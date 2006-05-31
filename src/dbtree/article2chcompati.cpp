@@ -1,0 +1,96 @@
+// ライセンス: 最新のGPL
+
+//#define _DEBUG
+#include "jddebug.h"
+
+#include "article2chcompati.h"
+#include "nodetree2chcompati.h"
+#include "interface.h"
+
+#include "jdlib/miscutil.h"
+#include "jdlib/misctime.h"
+
+#include <sstream>
+
+using namespace DBTREE;
+
+Article2chCompati::Article2chCompati( const std::string& datbase, const std::string& _id, bool cached )
+    : ArticleBase( datbase, _id, cached )
+{
+    assert( ! id().empty() );
+
+    // key (idから拡張子を除いたもの)を取得
+    unsigned int i = get_id().rfind( "." ); // 拡張子は取り除く
+    if( i != std::string::npos ) set_key( get_id().substr( 0, i ) );
+
+    // key から since 計算
+    if( i != std::string::npos ) set_since_time( atol( get_key().c_str() ) );
+    set_since_date( MISC::timettostr( get_since_time() ) );
+}
+
+
+
+Article2chCompati::~Article2chCompati()
+{}
+
+
+
+// 書き込みメッセージ変換
+const std::string Article2chCompati::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
+{
+    if( msg.empty() ) return std::string();
+
+    std::string charset = DBTREE::board_charset( get_url() );
+
+    std::stringstream ss_post;
+    ss_post.clear();
+    ss_post << "bbs="      << DBTREE::board_id( get_url() )
+            << "&key="     << get_key()
+            << "&time="    << get_time_modified()
+            << "&submit="  << MISC::charset_url_encode( "書き込む", charset )
+            << "&FROM="    << MISC::charset_url_encode( name, charset )
+            << "&mail="    << MISC::charset_url_encode( mail, charset )
+            << "&MESSAGE=" << MISC::charset_url_encode( msg, charset );
+
+#ifdef _DEBUG
+    std::cout << "Article2chCompati::create_write_message " << ss_post.str() << std::endl;
+#endif
+
+    return ss_post.str();
+}
+
+
+
+
+//
+// bbscgi のURL
+//
+// (例) "http://www.hoge2ch.net/test/bbs.cgi"
+//
+//
+const std::string Article2chCompati::url_bbscgi()
+{
+    std::string cgibase = DBTREE::url_bbscgibase( get_url() );
+    return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
+}
+
+
+
+//
+// subbbscgi のURL
+//
+// (例) "http://www.hoge2ch.net/test/subbbs.cgi"
+//
+const std::string Article2chCompati::url_subbbscgi()
+{
+    std::string cgibase = DBTREE::url_subbbscgibase( get_url() );
+    return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
+}
+
+
+
+
+NodeTreeBase* Article2chCompati::create_nodetree()
+{
+    return new NodeTree2chCompati( get_url(), get_date_modified() );
+}

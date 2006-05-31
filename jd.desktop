@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=JD 2ch browser
+Comment=JD is the browser for 2ch.It's similar to OpenJaneDoe.
+Exec=jd
+Icon=jd.png
+Terminal=0
+Type=Application
+Encoding=UTF-8
+Categories=Application;Network;X-Red-Hat-Base;X-Red-Hat-Base-Only;
+

@@ -1,0 +1,132 @@
+dnl
+dnl JD用 configure.in
+dnl
+AC_PREREQ(2.50)
+AC_INIT(jd, 1.0)
+AM_INIT_AUTOMAKE
+AC_CONFIG_HEADERS(config.h)
+
+AC_ISC_POSIX
+AC_PROG_CC
+AM_PROG_CC_STDC
+AC_HEADER_STDC
+AC_PROG_CPP
+AC_PROG_CXX
+AC_PROG_CXXCPP
+AC_PROG_LIBTOOL
+AC_LANG_CPLUSPLUS
+
+dnl ---------------------------------------------------
+dnl ---------------------------------------------------
+dnl
+dnl ユーザー設定
+dnl
+
+dnl XSMPを使ってセッション管理をする。libSMとlibICEが必要。無ければXSMPは無効になる
+use_xsmp=yes
+
+dnl GNOMEUIを使ってセッション管理をする。libgnomeui-develが必要。use_xsmp=yesの時は無効
+use_gnomeui=no
+
+dnl MS932ではなくCP932で文字コード変換をする
+use_cp932=no
+
+dnl 追加コンパイルオプション
+CXXFLAGS="$CXXFLAGS -ggdb -Wall"
+
+dnl ---------------------------------------------------
+dnl ---------------------------------------------------
+
+LIBSM_CFLAGS=""
+LIBSM_LIBS=""
+GNOMEUI_CFLAGS=""
+GNOMEUI_LIBS=""
+
+dnl
+dnl パッケージのチェック
+dnl
+PKG_CHECK_MODULES(GTKMM,[gtkmm-2.4 >= 2.4.8] )
+PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.0] )
+PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9] )
+
+AC_SUBST(GTKMM_CFLAGS)
+AC_SUBST(GTKMM_LIBS)
+AC_SUBST(GTHREAD_CFLAGS)
+AC_SUBST(GTHREAD_LIBS)
+AC_SUBST(OPENSSL_CFLAGS)
+AC_SUBST(OPENSSL_LIBS)
+
+
+dnl
+dnl CP932使用
+dnl
+if test x"$use_cp932" = "xyes" ; then
+  echo "use CP932"
+  CXXFLAGS="$CXXFLAGS -DNOUSE_MS932"
+else
+  echo "use MS932"
+fi
+
+
+dnl
+dnl XSMP を使用してセッション管理
+dnl
+dnl dirsの並びは Tk の configure に書いてあったもの + Fedora 向けにディレクトリを追加
+dnl
+if test x"$use_xsmp" = "xyes" ; then
+  
+  AC_MSG_CHECKING(for SMlib.h and ICElib.h)
+  LIBSM_CFLAGS=""
+  dirs="/usr/unsupported/include /usr/local/include /usr/X386/include /usr/X11R6/include /usr/X11R5/include /usr/include/X11R5 /usr/include/X11R4 /usr/openwin/include /usr/X11/include /usr/sww/include /usr/include"
+  for i in $dirs ; do
+    if test -r $i/X11/ICE/ICElib.h -a -r $i/X11/SM/SMlib.h ; then
+      AC_MSG_RESULT($i)
+      LIBSM_CFLAGS="-I$i"
+      break
+    fi
+  done
+  if test -z "$LIBSM_CFLAGS" ; then
+    AC_MSG_RESULT(could not find SMlib.h and ICElib.h)
+  fi
+
+  AC_MSG_CHECKING(for libSM and libICE)
+  LIBSM_LIBS="" 
+  dirs="/usr/unsupported/lib /usr/local/lib /usr/X386/lib /usr/X11R6/lib /usr/X11R5/lib /usr/lib/X11R5 /usr/lib/X11R4 /usr/openwin/lib /usr/X11/lib /usr/sww/X11/lib /usr/lib"
+  for i in $dirs ; do
+    if test -r $i/libICE.so -a -r $i/libSM.so ; then
+      AC_MSG_RESULT($i)
+      LIBSM_LIBS="-L$i -lICE -lSM"
+      break
+    fi
+  done
+  if test -z "$LIBSM_LIBS" ; then
+    AC_MSG_RESULT(could not find libSM and libICE.)
+  fi
+
+  if test -n "$LIBSM_CFLAGS" -a -n "$LIBSM_LIBS" ; then
+    echo "use XSMP"
+    AC_SUBST(LIBSM_CFLAGS)
+    AC_SUBST(LIBSM_LIBS)
+    CXXFLAGS="$CXXFLAGS -DUSE_XSMP"
+  fi
+
+else
+
+
+dnl
+dnl GNOMEUI を使用してセッション管理
+dnl
+if test x"$use_gnomeui" = "xyes" ; then
+
+  PKG_CHECK_MODULES(GNOMEUI, [libgnomeui-2.0 >= 2.0] )
+
+  echo "use GNOMEUI"
+  AC_SUBST(GNOMEUI_CFLAGS)
+  AC_SUBST(GNOMEUI_LIBS)
+  CXXFLAGS="$CXXFLAGS -DUSE_GNOMEUI"
+fi
+
+fi
+
+
+AC_OUTPUT(Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/config/Makefile )

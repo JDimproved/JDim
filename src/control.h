@@ -1,0 +1,53 @@
+// ライセンス: 最新のGPL
+
+//
+// 入力コントロール
+//
+// キー入力やマウスジェスチャ管理
+//
+
+#ifndef _CONTROL_H
+#define _CONTROL_H
+
+#include <gtkmm.h>
+
+namespace CONTROL
+{
+    class Control
+    {
+        int m_mode;
+
+      public:
+
+        Control();
+
+        // コントロールモード設定
+        void set_mode( int mode ){ m_mode = mode; }
+
+        // キー入力
+        // 戻り値はコントロールID
+        int key_press( GdkEventKey* event );  // 戻り値はコントロールID
+
+        // マウスボタン
+        bool button_alloted( GdkEventButton* event, int id );  // eventがidに割り当てられていたらtrue
+        bool get_eventbutton( int id, GdkEventButton& event ); // ID からevent取得
+
+        // マウスジェスチャ
+        void MG_reset();
+        bool MG_start( GdkEventButton* event );
+        bool MG_motion( GdkEventMotion* event );
+        int MG_end( GdkEventButton* event );  // 戻り値はコントロールID
+
+      private:
+
+        bool m_mg;
+        int m_mg_lng;
+        int m_mg_x;
+        int m_mg_y;
+        int m_mg_value;
+        std::string m_mg_direction;
+    };
+}
+
+
+#endif
