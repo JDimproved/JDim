@@ -279,7 +279,7 @@ void Root::bbsmenu2xml( const std::string& menu )
         std::string& line = (*it);
 
         // カテゴリに入る
-        unsigned int i;
+        size_t i;
         if( ( i = line.find( "<BR><BR><B>" ) ) != std::string::npos ){
 
             if( ! regex.exec( " ?<BR><BR><B>(.*)</B><BR>.*", line ) ) continue;

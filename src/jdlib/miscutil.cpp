@@ -16,7 +16,7 @@
 std::list< std::string > MISC::get_lines( const std::string& str, bool rm_space ){
         
     std::list< std::string > lines;
-    unsigned int i = 0,i2 = 0, r = 0;
+    size_t i = 0, i2 = 0, r = 0;
     while ( ( i2 = str.find( "\n", i ) ) != std::string::npos ){
         r = 0;
         if( str[ i2 - 1 ] == '\r' ) r = 1;
@@ -49,7 +49,7 @@ std::list< std::string > MISC::get_elisp_lists( const std::string& str )
 #endif 
    
     std::list< std::string > lists;
-    int pos = 0, length = 0;
+    size_t pos = 0, length = 0;
     std::string str2 = remove_space( str );
     const char* data = str2.c_str();
     if( data[ 0 ] != '(' ) return lists;
@@ -110,7 +110,7 @@ std::list< std::string > MISC::get_elisp_lists( const std::string& str )
 std::list< std::string > MISC::split_line( const std::string& str )
 {
     std::string str_space = "　";
-    int lng_space = str_space.length();
+    size_t lng_space = str_space.length();
     bool dquote;
 
     std::list< std::string > list_str;
@@ -141,7 +141,7 @@ std::list< std::string > MISC::split_line( const std::string& str )
 
         // 空白か " を探す
         i2 = i;
-        int lng_tmp = 1;
+        size_t lng_tmp = 1;
         while( i2 < lng ){
 
             // " 発見( \"は除く )
@@ -200,10 +200,10 @@ std::list< std::string > MISC::StringTokenizer( const std::string& str, char del
 std::string MISC::remove_space( const std::string& str )
 {
     std::string str_space = "　";
-    int lng_space = str_space.length();
+    size_t lng_space = str_space.length();
 
     std::string str_out;
-    int lng = str.length();
+    size_t lng = str.length();
     
     if( lng == 0 ) return str;
     if( str.find( " " ) == std::string::npos ) return str;
@@ -223,7 +223,7 @@ std::string MISC::remove_space( const std::string& str )
     }
 
     // 後
-    int i2 = lng -1;
+    size_t i2 = lng -1;
     while( 1 ){
 
         // 半角
@@ -248,10 +248,10 @@ std::string MISC::remove_space( const std::string& str )
 //
 std::string MISC::cut_str( const std::string& str, const std::string& str1, const std::string& str2 )
 {
-    unsigned int i = str.find( str1 );
+    size_t i = str.find( str1 );
     if( i == std::string::npos ) return std::string();
     i += str1.length();
-    unsigned int i2 = str.find( str2, i );
+    size_t i2 = str.find( str2, i );
     if( i2 == std::string::npos ) return std::string();
     
     return str.substr( i, i2 - i );
@@ -262,7 +262,7 @@ std::string MISC::cut_str( const std::string& str, const std::string& str1, cons
 std::string MISC::replace_str( const std::string& str, const std::string& str1, const std::string& str2 )
 {
     std::string str_out;
-    unsigned int i, pos = 0;
+    size_t i, pos = 0;
     while( ( i = str.find( str1 , pos ) ) != std::string::npos ){
 
         str_out += str.substr( pos, ( i - pos ) ) + str2;
@@ -508,7 +508,7 @@ int MISC::ucs2utf8( int ucs2, char* utfstr )
 std::string MISC::toupper_str( const std::string& str )
 {
     std::string str_out;
-    for( unsigned int i = 0; i < str.length() ; ++i ) str_out += toupper( str[ i ] );
+    for( size_t i = 0; i < str.length() ; ++i ) str_out += toupper( str[ i ] );
 
     return str_out;
 }
@@ -535,7 +535,7 @@ std::string MISC::tolower_str( const std::string& str )
 {
     std::string str_out;
 
-    for( unsigned int i = 0; i < str.length() ; ++i ) str_out += tolower( str[ i ] );
+    for( size_t i = 0; i < str.length() ; ++i ) str_out += tolower( str[ i ] );
 
     return str_out;
 }
@@ -548,7 +548,7 @@ std::string MISC::tolower_str( const std::string& str )
 std::string MISC::get_hostname( const std::string& path )
 {
     if( path.find( "http://" ) == std::string::npos ) return std::string();
-    unsigned int i = path.find( "/", strlen( "http://" ) ); 
+    size_t i = path.find( "/", strlen( "http://" ) ); 
     if( i == std::string::npos ) return std::string();
 
     return path.substr( 0, i );
@@ -563,7 +563,7 @@ std::string MISC::get_filename( const std::string& path )
 {
     if( path.empty() ) return std::string();
 
-    unsigned int i = path.rfind( "/" );
+    size_t i = path.rfind( "/" );
     if( i == std::string::npos ) return path;
 
     return path.substr( i+1 );
@@ -578,7 +578,7 @@ std::string MISC::get_dir( const std::string& path )
 {
     if( path.empty() ) return std::string();
 
-    unsigned int i = path.rfind( "/" );
+    size_t i = path.rfind( "/" );
     if( i == std::string::npos ) return std::string();
 
     return path.substr( 0, i+1 );

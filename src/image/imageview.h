@@ -17,7 +17,7 @@ namespace IMAGE
         Gtk::Label m_label;
         gdouble m_x_motion;
         gdouble m_y_motion;
-        unsigned int m_length_prev;
+        size_t m_length_prev;
         bool m_show_status;
         bool m_show_label;
 

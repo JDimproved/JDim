@@ -31,7 +31,7 @@ ImageViewMain::ImageViewMain( const std::string& url )
       m_scrwin( 0 ),
       m_length_prev( 0 ),
       m_show_status( false ),
-      m_show_label( 0 )
+      m_show_label( false )
 {
 #ifdef _DEBUG    
     std::cout << "ImageViewMain::ImageViewMain : " << get_url() << std::endl;
@@ -237,7 +237,7 @@ void ImageViewMain::show_status()
             m_length_prev = get_img()->current_length();
 
             char tmpstr[ 256 ];
-            snprintf( tmpstr, 256, "%d k / %d k", m_length_prev/1024, get_img()->total_length()/1024 );
+            snprintf( tmpstr, 256, "%zd k / %zd k", m_length_prev/1024, get_img()->total_length()/1024 );
             set_status( tmpstr );
 
             // ステータス標示

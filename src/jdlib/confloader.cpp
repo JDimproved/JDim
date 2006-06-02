@@ -36,7 +36,7 @@ ConfLoader::ConfLoader( const std::string& file, std::string str_conf )
 
             std::string line = MISC::remove_space( ( *it ) );
 
-            unsigned int i = line.find( "=" );
+            size_t i = line.find( "=" );
             if( i != std::string::npos ){
 
                 ConfData data;

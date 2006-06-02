@@ -236,7 +236,7 @@ std::list< int > NodeTreeBase::get_reference( int number )
                 std::string str_num = url.substr( strlen( PROTO_ANCHORE) );
                 int num_from = atol( str_num.c_str() );
                 int num_to = num_from;
-                unsigned int i2;
+                size_t i2;
                 if( ( i2  = str_num.find( "-" ) ) != std::string::npos ) num_to = atol( str_num.substr( i2 +1 ).c_str() );
 
                 const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く

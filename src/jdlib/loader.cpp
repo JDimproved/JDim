@@ -220,7 +220,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     
     // protocol と host と path 取得
     m_data.url = data_in.url;
-    unsigned long i = m_data.url.find( "://", 0 );  // "http://" とつけるのは呼び出し側の責任で
+    size_t i = m_data.url.find( "://", 0 );  // "http://" とつけるのは呼び出し側の責任で
     if( i == std::string::npos ){
 
         m_data.code = HTTP_ERR;
@@ -231,7 +231,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     i += 3;
     m_data.protocol = data_in.url.substr( 0, i );
 
-    unsigned long i2 = m_data.url.find( "/", i );
+    size_t i2 = m_data.url.find( "/", i );
     if( i2 == std::string::npos ){
 
         m_data.code = HTTP_ERR;

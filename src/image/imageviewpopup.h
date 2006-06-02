@@ -15,7 +15,7 @@ namespace IMAGE
     {
         Gtk::EventBox* m_event_frame;
         Gtk::Label* m_label;
-        unsigned int m_length_prev;
+        size_t m_length_prev;
 
       public:
 

@@ -919,7 +919,7 @@ void ArticleViewBase::show_res( const std::string& num, bool show_title )
 
     if( num_from <= m_article->get_number_load() ){
 
-        unsigned int i;
+        size_t i;
         if( ( i = num.find( "-" ) ) != std::string::npos ) num_to = atol( num.substr( i +1 ).c_str() );
         num_to = MAX( num_to, num_from );
 

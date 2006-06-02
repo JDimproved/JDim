@@ -155,7 +155,7 @@ std::string CACHE::path_board_root( const std::string& url )
     std::cout << "CACHE::path_board_root " << url << " -> " << url_board << std::endl;
 #endif
 
-    unsigned int i = url_board.find( "://" );
+    size_t i = url_board.find( "://" );
     if( i == std::string::npos ) return std::string();
 
     return CACHE::path_root() + url_board.substr( i + 3 );
@@ -193,7 +193,7 @@ std::string CACHE::path_article_info( const std::string& url, const std::string&
     std::string id_str = id;
 
     // idに拡張子が付いてたら取る
-    unsigned int i = id.find( "." );
+    size_t i = id.find( "." );
     if( i != std::string::npos ) id_str = id.substr( 0, i );
 
     return CACHE::path_article_info_root( url ) + id_str;
@@ -462,7 +462,7 @@ bool CACHE::jdmkdir( const std::string& path )
 #endif
     
     // ルートからディレクトリがあるかチェックしていく。無ければ作る
-    unsigned int i = 0;
+    size_t i = 0;
 
     while( ( i = target.find( "/", i ) ) != std::string::npos ){
 
