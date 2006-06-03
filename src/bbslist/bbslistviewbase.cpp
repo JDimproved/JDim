@@ -528,6 +528,10 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
     // マウスジェスチャ
     SKELETON::View::get_control().MG_start( event );
 
+    // ダブルクリック
+    m_dblclick = false;
+    if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
+
     CORE::core_set_command( "switch_bbslist" );
 
     return true;
@@ -550,6 +554,10 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
 
     m_path_selected = m_treeview.get_path_under_xy( (int)event->x, (int)event->y );
 
+    // ダブルクリックの処理のため一時的にtypeを切替える
+    GdkEventType type_copy = event->type;
+    if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
+
     // 板を開く
     bool openboard = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenBoardButton );
     bool openboardtab = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenBoardTabButton );
@@ -560,6 +568,8 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
     else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
         show_popupmenu( m_path_selected );
     }
+
+    event->type = type_copy;
 
     return true;
 }

@@ -27,6 +27,9 @@ namespace BOARD
         Glib::RefPtr< Gtk::ListStore > m_liststore;
         Gtk::ScrolledWindow m_scrwin;
 
+        // ダブルクリック状態
+        bool m_dblclick;
+
         // ソートで使う変数
         int m_previous_col;
         bool m_ascend;

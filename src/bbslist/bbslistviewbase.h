@@ -35,6 +35,9 @@ namespace BBSLIST
         Gtk::ScrolledWindow m_scrwin;
         JDLIB::ConstPtr< Gtk::CellRendererText > m_ren_text;
 
+        // ダブルクリック状態
+        bool m_dblclick;
+
         // ポップアップメニュー用
         Gtk::TreeModel::Path m_path_selected;
 

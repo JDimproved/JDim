@@ -1071,6 +1071,10 @@ bool BoardView::slot_button_press( GdkEventButton* event )
     // マウスジェスチャ
     SKELETON::View::get_control().MG_start( event );
 
+    // ダブルクリック
+    m_dblclick = false;
+    if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
+
     return true;
 }
 
@@ -1109,7 +1113,11 @@ bool BoardView::slot_button_release( GdkEventButton* event )
                   << x << " " << y << " " << cell_x << " " << cell_y << std::endl;
 #endif
 
-        // 板を開く
+        // ダブルクリックの処理のため一時的にtypeを切替える
+        GdkEventType type_copy = event->type;
+        if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
+
+        // スレを開く
         bool openarticle = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenArticleButton );
         bool openarticletab = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenArticleTabButton );
         if( openarticle || openarticletab ) open_row( path, openarticletab );
@@ -1127,6 +1135,8 @@ bool BoardView::slot_button_release( GdkEventButton* event )
             }
             if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );
         }
+
+        event->type = type_copy;
     }
 
     return true;
