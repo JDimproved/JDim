@@ -869,7 +869,7 @@ void ArticleViewBase::slot_next_bm()
         }
     }
 
-    for( int i = 1; i < m_current_bm ; ++i ){
+    for( int i = 1; i <= m_current_bm ; ++i ){
         if( m_article->is_bookmarked( i ) ){
             goto_num( i );
             m_current_bm = i;

@@ -1541,11 +1541,12 @@ bool DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
     
     // search_move でひとつ進めるのでひとつ前に戻しておく
     if( ! reverse ){
-        ( *it ).select = false;
+        if( it != m_multi_selection.end() ) ( *it ).select = false;
         if( it == m_multi_selection.begin() )  m_multi_selection.back().select = true;
         else ( *( --it ) ).select = true;            
     }
     
+    redraw_view();
     return true;
 }
 
