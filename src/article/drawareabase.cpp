@@ -248,18 +248,23 @@ void DrawAreaBase::init_font()
 {
     if( fontname().empty() ) return;
 
+    // layoutにフォントをセット
     Pango::FontDescription pfd( fontname() );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
     m_pango_layout->set_font_description( pfd );  
 
-    // 改行高さと右マージン幅取得
-    // 真面目にやると大変そうなので文字列 wstr の平均を取る
+    // 文字高さ、改行高さ取得
+    Pango::FontMetrics metrics = get_pango_context()->get_metrics( pfd );
+    m_height_text = PANGO_PIXELS( metrics.get_ascent() - metrics.get_underline_position () ); // 文字高さ    
+    m_br_size = PANGO_PIXELS( metrics.get_ascent() + metrics.get_descent() ); // 改行高さ
+
+    // マージン幅取得
+    // マージン幅は真面目にやると大変そうなので文字列 wstr の平均を取る
     const char* wstr = "あいうえお";
     m_pango_layout->set_text( wstr );
-    m_height_text = m_pango_layout->get_pixel_ink_extents().get_height() + 1;
-    m_br_size = m_height_text + 4;
-    m_mrg_right = ( m_pango_layout->get_pixel_ink_extents().get_width() / 5 ) /2 * 3;
-    m_mrg_left = ( m_pango_layout->get_pixel_ink_extents().get_width() / 5 );
+    int width = m_pango_layout->get_pixel_ink_extents().get_width() / 5;
+    m_mrg_right = width /2 * 3;
+    m_mrg_left = width;
     m_down_size = m_mrg_left;
 }
 
