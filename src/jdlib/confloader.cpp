@@ -111,6 +111,17 @@ void ConfLoader::update( const std::string& name, const int value )
 }
 
 
+// 値を変更 (double型)
+void ConfLoader::update( const std::string& name, const double value )
+{
+    const int buflng = 256;
+    char str_value[ buflng ];
+    snprintf( str_value, buflng, "%lf", value );
+    update( name, std::string( str_value ) );
+}
+
+
+
 //
 // string 型
 //
@@ -147,3 +158,15 @@ int ConfLoader::get_option( const std::string& name, int dflt )
     return atoi( val.c_str() );
 }
 
+
+//
+// double 型
+//
+double ConfLoader::get_option( const std::string& name, double dflt )
+{
+    std::string val = get_option( name, std::string() );
+
+    if( val.empty() ) return dflt;
+
+    return atof( val.c_str() );
+}

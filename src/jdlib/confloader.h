@@ -41,10 +41,12 @@ namespace JDLIB
         // name が無い場合は綱目を追加
         void update( const std::string& name, const std::string& value );
         void update( const std::string& name, const int value );
+        void update( const std::string& name, const double value );
 
         // 値取得
         std::string get_option( const std::string& name, std::string dflt );
         int get_option( const std::string& name, int dflt );
+        double get_option( const std::string& name, double dflt );
     };
 }
 

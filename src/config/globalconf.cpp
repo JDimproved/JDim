@@ -65,6 +65,10 @@ int mouse_radius;
 int history_size;
 int instruct_popup;
 
+double adjust_underline_pos;
+double adjust_line_space;
+
+
 //
 // 初期設定
 //
@@ -193,6 +197,10 @@ const bool CONFIG::init_config()
     // 0以上なら多重ポップアップの説明を表示する
     instruct_popup = cf.get_option( "instruct_popup", 100 );    
 
+    // スレ表示の行間調整
+    adjust_underline_pos = cf.get_option( "adjust_underline_pos", 1.0 );
+    adjust_line_space = cf.get_option( "adjust_line_space", 1.0 );
+
     return ! cf.empty();
 }
 
@@ -274,6 +282,9 @@ void CONFIG::save_conf()
     cf.update( "mouse_radius", mouse_radius );
     cf.update( "history_size", history_size );
     cf.update( "instruct_popup", instruct_popup );
+
+    cf.update( "adjust_underline_pos", adjust_underline_pos );
+    cf.update( "adjust_line_space", adjust_line_space );
 
     cf.save();
 }
@@ -371,3 +382,6 @@ const int CONFIG::get_instruct_popup(){
     if( instruct_popup ) return instruct_popup--;
     return 0;
 }
+
+const double CONFIG::get_adjust_underline_pos(){ return adjust_underline_pos; }
+const double CONFIG::get_adjust_line_space(){ return adjust_line_space; }

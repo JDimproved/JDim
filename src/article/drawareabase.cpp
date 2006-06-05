@@ -255,8 +255,14 @@ void DrawAreaBase::init_font()
 
     // 文字高さ、改行高さ取得
     Pango::FontMetrics metrics = get_pango_context()->get_metrics( pfd );
-    m_height_text = PANGO_PIXELS( metrics.get_ascent() - metrics.get_underline_position () ); // 文字高さ    
-    m_br_size = PANGO_PIXELS( metrics.get_ascent() + metrics.get_descent() ); // 改行高さ
+
+    // リンクの下線の位置
+    m_underline_pos = PANGO_PIXELS( ( metrics.get_ascent() - metrics.get_underline_position() )
+                                  * CONFIG::get_adjust_underline_pos() ); 
+
+    // 改行高さ
+    m_br_size = PANGO_PIXELS( ( metrics.get_ascent() + metrics.get_descent() )
+                              * CONFIG::get_adjust_line_space() ); 
 
     // マージン幅取得
     // マージン幅は真面目にやると大変そうなので文字列 wstr の平均を取る
@@ -826,7 +832,7 @@ bool DrawAreaBase::draw_drawarea()
     int yy = m_caret_pos.y - pos_y;
     if( yy >= 0 ){
         m_gc->set_foreground( m_color[ COLOR_CHAR ] );
-        m_window->draw_line( m_gc, xx, yy, xx, yy + m_height_text );
+        m_window->draw_line( m_gc, xx, yy, xx, yy + m_underline_pos );
     }
 #endif
 
@@ -1136,7 +1142,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
             if( node->link ){
 
                 m_gc->set_foreground( m_color[ color ] );
-                m_backscreen->draw_line( m_gc, x, y + m_height_text, x + width_line, y + m_height_text );
+                m_backscreen->draw_line( m_gc, x, y + m_underline_pos, x + width_line, y + m_underline_pos );
             }
         }
 

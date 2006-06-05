@@ -135,6 +135,10 @@ namespace CONFIG
 
     // 0以上なら多重ポップアップの説明を表示する
     const int get_instruct_popup();
+
+    // スレ表示の行間調整
+    const double get_adjust_underline_pos();
+    const double get_adjust_line_space();
 }
 
 

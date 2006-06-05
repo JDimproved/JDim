@@ -101,7 +101,7 @@ namespace ARTICLE
         std::list< SELECTION > m_multi_selection;
       
         // レイアウト用
-        int m_height_text; // テキストの平均高さ
+        int m_underline_pos; // 下線の位置(文字の上からのピクセル値)
         int m_br_size; // 改行量 (ピクセル値)
         int m_mrg_left; // 左マージン幅 (ピクセル値)
         int m_mrg_right; // 右マージン幅 (ピクセル値)
