@@ -111,6 +111,10 @@ namespace CONFIG
     const bool get_use_mosaic();
     void set_use_mosaic( bool mosaic );
 
+    // 画像をデフォルトでウィンドウサイズに合わせる
+    const bool get_zoom_to_fit();
+    void set_zoom_to_fit( bool fit );
+
     const bool get_show_oldarticle();
     void set_show_oldarticle( bool showarticle );
 

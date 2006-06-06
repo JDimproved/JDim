@@ -62,7 +62,7 @@ Img::~Img()
 void Img::clear()
 {
     m_mosaic = CONFIG::get_use_mosaic();
-    m_zoom_to_fit = true;
+    m_zoom_to_fit = CONFIG::get_zoom_to_fit();
     m_size = 100;
     m_protect = false;
     memset( m_sign, 0, sizeof( m_sign ) );
