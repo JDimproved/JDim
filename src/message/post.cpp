@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "post.h"
@@ -188,7 +188,15 @@ void Post::receive_finish()
     regex.exec( ".*<font size=\\+1 color=#FF0000>([^<]*)</font>.*", str );
     conf = MISC::remove_space( regex.str( 1 ) );
 
-    regex.exec( ".*</ul>.*<b>(.*)</b>.*<form.*", str, 0, false, false );
+    // メッセージ
+    bool ret;
+
+    // 2ch 型
+    ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<form.*", str, 0, false, false );
+
+    // 0ch 型
+    if( ! ret ) ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<input.*", str, 0, false, false );
+
     msg = MISC::remove_space( regex.str( 1 ) );
 
     // 2ch の hana 値
