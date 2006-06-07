@@ -12,6 +12,7 @@
 #include "loaderdata.h"
 
 #include <string>
+#include <list>
 #include <zlib.h>
 
 #include <netdb.h>
@@ -95,6 +96,7 @@ namespace JDLIB
         bool receive_header( char* buf, size_t& read_size );
         bool analyze_header();
         std::string analyze_header_option( char* option );
+        std::list< std::string > analyze_header_option_list( char* option );
 
         // chunk用
         bool skip_chunk( char* buf, size_t& read_size );

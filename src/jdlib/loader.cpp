@@ -894,8 +894,8 @@ bool Loader::analyze_header()
     m_data.modified = analyze_header_option( "Last-Modified: " );
     
     // cookie
-    // とりあえず METAデータは無視
     m_data.cookie = analyze_header_option( "Set-Cookie: " );
+    m_data.list_cookies = analyze_header_option_list( "Set-Cookie: " );
 
     // Location
     if( m_data.code == HTTP_REDIRECT ) m_data.location = analyze_header_option( "Location: " );
@@ -925,8 +925,11 @@ bool Loader::analyze_header()
     std::cout << "code = " << m_data.code << std::endl;
     std::cout << "length = " << m_data.length << std::endl;    
     std::cout << "date = " << m_data.date << std::endl;
-    std::cout << "modified = " << m_data.modified << std::endl;    
-    std::cout << "cookie = " << m_data.cookie << std::endl;
+    std::cout << "modified = " << m_data.modified << std::endl;
+
+    std::list< std::string >::iterator it = m_data.list_cookies.begin();
+    for( ; it != m_data.list_cookies.end(); ++it ) std::cout << "cookie = " << (*it) << std::endl;
+
     std::cout << "location = " << m_data.location << std::endl;
     std::cout << "contenttype = " << m_data.contenttype<< std::endl;            
     if( m_use_chunk ) std::cout << "m_use_chunk = true\n";
@@ -953,6 +956,33 @@ std::string Loader::analyze_header_option( char* option )
 
     return std::string();
 }
+
+
+
+//
+// analyze_header() から呼ばれるオプションの値を取り出す関数(リスト版)
+//
+std::list< std::string > Loader::analyze_header_option_list( char* option )
+{
+    std::list< std::string > str_list;
+    
+    size_t i = 0, i2 = 0;
+
+    for(;;){
+
+        i = m_data.str_header.find( option, i2 );    
+        if( i == std::string::npos ) break;
+
+        i2 = m_data.str_header.find( "\r\n", i );
+        if( i2 == std::string::npos ) i2 = m_data.str_header.find( "\n", i );
+        if( i2 == std::string::npos ) break;
+
+        str_list.push_back( m_data.str_header.substr( i + strlen( option ), i2 - ( i + strlen( option ) ) ) );
+    }
+
+    return str_list;
+}
+
 
 
 

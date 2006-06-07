@@ -8,6 +8,7 @@
 #define _LOADERDATA_H
 
 #include <string>
+#include <list>
 
 namespace JDLIB
 {
@@ -44,6 +45,7 @@ namespace JDLIB
         std::string modified;
         size_t byte_readfrom;
         std::string cookie;
+        std::list< std::string > list_cookies;
         std::string location;
         std::string contenttype;
         size_t size_buf;
