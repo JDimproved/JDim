@@ -12,8 +12,7 @@ using namespace BOARD;
  
 Preferences::Preferences( const std::string& url )
     : SKELETON::PrefDiag( url, false ),
-      m_frame_cookie( "クッキー" ),
-      m_label_cookie( "未取得" ),
+      m_frame_cookie( "クッキー＆Hana" ),
       m_button_cookie( "削除" ) ,
       m_label_name( DBTREE::board_name( get_url() ), Gtk::ALIGN_LEFT ),
       m_label_url( "URL : ", DBTREE::url_boardbase( get_url() ) ),
@@ -23,13 +22,27 @@ Preferences::Preferences( const std::string& url )
       m_label_line( "1レスの最大改行数 : " ),
       m_label_byte( "1レスの最大バイト数 : " )
 {
-    m_label_cookie.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
-    std::string str_tmp = DBTREE::board_cookie_for_write( get_url() );
-    if( !str_tmp.empty() ) m_label_cookie.set_label( str_tmp );
+    m_edit_cookies.textview().set_editable( false );
+
+    // cookie と hana をセット
+    std::string str_cookies_hana;
+    std::list< std::string > list_cookies = DBTREE::board_list_cookies_for_write( get_url() );
+    if( list_cookies.empty() ) str_cookies_hana = "cookie: 未取得\n";
+    else{
+        std::list< std::string >::iterator it = list_cookies.begin();
+        for( ; it != list_cookies.end(); ++it ) str_cookies_hana += "cookie: " + (*it) + "\n";
+    }
+
+    std::string hana = DBTREE::board_hana_for_write( get_url() );
+    if( ! hana.empty() ) str_cookies_hana += "\nhana: " + hana + "\n";
+
+    m_edit_cookies.set_text( str_cookies_hana );
+
     m_hbox_cookie.set_border_width( 8 );
     m_hbox_cookie.set_spacing( 8 );
-    m_hbox_cookie.pack_start( m_label_cookie );
-    m_hbox_cookie.pack_start( m_button_cookie, Gtk::PACK_SHRINK );
+    m_hbox_cookie.pack_start( m_edit_cookies );
+    m_hbox_cookie.pack_start( m_vbox_cookie, Gtk::PACK_SHRINK );
+    m_vbox_cookie.pack_end( m_button_cookie, Gtk::PACK_SHRINK );
     m_button_cookie.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_delete_cookie ) );
 
     m_frame_cookie.add( m_hbox_cookie );
@@ -64,7 +77,8 @@ Preferences::Preferences( const std::string& url )
 
 void Preferences::slot_delete_cookie()
 {
-    DBTREE::board_set_cookie_for_write( get_url(), std::string() );
-    m_label_cookie.set_label( "未取得" );
-}
+    DBTREE::board_set_list_cookies_for_write( get_url(), std::list< std::string >() );
+    DBTREE::board_set_hana_for_write( get_url(), std::string() );
 
+    m_edit_cookies.set_text( "未取得" );
+}

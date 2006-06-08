@@ -70,8 +70,11 @@ namespace DBTREE
         int m_lng_rawdata;
         bool m_read_info;
 
-        std::string m_cookie_for_write; // クッキー、書き込みの時に必要
-        std::string m_hana_for_write;   // hana, 2ch書き込み時に必要
+        // クッキー, 書き込み時に必要
+        std::list< std::string > m_list_cookies_for_write;
+
+        // hana, 2ch書き込み時に必要
+        std::string m_hana_for_write;   
 
         // get_article_fromURL()のキャッシュ
         std::string m_get_article_url;
@@ -145,8 +148,9 @@ namespace DBTREE
         virtual const int message_count();
 
         // 書き込み用クッキー
-        const std::string& cookie_for_write() { return m_cookie_for_write; }
-        void set_cookie_for_write( const std::string& cookie ){ m_cookie_for_write = cookie; }
+        virtual const std::string cookie_for_write();
+        const std::list< std::string >& list_cookies_for_write() { return m_list_cookies_for_write; }
+        void set_list_cookies_for_write( const std::list< std::string >& list_cookies ){ m_list_cookies_for_write = list_cookies; }
 
         // hana
         const std::string& hana_for_write() { return m_hana_for_write; }

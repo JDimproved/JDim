@@ -60,7 +60,8 @@ namespace DBTREE
     const std::string board_subjecttxt( const std::string& url );
     const std::string board_charset( const std::string& url );
     const std::string board_cookie_for_write( const std::string& url );
-    void board_set_cookie_for_write( const std::string& url, const std::string& cookie );        
+    const std::list< std::string >& board_list_cookies_for_write( const std::string& url );
+    void board_set_list_cookies_for_write( const std::string& url, const std::list< std::string>& list_cookies );        
     const std::string board_hana_for_write( const std::string& url );
     void board_set_hana_for_write( const std::string& url, const std::string& hana );        
     const std::string board_ext( const std::string& url );

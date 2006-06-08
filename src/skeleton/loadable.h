@@ -42,6 +42,7 @@
 #define _LOADABLE_H
 
 #include <gtkmm.h>
+#include <list>
 
 namespace JDLIB
 {
@@ -62,7 +63,7 @@ namespace SKELETON
         int m_code;
         std::string m_str_code;
         std::string m_date_modified;
-        std::string m_cookie;
+        std::list< std::string > m_cookies;
         std::string m_location;
         size_t m_total_length;
         size_t m_current_length;
@@ -81,7 +82,7 @@ namespace SKELETON
         const std::string& get_str_code() const { return m_str_code; }
         void set_str_code( const std::string& str_code ){ m_str_code = str_code; }
 
-        const std::string& cookie() const { return m_cookie; }
+        const std::list< std::string >& cookies() const { return m_cookies; }
         const std::string& location() const { return m_location; }
 
         const size_t total_length() const { return m_total_length; }
@@ -121,7 +122,7 @@ namespace SKELETON
         const int get_loader_code();
         const std::string get_loader_str_code();
         const std::string get_loader_modified();
-        const std::string get_loader_cookie();
+        const std::list< std::string > get_loader_cookies();
         const std::string get_loader_location();
         const size_t get_loader_length();
     };

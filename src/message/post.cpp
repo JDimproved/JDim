@@ -95,19 +95,19 @@ void Post::post_msg()
 
     data.agent = DBTREE::get_agent( m_url );
     data.referer = DBTREE::url_boardbase( m_url );
-    data.cookie = DBTREE::board_cookie_for_write( m_url );
     data.str_post = m_msg;
     data.host_proxy = DBTREE::get_proxy_host_w( m_url );
     data.port_proxy = DBTREE::get_proxy_port_w( m_url );
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout_post();
+    data.cookie_for_write = DBTREE::board_cookie_for_write( m_url );
 
 #ifdef _DEBUG
     std::cout << "Post::post_msg : " << std::endl
               << "url = " << data.url << std::endl
               << "agent = " << data.agent << std::endl
               << "referer = " << data.referer << std::endl
-              << "cookie = " << data.cookie << std::endl
+              << "cookie = " << data.cookie_for_write << std::endl
               << "proxy = " << data.host_proxy << ":" << data.port_proxy << std::endl
               << m_msg << std::endl;
 #endif
@@ -209,7 +209,11 @@ void Post::receive_finish()
     std::cout << "CONF: [" << conf << "]\n";
     std::cout << "MSG: [" << msg << "]\n";
     std::cout << "ERR: [" << m_errmsg << "]\n";
-    std::cout << "cookie: [" << cookie() << "]\n";
+
+    std::list< std::string > list_cookies = SKELETON::Loadable::cookies();
+    std::list< std::string >::iterator it = list_cookies.begin();
+    for( ; it != list_cookies.end(); ++it ) std::cout << "cookie : [" << (*it) << "]\n";
+
     std::cout << "hana: [" << hana << "]\n";
     std::cout << "location: [" << location() << "]\n";
 #endif
@@ -267,7 +271,7 @@ void Post::receive_finish()
             CONFIG::set_always_write_ok( ckbt_active );
         }
 
-        set_cookie_hana( cookie(), hana );
+        set_cookies_and_hana( SKELETON::Loadable::cookies(), hana );
 
         ++m_count; // 永久ループ防止
         post_msg();
@@ -279,7 +283,7 @@ void Post::receive_finish()
     else if( m_count < 2
              && ! m_subbbs && conf.find( "書き込み確認" ) != std::string::npos ){
 
-        set_cookie_hana( cookie(), hana );
+        set_cookies_and_hana( SKELETON::Loadable::cookies(), hana );
 
         // subbbs.cgi にポスト先を変更してもう一回ポスト
         m_subbbs = true;
@@ -306,10 +310,10 @@ void Post::receive_finish()
 //
 // データベースにクッキーとhanaを登録
 //
-void Post::set_cookie_hana( const std::string& cookie, const std::string& hana )
+void Post::set_cookies_and_hana( const std::list< std::string >& cookies, const std::string& hana )
 {
-    if( DBTREE::board_cookie_for_write( m_url ).empty()
-        && ! cookie.empty() ) DBTREE::board_set_cookie_for_write( m_url, cookie );
+    if( DBTREE::board_list_cookies_for_write( m_url ).empty()
+        && ! cookies.empty() ) DBTREE::board_set_list_cookies_for_write( m_url, cookies );
 
     if( DBTREE::board_hana_for_write( m_url ).empty()
         && ! hana.empty() ){

@@ -37,7 +37,7 @@ void Loadable::clear_load_data()
     m_code = HTTP_INIT;
     m_str_code = std::string();
     m_date_modified = std::string();
-    m_cookie = std::string();
+    m_cookies.clear();
     m_location = std::string();
     m_total_length = 0;
     m_current_length = 0;
@@ -161,7 +161,7 @@ void Loadable::finish_disp()
     m_code = get_loader_code();
     if( ! get_loader_str_code().empty() ) m_str_code = get_loader_str_code();
     if( ! get_loader_modified().empty() ) m_date_modified = get_loader_modified();
-    if( ! get_loader_cookie().empty() ) m_cookie = get_loader_cookie();
+    if( ! get_loader_cookies().empty() ) m_cookies = get_loader_cookies();
     if( ! get_loader_location().empty() ) m_location = get_loader_location();
 
 #ifdef _DEBUG
@@ -211,11 +211,11 @@ const std::string Loadable::get_loader_modified()
 }
 
 
-const std::string Loadable::get_loader_cookie()
+const std::list< std::string > Loadable::get_loader_cookies()
 {
-    if( ! m_loader ) return std::string();
+    if( ! m_loader ) return std::list< std::string >();
 
-    return m_loader->data().cookie;
+    return m_loader->data().list_cookies;
 }
 
 

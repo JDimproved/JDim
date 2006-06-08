@@ -44,7 +44,7 @@ namespace JDLIB
         std::string date;
         std::string modified;
         size_t byte_readfrom;
-        std::string cookie;
+        std::string cookie_for_write;
         std::list< std::string > list_cookies;
         std::string location;
         std::string contenttype;
@@ -83,7 +83,8 @@ namespace JDLIB
             date.clear();
             modified.clear();
             byte_readfrom = 0;
-            cookie.clear();
+            cookie_for_write.clear();
+            list_cookies.clear();
             contenttype.clear();
             size_buf = 0;
             timeout = 0;

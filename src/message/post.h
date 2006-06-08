@@ -52,7 +52,7 @@ namespace MESSAGE
         virtual void receive_data( const char* data, size_t size );
         virtual void receive_finish();
 
-        void set_cookie_hana( const std::string& cookie, const std::string& hana );
+        void set_cookies_and_hana( const std::list< std::string >& cookies, const std::string& hana );
     };
     
 }

@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-//#define _DEBUG
+#define _DEBUG
 //#define _DEBUG_CHUNKED
 #include "jddebug.h"
 
@@ -190,6 +190,7 @@ void Loader::wait()
 // byte_readfrom ( != 0 ならその位置からレジューム)
 // agent
 // referer
+// cookie_for_write
 // host_proxy ( != empty ならproxy使用 )
 // port_proxy ( == 0 なら 8080 )
 // size_buf ( バッファサイズ, k 単位で指定。 == 0 ならデフォルトサイズ(LNG_BUF_MIN)使用)
@@ -297,7 +298,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     m_data.byte_readfrom = data_in.byte_readfrom;    
     m_data.agent = data_in.agent;
     m_data.referer = data_in.referer;
-    m_data.cookie = data_in.cookie;
+    m_data.cookie_for_write = data_in.cookie_for_write;
     m_data.host_proxy = data_in.host_proxy;
     m_data.port_proxy = data_in.port_proxy;
     if( m_data.port_proxy == 0 ) m_data.port_proxy = 8080;
@@ -312,8 +313,8 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     std::cout << "modified: " << m_data.modified << std::endl;
     std::cout << "byte_readfrom: " << m_data.byte_readfrom << std::endl;
     std::cout << "agent: " << m_data.agent << std::endl;
-    std::cout << "referer: " << m_data.referer << std::endl;    
-    std::cout << "cookie: " << m_data.cookie << std::endl;
+    std::cout << "referer: " << m_data.referer << std::endl;
+    std::cout << "cookie: " << m_data.cookie_for_write << std::endl;
     std::cout << "proxy: " << m_data.host_proxy << std::endl;
     std::cout << "port of proxy: " << m_data.port_proxy << std::endl;
     std::cout << "buffer size: " << m_lng_buf / 1024 << " kb" << std::endl;
@@ -775,7 +776,10 @@ std::string Loader::create_msg_send()
     msg << "Host: " << m_data.host << "\r\n";
     if( ! m_data.agent.empty() ) msg << "User-Agent: " << m_data.agent << "\r\n";
     if( ! m_data.referer.empty() ) msg << "Referer: " << m_data.referer << "\r\n";
-    if( ! m_data.cookie.empty() ) msg << "Cookie: " << m_data.cookie << "\r\n";
+
+
+    if( ! m_data.cookie_for_write.empty() ) msg << "Cookie: " << m_data.cookie_for_write << "\r\n";
+
     if( ! m_data.modified.empty() ) msg << "If-Modified-Since: " << m_data.modified << "\r\n";
 
     // レジュームするときは gzip は受け取らない
@@ -894,7 +898,6 @@ bool Loader::analyze_header()
     m_data.modified = analyze_header_option( "Last-Modified: " );
     
     // cookie
-    m_data.cookie = analyze_header_option( "Set-Cookie: " );
     m_data.list_cookies = analyze_header_option_list( "Set-Cookie: " );
 
     // Location

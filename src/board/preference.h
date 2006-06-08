@@ -15,10 +15,11 @@ namespace BOARD
         Gtk::VBox m_vbox;
         SKELETON::EditView m_edit_settingtxt;
 
-        // クッキー
+        // クッキー & hana
         Gtk::Frame m_frame_cookie;
         Gtk::HBox m_hbox_cookie;
-        Gtk::Label m_label_cookie;
+        SKELETON::EditView m_edit_cookies;
+        Gtk::VBox m_vbox_cookie;
         Gtk::Button m_button_cookie;
 
         // 情報

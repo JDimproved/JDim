@@ -145,6 +145,15 @@ const int BoardBase::message_count()
 }
 
 
+//書き込み用クッキー
+const std::string BoardBase::cookie_for_write()
+{
+    if( m_list_cookies_for_write.empty() ) return std::string();
+
+    return *(m_list_cookies_for_write.begin() );
+}
+
+
 void BoardBase::clear()
 {
     if( m_rawdata ) free( m_rawdata );

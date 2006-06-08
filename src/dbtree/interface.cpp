@@ -197,9 +197,15 @@ const std::string DBTREE::board_cookie_for_write( const std::string& url )
 }
 
 
-void DBTREE::board_set_cookie_for_write( const std::string& url, const std::string& cookie )
+const std::list< std::string >& DBTREE::board_list_cookies_for_write( const std::string& url )
 {
-    DBTREE::get_board( url )->set_cookie_for_write( cookie );
+    return DBTREE::get_board( url )->list_cookies_for_write();
+}
+
+
+void DBTREE::board_set_list_cookies_for_write( const std::string& url, const std::list< std::string>& list_cookies )
+{
+    DBTREE::get_board( url )->set_list_cookies_for_write( list_cookies );
 }
 
 
