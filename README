@@ -386,6 +386,7 @@ articleviewの行間幅を真面目に計算で求めるようにした
 手動で下線や改行位置を調節できるようにした( adjust_underline_pos, adjust_line_space )
 画像をオリジナルサイズで最初から開けるようにした( zoom_to_fit )
 板のプロパティでhanaの確認と削除を出来るようにした
+cookieを真面目に解析して作成するようにした(PON,NAME,MAILを取得)
 
 
 - 1.50.060601

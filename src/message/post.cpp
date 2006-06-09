@@ -234,7 +234,7 @@ void Post::receive_finish()
     }
 
     // クッキー確認
-    else if( m_count < 2 && 
+    else if( m_count < 1 && // 永久ループ防止
         ( title.find( "書き込み確認" ) != std::string::npos
           || tag_2ch.find( "cookie" ) != std::string::npos  ) ){
 
@@ -280,7 +280,7 @@ void Post::receive_finish()
     }
 
     // スレ立て時の書き込み確認
-    else if( m_count < 2
+    else if( m_count < 1 // 永久ループ防止
              && ! m_subbbs && conf.find( "書き込み確認" ) != std::string::npos ){
 
         set_cookies_and_hana( SKELETON::Loadable::cookies(), hana );
@@ -312,12 +312,12 @@ void Post::receive_finish()
 //
 void Post::set_cookies_and_hana( const std::list< std::string >& cookies, const std::string& hana )
 {
-    if( DBTREE::board_list_cookies_for_write( m_url ).empty()
-        && ! cookies.empty() ) DBTREE::board_set_list_cookies_for_write( m_url, cookies );
+    if( ! cookies.empty() ) DBTREE::board_set_list_cookies_for_write( m_url, cookies );
 
-    if( DBTREE::board_hana_for_write( m_url ).empty()
-        && ! hana.empty() ){
+    if( ! hana.empty() ){
         DBTREE::board_set_hana_for_write( m_url, hana );
+
+        // 手抜き。後で直すこと
         if( m_msg.find( "hana=" ) == std::string::npos ) m_msg += "&hana=" + hana;
     }
 }

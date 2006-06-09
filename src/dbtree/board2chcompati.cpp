@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "board2chcompati.h"
@@ -8,6 +8,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
+#include "jdlib/jdregex.h"
 
 #include <sstream>
 
@@ -59,6 +60,82 @@ bool Board2chCompati::is_valid( const std::string& filename )
         
     return true;
 }
+
+
+//書き込み用クッキー作成
+const std::string Board2chCompati::cookie_for_write()
+{
+    std::list< std::string > list_cookies = BoardBase::list_cookies_for_write();
+    if( list_cookies.empty() ) return std::string();
+
+    JDLIB::Regex regex;
+
+    std::string str_expire;
+    std::string query_expire = "expires=([^;]*)";
+
+    std::string str_path;
+    std::string query_path = "path=([^;]*)";
+
+    bool use_pon = false;
+    std::string str_pon;
+    std::string query_pon = "PON=([^;]*)?";
+
+    bool use_name = false;
+    std::string str_name;
+    std::string query_name = "NAME=([^;]*)?";
+
+    bool use_mail = false;
+    std::string str_mail;
+    std::string query_mail = "MAIL=([^;]*)?";
+
+    std::list< std::string >::iterator it = list_cookies.begin();
+
+    // expire と path は一つ目のcookieから取得
+    if( regex.exec( query_expire, (*it) ) ) str_expire = regex.str( 1 );
+    if( regex.exec( query_path, (*it) ) ) str_path = regex.str( 1 );
+
+    // その他は iterateして取得
+    for( ; it != list_cookies.end(); ++it ){
+        if( regex.exec( query_pon, (*it) ) ){
+            use_pon = true;
+            str_pon = regex.str( 1 );
+        }
+        if( regex.exec( query_name, (*it) ) ){
+            use_name = true;
+            str_name = regex.str( 1 );
+        }
+        if( regex.exec( query_mail, (*it) ) ){
+            use_mail = true;
+            str_mail = regex.str( 1 );
+        }
+    }
+
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::cookie_for_write\n"
+              << "expire = " << str_expire << std::endl
+              << "path = " << str_path << std::endl    
+              << "pon = " << str_pon << std::endl
+              << "name = " << str_name << std::endl
+              << "mail = " << str_mail << std::endl;
+#endif    
+
+    std::string cookie;
+
+    if( use_name ) cookie += "NAME=" + str_name + "; ";
+    if( use_mail ) cookie += "MAIL=" + str_mail + "; ";
+    if( use_pon ) cookie += "PON=" + str_pon + "; ";
+
+    if( cookie.empty() ) return std::string();
+
+    cookie += "expires=" + str_expire + "; path=" + str_path;
+
+#ifdef _DEBUG
+    std::cout << "cookie = " << cookie << std::endl;
+#endif 
+
+    return cookie;
+}
+
 
 
 // 新スレ作成時の書き込みメッセージ作成

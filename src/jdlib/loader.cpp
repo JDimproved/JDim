@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-#define _DEBUG
+//#define _DEBUG
 //#define _DEBUG_CHUNKED
 #include "jddebug.h"
 

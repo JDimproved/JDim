@@ -5,6 +5,7 @@
 #include "dbtree/interface.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/jdiconv.h"
 
 #include "cache.h"
 
@@ -29,8 +30,17 @@ Preferences::Preferences( const std::string& url )
     std::list< std::string > list_cookies = DBTREE::board_list_cookies_for_write( get_url() );
     if( list_cookies.empty() ) str_cookies_hana = "cookie: 未取得\n";
     else{
+
+        JDLIB::Iconv* iconv = new JDLIB::Iconv( DBTREE::board_charset( get_url() ) );
         std::list< std::string >::iterator it = list_cookies.begin();
-        for( ; it != list_cookies.end(); ++it ) str_cookies_hana += "cookie: " + (*it) + "\n";
+        for( ; it != list_cookies.end(); ++it ){
+            char str_bk[ 256 ];
+            strcpy( str_bk, (*it).c_str() );
+            int byte_out;
+            std::string cookie = iconv->convert( str_bk, (*it).length() , byte_out );
+            str_cookies_hana += "cookie: " + cookie + "\n";
+        }
+        delete iconv;
     }
 
     std::string hana = DBTREE::board_hana_for_write( get_url() );
