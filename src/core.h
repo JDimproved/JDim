@@ -136,6 +136,8 @@ namespace CORE
         void slot_setup_passwd();
         void slot_setup_browser();
 
+        void slot_show_hp();
+        void slot_show_bbs();
         void slot_show_manual();
         void slot_show_about();
         void slot_quit();

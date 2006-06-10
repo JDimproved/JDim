@@ -19,6 +19,7 @@
 #include "command.h"
 #include "config/globalconf.h"
 #include "cache.h"
+#include "jdversion.h"
 
 #include <sstream>
 
@@ -48,6 +49,9 @@ Root::Root()
     load_movetable();
     load_cache();
     load_etc();
+
+    // JDのサポートBBS登録
+    set_board( JDBBS, "JDサポートBBS" );
 
     m_board_null = new DBTREE::BoardBase( "", "", "" );
 }

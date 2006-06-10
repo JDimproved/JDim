@@ -4,8 +4,9 @@
 #define _JDVER_H
 
 #define JDCOPYRIGHT "(c) 2006 JD project"
-#define JDVERSIONSTR "1.50.060601"
-#define JDVERSION 150060601
-#define JDURL "http://www.geocities.jp/jd4linux/"
+#define JDVERSIONSTR "1.51b.060611"
+#define JDVERSION 151060611
+#define JDURL "http://jd4linux.sourceforge.jp/"
+#define JDBBS "http://jd4linux.sourceforge.jp/cgi-bin/bbs/support/"
 
 #endif
