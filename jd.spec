@@ -1,6 +1,6 @@
 Summary: jd 2ch browser
 Name: jd
-Version: 150_060601
+Version: 151_060611
 Release: 1
 Group: Applications/Internet
 URL: http://www.geocities.jp/jd4linux/
