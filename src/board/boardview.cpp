@@ -21,7 +21,6 @@
 #include "controlid.h"
 
 #include <gtk/gtk.h> // m_liststore->gobj()->sort_column_id = -2
-#include <gtk/gtkversion.h> // GTK_CHECK_VERSION
 #include <sstream>
 
 using namespace BOARD;
@@ -86,7 +85,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_liststore = Gtk::ListStore::create( m_columns );
     m_treeview.set_model( m_liststore );
 
-#if GTK_CHECK_VERSION(2,6,0)
+#ifndef USE_GTKMM24
     
     // セルを固定の高さにする
     // append_column する前に columnに対して set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ) すること

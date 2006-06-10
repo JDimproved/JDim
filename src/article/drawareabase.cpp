@@ -251,26 +251,33 @@ void DrawAreaBase::init_font()
     // layoutにフォントをセット
     Pango::FontDescription pfd( fontname() );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
-    m_pango_layout->set_font_description( pfd );  
 
     // 文字高さ、改行高さ取得
     Pango::FontMetrics metrics = get_pango_context()->get_metrics( pfd );
-
-    // リンクの下線の位置
-    m_underline_pos = PANGO_PIXELS( ( metrics.get_ascent() - metrics.get_underline_position() )
-                                  * CONFIG::get_adjust_underline_pos() ); 
 
     // 改行高さ
     m_br_size = PANGO_PIXELS( ( metrics.get_ascent() + metrics.get_descent() )
                               * CONFIG::get_adjust_line_space() ); 
 
-    // マージン幅取得
-    // マージン幅は真面目にやると大変そうなので文字列 wstr の平均を取る
     const char* wstr = "あいうえお";
+    m_pango_layout->set_font_description( pfd );
     m_pango_layout->set_text( wstr );
+
+    // リンクの下線の位置
+#ifdef USE_GTKMM24
+    m_underline_pos = int( ( m_pango_layout->get_pixel_ink_extents().get_height() + 1 ) * CONFIG::get_adjust_underline_pos() );
+#else
+    m_underline_pos = PANGO_PIXELS( ( metrics.get_ascent() - metrics.get_underline_position() )
+                                  * CONFIG::get_adjust_underline_pos() ); 
+#endif
+
+    // 左右マージン幅取得
+    // マージン幅は真面目にやると大変そうなので文字列 wstr の平均を取る
     int width = m_pango_layout->get_pixel_ink_extents().get_width() / 5;
     m_mrg_right = width /2 * 3;
     m_mrg_left = width;
+
+    // 字下げ量
     m_down_size = m_mrg_left;
 }
 

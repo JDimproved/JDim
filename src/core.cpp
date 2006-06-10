@@ -33,7 +33,6 @@
 #include "message/messageadmin.h"
 
 #include <sstream>
-#include <gtk/gtkversion.h> // GTK_CHECK_VERSION
 
 using namespace CORE;
 
@@ -391,12 +390,12 @@ void Core::run( bool init )
     m_tooltip.set_tip( m_button_go, "移動" );
 
     std::string str_tmp;
-#if GTK_CHECK_VERSION(2,6,0)
+#ifdef USE_GTKMM24
+    m_statbar.pack_start( m_mginfo );
+#else
     m_statbar.pack_start( m_mginfo, Gtk::PACK_SHRINK );
     m_mginfo.set_width_chars( MAX_MG_LNG * 2 + 16 );
     m_mginfo.set_justify( Gtk::JUSTIFY_LEFT );
-#else
-    m_statbar.pack_start( m_mginfo );
 #endif
     m_statbar.show_all_children();
     
