@@ -395,6 +395,8 @@ std::string MISC::url_encode( const char* str, size_t n )
 //
 // 文字コード変換して url エンコード
 //
+// str は UTF-8 であること
+//
 std::string MISC::charset_url_encode( const std::string& str, const std::string& charset )
 {
     if( charset.empty() ) return MISC::url_encode( str.c_str(), str.length() );
@@ -410,6 +412,28 @@ std::string MISC::charset_url_encode( const std::string& str, const std::string&
     free( str_bk );
 
     return str_encoded;
+}
+
+
+//
+// strをUTF-8の文字列に変換
+//
+// 遅いので連続的な処理が必要な時は使わないこと
+//
+std::string MISC::strtoutf8( const std::string& str, const std::string& charset )
+{
+    if( charset == "UTF-8" ) return str;
+
+    char* str_bk = ( char* ) malloc( str.length() + 64 );
+    strcpy( str_bk, str.c_str() );
+
+    JDLIB::Iconv* libiconv = new JDLIB::Iconv( charset.c_str() );
+    int byte_out;
+    std::string str_enc = libiconv->convert( str_bk, strlen( str_bk ), byte_out );
+    delete libiconv;
+    free( str_bk );
+
+    return str_enc;
 }
 
 

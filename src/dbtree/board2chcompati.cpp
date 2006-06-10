@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "board2chcompati.h"
@@ -68,6 +68,10 @@ const std::string Board2chCompati::cookie_for_write()
     std::list< std::string > list_cookies = BoardBase::list_cookies_for_write();
     if( list_cookies.empty() ) return std::string();
 
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::cookie_for_write\n";
+#endif
+
     JDLIB::Regex regex;
 
     std::string str_expire;
@@ -96,23 +100,29 @@ const std::string Board2chCompati::cookie_for_write()
 
     // その他は iterateして取得
     for( ; it != list_cookies.end(); ++it ){
-        if( regex.exec( query_pon, (*it) ) ){
+
+        std::string tmp_cookie = MISC::strtoutf8( (*it), get_charset() );
+
+#ifdef _DEBUG
+        std::cout << tmp_cookie << std::endl;
+#endif
+
+        if( regex.exec( query_pon, tmp_cookie ) ){
             use_pon = true;
             str_pon = regex.str( 1 );
         }
-        if( regex.exec( query_name, (*it) ) ){
+        if( regex.exec( query_name, tmp_cookie ) ){
             use_name = true;
-            str_name = regex.str( 1 );
+            str_name = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
         }
-        if( regex.exec( query_mail, (*it) ) ){
+        if( regex.exec( query_mail, tmp_cookie ) ){
             use_mail = true;
-            str_mail = regex.str( 1 );
+            str_mail = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
         }
     }
 
 #ifdef _DEBUG
-    std::cout << "Board2chCompati::cookie_for_write\n"
-              << "expire = " << str_expire << std::endl
+    std::cout << "expire = " << str_expire << std::endl
               << "path = " << str_path << std::endl    
               << "pon = " << str_pon << std::endl
               << "name = " << str_name << std::endl

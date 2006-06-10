@@ -43,12 +43,15 @@ namespace MISC
 
     // 数字　-> 文字変換
     std::string itostr( int n );
-    
+
     // urlエンコード
     std::string url_encode( const char* str, size_t n );
 
     //文字コード変換して url エンコード
     std::string charset_url_encode( const std::string& str, const std::string& charset );
+
+    // UTF8の文字列に変換
+    std::string strtoutf8( const std::string& str, const std::string& charset );
 
     // utf-8 -> ucs2 変換
     int utf8toucs2( const char* utfstr, int& byte );

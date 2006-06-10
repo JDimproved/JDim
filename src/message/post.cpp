@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "post.h"
