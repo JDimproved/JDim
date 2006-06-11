@@ -777,10 +777,10 @@ void BoardBase::receive_finish()
 //
 // キャッシュのディレクトリ内にあるスレのファイル名を取得してDBにすべてを登録
 //
-// 全てのスレのinfoファイルを読むと遅くなるのでこの段階では読まない(登録のみ)
+// 全てのスレのinfoファイルを読むと遅くなるのでこの段階では読まない(DBへの登録のみ)
 //
-// boardビューに一覧表示したり、BoardBase::get_article_fromURL()で参照された段階で初めて
-// スレのinfoファイルを読み込む
+// boardビューに一覧表示するためBoardBaseの派生クラスのparse_subject()を呼び出したり、
+// BoardBase::get_article_fromURL()で参照されたときに初めてスレのinfoファイルを読み込む
 //
 void BoardBase::append_all_article()
 {
@@ -801,8 +801,11 @@ void BoardBase::append_all_article()
 #ifdef _DEBUG
             std::cout << "append id = " << file << std::endl;
 #endif
+            // キャッシュあり( cached = false ) 指定でDBに登録
+            // キャッシュに無いスレはsubject.txtを読み込んだ時に
+            // 派生クラスのparse_subject()で登録する。
             append_article( file,
-                            true // キャッシュあり
+                            true 
                 );
         }
     }

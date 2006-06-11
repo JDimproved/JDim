@@ -299,11 +299,10 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
         // DBに登録されてるならarticle クラスの情報更新
         ArticleBase* article = get_article( id );
 
-        // DBにないなら新規に article クラスを追加
+        // DBにないなら新規に article クラスをDBに登録
         //
         // なおRoot::get_board()、BoardBase::read_info()経由で BoardBase::append_all_article() が既に呼ばれているので
-        // DBに無いということはキャッシュにも無いということ。よって append_article()で  cached = false
-
+        // DBに無いということはキャッシュに無いということ。よって append_article()の呼出に cached = false　を指定する
         if( article->empty() ) article = append_article( id,
                                                          false // キャッシュ無し
             );
@@ -314,7 +313,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
             // 情報ファイル読み込み
             article->read_info();
 
-            // infoファイルが無いバアイモるのでsubject.txtから取得したサブジェクト、レス数を指定しておく
+            // infoファイルが無い場合もあるのでsubject.txtから取得したサブジェクト、レス数を指定しておく
             article->set_subject( subject );
             article->set_number( number );
 
