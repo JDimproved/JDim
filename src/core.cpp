@@ -793,7 +793,7 @@ void Core::slot_toggle_3pane()
     if( SESSION::get_mode_pane() == MODE_3PANE ) return;
     SESSION::set_mode_pane( MODE_3PANE );
 
-    Gtk::MessageDialog mdiag( "次回起動時から3paneにになります" );
+    Gtk::MessageDialog mdiag( "次回起動時から3paneになります" );
     mdiag.run();
 }
 

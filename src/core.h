@@ -47,7 +47,7 @@ namespace MESSAGE
 }
 
 
-// m_focused_admin の値。どこににフォーカスしているか
+// m_focused_admin の値。どこにフォーカスしているか
 // Core::slot_focus_in_event, Core::slot_focus_out_event 参照
 enum
 {
