@@ -313,6 +313,26 @@ const time_t DBTREE::article_time_modified( const std::string& url )
     return DBTREE::get_article( url )->get_time_modified();
 }
 
+// 更新時間(文字列)
+const std::string DBTREE::article_date_modified( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_date_modified();
+}
+
+
+// 最終書き込み時刻
+const time_t DBTREE::article_write_time( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_write_time();
+}
+
+// 最終書き込み時刻(文字列)
+const std::string DBTREE::article_write_date( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_write_date();
+}
+
+
 
 const int DBTREE::article_status( const std::string& url )
 {

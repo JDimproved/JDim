@@ -20,8 +20,11 @@ namespace ARTICLE
         SKELETON::LabelEntry m_label_url;
         SKELETON::LabelEntry m_label_url_dat;
         SKELETON::LabelEntry m_label_cache;
+        SKELETON::LabelEntry m_label_size;
 
         SKELETON::LabelEntry m_label_since;
+        SKELETON::LabelEntry m_label_modified;
+        SKELETON::LabelEntry m_label_write;
 
       public:
 

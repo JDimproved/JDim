@@ -5,6 +5,7 @@
 #include "dbtree/interface.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/misctime.h"
 
 #include "cache.h"
 
@@ -19,8 +20,11 @@ Preferences::Preferences( const std::string& url )
     ,m_label_url( "URL : ", DBTREE:: url_readcgi( get_url(),0,0 ) )
     ,m_label_url_dat( "DAT : ", DBTREE:: url_dat( get_url() ) )
     ,m_label_cache( "ローカルキャッシュパス : ", CACHE::path_dat( get_url() ) )
+    ,m_label_size( "サイズ(byte) : ", MISC::itostr( DBTREE::article_lng_dat( get_url() ) ) )
 
     ,m_label_since( "スレ立て日時 : ", DBTREE::article_since_date( get_url() ) )
+    ,m_label_modified( "最終更新日時 : ", MISC::timettostr( DBTREE::article_time_modified( get_url() ) ) )
+    ,m_label_write( "最終書き込み日時 : ", DBTREE::article_write_date( get_url() ) )
 {
     // 一般
     m_vbox_info.set_border_width( 16 );
@@ -29,7 +33,11 @@ Preferences::Preferences( const std::string& url )
     m_vbox_info.pack_start( m_label_url, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_url_dat, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_cache, Gtk::PACK_SHRINK );
+    m_vbox_info.pack_start( m_label_size, Gtk::PACK_SHRINK );
+
     m_vbox_info.pack_start( m_label_since, Gtk::PACK_SHRINK );
+    m_vbox_info.pack_start( m_label_modified, Gtk::PACK_SHRINK );
+    m_vbox_info.pack_start( m_label_write, Gtk::PACK_SHRINK );
 
     std::string str_id, str_name;
     std::list< std::string >::iterator it;

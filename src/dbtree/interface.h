@@ -82,6 +82,9 @@ namespace DBTREE
     const time_t article_since_time( const std::string& url );
     const std::string article_since_date( const std::string& url );
     const time_t article_time_modified( const std::string& url );
+    const std::string article_date_modified( const std::string& url );
+    const time_t article_write_time( const std::string& url );
+    const std::string article_write_date( const std::string& url );
     const int article_status( const std::string& url );
     void article_reset_status( const std::string& url );
     const int article_code( const std::string& url );
