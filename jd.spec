@@ -1,9 +1,9 @@
-Summary: jd 2ch browser
+Summary: a 2ch browser
 Name: jd
-Version: 151b_060611
+Version: 151b_060612
 Release: 1
 Group: Applications/Internet
-URL: http://www.geocities.jp/jd4linux/
+URL: http://jd4linux.sourceforge.jp/
 Source0: %{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Requires: gtkmm24 glibmm24 pango openssl zlib
@@ -11,7 +11,7 @@ BuildRequires: libtool automake autoconf gtkmm24-devel glibmm24-devel pango-deve
 License: GPL
 
 %description 
-jd is the browser for 2ch.It's similar to OpenJaneDoe.
+JD is a 2ch browser based on gtkmm2.
 
 %prep
 %setup -q
