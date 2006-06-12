@@ -263,7 +263,7 @@ const int DBTREE::board_view_sort_column( const std::string& url )
 
 void DBTREE::board_set_view_sort_column( const std::string& url, int column )
 {
-    return DBTREE::get_board( url )->set_view_sort_column( column );
+    DBTREE::get_board( url )->set_view_sort_column( column );
 }
 
 
@@ -275,7 +275,19 @@ const bool DBTREE::board_view_sort_ascend( const std::string& url )
 
 void DBTREE::board_set_view_sort_ascend( const std::string& url, bool ascend )
 {
-    return DBTREE::get_board( url )->set_view_sort_ascend( ascend );
+    DBTREE::get_board( url )->set_view_sort_ascend( ascend );
+}
+
+
+const bool DBTREE::board_check_noname( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_check_noname();
+}
+
+
+void DBTREE::board_set_check_noname( const std::string& url, bool check )
+{
+    DBTREE::get_board( url )->set_check_noname( check );
 }
 
 

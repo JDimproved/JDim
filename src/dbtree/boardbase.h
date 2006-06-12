@@ -36,6 +36,9 @@ namespace DBTREE
         int m_view_sort_column;
         bool m_view_sort_ascend;
 
+        // 名無し書き込み不可
+        bool m_check_noname;
+
         //
         // subjectファイルのURLが "http://www.hoge2ch.net/hogeboard/subject.txt"
         // datファイルのURLが "http://www.hoge2ch.net/hogeboard/dat/12345.dat"
@@ -113,6 +116,9 @@ namespace DBTREE
         const bool get_view_sort_ascend() const { return m_view_sort_ascend; }
         void set_view_sort_ascend( bool ascend ){ m_view_sort_ascend = ascend; }
 
+        // 名無し書き込み不可
+        const bool get_check_noname() const { return m_check_noname; }
+        void set_check_noname( bool check ){ m_check_noname = check; }
 
         // url がこの板のものかどうか
         virtual bool equal( const std::string& url );

@@ -74,6 +74,8 @@ namespace DBTREE
     void board_set_view_sort_column( const std::string& url, int column );
     const bool board_view_sort_ascend( const std::string& url );
     void board_set_view_sort_ascend( const std::string& url, bool ascend );
+    const bool board_check_noname( const std::string& url );
+    void board_set_check_noname( const std::string& url, bool check );
 
     
     // article 系

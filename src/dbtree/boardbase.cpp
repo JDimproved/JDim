@@ -834,6 +834,7 @@ void BoardBase::read_board_info()
 
     m_view_sort_column = cf.get_option( "view_sort_column", -1 );
     m_view_sort_ascend = cf.get_option( "view_sort_ascend", false );
+    m_check_noname = cf.get_option( "check_noname", false );
 
 #ifdef _DEBUG
     std::cout << "modified = " << date_modified() << std::endl;
@@ -871,7 +872,8 @@ void BoardBase::save_jdboard_info()
     std::ostringstream sstr;
     sstr << "modified = " << date_modified() << std::endl
          << "view_sort_column = " << m_view_sort_column << std::endl
-         << "view_sort_ascend = " << m_view_sort_ascend << std::endl;
+         << "view_sort_ascend = " << m_view_sort_ascend << std::endl
+         << "check_noname = " << m_check_noname << std::endl;
 
     CACHE::save_rawdata( path_info, sstr.str() );
 }

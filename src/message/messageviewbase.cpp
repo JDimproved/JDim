@@ -230,6 +230,20 @@ void MessageViewBase::slot_write_clicked()
         return;
     }
 
+    // fusianasan チェック
+    if( DBTREE::default_noname( get_url() ) == "fusianasan" ) DBTREE::board_set_check_noname( get_url(), true );
+
+    // 名無し書き込みチェック
+    if( DBTREE::board_check_noname( get_url() ) ){
+
+        std::string name = get_entry_name().get_text();
+        if( name.empty() ){
+            Gtk::MessageDialog mdiag( "名前欄が空白です。fusianasan 書き込みになる可能性があります。" );
+            mdiag.run();
+            return;
+        }
+    }
+
     write();
 }
 
