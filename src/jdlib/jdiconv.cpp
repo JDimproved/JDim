@@ -70,7 +70,11 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
         std::cout << "byte_left_out = " << byte_left_out << std::endl;
 #endif
     
+#ifdef USE_FREEBSD
+        int ret = iconv( m_cd, (const char**)&m_buf_in_tmp, &m_byte_left_in, &buf_out, &byte_left_out );
+#else
         int ret = iconv( m_cd, &m_buf_in_tmp, &m_byte_left_in, &buf_out, &byte_left_out );
+#endif
 
 #ifdef _DEBUG
         std::cout << "--> ret = " << ret << std::endl;

@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <dirent.h>
 
-#include <sys/sendfile.h>
 #include <fcntl.h>
 
 

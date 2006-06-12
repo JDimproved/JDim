@@ -37,6 +37,17 @@ CXXFLAGS="$CXXFLAGS -ggdb -Wall"
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
 
+
+dnl
+dnl FreeBSD ( --with-freebsd=yes )
+dnl
+if test x"$with_freebsd" = "xyes" ; then
+  echo "use freebsd"
+  use_cp932=yes
+  CXXFLAGS="$CXXFLAGS -DUSE_FREEBSD"
+fi
+
+
 LIBSM_CFLAGS=""
 LIBSM_LIBS=""
 GNOMEUI_CFLAGS=""
