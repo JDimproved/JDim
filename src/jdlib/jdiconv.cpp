@@ -21,6 +21,10 @@ Iconv::Iconv( const std::string& coding_from, const std::string& coding_to )
     m_buf_out = ( char* )malloc( BUF_SIZE_ICONV_OUT );
     
     m_cd = iconv_open( coding_to.c_str(), m_coding_from.c_str() ); 
+
+    // MS932で失敗したらCP932で試してみる
+    if( m_cd == ( iconv_t ) -1 && coding_from == "MS932" ) m_cd = iconv_open( coding_to.c_str(), "CP932" ); 
+
     if( m_cd == ( iconv_t ) -1 ){
         MISC::ERRMSG( "can't open iconv coding = " + m_coding_from + " to " + coding_to );
     }
@@ -93,11 +97,7 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                 unsigned char code1 = *(m_buf_in_tmp+1);
                 unsigned char code2 = *(m_buf_in_tmp+2);
 
-#ifdef NOUSE_MS932
-                if( m_coding_from == "CP932" )
-#else
                 if( m_coding_from == "MS932" )
-#endif
                 {
 
                     // 空白(0xa0)

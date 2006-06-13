@@ -35,11 +35,7 @@ Board2chCompati::Board2chCompati( const std::string& root, const std::string& pa
     set_subjecttxt( "subject.txt" );
     set_ext( ".dat" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く
-#ifdef NOUSE_MS932
-    set_charset( "CP932" );
-#else
     set_charset( "MS932" );
-#endif
 }
 
 
