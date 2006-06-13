@@ -23,7 +23,10 @@ Iconv::Iconv( const std::string& coding_from, const std::string& coding_to )
     m_cd = iconv_open( coding_to.c_str(), m_coding_from.c_str() ); 
 
     // MS932で失敗したらCP932で試してみる
-    if( m_cd == ( iconv_t ) -1 && coding_from == "MS932" ) m_cd = iconv_open( coding_to.c_str(), "CP932" ); 
+    if( m_cd == ( iconv_t ) -1 ){
+        if( coding_to == "MS932" ) m_cd = iconv_open( "CP932", m_coding_from.c_str() );
+        else if( coding_from == "MS932" ) m_cd = iconv_open( coding_to.c_str(), "CP932" ); 
+    }
 
     if( m_cd == ( iconv_t ) -1 ){
         MISC::ERRMSG( "can't open iconv coding = " + m_coding_from + " to " + coding_to );
