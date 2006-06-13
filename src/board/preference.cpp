@@ -11,9 +11,11 @@
 using namespace BOARD;
  
 Preferences::Preferences( const std::string& url )
-    : SKELETON::PrefDiag( url, false ),
+    : SKELETON::PrefDiag( url ),
       m_frame_cookie( "クッキー＆Hana" ),
       m_button_cookie( "削除" ) ,
+      m_check_noname( "名前欄が空白の時は書き込まない" ),
+
       m_label_name( DBTREE::board_name( get_url() ), Gtk::ALIGN_LEFT ),
       m_label_url( "URL : ", DBTREE::url_boardbase( get_url() ) ),
       m_label_cache( "ローカルキャッシュパス", CACHE::path_board_root( DBTREE::url_boardbase( get_url() ) ) ),
@@ -23,6 +25,7 @@ Preferences::Preferences( const std::string& url )
       m_label_byte( "1レスの最大バイト数 : " )
 {
     m_edit_cookies.textview().set_editable( false );
+    m_check_noname.set_active( DBTREE::board_check_noname( get_url() ) );
 
     // cookie と hana をセット
     std::string str_cookies_hana;
@@ -61,6 +64,7 @@ Preferences::Preferences( const std::string& url )
     m_vbox.pack_start( m_label_line, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_byte, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
+    m_vbox.pack_end( m_check_noname, Gtk::PACK_SHRINK );
 
     // SETTING.TXT
     m_edit_settingtxt.textview().set_editable( false );
@@ -82,4 +86,14 @@ void Preferences::slot_delete_cookie()
     DBTREE::board_set_hana_for_write( get_url(), std::string() );
 
     m_edit_cookies.set_text( "未取得" );
+}
+
+
+//
+// OK 押した
+//
+void Preferences::slot_ok_clicked()
+{
+    // 名無し書き込みチェック
+    DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );
 }

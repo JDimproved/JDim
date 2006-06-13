@@ -381,6 +381,7 @@ Delete : 削除
 名無しがfusianasanの板の時は名前欄が空白だと書き込めないようにした
 FreeBSD対応( ./configure --with-freebsd=yes )
 NOUSE_MS932 を使わないようにした
+板のプロパティに「名前欄が空白の時は書き込まない」チェックボタンを追加
 
 
 - 1.51b.060612

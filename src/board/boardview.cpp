@@ -212,6 +212,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"), sigc::mem_fun( *this, &BoardView::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ"), sigc::mem_fun( *this, &BoardView::slot_push_preferences ) );
 
 
     ui_manager() = Gtk::UIManager::create();    
@@ -235,6 +236,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     "<menu action='Delete_Menu'>"
     "<menuitem action='Delete'/>"
     "</menu>"
+    "<separator/>"
+    "<menuitem action='Preference'/>"
     "</popup>"
 
 

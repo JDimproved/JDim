@@ -22,6 +22,9 @@ namespace BOARD
         Gtk::VBox m_vbox_cookie;
         Gtk::Button m_button_cookie;
 
+        // 名無し書き込みチェック
+        Gtk::CheckButton m_check_noname;
+
         // 情報
         Gtk::VBox m_vbox_info;
         Gtk::Label m_label_name;
@@ -37,6 +40,7 @@ namespace BOARD
 
       private:
         void slot_delete_cookie();
+        virtual void slot_ok_clicked();
     };
 
 }

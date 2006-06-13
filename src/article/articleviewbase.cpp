@@ -213,6 +213,8 @@ void ArticleViewBase::setup_action()
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), true ) );
     action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
+    action_group()->add( Gtk::Action::create( "Preference", "プロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
+
 
     // 抽出系
     action_group()->add( Gtk::Action::create( "Drawout_Menu", "抽出" ) );
@@ -320,6 +322,9 @@ void ArticleViewBase::setup_action()
     "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<menuitem action='Copy'/>"
+
+    "<separator/>"
+    "<menuitem action='Preference'/>"
 
     "</popup>"
 
