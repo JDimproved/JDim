@@ -12,6 +12,7 @@
 #include "command.h"
 
 #include <gtkmm.h>
+#include <sstream>
 
 using namespace DBIMG;
 
@@ -171,7 +172,11 @@ void ImgRoot::delete_all_files()
     std::cout << "ImgRoot::delete_all_files\n";
 #endif
 
-    Gtk::MessageDialog mdiag( "保護されていない画像を全て削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+    std::stringstream ss;
+    ss << "現在の画像キャッシュサイズ : " << ( CACHE::get_dirsize( CACHE::path_img_root() ) / 1024 / 1024 ) << "M\n\n"
+       << "保護されていない画像を全て削除しますか？";
+
+    Gtk::MessageDialog mdiag( ss.str(), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
     if( mdiag.run() != Gtk::RESPONSE_OK ) return;
 
     std::list< std::string >list_file;

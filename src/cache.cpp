@@ -603,3 +603,29 @@ std::list< std::string > CACHE::get_filelist( const std::string& dir )
 
     return list_files;
 }
+
+
+//
+// dir ディレクトリ内のレギュラーファイルの合計サイズを取得
+//
+size_t CACHE::get_dirsize( const std::string& dir )
+{
+    size_t total_size = 0;
+
+#ifdef _DEBUG
+    std::cout << "CACHE::get_dirsize " << dir << std::endl;
+#endif
+
+    DIR *dirp = opendir( dir.c_str() );
+    if( !dirp ) return 0;
+
+    struct dirent *direntry;
+    while( ( direntry = readdir( dirp ) ) ){
+        std::string filename = dir + direntry->d_name;
+        total_size += CACHE::get_filesize( filename );
+    }
+
+    closedir( dirp );
+
+    return total_size;
+}

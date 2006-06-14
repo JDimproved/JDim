@@ -100,6 +100,9 @@ namespace CACHE
 
     // dir ディレクトリ内のレギュラーファイルのリストを取得
     std::list< std::string > get_filelist( const std::string& dir );
+
+    // dir ディレクトリ内のレギュラーファイルの合計サイズを取得
+    size_t get_dirsize( const std::string& dir );
 }
 
 #endif
