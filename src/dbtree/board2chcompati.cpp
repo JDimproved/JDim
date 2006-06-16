@@ -45,14 +45,13 @@ Board2chCompati::Board2chCompati( const std::string& root, const std::string& pa
 //
 bool Board2chCompati::is_valid( const std::string& filename )
 {
-    if( filename.length() != 10 + get_ext().length() ) return false;
     if( filename.find( get_ext() ) == std::string::npos ) return false;
     if( filename.length() - filename.rfind( get_ext() ) != get_ext().length() ) return false;
 
     unsigned int dig, n;
     MISC::str_to_uint( filename.c_str(), dig, n );
     if( dig != n ) return false;
-    if( dig != 10 ) return false;
+    if( dig == 0 ) return false;
         
     return true;
 }
