@@ -68,15 +68,11 @@ make
 
 実行するには直接 src/jd を起動するか手動で /usr/bin あたりに src/jd を cp する。
 
-FreeBSDの場合は ./configure --with-freebsd=yes とする。
-
 
 以上の操作でmakeが通らなかったり動作が変な時はconfigure.in の user settingsの項を修正する。
 
 use_xsmp : XSMPを使ってセッション管理をする
 use_gnomeui : GNOMEUIを使ってセッション管理をする。libgnomeui-develが必要。use_xsmp=yesの時は無効
-use_ms932 : MS932ではなくCP932で文字コード変換をする
-
 
 
 //////////////////////////////////////////////////////////////
@@ -382,6 +378,8 @@ Delete : 削除
 FreeBSD対応( ./configure --with-freebsd=yes )
 NOUSE_MS932 を使わないようにした
 板のプロパティに「名前欄が空白の時は書き込まない」チェックボタンを追加
+画像キャッシュ削除ダイアログに現在のキャッシュサイズを表示するようにした
+大昔(2000年頃)に建てられたスレを開いたときスレ一覧の既読マークが表示されないバグを修正
 
 
 - 1.51b.060612

@@ -16,6 +16,26 @@ AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 AC_LANG_CPLUSPLUS
 
+dnl
+dnl OSを判定してOS別の設定
+dnl 
+case "${host_os}" in 
+ linux*) 
+   echo "os = linux"
+   AC_DEFUN([AM_ICONV],[])
+   AC_DEFINE(ICONV_CONST, , "iconv_const")
+   ;;
+ freebsd*) 
+   echo "os = freebsd"
+   ;;
+ *)
+   echo "os = ???"
+   ;;
+esac
+
+AM_ICONV
+
+
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
 dnl
@@ -28,24 +48,11 @@ use_xsmp=yes
 dnl GNOMEUIを使ってセッション管理をする。libgnomeui-develが必要。use_xsmp=yesの時は無効
 use_gnomeui=no
 
-dnl MS932ではなくCP932で文字コード変換をする
-use_cp932=no
-
 dnl 追加コンパイルオプション
 CXXFLAGS="$CXXFLAGS -ggdb -Wall"
 
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
-
-
-dnl
-dnl FreeBSD ( --with-freebsd=yes )
-dnl
-if test x"$with_freebsd" = "xyes" ; then
-  echo "use freebsd"
-  use_cp932=yes
-  CXXFLAGS="$CXXFLAGS -DUSE_FREEBSD"
-fi
 
 
 LIBSM_CFLAGS=""
@@ -79,17 +86,6 @@ AC_SUBST(GTHREAD_CFLAGS)
 AC_SUBST(GTHREAD_LIBS)
 AC_SUBST(OPENSSL_CFLAGS)
 AC_SUBST(OPENSSL_LIBS)
-
-
-dnl
-dnl CP932使用
-dnl
-if test x"$use_cp932" = "xyes" ; then
-  echo "use CP932"
-  CXXFLAGS="$CXXFLAGS -DNOUSE_MS932"
-else
-  echo "use MS932"
-fi
 
 
 dnl
