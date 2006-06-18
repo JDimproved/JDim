@@ -544,10 +544,15 @@ std::list< std::string > DBTREE::get_abone_list_name( const std::string& url )
     return DBTREE::get_article( url )->get_abone_list_name();
 }
 
-
-void DBTREE::reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names )
+std::list< std::string > DBTREE::get_abone_list_word( const std::string& url )
 {
-    DBTREE::get_article( url )->reset_abone( ids, names );
+    return DBTREE::get_article( url )->get_abone_list_word();
+}
+
+void DBTREE::reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names
+                          , std::list< std::string >& words )
+{
+    DBTREE::get_article( url )->reset_abone( ids, names, words );
 }
 
 
@@ -562,6 +567,10 @@ void DBTREE::add_abone_name( const std::string& url, const std::string& name )
     DBTREE::get_article( url )->add_abone_name( name );
 }
 
+void DBTREE::add_abone_word( const std::string& url, const std::string& word )
+{
+    DBTREE::get_article( url )->add_abone_word( word );
+}
 
 const bool DBTREE::is_bookmarked( const std::string& url, int number )
 {

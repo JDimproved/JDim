@@ -148,9 +148,12 @@ namespace DBTREE
     // あぼーん
     std::list< std::string > get_abone_list_id( const std::string& url );
     std::list< std::string > get_abone_list_name( const std::string& url );
-    void reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names );
+    std::list< std::string > get_abone_list_word( const std::string& url );
+    void reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names,
+                      std::list< std::string >& words );
     void add_abone_id( const std::string& url, const std::string& id );
     void add_abone_name( const std::string& url, const std::string& name );
+    void add_abone_word( const std::string& url, const std::string& word );
 
     // ブックマーク
     const bool is_bookmarked( const std::string& url, int number );

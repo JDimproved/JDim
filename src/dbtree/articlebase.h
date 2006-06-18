@@ -61,13 +61,11 @@ namespace DBTREE
         bool m_write_fixmail;          // 書き込み時メール固定
         std::list< std::string > m_list_abone_id;   // あぼーんするID
         std::list< std::string > m_list_abone_name; // あぼーんする名前
+        std::list< std::string > m_list_abone_word; // あぼーんする文字列
 
         // あぼーん
         JDLIB::ConstPtr< char > m_abone; // あぼーん判定のキャッシュ
         
-        bool m_abone_id; // id であぼーん判定をする
-        bool m_abone_name; // 名前であぼーん判定をする
-
         // ブックマーク
         JDLIB::ConstPtr< char > m_bookmark; // ブックマーク判定キャッシュ
 
@@ -208,10 +206,13 @@ namespace DBTREE
         // あぼーん
         std::list< std::string > get_abone_list_id(){ return m_list_abone_id; }
         std::list< std::string > get_abone_list_name(){ return m_list_abone_name; }
+        std::list< std::string > get_abone_list_word(){ return m_list_abone_word; }
         const bool abone( int number );
-        void reset_abone( std::list< std::string >& ids, std::list< std::string >& names );
+        void reset_abone( std::list< std::string >& ids, std::list< std::string >& names
+                          , std::list< std::string >& words );
         void add_abone_id( const std::string& id );
-        void add_abone_name( const std::string& id );
+        void add_abone_name( const std::string& name );
+        void add_abone_word( const std::string& word );
 
         // レスのブックマーク
         int get_num_bookmark();

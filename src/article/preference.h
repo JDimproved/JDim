@@ -12,7 +12,7 @@ namespace ARTICLE
     class Preferences : public SKELETON::PrefDiag
     {
         Gtk::Notebook m_notebook;
-        SKELETON::EditView m_edit_id, m_edit_name;
+        SKELETON::EditView m_edit_id, m_edit_name, m_edit_word;
 
         // 情報
         Gtk::VBox m_vbox_info;

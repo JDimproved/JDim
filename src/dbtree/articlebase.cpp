@@ -58,8 +58,6 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_number_seen( 0 ),
       m_write_fixname( 0 ),
       m_write_fixmail( 0 ),
-      m_abone_id( 1 ),
-      m_abone_name( 1 ),
       m_cached( cached ),
       m_read_info( 0 ),
       m_current( 0 ),
@@ -331,25 +329,71 @@ const bool ArticleBase::abone( int number )
 //
 // あぼーんのリセット
 //
-void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names )
+void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names
+                               , std::list< std::string >& words )
 {
     if( empty() ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::reset_abone\n";
-
-    std::list< std::string >::iterator it;
-    std::cout << "IDs:\n";
-    for( it = ids.begin(); it != ids.end(); ++it ) std::cout << (*it) << std::endl;
-    std::cout << "NAMEs:\n";
-    for( it = names.begin(); it != names.end(); ++it ) std::cout << (*it) << std::endl;
-#endif    
+#endif
 
     m_list_abone_id.clear();
     m_list_abone_name.clear();
+    m_list_abone_word.clear();
 
-    m_list_abone_id = ids;
-    m_list_abone_name = names;
+    std::string tmp_str;
+    std::list< std::string >::iterator it;    
+
+#ifdef _DEBUG
+    std::cout << "IDs:\n";
+#endif    
+    for( it = ids.begin(); it != ids.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ){
+#ifdef _DEBUG
+            std::cout << tmp_str << std::endl;
+#endif
+            m_list_abone_id.push_back( *it );
+        }
+    }
+#ifdef _DEBUG
+    std::cout << "size = " << m_list_abone_id.size() << std::endl;
+#endif    
+
+    
+#ifdef _DEBUG
+    std::cout << "Names:\n";
+#endif    
+    for( it = names.begin(); it != names.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ){
+#ifdef _DEBUG
+            std::cout << tmp_str << std::endl;
+#endif
+            m_list_abone_name.push_back( *it );
+        }
+    }
+#ifdef _DEBUG
+    std::cout << "size = " << m_list_abone_name.size() << std::endl;
+#endif    
+
+
+#ifdef _DEBUG
+    std::cout << "Words:\n";
+#endif    
+    for( it = words.begin(); it != words.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ){
+#ifdef _DEBUG
+            std::cout << tmp_str << std::endl;
+#endif
+            m_list_abone_word.push_back( *it );
+        }
+    }
+#ifdef _DEBUG
+    std::cout << "size = " << m_list_abone_word.size() << std::endl;
+#endif    
 
     check_abone( 1, m_number_load );
 
@@ -364,6 +408,7 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
 void ArticleBase::add_abone_id( const std::string& id )
 {
     if( empty() ) return;
+    if( id.empty() ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::add_abone_id : " << id << std::endl;
@@ -385,12 +430,34 @@ void ArticleBase::add_abone_id( const std::string& id )
 void ArticleBase::add_abone_name( const std::string& name )
 {
     if( empty() ) return;
+    if( name.empty() ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::add_abone_name : " << name << std::endl;
 #endif    
 
     m_list_abone_name.push_back( name );
+
+    check_abone( 1, m_number_load );
+
+    m_save_info = true;
+}
+
+
+
+//
+// あぼーん文字列追加
+//
+void ArticleBase::add_abone_word( const std::string& word )
+{
+    if( empty() ) return;
+    if( word.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleBase::add_abone_word : " << word << std::endl;
+#endif    
+
+    m_list_abone_word.push_back( word );
 
     check_abone( 1, m_number_load );
 
@@ -412,16 +479,14 @@ void ArticleBase::check_abone( int from_number, int to_number )
 #endif
     if( to_number < from_number ) return;
 
-    bool abone_id = ( m_abone_id && ( m_list_abone_id.size() > 0 ) );
-    bool abone_name = ( m_abone_name && ( m_list_abone_name.size() > 0 ) );
+    std::list< std::string >::iterator it;
 
     for( int i = from_number ; i <= to_number; ++i ){
 
         m_abone[ i ] = false;
-        std::list< std::string >::iterator it;
 
         // ID
-        if( abone_id ){
+        if( ! m_list_abone_id.empty() ){
 
             int ln_protoid = strlen( PROTO_ID );
 
@@ -438,11 +503,11 @@ void ArticleBase::check_abone( int from_number, int to_number )
                     break;
                 }
             }
+            if( m_abone[ i ] ) continue;
         }
-        if( m_abone[ i ] ) continue;
 
         // 名前
-        if( abone_name ){
+        if( ! m_list_abone_name.empty() ){
 
             for( it = m_list_abone_name.begin(); it != m_list_abone_name.end(); ++it ){
 
@@ -458,8 +523,21 @@ void ArticleBase::check_abone( int from_number, int to_number )
                     }
                 }
             }
+            if( m_abone[ i ] ) continue;
         }
-        if( m_abone[ i ] ) continue;
+
+        // 文字列
+        if( ! m_list_abone_word.empty() ){
+
+            for( it = m_list_abone_word.begin(); it != m_list_abone_word.end(); ++it ){
+
+                if( get_nodetree()->get_res_str( i ).find( *it ) != std::string::npos ){
+                    m_abone[ i ] = true;
+                    break;
+                }
+            }
+            if( m_abone[ i ] ) continue;
+        }
     }
 
 #ifdef _DEBUG
@@ -717,7 +795,7 @@ void ArticleBase::slot_load_finished()
               << "number = " << m_number << std::endl
               << "new = " << m_number_new << std::endl
               << "date = " << m_date_modified << std::endl
-              << "access-time = " << access_time_str() << std::endl
+              << "access-time = " << get_access_time_str() << std::endl
               << "lng = " << m_lng_dat << std::endl
               << "code = " << m_code << std::endl
               << "status = " << m_status << std::endl
@@ -759,6 +837,7 @@ void ArticleBase::delete_cache()
     m_bookmark.reset();
     m_list_abone_id.clear();
     m_list_abone_name.clear();
+    m_list_abone_word.clear();
     m_cached = false;
     m_read_info = false;
     m_save_info = false;
@@ -909,6 +988,17 @@ void ArticleBase::read_info()
             it_tmp = list_tmp.begin();
             for( ; it_tmp != list_tmp.end(); ++it_tmp ) if( !(*it_tmp).empty() ) m_bookmark[ atoi( (*it_tmp).c_str() ) ] = true;
         }
+
+        // あぼーん word
+        GET_INFOVALUE( str_tmp, "aboneword = " );
+        if( ! str_tmp.empty() ){
+            list_tmp = MISC::split_line( str_tmp );
+            it_tmp = list_tmp.begin();
+            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+                if( !(*it_tmp).empty() ) m_list_abone_word.push_back( MISC::recover_quot( ( *it_tmp ) ) );
+            }
+        }
+
     }
 
     // キャッシュはあるけど情報ファイルが無い場合
@@ -966,6 +1056,8 @@ void ArticleBase::read_info()
     for( ; it != m_list_abone_id.end(); ++it ) std::cout << (*it) << std::endl;
     std::cout << "abone-name\n"; it = m_list_abone_name.begin();
     for( ; it != m_list_abone_name.end(); ++it ) std::cout << (*it) << std::endl;
+    std::cout << "abone-word\n"; it = m_list_abone_word.begin();
+    for( ; it != m_list_abone_word.end(); ++it ) std::cout << (*it) << std::endl;
 
     if( m_bookmark ){
         std::cout << "bookmark =";
@@ -1000,7 +1092,7 @@ void ArticleBase::save_info()
     ss_write << ( m_write_time.tv_sec >> 16 ) << " " << ( m_write_time.tv_sec & 0xffff ) << " " << m_write_time.tv_usec;
 
     // あぼーん情報
-    std::string str_abone_id, str_abone_name;
+    std::string str_abone_id, str_abone_name, str_abone_word;
     std::list< std::string >::iterator it = m_list_abone_id.begin();
     for( ; it != m_list_abone_id.end(); ++it ){
         if( ! ( *it ).empty() ) str_abone_id += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
@@ -1008,6 +1100,10 @@ void ArticleBase::save_info()
     it = m_list_abone_name.begin();
     for( ; it != m_list_abone_name.end(); ++it ){
         if( ! ( *it ).empty() ) str_abone_name += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
+    }
+    it = m_list_abone_word.begin();
+    for( ; it != m_list_abone_word.end(); ++it ){
+        if( ! ( *it ).empty() ) str_abone_word += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
     }
 
     // スレのブックマーク
@@ -1032,6 +1128,7 @@ void ArticleBase::save_info()
          << "aboneid = " << str_abone_id << std::endl
          << "abonename = " << str_abone_name << std::endl
          << "bookmark = " << ss_bookmark.str() << std::endl
+         << "aboneword = " << str_abone_word << std::endl
     ;
 
 #ifdef _DEBUG

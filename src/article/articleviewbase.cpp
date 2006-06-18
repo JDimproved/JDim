@@ -228,8 +228,9 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DrawoutTmp", "テンプレート抽出"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_tmp ) );
 
     // あぼーん系
-    action_group()->add( Gtk::Action::create( "AboneID", "IDあぼ〜ん"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
-    action_group()->add( Gtk::Action::create( "AboneName", "名前あぼ〜ん"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
+    action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
+    action_group()->add( Gtk::Action::create( "AboneName", "NG Nameに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
+    action_group()->add( Gtk::Action::create( "AboneWord", "NG Wordに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word ) );
 
     // 移動系
     action_group()->add( Gtk::Action::create( "Move_Menu", "移動" ) );
@@ -322,6 +323,9 @@ void ArticleViewBase::setup_action()
     "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<menuitem action='Copy'/>"
+
+    "<separator/>"
+    "<menuitem action='AboneWord'/>"
 
     "<separator/>"
     "<menuitem action='Preference'/>"
@@ -1714,6 +1718,12 @@ void ArticleViewBase::show_menu( const std::string& url )
         else act->set_sensitive( true );
     }
 
+    act = action_group()->get_action( "AboneWord" );
+    if( act ){
+        if( str_select.empty() ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     // ブックマークがセットされていない
     act = action_group()->get_action( "DrawoutBM" );
     if( act ){
@@ -2107,6 +2117,17 @@ void ArticleViewBase::slot_abone_name()
     ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
 }
 
+
+//
+// 範囲選択した文字列でであぼ〜ん
+//
+void ArticleViewBase::slot_abone_word()
+{
+    DBTREE::add_abone_word( m_url_article, m_drawarea->str_selection() );
+
+    // 再レイアウト
+    ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
+}
 
 
 //
