@@ -326,8 +326,24 @@ const bool ArticleBase::abone( int number )
 }
 
 
+
 //
-// あぼーんのリセット
+// あぼーん状態の更新
+//
+// あぼーん情報を変更したら呼び出す
+//
+void ArticleBase::update_abone()
+{
+    // まだnodetreeが作られてなくてあぼーん状態が得られてないときは何もしない
+    if( !m_abone ) return;
+
+    check_abone( 1, m_number_load );
+}
+
+
+
+//
+// あぼーん状態のリセット(情報セットと状態更新)
 //
 void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names
                                , std::list< std::string >& words )
@@ -345,57 +361,24 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
     std::string tmp_str;
     std::list< std::string >::iterator it;    
 
-#ifdef _DEBUG
-    std::cout << "IDs:\n";
-#endif    
+    // 空白行を除きつつ情報を更新していく
+    
     for( it = ids.begin(); it != ids.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ){
-#ifdef _DEBUG
-            std::cout << tmp_str << std::endl;
-#endif
-            m_list_abone_id.push_back( *it );
-        }
+        if( ! tmp_str.empty() ) m_list_abone_id.push_back( *it );
     }
-#ifdef _DEBUG
-    std::cout << "size = " << m_list_abone_id.size() << std::endl;
-#endif    
 
-    
-#ifdef _DEBUG
-    std::cout << "Names:\n";
-#endif    
     for( it = names.begin(); it != names.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ){
-#ifdef _DEBUG
-            std::cout << tmp_str << std::endl;
-#endif
-            m_list_abone_name.push_back( *it );
-        }
+        if( ! tmp_str.empty() ) m_list_abone_name.push_back( *it );
     }
-#ifdef _DEBUG
-    std::cout << "size = " << m_list_abone_name.size() << std::endl;
-#endif    
 
-
-#ifdef _DEBUG
-    std::cout << "Words:\n";
-#endif    
     for( it = words.begin(); it != words.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ){
-#ifdef _DEBUG
-            std::cout << tmp_str << std::endl;
-#endif
-            m_list_abone_word.push_back( *it );
-        }
+        if( ! tmp_str.empty() ) m_list_abone_word.push_back( *it );
     }
-#ifdef _DEBUG
-    std::cout << "size = " << m_list_abone_word.size() << std::endl;
-#endif    
 
-    check_abone( 1, m_number_load );
+    update_abone();
 
     m_save_info = true;
 }
@@ -418,7 +401,7 @@ void ArticleBase::add_abone_id( const std::string& id )
 
     m_list_abone_id.push_back( id_tmp );
 
-    check_abone( 1, m_number_load );
+    update_abone();
 
     m_save_info = true;
 }
@@ -438,7 +421,7 @@ void ArticleBase::add_abone_name( const std::string& name )
 
     m_list_abone_name.push_back( name );
 
-    check_abone( 1, m_number_load );
+    update_abone();
 
     m_save_info = true;
 }
@@ -459,7 +442,7 @@ void ArticleBase::add_abone_word( const std::string& word )
 
     m_list_abone_word.push_back( word );
 
-    check_abone( 1, m_number_load );
+    update_abone();
 
     m_save_info = true;
 }
@@ -479,64 +462,22 @@ void ArticleBase::check_abone( int from_number, int to_number )
 #endif
     if( to_number < from_number ) return;
 
-    std::list< std::string >::iterator it;
-
     for( int i = from_number ; i <= to_number; ++i ){
 
         m_abone[ i ] = false;
 
-        // ID
-        if( ! m_list_abone_id.empty() ){
-
-            int ln_protoid = strlen( PROTO_ID );
-
-            for( it = m_list_abone_id.begin(); it != m_list_abone_id.end(); ++it ){
-
-                // std::string の find は遅いのでstrcmp使う
-                if( strcmp( get_nodetree()->get_id_name( i ).c_str() + ln_protoid, ( *it ).c_str() ) == 0 ){
-
-#ifdef _DEBUG
-                    std::cout << "abone = " << i << std::endl;
-#endif
-
-                    m_abone[ i ] = true;
-                    break;
-                }
-            }
-            if( m_abone[ i ] ) continue;
+        // ローカルあぼーん
+        if( get_nodetree()->check_abone_id( i, m_list_abone_id ) ){
+            m_abone[ i ] = true;
+            continue;
         }
-
-        // 名前
-        if( ! m_list_abone_name.empty() ){
-
-            for( it = m_list_abone_name.begin(); it != m_list_abone_name.end(); ++it ){
-
-                // std::string の find は遅いのでstrcmp使う
-                const char* s1 = get_nodetree()->get_name( i ).c_str();
-                const char* s2 = ( *it ).c_str();
-                while( *s1 != '\0' && *s1 != *s2 ) s1++;
-                if( *s1 != '\0'  ){
-
-                    if( strncmp( s1, s2, strlen( s2 ) ) == 0 ){
-                        m_abone[ i ] = true;
-                        break;
-                    }
-                }
-            }
-            if( m_abone[ i ] ) continue;
+        if( get_nodetree()->check_abone_name( i, m_list_abone_name ) ){
+            m_abone[ i ] = true;
+            continue;
         }
-
-        // 文字列
-        if( ! m_list_abone_word.empty() ){
-
-            for( it = m_list_abone_word.begin(); it != m_list_abone_word.end(); ++it ){
-
-                if( get_nodetree()->get_res_str( i ).find( *it ) != std::string::npos ){
-                    m_abone[ i ] = true;
-                    break;
-                }
-            }
-            if( m_abone[ i ] ) continue;
+        if( get_nodetree()->check_abone_word( i, m_list_abone_word ) ){
+            m_abone[ i ] = true;
+            continue;
         }
     }
 
@@ -547,6 +488,8 @@ void ArticleBase::check_abone( int from_number, int to_number )
 #endif 
 
 }
+
+
 
 
 //

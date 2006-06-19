@@ -203,13 +203,22 @@ namespace DBTREE
         const bool is_current() const { return m_current; };    
         void set_current( bool current ){ m_current = current; }
 
-        // あぼーん
+        // あぼーん情報
         std::list< std::string > get_abone_list_id(){ return m_list_abone_id; }
         std::list< std::string > get_abone_list_name(){ return m_list_abone_name; }
         std::list< std::string > get_abone_list_word(){ return m_list_abone_word; }
+
+        // number番のレスがあぼーんされているか
         const bool abone( int number );
+
+        // あぼーん状態の更新
+        void update_abone();
+
+        // あぼーん状態のリセット(情報セットと状態更新)
         void reset_abone( std::list< std::string >& ids, std::list< std::string >& names
                           , std::list< std::string >& words );
+
+        // あぼ〜んに追加
         void add_abone_id( const std::string& id );
         void add_abone_name( const std::string& name );
         void add_abone_word( const std::string& word );

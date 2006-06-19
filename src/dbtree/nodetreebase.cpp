@@ -1327,3 +1327,77 @@ void NodeTreeBase::count_id_name( NODE* header, const char* str_id )
         else if( num_id_name >= 2 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK;
     }
 }
+
+
+
+//
+// number番のあぼーん判定を更新(ID)
+//
+// あぼーんの時はtrueを返す
+//
+bool NodeTreeBase::check_abone_id( int number, std::list< std::string >& list_id )
+{
+    NODE* head = res_header( number );
+    if( ! head ) return false;
+    if( ! head->headinfo->node_id_name ) return false;
+    if( list_id.empty() ) return false;
+
+    int ln_protoid = strlen( PROTO_ID );
+
+    std::list< std::string >::iterator it = list_id.begin();
+    for( ; it != list_id.end(); ++it ){
+
+        // std::string の find は遅いのでstrcmp使う
+        if( strcmp( head->headinfo->node_id_name->linkinfo->link + ln_protoid, ( *it ).c_str() ) == 0 ) return true;
+    }
+
+    return false;
+}
+
+
+//
+// number番のあぼーん判定を更新(name)
+//
+// あぼーんの時はtrueを返す
+//
+bool NodeTreeBase::check_abone_name( int number, std::list< std::string >& list_name )
+{
+    NODE* head = res_header( number );
+    if( ! head ) return false;
+    if( ! head->headinfo->name ) return false;
+    if( list_name.empty() ) return false;
+
+    std::list< std::string >::iterator it = list_name.begin();
+    for( ; it != list_name.end(); ++it ){
+
+        // std::string の find は遅いのでstrcmp使う
+        const char* s1 = head->headinfo->name;
+        const char* s2 = ( *it ).c_str();
+        while( *s1 != '\0' && *s1 != *s2 ) s1++;
+
+        if( *s1 != '\0'  && strncmp( s1, s2, strlen( s2 ) ) == 0 ) return true;
+    }
+
+    return false;
+}
+
+
+
+//
+// number番のあぼーん判定を更新(word)
+//
+// あぼーんの時はtrueを返す
+//
+bool NodeTreeBase::check_abone_word( int number, std::list< std::string >& list_word )
+{
+    if( list_word.empty() ) return false;
+
+    std::string res_str = get_res_str( number );
+
+    std::list< std::string >::iterator it = list_word.begin();
+    for( ; it != list_word.end(); ++it ){
+        if( res_str.find( *it ) != std::string::npos ) return true;
+    }
+
+    return false;
+}
