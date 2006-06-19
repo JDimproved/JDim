@@ -775,6 +775,11 @@ void ArticleBase::delete_cache()
     memset( &m_write_time, 0, sizeof( struct timeval ) );
     m_write_time_date.clear();
 
+    m_write_name.clear();
+    m_write_mail.clear();
+    m_write_fixname = false;
+    m_write_fixmail = false;
+
     m_heap.clear();
     m_abone.reset();
     m_bookmark.reset();
