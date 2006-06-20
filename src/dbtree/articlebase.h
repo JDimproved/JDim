@@ -62,6 +62,7 @@ namespace DBTREE
         std::list< std::string > m_list_abone_id;   // あぼーんするID
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
+        std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
 
         // あぼーん
         JDLIB::ConstPtr< char > m_abone; // あぼーん判定のキャッシュ
@@ -207,6 +208,7 @@ namespace DBTREE
         std::list< std::string > get_abone_list_id(){ return m_list_abone_id; }
         std::list< std::string > get_abone_list_name(){ return m_list_abone_name; }
         std::list< std::string > get_abone_list_word(){ return m_list_abone_word; }
+        std::list< std::string > get_abone_list_regex(){ return m_list_abone_regex; }
 
         // number番のレスがあぼーんされているか
         const bool abone( int number );
@@ -216,7 +218,7 @@ namespace DBTREE
 
         // あぼーん状態のリセット(情報セットと状態更新)
         void reset_abone( std::list< std::string >& ids, std::list< std::string >& names
-                          , std::list< std::string >& words );
+                          , std::list< std::string >& words, std::list< std::string >& regexs );
 
         // あぼ〜んに追加
         void add_abone_id( const std::string& id );

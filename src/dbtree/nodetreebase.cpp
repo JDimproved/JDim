@@ -10,6 +10,7 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 #include "jdlib/loaderdata.h"
+#include "jdlib/jdregex.h"
 
 #include "dbimg/imginterface.h"
 
@@ -1397,6 +1398,27 @@ bool NodeTreeBase::check_abone_word( int number, std::list< std::string >& list_
     std::list< std::string >::iterator it = list_word.begin();
     for( ; it != list_word.end(); ++it ){
         if( res_str.find( *it ) != std::string::npos ) return true;
+    }
+
+    return false;
+}
+
+
+//
+// number番のあぼーん判定を更新(regex)
+//
+// あぼーんの時はtrueを返す
+//
+bool NodeTreeBase::check_abone_regex( int number, std::list< std::string >& list_regex )
+{
+    if( list_regex.empty() ) return false;
+
+    JDLIB::Regex regex;
+    std::string res_str = get_res_str( number );
+
+    std::list< std::string >::iterator it = list_regex.begin();
+    for( ; it != list_regex.end(); ++it ){
+        if( regex.exec( *it, res_str ) ) return true;
     }
 
     return false;

@@ -136,6 +136,7 @@ namespace DBTREE
         bool check_abone_id( int number, std::list< std::string >& list_id );
         bool check_abone_name( int number, std::list< std::string >& list_name );
         bool check_abone_word( int number, std::list< std::string >& list_word );
+        bool check_abone_regex( int number, std::list< std::string >& list_regex );
 
       protected:
 

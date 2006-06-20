@@ -346,7 +346,7 @@ void ArticleBase::update_abone()
 // あぼーん状態のリセット(情報セットと状態更新)
 //
 void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names
-                               , std::list< std::string >& words )
+                               ,std::list< std::string >& words, std::list< std::string >& regexs )
 {
     if( empty() ) return;
 
@@ -357,6 +357,7 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
     m_list_abone_id.clear();
     m_list_abone_name.clear();
     m_list_abone_word.clear();
+    m_list_abone_regex.clear();
 
     std::string tmp_str;
     std::list< std::string >::iterator it;    
@@ -376,6 +377,11 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
     for( it = words.begin(); it != words.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
         if( ! tmp_str.empty() ) m_list_abone_word.push_back( *it );
+    }
+
+    for( it = regexs.begin(); it != regexs.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ) m_list_abone_regex.push_back( *it );
     }
 
     update_abone();
@@ -464,21 +470,11 @@ void ArticleBase::check_abone( int from_number, int to_number )
 
     for( int i = from_number ; i <= to_number; ++i ){
 
-        m_abone[ i ] = false;
-
         // ローカルあぼーん
-        if( get_nodetree()->check_abone_id( i, m_list_abone_id ) ){
-            m_abone[ i ] = true;
-            continue;
-        }
-        if( get_nodetree()->check_abone_name( i, m_list_abone_name ) ){
-            m_abone[ i ] = true;
-            continue;
-        }
-        if( get_nodetree()->check_abone_word( i, m_list_abone_word ) ){
-            m_abone[ i ] = true;
-            continue;
-        }
+        if( ( m_abone[ i ] = get_nodetree()->check_abone_id( i, m_list_abone_id ) ) ) continue;
+        if( ( m_abone[ i ] = get_nodetree()->check_abone_name( i, m_list_abone_name ) ) ) continue;
+        if( ( m_abone[ i ] = get_nodetree()->check_abone_word( i, m_list_abone_word ) ) ) continue;
+        if( ( m_abone[ i ] = get_nodetree()->check_abone_regex( i, m_list_abone_regex ) ) ) continue;
     }
 
 #ifdef _DEBUG
@@ -786,6 +782,7 @@ void ArticleBase::delete_cache()
     m_list_abone_id.clear();
     m_list_abone_name.clear();
     m_list_abone_word.clear();
+    m_list_abone_regex.clear();
     m_cached = false;
     m_read_info = false;
     m_save_info = false;
@@ -947,6 +944,15 @@ void ArticleBase::read_info()
             }
         }
 
+        // あぼーん regex
+        GET_INFOVALUE( str_tmp, "aboneregex = " );
+        if( ! str_tmp.empty() ){
+            list_tmp = MISC::split_line( str_tmp );
+            it_tmp = list_tmp.begin();
+            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+                if( !(*it_tmp).empty() ) m_list_abone_regex.push_back( MISC::recover_quot( ( *it_tmp ) ) );
+            }
+        }
     }
 
     // キャッシュはあるけど情報ファイルが無い場合
@@ -1006,6 +1012,9 @@ void ArticleBase::read_info()
     for( ; it != m_list_abone_name.end(); ++it ) std::cout << (*it) << std::endl;
     std::cout << "abone-word\n"; it = m_list_abone_word.begin();
     for( ; it != m_list_abone_word.end(); ++it ) std::cout << (*it) << std::endl;
+    std::cout << "abone-regex\n"; it = m_list_abone_regex.begin();
+    for( ; it != m_list_abone_regex.end(); ++it ) std::cout << (*it) << std::endl;
+
 
     if( m_bookmark ){
         std::cout << "bookmark =";
@@ -1040,7 +1049,7 @@ void ArticleBase::save_info()
     ss_write << ( m_write_time.tv_sec >> 16 ) << " " << ( m_write_time.tv_sec & 0xffff ) << " " << m_write_time.tv_usec;
 
     // あぼーん情報
-    std::string str_abone_id, str_abone_name, str_abone_word;
+    std::string str_abone_id, str_abone_name, str_abone_word, str_abone_regex;
     std::list< std::string >::iterator it = m_list_abone_id.begin();
     for( ; it != m_list_abone_id.end(); ++it ){
         if( ! ( *it ).empty() ) str_abone_id += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
@@ -1052,6 +1061,10 @@ void ArticleBase::save_info()
     it = m_list_abone_word.begin();
     for( ; it != m_list_abone_word.end(); ++it ){
         if( ! ( *it ).empty() ) str_abone_word += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
+    }
+    it = m_list_abone_regex.begin();
+    for( ; it != m_list_abone_regex.end(); ++it ){
+        if( ! ( *it ).empty() ) str_abone_regex += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
     }
 
     // スレのブックマーク
@@ -1077,6 +1090,7 @@ void ArticleBase::save_info()
          << "abonename = " << str_abone_name << std::endl
          << "bookmark = " << ss_bookmark.str() << std::endl
          << "aboneword = " << str_abone_word << std::endl
+         << "aboneregex = " << str_abone_regex << std::endl
     ;
 
 #ifdef _DEBUG
