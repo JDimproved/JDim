@@ -412,6 +412,7 @@ long CACHE::is_file_exists( const std::string& path )
 {
     struct stat buf_stat;
 
+    if( path.empty() ) return EXIST_ERROR;
     if( stat( path.c_str(), &buf_stat ) != 0 ) return EXIST_ERROR;
 
     if( S_ISREG( buf_stat.st_mode ) ) return EXIST_FILE;

@@ -6,7 +6,6 @@
 #include "imageadmin.h"
 #include "imageviewbase.h"
 #include "imageareabase.h"
-#include "preference.h"
 
 #include "dbtree/interface.h"
 
@@ -21,6 +20,7 @@
 #include "global.h"
 #include "controlutil.h"
 #include "controlid.h"
+#include "prefdiagfactory.h"
 
 #include <sstream>
 
@@ -358,8 +358,9 @@ void ImageViewBase::slot_close_all_views()
 //
 void ImageViewBase::slot_preference()
 {
-    Preferences pref( get_url() );
-    pref.run();
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_IMAGE, get_url() );
+    pref->run();
+    delete pref;
 }
 
 

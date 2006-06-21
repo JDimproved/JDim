@@ -21,7 +21,6 @@ jd_SOURCES = \
 	cache.cpp \
 	xml.cpp \
 	command.cpp \
-	viewfactory.cpp \
 	sharedbuffer.cpp \
 	dndmanager.cpp \
 	historymenu.cpp \
@@ -30,7 +29,12 @@ jd_SOURCES = \
 	controlutil.cpp \
 \
 	session.cpp \
-	login2ch.cpp
+	login2ch.cpp \
+\
+	viewfactory.cpp \
+\
+	prefdiagfactory.cpp
+
 
 noinst_HEADERS = \
 	winmain.h \
@@ -42,12 +46,8 @@ noinst_HEADERS = \
 	global.h \
 	jdversion.h \
 	command.h \
-	viewfactory.h \
 	sharedbuffer.h \
 	dndmanager.h \
-	proxypref.h \
-	browserpref.h \
-	passwdpref.h \
 	historymenu.h \
 	historysubmenu.h \
 	colorid.h \
@@ -57,6 +57,14 @@ noinst_HEADERS = \
 	controlutil.h \
 \
 	session.h \
-	login2ch.h
+	login2ch.h \
+\
+	viewfactory.h \
+\
+	prefdiagfactory.h \
+	proxypref.h \
+	browserpref.h \
+	passwdpref.h
+
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@

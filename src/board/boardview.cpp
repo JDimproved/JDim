@@ -5,7 +5,6 @@
 
 #include "boardadmin.h"
 #include "boardview.h"
-#include "preference.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
@@ -19,6 +18,7 @@
 #include "sharedbuffer.h"
 #include "global.h"
 #include "controlid.h"
+#include "prefdiagfactory.h"
 
 #include <gtk/gtk.h> // m_liststore->gobj()->sort_column_id = -2
 #include <sstream>
@@ -212,6 +212,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"), sigc::mem_fun( *this, &BoardView::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ"), sigc::mem_fun( *this, &BoardView::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ"), sigc::mem_fun( *this, &BoardView::slot_push_preferences ) );
 
 
@@ -237,6 +238,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     "<menuitem action='Delete'/>"
     "</menu>"
     "<separator/>"
+    "<menuitem action='PreferenceArticle'/>"
     "<menuitem action='Preference'/>"
     "</popup>"
 
@@ -1505,13 +1507,29 @@ void BoardView::slot_entry_operate( int controlid )
 }
 
 
+
 //
-// 設定ボタン
+// 板プロパティ表示
 //
 void BoardView::slot_push_preferences()
 {
-    Preferences pref( get_url() );
-    pref.run();
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_BOARD, get_url() );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// スレプロパティ表示
+//
+void BoardView::slot_preferences_article()
+{
+    if( m_path_selected.empty() ) return;
+    std::string url = path2daturl( m_path_selected );
+
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_ARTICLE, url );
+    pref->run();
+    delete pref;
 }
 
 

@@ -572,13 +572,7 @@ void NodeTreeBase::download_dat()
     init_loading();
 
     // 保存ディレクトリ作成(無ければ)
-    std::string path_board_root = CACHE::path_board_root( m_url );
-
-#ifdef _DEBUG
-        std::cout << "boad_root = " << path_board_root << std::endl;
-#endif
-
-    if( CACHE::jdmkdir( path_board_root ) ){
+    if( CACHE::mkdir_boardroot( m_url ) ){
     
         // 保存ファイルオープン
         std::string path_cache = CACHE::path_dat( m_url );
@@ -593,7 +587,7 @@ void NodeTreeBase::download_dat()
         }
     }
     else{
-        MISC::ERRMSG( "could not create " + path_board_root );
+        MISC::ERRMSG( "could not create " + DBTREE::url_boardbase( m_url ) );
     }
 
     // ロード開始

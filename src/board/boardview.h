@@ -109,6 +109,7 @@ namespace BOARD
         void slot_copy_title_url();
         void slot_open_browser();
         void slot_push_preferences();
+        void slot_preferences_article();
 
         bool open_row( Gtk::TreePath& path, bool tab );
         std::string path2daturl( const Gtk::TreePath& path );

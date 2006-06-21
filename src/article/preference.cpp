@@ -8,6 +8,7 @@
 #include "jdlib/misctime.h"
 
 #include "cache.h"
+#include "command.h"
 
 #include <string>
 #include <list>
@@ -89,4 +90,7 @@ void Preferences::slot_ok_clicked()
     std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text(), true );
     std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text(), true );
     DBTREE::reset_abone( get_url(), list_id, list_name, list_word, list_regex );
+
+    // viewの再レイアウト
+    CORE::core_set_command( "relayout_article", get_url() );
 }

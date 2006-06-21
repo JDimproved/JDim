@@ -88,7 +88,9 @@ ArticleBase::~ArticleBase()
 
     // 参照ロックが外れていない
     assert( get_lock() == 0 );
-    assert( !m_nodetree );
+
+    // nodetreeのクリアと情報保存
+    unlock_impl();
 }
 
 
@@ -105,6 +107,16 @@ const std::string ArticleBase::get_org_url()
 {
     std::string newhost = MISC::get_hostname( m_url );
     return m_org_host + m_url.substr( newhost.length() );
+}
+
+
+// キャッシュにあるdatファイルのサイズ
+const size_t ArticleBase::get_lng_dat()
+{
+    if( !m_cached ) return 0;
+
+    get_nodetree(); // キャッシュ読み込み
+    return m_lng_dat;
 }
 
 
@@ -788,16 +800,14 @@ void ArticleBase::delete_cache()
     m_save_info = false;
     
     // キャッシュ
-    std::string path = CACHE::path_dat( m_url );
-    if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+    std::string path_dat = CACHE::path_dat( m_url );
+    if( CACHE::is_file_exists( path_dat ) == CACHE::EXIST_FILE ) unlink( path_dat.c_str() );
 
     // info
-    path = CACHE::path_article_info( m_url, m_id );
-    if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+    if( CACHE::is_file_exists( m_path_article_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_info.c_str() );
 
     // 拡張info
-    path = CACHE::path_article_ext_info( m_url, m_id );
-    if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+    if( CACHE::is_file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_ext_info.c_str() );
 
     // BoardViewの行を更新
     CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
@@ -822,13 +832,18 @@ void ArticleBase::read_info()
     std::cout << "ArticleBase::read_info :  url = " << m_url << std::endl;
 #endif
 
-    std::string path_info = CACHE::path_article_ext_info( m_url, m_id );
-    if( CACHE::is_file_exists( path_info ) == CACHE::EXIST_FILE ){
+    // 情報ファイルのパス
+    // デストラクタの中でCACHE::path_article_ext_info()などを呼ぶとabortするので
+    // パスを取得しておく
+    m_path_article_info = CACHE::path_article_info( m_url, m_id );  // info
+    m_path_article_ext_info = CACHE::path_article_ext_info( m_url, m_id ); // 拡張info
+
+    if( CACHE::is_file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ){
 
         std::string str_info, str_tmp;
         std::list< std::string > list_tmp;
         std::list< std::string >::iterator it_tmp;
-        CACHE::load_rawdata( path_info, str_info );
+        CACHE::load_rawdata( m_path_article_ext_info, str_info );
 
         std::list< std::string > lines = MISC::get_lines( str_info );
         std::list < std::string >::iterator it = lines.begin(), it2;
@@ -991,7 +1006,7 @@ void ArticleBase::read_info()
     if( m_number < m_number_load ) m_number = m_number_load;
 
 #ifdef _DEBUG
-    std::cout << "ArticleBase::read_info file = " << path_info << std::endl;
+    std::cout << "ArticleBase::read_info file = " << m_path_article_ext_info << std::endl;
 
     std::cout << "subject = " << m_subject << std::endl
               << "org_host = " << m_org_host << std::endl
@@ -1039,10 +1054,7 @@ void ArticleBase::save_info()
     if( ! m_save_info ) return;
     m_save_info = false;
 
-    if( ! CACHE::mkdir_boardroot( m_url ) ) return;
-    
-    std::string path_info = CACHE::path_article_ext_info( m_url, m_id );
-    if( path_info.empty() ) return;
+    if( m_path_article_ext_info.empty() ) return;
 
     // 書き込み時間
     std::ostringstream ss_write;
@@ -1094,11 +1106,11 @@ void ArticleBase::save_info()
     ;
 
 #ifdef _DEBUG
-    std::cout << "ArticleBase::save_info file = " << path_info << std::endl;
+    std::cout << "ArticleBase::save_info file = " << m_path_article_ext_info << std::endl;
     std::cout << sstr.str() << std::endl;
 #endif
 
-    CACHE::save_rawdata( path_info, sstr.str() );
+    CACHE::save_rawdata( m_path_article_ext_info, sstr.str() );
 
     // 互換性のため
     save_navi2ch_info();
@@ -1115,10 +1127,7 @@ void ArticleBase::save_navi2ch_info()
 {
     if( empty() ) return;
     if( ! m_cached ) return;
-
-    if( ! CACHE::mkdir_boardroot( m_url ) ) return;
-    
-    std::string path_info = CACHE::path_article_info( m_url, m_id );
+    if( m_path_article_info.empty() ) return;
 
     std::string name = "nil";
     std::string hide = "nil";
@@ -1128,10 +1137,10 @@ void ArticleBase::save_navi2ch_info()
     std::string kako = "nil";
 
     // 保存してあるinfoから扱ってない情報をコピー
-    if( CACHE::is_file_exists( path_info ) == CACHE::EXIST_FILE ){
+    if( CACHE::is_file_exists( m_path_article_info ) == CACHE::EXIST_FILE ){
 
         std::string str_info;
-        CACHE::load_rawdata( path_info, str_info );
+        CACHE::load_rawdata( m_path_article_info, str_info );
 #ifdef _DEBUG
         std::cout << "str_info " << str_info << std::endl;
 #endif
@@ -1161,9 +1170,9 @@ void ArticleBase::save_navi2ch_info()
          << ")";
 
 #ifdef _DEBUG
-    std::cout << "ArticleBase::save_navi2ch_info file = " << path_info << std::endl;
+    std::cout << "ArticleBase::save_navi2ch_info file = " << m_path_article_info << std::endl;
     std::cout << sstr.str() << std::endl;
 #endif
 
-    CACHE::save_rawdata( path_info, sstr.str() );
+    CACHE::save_rawdata( m_path_article_info, sstr.str() );
 }

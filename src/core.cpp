@@ -9,11 +9,9 @@
 #include "session.h"
 #include "global.h"
 #include "dndmanager.h"
-#include "proxypref.h"
-#include "passwdpref.h"
-#include "browserpref.h"
 #include "historymenu.h"
 #include "login2ch.h"
+#include "prefdiagfactory.h"
 #include "jdversion.h"
 
 #include "config/globalconf.h"
@@ -623,8 +621,9 @@ bool Core::open_color_diag( std::string title, const int* rgb, int* rgb_out )
 //
 void Core::slot_setup_proxy()
 {
-    ProxyPref pref( "" );
-    pref.run();
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_PROXY, "" );
+    pref->run();
+    delete pref;
 }
 
 
@@ -633,8 +632,9 @@ void Core::slot_setup_proxy()
 //
 void Core::slot_setup_passwd()
 {
-    PasswdPref pref( "" );
-    pref.run();
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_PASSWD, "" );
+    pref->run();
+    delete pref;
 }
 
 
@@ -644,8 +644,9 @@ void Core::slot_setup_passwd()
 //
 void Core::slot_setup_browser()
 {
-    BrowserPref pref( "" );
-    pref.run();
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_BROWSER, "" );
+    pref->run();
+    delete pref;
 }
 
 
@@ -1142,6 +1143,13 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "redraw_article" ) {
 
         ARTICLE::get_admin()->set_command( "redraw_current_view" );
+        return;
+    }
+
+    // command.url を含むarticle viewを全て再レイアウトして再描画
+    else if( command.command == "relayout_article" ){
+
+        ARTICLE::get_admin()->set_command( "relayout_views", command.url );
         return;
     }
 

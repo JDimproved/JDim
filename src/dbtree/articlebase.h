@@ -27,6 +27,12 @@ namespace DBTREE
     {
         JDLIB::HEAP m_heap;
 
+        // 情報ファイルのパス
+        // デストラクタの中でCACHE::path_article_ext_info()を呼ぶとabortするので
+        // ArticleBase::read_info()が呼ばれたときにパスを取得しておく
+        std::string m_path_article_info;
+        std::string m_path_article_ext_info;
+
         // m_nodetree は参照が外れたら自動でクリアされる
         JDLIB::ConstPtr< NodeTreeBase > m_nodetree;
 
@@ -114,7 +120,9 @@ namespace DBTREE
         const int get_number_new() const { return m_number_new; }
         const int get_number_load() const { return m_number_load; }
         const int get_number_seen() const{  return m_number_seen; }
-        const size_t get_lng_dat() const { return m_lng_dat; }
+
+        // キャッシュにあるdatファイルのサイズ
+        const size_t get_lng_dat();
 
         // nodetree の number 番のレスのヘッダノードのポインタを返す
         NODE* res_header( int number );

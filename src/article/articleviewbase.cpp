@@ -8,7 +8,6 @@
 #include "articleview.h"
 #include "drawareamain.h"
 #include "toolbar.h"
-#include "preference.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
@@ -29,6 +28,7 @@
 #include "viewfactory.h"
 #include "sharedbuffer.h"
 #include "cache.h"
+#include "prefdiagfactory.h"
 
 #include <sstream>
 
@@ -822,14 +822,10 @@ void ArticleViewBase::slot_push_preferences()
     std::cout << "ArticleViewBase::slot_push_preference\n";
 #endif
 
-    Preferences pref( m_url_article );
-    if( pref.run() == Gtk::RESPONSE_OK ){
-
-        // 再レイアウト
-        ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
-    }
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_ARTICLE, m_url_article );
+    pref->run();
+    delete pref;
 }
-
 
 
 
