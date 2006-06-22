@@ -71,7 +71,12 @@ namespace DBTREE
 
         char* m_rawdata;
         int m_lng_rawdata;
+
+        // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
         bool m_read_info;
+
+        // データを更新したらtrueにしてsave_info()で保存する
+        bool m_save_info;
 
         // クッキー, 書き込み時に必要
         std::list< std::string > m_list_cookies_for_write;
@@ -112,13 +117,13 @@ namespace DBTREE
 
         // boardviewでソートする列番号とソート順
         const int get_view_sort_column() const { return m_view_sort_column; }
-        void set_view_sort_column( int column ){ m_view_sort_column = column; }
+        void set_view_sort_column( int column );
         const bool get_view_sort_ascend() const { return m_view_sort_ascend; }
-        void set_view_sort_ascend( bool ascend ){ m_view_sort_ascend = ascend; }
+        void set_view_sort_ascend( bool ascend );
 
         // 名無し書き込み不可
         const bool get_check_noname() const { return m_check_noname; }
-        void set_check_noname( bool check ){ m_check_noname = check; }
+        void set_check_noname( bool check );
 
         // url がこの板のものかどうか
         virtual bool equal( const std::string& url );
@@ -232,7 +237,7 @@ namespace DBTREE
         virtual const std::string url_subbbscgi_new() { return std::string(); }
 
         void read_info();
-        void save_info();
+        void save_info_force();
         
       private:
 
@@ -251,6 +256,7 @@ namespace DBTREE
         void read_board_info();
         void append_all_article();
 
+        void save_info();
         void save_summary();
         void save_board_info();
         void save_jdboard_info();

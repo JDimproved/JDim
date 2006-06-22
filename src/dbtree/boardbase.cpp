@@ -37,6 +37,7 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_name( name )
     , m_rawdata( 0 )
     , m_read_info( 0 )
+    , m_save_info( 0 )
     , m_article_null( 0 )
 {
     clear();
@@ -72,6 +73,28 @@ ArticleBase* BoardBase::get_article_null()
 bool BoardBase::empty()
 {
     return m_root.empty();
+}
+
+
+void BoardBase::set_view_sort_column( int column )
+{
+    m_save_info = true;
+    m_view_sort_column = column;
+}
+
+
+void BoardBase::set_view_sort_ascend( bool ascend )
+{
+    m_save_info = true;
+    m_view_sort_ascend = ascend;
+}
+
+
+
+void BoardBase::set_check_noname( bool check )
+{
+    m_save_info = true;
+    m_check_noname = check;
 }
 
 
@@ -510,7 +533,7 @@ ArticleBase* BoardBase::get_article_create( const std::string id )
     if( ! art->empty() ){
 
 #ifdef _DEBUG
-        std::cout << "found id = " << art->id() << std::endl;
+        std::cout << "found id = " << art->get_id() << std::endl;
 #endif
         // ポインタを返す前にスレッドの情報ファイルを読み込み
         art->read_info();
@@ -663,7 +686,7 @@ void BoardBase::receive_finish()
     std::string path_oldsubject = CACHE::path_board_root( url_boardbase() ) + "old-" + m_subjecttxt;
 
 #ifdef _DEBUG
-    std::cout << "BoardBase::receive_finish code = " << str_code() << std::endl;
+    std::cout << "BoardBase::receive_finish code = " << get_str_code() << std::endl;
 #endif
 
     // エラー or 移転
@@ -707,13 +730,16 @@ void BoardBase::receive_finish()
         return;
     }
 
-    // subject.txt をキャッシュに保存
+    // codeが200なら情報を保存して subject.txt をキャッシュに保存
     if( SESSION::is_online() && get_code() == HTTP_OK ){
 
 #ifdef _DEBUG
         std::cout << "rename " << path_subject << " " << path_oldsubject << std::endl;
         std::cout << "save " << path_subject << std::endl;    
 #endif
+
+        m_save_info = true;
+        save_info();
 
         // subject.txtをキャッシュ
         if( CACHE::mkdir_boardroot( url_boardbase() ) ){
@@ -758,7 +784,7 @@ void BoardBase::receive_finish()
                 // info 読み込み
                 // TODO : 数が多いとboardビューを開くまで時間がかかるのをなんとかする
 #ifdef _DEBUG
-                std::cout << "read article_info << " << ( *it )->url() << std::endl;
+                std::cout << "read article_info << " << ( *it )->get_url() << std::endl;
 #endif                
                 ( *it )->read_info();
                 m_list_subject.push_back( *it );
@@ -842,6 +868,17 @@ void BoardBase::read_board_info()
 }
 
 
+//
+// 強制情報保存
+//
+// board viewを閉じたとき(BoardView::~BoardView())などに呼び出す
+//
+void BoardBase::save_info_force()
+{
+    m_save_info = true;
+    save_info();
+}
+
 
 //
 // 情報保存
@@ -849,6 +886,9 @@ void BoardBase::read_board_info()
 void BoardBase::save_info()
 {
     if( empty() ) return;
+    if( !m_save_info ) return;
+    m_save_info = false;
+
     if( ! CACHE::mkdir_boardroot( url_boardbase() ) ) return;
 
     save_jdboard_info();

@@ -96,4 +96,7 @@ void Preferences::slot_ok_clicked()
 {
     // 名無し書き込みチェック
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );
+
+    // 
+    DBTREE::board_save_info( get_url() );
 }

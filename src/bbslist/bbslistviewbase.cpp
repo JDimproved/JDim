@@ -24,6 +24,7 @@
 #include "sharedbuffer.h"
 #include "viewfactory.h"
 #include "xml.h"
+#include "prefdiagfactory.h"
 
 #include <sstream>
 //#include <gtk/gtkversion.h> // GTK_CHECK_VERSION
@@ -124,6 +125,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "Unselect", "選択解除"), sigc::mem_fun( *this, &BBSListViewBase::slot_unselect_all ) );
+    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
+
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
@@ -144,6 +147,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menuitem action='AppendFavorite'/>"
+    "<separator/>"
+    "<menuitem action='PreferenceBoard'/>"
     "</popup>"
 
 
@@ -171,6 +176,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menu action='Delete_Menu'>"
     "<menuitem action='Delete'/>"
     "</menu>"
+    "<separator/>"
+    "<menuitem action='PreferenceBoard'/>"
     "</popup>"
 
     // お気に入り+複数選択
@@ -824,6 +831,21 @@ void BBSListViewBase::slot_copy_title_url()
 void BBSListViewBase::slot_unselect_all()
 {
     m_treeview.get_selection()->unselect_all();
+}
+
+
+
+//
+// 板プロパティ表示
+//
+void BBSListViewBase::slot_preferences_board()
+{
+    if( m_path_selected.empty() ) return;
+    std::string url = path2url( m_path_selected );
+
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_BOARD, url );
+    pref->run();
+    delete pref;
 }
 
 
