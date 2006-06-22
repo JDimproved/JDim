@@ -719,15 +719,7 @@ void ArticleBase::slot_load_finished()
     else m_status &= ~STATUS_BROKEN;
 
     // 状態が変わっていたら情報保存
-    if( old_status != m_status ){
-
-        // 初めてダウンロードしたときはまだArticleBase::read_info()が呼ばれてないので
-        // ここで情報ファイルのパスを設定しておく
-        m_path_article_info = CACHE::path_article_info( m_url, m_id );  // info
-        m_path_article_ext_info = CACHE::path_article_ext_info( m_url, m_id ); // 拡張info
-
-        m_save_info = true;
-    }
+    if( old_status != m_status ) m_save_info = true;
 
     // スレの数が0ならスレ情報はセーブしない
     if( ! m_number_load ) m_cached = false;
@@ -831,6 +823,14 @@ void ArticleBase::delete_cache()
 //
 void ArticleBase::read_info()
 {
+    // 情報ファイルのパス
+    // デストラクタの中でCACHE::path_article_ext_info()などを呼ぶとabortするので
+    // パスを取得しておく
+    if(  m_path_article_info.empty() ){
+        m_path_article_info = CACHE::path_article_info( m_url, m_id );  // info
+        m_path_article_ext_info = CACHE::path_article_ext_info( m_url, m_id ); // 拡張info
+    }
+
     if( empty() ) return;
     if( ! m_cached ) return;  // キャッシュがないなら読まない
     if( m_read_info ) return; // 一度読んだら2度読みしない
@@ -839,12 +839,6 @@ void ArticleBase::read_info()
 #ifdef _DEBUG
     std::cout << "ArticleBase::read_info :  url = " << m_url << std::endl;
 #endif
-
-    // 情報ファイルのパス
-    // デストラクタの中でCACHE::path_article_ext_info()などを呼ぶとabortするので
-    // パスを取得しておく
-    m_path_article_info = CACHE::path_article_info( m_url, m_id );  // info
-    m_path_article_ext_info = CACHE::path_article_ext_info( m_url, m_id ); // 拡張info
 
     if( CACHE::is_file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ){
 
