@@ -281,7 +281,7 @@ void Admin::exec_command()
 
     // タブに文字をセット、タブ幅調整
     else if( command.command  == "set_tablabel" ){
-        set_tablabel( command.url, command.arg1 );
+        set_tablabel( command.url, command.arg1, ( command.arg2 == "fix" ) );
     }
     else if( command.command  == "adjust_tabwidth" ){
         adjust_tabwidth( ( command.arg1 == "true" ) );
@@ -674,7 +674,9 @@ void Admin::focus_out()
 //
 // タブラベル更新
 //
-void Admin::set_tablabel( const std::string& url, const std::string& str_label )
+// fix = true ならタブ幅の調整はしない
+//
+void Admin::set_tablabel( const std::string& url, const std::string& str_label, bool fix )
 {
 #ifdef _DEBUG
     std::cout << "Admin::set_tablabel : " << url << std::endl;
@@ -683,11 +685,18 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label )
     SKELETON::View* view = get_view( url );
     if( view ){
 
-        view->get_tab_label().set_text( "" );  //  adjust_tabwidth() でタブをリサイズする
         view->get_tab_label().set_fulltext( str_label );
 
-        // タブ幅再設定
-        set_command( "adjust_tabwidth", "", "true" );
+        //  adjust_tabwidth() でタブをリサイズする
+        if( !fix ){
+
+            view->get_tab_label().set_text( "" );  
+
+            // タブ幅再設定
+            set_command( "adjust_tabwidth", "", "true" );
+        }
+        // 固定長
+        else view->get_tab_label().set_text( str_label );  
     }
 }
 

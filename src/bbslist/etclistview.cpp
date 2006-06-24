@@ -32,7 +32,7 @@ EtcListView::~EtcListView()
 void EtcListView::show_view()
 {
     xml2tree( DBTREE::get_xml_etc() );
-    BBSLIST::get_admin()->set_command( "set_tablabel", get_url(), "Etc" );
+    BBSLIST::get_admin()->set_command( "set_tablabel", get_url(), "Etc", "fix" );
 }
 
 

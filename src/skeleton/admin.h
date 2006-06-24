@@ -103,7 +103,7 @@ namespace SKELETON
         virtual void focus_current_view();
         virtual void restore_focus();
         virtual void focus_out();
-        virtual void set_tablabel( const std::string& url, const std::string& str_label );
+        virtual void set_tablabel( const std::string& url, const std::string& str_label, bool fix );
         virtual void adjust_tabwidth( bool force );
 
         // D&D
