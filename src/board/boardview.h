@@ -98,6 +98,7 @@ namespace BOARD
         bool slot_button_release( GdkEventButton* event );
         bool slot_motion( GdkEventMotion* event );
         bool slot_key_press( GdkEventKey* event );
+        bool slot_key_release( GdkEventKey* event );
         void slot_open_tab();
         void slot_favorite_thread();
         void slot_favorite_board();

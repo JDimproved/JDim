@@ -191,6 +191,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BoardView::slot_button_release ) );
     m_treeview.sig_motion().connect( sigc::mem_fun(*this, &BoardView::slot_motion ) );
     m_treeview.sig_key_press().connect( sigc::mem_fun(*this, &BoardView::slot_key_press ) );
+    m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &BoardView::slot_key_release ) );
 
     // D&D設定
     m_treeview.set_reorderable_view( true );
@@ -1184,8 +1185,33 @@ bool BoardView::slot_motion( GdkEventMotion* event )
 //
 bool BoardView::slot_key_press( GdkEventKey* event )
 {
-    operate_view( SKELETON::View::get_control().key_press( event ) );
+    int key = SKELETON::View::get_control().key_press( event );
 
+    // キー入力でスレを開くとkey_releaseイベントがboadviewが画面から
+    // 消えてから送られてWIDGET_REALIZED_FOR_EVENT assertionが出るので
+    // OpenArticle(Tab)は slot_key_release() で処理する
+    if( key == CONTROL::OpenArticle ) return true;
+    if( key == CONTROL::OpenArticleTab ) return true;
+
+    operate_view( key );
+
+    return true;
+}
+
+
+//
+// キーリリースイベント
+//
+bool BoardView::slot_key_release( GdkEventKey* event )
+{
+    int key = SKELETON::View::get_control().key_press( event );
+
+    // キー入力でスレを開くとkey_releaseイベントがboadviewが画面から
+    // 消えてから送られてWIDGET_REALIZED_FOR_EVENT assertionが出るので
+    // OpenArticle(Tab)はここで処理する
+    if( key == CONTROL::OpenArticle ) operate_view( key );
+    if( key == CONTROL::OpenArticleTab ) operate_view( key );
+   
     return true;
 }
 
