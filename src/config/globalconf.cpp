@@ -50,6 +50,7 @@ int loader_timeout_post;
 int loader_timeout_img;
 
 std::string command_openurl;
+int brownsercombo_id;
 
 int imgpopup_width;
 int imgpopup_height;
@@ -128,7 +129,10 @@ const bool CONFIG::init_config()
     loader_timeout_img = cf.get_option( "loader_timeout_img", 30 ); // 画像
 
     // リンクをクリックしたときに実行するコマンド
-    command_openurl = cf.get_option( "command_openurl", "firefox -remote \"openURL(%s,new-tab)\"" );
+    command_openurl = cf.get_option( "command_openurl", "" );
+
+    // ブラウザ設定ダイアログのコンボボックスの番号
+    brownsercombo_id = cf.get_option( "brownsercombo_id", 0 );
 
     // 画像ポップアップサイズ
     imgpopup_width = cf.get_option( "imgpopup_width", 320 );
@@ -252,6 +256,7 @@ void CONFIG::save_conf()
     cf.update( "loader_timeout_img", loader_timeout_img );
 
     cf.update( "command_openurl", command_openurl );
+    cf.update( "brownsercombo_id", brownsercombo_id );
 
     cf.update( "imgpopup_width", imgpopup_width );
     cf.update( "imgpopup_height", imgpopup_height );
@@ -364,6 +369,9 @@ const int CONFIG::get_loader_timeout_img(){ return loader_timeout_img; }
 
 const std::string& CONFIG::get_command_openurl() { return command_openurl; }
 void CONFIG::set_command_openurl( const std::string& command ){ command_openurl = command; }
+
+const int CONFIG::get_brownsercombo_id(){ return brownsercombo_id; }
+void CONFIG::set_brownsercombo_id( int id ){ brownsercombo_id = id; }
 
 const int CONFIG::get_imgpopup_width(){ return imgpopup_width; }
 const int CONFIG::get_imgpopup_height(){ return imgpopup_height; }

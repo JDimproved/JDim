@@ -103,6 +103,10 @@ namespace CONFIG
     const std::string& get_command_openurl();
     void set_command_openurl( const std::string& command );
 
+    // ブラウザ設定ダイアログのコンボボックスの番号
+    const int get_brownsercombo_id();
+    void set_brownsercombo_id( int id );
+
     // 画像ポップアップサイズ
     const int get_imgpopup_width();
     const int get_imgpopup_height();
