@@ -382,6 +382,7 @@ PrefDiagFactory追加
 bbslistのタブが縮んだままになるバグを修正
 スレ一覧からスペースでスレを開くとWIDGET_REALIZED_FOR_EVENT assertが出るバグを修正
 ブラウザ設定をコンボボックスを使うように改良
+メニューなどの英語を日本語に直した
 
 
 - 1.51b.060617

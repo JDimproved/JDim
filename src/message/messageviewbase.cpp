@@ -134,11 +134,11 @@ void MessageViewBase::pack_widget()
     // 書き込みビュー
     m_label_name.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
     m_label_mail.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
-    m_label_name.set_text( " name " );
-    m_label_mail.set_text( " mail " );
+    m_label_name.set_text( " 名前 " );
+    m_label_mail.set_text( " メール " );
 
-    m_check_fixname.set_label( "fix" );
-    m_check_fixmail.set_label( "fix" );
+    m_check_fixname.set_label( "保存" );
+    m_check_fixmail.set_label( "保存" );
 
     if( DBTREE::write_fixname( get_url() ) ){
         m_check_fixname.set_active();
@@ -165,8 +165,8 @@ void MessageViewBase::pack_widget()
     // プレビュー
     m_preview = CORE::ViewFactory( CORE::VIEW_ARTICLEPREVIEW, get_url() );
 
-    m_notebook.append_page( m_msgview, "Message" );
-    m_notebook.append_page( *m_preview, "Preview" );
+    m_notebook.append_page( m_msgview, "メッセージ" );
+    m_notebook.append_page( *m_preview, "プレビュー" );
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &MessageViewBase::slot_switch_page ) );
 
     pack_start( m_toolbar, Gtk::PACK_SHRINK );

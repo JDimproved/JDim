@@ -174,8 +174,8 @@ void ArticleViewMain::update_finish()
 
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::article_str_code( url_article() )
-           << " [ Total " << DBTREE::article_number_load( url_article() )
-           << " / New " << DBTREE::article_number_new( url_article() ) << " ] "
+           << " [ 全 " << DBTREE::article_number_load( url_article() )
+           << " / 新着 " << DBTREE::article_number_new( url_article() ) << " ] "
            << str_stat
            << " " << DBTREE::article_lng_dat( url_article() )/1024 << " k";
 

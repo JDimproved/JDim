@@ -772,7 +772,7 @@ void BoardView::update_view()
 
     // ステータスバー更新
     std::ostringstream ss_tmp;
-    ss_tmp << DBTREE::board_str_code( get_url() ) << " [ Total " << ( id -1 ) << " ] ";
+    ss_tmp << DBTREE::board_str_code( get_url() ) << " [ 全 " << ( id -1 ) << " ] ";
     set_status( ss_tmp.str() );
     CORE::core_set_command( "set_status","", get_status() );
 

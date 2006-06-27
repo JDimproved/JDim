@@ -12,7 +12,7 @@ using namespace CORE;
 
 
 HistoryMenu::HistoryMenu()
-    : Gtk::MenuItem( "_History", true )
+    : Gtk::MenuItem( "履歴(_B)", true )
 {
     m_submenu = Gtk::manage( new CORE::HistorySubMenu( CACHE::path_xml_history() ) );
     set_submenu( *m_submenu );

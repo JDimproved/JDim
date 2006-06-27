@@ -64,7 +64,7 @@ IMAGE::get_admin()->set_command( "focus_out" ); \
 Core::Core( WinMain& win_main )
     : m_win_main( win_main ),
       m_imagetab_shown( 0 ),
-      m_button_go( Gtk::Stock::JUMP_TO, "Go" ),
+      m_button_go( Gtk::Stock::JUMP_TO, "移動" ),
       m_focused_admin( FOCUS_NO )
 {
     instance_core = this;
@@ -151,7 +151,7 @@ void Core::run( bool init )
     m_action_group = Gtk::ActionGroup::create();
 
     // File
-    m_action_group->add( Gtk::Action::create( "Menu_File", "_File" ) );    
+    m_action_group->add( Gtk::Action::create( "Menu_File", "ファイル(_F)" ) );    
     m_action_group->add( Gtk::ToggleAction::create( "Online", "オンライン", std::string(), SESSION::is_online() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_online ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板リスト再読込"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
@@ -167,7 +167,7 @@ void Core::run( bool init )
 
 
     // 表示
-    m_action_group->add( Gtk::Action::create( "Menu_View", "_View" ) );    
+    m_action_group->add( Gtk::Action::create( "Menu_View", "表示(_V)" ) );    
     m_action_group->add( Gtk::ToggleAction::create( "Urlbar", "アドレスバー", std::string(), SESSION::show_urlbar() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_urlbar ) );
 
@@ -188,15 +188,15 @@ void Core::run( bool init )
     m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
 
     // 設定
-    m_action_group->add( Gtk::Action::create( "Menu_Config", "_Config" ) );    
-    m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "Boardに過去ログも表示", std::string(), CONFIG::get_show_oldarticle() ),
+    m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
+    m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示", std::string(), CONFIG::get_show_oldarticle() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "RestoreBoard", "起動時にBoardを復元", std::string(), CONFIG::get_restore_board() ),
+    m_action_group->add( Gtk::ToggleAction::create( "RestoreBoard", "起動時にスレ一覧を復元", std::string(), CONFIG::get_restore_board() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_board ) );
-    m_action_group->add( Gtk::ToggleAction::create( "RestoreArticle", "起動時にarticleを復元", std::string(), CONFIG::get_restore_article() ),
+    m_action_group->add( Gtk::ToggleAction::create( "RestoreArticle", "起動時にスレッドを復元", std::string(), CONFIG::get_restore_article() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_article ) );
-    m_action_group->add( Gtk::ToggleAction::create( "RestoreImage", "起動時にImageを復元", std::string(), CONFIG::get_restore_image() ),
+    m_action_group->add( Gtk::ToggleAction::create( "RestoreImage", "起動時に画像を復元", std::string(), CONFIG::get_restore_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_image ) );
 
     m_action_group->add( Gtk::Action::create( "ColorChar", "スレ文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
@@ -216,7 +216,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア" ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
 
     // help
-    m_action_group->add( Gtk::Action::create( "Menu_Help", "_Help" ) );    
+    m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
     m_action_group->add( Gtk::Action::create( "Hp", "ホームページ" ), sigc::mem_fun( *this, &Core::slot_show_hp ) );
     m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル" ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
@@ -332,9 +332,9 @@ void Core::run( bool init )
     // 2pane
     if( mode_pane == MODE_2PANE ){
 
-        m_notebook.append_page( BOARD::get_admin()->get_gtknotebook(), "Board" );
-        m_notebook.append_page( ARTICLE::get_admin()->get_gtknotebook(), "Article" );
-        m_notebook.append_page( IMAGE::get_admin()->view(), "Image" );
+        m_notebook.append_page( BOARD::get_admin()->get_gtknotebook(), "スレ一覧" );
+        m_notebook.append_page( ARTICLE::get_admin()->get_gtknotebook(), "スレッド" );
+        m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
         m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
 
         m_vbox.pack_start( m_notebook );
@@ -346,8 +346,8 @@ void Core::run( bool init )
     // 3ペーン
     else if( mode_pane == MODE_3PANE ){
 
-        m_notebook.append_page( ARTICLE::get_admin()->get_gtknotebook(), "Article" );
-        m_notebook.append_page( IMAGE::get_admin()->view(), "Image" );
+        m_notebook.append_page( ARTICLE::get_admin()->get_gtknotebook(), "スレッド" );
+        m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
         m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
 
         m_vbox.pack_start( m_notebook );
@@ -362,8 +362,8 @@ void Core::run( bool init )
     // 縦3ペーン
     else{
 
-        m_notebook.append_page( ARTICLE::get_admin()->get_gtknotebook(), "Article" );
-        m_notebook.append_page( IMAGE::get_admin()->view(), "Image" );
+        m_notebook.append_page( ARTICLE::get_admin()->get_gtknotebook(), "スレッド" );
+        m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
         m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
 
         m_vbox.pack_start( m_notebook );
@@ -821,7 +821,7 @@ void Core::slot_toggle_oldarticle()
 {
     CONFIG::set_show_oldarticle( ! CONFIG::get_show_oldarticle() );
 
-    Gtk::MessageDialog mdiag( "次に開いたBoardから有効になります" );
+    Gtk::MessageDialog mdiag( "次に開いた板から有効になります" );
     mdiag.run();
 }
 
