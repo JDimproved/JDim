@@ -206,7 +206,7 @@ std::list< int > NodeTreeBase::get_res_with_url()
         while( node ){
 
             if( node->type == NODE_LINK
-                && std::string( node->linkinfo->link ).find( "http://" ) == 0 ){
+                && std::string( node->linkinfo->link ).find( "http" ) == 0 ){
                 list_res.push_back( i );
                 break;
             }
@@ -1070,12 +1070,17 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
         }
 
         ///////////////////////
-        // http, ttp のチェック
+        // http(s)://, ttp(s)://, tp(s):// のチェック
         int create_link = 0;
-        if( *( pos ) == 'h' && *( pos + 1 ) == 't' && *( pos + 2 ) == 't' && *( pos + 3 ) == 'p'
-            && *( pos + 4 ) == ':' && *( pos + 5 ) == '/' && *( pos + 6 ) == '/' ) create_link = 6;
-        if( *( pos ) == 't' && *( pos + 1 ) == 't' && *( pos + 2 ) == 'p' 
-            && *( pos + 3 ) == ':' && *( pos + 4 ) == '/' && *( pos + 5 ) == '/' ) create_link = 5;
+        if( ( *( pos ) == 'h' && *( pos + 1 ) == 't' && *( pos + 2 ) == 't' && *( pos + 3 ) == 'p' ) &&
+            ( ( *( pos + 4 ) == ':' && *( pos + 5 ) == '/' && *( pos + 6 ) == '/' )
+              || ( *( pos + 4 ) == 's' && *( pos + 5 ) == ':' && *( pos + 6 ) == '/' && *( pos + 7 ) == '/' ) ) ) create_link = 1;
+        else if( ( *( pos ) == 't' && *( pos + 1 ) == 't' && *( pos + 2 ) == 'p'  ) && 
+            ( ( *( pos + 3 ) == ':' && *( pos + 4 ) == '/' && *( pos + 5 ) == '/' )
+              || ( *( pos + 3 ) == 's' && *( pos + 4 ) == ':' && *( pos + 5 ) == '/' && *( pos + 6 ) == '/' ) ) ) create_link = 2;
+        else if( ( *( pos ) == 't' && *( pos + 1 ) == 'p'  ) &&
+            ( ( *( pos + 2 ) == ':' && *( pos + 3 ) == '/' && *( pos + 4 ) == '/' )
+              || ( *( pos + 2 ) == 's' && *( pos + 3 ) == ':' && *( pos + 4 ) == '/' && *( pos + 5 ) == '/' ) ) ) create_link = 3;
         if( create_link ){
 
             // フラッシュしてからリンクノードつくる
@@ -1088,9 +1093,13 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 
             // m_parsed_text に http://〜をコピー
             int offset = 0;
-            if( create_link == 5 ){ // ttp:// の場合
+            if( create_link >= 2 ){ // ttp:// の場合
                 m_parsed_text[ 0 ] = 'h';
                 offset = 1;
+            }
+            if( create_link >= 3 ){ // tp:// の場合
+                m_parsed_text[ 1 ] = 't';
+                offset = 2;
             }
             memcpy( m_parsed_text + offset, pos, n );
 
