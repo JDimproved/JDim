@@ -1132,6 +1132,14 @@ bool BoardView::slot_button_release( GdkEventButton* event )
 
             Gtk::Menu* popupmenu;
             if( m_treeview.get_selection()->get_selected_rows().size() == 1 ){
+
+                // キャッシュが無かったらスレのプロパティを非表示に
+                Glib::RefPtr< Gtk::Action > act = action_group()->get_action( "PreferenceArticle" );
+                if( act ){
+                    if( DBTREE::article_is_cached( path2daturl( m_path_selected ) ) ) act->set_sensitive( true );
+                    else act->set_sensitive( false );
+                }
+
                 popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
             }
             else{ // 複数選択の場合

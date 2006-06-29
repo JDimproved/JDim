@@ -25,7 +25,8 @@ Preferences::Preferences( const std::string& url )
 
     ,m_label_since( "スレ立て日時 : ", DBTREE::article_since_date( get_url() ) )
     ,m_label_modified( "最終更新日時 : ", MISC::timettostr( DBTREE::article_time_modified( get_url() ) ) )
-    ,m_label_write( "最終書き込み日時 : ", DBTREE::article_write_date( get_url() ) )
+    ,m_label_write( "最終書き込み日時 : ",
+                    DBTREE::article_write_time( get_url() ) ? DBTREE::article_write_date( get_url() ) : std::string() )
 {
     // 一般
     m_vbox_info.set_border_width( 16 );

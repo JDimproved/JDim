@@ -79,6 +79,7 @@ namespace DBTREE
 
     
     // article 系
+    const bool article_is_cached( const std::string& url ); // キャッシュにあるかどうか
     const std::string article_id( const std::string& url ); // 拡張子込み "12345.dat" みたいに
     const std::string article_key( const std::string& url ); // idから拡張子を取ったもの。書き込み用
     const time_t article_since_time( const std::string& url );

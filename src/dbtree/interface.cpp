@@ -291,6 +291,12 @@ void DBTREE::board_set_check_noname( const std::string& url, bool check )
 }
 
 
+const bool DBTREE::article_is_cached( const std::string& url )
+{
+    return DBTREE::get_article( url )->is_cached();
+}
+
+
 // 拡張子付き
 const std::string DBTREE::article_id( const std::string& url )
 {
