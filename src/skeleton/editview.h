@@ -63,6 +63,8 @@ namespace SKELETON
         Glib::ustring get_text(){ return m_textview.get_buffer()->get_text(); }
         int get_line_count(){ return m_textview.get_buffer()->get_line_count(); }
 
+        void set_editable( bool editable ){ m_textview.set_editable( editable ); }
+
         void focus_view(){ m_textview.grab_focus(); }
     };
 }
