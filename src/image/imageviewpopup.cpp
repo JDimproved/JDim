@@ -45,6 +45,8 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
 //
 void ImageViewPopup::clock_in()
 {
+    View::clock_in();
+
     // ロード中
     if( loading() ){
 

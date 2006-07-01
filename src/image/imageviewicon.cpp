@@ -67,6 +67,8 @@ ImageViewIcon::~ImageViewIcon()
 //
 void ImageViewIcon::clock_in()
 {
+    View::clock_in();
+
     // ロード終了
     if( get_imagearea() && loading() && ! get_img()->is_loading() ){
 

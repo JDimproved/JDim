@@ -42,6 +42,18 @@ enum
 };
 
 
+// オートリロードのモード
+enum
+{
+    AUTORELOAD_NOT = 0,
+    AUTORELOAD_ONCE, // 1 回だけリロードして終わり
+    AUTORELOAD_ON    // オートリロード実行中
+};
+
+// オートリロードの最小秒数
+#define AUTORELOAD_MINSEC 10
+
+
 // CoreやAdminクラスで使うコマンド構造体
 struct COMMAND_ARGS
 {

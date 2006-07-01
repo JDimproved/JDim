@@ -75,6 +75,8 @@ void ArticleViewMain::goto_num( int num )
 //
 void ArticleViewMain::reload()
 {
+    View::reset_autoreload_counter();
+
     // DAT落ちしてるとロードしないので状態をリセットしておく
     get_article()->reset_status();
     show_view();

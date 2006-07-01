@@ -256,6 +256,8 @@ BBSListViewBase::~BBSListViewBase()
 //
 void BBSListViewBase::clock_in()
 {
+    View::clock_in();
+
     m_treeview.clock_in();
 
     // スクロールバー移動

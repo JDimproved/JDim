@@ -287,6 +287,13 @@ void Admin::exec_command()
         adjust_tabwidth( ( command.arg1 == "true" ) );
     }
 
+    // オートリロード設定
+    else if( command.command  == "set_autoreload" ){
+        int mode = AUTORELOAD_ON;
+        int sec = 10;
+        set_autoreload_mode( command.url, mode, sec );
+    }
+
     // 全てのビューを再描画
     else if( command.command == "relayout_all" ){
 
@@ -698,6 +705,17 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label, 
         // 固定長
         else view->get_tab_label().set_text( str_label );  
     }
+}
+
+
+
+//
+// オートリロードのモード設定
+//
+void Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
+{
+    SKELETON::View* view = get_view( url );
+    if( view ) view->set_autoreload_mode( mode, sec );
 }
 
 

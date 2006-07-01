@@ -628,6 +628,8 @@ int BoardView::compare_row( int& num_a, int& num_b, Gtk::TreeModel::Row& row_a, 
 //
 void BoardView::clock_in()
 {
+    View::clock_in();
+
     m_treeview.clock_in();
 }
 

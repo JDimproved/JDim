@@ -55,6 +55,8 @@ ImageViewMain::ImageViewMain( const std::string& url )
 //
 void ImageViewMain::clock_in()
 {
+    View::clock_in();
+
     // viewがアクティブになった(クロック入力が来た)ときにステータス表示
     if( m_show_status ){
         m_show_status = false;

@@ -426,6 +426,8 @@ void ArticleViewBase::clock_in()
 {
     assert( m_drawarea );
 
+    View::clock_in();
+
     // ポップアップが出てたらそっちにクロックを回す
     if( is_popup_shown() && m_popup_win->view() ){
         m_popup_win->view()->clock_in();
@@ -444,6 +446,8 @@ void ArticleViewBase::clock_in()
 //
 void ArticleViewBase::reload()
 {
+    View::reset_autoreload_counter();
+
     // DAT落ちしてるとロードしないので状態をリセットしておく
     DBTREE::article_reset_status( m_url_article );
     CORE::core_set_command( "open_article", m_url_article , "true" );

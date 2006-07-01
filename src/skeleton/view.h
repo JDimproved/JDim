@@ -49,6 +49,11 @@ namespace SKELETON
         // true ならマウスジェスチャ使用
         bool m_enable_mg; 
 
+        // オートリロード
+        int m_autoreload_mode; // モード
+        int m_autoreload_sec; // 何秒おきにリロードするか
+        int m_autoreload_counter; // オートリロード用のカウンタ
+
       protected:
 
         // UI
@@ -65,6 +70,12 @@ namespace SKELETON
         void set_enable_mg( bool mg ){ m_enable_mg = mg; }
         const bool enable_mg() const { return m_enable_mg; }
 
+        // オートリロードのカウンタをインクリメント
+        // 指定秒数を越えたら true を返す
+        bool inc_autoreload_counter();
+
+        // オートリロードのカウンタをリセット
+        void reset_autoreload_counter(); 
 
     public:
 
@@ -98,8 +109,9 @@ namespace SKELETON
         // shutdown( SIGHUP )用
         virtual void shutdown(){}
 
-        virtual void clock_in(){}
+        virtual void clock_in();
         virtual void reload(){}
+        virtual void set_autoreload_mode( int mode, int sec );
         virtual void stop(){}
         virtual void show_view(){}
         virtual void redraw_view(){}
