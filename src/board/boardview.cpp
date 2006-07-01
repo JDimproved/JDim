@@ -209,6 +209,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動"), sigc::mem_fun( *this, &BoardView::goto_bottom ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );    
     action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する"), sigc::mem_fun( *this, &BoardView::delete_view ) );
+    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く"), sigc::mem_fun( *this, &BoardView::open_selected_rows ) );
     action_group()->add( Gtk::Action::create( "Unselect", "選択解除"), sigc::mem_fun( *this, &BoardView::slot_unselect_all ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_title_url ) );
@@ -246,6 +247,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
     // 通常 + 複数
     "<popup name='popup_menu_mul'>"
+    "<menuitem action='OpenRows'/>"
+    "<separator/>"
     "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menuitem action='Favorite_Article'/>"
@@ -1380,6 +1383,27 @@ bool BoardView::open_row( Gtk::TreePath& path, bool tab )
 
     CORE::core_set_command( "open_article", url_target , str_tab );
     return true;
+}
+
+
+
+//
+// 選択した行をまとめて開く
+//
+void BoardView::open_selected_rows()
+{
+    std::string list_url;
+    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
+    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
+    for( ; it != list_it.end(); ++it ){
+        Gtk::TreeModel::Row row = *( *it );
+        std::string url = DBTREE::url_datbase( get_url() ) + row[ m_columns.m_col_id_dat ];
+
+        if( !list_url.empty() ) list_url += " ";
+        list_url += url;
+    }
+
+    CORE::core_set_command( "open_article_list", std::string(), list_url );
 }
 
 

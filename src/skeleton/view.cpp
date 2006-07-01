@@ -15,15 +15,10 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
 {}
 
 
-//
-// クロック入力
-//
-// クロックタイマーの本体はコアが持っていて、定期的にadminがアクティブなviewにクロック入力を渡す
-//
-void View::clock_in()
+void View::clock_in_always()
 {
     // オートリロード
-    if( View::inc_autoreload_counter() ) reload();
+    if( inc_autoreload_counter() ) reload();
 }
 
 
@@ -34,6 +29,7 @@ bool View::inc_autoreload_counter()
     if( m_autoreload_mode == AUTORELOAD_NOT ) return false;
 
     ++m_autoreload_counter;
+
     if( m_autoreload_counter > m_autoreload_sec * 1000/TIMER_TIMEOUT ){
         reset_autoreload_counter();
         return true;

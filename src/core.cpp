@@ -879,6 +879,19 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    // メインビューを複数開く
+    // 
+    if( command.command  == "open_article_list" ) {
+
+        ARTICLE::get_admin()->set_command( "open_list",
+                                           std::string(),
+
+                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           command.arg1 // datファイルのURLを空白で区切って指定
+            );
+
+        return;
+    }
 
     // キーワードで抽出( AND/OR )
     else if( command.command  == "open_article_keyword" ) { 

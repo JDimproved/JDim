@@ -109,7 +109,12 @@ namespace SKELETON
         // shutdown( SIGHUP )用
         virtual void shutdown(){}
 
-        virtual void clock_in();
+        // クロック入力
+        // clock_in()はビューがアクティブのときに呼び出される
+        // clock_in_always()は常に呼び出されるので重い処理を含めてはいけない
+        virtual void clock_in(){};
+        virtual void clock_in_always();
+
         virtual void reload(){}
         virtual void set_autoreload_mode( int mode, int sec );
         virtual void stop(){}

@@ -183,6 +183,7 @@ void ArticleViewMain::update_finish()
 
     set_status( ss_tmp.str() );
     CORE::core_set_command( "set_status", "", get_status() );
+    ARTICLE::get_admin()->set_command( "focus_current_view" );
 
     // 全体再描画
     drawarea()->redraw_view();

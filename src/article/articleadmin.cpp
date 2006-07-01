@@ -18,6 +18,8 @@
 #include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "session.h"
+#include "command.h"
+
 
 ARTICLE::ArticleAdmin *instance_articleadmin = NULL;
 
@@ -174,6 +176,44 @@ void ArticleAdmin::restore()
 }
 
 
+
+// リストで与えられたページをタブで連続して開く
+//
+// 連続してリロードかけるとサーバに負担をかけるので、オフラインで開いて
+// タイミングをずらしながらリロードする
+//
+void ArticleAdmin::open_list( std::list< std::string >& list_url )
+{
+    if( list_url.empty() ) return;
+
+    int waittime = 0;
+    bool online = SESSION::is_online();
+
+    std::list< std::string >::iterator it = list_url.begin();
+    for( ; it != list_url.end(); ++it, waittime += AUTORELOAD_MINSEC ){
+
+        COMMAND_ARGS command_arg;
+        command_arg.command = "open_view";
+        command_arg.url = (*it);
+        command_arg.arg1 = "true";   // タブで開く
+        command_arg.arg2 = "false";  // 既に開いているかチェック
+        command_arg.arg3 = "MAIN";
+
+        open_view( command_arg );
+        CORE::core_set_command( "set_history_article", command_arg.url );
+
+        // 一番最初のスレは普通にオンラインで開く
+        // 二番目からは ウェイトを入れてリロード
+        if( !waittime ) SESSION::set_online( false );
+        else set_autoreload_mode( command_arg.url, AUTORELOAD_ONCE, waittime );
+    }
+
+    SESSION::set_online( online );
+    switch_view( *( list_url.begin() ) );
+}
+
+
+
 //
 // カレントビューでポップアップ表示していたら消す
 //
@@ -290,6 +330,14 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
             SKELETON::View* view = ( *it );
             if( view ) view->relayout();
         }
+    }
+
+    // リストで開く
+    // arg1 にはdatファイルを空白で区切って指定する
+    //
+    else if( command.command == "open_list" ){
+        std::list< std::string > list_url = MISC::split_line( command.arg1 );
+        open_list( list_url );
     }
 
     // フォント初期化

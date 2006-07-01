@@ -113,6 +113,7 @@ namespace BOARD
         void slot_preferences_article();
 
         bool open_row( Gtk::TreePath& path, bool tab );
+        void open_selected_rows();
         std::string path2daturl( const Gtk::TreePath& path );
 
         // 検索

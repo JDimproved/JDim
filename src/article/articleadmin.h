@@ -8,6 +8,7 @@
 
 #include "skeleton/admin.h"
 
+#include <list>
 #include <string>
 
 #define ARTICLE_SIGN "_ARTICLE_"
@@ -36,6 +37,7 @@ namespace ARTICLE
         virtual void restore();
 
       private:
+        void open_list( std::list< std::string >& list_url );
         void delete_popup();
 
         virtual void slot_drag_begin( int page );

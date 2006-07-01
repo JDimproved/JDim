@@ -159,9 +159,20 @@ std::list<std::string> Admin::get_URLs()
 //
 void Admin::clock_in()
 {
+    // アクティブなビューにクロックを送る
     SKELETON::View* view = get_current_view();
     if( view ) view->clock_in();
     if( m_adjust_reserve ) adjust_tabwidth( false );
+
+    // 全てのビューにクロックを送る
+    // clock_in_always()には軽い処理だけを含めること
+    int pages = m_notebook.get_n_pages();
+    if( pages ){
+        for( int i = 0; i < pages; ++i ){
+            SKELETON::View* view = dynamic_cast< SKELETON::View* >( m_notebook.get_nth_page( i ) );
+            if( view ) view->clock_in_always();
+        }
+    }
 
     m_notebook.clock_in();
 }
@@ -338,7 +349,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
 #ifdef _DEBUG
             std::cout << "page = " << page << std::endl;
 #endif        
-            m_notebook.set_current_page( page );
+            set_current_page( page );
             view->show_view();
             focus_current_view();
             return;
@@ -374,7 +385,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
     view->show();
     view->show_view();
-    m_notebook.set_current_page( m_notebook.page_num( *view ) );
+    set_current_page( m_notebook.page_num( *view ) );
     focus_current_view();
 }
 
@@ -391,7 +402,7 @@ void Admin::switch_view( const std::string& url )
     if( view ){
             
         int page = m_notebook.page_num( *view );
-        m_notebook.set_current_page( page );
+        set_current_page( page );
         focus_view( page );
     }
 }
@@ -411,7 +422,7 @@ void Admin::tab_left()
 
     if( page == 0 ) page = pages;
 
-    m_notebook.set_current_page( --page );
+    set_current_page( --page );
 }
 
 
@@ -429,7 +440,7 @@ void Admin::tab_right()
 
     if( page == pages -1 ) page = -1;
 
-    m_notebook.set_current_page( ++page );
+    set_current_page( ++page );
 }
 
 
@@ -840,7 +851,7 @@ View* Admin::get_current_view()
 
 
 //
-// 現在表示されているページ番号
+// 指定したページに表示切替え
 //
 void Admin::set_current_page( int page )
 {
