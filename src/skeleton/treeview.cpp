@@ -345,7 +345,8 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
 
 bool JDTreeView::on_button_release_event( GdkEventButton* event )
 {
-    if( !( event->state & GDK_CONTROL_MASK ) ){ // ctrl + クリック( 複数選択 )してない場合
+    if( !( event->state & GDK_CONTROL_MASK )
+        && !( event->state & GDK_SHIFT_MASK ) ){ // ctrl/shift + クリック( 複数選択 )してない場合
 
         Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
 
