@@ -322,8 +322,16 @@ void JDTreeView::expand_parents( const Gtk::TreePath& path )
 
 bool JDTreeView::on_button_press_event( GdkEventButton* event )
 {
+    Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
     m_drag = false;
     m_sig_button_press.emit( event );
+
+    // ドラッグして範囲選択
+    // m_path_dragstart が empty でない時に範囲選択を行う
+    // on_motion_notify_event()も参照せよ
+    if( m_control.button_alloted( event, CONTROL::OpenArticleTabButton ) )
+        m_path_dragstart = m_path_dragpre = path;
+    else m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
 
     // 複数行選択時の動作
     if( get_selection()->get_selected_rows().size() >= 2 ){
@@ -333,7 +341,17 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
 
         // 普通にクリックしても選択解除しない
         // 選択解除はD&Dしてなかったら on_button_release_event()で行う
-        if( !( event->state & GDK_CONTROL_MASK ) ) return true;
+        if( !( event->state & GDK_CONTROL_MASK )
+            && !( event->state & GDK_SHIFT_MASK ) ) return true;
+    }
+    else {
+        // ドラッグ範囲選択開始 or 一つも行が選択されていない
+        if( !m_path_dragstart.empty() 
+            || ( !( event->state & GDK_CONTROL_MASK ) && !path.empty() && get_selection()->get_selected_rows().size() == 0 )
+            ){
+            get_selection()->unselect_all();
+            set_cursor( path );
+        }
     }
 
     return Gtk::TreeView::on_button_press_event( event );
@@ -345,10 +363,11 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
 
 bool JDTreeView::on_button_release_event( GdkEventButton* event )
 {
-    if( !( event->state & GDK_CONTROL_MASK )
-        && !( event->state & GDK_SHIFT_MASK ) ){ // ctrl/shift + クリック( 複数選択 )してない場合
+    Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
 
-        Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
+    if( !( event->state & GDK_CONTROL_MASK )
+        && !( event->state & GDK_SHIFT_MASK ) // ctrl/shift + クリックで複数選択してない場合
+        && !( !m_path_dragstart.empty() && path != m_path_dragstart ) ){ // ドラッグして範囲選択していない場合
 
         // 何もないところをクリックしたら選択解除
         if( !get_row( path ) ) get_selection()->unselect_all();
@@ -359,6 +378,8 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
 
         if( !m_drag ) m_sig_button_release.emit( event );
     }
+
+    m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
 
     return Gtk::TreeView::on_button_release_event( event );
 }
@@ -467,6 +488,15 @@ bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
 #ifdef _DEBUG
 //    std::cout << "JDTreeView::on_motion_notify_event x = " << event->x << " y = " << event->y << std::endl;
 #endif
+
+    // ドラッグして範囲選択
+    Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
+    if( ! m_path_dragstart.empty() && !path.empty() && path != m_path_dragpre ){
+        get_selection()->unselect_all();
+        get_selection()->select( path, m_path_dragstart );
+        m_path_dragpre = path;
+    }
+
     m_sig_motion.emit( event );
 
     return Gtk::TreeView::on_motion_notify_event( event );
@@ -490,7 +520,7 @@ bool JDTreeView::on_scroll_event( GdkEventScroll* event )
 
     std::cout << "scr_inc = " << scr_inc << std::endl;
     std::cout << "lower = " << adj->get_lower() << std::endl;
-    std::cout << "upper = " << upper << std::endl;
+    std::cout << "upper = " << adj->get_upper() << std::endl;
     std::cout << "value = " << val << std::endl;
     std::cout << "step = " << adj->get_step_increment() << std::endl;
     std::cout << "page = " << adj->get_page_increment() << std::endl;

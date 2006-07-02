@@ -45,6 +45,8 @@ namespace SKELETON
 
         bool m_reorderable;
         bool m_drag;
+        Gtk::TreeModel::Path m_path_dragstart;
+        Gtk::TreeModel::Path m_path_dragpre;
 
         Tooltip m_tooltip;
 
