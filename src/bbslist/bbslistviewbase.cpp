@@ -1371,7 +1371,7 @@ void BBSListViewBase::draw_underline( const Gtk::TreePath& path, bool draw )
 void BBSListViewBase::show_status()
 {
     set_status( path2url( m_treeview.get_current_path() ) );
-    CORE::core_set_command( "set_status", "", path2url( m_treeview.get_current_path() ) );
+    BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
 
 

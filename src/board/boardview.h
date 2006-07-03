@@ -74,6 +74,8 @@ namespace BOARD
 
         void save_column_width();
 
+        void show_view_impl();
+
         // ソート用
         void slot_mark_clicked();        
         void slot_id_clicked();

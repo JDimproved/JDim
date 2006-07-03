@@ -29,6 +29,9 @@ namespace ARTICLE
         virtual void update_view();
         virtual void update_finish();
         virtual void relayout();
+
+      private:
+        void show_view_impl();
     };
 
 

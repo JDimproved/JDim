@@ -3,6 +3,7 @@
 //#define _DEBUG
 #include "jddebug.h"
 
+#include "imageadmin.h"
 #include "imageview.h"
 #include "imagearea.h"
 
@@ -60,7 +61,7 @@ void ImageViewMain::clock_in()
     // viewがアクティブになった(クロック入力が来た)ときにステータス表示
     if( m_show_status ){
         m_show_status = false;
-        CORE::core_set_command( "set_status", "", get_status() );
+        IMAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
     }
 
     // ロード中
@@ -222,7 +223,7 @@ void ImageViewMain::show_status()
         else if( get_img()->get_code() != HTTP_OK ) set_status( get_img()->get_str_code() );
 
         // ステータス標示
-        CORE::core_set_command( "set_status", "", get_status() );
+        IMAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
         if( m_show_label ) m_label.set_text( get_status() );
 
 #ifdef _DEBUG
@@ -243,7 +244,7 @@ void ImageViewMain::show_status()
             set_status( tmpstr );
 
             // ステータス標示
-            CORE::core_set_command( "set_status", "", get_status() );
+            IMAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
             if( m_show_label ) m_label.set_text( get_status() );
 
 #ifdef _DEBUG

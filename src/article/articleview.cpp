@@ -79,7 +79,7 @@ void ArticleViewMain::reload()
 
     // DAT落ちしてるとロードしないので状態をリセットしておく
     get_article()->reset_status();
-    show_view();
+    show_view_impl();
     CORE::core_set_command( "set_history_article", url_article() );
 }
 
@@ -90,17 +90,22 @@ void ArticleViewMain::reload()
 //
 void ArticleViewMain::show_view()
 {
+    // タブをarticleに切替えてから表示する
+    CORE::core_set_command( "switch_article" );
+    show_view_impl();
+}
+
+void ArticleViewMain::show_view_impl()
+{
     m_gotonum_reserve = 0;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::show_view\n";
 #endif
-    
-    CORE::core_set_command( "switch_article" );
 
     if( get_url().empty() ){
         set_status( "invalid URL" );
-        CORE::core_set_command( "set_status","", get_status() );
+        ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
         return;
     }
 
@@ -124,7 +129,7 @@ void ArticleViewMain::show_view()
     get_article()->download_dat();
     if( get_article()->is_loading() ){
         set_status( "loading..." );
-        CORE::core_set_command( "set_status","", get_status() );
+        ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
     }
 }
 
@@ -182,8 +187,7 @@ void ArticleViewMain::update_finish()
            << " " << DBTREE::article_lng_dat( url_article() )/1024 << " k";
 
     set_status( ss_tmp.str() );
-    CORE::core_set_command( "set_status", "", get_status() );
-    ARTICLE::get_admin()->set_command( "focus_current_view" );
+    ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
 
     // 全体再描画
     drawarea()->redraw_view();

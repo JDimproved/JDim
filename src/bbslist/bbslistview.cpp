@@ -53,7 +53,7 @@ void BBSListViewMain::reload()
 {
     DBTREE::download_bbsmenu();
     set_status( "loading..." );
-    CORE::core_set_command( "set_status","", get_status() );        
+    BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
 
 
@@ -83,7 +83,7 @@ void BBSListViewMain::update_view()
 {
     xml2tree( DBTREE::get_xml_bbsmenu() );
     set_status( std::string() );
-    CORE::core_set_command( "set_status","", get_status() );        
+    BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
 
 

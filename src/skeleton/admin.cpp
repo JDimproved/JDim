@@ -316,6 +316,15 @@ void Admin::exec_command()
         }
     }
 
+    // ステータス表示
+    // アクティブなviewから依頼が来たらコアに渡す
+    else if( command.command == "set_status" ){
+
+        SKELETON::View* view = get_current_view();
+        if( m_focus && view && view->get_url() == command.url )
+            CORE::core_set_command( "set_status", command.url, command.arg1 );
+    }
+
     // 個別のコマンド処理
     else command_local( command );
 }
