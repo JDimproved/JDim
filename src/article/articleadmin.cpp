@@ -182,8 +182,9 @@ void ArticleAdmin::restore()
 // 連続してリロードかけるとサーバに負担をかけるので、オフラインで開いて
 // タイミングをずらしながらリロードする
 //
-void ArticleAdmin::open_list( std::list< std::string >& list_url )
+void ArticleAdmin::open_list( const std::string& str_list )
 {
+    std::list< std::string > list_url = MISC::split_line( str_list );
     if( list_url.empty() ) return;
 
     int waittime = 0;
@@ -330,14 +331,6 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
             SKELETON::View* view = ( *it );
             if( view ) view->relayout();
         }
-    }
-
-    // リストで開く
-    // arg1 にはdatファイルを空白で区切って指定する
-    //
-    else if( command.command == "open_list" ){
-        std::list< std::string > list_url = MISC::split_line( command.arg1 );
-        open_list( list_url );
     }
 
     // フォント初期化

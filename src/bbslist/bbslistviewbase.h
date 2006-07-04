@@ -124,6 +124,7 @@ namespace BBSLIST
 
         Gtk::TreeViewColumn* create_column();
         virtual bool open_row( Gtk::TreePath& path, bool tab );
+        void open_selected_rows();
         Glib::ustring path2url( const Gtk::TreePath& path );
         Glib::ustring path2name( const Gtk::TreePath& path );
         int path2type( const Gtk::TreePath& path );

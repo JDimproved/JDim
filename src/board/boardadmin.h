@@ -19,6 +19,7 @@ namespace BOARD
         ~BoardAdmin();
 
       protected:
+        virtual void open_list( const std::string& str_list );
         SKELETON::View* create_view( const COMMAND_ARGS& command );
 
         virtual void restore();

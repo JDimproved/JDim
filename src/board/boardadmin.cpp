@@ -16,6 +16,7 @@
 #include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "session.h"
+#include "command.h"
 
 BOARD::BoardAdmin *instance_boardadmin = NULL;
 
@@ -84,6 +85,42 @@ void BoardAdmin::restore()
     SESSION::set_online( online );
     set_command( "set_page", std::string(), MISC::itostr( SESSION::board_page() ) );
 }
+
+
+// リストで与えられたページをタブで連続して開く
+//
+// 連続してリロードかけるとサーバに負担をかけるので、オフラインで開いて
+// タイミングをずらしながらリロードする
+//
+void BoardAdmin::open_list( const std::string& str_list )
+{
+    std::list< std::string > list_url = MISC::split_line( str_list );
+    if( list_url.empty() ) return;
+
+    int waittime = 0;
+    bool online = SESSION::is_online();
+
+    std::list< std::string >::iterator it = list_url.begin();
+    for( ; it != list_url.end(); ++it, waittime += AUTORELOAD_MINSEC ){
+
+        COMMAND_ARGS command_arg;
+        command_arg.command = "open_view";
+        command_arg.url = (*it);
+        command_arg.arg1 = "true";   // タブで開く
+
+        open_view( command_arg );
+        CORE::core_set_command( "set_history_board", command_arg.url );
+
+        // 一番最初のスレは普通にオンラインで開く
+        // 二番目からは ウェイトを入れてリロード
+        if( !waittime ) SESSION::set_online( false );
+        else set_autoreload_mode( command_arg.url, AUTORELOAD_ONCE, waittime );
+    }
+
+    SESSION::set_online( online );
+    switch_view( *( list_url.begin() ) );
+}
+
 
 
 SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )

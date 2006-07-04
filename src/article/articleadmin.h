@@ -31,13 +31,13 @@ namespace ARTICLE
         ~ArticleAdmin();
 
       protected:
+        virtual void open_list( const std::string& str_list );
         SKELETON::View* create_view( const COMMAND_ARGS& command );
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();
 
       private:
-        void open_list( std::list< std::string >& list_url );
         void delete_popup();
 
         virtual void slot_drag_begin( int page );

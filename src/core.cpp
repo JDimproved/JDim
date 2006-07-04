@@ -1037,6 +1037,20 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    // 複数開く
+    // 
+    if( command.command  == "open_board_list" ) {
+
+        BOARD::get_admin()->set_command( "open_list",
+                                         std::string(),
+
+                                         // 以下 COMMAND_ARGS::arg1, arg2,....
+                                         command.arg1 // datファイルのURLを空白で区切って指定
+            );
+
+        return;
+    }
+
     else if( command.command  == "update_board" ){
 
         BOARD::get_admin()->set_command( "update_view", command.url );

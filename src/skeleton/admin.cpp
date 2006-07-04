@@ -237,6 +237,12 @@ void Admin::exec_command()
     else if( command.command == "open_view" ){
         open_view( command );
     }
+    // リストで開く
+    // arg1 にはdatファイルを空白で区切って指定する
+    //
+    else if( command.command == "open_list" ){
+        open_list( command.arg1 );
+    }
     else if( command.command == "switch_view" ){
         switch_view( command.url );
     }

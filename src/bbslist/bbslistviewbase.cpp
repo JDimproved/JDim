@@ -122,6 +122,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "Rename", "名前変更"), sigc::mem_fun( *this, &BBSListViewBase::slot_rename ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );    
     action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &BBSListViewBase::delete_view ) );
+    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く"), sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "Unselect", "選択解除"), sigc::mem_fun( *this, &BBSListViewBase::slot_unselect_all ) );
@@ -154,6 +155,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
     // 通常 + 複数
     "<popup name='popup_menu_mul'>"
+    "<menuitem action='OpenRows'/>"
+    "<separator/>"
     "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menuitem action='AppendFavorite'/>"
@@ -182,6 +185,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
     // お気に入り+複数選択
     "<popup name='popup_menu_favorite_mul'>"
+    "<menuitem action='OpenRows'/>"
+    "<separator/>"
     "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menu action='Delete_Menu'>"
@@ -1080,6 +1085,45 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
     return true;
 }
 
+
+
+//
+// 選択した行をまとめて開く
+//
+void BBSListViewBase::open_selected_rows()
+{
+    std::string list_url_board;
+    std::string list_url_article;
+
+    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
+    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
+    for( ; it != list_it.end(); ++it ){
+
+        Gtk::TreeModel::Row row = *( *it );
+        Gtk::TreePath path = GET_PATH( row );
+
+        int type = path2type( path );
+        std::string url = path2url( path );
+
+        switch( type ){
+
+            case TYPE_BOARD:
+                url = DBTREE::url_subject( url );
+                if( !list_url_board.empty() ) list_url_board += " ";
+                list_url_board += url;
+                break;
+
+            case TYPE_THREAD:
+                url = DBTREE::url_dat( url );
+                if( !list_url_article.empty() ) list_url_article += " ";
+                list_url_article += url;
+                break;
+        }
+    }
+
+    if( !list_url_board.empty() ) CORE::core_set_command( "open_board_list", std::string(), list_url_board );
+    if( !list_url_article.empty() ) CORE::core_set_command( "open_article_list", std::string(), list_url_article );
+}
 
 
 
