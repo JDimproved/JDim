@@ -121,6 +121,7 @@ namespace CORE
         void slot_delete_all_images();
 
         void slot_changefont_tree();
+        void slot_changefont_tree_board();
         void slot_changefont_main();
         void slot_changefont_popup();
 

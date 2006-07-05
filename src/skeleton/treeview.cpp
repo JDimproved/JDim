@@ -27,7 +27,7 @@
 using namespace SKELETON;
 
 
-JDTreeView::JDTreeView()
+JDTreeView::JDTreeView( const std::string& fontname, const int *rgb )
     : m_reorderable( 0 ),
       m_drag( 0 ),
       m_popup_win( 0 ),
@@ -46,8 +46,8 @@ JDTreeView::JDTreeView()
     add_events( Gdk::LEAVE_NOTIFY_MASK );
     add_events( Gdk::SCROLL_MASK );
 
-    init_color();
-    init_font();
+    init_color( rgb );
+    init_font( fontname );
 
     get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
 }
@@ -63,12 +63,10 @@ JDTreeView::~JDTreeView()
 //
 // 色初期化
 //
-void JDTreeView::init_color()
+void JDTreeView::init_color( const int *rgb )
 {
     // 背景色
     Gdk::Color color;
-    const int *rgb;
-    rgb = CONFIG::get_color_back_tree();
     color.set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
     modify_base( get_state(), color );
 }
@@ -77,9 +75,9 @@ void JDTreeView::init_color()
 //
 // フォント初期化
 //
-void JDTreeView::init_font()
+void JDTreeView::init_font( const std::string& fontname )
 {
-    Pango::FontDescription pfd( CONFIG::get_fontname_tree() );
+    Pango::FontDescription pfd( fontname );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
     modify_font( pfd );
 }

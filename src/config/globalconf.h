@@ -29,21 +29,25 @@ namespace CONFIG
     const int* get_color_back();
     const int* get_color_back_popup();
     const int* get_color_back_tree();
+    const int* get_color_back_tree_board();
     
     void set_color_char( int* color );
     void set_color_separator( int* color );
     void set_color_back( int* color );
     void set_color_back_popup( int* color );
     void set_color_back_tree( int* color );
+    void set_color_back_tree_board( int* color );
 
     // フォント
     const std::string& get_fontname_main();
     const std::string& get_fontname_popup();
     const std::string& get_fontname_tree();
+    const std::string& get_fontname_tree_board();
 
     void set_fontname_main( const std::string& name );
     void set_fontname_popup( const std::string& name );
     void set_fontname_tree( const std::string& name );
+    void set_fontname_tree_board( const std::string& name );
 
     // 2chの認証サーバ
     const std::string& get_url_login2ch();

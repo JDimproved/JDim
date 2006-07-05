@@ -12,6 +12,8 @@
 #include "dbtree/interface.h"
 #include "dbtree/articlebase.h"
 
+#include "config/globalconf.h"
+
 #include "command.h"
 #include "session.h"
 #include "dndmanager.h"
@@ -60,7 +62,8 @@ m_treeview.append_column( *col ); \
 
 
 BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
-    : SKELETON::View( url )
+    : SKELETON::View( url ),
+      m_treeview( CONFIG::get_fontname_tree_board(), CONFIG::get_color_back_tree_board() )
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
@@ -729,8 +732,8 @@ void BoardView::redraw_view()
 //
 void BoardView::relayout()
 {
-    m_treeview.init_color();
-    m_treeview.init_font();
+    m_treeview.init_color( CONFIG::get_color_back_tree_board() );
+    m_treeview.init_font( CONFIG::get_fontname_tree_board() );
 }
 
 

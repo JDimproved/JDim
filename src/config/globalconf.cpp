@@ -19,9 +19,11 @@ int color_sepa[ COLOR_SIZE ];
 int color_back[ COLOR_SIZE ];
 int color_back_popup[ COLOR_SIZE ];
 int color_back_tree[ COLOR_SIZE ];
+int color_back_tree_board[ COLOR_SIZE ];
 std::string fontname_main;
 std::string fontname_popup;
-std::string fontname_tree;;
+std::string fontname_tree;
+std::string fontname_tree_board;
 std::string url_login2ch;
 std::string url_bbsmenu;
 std::string path_cacheroot;
@@ -91,6 +93,7 @@ const bool CONFIG::init_config()
     fontname_main = cf.get_option( "fontname_main", "Kochi Gothic 12" );
     fontname_popup = cf.get_option( "fontname_popup","Kochi Gothic 9" );
     fontname_tree = cf.get_option( "fontname_tree","Kochi Gothic 10" );
+    fontname_tree_board = cf.get_option( "fontname_tree_board",fontname_tree );
 
     // キャッシュのルートディレクトリ
     // キャッシュ構造は navi2ch の上位互換なので path_cacheroot = "~/.navi2ch/" とすればnavi2chとキャッシュを共有できる
@@ -167,10 +170,15 @@ const bool CONFIG::init_config()
     color_back[ 1 ] = cf.get_option( "color_back_G", 65000 );
     color_back[ 2 ] = cf.get_option( "color_back_B", 63000 );
 
-    // ツリービューの背景色
+    // ツリービュー(板一覧)の背景色
     color_back_tree[ 0 ] = cf.get_option( "color_tree_R", 65000 );
     color_back_tree[ 1 ] = cf.get_option( "color_tree_G", 65000 );
     color_back_tree[ 2 ] = cf.get_option( "color_tree_B", 63000 );
+
+    // ツリービュー(スレ一覧)の背景色
+    color_back_tree_board[ 0 ] = cf.get_option( "color_tree_board_R", color_back_tree[ 0 ] );
+    color_back_tree_board[ 1 ] = cf.get_option( "color_tree_board_G", color_back_tree[ 1 ] );
+    color_back_tree_board[ 2 ] = cf.get_option( "color_tree_board_B", color_back_tree[ 2 ] );
 
     // ポップアップの背景色
     color_back_popup[ 0 ] = cf.get_option( "color_popup_R", 65000 );
@@ -229,6 +237,7 @@ void CONFIG::save_conf()
     cf.update( "fontname_main", fontname_main );
     cf.update( "fontname_popup", fontname_popup );
     cf.update( "fontname_tree", fontname_tree );
+    cf.update( "fontname_tree_board", fontname_tree_board );
 
     cf.update( "path_cacheroot", path_cacheroot );
 
@@ -279,6 +288,10 @@ void CONFIG::save_conf()
     cf.update( "color_tree_G", color_back_tree[ 1 ] );
     cf.update( "color_tree_B", color_back_tree[ 2 ] );
 
+    cf.update( "color_tree_board_R", color_back_tree_board[ 0 ] );
+    cf.update( "color_tree_board_G", color_back_tree_board[ 1 ] );
+    cf.update( "color_tree_board_B", color_back_tree_board[ 2 ] );
+
     cf.update( "color_popup_R", color_back_popup[ 0 ] );
     cf.update( "color_popup_G", color_back_popup[ 1 ] );
     cf.update( "color_popup_B", color_back_popup[ 2 ] );
@@ -312,21 +325,25 @@ const int* CONFIG::get_color_separator() { return color_sepa; }
 const int* CONFIG::get_color_back() { return color_back; }
 const int* CONFIG::get_color_back_popup() { return color_back_popup; }
 const int* CONFIG::get_color_back_tree() { return color_back_tree; }
+const int* CONFIG::get_color_back_tree_board() { return color_back_tree_board; }
 
 void CONFIG::set_color_char( int* color ) { memcpy( color_char, color, sizeof( int )*COLOR_SIZE ); }
 void CONFIG::set_color_separator( int* color ) { memcpy( color_sepa, color, sizeof( int )*COLOR_SIZE ); }
 void CONFIG::set_color_back( int* color ) { memcpy( color_back, color, sizeof( int )*COLOR_SIZE ); }
 void CONFIG::set_color_back_popup( int* color ) { memcpy( color_back_popup, color, sizeof( int )*COLOR_SIZE ); }
 void CONFIG::set_color_back_tree( int* color ) { memcpy( color_back_tree, color, sizeof( int )*COLOR_SIZE ); }
+void CONFIG::set_color_back_tree_board( int* color ) { memcpy( color_back_tree_board, color, sizeof( int )*COLOR_SIZE ); }
 
 
 const std::string& CONFIG::get_fontname_main() { return fontname_main; }
 const std::string& CONFIG::get_fontname_popup() { return fontname_popup; }
 const std::string& CONFIG::get_fontname_tree() { return fontname_tree; }
+const std::string& CONFIG::get_fontname_tree_board() { return fontname_tree_board; }
 
 void CONFIG::set_fontname_main( const std::string& name) { fontname_main = name; }
 void CONFIG::set_fontname_popup( const std::string& name) { fontname_popup = name; }
 void CONFIG::set_fontname_tree( const std::string& name) { fontname_tree = name; }
+void CONFIG::set_fontname_tree_board( const std::string& name) { fontname_tree_board = name; }
 
 const std::string& CONFIG::get_url_login2ch() { return url_login2ch; }
 const std::string& CONFIG::get_url_bbsmenu() { return url_bbsmenu; }

@@ -73,7 +73,7 @@ namespace SKELETON
         SIG_DRAG_DROP sig_drag_drop() { return m_sig_drag_drop; }
         SIG_DRAG_END sig_drag_end() { return m_sig_drag_end; }
 
-        JDTreeView();
+        JDTreeView( const std::string& fontname, const int *rgb );
         ~JDTreeView();
 
        
@@ -81,10 +81,10 @@ namespace SKELETON
         void clock_in();
 
         // 色初期化
-        void init_color();
+        void init_color( const int *rgb );
 
         // フォント初期化
-        void init_font();
+        void init_font( const std::string& fontname );
         
         // D&D可で並び替え可
         void set_reorderable_view( bool reorderable );

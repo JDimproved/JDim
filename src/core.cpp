@@ -205,7 +205,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "ColorBackPopup", "ポップアップ背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_popup ) );
     m_action_group->add( Gtk::Action::create( "ColorBackTree", "ツリー背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
 
-    m_action_group->add( Gtk::Action::create( "FontTree", "ツリーフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
+    m_action_group->add( Gtk::Action::create( "FontTree", "板一覧フォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
+    m_action_group->add( Gtk::Action::create( "FontTreeBoard", "スレ一覧フォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree_board ) );
     m_action_group->add( Gtk::Action::create( "FontMenu", "スレフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
     m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
@@ -263,6 +264,7 @@ void Core::run( bool init )
         "<menuitem action='FontMenu'/>"
         "<menuitem action='FontPopup'/>"
         "<menuitem action='FontTree'/>"
+        "<menuitem action='FontTreeBoard'/>"
         "<separator/>"
         "<menuitem action='ColorChar'/>"
 //        "<menuitem action='ColorSepa'/>"
@@ -477,16 +479,30 @@ void Core::slot_delete_all_images()
 
 
 //
-// ツリーフォント変更
+// ツリーフォント(板一覧)変更
 //
 void Core::slot_changefont_tree()
 {
     Gtk::FontSelectionDialog diag;
     diag.set_font_name( CONFIG::get_fontname_tree() );
-    diag.set_title( "ツリーフォント" );
+    diag.set_title( "板一覧フォント" );
     if( diag.run() == Gtk::RESPONSE_OK ){
         CONFIG::set_fontname_tree( diag.get_font_name() );
         BBSLIST::get_admin()->set_command( "relayout_all" );
+    }
+}
+
+
+//
+// ツリーフォント(スレ一覧)変更
+//
+void Core::slot_changefont_tree_board()
+{
+    Gtk::FontSelectionDialog diag;
+    diag.set_font_name( CONFIG::get_fontname_tree_board() );
+    diag.set_title( "スレ一覧フォント" );
+    if( diag.run() == Gtk::RESPONSE_OK ){
+        CONFIG::set_fontname_tree_board( diag.get_font_name() );
         BOARD::get_admin()->set_command( "relayout_all" );
     }
 }
