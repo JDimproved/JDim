@@ -14,6 +14,7 @@ namespace CORE
         { "ユーザ設定", "" },
         { "firefox 1.0*", "firefox -remote \"openURL(%s,new-tab)\"" },
         { "firefox 1.5*", "firefox %s" },
+        { "opera 9.*",    "opera -remote \"openURL(%s,new-tab)\"" },
         
         { "",""}
     };
