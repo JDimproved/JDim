@@ -60,6 +60,9 @@ namespace CONFIG
         // モーションセット
         void set_motion( const std::string& name, const std::string& str_motion );
         virtual void set_one_motion( const std::string& name, const std::string& str_motion ){}
+
+        // 指定したIDのアイテムを削除
+        void remove_items( int id );
     };
 }
 

@@ -151,6 +151,7 @@ namespace CORE
         void slot_toggle_3pane();
         void slot_toggle_v3pane();
         void slot_toggle_oldarticle();
+        void slot_toggle_tabbutton();
         void slot_toggle_restore_board();
         void slot_toggle_restore_article();
         void slot_toggle_restore_image();

@@ -177,3 +177,20 @@ void MouseKeyConf::set_motion( const std::string& name, const std::string& str_m
     std::list< std::string >::iterator it = list_motion.begin();
     for( ; it != list_motion.end(); ++it ) set_one_motion( name, (*it) );
 }
+
+
+// 指定したIDのアイテムを削除
+void MouseKeyConf::remove_items( int id )
+{
+    std::vector< MouseKeyItem* >::iterator it = m_vec_items.begin();
+    for( ; it != m_vec_items.end(); ++it ){
+
+        MouseKeyItem* item = (*it);
+        if( item->get_id() == id ){
+            m_vec_items.erase( it );
+            delete item;
+            remove_items( id );
+            return;
+        }
+    }
+}

@@ -17,6 +17,12 @@ namespace CONFIG
         ButtonConfig();
         virtual ~ButtonConfig();
 
+        // 中ボタンでタブで開くか
+        bool tab_midbutton();
+
+        // タブで開くボタンを入れ替える
+        void toggle_tab_button();
+
       private:
 
         void load_conf();

@@ -135,3 +135,41 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
     MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick );
     MouseKeyConf::vec_items().push_back( item );
 }
+
+
+
+// 中ボタンでタブで開くか
+bool ButtonConfig::tab_midbutton()
+{
+    return ( MouseKeyConf::get_str_motion( CONTROL::OpenArticleTabButton ) == "Mid" );
+}
+
+
+// タブで開くボタンを入れ替える
+void ButtonConfig::toggle_tab_button()
+{
+    if( tab_midbutton() ){
+
+        MouseKeyConf::remove_items( CONTROL::OpenBoardButton );
+        MouseKeyConf::remove_items( CONTROL::OpenBoardTabButton );
+        MouseKeyConf::remove_items( CONTROL::OpenArticleButton );
+        MouseKeyConf::remove_items( CONTROL::OpenArticleTabButton );
+
+        set_one_motion( "OpenBoardButton", "Mid" );
+        set_one_motion( "OpenBoardTabButton", "Left" );
+        set_one_motion( "OpenArticleButton", "Mid" );
+        set_one_motion( "OpenArticleTabButton", "Left" );
+    }
+    else{
+
+        MouseKeyConf::remove_items( CONTROL::OpenBoardButton );
+        MouseKeyConf::remove_items( CONTROL::OpenBoardTabButton );
+        MouseKeyConf::remove_items( CONTROL::OpenArticleButton );
+        MouseKeyConf::remove_items( CONTROL::OpenArticleTabButton );
+
+        set_one_motion( "OpenBoardButton", "Left" );
+        set_one_motion( "OpenBoardTabButton", "Mid" );
+        set_one_motion( "OpenArticleButton", "Left" );
+        set_one_motion( "OpenArticleTabButton", "Mid" );
+    }
+}

@@ -192,6 +192,10 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示", std::string(), CONFIG::get_show_oldarticle() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "デフォルトでタブで開く", std::string(),
+                                                    ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
+
     m_action_group->add( Gtk::ToggleAction::create( "RestoreBoard", "起動時にスレ一覧を復元", std::string(), CONFIG::get_restore_board() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_board ) );
     m_action_group->add( Gtk::ToggleAction::create( "RestoreArticle", "起動時にスレッドを復元", std::string(), CONFIG::get_restore_article() ),
@@ -256,6 +260,7 @@ void Core::run( bool init )
 
         "<menu action='Menu_Config'>"
         "<menuitem action='OldArticle'/>"
+        "<menuitem action='ToggleTab'/>"
         "<separator/>"
         "<menuitem action='RestoreBoard'/>"
         "<menuitem action='RestoreArticle'/>"
@@ -839,6 +844,16 @@ void Core::slot_toggle_oldarticle()
 
     Gtk::MessageDialog mdiag( "次に開いた板から有効になります" );
     mdiag.run();
+}
+
+
+
+//
+// タブで開くボタンを入れ替える
+//
+void Core::slot_toggle_tabbutton()
+{
+    CONFIG::get_buttonconfig()->toggle_tab_button();
 }
 
 
