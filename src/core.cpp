@@ -156,7 +156,7 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_online ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板リスト再読込"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
     m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
-    m_action_group->add( Gtk::Action::create( "Quit", Gtk::Stock::QUIT ), sigc::mem_fun(*this, &Core::slot_quit ) );
+    m_action_group->add( Gtk::Action::create( "Quit", "終了" ), sigc::mem_fun(*this, &Core::slot_quit ) );
 
 
     // ログイン
