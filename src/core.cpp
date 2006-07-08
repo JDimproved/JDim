@@ -1393,7 +1393,7 @@ void Core::exec_command()
     else if( command.command  == "open_url" ){
 
         command.url = MISC::remove_space( command.url );
-        if( command.url.find( "http://" ) != 0 ) command.url = "http://" + command.url;
+        if( command.url.find( "http://" ) != 0 && command.url.find( "https://" ) != 0 ) command.url = "http://" + command.url;
 
         int num_from, num_to;
         std::string url_dat = DBTREE::url_dat( command.url, num_from, num_to );
@@ -1613,7 +1613,7 @@ void Core::open_by_browser( const std::string& url )
     if( !command_openurl.empty() ){
         command_openurl = MISC::replace_str( command_openurl, "%s", url );
 #ifdef _DEBUG
-        std::cout << "spawn command = " << command_openurl << std::endl;
+        std::cout << "spawn url = " << url << " command = " << command_openurl << std::endl;
 #endif
         Glib::spawn_command_line_async( command_openurl );
     }
