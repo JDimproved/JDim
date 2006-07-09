@@ -60,9 +60,7 @@ void ArticleViewPopup::show_instruct_popup()
 //
 DrawAreaBase* ArticleViewPopup::create_drawarea()
 {
-    if( m_show_abone ) return Gtk::manage( new ARTICLE::DrawAreaPopupShowAbone( url_article() ) );
-
-    return Gtk::manage( new ARTICLE::DrawAreaPopup( url_article() ) );
+    return Gtk::manage( new ARTICLE::DrawAreaPopup( url_article(), m_show_abone ) );
 }
 
 

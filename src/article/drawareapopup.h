@@ -14,7 +14,8 @@ namespace ARTICLE
 
       public:
 
-        DrawAreaPopup( const std::string& url );
+        // show_abone == true ならあぼーんされたスレも表示
+        DrawAreaPopup( const std::string& url, bool show_abone );
 
       protected:
 
@@ -35,18 +36,6 @@ namespace ARTICLE
         // フォントモード
         virtual const int fontmode();
     };
-
-
-    /////////////////////////////
-
-    // あぼーんされたレスも表示する
-    class DrawAreaPopupShowAbone : public ARTICLE::DrawAreaPopup
-    {
-
-      public:
-        DrawAreaPopupShowAbone( const std::string& url );
-    };
-
 }
 
 #endif

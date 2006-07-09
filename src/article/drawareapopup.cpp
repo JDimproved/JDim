@@ -16,14 +16,15 @@ using namespace ARTICLE;
 #define POPUP_OFFSET_Y 1
 
 
-DrawAreaPopup::DrawAreaPopup( const std::string& url )
+// show_abone == true ならあぼーんされたスレも表示
+DrawAreaPopup::DrawAreaPopup( const std::string& url, bool show_abone )
     : DrawAreaBase( url )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaPopup::DrawAreaPopup url = " << url << std::endl;
 #endif
 
-    setup( false, false );
+    setup( show_abone, false );
 }
 
 
@@ -81,20 +82,4 @@ bool DrawAreaPopup::draw_drawarea()
     draw_frame();
 
     return true;
-}
-
-
-
-//////////////////////////////////////////////
-
-
-// あぼーんされたレスも表示する
-DrawAreaPopupShowAbone::DrawAreaPopupShowAbone( const std::string& url )
-    : DrawAreaPopup( url )
-{
-#ifdef _DEBUG
-    std::cout << "DrawAreaPopupShowAbone::DrawAreaPopupShowAbone url = " << url << std::endl;
-#endif
-
-    setup( true, false );
 }
