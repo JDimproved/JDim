@@ -61,6 +61,9 @@ Img::~Img()
 
 void Img::clear()
 {
+    // HTTPコードのクリア
+    Loadable::clear_load_data();
+
     m_mosaic = CONFIG::get_use_mosaic();
     m_zoom_to_fit = CONFIG::get_zoom_to_fit();
     m_size = 100;
@@ -259,7 +262,7 @@ void Img::read_info()
     JDLIB::ConfLoader cf( CACHE::path_img_info( m_url ), std::string() );
 
     m_refurl = cf.get_option( "refurl", "" );
-    set_code( cf.get_option( "code", HTTP_ERR ) );
+    set_code( cf.get_option( "code", HTTP_INIT ) );
     set_str_code( cf.get_option( "str_code", "" ) );
     set_total_length( cf.get_option( "byte", 0 ) );
     m_mosaic = cf.get_option( "mosaic", CONFIG::get_use_mosaic() );

@@ -929,8 +929,8 @@ void DrawAreaBase::draw_one_node( LAYOUT* layout, const int& width_view, const i
 
                     if( img->is_loading() ) node->color_text = COLOR_IMG_LOADING;
                     else if( img->get_code() == HTTP_OK ) node->color_text = COLOR_IMG_CACHED;
-                    else if( img->get_code() != HTTP_ERR ) node->color_text = COLOR_IMG_ERR;
-                    else node->color_text = COLOR_IMG_NOCACHE;
+                    else if( img->get_code() == HTTP_ERR || img->get_code() == HTTP_INIT ) node->color_text = COLOR_IMG_NOCACHE;
+                    else node->color_text = COLOR_IMG_ERR;
                 }
             }
 

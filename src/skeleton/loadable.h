@@ -73,7 +73,10 @@ namespace SKELETON
         Loadable();
         virtual ~Loadable();
 
+        // HTTPコードなどの完全クリア
         void clear_load_data();
+
+        // ロード中かどうか
         const bool is_loading();
 
         const int get_code() const { return m_code; }

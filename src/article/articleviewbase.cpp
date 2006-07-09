@@ -1283,10 +1283,11 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
     SKELETON::View* view_popup = NULL;
 
     // 画像ポップアップ
-    if( DBIMG::is_loadable( url ) && ( DBIMG::is_loading( url ) || DBIMG::get_code( url ) != HTTP_ERR ) ){
+    if( DBIMG::is_loadable( url )
+        && ( DBIMG::is_loading( url ) || ( DBIMG::get_code( url ) != HTTP_ERR && DBIMG::get_code( url ) != HTTP_INIT ) ) ){
 
 #ifdef _DEBUG
-        std::cout << "image\n";
+        std::cout << "image " << DBIMG::get_code( url ) << " " << DBIMG::is_loading( url ) << "\n";
 #endif
 
         view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
