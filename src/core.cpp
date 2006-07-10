@@ -900,6 +900,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            command.arg1, // "true"ならtabで開く
                                            "false", // url 開いてるかチェック
+                                           "false", // "true"ならオフラインで開く
 
                                            "MAIN", // メインモード
 
@@ -936,6 +937,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
+                                           "false", // "true"ならオフラインで開く
 
                                            mode_str, // キーワード抽出モード
 
@@ -953,6 +955,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
+                                           "false", // "true"ならオフラインで開く
 
                                            "RES", // レス抽出モード
                                      
@@ -973,6 +976,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
+                                           "false", // "true"ならオフラインで開く
 
                                            "ID", // ID 抽出モード
                                      
@@ -990,6 +994,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
+                                           "false", // "true"ならオフラインで開く
 
                                            "BM" //　ブックマーク抽出モード
             );
@@ -1005,6 +1010,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
+                                           "false", // "true"ならオフラインで開く
 
                                            "URL" // URL抽出モード
             );
@@ -1020,6 +1026,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
+                                           "false", // "true"ならオフラインで開く
 
                                            "REF", // 参照抽出モード
                                      
@@ -1061,7 +1068,9 @@ void Core::set_command( const COMMAND_ARGS& command )
         BOARD::get_admin()->set_command( "open_view",
                                          command.url,
 
-                                         command.arg1  // "true" ならtabで開く
+                                         command.arg1,  // "true" ならtabで開く
+                                         "false", // url 開いてるかチェック
+                                         "false" // "true"ならオフラインで開く
             );
 
         set_history_board( command.url );

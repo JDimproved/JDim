@@ -66,8 +66,8 @@ SKELETON::View* BBSListAdmin::create_view( const COMMAND_ARGS& command )
     else if( command.url == URL_ETCVIEW ) type = CORE::VIEW_ETCLIST;
 
     CORE::VIEWFACTORY_ARGS view_args;
-    view_args.arg1 = command.arg3;
-    view_args.arg2 = command.arg4;    
+    view_args.arg1 = command.arg4;
+    view_args.arg2 = command.arg5;    
 
     SKELETON::View* view = CORE::ViewFactory( type, command.url, view_args );
     return view;

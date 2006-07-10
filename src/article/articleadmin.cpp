@@ -93,9 +93,11 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "RES";
-            command_arg.arg4 = regex.str( 2 );
-            if( regex.str( 3 ) != "0" ) command_arg.arg5 = regex.str( 3 );
+            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+
+            command_arg.arg4 = "RES";
+            command_arg.arg5 = regex.str( 2 );
+            if( regex.str( 3 ) != "0" ) command_arg.arg6 = regex.str( 3 );
         }
 
         // ID抽出
@@ -104,8 +106,10 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "ID";
-            command_arg.arg4 = regex.str( 2 );
+            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+
+            command_arg.arg4 = "ID";
+            command_arg.arg5 = regex.str( 2 );
         }
 
         // ブックマーク抽出
@@ -114,7 +118,9 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "BM";
+            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+
+            command_arg.arg4 = "BM";
         }
 
         // URL抽出
@@ -123,7 +129,9 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "URL";
+            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+
+            command_arg.arg4 = "URL";
         }
 
         // 参照
@@ -132,8 +140,10 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "REF";
-            command_arg.arg4 = regex.str( 2 );
+            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+
+            command_arg.arg4 = "REF";
+            command_arg.arg5 = regex.str( 2 );
         }
 
         // キーワード
@@ -143,10 +153,11 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
+            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
 
-            if( regex.str( 3 ) == "1" ) command_arg.arg3 = "KEYWORD_OR";
-            else command_arg.arg3 = "KEYWORD";
-            command_arg.arg4 = regex.str( 2 );
+            if( regex.str( 3 ) == "1" ) command_arg.arg4 = "KEYWORD_OR";
+            else command_arg.arg4 = "KEYWORD";
+            command_arg.arg5 = regex.str( 2 );
         }
 
         // MAIN
@@ -154,7 +165,9 @@ void ArticleAdmin::restore()
             command_arg.url = url;
             command_arg.arg1 = "true";   // タブで開く
             command_arg.arg2 = "false";  // 既に開いているかチェック
-            command_arg.arg3 = "MAIN";
+            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+
+            command_arg.arg4 = "MAIN";
         }
 
 #ifdef _DEBUG
@@ -198,7 +211,9 @@ void ArticleAdmin::open_list( const std::string& str_list )
         command_arg.url = (*it);
         command_arg.arg1 = "true";   // タブで開く
         command_arg.arg2 = "false";  // 既に開いているかチェック
-        command_arg.arg3 = "MAIN";
+        command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+
+        command_arg.arg4 = "MAIN";
 
         open_view( command_arg );
         CORE::core_set_command( "set_history_article", command_arg.url );
@@ -226,14 +241,12 @@ void ArticleAdmin::delete_popup()
 
 
 //
-// arg1 は "ID" や "MAIN" などのビューの種類を指定
-//
-// arg2 は各ビュー別のパラメータ
+// view の作成
 //
 SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
 {
 #ifdef _DEBUG    
-    std::cout << "ArticleAdmin::create_view : " << command.arg3 << std::endl;
+    std::cout << "ArticleAdmin::create_view : " << command.arg4 << std::endl;
 #endif
 
     delete_popup();
@@ -243,54 +256,54 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
     std::string str_jump;
 
     // メインビュー
-    if( command.arg3 == "MAIN" ){
+    if( command.arg4 == "MAIN" ){
         type = CORE::VIEW_ARTICLEVIEW;
-        str_jump = command.arg4; // ジャンプ
+        str_jump = command.arg5; // ジャンプ
     }
 
     // キーワード抽出ビュー(AND)
-    else if( command.arg3 == "KEYWORD" ){
+    else if( command.arg4 == "KEYWORD" ){
         type = CORE::VIEW_ARTICLEDRAWOUT;
-        view_args.arg1 = command.arg4;  // query
+        view_args.arg1 = command.arg5;  // query
         view_args.arg2 = "AND";
     }
 
     // キーワード抽出ビュー(OR)
-    else if( command.arg3 == "KEYWORD_OR" ){
+    else if( command.arg4 == "KEYWORD_OR" ){
         type = CORE::VIEW_ARTICLEDRAWOUT;
-        view_args.arg1 = command.arg4; // query
+        view_args.arg1 = command.arg5; // query
         view_args.arg2 = "OR";
     }
 
     // レス抽出ビュー
-    if( command.arg3 == "RES" ){
+    if( command.arg4 == "RES" ){
         type = CORE::VIEW_ARTICLERES;
-        view_args.arg1 = command.arg4; // レス番号 ( from-to )
+        view_args.arg1 = command.arg5; // レス番号 ( from-to )
         view_args.arg2 = "false";
-        view_args.arg3 = command.arg5; // ジャンプ
+        view_args.arg4 = command.arg6; // ジャンプ
         str_jump = command.arg5;
     }
 
     // ID 抽出ビュー
-    if( command.arg3 == "ID" ){
+    if( command.arg4 == "ID" ){
         type = CORE::VIEW_ARTICLEID;
-        view_args.arg1 = command.arg4; // ID
+        view_args.arg1 = command.arg5; // ID
     }
 
     // ブックマーク抽出ビュー
-    if( command.arg3 == "BM" ){
+    if( command.arg4 == "BM" ){
         type = CORE::VIEW_ARTICLEBM;
     }
 
     // URL抽出ビュー
-    if( command.arg3 == "URL" ){
+    if( command.arg4 == "URL" ){
         type = CORE::VIEW_ARTICLEURL;
     }
 
     // 参照抽出ビュー
-    if( command.arg3 == "REF" ){
+    if( command.arg4 == "REF" ){
         type = CORE::VIEW_ARTICLEREFER;
-        view_args.arg1 = command.arg4; // 対象レス番号
+        view_args.arg1 = command.arg5; // 対象レス番号
     }
 
     SKELETON::View* view = CORE::ViewFactory( type, command.url, view_args );

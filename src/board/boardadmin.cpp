@@ -77,6 +77,7 @@ void BoardAdmin::restore()
             command_arg.command = "open_view";
             command_arg.url = (*it_tmp);
             command_arg.arg1 = "true";
+            command_arg.arg2 = "false"; // オフラインで開く(上でオフラインにしているので関係なし)
 
             open_view( command_arg );
         }
@@ -107,6 +108,7 @@ void BoardAdmin::open_list( const std::string& str_list )
         command_arg.command = "open_view";
         command_arg.url = (*it);
         command_arg.arg1 = "true";   // タブで開く
+        command_arg.arg2 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
 
         open_view( command_arg );
         CORE::core_set_command( "set_history_board", command_arg.url );
@@ -126,8 +128,8 @@ void BoardAdmin::open_list( const std::string& str_list )
 SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
 {
     CORE::VIEWFACTORY_ARGS view_args;
-    view_args.arg1 = command.arg3;
-    view_args.arg2 = command.arg4;    
+    view_args.arg1 = command.arg4;
+    view_args.arg2 = command.arg5;    
 
     SKELETON::View* view = CORE::ViewFactory( CORE::VIEW_BOARDVIEW, command.url, view_args );
     return view;

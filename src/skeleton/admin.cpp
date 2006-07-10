@@ -341,6 +341,9 @@ void Admin::exec_command()
 //
 // command.arg1: "true" なら新しいtabを開く, "right" ならアクティブなtabの右に、"left"なら左に開く
 // command.arg2: "true" なら既にurlを開いているかチェックしない
+// command.arg3: "true" ならオフラインで開く
+//
+// その他は各ビュー別の設定
 //
 void Admin::open_view( const COMMAND_ARGS& command )
 {
