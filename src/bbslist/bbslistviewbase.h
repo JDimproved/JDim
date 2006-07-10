@@ -110,6 +110,8 @@ namespace BBSLIST
         void slot_copy_title_url();
         void slot_unselect_all();
         void slot_preferences_board();
+        void slot_preferences_article();
+        void slot_preferences_image();
         void slot_row_exp( const Gtk::TreeModel::iterator& it, const Gtk::TreeModel::Path& path );
         void slot_row_col( const Gtk::TreeModel::iterator& it, const Gtk::TreeModel::Path& path );        
         void slot_ren_text_on_edited( const Glib::ustring& path, const Glib::ustring& text );

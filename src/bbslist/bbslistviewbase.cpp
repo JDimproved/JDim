@@ -127,7 +127,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "Unselect", "選択解除"), sigc::mem_fun( *this, &BBSListViewBase::slot_unselect_all ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
+    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
 
 
     ui_manager() = Gtk::UIManager::create();    
@@ -181,7 +183,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='Delete'/>"
     "</menu>"
     "<separator/>"
+    "<menuitem action='PreferenceArticle'/>"
     "<menuitem action='PreferenceBoard'/>"
+    "<menuitem action='PreferenceImage'/>"
     "</popup>"
 
     // お気に入り+複数選択
@@ -581,6 +585,31 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
     }
     // ポップアップメニューボタン
     else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
+
+        Glib::RefPtr< Gtk::Action > act_board, act_article, act_image;
+        act_board = action_group()->get_action( "PreferenceBoard" );
+        act_article = action_group()->get_action( "PreferenceArticle" );
+        act_image = action_group()->get_action( "PreferenceImage" );
+        if( act_board ) act_board->set_sensitive( false );
+        if( act_article ) act_article->set_sensitive( false );
+        if( act_image ) act_image->set_sensitive( false );
+
+        int type = path2type( m_path_selected );
+        switch( type ){
+
+            case TYPE_BOARD:
+                if( act_board ) act_board->set_sensitive( true );
+                break;
+
+            case TYPE_THREAD:
+                if( act_article ) act_article->set_sensitive( true );
+                break;
+
+            case TYPE_IMAGE:
+                if( act_image ) act_image->set_sensitive( true );
+                break;
+        }
+
         show_popupmenu( m_path_selected );
     }
 
@@ -851,7 +880,36 @@ void BBSListViewBase::slot_preferences_board()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_BOARD, url );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_BOARD, DBTREE::url_subject( url ) );
+    pref->run();
+    delete pref;
+}
+
+
+
+//
+// スレプロパティ表示
+//
+void BBSListViewBase::slot_preferences_article()
+{
+    if( m_path_selected.empty() ) return;
+    std::string url = path2url( m_path_selected );
+
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_ARTICLE, DBTREE::url_dat( url ) );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// 画像プロパティ表示
+//
+void BBSListViewBase::slot_preferences_image()
+{
+    if( m_path_selected.empty() ) return;
+    std::string url = path2url( m_path_selected );
+
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_IMAGE, url );
     pref->run();
     delete pref;
 }
