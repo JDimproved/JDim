@@ -280,8 +280,8 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
         type = CORE::VIEW_ARTICLERES;
         view_args.arg1 = command.arg5; // レス番号 ( from-to )
         view_args.arg2 = "false";
-        view_args.arg4 = command.arg6; // ジャンプ
-        str_jump = command.arg5;
+        view_args.arg3 = command.arg6; // ジャンプ番号
+        str_jump = command.arg6;
     }
 
     // ID 抽出ビュー
