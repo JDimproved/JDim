@@ -1323,7 +1323,8 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         std::cout << "anchore = " << args.arg1 << std::endl;
 #endif
 
-        view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, m_url_article, args );
+        if( ! m_article->get_res_str( atoi( args.arg1.c_str() ), false ).empty() )
+            view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, m_url_article, args );
     }
 
     // あぼーんされたレスをポップアップ表示
