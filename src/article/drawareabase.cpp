@@ -1186,43 +1186,48 @@ bool DrawAreaBase::set_scroll( const int& control )
     if( !m_vscrbar ) return false;
     double dy = 0;
 
+    Gtk::Adjustment* adjust = m_vscrbar->get_adjustment();
+    int y = ( int ) adjust->get_value();
+    bool enable_down = ( y < adjust->get_upper() - adjust->get_page_size() );
+    bool enable_up = ( y > 0 );
+
     if( m_scrollinfo.mode == SCROLL_NOT ){
 
         switch( control ){
 
             // 下
             case CONTROL::DownFast:
-                dy  = SCROLLSPEED_FAST;
+                if( enable_down ) dy  = SCROLLSPEED_FAST;
                 break;
 
             case CONTROL::DownMid:
-                dy = SCROLLSPEED_MID;
+                if( enable_down ) dy = SCROLLSPEED_MID;
                 break;
 
             case CONTROL::Down:
-                dy = SCROLLSPEED_SLOW;
+                if( enable_down ) dy = SCROLLSPEED_SLOW;
                 break;
 
                 // 上
             case CONTROL::UpFast:
-                dy = - SCROLLSPEED_FAST;
+                if( enable_up ) dy = - SCROLLSPEED_FAST;
                 break;
 
             case CONTROL::UpMid:
-                dy = - SCROLLSPEED_MID;
+                if( enable_up )dy = - SCROLLSPEED_MID;
                 break;
 
             case CONTROL::Up:
-                dy = - SCROLLSPEED_SLOW;
+                if( enable_up )dy = - SCROLLSPEED_SLOW;
                 break;
 
                 // Home, End, New
             case CONTROL::Home:
-                goto_top();
+                if( enable_up ) goto_top();
                 break;
 
             case CONTROL::End:
-                goto_bottom();
+                if( enable_down ) goto_bottom();
                 break;
 
             case CONTROL::GotoNew:
@@ -1376,7 +1381,7 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
     adjust->set_value( y );
 
     // キーを押しっぱなしの時に一番上か下に着いたらスクロール停止
-    if( m_key_press && ( y <= 0 || y >= adjust->get_upper() - adjust->get_page_size() ) ){
+    if( m_scrollinfo.mode == SCROLL_LOCKED && ( y <= 0 || y >= adjust->get_upper() - adjust->get_page_size() ) ){
         m_scrollinfo.reset();
         redraw_all = true;
     }
