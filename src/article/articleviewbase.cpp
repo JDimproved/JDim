@@ -214,6 +214,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
     action_group()->add( Gtk::Action::create( "Preference", "プロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
+    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
 
 
     // 抽出系
@@ -346,6 +347,8 @@ void ArticleViewBase::setup_action()
     "<menu action='Delete_Menu'>"
     "<menuitem action='DeleteImage'/>"
     "</menu>"
+    "<separator/>"
+    "<menuitem action='PreferenceImage'/>"
     "</popup>"
 
     "</ui>";
@@ -830,6 +833,22 @@ void ArticleViewBase::slot_push_preferences()
     pref->run();
     delete pref;
 }
+
+
+
+//
+// 画像プロパティ表示
+//
+void ArticleViewBase::slot_preferences_image()
+{
+    if( m_url_tmp.empty() ) return;
+    std::string url = m_url_tmp;
+
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_IMAGE, url );
+    pref->run();
+    delete pref;
+}
+
 
 
 

@@ -135,6 +135,7 @@ namespace ARTICLE
         void slot_push_delete();
         void slot_push_open_board();
         void slot_push_preferences();
+        void slot_preferences_image();
         void slot_push_open_search();
         void slot_push_up_search();
         void slot_push_down_search();
