@@ -945,7 +945,7 @@ void ArticleViewBase::show_res( const std::string& num, bool show_title )
     int num_from = atol( num.c_str() );
     int num_to = 0;
 
-    if( num_from <= m_article->get_number_load() ){
+    if( num_from >= 1 && num_from <= m_article->get_number_load() ){
 
         size_t i;
         if( ( i = num.find( "-" ) ) != std::string::npos ) num_to = atol( num.substr( i +1 ).c_str() );
@@ -1323,8 +1323,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         std::cout << "anchore = " << args.arg1 << std::endl;
 #endif
 
-        if( ! m_article->get_res_str( atoi( args.arg1.c_str() ), false ).empty() )
-            view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, m_url_article, args );
+        view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, m_url_article, args );
     }
 
     // あぼーんされたレスをポップアップ表示
