@@ -93,7 +93,15 @@ void JDTreeView::set_reorderable_view( bool reorderable )
         m_reorderable = true;
         std::list< Gtk::TargetEntry > targets;
         targets.push_back( Gtk::TargetEntry( "text/plain", Gtk::TARGET_SAME_APP, 0 ) );
-        drag_source_set( targets, Gdk::BUTTON1_MASK );
+
+        // ドラッグ開始ボタン設定
+        // タブで開くボタンを左クリックに割り当てていたらドラッグ開始ボタンを中ボタンにする
+        Gdk::ModifierType type = Gdk::BUTTON1_MASK;
+        GdkEventButton event;
+        m_control.get_eventbutton( CONTROL::OpenArticleButton, event );
+        if( event.button == 2 ) type = Gdk::BUTTON2_MASK;
+
+        drag_source_set( targets, type );
         drag_dest_set( targets );
     }
     else{
@@ -318,6 +326,9 @@ void JDTreeView::expand_parents( const Gtk::TreePath& path )
 
 
 
+//
+// マウスボタンを押した
+//
 bool JDTreeView::on_button_press_event( GdkEventButton* event )
 {
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
@@ -480,14 +491,18 @@ bool JDTreeView::on_key_release_event( GdkEventKey* event )
 }
 
 
+//
 // マウスを動かした
+//
 bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
 {
 #ifdef _DEBUG
 //    std::cout << "JDTreeView::on_motion_notify_event x = " << event->x << " y = " << event->y << std::endl;
 #endif
 
-    // ドラッグして範囲選択
+    // drag_source_set() でセットしたボタン以外でドラッグして範囲選択
+    // m_path_dragstart が empty で無いときに実行
+    // JDTreeView::on_button_press_event() も参照せよ
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
     if( ! m_path_dragstart.empty() && !path.empty() && path != m_path_dragpre ){
         get_selection()->unselect_all();

@@ -801,7 +801,7 @@ void Core::slot_toggle_2pane()
     if( SESSION::get_mode_pane() == MODE_2PANE ) return;
     SESSION::set_mode_pane( 0 );
 
-    Gtk::MessageDialog mdiag( "次回起動時から2paneになります" );
+    Gtk::MessageDialog mdiag( "JDの再起動後に2paneになります\n\nJDを再起動してください" );
     mdiag.run();
 }
 
@@ -815,7 +815,7 @@ void Core::slot_toggle_3pane()
     if( SESSION::get_mode_pane() == MODE_3PANE ) return;
     SESSION::set_mode_pane( MODE_3PANE );
 
-    Gtk::MessageDialog mdiag( "次回起動時から3paneになります" );
+    Gtk::MessageDialog mdiag( "JDの再起動後に3paneになります\n\nJDを再起動してください" );
     mdiag.run();
 }
 
@@ -828,7 +828,7 @@ void Core::slot_toggle_v3pane()
     if( SESSION::get_mode_pane() == MODE_V3PANE ) return;
     SESSION::set_mode_pane( MODE_V3PANE );
 
-    Gtk::MessageDialog mdiag( "次回起動時から縦3paneになります" );
+    Gtk::MessageDialog mdiag( "JDの再起動後に縦3paneになります\n\nJDを再起動してください" );
     mdiag.run();
 }
 
@@ -854,6 +854,9 @@ void Core::slot_toggle_oldarticle()
 void Core::slot_toggle_tabbutton()
 {
     CONFIG::get_buttonconfig()->toggle_tab_button();
+
+    Gtk::MessageDialog mdiag( "JDの再起動後に有効になります\n\nJDを再起動してください" );
+    mdiag.run();
 }
 
 

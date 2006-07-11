@@ -138,7 +138,7 @@ namespace SKELETON
 
       protected:
 
-        // 呼び出される順番は
+        // drag_source_set() でセットしたボタンでドラッグした時に呼び出される順番は
         //
         // (1) on_button_press_event
         // (2) on_drag_begin
@@ -146,6 +146,9 @@ namespace SKELETON
         // (4) on_button_release_event
         // (5) on_drag_drop
         // (6) on_drag_end
+        //
+        // drag_source_set() でセットしたボタン以外でドラッグしたときは on_drag_motion()
+        // ではなくて普通に on_motion_notify_event() が呼ばれるのに注意
         //
         virtual bool on_button_press_event( GdkEventButton* event );
         virtual void on_drag_begin( const Glib::RefPtr< Gdk::DragContext>& context );
