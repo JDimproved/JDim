@@ -46,15 +46,14 @@ time_t MISC::datetotime( const std::string& date )
 //
 std::string MISC::timettostr( time_t time_from )
 {
-    std::string str_ret;
+    char str_ret[ 64 ];
+    str_ret[ 0 ] = '\0';
 
     struct tm tm_tmp;
     if( localtime_r( &time_from, &tm_tmp ) ){
-        std::stringstream ss;
-        ss << ( 1900 + tm_tmp.tm_year ) << "/" << ( 1 + tm_tmp.tm_mon ) << "/"
-           << tm_tmp.tm_mday << " "  << tm_tmp.tm_hour << ":" << tm_tmp.tm_min;
 
-        str_ret = ss.str();
+        snprintf( str_ret, 64, "%d/%02d/%02d %02d:%02d",
+                  ( 1900 + tm_tmp.tm_year ), ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday, tm_tmp.tm_hour, tm_tmp.tm_min );
     }
 
 #ifdef _DEBUG
