@@ -551,8 +551,9 @@ void Core::slot_changefont_popup()
 void Core::slot_changecolor_back_tree()
 {
     int rgb[ 3 ];
-    if( open_color_diag( "ツリー背景", CONFIG::get_color_back_tree(), rgb ) ){
+    if( open_color_diag( "ツリー背景色", CONFIG::get_color_back_tree(), rgb ) ){
         CONFIG::set_color_back_tree( rgb );
+        CONFIG::set_color_back_tree_board( rgb );
         BBSLIST::get_admin()->set_command( "relayout_all" );
         BOARD::get_admin()->set_command( "relayout_all" );
     }
