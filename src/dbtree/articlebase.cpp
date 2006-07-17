@@ -340,7 +340,7 @@ const bool ArticleBase::abone( int number )
 
 
 //
-// あぼーん状態の更新
+// 全レスのあぼーん状態の更新
 //
 // あぼーん情報を変更したら呼び出す
 //
@@ -468,7 +468,7 @@ void ArticleBase::add_abone_word( const std::string& word )
 
 
 //
-// あぼーん判定を更新
+// from_number番から to_number 番までのレスのあぼーん判定を更新
 //
 void ArticleBase::check_abone( int from_number, int to_number )
 {
@@ -673,9 +673,10 @@ void ArticleBase::slot_node_updated()
         // あぼーん判定更新
         check_abone( m_number_load + 1, m_nodetree->get_res_number() );
 
+        // スレの読み込み数更新
         m_number_load = m_nodetree->get_res_number();
 
-        // ビュー更新
+        // articleビュー更新
         CORE::core_set_command( "update_article", m_url );
     }
 }

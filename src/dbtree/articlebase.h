@@ -221,14 +221,11 @@ namespace DBTREE
         // number番のレスがあぼーんされているか
         const bool abone( int number );
 
-        // あぼーん状態の更新
-        void update_abone();
-
-        // あぼーん状態のリセット(情報セットと状態更新)
+        // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
         void reset_abone( std::list< std::string >& ids, std::list< std::string >& names
                           , std::list< std::string >& words, std::list< std::string >& regexs );
 
-        // あぼ〜んに追加
+        // あぼ〜んに追加(reset_abone()と違って個別におこなう)
         void add_abone_id( const std::string& id );
         void add_abone_name( const std::string& name );
         void add_abone_word( const std::string& word );
@@ -255,6 +252,8 @@ namespace DBTREE
         void slot_load_finished();
         virtual void unlock_impl();
 
+        // あぼーん状態の更新
+        void update_abone();
         void check_abone( int from_number, int to_number );
 
         // 情報ファイル書き込み

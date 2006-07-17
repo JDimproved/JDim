@@ -54,13 +54,24 @@ namespace DBTREE
     // リンク情報
     struct LINKINFO
     {
-        bool image; // 画像かどうか
         char* link; // リンクURL
-        DBIMG::Img* img;  // 画像データクラスへのポインタ(危険だが高速化のため直接アクセス、deleteしないこと)
 
+        // アンカー情報
+        // anc_from番 から anc_to番までのアンカーになっている
+        // anc_from = 0 ならアンカーでは無い
+        int anc_from;
+        int anc_to;
+
+        // 画像関係の情報
+        //
+        // 画像リンクの場合、実際にリンクが画面に表示される段階でノードに DBIMG::Img
+        // のポインタと色をセットする。
         // image == true かつ img == NULL ならまだ img は未取得
         // 実際にノードが画面に表示された際に img のポインタを取得して画像の状態を取得する
-        // 詳しくは ArticleViewBase::draw_one_node を参照
+        // 詳しくは  DrawAreaBase::draw_one_node() を参照
+
+        bool image; // 画像かどうか
+        DBIMG::Img* img;  // 画像データクラスへのポインタ(危険だが高速化のため直接アクセス、deleteしないこと)
     };
 
     

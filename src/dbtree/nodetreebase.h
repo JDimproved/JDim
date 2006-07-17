@@ -106,9 +106,6 @@ namespace DBTREE
         // number番のID の重複数( = 発言数 )
         int get_num_id_name( int number );
 
-        // number番に含まれるURLをすべてリストにして取得
-        std::list< std::string > get_URLs( int number );
-
         // URL を含むレス番号をリストにして取得
         std::list< int > get_res_with_url();
 
@@ -167,8 +164,8 @@ namespace DBTREE
         NODE* createBrNode();
         NODE* createSpNode( const int& type );
         NODE* create_node_downleft();
-        NODE* create_linknode( const char* text, int n,
-                               const char* link, int n_link, int color_text, bool bold = false, bool img = false );
+        NODE* create_linknode( const char* text, int n, const char* link, int n_link, int color_text, bool bold = false,
+                               bool img = false, int anc_from = 0, int anc_to = 0 );
         NODE* createTextNode( const char* text, int color_text, bool bold = false );
         NODE* createTextNodeN( const char* text, int n, int color_text, bool bold = false );
 
@@ -182,7 +179,8 @@ namespace DBTREE
         void parse_html( const char* str, int lng, int color_text, bool digitlink = false, bool bold = false );
         void parseBr( );
 
-        bool check_anchor( const char* str_in, int& n, char* str_out, char* str_link, int lng_link, int mode = 0 );
+        bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
+                           int& anc_from, int& anc_to );
         int str_to_int( const char* str, int& n );
         void count_id_name( NODE* header, const char* str_id );
     };
