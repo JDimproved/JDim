@@ -1265,23 +1265,6 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
     
     n_in = ( int )( pos - str_in );
 
-    
-    // 参照数チェック
-    const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
-    if( anc_to >= anc_from && anc_to - anc_from < range ){
-
-        for( int i = MAX( 1, anc_from ); i <= MIN( m_id_header -1, anc_to ) ; ++i ){
-        
-            NODE* tmphead = m_vec_header[ i ];
-            if( tmphead && tmphead->headinfo && tmphead->headinfo->node_res ){
-
-                ++( tmphead->headinfo->num_reference );
-                if( tmphead->headinfo->num_reference >= 3 ) tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_RED;
-                else if( tmphead->headinfo->num_reference >= 1 ) tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_PUR;
-            }
-        }
-    }
-    
     return true;
 }
 
@@ -1319,7 +1302,7 @@ void NodeTreeBase::count_id_name( NODE* header, const char* str_id )
 
 
 //
-// number番のあぼーん判定を更新(ID)
+// number番のあぼーん判定(ID)
 //
 // あぼーんの時はtrueを返す
 //
@@ -1344,7 +1327,7 @@ bool NodeTreeBase::check_abone_id( int number, std::list< std::string >& list_id
 
 
 //
-// number番のあぼーん判定を更新(name)
+// number番のあぼーん判定(name)
 //
 // あぼーんの時はtrueを返す
 //
@@ -1372,7 +1355,7 @@ bool NodeTreeBase::check_abone_name( int number, std::list< std::string >& list_
 
 
 //
-// number番のあぼーん判定を更新(word)
+// number番のあぼーん判定(word)
 //
 // あぼーんの時はtrueを返す
 //
@@ -1392,7 +1375,7 @@ bool NodeTreeBase::check_abone_word( int number, std::list< std::string >& list_
 
 
 //
-// number番のあぼーん判定を更新(regex)
+// number番のあぼーん判定(regex)
 //
 // あぼーんの時はtrueを返す
 //
@@ -1409,4 +1392,54 @@ bool NodeTreeBase::check_abone_regex( int number, std::list< std::string >& list
     }
 
     return false;
+}
+
+
+
+// 参照数のクリア
+void NodeTreeBase::clear_reference()
+{
+    for( int i = 1; i <= m_id_header; ++i ){
+        NODE* tmphead = m_vec_header[ i ];
+        if( tmphead && tmphead->headinfo && tmphead->headinfo->node_res ){
+            tmphead->headinfo->num_reference = 0;
+            tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK;
+        }
+    }
+}
+
+
+//
+// number番のレスが参照しているレスのレス番号の参照数と色を更新する
+//
+void NodeTreeBase::update_reference( int number )
+{
+    NODE* node = res_header( number );
+    while( node ){
+
+        if( node->type == NODE_LINK ){
+
+            // アンカーノードの時は node->linkinfo->anc_from != 0
+            int anc_from = node->linkinfo->anc_from;
+            int anc_to = node->linkinfo->anc_from;
+
+            const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
+            if( anc_from && anc_to >= anc_from && anc_to - anc_from < range ){
+
+                for( int i = anc_from; i <= MIN( m_id_header -1, anc_to ) ; ++i ){
+        
+                    NODE* tmphead = m_vec_header[ i ];
+                    if( tmphead && tmphead->headinfo && tmphead->headinfo->node_res ){
+
+                        // 参照数を更新して色を変更
+                        ++( tmphead->headinfo->num_reference );
+                        if( tmphead->headinfo->num_reference >= 3 ) tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_RED;
+                        else if( tmphead->headinfo->num_reference >= 1 ) tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_PUR;
+                    }
+                }
+            }
+        }
+
+        node = node->next_node;
+    }
 }

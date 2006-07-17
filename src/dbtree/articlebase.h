@@ -256,6 +256,9 @@ namespace DBTREE
         void update_abone();
         void check_abone( int from_number, int to_number );
 
+        // from_number番から to_number 番までのレスが参照しているレスの参照数を更新
+        void update_reference( int from_number, int to_number );
+
         // 情報ファイル書き込み
         void save_info();
         void save_navi2ch_info();

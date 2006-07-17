@@ -350,6 +350,10 @@ void ArticleBase::update_abone()
     if( !m_abone ) return;
 
     check_abone( 1, m_number_load );
+
+    // 参照状態も更新
+    get_nodetree()->clear_reference();
+    update_reference( 1, m_number_load );
 }
 
 
@@ -496,6 +500,22 @@ void ArticleBase::check_abone( int from_number, int to_number )
 #endif 
 
 }
+
+
+//
+// from_number番から to_number 番までのレスが参照しているレスの参照数を更新
+//
+void ArticleBase::update_reference( int from_number, int to_number )
+{
+    if( empty() ) return;
+    assert( m_abone );
+
+    if( to_number < from_number ) return;
+
+    // あぼーんしているレスはチェックしない
+    for( int i = from_number ; i <= to_number; ++i ) if( !m_abone[ i ] ) get_nodetree()->update_reference( i );
+}
+
 
 
 
@@ -672,6 +692,9 @@ void ArticleBase::slot_node_updated()
 
         // あぼーん判定更新
         check_abone( m_number_load + 1, m_nodetree->get_res_number() );
+
+        // 参照数更新
+        update_reference( m_number_load + 1, m_nodetree->get_res_number() );
 
         // スレの読み込み数更新
         m_number_load = m_nodetree->get_res_number();
