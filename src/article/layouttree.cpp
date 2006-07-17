@@ -184,7 +184,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header )
 
     // あぼーん
     if( ! m_show_abone && m_article->abone( res_number ) ){
-        append_abone_node( node_header );
+//        append_abone_node( node_header );
         return;
     }
 
