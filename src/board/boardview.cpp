@@ -27,6 +27,15 @@
 
 using namespace BOARD;
 
+#define COLUMN_TITLE_ID    "ID"
+#define COLUMN_TITLE_NAME  "タイトル"
+#define COLUMN_TITLE_RES   "レス"
+#define COLUMN_TITLE_LOAD  "取得"
+#define COLUMN_TITLE_NEW   "新着"
+#define COLUMN_TITLE_SINCE "since"
+#define COLUMN_TITLE_WRITE "最終書込"
+#define COLUMN_TITLE_SPEED "速度"
+
 
 // row -> path
 #define GET_PATH( row ) m_liststore->get_path( row )
@@ -102,14 +111,14 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
     // columnのappend
     APPEND_COLUMN( " ", m_columns.m_col_mark );
-    APPEND_COLUMN( "ID", m_columns.m_col_id );
-    APPEND_COLUMN( "タイトル", m_columns.m_col_subject );
-    APPEND_COLUMN( "レス", m_columns.m_col_res );
-    APPEND_COLUMN( "取得", m_columns.m_col_str_load );
-    APPEND_COLUMN( "新着", m_columns.m_col_str_new );
-    APPEND_COLUMN( "since", m_columns.m_col_since );
-    APPEND_COLUMN( "最終書込", m_columns.m_col_write );
-    APPEND_COLUMN( "速度", m_columns.m_col_speed );
+    APPEND_COLUMN( COLUMN_TITLE_ID, m_columns.m_col_id );
+    APPEND_COLUMN( COLUMN_TITLE_NAME, m_columns.m_col_subject );
+    APPEND_COLUMN( COLUMN_TITLE_RES, m_columns.m_col_res );
+    APPEND_COLUMN( COLUMN_TITLE_LOAD, m_columns.m_col_str_load );
+    APPEND_COLUMN( COLUMN_TITLE_NEW, m_columns.m_col_str_new );
+    APPEND_COLUMN( COLUMN_TITLE_SINCE, m_columns.m_col_since );
+    APPEND_COLUMN( COLUMN_TITLE_WRITE, m_columns.m_col_write );
+    APPEND_COLUMN( COLUMN_TITLE_SPEED, m_columns.m_col_speed );
     m_treeview.set_column_for_height( 2 );
 
     // サイズを調整しつつソートの設定
@@ -1184,9 +1193,9 @@ bool BoardView::slot_motion( GdkEventMotion* event )
     if( m_treeview.get_path_at_pos( x, y, path, column, cell_x, cell_y ) ){
 
         m_treeview.set_tooltip_min_width( column->get_width() );
-        if( column->get_title() == "name" ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_subject ) );
-        else if( column->get_title() == "since" ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_since ) );
-        else if( column->get_title() == "write" ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_write ) );
+        if( column->get_title() == COLUMN_TITLE_NAME ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_subject ) );
+        else if( column->get_title() == COLUMN_TITLE_SINCE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_since ) );
+        else if( column->get_title() == COLUMN_TITLE_WRITE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_write ) );
         else m_treeview.set_str_tooltip( std::string() );
     }
 
