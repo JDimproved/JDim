@@ -130,21 +130,35 @@ namespace DBTREE
         // number番のレスの発言者の名前
         const std::string get_name( int number );
 
-        // number番のレスの発言者のID( スレIDではなくて名前の横のID)
+        // number番のレスの発言者ID( スレIDではなくて名前の横のID )
         const std::string get_id_name( int number );
 
-        // 指定したID の重複数( = 発言数 )
+        // 指定したた発言者ID の重複数( = 発言数 )
         // (注) 下の get_num_id_name( int number )と違って検索するので遅い
         int get_num_id_name( const std::string& id );
 
-        // number番のID の重複数( = 発言数 )
+        // number番のた発言者ID の重複数( = 発言数 )
         int get_num_id_name( int number );
 
+        // 指定した発言者IDを持つレス番号をリストにして取得
+        std::list< int > get_res_id_name( const std::string& id_name );
+
+        // str_num で指定したレス番号をリストにして取得
+        // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
+        std::list< int > get_res_str_num( const std::string& str_num );
+
+        // ブックマークをつけたレス番号をリストにして取得
+        std::list< int > get_res_bm();
+
         // number番のレスを参照しているレス番号をリストにして取得
-        std::list< int > get_reference( int number );
+        std::list< int > get_res_reference( int number );
 
         // URL を含むレス番号をリストにして取得
         std::list< int > get_res_with_url();
+
+        // query を含むレス番号をリストにして取得
+        // mode_or == true なら OR抽出
+        std::list< int > get_res_query( const std::string& query, bool mode_or );
 
         // number番のレスの文字列を返す
         // ref == true なら先頭に ">" を付ける        
@@ -251,6 +265,9 @@ namespace DBTREE
         void slot_node_updated();
         void slot_load_finished();
         virtual void unlock_impl();
+
+        // レス番号のリストからあぼーんしている番号を取り除く
+        std::list< int > remove_abone_from_list( std::list< int >& list_num );
 
         // あぼーん状態の更新
         void update_abone();

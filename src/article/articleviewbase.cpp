@@ -10,7 +10,6 @@
 #include "toolbar.h"
 
 #include "jdlib/miscutil.h"
-#include "jdlib/jdregex.h"
 
 #include "dbtree/articlebase.h"
 #include "dbtree/interface.h"
@@ -924,12 +923,13 @@ void ArticleViewBase::slot_jump()
 // レスを抽出して表示
 //
 // num は "from-to"　の形式 (例) 3から10を抽出したいなら "3-10"
+// show_title == trueの時は 板名、スレ名を表示
 // 
 void ArticleViewBase::show_res( const std::string& num, bool show_title )
 {
     assert( m_article );
 
-    // 板名、レス名
+    // 板名、スレ名
     if( show_title ){
 
         std::string html;
@@ -942,20 +942,9 @@ void ArticleViewBase::show_res( const std::string& num, bool show_title )
         if( ! html.empty() ) append_html( html );
     }
 
-    int num_from = atol( num.c_str() );
-    int num_to = 0;
+    std::list< int > list_resnum = m_article->get_res_str_num( num );
 
-    if( num_from >= 1 && num_from <= m_article->get_number_load() ){
-
-        size_t i;
-        if( ( i = num.find( "-" ) ) != std::string::npos ) num_to = atol( num.substr( i +1 ).c_str() );
-        num_to = MAX( num_to, num_from );
-
-        std::list< int > list_resnum;          
-        for( int i2 = num_from; i2 <= num_to ; ++i2 ) list_resnum.push_back( i2 );
-
-        if( list_resnum.size() ) append_res( list_resnum );
-    }
+    if( !list_resnum.empty() ) append_res( list_resnum );
     else if( !show_title ) append_html( "未取得レス" );
 }
 
@@ -972,16 +961,13 @@ void ArticleViewBase::show_id( const std::string& id_name )
     std::cout << "ArticleViewBase::show_id " << id_name << std::endl;
 #endif
     
-    std::list< int > list_resnum;          
-    for( int i = 1; i <= m_article->get_number_load() ; ++i ){
-        if( id_name == m_article->get_id_name( i ) ) list_resnum.push_back( i );
-    }
+    std::list< int > list_resnum = m_article->get_res_id_name( id_name );       
 
     std::ostringstream comment;
     comment << "ID:" << id_name.substr( strlen( PROTO_ID ) ) << "  " << list_resnum.size() << " 件";
       
     append_html( comment.str() );
-    append_res( list_resnum );
+    if( ! list_resnum.empty() ) append_res( list_resnum );
 }
 
 
@@ -997,12 +983,10 @@ void ArticleViewBase::show_bm()
     std::cout << "ArticleViewBase::show_bm " << std::endl;
 #endif
     
-    std::list< int > list_resnum;          
-    for( int i = 1; i <= m_article->get_number_load() ; ++i ){
+    std::list< int > list_resnum = m_article->get_res_bm();
 
-        if( m_article->is_bookmarked( i ) ) list_resnum.push_back( i );
-    }
-    append_res( list_resnum );
+    if( ! list_resnum.empty() ) append_res( list_resnum );
+    else append_html( "ブックマークはセットされていません" );
 }
 
 
@@ -1020,7 +1004,9 @@ void ArticleViewBase::show_res_with_url()
 #endif
 
     std::list< int > list_resnum = m_article->get_res_with_url();
-    append_res( list_resnum );
+
+    if( ! list_resnum.empty() ) append_res( list_resnum );
+    else append_html( "リンクを含むスレはありません" );
 }
 
 
@@ -1036,8 +1022,11 @@ void ArticleViewBase::show_refer( int num )
     std::cout << "ArticleViewBase::show_refer " << num << std::endl;
 #endif
 
-    std::list< int > list_resnum = m_article->get_reference( num );
+    std::list< int > list_resnum = m_article->get_res_reference( num );
+
+    // num 番は先頭に必ず表示
     list_resnum.push_front( num );
+
     append_res( list_resnum );
 }
 
@@ -1051,51 +1040,11 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or )
 {
     assert( m_article );
 
-    JDLIB::Regex regex;
-
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::drawout_keywords " << query << std::endl;
 #endif
-    if( query.empty() ) return;
 
-    std::list< std::string > list_query;
-    list_query = MISC::split_line( query );
-
-    std::list< int > list_resnum;          
-    for( int i = 1; i <= m_article->get_number_load() ; ++i ){
-
-        bool apnd = true;
-        if( mode_or ) apnd = false;
-        std::list< std::string >::iterator it = list_query.begin();
-        for( ; it != list_query.end(); ++it ){
-
-            bool ret = regex.exec( ( *it ), m_article->get_res_str( i ), 0, true );
-
-#ifdef _DEBUG
-            if( ret ) std::cout << i << " : " << ( *it ) << std::endl << regex.str( 0 ) << std::endl;
-#endif
-
-            // OR
-            if( mode_or ){
-                
-                if( ret ){
-                    apnd = true;
-                    break;
-                }
-            }
-
-            // AND
-            else{
-
-                if( ! ret ){
-                    apnd = false;
-                    break;
-                }
-            }
-        }
-
-        if( apnd ) list_resnum.push_back( i );
-    }
+    std::list< int > list_resnum = m_article->get_res_query( query, mode_or );         
 
     std::ostringstream comment;
     comment << query << "  " << list_resnum.size() << " 件";
@@ -1103,7 +1052,8 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or )
     append_html( comment.str() );
     append_res( list_resnum );
 
-    // ハイライト
+    // ハイライト表示
+    std::list< std::string > list_query = MISC::split_line( query );
     m_drawarea->search( list_query, false );
 }
 

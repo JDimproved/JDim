@@ -1099,7 +1099,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
                                     int color , int color_back, int byte_from, int byte_to )
 {
     assert( node->text != NULL );
-    assert( byte_to <= strlen( node->text ) );
+    assert( byte_to <= (int)strlen( node->text ) );
 
     if( *node->text == '\0' ) return;
     if( byte_to == 0 ) byte_to = strlen( node->text );
@@ -1297,7 +1297,7 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
 //
 // clock_in()からクロック入力される度にスクロールする
 //
-// redraw_all : true なら前画面再描画
+// redraw_all : true なら全画面再描画
 //
 void DrawAreaBase::exec_scroll( bool redraw_all )
 {
@@ -1424,7 +1424,7 @@ void DrawAreaBase::goto_num( int num )
         return;
     }
 
-    // 範囲を越えていたら再レイアウトしたときにもう一度呼び出し
+    // 表示範囲を越えていたら再レイアウトしたときにもう一度呼び出し
     else if( num > max_number() ){
         m_goto_num_reserve = num;
 
@@ -1436,15 +1436,19 @@ void DrawAreaBase::goto_num( int num )
 
     else m_goto_num_reserve = 0;
 
-    if( DBTREE::article_number_load( m_url ) < num ){
+    // ロード数を越えている場合
+    int number_load = DBTREE::article_number_load( m_url );
+    if( number_load < num ) num = number_load;
 
-        num = DBTREE::article_number_load( m_url );
-    }
+    // num番が表示されていないときは近くの番号をセット
+    while( ! m_layout_tree->get_header_of_res( num ) && num++ < number_load );
+    while( ! m_layout_tree->get_header_of_res( num ) && num-- > 1 );
 
 #ifdef _DEBUG
     std::cout << "exec goto_num\n";
 #endif
 
+    // スクロール実行
     m_scrollinfo.reset();
     m_scrollinfo.mode = SCROLL_TO_NUM;
     m_scrollinfo.res = num;

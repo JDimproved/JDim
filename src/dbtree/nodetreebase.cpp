@@ -197,7 +197,7 @@ std::list< int > NodeTreeBase::get_res_with_url()
 //
 // number番のレスを参照しているレスの番号全てをリストにして取得
 //
-std::list< int > NodeTreeBase::get_reference( int number )
+std::list< int > NodeTreeBase::get_res_reference( int number )
 {
     std::list< int > list_ref;
     for( int i = number + 1; i <= m_id_header; ++i ){
@@ -209,7 +209,7 @@ std::list< int > NodeTreeBase::get_reference( int number )
 
                 // アンカーノードの時は node->linkinfo->anc_from != 0
                 int anc_from = node->linkinfo->anc_from;
-                int anc_to = node->linkinfo->anc_from;
+                int anc_to = node->linkinfo->anc_to;
 
                 const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
                 if( anc_from && anc_to - anc_from < range && anc_from <= number && number <= anc_to ) {
@@ -1396,7 +1396,7 @@ bool NodeTreeBase::check_abone_regex( int number, std::list< std::string >& list
 
 
 
-// 参照数のクリア
+// 参照数と色のクリア
 void NodeTreeBase::clear_reference()
 {
     for( int i = 1; i <= m_id_header; ++i ){
@@ -1421,7 +1421,7 @@ void NodeTreeBase::update_reference( int number )
 
             // アンカーノードの時は node->linkinfo->anc_from != 0
             int anc_from = node->linkinfo->anc_from;
-            int anc_to = node->linkinfo->anc_from;
+            int anc_to = node->linkinfo->anc_to;
 
             const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
             if( anc_from && anc_to >= anc_from && anc_to - anc_from < range ){

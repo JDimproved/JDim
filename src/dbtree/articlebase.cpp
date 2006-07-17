@@ -11,6 +11,7 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 #include "jdlib/miscmsg.h"
+#include "jdlib/jdregex.h"
 
 #include "httpcode.h"
 #include "command.h"
@@ -140,7 +141,7 @@ const std::string ArticleBase::get_name( int number )
 
 
 //
-// number番のID
+// number番の発言者ID
 //
 const std::string ArticleBase::get_id_name( int number )
 {
@@ -148,7 +149,7 @@ const std::string ArticleBase::get_id_name( int number )
 }
 
 
-// 指定したID の重複数( = 発言数 )
+// 指定した発言者ID の重複数( = 発言数 )
 // 下のnum_id_name( int number )と違って検索するので遅い
 int ArticleBase::get_num_id_name( const std::string& id )
 {
@@ -157,20 +158,75 @@ int ArticleBase::get_num_id_name( const std::string& id )
 
 
 
-// number番のID の重複数( = 発言数 )
+// number番の発言者ID の重複数( = 発言数 )
 int ArticleBase::get_num_id_name( int number )
 {
     return get_nodetree()->get_num_id_name( number );
 }
 
 
+// レス番号のリストからあぼーんしている番号を取り除く
+std::list< int > ArticleBase::remove_abone_from_list( std::list< int >& list_num )
+{
+    std::list< int > list_resnum; 
+
+    std::list< int >::iterator it = list_num.begin();
+    for( ; it != list_num.end(); ++it ) if( ! abone( *it ) ) list_resnum.push_back( *it );
+
+    return list_resnum;
+}
+
+
+// 指定した発言者IDを持つレス番号をリストにして取得
+std::list< int > ArticleBase::get_res_id_name( const std::string& id_name )
+{
+    std::list< int > list_resnum;          
+    for( int i = 1; i <= m_number_load ; ++i ){
+        if( id_name == get_id_name( i ) ) list_resnum.push_back( i );
+    }
+
+    return remove_abone_from_list( list_resnum );
+}
+
+
+// str_num で指定したレス番号をリストにして取得
+// str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
+std::list< int > ArticleBase::get_res_str_num( const std::string& str_num )
+{
+    std::list< int > list_resnum;
+    int num_from = MAX( 1, atol( str_num.c_str() ) );
+    int num_to = 0;
+    if( num_from <= m_number_load  ){
+        size_t i;
+        if( ( i = str_num.find( "-" ) ) != std::string::npos ) num_to = atol( str_num.substr( i +1 ).c_str() );
+        num_to = MIN( MAX( num_to, num_from ), m_number_load );
+        for( int i2 = num_from; i2 <= num_to ; ++i2 ) list_resnum.push_back( i2 );
+    }
+
+    return remove_abone_from_list( list_resnum );
+}
+
+
+// ブックマークをつけたレス番号をリストにして取得
+std::list< int > ArticleBase::get_res_bm()
+{
+    std::list< int > list_resnum;          
+    for( int i = 1; i <= m_number_load ; ++i ){
+        if( is_bookmarked( i ) ) list_resnum.push_back( i );
+    }
+
+    return remove_abone_from_list( list_resnum );
+}
+
 
 //
 // number番のレスを参照しているレス番号をリストにして取得
 //
-std::list< int > ArticleBase::get_reference( int number )
+std::list< int > ArticleBase::get_res_reference( int number )
 {
-    return get_nodetree()->get_reference( number );
+    std::list< int > list_resnum = get_nodetree()->get_res_reference( number );
+
+    return remove_abone_from_list( list_resnum );
 }
 
 
@@ -179,7 +235,57 @@ std::list< int > ArticleBase::get_reference( int number )
 //
 std::list< int > ArticleBase::get_res_with_url()
 {
-    return get_nodetree()->get_res_with_url();
+    std::list< int > list_resnum = get_nodetree()->get_res_with_url();
+
+    return remove_abone_from_list( list_resnum );
+}
+
+
+//
+// query を含むレス番号をリストにして取得
+//
+// mode_or == true なら OR抽出
+//
+std::list< int > ArticleBase::get_res_query( const std::string& query, bool mode_or )
+{
+    std::list< int > list_resnum;
+    if( query.empty() ) return list_resnum;
+
+    JDLIB::Regex regex;
+    std::list< std::string > list_query = MISC::split_line( query );
+
+    for( int i = 1; i <= m_number_load ; ++i ){
+
+        bool apnd = true;
+        if( mode_or ) apnd = false;
+        std::list< std::string >::iterator it = list_query.begin();
+        for( ; it != list_query.end(); ++it ){
+
+            bool ret = regex.exec( ( *it ), get_res_str( i ), 0, true );
+
+            // OR
+            if( mode_or ){
+                
+                if( ret ){
+                    apnd = true;
+                    break;
+                }
+            }
+
+            // AND
+            else{
+
+                if( ! ret ){
+                    apnd = false;
+                    break;
+                }
+            }
+        }
+
+        if( apnd ) list_resnum.push_back( i );
+    }
+
+    return remove_abone_from_list( list_resnum );
 }
 
 
@@ -495,7 +601,7 @@ void ArticleBase::check_abone( int from_number, int to_number )
 
 #ifdef _DEBUG
     for( int i = from_number ; i <= to_number; ++i ) if( m_abone[ i ] ){
-        std::cout << i << " " << get_nodetree()->get_id_name( i ) << " " << get_nodetree()->get_name( i ) << std::endl;
+        std::cout << i << " " << get_id_name( i ) << " " << get_nodetree()->get_name( i ) << std::endl;
     }
 #endif 
 
@@ -540,12 +646,11 @@ bool ArticleBase::is_bookmarked( int number )
 {
     if( number <= 0 || number > m_number_load ) return false;
 
-    // まだnodetreeが作られてなくてブックマークとあぼーんの情報が得られてないのでnodetreeを作って情報取得
-    if( !m_bookmark || !m_abone ) get_nodetree();
-    assert( m_abone );
+    // まだnodetreeが作られてなくてブックマークの情報が得られてないのでnodetreeを作って情報取得
+    if( !m_bookmark ) get_nodetree();
     assert( m_bookmark );
 
-    return ( !m_abone[ number ] && m_bookmark[ number ] );
+    return ( m_bookmark[ number ] );
 }
 
 

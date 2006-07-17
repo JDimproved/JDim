@@ -110,7 +110,7 @@ namespace DBTREE
         std::list< int > get_res_with_url();
 
         // number番のレスを参照しているレス番号をリストにして取得
-        std::list< int > get_reference( int number );
+        std::list< int > get_res_reference( int number );
 
         // number番のレスの文字列を返す
         // ref == true なら先頭に ">" を付ける        
@@ -135,7 +135,7 @@ namespace DBTREE
         bool check_abone_word( int number, std::list< std::string >& list_word );
         bool check_abone_regex( int number, std::list< std::string >& list_regex );
 
-        // 参照数のクリア
+        // 参照数と色のクリア
         void clear_reference();
 
         // number番のレスが参照しているレスのレス番号の参照数と色を更新する

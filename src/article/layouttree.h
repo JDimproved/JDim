@@ -102,6 +102,7 @@ namespace ARTICLE
         // 座標 y の下にあるヘッダ
         const LAYOUT* get_header_at_y( int y );
 
+        // レス番号 number のヘッダを返す
         const LAYOUT* get_header_of_res( int number );
 
       private:

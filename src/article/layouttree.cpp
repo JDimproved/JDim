@@ -184,7 +184,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header )
 
     // あぼーん
     if( ! m_show_abone && m_article->abone( res_number ) ){
-//        append_abone_node( node_header );
+        append_abone_node( node_header );
         return;
     }
 
@@ -243,30 +243,32 @@ void LayoutTree::append_node( DBTREE::NODE* node_header )
 //
 void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
 {
-        LAYOUT* tmplayout;
-        DBTREE::NODE* tmpnode;
-        int res_number = node_header->id_header;
+    int res_number = node_header->id_header;
+    if( res_number > m_max_res_number ) m_max_res_number = res_number;
 
 #ifdef _DEBUG
     std::cout << "LayoutTree::append_abone_node num = " << res_number << std::endl;
 #endif
+/*
+    LAYOUT* tmplayout;
+    DBTREE::NODE* tmpnode;
 
-        tmplayout = create_layout_header();
-        tmplayout->res_number = res_number;
-        if( res_number > m_max_res_number ) m_max_res_number = res_number;
+    tmplayout = create_layout_header();
+    tmplayout->res_number = res_number;
 
-        // node_header->next_node == レス番号のリンクヘッダ
-        tmpnode = node_header->next_node;
-        tmplayout = create_layout_link( tmpnode->text, tmpnode->linkinfo->link, &tmpnode->color_text, tmpnode->bold );
+    // node_header->next_node == レス番号のリンクヘッダ
+    tmpnode = node_header->next_node;
+    tmplayout = create_layout_link( tmpnode->text, tmpnode->linkinfo->link, &tmpnode->color_text, tmpnode->bold );
 
-        tmplayout = create_layout_text( " あぼ〜ん", NULL, false );
+    tmplayout = create_layout_text( " あぼ〜ん", NULL, false );
 
-        tmplayout = create_layout_br( "" );
+    tmplayout = create_layout_br( "" );
 
-        tmplayout = create_layout_downleft();
-        tmplayout = create_layout_downleft();
+    tmplayout = create_layout_downleft();
+    tmplayout = create_layout_downleft();
 
-        tmplayout = create_layout_text( "あぼ〜ん", NULL, false );
+    tmplayout = create_layout_text( "あぼ〜ん", NULL, false );
+*/
 }
 
 
