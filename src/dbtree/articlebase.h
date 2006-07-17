@@ -141,24 +141,24 @@ namespace DBTREE
         int get_num_id_name( int number );
 
         // 指定した発言者IDを持つレス番号をリストにして取得
-        std::list< int > get_res_id_name( const std::string& id_name, bool cancel_abone );
+        std::list< int > get_res_id_name( const std::string& id_name );
 
         // str_num で指定したレス番号をリストにして取得
         // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
-        std::list< int > get_res_str_num( const std::string& str_num, bool cancel_abone );
+        std::list< int > get_res_str_num( const std::string& str_num );
 
         // ブックマークをつけたレス番号をリストにして取得
-        std::list< int > get_res_bm( bool cancel_abone );
+        std::list< int > get_res_bm();
 
         // number番のレスを参照しているレス番号をリストにして取得
-        std::list< int > get_res_reference( int number, bool cancel_abone );
+        std::list< int > get_res_reference( int number );
 
         // URL を含むレス番号をリストにして取得
-        std::list< int > get_res_with_url( bool cancel_abone );
+        std::list< int > get_res_with_url();
 
         // query を含むレス番号をリストにして取得
         // mode_or == true なら OR抽出
-        std::list< int > get_res_query( const std::string& query, bool mode_or, bool cancel_abone );
+        std::list< int > get_res_query( const std::string& query, bool mode_or );
 
         // number番のレスの文字列を返す
         // ref == true なら先頭に ">" を付ける        
