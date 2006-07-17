@@ -103,13 +103,13 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // columnのappend
     APPEND_COLUMN( " ", m_columns.m_col_mark );
     APPEND_COLUMN( "ID", m_columns.m_col_id );
-    APPEND_COLUMN( "name", m_columns.m_col_subject );
-    APPEND_COLUMN( "res", m_columns.m_col_res );
-    APPEND_COLUMN( "load", m_columns.m_col_str_load );
-    APPEND_COLUMN( "new", m_columns.m_col_str_new );
+    APPEND_COLUMN( "タイトル", m_columns.m_col_subject );
+    APPEND_COLUMN( "レス", m_columns.m_col_res );
+    APPEND_COLUMN( "取得", m_columns.m_col_str_load );
+    APPEND_COLUMN( "新着", m_columns.m_col_str_new );
     APPEND_COLUMN( "since", m_columns.m_col_since );
-    APPEND_COLUMN( "write", m_columns.m_col_write );
-    APPEND_COLUMN( "speed", m_columns.m_col_speed );
+    APPEND_COLUMN( "最終書込", m_columns.m_col_write );
+    APPEND_COLUMN( "速度", m_columns.m_col_speed );
     m_treeview.set_column_for_height( 2 );
 
     // サイズを調整しつつソートの設定
