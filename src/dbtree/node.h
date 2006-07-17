@@ -47,7 +47,7 @@ namespace DBTREE
         char* name; // 名前
         
         NODE* node_id_name;  // 名前IDリンクノードのポインタ
-        int num_id_name; // 同じIDのレスの個数
+        int num_id_name; // 同じIDのレスの個数( = 発言数 )
     };
 
 

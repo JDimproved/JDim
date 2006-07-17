@@ -920,9 +920,6 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 
             // ヘッダにリンクノードへのポインタを登録
             header->headinfo->node_id_name = node_id_name;
-
-            // 発言回数を調べる
-            count_id_name( header, tmplink );
         }
 
         // BE:
@@ -1269,37 +1266,6 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 }
 
 
-//
-// 名前IDが何回現れたかカウントする ( parse_date_id() 参照 )
-// 
-void NodeTreeBase::count_id_name( NODE* header, const char* str_id )
-{
-    // 同じIDのレスの個数
-    if( header->headinfo->node_id_name ){
-
-        int num_id_name = 1;
-        for( int i = 1 ; i < header->id_header; ++i ){
-            if( m_vec_header[ i ]->headinfo->node_id_name
-                && strcmp( str_id, m_vec_header[ i ]->headinfo->node_id_name->linkinfo->link ) == 0 ){
-
-                // 対象よりも前のヘッダ情報を更新
-                NODE* tmphead = m_vec_header[ i ];
-                ++( tmphead->headinfo->num_id_name );
-                if( tmphead->headinfo->num_id_name >= 4 ) tmphead->headinfo->node_id_name->color_text = COLOR_CHAR_LINK_RED;        
-                else if( tmphead->headinfo->num_id_name >= 2 ) tmphead->headinfo->node_id_name->color_text = COLOR_CHAR_LINK;
-
-                ++num_id_name;
-            }
-        }
-
-        // ヘッダ情報更新
-        header->headinfo->num_id_name = num_id_name;        
-        if( num_id_name >= 4 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK_RED;        
-        else if( num_id_name >= 2 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK;
-    }
-}
-
-
 
 //
 // number番のあぼーん判定(ID)
@@ -1396,7 +1362,7 @@ bool NodeTreeBase::check_abone_regex( int number, std::list< std::string >& list
 
 
 
-// 参照数と色のクリア
+// 参照数(num_reference)と色のクリア
 void NodeTreeBase::clear_reference()
 {
     for( int i = 1; i <= m_id_header; ++i ){
@@ -1410,7 +1376,7 @@ void NodeTreeBase::clear_reference()
 
 
 //
-// number番のレスが参照しているレスのレス番号の参照数と色を更新する
+// number番のレスが参照しているレスのレス番号の参照数(num_reference)と色を更新する
 //
 void NodeTreeBase::update_reference( int number )
 {
@@ -1429,7 +1395,8 @@ void NodeTreeBase::update_reference( int number )
                 for( int i = anc_from; i <= MIN( m_id_header -1, anc_to ) ; ++i ){
         
                     NODE* tmphead = m_vec_header[ i ];
-                    if( tmphead && tmphead->headinfo && tmphead->headinfo->node_res ){
+                    if( tmphead && tmphead->headinfo->num_id_name // tmpheadがあぼーんされているなら num_id_name = 0
+                        && tmphead->headinfo->node_res ){
 
                         // 参照数を更新して色を変更
                         ++( tmphead->headinfo->num_reference );
@@ -1443,3 +1410,61 @@ void NodeTreeBase::update_reference( int number )
         node = node->next_node;
     }
 }
+
+
+// 発言数(( num_id_name ))とIDの色のクリア
+void NodeTreeBase::clear_id_name()
+{
+    for( int i = 1; i <= m_id_header; ++i ){
+        NODE* tmphead = m_vec_header[ i ];
+        if( tmphead && tmphead->headinfo && tmphead->headinfo->node_id_name ){
+            tmphead->headinfo->num_id_name = 0;
+            tmphead->headinfo->node_id_name->color_text = COLOR_CHAR;
+        }
+    }
+}
+
+
+//
+// number番のレスの発言数を更新
+//
+void NodeTreeBase::update_id_name( int number )
+{
+    NODE* header = res_header( number );
+
+    if( header && header->headinfo->node_id_name ){
+
+        char* str_id = header->headinfo->node_id_name->linkinfo->link;
+
+        // 以前に出た同じIDのレスの発言数を更新しつつ発言回数を調べる
+        int num_id_name = 1;
+        for( int i = 1 ; i < header->id_header; ++i ){
+
+            NODE* tmphead = m_vec_header[ i ];
+
+            if( tmphead && tmphead->headinfo->num_id_name // tmpheadがあぼーんされているなら num_id_name = 0
+                && tmphead->headinfo->node_id_name
+                && strcmp( str_id, tmphead->headinfo->node_id_name->linkinfo->link ) == 0 ){
+
+                set_num_id_name( tmphead, tmphead->headinfo->num_id_name+1 );
+                ++num_id_name;
+            }
+        }
+
+        set_num_id_name( header, num_id_name );
+    }
+}
+
+
+
+//
+// 発言数( num_id_name )の更新
+//
+// IDノードの色も変更する
+//
+void NodeTreeBase::set_num_id_name( NODE* header, int num_id_name )
+{
+    header->headinfo->num_id_name = num_id_name;        
+    if( num_id_name >= 4 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK_RED;        
+    else if( num_id_name >= 2 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK;
+}    

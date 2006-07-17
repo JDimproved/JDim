@@ -457,7 +457,11 @@ void ArticleBase::update_abone()
 
     check_abone( 1, m_number_load );
 
-    // 参照状態も更新
+    // 発言数更新
+    get_nodetree()->clear_id_name();
+    update_id_name( 1, m_number_load );
+
+    // 参照状態更新
     get_nodetree()->clear_reference();
     update_reference( 1, m_number_load );
 }
@@ -623,6 +627,20 @@ void ArticleBase::update_reference( int from_number, int to_number )
 }
 
 
+
+//
+// from_number番から to_number 番までの発言数の更新
+//
+void ArticleBase::update_id_name( int from_number, int to_number )
+{
+    if( empty() ) return;
+    assert( m_abone );
+
+    if( to_number < from_number ) return;
+
+    // あぼーんしているレスはチェックしない
+    for( int i = from_number ; i <= to_number; ++i ) if( !m_abone[ i ] ) get_nodetree()->update_id_name( i );
+}
 
 
 
@@ -797,6 +815,9 @@ void ArticleBase::slot_node_updated()
 
         // あぼーん判定更新
         check_abone( m_number_load + 1, m_nodetree->get_res_number() );
+
+        // 発言数更新
+        update_id_name( m_number_load + 1, m_nodetree->get_res_number() );
 
         // 参照数更新
         update_reference( m_number_load + 1, m_nodetree->get_res_number() );

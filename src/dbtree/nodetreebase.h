@@ -135,11 +135,17 @@ namespace DBTREE
         bool check_abone_word( int number, std::list< std::string >& list_word );
         bool check_abone_regex( int number, std::list< std::string >& list_regex );
 
-        // 参照数と色のクリア
+        // 参照数(num_reference)と色のクリア
         void clear_reference();
 
-        // number番のレスが参照しているレスのレス番号の参照数と色を更新する
+        // number番のレスが参照しているレスのレス番号の参照数(num_reference)と色を更新する
         void update_reference( int number );
+
+        // 発言数とIDの色のクリア
+        void clear_id_name();
+
+        // number番のレスの発言数を更新
+        void update_id_name( int number );
 
       protected:
 
@@ -188,7 +194,10 @@ namespace DBTREE
         bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
                            int& anc_from, int& anc_to );
         int str_to_int( const char* str, int& n );
-        void count_id_name( NODE* header, const char* str_id );
+
+        // 発言数( num_id_name )の更新
+        // IDノードの色も変更する
+        void set_num_id_name( NODE* header, int num_id_name );
     };
 }
 
