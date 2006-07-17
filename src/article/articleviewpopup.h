@@ -23,6 +23,7 @@ namespace ARTICLE
 
       protected:
         void show_instruct_popup();
+        const bool show_abone() const { return m_show_abone; }
 
       private:
         virtual void pack_widget();

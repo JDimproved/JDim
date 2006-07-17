@@ -102,6 +102,7 @@ namespace ARTICLE
 
         // レスを抽出して表示
         // num は "from-to"　の形式 (例) 3から10を抽出したいなら "3-10"
+        // show_title == trueの時は 板名、スレ名を表示
         void show_res( const std::string& num, bool show_title );
 
         // ID で抽出して表示

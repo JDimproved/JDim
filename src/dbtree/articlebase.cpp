@@ -178,12 +178,15 @@ std::list< int > ArticleBase::remove_abone_from_list( std::list< int >& list_num
 
 
 // 指定した発言者IDを持つレス番号をリストにして取得
-std::list< int > ArticleBase::get_res_id_name( const std::string& id_name )
+std::list< int > ArticleBase::get_res_id_name( const std::string& id_name, bool cancel_abone )
 {
     std::list< int > list_resnum;          
     for( int i = 1; i <= m_number_load ; ++i ){
         if( id_name == get_id_name( i ) ) list_resnum.push_back( i );
     }
+
+    // cancel_abone = true の時はあぼーんのチェックをしない
+    if( cancel_abone ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -191,7 +194,7 @@ std::list< int > ArticleBase::get_res_id_name( const std::string& id_name )
 
 // str_num で指定したレス番号をリストにして取得
 // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
-std::list< int > ArticleBase::get_res_str_num( const std::string& str_num )
+std::list< int > ArticleBase::get_res_str_num( const std::string& str_num, bool cancel_abone )
 {
     std::list< int > list_resnum;
     int num_from = MAX( 1, atol( str_num.c_str() ) );
@@ -203,17 +206,23 @@ std::list< int > ArticleBase::get_res_str_num( const std::string& str_num )
         for( int i2 = num_from; i2 <= num_to ; ++i2 ) list_resnum.push_back( i2 );
     }
 
+    // cancel_abone = true の時はあぼーんのチェックをしない
+    if( cancel_abone ) return list_resnum;
+
     return remove_abone_from_list( list_resnum );
 }
 
 
 // ブックマークをつけたレス番号をリストにして取得
-std::list< int > ArticleBase::get_res_bm()
+std::list< int > ArticleBase::get_res_bm( bool cancel_abone)
 {
     std::list< int > list_resnum;          
     for( int i = 1; i <= m_number_load ; ++i ){
         if( is_bookmarked( i ) ) list_resnum.push_back( i );
     }
+
+    // cancel_abone = true の時はあぼーんのチェックをしない
+    if( cancel_abone ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -222,9 +231,12 @@ std::list< int > ArticleBase::get_res_bm()
 //
 // number番のレスを参照しているレス番号をリストにして取得
 //
-std::list< int > ArticleBase::get_res_reference( int number )
+std::list< int > ArticleBase::get_res_reference( int number, bool cancel_abone )
 {
     std::list< int > list_resnum = get_nodetree()->get_res_reference( number );
+
+    // cancel_abone = true の時はあぼーんのチェックをしない
+    if( cancel_abone ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -233,9 +245,12 @@ std::list< int > ArticleBase::get_res_reference( int number )
 //
 // URL を含むレス番号をリストにして取得
 //
-std::list< int > ArticleBase::get_res_with_url()
+std::list< int > ArticleBase::get_res_with_url( bool cancel_abone )
 {
     std::list< int > list_resnum = get_nodetree()->get_res_with_url();
+
+    // cancel_abone = true の時はあぼーんのチェックをしない
+    if( cancel_abone ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -246,7 +261,7 @@ std::list< int > ArticleBase::get_res_with_url()
 //
 // mode_or == true なら OR抽出
 //
-std::list< int > ArticleBase::get_res_query( const std::string& query, bool mode_or )
+std::list< int > ArticleBase::get_res_query( const std::string& query, bool mode_or, bool cancel_abone )
 {
     std::list< int > list_resnum;
     if( query.empty() ) return list_resnum;
@@ -284,6 +299,9 @@ std::list< int > ArticleBase::get_res_query( const std::string& query, bool mode
 
         if( apnd ) list_resnum.push_back( i );
     }
+
+    // cancel_abone = true の時はあぼーんのチェックをしない
+    if( cancel_abone ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }

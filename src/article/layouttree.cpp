@@ -11,6 +11,8 @@
 
 #include "jdlib/miscutil.h"
 
+#include "config/globalconf.h"
+
 using namespace ARTICLE;
 
 #define SIZE_OF_HEAP 256 * 1024
@@ -249,7 +251,10 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
 #ifdef _DEBUG
     std::cout << "LayoutTree::append_abone_node num = " << res_number << std::endl;
 #endif
-/*
+
+    // 透明あぼーん
+    if( ! m_show_abone && CONFIG::transparent_abone() ) return;
+
     LAYOUT* tmplayout;
     DBTREE::NODE* tmpnode;
 
@@ -268,7 +273,6 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
     tmplayout = create_layout_downleft();
 
     tmplayout = create_layout_text( "あぼ〜ん", NULL, false );
-*/
 }
 
 

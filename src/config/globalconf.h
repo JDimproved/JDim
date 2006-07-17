@@ -151,6 +151,10 @@ namespace CONFIG
     // スレ表示の行間調整
     const double get_adjust_underline_pos();
     const double get_adjust_line_space();
+
+    // 透明あぼーん
+    const bool transparent_abone();
+    void set_transparent_abone( bool value );
 }
 
 

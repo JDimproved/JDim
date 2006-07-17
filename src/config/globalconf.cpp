@@ -418,3 +418,7 @@ const int CONFIG::get_instruct_popup(){
 
 const double CONFIG::get_adjust_underline_pos(){ return adjust_underline_pos; }
 const double CONFIG::get_adjust_line_space(){ return adjust_line_space; }
+
+
+const bool CONFIG::transparent_abone(){ return true; }
+void CONFIG::set_transparent_abone( bool value ){}

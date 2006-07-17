@@ -924,6 +924,7 @@ void ArticleViewBase::slot_jump()
 //
 // num は "from-to"　の形式 (例) 3から10を抽出したいなら "3-10"
 // show_title == trueの時は 板名、スレ名を表示
+// show_abone == trueの時はあぼーんしたレスも表示する
 // 
 void ArticleViewBase::show_res( const std::string& num, bool show_title )
 {
@@ -942,7 +943,7 @@ void ArticleViewBase::show_res( const std::string& num, bool show_title )
         if( ! html.empty() ) append_html( html );
     }
 
-    std::list< int > list_resnum = m_article->get_res_str_num( num );
+    std::list< int > list_resnum = m_article->get_res_str_num( num, !CONFIG::transparent_abone() );
 
     if( !list_resnum.empty() ) append_res( list_resnum );
     else if( !show_title ) append_html( "未取得レス" );
@@ -961,7 +962,7 @@ void ArticleViewBase::show_id( const std::string& id_name )
     std::cout << "ArticleViewBase::show_id " << id_name << std::endl;
 #endif
     
-    std::list< int > list_resnum = m_article->get_res_id_name( id_name );       
+    std::list< int > list_resnum = m_article->get_res_id_name( id_name, !CONFIG::transparent_abone() );       
 
     std::ostringstream comment;
     comment << "ID:" << id_name.substr( strlen( PROTO_ID ) ) << "  " << list_resnum.size() << " 件";
@@ -983,7 +984,7 @@ void ArticleViewBase::show_bm()
     std::cout << "ArticleViewBase::show_bm " << std::endl;
 #endif
     
-    std::list< int > list_resnum = m_article->get_res_bm();
+    std::list< int > list_resnum = m_article->get_res_bm( !CONFIG::transparent_abone() );
 
     if( ! list_resnum.empty() ) append_res( list_resnum );
     else append_html( "ブックマークはセットされていません" );
@@ -1003,7 +1004,7 @@ void ArticleViewBase::show_res_with_url()
     std::cout << "ArticleViewBase::show_res_with_url\n";
 #endif
 
-    std::list< int > list_resnum = m_article->get_res_with_url();
+    std::list< int > list_resnum = m_article->get_res_with_url( !CONFIG::transparent_abone() );
 
     if( ! list_resnum.empty() ) append_res( list_resnum );
     else append_html( "リンクを含むスレはありません" );
@@ -1022,7 +1023,7 @@ void ArticleViewBase::show_refer( int num )
     std::cout << "ArticleViewBase::show_refer " << num << std::endl;
 #endif
 
-    std::list< int > list_resnum = m_article->get_res_reference( num );
+    std::list< int > list_resnum = m_article->get_res_reference( num, !CONFIG::transparent_abone() );
 
     // num 番は先頭に必ず表示
     list_resnum.push_front( num );
@@ -1044,7 +1045,7 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or )
     std::cout << "ArticleViewBase::drawout_keywords " << query << std::endl;
 #endif
 
-    std::list< int > list_resnum = m_article->get_res_query( query, mode_or );         
+    std::list< int > list_resnum = m_article->get_res_query( query, mode_or, !CONFIG::transparent_abone() );         
 
     std::ostringstream comment;
     comment << query << "  " << list_resnum.size() << " 件";
