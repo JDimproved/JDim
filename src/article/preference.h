@@ -25,6 +25,9 @@ namespace ARTICLE
         // 透明あぼーん
         Gtk::CheckButton m_check_transpabone;
 
+        // 連鎖あぼーん
+        Gtk::CheckButton m_check_chainabone;
+
         SKELETON::LabelEntry m_label_since;
         SKELETON::LabelEntry m_label_modified;
         SKELETON::LabelEntry m_label_write;

@@ -596,6 +596,18 @@ void DBTREE::set_abone_transparent( const std::string& url, bool set )
 }
 
 
+const bool DBTREE::get_abone_chain( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_abone_chain();
+}
+
+
+void DBTREE::set_abone_chain( const std::string& url, bool set )
+{
+    DBTREE::get_article( url )->set_abone_chain( set );
+}
+
+
 const bool DBTREE::is_bookmarked( const std::string& url, int number )
 {
     return DBTREE::get_article( url )->is_bookmarked( number );

@@ -232,7 +232,10 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "AboneName", "NG Nameに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
     action_group()->add( Gtk::Action::create( "AboneWord", "NG Wordに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word ) );
     action_group()->add( Gtk::ToggleAction::create( "TranspAbone", "透明あぼ〜ん", std::string(), false ),
-                         sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_transparentabone ) );
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_abone_transparent ) );
+    action_group()->add( Gtk::ToggleAction::create( "ChainAbone", "連鎖あぼ〜ん", std::string(), false ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_abone_chain ) );
+
 
     // 移動系
     action_group()->add( Gtk::Action::create( "Move_Menu", "移動" ) );
@@ -331,6 +334,7 @@ void ArticleViewBase::setup_action()
 
     "<separator/>"
     "<menuitem action='TranspAbone'/>"
+    "<menuitem action='ChainAbone'/>"
 
     "<separator/>"
     "<menuitem action='Preference'/>"
@@ -1718,12 +1722,30 @@ void ArticleViewBase::show_menu( const std::string& url )
 
             tact->set_active( true );
 
-            // slot_toggle_transparentabone() が呼ばれてしまうので trueに戻しておく
+            // slot_toggle_abone_transparent() が呼ばれてしまうので trueに戻しておく
             m_article->set_abone_transparent( true );
         }
         else{
             tact->set_active( false );
             m_article->set_abone_transparent( false );
+        }
+    }
+
+    // 連鎖あぼーん
+    act = action_group()->get_action( "ChainAbone" );
+    if( act ){
+
+        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+        if( m_article->get_abone_chain() ){
+
+            tact->set_active( true );
+
+            // slot_toggle_abone_chain() が呼ばれてしまうので trueに戻しておく
+            m_article->set_abone_chain( true );
+        }
+        else{
+            tact->set_active( false );
+            m_article->set_abone_chain( false );
         }
     }
 
@@ -2129,10 +2151,22 @@ void ArticleViewBase::slot_abone_word()
 //
 // 透明あぼーん
 //
-void ArticleViewBase::slot_toggle_transparentabone()
+void ArticleViewBase::slot_toggle_abone_transparent()
 {
     assert( m_article );
     m_article->set_abone_transparent( ! m_article->get_abone_transparent() );
+
+    // 再レイアウト
+    ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
+}
+
+//
+// 連鎖あぼーん
+//
+void ArticleViewBase::slot_toggle_abone_chain()
+{
+    assert( m_article );
+    m_article->set_abone_chain( ! m_article->get_abone_chain() );
 
     // 再レイアウト
     ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );

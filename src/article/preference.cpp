@@ -23,6 +23,7 @@ Preferences::Preferences( const std::string& url )
     ,m_label_cache( "ローカルキャッシュパス : ", std::string() )
     ,m_label_size( "サイズ(byte) : ", std::string() )
     ,m_check_transpabone( "透明あぼ〜ん" )
+    ,m_check_chainabone( "連鎖あぼ〜ん" )
     ,m_label_since( "スレ立て日時 : ", DBTREE::article_since_date( get_url() ) )
     ,m_label_modified( "最終更新日時 : ", std::string() )
     ,m_label_write( "最終書き込み日時 : ", std::string() )
@@ -38,6 +39,9 @@ Preferences::Preferences( const std::string& url )
     // 透明あぼーん
     m_check_transpabone.set_active( DBTREE::get_abone_transparent( get_url() ) );
 
+    // 連鎖あぼーん
+    m_check_chainabone.set_active( DBTREE::get_abone_chain( get_url() ) );
+
     m_vbox_info.set_border_width( 16 );
     m_vbox_info.set_spacing( 8 );
     m_vbox_info.pack_start( m_label_name, Gtk::PACK_SHRINK );
@@ -50,6 +54,7 @@ Preferences::Preferences( const std::string& url )
     m_vbox_info.pack_start( m_label_modified, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_write, Gtk::PACK_SHRINK );
 
+    m_vbox_info.pack_end( m_check_chainabone, Gtk::PACK_SHRINK );
     m_vbox_info.pack_end( m_check_transpabone, Gtk::PACK_SHRINK );
 
     std::string str_id, str_name, str_word, str_regex;
@@ -114,6 +119,9 @@ void Preferences::slot_ok_clicked()
 
     // 透明あぼーん
     DBTREE::set_abone_transparent( get_url(), m_check_transpabone.get_active() );
+
+    // 連鎖あぼーん
+    DBTREE::set_abone_chain( get_url(), m_check_chainabone.get_active() );
 
     // viewの再レイアウト
     CORE::core_set_command( "relayout_article", get_url() );
