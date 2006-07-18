@@ -397,8 +397,8 @@ NODE* NodeTreeBase::create_linknode( const char* text, int n, const char* link, 
         tmpnode->linkinfo->link = ( char* )m_heap.heap_alloc( n_link +4 );
         memcpy( tmpnode->linkinfo->link, link, n_link ); tmpnode->linkinfo->link[ n_link ] = '\0';
 
-        tmpnode->linkinfo->anc_from = anc_from;
-        tmpnode->linkinfo->anc_to = anc_to;
+        tmpnode->linkinfo->anc_from = MAX( 0, anc_from );
+        tmpnode->linkinfo->anc_to = MAX( anc_from, anc_to );
 
         tmpnode->linkinfo->image = img;
     }
@@ -1362,6 +1362,40 @@ bool NodeTreeBase::check_abone_regex( int number, std::list< std::string >& list
 
 
 
+
+//
+// number番のあぼーん判定(連鎖)
+//
+// あぼーんしているレスにアンカーを張っているときはtrueを返す
+//
+bool NodeTreeBase::check_abone_chain( int number )
+{
+    NODE* node = res_header( number );
+    while( node ){
+
+        if( node->type == NODE_LINK ){
+
+            // アンカーノードの時は node->linkinfo->anc_from != 0
+            int anc_from = node->linkinfo->anc_from;
+            int anc_to = node->linkinfo->anc_to;
+
+            // >>20-30 の様に範囲でアンカーを張っている場合は除く
+            if( anc_from && anc_from == anc_to ){
+
+                NODE* tmphead = res_header( anc_from );
+
+                // tmpheadがあぼーんされているなら num_id_name = 0
+                if( tmphead && tmphead->headinfo->num_id_name == 0 ) return true;
+            }
+        }
+        node = node->next_node;
+    }
+
+    return false;
+}
+
+
+
 // 参照数(num_reference)と色のクリア
 void NodeTreeBase::clear_reference()
 {
@@ -1390,11 +1424,11 @@ void NodeTreeBase::update_reference( int number )
             int anc_to = node->linkinfo->anc_to;
 
             const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
-            if( anc_from && anc_to >= anc_from && anc_to - anc_from < range ){
+            if( anc_from && anc_to - anc_from < range ){
 
                 for( int i = anc_from; i <= MIN( m_id_header -1, anc_to ) ; ++i ){
         
-                    NODE* tmphead = m_vec_header[ i ];
+                    NODE* tmphead = res_header( i );
                     if( tmphead && tmphead->headinfo->num_id_name // tmpheadがあぼーんされているなら num_id_name = 0
                         && tmphead->headinfo->node_res ){
 
@@ -1467,4 +1501,5 @@ void NodeTreeBase::set_num_id_name( NODE* header, int num_id_name )
     header->headinfo->num_id_name = num_id_name;        
     if( num_id_name >= 4 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK_RED;        
     else if( num_id_name >= 2 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK;
-}    
+    else header->headinfo->node_id_name->color_text = COLOR_CHAR;
+}

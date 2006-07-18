@@ -134,6 +134,7 @@ namespace DBTREE
         bool check_abone_name( int number, std::list< std::string >& list_name );
         bool check_abone_word( int number, std::list< std::string >& list_word );
         bool check_abone_regex( int number, std::list< std::string >& list_regex );
+        bool check_abone_chain( int number );
 
         // 参照数(num_reference)と色のクリア
         void clear_reference();

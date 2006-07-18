@@ -72,6 +72,7 @@ namespace DBTREE
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
         bool m_abone_transparent; // 透明あぼーん
+        bool m_abone_chain; // 連鎖あぼーん
 
         // あぼーんされているか
         // m_abone[ num ] == true なら num番のレスはあぼーん
@@ -240,6 +241,10 @@ namespace DBTREE
         const bool get_abone_transparent(){ return m_abone_transparent; };
         void set_abone_transparent( bool set ){ m_abone_transparent = set; }
 
+        // 連鎖あぼーん
+        const bool get_abone_chain(){ return m_abone_chain; };
+        void set_abone_chain( bool set ){ m_abone_chain = set; }
+
         // number番のレスがあぼーんされているか
         const bool abone( int number );
 
@@ -280,6 +285,7 @@ namespace DBTREE
         // あぼーん状態の更新
         void update_abone();
         void check_abone( int from_number, int to_number );
+        void check_abone_chain( int from_number, int to_number );
 
         // from_number番から to_number 番までのレスが参照しているレスの参照数を更新
         void update_reference( int from_number, int to_number );
