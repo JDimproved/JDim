@@ -22,6 +22,9 @@ namespace ARTICLE
         SKELETON::LabelEntry m_label_cache;
         SKELETON::LabelEntry m_label_size;
 
+        // 透明あぼーん
+        Gtk::CheckButton m_check_transpabone;
+
         SKELETON::LabelEntry m_label_since;
         SKELETON::LabelEntry m_label_modified;
         SKELETON::LabelEntry m_label_write;

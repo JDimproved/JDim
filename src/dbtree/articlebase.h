@@ -65,13 +65,17 @@ namespace DBTREE
         std::string m_write_mail;      // 書き込み時のメアド
         bool m_write_fixname;          // 書き込み時名前固定
         bool m_write_fixmail;          // 書き込み時メール固定
+
+        // あぼーん情報
         std::list< std::string > m_list_abone_id;   // あぼーんするID
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
+        bool m_abone_transparent; // 透明あぼーん
 
-        // あぼーん
-        JDLIB::ConstPtr< char > m_abone; // あぼーん判定のキャッシュ
+        // あぼーんされているか
+        // m_abone[ num ] == true なら num番のレスはあぼーん
+        JDLIB::ConstPtr< char > m_abone; 
         
         // ブックマーク
         JDLIB::ConstPtr< char > m_bookmark; // ブックマーク判定キャッシュ
@@ -231,6 +235,10 @@ namespace DBTREE
         std::list< std::string > get_abone_list_name(){ return m_list_abone_name; }
         std::list< std::string > get_abone_list_word(){ return m_list_abone_word; }
         std::list< std::string > get_abone_list_regex(){ return m_list_abone_regex; }
+
+        // 透明あぼーん
+        const bool get_abone_transparent(){ return m_abone_transparent; };
+        void set_abone_transparent( bool set ){ m_abone_transparent = set; }
 
         // number番のレスがあぼーんされているか
         const bool abone( int number );

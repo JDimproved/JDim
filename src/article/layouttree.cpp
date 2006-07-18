@@ -253,7 +253,7 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
 #endif
 
     // 透明あぼーん
-    if( ! m_show_abone && CONFIG::transparent_abone() ) return;
+    if( ! m_show_abone && m_article->get_abone_transparent() ) return;
 
     LAYOUT* tmplayout;
     DBTREE::NODE* tmpnode;

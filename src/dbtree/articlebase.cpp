@@ -12,8 +12,6 @@
 #include "jdlib/miscmsg.h"
 #include "jdlib/jdregex.h"
 
-#include "config/globalconf.h"
-
 #include "httpcode.h"
 #include "command.h"
 #include "cache.h"
@@ -187,7 +185,7 @@ std::list< int > ArticleBase::get_res_id_name( const std::string& id_name )
     }
 
     // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! CONFIG::transparent_abone() ) return list_resnum;
+    if( ! m_abone_transparent ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -208,7 +206,7 @@ std::list< int > ArticleBase::get_res_str_num( const std::string& str_num )
     }
 
     // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! CONFIG::transparent_abone() ) return list_resnum;
+    if( ! m_abone_transparent ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -223,7 +221,7 @@ std::list< int > ArticleBase::get_res_bm()
     }
 
     // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! CONFIG::transparent_abone() ) return list_resnum;
+    if( ! m_abone_transparent ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -237,7 +235,7 @@ std::list< int > ArticleBase::get_res_reference( int number )
     std::list< int > list_resnum = get_nodetree()->get_res_reference( number );
 
     // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! CONFIG::transparent_abone() ) return list_resnum;
+    if( ! m_abone_transparent ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -251,7 +249,7 @@ std::list< int > ArticleBase::get_res_with_url()
     std::list< int > list_resnum = get_nodetree()->get_res_with_url();
 
     // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! CONFIG::transparent_abone() ) return list_resnum;
+    if( ! m_abone_transparent ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -302,7 +300,7 @@ std::list< int > ArticleBase::get_res_query( const std::string& query, bool mode
     }
 
     // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! CONFIG::transparent_abone() ) return list_resnum;
+    if( ! m_abone_transparent ) return list_resnum;
 
     return remove_abone_from_list( list_resnum );
 }
@@ -1139,6 +1137,11 @@ void ArticleBase::read_info()
                 if( !(*it_tmp).empty() ) m_list_abone_regex.push_back( MISC::recover_quot( ( *it_tmp ) ) );
             }
         }
+
+        // 透明あぼーん
+        m_abone_transparent = true;
+        GET_INFOVALUE( str_tmp, "transparent_abone = " );
+        if( ! str_tmp.empty() ) m_write_fixname = atoi( str_tmp.c_str() );
     }
 
     // キャッシュはあるけど情報ファイルが無い場合
@@ -1190,6 +1193,7 @@ void ArticleBase::read_info()
               << "writefixname = " << m_write_fixname << std::endl
               << "writefixmail = " << m_write_fixmail << std::endl
               << "status = " << m_status << std::endl
+              << "transparent_abone = " << m_abone_transparent << std::endl;
     ;
 
     std::cout << "abone-id\n"; std::list < std::string >::iterator it = m_list_abone_id.begin();

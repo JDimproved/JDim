@@ -231,6 +231,8 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
     action_group()->add( Gtk::Action::create( "AboneName", "NG Nameに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
     action_group()->add( Gtk::Action::create( "AboneWord", "NG Wordに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word ) );
+    action_group()->add( Gtk::ToggleAction::create( "TranspAbone", "透明あぼ〜ん", std::string(), false ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_transparentabone ) );
 
     // 移動系
     action_group()->add( Gtk::Action::create( "Move_Menu", "移動" ) );
@@ -243,7 +245,7 @@ void ArticleViewBase::setup_action()
 
     // 画像系
     action_group()->add( Gtk::Action::create( "Cancel_Mosaic", "モザイク解除"), sigc::mem_fun( *this, &ArticleViewBase::slot_cancel_mosaic ) );
-    action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "保護する", std::string(), false ),
+    action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_protectimage ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "削除" ) );    
     action_group()->add( Gtk::Action::create( "DeleteImage", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::slot_deleteimage ) );
@@ -326,6 +328,9 @@ void ArticleViewBase::setup_action()
 
     "<separator/>"
     "<menuitem action='AboneWord'/>"
+
+    "<separator/>"
+    "<menuitem action='TranspAbone'/>"
 
     "<separator/>"
     "<menuitem action='Preference'/>"
@@ -1629,6 +1634,8 @@ void ArticleViewBase::delete_popup()
 //
 void ArticleViewBase::show_menu( const std::string& url )
 {
+    assert( m_article );
+
 #ifdef _DEBUG    
     std::cout << "ArticleViewBase::show_menu " << get_url() << " url = " << url << std::endl;
 #endif
@@ -1700,6 +1707,24 @@ void ArticleViewBase::show_menu( const std::string& url )
     if( act ){
         if( m_article->get_num_bookmark() ) act->set_sensitive( true );
         else act->set_sensitive( false );
+    }
+
+    // 透明あぼーん
+    act = action_group()->get_action( "TranspAbone" );
+    if( act ){
+
+        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+        if( m_article->get_abone_transparent() ){
+
+            tact->set_active( true );
+
+            // slot_toggle_transparentabone() が呼ばれてしまうので trueに戻しておく
+            m_article->set_abone_transparent( true );
+        }
+        else{
+            tact->set_active( false );
+            m_article->set_abone_transparent( false );
+        }
     }
 
     // 表示
@@ -2095,6 +2120,19 @@ void ArticleViewBase::slot_abone_name()
 void ArticleViewBase::slot_abone_word()
 {
     DBTREE::add_abone_word( m_url_article, m_drawarea->str_selection() );
+
+    // 再レイアウト
+    ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
+}
+
+
+//
+// 透明あぼーん
+//
+void ArticleViewBase::slot_toggle_transparentabone()
+{
+    assert( m_article );
+    m_article->set_abone_transparent( ! m_article->get_abone_transparent() );
 
     // 再レイアウト
     ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );

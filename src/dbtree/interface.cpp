@@ -583,6 +583,19 @@ void DBTREE::add_abone_word( const std::string& url, const std::string& word )
     DBTREE::get_article( url )->add_abone_word( word );
 }
 
+
+const bool DBTREE::get_abone_transparent( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_abone_transparent();
+}
+
+
+void DBTREE::set_abone_transparent( const std::string& url, bool set )
+{
+    DBTREE::get_article( url )->set_abone_transparent( set );
+}
+
+
 const bool DBTREE::is_bookmarked( const std::string& url, int number )
 {
     return DBTREE::get_article( url )->is_bookmarked( number );

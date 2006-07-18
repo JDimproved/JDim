@@ -157,6 +157,9 @@ namespace DBTREE
     void add_abone_name( const std::string& url, const std::string& name );
     void add_abone_word( const std::string& url, const std::string& word );
 
+    const bool get_abone_transparent( const std::string& url );
+    void set_abone_transparent( const std::string& url, bool set );
+
     // ブックマーク
     const bool is_bookmarked( const std::string& url, int number );
     void set_bookmark( const std::string& url, int number, bool set );
