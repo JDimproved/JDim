@@ -50,6 +50,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
       m_popup_win( 0 ),
       m_popup_shown( 0 ),
       m_number_popup_shown( 0 ),
+      m_enable_menuslot( true ),
       m_current_bm( 0 )
 {
     clear();
@@ -1644,6 +1645,9 @@ void ArticleViewBase::show_menu( const std::string& url )
     std::cout << "ArticleViewBase::show_menu " << get_url() << " url = " << url << std::endl;
 #endif
 
+    // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
+    m_enable_menuslot = false;
+
     // 子ポップアップが表示されていて、かつポインタがその上だったら表示しない
     ArticleViewBase* popup_article = NULL;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
@@ -1718,17 +1722,8 @@ void ArticleViewBase::show_menu( const std::string& url )
     if( act ){
 
         Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-        if( m_article->get_abone_transparent() ){
-
-            tact->set_active( true );
-
-            // slot_toggle_abone_transparent() が呼ばれてしまうので trueに戻しておく
-            m_article->set_abone_transparent( true );
-        }
-        else{
-            tact->set_active( false );
-            m_article->set_abone_transparent( false );
-        }
+        if( m_article->get_abone_transparent() ) tact->set_active( true );
+        else tact->set_active( false );
     }
 
     // 連鎖あぼーん
@@ -1736,18 +1731,45 @@ void ArticleViewBase::show_menu( const std::string& url )
     if( act ){
 
         Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-        if( m_article->get_abone_chain() ){
+        if( m_article->get_abone_chain() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
 
-            tact->set_active( true );
+    // 画像
+    if( DBIMG::is_loadable( url ) ){ 
 
-            // slot_toggle_abone_chain() が呼ばれてしまうので trueに戻しておく
-            m_article->set_abone_chain( true );
+        // モザイク
+        act = action_group()->get_action( "Cancel_Mosaic" );
+        if( act ){
+            if( DBIMG::is_cached( url ) && DBIMG::get_mosaic( url ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
         }
-        else{
-            tact->set_active( false );
-            m_article->set_abone_chain( false );
+
+        // 保護のトグル切替え
+        act = action_group()->get_action( "ProtectImage" );
+        if( act ){
+
+            if( DBIMG::is_cached( url ) ){
+
+                act->set_sensitive( true );
+
+                Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+                if( DBIMG::is_protected( url ) ) tact->set_active( true );
+                else tact->set_active( false );
+            }
+            else act->set_sensitive( false );
+        }
+
+        // 削除
+        act = action_group()->get_action( "DeleteImage" );
+        if( act ){
+
+            if( DBIMG::is_cached( url ) && ! DBIMG::is_protected( url ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
         }
     }
+
+    m_enable_menuslot = true;
 
     // 表示
     Gtk::Menu* popupmenu;
@@ -1769,46 +1791,6 @@ void ArticleViewBase::show_menu( const std::string& url )
 
     // 画像ポップアップメニュー
     else if( DBIMG::is_loadable( url ) ){ 
-
-        // モザイク
-        act = action_group()->get_action( "Cancel_Mosaic" );
-        if( act ){
-            if( DBIMG::is_cached( url ) && DBIMG::get_mosaic( url ) ) act->set_sensitive( true );
-            else act->set_sensitive( false );
-        }
-
-        // 保護のトグル切替え
-        act = action_group()->get_action( "ProtectImage" );
-        if( act ){
-
-            if( DBIMG::is_cached( url ) ){
-
-                act->set_sensitive( true );
-
-                Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-                if( DBIMG::is_protected( url ) ){
-
-                    tact->set_active( true );
-
-                    // slot_toggle_protectimage() が呼ばれてしまうので trueに戻しておく
-                    DBIMG::set_protect( url, true );
-                }
-                else{
-                    tact->set_active( false );
-                    DBIMG::set_protect( url, false );
-                }
-            }
-            else act->set_sensitive( false );
-        }
-
-        // 削除
-        act = action_group()->get_action( "DeleteImage" );
-        if( act ){
-
-            if( DBIMG::is_cached( url ) && ! DBIMG::is_protected( url ) ) act->set_sensitive( true );
-            else act->set_sensitive( false );
-        }
-        
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_img" ) );
     }
 
@@ -2153,6 +2135,8 @@ void ArticleViewBase::slot_abone_word()
 //
 void ArticleViewBase::slot_toggle_abone_transparent()
 {
+    if( ! m_enable_menuslot ) return;
+
     assert( m_article );
     m_article->set_abone_transparent( ! m_article->get_abone_transparent() );
 
@@ -2165,6 +2149,8 @@ void ArticleViewBase::slot_toggle_abone_transparent()
 //
 void ArticleViewBase::slot_toggle_abone_chain()
 {
+    if( ! m_enable_menuslot ) return;
+
     assert( m_article );
     m_article->set_abone_chain( ! m_article->get_abone_chain() );
 
@@ -2208,6 +2194,8 @@ void ArticleViewBase::slot_saveimage()
 //
 void ArticleViewBase::slot_toggle_protectimage()
 {
+    if( ! m_enable_menuslot ) return;
+
     DBIMG::set_protect( m_url_tmp , ! DBIMG::is_protected( m_url_tmp ) );
 }
 

@@ -55,9 +55,10 @@ namespace ARTICLE
         bool m_search_invert; // 逆方向検索モード
         std::string m_query;  // 前回の検索で使ったクエリー
 
-        // ポップアップメニューが表示されている
-        bool m_popupmenu_shown;
-       
+        // ポップアップメニュー用
+        bool m_popupmenu_shown; // ポップアップメニューが表示されている
+        bool m_enable_menuslot;
+
         // ブックマーク移動時の現在の位置(レス番号)
         int m_current_bm;
 
