@@ -91,8 +91,8 @@ Preferences::Preferences( const std::string& url )
 
     m_notebook.append_page( m_vbox_info, "一般" );
     m_notebook.append_page( m_edit_id, "NG ID" );
-    m_notebook.append_page( m_edit_name, "NG Name" );
-    m_notebook.append_page( m_edit_word, "NG Word" );
+    m_notebook.append_page( m_edit_name, "NG 名前" );
+    m_notebook.append_page( m_edit_word, "NG ワード" );
     m_notebook.append_page( m_edit_regex, "NG 正規表現" );
 
     get_vbox()->pack_start( m_notebook );

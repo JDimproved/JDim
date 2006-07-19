@@ -230,8 +230,11 @@ void ArticleViewBase::setup_action()
 
     // あぼーん系
     action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
-    action_group()->add( Gtk::Action::create( "AboneName", "NG Nameに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
-    action_group()->add( Gtk::Action::create( "AboneWord", "NG Wordに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word ) );
+    action_group()->add( Gtk::Action::create( "AboneName", "NG 名前に追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
+    action_group()->add( Gtk::Action::create( "AboneWord", "NG ワードに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word ) );
+
+    // 設定
+    action_group()->add( Gtk::Action::create( "Setting_Menu", "設定" ) );
     action_group()->add( Gtk::ToggleAction::create( "TranspAbone", "透明あぼ〜ん", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_abone_transparent ) );
     action_group()->add( Gtk::ToggleAction::create( "ChainAbone", "連鎖あぼ〜ん", std::string(), false ),
@@ -334,10 +337,12 @@ void ArticleViewBase::setup_action()
     "<menuitem action='AboneWord'/>"
 
     "<separator/>"
+
+    "<menu action='Setting_Menu'>"
     "<menuitem action='TranspAbone'/>"
     "<menuitem action='ChainAbone'/>"
+    "</menu>"
 
-    "<separator/>"
     "<menuitem action='Preference'/>"
 
     "</popup>"
