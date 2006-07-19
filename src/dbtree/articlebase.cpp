@@ -467,20 +467,20 @@ const bool ArticleBase::abone( int number )
 //
 // あぼーん情報を変更したら呼び出す
 //
+// あぼーんしたスレの発言数や参照はカウントしないので、発言数や参照数も更新する
+//
 void ArticleBase::update_abone()
 {
     // まだnodetreeが作られてなくてあぼーん状態が得られてないときは何もしない
     if( !m_abone ) return;
 
     // あぼーん更新
+    get_nodetree()->clear_abone();
     check_abone( 1, m_number_load );
 
     // 発言数更新
     get_nodetree()->clear_id_name();
     update_id_name( 1, m_number_load );
-
-    // 連鎖あぼーん更新
-    check_abone_chain( 1, m_number_load );
 
     // 参照状態更新
     get_nodetree()->clear_reference();
@@ -622,6 +622,9 @@ void ArticleBase::check_abone( int from_number, int to_number )
         if( ( m_abone[ i ] = get_nodetree()->check_abone_name( i, m_list_abone_name ) ) ) continue;
         if( ( m_abone[ i ] = get_nodetree()->check_abone_word( i, m_list_abone_word ) ) ) continue;
         if( ( m_abone[ i ] = get_nodetree()->check_abone_regex( i, m_list_abone_regex ) ) ) continue;
+
+        // 連鎖あぼーん
+        if( m_abone_chain ) if( ( m_abone[ i ] = get_nodetree()->check_abone_chain( i ) ) ) continue;
     }
 
 #ifdef _DEBUG
@@ -630,24 +633,6 @@ void ArticleBase::check_abone( int from_number, int to_number )
     }
 #endif 
 
-}
-
-
-
-//
-// from_number番から to_number 番までの連鎖あぼーん判定を更新
-//
-void ArticleBase::check_abone_chain( int from_number, int to_number )
-{
-    assert( m_abone );
-
-    if( empty() ) return;
-    if( ! m_abone_chain ) return;
-    if( to_number < from_number ) return;
-
-    for( int i = from_number ; i <= to_number; ++i ){
-        if( ! m_abone[ i ] ) m_abone[ i ] = get_nodetree()->check_abone_chain( i );
-    }
 }
 
 
@@ -860,9 +845,6 @@ void ArticleBase::slot_node_updated()
 
         // 発言数更新
         update_id_name( m_number_load + 1, m_nodetree->get_res_number() );
-
-        // 連鎖あぼーん更新
-        check_abone_chain( m_number_load + 1, m_nodetree->get_res_number() );
 
         // 参照数更新
         update_reference( m_number_load + 1, m_nodetree->get_res_number() );

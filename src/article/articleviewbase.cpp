@@ -2159,6 +2159,9 @@ void ArticleViewBase::slot_toggle_abone_chain()
     assert( m_article );
     m_article->set_abone_chain( ! m_article->get_abone_chain() );
 
+    // あぼーん情報更新
+    m_article->update_abone();
+
     // 再レイアウト
     ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
 }

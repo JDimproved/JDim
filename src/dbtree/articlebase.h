@@ -248,11 +248,14 @@ namespace DBTREE
         // number番のレスがあぼーんされているか
         const bool abone( int number );
 
+        // 全スレのあぼーん状態の更新
+        void update_abone();
+
         // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
         void reset_abone( std::list< std::string >& ids, std::list< std::string >& names
-                          , std::list< std::string >& words, std::list< std::string >& regexs );
+                          ,std::list< std::string >& words, std::list< std::string >& regexs );
 
-        // あぼ〜んに追加(reset_abone()と違って個別におこなう)
+        // あぼ〜んに追加して状態更新(reset_abone()と違って個別におこなう)
         void add_abone_id( const std::string& id );
         void add_abone_name( const std::string& name );
         void add_abone_word( const std::string& word );
@@ -282,10 +285,8 @@ namespace DBTREE
         // レス番号のリストからあぼーんしている番号を取り除く
         std::list< int > remove_abone_from_list( std::list< int >& list_num );
 
-        // あぼーん状態の更新
-        void update_abone();
+        // from_number番から to_number 番までのレスのあぼーん判定を更新
         void check_abone( int from_number, int to_number );
-        void check_abone_chain( int from_number, int to_number );
 
         // from_number番から to_number 番までのレスが参照しているレスの参照数を更新
         void update_reference( int from_number, int to_number );

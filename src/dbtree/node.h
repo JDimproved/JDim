@@ -39,14 +39,15 @@ namespace DBTREE
     // ヘッダ拡張情報
     struct HEADERINFO
     {
-        NODE* next_header;
+        NODE* next_header; // 次のヘッダのポインタ
 
-        NODE* node_res;  // レス番号ノードのポインタ
-        int num_reference; // 参照数
+        NODE* node_res;  // レス番号ノードのポインタ(リンクの色を変えるときに必要)
+        int num_reference; // 他のレスから参照されている数
+        bool abone; // あぼーん
 
         char* name; // 名前
         
-        NODE* node_id_name;  // 名前IDリンクノードのポインタ
+        NODE* node_id_name;  // 名前IDリンクノードのポインタ(IDを取得したり、リンクの色を変えるときに必要)
         int num_id_name; // 同じIDのレスの個数( = 発言数 )
     };
 

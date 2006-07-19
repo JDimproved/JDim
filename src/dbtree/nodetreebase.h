@@ -129,6 +129,9 @@ namespace DBTREE
         // ロード開始
         void download_dat();
 
+        // あぼーんのクリア
+        void clear_abone();
+
         // あぼーんチェック
         bool check_abone_id( int number, std::list< std::string >& list_id );
         bool check_abone_name( int number, std::list< std::string >& list_name );
