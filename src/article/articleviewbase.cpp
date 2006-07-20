@@ -1303,7 +1303,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         std::cout << "res = " << args.arg1 << std::endl;
 #endif
 
-        if( m_article->abone( atoi( args.arg1.c_str() ) ) ){
+        if( m_article->get_abone( atoi( args.arg1.c_str() ) ) ){
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, m_url_article, args );
         }
     }

@@ -129,6 +129,9 @@ namespace DBTREE
         // ロード開始
         void download_dat();
 
+        // あぼーんしているか
+        bool get_abone( int number );
+
         // あぼーんのクリア
         void clear_abone();
 

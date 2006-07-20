@@ -170,7 +170,7 @@ std::list< int > ArticleBase::remove_abone_from_list( std::list< int >& list_num
     std::list< int > list_resnum; 
 
     std::list< int >::iterator it = list_num.begin();
-    for( ; it != list_num.end(); ++it ) if( ! abone( *it ) ) list_resnum.push_back( *it );
+    for( ; it != list_num.end(); ++it ) if( ! get_nodetree()->get_abone( *it ) ) list_resnum.push_back( *it );
 
     return list_resnum;
 }
@@ -448,16 +448,9 @@ void ArticleBase::update_writetime()
 //
 // あぼーんしてるか
 //
-const bool ArticleBase::abone( int number )
+const bool ArticleBase::get_abone( int number )
 {
-    if( number <= 0 || number > m_number_load ) return false;
-    if( empty() ) return false;
-
-    // まだnodetreeが作られてなくてあぼーんの情報が得られてないのでnodetreeを作って情報取得
-    if( !m_abone ) get_nodetree();
-    assert( m_abone );
-
-    return m_abone[ number ];
+    return get_nodetree()->get_abone( number );
 }
 
 
@@ -471,8 +464,8 @@ const bool ArticleBase::abone( int number )
 //
 void ArticleBase::update_abone()
 {
-    // まだnodetreeが作られてなくてあぼーん状態が得られてないときは何もしない
-    if( !m_abone ) return;
+    // nodetreeが作られていないときは更新しない
+    if( ! m_nodetree ) return;
 
     // あぼーん更新
     get_nodetree()->clear_abone();
@@ -608,31 +601,19 @@ void ArticleBase::add_abone_word( const std::string& word )
 void ArticleBase::check_abone( int from_number, int to_number )
 {
     if( empty() ) return;
-    assert( m_abone );
-
-#ifdef _DEBUG
-    std::cout << "ArticleBase::check_abone from " << from_number << " to " << to_number << std::endl;
-#endif
     if( to_number < from_number ) return;
 
     for( int i = from_number ; i <= to_number; ++i ){
 
         // ローカルあぼーん
-        if( ( m_abone[ i ] = get_nodetree()->check_abone_id( i, m_list_abone_id ) ) ) continue;
-        if( ( m_abone[ i ] = get_nodetree()->check_abone_name( i, m_list_abone_name ) ) ) continue;
-        if( ( m_abone[ i ] = get_nodetree()->check_abone_word( i, m_list_abone_word ) ) ) continue;
-        if( ( m_abone[ i ] = get_nodetree()->check_abone_regex( i, m_list_abone_regex ) ) ) continue;
+        if( get_nodetree()->check_abone_id( i, m_list_abone_id ) )  continue;
+        if( get_nodetree()->check_abone_name( i, m_list_abone_name ) ) continue;
+        if( get_nodetree()->check_abone_word( i, m_list_abone_word ) ) continue;
+        if( get_nodetree()->check_abone_regex( i, m_list_abone_regex ) ) continue;
 
         // 連鎖あぼーん
-        if( m_abone_chain ) if( ( m_abone[ i ] = get_nodetree()->check_abone_chain( i ) ) ) continue;
+        if( m_abone_chain ) if( get_nodetree()->check_abone_chain( i ) ) continue;
     }
-
-#ifdef _DEBUG
-    for( int i = from_number ; i <= to_number; ++i ) if( m_abone[ i ] ){
-        std::cout << i << " " << get_id_name( i ) << " " << get_nodetree()->get_name( i ) << std::endl;
-    }
-#endif 
-
 }
 
 
@@ -643,12 +624,10 @@ void ArticleBase::check_abone( int from_number, int to_number )
 void ArticleBase::update_reference( int from_number, int to_number )
 {
     if( empty() ) return;
-    assert( m_abone );
-
     if( to_number < from_number ) return;
 
     // あぼーんしているレスはチェックしない
-    for( int i = from_number ; i <= to_number; ++i ) if( !m_abone[ i ] ) get_nodetree()->update_reference( i );
+    for( int i = from_number ; i <= to_number; ++i ) if( !get_nodetree()->get_abone( i ) ) get_nodetree()->update_reference( i );
 }
 
 
@@ -659,12 +638,10 @@ void ArticleBase::update_reference( int from_number, int to_number )
 void ArticleBase::update_id_name( int from_number, int to_number )
 {
     if( empty() ) return;
-    assert( m_abone );
-
     if( to_number < from_number ) return;
 
     // あぼーんしているレスはチェックしない
-    for( int i = from_number ; i <= to_number; ++i ) if( !m_abone[ i ] ) get_nodetree()->update_id_name( i );
+    for( int i = from_number ; i <= to_number; ++i ) if( !get_nodetree()->get_abone( i ) ) get_nodetree()->update_id_name( i );
 }
 
 
@@ -732,7 +709,6 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
         m_nodetree = create_nodetree();
         assert( m_nodetree );
 
-        if( ! m_abone ) m_abone = ( char* ) m_heap.heap_alloc( MAX_RESNUMBER );
         if( ! m_bookmark ) m_bookmark = ( char* ) m_heap.heap_alloc( MAX_RESNUMBER );
 
         m_nodetree->sig_updated().connect( sigc::mem_fun( *this, &ArticleBase::slot_node_updated ) );
@@ -966,7 +942,6 @@ void ArticleBase::delete_cache()
     m_write_fixmail = false;
 
     m_heap.clear();
-    m_abone.reset();
     m_bookmark.reset();
     m_list_abone_id.clear();
     m_list_abone_name.clear();

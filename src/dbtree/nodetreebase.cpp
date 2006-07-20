@@ -1266,6 +1266,16 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 }
 
 
+// あぼーんしているか
+bool NodeTreeBase::get_abone( int number )
+{
+    NODE* head = res_header( number );
+    if( ! head ) return false;
+    if( ! head->headinfo ) return false;
+
+    return head->headinfo->abone;
+}
+
 
 
 // あぼーんのクリア

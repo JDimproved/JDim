@@ -74,10 +74,6 @@ namespace DBTREE
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
 
-        // あぼーんされているか
-        // m_abone[ num ] == true なら num番のレスはあぼーん
-        JDLIB::ConstPtr< char > m_abone; 
-        
         // ブックマーク
         JDLIB::ConstPtr< char > m_bookmark; // ブックマーク判定キャッシュ
 
@@ -246,7 +242,7 @@ namespace DBTREE
         void set_abone_chain( bool set ){ m_abone_chain = set; }
 
         // number番のレスがあぼーんされているか
-        const bool abone( int number );
+        const bool get_abone( int number );
 
         // 全スレのあぼーん状態の更新
         void update_abone();
