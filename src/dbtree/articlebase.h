@@ -45,7 +45,6 @@ namespace DBTREE
         int m_code;                  // HTTPコード
         std::string m_str_code;      // HTTPコード(文字列)
         std::string m_ext_err;       // HTTPコード以外のエラーメッセージ
-        size_t m_lng_dat;            // dat ファイルのサイズ
         int m_status;                // 状態 ( global.h で定義 )
 
         // 移転する前にこのスレがあった旧ホスト名( 移転していないなら m_url に含まれているホスト名と同じ )
@@ -280,15 +279,6 @@ namespace DBTREE
 
         // レス番号のリストからあぼーんしている番号を取り除く
         std::list< int > remove_abone_from_list( std::list< int >& list_num );
-
-        // from_number番から to_number 番までのレスのあぼーん判定を更新
-        void check_abone( int from_number, int to_number );
-
-        // from_number番から to_number 番までのレスが参照しているレスの参照数を更新
-        void update_reference( int from_number, int to_number );
-
-        // from_number番から to_number 番までの発言数の更新
-        void update_id_name( int from_number, int to_number );
 
         // 情報ファイル書き込み
         void save_info();

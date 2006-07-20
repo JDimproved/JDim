@@ -140,8 +140,8 @@ void NodeTree2chCompati::create_loaderdata( JDLIB::LOADERDATA& data )
     data.agent = DBTREE::get_agent( get_url() );
 
     // 1byte前からレジュームして '\n' が返ってこなかったらあぼーんがあったってこと
-    if( lng_dat() ) {
-        data.byte_readfrom = lng_dat() -1;
+    if( get_lng_dat() ) {
+        data.byte_readfrom = get_lng_dat() -1;
         set_resume( true );
     }
     else set_resume( false );

@@ -710,9 +710,20 @@ void NodeTreeBase::add_raw_lines( char* rawlines )
 
     while( * ( pos = add_one_dat_line( pos ) ) != '\0' ) ++pos;
 
-    // データベース更新
-    // Article::slot_node_updated()が呼び出される
-    if( num_before != m_id_header ) m_sig_updated.emit();
+    if( num_before != m_id_header ){
+
+        // あぼーん判定
+        update_abone( num_before +1,  m_id_header );
+
+        // 発言数更新
+        update_id_name( num_before +1,  m_id_header );
+
+        // 参照数更新
+        update_reference( num_before +1,  m_id_header );
+
+        // articlebase クラスに状態が変わったことを知らせる
+        m_sig_updated.emit();
+    }
 }
 
 
@@ -795,7 +806,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
         std::cout << "subject = " << m_subject << std::endl;
 #endif
     }
-    
+
     return pos;
 }
 
@@ -1288,14 +1299,73 @@ void NodeTreeBase::clear_abone()
 }
 
 
+
+// あぼーん情報を親クラスのarticlebaseからコピーする
+void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id, std::list< std::string >& list_abone_name,
+                                    std::list< std::string >& list_abone_word, std::list< std::string >& list_abone_regex,
+                                    bool& abone_chain )
+{
+    m_list_abone_id = list_abone_id;
+    m_list_abone_name = list_abone_name;
+    m_list_abone_word = list_abone_word;
+    m_list_abone_regex = list_abone_regex;
+
+    m_abone_chain = abone_chain;
+}
+
+
+//
+// 全レスのあぼーん状態の更新
+//
+// 発言数や参照数も更新する
+//
+void NodeTreeBase::update_abone_all()
+{
+    // あぼーん更新
+    clear_abone();
+    update_abone( 1, m_id_header );
+
+    // 発言数更新
+    clear_id_name();
+    update_id_name( 1, m_id_header );
+
+    // 参照状態更新
+    clear_reference();
+    update_reference( 1, m_id_header );
+}
+
+
+//
+// from_number番から to_number 番までのレスのあぼーん状態を更新
+//
+void NodeTreeBase::update_abone( int from_number, int to_number )
+{
+    if( empty() ) return;
+    if( to_number < from_number ) return;
+
+    for( int i = from_number ; i <= to_number; ++i ){
+
+        // ローカルあぼーん
+        if( check_abone_id( i ) )  continue;
+        if( check_abone_name( i ) ) continue;
+        if( check_abone_word( i ) ) continue;
+        if( check_abone_regex( i ) ) continue;
+
+        // 連鎖あぼーん
+        if( check_abone_chain( i ) ) continue;
+    }
+}
+
+
+
 //
 // number番のあぼーん判定(ID)
 //
 // あぼーんの時はtrueを返す
 //
-bool NodeTreeBase::check_abone_id( int number, std::list< std::string >& list_id )
+bool NodeTreeBase::check_abone_id( int number )
 {
-    if( list_id.empty() ) return false;
+    if( m_list_abone_id.empty() ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
@@ -1303,8 +1373,8 @@ bool NodeTreeBase::check_abone_id( int number, std::list< std::string >& list_id
 
     int ln_protoid = strlen( PROTO_ID );
 
-    std::list< std::string >::iterator it = list_id.begin();
-    for( ; it != list_id.end(); ++it ){
+    std::list< std::string >::iterator it = m_list_abone_id.begin();
+    for( ; it != m_list_abone_id.end(); ++it ){
 
         // std::string の find は遅いのでstrcmp使う
         if( strcmp( head->headinfo->node_id_name->linkinfo->link + ln_protoid, ( *it ).c_str() ) == 0 ){
@@ -1322,16 +1392,16 @@ bool NodeTreeBase::check_abone_id( int number, std::list< std::string >& list_id
 //
 // あぼーんの時はtrueを返す
 //
-bool NodeTreeBase::check_abone_name( int number, std::list< std::string >& list_name )
+bool NodeTreeBase::check_abone_name( int number )
 {
-    if( list_name.empty() ) return false;
+    if( m_list_abone_name.empty() ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( head->headinfo->abone ) return true;
 
-    std::list< std::string >::iterator it = list_name.begin();
-    for( ; it != list_name.end(); ++it ){
+    std::list< std::string >::iterator it = m_list_abone_name.begin();
+    for( ; it != m_list_abone_name.end(); ++it ){
 
         // std::string の find は遅いのでstrcmp使う
         const char* s1 = head->headinfo->name;
@@ -1354,9 +1424,9 @@ bool NodeTreeBase::check_abone_name( int number, std::list< std::string >& list_
 //
 // あぼーんの時はtrueを返す
 //
-bool NodeTreeBase::check_abone_word( int number, std::list< std::string >& list_word )
+bool NodeTreeBase::check_abone_word( int number )
 {
-    if( list_word.empty() ) return false;
+    if( m_list_abone_word.empty() ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
@@ -1364,8 +1434,8 @@ bool NodeTreeBase::check_abone_word( int number, std::list< std::string >& list_
 
     std::string res_str = get_res_str( number );
 
-    std::list< std::string >::iterator it = list_word.begin();
-    for( ; it != list_word.end(); ++it ){
+    std::list< std::string >::iterator it = m_list_abone_word.begin();
+    for( ; it != m_list_abone_word.end(); ++it ){
         if( res_str.find( *it ) != std::string::npos ){
             head->headinfo->abone = true;
             return true;
@@ -1381,9 +1451,9 @@ bool NodeTreeBase::check_abone_word( int number, std::list< std::string >& list_
 //
 // あぼーんの時はtrueを返す
 //
-bool NodeTreeBase::check_abone_regex( int number, std::list< std::string >& list_regex )
+bool NodeTreeBase::check_abone_regex( int number )
 {
-    if( list_regex.empty() ) return false;
+    if( m_list_abone_regex.empty() ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
@@ -1392,8 +1462,8 @@ bool NodeTreeBase::check_abone_regex( int number, std::list< std::string >& list
     JDLIB::Regex regex;
     std::string res_str = get_res_str( number );
 
-    std::list< std::string >::iterator it = list_regex.begin();
-    for( ; it != list_regex.end(); ++it ){
+    std::list< std::string >::iterator it = m_list_abone_regex.begin();
+    for( ; it != m_list_abone_regex.end(); ++it ){
         if( regex.exec( *it, res_str ) ){
             head->headinfo->abone = true;
             return true;
@@ -1413,6 +1483,8 @@ bool NodeTreeBase::check_abone_regex( int number, std::list< std::string >& list
 //
 bool NodeTreeBase::check_abone_chain( int number )
 {
+    if( !m_abone_chain ) return false;
+
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( head->headinfo->abone ) return true;
@@ -1458,10 +1530,25 @@ void NodeTreeBase::clear_reference()
 }
 
 
+
 //
-// number番のレスが参照しているレスのレス番号の参照数(num_reference)と色を更新する
+// from_number番から to_number 番までのレスが参照しているレスの参照数を更新
 //
-void NodeTreeBase::update_reference( int number )
+void NodeTreeBase::update_reference( int from_number, int to_number )
+{
+    if( empty() ) return;
+    if( to_number < from_number ) return;
+
+    // あぼーんしているレスはチェックしない
+    for( int i = from_number ; i <= to_number; ++i ) if( !get_abone( i ) ) check_reference( i );
+}
+
+
+
+//
+// number番のレスが参照しているレスのレス番号の参照数(num_reference)と色をチェック
+//
+void NodeTreeBase::check_reference( int number )
 {
     NODE* node = res_header( number );
     while( node ){
@@ -1507,10 +1594,25 @@ void NodeTreeBase::clear_id_name()
 }
 
 
+
+//
+// from_number番から to_number 番までの発言数の更新
+//
+void NodeTreeBase::update_id_name( int from_number, int to_number )
+{
+    if( empty() ) return;
+    if( to_number < from_number ) return;
+
+    // あぼーんしているレスはチェックしない
+    for( int i = from_number ; i <= to_number; ++i ) if( !get_abone( i ) ) check_id_name( i );
+}
+
+
+
 //
 // number番のレスの発言数を更新
 //
-void NodeTreeBase::update_id_name( int number )
+void NodeTreeBase::check_id_name( int number )
 {
     NODE* header = res_header( number );
 

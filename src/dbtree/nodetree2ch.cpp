@@ -60,7 +60,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
 
         std::ostringstream ss;
         ss << regex.str( 1 ) << "/test/offlaw.cgi" << regex.str( 2 ) << regex.str( 3 )
-           << "/?raw=." << lng_dat();
+           << "/?raw=." << get_lng_dat();
 
         std::string sid = LOGIN::get_login2ch()->get_sessionid();
         ss << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
@@ -83,8 +83,8 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
 
         // レジューム設定
         // 1byte前からレジュームして '\n' が返ってこなかったらあぼーんがあったってこと
-        if( lng_dat() ) {
-            data.byte_readfrom = lng_dat() -1;
+        if( get_lng_dat() ) {
+            data.byte_readfrom = get_lng_dat() -1;
             set_resume( true );
         }
         else set_resume( false );

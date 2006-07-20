@@ -48,6 +48,14 @@ namespace DBTREE
         
         std::string m_subject;
 
+        // あぼーん情報
+        // 実体は親のarticlebaseクラスが持っていてcopy_abone_info()でコピーする
+        std::list< std::string > m_list_abone_id;   // あぼーんするID
+        std::list< std::string > m_list_abone_name; // あぼーんする名前
+        std::list< std::string > m_list_abone_word; // あぼーんする文字列
+        std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
+        bool m_abone_chain; // 連鎖あぼーん
+
         // ロード用変数
         char* m_buffer_lines;
         int m_byte_buffer_lines_left;
@@ -86,7 +94,7 @@ namespace DBTREE
         const std::string& get_url() const { return m_url; }
         const std::string& get_subject() const { return m_subject; }
         const int get_res_number();
-        const size_t lng_dat() const { return m_lng_dat; }
+        const size_t get_lng_dat() const { return m_lng_dat; }
         const bool is_broken() const{ return m_broken; }
         const std::string& get_ext_err() const { return m_ext_err; }
 
@@ -132,27 +140,15 @@ namespace DBTREE
         // あぼーんしているか
         bool get_abone( int number );
 
-        // あぼーんのクリア
-        void clear_abone();
+        // あぼーん情報を親クラスのarticlebaseからコピーする
+        void copy_abone_info( std::list< std::string >& list_abone_id, std::list< std::string >& list_abone_name,
+                        std::list< std::string >& list_abone_word, std::list< std::string >& list_abone_regex,
+                        bool& abone_chain );
 
-        // あぼーんチェック
-        bool check_abone_id( int number, std::list< std::string >& list_id );
-        bool check_abone_name( int number, std::list< std::string >& list_name );
-        bool check_abone_word( int number, std::list< std::string >& list_word );
-        bool check_abone_regex( int number, std::list< std::string >& list_regex );
-        bool check_abone_chain( int number );
+        // 全レスのあぼーん状態の更新
+        // 発言数や参照数も更新する
+        void update_abone_all();
 
-        // 参照数(num_reference)と色のクリア
-        void clear_reference();
-
-        // number番のレスが参照しているレスのレス番号の参照数(num_reference)と色を更新する
-        void update_reference( int number );
-
-        // 発言数とIDの色のクリア
-        void clear_id_name();
-
-        // number番のレスの発言数を更新
-        void update_id_name( int number );
 
       protected:
 
@@ -200,7 +196,39 @@ namespace DBTREE
 
         bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
                            int& anc_from, int& anc_to );
-        int str_to_int( const char* str, int& n );
+
+        // あぼーんのクリア
+        void clear_abone();
+
+        // from_number番から to_number 番までのレスのあぼーん状態を更新
+        void update_abone( int from_number, int to_number );
+
+        // あぼーんチェック
+        bool check_abone_id( int number );
+        bool check_abone_name( int number );
+        bool check_abone_word( int number );
+        bool check_abone_regex( int number );
+        bool check_abone_chain( int number );
+
+
+        // 参照数(num_reference)と色のクリア
+        void clear_reference();
+
+        // from_number番から to_number 番までのレスが参照しているレスの参照数を更新
+        void update_reference( int from_number, int to_number );
+
+        // number番のレスが参照しているレスのレス番号の参照数(num_reference)と色をチェック
+        void check_reference( int number );
+
+
+        // 発言数とIDの色のクリア
+        void clear_id_name();
+
+        // from_number番から to_number 番までの発言数の更新
+        void update_id_name( int from_number, int to_number );
+
+        // number番のレスの発言数をチェック
+        void check_id_name( int number );
 
         // 発言数( num_id_name )の更新
         // IDノードの色も変更する

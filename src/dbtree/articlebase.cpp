@@ -48,7 +48,6 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_since_time( 0 ),
       m_since_date( std::string() ),
       m_str_code( std::string() ),
-      m_lng_dat( 0 ),
       m_status( STATUS_UNKNOWN ),
       m_subject( std::string() ),
       m_number( 0 ),
@@ -74,8 +73,8 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
     update_url( datbase );
 
     // この段階では移転前の旧ホスト名は分からないのでとりあえず現在のホスト名をセットしておく
-    // あとで Root::url_dat()でURLを変換する時に旧ホスト名を教えてもらってinfoファイルに保存しておく。
-    // Root::url_dat()も参照せよ
+    // あとで BoardBase::url_dat()でURLを変換する時に旧ホスト名を教えてもらってinfoファイルに保存しておく。
+    // BoardBase::url_dat()も参照せよ
     m_org_host = MISC::get_hostname( m_url );
 }
 
@@ -113,10 +112,7 @@ const std::string ArticleBase::get_org_url()
 // キャッシュにあるdatファイルのサイズ
 const size_t ArticleBase::get_lng_dat()
 {
-    if( !m_cached ) return 0;
-
-    get_nodetree(); // キャッシュ読み込み
-    return m_lng_dat;
+    return get_nodetree()->get_lng_dat();
 }
 
 
@@ -331,7 +327,7 @@ time_t ArticleBase::get_time_modified()
 //
 // url の更新
 //
-// 移転があったときなどに上位クラスから呼ばれる
+// 移転があったときなどに上位クラスのboardbaseから呼ばれる
 //
 void ArticleBase::update_url( const std::string& datbase )
 {
@@ -467,17 +463,10 @@ void ArticleBase::update_abone()
     // nodetreeが作られていないときは更新しない
     if( ! m_nodetree ) return;
 
-    // あぼーん更新
-    get_nodetree()->clear_abone();
-    check_abone( 1, m_number_load );
+    get_nodetree()->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex,
+                                     m_abone_chain );
 
-    // 発言数更新
-    get_nodetree()->clear_id_name();
-    update_id_name( 1, m_number_load );
-
-    // 参照状態更新
-    get_nodetree()->clear_reference();
-    update_reference( 1, m_number_load );
+    get_nodetree()->update_abone_all();
 }
 
 
@@ -595,56 +584,6 @@ void ArticleBase::add_abone_word( const std::string& word )
 
 
 
-//
-// from_number番から to_number 番までのレスのあぼーん判定を更新
-//
-void ArticleBase::check_abone( int from_number, int to_number )
-{
-    if( empty() ) return;
-    if( to_number < from_number ) return;
-
-    for( int i = from_number ; i <= to_number; ++i ){
-
-        // ローカルあぼーん
-        if( get_nodetree()->check_abone_id( i, m_list_abone_id ) )  continue;
-        if( get_nodetree()->check_abone_name( i, m_list_abone_name ) ) continue;
-        if( get_nodetree()->check_abone_word( i, m_list_abone_word ) ) continue;
-        if( get_nodetree()->check_abone_regex( i, m_list_abone_regex ) ) continue;
-
-        // 連鎖あぼーん
-        if( m_abone_chain ) if( get_nodetree()->check_abone_chain( i ) ) continue;
-    }
-}
-
-
-
-//
-// from_number番から to_number 番までのレスが参照しているレスの参照数を更新
-//
-void ArticleBase::update_reference( int from_number, int to_number )
-{
-    if( empty() ) return;
-    if( to_number < from_number ) return;
-
-    // あぼーんしているレスはチェックしない
-    for( int i = from_number ; i <= to_number; ++i ) if( !get_nodetree()->get_abone( i ) ) get_nodetree()->update_reference( i );
-}
-
-
-
-//
-// from_number番から to_number 番までの発言数の更新
-//
-void ArticleBase::update_id_name( int from_number, int to_number )
-{
-    if( empty() ) return;
-    if( to_number < from_number ) return;
-
-    // あぼーんしているレスはチェックしない
-    for( int i = from_number ; i <= to_number; ++i ) if( !get_nodetree()->get_abone( i ) ) get_nodetree()->update_id_name( i );
-}
-
-
 
 //
 // ブックマークの数
@@ -708,6 +647,10 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
     
         m_nodetree = create_nodetree();
         assert( m_nodetree );
+
+        // あぼーん情報のコピー
+        m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex,
+                                     m_abone_chain );
 
         if( ! m_bookmark ) m_bookmark = ( char* ) m_heap.heap_alloc( MAX_RESNUMBER );
 
@@ -809,26 +752,15 @@ void ArticleBase::slot_node_updated()
 
     // nodetreeから情報取得
     if( ! m_nodetree->get_subject().empty() ) m_subject = m_nodetree->get_subject();
-    m_lng_dat = m_nodetree->lng_dat();
+
 
     // スレが更新している場合
     if( m_number_load != m_nodetree->get_res_number() ){
 
-        // 状態更新
-
-        // あぼーん判定更新
-        check_abone( m_number_load + 1, m_nodetree->get_res_number() );
-
-        // 発言数更新
-        update_id_name( m_number_load + 1, m_nodetree->get_res_number() );
-
-        // 参照数更新
-        update_reference( m_number_load + 1, m_nodetree->get_res_number() );
-
         // スレの読み込み数更新
         m_number_load = m_nodetree->get_res_number();
 
-        // articleビュー更新
+        // 対応するarticleビューを更新
         CORE::core_set_command( "update_article", m_url );
     }
 }
@@ -900,7 +832,6 @@ void ArticleBase::slot_load_finished()
               << "new = " << m_number_new << std::endl
               << "date = " << m_date_modified << std::endl
               << "access-time = " << get_access_time_str() << std::endl
-              << "lng = " << m_lng_dat << std::endl
               << "code = " << m_code << std::endl
               << "status = " << m_status << std::endl
 
