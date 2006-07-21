@@ -57,6 +57,8 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_number_seen( 0 ),
       m_write_fixname( 0 ),
       m_write_fixmail( 0 ),
+      m_abone_transparent( 0 ),
+      m_abone_chain( 0 ),
       m_cached( cached ),
       m_read_info( 0 ),
       m_current( 0 ),
@@ -475,7 +477,8 @@ void ArticleBase::update_abone()
 // あぼーん状態のリセット(情報セットと状態更新)
 //
 void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names
-                               ,std::list< std::string >& words, std::list< std::string >& regexs )
+                               ,std::list< std::string >& words, std::list< std::string >& regexs
+                               ,bool transparent, bool chain )
 {
     if( empty() ) return;
 
@@ -512,6 +515,9 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
         std::string tmp_str = MISC::remove_space( (*it) );
         if( ! tmp_str.empty() ) m_list_abone_regex.push_back( *it );
     }
+
+    m_abone_transparent = transparent;
+    m_abone_chain = chain;
 
     update_abone();
 
@@ -582,6 +588,35 @@ void ArticleBase::add_abone_word( const std::string& word )
     m_save_info = true;
 }
 
+
+//
+// 透明あぼーん更新
+//
+// 表示を変えるだけなので、update_abone()を呼んでnodetreeの更新をする必要は無い
+//
+void ArticleBase::set_abone_transparent( bool set )
+{
+    if( empty() ) return;
+
+    m_abone_transparent = set;
+
+    m_save_info = true;
+} 
+
+
+//
+// 連鎖あぼーん更新
+//
+void ArticleBase::set_abone_chain( bool set )
+{
+    if( empty() ) return;
+
+    m_abone_chain = set;
+
+    update_abone();
+
+    m_save_info = true;
+} 
 
 
 

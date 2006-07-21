@@ -561,9 +561,10 @@ std::list< std::string > DBTREE::get_abone_list_regex( const std::string& url )
 }
 
 void DBTREE::reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names
-                          , std::list< std::string >& words, std::list< std::string >& regexs )
+                          , std::list< std::string >& words, std::list< std::string >& regexs
+                          , bool transparent, bool chain)
 {
-    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs );
+    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs, transparent, chain );
 }
 
 

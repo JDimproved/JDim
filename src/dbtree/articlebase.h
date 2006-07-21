@@ -231,29 +231,23 @@ namespace DBTREE
         std::list< std::string > get_abone_list_name(){ return m_list_abone_name; }
         std::list< std::string > get_abone_list_word(){ return m_list_abone_word; }
         std::list< std::string > get_abone_list_regex(){ return m_list_abone_regex; }
-
-        // 透明あぼーん
-        const bool get_abone_transparent(){ return m_abone_transparent; };
-        void set_abone_transparent( bool set ){ m_abone_transparent = set; }
-
-        // 連鎖あぼーん
-        const bool get_abone_chain(){ return m_abone_chain; };
-        void set_abone_chain( bool set ){ m_abone_chain = set; }
+        const bool get_abone_transparent(){ return m_abone_transparent; }; // 透明
+        const bool get_abone_chain(){ return m_abone_chain; }; // 連鎖
 
         // number番のレスがあぼーんされているか
         const bool get_abone( int number );
 
-        // 全スレのあぼーん状態の更新
-        void update_abone();
-
         // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
         void reset_abone( std::list< std::string >& ids, std::list< std::string >& names
-                          ,std::list< std::string >& words, std::list< std::string >& regexs );
+                          ,std::list< std::string >& words, std::list< std::string >& regexs
+                          ,bool transparent, bool chain );
 
-        // あぼ〜んに追加して状態更新(reset_abone()と違って個別におこなう)
+        // あぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう)
         void add_abone_id( const std::string& id );
         void add_abone_name( const std::string& name );
         void add_abone_word( const std::string& word );
+        void set_abone_transparent( bool set ); // 透明
+        void set_abone_chain( bool set ); // 連鎖
 
         // レスのブックマーク
         int get_num_bookmark();
@@ -279,6 +273,9 @@ namespace DBTREE
 
         // レス番号のリストからあぼーんしている番号を取り除く
         std::list< int > remove_abone_from_list( std::list< int >& list_num );
+
+        // 全スレのあぼーん状態の更新
+        void update_abone();
 
         // 情報ファイル書き込み
         void save_info();

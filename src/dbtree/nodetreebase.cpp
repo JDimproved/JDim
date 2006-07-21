@@ -1563,12 +1563,12 @@ void NodeTreeBase::check_reference( int number )
 
             // アンカーノードの時は node->linkinfo->anc_from != 0
             int anc_from = node->linkinfo->anc_from;
-            int anc_to = node->linkinfo->anc_to;
+            int anc_to = MIN( number -1, node->linkinfo->anc_to ); // 未来のレスはチェックしない
 
             const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
             if( anc_from && anc_to - anc_from < range ){
 
-                for( int i = anc_from; i <= MIN( m_id_header -1, anc_to ) ; ++i ){
+                for( int i = anc_from; i <= anc_to ; ++i ){
         
                     NODE* tmphead = res_header( i );
                     if( tmphead && ! tmphead->headinfo->abone && tmphead->headinfo->node_res ){
