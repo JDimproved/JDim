@@ -168,13 +168,65 @@ int NodeTreeBase::get_num_id_name( int number )
 }
 
 
+//
+// レス番号のリストからあぼーんしている番号を取り除く
+//
+std::list< int > NodeTreeBase::remove_abone_from_list( std::list< int >& list_num )
+{
+    // 透明あぼーんでない時はそのまま戻す
+    if( ! m_abone_transparent ) return list_num;
+
+    std::list< int > list_resnum; 
+
+    std::list< int >::iterator it = list_num.begin();
+    for( ; it != list_num.end(); ++it ) if( ! get_abone( *it ) ) list_resnum.push_back( *it );
+
+    return list_resnum;
+}
+
+
+//
+// 指定した発言者IDを持つレス番号をリストにして取得
+//
+std::list< int > NodeTreeBase::get_res_id_name( const std::string& id_name )
+{
+    std::list< int > list_resnum;          
+    for( int i = 1; i <= m_id_header ; ++i ){
+        if( id_name == get_id_name( i ) ) list_resnum.push_back( i );
+    }
+
+    return remove_abone_from_list( list_resnum );
+}
+
+
+
+//
+// str_num で指定したレス番号をリストにして取得
+// str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
+//
+std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num )
+{
+    std::list< int > list_resnum;
+    int num_from = MAX( 1, atol( str_num.c_str() ) );
+    int num_to = 0;
+    if( num_from <= m_id_header  ){
+        size_t i;
+        if( ( i = str_num.find( "-" ) ) != std::string::npos ) num_to = atol( str_num.substr( i +1 ).c_str() );
+        num_to = MIN( MAX( num_to, num_from ), m_id_header );
+        for( int i2 = num_from; i2 <= num_to ; ++i2 ) list_resnum.push_back( i2 );
+    }
+
+    return remove_abone_from_list( list_resnum );
+}
+
+
 
 //
 // URL を含むレス番号をリストにして取得
 //
 std::list< int > NodeTreeBase::get_res_with_url()
 {
-    std::list< int > list_res;
+    std::list< int > list_resnum;
     for( int i = 1; i <= m_id_header; ++i ){
 
         NODE* node = res_header( i );
@@ -182,14 +234,14 @@ std::list< int > NodeTreeBase::get_res_with_url()
 
             if( node->type == NODE_LINK
                 && std::string( node->linkinfo->link ).find( "http" ) == 0 ){
-                list_res.push_back( i );
+                list_resnum.push_back( i );
                 break;
             }
             node = node->next_node;
         }
     }
     
-    return list_res;
+    return remove_abone_from_list( list_resnum );
 }
 
 
@@ -199,7 +251,7 @@ std::list< int > NodeTreeBase::get_res_with_url()
 //
 std::list< int > NodeTreeBase::get_res_reference( int number )
 {
-    std::list< int > list_ref;
+    std::list< int > list_resnum;
     for( int i = number + 1; i <= m_id_header; ++i ){
 
         NODE* node = res_header( i );
@@ -213,7 +265,7 @@ std::list< int > NodeTreeBase::get_res_reference( int number )
 
                 const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
                 if( anc_from && anc_to - anc_from < range && anc_from <= number && number <= anc_to ) {
-                    list_ref.push_back( i );
+                    list_resnum.push_back( i );
                     break;
                 }
             }
@@ -224,10 +276,60 @@ std::list< int > NodeTreeBase::get_res_reference( int number )
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::get_reference\n";
     std::list < int >::iterator it;
-    for( it = list_ref.begin(); it != list_ref.end(); ++it ) std::cout << *it << std::endl;
+    for( it = list_resnum.begin(); it != list_resnum.end(); ++it ) std::cout << *it << std::endl;
 #endif
     
-    return list_ref;
+    return remove_abone_from_list( list_resnum );
+}
+
+
+
+
+//
+// query を含むレス番号をリストにして取得
+//
+// mode_or == true なら OR抽出
+//
+std::list< int > NodeTreeBase::get_res_query( const std::string& query, bool mode_or )
+{
+    std::list< int > list_resnum;
+    if( query.empty() ) return list_resnum;
+
+    JDLIB::Regex regex;
+    std::list< std::string > list_query = MISC::split_line( query );
+
+    for( int i = 1; i <= m_id_header ; ++i ){
+
+        bool apnd = true;
+        if( mode_or ) apnd = false;
+        std::list< std::string >::iterator it = list_query.begin();
+        for( ; it != list_query.end(); ++it ){
+
+            bool ret = regex.exec( ( *it ), get_res_str( i ), 0, true );
+
+            // OR
+            if( mode_or ){
+                
+                if( ret ){
+                    apnd = true;
+                    break;
+                }
+            }
+
+            // AND
+            else{
+
+                if( ! ret ){
+                    apnd = false;
+                    break;
+                }
+            }
+        }
+
+        if( apnd ) list_resnum.push_back( i );
+    }
+
+    return remove_abone_from_list( list_resnum );
 }
 
 
@@ -1303,13 +1405,14 @@ void NodeTreeBase::clear_abone()
 // あぼーん情報を親クラスのarticlebaseからコピーする
 void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id, std::list< std::string >& list_abone_name,
                                     std::list< std::string >& list_abone_word, std::list< std::string >& list_abone_regex,
-                                    bool& abone_chain )
+                                    bool& abone_transparent, bool& abone_chain )
 {
     m_list_abone_id = list_abone_id;
     m_list_abone_name = list_abone_name;
     m_list_abone_word = list_abone_word;
     m_list_abone_regex = list_abone_regex;
 
+    m_abone_transparent = abone_transparent;
     m_abone_chain = abone_chain;
 }
 

@@ -54,6 +54,7 @@ namespace DBTREE
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
+        bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
 
         // ロード用変数
@@ -114,11 +115,23 @@ namespace DBTREE
         // number番のID の重複数( = 発言数 )
         int get_num_id_name( int number );
 
+        // 指定した発言者IDを持つレス番号をリストにして取得
+        std::list< int > get_res_id_name( const std::string& id_name );
+
+        // str_num で指定したレス番号をリストにして取得
+        // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
+        std::list< int > get_res_str_num( const std::string& str_num );
+
         // URL を含むレス番号をリストにして取得
         std::list< int > get_res_with_url();
 
         // number番のレスを参照しているレス番号をリストにして取得
         std::list< int > get_res_reference( int number );
+
+        // query を含むレス番号をリストにして取得
+        // mode_or == true なら OR抽出
+        std::list< int > get_res_query( const std::string& query, bool mode_or );
+
 
         // number番のレスの文字列を返す
         // ref == true なら先頭に ">" を付ける        
@@ -142,8 +155,8 @@ namespace DBTREE
 
         // あぼーん情報を親クラスのarticlebaseからコピーする
         void copy_abone_info( std::list< std::string >& list_abone_id, std::list< std::string >& list_abone_name,
-                        std::list< std::string >& list_abone_word, std::list< std::string >& list_abone_regex,
-                        bool& abone_chain );
+                              std::list< std::string >& list_abone_word, std::list< std::string >& list_abone_regex,
+                              bool& abone_transparent, bool& abone_chain );
 
         // 全レスのあぼーん状態の更新
         // 発言数や参照数も更新する
@@ -196,6 +209,9 @@ namespace DBTREE
 
         bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
                            int& anc_from, int& anc_to );
+
+        // レス番号のリストからあぼーんしている番号を取り除く
+        std::list< int > remove_abone_from_list( std::list< int >& list_num );
 
         // あぼーんのクリア
         void clear_abone();

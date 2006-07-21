@@ -162,30 +162,10 @@ int ArticleBase::get_num_id_name( int number )
 }
 
 
-// レス番号のリストからあぼーんしている番号を取り除く
-std::list< int > ArticleBase::remove_abone_from_list( std::list< int >& list_num )
-{
-    std::list< int > list_resnum; 
-
-    std::list< int >::iterator it = list_num.begin();
-    for( ; it != list_num.end(); ++it ) if( ! get_nodetree()->get_abone( *it ) ) list_resnum.push_back( *it );
-
-    return list_resnum;
-}
-
-
 // 指定した発言者IDを持つレス番号をリストにして取得
 std::list< int > ArticleBase::get_res_id_name( const std::string& id_name )
 {
-    std::list< int > list_resnum;          
-    for( int i = 1; i <= m_number_load ; ++i ){
-        if( id_name == get_id_name( i ) ) list_resnum.push_back( i );
-    }
-
-    // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! m_abone_transparent ) return list_resnum;
-
-    return remove_abone_from_list( list_resnum );
+    return get_nodetree()->get_res_id_name( id_name );
 }
 
 
@@ -193,20 +173,7 @@ std::list< int > ArticleBase::get_res_id_name( const std::string& id_name )
 // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
 std::list< int > ArticleBase::get_res_str_num( const std::string& str_num )
 {
-    std::list< int > list_resnum;
-    int num_from = MAX( 1, atol( str_num.c_str() ) );
-    int num_to = 0;
-    if( num_from <= m_number_load  ){
-        size_t i;
-        if( ( i = str_num.find( "-" ) ) != std::string::npos ) num_to = atol( str_num.substr( i +1 ).c_str() );
-        num_to = MIN( MAX( num_to, num_from ), m_number_load );
-        for( int i2 = num_from; i2 <= num_to ; ++i2 ) list_resnum.push_back( i2 );
-    }
-
-    // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! m_abone_transparent ) return list_resnum;
-
-    return remove_abone_from_list( list_resnum );
+    return get_nodetree()->get_res_str_num( str_num );
 }
 
 
@@ -218,10 +185,8 @@ std::list< int > ArticleBase::get_res_bm()
         if( is_bookmarked( i ) ) list_resnum.push_back( i );
     }
 
-    // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! m_abone_transparent ) return list_resnum;
-
-    return remove_abone_from_list( list_resnum );
+    // あぼーんしていてもリストから取り除かない
+    return list_resnum;
 }
 
 
@@ -230,12 +195,7 @@ std::list< int > ArticleBase::get_res_bm()
 //
 std::list< int > ArticleBase::get_res_reference( int number )
 {
-    std::list< int > list_resnum = get_nodetree()->get_res_reference( number );
-
-    // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! m_abone_transparent ) return list_resnum;
-
-    return remove_abone_from_list( list_resnum );
+    return get_nodetree()->get_res_reference( number );
 }
 
 
@@ -244,12 +204,7 @@ std::list< int > ArticleBase::get_res_reference( int number )
 //
 std::list< int > ArticleBase::get_res_with_url()
 {
-    std::list< int > list_resnum = get_nodetree()->get_res_with_url();
-
-    // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! m_abone_transparent ) return list_resnum;
-
-    return remove_abone_from_list( list_resnum );
+    return get_nodetree()->get_res_with_url();
 }
 
 
@@ -260,47 +215,7 @@ std::list< int > ArticleBase::get_res_with_url()
 //
 std::list< int > ArticleBase::get_res_query( const std::string& query, bool mode_or )
 {
-    std::list< int > list_resnum;
-    if( query.empty() ) return list_resnum;
-
-    JDLIB::Regex regex;
-    std::list< std::string > list_query = MISC::split_line( query );
-
-    for( int i = 1; i <= m_number_load ; ++i ){
-
-        bool apnd = true;
-        if( mode_or ) apnd = false;
-        std::list< std::string >::iterator it = list_query.begin();
-        for( ; it != list_query.end(); ++it ){
-
-            bool ret = regex.exec( ( *it ), get_res_str( i ), 0, true );
-
-            // OR
-            if( mode_or ){
-                
-                if( ret ){
-                    apnd = true;
-                    break;
-                }
-            }
-
-            // AND
-            else{
-
-                if( ! ret ){
-                    apnd = false;
-                    break;
-                }
-            }
-        }
-
-        if( apnd ) list_resnum.push_back( i );
-    }
-
-    // 透明あぼーんでない時はあぼーんのチェックをしない
-    if( ! m_abone_transparent ) return list_resnum;
-
-    return remove_abone_from_list( list_resnum );
+    return get_nodetree()->get_res_query( query, mode_or );
 }
 
 
@@ -466,7 +381,7 @@ void ArticleBase::update_abone()
     if( ! m_nodetree ) return;
 
     get_nodetree()->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex,
-                                     m_abone_chain );
+                                     m_abone_transparent, m_abone_chain );
 
     get_nodetree()->update_abone_all();
 }
@@ -592,13 +507,13 @@ void ArticleBase::add_abone_word( const std::string& word )
 //
 // 透明あぼーん更新
 //
-// 表示を変えるだけなので、update_abone()を呼んでnodetreeの更新をする必要は無い
-//
 void ArticleBase::set_abone_transparent( bool set )
 {
     if( empty() ) return;
 
     m_abone_transparent = set;
+
+    update_abone();
 
     m_save_info = true;
 } 
@@ -685,7 +600,7 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
 
         // あぼーん情報のコピー
         m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex,
-                                     m_abone_chain );
+                                     m_abone_transparent, m_abone_chain );
 
         if( ! m_bookmark ) m_bookmark = ( char* ) m_heap.heap_alloc( MAX_RESNUMBER );
 
@@ -913,6 +828,8 @@ void ArticleBase::delete_cache()
     m_list_abone_name.clear();
     m_list_abone_word.clear();
     m_list_abone_regex.clear();
+    m_abone_transparent = false;
+    m_abone_chain = false;
     m_cached = false;
     m_read_info = false;
     m_save_info = false;

@@ -271,9 +271,6 @@ namespace DBTREE
         void slot_load_finished();
         virtual void unlock_impl();
 
-        // レス番号のリストからあぼーんしている番号を取り除く
-        std::list< int > remove_abone_from_list( std::list< int >& list_num );
-
         // 全スレのあぼーん状態の更新
         void update_abone();
 
