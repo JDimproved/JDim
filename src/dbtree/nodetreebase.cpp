@@ -1369,6 +1369,8 @@ bool NodeTreeBase::check_abone_id( int number )
 
     NODE* head = res_header( number );
     if( ! head ) return false;
+    if( ! head->headinfo ) return false;
+    if( ! head->headinfo->node_id_name ) return false;
     if( head->headinfo->abone ) return true;
 
     int ln_protoid = strlen( PROTO_ID );
@@ -1398,6 +1400,7 @@ bool NodeTreeBase::check_abone_name( int number )
 
     NODE* head = res_header( number );
     if( ! head ) return false;
+    if( ! head->headinfo ) return false;
     if( head->headinfo->abone ) return true;
 
     std::list< std::string >::iterator it = m_list_abone_name.begin();
@@ -1430,6 +1433,7 @@ bool NodeTreeBase::check_abone_word( int number )
 
     NODE* head = res_header( number );
     if( ! head ) return false;
+    if( ! head->headinfo ) return false;
     if( head->headinfo->abone ) return true;
 
     std::string res_str = get_res_str( number );
@@ -1457,6 +1461,7 @@ bool NodeTreeBase::check_abone_regex( int number )
 
     NODE* head = res_header( number );
     if( ! head ) return false;
+    if( ! head->headinfo ) return false;
     if( head->headinfo->abone ) return true;
 
     JDLIB::Regex regex;
@@ -1487,6 +1492,7 @@ bool NodeTreeBase::check_abone_chain( int number )
 
     NODE* head = res_header( number );
     if( ! head ) return false;
+    if( ! head->headinfo ) return false;
     if( head->headinfo->abone ) return true;
 
     NODE* node = head;
