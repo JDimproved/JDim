@@ -388,7 +388,7 @@ void DrawAreaBase::append_res( int from_num, int to_num )
     std::cout << "DrawAreaBase::append_res from " << from_num << " to " << to_num << std::endl;
 #endif
 
-    for( int num = from_num; num <= to_num; ++num ) m_layout_tree->append_node( m_article->res_header( num ) );
+    for( int num = from_num; num <= to_num; ++num ) m_layout_tree->append_node( m_article->res_header( num ), false );
 
     // クライアント領域のサイズをリセットして再レイアウト
     m_width_client = 0;
@@ -403,6 +403,19 @@ void DrawAreaBase::append_res( int from_num, int to_num )
 //
 void DrawAreaBase::append_res( std::list< int >& list_resnum )
 {
+    std::list< bool > list_joint;
+    append_res( list_resnum, list_joint );
+}
+
+
+
+//
+// リストで指定したレスをappendして再レイアウト( 連結情報付き )
+// 
+// list_joint で連結指定したレスはヘッダを取り除いて前のレスに連結する
+//
+void DrawAreaBase::append_res( std::list< int >& list_resnum, std::list< bool >& list_joint )
+{
     assert( m_article );
     assert( m_layout_tree );
 
@@ -411,17 +424,24 @@ void DrawAreaBase::append_res( std::list< int >& list_resnum )
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::append_res" << std::endl;
 #endif
-    
-    std::list< int >::iterator it;
-    for( it = list_resnum.begin(); it != list_resnum.end(); ++it ){
 
-        int num = (* it );
+    bool use_joint = ( list_joint.size() == list_resnum.size() );
+    
+    std::list< int >::iterator it = list_resnum.begin();
+    std::list< bool >::iterator it_joint = list_joint.begin();
+    for( ; it != list_resnum.end(); ++it ){
 
 #ifdef _DEBUG
-        std::cout << "append no. " << num << std::endl;
+        std::cout << "append no. " << ( *it ) << std::endl;
 #endif
 
-        m_layout_tree->append_node( m_article->res_header( num ) );
+        bool joint = false;
+        if( use_joint ){
+            joint = ( *it_joint );
+            ++it_joint;
+        }
+
+        m_layout_tree->append_node( m_article->res_header( ( *it ) ), joint );
     }
 
     // クライアント領域のサイズをリセットして再レイアウト
@@ -429,6 +449,8 @@ void DrawAreaBase::append_res( std::list< int >& list_resnum )
     m_height_client = 0;
     layout();
 }
+
+
 
 //
 // html をappendして再レイアウト

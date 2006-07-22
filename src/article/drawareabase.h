@@ -154,10 +154,20 @@ namespace ARTICLE
         int seen_current(); // 現在見ているレスの番号
         int max_number();   // 表示されている最後のレスの番号
 
-        // 表示するレスやコメントの追加
+        // レスをappendして再レイアウト
         void append_res( int from_num, int to_num );
+
+        // リストで指定したレスをappendして再レイアウト
         void append_res( std::list< int >& list_resnum );
+
+        // リストで指定したレスをappendして再レイアウト( 連結情報付き )
+        // list_joint で連結指定したレスはヘッダを取り除いて前のレスに連結する
+        void append_res( std::list< int >& list_resnum, std::list< bool >& list_joint );
+
+        // html をappendして再レイアウト
         void append_html( const std::string& html );
+
+        // datをappendして再レイアウト
         void append_dat( const std::string& dat, int num );
 
         // 全画面消去

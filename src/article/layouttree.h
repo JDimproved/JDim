@@ -94,7 +94,8 @@ namespace ARTICLE
         const int max_res_number() const { return m_max_res_number; }
 
         // nodetreeのノード構造をコピーし、ツリーの一番最後に加える
-        void append_node( DBTREE::NODE* node_header );
+        // joint == true の時はヘッダを作らないで、本文を前のツリーの続きに連結する
+        void append_node( DBTREE::NODE* node_header, bool joint );
 
         // html をパースして追加
         void append_html( const std::string& html );

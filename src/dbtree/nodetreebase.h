@@ -120,7 +120,8 @@ namespace DBTREE
 
         // str_num で指定したレス番号をリストにして取得
         // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
-        std::list< int > get_res_str_num( const std::string& str_num );
+        // list_jointは出力で true のスレは前のスレに連結される (例) "3+4" なら 4が3に連結
+        std::list< int > get_res_str_num( const std::string& str_num, std::list< bool >& list_joint );
 
         // URL を含むレス番号をリストにして取得
         std::list< int > get_res_with_url();

@@ -178,7 +178,9 @@ LAYOUT* LayoutTree::create_layout_downleft()
 //
 // nodetreeのノード構造をコピーし、レイアウトツリーの一番最後に加える
 //
-void LayoutTree::append_node( DBTREE::NODE* node_header )
+// joint == true の時はヘッダを作らないで、本文を前のツリーの続きに連結する
+//
+void LayoutTree::append_node( DBTREE::NODE* node_header, bool joint )
 {
     if( ! node_header ) return;
     int res_number = node_header->id_header;
@@ -195,6 +197,12 @@ void LayoutTree::append_node( DBTREE::NODE* node_header )
     }
 
     DBTREE::NODE* tmpnode = node_header;
+
+    // 連結モード
+    if( joint ){
+        tmpnode = node_header->headinfo->node_body;
+        create_layout_br();
+    }
 
     while( tmpnode ){
 
@@ -295,7 +303,7 @@ void LayoutTree::append_html( const std::string& html )
     if( ! m_local_nodetree ) m_local_nodetree = new DBTREE::NodeTreeBase( m_url, std::string() );
     DBTREE::NODE* node = m_local_nodetree->append_html( html );
     node->id_header = 0;
-    append_node( node );
+    append_node( node, false );
 }
 
 
@@ -316,7 +324,7 @@ void LayoutTree::append_dat( const std::string& dat, int num )
     }
 
     DBTREE::NODE* node = m_local_nodetree->append_dat( dat );
-    append_node( node );
+    append_node( node, false );
 }
 
 

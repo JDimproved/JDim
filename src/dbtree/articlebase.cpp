@@ -171,9 +171,10 @@ std::list< int > ArticleBase::get_res_id_name( const std::string& id_name )
 
 // str_num で指定したレス番号をリストにして取得
 // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
-std::list< int > ArticleBase::get_res_str_num( const std::string& str_num )
+// list_jointは出力で true のスレは前のスレに連結される (例) "3+4" なら 4が3に連結
+std::list< int > ArticleBase::get_res_str_num( const std::string& str_num, std::list< bool >& list_joint )
 {
-    return get_nodetree()->get_res_str_num( str_num );
+    return get_nodetree()->get_res_str_num( str_num, list_joint );
 }
 
 

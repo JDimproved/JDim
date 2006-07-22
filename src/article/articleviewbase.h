@@ -129,7 +129,10 @@ namespace ARTICLE
         virtual void append_dat( const std::string& dat, int num = 0 );
 
         // リストで指定したレスを表示
-        virtual void append_res( std::list< int >& list_resnum );
+        void append_res( std::list< int >& list_resnum );
+
+        // リストで指定したレスを表示(連結情報付き)
+        void append_res( std::list< int >& list_resnum, std::list< bool >& list_joint );
 
         // ツールバーのボタンを押したときのスロット
         void slot_push_close_search();

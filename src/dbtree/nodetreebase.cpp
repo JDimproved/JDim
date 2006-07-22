@@ -204,23 +204,39 @@ std::list< int > NodeTreeBase::get_res_id_name( const std::string& id_name )
 //
 // str_num で指定したレス番号をリストにして取得
 // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
+// list_jointは出力で true のスレは前のスレに連結される (例) "3+4" なら 4が3に連結
 //
-std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num )
+std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std::list< bool >& list_joint )
 {
     std::list< int > list_resnum;
 
+    // "," ごとにブロック分けする
     std::list< std::string > list_str_num = MISC::StringTokenizer( str_num, ',' );
-
     std::list< std::string >::iterator it = list_str_num.begin();
     for( ; it != list_str_num.end(); ++it ){
 
-        int num_from = MAX( 1, atol( ( *it ).c_str() ) );
-        int num_to = 0;
-        if( num_from <= m_id_header  ){
-            size_t i;
-            if( ( i = ( *it ).find( "-" ) ) != std::string::npos ) num_to = atol( ( *it ).substr( i +1 ).c_str() );
-            num_to = MIN( MAX( num_to, num_from ), m_id_header );
-            for( int i2 = num_from; i2 <= num_to ; ++i2 ) list_resnum.push_back( i2 );
+        bool joint = false;
+
+        // "+"ごとにブロックを分ける
+        std::list< std::string > list_str_num2 = MISC::StringTokenizer( ( *it ), '+' );
+        std::list< std::string >::iterator it2 = list_str_num2.begin();
+        for( ; it2 != list_str_num2.end(); ++it2 ){
+
+            int num_from = MAX( 1, atol( ( *it2 ).c_str() ) );
+            int num_to = 0;
+            if( num_from <= m_id_header  ){
+                size_t i;
+                if( ( i = ( *it2 ).find( "-" ) ) != std::string::npos ) num_to = atol( ( *it2 ).substr( i +1 ).c_str() );
+                num_to = MIN( MAX( num_to, num_from ), m_id_header );
+                for( int i2 = num_from; i2 <= num_to ; ++i2 ) {
+
+                    list_resnum.push_back( i2 );
+                    list_joint.push_back( joint );
+
+                    // "+"が付いていたら2つ目のスレから連結指定
+                    if( list_str_num2.size() >= 2 ) joint = true;
+                }
+            }
         }
     }
 

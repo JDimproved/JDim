@@ -937,9 +937,12 @@ void ArticleViewBase::slot_jump()
 //
 // レスを抽出して表示
 //
-// num は "from-to"　の形式 (例) 3から10を抽出したいなら "3-10"
+// num は "from-to"　の形式。"a+b"の時はaとbを連結する(bのヘッダ行を取り除く)
+//
+// (例) 3から10を表示したいなら "3-10"
+//      3と4を連結して表示したい時は "3+4"
+//
 // show_title == trueの時は 板名、スレ名を表示
-// show_abone == trueの時はあぼーんしたレスも表示する
 // 
 void ArticleViewBase::show_res( const std::string& num, bool show_title )
 {
@@ -958,9 +961,10 @@ void ArticleViewBase::show_res( const std::string& num, bool show_title )
         if( ! html.empty() ) append_html( html );
     }
 
-    std::list< int > list_resnum = m_article->get_res_str_num( num );
+    std::list< bool > list_joint;
+    std::list< int > list_resnum = m_article->get_res_str_num( num, list_joint );
 
-    if( !list_resnum.empty() ) append_res( list_resnum );
+    if( !list_resnum.empty() ) append_res( list_resnum, list_joint );
     else if( !show_title ) append_html( "未取得レス" );
 }
 
@@ -1102,7 +1106,6 @@ void ArticleViewBase::append_dat( const std::string& dat, int num )
 }
 
 
-
 //
 // リストで指定したレスの表示
 //
@@ -1110,6 +1113,19 @@ void ArticleViewBase::append_res( std::list< int >& list_resnum )
 {
     assert( m_drawarea );
     m_drawarea->append_res( list_resnum );
+    m_drawarea->redraw_view();
+}
+
+
+//
+// リストで指定したレスを表示(連結情報付き)
+//
+// list_joint で連結指定したレスはヘッダを取り除いて前のレスに連結する
+//
+void ArticleViewBase::append_res( std::list< int >& list_resnum, std::list< bool >& list_joint )
+{
+    assert( m_drawarea );
+    m_drawarea->append_res( list_resnum, list_joint );
     m_drawarea->redraw_view();
 }
 
