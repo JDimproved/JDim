@@ -1711,8 +1711,12 @@ void NodeTreeBase::check_reference( int number )
 {
     NODE* node = res_header( number );
 
-    // あぼーんしているならチェックしない
+    // 既にあぼーんしているならチェックしない
     if( node->headinfo->abone ) return;
+
+    // 2重チェック防止用
+    bool checked[ MAX_RESNUMBER ];
+    memset( checked, 0, sizeof( bool ) * MAX_RESNUMBER );
 
     while( node ){
 
@@ -1734,11 +1738,19 @@ void NodeTreeBase::check_reference( int number )
                     if( anc_to - anc_from < range ){
 
                         for( int i = anc_from; i <= anc_to ; ++i ){
-        
+
+                            // 自分自身へのレスは除外
+                            if( i == number ) continue;
+
+                            // 既にチェックしている
+                            if( checked[ i ] ) continue;
+
                             NODE* tmphead = res_header( i );
                             if( tmphead
                                 && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
                                 && tmphead->headinfo->node_res ){
+
+                                checked[ i ] = true;
 
                                 // 参照数を更新して色を変更
                                 ++( tmphead->headinfo->num_reference );
