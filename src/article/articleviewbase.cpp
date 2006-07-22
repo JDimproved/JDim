@@ -1283,7 +1283,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
       
         args.arg1 = url.substr( strlen( PROTO_ANCHORE) );
         args.arg2 = "false"; // 板名、スレ名非表示
-        args.arg3 = "false"; // あぼーんレス非表示
+        args.arg3 = "false"; // あぼーんしたレスの内容は非表示(あぼーんと表示)
 
 #ifdef _DEBUG
         std::cout << "anchore = " << args.arg1 << std::endl;
@@ -1292,12 +1292,12 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, m_url_article, args );
     }
 
-    // あぼーんされたレスをポップアップ表示
+    // あぼーんされたレスの内容をポップアップ表示
     else if( url.find( PROTO_RES ) == 0 ){
 
         args.arg1 = url.substr( strlen( PROTO_RES ) );
         args.arg2 = "false"; // 板名、スレ名非表示
-        args.arg3 = "true"; // あぼーんレス表示
+        args.arg3 = "true"; // あぼーんレスの内容を表示
 
 #ifdef _DEBUG
         std::cout << "res = " << args.arg1 << std::endl;
@@ -1339,14 +1339,11 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         // 他スレ
         if( ! url_dat.empty() ){
 
-            num_from = MAX( 1, num_from ); // 最低でも1レス目は表示
-            num_to = MAX( num_from, num_to );
-            std::stringstream ss_tmp;
-            ss_tmp << num_from << "-" << num_to;
+            if( num_from == 0 ) args.arg1 = "1"; // 最低でも1レス目は表示
+            else args.arg1 = MISC::get_filename( url );
 
-            args.arg1 = ss_tmp.str();
             args.arg2 = "true"; // 板名、スレ名表示
-            args.arg3 = "false"; // あぼーんレス非表示
+            args.arg3 = "false"; // あぼーんしたレスの内容は非表示(あぼーんと表示)
 
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, url_dat, args );
         }

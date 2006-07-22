@@ -39,6 +39,7 @@
 #define LNG_RES 16
 #define LNG_ID 64
 #define LNG_LINK 256
+#define MAX_ANCINFO 64
 #define RANGE_REF 20
 #define MAX_LINK_DIGIT 4  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
 
@@ -207,13 +208,20 @@ std::list< int > NodeTreeBase::get_res_id_name( const std::string& id_name )
 std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num )
 {
     std::list< int > list_resnum;
-    int num_from = MAX( 1, atol( str_num.c_str() ) );
-    int num_to = 0;
-    if( num_from <= m_id_header  ){
-        size_t i;
-        if( ( i = str_num.find( "-" ) ) != std::string::npos ) num_to = atol( str_num.substr( i +1 ).c_str() );
-        num_to = MIN( MAX( num_to, num_from ), m_id_header );
-        for( int i2 = num_from; i2 <= num_to ; ++i2 ) list_resnum.push_back( i2 );
+
+    std::list< std::string > list_str_num = MISC::StringTokenizer( str_num, ',' );
+
+    std::list< std::string >::iterator it = list_str_num.begin();
+    for( ; it != list_str_num.end(); ++it ){
+
+        int num_from = MAX( 1, atol( ( *it ).c_str() ) );
+        int num_to = 0;
+        if( num_from <= m_id_header  ){
+            size_t i;
+            if( ( i = ( *it ).find( "-" ) ) != std::string::npos ) num_to = atol( ( *it ).substr( i +1 ).c_str() );
+            num_to = MIN( MAX( num_to, num_from ), m_id_header );
+            for( int i2 = num_from; i2 <= num_to ; ++i2 ) list_resnum.push_back( i2 );
+        }
     }
 
     return remove_abone_from_list( list_resnum );
@@ -259,15 +267,27 @@ std::list< int > NodeTreeBase::get_res_reference( int number )
 
             if( node->type == NODE_LINK ){
 
-                // アンカーノードの時は node->linkinfo->anc_from != 0
-                int anc_from = node->linkinfo->anc_from;
-                int anc_to = node->linkinfo->anc_to;
+                // アンカーノードの時は node->linkinfo->ancinfo != NULL;
+                if( node->linkinfo->ancinfo ){
 
-                const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
-                if( anc_from && anc_to - anc_from < range && anc_from <= number && number <= anc_to ) {
-                    list_resnum.push_back( i );
-                    break;
+                    int anc = 0;
+                    int anc_from;
+                    int anc_to;
+                    for(;;){
+                        anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
+                        anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
+                        if( anc_from == 0 ) break;
+                        ++anc;
+
+                        const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
+                        if( anc_to - anc_from < range && anc_from <= number && number <= anc_to ) {
+                            list_resnum.push_back( i );
+                            break;
+                        }
+                    }
+                    if( anc_from != 0 ) break; // from while( node )
                 }
+
             }
             node = node->next_node;
         }
@@ -483,11 +503,8 @@ NODE* NodeTreeBase::create_node_downleft()
 // リンクノード作成
 //
 // bold : 太字か
-// img : 画像か
-// anc_from, anc_to : アンカーの番号( anc_from == 0 なら一般のリンク )
-
-NODE* NodeTreeBase::create_linknode( const char* text, int n, const char* link, int n_link, int color_text,
-                                     bool bold, bool img, int anc_from, int anc_to )
+//
+NODE* NodeTreeBase::create_linknode( const char* text, int n, const char* link, int n_link, int color_text, bool bold )
 {
     NODE* tmpnode = createTextNodeN( text, n, color_text, bold );
     if( tmpnode ){
@@ -498,16 +515,39 @@ NODE* NodeTreeBase::create_linknode( const char* text, int n, const char* link, 
 
         tmpnode->linkinfo->link = ( char* )m_heap.heap_alloc( n_link +4 );
         memcpy( tmpnode->linkinfo->link, link, n_link ); tmpnode->linkinfo->link[ n_link ] = '\0';
-
-        tmpnode->linkinfo->anc_from = MAX( 0, anc_from );
-        tmpnode->linkinfo->anc_to = MAX( anc_from, anc_to );
-
-        tmpnode->linkinfo->image = img;
     }
     
     return tmpnode;
 }
 
+
+//
+// アンカーノード作成
+//
+NODE* NodeTreeBase::create_ancnode( const char* text, int n, const char* link, int n_link, int color_text,  bool bold,
+                                    ANCINFO* ancinfo, int lng_ancinfo )
+{
+    NODE* tmpnode = create_linknode( text, n, link, n_link, color_text, bold );
+    if( tmpnode ){
+
+        tmpnode->linkinfo->ancinfo = ( ANCINFO* )m_heap.heap_alloc( sizeof( ANCINFO ) * ( lng_ancinfo + 1 ) );
+        memcpy( tmpnode->linkinfo->ancinfo, ancinfo, sizeof( ANCINFO ) * lng_ancinfo );
+    }
+    
+    return tmpnode;
+}
+
+
+//
+// 画像ノード作成
+//
+NODE* NodeTreeBase::create_imgnode( const char* text, int n, const char* link, int n_link, int color_text,  bool bold )
+{
+    NODE* tmpnode = create_linknode( text, n, link, n_link, color_text, bold );
+    if( tmpnode ) tmpnode->linkinfo->image = true;
+    
+    return tmpnode;
+}
 
 
 //
@@ -1028,7 +1068,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             memcpy( tmplink + sizeof( PROTO_ID ) - 1, tmpid, lng_id_tmp + 1 );
             
             // リンク作成
-            NODE* node_id_name = create_linknode( "ID:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR );
+            NODE* node_id_name = create_linknode( "ID:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
             createTextNodeN( tmpid, lng_id_tmp, COLOR_CHAR);
 
             // ヘッダにリンクノードへのポインタを登録
@@ -1055,7 +1095,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             memcpy( tmplink + sizeof( PROTO_BE ) -1, tmpid, lng_id_tmp + 1 );
 
             // リンク作成
-            create_linknode( "BE:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR );
+            create_linknode( "BE:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
             createTextNodeN( tmpid, lng_id_tmp, COLOR_CHAR);
         }
 
@@ -1124,7 +1164,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 ++pos;
             }
 
-            // forのところで++されるので--しとく
+            // forのところで++されるので--しておく
             --pos;
             continue;
         }
@@ -1135,23 +1175,34 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
         int n_in = 0;
         int n_out = 0;
         char tmpstr[ LNG_LINK ], tmplink[ LNG_LINK ];
-        int anc_from, anc_to;
-        if( check_anchor( 2 * digitlink, pos, n_in, tmpstr, tmplink, LNG_LINK, anc_from, anc_to ) ){
+        int lng_str = 0, lng_link = strlen( PROTO_ANCHORE );
+        ANCINFO ancinfo[ MAX_ANCINFO ];
+        int lng_anc = 0;
+        if( check_anchor( 2 * digitlink, pos, n_in, tmpstr + lng_str, tmplink + lng_link, LNG_LINK - lng_link, ancinfo + lng_anc ) ){
 
-            // フラッシュしてからリンクノードつくる
+            // フラッシュしてからアンカーノードをつくる
             createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
-            create_linknode( tmpstr, strlen( tmpstr), tmplink, strlen( tmplink ), COLOR_CHAR_LINK, bold, false, anc_from, anc_to );
+            memcpy( tmplink, PROTO_ANCHORE, strlen( PROTO_ANCHORE ) );
+            lng_str += strlen( tmpstr ) - lng_str;
+            lng_link += strlen( tmplink ) - lng_link;
+            ++lng_anc;
             pos += n_in; 
 
             // , や = が続くとき
-            while( check_anchor( 1, pos, n_in, tmpstr, tmplink, LNG_LINK, anc_from, anc_to ) ){
-                create_linknode( tmpstr, strlen( tmpstr), tmplink, strlen( tmplink ), COLOR_CHAR_LINK, bold,
-                     false, anc_from, anc_to );
+            while( check_anchor( 1, pos, n_in, tmpstr + lng_str, tmplink + lng_link +1, // ','の分を空ける
+                                 LNG_LINK - ( lng_link +1 ), ancinfo + lng_anc ) ){
+
+                tmplink[ lng_link ] = ',';
+                lng_str += strlen( tmpstr ) - lng_str;
+                lng_link += strlen( tmplink ) - lng_link;
+                ++lng_anc;
                 pos += n_in; 
             }
 
-            // forのところで++されるので--しとく
+            create_ancnode( tmpstr, lng_str, tmplink, lng_link, COLOR_CHAR_LINK, bold, ancinfo, lng_anc );
+
+            // forのところで++されるので--しておく
             --pos;
             continue;
         }
@@ -1196,20 +1247,17 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
             }
             memcpy( m_parsed_text + offset, pos, n );
 
-            // リンクノード作成
-            bool img = false;
-            int color_tmp = COLOR_CHAR_LINK;
-
-            // 画像かどうか
+            // 画像リンク
             if( DBIMG::is_loadable( m_parsed_text, n + offset ) ){
-                img = true;
-                color_tmp = COLOR_IMG_NOCACHE;
+                create_imgnode( m_parsed_text + offset, n, m_parsed_text , n + offset, COLOR_IMG_NOCACHE, bold );
             }
 
-            create_linknode( m_parsed_text + offset, n, m_parsed_text , n + offset, color_tmp, bold, img ); 
+            // 一般リンク
+            else create_linknode( m_parsed_text + offset, n, m_parsed_text , n + offset, COLOR_CHAR_LINK, bold );
+
             pos += n;
 
-            // forのところで++されるので--しとく
+            // forのところで++されるので--しておく
             --pos;
             continue;
         }
@@ -1233,7 +1281,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 
                 pos += n_in;
 
-                // forのところで++されるので--しとく
+                // forのところで++されるので--しておく
                 --pos;
                 continue;
             }
@@ -1259,12 +1307,12 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 // n_in : str_in から何バイト読み取ったか
 // str_out : (画面に表示される)文字列
 // str_link : リンクの文字列
-// anc_from, anc_to : num番からanc_to番までのアンカーが現れた
+// ancinfo : ancinfo->anc_from 番から ancinfo->anc_to 番までのアンカーが現れた
 //
 // 戻り値 : アンカーが現れれば true
 //
 bool NodeTreeBase::check_anchor( int mode, const char* str_in,
-                                 int& n_in, char* str_out, char* str_link, int lng_link, int& anc_from, int& anc_to )
+                                 int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo )
 {
     char tmp_out[ 64 ];
     int lng_out = 0;
@@ -1316,8 +1364,8 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 
     // 数字かチェック
     unsigned int n, dig;
-    anc_from = anc_to = MISC::str_to_uint( pos, dig, n );
-    if( dig == 0 || dig > MAX_LINK_DIGIT || anc_from == 0 ){
+    ancinfo->anc_from = ancinfo->anc_to = MISC::str_to_uint( pos, dig, n );
+    if( dig == 0 || dig > MAX_LINK_DIGIT || ancinfo->anc_from == 0 ){
 
         // モード2で数字が長すぎるときは飛ばす
         if( mode == 2 && dig > MAX_LINK_DIGIT ) n_in = ( int )( pos - str_in ) + n; 
@@ -1333,7 +1381,7 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
     str_out[ lng_out + n ] = '\0';
 
     // アンカー文字
-    snprintf( str_link, lng_link, "%s%d",  PROTO_ANCHORE, anc_from );
+    snprintf( str_link, lng_link, "%d", ancinfo->anc_from );
     pos += n;
     lng_out += n;    
 
@@ -1356,15 +1404,15 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 
     if( offset ){
         
-        anc_to = MISC::str_to_uint( pos + offset, dig, n );
-        if( dig && dig <= MAX_LINK_DIGIT && anc_from ){
+        ancinfo->anc_to = MAX( ancinfo->anc_from, MISC::str_to_uint( pos + offset, dig, n ) );
+        if( dig && dig <= MAX_LINK_DIGIT && ancinfo->anc_to ){
 
             // 画面に表示する文字            
             memcpy( str_out + lng_out, pos, offset + n );
             str_out[ lng_out + offset + n ] = '\0';
 
             // アンカー文字をもう一度作成
-            snprintf( str_link, lng_link, "%s%d-%d",  PROTO_ANCHORE, anc_from, anc_to );
+            snprintf( str_link, lng_link, "%d-%d", ancinfo->anc_from, ancinfo->anc_to );
             pos += offset + n;
             lng_out += offset + n;
         }
@@ -1603,20 +1651,32 @@ bool NodeTreeBase::check_abone_chain( int number )
 
         if( node->type == NODE_LINK ){
 
-            // アンカーノードの時は node->linkinfo->anc_from != 0
-            int anc_from = node->linkinfo->anc_from;
-            int anc_to = node->linkinfo->anc_to;
+            // アンカーノードの時は node->linkinfo->ancinfo != NULL;
+            if( node->linkinfo->ancinfo ){
 
-            // >>20-30 の様に範囲でアンカーを張っている場合は除く
-            if( anc_from && anc_from == anc_to ){
+                int anc = 0;
+                int anc_from;
+                int anc_to;
+                for(;;){
 
-                NODE* tmphead = res_header( anc_from );
+                    anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
+                    anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
+                    if( anc_from == 0 ) break;
+                    ++anc;
 
-                if( tmphead && tmphead->headinfo->abone ){
-                    head->headinfo->abone = true;
-                    return true;
+                    // >>20-30 の様に範囲でアンカーを張っている場合は除く
+                    if( anc_from == anc_to ){
+
+                        NODE* tmphead = res_header( anc_from );
+
+                        if( tmphead && tmphead->headinfo->abone ){
+                            head->headinfo->abone = true;
+                            return true;
+                        }
+                    }
                 }
             }
+
         }
         node = node->next_node;
     }
@@ -1647,9 +1707,7 @@ void NodeTreeBase::update_reference( int from_number, int to_number )
 {
     if( empty() ) return;
     if( to_number < from_number ) return;
-
-    // あぼーんしているレスはチェックしない
-    for( int i = from_number ; i <= to_number; ++i ) if( !get_abone( i ) ) check_reference( i );
+    for( int i = from_number ; i <= to_number; ++i ) check_reference( i );
 }
 
 
@@ -1660,29 +1718,49 @@ void NodeTreeBase::update_reference( int from_number, int to_number )
 void NodeTreeBase::check_reference( int number )
 {
     NODE* node = res_header( number );
+
+    // あぼーんしているならチェックしない
+    if( node->headinfo->abone ) return;
+
     while( node ){
 
         if( node->type == NODE_LINK ){
 
-            // アンカーノードの時は node->linkinfo->anc_from != 0
-            int anc_from = node->linkinfo->anc_from;
-            int anc_to = MIN( number -1, node->linkinfo->anc_to ); // 未来のレスはチェックしない
+            // アンカーノードの時は node->linkinfo->ancinfo != NULL;
+            if( node->linkinfo->ancinfo ){
 
-            const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
-            if( anc_from && anc_to - anc_from < range ){
+                int anc = 0;
+                int anc_from;
+                int anc_to;
+                for(;;){
+                    anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
+                    anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
+                    if( anc_from == 0 ) break;
+                    ++anc;
 
-                for( int i = anc_from; i <= anc_to ; ++i ){
+                    const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
+                    if( anc_to - anc_from < range ){
+
+                        for( int i = anc_from; i <= anc_to ; ++i ){
         
-                    NODE* tmphead = res_header( i );
-                    if( tmphead && ! tmphead->headinfo->abone && tmphead->headinfo->node_res ){
+                            NODE* tmphead = res_header( i );
+                            if( tmphead
+                                && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
+                                && tmphead->headinfo->node_res ){
 
-                        // 参照数を更新して色を変更
-                        ++( tmphead->headinfo->num_reference );
-                        if( tmphead->headinfo->num_reference >= 3 ) tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_RED;
-                        else if( tmphead->headinfo->num_reference >= 1 ) tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_PUR;
+                                // 参照数を更新して色を変更
+                                ++( tmphead->headinfo->num_reference );
+                                if( tmphead->headinfo->num_reference >= 3 )
+                                    tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_RED;
+                                else if( tmphead->headinfo->num_reference >= 1 )
+                                    tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_PUR;
+                                else tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK;
+                            }
+                        }
                     }
                 }
             }
+
         }
 
         node = node->next_node;
@@ -1711,9 +1789,7 @@ void NodeTreeBase::update_id_name( int from_number, int to_number )
 {
     if( empty() ) return;
     if( to_number < from_number ) return;
-
-    // あぼーんしているレスはチェックしない
-    for( int i = from_number ; i <= to_number; ++i ) if( !get_abone( i ) ) check_id_name( i );
+    for( int i = from_number ; i <= to_number; ++i ) check_id_name( i );
 }
 
 
@@ -1724,6 +1800,9 @@ void NodeTreeBase::update_id_name( int from_number, int to_number )
 void NodeTreeBase::check_id_name( int number )
 {
     NODE* header = res_header( number );
+
+    // あぼーんしているならチェックしない
+    if( header->headinfo->abone ) return;
 
     if( header && header->headinfo->node_id_name ){
 

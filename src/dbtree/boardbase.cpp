@@ -272,7 +272,7 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
 
     // read.cgi型
     std::string cgipath = MISC::replace_str( url_readcgipath(), "?", "\\?" );
-    std::string query_cgi = "^ *(http://.+" + cgipath + ")([1234567890]+)/?r?(l50)?([1234567890]+)?(-)?([1234567890]+)? *$";
+    std::string query_cgi = "^ *(http://.+" + cgipath + ")([1234567890]+)/?r?(l50)?([1234567890]+)?(-)?([1234567890]+)?.*$";
 
 #ifdef _DEBUG
     std::cout << "query_dat = " << query_dat << std::endl;

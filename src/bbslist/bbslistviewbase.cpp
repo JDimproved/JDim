@@ -122,7 +122,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "NewCom", "コメント挿入"), sigc::mem_fun( *this, &BBSListViewBase::slot_newcomment ) );
     action_group()->add( Gtk::Action::create( "Rename", "名前変更"), sigc::mem_fun( *this, &BBSListViewBase::slot_rename ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );    
-    action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &BBSListViewBase::delete_view ) );
+    action_group()->add( Gtk::Action::create( "Delete", "お気に入りから削除する"), sigc::mem_fun( *this, &BBSListViewBase::delete_view ) );
     action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く"), sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );

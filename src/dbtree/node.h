@@ -36,6 +36,14 @@ namespace DBTREE
 
     struct NODE;
 
+    // アンカー情報
+    // anc_from番 から anc_to番までのアンカー
+    struct ANCINFO
+    {
+        int anc_from;
+        int anc_to;
+    };
+
     // ヘッダ拡張情報
     struct HEADERINFO
     {
@@ -57,11 +65,10 @@ namespace DBTREE
     {
         char* link; // リンクURL
 
-        // アンカー情報
-        // anc_from番 から anc_to番までのアンカーになっている
-        // anc_from = 0 ならアンカーでは無い
-        int anc_from;
-        int anc_to;
+        // アンカー情報のベクトル
+        // NULL なら一般のリンク
+        // ancinfo->anc_from == ancinfo->anc_to == 0 が終端
+        ANCINFO* ancinfo;
 
         // 画像関係の情報
         //

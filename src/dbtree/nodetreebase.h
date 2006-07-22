@@ -192,8 +192,10 @@ namespace DBTREE
         NODE* createBrNode();
         NODE* createSpNode( const int& type );
         NODE* create_node_downleft();
-        NODE* create_linknode( const char* text, int n, const char* link, int n_link, int color_text, bool bold = false,
-                               bool img = false, int anc_from = 0, int anc_to = 0 );
+        NODE* create_linknode( const char* text, int n, const char* link, int n_link, int color_text, bool bold );
+        NODE* create_ancnode( const char* text, int n, const char* link, int n_link, int color_text, bool bold,
+                              ANCINFO* ancinfo, int lng_ancinfo );
+        NODE* create_imgnode( const char* text, int n, const char* link, int n_link, int color_text, bool bold );
         NODE* createTextNode( const char* text, int color_text, bool bold = false );
         NODE* createTextNodeN( const char* text, int n, int color_text, bool bold = false );
 
@@ -207,8 +209,7 @@ namespace DBTREE
         void parse_html( const char* str, int lng, int color_text, bool digitlink = false, bool bold = false );
         void parseBr( );
 
-        bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
-                           int& anc_from, int& anc_to );
+        bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
 
         // レス番号のリストからあぼーんしている番号を取り除く
         std::list< int > remove_abone_from_list( std::list< int >& list_num );
