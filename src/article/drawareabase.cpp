@@ -1015,20 +1015,25 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
         id_header_to = m_selection.caret_to.layout->id_header;
         id_to = m_selection.caret_to.layout->id;
 
+        // 選択開始ノードの場合は m_selection.caret_from.byte から、それ以外は0バイト目から描画
         byte_from =  m_selection.caret_from.byte * ( id_header == id_header_from && id == id_from );
+
+        // 選択終了ノードの場合は m_selection.caret_to.byte から、それ以外は最後まで描画
         byte_to =  m_selection.caret_to.byte * ( id_header == id_header_to && id == id_to );
         if( byte_to == 0 ) byte_to = strlen( layout->text );
         
-        if( //  このノードは範囲選択外なら範囲選択の描画をしない
-            ( id_header < id_header_from )
+        if( byte_from == byte_to
+
+            //  このノードは範囲選択外なので範囲選択の描画をしない
+            || ( id_header < id_header_from )
             || ( id_header > id_header_to )
             || ( id_header == id_header_from && id < id_from )
             || ( id_header == id_header_to && id > id_to )
 
-            // キャレットが先頭にあるなら範囲選択の描画をしない
+            // キャレットが先頭にあるので範囲選択の描画をしない
             ||  ( id_header == id_header_to && id == id_to && m_selection.caret_to.byte == 0 )
             ){
-            
+
             draw_selection = false;
         }
 
@@ -1042,7 +1047,7 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
         layout_draw_one_node( layout, x, y, width_view, true, bold, color_text, COLOR_BACK );
 
     } else { // 範囲選択の前後描画
-        
+
         // 前
         if( byte_from ) layout_draw_one_node( layout, x, y, width_view, true, bold, color_text, COLOR_BACK, 0, byte_from );
 
@@ -2420,8 +2425,9 @@ bool DrawAreaBase::motion_mouse()
     
         // ポインタが画面外に近かったらオートスクロールを開始する
         const int mrg = m_br_size * 3;
-        Gtk::Adjustment* adjust = ( m_vscrbar ? m_vscrbar->get_adjustment() : 0 );
-        if ( ( pos == 0 && m_y_pointer < mrg )
+        Gtk::Adjustment* adjust = ( m_vscrbar ? m_vscrbar->get_adjustment() : NULL );
+        if ( ! adjust
+             || ( pos == 0 && m_y_pointer < mrg )
              || ( adjust && pos >= adjust->get_upper() - adjust->get_page_size() && m_y_pointer > m_view.get_height() - mrg )
              || ( m_y_pointer > mrg && m_y_pointer < m_view.get_height() - mrg ) ){
 
