@@ -2426,20 +2426,30 @@ bool DrawAreaBase::motion_mouse()
         // ポインタが画面外に近かったらオートスクロールを開始する
         const int mrg = m_br_size * 3;
         Gtk::Adjustment* adjust = ( m_vscrbar ? m_vscrbar->get_adjustment() : NULL );
+
+        // スクロールのリセット
         if ( ! adjust
-             || ( pos == 0 && m_y_pointer < mrg )
-             || ( adjust && pos >= adjust->get_upper() - adjust->get_page_size() && m_y_pointer > m_view.get_height() - mrg )
+
+             // スクロールページの一番上
+             || ( pos == 0 && m_y_pointer < m_view.get_height() - mrg ) 
+
+             // スクロールページの一番下
+             || ( pos >= adjust->get_upper() - adjust->get_page_size() && m_y_pointer > mrg )
+
+             // ページの中央
              || ( m_y_pointer > mrg && m_y_pointer < m_view.get_height() - mrg ) ){
 
             m_scrollinfo.reset();
         }
+
+        // スクロールモードをセット
         else if( m_scrollinfo.mode == SCROLL_NOT ){
 
             m_scrollinfo.mode = SCROLL_AUTO;
             m_scrollinfo.show_marker = false;
             m_scrollinfo.x = m_x_pointer;
 
-            if( m_y_pointer < mrg ){
+            if( m_y_pointer <= mrg ){
                 m_scrollinfo.enable_up = true;
                 m_scrollinfo.enable_down = false;
                 m_scrollinfo.y = mrg;
