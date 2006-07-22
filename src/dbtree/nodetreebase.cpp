@@ -467,11 +467,6 @@ NODE* NodeTreeBase::createBrNode()
 {
     NODE* tmpnode = createNode();
     tmpnode->type = NODE_BR;
-
-    // 便宜的に'\0'をセットする
-    tmpnode->text = ( char* )m_heap.heap_alloc( 2 );
-    tmpnode->text[ 0 ] = '\0';
-    
     return tmpnode;
 }
 
@@ -494,7 +489,6 @@ NODE* NodeTreeBase::create_node_downleft()
 {
     NODE* tmpnode = createNode();
     tmpnode->type = NODE_DOWN_LEFT;
-
     return tmpnode;
 }
 
@@ -927,7 +921,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     parseName( header, section[ 0 ], section_lng[ 0 ] );
     
     // メール
-    parseMail( section[ 1 ], section_lng[ 1 ] );
+    parseMail( header, section[ 1 ], section_lng[ 1 ] );
 
     // 日付とID
     parse_date_id( header, section[ 2 ], section_lng[ 2 ] );
@@ -935,10 +929,11 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     // 改行してレベル下げ
     createBrNode();
     create_node_downleft();
-    create_node_downleft();
+    NODE* tmpnode = create_node_downleft();
     
     // 本文
     parse_html( section[ 3 ], section_lng[ 3 ], COLOR_CHAR );
+    header->headinfo->node_body = tmpnode->next_node;
 
     // サブジェクト
     if( header->id_header == 1 ){
@@ -964,7 +959,7 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
     int pos_trip_end = 0;
     int i;
 
-    NODE* node = createTextNode( " 名前：", COLOR_CHAR );
+    header->headinfo->node_name = createTextNode( " 名前：", COLOR_CHAR );
 
     // トリップ付きの時は中の数字をリンクにしない
     for( i = 0; i < lng; ++i ) if( str[ i ] == '<' && str[ i+2 ] == 'b' ) break;
@@ -1005,7 +1000,7 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
     else parse_html( str, lng, COLOR_CHAR_NAME, digitlink, bold );
 
     // プレインな名前取得
-    node = node->next_node;
+    NODE* node = header->headinfo->node_name->next_node;
     std::string str_tmp;
     while( node ){
         if( node->text ) str_tmp += node->text;
@@ -1020,16 +1015,16 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
 //
 // メール
 //
-void NodeTreeBase::parseMail( const char* str, int lng )
+void NodeTreeBase::parseMail( NODE* header, const char* str, int lng )
 {
-    createTextNode( " [", COLOR_CHAR );
+    header->headinfo->node_mail = createTextNode( " [", COLOR_CHAR );
     parse_html( str, lng, COLOR_CHAR, true );
     createTextNode( "]：", COLOR_CHAR );
 }
 
 
 //
-// 日付とIDとBE
+// 日付とIDとBEその他
 //
 void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 {
@@ -1068,11 +1063,8 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             memcpy( tmplink + sizeof( PROTO_ID ) - 1, tmpid, lng_id_tmp + 1 );
             
             // リンク作成
-            NODE* node_id_name = create_linknode( "ID:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
+            header->headinfo->node_id_name = create_linknode( "ID:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
             createTextNodeN( tmpid, lng_id_tmp, COLOR_CHAR);
-
-            // ヘッダにリンクノードへのポインタを登録
-            header->headinfo->node_id_name = node_id_name;
         }
 
         // BE:

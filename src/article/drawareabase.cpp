@@ -1756,12 +1756,13 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
                 while( tmplayout2 && !tmplayout2->text ) tmplayout2 = tmplayout2->next_layout;
 
                 // 次のノードのy座標を取得
-                // 最終ノードなら次のブロックの y 座標を出す
                 if( tmplayout2 ) next_y = tmplayout2->y;
+
+                // 最終ノードなので次のブロックの y 座標を取得
                 else{
                     
                     if( tmpheader->next_header ) next_y = tmpheader->next_header->y;
-                    else  next_y = y + BIG_HEIGHT; // 最終行ってこと
+                    else next_y = y + BIG_HEIGHT; // 最終ブロックの最終行ということ
                 }
                 
                 if(
@@ -1774,7 +1775,6 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
                           || tmplayout->next_layout == NULL // 最終ノード
                           || tmplayout->next_layout->type == DBTREE::NODE_BR // 一番右端のノード
                             )
-
                         && ( tmp_y <= y && tmp_y + m_br_size >= y  ) && x >= tmp_x )
 
                     ){

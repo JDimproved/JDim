@@ -47,16 +47,18 @@ namespace DBTREE
     // ヘッダ拡張情報
     struct HEADERINFO
     {
-        NODE* next_header; // 次のヘッダのポインタ
+        NODE* next_header; // 次のヘッダノードのアドレス
 
-        NODE* node_res;  // レス番号ノードのポインタ(リンクの色を変えるときに必要)
+        bool abone; // あぼーんされているか
         int num_reference; // 他のレスから参照されている数
-        bool abone; // あぼーん
-
         char* name; // 名前
-        
-        NODE* node_id_name;  // 名前IDリンクノードのポインタ(IDを取得したり、リンクの色を変えるときに必要)
         int num_id_name; // 同じIDのレスの個数( = 発言数 )
+
+        NODE* node_res;  // レス番号ノードの先頭アドレス(リンクの色を変えるときなどに必要)
+        NODE* node_name; // 名前ノードの先頭アドレス
+        NODE* node_mail; // メールノードの先頭アドレス
+        NODE* node_id_name;  // IDノードの先頭アドレス(IDを取得したり、リンクの色を変えるときなどに必要)
+        NODE* node_body; // 本文ノードの先頭アドレス
     };
 
 

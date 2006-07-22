@@ -32,6 +32,8 @@ LayoutTree::LayoutTree( const std::string& url, bool show_abone )
     m_article = DBTREE::get_article( m_url );
     assert( m_article );
 
+    m_dummy_str = '\0';
+
     clear();
 }
 
@@ -135,14 +137,16 @@ LAYOUT* LayoutTree::create_layout_link( const char* text, const char* link, cons
 //
 // 改行ノード作成
 //
-LAYOUT* LayoutTree::create_layout_br( const char* text )
+LAYOUT* LayoutTree::create_layout_br()
 {
     LAYOUT* tmplayout = create_layout( DBTREE::NODE_BR );
     m_last_layout->next_layout = tmplayout;
     m_last_layout = tmplayout;
 
-    tmplayout->text = text;
-    
+    // DrawAreaBase::set_caret() において layout->text != NULL の場合
+    // キャレット移動の計算がうまくいかないのでダミーのテキストバッファをセットする
+    tmplayout->text = &m_dummy_str;
+
     return tmplayout;
 }
 
@@ -191,7 +195,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header )
     }
 
     DBTREE::NODE* tmpnode = node_header;
-    
+
     while( tmpnode ){
 
         LAYOUT* tmplayout = NULL;
@@ -213,7 +217,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header )
                 break;
 
             case DBTREE::NODE_BR:
-                tmplayout = create_layout_br( tmpnode->text );
+                tmplayout = create_layout_br();
                 break;
             
             case DBTREE::NODE_ZWSP:
@@ -267,7 +271,7 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
 
     tmplayout = create_layout_text( " あぼ〜ん", NULL, false );
 
-    tmplayout = create_layout_br( "" );
+    tmplayout = create_layout_br();
 
     tmplayout = create_layout_downleft();
     tmplayout = create_layout_downleft();
