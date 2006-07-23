@@ -64,6 +64,7 @@ noinst_HEADERS = \
 	prefdiagfactory.h \
 	proxypref.h \
 	browserpref.h \
+	globalabonepref.h \
 	passwdpref.h
 
 

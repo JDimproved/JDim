@@ -136,6 +136,7 @@ namespace CORE
         void slot_setup_proxy();
         void slot_setup_passwd();
         void slot_setup_browser();
+        void slot_setup_abone();
 
         void slot_show_hp();
         void slot_show_bbs();

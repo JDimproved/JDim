@@ -1614,8 +1614,8 @@ bool NodeTreeBase::check_abone_word( int number )
 {
     bool check_word = ! m_list_abone_word.empty();
     bool check_regex = ! m_list_abone_regex.empty();
-    bool check_word_global = CONFIG::get_list_abone_word().empty();
-    bool check_regex_global = CONFIG::get_list_abone_regex().empty();
+    bool check_word_global = ! CONFIG::get_list_abone_word().empty();
+    bool check_regex_global = ! CONFIG::get_list_abone_regex().empty();
 
     if( !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
 

@@ -489,6 +489,8 @@ void CONFIG::set_list_abone_name( std::list< std::string >& name )
     std::string tmp_str;
     std::list< std::string >::iterator it;    
 
+    list_abone_name.clear();
+
     // 空白行を除きつつ情報を更新していく
     for( it = name.begin(); it != name.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
@@ -500,6 +502,8 @@ void CONFIG::set_list_abone_word( std::list< std::string >& word )
 {
     std::string tmp_str;
     std::list< std::string >::iterator it;    
+
+    list_abone_word.clear();
 
     // 空白行を除きつつ情報を更新していく
     for( it = word.begin(); it != word.end(); ++it ){
@@ -513,6 +517,8 @@ void CONFIG::set_list_abone_regex( std::list< std::string >& regex )
 {
     std::string tmp_str;
     std::list< std::string >::iterator it;    
+
+    list_abone_regex.clear();
 
     // 空白行を除きつつ情報を更新していく
     for( it = regex.begin(); it != regex.end(); ++it ){

@@ -216,6 +216,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
     m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ" ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
 
+    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
+
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア" ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
@@ -279,6 +281,8 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='SetupProxy'/>"
         "<menuitem action='SetupBrowser'/>"
+        "<separator/>"
+        "<menuitem action='SetupAbone'/>"
         "<separator/>"
         "<menuitem action='UseMosaic'/>"    
         "<menuitem action='DeleteImages'/>"
@@ -644,6 +648,17 @@ bool Core::open_color_diag( std::string title, const int* rgb, int* rgb_out )
 void Core::slot_setup_proxy()
 {
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_PROXY, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// あぼーん設定
+//
+void Core::slot_setup_abone()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_GLOBALABONE, "" );
     pref->run();
     delete pref;
 }
