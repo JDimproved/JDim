@@ -414,7 +414,7 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
     
     for( it = ids.begin(); it != ids.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ) m_list_abone_id.push_back( *it );
+        if( ! tmp_str.empty() ) m_list_abone_id.push_back( tmp_str ); // 前後の空白を除く
     }
 
     for( it = names.begin(); it != names.end(); ++it ){

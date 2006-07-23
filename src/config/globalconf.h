@@ -7,6 +7,7 @@
 #define _GLOBALCONF_H
 
 #include <string>
+#include <list>
 
 namespace CONFIG
 {
@@ -151,6 +152,15 @@ namespace CONFIG
     // スレ表示の行間調整
     const double get_adjust_underline_pos();
     const double get_adjust_line_space();
+
+    // 全体あぼーん
+    std::list< std::string >& get_list_abone_name(); // 名前
+    std::list< std::string >& get_list_abone_word(); // ワード
+    std::list< std::string >& get_list_abone_regex(); // 正規表現
+
+    void set_list_abone_name( std::list< std::string >& name );
+    void set_list_abone_word( std::list< std::string >& word );
+    void set_list_abone_regex( std::list< std::string >& regex );
 }
 
 

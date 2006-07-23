@@ -7,6 +7,7 @@
 #include "cache.h"
 
 #include "jdlib/confloader.h"
+#include "jdlib/miscutil.h"
 
 #define COLOR_SIZE 3
 
@@ -71,6 +72,11 @@ int instruct_popup;
 
 double adjust_underline_pos;
 double adjust_line_space;
+
+std::list< std::string > list_abone_id;
+std::list< std::string > list_abone_name;
+std::list< std::string > list_abone_word;
+std::list< std::string > list_abone_regex;
 
 
 //
@@ -217,6 +223,40 @@ const bool CONFIG::init_config()
     adjust_underline_pos = cf.get_option( "adjust_underline_pos", 1.0 );
     adjust_line_space = cf.get_option( "adjust_line_space", 1.0 );
 
+    std::list< std::string > list_tmp;
+    std::list< std::string >::iterator it_tmp;
+    std::string str_tmp;
+
+    // あぼーん name
+    str_tmp = cf.get_option( "abonename", "" );
+    if( ! str_tmp.empty() ){
+        list_tmp = MISC::split_line( str_tmp );
+        it_tmp = list_tmp.begin();
+        for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+            if( !(*it_tmp).empty() ) list_abone_name.push_back( MISC::recover_quot( ( *it_tmp ) ) );
+        }
+    }
+
+    // あぼーん word
+    str_tmp = cf.get_option( "aboneword", "" );
+    if( ! str_tmp.empty() ){
+        list_tmp = MISC::split_line( str_tmp );
+        it_tmp = list_tmp.begin();
+        for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+            if( !(*it_tmp).empty() ) list_abone_word.push_back( MISC::recover_quot( ( *it_tmp ) ) );
+        }
+    }
+
+    // あぼーん regex
+    str_tmp = cf.get_option( "aboneregex", "" );
+    if( ! str_tmp.empty() ){
+        list_tmp = MISC::split_line( str_tmp );
+        it_tmp = list_tmp.begin();
+        for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+            if( !(*it_tmp).empty() ) list_abone_regex.push_back( MISC::recover_quot( ( *it_tmp ) ) );
+        }
+    }
+
     return ! cf.empty();
 }
 
@@ -308,6 +348,26 @@ void CONFIG::save_conf()
 
     cf.update( "adjust_underline_pos", adjust_underline_pos );
     cf.update( "adjust_line_space", adjust_line_space );
+
+    // あぼーん情報
+    std::string str_abone_name, str_abone_word, str_abone_regex;
+    std::list< std::string >::iterator it;
+    it = list_abone_name.begin();
+    for( ; it != list_abone_name.end(); ++it ){
+        if( ! ( *it ).empty() ) str_abone_name += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
+    }
+    it = list_abone_word.begin();
+    for( ; it != list_abone_word.end(); ++it ){
+        if( ! ( *it ).empty() ) str_abone_word += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
+    }
+    it = list_abone_regex.begin();
+    for( ; it != list_abone_regex.end(); ++it ){
+        if( ! ( *it ).empty() ) str_abone_regex += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
+    }
+
+    cf.update( "abonename", str_abone_name );
+    cf.update( "aboneword", str_abone_word );
+    cf.update( "aboneregex", str_abone_regex );
 
     cf.save();
 }
@@ -418,3 +478,46 @@ const int CONFIG::get_instruct_popup(){
 
 const double CONFIG::get_adjust_underline_pos(){ return adjust_underline_pos; }
 const double CONFIG::get_adjust_line_space(){ return adjust_line_space; }
+
+
+std::list< std::string >& CONFIG::get_list_abone_name(){ return list_abone_name; }
+std::list< std::string >& CONFIG::get_list_abone_word(){ return list_abone_word; }
+std::list< std::string >& CONFIG::get_list_abone_regex(){ return list_abone_regex; }
+
+void CONFIG::set_list_abone_name( std::list< std::string >& name )
+{
+    std::string tmp_str;
+    std::list< std::string >::iterator it;    
+
+    // 空白行を除きつつ情報を更新していく
+    for( it = name.begin(); it != name.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ) list_abone_name.push_back( *it );
+    }
+}
+
+void CONFIG::set_list_abone_word( std::list< std::string >& word )
+{
+    std::string tmp_str;
+    std::list< std::string >::iterator it;    
+
+    // 空白行を除きつつ情報を更新していく
+    for( it = word.begin(); it != word.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ) list_abone_word.push_back( *it );
+    }
+}
+
+
+void CONFIG::set_list_abone_regex( std::list< std::string >& regex )
+{
+    std::string tmp_str;
+    std::list< std::string >::iterator it;    
+
+    // 空白行を除きつつ情報を更新していく
+    for( it = regex.begin(); it != regex.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ) list_abone_regex.push_back( *it );
+    }
+}
+

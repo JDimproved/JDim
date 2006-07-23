@@ -14,6 +14,8 @@
 
 #include "dbimg/imginterface.h"
 
+#include "config/globalconf.h"
+
 #include "global.h"
 #include "httpcode.h"
 #include "colorid.h"
@@ -249,7 +251,7 @@ std::list< int > NodeTreeBase::get_res_with_url()
         while( node ){
 
             if( node->type == NODE_LINK
-                && ! node->linkinfo->link
+                && node->linkinfo->link
                 && (
                     std::string( node->linkinfo->link ).find( "http" ) == 0
                     || std::string( node->linkinfo->link ).find( "https" ) == 0
@@ -1517,14 +1519,9 @@ void NodeTreeBase::update_abone( int from_number, int to_number )
     if( to_number < from_number ) return;
 
     for( int i = from_number ; i <= to_number; ++i ){
-
-        // ローカルあぼーん
         if( check_abone_id( i ) )  continue;
         if( check_abone_name( i ) ) continue;
         if( check_abone_word( i ) ) continue;
-        if( check_abone_regex( i ) ) continue;
-
-        // 連鎖あぼーん
         if( check_abone_chain( i ) ) continue;
     }
 }
@@ -1543,8 +1540,8 @@ bool NodeTreeBase::check_abone_id( int number )
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
-    if( ! head->headinfo->node_id_name ) return false;
     if( head->headinfo->abone ) return true;
+    if( ! head->headinfo->node_id_name ) return false;
 
     int ln_protoid = strlen( PROTO_ID );
 
@@ -1563,30 +1560,43 @@ bool NodeTreeBase::check_abone_id( int number )
 
 
 //
-// number番のあぼーん判定(name)
+// number番のあぼーん判定(name, global name )
 //
 // あぼーんの時はtrueを返す
 //
 bool NodeTreeBase::check_abone_name( int number )
 {
-    if( m_list_abone_name.empty() ) return false;
+    bool check_name = ! m_list_abone_name.empty();
+    bool check_name_global = ! CONFIG::get_list_abone_name().empty();
+
+    if( !check_name && !check_name_global ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
     if( head->headinfo->abone ) return true;
+    if( ! head->headinfo->name ) return false;
 
-    std::list< std::string >::iterator it = m_list_abone_name.begin();
-    for( ; it != m_list_abone_name.end(); ++it ){
+    std::list< std::string >::iterator it;
+    std::string name_str( head->headinfo->name );
 
-        // std::string の find は遅いのでstrcmp使う
-        const char* s1 = head->headinfo->name;
-        const char* s2 = ( *it ).c_str();
-        while( *s1 != '\0' && *s1 != *s2 ) s1++;
+    if( check_name ){
+        it = m_list_abone_name.begin();
+        for( ; it != m_list_abone_name.end(); ++it ){
+            if( name_str.find( *it ) != std::string::npos ){
+                head->headinfo->abone = true;
+                return true;
+            }
+        }
+    }
 
-        if( *s1 != '\0'  && strncmp( s1, s2, strlen( s2 ) ) == 0 ){
-            head->headinfo->abone = true;
-            return true;
+    if( check_name_global ){
+        it = CONFIG::get_list_abone_name().begin();
+        for( ; it != CONFIG::get_list_abone_name().end(); ++it ){
+            if( name_str.find( *it ) != std::string::npos ){
+                head->headinfo->abone = true;
+                return true;
+            }
         }
     }
 
@@ -1596,13 +1606,18 @@ bool NodeTreeBase::check_abone_name( int number )
 
 
 //
-// number番のあぼーん判定(word)
+// number番のあぼーん判定( word, regex, global word, global regex )
 //
 // あぼーんの時はtrueを返す
 //
 bool NodeTreeBase::check_abone_word( int number )
 {
-    if( m_list_abone_word.empty() ) return false;
+    bool check_word = ! m_list_abone_word.empty();
+    bool check_regex = ! m_list_abone_regex.empty();
+    bool check_word_global = CONFIG::get_list_abone_word().empty();
+    bool check_regex_global = CONFIG::get_list_abone_regex().empty();
+
+    if( !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
@@ -1610,41 +1625,53 @@ bool NodeTreeBase::check_abone_word( int number )
     if( head->headinfo->abone ) return true;
 
     std::string res_str = get_res_str( number );
+    JDLIB::Regex regex;
 
-    std::list< std::string >::iterator it = m_list_abone_word.begin();
-    for( ; it != m_list_abone_word.end(); ++it ){
-        if( res_str.find( *it ) != std::string::npos ){
-            head->headinfo->abone = true;
-            return true;
+    // ローカル NG word
+    if( check_word ){
+
+        std::list< std::string >::iterator it = m_list_abone_word.begin();
+        for( ; it != m_list_abone_word.end(); ++it ){
+            if( res_str.find( *it ) != std::string::npos ){
+                head->headinfo->abone = true;
+                return true;
+            }
         }
     }
 
-    return false;
-}
+    // ローカル NG regex
+    if( check_regex ){
 
+        std::list< std::string >::iterator it = m_list_abone_regex.begin();
+        for( ; it != m_list_abone_regex.end(); ++it ){
+            if( regex.exec( *it, res_str ) ){
+                head->headinfo->abone = true;
+                return true;
+            }
+        }
+    }
 
-//
-// number番のあぼーん判定(regex)
-//
-// あぼーんの時はtrueを返す
-//
-bool NodeTreeBase::check_abone_regex( int number )
-{
-    if( m_list_abone_regex.empty() ) return false;
+    // 全体 NG word
+    if( check_word_global ){
 
-    NODE* head = res_header( number );
-    if( ! head ) return false;
-    if( ! head->headinfo ) return false;
-    if( head->headinfo->abone ) return true;
+        std::list< std::string >::iterator it = CONFIG::get_list_abone_word().begin();
+        for( ; it != CONFIG::get_list_abone_word().end(); ++it ){
+            if( res_str.find( *it ) != std::string::npos ){
+                head->headinfo->abone = true;
+                return true;
+            }
+        }
+    }
 
-    JDLIB::Regex regex;
-    std::string res_str = get_res_str( number );
+    // 全体 NG regex
+    if( check_regex_global ){
 
-    std::list< std::string >::iterator it = m_list_abone_regex.begin();
-    for( ; it != m_list_abone_regex.end(); ++it ){
-        if( regex.exec( *it, res_str ) ){
-            head->headinfo->abone = true;
-            return true;
+        std::list< std::string >::iterator it = CONFIG::get_list_abone_regex().begin();
+        for( ; it != CONFIG::get_list_abone_regex().end(); ++it ){
+            if( regex.exec( *it, res_str ) ){
+                head->headinfo->abone = true;
+                return true;
+            }
         }
     }
 

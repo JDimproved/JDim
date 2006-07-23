@@ -222,7 +222,6 @@ namespace DBTREE
         bool check_abone_id( int number );
         bool check_abone_name( int number );
         bool check_abone_word( int number );
-        bool check_abone_regex( int number );
         bool check_abone_chain( int number );
 
 
