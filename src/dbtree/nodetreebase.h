@@ -212,9 +212,6 @@ namespace DBTREE
 
         bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
 
-        // レス番号のリストからあぼーんしている番号を取り除く
-        std::list< int > remove_abone_from_list( std::list< int >& list_num );
-
         // あぼーんのクリア
         void clear_abone();
 

@@ -170,33 +170,18 @@ int NodeTreeBase::get_num_id_name( int number )
 
 
 //
-// レス番号のリストからあぼーんしている番号を取り除く
-//
-std::list< int > NodeTreeBase::remove_abone_from_list( std::list< int >& list_num )
-{
-    // 透明あぼーんでない時はそのまま戻す
-    if( ! m_abone_transparent ) return list_num;
-
-    std::list< int > list_resnum; 
-
-    std::list< int >::iterator it = list_num.begin();
-    for( ; it != list_num.end(); ++it ) if( ! get_abone( *it ) ) list_resnum.push_back( *it );
-
-    return list_resnum;
-}
-
-
-//
 // 指定した発言者IDを持つレス番号をリストにして取得
 //
 std::list< int > NodeTreeBase::get_res_id_name( const std::string& id_name )
 {
     std::list< int > list_resnum;          
     for( int i = 1; i <= m_id_header ; ++i ){
-        if( id_name == get_id_name( i ) ) list_resnum.push_back( i );
+        if( id_name == get_id_name( i )
+            && ( ! m_abone_transparent || ! get_abone( i ) ) //  透明あぼーんしていない　or あぼーんしていない
+            ) list_resnum.push_back( i );
     }
 
-    return remove_abone_from_list( list_resnum );
+    return list_resnum;
 }
 
 
@@ -210,14 +195,15 @@ std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std:
 {
     std::list< int > list_resnum;
 
-    // "," ごとにブロック分けする
+    // "," ごとにブロック分けする (例) "1-2,3-4+5" -> "1-2","3-4+5"
     std::list< std::string > list_str_num = MISC::StringTokenizer( str_num, ',' );
     std::list< std::string >::iterator it = list_str_num.begin();
     for( ; it != list_str_num.end(); ++it ){
 
+        // true なら前のスレと結合
         bool joint = false;
 
-        // "+"ごとにブロックを分ける
+        // "+"ごとにブロックを分ける (例) "1+2-3+4" -> "1","2-3","4"
         std::list< std::string > list_str_num2 = MISC::StringTokenizer( ( *it ), '+' );
         std::list< std::string >::iterator it2 = list_str_num2.begin();
         for( ; it2 != list_str_num2.end(); ++it2 ){
@@ -225,22 +211,28 @@ std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std:
             int num_from = MAX( 1, atol( ( *it2 ).c_str() ) );
             int num_to = 0;
             if( num_from <= m_id_header  ){
+
                 size_t i;
                 if( ( i = ( *it2 ).find( "-" ) ) != std::string::npos ) num_to = atol( ( *it2 ).substr( i +1 ).c_str() );
                 num_to = MIN( MAX( num_to, num_from ), m_id_header );
+
                 for( int i2 = num_from; i2 <= num_to ; ++i2 ) {
 
-                    list_resnum.push_back( i2 );
-                    list_joint.push_back( joint );
+                    //  透明あぼーんしていない　or あぼーんしていないなら追加
+                    if( ! m_abone_transparent || ! get_abone( i2 ) ){ 
 
-                    // "+"が付いていたら2つ目のスレから連結指定
-                    if( list_str_num2.size() >= 2 ) joint = true;
+                        list_resnum.push_back( i2 );
+                        list_joint.push_back( joint );
+
+                        // "+"が付いていたら2つ目のスレから連結指定
+                        if( list_str_num2.size() >= 2 ) joint = true;
+                    }
                 }
             }
         }
     }
 
-    return remove_abone_from_list( list_resnum );
+    return list_resnum;
 }
 
 
@@ -257,7 +249,14 @@ std::list< int > NodeTreeBase::get_res_with_url()
         while( node ){
 
             if( node->type == NODE_LINK
-                && std::string( node->linkinfo->link ).find( "http" ) == 0 ){
+                && ! node->linkinfo->link
+                && (
+                    std::string( node->linkinfo->link ).find( "http" ) == 0
+                    || std::string( node->linkinfo->link ).find( "https" ) == 0
+                    || std::string( node->linkinfo->link ).find( "ftp" ) == 0
+                    )
+                && ( ! m_abone_transparent || ! get_abone( i ) ) //  透明あぼーんしていない　or あぼーんしていない
+                ){
                 list_resnum.push_back( i );
                 break;
             }
@@ -265,7 +264,7 @@ std::list< int > NodeTreeBase::get_res_with_url()
         }
     }
     
-    return remove_abone_from_list( list_resnum );
+    return list_resnum;
 }
 
 
@@ -290,13 +289,16 @@ std::list< int > NodeTreeBase::get_res_reference( int number )
                     int anc_from;
                     int anc_to;
                     for(;;){
+
                         anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
                         anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
                         if( anc_from == 0 ) break;
                         ++anc;
 
-                        const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
-                        if( anc_to - anc_from < range && anc_from <= number && number <= anc_to ) {
+                        // >>1-1000 みたいなアンカーは弾く
+                        if( anc_to - anc_from < RANGE_REF && anc_from <= number && number <= anc_to
+                            && ( ! m_abone_transparent || ! get_abone( i ) ) //  透明あぼーんしていない　or あぼーんしていない
+                            ) {
                             list_resnum.push_back( i );
                             break;
                         }
@@ -315,7 +317,7 @@ std::list< int > NodeTreeBase::get_res_reference( int number )
     for( it = list_resnum.begin(); it != list_resnum.end(); ++it ) std::cout << *it << std::endl;
 #endif
     
-    return remove_abone_from_list( list_resnum );
+    return list_resnum;
 }
 
 
@@ -362,10 +364,12 @@ std::list< int > NodeTreeBase::get_res_query( const std::string& query, bool mod
             }
         }
 
-        if( apnd ) list_resnum.push_back( i );
+        if( apnd
+            && ( ! m_abone_transparent || ! get_abone( i ) ) //  透明あぼーんしていない　or あぼーんしていない
+            ) list_resnum.push_back( i );
     }
 
-    return remove_abone_from_list( list_resnum );
+    return list_resnum;
 }
 
 
@@ -1197,11 +1201,10 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
             ++lng_anc;
             pos += n_in; 
 
-            // , や = が続くとき
-            while( check_anchor( 1, pos, n_in, tmpstr + lng_str, tmplink + lng_link +1, // ','の分を空ける
-                                 LNG_LINK - ( lng_link +1 ), ancinfo + lng_anc ) ){
+            // , や = や +が続くとき
+            while( check_anchor( 1, pos, n_in, tmpstr + lng_str, tmplink + lng_link ,
+                                 LNG_LINK - lng_link, ancinfo + lng_anc ) ){
 
-                tmplink[ lng_link ] = ',';
                 lng_str += strlen( tmpstr ) - lng_str;
                 lng_link += strlen( tmplink ) - lng_link;
                 ++lng_anc;
@@ -1307,7 +1310,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 // アンカーが現れたかチェックして文字列を取得する関数
 //
 // 入力
-// mode : 0 なら >> が先頭に無ければアンカーにしない、1 なら,か=があればアンカーにする、2 なら数字が先頭に来たらアンカーにする
+// mode : 0 なら >> が先頭に無ければアンカーにしない、1 なら,か+か=があればアンカーにする、2 なら数字が先頭に来たらアンカーにする
 // str_in : 入力文字列の先頭アドレス
 // lng_link : str_linkのバッファサイズ
 //
@@ -1349,22 +1352,33 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
         }
     }
 
-    // カンマかイコールをチェック
+    // カンマかイコールかプラスをチェック
     else if( mode == 1 ){  
 
-        if( *( pos ) == '=' || *( pos ) == ',' ){
-            tmp_out[ lng_out ] = *( pos );
-            ++lng_out;
+        if( *( pos ) == '=' || *( pos ) == ',' || *( pos ) == '+' ){
+
+            tmp_out[ lng_out++ ] = *( pos );
+
+            str_link[ 0 ] = *( pos );
+            ++str_link;
+            --lng_link;
+
             ++pos;
         }
 
         // utf-8で"、"
         else if( ( unsigned char )( *pos ) == 0xe3 && ( unsigned char ) ( *( pos + 1 ) ) == 0x80
-                     && ( unsigned char ) ( *( pos + 2 ) ) == 0x81 ){
-                tmp_out[ lng_out++ ] = 0xe3;
-                tmp_out[ lng_out++ ] = 0x80;
-                tmp_out[ lng_out++ ] = 0x81;
-                pos += 3;
+                 && ( unsigned char ) ( *( pos + 2 ) ) == 0x81 ){
+
+            tmp_out[ lng_out++ ] = 0xe3;
+            tmp_out[ lng_out++ ] = 0x80;
+            tmp_out[ lng_out++ ] = 0x81;
+
+            str_link[ 0 ] = ',';
+            ++str_link;
+            --lng_link;
+
+            pos += 3;
         }
 
         else return false;
@@ -1672,6 +1686,10 @@ bool NodeTreeBase::check_abone_chain( int number )
                     if( anc_from == 0 ) break;
                     ++anc;
 
+                    // number-1 番以下のレスだけを見る
+                    if( anc_from >= number ) continue;
+                    anc_to = MIN( anc_to, number -1 );
+
                     // >>20-30 の様に範囲でアンカーを張っている場合は除く
                     if( anc_from == anc_to ){
 
@@ -1731,8 +1749,8 @@ void NodeTreeBase::check_reference( int number )
     if( node->headinfo->abone ) return;
 
     // 2重チェック防止用
-    bool checked[ MAX_RESNUMBER ];
-    memset( checked, 0, sizeof( bool ) * MAX_RESNUMBER );
+    bool checked[ number ];
+    memset( checked, 0, sizeof( bool ) * number );
 
     while( node ){
 
@@ -1745,37 +1763,38 @@ void NodeTreeBase::check_reference( int number )
                 int anc_from;
                 int anc_to;
                 for(;;){
+
                     anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
                     anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
                     if( anc_from == 0 ) break;
                     ++anc;
 
-                    const int range = RANGE_REF; // >>1-1000 みたいなアンカーは弾く
-                    if( anc_to - anc_from < range ){
+                    // number-1 番以下のレスだけを見る
+                    if( anc_from >= number ) continue;
+                    anc_to = MIN( anc_to, number -1 );
 
-                        for( int i = anc_from; i <= anc_to ; ++i ){
+                    // >>1-1000 みたいなアンカーは弾く
+                    if( anc_to - anc_from >= RANGE_REF ) continue;
 
-                            // 自分自身へのレスは除外
-                            if( i == number ) continue;
+                    for( int i = anc_from; i <= anc_to ; ++i ){
 
-                            // 既にチェックしている
-                            if( checked[ i ] ) continue;
+                        // 既にチェックしている
+                        if( checked[ i ] ) continue;
 
-                            NODE* tmphead = res_header( i );
-                            if( tmphead
-                                && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
-                                && tmphead->headinfo->node_res ){
+                        NODE* tmphead = res_header( i );
+                        if( tmphead
+                            && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
+                            && tmphead->headinfo->node_res ){
 
-                                checked[ i ] = true;
+                            checked[ i ] = true;
 
-                                // 参照数を更新して色を変更
-                                ++( tmphead->headinfo->num_reference );
-                                if( tmphead->headinfo->num_reference >= 3 )
-                                    tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_RED;
-                                else if( tmphead->headinfo->num_reference >= 1 )
-                                    tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_PUR;
-                                else tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK;
-                            }
+                            // 参照数を更新して色を変更
+                            ++( tmphead->headinfo->num_reference );
+                            if( tmphead->headinfo->num_reference >= 3 )
+                                tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_RED;
+                            else if( tmphead->headinfo->num_reference >= 1 )
+                                tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_PUR;
+                            else tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK;
                         }
                     }
                 }
@@ -1835,7 +1854,7 @@ void NodeTreeBase::check_id_name( int number )
             NODE* tmphead = m_vec_header[ i ];
 
             if( tmphead
-                && ! tmphead->headinfo->abone
+                && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
                 && tmphead->headinfo->node_id_name
                 && str_id[ 0 ] == tmphead->headinfo->node_id_name->linkinfo->link[ 0 ] // とりあえず先頭だけで比較
                 && strcmp( str_id, tmphead->headinfo->node_id_name->linkinfo->link ) == 0 ){
