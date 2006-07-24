@@ -217,11 +217,11 @@ void BoardBase::read_info()
         
         m_read_info = true; 
 
-        // 情報ファイル読み込み
+        // 板の情報ファイル読み込み
         read_board_info();
 
         // キャッシュにあるレスをデータベースに登録
-        append_all_article();
+        append_all_article_in_cache();
 
         // キャッシュからSETTING.TXT のロード
         load_setting();
@@ -808,10 +808,10 @@ void BoardBase::receive_finish()
 // boardビューに一覧表示するためBoardBaseの派生クラスのparse_subject()を呼び出したり、
 // BoardBase::get_article_fromURL()で参照されたときに初めてスレのinfoファイルを読み込む
 //
-void BoardBase::append_all_article()
+void BoardBase::append_all_article_in_cache()
 {
 #ifdef _DEBUG
-    std::cout << "BoardBase::append_all_article\n";
+    std::cout << "BoardBase::append_all_article_in_cache\n";
 #endif
     
     std::list< std::string >list_file;
@@ -835,6 +835,17 @@ void BoardBase::append_all_article()
                 );
         }
     }
+}
+
+
+
+//
+// 配下の全articlebaseクラスのあぼーん状態の更新
+//
+void BoardBase::update_abone_all_article()
+{
+    std::list< ArticleBase* >::iterator it = m_list_article.begin();
+    for( ; it != m_list_article.end(); ++it ) ( *it )->update_abone();
 }
 
 

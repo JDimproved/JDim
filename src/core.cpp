@@ -1068,6 +1068,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    // articleの削除
     else if( command.command == "delete_article" ){
 
         ARTICLE::get_admin()->set_command( "close_view", command.url,
@@ -1076,6 +1077,11 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         DBTREE::delete_article( command.url );
         return;
+    }
+
+    // 全articleviewの再レイアウト
+    else if( command.command == "relayout_all_article" ){
+        ARTICLE::get_admin()->set_command( "relayout_all" );
     }
 
 

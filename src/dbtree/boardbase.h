@@ -236,6 +236,10 @@ namespace DBTREE
         // 新スレ作成用のsubbbscgi のURL
         virtual const std::string url_subbbscgi_new() { return std::string(); }
 
+
+        // 配下の全articlebaseクラスのあぼーん状態の更新
+        void update_abone_all_article();
+
         void read_info();
         void save_info_force();
         
@@ -254,7 +258,7 @@ namespace DBTREE
         virtual void parse_subject( const char* str_subject_txt ){}
 
         void read_board_info();
-        void append_all_article();
+        void append_all_article_in_cache();
 
         void save_info();
         void save_summary();

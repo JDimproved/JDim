@@ -693,3 +693,14 @@ bool Root::is_machi( const std::string& url )
 
     return false;
 }
+
+
+
+//
+// 配下の全boardbaseクラスに、全articlebaseクラスのあぼーん状態の更新をさせる
+//
+void Root::update_abone_all_article()
+{
+    std::list< BoardBase* >::iterator it = m_list_board.begin();
+    for( ; it != m_list_board.end(); ++it ) ( *it )->update_abone_all_article();
+}

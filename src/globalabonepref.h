@@ -10,6 +10,8 @@
 
 #include "config/globalconf.h"
 
+#include "dbtree/interface.h"
+
 #include "command.h"
 
 namespace CORE
@@ -23,7 +25,7 @@ namespace CORE
         // OK押した
         virtual void slot_ok_clicked(){
 
-            // あぼーん再設定
+            // 全体あぼーん再設定
             std::list< std::string > list_name = MISC::get_lines( m_edit_name.get_text(), true );
             std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text(), true );
             std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text(), true );
@@ -31,6 +33,10 @@ namespace CORE
             CONFIG::set_list_abone_name( list_name );
             CONFIG::set_list_abone_word( list_word );
             CONFIG::set_list_abone_regex( list_regex );
+
+            // あぼーん情報更新
+            DBTREE::update_abone_all_article();
+            CORE::core_set_command( "relayout_all_article" );
         }
 
       public:

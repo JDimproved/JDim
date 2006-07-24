@@ -538,6 +538,11 @@ size_t DBTREE::article_lng_dat( const std::string& url )
 
 
 
+void DBTREE::update_abone_all_article()
+{
+    DBTREE::get_root()->update_abone_all_article();
+}
+
 
 std::list< std::string > DBTREE::get_abone_list_id( const std::string& url )
 {

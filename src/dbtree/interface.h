@@ -146,23 +146,36 @@ namespace DBTREE
                                                  const std::string& name, const std::string& mail, const std::string& msg );
 
 
-    // あぼーん
+    // あぼーん関係
+
+    // 全articlebaseクラスのあぼーん状態の更新
+    void update_abone_all_article();
+
+    // 各articlebase別のあぼーん情報
+    // グローバルなあぼーん情報は globalconf が管理
     std::list< std::string > get_abone_list_id( const std::string& url );
     std::list< std::string > get_abone_list_name( const std::string& url );
     std::list< std::string > get_abone_list_word( const std::string& url );
     std::list< std::string > get_abone_list_regex( const std::string& url );
+
+    // 全あぼーん情報の同時セットと更新
     void reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names,
                       std::list< std::string >& words, std::list< std::string >& regexs,
                       bool transparent, bool chain);
+
+    // 個別のあぼーん情報のセットと更新
     void add_abone_id( const std::string& url, const std::string& id );
     void add_abone_name( const std::string& url, const std::string& name );
     void add_abone_word( const std::string& url, const std::string& word );
 
+    // 透明あぼーん
     const bool get_abone_transparent( const std::string& url );
     void set_abone_transparent( const std::string& url, bool set );
 
+    // 連鎖あぼーん
     const bool get_abone_chain( const std::string& url );
     void set_abone_chain( const std::string& url, bool set );
+
 
     // ブックマーク
     const bool is_bookmarked( const std::string& url, int number );
