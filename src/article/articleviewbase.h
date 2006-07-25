@@ -207,6 +207,8 @@ namespace ARTICLE
         void slot_abone_id();
         void slot_abone_name();
         void slot_abone_word();
+        void slot_global_abone_name();
+        void slot_global_abone_word();
         void slot_toggle_abone_transparent();
         void slot_toggle_abone_chain();
         void slot_pre_bm();

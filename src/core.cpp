@@ -1404,6 +1404,26 @@ void Core::exec_command()
         slot_reload_list();
     }
 
+    // グローバルあぼーん(名前)
+    else if( command.command == "set_global_abone_name" ){
+
+        std::list< std::string >list_tmp =  CONFIG::get_list_abone_name();
+        list_tmp.push_back( command.arg1 );
+        CONFIG::set_list_abone_name( list_tmp );
+        DBTREE::update_abone_all_article();
+        CORE::core_set_command( "relayout_all_article" );
+    }
+
+    // グローバルあぼーん(名前)
+    else if( command.command == "set_global_abone_word" ){
+
+        std::list< std::string >list_tmp =  CONFIG::get_list_abone_word();
+        list_tmp.push_back( command.arg1 );
+        CONFIG::set_list_abone_word( list_tmp );
+        DBTREE::update_abone_all_article();
+        CORE::core_set_command( "relayout_all_article" );
+    }
+
     // URL のオープン関係
 
     // 常に外部ブラウザで開く場合

@@ -1008,12 +1008,12 @@ void ArticleBase::read_info()
         }
 
         // 透明あぼーん
-        m_abone_transparent = true;
-        GET_INFOVALUE( str_tmp, "transparent = " );
+        m_abone_transparent = false;
+        GET_INFOVALUE( str_tmp, "abonetrp = " );
         if( ! str_tmp.empty() ) m_abone_transparent = atoi( str_tmp.c_str() );
 
         // 連鎖あぼーん
-        m_abone_chain = true;
+        m_abone_chain = false;
         GET_INFOVALUE( str_tmp, "abonechain = " );
         if( ! str_tmp.empty() ) m_abone_chain = atoi( str_tmp.c_str() );
     }
@@ -1152,6 +1152,8 @@ void ArticleBase::save_info()
          << "bookmark = " << ss_bookmark.str() << std::endl
          << "aboneword = " << str_abone_word << std::endl
          << "aboneregex = " << str_abone_regex << std::endl
+         << "abonetrp = " << m_abone_transparent << std::endl
+         << "abonechain = " << m_abone_chain << std::endl
     ;
 
 #ifdef _DEBUG
