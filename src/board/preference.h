@@ -13,7 +13,6 @@ namespace BOARD
     {
         Gtk::Notebook m_notebook;
         Gtk::VBox m_vbox;
-        SKELETON::EditView m_edit_settingtxt;
 
         // クッキー & hana
         Gtk::Frame m_frame_cookie;
@@ -34,6 +33,12 @@ namespace BOARD
         SKELETON::LabelEntry m_label_noname;
         SKELETON::LabelEntry m_label_line;
         SKELETON::LabelEntry m_label_byte;
+
+        // あぼーん
+        SKELETON::EditView m_edit_word, m_edit_regex;
+
+        // SETTING.TXT
+        SKELETON::EditView m_edit_settingtxt;
 
       public:
         Preferences( const std::string& url );

@@ -291,6 +291,24 @@ void DBTREE::board_set_check_noname( const std::string& url, bool check )
 }
 
 
+
+std::list< std::string > DBTREE::get_abone_list_word_board( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_list_word();
+}
+
+std::list< std::string > DBTREE::get_abone_list_regex_board( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_list_regex();
+}
+
+
+void DBTREE::reset_abone_board( const std::string& url, std::list< std::string >& words, std::list< std::string >& regexs )
+{
+    DBTREE::get_board( url )->reset_abone( words, regexs );
+}
+
+
 const bool DBTREE::article_is_cached( const std::string& url )
 {
     return DBTREE::get_article( url )->is_cached();

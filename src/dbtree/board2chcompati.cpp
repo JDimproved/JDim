@@ -314,7 +314,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
 
             // boardビューに表示するリスト更新
             article->set_current( true );
-            get_list_subject().push_back( article );
+            if( ! BoardBase::get_abone( article ) ) get_list_subject().push_back( article );
         }
     }
 }

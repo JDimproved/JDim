@@ -148,10 +148,27 @@ namespace DBTREE
 
     // あぼーん関係
 
+    //
+    // 各boadbase別のあぼーん情報
+    //
+
+    // スレあぼーん
+    // グローバルなあぼーん情報は globalconf が管理
+    std::list< std::string > get_abone_list_word_board( const std::string& url );
+    std::list< std::string > get_abone_list_regex_board( const std::string& url );
+
+    // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
+    void reset_abone_board( const std::string& url, std::list< std::string >& words, std::list< std::string >& regexs );
+
+
+    //
+    // 各articlebase別のあぼーん情報
+    //
+
     // 全articlebaseクラスのあぼーん状態の更新
     void update_abone_all_article();
 
-    // 各articlebase別のあぼーん情報
+    // レスあぼーん
     // グローバルなあぼーん情報は globalconf が管理
     std::list< std::string > get_abone_list_id( const std::string& url );
     std::list< std::string > get_abone_list_name( const std::string& url );

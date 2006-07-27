@@ -238,7 +238,7 @@ namespace DBTREE
         // number番のレスがあぼーんされているか
         const bool get_abone( int number );
 
-        // 全スレのあぼーん状態の更新
+        // 全レスのあぼーん状態の更新
         void update_abone();
 
         // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)

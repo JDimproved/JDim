@@ -787,7 +787,7 @@ void BoardBase::receive_finish()
                 std::cout << "read article_info << " << ( *it )->get_url() << std::endl;
 #endif                
                 ( *it )->read_info();
-                m_list_subject.push_back( *it );
+                if( ! get_abone( *it ) ) m_list_subject.push_back( *it );
             }
         }
     }
@@ -847,6 +847,77 @@ void BoardBase::update_abone_all_article()
     std::list< ArticleBase* >::iterator it = m_list_article.begin();
     for( ; it != m_list_article.end(); ++it ) ( *it )->update_abone();
 }
+
+
+
+
+// articleがあぼーんされているか
+const bool BoardBase::get_abone( ArticleBase* article )
+{
+    if( ! article ) return false;
+
+    // wordあぼーん
+    std::list< std::string >::iterator it = m_list_abone_word.begin();
+    for( ; it != m_list_abone_word.end(); ++it ){
+        if( ! ( *it ).empty() && article->get_subject().find( *it ) != std::string::npos ) return true;
+    }
+
+    return false;
+}
+
+
+//
+// スレあぼーん状態の更新
+//
+void BoardBase::update_abone()
+{
+    if( m_list_subject.empty() ) return;
+
+    // オフラインに切り替えてからキャッシュにあるsubject.txtを再読み込みする
+    bool online = SESSION::is_online();
+    SESSION::set_online( false );
+
+    download_subject();
+
+    SESSION::set_online( online );
+}
+
+
+
+//
+// あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
+//
+void BoardBase::reset_abone( std::list< std::string >& words, std::list< std::string >& regexs )
+{
+    if( empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "BoardBase::reset_abone\n";
+#endif
+
+    m_list_abone_word.clear();
+    m_list_abone_regex.clear();
+
+    std::string tmp_str;
+    std::list< std::string >::iterator it;    
+
+    // 空白行を除きつつ情報を更新していく
+    
+    for( it = words.begin(); it != words.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ) m_list_abone_word.push_back( *it );
+    }
+
+    for( it = regexs.begin(); it != regexs.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ) m_list_abone_regex.push_back( *it );
+    }
+
+    update_abone();
+
+    m_save_info = true;
+}
+
 
 
 

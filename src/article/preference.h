@@ -12,7 +12,6 @@ namespace ARTICLE
     class Preferences : public SKELETON::PrefDiag
     {
         Gtk::Notebook m_notebook;
-        SKELETON::EditView m_edit_id, m_edit_name, m_edit_word, m_edit_regex;
 
         // 情報
         Gtk::VBox m_vbox_info;
@@ -21,6 +20,9 @@ namespace ARTICLE
         SKELETON::LabelEntry m_label_url_dat;
         SKELETON::LabelEntry m_label_cache;
         SKELETON::LabelEntry m_label_size;
+
+        // あぼーん
+        SKELETON::EditView m_edit_id, m_edit_name, m_edit_word, m_edit_regex;
 
         // 透明あぼーん
         Gtk::CheckButton m_check_transpabone;

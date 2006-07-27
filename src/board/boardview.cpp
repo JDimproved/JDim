@@ -737,7 +737,7 @@ void BoardView::redraw_view()
 
 
 //
-// 再描画
+// 色、フォントの更新
 //
 void BoardView::relayout()
 {
@@ -757,6 +757,8 @@ void BoardView::update_view()
 #ifdef _DEBUG
     std::cout << "BoardView::update_view " << get_url() << std::endl;
 #endif    
+
+    m_liststore->clear();
 
     // 高速化のためデータベースに直接アクセス
     std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url() );
