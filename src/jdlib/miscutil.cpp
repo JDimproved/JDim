@@ -193,6 +193,71 @@ std::list< std::string > MISC::StringTokenizer( const std::string& str, char del
 
 
 
+//
+// list_inから空白行を除いてリストを返す
+//
+// remove_space == true なら行の前後の空白も削除する
+//
+std::list< std::string > MISC::remove_nullline_from_list( std::list< std::string >& list_in, bool remove_space )
+{
+    std::list< std::string > list_ret;
+    std::string tmp_str;
+    std::list< std::string >::iterator it;    
+
+    for( it = list_in.begin(); it != list_in.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( ! tmp_str.empty() ){
+            if( remove_space ) list_ret.push_back( tmp_str );
+            else list_ret.push_back( *it );
+        }
+    }
+
+    return list_ret;
+}
+
+
+//
+// 空白とカンマで区切られた str_in の文字列をリストにして出力
+//
+// \"は " に置換される
+//
+// (例)  "aaa" "bbb" "\"ccc\""  → aaa と bbb と "ccc"
+//
+std::list< std::string > MISC::strtolist( std::string& str_in )
+{
+    std::list< std::string > list_tmp;
+    std::list< std::string > list_ret;
+
+    list_tmp = MISC::split_line( str_in );
+    std::list< std::string >::iterator it = list_tmp.begin();
+    for( ; it != list_tmp.end(); ++it ){
+        if( !( *it ).empty() ) list_ret.push_back( MISC::recover_quot( ( *it ) ) );
+    }
+
+    return list_ret;
+}
+
+
+
+//
+// list_in の文字列リストを空白とカンマで区切ってストリングにして出力
+//
+// "は \" に置換される
+//
+// (例)  "aaa" "bbb" "\"ccc\""
+//
+std::string MISC::listtostr( std::list< std::string >& list_in )
+{
+    std::string str_out;
+    std::list< std::string >::iterator it = list_in.begin();
+    for( ; it != list_in.end(); ++it ){
+        if( ! ( *it ).empty() ) str_out += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
+    }
+
+    return str_out;
+}
+
+
 
 //
 // strの前後の空白削除

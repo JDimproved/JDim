@@ -402,36 +402,11 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
     std::cout << "ArticleBase::reset_abone\n";
 #endif
 
-    m_list_abone_id.clear();
-    m_list_abone_name.clear();
-    m_list_abone_word.clear();
-    m_list_abone_regex.clear();
-
-    std::string tmp_str;
-    std::list< std::string >::iterator it;    
-
-    // 空白行を除きつつ情報を更新していく
+    m_list_abone_id = MISC::remove_nullline_from_list( ids, true );
+    m_list_abone_name = MISC::remove_nullline_from_list( names, false );
+    m_list_abone_word = MISC::remove_nullline_from_list( words, false );
+    m_list_abone_regex = MISC::remove_nullline_from_list( regexs, false );
     
-    for( it = ids.begin(); it != ids.end(); ++it ){
-        std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ) m_list_abone_id.push_back( tmp_str ); // 前後の空白を除く
-    }
-
-    for( it = names.begin(); it != names.end(); ++it ){
-        std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ) m_list_abone_name.push_back( *it );
-    }
-
-    for( it = words.begin(); it != words.end(); ++it ){
-        std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ) m_list_abone_word.push_back( *it );
-    }
-
-    for( it = regexs.begin(); it != regexs.end(); ++it ){
-        std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ) m_list_abone_regex.push_back( *it );
-    }
-
     m_abone_transparent = transparent;
     m_abone_chain = chain;
 
@@ -957,23 +932,11 @@ void ArticleBase::read_info()
 
         // あぼーん ID
         GET_INFOVALUE( str_tmp, "aboneid = " );
-        if( ! str_tmp.empty() ){
-            list_tmp = MISC::split_line( str_tmp );
-            it_tmp = list_tmp.begin();
-            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
-                if( !(*it_tmp).empty() ) m_list_abone_id.push_back( MISC::recover_quot( ( *it_tmp ) ) );
-            }
-        }
+        if( ! str_tmp.empty() ) m_list_abone_id = MISC::strtolist( str_tmp );
 
         // あぼーん name
         GET_INFOVALUE( str_tmp, "abonename = " );
-        if( ! str_tmp.empty() ){
-            list_tmp = MISC::split_line( str_tmp );
-            it_tmp = list_tmp.begin();
-            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
-                if( !(*it_tmp).empty() ) m_list_abone_name.push_back( MISC::recover_quot( ( *it_tmp ) ) );
-            }
-        }
+        if( ! str_tmp.empty() ) m_list_abone_name = MISC::strtolist( str_tmp );
 
         // ブックマーク
         GET_INFOVALUE( str_tmp, "bookmark = " );
@@ -989,23 +952,11 @@ void ArticleBase::read_info()
 
         // あぼーん word
         GET_INFOVALUE( str_tmp, "aboneword = " );
-        if( ! str_tmp.empty() ){
-            list_tmp = MISC::split_line( str_tmp );
-            it_tmp = list_tmp.begin();
-            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
-                if( !(*it_tmp).empty() ) m_list_abone_word.push_back( MISC::recover_quot( ( *it_tmp ) ) );
-            }
-        }
+        if( ! str_tmp.empty() ) m_list_abone_word = MISC::strtolist( str_tmp );
 
         // あぼーん regex
         GET_INFOVALUE( str_tmp, "aboneregex = " );
-        if( ! str_tmp.empty() ){
-            list_tmp = MISC::split_line( str_tmp );
-            it_tmp = list_tmp.begin();
-            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
-                if( !(*it_tmp).empty() ) m_list_abone_regex.push_back( MISC::recover_quot( ( *it_tmp ) ) );
-            }
-        }
+        if( ! str_tmp.empty() ) m_list_abone_regex = MISC::strtolist( str_tmp );
 
         // 透明あぼーん
         m_abone_transparent = false;
@@ -1110,23 +1061,10 @@ void ArticleBase::save_info()
     ss_write << ( m_write_time.tv_sec >> 16 ) << " " << ( m_write_time.tv_sec & 0xffff ) << " " << m_write_time.tv_usec;
 
     // あぼーん情報
-    std::string str_abone_id, str_abone_name, str_abone_word, str_abone_regex;
-    std::list< std::string >::iterator it = m_list_abone_id.begin();
-    for( ; it != m_list_abone_id.end(); ++it ){
-        if( ! ( *it ).empty() ) str_abone_id += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
-    }
-    it = m_list_abone_name.begin();
-    for( ; it != m_list_abone_name.end(); ++it ){
-        if( ! ( *it ).empty() ) str_abone_name += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
-    }
-    it = m_list_abone_word.begin();
-    for( ; it != m_list_abone_word.end(); ++it ){
-        if( ! ( *it ).empty() ) str_abone_word += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
-    }
-    it = m_list_abone_regex.begin();
-    for( ; it != m_list_abone_regex.end(); ++it ){
-        if( ! ( *it ).empty() ) str_abone_regex += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
-    }
+    std::string str_abone_id = MISC::listtostr( m_list_abone_id );
+    std::string str_abone_name = MISC::listtostr( m_list_abone_name );
+    std::string str_abone_word = MISC::listtostr( m_list_abone_word );
+    std::string str_abone_regex = MISC::listtostr( m_list_abone_regex );
 
     // スレのブックマーク
     std::ostringstream ss_bookmark;

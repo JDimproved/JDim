@@ -154,12 +154,11 @@ namespace DBTREE
 
     // スレあぼーん
     // グローバルなあぼーん情報は globalconf が管理
-    std::list< std::string > get_abone_list_word_board( const std::string& url );
-    std::list< std::string > get_abone_list_regex_board( const std::string& url );
+    std::list< std::string > get_abone_list_word_thread( const std::string& url );
+    std::list< std::string > get_abone_list_regex_thread( const std::string& url );
 
     // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
-    void reset_abone_board( const std::string& url, std::list< std::string >& words, std::list< std::string >& regexs );
-
+    void reset_abone_thread( const std::string& url, std::list< std::string >& words, std::list< std::string >& regexs );
 
     //
     // 各articlebase別のあぼーん情報

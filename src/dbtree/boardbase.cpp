@@ -787,7 +787,7 @@ void BoardBase::receive_finish()
                 std::cout << "read article_info << " << ( *it )->get_url() << std::endl;
 #endif                
                 ( *it )->read_info();
-                if( ! get_abone( *it ) ) m_list_subject.push_back( *it );
+                if( ! get_abone_thread( *it ) ) m_list_subject.push_back( *it );
             }
         }
     }
@@ -852,13 +852,13 @@ void BoardBase::update_abone_all_article()
 
 
 // articleがあぼーんされているか
-const bool BoardBase::get_abone( ArticleBase* article )
+const bool BoardBase::get_abone_thread( ArticleBase* article )
 {
     if( ! article ) return false;
 
     // wordあぼーん
-    std::list< std::string >::iterator it = m_list_abone_word.begin();
-    for( ; it != m_list_abone_word.end(); ++it ){
+    std::list< std::string >::iterator it = m_list_abone_word_thread.begin();
+    for( ; it != m_list_abone_word_thread.end(); ++it ){
         if( ! ( *it ).empty() && article->get_subject().find( *it ) != std::string::npos ) return true;
     }
 
@@ -869,7 +869,7 @@ const bool BoardBase::get_abone( ArticleBase* article )
 //
 // スレあぼーん状態の更新
 //
-void BoardBase::update_abone()
+void BoardBase::update_abone_thread()
 {
     if( m_list_subject.empty() ) return;
 
@@ -887,7 +887,7 @@ void BoardBase::update_abone()
 //
 // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
 //
-void BoardBase::reset_abone( std::list< std::string >& words, std::list< std::string >& regexs )
+void BoardBase::reset_abone_thread( std::list< std::string >& words, std::list< std::string >& regexs )
 {
     if( empty() ) return;
 
@@ -895,25 +895,10 @@ void BoardBase::reset_abone( std::list< std::string >& words, std::list< std::st
     std::cout << "BoardBase::reset_abone\n";
 #endif
 
-    m_list_abone_word.clear();
-    m_list_abone_regex.clear();
+    m_list_abone_word_thread = MISC::remove_nullline_from_list( words, false );
+    m_list_abone_regex_thread = MISC::remove_nullline_from_list( regexs, false );
 
-    std::string tmp_str;
-    std::list< std::string >::iterator it;    
-
-    // 空白行を除きつつ情報を更新していく
-    
-    for( it = words.begin(); it != words.end(); ++it ){
-        std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ) m_list_abone_word.push_back( *it );
-    }
-
-    for( it = regexs.begin(); it != regexs.end(); ++it ){
-        std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ) m_list_abone_regex.push_back( *it );
-    }
-
-    update_abone();
+    update_abone_thread();
 
     m_save_info = true;
 }
@@ -943,6 +928,14 @@ void BoardBase::read_board_info()
     m_view_sort_column = cf.get_option( "view_sort_column", -1 );
     m_view_sort_ascend = cf.get_option( "view_sort_ascend", false );
     m_check_noname = cf.get_option( "check_noname", false );
+
+    // スレ あぼーん word
+    std::string str_tmp = cf.get_option( "abonewordthread", "" );
+    if( ! str_tmp.empty() ) m_list_abone_word_thread = MISC::strtolist( str_tmp );
+
+    // スレ あぼーん regex
+    str_tmp = cf.get_option( "aboneregexthread", "" );
+    if( ! str_tmp.empty() ) m_list_abone_regex_thread = MISC::strtolist( str_tmp );
 
 #ifdef _DEBUG
     std::cout << "modified = " << date_modified() << std::endl;

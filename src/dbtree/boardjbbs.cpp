@@ -235,7 +235,7 @@ void BoardJBBS::parse_subject( const char* str_subject_txt )
 
             if( pushback ){
                 article->set_current( true );
-                if( ! BoardBase::get_abone( article ) ) get_list_subject().push_back( article );
+                if( ! BoardBase::get_abone_thread( article ) ) get_list_subject().push_back( article );
             }
         }
     }

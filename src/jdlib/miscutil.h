@@ -22,7 +22,21 @@ namespace MISC
 
     // emacs lisp のリスト型を要素ごとにlistにして出力
     std::list< std::string > get_elisp_lists( const std::string& str );
-    
+
+    // list_inから空白行を除いてリストを返す
+    // remove_space == true なら行の前後の空白も削除する
+    std::list< std::string > remove_nullline_from_list( std::list< std::string >& list_in, bool remove_space );
+
+    // 空白とカンマで区切られた str_in の文字列をリストにして出力
+    // \"は " に置換される
+    // (例)  "aaa" "bbb" "\"ccc\""  → aaa と bbb と "ccc"
+    std::list< std::string > strtolist( std::string& str_in );
+
+    // list_in の文字列リストを空白とカンマで区切ってストリングにして出力
+    // "は \" に置換される
+    // (例)  "aaa" "bbb" "\"ccc\""
+    std::string listtostr( std::list< std::string >& list_in );
+
     // strの前後の空白削除
     std::string remove_space( const std::string& str );
 

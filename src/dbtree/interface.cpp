@@ -292,20 +292,20 @@ void DBTREE::board_set_check_noname( const std::string& url, bool check )
 
 
 
-std::list< std::string > DBTREE::get_abone_list_word_board( const std::string& url )
+std::list< std::string > DBTREE::get_abone_list_word_thread( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_abone_list_word();
+    return DBTREE::get_board( url )->get_abone_list_word_thread();
 }
 
-std::list< std::string > DBTREE::get_abone_list_regex_board( const std::string& url )
+std::list< std::string > DBTREE::get_abone_list_regex_thread( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_abone_list_regex();
+    return DBTREE::get_board( url )->get_abone_list_regex_thread();
 }
 
 
-void DBTREE::reset_abone_board( const std::string& url, std::list< std::string >& words, std::list< std::string >& regexs )
+void DBTREE::reset_abone_thread( const std::string& url, std::list< std::string >& words, std::list< std::string >& regexs )
 {
-    DBTREE::get_board( url )->reset_abone( words, regexs );
+    DBTREE::get_board( url )->reset_abone_thread( words, regexs );
 }
 
 

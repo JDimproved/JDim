@@ -70,13 +70,13 @@ Preferences::Preferences( const std::string& url )
     std::string str_word, str_regex;
     std::list< std::string >::iterator it;
 
-    // wordあぼーん
-    std::list< std::string > list_word = DBTREE::get_abone_list_word_board( get_url() );
+    // スレwordあぼーん
+    std::list< std::string > list_word = DBTREE::get_abone_list_word_thread( get_url() );
     for( it = list_word.begin(); it != list_word.end(); ++it ) if( ! ( *it ).empty() ) str_word += ( *it ) + "\n";
     m_edit_word.set_text( str_word );
 
-    // regexあぼーん
-    std::list< std::string > list_regex = DBTREE::get_abone_list_regex_board( get_url() );
+    // スレregexあぼーん
+    std::list< std::string > list_regex = DBTREE::get_abone_list_regex_thread( get_url() );
     for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
     m_edit_regex.set_text( str_regex );
 
@@ -86,8 +86,8 @@ Preferences::Preferences( const std::string& url )
     m_edit_settingtxt.set_text( DBTREE::settingtxt( get_url() ) );
 
     m_notebook.append_page( m_vbox, "一般" );
-    m_notebook.append_page( m_edit_word, "スレ NG ワード" );
-    m_notebook.append_page( m_edit_regex, "スレ NG 正規表現" );
+    m_notebook.append_page( m_edit_word, "NG ワード(スレ)" );
+    m_notebook.append_page( m_edit_regex, "NG 正規表現(スレ)" );
     m_notebook.append_page( m_edit_settingtxt, "SETTING.TXT" );
 
     get_vbox()->pack_start( m_notebook );
@@ -114,7 +114,7 @@ void Preferences::slot_ok_clicked()
     // あぼーん再設定
     std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text(), true );
     std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text(), true );
-    DBTREE::reset_abone_board( get_url(), list_word, list_regex );  // 板の再描画も行われる
+    DBTREE::reset_abone_thread( get_url(), list_word, list_regex );  // 板の再描画も行われる
 
     // 名無し書き込みチェック
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );

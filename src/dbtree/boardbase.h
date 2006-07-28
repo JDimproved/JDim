@@ -70,8 +70,8 @@ namespace DBTREE
         std::string m_name; // 板名
 
         // あぼーん情報
-        std::list< std::string > m_list_abone_word; // あぼーんする文字列
-        std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
+        std::list< std::string > m_list_abone_word_thread; // あぼーんする文字列
+        std::list< std::string > m_list_abone_regex_thread; // あぼーんする正規表現
 
         char* m_rawdata;
         int m_lng_rawdata;
@@ -110,8 +110,8 @@ namespace DBTREE
         void set_id( const std::string& str ){ m_id = str; }
         void set_charset( const std::string& str ){ m_charset = str; }
 
-        // articleがあぼーんされているか
-        const bool get_abone( ArticleBase* article );
+        // articleがスレあぼーんされているか
+        const bool get_abone_thread( ArticleBase* article );
 
       public:
 
@@ -247,15 +247,15 @@ namespace DBTREE
         // 配下の全articlebaseクラスのあぼーん状態の更新
         void update_abone_all_article();
 
-        // あぼーん情報
-        std::list< std::string > get_abone_list_word(){ return m_list_abone_word; }
-        std::list< std::string > get_abone_list_regex(){ return m_list_abone_regex; }
+        // スレあぼーん情報
+        std::list< std::string > get_abone_list_word_thread(){ return m_list_abone_word_thread; }
+        std::list< std::string > get_abone_list_regex_thread(){ return m_list_abone_regex_thread; }
 
-        // あぼーん状態の更新
-        void update_abone();
+        // スレあぼーん状態の更新
+        void update_abone_thread();
 
-        // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
-        void reset_abone( std::list< std::string >& words, std::list< std::string >& regexs );
+        // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
+        void reset_abone_thread( std::list< std::string >& words, std::list< std::string >& regexs );
 
         void read_info();
         void save_info_force();

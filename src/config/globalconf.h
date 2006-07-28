@@ -153,7 +153,14 @@ namespace CONFIG
     const double get_adjust_underline_pos();
     const double get_adjust_line_space();
 
-    // 全体あぼーん
+    // boardviewでのスレの全体あぼーん
+    std::list< std::string >& get_list_abone_word_thread(); // ワード
+    std::list< std::string >& get_list_abone_regex_thread(); // 正規表現
+
+    void set_list_abone_word_thread( std::list< std::string >& word );
+    void set_list_abone_regex_thread( std::list< std::string >& regex );
+
+    // articleviewでのレスの全体あぼーん
     std::list< std::string >& get_list_abone_name(); // 名前
     std::list< std::string >& get_list_abone_word(); // ワード
     std::list< std::string >& get_list_abone_regex(); // 正規表現
