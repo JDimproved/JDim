@@ -124,7 +124,7 @@ const bool CONFIG::init_config()
     proxy_port_for_data = cf.get_option( "proxy_port_for_data", 8080 );
 
     // 2ch にアクセスするときのエージェント名
-    agent_for2ch = cf.get_option( "agent_for2ch", "Monazilla/1.00 Navi2ch" );
+    agent_for2ch = cf.get_option( "agent_for2ch", "Monazilla/1.00 JD" );
 
     // 2ch外にアクセスするときのエージェント名
     agent_for_data = cf.get_option( "agent_for_data", "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8) Gecko/20051111 Firefox/1.5" );
