@@ -291,6 +291,12 @@ void DBTREE::board_set_check_noname( const std::string& url, bool check )
 }
 
 
+void DBTREE::update_abone_all_board()
+{
+    DBTREE::get_root()->update_abone_all_board();
+
+}
+
 
 std::list< std::string > DBTREE::get_abone_list_word_thread( const std::string& url )
 {

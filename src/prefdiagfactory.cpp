@@ -6,6 +6,7 @@
 #include "browserpref.h"
 #include "proxypref.h"
 #include "globalabonepref.h"
+#include "globalabonethreadpref.h"
 
 #include "board/preference.h"
 #include "article/preference.h"
@@ -26,6 +27,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( int type, const std::string& url )
 
         case PREFDIAG_GLOBALABONE:
             return new CORE::GlobalAbonePref( url );
+
+        case PREFDIAG_GLOBALABONETHREAD:
+            return new CORE::GlobalAboneThreadPref( url );
 
         case PREFDIAG_BOARD:
             return new BOARD::Preferences( url );

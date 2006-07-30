@@ -342,6 +342,13 @@ void CONFIG::save_conf()
     cf.update( "adjust_underline_pos", adjust_underline_pos );
     cf.update( "adjust_line_space", adjust_line_space );
 
+    // スレあぼーん情報
+    std::string str_abone_word_thread = MISC::listtostr( list_abone_word_thread );
+    std::string str_abone_regex_thread = MISC::listtostr( list_abone_regex_thread );
+
+    cf.update( "abonewordthread", str_abone_word_thread );
+    cf.update( "aboneregexthread", str_abone_regex_thread );
+
     // あぼーん情報
     std::string str_abone_name = MISC::listtostr( list_abone_name );
     std::string str_abone_word = MISC::listtostr( list_abone_word );

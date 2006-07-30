@@ -71,6 +71,9 @@ namespace DBTREE
         // bbsmenuのダウンロード
         void download_bbsmenu();
 
+        // 配下の全boardbaseクラスのレスあぼーん状態を更新する
+        void update_abone_all_board();
+
         // 配下の全boardbaseクラスに、全articlebaseクラスのあぼーん状態の更新をさせる
         void update_abone_all_article();
 

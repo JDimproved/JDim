@@ -152,6 +152,9 @@ namespace DBTREE
     // 各boadbase別のあぼーん情報
     //
 
+    // 全boardbaseクラスのあぼーん状態の更新
+    void update_abone_all_board();
+
     // スレあぼーん
     // グローバルなあぼーん情報は globalconf が管理
     std::list< std::string > get_abone_list_word_thread( const std::string& url );

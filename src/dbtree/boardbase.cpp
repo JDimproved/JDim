@@ -851,15 +851,52 @@ void BoardBase::update_abone_all_article()
 
 
 
-// articleがあぼーんされているか
+//
+// スレあぼーん判定
+//
 const bool BoardBase::get_abone_thread( ArticleBase* article )
 {
     if( ! article ) return false;
 
-    // wordあぼーん
-    std::list< std::string >::iterator it = m_list_abone_word_thread.begin();
-    for( ; it != m_list_abone_word_thread.end(); ++it ){
-        if( ! ( *it ).empty() && article->get_subject().find( *it ) != std::string::npos ) return true;
+    bool check_word = ! m_list_abone_word_thread.empty();
+    bool check_regex = ! m_list_abone_regex_thread.empty();
+    bool check_word_global = ! CONFIG::get_list_abone_word_thread().empty();
+    bool check_regex_global = ! CONFIG::get_list_abone_regex_thread().empty();
+
+    if( !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
+
+    JDLIB::Regex regex;
+    
+    // ローカル NG word
+    if( check_word ){
+        std::list< std::string >::iterator it = m_list_abone_word_thread.begin();
+        for( ; it != m_list_abone_word_thread.end(); ++it ){
+            if( article->get_subject().find( *it ) != std::string::npos ) return true;
+        }
+    }
+
+    // ローカル NG regex
+    if( check_regex ){
+        std::list< std::string >::iterator it = m_list_abone_regex_thread.begin();
+        for( ; it != m_list_abone_regex_thread.end(); ++it ){
+            if( regex.exec( *it, article->get_subject() ) ) return true;
+        }
+    }
+
+    // 全体 NG word
+    if( check_word_global ){
+        std::list< std::string >::iterator it = CONFIG::get_list_abone_word_thread().begin();
+        for( ; it != CONFIG::get_list_abone_word_thread().end(); ++it ){
+            if( article->get_subject().find( *it ) != std::string::npos ) return true;
+        }
+    }
+
+    // 全体 NG regex
+    if( check_regex_global ){
+        std::list< std::string >::iterator it = CONFIG::get_list_abone_regex_thread().begin();
+        for( ; it != CONFIG::get_list_abone_regex_thread().end(); ++it ){
+            if( regex.exec( *it, article->get_subject() ) ) return true;
+        }
     }
 
     return false;
@@ -983,12 +1020,19 @@ void BoardBase::save_jdboard_info()
 #ifdef _DEBUG
     std::cout << "BoardBase::save_jdboard_info file = " << path_info << std::endl;
 #endif
+
+    // あぼーん情報
+    std::string str_abone_word = MISC::listtostr( m_list_abone_word_thread );
+    std::string str_abone_regex = MISC::listtostr( m_list_abone_regex_thread );
     
     std::ostringstream sstr;
     sstr << "modified = " << date_modified() << std::endl
          << "view_sort_column = " << m_view_sort_column << std::endl
          << "view_sort_ascend = " << m_view_sort_ascend << std::endl
-         << "check_noname = " << m_check_noname << std::endl;
+         << "check_noname = " << m_check_noname << std::endl
+         << "abonewordthread = " << str_abone_word << std::endl
+         << "aboneregexthread = " << str_abone_regex << std::endl
+    ;
 
     CACHE::save_rawdata( path_info, sstr.str() );
 }
