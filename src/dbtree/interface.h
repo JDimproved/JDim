@@ -153,15 +153,22 @@ namespace DBTREE
     //
 
     // 全boardbaseクラスのあぼーん状態の更新
+    // ビューの再描画も同時に行われる
     void update_abone_all_board();
+
+    // 指定したboardbaseクラスのあぼーん状態の更新
+    // ビューの再描画も同時に行われる
+    void update_abone_board( const std::string& url );
 
     // スレあぼーん
     // グローバルなあぼーん情報は globalconf が管理
+    std::list< std::string > get_abone_list_thread( const std::string& url );
     std::list< std::string > get_abone_list_word_thread( const std::string& url );
     std::list< std::string > get_abone_list_regex_thread( const std::string& url );
 
     // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
-    void reset_abone_thread( const std::string& url, std::list< std::string >& words, std::list< std::string >& regexs );
+    void reset_abone_thread( const std::string& url,
+                             std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs );
 
     //
     // 各articlebase別のあぼーん情報

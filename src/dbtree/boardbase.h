@@ -70,6 +70,7 @@ namespace DBTREE
         std::string m_name; // 板名
 
         // あぼーん情報
+        std::list< std::string > m_list_abone_thread; // あぼーんするスレのタイトル
         std::list< std::string > m_list_abone_word_thread; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex_thread; // あぼーんする正規表現
 
@@ -248,6 +249,7 @@ namespace DBTREE
         void update_abone_all_article();
 
         // スレあぼーん情報
+        std::list< std::string > get_abone_list_thread(){ return m_list_abone_thread; }
         std::list< std::string > get_abone_list_word_thread(){ return m_list_abone_word_thread; }
         std::list< std::string > get_abone_list_regex_thread(){ return m_list_abone_regex_thread; }
 
@@ -255,7 +257,7 @@ namespace DBTREE
         void update_abone_thread();
 
         // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
-        void reset_abone_thread( std::list< std::string >& words, std::list< std::string >& regexs );
+        void reset_abone_thread( std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs );
 
         void read_info();
         void save_info_force();

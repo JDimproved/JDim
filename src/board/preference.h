@@ -35,7 +35,7 @@ namespace BOARD
         SKELETON::LabelEntry m_label_byte;
 
         // あぼーん
-        SKELETON::EditView m_edit_word, m_edit_regex;
+        SKELETON::EditView m_edit_thread, m_edit_word, m_edit_regex;
 
         // SETTING.TXT
         SKELETON::EditView m_edit_settingtxt;

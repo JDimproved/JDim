@@ -226,6 +226,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"), sigc::mem_fun( *this, &BoardView::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "AboneThread", "スレをあぼ〜んする"), sigc::mem_fun( *this, &BoardView::slot_abone_thread ) );
     action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ"), sigc::mem_fun( *this, &BoardView::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ"), sigc::mem_fun( *this, &BoardView::slot_push_preferences ) );
 
@@ -248,6 +249,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     "<separator/>"
     "<menuitem action='Favorite_Article'/>"
     "<separator/>"
+    "<menuitem action='AboneThread'/>"
+    "<separator/>"
     "<menu action='Delete_Menu'>"
     "<menuitem action='Delete'/>"
     "</menu>"
@@ -264,6 +267,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menuitem action='Favorite_Article'/>"
+    "<separator/>"
+    "<menuitem action='AboneThread'/>"
     "<separator/>"
     "<menu action='Delete_Menu'>"
     "<menuitem action='Delete'/>"
@@ -1507,7 +1512,6 @@ bool BoardView::drawout()
         Gtk::TreeModel::Row row = *( it );
         Glib::ustring subject = row[ m_columns.m_col_subject ];
 
-
         if( reset ) row[ m_columns.m_col_drawbg ] = false;
         else if( regex.exec( query, subject, 0, true ) ){
             row[ m_columns.m_col_drawbg ] = true;
@@ -1635,6 +1639,29 @@ void BoardView::slot_preferences_article()
 }
 
 
+//
+// 選択したスレをあぼーん
+//
+void BoardView::slot_abone_thread()
+{
+    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
+    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
+    if( ! list_it.size() ) return;
+
+    std::list< std::string > threads = DBTREE::get_abone_list_thread( get_url() );
+
+    for( ; it != list_it.end(); ++it ){
+        Gtk::TreeModel::Row row = *( *it );
+        Glib::ustring subject = row[ m_columns.m_col_subject ];
+        threads.push_back( subject );
+    }
+
+    // あぼーん情報更新
+    // 板の再描画も行われる
+    std::list< std::string > words = DBTREE::get_abone_list_word_thread( get_url() );
+    std::list< std::string > regexs = DBTREE::get_abone_list_regex_thread( get_url() );
+    DBTREE::reset_abone_thread( get_url(), threads, words, regexs );
+}
 
 
 

@@ -858,15 +858,24 @@ const bool BoardBase::get_abone_thread( ArticleBase* article )
 {
     if( ! article ) return false;
 
+    bool check_thread = ! m_list_abone_thread.empty();
     bool check_word = ! m_list_abone_word_thread.empty();
     bool check_regex = ! m_list_abone_regex_thread.empty();
     bool check_word_global = ! CONFIG::get_list_abone_word_thread().empty();
     bool check_regex_global = ! CONFIG::get_list_abone_regex_thread().empty();
 
-    if( !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
+    if( !check_thread && !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
 
     JDLIB::Regex regex;
     
+    // スレあぼーん
+    if( check_thread ){
+        std::list< std::string >::iterator it = m_list_abone_thread.begin();
+        for( ; it != m_list_abone_thread.end(); ++it ){
+            if( article->get_subject() == (*it) ) return true;
+        }
+    }
+
     // ローカル NG word
     if( check_word ){
         std::list< std::string >::iterator it = m_list_abone_word_thread.begin();
@@ -924,7 +933,8 @@ void BoardBase::update_abone_thread()
 //
 // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
 //
-void BoardBase::reset_abone_thread( std::list< std::string >& words, std::list< std::string >& regexs )
+void BoardBase::reset_abone_thread( std::list< std::string >& threads,
+                                    std::list< std::string >& words, std::list< std::string >& regexs )
 {
     if( empty() ) return;
 
@@ -932,6 +942,7 @@ void BoardBase::reset_abone_thread( std::list< std::string >& words, std::list< 
     std::cout << "BoardBase::reset_abone\n";
 #endif
 
+    m_list_abone_thread = MISC::remove_nullline_from_list( threads, false );
     m_list_abone_word_thread = MISC::remove_nullline_from_list( words, false );
     m_list_abone_regex_thread = MISC::remove_nullline_from_list( regexs, false );
 
@@ -966,8 +977,12 @@ void BoardBase::read_board_info()
     m_view_sort_ascend = cf.get_option( "view_sort_ascend", false );
     m_check_noname = cf.get_option( "check_noname", false );
 
+    // スレ あぼーん
+    std::string str_tmp = cf.get_option( "abonethread", "" );
+    if( ! str_tmp.empty() ) m_list_abone_thread = MISC::strtolist( str_tmp );
+
     // スレ あぼーん word
-    std::string str_tmp = cf.get_option( "abonewordthread", "" );
+    str_tmp = cf.get_option( "abonewordthread", "" );
     if( ! str_tmp.empty() ) m_list_abone_word_thread = MISC::strtolist( str_tmp );
 
     // スレ あぼーん regex
@@ -1022,6 +1037,7 @@ void BoardBase::save_jdboard_info()
 #endif
 
     // あぼーん情報
+    std::string str_abone = MISC::listtostr( m_list_abone_thread );
     std::string str_abone_word = MISC::listtostr( m_list_abone_word_thread );
     std::string str_abone_regex = MISC::listtostr( m_list_abone_regex_thread );
     
@@ -1030,6 +1046,7 @@ void BoardBase::save_jdboard_info()
          << "view_sort_column = " << m_view_sort_column << std::endl
          << "view_sort_ascend = " << m_view_sort_ascend << std::endl
          << "check_noname = " << m_check_noname << std::endl
+         << "abonethread = " << str_abone << std::endl
          << "abonewordthread = " << str_abone_word << std::endl
          << "aboneregexthread = " << str_abone_regex << std::endl
     ;

@@ -297,6 +297,15 @@ void DBTREE::update_abone_all_board()
 
 }
 
+void DBTREE::update_abone_board( const std::string& url )
+{
+    DBTREE::get_board( url )->update_abone_thread();
+}
+
+std::list< std::string > DBTREE::get_abone_list_thread( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_list_thread();
+}
 
 std::list< std::string > DBTREE::get_abone_list_word_thread( const std::string& url )
 {
@@ -309,9 +318,10 @@ std::list< std::string > DBTREE::get_abone_list_regex_thread( const std::string&
 }
 
 
-void DBTREE::reset_abone_thread( const std::string& url, std::list< std::string >& words, std::list< std::string >& regexs )
+void DBTREE::reset_abone_thread( const std::string& url,
+                                 std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs )
 {
-    DBTREE::get_board( url )->reset_abone_thread( words, regexs );
+    DBTREE::get_board( url )->reset_abone_thread( threads, words, regexs );
 }
 
 

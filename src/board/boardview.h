@@ -115,6 +115,7 @@ namespace BOARD
         void slot_open_browser();
         void slot_push_preferences();
         void slot_preferences_article();
+        void slot_abone_thread();
 
         bool open_row( Gtk::TreePath& path, bool tab );
         void open_selected_rows();
