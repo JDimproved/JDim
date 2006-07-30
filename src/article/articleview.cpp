@@ -650,6 +650,7 @@ void ArticleViewDrawout::relayout()
 #endif
 
     drawarea()->clear_screen();
+    drawarea()->clear_highlight();
     drawout_keywords( m_query, m_mode_or );
     drawarea()->redraw_view();
 }
