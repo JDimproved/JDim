@@ -43,6 +43,7 @@ namespace ARTICLE
 
         // 文字情報( 実際にはノード情報(DBTREE::NODE)のtext情報へのポインタ)
         const char* text;
+        int lng_text; // テキストの長さ
         const char* link;
         const unsigned char* color_text;
         bool bold;

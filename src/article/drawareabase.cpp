@@ -66,6 +66,8 @@ DrawAreaBase::~DrawAreaBase()
     std::cout << "DrawAreaBase::~DrawAreaBase " << m_url << std::endl;;
 #endif
 
+    if( m_layout_tree ) delete m_layout_tree;
+    m_layout_tree = NULL;
     clear();
 }
 
@@ -99,6 +101,8 @@ const int DrawAreaBase::fontmode()
 //
 void DrawAreaBase::setup( bool show_abone, bool show_scrbar )
 {
+    if( m_layout_tree ) delete m_layout_tree;
+    m_layout_tree = NULL;
     clear();
 
     m_article = DBTREE::get_article( m_url );
@@ -152,9 +156,6 @@ void DrawAreaBase::setup( bool show_abone, bool show_scrbar )
 //
 void DrawAreaBase::clear()
 {
-    if( m_layout_tree ) delete m_layout_tree;
-    m_layout_tree = NULL;
-
     m_scrollinfo.reset();
 
     m_selection.select = false;
@@ -169,6 +170,10 @@ void DrawAreaBase::clear()
     m_key_press = false;
     m_goto_num_reserve = 0;
     m_wheel_scroll_time = 0;
+    m_caret_pos = CARET_POSITION();
+    m_caret_pos_pre = CARET_POSITION();
+    m_caret_pos_current = CARET_POSITION();
+    m_caret_pos_dragstart = CARET_POSITION();
 }
 
 
@@ -505,13 +510,10 @@ void DrawAreaBase::append_dat( const std::string& dat, int num )
 void DrawAreaBase::clear_screen()
 {
     if( ! m_layout_tree ) return;
-
     m_layout_tree->clear();
-    m_selection.select = false;
+    clear();
     init_color();
     init_font();
-    m_width_client = 0;
-    m_height_client = 0;
     layout();
     redraw_view();
 }
@@ -1126,10 +1128,12 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
                                     int color , int color_back, int byte_from, int byte_to )
 {
     assert( node->text != NULL );
-    assert( byte_to <= (int)strlen( node->text ) );
 
     if( *node->text == '\0' ) return;
-    if( byte_to == 0 ) byte_to = strlen( node->text );
+    if( ! node->lng_text ) node->lng_text = strlen( node->text );
+    if( byte_from >= node->lng_text ) return;
+    if( byte_to > node->lng_text ) byte_to = node->lng_text;
+    if( byte_to == 0 ) byte_to = node->lng_text; 
 
     node->width = 0;
     node->height = m_br_size;
