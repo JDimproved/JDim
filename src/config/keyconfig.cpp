@@ -60,12 +60,10 @@ void KeyConfig::load_conf()
 
     // 共通設定
     SETMOTION( "Up", "k Up" );
-    SETMOTION( "UpMid", "u" );
-    SETMOTION( "UpFast", "b Page_Up" );
-
     SETMOTION( "Down", "j Down" );
-    SETMOTION( "DownMid", "d" );
-    SETMOTION( "DownFast", "Page_Down Space" );
+
+    SETMOTION( "PageUp", "Page_Up" );
+    SETMOTION( "PageDown", "Page_Down" );    
 
     SETMOTION( "Right", "l Right" );
     SETMOTION( "Left", "h Left" );
@@ -101,6 +99,12 @@ void KeyConfig::load_conf()
     SETMOTION( "NewArticle", "w" );
 
     // ARTICLE
+    SETMOTION( "UpMid", "u" );
+    SETMOTION( "UpFast", "b Page_Up" );
+
+    SETMOTION( "DownMid", "d" );
+    SETMOTION( "DownFast", "Page_Down Space" );
+
     SETMOTION( "GotoNew", "F4" );
     SETMOTION( "WriteMessage", "w Alt+w" );
 

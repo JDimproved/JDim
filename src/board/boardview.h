@@ -69,6 +69,8 @@ namespace BOARD
 
         void row_up();
         void row_down();
+        void page_up();
+        void page_down();
 
     private:
 

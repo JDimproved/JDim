@@ -387,6 +387,14 @@ void  BBSListViewBase::operate_view( const int& control )
             row_up();
             break;
 
+        case CONTROL::PageUp:
+            page_up();
+            break;
+
+        case CONTROL::PageDown:
+            page_down();
+            break;
+
         case CONTROL::Home:
             goto_top();
             break;
@@ -512,6 +520,24 @@ void BBSListViewBase::row_down()
     show_status();
 } 
    
+
+//
+// page up
+//
+void BBSListViewBase::page_up()
+{
+    m_treeview.page_up();
+}    
+
+
+//
+// page down
+//
+void BBSListViewBase::page_down()
+{
+    m_treeview.page_down();
+} 
+
 
 
 //

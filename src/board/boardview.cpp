@@ -864,6 +864,14 @@ void BoardView::operate_view( const int& control )
             row_up();
             break;
 
+        case CONTROL::PageUp:
+            page_up();
+            break;
+
+        case CONTROL::PageDown:
+            page_down();
+            break;
+
         case CONTROL::Home:
             goto_top();
             break;
@@ -985,6 +993,26 @@ void BoardView::row_down()
     m_treeview.row_down();
 } 
    
+
+//
+// page up
+//
+void BoardView::page_up()
+{
+    m_treeview.page_up();
+}    
+
+
+//
+// page down
+//
+void BoardView::page_down()
+{
+    m_treeview.page_down();
+} 
+   
+
+
 
 
 //

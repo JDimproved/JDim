@@ -94,6 +94,8 @@ namespace BBSLIST
 
         void row_up();
         void row_down();
+        void page_up();
+        void page_down();
 
         bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );

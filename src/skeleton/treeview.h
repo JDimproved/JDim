@@ -121,6 +121,8 @@ namespace SKELETON
         void goto_bottom();
         void row_up();
         void row_down();
+        void page_up();
+        void page_down();
 
         // path の前後のpathを取得
         Gtk::TreePath prev_path( const Gtk::TreePath& path, bool check_expand = true );

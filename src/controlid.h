@@ -30,12 +30,7 @@ namespace CONTROL
         COMMONMOTION = 0,
 
         Up,
-        UpMid,
-        UpFast,
-
         Down,
-        DownMid,
-        DownFast,
 
         Right,
         Left,
@@ -47,6 +42,9 @@ namespace CONTROL
         NextBookMark,
         
         ToggleArticle,
+
+        PageUp,
+        PageDown,
 
         Home,
         End,
@@ -105,6 +103,12 @@ namespace CONTROL
 
         // ARTICLE系
         ARTICLEMOTION,
+
+        UpMid,
+        UpFast,
+
+        DownMid,
+        DownFast,
 
         GotoNew,
         OpenParentBoard,

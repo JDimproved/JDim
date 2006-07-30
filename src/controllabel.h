@@ -18,12 +18,7 @@ namespace CONTROL
         { "", "" },
 
         { "Up", "上移動" },
-        { "UpMid", "中速上移動" },
-        { "UpFast", "高速上移動" },
-
         { "Down", "下移動" },
-        { "DownMid", "中速下移動" },
-        { "DownFast", "高速下移動" },
 
         { "Right", "右移動" },
         { "Left", "左移動" },
@@ -35,6 +30,9 @@ namespace CONTROL
         { "NextBookMark", "次のプックマークヘ移動" },
 
         { "ToggleArticle", "板一覧とスレ表示切替" },
+        
+        { "PageUp", "上のページに移動" },
+        { "PageDown", "下のページに移動" },
 
         { "Home", "先頭へ移動" },
         { "End", "最後へ移動" },
@@ -95,6 +93,12 @@ namespace CONTROL
         // ARTICLE
 
         { "", "" },
+
+        { "UpMid", "中速上移動" },
+        { "UpFast", "高速上移動" },
+
+        { "DownMid", "中速下移動" },
+        { "DownFast", "高速下移動" },
 
         { "GotoNew", "新着へ移動" },
         { "OpenParentBoard", "板を開く" },

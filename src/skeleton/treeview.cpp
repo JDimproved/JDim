@@ -241,6 +241,51 @@ void JDTreeView::row_down()
 
 
 //
+// page up
+//
+void JDTreeView::page_up()
+{
+    bool set_top = false;
+
+    // スクロール
+    Gtk::Adjustment *adj = get_vadjustment();
+    double val = adj->get_value();
+    if( val > adj->get_page_size()/2 ) set_top = true;
+    val = MAX( 0, val - adj->get_page_size() );
+    adj->set_value( val );
+
+    // 選択行移動
+    Gtk::TreePath path;
+    if( set_top ) path = get_path_under_xy( 0, (int)adj->get_page_size() - 4 );
+    else path = get_path_under_xy( 0, 0 );
+    if( path.get_depth() && get_row( path ) )set_cursor( path );
+}
+
+
+//
+// page down
+//
+void JDTreeView::page_down()
+{
+    bool set_bottom = false;
+
+    // スクロール
+    Gtk::Adjustment *adj = get_vadjustment();
+    double val = adj->get_value();
+    if( val < adj->get_upper() - adj->get_page_size() - adj->get_page_size()/2 ) set_bottom = true;
+    val = MIN( adj->get_upper() - adj->get_page_size(), val + adj->get_page_size() );
+    adj->set_value( val );
+
+    // 選択行移動
+    Gtk::TreePath path;
+    if( set_bottom ) path = get_path_under_xy( 0, 0 );
+    else path = get_path_under_xy( 0, (int)adj->get_page_size() - 4 );
+    if( path.get_depth() && get_row( path ) ) set_cursor( path );
+}
+
+
+
+//
 // path の前の path を取得
 //
 // check_expand = true なら行が開いてるかチェックして開いて無い時はdown()しない
