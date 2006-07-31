@@ -36,6 +36,7 @@ namespace ARTICLE
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();
+        virtual void switch_admin();
 
       private:
         void delete_popup();

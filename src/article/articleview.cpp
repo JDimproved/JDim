@@ -79,7 +79,7 @@ void ArticleViewMain::reload()
 
     // DAT落ちしてるとロードしないので状態をリセットしておく
     get_article()->reset_status();
-    show_view_impl();
+    show_view();
     CORE::core_set_command( "set_history_article", url_article() );
 }
 
@@ -89,13 +89,6 @@ void ArticleViewMain::reload()
 //  キャッシュ表示 & 差分ロード開始
 //
 void ArticleViewMain::show_view()
-{
-    // タブをarticleに切替えてから表示する
-    CORE::core_set_command( "switch_article" );
-    show_view_impl();
-}
-
-void ArticleViewMain::show_view_impl()
 {
     m_gotonum_reserve = 0;
 
@@ -264,8 +257,6 @@ ArticleViewRes::~ArticleViewRes()
 //
 void ArticleViewRes::show_view()
 {
-    CORE::core_set_command( "switch_article" );
-
     show_res( m_str_num, m_show_title );
 
     // ラベルとタブ
@@ -335,8 +326,6 @@ ArticleViewID::~ArticleViewID()
 //
 void ArticleViewID::show_view()
 {
-    CORE::core_set_command( "switch_article" );
-
     show_id( m_str_id );
 
     // ラベルとタブ
@@ -406,8 +395,6 @@ ArticleViewBM::~ArticleViewBM()
 //
 void ArticleViewBM::show_view()
 {
-    CORE::core_set_command( "switch_article" );
-
     show_bm();
 
     // ラベルとタブ
@@ -476,8 +463,6 @@ ArticleViewURL::~ArticleViewURL()
 //
 void ArticleViewURL::show_view()
 {
-    CORE::core_set_command( "switch_article" );
-
     show_res_with_url();
 
     // ラベルとタブ
@@ -544,8 +529,6 @@ ArticleViewRefer::~ArticleViewRefer()
 //
 void ArticleViewRefer::show_view()
 {
-    CORE::core_set_command( "switch_article" );
-
     show_refer( atol( m_str_num.c_str() ) );
 
     // ラベルとタブ
@@ -618,8 +601,6 @@ ArticleViewDrawout::~ArticleViewDrawout()
 //
 void ArticleViewDrawout::show_view()
 {
-    CORE::core_set_command( "switch_article" );
-
     drawout_keywords( m_query, m_mode_or );
 
     // ラベルとタブ

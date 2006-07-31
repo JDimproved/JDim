@@ -86,6 +86,7 @@ namespace SKELETON
 
         virtual void restore(){} // 起動時に前回の状態を回復
         virtual void open_view( const COMMAND_ARGS& command );
+        virtual void switch_admin(){} // CORE::core_set_command( "switch_*" )　を送る
         virtual void switch_view( const std::string& url );
         virtual void tab_left();
         virtual void tab_right();

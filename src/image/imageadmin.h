@@ -53,6 +53,7 @@ namespace IMAGE
       private:
         
         virtual void restore();
+        virtual void switch_admin();
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void tab_left();
         virtual void tab_right();

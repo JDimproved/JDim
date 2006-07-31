@@ -660,7 +660,7 @@ void BoardView::clock_in()
 //
 void BoardView::reload()
 {
-    show_view_impl();
+    show_view();
     CORE::core_set_command( "set_history_board", get_url() );
 }
 
@@ -679,13 +679,6 @@ void BoardView::stop()
 // ビュー表示
 //
 void BoardView::show_view()
-{
-    // タブをboardに切替えてから表示する
-    CORE::core_set_command( "switch_board" );
-    show_view_impl();
-}
-
-void BoardView::show_view_impl()
 {
 #ifdef _DEBUG
     std::cout << "BoardView::show_view " << get_url() << std::endl;

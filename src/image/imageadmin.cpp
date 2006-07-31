@@ -100,6 +100,12 @@ void ImageAdmin::restore()
 }
 
 
+void ImageAdmin::switch_admin()
+{
+    CORE::core_set_command( "switch_image" );
+}
+
+
 //
 // ページが含まれていないか
 //

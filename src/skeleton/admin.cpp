@@ -9,6 +9,7 @@
 #include "dbtree/interface.h"
 
 #include "command.h"
+#include "session.h"
 #include "global.h"
 #include "controlutil.h"
 #include "controlid.h"
@@ -341,9 +342,9 @@ void Admin::exec_command()
 //
 // command.arg1: "true" なら新しいtabを開く, "right" ならアクティブなtabの右に、"left"なら左に開く
 // command.arg2: "true" なら既にurlを開いているかチェックしない
-// command.arg3: "true" ならオフラインで開く
+// command.arg3: モード。"auto"なら表示されていればリロードせずに切替え、されていなければ新しいタブで開いてロード
 //
-// その他は各ビュー別の設定
+// その他のargは各ビュー別の設定
 //
 void Admin::open_view( const COMMAND_ARGS& command )
 {
@@ -368,6 +369,11 @@ void Admin::open_view( const COMMAND_ARGS& command )
             std::cout << "page = " << page << std::endl;
 #endif        
             set_current_page( page );
+            switch_admin();
+
+            // オートモードは切り替えのみ
+            if( command.arg3 == "auto" ) return;
+
             view->show_view();
             focus_current_view();
             return;
@@ -378,7 +384,9 @@ void Admin::open_view( const COMMAND_ARGS& command )
     if( !view ) return;
 
     int page = m_notebook.get_current_page();
-    bool open_tab = (  page == -1 || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left" );
+    bool open_tab = (  page == -1 || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left"
+                       || command.arg3 == "auto" // オートモードの時もタブで開く
+        );
 
     // タブで表示
     if( open_tab ){
@@ -401,6 +409,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
         if( current_view ) delete current_view;
     }
 
+    switch_admin();
     view->show();
     view->show_view();
     set_current_page( m_notebook.page_num( *view ) );

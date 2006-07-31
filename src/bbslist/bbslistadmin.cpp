@@ -12,6 +12,7 @@
 #include "global.h"
 #include "viewfactory.h"
 #include "session.h"
+#include "command.h"
 
 BBSLIST::BBSListAdmin *instance_bbslistadmin = NULL;
 
@@ -56,6 +57,12 @@ void BBSListAdmin::restore()
     set_command( "open_view", URL_ETCVIEW, "true" );
     set_command( "open_view", URL_FAVORITEVIEW, "true" );
     set_command( "set_page", std::string(), MISC::itostr( SESSION::bbslist_page() ) );
+}
+
+
+void BBSListAdmin::switch_admin()
+{
+    CORE::core_set_command( "switch_bbslist" );
 }
 
 

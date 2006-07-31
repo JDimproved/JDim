@@ -189,6 +189,11 @@ void ArticleAdmin::restore()
 }
 
 
+void ArticleAdmin::switch_admin()
+{
+    CORE::core_set_command( "switch_article" );
+}
+
 
 // リストで与えられたページをタブで連続して開く
 //

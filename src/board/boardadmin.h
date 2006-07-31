@@ -23,6 +23,7 @@ namespace BOARD
         SKELETON::View* create_view( const COMMAND_ARGS& command );
 
         virtual void restore();
+        virtual void switch_admin();
 
       private:
         virtual void slot_drag_begin( int page );

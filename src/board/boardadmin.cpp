@@ -88,6 +88,13 @@ void BoardAdmin::restore()
 }
 
 
+void BoardAdmin::switch_admin()
+{
+    CORE::core_set_command( "switch_board" );
+}
+
+
+
 // リストで与えられたページをタブで連続して開く
 //
 // 連続してリロードかけるとサーバに負担をかけるので、オフラインで開いて

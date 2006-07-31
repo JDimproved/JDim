@@ -23,6 +23,7 @@ namespace BBSLIST
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();
+        virtual void switch_admin();
 
         // bbslistはクローズしない
         virtual void close_view( const std::string& url ){}

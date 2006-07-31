@@ -851,7 +851,9 @@ void ArticleViewBase::slot_push_delete()
 //
 void ArticleViewBase::slot_push_open_board()
 {
-    CORE::core_set_command( "open_board", DBTREE::url_subject( m_url_article ), "true" );
+    CORE::core_set_command( "open_board", DBTREE::url_subject( m_url_article ), "true",
+                            "auto" // オートモードで開く
+        );
 }
 
 

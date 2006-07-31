@@ -933,7 +933,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            command.arg1, // "true"ならtabで開く
                                            "false", // url 開いてるかチェック
-                                           "false", // "true"ならオフラインで開く
+                                           "", // モード
 
                                            "MAIN", // メインモード
 
@@ -970,7 +970,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "false", // "true"ならオフラインで開く
+                                           "", // モード
 
                                            mode_str, // キーワード抽出モード
 
@@ -988,7 +988,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "false", // "true"ならオフラインで開く
+                                           "", // モード
 
                                            "RES", // レス抽出モード
                                      
@@ -1009,7 +1009,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "false", // "true"ならオフラインで開く
+                                           "", // モード
 
                                            "ID", // ID 抽出モード
                                      
@@ -1027,7 +1027,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "false", // "true"ならオフラインで開く
+                                           "", // モード
 
                                            "BM" //　ブックマーク抽出モード
             );
@@ -1043,7 +1043,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "false", // "true"ならオフラインで開く
+                                           "", // モード
 
                                            "URL" // URL抽出モード
             );
@@ -1059,7 +1059,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "false", // "true"ならオフラインで開く
+                                           "", // モード
 
                                            "REF", // 参照抽出モード
                                      
@@ -1109,7 +1109,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                          command.arg1,  // "true" ならtabで開く
                                          "false", // url 開いてるかチェック
-                                         "false" // "true"ならオフラインで開く
+                                         command.arg2 // モード
             );
 
         set_history_board( command.url );
@@ -1340,7 +1340,8 @@ void Core::exec_command()
     else if( command.command  == "set_history_article" ) set_history_article( command.url );
         
     else if( command.command  == "set_history_board" ) set_history_board( command.url );
-    
+
+    // ビューの切替え
     else if( command.command  == "switch_article" ) switch_article();
 
     else if( command.command  == "switch_board" ) switch_board();
