@@ -1510,6 +1510,7 @@ void Core::exec_command()
 
         // coreと全てのadminクラスのコマンドの実行が終わった
         if( m_list_command.size() == 0
+            && ! BBSLIST::get_admin()->has_commands()
             && ! BOARD::get_admin()->has_commands()
             && ! ARTICLE::get_admin()->has_commands()
             && ! IMAGE::get_admin()->has_commands() ){
