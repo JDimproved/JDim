@@ -53,9 +53,22 @@ BBSListAdmin::~BBSListAdmin()
 // 前回開いていたURLを復元
 void BBSListAdmin::restore()
 {
-    set_command( "open_view", URL_BBSLISTVIEW );
-    set_command( "open_view", URL_ETCVIEW, "true" );
-    set_command( "open_view", URL_FAVORITEVIEW, "true" );
+    COMMAND_ARGS command_arg;
+    command_arg.command = "open_view";
+
+    // bbslist
+    command_arg.url = URL_BBSLISTVIEW;
+    open_view( command_arg );
+
+    // etc
+    command_arg.url = URL_ETCVIEW;
+    command_arg.arg1 = "true";
+    open_view( command_arg );
+
+    // favorite
+    command_arg.url = URL_FAVORITEVIEW;
+    open_view( command_arg );
+
     set_command( "set_page", std::string(), MISC::itostr( SESSION::bbslist_page() ) );
 }
 

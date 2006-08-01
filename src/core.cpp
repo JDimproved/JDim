@@ -65,7 +65,8 @@ Core::Core( WinMain& win_main )
     : m_win_main( win_main ),
       m_imagetab_shown( 0 ),
       m_button_go( Gtk::Stock::JUMP_TO, "移動" ),
-      m_focused_admin( FOCUS_NO )
+      m_focused_admin( FOCUS_NO ),
+      m_boot( true )
 {
     instance_core = this;
     m_disp.connect( sigc::mem_fun( *this, &Core::exec_command ) );
@@ -1320,13 +1321,6 @@ void Core::exec_command()
 
             IMAGE::get_admin()->set_command( "restore" );
         }
-
-        int notebook_page = SESSION::notebook_main_page();
-        if( is2pane ){
-            if( notebook_page == 0 ) core_set_command( "switch_board" );
-            else if( notebook_page == 2 ) core_set_command( "switch_image" );
-        }
-        else if( notebook_page == 1 ) core_set_command( "switch_image" );
     }
 
     // 各ビューのタブ幅調整
@@ -1507,7 +1501,51 @@ void Core::exec_command()
         // その他
         else open_by_browser( command.url );
     }
+
+    // ある admin クラスのコマンドが空になった
+    else if( command.command  == "empty_command" ){}
+
+    // 起動中
+    if( m_boot ){
+
+        // coreと全てのadminクラスのコマンドの実行が終わった
+        if( m_list_command.size() == 0
+            && ! BOARD::get_admin()->has_commands()
+            && ! ARTICLE::get_admin()->has_commands()
+            && ! IMAGE::get_admin()->has_commands() ){
+
+            // 起動完了
+            m_boot = false;
+            exec_command_after_boot();
+        }
+    }
 }
+
+
+
+//
+// 起動完了直後に実行する処理
+//
+void Core::exec_command_after_boot()
+{
+    bool is2pane = ( SESSION::get_mode_pane() == MODE_2PANE );
+
+    // フォーカス状態回復
+    int notebook_page = SESSION::notebook_main_page();
+    if( is2pane ){
+        if( notebook_page == 0 && SESSION::board_URLs().size() ) core_set_command( "switch_board" );
+        else if( notebook_page == 1 && SESSION::article_URLs().size() ) core_set_command( "switch_article" );
+        else if( notebook_page == 2 && SESSION::image_URLs().size()  ) core_set_command( "switch_image" );
+        else core_set_command( "switch_bbslist" );
+    }
+    else{
+        if( notebook_page == 0 && SESSION::article_URLs().size() ) core_set_command( "switch_article" );
+        else if( notebook_page == 1 && SESSION::image_URLs().size()  ) core_set_command( "switch_image" );
+        else if( SESSION::board_URLs().size() ) core_set_command( "switch_board" );
+        else core_set_command( "switch_bbslist" );
+    }
+}
+
 
 
 

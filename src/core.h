@@ -97,7 +97,10 @@ namespace CORE
         // フォーカスイン、アウトイベントの時に使う変数
         /// Core::slot_focus_in_event, Core::slot_focus_out_event 参照
         int m_focused_admin;
-        
+
+        // 起動中
+        bool m_boot;
+
     public:
 
         Core( WinMain& win_main );
@@ -158,7 +161,12 @@ namespace CORE
         void slot_toggle_restore_article();
         void slot_toggle_restore_image();
 
+        // coreが自前でするコマンド処理
         void exec_command();
+
+        // 起動完了直後に実行する処理
+        void exec_command_after_boot();
+
         bool slot_timeout( int timer_number );
         void slot_switch_page( GtkNotebookPage*, guint page );
         bool slot_focus_out_event( GdkEventFocus* ev );

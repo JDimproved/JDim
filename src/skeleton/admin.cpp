@@ -233,6 +233,9 @@ void Admin::exec_command()
     COMMAND_ARGS command = m_list_command.front();
     m_list_command.pop_front();
 
+    // コマンドリストが空になったことをcoreに知らせる
+    if( m_list_command.size() == 0 ) CORE::core_set_command( "empty_command", m_url );
+
 #ifdef _DEBUG
     std::cout << "Admin::exec_command " << m_url << " : " << command.command << " " << command.url << " " << std::endl
               << command.arg1 << " " << command.arg2 << std::endl

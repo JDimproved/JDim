@@ -96,7 +96,10 @@ void ImageAdmin::restore()
     }
 
     SKELETON::View* view = get_nth_icon( SESSION::image_page() );
-    if( view ) switch_img( view->get_url() );
+    if( view ){
+        switch_img( view->get_url() );
+        switch_admin();
+    }
 }
 
 

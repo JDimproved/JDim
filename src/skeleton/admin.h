@@ -58,15 +58,18 @@ namespace SKELETON
         virtual void clock_in();
 
         // コマンド入力
-        virtual void set_command( const std::string& command,
-                                  const std::string& url = std::string(),
-                                  const std::string& arg1 = std::string(),
-                                  const std::string& arg2 = std::string(),
-                                  const std::string& arg3 = std::string(),
-                                  const std::string& arg4 = std::string(),
-                                  const std::string& arg5 = std::string(),
-                                  const std::string& arg6 = std::string()
+        void set_command( const std::string& command,
+                          const std::string& url = std::string(),
+                          const std::string& arg1 = std::string(),
+                          const std::string& arg2 = std::string(),
+                          const std::string& arg3 = std::string(),
+                          const std::string& arg4 = std::string(),
+                          const std::string& arg5 = std::string(),
+                          const std::string& arg6 = std::string()
             );
+
+        // コマンドがセットされているか
+        const bool has_commands() const { return ( m_list_command.size() ); }
 
         // 現在表示してるページ番号
         // 表示ページを指定したいときは "set_page" コマンドを使う
