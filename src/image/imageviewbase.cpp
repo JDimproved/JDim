@@ -113,6 +113,12 @@ void ImageViewBase::setup_common()
     action_group()->add( Gtk::Action::create( "CloseOther_Menu", "他の画像を閉じる" ) );
     action_group()->add( Gtk::Action::create( "CloseOther", "閉じる" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_other_views ) );
 
+    action_group()->add( Gtk::Action::create( "CloseLeft_Menu", "左の画像を閉じる" ) );
+    action_group()->add( Gtk::Action::create( "CloseLeft", "閉じる" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_left_views ) );
+
+    action_group()->add( Gtk::Action::create( "CloseRight_Menu", "右の画像を閉じる" ) );
+    action_group()->add( Gtk::Action::create( "CloseRight", "閉じる" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_right_views ) );
+
     action_group()->add( Gtk::Action::create( "CloseAll_Menu", "全ての画像を閉じる" ) );
     action_group()->add( Gtk::Action::create( "CloseAll", "閉じる" ),
                          sigc::mem_fun( *this, &ImageViewBase::slot_close_all_views ) );
@@ -191,8 +197,16 @@ void ImageViewBase::setup_common()
     "<popup name='popup_menu_icon'>"
 
     "<menuitem action='Quit'/>"
+    "<separator/>"
+
     "<menu action='CloseOther_Menu'>"
     "<menuitem action='CloseOther'/>"
+    "</menu>"
+    "<menu action='CloseLeft_Menu'>"
+    "<menuitem action='CloseLeft'/>"
+    "</menu>"
+    "<menu action='CloseRight_Menu'>"
+    "<menuitem action='CloseRight'/>"
     "</menu>"
     "<menu action='CloseAll_Menu'>"
     "<menuitem action='CloseAll'/>"
@@ -342,6 +356,25 @@ void ImageViewBase::slot_close_other_views()
 {
     IMAGE::get_admin()->set_command( "close_other_views", get_url() );
 }
+
+
+//
+// 左の画像を閉じる
+//
+void ImageViewBase::slot_close_left_views()
+{
+    IMAGE::get_admin()->set_command( "close_left_views", get_url() );
+}
+
+
+//
+// 右の画像を閉じる
+//
+void ImageViewBase::slot_close_right_views()
+{
+    IMAGE::get_admin()->set_command( "close_right_views", get_url() );
+}
+
 
 
 //

@@ -46,6 +46,10 @@ Admin::Admin( const std::string& url )
     m_action_group->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &Admin::slot_close_tab ) );
     m_action_group->add( Gtk::Action::create( "CloseOther_Menu", "他のタブを閉じる" ) );
     m_action_group->add( Gtk::Action::create( "CloseOther", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseLeft_Menu", "左のタブを閉じる" ) );
+    m_action_group->add( Gtk::Action::create( "CloseLeft", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseRight_Menu", "右のタブを閉じる" ) );
+    m_action_group->add( Gtk::Action::create( "CloseRight", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseAll_Menu", "全てのタブを閉じる" ) );
     m_action_group->add( Gtk::Action::create( "CloseAll", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
     m_action_group->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く" ), sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
@@ -62,8 +66,15 @@ Admin::Admin( const std::string& url )
     // 通常
     "<popup name='popup_menu'>"
     "<menuitem action='Quit'/>"
+    "<separator/>"
     "<menu action='CloseOther_Menu'>"
     "<menuitem action='CloseOther'/>"
+    "</menu>"
+    "<menu action='CloseLeft_Menu'>"
+    "<menuitem action='CloseLeft'/>"
+    "</menu>"
+    "<menu action='CloseRight_Menu'>"
+    "<menuitem action='CloseRight'/>"
     "</menu>"
     "<menu action='CloseAll_Menu'>"
     "<menuitem action='CloseAll'/>"
@@ -988,6 +999,41 @@ void Admin::slot_close_other_tabs()
         if( view && view->get_url() != url ) set_command( "close_view", view->get_url() );
     }
 }
+
+
+
+//
+// 右クリックメニューの左を閉じる
+//
+void Admin::slot_close_left_tabs()
+{
+#ifdef _DEBUG
+    std::cout << "Admin::slot_close_left_tabs " << m_clicked_page << std::endl;
+#endif
+
+    for( int i = 0; i < m_clicked_page; ++i ){
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        if( view ) set_command( "close_view", view->get_url() );
+    }
+}
+
+
+//
+// 右クリックメニューの右を閉じる
+//
+void Admin::slot_close_right_tabs()
+{
+#ifdef _DEBUG
+    std::cout << "Admin::slot_close_right_tabs " << m_clicked_page << std::endl;
+#endif
+
+    int pages = m_notebook.get_n_pages();
+    for( int i = m_clicked_page +1; i < pages; ++i ){
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        if( view ) set_command( "close_view", view->get_url() );
+    }
+}
+
 
 
 

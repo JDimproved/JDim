@@ -200,6 +200,10 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
 
     else if( command.command  == "close_other_views" ) close_other_views( command.url );
 
+    else if( command.command  == "close_left_views" ) close_left_views( command.url );
+
+    else if( command.command  == "close_right_views" ) close_right_views( command.url );
+
     else if( command.command  == "close_all_views" ) close_other_views( std::string() );
 }
 
@@ -420,6 +424,38 @@ void ImageAdmin::close_other_views( const std::string& url )
     for(; it !=  m_iconbox.children().end(); ++it ){
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
         if( view && view->get_url() != url ) set_command( "close_view", view->get_url() );
+    }
+}
+
+
+//
+// url の左側の画像を閉じる
+//
+void ImageAdmin::close_left_views( const std::string& url )
+{
+    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
+    for(; it !=  m_iconbox.children().end(); ++it ){
+        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+        if( view->get_url() == url ) return;
+        if( view ) set_command( "close_view", view->get_url() );
+    }
+}
+
+
+//
+// url の右側の画像を閉じる
+//
+void ImageAdmin::close_right_views( const std::string& url )
+{
+    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
+    for(; it !=  m_iconbox.children().end(); ++it ){
+        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+        if( view->get_url() == url ) break;
+    }
+    ++it;
+    for(; it !=  m_iconbox.children().end(); ++it ){
+        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+        if( view ) set_command( "close_view", view->get_url() );
     }
 }
 

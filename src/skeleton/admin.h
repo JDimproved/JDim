@@ -138,6 +138,8 @@ namespace SKELETON
         // 右クリックメニュー
         virtual void slot_close_tab();
         virtual void slot_close_other_tabs();
+        virtual void slot_close_left_tabs();
+        virtual void slot_close_right_tabs();
         virtual void slot_close_all_tabs();
         virtual void slot_open_by_browser();
         virtual void slot_copy_url();
