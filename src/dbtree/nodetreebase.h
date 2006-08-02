@@ -211,6 +211,7 @@ namespace DBTREE
         void parseBr( );
 
         bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
+        bool check_link( const char* str_in, int lng_in, int& n_in, char* str_link, int lng_link );
 
         // あぼーんのクリア
         void clear_abone();

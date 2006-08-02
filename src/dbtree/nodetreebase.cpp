@@ -1227,48 +1227,23 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
         }
 
         ///////////////////////
-        // http(s)://, ttp(s)://, tp(s):// のチェック
-        int create_link = 0;
-        if( ( *( pos ) == 'h' && *( pos + 1 ) == 't' && *( pos + 2 ) == 't' && *( pos + 3 ) == 'p' ) &&
-            ( ( *( pos + 4 ) == ':' && *( pos + 5 ) == '/' && *( pos + 6 ) == '/' )
-              || ( *( pos + 4 ) == 's' && *( pos + 5 ) == ':' && *( pos + 6 ) == '/' && *( pos + 7 ) == '/' ) ) ) create_link = 1;
-        else if( ( *( pos ) == 't' && *( pos + 1 ) == 't' && *( pos + 2 ) == 'p'  ) && 
-            ( ( *( pos + 3 ) == ':' && *( pos + 4 ) == '/' && *( pos + 5 ) == '/' )
-              || ( *( pos + 3 ) == 's' && *( pos + 4 ) == ':' && *( pos + 5 ) == '/' && *( pos + 6 ) == '/' ) ) ) create_link = 2;
-        else if( ( *( pos ) == 't' && *( pos + 1 ) == 'p'  ) &&
-            ( ( *( pos + 2 ) == ':' && *( pos + 3 ) == '/' && *( pos + 4 ) == '/' )
-              || ( *( pos + 2 ) == 's' && *( pos + 3 ) == ':' && *( pos + 4 ) == '/' && *( pos + 5 ) == '/' ) ) ) create_link = 3;
-        if( create_link ){
+        // リンク(http)のチェック
+        if( check_link( pos, (int)( pos_end - pos ), n_in, tmplink, LNG_LINK ) ){
 
             // フラッシュしてからリンクノードつくる
             createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
-            int n = 0;
-            while( *( pos + n ) != '<' && *( pos + n ) != ' ' && pos + n < pos_end
-                   && *( pos + n ) > 0 // 半角文字が続く限り
-                ) ++n;
-
-            // m_parsed_text に http://〜をコピー
-            int offset = 0;
-            if( create_link >= 2 ){ // ttp:// の場合
-                m_parsed_text[ 0 ] = 'h';
-                offset = 1;
-            }
-            if( create_link >= 3 ){ // tp:// の場合
-                m_parsed_text[ 1 ] = 't';
-                offset = 2;
-            }
-            memcpy( m_parsed_text + offset, pos, n );
+            lng_link = strlen( tmplink );
 
             // 画像リンク
-            if( DBIMG::is_loadable( m_parsed_text, n + offset ) ){
-                create_imgnode( m_parsed_text + offset, n, m_parsed_text , n + offset, COLOR_IMG_NOCACHE, bold );
+            if( DBIMG::is_loadable( tmplink, lng_link ) ){
+                create_imgnode( pos, n_in, tmplink , lng_link, COLOR_IMG_NOCACHE, bold );
             }
 
             // 一般リンク
-            else create_linknode( m_parsed_text + offset, n, m_parsed_text , n + offset, COLOR_CHAR_LINK, bold );
+            else create_linknode( pos, n_in, tmplink , lng_link, COLOR_CHAR_LINK, bold );
 
-            pos += n;
+            pos += n_in;
 
             // forのところで++されるので--しておく
             --pos;
@@ -1449,6 +1424,77 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 
     return true;
 }
+
+
+
+//
+// リンクが現れたかチェックして文字列を取得する関数
+//
+// 入力
+// str_in : 入力文字列の先頭アドレス
+// lng_str : str_inのバッファサイズ
+// lng_link : str_linkのバッファサイズ
+//
+// 出力
+// n_in : str_in から何バイト読み取ったか
+// str_link : リンクの文字列
+//
+// 戻り値 : リンクが現れれば true
+//
+bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* str_link, int lng_link )
+{
+    // http(s)://, ttp(s)://, tp(s):// のチェック
+    int create_link = 0;
+    if( ( *( str_in ) == 'h' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 't' && *( str_in + 3 ) == 'p' ) &&
+        ( ( *( str_in + 4 ) == ':' && *( str_in + 5 ) == '/' && *( str_in + 6 ) == '/' )
+          || ( *( str_in + 4 ) == 's' && *( str_in + 5 ) == ':' && *( str_in + 6 ) == '/' && *( str_in + 7 ) == '/' ) ) ){
+        create_link = 1;
+    }
+    else if( ( *( str_in ) == 't' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p'  ) && 
+             ( ( *( str_in + 3 ) == ':' && *( str_in + 4 ) == '/' && *( str_in + 5 ) == '/' )
+               || ( *( str_in + 3 ) == 's' && *( str_in + 4 ) == ':' && *( str_in + 5 ) == '/' && *( str_in + 6 ) == '/' ) ) ){
+        create_link = 2;
+    }
+    else if( ( *( str_in ) == 't' && *( str_in + 1 ) == 'p'  ) &&
+             ( ( *( str_in + 2 ) == ':' && *( str_in + 3 ) == '/' && *( str_in + 4 ) == '/' )
+               || ( *( str_in + 2 ) == 's' && *( str_in + 3 ) == ':' && *( str_in + 4 ) == '/' && *( str_in + 5 ) == '/' ) ) ){
+        create_link = 3;
+    }
+    
+    if( !create_link ) return false;
+
+    n_in = 0;
+    while( n_in < lng_in
+           && *( str_in + n_in ) != '<'
+           && *( str_in + n_in ) != ' '
+           && *( str_in + n_in ) != '\"'
+           && !( *( str_in + n_in ) == '&' && *( str_in + n_in +1 ) == 'q' && *( str_in + n_in +2 ) == 'u'
+                 && *( str_in + n_in +3 ) == 'o' && *( str_in + n_in +4 ) == 't' && *( str_in + n_in +5 ) == ';' ) // "
+           && *( str_in + n_in ) > 0 // 半角文字が続く限り
+        ) ++n_in;
+
+    // 最後に ()が来たら除く
+    if( *( str_in + n_in -1 ) == '('
+        || *( str_in + n_in -1 ) == ')' ) --n_in;
+
+    int offset = 0;
+    if( create_link >= 2 ){ // ttp:// の場合
+        str_link[ 0 ] = 'h';
+        offset = 1;
+    }
+    if( create_link >= 3 ){ // tp:// の場合
+        str_link[ 1 ] = 't';
+        offset = 2;
+    }
+
+    if( n_in + offset > lng_link ) return false;
+
+    memcpy( str_link + offset, str_in, n_in );
+    str_link[ n_in + offset ] = '\0';
+
+    return true;
+}
+
 
 
 // あぼーんしているか
