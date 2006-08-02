@@ -1299,8 +1299,6 @@ void Core::exec_command()
               << " " << command.arg1 << " " << command.arg2 << " " << command.arg3 << " " << command.arg4 << std::endl;
 #endif
 
-    bool is2pane = ( SESSION::get_mode_pane() == MODE_2PANE );
-
     // 各管理クラスが開いていたURLを復元
     if( command.command == "restore_views" ){
 
@@ -1365,34 +1363,7 @@ void Core::exec_command()
     }
 
     // あるnotebookが空になった
-    else if( command.command  == "empty_page" ) {
-
-        FOCUS_OUT_ALL();
-
-        // 画像ビューの場合
-        if( command.url == URL_IMAGEADMIN ){
-
-            // 画像インジケータを隠す
-            if( m_imagetab_shown ){
-                m_vbox.remove( IMAGE::get_admin()->tab() );
-                m_win_main.show_all_children();
-                m_imagetab_shown = false;
-            }
-           
-            if( is2pane ) m_notebook.set_current_page( 1 );
-            else m_notebook.set_current_page( 0 );
-            ARTICLE::get_admin()->set_command( "focus_current_view" );
-        }
-
-        // articleビューの場合
-        else if( command.url == URL_ARTICLEADMIN ){
-            if( is2pane ) m_notebook.set_current_page( 0 );
-            BOARD::get_admin()->set_command( "focus_current_view" );
-        }
-
-        // boardビューの場合
-        else if( command.url == URL_BOARDADMIN ) BBSLIST::get_admin()->set_command( "focus_current_view" );
-    }
+    else if( command.command  == "empty_page" ) empty_page( command.url );
 
     // URL、ステータスなどの表示
     else if( command.command  == "set_url" ){
@@ -1579,13 +1550,34 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
     FOCUS_OUT_ALL();
 
     if( SESSION::get_mode_pane() == MODE_2PANE ){
-        if( page == 0 ) BOARD::get_admin()->set_command( "focus_current_view" );
-        else if( page == 1 ) ARTICLE::get_admin()->set_command( "focus_current_view" );
-        else if( page == 2 ) IMAGE::get_admin()->set_command( "focus_current_view" );
+
+        switch( page){
+
+            case 0:
+                BOARD::get_admin()->set_command( "focus_current_view" );
+                break;
+
+            case 1:
+                ARTICLE::get_admin()->set_command( "focus_current_view" );
+                break;
+
+            case 2:
+                IMAGE::get_admin()->set_command( "focus_current_view" );
+                break;
+        }
     }
     else{
-        if( page == 0 ) ARTICLE::get_admin()->set_command( "focus_current_view" );
-        else if( page == 1 ) IMAGE::get_admin()->set_command( "focus_current_view" );
+
+        switch( page ){
+
+            case 0:
+                ARTICLE::get_admin()->set_command( "focus_current_view" );
+                break;
+
+            case 1:
+                IMAGE::get_admin()->set_command( "focus_current_view" );
+                break;
+        }
     }
 }
 
@@ -1596,7 +1588,7 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
 
 bool Core::slot_focus_out_event( GdkEventFocus* )
 {
-    // 現在フォーカスされているビュー番号を保存
+    // m_focused_admin に現在フォーカスされているビュー番号を保存
     if( BBSLIST::get_admin()->has_focus() ) m_focused_admin = FOCUS_BBSLIST;
     else if( BOARD::get_admin()->has_focus() ) m_focused_admin = FOCUS_BOARD;
     else if( ARTICLE::get_admin()->has_focus() ) m_focused_admin = FOCUS_ARTICLE;
@@ -1647,6 +1639,67 @@ void Core::slot_active_url()
 }
 
 
+
+//
+// あるadminがemptyになったので他のadminにスイッチ
+//
+// url : empty になったadmin
+//
+void Core::empty_page( const std::string& url )
+{
+    int focused_admin = FOCUS_NO;
+
+    FOCUS_OUT_ALL();
+
+    // 画像ビューの場合
+    if( url == URL_IMAGEADMIN ){
+
+        // 画像インジケータを隠す
+        if( m_imagetab_shown ){
+            m_vbox.remove( IMAGE::get_admin()->tab() );
+            m_win_main.show_all_children();
+            m_imagetab_shown = false;
+        }
+
+        if( ! ARTICLE::get_admin()->empty() ) focused_admin = FOCUS_ARTICLE;
+        else if( ! BOARD::get_admin()->empty() ) focused_admin = FOCUS_BOARD;
+        else focused_admin = FOCUS_BBSLIST;
+    }
+
+    // articleビューの場合
+    else if( url == URL_ARTICLEADMIN ){
+
+        if( ! BOARD::get_admin()->empty() ) focused_admin = FOCUS_BOARD;
+        else focused_admin = FOCUS_BBSLIST;
+    }
+
+    // boardビューの場合
+    else if( url == URL_BOARDADMIN ){
+        focused_admin = FOCUS_BBSLIST;
+    }
+
+    switch( focused_admin ){
+
+        case FOCUS_BBSLIST:
+            core_set_command( "switch_bbslist" );
+            break;
+
+        case FOCUS_BOARD:
+            core_set_command( "switch_board" );
+            break;
+
+        case FOCUS_ARTICLE:
+            core_set_command( "switch_article" );
+            break;
+
+        case FOCUS_IMAGE:
+            core_set_command( "switch_image" );
+            break;
+    }
+}
+
+
+
 //
 // 各viewにスイッチ
 //
@@ -1657,7 +1710,6 @@ void Core::switch_article()
     FOCUS_OUT_ALL();
     ARTICLE::get_admin()->set_command( "delete_popup" );
 
-    m_focused_admin = FOCUS_ARTICLE;
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 1 );
     else m_notebook.set_current_page( 0 );
     ARTICLE::get_admin()->set_command( "focus_current_view" );
@@ -1671,7 +1723,6 @@ void Core::switch_board()
     FOCUS_OUT_ALL();
     ARTICLE::get_admin()->set_command( "delete_popup" );
 
-    m_focused_admin = FOCUS_BOARD;
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 0 );
     BOARD::get_admin()->set_command( "focus_current_view" );
 }
@@ -1683,8 +1734,7 @@ void Core::switch_bbslist()
 
     FOCUS_OUT_ALL();
     ARTICLE::get_admin()->set_command( "delete_popup" );
-       
-    m_focused_admin = FOCUS_BBSLIST;
+
     BBSLIST::get_admin()->set_command( "focus_current_view" );
 }
 
@@ -1696,7 +1746,6 @@ void Core::switch_image()
     FOCUS_OUT_ALL();
     ARTICLE::get_admin()->set_command( "delete_popup" );
 
-    m_focused_admin = FOCUS_IMAGE;
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 2 );
     else m_notebook.set_current_page( 1 );
     IMAGE::get_admin()->set_command( "focus_current_view" );

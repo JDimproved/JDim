@@ -173,6 +173,8 @@ namespace CORE
         bool slot_focus_in_event( GdkEventFocus* ev );
         void slot_active_url();
 
+        // あるadminがemptyになったので他のadminにスイッチ
+        void empty_page( const std::string& url );
         void switch_article();
         void switch_board();
         void switch_bbslist();

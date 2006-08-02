@@ -199,6 +199,9 @@ void ImageViewBase::setup_common()
     "<menuitem action='Quit'/>"
     "<separator/>"
 
+    "<menu action='CloseAll_Menu'>"
+    "<menuitem action='CloseAll'/>"
+    "</menu>"
     "<menu action='CloseOther_Menu'>"
     "<menuitem action='CloseOther'/>"
     "</menu>"
@@ -207,9 +210,6 @@ void ImageViewBase::setup_common()
     "</menu>"
     "<menu action='CloseRight_Menu'>"
     "<menuitem action='CloseRight'/>"
-    "</menu>"
-    "<menu action='CloseAll_Menu'>"
-    "<menuitem action='CloseAll'/>"
     "</menu>"
     "<separator/>"
 
