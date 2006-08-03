@@ -460,7 +460,12 @@ void Core::shutdown()
 //
 void Core::set_maintitle()
 {
+#ifdef JDVERSION_CVS
+    std::string title = std::string( "JD - " ) + "cvs." + std::string( __DATE__ ) + " " + std::string( __TIME__ );
+#elif
     std::string title = std::string( "JD - " ) + std::string( JDVERSIONSTR );
+#endif
+
     if( LOGIN::get_login2ch()->login_now() ) title +=" [ ログイン中 ]";
     if( ! SESSION::is_online() ) title += " [ オフライン ]";
     m_win_main.set_title( title );
@@ -736,7 +741,13 @@ void Core::slot_show_manual()
 void Core::slot_show_about()
 {
     std::stringstream ss;
-    ss << "バージョン " << JDVERSIONSTR << std::endl << std::endl << JDCOPYRIGHT;
+    ss << "バージョン "
+#ifdef JDVERSION_CVS
+       << "cvs." + std::string( __DATE__ ) + " " + std::string( __TIME__ )
+#elif
+       << JDVERSIONSTR 
+#endif
+       << std::endl << std::endl << JDCOPYRIGHT;
     Gtk::MessageDialog mdiag( ss.str() );
     mdiag.run();
 }
