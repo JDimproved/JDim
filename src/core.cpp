@@ -461,8 +461,8 @@ void Core::shutdown()
 void Core::set_maintitle()
 {
 #ifdef JDVERSION_CVS
-    std::string title = std::string( "JD - " ) + "cvs." + std::string( __DATE__ ) + " " + std::string( __TIME__ );
-#elif
+    std::string title = std::string( "JD - " ) + "cvs." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
+#else
     std::string title = std::string( "JD - " ) + std::string( JDVERSIONSTR );
 #endif
 
@@ -743,8 +743,8 @@ void Core::slot_show_about()
     std::stringstream ss;
     ss << "バージョン "
 #ifdef JDVERSION_CVS
-       << "cvs." + std::string( __DATE__ ) + " " + std::string( __TIME__ )
-#elif
+       << "cvs." + std::string( __DATE__ ) + "-" + std::string( __TIME__ )
+#else
        << JDVERSIONSTR 
 #endif
        << std::endl << std::endl << JDCOPYRIGHT;
