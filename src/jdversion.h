@@ -11,5 +11,6 @@
 #define JDVERSION 152060803
 #define JDURL "http://jd4linux.sourceforge.jp/"
 #define JDBBS "http://jd4linux.sourceforge.jp/cgi-bin/bbs/support/"
+#define JD2CHLOG "http://jd4linux.sourceforge.jp/old2ch/"
 
 #endif

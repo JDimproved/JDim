@@ -53,6 +53,9 @@ Root::Root()
     // JDのサポートBBS登録
     set_board( JDBBS, "JDサポートBBS" );
 
+    // 2chのスレの過去ログ
+    set_board( JD2CHLOG, "2chスレ過去ログ" );
+
     m_board_null = new DBTREE::BoardBase( "", "", "" );
 }
 

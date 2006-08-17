@@ -143,6 +143,7 @@ namespace CORE
 
         void slot_show_hp();
         void slot_show_bbs();
+        void slot_show_old2ch();
         void slot_show_manual();
         void slot_show_about();
         void slot_quit();

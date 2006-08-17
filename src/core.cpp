@@ -228,6 +228,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
     m_action_group->add( Gtk::Action::create( "Hp", "ホームページ" ), sigc::mem_fun( *this, &Core::slot_show_hp ) );
     m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
+    m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
     m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル" ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
     m_action_group->add( Gtk::Action::create( "About", "JDについて" ), sigc::mem_fun( *this, &Core::slot_show_about ) );
     
@@ -297,6 +298,7 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='Hp'/>"
         "<menuitem action='Bbs'/>"
+        "<menuitem action='OldLog'/>"
         "<separator/>"
         "<menuitem action='About'/>"
         "</menu>"                         
@@ -727,6 +729,15 @@ void Core::slot_show_bbs()
 
 
 //
+// 過去ログ
+//
+void Core::slot_show_old2ch()
+{
+    CORE::core_set_command( "open_board" , DBTREE::url_subject( JD2CHLOG ), "true" );
+}
+
+
+//
 // マニュアル
 //
 void Core::slot_show_manual()
@@ -953,7 +964,9 @@ void Core::set_command( const COMMAND_ARGS& command )
         // ジャンプ( empty ならジャンプしない )
         if( ! command.arg3.empty() ) ARTICLE::get_admin()->set_command( "goto_num", command.url, command.arg3 );
 
+        // 履歴更新
         set_history_article( command.url );
+
         return;
     }
 
