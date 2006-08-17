@@ -491,7 +491,7 @@ void ArticleViewBase::reload()
 
     // DAT落ちしてるとロードしないので状態をリセットしておく
     DBTREE::article_reset_status( m_url_article );
-    CORE::core_set_command( "open_article", m_url_article , "true" );
+    CORE::core_set_command( "open_article", m_url_article , "true", "" );
 }
 
 
@@ -955,7 +955,8 @@ void ArticleViewBase::slot_next_bm()
 //
 void ArticleViewBase::slot_jump()
 {
-    goto_num( atoi( m_str_num.c_str() ) );
+    CORE::core_set_command( "open_article", m_url_article , "true", "auto", m_str_num );
+//    goto_num( atoi( m_str_num.c_str() ) );
 }
 
 

@@ -80,7 +80,7 @@ void MessageViewMain::write()
 
 void MessageViewMain::reload()
 {
-    CORE::core_set_command( "open_article", get_url(), "true" );
+    CORE::core_set_command( "open_article", get_url(), "true", "" );
 }
 
 

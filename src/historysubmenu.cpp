@@ -205,8 +205,8 @@ void HistorySubMenu::slot_activate( int i )
 #ifdef _DEBUG
         std::cout << "open " << url << std::endl;
 #endif
-        if( type == TYPE_THREAD ) CORE::core_set_command( "open_article" , url, "true" );
-        else if( type == TYPE_BOARD ) CORE::core_set_command( "open_board" , url, "true" );
+        if( type == TYPE_THREAD ) CORE::core_set_command( "open_article" , url, "true", "" );
+        else if( type == TYPE_BOARD ) CORE::core_set_command( "open_board" , url, "true", "" );
     }
 }
 

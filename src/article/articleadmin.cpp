@@ -263,7 +263,6 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
     // メインビュー
     if( command.arg4 == "MAIN" ){
         type = CORE::VIEW_ARTICLEVIEW;
-        str_jump = command.arg5; // ジャンプ
     }
 
     // キーワード抽出ビュー(AND)

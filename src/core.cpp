@@ -944,13 +944,14 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            command.arg1, // "true"ならtabで開く
-                                           "false", // url 開いてるかチェック
-                                           "", // モード
+                                           "false", // url 開いてるかチェックする
+                                           command.arg2, // 開き方のモード ( Admin::open_view 参照 )
 
-                                           "MAIN", // メインモード
-
-                                           command.arg2  // ジャンプ番号( empty ならジャンプしない )
+                                           "MAIN" // メインモードでarticleを開く
             );
+
+        // ジャンプ( empty ならジャンプしない )
+        if( ! command.arg3.empty() ) ARTICLE::get_admin()->set_command( "goto_num", command.url, command.arg3 );
 
         set_history_article( command.url );
         return;
@@ -982,7 +983,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "", // モード
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
 
                                            mode_str, // キーワード抽出モード
 
@@ -1000,7 +1001,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "", // モード
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
 
                                            "RES", // レス抽出モード
                                      
@@ -1021,7 +1022,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "", // モード
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
 
                                            "ID", // ID 抽出モード
                                      
@@ -1039,7 +1040,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "", // モード
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
 
                                            "BM" //　ブックマーク抽出モード
             );
@@ -1055,7 +1056,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "", // モード
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
 
                                            "URL" // URL抽出モード
             );
@@ -1071,7 +1072,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
-                                           "", // モード
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
 
                                            "REF", // 参照抽出モード
                                      
@@ -1121,7 +1122,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                          command.arg1,  // "true" ならtabで開く
                                          "false", // url 開いてるかチェック
-                                         command.arg2 // モード
+                                         command.arg2 // 開き方のモード ( Admin::open_view 参照 )
             );
 
         set_history_board( command.url );
@@ -1450,8 +1451,8 @@ void Core::exec_command()
 #ifdef _DEBUG
             std::cout << "exec : open_article url = " << url_dat << std::endl;
 #endif
-            if( num_from ) CORE::core_set_command( "open_article" , url_dat, "true", MISC::itostr( num_from ) );
-            else CORE::core_set_command( "open_article" , url_dat, "true" );
+            if( num_from ) CORE::core_set_command( "open_article" , url_dat, "true", "", MISC::itostr( num_from ) );
+            else CORE::core_set_command( "open_article" , url_dat, "true", "" );
         }
 
         // 掲示板のベースURLの場合

@@ -1146,11 +1146,11 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
     switch( type ){
 
         case TYPE_BOARD:
-            CORE::core_set_command( "open_board", DBTREE::url_subject( url ), str_tab );
+            CORE::core_set_command( "open_board", DBTREE::url_subject( url ), str_tab, "" );
             break;
 
         case TYPE_THREAD:
-            CORE::core_set_command( "open_article", DBTREE::url_dat( url ), str_tab );
+            CORE::core_set_command( "open_article", DBTREE::url_dat( url ), str_tab, "" );
             break;
 
         case TYPE_IMAGE:

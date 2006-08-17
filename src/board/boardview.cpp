@@ -1429,7 +1429,7 @@ bool BoardView::open_row( Gtk::TreePath& path, bool tab )
 
     if( url_target.empty() ) return false;
 
-    CORE::core_set_command( "open_article", url_target , str_tab );
+    CORE::core_set_command( "open_article", url_target , str_tab, "" );
     return true;
 }
 
