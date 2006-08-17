@@ -22,6 +22,8 @@ using namespace CORE;
 
 #define HIST_NONAME "--------------"
 
+// 履歴に表示する文字数(半角)
+#define HIST_MAX_LNG 50
 
 HistorySubMenu::HistorySubMenu( const std::string path_xml )
     : Gtk::Menu(),
@@ -235,6 +237,20 @@ void HistorySubMenu::set_menulabel()
                 if( name.empty() ) name = "???";
                 else ( *it_hist )->name = name;
             }
+
+
+            // 履歴に表示する文字数を制限
+            unsigned int pos, lng_name;
+            int byte = 0;
+            for( pos = 0, lng_name = 0; pos < name.length(); pos += byte ){
+                MISC::utf8toucs2( name.c_str()+pos, byte );
+                if( byte > 1 ) lng_name += 2;
+                else ++lng_name;
+                if( lng_name >= HIST_MAX_LNG ) break;
+            }
+
+            // カットしたら"..."をつける
+            if( pos != name.length() ) name = name.substr( 0, pos ) + "...";
 
             dynamic_cast< Gtk::Label* >( (*it_item)->get_child() )->set_text( name );
         }
