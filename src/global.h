@@ -1,4 +1,4 @@
-/* グローバルな定数やstructなど */
+// グローバルな定数などの定義
 
 #ifndef _GLOBAL_H
 #define _GLOBAL_H
@@ -52,20 +52,6 @@ enum
 
 // オートリロードの最小秒数
 #define AUTORELOAD_MINSEC 10
-
-
-// CoreやAdminクラスで使うコマンド構造体
-struct COMMAND_ARGS
-{
-    std::string command;
-    std::string url;
-    std::string arg1;
-    std::string arg2;
-    std::string arg3;
-    std::string arg4;
-    std::string arg5;
-    std::string arg6;
-};
 
 
 // プロトコル

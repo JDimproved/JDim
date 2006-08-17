@@ -10,7 +10,7 @@
 #include <gtkmm.h>
 #include <string>
 
-struct COMMAND_ARGS;
+#include "command_args.h"
 
 namespace SKELETON
 {

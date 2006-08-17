@@ -12,8 +12,7 @@
 #include <string>
 
 #include "skeleton/imgbutton.h"
-
-struct COMMAND_ARGS;
+#include "command_args.h"
 
 class WinMain;
 

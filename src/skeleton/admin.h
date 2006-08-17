@@ -13,7 +13,7 @@
 
 #include "dragnote.h"
 
-struct COMMAND_ARGS;
+#include "command_args.h"
 
 namespace SKELETON
 {

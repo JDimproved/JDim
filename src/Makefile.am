@@ -55,6 +55,7 @@ noinst_HEADERS = \
 	controllabel.h \
 	control.h \
 	controlutil.h \
+	command_args.h \
 \
 	session.h \
 	login2ch.h \
