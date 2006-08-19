@@ -165,7 +165,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
             break;
 
         case COL_SPEED:
-            width = SESSION::col_speed();
+            width = 1;//SESSION::col_speed(); ぴったり収まるように調整する
             break;
         }
 
