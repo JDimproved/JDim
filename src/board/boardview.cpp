@@ -22,6 +22,8 @@
 #include "controlid.h"
 #include "prefdiagfactory.h"
 
+#include "icons/iconmanager.h"
+
 #include <gtk/gtk.h> // m_liststore->gobj()->sort_column_id = -2
 #include <sstream>
 
@@ -1117,17 +1119,17 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
     int mark_val;
     if( ! art->is_current() ){
         mark_val = COL_MARKVAL_OLD;
-        row[ m_columns.m_col_mark ] = render_icon( Gtk::Stock::OK, Gtk::ICON_SIZE_MENU );
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::ICON_DOWN16 );
     }
     // キャッシュあり、新着あり
     else if( art->get_number_load() && art->get_number() > art->get_number_load() ){
         mark_val = COL_MARKVAL_UPDATED;
-        row[ m_columns.m_col_mark ] = render_icon( Gtk::Stock::ADD, Gtk::ICON_SIZE_MENU );
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::ICON_ADD16 );
     }
     // キャッシュあり、新着無し
     else if( art->get_number_load() ){
         mark_val = COL_MARKVAL_CACHED;
-        row[ m_columns.m_col_mark ] = render_icon( Gtk::Stock::CANCEL, Gtk::ICON_SIZE_MENU );
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::ICON_CHECK16 );
     }
     //キャッシュ無し
     else{

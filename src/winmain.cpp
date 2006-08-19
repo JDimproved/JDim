@@ -8,9 +8,7 @@
 #include "core.h"
 #include "session.h"
 
-#include "icons/icon_jd16.h"
-#include "icons/icon_jd32.h"
-#include "icons/icon_jd48.h"
+#include "icons/iconmanager.h"
 
 #include "jdlib/loader.h"
 
@@ -28,11 +26,11 @@ WinMain::WinMain( bool init )
     if( !Glib::thread_supported() ) Glib::thread_init();
     assert( Glib::thread_supported() );
 
-    // アイコン
+    // アイコンをセット
     std::list< Glib::RefPtr< Gdk::Pixbuf > > list_icons;
-    list_icons.push_back( Gdk::Pixbuf::create_from_inline( sizeof( icon_jd16_png ), icon_jd16_png ) );
-    list_icons.push_back( Gdk::Pixbuf::create_from_inline( sizeof( icon_jd32_png ), icon_jd32_png ) );
-    list_icons.push_back( Gdk::Pixbuf::create_from_inline( sizeof( icon_jd48_png ), icon_jd48_png ) );
+    list_icons.push_back( ICON::get_icon( ICON::ICON_JD16 ) );
+    list_icons.push_back( ICON::get_icon( ICON::ICON_JD32 ) );
+    list_icons.push_back( ICON::get_icon( ICON::ICON_JD48 ) );
     Gtk::Window::set_default_icon_list( list_icons );
     
     // セッション回復
@@ -61,6 +59,9 @@ WinMain::~WinMain()
 #endif
 
     save_session();
+
+    // アイコンマネージャ削除
+    ICON::delete_icon_manager();
 }
 
 
