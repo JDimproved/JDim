@@ -984,10 +984,6 @@ void ArticleBase::read_info()
         m_subject = get_nodetree()->get_subject();
         m_number_load = get_nodetree()->get_res_number();
 
-        if( m_subject.empty() ) {
-            m_subject = "壊れています";
-            m_status |= STATUS_BROKEN;
-        }
         if( !m_number_load ){
             m_number_load = 1;
             m_status |= STATUS_BROKEN;
