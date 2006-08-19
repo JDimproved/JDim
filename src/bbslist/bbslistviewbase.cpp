@@ -16,6 +16,8 @@
 
 #include "config/globalconf.h"
 
+#include "icons/iconmanager.h"
+
 #include "command.h"
 #include "global.h"
 #include "httpcode.h"
@@ -1352,23 +1354,23 @@ void BBSListViewBase::setup_row( Gtk::TreeModel::Row& row, Glib::ustring url, Gl
     switch( type ){
 
         case TYPE_DIR:
-            row[ m_columns.m_col_image ] = render_icon( Gtk::Stock::OPEN, Gtk::ICON_SIZE_MENU );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_DIR16 );
             break;
 
         case TYPE_BOARD:
-            row[ m_columns.m_col_image ] = render_icon( Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_BOARD16 );
             break;
 
         case TYPE_THREAD:
-            row[ m_columns.m_col_image ] = render_icon( Gtk::Stock::COPY, Gtk::ICON_SIZE_MENU );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_THREAD16 );
             break;
 
         case TYPE_IMAGE:
-            row[ m_columns.m_col_image ] = render_icon( Gtk::Stock::NO, Gtk::ICON_SIZE_MENU );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_IMAGE16 );
             break;
 
         case TYPE_LINK:
-            row[ m_columns.m_col_image ] = render_icon( Gtk::Stock::JUMP_TO, Gtk::ICON_SIZE_MENU );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_LINK16 );
             break;
     }
 }

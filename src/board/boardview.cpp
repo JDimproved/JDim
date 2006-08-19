@@ -1133,11 +1133,8 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
     }
     //キャッシュ無し
     else{
-        // 透明色のアイコンを作る
         mark_val = COL_MARKVAL_NORMAL;
-        Glib::RefPtr< Gdk::Pixbuf > tmp_pixbuf = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, true, 8, 1, 1 );
-        tmp_pixbuf->fill( 0 );
-        row[ m_columns.m_col_mark ] = tmp_pixbuf;
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::ICON_TRANSPARENT );
     }
     row[ m_columns.m_col_mark_val ] = mark_val;
 

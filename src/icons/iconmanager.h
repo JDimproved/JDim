@@ -22,6 +22,14 @@ namespace ICON
         ICON_CHECK16,
         ICON_DOWN16,
 
+        ICON_DIR16,
+        ICON_BOARD16,
+        ICON_THREAD16,
+        ICON_IMAGE16,
+        ICON_LINK16 ,
+
+        ICON_TRANSPARENT,
+
         NUM_ICONS
     };
 
