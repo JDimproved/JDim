@@ -12,6 +12,8 @@
 #include <string>
 
 #include "skeleton/imgbutton.h"
+#include "skeleton/hpaned.h"
+
 #include "command_args.h"
 
 class WinMain;
@@ -73,7 +75,7 @@ namespace CORE
         WinMain& m_win_main;
         
         Gtk::VBox m_vbox_main;
-        Gtk::HPaned m_hpaned;
+        SKELETON::JDHPaned m_hpaned;
         Gtk::VPaned m_vpaned; // 3ペーンモード時の右側ペーン
         Gtk::HPaned m_hpaned_r; // 縦3ペーンモードの時の右側ペーン
         Gtk::VBox m_vbox;

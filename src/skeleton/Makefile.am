@@ -8,7 +8,8 @@ libskeleton_a_SOURCES = \
 	view.cpp \
 	dragnote.cpp \
 	entry.cpp \
-	login.cpp
+	login.cpp \
+	hpaned.cpp
 
 noinst_HEADERS = \
 	admin.h \
@@ -25,7 +26,8 @@ noinst_HEADERS = \
 	entry.h \
 	label_entry.h \
 	prefdiag.h \
-	login.h
+	login.h \
+	hpaned.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src
