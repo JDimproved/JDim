@@ -329,24 +329,6 @@ const std::string DrawAreaBase::str_selection()
 }
 
 
-//
-// drawarea 上にマウスポインタがあったら true
-//
-bool DrawAreaBase::is_mouse_on_drawarea()
-{
-    bool ret = false;
-
-    int x,y;
-    m_view.get_pointer( x, y );
-    if( x <= m_view.get_width() && x >= 0 && y <= m_view.get_height() && y >= 0 ) ret = true;
-
-#ifdef _DEBUG
-    std::cout << "DrawAreaBase::is_mouse_on_drawarea " << m_url << " ret = " << ret << std::endl;
-#endif
-
-    return ret;
-}
-
 
 //
 // 現在見ているレスの番号( >= 1 )

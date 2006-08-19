@@ -256,14 +256,15 @@ void ImageViewMain::show_status()
 
 
 //
-// ポップアップメニュー
+// ポップアップメニュー取得
 //
-void ImageViewMain::show_popupmenu()
+// SKELETON::View::show_popupmenu() を参照すること
+//
+Gtk::Menu* ImageViewMain::get_popupmenu( const std::string& url )
 {
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
-    if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );
+    return popupmenu;
 }
-
 
 
 

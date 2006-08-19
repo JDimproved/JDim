@@ -29,7 +29,8 @@ namespace IMAGE
 
       protected:
         virtual void show_status();
-        virtual void show_popupmenu();
+
+        virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
         virtual bool slot_button_press_imagearea( GdkEventButton* event );
         virtual bool slot_motion_notify_imagearea( GdkEventMotion* event );

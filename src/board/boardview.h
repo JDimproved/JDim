@@ -72,6 +72,10 @@ namespace BOARD
         void page_up();
         void page_down();
 
+      protected:
+
+        virtual Gtk::Menu* get_popupmenu( const std::string& url );
+
     private:
 
         void save_column_width();

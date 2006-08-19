@@ -1580,14 +1580,17 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
 
             case 0:
                 BOARD::get_admin()->set_command( "focus_current_view" );
+                m_focused_admin = FOCUS_BOARD;
                 break;
 
             case 1:
                 ARTICLE::get_admin()->set_command( "focus_current_view" );
+                m_focused_admin = FOCUS_ARTICLE;
                 break;
 
             case 2:
                 IMAGE::get_admin()->set_command( "focus_current_view" );
+                m_focused_admin = FOCUS_IMAGE;
                 break;
         }
     }
@@ -1597,10 +1600,12 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
 
             case 0:
                 ARTICLE::get_admin()->set_command( "focus_current_view" );
+                m_focused_admin = FOCUS_ARTICLE;
                 break;
 
             case 1:
                 IMAGE::get_admin()->set_command( "focus_current_view" );
+                m_focused_admin = FOCUS_IMAGE;
                 break;
         }
     }
@@ -1738,6 +1743,7 @@ void Core::switch_article()
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 1 );
     else m_notebook.set_current_page( 0 );
     ARTICLE::get_admin()->set_command( "focus_current_view" );
+    m_focused_admin = FOCUS_ARTICLE;
 }
 
 
@@ -1750,6 +1756,7 @@ void Core::switch_board()
 
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 0 );
     BOARD::get_admin()->set_command( "focus_current_view" );
+    m_focused_admin = FOCUS_BOARD;
 }
 
 
@@ -1761,6 +1768,7 @@ void Core::switch_bbslist()
     ARTICLE::get_admin()->set_command( "delete_popup" );
 
     BBSLIST::get_admin()->set_command( "focus_current_view" );
+    m_focused_admin = FOCUS_BBSLIST;
 }
 
 
@@ -1774,6 +1782,7 @@ void Core::switch_image()
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 2 );
     else m_notebook.set_current_page( 1 );
     IMAGE::get_admin()->set_command( "focus_current_view" );
+    m_focused_admin = FOCUS_IMAGE;
 }
 
 

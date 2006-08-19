@@ -20,7 +20,7 @@ namespace BBSLIST
         virtual void show_view();
 
       protected:
-        virtual void show_popupmenu( const Gtk::TreePath& path );
+        virtual Gtk::Menu* get_popupmenu( const std::string& url );
     };
 };
 

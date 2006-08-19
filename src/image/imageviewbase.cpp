@@ -252,7 +252,6 @@ void ImageViewBase::setup_common()
 }
 
 
-
 //
 // ImageAreaBaseのセット
 // 
@@ -555,43 +554,7 @@ bool ImageViewBase::slot_button_release_imagearea( GdkEventButton* event )
     // ポップアップメニュー
     else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
-        // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
-        m_enable_menuslot = false;
-
-        Glib::RefPtr< Gtk::Action > act;
-        Glib::RefPtr< Gtk::ToggleAction > tact;
-
-        bool current_protect = m_img->is_protected();
-
-        // モザイク
-        act = action_group()->get_action( "CancelMosaic" );
-        if( m_img->is_cached() && m_img->get_mosaic() ) act->set_sensitive( true );
-        else act->set_sensitive( false );
-
-        // 参照元スレ
-        act = action_group()->get_action( "OpenRef" );
-        if( ! m_img->refurl().empty() ) act->set_sensitive( true );
-        else act->set_sensitive( false );
-
-        // 保護
-        act = action_group()->get_action( "ProtectImage" );
-        tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-        if( current_protect ) tact->set_active( true );
-        else tact->set_active( false );
-
-        // 削除
-        act = action_group()->get_action( "DeleteImage" );
-        if( m_img->is_cached() && ! m_img->is_protected() ) act->set_sensitive( true );
-        else act->set_sensitive( false );
-
-        // ロード停止
-        act = action_group()->get_action( "LoadStop" );
-        if( m_img->is_loading() ) act->set_sensitive( true );
-        else act->set_sensitive( false );
-
-        m_enable_menuslot = true;
-
-        show_popupmenu(); // 各派生ビュー別に表示するメニューを変える
+        SKELETON::View::show_popupmenu( "", false );
     }
 
 
@@ -841,3 +804,50 @@ void ImageViewBase::set_image_to_buffer()
     CORE::SBUF_clear_info();
     CORE::SBUF_append( info );
 }
+
+
+
+//
+// ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
+//
+// SKELETON::View::show_popupmenu() を参照すること
+//
+void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
+{
+    // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
+    m_enable_menuslot = false;
+
+    Glib::RefPtr< Gtk::Action > act;
+    Glib::RefPtr< Gtk::ToggleAction > tact;
+
+    bool current_protect = m_img->is_protected();
+
+    // モザイク
+    act = action_group()->get_action( "CancelMosaic" );
+    if( m_img->is_cached() && m_img->get_mosaic() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
+    // 参照元スレ
+    act = action_group()->get_action( "OpenRef" );
+    if( ! m_img->refurl().empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
+    // 保護
+    act = action_group()->get_action( "ProtectImage" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( current_protect ) tact->set_active( true );
+    else tact->set_active( false );
+
+    // 削除
+    act = action_group()->get_action( "DeleteImage" );
+    if( m_img->is_cached() && ! m_img->is_protected() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
+    // ロード停止
+    act = action_group()->get_action( "LoadStop" );
+    if( m_img->is_loading() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
+    m_enable_menuslot = true;
+}
+

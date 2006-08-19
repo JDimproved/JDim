@@ -49,14 +49,12 @@ namespace ARTICLE
         // ポップアップ
         SKELETON::PopupWin* m_popup_win;
         bool m_popup_shown; // 表示されているならtrue, falseでもdeleteしない限りは m_popup_win != NULLに注意
-        bool m_number_popup_shown; // 数字範囲選択をクリックしたときのポップアップが表示中
 
         // 検索用
         bool m_search_invert; // 逆方向検索モード
         std::string m_query;  // 前回の検索で使ったクエリー
 
-        // ポップアップメニュー用
-        bool m_popupmenu_shown; // ポップアップメニューが表示されている
+        // ポップアップメニュー表示のときにactivate_act_before_popupmenu()で使う変数
         bool m_enable_menuslot;
 
         // ブックマーク移動時の現在の位置(レス番号)
@@ -91,6 +89,12 @@ namespace ARTICLE
         DrawAreaBase* drawarea();
         ArticleToolBar* toolbar() { return m_toolbar; }
         JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article();
+
+        // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
+        virtual void activate_act_before_popupmenu( const std::string& url );
+
+        // ポップアップメニュー取得
+        virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
         // 初期設定
         void setup_view();
@@ -152,10 +156,8 @@ namespace ARTICLE
 
         virtual DrawAreaBase* create_drawarea();        
 
-        void clear();
         virtual void pack_widget();
         void setup_action();
-        bool is_mouse_on_drawarea();
         
         // drawarea の signal を受け取る slots
         bool slot_button_press_drawarea( GdkEventButton* event );
@@ -182,10 +184,6 @@ namespace ARTICLE
         void hide_popup( bool force = false );
         void delete_popup(); // ポップアップ強制削除
         
-        // ポップアップメニュー関係
-        const bool is_popupmenu_shown() const { return m_popupmenu_shown; }
-        virtual void show_menu( const std::string& url );
-        void slot_hide_popupmenu();
         void slot_bookmark();
         void slot_open_browser();
         void slot_write_res();

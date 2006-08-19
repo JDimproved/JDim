@@ -482,6 +482,39 @@ void  BBSListViewBase::operate_view( const int& control )
 
 
 //
+// ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
+//
+// SKELETON::View::show_popupmenu() を参照すること
+//
+void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
+{
+    Glib::RefPtr< Gtk::Action > act_board, act_article, act_image;
+    act_board = action_group()->get_action( "PreferenceBoard" );
+    act_article = action_group()->get_action( "PreferenceArticle" );
+    act_image = action_group()->get_action( "PreferenceImage" );
+    if( act_board ) act_board->set_sensitive( false );
+    if( act_article ) act_article->set_sensitive( false );
+    if( act_image ) act_image->set_sensitive( false );
+
+    int type = path2type( m_path_selected );
+    switch( type ){
+
+        case TYPE_BOARD:
+            if( act_board ) act_board->set_sensitive( true );
+            break;
+
+        case TYPE_THREAD:
+            if( act_article ) act_article->set_sensitive( true );
+            break;
+
+        case TYPE_IMAGE:
+            if( act_image ) act_image->set_sensitive( true );
+            break;
+    }
+}
+
+
+//
 // 先頭に戻る
 //
 void BBSListViewBase::goto_top()
@@ -612,31 +645,9 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
     // ポップアップメニューボタン
     else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
-        Glib::RefPtr< Gtk::Action > act_board, act_article, act_image;
-        act_board = action_group()->get_action( "PreferenceBoard" );
-        act_article = action_group()->get_action( "PreferenceArticle" );
-        act_image = action_group()->get_action( "PreferenceImage" );
-        if( act_board ) act_board->set_sensitive( false );
-        if( act_article ) act_article->set_sensitive( false );
-        if( act_image ) act_image->set_sensitive( false );
-
-        int type = path2type( m_path_selected );
-        switch( type ){
-
-            case TYPE_BOARD:
-                if( act_board ) act_board->set_sensitive( true );
-                break;
-
-            case TYPE_THREAD:
-                if( act_article ) act_article->set_sensitive( true );
-                break;
-
-            case TYPE_IMAGE:
-                if( act_image ) act_image->set_sensitive( true );
-                break;
-        }
-
-        show_popupmenu( m_path_selected );
+        std::string url = path2url( m_path_selected );
+        if( ! m_path_selected.empty() && url.empty() ) url = "dummy_url";
+        SKELETON::View::show_popupmenu( url, false );
     }
 
     event->type = type_copy;

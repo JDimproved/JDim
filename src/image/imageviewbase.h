@@ -75,7 +75,7 @@ namespace IMAGE
         void setup_common();
         void set_image_to_buffer();
 
-        virtual void show_popupmenu(){} // popupメニューは派生ビューで指定する
+        virtual void activate_act_before_popupmenu( const std::string& url );
 
         virtual bool slot_button_press_imagearea( GdkEventButton* event );
         virtual bool slot_motion_notify_imagearea( GdkEventMotion* event );

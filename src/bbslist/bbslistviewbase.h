@@ -154,7 +154,7 @@ namespace BBSLIST
 
       protected:
 
-        virtual void show_popupmenu( const Gtk::TreePath& path ){} // popupメニューは派生ビューで指定する
+        virtual void activate_act_before_popupmenu( const std::string& url );
 
         void append_from_buffer( Gtk::TreeModel::Path path, bool after = true );
         void delete_selected_rows();

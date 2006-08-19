@@ -22,8 +22,6 @@ namespace ARTICLE
       private:
         virtual void pack_widget();
 
-        // IDなどをクリックしてもメニューは出さない
-        virtual void show_menu( const std::string& url ){}
         virtual void goto_num( int num ){}
         virtual void slot_drawout_id(){}        
         virtual void slot_drawout_ref(){}        

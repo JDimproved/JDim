@@ -1010,6 +1010,38 @@ void BoardView::page_down()
 } 
    
 
+//
+// ポップアップメニュー取得
+//
+// SKELETON::View::show_popupmenu() を参照すること
+//
+Gtk::Menu* BoardView::get_popupmenu( const std::string& url )
+{
+    Gtk::Menu* popupmenu = NULL;
+
+    // 削除サブメニュー
+    if( url == "popup_menu_delete" ){
+        popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_delete" ) );
+    }
+
+    // お気に入りサブメニュー
+    else if( url == "popup_menu_favorite" ){
+        popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite" ) );
+    }
+
+    // 通常メニュー
+    else if( m_treeview.get_selection()->get_selected_rows().size() == 1 ){
+        popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
+    }
+
+    // 複数選択メニュー
+    else{ 
+        m_path_selected = Gtk::TreeModel::Path();
+        popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_mul" ) );
+    }
+
+    return popupmenu;
+}
 
 
 
@@ -1183,15 +1215,7 @@ bool BoardView::slot_button_release( GdkEventButton* event )
         // ポップアップメニューボタン
         else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
-            Gtk::Menu* popupmenu;
-            if( m_treeview.get_selection()->get_selected_rows().size() == 1 ){
-                popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
-            }
-            else{ // 複数選択の場合
-                m_path_selected = Gtk::TreeModel::Path();
-                popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_mul" ) );
-            }
-            if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );
+            SKELETON::View::show_popupmenu( "", false );
         }
 
         event->type = type_copy;
@@ -1350,8 +1374,7 @@ void BoardView::slot_new_article()
 //
 void BoardView::slot_push_delete()
 {
-    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_delete" ) ); 
-    if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );
+    SKELETON::View::show_popupmenu( "popup_menu_delete", false );
 }
 
 
@@ -1360,8 +1383,7 @@ void BoardView::slot_push_delete()
 //
 void BoardView::slot_push_favorite()
 {
-    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite" ) ); 
-    if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );
+    SKELETON::View::show_popupmenu( "popup_menu_favorite", false );
 }
 
 

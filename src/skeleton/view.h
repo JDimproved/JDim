@@ -12,10 +12,12 @@
 
 namespace SKELETON
 {
-    // 自分がポップアップviewの時に(ポップアップウィンドウ経由で)親widgetにhideを依頼するシグナル
+    // 自分がポップアップviewの時に(ポップアップウィンドウ( SKELETON::PopupWin ) 経由で)
+    // 親widgetにhideを依頼するシグナル。PopupWin::PopupWin()でPopupWin::slot_hide_popup()にコネクトされる。
     typedef sigc::signal< void > SIG_HIDE_POPUP;    
 
-    // 自分がポップアップviewの時にポップアップウィンドウにリサイズを依頼するシグナル
+    // 自分がポップアップviewでリサイズしたときに、明示的にポップアップウィンドウ( SKELETON::PopupWin )
+    // にリサイズを依頼するシグナル。PopupWin::PopupWin()でPopupWin::slot_resize_popup()にコネクトされる。
     typedef sigc::signal< void > SIG_RESIZE_POPUP;
     
     class View : public Gtk::VBox
@@ -54,6 +56,9 @@ namespace SKELETON
         int m_autoreload_sec; // 何秒おきにリロードするか
         int m_autoreload_counter; // オートリロード用のカウンタ
 
+        // ポップアップメニューが表示されているかどうか
+        bool m_popupmenu_shown; 
+
       protected:
 
         // UI
@@ -77,6 +82,21 @@ namespace SKELETON
         // オートリロードのカウンタをリセット
         void reset_autoreload_counter(); 
 
+        // ポップアップメニュー表示
+        void show_popupmenu( const std::string& url, bool use_slot = false );
+
+        // ポップアップメニュー表示時に表示位置を決めるスロット
+        void slot_popup_menu_position( int& x, int& y, bool& push_in );
+
+        // ポップアップメニューがhideした時に呼び出されるスロット
+        void slot_hide_popupmenu();
+
+        // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
+        virtual void activate_act_before_popupmenu( const std::string& url ){}
+
+        //  ポップアップメニュー取得
+        virtual Gtk::Menu* get_popupmenu( const std::string& url ){ return NULL; }
+
     public:
 
         SIG_HIDE_POPUP sig_hide_popup(){ return m_sig_hide_popup; }
@@ -87,6 +107,12 @@ namespace SKELETON
 
         virtual const std::string& get_url(){ return m_url; }
         void set_url( const std::string& url ){ m_url = url; }
+
+        // view 上にマウスポインタがあれば true
+        bool is_mouse_on_view();
+
+        // ポップアップメニューが表示されているか
+        const bool is_popupmenu_shown() const { return m_popupmenu_shown; }
 
         // 各view個別のコマンド
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() ){ return true; }
@@ -111,7 +137,7 @@ namespace SKELETON
 
         // クロック入力
         // clock_in()はビューがアクティブのときに呼び出される
-        // clock_in_always()は常に呼び出されるので重い処理を含めてはいけない
+        // clock_in_always()はviewの種類に依らず常に呼び出されるので重い処理を含めてはいけない
         virtual void clock_in(){};
         virtual void clock_in_always();
 

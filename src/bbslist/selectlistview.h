@@ -22,7 +22,7 @@ namespace BBSLIST
 
       private:
         virtual bool open_row( Gtk::TreePath& path, bool tab ){ return true; } // 開かないようにキャンセル
-        virtual void show_popupmenu( const Gtk::TreePath& path );
+        virtual Gtk::Menu* get_popupmenu( const std::string& url );
     };
 
 };

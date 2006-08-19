@@ -150,7 +150,6 @@ namespace ARTICLE
         void focus_out();
 
         const std::string str_selection(); // 範囲選択中の文字列
-        bool is_mouse_on_drawarea(); // マウスが描画領域の上にあるかどうか
         int seen_current(); // 現在見ているレスの番号
         int max_number();   // 表示されている最後のレスの番号
 

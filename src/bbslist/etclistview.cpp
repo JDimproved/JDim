@@ -38,16 +38,18 @@ void EtcListView::show_view()
 
 
 //
-// ポップアップメニュー
+// ポップアップメニュー取得
 //
-void EtcListView::show_popupmenu( const Gtk::TreePath& path )
+// SKELETON::View::show_popupmenu() を参照すること
+//
+Gtk::Menu* EtcListView::get_popupmenu( const std::string& url )
 {
-    if( path.empty() ) return;
+    if( url.empty() ) return NULL;
 
     Gtk::Menu* popupmenu;
     std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
     if( list_it.size() == 1 ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
     else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_mul" ) );
 
-    if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );
+    return popupmenu;
 }

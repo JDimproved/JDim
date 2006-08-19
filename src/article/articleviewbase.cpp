@@ -47,14 +47,11 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
     : SKELETON::View( url ),
       m_url_article( url ),
       m_toolbar( 0 ),
-      m_popup_win( 0 ),
-      m_popup_shown( 0 ),
-      m_number_popup_shown( 0 ),
+      m_popup_win( NULL ),
+      m_popup_shown( false ),
       m_enable_menuslot( true ),
       m_current_bm( 0 )
 {
-    clear();
-
     // マウスジェスチャ可能
     SKELETON::View::set_enable_mg( true );
 
@@ -70,7 +67,8 @@ ArticleViewBase::~ArticleViewBase()
     std::cout << "ArticleViewBase::~ArticleViewBase : " << get_url() << std::endl;
 #endif
 
-    clear();
+    hide_popup( true );
+    delete_popup();
 }
 
 
@@ -107,23 +105,6 @@ DrawAreaBase* ArticleViewBase::create_drawarea()
 
 
 //
-// メンバ変数初期化
-//
-void ArticleViewBase::clear()
-{
-#ifdef _DEBUG
-    std::cout << "ArticleViewBase::clear " << get_url() << std::endl;
-#endif    
-
-    hide_popup( true );
-    delete_popup();
-
-    m_popupmenu_shown = false;
-}
-
-
-
-//
 // セットアップ
 //
 // 各派生ビューで初期設定が済んだ後に呼ばれる
@@ -133,8 +114,6 @@ void ArticleViewBase::setup_view()
 #ifdef _DEBUG    
     std::cout << "ArticleViewBase::setup_view " << get_url() << " url_article = " << m_url_article << std::endl;
 #endif
-
-    clear();
     
     m_article = DBTREE::get_article( m_url_article );
     m_drawarea = create_drawarea();
@@ -398,16 +377,6 @@ void ArticleViewBase::setup_action()
     CONTROL::set_menu_motion( popupmenu );
 }
 
-
-
-
-//
-// drawarea 上にマウスポインタがあったら true
-//
-bool ArticleViewBase::is_mouse_on_drawarea()
-{
-    return m_drawarea->is_mouse_on_drawarea();
-}
 
 
 //
@@ -837,12 +806,7 @@ void ArticleViewBase::slot_push_write()
 //
 void ArticleViewBase::slot_push_delete()
 {
-    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_delete" ) );
-    if( popupmenu ) { 
-        popupmenu->signal_hide().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_hide_popupmenu ) ); 
-        popupmenu->popup( 0, gtk_get_current_event_time() ); 
-        m_popupmenu_shown = true;
-    }
+    SKELETON::View::show_popupmenu( "popup_menu_delete", false );
 }
 
 
@@ -956,7 +920,6 @@ void ArticleViewBase::slot_next_bm()
 void ArticleViewBase::slot_jump()
 {
     CORE::core_set_command( "open_article", m_url_article , "true", "auto", m_str_num );
-//    goto_num( atoi( m_str_num.c_str() ) );
 }
 
 
@@ -1216,7 +1179,9 @@ bool ArticleViewBase::slot_button_release_drawarea( std::string url, int res_num
                 
             else if( ! click_url( url, res_number, event ) ){
 
-                if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ) show_menu( url );
+                if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
+                    SKELETON::View::show_popupmenu( url, false );
+                }
             }
         }
     }
@@ -1451,7 +1416,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             show_popup( view_popup );
         }
         else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_id();
-        else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ) show_menu( url );
+        else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
+            SKELETON::View::show_popupmenu( url, false );
+        }
     }
 
     // BE クリック
@@ -1466,7 +1433,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         std::cout << "open  " << ssurl.str() << std::endl;
 #endif
         if( control.button_alloted( event, CONTROL::OpenBeButton ) ) CORE::core_set_command( "open_url_browser", ssurl.str() );
-        else if( control.button_alloted( event, CONTROL::PopupmenuBeButton ) ) show_menu( ssurl.str() );
+        else if( control.button_alloted( event, CONTROL::PopupmenuBeButton ) ){
+            SKELETON::View::show_popupmenu( ssurl.str(), false );
+        }
     }
 
     // アンカーをクリック
@@ -1478,7 +1447,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 #ifdef _DEBUG
         std::cout << "anchor num = " << m_str_num << std::endl;
 #endif
-        if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ) show_menu( url );
+        if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
+            SKELETON::View::show_popupmenu( url, false );
+        }
         else if( control.button_alloted( event, CONTROL::DrawoutAncButton ) ) slot_drawout_around();
     }
 
@@ -1489,7 +1460,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         m_name = m_article->get_name( atoi( m_str_num.c_str() ) );
         m_url_tmp = DBTREE::url_readcgi( m_url_article, atoi( m_str_num.c_str() ), 0 );
 
-        if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ) show_menu( url );
+        if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ){
+            SKELETON::View::show_popupmenu( url, false );
+        }
 
         // ブックマークセット
         else if( control.button_alloted( event, CONTROL::BmResButton ) ) slot_bookmark();
@@ -1507,7 +1480,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     // 画像クリック
     else if( DBIMG::is_loadable( url ) ){
 
-        if( control.button_alloted( event, CONTROL::PopupmenuImageButton ) ) show_menu( url );
+        if( control.button_alloted( event, CONTROL::PopupmenuImageButton ) ){
+            SKELETON::View::show_popupmenu( url, false );
+        }
 
         else if( ! DBIMG::is_cached( url ) && ! SESSION::is_online() ){
             Gtk::MessageDialog mdiag( "オフラインです" );
@@ -1569,7 +1544,7 @@ const bool ArticleViewBase::is_mouse_on_popup()
     ArticleViewBase* popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
     if( ! popup_article ) return false;
 
-    return popup_article->is_mouse_on_drawarea();
+    return popup_article->is_mouse_on_view();
 }
 
 
@@ -1615,7 +1590,7 @@ void ArticleViewBase::slot_hide_popup()
     hide_popup();
 
     // ポインタがwidgetの外にあったら親に知らせて自分も閉じてもらう
-    if( ! is_mouse_on_drawarea() ) sig_hide_popup().emit();
+    if( ! SKELETON::View::is_mouse_on_view() ) sig_hide_popup().emit();
 }
 
 
@@ -1656,7 +1631,6 @@ void ArticleViewBase::hide_popup( bool force )
 
     m_popup_win->hide();
     m_popup_shown = false;
-    m_number_popup_shown = false;
 }
 
 
@@ -1673,30 +1647,23 @@ void ArticleViewBase::delete_popup()
     if( m_popup_win ) delete m_popup_win;
     m_popup_win = NULL;
     m_popup_shown = false;
-    m_number_popup_shown = false;
 }
 
 
-
-
 //
-// ポップアップメニュー表示
+// ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
 //
-void ArticleViewBase::show_menu( const std::string& url )
+// SKELETON::View::show_popupmenu() を参照すること
+//
+void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 {
-    assert( m_article );
-
-#ifdef _DEBUG    
-    std::cout << "ArticleViewBase::show_menu " << get_url() << " url = " << url << std::endl;
-#endif
-
     // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
     m_enable_menuslot = false;
 
     // 子ポップアップが表示されていて、かつポインタがその上だったら表示しない
     ArticleViewBase* popup_article = NULL;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
-    if( popup_article && popup_article->is_mouse_on_drawarea() ) return;
+    if( popup_article && popup_article->is_mouse_on_view() ) return;
     hide_popup();
     Glib::RefPtr< Gtk::Action > act, act2;
     act = action_group()->get_action( "CopyURL" );
@@ -1821,12 +1788,26 @@ void ArticleViewBase::show_menu( const std::string& url )
     }
 
     m_enable_menuslot = true;
+}
 
+
+//
+// ポップアップメニュー取得
+//
+// SKELETON::View::show_popupmenu() を参照すること
+//
+Gtk::Menu* ArticleViewBase::get_popupmenu( const std::string& url )    
+{
     // 表示
-    Gtk::Menu* popupmenu;
+    Gtk::Menu* popupmenu = NULL;
+
+    // 削除サブメニュー
+    if( url == "popup_menu_delete" ){
+        popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_delete" ) );
+    }
 
     // レス番号ポップアップメニュー
-    if( url.find( PROTO_RES ) == 0 ){
+    else if( url.find( PROTO_RES ) == 0 ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_res" ) );
     }
 
@@ -1848,34 +1829,8 @@ void ArticleViewBase::show_menu( const std::string& url )
     // 通常メニュー
     else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
 
-    if( popupmenu ) {
-        popupmenu->signal_hide().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_hide_popupmenu ) ); 
-        popupmenu->popup( 0, gtk_get_current_event_time() );
-        m_popupmenu_shown = true;
-    }
-
+    return popupmenu;
 }
-
-
-//
-// ポップアップメニューがhideしたときに呼ばれるslot
-//
-void ArticleViewBase::slot_hide_popupmenu()
-{
-    if( ! m_popupmenu_shown ) return;
-
-#ifdef _DEBUG
-    std::cout << "ArticleViewBase::slot_hide_popupmenu " << get_url() << std::endl;
-#endif
-
-    m_popupmenu_shown = false;
-
-    // もしメニューを消したときにマウスポインタが領域外に
-    // あったら自分自身をhide
-    if( ! is_mouse_on_drawarea() ) sig_hide_popup().emit();
-}
-
-
 
 
 //

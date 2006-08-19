@@ -143,12 +143,14 @@ void ImageViewIcon::switch_icon()
 
 
 //
-// ポップアップメニュー
+// ポップアップメニュー取得
 //
-void ImageViewIcon::show_popupmenu()
+// SKELETON::View::show_popupmenu() を参照すること
+//
+Gtk::Menu* ImageViewIcon::get_popupmenu( const std::string& url )
 {
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_icon" ) );
-    if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );
+    return popupmenu;
 }
 
 

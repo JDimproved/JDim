@@ -16,18 +16,19 @@ SelectListView::SelectListView( const std::string& url, const std::string& arg1,
 
 
 //
-// ポップアップメニュー
+// ポップアップメニュー取得
 //
-void SelectListView::show_popupmenu( const Gtk::TreePath& path )
+// SKELETON::View::show_popupmenu() を参照すること
+//
+Gtk::Menu* SelectListView::get_popupmenu( const std::string& url )
 {
     Gtk::Menu* popupmenu;
-
-    if( path.empty() ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_space" ) );
+    if( url.empty() ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_space" ) );
     else{
         std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
         if( list_it.size() == 1 ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_select" ) );
         else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_mul" ) );
     }
 
-    if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );
+    return popupmenu;
 }
