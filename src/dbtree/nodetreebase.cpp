@@ -1441,36 +1441,93 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 //
 // 戻り値 : リンクが現れれば true
 //
+
+enum
+{
+    LINKTYPE_NONE,
+
+    LINKTYPE_HTTP,
+    LINKTYPE_FTP,
+    LINKTYPE_TTP,
+    LINKTYPE_TP
+};
+
 bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* str_link, int lng_link )
 {
-    // http(s)://, ttp(s)://, tp(s):// のチェック
-    int create_link = 0;
+    // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
+    int linktype = LINKTYPE_NONE;
+
+    // http://, https://
     if( ( *( str_in ) == 'h' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 't' && *( str_in + 3 ) == 'p' ) &&
         ( ( *( str_in + 4 ) == ':' && *( str_in + 5 ) == '/' && *( str_in + 6 ) == '/' )
           || ( *( str_in + 4 ) == 's' && *( str_in + 5 ) == ':' && *( str_in + 6 ) == '/' && *( str_in + 7 ) == '/' ) ) ){
-        create_link = 1;
+        linktype = LINKTYPE_HTTP;
     }
+    // ftp://
+    else if( *( str_in ) == 'f' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p' && 
+             *( str_in + 3 ) == ':' && *( str_in + 4 ) == '/' && *( str_in + 5 ) == '/' ){
+        linktype = LINKTYPE_FTP;
+    }
+    // ttp://
     else if( ( *( str_in ) == 't' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p'  ) && 
              ( ( *( str_in + 3 ) == ':' && *( str_in + 4 ) == '/' && *( str_in + 5 ) == '/' )
                || ( *( str_in + 3 ) == 's' && *( str_in + 4 ) == ':' && *( str_in + 5 ) == '/' && *( str_in + 6 ) == '/' ) ) ){
-        create_link = 2;
+        linktype = LINKTYPE_TTP;
     }
+    // tp://
     else if( ( *( str_in ) == 't' && *( str_in + 1 ) == 'p'  ) &&
              ( ( *( str_in + 2 ) == ':' && *( str_in + 3 ) == '/' && *( str_in + 4 ) == '/' )
                || ( *( str_in + 2 ) == 's' && *( str_in + 3 ) == ':' && *( str_in + 4 ) == '/' && *( str_in + 5 ) == '/' ) ) ){
-        create_link = 3;
+        linktype = LINKTYPE_TP;
     }
     
-    if( !create_link ) return false;
+    if( linktype == LINKTYPE_NONE ) return false;
 
+    // リンクの長さを取得
     n_in = 0;
-    while( n_in < lng_in
-           && *( str_in + n_in ) != '<'
-           && *( str_in + n_in ) != ' '
-           && *( str_in + n_in ) != '\"'
-           && !( *( str_in + n_in ) == '&' && *( str_in + n_in +1 ) == 'q' && *( str_in + n_in +2 ) == 'u'
-                 && *( str_in + n_in +3 ) == 'o' && *( str_in + n_in +4 ) == 't' && *( str_in + n_in +5 ) == ';' ) // "
-           && *( str_in + n_in ) > 0 // 半角文字が続く限り
+    while(
+        // バッファサイズを越えない
+        n_in < lng_in
+
+        // < ではない
+        && !( *( str_in + n_in ) == '&' && *( str_in + n_in +1 ) == 'l' && *( str_in + n_in +2 ) == 't'
+              && *( str_in + n_in +3) == ';' ) 
+
+        // > ではない
+        && !( *( str_in + n_in ) == '&' && *( str_in + n_in +1 ) == 'g' && *( str_in + n_in +2 ) == 't'
+              && *( str_in + n_in +3 ) == ';' ) 
+
+        // " ではない
+        && !( *( str_in + n_in ) == '&' && *( str_in + n_in +1 ) == 'q' && *( str_in + n_in +2 ) == 'u'
+              && *( str_in + n_in +3 ) == 'o' && *( str_in + n_in +4 ) == 't' && *( str_in + n_in +5 ) == ';' ) 
+
+        // [-a-zA-Z0-9!#$%&'()~=@;+:*,./?_] が続く限りwhileで回す
+        && (
+            ( *( str_in + n_in ) >= '0' && *( str_in + n_in ) <= '9' )
+            || ( *( str_in + n_in ) >= 'a' && *( str_in + n_in ) <= 'z' )
+            || ( *( str_in + n_in ) >= 'A' && *( str_in + n_in ) <= 'Z' )
+            || *( str_in + n_in ) == '!'
+            || *( str_in + n_in ) == '#'
+            || *( str_in + n_in ) == '$'
+            || *( str_in + n_in ) == '%'
+            || *( str_in + n_in ) == '&'
+            || *( str_in + n_in ) == '\''
+            || *( str_in + n_in ) == '('
+            || *( str_in + n_in ) == ')'
+            || *( str_in + n_in ) == '~'
+            || *( str_in + n_in ) == '-'
+            || *( str_in + n_in ) == '='
+            || *( str_in + n_in ) == '@'
+            || *( str_in + n_in ) == ';'
+            || *( str_in + n_in ) == '+'
+            || *( str_in + n_in ) == ':'
+            || *( str_in + n_in ) == '*'
+            || *( str_in + n_in ) == ','
+            || *( str_in + n_in ) == '.'
+            || *( str_in + n_in ) == '/'
+            || *( str_in + n_in ) == '?'
+            || *( str_in + n_in ) == '_'
+            )
         ) ++n_in;
 
     // 最後に ()が来たら除く
@@ -1478,13 +1535,15 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
         || *( str_in + n_in -1 ) == ')' ) --n_in;
 
     int offset = 0;
-    if( create_link >= 2 ){ // ttp:// の場合
+    if( linktype == LINKTYPE_TTP || linktype == LINKTYPE_TP ){ // ttp://, tp:// の場合、リンクの先頭にhを補間
+
         str_link[ 0 ] = 'h';
         offset = 1;
-    }
-    if( create_link >= 3 ){ // tp:// の場合
-        str_link[ 1 ] = 't';
-        offset = 2;
+
+        if( linktype == LINKTYPE_TP ){ // tp:// の場合、さらにリンク先頭にtを補間
+            str_link[ 1 ] = 't';
+            offset = 2;
+        }
     }
 
     if( n_in + offset > lng_link ) return false;

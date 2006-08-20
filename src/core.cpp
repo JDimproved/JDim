@@ -1451,8 +1451,14 @@ void Core::exec_command()
     // タイプによって判定する場合
     else if( command.command  == "open_url" ){
 
+        // プロトコルが指定されていなかったら"http://"を仮定する
         command.url = MISC::remove_space( command.url );
-        if( command.url.find( "http://" ) != 0 && command.url.find( "https://" ) != 0 ) command.url = "http://" + command.url;
+        if( command.url.find( "http://" ) != 0
+            && command.url.find( "https://" ) != 0
+            && command.url.find( "ftp://" ) != 0 ){
+
+            command.url = "http://" + command.url;
+        }
 
         int num_from, num_to;
         std::string url_dat = DBTREE::url_dat( command.url, num_from, num_to );
