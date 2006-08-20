@@ -13,17 +13,20 @@ namespace CORE
 {
     class HistorySubMenu;
 
-    class HistoryMenu : public Gtk::MenuItem
+    class HistoryMenuBase : public Gtk::MenuItem
     {
         CORE::HistorySubMenu* m_submenu;
-        CORE::HistorySubMenu* m_submenu_board;
 
       public:
 
-        HistoryMenu();
-        ~HistoryMenu();
+        HistoryMenuBase( const std::string& label );
+        virtual ~HistoryMenuBase();
 
         void append( const std::string& url, const std::string& name, int type );
+
+      protected:
+
+        void setup( CORE::HistorySubMenu* submenu );
 
       private:
 
@@ -33,6 +36,24 @@ namespace CORE
         // 履歴クリア
         void slot_clear();
     };
+
+
+
+    // スレ履歴
+    class HistoryMenuThread : public CORE::HistoryMenuBase
+    {
+      public:
+        HistoryMenuThread();
+    };
+
+
+    // 板履歴
+    class HistoryMenuBoard : public CORE::HistoryMenuBase
+    {
+      public:
+        HistoryMenuBoard();
+    };
+
 }
 
 #endif

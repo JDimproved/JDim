@@ -309,9 +309,13 @@ void Core::run( bool init )
     Gtk::MenuBar* menubar = dynamic_cast< Gtk::MenuBar* >( m_ui_manager->get_widget("/menu_bar") );
     assert( menubar );
 
-    // 履歴メニュー追加
-    m_histmenu = Gtk::manage( new HistoryMenu() );
-    menubar->items().insert( --(--( menubar->items().end() )), *m_histmenu );
+    // 板履歴メニュー追加
+    m_histmenu_board = Gtk::manage( new HistoryMenuBoard() );
+    menubar->items().insert( --(--( menubar->items().end() )), *m_histmenu_board );
+
+    // スレ履歴メニュー追加
+    m_histmenu_thread = Gtk::manage( new HistoryMenuThread() );
+    menubar->items().insert( --(--( menubar->items().end() )), *m_histmenu_thread );
 
 
     // 初回起動時の設定
@@ -1821,11 +1825,11 @@ void Core::open_by_browser( const std::string& url )
 // history セット
 void Core::set_history_article( const std::string& url )
 {
-    m_histmenu->append( url, DBTREE::article_subject( url ), TYPE_THREAD );
+    if( m_histmenu_thread ) m_histmenu_thread->append( url, DBTREE::article_subject( url ), TYPE_THREAD );
 }
 
 
 void Core::set_history_board( const std::string& url )
 {
-    m_histmenu->append( url, DBTREE::board_name( url ), TYPE_BOARD );
+    if( m_histmenu_board ) m_histmenu_board->append( url, DBTREE::board_name( url ), TYPE_BOARD );
 }

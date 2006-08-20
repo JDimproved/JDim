@@ -64,7 +64,8 @@ enum
 namespace CORE
 {
     class DND_Manager;
-    class HistoryMenu;
+    class HistoryMenuThread;
+    class HistoryMenuBoard;
 
     class Core
     {
@@ -93,7 +94,8 @@ namespace CORE
 
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
-        HistoryMenu* m_histmenu;
+        HistoryMenuThread* m_histmenu_thread;
+        HistoryMenuBoard* m_histmenu_board;
 
         // フォーカスイン、アウトイベントの時に使う変数
         /// Core::slot_focus_in_event, Core::slot_focus_out_event 参照
