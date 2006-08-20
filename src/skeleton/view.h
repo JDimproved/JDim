@@ -34,10 +34,6 @@ namespace SKELETON
         int m_width_client;
         int m_height_client;
 
-        // タブに表示する文字列
-        // m_str_label にラベルの文字列を入れた後に Adminに set_tablabel コマンドを送ると表示される
-        std::string m_str_label;
-
         // 入力コントローラ
         CONTROL::Control m_control;
 

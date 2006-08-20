@@ -19,16 +19,26 @@ namespace SKELETON
 
       public:
 
-        TabLabel(){
-            pack_start( m_label );
-            show_all_children();
-        }
+        TabLabel();
 
-        Gtk::Label& get_label() { return m_label; }
+        // タブの幅(ピクセル)
+        const int get_tabwidth();
 
-        void set_fulltext( const std::string& label ){ m_fulltext = label; }
+        // カットしていない全体の文字列
         const std::string& get_fulltext() const { return m_fulltext; }
-        void set_text( const std::string& label ){ m_label.set_text( label ); }
+        void set_fulltext( const std::string& label );
+
+        // 実際にラベルに表示している文字列
+        const Glib::ustring get_text() const { return m_label.get_text(); }
+
+        // 伸縮
+        bool dec();
+        bool inc();
+
+      private:
+
+        // タブの文字列の文字数がlngになるようにリサイズする
+        void resize_tab( int lng );
     }; 
 }
 

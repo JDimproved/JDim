@@ -7,6 +7,7 @@ libskeleton_a_SOURCES = \
 	treeview.cpp \
 	view.cpp \
 	dragnote.cpp \
+	tablabel.cpp \
 	entry.cpp \
 	login.cpp \
 	hpaned.cpp

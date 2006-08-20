@@ -65,7 +65,8 @@ namespace SKELETON
         // マウスの下にあるタブの番号
         int get_page_under_mouse();
 
-        void adjust_tabwidth( bool force );
+        // タブ幅調整
+        void adjust_tabwidth();
 
       protected:
 

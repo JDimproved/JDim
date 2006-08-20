@@ -10,19 +10,6 @@
 
 using namespace SKELETON;
 
-// タブに貼っているラベルのサイズを取得
-#define GET_LABELWIDTH(tab,mrg) tab->get_label().get_layout()->get_pixel_ink_extents().get_width()+mrg
-
-
-// タブのラベルのリサイズ
-#define RESIZE_TAB(tab,lng) \
-do{ \
-Glib::ustring ulabel( tab->get_fulltext() ); \
-ulabel.resize( lng ); \
-tab->get_label().set_text( ulabel ); \
-} while( false )
-
-
 
 DragableNoteBook::DragableNoteBook()
     : Gtk::Notebook()
@@ -90,18 +77,15 @@ bool DragableNoteBook::on_leave_notify_event( GdkEventCrossing* event )
 
 
 //
-// タブの幅調整
+// タブ幅調整
 //
-// force = true なら必ず変更
-//
-void DragableNoteBook::adjust_tabwidth( bool force )
+void DragableNoteBook::adjust_tabwidth()
 {
 #ifdef _DEBUG
     std::cout << "DragableNoteBook::adjust_tabwidth\n";
 #endif
 
     const int mrg = 30;
-    const int mrg_tab = 10;
 
     int width_notebook = get_width() - mrg;
     int pages = get_n_pages();
@@ -115,7 +99,7 @@ void DragableNoteBook::adjust_tabwidth( bool force )
         // タブ幅の平均値
         int avg_width_tab = width_notebook / MAX( 3, pages );
 
-        // 縮める
+        // タブ幅が平均値をオーバーしているなら縮める
         for( int i = 0; i < pages; ++i ){
 
             SKELETON::TabLabel* tab = dynamic_cast< SKELETON::TabLabel* >( get_tab_label( *get_nth_page( i ) ) );
@@ -123,18 +107,17 @@ void DragableNoteBook::adjust_tabwidth( bool force )
 
                 for(;;){
 
-                    int width = GET_LABELWIDTH( tab, mrg_tab );
+                    int width = tab->get_tabwidth();
 #ifdef _DEBUG
-                    std::cout << "s " << i << " " << width << " / " << avg_width_tab << " " << tab->get_label().get_text() << std::endl;
+                    std::cout << "s " << i << " " << width << " / " << avg_width_tab << " " << tab->get_text() << std::endl;
 #endif
-                    int lng = tab->get_label().get_text().length() -1;
-                    if( width < avg_width_tab || lng < 0 ) break;
-                    RESIZE_TAB( tab, lng );
+                    if( width < avg_width_tab ) break;
+                    if( ! tab->inc() ) break;
                 }
             }
         }
 
-        // 伸ばす
+        // タブ幅が平均値より短ければ伸ばす
         int width_total = 0;
         for( int i = 0; i < pages; ++i ){
 
@@ -143,21 +126,20 @@ void DragableNoteBook::adjust_tabwidth( bool force )
 
                 for(;;){
 
-                    if( tab->get_label().get_text() == tab->get_fulltext() ) break;
-                    int lng = tab->get_label().get_text().length() +1;
-                    RESIZE_TAB( tab, lng );
+                    if( ! tab->dec() ) break;
 
-                    // 越えたらひとつ戻してbreak;
-                    int width = GET_LABELWIDTH( tab, mrg_tab );
+                    int width = tab->get_tabwidth();
 #ifdef _DEBUG
-                    std::cout << "w " << i << " " << width << " / " << avg_width_tab << " " << tab->get_label().get_text() << std::endl;
+                    std::cout << "w " << i << " " << width << " / " << avg_width_tab << " " << tab->get_text() << std::endl;
 #endif
+                    // 最大値を越えたらひとつ戻してbreak;
                     if( width_total + width > avg_width_tab * ( i + 1 ) ){
-                        RESIZE_TAB( tab, --lng );
+                        tab->inc();
                         break;
                     }
                 }
-                width_total += GET_LABELWIDTH( tab, mrg_tab );
+
+                width_total += tab->get_tabwidth();
             }
         }
     }

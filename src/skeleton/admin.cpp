@@ -746,16 +746,8 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label, 
 
         view->get_tab_label().set_fulltext( str_label );
 
-        //  adjust_tabwidth() でタブをリサイズする
-        if( !fix ){
-
-            view->get_tab_label().set_text( "" );  
-
-            // タブ幅再設定
-            set_command( "adjust_tabwidth", "", "true" );
-        }
-        // 固定長
-        else view->get_tab_label().set_text( str_label );  
+        // タブ幅再設定指定
+        if( !fix ) set_command( "adjust_tabwidth", "", "true" );
     }
 }
 
@@ -783,8 +775,14 @@ void Admin::adjust_tabwidth( bool force )
 
     int width_notebook = m_notebook.get_width() - mrg;
 
-    // 前回の呼び出しと幅が同じ時は一旦returnして
-    // クロック入力時に改めて adjust_tabwidth() を呼び出す
+    // 前回の呼び出し時とnotebookの幅が同じ時はまだraalize/resizeしていないということなので
+    // 一旦returnしてクロック入力時に改めて adjust_tabwidth() を呼び出す
+    //
+    // force == true なら必ず変更する
+    //
+
+    if( force && m_adjust_reserve ) return;
+
     if( !force && width_notebook == m_pre_width ){
         m_adjust_reserve = true;
         return;
@@ -794,14 +792,14 @@ void Admin::adjust_tabwidth( bool force )
     std::cout << "Admin::adjust_tabwidth\n";
 #endif
 
-    if( width_notebook != m_pre_width ) m_pre_width = width_notebook;
-    if( !m_adjust_reserve ) m_adjust_reserve = false;
+    m_pre_width = width_notebook;
+    m_adjust_reserve = false;
 
 #ifdef _DEBUG
     std::cout << "width_notebook = " << width_notebook << std::endl;
 #endif
 
-    m_notebook.adjust_tabwidth( force );
+    m_notebook.adjust_tabwidth();
 }
 
 
