@@ -609,9 +609,9 @@ std::list< std::string > CACHE::get_filelist( const std::string& dir )
 //
 // dir ディレクトリ内のレギュラーファイルの合計サイズを取得
 //
-size_t CACHE::get_dirsize( const std::string& dir )
+int64_t CACHE::get_dirsize( const std::string& dir )
 {
-    size_t total_size = 0;
+    int64_t total_size = 0;
 
 #ifdef _DEBUG
     std::cout << "CACHE::get_dirsize " << dir << std::endl;
@@ -627,6 +627,10 @@ size_t CACHE::get_dirsize( const std::string& dir )
     }
 
     closedir( dirp );
+
+#ifdef _DEBUG
+    std::cout << "size = " << total_size << std::endl;
+#endif
 
     return total_size;
 }
