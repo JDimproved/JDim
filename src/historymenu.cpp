@@ -32,12 +32,17 @@ void HistoryMenuBase::setup( CORE::HistorySubMenu* submenu )
 
     // セパレータ
     Gtk::MenuItem* item = Gtk::manage( new Gtk::SeparatorMenuItem() );
-    m_submenu->append( *item );
+    m_submenu->prepend( *item );
 
     // クリア
+    Gtk::Menu* menu = Gtk::manage( new Gtk::Menu() );
+    item = Gtk::manage( new Gtk::MenuItem( "クリアする" ) );
+    menu->append( *item );
+    item->signal_activate().connect( sigc::mem_fun( *this, &HistoryMenuBase::slot_clear ) ); 
+
     item = Gtk::manage( new Gtk::MenuItem( "履歴クリア" ) );
-    m_submenu->append( *item );
-    item->signal_activate().connect( sigc::mem_fun( *this, &HistoryMenuBase::slot_clear ) );
+    item->set_submenu( *menu );
+    m_submenu->prepend( *item );
 }
 
 
@@ -61,9 +66,6 @@ void HistoryMenuBase::slot_activate_menu()
 // 履歴のクリア
 void HistoryMenuBase::slot_clear()
 {
-    Gtk::MessageDialog mdiag( "履歴を全てクリアしますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-    if( mdiag.run() != Gtk::RESPONSE_OK ) return;
-    
     if( m_submenu ) m_submenu->clear();
 }
 
