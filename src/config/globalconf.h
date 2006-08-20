@@ -153,6 +153,9 @@ namespace CONFIG
     const double get_adjust_underline_pos();
     const double get_adjust_line_space();
 
+    // スレ表示でリンクの下に下線を引く
+    const bool get_draw_underline();
+
     // boardviewでのスレの全体あぼーん
     std::list< std::string >& get_list_abone_word_thread(); // ワード
     std::list< std::string >& get_list_abone_regex_thread(); // 正規表現

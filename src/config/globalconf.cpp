@@ -73,6 +73,7 @@ int instruct_popup;
 double adjust_underline_pos;
 double adjust_line_space;
 
+bool draw_underline;
 
 std::list< std::string > list_abone_word_thread;
 std::list< std::string > list_abone_regex_thread;
@@ -226,6 +227,9 @@ const bool CONFIG::init_config()
     adjust_underline_pos = cf.get_option( "adjust_underline_pos", 1.0 );
     adjust_line_space = cf.get_option( "adjust_line_space", 1.0 );
 
+    // リンク下線を表示
+    draw_underline = cf.get_option( "draw_underline", true );
+
     std::list< std::string > list_tmp;
     std::list< std::string >::iterator it_tmp;
     std::string str_tmp;
@@ -341,6 +345,8 @@ void CONFIG::save_conf()
 
     cf.update( "adjust_underline_pos", adjust_underline_pos );
     cf.update( "adjust_line_space", adjust_line_space );
+
+    cf.update( "draw_underline", draw_underline );
 
     // スレあぼーん情報
     std::string str_abone_word_thread = MISC::listtostr( list_abone_word_thread );
@@ -468,7 +474,7 @@ const int CONFIG::get_instruct_popup(){
 const double CONFIG::get_adjust_underline_pos(){ return adjust_underline_pos; }
 const double CONFIG::get_adjust_line_space(){ return adjust_line_space; }
 
-
+const bool CONFIG::get_draw_underline(){ return draw_underline; }
 
 std::list< std::string >& CONFIG::get_list_abone_word_thread(){ return list_abone_word_thread; }
 std::list< std::string >& CONFIG::get_list_abone_regex_thread(){ return list_abone_regex_thread; }

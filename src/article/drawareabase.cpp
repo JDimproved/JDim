@@ -1159,7 +1159,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
             }
             
             // リンクの時は下線を引く
-            if( node->link ){
+            if( node->link && CONFIG::get_draw_underline() ){
 
                 m_gc->set_foreground( m_color[ color ] );
                 m_backscreen->draw_line( m_gc, x, y + m_underline_pos, x + width_line, y + m_underline_pos );
