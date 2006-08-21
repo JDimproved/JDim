@@ -6,8 +6,6 @@
 #include <gtkmm.h>
 #include <string>
 
-#include "tablabel.h"
-
 #include "control.h"
 
 namespace SKELETON
@@ -26,9 +24,6 @@ namespace SKELETON
         SIG_RESIZE_POPUP m_sig_resize_popup;
 
         std::string m_url;
-
-        // notebookのタブに張り付けるラベル
-        SKELETON::TabLabel  m_label;
 
         // クライアント領域の幅、高さ
         int m_width_client;
@@ -124,9 +119,6 @@ namespace SKELETON
         virtual const int height_client(){ return m_height_client; }
         void set_width_client( int val ){ m_width_client = val; }
         void set_height_client( int val ){ m_height_client = val; }
-
-        // notebookのタブに張り付けるラベル
-        SKELETON::TabLabel& get_tab_label() { return m_label; }
 
         // shutdown( SIGHUP )用
         virtual void shutdown(){}

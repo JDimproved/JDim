@@ -5,6 +5,7 @@
 
 #include "admin.h"
 #include "view.h"
+#include "tablabel.h"
 
 #include "dbtree/interface.h"
 
@@ -107,9 +108,14 @@ Admin::~Admin()
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
+
             SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( 0 ) );
+            SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( 0 );
+
             m_notebook.remove_page( 0 );
+
             if( view ) delete view;
+            if( tablabel ) delete tablabel;
         }
     }
     m_list_command.clear();
@@ -397,6 +403,9 @@ void Admin::open_view( const COMMAND_ARGS& command )
     view = create_view( command );
     if( !view ) return;
 
+    // タブ
+    SKELETON::TabLabel* tablabel = new SKELETON::TabLabel( command.url );
+
     int page = m_notebook.get_current_page();
     bool open_tab = (  page == -1 || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left"
                        || command.arg3 == "auto" // オートモードの時もタブで開く
@@ -408,9 +417,15 @@ void Admin::open_view( const COMMAND_ARGS& command )
 #ifdef _DEBUG
         std::cout << "append page\n";
 #endif
-        if( page != -1 && command.arg1 == "right" ) m_notebook.insert_page( *view , view->get_tab_label(), page+1 );
-        else if( page != -1 && command.arg1 == "left" ) m_notebook.insert_page( *view , view->get_tab_label(), page );
-        else m_notebook.append_page( *view , view->get_tab_label() );
+
+        // 現在のページの右に表示
+        if( page != -1 && command.arg1 == "right" ) m_notebook.insert_page( *view , *tablabel, page+1 );
+
+        // 現在のページの左に表示
+        else if( page != -1 && command.arg1 == "left" ) m_notebook.insert_page( *view , *tablabel, page );
+
+        // 最後に表示
+        else m_notebook.append_page( *view , *tablabel );
     }
 
     // 開いてるviewを消してその場所に表示
@@ -418,9 +433,13 @@ void Admin::open_view( const COMMAND_ARGS& command )
 #ifdef _DEBUG
         std::cout << "replace page\n";
 #endif
-        m_notebook.insert_page( *view, view->get_tab_label(), page );
+        m_notebook.insert_page( *view, *tablabel, page );
+
+        SKELETON::TabLabel* oldtab = m_notebook.get_tablabel( page + 1 );
         m_notebook.remove_page( page + 1 );
+
         if( current_view ) delete current_view;
+        if( oldtab ) delete oldtab;
     }
 
     switch_admin();
@@ -557,8 +576,13 @@ void Admin::close_view( SKELETON::View* view )
 
     int page = m_notebook.page_num( *view );
     int current_page = m_notebook.get_current_page();
+
+    SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( page );
+
     m_notebook.remove_page( page );
+
     delete view;
+    if( tablabel ) delete tablabel;
 
 #ifdef _DEBUG
     std::cout << "Admin::close_view : delete page = " << page << std::endl;
@@ -741,10 +765,10 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label, 
     std::cout << "Admin::set_tablabel : " << url << std::endl;
 #endif
 
-    SKELETON::View* view = get_view( url );
-    if( view ){
+    SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( url );
+    if( tablabel ){
 
-        view->get_tab_label().set_fulltext( str_label );
+        tablabel->set_fulltext( str_label );
 
         // タブ幅再設定指定
         if( !fix ) set_command( "adjust_tabwidth", "", "true" );

@@ -40,6 +40,24 @@ void DragableNoteBook::focus_out()
 
 
 
+// タブ取得
+SKELETON::TabLabel* DragableNoteBook::get_tablabel( int page )
+{
+    return dynamic_cast< SKELETON::TabLabel* >( get_tab_label( *get_nth_page( page ) ) );
+}
+
+
+SKELETON::TabLabel* DragableNoteBook::get_tablabel( const std::string& url )
+{
+    for( int i = 0; i < get_n_pages() ; ++i ){
+        SKELETON::TabLabel* tablabel = get_tablabel( i );
+        if( tablabel && tablabel->get_url() == url ) return tablabel;
+    }
+
+    return NULL;
+}
+
+
 // マウスを動かした
 bool DragableNoteBook::on_motion_notify_event( GdkEventMotion* event )
 {
@@ -51,8 +69,8 @@ bool DragableNoteBook::on_motion_notify_event( GdkEventMotion* event )
 #endif
 
     if( page >= 0 && page < get_n_pages() ){
-            tab = dynamic_cast< SKELETON::TabLabel* >( get_tab_label( *get_nth_page( page ) ) );
-            if( tab ) m_tooltip.set_text( tab->get_fulltext() );
+        tab = get_tablabel( page );
+        if( tab ) m_tooltip.set_text( tab->get_fulltext() );
     }
     else m_tooltip.hide_tooltip();
 
@@ -102,7 +120,7 @@ void DragableNoteBook::adjust_tabwidth()
         // タブ幅が平均値をオーバーしているなら縮める
         for( int i = 0; i < pages; ++i ){
 
-            SKELETON::TabLabel* tab = dynamic_cast< SKELETON::TabLabel* >( get_tab_label( *get_nth_page( i ) ) );
+            SKELETON::TabLabel* tab = get_tablabel( i );
             if( tab ){
 
                 for(;;){
@@ -121,7 +139,7 @@ void DragableNoteBook::adjust_tabwidth()
         int width_total = 0;
         for( int i = 0; i < pages; ++i ){
 
-            SKELETON::TabLabel* tab = dynamic_cast< SKELETON::TabLabel* >( get_tab_label( *get_nth_page( i ) ) );
+            SKELETON::TabLabel* tab = get_tablabel( i );
             if( tab ){
 
                 for(;;){
@@ -324,7 +342,7 @@ int DragableNoteBook::get_page_under_mouse()
 
     for( i = 0; i < get_n_pages() ; ++i ){
 
-        SKELETON::TabLabel* tab = dynamic_cast< SKELETON::TabLabel* >( get_tab_label( *get_nth_page( i ) ) );
+        SKELETON::TabLabel* tab = get_tablabel( i );
         if( !tab ){
 #ifdef _DEBUG
             std::cout << "DragableNoteBook::get_page_under_mouse: tab = NULL\n";

@@ -14,6 +14,8 @@
 
 namespace SKELETON
 {
+    class TabLabel;
+
     typedef sigc::signal< void, int > SIG_TAB_CLOSE;
     typedef sigc::signal< void, int > SIG_TAB_RELOAD;
     typedef sigc::signal< void, int, int , int > SIG_TAB_MENU;
@@ -59,6 +61,10 @@ namespace SKELETON
 
         void clock_in();
         void focus_out();
+
+        // タブ取得
+        TabLabel* get_tablabel( int page );
+        TabLabel* get_tablabel( const std::string& url );
 
         void set_dragable( bool dragable );
 

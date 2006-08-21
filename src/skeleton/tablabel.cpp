@@ -1,16 +1,25 @@
 // ライセンス: 最新のGPL
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "tablabel.h"
 
 using namespace SKELETON;
 
-TabLabel::TabLabel()
+TabLabel::TabLabel( const std::string& url )
+    : m_url( url )
 {
     pack_start( m_label );
     show_all_children();
+}
+
+
+TabLabel::~TabLabel()
+{
+#ifdef _DEBUG
+    std::cout << "TabLabel::~TabLabel " <<  m_fulltext << std::endl;
+#endif
 }
 
 

@@ -12,6 +12,8 @@ namespace SKELETON
 {
     class TabLabel : public Gtk::HBox
     {
+        std::string m_url;
+
         Gtk::Label m_label;
 
         // ラベルに表示する文字列の全体
@@ -19,7 +21,10 @@ namespace SKELETON
 
       public:
 
-        TabLabel();
+        TabLabel( const std::string& url );
+        ~TabLabel();
+
+        const std::string& get_url(){ return m_url; }
 
         // タブの幅(ピクセル)
         const int get_tabwidth();
