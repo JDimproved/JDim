@@ -1,16 +1,23 @@
 // ライセンス: 最新のGPL
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "tablabel.h"
 
+#include "icons/iconmanager.h"
+
 using namespace SKELETON;
 
 TabLabel::TabLabel( const std::string& url )
-    : m_url( url )
+    : m_url( url ), m_stat_icon( TABICON_NONE ), m_image( NULL )
 {
-    pack_start( m_label );
+#ifdef _DEBUG
+    std::cout << "TabLabel::TabLabel " <<  m_url << std::endl;
+#endif
+
+    pack_end( m_label );
+
     show_all_children();
 }
 
@@ -20,6 +27,8 @@ TabLabel::~TabLabel()
 #ifdef _DEBUG
     std::cout << "TabLabel::~TabLabel " <<  m_fulltext << std::endl;
 #endif
+
+    if( m_image ) delete m_image;
 }
 
 
@@ -28,6 +37,35 @@ void TabLabel::set_fulltext( const std::string& label )
     m_fulltext = label;
     m_label.set_text( label );
 }
+
+
+// アイコン状態のセット
+void TabLabel::set_icon_stat( int status )
+{
+    if( m_stat_icon == status ) return;
+
+    if( !m_image ){
+        m_image = new Gtk::Image();
+        pack_end( *m_image );
+        show_all_children();
+    }
+
+#ifdef _DEBUG
+    std::cout << "TabLabel::set_icon_stat stat = " << status << std::endl;
+#endif
+
+    m_stat_icon = status;
+
+    int id = 0;
+    switch( status ){
+        case TABICON_NORMAL: id = ICON::ICON_THREAD16; break;
+        case TABICON_LOADING: id = ICON::ICON_IMAGE16; break;
+        case TABICON_UPDATED: id = ICON::ICON_ADD16; break;
+    }
+
+    m_image->set( ICON::get_icon( id ) );
+}
+
 
 
 const int TabLabel::get_tabwidth()

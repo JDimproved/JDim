@@ -693,6 +693,9 @@ void BoardView::show_view()
         return;
     }
 
+    // タブにアイコンを表示
+    BOARD::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
+
     // タブに名前をセット
     BOARD::get_admin()->set_command( "set_tablabel", get_url(), DBTREE::board_name( get_url() ) );
 
@@ -799,6 +802,9 @@ void BoardView::update_view()
     ss_tmp << DBTREE::board_str_code( get_url() ) << " [ 全 " << ( id -1 ) << " ] ";
     set_status( ss_tmp.str() );
     CORE::core_set_command( "set_status","", get_status() );
+
+    // タブのアイコン状態を更新
+    BOARD::get_admin()->set_command( "set_tabicon", get_url(), "normal" );
 
     focus_view();
 }

@@ -325,6 +325,20 @@ void Admin::exec_command()
         adjust_tabwidth( ( command.arg1 == "true" ) );
     }
 
+    // タブのアイコンをセット
+    else if( command.command  == "set_tabicon" ){
+
+        SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( command.url );
+        if( tablabel ){
+
+            int id = TABICON_NORMAL;
+            if( command.arg1 == "loading" ) id = TABICON_LOADING;
+            if( command.arg1 == "updated" ) id = TABICON_UPDATED;
+
+            tablabel->set_icon_stat( id );
+        }
+    }
+
     // オートリロード設定
     else if( command.command  == "set_autoreload" ){
         int mode = AUTORELOAD_ON;
@@ -765,15 +779,20 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label, 
     std::cout << "Admin::set_tablabel : " << url << std::endl;
 #endif
 
-    SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( url );
-    if( tablabel ){
+    SKELETON::View* view = get_view( url );
+    if( view ){
 
-        tablabel->set_fulltext( str_label );
+        SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( m_notebook.page_num( *view ) );
+        if( tablabel ){
 
-        // タブ幅再設定指定
-        if( !fix ) set_command( "adjust_tabwidth", "", "true" );
+            tablabel->set_fulltext( str_label );
+
+            // タブ幅再設定指定
+            if( !fix ) set_command( "adjust_tabwidth", "", "true" );
+        }
     }
 }
+
 
 
 

@@ -81,6 +81,9 @@ void ArticleViewMain::reload()
     get_article()->reset_status();
     show_view();
     CORE::core_set_command( "set_history_article", url_article() );
+
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
 }
 
 
@@ -101,6 +104,9 @@ void ArticleViewMain::show_view()
         ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
         return;
     }
+
+    // タブにアイコンを表示
+    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "normal" );
 
     // キャッシュに含まれているレスを表示
     int from_num = drawarea()->max_number() + 1;
@@ -123,6 +129,9 @@ void ArticleViewMain::show_view()
     if( get_article()->is_loading() ){
         set_status( "loading..." );
         ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
+
+        // タブのアイコン状態を更新
+        ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
     }
 }
 
@@ -171,6 +180,9 @@ void ArticleViewMain::update_finish()
     // タブのラベルセット
     std::string str_label = str_stat + DBTREE::article_subject( url_article() );
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label ); 
+
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "normal" );
 
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::article_str_code( url_article() )
