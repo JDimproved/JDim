@@ -70,11 +70,12 @@ void TabLabel::set_icon_stat( int status )
 
 const int TabLabel::get_tabwidth()
 {
-    const int mrg = 10;    
+    const int iconsize = 16;
+    const int mrg = 12;    
 
     int lng_label = m_label.get_layout()->get_pixel_ink_extents().get_width();
 
-    return lng_label +mrg;
+    return iconsize + lng_label + mrg;
 }
 
 
