@@ -42,6 +42,7 @@ Root::Root()
     , m_rawdata ( 0 )
     , m_lng_rawdata( 0 )
     , m_board_null( 0 )
+    , m_get_board( NULL )
 {
     m_xml_bbsmenu.clear();
     clear();
@@ -98,6 +99,11 @@ BoardBase* Root::get_board( const std::string& url, int count )
     std::cout << "Root::get_board : count = " << count << " url = " << url << std::endl;
 #endif
 
+    // キャッシュ
+    if( url == m_get_board_url && m_get_board ) return m_get_board;
+    m_get_board_url = url;
+    m_get_board = NULL;
+
     if( count > 20 ){
         MISC::ERRMSG( "Root::get_board: could not find board" );
         return m_board_null;
@@ -113,6 +119,7 @@ BoardBase* Root::get_board( const std::string& url, int count )
         BoardBase* board = *( it );
         if( board->equal( url ) ){
             board->read_info(); // 板情報の取得( 詳しくはBoardBase::read_info()をみること )
+            m_get_board = board;
             return board;
         }
     }
@@ -160,6 +167,7 @@ BoardBase* Root::get_board( const std::string& url, int count )
                 save_movetable();
 
                 board->read_info();
+                m_get_board = board;
                 return board;
             }
         }

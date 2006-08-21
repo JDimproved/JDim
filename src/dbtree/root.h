@@ -55,7 +55,12 @@ namespace DBTREE
 
         // NULL board クラス
         BoardBase* m_board_null;
-        
+
+        // get_board()のキャッシュ
+        // get_article_fromURL()のキャッシュ
+        std::string m_get_board_url;
+        BoardBase* m_get_board;
+
       public:
 
         Root();
