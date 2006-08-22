@@ -1354,23 +1354,23 @@ void BBSListViewBase::setup_row( Gtk::TreeModel::Row& row, Glib::ustring url, Gl
     switch( type ){
 
         case TYPE_DIR:
-            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_DIR16 );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::DIR );
             break;
 
         case TYPE_BOARD:
-            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_BOARD16 );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::BOARD );
             break;
 
         case TYPE_THREAD:
-            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_THREAD16 );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::THREAD );
             break;
 
         case TYPE_IMAGE:
-            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_IMAGE16 );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::IMAGE );
             break;
 
         case TYPE_LINK:
-            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::ICON_LINK16 );
+            row[ m_columns.m_col_image ] = ICON::get_icon( ICON::LINK );
             break;
     }
 }

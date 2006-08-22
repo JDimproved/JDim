@@ -28,9 +28,9 @@ WinMain::WinMain( bool init )
 
     // アイコンをセット
     std::list< Glib::RefPtr< Gdk::Pixbuf > > list_icons;
-    list_icons.push_back( ICON::get_icon( ICON::ICON_JD16 ) );
-    list_icons.push_back( ICON::get_icon( ICON::ICON_JD32 ) );
-    list_icons.push_back( ICON::get_icon( ICON::ICON_JD48 ) );
+    list_icons.push_back( ICON::get_icon( ICON::JD16 ) );
+    list_icons.push_back( ICON::get_icon( ICON::JD32 ) );
+    list_icons.push_back( ICON::get_icon( ICON::JD48 ) );
     Gtk::Window::set_default_icon_list( list_icons );
     
     // セッション回復

@@ -15,6 +15,7 @@
 
 #include "command.h"
 #include "global.h"
+#include "httpcode.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -106,7 +107,7 @@ void ArticleViewMain::show_view()
     }
 
     // タブにアイコンを表示
-    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "normal" );
+    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "default" );
 
     // キャッシュに含まれているレスを表示
     int from_num = drawarea()->max_number() + 1;
@@ -182,7 +183,9 @@ void ArticleViewMain::update_finish()
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label ); 
 
     // タブのアイコン状態を更新
-    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "normal" );
+    int code = DBTREE::article_code( url_article() );
+    if( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "update" );
+    else ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "default" );
 
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::article_str_code( url_article() )

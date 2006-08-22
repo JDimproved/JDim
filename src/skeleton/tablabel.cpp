@@ -10,7 +10,7 @@
 using namespace SKELETON;
 
 TabLabel::TabLabel( const std::string& url )
-    : m_url( url ), m_stat_icon( TABICON_NONE ), m_image( NULL )
+    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_image( NULL )
 {
 #ifdef _DEBUG
     std::cout << "TabLabel::TabLabel " <<  m_url << std::endl;
@@ -39,10 +39,10 @@ void TabLabel::set_fulltext( const std::string& label )
 }
 
 
-// アイコン状態のセット
-void TabLabel::set_icon_stat( int status )
+// アイコンセット
+void TabLabel::set_id_icon( int id )
 {
-    if( m_stat_icon == status ) return;
+    if( m_id_icon == id ) return;
 
     if( !m_image ){
         m_image = new Gtk::Image();
@@ -51,17 +51,10 @@ void TabLabel::set_icon_stat( int status )
     }
 
 #ifdef _DEBUG
-    std::cout << "TabLabel::set_icon_stat stat = " << status << std::endl;
+    std::cout << "TabLabel::set_icon " <<  m_fulltext << " id = " << id << std::endl;
 #endif
 
-    m_stat_icon = status;
-
-    int id = 0;
-    switch( status ){
-        case TABICON_NORMAL: id = ICON::ICON_THREAD16; break;
-        case TABICON_LOADING: id = ICON::ICON_IMAGE16; break;
-        case TABICON_UPDATED: id = ICON::ICON_ADD16; break;
-    }
+    m_id_icon = id;
 
     m_image->set( ICON::get_icon( id ) );
 }

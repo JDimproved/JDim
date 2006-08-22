@@ -12,6 +12,10 @@
 #include "jdlib/jdregex.h"
 
 #include "skeleton/view.h"
+#include "skeleton/dragnote.h"
+#include "skeleton/tablabel.h"
+
+#include "icons/iconmanager.h"
 
 #include "global.h"
 #include "viewfactory.h"
@@ -193,6 +197,53 @@ void ArticleAdmin::switch_admin()
 {
     CORE::core_set_command( "switch_article" );
 }
+
+
+
+//
+// タブにアイコンをセットする
+//
+void ArticleAdmin::set_tabicon( const std::string& url, const std::string& iconname )
+{
+    SKELETON::View* view = get_view( url );
+    if( view ){
+
+        SKELETON::TabLabel* tablabel = get_notebook().get_tablabel( get_notebook().page_num( *view ) );
+        if( tablabel ){
+
+            int id = ICON::THREAD;
+
+            if( iconname == "default" ){
+
+                // ロード準備中ならアイコンを変更しない
+                if( tablabel->get_id_icon() == ICON::LOADING_STOP ) return;
+
+                id = ICON::THREAD;
+            }
+
+            // タブが切り替わったときにAdmin::slot_switch_page から呼ばれる
+            // update 状態以外の時はアイコンを変更しない
+            if( iconname == "switch_page" ){
+
+                if( tablabel->get_id_icon() != ICON::THREAD_UPDATE ) return;
+
+                id = ICON::THREAD;
+            }
+
+            if( iconname == "loading" ) id = ICON::LOADING;
+            if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
+            if( iconname == "update" ){
+
+                // 違うタブを開いている場合
+                if( view != get_current_view() ) id = ICON::THREAD_UPDATE;
+                else id = ICON::THREAD;
+            }
+
+            tablabel->set_id_icon( id );
+        }
+    }
+}
+
 
 
 // リストで与えられたページをタブで連続して開く

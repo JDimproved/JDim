@@ -14,21 +14,25 @@ namespace ICON
 {
     enum
     {
-        ICON_JD16,
-        ICON_JD32,
-        ICON_JD48,
+        JD16,
+        JD32,
+        JD48,
 
-        ICON_ADD16,
-        ICON_CHECK16,
-        ICON_DOWN16,
+        UPDATE,
+        CHECK,
+        DOWN,
+        LOADING,
+        LOADING_STOP,
 
-        ICON_DIR16,
-        ICON_BOARD16,
-        ICON_THREAD16,
-        ICON_IMAGE16,
-        ICON_LINK16 ,
+        DIR,
+        BOARD,
+        BOARD_UPDATE,
+        THREAD,
+        THREAD_UPDATE,
+        IMAGE,
+        LINK,
 
-        ICON_TRANSPARENT,
+        TRANSPARENT,
 
         NUM_ICONS
     };

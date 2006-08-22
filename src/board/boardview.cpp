@@ -804,7 +804,7 @@ void BoardView::update_view()
     CORE::core_set_command( "set_status","", get_status() );
 
     // タブのアイコン状態を更新
-    BOARD::get_admin()->set_command( "set_tabicon", get_url(), "normal" );
+    BOARD::get_admin()->set_command( "set_tabicon", get_url(), "default" );
 
     focus_view();
 }
@@ -1125,22 +1125,22 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
     int mark_val;
     if( ! art->is_current() ){
         mark_val = COL_MARKVAL_OLD;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::ICON_DOWN16 );
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::DOWN );
     }
     // キャッシュあり、新着あり
     else if( art->get_number_load() && art->get_number() > art->get_number_load() ){
         mark_val = COL_MARKVAL_UPDATED;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::ICON_ADD16 );
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::UPDATE );
     }
     // キャッシュあり、新着無し
     else if( art->get_number_load() ){
         mark_val = COL_MARKVAL_CACHED;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::ICON_CHECK16 );
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::CHECK );
     }
     //キャッシュ無し
     else{
         mark_val = COL_MARKVAL_NORMAL;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::ICON_TRANSPARENT );
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::TRANSPARENT );
     }
     row[ m_columns.m_col_mark_val ] = mark_val;
 

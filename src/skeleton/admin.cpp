@@ -327,23 +327,7 @@ void Admin::exec_command()
 
     // タブのアイコンをセット
     else if( command.command  == "set_tabicon" ){
-
-        SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( command.url );
-        if( tablabel ){
-
-            int id = TABICON_NORMAL;
-            if( command.arg1 == "loading" ) id = TABICON_LOADING;
-            if( command.arg1 == "updated" ) id = TABICON_UPDATED;
-
-            tablabel->set_icon_stat( id );
-        }
-    }
-
-    // オートリロード設定
-    else if( command.command  == "set_autoreload" ){
-        int mode = AUTORELOAD_ON;
-        int sec = 10;
-        set_autoreload_mode( command.url, mode, sec );
+        set_tabicon( command.url, command.arg1 );
     }
 
     // 全てのビューを再描画
@@ -477,7 +461,6 @@ void Admin::switch_view( const std::string& url )
             
         int page = m_notebook.page_num( *view );
         set_current_page( page );
-        focus_view( page );
     }
 }
 
@@ -802,7 +785,13 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label, 
 void Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
 {
     SKELETON::View* view = get_view( url );
-    if( view ) view->set_autoreload_mode( mode, sec );
+    if( view ){
+
+        // タブのアイコンをロード準備にする
+        set_command( "set_tabicon", view->get_url(), "loading_stop" );
+
+        view->set_autoreload_mode( mode, sec );
+    }
 }
 
 
@@ -960,6 +949,15 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
 #ifdef _DEBUG
     std::cout << "Admin::slot_switch_page : " << m_url << " page = " << page << std::endl;
 #endif
+
+    // タブのアイコンを通常に戻す
+    SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( page ) );
+    if( view ){
+#ifdef _DEBUG
+        std::cout << "url = " << view->get_url() << std::endl;
+#endif
+        set_command( "set_tabicon", view->get_url(), "switch_page" );
+    }
 
     focus_view( page );
 }

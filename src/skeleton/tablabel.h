@@ -10,21 +10,10 @@
 
 namespace SKELETON
 {
-
-    // アイコン状態
-    enum
-    {
-        TABICON_NONE,
-
-        TABICON_NORMAL,
-        TABICON_LOADING,
-        TABICON_UPDATED
-    };
-
     class TabLabel : public Gtk::HBox
     {
         std::string m_url;
-        int m_stat_icon;
+        int m_id_icon;
 
         Gtk::Label m_label;
         Gtk::Image* m_image;
@@ -46,8 +35,9 @@ namespace SKELETON
         // 実際にラベルに表示している文字列
         const Glib::ustring get_text() const { return m_label.get_text(); }
 
-        // アイコン状態のセット
-        void set_icon_stat( int status );
+        // アイコンセット
+        void set_id_icon( int id );
+        const int get_id_icon() const { return m_id_icon; }
 
         // タブの幅(ピクセル)
         const int get_tabwidth();
