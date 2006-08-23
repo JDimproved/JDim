@@ -211,6 +211,10 @@ void ArticleAdmin::set_tabicon( const std::string& url, const std::string& iconn
         SKELETON::TabLabel* tablabel = get_notebook().get_tablabel( get_notebook().page_num( *view ) );
         if( tablabel ){
 
+#ifdef _DEBUG
+            std::cout << "ArticleAdmin::set_tabicon url = " << url << " icon = " << iconname << std::endl;
+#endif
+
             int id = ICON::THREAD;
 
             if( iconname == "default" ){

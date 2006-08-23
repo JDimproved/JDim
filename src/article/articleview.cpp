@@ -16,6 +16,7 @@
 #include "command.h"
 #include "global.h"
 #include "httpcode.h"
+#include "session.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -76,15 +77,18 @@ void ArticleViewMain::goto_num( int num )
 //
 void ArticleViewMain::reload()
 {
+    // オフライン
+    if( ! SESSION::is_online() ) return;
+
+    // オートリロードのカウンタを0にする
     View::reset_autoreload_counter();
 
     // DAT落ちしてるとロードしないので状態をリセットしておく
     get_article()->reset_status();
     show_view();
-    CORE::core_set_command( "set_history_article", url_article() );
 
-    // タブのアイコン状態を更新
-    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
+    // スレ履歴更新
+    CORE::core_set_command( "set_history_article", url_article() );
 }
 
 
@@ -106,8 +110,22 @@ void ArticleViewMain::show_view()
         return;
     }
 
-    // タブにアイコンを表示
-    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "default" );
+    // もしarticleクラスがまだキャッシュにあるdatを解析していないときに
+    // drawarea()->append_res()を呼ぶと update_finish() がコールバック
+    // されて2回再描画することになるので、 show_view() の中で update_finish()を
+    // 呼ばないようにする。動作をまとめると次のようになる。
+
+    // オフライン　かつ
+    //   キャッシュを読み込んでいない場合  -> articleでnodetreeが作られた時に update_finish がコールバックされる
+    //   キャッシュを読み込んでいる場合    -> show_viewから直接  update_finish を呼ぶ
+    //
+    // オンライン　かつ
+    //   キャッシュを読み込んでいない場合  -> articleでnodetreeが作られた時に update_finish がコールバックされる
+    // 　　　　　　　　　　　　　　　　　　　　ロード終了時にもupdate_finish がコールバックされる
+    //   キャッシュを読み込んでいる場合    -> show_viewから直接  update_finish を呼ぶ
+    //  　　　　　　　　　　　　　　　　　　　　ロード終了時にもupdate_finish がコールバックされる
+
+    bool call_update_finish = get_article()->is_cache_read();
 
     // キャッシュに含まれているレスを表示
     int from_num = drawarea()->max_number() + 1;
@@ -123,11 +141,16 @@ void ArticleViewMain::show_view()
     // セパレータを最後に移動
     drawarea()->set_separator_new( to_num + 1 );
 
-    update_finish();    
-    
+    // update_finish() を呼んでキャッシュの分を描画
+    if( call_update_finish ) update_finish();    
+
+    // オフラインならダウンロードを開始しない
+    if( ! SESSION::is_online() ) return;
+
     // 差分 download 開始
     get_article()->download_dat();
     if( get_article()->is_loading() ){
+
         set_status( "loading..." );
         ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
 
@@ -163,10 +186,6 @@ void ArticleViewMain::update_view()
 //
 void ArticleViewMain::update_finish()
 {
-#ifdef _DEBUG
-    std::cout << "ArticleViewMain::update_finish\n";
-#endif
-
     int status = DBTREE::article_status( url_article() );
     std::string str_stat;
     if( status & STATUS_OLD ) str_stat = "[ DAT落ち or 移転しました ]";
@@ -184,8 +203,23 @@ void ArticleViewMain::update_finish()
 
     // タブのアイコン状態を更新
     int code = DBTREE::article_code( url_article() );
-    if( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "update" );
+
+    // まだロード中
+    if( get_article()->is_loading() ){
+        ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
+    }
+    // オートリロードモードでロード待ち
+    else if( View::get_autoreload_mode() != AUTORELOAD_NOT ){
+        ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading_stop" );
+    }
+    // 更新あり   
+    else if( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "update" );
+    // 通常状態
     else ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "default" );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewMain::update_finish " << str_label << " code = " << code << std::endl;;
+#endif
 
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::article_str_code( url_article() )
