@@ -225,6 +225,11 @@ const std::string DBTREE::board_ext( const std::string& url )
     return DBTREE::get_board( url )->get_ext();
 }
 
+const int DBTREE::board_code( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_code();
+}
+
 
 const std::string DBTREE::board_str_code( const std::string& url )
 {

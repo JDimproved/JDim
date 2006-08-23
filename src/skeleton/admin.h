@@ -110,6 +110,8 @@ namespace SKELETON
         virtual void set_tablabel( const std::string& url, const std::string& str_label, bool fix );
         virtual void set_tabicon( const std::string& url, const std::string& iconname ){}
         virtual void adjust_tabwidth( bool force );
+
+        // オートリロードのモード設定
         virtual void set_autoreload_mode( const std::string& url, int mode, int sec );
 
         // D&D

@@ -65,6 +65,7 @@ namespace DBTREE
     const std::string board_hana_for_write( const std::string& url );
     void board_set_hana_for_write( const std::string& url, const std::string& hana );        
     const std::string board_ext( const std::string& url );
+    const int board_code( const std::string& url );
     const std::string board_str_code( const std::string& url );
     void board_save_info( const std::string& url );
     void board_download_subject( const std::string& url );

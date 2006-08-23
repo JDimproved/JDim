@@ -213,7 +213,9 @@ void ArticleViewMain::update_finish()
         ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading_stop" );
     }
     // 更新あり   
-    else if( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "update" );
+    else if( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ){
+        ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "update" );
+    }
     // 通常状態
     else ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "default" );
 

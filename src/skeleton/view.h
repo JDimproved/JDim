@@ -120,6 +120,12 @@ namespace SKELETON
         void set_width_client( int val ){ m_width_client = val; }
         void set_height_client( int val ){ m_height_client = val; }
 
+        // オートリロードのモード設定
+        void set_autoreload_mode( int mode, int sec );
+
+        // 現在のオートリロードのモード取得
+        const int get_autoreload_mode() const { return m_autoreload_mode; }
+
         // shutdown( SIGHUP )用
         virtual void shutdown(){}
 
@@ -130,7 +136,6 @@ namespace SKELETON
         virtual void clock_in_always();
 
         virtual void reload(){}
-        virtual void set_autoreload_mode( int mode, int sec );
         virtual void stop(){}
         virtual void show_view(){}
         virtual void redraw_view(){}

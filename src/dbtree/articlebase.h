@@ -223,6 +223,9 @@ namespace DBTREE
         // HDDにキャッシュされているか
         const bool is_cached() const { return m_cached; }  
 
+        // キャッシュがarticlebaseに読み込まれている(nodetree!=NULL)か
+        const bool is_cache_read() const { return ( m_nodetree ); }
+
         // subject.txtに含まれているなら true
         const bool is_current() const { return m_current; };    
         void set_current( bool current ){ m_current = current; }
@@ -268,7 +271,10 @@ namespace DBTREE
 
       private:
 
+        // NodeTree作成
+        // もしNodeTreeが作られていなかったら作成
         JDLIB::ConstPtr< NodeTreeBase >& get_nodetree();
+
         virtual NodeTreeBase* create_nodetree(){ return NULL; }
 
         void slot_node_updated();

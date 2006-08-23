@@ -785,13 +785,7 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label, 
 void Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
 {
     SKELETON::View* view = get_view( url );
-    if( view ){
-
-        // タブのアイコンをロード準備にする
-        set_command( "set_tabicon", view->get_url(), "loading_stop" );
-
-        view->set_autoreload_mode( mode, sec );
-    }
+    if( view ) view->set_autoreload_mode( mode, sec );
 }
 
 

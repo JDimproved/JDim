@@ -217,13 +217,7 @@ void ArticleAdmin::set_tabicon( const std::string& url, const std::string& iconn
 
             int id = ICON::THREAD;
 
-            if( iconname == "default" ){
-
-                // ロード準備中ならアイコンを変更しない
-                if( tablabel->get_id_icon() == ICON::LOADING_STOP ) return;
-
-                id = ICON::THREAD;
-            }
+            if( iconname == "default" ) id = ICON::THREAD;
 
             // タブが切り替わったときにAdmin::slot_switch_page から呼ばれる
             // update 状態以外の時はアイコンを変更しない
@@ -238,7 +232,7 @@ void ArticleAdmin::set_tabicon( const std::string& url, const std::string& iconn
             if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
             if( iconname == "update" ){
 
-                // 違うタブを開いている場合
+                // タブがアクティブの時は通常アイコンを表示
                 if( view != get_current_view() ) id = ICON::THREAD_UPDATE;
                 else id = ICON::THREAD;
             }

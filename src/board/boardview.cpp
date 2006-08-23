@@ -21,6 +21,7 @@
 #include "global.h"
 #include "controlid.h"
 #include "prefdiagfactory.h"
+#include "httpcode.h"
 
 #include "icons/iconmanager.h"
 
@@ -761,6 +762,7 @@ void BoardView::update_view()
     std::cout << "BoardView::update_view " << get_url() << std::endl;
 #endif    
 
+    // 画面消去
     m_liststore->clear();
 
     // 高速化のためデータベースに直接アクセス
@@ -804,7 +806,18 @@ void BoardView::update_view()
     CORE::core_set_command( "set_status","", get_status() );
 
     // タブのアイコン状態を更新
-    BOARD::get_admin()->set_command( "set_tabicon", get_url(), "default" );
+    int code = DBTREE::board_code( get_url() );
+
+    // オートリロードモードでロード待ち
+    if( View::get_autoreload_mode() != AUTORELOAD_NOT ){
+        BOARD::get_admin()->set_command( "set_tabicon", get_url(), "loading_stop" );
+    }
+    // 更新あり   
+    else if( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ){
+        BOARD::get_admin()->set_command( "set_tabicon", get_url(), "update" );
+    }
+    // 通常
+    else BOARD::get_admin()->set_command( "set_tabicon", get_url(), "default" );
 
     focus_view();
 }

@@ -1732,7 +1732,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     }
 
     // 透明/連鎖あぼーん
-    act = action_group()->get_action( "TranspAbone" );
+    act = action_group()->get_action( "TranspChainAbone" );
     if( act ){
 
         Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
