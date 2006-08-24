@@ -190,6 +190,7 @@ namespace DBTREE
 
         NODE* createNode();        
         NODE* create_header_node();
+        NODE* createIDNumNode();
         NODE* createBrNode();
         NODE* createSpNode( const int& type );
         NODE* create_node_downleft();

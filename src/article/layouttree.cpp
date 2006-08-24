@@ -133,6 +133,16 @@ LAYOUT* LayoutTree::create_layout_link( const char* text, const char* link, cons
 }
 
 
+// 発言回数(IDの出現数)ノード
+//
+LAYOUT* LayoutTree::create_layout_idnum( const char* text, const unsigned char* color_text, bool bold )
+{
+    LAYOUT* tmplayout = create_layout_text( text, color_text, bold );
+    tmplayout->type = DBTREE::NODE_IDNUM;
+
+    return tmplayout;
+}
+
 
 //
 // 改行ノード作成
@@ -223,6 +233,11 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, bool joint )
                 tmplayout = create_layout_link( tmpnode->text, tmpnode->linkinfo->link,
                                                 &tmpnode->color_text, tmpnode->bold );
                 break;
+
+            case DBTREE::NODE_IDNUM:
+                tmplayout = create_layout_idnum( tmpnode->text, &tmpnode->color_text, tmpnode->bold );
+                break;
+
 
             case DBTREE::NODE_BR:
                 tmplayout = create_layout_br();

@@ -22,6 +22,7 @@ namespace DBTREE
         NODE_HEADER = 0, // ヘッダ
         NODE_TEXT,  // テキスト
         NODE_LINK,  // リンク
+        NODE_IDNUM, // 発言回数(IDの出現数)
         NODE_BR,     // 改行
         NODE_DOWN_LEFT, // 左マージンのレベルをひとつ下げる。ヘッダの時点でレベル1
         // スペース

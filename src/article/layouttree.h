@@ -117,6 +117,7 @@ namespace ARTICLE
         LAYOUT* create_layout_header();
         LAYOUT* create_layout_text( const char* text, const unsigned char* color_text, bool bold );
         LAYOUT* create_layout_link( const char* text, const char* link, const unsigned char* color_text, bool bold );
+        LAYOUT* create_layout_idnum( const char* text, const unsigned char* color_text, bool bold );
         LAYOUT* create_layout_br();
         LAYOUT* create_layout_sp( const int& type );
         LAYOUT* create_layout_downleft();

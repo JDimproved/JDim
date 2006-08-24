@@ -483,6 +483,19 @@ NODE* NodeTreeBase::create_header_node()
 
 
 //
+// 発言回数(IDの出現数)ノード
+//
+NODE* NodeTreeBase::createIDNumNode()
+{
+    const char* dummy = "00000000";
+
+    NODE* tmpnode = createTextNode( dummy, COLOR_CHAR );
+    tmpnode->type = NODE_IDNUM;
+    return tmpnode;
+}
+
+
+//
 // 改行ノード作成
 //
 NODE* NodeTreeBase::createBrNode()
@@ -1087,6 +1100,9 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             // リンク作成
             header->headinfo->node_id_name = create_linknode( "ID:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
             createTextNodeN( tmpid, lng_id_tmp, COLOR_CHAR);
+
+            // 発言回数
+            createIDNumNode();
         }
 
         // BE:
