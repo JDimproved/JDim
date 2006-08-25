@@ -53,6 +53,8 @@ Admin::Admin( const std::string& url )
     m_action_group->add( Gtk::Action::create( "CloseRight", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseAll_Menu", "全てのタブを閉じる" ) );
     m_action_group->add( Gtk::Action::create( "CloseAll", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "ReloadAll_Menu", "全てのタブを更新" ) );
+    m_action_group->add( Gtk::Action::create( "ReloadAll", "更新する" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
     m_action_group->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く" ), sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
     m_action_group->add( Gtk::Action::create( "CopyURL", "URLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
 
@@ -79,6 +81,10 @@ Admin::Admin( const std::string& url )
     "</menu>"
     "<menu action='CloseRight_Menu'>"
     "<menuitem action='CloseRight'/>"
+    "</menu>"
+    "<separator/>"
+    "<menu action='ReloadAll_Menu'>"
+    "<menuitem action='ReloadAll'/>"
     "</menu>"
     "<separator/>"
     "<menuitem action='OpenBrowser'/>"
@@ -782,10 +788,26 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label, 
 //
 // オートリロードのモード設定
 //
-void Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
+// 成功したらtrueを返す
+//
+// mode : モード (global.h　参照)
+// sec :  リロードまでの秒数
+//
+bool Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
 {
     SKELETON::View* view = get_view( url );
-    if( view ) view->set_autoreload_mode( mode, sec );
+    if( view ){
+
+        view->set_autoreload_mode( mode, sec );
+
+        // モード設定が成功したら待機アイコンに切替え
+        if( view->get_autoreload_mode() == mode ){
+            set_command( "set_tabicon", view->get_url(), "loading_stop" );
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
@@ -1086,6 +1108,37 @@ void Admin::slot_close_all_tabs()
     for( int i = 0; i < pages; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
+    }
+}
+
+
+
+//
+// 右クリックメニューの全てを更新
+//
+void Admin::slot_reload_all_tabs()
+{
+#ifdef _DEBUG
+    std::cout << "Admin::slot_reload_all_tabs " << m_clicked_page << std::endl;
+#endif
+
+    int waittime = 0;
+    int pages = m_notebook.get_n_pages();
+
+    // クリックしたタブから右側
+    for( int i = m_clicked_page ; i < pages; ++i ){
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        if( view ){
+            if( set_autoreload_mode( view->get_url(), AUTORELOAD_ONCE, waittime ) ) waittime += AUTORELOAD_MINSEC;
+        }
+    }
+
+    // クリックしたタブから左側
+    for( int i = 0 ; i < m_clicked_page; ++i ){
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        if( view ){
+            if( set_autoreload_mode( view->get_url(), AUTORELOAD_ONCE, waittime ) ) waittime += AUTORELOAD_MINSEC;
+        }
     }
 }
 

@@ -13,7 +13,8 @@ using namespace SKELETON;
 View::View( const std::string& url, const std::string& arg1 ,const std::string& arg2 )
     : m_url( url ),
       m_status( std::string() ),
-      m_enable_mg( 0 ),
+      m_enable_mg( false ),
+      m_enable_autoreload( false ),
       m_autoreload_mode( AUTORELOAD_NOT ),
       m_popupmenu_shown( false )
 {}
@@ -48,8 +49,10 @@ bool View::inc_autoreload_counter()
 // オートリロードのモードを設定
 void View::set_autoreload_mode( int mode, int sec )
 {
+    if( ! m_enable_autoreload ) return;
+
     m_autoreload_mode = mode;
-    m_autoreload_sec = MAX( AUTORELOAD_MINSEC, sec );
+    m_autoreload_sec = sec;
     m_autoreload_counter = 0;
 }
 

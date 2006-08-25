@@ -43,6 +43,7 @@ namespace SKELETON
         bool m_enable_mg; 
 
         // オートリロード
+        bool m_enable_autoreload; // true ならオートリロード可能(デフォルト:off)
         int m_autoreload_mode; // モード
         int m_autoreload_sec; // 何秒おきにリロードするか
         int m_autoreload_counter; // オートリロード用のカウンタ
@@ -69,6 +70,9 @@ namespace SKELETON
         // オートリロードのカウンタをインクリメント
         // 指定秒数を越えたら true を返す
         bool inc_autoreload_counter();
+
+        // オートリロード可能/不可能切替え
+        void set_enable_autoreload( bool autoreload ){ m_enable_autoreload = autoreload; }
 
         // オートリロードのカウンタをリセット
         void reset_autoreload_counter(); 

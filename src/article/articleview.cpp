@@ -34,6 +34,9 @@ ArticleViewMain::ArticleViewMain( const std::string& url )
     std::cout << "ArticleViewMain::ArticleViewMain " << get_url() << " url_article = " << url_article() << std::endl;
 #endif
 
+    // オートリロード可
+    SKELETON::View::set_enable_autoreload( true );
+
     setup_view();
 }
 

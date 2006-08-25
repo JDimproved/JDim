@@ -306,6 +306,9 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // マウスジェスチォ可能
     SKELETON::View::set_enable_mg( true );
 
+    // オートリロード可
+    SKELETON::View::set_enable_autoreload( true );
+
     // コントロールモード設定
     SKELETON::View::get_control().set_mode( CONTROL::MODE_BOARD );
 }

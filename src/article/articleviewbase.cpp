@@ -452,7 +452,8 @@ void ArticleViewBase::clock_in()
 //
 void ArticleViewBase::reload()
 {
-    View::reset_autoreload_counter();
+    // オフライン
+    if( ! SESSION::is_online() ) return;
 
     // DAT落ちしてるとロードしないので状態をリセットしておく
     DBTREE::article_reset_status( m_url_article );

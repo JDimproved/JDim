@@ -112,7 +112,7 @@ namespace SKELETON
         virtual void adjust_tabwidth( bool force );
 
         // オートリロードのモード設定
-        virtual void set_autoreload_mode( const std::string& url, int mode, int sec );
+        virtual bool set_autoreload_mode( const std::string& url, int mode, int sec );
 
         // D&D
         // 派生クラス別にD&Dの処理を行う
@@ -147,6 +147,7 @@ namespace SKELETON
         virtual void slot_close_left_tabs();
         virtual void slot_close_right_tabs();
         virtual void slot_close_all_tabs();
+        virtual void slot_reload_all_tabs();
         virtual void slot_open_by_browser();
         virtual void slot_copy_url();
     };
