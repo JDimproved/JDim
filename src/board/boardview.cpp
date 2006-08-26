@@ -693,7 +693,7 @@ void BoardView::show_view()
     // DBに登録されてない
     if( get_url().empty() ){
         set_status( "invalid URL" );
-        CORE::core_set_command( "set_status","", get_status() );
+        BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
         return;
     }
 
@@ -710,7 +710,7 @@ void BoardView::show_view()
     // 終わったら update_view() が呼ばれる
     DBTREE::board_download_subject( get_url() );
     set_status( "loading..." );
-    CORE::core_set_command( "set_status","", get_status() );
+    BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
 
 
@@ -765,6 +765,9 @@ void BoardView::update_view()
     std::cout << "BoardView::update_view " << get_url() << std::endl;
 #endif    
 
+    // 更新されたか
+    bool updated = false;
+
     // 画面消去
     m_liststore->clear();
 
@@ -797,6 +800,9 @@ void BoardView::update_view()
             row[ m_columns.m_col_id_dat ] = art->get_id();
 
             update_row_common( art, row, id );
+
+            // 更新があるかチェック
+            if( art->get_number_load() && art->get_number() > art->get_number_load() ) updated = true;
         }
 
         redraw_view();
@@ -806,7 +812,7 @@ void BoardView::update_view()
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::board_str_code( get_url() ) << " [ 全 " << ( id -1 ) << " ] ";
     set_status( ss_tmp.str() );
-    CORE::core_set_command( "set_status","", get_status() );
+    BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
 
     // タブのアイコン状態を更新
     int code = DBTREE::board_code( get_url() );
@@ -816,11 +822,12 @@ void BoardView::update_view()
         BOARD::get_admin()->set_command( "set_tabicon", get_url(), "loading_stop" );
     }
     // 更新あり   
-    else if( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ){
+    else  if( ( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) && updated ){
         BOARD::get_admin()->set_command( "set_tabicon", get_url(), "update" );
     }
     // 通常
     else BOARD::get_admin()->set_command( "set_tabicon", get_url(), "default" );
+
 
     focus_view();
 }
