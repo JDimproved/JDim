@@ -42,6 +42,9 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
 {
     clear();
     clear_load_data();
+
+    // 板情報はクラスが作られた時点ではまだ読まない
+    // BoardBase::read_info() の説明を見ること
 }
 
 
@@ -517,7 +520,7 @@ ArticleBase* BoardBase::get_article( const std::string id )
 
 
 //
-// m_list_article　から article のポインタを検索して返す
+// articleの IDを渡して m_list_article　から article のポインタを検索して返す
 //
 // ポインタがあった場合は情報ファイルを読み込む
 // さらにデータベースにArticleBaseクラスが登録されてない場合はクラスを作成して登録する
@@ -827,11 +830,11 @@ void BoardBase::append_all_article_in_cache()
 #ifdef _DEBUG
             std::cout << "append id = " << file << std::endl;
 #endif
-            // キャッシュあり( cached = false ) 指定でDBに登録
+            // キャッシュあり( cached = true ) 指定でDBに登録
             // キャッシュに無いスレはsubject.txtを読み込んだ時に
             // 派生クラスのparse_subject()で登録する。
             append_article( file,
-                            true 
+                            true  // キャッシュあり
                 );
         }
     }
