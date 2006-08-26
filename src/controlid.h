@@ -43,6 +43,8 @@ namespace CONTROL
         
         ToggleArticle,
 
+        ShowPopupMenu,
+
         PageUp,
         PageDown,
 

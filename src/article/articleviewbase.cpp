@@ -629,6 +629,12 @@ void ArticleViewBase::operate_view( const int& control )
             ARTICLE::get_admin()->set_command( "tab_right" );
             break;
 
+        // ポップアップメニュー表示
+        case CONTROL::ShowPopupMenu:
+            SKELETON::View::show_popupmenu( "", true );
+            break;
+
+            // ブックマーク移動
         case CONTROL::PreBookMark:
             slot_pre_bm();
             break;

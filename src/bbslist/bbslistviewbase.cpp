@@ -46,6 +46,15 @@
 #define GET_PATH( row ) m_treestore->get_path( row )
 
 
+// ポップアップメニュー表示
+#define SHOW_POPUPMENU(slot) do{\
+std::string url = path2url( m_path_selected ); \
+if( ! m_path_selected.empty() && url.empty() ) url = "dummy_url"; \
+SKELETON::View::show_popupmenu( url, slot ); \
+}while(0)
+
+
+
 using namespace BBSLIST;
 
 BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1, const std::string& arg2 )
@@ -460,6 +469,16 @@ void  BBSListViewBase::operate_view( const int& control )
             break;
         }
 
+        // ポップアップメニュー表示
+        case CONTROL::ShowPopupMenu:
+        {
+            if( m_treeview.get_selection()->get_selected_rows().size() >= 1 ){
+                m_path_selected = * (m_treeview.get_selection()->get_selected_rows().begin() );
+            }
+            SHOW_POPUPMENU(true);
+            break;
+        }
+
         // 検索
         case CONTROL::Search:
             m_search_invert = false;
@@ -647,9 +666,7 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
     // ポップアップメニューボタン
     else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
-        std::string url = path2url( m_path_selected );
-        if( ! m_path_selected.empty() && url.empty() ) url = "dummy_url";
-        SKELETON::View::show_popupmenu( url, false );
+        SHOW_POPUPMENU( false );
     }
 
     event->type = type_copy;

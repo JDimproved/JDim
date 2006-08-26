@@ -73,7 +73,10 @@ void KeyConfig::load_conf()
 
     SETMOTION( "PreBookMark", "Ctrl+F2" );
     SETMOTION( "NextBookMark", "F2" );
+
     SETMOTION( "ToggleArticle", "Alt+x" );
+
+    SETMOTION( "ShowPopupMenu", "Shift+F10 Ctrl+m" );
 
     SETMOTION( "Home", "Home g <" );
     SETMOTION( "End", "End G >" );

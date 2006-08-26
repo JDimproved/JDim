@@ -30,6 +30,8 @@ namespace CONTROL
         { "NextBookMark", "次のプックマークヘ移動" },
 
         { "ToggleArticle", "板一覧とスレ表示切替" },
+
+        { "ShowPopupMenu", "メニュー表示" },
         
         { "PageUp", "上のページに移動" },
         { "PageDown", "下のページに移動" },

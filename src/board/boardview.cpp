@@ -962,6 +962,11 @@ void BoardView::operate_view( const int& control )
             break;
         }
 
+        // ポップアップメニュー表示
+        case CONTROL::ShowPopupMenu:
+            SKELETON::View::show_popupmenu( "", true );
+            break;
+
         // 検索
         case CONTROL::Search:
             m_search_invert = false;
@@ -1062,6 +1067,7 @@ Gtk::Menu* BoardView::get_popupmenu( const std::string& url )
 
     // 通常メニュー
     else if( m_treeview.get_selection()->get_selected_rows().size() == 1 ){
+        m_path_selected = * (m_treeview.get_selection()->get_selected_rows().begin() );
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
     }
 
