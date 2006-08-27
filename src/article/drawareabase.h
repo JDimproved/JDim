@@ -233,6 +233,9 @@ namespace ARTICLE
         void layout_draw_one_node( LAYOUT* node, int& x, int& y, int width_win, bool do_draw, bool bold = false, 
                                    int color = COLOR_CHAR, int color_bac = COLOR_BACK, int byte_from = 0, int byte_to = 0 );
 
+        // 整数 -> 文字変換してノードに発言数をセット
+        int set_num_id( LAYOUT* layout );
+
         // スクロール関係
         void exec_scroll( bool redraw_all ); // スクロールやジャンプを実行して再描画
         int get_vscr_val();

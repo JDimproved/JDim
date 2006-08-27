@@ -40,6 +40,7 @@ using namespace ARTICLE;
 
 #define SEPARATOR_HEIGHT 6 // 新着セパレータの高さ
 
+
 //////////////////////////////////////////////////////////
 
 
@@ -662,16 +663,14 @@ void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
 // x,y : ノードの初期座標(左上)、次のノードの左上座標が入って返る
 // mrg_level : 字下げ下げレベル
 //
+#include <iostream>
 void DrawAreaBase::layout_one_node( LAYOUT* layout, int& x, int& y, int width_view, int& mrg_level )
 {
     switch( layout->type ){
 
         case DBTREE::NODE_IDNUM: // 発言数ノード
 
-            // ダミーの文字列をセット
-            memset( layout->node->text, (int)'0', 8 );
-            layout->node->text[ 8 ] = '\0';
-            layout->lng_text = 8;
+            if( !set_num_id( layout ) ) break;
 
         case DBTREE::NODE_TEXT: // テキスト
         case DBTREE::NODE_LINK: // リンク
@@ -958,37 +957,8 @@ void DrawAreaBase::draw_one_node( LAYOUT* layout, const int& width_view, const i
             // 発言回数ノード
         case DBTREE::NODE_IDNUM:
 
-        {
-            int num_id = layout->header->node->headinfo->num_id_name;
-
-            if( num_id >= 2 ){
-
-                int pos = 0;
-                layout->node->text[ pos++] = ' ';
-                layout->node->text[ pos++] = '(';
-
-                // 整数 -> 文字変換
-                // 最大4桁を想定
-                int div_tmp = 1;
-                if( num_id / 1000 ) div_tmp = 1000;
-                else if( num_id / 100 ) div_tmp = 100;
-                else if( num_id / 10 ) div_tmp = 10;
-                while( div_tmp ){
-
-                    int tmp_val = num_id / div_tmp;
-                    num_id -= tmp_val * div_tmp;
-                    div_tmp /= 10;
-
-                    layout->node->text[ pos++] = '0' + tmp_val;
-                }
-
-                layout->node->text[ pos++] = ')';
-
-                layout->lng_text = pos;
-                draw_one_text_node( layout, width_view, pos_y );
-            }
-        }
-        break;
+            if( set_num_id( layout ) ) draw_one_text_node( layout, width_view, pos_y );
+            break;
 
         // ヘッダ
         case DBTREE::NODE_HEADER:
@@ -1228,6 +1198,41 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
         pos_start = pos_to;
     }
 }
+
+
+
+
+// 整数 -> 文字変換してノードに発言数をセット
+// 最大4桁を想定
+int DrawAreaBase::set_num_id( LAYOUT* layout )
+{
+    int pos = 0;
+
+    int num_id = layout->header->node->headinfo->num_id_name;
+    if( num_id >= 2 ){
+
+        layout->node->text[ pos++] = ' ';
+        layout->node->text[ pos++] = '(';
+        int div_tmp = 1;
+        if( num_id / 1000 ) div_tmp = 1000;
+        else if( num_id / 100 ) div_tmp = 100;
+        else if( num_id / 10 ) div_tmp = 10;
+        while( div_tmp ){
+
+            int tmp_val = num_id / div_tmp;
+            num_id -= tmp_val * div_tmp;
+            div_tmp /= 10;
+
+            layout->node->text[ pos++] = '0' + tmp_val;
+        }
+        layout->node->text[ pos++] = ')';
+        layout->node->text[ pos ] = '\0';
+        layout->lng_text = pos;
+    }
+
+    return pos;
+}
+
 
 
 
