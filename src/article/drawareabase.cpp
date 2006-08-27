@@ -1565,7 +1565,10 @@ bool DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
         while( tmplayout ){
 
             // (注意) 今のところレイアウトノードをまたがった検索は出来ない
-            if( ( tmplayout->type == DBTREE::NODE_TEXT || tmplayout->type == DBTREE::NODE_LINK ) && tmplayout->text ){
+            if( ( tmplayout->type == DBTREE::NODE_TEXT
+                  || tmplayout->type == DBTREE::NODE_IDNUM
+                  || tmplayout->type == DBTREE::NODE_LINK )
+                && tmplayout->text ){
 
                 std::string text = tmplayout->text;
                 int offset = 0;
