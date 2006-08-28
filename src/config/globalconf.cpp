@@ -25,6 +25,7 @@ std::string fontname_main;
 std::string fontname_popup;
 std::string fontname_tree;
 std::string fontname_tree_board;
+std::string fontname_message;
 std::string url_login2ch;
 std::string url_bbsmenu;
 std::string path_cacheroot;
@@ -104,6 +105,7 @@ const bool CONFIG::init_config()
     fontname_popup = cf.get_option( "fontname_popup","Kochi Gothic 9" );
     fontname_tree = cf.get_option( "fontname_tree","Kochi Gothic 10" );
     fontname_tree_board = cf.get_option( "fontname_tree_board",fontname_tree );
+    fontname_message = cf.get_option( "fontname_message",fontname_message );
 
     // キャッシュのルートディレクトリ
     // キャッシュ構造は navi2ch の上位互換なので path_cacheroot = "~/.navi2ch/" とすればnavi2chとキャッシュを共有できる
@@ -275,6 +277,7 @@ void CONFIG::save_conf()
     cf.update( "fontname_popup", fontname_popup );
     cf.update( "fontname_tree", fontname_tree );
     cf.update( "fontname_tree_board", fontname_tree_board );
+    cf.update( "fontname_message", fontname_message );
 
     cf.update( "path_cacheroot", path_cacheroot );
 
@@ -394,11 +397,13 @@ const std::string& CONFIG::get_fontname_main() { return fontname_main; }
 const std::string& CONFIG::get_fontname_popup() { return fontname_popup; }
 const std::string& CONFIG::get_fontname_tree() { return fontname_tree; }
 const std::string& CONFIG::get_fontname_tree_board() { return fontname_tree_board; }
+const std::string& CONFIG::get_fontname_message() { return fontname_message; }
 
 void CONFIG::set_fontname_main( const std::string& name) { fontname_main = name; }
 void CONFIG::set_fontname_popup( const std::string& name) { fontname_popup = name; }
 void CONFIG::set_fontname_tree( const std::string& name) { fontname_tree = name; }
 void CONFIG::set_fontname_tree_board( const std::string& name) { fontname_tree_board = name; }
+void CONFIG::set_fontname_message( const std::string& name) { fontname_message = name; }
 
 const std::string& CONFIG::get_url_login2ch() { return url_login2ch; }
 const std::string& CONFIG::get_url_bbsmenu() { return url_bbsmenu; }

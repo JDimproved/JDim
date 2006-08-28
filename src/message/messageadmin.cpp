@@ -103,6 +103,10 @@ void MessageAdmin::exec_command()
 
     else if( command.command  == "focus_view" ) focus_view();
 
+    else if( command.command == "relayout_all" ){
+        if( m_view ) m_view->relayout();
+    }
+
     // view の操作
     else if( command.command == "exec_Write" ){
         if( m_view ) m_view->operate_view( CONTROL::ExecWrite );

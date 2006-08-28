@@ -48,11 +48,15 @@ namespace MESSAGE
         MessageViewBase( const std::string& url );
         ~MessageViewBase();
 
+        // フォント初期化
+        void init_font( const std::string& fontname );
+
         // コマンド
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
 
         // SKELETON::View の関数のオーバロード
         virtual void reload(){}
+        virtual void relayout();
         virtual void close_view();
         virtual void focus_view();
         virtual void operate_view( const int& control );

@@ -130,6 +130,7 @@ namespace CORE
         void slot_changefont_tree_board();
         void slot_changefont_main();
         void slot_changefont_popup();
+        void slot_changefont_message();
 
         void slot_changecolor_char();
         void slot_changecolor_separator();

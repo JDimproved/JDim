@@ -44,11 +44,13 @@ namespace CONFIG
     const std::string& get_fontname_popup();
     const std::string& get_fontname_tree();
     const std::string& get_fontname_tree_board();
+    const std::string& get_fontname_message();
 
     void set_fontname_main( const std::string& name );
     void set_fontname_popup( const std::string& name );
     void set_fontname_tree( const std::string& name );
     void set_fontname_tree_board( const std::string& name );
+    void set_fontname_message( const std::string& name );
 
     // 2chの認証サーバ
     const std::string& get_url_login2ch();

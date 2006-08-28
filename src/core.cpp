@@ -210,10 +210,15 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "ColorBackPopup", "ポップアップ背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_popup ) );
     m_action_group->add( Gtk::Action::create( "ColorBackTree", "ツリー背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
 
-    m_action_group->add( Gtk::Action::create( "FontTree", "板一覧フォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
-    m_action_group->add( Gtk::Action::create( "FontTreeBoard", "スレ一覧フォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree_board ) );
-    m_action_group->add( Gtk::Action::create( "FontMenu", "スレフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
-    m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
+
+    m_action_group->add( Gtk::Action::create( "Font_Menu", "フォント" ) );
+    m_action_group->add( Gtk::Action::create( "FontTree", "板一覧" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
+    m_action_group->add( Gtk::Action::create( "FontTreeBoard", "スレ一覧" ), sigc::mem_fun( *this, &Core::slot_changefont_tree_board ) );
+    m_action_group->add( Gtk::Action::create( "FontMenu", "スレッド" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
+    m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップ" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
+    m_action_group->add( Gtk::Action::create( "FontMessage", "書き込みウィンドウ" ), sigc::mem_fun( *this, &Core::slot_changefont_message ) );
+
+
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
     m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ" ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
 
@@ -271,10 +276,15 @@ void Core::run( bool init )
         "<menuitem action='RestoreArticle'/>"
         "<menuitem action='RestoreImage'/>"
         "<separator/>"
+
+        "<menu action='Font_Menu'>"
         "<menuitem action='FontMenu'/>"
         "<menuitem action='FontPopup'/>"
         "<menuitem action='FontTree'/>"
         "<menuitem action='FontTreeBoard'/>"
+        "<menuitem action='FontMessage'/>"
+        "</menu>"
+
         "<separator/>"
         "<menuitem action='ColorChar'/>"
 //        "<menuitem action='ColorSepa'/>"
@@ -559,6 +569,21 @@ void Core::slot_changefont_popup()
     if( diag.run() == Gtk::RESPONSE_OK ){
         CONFIG::set_fontname_popup( diag.get_font_name() );
         ARTICLE::get_admin()->set_command( "init_font" );
+    }
+}
+
+
+//
+// 書き込みフォント変更
+//
+void Core::slot_changefont_message()
+{
+    Gtk::FontSelectionDialog diag;
+    diag.set_font_name( CONFIG::get_fontname_message() );
+    diag.set_title( "書き込みウィンドウフォント" );
+    if( diag.run() == Gtk::RESPONSE_OK ){
+        CONFIG::set_fontname_message( diag.get_font_name() );
+        MESSAGE::get_admin()->set_command( "relayout_all" );
     }
 }
 

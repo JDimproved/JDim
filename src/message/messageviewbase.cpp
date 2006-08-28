@@ -12,6 +12,8 @@
 
 #include "dbtree/interface.h"
 
+#include "config/globalconf.h"
+
 #include "httpcode.h"
 #include "command.h"
 #include "viewfactory.h"
@@ -63,6 +65,21 @@ MessageViewBase::~MessageViewBase()
 void MessageViewBase::setup_view()
 {
     pack_widget();
+}
+
+
+
+//
+// フォント初期化
+//
+void MessageViewBase::init_font( const std::string& fontname )
+{
+    Pango::FontDescription pfd( fontname );
+    pfd.set_weight( Pango::WEIGHT_NORMAL );
+
+    m_entry_name.modify_font( pfd );
+    m_entry_mail.modify_font( pfd );
+    m_text_message.modify_font( pfd );
 }
 
 
@@ -171,6 +188,9 @@ void MessageViewBase::pack_widget()
 
     pack_start( m_toolbar, Gtk::PACK_SHRINK );
     pack_start( m_notebook );
+
+    // フォントセット
+    init_font( CONFIG::get_fontname_message() );
 }
 
 
@@ -278,6 +298,16 @@ bool MessageViewBase::slot_key_release( GdkEventKey* event )
     operate_view( SKELETON::View::get_control().key_press( event ) );
 
     return true;
+}
+
+
+
+//
+// フォントの更新
+//
+void MessageViewBase::relayout()
+{
+    init_font( CONFIG::get_fontname_message() );
 }
 
 
