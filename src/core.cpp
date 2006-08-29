@@ -204,6 +204,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "RestoreImage", "起動時に画像を復元", std::string(), CONFIG::get_restore_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_image ) );
 
+    m_action_group->add( Gtk::Action::create( "Color_Menu", "色" ) );
     m_action_group->add( Gtk::Action::create( "ColorChar", "スレ文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
     m_action_group->add( Gtk::Action::create( "ColorSepa", "新着セパレータ色" ), sigc::mem_fun( *this, &Core::slot_changecolor_separator ) );
     m_action_group->add( Gtk::Action::create( "ColorBack", "スレ背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
@@ -286,11 +287,15 @@ void Core::run( bool init )
         "</menu>"
 
         "<separator/>"
+
+        "<menu action='Color_Menu'>"
         "<menuitem action='ColorChar'/>"
 //        "<menuitem action='ColorSepa'/>"
         "<menuitem action='ColorBack'/>"
         "<menuitem action='ColorBackPopup'/>"
         "<menuitem action='ColorBackTree'/>"
+        "</menu>"
+
         "<separator/>"
         "<menuitem action='SetupProxy'/>"
         "<menuitem action='SetupBrowser'/>"
@@ -343,8 +348,15 @@ void Core::run( bool init )
         delete mdiag;
 
         slot_changefont_main();
+
+        CONFIG::set_fontname_popup( CONFIG::get_fontname_main() );
         slot_changefont_popup();
+
+        CONFIG::set_fontname_tree( CONFIG::get_fontname_popup() );
         slot_changefont_tree();
+
+        CONFIG::set_fontname_tree_board( CONFIG::get_fontname_tree() );
+        CONFIG::set_fontname_message( CONFIG::get_fontname_main() );
 
         mdiag = new Gtk::MessageDialog( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
         mdiag->run();
