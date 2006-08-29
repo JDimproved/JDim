@@ -6,6 +6,7 @@
 
 #include "loader.h"
 #include "miscmsg.h"
+#include "miscutil.h"
 
 #include "skeleton/loadable.h"
 
@@ -195,6 +196,7 @@ void Loader::wait()
 // port_proxy ( == 0 なら 8080 )
 // size_buf ( バッファサイズ, k 単位で指定。 == 0 ならデフォルトサイズ(LNG_BUF_MIN)使用)
 // timeout ( タイムアウト秒。==0 ならデフォルト( TIMEOUT )使用  )
+// basicauth
 //
 bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
 {
@@ -304,6 +306,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     if( m_data.port_proxy == 0 ) m_data.port_proxy = 8080;
     m_data.timeout = MAX( TIMEOUT_MIN, data_in.timeout );
     m_data.ex_field = data_in.ex_field;
+    m_data.basicauth = data_in.basicauth;
 
 #ifdef _DEBUG    
     std::cout << "host: " << m_data.host << std::endl;
@@ -320,6 +323,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     std::cout << "buffer size: " << m_lng_buf / 1024 << " kb" << std::endl;
     std::cout << "timeout : " << m_data.timeout << " sec" << std::endl;
     std::cout << "ex_field : " << m_data.ex_field << std::endl;
+    std::cout << "basicauth : " << m_data.basicauth << std::endl;
     std::cout << "\n";
 #endif
 
@@ -777,6 +781,8 @@ std::string Loader::create_msg_send()
     if( ! m_data.agent.empty() ) msg << "User-Agent: " << m_data.agent << "\r\n";
     if( ! m_data.referer.empty() ) msg << "Referer: " << m_data.referer << "\r\n";
 
+    // basic認証
+    if( ! m_data.basicauth.empty() ) msg << "Authorization: Basic " << MISC::base64( m_data.basicauth ) << "\r\n";
 
     if( ! m_data.cookie_for_write.empty() ) msg << "Cookie: " << m_data.cookie_for_write << "\r\n";
 

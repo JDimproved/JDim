@@ -481,6 +481,50 @@ std::string MISC::charset_url_encode( const std::string& str, const std::string&
 
 
 //
+// BASE64
+//
+std::string MISC::base64( const std::string& str )
+{
+    char table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+    std::string out;
+    int lng = str.length();
+    std::string data = str + "\0\0\0\0";
+
+    for( int i = 0; i < lng; i += 3 ){
+
+        unsigned char* cstr = (unsigned char*)( data.c_str() + i );
+        unsigned char key[ 4 ];
+
+        key[ 0 ] = (*cstr) >> 2;
+        key[ 1 ] = ( ( (*cstr) << 4 ) + ( (*(cstr+1)) >> 4 ) );
+        key[ 2 ] = ( ( (*(cstr+1)) << 2 ) + ( (*(cstr+2)) >> 6 ) );
+        key[ 3 ] = *(cstr+2);
+
+        for( int j = 0; j < 4; ++j ){
+            key[ j ] &= 0x3f;
+            out += table[ key[ j ] ];
+        }
+    }
+
+    if( lng % 3 == 1 ){
+        out = out.substr( 0, out.length()-2 ) + "==";
+    }
+    else if( lng % 3 == 2 ){
+        out = out.substr( 0, out.length()-1 ) + "=";
+    }
+
+#ifdef _DEBUG
+    std::cout << "MISC::base64 " << str << " -> " << out << std::endl;
+#endif 
+
+    return out;
+}
+
+
+
+
+//
 // strをUTF-8の文字列に変換
 //
 // 遅いので連続的な処理が必要な時は使わないこと

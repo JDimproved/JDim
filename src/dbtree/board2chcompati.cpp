@@ -25,7 +25,8 @@ using namespace DBTREE;
 #endif
 
 
-Board2chCompati::Board2chCompati( const std::string& root, const std::string& path_board, const std::string& name )
+Board2chCompati::Board2chCompati( const std::string& root, const std::string& path_board, const std::string& name,
+    const std::string& basicauth)
     : BoardBase( root, path_board, name )
 {
     set_path_dat( "/dat" );
@@ -36,6 +37,8 @@ Board2chCompati::Board2chCompati( const std::string& root, const std::string& pa
     set_ext( ".dat" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く
     set_charset( "MS932" );
+
+    BoardBase::set_basicauth( basicauth );
 }
 
 

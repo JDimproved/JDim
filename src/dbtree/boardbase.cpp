@@ -662,7 +662,8 @@ void BoardBase::create_loaderdata( JDLIB::LOADERDATA& data )
     data.port_proxy = get_proxy_port();
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
-    if( ! date_modified().empty() ) data.modified = date_modified();
+    data.basicauth = get_basicauth();
+    data.modified = date_modified();
 }
 
 

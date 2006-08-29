@@ -8,13 +8,14 @@
 
 #include "global.h"
 
-DBTREE::BoardBase* DBTREE::BoardFactory( int type, const std::string& root, const std::string& path_board, const std::string& name )
+DBTREE::BoardBase* DBTREE::BoardFactory( int type, const std::string& root, const std::string& path_board, const std::string& name,
+                                         const std::string& basicauth )
 {
     switch( type )
     {
         case TYPE_BOARD_2CH: return new DBTREE::Board2ch( root, path_board, name );
 
-        case TYPE_BOARD_2CH_COMPATI: return new DBTREE::Board2chCompati( root, path_board, name );
+        case TYPE_BOARD_2CH_COMPATI: return new DBTREE::Board2chCompati( root, path_board, name, basicauth );
 
         case TYPE_BOARD_JBBS:return  new DBTREE::BoardJBBS( root, path_board, name );
 

@@ -16,7 +16,7 @@ namespace DBTREE
     {
       public:
 
-        Board2chCompati( const std::string& root, const std::string& path_board, const std::string& name );
+        Board2chCompati( const std::string& root, const std::string& path_board, const std::string& name, const std::string& basicauth );
 
         // 書き込み用クッキー
         virtual const std::string cookie_for_write();

@@ -150,6 +150,7 @@ void NodeTree2chCompati::create_loaderdata( JDLIB::LOADERDATA& data )
     data.port_proxy = DBTREE::get_proxy_port( get_url() );
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
+    data.basicauth = DBTREE::board_basicauth( get_url() );
 
     if( ! date_modified().empty() ) data.modified = date_modified();
 }

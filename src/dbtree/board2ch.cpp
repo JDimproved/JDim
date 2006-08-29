@@ -15,7 +15,7 @@ using namespace DBTREE;
 
 
 Board2ch::Board2ch( const std::string& root, const std::string& path_board, const std::string& name )
-    : Board2chCompati( root, path_board, name )
+    : Board2chCompati( root, path_board, name, std::string() )
     , m_settingloader( 0 )
 {
 #ifdef _DEBUG

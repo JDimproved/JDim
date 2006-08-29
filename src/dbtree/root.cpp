@@ -382,7 +382,7 @@ void Root::update_boards( const std::string xml )
 // 板のタイプに合わせて板情報をセット
 // ついでに移転とかの判定もする
 //
-bool Root::set_board( const std::string& url, const std::string& name )
+bool Root::set_board( const std::string& url, const std::string& name, const std::string& basicauth )
 {
 #ifdef _SHOW_BOARD
     std::cout << url << " " << name << std::endl;
@@ -440,12 +440,13 @@ bool Root::set_board( const std::string& url, const std::string& name )
     int stat = is_moved( root, path_board, name, &board );
 
 #ifdef _SHOW_BOARD
-    std::cout << "root = " << root << " path_board = " << path_board <<" type = " << type << " stat = " << stat << std::endl;
+    std::cout << "root = " << root << " path_board = " << path_board
+              << "basicauth = " << basicauth <<" type = " << type << " stat = " << stat << std::endl;
 #endif
 
     // 新板登録
     if( stat == BOARD_NEW ){
-        board = DBTREE::BoardFactory( type, root, path_board, name );
+        board = DBTREE::BoardFactory( type, root, path_board, name, basicauth );
         if( board ) m_list_board.push_back( board );
     }
 
@@ -555,6 +556,7 @@ void Root::load_etc()
 {
     m_xml_etc.clear();
 
+    JDLIB::Regex regex;
     std::string file_etctxt = CACHE::path_etcboard();
     std::string etcboard;
     if( CACHE::load_rawdata( file_etctxt, etcboard ) ){
@@ -572,13 +574,20 @@ void Root::load_etc()
             std::string url;
             url = *( it++ );
             if( it == list_etc.end() ) break;
+
+            // basic認証
+            std::string basicauth;
+            if( regex.exec( "http://([^/]+:[^/]+@)(.+)$" , url ) ){
+                basicauth = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+                url = "http://" + regex.str( 2 );
+            }
                 
 #ifdef _DEBUG
             std::cout << "etc board : " << url << " " << name << std::endl;
 #endif
 
             // DBに登録
-            if( set_board( url, name ) ){
+            if( set_board( url, name, basicauth ) ){
 
                 m_xml_etc += "<board url=\"";
                 m_xml_etc += url;

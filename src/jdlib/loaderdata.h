@@ -48,6 +48,7 @@ namespace JDLIB
         std::list< std::string > list_cookies;
         std::string location;
         std::string contenttype;
+        std::string basicauth;
         size_t size_buf;
         long timeout;
         
@@ -86,6 +87,7 @@ namespace JDLIB
             cookie_for_write.clear();
             list_cookies.clear();
             contenttype.clear();
+            basicauth.clear();
             size_buf = 0;
             timeout = 0;
         }

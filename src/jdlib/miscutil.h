@@ -64,6 +64,9 @@ namespace MISC
     //文字コード変換して url エンコード
     std::string charset_url_encode( const std::string& str, const std::string& charset );
 
+    // BASE64
+    std::string base64( const std::string& str );
+
     // UTF8の文字列に変換
     std::string strtoutf8( const std::string& str, const std::string& charset );
 

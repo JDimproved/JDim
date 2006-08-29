@@ -220,6 +220,13 @@ void DBTREE::board_set_hana_for_write( const std::string& url, const std::string
     DBTREE::get_board( url )->set_hana_for_write( hana );
 }
 
+
+const std::string DBTREE::board_basicauth( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_basicauth();
+}
+
+
 const std::string DBTREE::board_ext( const std::string& url )
 {
     return DBTREE::get_board( url )->get_ext();

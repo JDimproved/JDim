@@ -89,6 +89,9 @@ namespace DBTREE
         // hana, 2ch書き込み時に必要
         std::string m_hana_for_write;   
 
+        // basic 認証用の「ユーザID:パスワード」の組
+        std::string m_basicauth;
+
         // get_article_fromURL()のキャッシュ
         std::string m_get_article_url;
         ArticleBase* m_get_article;
@@ -174,6 +177,10 @@ namespace DBTREE
         // hana
         const std::string& hana_for_write() { return m_hana_for_write; }
         void set_hana_for_write( const std::string& hana ){ m_hana_for_write = hana; }
+
+        // basic認証
+        const std::string& get_basicauth() const { return m_basicauth; }
+        void set_basicauth( const std::string& basicauth ){ m_basicauth = basicauth; }
 
         // スレの url を dat型のurlに変換して出力
         // url がスレッドのURLで無い時はempty()が返る
