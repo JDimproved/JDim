@@ -1579,7 +1579,7 @@ bool DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
                     for( it_query = list_query.begin(); it_query != list_query.end() ; ++it_query ){
 
                         std::string query = ( *it_query );
-                        if( regex.exec( query, tmplayout->text, offset, true ) ){
+                        if( regex.exec( query, tmplayout->text, offset, true, true, true ) ){
 
                             offset = regex.pos( 0 );
                             lng = regex.str( 0 ).length();

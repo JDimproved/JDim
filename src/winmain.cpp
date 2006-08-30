@@ -1,5 +1,9 @@
 // ライセンス: 最新のGPL
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 //#define _DEBUG
 #include "jddebug.h"
 
@@ -11,6 +15,11 @@
 #include "icons/iconmanager.h"
 
 #include "jdlib/loader.h"
+
+#ifdef HAVE_MIGEMO_H
+#include "jdlib/jdmigemo.h"
+#endif
+
 
 WinMain::WinMain( bool init )
     : Gtk::Window( Gtk::WINDOW_TOPLEVEL )
@@ -46,6 +55,11 @@ WinMain::WinMain( bool init )
     set_resizable( true );
     property_destroy_with_parent().set_value( false );
 
+    // migemo 初期化
+#ifdef HAVE_MIGEMO_H
+    jd_migemo_init( "/usr/share/migemo/utf-8/migemo-dict" );
+#endif
+
     // 後はcoreを作って任せる
     m_core = new class CORE::Core( *this );
     m_core->run( init );
@@ -59,6 +73,11 @@ WinMain::~WinMain()
 #endif
 
     save_session();
+
+    // migemo のクローズ
+#ifdef HAVE_MIGEMO_H
+    jd_migemo_close();
+#endif
 
     // アイコンマネージャ削除
     ICON::delete_icon_manager();

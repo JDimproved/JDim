@@ -1562,7 +1562,7 @@ bool BoardView::drawout()
         Glib::ustring subject = row[ m_columns.m_col_subject ];
 
         if( reset ) row[ m_columns.m_col_drawbg ] = false;
-        else if( regex.exec( query, subject, 0, true ) ){
+        else if( regex.exec( query, subject, 0, true, true, true ) ){
             row[ m_columns.m_col_drawbg ] = true;
             find = true;
 
@@ -1625,7 +1625,7 @@ void BoardView::search()
         if( path == path_start ) break;
         
         Glib::ustring subject = get_name_of_cell( path, m_columns.m_col_subject );
-        if( regex.exec( query, subject, 0, true ) ){
+        if( regex.exec( query, subject, 0, true, true, true ) ){
             m_treeview.scroll_to_row( path, 0 );
             m_treeview.set_cursor( path );
             return;

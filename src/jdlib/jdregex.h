@@ -21,7 +21,7 @@ namespace JDLIB
         // icase : true なら大小無視
         // newline : true なら . に改行をマッチさせない
         bool exec( const std::string reg, const std::string& target, unsigned int offset = 0
-                   , bool icase = false, bool newline = true );
+                   , bool icase = false, bool newline = true, bool usemigemo = false );
         const int pos( unsigned int num );
         const std::string str( unsigned int num );
     };

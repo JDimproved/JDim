@@ -5,6 +5,17 @@
 
 #include "jdregex.h"
 
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef HAVE_MIGEMO_H
+#include "jdmigemo.h"
+#endif
+
+
+
 #include <regex.h>
 
 #define REGEX_MAX_NMATCH 32
@@ -25,7 +36,7 @@ Regex::~Regex()
 
 // icase : true なら大小無視
 // newline : true なら . に改行をマッチさせない
-bool Regex::exec( const std::string reg, const std::string& target, unsigned int offset, bool icase, bool newline )
+bool Regex::exec( const std::string reg, const std::string& target, unsigned int offset, bool icase, bool newline, bool use_migemo )
 {
     regex_t preg;
     regmatch_t pmatch[ REGEX_MAX_NMATCH ];
@@ -41,10 +52,28 @@ bool Regex::exec( const std::string reg, const std::string& target, unsigned int
     if( newline ) cflags |= REG_NEWLINE;
     if( icase ) cflags |= REG_ICASE;
 
+#ifdef HAVE_MIGEMO_H
+
+    if( use_migemo ){
+
+        if( jd_migemo_regcomp( &preg, reg.c_str(),cflags ) != 0 ){
+            if( regcomp( &preg, reg.c_str(), cflags ) != 0 ){
+                regfree( &preg );
+                return false;
+            }
+        }
+    }
+    else{
+#endif
+
     if( regcomp( &preg, reg.c_str(), cflags ) != 0 ){
         regfree( &preg );
         return false;
     }
+
+#ifdef HAVE_MIGEMO_H
+    }
+#endif
 
     if( regexec( &preg, target.c_str() + offset, REGEX_MAX_NMATCH, pmatch, 0 ) != 0 ){
         regfree( &preg );

@@ -1850,7 +1850,7 @@ void BBSListViewBase::search()
         Glib::ustring name = path2name( path );
         Glib::ustring url = path2url( path );
 
-        if( regex.exec( query, name, 0, true ) || regex.exec( query, url, 0, true ) ){
+        if( regex.exec( query, name, 0, true, true, true ) || regex.exec( query, url, 0, true ) ){
             m_treeview.expand_parents( path );
             m_treeview.scroll_to_row( path, 0 );
             m_treeview.set_cursor( path );
