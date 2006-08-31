@@ -943,6 +943,9 @@ bool Loader::analyze_header()
     std::cout << "contenttype = " << m_data.contenttype<< std::endl;            
     if( m_use_chunk ) std::cout << "m_use_chunk = true\n";
     if( m_use_zlib )  std::cout << "m_use_zlib = true\n";
+
+    std::cout << "authenticate = " << analyze_header_option( "WWW-Authenticate: " ) << std::endl;
+
     std::cout << "\n";
 #endif
     

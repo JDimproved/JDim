@@ -94,7 +94,7 @@ namespace DBTREE
         void update_boards( const std::string xml );
 
         void load_cache();
-        bool set_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string() );
+        bool set_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
         int is_moved( const std::string& root,
                        const std::string& path_board,
                        const std::string& name,

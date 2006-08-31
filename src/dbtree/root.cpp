@@ -380,9 +380,11 @@ void Root::update_boards( const std::string xml )
 
 //
 // 板のタイプに合わせて板情報をセット
-// ついでに移転とかの判定もする
+// ついでに移転の判定もする
 //
-bool Root::set_board( const std::string& url, const std::string& name, const std::string& basicauth )
+// etc == true なら etc.txtに登録された外部板を意味する
+//
+bool Root::set_board( const std::string& url, const std::string& name, const std::string& basicauth, bool etc )
 {
 #ifdef _SHOW_BOARD
     std::cout << url << " " << name << std::endl;
@@ -396,7 +398,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     int type;
 
     // 2ch
-    if( is_2ch( url ) ){
+    if( !etc && is_2ch( url ) ){
 
         if( ! regex.exec( "(http://[^/]*)/([^/]*)/$" , url ) ) return false;
         root = regex.str( 1 );
@@ -584,10 +586,11 @@ void Root::load_etc()
                 
 #ifdef _DEBUG
             std::cout << "etc board : " << url << " " << name << std::endl;
+            std::cout << "id:passwd = " << basicauth << std::endl;
 #endif
 
             // DBに登録
-            if( set_board( url, name, basicauth ) ){
+            if( set_board( url, name, basicauth, true ) ){
 
                 m_xml_etc += "<board url=\"";
                 m_xml_etc += url;
