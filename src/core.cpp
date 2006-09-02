@@ -488,11 +488,17 @@ void Core::shutdown()
 //
 void Core::set_maintitle()
 {
+    std::string title;
+
+    if( m_title.empty() ){
+
 #ifdef JDVERSION_CVS
-    std::string title = std::string( "JD - " ) + "cvs." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
+        title = std::string( "JD - " ) + "cvs." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
 #else
-    std::string title = std::string( "JD - " ) + std::string( JDVERSIONSTR );
+        title = std::string( "JD - " ) + std::string( JDVERSIONSTR );
 #endif
+
+    } else title = "JD - " + m_title;
 
     if( LOGIN::get_login2ch()->login_now() ) title +=" [ ログイン中 ]";
     if( ! SESSION::is_online() ) title += " [ オフライン ]";
@@ -1431,7 +1437,12 @@ void Core::exec_command()
     // あるnotebookが空になった
     else if( command.command  == "empty_page" ) empty_page( command.url );
 
-    // URL、ステータスなどの表示
+    // タイトル、URL、ステータスなどの表示
+    else if( command.command  == "set_title" ){
+        m_title = command.arg1;
+        set_maintitle();
+    }
+
     else if( command.command  == "set_url" ){
         m_entry_url.set_text( command.url );
     }

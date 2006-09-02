@@ -36,6 +36,9 @@ namespace SKELETON
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
 
+        // メインウィンドウのタイトルに表示する文字
+        std::string m_title;
+
         // メインウィンドウのステータスバーに表示する文字
         std::string m_status;
 
@@ -59,6 +62,9 @@ namespace SKELETON
 
         // コントローラ
         CONTROL::Control& get_control(){ return m_control; }
+
+        // タイトル
+        void set_title( const std::string& title ){ m_title = title; }
 
         // ステータス
         void set_status( const std::string& status ){ m_status = status; }
@@ -114,6 +120,9 @@ namespace SKELETON
 
         // コピー用のURL
         virtual const std::string url_for_copy(){ return m_url; }
+
+        // メインウィンドウのタイトルバーに表示する文字列
+        virtual const std::string& get_title(){ return m_title; }
 
         // メインウィンドウのステータスバーに表示する文字列
         virtual const std::string& get_status(){ return m_status; }

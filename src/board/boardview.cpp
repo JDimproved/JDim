@@ -692,10 +692,14 @@ void BoardView::show_view()
 
     // DBに登録されてない
     if( get_url().empty() ){
-        set_status( "invalid URL" );
-        BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
+        SKELETON::View::set_status( "invalid URL" );
+        BOARD::get_admin()->set_command( "set_status", get_url(), SKELETON::View::get_status() );
         return;
     }
+
+    // タイトル表示
+    SKELETON::View::set_title( DBTREE::board_name( get_url() ) );
+    BOARD::get_admin()->set_command( "set_title", get_url(), SKELETON::View::get_title() );
 
     // タブにアイコンを表示
     BOARD::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
@@ -709,8 +713,8 @@ void BoardView::show_view()
     // download 開始
     // 終わったら update_view() が呼ばれる
     DBTREE::board_download_subject( get_url() );
-    set_status( "loading..." );
-    BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
+    SKELETON::View::set_status( "loading..." );
+    BOARD::get_admin()->set_command( "set_status", get_url(), SKELETON::View::get_status() );
 }
 
 
@@ -809,8 +813,8 @@ void BoardView::update_view()
     // ステータスバー更新
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::board_str_code( get_url() ) << " [ 全 " << ( id -1 ) << " ] ";
-    set_status( ss_tmp.str() );
-    BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
+    SKELETON::View::set_status( ss_tmp.str() );
+    BOARD::get_admin()->set_command( "set_status", get_url(), SKELETON::View::get_status() );
 
     // タブのアイコン状態を更新
     int code = DBTREE::board_code( get_url() );

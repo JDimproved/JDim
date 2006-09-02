@@ -88,6 +88,10 @@ namespace CORE
         Gtk::Entry m_entry_url;
         SKELETON::ImgButton m_button_go;
 
+        // タイトルに表示する文字列
+        // set_maintitle() 参照
+        std::string m_title;
+
         // ステータスバー
         Gtk::Statusbar m_statbar;
         Gtk::Label m_mginfo;

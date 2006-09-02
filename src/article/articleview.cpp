@@ -226,6 +226,7 @@ void ArticleViewMain::update_finish()
     std::cout << "ArticleViewMain::update_finish " << str_label << " code = " << code << std::endl;;
 #endif
 
+    // ステータス表示
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::article_str_code( url_article() )
            << " [ 全 " << DBTREE::article_number_load( url_article() )
@@ -237,8 +238,12 @@ void ArticleViewMain::update_finish()
            << " / " << DBTREE::article_lng_dat( url_article() )/1024 << " k ] "
            << str_stat;
 
-    set_status( ss_tmp.str() );
-    ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
+    SKELETON::View::set_status( ss_tmp.str() );
+    ARTICLE::get_admin()->set_command( "set_status", get_url(), SKELETON::View::get_status() );
+
+    // タイトルセット
+    SKELETON::View::set_title( DBTREE::article_subject( url_article() ) );
+    ARTICLE::get_admin()->set_command( "set_title", get_url(), SKELETON::View::get_title() );
 
     // 全体再描画
     drawarea()->redraw_view();
