@@ -195,6 +195,10 @@ std::list< int > NodeTreeBase::get_res_id_name( const std::string& id_name )
 //
 std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std::list< bool >& list_joint )
 {
+#ifdef _DEBUG
+    std::cout << "NodeTreeBase::get_res_str_num " << str_num << std::endl;
+#endif
+
     std::list< int > list_resnum;
 
     // "," ごとにブロック分けする (例) "1-2,3-4+5" -> "1-2","3-4+5"
@@ -202,32 +206,43 @@ std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std:
     std::list< std::string >::iterator it = list_str_num.begin();
     for( ; it != list_str_num.end(); ++it ){
 
-        // true なら前のスレと結合
-        bool joint = false;
+        // "=" ごとにブロック分けする (例) "1-2=3-4+5" -> "1-2","3-4+5"
+        std::list< std::string > list_str_num_eq = MISC::StringTokenizer( ( *it ), '=' );
+        std::list< std::string >::iterator it_eq = list_str_num_eq.begin();
+        for( ; it_eq != list_str_num_eq.end(); ++it_eq ){
 
-        // "+"ごとにブロックを分ける (例) "1+2-3+4" -> "1","2-3","4"
-        std::list< std::string > list_str_num2 = MISC::StringTokenizer( ( *it ), '+' );
-        std::list< std::string >::iterator it2 = list_str_num2.begin();
-        for( ; it2 != list_str_num2.end(); ++it2 ){
+            // true なら前のスレと結合
+            bool joint = false;
 
-            int num_from = MAX( 1, atol( ( *it2 ).c_str() ) );
-            int num_to = 0;
-            if( num_from <= m_id_header  ){
+            // "+"ごとにブロックを分ける (例) "1+2-3+4" -> "1","2-3","4"
+            std::list< std::string > list_str_num_pl = MISC::StringTokenizer( ( *it_eq ), '+' );
+            std::list< std::string >::iterator it_pl = list_str_num_pl.begin();
+            for( ; it_pl != list_str_num_pl.end(); ++it_pl ){
 
-                size_t i;
-                if( ( i = ( *it2 ).find( "-" ) ) != std::string::npos ) num_to = atol( ( *it2 ).substr( i +1 ).c_str() );
-                num_to = MIN( MAX( num_to, num_from ), m_id_header );
+                // num_from から num_to まで表示
+                int num_from = MAX( 1, atol( ( *it_pl ).c_str() ) );
+                int num_to = 0;
 
-                for( int i2 = num_from; i2 <= num_to ; ++i2 ) {
+                if( num_from <= m_id_header  ){
 
-                    //  透明あぼーんしていない　or あぼーんしていないなら追加
-                    if( ! m_abone_transparent || ! get_abone( i2 ) ){ 
+                    size_t i;
+                    if( ( i = ( *it_pl ).find( "-" ) ) != std::string::npos ) num_to = atol( ( *it_pl ).substr( i +1 ).c_str() );
+                    num_to = MIN( MAX( num_to, num_from ), m_id_header );
 
-                        list_resnum.push_back( i2 );
-                        list_joint.push_back( joint );
+                    for( int i2 = num_from; i2 <= num_to ; ++i2 ) {
 
-                        // "+"が付いていたら2つ目のスレから連結指定
-                        if( list_str_num2.size() >= 2 ) joint = true;
+                        //  透明あぼーんしていない　or あぼーんしていないなら追加
+                        if( ! m_abone_transparent || ! get_abone( i2 ) ){ 
+#ifdef _DEBUG
+                            std::cout << *it_pl << " " << num_from << " - " << num_to
+                                      << " i2 = " << i2 << " joint = " << joint << std::endl;
+#endif
+                            list_resnum.push_back( i2 );
+                            list_joint.push_back( joint );
+
+                            // "+"が付いていたら2つ目のブロックから連結指定
+                            if( list_str_num_pl.size() >= 2 ) joint = true;
+                        }
                     }
                 }
             }
@@ -988,8 +1003,8 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 //
 void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
 {
-    const bool digitlink = true;
-    const bool bold = true;
+    bool digitlink = true;
+    bool bold = true;
     int pos_trip_begin = 0;
     int pos_trip_end = 0;
     int i;
@@ -1020,8 +1035,11 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
         // トリップの前(名前部分)
         parse_html( str, pos_trip_begin, COLOR_CHAR_NAME, digitlink, bold );
 
+        // あとは数字が入ってもリンクしない
+        digitlink = false;
+
         // トリップ
-        parse_html( str + pos_trip_begin, pos_trip_end - pos_trip_begin + 1, COLOR_CHAR_NAME, false, bold );
+        parse_html( str + pos_trip_begin, pos_trip_end - pos_trip_begin + 1, COLOR_CHAR_NAME, digitlink, bold );
 
         // トリップの後
         if( pos_trip_end < lng-1 )
@@ -1029,9 +1047,12 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
     }
 
     // デフォルト名無しと同じときはアンカーを作らない
-    else if( strncmp( m_default_noname.data(), str, lng ) == 0 ) parse_html( str, lng, COLOR_CHAR_NAME, false, bold );
+    else if( strncmp( m_default_noname.data(), str, lng ) == 0 ){
+        digitlink = false;
+        parse_html( str, lng, COLOR_CHAR_NAME, digitlink, bold );
+    }
 
-    // 通常の場合は中に数字があったらアンカーにする
+    // 通常の場合は先頭に数字があったらアンカーにする
     else parse_html( str, lng, COLOR_CHAR_NAME, digitlink, bold );
 
     // プレインな名前取得
@@ -1167,7 +1188,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 //
 // HTMLパーサ
 //
-// digitlink : true の時は数字が現れたら手当たり次第にアンカーにする( parseName() などで使う )
+// digitlink : true の時は先頭に数字が現れたらアンカーにする( parseName() などで使う )
 //             false なら数字の前に >> がついてるときだけアンカーにする
 //
 // bold : ボールド標示
@@ -1182,9 +1203,9 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
     int lng_text = 0;
     
     // 行頭の1個以上の空白は除く
-    if( ! digitlink ) while( *pos == ' ' && *( pos + 1 ) != ' ' ) ++pos;
+    while( *pos == ' ' && *( pos + 1 ) != ' ' ) ++pos;
    
-    for( ; pos < pos_end; ++pos ){
+    for( ; pos < pos_end; ++pos, digitlink = false ){
 
 
         ///////////////////////
@@ -1273,7 +1294,11 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
         int lng_str = 0, lng_link = strlen( PROTO_ANCHORE );
         ANCINFO ancinfo[ MAX_ANCINFO ];
         int lng_anc = 0;
-        if( check_anchor( 2 * digitlink, pos, n_in, tmpstr + lng_str, tmplink + lng_link, LNG_LINK - lng_link, ancinfo + lng_anc ) ){
+
+        int mode = 0;
+        if( digitlink ) mode = 2;
+
+        if( check_anchor( mode , pos, n_in, tmpstr + lng_str, tmplink + lng_link, LNG_LINK - lng_link, ancinfo + lng_anc ) ){
 
             // フラッシュしてからアンカーノードをつくる
             createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
@@ -1285,7 +1310,8 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
             pos += n_in; 
 
             // , や = や +が続くとき
-            while( check_anchor( 1, pos, n_in, tmpstr + lng_str, tmplink + lng_link ,
+            mode = 1;
+            while( check_anchor( mode, pos, n_in, tmpstr + lng_str, tmplink + lng_link ,
                                  LNG_LINK - lng_link, ancinfo + lng_anc ) ){
 
                 lng_str += strlen( tmpstr ) - lng_str;
