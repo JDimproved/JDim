@@ -774,8 +774,6 @@ void BoardView::update_view()
     // 高速化のためデータベースに直接アクセス
     std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url() );
 
-    time_t current_t = time( NULL );
-    
     // 自動ソート抑制
     UNSORTED_COLUMN();
 
@@ -794,7 +792,7 @@ void BoardView::update_view()
             row[ m_columns.m_col_since ] = art->get_since_date();
 
             if( art->is_current() )
-                row[ m_columns.m_col_speed ] = art->get_number() / MAX( 1, ( current_t - art->get_since_time()) / ( 60 * 60 * 24 ) + 1 );
+                row[ m_columns.m_col_speed ] = art->get_speed();
         
             row[ m_columns.m_col_since_t ] = art->get_since_time();
             row[ m_columns.m_col_id_dat ] = art->get_id();

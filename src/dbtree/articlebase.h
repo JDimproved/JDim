@@ -121,6 +121,9 @@ namespace DBTREE
         const int get_number_load() const { return m_number_load; }
         const int get_number_seen() const{  return m_number_seen; }
 
+        // スレ速度
+        const int get_speed();
+
         // キャッシュにあるdatファイルのサイズ
         const size_t get_lng_dat();
 

@@ -229,9 +229,13 @@ void ArticleViewMain::update_finish()
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::article_str_code( url_article() )
            << " [ 全 " << DBTREE::article_number_load( url_article() )
-           << " / 新着 " << DBTREE::article_number_new( url_article() ) << " ] "
-           << str_stat
-           << " " << DBTREE::article_lng_dat( url_article() )/1024 << " k";
+           << " / 新着 " << DBTREE::article_number_new( url_article() );
+
+    if( DBTREE::article_write_time( url_article() ) ) ss_tmp << " / 最終書込 " << DBTREE::article_write_date( url_article() );
+
+    ss_tmp << " / 速度 " << DBTREE::article_get_speed( url_article() )
+           << " / " << DBTREE::article_lng_dat( url_article() )/1024 << " k ] "
+           << str_stat;
 
     set_status( ss_tmp.str() );
     ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );

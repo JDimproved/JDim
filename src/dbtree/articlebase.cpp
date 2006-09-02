@@ -111,6 +111,14 @@ const std::string ArticleBase::get_org_url()
 }
 
 
+// スレ速度
+const int ArticleBase::get_speed()
+{
+    time_t current_t = time( NULL );
+    return get_number() / MAX( 1, ( current_t - get_since_time()) / ( 60 * 60 * 24 ) + 1 );
+}
+
+
 // キャッシュにあるdatファイルのサイズ
 const size_t ArticleBase::get_lng_dat()
 {

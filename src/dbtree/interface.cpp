@@ -462,6 +462,12 @@ void DBTREE::article_download_dat( const std::string& url )
 }
 
 
+const int DBTREE::article_get_speed( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_speed();
+}
+
+
 const std::string& DBTREE::get_agent( const std::string& url )
 {
     return DBTREE::get_board( url )->get_agent();

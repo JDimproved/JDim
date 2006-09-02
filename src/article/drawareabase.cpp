@@ -419,15 +419,15 @@ void DrawAreaBase::append_res( std::list< int >& list_resnum, std::list< bool >&
     std::list< bool >::iterator it_joint = list_joint.begin();
     for( ; it != list_resnum.end(); ++it ){
 
-#ifdef _DEBUG
-        std::cout << "append no. " << ( *it ) << std::endl;
-#endif
-
         bool joint = false;
         if( use_joint ){
             joint = ( *it_joint );
             ++it_joint;
         }
+
+#ifdef _DEBUG
+        std::cout << "append no. " << ( *it ) << " joint = " << joint << std::endl;
+#endif
 
         m_layout_tree->append_node( m_article->res_header( ( *it ) ), joint );
     }

@@ -102,6 +102,7 @@ namespace DBTREE
     void article_set_number_seen( const std::string& url, int seen );
     const int article_number_new( const std::string& url );    
     void article_download_dat( const std::string& url );
+    const int article_get_speed( const std::string& url );
 
     void delete_article( const std::string& url );  // キャッシュ削除
     void article_update_writetime( const std::string& url );
