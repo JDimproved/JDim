@@ -101,6 +101,7 @@ void Post::post_msg()
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout_post();
     data.cookie_for_write = DBTREE::board_cookie_for_write( m_url );
+    data.basicauth = DBTREE::board_basicauth( m_url );
 
 #ifdef _DEBUG
     std::cout << "Post::post_msg : " << std::endl
