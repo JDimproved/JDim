@@ -1059,7 +1059,7 @@ void NodeTreeBase::parseMail( NODE* header, const char* str, int lng )
 
 
 //
-// 日付とIDとBEその他
+// 日付とID、及びBE、株、その他
 //
 void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 {
@@ -1072,11 +1072,12 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 
     for(;;){
 
-        // 空白を飛ばす
+        // 先頭の空白を飛ばす
         while( start + lng_text < lng && str[ start + lng_text ] == ' ' ) ++lng_text;
 
+        // 空白ごとにブロック分けしてパースする
         int start_block = start + lng_text;
-        int lng_block = 0;
+        int lng_block = 0; // ブロックの長さ
         while( start_block + lng_block < lng && str[ start_block + lng_block ] != ' ' ) ++lng_block;
         if( !lng_block ) break;
 
@@ -1085,8 +1086,6 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 
             // フラッシュ
             if( lng_text ) createTextNodeN( str + start, lng_text, COLOR_CHAR );
-            start = start_block + lng_block;
-            lng_text = 0;
 
             // id 取得
             lng_id_tmp = lng_block -3;
@@ -1101,8 +1100,12 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             header->headinfo->node_id_name = create_linknode( "ID:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
             createTextNodeN( tmpid, lng_id_tmp, COLOR_CHAR);
 
-            // 発言回数
+            // 発言回数ノード作成
             createIDNumNode();
+
+            // 次のブロックへ移動
+            start = start_block + lng_block;
+            lng_text = 0;
         }
 
         // BE:
@@ -1110,8 +1113,6 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 
             // フラッシュ
             if( lng_text ) createTextNodeN( str + start, lng_text, COLOR_CHAR );
-            start = start_block + lng_block;
-            lng_text = 0;
 
             // id 取得
             lng_id_tmp = 0;
@@ -1127,6 +1128,31 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             // リンク作成
             create_linknode( "BE:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
             createTextNodeN( tmpid, lng_id_tmp, COLOR_CHAR);
+
+            // 次のブロックへ移動
+            start = start_block + lng_block;
+            lng_text = 0;
+        }
+
+        // 株などの<a href～>
+        else if( str[ start_block ] == '<'
+                 && str[ start_block + 1 ] == 'a'
+                 && str[ start_block + 2 ] == ' ' ){
+
+            // フラッシュ
+            if( lng_text ) createTextNodeN( str + start, lng_text, COLOR_CHAR );
+
+            // </a>までブロックの長さを伸ばす
+            while( start_block + lng_block < lng
+                   && ! ( str[ start_block + lng_block -1 ] == 'a'
+                          && str[ start_block + lng_block ] == '>' ) ) ++lng_block;
+            ++lng_block;
+
+            parse_html( str + start_block, lng_block, COLOR_CHAR, false, false, true );
+
+            // 次のブロックへ移動
+            start = start_block + lng_block;
+            lng_text = 0;
         }
 
         // テキスト
@@ -1146,7 +1172,10 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 //
 // bold : ボールド標示
 //
-void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool digitlink, bool bold )
+// ahref : <a href=～></a> からリンクノードを作成する
+// (例) parse_html( "<a href=\"hoge.com\">hoge</a>", 27, COLOR_CHAR, false, false, true );
+//
+void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool digitlink, bool bold, bool ahref )
 {
     const char* pos = str;
     const char* pos_end = str + lng;
@@ -1179,6 +1208,42 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 
                 // 行頭の1個以上の空白を除く
                 while( *pos == ' ' && *( pos + 1 ) != ' ' ) ++pos;
+            }
+
+            //  ahref == true かつ <a href=～></a>
+            if( ahref &&
+                *( pos + 1 ) == 'a' && *( pos + 2 ) == ' ' ){
+
+                // フラッシュ
+                createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+
+                while( pos < pos_end && *pos != '"' ) ++pos;
+                if( pos >= pos_end ) continue;
+                ++pos;
+
+                const char* pos_link_start = pos;
+                int lng_link = 0;
+
+                while( pos < pos_end && *pos != '"' ){ ++pos; ++lng_link; }
+                if( pos >= pos_end ) continue;
+
+                while( pos < pos_end && *pos != '>' ) ++pos;
+                if( pos >= pos_end ) continue;
+                ++pos;
+
+                const char* pos_str_start = pos;
+                int lng_str = 0;
+
+                while( pos < pos_end && *pos != '<' ){ ++pos; ++lng_str; }
+                if( pos >= pos_end ) continue;
+
+                while( pos < pos_end && *pos != '>' ) ++pos;
+                if( pos >= pos_end ) continue;
+                ++pos;
+
+                if( lng_link && lng_str ){
+                    create_linknode( pos_str_start, lng_str , pos_link_start, lng_link, COLOR_CHAR, false );
+                }
             }
 
             // </a>

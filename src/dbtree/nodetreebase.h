@@ -208,7 +208,7 @@ namespace DBTREE
         void parseName( NODE* header, const char* str, int lng );
         void parseMail( NODE* header, const char* str, int lng );
         void parse_date_id( NODE* header, const char* str, int lng );
-        void parse_html( const char* str, int lng, int color_text, bool digitlink = false, bool bold = false );
+        void parse_html( const char* str, int lng, int color_text, bool digitlink = false, bool bold = false, bool ahref = false );
         void parseBr( );
 
         bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
