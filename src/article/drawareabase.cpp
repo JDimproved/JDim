@@ -663,7 +663,6 @@ void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
 // x,y : ノードの初期座標(左上)、次のノードの左上座標が入って返る
 // mrg_level : 字下げ下げレベル
 //
-#include <iostream>
 void DrawAreaBase::layout_one_node( LAYOUT* layout, int& x, int& y, int width_view, int& mrg_level )
 {
     switch( layout->type ){

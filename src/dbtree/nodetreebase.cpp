@@ -1211,7 +1211,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
             }
 
             //  ahref == true かつ <a href=～></a>
-            if( ahref &&
+            else if( ahref &&
                 *( pos + 1 ) == 'a' && *( pos + 2 ) == ' ' ){
 
                 // フラッシュ
