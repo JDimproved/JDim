@@ -7,6 +7,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "config/globalconf.h"
+
 using namespace SKELETON;
 
 TabLabel::TabLabel( const std::string& url )
@@ -87,7 +89,7 @@ bool TabLabel::dec()
 bool TabLabel::inc()
 {
     int lng = m_label.get_text().length() -1;
-    if( lng <= 0 ) return false;
+    if( lng < CONFIG::get_tab_min_str() ) return false;
     resize_tab( lng );
 
     return true;
