@@ -1130,9 +1130,9 @@ void ArticleViewBase::append_res( std::list< int >& list_resnum, std::list< bool
 bool ArticleViewBase::slot_leave_drawarea( GdkEventCrossing* event )
 {
     // クリックしたときやホイールを回すと event->mode に　GDK_CROSSING_GRAB
-    // か GDK_CROSSING_GRAB がセットされてイベントが発生する場合がある
+    // か GDK_CROSSING_UNGRAB がセットされてイベントが発生する場合がある
     if( event->mode == GDK_CROSSING_GRAB ) return false;
-    if( event->mode == GDK_CROSSING_GRAB ) return false;
+    if( event->mode == GDK_CROSSING_UNGRAB ) return false;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_leave_drawarea\n";
@@ -1582,9 +1582,9 @@ void ArticleViewBase::show_popup( SKELETON::View* view )
 bool ArticleViewBase::slot_popup_leave_notify_event( GdkEventCrossing* event )
 {
     // クリックしたときやホイールを回すと event->mode に　GDK_CROSSING_GRAB
-    // か GDK_CROSSING_GRAB がセットされてイベントが発生する場合がある
+    // か GDK_CROSSING_UNGRAB がセットされてイベントが発生する場合がある
     if( event->mode == GDK_CROSSING_GRAB ) return false;
-    if( event->mode == GDK_CROSSING_GRAB ) return false;
+    if( event->mode == GDK_CROSSING_UNGRAB ) return false;
 
     slot_hide_popup();
     return true;
