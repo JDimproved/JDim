@@ -1,6 +1,6 @@
 Summary: a 2ch browser
 Name: jd
-Version: 152b_060827
+Version: 152b_060903
 Release: 1
 Group: Applications/Internet
 URL: http://jd4linux.sourceforge.jp/

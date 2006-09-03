@@ -150,4 +150,15 @@ fi
 fi
 
 
+dnl
+dnl checking migemo
+dnl
+AC_ARG_WITH(migemo,[ --with-migemo    (enable migemo search)],
+       [ if test "$withval" != "no" ;then
+               echo "use migemo"
+               AC_CHECK_HEADERS([migemo.h])
+               AC_CHECK_LIB(migemo,migemo_open)
+       fi ])
+
+
 AC_OUTPUT(Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/config/Makefile src/icons/Makefile )
