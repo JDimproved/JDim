@@ -116,6 +116,9 @@ void DragableNoteBook::adjust_tabwidth()
 
         // タブ幅の平均値
         int avg_width_tab = width_notebook / MAX( 3, pages );
+#ifdef _DEBUG
+        std::cout << "avg_width_tab = " << avg_width_tab << std::endl;
+#endif
 
         // タブ幅が平均値をオーバーしているなら縮める
         for( int i = 0; i < pages; ++i ){
@@ -130,7 +133,7 @@ void DragableNoteBook::adjust_tabwidth()
                     std::cout << "s " << i << " " << width << " / " << avg_width_tab << " " << tab->get_text() << std::endl;
 #endif
                     if( width < avg_width_tab ) break;
-                    if( ! tab->inc() ) break;
+                    if( ! tab->dec() ) break;
                 }
             }
         }
@@ -144,7 +147,7 @@ void DragableNoteBook::adjust_tabwidth()
 
                 for(;;){
 
-                    if( ! tab->dec() ) break;
+                    if( ! tab->inc() ) break;
 
                     int width = tab->get_tabwidth();
 #ifdef _DEBUG
@@ -152,7 +155,7 @@ void DragableNoteBook::adjust_tabwidth()
 #endif
                     // 最大値を越えたらひとつ戻してbreak;
                     if( width_total + width > avg_width_tab * ( i + 1 ) ){
-                        tab->inc();
+                        tab->dec();
                         break;
                     }
                 }
@@ -198,11 +201,11 @@ void DragableNoteBook::set_dragable( bool dragable )
 
 
 
+// ボタン押した
 bool DragableNoteBook::on_button_press_event( GdkEventButton* event )
 {
     // ボタンを押した時点でのページ番号を記録しておく
     m_page = get_page_under_mouse();
-    if( m_page >= get_n_pages() ) m_page = get_n_pages() -1;
     m_drag = false;
 
     // ダブルクリック
@@ -210,17 +213,21 @@ bool DragableNoteBook::on_button_press_event( GdkEventButton* event )
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
 #ifdef _DEBUG
-    std::cout << "DragableNoteBook::on_button_press_event from " << m_page  << std::endl;
+    std::cout << "DragableNoteBook::on_button_press_event page = " << m_page  << std::endl;
     std::cout << "x = " << (int)event->x_root << " y = " << (int)event->y_root
               << " dblclick = " << m_dblclick << std::endl;
 #endif
-    
-    return true;
+
+    // ページはon_button_release_eventの中で自前で切り替える
+    if( m_page >= 0 && m_page < get_n_pages() ) return true;
+
+    return Gtk::Notebook::on_button_press_event( event );
 }
 
 
 
 
+// ボタン離した
 bool DragableNoteBook::on_button_release_event( GdkEventButton* event )
 {
     int x = (int)event->x_root;
@@ -236,7 +243,8 @@ bool DragableNoteBook::on_button_release_event( GdkEventButton* event )
     if( !m_drag // D&D中は切替えない
 
         // なぜかviewをクリックしても呼ばれるので m_page の値で on_button_press_event が呼ばれたかチェック
-        && m_page != -1 
+        && m_page >= 0 && m_page < get_n_pages()
+
         ){
 
         // ダブルクリックの処理のため一時的にtypeを切替える
@@ -338,34 +346,42 @@ void DragableNoteBook::on_drag_end( const Glib::RefPtr< Gdk::DragContext >& cont
 int DragableNoteBook::get_page_under_mouse()
 {
     int x, y;
-    int width = 0, height = 0, i;
+    int width = 0, height = 0;
+    int page_min = 65535, page_max = -1;
 
-    for( i = 0; i < get_n_pages() ; ++i ){
+    for( int i = 0 ; i < get_n_pages(); ++i ){
 
         SKELETON::TabLabel* tab = get_tablabel( i );
-        if( !tab ){
-#ifdef _DEBUG
-            std::cout << "DragableNoteBook::get_page_under_mouse: tab = NULL\n";
-#endif
-            return -1;
-        }
+        if( !tab ) return -1;
 
-        // HBoxは(x,y)座標が取得できないので、幅と高さとマウスの位置からタブの中に
-        // マウスがあるかどうか判定する
-        width = tab->get_allocation().get_width();
-        height = tab->get_allocation().get_height();
+        width = tab->get_width();
+        height = tab->get_height();
         tab->get_pointer( x, y );
 
-#ifdef _DEBUG
-//        std::cout << "DragableNoteBook::get_page_under_mouse: x = " << x << " y = " << y
-//                  << " xx = " << xx << " yy = " << yy << " w = " << width << " h = " << height << std::endl;
-#endif
-
-        if( x >= 0 && x <= width && y >= 0 && y <= height ) return i;
+        if( x >= 0 && x <= width && y >= 0 && y <= height ){
+            if( page_min > i ) page_min = i;
+            if( page_max < i ) page_max = i;
+        }
     }
 
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::get_page_under_mouse: page_min = " << page_min
+              << " page_max = " << page_max << std::endl;
+#endif
+
+    // スクロールモードになったとき、表示されていないタブでも
+    // tab->get_pointer( x, y ) したときにマウスが上にあると誤判定するバグ?がある
+    //
+    // (例)
+    // タブ0,1が隠れていてタブ2が表示されているとき、page_min = 0, page_max = 2 -> page_maxをreturn
+    // タブ4,5が隠れていてタブ3が表示されているとき、page_min = 3, page_max = 5 -> page_minをreturn
+    //
+    if( page_min == page_max ) return page_min;
+    if( page_min == 0 ) return page_max;
+    if( page_max == get_n_pages()-1 ) return page_min;
+
     // 右の空白部分をクリック
-    if( x > 0 ) return i;
+    if( x > 0 ) return get_n_pages();
 
     return -1;
 }

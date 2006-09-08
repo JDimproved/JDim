@@ -74,22 +74,24 @@ const int TabLabel::get_tabwidth()
 }
 
 
-// 伸縮
+// 縮む
 bool TabLabel::dec()
 {
-    if( m_label.get_text() == m_fulltext ) return false;
 
-    int lng = m_label.get_text().length() +1;
+    int lng = m_label.get_text().length() -1;
+    if( lng < CONFIG::get_tab_min_str() ) return false;
     resize_tab( lng );
 
     return true;
 }
 
 
+// 伸びる
 bool TabLabel::inc()
 {
-    int lng = m_label.get_text().length() -1;
-    if( lng < CONFIG::get_tab_min_str() ) return false;
+    if( m_label.get_text() == m_fulltext ) return false;
+
+    int lng = m_label.get_text().length() +1;
     resize_tab( lng );
 
     return true;
