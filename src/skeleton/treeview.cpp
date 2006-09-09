@@ -417,22 +417,26 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
 //
 bool JDTreeView::on_button_release_event( GdkEventButton* event )
 {
-    bool emit_sig = false;
+    bool emit_sig = false; // true なら m_sig_button_release をemitする
+
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
 
-    if( !( event->state & GDK_CONTROL_MASK )
-        && !( event->state & GDK_SHIFT_MASK ) // ctrl/shift + クリックで複数選択してない場合
+    if( !m_drag // ドラッグ状態でない
 
-        && !( !m_path_dragstart.empty() && path != m_path_dragstart ) // ドラッグして範囲選択していない場合
+        && !( event->state & GDK_CONTROL_MASK )
+        && !( event->state & GDK_SHIFT_MASK ) // ctrl/shift + クリックで複数行選択をしてない場合
+
+        && !( !m_path_dragstart.empty() && path != m_path_dragstart ) // 範囲選択をしていない場合
         ){ 
+
+        emit_sig = true;
 
         // 何もないところをクリックしたら選択解除
         if( !get_row( path ) ) get_selection()->unselect_all();
 
-        // ドラッグ中で無ければ選択
-        if( get_row( path ) && !m_drag ){
+        // クリックした行が範囲選択部分に含まれていないときは選択を解除する
+        if( get_row( path ) ){
 
-            // クリックした部分が範囲選択部分でないときは選択解除
             bool included = false;
             std::list< Gtk::TreeModel::iterator > list_it = get_selected_iterators();
             std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
@@ -446,11 +450,8 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
                     break;
                 }
             }
-
             if( ! included ) set_cursor( path );
         }
-
-        if( !m_drag ) emit_sig = true;
     }
 
     m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
@@ -458,7 +459,7 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
     bool expanded = row_expanded( path );
     bool ret = Gtk::TreeView::on_button_release_event( event );
 
-    // 左の△ボタンを押した
+    // 左の△ボタンを押してディレクトリを開け閉めした場合は信号のemitをキャンセル
     if( expanded != row_expanded( path ) ) emit_sig = false;
 
     if( emit_sig ) m_sig_button_release.emit( event );
