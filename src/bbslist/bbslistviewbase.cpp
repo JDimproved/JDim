@@ -1173,9 +1173,9 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
     if( tab ) str_tab = "true";
 
     Glib::ustring url = path2url( path );
-    if( url.empty() ) return false;
-
     int type = path2type( path );
+
+    if( type != TYPE_DIR && url.empty() ) return false;
 
     switch( type ){
 
@@ -1194,6 +1194,11 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
 
         case TYPE_LINK:
             CORE::core_set_command( "open_url_browser", url );
+            break;
+
+        case TYPE_DIR:
+            if( ! m_treeview.row_expanded( path ) ) m_treeview.expand_row( path, false );
+            else m_treeview.collapse_row( path );
             break;
     }
     

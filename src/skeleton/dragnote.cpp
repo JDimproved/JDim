@@ -38,7 +38,7 @@ void DragableNoteBook::clock_in()
 
     // Gtk::NoteBook は configure_event()をキャッチ出来ないので
     // 応急処置としてタイマーの中でサイズが変更したか調べる
-    else m_pre_width = get_width();
+    else if( m_pre_width > 0 ) m_pre_width = get_width();
 }
 
 

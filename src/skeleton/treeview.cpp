@@ -449,8 +449,11 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
             if( ! included ) set_cursor( path );
         }
 
-
-        if( !m_drag ) m_sig_button_release.emit( event );
+        if( !m_drag ){
+            m_sig_button_release.emit( event );
+            m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
+            return true;
+        }
     }
 
     m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
