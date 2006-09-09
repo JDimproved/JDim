@@ -62,6 +62,8 @@ void ButtonConfig::load_conf()
     SETMOTION( "AutoScrollButton", "Mid" );
     SETMOTION( "GestureButton", "Right" );
     SETMOTION( "PopupmenuButton", "Right" );
+    SETMOTION( "DragStartButton", "Left" );
+    SETMOTION( "TreeRowSelectionButton", "Mid" );
 
     // BBSLIST用ボタン設定
     SETMOTION( "OpenBoardButton", "Left" );

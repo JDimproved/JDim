@@ -77,6 +77,8 @@ namespace CONTROL
         AutoScrollButton,
         GestureButton,
         PopupmenuButton,
+        DragStartButton,
+        TreeRowSelectionButton,
 
         COMMONMOTION_END,
 

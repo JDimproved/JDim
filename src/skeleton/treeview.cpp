@@ -98,7 +98,7 @@ void JDTreeView::set_reorderable_view( bool reorderable )
         // タブで開くボタンを左クリックに割り当てていたらドラッグ開始ボタンを中ボタンにする
         Gdk::ModifierType type = Gdk::BUTTON1_MASK;
         GdkEventButton event;
-        m_control.get_eventbutton( CONTROL::OpenArticleButton, event );
+        m_control.get_eventbutton( CONTROL::DragStartButton, event );
         if( event.button == 2 ) type = Gdk::BUTTON2_MASK;
 
         drag_source_set( targets, type );
@@ -383,7 +383,7 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
     // ドラッグして範囲選択
     // m_path_dragstart が empty でない時に範囲選択を行う
     // on_motion_notify_event()も参照せよ
-    if( m_control.button_alloted( event, CONTROL::OpenArticleTabButton ) )
+    if( m_control.button_alloted( event, CONTROL::TreeRowSelectionButton ) )
         m_path_dragstart = m_path_dragpre = path;
     else m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
 

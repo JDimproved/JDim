@@ -64,6 +64,8 @@ namespace CONTROL
         { "AutoScrollButton", "オートスクロール" },
         { "GestureButton", "マウスジェスチャ" },
         { "PopupmenuButton", "ポップアップメニュー表示" },
+        { "DragStartButton", "ドラッグ開始" },
+        { "TreeRowSelectionButton", "行範囲選択" },
 
         { "", "" },
 
