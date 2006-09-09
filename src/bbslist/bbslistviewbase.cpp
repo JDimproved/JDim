@@ -1469,17 +1469,23 @@ bool BBSListViewBase::copy_row( Gtk::TreeModel::iterator& src, Gtk::TreeModel::i
 //
 void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
 {
-    // 移動できるかチェック
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it_src;
-    for( it_src = list_it.begin() ; it_src != list_it.end(); ++it_src ){
+    std::vector< bool > vec_cancel;
+    vec_cancel.resize( list_it.size() );
+    std::fill( vec_cancel.begin(), vec_cancel.end(), false );
+
+    // 移動できるかチェック
+    std::list< Gtk::TreeModel::iterator >::iterator it_src = list_it.begin();
+    for( int i = 0 ; it_src != list_it.end(); ++i, ++it_src ){
+
+        if( vec_cancel[ i ] ) continue;
 
         Gtk::TreeModel::Path path_src = GET_PATH( ( *it_src ) );
 
         // 移動先と送り側が同じならキャンセル
         if( path_src.to_string() == path.to_string() ) return;
 
-        // dest がサブディレクトリに含まれないかチェック
+        // 移動先がサブディレクトリに含まれないかチェック
         if( is_dir( ( *it_src ) ) ){
             if( path.to_string().find( path_src.to_string() ) != Glib::ustring::npos ){
                 Gtk::MessageDialog mdiag( "移動先は送り側のディレクトリのサブディレクトリです", false, Gtk::MESSAGE_ERROR );
@@ -1488,13 +1494,14 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
             }
         }
 
-        // path_srcのサブディレクトリ内の行も含まれていたらその行はremove
+        // path_srcのサブディレクトリ内の行も範囲選択内に含まれていたらその行の移動をキャンセル
         std::list< Gtk::TreeModel::iterator >::iterator it_tmp = it_src;
-        for( ++it_tmp ; it_tmp != list_it.end(); ++it_tmp ){
+        ++it_tmp;
+        for( int i2 = 1 ; it_tmp != list_it.end(); ++i2, ++it_tmp ){
 
             Gtk::TreeModel::Path path_tmp = GET_PATH( ( *it_tmp ) );
             if( path_tmp.to_string().find( path_src.to_string() ) != Glib::ustring::npos ){
-                list_it.remove( ( *it_tmp ) );
+                vec_cancel[ i + i2 ] = true;
             }
         }
     }
@@ -1502,7 +1509,10 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
     // 移動
     Gtk::TreeModel::iterator it_dest = m_treestore->get_iter( path );
     bool subdir = after;
-    for( it_src = list_it.begin() ; it_src != list_it.end(); ++it_src ){
+    it_src = list_it.begin();
+    for( int i = 0 ; it_src != list_it.end(); ++i, ++it_src ){
+
+        if( vec_cancel[ i ] ) continue;
 
         if( copy_row( ( *it_src ), it_dest, subdir, after ) ) m_treestore->erase( ( *it_src ) );
         subdir = false;
