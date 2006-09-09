@@ -666,6 +666,9 @@ void BoardView::clock_in()
 //
 void BoardView::reload()
 {
+    // オートリロードのカウンタを0にする
+    View::reset_autoreload_counter();
+
     show_view();
     CORE::core_set_command( "set_history_board", get_url() );
 }
