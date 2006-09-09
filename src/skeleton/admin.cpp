@@ -6,6 +6,7 @@
 #include "admin.h"
 #include "view.h"
 #include "tablabel.h"
+#include "dragnote.h"
 
 #include "dbtree/interface.h"
 
@@ -21,24 +22,25 @@ using namespace SKELETON;
 
 Admin::Admin( const std::string& url )
     : m_url( url )
+    , m_notebook( 0 )
     , m_focus( false )
-    , m_adjust_reserve( false )
-    , m_pre_width( -1 )
 {
     m_disp.connect( sigc::mem_fun( *this, &Admin::exec_command ) );
 
-    m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Admin::slot_switch_page ) );
-    m_notebook.set_scrollable( true );
+    m_notebook = new DragableNoteBook();
 
-    m_notebook.sig_tab_close().connect( sigc::mem_fun( *this, &Admin::slot_tab_close ) );
-    m_notebook.sig_tab_reload().connect( sigc::mem_fun( *this, &Admin::slot_tab_reload ) );
-    m_notebook.sig_tab_menu().connect( sigc::mem_fun( *this, &Admin::slot_tab_menu ) );
+    m_notebook->signal_switch_page().connect( sigc::mem_fun( *this, &Admin::slot_switch_page ) );
+    m_notebook->set_scrollable( true );
+
+    m_notebook->sig_tab_close().connect( sigc::mem_fun( *this, &Admin::slot_tab_close ) );
+    m_notebook->sig_tab_reload().connect( sigc::mem_fun( *this, &Admin::slot_tab_reload ) );
+    m_notebook->sig_tab_menu().connect( sigc::mem_fun( *this, &Admin::slot_tab_menu ) );
 
     // D&D
-    m_notebook.sig_drag_begin().connect( sigc::mem_fun(*this, &Admin::slot_drag_begin ) );
-    m_notebook.sig_drag_motion().connect( sigc::mem_fun(*this, &Admin::slot_drag_motion ) );
-    m_notebook.sig_drag_drop().connect( sigc::mem_fun(*this, &Admin::slot_drag_drop ) );
-    m_notebook.sig_drag_end().connect( sigc::mem_fun(*this, &Admin::slot_drag_end ) );
+    m_notebook->sig_drag_begin().connect( sigc::mem_fun(*this, &Admin::slot_drag_begin ) );
+    m_notebook->sig_drag_motion().connect( sigc::mem_fun(*this, &Admin::slot_drag_motion ) );
+    m_notebook->sig_drag_drop().connect( sigc::mem_fun(*this, &Admin::slot_drag_drop ) );
+    m_notebook->sig_drag_end().connect( sigc::mem_fun(*this, &Admin::slot_drag_end ) );
 
     m_list_command.clear();
 
@@ -106,7 +108,7 @@ Admin::~Admin()
 #ifdef _DEBUG
     std::cout << "Admin::~Admin " << m_url << std::endl;
 #endif
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
 
 #ifdef _DEBUG
     std::cout << "pages = " << pages << std::endl;
@@ -115,23 +117,32 @@ Admin::~Admin()
 
         for( int i = 0; i < pages; ++i ){
 
-            SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( 0 ) );
-            SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( 0 );
+            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( 0 ) );
+            SKELETON::TabLabel* tablabel = m_notebook->get_tablabel( 0 );
 
-            m_notebook.remove_page( 0 );
+            m_notebook->remove_page( 0 );
 
             if( view ) delete view;
             if( tablabel ) delete tablabel;
         }
     }
     m_list_command.clear();
+
+    if( m_notebook ) delete m_notebook;
+}
+
+
+
+Gtk::Widget* Admin::get_widget()
+{
+    return dynamic_cast< Gtk::Widget*>( m_notebook );
 }
 
 
 // SIGHUPを受け取った
 void Admin::shutdown()
 {
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
 
 #ifdef _DEBUG
     std::cout << "pages = " << pages << std::endl;
@@ -139,7 +150,7 @@ void Admin::shutdown()
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
             if( view ) view->shutdown();
         }
     }
@@ -152,7 +163,7 @@ void Admin::shutdown()
 //
 bool Admin::empty()
 {
-    return ( m_notebook.get_n_pages() == 0 );
+    return ( m_notebook->get_n_pages() == 0 );
 }
 
 
@@ -164,11 +175,11 @@ std::list<std::string> Admin::get_URLs()
 {
     std::list<std::string> urls;
     
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< SKELETON::View* >( m_notebook.get_nth_page( i ) );
+            SKELETON::View* view = dynamic_cast< SKELETON::View* >( m_notebook->get_nth_page( i ) );
             if( view ) urls.push_back( view->get_url() );
         }
     }
@@ -186,19 +197,18 @@ void Admin::clock_in()
     // アクティブなビューにクロックを送る
     SKELETON::View* view = get_current_view();
     if( view ) view->clock_in();
-    if( m_adjust_reserve ) adjust_tabwidth( false );
 
     // 全てのビューにクロックを送る
     // clock_in_always()には軽い処理だけを含めること
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     if( pages ){
         for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< SKELETON::View* >( m_notebook.get_nth_page( i ) );
+            SKELETON::View* view = dynamic_cast< SKELETON::View* >( m_notebook->get_nth_page( i ) );
             if( view ) view->clock_in_always();
         }
     }
 
-    m_notebook.clock_in();
+    m_notebook->clock_in();
 }
 
 
@@ -328,7 +338,7 @@ void Admin::exec_command()
         set_tablabel( command.url, command.arg1, ( command.arg2 == "fix" ) );
     }
     else if( command.command  == "adjust_tabwidth" ){
-        adjust_tabwidth( ( command.arg1 == "true" ) );
+        m_notebook->adjust_tabwidth( ( command.arg1 == "true" ) );
     }
 
     // タブのアイコンをセット
@@ -397,7 +407,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
         view = get_view( command.url );
         if( view ){
             
-            int page = m_notebook.page_num( *view );
+            int page = m_notebook->page_num( *view );
 #ifdef _DEBUG
             std::cout << "page = " << page << std::endl;
 #endif        
@@ -419,7 +429,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
     // タブ
     SKELETON::TabLabel* tablabel = new SKELETON::TabLabel( command.url );
 
-    int page = m_notebook.get_current_page();
+    int page = m_notebook->get_current_page();
     bool open_tab = (  page == -1 || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left"
                        || command.arg3 == "auto" // オートモードの時もタブで開く
         );
@@ -432,13 +442,13 @@ void Admin::open_view( const COMMAND_ARGS& command )
 #endif
 
         // 現在のページの右に表示
-        if( page != -1 && command.arg1 == "right" ) m_notebook.insert_page( *view , *tablabel, page+1 );
+        if( page != -1 && command.arg1 == "right" ) m_notebook->insert_page( *view , *tablabel, page+1 );
 
         // 現在のページの左に表示
-        else if( page != -1 && command.arg1 == "left" ) m_notebook.insert_page( *view , *tablabel, page );
+        else if( page != -1 && command.arg1 == "left" ) m_notebook->insert_page( *view , *tablabel, page );
 
         // 最後に表示
-        else m_notebook.append_page( *view , *tablabel );
+        else m_notebook->append_page( *view , *tablabel );
     }
 
     // 開いてるviewを消してその場所に表示
@@ -446,10 +456,10 @@ void Admin::open_view( const COMMAND_ARGS& command )
 #ifdef _DEBUG
         std::cout << "replace page\n";
 #endif
-        m_notebook.insert_page( *view, *tablabel, page );
+        m_notebook->insert_page( *view, *tablabel, page );
 
-        SKELETON::TabLabel* oldtab = m_notebook.get_tablabel( page + 1 );
-        m_notebook.remove_page( page + 1 );
+        SKELETON::TabLabel* oldtab = m_notebook->get_tablabel( page + 1 );
+        m_notebook->remove_page( page + 1 );
 
         if( current_view ) delete current_view;
         if( oldtab ) delete oldtab;
@@ -458,7 +468,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
     switch_admin();
     view->show();
     view->show_view();
-    set_current_page( m_notebook.page_num( *view ) );
+    set_current_page( m_notebook->page_num( *view ) );
     focus_current_view();
 }
 
@@ -474,7 +484,7 @@ void Admin::switch_view( const std::string& url )
     SKELETON::View* view = get_view( url );
     if( view ){
             
-        int page = m_notebook.page_num( *view );
+        int page = m_notebook->page_num( *view );
         set_current_page( page );
     }
 }
@@ -486,10 +496,10 @@ void Admin::switch_view( const std::string& url )
 //
 void Admin::tab_left()
 {
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     if( pages == 1 ) return;
 
-    int page = m_notebook.get_current_page();
+    int page = m_notebook->get_current_page();
     if( page == -1 ) return;
 
     if( page == 0 ) page = pages;
@@ -504,10 +514,10 @@ void Admin::tab_left()
 //
 void Admin::tab_right()
 {
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     if( pages == 1 ) return;
 
-    int page = m_notebook.get_current_page();
+    int page = m_notebook->get_current_page();
     if( page == -1 ) return;
 
     if( page == pages -1 ) page = -1;
@@ -586,12 +596,12 @@ void Admin::close_view( SKELETON::View* view )
 {
     if( !view ) return;
 
-    int page = m_notebook.page_num( *view );
-    int current_page = m_notebook.get_current_page();
+    int page = m_notebook->page_num( *view );
+    int current_page = m_notebook->get_current_page();
 
-    SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( page );
+    SKELETON::TabLabel* tablabel = m_notebook->get_tablabel( page );
 
-    m_notebook.remove_page( page );
+    m_notebook->remove_page( page );
 
     delete view;
     if( tablabel ) delete tablabel;
@@ -600,7 +610,7 @@ void Admin::close_view( SKELETON::View* view )
     std::cout << "Admin::close_view : delete page = " << page << std::endl;
 #endif
 
-    if( m_notebook.get_n_pages() == 0 ){
+    if( m_notebook->get_n_pages() == 0 ){
 #ifdef _DEBUG
         std::cout << "empty\n";
 #endif
@@ -609,7 +619,7 @@ void Admin::close_view( SKELETON::View* view )
     else{
 
         if( page == current_page ){
-            SKELETON::View* newview = dynamic_cast< View* >( m_notebook.get_nth_page( page ) );
+            SKELETON::View* newview = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
             if( newview ) switch_view( newview->get_url() );
         }
         set_command( "adjust_tabwidth", "", "true" ); 
@@ -706,7 +716,7 @@ void Admin::focus_view( int page )
     std::cout << "Admin::focus_view : " << m_url << " page = " << page << std::endl;
 #endif
     
-    SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( page ) );
+    SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) {
         view->focus_view();
         CORE::core_set_command( "set_title", "", view->get_title() );
@@ -726,7 +736,7 @@ void Admin::focus_current_view()
     std::cout << "Admin::focus_current_view : " << m_url << std::endl;
 #endif
 
-    int page = m_notebook.get_current_page();
+    int page = m_notebook->get_current_page();
     focus_view( page );
 }
 
@@ -743,8 +753,8 @@ void Admin::restore_focus()
     std::cout << "Admin::restore_focus : " << m_url << std::endl;
 #endif
 
-    int page = m_notebook.get_current_page();
-    SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( page ) );
+    int page = m_notebook->get_current_page();
+    SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) view->focus_view();
 }
 
@@ -762,7 +772,7 @@ void Admin::focus_out()
 
     SKELETON::View* view = get_current_view();
     if( view ) view->focus_out();
-    m_notebook.focus_out();
+    m_notebook->focus_out();
 }
 
 
@@ -781,7 +791,7 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label, 
     SKELETON::View* view = get_view( url );
     if( view ){
 
-        SKELETON::TabLabel* tablabel = m_notebook.get_tablabel( m_notebook.page_num( *view ) );
+        SKELETON::TabLabel* tablabel = m_notebook->get_tablabel( m_notebook->page_num( *view ) );
         if( tablabel ){
 
             tablabel->set_fulltext( str_label );
@@ -823,57 +833,17 @@ bool Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
 
 
 //
-// タブの幅調整
-//
-// force = true なら必ず変更
-//
-void Admin::adjust_tabwidth( bool force )
-{
-    const int mrg = 30;
-
-    int width_notebook = m_notebook.get_width() - mrg;
-
-    // 前回の呼び出し時とnotebookの幅が同じ時はまだraalize/resizeしていないということなので
-    // 一旦returnしてクロック入力時に改めて adjust_tabwidth() を呼び出す
-    //
-    // force == true なら必ず変更する
-    //
-
-    if( force && m_adjust_reserve ) return;
-
-    if( !force && width_notebook == m_pre_width ){
-        m_adjust_reserve = true;
-        return;
-    }
-
-#ifdef _DEBUG
-    std::cout << "Admin::adjust_tabwidth\n";
-#endif
-
-    m_pre_width = width_notebook;
-    m_adjust_reserve = false;
-
-#ifdef _DEBUG
-    std::cout << "width_notebook = " << width_notebook << std::endl;
-#endif
-
-    m_notebook.adjust_tabwidth();
-}
-
-
-
-//
 // ビュークラス取得
 //
 // use_find が true なら == の代わりに findを使う
 //
 View* Admin::get_view( const std::string& url, bool use_find )
 {
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
             if( view ){
                 if( view->get_url() == url ) return view;
                 else if( use_find && view->get_url().find ( url ) != std::string::npos ) return view;
@@ -895,11 +865,11 @@ std::list< View* > Admin::get_list_view( const std::string& url )
 {
     std::list< View* > list_view;
     
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
             if( view && view->get_url().find ( url ) != std::string::npos ) list_view.push_back( view );
         }
     }
@@ -917,11 +887,11 @@ std::list< View* > Admin::get_list_view()
 {
     std::list< View* > list_view;
     
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
             if( view ) list_view.push_back( view );
         }
     }
@@ -937,9 +907,9 @@ std::list< View* > Admin::get_list_view()
 //
 View* Admin::get_current_view()
 {
-    int page = m_notebook.get_current_page();
+    int page = m_notebook->get_current_page();
     if( page == -1 ) return NULL;
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook.get_nth_page( page ) );
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
 
     return view;
 }
@@ -952,7 +922,7 @@ View* Admin::get_current_view()
 //
 void Admin::set_current_page( int page )
 {
-    m_notebook.set_current_page( page );
+    m_notebook->set_current_page( page );
 }
 
 
@@ -962,7 +932,7 @@ void Admin::set_current_page( int page )
 //
 int Admin::get_current_page()
 {
-    return m_notebook.get_current_page();
+    return m_notebook->get_current_page();
 }
 
 
@@ -977,7 +947,7 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
 #endif
 
     // タブのアイコンを通常に戻す
-    SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( page ) );
+    SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ){
 #ifdef _DEBUG
         std::cout << "url = " << view->get_url() << std::endl;
@@ -999,7 +969,7 @@ void Admin::slot_tab_close( int page )
 #endif
 
     // 閉じる
-    SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( page ) );
+    SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) close_view( view->get_url() );
 }
 
@@ -1013,7 +983,7 @@ void Admin::slot_tab_reload( int page )
     std::cout << "Admin::slot_tab_reload " << page << std::endl;
 #endif
 
-    SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( page ) );
+    SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) view->reload();
 }
 
@@ -1043,7 +1013,7 @@ void Admin::slot_close_tab()
     std::cout << "Admin::slot_close_tab " << m_clicked_page << std::endl;
 #endif
 
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook.get_nth_page( m_clicked_page ) );
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) close_view( view->get_url() );
 }
 
@@ -1058,12 +1028,12 @@ void Admin::slot_close_other_tabs()
 #endif
 
     std::string url;
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook.get_nth_page( m_clicked_page ) );
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) url = view->get_url();
 
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     for( int i = 0; i < pages; ++i ){
-        view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view && view->get_url() != url ) set_command( "close_view", view->get_url() );
     }
 }
@@ -1080,7 +1050,7 @@ void Admin::slot_close_left_tabs()
 #endif
 
     for( int i = 0; i < m_clicked_page; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
     }
 }
@@ -1095,9 +1065,9 @@ void Admin::slot_close_right_tabs()
     std::cout << "Admin::slot_close_right_tabs " << m_clicked_page << std::endl;
 #endif
 
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     for( int i = m_clicked_page +1; i < pages; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
     }
 }
@@ -1114,9 +1084,9 @@ void Admin::slot_close_all_tabs()
     std::cout << "Admin::slot_close_all_tabs " << m_clicked_page << std::endl;
 #endif
 
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
     for( int i = 0; i < pages; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
     }
 }
@@ -1133,11 +1103,11 @@ void Admin::slot_reload_all_tabs()
 #endif
 
     int waittime = 0;
-    int pages = m_notebook.get_n_pages();
+    int pages = m_notebook->get_n_pages();
 
     // クリックしたタブから右側
     for( int i = m_clicked_page ; i < pages; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ){
             if( set_autoreload_mode( view->get_url(), AUTORELOAD_ONCE, waittime ) ) waittime += AUTORELOAD_MINSEC;
         }
@@ -1145,7 +1115,7 @@ void Admin::slot_reload_all_tabs()
 
     // クリックしたタブから左側
     for( int i = 0 ; i < m_clicked_page; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook.get_nth_page( i ) );
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ){
             if( set_autoreload_mode( view->get_url(), AUTORELOAD_ONCE, waittime ) ) waittime += AUTORELOAD_MINSEC;
         }
@@ -1163,7 +1133,7 @@ void Admin::slot_open_by_browser()
     std::cout << "Admin::slot_open_by_browser " << m_clicked_page << std::endl;
 #endif
 
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook.get_nth_page( m_clicked_page ) );
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) CORE::core_set_command( "open_url_browser", view->url_for_copy() );
 }
 
@@ -1173,6 +1143,6 @@ void Admin::slot_open_by_browser()
 //
 void Admin::slot_copy_url()
 {
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook.get_nth_page( m_clicked_page ) );
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) COPYCLIP( view->url_for_copy() );
 }

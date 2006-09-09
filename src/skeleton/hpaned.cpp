@@ -5,6 +5,8 @@
 
 #include "hpaned.h"
 
+#include "command.h"
+
 using namespace SKELETON;
 
 JDHPaned::JDHPaned()
@@ -70,6 +72,9 @@ bool JDHPaned::on_button_release_event( GdkEventButton* event )
             m_pos = pos;
             Gtk::HPaned::set_position( 0 );
         }
+
+        // タブ幅調整
+        CORE::core_set_command( "adjust_tabwidth" );
     }
 
     m_clicked = false;

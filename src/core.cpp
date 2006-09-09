@@ -374,46 +374,46 @@ void Core::run( bool init )
     // 2pane
     if( mode_pane == MODE_2PANE ){
 
-        m_notebook.append_page( BOARD::get_admin()->get_gtknotebook(), "スレ一覧" );
-        m_notebook.append_page( ARTICLE::get_admin()->get_gtknotebook(), "スレッド" );
+        m_notebook.append_page( *BOARD::get_admin()->get_widget(), "スレ一覧" );
+        m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
         m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
         m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
 
         m_vbox.pack_start( m_notebook );
 
-        m_hpaned.add1( BBSLIST::get_admin()->get_gtknotebook() );
+        m_hpaned.add1( *BBSLIST::get_admin()->get_widget() );
         m_hpaned.add2( m_vbox );
     }
 
     // 3ペーン
     else if( mode_pane == MODE_3PANE ){
 
-        m_notebook.append_page( ARTICLE::get_admin()->get_gtknotebook(), "スレッド" );
+        m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
         m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
         m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
 
         m_vbox.pack_start( m_notebook );
 
-        m_vpaned.add1( BOARD::get_admin()->get_gtknotebook() );
+        m_vpaned.add1( *BOARD::get_admin()->get_widget() );
         m_vpaned.add2( m_vbox );
 
-        m_hpaned.add1( BBSLIST::get_admin()->get_gtknotebook() );
+        m_hpaned.add1( *BBSLIST::get_admin()->get_widget() );
         m_hpaned.add2( m_vpaned );
     }
 
     // 縦3ペーン
     else{
 
-        m_notebook.append_page( ARTICLE::get_admin()->get_gtknotebook(), "スレッド" );
+        m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
         m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
         m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
 
         m_vbox.pack_start( m_notebook );
 
-        m_hpaned_r.add1( BOARD::get_admin()->get_gtknotebook() );
+        m_hpaned_r.add1( *BOARD::get_admin()->get_widget() );
         m_hpaned_r.add2( m_vbox );
 
-        m_hpaned.add1( BBSLIST::get_admin()->get_gtknotebook() );
+        m_hpaned.add1( *BBSLIST::get_admin()->get_widget() );
         m_hpaned.add2( m_hpaned_r );
     }
 

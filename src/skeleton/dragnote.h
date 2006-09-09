@@ -46,6 +46,9 @@ namespace SKELETON
 
         Tooltip m_tooltip;
 
+        bool m_adjust_reserve; // adjust予約
+        int m_pre_width;
+
       public:
 
         SIG_TAB_CLOSE sig_tab_close() { return m_sig_tab_close; }
@@ -72,7 +75,7 @@ namespace SKELETON
         int get_page_under_mouse();
 
         // タブ幅調整
-        void adjust_tabwidth();
+        void adjust_tabwidth( bool force );
 
       protected:
 

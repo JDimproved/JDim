@@ -11,23 +11,19 @@
 #include <string>
 #include <list>
 
-#include "dragnote.h"
-
 #include "command_args.h"
 
 namespace SKELETON
 {
     class View;
+    class DragableNoteBook;
 
     class Admin
     {
         std::string m_url;
-        DragableNoteBook m_notebook;
+        DragableNoteBook* m_notebook;
 
         bool m_focus;
-
-        bool m_adjust_reserve; // adjust予約
-        int m_pre_width;
 
         Glib::Dispatcher m_disp;
         std::list< COMMAND_ARGS > m_list_command;
@@ -44,7 +40,7 @@ namespace SKELETON
 
         virtual bool empty();
         const std::string& get_url() const{ return m_url; }
-        Gtk::Notebook& get_gtknotebook(){ return m_notebook; }
+        Gtk::Widget* get_widget();
 
         // フォーカスされているか
         const bool has_focus() const { return m_focus; }
@@ -80,7 +76,7 @@ namespace SKELETON
 
     protected:
 
-        DragableNoteBook& get_notebook(){ return m_notebook; }
+        DragableNoteBook* get_notebook(){ return m_notebook; }
 
         virtual void exec_command();
 
@@ -109,7 +105,6 @@ namespace SKELETON
         virtual void focus_out();
         virtual void set_tablabel( const std::string& url, const std::string& str_label, bool fix );
         virtual void set_tabicon( const std::string& url, const std::string& iconname ){}
-        virtual void adjust_tabwidth( bool force );
 
         // オートリロードのモード設定
         virtual bool set_autoreload_mode( const std::string& url, int mode, int sec );

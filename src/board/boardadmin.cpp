@@ -46,7 +46,7 @@ BoardAdmin::BoardAdmin( const std::string& url )
     : SKELETON::Admin( url )
 {
     //D&D可
-    get_notebook().set_dragable( true );
+    get_notebook()->set_dragable( true );
 }
 
 
@@ -106,7 +106,7 @@ void BoardAdmin::set_tabicon( const std::string& url, const std::string& iconnam
     SKELETON::View* view = get_view( url );
     if( view ){
 
-        SKELETON::TabLabel* tablabel = get_notebook().get_tablabel( get_notebook().page_num( *view ) );
+        SKELETON::TabLabel* tablabel = get_notebook()->get_tablabel( get_notebook()->page_num( *view ) );
         if( tablabel ){
 
 #ifdef _DEBUG
@@ -193,7 +193,7 @@ SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
 //
 void BoardAdmin::slot_drag_begin( int page )
 {
-    SKELETON::View* view = ( SKELETON::View* )get_notebook().get_nth_page( page );
+    SKELETON::View* view = ( SKELETON::View* )get_notebook()->get_nth_page( page );
     if( !view ) return;
 
     std::string url = view->get_url();

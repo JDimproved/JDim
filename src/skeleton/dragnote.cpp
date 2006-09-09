@@ -15,6 +15,9 @@ DragableNoteBook::DragableNoteBook()
     : Gtk::Notebook()
     , m_page( -1 )
     , m_drag( 0 )
+    , m_adjust_reserve( false )
+    , m_pre_width( -1 )
+
 {
     add_events( Gdk::POINTER_MOTION_MASK );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
@@ -27,6 +30,10 @@ DragableNoteBook::DragableNoteBook()
 void DragableNoteBook::clock_in()
 {
     m_tooltip.clock_in();
+    
+    if( m_adjust_reserve ) adjust_tabwidth( false );
+
+    else m_pre_width = get_width();
 }
 
 
@@ -97,26 +104,35 @@ bool DragableNoteBook::on_leave_notify_event( GdkEventCrossing* event )
 //
 // タブ幅調整
 //
-void DragableNoteBook::adjust_tabwidth()
+void DragableNoteBook::adjust_tabwidth( bool force )
 {
-#ifdef _DEBUG
-    std::cout << "DragableNoteBook::adjust_tabwidth\n";
-#endif
-
     const int mrg = 30;
 
-    int width_notebook = get_width() - mrg;
-    int pages = get_n_pages();
+    // 調整待ち
+    if( force && m_adjust_reserve ) return;
 
-#ifdef _DEBUG
-    std::cout << "width_notebook = " << width_notebook << " page = " << pages << std::endl;
-#endif
+    int width_notebook = get_width();
+
+    // 前回の呼び出し時とnotebookの幅が同じ時はまだraalize/resizeしていないということなので
+    // 一旦returnしてクロック入力時に改めて adjust_tabwidth() を呼び出す
+    if( ! force && width_notebook == m_pre_width ){
+        m_adjust_reserve = true;
+        return;
+    }
+
+    m_pre_width = width_notebook;
+    m_adjust_reserve = false;
+    width_notebook -= mrg;
+    int pages = get_n_pages();
 
     if( pages ){
 
         // タブ幅の平均値
         int avg_width_tab = width_notebook / MAX( 3, pages );
+
 #ifdef _DEBUG
+        std::cout << "DragableNoteBook::adjust_tabwidth\n";
+        std::cout << "width_notebook = " << width_notebook << " page = " << pages << std::endl;
         std::cout << "avg_width_tab = " << avg_width_tab << std::endl;
 #endif
 
@@ -165,7 +181,6 @@ void DragableNoteBook::adjust_tabwidth()
         }
     }
 }
-
 
 
 //
