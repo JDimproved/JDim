@@ -394,7 +394,6 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
         if( m_control.button_alloted( event, CONTROL::PopupmenuButton ) ) return true;
 
         // D&Dのため、ctrlやshiftなしで普通にクリックしたときも選択解除しない
-        // 選択解除は、もしD&Dをしなかったら on_button_release_event()の中で行う
         if( !( event->state & GDK_CONTROL_MASK )
             && !( event->state & GDK_SHIFT_MASK ) ){
 
@@ -429,9 +428,27 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
         // 何もないところをクリックしたら選択解除
         if( !get_row( path ) ) get_selection()->unselect_all();
 
-        // ポップアップメニューボタン以外のボタンを押したとき、ドラッグ中で無ければ選択
-        if( ! m_control.button_alloted( event, CONTROL::PopupmenuButton )
-            && get_row( path ) && !m_drag ) set_cursor( path );
+        // ドラッグ中で無ければ選択
+        if( get_row( path ) && !m_drag ){
+
+            // クリックした部分が範囲選択部分でないときは選択解除
+            bool included = false;
+            std::list< Gtk::TreeModel::iterator > list_it = get_selected_iterators();
+            std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
+            for( ; it != list_it.end(); ++it ){
+
+                Gtk::TreeModel::Row row_tmp = *( *it );
+                Gtk::TreePath path_tmp = GET_PATH( row_tmp );
+
+                if( path == path_tmp ){
+                    included = true;
+                    break;
+                }
+            }
+
+            if( ! included ) set_cursor( path );
+        }
+
 
         if( !m_drag ) m_sig_button_release.emit( event );
     }

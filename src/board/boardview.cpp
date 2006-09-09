@@ -1246,7 +1246,14 @@ bool BoardView::slot_button_release( GdkEventButton* event )
         // スレを開く
         bool openarticle = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenArticleButton );
         bool openarticletab = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenArticleTabButton );
-        if( openarticle || openarticletab ) open_row( path, openarticletab );
+
+        if( openarticle || openarticletab ){
+
+            // 複数行選択中
+            if( m_treeview.get_selected_iterators().size() >= 2 ) open_selected_rows();
+
+            else open_row( path, openarticletab );
+        }
 
         // ポップアップメニューボタン
         else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){

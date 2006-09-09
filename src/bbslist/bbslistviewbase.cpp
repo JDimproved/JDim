@@ -661,7 +661,11 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
     bool openboard = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenBoardButton );
     bool openboardtab = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenBoardTabButton );
     if( openboard || openboardtab ){
-        if( m_treeview.get_row( m_path_selected ) ) open_row( m_path_selected, openboardtab );
+
+        // 複数行選択中
+        if( m_treeview.get_selected_iterators().size() >= 2 ) open_selected_rows();
+
+        else if( m_treeview.get_row( m_path_selected ) ) open_row( m_path_selected, openboardtab );
     }
     // ポップアップメニューボタン
     else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
