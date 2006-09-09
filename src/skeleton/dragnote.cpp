@@ -31,8 +31,13 @@ void DragableNoteBook::clock_in()
 {
     m_tooltip.clock_in();
     
-    if( m_adjust_reserve ) adjust_tabwidth( false );
+    if( m_adjust_reserve ){
+        m_adjust_reserve = false;
+        m_adjust_reserve = ! adjust_tabwidth( false );
+    }
 
+    // Gtk::NoteBook は configure_event()をキャッチ出来ないので
+    // 応急処置としてタイマーの中でサイズが変更したか調べる
     else m_pre_width = get_width();
 }
 
@@ -104,12 +109,12 @@ bool DragableNoteBook::on_leave_notify_event( GdkEventCrossing* event )
 //
 // タブ幅調整
 //
-void DragableNoteBook::adjust_tabwidth( bool force )
+bool DragableNoteBook::adjust_tabwidth( bool force )
 {
     const int mrg = 30;
 
     // 調整待ち
-    if( force && m_adjust_reserve ) return;
+    if( m_adjust_reserve ) return false;
 
     int width_notebook = get_width();
 
@@ -117,7 +122,7 @@ void DragableNoteBook::adjust_tabwidth( bool force )
     // 一旦returnしてクロック入力時に改めて adjust_tabwidth() を呼び出す
     if( ! force && width_notebook == m_pre_width ){
         m_adjust_reserve = true;
-        return;
+        return false;
     }
 
     m_pre_width = width_notebook;
@@ -180,6 +185,8 @@ void DragableNoteBook::adjust_tabwidth( bool force )
             }
         }
     }
+
+    return true;
 }
 
 

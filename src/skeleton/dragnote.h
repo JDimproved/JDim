@@ -75,7 +75,7 @@ namespace SKELETON
         int get_page_under_mouse();
 
         // タブ幅調整
-        void adjust_tabwidth( bool force );
+        bool adjust_tabwidth( bool force );
 
       protected:
 
