@@ -417,6 +417,7 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
 //
 bool JDTreeView::on_button_release_event( GdkEventButton* event )
 {
+    bool emit_sig = false;
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
 
     if( !( event->state & GDK_CONTROL_MASK )
@@ -449,16 +450,20 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
             if( ! included ) set_cursor( path );
         }
 
-        if( !m_drag ){
-            m_sig_button_release.emit( event );
-            m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
-            return true;
-        }
+        if( !m_drag ) emit_sig = true;
     }
 
     m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
 
-    return Gtk::TreeView::on_button_release_event( event );
+    bool expanded = row_expanded( path );
+    bool ret = Gtk::TreeView::on_button_release_event( event );
+
+    // 左の△ボタンを押した
+    if( expanded != row_expanded( path ) ) emit_sig = false;
+
+    if( emit_sig ) m_sig_button_release.emit( event );
+
+    return ret;
 }
 
 
