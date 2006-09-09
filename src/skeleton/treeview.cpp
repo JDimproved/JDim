@@ -393,18 +393,18 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
         // ポップアップメニューボタンを押しても選択解除しない
         if( m_control.button_alloted( event, CONTROL::PopupmenuButton ) ) return true;
 
-        // 普通にクリックしても選択解除しない
-        // 選択解除はD&Dしてなかったら on_button_release_event()で行う
+        // D&Dのため、ctrlやshiftなしで普通にクリックしたときも選択解除しない
+        // 選択解除は、もしD&Dをしなかったら on_button_release_event()の中で行う
         if( !( event->state & GDK_CONTROL_MASK )
-            && !( event->state & GDK_SHIFT_MASK ) ) return true;
-    }
-    else {
-        // ドラッグ範囲選択開始 or 一つも行が選択されていない
-        if( !m_path_dragstart.empty() 
-            || ( !( event->state & GDK_CONTROL_MASK ) && !path.empty() && get_selection()->get_selected_rows().size() == 0 )
-            ){
-            get_selection()->unselect_all();
-            set_cursor( path );
+            && !( event->state & GDK_SHIFT_MASK ) ){
+
+            // ただし範囲選択開始ボタンを押したときは選択解除
+            if( !m_path_dragstart.empty() ){
+                get_selection()->unselect_all();
+                set_cursor( path );
+            }
+
+            return true;
         }
     }
 
@@ -413,15 +413,18 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
 
 
 
-
-
+//
+// マウスボタンを離した
+//
 bool JDTreeView::on_button_release_event( GdkEventButton* event )
 {
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
 
     if( !( event->state & GDK_CONTROL_MASK )
         && !( event->state & GDK_SHIFT_MASK ) // ctrl/shift + クリックで複数選択してない場合
-        && !( !m_path_dragstart.empty() && path != m_path_dragstart ) ){ // ドラッグして範囲選択していない場合
+
+        && !( !m_path_dragstart.empty() && path != m_path_dragstart ) // ドラッグして範囲選択していない場合
+        ){ 
 
         // 何もないところをクリックしたら選択解除
         if( !get_row( path ) ) get_selection()->unselect_all();
