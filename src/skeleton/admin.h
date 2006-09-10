@@ -33,6 +33,11 @@ namespace SKELETON
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
         int m_clicked_page;
 
+        // 移動サブメニュー用
+        Gtk::Menu* m_move_menu;
+        std::vector< Gtk::MenuItem* > m_vec_movemenu_items;
+        std::vector< bool > m_vec_movemenu_append;
+
     public:
 
         Admin( const std::string& url );
@@ -122,6 +127,8 @@ namespace SKELETON
         std::list< View* > get_list_view( const std::string& url );
         std::list< View* > get_list_view();
         virtual View* get_current_view();
+
+        // 指定したページに表示切替え
         virtual void set_current_page( int page );
 
         // notebookのタブが切り替わったときに呼ばれるslot

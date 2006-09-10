@@ -10,12 +10,18 @@
 
 #include "dbtree/interface.h"
 
+#include "jdlib/miscutil.h"
+
 #include "command.h"
 #include "session.h"
 #include "global.h"
 #include "controlutil.h"
 #include "controlid.h"
 
+
+#define MOVETAB_MENU { 5, 10, 15, 20, 25, 30 }
+        
+#define MAX_TABS 50
 
 using namespace SKELETON;
 
@@ -47,6 +53,7 @@ Admin::Admin( const std::string& url )
     // 右クリックメニュー
     m_action_group = Gtk::ActionGroup::create();
     m_action_group->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &Admin::slot_close_tab ) );
+
     m_action_group->add( Gtk::Action::create( "CloseOther_Menu", "他のタブを閉じる" ) );
     m_action_group->add( Gtk::Action::create( "CloseOther", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseLeft_Menu", "左のタブを閉じる" ) );
@@ -55,8 +62,10 @@ Admin::Admin( const std::string& url )
     m_action_group->add( Gtk::Action::create( "CloseRight", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseAll_Menu", "全てのタブを閉じる" ) );
     m_action_group->add( Gtk::Action::create( "CloseAll", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
+
     m_action_group->add( Gtk::Action::create( "ReloadAll_Menu", "全てのタブを更新" ) );
     m_action_group->add( Gtk::Action::create( "ReloadAll", "更新する" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
+
     m_action_group->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く" ), sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
     m_action_group->add( Gtk::Action::create( "CopyURL", "URLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
 
@@ -72,6 +81,7 @@ Admin::Admin( const std::string& url )
     "<popup name='popup_menu'>"
     "<menuitem action='Quit'/>"
     "<separator/>"
+
     "<menu action='CloseAll_Menu'>"
     "<menuitem action='CloseAll'/>"
     "</menu>"
@@ -85,10 +95,12 @@ Admin::Admin( const std::string& url )
     "<menuitem action='CloseRight'/>"
     "</menu>"
     "<separator/>"
+
     "<menu action='ReloadAll_Menu'>"
     "<menuitem action='ReloadAll'/>"
     "</menu>"
     "<separator/>"
+
     "<menuitem action='OpenBrowser'/>"
     "<menuitem action='CopyURL'/>"
     "</popup>"
@@ -97,8 +109,28 @@ Admin::Admin( const std::string& url )
 
     m_ui_manager->add_ui_from_string( str_ui );    
 
-    // ポップアップメニューにアクセレータを表示
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
+
+    // 移動サブメニュー作成と登録
+    for( int i = 0; i < MAX_TABS; ++i ){
+        Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( "dummy" ) );
+        m_vec_movemenu_items.push_back( item );
+        item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &Admin::set_current_page ), i ) );
+
+        m_vec_movemenu_append.push_back( false );
+    }
+    m_move_menu = Gtk::manage( new Gtk::Menu() );
+
+    Gtk::MenuItem* menuitem  = Gtk::manage( new Gtk::MenuItem( "移動" ) );
+    menuitem->set_submenu( *m_move_menu );
+    popupmenu->insert( *menuitem, 2 );
+    menuitem->show_all();
+
+    menuitem = Gtk::manage( new Gtk::SeparatorMenuItem() );
+    popupmenu->insert( *menuitem, 3 );
+    menuitem->show_all();
+
+    // ポップアップメニューにアクセレータを表示
     CONTROL::set_menu_motion( popupmenu );
 }
 
@@ -1000,7 +1032,53 @@ void Admin::slot_tab_menu( int page, int x, int y )
     m_clicked_page = page;
 
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
-    if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );
+    if( popupmenu ){
+
+        for( int i = 0; i < MAX_TABS ; ++i ){
+            if( m_vec_movemenu_append[ i ] )m_move_menu->remove( *m_vec_movemenu_items[ i ] );
+            m_vec_movemenu_append[ i ] = false;
+        }
+
+        // 移動サブメニューにタブ名をセットする
+        int pages = m_notebook->get_n_pages();
+        for( int i = 0; i < MIN( pages, MAX_TABS ); ++ i ){
+
+            Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_vec_movemenu_items[ i ]->get_child() );
+            if( label ){
+
+                SKELETON::TabLabel* tablabel = m_notebook->get_tablabel( i );
+                if( tablabel ){
+
+                    std::string name = tablabel->get_fulltext();
+
+                    /////////////
+                    const unsigned int maxsize = 50;
+
+                    // 履歴に表示する文字数を制限
+                    unsigned int pos, lng_name;
+                    int byte = 0;
+                    for( pos = 0, lng_name = 0; pos < name.length(); pos += byte ){
+                        MISC::utf8toucs2( name.c_str()+pos, byte );
+                        if( byte > 1 ) lng_name += 2;
+                        else ++lng_name;
+                        if( lng_name >= maxsize ) break;
+                    }
+
+                    // カットしたら"..."をつける
+                    if( pos != name.length() ) name = name.substr( 0, pos ) + "...";
+
+                    /////////////
+
+                    label->set_text( name );
+                }
+            }
+            m_move_menu->append( *m_vec_movemenu_items[ i ] );
+            m_vec_movemenu_append[ i ] = true;
+        }
+        m_move_menu->show_all();
+
+        popupmenu->popup( 0, gtk_get_current_event_time() );
+    }
 }
 
 
