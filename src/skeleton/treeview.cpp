@@ -434,7 +434,7 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
         // 何もないところをクリックしたら選択解除
         if( !get_row( path ) ) get_selection()->unselect_all();
 
-        // クリックした行が範囲選択部分に含まれていないときは選択を解除する
+        // クリックした行が範囲選択部分に含まれていないときは選択を解除する( m_sig_button_release はemitしない)
         if( get_row( path ) ){
 
             bool included = false;
@@ -450,7 +450,10 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
                     break;
                 }
             }
-            if( ! included ) set_cursor( path );
+            if( ! included ){
+                set_cursor( path );
+                emit_sig = false;
+            }
         }
     }
 

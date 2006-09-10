@@ -1103,7 +1103,7 @@ void BBSListViewBase::slot_drag_drop( Gtk::TreeModel::Path path )
     if( url_from == get_url() ) move_selected_row( path, after );
 
     // 他のビューからD&Dされた
-    else append_from_buffer( path, after );
+    else append_from_buffer( path, after, false );
 }
 
 
@@ -1453,6 +1453,7 @@ bool BBSListViewBase::copy_row( Gtk::TreeModel::iterator& src, Gtk::TreeModel::i
 
     Gtk::TreeModel::Row row_tmp = *( it_new );
     setup_row( row_tmp, url, name, type );
+    m_treeview.get_selection()->select( row_tmp );
 
     // srcがdirならサブディレクトリ内の行も再帰的にコピー
     if( src_is_dir ){
@@ -1515,7 +1516,10 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
         }
     }
 
-    // 移動
+    // 移動開始
+
+    m_treeview.get_selection()->unselect_all();
+
     Gtk::TreeModel::iterator it_dest = m_treestore->get_iter( path );
     bool subdir = after;
     it_src = list_it.begin();
@@ -1523,6 +1527,7 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
 
         if( vec_cancel[ i ] ) continue;
 
+        // コピーして削除
         if( copy_row( ( *it_src ), it_dest, subdir, after ) ) m_treestore->erase( ( *it_src ) );
         subdir = false;
         after = true;;
@@ -1557,15 +1562,18 @@ void BBSListViewBase::show_status()
 //
 // 共有バッファからデータを取り出して pathの所に追加
 //
-// after = false ならpathの前に追加( デフォルト true )
+// after = false ならpathの前に追加
+// scroll = true なら追加した行にスクロールする
 //
-void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after )
+void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after, bool scroll )
 {
-    Gtk::TreeModel::Path path_bkup = path;
+    Gtk::TreeModel::Path path_top = Gtk::TreeModel::Path();
 
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::append_from_buffer\n";
 #endif
+
+    m_treeview.get_selection()->unselect_all();
 
     bool subdir = true;
     std::list< CORE::DATA_INFO > infolist = CORE::SBUF_infolist();
@@ -1579,7 +1587,14 @@ void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after 
 
         if( info.type != TYPE_DIR_END ){
             path = append_row( info.url, info.name, info.type, path, subdir, after );
-            after = true;
+            if( m_treeview.get_row( path ) ){
+                if( ! m_treeview.get_row( path_top ) ){
+                    path_top = path;
+                    m_treeview.set_cursor( path_top );
+                }
+                m_treeview.get_selection()->select( path );
+                after = true;
+            }
         }
 
         if( info.type == TYPE_DIR ) subdir = true;
@@ -1591,10 +1606,9 @@ void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after 
         }
     }
 
-    path = m_treeview.next_path( path_bkup );
-    if( m_treeview.get_row( path ) ){
-        m_treeview.scroll_to_row( path, 0 );
-        m_treeview.get_selection()->unselect_all();
+    // 追加した行にスクロール
+    if( scroll && m_treeview.get_row( path_top ) ){
+        m_treeview.scroll_to_row( path_top, 0.1 );
     }
 }
 
@@ -1871,7 +1885,7 @@ void BBSListViewBase::search()
 
         if( regex.exec( query, name, 0, true, true, true ) || regex.exec( query, url, 0, true ) ){
             m_treeview.expand_parents( path );
-            m_treeview.scroll_to_row( path, 0 );
+            m_treeview.scroll_to_row( path, 0.1 );
             m_treeview.set_cursor( path );
             show_status();
             return;

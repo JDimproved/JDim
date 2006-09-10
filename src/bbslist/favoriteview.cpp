@@ -98,7 +98,7 @@ void  FavoriteListView::append_favorite()
     
     SelectListDialog diag( get_url(), get_treestore() );
     if( diag.run() != Gtk::RESPONSE_OK ) return;
-    append_from_buffer( diag.get_path() );
+    BBSListViewBase::append_from_buffer( diag.get_path(), true, true );
 }
 
 
