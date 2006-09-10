@@ -137,6 +137,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く"), sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
+    action_group()->add( Gtk::Action::create( "SelectDir", "ディレクトリ内全選択"), sigc::mem_fun( *this, &BBSListViewBase::slot_select_all_dir ) );
     action_group()->add( Gtk::Action::create( "Unselect", "選択解除"), sigc::mem_fun( *this, &BBSListViewBase::slot_unselect_all ) );
     action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
@@ -159,6 +160,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitleURL'/>"
     "<separator/>"
+    "<menuitem action='SelectDir'/>"
     "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menuitem action='AppendFavorite'/>"
@@ -185,7 +187,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitleURL'/>"
     "<separator/>"
+    "<menuitem action='SelectDir'/>"
     "<menuitem action='Unselect'/>"
+    "<separator/>"
     "<menuitem action='Rename'/>"
     "<menuitem action='NewDir'/>"
     "<menuitem action='NewCom'/>"
@@ -513,10 +517,13 @@ void  BBSListViewBase::operate_view( const int& control )
 //
 void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
 {
-    Glib::RefPtr< Gtk::Action > act_board, act_article, act_image;
+    Glib::RefPtr< Gtk::Action > act_selectdir, act_board, act_article, act_image;
+    act_selectdir = action_group()->get_action( "SelectDir" );
     act_board = action_group()->get_action( "PreferenceBoard" );
     act_article = action_group()->get_action( "PreferenceArticle" );
     act_image = action_group()->get_action( "PreferenceImage" );
+
+    if( act_selectdir ) act_selectdir->set_sensitive( false );
     if( act_board ) act_board->set_sensitive( false );
     if( act_article ) act_article->set_sensitive( false );
     if( act_image ) act_image->set_sensitive( false );
@@ -535,6 +542,9 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
         case TYPE_IMAGE:
             if( act_image ) act_image->set_sensitive( true );
             break;
+
+        case TYPE_DIR:
+            if( act_selectdir ) act_selectdir->set_sensitive( true );
     }
 }
 
@@ -923,6 +933,28 @@ void BBSListViewBase::slot_copy_title_url()
        << url << std::endl;
 
     COPYCLIP( ss.str() );
+}
+
+
+//
+// ディレクトリ内を全選択
+//
+void BBSListViewBase::slot_select_all_dir()
+{
+    Gtk::TreeModel::Path path = m_path_selected;
+
+    // とりあえず再帰なしで一階層のみ
+    if( is_dir( path ) ){
+
+        m_treeview.get_selection()->select( path );
+        path.down();
+
+        while( m_treeview.get_row( path ) ){
+
+            m_treeview.get_selection()->select( path );
+            path.next();
+        }
+    }
 }
 
 

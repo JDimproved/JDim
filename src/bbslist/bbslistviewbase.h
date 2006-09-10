@@ -110,6 +110,7 @@ namespace BBSLIST
         void slot_rename();
         void slot_copy_url();
         void slot_copy_title_url();
+        void slot_select_all_dir();
         void slot_unselect_all();
         void slot_preferences_board();
         void slot_preferences_article();
