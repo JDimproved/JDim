@@ -291,6 +291,10 @@ void BBSListViewBase::clock_in()
 #ifdef _DEBUG    
             std::cout << "BBSListViewBase::clock_in jump to = " << m_jump_y << " upper = " << (int)adjust->get_upper() << std::endl;
 #endif
+
+            // 何故か先頭にジャンプ出来ないので 1 にジャンプする
+            if( m_jump_y == 0 ) m_jump_y = 1;
+
             adjust->set_value( m_jump_y );
             m_jump_y = -1;
         }
@@ -1667,7 +1671,10 @@ std::string BBSListViewBase::tree2xml()
     // 座標と選択中のパス
     xml << "<pos";
     Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
-    if( adjust ) xml << " y=\"" << (int) adjust->get_value() << "\"";
+    if( m_jump_y != -1 ) xml << " y=\"" << m_jump_y << "\"";
+    else if( adjust ) xml << " y=\"" << (int) adjust->get_value() << "\"";
+    else xml << " y=\"0\"";
+
     Gtk::TreeModel::Path focused_path = m_treeview.get_current_path();
     if( !focused_path.empty() ) xml << " path=\"" << focused_path.to_string() << "\"";
     xml << "/>\n";
@@ -1765,10 +1772,14 @@ void BBSListViewBase::xml2tree( const std::string& xml )
         std::string& line = *( it );
 
         // 座標
-        if( regex.exec( "< *pos +y=\"(.*)\" +path=\"(.*)\" */>", line, 0, true ) ){
+        if( y == -1 && regex.exec( "< *pos +y=\"([^\"]*)\"( +path=\"([^\"]*)\")? */>", line, 0, true ) ){
 
             y = atoi( regex.str( 1 ).c_str() );
-            focused_path = regex.str( 2 );
+            focused_path = regex.str( 3 );
+
+#ifdef _DEBUG
+            std::cout << "y = " << y << " path = " << focused_path << std::endl;
+#endif
         }
         
         // タイプ別
@@ -1820,7 +1831,9 @@ void BBSListViewBase::xml2tree( const std::string& xml )
         if( m_treeview.get_row( path ) ){
             m_treeview.set_cursor( path );
         }
+        else m_treeview.get_selection()->unselect_all();
     }
+    else m_treeview.get_selection()->unselect_all();
 
     if( y != -1 ){
         // この段階ではまだスクロールバーが表示されてない時があるのでclock_in()で移動する
