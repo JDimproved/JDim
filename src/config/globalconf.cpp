@@ -78,6 +78,8 @@ bool draw_underline;
 
 int tab_min_str;
 
+bool show_tab_icon;
+
 std::list< std::string > list_abone_word_thread;
 std::list< std::string > list_abone_regex_thread;
 
@@ -237,6 +239,9 @@ const bool CONFIG::init_config()
     // タブに表示する文字列の最小値
     tab_min_str = cf.get_option( "tab_min_str", 4 );
 
+    // タブにアイコンを表示するか
+    show_tab_icon = cf.get_option( "show_tab_icon", true );
+
     std::list< std::string > list_tmp;
     std::list< std::string >::iterator it_tmp;
     std::string str_tmp;
@@ -357,6 +362,8 @@ void CONFIG::save_conf()
     cf.update( "draw_underline", draw_underline );
 
     cf.update( "tab_min_str", tab_min_str );
+
+    cf.update( "show_tab_icon", show_tab_icon );
 
     // スレあぼーん情報
     std::string str_abone_word_thread = MISC::listtostr( list_abone_word_thread );
@@ -489,6 +496,8 @@ const double CONFIG::get_adjust_line_space(){ return adjust_line_space; }
 const bool CONFIG::get_draw_underline(){ return draw_underline; }
 
 const int CONFIG::get_tab_min_str(){ return tab_min_str; }
+
+const bool CONFIG::get_show_tab_icon(){ return show_tab_icon; }
 
 std::list< std::string >& CONFIG::get_list_abone_word_thread(){ return list_abone_word_thread; }
 std::list< std::string >& CONFIG::get_list_abone_regex_thread(){ return list_abone_regex_thread; }

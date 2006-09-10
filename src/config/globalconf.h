@@ -161,6 +161,9 @@ namespace CONFIG
     // タブに表示する文字列の最小値
     const int get_tab_min_str();
 
+    // タブにアイコンを表示するか
+    const bool get_show_tab_icon();
+
     // boardviewでのスレの全体あぼーん
     std::list< std::string >& get_list_abone_word_thread(); // ワード
     std::list< std::string >& get_list_abone_regex_thread(); // 正規表現

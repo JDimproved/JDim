@@ -44,6 +44,7 @@ void TabLabel::set_fulltext( const std::string& label )
 // アイコンセット
 void TabLabel::set_id_icon( int id )
 {
+    if( ! CONFIG::get_show_tab_icon() ) return;
     if( m_id_icon == id ) return;
 
     if( !m_image ){
@@ -68,9 +69,11 @@ const int TabLabel::get_tabwidth()
     const int iconsize = 16;
     const int mrg = 12;    
 
-    int lng_label = m_label.get_layout()->get_pixel_ink_extents().get_width();
+    int lng_label = m_label.get_layout()->get_pixel_ink_extents().get_width() + mrg;
 
-    return iconsize + lng_label + mrg;
+    if( m_image ) lng_label += iconsize;
+
+    return lng_label;
 }
 
 
