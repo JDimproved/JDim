@@ -93,7 +93,12 @@ namespace CORE
         std::string m_title;
 
         // ステータスバー
+#ifdef USE_GTKMM24
         Gtk::Statusbar m_statbar;
+#else
+        Gtk::HBox m_statbar;
+        Gtk::Label m_label_stat;
+#endif
         Gtk::Label m_mginfo;
 
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;

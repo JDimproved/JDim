@@ -433,7 +433,9 @@ void Core::run( bool init )
 #ifdef USE_GTKMM24
     m_statbar.pack_start( m_mginfo );
 #else
-    m_statbar.pack_start( m_mginfo, Gtk::PACK_SHRINK );
+    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
+
+    m_statbar.pack_end( m_mginfo, Gtk::PACK_SHRINK );
     m_mginfo.set_width_chars( MAX_MG_LNG * 2 + 16 );
     m_mginfo.set_justify( Gtk::JUSTIFY_LEFT );
 #endif
@@ -450,7 +452,6 @@ void Core::run( bool init )
     m_win_main.signal_focus_out_event().connect( sigc::mem_fun(*this, &Core::slot_focus_out_event ) );
     m_win_main.signal_focus_in_event().connect( sigc::mem_fun(*this, &Core::slot_focus_in_event ) );
     m_win_main.show_all_children();
-    m_statbar.push( "" );    
 
     // slot 作って Glib::signal_timeout() にコネクト
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
@@ -1448,7 +1449,11 @@ void Core::exec_command()
     }
 
     else if( command.command  == "set_status" ){
+#ifdef USE_GTKMM24
         m_statbar.push( command.arg1 );
+#else
+        m_label_stat.set_text( command.arg1 );
+#endif        
     }
 
     // マウスジェスチャ
