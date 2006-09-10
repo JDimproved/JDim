@@ -432,10 +432,13 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
         emit_sig = true;
 
         // 何もないところをクリックしたら選択解除
-        if( !get_row( path ) ) get_selection()->unselect_all();
+        if( !get_row( path ) ){
+            get_selection()->unselect_all();
+            emit_sig = false;
+        }
 
         // クリックした行が範囲選択部分に含まれていないときは選択を解除する( m_sig_button_release はemitしない)
-        if( get_row( path ) ){
+        if( get_row( path ) && get_selection()->get_selected_rows().size() >= 2 ){
 
             bool included = false;
             std::list< Gtk::TreeModel::iterator > list_it = get_selected_iterators();
@@ -451,7 +454,7 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
                 }
             }
             if( ! included ){
-                set_cursor( path );
+                get_selection()->unselect_all();
                 emit_sig = false;
             }
         }
