@@ -44,8 +44,6 @@ Admin::Admin( const std::string& url )
 
     // D&D
     m_notebook->sig_drag_begin().connect( sigc::mem_fun(*this, &Admin::slot_drag_begin ) );
-    m_notebook->sig_drag_motion().connect( sigc::mem_fun(*this, &Admin::slot_drag_motion ) );
-    m_notebook->sig_drag_drop().connect( sigc::mem_fun(*this, &Admin::slot_drag_drop ) );
     m_notebook->sig_drag_end().connect( sigc::mem_fun(*this, &Admin::slot_drag_end ) );
 
     m_list_command.clear();
@@ -459,7 +457,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
     if( !view ) return;
 
     // タブ
-    SKELETON::TabLabel* tablabel = new SKELETON::TabLabel( command.url );
+    SKELETON::TabLabel* tablabel = m_notebook->create_tablabel( command.url );
 
     int page = m_notebook->get_current_page();
     bool open_tab = (  page == -1 || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left"

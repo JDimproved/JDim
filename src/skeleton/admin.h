@@ -117,8 +117,6 @@ namespace SKELETON
         // D&D
         // 派生クラス別にD&Dの処理を行う
         virtual void slot_drag_begin( int page ){}
-        virtual void slot_drag_motion(){}
-        virtual void slot_drag_drop( int page ){}
         virtual void slot_drag_end(){}
 
         virtual void open_list( const std::string& str_list ){};
