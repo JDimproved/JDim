@@ -121,11 +121,11 @@ Admin::Admin( const std::string& url )
 
     Gtk::MenuItem* menuitem  = Gtk::manage( new Gtk::MenuItem( "移動" ) );
     menuitem->set_submenu( *m_move_menu );
-    popupmenu->insert( *menuitem, 2 );
+    popupmenu->insert( *menuitem, 0 );
     menuitem->show_all();
 
     menuitem = Gtk::manage( new Gtk::SeparatorMenuItem() );
-    popupmenu->insert( *menuitem, 3 );
+    popupmenu->insert( *menuitem, 1 );
     menuitem->show_all();
 
     // ポップアップメニューにアクセレータを表示
@@ -1047,27 +1047,9 @@ void Admin::slot_tab_menu( int page, int x, int y )
                 SKELETON::TabLabel* tablabel = m_notebook->get_tablabel( i );
                 if( tablabel ){
 
-                    std::string name = tablabel->get_fulltext();
-
-                    /////////////
                     const unsigned int maxsize = 50;
-
-                    // 履歴に表示する文字数を制限
-                    unsigned int pos, lng_name;
-                    int byte = 0;
-                    for( pos = 0, lng_name = 0; pos < name.length(); pos += byte ){
-                        MISC::utf8toucs2( name.c_str()+pos, byte );
-                        if( byte > 1 ) lng_name += 2;
-                        else ++lng_name;
-                        if( lng_name >= maxsize ) break;
-                    }
-
-                    // カットしたら"..."をつける
-                    if( pos != name.length() ) name = name.substr( 0, pos ) + "...";
-
-                    /////////////
-
-                    label->set_text( name );
+                    std::string name = tablabel->get_fulltext();
+                    label->set_text( MISC::cut_str( name, maxsize ) );
                 }
             }
             m_move_menu->append( *m_vec_movemenu_items[ i ] );
