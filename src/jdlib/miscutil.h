@@ -58,6 +58,9 @@ namespace MISC
     // 数字　-> 文字変換
     std::string itostr( int n );
 
+    // strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
+    std::string cut_str( const std::string& str, unsigned int maxsize );
+
     // urlエンコード
     std::string url_encode( const char* str, size_t n );
 

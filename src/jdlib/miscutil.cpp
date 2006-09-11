@@ -415,6 +415,29 @@ std::string MISC::itostr( int n )
 }
 
 
+
+// strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
+std::string MISC::cut_str( const std::string& str, unsigned int maxsize )
+{
+    std::string outstr = str;
+    unsigned int pos, lng_str;
+    int byte = 0;
+
+    for( pos = 0, lng_str = 0; pos < outstr.length(); pos += byte ){
+        MISC::utf8toucs2( outstr.c_str()+pos, byte );
+        if( byte > 1 ) lng_str += 2;
+        else ++lng_str;
+        if( lng_str >= maxsize ) break;
+    }
+
+    // カットしたら"..."をつける
+    if( pos != outstr.length() ) outstr = outstr.substr( 0, pos ) + "...";
+
+    return outstr;
+}
+
+
+
 //
 // url エンコード
 //
