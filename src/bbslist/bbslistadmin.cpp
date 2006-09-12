@@ -6,6 +6,7 @@
 #include "bbslistadmin.h"
 
 #include "skeleton/view.h"
+#include "skeleton/dragnote.h"
 
 #include "jdlib/miscutil.h"
 
@@ -36,7 +37,10 @@ using namespace BBSLIST;
 
 BBSListAdmin::BBSListAdmin( const std::string& url )
     : SKELETON::Admin( url )
-{}
+{
+    get_notebook()->set_dragable( false );
+    get_notebook()->set_fixtab( true );
+}
 
 
 BBSListAdmin::~BBSListAdmin()

@@ -9,7 +9,6 @@
 
 #include "skeleton/view.h"
 #include "skeleton/dragnote.h"
-#include "skeleton/tablabel.h"
 
 #include "icons/iconmanager.h"
 
@@ -45,8 +44,8 @@ using namespace BOARD;
 BoardAdmin::BoardAdmin( const std::string& url )
     : SKELETON::Admin( url )
 {
-    //D&D可
     get_notebook()->set_dragable( true );
+    get_notebook()->set_fixtab( false );
 }
 
 
@@ -104,39 +103,8 @@ void BoardAdmin::switch_admin()
 void BoardAdmin::set_tabicon( const std::string& url, const std::string& iconname )
 {
     SKELETON::View* view = get_view( url );
-    if( view ){
-
-        SKELETON::TabLabel* tablabel = get_notebook()->get_tablabel( get_notebook()->page_num( *view ) );
-        if( tablabel ){
-
-#ifdef _DEBUG
-            std::cout << "BoardAdmin::set_tabicon url = " << url << " icon = " << iconname << std::endl;
-#endif
-            int id = ICON::BOARD;
-
-            if( iconname == "default" ) id = ICON::BOARD;
-
-            // タブが切り替わったときにAdmin::slot_switch_page から呼ばれる
-            // update 状態以外の時はアイコンを変更しない
-            if( iconname == "switch_page" ){
-
-                if( tablabel->get_id_icon() != ICON::BOARD_UPDATE ) return;
-
-                id = ICON::BOARD;
-            }
-
-            if( iconname == "loading" ) id = ICON::LOADING;
-            if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
-            if( iconname == "update" ){
-
-                // タブがアクティブの時は通常アイコンを表示
-                if( view != get_current_view() ) id = ICON::BOARD_UPDATE;
-                else id = ICON::BOARD;
-            }
-
-            tablabel->set_id_icon( id );
-        }
-    }
+    if( view ) get_notebook()->set_tabicon( iconname, get_notebook()->page_num( *view ),
+                                            ICON::BOARD, ICON::BOARD_UPDATE );
 }
 
 

@@ -42,6 +42,9 @@ namespace SKELETON
 
         Tooltip m_tooltip;
 
+        bool m_dragable;
+        bool m_fixtab;
+
         bool m_adjust_reserve; // adjust予約
         int m_pre_width;
 
@@ -59,6 +62,30 @@ namespace SKELETON
         void clock_in();
         void focus_out();
 
+        int append_page( const std::string& url, Gtk::Widget& child );
+        int insert_page( const std::string& url, Gtk::Widget& child, int page );
+        void remove_page( int page );
+
+        // タブの文字列取得/セット
+        const std::string get_tab_fulltext( int page );
+        void set_tab_fulltext( const std::string& str, int page );
+
+        // タブにアイコンをセットする
+        void set_tabicon( const std::string& iconname, int page,
+                          int id_default, int id_update );
+
+        // ドラッグ可/不可切り替え(デフォルト false );
+        void set_dragable( bool dragable ){ m_dragable = dragable; }
+
+        // タブの幅を固定するか(デフォルト false );
+        void set_fixtab( bool fix ){ m_fixtab = fix; }
+
+        // タブ幅調整
+        bool adjust_tabwidth( bool force );
+
+
+      private:
+
         // タブ作成
         SKELETON::TabLabel* create_tablabel( const std::string& url );
 
@@ -66,13 +93,9 @@ namespace SKELETON
         TabLabel* get_tablabel( int page );
         TabLabel* get_tablabel( const std::string& url );
 
-        void set_dragable( bool dragable );
-
         // マウスの下にあるタブの番号
         int get_page_under_mouse();
 
-        // タブ幅調整
-        bool adjust_tabwidth( bool force );
 
       protected:
 

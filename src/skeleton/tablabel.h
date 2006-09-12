@@ -54,6 +54,8 @@ namespace SKELETON
 
         const std::string& get_url(){ return m_url; }
 
+        void set_dragable( bool dragable, int button );
+
         const bool is_under_mouse() const { return m_under_mouse; }
 
         // カットしていない全体の文字列
@@ -78,8 +80,6 @@ namespace SKELETON
 
         // タブの文字列の文字数がlngになるようにリサイズする
         void resize_tab( int lng );
-
-        void set_dragable( bool dragable, int button );
 
         virtual bool on_enter_notify_event( GdkEventCrossing* event );
         virtual bool on_motion_notify_event( GdkEventMotion* event );

@@ -5,7 +5,6 @@
 
 #include "admin.h"
 #include "view.h"
-#include "tablabel.h"
 #include "dragnote.h"
 
 #include "dbtree/interface.h"
@@ -117,7 +116,15 @@ Admin::Admin( const std::string& url )
 
         m_vec_movemenu_append.push_back( false );
     }
+
     m_move_menu = Gtk::manage( new Gtk::Menu() );
+
+    // コメント行( MAX_TABS 番)
+    Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( "comment" ) );
+    m_vec_movemenu_items.push_back( item );
+    m_move_menu->append( *m_vec_movemenu_items[ MAX_TABS ] );
+    m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
+
 
     Gtk::MenuItem* menuitem  = Gtk::manage( new Gtk::MenuItem( "移動" ) );
     menuitem->set_submenu( *m_move_menu );
@@ -148,12 +155,10 @@ Admin::~Admin()
         for( int i = 0; i < pages; ++i ){
 
             SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( 0 ) );
-            SKELETON::TabLabel* tablabel = m_notebook->get_tablabel( 0 );
 
             m_notebook->remove_page( 0 );
 
             if( view ) delete view;
-            if( tablabel ) delete tablabel;
         }
     }
     m_list_command.clear();
@@ -365,7 +370,7 @@ void Admin::exec_command()
 
     // タブに文字をセット、タブ幅調整
     else if( command.command  == "set_tablabel" ){
-        set_tablabel( command.url, command.arg1, ( command.arg2 == "fix" ) );
+        set_tablabel( command.url, command.arg1 );
     }
     else if( command.command  == "adjust_tabwidth" ){
         m_notebook->adjust_tabwidth( ( command.arg1 == "true" ) );
@@ -456,8 +461,6 @@ void Admin::open_view( const COMMAND_ARGS& command )
     view = create_view( command );
     if( !view ) return;
 
-    // タブ
-    SKELETON::TabLabel* tablabel = m_notebook->create_tablabel( command.url );
 
     int page = m_notebook->get_current_page();
     bool open_tab = (  page == -1 || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left"
@@ -470,15 +473,14 @@ void Admin::open_view( const COMMAND_ARGS& command )
 #ifdef _DEBUG
         std::cout << "append page\n";
 #endif
-
         // 現在のページの右に表示
-        if( page != -1 && command.arg1 == "right" ) m_notebook->insert_page( *view , *tablabel, page+1 );
+        if( page != -1 && command.arg1 == "right" ) m_notebook->insert_page( command.url, *view, page+1 );
 
         // 現在のページの左に表示
-        else if( page != -1 && command.arg1 == "left" ) m_notebook->insert_page( *view , *tablabel, page );
+        else if( page != -1 && command.arg1 == "left" ) m_notebook->insert_page( command.url, *view, page );
 
         // 最後に表示
-        else m_notebook->append_page( *view , *tablabel );
+        else m_notebook->append_page( command.url, *view );
     }
 
     // 開いてるviewを消してその場所に表示
@@ -486,13 +488,11 @@ void Admin::open_view( const COMMAND_ARGS& command )
 #ifdef _DEBUG
         std::cout << "replace page\n";
 #endif
-        m_notebook->insert_page( *view, *tablabel, page );
+        m_notebook->insert_page( command.url, *view, page );
 
-        SKELETON::TabLabel* oldtab = m_notebook->get_tablabel( page + 1 );
         m_notebook->remove_page( page + 1 );
 
         if( current_view ) delete current_view;
-        if( oldtab ) delete oldtab;
     }
 
     switch_admin();
@@ -629,12 +629,9 @@ void Admin::close_view( SKELETON::View* view )
     int page = m_notebook->page_num( *view );
     int current_page = m_notebook->get_current_page();
 
-    SKELETON::TabLabel* tablabel = m_notebook->get_tablabel( page );
-
     m_notebook->remove_page( page );
 
     delete view;
-    if( tablabel ) delete tablabel;
 
 #ifdef _DEBUG
     std::cout << "Admin::close_view : delete page = " << page << std::endl;
@@ -652,7 +649,6 @@ void Admin::close_view( SKELETON::View* view )
             SKELETON::View* newview = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
             if( newview ) switch_view( newview->get_url() );
         }
-        set_command( "adjust_tabwidth", "", "true" ); 
     }
 }
 
@@ -810,26 +806,14 @@ void Admin::focus_out()
 //
 // タブラベル更新
 //
-// fix = true ならタブ幅の調整はしない
-//
-void Admin::set_tablabel( const std::string& url, const std::string& str_label, bool fix )
+void Admin::set_tablabel( const std::string& url, const std::string& str_label )
 {
 #ifdef _DEBUG
     std::cout << "Admin::set_tablabel : " << url << std::endl;
 #endif
 
     SKELETON::View* view = get_view( url );
-    if( view ){
-
-        SKELETON::TabLabel* tablabel = m_notebook->get_tablabel( m_notebook->page_num( *view ) );
-        if( tablabel ){
-
-            tablabel->set_fulltext( str_label );
-
-            // タブ幅再設定指定
-            if( !fix ) set_command( "adjust_tabwidth", "", "true" );
-        }
-    }
+    if( view ) m_notebook->set_tab_fulltext( str_label, m_notebook->page_num( *view ) );
 }
 
 
@@ -1032,6 +1016,7 @@ void Admin::slot_tab_menu( int page, int x, int y )
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
     if( popupmenu ){
 
+        // menu item をサブメニューから取り除く
         for( int i = 0; i < MAX_TABS ; ++i ){
             if( m_vec_movemenu_append[ i ] )m_move_menu->remove( *m_vec_movemenu_items[ i ] );
             m_vec_movemenu_append[ i ] = false;
@@ -1044,17 +1029,20 @@ void Admin::slot_tab_menu( int page, int x, int y )
             Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_vec_movemenu_items[ i ]->get_child() );
             if( label ){
 
-                SKELETON::TabLabel* tablabel = m_notebook->get_tablabel( i );
-                if( tablabel ){
-
+                std::string name = m_notebook->get_tab_fulltext( i );
+                if( ! name.empty() ){
                     const unsigned int maxsize = 50;
-                    std::string name = tablabel->get_fulltext();
                     label->set_text( MISC::cut_str( name, maxsize ) );
                 }
             }
             m_move_menu->append( *m_vec_movemenu_items[ i ] );
             m_vec_movemenu_append[ i ] = true;
         }
+
+        // コメント行更新
+        Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_vec_movemenu_items[ MAX_TABS ]->get_child() );
+        if( label ) label->set_text( "タブ数 " + MISC::itostr( pages ) );
+
         m_move_menu->show_all();
 
         popupmenu->popup( 0, gtk_get_current_event_time() );

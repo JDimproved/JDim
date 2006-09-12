@@ -22,8 +22,6 @@ TabLabel::TabLabel( const std::string& url )
     add_events( Gdk::POINTER_MOTION_MASK );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
 
-    set_dragable( true, 1 );
-
     add( m_hbox );
     m_hbox.pack_end( m_label, Gtk::PACK_SHRINK );
 

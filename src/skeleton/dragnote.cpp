@@ -7,6 +7,8 @@
 #include "dragnote.h"
 #include "tablabel.h"
 
+#include "icons/iconmanager.h"
+
 #include "controlid.h"
 
 using namespace SKELETON;
@@ -16,9 +18,10 @@ DragableNoteBook::DragableNoteBook()
     : Gtk::Notebook()
     , m_page( -1 )
     , m_drag( 0 )
+    , m_dragable( false )
+    , m_fixtab( false )
     , m_adjust_reserve( false )
     , m_pre_width( -1 )
-
 {}
 
 
@@ -49,10 +52,108 @@ void DragableNoteBook::focus_out()
 }
 
 
+//
+// ページのappendとinsert
+//
+// ついでにタブも作成する
+//
+int DragableNoteBook::append_page( const std::string& url, Gtk::Widget& child )
+{
+    SKELETON::TabLabel* tablabel = create_tablabel( url );
+    return Gtk::Notebook::append_page( child , *tablabel );
+}
+
+int DragableNoteBook::insert_page( const std::string& url, Gtk::Widget& child, int page )
+{
+    SKELETON::TabLabel* tablabel = create_tablabel( url );
+    return Gtk::Notebook::insert_page( child , *tablabel, page );
+}
+
+
+
+//
+// タブの文字列取得
+//
+const std::string DragableNoteBook::get_tab_fulltext( int page )
+{
+    SKELETON::TabLabel* tablabel = get_tablabel( page );
+    if( ! tablabel ) return std::string();
+
+    return tablabel->get_fulltext();
+}
+
+
+
+//
+// タブに文字列をセットとタブ幅調整
+//
+void DragableNoteBook::set_tab_fulltext( const std::string& str, int page )
+{
+    SKELETON::TabLabel* tablabel = get_tablabel( page );
+    if( tablabel ){
+        tablabel->set_fulltext( str );
+        adjust_tabwidth( true );
+    }
+}
+
+
+
+//
+// ページ取り除き
+//
+// ついでにタブも削除する
+//
+void DragableNoteBook::remove_page( int page )
+{
+    SKELETON::TabLabel* tablabel = get_tablabel( page );
+    Gtk::Notebook::remove_page( page );
+    if( tablabel ) delete tablabel;
+    m_tooltip.hide_tooltip();
+    adjust_tabwidth( true );
+}
+
+
+//
+// タブにアイコンをセットする
+//
+void DragableNoteBook::set_tabicon( const std::string& iconname, int page,
+                                    int id_default, int id_update )
+{
+    SKELETON::TabLabel* tablabel = get_tablabel( page );
+    if( tablabel ){
+
+        int id = id_default;
+
+        // タブが切り替わったときにAdmin::slot_switch_page から呼ばれる
+        if( iconname == "switch_page" ){
+
+            // update 状態以外の時はアイコンを変更しない
+            if( tablabel->get_id_icon() != id_update ) return;
+        }
+
+        if( iconname == "loading" ) id = ICON::LOADING;
+        if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
+        if( iconname == "update" ){
+
+            // タブがアクティブの時は通常アイコンを表示
+            if( page != get_current_page() ) id = id_update;
+        }
+
+        tablabel->set_id_icon( id );
+    }
+}
+
+
+
 // タブ作成
 SKELETON::TabLabel* DragableNoteBook::create_tablabel( const std::string& url )
 {
     SKELETON::TabLabel *tablabel = new SKELETON::TabLabel( url );
+
+    // ドラッグ設定
+    GdkEventButton event;
+    m_control.get_eventbutton( CONTROL::DragStartButton, event );
+    tablabel->set_dragable( m_dragable, event.button );
 
     tablabel->sig_tab_motion_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_motion_event ) );
     tablabel->sig_tab_leave_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_leave_event ) );
@@ -118,6 +219,8 @@ int DragableNoteBook::get_page_under_mouse()
 //
 bool DragableNoteBook::adjust_tabwidth( bool force )
 {
+    if( m_fixtab ) return false;
+
     const int mrg = 30;
 
     // 調整待ち
@@ -194,41 +297,6 @@ bool DragableNoteBook::adjust_tabwidth( bool force )
     }
 
     return true;
-}
-
-
-
-//
-// D&D設定
-//
-void DragableNoteBook::set_dragable( bool dragable )
-{
-/*
-    if( dragable ){
-
-        // クリックボタンの割り当て取得
-        GdkEventButton event;
-        if( ! m_control.get_eventbutton( CONTROL::ClickButton, event ) ) return;
-        
-        std::list< Gtk::TargetEntry > targets;
-        targets.push_back( Gtk::TargetEntry( "text/plain", Gtk::TARGET_SAME_WIDGET, 0 ) );
-
-        switch( event.button ){
-
-            case 1: drag_source_set( targets, Gdk::BUTTON1_MASK ); break;
-            case 2: drag_source_set( targets, Gdk::BUTTON2_MASK ); break;
-            case 3: drag_source_set( targets, Gdk::BUTTON3_MASK ); break;
-
-            default: return;
-        }
-
-        drag_dest_set( targets );
-    }
-    else{
-        drag_source_unset();
-        drag_dest_unset();
-    }
-*/
 }
 
 

@@ -59,7 +59,7 @@ bool FavoriteListView::set_command( const std::string& command, const std::strin
 //
 void FavoriteListView::show_view()
 {
-    BBSLIST::get_admin()->set_command( "set_tablabel", get_url(), "お気に入り", "fix" );
+    BBSLIST::get_admin()->set_command( "set_tablabel", get_url(), "お気に入り" );
 
     std::string xml;
     CACHE::load_rawdata( CACHE::path_xml_favorite() , xml );
