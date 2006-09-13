@@ -109,7 +109,6 @@ void ImageViewBase::setup_common()
     }
 
     action_group()->add( Gtk::Action::create( "Move_Menu", "移動" ) );
-    action_group()->add( Gtk::Action::create( "MoveInfo", "info" ) );
     action_group()->add( Gtk::Action::create( "MoveHead", "先頭に移動" ), sigc::mem_fun( *this, &ImageViewBase::slot_move_head ) );
     action_group()->add( Gtk::Action::create( "MoveTail", "最後に移動" ), sigc::mem_fun( *this, &ImageViewBase::slot_move_tail ) );
 
@@ -202,8 +201,6 @@ void ImageViewBase::setup_common()
     "<popup name='popup_menu_icon'>"
 
     "<menu action='Move_Menu'>"
-    "<menuitem action='MoveInfo'/>"
-    "<separator/>"
     "<menuitem action='MoveHead'/>"
     "<menuitem action='MoveTail'/>"
     "</menu>"

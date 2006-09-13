@@ -109,23 +109,18 @@ Admin::Admin( const std::string& url )
     m_ui_manager->add_ui_from_string( str_ui );    
 
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
+    Gtk::MenuItem* item;
 
     // 移動サブメニュー作成と登録
     for( int i = 0; i < MAX_TABS; ++i ){
-        Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( "dummy" ) );
-        m_vec_movemenu_items.push_back( item );
+        item = Gtk::manage( new Gtk::MenuItem( "dummy" ) );
         item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &Admin::set_current_page ), i ) );
 
+        m_vec_movemenu_items.push_back( item );
         m_vec_movemenu_append.push_back( false );
     }
 
     m_move_menu = Gtk::manage( new Gtk::Menu() );
-
-    // コメント行( MAX_TABS 番)
-    Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( "comment" ) );
-    m_vec_movemenu_items.push_back( item );
-    m_move_menu->append( *m_vec_movemenu_items[ MAX_TABS ] );
-    m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
 
     // 先頭、最後に移動
     item = Gtk::manage( new Gtk::MenuItem( "先頭に移動" ) );
@@ -137,15 +132,16 @@ Admin::Admin( const std::string& url )
     item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_tail ) );
     m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
 
+    item  = Gtk::manage( new Gtk::MenuItem( "移動" ) );
+    item->set_submenu( *m_move_menu );
+    m_vec_movemenu_items.push_back( item );
 
-    Gtk::MenuItem* menuitem  = Gtk::manage( new Gtk::MenuItem( "移動" ) );
-    menuitem->set_submenu( *m_move_menu );
-    popupmenu->insert( *menuitem, 0 );
-    menuitem->show_all();
+    popupmenu->insert( *item, 0 );
+    item->show_all();
 
-    menuitem = Gtk::manage( new Gtk::SeparatorMenuItem() );
-    popupmenu->insert( *menuitem, 1 );
-    menuitem->show_all();
+    item = Gtk::manage( new Gtk::SeparatorMenuItem() );
+    popupmenu->insert( *item, 1 );
+    item->show_all();
 
     // ポップアップメニューにアクセレータを表示
     CONTROL::set_menu_motion( popupmenu );
@@ -1091,9 +1087,9 @@ void Admin::slot_tab_menu( int page, int x, int y )
             m_vec_movemenu_append[ i ] = true;
         }
 
-        // コメント行更新
+        // コメント更新
         Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_vec_movemenu_items[ MAX_TABS ]->get_child() );
-        if( label ) label->set_text( "タブ数 " + MISC::itostr( pages ) );
+        if( label ) label->set_text( "移動 ( タブ数 " + MISC::itostr( pages ) +" )" );
 
         m_move_menu->show_all();
 

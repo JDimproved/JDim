@@ -156,22 +156,11 @@ Gtk::Menu* ImageViewIcon::get_popupmenu( const std::string& url )
     // タブ情報セット
     if( menu ){
 
+        // 一番上のitemのラベルを書き換える
         Gtk::Menu_Helpers::MenuList::iterator it_item =  menu->items().begin();
-        Gtk::Menu* submenu = (*it_item).get_submenu();
-        if( submenu ){
 
-            it_item = submenu->items().begin();
-            while( it_item != submenu->items().end() ){
-
-                // 一番上のitemのラベルを書き換える
-                Gtk::Label* label = dynamic_cast< Gtk::Label* >( (*it_item).get_child() );
-                if( label ){
-                    label->set_text( "タブ数 " + MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) );
-                    break;
-                }
-                ++it_item;
-            }
-        }
+        Gtk::Label* label = dynamic_cast< Gtk::Label* >( (*it_item).get_child() );
+        if( label ) label->set_text( "移動 ( タブ数 " + MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) + " )" );
     }
 
     return menu;

@@ -330,7 +330,8 @@ void ImageAdmin::tab_head()
     if( view ) url_to = view->get_url();
 
     if( !url_to.empty() ) switch_img( url_to );
-    focus_current_view();
+
+    switch_admin();
 }
 
 
@@ -349,8 +350,8 @@ void ImageAdmin::tab_tail()
     if( view ) url_to = view->get_url();
 
     if( !url_to.empty() ) switch_img( url_to );
-    focus_current_view();
 
+    switch_admin();
 }
 
 
