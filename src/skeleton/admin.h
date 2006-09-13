@@ -50,6 +50,9 @@ namespace SKELETON
         // フォーカスされているか
         const bool has_focus() const { return m_focus; }
 
+        // タブの数
+        virtual int get_tab_nums();
+
         // 含まれているページのURLのリスト取得
         virtual std::list< std::string > get_URLs();
 
@@ -94,6 +97,8 @@ namespace SKELETON
         virtual void switch_view( const std::string& url );
         virtual void tab_left();
         virtual void tab_right();
+        virtual void tab_head();
+        virtual void tab_tail();
         virtual void redraw_view( const std::string& url );
         virtual void redraw_current_view();
         virtual void redraw_views( const std::string& url );

@@ -42,9 +42,15 @@ namespace IMAGE
         Gtk::EventBox& view() { return m_view; }
 
         virtual bool empty();
-        virtual std::list< std::string > get_URLs();
         virtual void clock_in();
 
+        // タブの数
+        virtual int get_tab_nums();
+
+        // 含まれているページのURLのリスト取得
+        virtual std::list< std::string > get_URLs();
+
+        // 現在表示してるページ番号
         virtual int get_current_page();
 
       protected:
@@ -57,6 +63,8 @@ namespace IMAGE
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void tab_left();
         virtual void tab_right();
+        virtual void tab_head();
+        virtual void tab_tail();
         virtual void redraw_view( const std::string& url );
         virtual void redraw_current_view();
         virtual void close_view( const std::string& url );
@@ -77,6 +85,8 @@ namespace IMAGE
 
         // スクロール
         void scroll_tab( int scroll );
+
+        // スクロールボタン
         void slot_press_left();
         void slot_press_right();
         void slot_release_left();

@@ -88,7 +88,9 @@ namespace IMAGE
         virtual void switch_icon(){}
 
         void zoom_in_out( bool zoomin );
-        
+
+        void slot_move_head();
+        void slot_move_tail();
         bool slot_key_press_imagearea( GdkEventKey* event );
         void slot_reload_force();
         void slot_cancel_mosaic();

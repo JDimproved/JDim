@@ -108,6 +108,11 @@ void ImageViewBase::setup_common()
         action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ImageViewBase::slot_resize_image ), tmp_size ) );
     }
 
+    action_group()->add( Gtk::Action::create( "Move_Menu", "移動" ) );
+    action_group()->add( Gtk::Action::create( "MoveInfo", "info" ) );
+    action_group()->add( Gtk::Action::create( "MoveHead", "先頭に移動" ), sigc::mem_fun( *this, &ImageViewBase::slot_move_head ) );
+    action_group()->add( Gtk::Action::create( "MoveTail", "最後に移動" ), sigc::mem_fun( *this, &ImageViewBase::slot_move_tail ) );
+
     action_group()->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &ImageViewBase::close_view ) );
 
     action_group()->add( Gtk::Action::create( "CloseOther_Menu", "他の画像を閉じる" ) );
@@ -196,6 +201,14 @@ void ImageViewBase::setup_common()
     
     "<popup name='popup_menu_icon'>"
 
+    "<menu action='Move_Menu'>"
+    "<menuitem action='MoveInfo'/>"
+    "<separator/>"
+    "<menuitem action='MoveHead'/>"
+    "<menuitem action='MoveTail'/>"
+    "</menu>"
+    "<separator/>"
+
     "<menuitem action='Quit'/>"
     "<separator/>"
 
@@ -214,10 +227,10 @@ void ImageViewBase::setup_common()
     "<separator/>"
 
     "<menuitem action='OpenBrowser'/>"
-    "<menuitem action='OpenRef'/>"
+    "<menuitem action='CopyURL'/>"
     "<separator/>"
 
-    "<menuitem action='CopyURL'/>"
+    "<menuitem action='OpenRef'/>"
     "<separator/>"
 
     "<menuitem action='Save'/>"
@@ -333,6 +346,26 @@ void ImageViewBase::redraw_view()
 #endif    
 
     show_view();
+}
+
+
+
+//
+// 先頭に移動
+//
+void ImageViewBase::slot_move_head()
+{
+    IMAGE::get_admin()->set_command( "tab_head", "" );
+}
+
+
+
+//
+// 最後に移動
+//
+void ImageViewBase::slot_move_tail()
+{
+    IMAGE::get_admin()->set_command( "tab_tail", "" );
 }
 
 

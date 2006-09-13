@@ -120,6 +120,16 @@ bool ImageAdmin::empty()
 
 
 //
+// 含まれているタブの数
+//
+int ImageAdmin::get_tab_nums()
+{
+    return m_iconbox.children().size();
+}
+
+
+
+//
 // 含まれているページのURLのリスト取得
 //
 std::list< std::string > ImageAdmin::get_URLs()
@@ -303,6 +313,46 @@ void ImageAdmin::tab_right()
     if( !url_to.empty() ) switch_img( url_to );
     focus_current_view();
 }
+
+
+
+//
+// タブの最初に移動
+//
+void ImageAdmin::tab_head()
+{
+    if( m_iconbox.children().size() == 1 ) return;
+
+    std::string url_to;
+    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
+
+    SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+    if( view ) url_to = view->get_url();
+
+    if( !url_to.empty() ) switch_img( url_to );
+    focus_current_view();
+}
+
+
+//
+// タブの最後に移動
+//
+void ImageAdmin::tab_tail()
+{
+    if( m_iconbox.children().size() == 1 ) return;
+
+    std::string url_to;
+    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().end();
+    it--;
+    
+    SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+    if( view ) url_to = view->get_url();
+
+    if( !url_to.empty() ) switch_img( url_to );
+    focus_current_view();
+
+}
+
 
 
 
@@ -644,9 +694,6 @@ SKELETON::View* ImageAdmin::get_current_view()
 {
     return dynamic_cast< SKELETON::View* >( m_view.get_child() );
 }
-
-
-
 
 
 

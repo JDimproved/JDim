@@ -93,14 +93,16 @@ Admin::Admin( const std::string& url )
     "</menu>"
     "<separator/>"
 
+    "<menuitem action='OpenBrowser'/>"
+    "<menuitem action='CopyURL'/>"
+    "<separator/>"
+
     "<menu action='ReloadAll_Menu'>"
     "<menuitem action='ReloadAll'/>"
     "</menu>"
-    "<separator/>"
 
-    "<menuitem action='OpenBrowser'/>"
-    "<menuitem action='CopyURL'/>"
     "</popup>"
+
 
     "</ui>";
 
@@ -123,6 +125,16 @@ Admin::Admin( const std::string& url )
     Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( "comment" ) );
     m_vec_movemenu_items.push_back( item );
     m_move_menu->append( *m_vec_movemenu_items[ MAX_TABS ] );
+    m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
+
+    // 先頭、最後に移動
+    item = Gtk::manage( new Gtk::MenuItem( "先頭に移動" ) );
+    m_move_menu->append( *item );
+    item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_head ) );
+
+    item = Gtk::manage( new Gtk::MenuItem( "最後に移動" ) );
+    m_move_menu->append( *item );
+    item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_tail ) );
     m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
 
 
@@ -201,6 +213,14 @@ bool Admin::empty()
     return ( m_notebook->get_n_pages() == 0 );
 }
 
+
+// タブの数
+int Admin::get_tab_nums()
+{
+    if( m_notebook ) return m_notebook->get_n_pages();
+
+    return 0;
+}
 
 
 //
@@ -323,6 +343,12 @@ void Admin::exec_command()
     }
     else if( command.command == "tab_right" ){
         tab_right();
+    }
+    else if( command.command == "tab_head" ){
+        tab_head();
+    }
+    else if( command.command == "tab_tail" ){
+        tab_tail();
     }
     else if( command.command == "redraw" ){
         redraw_view( command.url );
@@ -553,6 +579,32 @@ void Admin::tab_right()
     if( page == pages -1 ) page = -1;
 
     set_current_page( ++page );
+}
+
+
+
+//
+// タブ先頭移動
+//
+void Admin::tab_head()
+{
+    int pages = m_notebook->get_n_pages();
+    if( pages == 1 ) return;
+
+    set_current_page( 0 );
+}
+
+
+
+//
+// タブ最後に移動
+//
+void Admin::tab_tail()
+{
+    int pages = m_notebook->get_n_pages();
+    if( pages == 1 ) return;
+
+    set_current_page( pages-1 );
 }
 
 
