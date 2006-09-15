@@ -502,10 +502,11 @@ NODE* NodeTreeBase::create_header_node()
 //
 NODE* NodeTreeBase::createIDNumNode()
 {
-    const char* dummy = "00000000";
+    const char* dummy = " (10000)";
 
     NODE* tmpnode = createTextNode( dummy, COLOR_CHAR );
     tmpnode->type = NODE_IDNUM;
+    tmpnode->text[ 0 ] = '\0'; // メモリだけ確保して文字を消す
     return tmpnode;
 }
 
