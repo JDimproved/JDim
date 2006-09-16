@@ -18,7 +18,7 @@
 
 namespace ARTICLE
 {
-    class ArticleToolBar : public Gtk::VBox
+    class ArticleToolBar : public Gtk::ScrolledWindow
     {
         friend class ArticleViewBase;
         friend class ArticleViewMain;
@@ -30,6 +30,8 @@ namespace ARTICLE
         friend class ArticleViewDrawout;
 
         Gtk::Tooltips m_tooltip;
+
+        Gtk::VBox m_vbox;
 
         // ラベル、ボタンバー
         Gtk::HBox m_buttonbar;
@@ -61,7 +63,8 @@ namespace ARTICLE
         void show_searchbar()
         {
             if( ! m_searchbar_shown ){
-                pack_start( m_searchbar, Gtk::PACK_SHRINK );
+                set_size_request( 8, m_vbox.get_height()*2 );
+                m_vbox.pack_start( m_searchbar, Gtk::PACK_SHRINK );
                 show_all_children();
                 m_searchbar_shown = true;
             }
@@ -71,7 +74,8 @@ namespace ARTICLE
         void hide_searchbar()
         {
             if( m_searchbar_shown ){
-                remove( m_searchbar );
+                m_vbox.remove( m_searchbar );
+                set_size_request( 8, m_vbox.get_height()/2 );
                 show_all_children();
                 m_searchbar_shown = false;
             }
@@ -82,6 +86,16 @@ namespace ARTICLE
         {
             m_label.set_text( label );
             m_tooltip.set_tip( m_label, label );
+        }
+
+        // vboxがrealizeしたらラベル(Gtk::Entry)の背景色を変える
+        void slot_vbox_realize()
+        {
+            Gdk::Color color_bg = m_vbox.get_style()->get_bg( Gtk::STATE_NORMAL );
+            m_label.modify_base( Gtk::STATE_NORMAL, color_bg );
+
+            color_bg = m_vbox.get_style()->get_bg( Gtk::STATE_ACTIVE );
+            m_label.modify_base( Gtk::STATE_ACTIVE, color_bg );
         }
 
         ArticleToolBar() :
@@ -103,6 +117,8 @@ namespace ARTICLE
         m_button_drawout_or( Gtk::Stock::ADD ),
         m_button_clear_hl( Gtk::Stock::CLEAR )
         {
+            m_vbox.signal_realize().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_vbox_realize ) );
+
             // スレ名ラベル
             // Gtk::Label を使うと勝手にリサイズするときがあるので
             // 面倒でも　Gtk::Entry を使う。背景色は on_realize() で指定する。
@@ -135,8 +151,8 @@ namespace ARTICLE
             m_buttonbar.pack_end( m_button_reload, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_open_search, Gtk::PACK_SHRINK );
 
-            set_border_width( 1 );
-            pack_start( m_buttonbar, Gtk::PACK_SHRINK );
+            m_buttonbar.set_border_width( 1 );
+            m_vbox.pack_start( m_buttonbar, Gtk::PACK_SHRINK );
 
             // 検索バー
             m_tooltip.set_tip( m_button_close_search, CONTROL::get_label_motion( CONTROL::CloseSearchBar ) );
@@ -153,22 +169,13 @@ namespace ARTICLE
             m_searchbar.pack_end( m_button_drawout_and, Gtk::PACK_SHRINK );
             m_searchbar.pack_end( m_button_up_search, Gtk::PACK_SHRINK );
             m_searchbar.pack_end( m_button_down_search, Gtk::PACK_SHRINK );
+
+            add( m_vbox );
+            set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+            set_size_request( 8 );
         }
         
         virtual ~ArticleToolBar(){}
-
-        virtual void on_realize()
-        {
-            Gtk::VBox::on_realize();
-            
-            // ラベル(Gtk::Entry)の背景色を変える
-            Gdk::Color color_bg = get_style()->get_bg( Gtk::STATE_NORMAL );
-            m_label.modify_base( Gtk::STATE_NORMAL, color_bg );
-
-            color_bg = get_style()->get_bg( Gtk::STATE_ACTIVE );
-            m_label.modify_base( Gtk::STATE_ACTIVE, color_bg );
-        }
-
     };
 }
 

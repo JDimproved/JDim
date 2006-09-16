@@ -84,7 +84,9 @@ namespace CORE
         bool m_imagetab_shown;
 
         Gtk::Tooltips m_tooltip;
-        Gtk::HBox m_urlbar;
+
+        Gtk::ScrolledWindow m_urlbar;
+        Gtk::HBox m_urlbar_vbox;
         Gtk::Entry m_entry_url;
         SKELETON::ImgButton m_button_go;
 

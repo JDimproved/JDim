@@ -424,8 +424,11 @@ void Core::run( bool init )
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
 
-    m_urlbar.pack_start( m_entry_url );
-    m_urlbar.pack_start( m_button_go, Gtk::PACK_SHRINK );
+    m_urlbar_vbox.pack_start( m_entry_url );
+    m_urlbar_vbox.pack_start( m_button_go, Gtk::PACK_SHRINK );
+    m_urlbar.add( m_urlbar_vbox );
+    m_urlbar.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+    m_urlbar.set_size_request( 8 );
 
     m_tooltip.set_tip( m_button_go, "移動" );
 
@@ -434,7 +437,6 @@ void Core::run( bool init )
     m_statbar.pack_start( m_mginfo );
 #else
     m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
-
     m_statbar.pack_end( m_mginfo, Gtk::PACK_SHRINK );
     m_mginfo.set_width_chars( MAX_MG_LNG * 2 + 16 );
     m_mginfo.set_justify( Gtk::JUSTIFY_LEFT );
@@ -443,9 +445,16 @@ void Core::run( bool init )
     
     // メインwindowのパッキング
     m_vbox_main.set_spacing( 4 );
-    m_vbox_main.pack_end( m_statbar, Gtk::PACK_SHRINK );
+
+    Gtk::ScrolledWindow *scrbar = Gtk::manage( new Gtk::ScrolledWindow() );
+    scrbar->add( m_statbar );
+    scrbar->set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+    scrbar->set_size_request( 8 );
+
+    m_vbox_main.pack_end( *scrbar, Gtk::PACK_SHRINK );
     m_vbox_main.pack_end( m_hpaned );
     if( SESSION::show_urlbar() ) m_vbox_main.pack_end( m_urlbar, Gtk::PACK_SHRINK );
+
     m_vbox_main.pack_end( *menubar, Gtk::PACK_SHRINK );
 
     m_win_main.add( m_vbox_main );

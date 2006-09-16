@@ -15,7 +15,7 @@
 
 namespace BOARD
 {
-    class BoardToolBar : public Gtk::VBox
+    class BoardToolBar : public Gtk::ScrolledWindow
     {
 
         friend class BoardView;
@@ -67,8 +67,10 @@ namespace BOARD
             m_buttonbar.pack_end( m_button_up_search, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_down_search, Gtk::PACK_SHRINK );
 
-            set_border_width( 1 );
-            pack_start( m_buttonbar, Gtk::PACK_SHRINK );
+            m_buttonbar.set_border_width( 1 );
+            add( m_buttonbar );
+            set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+            set_size_request( 8 );
         }
 
     };
