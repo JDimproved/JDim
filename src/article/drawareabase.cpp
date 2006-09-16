@@ -766,11 +766,14 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
     while( tmpheader ){
 
         // 現在みているスレ番号取得
-        if( ! m_seen_current
-            && tmpheader->y + tmpheader->height > ( pos_y + m_br_size ) // 改行分下にずらす
-            && tmpheader->y < ( pos_y + m_br_size ) ){
+        if( ! m_seen_current ){
 
-            m_seen_current = tmpheader->id_header;
+            if( ! tmpheader->next_header // 最後のレス
+                || ( tmpheader->next_header->y >= ( pos_y + m_br_size ) // 改行分下にずらす
+                     && tmpheader->y <= ( pos_y + m_br_size ) ) ){
+
+                m_seen_current = tmpheader->id_header;
+            }
         }
 
         // ヘッダが範囲に含まれてるなら描画
