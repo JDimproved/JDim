@@ -76,6 +76,9 @@ namespace ARTICLE
         int m_width_client; 
         int m_height_client;
 
+        //現在見ているレスの番号
+        int m_seen_current;
+
         // 描画用
         Glib::RefPtr< Gdk::Window > m_window;
         Glib::RefPtr< Gdk::GC > m_gc;
@@ -150,7 +153,7 @@ namespace ARTICLE
         void focus_out();
 
         const std::string str_selection(); // 範囲選択中の文字列
-        int seen_current(); // 現在見ているレスの番号
+        const int get_seen_current() const { return m_seen_current; } // 現在見ているレスの番号
         int max_number();   // 表示されている最後のレスの番号
 
         // レスをappendして再レイアウト

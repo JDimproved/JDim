@@ -47,7 +47,7 @@ ArticleViewMain::~ArticleViewMain()
 #ifdef _DEBUG    
     std::cout << "ArticleViewMain::~ArticleViewMain : " << get_url() << " url_article = " << url_article() << std::endl;
 #endif
-    int seen = drawarea()->seen_current();
+    int seen = drawarea()->get_seen_current();
         
 #ifdef _DEBUG    
         std::cout << "set seen to " << seen << std::endl;
@@ -263,7 +263,7 @@ void ArticleViewMain::relayout()
     std::cout << "ArticleViewMain::relayout\n";
 #endif
 
-    int seen = drawarea()->seen_current();
+    int seen = drawarea()->get_seen_current();
 
     drawarea()->clear_screen();
     drawarea()->append_res( 1, get_article()->get_number_load() );

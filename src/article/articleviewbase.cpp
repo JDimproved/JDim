@@ -866,7 +866,7 @@ void ArticleViewBase::slot_pre_bm()
 {
     assert( m_article );
 
-    if( m_current_bm == 0 ) m_current_bm = m_drawarea->seen_current();
+    if( m_current_bm == 0 ) m_current_bm = m_drawarea->get_seen_current();
 
     for( int i = m_current_bm -1 ; i >= 1 ; --i ){
         if( m_article->is_bookmarked( i ) ){
@@ -894,7 +894,7 @@ void ArticleViewBase::slot_next_bm()
 {
     assert( m_article );
 
-    if( m_current_bm == 0 ) m_current_bm = m_drawarea->seen_current();
+    if( m_current_bm == 0 ) m_current_bm = m_drawarea->get_seen_current();
 
     for( int i = m_current_bm + 1; i <= m_article->get_number_load() ; ++i ){
         if( m_article->is_bookmarked( i ) ){

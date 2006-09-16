@@ -49,6 +49,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     : m_url( url )
     , m_vscrbar( 0 )
     , m_layout_tree( 0 )
+    , m_seen_current( 0 )
     , m_window( 0 )
     , m_gc( 0 )
     , m_backscreen( 0 )
@@ -329,28 +330,6 @@ const std::string DrawAreaBase::str_selection()
     return m_selection.str;
 }
 
-
-
-//
-// 現在見ているレスの番号( >= 1 )
-//
-int DrawAreaBase::seen_current()
-{
-    assert( m_layout_tree );
-
-    if( !m_vscrbar ) return 0;
-
-    int seen = DBTREE::article_number_load( m_url );
-    Gtk::Adjustment* adjust = m_vscrbar->get_adjustment();
-
-    if( adjust->get_value() < adjust->get_upper() - adjust->get_page_size() - m_br_size ){
-        int y = ( int ) adjust->get_value();
-        const LAYOUT* layout = m_layout_tree->get_header_at_y( y );
-        if( layout ) seen = layout->res_number;
-    }
-
-    return seen;
-}    
 
 
 //
@@ -782,8 +761,17 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
 #endif    
 
     // ノード描画
+    m_seen_current = 0;
     LAYOUT* tmpheader = m_layout_tree->top_header();
     while( tmpheader ){
+
+        // 現在みているスレ番号取得
+        if( ! m_seen_current
+            && tmpheader->y + tmpheader->height > ( pos_y + m_br_size ) // 改行分下にずらす
+            && tmpheader->y < ( pos_y + m_br_size ) ){
+
+            m_seen_current = tmpheader->id_header;
+        }
 
         // ヘッダが範囲に含まれてるなら描画
         if( tmpheader->y + tmpheader->height > upper
@@ -2226,8 +2214,14 @@ bool DrawAreaBase::slot_configure_event( GdkEventConfigure* event )
               << " width = " << m_view.get_width() << " heith = " << m_view.get_height() << std::endl;
 #endif
 
+    // リサイズする前のレス番号を保存しておいて
+    // redrawした後にジャンプ
+    int seen_current = m_seen_current;
+
     layout();
     redraw_view();
+
+    if( seen_current ) goto_num( seen_current );
 
     return true;
 }
