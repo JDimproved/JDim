@@ -1,10 +1,9 @@
 [Desktop Entry]
 Name=JD 2ch browser
-Comment=JD is the browser for 2ch.It's similar to OpenJaneDoe.
+Comment=JD is a 2ch browser based on gtkmm2.
 Exec=jd
 Icon=jd.png
-Terminal=0
+Terminal=false
 Type=Application
 Encoding=UTF-8
-Categories=Application;Network;X-Red-Hat-Base;X-Red-Hat-Base-Only;
-
+Categories=Application;Network;X-Red-Hat-Base;
