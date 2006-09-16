@@ -772,7 +772,7 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
                 || ( tmpheader->next_header->y >= ( pos_y + m_br_size ) // 改行分下にずらす
                      && tmpheader->y <= ( pos_y + m_br_size ) ) ){
 
-                m_seen_current = tmpheader->id_header;
+                m_seen_current = tmpheader->res_number;
             }
         }
 
