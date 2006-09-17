@@ -760,9 +760,10 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
 //    std::cout << "DrawAreaBase::draw_backscreen all = " << redraw_all << " y = " << pos_y <<" dy = " << dy << std::endl;
 #endif    
 
-    // スクロールバーの位置が一倍最後の場合は最後のレスをみていることにする
+    // スクロールバーの位置が一番最後の場合は最後のレスをみていることにする
     m_seen_current = 0;
-    if( pos_y >= get_vscr_maxval() ) m_seen_current = m_layout_tree->max_res_number();
+    const int mrg = m_br_size * 3;
+    if( pos_y >= get_vscr_maxval() - mrg ) m_seen_current = m_layout_tree->max_res_number();
 
     // ノード描画
     LAYOUT* tmpheader = m_layout_tree->top_header();
