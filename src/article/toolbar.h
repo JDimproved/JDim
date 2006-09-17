@@ -63,7 +63,8 @@ namespace ARTICLE
         void show_searchbar()
         {
             if( ! m_searchbar_shown ){
-                set_size_request( 8, m_vbox.get_height()*2 );
+                if( m_vbox.get_height() < 8 ) set_size_request( 8 ); // まだrealizeしていない
+                else set_size_request( 8, m_vbox.get_height()*2 );
                 m_vbox.pack_start( m_searchbar, Gtk::PACK_SHRINK );
                 show_all_children();
                 m_searchbar_shown = true;
@@ -75,7 +76,8 @@ namespace ARTICLE
         {
             if( m_searchbar_shown ){
                 m_vbox.remove( m_searchbar );
-                set_size_request( 8, m_vbox.get_height()/2 );
+                if( m_vbox.get_height() < 8 ) set_size_request( 8 ); // まだrealizeしていない
+                else set_size_request( 8, m_vbox.get_height()/2 );
                 show_all_children();
                 m_searchbar_shown = false;
             }
@@ -173,6 +175,7 @@ namespace ARTICLE
             add( m_vbox );
             set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
             set_size_request( 8 );
+            show_all_children();
         }
         
         virtual ~ArticleToolBar(){}
