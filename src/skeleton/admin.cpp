@@ -1089,7 +1089,7 @@ void Admin::slot_tab_menu( int page, int x, int y )
 
         // コメント更新
         Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_vec_movemenu_items[ MAX_TABS ]->get_child() );
-        if( label ) label->set_text( "移動 ( タブ数 " + MISC::itostr( pages ) +" )" );
+        if( label ) label->set_text( "移動 [ タブ数 " + MISC::itostr( pages ) +" ]" );
 
         m_move_menu->show_all();
 

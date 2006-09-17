@@ -47,7 +47,10 @@ bool JDHPaned::on_button_press_event( GdkEventButton* event )
     std::cout << "x = " << event->x << " pos = " << m_pos << std::endl;
 #endif
 
-    if( event->type == GDK_BUTTON_PRESS && event->button == 1 ) m_clicked = true;
+    // 仕切りをクリックしたかチェック
+    if( event->type == GDK_BUTTON_PRESS && event->button == 1
+        && event->x >= 0 && event->x <= 8
+        ) m_clicked = true;
     m_drag = false;
 
     return Gtk::HPaned::on_button_press_event( event );
