@@ -760,8 +760,11 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
 //    std::cout << "DrawAreaBase::draw_backscreen all = " << redraw_all << " y = " << pos_y <<" dy = " << dy << std::endl;
 #endif    
 
-    // ノード描画
+    // スクロールバーの位置が一倍最後の場合は最後のレスをみていることにする
     m_seen_current = 0;
+    if( pos_y >= get_vscr_maxval() ) m_seen_current = m_layout_tree->max_res_number();
+
+    // ノード描画
     LAYOUT* tmpheader = m_layout_tree->top_header();
     while( tmpheader ){
 
@@ -1236,9 +1239,8 @@ bool DrawAreaBase::set_scroll( const int& control )
     if( !m_vscrbar ) return false;
     double dy = 0;
 
-    Gtk::Adjustment* adjust = m_vscrbar->get_adjustment();
-    int y = ( int ) adjust->get_value();
-    bool enable_down = ( y < adjust->get_upper() - adjust->get_page_size() );
+    int y = get_vscr_val();
+    bool enable_down = ( y < get_vscr_maxval() );
     bool enable_up = ( y > 0 );
 
     if( m_scrollinfo.mode == SCROLL_NOT ){
@@ -1450,6 +1452,18 @@ int DrawAreaBase::get_vscr_val()
     if( m_vscrbar ) return ( int ) m_vscrbar->get_adjustment()->get_value();
     return 0;
 }
+
+
+//
+// スクロールバーの最大値値
+//
+int DrawAreaBase::get_vscr_maxval()
+{
+    if( m_vscrbar ) return ( int ) ( m_vscrbar->get_adjustment()->get_upper()
+                                     - m_vscrbar->get_adjustment()->get_page_size() );
+    return 0;
+}
+
 
 
 //
@@ -2479,16 +2493,14 @@ bool DrawAreaBase::motion_mouse()
     
         // ポインタが画面外に近かったらオートスクロールを開始する
         const int mrg = m_br_size * 3;
-        Gtk::Adjustment* adjust = ( m_vscrbar ? m_vscrbar->get_adjustment() : NULL );
 
         // スクロールのリセット
-        if ( ! adjust
-
+        if ( 
              // スクロールページの一番上
-             || ( pos == 0 && m_y_pointer < m_view.get_height() - mrg ) 
+             ( pos == 0 && m_y_pointer < m_view.get_height() - mrg ) 
 
              // スクロールページの一番下
-             || ( pos >= adjust->get_upper() - adjust->get_page_size() && m_y_pointer > mrg )
+             || ( pos >= get_vscr_maxval() && m_y_pointer > mrg )
 
              // ページの中央
              || ( m_y_pointer > mrg && m_y_pointer < m_view.get_height() - mrg ) ){

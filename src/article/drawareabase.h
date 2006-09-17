@@ -242,6 +242,7 @@ namespace ARTICLE
         // スクロール関係
         void exec_scroll( bool redraw_all ); // スクロールやジャンプを実行して再描画
         int get_vscr_val();
+        int get_vscr_maxval();
 
         // キャレット関係
         LAYOUT* set_caret( CARET_POSITION& caret_pos, int x, int y );
