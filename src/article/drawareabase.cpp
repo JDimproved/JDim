@@ -760,6 +760,18 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
 //    std::cout << "DrawAreaBase::draw_backscreen all = " << redraw_all << " y = " << pos_y <<" dy = " << dy << std::endl;
 #endif    
 
+    // 新着セパレータのの位置の調整
+    // あぼーんなどで表示されていないときは表示位置を移動する
+    if( m_separator_new && ! m_layout_tree->get_header_of_res( m_separator_new ) ){
+
+        int num = m_separator_new;
+        int max_number = m_layout_tree->max_res_number();
+        while( ! m_layout_tree->get_header_of_res( num ) && num++ < max_number );
+
+        if( m_layout_tree->get_header_of_res( num ) ) m_separator_new = num;;
+    }
+
+
     // スクロールバーの位置が一番最後の場合は最後のレスをみていることにする
     m_seen_current = 0;
     const int mrg = m_br_size * 3;
@@ -1533,8 +1545,10 @@ void DrawAreaBase::goto_top()
 
 void DrawAreaBase::goto_new()
 {
-    int new_num = DBTREE::article_number_load( m_url ) - DBTREE::article_number_new( m_url );
-    goto_num( new_num );
+    if( m_separator_new ){
+        int num = m_separator_new > 1 ? m_separator_new -1 : 1;
+        goto_num( num );
+    }
 }
 
 void DrawAreaBase::goto_bottom()

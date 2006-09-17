@@ -145,12 +145,14 @@ namespace ARTICLE
         const std::string& get_url() const { return m_url; }
         const int& width_client() const { return m_width_client; }
         const int& height_client() const { return m_height_client; }
-        int get_separator_new(){ return m_separator_new; }
-        void set_separator_new( int val ){ m_separator_new = val; }
 
         void clock_in();
         void focus_view();
         void focus_out();
+
+        // 新着セパレータのあるレス番号の取得とセット
+        const int get_separator_new() const { return m_separator_new; }
+        void set_separator_new( int num ){ m_separator_new = num; };
 
         const std::string str_selection(); // 範囲選択中の文字列
         const int get_seen_current() const { return m_seen_current; } // 現在見ているレスの番号
