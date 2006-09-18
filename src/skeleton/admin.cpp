@@ -62,6 +62,9 @@ Admin::Admin( const std::string& url )
 
     m_action_group->add( Gtk::Action::create( "ReloadAll_Menu", "全てのタブを更新" ) );
     m_action_group->add( Gtk::Action::create( "ReloadAll", "更新する" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CancelReloadAll", "更新キャンセル" ),
+                         sigc::mem_fun( *this, &Admin::slot_cancel_reload_all_tabs ) );
+
 
     m_action_group->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く" ), sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
     m_action_group->add( Gtk::Action::create( "CopyURL", "URLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
@@ -100,6 +103,7 @@ Admin::Admin( const std::string& url )
     "<menu action='ReloadAll_Menu'>"
     "<menuitem action='ReloadAll'/>"
     "</menu>"
+    "<menuitem action='CancelReloadAll'/>"
 
     "</popup>"
 
@@ -430,6 +434,11 @@ void Admin::exec_command()
         SKELETON::View* view = get_current_view();
         if( m_focus && view && view->get_url() == command.url )
             CORE::core_set_command( "set_status", command.url, command.arg1 );
+    }
+
+    // オートリロードのキャンセル
+    else if( command.command == "cancel_reload" ){
+        slot_cancel_reload_all_tabs();
     }
 
     // 個別のコマンド処理
@@ -914,11 +923,16 @@ bool Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
     SKELETON::View* view = get_view( url );
     if( view ){
 
+        if( mode == AUTORELOAD_NOT && view->get_autoreload_mode() == AUTORELOAD_NOT ) return false;
+
         view->set_autoreload_mode( mode, sec );
 
-        // モード設定が成功したら待機アイコンに切替え
+        // モード設定が成功したらアイコン変更
         if( view->get_autoreload_mode() == mode ){
-            set_command( "set_tabicon", view->get_url(), "loading_stop" );
+
+            if( mode != AUTORELOAD_NOT ) set_tabicon( view->get_url(), "loading_stop" );
+            else set_tabicon( view->get_url(), "default" );
+
             return true;
         }
     }
@@ -1048,7 +1062,7 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
 #ifdef _DEBUG
         std::cout << "url = " << view->get_url() << std::endl;
 #endif
-        set_command( "set_tabicon", view->get_url(), "switch_page" );
+        set_tabicon( view->get_url(), "switch_page" );
     }
 
     focus_view( page );
@@ -1230,6 +1244,8 @@ void Admin::slot_reload_all_tabs()
     std::cout << "Admin::slot_reload_all_tabs " << m_clicked_page << std::endl;
 #endif
 
+    if( ! SESSION::is_online() ) return;
+
     int waittime = 0;
     int pages = m_notebook->get_n_pages();
 
@@ -1250,6 +1266,17 @@ void Admin::slot_reload_all_tabs()
     }
 }
 
+
+//
+// 右クリックメニューの更新キャンセル
+//
+void Admin::slot_cancel_reload_all_tabs()
+{
+    for( int i = 0 ; i < m_notebook->get_n_pages(); ++i ){
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        if( view ) set_autoreload_mode( view->get_url(), AUTORELOAD_NOT, 0 );
+    }
+}
 
 
 //

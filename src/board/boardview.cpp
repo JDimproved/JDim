@@ -832,9 +832,6 @@ void BoardView::update_view()
     }
     // 通常
     else BOARD::get_admin()->set_command( "set_tabicon", get_url(), "default" );
-
-
-    focus_view();
 }
 
 void BoardView::focus_view()

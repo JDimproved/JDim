@@ -860,6 +860,12 @@ void Core::slot_toggle_online()
 {
     SESSION::set_online( !SESSION::is_online() );
     set_maintitle();
+
+    // オートリロードキャンセル
+    if( ! SESSION::is_online() ){
+        BOARD::get_admin()->set_command( "cancel_reload" );
+        ARTICLE::get_admin()->set_command( "cancel_reload" );
+    }
 }
 
 
