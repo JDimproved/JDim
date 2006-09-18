@@ -424,22 +424,23 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
     if( !m_drag // ドラッグ状態でない
 
         && !( event->state & GDK_CONTROL_MASK )
-        && !( event->state & GDK_SHIFT_MASK ) // ctrl/shift + クリックで複数行選択をしてない場合
+        && !( event->state & GDK_SHIFT_MASK ) // ctrl/shift + クリックで複数行選択操作をしてない場合
 
-        && !( !m_path_dragstart.empty() && path != m_path_dragstart ) // 範囲選択をしていない場合
+        && !( !m_path_dragstart.empty() && path != m_path_dragstart ) // 範囲選択操作をしていない場合
         ){ 
 
         emit_sig = true;
 
-        // 何もないところをクリックしたら選択解除
-        if( !get_row( path ) ){
+        // 範囲選択状態でポップアップメニュー以外のボタンを離したら選択解除
+        if( get_selection()->get_selected_rows().size() >= 2
+            && ! m_control.button_alloted( event, CONTROL::PopupmenuButton ) ){
             get_selection()->unselect_all();
+            if( get_row( path ) ) set_cursor( path );
             emit_sig = false;
         }
-
+/*
         // クリックした行が範囲選択部分に含まれていないときは選択を解除する( m_sig_button_release はemitしない)
         if( get_row( path ) && get_selection()->get_selected_rows().size() >= 2 ){
-
             bool included = false;
             std::list< Gtk::TreeModel::iterator > list_it = get_selected_iterators();
             std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
@@ -458,6 +459,7 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
                 emit_sig = false;
             }
         }
+*/
     }
 
     m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
