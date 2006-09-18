@@ -124,7 +124,8 @@ namespace SKELETON
         virtual void slot_drag_begin( int page ){}
         virtual void slot_drag_end(){}
 
-        virtual void open_list( const std::string& str_list ){};
+        void open_list( const std::string& str_list );
+        virtual COMMAND_ARGS get_open_list_args( const std::string& url ){ return COMMAND_ARGS(); }
         virtual View* create_view( const COMMAND_ARGS& command ){ return NULL; };
         virtual View* get_view( const std::string& url, bool use_find = false );
         std::list< View* > get_list_view( const std::string& url );

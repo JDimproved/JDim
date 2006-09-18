@@ -211,42 +211,22 @@ void ArticleAdmin::set_tabicon( const std::string& url, const std::string& iconn
 
 
 
-// リストで与えられたページをタブで連続して開く
 //
-// 連続してリロードかけるとサーバに負担をかけるので、オフラインで開いて
-// タイミングをずらしながらリロードする
+// リストで与えられたページをタブで連続して開くとき(Admin::open_list())の引数セット
 //
-void ArticleAdmin::open_list( const std::string& str_list )
+COMMAND_ARGS ArticleAdmin::get_open_list_args( const std::string& url )
 {
-    std::list< std::string > list_url = MISC::split_line( str_list );
-    if( list_url.empty() ) return;
+    COMMAND_ARGS command_arg;
+    command_arg.command = "open_view";
+    command_arg.url = url;
+    command_arg.arg1 = "true";   // タブで開く
+    command_arg.arg2 = "false";  // 既に開いているかチェック
+    command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+    command_arg.arg4 = "MAIN";
 
-    int waittime = 0;
-    bool online = SESSION::is_online();
+    CORE::core_set_command( "set_history_article", command_arg.url );
 
-    std::list< std::string >::iterator it = list_url.begin();
-    for( ; it != list_url.end(); ++it, waittime += AUTORELOAD_MINSEC ){
-
-        COMMAND_ARGS command_arg;
-        command_arg.command = "open_view";
-        command_arg.url = (*it);
-        command_arg.arg1 = "true";   // タブで開く
-        command_arg.arg2 = "false";  // 既に開いているかチェック
-        command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
-
-        command_arg.arg4 = "MAIN";
-
-        open_view( command_arg );
-        CORE::core_set_command( "set_history_article", command_arg.url );
-
-        // 一番最初のスレは普通にオンラインで開く
-        // 二番目からは ウェイトを入れてリロード
-        if( !waittime ) SESSION::set_online( false );
-        else set_autoreload_mode( command_arg.url, AUTORELOAD_ONCE, waittime );
-    }
-
-    SESSION::set_online( online );
-    switch_view( *( list_url.begin() ) );
+    return command_arg;
 }
 
 
