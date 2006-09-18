@@ -353,6 +353,7 @@ const std::string BoardBase::url_readcgi( const std::string& url, int num_from, 
 
     ArticleBase* article = get_article_fromURL( url );
     if( !article ) return std::string();
+    if( article->empty() ) return std::string();
 
     std::string readcgi = url_readcgibase() + article->get_key() + "/";
 

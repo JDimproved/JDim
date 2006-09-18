@@ -391,11 +391,16 @@ void ArticleAdmin::slot_drag_begin( int page )
     info.url = DBTREE::url_readcgi( url, 0, 0 );
     info.name = DBTREE::article_subject( info.url );
 
+    CORE::SBUF_clear_info();
+    if( info.url.empty() ) return;
+
 #ifdef _DEBUG    
-    std::cout << "ArticleAdmin::slot_drag_begin " << info.name  << std::endl;
+    std::cout << "ArticleAdmin::slot_drag_begin " << url  << std::endl;
+    std::cout << "name = " << info.name << std::endl;
+    std::cout << "url ~ " << info.url << std::endl;
+    std::cout << "type  =" << info.type << std::endl;
 #endif
 
-    CORE::SBUF_clear_info();
     CORE::SBUF_append( info );
 }
 

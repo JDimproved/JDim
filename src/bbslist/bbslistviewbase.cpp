@@ -1618,7 +1618,9 @@ void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after,
 
         CORE::DATA_INFO& info = ( *it );
 #ifdef _DEBUG    
-        std::cout << "append " << info.name << std::endl;
+        std::cout << "append name = " << info.name << std::endl;
+        std::cout << "url " << info.url << std::endl;
+        std::cout << "type " << info.type << std::endl;
 #endif
 
         if( info.type != TYPE_DIR_END ){
