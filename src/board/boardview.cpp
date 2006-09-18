@@ -1230,14 +1230,16 @@ bool BoardView::slot_button_release( GdkEventButton* event )
 
         m_path_selected = path;
 
-        // リサイズするときにラベルをクリックすると一番上のアイテムが開く問題の対処
-        // かなりその場しのぎな方法なのでGTKのバージョンが上がったら誤動作するかも
-        if( path.to_string() == "0" && x == cell_x && y == cell_y ) return true;
-        
 #ifdef _DEBUG        
-        std::cout << "BoardView::slot_button_press : " << path.to_string() << " "
-                  << x << " " << y << " " << cell_x << " " << cell_y << std::endl;
+        std::cout << "BoardView::slot_button_press : path = " << path.to_string()
+                  << " x = " << x << " y = " << y
+                  << " cellheight = " << m_treeview.get_row_height() 
+                  << " cell_x = " << cell_x << " cell_y = " << cell_y << std::endl;
 #endif
+
+        // リサイズするときにラベルをクリックすると行を開く問題の対処
+        // かなりその場しのぎな方法なのでGTKのバージョンが上がったら誤動作するかも
+        if( x == cell_x && y < m_treeview.get_row_height() ) return true;
 
         // ダブルクリックの処理のため一時的にtypeを切替える
         GdkEventType type_copy = event->type;
