@@ -132,7 +132,7 @@ void ImageViewBase::setup_common()
     action_group()->add( Gtk::Action::create( "OpenRef", "参照元のレスを開く"), sigc::mem_fun( *this, &ImageViewBase::slot_open_ref ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &ImageViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "Save", "Save"), sigc::mem_fun( *this, &ImageViewBase::slot_save ) );
-    action_group()->add( Gtk::Action::create( "SaveAll", "すべて保存"), sigc::mem_fun( *this, &ImageViewBase::slot_save_all ) );
+    action_group()->add( Gtk::Action::create( "SaveAll", "全ての画像を保存"), sigc::mem_fun( *this, &ImageViewBase::slot_save_all ) );
 
     action_group()->add( Gtk::Action::create( "DeleteMenu", "Delete" ) );    
     action_group()->add( Gtk::Action::create( "DeleteImage", "削除する"), sigc::mem_fun( *this, &ImageViewBase::delete_view ) );
@@ -223,15 +223,18 @@ void ImageViewBase::setup_common()
     "</menu>"
     "<separator/>"
 
-    "<menuitem action='OpenBrowser'/>"
-    "<menuitem action='CopyURL'/>"
+    "<menuitem action='SaveAll'/>"
     "<separator/>"
 
+    "<menuitem action='OpenBrowser'/>"
     "<menuitem action='OpenRef'/>"
     "<separator/>"
 
+    "<menuitem action='CopyURL'/>"
+    "<separator/>"
+
+    "<menuitem action='AppendFavorite'/>"
     "<menuitem action='Save'/>"
-    "<menuitem action='SaveAll'/>"
     "<separator/>"
 
     "<menuitem action='LoadStop'/>"
