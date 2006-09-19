@@ -771,11 +771,13 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
         if( m_layout_tree->get_header_of_res( num ) ) m_separator_new = num;;
     }
 
-
-    // スクロールバーの位置が一番最後の場合は最後のレスをみていることにする
+    // 一番最後のレスが半分以上表示されていたら最後のレス番号をm_seen_currentにセット
     m_seen_current = 0;
-    const int mrg = m_br_size * 3;
-    if( pos_y >= get_vscr_maxval() - mrg ) m_seen_current = m_layout_tree->max_res_number();
+    const LAYOUT* lastheader =  m_layout_tree->get_header_of_res( m_layout_tree->max_res_number() );
+    if( lastheader && lastheader->y + lastheader->height/2 < pos_y + height_view ){
+
+        m_seen_current = m_layout_tree->max_res_number();
+    }
 
     // ノード描画
     LAYOUT* tmpheader = m_layout_tree->top_header();
