@@ -234,7 +234,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Cancel_Mosaic", "モザイク解除"), sigc::mem_fun( *this, &ArticleViewBase::slot_cancel_mosaic ) );
     action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_protectimage ) );
-    action_group()->add( Gtk::Action::create( "Delete_Menu", "削除" ) );    
+    action_group()->add( Gtk::Action::create( "DeleteImage_Menu", "削除" ) );    
     action_group()->add( Gtk::Action::create( "DeleteImage", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::slot_deleteimage ) );
     action_group()->add( Gtk::Action::create( "SaveImage", "保存"), sigc::mem_fun( *this, &ArticleViewBase::slot_saveimage ) );
 
@@ -357,7 +357,7 @@ void ArticleViewBase::setup_action()
     "<menuitem action='SaveImage'/>"
     "<separator/>"
     "<menuitem action='ProtectImage'/>"
-    "<menu action='Delete_Menu'>"
+    "<menu action='DeleteImage_Menu'>"
     "<menuitem action='DeleteImage'/>"
     "</menu>"
     "<separator/>"
@@ -1779,10 +1779,18 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         }
 
         // 削除
-        act = action_group()->get_action( "DeleteImage" );
+        act = action_group()->get_action( "DeleteImage_Menu" );
         if( act ){
 
             if( DBIMG::is_cached( url ) && ! DBIMG::is_protected( url ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+        }
+
+        // 保存
+        act = action_group()->get_action( "SaveImage" );
+        if( act ){
+
+            if(  DBIMG::is_cached( url ) ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
     }

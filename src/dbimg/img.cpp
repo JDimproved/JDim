@@ -132,6 +132,8 @@ void Img::download_img()
 //
 bool Img::save( const std::string& path_to )
 {
+    if( is_loading() ) return false;
+
     std::string dir = MISC::get_dir( path_to );
     if( dir.empty() ) dir = SESSION::dir_img_save();
 
