@@ -1908,46 +1908,44 @@ bool NodeTreeBase::check_abone_chain( int number )
     if( ! head->headinfo ) return false;
     if( head->headinfo->abone ) return true;
 
+    bool abone = false;
     NODE* node = head;
     while( node ){
 
-        if( node->type == NODE_LINK ){
+        // アンカーノードの時は node->linkinfo->ancinfo != NULL;
+        if( node->type == NODE_LINK && node->linkinfo->ancinfo ){
 
-            // アンカーノードの時は node->linkinfo->ancinfo != NULL;
-            if( node->linkinfo->ancinfo ){
+            int anc = 0;
+            int anc_from;
+            int anc_to;
+            for(;;){
 
-                int anc = 0;
-                int anc_from;
-                int anc_to;
-                for(;;){
+                anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
+                anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
+                if( anc_from == 0 ) break;
+                ++anc;
 
-                    anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
-                    anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
-                    if( anc_from == 0 ) break;
-                    ++anc;
+                // number-1 番以下のレスだけを見る
+                if( anc_from >= number ) continue;
+                anc_to = MIN( anc_to, number -1 );
 
-                    // number-1 番以下のレスだけを見る
-                    if( anc_from >= number ) continue;
-                    anc_to = MIN( anc_to, number -1 );
+                // anc_from から anc_to まで全てあぼーんされているかチェック
+                // ひとつでもあぼーんされていないレスが見付かったらあぼーんしない
+                while( anc_from <= anc_to ){
 
-                    // >>20-30 の様に範囲でアンカーを張っている場合は除く
-                    if( anc_from == anc_to ){
-
-                        NODE* tmphead = res_header( anc_from );
-
-                        if( tmphead && tmphead->headinfo->abone ){
-                            head->headinfo->abone = true;
-                            return true;
-                        }
-                    }
+                    NODE* tmphead = res_header( anc_from++ );
+                    if( tmphead && ! tmphead->headinfo->abone ) return false;
                 }
-            }
 
+                abone = true;
+            }
         }
+        
         node = node->next_node;
     }
 
-    return false;
+    head->headinfo->abone = abone;
+    return !abone;
 }
 
 
