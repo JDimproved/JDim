@@ -96,14 +96,16 @@ Admin::Admin( const std::string& url )
     "</menu>"
     "<separator/>"
 
-    "<menuitem action='OpenBrowser'/>"
-    "<menuitem action='CopyURL'/>"
-    "<separator/>"
-
     "<menu action='ReloadAll_Menu'>"
     "<menuitem action='ReloadAll'/>"
     "</menu>"
     "<menuitem action='CancelReloadAll'/>"
+    "<separator/>"
+
+    "<menuitem action='OpenBrowser'/>"
+    "<separator/>"
+
+    "<menuitem action='CopyURL'/>"
 
     "</popup>"
 
