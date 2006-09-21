@@ -28,9 +28,9 @@ using namespace SKELETON;
 
 
 JDTreeView::JDTreeView( const std::string& fontname, const int *rgb )
-    : m_reorderable( 0 ),
-      m_drag( 0 ),
-      m_popup_win( 0 ),
+    : m_reorderable( false ),
+      m_drag( false ),
+      m_popup_win( NULL ),
       m_column_for_height( 0 )
 {
 #ifdef _DEBUG
@@ -557,18 +557,22 @@ void JDTreeView::on_drag_end( const Glib::RefPtr< Gdk::DragContext >& context )
 
 
 
+//
+// キーボードのキーを押した
+//
 bool JDTreeView::on_key_press_event( GdkEventKey* event )
 {
     m_sig_key_press.emit( event );
-
     return true;
 }
 
 
+//
+// キーボードのキーを離した
+//
 bool JDTreeView::on_key_release_event( GdkEventKey* event )
 {
     m_sig_key_release.emit( event );
-
     return true;
 }
 
