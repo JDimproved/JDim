@@ -1880,7 +1880,7 @@ void Core::open_by_browser( const std::string& url )
 {
     std::string command_openurl = CONFIG::get_command_openurl();
     if( !command_openurl.empty() ){
-        command_openurl = MISC::replace_str( command_openurl, "%s", "\"" + url + "\"" );
+        command_openurl = MISC::replace_str( command_openurl, "%s", url );
 #ifdef _DEBUG
         std::cout << "spawn url = " << url << " command = " << command_openurl << std::endl;
 #endif

@@ -12,8 +12,8 @@ namespace CORE
     char browsers[][ 2 ][ MAX_TEXT ]={
 
         { "ユーザ設定", "" },
-        { "RedHat系標準ブラウザ",    "htmlview %s" },
-        { "firefox 1.5*", "firefox %s" },
+        { "RedHat系標準ブラウザ",    "htmlview \"%s\"" },
+        { "firefox 1.5*", "firefox \"%s\"" },
         { "firefox 1.0*", "firefox -remote \"openURL(%s,new-tab)\"" },
         { "opera 9.*",    "opera -remote \"openURL(%s,new-tab)\"" },
         
