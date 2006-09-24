@@ -77,6 +77,11 @@ void Post::post_msg()
     if( toplevel ){
         m_writingdiag = new Gtk::MessageDialog( *toplevel, "書き込み中・・・", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, false );
         m_writingdiag->show();
+
+        // gtkのバージョンによってはラベルが選択状態になっている場合があるので
+        // 選択状態を解除する
+        Gtk::Label *label = dynamic_cast< Gtk::Label* >( m_writingdiag->get_focus() );
+        if( label ) label->set_selectable( false );
     }
 
     JDLIB::LOADERDATA data;
