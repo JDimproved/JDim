@@ -25,6 +25,9 @@ namespace ARTICLE
         // バックスクリーンをDrawAreaにコピー
         virtual bool draw_drawarea();
 
+        // リサイズした
+        virtual bool slot_configure_event( GdkEventConfigure* event );
+
       private:
 
         // 背景色

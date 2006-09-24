@@ -212,6 +212,9 @@ namespace ARTICLE
         // DrawAreaに枠を描画
         void draw_frame();
 
+        // リサイズした
+        virtual bool slot_configure_event( GdkEventConfigure* event );
+
       private:
 
         // 背景色
@@ -261,7 +264,6 @@ namespace ARTICLE
 
         // スロット
         void slot_change_adjust();
-        bool slot_configure_event( GdkEventConfigure* event );
         bool slot_expose_event( GdkEventExpose* event );
         bool slot_scroll_event( GdkEventScroll* event );
         bool slot_leave_notify_event( GdkEventCrossing* event );

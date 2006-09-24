@@ -83,3 +83,18 @@ bool DrawAreaPopup::draw_drawarea()
 
     return true;
 }
+
+
+//
+// drawarea がリサイズした
+//
+// ポップアップの場合は先頭に戻る
+//
+bool DrawAreaPopup::slot_configure_event( GdkEventConfigure* event )
+{
+    layout();
+    redraw_view();
+    DrawAreaBase::goto_top();
+
+    return true;
+}
