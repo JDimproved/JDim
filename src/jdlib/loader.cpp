@@ -737,7 +737,7 @@ struct addrinfo* Loader::get_addrinfo( const std::string& hostname, int port )
     const int poststrlng = 256;
     char port_str[ poststrlng ];
     memset( &hints, 0, sizeof( addrinfo ) );
-    hints.ai_family = PF_UNSPEC;
+    hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
     snprintf( port_str, poststrlng, "%d", port );
