@@ -1251,7 +1251,10 @@ int DrawAreaBase::set_num_id( LAYOUT* layout )
 //
 bool DrawAreaBase::set_scroll( const int& control )
 {
-    if( !m_vscrbar ) return false;
+    if( !m_vscrbar ){
+        m_scrollinfo.reset();
+        return false;
+    }
     double dy = 0;
 
     int y = get_vscr_val();
@@ -1490,6 +1493,7 @@ void DrawAreaBase::goto_num( int num )
     std::cout << "DrawAreaBase::goto_num num =  " << num << std::endl;
 #endif
     if( num <= 0 ) return;
+    if( ! m_vscrbar ) return;
 
     // ジャンプ予約
 
@@ -1540,9 +1544,11 @@ void DrawAreaBase::goto_num( int num )
 //
 void DrawAreaBase::goto_top()
 {
-    m_scrollinfo.reset();
-    m_scrollinfo.mode = SCROLL_TO_TOP;
-    exec_scroll( true );
+    if( m_vscrbar ){
+        m_scrollinfo.reset();
+        m_scrollinfo.mode = SCROLL_TO_TOP;
+        exec_scroll( true );
+    }
 }
 
 void DrawAreaBase::goto_new()
@@ -1555,9 +1561,11 @@ void DrawAreaBase::goto_new()
 
 void DrawAreaBase::goto_bottom()
 {
-    m_scrollinfo.reset();
-    m_scrollinfo.mode = SCROLL_TO_BOTTOM;
-    exec_scroll( true );
+    if( m_vscrbar ){
+        m_scrollinfo.reset();
+        m_scrollinfo.mode = SCROLL_TO_BOTTOM;
+        exec_scroll( true );
+    }
 }
 
 
