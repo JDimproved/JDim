@@ -1,7 +1,7 @@
 # Defined by upsteam
 #
 %define         main_ver      1.7.0
-%define         strtag        rc060921
+%define         strtag        060927
 
 
 # Defined by vendor
@@ -13,7 +13,7 @@
 %define         icondir       %{_datadir}/icons/hicolor/96x96/apps/
 
 # Define this if this is pre-version
-%define         pre_release   1
+%define         pre_release   0
 
 %if %{pre_release}
 %define         rel           0.%{vendor_rel}.%{strtag}%{?dist}
