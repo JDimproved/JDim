@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "login2ch.h"
@@ -142,7 +142,7 @@ void Login2ch::receive_finish()
 {
 #ifdef _DEBUG
     std::cout << "Login2ch::receive_finish code = " << get_code() << " lng_rawdata = " << m_lng_rawdata << std::endl;
-    if( m_rawdata ) std::cout << m_rawdata << std::endl;
+//    if( m_rawdata ) std::cout << m_rawdata << std::endl;
 #endif
 
     std::string sid;
@@ -150,14 +150,26 @@ void Login2ch::receive_finish()
 
     if( m_rawdata && get_code() == HTTP_OK ){
 
+        // 末尾のLFを除去
+        char *pos_lf = strchr( m_rawdata, '\n' );
+        if( pos_lf ){
+
+            *pos_lf= '\0';
+
+#ifdef _DEBUG
+            std::cout << "removed LF\n";
+#endif
+        }
+
         // SID 取得
         sid = std::string( m_rawdata );
 
         if( sid.find( "SESSION-ID=" ) == 0 ){
 
             sid = sid.substr( strlen( "SESSION-ID=" ) );
+
 #ifdef _DEBUG
-            std::cout << "sid = " << sid << std::endl;
+//            std::cout << "sid = " << sid << std::endl;
 #endif
             if( sid.find( "ERROR" ) != 0 ){
                 set_login_now( true );

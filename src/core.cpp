@@ -255,12 +255,12 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='Quit'/>"
         "</menu>"
-/*
+
         "<menu action='Menu_Login'>"
         "<menuitem action='Login2ch'/>"
         "<menuitem action='SetupPasswd'/>"
         "</menu>"
-*/
+
         "<menu action='Menu_View'>"
         "<menuitem action='Urlbar'/>"
         "<separator/>"
