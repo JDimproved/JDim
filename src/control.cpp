@@ -274,13 +274,16 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
 // もしジェスチャが実行されたら true が戻る
 bool Control::MG_wheel_end( GdkEventButton* event )
 {
-    if( ! mg_wheel ) return None;
+    if( ! mg_wheel ) return false;
 
 #ifdef _DEBUG
     std::cout << "Control::MG_wheel_end\n";
 #endif
 
-    mg_wheel = false;
+    bool ret = mg_wheel_done;
 
-    return mg_wheel_done;
+    mg_wheel = false;
+    mg_wheel_done = false;
+
+    return ret;
 }
