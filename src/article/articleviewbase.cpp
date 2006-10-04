@@ -621,6 +621,7 @@ void ArticleViewBase::operate_view( const int& control )
             CORE::core_set_command( "switch_image" );
             break;
 
+            // 右、左のタブに切り替え
         case CONTROL::TabLeft:
             ARTICLE::get_admin()->set_command( "tab_left" );
             break;
@@ -1157,6 +1158,9 @@ bool ArticleViewBase::slot_button_press_drawarea( GdkEventButton* event )
     // マウスジェスチャ
     SKELETON::View::get_control().MG_start( event );
 
+    // ホイールマウスジェスチャ
+    SKELETON::View::get_control().MG_wheel_start( event );
+
     return true;
 }
 
@@ -1169,6 +1173,10 @@ bool ArticleViewBase::slot_button_release_drawarea( std::string url, int res_num
 {
     /// マウスジェスチャ
     int mg = SKELETON::View::get_control().MG_end( event );
+
+    // ホイールマウスジェスチャ
+    // 実行された場合は何もしない 
+    if( SKELETON::View::get_control().MG_wheel_end( event ) ) return true;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_button_release_drawarea mg = " << mg << " url = " << get_url() << std::endl;
@@ -1257,6 +1265,13 @@ bool ArticleViewBase::slot_scroll_drawarea( GdkEventScroll* event )
     ArticleViewBase* popup_article = NULL;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
     if( popup_article ) return popup_article->slot_scroll_drawarea( event );
+
+    // ホイールマウスジェスチャ
+    int control = SKELETON::View::get_control().MG_wheel_scroll( event );
+    if( control != CONTROL::None ){
+        operate_view( control );
+        return true;
+    }
 
     m_drawarea->wheelscroll( event );
     return true;

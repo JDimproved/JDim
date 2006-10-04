@@ -22,6 +22,7 @@ namespace SKELETON
     {
         typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_PRESS;
         typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_RELEASE;
+        typedef sigc::signal< bool, GdkEventScroll* > SIG_SCROLL_EVENT;
         typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_PRESS;
         typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_RELEASE;
         typedef sigc::signal< bool, GdkEventMotion* > SIG_MOTION;
@@ -34,6 +35,7 @@ namespace SKELETON
 
         SIG_KEY_PRESS m_sig_key_press;
         SIG_KEY_RELEASE m_sig_key_release;
+        SIG_SCROLL_EVENT m_sig_scroll_event;
         SIG_BUTTON_PRESS m_sig_button_press;
         SIG_BUTTON_RELEASE m_sig_button_release;
         SIG_MOTION m_sig_motion;
@@ -64,6 +66,7 @@ namespace SKELETON
 
         SIG_KEY_PRESS sig_key_press() { return m_sig_key_press; }
         SIG_KEY_RELEASE sig_key_release() { return m_sig_key_release; }
+        SIG_SCROLL_EVENT sig_scroll_event(){ return m_sig_scroll_event; }
         SIG_BUTTON_PRESS sig_button_press() { return m_sig_button_press; }
         SIG_BUTTON_RELEASE sig_button_release() { return m_sig_button_release; }
         SIG_MOTION sig_motion() { return m_sig_motion; }
@@ -137,6 +140,9 @@ namespace SKELETON
         // 行のセルの高さ
         int get_row_height();
         void set_column_for_height( int column ){ m_column_for_height = column; }
+
+        // マウスホイールの処理
+        void wheelscroll( GdkEventScroll* event );
 
       protected:
 

@@ -17,6 +17,14 @@ namespace CONTROL
     {
         int m_mode;
 
+        // マウスジェスチャ用変数
+        bool m_mg; // true ならマウスジェスチャのモードになっている
+        int m_mg_lng;
+        int m_mg_x;
+        int m_mg_y;
+        int m_mg_value;
+        std::string m_mg_direction;
+
       public:
 
         Control();
@@ -38,14 +46,10 @@ namespace CONTROL
         bool MG_motion( GdkEventMotion* event );
         int MG_end( GdkEventButton* event );  // 戻り値はコントロールID
 
-      private:
-
-        bool m_mg;
-        int m_mg_lng;
-        int m_mg_x;
-        int m_mg_y;
-        int m_mg_value;
-        std::string m_mg_direction;
+        // ホイールマウスジェスチャ。 戻り値はコントロールID
+        bool MG_wheel_start( GdkEventButton* event );
+        int MG_wheel_scroll( GdkEventScroll* event ); 
+        bool MG_wheel_end( GdkEventButton* event );
     };
 }
 

@@ -602,8 +602,21 @@ bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
 }
 
 
+
 // マウスのwheelを回した
 bool JDTreeView::on_scroll_event( GdkEventScroll* event )
+{
+    wheelscroll( event );
+
+    return true;
+}
+
+
+
+//
+// マウスホイールの処理
+//
+void JDTreeView::wheelscroll( GdkEventScroll* event )
 {
     Gtk::Adjustment *adj = get_vadjustment();
     double val = adj->get_value();
@@ -625,8 +638,6 @@ bool JDTreeView::on_scroll_event( GdkEventScroll* event )
     std::cout << "page = " << adj->get_page_increment() << std::endl;
     std::cout << "page_size = " << adj->get_page_size() << std::endl;
 #endif
-
-    return true;
 }
 
 

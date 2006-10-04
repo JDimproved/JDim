@@ -18,6 +18,11 @@
 using namespace CONTROL;
 
 
+// ホイールマウスジェスチャが開始されているか
+// タブが切り替わる場合があるので全てのviewで共通の変数とする
+bool mg_wheel = false;;
+bool mg_wheel_done = false;
+
 Control::Control()
     : m_mode( CONTROL::MODE_COMMON )
 {
@@ -220,4 +225,62 @@ int Control::MG_end( GdkEventButton* event )
     MG_reset();
 
     return control;
+}
+
+
+///////////////////////////////////////
+//
+// ホイールマウスジェスチャ
+
+
+// ホイールマウスジェスチャ開始
+bool Control::MG_wheel_start( GdkEventButton* event )
+{
+    if( ! button_alloted( event, CONTROL::GestureButton ) ) return false;
+
+#ifdef _DEBUG
+    std::cout << "Control::MG_wheel_start\n";
+#endif
+
+    mg_wheel = true;
+    mg_wheel_done = false;
+    return true;
+}
+
+
+// ホイールマウスジェスチャ。 戻り値はコントロールID
+int Control::MG_wheel_scroll( GdkEventScroll* event )
+{
+    if( ! mg_wheel ) return CONTROL::None;
+
+    int control = CONTROL::None;
+    if( event->direction == GDK_SCROLL_UP ) control = CONTROL::TabLeft;
+    if( event->direction == GDK_SCROLL_DOWN ) control = CONTROL::TabRight;
+
+#ifdef _DEBUG
+    std::cout << "Control::MG_wheel_scroll control = " << control << std::endl;
+#endif
+
+    if( control != CONTROL::None ){
+        CORE::core_set_command( "set_mginfo", "", CONTROL::get_label( control ) );
+        mg_wheel_done = true;
+    }
+
+    return control;
+}
+
+
+// ホイールマウスジェスチャ終了
+// もしジェスチャが実行されたら true が戻る
+bool Control::MG_wheel_end( GdkEventButton* event )
+{
+    if( ! mg_wheel ) return None;
+
+#ifdef _DEBUG
+    std::cout << "Control::MG_wheel_end\n";
+#endif
+
+    mg_wheel = false;
+
+    return mg_wheel_done;
 }
