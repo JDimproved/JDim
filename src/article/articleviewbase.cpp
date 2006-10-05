@@ -120,13 +120,14 @@ void ArticleViewBase::setup_view()
     assert( m_article );
     assert( m_drawarea );
 
-    m_drawarea->sig_leave_notify().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_leave_drawarea ) );
-    m_drawarea->sig_button_press().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_button_press_drawarea ));
-    m_drawarea->sig_button_release().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_button_release_drawarea ));
-    m_drawarea->sig_scroll_event().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_scroll_drawarea ));
-    m_drawarea->sig_motion_notify().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_motion_notify_drawarea ) );
-    m_drawarea->sig_key_press().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_key_press_drawarea ) );
-    m_drawarea->sig_key_release().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_key_release_drawarea ) );    
+    m_drawarea->sig_button_press().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_button_press ));
+    m_drawarea->sig_button_release().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_button_release ));
+    m_drawarea->sig_motion_notify().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_motion_notify ) );
+    m_drawarea->sig_key_press().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_key_press ) );
+    m_drawarea->sig_key_release().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_key_release ) );    
+    m_drawarea->sig_scroll_event().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_scroll_event ));
+    m_drawarea->sig_leave_notify().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_leave_notify ) );
+
     m_drawarea->sig_on_url().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_on_url ) );
     m_drawarea->sig_leave_url().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_leave_url ) );
 
@@ -1128,7 +1129,7 @@ void ArticleViewBase::append_res( std::list< int >& list_resnum, std::list< bool
 //
 // drawareaから出た
 //
-bool ArticleViewBase::slot_leave_drawarea( GdkEventCrossing* event )
+bool ArticleViewBase::slot_leave_notify( GdkEventCrossing* event )
 {
     // クリックしたときやホイールを回すと event->mode に　GDK_CROSSING_GRAB
     // か GDK_CROSSING_UNGRAB がセットされてイベントが発生する場合がある
@@ -1149,10 +1150,10 @@ bool ArticleViewBase::slot_leave_drawarea( GdkEventCrossing* event )
 //
 // drawarea のクリックイベント
 //
-bool ArticleViewBase::slot_button_press_drawarea( GdkEventButton* event )
+bool ArticleViewBase::slot_button_press( GdkEventButton* event )
 {
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::slot_button_press_drawarea url = " << get_url() << std::endl;
+    std::cout << "ArticleViewBase::slot_button_press url = " << get_url() << std::endl;
 #endif
 
     // マウスジェスチャ
@@ -1169,7 +1170,7 @@ bool ArticleViewBase::slot_button_press_drawarea( GdkEventButton* event )
 //
 // drawarea でのマウスボタンのリリースイベント
 //
-bool ArticleViewBase::slot_button_release_drawarea( std::string url, int res_number, GdkEventButton* event )
+bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkEventButton* event )
 {
     /// マウスジェスチャ
     int mg = SKELETON::View::get_control().MG_end( event );
@@ -1179,7 +1180,7 @@ bool ArticleViewBase::slot_button_release_drawarea( std::string url, int res_num
     if( SKELETON::View::get_control().MG_wheel_end( event ) ) return true;
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::slot_button_release_drawarea mg = " << mg << " url = " << get_url() << std::endl;
+    std::cout << "ArticleViewBase::slot_button_release mg = " << mg << " url = " << get_url() << std::endl;
 #endif
 
     if( event->type == GDK_BUTTON_RELEASE ){
@@ -1206,7 +1207,7 @@ bool ArticleViewBase::slot_button_release_drawarea( std::string url, int res_num
 //
 // drawarea でマウスが動いた
 //
-bool ArticleViewBase::slot_motion_notify_drawarea( GdkEventMotion* event )
+bool ArticleViewBase::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
     SKELETON::View::get_control().MG_motion( event );
@@ -1219,16 +1220,16 @@ bool ArticleViewBase::slot_motion_notify_drawarea( GdkEventMotion* event )
 //
 // drawareaのキープレスイベント
 //
-bool ArticleViewBase::slot_key_press_drawarea( GdkEventKey* event )
+bool ArticleViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::slot_key_press_drawarea\n";
+    std::cout << "ArticleViewBase::slot_key_press\n";
 #endif
 
     // ポップアップはキーフォーカスを取れないので親からキー入力を送ってやる
     ArticleViewBase* popup_article = NULL;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
-    if( popup_article ) return popup_article->slot_key_press_drawarea( event );
+    if( popup_article ) return popup_article->slot_key_press( event );
     
     operate_view( SKELETON::View::get_control().key_press( event ) );
 
@@ -1240,16 +1241,16 @@ bool ArticleViewBase::slot_key_press_drawarea( GdkEventKey* event )
 //
 // drawareaのキーリリースイベント
 //
-bool ArticleViewBase::slot_key_release_drawarea( GdkEventKey* event )
+bool ArticleViewBase::slot_key_release( GdkEventKey* event )
 {
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::slot_key_release_drawarea\n";
+    std::cout << "ArticleViewBase::slot_key_release\n";
 #endif
 
     // ポップアップはキーフォーカスを取れないのでキー入力を送ってやる
     ArticleViewBase* popup_article = NULL;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
-    if( popup_article ) return popup_article->slot_key_release_drawarea( event );
+    if( popup_article ) return popup_article->slot_key_release( event );
    
     return true;
 }
@@ -1259,16 +1260,16 @@ bool ArticleViewBase::slot_key_release_drawarea( GdkEventKey* event )
 //
 // drawareaのマウスホイールイベント
 //
-bool ArticleViewBase::slot_scroll_drawarea( GdkEventScroll* event )
+bool ArticleViewBase::slot_scroll_event( GdkEventScroll* event )
 {
     // ポップアップしているときはそちらにイベントを送ってやる
     ArticleViewBase* popup_article = NULL;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
-    if( popup_article ) return popup_article->slot_scroll_drawarea( event );
+    if( popup_article ) return popup_article->slot_scroll_event( event );
 
     // ホイールマウスジェスチャ
     int control = SKELETON::View::get_control().MG_wheel_scroll( event );
-    if( control != CONTROL::None ){
+    if( enable_mg() && control != CONTROL::None ){
         operate_view( control );
         return true;
     }

@@ -204,7 +204,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     
     m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BoardView::slot_button_press ) );
     m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BoardView::slot_button_release ) );
-    m_treeview.sig_motion().connect( sigc::mem_fun(*this, &BoardView::slot_motion ) );
+    m_treeview.sig_motion_notify().connect( sigc::mem_fun(*this, &BoardView::slot_motion_notify ) );
     m_treeview.sig_key_press().connect( sigc::mem_fun(*this, &BoardView::slot_key_press ) );
     m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &BoardView::slot_key_release ) );
     m_treeview.sig_scroll_event().connect( sigc::mem_fun(*this, &BoardView::slot_scroll_event ) );
@@ -1283,7 +1283,7 @@ bool BoardView::slot_button_release( GdkEventButton* event )
 //
 // マウス動かした
 //
-bool BoardView::slot_motion( GdkEventMotion* event )
+bool BoardView::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
     SKELETON::View::get_control().MG_motion( event );

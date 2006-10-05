@@ -25,7 +25,7 @@ namespace SKELETON
         typedef sigc::signal< bool, GdkEventScroll* > SIG_SCROLL_EVENT;
         typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_PRESS;
         typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_RELEASE;
-        typedef sigc::signal< bool, GdkEventMotion* > SIG_MOTION;
+        typedef sigc::signal< bool, GdkEventMotion* > SIG_MOTION_NOTIFY;
 
         typedef sigc::signal< void > SIG_DRAG_BEGIN;
         typedef sigc::signal< void, Gtk::TreeModel::Path > SIG_DRAG_MOTION;
@@ -38,7 +38,7 @@ namespace SKELETON
         SIG_SCROLL_EVENT m_sig_scroll_event;
         SIG_BUTTON_PRESS m_sig_button_press;
         SIG_BUTTON_RELEASE m_sig_button_release;
-        SIG_MOTION m_sig_motion;
+        SIG_MOTION_NOTIFY m_sig_motion_notify;
 
         SIG_DRAG_BEGIN m_sig_drag_begin;
         SIG_DRAG_MOTION m_sig_drag_motion;
@@ -69,7 +69,7 @@ namespace SKELETON
         SIG_SCROLL_EVENT sig_scroll_event(){ return m_sig_scroll_event; }
         SIG_BUTTON_PRESS sig_button_press() { return m_sig_button_press; }
         SIG_BUTTON_RELEASE sig_button_release() { return m_sig_button_release; }
-        SIG_MOTION sig_motion() { return m_sig_motion; }
+        SIG_MOTION_NOTIFY sig_motion_notify() { return m_sig_motion_notify; }
 
         SIG_DRAG_BEGIN sig_drag_begin() { return m_sig_drag_begin; }
         SIG_DRAG_MOTION sig_drag_motion() { return m_sig_drag_motion; }

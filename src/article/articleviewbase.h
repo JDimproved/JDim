@@ -160,15 +160,13 @@ namespace ARTICLE
         void setup_action();
         
         // drawarea の signal を受け取る slots
-        bool slot_button_press_drawarea( GdkEventButton* event );
-        bool slot_button_release_drawarea( std::string url, int res_number, GdkEventButton* event );
-        bool slot_motion_notify_drawarea( GdkEventMotion* event );
-        bool slot_key_press_drawarea( GdkEventKey* event );
-        bool slot_key_release_drawarea( GdkEventKey* event );
-        bool slot_scroll_drawarea( GdkEventScroll* event );
-        bool slot_expose_drawarea( GdkEventExpose *event );
-
-        bool slot_leave_drawarea( GdkEventCrossing* ev );
+        bool slot_button_press( GdkEventButton* event );
+        bool slot_button_release( std::string url, int res_number, GdkEventButton* event );
+        bool slot_motion_notify( GdkEventMotion* event );
+        bool slot_key_press( GdkEventKey* event );
+        bool slot_key_release( GdkEventKey* event );
+        bool slot_scroll_event( GdkEventScroll* event );
+        bool slot_leave_notify( GdkEventCrossing* ev );
 
         // レスポップアップ関係
 

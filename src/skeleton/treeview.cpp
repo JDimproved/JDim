@@ -596,7 +596,7 @@ bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
         m_path_dragpre = path;
     }
 
-    m_sig_motion.emit( event );
+    m_sig_motion_notify.emit( event );
 
     return Gtk::TreeView::on_motion_notify_event( event );
 }
