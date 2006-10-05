@@ -99,9 +99,10 @@ namespace BBSLIST
 
         bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );
-        bool slot_motion( GdkEventMotion* event );
+        bool slot_motion_notify( GdkEventMotion* event );
         bool slot_key_press( GdkEventKey* event );
         bool slot_key_release( GdkEventKey* event );
+        bool slot_scroll_event( GdkEventScroll* event );
         void slot_open_tab();
         void slot_open_browser();
         void slot_append_favorite();

@@ -108,9 +108,11 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
     m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_button_press ) );
     m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_button_release ) );
-    m_treeview.sig_motion().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_motion ) );
+    m_treeview.sig_motion_notify().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_motion_notify ) );
     m_treeview.sig_key_press().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_key_press ) );
     m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_key_release ) );
+    m_treeview.sig_scroll_event().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_scroll_event ) );
+
 
     m_treeview.sig_drag_begin().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_begin ) );
     m_treeview.sig_drag_motion().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_motion ) );
@@ -641,6 +643,9 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
     // マウスジェスチャ
     SKELETON::View::get_control().MG_start( event );
 
+    // ホイールマウスジェスチャ
+    SKELETON::View::get_control().MG_wheel_start( event );
+
     // ダブルクリック
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
@@ -658,6 +663,11 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
 {
     /// マウスジェスチャ
     int mg = SKELETON::View::get_control().MG_end( event );
+
+    // ホイールマウスジェスチャ
+    // 実行された場合は何もしない 
+    if( SKELETON::View::get_control().MG_wheel_end( event ) ) return true;
+
     if( mg != CONTROL::None && enable_mg() ){
         operate_view( mg );
         return true;
@@ -698,7 +708,7 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
 //
 // マウス動かした
 //
-bool BBSListViewBase::slot_motion( GdkEventMotion* event )
+bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
     SKELETON::View::get_control().MG_motion( event );
@@ -783,6 +793,22 @@ bool BBSListViewBase::slot_key_release( GdkEventKey* event )
     return true;
 }
 
+
+//
+// マウスホイールイベント
+//
+bool BBSListViewBase::slot_scroll_event( GdkEventScroll* event )
+{
+    // ホイールマウスジェスチャ
+    int control = SKELETON::View::get_control().MG_wheel_scroll( event );
+    if( enable_mg() && control != CONTROL::None ){
+        operate_view( control );
+        return true;
+    }
+
+    m_treeview.wheelscroll( event );
+    return true;
+}
 
 
 //
