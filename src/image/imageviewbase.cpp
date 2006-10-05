@@ -73,10 +73,12 @@ void ImageViewBase::setup_common()
     m_event.set_flags( m_event.get_flags() | Gtk::CAN_FOCUS );
     m_event.add_events( Gdk::POINTER_MOTION_MASK );
 
-    m_event.signal_key_press_event().connect( sigc::mem_fun(*this, &ImageViewBase::slot_key_press_imagearea ) );
-    m_event.signal_button_press_event().connect( sigc::mem_fun( *this, &ImageViewBase::slot_button_press_imagearea ) );
-    m_event.signal_button_release_event().connect( sigc::mem_fun( *this, &ImageViewBase::slot_button_release_imagearea ) );
-    m_event.signal_motion_notify_event().connect(  sigc::mem_fun( *this, &ImageViewBase::slot_motion_notify_imagearea ) );
+    m_event.signal_button_press_event().connect( sigc::mem_fun( *this, &ImageViewBase::slot_button_press ) );
+    m_event.signal_button_release_event().connect( sigc::mem_fun( *this, &ImageViewBase::slot_button_release ) );
+    m_event.signal_motion_notify_event().connect(  sigc::mem_fun( *this, &ImageViewBase::slot_motion_notify ) );
+    m_event.signal_key_press_event().connect( sigc::mem_fun(*this, &ImageViewBase::slot_key_press ) );
+    m_event.signal_scroll_event().connect( sigc::mem_fun(*this, &ImageViewBase::slot_scroll_event ) );
+
     m_event.grab_focus();
 
     // ポップアップメニューの設定
@@ -522,10 +524,10 @@ void ImageViewBase::operate_view( const int& control )
 //
 // キープレスイベント
 //
-bool ImageViewBase::slot_key_press_imagearea( GdkEventKey* event )
+bool ImageViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG
-    std::cout << "ImageViewBase::slot_key_press_imagearea url = " << get_url() << std::endl;
+    std::cout << "ImageViewBase::slot_key_press url = " << get_url() << std::endl;
 #endif
 
     operate_view( SKELETON::View::get_control().key_press( event ) );
@@ -538,18 +540,21 @@ bool ImageViewBase::slot_key_press_imagearea( GdkEventKey* event )
 //
 // ボタンクリック
 //
-bool ImageViewBase::slot_button_press_imagearea( GdkEventButton* event )
+bool ImageViewBase::slot_button_press( GdkEventButton* event )
 {
 #ifdef _DEBUG
-    std::cout << "ImageViewBase::slot_button_press_event url = " << get_url() << std::endl;
+    std::cout << "ImageViewBase::slot_button_press url = " << get_url() << std::endl;
 #endif
+
+    // マウスジェスチャ
+    SKELETON::View::get_control().MG_start( event );
+
+    // ホイールマウスジェスチャ
+    SKELETON::View::get_control().MG_wheel_start( event );
 
     // ダブルクリック
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
-
-    // マウスジェスチャ
-    SKELETON::View::get_control().MG_start( event );
 
     return true;
 }
@@ -559,10 +564,15 @@ bool ImageViewBase::slot_button_press_imagearea( GdkEventButton* event )
 //
 // マウスボタンのリリースイベント
 //
-bool ImageViewBase::slot_button_release_imagearea( GdkEventButton* event )
+bool ImageViewBase::slot_button_release( GdkEventButton* event )
 {
     /// マウスジェスチャ
     int mg = SKELETON::View::get_control().MG_end( event );
+
+    // ホイールマウスジェスチャ
+    // 実行された場合は何もしない 
+    if( SKELETON::View::get_control().MG_wheel_end( event ) ) return true;
+
     if( mg != CONTROL::None && enable_mg() ){
         operate_view( mg );
         return true;
@@ -601,13 +611,32 @@ bool ImageViewBase::slot_button_release_imagearea( GdkEventButton* event )
 //
 // マウスモーション
 //
-bool ImageViewBase::slot_motion_notify_imagearea( GdkEventMotion* event )
+bool ImageViewBase::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
     SKELETON::View::get_control().MG_motion( event );
 
     return true;
 }
+
+
+
+//
+// マウスホイールイベント
+//
+bool ImageViewBase::slot_scroll_event( GdkEventScroll* event )
+{
+    // ホイールマウスジェスチャ
+    int control = SKELETON::View::get_control().MG_wheel_scroll( event );
+    if( enable_mg() && control != CONTROL::None ){
+        operate_view( control );
+        return true;
+    }
+
+    return false;
+}
+
+
 
 
 //

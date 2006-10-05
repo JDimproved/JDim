@@ -32,8 +32,8 @@ namespace IMAGE
 
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
-        virtual bool slot_button_press_imagearea( GdkEventButton* event );
-        virtual bool slot_motion_notify_imagearea( GdkEventMotion* event );
+        virtual bool slot_button_press( GdkEventButton* event );
+        virtual bool slot_motion_notify( GdkEventMotion* event );
 
       private:
         void set_label();

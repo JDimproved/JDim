@@ -271,9 +271,9 @@ Gtk::Menu* ImageViewMain::get_popupmenu( const std::string& url )
 //
 // ボタンクリック
 //
-bool ImageViewMain::slot_button_press_imagearea( GdkEventButton* event )
+bool ImageViewMain::slot_button_press( GdkEventButton* event )
 {
-    ImageViewBase::slot_button_press_imagearea( event );
+    ImageViewBase::slot_button_press( event );
 
     // ドラッグして画像移動するときの起点
     m_x_motion = event->x_root;
@@ -288,9 +288,9 @@ bool ImageViewMain::slot_button_press_imagearea( GdkEventButton* event )
 //
 // マウスモーション
 //
-bool ImageViewMain::slot_motion_notify_imagearea( GdkEventMotion* event )
+bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
 {
-    ImageViewBase::slot_motion_notify_imagearea( event );
+    ImageViewBase::slot_motion_notify( event );
 
     // スクロールバー移動
     if( m_scrwin && event->state == GDK_BUTTON1_MASK ){
