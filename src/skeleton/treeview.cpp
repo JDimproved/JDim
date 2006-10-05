@@ -606,7 +606,7 @@ bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
 // マウスのwheelを回した
 bool JDTreeView::on_scroll_event( GdkEventScroll* event )
 {
-    wheelscroll( event );
+    m_sig_scroll_event.emit( event );
 
     return true;
 }
