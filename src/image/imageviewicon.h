@@ -27,6 +27,7 @@ namespace IMAGE
       protected:
 
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
+        virtual bool slot_scroll_event( GdkEventScroll* event );
 
       private:
 

@@ -16,6 +16,8 @@
 #include "sharedbuffer.h"
 #include "cache.h"
 #include "command.h"
+#include "controlid.h"
+
 
 // 枠を描く
 #define DRAW_FRAME( color ) m_event_frame->modify_bg( Gtk::STATE_NORMAL, color ); 
@@ -166,6 +168,22 @@ Gtk::Menu* ImageViewIcon::get_popupmenu( const std::string& url )
     return menu;
 }
 
+
+
+//
+// マウスホイールイベント
+//
+bool ImageViewIcon::slot_scroll_event( GdkEventScroll* event )
+{
+    // 回転したらタブ切り替え
+    int control = CONTROL::None;
+    if( event->direction == GDK_SCROLL_UP ) control = CONTROL::TabLeft;
+    if( event->direction == GDK_SCROLL_DOWN ) control = CONTROL::TabRight;
+
+    ImageViewBase::operate_view( control );
+
+    return true;
+}
 
 
 

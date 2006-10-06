@@ -81,7 +81,7 @@ namespace IMAGE
         bool slot_button_release( GdkEventButton* event );
         virtual bool slot_motion_notify( GdkEventMotion* event );
         bool slot_key_press( GdkEventKey* event );
-        bool slot_scroll_event( GdkEventScroll* event );
+        virtual bool slot_scroll_event( GdkEventScroll* event );
 
 
       private:
