@@ -27,6 +27,8 @@ Control::Control()
     : m_mode( CONTROL::MODE_COMMON )
 {
     MG_reset();
+    mg_wheel = false;
+    mg_wheel_done = false;
 }
 
 

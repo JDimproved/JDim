@@ -181,6 +181,7 @@ bool ImageViewIcon::slot_scroll_event( GdkEventScroll* event )
     if( event->direction == GDK_SCROLL_DOWN ) control = CONTROL::TabRight;
 
     ImageViewBase::operate_view( control );
+    CORE::core_set_command( "switch_image" );
 
     return true;
 }
