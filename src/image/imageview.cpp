@@ -11,6 +11,7 @@
 
 #include "command.h"
 #include "httpcode.h"
+#include "controlid.h"
 
 #include <sstream>
 
@@ -293,19 +294,31 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
     ImageViewBase::slot_motion_notify( event );
 
     // スクロールバー移動
-    if( m_scrwin && event->state == GDK_BUTTON1_MASK ){
+    if( m_scrwin ){
 
-        Gtk::Adjustment* hadj = m_scrwin->get_hadjustment();
-        Gtk::Adjustment* vadj = m_scrwin->get_vadjustment();
+        GdkEventButton event_button;
+        get_control().get_eventbutton( CONTROL::ClickButton, event_button );
 
-        gdouble dx = event->x_root - m_x_motion;
-        gdouble dy = event->y_root - m_y_motion;
+        if( ( event->state == GDK_BUTTON1_MASK && event_button.button == 1 )
+            || ( event->state == GDK_BUTTON2_MASK && event_button.button == 2 )
+            || ( event->state == GDK_BUTTON3_MASK && event_button.button == 3 )
+            ){
 
-        m_x_motion = event->x_root;
-        m_y_motion = event->y_root;
+            Gtk::Adjustment* hadj = m_scrwin->get_hadjustment();
+            Gtk::Adjustment* vadj = m_scrwin->get_vadjustment();
 
-        if( hadj ) hadj->set_value( MAX( hadj->get_lower(), MIN( hadj->get_upper() - hadj->get_page_size(), hadj->get_value() - dx ) ) );
-        if( vadj ) vadj->set_value( MAX( vadj->get_lower(), MIN( vadj->get_upper() - vadj->get_page_size(), vadj->get_value() - dy ) ) );
+            gdouble dx = event->x_root - m_x_motion;
+            gdouble dy = event->y_root - m_y_motion;
+
+            m_x_motion = event->x_root;
+            m_y_motion = event->y_root;
+
+            if( hadj ) hadj->set_value(
+                MAX( hadj->get_lower(), MIN( hadj->get_upper() - hadj->get_page_size(), hadj->get_value() - dx ) ) );
+
+            if( vadj ) vadj->set_value(
+                MAX( vadj->get_lower(), MIN( vadj->get_upper() - vadj->get_page_size(), vadj->get_value() - dy ) ) );
+        }
     }
 
     return true;
