@@ -773,7 +773,14 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
 
     // 一番最後のレスが半分以上表示されていたら最後のレス番号をm_seen_currentにセット
     m_seen_current = 0;
-    const LAYOUT* lastheader =  m_layout_tree->get_header_of_res( m_layout_tree->max_res_number() );
+    int num = m_layout_tree->max_res_number();
+    const LAYOUT* lastheader = m_layout_tree->get_header_of_res( num );
+
+    // あぼーんなどで表示されていないときは前のレスを調べる
+    if( !lastheader ){
+        while( ! m_layout_tree->get_header_of_res( num ) && num-- > 0 );
+        lastheader = m_layout_tree->get_header_of_res( num );
+    }
     if( lastheader && lastheader->y + lastheader->height/2 < pos_y + height_view ){
 
         m_seen_current = m_layout_tree->max_res_number();
