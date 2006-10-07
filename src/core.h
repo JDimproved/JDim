@@ -113,6 +113,9 @@ namespace CORE
         /// Core::slot_focus_in_event, Core::slot_focus_out_event 参照
         int m_focused_admin;
 
+        // サイドバーを閉じる前にフォーカスされていたadmin
+        int m_focused_admin_sidebar;
+
         // 起動中
         bool m_boot;
 
@@ -132,6 +135,8 @@ namespace CORE
         void shutdown();
 
     private:
+
+        int get_focused_admin();
 
         void set_maintitle();
 
@@ -172,6 +177,7 @@ namespace CORE
         void slot_toggle_login2ch();
         void slot_toggle_urlbar();
         void slot_toggle_sidebar();
+        void slot_show_hide_leftpane( bool show );
         void slot_toggle_2pane();
         void slot_toggle_3pane();
         void slot_toggle_v3pane();

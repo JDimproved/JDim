@@ -650,6 +650,11 @@ void ArticleViewBase::operate_view( const int& control )
             stop();
             sig_hide_popup().emit();
             break;
+
+            // サイドバー表示/非表示
+        case CONTROL::ShowSideBar:
+            CORE::core_set_command( "toggle_sidebar" );
+            break;
     }
 }
 

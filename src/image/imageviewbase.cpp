@@ -514,6 +514,11 @@ void ImageViewBase::operate_view( const int& control )
                 delete_view();
             }
             break;
+
+            // サイドバー表示/非表示
+        case CONTROL::ShowSideBar:
+            CORE::core_set_command( "toggle_sidebar" );
+            break;
     }
 }
                                                     

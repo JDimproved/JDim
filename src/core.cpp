@@ -417,7 +417,7 @@ void Core::run( bool init )
     }
 
     // 縦3ペーン
-    else{
+    else if( mode_pane == MODE_V3PANE ){
 
         m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
         m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
@@ -438,7 +438,7 @@ void Core::run( bool init )
     // サイドバー設定
     m_hpaned.set_position( SESSION::hpane_main_pos() );
     if( ! SESSION::show_sidebar() ) m_hpaned.show_hide_leftpane();
-    m_hpaned.sig_show_hide_leftpane().connect( sigc::ptr_fun( &SESSION::set_show_sidebar ) );
+    m_hpaned.sig_show_hide_leftpane().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
@@ -510,6 +510,21 @@ void Core::shutdown()
     IMAGE::get_admin()->shutdown();
 }
 
+
+
+//
+// 現在フォーカスされているadmin
+//
+int Core::get_focused_admin()
+{
+    int focused_admin = FOCUS_NO;
+    if( BBSLIST::get_admin()->has_focus() ) focused_admin = FOCUS_BBSLIST;
+    else if( BOARD::get_admin()->has_focus() ) focused_admin = FOCUS_BOARD;
+    else if( ARTICLE::get_admin()->has_focus() ) focused_admin = FOCUS_ARTICLE;
+    else if( IMAGE::get_admin()->has_focus() ) focused_admin = FOCUS_IMAGE;
+
+    return focused_admin;
+}
 
 
 //
@@ -955,11 +970,33 @@ void Core::slot_toggle_urlbar()
 void Core::slot_toggle_sidebar()
 {
     if( ! m_enable_menuslot ) return;
-
-    SESSION::set_show_sidebar( !SESSION::show_sidebar() );
-
     m_hpaned.show_hide_leftpane();
 }
+
+
+
+//
+// サイドバーの表示が切り替わったときに呼ばれる
+//
+void Core::slot_show_hide_leftpane( bool show )
+{
+    SESSION::set_show_sidebar( show );
+
+    // 表示されたらbbslistをフォーカス
+    if( SESSION::show_sidebar() )CORE::core_set_command( "switch_bbslist" );
+
+    // 非表示になったときは m_focused_admin_sidebar で指定されるadminにフォーカスを移す
+    else{
+
+        switch( m_focused_admin_sidebar ){
+            case FOCUS_BBSLIST:
+            case FOCUS_BOARD: CORE::core_set_command( "switch_board" ); break;
+            case FOCUS_ARTICLE: CORE::core_set_command( "switch_article" ); break;
+            case FOCUS_IMAGE: CORE::core_set_command( "switch_image" ); break;
+        }
+    }
+}
+
 
 
 //
@@ -1485,6 +1522,9 @@ void Core::exec_command()
 
     else if( command.command  == "toggle_article" ) toggle_article();
 
+    // サイドバー表示/非表示
+    else if( command.command  == "toggle_sidebar" ) slot_toggle_sidebar();
+
     // 2chへのログイン処理が完了した
     else if( command.command  == "login2ch_finished" ){
 
@@ -1750,11 +1790,7 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
 bool Core::slot_focus_out_event( GdkEventFocus* )
 {
     // m_focused_admin に現在フォーカスされているビュー番号を保存
-    if( BBSLIST::get_admin()->has_focus() ) m_focused_admin = FOCUS_BBSLIST;
-    else if( BOARD::get_admin()->has_focus() ) m_focused_admin = FOCUS_BOARD;
-    else if( ARTICLE::get_admin()->has_focus() ) m_focused_admin = FOCUS_ARTICLE;
-    else if( IMAGE::get_admin()->has_focus() ) m_focused_admin = FOCUS_IMAGE;
-    else m_focused_admin = FOCUS_NO;
+    m_focused_admin = get_focused_admin();
 
     FOCUS_OUT_ALL();
 
@@ -1875,6 +1911,7 @@ void Core::switch_article()
     else m_notebook.set_current_page( 0 );
     ARTICLE::get_admin()->set_command( "focus_current_view" );
     m_focused_admin = FOCUS_ARTICLE;
+    m_focused_admin_sidebar = FOCUS_ARTICLE;
 }
 
 
@@ -1888,12 +1925,17 @@ void Core::switch_board()
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 0 );
     BOARD::get_admin()->set_command( "focus_current_view" );
     m_focused_admin = FOCUS_BOARD;
+    m_focused_admin_sidebar = FOCUS_BOARD;
 }
 
 
 void Core::switch_bbslist()
 {
     if( BBSLIST::get_admin()->empty() ) return;
+
+    // サイドバーを閉じたときにフォーカスするadminをセット
+    int focused_admin = get_focused_admin();
+    if( focused_admin != FOCUS_BBSLIST ) m_focused_admin_sidebar = focused_admin;
 
     FOCUS_OUT_ALL();
     ARTICLE::get_admin()->set_command( "delete_popup" );
@@ -1914,6 +1956,7 @@ void Core::switch_image()
     else m_notebook.set_current_page( 1 );
     IMAGE::get_admin()->set_command( "focus_current_view" );
     m_focused_admin = FOCUS_IMAGE;
+    m_focused_admin_sidebar = FOCUS_IMAGE;
 }
 
 

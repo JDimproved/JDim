@@ -507,6 +507,11 @@ void  BBSListViewBase::operate_view( const int& control )
         case CONTROL::SearchPrev:
             slot_push_up_search();
             break;
+
+            // サイドバー表示/非表示
+        case CONTROL::ShowSideBar:
+            CORE::core_set_command( "toggle_sidebar" );
+            break;
     }
 }
 
