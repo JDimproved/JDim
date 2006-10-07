@@ -161,7 +161,7 @@ void Core::run( bool init )
 
 
     // ログイン
-    m_action_group->add( Gtk::Action::create( "Menu_Login", "_Login" ) );    
+    m_action_group->add( Gtk::Action::create( "Menu_Login", "ログイン(_L)" ) );    
     m_action_group->add( Gtk::ToggleAction::create( "Login2ch", "2chにログイン", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
     m_action_group->add( Gtk::Action::create( "SetupPasswd", "設定" ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );

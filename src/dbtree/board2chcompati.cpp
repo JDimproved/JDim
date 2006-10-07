@@ -156,13 +156,8 @@ const std::string Board2chCompati::create_newarticle_message( const std::string&
     std::stringstream ss_post;
     ss_post.clear();
     ss_post << "bbs="      << get_id()
-            << "&subject=" << MISC::charset_url_encode( subject, get_charset() );
-
-    // 2chのhana値
-    std::string hana = hana_for_write();
-    if( ! hana.empty() ) ss_post << "&hana=" << hana;
-
-    ss_post << "&time="    << time_modified()
+            << "&subject=" << MISC::charset_url_encode( subject, get_charset() )
+            << "&time="    << time_modified()
             << "&submit="  << MISC::charset_url_encode( "新規スレッド作成", get_charset() )
             << "&FROM="    << MISC::charset_url_encode( name, get_charset() )
             << "&mail="    << MISC::charset_url_encode( mail, get_charset() )
