@@ -19,6 +19,10 @@ namespace SESSION
     const bool is_online();
     void set_online( bool mode );
 
+    // 2chログイン中
+    const bool login2ch();
+    void set_login2ch( bool login );
+
     int x();
     int y();
     int width();

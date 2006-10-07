@@ -491,6 +491,9 @@ void Core::run( bool init )
     // タイトル表示
     SESSION::set_online( !SESSION::is_online() ); // slot_toggle_online()で反転する
     slot_toggle_online();
+
+    // 2chログイン
+    if( SESSION::login2ch() ) slot_toggle_login2ch();
 }
 
 

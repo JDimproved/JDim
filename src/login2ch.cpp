@@ -68,8 +68,9 @@ void Login2ch::logout()
 #endif
     if( is_loading() ) return;
     
-    set_login_now( false );
-    set_sessionid( std::string() );
+    SKELETON::Login::set_login_now( false );
+    SKELETON::Login::set_sessionid( std::string() );
+    SESSION::set_login2ch( false );
 }
 
 
@@ -173,9 +174,10 @@ void Login2ch::receive_finish()
 //            std::cout << "sid = " << sid << std::endl;
 #endif
             if( sid.find( "ERROR" ) != 0 ){
-                set_login_now( true );
-                set_sessionid( sid );
+                SKELETON::Login::set_login_now( true );
+                SKELETON::Login::set_sessionid( sid );
                 show_err = false;
+                SESSION::set_login2ch( true );
             }
             else{
                 MISC::ERRMSG( "2chログイン失敗 : sid = " + sid );

@@ -13,6 +13,7 @@
 
 int mode_pane;
 bool mode_online;
+bool mode_login2ch;
 
 int win_x;
 int win_y;
@@ -72,6 +73,9 @@ void SESSION::init_session()
 
     // オンライン
     mode_online = cf.get_option( "mode_online", true );
+
+    // 2chログイン
+    mode_login2ch = cf.get_option( "mode_login2ch", false );
 
     // paneのモード
     mode_pane = cf.get_option( "mode_pane", 0 );
@@ -211,6 +215,7 @@ void SESSION::save_session()
     std::ostringstream oss;
     oss << "mode_pane = " << mode_pane << std::endl
         << "mode_online = " << mode_online << std::endl
+        << "mode_login2ch = " << mode_login2ch << std::endl
         << "x = " << win_x << std::endl
         << "y = " << win_y << std::endl
         << "width = " << win_width << std::endl
@@ -266,6 +271,9 @@ void SESSION::set_mode_pane( int mode ){ mode_pane = mode; }
 
 const bool SESSION::is_online(){ return mode_online; }
 void SESSION::set_online( bool mode ){ mode_online = mode; }
+
+const bool SESSION::login2ch(){ return mode_login2ch; }
+void SESSION::set_login2ch( bool login ){ mode_login2ch = login; }
 
 int SESSION::x(){ return win_x; }
 int SESSION::y(){ return win_y; }
