@@ -25,6 +25,7 @@ namespace SESSION
     int height();
     bool maximized();
     bool show_urlbar();
+    bool show_sidebar();
    
     void set_x( int x );
     void set_y( int y );
@@ -32,6 +33,7 @@ namespace SESSION
     void set_height( int height );
     void set_maximized( bool maximized );
     void set_show_urlbar( bool showbar );
+    void set_show_sidebar( bool showbar );
 
     /// メインウィンドウのペインの敷居の位置
     int hpane_main_pos();

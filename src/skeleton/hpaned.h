@@ -12,8 +12,13 @@
 
 namespace SKELETON
 {
+    // 左ペーン表示/表示切り替え時にemit
+    typedef sigc::signal< void, bool > SIG_SHOW_HIDE_LEFTPANE;
+
     class JDHPaned : public Gtk::HPaned
     {
+        SIG_SHOW_HIDE_LEFTPANE m_sig_show_hide_leftpane;
+
         bool m_clicked;
         bool m_drag;
         int m_pos;
@@ -22,8 +27,13 @@ namespace SKELETON
         JDHPaned();
         ~JDHPaned();
 
+        SIG_SHOW_HIDE_LEFTPANE sig_show_hide_leftpane() { return m_sig_show_hide_leftpane; }
+
         int get_position();
         void set_position( int position );
+
+        // 左ペーン表示/表示切り替え
+        void show_hide_leftpane();
 
       protected:
         virtual bool on_button_press_event( GdkEventButton* event );

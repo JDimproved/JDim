@@ -107,6 +107,7 @@ namespace CORE
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
         HistoryMenuThread* m_histmenu_thread;
         HistoryMenuBoard* m_histmenu_board;
+        bool m_enable_menuslot;
 
         // フォーカスイン、アウトイベントの時に使う変数
         /// Core::slot_focus_in_event, Core::slot_focus_out_event 参照
@@ -133,6 +134,8 @@ namespace CORE
     private:
 
         void set_maintitle();
+
+        void slot_activate_menubar();
 
         void slot_toggle_use_mosaic();
         void slot_delete_all_images();
@@ -168,6 +171,7 @@ namespace CORE
         void slot_toggle_online();
         void slot_toggle_login2ch();
         void slot_toggle_urlbar();
+        void slot_toggle_sidebar();
         void slot_toggle_2pane();
         void slot_toggle_3pane();
         void slot_toggle_v3pane();

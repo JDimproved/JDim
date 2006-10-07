@@ -32,6 +32,8 @@ namespace CONTROL
         { "ToggleArticle", "板一覧とスレ表示切替" },
 
         { "ShowPopupMenu", "メニュー表示" },
+
+        { "ShowSideBar", "サイドバー表示" },
         
         { "PageUp", "上のページに移動" },
         { "PageDown", "下のページに移動" },

@@ -45,6 +45,7 @@ int board_col_write;
 int board_col_speed;
 
 bool win_show_urlbar;
+bool win_show_sidebar;
 
 int win_mes_x;
 int win_mes_y;
@@ -82,6 +83,7 @@ void SESSION::init_session()
     win_maximized = cf.get_option( "maximized", false );
 
     win_show_urlbar = cf.get_option( "show_urlbar", true );
+    win_show_sidebar = cf.get_option( "show_sidebar", true );
 
     win_hpane_main_pos = cf.get_option( "hpane_main_pos", 190 );
     win_vpane_main_pos = cf.get_option( "vpane_main_pos", 200 );
@@ -140,6 +142,7 @@ void SESSION::init_session()
               << "h=" << win_height << std::endl
               << "m=" << win_maximized << std::endl
               << "urlbar=" << win_show_urlbar << std::endl
+              << "sidebar=" << win_show_sidebar << std::endl
 
               << "hpane=" << win_hpane_main_pos << std::endl
               << "vpane=" << win_vpane_main_pos << std::endl
@@ -214,6 +217,7 @@ void SESSION::save_session()
         << "height = " << win_height << std::endl
         << "maximized = " << win_maximized << std::endl
         << "show_urlbar = " << win_show_urlbar << std::endl
+        << "show_sidebar = " << win_show_sidebar << std::endl
 
         << "hpane_main_pos = " << win_hpane_main_pos << std::endl
         << "vpane_main_pos = " << win_vpane_main_pos << std::endl
@@ -269,6 +273,7 @@ int SESSION::width(){ return win_width; }
 int SESSION::height(){ return win_height; }
 bool SESSION::maximized(){ return win_maximized; }
 bool SESSION::show_urlbar(){ return win_show_urlbar; }
+bool SESSION::show_sidebar(){ return win_show_sidebar; }
 
 void SESSION::set_x( int x ){ win_x = x; }
 void SESSION::set_y( int y ){ win_y = y; }
@@ -276,6 +281,7 @@ void SESSION::set_width( int width ){ win_width = width; }
 void SESSION::set_height( int height ){ win_height = height; }
 void SESSION::set_maximized( bool maximized ){ win_maximized = maximized; }
 void SESSION::set_show_urlbar( bool showurl ){ win_show_urlbar = showurl; }
+void SESSION::set_show_sidebar( bool showurl ){ win_show_sidebar = showurl; }
 
 
 

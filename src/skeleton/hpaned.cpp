@@ -40,6 +40,40 @@ void JDHPaned::set_position( int position )
 }
 
 
+//
+// 左ペーン表示/表示切り替え
+//
+void JDHPaned::show_hide_leftpane()
+{
+    int pos = Gtk::HPaned::get_position();
+
+    // 復元
+    if( pos == 0 ){
+#ifdef _DEBUG
+        std::cout << "restore!\n";
+#endif
+        Gtk::HPaned::set_position( get_position() );
+
+        m_sig_show_hide_leftpane.emit( true );
+    }
+
+    // 折りたたみ
+    else{
+#ifdef _DEBUG
+        std::cout << "fold!\n";
+#endif
+        m_pos = pos;
+        Gtk::HPaned::set_position( 0 );
+
+        m_sig_show_hide_leftpane.emit( false );
+    }
+
+    // タブ幅調整
+    CORE::core_set_command( "adjust_tabwidth" );
+}
+
+
+
 bool JDHPaned::on_button_press_event( GdkEventButton* event )
 {
 #ifdef _DEBUG
@@ -65,30 +99,7 @@ bool JDHPaned::on_button_release_event( GdkEventButton* event )
     bool ret = Gtk::HPaned::on_button_release_event( event );
 
     // 仕切りをクリックしたら折りたたむ
-    if( m_clicked && ! m_drag ){
-
-        int pos = Gtk::HPaned::get_position();
-
-        // 復元
-        if( pos == 0 ){
-#ifdef _DEBUG
-            std::cout << "restore!\n";
-#endif
-            Gtk::HPaned::set_position( get_position() );
-        }
-
-        // 折りたたみ
-        else{
-#ifdef _DEBUG
-            std::cout << "fold!\n";
-#endif
-            m_pos = pos;
-            Gtk::HPaned::set_position( 0 );
-        }
-
-        // タブ幅調整
-        CORE::core_set_command( "adjust_tabwidth" );
-    }
+    if( m_clicked && ! m_drag ) show_hide_leftpane();
 
     m_clicked = false;
 

@@ -12,6 +12,7 @@
 #include "historymenu.h"
 #include "login2ch.h"
 #include "prefdiagfactory.h"
+#include "controlutil.h"
 #include "jdversion.h"
 
 #include "config/globalconf.h"
@@ -65,6 +66,7 @@ Core::Core( WinMain& win_main )
     : m_win_main( win_main ),
       m_imagetab_shown( 0 ),
       m_button_go( Gtk::Stock::JUMP_TO, "移動" ),
+      m_enable_menuslot( true ),
       m_focused_admin( FOCUS_NO ),
       m_boot( true )
 {
@@ -171,6 +173,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Menu_View", "表示(_V)" ) );    
     m_action_group->add( Gtk::ToggleAction::create( "Urlbar", "アドレスバー", std::string(), SESSION::show_urlbar() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_urlbar ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ShowSideBar", "ShowSideBar", std::string(), SESSION::show_sidebar() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_sidebar ) );
 
     // pane 設定
     Gtk::RadioButtonGroup radiogroup;
@@ -263,6 +267,7 @@ void Core::run( bool init )
 
         "<menu action='Menu_View'>"
         "<menuitem action='Urlbar'/>"
+        "<menuitem action='ShowSideBar'/>"
         "<separator/>"
         "<menuitem action='2Pane'/>"
         "<menuitem action='3Pane'/>"
@@ -332,6 +337,16 @@ void Core::run( bool init )
     m_histmenu_thread = Gtk::manage( new HistoryMenuThread() );
     menubar->items().insert( --(--( menubar->items().end() )), *m_histmenu_thread );
 
+
+    // メニューにショートカットキーやマウスジェスチャを表示
+    Gtk::Menu_Helpers::MenuList& items = menubar->items();
+    Gtk::Menu_Helpers::MenuList::iterator it_item = items.begin();
+    for( ; it_item != items.end(); ++it_item ){
+        Gtk::Menu* menu = dynamic_cast< Gtk::Menu* >( (*it_item).get_submenu() );
+        CONTROL::set_menu_motion( menu );
+
+        ( *it_item ).signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_menubar ) );
+    }
 
     // 初回起動時の設定
     if( init ){
@@ -417,9 +432,13 @@ void Core::run( bool init )
         m_hpaned.add2( m_hpaned_r );
     }
 
-    m_hpaned.set_position( SESSION::hpane_main_pos() );
     m_vpaned.set_position( SESSION::vpane_main_pos() );
     m_hpaned_r.set_position( SESSION::hpane_main_r_pos() );
+
+    // サイドバー設定
+    m_hpaned.set_position( SESSION::hpane_main_pos() );
+    if( ! SESSION::show_sidebar() ) m_hpaned.show_hide_leftpane();
+    m_hpaned.sig_show_hide_leftpane().connect( sigc::ptr_fun( &SESSION::set_show_sidebar ) );
 
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
@@ -513,6 +532,27 @@ void Core::set_maintitle()
     if( LOGIN::get_login2ch()->login_now() ) title +=" [ ログイン中 ]";
     if( ! SESSION::is_online() ) title += " [ オフライン ]";
     m_win_main.set_title( title );
+}
+
+
+
+//
+// メニューバーがアクティブになったときに呼ばれるスロット
+//
+void Core::slot_activate_menubar()
+{
+    // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
+    m_enable_menuslot = false;
+
+    Glib::RefPtr< Gtk::Action > act = m_action_group->get_action( "ShowSideBar" );
+    Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+
+        if( SESSION::show_sidebar() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    m_enable_menuslot = true;
 }
 
 
@@ -906,6 +946,19 @@ void Core::slot_toggle_urlbar()
     else m_vbox_main.remove( m_urlbar );
 
     m_win_main.show_all_children();
+}
+
+
+//
+// サイドバー表示切替え
+//
+void Core::slot_toggle_sidebar()
+{
+    if( ! m_enable_menuslot ) return;
+
+    SESSION::set_show_sidebar( !SESSION::show_sidebar() );
+
+    m_hpaned.show_hide_leftpane();
 }
 
 

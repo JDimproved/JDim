@@ -45,6 +45,8 @@ namespace CONTROL
 
         ShowPopupMenu,
 
+        ShowSideBar,
+
         PageUp,
         PageDown,
 
