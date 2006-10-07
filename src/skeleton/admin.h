@@ -136,7 +136,7 @@ namespace SKELETON
         virtual void set_current_page( int page );
 
         // notebookのタブが切り替わったときに呼ばれるslot
-        virtual void slot_switch_page( GtkNotebookPage*, guint page );
+        void slot_switch_page( GtkNotebookPage*, guint page );
 
         // タブを閉じる
         virtual void slot_tab_close( int page );

@@ -136,8 +136,6 @@ namespace CORE
 
     private:
 
-        int get_focused_admin();
-
         void set_maintitle();
 
         void slot_activate_menubar();
@@ -201,6 +199,10 @@ namespace CORE
 
         // あるadminがemptyになったので他のadminにスイッチ
         void empty_page( const std::string& url );
+
+        // あるadminののnotebookのページがスイッチした
+        void switch_page( const std::string& url );
+
         void switch_article();
         void switch_board();
         void switch_bbslist();

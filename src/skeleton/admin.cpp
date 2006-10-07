@@ -1067,7 +1067,8 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
         set_tabicon( view->get_url(), "switch_page" );
     }
 
-    focus_view( page );
+    // coreにページが切り替わったことを知らせて、core経由でviewをフォーカスする
+    CORE::core_set_command( "switch_page", m_url );
 }
 
 

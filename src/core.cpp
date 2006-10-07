@@ -61,6 +61,35 @@ IMAGE::get_admin()->set_command( "focus_out" ); \
 }while(0)
 
 
+#define FOCUS_ADMIN_BBSLIST() do{ \
+BBSLIST::get_admin()->set_command( "focus_current_view" ); \
+m_focused_admin = FOCUS_BBSLIST; \
+}while(0)
+ 
+
+#define FOCUS_ADMIN_BOARD() do{ \
+BOARD::get_admin()->set_command( "focus_current_view" ); \
+m_focused_admin = FOCUS_BOARD; \
+m_focused_admin_sidebar = FOCUS_BOARD; \
+}while(0)
+
+#define FOCUS_ADMIN_ARTICLE() do{ \
+ARTICLE::get_admin()->set_command( "focus_current_view" ); \
+m_focused_admin = FOCUS_ARTICLE; \
+m_focused_admin_sidebar = FOCUS_ARTICLE; \
+}while(0)
+
+
+#define FOCUS_ADMIN_IMAGE() do{ \
+IMAGE::get_admin()->set_command( "focus_current_view" ); \
+m_focused_admin = FOCUS_IMAGE; \
+m_focused_admin_sidebar = FOCUS_IMAGE; \
+}while(0)
+
+
+
+//////////////////////////////////////////////////////
+
 
 Core::Core( WinMain& win_main )
     : m_win_main( win_main ),
@@ -68,6 +97,7 @@ Core::Core( WinMain& win_main )
       m_button_go( Gtk::Stock::JUMP_TO, "移動" ),
       m_enable_menuslot( true ),
       m_focused_admin( FOCUS_NO ),
+      m_focused_admin_sidebar( FOCUS_NO ),
       m_boot( true )
 {
     instance_core = this;
@@ -511,22 +541,6 @@ void Core::shutdown()
     BOARD::get_admin()->shutdown();
     BBSLIST::get_admin()->shutdown();
     IMAGE::get_admin()->shutdown();
-}
-
-
-
-//
-// 現在フォーカスされているadmin
-//
-int Core::get_focused_admin()
-{
-    int focused_admin = FOCUS_NO;
-    if( BBSLIST::get_admin()->has_focus() ) focused_admin = FOCUS_BBSLIST;
-    else if( BOARD::get_admin()->has_focus() ) focused_admin = FOCUS_BOARD;
-    else if( ARTICLE::get_admin()->has_focus() ) focused_admin = FOCUS_ARTICLE;
-    else if( IMAGE::get_admin()->has_focus() ) focused_admin = FOCUS_IMAGE;
-
-    return focused_admin;
 }
 
 
@@ -1549,6 +1563,9 @@ void Core::exec_command()
     // あるnotebookが空になった
     else if( command.command  == "empty_page" ) empty_page( command.url );
 
+    // あるadminのnotebookのページが切り替わった
+    else if( command.command  == "switch_page" ) switch_page( command.url );
+
     // タイトル、URL、ステータスなどの表示
     else if( command.command  == "set_title" ){
         m_title = command.arg1;
@@ -1738,7 +1755,7 @@ bool Core::slot_timeout( int timer_number )
 
 
 //
-// タブの切替え
+// 右ペーンのnotebookのタブの切替え
 //
 void Core::slot_switch_page( GtkNotebookPage*, guint page )
 {
@@ -1752,35 +1769,20 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
 
         switch( page){
 
-            case 0:
-                BOARD::get_admin()->set_command( "focus_current_view" );
-                m_focused_admin = FOCUS_BOARD;
-                break;
+            case 0: FOCUS_ADMIN_BOARD(); break;
 
-            case 1:
-                ARTICLE::get_admin()->set_command( "focus_current_view" );
-                m_focused_admin = FOCUS_ARTICLE;
-                break;
+            case 1: FOCUS_ADMIN_ARTICLE(); break;
 
-            case 2:
-                IMAGE::get_admin()->set_command( "focus_current_view" );
-                m_focused_admin = FOCUS_IMAGE;
-                break;
+            case 2: FOCUS_ADMIN_IMAGE(); break;
         }
     }
     else{
 
         switch( page ){
 
-            case 0:
-                ARTICLE::get_admin()->set_command( "focus_current_view" );
-                m_focused_admin = FOCUS_ARTICLE;
-                break;
+            case 0: FOCUS_ADMIN_ARTICLE(); break;
 
-            case 1:
-                IMAGE::get_admin()->set_command( "focus_current_view" );
-                m_focused_admin = FOCUS_IMAGE;
-                break;
+            case 1: FOCUS_ADMIN_IMAGE(); break;
         }
     }
 }
@@ -1789,12 +1791,8 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
 //
 // フォーカスアウトイベント
 //
-
 bool Core::slot_focus_out_event( GdkEventFocus* )
 {
-    // m_focused_admin に現在フォーカスされているビュー番号を保存
-    m_focused_admin = get_focused_admin();
-
     FOCUS_OUT_ALL();
 
 #ifdef _DEBUG
@@ -1822,7 +1820,6 @@ bool Core::slot_focus_in_event( GdkEventFocus* )
         case FOCUS_ARTICLE: ARTICLE::get_admin()->set_command( "restore_focus" ); break;
         case FOCUS_IMAGE: IMAGE::get_admin()->set_command( "restore_focus" ); break;
     }
-    m_focused_admin = FOCUS_NO;
 
     return true;
 }
@@ -1901,6 +1898,20 @@ void Core::empty_page( const std::string& url )
 
 
 //
+// あるadminのnotebookのページがスイッチした
+//
+// url : adminのurl
+//
+void Core::switch_page( const std::string& url )
+{
+    if( url == URL_BBSLISTADMIN ) FOCUS_ADMIN_BBSLIST();
+    if( url == URL_BOARDADMIN ) FOCUS_ADMIN_BOARD();
+    if( url == URL_ARTICLEADMIN ) FOCUS_ADMIN_ARTICLE();
+    if( url == URL_IMAGEADMIN ) FOCUS_ADMIN_IMAGE();
+}
+
+
+//
 // 各viewにスイッチ
 //
 void Core::switch_article()
@@ -1912,9 +1923,8 @@ void Core::switch_article()
 
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 1 );
     else m_notebook.set_current_page( 0 );
-    ARTICLE::get_admin()->set_command( "focus_current_view" );
-    m_focused_admin = FOCUS_ARTICLE;
-    m_focused_admin_sidebar = FOCUS_ARTICLE;
+
+    FOCUS_ADMIN_ARTICLE();
 }
 
 
@@ -1926,9 +1936,8 @@ void Core::switch_board()
     ARTICLE::get_admin()->set_command( "delete_popup" );
 
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 0 );
-    BOARD::get_admin()->set_command( "focus_current_view" );
-    m_focused_admin = FOCUS_BOARD;
-    m_focused_admin_sidebar = FOCUS_BOARD;
+
+    FOCUS_ADMIN_BOARD();
 }
 
 
@@ -1936,15 +1945,10 @@ void Core::switch_bbslist()
 {
     if( BBSLIST::get_admin()->empty() ) return;
 
-    // サイドバーを閉じたときにフォーカスするadminをセット
-    int focused_admin = get_focused_admin();
-    if( focused_admin != FOCUS_BBSLIST ) m_focused_admin_sidebar = focused_admin;
-
     FOCUS_OUT_ALL();
     ARTICLE::get_admin()->set_command( "delete_popup" );
 
-    BBSLIST::get_admin()->set_command( "focus_current_view" );
-    m_focused_admin = FOCUS_BBSLIST;
+    FOCUS_ADMIN_BBSLIST();
 }
 
 
@@ -1957,9 +1961,8 @@ void Core::switch_image()
 
     if( SESSION::get_mode_pane() == MODE_2PANE ) m_notebook.set_current_page( 2 );
     else m_notebook.set_current_page( 1 );
-    IMAGE::get_admin()->set_command( "focus_current_view" );
-    m_focused_admin = FOCUS_IMAGE;
-    m_focused_admin_sidebar = FOCUS_IMAGE;
+
+    FOCUS_ADMIN_IMAGE();
 }
 
 

@@ -73,7 +73,7 @@ namespace MESSAGE
         void slot_write_clicked();
         void slot_cancel_clicked();
         bool slot_key_release( GdkEventKey* event );
-        virtual void slot_switch_page( GtkNotebookPage*, guint page );
+        void slot_switch_page( GtkNotebookPage*, guint page );
 
         virtual std::string create_message(){ return std::string() ;}
 
