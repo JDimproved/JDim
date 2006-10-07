@@ -78,13 +78,14 @@ void Login2ch::logout()
 //
 void Login2ch::start_login()
 {
+    if( is_loading() ) return;
+
 #ifdef _DEBUG
     std::cout << "Login2ch::start_login url = " << CONFIG::get_url_login2ch() << std::endl;
 #endif 
 
     set_str_code( "" );
 
-    if( is_loading() ) return;
     if( ! SESSION::is_online() ){
 
         // ディスパッチャ経由でreceive_finish()を呼ぶ

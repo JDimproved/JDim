@@ -26,7 +26,7 @@ namespace CORE
         Gtk::Entry entry_passwd;
 
         PasswdFrame( const std::string& title )
-        : m_label_id( "ID" ), m_label_passwd( "password" )
+        : m_label_id( "ID" ), m_label_passwd( "パスワード" )
         {
             m_hbox.set_spacing( 8 );
 
@@ -65,7 +65,7 @@ namespace CORE
 
         PasswdPref( const std::string& url )
         : SKELETON::PrefDiag( url )
-        , m_frame_2ch( "2chログイン用" )
+        , m_frame_2ch( "2chログイン用 ID" )
         , m_label_sid_2ch( "SID : ", LOGIN::get_login2ch()->get_sessionid() )
         {
             // 2ch用

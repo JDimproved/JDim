@@ -559,11 +559,21 @@ void Core::slot_activate_menubar()
     // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
     m_enable_menuslot = false;
 
+    // サイドバー
     Glib::RefPtr< Gtk::Action > act = m_action_group->get_action( "ShowSideBar" );
     Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
 
         if( SESSION::show_sidebar() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // ログイン
+    act = m_action_group->get_action( "Login2ch" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
+    if( tact ){
+
+        if( LOGIN::get_login2ch()->login_now() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -929,14 +939,19 @@ void Core::slot_toggle_online()
 //
 void Core::slot_toggle_login2ch()
 {
+    if( ! m_enable_menuslot ) return;
+
 #ifdef _DEBUG
     std::cout << "Core::slot_toggle_login2ch\n";
 #endif
 
-    if(  LOGIN::get_login2ch()->login_now() ){
+    // ログイン中ならログアウト
+    if( LOGIN::get_login2ch()->login_now() ){
         LOGIN::get_login2ch()->logout();
         set_maintitle();
     }
+
+    // ログオフ中ならログイン開始
     else LOGIN::get_login2ch()->start_login();
 }
 
@@ -1526,22 +1541,7 @@ void Core::exec_command()
     else if( command.command  == "toggle_sidebar" ) slot_toggle_sidebar();
 
     // 2chへのログイン処理が完了した
-    else if( command.command  == "login2ch_finished" ){
-
-        // ログインに失敗したらメニューのチェックを外しておく
-        if( ! LOGIN::get_login2ch()->login_now() ){
-
-            Glib::RefPtr< Gtk::ToggleAction > tact
-            = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( m_action_group->get_action( "Login2ch" ) );
-            if( tact && tact->get_active() ){
-
-                LOGIN::get_login2ch()->set_login_now( true ); 
-                tact->set_active( false );
-            }
-        }
-
-        set_maintitle();
-    }
+    else if( command.command  == "login2ch_finished" ) set_maintitle();
 
     // あるnotebookが空になった
     else if( command.command  == "empty_page" ) empty_page( command.url );
