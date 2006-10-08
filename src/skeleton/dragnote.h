@@ -33,6 +33,8 @@ namespace SKELETON
         SIG_DRAG_BEGIN m_sig_drag_begin;
         SIG_DRAG_END m_sig_drag_end;
 
+        Glib::RefPtr< Pango::Layout > m_layout_tab;
+
         int m_page;
         bool m_drag;
         bool m_dblclick;
@@ -45,7 +47,6 @@ namespace SKELETON
         bool m_dragable;
         bool m_fixtab;
 
-        bool m_adjust_reserve; // adjust予約
         int m_pre_width;
 
       public:

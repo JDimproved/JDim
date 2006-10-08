@@ -9,6 +9,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "config/globalconf.h"
+
 #include "controlid.h"
 
 using namespace SKELETON;
@@ -20,9 +22,11 @@ DragableNoteBook::DragableNoteBook()
     , m_drag( 0 )
     , m_dragable( false )
     , m_fixtab( false )
-    , m_adjust_reserve( false )
-    , m_pre_width( -1 )
-{}
+{
+    m_layout_tab = create_pango_layout( "" );
+
+    m_pre_width = get_width();
+}
 
 
 //
@@ -31,15 +35,11 @@ DragableNoteBook::DragableNoteBook()
 void DragableNoteBook::clock_in()
 {
     m_tooltip.clock_in();
-    
-    if( m_adjust_reserve ){
-        m_adjust_reserve = false;
-        m_adjust_reserve = ! adjust_tabwidth( false );
-    }
-
+ 
     // Gtk::NoteBook は configure_event()をキャッチ出来ないので
-    // 応急処置としてタイマーの中でサイズが変更したか調べる
-    else if( m_pre_width > 0 ) m_pre_width = get_width();
+    // 応急処置としてタイマーの中でサイズが変更したか調べて
+    // 変わっていたらタブ幅を調整する
+    if( ! m_fixtab && m_pre_width != get_width() ) adjust_tabwidth( false );
 }
 
 
@@ -92,7 +92,8 @@ void DragableNoteBook::set_tab_fulltext( const std::string& str, int page )
     SKELETON::TabLabel* tablabel = get_tablabel( page );
     if( tablabel ){
         tablabel->set_fulltext( str );
-        adjust_tabwidth( true );
+        if( m_fixtab ) tablabel->resize_tab( str.length() );
+        else adjust_tabwidth( true );
     }
 }
 
@@ -219,80 +220,95 @@ int DragableNoteBook::get_page_under_mouse()
 //
 bool DragableNoteBook::adjust_tabwidth( bool force )
 {
+    const int mrg_notebook = 30;
+
     if( m_fixtab ) return false;
 
-    const int mrg = 30;
+    int pages = get_n_pages();
+    if( ! pages ) return false;
 
-    // 調整待ち
-    if( m_adjust_reserve ) return false;
+    SKELETON::TabLabel* tab = get_tablabel( 0 );
+    if( ! tab ) return false;
+    m_layout_tab->set_font_description( tab->get_pango_context()->get_font_description() );
+    int mrg_tab = tab->get_margin();
+
+    std::vector< int > vec_width; // 変更後のタブ幅
+    vec_width.resize( pages );
 
     int width_notebook = get_width();
-
-    // 前回の呼び出し時とnotebookの幅が同じ時はまだraalize/resizeしていないということなので
-    // 一旦returnしてクロック入力時に改めて adjust_tabwidth() を呼び出す
-    if( ! force && width_notebook == m_pre_width ){
-        m_adjust_reserve = true;
-        return false;
-    }
-
     m_pre_width = width_notebook;
-    m_adjust_reserve = false;
-    width_notebook -= mrg;
-    int pages = get_n_pages();
+    width_notebook -= mrg_notebook;
 
-    if( pages ){
-
-        // タブ幅の平均値
-        int avg_width_tab = width_notebook / MAX( 3, pages );
+    int avg_width_tab = width_notebook / MAX( 3, pages );  // タブ幅の平均値
 
 #ifdef _DEBUG_RESIZE_TAB
-        std::cout << "DragableNoteBook::adjust_tabwidth\n";
-        std::cout << "width_notebook = " << width_notebook << " page = " << pages << std::endl;
-        std::cout << "avg_width_tab = " << avg_width_tab << std::endl;
+    std::cout << "DragableNoteBook::adjust_tabwidth\n"
+              << "width_notebook = " << width_notebook
+              << " page = " << pages << std::endl
+              << "avg_width_tab = " << avg_width_tab << std::endl;
 #endif
 
-        // タブ幅が平均値をオーバーしているなら縮める
-        for( int i = 0; i < pages; ++i ){
+    // 一端、全てのタブの幅を平均値以下に縮める
+    for( int i = 0; i < pages; ++i ){
 
-            SKELETON::TabLabel* tab = get_tablabel( i );
-            if( tab ){
+        tab = get_tablabel( i );
+        if( tab ){
 
-                for(;;){
+            Glib::ustring ulabel( tab->get_fulltext() );
+            vec_width[ i ] = ulabel.length();
 
-                    int width = tab->get_tabwidth();
+            for(;;){
+
+                m_layout_tab->set_text( ulabel.substr( 0,  vec_width[ i ] ) );
+                int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + mrg_tab;
+
 #ifdef _DEBUG_RESIZE_TAB
-                    std::cout << "s " << i << " " << width << " / " << avg_width_tab << " " << tab->get_text() << std::endl;
+                std::cout << "s " << i << " " << width << " / " << avg_width_tab
+                          << " lng = " << vec_width[ i ] << " : " << ulabel.substr( 0, vec_width[ i ] ) << std::endl;
 #endif
-                    if( width < avg_width_tab ) break;
-                    if( ! tab->dec() ) break;
-                }
+
+                if( width < avg_width_tab ) break;
+                --vec_width[ i ];
+                if( vec_width[ i ] < CONFIG::get_tab_min_str() ) break;
             }
         }
+    }
 
-        // タブ幅が平均値より短ければ伸ばす
-        int width_total = 0;
-        for( int i = 0; i < pages; ++i ){
+    // 横をはみださないようにタブ幅を延ばしていく
+    int width_total = 0;
+    for( int i = 0; i < pages; ++i ){
 
-            SKELETON::TabLabel* tab = get_tablabel( i );
-            if( tab ){
+        SKELETON::TabLabel* tab = get_tablabel( i );
+        if( tab ){
 
-                for(;;){
+            Glib::ustring ulabel( tab->get_fulltext() );
+            int lng_max = ulabel.length();
 
-                    if( ! tab->inc() ) break;
+            for(;;){
 
-                    int width = tab->get_tabwidth();
+                if( vec_width[ i ] >= lng_max ) break;
+
+                ++vec_width[ i ];
+
+                m_layout_tab->set_text( ulabel.substr( 0,  vec_width[ i ] ) );
+                int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + mrg_tab;
+
 #ifdef _DEBUG_RESIZE_TAB
-                    std::cout << "w " << i << " " << width << " / " << avg_width_tab << " " << tab->get_text() << std::endl;
+                std::cout << "w " << i << " " << width << " / " << avg_width_tab
+                          << " total= " << width_total + width << " / " << avg_width_tab * ( i + 1 )
+                          << " lng = " << vec_width[ i ] << " : " << ulabel.substr( 0, vec_width[ i ] ) << std::endl;
 #endif
-                    // 最大値を越えたらひとつ戻してbreak;
-                    if( width_total + width > avg_width_tab * ( i + 1 ) ){
-                        tab->dec();
-                        break;
-                    }
+                // 最大値を越えたらひとつ戻してbreak;
+                if( width_total + width > avg_width_tab * ( i + 1 ) ){
+                    --vec_width[ i ];
+                    break;
                 }
-
-                width_total += tab->get_tabwidth();
             }
+
+            m_layout_tab->set_text( ulabel.substr( 0,  vec_width[ i ] ) );
+            width_total += ( m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + mrg_tab );
+
+            tab->resize_tab( vec_width[ i ] );
         }
     }
 

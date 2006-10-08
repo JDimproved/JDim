@@ -33,7 +33,10 @@ namespace SKELETON
         int m_id_icon;
 
         Gtk::Label m_label;
+
+        // アイコン画像
         Gtk::Image* m_image;
+        int m_image_width;
 
         // ラベルに表示する文字列の全体
         std::string m_fulltext;
@@ -58,28 +61,21 @@ namespace SKELETON
 
         const bool is_under_mouse() const { return m_under_mouse; }
 
+        const int get_margin();
+        const int get_image_width() const { return m_image_width; }
+
         // カットしていない全体の文字列
         const std::string& get_fulltext() const { return m_fulltext; }
-        void set_fulltext( const std::string& label );
-
-        // 実際にラベルに表示している文字列
-        const Glib::ustring get_text() const { return m_label.get_text(); }
+        void set_fulltext( const std::string& label ){ m_fulltext = label; }
 
         // アイコンセット
         void set_id_icon( int id );
         const int get_id_icon() const { return m_id_icon; }
 
-        // タブの幅(ピクセル)
-        const int get_tabwidth();
-
-        // 伸縮
-        bool dec();
-        bool inc();
+        // タブの文字列の文字数をlngにセット
+        void resize_tab( int lng );
 
       private:
-
-        // タブの文字列の文字数がlngになるようにリサイズする
-        void resize_tab( int lng );
 
         virtual bool on_enter_notify_event( GdkEventCrossing* event );
         virtual bool on_motion_notify_event( GdkEventMotion* event );

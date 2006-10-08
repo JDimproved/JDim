@@ -12,7 +12,7 @@
 using namespace SKELETON;
 
 TabLabel::TabLabel( const std::string& url )
-    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_image( NULL ), m_under_mouse( false )
+    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_image( NULL ), m_image_width( 0 ), m_under_mouse( false )
 {
 #ifdef _DEBUG
     std::cout << "TabLabel::TabLabel " << m_url << std::endl;
@@ -39,11 +39,12 @@ TabLabel::~TabLabel()
 }
 
 
-// カットしていない全体の文字列をセット
-void TabLabel::set_fulltext( const std::string& label )
+// タブとラベルの間のすき間のサイズ
+// 取得方法が分からないのでとりあえずマジックナンバーを返しておく
+const int TabLabel::get_margin()
 {
-    m_fulltext = label;
-    m_label.set_text( label );
+    const int mrg_tab = 12;
+    return mrg_tab;
 }
 
 
@@ -66,43 +67,7 @@ void TabLabel::set_id_icon( int id )
     m_id_icon = id;
 
     m_image->set( ICON::get_icon( id ) );
-}
-
-
-// タブ幅取得
-const int TabLabel::get_tabwidth()
-{
-    const int iconsize = 16;
-    const int mrg = 12;    
-
-    int lng_label = m_label.get_layout()->get_pixel_ink_extents().get_width() + mrg;
-
-    if( m_image ) lng_label += iconsize;
-
-    return lng_label;
-}
-
-
-// 縮む
-bool TabLabel::dec()
-{
-    int lng = m_label.get_text().length() -1;
-    if( lng < CONFIG::get_tab_min_str() ) return false;
-    resize_tab( lng );
-
-    return true;
-}
-
-
-// 伸びる
-bool TabLabel::inc()
-{
-    if( m_label.get_text() == m_fulltext ) return false;
-
-    int lng = m_label.get_text().length() +1;
-    resize_tab( lng );
-
-    return true;
+    m_image_width = ICON::get_icon( id )->get_width();
 }
 
 
