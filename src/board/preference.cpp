@@ -35,7 +35,7 @@ Preferences::Preferences( const std::string& url )
     else{
         std::list< std::string >::iterator it = list_cookies.begin();
         for( ; it != list_cookies.end(); ++it )
-            str_cookies_hana += "cookie: " + MISC::strtoutf8( (*it), DBTREE::board_charset( get_url() ) ) + "\n";
+            str_cookies_hana += "cookie: " + MISC::iconv( (*it), DBTREE::board_charset( get_url() ), "UTF-8" ) + "\n";
     }
 
     std::string hana = DBTREE::board_hana_for_write( get_url() );

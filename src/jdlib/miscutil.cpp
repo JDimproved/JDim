@@ -489,15 +489,8 @@ std::string MISC::charset_url_encode( const std::string& str, const std::string&
 {
     if( charset.empty() ) return MISC::url_encode( str.c_str(), str.length() );
 
-    char* str_bk = ( char* ) malloc( str.length() + 64 );
-    strcpy( str_bk, str.c_str() );
-
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( "UTF-8", charset.c_str() );
-    int byte_out;
-    const char* str_enc = libiconv->convert( str_bk, strlen( str_bk ), byte_out );
-    std::string str_encoded = MISC::url_encode( str_enc, strlen( str_enc ) );
-    delete libiconv;
-    free( str_bk );
+    std::string str_enc = MISC::iconv( str, "UTF-8", charset );
+    std::string str_encoded = MISC::url_encode( str_enc.c_str(), strlen( str_enc.c_str() ) );
 
     return str_encoded;
 }
@@ -548,20 +541,22 @@ std::string MISC::base64( const std::string& str )
 
 
 //
-// strをUTF-8の文字列に変換
+// 文字コードを coding_from から coding_to に変換
 //
 // 遅いので連続的な処理が必要な時は使わないこと
 //
-std::string MISC::strtoutf8( const std::string& str, const std::string& charset )
+std::string MISC::iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to )
 {
-    if( charset == "UTF-8" ) return str;
+    if( coding_from == coding_to ) return str;
 
     char* str_bk = ( char* ) malloc( str.length() + 64 );
     strcpy( str_bk, str.c_str() );
 
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( charset.c_str() );
+    JDLIB::Iconv* libiconv = new JDLIB::Iconv( coding_from, coding_to );
     int byte_out;
+
     std::string str_enc = libiconv->convert( str_bk, strlen( str_bk ), byte_out );
+
     delete libiconv;
     free( str_bk );
 

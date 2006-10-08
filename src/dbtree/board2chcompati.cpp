@@ -99,7 +99,7 @@ const std::string Board2chCompati::cookie_for_write()
     // その他は iterateして取得
     for( ; it != list_cookies.end(); ++it ){
 
-        std::string tmp_cookie = MISC::strtoutf8( (*it), get_charset() );
+        std::string tmp_cookie = MISC::iconv( (*it), get_charset(), "UTF-8" );
 
 #ifdef _DEBUG
         std::cout << tmp_cookie << std::endl;

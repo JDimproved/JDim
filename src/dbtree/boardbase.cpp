@@ -762,7 +762,7 @@ void BoardBase::receive_finish()
     }
 
     // UTF-8に変換しておく
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( m_charset );
+    JDLIB::Iconv* libiconv = new JDLIB::Iconv( m_charset, "UTF-8" );
     int byte_out;
     const char* rawdata_utf8 = libiconv->convert( m_rawdata , m_lng_rawdata,  byte_out );
 

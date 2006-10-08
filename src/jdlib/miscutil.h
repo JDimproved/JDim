@@ -64,14 +64,16 @@ namespace MISC
     // urlエンコード
     std::string url_encode( const char* str, size_t n );
 
-    //文字コード変換して url エンコード
+    // 文字コードを変換して url エンコード
+    // str は UTF-8 であること
     std::string charset_url_encode( const std::string& str, const std::string& charset );
 
     // BASE64
     std::string base64( const std::string& str );
 
-    // UTF8の文字列に変換
-    std::string strtoutf8( const std::string& str, const std::string& charset );
+    // 文字コードを coding_from から coding_to に変換
+    // 遅いので連続的な処理が必要な時は使わないこと
+    std::string iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to );
 
     // utf-8 -> ucs2 変換
     int utf8toucs2( const char* utfstr, int& byte );

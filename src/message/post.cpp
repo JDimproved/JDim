@@ -149,7 +149,7 @@ void Post::receive_finish()
 #endif
 
     std::string charset = DBTREE::board_charset( m_url );
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( charset );
+    JDLIB::Iconv* libiconv = new JDLIB::Iconv( charset, "UTF-8" );
     int byte_out;
     std::string str = libiconv->convert( m_rawdata, m_lng_rawdata, byte_out );
     delete libiconv;

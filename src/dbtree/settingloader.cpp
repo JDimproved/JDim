@@ -91,7 +91,7 @@ void SettingLoader::load_setting()
     m_lng_rawdata = CACHE::load_rawdata( path, m_rawdata, SIZE_OF_RAWDATA );
 
     // UTF-8に変換しておく
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( DBTREE::board_charset( m_url_boadbase ) );
+    JDLIB::Iconv* libiconv = new JDLIB::Iconv( DBTREE::board_charset( m_url_boadbase ), "UTF-8" );
     int byte_out;
     m_settingtxt = libiconv->convert( m_rawdata , m_lng_rawdata,  byte_out );
     delete libiconv;
@@ -203,7 +203,7 @@ void SettingLoader::receive_finish()
     }
 
     // UTF-8に変換しておく
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( DBTREE::board_charset( m_url_boadbase ) );
+    JDLIB::Iconv* libiconv = new JDLIB::Iconv( DBTREE::board_charset( m_url_boadbase ), "UTF-8" );
     int byte_out;
     m_settingtxt = libiconv->convert( m_rawdata , m_lng_rawdata,  byte_out );
     delete libiconv;
