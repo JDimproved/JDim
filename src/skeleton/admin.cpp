@@ -401,7 +401,7 @@ void Admin::exec_command()
         set_tablabel( command.url, command.arg1 );
     }
     else if( command.command  == "adjust_tabwidth" ){
-        m_notebook->adjust_tabwidth( ( command.arg1 == "true" ) );
+        m_notebook->adjust_tabwidth();
     }
 
     // タブのアイコンをセット

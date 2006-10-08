@@ -39,7 +39,7 @@ void DragableNoteBook::clock_in()
     // Gtk::NoteBook は configure_event()をキャッチ出来ないので
     // 応急処置としてタイマーの中でサイズが変更したか調べて
     // 変わっていたらタブ幅を調整する
-    if( ! m_fixtab && m_pre_width != get_width() ) adjust_tabwidth( false );
+    if( ! m_fixtab && m_pre_width != get_width() ) adjust_tabwidth();
 }
 
 
@@ -93,7 +93,7 @@ void DragableNoteBook::set_tab_fulltext( const std::string& str, int page )
     if( tablabel ){
         tablabel->set_fulltext( str );
         if( m_fixtab ) tablabel->resize_tab( str.length() );
-        else adjust_tabwidth( true );
+        else adjust_tabwidth();
     }
 }
 
@@ -110,7 +110,7 @@ void DragableNoteBook::remove_page( int page )
     Gtk::Notebook::remove_page( page );
     if( tablabel ) delete tablabel;
     m_tooltip.hide_tooltip();
-    adjust_tabwidth( true );
+    adjust_tabwidth();
 }
 
 
@@ -218,7 +218,7 @@ int DragableNoteBook::get_page_under_mouse()
 //
 // タブ幅調整
 //
-bool DragableNoteBook::adjust_tabwidth( bool force )
+bool DragableNoteBook::adjust_tabwidth()
 {
     const int mrg_notebook = 30;
 
@@ -227,9 +227,10 @@ bool DragableNoteBook::adjust_tabwidth( bool force )
     int pages = get_n_pages();
     if( ! pages ) return false;
 
+    // layoutにラベルのフォントをセットする
     SKELETON::TabLabel* tab = get_tablabel( 0 );
     if( ! tab ) return false;
-    m_layout_tab->set_font_description( tab->get_pango_context()->get_font_description() );
+    m_layout_tab->set_font_description( tab->get_label_font_description() );
     int mrg_tab = tab->get_margin();
 
     std::vector< int > vec_width; // 変更後のタブ幅

@@ -55,6 +55,9 @@ namespace SKELETON
         SIG_TAB_DRAG_DROP sig_tab_drag_drop() { return m_sig_tab_drag_drop; }
         SIG_TAB_DRAG_END sig_tab_drag_end() { return m_sig_tab_drag_end; }
 
+        Pango::FontDescription get_label_font_description(){
+            return m_label.get_pango_context()->get_font_description(); }
+
         const std::string& get_url(){ return m_url; }
 
         void set_dragable( bool dragable, int button );

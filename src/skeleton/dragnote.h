@@ -82,7 +82,7 @@ namespace SKELETON
         void set_fixtab( bool fix ){ m_fixtab = fix; }
 
         // タブ幅調整
-        bool adjust_tabwidth( bool force );
+        bool adjust_tabwidth();
 
 
       private:
