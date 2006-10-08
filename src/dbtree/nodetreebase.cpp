@@ -1550,6 +1550,12 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 // 戻り値 : リンクが現れれば true
 //
 
+//
+// Thanks to 「パッチ投稿」スレの8氏
+//
+// http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/8
+//
+
 enum
 {
     LINKTYPE_NONE,

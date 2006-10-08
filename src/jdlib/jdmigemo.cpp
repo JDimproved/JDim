@@ -1,5 +1,11 @@
 // ライセンス: 最新のGPL
 
+//
+// Thanks to 「テスト運用中」スレの18氏
+//
+// http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1149945056/18
+//
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
