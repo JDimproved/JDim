@@ -9,6 +9,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
+#include "jdlib/misctrip.h"
 
 #include "dbtree/interface.h"
 
@@ -424,7 +425,22 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         
         std::stringstream ss;
 
-        if( ! m_entry_name.get_text().empty() ) ss << m_entry_name.get_text();
+        // 名前 + トリップ
+        if( ! m_entry_name.get_text().empty() ){
+
+            std::string name = m_entry_name.get_text();
+            std::string trip;
+
+            unsigned int i = name.find( "#" );
+            if( i != std::string::npos ){
+
+                trip = MISC::get_trip( name.substr( i+1 ), DBTREE::board_charset( get_url() ) );
+                name = name.substr( 0, i );
+            }
+
+            ss << name;
+            if( ! trip.empty() ) ss << " ◆" << trip;
+        }
         else ss << DBTREE::default_noname( get_url() );
 
         ss << "<>" << m_entry_mail.get_text() << "<>";
