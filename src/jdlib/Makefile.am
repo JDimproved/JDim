@@ -4,6 +4,7 @@ libjdlib_a_SOURCES = \
 	miscutil.cpp \
 	miscmsg.cpp \
 	misctime.cpp \
+	misctrip.cpp \
         heap.cpp \
 	jdiconv.cpp \
 	loader.cpp \
@@ -15,6 +16,7 @@ noinst_HEADERS = \
 	miscutil.h \
 	miscmsg.h \
 	misctime.h \
+	misctrip.h \
 	constptr.h \
 	refptr_lock.h \
 	heap.h \
