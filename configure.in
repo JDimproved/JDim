@@ -50,12 +50,14 @@ dnl GNOMEUIを使ってセッション管理をする。libgnomeui-develが必�
 use_gnomeui=no
 
 dnl 追加コンパイルオプション
-CXXFLAGS="$CXXFLAGS -ggdb -Wall -lcrypt"
+CXXFLAGS="$CXXFLAGS -ggdb -Wall"
 
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
 
 
+LIBCRYPT_CFLAGS=""
+LIBCRYPT_LIBS=""
 LIBSM_CFLAGS=""
 LIBSM_LIBS=""
 GNOMEUI_CFLAGS=""
@@ -87,6 +89,19 @@ AC_SUBST(GTHREAD_CFLAGS)
 AC_SUBST(GTHREAD_LIBS)
 AC_SUBST(OPENSSL_CFLAGS)
 AC_SUBST(OPENSSL_LIBS)
+
+
+dnl 
+dnl crypt
+dnl
+
+LIBCRYPT_CFLAGS=""
+LIBCRYPT_LIBS="-lcrypt"
+
+echo "use crypt"
+AC_SUBST(LIBCRYPT_CFLAGS)
+AC_SUBST(LIBCRYPT_LIBS)
+CXXFLAGS="$CXXFLAGS -DUSE_CRYPT"
 
 
 dnl
