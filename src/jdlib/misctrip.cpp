@@ -66,7 +66,7 @@ namespace MISC
     //
     // salt の変換
     //
-    void convert_salt( char *key, char *salt )
+    void convert_salt( char *salt )
     {
         unsigned int i;
         for (i=0; i<strlen(salt); i++)
@@ -131,7 +131,7 @@ std::string MISC::get_trip( const std::string& str, const std::string& charset )
     strncat(salt, "H.", 2);
 
     // salt を仕様に合わせて変換する
-    MISC::convert_salt(key, salt);
+    MISC::convert_salt( salt );
 
     // トリップ生成
     char trip[ chrbuf ];
