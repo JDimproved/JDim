@@ -55,9 +55,6 @@ CXXFLAGS="$CXXFLAGS -ggdb -Wall"
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
 
-
-LIBCRYPT_CFLAGS=""
-LIBCRYPT_LIBS=""
 LIBSM_CFLAGS=""
 LIBSM_LIBS=""
 GNOMEUI_CFLAGS=""
@@ -95,13 +92,9 @@ dnl
 dnl crypt
 dnl
 
-LIBCRYPT_CFLAGS=""
-LIBCRYPT_LIBS="-lcrypt"
-
 echo "use crypt"
-AC_SUBST(LIBCRYPT_CFLAGS)
-AC_SUBST(LIBCRYPT_LIBS)
-CXXFLAGS="$CXXFLAGS -DUSE_CRYPT"
+AC_CHECK_HEADERS([crypt.h])
+AC_CHECK_LIB(crypt,crypt)
 
 
 dnl
