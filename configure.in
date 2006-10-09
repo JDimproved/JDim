@@ -50,7 +50,7 @@ dnl GNOMEUIを使ってセッション管理をする。libgnomeui-develが必�
 use_gnomeui=no
 
 dnl 追加コンパイルオプション
-CXXFLAGS="$CXXFLAGS -ggdb -Wall"
+CXXFLAGS="$CXXFLAGS -ggdb -Wall -lcrypt"
 
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
