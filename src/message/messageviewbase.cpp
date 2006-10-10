@@ -10,6 +10,7 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 #include "jdlib/misctrip.h"
+#include "jdlib/jdiconv.h"
 
 #include "dbtree/interface.h"
 
@@ -41,6 +42,12 @@ MessageViewBase::MessageViewBase( const std::string& url )
 
     // コントロールモード設定
     get_control().set_mode( CONTROL::MODE_MESSAGE );
+
+    m_max_line = DBTREE::line_number( get_url() ) * 2;
+    m_max_str = DBTREE::message_count( get_url() );
+
+    m_iconv = new JDLIB::Iconv( "UTF-8", DBTREE::board_charset( get_url() ) );;
+    m_str_iconv = ( char* ) malloc( 2048 );
 }
 
 
@@ -56,6 +63,12 @@ MessageViewBase::~MessageViewBase()
 
     if( m_post ) delete m_post;
     m_post = NULL;
+
+    if( m_iconv ) delete m_iconv;
+    m_iconv = NULL;
+
+    if( m_str_iconv ) free( m_str_iconv );
+    m_str_iconv = NULL;
 }
 
 
@@ -175,10 +188,16 @@ void MessageViewBase::pack_widget()
     m_hbox_name_mail.pack_start( m_check_fixmail, Gtk::PACK_SHRINK );
     m_hbox_name_mail.pack_start( m_entry_mail );
 
+#ifndef USE_GTKMM24
+    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
+#endif
+
     m_msgview.pack_start( m_hbox_name_mail, Gtk::PACK_SHRINK );    
     m_msgview.pack_start( m_text_message );
+    m_msgview.pack_start( m_statbar, Gtk::PACK_SHRINK );
 
     m_text_message.sig_key_release().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_release ) );    
+    m_text_message.get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::show_status ) );
 
     // プレビュー
     m_preview = CORE::ViewFactory( CORE::VIEW_ARTICLEPREVIEW, get_url() );
@@ -192,6 +211,8 @@ void MessageViewBase::pack_widget()
 
     // フォントセット
     init_font( CONFIG::get_fontname_message() );
+
+    show_status();
 }
 
 
@@ -459,4 +480,32 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         m_preview->set_command( "append_dat", ss.str() );
     }
     else MESSAGE::get_admin()->set_command( "focus_view" );
+}
+
+
+
+//
+// ステータス表示
+//
+void MessageViewBase::show_status()
+{
+    std::stringstream ss;
+    int byte_out;
+
+    strcpy( m_str_iconv,  m_text_message.get_text().c_str() );
+    std::string str_enc = m_iconv->convert( m_str_iconv, strlen( m_str_iconv ), byte_out );
+
+    ss << " [ 行数 " << m_text_message.get_buffer()->get_line_count();
+    if( m_max_line ) ss << "/ " << m_max_line;
+
+    ss << "   /  文字数 " << str_enc.length();
+    if( m_max_str ) ss << "/ " << m_max_str;
+
+    ss << " ]";
+
+#ifdef USE_GTKMM24
+    m_statbar.push( ss.str() );
+#else
+    m_label_stat.set_text( ss.str() );
+#endif        
 }

@@ -7,6 +7,12 @@
 #include "skeleton/editview.h"
 #include "skeleton/imgbutton.h"
 
+namespace JDLIB
+{
+    class Iconv;
+}
+
+
 namespace MESSAGE
 {
     class Post;
@@ -35,6 +41,20 @@ namespace MESSAGE
         Gtk::Entry m_entry_name;
         Gtk::Entry m_entry_mail;
         SKELETON::EditView m_text_message;
+
+        // ステータスバー
+#ifdef USE_GTKMM24
+        Gtk::Statusbar m_statbar;
+#else
+        Gtk::HBox m_statbar;
+        Gtk::Label m_label_stat;
+#endif
+
+        // 文字数計算用
+        JDLIB::Iconv* m_iconv;
+        char* m_str_iconv;
+        int m_max_line;
+        int m_max_str;
 
       protected:
         
@@ -76,6 +96,8 @@ namespace MESSAGE
         void slot_switch_page( GtkNotebookPage*, guint page );
 
         virtual std::string create_message(){ return std::string() ;}
+
+        void show_status();
 
       protected:
 
