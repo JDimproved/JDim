@@ -25,7 +25,7 @@ Preferences::Preferences( const std::string& url )
       m_label_line( "1レスの最大改行数 : " ),
       m_label_byte( "1レスの最大バイト数 : " )
 {
-    m_edit_cookies.textview().set_editable( false );
+    m_edit_cookies.set_editable( false );
     m_check_noname.set_active( DBTREE::board_check_noname( get_url() ) );
 
     // cookie と hana をセット
@@ -87,7 +87,7 @@ Preferences::Preferences( const std::string& url )
 
 
     // SETTING.TXT
-    m_edit_settingtxt.textview().set_editable( false );
+    m_edit_settingtxt.set_editable( false );
     m_edit_settingtxt.set_text( DBTREE::settingtxt( get_url() ) );
 
     m_notebook.append_page( m_vbox, "一般" );

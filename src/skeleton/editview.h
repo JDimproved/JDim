@@ -57,11 +57,10 @@ namespace SKELETON
         SIG_KEY_PRESS sig_key_press(){ return m_textview.sig_key_press(); }
         SIG_KEY_RELEASE sig_key_release(){ return m_textview.sig_key_release(); }
 
-        Gtk::TextView& textview(){ return m_textview; }
+        Glib::RefPtr< Gtk::TextBuffer > get_buffer(){ return m_textview.get_buffer(); }
 
         void set_text( const Glib::ustring& text ){ m_textview.get_buffer()->set_text( text ); }
         Glib::ustring get_text(){ return m_textview.get_buffer()->get_text(); }
-        int get_line_count(){ return m_textview.get_buffer()->get_line_count(); }
 
         void set_editable( bool editable ){ m_textview.set_editable( editable ); }
 
