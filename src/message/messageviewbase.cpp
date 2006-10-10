@@ -28,6 +28,8 @@
 
 using namespace MESSAGE;
 
+#define MAX_STR_ICONV 128*1024
+
 
 MessageViewBase::MessageViewBase( const std::string& url )
     : SKELETON::View( url ),
@@ -47,7 +49,11 @@ MessageViewBase::MessageViewBase( const std::string& url )
     m_max_str = DBTREE::message_count( get_url() );
 
     m_iconv = new JDLIB::Iconv( "UTF-8", DBTREE::board_charset( get_url() ) );;
-    m_str_iconv = ( char* ) malloc( 2048 );
+
+    int max_str = m_max_str;
+    if( ! max_str ) max_str = MAX_STR_ICONV;
+
+    m_str_iconv = ( char* ) malloc( max_str + 1024 );
 }
 
 
