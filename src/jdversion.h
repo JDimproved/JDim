@@ -4,7 +4,7 @@
 #define _JDVER_H
 
 // cvs 版の時は JDVERSION_CVS をdefineする
-//#define JDVERSION_CVS
+#define JDVERSION_CVS
 
 #define JDCOPYRIGHT "(c) 2006 JD project"
 #define JDVERSIONSTR "1.8.0-beta061009"
