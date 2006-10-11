@@ -249,6 +249,9 @@ namespace DBTREE
         // 発言数( num_id_name )の更新
         // IDノードの色も変更する
         void set_num_id_name( NODE* header, int num_id_name );
+
+        // http://ime.nu/ などをリンクから削除
+        void remove_imenu( char* str_link );
     };
 }
 
