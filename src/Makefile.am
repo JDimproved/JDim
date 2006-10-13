@@ -24,6 +24,7 @@ jd_SOURCES = \
 	command.cpp \
 	sharedbuffer.cpp \
 	dndmanager.cpp \
+	usrcmdmanager.cpp \
 	historymenu.cpp \
 	historysubmenu.cpp \
 	control.cpp \
@@ -49,6 +50,7 @@ noinst_HEADERS = \
 	command.h \
 	sharedbuffer.h \
 	dndmanager.h \
+	usrcmdmanager.h \
 	historymenu.h \
 	historysubmenu.h \
 	colorid.h \

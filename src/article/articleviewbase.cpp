@@ -28,6 +28,7 @@
 #include "sharedbuffer.h"
 #include "cache.h"
 #include "prefdiagfactory.h"
+#include "usrcmdmanager.h"
 
 #include <sstream>
 
@@ -181,7 +182,6 @@ void ArticleViewBase::setup_action()
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "BookMark", "ブックマーク設定/解除"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"), sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "Google", "googleで検索"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_google ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_current_url ) );
     action_group()->add( Gtk::Action::create( "CopyID", "IDコピー"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_id ) );
     action_group()->add( Gtk::Action::create( "Copy", "Copy"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_selection_str ) );
@@ -239,6 +239,14 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DeleteImage", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::slot_deleteimage ) );
     action_group()->add( Gtk::Action::create( "SaveImage", "保存"), sigc::mem_fun( *this, &ArticleViewBase::slot_saveimage ) );
 
+    // ユーザコマンド
+    const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
+    for( int i = 0; i < usrcmd_size; ++i ){
+        std::string cmdname = "usrcmd" + MISC::itostr( i );
+        std::string cmdlabel = CORE::get_usrcmd_manager()->get_label( i );
+        Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( cmdname, cmdlabel );
+        action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::slot_usrcmd ), i ) );
+    }
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
@@ -322,8 +330,15 @@ void ArticleViewBase::setup_action()
     "</menu>"
 
     "<separator/>"
-    "<menuitem action='OpenBrowser'/>"
-    "<menuitem action='Google'/>"
+    "<menuitem action='OpenBrowser'/>";
+
+    // ユーザコマンド
+    for( int i = 0; i < usrcmd_size; ++i ){
+        str_ui += "<menuitem action='usrcmd" + MISC::itostr( i );
+        str_ui +=+  "'/>";
+    }
+
+    Glib::ustring str_ui2 = 
 
     "<separator/>"
     "<menuitem action='CopyURL'/>"
@@ -366,6 +381,8 @@ void ArticleViewBase::setup_action()
     "</popup>"
 
     "</ui>";
+
+    str_ui += str_ui2;
 
     ui_manager()->add_ui_from_string( str_ui );
 
@@ -1740,12 +1757,6 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
-    act = action_group()->get_action( "Google" );
-    if( act ){
-        if( str_select.empty() ) act->set_sensitive( false );
-        else act->set_sensitive( true );
-    }
-
     act = action_group()->get_action( "AboneWord" );
     if( act ){
         if( str_select.empty() ) act->set_sensitive( false );
@@ -1757,6 +1768,19 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         if( str_select.empty() ) act->set_sensitive( false );
         else act->set_sensitive( true );
     }
+
+
+    // ユーザコマンド
+    const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
+    for( int i = 0; i < usrcmd_size; ++i ){
+        std::string str_cmd = "usrcmd" + MISC::itostr( i );
+        act = action_group()->get_action( str_cmd );
+        if( act ){
+            if( CORE::get_usrcmd_manager()->sensitive( i, url, str_select ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+        }
+    }
+
 
     // ブックマークがセットされていない
     act = action_group()->get_action( "DrawoutBM" );
@@ -1888,12 +1912,11 @@ void ArticleViewBase::slot_drawout_selection_str()
 
 
 //
-// google検索
+// ユーザコマンド実行
 //
-void ArticleViewBase::slot_search_google()
+void ArticleViewBase::slot_usrcmd( int num )
 {
-    if( m_drawarea->str_selection().empty() ) return;
-    CORE::core_set_command( "search_google" ,"", m_drawarea->str_selection() );
+    CORE::core_set_command( "exec_usr_cmd" ,m_url_tmp, MISC::itostr( num ), m_drawarea->str_selection() );
 }
 
 

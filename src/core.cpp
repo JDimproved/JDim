@@ -9,6 +9,7 @@
 #include "session.h"
 #include "global.h"
 #include "dndmanager.h"
+#include "usrcmdmanager.h"
 #include "historymenu.h"
 #include "login2ch.h"
 #include "prefdiagfactory.h"
@@ -119,6 +120,9 @@ Core::Core( WinMain& win_main )
 
     // D&Dマネージャ作成
     CORE::get_dnd_manager();
+
+    // ユーザコマンドマネージャ
+    CORE::get_usrcmd_manager();
 }
 
 
@@ -138,6 +142,9 @@ Core::~Core()
 
     // メインnotebookのページ番号
     SESSION::set_notebook_main_page( m_notebook.get_current_page() );
+
+    // ユーザコマンドマネージャ
+    CORE::delete_usrcmd_manager();
 
     // D&Dマネージャ削除
     CORE::delete_dnd_manager();
@@ -1614,24 +1621,15 @@ void Core::exec_command()
         CORE::core_set_command( "relayout_all_article" );
     }
 
+    // ユーザコマンド
+    else if( command.command  == "exec_usr_cmd" ){
+        CORE::get_usrcmd_manager()->exec( atoi( command.arg1.c_str() ), command.url, command.arg2 );
+    }
+
     // URL のオープン関係
 
     // 常に外部ブラウザで開く場合
     else if( command.command  == "open_url_browser" ) open_by_browser( command.url );
-
-    // google 検索
-    else if( command.command == "search_google" ){
-
-        std::string query = "http://www.google.co.jp/search?hl=ja&q=";
-        query += MISC::url_encode( command.arg1.c_str(), strlen( command.arg1.c_str() ) );
-        query += "&btnG=Google+%E6%A4%9C%E7%B4%A2&lr=";
-       
-#ifdef _DEBUG
-        std::cout << "exec : search_google = " << query << std::endl;
-#endif
-
-        open_by_browser( query );
-    }
 
     // タイプによって判定する場合
     else if( command.command  == "open_url" ){

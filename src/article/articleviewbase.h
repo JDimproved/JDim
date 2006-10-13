@@ -190,7 +190,7 @@ namespace ARTICLE
         void slot_copy_id();
         void slot_copy_selection_str();
         void slot_drawout_selection_str();
-        void slot_search_google();
+        void slot_usrcmd( int num );
         void slot_copy_res( bool ref );
         void slot_favorite();
         virtual void slot_drawout_res();
