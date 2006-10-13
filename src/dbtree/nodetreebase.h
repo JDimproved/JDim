@@ -251,7 +251,7 @@ namespace DBTREE
         void set_num_id_name( NODE* header, int num_id_name );
 
         // http://ime.nu/ などをリンクから削除
-        void remove_imenu( char* str_link );
+        bool remove_imenu( char* str_link );
     };
 }
 

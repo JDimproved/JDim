@@ -1341,7 +1341,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
             // フラッシュしてからリンクノードつくる
             createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
-            remove_imenu( tmplink );
+            while( remove_imenu( tmplink ) );
 
             lng_link = strlen( tmplink );
 
@@ -2135,25 +2135,36 @@ void NodeTreeBase::set_num_id_name( NODE* header, int num_id_name )
 //
 // http://ime.nu/ などをリンクから削除
 //
-void NodeTreeBase::remove_imenu( char* str_link )
+// 取り除いたらtrueを返す
+//
+// Thanks to 「ハッチ投稿」スレの24氏
+//
+// http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/24
+//
+bool NodeTreeBase::remove_imenu( char* str_link )
 {
-    if( ( str_link[ 7 ] != 'i' && str_link[ 8 ] != 'm' )
-        || ( str_link[ 7 ] != 'n' && str_link[ 8 ] != 'u' )
-        || ( str_link[ 7 ] != 'p' && str_link[ 8 ] != 'i' ) ){
+    const int lng_http = 7; // = strlen( "http://" );
+
+    if( ( str_link[ lng_http ] != 'i' && str_link[ lng_http +1 ] != 'm' )
+        || ( str_link[ lng_http ] != 'n' && str_link[ lng_http +1 ] != 'u' )
+        || ( str_link[ lng_http ] != 'p' && str_link[ lng_http +1 ] != 'i' ) ){
 
         if( strstr( str_link, "http://ime.nu/" ) == str_link
                || strstr( str_link, "http://ime.st/" ) == str_link
                || strstr( str_link, "http://nun.nu/" ) == str_link
                || strstr( str_link, "http://pinktower.com/" ) == str_link ){
 
-            const int lng_http = 7; // = strlen( "http://" );
             int linklen = strlen( str_link ) +1;
             int cutsize = 0; 
 
-            if( str_link[ 7 ] == 'p' ) cutsize = 14; // = strlen( "pinktower.com/" )
-            else cutsize =  7; // = strlen( "ime.nu/"
+            if( str_link[ lng_http ] == 'p' ) cutsize = 14; // = strlen( "pinktower.com/" )
+            else cutsize =  7; // = strlen( "ime.nu/" )
 
             memmove( str_link + lng_http, str_link + lng_http + cutsize, linklen - ( lng_http + cutsize ) );
+
+            return true;
         }
     }
+
+    return false;
 }
