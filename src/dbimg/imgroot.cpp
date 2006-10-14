@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "imgroot.h"
@@ -8,10 +8,16 @@
 
 #include "jdlib/confloader.h"
 
+#ifdef _DEBUG
+#include "jdlib/misctime.h"
+#endif
+
 #include "cache.h"
 #include "command.h"
 
 #include <gtkmm.h>
+#include <sys/time.h>
+
 #include <sstream>
 
 using namespace DBIMG;
@@ -163,14 +169,17 @@ void ImgRoot::delete_cache( const std::string& url, bool redraw )
 //
 // 全キャッシュ削除
 //
-// image/info フォルダにあるファイルを全て取得してinfoファイルに
-// 含まれているURLを取得して delete_cache() を呼ぶ
+// image/info フォルダにあるファイルを全て取得してinfoファイルから
+// 含まれているURLを取得して保護されていない画像は delete_cache() を呼んで消す
 //
 void ImgRoot::delete_all_files()
 {
 #ifdef _DEBUG
     std::cout << "ImgRoot::delete_all_files\n";
 #endif
+
+    // この日数よりも古い画像を消す
+    const time_t delete_days = 0;
 
     std::stringstream ss;
     ss << "現在の画像キャッシュサイズ : " << ( CACHE::get_dirsize( CACHE::path_img_root() ) / 1024 / 1024 ) << "M\n\n"
@@ -189,16 +198,33 @@ void ImgRoot::delete_all_files()
         std::string file = CACHE::path_img_info_root() + ( *it );
 
         JDLIB::ConfLoader cf( file, std::string() );
+
         std::string url = cf.get_option( "url", "" );
         bool protect = cf.get_option( "protect", 0 );
 
+        if( protect ) continue;
+
+        // 経過日数計算
+        struct timeval tv;
+        struct timezone tz;
+        gettimeofday( &tv, &tz );
+        time_t mtime = CACHE::get_filemtime( CACHE::path_img( url ) );
+        time_t days = ( tv.tv_sec - mtime ) / ( 60 * 60 * 24 );
+
+        bool delete_image = false;
+        if( days >= delete_days ) delete_image = true;
+
 #ifdef _DEBUG
-        std::cout << "file  = " << file << std::endl;
+        std::cout << "\npath  = " << file << std::endl;
         std::cout << "url = " << url << std::endl;
         std::cout << "protect = " << protect << std::endl;
+        std::cout << "path = " << CACHE::path_img( url ) << std::endl;
+        std::cout << "mtime = " << MISC::timettostr( mtime ) << std::endl;
+        std::cout << "days = " << days << std::endl;
+        if( delete_image ) std::cout << "delete!\n";
 #endif
 
-        if( !protect ) delete_cache( url,
+        if( delete_image ) delete_cache( url,
                                      false // ビューの再描画はしない
             );
     }
