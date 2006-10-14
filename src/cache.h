@@ -10,14 +10,9 @@
 
 namespace CACHE
 {
-    // is_file_exists の戻り値
-    enum
-    {
-        EXIST_FILE = 0,  // ファイル
-        EXIST_DIR,       // ディレクトリ
-        EXIST,           // 存在しない or 何か存在してる
-        EXIST_ERROR      // エラー
-    };
+    /////////////////////////////////////////////////
+    //
+    // 設定ファイルのパス
 
     // 設定ファイル
     std::string path_conf();
@@ -82,6 +77,20 @@ namespace CACHE
     std::string path_img( const std::string& url );
     std::string path_img_info( const std::string& url );
 
+
+    /////////////////////////////////////////////////
+    //
+    // ユーティリティ関数
+
+    // is_file_exists の戻り値
+    enum
+    {
+        EXIST_FILE = 0,  // ファイル
+        EXIST_DIR,       // ディレクトリ
+        EXIST,           // 存在しない or 何か存在してる
+        EXIST_ERROR      // エラー
+    };
+
     // キャッシュの mkdir 関係
     bool mkdir_root();
     bool mkdir_imgroot();
@@ -94,9 +103,12 @@ namespace CACHE
     bool save_rawdata( const std::string& path, const std::string& str );
     bool save_rawdata( const std::string& path, const char* data, size_t n );
 
-    // ファイル操作
+    // ファイル情報
     long is_file_exists( const std::string& path );
     size_t get_filesize( const std::string& path );
+    time_t get_filemtime( const std::string& path );
+
+    // ファイル操作
     bool jdmkdir( const std::string& path );
     bool jdcopy( const std::string& file_from, const std::string& file_to );
     std::string open_save_diag( const std::string& file_from, const std::string& file_to );

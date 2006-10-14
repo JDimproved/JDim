@@ -440,6 +440,15 @@ size_t CACHE::get_filesize( const std::string& path )
 }
 
 
+time_t CACHE::get_filemtime( const std::string& path )
+{
+    struct stat buf_stat;
+
+    if( stat( path.c_str(), &buf_stat ) != 0 ) return 0;
+    if( S_ISREG( buf_stat.st_mode ) ) return buf_stat.st_mtime;
+    return 0;
+}
+
 
 //
 // mkdir
