@@ -36,7 +36,7 @@ namespace CORE
 
         BrowserPref( const std::string& url )
         : SKELETON::PrefDiag( url ),
-        m_label_notice( "コンボボックスの中から使用するWebブラウザを選択して下さい\nリンククリック時に %s をURLに変換します" )
+        m_label_notice( "コンボボックスの中から使用するWebブラウザを選択して下さい\nリンククリック時に %LINK をURLに変換します" )
         {
             int i = 0;
             for(;;){
