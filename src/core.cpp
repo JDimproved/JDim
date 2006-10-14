@@ -1621,9 +1621,14 @@ void Core::exec_command()
         CORE::core_set_command( "relayout_all_article" );
     }
 
-    // ユーザコマンド
+    // ユーザコマンド実行
     else if( command.command  == "exec_usr_cmd" ){
-        CORE::get_usrcmd_manager()->exec( atoi( command.arg1.c_str() ), command.url, command.arg2 );
+
+        CORE::get_usrcmd_manager()->exec( atoi( command.arg1.c_str() ), // コマンド番号
+                                          command.url, // URL
+                                          command.arg2, // Link
+                                          command.arg3 // 選択文字
+            );
     }
 
     // URL のオープン関係

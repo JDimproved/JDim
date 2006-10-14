@@ -27,10 +27,14 @@ namespace CORE
         const int get_size() const { return m_size; }
 
         // 実行
-        void exec( int num, const std::string& url, const std::string& selection );
+        void exec( int num, const std::string& url, const std::string& link, const std::string& selection );
 
+        bool is_sensitive( int num, const std::string& link, const std::string& selection );
         const std::string get_label( int num );
-        bool sensitive( int num, const std::string& url, const std::string& selection );
+
+      private:
+
+        void set_cmd( const std::string& label, const std::string& cmd );
     };
 
     ///////////////////////////////////////

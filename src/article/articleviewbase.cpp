@@ -333,13 +333,9 @@ void ArticleViewBase::setup_action()
     "<menuitem action='OpenBrowser'/>";
 
     // ユーザコマンド
-    for( int i = 0; i < usrcmd_size; ++i ){
-        str_ui += "<menuitem action='usrcmd" + MISC::itostr( i );
-        str_ui +=+  "'/>";
-    }
+    for( int i = 0; i < usrcmd_size; ++i ) str_ui += "<menuitem action='usrcmd" + MISC::itostr( i ) + std::string( "'/>" );
 
     Glib::ustring str_ui2 = 
-
     "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<menuitem action='Copy'/>"
@@ -366,7 +362,12 @@ void ArticleViewBase::setup_action()
     "<popup name='popup_menu_img'>"
     "<menuitem action='Cancel_Mosaic'/>"
     "<separator/>"
-    "<menuitem action='OpenBrowser'/>"
+    "<menuitem action='OpenBrowser'/>";
+
+    // ユーザコマンド
+    for( int i = 0; i < usrcmd_size; ++i ) str_ui2 += "<menuitem action='usrcmd" + MISC::itostr( i ) + std::string( "'/>" );
+
+    Glib::ustring str_ui3 = 
     "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<separator/>"
@@ -382,7 +383,7 @@ void ArticleViewBase::setup_action()
 
     "</ui>";
 
-    str_ui += str_ui2;
+    str_ui += str_ui2 + str_ui3;
 
     ui_manager()->add_ui_from_string( str_ui );
 
@@ -1776,7 +1777,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         std::string str_cmd = "usrcmd" + MISC::itostr( i );
         act = action_group()->get_action( str_cmd );
         if( act ){
-            if( CORE::get_usrcmd_manager()->sensitive( i, url, str_select ) ) act->set_sensitive( true );
+            if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
     }
@@ -1916,7 +1917,7 @@ void ArticleViewBase::slot_drawout_selection_str()
 //
 void ArticleViewBase::slot_usrcmd( int num )
 {
-    CORE::core_set_command( "exec_usr_cmd" ,m_url_tmp, MISC::itostr( num ), m_drawarea->str_selection() );
+    CORE::core_set_command( "exec_usr_cmd" ,m_url_article, MISC::itostr( num ), m_url_tmp, m_drawarea->str_selection() );
 }
 
 
