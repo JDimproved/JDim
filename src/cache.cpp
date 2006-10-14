@@ -102,6 +102,14 @@ std::string CACHE::path_etcboard()
 }
 
 
+// ユーザーコマンド設定ファイル
+std::string CACHE::path_usrcmd()
+{
+    return CACHE::path_root() +  "usrcmd.txt";
+}
+
+
+
 // 履歴
 std::string CACHE::path_xml_history()
 {

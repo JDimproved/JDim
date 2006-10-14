@@ -42,8 +42,11 @@ namespace CACHE
     std::string path_xml_favorite();
     std::string path_xml_favorite_bkup();
 
-    // 外部板( navi2ch 互換 )
+    // 外部板設定ファイル( navi2ch 互換 )
     std::string path_etcboard();
+
+    // ユーザーコマンド設定ファイル
+    std::string path_usrcmd();
 
     // 履歴
     std::string path_xml_history();

@@ -5,6 +5,7 @@
 
 #include "usrcmdmanager.h"
 #include "command.h"
+#include "cache.h"
 
 #include "jdlib/miscutil.h"
 
@@ -34,8 +35,32 @@ using namespace CORE;
 
 Usrcmd_Manager::Usrcmd_Manager()
 {
-    set_cmd( "googleで検索", "$VIEW http://www.google.co.jp/search?hl=ja&q=$TEXTU&btnG=Google+%E6%A4%9C%E7%B4%A2&lr=" );
-//    set_cmd( "wgetでダウンロード", "xterm -e \"~/.jd/mywget.sh $LINK\"" );
+    // 設定ファイル(usrcmd.txt)からユーザーコマンドを読み込み
+    std::string file_usrcmd = CACHE::path_usrcmd();
+    std::string usrcmd;
+    std::string label;
+    std::string cmd;
+    if( CACHE::load_rawdata( file_usrcmd, usrcmd ) ){
+
+        std::list< std::string > list_usrcmd = MISC::get_lines( usrcmd );
+        std::list< std::string >::iterator it;
+        for( it = list_usrcmd.begin(); it != list_usrcmd.end(); ++it ){
+
+            label = *( it++ );
+            if( it == list_usrcmd.end() ) break;
+            cmd = *it;
+            set_cmd( label, cmd );
+        }
+    }
+
+    // デフォルト設定を保存
+    else{
+
+        label = "googleで検索";
+        cmd = "$VIEW http://www.google.co.jp/search?hl=ja&q=$TEXTU&btnG=Google+%E6%A4%9C%E7%B4%A2&lr=";
+        set_cmd( label, cmd );
+        CACHE::save_rawdata( file_usrcmd, label + "\n" + cmd + "\n" );
+    }
 
     m_size = m_list_label.size();
 }
