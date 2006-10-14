@@ -2145,9 +2145,9 @@ bool NodeTreeBase::remove_imenu( char* str_link )
 {
     const int lng_http = 7; // = strlen( "http://" );
 
-    if( ( str_link[ lng_http ] != 'i' && str_link[ lng_http +1 ] != 'm' )
-        || ( str_link[ lng_http ] != 'n' && str_link[ lng_http +1 ] != 'u' )
-        || ( str_link[ lng_http ] != 'p' && str_link[ lng_http +1 ] != 'i' ) ){
+    if( ( str_link[ lng_http ] == 'i' && str_link[ lng_http +1 ] == 'm' )
+        || ( str_link[ lng_http ] == 'n' && str_link[ lng_http +1 ] == 'u' )
+        || ( str_link[ lng_http ] == 'p' && str_link[ lng_http +1 ] == 'i' ) ){
 
         if( strstr( str_link, "http://ime.nu/" ) == str_link
                || strstr( str_link, "http://ime.st/" ) == str_link
