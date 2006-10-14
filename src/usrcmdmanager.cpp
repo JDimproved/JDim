@@ -105,6 +105,7 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
     cmd = MISC::replace_str( cmd, "$LINK", link );
     cmd = MISC::replace_str( cmd, "$TEXTU", MISC::charset_url_encode( selection, "UTF-8" ) );
     cmd = MISC::replace_str( cmd, "$TEXTX", MISC::charset_url_encode( selection, "EUC-JP" ) );
+    cmd = MISC::replace_str( cmd, "$TEXTE", MISC::charset_url_encode( selection, "MS932" ) );
     cmd = MISC::replace_str( cmd, "$TEXT", selection );
        
 #ifdef _DEBUG
@@ -134,7 +135,9 @@ bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::
 
     if( cmd.find( "$TEXT" ) != std::string::npos
         || cmd.find( "$TEXTU" ) != std::string::npos
-        || cmd.find( "$TEXTX" ) != std::string::npos ){
+        || cmd.find( "$TEXTX" ) != std::string::npos
+        || cmd.find( "$TEXTE" ) != std::string::npos
+        ){
 
         if( selection.empty() ) return false;
     }
