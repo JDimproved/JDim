@@ -126,6 +126,11 @@ namespace CONFIG
     const bool get_zoom_to_fit();
     void set_zoom_to_fit( bool fit );
 
+    // 画像キャッシュ削除の日数
+    const int get_del_img_day();
+    void set_del_img_day( int day );
+
+    // スレ一覧にdat落ちしたスレも表示する
     const bool get_show_oldarticle();
     void set_show_oldarticle( bool showarticle );
 

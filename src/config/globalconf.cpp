@@ -60,6 +60,7 @@ int imgpopup_width;
 int imgpopup_height;
 bool use_mosaic;
 bool zoom_to_fit;
+int del_img_day;
 
 bool show_oldarticle;
 
@@ -162,6 +163,9 @@ const bool CONFIG::init_config()
 
     // 画像をデフォルトでウィンドウサイズに合わせる
     zoom_to_fit = cf.get_option( "zoom_to_fit", 1 );
+
+    // 画像キャッシュ削除の日数
+    del_img_day = cf.get_option( "del_img_day", 20 );
 
     // 2chの認証サーバ
     url_login2ch = cf.get_option( "url_login2ch", "https://2chv.tora3.net/futen.cgi" );
@@ -321,6 +325,7 @@ void CONFIG::save_conf()
     cf.update( "imgpopup_height", imgpopup_height );
     cf.update( "use_mosaic", use_mosaic );
     cf.update( "zoom_to_fit", zoom_to_fit );
+    cf.update( "del_img_day", del_img_day );
 
     cf.update( "color_char_R", color_char[ 0 ] );
     cf.update( "color_char_G", color_char[ 1 ] );
@@ -470,7 +475,8 @@ const bool CONFIG::get_use_mosaic(){ return use_mosaic; }
 void CONFIG::set_use_mosaic( bool mosaic ) { use_mosaic = mosaic; }
 const bool CONFIG::get_zoom_to_fit(){ return zoom_to_fit; }
 void CONFIG::set_zoom_to_fit( bool fit ){ zoom_to_fit = fit; }
-
+const int CONFIG::get_del_img_day(){ return del_img_day; }
+void CONFIG::set_del_img_day( int day ){ del_img_day = day; }
 
 const bool CONFIG::get_show_oldarticle(){ return show_oldarticle; }
 void CONFIG::set_show_oldarticle( bool showarticle ){ show_oldarticle = showarticle; }
