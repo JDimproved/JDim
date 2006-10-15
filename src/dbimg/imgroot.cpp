@@ -1,10 +1,11 @@
 // ライセンス: 最新のGPL
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "imgroot.h"
 #include "img.h"
+#include "delimgdiag.h"
 
 #include "jdlib/confloader.h"
 
@@ -178,54 +179,81 @@ void ImgRoot::delete_all_files()
     std::cout << "ImgRoot::delete_all_files\n";
 #endif
 
-    // この日数よりも古い画像を消す
-    const time_t delete_days = 0;
+    DelImgDiag deldiag;
+    if( deldiag.run() != Gtk::RESPONSE_OK ) return;
 
-    std::stringstream ss;
-    ss << "現在の画像キャッシュサイズ : " << ( CACHE::get_dirsize( CACHE::path_img_root() ) / 1024 / 1024 ) << "M\n\n"
-       << "保護されていない画像を全て削除しますか？";
+    std::vector< std::string > list_urls;
+    int num_files = 0;
+    int64_t size_files = 0;
 
-    Gtk::MessageDialog mdiag( ss.str(), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-    if( mdiag.run() != Gtk::RESPONSE_OK ) return;
-
-    std::list< std::string >list_file;
+    std::list< std::string >list_infofile;
     std::string path_info_root = CACHE::path_img_info_root();
-    list_file = CACHE::get_filelist( path_info_root );
+    list_infofile = CACHE::get_filelist( path_info_root );
 
-    std::list< std::string >::iterator it = list_file.begin();
-    for(; it != list_file.end(); ++it ){
+    std::list< std::string >::iterator it_info = list_infofile.begin();
+    for(; it_info != list_infofile.end(); ++it_info ){
 
-        std::string file = CACHE::path_img_info_root() + ( *it );
+        std::string path_info = CACHE::path_img_info_root() + ( *it_info );
 
-        JDLIB::ConfLoader cf( file, std::string() );
+        JDLIB::ConfLoader cf( path_info, std::string() );
 
         std::string url = cf.get_option( "url", "" );
         bool protect = cf.get_option( "protect", 0 );
 
+        if( url.empty() ) continue;
         if( protect ) continue;
 
-        // 経過日数計算
+        std::string path_file = CACHE::path_img( url );
+
+        // 経過日数を計算
         struct timeval tv;
         struct timezone tz;
         gettimeofday( &tv, &tz );
-        time_t mtime = CACHE::get_filemtime( CACHE::path_img( url ) );
-        time_t days = ( tv.tv_sec - mtime ) / ( 60 * 60 * 24 );
+        time_t mtime = CACHE::get_filemtime( path_file );
 
-        bool delete_image = false;
-        if( days >= delete_days ) delete_image = true;
+        // 404などでinfoファイルはあるが画像が無い場合は infoのmtimeを見る
+        if( ! mtime ) mtime = CACHE::get_filemtime( path_info );
+
+        time_t days = ( tv.tv_sec - mtime ) / ( 60 * 60 * 24 );
+        if( days >= CONFIG::get_del_img_day() ){
 
 #ifdef _DEBUG
-        std::cout << "\npath  = " << file << std::endl;
-        std::cout << "url = " << url << std::endl;
-        std::cout << "protect = " << protect << std::endl;
-        std::cout << "path = " << CACHE::path_img( url ) << std::endl;
-        std::cout << "mtime = " << MISC::timettostr( mtime ) << std::endl;
-        std::cout << "days = " << days << std::endl;
-        if( delete_image ) std::cout << "delete!\n";
+            std::cout << "\ninfo  = " << path_info << std::endl;
+            std::cout << "path = " << path_file << std::endl;
+            std::cout << "url = " << url << std::endl;
+            std::cout << "protect = " << protect << std::endl;
+            std::cout << "mtime = " << MISC::timettostr( mtime ) << std::endl;
+            std::cout << "days = " << days << std::endl;
+#endif
+            list_urls.push_back( url );
+            ++num_files;
+            size_files += CACHE::get_filesize( path_file );
+        }
+    }
+
+    if( !num_files ){
+        Gtk::MessageDialog mdiag2( "削除するファイルはありません", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK );
+        mdiag2.run();
+        return;
+    }
+
+    std::stringstream ss;
+    ss << "削除するファイルの数 : " << num_files << "\n"
+       << "削除するファイルの合計サイズ : " << ( size_files / 1024 / 1024 ) << "M\n\n"
+       << "本当に画像を削除しますか？";
+
+    Gtk::MessageDialog mdiag2( ss.str(), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+    if( mdiag2.run() != Gtk::RESPONSE_OK ) return;
+
+    std::vector< std::string >::iterator it_url = list_urls.begin();
+    for(; it_url != list_urls.end(); ++it_url ){
+
+#ifdef _DEBUG
+        std::cout << "delete " << *it_url << std::endl;
 #endif
 
-        if( delete_image ) delete_cache( url,
-                                     false // ビューの再描画はしない
+        delete_cache( *it_url,
+                      false // ビューの再描画はしない
             );
     }
 

@@ -8,7 +8,8 @@ libdbimg_a_SOURCES = \
 noinst_HEADERS = \
 	imgroot.h \
 	img.h \
-	imginterface.h
+	imginterface.h \
+	delimgdiag.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src
