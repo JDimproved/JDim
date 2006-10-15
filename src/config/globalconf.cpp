@@ -26,6 +26,10 @@ std::string fontname_popup;
 std::string fontname_tree;
 std::string fontname_tree_board;
 std::string fontname_message;
+
+std::string ref_prefix;
+int ref_prefix_space;
+
 std::string url_login2ch;
 std::string url_bbsmenu;
 std::string path_cacheroot;
@@ -111,6 +115,14 @@ const bool CONFIG::init_config()
     fontname_tree = cf.get_option( "fontname_tree","Kochi Gothic 10" );
     fontname_tree_board = cf.get_option( "fontname_tree_board",fontname_tree );
     fontname_message = cf.get_option( "fontname_message",fontname_message );
+
+    // レスを参照するときに前に付ける文字
+    ref_prefix = cf.get_option( "ref_prefix", ">" );
+
+    // ref_prefix の後のスペースの数
+    // JDLIB::ConfLoader の中で MISC::remove_space() が呼ばれて空白が消えるので別設定とした
+    ref_prefix_space = cf.get_option( "ref_prefix_space", 1 );
+    for( int i = 0; i < ref_prefix_space; ++i ) ref_prefix += " ";
 
     // キャッシュのルートディレクトリ
     // キャッシュ構造は navi2ch の上位互換なので path_cacheroot = "~/.navi2ch/" とすればnavi2chとキャッシュを共有できる
@@ -293,6 +305,9 @@ void CONFIG::save_conf()
     cf.update( "fontname_tree_board", fontname_tree_board );
     cf.update( "fontname_message", fontname_message );
 
+    cf.update( "ref_prefix", ref_prefix );
+    cf.update( "ref_prefix_space", ref_prefix_space );
+
     cf.update( "path_cacheroot", path_cacheroot );
 
     cf.update( "agent_for2ch", agent_for2ch );
@@ -423,6 +438,8 @@ void CONFIG::set_fontname_popup( const std::string& name) { fontname_popup = nam
 void CONFIG::set_fontname_tree( const std::string& name) { fontname_tree = name; }
 void CONFIG::set_fontname_tree_board( const std::string& name) { fontname_tree_board = name; }
 void CONFIG::set_fontname_message( const std::string& name) { fontname_message = name; }
+
+const std::string&  CONFIG::get_ref_prefix(){ return ref_prefix; }
 
 const std::string& CONFIG::get_url_login2ch() { return url_login2ch; }
 const std::string& CONFIG::get_url_bbsmenu() { return url_bbsmenu; }
