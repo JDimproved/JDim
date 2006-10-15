@@ -2037,7 +2037,14 @@ void ArticleViewBase::slot_copy_res( bool ref )
     std::cout << "ArticleViewBase::copy_res number = " << m_str_num << std::endl;
 #endif    
 
-    COPYCLIP( m_article->get_res_str( atoi( m_str_num.c_str() ), ref ) );
+    std::string tmpstr;
+    if( ref ) tmpstr = CONFIG::get_ref_prefix();
+    std::string board_name = DBTREE::board_name( m_url_article );
+    if( ! board_name.empty() ) tmpstr += "[ " + board_name + " ] ";
+    tmpstr += DBTREE::article_subject( m_url_article ) + "\n";
+    tmpstr += m_article->get_res_str( atoi( m_str_num.c_str() ), ref );
+
+    COPYCLIP( tmpstr );
 }
 
 

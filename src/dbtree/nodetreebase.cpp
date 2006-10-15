@@ -394,7 +394,7 @@ std::list< int > NodeTreeBase::get_res_query( const std::string& query, bool mod
 //
 // number　番のレスの文字列を返す
 //
-// ref == true なら先頭に ">" を付ける
+// ref == true なら先頭に参照文字( "> "など)を付ける
 //
 const std::string NodeTreeBase::get_res_str( int number, bool ref )
 {
@@ -407,13 +407,13 @@ const std::string NodeTreeBase::get_res_str( int number, bool ref )
     NODE* node = res_header( number );
     if( ! node ) return std::string();
 
-    if( ref ) str_res += "> ";
+    if( ref ) str_res += CONFIG::get_ref_prefix();
     
     while( node ){
     
         if( node->type == DBTREE::NODE_BR ){
             str_res += "\n";
-            if( ref ) str_res += "> ";
+            if( ref ) str_res += CONFIG::get_ref_prefix();
         }
         else if( node->text ){
             str_res += node->text;
