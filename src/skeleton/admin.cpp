@@ -68,6 +68,7 @@ Admin::Admin( const std::string& url )
 
     m_action_group->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く" ), sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
     m_action_group->add( Gtk::Action::create( "CopyURL", "URLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
+    m_action_group->add( Gtk::Action::create( "CopyTitle", "タイトルとURLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_title_url ) );
 
     m_ui_manager = Gtk::UIManager::create();    
     m_ui_manager->insert_action_group( m_action_group );
@@ -106,6 +107,7 @@ Admin::Admin( const std::string& url )
     "<separator/>"
 
     "<menuitem action='CopyURL'/>"
+    "<menuitem action='CopyTitle'/>"
 
     "</popup>"
 
@@ -1303,4 +1305,18 @@ void Admin::slot_copy_url()
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) COPYCLIP( view->url_for_copy() );
+}
+
+
+
+//
+// 右クリックメニューのタイトルとURLコピー
+//
+void Admin::slot_copy_title_url()
+{
+    std::string str = m_notebook->get_tab_fulltext( m_clicked_page );
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    if( view ) str += "\n" + view->url_for_copy();
+    
+    COPYCLIP( str );
 }

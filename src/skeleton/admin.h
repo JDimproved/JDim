@@ -157,6 +157,7 @@ namespace SKELETON
         virtual void slot_cancel_reload_all_tabs();
         virtual void slot_open_by_browser();
         virtual void slot_copy_url();
+        virtual void slot_copy_title_url();
     };
 }
 
