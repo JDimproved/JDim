@@ -17,7 +17,6 @@
 #include "cache.h"
 #include "session.h"
 
-#include <gtkmm.h>
 #include <sstream>
 
 #ifndef MAX
@@ -68,7 +67,6 @@ void Img::clear()
     m_zoom_to_fit = CONFIG::get_zoom_to_fit();
     m_size = 100;
     m_protect = false;
-    memset( m_sign, 0, sizeof( m_sign ) );
     m_type = T_UNKNOWN;
 }
 
@@ -181,15 +179,56 @@ void Img::receive_data( const char* data, size_t size )
 {
     if( ! size ) return;
 
-    if( m_fout ) fwrite( data, 1, size, m_fout );
-    if( m_sign[ 0 ] == 0 ) memcpy( m_sign, data, MIN( sizeof( m_sign ) -1, size ) );
+    // 先頭のシグネチャを見て画像かどうかをチェック
+    if( m_type == T_UNKNOWN && get_code() == HTTP_OK ){
 
 #ifdef _DEBUG
-    std::cout << "Img::receive_data code = " << code() << " "
-              << current_length() << " / " << total_length() << std::endl;
+        assert( size > 8 );
+#endif        
+        // ファイル判定用のシグネチャ
+        const unsigned char *sign = ( const unsigned char* )data;
+
+        // jpeg は FF D8
+        if( sign[ 0 ] == 0xFF
+            && sign[ 1 ] == 0xD8 ) m_type = T_JPG;
+
+        // png は 0x89 0x50 0x4e 0x47 0xd 0xa 0x1a 0xa
+        else if( sign[ 0 ] == 0x89
+                 && sign[ 1 ] == 0x50
+                 && sign[ 2 ] == 0x4e
+                 && sign[ 3 ] == 0x47
+                 && sign[ 4 ] == 0x0d
+                 && sign[ 5 ] == 0x0a
+                 && sign[ 6 ] == 0x1a
+                 && sign[ 7 ] == 0x0a ) m_type = T_PNG;
+
+        // gif
+        else if( sign[ 0 ] == 'G'
+                 && sign[ 1 ] == 'I'
+                 && sign[ 2 ] == 'F' ) m_type = T_GIF;
+
+        // 画像ファイルではない
+        else{
+            m_type = T_NOIMG;
+            stop_load();
+        }
+
+        // 指定サイズよりも大きい
+        if( m_type != T_NOIMG && total_length() > (size_t)CONFIG::get_max_img_size() * 1024 * 1024 ){
+            m_type = T_LARGE;
+            stop_load();
+        }
+    }
+
+    if( m_fout &&
+        ( m_type != T_NOIMG && m_type != T_LARGE ) ) fwrite( data, 1, size, m_fout );
+
+#ifdef _DEBUG
+    std::cout << "Img::receive_data code = " << get_code() << " "
+              << current_length() << " / " << total_length() << std::endl
+              << "type = " << m_type << std::endl;
 #endif
 }
-
 
 
 //
@@ -200,50 +239,44 @@ void Img::receive_finish()
     if( m_fout ) fclose( m_fout );
     m_fout = NULL;
 
-    m_type = T_NOIMG;
-
-    // シグネチャを見て画像かどうかをチェック
-    if( get_code() == HTTP_OK ){
-
-        // jpeg は FF D8
-        if( m_sign[ 0 ] == 0xFF
-            && m_sign[ 1 ] == 0xD8 ) m_type = T_JPG;
-
-        // png は 0x89 0x50 0x4e 0x47 0xd 0xa 0x1a 0xa
-        else if( m_sign[ 0 ] == 0x89
-                 && m_sign[ 1 ] == 0x50
-                 && m_sign[ 2 ] == 0x4e
-                 && m_sign[ 3 ] == 0x47
-                 && m_sign[ 4 ] == 0x0d
-                 && m_sign[ 5 ] == 0x0a
-                 && m_sign[ 6 ] == 0x1a
-                 && m_sign[ 7 ] == 0x0a ) m_type = T_PNG;
-
-        // gif
-        else if( m_sign[ 0 ] == 'G'
-                 && m_sign[ 1 ] == 'I'
-                 && m_sign[ 2 ] == 'F' ) m_type = T_GIF;
-
-        if( m_type == T_NOIMG ){
-            set_code( HTTP_CANCEL );
-            set_str_code( "画像ファイルではありません" );
-        }
+    // 指定サイズよりも大きい
+    if( total_length() > (size_t)CONFIG::get_max_img_size() * 1024 * 1024 ){
+        m_type = T_LARGE;
+        set_code( HTTP_CANCEL );
     }
 
+    // エラーメッセージのセット
     if( m_type == T_NOIMG ){
+        set_code( HTTP_CANCEL );
+        set_str_code( "画像ファイルではありません" );
+        set_current_length( 0 );
+    }
 
-        // キャッシュを消しておく
+    else if( m_type == T_LARGE ){
+        set_code( HTTP_CANCEL );
+        std::stringstream ss;
+        ss << "ファイルサイズが大きすぎます ( " << ( total_length() / 1024 / 1024 ) << " M )";
+        set_str_code( ss.str() );
+        set_current_length( 0 );
+    }
+    else if( m_type == T_UNKNOWN ) set_current_length( 0 );
+
+    set_total_length( current_length() );
+
+    // 読み込み失敗の場合はファイルを消しておく
+    if( ! total_length() ){
         std::string path = CACHE::path_img( m_url );
         if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
     }
 
+    // 読み込み失敗の場合でもエラーメッセージを残すので info　は保存する
     save_info();
 
     CORE::core_set_command( "redraw", m_url );
     CORE::core_set_command( "redraw_article" );
 
 #ifdef _DEBUG
-    std::cout << "Img::receive_finish code = " << code() << std::endl
+    std::cout << "Img::receive_finish code = " << get_code() << std::endl
               << "total byte = " << total_length() << std::endl
               << "type = " << m_type << std::endl;
 #endif
@@ -276,9 +309,9 @@ void Img::read_info()
 
 #ifdef _DEBUG
     std::cout << "refurl = " << m_refurl << std::endl;
-    std::cout << "code = " << code() << std::endl;
-    std::cout << "str_code = " << str_code() << std::endl;
-    std::cout << "byte = " << current_length() << std::endl;
+    std::cout << "code = " << get_code() << std::endl;
+    std::cout << "str_code = " << get_str_code() << std::endl;
+    std::cout << "byte = " << total_length() << std::endl;
     std::cout << "mosaic = " << m_mosaic << std::endl;
     std::cout << "protect = " << m_protect << std::endl;
     std::cout << "type = " << m_type << std::endl;
@@ -300,7 +333,7 @@ void Img::save_info()
         << "refurl = " << m_refurl << std::endl
         << "code = " << get_code() << std::endl
         << "str_code = " << get_str_code() << std::endl
-        << "byte = " << current_length() << std::endl
+        << "byte = " << total_length() << std::endl
         << "mosaic = " << m_mosaic << std::endl
         << "protect = " << m_protect << std::endl
         << "type = " << m_type << std::endl;

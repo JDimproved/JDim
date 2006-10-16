@@ -17,6 +17,7 @@ namespace DBIMG
         T_JPG,
         T_PNG,
         T_GIF,
+        T_LARGE,
         T_UNKNOWN
     };
 
@@ -33,9 +34,6 @@ namespace DBIMG
 
         // 保存用ファイルハンドラ
         FILE* m_fout;
-
-        // ファイル判定用のシグネチャ
-        unsigned char m_sign[ 16 ];
         
       public:
         Img( const std::string& url );
