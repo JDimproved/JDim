@@ -65,6 +65,7 @@ int imgpopup_height;
 bool use_mosaic;
 bool zoom_to_fit;
 int del_img_day;
+int max_img_size;
 
 bool show_oldarticle;
 
@@ -178,6 +179,9 @@ const bool CONFIG::init_config()
 
     // 画像キャッシュ削除の日数
     del_img_day = cf.get_option( "del_img_day", 20 );
+
+    // ダウンロードする画像の最大サイズ(Mbyte)
+    max_img_size = cf.get_option( "max_img_size", 16 );
 
     // 2chの認証サーバ
     url_login2ch = cf.get_option( "url_login2ch", "https://2chv.tora3.net/futen.cgi" );
@@ -341,6 +345,7 @@ void CONFIG::save_conf()
     cf.update( "use_mosaic", use_mosaic );
     cf.update( "zoom_to_fit", zoom_to_fit );
     cf.update( "del_img_day", del_img_day );
+    cf.update( "max_img_size", max_img_size );
 
     cf.update( "color_char_R", color_char[ 0 ] );
     cf.update( "color_char_G", color_char[ 1 ] );
@@ -494,6 +499,7 @@ const bool CONFIG::get_zoom_to_fit(){ return zoom_to_fit; }
 void CONFIG::set_zoom_to_fit( bool fit ){ zoom_to_fit = fit; }
 const int CONFIG::get_del_img_day(){ return del_img_day; }
 void CONFIG::set_del_img_day( int day ){ del_img_day = day; }
+const int CONFIG::get_max_img_size(){ return max_img_size; }
 
 const bool CONFIG::get_show_oldarticle(){ return show_oldarticle; }
 void CONFIG::set_show_oldarticle( bool showarticle ){ show_oldarticle = showarticle; }

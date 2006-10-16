@@ -133,6 +133,9 @@ namespace CONFIG
     const int get_del_img_day();
     void set_del_img_day( int day );
 
+    // ダウンロードする画像の最大サイズ(Mbyte)
+    const int get_max_img_size();
+
     // スレ一覧にdat落ちしたスレも表示する
     const bool get_show_oldarticle();
     void set_show_oldarticle( bool showarticle );
