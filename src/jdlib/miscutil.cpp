@@ -698,9 +698,14 @@ std::string MISC::tolower_str( const std::string& str )
 //
 std::string MISC::get_hostname( const std::string& path )
 {
-    if( path.find( "http://" ) == std::string::npos ) return std::string();
-    size_t i = path.find( "/", strlen( "http://" ) ); 
-    if( i == std::string::npos ) return std::string();
+    int lng = 0;
+    if( path.find( "http://" ) == 0 ) lng = strlen( "http://" );
+    else if( path.find( "https://" ) == 0 ) lng = strlen( "https://" );
+    else if( path.find( "ftp://" ) == 0 ) lng = strlen( "ftp://" );
+    if( !lng ) return std::string();
+
+    size_t i = path.find( "/", lng ); 
+    if( i == std::string::npos ) return path;
 
     return path.substr( 0, i );
 }
