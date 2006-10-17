@@ -1197,14 +1197,20 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 // ahref : <a href=～></a> からリンクノードを作成する
 // (例) parse_html( "<a href=\"hoge.com\">hoge</a>", 27, COLOR_CHAR, false, false, true );
 //
+// (パッチ)
+//
+// 行頭の空白は全て除くパッチ
+// Thanks to 「パッチ投稿スレ」の28氏
+// http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/28
+//
 void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool digitlink, bool bold, bool ahref )
 {
     const char* pos = str;
     const char* pos_end = str + lng;
     int lng_text = 0;
     
-    // 行頭の1個以上の空白は除く
-    while( *pos == ' ' && *( pos + 1 ) != ' ' ) ++pos;
+    // 行頭の空白は全て除く
+    while( *pos == ' ' ) ++pos;
    
     for( ; pos < pos_end; ++pos, digitlink = false ){
 
@@ -1225,11 +1231,8 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 // 改行ノード作成
                 createBrNode();
 
-                //改行直後の空白を取り除く
-                if( *pos == ' ' ) ++pos;
-                
-                // 行頭の1個以上の空白を除く
-                while( *pos == ' ' && *( pos + 1 ) != ' ' ) ++pos;
+                // 改行直後と行頭の空白は全て除く
+                while( *pos == ' ' ) ++pos;
             }
 
             //  ahref == true かつ <a href=～></a>
@@ -1384,6 +1387,9 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 continue;
             }
         }
+
+        // 連続する空白は一個にする
+        while( *pos == ' ' && *( pos + 1 ) == ' ' ) ++pos;
 
         m_parsed_text[ lng_text++ ] = *pos;
     }
