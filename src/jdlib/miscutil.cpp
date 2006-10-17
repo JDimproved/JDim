@@ -696,7 +696,9 @@ std::string MISC::tolower_str( const std::string& str )
 //
 // path からホスト名だけ取り出す
 //
-std::string MISC::get_hostname( const std::string& path )
+// protocol = false のときはプロトコルを除く
+//
+std::string MISC::get_hostname( const std::string& path, bool protocol )
 {
     int lng = 0;
     if( path.find( "http://" ) == 0 ) lng = strlen( "http://" );
@@ -704,10 +706,14 @@ std::string MISC::get_hostname( const std::string& path )
     else if( path.find( "ftp://" ) == 0 ) lng = strlen( "ftp://" );
     if( !lng ) return std::string();
 
-    size_t i = path.find( "/", lng ); 
-    if( i == std::string::npos ) return path;
+    int pos = 0;
+    if( ! protocol ) pos = lng;
 
-    return path.substr( 0, i );
+    size_t i = path.find( "/", lng ); 
+
+    if( i == std::string::npos ) path.substr( pos );
+
+    return path.substr( pos, i - pos );
 }
 
 

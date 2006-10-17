@@ -91,7 +91,8 @@ namespace MISC
     std::string tolower_str( const std::string& str );
 
     // path からホスト名だけ取り出す
-    std::string get_hostname( const std::string& path );
+    // protocol = false のときはプロトコルを除く
+    std::string get_hostname( const std::string& path, bool protocol = true );
 
     // path からファイル名だけ取り出す
     std::string get_filename( const std::string& path );

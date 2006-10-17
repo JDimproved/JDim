@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "usrcmdmanager.h"
@@ -105,6 +105,9 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
     cmd = MISC::replace_str( cmd, "$LINK", link );
     cmd = MISC::replace_str( cmd, "$SERVERL", MISC::get_hostname( link ) );
     cmd = MISC::replace_str( cmd, "$SERVER", MISC::get_hostname( url ) );
+    cmd = MISC::replace_str( cmd, "$HOSTNAMEL", MISC::get_hostname( link, false ) );
+    cmd = MISC::replace_str( cmd, "$HOSTNAME", MISC::get_hostname( url, false ) );
+
     cmd = MISC::replace_str( cmd, "$TEXTU", MISC::charset_url_encode( selection, "UTF-8" ) );
     cmd = MISC::replace_str( cmd, "$TEXTX", MISC::charset_url_encode( selection, "EUC-JP" ) );
     cmd = MISC::replace_str( cmd, "$TEXTE", MISC::charset_url_encode( selection, "MS932" ) );
@@ -117,8 +120,8 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
     std::cout << "exec " << cmd << std::endl;
 #endif
 
-//    if( m_list_openbrowser[ num ] ) CORE::core_set_command( "open_url_browser", cmd );
-//    else Glib::spawn_command_line_async( cmd );
+    if( m_list_openbrowser[ num ] ) CORE::core_set_command( "open_url_browser", cmd );
+    else Glib::spawn_command_line_async( cmd );
 }
 
 
@@ -133,6 +136,7 @@ bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::
 
     if( cmd.find( "$LINK" ) != std::string::npos
         || cmd.find( "$SERVERL" ) != std::string::npos
+        || cmd.find( "$HOSTNAMEL" ) != std::string::npos
         ){
         if( link.empty() ) return false;
     }
