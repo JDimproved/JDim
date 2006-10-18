@@ -25,14 +25,16 @@ namespace CONFIG
     void set_restore_image( bool restore );
 
     // 色 ( RGB の順 ) 範囲は 0 - 65535
-    const int* get_color_char();
-    const int* get_color_separator();
-    const int* get_color_back();
-    const int* get_color_back_popup();
-    const int* get_color_back_tree();
-    const int* get_color_back_tree_board();
+    const int* get_color_char();          // 文字
+    const int* get_color_char_age();      // age ているときのメール欄
+    const int* get_color_separator();     // 新着セパレータ
+    const int* get_color_back();          // 背景
+    const int* get_color_back_popup();    // ポップアップの背景
+    const int* get_color_back_tree();     // 板一覧の背景
+    const int* get_color_back_tree_board();// スレ一覧の背景
     
     void set_color_char( int* color );
+    void set_color_char_age( int* color );
     void set_color_separator( int* color );
     void set_color_back( int* color );
     void set_color_back_popup( int* color );

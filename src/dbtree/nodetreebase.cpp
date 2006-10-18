@@ -1074,9 +1074,18 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
 //
 void NodeTreeBase::parseMail( NODE* header, const char* str, int lng )
 {
-    header->headinfo->node_mail = createTextNode( " [", COLOR_CHAR );
-    parse_html( str, lng, COLOR_CHAR, true );
-    createTextNode( "]：", COLOR_CHAR );
+    // sage 以外の時は色を変える
+    int color = COLOR_CHAR;
+    if( !( str[ 0 ] == 's' && str[ 1 ] == 'a' && str[ 2 ] == 'g' && str[ 3 ] == 'e' ) ) color = COLOR_CHAR_AGE;
+
+    header->headinfo->node_mail = createTextNode( " [", color );
+    parse_html( str, lng, color, true );
+
+    if( color == COLOR_CHAR ) createTextNode( "]：", color );
+    else{
+        createTextNode( "]", color );
+        createTextNode( "：", COLOR_CHAR );
+    }
 }
 
 

@@ -16,6 +16,7 @@ bool restore_article;
 bool restore_image;
 
 int color_char[ COLOR_SIZE ];
+int color_char_age[ COLOR_SIZE ];
 int color_sepa[ COLOR_SIZE ];
 int color_back[ COLOR_SIZE ];
 int color_back_popup[ COLOR_SIZE ];
@@ -196,6 +197,11 @@ const bool CONFIG::init_config()
     color_char[ 1 ] = cf.get_option( "color_char_G", 0 );
     color_char[ 2 ] = cf.get_option( "color_char_B", 0 );
 
+    // ageの時のメール欄
+    color_char_age[ 0 ] = cf.get_option( "color_char_age_R", 65000 );
+    color_char_age[ 1 ] = cf.get_option( "color_char_age_G", 0 );
+    color_char_age[ 2 ] = cf.get_option( "color_char_age_B", 0 );
+
     // 新着セパレータ
     color_sepa[ 0 ] = cf.get_option( "color_sepa_R", 32000 );
     color_sepa[ 1 ] = cf.get_option( "color_sepa_G", 32000 );
@@ -351,6 +357,10 @@ void CONFIG::save_conf()
     cf.update( "color_char_G", color_char[ 1 ] );
     cf.update( "color_char_B", color_char[ 2 ] );
 
+    cf.update( "color_char_age_R", color_char_age[ 0 ] );
+    cf.update( "color_char_age_G", color_char_age[ 1 ] );
+    cf.update( "color_char_age_B", color_char_age[ 2 ] );
+
     cf.update( "color_sepa_R", color_sepa[ 0 ] );
     cf.update( "color_sepa_G", color_sepa[ 1 ] );
     cf.update( "color_sepa_B", color_sepa[ 2 ] );
@@ -418,6 +428,7 @@ const bool CONFIG::get_restore_image(){ return restore_image; }
 void CONFIG::set_restore_image( bool restore ){ restore_image = restore; }
 
 const int* CONFIG::get_color_char() { return color_char; }
+const int* CONFIG::get_color_char_age() { return color_char_age; }
 const int* CONFIG::get_color_separator() { return color_sepa; }
 const int* CONFIG::get_color_back() { return color_back; }
 const int* CONFIG::get_color_back_popup() { return color_back_popup; }
@@ -425,6 +436,7 @@ const int* CONFIG::get_color_back_tree() { return color_back_tree; }
 const int* CONFIG::get_color_back_tree_board() { return color_back_tree_board; }
 
 void CONFIG::set_color_char( int* color ) { memcpy( color_char, color, sizeof( int )*COLOR_SIZE ); }
+void CONFIG::set_color_char_age( int* color ) { memcpy( color_char_age, color, sizeof( int )*COLOR_SIZE ); }
 void CONFIG::set_color_separator( int* color ) { memcpy( color_sepa, color, sizeof( int )*COLOR_SIZE ); }
 void CONFIG::set_color_back( int* color ) { memcpy( color_back, color, sizeof( int )*COLOR_SIZE ); }
 void CONFIG::set_color_back_popup( int* color ) { memcpy( color_back_popup, color, sizeof( int )*COLOR_SIZE ); }

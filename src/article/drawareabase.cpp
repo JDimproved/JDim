@@ -219,6 +219,10 @@ void DrawAreaBase::init_color()
     // 文字色
     rgb = CONFIG::get_color_char();
     m_color[ COLOR_CHAR ].set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
+
+    rgb = CONFIG::get_color_char_age();
+    m_color[ COLOR_CHAR_AGE ].set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
+
     m_color[ COLOR_CHAR_NAME ] = Gdk::Color( "darkgreen" );    
     m_color[ COLOR_CHAR_SELECTION  ] = Gdk::Color( "white" );
     m_color[ COLOR_CHAR_LINK ] = Gdk::Color( "blue" );
