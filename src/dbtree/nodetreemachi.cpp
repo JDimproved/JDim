@@ -246,20 +246,13 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
 #ifdef _DEBUG
             std::cout << "abone = " << num << std::endl;
 #endif
-            buffer += "あぼ〜ん<><><> あほ〜ん <><>\n";
+            buffer += "あぼ〜ん<><><> あぼ〜ん <><>\n";
             next++;
         }
         
         buffer += name + "<>" + mail + "<>" + date + "<> " + body + " <><>\n";
         next++;
     }
-
-
-//    m_decoded_lines;
-
-//    byte = 0;
-//    rawlines[ 0 ] = '\0';
-//    return NULL;
 
     if( buffer.length() > BUF_SIZE_ICONV_OUT ){
         MISC::ERRMSG( "buffer over flow in NodeTreeMachi::process_raw_lines" );
@@ -269,8 +262,6 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
     byte = buffer.length();
     memcpy( m_decoded_lines, buffer.c_str(), byte );
     m_decoded_lines[ byte ] = '\0';
-
-//    std::cout << "byte = " << byte << std::endl << m_decoded_lines << std::endl;
 
     return m_decoded_lines;
 }
