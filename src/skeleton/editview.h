@@ -28,12 +28,18 @@ namespace SKELETON
         virtual bool on_key_press_event( GdkEventKey* event )
         {
             m_sig_key_press.emit( event );
+
+            if( event->state & GDK_MOD1_MASK ) return true;
+
             return Gtk::TextView::on_key_press_event( event );
         }
 
         virtual bool on_key_release_event( GdkEventKey* event )
         {
             m_sig_key_release.emit( event );
+
+            if(  event->state & GDK_MOD1_MASK ) return true;
+
             return Gtk::TextView::on_key_release_event( event );
         }
     };
