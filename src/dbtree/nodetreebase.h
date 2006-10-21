@@ -54,6 +54,8 @@ namespace DBTREE
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
+        std::list< std::string > m_list_abone_word_global; // あぼーんする文字列(全体)
+        std::list< std::string > m_list_abone_regex_global; // あぼーんする正規表現(全体)
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
 

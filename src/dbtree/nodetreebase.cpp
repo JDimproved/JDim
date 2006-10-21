@@ -1711,14 +1711,20 @@ void NodeTreeBase::clear_abone()
 
 
 // あぼーん情報を親クラスのarticlebaseからコピーする
-void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id, std::list< std::string >& list_abone_name,
-                                    std::list< std::string >& list_abone_word, std::list< std::string >& list_abone_regex,
+void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id,
+                                    std::list< std::string >& list_abone_name,
+                                    std::list< std::string >& list_abone_word,
+                                    std::list< std::string >& list_abone_regex,
                                     bool& abone_transparent, bool& abone_chain )
 {
     m_list_abone_id = list_abone_id;
     m_list_abone_name = list_abone_name;
-    m_list_abone_word = list_abone_word;
-    m_list_abone_regex = list_abone_regex;
+
+    // 設定ファイルには改行は"\\n"で保存されているので "\n"　に変換する
+    m_list_abone_word = MISC::replace_str_list( list_abone_word, "\\n", "\n" );
+    m_list_abone_regex = MISC::replace_str_list( list_abone_regex, "\\n", "\n" );
+    m_list_abone_word_global = MISC::replace_str_list( CONFIG::get_list_abone_word(), "\\n", "\n" );
+    m_list_abone_regex_global = MISC::replace_str_list( CONFIG::get_list_abone_regex(), "\\n", "\n" );
 
     m_abone_transparent = abone_transparent;
     m_abone_chain = abone_chain;
@@ -1850,8 +1856,8 @@ bool NodeTreeBase::check_abone_word( int number )
 {
     bool check_word = ! m_list_abone_word.empty();
     bool check_regex = ! m_list_abone_regex.empty();
-    bool check_word_global = ! CONFIG::get_list_abone_word().empty();
-    bool check_regex_global = ! CONFIG::get_list_abone_regex().empty();
+    bool check_word_global = ! m_list_abone_word_global.empty();
+    bool check_regex_global = ! m_list_abone_regex_global.empty();
 
     if( !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
 
@@ -1890,8 +1896,8 @@ bool NodeTreeBase::check_abone_word( int number )
     // 全体 NG word
     if( check_word_global ){
 
-        std::list< std::string >::iterator it = CONFIG::get_list_abone_word().begin();
-        for( ; it != CONFIG::get_list_abone_word().end(); ++it ){
+        std::list< std::string >::iterator it = m_list_abone_word_global.begin();
+        for( ; it != m_list_abone_word_global.end(); ++it ){
             if( res_str.find( *it ) != std::string::npos ){
                 head->headinfo->abone = true;
                 return true;
@@ -1902,8 +1908,8 @@ bool NodeTreeBase::check_abone_word( int number )
     // 全体 NG regex
     if( check_regex_global ){
 
-        std::list< std::string >::iterator it = CONFIG::get_list_abone_regex().begin();
-        for( ; it != CONFIG::get_list_abone_regex().end(); ++it ){
+        std::list< std::string >::iterator it = m_list_abone_regex_global.begin();
+        for( ; it != m_list_abone_regex_global.end(); ++it ){
             if( regex.exec( *it, res_str ) ){
                 head->headinfo->abone = true;
                 return true;
