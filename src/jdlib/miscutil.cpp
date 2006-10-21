@@ -339,6 +339,18 @@ std::string MISC::replace_str( const std::string& str, const std::string& str1, 
 }
 
 
+// list_inから str1 を str2 に置き換えてリストを返す
+std::list< std::string > MISC::replace_str_list( std::list< std::string >& list_in,
+                                                 const std::string& str1, const std::string& str2 )
+{
+    std::list< std::string > list_out;
+    std::list< std::string >::iterator it = list_in.begin();
+    for( ; it != list_in.end(); ++it ) list_out.push_back( replace_str( *it, str1, str2 ) );
+    return list_out;
+}
+
+
+
 // " を \" に置き換え
 std::string MISC::replace_quot( const std::string& str )
 {

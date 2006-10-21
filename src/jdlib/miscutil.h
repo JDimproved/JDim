@@ -46,6 +46,9 @@ namespace MISC
     // str1 を str2 に置き換え
     std::string replace_str( const std::string& str, const std::string& str1, const std::string& str2 );
 
+    // list_inから str1 を str2 に置き換えてリストを返す
+    std::list< std::string > replace_str_list( std::list< std::string >& list_in, const std::string& str1, const std::string& str2 );
+
     // " を \" に置き換え
     std::string replace_quot( const std::string& str );
 
