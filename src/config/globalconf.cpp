@@ -73,6 +73,7 @@ bool show_oldarticle;
 int tree_scroll_size;
 bool open_one_category;
 bool always_write_ok;
+bool save_postlog;
 int margin_popup;
 int mouse_radius;
 int history_size;
@@ -243,6 +244,9 @@ const bool CONFIG::init_config()
     // 書き込み時に書き込み確認ダイアログを出すかどうか
     always_write_ok = cf.get_option( "always_write_ok", false );
 
+    // 書き込みログを保存
+    save_postlog = cf.get_option( "save_postlog", false );
+
     // ポップアップとカーソルの間のマージン
     margin_popup = cf.get_option( "margin_popup", 30 );
 
@@ -386,6 +390,7 @@ void CONFIG::save_conf()
     cf.update( "tree_scroll_size", tree_scroll_size );
     cf.update( "open_one_category", open_one_category );
     cf.update( "always_write_ok", always_write_ok );
+    cf.update( "save_postlog", save_postlog );
     cf.update( "margin_popup", margin_popup );
     cf.update( "mouse_radius", mouse_radius );
     cf.update( "history_size", history_size );
@@ -520,6 +525,8 @@ const int CONFIG::get_tree_scroll_size(){ return tree_scroll_size; }
 const bool CONFIG::get_open_one_category(){ return open_one_category; }
 const bool CONFIG::get_always_write_ok() { return always_write_ok; }
 void CONFIG::set_always_write_ok( bool write_ok ){ always_write_ok = write_ok; }
+const bool CONFIG::get_save_postlog(){ return save_postlog; }
+void CONFIG::set_save_postlog( bool save ){ save_postlog = save; }
 const int CONFIG::get_margin_popup(){ return margin_popup; }
 const int CONFIG::get_mouse_radius(){ return mouse_radius; }
 const int CONFIG::get_history_size(){ return history_size; }

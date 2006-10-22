@@ -152,6 +152,10 @@ namespace CONFIG
     const bool get_always_write_ok();
     void set_always_write_ok( bool write_ok );
 
+    // 書き込みログを保存
+    const bool get_save_postlog();
+    void set_save_postlog( bool save );
+
     // ポップアップとカーソルの間のマージン
     const int get_margin_popup();
 
