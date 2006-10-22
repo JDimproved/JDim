@@ -77,6 +77,8 @@ namespace CACHE
     std::string path_img( const std::string& url );
     std::string path_img_info( const std::string& url );
 
+    // 書き込みログ
+    std::string path_postlog();
 
     /////////////////////////////////////////////////
     //
@@ -100,8 +102,8 @@ namespace CACHE
     // 生データ読み書き
     size_t load_rawdata( const std::string& path, std::string& str );
     size_t load_rawdata( const std::string& path, char* data, size_t n );    
-    bool save_rawdata( const std::string& path, const std::string& str );
-    bool save_rawdata( const std::string& path, const char* data, size_t n );
+    bool save_rawdata( const std::string& path, const std::string& str, bool append = false );
+    bool save_rawdata( const std::string& path, const char* data, size_t n, bool append = false );
 
     // ファイル情報
     long is_file_exists( const std::string& path );

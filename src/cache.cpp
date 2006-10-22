@@ -240,6 +240,15 @@ std::string CACHE::path_img_info_root()
 
 
 //
+// 書き込みログ
+//
+std::string CACHE::path_postlog()
+{
+    return CACHE::path_root() +  "post.log";
+}
+
+
+//
 // 画像キャッシュファイルの名前
 //
 std::string CACHE::filename_img( const std::string& url )
@@ -394,17 +403,18 @@ size_t CACHE::load_rawdata( const std::string& path, char* data, size_t n )
 }
 
 
-bool CACHE::save_rawdata( const std::string& path, const std::string& str )
+bool CACHE::save_rawdata( const std::string& path, const std::string& str, bool append )
 {
-    return save_rawdata( path, str.c_str(), str.length() );
+    return save_rawdata( path, str.c_str(), str.length(), append );
 }
 
 
 
-bool CACHE::save_rawdata( const std::string& path, const char* data, size_t n )
+bool CACHE::save_rawdata( const std::string& path, const char* data, size_t n, bool append )
 {
     std::ofstream fout;
-    fout.open( path.c_str() );
+    if( append ) fout.open( path.c_str(), std::ios::app );
+    else fout.open( path.c_str() );
     if( !fout.is_open() ){
         MISC::ERRMSG( "can't open " + path );
         return false;
