@@ -83,6 +83,9 @@ namespace MESSAGE
 
         void post_fin();
 
+        // 書き込みログ保存
+        void save_postlog();
+
       private:
 
         virtual void write(){};

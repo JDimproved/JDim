@@ -267,6 +267,9 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
     m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん" ), sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存", std::string(), CONFIG::get_save_postlog() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
+
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア" ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
@@ -344,6 +347,8 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='SetupAbone'/>"
         "<menuitem action='SetupAboneThread'/>"
+        "<separator/>"
+        "<menuitem action='SavePostLog'/>"    
         "<separator/>"
         "<menuitem action='UseMosaic'/>"    
         "<menuitem action='DeleteImages'/>"
@@ -602,6 +607,16 @@ void Core::slot_activate_menubar()
     }
 
     m_enable_menuslot = true;
+}
+
+
+
+//
+// 書き込みログを保存
+//
+void Core::slot_toggle_save_postlog()
+{
+    CONFIG::set_save_postlog( ! CONFIG::get_save_postlog() );
 }
 
 

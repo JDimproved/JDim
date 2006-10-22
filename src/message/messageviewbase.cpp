@@ -1,6 +1,7 @@
 // ライセンス: 最新のGPL
 
 //#define _DEBUG
+//#define _DEBUG_KEY
 #include "jddebug.h"
 
 #include "messageadmin.h"
@@ -21,6 +22,7 @@
 #include "viewfactory.h"
 #include "controlutil.h"
 #include "controlid.h"
+#include "cache.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -310,7 +312,7 @@ void MessageViewBase::slot_cancel_clicked()
 //
 bool MessageViewBase::slot_key_release( GdkEventKey* event )
 {
-#ifdef _DEBUG
+#ifdef _DEBUG_KEY
     guint key = event->keyval;
     bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
     bool shift = ( event->state ) & GDK_SHIFT_MASK;
@@ -412,6 +414,7 @@ void MessageViewBase::post_fin()
     if( code == HTTP_OK
         || ( code == HTTP_REDIRECT && ! location.empty() ) // (まちBBSなどで)リダイレクトした場合
         ){
+        save_postlog();
         m_text_message.set_text( std::string() );
         close_view();
         reload();
@@ -514,4 +517,36 @@ void MessageViewBase::show_status()
 #else
     m_label_stat.set_text( ss.str() );
 #endif        
+}
+
+
+
+// 書き込みログ保存
+void MessageViewBase::save_postlog()
+{
+    if( ! CONFIG::get_save_postlog() ) return;
+
+    std::string subject = get_entry_subject().get_text();
+    std::string msg = get_text_message().get_text();
+    std::string name = get_entry_name().get_text();
+    std::string mail = get_entry_mail().get_text();
+
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday( &tv, &tz );
+    std::string date = MISC::timettostr( tv.tv_sec );
+
+    std::stringstream ss;
+    ss << "---------------" << std::endl
+       << get_url() << std::endl
+       << "[ " << DBTREE::board_name( get_url() ) << " ] " << subject << std::endl
+       << "名前：" << name << " [" << mail << "]：" << date << std::endl
+       << msg << std::endl;
+
+#ifdef _DEBUG
+    std::cout << ss.str() << std::endl;
+#endif 
+
+
+    CACHE::save_rawdata( CACHE::path_postlog(), ss.str(), true );
 }

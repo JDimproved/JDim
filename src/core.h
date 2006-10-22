@@ -140,6 +140,7 @@ namespace CORE
 
         void slot_activate_menubar();
 
+        void slot_toggle_save_postlog();
         void slot_toggle_use_mosaic();
         void slot_delete_all_images();
 
