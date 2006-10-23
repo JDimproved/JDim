@@ -9,7 +9,7 @@
 # Defined by upsteam
 #
 %define         main_ver      1.8.0
-%define         strtag        beta061009
+%define         strtag        beta061023
 %define         repoid        21934
 
 
