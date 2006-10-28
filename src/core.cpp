@@ -1425,6 +1425,11 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    else if( command.command == "close_image_view" ){
+
+        IMAGE::get_admin()->set_command( "close_view", command.url );
+        return;
+    }
 
     ////////////////////////////
     // message系

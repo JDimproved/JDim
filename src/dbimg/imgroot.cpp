@@ -152,6 +152,9 @@ void ImgRoot::delete_cache( const std::string& url, bool redraw )
         img->clear_load_data();
     }
 
+    // ビューを閉じる
+    CORE::core_set_command( "close_image_view", url );
+
     // キャッシュ削除
     std::string path = CACHE::path_img( url );
     if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
