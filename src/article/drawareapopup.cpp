@@ -25,6 +25,7 @@ DrawAreaPopup::DrawAreaPopup( const std::string& url, bool show_abone )
 #endif
 
     setup( show_abone, false );
+    set_draw_frame( true );
 }
 
 
@@ -64,24 +65,6 @@ void DrawAreaPopup::layout()
 #endif
 
     layout_impl( nowrap, POPUP_OFFSET_Y, POPUP_RIGHT_MRG );
-}
-
-
-
-//
-// バックスクリーンをDrawAreaにコピー
-//
-// ポップアップの場合は枠も描く
-//
-bool DrawAreaPopup::draw_drawarea()
-{
-    // 描画
-    if( ! DrawAreaBase::draw_drawarea() ) return false;
-
-    // フレーム描画
-    draw_frame();
-
-    return true;
 }
 
 

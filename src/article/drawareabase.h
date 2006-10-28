@@ -97,6 +97,9 @@ namespace ARTICLE
         // 新着セパレータの位置(レス番号),  0 なら表示しない
         int m_separator_new; 
 
+        // 枠を描くか
+        bool m_draw_frame;
+
         // 範囲選択
         SELECTION m_selection;
 
@@ -207,9 +210,10 @@ namespace ARTICLE
         void layout_impl( bool nowrap, int offset_y, int right_mrg );
 
         // バックスクリーンをDrawAreaにコピー
-        virtual bool draw_drawarea();
+        bool draw_drawarea();
 
         // DrawAreaに枠を描画
+        void set_draw_frame( bool draw_frame ){ m_draw_frame = draw_frame; }
         void draw_frame();
 
         // リサイズした

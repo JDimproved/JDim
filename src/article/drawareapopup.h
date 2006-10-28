@@ -22,9 +22,6 @@ namespace ARTICLE
         // レイアウト実行
         virtual void layout();
 
-        // バックスクリーンをDrawAreaにコピー
-        virtual bool draw_drawarea();
-
         // リサイズした
         virtual bool slot_configure_event( GdkEventConfigure* event );
 

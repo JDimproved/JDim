@@ -54,6 +54,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_gc( 0 )
     , m_backscreen( 0 )
     , m_pango_layout( 0 )
+    , m_draw_frame( false )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::DrawAreaBase " << m_url << std::endl;;
@@ -881,6 +882,9 @@ bool DrawAreaBase::draw_drawarea()
         m_window->draw_arc( m_gc, false, m_scrollinfo.x - AUTOSCR_CIRCLE/2, m_scrollinfo.y - AUTOSCR_CIRCLE/2 ,
                             AUTOSCR_CIRCLE, AUTOSCR_CIRCLE, 0, 360 * 64 );
     }
+
+    // フレーム描画
+    if( m_draw_frame ) draw_frame();
 
     return true;
 }
