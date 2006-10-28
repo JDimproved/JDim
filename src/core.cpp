@@ -2006,11 +2006,17 @@ void Core::open_by_browser( const std::string& url )
     std::string command_openurl = CONFIG::get_command_openurl();
     if( !command_openurl.empty() ){
 
-        command_openurl = MISC::replace_str( command_openurl, "%LINK", url );
-        command_openurl = MISC::replace_str( command_openurl, "%s", url );
+        std::string tmp_url = url;
+
+        // urlの先頭と最後のの " を取る
+        while( *tmp_url.c_str() == '\"' ) tmp_url = tmp_url.substr( 1 );
+        while( tmp_url.c_str()[ tmp_url.length()-1 ] == '\"' ) tmp_url = tmp_url.substr( 0, tmp_url.length()-1 );
+
+        command_openurl = MISC::replace_str( command_openurl, "%LINK", tmp_url );
+        command_openurl = MISC::replace_str( command_openurl, "%s", tmp_url );
 
 #ifdef _DEBUG
-        std::cout << "spawn url = " << url << " command = " << command_openurl << std::endl;
+        std::cout << "spawn url = " << tmp_url << " command = " << command_openurl << std::endl;
 #endif
         Glib::spawn_command_line_async( command_openurl );
     }
