@@ -117,7 +117,7 @@ namespace ARTICLE
         SCROLLINFO m_scrollinfo;
         guint32 m_wheel_scroll_time; // 前回ホイールを回した時刻
         int m_goto_num_reserve; // 初期化時のジャンプ予約(レス番号)
-        int m_pre_pos_y; // スクロールした時の差分量(dy)
+        int m_pre_pos_y; // ひとつ前のスクロールバーの位置。スクロールした時の差分量計算に使用する
 
         // 状態
         int m_x_pointer, m_y_pointer;  // 現在のマウスポインタの位置
@@ -210,7 +210,7 @@ namespace ARTICLE
         void layout_impl( bool nowrap, int offset_y, int right_mrg );
 
         // バックスクリーンをDrawAreaにコピー
-        bool draw_drawarea();
+        bool draw_drawarea( int x = 0, int y = 0, int width = 0, int height = 0 );
 
         // DrawAreaに枠を描画
         void set_draw_frame( bool draw_frame ){ m_draw_frame = draw_frame; }

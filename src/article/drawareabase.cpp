@@ -843,7 +843,7 @@ void DrawAreaBase::draw_frame()
 //
 // draw_backscreen()でバックスクリーンを描画してから呼ぶこと
 // 
-bool DrawAreaBase::draw_drawarea()
+bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
 {
     if( ! m_layout_tree ) return false;
 
@@ -860,11 +860,11 @@ bool DrawAreaBase::draw_drawarea()
         return false;
     }
     
-    int width_view = m_view.get_width();
-    int height_view = m_view.get_height();
+    if( !width )  width = m_view.get_width();
+    if( !height ) height = m_view.get_height();
 
     // バックスクリーンをコピー
-    m_window->draw_drawable( m_gc, m_backscreen, 0, 0, 0, 0, width_view , height_view );
+    m_window->draw_drawable( m_gc, m_backscreen, x, y, x, y, width, height );
 
 #if 0
     // キャレット描画
@@ -2532,7 +2532,7 @@ bool DrawAreaBase::motion_mouse()
         }
     
         // ポインタが画面外に近かったらオートスクロールを開始する
-        const int mrg = m_br_size * 3;
+        const int mrg = ( int )( (double)m_br_size*0.5 );
 
         // スクロールのリセット
         if ( 
@@ -2558,12 +2558,12 @@ bool DrawAreaBase::motion_mouse()
             if( m_y_pointer <= mrg ){
                 m_scrollinfo.enable_up = true;
                 m_scrollinfo.enable_down = false;
-                m_scrollinfo.y = mrg;
+                m_scrollinfo.y = mrg*6;
             }
             else{
                 m_scrollinfo.enable_up = false;                
                 m_scrollinfo.enable_down = true;
-                m_scrollinfo.y = m_view.get_height() - mrg;
+                m_scrollinfo.y = m_view.get_height() - mrg*6;
             }
         }
     }
