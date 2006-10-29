@@ -120,7 +120,7 @@ if test x"$use_xsmp" = "xyes" ; then
 
   AC_MSG_CHECKING(for libSM and libICE)
   LIBSM_LIBS="" 
-  dirs="/usr/unsupported/lib /usr/local/lib /usr/X386/lib /usr/X11R6/lib /usr/X11R5/lib /usr/lib/X11R5 /usr/lib/X11R4 /usr/openwin/lib /usr/X11/lib /usr/sww/X11/lib /usr/lib"
+  dirs="/usr/unsupported/lib /usr/local/lib /usr/X386/lib /usr/X11R6/lib /usr/X11R5/lib /usr/lib/X11R5 /usr/lib/X11R4 /usr/openwin/lib /usr/X11/lib /usr/sww/X11/lib /usr/lib /usr/X11R6/lib64 /usr/lib64"
   for i in $dirs ; do
     if test -r $i/libICE.so -a -r $i/libSM.so ; then
       AC_MSG_RESULT($i)
