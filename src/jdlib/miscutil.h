@@ -11,8 +11,7 @@
 namespace MISC
 {
     // str を "\n" ごとに区切ってlistにして出力
-    // rm_space == true なら各行の前後の空白を削る
-    std::list< std::string > get_lines( const std::string& str, bool rm_space = false );
+    std::list< std::string > get_lines( const std::string& str );
 
     // strを空白または "" 単位で区切って list で出力
     std::list< std::string > split_line( const std::string& str );
@@ -24,8 +23,13 @@ namespace MISC
     std::list< std::string > get_elisp_lists( const std::string& str );
 
     // list_inから空白行を除いてリストを返す
-    // remove_space == true なら行の前後の空白も削除する
-    std::list< std::string > remove_nullline_from_list( std::list< std::string >& list_in, bool remove_space );
+    std::list< std::string > remove_nullline_from_list( std::list< std::string >& list_in );
+
+    // list_inの各行から前後の空白を除いてリストを返す
+    std::list< std::string > remove_space_from_list( std::list< std::string >& list_in );
+
+    // list_inからコメント(#)より後の文字列を除いてリストを返す
+    std::list< std::string > remove_commentline_from_list( std::list< std::string >& list_in );
 
     // 空白とカンマで区切られた str_in の文字列をリストにして出力
     // \"は " に置換される

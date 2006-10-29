@@ -13,7 +13,7 @@
 //
 // str を "\n" ごとに区切ってlistにして出力
 //
-std::list< std::string > MISC::get_lines( const std::string& str, bool rm_space ){
+std::list< std::string > MISC::get_lines( const std::string& str ){
         
     std::list< std::string > lines;
     size_t i = 0, i2 = 0, r = 0;
@@ -22,18 +22,13 @@ std::list< std::string > MISC::get_lines( const std::string& str, bool rm_space 
         if( str[ i2 - 1 ] == '\r' ) r = 1;
         if( i2 - i > 0 ){
             std::string str_tmp = str.substr( i, i2 - i - r );
-
-            if( rm_space ) lines.push_back( remove_space( str_tmp ) );
-            else lines.push_back( str_tmp );
+            lines.push_back( str_tmp );
         }
         i = i2 + 1;
     }
 
     // 最後の行
-    if( i != str.length() +1 ){
-        if( rm_space ) lines.push_back( remove_space( str.substr( i ) ) );
-        else lines.push_back( str.substr( i ) );
-    }
+    if( i != str.length() +1 ) lines.push_back( str.substr( i ) );
     
     return lines;
 }
@@ -196,24 +191,53 @@ std::list< std::string > MISC::StringTokenizer( const std::string& str, char del
 //
 // list_inから空白行を除いてリストを返す
 //
-// remove_space == true なら行の前後の空白も削除する
-//
-std::list< std::string > MISC::remove_nullline_from_list( std::list< std::string >& list_in, bool remove_space )
+std::list< std::string > MISC::remove_nullline_from_list( std::list< std::string >& list_in )
 {
     std::list< std::string > list_ret;
-    std::string tmp_str;
     std::list< std::string >::iterator it;    
-
     for( it = list_in.begin(); it != list_in.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ){
-            if( remove_space ) list_ret.push_back( tmp_str );
-            else list_ret.push_back( *it );
-        }
+        if( ! tmp_str.empty() ) list_ret.push_back( *it );
     }
 
     return list_ret;
 }
+
+
+//
+// list_inの各行から前後の空白を除いてリストを返す
+//
+std::list< std::string > MISC::remove_space_from_list( std::list< std::string >& list_in )
+{
+    std::list< std::string > list_ret;
+    std::list< std::string >::iterator it;    
+    for( it = list_in.begin(); it != list_in.end(); ++it ){
+        std::string tmp_str = MISC::remove_space( (*it) );
+        list_ret.push_back( tmp_str );
+    }
+
+    return list_ret;
+}
+
+
+//
+// list_inからコメント行(#)より後の文字列を除いてリストを返す
+//
+std::list< std::string > remove_commentline_from_list( std::list< std::string >& list_in )
+{
+    const std::string commentchr = "#";
+
+    std::list< std::string > list_ret;
+    std::list< std::string >::iterator it;    
+    for( it = list_in.begin(); it != list_in.end(); ++it ){
+        unsigned int pos = ( *it ).find( commentchr );
+        if( pos == std::string::npos ) list_ret.push_back( *it );
+        else list_ret.push_back( ( *it ).substr( 0, pos ) );
+    }
+
+    return list_ret;
+}
+
 
 
 //
