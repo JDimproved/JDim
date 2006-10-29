@@ -26,9 +26,9 @@ namespace CORE
         virtual void slot_ok_clicked(){
 
             // 全体あぼーん再設定
-            std::list< std::string > list_name = MISC::get_lines( m_edit_name.get_text(), true );
-            std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text(), true );
-            std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text(), true );
+            std::list< std::string > list_name = MISC::get_lines( m_edit_name.get_text() );
+            std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text() );
+            std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
 
             CONFIG::set_list_abone_name( list_name );
             CONFIG::set_list_abone_word( list_word );

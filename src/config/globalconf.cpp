@@ -553,13 +553,17 @@ std::list< std::string >& CONFIG::get_list_abone_regex_thread(){ return list_abo
 
 void CONFIG::set_list_abone_word_thread( std::list< std::string >& word )
 {
-    list_abone_word_thread = MISC::remove_nullline_from_list( word, false );
+    // 前後の空白と空白行を除く
+    list_abone_word_thread = MISC::remove_space_from_list( word );
+    list_abone_word_thread = MISC::remove_nullline_from_list( list_abone_word_thread );
 }
 
 
 void CONFIG::set_list_abone_regex_thread( std::list< std::string >& regex )
 {
-    list_abone_regex_thread = MISC::remove_nullline_from_list( regex, false );
+    // 前後の空白と空白行を除く
+    list_abone_regex_thread = MISC::remove_space_from_list( regex );
+    list_abone_regex_thread = MISC::remove_nullline_from_list( list_abone_regex_thread );
 }
 
 
@@ -569,17 +573,23 @@ std::list< std::string >& CONFIG::get_list_abone_regex(){ return list_abone_rege
 
 void CONFIG::set_list_abone_name( std::list< std::string >& name )
 {
-    list_abone_name = MISC::remove_nullline_from_list( name, false );
+    // 前後の空白と空白行を除く
+    list_abone_name = MISC::remove_space_from_list( name );
+    list_abone_name = MISC::remove_nullline_from_list( list_abone_name );
 }
 
 void CONFIG::set_list_abone_word( std::list< std::string >& word )
 {
-    list_abone_word = MISC::remove_nullline_from_list( word, false );
+    // 前後の空白と空白行を除く
+    list_abone_word = MISC::remove_space_from_list( word );
+    list_abone_word = MISC::remove_nullline_from_list( list_abone_word );
 }
 
 
 void CONFIG::set_list_abone_regex( std::list< std::string >& regex )
 {
-    list_abone_regex = MISC::remove_nullline_from_list( regex, false );
+    // 前後の空白と空白行を除く
+    list_abone_regex = MISC::remove_space_from_list( regex );
+    list_abone_regex = MISC::remove_nullline_from_list( list_abone_regex );
 }
 

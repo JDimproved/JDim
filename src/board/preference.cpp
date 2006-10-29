@@ -118,9 +118,9 @@ void Preferences::slot_delete_cookie()
 void Preferences::slot_ok_clicked()
 {
     // あぼーん再設定
-    std::list< std::string > list_thread = MISC::get_lines( m_edit_thread.get_text(), true );
-    std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text(), true );
-    std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text(), true );
+    std::list< std::string > list_thread = MISC::get_lines( m_edit_thread.get_text() );
+    std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text() );
+    std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
     DBTREE::reset_abone_thread( get_url(), list_thread, list_word, list_regex );  // 板の再描画も行われる
 
     // 名無し書き込みチェック

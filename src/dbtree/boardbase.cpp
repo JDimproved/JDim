@@ -947,9 +947,16 @@ void BoardBase::reset_abone_thread( std::list< std::string >& threads,
     std::cout << "BoardBase::reset_abone\n";
 #endif
 
-    m_list_abone_thread = MISC::remove_nullline_from_list( threads, false );
-    m_list_abone_word_thread = MISC::remove_nullline_from_list( words, false );
-    m_list_abone_regex_thread = MISC::remove_nullline_from_list( regexs, false );
+    // 前後の空白と空白行を除く
+
+    m_list_abone_thread = MISC::remove_space_from_list( threads );
+    m_list_abone_thread = MISC::remove_nullline_from_list( m_list_abone_thread );
+
+    m_list_abone_word_thread = MISC::remove_space_from_list( words );
+    m_list_abone_word_thread = MISC::remove_nullline_from_list( m_list_abone_word_thread );
+
+    m_list_abone_regex_thread = MISC::remove_space_from_list( regexs );
+    m_list_abone_regex_thread = MISC::remove_nullline_from_list( m_list_abone_regex_thread );
 
     update_abone_thread();
 

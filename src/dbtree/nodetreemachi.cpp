@@ -136,11 +136,11 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
     std::string buffer;
 
     // 入力データを行ごとに分割して本文だけ取り出す
-    std::list< std::string > lines = MISC::get_lines( rawlines, true );
+    std::list< std::string > lines = MISC::get_lines( rawlines );
     std::list< std::string >::iterator it;
     for( it = lines.begin(); it != lines.end(); ++it ){
 
-        std::string& line = (*it);
+        std::string line = MISC::remove_space( *it );
 
         if( m_tmp_buffer.empty() ){
 
@@ -206,11 +206,11 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
     const char* str_lines = m_iconv->convert( rawlines, strlen( rawlines ), byte_lines );
 
     // 入力データを行ごとに分割して本文だけ取り出す
-    std::list< std::string > lines = MISC::get_lines( str_lines, true );
+    std::list< std::string > lines = MISC::get_lines( str_lines );
     std::list< std::string >::iterator it;
     for( it = lines.begin(); it != lines.end(); ++it ){
 
-        std::string& line = (*it);
+        std::string line = MISC::remove_space( *it );
         if( line.empty() ) continue;
 
         if( ! m_regex->exec( reg, line ) ){

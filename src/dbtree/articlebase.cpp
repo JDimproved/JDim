@@ -410,10 +410,19 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
     std::cout << "ArticleBase::reset_abone\n";
 #endif
 
-    m_list_abone_id = MISC::remove_nullline_from_list( ids, true );
-    m_list_abone_name = MISC::remove_nullline_from_list( names, false );
-    m_list_abone_word = MISC::remove_nullline_from_list( words, false );
-    m_list_abone_regex = MISC::remove_nullline_from_list( regexs, false );
+    // 前後の空白と空白行を除く
+
+    m_list_abone_id = MISC::remove_space_from_list( ids );
+    m_list_abone_id = MISC::remove_nullline_from_list( m_list_abone_id );
+
+    m_list_abone_name = MISC::remove_space_from_list( names );
+    m_list_abone_name = MISC::remove_nullline_from_list( m_list_abone_name );
+
+    m_list_abone_word = MISC::remove_space_from_list( words );
+    m_list_abone_word = MISC::remove_nullline_from_list( m_list_abone_word );
+
+    m_list_abone_regex = MISC::remove_space_from_list( regexs );
+    m_list_abone_regex = MISC::remove_nullline_from_list( m_list_abone_regex );
     
     m_abone_transparent = transparent;
     m_abone_chain = chain;
