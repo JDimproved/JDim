@@ -43,6 +43,9 @@ Usrcmd_Manager::Usrcmd_Manager()
     if( CACHE::load_rawdata( file_usrcmd, usrcmd ) ){
 
         std::list< std::string > list_usrcmd = MISC::get_lines( usrcmd );
+        list_usrcmd = MISC::remove_commentline_from_list( list_usrcmd );
+        list_usrcmd = MISC::remove_space_from_list( list_usrcmd );
+        list_usrcmd = MISC::remove_nullline_from_list( list_usrcmd );
         std::list< std::string >::iterator it;
         for( it = list_usrcmd.begin(); it != list_usrcmd.end(); ++it ){
 

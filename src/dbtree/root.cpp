@@ -564,6 +564,9 @@ void Root::load_etc()
     if( CACHE::load_rawdata( file_etctxt, etcboard ) ){
 
         std::list< std::string > list_etc = MISC::get_lines( etcboard );
+        list_etc = MISC::remove_commentline_from_list( list_etc );
+        list_etc = MISC::remove_space_from_list( list_etc );
+        list_etc = MISC::remove_nullline_from_list( list_etc );
         std::list< std::string >::iterator it;
         for( it = list_etc.begin(); it != list_etc.end(); ++it ){
 
