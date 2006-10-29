@@ -168,6 +168,7 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
 
     close_view();
 
+    std::string title;
     std::string url_msg;
     int type;
     CORE::VIEWFACTORY_ARGS args;
@@ -175,6 +176,7 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
         type = CORE::VIEW_MESSAGE;
         args.arg1 = msg;
         url_msg = url;
+        title = "JD - [ 書き込み ] " + DBTREE::article_subject( url );
     }
 
     // 新スレ
@@ -183,10 +185,12 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
         type = CORE::VIEW_NEWTHREAD;
         args.arg1 = msg;
         url_msg = DBTREE::url_datbase( url ) + "0000000000" + DBTREE::board_ext( url );
+        title = "JD - [ 新スレ作成 ] " + DBTREE::board_name( url );
     }
 
     m_view = CORE::ViewFactory( type, url_msg, args );
     m_win = new MESSAGE::MessageWin();
+    m_win->set_title( title );
     m_win->add( *m_view );
     m_win->show_all();
 }
