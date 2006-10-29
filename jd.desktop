@@ -6,4 +6,4 @@ Icon=jd.png
 Terminal=false
 Type=Application
 Encoding=UTF-8
-Categories=Network
+Categories=Network;
