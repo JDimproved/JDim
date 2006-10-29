@@ -123,7 +123,7 @@ int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n
          ret = DBTREE::NODE_ZWSP;
     }    
 
-    // 数字参照
+    // 数字参照 &#数字;
     else if( in_char[ 1 ] == '#' ) ret = decode_char_number( in_char, n_in, out_char, n_out );
 
     else ret = NODE_NONE;
@@ -135,7 +135,7 @@ int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n
 
 
 //
-// 数字参照
+// 数字参照  &#数字;
 //
 // in_char[1] == "#" であること
 //
@@ -147,6 +147,7 @@ int DBTREE::decode_char_number( const char* in_char, int& n_in,  char* out_char,
 
     n_in = n_out = 0;
 
+    // 桁数取得(最大4桁)
     if( in_char[ 2 ] == ';' ) return NODE_NONE;
     else if( in_char[ 3 ] == ';' ) lng = 1;
     else if( in_char[ 4 ] == ';' ) lng = 2;
@@ -154,6 +155,9 @@ int DBTREE::decode_char_number( const char* in_char, int& n_in,  char* out_char,
     else if( in_char[ 6 ] == ';' ) lng = 4;
     else if( in_char[ 7 ] == ';' ) lng = 5;
     else return NODE_NONE;
+
+    // 全て数字かどうかチェック
+    for( int i = 0; i < lng; ++i ) if( in_char[ 2 + i ] < '0' || in_char[ 2 + i ] > '9' ) return NODE_NONE;
 
     memcpy( str_num, in_char + 2, lng );
     str_num[ lng ] = '\0';
