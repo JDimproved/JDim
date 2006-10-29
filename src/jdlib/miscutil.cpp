@@ -221,18 +221,17 @@ std::list< std::string > MISC::remove_space_from_list( std::list< std::string >&
 
 
 //
-// list_inからコメント行(#)より後の文字列を除いてリストを返す
+// list_inからコメント行(#)を除いてリストを返す
 //
-std::list< std::string > remove_commentline_from_list( std::list< std::string >& list_in )
+std::list< std::string > MISC::remove_commentline_from_list( std::list< std::string >& list_in )
 {
-    const std::string commentchr = "#";
+    const char commentchr = '#';
 
     std::list< std::string > list_ret;
     std::list< std::string >::iterator it;    
     for( it = list_in.begin(); it != list_in.end(); ++it ){
-        unsigned int pos = ( *it ).find( commentchr );
-        if( pos == std::string::npos ) list_ret.push_back( *it );
-        else list_ret.push_back( ( *it ).substr( 0, pos ) );
+        std::string tmp_str = MISC::remove_space( (*it) );
+        if( tmp_str.c_str()[ 0 ] != commentchr ) list_ret.push_back( *it );
     }
 
     return list_ret;

@@ -28,7 +28,7 @@ namespace MISC
     // list_inの各行から前後の空白を除いてリストを返す
     std::list< std::string > remove_space_from_list( std::list< std::string >& list_in );
 
-    // list_inからコメント(#)より後の文字列を除いてリストを返す
+    // list_inからコメント行(#)を除いてリストを返す
     std::list< std::string > remove_commentline_from_list( std::list< std::string >& list_in );
 
     // 空白とカンマで区切られた str_in の文字列をリストにして出力
