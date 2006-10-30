@@ -1005,12 +1005,21 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
 {
     bool digitlink = true;
-    bool bold = true;
+    const bool bold = true;
     int pos_trip_begin = 0;
     int pos_trip_end = 0;
     int i;
+    const bool defaultname = ( strncmp( m_default_noname.data(), str, lng ) == 0 );
 
-    header->headinfo->node_name = createTextNode( " 名前：", COLOR_CHAR );
+    // デフォルトの名前で無いときはリンクにする
+    NODE* node_name;
+    if( defaultname ) node_name = createTextNode( " 名前：", COLOR_CHAR );
+    else{
+        createTextNode( " ", COLOR_CHAR );
+        const char namestr[] = "名前";
+        create_linknode( namestr, strlen( namestr ) , PROTO_NAME, strlen( PROTO_NAME ), COLOR_CHAR, false );
+        node_name = createTextNode( "：", COLOR_CHAR );
+    }
 
     // トリップ付きの時は中の数字をリンクにしない
     for( i = 0; i < lng; ++i ) if( str[ i ] == '<' && str[ i+2 ] == 'b' ) break;
@@ -1048,7 +1057,7 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
     }
 
     // デフォルト名無しと同じときはアンカーを作らない
-    else if( strncmp( m_default_noname.data(), str, lng ) == 0 ){
+    else if( defaultname ){
         digitlink = false;
         parse_html( str, lng, COLOR_CHAR_NAME, digitlink, bold );
     }
@@ -1057,7 +1066,8 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
     else parse_html( str, lng, COLOR_CHAR_NAME, digitlink, bold );
 
     // プレインな名前取得
-    NODE* node = header->headinfo->node_name->next_node;
+    header->headinfo->node_name = node_name->next_node;
+    NODE* node = header->headinfo->node_name;
     std::string str_tmp;
     while( node ){
         if( node->text ) str_tmp += node->text;

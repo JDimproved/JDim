@@ -57,8 +57,10 @@ enum
 // プロトコル
 #define PROTO_ANCHORE "anc://"
 #define PROTO_RES "res://"
+#define PROTO_NAME "name://"
 #define PROTO_ID "ID://"
 #define PROTO_BE "BE://"
+#define PROTO_ABONE "abone://"
 
 
 // 仮想 URL

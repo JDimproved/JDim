@@ -13,6 +13,8 @@
 
 #include "config/globalconf.h"
 
+#include "global.h"
+
 using namespace ARTICLE;
 
 #define SIZE_OF_HEAP 256 * 1024
@@ -292,14 +294,15 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
     tmpnode = node_header->next_node;
     tmplayout = create_layout_link( tmpnode->text, tmpnode->linkinfo->link, &tmpnode->color_text, tmpnode->bold );
 
-    tmplayout = create_layout_text( " あぼ〜ん", NULL, false );
+    tmplayout = create_layout_text( " ", NULL, false );
+    tmplayout = create_layout_link( "あぼ〜ん", PROTO_ABONE, NULL, false );
 
     tmplayout = create_layout_br();
 
     tmplayout = create_layout_downleft();
     tmplayout = create_layout_downleft();
 
-    tmplayout = create_layout_text( "あぼ〜ん", NULL, false );
+    tmplayout = create_layout_link( "あぼ〜ん", PROTO_ABONE, NULL, false );
 }
 
 

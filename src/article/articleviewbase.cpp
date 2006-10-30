@@ -278,19 +278,6 @@ void ArticleViewBase::setup_action()
     "<menuitem action='CopyResRef'/>"
     "<separator/>"
 
-    "<menu action='Abone_Menu'>"
-
-    "<menuitem action='AboneName'/>"
-    "<menu action='GlobalAboneName'>"
-    "<menuitem action='SetGlobalAboneName'/>"
-    "</menu>"
-
-    "<menuitem action='TranspChainAbone'/>"
-
-    "</menu>"
-
-    "<separator/>"
-
     "<menuitem action='Preference'/>"
 
     "</popup>"
@@ -310,6 +297,18 @@ void ArticleViewBase::setup_action()
     "<menuitem action='AboneID'/>"
     "</popup>"
 
+    // 名前をクリックしたときのメニュー
+    "<popup name='popup_menu_name'>"
+    "<menuitem action='AboneName'/>"
+    "<menu action='GlobalAboneName'>"
+    "<menuitem action='SetGlobalAboneName'/>"
+    "</menu>"
+    "</popup>"
+
+    // あぼーんをクリックしたときのメニュー
+    "<popup name='popup_menu_abone'>"
+    "<menuitem action='TranspChainAbone'/>"
+    "</popup>"
 
     // 通常の右クリックメニュー
     "<popup name='popup_menu'>"
@@ -1203,7 +1202,9 @@ bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkE
     if( SKELETON::View::get_control().MG_wheel_end( event ) ) return true;
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::slot_button_release mg = " << mg << " url = " << get_url() << std::endl;
+    std::cout << "ArticleViewBase::slot_button_release mg = " << mg << " url = " << get_url()
+              << " url = " << url << " res = " << res_number
+              << std::endl;
 #endif
 
     if( event->type == GDK_BUTTON_RELEASE ){
@@ -1435,7 +1436,6 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 {
     assert( m_article );
     if( url.empty() ) return false;
-    if( !res_number ) return false;
 
     CONTROL::Control& control = SKELETON::View::get_control();
   
@@ -1460,6 +1460,24 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
         else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_id();
         else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
+            SKELETON::View::show_popupmenu( url, false );
+        }
+    }
+
+    // 名前クリック
+    else if( url.find( PROTO_NAME ) == 0 ){
+
+        m_name = m_article->get_name( res_number );
+
+        if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
+            SKELETON::View::show_popupmenu( url, false );
+        }
+    }
+
+    // あぼーんクリック
+    else if( url.find( PROTO_ABONE ) == 0 ){
+
+        if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
             SKELETON::View::show_popupmenu( url, false );
         }
     }
@@ -1500,7 +1518,6 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     else if( url.find( PROTO_RES ) == 0 ){
 
         m_str_num = url.substr( strlen( PROTO_RES ) );
-        m_name = m_article->get_name( atoi( m_str_num.c_str() ) );
         m_url_tmp = DBTREE::url_readcgi( m_url_article, atoi( m_str_num.c_str() ), 0 );
 
         if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ){
@@ -1873,6 +1890,16 @@ Gtk::Menu* ArticleViewBase::get_popupmenu( const std::string& url )
     // IDポップアップメニュー
     else if( url.find( PROTO_ID ) == 0 ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_id" ) );
+    }
+
+    // 名前ポップアップメニュー
+    else if( url.find( PROTO_NAME ) == 0 ){
+        popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_name" ) );
+    }
+
+    // あぼーんポップアップメニュー
+    else if( url.find( PROTO_ABONE ) == 0 ){
+        popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_abone" ) );
     }
 
     // 画像ポップアップメニュー
