@@ -11,12 +11,8 @@
 
 namespace DBTREE
 {
-    class SettingLoader;
-
     class Board2ch : public Board2chCompati
     {
-        SettingLoader* m_settingloader;
-
       public:
 
         Board2ch( const std::string& root, const std::string& path_board,const std::string& name );
@@ -30,11 +26,6 @@ namespace DBTREE
         virtual const std::string get_proxy_host_w();
         virtual const int get_proxy_port_w();
 
-        virtual const std::string settingtxt();
-        virtual const std::string default_noname();
-        virtual const int line_number();
-        virtual const int message_count();
-
         // 新スレ作成用のメッセージ変換
         virtual const std::string create_newarticle_message( const std::string& subject,
                                                              const std::string& name, const std::string& mail, const std::string& msg );
@@ -42,9 +33,6 @@ namespace DBTREE
       private:
 
         virtual ArticleBase* append_article( const std::string& id, bool cached );
-
-        virtual void load_setting();
-        virtual void download_setting();
     };
 }
 

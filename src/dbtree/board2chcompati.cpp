@@ -5,10 +5,13 @@
 
 #include "board2chcompati.h"
 #include "article2chcompati.h"
+#include "settingloader.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 #include "jdlib/jdregex.h"
+
+#include "httpcode.h"
 
 #include <sstream>
 
@@ -28,6 +31,7 @@ using namespace DBTREE;
 Board2chCompati::Board2chCompati( const std::string& root, const std::string& path_board, const std::string& name,
     const std::string& basicauth)
     : BoardBase( root, path_board, name )
+    , m_settingloader( 0 )
 {
     set_path_dat( "/dat" );
     set_path_readcgi( "/test/read.cgi" );
@@ -39,6 +43,13 @@ Board2chCompati::Board2chCompati( const std::string& root, const std::string& pa
     set_charset( "MS932" );
 
     BoardBase::set_basicauth( basicauth );
+}
+
+
+Board2chCompati::~Board2chCompati()
+{
+    if( m_settingloader ) delete m_settingloader;
+    m_settingloader = NULL;
 }
 
 
@@ -315,4 +326,77 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
             if( ! BoardBase::get_abone_thread( article ) ) get_list_subject().push_back( article );
         }
     }
+}
+
+
+
+const std::string Board2chCompati::settingtxt()
+{
+    if( m_settingloader ){
+        if( m_settingloader->is_loading() ) return "ロード中です";
+        else if( m_settingloader->get_code() == HTTP_OK ) return m_settingloader->settingtxt();
+        else return "ロードに失敗しました : " + m_settingloader->get_str_code();
+    }
+
+    return BoardBase::settingtxt();
+}
+
+
+const std::string Board2chCompati::default_noname()
+{
+    if( m_settingloader
+        && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->default_noname();
+
+    return BoardBase::default_noname();
+}
+
+
+const int Board2chCompati::line_number()
+{
+    if( m_settingloader
+        && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->line_number();
+
+    return BoardBase::line_number();
+}
+
+
+const int Board2chCompati::message_count()
+{
+    if( m_settingloader
+        && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->message_count();
+
+    return BoardBase::message_count();
+}    
+
+
+
+//
+// SETTING.TXTをキャッシュから読み込む
+//
+// BoardBase::read_info()で呼び出す
+//
+void Board2chCompati::load_setting()
+{
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::load_setting\n";
+#endif
+
+    if( ! m_settingloader ) m_settingloader = new SettingLoader( url_boardbase() );
+    m_settingloader->load_setting();
+}
+
+
+//
+// SETTING.TXTをサーバからダウンロード
+//
+// 読み込むタイミングはsubject.txtを読み終わった直後( BoardBase::receive_finish() )
+//
+void Board2chCompati::download_setting()
+{
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::download_setting\n";
+#endif
+
+    if( ! m_settingloader ) m_settingloader = new SettingLoader( url_boardbase() );
+    m_settingloader->download_setting();
 }
