@@ -209,7 +209,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DrawoutTmp", "テンプレート抽出"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_tmp ) );
 
     // あぼーん系
-    action_group()->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん" ) );
+    action_group()->add( Gtk::Action::create( "AboneWord_Menu", "NG ワード" ) );
     action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
     action_group()->add( Gtk::Action::create( "AboneName", "NG 名前に追加 (ローカルあぼ〜ん)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
     action_group()->add( Gtk::Action::create( "GlobalAboneName", "NG 名前に追加 (全体あぼ〜ん)" ) );
@@ -218,6 +218,8 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "GlobalAboneWord", "NG ワードに追加 (全体あぼ〜ん)" ) );
     action_group()->add( Gtk::Action::create( "SetGlobalAboneWord", "追加する"), sigc::mem_fun( *this, &ArticleViewBase::slot_global_abone_word ) );
 
+    action_group()->add( Gtk::ToggleAction::create( "TranspAbone", "透明あぼ〜ん", std::string(), false ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_abone_transp ) );
     action_group()->add( Gtk::ToggleAction::create( "TranspChainAbone", "透明/連鎖あぼ〜ん", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_abone_transp_chain ) );
 
@@ -307,6 +309,7 @@ void ArticleViewBase::setup_action()
 
     // あぼーんをクリックしたときのメニュー
     "<popup name='popup_menu_abone'>"
+    "<menuitem action='TranspAbone'/>"
     "<menuitem action='TranspChainAbone'/>"
     "</popup>"
 
@@ -340,7 +343,7 @@ void ArticleViewBase::setup_action()
     "<menuitem action='Copy'/>"
 
     "<separator/>"
-    "<menu action='Abone_Menu'>"
+    "<menu action='AboneWord_Menu'>"
 
     "<menuitem action='AboneWord'/>"
 
@@ -348,7 +351,6 @@ void ArticleViewBase::setup_action()
     "<menuitem action='SetGlobalAboneWord'/>"
     "</menu>"
 
-    "<menuitem action='TranspChainAbone'/>"
     "</menu>"
 
     "<separator/>"
@@ -1775,18 +1777,11 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
-    act = action_group()->get_action( "AboneWord" );
+    act = action_group()->get_action( "AboneWord_Menu" );
     if( act ){
         if( str_select.empty() ) act->set_sensitive( false );
         else act->set_sensitive( true );
     }
-
-    act = action_group()->get_action( "GlobalAboneWord" );
-    if( act ){
-        if( str_select.empty() ) act->set_sensitive( false );
-        else act->set_sensitive( true );
-    }
-
 
     // ユーザコマンド
     const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
@@ -1807,6 +1802,15 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( false );
     }
 
+    // 透明あぼーん
+    act = action_group()->get_action( "TranspAbone" );
+    if( act ){
+
+        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+        if( m_article->get_abone_transparent() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
     // 透明/連鎖あぼーん
     act = action_group()->get_action( "TranspChainAbone" );
     if( act ){
@@ -1815,6 +1819,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         if( m_article->get_abone_transparent() && m_article->get_abone_chain() ) tact->set_active( true );
         else tact->set_active( false );
     }
+
 
     // 画像
     if( DBIMG::is_loadable( url ) ){ 
@@ -2242,6 +2247,25 @@ void ArticleViewBase::slot_global_abone_word()
     CORE::core_set_command( "set_global_abone_word", "", m_drawarea->str_selection() );
 }
 
+
+
+//
+// 透明あぼーん
+//
+void ArticleViewBase::slot_toggle_abone_transp()
+{
+    if( ! m_enable_menuslot ) return;
+
+    assert( m_article );
+
+    bool setval = true;
+
+    if( m_article->get_abone_transparent() ) setval = false;
+    m_article->set_abone_transparent( setval );
+
+    // 再レイアウト
+    ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
+}
 
 
 //
