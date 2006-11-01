@@ -476,7 +476,11 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         }
         else ss << DBTREE::default_noname( get_url() );
 
-        ss << "<>" << m_entry_mail.get_text() << "<>";
+        std::string mail = m_entry_mail.get_text();
+        mail = MISC::replace_str( mail, "<", "&lt;" );
+        mail = MISC::replace_str( mail, ">", "&gt;" );
+
+        ss << "<>" << mail  << "<>";
 
         struct timeval tv;
         struct timezone tz;
