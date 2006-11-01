@@ -1086,7 +1086,9 @@ void NodeTreeBase::parseMail( NODE* header, const char* str, int lng )
 {
     // sage 以外の時は色を変える
     int color = COLOR_CHAR;
-    if( !( str[ 0 ] == 's' && str[ 1 ] == 'a' && str[ 2 ] == 'g' && str[ 3 ] == 'e' ) ) color = COLOR_CHAR_AGE;
+    int i = 0;
+    while( str[ i ] != 's' && i < lng ) ++i;
+    if( str[ i ] != 's' || str[ i+1 ] != 'a' || str[ i+2 ] != 'g' || str[ i+3 ] != 'e' ) color = COLOR_CHAR_AGE;
 
     header->headinfo->node_mail = createTextNode( " [", color );
     parse_html( str, lng, color, true );

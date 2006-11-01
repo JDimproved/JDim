@@ -459,6 +459,9 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         if( ! m_entry_name.get_text().empty() ){
 
             std::string name = m_entry_name.get_text();
+            name = MISC::replace_str( name, "<", "&lt;" );
+            name = MISC::replace_str( name, ">", "&gt;" );
+
             std::string trip;
 
             unsigned int i = name.find( "#" );
