@@ -107,6 +107,12 @@ namespace DBTREE
         // number番の名前
         const std::string get_name( int number );
 
+        // number番の名前の重複数( = 発言数 )
+        int get_num_name( int number );
+
+        // 指定した発言者の名前のレス番号をリストにして取得
+        std::list< int > get_res_name( const std::string& name );
+
         // number番のID
         const std::string get_id_name( int number );
 

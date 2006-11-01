@@ -70,6 +70,25 @@ namespace ARTICLE
     /////////////////////////////////////////////////////////////////////////
 
 
+    // 名前抽出ポップアップ
+    class ArticleViewPopupName : public ArticleViewPopup
+    {
+        std::string m_str_name;
+
+      public:
+        ArticleViewPopupName( const std::string& url, const std::string& name ): ArticleViewPopup( url, false ), m_str_name( name ){}
+        ~ArticleViewPopupName(){}
+
+        virtual void show_view(){
+            show_instruct_popup();
+            show_name( m_str_name );
+        }
+    };
+
+
+    /////////////////////////////////////////////////////////////////////////
+
+
     // ID 抽出ポップアップ
     class ArticleViewPopupID : public ArticleViewPopup
     {

@@ -1233,6 +1233,25 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
 
+    // 名前 で抽出
+    else if( command.command  == "open_article_name" ) { 
+
+        ARTICLE::get_admin()->set_command( "open_view",
+                                           command.url, 
+
+                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           "left", // タブで開く
+                                           "true", // url 開いてるかチェックしない
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
+
+                                           "NAME", // 名前抽出モード
+                                     
+                                           command.arg1 // 名前
+            );
+        return;
+    }
+
+
     // ID で抽出
     else if( command.command  == "open_article_id" ) { 
 

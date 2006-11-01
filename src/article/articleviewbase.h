@@ -110,6 +110,9 @@ namespace ARTICLE
         // show_title == trueの時は 板名、スレ名を表示
         void show_res( const std::string& num, bool show_title );
 
+        // 名前 で抽出して表示
+        void show_name( const std::string& name );
+
         // ID で抽出して表示
         void show_id( const std::string& id_name );
 
@@ -187,6 +190,7 @@ namespace ARTICLE
         void slot_write_res();
         void slot_quote_res();
         void slot_copy_current_url();
+        void slot_copy_name();
         void slot_copy_id();
         void slot_copy_selection_str();
         void slot_drawout_selection_str();
@@ -196,6 +200,7 @@ namespace ARTICLE
         virtual void slot_drawout_res();
         virtual void slot_drawout_around();
         virtual void slot_drawout_tmp();
+        virtual void slot_drawout_name();
         virtual void slot_drawout_id();
         virtual void slot_drawout_bm();
         virtual void slot_drawout_refer();

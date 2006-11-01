@@ -146,6 +146,24 @@ const std::string ArticleBase::get_name( int number )
 
 
 //
+// number番の名前の重複数( = 発言数 )
+//
+int ArticleBase::get_num_name( int number )
+{
+    return get_nodetree()->get_num_name( number );
+}
+
+
+//
+// 指定した発言者の名前のレス番号をリストにして取得
+//
+std::list< int > ArticleBase::get_res_name( const std::string& name )
+{
+    return get_nodetree()->get_res_name( name );
+}
+
+
+//
 // number番の発言者ID
 //
 const std::string ArticleBase::get_id_name( int number )

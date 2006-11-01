@@ -446,6 +446,40 @@ const std::string NodeTreeBase::get_name( int number )
 }
 
 
+//
+// number番の名前の重複数( = 発言数 )
+//
+int NodeTreeBase::get_num_name( int number )
+{
+    int num = 0;
+    std::string name = get_name( number );
+
+    for( int i = 1; i <= m_id_header; ++i ){
+
+        if( get_name( i ) == name ) ++num;
+    }
+
+    return num;
+}
+
+
+
+//
+// 指定した発言者の名前のレス番号をリストにして取得
+//
+std::list< int > NodeTreeBase::get_res_name( const std::string& name )
+{
+    std::list< int > list_resnum;          
+    for( int i = 1; i <= m_id_header ; ++i ){
+        if( name == get_name( i )
+            && ( ! m_abone_transparent || ! get_abone( i ) ) //  透明あぼーんしていない　or あぼーんしていない
+            ) list_resnum.push_back( i );
+    }
+
+    return list_resnum;
+}
+
+
 
 //
 // number番の ID 取得

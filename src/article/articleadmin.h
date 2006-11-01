@@ -13,6 +13,7 @@
 
 #define ARTICLE_SIGN "_ARTICLE_"
 #define RES_SIGN     "_RES_"
+#define NAME_SIGN    "_NAME_"
 #define ID_SIGN      "_ID_"
 #define BOOKMK_SIGN  "_BM_"
 #define URL_SIGN     "_URL_"

@@ -133,14 +133,20 @@ namespace DBTREE
         // number番のレスの発言者の名前
         const std::string get_name( int number );
 
+        // number番の名前の重複数( = 発言数 )
+        int get_num_name( int number );
+
+        // 指定した発言者の名前のレス番号をリストにして取得
+        std::list< int > get_res_name( const std::string& name );
+
         // number番のレスの発言者ID( スレIDではなくて名前の横のID )
         const std::string get_id_name( int number );
 
-        // 指定したた発言者ID の重複数( = 発言数 )
+        // 指定した発言者ID の重複数( = 発言数 )
         // (注) 下の get_num_id_name( int number )と違って検索するので遅い
         int get_num_id_name( const std::string& id );
 
-        // number番のた発言者ID の重複数( = 発言数 )
+        // number番の発言者ID の重複数( = 発言数 )
         int get_num_id_name( int number );
 
         // 指定した発言者IDを持つレス番号をリストにして取得

@@ -351,6 +351,76 @@ void ArticleViewRes::relayout()
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// 名前抽出ビュー
+
+
+ArticleViewName::ArticleViewName( const std::string& url, const std::string& name )
+    : ArticleViewBase( url ),
+      m_str_name( name )
+{
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday( &tv, &tz );
+
+    // viewのURL更新
+    set_url( url_article() + ARTICLE_SIGN + NAME_SIGN + m_str_name + TIME_SIGN + MISC::timevaltostr( tv ) );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewName::ArticleViewName " << get_url() << std::endl;
+#endif
+
+    setup_view();
+}
+
+
+
+ArticleViewName::~ArticleViewName()
+{
+
+#ifdef _DEBUG    
+    std::cout << "ArticleViewName::~ArticleViewName : " << get_url() << std::endl;
+#endif
+}
+
+
+//
+// 抽出表示
+//
+void ArticleViewName::show_view()
+{
+    show_name( m_str_name );
+
+    // ラベルとタブ
+    if( toolbar() ){
+
+        toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+        toolbar()->set_label( " [ 名前：" + m_str_name + " ] - "
+                                     + DBTREE::article_subject( url_article() ));
+        std::string str_label = "[名前] " + DBTREE::article_subject( url_article() );
+        ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label );
+    }
+
+}
+
+
+
+//
+// 画面を消してレイアウトやりなおし & 再描画
+//
+void ArticleViewName::relayout()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewName::relayout\n";
+#endif
+
+    drawarea()->clear_screen();
+    show_name( m_str_name );
+    drawarea()->redraw_view();
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

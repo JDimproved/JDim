@@ -23,6 +23,7 @@ namespace ARTICLE
         friend class ArticleViewBase;
         friend class ArticleViewMain;
         friend class ArticleViewRes;
+        friend class ArticleViewName;
         friend class ArticleViewID;
         friend class ArticleViewBM;
         friend class ArticleViewRefer;

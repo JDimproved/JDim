@@ -183,6 +183,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "BookMark", "ブックマーク設定/解除"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"), sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_current_url ) );
+    action_group()->add( Gtk::Action::create( "CopyNAME", "名前コピー"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_name ) );
     action_group()->add( Gtk::Action::create( "CopyID", "IDコピー"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_id ) );
     action_group()->add( Gtk::Action::create( "Copy", "Copy"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_selection_str ) );
     action_group()->add( Gtk::Action::create( "WriteRes", "レスする" ),sigc::mem_fun( *this, &ArticleViewBase::slot_write_res ) );
@@ -201,6 +202,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Drawout_Menu", "抽出" ) );
     action_group()->add( Gtk::Action::create( "DrawoutWord", "キーワード抽出"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_selection_str ) );
     action_group()->add( Gtk::Action::create( "DrawoutRes", "レス抽出"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_res ) );
+    action_group()->add( Gtk::Action::create( "DrawoutNAME", "名前抽出"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_name ) );
     action_group()->add( Gtk::Action::create( "DrawoutID", "ID抽出"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_id ) );
     action_group()->add( Gtk::Action::create( "DrawoutBM", "ブックマーク抽出"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_bm ) );
     action_group()->add( Gtk::Action::create( "DrawoutURL", "URL抽出"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_url ) );
@@ -301,6 +303,9 @@ void ArticleViewBase::setup_action()
 
     // 名前をクリックしたときのメニュー
     "<popup name='popup_menu_name'>"
+    "<menuitem action='DrawoutNAME'/>"
+    "<menuitem action='CopyNAME'/>"
+    "<separator/>"
     "<menuitem action='AboneName'/>"
     "<menu action='GlobalAboneName'>"
     "<menuitem action='SetGlobalAboneName'/>"
@@ -988,6 +993,26 @@ void ArticleViewBase::show_res( const std::string& num, bool show_title )
 }
 
 
+//
+// 名前 で抽出して表示
+// 
+void ArticleViewBase::show_name( const std::string& name )
+{
+    assert( m_article );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::show_name " << name << std::endl;
+#endif
+    
+    std::list< int > list_resnum = m_article->get_res_name( name );       
+
+    std::ostringstream comment;
+    comment << "名前：" << name << "  " << list_resnum.size() << " 件";
+      
+    append_html( comment.str() );
+    if( ! list_resnum.empty() ) append_res( list_resnum );
+}
+
 
 //
 // ID で抽出して表示
@@ -1469,9 +1494,18 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     // 名前クリック
     else if( url.find( PROTO_NAME ) == 0 ){
 
+        int num_name = m_article->get_num_name( res_number );
         m_name = m_article->get_name( res_number );
 
-        if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
+        // 名前ポップアップ
+        if( num_name >= 1 && control.button_alloted( event, CONTROL::PopupIDButton ) ){
+            CORE::VIEWFACTORY_ARGS args;
+            args.arg1 = m_name;
+            SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPNAME, m_url_article, args );
+            show_popup( view_popup );
+        }
+        else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_name();
+        else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
             SKELETON::View::show_popupmenu( url, false );
         }
     }
@@ -2043,6 +2077,18 @@ void ArticleViewBase::slot_copy_current_url()
 
 
 //
+// 名前をコピー
+//
+// 呼び出す前に m_name に名前をセットしておくこと
+//
+void ArticleViewBase::slot_copy_name()
+{
+    std::string name = "名前：" + m_name;
+    COPYCLIP( name );
+}
+
+
+//
 // IDをコピー
 //
 // 呼び出す前に m_id_name にIDをセットしておくこと
@@ -2140,6 +2186,16 @@ void ArticleViewBase::slot_drawout_tmp()
     CORE::core_set_command( "open_article_res" ,m_url_article, ss.str() );
 }
 
+
+//
+// 別のタブを開いて名前抽出
+//
+// 呼び出す前に m_name にIDをセットしておくこと
+//
+void ArticleViewBase::slot_drawout_name()
+{
+    CORE::core_set_command( "open_article_name" ,m_url_article, m_name );
+}
 
 
 

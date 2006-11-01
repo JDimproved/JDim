@@ -103,6 +103,18 @@ void ArticleAdmin::restore()
             if( regex.str( 3 ) != "0" ) command_arg.arg6 = regex.str( 3 );
         }
 
+        // 名前抽出
+        else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + NAME_SIGN + "(.*)" + TIME_SIGN, url )){
+
+            command_arg.url = regex.str( 1 );
+            command_arg.arg1 = "true"; // タブで開く
+            command_arg.arg2 = "true"; // 既に開いているかチェック無し
+            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+
+            command_arg.arg4 = "NAME";
+            command_arg.arg5 = regex.str( 2 );
+        }
+
         // ID抽出
         else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + ID_SIGN + "(.*)" + TIME_SIGN, url )){
 
@@ -282,6 +294,12 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
         view_args.arg2 = "false";
         view_args.arg3 = command.arg6; // ジャンプ番号
         str_jump = command.arg6;
+    }
+
+    // 名前抽出ビュー
+    if( command.arg4 == "NAME" ){
+        type = CORE::VIEW_ARTICLENAME;
+        view_args.arg1 = command.arg5; // 名前
     }
 
     // ID 抽出ビュー

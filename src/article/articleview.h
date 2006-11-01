@@ -51,6 +51,23 @@ namespace ARTICLE
     };
 
 
+    /////////////////////////////////////////////////////////////////////////
+
+
+    // 名前抽出ビュー
+    class ArticleViewName : public ArticleViewBase
+    {
+        std::string m_str_name;
+
+      public:
+        ArticleViewName( const std::string& url, const std::string& name );
+        ~ArticleViewName();
+
+        // SKELETON::View の関数のオーバロード
+        virtual void show_view();
+        virtual void relayout();
+    };
+
 
     /////////////////////////////////////////////////////////////////////////
 
