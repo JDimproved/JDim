@@ -1,9 +1,11 @@
 [Desktop Entry]
-Name=JD 2ch browser
-Comment=JD is a 2ch browser based on gtkmm2.
+Encoding=UTF-8
 Exec=jd
 Icon=jd.png
 Terminal=false
 Type=Application
-Encoding=UTF-8
+Name=JD 2ch browser
+Name[ja]=2ch ブラウザ JD
+Comment=JD is a 2ch browser based on gtkmm2.
+Comment[ja]=gtkmm2 を利用した 2ch ブラウザ
 Categories=Network;
