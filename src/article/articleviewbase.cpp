@@ -959,6 +959,38 @@ void ArticleViewBase::slot_jump()
 
 
 //
+// レス番号を能えて、そのURLのリストをHTMLにして返す
+//
+std::string ArticleViewBase::get_html_of_resURLs( std::list< int >& list_resnum )
+{
+    std::string html = "<br>[ 抽出したレスのURL ]<br><br>";
+    int from_num;
+    int to_num;
+
+    std::list < int >::iterator it = list_resnum.begin();
+    from_num = *it;
+    to_num = from_num -1;
+    for( ; it != list_resnum.end(); ++it ){
+
+        if( to_num +1 != ( *it ) ){
+
+            html += url_for_copy() + MISC::itostr( from_num );
+            if( from_num != to_num ) html += "-" + MISC::itostr( to_num );
+            html +=  "<br>";
+            from_num = to_num = *it;
+        }
+        else to_num = *it;
+    }
+
+    html += url_for_copy() + MISC::itostr( from_num );
+    if( from_num != to_num ) html += "-" + MISC::itostr( to_num );
+    html +=  "<br>";
+
+    return html;
+}
+
+
+//
 // レスを抽出して表示
 //
 // num は "from-to"　の形式。"a+b"の時はaとbを連結する(bのヘッダ行を取り除く)
@@ -1010,7 +1042,10 @@ void ArticleViewBase::show_name( const std::string& name )
     comment << "名前：" << name << "  " << list_resnum.size() << " 件";
       
     append_html( comment.str() );
-    if( ! list_resnum.empty() ) append_res( list_resnum );
+    if( ! list_resnum.empty() ){
+        append_res( list_resnum );
+        append_html( get_html_of_resURLs( list_resnum ) );
+    }
 }
 
 
@@ -1031,7 +1066,10 @@ void ArticleViewBase::show_id( const std::string& id_name )
     comment << "ID:" << id_name.substr( strlen( PROTO_ID ) ) << "  " << list_resnum.size() << " 件";
       
     append_html( comment.str() );
-    if( ! list_resnum.empty() ) append_res( list_resnum );
+    if( ! list_resnum.empty() ){
+        append_res( list_resnum );
+        append_html( get_html_of_resURLs( list_resnum ) );
+    }
 }
 
 
@@ -1049,7 +1087,10 @@ void ArticleViewBase::show_bm()
     
     std::list< int > list_resnum = m_article->get_res_bm();
 
-    if( ! list_resnum.empty() ) append_res( list_resnum );
+    if( ! list_resnum.empty() ){
+        append_res( list_resnum );
+        append_html( get_html_of_resURLs( list_resnum ) );
+    }
     else append_html( "ブックマークはセットされていません" );
 }
 
@@ -1114,11 +1155,16 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or )
     comment << query << "  " << list_resnum.size() << " 件";
 
     append_html( comment.str() );
-    append_res( list_resnum );
 
-    // ハイライト表示
-    std::list< std::string > list_query = MISC::split_line( query );
-    m_drawarea->search( list_query, false );
+    if( ! list_resnum.empty() ){
+
+        append_res( list_resnum );
+        append_html( get_html_of_resURLs( list_resnum ) );
+
+        // ハイライト表示
+        std::list< std::string > list_query = MISC::split_line( query );
+        m_drawarea->search( list_query, false );
+    }
 }
 
 

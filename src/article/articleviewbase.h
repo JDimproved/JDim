@@ -161,6 +161,9 @@ namespace ARTICLE
 
         virtual void pack_widget();
         void setup_action();
+
+        // レス番号を能えて、そのURLのリストをHTMLにして返す
+        std::string get_html_of_resURLs( std::list< int >& list_resnum );
         
         // drawarea の signal を受け取る slots
         bool slot_button_press( GdkEventButton* event );
