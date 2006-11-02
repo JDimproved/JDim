@@ -55,6 +55,7 @@ namespace MESSAGE
         char* m_str_iconv;
         int m_max_line;
         int m_max_str;
+        int m_lng_str_enc;
 
       protected:
         

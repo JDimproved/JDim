@@ -294,6 +294,27 @@ void MessageViewBase::slot_write_clicked()
         }
     }
 
+
+    // 行数チェック
+    if( m_max_line ){
+
+        if( m_text_message.get_buffer()->get_line_count() > m_max_line ){
+            Gtk::MessageDialog mdiag( "行数が多すぎます。" );
+            mdiag.run();
+            return;
+        }
+    }
+
+    // バイト数チェック
+    if( m_max_str ){
+
+        if( m_lng_str_enc > m_max_str ){
+            Gtk::MessageDialog mdiag( "文字数が多すぎます。" );
+            mdiag.run();
+            return;
+        }
+    }
+
     write();
 }
 
@@ -510,11 +531,12 @@ void MessageViewBase::show_status()
 
     strcpy( m_str_iconv,  m_text_message.get_text().c_str() );
     std::string str_enc = m_iconv->convert( m_str_iconv, strlen( m_str_iconv ), byte_out );
+    m_lng_str_enc = str_enc.length();
 
     ss << " [ 行数 " << m_text_message.get_buffer()->get_line_count();
     if( m_max_line ) ss << "/ " << m_max_line;
 
-    ss << "   /  文字数 " << str_enc.length();
+    ss << "   /  文字数 " << m_lng_str_enc;
     if( m_max_str ) ss << "/ " << m_max_str;
 
     ss << " ]";
