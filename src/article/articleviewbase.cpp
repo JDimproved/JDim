@@ -969,13 +969,14 @@ std::string ArticleViewBase::get_html_url4report( std::list< int >& list_resnum 
 
     std::list < int >::iterator it = list_resnum.begin();
     for( ; it != list_resnum.end(); ++it ){
+
         int num = (*it);
-        std::string id_str = m_article->get_id_name( num ).substr( strlen( PROTO_ID ) );
-        std::string time_str = MISC::remove_str_regex( m_article->get_time( num ), "\\([^\\)]+\\)" );
+        std::string time_str = m_article->get_time( num );
+        std::string id_str = m_article->get_id_name( num );
 
         html += url_for_copy() + MISC::itostr( num );
-        if( ! time_str.empty() ) html += " " + time_str;
-        if( ! id_str.empty() ) html += " ID:" + id_str;
+        if( ! time_str.empty() ) html += " " + MISC::remove_str_regex( time_str, "\\([^\\)]+\\)" ); // 曜日を取り除く
+        if( ! id_str.empty() ) html += " ID:" + id_str.substr( strlen( PROTO_ID ) );
         html += "<br>";
     }
 
