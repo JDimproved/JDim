@@ -10,13 +10,13 @@
 # Defined by upsteam
 #
 %define         main_ver      1.8.0
-%define         strtag        beta061023
+%define         strtag        beta061103
 %define         repoid        22352
 
 
 # Defined by vendor
 #
-%define         vendor_rel    3
+%define         vendor_rel    1
 # Tag name changed from vendor to vendorname so as not to
 # overwrite Vendor entry in Summary
 %define         vendorname    fedora
