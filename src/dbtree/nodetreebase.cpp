@@ -480,6 +480,25 @@ std::list< int > NodeTreeBase::get_res_name( const std::string& name )
 }
 
 
+//
+// number番のレスの時刻
+// 内部で regex　を使っているので遅い
+//
+const std::string NodeTreeBase::get_time( int number )
+{
+    std::string res_str = get_res_str( number );
+    if( res_str.empty() ) return std::string();
+
+    std::string time_str;
+    JDLIB::Regex regex;
+
+    if( regex.exec( " 名前：.+]：([0-9]*/[0-9]*/[0-9]*[^ ]* [0-9]*:[0-9]*[^ ]*).*$", res_str ) ){
+        time_str = regex.str( 1 );
+    }
+
+    return time_str;
+}
+
 
 //
 // number番の ID 取得
@@ -675,7 +694,7 @@ NODE* NodeTreeBase::append_html( const std::string& html )
     m_vec_header[ m_id_header ] = tmpnode;
 
     init_loading();
-    parse_html( html.c_str(), html.length(), COLOR_CHAR );
+    parse_html( html.c_str(), html.length(), COLOR_CHAR, false, false, true );
     clear();
 
     return tmpnode;
