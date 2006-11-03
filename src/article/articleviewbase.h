@@ -60,6 +60,9 @@ namespace ARTICLE
         // ブックマーク移動時の現在の位置(レス番号)
         int m_current_bm;
 
+        // 抽出ビューで荒らし報告用のURLを表示する
+        bool m_show_url4report;
+
     public:
 
         ArticleViewBase( const std::string& url );
@@ -162,8 +165,8 @@ namespace ARTICLE
         virtual void pack_widget();
         void setup_action();
 
-        // レス番号を能えて、そのURLのリストをHTMLにして返す
-        std::string get_html_of_resURLs( std::list< int >& list_resnum );
+        // 荒らし報告用のURLリストをHTML形式で取得
+        std::string get_html_url4report( std::list< int >& list_resnum );
         
         // drawarea の signal を受け取る slots
         bool slot_button_press( GdkEventButton* event );

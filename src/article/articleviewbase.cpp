@@ -42,6 +42,7 @@
 
 using namespace ARTICLE;
 
+#define PROTO_URL4REPORT "url4report://"
 
 
 ArticleViewBase::ArticleViewBase( const std::string& url )
@@ -51,7 +52,8 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
       m_popup_win( NULL ),
       m_popup_shown( false ),
       m_enable_menuslot( true ),
-      m_current_bm( 0 )
+      m_current_bm( 0 ),
+      m_show_url4report( false )
 {
     // マウスジェスチャ可能
     SKELETON::View::set_enable_mg( true );
@@ -959,32 +961,23 @@ void ArticleViewBase::slot_jump()
 
 
 //
-// レス番号を能えて、そのURLのリストをHTMLにして返す
+// 荒らし報告用のURLリストをHTML形式で取得
 //
-std::string ArticleViewBase::get_html_of_resURLs( std::list< int >& list_resnum )
+std::string ArticleViewBase::get_html_url4report( std::list< int >& list_resnum )
 {
-    std::string html = "<br>[ 抽出したレスのURL ]<br><br>";
-    int from_num;
-    int to_num;
+    std::string html = "[ 荒らし報告用URLリスト ]<br><br>";
 
     std::list < int >::iterator it = list_resnum.begin();
-    from_num = *it;
-    to_num = from_num -1;
     for( ; it != list_resnum.end(); ++it ){
+        int num = (*it);
+        std::string id_str = m_article->get_id_name( num ).substr( strlen( PROTO_ID ) );
+        std::string time_str = MISC::remove_str_regex( m_article->get_time( num ), "\\([^\\)]+\\)" );
 
-        if( to_num +1 != ( *it ) ){
-
-            html += url_for_copy() + MISC::itostr( from_num );
-            if( from_num != to_num ) html += "-" + MISC::itostr( to_num );
-            html +=  "<br>";
-            from_num = to_num = *it;
-        }
-        else to_num = *it;
+        html += url_for_copy() + MISC::itostr( num );
+        if( ! time_str.empty() ) html += " " + time_str;
+        if( ! id_str.empty() ) html += " ID:" + id_str;
+        html += "<br>";
     }
-
-    html += url_for_copy() + MISC::itostr( from_num );
-    if( from_num != to_num ) html += "-" + MISC::itostr( to_num );
-    html +=  "<br>";
 
     return html;
 }
@@ -1040,12 +1033,14 @@ void ArticleViewBase::show_name( const std::string& name )
 
     std::ostringstream comment;
     comment << "名前：" << name << "  " << list_resnum.size() << " 件";
-      
-    append_html( comment.str() );
+
     if( ! list_resnum.empty() ){
-        append_res( list_resnum );
-        append_html( get_html_of_resURLs( list_resnum ) );
+        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">荒らし報告用URL表示</a>";
+        else comment << "<br><br>" + get_html_url4report( list_resnum );
     }
+
+    append_html( comment.str() );
+    if( ! list_resnum.empty() ) append_res( list_resnum );
 }
 
 
@@ -1064,12 +1059,14 @@ void ArticleViewBase::show_id( const std::string& id_name )
 
     std::ostringstream comment;
     comment << "ID:" << id_name.substr( strlen( PROTO_ID ) ) << "  " << list_resnum.size() << " 件";
+
+    if( ! list_resnum.empty() ){
+        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">荒らし報告用URL表示</a>";
+        else comment << "<br><br>" + get_html_url4report( list_resnum );
+    }
       
     append_html( comment.str() );
-    if( ! list_resnum.empty() ){
-        append_res( list_resnum );
-        append_html( get_html_of_resURLs( list_resnum ) );
-    }
+    if( ! list_resnum.empty() ) append_res( list_resnum );
 }
 
 
@@ -1087,10 +1084,7 @@ void ArticleViewBase::show_bm()
     
     std::list< int > list_resnum = m_article->get_res_bm();
 
-    if( ! list_resnum.empty() ){
-        append_res( list_resnum );
-        append_html( get_html_of_resURLs( list_resnum ) );
-    }
+    if( ! list_resnum.empty() ) append_res( list_resnum );
     else append_html( "ブックマークはセットされていません" );
 }
 
@@ -1154,12 +1148,16 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or )
     std::ostringstream comment;
     comment << query << "  " << list_resnum.size() << " 件";
 
+    if( ! list_resnum.empty() ){
+        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">荒らし報告用URL表示</a>";
+        else comment << "<br><br>" + get_html_url4report( list_resnum );
+    }
+
     append_html( comment.str() );
 
     if( ! list_resnum.empty() ){
 
         append_res( list_resnum );
-        append_html( get_html_of_resURLs( list_resnum ) );
 
         // ハイライト表示
         std::list< std::string > list_query = MISC::split_line( query );
@@ -1563,6 +1561,17 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             SKELETON::View::show_popupmenu( url, false );
         }
     }
+
+    // 荒らし報告用URL表示クリック
+    else if( url.find( PROTO_URL4REPORT ) == 0 ){
+
+        if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
+
+            m_show_url4report = true;
+            relayout();
+        }
+    }
+
 
     // BE クリック
     else if( url.find( PROTO_BE ) == 0 ){
