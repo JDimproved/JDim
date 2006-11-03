@@ -965,7 +965,7 @@ void ArticleViewBase::slot_jump()
 //
 std::string ArticleViewBase::get_html_url4report( std::list< int >& list_resnum )
 {
-    std::string html = "[ 荒らし報告用URLリスト ]<br><br>";
+    std::string html;
 
     std::list < int >::iterator it = list_resnum.begin();
     for( ; it != list_resnum.end(); ++it ){
@@ -1021,7 +1021,9 @@ void ArticleViewBase::show_res( const std::string& num, bool show_title )
 //
 // 名前 で抽出して表示
 // 
-void ArticleViewBase::show_name( const std::string& name )
+// show_option = true の時は URL 表示などのオプションが表示される
+//
+void ArticleViewBase::show_name( const std::string& name, bool show_option )
 {
     assert( m_article );
 
@@ -1034,8 +1036,8 @@ void ArticleViewBase::show_name( const std::string& name )
     std::ostringstream comment;
     comment << "名前：" << name << "  " << list_resnum.size() << " 件";
 
-    if( ! list_resnum.empty() ){
-        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">荒らし報告用URL表示</a>";
+    if( show_option && ! list_resnum.empty() ){
+        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
     }
 
@@ -1047,7 +1049,9 @@ void ArticleViewBase::show_name( const std::string& name )
 //
 // ID で抽出して表示
 // 
-void ArticleViewBase::show_id( const std::string& id_name )
+// show_option = true の時は URL 表示などのオプションが表示される
+//
+void ArticleViewBase::show_id( const std::string& id_name, bool show_option )
 {
     assert( m_article );
 
@@ -1060,8 +1064,8 @@ void ArticleViewBase::show_id( const std::string& id_name )
     std::ostringstream comment;
     comment << "ID:" << id_name.substr( strlen( PROTO_ID ) ) << "  " << list_resnum.size() << " 件";
 
-    if( ! list_resnum.empty() ){
-        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">荒らし報告用URL表示</a>";
+    if( show_option && ! list_resnum.empty() ){
+        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
     }
       
@@ -1135,7 +1139,10 @@ void ArticleViewBase::show_refer( int num )
 //
 // キーワードで抽出して表示
 // 
-void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or )
+// mode_or = true の時は or 検索
+// show_option = true の時は URL 表示などのオプションが表示される
+//
+void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or, bool show_option )
 {
     assert( m_article );
 
@@ -1148,8 +1155,8 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or )
     std::ostringstream comment;
     comment << query << "  " << list_resnum.size() << " 件";
 
-    if( ! list_resnum.empty() ){
-        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">荒らし報告用URL表示</a>";
+    if( show_option && ! list_resnum.empty() ){
+        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
     }
 

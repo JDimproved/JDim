@@ -81,7 +81,7 @@ namespace ARTICLE
 
         virtual void show_view(){
             show_instruct_popup();
-            show_name( m_str_name );
+            show_name( m_str_name, false );
         }
     };
 
@@ -100,7 +100,7 @@ namespace ARTICLE
 
         virtual void show_view(){
             show_instruct_popup();
-            show_id( m_str_id );
+            show_id( m_str_id, false );
         }
     };
 

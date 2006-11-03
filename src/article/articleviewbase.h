@@ -114,10 +114,12 @@ namespace ARTICLE
         void show_res( const std::string& num, bool show_title );
 
         // 名前 で抽出して表示
-        void show_name( const std::string& name );
+        // show_option = true の時は URL 表示などのオプションが表示される
+        void show_name( const std::string& name, bool show_option );
 
         // ID で抽出して表示
-        void show_id( const std::string& id_name );
+        // show_option = true の時は URL 表示などのオプションが表示される
+        void show_id( const std::string& id_name, bool show_option );
 
         // ブックマークを抽出して表示
         void show_bm();
@@ -130,7 +132,8 @@ namespace ARTICLE
 
         // キーワードで抽出して表示
         // mode_or = true の時は or 検索
-        void drawout_keywords( const std::string& query, bool mode_or );
+        // show_option = true の時は URL 表示などのオプションが表示される
+        void drawout_keywords( const std::string& query, bool mode_or, bool show_option );
 
         // HTML追加
         void append_html( const std::string& html );

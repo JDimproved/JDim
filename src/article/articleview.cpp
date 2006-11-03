@@ -390,7 +390,7 @@ ArticleViewName::~ArticleViewName()
 //
 void ArticleViewName::show_view()
 {
-    show_name( m_str_name );
+    show_name( m_str_name, true );
 
     // ラベルとタブ
     if( toolbar() ){
@@ -416,7 +416,7 @@ void ArticleViewName::relayout()
 #endif
 
     drawarea()->clear_screen();
-    show_name( m_str_name );
+    show_name( m_str_name, true );
     drawarea()->redraw_view();
 }
 
@@ -461,7 +461,7 @@ ArticleViewID::~ArticleViewID()
 //
 void ArticleViewID::show_view()
 {
-    show_id( m_str_id );
+    show_id( m_str_id, true );
 
     // ラベルとタブ
     if( toolbar() ){
@@ -486,7 +486,7 @@ void ArticleViewID::relayout()
 #endif
 
     drawarea()->clear_screen();
-    show_id( m_str_id );
+    show_id( m_str_id, true );
     drawarea()->redraw_view();
 }
 
@@ -736,7 +736,7 @@ ArticleViewDrawout::~ArticleViewDrawout()
 //
 void ArticleViewDrawout::show_view()
 {
-    drawout_keywords( m_query, m_mode_or );
+    drawout_keywords( m_query, m_mode_or, true );
 
     // ラベルとタブ
     if( toolbar() ){
@@ -767,7 +767,7 @@ void ArticleViewDrawout::relayout()
 
     drawarea()->clear_screen();
     drawarea()->clear_highlight();
-    drawout_keywords( m_query, m_mode_or );
+    drawout_keywords( m_query, m_mode_or, true );
     drawarea()->redraw_view();
 }
 
