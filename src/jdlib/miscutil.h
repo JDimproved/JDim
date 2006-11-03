@@ -44,6 +44,12 @@ namespace MISC
     // strの前後の空白削除
     std::string remove_space( const std::string& str );
 
+    // str1からstr2で示された文字列を除く
+    std::string remove_str( const std::string& str1, const std::string& str2 );
+
+    // 正規表現を使ってstr1からqueryで示された文字列を除く
+    std::string remove_str_regex( const std::string& str1, const std::string& query );
+
     // str1, str2 に囲まれた文字列を切り出す
     std::string cut_str( const std::string& str, const std::string& str1, const std::string& str2 );
 

@@ -6,6 +6,7 @@
 #include "miscutil.h"
 #include "miscmsg.h"
 #include "jdiconv.h"
+#include "jdregex.h"
 
 #include <sstream>
 
@@ -329,6 +330,28 @@ std::string MISC::remove_space( const std::string& str )
     return str_out;
 }
 
+
+//
+// str1からstr2で示された文字列を除く
+//
+std::string MISC::remove_str( const std::string& str1, const std::string& str2 )
+{
+    std::string str_out;
+    unsigned int pos = str1.find( str2 );
+    if( pos != std::string::npos ) str_out = str1.substr( 0, pos ) + str1.substr( pos + str2.length() );
+    return str_out;
+}
+
+
+//
+// 正規表現を使ってstr1からqueryで示された文字列を除く
+//
+std::string MISC::remove_str_regex( const std::string& str1, const std::string& query )
+{
+    JDLIB::Regex regex;
+    if( ! regex.exec( query, str1 ) ) return std::string();
+    return MISC::remove_str( str1, regex.str( 0 ) );
+}
 
 
 //
