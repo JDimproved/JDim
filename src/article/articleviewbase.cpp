@@ -1523,9 +1523,15 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 #endif
 
     hide_popup();
-      
+
+    // プレビュー画面など、レスが存在しないときはいくつかの機能を無効にする
+    bool res_exist = ( m_article->res_header( res_number ) );
+
+    /////////////////////////////////////////////////////////////////
     // ID クリック
     if( url.find( PROTO_ID ) == 0 ){
+
+        if( ! res_exist ) return true;
 
         int num_id = m_article->get_num_id_name( res_number );
         m_id_name = m_article->get_id_name( res_number );
@@ -1543,8 +1549,11 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
     }
 
+    /////////////////////////////////////////////////////////////////
     // 名前クリック
     else if( url.find( PROTO_NAME ) == 0 ){
+
+        if( ! res_exist ) return true;
 
         int num_name = m_article->get_num_name( res_number );
         m_name = m_article->get_name( res_number );
@@ -1562,6 +1571,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
     }
 
+    /////////////////////////////////////////////////////////////////
     // あぼーんクリック
     else if( url.find( PROTO_ABONE ) == 0 ){
 
@@ -1570,6 +1580,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
     }
 
+    /////////////////////////////////////////////////////////////////
     // 荒らし報告用URL表示クリック
     else if( url.find( PROTO_URL4REPORT ) == 0 ){
 
@@ -1580,7 +1591,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
     }
 
-
+    /////////////////////////////////////////////////////////////////
     // BE クリック
     else if( url.find( PROTO_BE ) == 0 ){
 
@@ -1598,6 +1609,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
     }
 
+    /////////////////////////////////////////////////////////////////
     // アンカーをクリック
     else if( url.find( PROTO_ANCHORE ) == 0 ){
 
@@ -1613,11 +1625,14 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         else if( control.button_alloted( event, CONTROL::DrawoutAncButton ) ) slot_drawout_around();
     }
 
+    /////////////////////////////////////////////////////////////////
     // レス番号クリック
     else if( url.find( PROTO_RES ) == 0 ){
 
-        m_str_num = url.substr( strlen( PROTO_RES ) );
-        m_url_tmp = DBTREE::url_readcgi( m_url_article, atoi( m_str_num.c_str() ), 0 );
+        if( ! res_exist ) return true;
+
+        m_str_num = MISC::itostr( res_number );
+        m_url_tmp = DBTREE::url_readcgi( m_url_article, res_number, 0 );
 
         if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ){
             SKELETON::View::show_popupmenu( url, false );
@@ -1627,7 +1642,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         else if( control.button_alloted( event, CONTROL::BmResButton ) ) slot_bookmark();
 
         // 参照ポップアップ表示
-        else if( control.button_alloted( event, CONTROL::ReferResButton ) ){
+        else if( control.button_alloted( event, CONTROL::ReferResButton )
+                     && m_article->get_res_reference( res_number ).size() ){
 
             CORE::VIEWFACTORY_ARGS args;
             args.arg1 = m_str_num;
@@ -1636,6 +1652,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
     }
   
+    /////////////////////////////////////////////////////////////////
     // 画像クリック
     else if( DBIMG::is_loadable( url ) ){
 
@@ -1674,9 +1691,12 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
     }
 
+    /////////////////////////////////////////////////////////////////
     // ブラウザで開く
     else if( control.button_alloted( event, CONTROL::ClickButton ) ) CORE::core_set_command( "open_url", url );
 
+    /////////////////////////////////////////////////////////////////
+    // 失敗
     else return false;
 
     return true;
