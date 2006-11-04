@@ -10,6 +10,8 @@
 #include "jdlib/miscmsg.h"
 #include "jdlib/loaderdata.h"
 
+#include "global.h"
+
 #include <sstream>
 
 using namespace DBTREE;
@@ -278,7 +280,14 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
             else if( article == article_first ) pushback = false;
 
             if( pushback ){
-                article->set_current( true );
+
+                // ステータスをDAT落ち状態から通常状態に変更
+                int status = article->get_status();
+                status |= STATUS_NORMAL;
+                status &= ~STATUS_OLD;
+                article->set_status( status );
+
+                // boardビューに表示するリスト更新
                 if( ! BoardBase::get_abone_thread( article ) ) get_list_subject().push_back( article );
             }
         }

@@ -80,9 +80,6 @@ namespace DBTREE
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
         bool m_read_info;
 
-        // データを更新したらtrueにしてsave_info()で保存する
-        bool m_save_info;
-
         // クッキー, 書き込み時に必要
         std::list< std::string > m_list_cookies_for_write;
 
@@ -266,8 +263,11 @@ namespace DBTREE
         // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
         void reset_abone_thread( std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs );
 
+        // 板情報の取得
         void read_info();
-        void save_info_force();
+
+        // 情報保存
+        void save_info();
         
       private:
 
@@ -286,7 +286,6 @@ namespace DBTREE
         void read_board_info();
         void append_all_article_in_cache();
 
-        void save_info();
         void save_summary();
         void save_board_info();
         void save_jdboard_info();

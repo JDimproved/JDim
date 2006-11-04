@@ -244,7 +244,7 @@ const std::string DBTREE::board_str_code( const std::string& url )
 
 void DBTREE::board_save_info( const std::string& url )
 {
-    DBTREE::get_board( url )->save_info_force();
+    DBTREE::get_board( url )->save_info();
 }
 
 

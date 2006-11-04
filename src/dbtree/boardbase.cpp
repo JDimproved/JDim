@@ -37,7 +37,6 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_name( name )
     , m_rawdata( 0 )
     , m_read_info( 0 )
-    , m_save_info( 0 )
     , m_article_null( 0 )
 {
     clear();
@@ -81,14 +80,12 @@ bool BoardBase::empty()
 
 void BoardBase::set_view_sort_column( int column )
 {
-    m_save_info = true;
     m_view_sort_column = column;
 }
 
 
 void BoardBase::set_view_sort_ascend( bool ascend )
 {
-    m_save_info = true;
     m_view_sort_ascend = ascend;
 }
 
@@ -96,7 +93,6 @@ void BoardBase::set_view_sort_ascend( bool ascend )
 
 void BoardBase::set_check_noname( bool check )
 {
-    m_save_info = true;
     m_check_noname = check;
 }
 
@@ -743,7 +739,6 @@ void BoardBase::receive_finish()
         std::cout << "save " << path_subject << std::endl;    
 #endif
 
-        m_save_info = true;
         save_info();
 
         // subject.txtをキャッシュ
@@ -769,12 +764,20 @@ void BoardBase::receive_finish()
 
     //////////////////////////////
     // データベース更新
+    // subject.txtを解析して現行スレだけリスト(m_list_subject)に加える
 
     m_list_subject.clear();
 
-    // subject.txtを解析して現行スレだけリストに加える
+    // 一度全てのarticleをdat落ち状態にして subject.txt に
+    // 含まれているものだけ parse_subject()の中で通常状態にする
     std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->set_current( false );
+    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+
+        int status = ( *it )->get_status();
+        status &= ~STATUS_NORMAL;
+        status |= STATUS_OLD;
+        ( *it )->set_status( status );
+    }
 
     // subject.txtをパースしながらデータベース更新
     parse_subject( rawdata_utf8 );
@@ -784,7 +787,10 @@ void BoardBase::receive_finish()
     // 取得する必要がある
     if( CONFIG::get_show_oldarticle() ){
         for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
-            if( ( *it )->is_cached() && ! ( *it )->is_current() ){
+
+            if( ( *it )->is_cached()
+                && ( ( *it )->get_status() & STATUS_OLD )
+                ){
 
                 // info 読み込み
                 // TODO : 数が多いとboardビューを開くまで時間がかかるのをなんとかする
@@ -792,10 +798,22 @@ void BoardBase::receive_finish()
                 std::cout << "read article_info << " << ( *it )->get_url() << std::endl;
 #endif                
                 ( *it )->read_info();
+
+                // read_info()で状態が変わる時があるのでDAT落ちにしてからリスト(m_list_subject)に加える
+                int status = ( *it )->get_status();
+
+                if( status & STATUS_NORMAL ){
+                    status &= ~STATUS_NORMAL;
+                    status |= STATUS_OLD;
+                    ( *it )->set_status( status );
+                    ( *it )->save_info( true );
+                }
+
                 if( ! get_abone_thread( *it ) ) m_list_subject.push_back( *it );
             }
         }
     }
+
     // コアにデータベース更新を知らせる
     CORE::core_set_command( "update_board", url_subject() );
 
@@ -959,8 +977,6 @@ void BoardBase::reset_abone_thread( std::list< std::string >& threads,
     m_list_abone_regex_thread = MISC::remove_nullline_from_list( m_list_abone_regex_thread );
 
     update_abone_thread();
-
-    m_save_info = true;
 }
 
 
@@ -1008,25 +1024,11 @@ void BoardBase::read_board_info()
 
 
 //
-// 強制情報保存
-//
-// board viewを閉じたとき(BoardView::~BoardView())などに呼び出す
-//
-void BoardBase::save_info_force()
-{
-    m_save_info = true;
-    save_info();
-}
-
-
-//
 // 情報保存
 //
 void BoardBase::save_info()
 {
     if( empty() ) return;
-    if( !m_save_info ) return;
-    m_save_info = false;
 
     if( ! CACHE::mkdir_boardroot( url_boardbase() ) ) return;
 
@@ -1089,7 +1091,8 @@ void BoardBase::save_summary()
     for( it = m_list_subject.begin(); it != m_list_subject.end(); ++it ){
 
         ArticleBase* art = *( it );
-        if( art->is_cached() && art->is_current() ){
+        if( art->is_cached()
+            && ( art->get_status() & STATUS_NORMAL ) ){
             if( count ) sstr_out << " ";
             ++count;
 

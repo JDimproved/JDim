@@ -12,6 +12,7 @@
 #include "jdlib/jdregex.h"
 
 #include "httpcode.h"
+#include "global.h"
 
 #include <sstream>
 
@@ -321,8 +322,13 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
             article->set_subject( subject );
             article->set_number( number );
 
+            // ステータスをDAT落ち状態から通常状態に変更
+            int status = article->get_status();
+            status |= STATUS_NORMAL;
+            status &= ~STATUS_OLD;
+            article->set_status( status );
+
             // boardビューに表示するリスト更新
-            article->set_current( true );
             if( ! BoardBase::get_abone_thread( article ) ) get_list_subject().push_back( article );
         }
     }

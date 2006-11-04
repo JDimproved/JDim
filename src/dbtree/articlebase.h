@@ -82,12 +82,11 @@ namespace DBTREE
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
         bool m_read_info; 
 
-        // subject.txtに含まれているなら true
-        // 実際にDAT落ちしたかどうかはサーバにアクセスして302か404が帰ってきたらDAT落ちと判定
-        bool m_current;
-
         // true ならunlock_impl()がコールバックされたときに情報保存
         bool m_save_info;
+
+        // キャッシュがあって、かつ新着の読み込みが可能
+        bool m_enable_load;
 
       protected:
         void set_key( const std::string& key ){ m_key = key; }
@@ -223,6 +222,7 @@ namespace DBTREE
 
         // 状態 ( global.hで定義 )
         const int get_status() const{ return m_status; }
+        void set_status( int status ){ m_status = status; }
         void reset_status();
         
         void set_subject( const std::string& subject );
@@ -239,9 +239,8 @@ namespace DBTREE
         // キャッシュがarticlebaseに読み込まれている(nodetree!=NULL)か
         const bool is_cache_read() const { return ( m_nodetree ); }
 
-        // subject.txtに含まれているなら true
-        const bool is_current() const { return m_current; };    
-        void set_current( bool current ){ m_current = current; }
+        // キャッシュがあって、かつ新着の読み込みが可能
+        const bool enable_load() const { return m_enable_load; }
 
         // あぼーん情報
         std::list< std::string > get_abone_list_id(){ return m_list_abone_id; }
@@ -277,6 +276,10 @@ namespace DBTREE
         // 情報ファイル読み込み
         void read_info();
 
+        // 情報ファイル書き込み
+        // キャッシュがあって、force = true の時は強制書き込み
+        void save_info( bool force );
+
         // スレッドのロード開始
         const bool is_loading();
         void stop_load();
@@ -294,8 +297,7 @@ namespace DBTREE
         void slot_load_finished();
         virtual void unlock_impl();
 
-        // 情報ファイル書き込み
-        void save_info();
+        // navi2ch互換情報ファイル書き込み
         void save_navi2ch_info();
     };
 }

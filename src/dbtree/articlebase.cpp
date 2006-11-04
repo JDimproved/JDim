@@ -61,8 +61,8 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_abone_chain( 0 ),
       m_cached( cached ),
       m_read_info( 0 ),
-      m_current( 0 ),
-      m_save_info( 0 )
+      m_save_info( 0 ),
+      m_enable_load( false )
 {
 #ifdef _DEBUG
     std::cout << "ArticleBase::ArticleBase : " << m_id << std::endl;
@@ -353,7 +353,10 @@ void ArticleBase::set_subject( const std::string& subject )
 
 void ArticleBase::set_number( int number )
 {
-    if( number && number != m_number ) m_number = number;
+    if( number && number != m_number ){
+        m_number = number;
+        if( is_cached() && m_number_load < m_number ) m_enable_load = true;
+    }
 }
 
 
@@ -654,7 +657,7 @@ void ArticleBase::unlock_impl()
     m_nodetree.clear();
 
     // スレ情報保存
-    save_info();
+    save_info( false );
 }
 
 
@@ -695,6 +698,7 @@ void ArticleBase::download_dat()
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::download_dat " << m_url << std::endl;;
+    std::cout << "status = " << m_status << std::endl;
 #endif
 
     // DAT落ちしていてログイン中で無い時はロードしない
@@ -764,15 +768,21 @@ void ArticleBase::slot_load_finished()
     int old_status = m_status;
     if( m_code != HTTP_ERR ){
 
-        m_status = STATUS_NORMAL;
-
         // DAT落ち
-        if( m_code == HTTP_REDIRECT || m_code == HTTP_NOT_FOUND ) m_status = STATUS_OLD;
+        if( m_code == HTTP_REDIRECT || m_code == HTTP_NOT_FOUND ){
+            m_status &= ~STATUS_NORMAL;
+            m_status |= STATUS_OLD;
+        }
+
+        // 既にDAT落ち状態では無いときは通常状態にする
+        else if( ! (m_status & STATUS_OLD ) ){
+            m_status |= STATUS_NORMAL;
+            m_status &= ~STATUS_OLD;
+        }
     }
 
     // 壊れている
     if( m_nodetree->is_broken() ) m_status |= STATUS_BROKEN;
-    else m_status &= ~STATUS_BROKEN;
 
     // 状態が変わっていたら情報保存
     if( old_status != m_status ) m_save_info = true;
@@ -793,6 +803,7 @@ void ArticleBase::slot_load_finished()
         m_cached = true;
         m_read_info = true;
         m_save_info = true;
+        m_enable_load = false;
     }
 
 #ifdef _DEBUG
@@ -1033,6 +1044,10 @@ void ArticleBase::read_info()
             m_number_load = 1;
             m_status |= STATUS_BROKEN;
         }
+        if( m_subject.empty() ){
+            m_subject = "壊れています";
+            m_status |= STATUS_BROKEN;
+        }
         
         m_number_before_load = m_number_load;
         m_save_info = true;
@@ -1088,11 +1103,13 @@ void ArticleBase::read_info()
 // キャッシュがある( m_cached = true )　かつ
 // m_save_info = true の時に保存。save_info()を呼ぶ前にm_save_infoをセットすること。
 //
-void ArticleBase::save_info()
+// キャッシュがあって、force = true の時は強制書き込み
+//
+void ArticleBase::save_info( bool force )
 {
     if( empty() ) return;
     if( ! m_cached ) return;
-    if( ! m_save_info ) return;
+    if( ! force && ! m_save_info ) return;
     m_save_info = false;
 
     if( m_path_article_ext_info.empty() ) return;

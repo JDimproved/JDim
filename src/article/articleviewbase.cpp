@@ -482,8 +482,6 @@ void ArticleViewBase::reload()
     // オフライン
     if( ! SESSION::is_online() ) return;
 
-    // DAT落ちしてるとロードしないので状態をリセットしておく
-    DBTREE::article_reset_status( m_url_article );
     CORE::core_set_command( "open_article", m_url_article , "true", "" );
 }
 
