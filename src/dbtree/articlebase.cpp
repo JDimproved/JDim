@@ -1027,7 +1027,7 @@ void ArticleBase::read_info()
 
     // キャッシュはあるけど情報ファイルが無い場合
     // 一時的にnodetreeを作って情報を取得して保存
-    if( ! m_number_load || m_subject.empty() ){
+    else{
 
 #ifdef _DEBUG
         std::cout << "ArticleBase::read_info : update info " << m_url << std::endl;
@@ -1042,10 +1042,6 @@ void ArticleBase::read_info()
 
         if( !m_number_load ){
             m_number_load = 1;
-            m_status |= STATUS_BROKEN;
-        }
-        if( m_subject.empty() ){
-            m_subject = "壊れています";
             m_status |= STATUS_BROKEN;
         }
         
