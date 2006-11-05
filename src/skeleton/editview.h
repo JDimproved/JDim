@@ -29,7 +29,7 @@ namespace SKELETON
         {
             m_sig_key_press.emit( event );
 
-//            if( event->state & GDK_MOD1_MASK ) return true;
+            if( event->state & GDK_MOD1_MASK && event->keyval == 'w' ) return true;
 
             return Gtk::TextView::on_key_press_event( event );
         }
@@ -38,7 +38,7 @@ namespace SKELETON
         {
             m_sig_key_release.emit( event );
 
-//            if(  event->state & GDK_MOD1_MASK ) return true;
+            if(  event->state & GDK_MOD1_MASK && event->keyval == 'w' ) return true;
 
             return Gtk::TextView::on_key_release_event( event );
         }
