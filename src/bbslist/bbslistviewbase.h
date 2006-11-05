@@ -165,6 +165,9 @@ namespace BBSLIST
         std::string tree2xml();
         void xml2tree( const std::string& xml );
 
+        // 移転があったときに行に含まれるURlを変更する
+        void update_urls();
+
       private:
         void set_info_to_sharedbuffer( Gtk::TreePath& path );
     };

@@ -1911,6 +1911,80 @@ void BBSListViewBase::xml2tree( const std::string& xml )
 
 
 //
+// 移転があったときに行に含まれるURlを変更する
+//
+void BBSListViewBase::update_urls()
+{
+    if( ! m_ready_tree ) return;
+    if( m_treestore->children().empty() ) return; 
+   
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::update_urls()\n";
+#endif
+    
+    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
+    Gtk::TreeModel::Row row;
+
+    while( 1 ){
+
+        if( ( row = m_treeview.get_row( path ) ) ){
+
+            Glib::ustring url = row[ m_columns.m_col_url ];
+            int type = row[ m_columns.m_type ];
+            std::string url_new;
+
+            switch( type ){
+
+                case TYPE_DIR: // サブディレクトリ
+                    path.down();
+                    break;
+
+                case TYPE_BOARD: // 板
+                    url_new = DBTREE::is_board_moved( url );
+                    if( ! url_new.empty() ){
+                        url_new = DBTREE::url_boardbase( url );
+#ifdef _DEBUG
+                        std::cout << url << " -> " << url_new << std::endl;
+#endif
+                        row[ m_columns.m_col_url ] = url_new;
+                    }
+                    path.next();
+                    break;
+
+                case TYPE_THREAD: // スレ
+                    url_new = DBTREE::is_board_moved( url );
+                    if( ! url_new.empty() ){
+
+                        url_new = DBTREE::url_dat( url );
+#ifdef _DEBUG
+                        std::cout << url << " -> " << url_new << std::endl;
+#endif
+                        row[ m_columns.m_col_url ] = url_new;
+                    }
+                    path.next();
+                    break;
+
+                default:
+                    path.next();
+                    break;
+            }
+        }
+
+        // サブディレクトリ内ならupする
+        else{
+
+            if( path.get_depth() >= 2 ){
+                path.up();
+                path.next();
+            }
+            else break;
+        }
+    }
+}
+
+
+
+//
 // 検索
 //
 // m_search_invert = true なら前方検索

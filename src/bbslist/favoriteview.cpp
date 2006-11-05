@@ -64,6 +64,7 @@ void FavoriteListView::show_view()
     std::string xml;
     CACHE::load_rawdata( CACHE::path_xml_favorite() , xml );
     xml2tree( xml );
+    update_urls();
 }
 
 
