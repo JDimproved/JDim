@@ -47,6 +47,10 @@ namespace DBTREE
     const std::string url_bbscgi_new( const std::string& url );
     const std::string url_subbbscgi_new( const std::string& url );
 
+    // 板が移転したかチェックする
+    // 移転した時は移転後のURLを返す
+    const std::string is_board_moved( const std::string& url );
+
     // bbslist系
     const std::string& get_xml_bbsmenu();
     const std::string& get_xml_etc();

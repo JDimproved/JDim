@@ -135,6 +135,12 @@ const std::string DBTREE::url_subbbscgi_new( const std::string& url )
 }
 
 
+const std::string  DBTREE::is_board_moved( const std::string& url )
+{
+    return get_root()->is_board_moved( url );
+}
+
+
 const std::string& DBTREE::get_xml_bbsmenu()
 {
     return get_root()->xml_bbsmenu();

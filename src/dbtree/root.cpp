@@ -100,7 +100,12 @@ BoardBase* Root::get_board( const std::string& url, int count )
 #endif
 
     // キャッシュ
-    if( url == m_get_board_url && m_get_board ) return m_get_board;
+    if( url == m_get_board_url && m_get_board ){
+#ifdef _DEBUG
+//        std::cout << "hit cache\n";
+#endif
+        return m_get_board;
+    }
     m_get_board_url = url;
     m_get_board = NULL;
 
@@ -124,21 +129,11 @@ BoardBase* Root::get_board( const std::string& url, int count )
         }
     }
 
+
     // 移転した時はrootを付け変えて再帰呼び出し
-    std::list< MOVETABLE >::iterator it_move;
-    for( it_move = m_movetable.begin(); it_move != m_movetable.end(); ++it_move ){
+    std::string new_url = is_board_moved( url );
+    if( ! new_url.empty() ) return get_board( new_url, count + 1 );
 
-        if( url.find( ( *it_move ).path_board ) != std::string::npos
-            && url.find( ( *it_move ).old_root ) == 0  ){
-
-            std::string new_url = ( *it_move ).new_root + ( *it_move ).path_board + "/";
-
-#ifdef _DEBUG            
-            std::cout << url << " is moved to " << new_url << std::endl;
-#endif
-            return get_board( new_url, count + 1 );
-        }
-    }
 
     // 2ch型の場合、板パスを見てもし一致したら新ホストに移転したと判断して移転テーブルを更新する
     if( is_2ch( url ) ){
@@ -650,6 +645,35 @@ void Root::load_movetable()
 
 
 }
+
+
+
+//
+// 板が移転したかチェックする
+//
+// 移転した時は移転後のURLを返す
+//
+const std::string Root::is_board_moved( const std::string& url )
+{
+    std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
+    for( ; it_move != m_movetable.end(); ++it_move ){
+
+        if( url.find( ( *it_move ).old_root ) == 0
+            && url.find( ( *it_move ).path_board + "/" ) != std::string::npos ){
+
+            std::string new_url = ( *it_move ).new_root + ( *it_move ).path_board + "/";
+
+#ifdef _DEBUG            
+            std::cout << url << " is moved to " << new_url << std::endl;
+#endif
+            return new_url;
+        }
+    }
+
+    return std::string();
+}
+
+
 
 
 //
