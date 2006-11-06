@@ -300,7 +300,7 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
         get_control().get_eventbutton( CONTROL::ClickButton, event_button );
 
 #ifdef _DEBUG
-        std::cout << "state = " << event->state << " button = " << event_button.button << std::endl;
+        std::cout << "state = " << event->state << " / " << GDK_BUTTON1_MASK << " button = " << event_button.button << std::endl;
 #endif
 
         if( ( event->state == GDK_BUTTON1_MASK && event_button.button == 1 )
