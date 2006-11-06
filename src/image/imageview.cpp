@@ -1,6 +1,6 @@
 // ライセンス: 最新のGPL
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "imageadmin.h"
@@ -299,6 +299,10 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
         GdkEventButton event_button;
         get_control().get_eventbutton( CONTROL::ClickButton, event_button );
 
+#ifdef _DEBUG
+        std::cout << "state = " << event->state << " button = " << event_button.button << std::endl;
+#endif
+
         if( ( event->state == GDK_BUTTON1_MASK && event_button.button == 1 )
             || ( event->state == GDK_BUTTON2_MASK && event_button.button == 2 )
             || ( event->state == GDK_BUTTON3_MASK && event_button.button == 3 )
@@ -309,6 +313,10 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
 
             gdouble dx = event->x_root - m_x_motion;
             gdouble dy = event->y_root - m_y_motion;
+
+#ifdef _DEBUG
+            std::cout << "dx = " << dx << " dy = " << dy << std::endl;
+#endif
 
             m_x_motion = event->x_root;
             m_y_motion = event->y_root;
