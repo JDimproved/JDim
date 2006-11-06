@@ -724,6 +724,13 @@ void Admin::close_view( SKELETON::View* view )
     int page = m_notebook->page_num( *view );
     int current_page = m_notebook->get_current_page();
 
+    // もし現在表示中のビューを消すときは予めひとつ右のビューにスイッチしておく
+    // そうしないと左のビューを一度表示してしまうので遅くなる
+    if( page == current_page ){
+        SKELETON::View* newview = dynamic_cast< View* >( m_notebook->get_nth_page( page + 1 ) );
+        if( newview ) switch_view( newview->get_url() );
+    }
+
     m_notebook->remove_page( page );
 
     delete view;
@@ -732,18 +739,12 @@ void Admin::close_view( SKELETON::View* view )
     std::cout << "Admin::close_view : delete page = " << page << std::endl;
 #endif
 
+    // 全てのビューが無くなったらコアに知らせる
     if( m_notebook->get_n_pages() == 0 ){
 #ifdef _DEBUG
         std::cout << "empty\n";
 #endif
         CORE::core_set_command( "empty_page", m_url );
-    }
-    else{
-
-        if( page == current_page ){
-            SKELETON::View* newview = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
-            if( newview ) switch_view( newview->get_url() );
-        }
     }
 }
 
