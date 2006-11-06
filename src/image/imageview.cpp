@@ -303,10 +303,9 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
         std::cout << "state = " << event->state << " / " << GDK_BUTTON1_MASK << " button = " << event_button.button << std::endl;
 #endif
 
-        if( ( event->state == GDK_BUTTON1_MASK && event_button.button == 1 )
-            || ( event->state == 272 && event_button.button == 1 )
-            || ( event->state == GDK_BUTTON2_MASK && event_button.button == 2 )
-            || ( event->state == GDK_BUTTON3_MASK && event_button.button == 3 )
+        if( ( ( event->state & GDK_BUTTON1_MASK ) && event_button.button == 1 )
+            || ( ( event->state & GDK_BUTTON2_MASK ) && event_button.button == 2 )
+            || ( ( event->state & GDK_BUTTON3_MASK ) && event_button.button == 3 )
             ){
 
             Gtk::Adjustment* hadj = m_scrwin->get_hadjustment();
