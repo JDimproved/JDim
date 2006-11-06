@@ -699,6 +699,9 @@ void Root::save_movetable()
 #endif
     
     CACHE::save_rawdata( file_move, movetable.str() );
+
+    // お気に入りに登録されているURLも更新
+    CORE::core_set_command( "update_favorite" );
 }
 
 

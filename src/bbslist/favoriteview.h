@@ -22,6 +22,7 @@ namespace BBSLIST
         virtual void shutdown();
 
         virtual void show_view();
+        virtual void update_view();
         virtual void delete_view(){ delete_selected_rows(); }
 
       protected:

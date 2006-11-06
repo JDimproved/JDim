@@ -1410,6 +1410,11 @@ void Core::set_command( const COMMAND_ARGS& command )
         BBSLIST::get_admin()->set_command( "append_favorite", command.url, command.arg1, command.arg2 );
         return;
     }
+    else if( command.command  == "update_favorite" ){
+
+        BBSLIST::get_admin()->set_command( "update_view", URL_FAVORITEVIEW );
+        return;
+    }
 
     else if( command.command  == "save_favorite" ){
 

@@ -68,6 +68,15 @@ void FavoriteListView::show_view()
 }
 
 
+//
+// アップデート
+//
+void FavoriteListView::update_view()
+{
+    update_urls();
+}
+
+
 
 //
 // ポップアップメニュー取得
