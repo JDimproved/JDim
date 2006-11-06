@@ -32,6 +32,9 @@ namespace DBTREE
         // subject.txt と同じ順番で、ロードされるたびに更新される
         std::list< ArticleBase* > m_list_subject; 
 
+        // 一度でも m_list_subject が作られた(=subject.txtを開いた)らtrue
+        bool m_list_subject_created;
+
         // ビュワーでソートをする列番号、ソード順
         int m_view_sort_column;
         bool m_view_sort_ascend;

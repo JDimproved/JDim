@@ -32,6 +32,7 @@ using namespace DBTREE;
 
 BoardBase::BoardBase( const std::string& root, const std::string& path_board, const std::string& name )
     : SKELETON::Loadable()
+    , m_list_subject_created( false )
     , m_root( root )
     , m_path_board( path_board )
     , m_name( name )
@@ -814,6 +815,8 @@ void BoardBase::receive_finish()
         }
     }
 
+    m_list_subject_created = true;
+
     // コアにデータベース更新を知らせる
     CORE::core_set_command( "update_board", url_subject() );
 
@@ -938,9 +941,13 @@ const bool BoardBase::get_abone_thread( ArticleBase* article )
 //
 // スレあぼーん状態の更新
 //
+// force = true なら強制更新
+//
 void BoardBase::update_abone_thread()
 {
-    if( m_list_subject.empty() ) return;
+    // Root::update_abone_all_board() であぼーん状態を全更新するときなど
+    // まだスレ一覧にスレを表示していないBoardBaseクラスは更新しない
+    if( ! m_list_subject_created ) return;
 
     // オフラインに切り替えてからキャッシュにあるsubject.txtを再読み込みする
     bool online = SESSION::is_online();
