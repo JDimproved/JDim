@@ -13,7 +13,7 @@ namespace CORE
 
         { "ユーザ設定", "" },
         { "RedHat系標準ブラウザ",    "htmlview \"%LINK\"" },
-        { "firefox 1.5*", "firefox \"%LINK\"" },
+        { "firefox 1.5 以降", "firefox \"%LINK\"" },
         { "firefox 1.0*", "firefox -remote \"openURL(%LINK,new-tab)\"" },
         { "opera 9.*",    "opera -remote \"openURL(%LINK,new-tab)\"" },
         
