@@ -177,7 +177,6 @@ void Post::receive_finish()
     JDLIB::Regex regex;
 
     std::string title;
-    std::string errmsg;
     std::string tag_2ch;
     std::string msg;
     std::string hana;
@@ -186,32 +185,27 @@ void Post::receive_finish()
     bool ret;
 
     // タイトル
-    regex.exec( ".*<title>([^<]*)</title>.*", str, 0, true );
+    regex.exec( ".*<title>([^<]*)</title>.*", str, 0, true, false );
     title = MISC::remove_space( regex.str( 1 ) );
 
     // エラー
     // 一番内側の<b>〜</b>を探す
-    errmsg = str;
     m_errmsg = std::string();
-    for(;;){
-        ret = regex.exec( ".*<b>(.*)</b>.*", errmsg ); 
-        if( ! ret ) break;
-        errmsg = regex.str( 1 );
-        m_errmsg = MISC::remove_space( errmsg );
-    }
+    if( regex.exec( "([^>]|[^b]>)*<b>(([^>]|[^b]>)*)</b>.*", str, 0, true, false ) ){
 
-    if( ! m_errmsg.empty() ){
+        m_errmsg = regex.str( 2 );
 
         // <a 〜を取り除く
-        ret = regex.exec( "(.*)<a +href *= *\"([^\"]*)\" *>(.*)</a>(.*)", m_errmsg );
-        if( ret ) m_errmsg = regex.str( 1 ) + " " + regex.str( 2 ) + " " + regex.str( 3 ) + regex.str( 4 );
+        while( regex.exec( "(.*)<a +href *= *\"([^\"]*)\" *>(.*)</a>(.*)", m_errmsg ) ){
+            m_errmsg = regex.str( 1 ) + " " + regex.str( 2 ) + " " + regex.str( 3 ) + regex.str( 4 );
+        }
 
         // 改行
         m_errmsg= MISC::replace_str( m_errmsg, "<br>", "\n" );
     }
 
     // 2chタグ
-    regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", str );
+    regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", str, 0, false, false );
     tag_2ch = MISC::remove_space( regex.str( 1 ) );
 
     // 書き込み確認
