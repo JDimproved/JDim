@@ -204,7 +204,7 @@ void Post::receive_finish()
 
         // <a 〜を取り除く
         ret = regex.exec( "(.*)<a +href *= *\"([^\"]*)\" *>(.*)</a>(.*)", m_errmsg );
-        m_errmsg = regex.str( 1 ) + " " + regex.str( 2 ) + " " + regex.str( 3 ) + regex.str( 4 );
+        if( ret ) m_errmsg = regex.str( 1 ) + " " + regex.str( 2 ) + " " + regex.str( 3 ) + regex.str( 4 );
 
         // 改行
         m_errmsg= MISC::replace_str( m_errmsg, "<br>", "\n" );
