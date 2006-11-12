@@ -151,7 +151,7 @@ void Post::receive_finish()
     std::string charset = DBTREE::board_charset( m_url );
     JDLIB::Iconv* libiconv = new JDLIB::Iconv( charset, "UTF-8" );
     int byte_out;
-    std::string str = libiconv->convert( m_rawdata, m_lng_rawdata, byte_out );
+    const std::string str = libiconv->convert( m_rawdata, m_lng_rawdata, byte_out );
     delete libiconv;
 
 #ifdef _DEBUG
@@ -177,25 +177,48 @@ void Post::receive_finish()
     JDLIB::Regex regex;
 
     std::string title;
+    std::string errmsg;
     std::string tag_2ch;
     std::string msg;
     std::string hana;
     std::string conf;
 
+    bool ret;
+
+    // タイトル
     regex.exec( ".*<title>([^<]*)</title>.*", str, 0, true );
     title = MISC::remove_space( regex.str( 1 ) );
 
-    regex.exec( ".*<b>([^<]*)</b>.*", str );
-    m_errmsg = MISC::remove_space( regex.str( 1 ) );
+    // エラー
+    // 一番内側の<b>〜</b>を探す
+    errmsg = str;
+    m_errmsg = std::string();
+    for(;;){
+        ret = regex.exec( ".*<b>(.*)</b>.*", errmsg ); 
+        if( ! ret ) break;
+        errmsg = regex.str( 1 );
+        m_errmsg = MISC::remove_space( errmsg );
+    }
 
+    if( ! m_errmsg.empty() ){
+
+        // <a 〜を取り除く
+        ret = regex.exec( "(.*)<a +href *= *\"([^\"]*)\" *>(.*)</a>(.*)", m_errmsg );
+        m_errmsg = regex.str( 1 ) + " " + regex.str( 2 ) + " " + regex.str( 3 ) + regex.str( 4 );
+
+        // 改行
+        m_errmsg= MISC::replace_str( m_errmsg, "<br>", "\n" );
+    }
+
+    // 2chタグ
     regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", str );
     tag_2ch = MISC::remove_space( regex.str( 1 ) );
 
+    // 書き込み確認
     regex.exec( ".*<font size=\\+1 color=#FF0000>([^<]*)</font>.*", str );
     conf = MISC::remove_space( regex.str( 1 ) );
 
-    // メッセージ
-    bool ret;
+    // メッセージ本文
 
     // 2ch 型
     ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<form.*", str, 0, false, false );
@@ -305,6 +328,9 @@ void Post::receive_finish()
         std::cout << "Error" << std::endl;
         std::cout << m_errmsg << std::endl;
 #endif        
+
+        MISC::ERRMSG( str );
+
         set_code( HTTP_ERR );
         m_sig_fin.emit();
         return;
