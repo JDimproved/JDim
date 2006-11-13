@@ -782,10 +782,13 @@ void ImageAdmin::save_all()
 
     // ディレクトリ選択
     Gtk::FileChooserDialog diag( "save", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
-    diag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-    diag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
 
     diag.set_current_folder( SESSION::dir_img_save() );
+
+    // ボタン追加 + saveボタンをデフォルトボタンにセット
+    diag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+    diag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
+    diag.set_default_response( Gtk::RESPONSE_ACCEPT );
     
     if( diag.run() == Gtk::RESPONSE_ACCEPT ){
 

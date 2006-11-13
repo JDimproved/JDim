@@ -555,8 +555,6 @@ std::string CACHE::open_save_diag( const std::string& file_from, const std::stri
     if( file_to.empty() ) return std::string();
 
     Gtk::FileChooserDialog diag( "save", Gtk::FILE_CHOOSER_ACTION_SAVE );
-    diag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-    diag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
 
     std::string name = MISC::get_filename( file_to );
     std::string dir = MISC::get_dir( file_to );
@@ -571,6 +569,11 @@ std::string CACHE::open_save_diag( const std::string& file_from, const std::stri
 
     diag.set_current_folder( dir );
     diag.set_current_name( name );
+
+    // ボタン追加 + saveボタンをデフォルトボタンにセット
+    diag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+    diag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
+    diag.set_default_response( Gtk::RESPONSE_ACCEPT );
     
     if( diag.run() == Gtk::RESPONSE_ACCEPT ){
 
