@@ -136,6 +136,8 @@ namespace CORE
 
     private:
 
+        void show_setupdiag( const std::string& msg );
+
         void set_maintitle();
 
         void slot_activate_menubar();

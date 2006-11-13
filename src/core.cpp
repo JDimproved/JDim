@@ -393,16 +393,12 @@ void Core::run( bool init )
     // 初回起動時の設定
     if( init ){
 
-        Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDセットアップへようこそ\n\nはじめにネットワークの設定をおこなって下さい。" );
-        mdiag->run();
-        delete mdiag;
+        show_setupdiag( "JDセットアップへようこそ\n\nはじめにネットワークの設定をおこなって下さい。" );
 
         slot_setup_proxy();
         slot_setup_browser();
 
-        mdiag = new Gtk::MessageDialog( "JDセットアップ\n\nスレ、ポップアップ、ツリービューの順にフォントの設定をおこなって下さい。" );
-        mdiag->run();
-        delete mdiag;
+        show_setupdiag( "JDセットアップ\n\nスレ、ポップアップ、ツリービューの順にフォントの設定をおこなって下さい。" );
 
         slot_changefont_main();
 
@@ -415,13 +411,8 @@ void Core::run( bool init )
         CONFIG::set_fontname_tree_board( CONFIG::get_fontname_tree() );
         CONFIG::set_fontname_message( CONFIG::get_fontname_main() );
 
-        mdiag = new Gtk::MessageDialog( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
-        mdiag->run();
-        delete mdiag;
-        
-        mdiag = new Gtk::MessageDialog( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします。\nリストが表示されるまでしばらくお待ち下さい。" );
-        mdiag->run();
-        delete mdiag;
+        show_setupdiag( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
+        show_setupdiag( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします。\nリストが表示されるまでしばらくお待ち下さい。" );
     }
 
     // 各 widget 作成
@@ -537,6 +528,22 @@ void Core::run( bool init )
     // 2chログイン
     if( SESSION::login2ch() ) slot_toggle_login2ch();
 }
+
+
+
+//
+// セットアップ中ダイアログ表示
+//
+void Core::show_setupdiag( const std::string& msg )
+{
+    Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg );
+    mdiag->set_title( "JDセットアップ" );
+    mdiag->set_keep_above( true );
+    mdiag->set_skip_taskbar_hint( false );
+    mdiag->run();
+    delete mdiag;
+}
+
 
 
 //
