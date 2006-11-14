@@ -7,8 +7,8 @@
 //#define JDVERSION_CVS
 
 #define JDCOPYRIGHT "(c) 2006 JD project"
-#define JDVERSIONSTR "1.8.0-rc061108"
-#define JDVERSION 180061108
+#define JDVERSIONSTR "1.8.0-061114"
+#define JDVERSION 180061114
 #define JDURL "http://jd4linux.sourceforge.jp/"
 #define JDBBS "http://jd4linux.sourceforge.jp/cgi-bin/bbs/support/"
 #define JD2CHLOG "http://jd4linux.sourceforge.jp/old2ch/"
