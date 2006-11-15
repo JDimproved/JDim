@@ -397,11 +397,17 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
         if( !( event->state & GDK_CONTROL_MASK )
             && !( event->state & GDK_SHIFT_MASK ) ){
 
-            // ただし範囲選択開始ボタンを押したときは選択解除
-            if( !m_path_dragstart.empty() ){
+            // ただし範囲選択外をクリックしたとき、または範囲選択開始ボタンを押したときは選択解除
+            if( ! get_selection()->is_selected( path )
+                || ! m_path_dragstart.empty()
+                ){
                 get_selection()->unselect_all();
                 set_cursor( path );
             }
+
+
+
+            
 
             return true;
         }
