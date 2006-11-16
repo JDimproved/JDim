@@ -29,6 +29,7 @@ libdbtree_a_SOURCES = \
 noinst_HEADERS = \
 	interface.h \
 	spchar_decoder.h \
+	spchar_tbl.h \
 	root.h \
 \
 	boardbase.h \

@@ -246,10 +246,6 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, bool joint )
                 break;
             
             case DBTREE::NODE_ZWSP:
-            case DBTREE::NODE_HAIRSP:
-            case DBTREE::NODE_THINSP:
-            case DBTREE::NODE_ENSP:
-            case DBTREE::NODE_EMSP:
                 tmplayout = create_layout_sp( tmpnode->type );
                 break;
 

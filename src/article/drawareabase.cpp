@@ -680,10 +680,6 @@ void DrawAreaBase::layout_one_node( LAYOUT* layout, int& x, int& y, int width_vi
 
             // スペース
         case DBTREE::NODE_ZWSP: break;
-        case DBTREE::NODE_HAIRSP:  x += 1;  break;
-        case DBTREE::NODE_THINSP:  x += 2;  break;
-        case DBTREE::NODE_ENSP:    x += 8;  break;
-        case DBTREE::NODE_EMSP:    x += 16; break;
 
         case DBTREE::NODE_DOWN_LEFT: // 字下げ
             ++mrg_level;

@@ -1,6 +1,7 @@
 // ライセンス: 最新のGPL
 
 #include "spchar_decoder.h"
+#include "spchar_tbl.h"
 #include "node.h"
 
 #include "jdlib/miscutil.h"
@@ -9,8 +10,22 @@
 #include <stdlib.h>
 
 
+bool DBTREE::check_spchar( const char* n_in, const char* spchar )
+{
+    int i = 0;
+    while( spchar[ i ] != '\0' ){
+
+        if( n_in[ i ] != spchar[ i ] ) return false;
+        ++i;
+    }
+
+    return true;
+}
+
+
+
 //
-// &〜みたいな特殊文字をデコードする
+// 文字参照のデコード
 //
 // in_char : 入力文字列, in_char[ 0 ] = '&' となっていること
 // out_char : 出力文字列
@@ -22,112 +37,34 @@
 int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out )
 {
     int ret = DBTREE::NODE_TEXT;
-
-    // gt
-    if( in_char[ 1 ] == 'g' && in_char[ 2 ] == 't' && in_char[ 3 ] == ';' ){
-        n_in = 4;
-        n_out = 1;
-        out_char[ 0 ] = '>';
-    }
-
-    // lt
-    else if( in_char[ 1 ] == 'l' && in_char[ 2 ] == 't' && in_char[ 3 ] == ';' ){
-        n_in = 4; 
-        n_out = 1;
-        out_char[ 0 ] = '<';
-    }
-    
-    // amp
-    else if( in_char[ 1 ] == 'a' && in_char[ 2 ] == 'm' && in_char[ 3 ] == 'p' && in_char[ 4 ] == ';' ){
-        n_in = 5; 
-        n_out = 1;
-        out_char[ 0 ] = '&';
-    }
-
-    // quot
-    else if( in_char[ 1 ] == 'q' && in_char[ 2 ] == 'u' && in_char[ 3 ] == 'o' && in_char[ 4 ] == 't' && in_char[ 5 ] == ';' ){
-        n_in = 6; 
-        n_out = 1;
-        out_char[ 0 ] = '"';
-    }
-
-    // hearts
-    else if( in_char[ 1 ] == 'h' && in_char[ 2 ] == 'e' && in_char[ 3 ] == 'a' && in_char[ 4 ] == 'r'
-        && in_char[ 5 ] == 't' && in_char[ 6 ] == 's' && in_char[ 7 ] == ';' ){
-        n_in = 8;
-        n_out = MISC::ucs2utf8( 9829, out_char );
-    }
-
-    // スペース
-
-    // nbsp
-    else if( in_char[ 1 ] == 'n' && in_char[ 2 ] == 'b'
-             && in_char[ 3 ] == 's' && in_char[ 4 ] == 'p' && in_char[ 5 ] == ';' ){
-        n_in = 6; 
-        n_out = 1;
-        out_char[ 0 ] = ' ';
-    }
-
-    // zwsp
-    else if( in_char[ 1 ] == 'z' && in_char[ 2 ] == 'w' && in_char[ 3 ] == 's' && in_char[ 4 ] == 'p'
-             && in_char[ 5 ] == ';' ){
-        n_in = 6;
-        n_out = 0;
-        ret = DBTREE::NODE_ZWSP;
-    }
-
-    // thinsp
-    else if( in_char[ 1 ] == 't' && in_char[ 2 ] == 'h' && in_char[ 3 ] == 'i' && in_char[ 4 ] == 'n'
-             && in_char[ 5 ] == 's' && in_char[ 6 ] == 'p' && in_char[ 7 ] == ';' ){
-        n_in = 8;
-        n_out = 0;
-        ret = DBTREE::NODE_THINSP;
-    }
-
-    // ensp
-    else if( in_char[ 1 ] == 'e' && in_char[ 2 ] == 'n' && in_char[ 3 ] == 's' && in_char[ 4 ] == 'p'
-             && in_char[ 5 ] == ';' ){
-        n_in = 6;
-        n_out = 0;
-        ret = DBTREE::NODE_ENSP;
-    }
-
-    // emsp
-    else if( in_char[ 1 ] == 'e' && in_char[ 2 ] == 'm' && in_char[ 3 ] == 's' && in_char[ 4 ] == 'p'
-             && in_char[ 5 ] == ';' ){
-        n_in = 6;
-        n_out = 0;
-        ret = DBTREE::NODE_EMSP;
-    }
-
-    // zwnj, zwj, lrm, rlm は今のところ無視
-    else if( in_char[ 1 ] == 'z' && in_char[ 2 ] == 'w' && in_char[ 3 ] == 'n' && in_char[ 4 ] == 'j'
-             && in_char[ 5 ] == ';' ){
-         n_in = 6; 
-         n_out = 0;
-         ret = DBTREE::NODE_ZWSP;
-    }    
-    else if( in_char[ 1 ] == 'z' && in_char[ 2 ] == 'w' && in_char[ 3 ] == 'j' && in_char[ 4 ] == ';' ){
-         n_in = 5; 
-         n_out = 0;
-         ret = DBTREE::NODE_ZWSP;
-    }    
-    else if( in_char[ 1 ] == 'l' && in_char[ 2 ] == 'r' && in_char[ 3 ] == 'm' && in_char[ 4 ] == ';' ){
-         n_in = 5; 
-         n_out = 0;
-         ret = DBTREE::NODE_ZWSP;
-    }    
-    else if( in_char[ 1 ] == 'r' && in_char[ 2 ] == 'l' && in_char[ 3 ] == 'm' && in_char[ 4 ] == ';' ){
-         n_in = 5; 
-         n_out = 0;
-         ret = DBTREE::NODE_ZWSP;
-    }    
+    n_in = n_out = 0;
 
     // 数字参照 &#数字;
-    else if( in_char[ 1 ] == '#' ) ret = decode_char_number( in_char, n_in, out_char, n_out );
+    if( in_char[ 1 ] == '#' ) ret = decode_char_number( in_char, n_in, out_char, n_out );
 
-    else ret = NODE_NONE;
+    // 文字参照 -> ユニコード変換
+    else{
 
+        int i = 0;
+        for(;;){
+
+            int ucs = ucstbl[ i ].ucs;
+            if( ! ucs ) break;
+            if( check_spchar( in_char +1, ucstbl[ i ].str ) ){
+
+                n_in = strlen( ucstbl[ i ].str ) +1;
+
+                // zwnj, zwj, lrm, rlm は今のところ無視する(zwspにする)
+                if( ucs >= UCS_ZWSP && ucs <= UCS_RLM ) ret = DBTREE::NODE_ZWSP;
+                else n_out = MISC::ucs2utf8( ucs, out_char );
+
+                break;
+            }
+            ++i;
+        }
+    }
+
+    if( !n_in ) ret = NODE_NONE;
     out_char[ n_out ] = '\0';
     return ret;
 }
@@ -135,7 +72,7 @@ int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n
 
 
 //
-// 数字参照  &#数字;
+// ユニコード文字参照  &#数字;
 //
 // in_char[1] == "#" であること
 //
@@ -166,37 +103,18 @@ int DBTREE::decode_char_number( const char* in_char, int& n_in,  char* out_char,
 
     switch( num ){
 
-        case 8194:
-            ret = DBTREE::NODE_ENSP;
-            break;
-
-        case 8195:
-            ret = DBTREE::NODE_EMSP;
-            break;
-
-        case 8201:
-            ret = DBTREE::NODE_THINSP;
-            break;
-
-        case 8202:
-            ret = DBTREE::NODE_HAIRSP;
-            break;
-
-        case 8203:
-            ret = DBTREE::NODE_ZWSP;
-            break;
-
-            //zwnj,zwj,lrm,rlm は今のところ無視
-        case 8204:
-        case 8205:
-        case 8206:
-        case 8207:
+        //zwnj,zwj,lrm,rlm は今のところ無視(zwspにする)
+        case UCS_ZWSP:
+        case UCS_ZWNJ:
+        case UCS_ZWJ:
+        case UCS_LRM:
+        case UCS_RLM:
             ret = DBTREE::NODE_ZWSP;
             break;
 
         default:
             n_out = MISC::ucs2utf8( num, out_char );
-            if( ! n_out ) return NODE_NONE;
+            if( ! n_out ) return DBTREE::NODE_NONE;
     }
 
     n_in = 3 + lng;

@@ -27,10 +27,6 @@ namespace DBTREE
         NODE_DOWN_LEFT, // 左マージンのレベルをひとつ下げる。ヘッダの時点でレベル1
         // スペース
         NODE_ZWSP,
-        NODE_HAIRSP,
-        NODE_THINSP, 
-        NODE_ENSP,
-        NODE_EMSP,
 
         NODE_NONE
     };
