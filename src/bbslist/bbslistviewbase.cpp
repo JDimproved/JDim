@@ -1706,6 +1706,11 @@ void BBSListViewBase::delete_selected_rows()
         }
     }
 
+    // カーソルを一番最後の列の次に移動する
+    it = list_it.end();
+    Gtk::TreePath next = m_treeview.next_path( GET_PATH( *(--it) ), true );
+    m_treeview.set_cursor( next );
+
     // まとめて削除
     // ディレクトリ内の列を同時に選択している場合があるので後から消す
     it = list_it.end();
