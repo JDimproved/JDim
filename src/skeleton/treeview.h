@@ -171,7 +171,10 @@ namespace SKELETON
         virtual bool on_motion_notify_event( GdkEventMotion* event );
         virtual bool on_scroll_event( GdkEventScroll* event );
         virtual bool on_leave_notify_event( GdkEventCrossing* event );
-    };
+
+      private:
+        void slot_selection_changed();
+   };
 }
 
 #endif

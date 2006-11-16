@@ -9,7 +9,10 @@
 
 #include "config/globalconf.h"
 
+#include "jdlib/miscutil.h"
+
 #include "controlid.h"
+#include "command.h"
 
 #ifndef MAX
 #define MAX( a, b ) ( a > b ? a : b )
@@ -50,6 +53,7 @@ JDTreeView::JDTreeView( const std::string& fontname, const int *rgb )
     init_font( fontname );
 
     get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
+    get_selection()->signal_changed().connect( sigc::mem_fun( *this, &JDTreeView::slot_selection_changed ) );
 }
 
 
@@ -759,3 +763,15 @@ std::list< Gtk::TreeModel::iterator > JDTreeView::get_selected_iterators()
 }
 
 
+
+//
+// 範囲選択更新
+//
+void JDTreeView::slot_selection_changed()
+{
+    int size = get_selection()->get_selected_rows().size();
+
+    std::string str;
+    if( size >= 2 ) str = "選択数 " + MISC::itostr( size );
+    CORE::core_set_command( "set_mginfo" ,"", str );
+}
