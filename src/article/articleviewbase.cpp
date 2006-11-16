@@ -1717,11 +1717,7 @@ const bool ArticleViewBase::is_popup_shown() const
 const bool ArticleViewBase::is_mouse_on_popup()
 {
     if( ! is_popup_shown() ) return false;
-
-    ArticleViewBase* popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
-    if( ! popup_article ) return false;
-
-    return popup_article->is_mouse_on_view();
+    return m_popup_win->view()->is_mouse_on_view();
 }
 
 
