@@ -270,6 +270,7 @@ bool DragableNoteBook::adjust_tabwidth()
 
                 if( width < avg_width_tab ) break;
                 --vec_width[ i ];
+                if( vec_width[ i ] < 0 ) vec_width[ i ] = 0;
                 if( vec_width[ i ] < CONFIG::get_tab_min_str() ) break;
             }
         }
@@ -284,6 +285,7 @@ bool DragableNoteBook::adjust_tabwidth()
 
             Glib::ustring ulabel( tab->get_fulltext() );
             int lng_max = ulabel.length();
+            if( ! lng_max ) continue;
 
             for(;;){
 
