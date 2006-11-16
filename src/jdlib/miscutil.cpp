@@ -675,7 +675,7 @@ int MISC::utf8toucs2( const char* utfstr, int& byte )
 //
 // 戻り値 : バイト数
 //
-int MISC::ucs2utf8( int ucs2, char* utfstr )
+int MISC::ucs2toutf8( int ucs2, char* utfstr )
 {
     int byte = 0;
 

@@ -56,7 +56,7 @@ int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n
 
                 // zwnj, zwj, lrm, rlm は今のところ無視する(zwspにする)
                 if( ucs >= UCS_ZWSP && ucs <= UCS_RLM ) ret = DBTREE::NODE_ZWSP;
-                else n_out = MISC::ucs2utf8( ucs, out_char );
+                else n_out = MISC::ucs2toutf8( ucs, out_char );
 
                 break;
             }
@@ -113,7 +113,7 @@ int DBTREE::decode_char_number( const char* in_char, int& n_in,  char* out_char,
             break;
 
         default:
-            n_out = MISC::ucs2utf8( num, out_char );
+            n_out = MISC::ucs2toutf8( num, out_char );
             if( ! n_out ) return DBTREE::NODE_NONE;
     }
 

@@ -92,7 +92,7 @@ namespace MISC
     int utf8toucs2( const char* utfstr, int& byte );
 
     // ucs2 -> utf8 変換
-    int ucs2utf8( int ucs2, char* utfstr );
+    int ucs2toutf8( int ucs2, char* utfstr );
 
     // str を大文字化
     std::string toupper_str( const std::string& str );
