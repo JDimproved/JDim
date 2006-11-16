@@ -124,7 +124,6 @@ bool Control::MG_start( GdkEventButton* event )
     m_mg = true;
     m_mg_x = ( int ) event->x;
     m_mg_y = ( int ) event->y;
-    CORE::core_set_command( "set_mginfo", "", "" );
 
 #ifdef _DEBUG
     std::cout << "Control::MG_start\n";
@@ -140,7 +139,10 @@ bool Control::MG_motion( GdkEventMotion* event )
     if( ! m_mg ) return false;
     if( m_mg_lng >= MAX_MG_LNG ) return false;
 
-    if( m_mg_direction.empty() ) m_mg_direction = "■";
+    if( m_mg_direction.empty() ){
+        m_mg_direction = "■";
+        CORE::core_set_command( "set_mginfo", "", "" );
+    }
 
     int x = ( int ) event->x;
     int y = ( int ) event->y;
