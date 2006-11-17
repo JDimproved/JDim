@@ -1899,10 +1899,11 @@ void Core::slot_active_url()
 void Core::empty_page( const std::string& url )
 {
     int focused_admin = FOCUS_NO;
+    int page = m_notebook.get_current_page();
 
     FOCUS_OUT_ALL();
 
-    // 画像ビューの場合
+    // 画像ビューが空になった
     if( url == URL_IMAGEADMIN ){
 
         // 画像インジケータを隠す
@@ -1912,19 +1913,33 @@ void Core::empty_page( const std::string& url )
             m_imagetab_shown = false;
         }
 
-        if( ! ARTICLE::get_admin()->empty() ) focused_admin = FOCUS_ARTICLE;
-        else if( ! BOARD::get_admin()->empty() ) focused_admin = FOCUS_BOARD;
-        else focused_admin = FOCUS_BBSLIST;
+        if( SESSION::get_mode_pane() == MODE_2PANE ){
+
+            if( m_focused_admin == FOCUS_BBSLIST ) focused_admin = FOCUS_BBSLIST;
+
+            else if( page >= 1 && ! ARTICLE::get_admin()->empty() ) focused_admin = FOCUS_ARTICLE;
+            else if( ! BOARD::get_admin()->empty() ) focused_admin = FOCUS_BOARD;
+            else focused_admin = FOCUS_BBSLIST;
+        }
+        else{
+
+            if( m_focused_admin == FOCUS_BBSLIST ) focused_admin = FOCUS_BBSLIST;
+            else if( m_focused_admin == FOCUS_BOARD ) focused_admin = FOCUS_BOARD;
+
+            else if( ! ARTICLE::get_admin()->empty() ) focused_admin = FOCUS_ARTICLE;
+            else if( ! BOARD::get_admin()->empty() ) focused_admin = FOCUS_BOARD;
+            else focused_admin = FOCUS_BBSLIST;
+        }
     }
 
-    // articleビューの場合
+    // articleビューが空になった
     else if( url == URL_ARTICLEADMIN ){
 
         if( ! BOARD::get_admin()->empty() ) focused_admin = FOCUS_BOARD;
         else focused_admin = FOCUS_BBSLIST;
     }
 
-    // boardビューの場合
+    // boardビューが空になった
     else if( url == URL_BOARDADMIN ){
         focused_admin = FOCUS_BBSLIST;
     }
