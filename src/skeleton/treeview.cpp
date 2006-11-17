@@ -406,12 +406,8 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
                 || ! m_path_dragstart.empty()
                 ){
                 get_selection()->unselect_all();
-                set_cursor( path );
+                if( get_row( path ) ) set_cursor( path );
             }
-
-
-
-            
 
             return true;
         }
@@ -436,7 +432,7 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
         && !( event->state & GDK_CONTROL_MASK )
         && !( event->state & GDK_SHIFT_MASK ) // ctrl/shift + クリックで複数行選択操作をしてない場合
 
-        && !( !m_path_dragstart.empty() && path != m_path_dragstart ) // 範囲選択操作をしていない場合
+        && !( !m_path_dragstart.empty() && ! path.empty() && path != m_path_dragstart ) // 範囲選択操作をしていない場合
         ){ 
 
         emit_sig = true;
