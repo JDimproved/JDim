@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -226,7 +226,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );    
     action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する"), sigc::mem_fun( *this, &BoardView::delete_view ) );
     action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く"), sigc::mem_fun( *this, &BoardView::open_selected_rows ) );
-    action_group()->add( Gtk::Action::create( "Unselect", "選択解除"), sigc::mem_fun( *this, &BoardView::slot_unselect_all ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"), sigc::mem_fun( *this, &BoardView::slot_open_browser ) );
@@ -249,8 +248,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitleURL'/>"
     "<separator/>"
-    "<menuitem action='Unselect'/>"
-    "<separator/>"
     "<menuitem action='Favorite_Article'/>"
     "<separator/>"
     "<menuitem action='AboneThread'/>"
@@ -267,8 +264,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // 通常 + 複数
     "<popup name='popup_menu_mul'>"
     "<menuitem action='OpenRows'/>"
-    "<separator/>"
-    "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menuitem action='Favorite_Article'/>"
     "<separator/>"
@@ -1461,15 +1456,6 @@ void BoardView::slot_push_delete()
 void BoardView::slot_push_favorite()
 {
     SKELETON::View::show_popupmenu( "popup_menu_favorite", false );
-}
-
-
-//
-// 選択解除
-//
-void BoardView::slot_unselect_all()
-{
-    m_treeview.get_selection()->unselect_all();
 }
 
 

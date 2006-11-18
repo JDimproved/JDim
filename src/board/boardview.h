@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 // スレ一覧ビュー
 
@@ -112,7 +112,6 @@ namespace BOARD
         void slot_new_article();
         void slot_push_delete();
         void slot_push_favorite();
-        void slot_unselect_all();
         void slot_copy_url();
         void slot_copy_title_url();
         void slot_open_browser();
