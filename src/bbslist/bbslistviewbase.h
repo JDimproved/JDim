@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //
 // 板ビュークラスのベースクラス
@@ -112,7 +112,6 @@ namespace BBSLIST
         void slot_copy_url();
         void slot_copy_title_url();
         void slot_select_all_dir();
-        void slot_unselect_all();
         void slot_preferences_board();
         void slot_preferences_article();
         void slot_preferences_image();

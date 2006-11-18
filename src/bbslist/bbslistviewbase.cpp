@@ -140,7 +140,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "SelectDir", "ディレクトリ内全選択"), sigc::mem_fun( *this, &BBSListViewBase::slot_select_all_dir ) );
-    action_group()->add( Gtk::Action::create( "Unselect", "選択解除"), sigc::mem_fun( *this, &BBSListViewBase::slot_unselect_all ) );
     action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
@@ -163,7 +162,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='CopyTitleURL'/>"
     "<separator/>"
     "<menuitem action='SelectDir'/>"
-    "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menuitem action='AppendFavorite'/>"
     "<separator/>"
@@ -174,8 +172,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     // 通常 + 複数
     "<popup name='popup_menu_mul'>"
     "<menuitem action='OpenRows'/>"
-    "<separator/>"
-    "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menuitem action='AppendFavorite'/>"
     "</popup>"
@@ -190,7 +186,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='CopyTitleURL'/>"
     "<separator/>"
     "<menuitem action='SelectDir'/>"
-    "<menuitem action='Unselect'/>"
     "<separator/>"
     "<menuitem action='Rename'/>"
     "<menuitem action='NewDir'/>"
@@ -209,8 +204,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<popup name='popup_menu_favorite_mul'>"
     "<menuitem action='OpenRows'/>"
     "<separator/>"
-    "<menuitem action='Unselect'/>"
-    "<separator/>"
     "<menu action='Delete_Menu'>"
     "<menuitem action='Delete'/>"
     "</menu>"
@@ -228,7 +221,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitleURL'/>"
     "<separator/>"
-    "<menuitem action='Unselect'/>"
     "<menuitem action='Rename'/>"
     "<menuitem action='NewDir'/>"
     "<separator/>"
@@ -987,16 +979,6 @@ void BBSListViewBase::slot_select_all_dir()
         }
     }
 }
-
-
-//
-// 選択解除
-//
-void BBSListViewBase::slot_unselect_all()
-{
-    m_treeview.get_selection()->unselect_all();
-}
-
 
 
 //
