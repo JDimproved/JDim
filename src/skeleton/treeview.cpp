@@ -407,8 +407,7 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
                 if( get_row( path ) ) set_cursor( path );
                 m_selection_canceled = true; // ボタンを話したときにシグナルをemitしないようにする
             }
-
-            return true;
+            else return true;
         }
     }
 
