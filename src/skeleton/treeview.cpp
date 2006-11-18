@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -382,6 +382,7 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
 {
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
     m_drag = false;
+    m_selection_canceled = false;
     m_sig_button_press.emit( event );
 
     // ドラッグして範囲選択
@@ -394,9 +395,6 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
     // 複数行選択時の動作
     if( get_selection()->get_selected_rows().size() >= 2 ){
 
-        // ポップアップメニューボタンを押しても選択解除しない
-        if( m_control.button_alloted( event, CONTROL::PopupmenuButton ) ) return true;
-
         // D&Dのため、ctrlやshiftなしで普通にクリックしたときも選択解除しない
         if( !( event->state & GDK_CONTROL_MASK )
             && !( event->state & GDK_SHIFT_MASK ) ){
@@ -407,6 +405,7 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
                 ){
                 get_selection()->unselect_all();
                 if( get_row( path ) ) set_cursor( path );
+                m_selection_canceled = true; // ボタンを話したときにシグナルをemitしないようにする
             }
 
             return true;
@@ -428,13 +427,14 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
 
     if( !m_drag // ドラッグ状態でない
-
+        && !m_selection_canceled // on_button_press_event()で選択状態を解除していない
         && !( event->state & GDK_CONTROL_MASK )
         && !( event->state & GDK_SHIFT_MASK ) // ctrl/shift + クリックで複数行選択操作をしてない場合
 
         && !( !m_path_dragstart.empty() && ! path.empty() && path != m_path_dragstart ) // 範囲選択操作をしていない場合
         ){ 
 
+        // 以上の場合はシグナルをemitする
         emit_sig = true;
 
         // 範囲選択状態でポップアップメニュー以外のボタンを離したら選択解除
@@ -444,29 +444,10 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
             if( get_row( path ) ) set_cursor( path );
             emit_sig = false;
         }
-/*
-        // クリックした行が範囲選択部分に含まれていないときは選択を解除する( m_sig_button_release はemitしない)
-        if( get_row( path ) && get_selection()->get_selected_rows().size() >= 2 ){
-            bool included = false;
-            std::list< Gtk::TreeModel::iterator > list_it = get_selected_iterators();
-            std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-            for( ; it != list_it.end(); ++it ){
-
-                Gtk::TreeModel::Row row_tmp = *( *it );
-                Gtk::TreePath path_tmp = GET_PATH( row_tmp );
-
-                if( path == path_tmp ){
-                    included = true;
-                    break;
-                }
-            }
-            if( ! included ){
-                get_selection()->unselect_all();
-                emit_sig = false;
-            }
-        }
-*/
     }
+
+    // ポップアップメニューボタンを押したら必ずシグナルをemit
+    if( m_control.button_alloted( event, CONTROL::PopupmenuButton ) ) emit_sig = true;
 
     m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
 

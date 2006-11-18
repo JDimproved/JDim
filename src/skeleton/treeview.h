@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 //
 // treeviewクラス
 //
@@ -47,6 +47,7 @@ namespace SKELETON
 
         bool m_reorderable;
         bool m_drag;
+        bool m_selection_canceled;
         Gtk::TreeModel::Path m_path_dragstart;
         Gtk::TreeModel::Path m_path_dragpre;
 
