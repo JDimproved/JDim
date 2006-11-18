@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 //#define _DEBUG_XML
@@ -1509,7 +1509,6 @@ bool BBSListViewBase::copy_row( Gtk::TreeModel::iterator& src, Gtk::TreeModel::i
     // destの下にサブディレクトリ作成
     else if( subdir && after && dest_is_dir ){
         it_new = m_treestore->prepend( row_dest.children() );
-        m_treeview.expand_row( GET_PATH( *dest ), false );
     }
 
     // destの後に追加
@@ -1520,7 +1519,6 @@ bool BBSListViewBase::copy_row( Gtk::TreeModel::iterator& src, Gtk::TreeModel::i
 
     Gtk::TreeModel::Row row_tmp = *( it_new );
     setup_row( row_tmp, url, name, type );
-    m_treeview.get_selection()->select( row_tmp );
 
     // srcがdirならサブディレクトリ内の行も再帰的にコピー
     if( src_is_dir ){
@@ -1585,9 +1583,10 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
 
     // 移動開始
 
-    m_treeview.get_selection()->unselect_all();
+    std::list< Gtk::TreeModel::Row > list_destrow;
 
     Gtk::TreeModel::iterator it_dest = m_treestore->get_iter( path );
+    Gtk::TreeModel::iterator it_dest_bkup = it_dest;
     bool subdir = after;
     it_src = list_it.begin();
     for( int i = 0 ; it_src != list_it.end(); ++i, ++it_src ){
@@ -1597,7 +1596,26 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
         // コピーして削除
         if( copy_row( ( *it_src ), it_dest, subdir, after ) ) m_treestore->erase( ( *it_src ) );
         subdir = false;
-        after = true;;
+        after = true;
+        list_destrow.push_back( *it_dest );
+    }
+
+    // 移動先がディレクトリなら開く
+    if( is_dir( it_dest_bkup ) ) m_treeview.expand_row( GET_PATH( *it_dest_bkup ), false );
+
+    // 範囲選択
+    m_treeview.get_selection()->unselect_all();
+    std::list< Gtk::TreeModel::Row >::iterator it_destrow = list_destrow.begin();
+    for( ; it_destrow != list_destrow.end(); ++it_destrow ){
+
+        Gtk::TreeModel::Row row_tmp = ( *it_destrow );
+        m_treeview.get_selection()->select( row_tmp );
+
+        if( row_tmp[ m_columns.m_type ] == TYPE_DIR ){
+            m_treeview.expand_row( GET_PATH( row_tmp ), false );
+            m_path_selected = GET_PATH( row_tmp );
+            slot_select_all_dir();
+        }
     }
 }
 
