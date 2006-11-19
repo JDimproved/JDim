@@ -1898,6 +1898,10 @@ void Core::slot_active_url()
 //
 void Core::empty_page( const std::string& url )
 {
+#ifdef _DEBUG
+    std::cout << "Core::empty_page url = " << url << std::endl;
+#endif
+
     int focused_admin = FOCUS_NO;
 
     if( m_focused_admin == FOCUS_BBSLIST ) focused_admin = FOCUS_BBSLIST;
@@ -1986,6 +1990,10 @@ void Core::switch_page( const std::string& url )
 //
 void Core::switch_article()
 {
+#ifdef _DEBUG
+    std::cout << "Core::switch_article\n";
+#endif
+
     if( m_focused_admin == FOCUS_ARTICLE ) return;
     if( ARTICLE::get_admin()->empty() ) return;
 
@@ -1993,7 +2001,7 @@ void Core::switch_article()
     ARTICLE::get_admin()->set_command( "delete_popup" );
 
     if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
-    else if( m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+    else if( SESSION::get_mode_pane() != MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
 
     FOCUS_ADMIN_ARTICLE();
 }
@@ -2001,6 +2009,10 @@ void Core::switch_article()
 
 void Core::switch_board()
 {
+#ifdef _DEBUG
+    std::cout << "Core::switch_board\n";
+#endif
+
     if( m_focused_admin == FOCUS_BOARD ) return;
     if( BOARD::get_admin()->empty() ) return;
 
@@ -2015,6 +2027,10 @@ void Core::switch_board()
 
 void Core::switch_bbslist()
 {
+#ifdef _DEBUG
+    std::cout << "Core::switch_bbslist\n";
+#endif
+
     if( m_focused_admin == FOCUS_BBSLIST ) return;
     if( BBSLIST::get_admin()->empty() ) return;
 
@@ -2027,6 +2043,10 @@ void Core::switch_bbslist()
 
 void Core::switch_image()
 {
+#ifdef _DEBUG
+    std::cout << "Core::switch_image\n";
+#endif
+
     if( m_focused_admin == FOCUS_IMAGE ) return;
     if( IMAGE::get_admin()->empty() ) return;
 
@@ -2034,7 +2054,7 @@ void Core::switch_image()
     ARTICLE::get_admin()->set_command( "delete_popup" );
 
     if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 2 ) m_notebook.set_current_page( 2 );
-    else if( m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
+    else if( SESSION::get_mode_pane() != MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
 
     FOCUS_ADMIN_IMAGE();
 
