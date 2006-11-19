@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 // 文字列関係の関数
 
@@ -86,7 +86,7 @@ namespace MISC
 
     // 文字コードを coding_from から coding_to に変換
     // 遅いので連続的な処理が必要な時は使わないこと
-    std::string iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to );
+    std::string Iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to );
 
     // utf-8 -> ucs2 変換
     int utf8toucs2( const char* utfstr, int& byte );

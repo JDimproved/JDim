@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -547,7 +547,7 @@ std::string MISC::charset_url_encode( const std::string& str, const std::string&
 {
     if( charset.empty() ) return MISC::url_encode( str.c_str(), str.length() );
 
-    std::string str_enc = MISC::iconv( str, "UTF-8", charset );
+    std::string str_enc = MISC::Iconv( str, "UTF-8", charset );
     std::string str_encoded = MISC::url_encode( str_enc.c_str(), strlen( str_enc.c_str() ) );
 
     return str_encoded;
@@ -603,7 +603,7 @@ std::string MISC::base64( const std::string& str )
 //
 // 遅いので連続的な処理が必要な時は使わないこと
 //
-std::string MISC::iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to )
+std::string MISC::Iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to )
 {
     if( coding_from == coding_to ) return str;
 

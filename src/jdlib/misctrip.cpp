@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //
 // Thanks to 「パッチ投稿」スレの9氏
@@ -119,7 +119,7 @@ std::string MISC::get_trip( const std::string& str, const std::string& charset )
     // key 用の変数
     char key[ chrbuf ];
 
-    std::string str_enc = MISC::iconv( str, "UTF-8", charset );
+    std::string str_enc = MISC::Iconv( str, "UTF-8", charset );
 
     // input を元にHTMLエスケープ処理した値を key に入れる
     if( ! MISC::html_escape( str_enc.c_str(), key, chrbuf ) ) return std::string();
