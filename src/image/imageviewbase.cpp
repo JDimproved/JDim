@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -378,7 +378,6 @@ void ImageViewBase::slot_move_tail()
 void ImageViewBase::close_view()
 {
     IMAGE::get_admin()->set_command( "close_view", get_url() );
-    CORE::core_set_command( "switch_image" );
 }
 
 
@@ -437,7 +436,6 @@ void ImageViewBase::slot_preference()
 void ImageViewBase::delete_view()
 {
     CORE::core_set_command( "delete_image", get_url() );
-    CORE::core_set_command( "switch_image" );
 }
 
 

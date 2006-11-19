@@ -593,8 +593,6 @@ void ImageAdmin::switch_img( const std::string& url )
         }
     }
 
-    // 全アイコンのフォーカスを一旦はずす
-    // 後でフォーカスしておくこと
     focus_out_all();
 
     // アイコン切り替え
@@ -623,6 +621,8 @@ void ImageAdmin::switch_img( const std::string& url )
             adjust->set_value( pos_to );
         }
     }
+
+    if( has_focus() ) focus_current_view();
 }
 
 
