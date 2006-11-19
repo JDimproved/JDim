@@ -1205,6 +1205,8 @@ bool BoardView::slot_button_press( GdkEventButton* event )
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
+    CORE::core_set_command( "switch_board" );
+
     return true;
 }
 

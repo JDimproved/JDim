@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -204,6 +204,13 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
 {
     // 切り替え
     if( command.command == "switch_image" ) switch_img( command.url );
+
+    // 画像強制表示
+    if( command.command == "show_image" ){
+        clock_in();
+        clock_in();
+        clock_in();
+    }
 
     // すべて保存
     else if( command.command  == "save_all" ) save_all();
