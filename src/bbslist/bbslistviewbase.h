@@ -96,6 +96,7 @@ namespace BBSLIST
         void row_down();
         void page_up();
         void page_down();
+        void select_all_dir( Gtk::TreeModel::Path path );
 
         bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );

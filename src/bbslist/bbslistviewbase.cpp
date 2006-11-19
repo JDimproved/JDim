@@ -959,14 +959,12 @@ void BBSListViewBase::slot_copy_title_url()
 }
 
 
+
 //
 // ディレクトリ内を全選択
 //
-void BBSListViewBase::slot_select_all_dir()
+void BBSListViewBase::select_all_dir( Gtk::TreeModel::Path path )
 {
-    Gtk::TreeModel::Path path = m_path_selected;
-
-    // とりあえず再帰なしで一階層のみ
     if( is_dir( path ) ){
 
         m_treeview.get_selection()->select( path );
@@ -975,9 +973,21 @@ void BBSListViewBase::slot_select_all_dir()
         while( m_treeview.get_row( path ) ){
 
             m_treeview.get_selection()->select( path );
+            select_all_dir( path );
             path.next();
         }
     }
+}
+
+
+//
+// ディレクトリ内を全選択(メニューから呼び出す)
+//
+// m_path_selected にパスをセットしておくこと
+//
+void BBSListViewBase::slot_select_all_dir()
+{
+    select_all_dir( m_path_selected );
 }
 
 
@@ -1595,8 +1605,7 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
 
         if( row_tmp[ m_columns.m_type ] == TYPE_DIR ){
             m_treeview.expand_row( GET_PATH( row_tmp ), false );
-            m_path_selected = GET_PATH( row_tmp );
-            slot_select_all_dir();
+            select_all_dir( GET_PATH( row_tmp ) );
         }
     }
 }
