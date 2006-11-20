@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -196,7 +196,7 @@ void ArticleViewBase::setup_action()
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), true ) );
     action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
-    action_group()->add( Gtk::Action::create( "Preference", "プロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
+    action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
 
 
@@ -282,10 +282,6 @@ void ArticleViewBase::setup_action()
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyRes'/>"
     "<menuitem action='CopyResRef'/>"
-    "<separator/>"
-
-    "<menuitem action='Preference'/>"
-
     "</popup>"
 
     // レスアンカーをクリックしたときのメニュー
@@ -1910,6 +1906,23 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     act = action_group()->get_action( "DrawoutBM" );
     if( act ){
         if( m_article->get_num_bookmark() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+    act = action_group()->get_action( "PreBookMark" );
+    if( act ){
+        if( m_article->get_num_bookmark() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+    act = action_group()->get_action( "NextBookMark" );
+    if( act ){
+        if( m_article->get_num_bookmark() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+
+    // 新着移動
+    act = action_group()->get_action( "GotoNew" );
+    if( act ){
+        if( m_article->get_number_new() ) act->set_sensitive( true );
         else act->set_sensitive( false );
     }
 
