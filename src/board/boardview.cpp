@@ -98,7 +98,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
     // ツリービュー設定
     m_liststore = Gtk::ListStore::create( m_columns );
-    m_treeview.set_model( m_liststore );
 
 #ifndef USE_GTKMM24
     
@@ -706,6 +705,7 @@ void BoardView::show_view()
     // タブに名前をセット
     BOARD::get_admin()->set_command( "set_tablabel", get_url(), DBTREE::board_name( get_url() ) );
 
+    m_treeview.unset_model();
     m_liststore->clear();
     m_pre_query = std::string();
     
@@ -772,6 +772,7 @@ void BoardView::update_view()
     bool updated = false;
 
     // 画面消去
+    m_treeview.unset_model();
     m_liststore->clear();
 
     // 高速化のためデータベースに直接アクセス
@@ -806,6 +807,7 @@ void BoardView::update_view()
             if( art->get_number_load() && art->get_number() > art->get_number_load() ) updated = true;
         }
 
+        m_treeview.set_model( m_liststore );
         redraw_view();
     }
 
