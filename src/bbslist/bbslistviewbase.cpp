@@ -769,7 +769,14 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 bool BBSListViewBase::slot_key_press( GdkEventKey* event )
 {
-    operate_view( SKELETON::View::get_control().key_press( event ) );
+    int key = SKELETON::View::get_control().key_press( event );
+
+    // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
+    // 一番上のスレが開くので、open_row() は slot_key_release() で処理する
+    if( key == CONTROL::OpenBoard ) return true;
+    if( key == CONTROL::OpenBoardTab ) return true;
+
+    operate_view( key );
     return true;
 }
 
@@ -787,6 +794,12 @@ bool BBSListViewBase::slot_key_release( GdkEventKey* event )
     std::cout << "BBSListViewBase::slot_key_release key = " << key << " ctrl = " << ctrl << " shift = " << shift << std::endl;
 #endif
     
+    // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
+    // 一番上のスレが開くので、open_row() は slot_key_release() で処理する
+    int key = SKELETON::View::get_control().key_press( event );
+    if( key == CONTROL::OpenBoard ) operate_view( key );
+    if( key == CONTROL::OpenBoardTab ) operate_view( key );
+
     return true;
 }
 
