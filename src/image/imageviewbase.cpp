@@ -493,7 +493,7 @@ void ImageViewBase::operate_view( const int& control )
 
             // article に切り替え
         case CONTROL::Left:
-            CORE::core_set_command( "switch_article" );
+            CORE::core_set_command( "switch_leftview" );
             break;
 
         case CONTROL::ToggleArticle:

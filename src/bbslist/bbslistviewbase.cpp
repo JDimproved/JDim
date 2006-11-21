@@ -435,7 +435,7 @@ void  BBSListViewBase::operate_view( const int& control )
         case CONTROL::Right:
 
             if( m_treeview.get_row( path ) ){
-                if( ! m_treeview.expand_row( path, false ) ) CORE::core_set_command( "switch_board" );
+                if( ! m_treeview.expand_row( path, false ) ) CORE::core_set_command( "switch_rightview" );
             }
             break;
 

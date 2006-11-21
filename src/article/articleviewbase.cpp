@@ -630,7 +630,7 @@ void ArticleViewBase::operate_view( const int& control )
 
             // Board に切り替え
         case CONTROL::Left:
-            CORE::core_set_command( "switch_board" );
+            CORE::core_set_command( "switch_leftview" );
             break;
 
         case CONTROL::ToggleArticle:
@@ -639,7 +639,7 @@ void ArticleViewBase::operate_view( const int& control )
 
             // image に切り替え
         case CONTROL::Right:
-            CORE::core_set_command( "switch_image" );
+            CORE::core_set_command( "switch_rightview" );
             break;
 
             // 右、左のタブに切り替え

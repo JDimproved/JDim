@@ -918,12 +918,12 @@ void BoardView::operate_view( const int& control )
 
             // Listに戻る
         case CONTROL::Left:
-            CORE::core_set_command( "switch_bbslist" );
+            CORE::core_set_command( "switch_leftview" );
             break;
 
             // 現在の記事を表示
         case CONTROL::Right:
-            CORE::core_set_command( "switch_article" );
+            CORE::core_set_command( "switch_rightview" );
             break;
 
         case CONTROL::ToggleArticle:

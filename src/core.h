@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //
 // コアクラス
@@ -52,7 +52,7 @@ namespace MESSAGE
 // Core::slot_focus_in_event, Core::slot_focus_out_event 参照
 enum
 {
-    FOCUS_BBSLIST,
+    FOCUS_BBSLIST = 0,
     FOCUS_BOARD,
     FOCUS_ARTICLE,
     FOCUS_IMAGE,
@@ -211,6 +211,8 @@ namespace CORE
         void switch_bbslist();
         void switch_image();
         void toggle_article();
+        void switch_leftview();
+        void switch_rightview();
         void open_by_browser( const std::string& url );
 
         void set_history_article( const std::string& url );

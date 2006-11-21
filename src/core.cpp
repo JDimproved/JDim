@@ -1612,6 +1612,10 @@ void Core::exec_command()
 
     else if( command.command  == "toggle_article" ) toggle_article();
 
+    else if( command.command  == "switch_leftview" ) switch_leftview();
+
+    else if( command.command  == "switch_rightview" ) switch_rightview();
+
     // サイドバー表示/非表示
     else if( command.command  == "toggle_sidebar" ) slot_toggle_sidebar();
 
@@ -2069,6 +2073,63 @@ void Core::toggle_article()
     if( m_focused_admin == FOCUS_ARTICLE ) switch_board();
     else switch_article();
 }
+
+
+// 左移動
+void Core::switch_leftview()
+{
+    FOCUS_OUT_ALL();
+    ARTICLE::get_admin()->set_command( "delete_popup" );
+
+    int next_admin = m_focused_admin -1;
+    
+    while( next_admin >= FOCUS_BBSLIST ){
+
+        if( next_admin == FOCUS_BBSLIST && ! BBSLIST::get_admin()->empty() ){
+            switch_bbslist();
+            break;
+        }
+        else if( next_admin == FOCUS_BOARD && ! BOARD::get_admin()->empty() ){
+            switch_board();
+            break;
+        }
+        else if( next_admin == FOCUS_ARTICLE && ! ARTICLE::get_admin()->empty() ){
+            switch_article();
+            break;
+        }
+
+        --next_admin;
+    }
+}
+
+
+// 右移動
+void Core::switch_rightview()
+{
+    FOCUS_OUT_ALL();
+    ARTICLE::get_admin()->set_command( "delete_popup" );
+
+    int next_admin = m_focused_admin +1;
+    
+    while( next_admin <= FOCUS_IMAGE ){
+
+        if( next_admin == FOCUS_BOARD && ! BOARD::get_admin()->empty() ){
+            switch_board();
+            break;
+        }
+        else if( next_admin == FOCUS_ARTICLE && ! ARTICLE::get_admin()->empty() ){
+            switch_article();
+            break;
+        }
+        else if( next_admin == FOCUS_IMAGE && ! IMAGE::get_admin()->empty() ){
+            switch_image();
+            break;
+        }
+
+        ++next_admin;
+    }
+}
+
 
 
 // ブラウザで開く
