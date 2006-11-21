@@ -238,12 +238,11 @@ void Core::run( bool init )
                                                     ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "RestoreBoard", "起動時にスレ一覧を復元", std::string(), CONFIG::get_restore_board() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_restore_board ) );
-    m_action_group->add( Gtk::ToggleAction::create( "RestoreArticle", "起動時にスレッドを復元", std::string(), CONFIG::get_restore_article() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_restore_article ) );
-    m_action_group->add( Gtk::ToggleAction::create( "RestoreImage", "起動時に画像を復元", std::string(), CONFIG::get_restore_image() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_restore_image ) );
+    m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "起動時に開いていたビューを復元", std::string(),
+                                                    ( CONFIG::get_restore_board()
+                                                      & CONFIG::get_restore_board()
+                                                      & CONFIG::get_restore_board() ) ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_restore_views ) );
 
     m_action_group->add( Gtk::Action::create( "Color_Menu", "色" ) );
     m_action_group->add( Gtk::Action::create( "ColorChar", "スレ文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
@@ -267,7 +266,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
     m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん" ), sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存", std::string(), CONFIG::get_save_postlog() ),
+    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
@@ -317,10 +316,8 @@ void Core::run( bool init )
         "<menu action='Menu_Config'>"
         "<menuitem action='OldArticle'/>"
         "<menuitem action='ToggleTab'/>"
-        "<separator/>"
-        "<menuitem action='RestoreBoard'/>"
-        "<menuitem action='RestoreArticle'/>"
-        "<menuitem action='RestoreImage'/>"
+        "<menuitem action='RestoreViews'/>"
+        "<menuitem action='SavePostLog'/>"
         "<separator/>"
 
         "<menu action='Font_Menu'>"
@@ -347,8 +344,6 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='SetupAbone'/>"
         "<menuitem action='SetupAboneThread'/>"
-        "<separator/>"
-        "<menuitem action='SavePostLog'/>"    
         "<separator/>"
         "<menuitem action='UseMosaic'/>"    
         "<menuitem action='DeleteImages'/>"
@@ -1130,19 +1125,13 @@ void Core::slot_toggle_tabbutton()
 //
 // 起動時にviewを復元
 //
-void Core::slot_toggle_restore_board()
+void Core::slot_toggle_restore_views()
 {
-    CONFIG::set_restore_board( ! CONFIG::get_restore_board() );
-}
+    bool status = CONFIG::get_restore_board() & CONFIG::get_restore_article() & CONFIG::get_restore_image();
 
-void Core::slot_toggle_restore_article()
-{
-    CONFIG::set_restore_article( ! CONFIG::get_restore_article() );
-}
-
-void Core::slot_toggle_restore_image()
-{
-    CONFIG::set_restore_image( ! CONFIG::get_restore_image() );
+    CONFIG::set_restore_board( ! status );
+    CONFIG::set_restore_article( ! status );
+    CONFIG::set_restore_image( ! status );
 }
 
 
