@@ -58,6 +58,7 @@ using namespace BOARD;
 enum{
     COL_MARKVAL_UPDATED = 0,   
     COL_MARKVAL_CACHED, 
+    COL_MARKVAL_NEWTHREAD,
     COL_MARKVAL_NORMAL,
     COL_MARKVAL_OLD
 };
@@ -1170,6 +1171,11 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
     else if( art->is_cached() ){
         mark_val = COL_MARKVAL_CACHED;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::CHECK );
+    }
+    // キャッシュ無し、新着
+    else if( art->get_hour() < 24 ){
+        mark_val = COL_MARKVAL_NEWTHREAD;
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::NEWTHREAD );
     }
     //キャッシュ無し
     else{
