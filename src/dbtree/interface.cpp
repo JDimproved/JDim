@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -375,16 +375,23 @@ const std::string DBTREE::article_since_date( const std::string& url )
 }
 
 
-// 更新時間
+// スレの更新時間( size_t )
 const time_t DBTREE::article_time_modified( const std::string& url )
 {
     return DBTREE::get_article( url )->get_time_modified();
 }
 
-// 更新時間(文字列)
+
+// スレの更新時間( 文字列 )
 const std::string DBTREE::article_date_modified( const std::string& url )
 {
     return DBTREE::get_article( url )->get_date_modified();
+}
+
+
+const int  DBTREE::article_hour( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_hour();
 }
 
 

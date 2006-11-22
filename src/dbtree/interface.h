@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //
 // データベースへのインターフェース関数
@@ -90,8 +90,9 @@ namespace DBTREE
     const std::string article_key( const std::string& url ); // idから拡張子を取ったもの。書き込み用
     const time_t article_since_time( const std::string& url );
     const std::string article_since_date( const std::string& url );
-    const time_t article_time_modified( const std::string& url );
-    const std::string article_date_modified( const std::string& url );
+    const time_t article_time_modified( const std::string& url ); // 更新時間( size_t )
+    const std::string article_date_modified( const std::string& url ); // スレの更新時間( 文字列 )
+    const int article_hour( const std::string& url );
     const time_t article_write_time( const std::string& url );
     const std::string article_write_date( const std::string& url );
     const int article_status( const std::string& url );
