@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -18,17 +18,15 @@
 using namespace CONTROL;
 
 
-// ホイールマウスジェスチャが開始されているか
-// タブが切り替わる場合があるので全てのviewで共通の変数とする
-bool mg_wheel = false;;
-bool mg_wheel_done = false;
+// ホイールマウスジェスチャ用( 全てのビューで共通 )
+bool mg_wheel_done;
+
 
 Control::Control()
     : m_mode( CONTROL::MODE_COMMON )
 {
     MG_reset();
-    mg_wheel = false;
-    mg_wheel_done = false;
+    MG_wheel_reset();
 }
 
 
@@ -237,6 +235,12 @@ int Control::MG_end( GdkEventButton* event )
 // ホイールマウスジェスチャ
 
 
+void Control::MG_wheel_reset()
+{
+    mg_wheel_done = false;
+}
+
+
 // ホイールマウスジェスチャ開始
 bool Control::MG_wheel_start( GdkEventButton* event )
 {
@@ -246,8 +250,8 @@ bool Control::MG_wheel_start( GdkEventButton* event )
     std::cout << "Control::MG_wheel_start\n";
 #endif
 
-    mg_wheel = true;
-    mg_wheel_done = false;
+    MG_wheel_reset();
+
     return true;
 }
 
@@ -255,9 +259,22 @@ bool Control::MG_wheel_start( GdkEventButton* event )
 // ホイールマウスジェスチャ。 戻り値はコントロールID
 int Control::MG_wheel_scroll( GdkEventScroll* event )
 {
-    if( ! mg_wheel ) return CONTROL::None;
-
     int control = CONTROL::None;
+
+    int x, y;
+    Gdk::ModifierType mask;
+    int button = 0;
+    GdkEventButton ev;
+    Gdk::Display::get_default()->get_pointer( x, y, mask );
+    get_eventbutton( CONTROL::GestureButton, ev );
+    switch( ev.button ){
+        case 1: button = Gdk::BUTTON1_MASK; break;
+        case 2: button = Gdk::BUTTON2_MASK; break;
+        case 3: button = Gdk::BUTTON3_MASK; break;
+    }
+
+    if( ! ( mask & button ) ) return control;
+
     if( event->direction == GDK_SCROLL_UP ) control = CONTROL::TabLeft;
     if( event->direction == GDK_SCROLL_DOWN ) control = CONTROL::TabRight;
 
@@ -278,16 +295,12 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
 // もしジェスチャが実行されたら true が戻る
 bool Control::MG_wheel_end( GdkEventButton* event )
 {
-    if( ! mg_wheel ) return false;
-
 #ifdef _DEBUG
     std::cout << "Control::MG_wheel_end\n";
 #endif
 
     bool ret = mg_wheel_done;
-
-    mg_wheel = false;
-    mg_wheel_done = false;
+    MG_wheel_reset();
 
     return ret;
 }
