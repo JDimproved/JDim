@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -56,7 +56,6 @@ using namespace ICON;
 
 ICON_Manager::ICON_Manager()
 {
-
     m_list_icons.resize( NUM_ICONS );
 
     m_list_icons[ ICON::JD16 ] =  Gdk::Pixbuf::create_from_inline( sizeof( icon_jd16 ), icon_jd16 );
@@ -64,6 +63,8 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::JD48 ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_jd48 ), icon_jd48 );
 
     m_list_icons[ ICON::UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_update ), icon_update );
+    Gtk::HBox dummy;
+    m_list_icons[ ICON::NEWTHREAD ] = dummy.render_icon( Gtk::Stock::YES, Gtk::ICON_SIZE_MENU ); // とりあえず
     m_list_icons[ ICON::CHECK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_check ), icon_check );
     m_list_icons[ ICON::DOWN ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_down ), icon_down );
     m_list_icons[ ICON::LOADING ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_loading ), icon_loading );

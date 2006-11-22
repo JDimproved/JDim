@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //
 // アイコンの管理クラス
@@ -19,6 +19,7 @@ namespace ICON
         JD48,
 
         UPDATE,
+        NEWTHREAD,
         CHECK,
         DOWN,
         LOADING,
