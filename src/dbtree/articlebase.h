@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //
 // スレ情報のベースクラス
@@ -212,6 +212,9 @@ namespace DBTREE
         // 更新時間
         time_t get_time_modified();
         const std::string& get_date_modified() { return m_date_modified; }
+
+        // スレが立ってからの経過時間( 時間 )
+        const int get_hour();
 
         // http コード
         const int get_code() const { return m_code; }

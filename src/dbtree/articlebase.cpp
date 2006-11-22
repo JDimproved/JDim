@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -275,6 +275,14 @@ time_t ArticleBase::get_time_modified()
     time_out = MISC::datetotime( m_date_modified );
     if( time_out == 0 ) time_out = time( NULL ) - 600;
     return time_out; 
+}
+
+
+
+// スレが立ってからの経過時間( 時間 )
+const int ArticleBase::get_hour()
+{
+    return ( time( NULL ) - get_since_time() ) / ( 60 * 60 );
 }
 
 
