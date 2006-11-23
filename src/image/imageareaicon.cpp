@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -93,6 +93,8 @@ void ImageAreaIcon::show_image_thread()
     // キャッシュされてない時は読み込みorエラーマークを表示
     if( ! is_cached() ){
 
+        m_pixbuf_icon.clear();
+
         // インジゲータ画像作成
         if( ! m_pixbuf ){
 
@@ -173,6 +175,10 @@ void ImageAreaIcon::show_image_thread()
 //
 void ImageAreaIcon::slot_set_image()
 {
+#ifdef _DEBUG
+    std::cout << "ImageAreaIcon::slot_set_image()\n";
+#endif    
+
     clear();
     if( m_pixbuf_icon ) set( m_pixbuf_icon );
     else if( m_pixbuf ) set( m_pixbuf );

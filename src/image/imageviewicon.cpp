@@ -118,19 +118,18 @@ void ImageViewIcon::show_view()
     std::cout << "ImageViewIcon::show_view url = " << get_url() << std::endl;
 #endif    
 
-    // 画像が既に表示しているなら再描画
-    if( get_imagearea() ){
-
-        get_imagearea()->show_image();
-        return;
-    }
-
     // 読み込み中        
     if( get_img()->is_loading() ) set_loading( true );
 
+    // 画像が既に表示しているなら再描画
+    if( get_imagearea() ) get_imagearea()->show_image();
+
     // 画像貼り付け
-    set_imagearea( Gtk::manage( new ImageAreaIcon( get_url() ) ) );
-    show_all_children();
+    else{
+
+        set_imagearea( Gtk::manage( new ImageAreaIcon( get_url() ) ) );
+        show_all_children();
+    }
 }
 
 
