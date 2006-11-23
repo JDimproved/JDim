@@ -1173,7 +1173,7 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::CHECK );
     }
     // キャッシュ無し、新着
-    else if( art->get_hour() < 24 ){
+    else if( art->get_hour() < CONFIG::get_newthread_hour() ){
         mark_val = COL_MARKVAL_NEWTHREAD;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::NEWTHREAD );
     }

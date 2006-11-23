@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 //
 // グローバル設定
 //
@@ -141,6 +141,9 @@ namespace CONFIG
     // スレ一覧にdat落ちしたスレも表示する
     const bool get_show_oldarticle();
     void set_show_oldarticle( bool showarticle );
+
+    // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
+    const int get_newthread_hour();
 
     // ツリービューのスクロール量(行数)
     const int get_tree_scroll_size();

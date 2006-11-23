@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -69,6 +69,7 @@ int del_img_day;
 int max_img_size;
 
 bool show_oldarticle;
+int newthread_hour;
 
 int tree_scroll_size;
 bool open_one_category;
@@ -231,6 +232,9 @@ const bool CONFIG::init_config()
     // boardビューで古いスレも表示
     show_oldarticle = cf.get_option( "show_oldarticle", false );
 
+    // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
+    newthread_hour = cf.get_option( "newthread_hour", 24 );
+
 
     /////////////////////////
     // UI 周りの設定
@@ -386,6 +390,7 @@ void CONFIG::save_conf()
     cf.update( "color_popup_B", color_back_popup[ 2 ] );
 
     cf.update( "show_oldarticle", show_oldarticle );
+    cf.update( "newthread_hour", newthread_hour );
 
     cf.update( "tree_scroll_size", tree_scroll_size );
     cf.update( "open_one_category", open_one_category );
@@ -520,6 +525,8 @@ const int CONFIG::get_max_img_size(){ return max_img_size; }
 
 const bool CONFIG::get_show_oldarticle(){ return show_oldarticle; }
 void CONFIG::set_show_oldarticle( bool showarticle ){ show_oldarticle = showarticle; }
+
+const int CONFIG::get_newthread_hour(){ return newthread_hour; }
 
 const int CONFIG::get_tree_scroll_size(){ return tree_scroll_size; }
 const bool CONFIG::get_open_one_category(){ return open_one_category; }
