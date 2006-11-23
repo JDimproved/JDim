@@ -81,8 +81,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     show_all_children();    
 
     m_treestore = Gtk::TreeStore::create( m_columns ); 
-    m_treeview.set_model( m_treestore );
-    m_treeview.set_headers_visible( false );
 
     // Gtk::TreeStoreでset_fixed_height_mode()を使うとexpandしたときに
     // スクロールバーが誤動作するので使わないこと
@@ -1852,7 +1850,10 @@ void BBSListViewBase::xml2tree( const std::string& xml )
     std::list< std::string > lines = MISC::get_lines( xml );
     if( lines.empty() ) return;
 
+    m_treeview.unset_model();
+
     // XML を解析してツリーを作る
+    std::list< Gtk::TreePath > list_path_expand;
     Gtk::TreeModel::Row row;
     int y = -1;
     std::string focused_path;
@@ -1903,10 +1904,8 @@ void BBSListViewBase::xml2tree( const std::string& xml )
 
             // expand
             if( regex.str( 1 ) == "1" ){
-
                 Gtk::TreePath path = GET_PATH( row );
-                m_treeview.expand_parents( path );
-                m_treeview.expand_row( path, false );
+                list_path_expand.push_back( path );
             }
 
             // 終わり
@@ -1915,6 +1914,16 @@ void BBSListViewBase::xml2tree( const std::string& xml )
             row = *( row.parent() );
             --level;
         }
+    }
+
+    m_treeview.set_model( m_treestore );
+    m_treeview.set_headers_visible( false );
+
+    // ディレクトリオープン
+    std::list< Gtk::TreePath >::iterator it_path = list_path_expand.begin();
+    for( ; it_path != list_path_expand.end(); ++it_path ){
+        m_treeview.expand_parents( *it_path );
+        m_treeview.expand_row( *it_path, false );
     }
 
     // 前回閉じた位置まで移動
