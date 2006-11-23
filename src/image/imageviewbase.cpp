@@ -511,6 +511,11 @@ void ImageViewBase::operate_view( const int& control )
                 if( mdiag.run() != Gtk::RESPONSE_OK ) return;
                 delete_view();
             }
+            else{
+                Gtk::MessageDialog mdiag( "キャッシュ保護されています" );
+                mdiag.run();
+            }
+
             break;
 
             // サイドバー表示/非表示
