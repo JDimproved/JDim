@@ -62,33 +62,6 @@ IMAGE::get_admin()->set_command( "focus_out" ); \
 }while(0)
 
 
-#define FOCUS_ADMIN_BBSLIST() do{ \
-BBSLIST::get_admin()->set_command( "focus_current_view" ); \
-m_focused_admin = FOCUS_BBSLIST; \
-}while(0)
- 
-
-#define FOCUS_ADMIN_BOARD() do{ \
-BOARD::get_admin()->set_command( "focus_current_view" ); \
-m_focused_admin = FOCUS_BOARD; \
-m_focused_admin_sidebar = FOCUS_BOARD; \
-}while(0)
-
-#define FOCUS_ADMIN_ARTICLE() do{ \
-ARTICLE::get_admin()->set_command( "focus_current_view" ); \
-m_focused_admin = FOCUS_ARTICLE; \
-m_focused_admin_sidebar = FOCUS_ARTICLE; \
-}while(0)
-
-
-#define FOCUS_ADMIN_IMAGE() do{ \
-IMAGE::get_admin()->set_command( "focus_current_view" ); \
-m_focused_admin = FOCUS_IMAGE; \
-m_focused_admin_sidebar = FOCUS_IMAGE; \
-}while(0)
-
-
-
 //////////////////////////////////////////////////////
 
 
@@ -1039,17 +1012,14 @@ void Core::slot_show_hide_leftpane( bool show )
     SESSION::set_show_sidebar( show );
 
     // 表示されたらbbslistをフォーカス
-    if( SESSION::show_sidebar() )CORE::core_set_command( "switch_bbslist" );
+    if( SESSION::show_sidebar() ) switch_bbslist();
 
     // 非表示になったときは m_focused_admin_sidebar で指定されるadminにフォーカスを移す
     else{
 
-        switch( m_focused_admin_sidebar ){
-            case FOCUS_BBSLIST:
-            case FOCUS_BOARD: CORE::core_set_command( "switch_board" ); break;
-            case FOCUS_ARTICLE: CORE::core_set_command( "switch_article" ); break;
-            case FOCUS_IMAGE: CORE::core_set_command( "switch_image" ); break;
-        }
+        if( m_focused_admin_sidebar == FOCUS_BOARD ) switch_board();
+        else if( m_focused_admin_sidebar == FOCUS_ARTICLE ) switch_article();
+        else if( m_focused_admin_sidebar == FOCUS_IMAGE ) switch_image();
     }
 }
 
@@ -1813,26 +1783,24 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
     std::cout << "Core::slot_switch_page " << page << std::endl;
 #endif
 
-    FOCUS_OUT_ALL();
-
     if( SESSION::get_mode_pane() == MODE_2PANE ){
 
         switch( page){
 
-            case 0: FOCUS_ADMIN_BOARD(); break;
+            case 0: switch_board(); break;
 
-            case 1: FOCUS_ADMIN_ARTICLE(); break;
+            case 1: switch_article(); break;
 
-            case 2: FOCUS_ADMIN_IMAGE(); break;
+            case 2: switch_image(); break;
         }
     }
     else{
 
         switch( page ){
 
-            case 0: FOCUS_ADMIN_ARTICLE(); break;
+            case 0: switch_article(); break;
 
-            case 1: FOCUS_ADMIN_IMAGE(); break;
+            case 1: switch_image(); break;
         }
     }
 }
@@ -1900,11 +1868,12 @@ void Core::empty_page( const std::string& url )
 
     int focused_admin = FOCUS_NO;
 
+    // emptyになったadminとフォーカスされているadminが異なる場合は
+    // フォーカスを移動しない
     if( m_focused_admin == FOCUS_BBSLIST ) focused_admin = FOCUS_BBSLIST;
     else if( m_focused_admin == FOCUS_BOARD && ! BOARD::get_admin()->empty() ) focused_admin = FOCUS_BOARD;
     else if( m_focused_admin == FOCUS_ARTICLE && ! ARTICLE::get_admin()->empty() ) focused_admin = FOCUS_ARTICLE;
-
-    FOCUS_OUT_ALL();
+    else if( m_focused_admin == FOCUS_IMAGE && ! IMAGE::get_admin()->empty() ) focused_admin = FOCUS_IMAGE;
 
     // 画像ビューが空になった
     if( url == URL_IMAGEADMIN ){
@@ -1918,9 +1887,13 @@ void Core::empty_page( const std::string& url )
 
         // フォーカス切り替え
         if( focused_admin == FOCUS_NO ){
+
             if( ! ARTICLE::get_admin()->empty() ) focused_admin = FOCUS_ARTICLE;
             else if( ! BOARD::get_admin()->empty() ) focused_admin = FOCUS_BOARD;
-            else focused_admin = FOCUS_BBSLIST;
+            else{
+                focused_admin = FOCUS_BBSLIST;
+                m_focused_admin_sidebar = FOCUS_NO;
+            }
         }
     }
 
@@ -1929,14 +1902,18 @@ void Core::empty_page( const std::string& url )
 
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == MODE_2PANE ){
-            if( BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) CORE::core_set_command( "switch_image" );
+            if( BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
         }
-        else if( ! IMAGE::get_admin()->empty() ) CORE::core_set_command( "switch_image" );
+        else if( ! IMAGE::get_admin()->empty() ) switch_image();
 
         // フォーカス切り替え
         if( focused_admin == FOCUS_NO ){
+
             if( ! BOARD::get_admin()->empty() ) focused_admin = FOCUS_BOARD;
-            else focused_admin = FOCUS_BBSLIST;
+            else{
+                focused_admin = FOCUS_BBSLIST;
+                m_focused_admin_sidebar = FOCUS_NO;
+            }
         }
     }
 
@@ -1945,23 +1922,26 @@ void Core::empty_page( const std::string& url )
 
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == MODE_2PANE ){
-            if( ! ARTICLE::get_admin()->empty() ) CORE::core_set_command( "switch_article" );
-            else if( ! IMAGE::get_admin()->empty() ) CORE::core_set_command( "switch_image" );
+
+            if( ! ARTICLE::get_admin()->empty() ) switch_article();
+            else if( ! IMAGE::get_admin()->empty() ) switch_image();
         }
 
         // フォーカス切り替え
-        if( focused_admin == FOCUS_NO ) focused_admin = FOCUS_BBSLIST;
+        if( focused_admin == FOCUS_NO ){
+
+            focused_admin = FOCUS_BBSLIST;
+            m_focused_admin_sidebar = FOCUS_NO;
+        }
     }
 
+    // 切り替え実行
     switch( focused_admin ){
 
-        case FOCUS_BBSLIST: CORE::core_set_command( "switch_bbslist" ); break;
-
-        case FOCUS_BOARD: CORE::core_set_command( "switch_board" ); break;
-
-        case FOCUS_ARTICLE: CORE::core_set_command( "switch_article" ); break;
-
-        case FOCUS_IMAGE: CORE::core_set_command( "switch_image" ); break;
+        case FOCUS_BBSLIST: switch_bbslist(); break;
+        case FOCUS_BOARD: switch_board(); break;
+        case FOCUS_ARTICLE: switch_article(); break;
+        case FOCUS_IMAGE: switch_image(); break;
     }
 }
 
@@ -1974,10 +1954,10 @@ void Core::empty_page( const std::string& url )
 //
 void Core::switch_page( const std::string& url )
 {
-    if( url == URL_BBSLISTADMIN && m_focused_admin != FOCUS_BBSLIST ) switch_bbslist();
-    else if( url == URL_BOARDADMIN && m_focused_admin != FOCUS_BOARD ) switch_board();
-    else if( url == URL_ARTICLEADMIN && m_focused_admin != FOCUS_ARTICLE ) switch_article();
-    else if( url == URL_IMAGEADMIN && m_focused_admin != FOCUS_IMAGE ) switch_image();
+    if( url == URL_BBSLISTADMIN ) switch_bbslist();
+    else if( url == URL_BOARDADMIN ) switch_board();
+    else if( url == URL_ARTICLEADMIN ) switch_article();
+    else if( url == URL_IMAGEADMIN ) switch_image();
 }
 
 
@@ -1990,16 +1970,19 @@ void Core::switch_article()
     std::cout << "Core::switch_article\n";
 #endif
 
-    if( m_focused_admin == FOCUS_ARTICLE ) return;
     if( ARTICLE::get_admin()->empty() ) return;
+    if( m_focused_admin != FOCUS_ARTICLE ){
 
-    FOCUS_OUT_ALL();
-    ARTICLE::get_admin()->set_command( "delete_popup" );
+        FOCUS_OUT_ALL();
+        ARTICLE::get_admin()->set_command( "delete_popup" );
 
-    if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
-    else if( SESSION::get_mode_pane() != MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+        if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
+        else if( SESSION::get_mode_pane() != MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+    }
 
-    FOCUS_ADMIN_ARTICLE();
+    ARTICLE::get_admin()->set_command( "focus_current_view" );
+    m_focused_admin = FOCUS_ARTICLE;
+    m_focused_admin_sidebar = FOCUS_ARTICLE;
 }
 
 
@@ -2009,15 +1992,18 @@ void Core::switch_board()
     std::cout << "Core::switch_board\n";
 #endif
 
-    if( m_focused_admin == FOCUS_BOARD ) return;
     if( BOARD::get_admin()->empty() ) return;
+    if( m_focused_admin != FOCUS_BOARD ){
 
-    FOCUS_OUT_ALL();
-    ARTICLE::get_admin()->set_command( "delete_popup" );
+        FOCUS_OUT_ALL();
+        ARTICLE::get_admin()->set_command( "delete_popup" );
 
-    if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+        if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+    }
 
-    FOCUS_ADMIN_BOARD();
+    BOARD::get_admin()->set_command( "focus_current_view" );
+    m_focused_admin = FOCUS_BOARD;
+    m_focused_admin_sidebar = FOCUS_BOARD;
 }
 
 
@@ -2027,13 +2013,18 @@ void Core::switch_bbslist()
     std::cout << "Core::switch_bbslist\n";
 #endif
 
-    if( m_focused_admin == FOCUS_BBSLIST ) return;
     if( BBSLIST::get_admin()->empty() ) return;
+    if( m_focused_admin != FOCUS_BBSLIST ){
 
-    FOCUS_OUT_ALL();
-    ARTICLE::get_admin()->set_command( "delete_popup" );
+        FOCUS_OUT_ALL();
+        ARTICLE::get_admin()->set_command( "delete_popup" );
 
-    FOCUS_ADMIN_BBSLIST();
+        // サイドバーが隠れていたら開く
+        if( ! m_boot && ! SESSION::show_sidebar() ) slot_toggle_sidebar();
+    }
+
+    BBSLIST::get_admin()->set_command( "focus_current_view" ); 
+    m_focused_admin = FOCUS_BBSLIST; 
 }
 
 
@@ -2043,19 +2034,22 @@ void Core::switch_image()
     std::cout << "Core::switch_image\n";
 #endif
 
-    if( m_focused_admin == FOCUS_IMAGE ) return;
     if( IMAGE::get_admin()->empty() ) return;
+    if( m_focused_admin != FOCUS_IMAGE ){
 
-    FOCUS_OUT_ALL();
-    ARTICLE::get_admin()->set_command( "delete_popup" );
+        FOCUS_OUT_ALL();
+        ARTICLE::get_admin()->set_command( "delete_popup" );
 
-    if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 2 ) m_notebook.set_current_page( 2 );
-    else if( SESSION::get_mode_pane() != MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
+        if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 2 ) m_notebook.set_current_page( 2 );
+        else if( SESSION::get_mode_pane() != MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
 
-    FOCUS_ADMIN_IMAGE();
+        // 画像強制表示
+        IMAGE::get_admin()->set_command( "show_image" );
+    }
 
-    // 画像強制表示
-    IMAGE::get_admin()->set_command( "show_image" );
+    IMAGE::get_admin()->set_command( "focus_current_view" );
+    m_focused_admin = FOCUS_IMAGE;
+    m_focused_admin_sidebar = FOCUS_IMAGE;
 }
 
 
@@ -2070,9 +2064,6 @@ void Core::toggle_article()
 // 左移動
 void Core::switch_leftview()
 {
-    FOCUS_OUT_ALL();
-    ARTICLE::get_admin()->set_command( "delete_popup" );
-
     int next_admin = m_focused_admin -1;
     
     while( next_admin >= FOCUS_BBSLIST ){
@@ -2098,9 +2089,6 @@ void Core::switch_leftview()
 // 右移動
 void Core::switch_rightview()
 {
-    FOCUS_OUT_ALL();
-    ARTICLE::get_admin()->set_command( "delete_popup" );
-
     int next_admin = m_focused_admin +1;
     
     while( next_admin <= FOCUS_IMAGE ){
