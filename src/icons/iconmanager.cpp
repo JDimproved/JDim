@@ -10,6 +10,7 @@
 #include "jd48.h"
 
 #include "update.h"
+#include "newthread.h"
 #include "check.h"
 #include "down.h"
 #include "loading.h"
@@ -63,8 +64,7 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::JD48 ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_jd48 ), icon_jd48 );
 
     m_list_icons[ ICON::UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_update ), icon_update );
-    Gtk::HBox dummy;
-    m_list_icons[ ICON::NEWTHREAD ] = dummy.render_icon( Gtk::Stock::YES, Gtk::ICON_SIZE_MENU ); // とりあえず
+    m_list_icons[ ICON::NEWTHREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_newthread ), icon_newthread );
     m_list_icons[ ICON::CHECK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_check ), icon_check );
     m_list_icons[ ICON::DOWN ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_down ), icon_down );
     m_list_icons[ ICON::LOADING ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_loading ), icon_loading );

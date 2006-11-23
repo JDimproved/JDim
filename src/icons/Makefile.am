@@ -5,7 +5,7 @@ libicon_a_SOURCES = \
 
 icon_headers = jd16.h jd32.h jd48.h \
 	dir.h board.h board_update.h thread.h thread_update.h \
-	image.h link.h loading.h loading_stop.h check.h down.h update.h
+	image.h link.h loading.h loading_stop.h check.h down.h update.h newthread.h
 
 noinst_HEADERS = \
 	iconmanager.h $(icon_headers)
