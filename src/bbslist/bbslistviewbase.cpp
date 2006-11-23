@@ -1758,13 +1758,19 @@ std::string BBSListViewBase::tree2xml()
     Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
     Gtk::TreeModel::Row row;
 
-    // 座標と選択中のパス
-    xml << "<pos";
+    // 座標
+    int y = 0;
     Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
-    if( m_jump_y != -1 ) xml << " y=\"" << m_jump_y << "\"";
-    else if( adjust ) xml << " y=\"" << (int) adjust->get_value() << "\"";
-    else xml << " y=\"0\"";
+    if( adjust ){
 
+        if( m_jump_y != -1 && adjust->get_upper() > m_jump_y ) y = m_jump_y;
+        else  y = ( int ) adjust->get_value();
+    }
+    else if( m_jump_y != -1 ) y = m_jump_y;
+
+    xml << "<pos y=\"" << y << "\"";
+
+    // 選択中のパス
     Gtk::TreeModel::Path focused_path = m_treeview.get_current_path();
     if( !focused_path.empty() ) xml << " path=\"" << focused_path.to_string() << "\"";
     xml << "/>\n";
