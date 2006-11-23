@@ -1440,12 +1440,15 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
     else if( command.command == "delete_image" ){
 
-        IMAGE::get_admin()->set_command( "close_view", command.url );
         DBIMG::delete_cache( command.url );
         return;
     }
 
     else if( command.command == "close_image_view" ){
+
+        // ダイアログから削除したときにフォーカスが外れるので
+        // フォーカス状態を回復してからcloseする
+        if( m_focused_admin == FOCUS_IMAGE ) IMAGE::get_admin()->set_command( "restore_focus" );
 
         IMAGE::get_admin()->set_command( "close_view", command.url );
         return;
