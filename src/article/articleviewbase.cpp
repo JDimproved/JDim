@@ -334,6 +334,13 @@ void ArticleViewBase::setup_action()
     "<menuitem action='NextBookMark'/>"
     "</menu>"
 
+    "<menu action='AboneWord_Menu'>"
+    "<menuitem action='AboneWord'/>"
+    "<menu action='GlobalAboneWord'>"
+    "<menuitem action='SetGlobalAboneWord'/>"
+    "</menu>"
+    "</menu>"
+
     "<separator/>"
     "<menuitem action='OpenBrowser'/>";
 
@@ -344,17 +351,6 @@ void ArticleViewBase::setup_action()
     "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<menuitem action='Copy'/>"
-
-    "<separator/>"
-    "<menu action='AboneWord_Menu'>"
-
-    "<menuitem action='AboneWord'/>"
-
-    "<menu action='GlobalAboneWord'>"
-    "<menuitem action='SetGlobalAboneWord'/>"
-    "</menu>"
-
-    "</menu>"
 
     "<separator/>"
 
