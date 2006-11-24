@@ -116,9 +116,10 @@ void Control::MG_reset()
 
 bool Control::MG_start( GdkEventButton* event )
 {
+    MG_reset();
+
     if( ! button_alloted( event, CONTROL::GestureButton ) ) return false;
 
-    MG_reset();
     m_mg = true;
     m_mg_x = ( int ) event->x;
     m_mg_y = ( int ) event->y;
@@ -244,13 +245,13 @@ void Control::MG_wheel_reset()
 // ホイールマウスジェスチャ開始
 bool Control::MG_wheel_start( GdkEventButton* event )
 {
+    MG_wheel_reset();
+
     if( ! button_alloted( event, CONTROL::GestureButton ) ) return false;
 
 #ifdef _DEBUG
     std::cout << "Control::MG_wheel_start\n";
 #endif
-
-    MG_wheel_reset();
 
     return true;
 }
