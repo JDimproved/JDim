@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -45,8 +45,13 @@ int board_col_since;
 int board_col_write;
 int board_col_speed;
 
+bool img_shown;
+
 bool win_show_urlbar;
 bool win_show_sidebar;
+
+int win_focused_admin;
+int win_focused_admin_sidebar;
 
 int win_mes_x;
 int win_mes_y;
@@ -88,6 +93,9 @@ void SESSION::init_session()
 
     win_show_urlbar = cf.get_option( "show_urlbar", true );
     win_show_sidebar = cf.get_option( "show_sidebar", true );
+
+    win_focused_admin = cf.get_option( "focused_admin", FOCUS_NO );
+    win_focused_admin_sidebar = cf.get_option( "focused_admin_sidebar", FOCUS_NO );
 
     win_hpane_main_pos = cf.get_option( "hpane_main_pos", 190 );
     win_vpane_main_pos = cf.get_option( "vpane_main_pos", 200 );
@@ -131,6 +139,8 @@ void SESSION::init_session()
     board_col_write = cf.get_option( "col_write", 100 );
     board_col_speed = cf.get_option( "col_speed", 50 );
 
+    img_shown = false;
+
     win_mes_x = cf.get_option( "mes_x", 0 );
     win_mes_y = cf.get_option( "mes_y", 0 );
     win_mes_width = cf.get_option( "mes_width", 300 );
@@ -147,6 +157,8 @@ void SESSION::init_session()
               << "m=" << win_maximized << std::endl
               << "urlbar=" << win_show_urlbar << std::endl
               << "sidebar=" << win_show_sidebar << std::endl
+              << "focused_admin=" << win_focused_admin << std::endl
+              << "focused_admin_sidebar=" << win_focused_admin_sidebar << std::endl
 
               << "hpane=" << win_hpane_main_pos << std::endl
               << "vpane=" << win_vpane_main_pos << std::endl
@@ -223,6 +235,8 @@ void SESSION::save_session()
         << "maximized = " << win_maximized << std::endl
         << "show_urlbar = " << win_show_urlbar << std::endl
         << "show_sidebar = " << win_show_sidebar << std::endl
+        << "focused_admin = " << win_focused_admin << std::endl
+        << "focused_admin_sidebar = " << win_focused_admin_sidebar << std::endl
 
         << "hpane_main_pos = " << win_hpane_main_pos << std::endl
         << "vpane_main_pos = " << win_vpane_main_pos << std::endl
@@ -282,6 +296,11 @@ int SESSION::height(){ return win_height; }
 bool SESSION::maximized(){ return win_maximized; }
 bool SESSION::show_urlbar(){ return win_show_urlbar; }
 bool SESSION::show_sidebar(){ return win_show_sidebar; }
+
+int SESSION::focused_admin(){ return win_focused_admin; }
+void SESSION::set_focused_admin( int admin ){ win_focused_admin = admin; }
+int SESSION::focused_admin_sidebar(){ return win_focused_admin_sidebar; }
+void SESSION::set_focused_admin_sidebar( int admin ){ win_focused_admin_sidebar = admin; }
 
 void SESSION::set_x( int x ){ win_x = x; }
 void SESSION::set_y( int y ){ win_y = y; }
@@ -353,6 +372,8 @@ void SESSION::set_col_since( int width ){ board_col_since = width; }
 void SESSION::set_col_write( int width ){ board_col_write = width; }
 void SESSION::set_col_speed( int width ){ board_col_speed = width; }
 
+bool SESSION::is_img_shown(){ return img_shown; }
+void SESSION::set_img_shown( bool set ){ img_shown = set; }
 
 // message ウィンドウの位置
 int SESSION::mes_x(){ return win_mes_x; }

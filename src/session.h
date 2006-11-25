@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 //
 // 座標などのウィンドウ情報とかのセッション情報
 //
@@ -10,6 +10,17 @@
 
 namespace SESSION
 {
+    // focused_admin の値。どこにフォーカスしているか
+    // Core::slot_focus_in_event, Core::slot_focus_out_event などを参照
+    enum
+    {
+        FOCUS_BBSLIST = 0,
+        FOCUS_BOARD,
+        FOCUS_ARTICLE,
+        FOCUS_IMAGE,
+        FOCUS_NO
+    };
+
     void init_session();
     void save_session();
 
@@ -38,6 +49,14 @@ namespace SESSION
     void set_maximized( bool maximized );
     void set_show_urlbar( bool showbar );
     void set_show_sidebar( bool showbar );
+
+    // フォーカスされているadmin
+    int focused_admin();
+    void set_focused_admin( int admin );
+
+    // サイドバーを閉じる前にフォーカスされていたadmin
+    int focused_admin_sidebar();
+    void set_focused_admin_sidebar( int admin );
 
     /// メインウィンドウのペインの敷居の位置
     int hpane_main_pos();
@@ -95,6 +114,10 @@ namespace SESSION
     void set_col_since( int width );
     void set_col_write( int width );
     void set_col_speed( int width );
+
+    // image が画面に表示されているか
+    bool is_img_shown();
+    void set_img_shown( bool set );
 
     // message ウィンドウの位置
     int mes_x();
