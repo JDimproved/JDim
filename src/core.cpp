@@ -106,6 +106,7 @@ Core::~Core()
 #endif
 
     // 設定保存
+    // セッション情報は WinMain::~WinMain() で保存する
     CONFIG::save_conf();
 
     // PANEの敷居の位置保存
@@ -359,29 +360,7 @@ void Core::run( bool init )
     }
 
     // 初回起動時の設定
-    if( init ){
-
-        show_setupdiag( "JDセットアップへようこそ\n\nはじめにネットワークの設定をおこなって下さい。" );
-
-        slot_setup_proxy();
-        slot_setup_browser();
-
-        show_setupdiag( "JDセットアップ\n\nスレ、ポップアップ、ツリービューの順にフォントの設定をおこなって下さい。" );
-
-        slot_changefont_main();
-
-        CONFIG::set_fontname_popup( CONFIG::get_fontname_main() );
-        slot_changefont_popup();
-
-        CONFIG::set_fontname_tree( CONFIG::get_fontname_popup() );
-        slot_changefont_tree();
-
-        CONFIG::set_fontname_tree_board( CONFIG::get_fontname_tree() );
-        CONFIG::set_fontname_message( CONFIG::get_fontname_main() );
-
-        show_setupdiag( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
-        show_setupdiag( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします。\nリストが表示されるまでしばらくお待ち下さい。" );
-    }
+    if( init ) first_setup();
 
     // 各 widget 作成
 
@@ -438,9 +417,9 @@ void Core::run( bool init )
 
     // サイドバー設定
     m_hpaned.set_position( SESSION::hpane_main_pos() );
-    if( ! SESSION::show_sidebar() ) m_hpaned.show_hide_leftpane();
     m_hpaned.sig_show_hide_leftpane().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
+    // urlバー
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
 
@@ -452,6 +431,7 @@ void Core::run( bool init )
 
     m_tooltip.set_tip( m_button_go, "移動" );
 
+    // ステータスバー
     std::string str_tmp;
 #ifdef USE_GTKMM24
     m_statbar.pack_start( m_mginfo );
@@ -473,7 +453,7 @@ void Core::run( bool init )
 
     m_vbox_main.pack_end( *scrbar, Gtk::PACK_SHRINK );
     m_vbox_main.pack_end( m_hpaned );
-    if( SESSION::show_urlbar() ) m_vbox_main.pack_end( m_urlbar, Gtk::PACK_SHRINK );
+    m_vbox_main.pack_end( m_urlbar, Gtk::PACK_SHRINK );
 
     m_vbox_main.pack_end( *menubar, Gtk::PACK_SHRINK );
 
@@ -482,19 +462,37 @@ void Core::run( bool init )
     m_win_main.signal_focus_in_event().connect( sigc::mem_fun(*this, &Core::slot_focus_in_event ) );
     m_win_main.show_all_children();
 
-    // slot 作って Glib::signal_timeout() にコネクト
-    sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
-    sigc::connection conn = Glib::signal_timeout().connect( slot_timeout, TIMER_TIMEOUT );
-
     // 各管理クラスが開いていたURLを復元
     core_set_command( "restore_views" );
+}
 
-    // タイトル表示
-    SESSION::set_online( !SESSION::is_online() ); // slot_toggle_online()で反転する
-    slot_toggle_online();
 
-    // 2chログイン
-    if( SESSION::login2ch() ) slot_toggle_login2ch();
+
+//
+// 初回起動時のセットアップ
+//
+void Core::first_setup()
+{
+    show_setupdiag( "JDセットアップへようこそ\n\nはじめにネットワークの設定をおこなって下さい。" );
+
+    slot_setup_proxy();
+    slot_setup_browser();
+
+    show_setupdiag( "JDセットアップ\n\nスレ、ポップアップ、ツリービューの順にフォントの設定をおこなって下さい。" );
+
+    slot_changefont_main();
+
+    CONFIG::set_fontname_popup( CONFIG::get_fontname_main() );
+    slot_changefont_popup();
+
+    CONFIG::set_fontname_tree( CONFIG::get_fontname_popup() );
+    slot_changefont_tree();
+
+    CONFIG::set_fontname_tree_board( CONFIG::get_fontname_tree() );
+    CONFIG::set_fontname_message( CONFIG::get_fontname_main() );
+
+    show_setupdiag( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
+    show_setupdiag( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします。\nリストが表示されるまでしばらくお待ち下さい。" );
 }
 
 
@@ -536,6 +534,8 @@ void Core::shutdown()
 //
 void Core::set_maintitle()
 {
+    if( m_boot ) return;
+
     std::string title;
 
     if( m_title.empty() ){
@@ -998,6 +998,7 @@ void Core::slot_toggle_urlbar()
 //
 void Core::slot_toggle_sidebar()
 {
+    if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
     m_hpaned.show_hide_leftpane();
 }
@@ -1732,11 +1733,17 @@ void Core::exec_command()
 
 
 //
-// 起動完了直後に実行する処理
+// 起動処理完了後に実行する処理
 //
 void Core::exec_command_after_boot()
 {
     bool is2pane = ( SESSION::get_mode_pane() == MODE_2PANE );
+
+    // サイドバー表示状態変更
+    if( ! SESSION::show_sidebar() ) m_hpaned.show_hide_leftpane();
+
+    // URLバー表示切り替え
+    if( ! SESSION::show_urlbar() ) m_vbox_main.remove( m_urlbar );
 
     // フォーカス状態回復
     int notebook_page = SESSION::notebook_main_page();
@@ -1752,6 +1759,16 @@ void Core::exec_command_after_boot()
         else if( SESSION::board_URLs().size() ) core_set_command( "switch_board" );
         else core_set_command( "switch_bbslist" );
     }
+
+    // タイマーセット
+    sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
+    sigc::connection conn = Glib::signal_timeout().connect( slot_timeout, TIMER_TIMEOUT );
+
+    // 2chログイン
+    if( SESSION::login2ch() ) slot_toggle_login2ch();
+
+    // タイトル表示
+    set_maintitle();
 }
 
 
@@ -2020,7 +2037,7 @@ void Core::switch_bbslist()
         ARTICLE::get_admin()->set_command( "delete_popup" );
 
         // サイドバーが隠れていたら開く
-        if( ! m_boot && ! SESSION::show_sidebar() ) slot_toggle_sidebar();
+        if( ! SESSION::show_sidebar() ) slot_toggle_sidebar();
     }
 
     BBSLIST::get_admin()->set_command( "focus_current_view" ); 

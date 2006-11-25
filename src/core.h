@@ -136,6 +136,8 @@ namespace CORE
 
     private:
 
+        // 初回起動時のセットアップ
+        void first_setup();
         void show_setupdiag( const std::string& msg );
 
         void set_maintitle();
