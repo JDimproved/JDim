@@ -48,19 +48,6 @@ namespace MESSAGE
 }
 
 
-// m_focused_admin の値。どこにフォーカスしているか
-// Core::slot_focus_in_event, Core::slot_focus_out_event 参照
-enum
-{
-    FOCUS_BBSLIST = 0,
-    FOCUS_BOARD,
-    FOCUS_ARTICLE,
-    FOCUS_IMAGE,
-    FOCUS_NO
-};
-
-
-
 namespace CORE
 {
     class DND_Manager;
@@ -108,13 +95,6 @@ namespace CORE
         HistoryMenuThread* m_histmenu_thread;
         HistoryMenuBoard* m_histmenu_board;
         bool m_enable_menuslot;
-
-        // フォーカスイン、アウトイベントの時に使う変数
-        /// Core::slot_focus_in_event, Core::slot_focus_out_event 参照
-        int m_focused_admin;
-
-        // サイドバーを閉じる前にフォーカスされていたadmin
-        int m_focused_admin_sidebar;
 
         // 起動中
         bool m_boot;

@@ -161,8 +161,8 @@ void ImageAdmin::clock_in()
     }
 
     // アクティブなviewにだけクロックを送る
-    // admin がフォーカスされていないなら何もしない
-    if( has_focus() ){
+    // admin が画面に表示されていないなら何もしない
+    if( SESSION::is_img_shown() ){
         SKELETON::View* view = get_current_view();
         if( view ) view->clock_in();
     }
