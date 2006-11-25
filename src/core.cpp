@@ -1674,8 +1674,11 @@ void Core::exec_command()
 #ifdef _DEBUG
             std::cout << "exec : open_article url = " << url_dat << std::endl;
 #endif
-            if( num_from ) CORE::core_set_command( "open_article" , url_dat, "true", "", MISC::itostr( num_from ) );
-            else CORE::core_set_command( "open_article" , url_dat, "true", "" );
+            
+            if( num_from ) CORE::core_set_command( "open_article" , url_dat, "left", // 現在表示中のビューの左に表示する
+                                                   "", MISC::itostr( num_from ) );
+            else CORE::core_set_command( "open_article" , url_dat, "left", // 現在表示中のビューの左に表示する
+                                         "" );
         }
 
         // 掲示板のベースURLの場合
