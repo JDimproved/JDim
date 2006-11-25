@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 //#define _SHOW_BOARD
@@ -551,7 +551,7 @@ int Root::is_moved( const std::string& root,
 //
 void Root::load_etc()
 {
-    m_xml_etc.clear();
+    m_xml_etc = "<pos y=\"0\" path=\"0\"/>";
 
     JDLIB::Regex regex;
     std::string file_etctxt = CACHE::path_etcboard();
