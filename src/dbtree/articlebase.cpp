@@ -873,6 +873,7 @@ void ArticleBase::delete_cache()
     m_cached = false;
     m_read_info = false;
     m_save_info = false;
+    m_enable_load = false;
     
     // キャッシュ
     std::string path_dat = CACHE::path_dat( m_url );
