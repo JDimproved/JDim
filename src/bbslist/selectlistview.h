@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //
 // お気に入り追加の時の選択ビュー
@@ -22,6 +22,7 @@ namespace BBSLIST
 
       private:
         virtual bool open_row( Gtk::TreePath& path, bool tab ){ return true; } // 開かないようにキャンセル
+        virtual void switch_rightview(){} // boardに移動しないようにキャンセル
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
     };
 

@@ -433,7 +433,7 @@ void  BBSListViewBase::operate_view( const int& control )
         case CONTROL::Right:
 
             if( m_treeview.get_row( path ) ){
-                if( ! m_treeview.expand_row( path, false ) ) CORE::core_set_command( "switch_rightview" );
+                if( ! m_treeview.expand_row( path, false ) ) switch_rightview();
             }
             break;
 
@@ -615,6 +615,7 @@ void BBSListViewBase::copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store )
 #endif
     m_treestore = store;
     m_treeview.set_model( m_treestore );
+    m_treeview.set_headers_visible( false );
 
     if( m_treestore->children().begin() ){
 
@@ -623,6 +624,7 @@ void BBSListViewBase::copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store )
             m_treeview.collapse_all();
             m_treeview.scroll_to_row( path, 0 );
             m_treeview.get_selection()->unselect_all();
+            m_treeview.set_cursor( path );
         }
     }
 }
@@ -1277,6 +1279,15 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
 #endif        
 
     return true;
+}
+
+
+//
+// 右のビュー(board)に切り替え
+//
+void BBSListViewBase::switch_rightview()
+{
+    CORE::core_set_command( "switch_rightview" );
 }
 
 

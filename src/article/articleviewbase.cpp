@@ -1253,6 +1253,8 @@ bool ArticleViewBase::slot_button_press( GdkEventButton* event )
     // ホイールマウスジェスチャ
     SKELETON::View::get_control().MG_wheel_start( event );
 
+    CORE::core_set_command( "switch_article" );
+
     return true;
 }
 
