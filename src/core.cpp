@@ -1005,7 +1005,7 @@ void Core::slot_toggle_sidebar()
         && BOARD::get_admin()->empty()
         && ARTICLE::get_admin()->empty() 
         && IMAGE::get_admin()->empty() ) return;
-    std::cout << "Hoge\n";
+
     m_hpaned.show_hide_leftpane();
 }
 
