@@ -996,8 +996,16 @@ void Core::slot_toggle_urlbar()
 //
 void Core::slot_toggle_sidebar()
 {
+#ifdef _DEBUG
+    std::cout << "Core::slot_toggle_sidebar focus = " << SESSION::focused_admin() << std::endl;
+#endif
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
+    if( SESSION::focused_admin() == SESSION::FOCUS_BBSLIST
+        && BOARD::get_admin()->empty()
+        && ARTICLE::get_admin()->empty() 
+        && IMAGE::get_admin()->empty() ) return;
+    std::cout << "Hoge\n";
     m_hpaned.show_hide_leftpane();
 }
 
@@ -1942,7 +1950,7 @@ void Core::empty_page( const std::string& url )
 
             if( ! BOARD::get_admin()->empty() ) focused_admin = SESSION::FOCUS_BOARD;
             else{
-                SESSION::set_focused_admin( SESSION::FOCUS_BBSLIST );
+                focused_admin = SESSION::FOCUS_BBSLIST;
                 SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
             }
         }
@@ -1960,8 +1968,7 @@ void Core::empty_page( const std::string& url )
 
         // フォーカス切り替え
         if( focused_admin == SESSION::FOCUS_NO ){
-
-            SESSION::set_focused_admin( SESSION::FOCUS_BBSLIST );
+            focused_admin = SESSION::FOCUS_BBSLIST;
             SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
         }
     }
