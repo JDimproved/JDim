@@ -131,6 +131,10 @@ namespace SESSION
     void set_mes_height( int height );
     void set_mes_maximized( bool maximized );
 
+    // 最後にdatを保存したディレクトリ
+    const std::string& dir_dat_save();
+    void set_dir_dat_save( const std::string& dir );
+
     // 最後に画像を保存したディレクトリ
     const std::string& dir_img_save();
     void set_dir_img_save( const std::string& dir );

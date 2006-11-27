@@ -587,6 +587,13 @@ void DBTREE::delete_article( const std::string& url )
 }
 
 
+// キャッシュ保存
+bool DBTREE::article_save_dat( const std::string& url, const std::string& path_to )
+{
+    return DBTREE::get_article( url )->save_dat( path_to );
+}
+
+
 
 void DBTREE::article_update_writetime( const std::string& url )
 {

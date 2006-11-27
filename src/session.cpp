@@ -59,6 +59,7 @@ int win_mes_width;
 int win_mes_height;
 bool win_mes_maximized;
 
+std::string img_dir_dat_save;
 std::string img_dir_img_save;
 
 /////////////////////////////////////
@@ -147,6 +148,7 @@ void SESSION::init_session()
     win_mes_height = cf.get_option( "mes_height", 300 );
     win_mes_maximized = cf.get_option( "mes_maximized", false );
 
+    img_dir_dat_save = cf.get_option( "img_dir_dat_save", "" );
     img_dir_img_save = cf.get_option( "img_dir_img_save", "" );
 
 #ifdef _DEBUG
@@ -269,6 +271,7 @@ void SESSION::save_session()
         << "mes_height = " << win_mes_height << std::endl
         << "mes_maximized = " << win_mes_maximized << std::endl
 
+        << "img_dir_dat_save = " << img_dir_dat_save << std::endl
         << "img_dir_img_save = " << img_dir_img_save << std::endl;
 
     CACHE::save_rawdata( CACHE::path_session(), oss.str() );
@@ -388,6 +391,10 @@ void SESSION::set_mes_width( int width ){ win_mes_width = width; }
 void SESSION::set_mes_height( int height ){ win_mes_height = height; }
 void SESSION::set_mes_maximized( bool maximized ){ win_mes_maximized = maximized; }
 
+
+// 最後にdatを保存したディレクトリ
+const std::string& SESSION::dir_dat_save(){ return img_dir_dat_save; }
+void SESSION::set_dir_dat_save( const std::string& dir ){ img_dir_dat_save = dir; }
 
 // 最後に画像を保存したディレクトリ
 const std::string& SESSION::dir_img_save(){ return img_dir_img_save; }

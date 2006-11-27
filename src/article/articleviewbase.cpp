@@ -198,7 +198,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
     action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
-
+    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存"), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
 
     // 抽出系
     action_group()->add( Gtk::Action::create( "Drawout_Menu", "抽出" ) );
@@ -348,6 +348,10 @@ void ArticleViewBase::setup_action()
     for( int i = 0; i < usrcmd_size; ++i ) str_ui += "<menuitem action='usrcmd" + MISC::itostr( i ) + std::string( "'/>" );
 
     Glib::ustring str_ui2 = 
+
+    "<separator/>"
+    "<menuitem action='SaveDat'/>"
+
     "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<menuitem action='Copy'/>"
@@ -948,6 +952,14 @@ void ArticleViewBase::slot_jump()
     CORE::core_set_command( "open_article", m_url_article , "true", "auto", m_str_num );
 }
 
+
+//
+// dat 保存
+//
+void ArticleViewBase::slot_save_dat()
+{
+    m_article->save_dat( std::string() );
+}
 
 
 //

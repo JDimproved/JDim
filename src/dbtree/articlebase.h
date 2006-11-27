@@ -234,7 +234,11 @@ namespace DBTREE
         void set_number_seen( int number_seen );
         void update_writetime();
 
+        // キャッシュ削除
         void delete_cache();
+
+        // キャッシュ保存
+        bool save_dat( const std::string& path_to );
 
         // HDDにキャッシュされているか
         const bool is_cached() const { return m_cached; }  

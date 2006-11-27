@@ -17,6 +17,7 @@
 #include "cache.h"
 #include "global.h"
 #include "login2ch.h"
+#include "session.h"
 
 #include <sstream>
 
@@ -887,6 +888,33 @@ void ArticleBase::delete_cache()
 
     // BoardViewの行を更新
     CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
+}
+
+
+
+//
+// キャッシュを名前を付けて保存
+//
+// path_to はデフォルトのファイル名
+//
+bool ArticleBase::save_dat( const std::string& path_to )
+{
+    if( is_loading() ) return false;
+
+    std::string dir = MISC::get_dir( path_to );
+    if( dir.empty() ) dir = SESSION::dir_dat_save();
+
+    std::string name = MISC::get_filename( path_to );
+    if( name.empty() ) name = MISC::get_filename( m_url );    
+
+    std::string save_to = CACHE::open_save_diag( CACHE::path_dat( m_url ), dir + name );
+
+    if( ! save_to.empty() ){
+        SESSION::set_dir_dat_save( MISC::get_dir( save_to ) );
+        return true;
+    }
+
+    return false;
 }
 
 

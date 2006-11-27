@@ -224,6 +224,7 @@ namespace ARTICLE
         void slot_pre_bm();
         void slot_next_bm();
         void slot_jump();
+        void slot_save_dat();
 
         // リンクの処理
         void slot_on_url( std::string url, int res_number );
