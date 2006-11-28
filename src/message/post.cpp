@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -74,7 +74,7 @@ void Post::post_msg()
 
     // 書き込み中ダイアログ表示
     Gtk::Window* toplevel = dynamic_cast< Gtk::Window* >( m_parent->get_toplevel() );
-    if( toplevel ){
+    if( ! CONFIG::get_hide_writing_dialog() && toplevel ){
         m_writingdiag = new Gtk::MessageDialog( *toplevel, "書き込み中・・・", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, false );
         m_writingdiag->show();
 
