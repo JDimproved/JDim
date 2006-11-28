@@ -350,11 +350,11 @@ void ArticleViewBase::setup_action()
     Glib::ustring str_ui2 = 
 
     "<separator/>"
-    "<menuitem action='SaveDat'/>"
-
-    "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<menuitem action='Copy'/>"
+
+    "<separator/>"
+    "<menuitem action='SaveDat'/>"
 
     "<separator/>"
 
