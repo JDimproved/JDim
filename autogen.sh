@@ -25,21 +25,26 @@ else
 fi
 echo `autoconf$AC_POSTFIX --version | head -1` found
 
-if which automake-1.9 >/dev/null 2>&1
-then AM_POSTFIX=-1.9
-elif which automake-1.8 >/dev/null 2>&1
-then AM_POSTFIX=-1.8
-elif which automake-1.7 >/dev/null 2>&1
-then AM_POSTFIX=-1.7
-elif which automake-1.6 >/dev/null 2>&1
-then AM_POSTFIX=-1.6
-elif which automake19 >/dev/null 2>&1
-then AM_POSTFIX=19
-elif which automake >/dev/null 2>&1
-then AM_POSTFIX=""
-else
-  echo 'you need automake (1.8.3+ recommended) to generate the Makefile'
-  exit 1
+unset AM_POSTFIX
+for num in `seq 10 -1 7`; do
+if test -z "$AM_POSTFIX" && which automake-1.$num &> /dev/null ; then
+	AM_POSTFIX=-1.$num
+	break
+fi
+done
+
+for num in `seq 19 -1 17` ; do
+if test -z "$AM_POSTFIX" && which automake$num &> /dev/null ; then
+	AM_POSTFIX=$num
+	break
+fi
+done
+
+if test -z "$AM_POSTFIX" ; then
+if ! which automake &> /dev/null ; then
+	echo 'you need automake (1.8.3+ recommended) to generate the Makefile'
+	exit 1
+fi
 fi
 
 if which libtoolize15 >/dev/null 2>&1
