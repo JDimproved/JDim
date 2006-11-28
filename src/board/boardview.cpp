@@ -232,7 +232,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "AboneThread", "スレをあぼ〜んする"), sigc::mem_fun( *this, &BoardView::slot_abone_thread ) );
     action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ"), sigc::mem_fun( *this, &BoardView::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ"), sigc::mem_fun( *this, &BoardView::slot_push_preferences ) );
-
+    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存"), sigc::mem_fun( *this, &BoardView::slot_save_dat ) );
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
@@ -247,6 +247,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitleURL'/>"
+    "<separator/>"
+    "<menuitem action='SaveDat'/>"
     "<separator/>"
     "<menuitem action='Favorite_Article'/>"
     "<separator/>"
@@ -1724,6 +1726,18 @@ void BoardView::slot_preferences_article()
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_ARTICLE, url );
     pref->run();
     delete pref;
+}
+
+
+//
+// datを保存
+//
+void BoardView::slot_save_dat()
+{
+    if( m_path_selected.empty() ) return;
+    std::string url = path2daturl( m_path_selected );
+
+    DBTREE::article_save_dat( url, std::string() );
 }
 
 
