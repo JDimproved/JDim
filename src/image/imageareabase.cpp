@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -63,7 +63,7 @@ void ImageAreaBase::set_image( Glib::RefPtr< Gdk::Pixbuf >& pixbuf, bool mosaic,
     // モザイク表示
     if( mosaic ){
         int size_mosaic = 20;  // モザイク画像は 1/size_mosaic にしてもとのサイズに直す
-        if( m_width_org / size_mosaic < 16 ) size_mosaic = m_width_org / 16;
+        if( m_width_org / size_mosaic < 16 ) size_mosaic = MAX( 1, m_width_org / 16 );
 
         Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
         pixbuf2 = pixbuf->scale_simple( m_width_org / size_mosaic, m_height_org / size_mosaic, Gdk::INTERP_NEAREST );
