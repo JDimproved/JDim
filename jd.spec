@@ -65,6 +65,9 @@ find . -name CVS | sort -r | xargs %{__rm} -rf
 %build
 sh autogen.sh
 
+# set TZ for __TIME__
+export TZ='Asia/Tokyo'
+
 %configure
 %{__make} %{?_smp_mflags}
 
