@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 // スレ表示部のベースクラス
 
@@ -84,6 +84,7 @@ namespace ARTICLE
         Glib::RefPtr< Gdk::GC > m_gc;
         Glib::RefPtr< Gdk::Pixmap > m_backscreen;
         Glib::RefPtr< Pango::Layout > m_pango_layout;
+        Glib::RefPtr< Pango::Context > m_context;
 
         // キャレット情報
         CARET_POSITION m_caret_pos;           // 現在のキャレットの位置(クリックやドラッグすると移動)
@@ -107,6 +108,9 @@ namespace ARTICLE
         std::list< SELECTION > m_multi_selection;
       
         // レイアウト用
+        int m_font_ascent;
+        int m_font_descent;
+        int m_font_height;
         int m_underline_pos; // 下線の位置(文字の上からのピクセル値)
         int m_br_size; // 改行量 (ピクセル値)
         int m_mrg_left; // 左マージン幅 (ピクセル値)

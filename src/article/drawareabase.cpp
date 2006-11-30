@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 //#define _DEBUG_CARETMOVE
@@ -260,22 +260,28 @@ void DrawAreaBase::init_font()
 {
     if( fontname().empty() ) return;
 
+    m_context = get_pango_context();
+    assert( m_context );
+
     // layoutにフォントをセット
     Pango::FontDescription pfd( fontname() );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
+    m_pango_layout->set_font_description( pfd );
+    modify_font( pfd );
 
-    // 文字高さ、改行高さ取得
-    Pango::FontMetrics metrics = get_pango_context()->get_metrics( pfd );
+    // フォント情報取得
+    Pango::FontMetrics metrics = m_context->get_metrics( pfd );
+    m_font_ascent = PANGO_PIXELS( metrics.get_ascent() );
+    m_font_descent = PANGO_PIXELS( metrics.get_descent() );
+    m_font_height = m_font_ascent + m_font_descent;
 
-    // 改行高さ
-    m_br_size = PANGO_PIXELS( ( metrics.get_ascent() + metrics.get_descent() )
-                              * CONFIG::get_adjust_line_space() ); 
+    // 改行高さ ( トップからの距離 )
+    m_br_size = ( int )( m_font_height * CONFIG::get_adjust_line_space() );
 
     const char* wstr = "あいうえお";
-    m_pango_layout->set_font_description( pfd );
     m_pango_layout->set_text( wstr );
 
-    // リンクの下線の位置
+    // リンクの下線の位置 ( トップからの距離 )
 #ifdef USE_GTKMM24
     m_underline_pos = int( ( m_pango_layout->get_pixel_ink_extents().get_height() + 1 ) * CONFIG::get_adjust_underline_pos() );
 #else
@@ -1158,6 +1164,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
 
         int byte_char;
         int pos_to = pos_start;
+        int n_str = 0;
         int n_ustr = 0;
         int width_line = 0;
 
@@ -1174,12 +1181,15 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
             }
             width_line += width_tmp;
             pos_to += byte_char;
+            n_str += byte_char;
             ++n_ustr;
             draw_head = false;
         }
 
         // pos_start から pos_to の前まで描画
         if( do_draw ){
+
+#ifdef DRAW_BY_PANGOLAYOUT  // Pango::Layout を使って文字を描画
 
             m_pango_layout->set_text( Glib::ustring( node->text + pos_start, n_ustr ) );
             m_backscreen->draw_layout( m_gc, x, y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
@@ -1189,6 +1199,33 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
                 m_backscreen->draw_layout( m_gc, x+1, y, m_pango_layout );
             }
             
+#else // Pango::GlyphString を使って文字を描画
+
+            assert( m_context );
+
+            m_gc->set_foreground( m_color[ color_back ] );
+            m_backscreen->draw_rectangle( m_gc, true, x, y, width_line, m_font_height );
+
+            m_gc->set_foreground( m_color[ color ] );
+
+            Pango::AttrList attr;
+            std::string text = std::string( node->text + pos_start, n_str );
+            std::list< Pango::Item > list_item = m_context->itemize( text, attr );
+
+            int xx = x;
+            std::list< Pango::Item >::iterator it = list_item.begin();
+            for( ; it != list_item.end(); ++it ){
+
+                Pango::Item &item = *it;
+                Pango::GlyphString grl = item.shape( text.substr( item.get_offset(), item.get_length() ) ) ;
+                Pango::Rectangle rect = grl.get_logical_extents(  item.get_analysis().get_font() );
+                int width = PANGO_PIXELS( rect.get_width() );
+
+                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), xx, y + m_font_ascent, grl );
+                if( bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), xx+1, y + m_font_ascent, grl );
+                xx += width;
+            }
+#endif
             // リンクの時は下線を引く
             if( node->link && CONFIG::get_draw_underline() ){
 
