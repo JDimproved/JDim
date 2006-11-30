@@ -443,6 +443,9 @@ void BoardView::slot_col_clicked( int col )
     }
 
     m_previous_col = col;
+
+    // ソートするとフォーカスが外れるので再フォーカス
+    CORE::core_set_command( "switch_board" );
 }
 
 
