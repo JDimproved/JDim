@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -10,6 +10,7 @@
 #include "controlutil.h"
 
 #include "jdlib/confloader.h"
+#include "jdlib/jdregex.h"
 
 CONFIG::ButtonConfig* instance_buttonconfig = NULL;
 
@@ -86,7 +87,7 @@ void ButtonConfig::load_conf()
     SETMOTION( "PopupmenuIDButton", "Left" );
 
     SETMOTION( "OpenImageButton", "Left" );
-    SETMOTION( "OpenBackImageButton", "Mid" );
+    SETMOTION( "OpenBackImageButton", "Mid Ctrl+Left" );
     SETMOTION( "PopupmenuImageButton", "Right" );
 
     SETMOTION( "OpenBeButton", "Left Mid" );
@@ -101,6 +102,7 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
 
 #ifdef _DEBUG
     std::cout << "ButtonConfig::set_motion " << name << std::endl;
+    std::cout << "motion = " << str_motion << std::endl;
 #endif
 
     int id = CONTROL::get_id( name );
@@ -113,29 +115,41 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
     int mode = MouseKeyConf::get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
 
-    bool ctrl = false;
-    bool shift = false;
-    bool alt = false;
-    bool dblclick = false;
-    guint motion = 0;
-    if( str_motion == "Left" ) motion = 1;
-    if( str_motion == "Mid" ) motion = 2;
-    if( str_motion == "Right" ) motion = 3;
-    if( str_motion == "DblLeft" ){ motion = 1; dblclick = true; }
-    if( str_motion == "DblMid" ) { motion = 2; dblclick = true; }
-    if( str_motion == "DblRight" ) { motion = 3; dblclick = true; }
+    JDLIB::Regex regex;
+    if( regex.exec( "(Ctrl)?(\\+?Shift)?(\\+?Alt)?\\+?(.*)", str_motion, 0, true ) ){
+
+        bool ctrl = false;
+        bool shift = false;
+        bool alt = false;
+        bool dblclick = false;
+        guint motion = 0;
+
+        if( ! regex.str( 1 ).empty() ) ctrl = true;
+        if( ! regex.str( 2 ).empty() ) shift = true;
+        if( ! regex.str( 3 ).empty() ) alt = true;
+
+        std::string str_button = regex.str( 4 );
+        if( str_button.empty() ) return;
+
+        if( str_button == "Left" ) motion = 1;
+        if( str_button == "Mid" ) motion = 2;
+        if( str_button == "Right" ) motion = 3;
+        if( str_button == "DblLeft" ){ motion = 1; dblclick = true; }
+        if( str_button == "DblMid" ) { motion = 2; dblclick = true; }
+        if( str_button == "DblRight" ) { motion = 3; dblclick = true; }
 
 #ifdef _DEBUG
-    std::cout << "motion = " << motion << " dblclick = " << dblclick << std::endl;
+        std::cout << "motion = " << motion << " dblclick = " << dblclick << std::endl;
 #endif
 
-    if( !motion ) return;
+        if( !motion ) return;
 
-    // ひとつのボタンに複数の機能が割り当てられているので重複チェックはしない
+        // ひとつのボタンに複数の機能が割り当てられているので重複チェックはしない
 
-    // データベース登録
-    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick );
-    MouseKeyConf::vec_items().push_back( item );
+        // データベース登録
+        MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick );
+        MouseKeyConf::vec_items().push_back( item );
+    }
 }
 
 
@@ -143,7 +157,7 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
 // 中ボタンでタブで開くか
 bool ButtonConfig::tab_midbutton()
 {
-    return ( MouseKeyConf::get_str_motion( CONTROL::OpenArticleTabButton ) == "Mid" );
+    return ( MouseKeyConf::get_str_motion( CONTROL::OpenArticleTabButton ).find( "Mid" ) != std::string::npos );
 }
 
 

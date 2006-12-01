@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 //
 // マウス、キーボード設定のベースクラス
 //
@@ -61,8 +61,8 @@ namespace CONFIG
         void set_motion( const std::string& name, const std::string& str_motion );
         virtual void set_one_motion( const std::string& name, const std::string& str_motion ){}
 
-        // 指定したIDのアイテムを削除
-        void remove_items( int id );
+        // 指定したIDのアイテムを全て削除
+        bool remove_items( int id );
     };
 }
 

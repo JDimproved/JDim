@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -179,9 +179,12 @@ void MouseKeyConf::set_motion( const std::string& name, const std::string& str_m
 }
 
 
-// 指定したIDのアイテムを削除
-void MouseKeyConf::remove_items( int id )
+// 指定したIDのアイテムを全て削除
+// 削除したら true を返す
+bool MouseKeyConf::remove_items( int id )
 {
+    bool ret = false;
+
     std::vector< MouseKeyItem* >::iterator it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
 
@@ -190,7 +193,12 @@ void MouseKeyConf::remove_items( int id )
             m_vec_items.erase( it );
             delete item;
             remove_items( id );
-            return;
+            ret = true;
+            break;
         }
     }
+
+    if( ret ) remove_items( id );
+
+    return ret;
 }
