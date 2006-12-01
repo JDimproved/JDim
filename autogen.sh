@@ -33,12 +33,14 @@ if test -z "$AM_POSTFIX" && which automake-1.$num &> /dev/null ; then
 fi
 done
 
+if test -z "$AM_POSTFIX" ; then
 for num in `seq 19 -1 17` ; do
 if test -z "$AM_POSTFIX" && which automake$num &> /dev/null ; then
 	AM_POSTFIX=$num
 	break
 fi
 done
+fi
 
 if test -z "$AM_POSTFIX" ; then
 if ! which automake &> /dev/null ; then
@@ -46,6 +48,7 @@ if ! which automake &> /dev/null ; then
 	exit 1
 fi
 fi
+echo `automake$AM_POSTFIX --version | head -1` found
 
 if which libtoolize15 >/dev/null 2>&1
 then LB_POSTFIX=15
@@ -61,8 +64,6 @@ echo `libtoolize$LB_POSTFIX --version | head -1` found
 if test -d /usr/local/share/aclocal ; then
   ACLOCAL_INCLUDE="-I /usr/local/share/aclocal"
 fi
-
-echo `automake$AM_POSTFIX --version | head -1` found
 
 echo This script runs configure and make...
 echo You did remember necessary arguments for configure, right?
