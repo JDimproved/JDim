@@ -262,11 +262,16 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
 {
     int control = CONTROL::None;
 
+    guint direction = event->direction;
+
+    // 押しているボタンは event から取れないので
+    // get_pointer()から取る
     int x, y;
     Gdk::ModifierType mask;
+    Gdk::Display::get_default()->get_pointer( x, y, mask );
+
     int button = 0;
     GdkEventButton ev;
-    Gdk::Display::get_default()->get_pointer( x, y, mask );
     get_eventbutton( CONTROL::GestureButton, ev );
     switch( ev.button ){
         case 1: button = Gdk::BUTTON1_MASK; break;
@@ -274,13 +279,13 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
         case 3: button = Gdk::BUTTON3_MASK; break;
     }
 
-    if( event->direction == GDK_SCROLL_LEFT ) control = CONTROL::Left;
-    if( event->direction == GDK_SCROLL_RIGHT ) control = CONTROL::Right;
+    if( direction == GDK_SCROLL_LEFT ) control = CONTROL::Left;
 
-    if( ! ( mask & button ) ) return control;
+    else if( direction == GDK_SCROLL_RIGHT ) control = CONTROL::Right;
 
-    if( event->direction == GDK_SCROLL_UP ) control = CONTROL::TabLeft;
-    if( event->direction == GDK_SCROLL_DOWN ) control = CONTROL::TabRight;
+    else if( ( mask & button ) && direction == GDK_SCROLL_UP ) control = CONTROL::TabLeft;
+
+    else if( ( mask & button ) && direction == GDK_SCROLL_DOWN ) control = CONTROL::TabRight;
 
 #ifdef _DEBUG
     std::cout << "Control::MG_wheel_scroll control = " << control << std::endl;
