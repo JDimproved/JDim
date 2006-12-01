@@ -98,11 +98,11 @@ void KeyConfig::load_conf()
 
     // BBSLIST
     SETMOTION( "OpenBoard", "Space" );
-    SETMOTION( "OpenBoardTab", "Shift+Space" );
+    SETMOTION( "OpenBoardTab", "Ctrl+Space" );
 
     // BOARD
     SETMOTION( "OpenArticle", "Space" );
-    SETMOTION( "OpenArticleTab", "Shift+Space" );
+    SETMOTION( "OpenArticleTab", "Ctrl+Space" );
     SETMOTION( "NewArticle", "w" );
 
     // ARTICLE
