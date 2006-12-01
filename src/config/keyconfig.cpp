@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 //#define _DEBUG_XML
@@ -98,9 +98,11 @@ void KeyConfig::load_conf()
 
     // BBSLIST
     SETMOTION( "OpenBoard", "Space" );
+    SETMOTION( "OpenBoardTab", "Shift+Space" );
 
     // BOARD
     SETMOTION( "OpenArticle", "Space" );
+    SETMOTION( "OpenArticleTab", "Shift+Space" );
     SETMOTION( "NewArticle", "w" );
 
     // ARTICLE
