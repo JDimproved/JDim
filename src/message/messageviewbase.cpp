@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 //#define _DEBUG_KEY
@@ -202,7 +202,6 @@ void MessageViewBase::pack_widget()
 
     m_msgview.pack_start( m_hbox_name_mail, Gtk::PACK_SHRINK );    
     m_msgview.pack_start( m_text_message );
-    m_msgview.pack_start( m_statbar, Gtk::PACK_SHRINK );
 
     m_text_message.sig_key_release().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_release ) );    
     m_text_message.get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::show_status ) );
@@ -216,6 +215,7 @@ void MessageViewBase::pack_widget()
 
     pack_start( m_toolbar, Gtk::PACK_SHRINK );
     pack_start( m_notebook );
+    pack_start( m_statbar, Gtk::PACK_SHRINK );
 
     // フォントセット
     init_font( CONFIG::get_fontname_message() );
