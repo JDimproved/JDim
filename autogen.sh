@@ -23,6 +23,7 @@ else
   echo 'you need autoconfig (2.58+ recommended) to generate the Makefile'
   exit 1
 fi
+echo checking autoconf$AC_POSTFIX ...
 echo `autoconf$AC_POSTFIX --version | head -1` found
 
 unset AM_POSTFIX
@@ -48,6 +49,7 @@ if ! which automake &> /dev/null ; then
 	exit 1
 fi
 fi
+echo checking automake$AM_POSTFIX ...
 echo `automake$AM_POSTFIX --version | head -1` found
 
 if which libtoolize15 >/dev/null 2>&1
@@ -59,6 +61,7 @@ else
   exit 1
 fi
 
+echo checking libtoolize$LB_POSTFIX ...
 echo `libtoolize$LB_POSTFIX --version | head -1` found
 
 if test -d /usr/local/share/aclocal ; then
