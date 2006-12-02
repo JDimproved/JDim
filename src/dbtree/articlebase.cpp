@@ -12,6 +12,8 @@
 #include "jdlib/miscmsg.h"
 #include "jdlib/jdregex.h"
 
+#include "config/globalconf.h"
+
 #include "httpcode.h"
 #include "command.h"
 #include "cache.h"
@@ -405,6 +407,28 @@ void ArticleBase::update_writetime()
     }
 }
 
+
+
+//
+// 透明あぼーん
+//
+const bool ArticleBase::get_abone_transparent()
+{
+    if( CONFIG::get_abone_transparent() ) return true;
+
+    return m_abone_transparent;
+}
+
+
+//
+// 連鎖あぼーん
+//
+const bool ArticleBase::get_abone_chain()
+{
+    if( CONFIG::get_abone_chain() ) return true;
+
+    return m_abone_chain;
+}
 
 
 //

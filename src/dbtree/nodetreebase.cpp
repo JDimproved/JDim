@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -1791,8 +1791,11 @@ void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id,
     m_list_abone_word_global = MISC::replace_str_list( CONFIG::get_list_abone_word(), "\\n", "\n" );
     m_list_abone_regex_global = MISC::replace_str_list( CONFIG::get_list_abone_regex(), "\\n", "\n" );
 
-    m_abone_transparent = abone_transparent;
-    m_abone_chain = abone_chain;
+    if( CONFIG::get_abone_transparent() ) m_abone_transparent = true;
+    else m_abone_transparent = abone_transparent;
+
+    if( CONFIG::get_abone_chain() ) m_abone_chain = true;
+    else m_abone_chain = abone_chain;
 }
 
 

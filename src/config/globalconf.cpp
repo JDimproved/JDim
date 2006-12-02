@@ -98,6 +98,9 @@ std::list< std::string > list_abone_name;
 std::list< std::string > list_abone_word;
 std::list< std::string > list_abone_regex;
 
+bool abone_transparent;
+bool abone_chain;
+
 
 //
 // 初期設定
@@ -305,6 +308,10 @@ const bool CONFIG::init_config()
     str_tmp = cf.get_option( "aboneregex", "" );
     if( ! str_tmp.empty() ) list_abone_regex = MISC::strtolist( str_tmp );
 
+    // デフォルトで透明、連鎖あぼーんをするか
+    abone_transparent = cf.get_option( "abone_transparent", false );
+    abone_chain = cf.get_option( "abone_chain", false );
+
     return ! cf.empty();
 }
 
@@ -431,6 +438,9 @@ void CONFIG::save_conf()
     cf.update( "abonename", str_abone_name );
     cf.update( "aboneword", str_abone_word );
     cf.update( "aboneregex", str_abone_regex );
+
+    cf.update( "abone_transparent", abone_transparent );
+    cf.update( "abone_chain", abone_chain );
 
     cf.save();
 }
@@ -608,3 +618,7 @@ void CONFIG::set_list_abone_regex( std::list< std::string >& regex )
     list_abone_regex = MISC::remove_nullline_from_list( list_abone_regex );
 }
 
+const bool CONFIG::get_abone_transparent(){ return abone_transparent; }
+void CONFIG::set_abone_transparent( bool set ){ abone_transparent = set; }
+const bool CONFIG::get_abone_chain(){ return abone_chain; }
+void CONFIG::set_abone_chain( bool set ){ abone_chain = set; }

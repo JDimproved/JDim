@@ -202,6 +202,13 @@ namespace CONFIG
     void set_list_abone_name( std::list< std::string >& name );
     void set_list_abone_word( std::list< std::string >& word );
     void set_list_abone_regex( std::list< std::string >& regex );
+
+    // デフォルトで透明、連鎖あぼーんをするか
+    const bool get_abone_transparent();
+    void set_abone_transparent( bool set );
+
+    const bool get_abone_chain();
+    void set_abone_chain( bool set );
 }
 
 

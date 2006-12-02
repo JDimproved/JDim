@@ -238,6 +238,10 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
     m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん" ), sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "デフォルトで透明/連鎖あぼ〜ん", std::string(),
+                                                    ( CONFIG::get_abone_transparent() && CONFIG::get_abone_chain() ) ),
+                                                    sigc::mem_fun( *this, &Core::slot_toggle_abone_transp_chain ) );
+
     m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
 
@@ -316,6 +320,7 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='SetupAbone'/>"
         "<menuitem action='SetupAboneThread'/>"
+        "<menuitem action='TranspChainAbone'/>"
         "<separator/>"
         "<menuitem action='UseMosaic'/>"    
         "<menuitem action='DeleteImages'/>"
@@ -818,6 +823,21 @@ void Core::slot_setup_abone_thread()
     delete pref;
 }
 
+
+//
+// 透明/連鎖あぼーん切り替え
+//
+void Core::slot_toggle_abone_transp_chain()
+{
+    bool status = CONFIG::get_abone_chain() & CONFIG::get_abone_transparent();
+
+    CONFIG::set_abone_transparent( ! status );
+    CONFIG::set_abone_chain( ! status );
+
+    // あぼーん情報更新
+    DBTREE::update_abone_all_article();
+    CORE::core_set_command( "relayout_all_article" );
+}
 
 
 //
