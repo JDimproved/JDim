@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 // スレビュークラスの基本クラス
 
@@ -86,6 +86,7 @@ namespace ARTICLE
         virtual void operate_view( const int& control );
         virtual void goto_top();
         virtual void goto_bottom();
+        virtual void goto_num( int num );
 
     protected:
 
@@ -101,9 +102,6 @@ namespace ARTICLE
 
         // 初期設定
         void setup_view();
-
-        // ジャンプ
-        void goto_num( int num );
 
         // 新着に移動
         void goto_new();

@@ -66,6 +66,7 @@ namespace BOARD
         virtual void operate_view( const int& control );
         virtual void goto_top();
         virtual void goto_bottom();
+        virtual void goto_num( int num );
 
         void row_up();
         void row_down();

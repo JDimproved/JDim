@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #ifndef _VIEW_H
 #define _VIEW_H
@@ -54,6 +54,10 @@ namespace SKELETON
         // ポップアップメニューが表示されているかどうか
         bool m_popupmenu_shown; 
 
+        // キーボード数字入力ジャンプ用
+        int m_keyjump_counter;
+        int m_keyjump_num;
+
       protected:
 
         // UI
@@ -82,6 +86,16 @@ namespace SKELETON
 
         // オートリロードのカウンタをリセット
         void reset_autoreload_counter(); 
+
+        // 数字入力ジャンプカウンタのインクリメント
+        // 指定秒数を越えたら true を返す
+        bool inc_keyjump_counter();
+
+        // 数字入力ジャンプカウンタのリセット
+        void reset_keyjump_counter(); 
+
+        // 数字入力ジャンプ用に sig_key_press() から呼び出す
+        void release_keyjump_key( int key );
 
         // ポップアップメニュー表示
         void show_popupmenu( const std::string& url, bool use_slot = false );
@@ -163,6 +177,7 @@ namespace SKELETON
         virtual void operate_view( const int& ){}
         virtual void goto_top(){}
         virtual void goto_bottom(){}
+        virtual void goto_num( int num ){}
     };
 }
 

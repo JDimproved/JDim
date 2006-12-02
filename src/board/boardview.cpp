@@ -1022,6 +1022,32 @@ void BoardView::goto_bottom()
 
 
 //
+// 指定したIDのスレに移動
+//
+void BoardView::goto_num( int num )
+{
+    if( ! num ) return;
+
+    focus_view();
+   
+    Gtk::TreeModel::Children child = m_liststore->children();
+    Gtk::TreeModel::Children::iterator it = child.begin();
+    for( ; it != child.end() ; ++it ){
+
+        Gtk::TreeModel::Row row = *( it );
+        
+        if( row[ m_columns.m_col_id ] == num ){
+
+            Gtk::TreePath path = GET_PATH( row );
+            m_treeview.scroll_to_row( path );
+            m_treeview.set_cursor( path );
+            return;
+        }
+    }
+}
+
+
+//
 // 上へ移動
 //
 void BoardView::row_up()
@@ -1333,13 +1359,17 @@ bool BoardView::slot_key_press( GdkEventKey* event )
 {
     int key = SKELETON::View::get_control().key_press( event );
 
-    // キー入力でスレを開くとkey_releaseイベントがboadviewが画面から
-    // 消えてから送られてWIDGET_REALIZED_FOR_EVENT assertionが出るので
-    // OpenArticle(Tab)は slot_key_release() で処理する
-    if( key == CONTROL::OpenArticle ) return true;
-    if( key == CONTROL::OpenArticleTab ) return true;
+    if( key != CONTROL::None ){
 
-    operate_view( key );
+        // キー入力でスレを開くとkey_releaseイベントがboadviewが画面から
+        // 消えてから送られてWIDGET_REALIZED_FOR_EVENT assertionが出るので
+        // OpenArticle(Tab)は slot_key_release() で処理する
+        if( key == CONTROL::OpenArticle ) return true;
+        if( key == CONTROL::OpenArticleTab ) return true;
+
+        operate_view( key );
+    }
+    else release_keyjump_key( event->keyval );
 
     return true;
 }

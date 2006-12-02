@@ -1,13 +1,18 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
 
 #include "view.h"
 
+#include "jdlib/miscutil.h"
+
 #include "global.h"
+#include "command.h"
 
 using namespace SKELETON;
+
+#define KEYJUMP_TIMEOUT 1000
 
 
 View::View( const std::string& url, const std::string& arg1 ,const std::string& arg2 )
@@ -16,7 +21,9 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
       m_enable_mg( false ),
       m_enable_autoreload( false ),
       m_autoreload_mode( AUTORELOAD_NOT ),
-      m_popupmenu_shown( false )
+      m_popupmenu_shown( false ),
+      m_keyjump_counter( 0 ),
+      m_keyjump_num( 0 )
 {}
 
 
@@ -26,6 +33,12 @@ void View::clock_in_always()
 {
     // オートリロード
     if( inc_autoreload_counter() ) reload();
+
+    // キーボード数字入力ジャンプ
+    if( inc_keyjump_counter() ){
+        goto_num( m_keyjump_num );
+        reset_keyjump_counter();
+    }
 }
 
 
@@ -62,6 +75,42 @@ void View::reset_autoreload_counter()
 {
     m_autoreload_counter = 0;
     if( m_autoreload_mode == AUTORELOAD_ONCE ) m_autoreload_mode = AUTORELOAD_NOT;
+}
+
+
+// 数字入力ジャンプカウンタのインクリメント
+// 指定秒数を越えたら true を返す
+bool View::inc_keyjump_counter()
+{
+    if( ! m_keyjump_counter ) return false;
+
+    ++m_keyjump_counter;
+
+    if( m_keyjump_counter > KEYJUMP_TIMEOUT / TIMER_TIMEOUT ) return true;
+
+    return false;
+}
+
+
+
+// 数字入力ジャンプカウンタのリセット
+void View::reset_keyjump_counter()
+{
+    m_keyjump_counter = 0;
+    m_keyjump_num = 0;
+}
+
+
+// 数字入力ジャンプ用に sig_key_press() から呼び出す
+void View::release_keyjump_key( int key )
+{
+    if( key >= '0' && key <= '9' ){
+        m_keyjump_counter = 1;
+        m_keyjump_num *= 10;
+        m_keyjump_num += key - '0';
+
+        CORE::core_set_command( "set_mginfo", "", MISC::itostr( m_keyjump_num ) );
+    }
 }
 
 

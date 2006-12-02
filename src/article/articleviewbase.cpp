@@ -1337,8 +1337,11 @@ bool ArticleViewBase::slot_key_press( GdkEventKey* event )
     ArticleViewBase* popup_article = NULL;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
     if( popup_article ) return popup_article->slot_key_press( event );
-    
-    operate_view( SKELETON::View::get_control().key_press( event ) );
+
+    int key = SKELETON::View::get_control().key_press( event );
+
+    if( key != CONTROL::None ) operate_view( key );
+    else release_keyjump_key( event->keyval );
 
     return true;
 }
