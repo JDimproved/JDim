@@ -82,6 +82,12 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
     m_treestore = Gtk::TreeStore::create( m_columns ); 
 
+#if GTKMMVER <= 260
+    // gtkmm26以下にはunset_model()が無いのでここでset_model()しておく
+    m_treeview.set_model( m_treestore );
+    m_treeview.set_headers_visible( false );
+#endif
+
     // Gtk::TreeStoreでset_fixed_height_mode()を使うとexpandしたときに
     // スクロールバーが誤動作するので使わないこと
 /*
@@ -1867,7 +1873,9 @@ void BBSListViewBase::xml2tree( const std::string& xml )
     std::list< std::string > lines = MISC::get_lines( xml );
     if( lines.empty() ) return;
 
+#if GTKMMVER >= 280
     m_treeview.unset_model();
+#endif
 
     // XML を解析してツリーを作る
     std::list< Gtk::TreePath > list_path_expand;
@@ -1933,8 +1941,10 @@ void BBSListViewBase::xml2tree( const std::string& xml )
         }
     }
 
+#if GTKMMVER >= 280
     m_treeview.set_model( m_treestore );
     m_treeview.set_headers_visible( false );
+#endif
 
     // ディレクトリオープン
     std::list< Gtk::TreePath >::iterator it_path = list_path_expand.begin();

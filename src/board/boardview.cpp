@@ -100,6 +100,11 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // ツリービュー設定
     m_liststore = Gtk::ListStore::create( m_columns );
 
+#if GTKMMVER <= 260
+    // gtkmm26以下にはunset_model()が無いのでここでset_model()しておく
+    m_treeview.set_model( m_liststore );
+#endif
+
 #if GTKMMVER >= 260
 
     // セルを固定の高さにする
@@ -711,7 +716,9 @@ void BoardView::show_view()
     // タブに名前をセット
     BOARD::get_admin()->set_command( "set_tablabel", get_url(), DBTREE::board_name( get_url() ) );
 
+#if GTKMMVER >= 280
     m_treeview.unset_model();
+#endif
     m_liststore->clear();
     m_pre_query = std::string();
     
@@ -778,7 +785,9 @@ void BoardView::update_view()
     bool updated = false;
 
     // 画面消去
+#if GTKMMVER >= 280
     m_treeview.unset_model();
+#endif
     m_liststore->clear();
 
     // 高速化のためデータベースに直接アクセス
@@ -813,7 +822,9 @@ void BoardView::update_view()
             if( art->get_number_load() && art->get_number() > art->get_number_load() ) updated = true;
         }
 
+#if GTKMMVER >= 280
         m_treeview.set_model( m_liststore );
+#endif
         redraw_view();
     }
 
