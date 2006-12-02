@@ -63,22 +63,16 @@ GNOMEUI_LIBS=""
 dnl
 dnl パッケージのチェック
 dnl
-PKG_CHECK_MODULES(GTKMM,[gtkmm-2.4 >= 2.6.0], 
-  [ 
-    echo "gtkmm >= 2.6.0" 
-    CXXFLAGS="$CXXFLAGS -DUSE_GTKMM26"
-  ], 
-  [ 
-    PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.4.0],
-      [ 
-        echo "gtkmm >= 2.4.0"
-        CXXFLAGS="$CXXFLAGS -DUSE_GTKMM24"
-      ]
-    ) 
-  ]
-)
+PKG_CHECK_MODULES(GTKMM,[gtkmm-2.4 >= 2.8.0], [ echo "gtkmm >= 2.8.0" ; GTKMMVER=280 ], [ 
+
+   PKG_CHECK_MODULES(GTKMM,[gtkmm-2.4 >= 2.6.0], [ echo "gtkmm >= 2.6.0" ; GTKMMVER=260 ], [ 
+  
+     PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.4.0], [ echo "gtkmm >= 2.4.0"; GTKMMVER=240   ] ) 
+   ] ) 
+] )
 PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.0] )
 PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9] )
+CXXFLAGS="$CXXFLAGS -DGTKMMVER=$GTKMMVER"
 
 AC_SUBST(GTKMM_CFLAGS)
 AC_SUBST(GTKMM_LIBS)

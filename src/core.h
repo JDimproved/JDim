@@ -82,7 +82,7 @@ namespace CORE
         std::string m_title;
 
         // ステータスバー
-#ifdef USE_GTKMM24
+#if GTKMMVER <= 240
         Gtk::Statusbar m_statbar;
 #else
         Gtk::HBox m_statbar;

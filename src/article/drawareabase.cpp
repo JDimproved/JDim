@@ -282,7 +282,7 @@ void DrawAreaBase::init_font()
     m_pango_layout->set_text( wstr );
 
     // リンクの下線の位置 ( トップからの距離 )
-#ifdef USE_GTKMM24
+#if GTKMMVER <= 240
     m_underline_pos = int( ( m_pango_layout->get_pixel_ink_extents().get_height() + 1 ) * CONFIG::get_adjust_underline_pos() );
 #else
     m_underline_pos = PANGO_PIXELS( ( metrics.get_ascent() - metrics.get_underline_position() )

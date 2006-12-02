@@ -196,7 +196,7 @@ void MessageViewBase::pack_widget()
     m_hbox_name_mail.pack_start( m_check_fixmail, Gtk::PACK_SHRINK );
     m_hbox_name_mail.pack_start( m_entry_mail );
 
-#ifndef USE_GTKMM24
+#if GTKMMVER >= 260
     m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
 #endif
 
@@ -541,7 +541,7 @@ void MessageViewBase::show_status()
 
     ss << " ]";
 
-#ifdef USE_GTKMM24
+#if GTKMMVER <= 240
     m_statbar.push( ss.str() );
 #else
     m_label_stat.set_text( ss.str() );

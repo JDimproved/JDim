@@ -100,8 +100,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // ツリービュー設定
     m_liststore = Gtk::ListStore::create( m_columns );
 
-#ifndef USE_GTKMM24
-    
+#if GTKMMVER >= 260
+
     // セルを固定の高さにする
     // append_column する前に columnに対して set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ) すること
     m_treeview.set_fixed_height_mode( true );

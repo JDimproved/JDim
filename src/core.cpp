@@ -436,7 +436,7 @@ void Core::run( bool init )
 
     // ステータスバー
     std::string str_tmp;
-#ifdef USE_GTKMM24
+#if GTKMMVER <= 240
     m_statbar.pack_start( m_mginfo );
 #else
     m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
@@ -1628,7 +1628,7 @@ void Core::exec_command()
     }
 
     else if( command.command  == "set_status" ){
-#ifdef USE_GTKMM24
+#if GTKMMVER <= 240
         m_statbar.push( command.arg1 );
 #else
         m_label_stat.set_text( command.arg1 );

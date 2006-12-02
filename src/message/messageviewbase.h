@@ -43,7 +43,7 @@ namespace MESSAGE
         SKELETON::EditView m_text_message;
 
         // ステータスバー
-#ifdef USE_GTKMM24
+#if GTKMMVER <= 240
         Gtk::Statusbar m_statbar;
 #else
         Gtk::HBox m_statbar;
