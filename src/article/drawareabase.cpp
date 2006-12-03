@@ -673,7 +673,7 @@ void DrawAreaBase::layout_one_node( LAYOUT* layout, int& x, int& y, int width_vi
             if( ! layout->lng_text ) layout->lng_text = strlen( layout->text );
 
             // 次のノードの左上座標を計算(x,y,width,height,が参照なので更新された値が戻る)
-            layout_draw_one_node( layout, x, y, width, height, width_view, false );
+            layout_draw_one_node( layout, x, y, width, height, width_view, false, layout->bold );
 
             layout->width = width;
             layout->height = height;
@@ -1195,6 +1195,8 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
             ++n_ustr;
             draw_head = false;
         }
+
+        if( bold ) ++width_line;
 
         // pos_start から pos_to の前まで描画
         if( do_draw ){
