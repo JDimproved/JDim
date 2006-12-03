@@ -656,6 +656,8 @@ void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
 //
 void DrawAreaBase::layout_one_node( LAYOUT* layout, int& x, int& y, int width_view, int& mrg_level )
 {
+    int width, height;
+
     switch( layout->type ){
 
         case DBTREE::NODE_IDNUM: // 発言数ノード
@@ -668,9 +670,13 @@ void DrawAreaBase::layout_one_node( LAYOUT* layout, int& x, int& y, int width_vi
             layout->mrg_level = mrg_level;    
             layout->x = x;
             layout->y = y;
+            if( ! layout->lng_text ) layout->lng_text = strlen( layout->text );
 
-            // 次のノードの左上座標を計算(x,yが参照なので更新された値が戻る)
-            layout_draw_one_node( layout, x, y, width_view, false );
+            // 次のノードの左上座標を計算(x,y,width,height,が参照なので更新された値が戻る)
+            layout_draw_one_node( layout, x, y, width, height, width_view, false );
+
+            layout->width = width;
+            layout->height = height;
 
             break;
 
@@ -1028,6 +1034,7 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
 {
     int x = layout->x;
     int y = layout->y - pos_y;
+    int width, height;
 
     int x_selection;
     int y_selection;
@@ -1088,20 +1095,20 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
     
     // 通常描画
     if( ! draw_selection ){
-        layout_draw_one_node( layout, x, y, width_view, true, bold, color_text, COLOR_BACK );
+        layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, COLOR_BACK );
 
     } else { // 範囲選択の前後描画
 
         // 前
-        if( byte_from ) layout_draw_one_node( layout, x, y, width_view, true, bold, color_text, COLOR_BACK, 0, byte_from );
+        if( byte_from ) layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, COLOR_BACK, 0, byte_from );
 
         // ここでは選択部分の座標計算のみ( do_draw = false )してハイライト後に選択部分を描画
         x_selection = x;
         y_selection = y;
-        layout_draw_one_node( layout, x, y, width_view, false, bold, color_text, COLOR_BACK,  byte_from, byte_to );
+        layout_draw_one_node( layout, x, y, width, height, width_view, false, bold, color_text, COLOR_BACK,  byte_from, byte_to );
     
         // 後
-        if( byte_to != strlen( layout->text ) ) layout_draw_one_node( layout, x, y, width_view, true, bold, color_text, COLOR_BACK, byte_to );
+        if( byte_to != strlen( layout->text ) ) layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, COLOR_BACK, byte_to );
     }
      
     // 検索結果のハイライト
@@ -1116,17 +1123,19 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
                 y = layout->y - pos_y;
                 int byte_from2 = ( *it ).caret_from.byte;
                 int byte_to2 = ( *it ).caret_to.byte;
-                if( byte_from2 ) layout_draw_one_node( layout, x, y, width_view, false, bold, COLOR_CHAR_HIGHLIGHT , COLOR_BACK_HIGHLIGHT, 0, byte_from2 );
+                if( byte_from2 ) layout_draw_one_node( layout, x, y, width, height,
+                                                       width_view, false, bold, COLOR_CHAR_HIGHLIGHT , COLOR_BACK_HIGHLIGHT, 0, byte_from2 );
 
                 // ハイライト描画
-                layout_draw_one_node( layout, x, y, width_view, true, bold, COLOR_CHAR_HIGHLIGHT , COLOR_BACK_HIGHLIGHT, byte_from2, byte_to2 );
+                layout_draw_one_node( layout, x, y, width, height,
+                                      width_view, true, bold, COLOR_CHAR_HIGHLIGHT , COLOR_BACK_HIGHLIGHT, byte_from2, byte_to2 );
             }
         }
     }
 
     // 範囲選択部分を描画
     if( draw_selection && byte_from != byte_to ){
-        layout_draw_one_node( layout, x_selection, y_selection, width_view, true, bold,
+        layout_draw_one_node( layout, x_selection, y_selection, width, height, width_view, true, bold,
                                             COLOR_CHAR_SELECTION , COLOR_BACK_SELECTION, byte_from, byte_to );
     }
 }
@@ -1136,7 +1145,8 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
 //
 // 実際にレイアウトノード内の文字の座標を計算したり描画する関数
 //
-// x,y : ノードの初期座標(左上)、次のノードの左上座標が入って返る
+// node_x,node_y (参照)  : ノードの初期座標(左上)、次のノードの左上座標が入って返る
+// node_width, node_height (参照) : ノードの幅、高さが入って返る
 // do_draw : true なら描画, false なら座標計算のみ
 // byte_from バイト目の文字から byte_to バイト目の「ひとつ前」の文字まで描画
 // byte_to が 0 なら最後まで描画
@@ -1144,19 +1154,18 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
 //
 // たとえば node->text = "abcdefg" で byte_from = 1, byte_to = 3 なら "bc" を描画
 //
-void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width_view, bool do_draw, bool bold,
-                                    int color , int color_back, int byte_from, int byte_to )
+void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y, int& node_width, int& node_height, int width_view,
+                                         bool do_draw, bool bold, int color , int color_back, int byte_from, int byte_to )
 {
     assert( node->text != NULL );
 
-    if( *node->text == '\0' ) return;
-    if( ! node->lng_text ) node->lng_text = strlen( node->text );
+    if( ! node->lng_text ) return;
     if( byte_from >= node->lng_text ) return;
     if( byte_to > node->lng_text ) byte_to = node->lng_text;
     if( byte_to == 0 ) byte_to = node->lng_text; 
 
-    node->width = 0;
-    node->height = m_br_size;
+    node_width = 0;
+    node_height = m_br_size;
 
     int pos_start = byte_from;
     for(;;){
@@ -1172,7 +1181,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
         // 右端がはみ出るまで文字を足していく
 
         bool draw_head = true; // 最低1文字は描画
-        while( ( x + width_line < width_view - m_mrg_right // > ならwrap が起こったということ
+        while( ( node_x + width_line < width_view - m_mrg_right // > ならwrap が起こったということ
                  &&  pos_to < byte_to ) || draw_head ) {
 
             int width_tmp = ARTICLE::get_width_of_char( node->text + pos_to, byte_char, fontmode() );
@@ -1193,11 +1202,11 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
 #ifdef DRAW_BY_PANGOLAYOUT  // Pango::Layout を使って文字を描画
 
             m_pango_layout->set_text( Glib::ustring( node->text + pos_start, n_ustr ) );
-            m_backscreen->draw_layout( m_gc, x, y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
+            m_backscreen->draw_layout( m_gc, node_x, node_y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
 
             if( bold ){
                 m_gc->set_foreground( m_color[ color ] );
-                m_backscreen->draw_layout( m_gc, x+1, y, m_pango_layout );
+                m_backscreen->draw_layout( m_gc, node_x+1, node_y, m_pango_layout );
             }
             
 #else // Pango::GlyphString を使って文字を描画
@@ -1205,7 +1214,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
             assert( m_context );
 
             m_gc->set_foreground( m_color[ color_back ] );
-            m_backscreen->draw_rectangle( m_gc, true, x, y, width_line, m_font_height );
+            m_backscreen->draw_rectangle( m_gc, true, node_x, node_y, width_line, m_font_height );
 
             m_gc->set_foreground( m_color[ color ] );
 
@@ -1213,7 +1222,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
             std::string text = std::string( node->text + pos_start, n_str );
             std::list< Pango::Item > list_item = m_context->itemize( text, attr );
 
-            int xx = x;
+            int xx = node_x;
             std::list< Pango::Item >::iterator it = list_item.begin();
             for( ; it != list_item.end(); ++it ){
 
@@ -1222,8 +1231,8 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
                 Pango::Rectangle rect = grl.get_logical_extents(  item.get_analysis().get_font() );
                 int width = PANGO_PIXELS( rect.get_width() );
 
-                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), xx, y + m_font_ascent, grl );
-                if( bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), xx+1, y + m_font_ascent, grl );
+                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), xx, node_y + m_font_ascent, grl );
+                if( bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), xx+1, node_y + m_font_ascent, grl );
                 xx += width;
             }
 #endif
@@ -1231,24 +1240,24 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& x, int& y, int width
             if( node->link && CONFIG::get_draw_underline() ){
 
                 m_gc->set_foreground( m_color[ color ] );
-                m_backscreen->draw_line( m_gc, x, y + m_underline_pos, x + width_line, y + m_underline_pos );
+                m_backscreen->draw_line( m_gc, node_x, node_y + m_underline_pos, node_x + width_line, node_y + m_underline_pos );
             }
         }
 
         // ノードの幅更新
-        x += width_line;
-        int width_tmp = x - ( m_mrg_left + m_down_size * node->mrg_level );
-        if( width_tmp > node->width ) node->width = width_tmp;
+        node_x += width_line;
+        int width_tmp = node_x - ( m_mrg_left + m_down_size * node->mrg_level );
+        if( width_tmp > node_width ) node_width = width_tmp;
         
         // wrap 処理
-        if( x >= width_view - m_mrg_right ) {
+        if( node_x >= width_view - m_mrg_right ) {
 
             // 改行
-            x = ( m_mrg_left + m_down_size * node->mrg_level );            
-            y += m_br_size;
+            node_x = ( m_mrg_left + m_down_size * node->mrg_level );            
+            node_y += m_br_size;
 
             // ノード高さ更新
-            node->height += m_br_size;
+            node_height += m_br_size;
         }
 
         if( pos_to >= byte_to ) break;

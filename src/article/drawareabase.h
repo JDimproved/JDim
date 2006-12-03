@@ -246,7 +246,8 @@ namespace ARTICLE
         int get_width_of_one_char( const char* str, int& byte );
         void draw_one_node( LAYOUT* layout, const int& width_win, const int& pos_y );
         void draw_one_text_node( LAYOUT* layout, const int& width_win, const int& pos_y );
-        void layout_draw_one_node( LAYOUT* node, int& x, int& y, int width_win, bool do_draw, bool bold = false, 
+        void layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y, int& node_width, int& node_height,
+                                   int width_win, bool do_draw, bool bold = false, 
                                    int color = COLOR_CHAR, int color_bac = COLOR_BACK, int byte_from = 0, int byte_to = 0 );
 
         // 整数 -> 文字変換してノードに発言数をセット
