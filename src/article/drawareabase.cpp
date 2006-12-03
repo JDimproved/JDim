@@ -1199,7 +1199,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
         // pos_start から pos_to の前まで描画
         if( do_draw ){
 
-#ifdef DRAW_BY_PANGOLAYOUT  // Pango::Layout を使って文字を描画
+#ifdef USE_PANGOLAYOUT  // Pango::Layout を使って文字を描画
 
             m_pango_layout->set_text( Glib::ustring( node->text + pos_start, n_ustr ) );
             m_backscreen->draw_layout( m_gc, node_x, node_y, m_pango_layout, m_color[ color ], m_color[ color_back ] );

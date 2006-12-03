@@ -173,4 +173,14 @@ AC_ARG_WITH(core2duo,[ --with-core2duo    (use core2duo)],
        fi ])
 
 
+dnl
+dnl checking pangolayout
+dnl
+AC_ARG_WITH(pangolayout,[ --with-pangolayout    (use pangolayout)],
+       [ if test "$withval" != "no" ;then
+               echo "use pango_layout for drawing"
+	       CXXFLAGS="$CXXFLAGS -DUSE_PANGOLAYOUT"
+       fi ])
+
+
 AC_OUTPUT(Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/config/Makefile src/icons/Makefile )
