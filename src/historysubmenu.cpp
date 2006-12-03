@@ -84,6 +84,8 @@ void HistorySubMenu::append_item( const std::string& url, const std::string& nam
     std::list< CORE::HIST_ITEM* >::iterator it;
     CORE::HIST_ITEM* item = NULL;
 
+    if( ! m_histlist.size() ) return;
+
     it = m_histlist.begin();
     for(; it != m_histlist.end(); ++it ){
 
@@ -134,7 +136,7 @@ void HistorySubMenu::xml2list( const std::string& xml )
 
     std::list< CORE::HIST_ITEM* >::iterator it_hist = m_histlist.begin();
     std::list< std::string >::iterator it = lines.begin();
-    for( ; it != lines.end(); ++it ){
+    for( ; it != lines.end() && it_hist != m_histlist.end() ; ++it ){
 
         std::string url;
         std::string name;
