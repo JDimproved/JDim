@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 //#difine _DEBUG_RESIZE_TAB
@@ -258,7 +258,7 @@ bool DragableNoteBook::adjust_tabwidth()
             Glib::ustring ulabel( tab->get_fulltext() );
             vec_width[ i ] = ulabel.length();
 
-            for(;;){
+            while( vec_width[ i ] > CONFIG::get_tab_min_str() ){
 
                 m_layout_tab->set_text( ulabel.substr( 0,  vec_width[ i ] ) );
                 int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + mrg_tab;
@@ -271,7 +271,6 @@ bool DragableNoteBook::adjust_tabwidth()
                 if( width < avg_width_tab ) break;
                 --vec_width[ i ];
                 if( vec_width[ i ] < 0 ) vec_width[ i ] = 0;
-                if( vec_width[ i ] < CONFIG::get_tab_min_str() ) break;
             }
         }
     }
