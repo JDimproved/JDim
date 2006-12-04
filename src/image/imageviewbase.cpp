@@ -491,6 +491,14 @@ void ImageViewBase::operate_view( const int& control )
             IMAGE::get_admin()->set_command( "tab_right" );
             break;
 
+        case CONTROL::ScrollLeft:
+            scroll_left();
+            break;
+
+        case CONTROL::ScrollRight:
+            scroll_right();
+            break;
+
             // article に切り替え
         case CONTROL::Left:
             CORE::core_set_command( "switch_leftview" );

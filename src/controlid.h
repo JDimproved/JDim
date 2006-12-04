@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 // コントロールID
 
@@ -81,6 +81,9 @@ namespace CONTROL
         PopupmenuButton,
         DragStartButton,
         TreeRowSelectionButton,
+
+        ScrollLeft,
+        ScrollRight,
 
         COMMONMOTION_END,
 

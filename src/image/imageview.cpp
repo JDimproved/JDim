@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -330,4 +330,27 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
     }
 
     return true;
+}
+
+
+//
+// 左スクロール
+//
+void ImageViewMain::scroll_left()
+{
+    Gtk::Adjustment*  hadjust = m_scrwin->get_hadjustment();
+    if( !hadjust ) return;
+    hadjust->set_value( MAX( 0,  hadjust->get_value() - hadjust->get_step_increment() ) );
+}
+
+
+//
+// 右スクロール
+//
+void ImageViewMain::scroll_right()
+{
+    Gtk::Adjustment*  hadjust = m_scrwin->get_hadjustment();
+    if( !hadjust ) return;
+    hadjust->set_value(  MIN( hadjust->get_upper() - hadjust->get_page_size(),
+                              hadjust->get_value() + hadjust->get_step_increment() ) );
 }

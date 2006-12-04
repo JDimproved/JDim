@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 // コントロールのラベル
 
@@ -68,6 +68,10 @@ namespace CONTROL
         { "PopupmenuButton", "ポップアップメニュー表示" },
         { "DragStartButton", "ドラッグ開始" },
         { "TreeRowSelectionButton", "行範囲選択" },
+
+        
+        { "ScrollLeft", "" }, // 左スクロール
+        { "ScrollRight", "" },// 右スクロール
 
         { "", "" },
 

@@ -943,6 +943,14 @@ void BoardView::operate_view( const int& control )
             CORE::core_set_command( "switch_rightview" );
             break;
 
+        case CONTROL::ScrollLeft:
+            scroll_left();
+            break;
+
+        case CONTROL::ScrollRight:
+            scroll_right();
+            break;
+
         case CONTROL::ToggleArticle:
             CORE::core_set_command( "toggle_article" );
             break;
@@ -1056,6 +1064,31 @@ void BoardView::goto_num( int num )
         }
     }
 }
+
+
+
+//
+// 左スクロール
+//
+void BoardView::scroll_left()
+{
+    Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
+    if( !hadjust ) return;
+    hadjust->set_value( MAX( 0,  hadjust->get_value() - hadjust->get_step_increment() ) );
+}
+
+
+//
+// 右スクロール
+//
+void BoardView::scroll_right()
+{
+    Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
+    if( !hadjust ) return;
+    hadjust->set_value(  MIN( hadjust->get_upper() - hadjust->get_page_size(),
+                              hadjust->get_value() + hadjust->get_step_increment() ) );
+}
+
 
 
 //

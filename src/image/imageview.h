@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //
 // 画像ビュークラス
@@ -26,6 +26,8 @@ namespace IMAGE
 
         virtual void clock_in();
         virtual void show_view();
+        virtual void scroll_left();
+        virtual void scroll_right();
 
       protected:
         virtual void show_status();

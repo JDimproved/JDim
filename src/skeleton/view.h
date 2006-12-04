@@ -178,6 +178,8 @@ namespace SKELETON
         virtual void goto_top(){}
         virtual void goto_bottom(){}
         virtual void goto_num( int num ){}
+        virtual void scroll_left(){}
+        virtual void scroll_right(){}
     };
 }
 

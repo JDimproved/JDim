@@ -279,9 +279,9 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
         case 3: button = Gdk::BUTTON3_MASK; break;
     }
 
-    if( direction == GDK_SCROLL_LEFT ) control = CONTROL::Left;
+    if( direction == GDK_SCROLL_LEFT ) control = CONTROL::ScrollLeft;
 
-    else if( direction == GDK_SCROLL_RIGHT ) control = CONTROL::Right;
+    else if( direction == GDK_SCROLL_RIGHT ) control = CONTROL::ScrollRight;
 
     else if( ( mask & button ) && direction == GDK_SCROLL_UP ) control = CONTROL::TabLeft;
 
