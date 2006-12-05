@@ -23,7 +23,7 @@ TabLabel::TabLabel( const std::string& url )
     add_events( Gdk::LEAVE_NOTIFY_MASK );
 
     add( m_hbox );
-    m_hbox.pack_end( m_label, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_label, Gtk::PACK_SHRINK );
 
     show_all_children();
 }
@@ -56,7 +56,9 @@ void TabLabel::set_id_icon( int id )
 
     if( !m_image ){
         m_image = new Gtk::Image();
-        m_hbox.pack_end( *m_image, Gtk::PACK_SHRINK );
+        m_hbox.remove( m_label );
+        m_hbox.pack_start( *m_image, Gtk::PACK_SHRINK );
+        m_hbox.pack_start( m_label, Gtk::PACK_SHRINK );
         show_all_children();
     }
 
