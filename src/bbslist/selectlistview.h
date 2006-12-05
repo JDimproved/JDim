@@ -21,7 +21,7 @@ namespace BBSLIST
         virtual void delete_view(){ delete_selected_rows(); }
 
       private:
-        virtual bool open_row( Gtk::TreePath& path, bool tab ){ return true; } // 開かないようにキャンセル
+        virtual bool open_row( Gtk::TreePath& path, bool tab );
         virtual void switch_rightview(){} // boardに移動しないようにキャンセル
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
     };

@@ -165,8 +165,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitleURL'/>"
     "<separator/>"
-    "<menuitem action='SelectDir'/>"
-    "<separator/>"
     "<menuitem action='AppendFavorite'/>"
     "<separator/>"
     "<menuitem action='PreferenceBoard'/>"
@@ -181,6 +179,12 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "</popup>"
 
 
+
+    // 通常ディレクトリメニュー
+    "<popup name='popup_menu_dir'>"
+    "<menuitem action='SelectDir'/>"
+    "</popup>"
+
     // お気に入り
     "<popup name='popup_menu_favorite'>"
     "<menuitem action='OpenTab'/>"
@@ -188,8 +192,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitleURL'/>"
-    "<separator/>"
-    "<menuitem action='SelectDir'/>"
     "<separator/>"
     "<menuitem action='Rename'/>"
     "<menuitem action='NewDir'/>"
@@ -220,6 +222,30 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "</popup>"
 
 
+    // お気に入りディレクトリメニュー
+    "<popup name='popup_menu_favorite_dir'>"
+    "<menuitem action='SelectDir'/>"
+    "<separator/>"
+    "<menuitem action='Rename'/>"
+    "<menuitem action='NewDir'/>"
+    "<menuitem action='NewCom'/>"
+    "<separator/>"
+    "<menu action='Delete_Menu'>"
+    "<menuitem action='Delete'/>"
+    "</menu>"
+    "</popup>"
+
+    // お気に入りコメントメニュー
+    "<popup name='popup_menu_favorite_com'>"
+    "<menuitem action='Rename'/>"
+    "<menuitem action='NewDir'/>"
+    "<menuitem action='NewCom'/>"
+    "<separator/>"
+    "<menu action='Delete_Menu'>"
+    "<menuitem action='Delete'/>"
+    "</menu>"
+    "</popup>"
+
     // 選択
     "<popup name='popup_menu_select'>"
     "<menuitem action='CopyURL'/>"
@@ -227,10 +253,15 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<separator/>"
     "<menuitem action='Rename'/>"
     "<menuitem action='NewDir'/>"
+    "<menuitem action='NewCom'/>"
     "<separator/>"
     "<menu action='Delete_Menu'>"
     "<menuitem action='Delete'/>"
     "</menu>"
+    "<separator/>"
+    "<menuitem action='PreferenceArticle'/>"
+    "<menuitem action='PreferenceBoard'/>"
+    "<menuitem action='PreferenceImage'/>"
     "</popup>"
 
     "</ui>";
@@ -244,6 +275,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_mul" ) );
     CONTROL::set_menu_motion( popupmenu );
 
+    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_dir" ) );
+    CONTROL::set_menu_motion( popupmenu );
+
     popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite" ) );
     CONTROL::set_menu_motion( popupmenu );
 
@@ -251,6 +285,12 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     CONTROL::set_menu_motion( popupmenu );
 
     popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_space" ) );
+    CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_dir" ) );
+    CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_com" ) );
     CONTROL::set_menu_motion( popupmenu );
 
     popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_select" ) );
@@ -520,16 +560,16 @@ void  BBSListViewBase::operate_view( const int& control )
 //
 void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
 {
-    Glib::RefPtr< Gtk::Action > act_selectdir, act_board, act_article, act_image;
-    act_selectdir = action_group()->get_action( "SelectDir" );
+    Glib::RefPtr< Gtk::Action > act_board, act_article, act_image, act_opentab;
     act_board = action_group()->get_action( "PreferenceBoard" );
     act_article = action_group()->get_action( "PreferenceArticle" );
     act_image = action_group()->get_action( "PreferenceImage" );
+    act_opentab = action_group()->get_action( "OpenTab" );
 
-    if( act_selectdir ) act_selectdir->set_sensitive( false );
     if( act_board ) act_board->set_sensitive( false );
     if( act_article ) act_article->set_sensitive( false );
     if( act_image ) act_image->set_sensitive( false );
+    if( act_opentab ) act_opentab->set_sensitive( true );
 
     int type = path2type( m_path_selected );
     switch( type ){
@@ -547,7 +587,11 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
             break;
 
         case TYPE_DIR:
-            if( act_selectdir ) act_selectdir->set_sensitive( true );
+            break;
+
+        case TYPE_LINK:
+            if( act_opentab ) act_opentab->set_sensitive( false );
+            break;
     }
 }
 

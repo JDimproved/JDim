@@ -70,6 +70,21 @@ namespace BBSLIST
         const bool& get_ready_tree() const{ return m_ready_tree; }
         void set_expand_collapse( bool set ){ m_expand_collapse = set; }
 
+        virtual void activate_act_before_popupmenu( const std::string& url );
+
+        void append_from_buffer( Gtk::TreeModel::Path path, bool after, bool scroll );
+        void delete_selected_rows();
+
+        // tree <-> XML 変換
+        std::string tree2xml();
+        void xml2tree( const std::string& xml );
+
+        // 移転があったときに行に含まれるURLを変更する
+        void update_urls();
+
+        // path からその行のタイプを取得
+        int path2type( const Gtk::TreePath& path );
+
       public:
 
         BBSListViewBase( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
@@ -134,7 +149,6 @@ namespace BBSLIST
         void open_selected_rows();
         Glib::ustring path2url( const Gtk::TreePath& path );
         Glib::ustring path2name( const Gtk::TreePath& path );
-        int path2type( const Gtk::TreePath& path );
         bool is_dir( Gtk::TreeModel::iterator& it );
         bool is_dir( const Gtk::TreePath& path );
 
@@ -155,22 +169,8 @@ namespace BBSLIST
         void slot_push_up_search();
         void slot_entry_operate( int controlid );
 
-      protected:
-
-        virtual void activate_act_before_popupmenu( const std::string& url );
-
-        void append_from_buffer( Gtk::TreeModel::Path path, bool after, bool scroll );
-        void delete_selected_rows();
-
-        // tree <-> XML 変換
-        std::string tree2xml();
-        void xml2tree( const std::string& xml );
-
-        // 移転があったときに行に含まれるURlを変更する
-        void update_urls();
-
-      private:
         void set_info_to_sharedbuffer( Gtk::TreePath& path );
+
     };
 };
 

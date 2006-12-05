@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -10,6 +10,7 @@
 
 #include "cache.h"
 #include "command.h"
+#include "global.h"
 
 using namespace BBSLIST;
 
@@ -98,7 +99,12 @@ Gtk::Menu* BBSListViewMain::get_popupmenu( const std::string& url )
 
     Gtk::Menu* popupmenu;
     std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
-    if( list_it.size() == 1 ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
+    if( list_it.size() == 1 ){
+            int type = path2type( *( get_treeview().get_selection()->get_selected_rows().begin() ) );
+
+            if( type == TYPE_DIR ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_dir" ) );
+            else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
+    }
     else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_mul" ) );
 
     return popupmenu;

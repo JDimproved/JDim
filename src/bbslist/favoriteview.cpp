@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -9,6 +9,7 @@
 
 #include "cache.h"
 #include "sharedbuffer.h"
+#include "global.h"
 
 using namespace BBSLIST;
 
@@ -89,7 +90,14 @@ Gtk::Menu* FavoriteListView::get_popupmenu( const std::string& url )
     if( url.empty() ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_space" ) );
     else{
         std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
-        if( list_it.size() == 1 ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite" ) );
+        if( list_it.size() == 1 ){
+
+            int type = path2type( *( get_treeview().get_selection()->get_selected_rows().begin() ) );
+
+            if( type == TYPE_DIR ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_dir" ) );
+            else if( type == TYPE_COMMENT ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_com" ) );
+            else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite" ) );
+        }
         else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_mul" ) );
     }
 
