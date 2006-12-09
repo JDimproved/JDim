@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 // 文字の幅とかを記録しておくデータベース
 
@@ -9,8 +9,8 @@ namespace ARTICLE
 {
     void init_font();
     int utf8toucs2( const char* utfstr, int& byte );
-    int get_width_of_char( const char* utfstr, int& byte, int mode );
-    void set_width_of_char( const char* utfstr, int& byte, int mode, int width );
+    void get_width_of_char( const char* utfstr, int& byte, int& width, int& width_wide, const int mode );
+    void set_width_of_char( const char* utfstr, int& byte, const int width, const int width_wide, const int mode );
 }
 
 #endif
