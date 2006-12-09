@@ -923,19 +923,19 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, bool& wide_
         const std::string dummy = "a";
 
         m_pango_layout->set_text( dummy + dummy );
-        int width_dummy = m_pango_layout->get_pixel_logical_extents().get_width() / 2;
+        int width_dummy = m_pango_layout->get_logical_extents().get_width() / 2;
 
         m_pango_layout->set_text( dummy + tmpchar );
-        width = m_pango_layout->get_pixel_logical_extents().get_width() - width_dummy;
+        width = m_pango_layout->get_logical_extents().get_width() - width_dummy;
 
         // 全角モードでの幅
         m_pango_layout->set_text( tmpchar );
-        width_wide = m_pango_layout->get_pixel_logical_extents().get_width();
+        width_wide = m_pango_layout->get_logical_extents().get_width();
 
 #ifdef _DEBUG
         if( width != width_wide ){
             std::cout << "DrawAreaBase::get_width_of_one_char c = ["
-                      << tmpchar << "] w = " << width << " wide = " << width_wide  << std::endl;
+                      << tmpchar << "] w = " << PANGO_PIXELS( width ) << " wide = " << PANGO_PIXELS( width_wide )  << std::endl;
         }
 #endif
 
@@ -1264,7 +1264,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
         bool draw_head = ! ( byte_from ); // 先頭は最低1文字描画
         if( ! node_x ) draw_head = true;
         while(  pos_to < byte_to 
-                && ( ! is_wrapped( node_x + width_line,  width_view - m_mrg_right, node->text + pos_to )
+                && ( ! is_wrapped( node_x + PANGO_PIXELS( width_line ),  width_view - m_mrg_right, node->text + pos_to )
                      || draw_head  ) ) {
 
             width_line += get_width_of_one_char( node->text + pos_to, byte_char, wide_mode, fontmode() );
@@ -1273,6 +1273,8 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
             ++n_ustr;
             draw_head = false;
         }
+
+        width_line = PANGO_PIXELS( width_line );
 
         // pos_start から pos_to の前まで描画
         if( width_line && do_draw ){
@@ -1314,17 +1316,14 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
                 xx += width;
             }
 
+            // 実際のラインの長さと近似値を合わせる ( 応急処置 )
             if( xx - node_x != width_line ){
-
-                // 実際のラインの長さが近似値よりも長かったので詰める ( 応急処置 )
-                if( xx - node_x < width_line ) width_line = xx - node_x;
-
-                else{
-                    std::stringstream ss_err;
-                    ss_err << "estimating width failed : " << text << " e = " << width_line << " r = " << xx - node_x;
-                    MISC::ERRMSG( ss_err.str() );
-                }
+                std::stringstream ss_err;
+                ss_err << "estimating width failed : " << text << " e = " << width_line << " r = " << xx - node_x;
+                MISC::ERRMSG( ss_err.str() );
+                width_line = xx - node_x;
             }
+
 #endif
             // リンクの時は下線を引く
             if( node->link && CONFIG::get_draw_underline() ){
@@ -1945,12 +1944,13 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
 
                 // ノードの中のテキストを調べていく
                 bool wide_mode = true;
+                int width_line = 0;
                 while( *pos != '\0' ){
 
                     int char_width = get_width_of_one_char( pos, byte_char, wide_mode, fontmode() );
                                     
                     // マウスポインタの下にノードがある場合
-                    if( ( tmp_x <= x && tmp_x + char_width >= x )
+                    if( ( tmp_x + PANGO_PIXELS( width_line ) <= x && tmp_x + PANGO_PIXELS( width_line + char_width ) >= x )
                         && ( tmp_y <= y && tmp_y + m_br_size >= y ) ){
 
 #ifdef _DEBUG_CARETMOVE                  
@@ -1958,29 +1958,31 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
                         if( tmplayout->link != NULL ) std::cout << "link = " << tmplayout->link << std::endl;
 #endif
                         // キャレットをセットして終了
-                        caret_pos.set( tmplayout, ( int )( pos - tmplayout->text ), x, tmp_x, tmp_y, char_width, byte_char );
+                        caret_pos.set( tmplayout, ( int )( pos - tmplayout->text ), x, tmp_x + PANGO_PIXELS( width_line ),
+                                       tmp_y, PANGO_PIXELS( char_width ), byte_char );
                         return tmplayout;
                     }
 
                     // 次の文字へ
                     pos += byte_char;
-                    tmp_x += char_width;
+                    width_line += char_width;
 
-                    if( *pos != '\0' && is_wrapped( tmp_x, width_view - m_mrg_right, pos ) ){ // wrap
+                    if( *pos != '\0' && is_wrapped( tmp_x + PANGO_PIXELS( width_line ), width_view - m_mrg_right, pos ) ){ // wrap
 
                         // wrapが起きたときに右のマージンの上にポインタがある場合
-                        if( ( tmp_y <= y && tmp_y + m_br_size >= y  ) && x >= tmp_x ){ 
+                        if( ( tmp_y <= y && tmp_y + m_br_size >= y  ) && x >= tmp_x + PANGO_PIXELS( width_line ) ){ 
 #ifdef _DEBUG_CARETMOVE
                             std::cout << "found: right (wrap)\n";
 #endif
                             // 右端にキャレットをセットして終わり
-                            caret_pos.set( tmplayout, ( int )( pos - tmplayout->text ) - byte_char, x, tmp_x, tmp_y, 0, 0 );
+                            caret_pos.set( tmplayout, ( int )( pos - tmplayout->text ) - byte_char, x, tmp_x + PANGO_PIXELS( width_line ), tmp_y, 0, 0 );
                             return NULL;
                         }
 
                         // 改行
                         tmp_x = m_mrg_left + m_down_size * tmplayout->mrg_level;
                         tmp_y += m_br_size;
+                        width_line = 0;
                     }
                 }
 
@@ -2013,14 +2015,14 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
                           || tmplayout->next_layout == NULL // 最終ノード
                           || tmplayout->next_layout->type == DBTREE::NODE_BR // 一番右端のノード
                             )
-                        && ( tmp_y <= y && tmp_y + m_br_size >= y  ) && x >= tmp_x )
+                        && ( tmp_y <= y && tmp_y + m_br_size >= y  ) && x >= tmp_x + PANGO_PIXELS( width_line ) )
 
                     ){
 #ifdef _DEBUG_CARETMOVE
                     std::cout << "found: right\n";
 #endif
                     // 現在のノードの右端にキャレットをセット
-                    caret_pos.set( tmplayout, ( int )( pos - tmplayout->text ), x, tmp_x, tmp_y, 0, 0 );
+                    caret_pos.set( tmplayout, ( int )( pos - tmplayout->text ), x, tmp_x + PANGO_PIXELS( width_line ), tmp_y, 0, 0 );
                     return NULL;
                 }
 
@@ -2082,18 +2084,22 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 const char* pos_left = NULL;
                 const char* pos_right = NULL;
 
-                const char* pos_tmp = pos;
+                
+                const char* pos_tmp = pos; // 仮の左開始位置
                 bool mode_ascii = ( *( ( unsigned char* )( pos ) ) < 128 );
 
                 // ノードの中のテキストを調べていく
                 bool wide_mode = true;
+                int width_line = 0;
                 while( *pos != '\0' ){
 
-                    int char_width =  get_width_of_one_char( pos, byte_char, wide_mode, fontmode() );
+                    int char_width = get_width_of_one_char( pos, byte_char, wide_mode, fontmode() );
 
-                    // x,yの下にノードがある場合
-                    // 左側の位置を確定
-                    if( ! pos_left && tmp_x <= x && tmp_x + char_width >= x && tmp_y <= y && tmp_y + m_br_size >= y ){
+                    // x,yの下に現在のノードがあったら左側の仮位置を確定する
+                    if( ! pos_left
+                        && tmp_x + PANGO_PIXELS( width_line ) <= x && tmp_x + PANGO_PIXELS( width_line + char_width ) >= x
+                        && tmp_y <= y && tmp_y + m_br_size >= y ){
+
                         pos_left = pos_tmp;
                     }
 
@@ -2103,13 +2109,15 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                     if( code_next == '\0'
                         || code == ' '
                         || code == ','
+                        || code == '('
+                        || code == ')'
                         || ( mode_ascii && code_next >= 128 )
                         || ( !mode_ascii && code_next < 128 ) ){
 
-                        // 左側の仮位置を移動
+                        // 左側が確定していなかったら左側の仮位置を移動
                         if( ! pos_left ){
 
-                            x_left = tmp_x;
+                            x_left = tmp_x + PANGO_PIXELS( width_line );
                             y_left = tmp_y;
 
                             pos_tmp = pos + byte_char;
@@ -2120,12 +2128,9 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                         else{
 
                             pos_right = pos;
-                            int x_right = tmp_x;
+                            int x_right = tmp_x + PANGO_PIXELS( width_line );
 
-                            if( code != ' ' && code != ',' ){
-                                pos_right += byte_char;
-                                tmp_x += char_width;
-                            }
+                            if( code != ' ' && code != ',' && code != '(' && code != ')' ) pos_right += byte_char;
 
                             // キャレット設定
                             caret_left.set( tmplayout, ( int )( pos_left - tmplayout->text ), x_left, x_left, y_left );
@@ -2143,13 +2148,14 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                     }
                     
                     pos += byte_char;
-                    tmp_x += char_width;
+                    width_line += char_width;
 
-                    if( *pos != '\0' && is_wrapped( tmp_x, width_view - m_mrg_right, pos ) ){ // wrap
+                    if( *pos != '\0' && is_wrapped( tmp_x + PANGO_PIXELS( width_line ), width_view - m_mrg_right, pos ) ){ // wrap
 
                         // 改行
                         tmp_x = m_mrg_left + m_down_size * tmplayout->mrg_level;
                         tmp_y += m_br_size;
+                        width_line = 0;
                     }
                 }
 
