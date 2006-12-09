@@ -96,7 +96,7 @@ void Root::clear()
 BoardBase* Root::get_board( const std::string& url, int count )
 {
 #ifdef _DEBUG
-    std::cout << "Root::get_board : count = " << count << " url = " << url << std::endl;
+//    std::cout << "Root::get_board : count = " << count << " url = " << url << std::endl;
 #endif
 
     // キャッシュ
@@ -382,7 +382,7 @@ void Root::update_boards( const std::string xml )
 bool Root::set_board( const std::string& url, const std::string& name, const std::string& basicauth, bool etc )
 {
 #ifdef _SHOW_BOARD
-    std::cout << url << " " << name << std::endl;
+    std::cout << "Root::set_board " << url << " " << name << std::endl;
 #endif
 
     JDLIB::Regex regex;
@@ -438,7 +438,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 
 #ifdef _SHOW_BOARD
     std::cout << "root = " << root << " path_board = " << path_board
-              << "basicauth = " << basicauth <<" type = " << type << " stat = " << stat << std::endl;
+              << " basicauth = " << basicauth <<" type = " << type << " stat = " << stat << std::endl;
 #endif
 
     // 新板登録
@@ -551,7 +551,7 @@ int Root::is_moved( const std::string& root,
 //
 void Root::load_etc()
 {
-    m_xml_etc = "<pos y=\"0\" path=\"0\"/>";
+    m_xml_etc = "<pos y=\"0\" path=\"0\"/>\n";
 
     JDLIB::Regex regex;
     std::string file_etctxt = CACHE::path_etcboard();
@@ -599,6 +599,10 @@ void Root::load_etc()
 
         }
     }
+
+#ifdef _DEBUG
+    std::cout << m_xml_etc << std::endl;
+#endif
 }
 
 
