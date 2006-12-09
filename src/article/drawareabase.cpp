@@ -1315,11 +1315,16 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
             }
 
             if( xx - node_x != width_line ){
-                std::stringstream ss_err;
-                ss_err << "estimating width failed : " << text << " e = " << width_line << " r = " << xx - node_x;
-                MISC::ERRMSG( ss_err.str() );
-            }
 
+                // 実際のラインの長さが近似値よりも長かったので詰める ( 応急処置 )
+                if( xx - node_x < width_line ) width_line = xx - node_x;
+
+                else{
+                    std::stringstream ss_err;
+                    ss_err << "estimating width failed : " << text << " e = " << width_line << " r = " << xx - node_x;
+                    MISC::ERRMSG( ss_err.str() );
+                }
+            }
 #endif
             // リンクの時は下線を引く
             if( node->link && CONFIG::get_draw_underline() ){
