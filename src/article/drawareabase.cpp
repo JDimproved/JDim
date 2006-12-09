@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 //#define _DEBUG_CARETMOVE
+//#define _DRAW_CARET
 #include "jddebug.h"
 
 #include "drawareabase.h"
@@ -875,10 +876,10 @@ bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
     // バックスクリーンをコピー
     m_window->draw_drawable( m_gc, m_backscreen, x, y, x, y, width, height );
 
-#if 0
+#ifdef _DRAW_CARET
     // キャレット描画
     int xx = m_caret_pos.x;
-    int yy = m_caret_pos.y - pos_y;
+    int yy = m_caret_pos.y - get_vscr_val();
     if( yy >= 0 ){
         m_gc->set_foreground( m_color[ COLOR_CHAR ] );
         m_window->draw_line( m_gc, xx, yy, xx, yy + m_underline_pos );
@@ -1193,6 +1194,35 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
 
 
 //
+// 文字列を wrap するか判定する関数
+//
+// str != NULL なら禁則処理も考える
+//
+bool DrawAreaBase::is_wrapped( const int x, const int boarder, const char* str )
+{
+    const unsigned char* tmpchar = ( const unsigned char* ) str;
+
+    if( x < boarder
+
+        // 禁則文字
+        || ( tmpchar && tmpchar[ 0 ] == ',' )
+
+        || ( tmpchar && tmpchar[ 0 ] == '.' )
+
+        // UTF-8で"。"
+        || ( tmpchar && tmpchar[ 0 ] == 0xe3 && tmpchar[ 1 ] == 0x80 && tmpchar[ 2 ] == 0x82 )
+
+        // UTF-8で"、"
+        || ( tmpchar && tmpchar[ 0 ] == 0xe3 && tmpchar[ 1 ] == 0x80 && tmpchar[ 2 ] == 0x81 )
+
+        ) return false;
+
+    return true;
+}
+
+
+
+//
 // 実際にレイアウトノード内の文字の座標を計算したり描画する関数
 //
 // node_x,node_y (参照)  : ノードの初期座標(左上)、次のノードの左上座標が入って返る
@@ -1204,8 +1234,9 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
 //
 // たとえば node->text = "abcdefg" で byte_from = 1, byte_to = 3 なら "bc" を描画
 //
-void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y, int& node_width, int& node_height, int width_view,
-                                         bool do_draw, bool bold, int color , int color_back, int byte_from, int byte_to )
+void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y, int& node_width, int& node_height,
+                                         int width_view, bool do_draw, bool bold,
+                                         int color, int color_back, int byte_from, int byte_to )
 {
     assert( node->text != NULL );
 
@@ -1230,10 +1261,11 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
         int width_line = 0;
 
         // 右端がはみ出るまで文字を足していく
-
-        bool draw_head = true; // 最低1文字は描画
-        while( ( node_x + width_line < width_view - m_mrg_right // > ならwrap が起こったということ
-                 &&  pos_to < byte_to ) || draw_head ) {
+        bool draw_head = ! ( byte_from ); // 先頭は最低1文字描画
+        if( ! node_x ) draw_head = true;
+        while(  pos_to < byte_to 
+                && ( ! is_wrapped( node_x + width_line,  width_view - m_mrg_right, node->text + pos_to )
+                     || draw_head  ) ) {
 
             width_line += get_width_of_one_char( node->text + pos_to, byte_char, wide_mode, fontmode() );
             pos_to += byte_char;
@@ -1243,7 +1275,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
         }
 
         // pos_start から pos_to の前まで描画
-        if( do_draw ){
+        if( width_line && do_draw ){
 
 #ifdef USE_PANGOLAYOUT  // Pango::Layout を使って文字を描画
 
@@ -1305,7 +1337,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
         if( width_tmp > node_width ) node_width = width_tmp;
         
         // wrap 処理
-        if( node_x >= width_view - m_mrg_right ) {
+        if( pos_to < byte_to && is_wrapped( node_x, width_view - m_mrg_right, NULL ) ) {
 
             // 改行
             node_x = ( m_mrg_left + m_down_size * node->mrg_level );            
@@ -1929,7 +1961,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
                     pos += byte_char;
                     tmp_x += char_width;
 
-                    if( tmp_x >= width_view - m_mrg_right ){ // wrap
+                    if( *pos != '\0' && is_wrapped( tmp_x, width_view - m_mrg_right, pos ) ){ // wrap
 
                         // wrapが起きたときに右のマージンの上にポインタがある場合
                         if( ( tmp_y <= y && tmp_y + m_br_size >= y  ) && x >= tmp_x ){ 
@@ -2108,7 +2140,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                     pos += byte_char;
                     tmp_x += char_width;
 
-                    if( tmp_x >= width_view - m_mrg_right ){ // wrap
+                    if( *pos != '\0' && is_wrapped( tmp_x, width_view - m_mrg_right, pos ) ){ // wrap
 
                         // 改行
                         tmp_x = m_mrg_left + m_down_size * tmplayout->mrg_level;
