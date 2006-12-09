@@ -104,7 +104,10 @@ void View::reset_keyjump_counter()
 // 数字入力ジャンプ用に sig_key_press() から呼び出す
 void View::release_keyjump_key( int key )
 {
-    if( key >= '0' && key <= '9' ){
+    // キーパッド対応
+    if( key >= GDK_KP_0 && key <= GDK_KP_9 ) key = key - GDK_KP_0 + GDK_0;
+
+    if( key >= GDK_0 && key <= GDK_9 ){
         m_keyjump_counter = 1;
         m_keyjump_num *= 10;
         m_keyjump_num += key - '0';
