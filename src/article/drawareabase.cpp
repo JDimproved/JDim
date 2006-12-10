@@ -41,6 +41,8 @@ using namespace ARTICLE;
 
 #define SEPARATOR_HEIGHT 6 // 新着セパレータの高さ
 
+#define IS_ALPHABET( chr ) ( ( chr >= 'a' && chr <= 'z' ) || ( chr >= 'A' && chr <= 'Z' ) )
+
 
 //////////////////////////////////////////////////////////
 
@@ -903,13 +905,15 @@ bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
 //
 // 一文字の幅を取得
 //
-// wide_mode :  全角半角モード( 前の文字が全角ならtrue、半角ならfalse )
-// mode : フォントのモード( スレビューのフォントかポップアップのフォントか)
+// pre_char : 前の文字( 前の文字が全角なら = 0 )
+// wide_mode :  全角半角モード( アルファベット以外の文字ではモードにしたがって幅を変える )
+// mode : フォントのモード( スレビューのフォントかポップアップのフォントかなど)
 //
-int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, bool& wide_mode, const int mode )
+int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode )
 {
-    int width, width_wide;
-    ARTICLE::get_width_of_char( str, byte, width, width_wide, mode );
+    int width = 0;
+    int width_wide = 0;
+    ARTICLE::get_width_of_char( str, byte, pre_char, width, width_wide, mode );
 
     // キャッシュに無かったら幅を調べてキャッシュに登録
     if( ! width || ! width_wide ){
@@ -918,29 +922,52 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, bool& wide_
         memcpy( tmpchar, str, byte );
         tmpchar[ byte ] = '\0';
 
-        // 半角モードでの幅
-        // ダミーの半角文字を前に付けて幅を取得
-        const std::string dummy = "a";
-
-        m_pango_layout->set_text( dummy + dummy );
-        int width_dummy = m_pango_layout->get_logical_extents().get_width() / 2;
-
-        m_pango_layout->set_text( dummy + tmpchar );
-        width = m_pango_layout->get_logical_extents().get_width() - width_dummy;
+#ifdef _DEBUG
+        std::cout << "no cache [" << tmpchar << "] " << byte <<" byte ";
+        if( pre_char == 0 ) std::cout << " p =[0] ";
+        else if( pre_char > 0 ) std::cout << " p =[" << pre_char << "] ";
+#endif
 
         // 全角モードでの幅
-        m_pango_layout->set_text( tmpchar );
-        width_wide = m_pango_layout->get_logical_extents().get_width();
+        if( ! width_wide ){
+
+            std::string str_dummy = "ぁ";
+            m_pango_layout->set_text( str_dummy + str_dummy );
+            int width_dummy = m_pango_layout->get_logical_extents().get_width() / 2;
+
+            m_pango_layout->set_text( str_dummy + tmpchar  );
+            width_wide = m_pango_layout->get_logical_extents().get_width() - width_dummy;
+
+            if( byte != 1 ) width = width_wide;
+        }
+
+        // 半角モードでの幅
+        // 半角モードではひとつ前の文字によって幅が変わることに注意する
+        if( ! width ){
+
+                char char_dummy[ 8 ] = "a";
+                if( pre_char && IS_ALPHABET( pre_char ) ) char_dummy[ 0 ] = pre_char;
+
+                std::string str_dummy = std::string( char_dummy ) + char_dummy;
+                m_pango_layout->set_text( str_dummy );
+                int width_dummy = m_pango_layout->get_logical_extents().get_width() / 2;
+
+                std::string str_tmp = char_dummy + std::string( tmpchar );
+                m_pango_layout->set_text( str_tmp );
+                width = m_pango_layout->get_logical_extents().get_width() - width_dummy;
 
 #ifdef _DEBUG
-        if( width != width_wide ){
-            std::cout << "DrawAreaBase::get_width_of_one_char c = ["
-                      << tmpchar << "] w = " << PANGO_PIXELS( width ) << " wide = " << PANGO_PIXELS( width_wide )  << std::endl;
+                std::cout << " dummy = " << str_dummy << " dw = " << PANGO_PIXELS( width_dummy );
+                std::cout << " str = " << str_tmp << " dw = " << PANGO_PIXELS( m_pango_layout->get_logical_extents().get_width() );
+#endif
         }
+
+#ifdef _DEBUG
+        std::cout << " w = " << PANGO_PIXELS( width ) << " wide = " << PANGO_PIXELS( width_wide ) << std::endl;
 #endif
 
         // フォントが無い
-        if( width <=0 && width_wide <= 0 ){
+        if( width_wide <= 0 ){
 
             int byte_tmp;
             unsigned int code = MISC::utf8toucs2( tmpchar, byte_tmp );
@@ -961,28 +988,31 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, bool& wide_
             width = width_wide = 0;
         }
 
-        ARTICLE::set_width_of_char( str, byte, width, width_wide, mode );
+        ARTICLE::set_width_of_char( str, byte, pre_char, width, width_wide, mode );
     }
 
-    // 全角、アルファベット以外の文字は、前の文字が半角か全角かで幅を切り替える
-    // また全角半角モードの切り替えはしない
     int ret = 0;
-    char tmp_char = str[ 0 ];
-    if( ! (
-            ( tmp_char >= 'a' && tmp_char <= 'z' )
-            || ( tmp_char >= 'A' && tmp_char <= 'Z' ) )
-        ){
 
-        if( wide_mode ) ret = width_wide;
-        else ret = width;
-    }
-    else{
+    // 全角文字
+    if( byte != 1 ){ 
 
         ret = width_wide;
+        pre_char = 0;
+        wide_mode = true;
+    }
 
-        // 全角半角モード切り替え
-        if( byte != 1 || ( byte == 1 && tmp_char == ' ' ) ) wide_mode = true;
-        else wide_mode = false;
+    // 半角文字
+    else{ 
+
+        ret = width;
+        pre_char = str[ 0 ];
+
+        // アルファベットならモードを半角モードに変更
+        if( IS_ALPHABET( str[ 0 ] ) ) wide_mode = false;
+
+        // アルファベット以外の文字では現在の全角/半角モードに
+        // したがって幅を変える。モードは変更しない
+        else if( wide_mode ) ret = width_wide;
     }
 
     return ret;
@@ -1192,6 +1222,37 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
 }
 
 
+//
+// 文字列の全角/半角モードの初期値を決定する関数
+//
+bool DrawAreaBase::set_init_wide_mode( const char* str, const int pos_start, const int pos_to )
+{
+    bool wide_mode = true;
+    int i = pos_start;
+    while( i < pos_to ){
+
+        int byte_tmp;
+        MISC::utf8toucs2( str + i, byte_tmp );
+
+        // 文字列に全角が含まれていたら全角モードで開始
+        if( byte_tmp != 1 ) break;
+
+        // アルファベットが含まれていたら半角モードで開始
+        if( IS_ALPHABET( str[ i ] ) ){
+            wide_mode = false;
+            break;
+        }
+
+        // 数字など、全てアルファベットと全角文字以外の文字で出来ていたら
+        // 全角モードにする
+        i += byte_tmp;
+    }
+
+    return wide_mode;
+}
+
+
+
 
 //
 // 文字列を wrap するか判定する関数
@@ -1248,8 +1309,9 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
     node_width = 0;
     node_height = m_br_size;
 
-    bool wide_mode = true;
+    char pre_char = 0;
     int pos_start = byte_from;
+
     for(;;){
 
         // 横に何文字並べるか計算
@@ -1260,6 +1322,9 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
         int n_ustr = 0;
         int width_line = 0;
 
+        // この文字列の全角/半角モードの初期値を決定
+        bool wide_mode = set_init_wide_mode( node->text, pos_start, byte_to );
+
         // 右端がはみ出るまで文字を足していく
         bool draw_head = ! ( byte_from ); // 先頭は最低1文字描画
         if( ! node_x ) draw_head = true;
@@ -1267,7 +1332,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
                 && ( ! is_wrapped( node_x + PANGO_PIXELS( width_line ),  width_view - m_mrg_right, node->text + pos_to )
                      || draw_head  ) ) {
 
-            width_line += get_width_of_one_char( node->text + pos_to, byte_char, wide_mode, fontmode() );
+            width_line += get_width_of_one_char( node->text + pos_to, byte_char, pre_char, wide_mode, fontmode() );
             pos_to += byte_char;
             n_str += byte_char;
             ++n_ustr;
@@ -1317,9 +1382,9 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
             }
 
             // 実際のラインの長さと近似値を合わせる ( 応急処置 )
-            if( xx - node_x != width_line ){
+            if( abs( xx - node_x - width_line ) > 2 ){ 
                 std::stringstream ss_err;
-                ss_err << "estimating width failed : " << text << " e = " << width_line << " r = " << xx - node_x;
+                ss_err << text << " e = " << width_line << " r = " << xx - node_x;
                 MISC::ERRMSG( ss_err.str() );
                 width_line = xx - node_x;
             }
@@ -1943,11 +2008,15 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
                 }
 
                 // ノードの中のテキストを調べていく
-                bool wide_mode = true;
+                char pre_char = 0;
                 int width_line = 0;
+
+                // この文字列の全角/半角モードの初期値を決定
+                bool wide_mode = set_init_wide_mode( tmplayout->text, 0, tmplayout->lng_text );
+
                 while( *pos != '\0' ){
 
-                    int char_width = get_width_of_one_char( pos, byte_char, wide_mode, fontmode() );
+                    int char_width = get_width_of_one_char( pos, byte_char, pre_char, wide_mode, fontmode() );
                                     
                     // マウスポインタの下にノードがある場合
                     if( ( tmp_x + PANGO_PIXELS( width_line ) <= x && tmp_x + PANGO_PIXELS( width_line + char_width ) >= x )
@@ -2089,11 +2158,15 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 bool mode_ascii = ( *( ( unsigned char* )( pos ) ) < 128 );
 
                 // ノードの中のテキストを調べていく
-                bool wide_mode = true;
+                char pre_char = 0;
                 int width_line = 0;
+
+                // この文字列の全角/半角モードの初期値を決定
+                bool wide_mode = set_init_wide_mode( tmplayout->text, 0, tmplayout->lng_text );
+
                 while( *pos != '\0' ){
 
-                    int char_width = get_width_of_one_char( pos, byte_char, wide_mode, fontmode() );
+                    int char_width = get_width_of_one_char( pos, byte_char, pre_char, wide_mode, fontmode() );
 
                     // x,yの下に現在のノードがあったら左側の仮位置を確定する
                     if( ! pos_left

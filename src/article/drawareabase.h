@@ -243,9 +243,10 @@ namespace ARTICLE
         // 描画、レイアウト関係
         void layout_one_node( LAYOUT* node, int& x, int& y, int width_win, int& mrg_level ); 
         bool draw_backscreen( bool redraw_all = false ); // バックスクリーン描画
-        int get_width_of_one_char( const char* str, int& byte, bool& wide_mode, const int mode );
+        int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );
         void draw_one_node( LAYOUT* layout, const int& width_win, const int& pos_y );
         void draw_one_text_node( LAYOUT* layout, const int& width_win, const int& pos_y );
+        bool set_init_wide_mode( const char* str, const int pos_start, const int pos_to );
         bool is_wrapped( const int x, const int boarder, const char* str );
         void layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y, int& node_width, int& node_height,
                                    int width_view, bool do_draw, bool bold = false, 
