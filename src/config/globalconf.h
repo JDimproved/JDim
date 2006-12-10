@@ -181,6 +181,9 @@ namespace CONFIG
     // スレ表示でリンクの下に下線を引く
     const bool get_draw_underline();
 
+    // スレビューで文字幅の近似を厳密にする
+    const bool get_strict_char_width();
+
     // タブに表示する文字列の最小値
     const int get_tab_min_str();
 

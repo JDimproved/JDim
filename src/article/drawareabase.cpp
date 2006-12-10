@@ -909,6 +909,7 @@ bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
 // wide_mode :  全角半角モード( アルファベット以外の文字ではモードにしたがって幅を変える )
 // mode : フォントのモード( スレビューのフォントかポップアップのフォントかなど)
 //
+#include <iostream>
 int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode )
 {
     int width = 0;
@@ -928,22 +929,32 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_c
         else if( pre_char > 0 ) std::cout << " p =[" << pre_char << "] ";
 #endif
 
-        // 全角モードでの幅
-        if( ! width_wide ){
+        // 厳密な幅計算をしない場合
+        if( ! CONFIG::get_strict_char_width() ){
 
-            std::string str_dummy = "ぁ";
-            m_pango_layout->set_text( str_dummy + str_dummy );
-            int width_dummy = m_pango_layout->get_logical_extents().get_width() / 2;
-
-            m_pango_layout->set_text( str_dummy + tmpchar  );
-            width_wide = m_pango_layout->get_logical_extents().get_width() - width_dummy;
-
-            if( byte != 1 ) width = width_wide;
+            m_pango_layout->set_text( tmpchar );
+            width = width_wide = m_pango_layout->get_logical_extents().get_width();
         }
 
-        // 半角モードでの幅
-        // 半角モードではひとつ前の文字によって幅が変わることに注意する
-        if( ! width ){
+        // 厳密に幅計算する場合
+        else{
+
+            // 全角モードでの幅
+            if( ! width_wide ){
+
+                std::string str_dummy = "ぁ";
+                m_pango_layout->set_text( str_dummy + str_dummy );
+                int width_dummy = m_pango_layout->get_logical_extents().get_width() / 2;
+
+                m_pango_layout->set_text( str_dummy + tmpchar  );
+                width_wide = m_pango_layout->get_logical_extents().get_width() - width_dummy;
+
+                if( byte != 1 ) width = width_wide;
+            }
+
+            // 半角モードでの幅
+            // 半角モードではひとつ前の文字によって幅が変わることに注意する
+            if( ! width ){
 
                 char char_dummy[ 8 ] = "a";
                 if( pre_char && IS_ALPHABET( pre_char ) ) char_dummy[ 0 ] = pre_char;
@@ -960,6 +971,7 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_c
                 std::cout << " dummy = " << str_dummy << " dw = " << PANGO_PIXELS( width_dummy );
                 std::cout << " str = " << str_tmp << " dw = " << PANGO_PIXELS( m_pango_layout->get_logical_extents().get_width() );
 #endif
+            }
         }
 
 #ifdef _DEBUG
@@ -993,26 +1005,32 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_c
 
     int ret = 0;
 
-    // 全角文字
-    if( byte != 1 ){ 
+    // 厳密に計算しない場合
+    if( ! CONFIG::get_strict_char_width() ) ret = width_wide;
 
-        ret = width_wide;
-        pre_char = 0;
-        wide_mode = true;
-    }
+    else{
 
-    // 半角文字
-    else{ 
+        // 全角文字
+        if( byte != 1 ){ 
 
-        ret = width;
-        pre_char = str[ 0 ];
+            ret = width_wide;
+            pre_char = 0;
+            wide_mode = true;
+        }
 
-        // アルファベットならモードを半角モードに変更
-        if( IS_ALPHABET( str[ 0 ] ) ) wide_mode = false;
+        // 半角文字
+        else{ 
 
-        // アルファベット以外の文字では現在の全角/半角モードに
-        // したがって幅を変える。モードは変更しない
-        else if( wide_mode ) ret = width_wide;
+            ret = width;
+            pre_char = str[ 0 ];
+
+            // アルファベットならモードを半角モードに変更
+            if( IS_ALPHABET( str[ 0 ] ) ) wide_mode = false;
+
+            // アルファベット以外の文字では現在の全角/半角モードに
+            // したがって幅を変える。モードは変更しない
+            else if( wide_mode ) ret = width_wide;
+        }
     }
 
     return ret;
@@ -1227,6 +1245,8 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
 //
 bool DrawAreaBase::set_init_wide_mode( const char* str, const int pos_start, const int pos_to )
 {
+    if( ! CONFIG::get_strict_char_width() ) return false;
+
     bool wide_mode = true;
     int i = pos_start;
     while( i < pos_to ){

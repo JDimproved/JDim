@@ -86,6 +86,7 @@ double adjust_underline_pos;
 double adjust_line_space;
 
 bool draw_underline;
+bool strict_char_width;
 
 int tab_min_str;
 
@@ -278,6 +279,9 @@ const bool CONFIG::init_config()
     // リンク下線を表示
     draw_underline = cf.get_option( "draw_underline", true );
 
+    // スレビューで文字幅の近似を厳密にする
+    strict_char_width = cf.get_option( "strict_char_width", false );
+
     // タブに表示する文字列の最小値
     tab_min_str = cf.get_option( "tab_min_str", 4 );
 
@@ -418,6 +422,7 @@ void CONFIG::save_conf()
     cf.update( "adjust_line_space", adjust_line_space );
 
     cf.update( "draw_underline", draw_underline );
+    cf.update( "strict_char_width", strict_char_width );
 
     cf.update( "tab_min_str", tab_min_str );
 
@@ -567,6 +572,7 @@ const double CONFIG::get_adjust_underline_pos(){ return adjust_underline_pos; }
 const double CONFIG::get_adjust_line_space(){ return adjust_line_space; }
 
 const bool CONFIG::get_draw_underline(){ return draw_underline; }
+const bool CONFIG::get_strict_char_width(){ return strict_char_width; }
 
 const int CONFIG::get_tab_min_str(){ return tab_min_str; }
 
