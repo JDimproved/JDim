@@ -52,10 +52,10 @@ MessageViewBase::MessageViewBase( const std::string& url )
 
     m_iconv = new JDLIB::Iconv( "UTF-8", DBTREE::board_charset( get_url() ) );;
 
-    int max_str = m_max_str;
-    if( ! max_str ) max_str = MAX_STR_ICONV;
+    m_lng_iconv = m_max_str * 3;
+    if( ! m_lng_iconv ) m_lng_iconv = MAX_STR_ICONV;
 
-    m_str_iconv = ( char* ) malloc( max_str + 1024 );
+    m_str_iconv = ( char* ) malloc( m_lng_iconv + 1024 );
 }
 
 
@@ -529,9 +529,12 @@ void MessageViewBase::show_status()
     std::stringstream ss;
     int byte_out;
 
-    strcpy( m_str_iconv,  m_text_message.get_text().c_str() );
-    std::string str_enc = m_iconv->convert( m_str_iconv, strlen( m_str_iconv ), byte_out );
-    m_lng_str_enc = str_enc.length();
+    if( ( int ) m_text_message.get_text().size() > m_lng_iconv ) m_lng_str_enc = m_max_str;
+    else{
+        strcpy( m_str_iconv,  m_text_message.get_text().substr( 0, m_lng_iconv - 64 ).c_str() );
+        std::string str_enc = m_iconv->convert( m_str_iconv, strlen( m_str_iconv ), byte_out );
+        m_lng_str_enc = str_enc.length();
+    }
 
     ss << " [ 行数 " << m_text_message.get_buffer()->get_line_count();
     if( m_max_line ) ss << "/ " << m_max_line;

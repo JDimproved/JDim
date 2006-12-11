@@ -56,6 +56,7 @@ namespace MESSAGE
         int m_max_line;
         int m_max_str;
         int m_lng_str_enc;
+        int m_lng_iconv;
 
       protected:
         
