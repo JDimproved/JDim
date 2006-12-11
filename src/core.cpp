@@ -1944,6 +1944,16 @@ void Core::empty_page( const std::string& url )
             m_imagetab_shown = false;
         }
 
+        // 空でないadminを前に出す
+        if( SESSION::get_mode_pane() == MODE_2PANE ){
+
+            if( m_notebook.get_current_page() == 2 ){
+                if( ! ARTICLE::get_admin()->empty() ) switch_article();
+                else if( ! BOARD::get_admin()->empty() ) switch_board();
+            }
+        }
+        else if( ! ARTICLE::get_admin()->empty() ) switch_article();
+
         // フォーカス切り替え
         if( focused_admin == SESSION::FOCUS_NO ){
 
@@ -1961,7 +1971,11 @@ void Core::empty_page( const std::string& url )
 
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == MODE_2PANE ){
-            if( BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
+
+            if( m_notebook.get_current_page() == 1 ){
+                if( BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
+                else if( ! BOARD::get_admin()->empty() ) switch_board();
+            }
         }
         else if( ! IMAGE::get_admin()->empty() ) switch_image();
 
@@ -1982,8 +1996,10 @@ void Core::empty_page( const std::string& url )
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == MODE_2PANE ){
 
-            if( ! ARTICLE::get_admin()->empty() ) switch_article();
-            else if( ! IMAGE::get_admin()->empty() ) switch_image();
+            if( m_notebook.get_current_page() == 0 ){
+                if( ! ARTICLE::get_admin()->empty() ) switch_article();
+                else if( ! IMAGE::get_admin()->empty() ) switch_image();
+            }
         }
 
         // フォーカス切り替え
