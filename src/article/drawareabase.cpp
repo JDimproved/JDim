@@ -909,7 +909,6 @@ bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
 // wide_mode :  全角半角モード( アルファベット以外の文字ではモードにしたがって幅を変える )
 // mode : フォントのモード( スレビューのフォントかポップアップのフォントかなど)
 //
-#include <iostream>
 int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode )
 {
     int width = 0;

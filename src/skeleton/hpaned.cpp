@@ -102,7 +102,8 @@ bool JDHPaned::on_button_release_event( GdkEventButton* event )
     if( m_clicked && ! m_drag ) show_hide_leftpane();
 
     // ドラッグした場合
-    else{
+    else if( m_clicked && m_drag ){
+
         int pos = Gtk::HPaned::get_position();
 
         if( pos ){
