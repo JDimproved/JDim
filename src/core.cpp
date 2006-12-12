@@ -2028,10 +2028,10 @@ void Core::empty_page( const std::string& url )
 //
 void Core::switch_page( const std::string& url )
 {
-    if( url == URL_BBSLISTADMIN ) switch_bbslist();
-    else if( url == URL_BOARDADMIN ) switch_board();
-    else if( url == URL_ARTICLEADMIN ) switch_article();
-    else if( url == URL_IMAGEADMIN ) switch_image();
+    if( url == URL_BBSLISTADMIN && SESSION::focused_admin() == SESSION::FOCUS_BBSLIST ) switch_bbslist();
+    else if( url == URL_BOARDADMIN && SESSION::focused_admin() == SESSION::FOCUS_BOARD ) switch_board();
+    else if( url == URL_ARTICLEADMIN && SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_article();
+    else if( url == URL_IMAGEADMIN && SESSION::focused_admin() == SESSION::FOCUS_IMAGE ) switch_image();
 }
 
 
