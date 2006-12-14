@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #include "boardfactory.h"
 #include "board2ch.h"

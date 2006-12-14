@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #ifndef _JDREGEX_H
 #define _JDREGEX_H

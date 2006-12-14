@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #ifndef _EDITVIEW_H
 #define _EDITVIEW_H

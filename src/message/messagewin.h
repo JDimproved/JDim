@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #ifndef _MESSAGEWIN_H
 #define _MESSAGEWIN_H

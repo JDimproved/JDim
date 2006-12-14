@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #ifndef _JDDEBUG_H
 #define _JDDEBUG_H

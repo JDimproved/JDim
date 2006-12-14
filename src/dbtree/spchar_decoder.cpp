@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #include "spchar_decoder.h"
 #include "spchar_tbl.h"

@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #ifndef _IMAGE_PREFERENCES_H
 #define _IMAGE_PREFERENCES_H

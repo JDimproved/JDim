@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

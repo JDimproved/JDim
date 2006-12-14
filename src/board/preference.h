@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #ifndef _BOARD_PREFERENCES_H
 #define _BOARD_PREFERENCES_H

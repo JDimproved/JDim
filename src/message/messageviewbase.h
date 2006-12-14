@@ -1,4 +1,4 @@
-// ライセンス: 最新のGPL
+// ライセンス: GPL2
 
 #ifndef _MESSAGEVIEWBASE_H
 #define _MESSAGEVIEWBASE_H
