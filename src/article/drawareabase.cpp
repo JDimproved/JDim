@@ -1402,9 +1402,9 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
 
             // 実際のラインの長さと近似値を合わせる ( 応急処置 )
             if( abs( xx - node_x - width_line ) > 2 ){ 
-                std::stringstream ss_err;
-                ss_err << text << " e = " << width_line << " r = " << xx - node_x;
-                MISC::ERRMSG( ss_err.str() );
+//                std::stringstream ss_err;
+//                ss_err << text << " e = " << width_line << " r = " << xx - node_x;
+//                MISC::ERRMSG( ss_err.str() );
                 width_line = xx - node_x;
             }
 
