@@ -726,7 +726,7 @@ NODE* NodeTreeBase::append_dat( const std::string& dat )
 void NodeTreeBase::load_cache()
 {
     std::string path_cache = CACHE::path_dat( m_url );
-    if( CACHE::is_file_exists( path_cache ) == CACHE::EXIST_FILE ){
+    if( CACHE::file_exists( path_cache ) == CACHE::EXIST_FILE ){
 
 #ifdef _DEBUG
         std::cout << "NodeTreeBase::load_cache from " << path_cache << std::endl;
@@ -900,7 +900,7 @@ void NodeTreeBase::receive_finish()
     if( get_res_number() == 0 ){
 
         std::string path = CACHE::path_dat( m_url );
-        if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+        if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
         set_date_modified( std::string() );
     }
 

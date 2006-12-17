@@ -15,6 +15,7 @@ namespace CONFIG
     const bool init_config();
 
     void save_conf();
+    void save_conf_impl( const std::string& path );
     
     // 前回開いたviewを復元するか
     const bool get_restore_board();
@@ -62,10 +63,6 @@ namespace CONFIG
 
     // bbsmenu.htmlのURL
     const std::string& get_url_bbsmenu();    
-
-    // キャッシュのルートディレクトリ
-    // キャッシュ構造は navi2ch の上位互換なので path_cacheroot = "~/.navi2ch/" とすればnavi2chとキャッシュを共有できる
-    const std::string& get_path_cacheroot();
 
     // 2ch にアクセスするときのエージェント名
     const std::string& get_agent_for2ch();

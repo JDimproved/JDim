@@ -902,13 +902,13 @@ void ArticleBase::delete_cache()
     
     // キャッシュ
     std::string path_dat = CACHE::path_dat( m_url );
-    if( CACHE::is_file_exists( path_dat ) == CACHE::EXIST_FILE ) unlink( path_dat.c_str() );
+    if( CACHE::file_exists( path_dat ) == CACHE::EXIST_FILE ) unlink( path_dat.c_str() );
 
     // info
-    if( CACHE::is_file_exists( m_path_article_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_info.c_str() );
+    if( CACHE::file_exists( m_path_article_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_info.c_str() );
 
     // 拡張info
-    if( CACHE::is_file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_ext_info.c_str() );
+    if( CACHE::file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_ext_info.c_str() );
 
     // BoardViewの行を更新
     CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
@@ -968,7 +968,7 @@ void ArticleBase::read_info()
     std::cout << "ArticleBase::read_info :  url = " << m_url << std::endl;
 #endif
 
-    if( CACHE::is_file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ){
+    if( CACHE::file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ){
 
         std::string str_info, str_tmp;
         std::list< std::string > list_tmp;
@@ -1241,7 +1241,7 @@ void ArticleBase::save_navi2ch_info()
     std::string kako = "nil";
 
     // 保存してあるinfoから扱ってない情報をコピー
-    if( CACHE::is_file_exists( m_path_article_info ) == CACHE::EXIST_FILE ){
+    if( CACHE::file_exists( m_path_article_info ) == CACHE::EXIST_FILE ){
 
         std::string str_info;
         CACHE::load_rawdata( m_path_article_info, str_info );

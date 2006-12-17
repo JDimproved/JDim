@@ -16,6 +16,7 @@ namespace CACHE
 
     // 設定ファイル
     std::string path_conf();
+    std::string path_conf_old();  // 旧ファイル
 
     // セッション情報ファイル
     std::string path_session();
@@ -84,7 +85,7 @@ namespace CACHE
     //
     // ユーティリティ関数
 
-    // is_file_exists の戻り値
+    // file_exists の戻り値
     enum
     {
         EXIST_FILE = 0,  // ファイル
@@ -106,7 +107,7 @@ namespace CACHE
     bool save_rawdata( const std::string& path, const char* data, size_t n, bool append = false );
 
     // ファイル情報
-    long is_file_exists( const std::string& path );
+    long file_exists( const std::string& path );
     size_t get_filesize( const std::string& path );
     time_t get_filemtime( const std::string& path );
 

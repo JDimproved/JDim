@@ -637,7 +637,7 @@ void BoardBase::download_subject()
 
     // subject.txtのキャッシュが無かったら modified をリセット
     std::string path_subject = CACHE::path_board_root( url_boardbase() ) + m_subjecttxt;
-    if( CACHE::is_file_exists( path_subject ) != CACHE::EXIST_FILE ) set_date_modified( std::string() );
+    if( CACHE::file_exists( path_subject ) != CACHE::EXIST_FILE ) set_date_modified( std::string() );
 
     JDLIB::LOADERDATA data;    
     create_loaderdata( data );
@@ -746,7 +746,7 @@ void BoardBase::receive_finish()
         if( CACHE::mkdir_boardroot( url_boardbase() ) ){
 
             // 古いファイルをrename
-            if( CACHE::is_file_exists( path_subject ) == CACHE::EXIST_FILE ){
+            if( CACHE::file_exists( path_subject ) == CACHE::EXIST_FILE ){
                 if( rename( path_subject.c_str(), path_oldsubject.c_str() ) != 0 ){
                     MISC::ERRMSG( "rename failed " + path_subject );
                 }
@@ -1145,7 +1145,7 @@ void BoardBase::save_board_info()
     std::string logo = "nil";
 
     // board.info 読み込み
-    if( CACHE::is_file_exists( path_info ) == CACHE::EXIST_FILE ){
+    if( CACHE::file_exists( path_info ) == CACHE::EXIST_FILE ){
 
         std::string str_info;
         CACHE::load_rawdata( path_info, str_info );

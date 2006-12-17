@@ -468,13 +468,13 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
         MISC::MSG( ss.str() );
 
         // もしキャッシュが存在したら移動して移転テーブル更新
-        if( CACHE::is_file_exists( old_path ) == CACHE::EXIST_DIR ){
+        if( CACHE::file_exists( old_path ) == CACHE::EXIST_DIR ){
 
             // キャッシュがある場合はダイアログに表示
             m_move_info += ss.str();
 
             // 移動先に同名のファイルかフォルダ何かあったらリネームしてバックアップをとっておく
-            if( CACHE::is_file_exists( new_path ) != CACHE::EXIST_ERROR ){
+            if( CACHE::file_exists( new_path ) != CACHE::EXIST_ERROR ){
 
                 std::string path_tmp = new_path.substr( 0, new_path.length() - 1 ) + "_bk/";
                 if( rename( new_path.c_str(), path_tmp.c_str() ) == 0 ) MISC::MSG( "rename : " +  new_path + " -> " + path_tmp );

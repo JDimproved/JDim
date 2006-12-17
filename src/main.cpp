@@ -40,7 +40,7 @@ bool lock_jd()
 {
     std::string path = CACHE::path_lock();
 
-    if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) return false;
+    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) return false;
 
     std::ofstream ofs;
     ofs.open( path.c_str() );
@@ -62,7 +62,7 @@ void unlock_jd()
 {
     std::string path = CACHE::path_lock();
 
-    if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
 }
 
 
@@ -81,8 +81,8 @@ void restore_bkup()
     std::string path_main_old = path_main + "." + MISC::itostr( tv.tv_sec );
     std::string path_favor_old = path_favor + "." + MISC::itostr( tv.tv_sec );
 
-    bool bkup_main = ( CACHE::is_file_exists( path_main_bkup ) == CACHE::EXIST_FILE );
-    bool bkup_favor = ( CACHE::is_file_exists( path_favor_bkup ) == CACHE::EXIST_FILE );
+    bool bkup_main = ( CACHE::file_exists( path_main_bkup ) == CACHE::EXIST_FILE );
+    bool bkup_favor = ( CACHE::file_exists( path_favor_bkup ) == CACHE::EXIST_FILE );
 
     if( bkup_main || bkup_favor ){
 

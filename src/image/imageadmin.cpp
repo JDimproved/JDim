@@ -830,7 +830,7 @@ void ImageAdmin::save_all()
 #endif
 
                 // 既にファイルがある場合
-                if( CACHE::is_file_exists( path_to ) == CACHE::EXIST_FILE ){
+                if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
 
                     // すべて上書き
                     if( overwrite == 1 ) CACHE::jdcopy( path_from, path_to ); 

@@ -27,6 +27,13 @@
 // 設定ファイル
 std::string CACHE::path_conf()
 {
+    return CACHE::path_root() + "jd.conf";
+}
+
+
+// 旧設定ファイル
+std::string CACHE::path_conf_old()
+{
     std::string home = getenv( "HOME" );
 
     return home + "/.jdrc";
@@ -55,10 +62,13 @@ std::string CACHE::path_passwd( const std::string& basename )
 
 
 // キャッシュルートの絶対パス
+// キャッシュ構造は navi2ch の上位互換なので path_cacheroot = "~/.navi2ch/" とすればnavi2chとキャッシュを共有できる
 std::string CACHE::path_root()
 {
+    std::string root;
 
-    std::string root = MISC::remove_space( CONFIG::get_path_cacheroot() );
+    if( getenv( "JD_CACHE" ) ) root = getenv( "JD_CACHE" );
+    else root = "~/.jd/";
 
     if( root[ root.length() -1 ] != '/' ) root = root + "/";
 
@@ -426,7 +436,7 @@ bool CACHE::save_rawdata( const std::string& path, const char* data, size_t n, b
 }
 
 
-long CACHE::is_file_exists( const std::string& path )
+long CACHE::file_exists( const std::string& path )
 {
     struct stat buf_stat;
 
@@ -469,7 +479,7 @@ bool CACHE::jdmkdir( const std::string& path )
     std::cout << "CACHE::jdmkdir : path = " + path << std::endl;
 #endif    
 
-    if( CACHE::is_file_exists( path ) == EXIST_DIR ) return true;
+    if( CACHE::file_exists( path ) == EXIST_DIR ) return true;
 
     std::string target = path;
     
@@ -500,7 +510,7 @@ bool CACHE::jdmkdir( const std::string& path )
         std::cout << "mkdir " << currentdir << std::endl;
 #endif
         
-        if( CACHE::is_file_exists( currentdir ) == EXIST_DIR ) continue;
+        if( CACHE::file_exists( currentdir ) == EXIST_DIR ) continue;
 
         if( mkdir( currentdir.c_str(), 0755 ) != 0 ){
             MISC::ERRMSG( "mkdir failed " + currentdir );
@@ -586,7 +596,7 @@ std::string CACHE::open_save_diag( const std::string& file_from, const std::stri
 #endif
 
         // 既にファイルがある場合は問い合わせる
-        if( CACHE::is_file_exists( path_to ) == CACHE::EXIST_FILE ){
+        if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
 
             Gtk::MessageDialog mdiag( "ファイルが存在します。ファイル名を変更しますか？",
                                       false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
@@ -621,7 +631,7 @@ std::list< std::string > CACHE::get_filelist( const std::string& dir )
 
         std::string filename = dir + direntry->d_name;
 
-        if( is_file_exists( filename ) == EXIST_FILE ){
+        if( file_exists( filename ) == EXIST_FILE ){
 
 #ifdef _DEBUG
             std::cout << filename << std::endl;

@@ -157,11 +157,11 @@ void ImgRoot::delete_cache( const std::string& url, bool redraw )
 
     // キャッシュ削除
     std::string path = CACHE::path_img( url );
-    if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
 
     // info 削除
     path = CACHE::path_img_info( url );
-    if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
 
     // 再描画
     if( redraw ) CORE::core_set_command( "redraw_article" );

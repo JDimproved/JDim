@@ -266,7 +266,7 @@ void Img::receive_finish()
     // 読み込み失敗の場合はファイルを消しておく
     if( ! total_length() ){
         std::string path = CACHE::path_img( m_url );
-        if( CACHE::is_file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+        if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
     }
 
     // 読み込み失敗の場合でもエラーメッセージを残すので info　は保存する

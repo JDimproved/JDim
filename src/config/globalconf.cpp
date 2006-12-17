@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "globalconf.h"
@@ -33,7 +33,6 @@ int ref_prefix_space;
 
 std::string url_login2ch;
 std::string url_bbsmenu;
-std::string path_cacheroot;
 
 std::string agent_for2ch;
 
@@ -108,10 +107,19 @@ bool abone_chain;
 //
 const bool CONFIG::init_config()
 {
-    JDLIB::ConfLoader cf( CACHE::path_conf(), std::string() );
+    std::string path_conf = CACHE::path_conf();
+
+    // 新設定ファイルが無かったら旧ファイルから読み込む
+    if( CACHE::file_exists( path_conf ) != CACHE::EXIST_FILE ){
+
+        if( CACHE::file_exists( CACHE::path_conf_old() ) == CACHE::EXIST_FILE ) path_conf = CACHE::path_conf_old();
+    }
+
+    JDLIB::ConfLoader cf( path_conf, std::string() );
 
 #ifdef _DEBUG
-    std::cout << "CONFIG::init_config empty = " << cf.empty() << std::endl;
+    std::cout << "CONFIG::init_config" << std::endl
+              << "conffile = " << path_conf << " empty = " << cf.empty() << std::endl;
 #endif
 
     // 前回開いたviewを復元するか
@@ -133,10 +141,6 @@ const bool CONFIG::init_config()
     // JDLIB::ConfLoader の中で MISC::remove_space() が呼ばれて空白が消えるので別設定とした
     ref_prefix_space = cf.get_option( "ref_prefix_space", 1 );
     for( int i = 0; i < ref_prefix_space; ++i ) ref_prefix += " ";
-
-    // キャッシュのルートディレクトリ
-    // キャッシュ構造は navi2ch の上位互換なので path_cacheroot = "~/.navi2ch/" とすればnavi2chとキャッシュを共有できる
-    path_cacheroot = cf.get_option( "path_cacheroot", "~/.jd/" );
 
     // 読み込み用プロクシとポート番号
     use_proxy_for2ch = cf.get_option( "use_proxy_for2ch", 0 );
@@ -325,7 +329,17 @@ const bool CONFIG::init_config()
 // 
 void CONFIG::save_conf()
 {
-    JDLIB::ConfLoader cf( CACHE::path_conf(), std::string() );
+    save_conf_impl( CACHE::path_conf() );
+    if( CACHE::file_exists( CACHE::path_conf_old() ) == CACHE::EXIST_FILE ) save_conf_impl( CACHE::path_conf_old() );
+}
+
+void CONFIG::save_conf_impl( const std::string& path )
+{
+#ifdef _DEBUG
+    std::cout << "CONFIG::save_conf_impl path = " << path << std::endl;
+#endif
+
+    JDLIB::ConfLoader cf( path, std::string() );
 
     cf.update( "restore_board", restore_board );
     cf.update( "restore_article", restore_article );
@@ -341,8 +355,6 @@ void CONFIG::save_conf()
 
     cf.update( "ref_prefix", ref_prefix );
     cf.update( "ref_prefix_space", ref_prefix_space );
-
-    cf.update( "path_cacheroot", path_cacheroot );
 
     cf.update( "agent_for2ch", agent_for2ch );
 
@@ -491,7 +503,6 @@ const std::string&  CONFIG::get_ref_prefix(){ return ref_prefix; }
 
 const std::string& CONFIG::get_url_login2ch() { return url_login2ch; }
 const std::string& CONFIG::get_url_bbsmenu() { return url_bbsmenu; }
-const std::string& CONFIG::get_path_cacheroot() { return path_cacheroot; }
 
 const std::string& CONFIG::get_agent_for2ch() { return agent_for2ch; }
 
