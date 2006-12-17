@@ -33,6 +33,7 @@ int ref_prefix_space;
 
 std::string url_login2ch;
 std::string url_bbsmenu;
+std::string path_cacheroot;
 
 std::string agent_for2ch;
 
@@ -141,6 +142,9 @@ const bool CONFIG::init_config()
     // JDLIB::ConfLoader の中で MISC::remove_space() が呼ばれて空白が消えるので別設定とした
     ref_prefix_space = cf.get_option( "ref_prefix_space", 1 );
     for( int i = 0; i < ref_prefix_space; ++i ) ref_prefix += " ";
+
+    // キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
+    path_cacheroot = cf.get_option( "path_cacheroot", "~/.jd/" );
 
     // 読み込み用プロクシとポート番号
     use_proxy_for2ch = cf.get_option( "use_proxy_for2ch", 0 );
@@ -355,6 +359,8 @@ void CONFIG::save_conf_impl( const std::string& path )
 
     cf.update( "ref_prefix", ref_prefix );
     cf.update( "ref_prefix_space", ref_prefix_space );
+
+    cf.update( "path_cacheroot", path_cacheroot );
 
     cf.update( "agent_for2ch", agent_for2ch );
 
