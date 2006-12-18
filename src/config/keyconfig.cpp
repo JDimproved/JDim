@@ -83,6 +83,8 @@ void KeyConfig::load_conf()
     SETMOTION( "Home", "Home g <" );
     SETMOTION( "End", "End G >" );
 
+    SETMOTION( "Back", "BackSpace" );
+
     SETMOTION( "Quit", "Ctrl+w q" );
     SETMOTION( "Save", "Ctrl+s" );
     SETMOTION( "Delete", "Delete" );
@@ -170,6 +172,7 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
         else if( str_key == "Left_Tab" ) motion = GDK_ISO_Left_Tab;
         else if( str_key == "Home" ) motion = GDK_Home;
         else if( str_key == "End" ) motion = GDK_End;
+        else if( str_key == "BackSpace" ) motion = GDK_BackSpace;
 
         else if( str_key == "F1" ) motion = GDK_F1;
         else if( str_key == "F2" ) motion = GDK_F2;
