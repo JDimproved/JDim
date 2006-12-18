@@ -27,7 +27,7 @@ echo checking autoconf$AC_POSTFIX ...
 echo `autoconf$AC_POSTFIX --version | head -1` found
 
 unset AM_POSTFIX
-for num in `seq 10 -1 7`; do
+for num in 10 9 8 7 ; do
 if which automake-1.$num > /dev/null 2>&1 ; then
 	AM_POSTFIX=-1.$num
 	break
@@ -35,7 +35,7 @@ fi
 done
 
 if test -z "$AM_POSTFIX" ; then
-for num in `seq 19 -1 17` ; do
+for num in 19 18 17 ; do
 if which automake$num > /dev/null 2>&1 ; then
 	AM_POSTFIX=$num
 	break
