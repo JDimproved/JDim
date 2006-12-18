@@ -707,7 +707,7 @@ void ArticleViewBase::goto_bottom()
 void ArticleViewBase::goto_num( int num )
 {
     assert( m_drawarea );
-    m_drawarea->goto_num( num );
+    m_drawarea->goto_num_history( num );
 }
 
 

@@ -180,6 +180,8 @@ void DrawAreaBase::clear()
     m_caret_pos_pre = CARET_POSITION();
     m_caret_pos_current = CARET_POSITION();
     m_caret_pos_dragstart = CARET_POSITION();
+
+    m_jump_history.clear();
 }
 
 
@@ -1536,6 +1538,11 @@ bool DrawAreaBase::set_scroll( const int& control )
             case CONTROL::GotoNew:
                 goto_new();
                 break;
+
+                // ジャンプ元に戻る
+            case CONTROL::Back:
+                goto_back();
+                break;
         }
 
         if( dy ){
@@ -1761,7 +1768,7 @@ void DrawAreaBase::goto_num( int num )
     while( ! m_layout_tree->get_header_of_res( num ) && num-- > 1 );
 
 #ifdef _DEBUG
-    std::cout << "exec goto_num\n";
+    std::cout << "exec goto_num num = " << num << std::endl;
 #endif
 
     // スクロール実行
@@ -1772,12 +1779,31 @@ void DrawAreaBase::goto_num( int num )
 }
 
 
+
+//
+// 現在のスレ番号をジャンプ履歴に登録してから num 番にジャンプ
+// 
+//
+void DrawAreaBase::goto_num_history( int num )
+{
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::goto_num_history num = " << num << std::endl;
+#endif
+
+    m_jump_history.push_back( get_seen_current() );
+    goto_num( num );
+}
+
+
 //
 // 先頭、新着、最後に移動
 //
 void DrawAreaBase::goto_top()
 {
     if( m_vscrbar ){
+
+        m_jump_history.push_back( get_seen_current() );
+
         m_scrollinfo.reset();
         m_scrollinfo.mode = SCROLL_TO_TOP;
         exec_scroll( true );
@@ -1787,6 +1813,9 @@ void DrawAreaBase::goto_top()
 void DrawAreaBase::goto_new()
 {
     if( m_separator_new ){
+
+        m_jump_history.push_back( get_seen_current() );
+
         int num = m_separator_new > 1 ? m_separator_new -1 : 1;
         goto_num( num );
     }
@@ -1795,10 +1824,32 @@ void DrawAreaBase::goto_new()
 void DrawAreaBase::goto_bottom()
 {
     if( m_vscrbar ){
+
+        m_jump_history.push_back( get_seen_current() );
+
         m_scrollinfo.reset();
         m_scrollinfo.mode = SCROLL_TO_BOTTOM;
         exec_scroll( true );
     }
+}
+
+
+//
+// ジャンプした場所に戻る
+//
+void DrawAreaBase::goto_back()
+{
+    if( ! m_jump_history.size() ) return;
+
+    int num = *m_jump_history.rbegin();
+    m_jump_history.pop_back();
+
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::goto_back history = " << m_jump_history.size() << " num = " << num << std::endl;
+#endif
+
+    assert( m_drawarea );
+    goto_num( num );
 }
 
 
