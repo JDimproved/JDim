@@ -41,6 +41,8 @@ namespace CONTROL
         { "Home", "先頭へ移動" },
         { "End", "最後へ移動" },
 
+        { "Back", "戻る" },
+
         { "Quit", "閉じる" },
         { "Save", "保存" },
         { "Delete", "削除" },
