@@ -6,6 +6,7 @@ libskeleton_a_SOURCES = \
 	tooltip.cpp \
 	treeview.cpp \
 	view.cpp \
+	editview.cpp \
 	dragnote.cpp \
 	tablabel.cpp \
 	entry.cpp \

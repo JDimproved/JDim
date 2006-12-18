@@ -10,38 +10,62 @@ namespace SKELETON
     typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_PRESS;
     typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_RELEASE;
 
+    // undo 用のバッファ
+    struct UNDO_DATA
+    {
+        Glib::ustring str_diff;
+        unsigned int pos;
+        unsigned int pos_cursor;
+        bool append;
+    };
+
+
     // キーのプレスとリリースをフックする
     class EditTextView : public Gtk::TextView
     {
         SIG_KEY_PRESS m_sig_key_press;
         SIG_KEY_RELEASE m_sig_key_release;
 
+        // undo 用
+        std::vector< UNDO_DATA > m_undo_tree;
+        int m_undo_pos;
+        Glib::ustring m_pre_text;
+        bool m_cancel_change;
+        bool m_delete_pushed;
+
+        // カーソル移動用
+        int m_pre_offset;
+        int m_pre_line;
+        int m_line_offset;
+
       public:
 
         SIG_KEY_PRESS sig_key_press(){ return m_sig_key_press; }
         SIG_KEY_RELEASE sig_key_release(){ return m_sig_key_release; }
 
-        EditTextView(){}
+        EditTextView();
+
+
+        void cursor_up();
+        void cursor_down();        
+        void cursor_left();
+        void cursor_right();
+        void cursor_home();
+        void cursor_end();
+
+        void delete_char();
+
+        void undo();
 
       protected:
 
-        virtual bool on_key_press_event( GdkEventKey* event )
-        {
-            m_sig_key_press.emit( event );
+        virtual bool on_key_press_event( GdkEventKey* event );
+        virtual bool on_key_release_event( GdkEventKey* event );
 
-            if( event->state & GDK_MOD1_MASK && event->keyval == 'w' ) return true;
+        void slot_buffer_changed();
 
-            return Gtk::TextView::on_key_press_event( event );
-        }
-
-        virtual bool on_key_release_event( GdkEventKey* event )
-        {
-            m_sig_key_release.emit( event );
-
-            if(  event->state & GDK_MOD1_MASK && event->keyval == 'w' ) return true;
-
-            return Gtk::TextView::on_key_release_event( event );
-        }
+      private:
+        void cursor_up_down( bool up );
     };
 
 
