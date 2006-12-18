@@ -1781,17 +1781,12 @@ void DrawAreaBase::goto_num( int num )
 
 
 //
-// 現在のスレ番号をジャンプ履歴に登録してから num 番にジャンプ
+// 現在のスレ番号をジャンプ履歴に登録
 // 
 //
-void DrawAreaBase::goto_num_history( int num )
+void DrawAreaBase::set_jump_history()
 {
-#ifdef _DEBUG
-    std::cout << "DrawAreaBase::goto_num_history num = " << num << std::endl;
-#endif
-
     m_jump_history.push_back( get_seen_current() );
-    goto_num( num );
 }
 
 

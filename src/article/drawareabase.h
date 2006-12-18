@@ -195,8 +195,8 @@ namespace ARTICLE
         void wheelscroll( GdkEventScroll* event );
 
         // ジャンプ
+        void set_jump_history(); // ジャンプ履歴に現在のスレを登録
         void goto_num( int num );
-        void goto_num_history( int num ); // ジャンプ履歴に登録してからジャンプ
         void goto_new();
         void goto_top();
         void goto_bottom();

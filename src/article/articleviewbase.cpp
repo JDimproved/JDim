@@ -707,7 +707,8 @@ void ArticleViewBase::goto_bottom()
 void ArticleViewBase::goto_num( int num )
 {
     assert( m_drawarea );
-    m_drawarea->goto_num_history( num );
+    m_drawarea->set_jump_history();
+    m_drawarea->goto_num( num );
 }
 
 
@@ -2506,6 +2507,7 @@ void ArticleViewBase::slot_active_search()
     
     else{
         m_query = query;
+        m_drawarea->set_jump_history();
 
         if( m_drawarea->search( list_query, m_search_invert ) ) m_drawarea->search_move( m_search_invert );
     }
