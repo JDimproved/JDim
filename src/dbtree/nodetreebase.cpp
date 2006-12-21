@@ -1232,7 +1232,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 
         // 株などの<a href～>
         else if( str[ start_block ] == '<'
-                 && str[ start_block + 1 ] == 'a'
+                 && ( str[ start_block + 1 ] == 'a' || str[ start_block + 1 ] == 'A' )
                  && str[ start_block + 2 ] == ' ' ){
 
             // フラッシュ
@@ -1240,7 +1240,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 
             // </a>までブロックの長さを伸ばす
             while( start_block + lng_block < lng
-                   && ! ( str[ start_block + lng_block -1 ] == 'a'
+                   && ! ( ( str[ start_block + lng_block -1 ] == 'a' || str[ start_block + lng_block -1 ] == 'A' )
                           && str[ start_block + lng_block ] == '>' ) ) ++lng_block;
             ++lng_block;
 
@@ -1312,7 +1312,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 
             //  ahref == true かつ <a href=～></a>
             else if( ahref &&
-                *( pos + 1 ) == 'a' && *( pos + 2 ) == ' ' ){
+                     ( *( pos + 1 ) == 'a' || *( pos + 1 ) == 'A' ) && *( pos + 2 ) == ' ' ){
 
                 // フラッシュ
                 createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
@@ -1347,7 +1347,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
             }
 
             // </a>
-            else if( *( pos + 1 ) == '/' && *( pos + 2 ) == 'a' && *( pos + 3 ) == '>' ) pos += 4;
+            else if( *( pos + 1 ) == '/' && ( *( pos + 2 ) == 'a' || *( pos + 2 ) == 'A' ) && *( pos + 3 ) == '>' ) pos += 4;
 
             // その他のタグは無視。タグを取り除いて中身だけを見る
             else {
@@ -1577,7 +1577,7 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 
 
     // dat形式では "&gt;&gt;数字"のパターンの場合には後に</a>がついてるのでのぞく
-    if( *( pos ) == '<' && *( pos + 1 ) == '/' && *( pos + 2 ) == 'a' && *( pos + 3 ) == '>' ) pos += 4;
+    if( *( pos ) == '<' && *( pos + 1 ) == '/' && ( *( pos + 2 ) == 'a' || *( pos + 2 ) == 'A' ) && *( pos + 3 ) == '>' ) pos += 4;
 
 
     // "-" でつながってる場合同じことをもう一回
@@ -1609,7 +1609,7 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
     }
 
     //"&gt;&gt;数字-数字</a>"のパターンの時に</a>をのぞく
-    if( *( pos ) == '<' && *( pos + 1 ) == '/' && *( pos + 2 ) == 'a' && *( pos + 3 ) == '>' ) pos += 4;
+    if( *( pos ) == '<' && *( pos + 1 ) == '/' && ( *( pos + 2 ) == 'a' || *( pos + 2 ) == 'A' ) && *( pos + 3 ) == '>' ) pos += 4;
     
     n_in = ( int )( pos - str_in );
 
