@@ -21,9 +21,11 @@ namespace BOARD
         COL_SINCE,
         COL_WRITE,
         COL_SPEED,
+
+        COL_VISIBLE_END,
             
         // 以下は不可視
-        COL_MARK_VAL,
+        COL_MARK_VAL = COL_VISIBLE_END,
         COL_DRAWBG,
         COL_LOAD,
         COL_NEW,

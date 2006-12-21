@@ -56,13 +56,22 @@ using namespace BOARD;
 #define DEFAULT_COLMUN_WIDTH 50
 
 enum{
-    COL_MARKVAL_UPDATED = 0,   
-    COL_MARKVAL_CACHED, 
+    COL_MARKVAL_OLD = -2,
+    COL_MARKVAL_FINISHED = -1,
+    COL_MARKVAL_NORMAL = 0,
     COL_MARKVAL_NEWTHREAD,
-    COL_MARKVAL_NORMAL,
-    COL_MARKVAL_OLD
+    COL_MARKVAL_CACHED, 
+    COL_MARKVAL_UPDATED,
+    COL_MARKVAL_BKMARKED,
+    COL_MARKVAL_BKMARKED_UPDATED
 };
 
+
+// 昇順で上か下か
+enum{
+    COL_A_UP = -1,
+    COL_B_UP = 1,
+};
 
 
 // set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ) を指定して append_columnする
@@ -76,7 +85,11 @@ m_treeview.append_column( *col ); \
 
 BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
-      m_treeview( CONFIG::get_fontname_tree_board(), CONFIG::get_color_back_tree_board() )
+      m_treeview( CONFIG::get_fontname_tree_board(), CONFIG::get_color_back_tree_board() ),
+      m_col( COL_NUM_COL ),
+      m_previous_col( COL_NUM_COL ),
+      m_ascend( false ),
+      m_previous_ascend( false )
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
@@ -130,7 +143,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_treeview.set_column_for_height( 2 );
 
     // サイズを調整しつつソートの設定
-    for( guint i = 0; i < COL_MARK_VAL; i++ ){
+    for( guint i = 0; i < COL_VISIBLE_END; i++ ){
         
         Gtk::TreeView::Column* column = m_treeview.get_column( i );
 
@@ -181,10 +194,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
         column->set_resizable( true );
         column->set_clickable( true );        
 
-        // ヘッダをクリックしたときに呼ぶslotの設定
-        if( i == COL_MARK ) column->signal_clicked().connect( sigc::mem_fun(*this, &BoardView::slot_mark_clicked ) );        
-        else if( i == COL_ID ) column->signal_clicked().connect( sigc::mem_fun(*this, &BoardView::slot_id_clicked ) );
-        else column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_col_clicked ), i ) );
+        // ヘッダをクリックしたときに呼ぶslot
+        column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_col_clicked ), i ) );
 
         // subjectの背景色設定
         if( i == COL_SUBJECT ){
@@ -197,14 +208,14 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     }
 
     // ソート関数セット
-    m_liststore->set_sort_func( COL_MARK_VAL, sigc::mem_fun( *this, &BoardView::slot_compare_mark_val ) );    
+    m_liststore->set_sort_func( COL_MARK, sigc::mem_fun( *this, &BoardView::slot_compare_mark ) );    
     m_liststore->set_sort_func( COL_ID, sigc::mem_fun( *this, &BoardView::slot_compare_num_id ) );
     m_liststore->set_sort_func( COL_SUBJECT, sigc::mem_fun( *this, &BoardView::slot_compare_subject ) );
     m_liststore->set_sort_func( COL_RES, sigc::mem_fun( *this, &BoardView::slot_compare_num_res ) );
-    m_liststore->set_sort_func( COL_LOAD, sigc::mem_fun( *this, &BoardView::slot_compare_num_load ) );
-    m_liststore->set_sort_func( COL_NEW, sigc::mem_fun( *this, &BoardView::slot_compare_new ) );
-    m_liststore->set_sort_func( COL_SINCE_T, sigc::mem_fun( *this, &BoardView::slot_compare_since_t ) );
-    m_liststore->set_sort_func( COL_WRITE_T, sigc::mem_fun( *this, &BoardView::slot_compare_write_t) );
+    m_liststore->set_sort_func( COL_STR_LOAD, sigc::mem_fun( *this, &BoardView::slot_compare_num_load ) );
+    m_liststore->set_sort_func( COL_STR_NEW, sigc::mem_fun( *this, &BoardView::slot_compare_new ) );
+    m_liststore->set_sort_func( COL_SINCE, sigc::mem_fun( *this, &BoardView::slot_compare_since ) );
+    m_liststore->set_sort_func( COL_WRITE, sigc::mem_fun( *this, &BoardView::slot_compare_write) );
     m_liststore->set_sort_func( COL_SPEED, sigc::mem_fun( *this, &BoardView::slot_compare_speed ) );
     
     m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BoardView::slot_button_press ) );
@@ -223,6 +234,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // ポップアップメニューの設定
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
+    action_group()->add( Gtk::Action::create( "BookMark", "ブックマーク設定/解除"), sigc::mem_fun( *this, &BoardView::slot_bookmark ) );
     action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く"), sigc::mem_fun( *this, &BoardView::slot_open_tab ) );
     action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加"), sigc::mem_fun( *this, &BoardView::slot_favorite_thread ) );
     action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに登録"), sigc::mem_fun( *this, &BoardView::slot_favorite_board ) );
@@ -247,6 +259,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
     // 通常
     "<popup name='popup_menu'>"
+    "<menuitem action='BookMark'/>"
+    "<separator/>"
     "<menuitem action='OpenTab'/>"
     "<menuitem action='OpenBrowser'/>"
     "<separator/>"
@@ -347,7 +361,7 @@ void BoardView::save_column_width()
     std::cout << "save_column_width " << get_url() << std::endl;
 #endif    
 
-    for( guint i = 0; i < COL_MARK_VAL; i++ ){
+    for( guint i = 0; i < COL_VISIBLE_END; i++ ){
         
         Gtk::TreeView::Column* column = m_treeview.get_column( i );
 
@@ -399,55 +413,62 @@ void BoardView::save_column_width()
 
 
 //
-// ヘッダをクリックしたときのslots
+// ヘッダをクリックしたときのslot関数
 //
-
-// mark をクリック
-void BoardView::slot_mark_clicked()
-{
-    // 前回と違う列をソートした後にクリックしたら ASCENDING
-    if( m_previous_col != COL_MARK_VAL ){
-        m_previous_col = COL_MARK_VAL;
-        m_ascend = false;
-    }
-
-    slot_col_clicked( COL_MARK_VAL );
-}
-
-// id をクリック
-void BoardView::slot_id_clicked()
-{
-    // 前回違う列をソートした後にクリックしたら ASCENDING
-    if( m_previous_col != COL_ID ){
-        m_previous_col = COL_ID;
-        m_ascend = false;
-    }
-
-    slot_col_clicked( COL_ID );
-}
-
-// その他のヘッダをクリック
 void BoardView::slot_col_clicked( int col )
 {
-    if( col == COL_STR_LOAD ) col = COL_LOAD;
-    else if( col == COL_STR_NEW ) col = COL_NEW;
-    else if( col == COL_SINCE ) col = COL_SINCE_T;
-    else if( col == COL_WRITE ) col = COL_WRITE_T;
-    
-    DBTREE::board_set_view_sort_column( get_url(), col );
+#ifdef _DEBUG
+    std::cout << "BoardView::slot_col_clicked col = " << col << std::endl;
+#endif
 
-    if( m_previous_col == col && !m_ascend ){
+    if( col <= 0 || col >= COL_VISIBLE_END ) col = COL_MARK;
+
+    bool col_changed = false;
+
+    if( m_col != col ){
+
+        col_changed = true;
+
+        m_previous_col = m_col;
+        m_previous_ascend = m_ascend;
+
+        m_col = col;
         m_ascend = true;
-        m_liststore->set_sort_column( col, Gtk::SORT_ASCENDING );
-        DBTREE::board_set_view_sort_ascend( get_url(), true );
+    }
+
+    if( m_col == COL_MARK ){}
+
+    else if( m_col == COL_ID ){
+        if( col_changed ) m_ascend = false;
+    }
+
+    else if( m_col == COL_SUBJECT ){
+        if( col_changed ) m_ascend = false;
+    }
+
+    else if( m_col == COL_RES ){}
+    else if( m_col == COL_STR_LOAD ){}
+    else if( m_col == COL_STR_NEW ){}
+    else if( m_col == COL_SINCE ){}
+    else if( m_col == COL_WRITE ){}
+    else if( m_col == COL_SPEED ){}
+
+    // ソート開始
+    if( ! m_ascend ){
+        m_ascend = true;
+        m_liststore->set_sort_column( m_col, Gtk::SORT_ASCENDING );
+
     }
     else{
         m_ascend = false;
-        m_liststore->set_sort_column( col, Gtk::SORT_DESCENDING );
-        DBTREE::board_set_view_sort_ascend( get_url(), false );
+        m_liststore->set_sort_column( m_col, Gtk::SORT_DESCENDING );
     }
 
-    m_previous_col = col;
+    DBTREE::board_set_view_sort_column( get_url(), m_col );
+    DBTREE::board_set_view_sort_ascend( get_url(), m_ascend );
+
+    DBTREE::board_set_view_sort_pre_column( get_url(), m_previous_col );
+    DBTREE::board_set_view_sort_pre_ascend( get_url(), m_previous_ascend );
 
     // ソートするとフォーカスが外れるので再フォーカス
     CORE::core_set_command( "switch_board" );
@@ -455,169 +476,99 @@ void BoardView::slot_col_clicked( int col )
 
 
 //
-// mark 列のソート関数
-//
-int BoardView::slot_compare_mark_val( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    Gtk::TreeModel::Row row_a = *( a );
-    Gtk::TreeModel::Row row_b = *( b );
-
-    int num_a = row_a[ m_columns.m_col_mark_val ];
-    int num_b = row_b[ m_columns.m_col_mark_val ];
-
-    // 抽出状態優先
-    int ret = compare_drawbg( row_a, row_b );
-    if( ret ) return ret;
-
-    // 両方ともマーク有り
-    if( num_a < COL_MARKVAL_NORMAL && num_b < COL_MARKVAL_NORMAL ){
-
-        if( num_a > num_b ) return 1;
-        else if( num_a < num_b )return -1;
-
-        // 同じマークならIDで決める
-        return compare_id( row_a, row_b );
-    }
-
-    //　マークが付いている方を優先
-    if( num_a < COL_MARKVAL_NORMAL ) return ( m_ascend ? -1 : 1 );
-    if( num_b < COL_MARKVAL_NORMAL ) return ( m_ascend ? 1 : -1 );
-
-    // どちらもマークが付いていないならIDの小さい方を優先
-    return compare_id( row_a, row_b );
-}
-
-
-// name 列のソート関数
-int BoardView::slot_compare_subject( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    Gtk::TreeModel::Row row_a = *( a ); 
-    Gtk::TreeModel::Row row_b = *( b ); 
-
-    Glib::ustring name_a = row_a[ m_columns.m_col_subject ]; 
-    Glib::ustring name_b = row_b[ m_columns.m_col_subject ]; 
-
-    // 抽出状態優先
-    int ret = compare_drawbg( row_a, row_b );
-    if( ret ) return ret;
-
-    if( name_a > name_b ) return 1;
-    else if( name_a < name_b )return -1;
-
-    // 同じ値ならIDで決める
-    return compare_id( row_a, row_b );
-}
-
-
-#define SLOT_COMPARE_ROW( target ) do{ \
-Gtk::TreeModel::Row row_a = *( a ); \
-Gtk::TreeModel::Row row_b = *( b ); \
-int num_a = row_a[ target ]; \
-int num_b = row_b[ target ]; \
-return compare_row( num_a, num_b, row_a, row_b ); \
-}while(0)
-
-// ID 列のソート関数
-int BoardView::slot_compare_num_id( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{ SLOT_COMPARE_ROW( m_columns.m_col_id ); }
-
-// res 列のソート関数
-int BoardView::slot_compare_num_res( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{ SLOT_COMPARE_ROW( m_columns.m_col_res ); }
-
-// load 列のソート関数
-int BoardView::slot_compare_num_load( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{ SLOT_COMPARE_ROW( m_columns.m_col_load ); }
-
-// new 列のソート関数
-int BoardView::slot_compare_new( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{ SLOT_COMPARE_ROW( m_columns.m_col_new ); }
-
-// since 列のソート関数
-int BoardView::slot_compare_since_t( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{ SLOT_COMPARE_ROW( m_columns.m_col_since_t ); }
-
-// write 列のソート関数
-int BoardView::slot_compare_write_t( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{ SLOT_COMPARE_ROW( m_columns.m_col_write_t ); }
-
-#undef COMPARE_ROW
-
-// speed 列のソート関数
-int BoardView::slot_compare_speed( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    Gtk::TreeModel::Row row_a = *( a ); 
-    Gtk::TreeModel::Row row_b = *( b ); 
-    int num_a = row_a[ m_columns.m_col_speed ]; 
-    int num_b = row_b[ m_columns.m_col_speed ]; 
-
-    // 抽出状態優先
-    int ret = compare_drawbg( row_a, row_b );
-    if( ret ) return ret;
-
-    if( num_a > num_b ) return 1;
-    else if( num_a < num_b )return -1;
-
-    // 同じ値ならIDで決める
-    return compare_id( row_a, row_b );
-}
-
-
-
-//
 // 抽出状態で比較
 //
-// 抽出状態にあるものを上にする。同じなら0
+// row_a が上か　row_b　が上かを返す。同じ状態なら 0
 //
 int BoardView::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
 {
     bool draw_a = row_a[ m_columns.m_col_drawbg ];
     bool draw_b = row_b[ m_columns.m_col_drawbg ];
-    if( draw_a && !draw_b ) return ( m_ascend ? -1 : 1 );
-    if( draw_b && !draw_a ) return ( m_ascend ? 1 : -1 );
+
+    if( draw_a && ! draw_b ) return COL_A_UP;
+    else if( draw_b && ! draw_a ) return COL_B_UP;
+
     return 0;
 }
 
 
-
 //
-// markで比較
+// 列の値によるソート
 //
-// マークが付いているか、値の小さい方を上にする
+// row_a が上か　row_b　が上かを返す。同じなら 0
 //
-int BoardView::compare_mark( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
+int BoardView::compare_col( int col, bool ascend, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
 {
-    int num_a = row_a[ m_columns.m_col_mark_val ];
-    int num_b = row_b[ m_columns.m_col_mark_val ];
+    int num_a = 0, num_b = 0;
 
-    if( num_a < COL_MARKVAL_NORMAL && num_b < COL_MARKVAL_NORMAL ){
+    switch( col ){
 
-        if( num_a > num_b ) return ( m_ascend ? 1 : -1 );
-        else if( num_a < num_b ) return ( m_ascend ? -1 : 1 );
+        case COL_ID:
+            num_a = row_a[ m_columns.m_col_id ];
+            num_b = row_b[ m_columns.m_col_id ];
+            break;
 
-        // 同じマークならIDで決める
-        return compare_id( row_a, row_b );
+        case COL_MARK:
+            num_a = row_a[ m_columns.m_col_mark_val ];
+            num_b = row_b[ m_columns.m_col_mark_val ];
+            break;
+
+        case COL_SUBJECT:
+        {
+            // 文字列の大小を数字に変換
+            Glib::ustring name_a = row_a[ m_columns.m_col_subject ]; 
+            Glib::ustring name_b = row_b[ m_columns.m_col_subject ]; 
+            if( name_a < name_b ) { num_a = 1; num_b = 2; }
+            else if( name_a > name_b ) { num_a = 2; num_b = 1; }
+            break;
+        }
+
+        case COL_RES:
+            num_a = row_a[ m_columns.m_col_res ];
+            num_b = row_b[ m_columns.m_col_res ];
+            break;
+
+        case COL_STR_LOAD:
+            num_a = row_a[ m_columns.m_col_load ];
+            num_b = row_b[ m_columns.m_col_load ];
+            break;
+
+        case COL_STR_NEW:
+            num_a = row_a[ m_columns.m_col_new ];
+            num_b = row_b[ m_columns.m_col_new ];
+            break;
+
+        case COL_SINCE:
+            num_a = row_a[ m_columns.m_col_since_t ];
+            num_b = row_b[ m_columns.m_col_since_t ];
+            break;
+
+        case COL_WRITE:
+            num_a = row_a[ m_columns.m_col_write_t ];
+            num_b = row_b[ m_columns.m_col_write_t ];
+            break;
+
+        case COL_SPEED:
+            num_a = row_a[ m_columns.m_col_speed ];
+            num_b = row_b[ m_columns.m_col_speed ];
+            break;
     }
 
-    //　マークが付いている方を優先
-    if( num_a < COL_MARKVAL_NORMAL ) return ( m_ascend ? -1 : 1 );
-    if( num_b < COL_MARKVAL_NORMAL ) return ( m_ascend ? 1 : -1 );
+    // 両方とも 0 より大きいか 0 より小さい場合は普通に比較
+    if( ( num_a > 0 && num_b > 0 ) || ( num_a < 0 && num_b < 0 ) ){
 
-    return 0;
-}
+        if( num_a < num_b ) return COL_A_UP * ( ascend ? 1 : -1 );
+        else if( num_a > num_b ) return COL_B_UP * ( ascend ? 1 : -1 );
+    }
 
+    // 0より大きい方を優先
+    else if( num_a > 0 && num_b <= 0 ) return COL_A_UP;
+    else if( num_b > 0 && num_a <= 0 ) return COL_B_UP;
 
-//
-// IDで比較
-//
-// IDの小さい方を上にする。両方同じなら 0
-//
-int BoardView::compare_id( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
-{
-    int num_a = row_a[ m_columns.m_col_id ];
-    int num_b = row_b[ m_columns.m_col_id ];
-    if( num_a > num_b ) return ( m_ascend ? 1 : -1 );
-    else if( num_a < num_b ) return ( m_ascend ? -1 : 1 );
+    // 0を優先
+    else if( num_a == 0 && num_b < 0 ) return COL_A_UP;
+    else if( num_b == 0 && num_a < 0 ) return COL_B_UP;
+
     return 0;
 }
 
@@ -625,34 +576,85 @@ int BoardView::compare_id( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_
 //
 // ソート関数の本体
 //
-int BoardView::compare_row( int& num_a, int& num_b, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
+int BoardView::compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
 {
-    // 抽出状態優先
-    int ret = compare_drawbg( row_a, row_b );
-    if( ret ) return ret;
+    Gtk::TreeModel::Row row_a = *( a );
+    Gtk::TreeModel::Row row_b = *( b );
 
-    // 両方とも 0 より大きい
-    if( num_a > 0 && num_b > 0 ){
+    int ret = compare_drawbg( row_a, row_b ); // 抽出状態を最優先
+    if( ! ret ) ret = compare_col( m_col, m_ascend, row_a, row_b );
+    if( ! ret ) ret = compare_col( m_previous_col, m_previous_ascend, row_a, row_b ); // マルチキーソート
+    if( ! ret ) ret = compare_col( COL_MARK, true, row_a, row_b );
+    if( ! ret ) ret = compare_col( COL_ID, true, row_a, row_b );
 
-        // 普通にcompare
-        if( num_a > num_b ) return 1;
-        else if( num_a < num_b )return -1;
-
-        // 同じ値ならIDで決める
-        return compare_id( row_a, row_b );
-    }
-
-    // 0より大きい方を優先
-    if( num_a > 0 ) return ( m_ascend ? -1 : 1 );
-    if( num_b > 0 ) return ( m_ascend ? 1 : -1 );
-
-    // マークの付いている方を優先
-    ret = compare_mark( row_a, row_b );
-    if( ret ) return ret;
-
-    // 両方0以下ならIDで決める
-    return compare_id( row_a, row_b );
+    // 降順の場合は結果をひっくり返す
+    return ret * ( m_ascend ? 1 : -1 );
 }
+
+//
+// mark 列のソート関数
+//
+int BoardView::slot_compare_mark( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+{
+    return compare_row( a, b );
+}
+
+
+// ID 列のソート関数
+int BoardView::slot_compare_num_id( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+{
+    return compare_row( a, b );
+}
+
+
+// subject 列のソート関数
+int BoardView::slot_compare_subject( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+{
+    return compare_row( a, b );
+}
+
+
+// res 列のソート関数
+int BoardView::slot_compare_num_res( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+{
+    return compare_row( a, b );
+}
+
+
+// load 列のソート関数
+int BoardView::slot_compare_num_load( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+{
+   return compare_row( a, b );
+}
+
+
+// new 列のソート関数
+int BoardView::slot_compare_new( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+{
+   return compare_row( a, b );
+}
+
+
+// since 列のソート関数
+int BoardView::slot_compare_since( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+{
+    return compare_row( a, b );
+}
+
+
+// write 列のソート関数
+int BoardView::slot_compare_write( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+{
+    return compare_row( a, b );
+}
+
+
+// speed 列のソート関数
+int BoardView::slot_compare_speed( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+{
+    return compare_row( a, b );
+}
+
 
 
 //
@@ -743,16 +745,13 @@ void BoardView::redraw_view()
     m_search_invert = false;
 
     // ソート状態回復
-    int col = DBTREE::board_view_sort_column( get_url() );
-    m_previous_col = col;
-    m_ascend = DBTREE::board_view_sort_ascend( get_url() );
-    if( col <= 0 ){
-        m_previous_col = COL_NUM_COL;
-        m_ascend = false;
-        slot_mark_clicked();
-    }
-    else if( m_ascend ) m_liststore->set_sort_column( col, Gtk::SORT_ASCENDING );
-    else m_liststore->set_sort_column( col, Gtk::SORT_DESCENDING );
+    m_col = DBTREE::board_view_sort_column( get_url() );
+    m_ascend = ! DBTREE::board_view_sort_ascend( get_url() ); // slot_col_clicked で反転するので not を付ける
+
+    m_previous_col = DBTREE::board_view_sort_pre_column( get_url() );
+    m_previous_ascend = DBTREE::board_view_sort_pre_ascend( get_url() );
+
+    slot_col_clicked( m_col );
 
     goto_top();
 }
@@ -1231,12 +1230,32 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
     //
     // マーク
 
-    // dat落ち
     int mark_val;
-    if( art->get_status() & STATUS_OLD ){
+
+    // ブックマーク & 新着あり
+    if( art->is_bookmarked_thread() && art->enable_load() ){
+        mark_val = COL_MARKVAL_BKMARKED_UPDATED;
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::BKMARK_UPDATE );
+    }
+
+    // ブックマーク
+    else if( art->is_bookmarked_thread() ){
+        mark_val = COL_MARKVAL_BKMARKED;
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::BKMARK );
+    }
+
+    // dat落ち
+    else if( art->get_status() & STATUS_OLD ){
         mark_val = COL_MARKVAL_OLD;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::DOWN );
     }
+
+    // キャッシュはあるが規定のレス数を越えていて全てのレスが既読
+    else if( art->is_finished() ){
+        mark_val = COL_MARKVAL_FINISHED;
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::CHECK );
+    }
+
     // 新着あり
     else if( art->enable_load() ){
         mark_val = COL_MARKVAL_UPDATED;
@@ -1484,6 +1503,16 @@ void BoardView::slot_drag_end()
 
 
 
+//
+// ブックマーク設定、解除
+//
+void BoardView::slot_bookmark()
+{
+    if( m_path_selected.empty() ) return;
+    std::string url = path2daturl( m_path_selected );
+    DBTREE::ArticleBase* art = DBTREE::get_article( url );
+    if( art ) art->set_bookmarked_thread( ! art->is_bookmarked_thread() );
+}
 
 
 //

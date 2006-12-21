@@ -31,8 +31,10 @@ namespace BOARD
         bool m_dblclick;
 
         // ソートで使う変数
+        int m_col;
         int m_previous_col;
         bool m_ascend;
+        bool m_previous_ascend;
 
         // サーチで使う変数
         bool m_search_invert;
@@ -84,23 +86,20 @@ namespace BOARD
         void save_column_width();
 
         // ソート用
-        void slot_mark_clicked();        
-        void slot_id_clicked();
         void slot_col_clicked( int col );
-        int slot_compare_mark_val( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );        
+        int slot_compare_mark( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );        
         int slot_compare_num_id( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
         int slot_compare_subject( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
         int slot_compare_num_res( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
         int slot_compare_num_load( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
         int slot_compare_new( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
-        int slot_compare_since_t( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
-        int slot_compare_write_t( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
+        int slot_compare_since( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
+        int slot_compare_write( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
         int slot_compare_speed( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );        
 
         int compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        int compare_mark( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        int compare_id( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        int compare_row( int& num_a, int& num_b, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
+        int compare_col( int col, bool ascend, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
+        int compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
 
         // UI
         bool slot_button_press( GdkEventButton* event );
@@ -109,6 +108,7 @@ namespace BOARD
         bool slot_key_press( GdkEventKey* event );
         bool slot_key_release( GdkEventKey* event );
         bool slot_scroll_event( GdkEventScroll* event );
+        void slot_bookmark();
         void slot_open_tab();
         void slot_favorite_thread();
         void slot_favorite_board();
