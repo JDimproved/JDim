@@ -18,6 +18,8 @@ namespace ICON
         JD32,
         JD48,
 
+        BKMARK_UPDATE,
+        BKMARK,
         UPDATE,
         NEWTHREAD,
         CHECK,
