@@ -214,6 +214,7 @@ void ArticleViewBase::setup_action()
 
     // あぼーん系
     action_group()->add( Gtk::Action::create( "AboneWord_Menu", "NG ワード" ) );
+    action_group()->add( Gtk::Action::create( "AboneRes", "レスをあぼ〜んする"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_res ) );
     action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
     action_group()->add( Gtk::Action::create( "AboneName", "NG 名前に追加 (ローカルあぼ〜ん)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
     action_group()->add( Gtk::Action::create( "GlobalAboneName", "NG 名前に追加 (全体あぼ〜ん)" ) );
@@ -269,6 +270,8 @@ void ArticleViewBase::setup_action()
     // レス番号をクリックしたときのメニュー
     "<popup name='popup_menu_res'>"
     "<menuitem action='BookMark'/>"
+    "<separator/>"
+    "<menuitem action='AboneRes'/>"
     "<separator/>"
     "<menuitem action='DrawoutRefer'/>"
     "<menuitem action='DrawoutAround'/>"
@@ -2345,6 +2348,22 @@ void ArticleViewBase::slot_drawout_url()
     CORE::core_set_command( "open_article_url" ,m_url_article );
 }
 
+
+
+//
+// レス番号であぼ〜ん
+//
+// 呼び出す前に m_str_num に対象のレス番号を入れておくこと
+//
+void ArticleViewBase::slot_abone_res()
+{
+    int number = atoi( m_str_num.c_str() );
+
+    DBTREE::set_abone_res( m_url_article, number, true );
+
+    // 再レイアウト
+    ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
+}
 
 
 //

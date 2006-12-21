@@ -91,6 +91,7 @@ Preferences::Preferences( const std::string& url )
 
     m_notebook.append_page( m_vbox_info, "一般" );
     m_notebook.append_page( m_edit_id, "NG ID" );
+    m_notebook.append_page( m_edit_res, "NG レス番号" );
     m_notebook.append_page( m_edit_name, "NG 名前" );
     m_notebook.append_page( m_edit_word, "NG ワード" );
     m_notebook.append_page( m_edit_regex, "NG 正規表現" );
@@ -115,7 +116,8 @@ void Preferences::slot_ok_clicked()
     std::list< std::string > list_name = MISC::get_lines( m_edit_name.get_text() );
     std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text() );
     std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
-    DBTREE::reset_abone( get_url(), list_id, list_name, list_word, list_regex
+    std::vector< char > vec_abone_res;
+    DBTREE::reset_abone( get_url(), list_id, list_name, list_word, list_regex, vec_abone_res
                          , m_check_transpabone.get_active(), m_check_chainabone.get_active() );
 
     // viewの再レイアウト

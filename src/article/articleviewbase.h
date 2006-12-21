@@ -212,6 +212,7 @@ namespace ARTICLE
         virtual void slot_drawout_bm();
         virtual void slot_drawout_refer();
         virtual void slot_drawout_url();
+        void slot_abone_res();
         void slot_abone_id();
         void slot_abone_name();
         void slot_abone_word();
