@@ -14,10 +14,16 @@
 
 using namespace DBTREE;
 
+// 規定の最大レス数
+#define DEFAULT_NUMBER_MAX_MACHI 1000
+
 ArticleMachi::ArticleMachi( const std::string& datbase, const std::string& _id, bool cached )
     : ArticleBase( datbase, _id, cached )
 {
     assert( !id().empty() );
+
+    // 規定の最大レス数セット
+    set_number_max( DEFAULT_NUMBER_MAX_MACHI );
 
     // Machi の場合は拡張子が無いので key = id
     set_key( get_id() );

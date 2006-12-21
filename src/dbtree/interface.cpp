@@ -295,6 +295,29 @@ void DBTREE::board_set_view_sort_ascend( const std::string& url, bool ascend )
 }
 
 
+const int DBTREE::board_view_sort_pre_column( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_view_sort_pre_column();
+}
+
+
+void DBTREE::board_set_view_sort_pre_column( const std::string& url, int column )
+{
+    DBTREE::get_board( url )->set_view_sort_pre_column( column );
+}
+
+
+const bool DBTREE::board_view_sort_pre_ascend( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_view_sort_pre_ascend();
+}
+
+
+void DBTREE::board_set_view_sort_pre_ascend( const std::string& url, bool ascend )
+{
+    DBTREE::get_board( url )->set_view_sort_pre_ascend( ascend );
+}
+
 const bool DBTREE::board_check_noname( const std::string& url )
 {
     return DBTREE::get_board( url )->get_check_noname();
@@ -637,9 +660,16 @@ std::list< std::string > DBTREE::get_abone_list_regex( const std::string& url )
 
 void DBTREE::reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names
                           , std::list< std::string >& words, std::list< std::string >& regexs
+                          , std::vector< char >& vec_abone_res
                           , bool transparent, bool chain)
 {
-    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs, transparent, chain );
+    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs, vec_abone_res, transparent, chain );
+}
+
+
+void DBTREE::set_abone_res( const std::string& url, const int number, const bool set )
+{
+    DBTREE::get_article( url )->set_abone_res( number, set );
 }
 
 

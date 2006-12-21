@@ -56,6 +56,7 @@ namespace DBTREE
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
         std::list< std::string > m_list_abone_word_global; // あぼーんする文字列(全体)
         std::list< std::string > m_list_abone_regex_global; // あぼーんする正規表現(全体)
+        std::vector< char > m_vec_abone_res; // レスあぼーん情報
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
 
@@ -169,6 +170,7 @@ namespace DBTREE
         // あぼーん情報を親クラスのarticlebaseからコピーする
         void copy_abone_info( std::list< std::string >& list_abone_id, std::list< std::string >& list_abone_name,
                               std::list< std::string >& list_abone_word, std::list< std::string >& list_abone_regex,
+                              std::vector< char >& vec_abone_res,
                               bool& abone_transparent, bool& abone_chain );
 
         // 全レスのあぼーん状態の更新
@@ -233,6 +235,7 @@ namespace DBTREE
         void update_abone( int from_number, int to_number );
 
         // あぼーんチェック
+        bool check_abone_res( int number );
         bool check_abone_id( int number );
         bool check_abone_name( int number );
         bool check_abone_word( int number );

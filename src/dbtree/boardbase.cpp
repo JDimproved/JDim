@@ -79,19 +79,6 @@ bool BoardBase::empty()
 }
 
 
-void BoardBase::set_view_sort_column( int column )
-{
-    m_view_sort_column = column;
-}
-
-
-void BoardBase::set_view_sort_ascend( bool ascend )
-{
-    m_view_sort_ascend = ascend;
-}
-
-
-
 void BoardBase::set_check_noname( bool check )
 {
     m_check_noname = check;
@@ -1010,6 +997,9 @@ void BoardBase::read_board_info()
 
     m_view_sort_column = cf.get_option( "view_sort_column", -1 );
     m_view_sort_ascend = cf.get_option( "view_sort_ascend", false );
+    m_view_sort_pre_column = cf.get_option( "view_sort_pre_column", -1 );
+    m_view_sort_pre_ascend = cf.get_option( "view_sort_pre_ascend", false );
+
     m_check_noname = cf.get_option( "check_noname", false );
 
     // スレ あぼーん
@@ -1066,6 +1056,8 @@ void BoardBase::save_jdboard_info()
     sstr << "modified = " << date_modified() << std::endl
          << "view_sort_column = " << m_view_sort_column << std::endl
          << "view_sort_ascend = " << m_view_sort_ascend << std::endl
+         << "view_sort_pre_column = " << m_view_sort_pre_column << std::endl
+         << "view_sort_pre_ascend = " << m_view_sort_pre_ascend << std::endl
          << "check_noname = " << m_check_noname << std::endl
          << "abonethread = " << str_abone << std::endl
          << "abonewordthread = " << str_abone_word << std::endl

@@ -1780,6 +1780,7 @@ void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id,
                                     std::list< std::string >& list_abone_name,
                                     std::list< std::string >& list_abone_word,
                                     std::list< std::string >& list_abone_regex,
+                                    std::vector< char >& vec_abone_res,
                                     bool& abone_transparent, bool& abone_chain )
 {
     m_list_abone_id = list_abone_id;
@@ -1790,6 +1791,8 @@ void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id,
     m_list_abone_regex = MISC::replace_str_list( list_abone_regex, "\\n", "\n" );
     m_list_abone_word_global = MISC::replace_str_list( CONFIG::get_list_abone_word(), "\\n", "\n" );
     m_list_abone_regex_global = MISC::replace_str_list( CONFIG::get_list_abone_regex(), "\\n", "\n" );
+
+    m_vec_abone_res = vec_abone_res;
 
     if( CONFIG::get_abone_transparent() ) m_abone_transparent = true;
     else m_abone_transparent = abone_transparent;
@@ -1829,6 +1832,7 @@ void NodeTreeBase::update_abone( int from_number, int to_number )
     if( to_number < from_number ) return;
 
     for( int i = from_number ; i <= to_number; ++i ){
+        if( check_abone_res( i ) )  continue;
         if( check_abone_id( i ) )  continue;
         if( check_abone_name( i ) ) continue;
         if( check_abone_word( i ) ) continue;
@@ -1836,6 +1840,28 @@ void NodeTreeBase::update_abone( int from_number, int to_number )
     }
 }
 
+
+
+//
+// number番のあぼーん判定(レスあぼーん)
+//
+// あぼーんの時はtrueを返す
+//
+bool NodeTreeBase::check_abone_res( int number )
+{
+    if( ! m_vec_abone_res.size() ) return false;
+    if( ! m_vec_abone_res[ number ] ) return false;
+
+    NODE* head = res_header( number );
+    if( ! head ) return false;
+    if( ! head->headinfo ) return false;
+    if( head->headinfo->abone ) return true;
+    if( ! head->headinfo->node_id_name ) return false;
+
+    head->headinfo->abone = true;
+
+    return false;
+}
 
 
 //

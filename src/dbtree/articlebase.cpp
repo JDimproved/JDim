@@ -45,7 +45,6 @@ if( it2 != lines.end() ){ \
 
 ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, bool cached )
     : SKELETON::Lockable(),
-      m_heap( MAX_RESNUMBER ),
       m_id ( id ),
       m_key( std::string() ),
       m_since_time( 0 ),
@@ -58,10 +57,12 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_number_load( 0 ),
       m_number_before_load( 0 ),
       m_number_seen( 0 ),
+      m_number_max( MAX_RESNUMBER ),
       m_write_fixname( 0 ),
       m_write_fixmail( 0 ),
       m_abone_transparent( 0 ),
       m_abone_chain( 0 ),
+      m_bookmarked_thread( false ),
       m_cached( cached ),
       m_read_info( 0 ),
       m_save_info( 0 ),
@@ -410,6 +411,32 @@ void ArticleBase::update_writetime()
 
 
 //
+// スレ自体のスレ一覧でのブックマーク
+//
+void ArticleBase::set_bookmarked_thread( bool bookmarked )
+{
+    m_bookmarked_thread = bookmarked;
+    save_info( true );
+
+    // BoardViewの行を更新
+    CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
+}
+
+
+//
+// キャッシュはあるが規定のレス数を越えていて、かつ全てのレスが既読
+//
+const bool ArticleBase::is_finished()
+{
+#ifdef _DEBUG
+    if( get_number_seen() >= get_number_max() ) std::cout << is_cached() << " " << !enable_load() << " " << get_number_seen() << " " << get_subject() << std::endl;
+#endif
+
+    return ( is_cached() && ! enable_load() && get_number_seen() >= get_number_max() );
+}
+
+
+//
 // 透明あぼーん
 //
 const bool ArticleBase::get_abone_transparent()
@@ -453,7 +480,7 @@ void ArticleBase::update_abone()
     // nodetreeが作られていないときは更新しない
     if( ! m_nodetree ) return;
 
-    get_nodetree()->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex,
+    get_nodetree()->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_vec_abone_res,
                                      m_abone_transparent, m_abone_chain );
 
     get_nodetree()->update_abone_all();
@@ -466,6 +493,7 @@ void ArticleBase::update_abone()
 //
 void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names
                                ,std::list< std::string >& words, std::list< std::string >& regexs
+                               ,std::vector< char >& vec_abone_res
                                ,bool transparent, bool chain )
 {
     if( empty() ) return;
@@ -487,6 +515,16 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
 
     m_list_abone_regex = MISC::remove_space_from_list( regexs );
     m_list_abone_regex = MISC::remove_nullline_from_list( m_list_abone_regex );
+
+    if( vec_abone_res.size() ){
+
+        if( ! m_vec_abone_res.size() ) m_vec_abone_res.resize( MAX_RESNUMBER );
+
+        for( int i = 1; i <= MIN( m_number_load, (int)vec_abone_res.size() ) ; ++i ){
+            if( vec_abone_res[ i ] ) m_vec_abone_res[ i ] = true;
+            else m_vec_abone_res[ i ] = false;
+        }
+    }
     
     m_abone_transparent = transparent;
     m_abone_chain = chain;
@@ -562,6 +600,29 @@ void ArticleBase::add_abone_word( const std::string& word )
 
 
 //
+// レスあぼーんのセット
+//
+void ArticleBase::set_abone_res( const int number, const bool set )
+{
+    if( empty() ) return;
+    if( number <= 0 || number > MAX_RESNUMBER ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleBase::set_abone_res num = " << number << " set = " << set << std::endl;
+#endif    
+
+    if( ! m_vec_abone_res.size() ) m_vec_abone_res.resize( MAX_RESNUMBER );
+
+    m_vec_abone_res[ number ] = set;
+
+    update_abone();
+
+    m_save_info = true;
+}
+
+
+
+//
 // 透明あぼーん更新
 //
 void ArticleBase::set_abone_transparent( bool set )
@@ -597,7 +658,7 @@ void ArticleBase::set_abone_chain( bool set )
 //
 int ArticleBase::get_num_bookmark()
 {
-    if( !m_bookmark ) return 0;
+    if( ! m_vec_bookmark.size() ) return 0;
 
     int ret = 0;
     for( int i = 1; i < MAX_RESNUMBER; ++i ) if( is_bookmarked( i ) ) ++ret;
@@ -613,10 +674,11 @@ bool ArticleBase::is_bookmarked( int number )
     if( number <= 0 || number > m_number_load ) return false;
 
     // まだnodetreeが作られてなくてブックマークの情報が得られてないのでnodetreeを作って情報取得
-    if( !m_bookmark ) get_nodetree();
-    assert( m_bookmark );
+    if( ! m_vec_bookmark.size() ) get_nodetree();
 
-    return ( m_bookmark[ number ] );
+    if( ! m_vec_bookmark.size() ) return false;
+
+    return ( m_vec_bookmark[ number ] );
 }
 
 
@@ -625,11 +687,13 @@ bool ArticleBase::is_bookmarked( int number )
 //
 void ArticleBase::set_bookmark( int number, bool set )
 {
-    if( ! m_bookmark ) get_nodetree();
+    if( ! m_vec_bookmark.size() ) get_nodetree();
     if( number <= 0 || number > MAX_RESNUMBER ) return;
 
+    if( ! m_vec_bookmark.size() ) m_vec_bookmark.resize( MAX_RESNUMBER );
+
     m_save_info = true;
-    m_bookmark[ number ] = set;
+    m_vec_bookmark[ number ] = set;
 }
 
 
@@ -656,10 +720,8 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
         assert( m_nodetree );
 
         // あぼーん情報のコピー
-        m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex,
+        m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_vec_abone_res,
                                      m_abone_transparent, m_abone_chain );
-
-        if( ! m_bookmark ) m_bookmark = ( char* ) m_heap.heap_alloc( MAX_RESNUMBER );
 
         m_nodetree->sig_updated().connect( sigc::mem_fun( *this, &ArticleBase::slot_node_updated ) );
         m_nodetree->sig_finished().connect( sigc::mem_fun( *this, &ArticleBase::slot_load_finished ) );
@@ -887,12 +949,12 @@ void ArticleBase::delete_cache()
     m_write_fixname = false;
     m_write_fixmail = false;
 
-    m_heap.clear();
-    m_bookmark.reset();
+    m_vec_bookmark.clear();
     m_list_abone_id.clear();
     m_list_abone_name.clear();
     m_list_abone_word.clear();
     m_list_abone_regex.clear();
+    m_vec_abone_res.clear();
     m_abone_transparent = false;
     m_abone_chain = false;
     m_cached = false;
@@ -1055,16 +1117,19 @@ void ArticleBase::read_info()
         GET_INFOVALUE( str_tmp, "abonename = " );
         if( ! str_tmp.empty() ) m_list_abone_name = MISC::strtolist( str_tmp );
 
-        // ブックマーク
+        // レスブックマーク
         GET_INFOVALUE( str_tmp, "bookmark = " );
         if( ! str_tmp.empty() ){
 
-            // ブックマーク領域作成
-            if( ! m_bookmark ) m_bookmark = ( char* ) m_heap.heap_alloc( MAX_RESNUMBER );
+            if( ! m_vec_bookmark.size() ) m_vec_bookmark.resize( MAX_RESNUMBER );
 
             list_tmp = MISC::split_line( str_tmp );
             it_tmp = list_tmp.begin();
-            for( ; it_tmp != list_tmp.end(); ++it_tmp ) if( !(*it_tmp).empty() ) m_bookmark[ atoi( (*it_tmp).c_str() ) ] = true;
+            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+                int number = atoi( (*it_tmp).c_str() );
+                if( !(*it_tmp).empty() ) m_vec_bookmark[ number ] = true;
+                else m_vec_bookmark[ number ] = false;
+            }
         }
 
         // あぼーん word
@@ -1084,6 +1149,27 @@ void ArticleBase::read_info()
         m_abone_chain = false;
         GET_INFOVALUE( str_tmp, "abonechain = " );
         if( ! str_tmp.empty() ) m_abone_chain = atoi( str_tmp.c_str() );
+
+        // レス番号あぼーん
+        m_abone_chain = false;
+        GET_INFOVALUE( str_tmp, "aboneres = " );
+        if( ! str_tmp.empty() ){
+
+            if( ! m_vec_abone_res.size() ) m_vec_abone_res.resize( MAX_RESNUMBER );
+
+            list_tmp = MISC::split_line( str_tmp );
+            it_tmp = list_tmp.begin();
+            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+                int number = atoi( (*it_tmp).c_str() );
+                if( !(*it_tmp).empty() ) m_vec_abone_res[ number ] = true;
+                else m_vec_abone_res[ number ] = false;
+            }
+        }
+
+        // スレ一覧でブックマークされているか
+        m_bookmarked_thread = false;
+        GET_INFOVALUE( str_tmp, "bkmark_thread = " );
+        if( ! str_tmp.empty() ) m_bookmarked_thread = atoi( str_tmp.c_str() );
     }
 
     // キャッシュはあるけど情報ファイルが無い場合
@@ -1131,7 +1217,8 @@ void ArticleBase::read_info()
               << "writefixname = " << m_write_fixname << std::endl
               << "writefixmail = " << m_write_fixmail << std::endl
               << "status = " << m_status << std::endl
-              << "transparent_abone = " << m_abone_transparent << std::endl;
+              << "transparent_abone = " << m_abone_transparent << std::endl
+              << "bookmarked_thread = " << m_bookmarked_thread << std::endl
     ;
 
     std::cout << "abone-id\n"; std::list < std::string >::iterator it = m_list_abone_id.begin();
@@ -1143,10 +1230,15 @@ void ArticleBase::read_info()
     std::cout << "abone-regex\n"; it = m_list_abone_regex.begin();
     for( ; it != m_list_abone_regex.end(); ++it ) std::cout << (*it) << std::endl;
 
+    if( m_vec_abone_res.size() ){
+        std::cout << "abone-res =";
+        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_abone_res[ i ] ) std::cout << " " << i;
+        std::cout << std::endl;
+    }
 
-    if( m_bookmark ){
+    if( m_vec_bookmark.size() ){
         std::cout << "bookmark =";
-        for( int i = 1; i <= m_number_load; ++i ) if( m_bookmark[ i ] ) std::cout << " " << i;
+        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_bookmark[ i ] ) std::cout << " " << i;
         std::cout << std::endl;
     }
 #endif
@@ -1181,10 +1273,16 @@ void ArticleBase::save_info( bool force )
     std::string str_abone_word = MISC::listtostr( m_list_abone_word );
     std::string str_abone_regex = MISC::listtostr( m_list_abone_regex );
 
-    // スレのブックマーク
+    // レスあぼーん
+    std::ostringstream ss_abone_res;
+    if( m_vec_abone_res.size() ){
+        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_abone_res[ i ] ) ss_abone_res << " " << i;
+    }
+
+    // レスのブックマーク
     std::ostringstream ss_bookmark;
-    if( m_bookmark ){
-        for( int i = 1; i <= m_number_load; ++i ) if( m_bookmark[ i ] ) ss_bookmark << " " << i;
+    if( m_vec_bookmark.size() ){
+        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_bookmark[ i ] ) ss_bookmark << " " << i;
     }
 
     std::ostringstream sstr;
@@ -1207,6 +1305,8 @@ void ArticleBase::save_info( bool force )
          << "aboneregex = " << str_abone_regex << std::endl
          << "abonetrp = " << m_abone_transparent << std::endl
          << "abonechain = " << m_abone_chain << std::endl
+         << "aboneres = " << ss_abone_res.str() << std::endl
+         << "bkmark_thread = " << m_bookmarked_thread << std::endl
     ;
 
 #ifdef _DEBUG

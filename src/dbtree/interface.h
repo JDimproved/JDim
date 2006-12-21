@@ -9,6 +9,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 
 namespace DBTREE
 {
@@ -80,6 +81,10 @@ namespace DBTREE
     void board_set_view_sort_column( const std::string& url, int column );
     const bool board_view_sort_ascend( const std::string& url );
     void board_set_view_sort_ascend( const std::string& url, bool ascend );
+    const int board_view_sort_pre_column( const std::string& url );
+    void board_set_view_sort_pre_column( const std::string& url, int column );
+    const bool board_view_sort_pre_ascend( const std::string& url );
+    void board_set_view_sort_pre_ascend( const std::string& url, bool ascend );
     const bool board_check_noname( const std::string& url );
     void board_set_check_noname( const std::string& url, bool check );
 
@@ -200,9 +205,11 @@ namespace DBTREE
     // 全あぼーん情報の同時セットと更新
     void reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names,
                       std::list< std::string >& words, std::list< std::string >& regexs,
+                      std::vector< char >& vec_abone_res,
                       bool transparent, bool chain);
 
     // 個別のあぼーん情報のセットと更新
+    void set_abone_res( const std::string& url, const int number, const bool set );
     void add_abone_id( const std::string& url, const std::string& id );
     void add_abone_name( const std::string& url, const std::string& name );
     void add_abone_word( const std::string& url, const std::string& word );

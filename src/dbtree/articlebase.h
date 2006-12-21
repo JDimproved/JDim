@@ -12,11 +12,11 @@
 #include <string>
 #include <sys/time.h>
 #include <list>
+#include <vector>
 
 #include "skeleton/lockable.h"
 
 #include "jdlib/constptr.h"
-#include "jdlib/heap.h"
 
 namespace DBTREE
 {
@@ -25,8 +25,6 @@ namespace DBTREE
 
     class ArticleBase : public SKELETON::Lockable
     {
-        JDLIB::HEAP m_heap;
-
         // 情報ファイルのパス
         // デストラクタの中でCACHE::path_article_ext_info()を呼ぶとabortするので
         // ArticleBase::read_info()が呼ばれたときにパスを取得しておく
@@ -57,6 +55,7 @@ namespace DBTREE
         int m_number_load;           // キャッシュにあるレスの数
         int m_number_before_load;    // ロード前のレスの数( m_number_new を計算するのに使う )
         int m_number_seen;           // どこまで読んだか
+        int m_number_max;            // 規定の最大レス数
         struct timeval m_access_time;  // ユーザが最後にロードした時間
         struct timeval m_write_time;   // 最終書き込み時間
         std::string m_write_time_date; // 書き込み月日( string型 )
@@ -70,11 +69,15 @@ namespace DBTREE
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
+        std::vector< char > m_vec_abone_res; // レスあぼーん情報
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
 
-        // ブックマーク
-        JDLIB::ConstPtr< char > m_bookmark; // ブックマーク判定キャッシュ
+        // 「スレ」がスレ一覧でブックマークされているか
+        bool m_bookmarked_thread;          
+
+        // 「レス」のブックマーク
+        std::vector< char > m_vec_bookmark; // ブックマーク判定キャッシュ
 
         // HDDにキャッシュされているか
         bool m_cached;
@@ -92,6 +95,7 @@ namespace DBTREE
         void set_key( const std::string& key ){ m_key = key; }
         void set_since_time( time_t since ){ m_since_time = since; }
         void set_since_date( std::string since ){ m_since_date = since; }
+        void set_number_max( int number ){ m_number_max = number; }
         
       public:
 
@@ -119,6 +123,7 @@ namespace DBTREE
         const int get_number_new() const { return m_number_new; }
         const int get_number_load() const { return m_number_load; }
         const int get_number_seen() const{  return m_number_seen; }
+        const int get_number_max() const { return m_number_max; }
 
         // スレ速度
         const int get_speed();
@@ -249,6 +254,9 @@ namespace DBTREE
         // キャッシュがあって、かつ新着の読み込みが可能
         const bool enable_load() const { return m_enable_load; }
 
+        // キャッシュはあるが規定のレス数を越えていて、かつ全てのレスが既読
+        const bool is_finished();
+
         // あぼーん情報
         std::list< std::string > get_abone_list_id(){ return m_list_abone_id; }
         std::list< std::string > get_abone_list_name(){ return m_list_abone_name; }
@@ -269,16 +277,22 @@ namespace DBTREE
         // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
         void reset_abone( std::list< std::string >& ids, std::list< std::string >& names
                           ,std::list< std::string >& words, std::list< std::string >& regexs
+                          ,std::vector< char >& vec_abone_res
                           ,bool transparent, bool chain );
 
         // あぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう)
         void add_abone_id( const std::string& id );
         void add_abone_name( const std::string& name );
         void add_abone_word( const std::string& word );
+        void set_abone_res( const int number, const bool set );
         void set_abone_transparent( bool set ); // 透明
         void set_abone_chain( bool set ); // 連鎖
 
-        // レスのブックマーク
+        // 「スレ」のブックマーク
+        void set_bookmarked_thread( bool bookmarked );
+        const int is_bookmarked_thread() const { return m_bookmarked_thread; }
+
+        // 「レス」のブックマーク
         int get_num_bookmark();
         bool is_bookmarked( int number );
         void set_bookmark( int number, bool set );
