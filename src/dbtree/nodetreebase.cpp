@@ -1294,7 +1294,8 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
         if( *pos == '<' ){ 
 
             // 改行 <br>
-            if( *( pos + 1 ) == 'b' && *( pos + 2 ) == 'r' ){  
+            if( ( *( pos + 1 ) == 'b' || *( pos + 1 ) == 'B' )
+                &&  ( *( pos + 2 ) == 'r' || *( pos + 2 ) == 'R' ) ){  
 
                 // フラッシュ
                 if( *( pos - 1 ) == ' ' ) --lng_text; // 改行前の空白を取り除く
