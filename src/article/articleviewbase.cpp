@@ -1533,8 +1533,6 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     std::cout << "ArticleViewBase::click_url " << url << std::endl;
 #endif
 
-    hide_popup();
-
     // プレビュー画面など、レスが存在しないときはいくつかの機能を無効にする
     bool res_exist = ( m_article->res_header( res_number ) );
 
@@ -1543,6 +1541,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     if( url.find( PROTO_ID ) == 0 ){
 
         if( ! res_exist ) return true;
+
+        hide_popup();
 
         int num_id = m_article->get_num_id_name( res_number );
         m_id_name = m_article->get_id_name( res_number );
@@ -1566,6 +1566,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         if( ! res_exist ) return true;
 
+        hide_popup();
+
         int num_name = m_article->get_num_name( res_number );
         m_name = m_article->get_name( res_number );
 
@@ -1586,6 +1588,10 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     // あぼーんクリック
     else if( url.find( PROTO_ABONE ) == 0 ){
 
+        if( ! res_exist ) return true;
+
+        hide_popup();
+
         if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
             SKELETON::View::show_popupmenu( url, false );
         }
@@ -1594,6 +1600,10 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     /////////////////////////////////////////////////////////////////
     // 荒らし報告用URL表示クリック
     else if( url.find( PROTO_URL4REPORT ) == 0 ){
+
+        if( ! res_exist ) return true;
+
+        hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
 
@@ -1605,6 +1615,10 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     /////////////////////////////////////////////////////////////////
     // BE クリック
     else if( url.find( PROTO_BE ) == 0 ){
+
+        if( ! res_exist ) return true;
+
+        hide_popup();
 
         std::stringstream ssurl;
         ssurl << "http://be.2ch.net/test/p.php?i="
@@ -1631,9 +1645,17 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         std::cout << "anchor num = " << m_str_num << std::endl;
 #endif
         if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
-            SKELETON::View::show_popupmenu( url, false );
+
+            if( is_popup_shown() ) warp_pointer_to_popup();
+            else{
+                hide_popup();
+                SKELETON::View::show_popupmenu( url, false );
+            }
         }
-        else if( control.button_alloted( event, CONTROL::DrawoutAncButton ) ) slot_drawout_around();
+        else if( control.button_alloted( event, CONTROL::DrawoutAncButton ) ){
+            hide_popup();
+            slot_drawout_around();
+        }
     }
 
     /////////////////////////////////////////////////////////////////
@@ -1641,6 +1663,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     else if( url.find( PROTO_RES ) == 0 ){
 
         if( ! res_exist ) return true;
+
+        hide_popup();
 
         m_str_num = MISC::itostr( res_number );
         m_url_tmp = DBTREE::url_readcgi( m_url_article, res_number, 0 );
@@ -1666,6 +1690,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     /////////////////////////////////////////////////////////////////
     // 画像クリック
     else if( DBIMG::is_loadable( url ) ){
+
+        hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuImageButton ) ){
             SKELETON::View::show_popupmenu( url, false );
@@ -1704,7 +1730,12 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // ブラウザで開く
-    else if( control.button_alloted( event, CONTROL::ClickButton ) ) CORE::core_set_command( "open_url", url );
+    else if( control.button_alloted( event, CONTROL::ClickButton ) ){
+
+        hide_popup();
+
+        CORE::core_set_command( "open_url", url );
+    }
 
     /////////////////////////////////////////////////////////////////
     // 失敗
@@ -2543,3 +2574,26 @@ void ArticleViewBase::slot_entry_operate( int controlid )
     else if( controlid == CONTROL::DrawOutAnd ) slot_push_drawout_and();
 }
 
+
+
+
+#include <gdk/gdkx.h>
+#include <iostream>
+void ArticleViewBase::warp_pointer_to_popup()
+{
+    if( is_popup_shown() ){
+
+        std::cout << "ArticleViewBase::warp_pointer_to_popup\n";
+
+        const int mrg = 32;
+        int x, y;
+        m_popup_win->get_pointer( x, y );
+        if( y < 0 ) y = mrg;
+        else y = m_popup_win->get_height() - mrg;
+
+        XWarpPointer( GDK_WINDOW_XDISPLAY( Glib::unwrap( get_window() ) ), 
+                      None,
+                      GDK_WINDOW_XWINDOW( Glib::unwrap( m_popup_win->get_window() ) )
+                      , 0, 0, 0, 0, mrg, y );
+    }
+}

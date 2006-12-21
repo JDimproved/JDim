@@ -240,6 +240,8 @@ namespace ARTICLE
         void open_searchbar( bool invert );
         void slot_active_search();
         void slot_entry_operate( int controlid );
+
+        void warp_pointer_to_popup();
     };
 
 }
