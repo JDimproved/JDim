@@ -22,6 +22,7 @@ namespace ARTICLE
         SKELETON::LabelEntry m_label_size;
 
         // あぼーん
+        Gtk::Label m_label_abone;
         SKELETON::EditView m_edit_id, m_edit_res, m_edit_name, m_edit_word, m_edit_regex;
 
         // 透明あぼーん

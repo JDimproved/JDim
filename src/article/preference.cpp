@@ -7,6 +7,8 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 
+#include "config/globalconf.h"
+
 #include "cache.h"
 #include "command.h"
 
@@ -42,6 +44,9 @@ Preferences::Preferences( const std::string& url )
     // 連鎖あぼーん
     m_check_chainabone.set_active( DBTREE::get_abone_chain( get_url() ) );
 
+    if( CONFIG::get_abone_transparent() ) m_check_transpabone.set_sensitive( false );
+    if( CONFIG::get_abone_chain() ) m_check_chainabone.set_sensitive( false );
+
     m_vbox_info.set_border_width( 16 );
     m_vbox_info.set_spacing( 8 );
     m_vbox_info.pack_start( m_label_name, Gtk::PACK_SHRINK );
@@ -54,6 +59,11 @@ Preferences::Preferences( const std::string& url )
     m_vbox_info.pack_start( m_label_modified, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_write, Gtk::PACK_SHRINK );
 
+    if( CONFIG::get_abone_transparent() || CONFIG::get_abone_chain() ){
+        m_label_abone.set_text( "チェック出来ない場合は「デフォルトで透明/連鎖あぼ〜ん」を解除して下さい" );
+        m_label_abone.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
+        m_vbox_info.pack_end( m_label_abone, Gtk::PACK_SHRINK );
+    }
     m_vbox_info.pack_end( m_check_chainabone, Gtk::PACK_SHRINK );
     m_vbox_info.pack_end( m_check_transpabone, Gtk::PACK_SHRINK );
 
