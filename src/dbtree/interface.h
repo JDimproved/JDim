@@ -199,6 +199,7 @@ namespace DBTREE
     std::list< std::string > get_abone_list_thread( const std::string& url );
     std::list< std::string > get_abone_list_word_thread( const std::string& url );
     std::list< std::string > get_abone_list_regex_thread( const std::string& url );
+    std::vector< char > get_abone_vec_res( const std::string& url );
 
     // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
     void reset_abone_thread( const std::string& url,

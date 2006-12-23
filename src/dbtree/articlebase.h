@@ -262,6 +262,7 @@ namespace DBTREE
         std::list< std::string > get_abone_list_name(){ return m_list_abone_name; }
         std::list< std::string > get_abone_list_word(){ return m_list_abone_word; }
         std::list< std::string > get_abone_list_regex(){ return m_list_abone_regex; }
+        std::vector< char > get_abone_vec_res(){ return m_vec_abone_res; }
 
         // 透明
         const bool get_abone_transparent();

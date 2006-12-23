@@ -67,15 +67,23 @@ Preferences::Preferences( const std::string& url )
     m_vbox_info.pack_end( m_check_chainabone, Gtk::PACK_SHRINK );
     m_vbox_info.pack_end( m_check_transpabone, Gtk::PACK_SHRINK );
 
-    std::string str_id, str_name, str_word, str_regex;
-    std::list< std::string >::iterator it;
-
     if( DBTREE::article_is_cached( get_url() ) ){ 
+
+        std::string str_id, str_res, str_name, str_word, str_regex;
+        std::list< std::string >::iterator it;
 
         // id
         std::list< std::string > list_id = DBTREE::get_abone_list_id( get_url() );
         for( it = list_id.begin(); it != list_id.end(); ++it ) if( ! ( *it ).empty() ) str_id += ( *it ) + "\n";
         m_edit_id.set_text( str_id );
+
+        // res
+        std::vector< char > vec_res = DBTREE::get_abone_vec_res( get_url() );
+        std::vector< char >::iterator it_res = vec_res.begin();
+        for( int res = 0 ; it_res != vec_res.end(); ++it_res, ++res ){
+            if( ( *it_res ) ) str_res += MISC::itostr( res ) + "\n";
+        }
+        m_edit_res.set_text( str_res );
 
         // name
         std::list< std::string > list_name = DBTREE::get_abone_list_name( get_url() );
@@ -94,6 +102,7 @@ Preferences::Preferences( const std::string& url )
     }
     else{
         m_edit_id.set_editable( false );
+        m_edit_res.set_editable( false );
         m_edit_name.set_editable( false );
         m_edit_word.set_editable( false );
         m_edit_regex.set_editable( false );
@@ -126,7 +135,16 @@ void Preferences::slot_ok_clicked()
     std::list< std::string > list_name = MISC::get_lines( m_edit_name.get_text() );
     std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text() );
     std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
+
     std::vector< char > vec_abone_res;
+    vec_abone_res.resize( DBTREE::article_number_load( get_url() ) );
+    std::list< std::string > list_res = MISC::get_lines( m_edit_res.get_text() );
+    std::list< std::string >::iterator it = list_res.begin();
+    for( ; it != list_res.end(); ++it ){
+        int number = atoi( (*it).c_str() );
+        if( number ) vec_abone_res[ number ] = true;
+    }
+
     DBTREE::reset_abone( get_url(), list_id, list_name, list_word, list_regex, vec_abone_res
                          , m_check_transpabone.get_active(), m_check_chainabone.get_active() );
 

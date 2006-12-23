@@ -737,6 +737,13 @@ std::list< std::string > DBTREE::get_abone_list_regex( const std::string& url )
     return DBTREE::get_article( url )->get_abone_list_regex();
 }
 
+
+std::vector< char > DBTREE::get_abone_vec_res( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_abone_vec_res();
+}
+
+
 void DBTREE::reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names
                           , std::list< std::string >& words, std::list< std::string >& regexs
                           , std::vector< char >& vec_abone_res
