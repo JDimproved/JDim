@@ -10,6 +10,7 @@
 #include "toolbar.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/miscx.h"
 
 #include "dbtree/articlebase.h"
 #include "dbtree/interface.h"
@@ -564,6 +565,30 @@ void ArticleViewBase::delete_view()
     CORE::core_set_command( "delete_article", m_url_article );
 }
 
+
+//
+// マウスポインタをポップアップの上に移動する
+// 
+void ArticleViewBase::warp_pointer_to_popup()
+{
+    if( is_popup_shown() ){
+
+        const int mrg = 32;
+
+        int x, y;
+        get_pointer( x, y );
+
+        m_popup_win->get_pointer( x, y );
+
+        if( x < mrg ) x = mrg;
+        else if( x > m_popup_win->get_width() - mrg ) x = m_popup_win->get_width() - mrg;
+
+        if( y < 0 ) y = mrg;
+        else y = m_popup_win->get_height() - mrg;
+
+        MISC::WarpPointer( get_window(), m_popup_win->get_window(), x, y );
+    }
+}
 
 
 //
@@ -2583,28 +2608,4 @@ void ArticleViewBase::slot_entry_operate( int controlid )
 {
     if( controlid == CONTROL::Cancel ) focus_view();
     else if( controlid == CONTROL::DrawOutAnd ) slot_push_drawout_and();
-}
-
-
-
-
-#include <gdk/gdkx.h>
-#include <iostream>
-void ArticleViewBase::warp_pointer_to_popup()
-{
-    if( is_popup_shown() ){
-
-        std::cout << "ArticleViewBase::warp_pointer_to_popup\n";
-
-        const int mrg = 32;
-        int x, y;
-        m_popup_win->get_pointer( x, y );
-        if( y < 0 ) y = mrg;
-        else y = m_popup_win->get_height() - mrg;
-
-        XWarpPointer( GDK_WINDOW_XDISPLAY( Glib::unwrap( get_window() ) ), 
-                      None,
-                      GDK_WINDOW_XWINDOW( Glib::unwrap( m_popup_win->get_window() ) )
-                      , 0, 0, 0, 0, mrg, y );
-    }
 }

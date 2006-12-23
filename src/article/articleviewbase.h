@@ -191,6 +191,7 @@ namespace ARTICLE
         void slot_hide_popup();
         void hide_popup( bool force = false );
         void delete_popup(); // ポップアップ強制削除
+        void warp_pointer_to_popup(); // マウスポインタをポップアップの上に移動する
         
         void slot_bookmark();
         void slot_open_browser();
@@ -240,8 +241,6 @@ namespace ARTICLE
         void open_searchbar( bool invert );
         void slot_active_search();
         void slot_entry_operate( int controlid );
-
-        void warp_pointer_to_popup();
     };
 
 }
