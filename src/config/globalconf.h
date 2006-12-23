@@ -180,6 +180,7 @@ namespace CONFIG
 
     // スレビューで文字幅の近似を厳密にする
     const bool get_strict_char_width();
+    void set_strict_char_width( bool strictwidth );
 
     // タブに表示する文字列の最小値
     const int get_tab_min_str();

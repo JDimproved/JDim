@@ -206,15 +206,22 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示", std::string(), CONFIG::get_show_oldarticle() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "デフォルトでタブで開く", std::string(),
-                                                    ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
-
     m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "起動時に開いていたビューを復元", std::string(),
                                                     ( CONFIG::get_restore_board()
                                                       & CONFIG::get_restore_board()
                                                       & CONFIG::get_restore_board() ) ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_views ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
+
+
+    m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス設定" ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "シングルクリックでタブを開く", std::string(),
+                                                    ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
+
 
     m_action_group->add( Gtk::Action::create( "Color_Menu", "色" ) );
     m_action_group->add( Gtk::Action::create( "ColorChar", "スレ文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
@@ -230,6 +237,9 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "FontMenu", "スレッド" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
     m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップ" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
     m_action_group->add( Gtk::Action::create( "FontMessage", "書き込みウィンドウ" ), sigc::mem_fun( *this, &Core::slot_changefont_message ) );
+    m_action_group->add( Gtk::ToggleAction::create( "StrictCharWidth", "フォント幅の近似計算を厳密におこなう",
+                                                    std::string(), CONFIG::get_strict_char_width() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_strict_charwidth ) );
 
 
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
@@ -241,9 +251,6 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "デフォルトで透明/連鎖あぼ〜ん", std::string(),
                                                     ( CONFIG::get_abone_transparent() && CONFIG::get_abone_chain() ) ),
                                                     sigc::mem_fun( *this, &Core::slot_toggle_abone_transp_chain ) );
-
-    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
@@ -291,9 +298,14 @@ void Core::run( bool init )
 
         "<menu action='Menu_Config'>"
         "<menuitem action='OldArticle'/>"
-        "<menuitem action='ToggleTab'/>"
         "<menuitem action='RestoreViews'/>"
         "<menuitem action='SavePostLog'/>"
+        "<separator/>"
+
+        "<menu action='Mouse_Menu'>"
+        "<menuitem action='ToggleTab'/>"
+        "</menu>"
+
         "<separator/>"
 
         "<menu action='Font_Menu'>"
@@ -302,6 +314,8 @@ void Core::run( bool init )
         "<menuitem action='FontTree'/>"
         "<menuitem action='FontTreeBoard'/>"
         "<menuitem action='FontMessage'/>"
+        "<separator/>"
+        "<menuitem action='StrictCharWidth' />"
         "</menu>"
 
         "<separator/>"
@@ -476,12 +490,12 @@ void Core::run( bool init )
 //
 void Core::first_setup()
 {
-    show_setupdiag( "JDセットアップへようこそ\n\nはじめにネットワークの設定をおこなって下さい。" );
+    show_setupdiag( "JDセットアップへようこそ\n\nはじめにネットワークの設定をおこなって下さい" );
 
     slot_setup_proxy();
     slot_setup_browser();
 
-    show_setupdiag( "JDセットアップ\n\nスレ、ポップアップ、ツリービューの順にフォントの設定をおこなって下さい。" );
+    show_setupdiag( "JDセットアップ\n\nスレ、ポップアップ、ツリービューの順にフォントの設定をおこなって下さい" );
 
     slot_changefont_main();
 
@@ -495,7 +509,7 @@ void Core::first_setup()
     CONFIG::set_fontname_message( CONFIG::get_fontname_main() );
 
     show_setupdiag( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
-    show_setupdiag( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします。\nリストが表示されるまでしばらくお待ち下さい。" );
+    show_setupdiag( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします\nリストが表示されるまでしばらくお待ち下さい" );
 }
 
 
@@ -595,6 +609,23 @@ void Core::slot_activate_menubar()
 void Core::slot_toggle_save_postlog()
 {
     CONFIG::set_save_postlog( ! CONFIG::get_save_postlog() );
+}
+
+
+//
+// フォント幅の近似計算を厳密におこなう
+//
+void Core::slot_toggle_strict_charwidth()
+{
+    CONFIG::set_strict_char_width( ! CONFIG::get_strict_char_width() );
+
+    if( CONFIG::get_strict_char_width() ){
+        Gtk::MessageDialog mdiag( "スレビューのフォント幅の近似を厳密におこないます\n\nパフォーマンスが低下しますので通常は設定しないでください" );
+        mdiag.run();
+    }
+
+    ARTICLE::get_admin()->set_command( "init_font" );
+    ARTICLE::get_admin()->set_command( "relayout_all" );
 }
 
 

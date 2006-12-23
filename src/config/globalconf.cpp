@@ -589,7 +589,9 @@ const double CONFIG::get_adjust_underline_pos(){ return adjust_underline_pos; }
 const double CONFIG::get_adjust_line_space(){ return adjust_line_space; }
 
 const bool CONFIG::get_draw_underline(){ return draw_underline; }
+
 const bool CONFIG::get_strict_char_width(){ return strict_char_width; }
+void CONFIG::set_strict_char_width( bool strictwidth ){ strict_char_width = strictwidth; }
 
 const int CONFIG::get_tab_min_str(){ return tab_min_str; }
 
