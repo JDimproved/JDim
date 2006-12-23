@@ -5,6 +5,8 @@
 
 #include <gtkmm.h>
 
+#include "control.h"
+
 namespace SKELETON
 {
     typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_PRESS;
@@ -25,6 +27,9 @@ namespace SKELETON
     {
         SIG_KEY_PRESS m_sig_key_press;
         SIG_KEY_RELEASE m_sig_key_release;
+
+        // 入力コントローラ
+        CONTROL::Control m_control;
 
         // undo 用
         std::vector< UNDO_DATA > m_undo_tree;

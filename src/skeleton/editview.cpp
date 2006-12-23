@@ -5,6 +5,8 @@
 
 #include "editview.h"
 
+#include "controlid.h"
+
 using namespace SKELETON;
 
 
@@ -13,6 +15,9 @@ EditTextView::EditTextView() :
     m_cancel_change( false ),
     m_line_offset( -1 )
 {
+    // コントロールモード設定
+    m_control.set_mode( CONTROL::MODE_EDIT );
+
     get_buffer()->signal_changed().connect( sigc::mem_fun( *this, &EditTextView::slot_buffer_changed ) );
 }
 
@@ -236,20 +241,26 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
 {
     m_sig_key_press.emit( event );
     m_delete_pushed = false;
-
-    if( event->state & GDK_MOD1_MASK && event->keyval == 'w' ) return true;
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'z' ) { undo(); return true; }
-    if( event->state & GDK_CONTROL_MASK && event->keyval == '/' ) { undo(); return true; }
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'p' ) { cursor_up(); return true; }
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'n' ) { cursor_down(); return true; }
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'b' ) { cursor_left(); return true; }
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'f' ) { cursor_right(); return true; }
-
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'd' ) { delete_char(); return true; }
     if( event->keyval == GDK_Delete ) m_delete_pushed = true;
 
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'a' ) { cursor_home(); return true; }
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'e' ) { cursor_end(); return true; }
+    // MessageViewでショートカットで書き込むと文字が挿入されてしまうので
+    // キャンセルする
+    if( event->state & GDK_MOD1_MASK && event->keyval == 'w' ) return true;
+    if( event->state & GDK_MOD1_MASK && event->keyval == 'q' ) return true;
+
+    switch( m_control.key_press( event ) ){
+
+        case CONTROL::HomeEdit: cursor_home(); return true;
+        case CONTROL::EndEdit: cursor_end(); return true;
+
+        case CONTROL::UpEdit: cursor_up(); return true;
+        case CONTROL::DownEdit: cursor_down(); return true;
+        case CONTROL::RightEdit: cursor_right(); return true;
+        case CONTROL::LeftEdit: cursor_left(); return true;
+
+        case CONTROL::DeleteEdit: delete_char(); return true;
+        case CONTROL::UndoEdit: undo(); return true;
+    }
 
     return Gtk::TextView::on_key_press_event( event );
 }
@@ -258,18 +269,23 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
 {
     m_sig_key_release.emit( event );
 
+    // MessageViewでショートカットで書き込むと文字が挿入されてしまうので
+    // キャンセルする
     if( event->state & GDK_MOD1_MASK && event->keyval == 'w' ) return true;
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'z' ) return true;
-    if( event->state & GDK_CONTROL_MASK && event->keyval == '/' ) return true;
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'p' ) return true;
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'n' ) return true;
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'b' ) return true;
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'f' ) return true;
+    if( event->state & GDK_MOD1_MASK && event->keyval == 'q' ) return true;
 
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'd' ) return true;
+    switch( m_control.key_press( event ) ){
 
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'a' ) return true;
-    if( event->state & GDK_CONTROL_MASK && event->keyval == 'e' ) return true;
+        case CONTROL::HomeEdit:
+        case CONTROL::EndEdit:
+        case CONTROL::UpEdit:
+        case CONTROL::DownEdit:
+        case CONTROL::RightEdit:
+        case CONTROL::LeftEdit:
+        case CONTROL::DeleteEdit:
+        case CONTROL::UndoEdit:
+            return true;
+    }
 
     return Gtk::TextView::on_key_release_event( event );
 }

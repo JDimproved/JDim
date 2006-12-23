@@ -127,6 +127,18 @@ void KeyConfig::load_conf()
     // MESSAGE
     SETMOTION( "CancelWrite", "Alt+q" );
     SETMOTION( "ExecWrite", "Alt+w" ); 
+
+    // EDIT
+    SETMOTION( "HomeEdit", "" );
+    SETMOTION( "EndEdit", "Ctrl+e" );
+
+    SETMOTION( "UpEdit", "Ctrl+p" );
+    SETMOTION( "DownEdit", "Ctrl+n" );
+    SETMOTION( "RightEdit", "Ctrl+f" );
+    SETMOTION( "LeftEdit", "Ctrl+b" );
+
+    SETMOTION( "DeleteEdit", "Ctrl+d" );
+    SETMOTION( "UndoEdit", "Ctrl+/ Ctrl+z" );
 }
 
 
@@ -134,21 +146,30 @@ void KeyConfig::load_conf()
 // ひとつの操作をデータベースに登録
 void KeyConfig::set_one_motion( const std::string& name, const std::string& str_motion )
 {
-    if( name.empty() || str_motion.empty() ) return;
+    if( name.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "KeyConfig::set_motion " << name << std::endl;
+    std::cout << "motion = " << str_motion << std::endl;
+#endif
 
     int id = CONTROL::get_id( name );
     if( id == CONTROL::None ) return;
 
+#ifdef _DEBUG
+    std::cout << "id = " << id << std::endl;
+#endif
+
     int mode = MouseKeyConf::get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
 
+    guint motion;
+    bool ctrl = false;
+    bool shift = false;
+    bool alt = false;
+
     JDLIB::Regex regex;
     if( regex.exec( "(Ctrl)?(\\+?Shift)?(\\+?Alt)?\\+?(.*)", str_motion, 0, true ) ){
-
-        guint motion;
-        bool ctrl = false;
-        bool shift = false;
-        bool alt = false;
 
         if( ! regex.str( 1 ).empty() ) ctrl = true;
         if( ! regex.str( 2 ).empty() ) shift = true;
@@ -199,10 +220,14 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
             MISC::ERRMSG( "key config : " + str_motion + " is already used." );
             return;
         }
-
-        MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, false );
-        MouseKeyConf::vec_items().push_back( item );
     }
+
+#ifdef _DEBUG
+    std::cout << "motion = " << motion << std::endl;
+#endif
+
+    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, false );
+    MouseKeyConf::vec_items().push_back( item );
 }
 
 

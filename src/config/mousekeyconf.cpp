@@ -152,6 +152,7 @@ int MouseKeyConf::get_mode( const int& id )
     if( id < CONTROL::ARTICLEMOTION_END ) return CONTROL::MODE_ARTICLE;
     if( id < CONTROL::IMAGEMOTION_END ) return CONTROL::MODE_IMAGE;
     if( id < CONTROL::MESSAGEMOTION_END ) return CONTROL::MODE_MESSAGE;
+    if( id < CONTROL::EDITMOTION_END ) return CONTROL::MODE_EDIT;
 
     return CONTROL::MODE_ERROR;
 }

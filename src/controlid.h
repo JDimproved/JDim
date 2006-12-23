@@ -16,6 +16,7 @@ namespace CONTROL
         MODE_ARTICLE,
         MODE_IMAGE,
         MODE_MESSAGE,
+        MODE_EDIT,
 
         MODE_ERROR
     };
@@ -164,6 +165,22 @@ namespace CONTROL
         ExecWrite,
 
         MESSAGEMOTION_END,
+
+        // EDIT 系
+        EDITMOTION,
+
+        HomeEdit,
+        EndEdit,
+
+        UpEdit,
+        DownEdit,
+        RightEdit,
+        LeftEdit,
+
+        DeleteEdit,
+        UndoEdit,
+
+        EDITMOTION_END,
 
         // その他
         CancelMG,

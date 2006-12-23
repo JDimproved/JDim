@@ -158,6 +158,23 @@ namespace CONTROL
 
         { "", "" },
 
+        // EDIT
+
+        { "", "" },
+
+        { "HomeEdit", "Home" },
+        { "EndEdit", "End" },
+
+        { "UpEdit", "カーソルを上へ移動" },
+        { "DownEdit", "カーソルを下へ移動" },
+        { "RightEdit", "カーソルを右へ移動" },
+        { "LeftEdit", "カーソルを左へ移動" },
+
+        { "DeleteEdit", "一文字削除" },
+        { "UndoEdit", "Undo" },
+
+        { "", "" },
+
         // その他
 
         { "", "" },
