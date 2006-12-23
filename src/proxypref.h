@@ -85,7 +85,7 @@ namespace CORE
 
         ProxyPref( const std::string& url )
         : SKELETON::PrefDiag( url )
-        , m_frame_2ch( "2ch読み込み用" ), m_frame_2ch_w( "2ch書き込み用" ), m_frame_data( "その他のサーバ用" )
+        , m_frame_2ch( "2ch読み込み用" ), m_frame_2ch_w( "2ch書き込み用" ), m_frame_data( "その他のサーバ用(外部板、画像など)" )
         {
             // 2ch用
             if( CONFIG::get_use_proxy_for2ch() ) m_frame_2ch.ckbt.set_active( true );
