@@ -52,7 +52,12 @@ void MouseKeyConf::save_conf( const std::string& savefile )
             }
         }
 
-        if( !name.empty() && !motion.empty() ) cf.update( name, motion );
+        if( !name.empty() ){
+#ifdef _DEBUG
+            std::cout << name << " = " << motion << std::endl;
+#endif
+            cf.update( name, motion );
+        }
     }
 
     cf.save();

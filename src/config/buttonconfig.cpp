@@ -75,6 +75,8 @@ void ButtonConfig::load_conf()
     SETMOTION( "OpenArticleTabButton", "Mid" );
 
     // ARTICLE用ボタン設定
+    SETMOTION( "PopupWarpButton", "" );
+
     SETMOTION( "ReferResButton", "Right" );
     SETMOTION( "BmResButton", "Mid" );
     SETMOTION( "PopupmenuResButton", "Left" );
@@ -98,7 +100,7 @@ void ButtonConfig::load_conf()
 // ひとつの操作をデータベースに登録
 void ButtonConfig::set_one_motion( const std::string& name, const std::string& str_motion )
 {
-    if( name.empty() || str_motion.empty() ) return;
+    if( name.empty() ) return;
 
 #ifdef _DEBUG
     std::cout << "ButtonConfig::set_motion " << name << std::endl;
@@ -115,21 +117,20 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
     int mode = MouseKeyConf::get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
 
+    bool ctrl = false;
+    bool shift = false;
+    bool alt = false;
+    bool dblclick = false;
+    guint motion = 0;
+
     JDLIB::Regex regex;
     if( regex.exec( "(Ctrl)?(\\+?Shift)?(\\+?Alt)?\\+?(.*)", str_motion, 0, true ) ){
-
-        bool ctrl = false;
-        bool shift = false;
-        bool alt = false;
-        bool dblclick = false;
-        guint motion = 0;
 
         if( ! regex.str( 1 ).empty() ) ctrl = true;
         if( ! regex.str( 2 ).empty() ) shift = true;
         if( ! regex.str( 3 ).empty() ) alt = true;
 
         std::string str_button = regex.str( 4 );
-        if( str_button.empty() ) return;
 
         if( str_button == "Left" ) motion = 1;
         if( str_button == "Mid" ) motion = 2;
@@ -137,19 +138,17 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
         if( str_button == "DblLeft" ){ motion = 1; dblclick = true; }
         if( str_button == "DblMid" ) { motion = 2; dblclick = true; }
         if( str_button == "DblRight" ) { motion = 3; dblclick = true; }
+    }
 
 #ifdef _DEBUG
-        std::cout << "motion = " << motion << " dblclick = " << dblclick << std::endl;
+    std::cout << "motion = " << motion << " dblclick = " << dblclick << std::endl;
 #endif
 
-        if( !motion ) return;
+    // ひとつのボタンに複数の機能が割り当てられているので重複チェックはしない
 
-        // ひとつのボタンに複数の機能が割り当てられているので重複チェックはしない
-
-        // データベース登録
-        MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick );
-        MouseKeyConf::vec_items().push_back( item );
-    }
+    // データベース登録
+    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick );
+    MouseKeyConf::vec_items().push_back( item );
 }
 
 
@@ -187,5 +186,29 @@ void ButtonConfig::toggle_tab_button()
         set_one_motion( "OpenBoardTabButton", "Mid" );
         set_one_motion( "OpenArticleButton", "Left" );
         set_one_motion( "OpenArticleTabButton", "Mid" );
+    }
+}
+
+
+
+// ポップアップ表示の時にクリックでワープするか
+bool ButtonConfig::is_popup_warpmode()
+{
+    return ( MouseKeyConf::get_str_motion( CONTROL::PopupWarpButton).find( "Left" ) != std::string::npos );
+}
+
+
+// ポップアップ表示の時にクリックでワープする
+void ButtonConfig::toggle_popup_warpmode()
+{
+    if( is_popup_warpmode() ){
+
+        MouseKeyConf::remove_items( CONTROL::PopupWarpButton );
+        set_one_motion( "PopupWarpButton", "" );
+    }
+    else{
+
+        MouseKeyConf::remove_items( CONTROL::PopupWarpButton );
+        set_one_motion( "PopupWarpButton", "Left" );
     }
 }

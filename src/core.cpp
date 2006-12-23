@@ -222,6 +222,10 @@ void Core::run( bool init )
                                                     ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "シングルクリックで多重ポップアップモードに移行する", std::string(),
+                                                    CONFIG::get_buttonconfig()->is_popup_warpmode() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
+
 
     m_action_group->add( Gtk::Action::create( "Color_Menu", "色" ) );
     m_action_group->add( Gtk::Action::create( "ColorChar", "スレ文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
@@ -304,6 +308,7 @@ void Core::run( bool init )
 
         "<menu action='Mouse_Menu'>"
         "<menuitem action='ToggleTab'/>"
+        "<menuitem action='TogglePopupWarp'/>"
         "</menu>"
 
         "<separator/>"
@@ -1147,6 +1152,15 @@ void Core::slot_toggle_tabbutton()
 
     Gtk::MessageDialog mdiag( "JDの再起動後に有効になります\n\nJDを再起動してください" );
     mdiag.run();
+}
+
+
+//
+// クリックで多重ポップアップモードに移行
+//
+void Core::slot_toggle_popupwarpmode()
+{
+    CONFIG::get_buttonconfig()->toggle_popup_warpmode();
 }
 
 

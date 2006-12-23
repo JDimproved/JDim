@@ -1542,21 +1542,26 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         if( ! res_exist ) return true;
 
-        hide_popup();
+        if( is_popup_shown() && control.button_alloted( event, CONTROL::PopupWarpButton ) ) warp_pointer_to_popup();
 
-        int num_id = m_article->get_num_id_name( res_number );
-        m_id_name = m_article->get_id_name( res_number );
+        else{
 
-        // ID ポップアップ
-        if( num_id >= 1 && control.button_alloted( event, CONTROL::PopupIDButton ) ){
-            CORE::VIEWFACTORY_ARGS args;
-            args.arg1 = m_id_name;
-            SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPID, m_url_article, args );
-            show_popup( view_popup );
-        }
-        else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_id();
-        else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
-            SKELETON::View::show_popupmenu( url, false );
+            hide_popup();
+
+            int num_id = m_article->get_num_id_name( res_number );
+            m_id_name = m_article->get_id_name( res_number );
+
+            // ID ポップアップ
+            if( num_id >= 1 && control.button_alloted( event, CONTROL::PopupIDButton ) ){
+                CORE::VIEWFACTORY_ARGS args;
+                args.arg1 = m_id_name;
+                SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPID, m_url_article, args );
+                show_popup( view_popup );
+            }
+            else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_id();
+            else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
+                SKELETON::View::show_popupmenu( url, false );
+            }
         }
     }
 
@@ -1566,21 +1571,26 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         if( ! res_exist ) return true;
 
-        hide_popup();
+        if( is_popup_shown() && control.button_alloted( event, CONTROL::PopupWarpButton ) ) warp_pointer_to_popup();
 
-        int num_name = m_article->get_num_name( res_number );
-        m_name = m_article->get_name( res_number );
+        else{
 
-        // 名前ポップアップ
-        if( num_name >= 1 && control.button_alloted( event, CONTROL::PopupIDButton ) ){
-            CORE::VIEWFACTORY_ARGS args;
-            args.arg1 = m_name;
-            SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPNAME, m_url_article, args );
-            show_popup( view_popup );
-        }
-        else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_name();
-        else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
-            SKELETON::View::show_popupmenu( url, false );
+            hide_popup();
+
+            int num_name = m_article->get_num_name( res_number );
+            m_name = m_article->get_name( res_number );
+
+            // 名前ポップアップ
+            if( num_name >= 1 && control.button_alloted( event, CONTROL::PopupIDButton ) ){
+                CORE::VIEWFACTORY_ARGS args;
+                args.arg1 = m_name;
+                SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPNAME, m_url_article, args );
+                show_popup( view_popup );
+            }
+            else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_name();
+            else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
+                SKELETON::View::show_popupmenu( url, false );
+            }
         }
     }
 
@@ -1638,23 +1648,21 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     // アンカーをクリック
     else if( url.find( PROTO_ANCHORE ) == 0 ){
 
+        if( is_popup_shown() && control.button_alloted( event, CONTROL::PopupWarpButton ) ) warp_pointer_to_popup();
+
+        else{
+
         // ジャンプ先セット
         m_str_num = url.substr( strlen( PROTO_ANCHORE ) );
 
 #ifdef _DEBUG
         std::cout << "anchor num = " << m_str_num << std::endl;
 #endif
-        if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
 
-            if( is_popup_shown() ) warp_pointer_to_popup();
-            else{
-                hide_popup();
-                SKELETON::View::show_popupmenu( url, false );
-            }
-        }
-        else if( control.button_alloted( event, CONTROL::DrawoutAncButton ) ){
             hide_popup();
-            slot_drawout_around();
+
+            if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ) SKELETON::View::show_popupmenu( url, false );
+            else if( control.button_alloted( event, CONTROL::DrawoutAncButton ) ) slot_drawout_around();
         }
     }
 
@@ -1664,26 +1672,29 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         if( ! res_exist ) return true;
 
-        hide_popup();
+        if( is_popup_shown() && control.button_alloted( event, CONTROL::PopupWarpButton ) ) warp_pointer_to_popup();
 
-        m_str_num = MISC::itostr( res_number );
-        m_url_tmp = DBTREE::url_readcgi( m_url_article, res_number, 0 );
+        else{
 
-        if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ){
-            SKELETON::View::show_popupmenu( url, false );
-        }
+            hide_popup();
 
-        // ブックマークセット
-        else if( control.button_alloted( event, CONTROL::BmResButton ) ) slot_bookmark();
+            m_str_num = MISC::itostr( res_number );
+            m_url_tmp = DBTREE::url_readcgi( m_url_article, res_number, 0 );
 
-        // 参照ポップアップ表示
-        else if( control.button_alloted( event, CONTROL::ReferResButton )
+            if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ) SKELETON::View::show_popupmenu( url, false );
+
+            // ブックマークセット
+            else if( control.button_alloted( event, CONTROL::BmResButton ) ) slot_bookmark();
+
+            // 参照ポップアップ表示
+            else if( control.button_alloted( event, CONTROL::ReferResButton )
                      && m_article->get_res_reference( res_number ).size() ){
 
-            CORE::VIEWFACTORY_ARGS args;
-            args.arg1 = m_str_num;
-            SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPREFER, m_url_article, args );
-            show_popup( view_popup );
+                CORE::VIEWFACTORY_ARGS args;
+                args.arg1 = m_str_num;
+                SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPREFER, m_url_article, args );
+                show_popup( view_popup );
+            }
         }
     }
   

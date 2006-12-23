@@ -125,7 +125,8 @@ namespace CONTROL
         OpenParentBoard,
         WriteMessage,
 
-        ReferResButton, // 以下、マウスボタン専用の設定
+        PopupWarpButton, // 以下、マウスボタン専用の設定
+        ReferResButton, 
         BmResButton,
         PopupmenuResButton,
 

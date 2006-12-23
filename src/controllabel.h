@@ -116,6 +116,7 @@ namespace CONTROL
         { "OpenParentBoard", "板を開く" },
         { "WriteMessage", "書き込み" },
 
+        { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },
         { "BmResButton", "ブックマーク" },
         { "PopupmenuResButton", "レス番号メニュー表示" },
