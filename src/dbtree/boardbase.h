@@ -19,6 +19,14 @@ namespace JDLIB
 
 namespace DBTREE
 {
+    // ローカルプロキシ設定
+    enum
+    {
+        PROXY_GLOBAL,  // 全体設定使用
+        PROXY_DISABLE, // 全体設定無効
+        PROXY_LOCAL    // ローカル設定使用
+    };
+
     class Root;
     class ArticleBase;
 
@@ -78,6 +86,19 @@ namespace DBTREE
         std::list< std::string > m_list_abone_thread; // あぼーんするスレのタイトル
         std::list< std::string > m_list_abone_word_thread; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex_thread; // あぼーんする正規表現
+
+        // ローカルプロキシ設定
+        int m_mode_local_proxy;
+        std::string m_local_proxy;
+        int m_local_proxy_port;
+
+        int m_mode_local_proxy_w;
+        std::string m_local_proxy_w;
+        int m_local_proxy_port_w;
+
+        // 書き込み時のデフォルトの名前とメアド
+        std::string m_write_name;      
+        std::string m_write_mail;
 
         char* m_rawdata;
         int m_lng_rawdata;
@@ -272,6 +293,28 @@ namespace DBTREE
 
         // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
         void reset_abone_thread( std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs );
+
+        // ローカルプロキシ設定
+        const int get_mode_local_proxy() const { return m_mode_local_proxy; }
+        const std::string& get_local_proxy() const { return m_local_proxy; }
+        const int get_local_proxy_port() const { return m_local_proxy_port; }
+        void set_mode_local_proxy( int mode ){ m_mode_local_proxy = mode; }
+        void set_local_proxy( const std::string& proxy ){ m_local_proxy = proxy; }
+        void set_local_proxy_port( int port ){ m_local_proxy_port = port; }
+
+        const int get_mode_local_proxy_w() const { return m_mode_local_proxy_w; }
+        const std::string& get_local_proxy_w() const { return m_local_proxy_w; }
+        const int get_local_proxy_port_w() const { return m_local_proxy_port_w; }
+        void set_mode_local_proxy_w( int mode ){ m_mode_local_proxy_w = mode; }
+        void set_local_proxy_w( const std::string& proxy ){ m_local_proxy_w = proxy; }
+        void set_local_proxy_port_w( int port ){ m_local_proxy_port_w = port; }
+
+        // 書き込み時のデフォルトの名前とメアド
+        const std::string& get_write_name() const { return  m_write_name; }
+        const std::string& get_write_mail() const { return m_write_mail; }
+
+        void set_write_name( const std::string& name ){ m_write_name = name; }
+        void set_write_mail( const std::string& mail ){ m_write_mail = mail; }
 
         // 板情報の取得
         void read_info();

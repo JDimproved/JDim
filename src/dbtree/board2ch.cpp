@@ -42,27 +42,48 @@ const std::string& Board2ch::get_agent()
 //
 const std::string Board2ch::get_proxy_host()
 {
-    if( ! CONFIG::get_use_proxy_for2ch() ) return std::string();
-    return CONFIG::get_proxy_for2ch();
+    int mode = get_mode_local_proxy();
+
+    if( mode == DBTREE::PROXY_GLOBAL ){
+
+        if( CONFIG::get_use_proxy_for2ch() ) return CONFIG::get_proxy_for2ch();
+    }
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy();
+
+    return std::string();
 }
 
 const int Board2ch::get_proxy_port()
 {
-    return CONFIG::get_proxy_port_for2ch();
-}
+    int mode = get_mode_local_proxy();
 
+    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_port_for2ch();
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_port();
+
+    return 0;
+}
 
 const std::string Board2ch::get_proxy_host_w()
 {
-    if( ! CONFIG::get_use_proxy_for2ch_w() ) return std::string();
-    return CONFIG::get_proxy_for2ch_w();
+    int mode = get_mode_local_proxy_w();
+
+    if( mode == DBTREE::PROXY_GLOBAL ){
+        if( CONFIG::get_use_proxy_for2ch_w() ) return CONFIG::get_proxy_for2ch_w();
+    }
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_w();
+
+    return std::string();
 }
 
 const int Board2ch::get_proxy_port_w()
 {
-    return CONFIG::get_proxy_port_for2ch_w();
-}
+    int mode = get_mode_local_proxy_w();
 
+    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_port_for2ch_w();
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_port_w();
+
+    return 0;
+}
 
 
 // 新スレ作成時の書き込みメッセージ作成

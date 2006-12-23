@@ -87,6 +87,22 @@ namespace DBTREE
     void board_set_view_sort_pre_ascend( const std::string& url, bool ascend );
     const bool board_check_noname( const std::string& url );
     void board_set_check_noname( const std::string& url, bool check );
+    const int board_get_mode_local_proxy( const std::string& url );
+    const std::string& board_get_local_proxy( const std::string& url );
+    const int board_get_local_proxy_port( const std::string& url );
+    void board_set_mode_local_proxy( const std::string& url, int mode );
+    void board_set_local_proxy( const std::string& url, const std::string& proxy );
+    void board_set_local_proxy_port( const std::string& url, int port );
+    const int board_get_mode_local_proxy_w( const std::string& url );
+    const std::string& board_get_local_proxy_w( const std::string& url );
+    const int board_get_local_proxy_port_w( const std::string& url );
+    void board_set_mode_local_proxy_w( const std::string& url, int mode );
+    void board_set_local_proxy_w( const std::string& url, const std::string& proxy );
+    void board_set_local_proxy_port_w( const std::string& url, int port );
+    const std::string& board_get_write_name( const std::string& url );
+    const std::string& board_get_write_mail( const std::string& url );
+    void board_set_write_name( const std::string& url, const std::string& name );
+    void board_set_write_mail( const std::string& url, const std::string& mail );
 
     
     // article 系

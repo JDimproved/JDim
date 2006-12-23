@@ -329,6 +329,85 @@ void DBTREE::board_set_check_noname( const std::string& url, bool check )
     DBTREE::get_board( url )->set_check_noname( check );
 }
 
+const int DBTREE::board_get_mode_local_proxy( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_mode_local_proxy();
+}
+
+const std::string& DBTREE::board_get_local_proxy( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_local_proxy();
+}
+
+const int DBTREE::board_get_local_proxy_port( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_local_proxy_port();
+}
+
+void DBTREE::board_set_mode_local_proxy( const std::string& url, int mode )
+{
+    DBTREE::get_board( url )->set_mode_local_proxy( mode );
+}
+
+void DBTREE::board_set_local_proxy( const std::string& url, const std::string& proxy )
+{
+    DBTREE::get_board( url )->set_local_proxy( proxy );
+}
+
+void DBTREE::board_set_local_proxy_port( const std::string& url, int port )
+{
+    DBTREE::get_board( url )->set_local_proxy_port( port );
+}
+
+const int DBTREE::board_get_mode_local_proxy_w( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_mode_local_proxy_w();
+}
+
+const std::string& DBTREE::board_get_local_proxy_w( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_local_proxy_w();
+}
+
+const int DBTREE::board_get_local_proxy_port_w( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_local_proxy_port_w();
+}
+
+void DBTREE::board_set_mode_local_proxy_w( const std::string& url, int mode )
+{
+    DBTREE::get_board( url )->set_mode_local_proxy_w( mode );
+}
+
+void DBTREE::board_set_local_proxy_w( const std::string& url, const std::string& proxy )
+{
+    DBTREE::get_board( url )->set_local_proxy_w( proxy );
+}
+
+void DBTREE::board_set_local_proxy_port_w( const std::string& url, int port )
+{
+    DBTREE::get_board( url )->set_local_proxy_port_w( port );
+}
+
+const std::string& DBTREE::board_get_write_name( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_write_name();
+}
+
+const std::string& DBTREE::board_get_write_mail( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_write_mail();
+}
+
+void DBTREE::board_set_write_name( const std::string& url, const std::string& name )
+{
+    DBTREE::get_board( url )->set_write_name( name );
+}
+
+void DBTREE::board_set_write_mail( const std::string& url, const std::string& mail )
+{
+    DBTREE::get_board( url )->set_write_mail( mail );
+}
 
 void DBTREE::update_abone_all_board()
 {

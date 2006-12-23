@@ -107,24 +107,46 @@ const std::string& BoardBase::get_agent()
 // プロキシ
 const std::string BoardBase::get_proxy_host()
 {
-    if( ! CONFIG::get_use_proxy_for_data() ) return std::string();
-    return CONFIG::get_proxy_for_data();
+    int mode = get_mode_local_proxy();
+
+    if( mode == DBTREE::PROXY_GLOBAL ){
+
+        if( CONFIG::get_use_proxy_for_data() ) return CONFIG::get_proxy_for_data();
+    }
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy();
+
+    return std::string();
 }
 
 const int BoardBase::get_proxy_port()
 {
-    return CONFIG::get_proxy_port_for_data();
+    int mode = get_mode_local_proxy();
+
+    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_port_for_data();
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_port();
+
+    return 0;
 }
 
 // 書き込み用プロキシ
 const std::string BoardBase::get_proxy_host_w()
 {
-    return get_proxy_host();
+    int mode = get_mode_local_proxy_w();
+
+    if( mode == DBTREE::PROXY_GLOBAL ) return get_proxy_host();
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_w();
+
+    return std::string();
 }
 
 const int BoardBase::get_proxy_port_w()
 {
-    return get_proxy_port();
+    int mode = get_mode_local_proxy_w();
+
+    if( mode == DBTREE::PROXY_GLOBAL ) return get_proxy_port();
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_port_w();
+
+    return 0;
 }
 
 
@@ -1014,6 +1036,19 @@ void BoardBase::read_board_info()
     str_tmp = cf.get_option( "aboneregexthread", "" );
     if( ! str_tmp.empty() ) m_list_abone_regex_thread = MISC::strtolist( str_tmp );
 
+    // ローカルプロキシ
+    m_mode_local_proxy = cf.get_option( "mode_local_proxy", 0 );
+    m_local_proxy = cf.get_option( "local_proxy", "" );
+    m_local_proxy_port = cf.get_option( "local_proxy_port", 8080 );
+ 
+    m_mode_local_proxy_w = cf.get_option( "mode_local_proxy_w", 0 );
+    m_local_proxy_w = cf.get_option( "local_proxy_w", "" );
+    m_local_proxy_port_w = cf.get_option( "local_proxy_port_w", 8080 );
+
+    // 書き込み時のデフォルトの名前とメアド
+    m_write_name = cf.get_option( "write_name", "" );
+    m_write_mail = cf.get_option( "write_mail", "" );
+
 #ifdef _DEBUG
     std::cout << "modified = " << date_modified() << std::endl;
 #endif
@@ -1062,6 +1097,14 @@ void BoardBase::save_jdboard_info()
          << "abonethread = " << str_abone << std::endl
          << "abonewordthread = " << str_abone_word << std::endl
          << "aboneregexthread = " << str_abone_regex << std::endl
+         << "mode_local_proxy = " << m_mode_local_proxy << std::endl
+         << "local_proxy = " << m_local_proxy << std::endl
+         << "local_proxy_port = " << m_local_proxy_port << std::endl
+         << "mode_local_proxy_w = " << m_mode_local_proxy_w << std::endl
+         << "local_proxy_w = " << m_local_proxy_w << std::endl
+         << "local_proxy_port_w = " << m_local_proxy_port_w << std::endl
+         << "write_name = " << m_write_name << std::endl
+         << "write_mail = " << m_write_mail << std::endl
     ;
 
     CACHE::save_rawdata( path_info, sstr.str() );
