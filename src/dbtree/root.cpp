@@ -153,9 +153,9 @@ BoardBase* Root::get_board( const std::string& url, int count )
                 m_movetable.push_back( movetable );
 
                 std::ostringstream ss;
-                ss << board->get_name() << " is moved" << std::endl
-                   << "old url = " << movetable.old_root + board->get_path_board() << "/" << std::endl
-                   << "new url = " << board->url_boardbase() << std::endl;
+                ss << board->get_name() << std::endl
+                   << "旧 URL = " << movetable.old_root + board->get_path_board() << "/" << std::endl
+                   << "新 URL  = " << board->url_boardbase() << std::endl;
                 MISC::MSG( ss.str() );
 
                 //移転テーブル保存
@@ -365,7 +365,7 @@ void Root::update_boards( const std::string xml )
     // 移転があった
     if( ! m_move_info.empty() ){
         
-        Gtk::MessageDialog mdiag( "移転一覧\n" + m_move_info  ); mdiag.run();
+        Gtk::MessageDialog mdiag( "移転一覧\n\n" + m_move_info  ); mdiag.run();
 
         //移転テーブル保存
         save_movetable();
@@ -462,16 +462,16 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
         std::string new_path = CACHE::path_board_root( new_url );
 
         std::ostringstream ss;
-        ss << board->get_name() << " is moved" << std::endl
-           << " old url = " << old_url << std::endl
-           << " new url = " << new_url << std::endl;
+        ss << board->get_name() << std::endl
+           << " 旧 URL = " << old_url << std::endl
+           << " 新 URL = " << new_url << std::endl;
         MISC::MSG( ss.str() );
 
         // もしキャッシュが存在したら移動して移転テーブル更新
         if( CACHE::file_exists( old_path ) == CACHE::EXIST_DIR ){
 
             // キャッシュがある場合はダイアログに表示
-            m_move_info += ss.str();
+            m_move_info += ss.str() + "\n";
 
             // 移動先に同名のファイルかフォルダ何かあったらリネームしてバックアップをとっておく
             if( CACHE::file_exists( new_path ) != CACHE::EXIST_ERROR ){
