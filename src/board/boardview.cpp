@@ -321,13 +321,13 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     CONTROL::set_menu_motion( popupmenu );
 
     // マウスジェスチォ可能
-    SKELETON::View::set_enable_mg( true );
+    set_enable_mg( true );
 
     // オートリロード可
-    SKELETON::View::set_enable_autoreload( true );
+    set_enable_autoreload( true );
 
     // コントロールモード設定
-    SKELETON::View::get_control().set_mode( CONTROL::MODE_BOARD );
+    get_control().set_mode( CONTROL::MODE_BOARD );
 }
 
 
@@ -703,14 +703,14 @@ void BoardView::show_view()
 
     // DBに登録されてない
     if( get_url().empty() ){
-        SKELETON::View::set_status( "invalid URL" );
-        BOARD::get_admin()->set_command( "set_status", get_url(), SKELETON::View::get_status() );
+        set_status( "invalid URL" );
+        BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
         return;
     }
 
     // タイトル表示
-    SKELETON::View::set_title( DBTREE::board_name( get_url() ) );
-    BOARD::get_admin()->set_command( "set_title", get_url(), SKELETON::View::get_title() );
+    set_title( DBTREE::board_name( get_url() ) );
+    BOARD::get_admin()->set_command( "set_title", get_url(), get_title() );
 
     // タブにアイコンを表示
     BOARD::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
@@ -727,8 +727,8 @@ void BoardView::show_view()
     // download 開始
     // 終わったら update_view() が呼ばれる
     DBTREE::board_download_subject( get_url() );
-    SKELETON::View::set_status( "loading..." );
-    BOARD::get_admin()->set_command( "set_status", get_url(), SKELETON::View::get_status() );
+    set_status( "loading..." );
+    BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
 
 
@@ -830,8 +830,8 @@ void BoardView::update_view()
     // ステータスバー更新
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::board_str_code( get_url() ) << " [ 全 " << ( id -1 ) << " ] ";
-    SKELETON::View::set_status( ss_tmp.str() );
-    BOARD::get_admin()->set_command( "set_status", get_url(), SKELETON::View::get_status() );
+    set_status( ss_tmp.str() );
+    BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
 
     // タブのアイコン状態を更新
     int code = DBTREE::board_code( get_url() );
@@ -988,7 +988,7 @@ void BoardView::operate_view( const int& control )
 
         // ポップアップメニュー表示
         case CONTROL::ShowPopupMenu:
-            SKELETON::View::show_popupmenu( "", true );
+            show_popupmenu( "", true );
             break;
 
         // 検索
@@ -1298,10 +1298,10 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
 bool BoardView::slot_button_press( GdkEventButton* event )
 {
     // マウスジェスチャ
-    SKELETON::View::get_control().MG_start( event );
+    get_control().MG_start( event );
 
     // ホイールマウスジェスチャ
-    SKELETON::View::get_control().MG_wheel_start( event );
+    get_control().MG_wheel_start( event );
 
     // ダブルクリック
     m_dblclick = false;
@@ -1320,11 +1320,11 @@ bool BoardView::slot_button_press( GdkEventButton* event )
 bool BoardView::slot_button_release( GdkEventButton* event )
 {
     /// マウスジェスチャ
-    int mg = SKELETON::View::get_control().MG_end( event );
+    int mg = get_control().MG_end( event );
 
     // ホイールマウスジェスチャ
     // 実行された場合は何もしない 
-    if( SKELETON::View::get_control().MG_wheel_end( event ) ) return true;
+    if( get_control().MG_wheel_end( event ) ) return true;
 
     if( mg != CONTROL::None && enable_mg() ){
         operate_view( mg );
@@ -1359,8 +1359,8 @@ bool BoardView::slot_button_release( GdkEventButton* event )
         if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
 
         // スレを開く
-        bool openarticle = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenArticleButton );
-        bool openarticletab = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenArticleTabButton );
+        bool openarticle = get_control().button_alloted( event, CONTROL::OpenArticleButton );
+        bool openarticletab = get_control().button_alloted( event, CONTROL::OpenArticleTabButton );
 
         if( openarticle || openarticletab ){
 
@@ -1371,10 +1371,12 @@ bool BoardView::slot_button_release( GdkEventButton* event )
         }
 
         // ポップアップメニューボタン
-        else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
+        else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
-            SKELETON::View::show_popupmenu( "", false );
+            show_popupmenu( "", false );
         }
+
+        else operate_view( get_control().button_press( event ) );
 
         event->type = type_copy;
     }
@@ -1390,7 +1392,7 @@ bool BoardView::slot_button_release( GdkEventButton* event )
 bool BoardView::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
-    SKELETON::View::get_control().MG_motion( event );
+    get_control().MG_motion( event );
 
     int x = (int)event->x;
     int y = (int)event->y;
@@ -1420,7 +1422,7 @@ bool BoardView::slot_motion_notify( GdkEventMotion* event )
 //
 bool BoardView::slot_key_press( GdkEventKey* event )
 {
-    int key = SKELETON::View::get_control().key_press( event );
+    int key = get_control().key_press( event );
 
     if( key != CONTROL::None ){
 
@@ -1443,7 +1445,7 @@ bool BoardView::slot_key_press( GdkEventKey* event )
 //
 bool BoardView::slot_key_release( GdkEventKey* event )
 {
-    int key = SKELETON::View::get_control().key_press( event );
+    int key = get_control().key_press( event );
 
     // キー入力でスレを開くとkey_releaseイベントがboadviewが画面から
     // 消えてから送られてWIDGET_REALIZED_FOR_EVENT assertionが出るので
@@ -1462,7 +1464,7 @@ bool BoardView::slot_key_release( GdkEventKey* event )
 bool BoardView::slot_scroll_event( GdkEventScroll* event )
 {
     // ホイールマウスジェスチャ
-    int control = SKELETON::View::get_control().MG_wheel_scroll( event );
+    int control = get_control().MG_wheel_scroll( event );
     if( enable_mg() && control != CONTROL::None ){
         operate_view( control );
         return true;
@@ -1564,7 +1566,7 @@ void BoardView::slot_new_article()
 //
 void BoardView::slot_push_delete()
 {
-    SKELETON::View::show_popupmenu( "popup_menu_delete", false );
+    show_popupmenu( "popup_menu_delete", false );
 }
 
 
@@ -1573,7 +1575,7 @@ void BoardView::slot_push_delete()
 //
 void BoardView::slot_push_favorite()
 {
-    SKELETON::View::show_popupmenu( "popup_menu_favorite", false );
+    show_popupmenu( "popup_menu_favorite", false );
 }
 
 

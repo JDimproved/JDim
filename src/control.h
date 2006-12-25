@@ -37,6 +37,7 @@ namespace CONTROL
         int key_press( GdkEventKey* event );  // 戻り値はコントロールID
 
         // マウスボタン
+        int button_press( GdkEventButton* event ); // 戻り値はコントロールID
         bool button_alloted( GdkEventButton* event, int id );  // eventがidに割り当てられていたらtrue
         bool get_eventbutton( int id, GdkEventButton& event ); // ID からevent取得
 

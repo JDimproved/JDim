@@ -65,6 +65,8 @@ void ButtonConfig::load_conf()
     SETMOTION( "PopupmenuButton", "Right" );
     SETMOTION( "DragStartButton", "Left" );
     SETMOTION( "TreeRowSelectionButton", "Mid" );
+    SETMOTION( "Reload", "Button4" );
+    SETMOTION( "ToggleArticle", "Button5" );
 
     // BBSLIST用ボタン設定
     SETMOTION( "OpenBoardButton", "Left" );
@@ -135,6 +137,8 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
         if( str_button == "Left" ) motion = 1;
         if( str_button == "Mid" ) motion = 2;
         if( str_button == "Right" ) motion = 3;
+        if( str_button == "Button4" ) motion = 8;
+        if( str_button == "Button5" ) motion = 9;
         if( str_button == "DblLeft" ){ motion = 1; dblclick = true; }
         if( str_button == "DblMid" ) { motion = 2; dblclick = true; }
         if( str_button == "DblRight" ) { motion = 3; dblclick = true; }

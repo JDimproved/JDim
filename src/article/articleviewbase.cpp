@@ -57,10 +57,10 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
       m_show_url4report( false )
 {
     // マウスジェスチャ可能
-    SKELETON::View::set_enable_mg( true );
+    set_enable_mg( true );
 
     // コントロールモード設定
-    SKELETON::View::get_control().set_mode( CONTROL::MODE_ARTICLE );
+    get_control().set_mode( CONTROL::MODE_ARTICLE );
 }
 
 
@@ -272,20 +272,27 @@ void ArticleViewBase::setup_action()
     "<popup name='popup_menu_res'>"
     "<menuitem action='BookMark'/>"
     "<separator/>"
-    "<menuitem action='AboneRes'/>"
-    "<separator/>"
+
+    "<menu action='Drawout_Menu'>"
     "<menuitem action='DrawoutRefer'/>"
     "<menuitem action='DrawoutAround'/>"
     "<menuitem action='DrawoutRes'/>"
+    "</menu>"
     "<separator/>"
+
     "<menuitem action='WriteRes'/>"
     "<menuitem action='QuoteRes'/>"
     "<separator/>"
+
     "<menuitem action='OpenBrowser'/>"
     "<separator/>"
+
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyRes'/>"
     "<menuitem action='CopyResRef'/>"
+    "<separator/>"
+
+    "<menuitem action='AboneRes'/>"
     "</popup>"
 
     // レスアンカーをクリックしたときのメニュー
@@ -681,7 +688,7 @@ void ArticleViewBase::operate_view( const int& control )
 
         // ポップアップメニュー表示
         case CONTROL::ShowPopupMenu:
-            SKELETON::View::show_popupmenu( "", true );
+            show_popupmenu( "", true );
             break;
 
             // ブックマーク移動
@@ -865,7 +872,7 @@ void ArticleViewBase::slot_push_write()
 //
 void ArticleViewBase::slot_push_delete()
 {
-    SKELETON::View::show_popupmenu( "popup_menu_delete", false );
+    show_popupmenu( "popup_menu_delete", false );
 }
 
 
@@ -1289,10 +1296,10 @@ bool ArticleViewBase::slot_button_press( GdkEventButton* event )
 #endif
 
     // マウスジェスチャ
-    SKELETON::View::get_control().MG_start( event );
+    get_control().MG_start( event );
 
     // ホイールマウスジェスチャ
-    SKELETON::View::get_control().MG_wheel_start( event );
+    get_control().MG_wheel_start( event );
 
     CORE::core_set_command( "switch_article" );
 
@@ -1307,11 +1314,11 @@ bool ArticleViewBase::slot_button_press( GdkEventButton* event )
 bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkEventButton* event )
 {
     /// マウスジェスチャ
-    int mg = SKELETON::View::get_control().MG_end( event );
+    int mg = get_control().MG_end( event );
 
     // ホイールマウスジェスチャ
     // 実行された場合は何もしない 
-    if( SKELETON::View::get_control().MG_wheel_end( event ) ) return true;
+    if( get_control().MG_wheel_end( event ) ) return true;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_button_release mg = " << mg << " url = " << get_url()
@@ -1328,9 +1335,10 @@ bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkE
                 
             else if( ! click_url( url, res_number, event ) ){
 
-                if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
-                    SKELETON::View::show_popupmenu( url, false );
+                if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
+                    show_popupmenu( url, false );
                 }
+                else operate_view( get_control().button_press( event ) );
             }
         }
     }
@@ -1346,7 +1354,7 @@ bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkE
 bool ArticleViewBase::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
-    SKELETON::View::get_control().MG_motion( event );
+    get_control().MG_motion( event );
 
     return true;
 }
@@ -1367,7 +1375,7 @@ bool ArticleViewBase::slot_key_press( GdkEventKey* event )
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
     if( popup_article ) return popup_article->slot_key_press( event );
 
-    int key = SKELETON::View::get_control().key_press( event );
+    int key = get_control().key_press( event );
 
     if( key != CONTROL::None ) operate_view( key );
     else release_keyjump_key( event->keyval );
@@ -1407,7 +1415,7 @@ bool ArticleViewBase::slot_scroll_event( GdkEventScroll* event )
     if( popup_article ) return popup_article->slot_scroll_event( event );
 
     // ホイールマウスジェスチャ
-    int control = SKELETON::View::get_control().MG_wheel_scroll( event );
+    int control = get_control().MG_wheel_scroll( event );
     if( enable_mg() && control != CONTROL::None ){
         operate_view( control );
         return true;
@@ -1552,7 +1560,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     assert( m_article );
     if( url.empty() ) return false;
 
-    CONTROL::Control& control = SKELETON::View::get_control();
+    CONTROL::Control& control = get_control();
   
 #ifdef _DEBUG    
     std::cout << "ArticleViewBase::click_url " << url << std::endl;
@@ -1585,7 +1593,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             }
             else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_id();
             else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
-                SKELETON::View::show_popupmenu( url, false );
+                show_popupmenu( url, false );
             }
         }
     }
@@ -1614,7 +1622,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             }
             else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_name();
             else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
-                SKELETON::View::show_popupmenu( url, false );
+                show_popupmenu( url, false );
             }
         }
     }
@@ -1628,7 +1636,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
-            SKELETON::View::show_popupmenu( url, false );
+            show_popupmenu( url, false );
         }
     }
 
@@ -1663,7 +1671,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 #endif
         if( control.button_alloted( event, CONTROL::OpenBeButton ) ) CORE::core_set_command( "open_url_browser", ssurl.str() );
         else if( control.button_alloted( event, CONTROL::PopupmenuBeButton ) ){
-            SKELETON::View::show_popupmenu( ssurl.str(), false );
+            show_popupmenu( ssurl.str(), false );
         }
     }
 
@@ -1684,7 +1692,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
             hide_popup();
 
-            if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ) SKELETON::View::show_popupmenu( url, false );
+            if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ) show_popupmenu( url, false );
             else if( control.button_alloted( event, CONTROL::DrawoutAncButton ) ) slot_drawout_around();
         }
     }
@@ -1704,7 +1712,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             m_str_num = MISC::itostr( res_number );
             m_url_tmp = DBTREE::url_readcgi( m_url_article, res_number, 0 );
 
-            if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ) SKELETON::View::show_popupmenu( url, false );
+            if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ) show_popupmenu( url, false );
 
             // ブックマークセット
             else if( control.button_alloted( event, CONTROL::BmResButton ) ) slot_bookmark();
@@ -1728,7 +1736,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuImageButton ) ){
-            SKELETON::View::show_popupmenu( url, false );
+            show_popupmenu( url, false );
         }
 
         else if( ! DBIMG::is_cached( url ) && ! SESSION::is_online() ){
@@ -1846,7 +1854,7 @@ void ArticleViewBase::slot_hide_popup()
     hide_popup();
 
     // ポインタがwidgetの外にあったら親に知らせて自分も閉じてもらう
-    if( ! SKELETON::View::is_mouse_on_view() ) sig_hide_popup().emit();
+    if( ! is_mouse_on_view() ) sig_hide_popup().emit();
 }
 
 
