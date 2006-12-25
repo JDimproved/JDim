@@ -1173,15 +1173,23 @@ void BBSListViewBase::slot_drag_motion( Gtk::TreeModel::Path path )
 {
     if( !m_treeview.get_row( path ) ) return;
     
+    draw_underline( m_drag_path_uline, false );
+
     // 移動先に下線を引く
     int cell_x, cell_y, cell_w, cell_h;
     m_treeview.get_cell_xy_wh( cell_x, cell_y, cell_w, cell_h );
+
+    // 真ん中より上の場合
     if( cell_y < cell_h / 2 ){
+
         Gtk::TreeModel::Path path_tmp = m_treeview.prev_path( path );
         if( m_treeview.get_row( path_tmp ) ) path = path_tmp;
+
+        if( ! is_dir( path ) ) draw_underline( path, true );
+
     }
-    draw_underline( m_drag_path_uline, false );
-    draw_underline( path, true );
+    else draw_underline( path, true );
+
     m_drag_path_uline = path;
 
 #ifdef _DEBUG    
@@ -1651,6 +1659,7 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
 
     Gtk::TreeModel::iterator it_dest = m_treestore->get_iter( path );
     Gtk::TreeModel::iterator it_dest_bkup = it_dest;
+    bool after_bkup = after;
     bool subdir = after;
     it_src = list_it.begin();
     for( int i = 0 ; it_src != list_it.end(); ++i, ++it_src ){
@@ -1665,7 +1674,7 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
     }
 
     // 移動先がディレクトリなら開く
-    if( is_dir( it_dest_bkup ) ) m_treeview.expand_row( GET_PATH( *it_dest_bkup ), false );
+    if( is_dir( it_dest_bkup ) && after_bkup ) m_treeview.expand_row( GET_PATH( *it_dest_bkup ), false );
 
     // 範囲選択
     m_treeview.get_selection()->unselect_all();
