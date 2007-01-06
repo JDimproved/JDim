@@ -79,12 +79,12 @@ namespace DBTREE
     std::list< DBTREE::ArticleBase* >& board_list_subject( const std::string& url );
     const int board_view_sort_column( const std::string& url );
     void board_set_view_sort_column( const std::string& url, int column );
-    const bool board_view_sort_ascend( const std::string& url );
-    void board_set_view_sort_ascend( const std::string& url, bool ascend );
+    const int board_view_sort_mode( const std::string& url );
+    void board_set_view_sort_mode( const std::string& url, int mode );
     const int board_view_sort_pre_column( const std::string& url );
     void board_set_view_sort_pre_column( const std::string& url, int column );
-    const bool board_view_sort_pre_ascend( const std::string& url );
-    void board_set_view_sort_pre_ascend( const std::string& url, bool ascend );
+    const int board_view_sort_pre_mode( const std::string& url );
+    void board_set_view_sort_pre_mode( const std::string& url, int mode );
     const bool board_check_noname( const std::string& url );
     void board_set_check_noname( const std::string& url, bool check );
     const int board_get_mode_local_proxy( const std::string& url );
@@ -104,6 +104,12 @@ namespace DBTREE
     void board_set_write_name( const std::string& url, const std::string& name );
     void board_set_write_mail( const std::string& url, const std::string& mail );
 
+    // 全板の情報ファイル読み込み
+    void read_boardinfo_all();
+
+    // キャッシュ内のログ検索
+    std::list< std::string > search_cache_all( const std::string& url, const std::string& query, bool mode_or );
+    std::list< std::string > search_cache( const std::string& url, const std::string& query, bool mode_or );
     
     // article 系
     const bool article_is_cached( const std::string& url ); // キャッシュにあるかどうか

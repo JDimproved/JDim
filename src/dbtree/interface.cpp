@@ -283,15 +283,15 @@ void DBTREE::board_set_view_sort_column( const std::string& url, int column )
 }
 
 
-const bool DBTREE::board_view_sort_ascend( const std::string& url )
+const int DBTREE::board_view_sort_mode( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_view_sort_ascend();
+    return DBTREE::get_board( url )->get_view_sort_mode();
 }
 
 
-void DBTREE::board_set_view_sort_ascend( const std::string& url, bool ascend )
+void DBTREE::board_set_view_sort_mode( const std::string& url, int mode )
 {
-    DBTREE::get_board( url )->set_view_sort_ascend( ascend );
+    DBTREE::get_board( url )->set_view_sort_mode( mode );
 }
 
 
@@ -307,15 +307,15 @@ void DBTREE::board_set_view_sort_pre_column( const std::string& url, int column 
 }
 
 
-const bool DBTREE::board_view_sort_pre_ascend( const std::string& url )
+const int DBTREE::board_view_sort_pre_mode( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_view_sort_pre_ascend();
+    return DBTREE::get_board( url )->get_view_sort_pre_mode();
 }
 
 
-void DBTREE::board_set_view_sort_pre_ascend( const std::string& url, bool ascend )
+void DBTREE::board_set_view_sort_pre_mode( const std::string& url, int mode )
 {
-    DBTREE::get_board( url )->set_view_sort_pre_ascend( ascend );
+    DBTREE::get_board( url )->set_view_sort_pre_mode( mode );
 }
 
 const bool DBTREE::board_check_noname( const std::string& url )
@@ -408,6 +408,23 @@ void DBTREE::board_set_write_mail( const std::string& url, const std::string& ma
 {
     DBTREE::get_board( url )->set_write_mail( mail );
 }
+
+
+void DBTREE::read_boardinfo_all()
+{
+    DBTREE::get_root()->read_boardinfo_all();
+}
+
+std::list< std::string > DBTREE::search_cache_all( const std::string& url, const std::string& query, bool mode_or )
+{
+    return DBTREE::get_root()->search_cache( query, mode_or );
+}
+
+std::list< std::string > DBTREE::search_cache( const std::string& url, const std::string& query, bool mode_or )
+{
+    return DBTREE::get_board( url )->search_cache( query, mode_or );
+}
+
 
 void DBTREE::update_abone_all_board()
 {

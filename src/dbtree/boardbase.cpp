@@ -645,7 +645,7 @@ void BoardBase::download_subject()
     // オンライン
 
     // subject.txtのキャッシュが無かったら modified をリセット
-    std::string path_subject = CACHE::path_board_root( url_boardbase() ) + m_subjecttxt;
+    std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
     if( CACHE::file_exists( path_subject ) != CACHE::EXIST_FILE ) set_date_modified( std::string() );
 
     JDLIB::LOADERDATA data;    
@@ -693,8 +693,8 @@ void BoardBase::receive_finish()
     download_setting();
 
     bool read_from_cache = false;
-    std::string path_subject = CACHE::path_board_root( url_boardbase() ) + m_subjecttxt;
-    std::string path_oldsubject = CACHE::path_board_root( url_boardbase() ) + "old-" + m_subjecttxt;
+    std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
+    std::string path_oldsubject = CACHE::path_board_root_fast( url_boardbase() ) + "old-" + m_subjecttxt;
 
 #ifdef _DEBUG
     std::cout << "BoardBase::receive_finish code = " << get_str_code() << std::endl;
@@ -836,6 +836,31 @@ void BoardBase::receive_finish()
 
 
 //
+// キャッシュのディレクトリ内にあるスレのファイル名のリストを取得
+//
+std::list< std::string > BoardBase::get_filelist_in_cache()
+{
+    std::list< std::string >list_out;
+    if( empty() ) return list_out;
+
+    std::list< std::string >list_file;
+    std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
+
+    list_file = CACHE::get_filelist( path_board_root );
+    if( ! list_file.size() ) return list_out;
+
+    std::list< std::string >::iterator it = list_file.begin();
+    for(; it != list_file.end(); ++it ){
+
+        std::string& file = ( *it );
+        if( is_valid( file ) ) list_out.push_back( file );
+    }
+
+    return list_out;
+}
+
+
+//
 // キャッシュのディレクトリ内にあるスレのファイル名を取得してDBにすべてを登録
 //
 // 全てのスレのinfoファイルを読むと遅くなるのでこの段階では読まない(DBへの登録のみ)
@@ -849,26 +874,21 @@ void BoardBase::append_all_article_in_cache()
     std::cout << "BoardBase::append_all_article_in_cache\n";
 #endif
     
-    std::list< std::string >list_file;
-    std::string path_board_root = CACHE::path_board_root( url_boardbase() );
-    list_file = CACHE::get_filelist( path_board_root );
+    std::list< std::string >list_file = get_filelist_in_cache();
 
     std::list< std::string >::iterator it = list_file.begin();
     for(; it != list_file.end(); ++it ){
 
-        std::string& file = ( *it );
-        if( is_valid( file ) ){
-
 #ifdef _DEBUG
-            std::cout << "append id = " << file << std::endl;
+        std::cout << "append id = " << ( *it ) << std::endl;
 #endif
-            // キャッシュあり( cached = true ) 指定でDBに登録
-            // キャッシュに無いスレはsubject.txtを読み込んだ時に
-            // 派生クラスのparse_subject()で登録する。
-            append_article( file,
-                            true  // キャッシュあり
-                );
-        }
+
+        // キャッシュあり( cached = true ) 指定でDBに登録
+        // キャッシュに無いスレはsubject.txtを読み込んだ時に
+        // 派生クラスのparse_subject()で登録する。
+        append_article( ( *it ),
+                        true  // キャッシュあり
+            );
     }
 }
 
@@ -996,6 +1016,69 @@ void BoardBase::reset_abone_thread( std::list< std::string >& threads,
 }
 
 
+//
+// キャッシュ内のログ検索
+//
+// datファイルのURL(read.cgi型)を返す
+//
+std::list< std::string > BoardBase::search_cache( const std::string& query,
+                                                  bool mode_or // 今のところ無視
+    )
+{
+#ifdef _DEBUG
+    std::cout << "BoardBase::search_cache " << query << std::endl;
+#endif
+
+    std::list< std::string >list_out;
+
+    if( empty() ) return list_out;
+
+    std::string query_local = MISC::Iconv( query, "UTF-8", get_charset() );
+    std::list< std::string > list_query = MISC::split_line( query_local );
+
+    std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
+
+    std::list< ArticleBase* >::iterator it;
+    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+
+        ArticleBase* article = ( *it );
+        if( ! article->is_cached() ) continue;
+
+        std::string path = path_board_root + article->get_id();
+        std::string rawdata;
+
+        if( CACHE::load_rawdata( path, rawdata ) > 0 ){
+
+            bool apnd = true;
+
+#ifdef _DEBUG
+            std::cout << "load " << path << " size = " << rawdata.size() << " byte" << std::endl;
+#endif
+
+            std::list< std::string >::iterator it_query = list_query.begin();
+            for( ; it_query != list_query.end(); ++it_query ){
+
+                if( rawdata.find( *it_query ) == std::string::npos ){
+                    apnd = false;
+                    break;
+                }
+            }
+
+            if( apnd ){
+#ifdef _DEBUG
+                std::cout << "found word in " << url_readcgi( article->get_url(), 0, 0 ) << std::endl
+                          << article->get_subject() << std::endl;
+#endif
+                std::string readcgi = url_readcgi( article->get_url(), 0, 0 );
+                list_out.push_back( readcgi );
+            }
+        }
+    }
+
+    return list_out;
+}
+
+
 
 
 //
@@ -1018,9 +1101,9 @@ void BoardBase::read_board_info()
     set_date_modified( modified );
 
     m_view_sort_column = cf.get_option( "view_sort_column", -1 );
-    m_view_sort_ascend = cf.get_option( "view_sort_ascend", false );
+    m_view_sort_mode = cf.get_option( "view_sort_mode", 0 );
     m_view_sort_pre_column = cf.get_option( "view_sort_pre_column", -1 );
-    m_view_sort_pre_ascend = cf.get_option( "view_sort_pre_ascend", false );
+    m_view_sort_pre_mode = cf.get_option( "view_sort_pre_mode", 0 );
 
     m_check_noname = cf.get_option( "check_noname", false );
 
@@ -1090,9 +1173,9 @@ void BoardBase::save_jdboard_info()
     std::ostringstream sstr;
     sstr << "modified = " << date_modified() << std::endl
          << "view_sort_column = " << m_view_sort_column << std::endl
-         << "view_sort_ascend = " << m_view_sort_ascend << std::endl
+         << "view_sort_mode = " << m_view_sort_mode << std::endl
          << "view_sort_pre_column = " << m_view_sort_pre_column << std::endl
-         << "view_sort_pre_ascend = " << m_view_sort_pre_ascend << std::endl
+         << "view_sort_pre_mode = " << m_view_sort_pre_mode << std::endl
          << "check_noname = " << m_check_noname << std::endl
          << "abonethread = " << str_abone << std::endl
          << "abonewordthread = " << str_abone_word << std::endl

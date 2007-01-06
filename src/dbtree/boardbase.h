@@ -45,9 +45,9 @@ namespace DBTREE
 
         // ビュワーでソートをする列番号、ソード順
         int m_view_sort_column;
-        bool m_view_sort_ascend;
+        int m_view_sort_mode;
         int m_view_sort_pre_column;
-        bool m_view_sort_pre_ascend;
+        int m_view_sort_pre_mode;
 
         // 名無し書き込み不可
         bool m_check_noname;
@@ -152,13 +152,13 @@ namespace DBTREE
         // boardviewでソートする列番号とソート順
         const int get_view_sort_column() const { return m_view_sort_column; }
         void set_view_sort_column( int column ){ m_view_sort_column = column; }
-        const bool get_view_sort_ascend() const { return m_view_sort_ascend; }
-        void set_view_sort_ascend( bool ascend ){ m_view_sort_ascend = ascend; }
+        const int get_view_sort_mode() const { return m_view_sort_mode; }
+        void set_view_sort_mode( int mode ){ m_view_sort_mode = mode; }
 
         const int get_view_sort_pre_column() const { return m_view_sort_pre_column; }
         void set_view_sort_pre_column( int column ) { m_view_sort_pre_column = column; }
-        const bool get_view_sort_pre_ascend() const { return m_view_sort_pre_ascend; }
-        void set_view_sort_pre_ascend( bool ascend ){ m_view_sort_pre_ascend = ascend; }
+        const int get_view_sort_pre_mode() const { return m_view_sort_pre_mode; }
+        void set_view_sort_pre_mode( int mode ){ m_view_sort_pre_mode = mode; }
 
         // 名無し書き込み不可
         const bool get_check_noname() const { return m_check_noname; }
@@ -322,6 +322,9 @@ namespace DBTREE
         // 情報保存
         void save_info();
         
+        // キャッシュ内のログ検索
+        std::list< std::string > search_cache( const std::string& query, bool mode_or );
+
       private:
 
         void clear();
@@ -335,6 +338,8 @@ namespace DBTREE
 
         virtual ArticleBase* append_article( const std::string& id, bool cached );
         virtual void parse_subject( const char* str_subject_txt ){}
+
+        std::list< std::string > get_filelist_in_cache();
 
         void read_board_info();
         void append_all_article_in_cache();

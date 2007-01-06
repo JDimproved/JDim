@@ -679,6 +679,33 @@ const std::string Root::is_board_moved( const std::string& url )
 
 
 
+// 全板の情報ファイル読み込み
+void Root::read_boardinfo_all()
+{
+    std::list< BoardBase* >::iterator it;
+    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
+
+        ( *it )->read_info();
+    }
+}
+
+// 全ログ検索
+std::list< std::string > Root::search_cache( const std::string& query, bool mode_or )
+{
+    std::list< std::string > m_urllist;
+
+    std::list< BoardBase* >::iterator it;
+    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
+
+        std::list< std::string > m_tmplist;
+        m_tmplist = ( *it )->search_cache( query, mode_or );
+        m_urllist.splice( m_urllist.end(), m_tmplist );
+    }
+
+    return m_urllist;
+}
+
+
 
 //
 // 移転テーブル保存

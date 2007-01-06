@@ -86,6 +86,12 @@ namespace DBTREE
         // 移転した時は移転後のURLを返す
         const std::string is_board_moved( const std::string& url );
 
+        // 全板の情報ファイル読み込み
+        void read_boardinfo_all();
+
+        // 全ログ検索
+        std::list< std::string > search_cache( const std::string& query, bool mode_or );
+
       private:
 
         // bbsmenuのダウンロード用関数
