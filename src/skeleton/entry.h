@@ -27,6 +27,8 @@ namespace SKELETON
 
         JDEntry(){}
 
+        void set_mode( int mode ){ m_control.set_mode( mode ); }
+
       protected:
 
         // キー入力のフック
