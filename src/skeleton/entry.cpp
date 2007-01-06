@@ -22,6 +22,10 @@ bool JDEntry::on_key_release_event( GdkEventKey* event )
             m_sig_operate.emit( CONTROL::DrawOutAnd );
             break;
 
+        case CONTROL::SearchCache:
+            m_sig_operate.emit( CONTROL::SearchCache );
+            break;
+
         case CONTROL::Cancel:
             m_sig_operate.emit( CONTROL::Cancel );
             break;

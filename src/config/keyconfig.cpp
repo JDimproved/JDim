@@ -106,6 +106,7 @@ void KeyConfig::load_conf()
     SETMOTION( "OpenArticle", "Space" );
     SETMOTION( "OpenArticleTab", "Ctrl+Space" );
     SETMOTION( "NewArticle", "w" );
+    SETMOTION( "SearchCache", "Ctrl+Enter" );
 
     // ARTICLE
     SETMOTION( "UpMid", "u" );
