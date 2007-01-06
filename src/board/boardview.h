@@ -33,8 +33,8 @@ namespace BOARD
         // ソートで使う変数
         int m_col;
         int m_previous_col;
-        bool m_ascend;
-        bool m_previous_ascend;
+        int m_sortmode;
+        int m_previous_sortmode;
 
         // サーチで使う変数
         bool m_search_invert;
@@ -86,20 +86,12 @@ namespace BOARD
         void save_column_width();
 
         // ソート用
+        void exec_sort();
         void slot_col_clicked( int col );
-        int slot_compare_mark( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );        
-        int slot_compare_num_id( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
-        int slot_compare_subject( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
-        int slot_compare_num_res( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
-        int slot_compare_num_load( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
-        int slot_compare_new( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
-        int slot_compare_since( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
-        int slot_compare_write( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
-        int slot_compare_speed( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );        
 
         int compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        int compare_col( int col, bool ascend, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        int compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
+        int compare_col( int col, int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
+        int slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
 
         // UI
         bool slot_button_press( GdkEventButton* event );
@@ -133,6 +125,7 @@ namespace BOARD
         void slot_push_down_search();
         void slot_push_up_search();
         void slot_entry_operate( int controlid );
+        void slot_search_cache();
 
         // d&d
         void slot_drag_begin();

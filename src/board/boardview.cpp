@@ -67,6 +67,17 @@ enum{
 };
 
 
+enum
+{
+    SORTMODE_ASCEND = 0,
+    SORTMODE_DESCEND,
+
+    SORTMODE_MARK1, // 通常
+    SORTMODE_MARK2, // 新着を一番上に
+    SORTMODE_MARK3  // 反転
+};
+
+
 // 昇順で上か下か
 enum{
     COL_A_UP = -1,
@@ -88,8 +99,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
       m_treeview( CONFIG::get_fontname_tree_board(), CONFIG::get_color_back_tree_board() ),
       m_col( COL_NUM_COL ),
       m_previous_col( COL_NUM_COL ),
-      m_ascend( false ),
-      m_previous_ascend( false )
+      m_sortmode( SORTMODE_ASCEND ),
+      m_previous_sortmode( false )
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
@@ -103,6 +114,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_toolbar.m_button_favorite.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_favorite ) );
     m_toolbar.m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_up_search ) );
     m_toolbar.m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_down_search ) );
+    m_toolbar.m_button_search_cache.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_search_cache ) );
     m_toolbar.m_button_preferences.signal_clicked().connect( sigc::mem_fun(*this, &BoardView::slot_push_preferences ) );
     m_toolbar.m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BoardView::slot_entry_operate ) );
 
@@ -208,15 +220,15 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     }
 
     // ソート関数セット
-    m_liststore->set_sort_func( COL_MARK, sigc::mem_fun( *this, &BoardView::slot_compare_mark ) );    
-    m_liststore->set_sort_func( COL_ID, sigc::mem_fun( *this, &BoardView::slot_compare_num_id ) );
-    m_liststore->set_sort_func( COL_SUBJECT, sigc::mem_fun( *this, &BoardView::slot_compare_subject ) );
-    m_liststore->set_sort_func( COL_RES, sigc::mem_fun( *this, &BoardView::slot_compare_num_res ) );
-    m_liststore->set_sort_func( COL_STR_LOAD, sigc::mem_fun( *this, &BoardView::slot_compare_num_load ) );
-    m_liststore->set_sort_func( COL_STR_NEW, sigc::mem_fun( *this, &BoardView::slot_compare_new ) );
-    m_liststore->set_sort_func( COL_SINCE, sigc::mem_fun( *this, &BoardView::slot_compare_since ) );
-    m_liststore->set_sort_func( COL_WRITE, sigc::mem_fun( *this, &BoardView::slot_compare_write) );
-    m_liststore->set_sort_func( COL_SPEED, sigc::mem_fun( *this, &BoardView::slot_compare_speed ) );
+    m_liststore->set_sort_func( COL_MARK, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );    
+    m_liststore->set_sort_func( COL_ID, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_SUBJECT, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_RES, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_STR_LOAD, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_STR_NEW, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_SINCE, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_WRITE, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_SPEED, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
     
     m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BoardView::slot_button_press ) );
     m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BoardView::slot_button_release ) );
@@ -413,6 +425,22 @@ void BoardView::save_column_width()
 
 
 //
+// ソート実行
+//
+void BoardView::exec_sort()
+{
+    if( m_col < 0 || m_col >= COL_VISIBLE_END ){
+        m_col = COL_ID;
+        m_sortmode = SORTMODE_ASCEND;
+    }
+
+    m_liststore->set_sort_column( -2, Gtk::SORT_ASCENDING );
+    m_liststore->set_sort_column( m_col, Gtk::SORT_ASCENDING );
+    CORE::core_set_command( "switch_board" );
+}
+
+
+//
 // ヘッダをクリックしたときのslot関数
 //
 void BoardView::slot_col_clicked( int col )
@@ -421,57 +449,35 @@ void BoardView::slot_col_clicked( int col )
     std::cout << "BoardView::slot_col_clicked col = " << col << std::endl;
 #endif
 
-    if( col <= 0 || col >= COL_VISIBLE_END ) col = COL_MARK;
-
-    bool col_changed = false;
-
-    if( m_col != col ){
-
-        col_changed = true;
+    if( m_col != col ){ // 前回クリックした列と違う列をクリックした
 
         m_previous_col = m_col;
-        m_previous_ascend = m_ascend;
+        m_previous_sortmode = m_sortmode;
 
         m_col = col;
-        m_ascend = true;
+
+        if( m_col == COL_MARK ) m_sortmode = SORTMODE_MARK1;
+        else if( m_col == COL_ID ) m_sortmode = SORTMODE_ASCEND;
+        else if( m_col == COL_SUBJECT ) m_sortmode = SORTMODE_ASCEND;
+        else m_sortmode = SORTMODE_DESCEND;
     }
+    else if( m_sortmode == SORTMODE_DESCEND ) m_sortmode = SORTMODE_ASCEND;
+    else if( m_sortmode == SORTMODE_ASCEND ) m_sortmode = SORTMODE_DESCEND;
+    else if( m_sortmode == SORTMODE_MARK1 ) m_sortmode = SORTMODE_MARK2;
+    else if( m_sortmode == SORTMODE_MARK2 ) m_sortmode = SORTMODE_MARK3;
+    else if( m_sortmode == SORTMODE_MARK3 ) m_sortmode = SORTMODE_MARK1;
 
-    if( m_col == COL_MARK ){}
-
-    else if( m_col == COL_ID ){
-        if( col_changed ) m_ascend = false;
-    }
-
-    else if( m_col == COL_SUBJECT ){
-        if( col_changed ) m_ascend = false;
-    }
-
-    else if( m_col == COL_RES ){}
-    else if( m_col == COL_STR_LOAD ){}
-    else if( m_col == COL_STR_NEW ){}
-    else if( m_col == COL_SINCE ){}
-    else if( m_col == COL_WRITE ){}
-    else if( m_col == COL_SPEED ){}
-
-    // ソート開始
-    if( ! m_ascend ){
-        m_ascend = true;
-        m_liststore->set_sort_column( m_col, Gtk::SORT_ASCENDING );
-
-    }
-    else{
-        m_ascend = false;
-        m_liststore->set_sort_column( m_col, Gtk::SORT_DESCENDING );
+    // 旧バージョンとの互換性のため
+    if( m_col == COL_MARK ){
+        if( m_sortmode == SORTMODE_DESCEND || m_sortmode == SORTMODE_ASCEND ) m_sortmode = SORTMODE_MARK1;
     }
 
     DBTREE::board_set_view_sort_column( get_url(), m_col );
-    DBTREE::board_set_view_sort_ascend( get_url(), m_ascend );
-
+    DBTREE::board_set_view_sort_mode( get_url(), m_sortmode );
     DBTREE::board_set_view_sort_pre_column( get_url(), m_previous_col );
-    DBTREE::board_set_view_sort_pre_ascend( get_url(), m_previous_ascend );
+    DBTREE::board_set_view_sort_pre_mode( get_url(), m_previous_sortmode );
 
-    // ソートするとフォーカスが外れるので再フォーカス
-    CORE::core_set_command( "switch_board" );
+    exec_sort();
 }
 
 
@@ -497,20 +503,41 @@ int BoardView::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& 
 //
 // row_a が上か　row_b　が上かを返す。同じなら 0
 //
-int BoardView::compare_col( int col, bool ascend, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
+int BoardView::compare_col( int col, int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
 {
     int num_a = 0, num_b = 0;
+    int ret = 0;
+
+    const int UP = 1;
+    const int DOWN = 2;
 
     switch( col ){
+
+        case COL_MARK:
+        {
+            num_a = row_a[ m_columns.m_col_mark_val ];
+            num_b = row_b[ m_columns.m_col_mark_val ];
+
+            if( sortmode == SORTMODE_MARK2 ){ // 新着を一番上に
+
+                if( num_a == COL_MARKVAL_NEWTHREAD
+                    && ( num_b != COL_MARKVAL_NEWTHREAD && num_b != COL_MARKVAL_BKMARKED_UPDATED && num_b != COL_MARKVAL_BKMARKED ) ){
+                    num_a = DOWN; // 下で ret *= -1 しているので UP と DOWNを逆にする
+                    num_b = UP;
+                }
+                else if( num_b == COL_MARKVAL_NEWTHREAD
+                         && ( num_a != COL_MARKVAL_NEWTHREAD && num_a != COL_MARKVAL_BKMARKED_UPDATED && num_a != COL_MARKVAL_BKMARKED ) ){
+                    num_a = UP; // 下で ret *= -1 しているので UP と DOWNを逆にする
+                    num_b = DOWN;
+                }
+            }
+
+            break;
+        }
 
         case COL_ID:
             num_a = row_a[ m_columns.m_col_id ];
             num_b = row_b[ m_columns.m_col_id ];
-            break;
-
-        case COL_MARK:
-            num_a = row_a[ m_columns.m_col_mark_val ];
-            num_b = row_b[ m_columns.m_col_mark_val ];
             break;
 
         case COL_SUBJECT:
@@ -518,8 +545,8 @@ int BoardView::compare_col( int col, bool ascend, Gtk::TreeModel::Row& row_a, Gt
             // 文字列の大小を数字に変換
             Glib::ustring name_a = row_a[ m_columns.m_col_subject ]; 
             Glib::ustring name_b = row_b[ m_columns.m_col_subject ]; 
-            if( name_a < name_b ) { num_a = 1; num_b = 2; }
-            else if( name_a > name_b ) { num_a = 2; num_b = 1; }
+            if( name_a < name_b ) { num_a = UP; num_b = DOWN; }
+            else if( name_a > name_b ) { num_a = DOWN; num_b = UP; }
             break;
         }
 
@@ -557,104 +584,46 @@ int BoardView::compare_col( int col, bool ascend, Gtk::TreeModel::Row& row_a, Gt
     // 両方とも 0 より大きいか 0 より小さい場合は普通に比較
     if( ( num_a > 0 && num_b > 0 ) || ( num_a < 0 && num_b < 0 ) ){
 
-        if( num_a < num_b ) return COL_A_UP * ( ascend ? 1 : -1 );
-        else if( num_a > num_b ) return COL_B_UP * ( ascend ? 1 : -1 );
+        if( num_a < num_b ) ret = COL_A_UP;
+        else if( num_a > num_b ) ret = COL_B_UP;
+
+        if( sortmode == SORTMODE_DESCEND ) ret *= -1;
+        if( sortmode == SORTMODE_MARK1 || sortmode == SORTMODE_MARK2 ) ret *= -1;
     }
 
     // 0より大きい方を優先
-    else if( num_a > 0 && num_b <= 0 ) return COL_A_UP;
-    else if( num_b > 0 && num_a <= 0 ) return COL_B_UP;
+    else if( num_a > 0 && num_b <= 0 ) ret = COL_A_UP;
+    else if( num_b > 0 && num_a <= 0 ) ret = COL_B_UP;
 
     // 0を優先
-    else if( num_a == 0 && num_b < 0 ) return COL_A_UP;
-    else if( num_b == 0 && num_a < 0 ) return COL_B_UP;
+    else if( num_a == 0 && num_b < 0 ) ret = COL_A_UP;
+    else if( num_b == 0 && num_a < 0 ) ret = COL_B_UP;
 
-    return 0;
+    return ret;
 }
 
 
 //
-// ソート関数の本体
+// ソート関数
 //
-int BoardView::compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+int BoardView::slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
 {
     Gtk::TreeModel::Row row_a = *( a );
     Gtk::TreeModel::Row row_b = *( b );
 
-    int ret = compare_drawbg( row_a, row_b ); // 抽出状態を最優先
-    if( ! ret ) ret = compare_col( m_col, m_ascend, row_a, row_b );
-    if( ! ret ) ret = compare_col( m_previous_col, m_previous_ascend, row_a, row_b ); // マルチキーソート
-    if( ! ret ) ret = compare_col( COL_MARK, true, row_a, row_b );
-    if( ! ret ) ret = compare_col( COL_ID, true, row_a, row_b );
+    // 抽出状態を最優先
+    int ret = compare_drawbg( row_a, row_b ); 
 
-    // 降順の場合は結果をひっくり返す
-    return ret * ( m_ascend ? 1 : -1 );
+    if( ! ret ) ret = compare_col( m_col, m_sortmode, row_a, row_b );
+
+    // マルチキーソート
+    if( ! ret ) ret = compare_col( m_previous_col, m_previous_sortmode, row_a, row_b );  
+
+    if( ! ret ) ret = compare_col( COL_MARK, SORTMODE_ASCEND, row_a, row_b );
+    if( ! ret ) ret = compare_col( COL_ID, SORTMODE_ASCEND, row_a, row_b );
+
+    return ret;
 }
-
-//
-// mark 列のソート関数
-//
-int BoardView::slot_compare_mark( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    return compare_row( a, b );
-}
-
-
-// ID 列のソート関数
-int BoardView::slot_compare_num_id( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    return compare_row( a, b );
-}
-
-
-// subject 列のソート関数
-int BoardView::slot_compare_subject( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    return compare_row( a, b );
-}
-
-
-// res 列のソート関数
-int BoardView::slot_compare_num_res( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    return compare_row( a, b );
-}
-
-
-// load 列のソート関数
-int BoardView::slot_compare_num_load( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-   return compare_row( a, b );
-}
-
-
-// new 列のソート関数
-int BoardView::slot_compare_new( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-   return compare_row( a, b );
-}
-
-
-// since 列のソート関数
-int BoardView::slot_compare_since( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    return compare_row( a, b );
-}
-
-
-// write 列のソート関数
-int BoardView::slot_compare_write( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    return compare_row( a, b );
-}
-
-
-// speed 列のソート関数
-int BoardView::slot_compare_speed( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
-{
-    return compare_row( a, b );
-}
-
 
 
 //
@@ -746,12 +715,12 @@ void BoardView::redraw_view()
 
     // ソート状態回復
     m_col = DBTREE::board_view_sort_column( get_url() );
-    m_ascend = ! DBTREE::board_view_sort_ascend( get_url() ); // slot_col_clicked で反転するので not を付ける
+    m_sortmode = DBTREE::board_view_sort_mode( get_url() );
 
     m_previous_col = DBTREE::board_view_sort_pre_column( get_url() );
-    m_previous_ascend = DBTREE::board_view_sort_pre_ascend( get_url() );
+    m_previous_sortmode = DBTREE::board_view_sort_pre_mode( get_url() );
 
-    slot_col_clicked( m_col );
+    exec_sort();
 
     goto_top();
 }
@@ -1802,14 +1771,23 @@ void BoardView::slot_push_down_search()
 }
 
 
+// キャッシュ検索
+void BoardView::slot_search_cache()
+{
+    std::string query = m_toolbar.m_entry_search.get_text();
+
+    if( ! query.empty() ) CORE::core_set_command( "open_article_searchcache", get_url() , query, "false" );
+}
+
+
 //
 // 検索entryの操作
 //
 void BoardView::slot_entry_operate( int controlid )
 {
     if( controlid == CONTROL::Cancel ) focus_view();
+    else if( controlid == CONTROL::SearchCache ) slot_search_cache();
 }
-
 
 
 //
