@@ -10,6 +10,7 @@
 #include "global.h"
 #include "dndmanager.h"
 #include "usrcmdmanager.h"
+#include "searchmanager.h"
 #include "historymenu.h"
 #include "login2ch.h"
 #include "prefdiagfactory.h"
@@ -92,8 +93,11 @@ Core::Core( WinMain& win_main )
     // D&Dマネージャ作成
     CORE::get_dnd_manager();
 
-    // ユーザコマンドマネージャ
+    // ユーザコマンドマネージャ作成
     CORE::get_usrcmd_manager();
+
+    // ログ検索マネージャ作成
+    CORE::get_search_manager();
 }
 
 
@@ -115,7 +119,10 @@ Core::~Core()
     // メインnotebookのページ番号
     SESSION::set_notebook_main_page( m_notebook.get_current_page() );
 
-    // ユーザコマンドマネージャ
+    // ログ検索マネージャ削除
+    CORE::delete_search_manager();
+
+    // ユーザコマンドマネージャ削除
     CORE::delete_usrcmd_manager();
 
     // D&Dマネージャ削除
@@ -1355,6 +1362,29 @@ void Core::set_command( const COMMAND_ARGS& command )
                                      
                                            command.arg1 // 対象レス番号
             );
+        return;
+    }
+
+    // ログ検索
+    else if( command.command  == "open_article_searchcache" ) { 
+
+        std::string mode_str = "SEARCHCACHE";
+        if( command.arg2 == "true" ) mode_str = "SEARCHCACHE_OR";  // OR 検索
+        
+        ARTICLE::get_admin()->set_command( "open_view",
+                                           command.url, 
+
+                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           "left", // タブで開く
+                                           "true", // url 開いてるかチェックしない
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
+
+                                           mode_str, // モード
+
+                                           command.arg1, // query
+                                           command.arg3  // "all" の時は全ログを検索
+            );
+
         return;
     }
 
