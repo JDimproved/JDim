@@ -63,6 +63,7 @@ namespace CACHE
     std::string path_buttonconf();
 
     std::string path_board_root( const std::string& url );
+    std::string path_board_root_fast( const std::string& boardbase );
     std::string path_article_summary( const std::string& url );
     std::string path_board_info( const std::string& url );
     std::string path_jdboard_info( const std::string& url );

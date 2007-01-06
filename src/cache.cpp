@@ -165,17 +165,23 @@ std::string CACHE::path_buttonconf()
 // 板のルートパス
 std::string CACHE::path_board_root( const std::string& url )
 {
+    std::string boardbase = DBTREE::url_boardbase( url );
+    return path_board_root_fast( boardbase );
+}
+
+
+//
+// 板のルートパス(高速版)
+//
+// DBTREE::url_boardbase( url ) を使わないであらかじめ boardbase を与える
+//
+std::string CACHE::path_board_root_fast( const std::string& boardbase )
+{
     // http:// を取り除く
-    std::string url_board = DBTREE::url_boardbase( url );
-
-#ifdef _DEBUG
-    std::cout << "CACHE::path_board_root " << url << " -> " << url_board << std::endl;
-#endif
-
-    size_t i = url_board.find( "://" );
+    size_t i = boardbase.find( "://" );
     if( i == std::string::npos ) return std::string();
 
-    return CACHE::path_root() + url_board.substr( i + 3 );
+    return CACHE::path_root() + boardbase.substr( i + 3 );
 }
 
 
