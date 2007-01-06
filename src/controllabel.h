@@ -96,6 +96,7 @@ namespace CONTROL
         { "OpenArticle", "スレを開く" },
         { "OpenArticleTab", "タブでスレを開く" },
         { "NewArticle", "新スレ作成" },
+        { "SearchCache", "ログ検索" },
 
         { "OpenArticleButton", "スレを開く" },
         { "OpenArticleTabButton", "タブでスレを開く" },

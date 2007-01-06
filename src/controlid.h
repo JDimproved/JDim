@@ -107,6 +107,7 @@ namespace CONTROL
         OpenArticle,
         OpenArticleTab,
         NewArticle,
+        SearchCache,
 
         OpenArticleButton, // 以下、マウスボタン専用の設定
         OpenArticleTabButton,
