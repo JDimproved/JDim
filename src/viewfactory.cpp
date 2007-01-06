@@ -69,6 +69,9 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
         case VIEW_ARTICLEPREVIEW:
             return new ARTICLE::ArticleViewPreview( url );
 
+        case VIEW_ARTICLESEARCHCAHCE:
+            return new ARTICLE::ArticleViewSearchCache( url, args.arg1, ( args.arg2 == "OR" ), ( args.arg3 == "all" ) );
+
             /////////////////
 
         case VIEW_ARTICLEPOPUPHTML:
@@ -85,6 +88,9 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
 
         case VIEW_ARTICLEPOPUPREFER:
             return new ARTICLE::ArticleViewPopupRefer( url, args.arg1 );
+
+        case VIEW_ARTICLEPOPUPDRAWOUT:
+            return new ARTICLE::ArticleViewPopupDrawout( url, args.arg1, ( args.arg2 == "OR" ) );
 
             /////////////////
 
