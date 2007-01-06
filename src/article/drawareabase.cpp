@@ -986,7 +986,7 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_c
             unsigned int code = MISC::utf8toucs2( tmpchar, byte_tmp );
 
             std::stringstream ss_err;
-            ss_err << "unknown font byte = " << byte_tmp << " code = " << code << " " << width << std::endl;
+            ss_err << "unknown font byte = " << byte_tmp << " code = " << code << " width = " << width;
 
 #ifdef _DEBUG
             std::cout << "DrawAreaBase::get_width_of_one_char "
@@ -1843,7 +1843,6 @@ void DrawAreaBase::goto_back()
     std::cout << "DrawAreaBase::goto_back history = " << m_jump_history.size() << " num = " << num << std::endl;
 #endif
 
-    assert( m_drawarea );
     goto_num( num );
 }
 

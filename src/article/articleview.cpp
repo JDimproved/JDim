@@ -17,6 +17,7 @@
 #include "global.h"
 #include "httpcode.h"
 #include "session.h"
+#include "searchmanager.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -771,3 +772,112 @@ void ArticleViewDrawout::relayout()
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ログキャッシュ検索抽出ビュー
+
+ArticleViewSearchCache::ArticleViewSearchCache( const std::string& url,
+                                                const std::string& query, bool mode_or, bool searchall )
+    : ArticleViewBase( url ), m_query( query ), m_mode_or( mode_or )
+{
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday( &tv, &tz );
+
+    //viewのURL更新
+    std::string url_tmp = url + BOARD_SIGN + KEYWORD_SIGN + m_query + ORMODE_SIGN;
+    if( mode_or ) url_tmp += "1";
+    else url_tmp += "0";
+    url_tmp += TIME_SIGN + MISC::timevaltostr( tv );
+    set_url( url_tmp );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewSearchCache::ArticleViewSearchCache " << get_url() << std::endl;
+#endif
+
+    setup_view();
+
+    CORE::get_search_manager()->sig_search_fin().connect(
+        sigc::mem_fun( *this, &ArticleViewSearchCache::slot_search_fin ) );
+
+    CORE::get_search_manager()->search( get_url(), url, query, mode_or, searchall );
+}
+
+
+
+ArticleViewSearchCache::~ArticleViewSearchCache()
+{
+
+#ifdef _DEBUG    
+    std::cout << "ArticleViewSearchCache::~ArticleViewSearchCache : " << get_url() << std::endl;
+#endif
+}
+
+
+//
+// ウィジットのパッキング
+//
+// ArticleViewBase::pack_widget()をオーパロードしてツールバーをパックしない
+//
+void ArticleViewSearchCache::pack_widget()
+{
+    pack_start( *drawarea() );
+    show_all_children();
+}
+
+
+//
+// 表示
+//
+void ArticleViewSearchCache::show_view()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewSearchCache::show_view()\n";
+#endif
+
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), "ログ検索" );
+
+    if( CORE::get_search_manager()->get_id() == get_url() ){
+
+        if( CORE::get_search_manager()->is_searching() ){
+            append_html( "検索中" );
+            ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
+        }
+    }
+    else if( CORE::get_search_manager()->is_searching() ) append_html( "他の検索スレッドが実行中です" );
+}
+
+
+
+//
+// 画面を消してレイアウトやりなおし & 再描画
+//
+void ArticleViewSearchCache::relayout()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewSearchCache::relayout\n";
+#endif
+
+    drawarea()->clear_screen();
+    drawarea()->clear_highlight();
+    search_cache( m_url_readcgi, m_query );
+    drawarea()->redraw_view();
+}
+
+
+//
+// 検索終了
+//
+void ArticleViewSearchCache::slot_search_fin()
+{
+    if( CORE::get_search_manager()->get_id() != get_url() ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewSearchCache::slot_search_fin " << get_url() << std::endl;
+#endif
+
+    m_url_readcgi =  CORE::get_search_manager()->get_urllist();
+    relayout();
+
+    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "default" );
+}

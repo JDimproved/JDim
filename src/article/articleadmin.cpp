@@ -175,6 +175,11 @@ void ArticleAdmin::restore()
             command_arg.arg5 = regex.str( 2 );
         }
 
+        // キャッシュ検索は重いので復元しない
+        else if( regex.exec( std::string( "(.*)" ) + BOARD_SIGN + KEYWORD_SIGN + "(.*)"
+                             + ORMODE_SIGN + "(.*)" + TIME_SIGN, url )){
+        }
+
         // MAIN
         else if( !url.empty() ){
             command_arg.url = url;
@@ -288,7 +293,7 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
     }
 
     // レス抽出ビュー
-    if( command.arg4 == "RES" ){
+    else if( command.arg4 == "RES" ){
         type = CORE::VIEW_ARTICLERES;
         view_args.arg1 = command.arg5; // レス番号 ( from-to )
         view_args.arg2 = "false";
@@ -297,32 +302,41 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
     }
 
     // 名前抽出ビュー
-    if( command.arg4 == "NAME" ){
+    else if( command.arg4 == "NAME" ){
         type = CORE::VIEW_ARTICLENAME;
         view_args.arg1 = command.arg5; // 名前
     }
 
     // ID 抽出ビュー
-    if( command.arg4 == "ID" ){
+    else if( command.arg4 == "ID" ){
         type = CORE::VIEW_ARTICLEID;
         view_args.arg1 = command.arg5; // ID
     }
 
     // ブックマーク抽出ビュー
-    if( command.arg4 == "BM" ){
+    else if( command.arg4 == "BM" ){
         type = CORE::VIEW_ARTICLEBM;
     }
 
     // URL抽出ビュー
-    if( command.arg4 == "URL" ){
+    else if( command.arg4 == "URL" ){
         type = CORE::VIEW_ARTICLEURL;
     }
 
     // 参照抽出ビュー
-    if( command.arg4 == "REF" ){
+    else if( command.arg4 == "REF" ){
         type = CORE::VIEW_ARTICLEREFER;
         view_args.arg1 = command.arg5; // 対象レス番号
     }
+
+    // ログ検索(AND)
+    else if( command.arg4 == "SEARCHCACHE" ){
+        type = CORE::VIEW_ARTICLESEARCHCAHCE;
+        view_args.arg1 = command.arg5;  // query
+        view_args.arg3 = command.arg6;  // "all" の時は全ログ検索
+    }
+
+    else return NULL;
 
     SKELETON::View* view = CORE::ViewFactory( type, command.url, view_args );
     assert( view != NULL );

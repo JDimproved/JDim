@@ -12,6 +12,7 @@
 #include <string>
 
 #define ARTICLE_SIGN "_ARTICLE_"
+#define BOARD_SIGN "_BOARD_"
 #define RES_SIGN     "_RES_"
 #define NAME_SIGN    "_NAME_"
 #define ID_SIGN      "_ID_"

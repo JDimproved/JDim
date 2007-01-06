@@ -159,6 +159,30 @@ namespace ARTICLE
         virtual void relayout();
     };
 
+
+    /////////////////////////////////////////////////////////////////////////
+
+
+    // キャッシュ検索ビュー
+    class ArticleViewSearchCache : public ArticleViewBase
+    {
+        std::string m_query;
+        bool m_mode_or;
+        std::list< std::string > m_url_readcgi;
+
+      public:
+        ArticleViewSearchCache( const std::string& url, const std::string& query, bool mode_or, bool searchall );
+        ~ArticleViewSearchCache();
+
+        // SKELETON::View の関数のオーバロード
+        virtual void show_view();
+        virtual void relayout();
+
+      private:
+        virtual void pack_widget();
+        void slot_search_fin();
+    };
+
 }
 
 

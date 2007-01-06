@@ -123,6 +123,24 @@ namespace ARTICLE
         }
     };
 
+    /////////////////////////////////////////////////////////////////////////
+
+    // キーワード抽出ビュー
+    class ArticleViewPopupDrawout : public ArticleViewPopup
+    {
+        std::string m_query;
+        bool m_mode_or;
+
+      public:
+        ArticleViewPopupDrawout( const std::string& url, const std::string& query, bool mode_or )
+        : ArticleViewPopup( url, false ), m_query( query ), m_mode_or( mode_or ){}
+        ~ArticleViewPopupDrawout(){}
+
+        virtual void show_view(){
+            show_instruct_popup();
+            drawout_keywords( m_query, m_mode_or, false );
+        }
+    };
 }
 
 #endif

@@ -196,14 +196,13 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, bool joint )
 {
     if( ! node_header ) return;
     int res_number = node_header->id_header;
-    if( m_article->empty() ) return;
 
 #ifdef _DEBUG
     std::cout << "LayoutTree::append_node num = " << res_number << " show_abone = " << m_show_abone << std::endl;
 #endif
 
     // あぼーん
-    if( ! m_show_abone && m_article->get_abone( res_number ) ){
+    if( ! m_article->empty() && ! m_show_abone && m_article->get_abone( res_number ) ){
         append_abone_node( node_header );
         return;
     }
@@ -311,7 +310,7 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
 void LayoutTree::append_html( const std::string& html )
 {
 #ifdef _DEBUG
-    std::cout << "LayoutTree::append_html " << html << std::endl;
+    std::cout << "LayoutTree::append_html url = " << m_url << " html = " << html << std::endl;
 #endif    
 
     if( ! m_local_nodetree ) m_local_nodetree = new DBTREE::NodeTreeBase( m_url, std::string() );

@@ -201,6 +201,13 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
     action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存"), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
 
+    // ログ検索
+    action_group()->add( Gtk::Action::create( "SearchCache_Menu", "ログ検索" ) );
+    action_group()->add( Gtk::Action::create( "SearchCacheAll", "キャッシュ内の全ログを検索") );
+    action_group()->add( Gtk::Action::create( "ExecSearchCacheAll", "検索する"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cacheall ) );
+    action_group()->add( Gtk::Action::create( "SearchCacheLocal", "この板内のログのみを検索"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
+
+
     // 抽出系
     action_group()->add( Gtk::Action::create( "Drawout_Menu", "抽出" ) );
     action_group()->add( Gtk::Action::create( "DrawoutWord", "キーワード抽出"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_selection_str ) );
@@ -349,6 +356,13 @@ void ArticleViewBase::setup_action()
     "<menuitem action='AboneWord'/>"
     "<menu action='GlobalAboneWord'>"
     "<menuitem action='SetGlobalAboneWord'/>"
+    "</menu>"
+    "</menu>"
+
+    "<menu action='SearchCache_Menu'>"
+    "<menuitem action='SearchCacheLocal'/>"
+    "<menu action='SearchCacheAll'>"
+    "<menuitem action='ExecSearchCacheAll'/>"
     "</menu>"
     "</menu>"
 
@@ -1212,6 +1226,36 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or, 
 }
 
 
+//
+// ログキャッシュ検索結果表示
+//
+// 毎回キャッシュ内を検索していると遅いので、あらかじめ検索しておいて
+// 結果だけこの関数に渡す
+// 
+void ArticleViewBase::search_cache( std::list< std::string >& list_url, const std::string& query )
+{
+    std::ostringstream comment;
+    comment << query << " " << list_url.size() << " 件<br><br>";
+
+    if( ! list_url.empty() ){
+
+        std::list< std::string >::iterator it = list_url.begin();
+        for(; it != list_url.end(); ++it ){
+
+            DBTREE::ArticleBase* article = DBTREE::get_article( *it );
+            if( article ){
+                comment << "[ " << DBTREE::board_name( article->get_url() ) << " ] ";
+                comment << "<a href=\"" << PROTO_OR << *it + KEYWORD_SIGN + query << "\">"
+                        << article->get_subject() << "</a><br>";
+                comment << *it << "<br><br>";
+            }
+        }
+    }
+
+    append_html( comment.str() );
+}
+
+
 
 //
 // html をappend
@@ -1483,8 +1527,24 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         }
     }
 
+    // 抽出(or)
+    else if( url.find( PROTO_OR ) == 0 ){
+
+        std::string url_tmp = url.substr( strlen( PROTO_OR ) );
+
+        int i = url_tmp.find( KEYWORD_SIGN );
+
+        std::string url_dat = DBTREE::url_dat( url_tmp.substr( 0, i ) );
+        args.arg1 = url_tmp.substr( i + strlen( KEYWORD_SIGN ) );
+        args.arg2 = "OR";
+
+        if( ! url_dat.empty() ){
+            view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPDRAWOUT, url_dat, args );
+        }
+    }
+
     // ID:〜の範囲選択の上にポインタがあるときIDポップアップ
-    else if( url.find( PROTO_ID ) == std::string::npos ){
+    else if( url.find( "ID:" ) == 0 ){
 
         args.arg1 = PROTO_ID + url.substr( 3 );
         int num_id = m_article->get_num_id_name( args.arg1 );
@@ -1513,7 +1573,6 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
 
         // 他スレ
         if( ! url_dat.empty() ){
-
             if( num_from == 0 ) args.arg1 = "1"; // 最低でも1レス目は表示
             else args.arg1 = MISC::get_filename( url );
 
@@ -1567,7 +1626,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 #endif
 
     // プレビュー画面など、レスが存在しないときはいくつかの機能を無効にする
-    bool res_exist = ( m_article->res_header( res_number ) );
+    bool res_exist = ( ! m_article->empty() && m_article->res_header( res_number ) );
 
     /////////////////////////////////////////////////////////////////
     // ID クリック
@@ -1726,6 +1785,21 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
                 SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPREFER, m_url_article, args );
                 show_popup( view_popup );
             }
+        }
+    }
+
+
+    /////////////////////////////////////////////////////////////////
+    // OR抽出
+    else if( url.find( PROTO_OR ) == 0 ){
+
+        std::string url_tmp = url.substr( strlen( PROTO_OR ) );
+        int i = url_tmp.find( KEYWORD_SIGN );
+        std::string url_dat = DBTREE::url_dat( url_tmp.substr( 0, i ) );
+
+        if( ! url_dat.empty() ){
+            std::string query = url_tmp.substr( i + strlen( KEYWORD_SIGN ) );
+            CORE::core_set_command( "open_article_keyword" ,url_dat, query, "true" );
         }
     }
   
@@ -1980,6 +2054,12 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
+    act = action_group()->get_action( "SearchCache_Menu" );
+    if( act ){
+        if( str_select.empty() ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     // ユーザコマンド
     const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
     for( int i = 0; i < usrcmd_size; ++i ){
@@ -2159,6 +2239,45 @@ void ArticleViewBase::slot_drawout_selection_str()
 
 
 //
+// ログ検索実行
+//
+void ArticleViewBase::slot_search_cacheall()
+{
+    std::string query = m_drawarea->str_selection();
+    std::string url = DBTREE::url_subject( m_url_article );
+
+    if( query.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_search_cacheall " << url << std::endl
+              << query << std::endl;
+#endif
+    
+    CORE::core_set_command( "open_article_searchcache", url , query, "false", "all" );
+}
+
+
+//
+// ログ検索実行
+//
+void ArticleViewBase::slot_search_cachelocal()
+{
+    std::string query = m_drawarea->str_selection();
+    std::string url = DBTREE::url_subject( m_url_article );
+
+    if( query.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_search_cachelocal " << url << std::endl
+              << query << std::endl;
+#endif
+    
+    CORE::core_set_command( "open_article_searchcache", url , query, "false" );
+}
+
+
+
+//
 // ユーザコマンド実行
 //
 void ArticleViewBase::slot_usrcmd( int num )
@@ -2200,7 +2319,6 @@ void ArticleViewBase::slot_open_browser()
 
     CORE::core_set_command( "open_url_browser", url );
 }
-
 
 
 //
