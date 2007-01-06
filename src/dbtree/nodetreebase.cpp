@@ -690,6 +690,10 @@ NODE* NodeTreeBase::append_html( const std::string& html )
     if( is_loading() ) return NULL;
     if( html.empty() ) return NULL;
 
+#ifdef _DEBUG
+    std::cout << "NodeTreeBase::append_html url = " << m_url << " html = " << html << std::endl;
+#endif
+
     NODE* tmpnode = create_header_node();
     m_vec_header[ m_id_header ] = tmpnode;
 
@@ -868,7 +872,7 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
     if( size_in > 1 ){
         memcpy( m_buffer_lines + m_byte_buffer_lines_left , data, size_in );
         m_buffer_lines[ m_byte_buffer_lines_left + size_in ] = '\0';
-        add_raw_lines( m_buffer_lines );
+        add_raw_lines( m_buffer_lines, m_byte_buffer_lines_left + size_in );
     }
 
     // 残りの分をバッファにコピーしておく
@@ -921,8 +925,18 @@ void NodeTreeBase::receive_finish()
 //
 // 鯖から生の(複数)行のデータを受け取ってdat形式に変換して add_one_dat_line() に出力
 //
-void NodeTreeBase::add_raw_lines( char* rawlines )
+void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
 {
+    // 時々サーバ側のdatファイルが壊れていてデータ中に \0 が
+    // 入っている時があるので取り除く
+    for( size_t i = 0; i < size; ++i ){
+        if( rawlines[ i ] == '\0' ){
+            MISC::ERRMSG( "EOF was inserted in the middle of the raw data" );
+            m_broken = true;
+            rawlines[ i ] = ' ';
+        } 
+    }
+
     // 保存前にrawデータを加工
     rawlines = process_raw_lines( rawlines );
 
@@ -1014,7 +1028,8 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
         std::cout << datline << std::endl;
 #endif
 
-        createTextNode( "broken", COLOR_CHAR );
+        m_broken = true;
+        createTextNode( " 壊れています", COLOR_CHAR );
         createBrNode();
         createBrNode();
         

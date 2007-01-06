@@ -216,7 +216,7 @@ namespace DBTREE
         NODE* createTextNodeN( const char* text, int n, int color_text, bool bold = false );
 
         // 以下、構文解析用関数
-        void add_raw_lines( char* rawines );
+        void add_raw_lines( char* rawines, size_t size );
         const char* add_one_dat_line( const char* datline );
 
         void parseName( NODE* header, const char* str, int lng );
