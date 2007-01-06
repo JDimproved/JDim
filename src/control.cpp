@@ -69,7 +69,6 @@ int Control::button_press( GdkEventButton* event )
     bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
     bool shift = ( event->state ) & GDK_SHIFT_MASK;
     bool alt = ( event->state ) & GDK_MOD1_MASK;
-    bool dblclick = ( event->type == GDK_2BUTTON_PRESS );
 
     return CONFIG::get_buttonconfig()->get_id( m_mode, button, ctrl, shift, alt, false );
 }
