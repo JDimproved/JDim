@@ -77,6 +77,7 @@ namespace CORE
         Gtk::Entry m_entry_url;
         SKELETON::ImgButton m_button_go;
         SKELETON::ImgButton m_button_search_cache;
+        SKELETON::ImgButton m_button_sidebar;
 
         // タイトルに表示する文字列
         // set_maintitle() 参照

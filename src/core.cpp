@@ -70,7 +70,8 @@ Core::Core( WinMain& win_main )
     : m_win_main( win_main ),
       m_imagetab_shown( 0 ),
       m_button_go( Gtk::Stock::JUMP_TO, "移動" ),
-      m_button_search_cache( Gtk::Stock::FIND, "ログ検索" ),
+      m_button_search_cache( Gtk::Stock::FIND, "" ),
+      m_button_sidebar( Gtk::Stock::OPEN, "" ),
       m_enable_menuslot( true ),
       m_boot( true )
 {
@@ -175,6 +176,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "Online", "オンライン", std::string(), SESSION::is_online() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_online ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板リスト再読込"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
+    m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内ログ検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
     m_action_group->add( Gtk::Action::create( "Quit", "終了" ), sigc::mem_fun(*this, &Core::slot_quit ) );
 
@@ -286,6 +288,8 @@ void Core::run( bool init )
 
         "<menu action='Menu_File'>"
         "<menuitem action='Online'/>"
+        "<separator/>"
+        "<menuitem action='SearchCache'/>"    
         "<separator/>"
         "<menuitem action='SaveFavorite'/>"
         "<separator/>"
@@ -450,10 +454,12 @@ void Core::run( bool init )
     m_hpaned.sig_show_hide_leftpane().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
     // urlバー
+    m_button_sidebar.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_toggle_sidebar ) );
     m_button_search_cache.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
 
+    m_urlbar_vbox.pack_start( m_button_sidebar, Gtk::PACK_SHRINK );
     m_urlbar_vbox.pack_start( m_button_search_cache, Gtk::PACK_SHRINK );
     m_urlbar_vbox.pack_start( m_entry_url );
     m_urlbar_vbox.pack_start( m_button_go, Gtk::PACK_SHRINK );
@@ -464,6 +470,8 @@ void Core::run( bool init )
     m_tooltip.set_tip( m_button_go, "移動" );
     m_tooltip.set_tip( m_button_search_cache,
                        "キャッシュ内の全ログ検索\n\nある板のログのみを対象に検索する場合は\nスレ一覧のログ検索ボタンを押してください" );
+    m_tooltip.set_tip( m_button_sidebar,
+                       "サイドバー表示切り替え\n\nサイドバーの右しきいをクリックしても\n表示を切り替えられます" );
 
     // ステータスバー
     std::string str_tmp;
