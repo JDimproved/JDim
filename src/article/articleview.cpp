@@ -846,7 +846,7 @@ void ArticleViewSearchCache::pack_widget()
 //
 void ArticleViewSearchCache::focus_view()
 {
-    if( m_cachetoolbar->m_entry_search.get_text().empty() ) m_cachetoolbar->m_entry_search.grab_focus();
+    if( m_url_readcgi.empty() && m_cachetoolbar->m_entry_search.get_text().empty() ) m_cachetoolbar->m_entry_search.grab_focus();
     else ArticleViewBase::focus_view();
 }
 
