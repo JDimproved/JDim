@@ -70,6 +70,7 @@ Core::Core( WinMain& win_main )
     : m_win_main( win_main ),
       m_imagetab_shown( 0 ),
       m_button_go( Gtk::Stock::JUMP_TO, "移動" ),
+      m_button_search_cache( Gtk::Stock::FIND, "ログ検索" ),
       m_enable_menuslot( true ),
       m_boot( true )
 {
@@ -449,9 +450,11 @@ void Core::run( bool init )
     m_hpaned.sig_show_hide_leftpane().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
     // urlバー
+    m_button_search_cache.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
 
+    m_urlbar_vbox.pack_start( m_button_search_cache, Gtk::PACK_SHRINK );
     m_urlbar_vbox.pack_start( m_entry_url );
     m_urlbar_vbox.pack_start( m_button_go, Gtk::PACK_SHRINK );
     m_urlbar.add( m_urlbar_vbox );
@@ -459,6 +462,8 @@ void Core::run( bool init )
     m_urlbar.set_size_request( 8 );
 
     m_tooltip.set_tip( m_button_go, "移動" );
+    m_tooltip.set_tip( m_button_search_cache,
+                       "キャッシュ内の全ログ検索\n\nある板のログのみを対象に検索する場合は\nスレ一覧のログ検索ボタンを押してください" );
 
     // ステータスバー
     std::string str_tmp;
@@ -1072,6 +1077,14 @@ void Core::slot_toggle_sidebar()
     m_hpaned.show_hide_leftpane();
 }
 
+
+//
+// キャッシュ内のログ検索
+//
+void Core::slot_search_cache()
+{
+    CORE::core_set_command( "open_article_searchcache", "dummyurl" , "", "false", "all" );
+}
 
 
 //

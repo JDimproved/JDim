@@ -133,9 +133,6 @@ namespace ARTICLE
         // show_option = true の時は URL 表示などのオプションが表示される
         void drawout_keywords( const std::string& query, bool mode_or, bool show_option );
 
-        // キャッシュ検索結果表示
-        void search_cache( std::list< std::string >& list_url, const std::string& query );
-
         // HTML追加
         void append_html( const std::string& html );
 
@@ -243,9 +240,9 @@ namespace ARTICLE
         void slot_saveimage();
 
         // 検索
-        void open_searchbar( bool invert );
-        void slot_active_search();
-        void slot_entry_operate( int controlid );
+        virtual void open_searchbar( bool invert );
+        virtual void slot_active_search();
+        virtual void slot_entry_operate( int controlid );
     };
 
 }

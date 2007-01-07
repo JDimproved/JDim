@@ -108,8 +108,8 @@ namespace DBTREE
     void read_boardinfo_all();
 
     // キャッシュ内のログ検索
-    std::list< std::string > search_cache_all( const std::string& url, const std::string& query, bool mode_or );
-    std::list< std::string > search_cache( const std::string& url, const std::string& query, bool mode_or );
+    std::list< std::string > search_cache_all( const std::string& url, const std::string& query, bool mode_or, bool& stop );
+    std::list< std::string > search_cache( const std::string& url, const std::string& query, bool mode_or, bool& top );
     
     // article 系
     const bool article_is_cached( const std::string& url ); // キャッシュにあるかどうか

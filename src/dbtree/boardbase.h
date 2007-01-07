@@ -323,7 +323,7 @@ namespace DBTREE
         void save_info();
         
         // キャッシュ内のログ検索
-        std::list< std::string > search_cache( const std::string& query, bool mode_or );
+        std::list< std::string > search_cache( const std::string& query, bool mode_or, bool& stop );
 
       private:
 

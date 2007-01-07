@@ -44,7 +44,7 @@ namespace BOARD
         m_button_favorite( Gtk::Stock::COPY ),
         m_button_up_search( Gtk::Stock::GO_UP ),
         m_button_down_search( Gtk::Stock::GO_DOWN ),
-        m_button_search_cache( Gtk::Stock::CUT ),
+        m_button_search_cache( Gtk::Stock::FIND ),
         m_button_new_article( Gtk::Stock::NEW ),
         m_button_preferences( Gtk::Stock::PREFERENCES )
         {

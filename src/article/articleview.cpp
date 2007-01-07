@@ -776,16 +776,17 @@ void ArticleViewDrawout::relayout()
 
 // ログキャッシュ検索抽出ビュー
 
-ArticleViewSearchCache::ArticleViewSearchCache( const std::string& url,
+ArticleViewSearchCache::ArticleViewSearchCache( const std::string& url_board,
                                                 const std::string& query, bool mode_or, bool searchall )
-    : ArticleViewBase( url ), m_query( query ), m_mode_or( mode_or )
+    : ArticleViewBase( url_board ), m_cachetoolbar( NULL )
+    , m_url_board( url_board ), m_mode_or( mode_or ), m_searchall( searchall )
 {
     struct timeval tv;
     struct timezone tz;
     gettimeofday( &tv, &tz );
 
     //viewのURL更新
-    std::string url_tmp = url + BOARD_SIGN + KEYWORD_SIGN + m_query + ORMODE_SIGN;
+    std::string url_tmp = m_url_board + BOARD_SIGN + KEYWORD_SIGN + "query" + ORMODE_SIGN;
     if( mode_or ) url_tmp += "1";
     else url_tmp += "0";
     url_tmp += TIME_SIGN + MISC::timevaltostr( tv );
@@ -796,11 +797,14 @@ ArticleViewSearchCache::ArticleViewSearchCache( const std::string& url,
 #endif
 
     setup_view();
+    m_cachetoolbar->m_entry_search.set_text( query );
 
     CORE::get_search_manager()->sig_search_fin().connect(
         sigc::mem_fun( *this, &ArticleViewSearchCache::slot_search_fin ) );
 
-    CORE::get_search_manager()->search( get_url(), url, query, mode_or, searchall );
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), "ログ検索" );
+
+    reload();
 }
 
 
@@ -817,12 +821,33 @@ ArticleViewSearchCache::~ArticleViewSearchCache()
 //
 // ウィジットのパッキング
 //
-// ArticleViewBase::pack_widget()をオーパロードしてツールバーをパックしない
+// ArticleViewBase::pack_widget()をオーパロードして検索ツールバーをパック
 //
 void ArticleViewSearchCache::pack_widget()
 {
-    pack_start( *drawarea() );
+    // ツールバーの設定
+    m_cachetoolbar = Gtk::manage( new CacheSearchToolBar() );
+    m_cachetoolbar->m_button_close.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearchCache::close_view ) );
+    m_cachetoolbar->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearchCache::reload ) );
+    m_cachetoolbar->m_button_stop.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearchCache::stop ) );
+
+    m_cachetoolbar->m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &ArticleViewSearchCache::slot_active_search ) );
+    m_cachetoolbar->m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &ArticleViewSearchCache::slot_entry_operate ) );
+
+    pack_start( *m_cachetoolbar, Gtk::PACK_SHRINK, 2 );
+    pack_start( *drawarea(), Gtk::PACK_EXPAND_WIDGET, 2 );
+
     show_all_children();
+}
+
+
+//
+// フォーカスイン 
+//
+void ArticleViewSearchCache::focus_view()
+{
+    if( m_cachetoolbar->m_entry_search.get_text().empty() ) m_cachetoolbar->m_entry_search.grab_focus();
+    else ArticleViewBase::focus_view();
 }
 
 
@@ -835,18 +860,24 @@ void ArticleViewSearchCache::show_view()
     std::cout << "ArticleViewSearchCache::show_view()\n";
 #endif
 
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), "ログ検索" );
+    drawarea()->clear_screen();
+    drawarea()->clear_highlight();
+
+    if( m_searchall ) append_html( "検索対象：キャッシュ内の全ログ<br>" );
+    else append_html( "検索対象：" + DBTREE::board_name( m_url_board ) + "<br>" );
 
     if( CORE::get_search_manager()->get_id() == get_url() ){
 
         if( CORE::get_search_manager()->is_searching() ){
-            append_html( "検索中" );
+            append_html( "検索中・・・" );
             ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
         }
     }
-    else if( CORE::get_search_manager()->is_searching() ) append_html( "他の検索スレッドが実行中です" );
+    else if( CORE::get_search_manager()->is_searching() ){
+        Gtk::MessageDialog mdiag( "他の検索スレッドが実行中です" );
+        mdiag.run();
+    }
 }
-
 
 
 //
@@ -858,9 +889,34 @@ void ArticleViewSearchCache::relayout()
     std::cout << "ArticleViewSearchCache::relayout\n";
 #endif
 
+    std::string query = m_cachetoolbar->m_entry_search.get_text();
+
     drawarea()->clear_screen();
     drawarea()->clear_highlight();
-    search_cache( m_url_readcgi, m_query );
+
+    std::ostringstream comment;
+
+    if( m_searchall ) comment <<  "検索対象：キャッシュ内の全ログ<br>";
+    else comment <<  "検索対象：" << DBTREE::board_name( m_url_board ) << "<br>";
+
+    comment << query << " " << m_url_readcgi.size() << " 件<br><br>";
+
+    if( ! m_url_readcgi.empty() ){
+
+        std::list< std::string >::iterator it = m_url_readcgi.begin();
+        for(; it != m_url_readcgi.end(); ++it ){
+
+            DBTREE::ArticleBase* article = DBTREE::get_article( *it );
+            if( article ){
+                comment << "[ " << DBTREE::board_name( article->get_url() ) << " ] ";
+                comment << "<a href=\"" << PROTO_OR << *it + KEYWORD_SIGN + query << "\">"
+                        << article->get_subject() << "</a><br>";
+                comment << *it << "<br><br>";
+            }
+        }
+    }
+
+    append_html( comment.str() );
     drawarea()->redraw_view();
 }
 
@@ -880,4 +936,63 @@ void ArticleViewSearchCache::slot_search_fin()
     relayout();
 
     ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "default" );
+}
+
+
+//
+// 再検索
+//
+void ArticleViewSearchCache::reload()
+{
+    if( CORE::get_search_manager()->is_searching() ){
+        Gtk::MessageDialog mdiag( "他の検索スレッドが実行中です" );
+        mdiag.run();
+    }
+
+    std::string query = m_cachetoolbar->m_entry_search.get_text();
+
+    // 検索が終わると ArticleViewSearchCache::slot_search_fin() が呼ばれる
+    if( ! query.empty() ){
+
+        CORE::get_search_manager()->search( get_url(), m_url_board, query, m_mode_or, m_searchall );
+        show_view();
+        focus_view();
+    }
+}
+
+
+//
+// 検索停止
+//
+void ArticleViewSearchCache::stop()
+{
+    CORE::get_search_manager()->stop();
+}
+
+
+
+//
+// 検索バーにフォーカス移動
+//
+void ArticleViewSearchCache::open_searchbar( bool invert )
+{
+    m_cachetoolbar->m_entry_search.grab_focus();     
+}
+
+
+//
+// 検索entryでenterを押した
+//
+void ArticleViewSearchCache::slot_active_search()
+{
+    reload();
+}
+
+//
+// 検索entryの操作
+//
+void ArticleViewSearchCache::slot_entry_operate( int controlid )
+{
+    if( controlid == CONTROL::Cancel ) focus_view();
+    else if( controlid == CONTROL::DrawOutAnd ) reload();
 }

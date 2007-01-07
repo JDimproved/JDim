@@ -181,6 +181,45 @@ namespace ARTICLE
         
         virtual ~ArticleToolBar(){}
     };
+
+
+    class CacheSearchToolBar : public Gtk::ScrolledWindow
+    {
+        friend class ArticleViewSearchCache;
+
+        Gtk::HBox m_hbox;
+
+        Gtk::Tooltips m_tooltip;
+
+        SKELETON::JDEntry m_entry_search;
+        SKELETON::ImgButton m_button_close;
+        SKELETON::ImgButton m_button_reload;
+        SKELETON::ImgButton m_button_stop;
+
+        CacheSearchToolBar() :
+        m_button_close( Gtk::Stock::CLOSE ),
+        m_button_reload( Gtk::Stock::REFRESH ),
+        m_button_stop( Gtk::Stock::STOP )
+        {
+            m_tooltip.set_tip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
+            m_tooltip.set_tip( m_button_reload, "再検索" );
+            m_tooltip.set_tip( m_button_stop, "検索中止" );
+
+            m_hbox.pack_start( m_entry_search, Gtk::PACK_EXPAND_WIDGET );
+            m_hbox.pack_end( m_button_close, Gtk::PACK_SHRINK );
+            m_hbox.pack_end( m_button_stop, Gtk::PACK_SHRINK );
+            m_hbox.pack_end( m_button_reload, Gtk::PACK_SHRINK );
+
+            m_hbox.set_border_width( 1 );
+            add( m_hbox );
+
+            set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+            set_size_request( 8 );
+            show_all_children();
+        }
+        
+        virtual ~CacheSearchToolBar(){}
+    };
 }
 
 

@@ -690,7 +690,7 @@ void Root::read_boardinfo_all()
 }
 
 // 全ログ検索
-std::list< std::string > Root::search_cache( const std::string& query, bool mode_or )
+std::list< std::string > Root::search_cache( const std::string& query, bool mode_or, bool& stop )
 {
     std::list< std::string > m_urllist;
 
@@ -698,8 +698,10 @@ std::list< std::string > Root::search_cache( const std::string& query, bool mode
     for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
 
         std::list< std::string > m_tmplist;
-        m_tmplist = ( *it )->search_cache( query, mode_or );
+        m_tmplist = ( *it )->search_cache( query, mode_or, stop );
         m_urllist.splice( m_urllist.end(), m_tmplist );
+
+        if( stop ) break;
     }
 
     return m_urllist;

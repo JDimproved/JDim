@@ -39,7 +39,9 @@ Search_Manager::Search_Manager()
 }
 
 Search_Manager::~Search_Manager()
-{}
+{
+    stop();
+}
 
 
 bool Search_Manager::search( const std::string& id,
@@ -95,8 +97,10 @@ void Search_Manager::thread_search()
     std::cout << "Search_Manager::thread_search\n";
 #endif
 
-    if( m_searchall ) m_urllist = DBTREE::search_cache_all( m_url, m_query, m_mode_or );
-    else m_urllist = DBTREE::search_cache( m_url, m_query, m_mode_or );
+    m_stop = false;
+
+    if( m_searchall ) m_urllist = DBTREE::search_cache_all( m_url, m_query, m_mode_or, m_stop );
+    else m_urllist = DBTREE::search_cache( m_url, m_query, m_mode_or, m_stop );
 
     m_disp.emit();
 }
@@ -109,4 +113,15 @@ void Search_Manager::search_fin()
 {
     m_sig_search_fin.emit();
     m_searching = false;
+}
+
+
+//
+// 検索中止
+//
+void Search_Manager::stop()
+{
+    if( ! m_searching ) return;
+
+    m_stop = true;
 }

@@ -35,6 +35,8 @@ namespace CORE
         // 検索実行中
         bool m_searching;
 
+        bool m_stop;
+
       public:
 
         Search_Manager();
@@ -48,6 +50,7 @@ namespace CORE
 
         bool search( const std::string& id, const std::string& url, const std::string& query,
                      bool mode_or, bool searchall );
+        void stop();
 
       private:
         static void* launcher( void* );

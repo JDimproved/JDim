@@ -1226,36 +1226,6 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or, 
 }
 
 
-//
-// ログキャッシュ検索結果表示
-//
-// 毎回キャッシュ内を検索していると遅いので、あらかじめ検索しておいて
-// 結果だけこの関数に渡す
-// 
-void ArticleViewBase::search_cache( std::list< std::string >& list_url, const std::string& query )
-{
-    std::ostringstream comment;
-    comment << query << " " << list_url.size() << " 件<br><br>";
-
-    if( ! list_url.empty() ){
-
-        std::list< std::string >::iterator it = list_url.begin();
-        for(; it != list_url.end(); ++it ){
-
-            DBTREE::ArticleBase* article = DBTREE::get_article( *it );
-            if( article ){
-                comment << "[ " << DBTREE::board_name( article->get_url() ) << " ] ";
-                comment << "<a href=\"" << PROTO_OR << *it + KEYWORD_SIGN + query << "\">"
-                        << article->get_subject() << "</a><br>";
-                comment << *it << "<br><br>";
-            }
-        }
-    }
-
-    append_html( comment.str() );
-}
-
-
 
 //
 // html をappend
@@ -2233,8 +2203,12 @@ void ArticleViewBase::slot_copy_selection_str()
 //
 void ArticleViewBase::slot_drawout_selection_str()
 {
-    if( m_drawarea->str_selection().empty() ) return;
-    CORE::core_set_command( "open_article_keyword" ,m_url_article, m_drawarea->str_selection(), "false" );
+    std::string query = m_drawarea->str_selection();
+    query = MISC::replace_str( query, "\n", "" );
+
+    if( query.empty() ) return;
+
+    CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "false" );
 }
 
 
@@ -2244,16 +2218,15 @@ void ArticleViewBase::slot_drawout_selection_str()
 void ArticleViewBase::slot_search_cacheall()
 {
     std::string query = m_drawarea->str_selection();
-    std::string url = DBTREE::url_subject( m_url_article );
+    query = MISC::replace_str( query, "\n", "" );
 
     if( query.empty() ) return;
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::slot_search_cacheall " << url << std::endl
-              << query << std::endl;
+    std::cout << "ArticleViewBase::slot_search_cacheall "<< query << std::endl;
 #endif
     
-    CORE::core_set_command( "open_article_searchcache", url , query, "false", "all" );
+    CORE::core_set_command( "open_article_searchcache", "dummyurl" , query, "false", "all" );
 }
 
 
@@ -2263,6 +2236,8 @@ void ArticleViewBase::slot_search_cacheall()
 void ArticleViewBase::slot_search_cachelocal()
 {
     std::string query = m_drawarea->str_selection();
+    query = MISC::replace_str( query, "\n", "" );
+
     std::string url = DBTREE::url_subject( m_url_article );
 
     if( query.empty() ) return;

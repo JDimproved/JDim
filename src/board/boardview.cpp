@@ -1775,8 +1775,7 @@ void BoardView::slot_push_down_search()
 void BoardView::slot_search_cache()
 {
     std::string query = m_toolbar.m_entry_search.get_text();
-
-    if( ! query.empty() ) CORE::core_set_command( "open_article_searchcache", get_url() , query, "false" );
+    CORE::core_set_command( "open_article_searchcache", get_url() , query, "false" );
 }
 
 

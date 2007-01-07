@@ -90,7 +90,7 @@ namespace DBTREE
         void read_boardinfo_all();
 
         // 全ログ検索
-        std::list< std::string > search_cache( const std::string& query, bool mode_or );
+        std::list< std::string > search_cache( const std::string& query, bool mode_or, bool& stop );
 
       private:
 

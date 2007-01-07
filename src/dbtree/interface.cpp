@@ -415,14 +415,14 @@ void DBTREE::read_boardinfo_all()
     DBTREE::get_root()->read_boardinfo_all();
 }
 
-std::list< std::string > DBTREE::search_cache_all( const std::string& url, const std::string& query, bool mode_or )
+std::list< std::string > DBTREE::search_cache_all( const std::string& url, const std::string& query, bool mode_or, bool& stop )
 {
-    return DBTREE::get_root()->search_cache( query, mode_or );
+    return DBTREE::get_root()->search_cache( query, mode_or, stop );
 }
 
-std::list< std::string > DBTREE::search_cache( const std::string& url, const std::string& query, bool mode_or )
+std::list< std::string > DBTREE::search_cache( const std::string& url, const std::string& query, bool mode_or, bool& stop )
 {
-    return DBTREE::get_board( url )->search_cache( query, mode_or );
+    return DBTREE::get_board( url )->search_cache( query, mode_or, stop );
 }
 
 

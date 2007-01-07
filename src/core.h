@@ -76,6 +76,7 @@ namespace CORE
         Gtk::HBox m_urlbar_vbox;
         Gtk::Entry m_entry_url;
         SKELETON::ImgButton m_button_go;
+        SKELETON::ImgButton m_button_search_cache;
 
         // タイトルに表示する文字列
         // set_maintitle() 参照
@@ -162,6 +163,7 @@ namespace CORE
         void slot_toggle_login2ch();
         void slot_toggle_urlbar();
         void slot_toggle_sidebar();
+        void slot_search_cache();
         void slot_show_hide_leftpane( bool show );
         void slot_toggle_2pane();
         void slot_toggle_3pane();

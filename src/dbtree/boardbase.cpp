@@ -1022,7 +1022,8 @@ void BoardBase::reset_abone_thread( std::list< std::string >& threads,
 // datファイルのURL(read.cgi型)を返す
 //
 std::list< std::string > BoardBase::search_cache( const std::string& query,
-                                                  bool mode_or // 今のところ無視
+                                                  bool mode_or, // 今のところ無視
+                                                  bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
     )
 {
 #ifdef _DEBUG
@@ -1073,6 +1074,8 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
                 list_out.push_back( readcgi );
             }
         }
+
+        if( stop ) break;
     }
 
     return list_out;
