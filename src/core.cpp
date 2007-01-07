@@ -15,6 +15,7 @@
 #include "login2ch.h"
 #include "prefdiagfactory.h"
 #include "controlutil.h"
+#include "controlid.h"
 #include "jdversion.h"
 
 #include "config/globalconf.h"
@@ -471,7 +472,9 @@ void Core::run( bool init )
     m_tooltip.set_tip( m_button_search_cache,
                        "キャッシュ内の全ログ検索\n\nある板のログのみを対象に検索する場合は\nスレ一覧のログ検索ボタンを押してください" );
     m_tooltip.set_tip( m_button_sidebar,
-                       "サイドバー表示切り替え\n\nサイドバーの右しきいをクリックしても\n表示を切り替えられます" );
+                       "サイドバー表示切り替え "
+                       + CONTROL::get_motion( CONTROL::ShowSideBar )
+                       + "\n\nサイドバーの右しきいをクリックしても\n表示を切り替えられます" );
 
     // ステータスバー
     std::string str_tmp;

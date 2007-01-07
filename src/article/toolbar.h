@@ -202,8 +202,8 @@ namespace ARTICLE
         m_button_stop( Gtk::Stock::STOP )
         {
             m_tooltip.set_tip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
-            m_tooltip.set_tip( m_button_reload, "再検索" );
-            m_tooltip.set_tip( m_button_stop, "検索中止" );
+            m_tooltip.set_tip( m_button_reload, "再検索 " + CONTROL::get_motion( CONTROL::Reload ) );
+            m_tooltip.set_tip( m_button_stop, "検索中止 " + CONTROL::get_motion( CONTROL::StopLoading ) );
 
             m_hbox.pack_start( m_entry_search, Gtk::PACK_EXPAND_WIDGET );
             m_hbox.pack_end( m_button_close, Gtk::PACK_SHRINK );
