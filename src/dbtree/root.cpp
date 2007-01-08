@@ -15,6 +15,8 @@
 #include "jdlib/miscmsg.h"
 #include "jdlib/loaderdata.h"
 
+#include "skeleton/editviewdialog.h"
+
 #include "global.h"
 #include "command.h"
 #include "config/globalconf.h"
@@ -365,7 +367,9 @@ void Root::update_boards( const std::string xml )
     // 移転があった
     if( ! m_move_info.empty() ){
         
-        Gtk::MessageDialog mdiag( "移転一覧\n\n" + m_move_info  ); mdiag.run();
+        SKELETON::EditViewDialog diag( m_move_info, "移転板一覧", false );
+        diag.resize( 600, 400 );
+        diag.run();
 
         //移転テーブル保存
         save_movetable();
