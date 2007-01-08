@@ -71,8 +71,8 @@ Core::Core( WinMain& win_main )
     : m_win_main( win_main ),
       m_imagetab_shown( 0 ),
       m_button_go( Gtk::Stock::JUMP_TO, "移動" ),
-      m_button_search_cache( Gtk::Stock::FIND, "" ),
-      m_button_sidebar( Gtk::Stock::OPEN, "" ),
+      m_button_search_cache( Gtk::Stock::FIND, "ログ検索" ),
+      m_button_sidebar( Gtk::Stock::OPEN, "サイドバー" ),
       m_enable_menuslot( true ),
       m_boot( true )
 {
@@ -473,8 +473,8 @@ void Core::run( bool init )
                        "キャッシュ内の全ログ検索\n\nある板のログのみを対象に検索する場合は\nスレ一覧のログ検索ボタンを押してください" );
     m_tooltip.set_tip( m_button_sidebar,
                        "サイドバー表示切り替え "
-                       + CONTROL::get_motion( CONTROL::ShowSideBar )
-                       + "\n\nサイドバーの右しきいをクリックしても\n表示を切り替えられます" );
+                       + CONTROL::get_motion( CONTROL::ShowSideBar ) );
+
 
     // ステータスバー
     std::string str_tmp;
