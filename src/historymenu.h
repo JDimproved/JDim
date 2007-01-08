@@ -23,6 +23,7 @@ namespace CORE
         virtual ~HistoryMenuBase();
 
         void append( const std::string& url, const std::string& name, int type );
+        void update();
 
       protected:
 

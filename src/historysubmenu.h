@@ -32,6 +32,7 @@ namespace CORE
 
         void clear();
         void append_item( const std::string& url, const std::string& name, int type );
+        void update();
 
         // ラベルをセット
         void set_menulabel();

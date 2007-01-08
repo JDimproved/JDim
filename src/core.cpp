@@ -1689,6 +1689,11 @@ void Core::exec_command()
         
     else if( command.command  == "set_history_board" ) set_history_board( command.url );
 
+    else if( command.command  == "update_history" ){
+        if( m_histmenu_thread ) m_histmenu_thread->update();
+        if( m_histmenu_board ) m_histmenu_board->update();
+    }
+
     // ビューの切替え
     else if( command.command  == "switch_article" ) switch_article();
 

@@ -81,6 +81,13 @@ void HistorySubMenu::clear()
 
 void HistorySubMenu::append_item( const std::string& url, const std::string& name, int type )
 {
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::append_item"
+              << " url = " << url
+              << " name = " << name
+              << " type = " << type << std::endl;
+#endif   
+
     std::list< CORE::HIST_ITEM* >::iterator it;
     CORE::HIST_ITEM* item = NULL;
 
@@ -94,6 +101,9 @@ void HistorySubMenu::append_item( const std::string& url, const std::string& nam
 
         // 同じURLがあったら先頭に持ってくる
         if( item->type == type && item->url == url ){
+#ifdef _DEBUG
+            std::cout << "found in list\n";
+#endif
             m_histlist.remove( item );
             m_histlist.push_front( item );
             return;
@@ -119,6 +129,27 @@ void HistorySubMenu::append_item( const std::string& url, const std::string& nam
     m_histlist.push_front( item );
 }
 
+
+
+//
+// 移転などでURLを更新する
+//
+void HistorySubMenu::update()
+{
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::update\n";
+#endif
+
+    std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
+    for(; it != m_histlist.end(); ++it ){
+
+        CORE::HIST_ITEM* item = (*it);
+        assert( item );
+
+        if( item->type == TYPE_THREAD ) item->url = DBTREE::url_dat( item->url );
+        else if( item->type == TYPE_BOARD ) item->url = DBTREE::url_subject( item->url );
+    }
+}
 
 
 //

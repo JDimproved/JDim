@@ -739,6 +739,9 @@ void Root::save_movetable()
 
     // お気に入りに登録されているURLも更新
     CORE::core_set_command( "update_favorite" );
+
+    // 履歴メニューのURLも更新
+    CORE::core_set_command( "update_history" );
 }
 
 

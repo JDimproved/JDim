@@ -53,6 +53,12 @@ void HistoryMenuBase::append( const std::string& url, const std::string& name, i
 }
 
 
+void HistoryMenuBase::update()
+{
+    if( m_submenu ) m_submenu->update();
+}
+
+
 // activeになった時にラベルをセットする
 void HistoryMenuBase::slot_activate_menu()
 {
