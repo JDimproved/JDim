@@ -111,11 +111,19 @@ void SettingLoader::load_setting()
 //
 void SettingLoader::download_setting()
 {
+    // 移転処理
+    std::string url_boardbase = DBTREE::url_boardbase( m_url_boadbase );
+    if( m_url_boadbase != url_boardbase ) m_url_boadbase = url_boardbase;
+
 #ifdef _DEBUG
-    std::cout << "SettingLoader::download_setting " << m_url_boadbase << std::endl;
+    std::cout << "SettingLoader::download_setting url = " << m_url_boadbase << std::endl;
 #endif
     if( is_loading() ) return;
     if( m_loaded ) return; // 読み込み済み
+
+#ifdef _DEBUG
+    std::cout << "start loading...\n";
+#endif
 
     clear();
     m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
@@ -177,6 +185,7 @@ void SettingLoader::receive_finish()
 
 #ifdef _DEBUG
         std::cout << "read from " << path << std::endl;
+        if( ! m_lng_rawdata ) std::cout << "no SETTING.TXT in cache!\n";
 #endif        
     }
 
