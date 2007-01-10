@@ -72,7 +72,7 @@ Core::Core( WinMain& win_main )
       m_imagetab_shown( 0 ),
       m_button_go( Gtk::Stock::JUMP_TO, "移動" ),
       m_button_search_cache( Gtk::Stock::FIND, "ログ検索" ),
-      m_button_sidebar( Gtk::Stock::OPEN, "サイドバー" ),
+      m_button_sidebar( "サイドバー" ),
       m_enable_menuslot( true ),
       m_boot( true )
 {
@@ -455,6 +455,7 @@ void Core::run( bool init )
     m_hpaned.sig_show_hide_leftpane().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
     // urlバー
+    m_button_sidebar.set_active( SESSION::show_sidebar() );
     m_button_sidebar.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_toggle_sidebar ) );
     m_button_search_cache.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
@@ -1075,6 +1076,8 @@ void Core::slot_toggle_urlbar()
 //
 void Core::slot_toggle_sidebar()
 {
+    if( ! m_enable_menuslot ) return;
+
 #ifdef _DEBUG
     std::cout << "Core::slot_toggle_sidebar focus = " << SESSION::focused_admin() << std::endl;
 #endif
@@ -1103,18 +1106,28 @@ void Core::slot_search_cache()
 //
 void Core::slot_show_hide_leftpane( bool show )
 {
+    // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
+    m_enable_menuslot = false;
+
     SESSION::set_show_sidebar( show );
 
     // 表示されたらbbslistをフォーカス
-    if( SESSION::show_sidebar() ) switch_bbslist();
+    if( SESSION::show_sidebar() ){
+        switch_bbslist();
+        m_button_sidebar.set_active( true );
+    }
 
     // 非表示になったときは SESSION::focused_admin_sidebar() で指定されるadminにフォーカスを移す
     else{
+
+        m_button_sidebar.set_active( false );
 
         if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_BOARD ) switch_board();
         else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_ARTICLE ) switch_article();
         else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_IMAGE ) switch_image();
     }
+
+    m_enable_menuslot = true;
 }
 
 
