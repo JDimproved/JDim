@@ -8,6 +8,8 @@
 #include <gtkmm.h>
 #include <string>
 
+#include "icons/iconmanager.h"
+
 namespace SKELETON
 {
 
@@ -47,6 +49,13 @@ namespace SKELETON
         void set_img( const Gtk::StockID& stock_id ){
 
             m_img = Gtk::manage( new Gtk::Image( stock_id, Gtk::ICON_SIZE_MENU ) );
+            add( *m_img );
+            set_focus_on_click( false );
+        }
+
+        void set_icon( const int id ){
+
+            m_img = Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) );
             add( *m_img );
             set_focus_on_click( false );
         }
