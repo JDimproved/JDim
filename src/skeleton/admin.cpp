@@ -445,6 +445,9 @@ void Admin::exec_command()
         slot_cancel_reload_all_tabs();
     }
 
+    // タブを隠す
+    else if( command.command == "hide_tabs" ) m_notebook->set_show_tabs( false );
+
     // 個別のコマンド処理
     else command_local( command );
 }
