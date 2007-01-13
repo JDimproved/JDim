@@ -708,7 +708,7 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
-    CORE::core_set_command( "switch_bbslist" );
+    CORE::core_set_command( "switch_sidebar" );
 
     return true;
 }

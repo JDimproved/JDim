@@ -504,8 +504,8 @@ void Core::run( bool init )
 //
 void Core::create_toolbar()
 {
-    m_button_bbslist.signal_clicked().connect( sigc::bind< std::string >( sigc::mem_fun( *this, &Core::switch_bbslist ), URL_BBSLISTVIEW ) );
-    m_button_favorite.signal_clicked().connect( sigc::bind< std::string >( sigc::mem_fun( *this, &Core::switch_bbslist ), URL_FAVORITEVIEW ) );
+    m_button_bbslist.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_bbslist ) );
+    m_button_favorite.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_favorite ) ); 
     m_button_board.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_board ) );
     m_button_thread.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_article ) );
     m_button_image.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_image ) );
@@ -1110,7 +1110,7 @@ void Core::slot_toggle_sidebar()
 #endif
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
-    if( SESSION::focused_admin() == SESSION::FOCUS_BBSLIST
+    if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR
         && BOARD::get_admin()->empty()
         && ARTICLE::get_admin()->empty() 
         && IMAGE::get_admin()->empty() ) return;
@@ -1140,7 +1140,7 @@ void Core::slot_show_hide_leftpane( bool show )
     SESSION::set_show_sidebar( show );
 
     // 表示されたらbbslistをフォーカス
-    if( SESSION::show_sidebar() ) switch_bbslist();
+    if( SESSION::show_sidebar() ) switch_sidebar();
 
     // 非表示になったときは SESSION::focused_admin_sidebar() で指定されるadminにフォーカスを移す
     else{
@@ -1733,7 +1733,7 @@ void Core::exec_command()
 
     else if( command.command  == "switch_board" ) switch_board();
 
-    else if( command.command  == "switch_bbslist" ) switch_bbslist();
+    else if( command.command  == "switch_sidebar" ) switch_sidebar( command.url );
 
     else if( command.command  == "switch_image" ) switch_image();
 
@@ -1918,7 +1918,7 @@ void Core::exec_command_after_boot()
 
     // フォーカス状態回復
     switch( admin ){
-        case SESSION::FOCUS_BBSLIST: switch_bbslist(); break;
+        case SESSION::FOCUS_SIDEBAR: switch_sidebar(); break;
         case SESSION::FOCUS_BOARD: switch_board(); break;
         case SESSION::FOCUS_ARTICLE: switch_article(); break;
         case SESSION::FOCUS_IMAGE: switch_image(); break;
@@ -2026,7 +2026,7 @@ bool Core::slot_focus_in_event( GdkEventFocus* )
     // フォーカス状態回復
     switch( SESSION::focused_admin() )
     {
-        case SESSION::FOCUS_BBSLIST: BBSLIST::get_admin()->set_command( "restore_focus" ); break;
+        case SESSION::FOCUS_SIDEBAR: BBSLIST::get_admin()->set_command( "restore_focus" ); break;
         case SESSION::FOCUS_BOARD: BOARD::get_admin()->set_command( "restore_focus" ); break;
         case SESSION::FOCUS_ARTICLE: ARTICLE::get_admin()->set_command( "restore_focus" ); break;
         case SESSION::FOCUS_IMAGE: IMAGE::get_admin()->set_command( "restore_focus" ); break;
@@ -2063,8 +2063,8 @@ void Core::empty_page( const std::string& url )
 
     // emptyになったadminとフォーカスされているadminが異なる場合は
     // フォーカスを移動しない
-    if( SESSION::focused_admin() == SESSION::FOCUS_BBSLIST )
-        focused_admin = SESSION::FOCUS_BBSLIST;
+    if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR )
+        focused_admin = SESSION::FOCUS_SIDEBAR;
     else if( SESSION::focused_admin() == SESSION::FOCUS_BOARD && ! BOARD::get_admin()->empty() )
         focused_admin = SESSION::FOCUS_BOARD;
     else if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE && ! ARTICLE::get_admin()->empty() )
@@ -2098,7 +2098,7 @@ void Core::empty_page( const std::string& url )
             if( ! ARTICLE::get_admin()->empty() ) focused_admin = SESSION::FOCUS_ARTICLE;
             else if( ! BOARD::get_admin()->empty() ) focused_admin = SESSION::FOCUS_BOARD;
             else{
-                focused_admin = SESSION::FOCUS_BBSLIST;
+                focused_admin = SESSION::FOCUS_SIDEBAR;
                 SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
             }
         }
@@ -2122,7 +2122,7 @@ void Core::empty_page( const std::string& url )
 
             if( ! BOARD::get_admin()->empty() ) focused_admin = SESSION::FOCUS_BOARD;
             else{
-                focused_admin = SESSION::FOCUS_BBSLIST;
+                focused_admin = SESSION::FOCUS_SIDEBAR;
                 SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
             }
         }
@@ -2142,7 +2142,7 @@ void Core::empty_page( const std::string& url )
 
         // フォーカス切り替え
         if( focused_admin == SESSION::FOCUS_NO ){
-            focused_admin = SESSION::FOCUS_BBSLIST;
+            focused_admin = SESSION::FOCUS_SIDEBAR;
             SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
         }
     }
@@ -2150,7 +2150,7 @@ void Core::empty_page( const std::string& url )
     // 切り替え実行
     switch( focused_admin ){
 
-        case SESSION::FOCUS_BBSLIST: switch_bbslist(); break;
+        case SESSION::FOCUS_SIDEBAR: switch_sidebar(); break;
         case SESSION::FOCUS_BOARD: switch_board(); break;
         case SESSION::FOCUS_ARTICLE: switch_article(); break;
         case SESSION::FOCUS_IMAGE: switch_image(); break;
@@ -2166,7 +2166,7 @@ void Core::empty_page( const std::string& url )
 //
 void Core::switch_page( const std::string& url )
 {
-    if( url == URL_BBSLISTADMIN && SESSION::focused_admin() == SESSION::FOCUS_BBSLIST ) switch_bbslist();
+    if( url == URL_BBSLISTADMIN && SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR ) switch_sidebar();
     else if( url == URL_BOARDADMIN && SESSION::focused_admin() == SESSION::FOCUS_BOARD ) switch_board();
     else if( url == URL_ARTICLEADMIN && SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_article();
     else if( url == URL_IMAGEADMIN && SESSION::focused_admin() == SESSION::FOCUS_IMAGE ) switch_image();
@@ -2182,7 +2182,7 @@ void Core::set_toggle_view_button()
 
     switch( SESSION::focused_admin() ){
 
-        case SESSION::FOCUS_BBSLIST:
+        case SESSION::FOCUS_SIDEBAR:
 
             if( BBSLIST::get_admin()->get_current_page() == 0 ){
                 m_button_bbslist.set_active( true );
@@ -2303,18 +2303,39 @@ void Core::switch_board()
     set_toggle_view_button();
 }
 
-void Core::switch_bbslist( const std::string url )
+
+void Core::switch_bbslist()
+{
+    if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR
+        && BBSLIST::get_admin()->get_current_url() == URL_BBSLISTVIEW ) slot_toggle_sidebar();
+    else switch_sidebar( URL_BBSLISTVIEW );
+}
+
+
+void Core::switch_favorite()
+{
+    if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR
+        && BBSLIST::get_admin()->get_current_url() == URL_FAVORITEVIEW ) slot_toggle_sidebar();
+    else switch_sidebar( URL_FAVORITEVIEW );
+}
+
+
+//
+// url は表示するページ( URL_BBSLISTVIEW or URL_FAVORITEVIEW )
+// urlが空の時はフォーカスを移すだけ
+//
+void Core::switch_sidebar( const std::string& url )
 {
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
-    std::cout << "Core::switch_bbslist url - " << url << std::endl;
+    std::cout << "Core::switch_sidebar url - " << url << std::endl;
 #endif
 
     if( ! BBSLIST::get_admin()->empty() ){
 
-        if( SESSION::focused_admin() != SESSION::FOCUS_BBSLIST ){
+        if( SESSION::focused_admin() != SESSION::FOCUS_SIDEBAR ){
 
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
@@ -2326,7 +2347,7 @@ void Core::switch_bbslist( const std::string url )
         if( ! url.empty() ) BBSLIST::get_admin()->set_command( "switch_view", url );
 
         BBSLIST::get_admin()->set_command( "focus_current_view" ); 
-        SESSION::set_focused_admin( SESSION::FOCUS_BBSLIST );
+        SESSION::set_focused_admin( SESSION::FOCUS_SIDEBAR );
     }
 
     set_toggle_view_button();
@@ -2380,10 +2401,10 @@ void Core::switch_leftview()
 {
     int next_admin = SESSION::focused_admin() -1;
     
-    while( next_admin >= SESSION::FOCUS_BBSLIST ){
+    while( next_admin >= SESSION::FOCUS_SIDEBAR ){
 
-        if( next_admin == SESSION::FOCUS_BBSLIST && ! BBSLIST::get_admin()->empty() ){
-            switch_bbslist();
+        if( next_admin == SESSION::FOCUS_SIDEBAR && ! BBSLIST::get_admin()->empty() ){
+            switch_sidebar();
             break;
         }
         else if( next_admin == SESSION::FOCUS_BOARD && ! BOARD::get_admin()->empty() ){

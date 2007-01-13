@@ -210,7 +210,9 @@ namespace CORE
 
         void switch_article();
         void switch_board();
-        void switch_bbslist( const std::string url = std::string() );
+        void switch_bbslist();
+        void switch_favorite();
+        void switch_sidebar( const std::string& url = std::string() );
         void switch_image();
         void toggle_article();
         void switch_leftview();

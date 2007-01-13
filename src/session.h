@@ -14,7 +14,7 @@ namespace SESSION
     // Core::slot_focus_in_event, Core::slot_focus_out_event などを参照
     enum
     {
-        FOCUS_BBSLIST = 0,
+        FOCUS_SIDEBAR = 0,
         FOCUS_BOARD,
         FOCUS_ARTICLE,
         FOCUS_IMAGE,
