@@ -29,7 +29,7 @@ namespace CONTROL
         { "PreBookMark", "前のプックマークヘ移動" },
         { "NextBookMark", "次のプックマークヘ移動" },
 
-        { "ToggleArticle", "板一覧とスレ表示切替" },
+        { "ToggleArticle", "スレ一覧とスレ表示切替" },
 
         { "ShowPopupMenu", "メニュー表示" },
 
