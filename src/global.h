@@ -71,7 +71,6 @@ enum
 #define URL_BBSLISTADMIN "jdadmin://bbslist"
 #define URL_BBSLISTVIEW "jdview://bbslist"
 #define URL_FAVORITEVIEW "jdview://favorite"
-#define URL_ETCVIEW "jdview://etc"
 
 #define URL_BOARDADMIN "jdadmin://board"
 

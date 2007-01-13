@@ -555,7 +555,7 @@ int Root::is_moved( const std::string& root,
 //
 void Root::load_etc()
 {
-    m_xml_etc = "<pos y=\"0\" path=\"0\"/>\n";
+    m_xml_etc = std::string();
 
     JDLIB::Regex regex;
     std::string file_etctxt = CACHE::path_etcboard();

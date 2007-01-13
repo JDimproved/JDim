@@ -3,7 +3,6 @@
 #include "viewfactory.h"
 
 #include "bbslist/bbslistview.h"
-#include "bbslist/etclistview.h"
 #include "bbslist/favoriteview.h"
 #include "bbslist/selectlistview.h"
 
@@ -25,9 +24,6 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
     {
         case VIEW_BBSLISTVIEW:
             return new BBSLIST::BBSListViewMain( url, args.arg1, args.arg2 );
-
-        case VIEW_ETCLIST:
-            return new BBSLIST::EtcListView( url, args.arg1, args.arg2 );
 
         case VIEW_FAVORITELIST:
             return new BBSLIST::FavoriteListView( url, args.arg1, args.arg2 );

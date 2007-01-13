@@ -14,12 +14,13 @@
 
 using namespace BBSLIST;
 
+#define SUBDIR_ETCLIST "外部板"
 
 // メインビュー
 
 BBSListViewMain::BBSListViewMain( const std::string& url,
                                   const std::string& arg1, const std::string& arg2 )
-    : BBSListViewBase( url, arg1, arg2 )
+    : BBSListViewBase( url, arg1, arg2 ), m_load_etc( false )
 {
     BBSListViewBase::set_expand_collapse( true );
 }
@@ -82,7 +83,20 @@ void BBSListViewMain::show_view()
 //
 void BBSListViewMain::update_view()
 {
-    xml2tree( DBTREE::get_xml_bbsmenu() );
+    std::string xml = DBTREE::get_xml_bbsmenu();
+
+    // 外部板挿入
+    m_load_etc = false;
+    std::string xml_etc = DBTREE::get_xml_etc();
+    unsigned int pos = xml.find( "<subdir" );
+    if( !xml.empty() && !xml_etc.empty() && pos != std::string::npos ){
+
+        m_load_etc = true;
+        xml_etc = "<subdir name=\"" + std::string( SUBDIR_ETCLIST) + "\">\n" + xml_etc + "</subdir open=\"0\" >\n";
+        xml.insert( pos, xml_etc );
+    }
+
+    xml2tree( xml );
     set_status( std::string() );
     BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
@@ -116,5 +130,26 @@ Gtk::Menu* BBSListViewMain::get_popupmenu( const std::string& url )
 //
 void BBSListViewMain::save_xml( const std::string& file )
 {
-    if( get_ready_tree() ) CACHE::save_rawdata( file , tree2xml() );
+    if( get_ready_tree() ){
+
+        std::string xml = tree2xml();
+
+        // 外部板を取り除く
+        if( m_load_etc ){
+
+            const std::string str1 = "<subdir";
+            const std::string str2 = "</subdir";
+            const std::string str3 = ">\n";
+
+            unsigned int pos = xml.find( str1 );
+            if( pos != std::string::npos ){
+
+                unsigned int pos_end = xml.find( str2, pos + str1.length() );
+                pos_end = xml.find( str3, pos_end );
+                xml.erase( pos, pos_end - pos + str3.length() );
+            }
+        }
+
+        CACHE::save_rawdata( file , xml );
+    }
 }

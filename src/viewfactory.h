@@ -21,7 +21,6 @@ namespace CORE
     {
         VIEW_BBSLISTVIEW,
         VIEW_FAVORITELIST,
-        VIEW_ETCLIST,
         VIEW_SELECTLIST,
 
         VIEW_BOARDVIEW,

@@ -59,14 +59,10 @@ void BBSListAdmin::restore()
 {
     COMMAND_ARGS command_arg;
     command_arg.command = "open_view";
+    command_arg.arg1 = "true";
 
     // bbslist
     command_arg.url = URL_BBSLISTVIEW;
-    open_view( command_arg );
-
-    // etc
-    command_arg.url = URL_ETCVIEW;
-    command_arg.arg1 = "true";
     open_view( command_arg );
 
     // favorite
@@ -87,7 +83,6 @@ SKELETON::View* BBSListAdmin::create_view( const COMMAND_ARGS& command )
 {
     int type = CORE::VIEW_BBSLISTVIEW;
     if( command.url == URL_FAVORITEVIEW ) type = CORE::VIEW_FAVORITELIST;
-    else if( command.url == URL_ETCVIEW ) type = CORE::VIEW_ETCLIST;
 
     CORE::VIEWFACTORY_ARGS view_args;
     view_args.arg1 = command.arg4;

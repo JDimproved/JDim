@@ -14,6 +14,8 @@ namespace BBSLIST
     // メインビュー
     class BBSListViewMain : public BBSListViewBase
     {
+        bool m_load_etc;
+
       public:
         BBSListViewMain( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
         virtual ~BBSListViewMain();
