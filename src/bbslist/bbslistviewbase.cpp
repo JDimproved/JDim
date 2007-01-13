@@ -75,8 +75,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_toolbar.m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_push_up_search ) );
     m_toolbar.m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_push_down_search ) );
     m_toolbar.m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_entry_operate ) );
-    m_toolbar.m_button_close.signal_clicked().connect(
-        sigc::bind< int >( sigc::mem_fun( *this, &BBSListViewBase::operate_view ), CONTROL::ShowSideBar )  );
+    m_toolbar.m_button_close.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::close_view ) );
 
     pack_start( m_toolbar, Gtk::PACK_SHRINK );    
     pack_start( m_scrwin );
@@ -424,6 +423,12 @@ void BBSListViewBase::focus_out()
 
 
 
+void BBSListViewBase::close_view()
+{
+    CORE::core_set_command( "toggle_sidebar" );
+}
+
+
 //
 // viewの操作
 //
@@ -503,6 +508,10 @@ void  BBSListViewBase::operate_view( const int& control )
 
         case CONTROL::TabRight:
             BBSLIST::get_admin()->set_command( "tab_right" );
+            break;
+
+        case CONTROL::Quit:
+            close_view();
             break;
 
         case CONTROL::Reload:
