@@ -74,6 +74,8 @@ namespace CORE
 
         // 右ペーンで使用するwidget
         Gtk::VBox m_vbox_article;
+        Gtk::VBox m_vbox_board;
+        Gtk::VBox m_vbox_articleboard;
         Gtk::Notebook m_notebook;
         bool m_imagetab_shown;
 
@@ -181,6 +183,7 @@ namespace CORE
         void slot_toggle_sidebar();
         void slot_search_cache();
         void slot_show_hide_leftpane( bool show );
+        void slot_toggle_toolbarpos( int pos );
         void slot_toggle_2pane();
         void slot_toggle_3pane();
         void slot_toggle_v3pane();
@@ -221,6 +224,10 @@ namespace CORE
 
         void set_history_article( const std::string& url );
         void set_history_board( const std::string& url );
+
+        // 画像インジケータ表示/非表示
+        void show_imagetab();
+        void hide_imagetab();
     };
 
     Core* get_instance();

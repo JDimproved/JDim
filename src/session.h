@@ -39,7 +39,6 @@ namespace SESSION
     int width();
     int height();
     bool maximized();
-    bool show_urlbar();
     bool show_sidebar();
    
     void set_x( int x );
@@ -47,8 +46,14 @@ namespace SESSION
     void set_width( int width );
     void set_height( int height );
     void set_maximized( bool maximized );
-    void set_show_urlbar( bool showbar );
     void set_show_sidebar( bool showbar );
+
+    // ツールバー
+    bool show_toolbar();
+    void set_show_toolbar( bool show );
+
+    int toolbar_pos();
+    void set_toolbar_pos( int pos );
 
     // フォーカスされているadmin
     int focused_admin();

@@ -47,8 +47,10 @@ int board_col_speed;
 
 bool img_shown;
 
-bool win_show_urlbar;
 bool win_show_sidebar;
+
+bool win_show_toolbar;
+int win_toolbar_pos;
 
 int win_focused_admin;
 int win_focused_admin_sidebar;
@@ -92,8 +94,10 @@ void SESSION::init_session()
     win_height = cf.get_option( "height", 600 );
     win_maximized = cf.get_option( "maximized", false );
 
-    win_show_urlbar = cf.get_option( "show_urlbar", true );
     win_show_sidebar = cf.get_option( "show_sidebar", true );
+
+    win_show_toolbar = cf.get_option( "show_toolbar", true );
+    win_toolbar_pos = cf.get_option( "toolbar_pos", 0 );
 
     win_focused_admin = cf.get_option( "focused_admin", FOCUS_NO );
     win_focused_admin_sidebar = cf.get_option( "focused_admin_sidebar", FOCUS_NO );
@@ -157,7 +161,8 @@ void SESSION::init_session()
               << "w=" << win_width << std::endl
               << "h=" << win_height << std::endl
               << "m=" << win_maximized << std::endl
-              << "urlbar=" << win_show_urlbar << std::endl
+              << "toolbar=" << win_show_toolbar << std::endl
+              << "toolbar_pos=" << win_toolbar_pos << std::endl
               << "sidebar=" << win_show_sidebar << std::endl
               << "focused_admin=" << win_focused_admin << std::endl
               << "focused_admin_sidebar=" << win_focused_admin_sidebar << std::endl
@@ -235,7 +240,8 @@ void SESSION::save_session()
         << "width = " << win_width << std::endl
         << "height = " << win_height << std::endl
         << "maximized = " << win_maximized << std::endl
-        << "show_urlbar = " << win_show_urlbar << std::endl
+        << "show_toolbar = " << win_show_toolbar << std::endl
+        << "toolbar_pos = " << win_toolbar_pos << std::endl
         << "show_sidebar = " << win_show_sidebar << std::endl
         << "focused_admin = " << win_focused_admin << std::endl
         << "focused_admin_sidebar = " << win_focused_admin_sidebar << std::endl
@@ -297,8 +303,12 @@ int SESSION::y(){ return win_y; }
 int SESSION::width(){ return win_width; }
 int SESSION::height(){ return win_height; }
 bool SESSION::maximized(){ return win_maximized; }
-bool SESSION::show_urlbar(){ return win_show_urlbar; }
 bool SESSION::show_sidebar(){ return win_show_sidebar; }
+
+bool SESSION::show_toolbar(){ return win_show_toolbar; }
+void SESSION::set_show_toolbar( bool show ){ win_show_toolbar = show; }
+int SESSION::toolbar_pos(){ return win_toolbar_pos; }
+void SESSION::set_toolbar_pos( int pos ){ win_toolbar_pos = pos; }
 
 int SESSION::focused_admin(){ return win_focused_admin; }
 void SESSION::set_focused_admin( int admin ){ win_focused_admin = admin; }
@@ -310,7 +320,6 @@ void SESSION::set_y( int y ){ win_y = y; }
 void SESSION::set_width( int width ){ win_width = width; }
 void SESSION::set_height( int height ){ win_height = height; }
 void SESSION::set_maximized( bool maximized ){ win_maximized = maximized; }
-void SESSION::set_show_urlbar( bool showurl ){ win_show_urlbar = showurl; }
 void SESSION::set_show_sidebar( bool showurl ){ win_show_sidebar = showurl; }
 
 

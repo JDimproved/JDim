@@ -199,8 +199,10 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Show_Thread", "スレビューに切替" ), sigc::mem_fun(*this, &Core::switch_article ) );
     m_action_group->add( Gtk::Action::create( "Show_Image", "画像ビューに切替" ), sigc::mem_fun(*this, &Core::switch_image ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "Toolbar", "ツールバー", std::string(), SESSION::show_urlbar() ),
+    m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Toolbar", "表示", std::string(), SESSION::show_toolbar() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbar ) );
+
     m_action_group->add( Gtk::Action::create( "Sidebar_Menu", "サイドバー" ) );
     m_action_group->add( Gtk::ToggleAction::create( "Show_BBS", "板一覧", std::string(), SESSION::show_sidebar() ),
                          sigc::mem_fun( *this, &Core::switch_bbslist ) );
@@ -222,6 +224,19 @@ void Core::run( bool init )
     m_action_group->add( raction0, sigc::mem_fun( *this, &Core::slot_toggle_2pane ) );
     m_action_group->add( raction1, sigc::mem_fun( *this, &Core::slot_toggle_3pane ) );
     m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
+
+    // ツールバー位置
+    Gtk::RadioButtonGroup rg_toolbar;
+    raction0 = Gtk::RadioAction::create( rg_toolbar, "ToolbarPos0", "メニューバーの下に表示する" );
+    raction1 = Gtk::RadioAction::create( rg_toolbar, "ToolbarPos1", "サイドバーの右に表示する" );
+
+    switch( SESSION::toolbar_pos() ){
+        case 0: raction0->set_active( true ); break;
+        case 1: raction1->set_active( true ); break;
+    }
+
+    m_action_group->add( raction0, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), 0 ) );
+    m_action_group->add( raction1, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), 1 ) );
 
     // 設定
     m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
@@ -320,7 +335,12 @@ void Core::run( bool init )
         "<menuitem action='Show_Thread'/>"
         "<menuitem action='Show_Image'/>"
         "<separator/>"
+        "<menu action='Toolbar_Menu'>"
         "<menuitem action='Toolbar'/>"
+        "<separator/>"
+        "<menuitem action='ToolbarPos0'/>"
+        "<menuitem action='ToolbarPos1'/>"
+        "</menu>"
         "<menu action='Sidebar_Menu'>"
         "<menuitem action='Show_BBS'/>"
         "<menuitem action='Show_FAVORITE'/>"
@@ -433,6 +453,7 @@ void Core::run( bool init )
         m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
         m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
 
+        if( SESSION::toolbar_pos() == 1 ) m_vbox_article.pack_start( m_toolbar, Gtk::PACK_SHRINK );
         m_vbox_article.pack_start( m_notebook );
 
         m_hpaned.add1( *m_sidebar );
@@ -447,8 +468,18 @@ void Core::run( bool init )
 
         m_vbox_article.pack_start( m_notebook );
 
-        m_vpaned_r.add1( *BOARD::get_admin()->get_widget() );
-        m_vpaned_r.add2( m_vbox_article );
+        if( SESSION::toolbar_pos() == 1 ){
+
+            m_vbox_board.pack_start( m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_board.pack_start( *BOARD::get_admin()->get_widget() );
+
+            m_vpaned_r.add1( m_vbox_board );
+            m_vpaned_r.add2( m_vbox_article );
+        }
+        else{
+            m_vpaned_r.add1( *BOARD::get_admin()->get_widget() );
+            m_vpaned_r.add2( m_vbox_article );
+        }
 
         m_hpaned.add1( *m_sidebar );
         m_hpaned.add2( m_vpaned_r );
@@ -465,8 +496,18 @@ void Core::run( bool init )
         m_hpaned_r.add1( *BOARD::get_admin()->get_widget() );
         m_hpaned_r.add2( m_vbox_article );
 
-        m_hpaned.add1( *m_sidebar );
-        m_hpaned.add2( m_hpaned_r );
+        if( SESSION::toolbar_pos() == 1 ){
+
+            m_vbox_articleboard.pack_start( m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_articleboard.pack_start( m_hpaned_r );
+
+            m_hpaned.add1( *m_sidebar );
+            m_hpaned.add2( m_vbox_articleboard );
+        }
+        else{
+            m_hpaned.add1( *m_sidebar );
+            m_hpaned.add2( m_hpaned_r );
+        }
     }
 
     // ペーンの位置設定
@@ -499,7 +540,7 @@ void Core::run( bool init )
 
     m_vbox_main.pack_end( *scrbar, Gtk::PACK_SHRINK );
     m_vbox_main.pack_end( m_hpaned );
-    m_vbox_main.pack_end( m_toolbar, Gtk::PACK_SHRINK );
+    if( SESSION::toolbar_pos() == 0 ) m_vbox_main.pack_end( m_toolbar, Gtk::PACK_SHRINK );
 
     m_vbox_main.pack_end( *menubar, Gtk::PACK_SHRINK );
 
@@ -552,7 +593,8 @@ void Core::create_toolbar()
     m_tooltip.set_tip( m_button_thread,
                        "スレビュー\n\n"
                        + CONTROL::get_label_motion( CONTROL::ToggleArticle ) );
-    m_tooltip.set_tip( m_button_image,"画像ビュー" );
+    m_tooltip.set_tip( m_button_image,"画像ビュー\n\nスレビュー切替 "
+                       + CONTROL::get_motion( CONTROL::ToggleArticle ) + " , " + CONTROL::get_motion( CONTROL::Left ) );
 }
 
 
@@ -1106,9 +1148,9 @@ void Core::slot_toggle_login2ch()
 //
 void Core::slot_toggle_toolbar()
 {
-    SESSION::set_show_urlbar( !SESSION::show_urlbar() );
+    SESSION::set_show_toolbar( !SESSION::show_toolbar() );
 
-    if( SESSION::show_urlbar() ){
+    if( SESSION::show_toolbar() ){
 
         Gtk::Widget* menubar = m_ui_manager->get_widget("/menu_bar");
         assert( menubar );
@@ -1174,6 +1216,19 @@ void Core::slot_show_hide_leftpane( bool show )
     }
 }
 
+
+
+//
+// ツールバーの表示モード
+//
+void Core::slot_toggle_toolbarpos( int pos )
+{
+    if( SESSION::toolbar_pos() == pos ) return;
+    SESSION::set_toolbar_pos( pos );
+
+    Gtk::MessageDialog mdiag( "JDの再起動後に位置が変わります\n\nJDを再起動してください" );
+    mdiag.run();
+}
 
 
 //
@@ -1577,13 +1632,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
     else if( command.command == "open_image" ){
 
-        // 画像インジケータ表示
-        if( !m_imagetab_shown ){
-            m_vbox_article.pack_start( IMAGE::get_admin()->tab(), Gtk::PACK_SHRINK );
-            m_vbox_article.reorder_child( IMAGE::get_admin()->tab(), 0 );
-            m_win_main.show_all_children();
-            m_imagetab_shown = true;
-        }
+        show_imagetab();
 
         // キャッシュに無かったらロード
         if( ! DBIMG::is_cached( command.url ) ) DBIMG::download_img( command.url );
@@ -1724,11 +1773,7 @@ void Core::exec_command()
         if( CONFIG::get_restore_article() ) ARTICLE::get_admin()->set_command( "restore" );
         if( CONFIG::get_restore_image() && SESSION::image_URLs().size() ){
 
-            // 画像インジケータ表示
-            m_vbox_article.pack_start( IMAGE::get_admin()->tab(), Gtk::PACK_SHRINK );
-            m_vbox_article.reorder_child( IMAGE::get_admin()->tab(), 0 );
-            m_win_main.show_all_children();
-            m_imagetab_shown = true;
+            show_imagetab();
 
             IMAGE::get_admin()->set_command( "restore" );
         }
@@ -1953,7 +1998,7 @@ void Core::exec_command_after_boot()
     if( ! SESSION::show_sidebar() ) m_hpaned.show_hide_leftpane();
 
     // ツールバー表示切り替え
-    if( ! SESSION::show_urlbar() ) m_vbox_main.remove( m_toolbar );
+    if( ! SESSION::show_toolbar() ) m_vbox_main.remove( m_toolbar );
 
     // タイマーセット
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
@@ -2098,12 +2143,7 @@ void Core::empty_page( const std::string& url )
     // 画像ビューが空になった
     if( url == URL_IMAGEADMIN ){
 
-        // 画像インジケータを隠す
-        if( m_imagetab_shown ){
-            m_vbox_article.remove( IMAGE::get_admin()->tab() );
-            m_win_main.show_all_children();
-            m_imagetab_shown = false;
-        }
+        hide_imagetab();
 
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == MODE_2PANE ){
@@ -2504,4 +2544,37 @@ void Core::set_history_article( const std::string& url )
 void Core::set_history_board( const std::string& url )
 {
     if( m_histmenu_board ) m_histmenu_board->append( url, DBTREE::board_name( url ), TYPE_BOARD );
+}
+
+
+//
+// 画像インジケータ表示
+//
+void Core::show_imagetab()
+{
+    if( ! m_imagetab_shown ){
+
+        int pos = 0;
+        if( SESSION::toolbar_pos() == 1 && SESSION::get_mode_pane() == MODE_2PANE ) pos = 1;
+        m_vbox_article.pack_start( IMAGE::get_admin()->tab(), Gtk::PACK_SHRINK );
+        m_vbox_article.reorder_child( IMAGE::get_admin()->tab(), pos );
+
+        m_win_main.show_all_children();
+        m_imagetab_shown = true;
+    }
+}
+
+
+//
+// 画像インジケータを隠す
+//
+void Core::hide_imagetab()
+{
+    if( m_imagetab_shown ){
+
+        m_vbox_article.remove( IMAGE::get_admin()->tab() );
+
+        m_win_main.show_all_children();
+        m_imagetab_shown = false;
+    }
 }
