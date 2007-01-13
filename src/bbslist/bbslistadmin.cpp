@@ -70,6 +70,7 @@ void BBSListAdmin::restore()
     open_view( command_arg );
 
     set_command( "set_page", std::string(), MISC::itostr( SESSION::bbslist_page() ) );
+    set_command( "hide_tabs" );
 }
 
 

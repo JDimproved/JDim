@@ -66,7 +66,7 @@ namespace BBSLIST
 
         Glib::RefPtr< Gtk::TreeStore >& get_treestore() { return m_treestore; }
         SKELETON::JDTreeView& get_treeview() { return  m_treeview; }
-        const BBSListtToolBar& get_toolbar() const{ return m_toolbar; }
+        BBSListtToolBar& get_toolbar() { return m_toolbar; }
         const bool& get_ready_tree() const{ return m_ready_tree; }
         void set_expand_collapse( bool set ){ m_expand_collapse = set; }
 

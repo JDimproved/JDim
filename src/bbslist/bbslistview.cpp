@@ -74,7 +74,7 @@ void BBSListViewMain::show_view()
 
     else update_view();
 
-    BBSLIST::get_admin()->set_command( "set_tablabel", get_url(), "板" );
+    get_toolbar().set_label( "板一覧" );
 }
 
 

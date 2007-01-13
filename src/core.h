@@ -64,20 +64,33 @@ namespace CORE
         
         Gtk::VBox m_vbox_main;
         SKELETON::JDHPaned m_hpaned;
-        Gtk::VPaned m_vpaned; // 3ペーンモード時の右側ペーン
-        Gtk::HPaned m_hpaned_r; // 縦3ペーンモードの時の右側ペーン
-        Gtk::VBox m_vbox;
+
+        // サイドバー
+        Gtk::Widget* m_sidebar;
+
+        // (縦/横) 3ペーンモード時の右側ペーン
+        Gtk::VPaned m_vpaned_r; 
+        Gtk::HPaned m_hpaned_r;
+
+        // 右ペーンで使用するwidget
+        Gtk::VBox m_vbox_article;
         Gtk::Notebook m_notebook;
         bool m_imagetab_shown;
 
+        // ツールバー
+        Gtk::ScrolledWindow m_toolbar;
         Gtk::Tooltips m_tooltip;
-
-        Gtk::ScrolledWindow m_urlbar;
-        Gtk::HBox m_urlbar_vbox;
+        Gtk::HBox m_toolbar_vbox;
         Gtk::Entry m_entry_url;
         SKELETON::ImgButton m_button_go;
         SKELETON::ImgButton m_button_search_cache;
-        Gtk::ToggleButton m_button_sidebar;
+        SKELETON::ImgToggleButton m_button_bbslist;
+        SKELETON::ImgToggleButton m_button_favorite;
+        SKELETON::ImgToggleButton m_button_board;
+        SKELETON::ImgToggleButton m_button_thread;
+        SKELETON::ImgToggleButton m_button_image;
+        Gtk::VSeparator m_vspr_toolbar_1;
+        Gtk::VSeparator m_vspr_toolbar_2;
 
         // タイトルに表示する文字列
         // set_maintitle() 参照
@@ -117,6 +130,8 @@ namespace CORE
         void shutdown();
 
     private:
+
+        void create_toolbar();
 
         // 初回起動時のセットアップ
         void first_setup();
@@ -162,7 +177,7 @@ namespace CORE
         void slot_save_favorite();
         void slot_toggle_online();
         void slot_toggle_login2ch();
-        void slot_toggle_urlbar();
+        void slot_toggle_toolbar();
         void slot_toggle_sidebar();
         void slot_search_cache();
         void slot_show_hide_leftpane( bool show );
@@ -182,6 +197,7 @@ namespace CORE
 
         bool slot_timeout( int timer_number );
         void slot_switch_page( GtkNotebookPage*, guint page );
+        void set_toggle_view_button();
         bool slot_focus_out_event( GdkEventFocus* ev );
         bool slot_focus_in_event( GdkEventFocus* ev );
         void slot_active_url();
@@ -194,7 +210,7 @@ namespace CORE
 
         void switch_article();
         void switch_board();
-        void switch_bbslist();
+        void switch_bbslist( const std::string url = std::string() );
         void switch_image();
         void toggle_article();
         void switch_leftview();
