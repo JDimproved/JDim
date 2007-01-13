@@ -75,9 +75,10 @@ namespace SKELETON
         // コマンドがセットされているか
         const bool has_commands() const { return ( m_list_command.size() ); }
 
-        // 現在表示してるページ番号
+        // 現在表示してるページ番号およびURL
         // 表示ページを指定したいときは "set_page" コマンドを使う
         virtual int get_current_page();
+        std::string get_current_url();
 
         // SIGHUPを受け取ったときの処理
         virtual void shutdown();
