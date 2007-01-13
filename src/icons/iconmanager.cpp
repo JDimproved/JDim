@@ -19,6 +19,7 @@
 #include "loading_stop.h"
 
 #include "dir.h"
+#include "favorite.h"
 #include "board.h"
 #include "board_update.h"
 #include "thread.h"
@@ -75,6 +76,7 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::LOADING_STOP ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_loading_stop ), icon_loading_stop );
 
     m_list_icons[ ICON::DIR ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_dir ), icon_dir );
+    m_list_icons[ ICON::FAVORITE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_favorite ), icon_favorite );
     m_list_icons[ ICON::BOARD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board ), icon_board );
     m_list_icons[ ICON::BOARD_UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board ), icon_board_update );
     m_list_icons[ ICON::THREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread ), icon_thread );

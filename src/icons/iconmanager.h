@@ -28,6 +28,7 @@ namespace ICON
         LOADING_STOP,
 
         DIR,
+        FAVORITE,
         BOARD,
         BOARD_UPDATE,
         THREAD,
