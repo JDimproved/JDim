@@ -180,7 +180,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Menu_File", "ファイル(_F)" ) );    
     m_action_group->add( Gtk::ToggleAction::create( "Online", "オンライン", std::string(), SESSION::is_online() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_online ) );
-    m_action_group->add( Gtk::Action::create( "ReloadList", "板リスト再読込"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
+    m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内ログ検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
     m_action_group->add( Gtk::Action::create( "Quit", "終了" ), sigc::mem_fun(*this, &Core::slot_quit ) );
@@ -195,10 +195,17 @@ void Core::run( bool init )
 
     // 表示
     m_action_group->add( Gtk::Action::create( "Menu_View", "表示(_V)" ) );    
+    m_action_group->add( Gtk::Action::create( "Show_Board", "スレ一覧に切替" ), sigc::mem_fun(*this, &Core::switch_board ) );
+    m_action_group->add( Gtk::Action::create( "Show_Thread", "スレビューに切替" ), sigc::mem_fun(*this, &Core::switch_article ) );
+    m_action_group->add( Gtk::Action::create( "Show_Image", "画像ビューに切替" ), sigc::mem_fun(*this, &Core::switch_image ) );
+
     m_action_group->add( Gtk::ToggleAction::create( "Toolbar", "ツールバー", std::string(), SESSION::show_urlbar() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbar ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ShowSideBar", "ShowSideBar", std::string(), SESSION::show_sidebar() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_sidebar ) );
+    m_action_group->add( Gtk::Action::create( "Sidebar_Menu", "サイドバー" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Show_BBS", "板一覧", std::string(), SESSION::show_sidebar() ),
+                         sigc::mem_fun( *this, &Core::switch_bbslist ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Show_FAVORITE", "お気に入り", std::string(), SESSION::show_sidebar() ),
+                         sigc::mem_fun( *this, &Core::switch_favorite ) );
 
     // pane 設定
     Gtk::RadioButtonGroup radiogroup;
@@ -309,8 +316,15 @@ void Core::run( bool init )
         "</menu>"
 
         "<menu action='Menu_View'>"
+        "<menuitem action='Show_Board'/>"
+        "<menuitem action='Show_Thread'/>"
+        "<menuitem action='Show_Image'/>"
+        "<separator/>"
         "<menuitem action='Toolbar'/>"
-        "<menuitem action='ShowSideBar'/>"
+        "<menu action='Sidebar_Menu'>"
+        "<menuitem action='Show_BBS'/>"
+        "<menuitem action='Show_FAVORITE'/>"
+        "</menu>"
         "<separator/>"
         "<menuitem action='2Pane'/>"
         "<menuitem action='3Pane'/>"
@@ -536,9 +550,9 @@ void Core::create_toolbar()
                        "スレ一覧\n\n"
                        + CONTROL::get_label_motion( CONTROL::ToggleArticle ) );
     m_tooltip.set_tip( m_button_thread,
-                       "スレ表示\n\n"
+                       "スレビュー\n\n"
                        + CONTROL::get_label_motion( CONTROL::ToggleArticle ) );
-m_tooltip.set_tip( m_button_image,"画像表示" );
+    m_tooltip.set_tip( m_button_image,"画像ビュー" );
 }
 
 
@@ -639,13 +653,22 @@ void Core::slot_activate_menubar()
     m_enable_menuslot = false;
 
     // サイドバー
-    Glib::RefPtr< Gtk::Action > act = m_action_group->get_action( "ShowSideBar" );
+    Glib::RefPtr< Gtk::Action > act = m_action_group->get_action( "Show_BBS" );
     Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
 
-        if( SESSION::show_sidebar() ) tact->set_active( true );
+        if( SESSION::show_sidebar() && BBSLIST::get_admin()->get_current_url() == URL_BBSLISTVIEW ) tact->set_active( true );
         else tact->set_active( false );
     }
+
+    act = m_action_group->get_action( "Show_FAVORITE" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+
+        if( SESSION::show_sidebar() && BBSLIST::get_admin()->get_current_url() == URL_FAVORITEVIEW ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
 
     // ログイン
     act = m_action_group->get_action( "Login2ch" );
