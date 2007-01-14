@@ -102,6 +102,8 @@ namespace SKELETON
         void modify_font( const Pango::FontDescription& font_desc ){ m_textview.modify_font( font_desc ); }
 
         void focus_view(){ m_textview.grab_focus(); }
+
+        void undo(){ m_textview.undo(); }
     };
 }
 
