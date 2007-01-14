@@ -20,15 +20,15 @@ using namespace ARTICLE;
 Preferences::Preferences( const std::string& url )
     : SKELETON::PrefDiag( url )
     ,m_label_name( DBTREE::article_subject( get_url() ), Gtk::ALIGN_LEFT )
-    ,m_label_url( "URL : ", DBTREE:: url_readcgi( get_url(),0,0 ) )
-    ,m_label_url_dat( "DAT : ", DBTREE:: url_dat( get_url() ) )
-    ,m_label_cache( "ローカルキャッシュパス : ", std::string() )
-    ,m_label_size( "サイズ(byte) : ", std::string() )
+    ,m_label_url( false, "URL : ", DBTREE:: url_readcgi( get_url(),0,0 ) )
+    ,m_label_url_dat( false, "DAT : ", DBTREE:: url_dat( get_url() ) )
+    ,m_label_cache( false, "ローカルキャッシュパス : ", std::string() )
+    ,m_label_size( false, "サイズ(byte) : ", std::string() )
     ,m_check_transpabone( "透明あぼ〜ん" )
     ,m_check_chainabone( "連鎖あぼ〜ん" )
-    ,m_label_since( "スレ立て日時 : ", DBTREE::article_since_date( get_url() ) )
-    ,m_label_modified( "最終更新日時 : ", std::string() )
-    ,m_label_write( "最終書き込み日時 : ", std::string() )
+    ,m_label_since( false, "スレ立て日時 : ", DBTREE::article_since_date( get_url() ) )
+    ,m_label_modified( false, "最終更新日時 : ", std::string() )
+    ,m_label_write( false, "最終書き込み日時 : ", std::string() )
 {
     // 一般
     if( DBTREE::article_is_cached( get_url() ) ){
