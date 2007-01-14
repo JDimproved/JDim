@@ -31,6 +31,7 @@ namespace SKELETON
                 m_entry.set_editable( false );
                 m_entry.set_activates_default( false );
                 m_entry.set_has_frame( false );
+                m_entry.property_can_focus() = false;
             }
 
             m_entry.set_text( text );
@@ -39,6 +40,7 @@ namespace SKELETON
             pack_start( m_entry );
         }
 
+        void set_visibility( bool visibility ){ m_entry.set_visibility( visibility ); }
         void set_text( const std::string& text ){ m_entry.set_text( text ); }
         Glib::ustring get_text(){ return m_entry.get_text(); }
 

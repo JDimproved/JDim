@@ -17,25 +17,21 @@ namespace CORE
     {
         Gtk::VBox m_vbox;
         Gtk::HBox m_hbox;
-        Gtk::Label m_label_id;
-        Gtk::Label m_label_passwd;
 
       public:
 
-        Gtk::Entry entry_id;
-        Gtk::Entry entry_passwd;
+        SKELETON::LabelEntry entry_id;
+        SKELETON::LabelEntry entry_passwd;
 
         PasswdFrame( const std::string& title )
-        : m_label_id( "ID" ), m_label_passwd( "パスワード" )
+        : entry_id( true, "ID：" ), entry_passwd( true, "パスワード：" )
         {
             m_hbox.set_spacing( 8 );
 
-            m_hbox.pack_start( m_label_id, Gtk::PACK_SHRINK );
             m_hbox.pack_start( entry_id );
 
-            m_hbox.pack_start( m_label_passwd, Gtk::PACK_SHRINK );
-            m_hbox.pack_start( entry_passwd, Gtk::PACK_SHRINK );
             entry_passwd.set_visibility( false );
+            m_hbox.pack_start( entry_passwd, Gtk::PACK_SHRINK );
 
             m_hbox.set_border_width( 8 );
             m_vbox.set_spacing( 8 );
@@ -66,13 +62,13 @@ namespace CORE
         PasswdPref( const std::string& url )
         : SKELETON::PrefDiag( url )
         , m_frame_2ch( "2chログイン用 ID" )
-        , m_label_sid_2ch( "SID : ", LOGIN::get_login2ch()->get_sessionid() )
+        , m_label_sid_2ch( false, "SID：", LOGIN::get_login2ch()->get_sessionid() )
         {
             // 2ch用
             m_frame_2ch.entry_id.set_text( LOGIN::get_login2ch()->get_username() );
             m_frame_2ch.entry_passwd.set_text( LOGIN::get_login2ch()->get_passwd() );
 
-            get_vbox()->set_spacing( 4 );
+            get_vbox()->set_spacing( 8 );
             get_vbox()->pack_start( m_frame_2ch );
             get_vbox()->pack_start( m_label_sid_2ch );
 

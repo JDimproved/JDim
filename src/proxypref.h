@@ -26,7 +26,7 @@ namespace CORE
         SKELETON::LabelEntry entry_port;
 
         ProxyFrame( const std::string& title )
-        : ckbt( "使用する" ), entry_host( true, "ホスト" ), entry_port( true, "port" ) 
+        : ckbt( "使用する" ), entry_host( true, "ホスト：" ), entry_port( true, "port：" ) 
         {
             m_hbox.set_spacing( 8 );
             m_hbox.pack_start( ckbt, Gtk::PACK_SHRINK );
