@@ -68,6 +68,11 @@ void ButtonConfig::load_conf()
     SETMOTION( "Reload", "Button4" );
     SETMOTION( "ToggleArticle", "Button5" );
 
+    SETMOTION( "ScrollRight", "Tilt_Right" );
+    SETMOTION( "ScrollLeft", "Tilt_Left" );
+    SETMOTION( "Right", "" );
+    SETMOTION( "Left", "" );
+
     // BBSLIST用ボタン設定
     SETMOTION( "OpenBoardButton", "Left" );
     SETMOTION( "OpenBoardTabButton", "Mid" );
@@ -137,6 +142,8 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
         if( str_button == "Left" ) motion = 1;
         if( str_button == "Mid" ) motion = 2;
         if( str_button == "Right" ) motion = 3;
+        if( str_button == "Tilt_Left" ) motion = 6;
+        if( str_button == "Tilt_Right" ) motion = 7;
         if( str_button == "Button4" ) motion = 8;
         if( str_button == "Button5" ) motion = 9;
         if( str_button == "DblLeft" ){ motion = 1; dblclick = true; }
