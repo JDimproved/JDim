@@ -6,7 +6,7 @@
 // cvs 版の時は JDVERSION_CVS をdefineする
 #define JDVERSION_CVS
 
-#define JDCOPYRIGHT "(c) 2006 JD project"
+#define JDCOPYRIGHT "(c) 2006-2007 JD project"
 #define JDVERSIONSTR "1.8.5-beta061227"
 #define JDVERSION 185061227
 #define JDURL "http://jd4linux.sourceforge.jp/"

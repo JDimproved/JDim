@@ -10,6 +10,8 @@
 #include "skeleton/imgbutton.h"
 #include "skeleton/entry.h"
 
+#include "icons/iconmanager.h"
+
 #include "controlutil.h"
 #include "controlid.h"
 
@@ -45,14 +47,15 @@ namespace BOARD
         m_button_up_search( Gtk::Stock::GO_UP ),
         m_button_down_search( Gtk::Stock::GO_DOWN ),
         m_button_search_cache( Gtk::Stock::FIND ),
-        m_button_new_article( Gtk::Stock::NEW ),
+        m_button_new_article( ICON::WRITE ),
         m_button_preferences( Gtk::Stock::PREFERENCES )
         {
             m_tooltip.set_tip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
             m_tooltip.set_tip( m_button_reload, CONTROL::get_label_motion( CONTROL::Reload ) );
             m_tooltip.set_tip( m_button_delete, CONTROL::get_label_motion( CONTROL::Delete ) );
             m_tooltip.set_tip( m_button_stop, CONTROL::get_label_motion( CONTROL::StopLoading ) );
-            m_tooltip.set_tip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite ) );
+            m_tooltip.set_tip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite )
+                + "\n\n板のタブまたは行をドラッグ＆ドロップでも可能" );
             m_tooltip.set_tip( m_button_up_search, CONTROL::get_label_motion( CONTROL::SearchPrev ) );
             m_tooltip.set_tip( m_button_down_search, CONTROL::get_label_motion( CONTROL::SearchNext ) );
             m_tooltip.set_tip( m_button_search_cache, CONTROL::get_label_motion( CONTROL::SearchCache ) );

@@ -19,11 +19,9 @@ namespace SKELETON
         Gtk::Label m_label;
         Gtk::HBox m_hbox;
 
-      public:
-
-        ImgButton( const Gtk::StockID& stock_id, const std::string label = std::string() ){
-
-            m_img = Gtk::manage( new Gtk::Image( stock_id, Gtk::ICON_SIZE_MENU ) );
+        void set( const std::string& label )
+        {
+            if( ! m_img ) return;
 
             if( label.empty() ) add( *m_img );
             else {
@@ -34,6 +32,20 @@ namespace SKELETON
             }
 
             set_focus_on_click( false );
+        }
+
+      public:
+
+        ImgButton( const int id, const std::string label = std::string() ){
+
+            m_img = Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) );
+            set( label );
+        }
+
+        ImgButton( const Gtk::StockID& stock_id, const std::string label = std::string() ){
+
+            m_img = Gtk::manage( new Gtk::Image( stock_id, Gtk::ICON_SIZE_MENU ) );
+            set( label );
         }
     };
 

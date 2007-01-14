@@ -17,6 +17,8 @@
 
 #include "config/globalconf.h"
 
+#include "icons/iconmanager.h"
+
 #include "httpcode.h"
 #include "command.h"
 #include "viewfactory.h"
@@ -37,7 +39,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
     : SKELETON::View( url ),
       m_post( 0 ),
       m_preview( 0 ),
-      m_button_write( Gtk::Stock::NEW ),
+      m_button_write( ICON::WRITE ),
       m_button_cancel( Gtk::Stock::CLOSE )
 {
 #ifdef _DEBUG

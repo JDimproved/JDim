@@ -13,6 +13,8 @@
 #include "skeleton/imgbutton.h"
 #include "skeleton/entry.h"
 
+#include "icons/iconmanager.h"
+
 #include "controlutil.h"
 #include "controlid.h"
 
@@ -104,7 +106,7 @@ namespace ARTICLE
         ArticleToolBar() :
 
         m_button_favorite( Gtk::Stock::COPY ),
-        m_button_write( Gtk::Stock::NEW ),
+        m_button_write( ICON::WRITE ),
         m_button_close( Gtk::Stock::CLOSE ),
         m_button_delete( Gtk::Stock::DELETE ),
         m_button_reload( Gtk::Stock::REFRESH ),
@@ -137,7 +139,8 @@ namespace ARTICLE
             m_tooltip.set_tip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
             m_tooltip.set_tip( m_button_reload, CONTROL::get_label_motion( CONTROL::Reload ) );
             m_tooltip.set_tip( m_button_delete, CONTROL::get_label_motion( CONTROL::Delete ) );
-            m_tooltip.set_tip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite ) );
+            m_tooltip.set_tip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite )
+                + "\n\nスレのタブをドラッグ＆ドロップでも可能" );
             m_tooltip.set_tip( m_button_stop, CONTROL::get_label_motion( CONTROL::StopLoading ) );
             m_tooltip.set_tip( m_button_preferences, CONTROL::get_label_motion( CONTROL::Property ) );
             m_tooltip.set_tip( m_button_open_search, CONTROL::get_label_motion( CONTROL::Search ) );
