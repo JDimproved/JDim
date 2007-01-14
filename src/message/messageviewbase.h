@@ -35,6 +35,7 @@ namespace MESSAGE
         Gtk::Label m_label_board;
         SKELETON::ImgButton m_button_write;
         SKELETON::ImgButton m_button_cancel;
+        SKELETON::ImgButton m_button_undo;
         Gtk::Tooltips m_tooltip;
 
         Gtk::Entry m_entry_subject;
@@ -97,6 +98,7 @@ namespace MESSAGE
 
         void slot_write_clicked();
         void slot_cancel_clicked();
+        void slot_undo_clicked();
         bool slot_key_release( GdkEventKey* event );
         void slot_switch_page( GtkNotebookPage*, guint page );
 

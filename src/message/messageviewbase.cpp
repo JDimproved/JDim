@@ -40,7 +40,8 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_post( 0 ),
       m_preview( 0 ),
       m_button_write( ICON::WRITE ),
-      m_button_cancel( Gtk::Stock::CLOSE )
+      m_button_cancel( Gtk::Stock::CLOSE ),
+      m_button_undo( Gtk::Stock::UNDO )
 {
 #ifdef _DEBUG
     std::cout << "MessageViewBase::MessageViewBase " << get_url() << std::endl;
@@ -159,18 +160,21 @@ void MessageViewBase::pack_widget()
     m_entry_subject.set_has_frame( false );
     m_entry_subject.set_text( DBTREE::article_subject( get_url() ) );
 
-    m_label_board.set_text( "[ " + DBTREE::board_name( get_url() ) + " ]  " );
+    m_label_board.set_text( " [ " + DBTREE::board_name( get_url() ) + " ]  " );
 
     m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
     m_button_cancel.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_cancel_clicked ) );
+    m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_undo_clicked ) );
     
     m_tooltip.set_tip( m_button_write, CONTROL::get_label_motion( CONTROL::ExecWrite ) );
     m_tooltip.set_tip( m_button_cancel, CONTROL::get_label_motion( CONTROL::CancelWrite ) );
+    m_tooltip.set_tip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
 
+    m_toolbar.pack_start( m_button_write, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_label_board, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 );
+    m_toolbar.pack_start( m_button_undo, Gtk::PACK_SHRINK );
     m_toolbar.pack_end( m_button_cancel, Gtk::PACK_SHRINK );
-    m_toolbar.pack_end( m_button_write, Gtk::PACK_SHRINK );
 
     // 書き込みビュー
     m_label_name.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
@@ -337,6 +341,15 @@ void MessageViewBase::slot_write_clicked()
 void MessageViewBase::slot_cancel_clicked()
 {
     close_view();
+}
+
+
+//
+// undoボタンを押した
+//
+void MessageViewBase::slot_undo_clicked()
+{
+    m_text_message.undo();
 }
 
 
