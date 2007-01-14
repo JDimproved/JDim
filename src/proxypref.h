@@ -6,6 +6,7 @@
 #define _PROXYPREF_H
 
 #include "skeleton/prefdiag.h"
+#include "skeleton/label_entry.h"
 
 #include "config/globalconf.h"
 
@@ -17,25 +18,19 @@ namespace CORE
     {
         Gtk::VBox m_vbox;
         Gtk::HBox m_hbox;
-        Gtk::Label m_label_host;
-        Gtk::Label m_label_port;
 
       public:
 
         Gtk::CheckButton ckbt;
-        Gtk::Entry entry_host;
-        Gtk::Entry entry_port;
+        SKELETON::LabelEntry entry_host;
+        SKELETON::LabelEntry entry_port;
 
         ProxyFrame( const std::string& title )
-        : m_label_host( "host" ), m_label_port( "port" ), ckbt( "使用する" )
+        : ckbt( "使用する" ), entry_host( true, "ホスト" ), entry_port( true, "port" ) 
         {
             m_hbox.set_spacing( 8 );
             m_hbox.pack_start( ckbt, Gtk::PACK_SHRINK );
-
-            m_hbox.pack_start( m_label_host, Gtk::PACK_SHRINK );
             m_hbox.pack_start( entry_host );
-
-            m_hbox.pack_start( m_label_port, Gtk::PACK_SHRINK );
             m_hbox.pack_start( entry_port, Gtk::PACK_SHRINK );
 
             m_hbox.set_border_width( 8 );

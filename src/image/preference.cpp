@@ -12,10 +12,10 @@ using namespace IMAGE;
 
 Preferences::Preferences( const std::string& url )
     : SKELETON::PrefDiag( url, false )
-    ,m_label_url( "URL : ", get_url() )
-    ,m_label_cache( "ローカルキャッシュパス : ", CACHE::path_img( get_url() ) )
-    ,m_label_ref( "参照元スレ : " )
-    ,m_label_url_ref( "参照元スレのURL : " )
+    ,m_label_url( false, "URL : ", get_url() )
+    ,m_label_cache( false, "ローカルキャッシュパス : ", CACHE::path_img( get_url() ) )
+    ,m_label_ref( false, "参照元スレ : " )
+    ,m_label_url_ref( false, "参照元スレのURL : " )
 {
     // 一般
     int num_from, num_to;

@@ -13,18 +13,16 @@ namespace BOARD
     {
         Gtk::VBox m_vbox;
         Gtk::HBox m_hbox;
-        Gtk::Label m_label_host;
-        Gtk::Label m_label_port;
 
       public:
 
         Gtk::RadioButton rd_global, rd_disable, rd_local;
-        Gtk::Entry entry_host;
-        Gtk::Entry entry_port;
+        SKELETON::LabelEntry entry_host;
+        SKELETON::LabelEntry entry_port;
 
         ProxyFrame( const std::string& title )
-        : m_label_host( "host" ), m_label_port( "port" ),
-        rd_global( "全体設定を使用する" ), rd_disable( "全体設定を無効にする" ), rd_local( "ローカル設定を使用する" )
+        : rd_global( "全体設定を使用する" ), rd_disable( "全体設定を無効にする" ), rd_local( "ローカル設定を使用する" ),
+        entry_host( true, "ホスト" ), entry_port( true, "ポート" )
         {
             Gtk::RadioButton::Group grp = rd_global.get_group();
             rd_disable.set_group( grp );
@@ -32,10 +30,7 @@ namespace BOARD
 
             m_hbox.set_spacing( 8 );
             m_hbox.set_border_width( 8 );
-
-            m_hbox.pack_start( m_label_host, Gtk::PACK_SHRINK );
             m_hbox.pack_start( entry_host );
-            m_hbox.pack_start( m_label_port, Gtk::PACK_SHRINK );
             m_hbox.pack_start( entry_port, Gtk::PACK_SHRINK );
 
             m_vbox.set_spacing( 8 );
