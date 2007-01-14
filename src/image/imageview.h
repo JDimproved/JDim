@@ -26,6 +26,8 @@ namespace IMAGE
 
         virtual void clock_in();
         virtual void show_view();
+        virtual void scroll_up();
+        virtual void scroll_down();
         virtual void scroll_left();
         virtual void scroll_right();
 

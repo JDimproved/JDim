@@ -225,6 +225,24 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
     else if( command.command  == "close_right_views" ) close_right_views( command.url );
 
     else if( command.command  == "close_all_views" ) close_other_views( std::string() );
+
+    // 画面のスクロール
+    else if( command.command == "scroll_up" ){
+        SKELETON::View* view = get_current_view();
+        if( view ) view->scroll_up();
+    }
+    else if( command.command == "scroll_down" ){
+        SKELETON::View* view = get_current_view();
+        if( view ) view->scroll_down();
+    }
+    else if( command.command == "scroll_left" ){
+        SKELETON::View* view = get_current_view();
+        if( view ) view->scroll_left();
+    }
+    else if( command.command == "scroll_right" ){
+        SKELETON::View* view = get_current_view();
+        if( view ) view->scroll_right();
+    }
 }
 
 

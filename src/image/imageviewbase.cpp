@@ -491,12 +491,20 @@ void ImageViewBase::operate_view( const int& control )
             IMAGE::get_admin()->set_command( "tab_right" );
             break;
 
+        case CONTROL::ScrollUp:
+            IMAGE::get_admin()->set_command( "scroll_up" );
+            break;
+
+        case CONTROL::ScrollDown:
+            IMAGE::get_admin()->set_command( "scroll_down" );
+            break;
+
         case CONTROL::ScrollLeft:
-            scroll_left();
+            IMAGE::get_admin()->set_command( "scroll_left" );
             break;
 
         case CONTROL::ScrollRight:
-            scroll_right();
+            IMAGE::get_admin()->set_command( "scroll_right" );
             break;
 
             // article に切り替え

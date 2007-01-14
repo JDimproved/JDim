@@ -334,10 +334,45 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
 
 
 //
+// 上スクロール
+//
+void ImageViewMain::scroll_up()
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewMain::scroll_up\n";
+#endif
+
+    Gtk::Adjustment*  vadjust = m_scrwin->get_vadjustment();
+    if( !vadjust ) return;
+    vadjust->set_value( MAX( 0,  vadjust->get_value() - vadjust->get_step_increment() ) );
+}
+
+
+//
+// 下スクロール
+//
+void ImageViewMain::scroll_down()
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewMain::scroll_down\n";
+#endif
+
+    Gtk::Adjustment*  vadjust = m_scrwin->get_vadjustment();
+    if( !vadjust ) return;
+    vadjust->set_value(  MIN( vadjust->get_upper() - vadjust->get_page_size(),
+                              vadjust->get_value() + vadjust->get_step_increment() ) );
+}
+
+
+//
 // 左スクロール
 //
 void ImageViewMain::scroll_left()
 {
+#ifdef _DEBUG
+    std::cout << "ImageViewMain::scroll_left\n";
+#endif
+
     Gtk::Adjustment*  hadjust = m_scrwin->get_hadjustment();
     if( !hadjust ) return;
     hadjust->set_value( MAX( 0,  hadjust->get_value() - hadjust->get_step_increment() ) );
@@ -349,6 +384,10 @@ void ImageViewMain::scroll_left()
 //
 void ImageViewMain::scroll_right()
 {
+#ifdef _DEBUG
+    std::cout << "ImageViewMain::scroll_right\n";
+#endif
+
     Gtk::Adjustment*  hadjust = m_scrwin->get_hadjustment();
     if( !hadjust ) return;
     hadjust->set_value(  MIN( hadjust->get_upper() - hadjust->get_page_size(),
