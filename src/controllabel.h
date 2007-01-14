@@ -172,7 +172,7 @@ namespace CONTROL
         { "LeftEdit", "カーソルを左へ移動" },
 
         { "DeleteEdit", "一文字削除" },
-        { "UndoEdit", "Undo" },
+        { "UndoEdit", "元に戻す(Undo)" },
 
         { "", "" },
 
