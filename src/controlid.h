@@ -85,6 +85,8 @@ namespace CONTROL
         DragStartButton,
         TreeRowSelectionButton,
 
+        ScrollUp,
+        ScrollDown,
         ScrollLeft,
         ScrollRight,
 

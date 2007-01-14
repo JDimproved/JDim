@@ -72,6 +72,8 @@ namespace CONTROL
         { "TreeRowSelectionButton", "行範囲選択" },
 
         
+        { "ScrollUp", "" }, // 上スクロール
+        { "ScrollDown", "" },// 下スクロール
         { "ScrollLeft", "" }, // 左スクロール
         { "ScrollRight", "" },// 右スクロール
 

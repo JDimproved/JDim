@@ -98,6 +98,12 @@ void KeyConfig::load_conf()
     SETMOTION( "SearchPrev", "Shift+Enter Ctrl+F3 Ctrl+G N" );
     SETMOTION( "DrawOutAnd", "Ctrl+Enter" );
 
+    SETMOTION( "ScrollUp", "K Shift+Up" );
+    SETMOTION( "ScrollDown", "J Shift+Down" );
+
+    SETMOTION( "ScrollRight", "L Shift+Right" );
+    SETMOTION( "ScrollLeft", "H Shift+Left" );
+
     // BBSLIST
     SETMOTION( "OpenBoard", "Space" );
     SETMOTION( "OpenBoardTab", "Ctrl+Space" );
