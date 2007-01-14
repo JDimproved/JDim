@@ -14,25 +14,46 @@ using namespace BOARD;
 
 Preferences::Preferences( const std::string& url )
     : SKELETON::PrefDiag( url ),
+      m_frame_write( "書き込み設定" ),
+      m_entry_writename( true, "名前：" ),
+      m_entry_writemail( true, "メール：" ),
+      m_check_noname( "名前欄が空白の時は書き込まない" ),
+
       m_frame_cookie( "クッキー＆Hana" ),
       m_button_cookie( "削除" ) ,
-      m_check_noname( "名前欄が空白の時は書き込まない" ),
 
       m_proxy_frame( "読み込み用" ),
       m_proxy_frame_w( "書き込み用" ),
 
       m_label_name( DBTREE::board_name( get_url() ), Gtk::ALIGN_LEFT ),
-      m_label_url( false, "URL : ", DBTREE::url_boardbase( get_url() ) ),
+      m_label_url( false, "URL：", DBTREE::url_boardbase( get_url() ) ),
       m_label_cache( false, "ローカルキャッシュパス", CACHE::path_board_root( DBTREE::url_boardbase( get_url() ) ) ),
 
-      m_label_noname( false, "デフォルト名無し : ", DBTREE::default_noname( get_url() ) ),
-      m_label_line( false, "1レスの最大改行数 : " ),
-      m_label_byte( false, "1レスの最大バイト数 : " )
+      m_label_noname( false, "デフォルト名無し：", DBTREE::default_noname( get_url() ) ),
+      m_label_line( false, "1レスの最大改行数：" ),
+      m_label_byte( false, "1レスの最大バイト数：" )
 {
     m_edit_cookies.set_editable( false );
-    m_check_noname.set_active( DBTREE::board_check_noname( get_url() ) );
 
-    // cookie と hana をセット
+    // 書き込み設定
+    m_check_noname.set_active( DBTREE::board_check_noname( get_url() ) );
+    m_entry_writename.set_text(DBTREE::board_get_write_name( get_url() ) ); 
+    m_entry_writemail.set_text(DBTREE::board_get_write_mail( get_url() ) );
+    if( m_entry_writemail.get_text().empty() ) m_entry_writemail.set_text( "sage" );
+
+    m_hbox_write.set_spacing( 8 );
+    m_hbox_write.pack_start( m_entry_writename );
+    m_hbox_write.pack_start( m_entry_writemail );
+
+    m_vbox_write.set_border_width( 8 );
+    m_vbox_write.set_spacing( 8 );
+    m_vbox_write.pack_start( m_check_noname, Gtk::PACK_SHRINK );
+    m_vbox_write.pack_start( m_hbox_write, Gtk::PACK_SHRINK );
+
+    m_frame_write.add( m_vbox_write );
+
+
+    // cookie と hana の設定
     std::string str_cookies_hana;
     std::list< std::string > list_cookies = DBTREE::board_list_cookies_for_write( get_url() );
     if( list_cookies.empty() ) str_cookies_hana = "cookie: 未取得\n";
@@ -56,6 +77,8 @@ Preferences::Preferences( const std::string& url )
 
     m_frame_cookie.add( m_hbox_cookie );
 
+
+    // 一般ページのパッキング
     m_label_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
     m_label_byte.set_text( MISC::itostr( DBTREE::message_count( get_url() ) ) );
 
@@ -69,7 +92,7 @@ Preferences::Preferences( const std::string& url )
     m_vbox.pack_start( m_label_line, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_byte, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
-    m_vbox.pack_end( m_check_noname, Gtk::PACK_SHRINK );
+    m_vbox.pack_end( m_frame_write, Gtk::PACK_SHRINK );
 
     std::string str_thread, str_word, str_regex;
     std::list< std::string >::iterator it;
@@ -170,8 +193,10 @@ void Preferences::slot_ok_clicked()
     std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
     DBTREE::reset_abone_thread( get_url(), list_thread, list_word, list_regex );  // 板の再描画も行われる
 
-    // 名無し書き込みチェック
+    // 書き込み設定
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );
+    DBTREE::board_set_write_name( get_url(), m_entry_writename.get_text() );
+    DBTREE::board_set_write_mail( get_url(), m_entry_writemail.get_text() );
 
     DBTREE::board_save_info( get_url() );
 }

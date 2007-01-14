@@ -22,7 +22,7 @@ namespace BOARD
 
         ProxyFrame( const std::string& title )
         : rd_global( "全体設定を使用する" ), rd_disable( "全体設定を無効にする" ), rd_local( "ローカル設定を使用する" ),
-        entry_host( true, "ホスト" ), entry_port( true, "ポート" )
+        entry_host( true, "ホスト：" ), entry_port( true, "ポート：" )
         {
             Gtk::RadioButton::Group grp = rd_global.get_group();
             rd_disable.set_group( grp );
@@ -51,15 +51,20 @@ namespace BOARD
         Gtk::Notebook m_notebook;
         Gtk::VBox m_vbox;
 
+        // 書き込み時のデフォルト名とメール
+        Gtk::Frame m_frame_write;
+        Gtk::VBox m_vbox_write;
+        Gtk::HBox m_hbox_write;
+        SKELETON::LabelEntry m_entry_writename;
+        SKELETON::LabelEntry m_entry_writemail;
+        Gtk::CheckButton m_check_noname; // 名無し書き込みチェック
+
         // クッキー & hana
         Gtk::Frame m_frame_cookie;
         Gtk::HBox m_hbox_cookie;
         SKELETON::EditView m_edit_cookies;
         Gtk::VBox m_vbox_cookie;
         Gtk::Button m_button_cookie;
-
-        // 名無し書き込みチェック
-        Gtk::CheckButton m_check_noname;
 
         // プロキシ
         Gtk::VBox m_vbox_proxy;

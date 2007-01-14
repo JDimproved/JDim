@@ -178,16 +178,26 @@ void MessageViewBase::pack_widget()
     m_label_name.set_text( " 名前 " );
     m_label_mail.set_text( " メール " );
 
-    m_check_fixname.set_label( "保存" );
-    m_check_fixmail.set_label( "保存" );
+    m_check_fixname.set_label( "固定" );
+    m_check_fixmail.set_label( "固定" );
 
+    // 名前
+    
     if( DBTREE::write_fixname( get_url() ) ){
         m_check_fixname.set_active();
         m_entry_name.set_text( DBTREE::write_name( get_url() ) );
     }
+    else if( ! DBTREE::board_get_write_name( get_url() ).empty() ){
+        m_entry_name.set_text( DBTREE::board_get_write_name( get_url() ) );
+    }
+
+    // メール
     if( DBTREE::write_fixmail( get_url() ) ){
         m_check_fixmail.set_active();
         m_entry_mail.set_text( DBTREE::write_mail( get_url() ) );
+    }
+    else if( ! DBTREE::board_get_write_mail( get_url() ).empty() ){
+        m_entry_mail.set_text( DBTREE::board_get_write_mail( get_url() ) );
     }
     else m_entry_mail.set_text( "sage" );
 
