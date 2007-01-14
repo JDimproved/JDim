@@ -24,6 +24,7 @@ namespace ICON
         NEWTHREAD,
         CHECK,
         DOWN,
+        WRITE,
         LOADING,
         LOADING_STOP,
 
