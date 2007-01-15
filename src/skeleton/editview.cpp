@@ -61,6 +61,7 @@ void EditTextView::cursor_up_down( bool up )
     }
 
     get_buffer()->place_cursor( it );
+    scroll_to( get_buffer()->get_insert(), 0.0 );
 
     m_pre_line = get_buffer()->get_insert()->get_iter().get_line();
     m_pre_offset = get_buffer()->get_insert()->get_iter().get_line_offset();
