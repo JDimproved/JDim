@@ -13,6 +13,9 @@ SelectListView::SelectListView( const std::string& url, const std::string& arg1,
 {
     // D&D可
     get_treeview().set_reorderable_view( true );
+
+    // ツールバーからラベル削除
+    get_toolbar().remove_label();
 }
 
 

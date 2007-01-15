@@ -20,6 +20,7 @@ namespace BBSLIST
         friend class BBSListViewBase;
         friend class BBSListViewMain;
         friend class FavoriteListView;
+        friend class SelectListView;
 
         // ラベルバー
         Gtk::HBox m_hbox_label;
@@ -81,6 +82,10 @@ namespace BBSLIST
             pack_start( m_hbox_search, Gtk::PACK_SHRINK );
         }
 
+        void remove_label()
+        {
+            remove( m_hbox_label );
+        }
     };
 }
 
