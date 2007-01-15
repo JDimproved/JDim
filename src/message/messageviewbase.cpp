@@ -35,6 +35,12 @@ using namespace MESSAGE;
 #define MAX_STR_ICONV 128*1024
 
 
+enum{
+    PAGE_MESSAGE = 0,
+    PAGE_PREVIEW
+};
+
+
 MessageViewBase::MessageViewBase( const std::string& url )
     : SKELETON::View( url ),
       m_post( 0 ),
@@ -408,9 +414,9 @@ void MessageViewBase::close_view()
 void MessageViewBase::tab_left()
 {
     int page = m_notebook.get_current_page();
-    if( page != 1 ) return;
+    if( page == PAGE_MESSAGE ) return;
 
-    m_notebook.set_current_page( 0 );
+    m_notebook.set_current_page( PAGE_MESSAGE );
     focus_view();
 }
 
@@ -421,9 +427,9 @@ void MessageViewBase::tab_left()
 void MessageViewBase::tab_right()
 {
     int page = m_notebook.get_current_page();
-    if( page != 0 ) return;
+    if( page == PAGE_PREVIEW ) return;
 
-    m_notebook.set_current_page( 1 );
+    m_notebook.set_current_page( PAGE_PREVIEW );
     m_preview->focus_view();
 }
 
@@ -492,7 +498,10 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 #endif
 
     // プレビュー表示
-    if( m_preview && page == 1 ){
+    if( m_preview && page == PAGE_PREVIEW ){
+
+        // 編集ボタン無効化
+        m_button_undo.set_sensitive( false );
 
         std::string msg = m_text_message.get_text();
         msg = MISC::replace_str( msg, "<", "&lt;" );
@@ -541,7 +550,15 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 
         m_preview->set_command( "append_dat", ss.str() );
     }
-    else MESSAGE::get_admin()->set_command( "focus_view" );
+
+    // メッセージビュー
+    else if( page == PAGE_MESSAGE ){
+
+        // 編集ボタン有効化
+        m_button_undo.set_sensitive( true );
+
+        MESSAGE::get_admin()->set_command( "focus_view" );
+    }
 }
 
 
