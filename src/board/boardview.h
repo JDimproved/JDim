@@ -100,7 +100,7 @@ namespace BOARD
         bool slot_key_press( GdkEventKey* event );
         bool slot_key_release( GdkEventKey* event );
         bool slot_scroll_event( GdkEventScroll* event );
-        void slot_bookmark();
+        void slot_bookmark( int bookmark );
         void slot_open_tab();
         void slot_favorite_thread();
         void slot_favorite_board();

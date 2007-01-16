@@ -367,7 +367,7 @@ void ArticleBase::set_number( int number )
 {
     if( number && number != m_number ){
         m_number = number;
-        if( is_cached() && m_number_load < m_number ) m_enable_load = true;
+        if( m_number_load < m_number ) m_enable_load = true;
     }
 }
 
@@ -937,6 +937,12 @@ void ArticleBase::delete_cache()
 
     if( empty() ) return;
 
+    if( m_bookmarked_thread ){
+        Gtk::MessageDialog mdiag( "「" + get_subject() + "」はブックマークされています。\n\nスレを削除しますか？"
+                                  ,false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+        if( mdiag.run() == Gtk::RESPONSE_NO ) return;
+    }
+
     m_number_load = m_number_seen = m_number_before_load = 0;
     m_status = STATUS_UNKNOWN;
     m_date_modified.clear();
@@ -961,6 +967,7 @@ void ArticleBase::delete_cache()
     m_read_info = false;
     m_save_info = false;
     m_enable_load = false;
+    m_bookmarked_thread = false;
     
     // キャッシュ
     std::string path_dat = CACHE::path_dat( m_url );

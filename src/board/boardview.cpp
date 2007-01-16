@@ -85,6 +85,14 @@ enum{
 };
 
 
+enum
+{
+    BOOKMARK_AUTO = -1,
+    BOOKMARK_UNSET = 0,
+    BOOKMARK_SET = 1
+};
+
+
 // set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ) を指定して append_columnする
 #define APPEND_COLUMN(title,model) do{ \
 Gtk::TreeView::Column* col = Gtk::manage( new Gtk::TreeViewColumn( title, model ) ); \
@@ -246,7 +254,12 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // ポップアップメニューの設定
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
-    action_group()->add( Gtk::Action::create( "BookMark", "ブックマーク設定/解除"), sigc::mem_fun( *this, &BoardView::slot_bookmark ) );
+    action_group()->add( Gtk::Action::create( "BookMark", "ブックマーク設定/解除"),
+                         sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_AUTO ) );
+    action_group()->add( Gtk::Action::create( "SetBookMark", "ブックマーク設定"),
+                         sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_SET ) );
+    action_group()->add( Gtk::Action::create( "UnsetBookMark", "ブックマーク解除"),
+                         sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_UNSET ) );
     action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く"), sigc::mem_fun( *this, &BoardView::slot_open_tab ) );
     action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加"), sigc::mem_fun( *this, &BoardView::slot_favorite_thread ) );
     action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに登録"), sigc::mem_fun( *this, &BoardView::slot_favorite_board ) );
@@ -297,6 +310,9 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // 通常 + 複数
     "<popup name='popup_menu_mul'>"
     "<menuitem action='OpenRows'/>"
+    "<separator/>"
+    "<menuitem action='SetBookMark'/>"
+    "<menuitem action='UnsetBookMark'/>"
     "<separator/>"
     "<menuitem action='Favorite_Article'/>"
     "<separator/>"
@@ -1226,7 +1242,7 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
     }
 
     // 新着あり
-    else if( art->enable_load() ){
+    else if( art->is_cached() && art->enable_load() ){
         mark_val = COL_MARKVAL_UPDATED;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::UPDATE );
     }
@@ -1477,12 +1493,21 @@ void BoardView::slot_drag_end()
 //
 // ブックマーク設定、解除
 //
-void BoardView::slot_bookmark()
+void BoardView::slot_bookmark( int bookmark )
 {
-    if( m_path_selected.empty() ) return;
-    std::string url = path2daturl( m_path_selected );
-    DBTREE::ArticleBase* art = DBTREE::get_article( url );
-    if( art ) art->set_bookmarked_thread( ! art->is_bookmarked_thread() );
+    std::string datbase = DBTREE::url_datbase( get_url() );
+    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
+    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
+    for( ; it != list_it.end(); ++it ){
+        Gtk::TreeModel::Row row = *( *it );
+        std::string url = datbase + row[ m_columns.m_col_id_dat ];
+        DBTREE::ArticleBase* art = DBTREE::get_article( url );
+        if( art ){
+            bool set = bookmark;
+            if( set == BOOKMARK_AUTO ) set = ! art->is_bookmarked_thread();
+            art->set_bookmarked_thread( set );
+        }
+    }
 }
 
 
