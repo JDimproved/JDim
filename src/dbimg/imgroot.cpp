@@ -164,7 +164,10 @@ void ImgRoot::delete_cache( const std::string& url, bool redraw )
     if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
 
     // 再描画
-    if( redraw ) CORE::core_set_command( "redraw_article" );
+    if( redraw ){
+        CORE::core_set_command( "redraw_article" );
+        CORE::core_set_command( "redraw_message" );
+    }
 }
 
 
@@ -262,4 +265,5 @@ void ImgRoot::delete_all_files()
 
     // ビュー再描画
     CORE::core_set_command( "redraw_article" );
+    CORE::core_set_command( "redraw_message" );
 }

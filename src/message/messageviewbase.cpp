@@ -89,6 +89,11 @@ MessageViewBase::~MessageViewBase()
 }
 
 
+void MessageViewBase::clock_in()
+{
+    if( m_preview ) m_preview->clock_in();
+}
+
 
 //
 // セットアップ
@@ -243,6 +248,16 @@ void MessageViewBase::pack_widget()
     init_font( CONFIG::get_fontname_message() );
 
     show_status();
+}
+
+
+
+//
+// 再描画
+//
+void MessageViewBase::redraw_view()
+{
+    if( m_preview ) m_preview->redraw_view();
 }
 
 

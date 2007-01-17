@@ -78,9 +78,11 @@ namespace MESSAGE
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
 
         // SKELETON::View の関数のオーバロード
+        virtual void clock_in();
         virtual void reload(){}
         virtual void relayout();
         virtual void close_view();
+        virtual void redraw_view();
         virtual void focus_view();
         virtual void operate_view( const int& control );
 

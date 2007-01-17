@@ -274,6 +274,7 @@ void Img::receive_finish()
 
     CORE::core_set_command( "redraw", m_url );
     CORE::core_set_command( "redraw_article" );
+    CORE::core_set_command( "redraw_message" );
 
 #ifdef _DEBUG
     std::cout << "Img::receive_finish code = " << get_code() << std::endl

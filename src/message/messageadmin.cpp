@@ -51,6 +51,12 @@ MessageAdmin::~MessageAdmin()
 }
 
 
+void MessageAdmin::clock_in()
+{
+    if( m_view ) m_view->clock_in();
+}
+
+
 //
 // コマンドセット
 //
@@ -80,6 +86,10 @@ void MessageAdmin::exec_command()
     COMMAND_ARGS command = m_list_command.front();
     m_list_command.pop_front();
 
+#ifdef _DEBUG
+    std::cout << "MessageAdmin::exec_command command = " << command.command << std::endl;
+#endif
+
     if( command.command == "open_view" ) open_view( command.url, command.arg1, false );
 
     else if( command.command == "create_new_thread" ) open_view( command.url, command.arg1, true );
@@ -106,6 +116,12 @@ void MessageAdmin::exec_command()
     else if( command.command == "relayout_all" ){
         if( m_view ) m_view->relayout();
     }
+    else if( command.command == "redraw" ){
+        redraw_view( command.url );
+    }
+    else if( command.command == "redraw_current_view" ){
+        if( m_view ) m_view->redraw_view();
+    }
 
     // view の操作
     else if( command.command == "exec_Write" ){
@@ -118,6 +134,22 @@ void MessageAdmin::exec_command()
         if( m_view ) m_view->operate_view( CONTROL::TabRight );
     }
 }
+
+
+//
+// ビューを再描画
+//
+void MessageAdmin::redraw_view( const std::string& url )
+{
+#ifdef _DEBUG
+        std::cout << "MessageAdmin::redraw_view url = " << url << std::endl;
+#endif
+
+    if( m_view && m_view->get_url() == url ){
+        m_view->redraw_view();
+    }
+}
+
 
 
 //

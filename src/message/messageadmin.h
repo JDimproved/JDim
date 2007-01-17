@@ -35,13 +35,15 @@ namespace MESSAGE
         MessageAdmin();
         ~MessageAdmin();
 
+        void clock_in();
+
         void set_command( const std::string& command, const std::string& url = std::string() , const std::string& arg1 = std::string() );
 
       private:
 
         void exec_command();
-
         void open_view( const std::string& url, const std::string& msg, bool new_thread );
+        void redraw_view( const std::string& url );
         void close_view();
         void focus_view();
     };

@@ -1691,6 +1691,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         BOARD::get_admin()->set_command( "redraw", command.url );
         BBSLIST::get_admin()->set_command( "redraw", command.url );
         IMAGE::get_admin()->set_command( "redraw", command.url );
+        MESSAGE::get_admin()->set_command( "redraw", command.url );
         return;
     }
 
@@ -1712,6 +1713,13 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "redraw_article" ) {
 
         ARTICLE::get_admin()->set_command( "redraw_current_view" );
+        return;
+    }
+
+    // 表示中のmessage viewを再描画
+    else if( command.command  == "redraw_message" ) {
+
+        MESSAGE::get_admin()->set_command( "redraw_current_view" );
         return;
     }
 
@@ -2030,6 +2038,7 @@ bool Core::slot_timeout( int timer_number )
     BOARD::get_admin()->clock_in();
     ARTICLE::get_admin()->clock_in();
     IMAGE::get_admin()->clock_in();
+    MESSAGE::get_admin()->clock_in();
     
     return true;
 }
