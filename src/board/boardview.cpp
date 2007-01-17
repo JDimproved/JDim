@@ -56,14 +56,14 @@ using namespace BOARD;
 #define DEFAULT_COLMUN_WIDTH 50
 
 enum{
-    COL_MARKVAL_OLD = -2,
-    COL_MARKVAL_FINISHED = -1,
-    COL_MARKVAL_NORMAL = 0,
-    COL_MARKVAL_NEWTHREAD,
-    COL_MARKVAL_CACHED, 
-    COL_MARKVAL_UPDATED,
-    COL_MARKVAL_BKMARKED,
-    COL_MARKVAL_BKMARKED_UPDATED
+    COL_MARKVAL_OLD = -2,        // dat 落ち
+    COL_MARKVAL_FINISHED = -1,   // キャッシュあり、新着無し、規定スレ数を越えている
+    COL_MARKVAL_NORMAL = 0,      // 通常状態
+    COL_MARKVAL_NEWTHREAD,       // 新スレ
+    COL_MARKVAL_CACHED,          // キャッシュあり、新着無し
+    COL_MARKVAL_UPDATED,         // キャッシュあり、新着有り
+    COL_MARKVAL_BKMARKED,        // ブックマークされている、新着無し
+    COL_MARKVAL_BKMARKED_UPDATED // ブックマークされている、新着有り
 };
 
 
@@ -1504,7 +1504,10 @@ void BoardView::slot_bookmark( int bookmark )
         DBTREE::ArticleBase* art = DBTREE::get_article( url );
         if( art ){
             bool set = bookmark;
-            if( set == BOOKMARK_AUTO ) set = ! art->is_bookmarked_thread();
+            if( bookmark == BOOKMARK_AUTO ) set = ! art->is_bookmarked_thread();
+#ifdef _DEBUG
+            std::cout << "BoardView::slot_bookmark url = " << url << " set = " << set << std::endl;
+#endif
             art->set_bookmarked_thread( set );
         }
     }
