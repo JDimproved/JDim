@@ -244,12 +244,12 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
     m_delete_pushed = false;
     if( event->keyval == GDK_Delete ) m_delete_pushed = true;
 
-    // MessageViewでショートカットで書き込むと文字が挿入されてしまうので
-    // キャンセルする
-    if( event->state & GDK_MOD1_MASK && event->keyval == 'w' ) return true;
-    if( event->state & GDK_MOD1_MASK && event->keyval == 'q' ) return true;
-
     switch( m_control.key_press( event ) ){
+
+        // MessageViewでショートカットで書き込むと文字が挿入されてしまうので
+        // キャンセルする
+        case CONTROL::ExecWrite: return true;
+        case CONTROL::CancelWrite: return true;
 
         case CONTROL::HomeEdit: cursor_home(); return true;
         case CONTROL::EndEdit: cursor_end(); return true;
