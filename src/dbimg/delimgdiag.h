@@ -13,6 +13,31 @@
 
 #include <sstream>
 
+
+#if GTKMMVER <= 240
+// gtkのバージョンが2.4以下の時はスピンが回ったときに
+// 明示的に値をセットする必要がある
+class SpinButton24 : public Gtk::SpinButton
+{
+
+public:
+
+    SpinButton24() : Gtk::SpinButton(){}
+
+protected:
+
+    virtual void on_spinbutton_digits_changed(){
+        const size_t size = 256;
+        char str[ size ];
+        snprintf( str, size, "%d", (int)get_value() );
+        set_text( str );
+    }
+};
+
+#endif
+
+
+
 namespace DBIMG
 {
     class DelImgDiag : public SKELETON::PrefDiag
@@ -21,7 +46,12 @@ namespace DBIMG
         Gtk::Label m_label;
         Gtk::HBox m_hbox;
         Gtk::Label m_spinlabel;
+
+#if GTKMMVER <= 240
+        SpinButton24 m_spin;
+#else
         Gtk::SpinButton m_spin;
+#endif
 
         // OK押した
         virtual void slot_ok_clicked(){
