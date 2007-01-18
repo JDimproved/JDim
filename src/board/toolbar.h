@@ -55,7 +55,7 @@ namespace BOARD
             m_tooltip.set_tip( m_button_delete, CONTROL::get_label_motion( CONTROL::Delete ) );
             m_tooltip.set_tip( m_button_stop, CONTROL::get_label_motion( CONTROL::StopLoading ) );
             m_tooltip.set_tip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite )
-                + "\n\n板のタブまたは行をドラッグ＆ドロップでも可能" );
+                + "\n\nまたは板のタブか選択したスレをお気に入りに直接Ｄ＆Ｄする" );
             m_tooltip.set_tip( m_button_up_search, CONTROL::get_label_motion( CONTROL::SearchPrev ) );
             m_tooltip.set_tip( m_button_down_search, CONTROL::get_label_motion( CONTROL::SearchNext ) );
             m_tooltip.set_tip( m_button_search_cache, CONTROL::get_label_motion( CONTROL::SearchCache ) );

@@ -140,7 +140,7 @@ namespace ARTICLE
             m_tooltip.set_tip( m_button_reload, CONTROL::get_label_motion( CONTROL::Reload ) );
             m_tooltip.set_tip( m_button_delete, CONTROL::get_label_motion( CONTROL::Delete ) );
             m_tooltip.set_tip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite )
-                + "\n\nスレのタブをドラッグ＆ドロップでも可能" );
+                + "\n\nまたはスレのタブをお気に入りに直接Ｄ＆Ｄする" );
             m_tooltip.set_tip( m_button_stop, CONTROL::get_label_motion( CONTROL::StopLoading ) );
             m_tooltip.set_tip( m_button_preferences, CONTROL::get_label_motion( CONTROL::Property ) );
             m_tooltip.set_tip( m_button_open_search, CONTROL::get_label_motion( CONTROL::Search ) );
