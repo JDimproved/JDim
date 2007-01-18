@@ -41,7 +41,7 @@ JDTreeView::JDTreeView( const std::string& fontname, const int *rgb )
 #endif
 
     set_enable_search( false );
-    set_rules_hint( false );
+    set_rules_hint( CONFIG::get_use_tree_gtkrc() );
     add_events( Gdk::BUTTON_PRESS_MASK );
     add_events( Gdk::KEY_PRESS_MASK );
     add_events( Gdk::KEY_RELEASE_MASK );
@@ -69,6 +69,8 @@ JDTreeView::~JDTreeView()
 //
 void JDTreeView::init_color( const int *rgb )
 {
+    if( CONFIG::get_use_tree_gtkrc() ) return;
+
     // 背景色
     Gdk::Color color;
     color.set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );

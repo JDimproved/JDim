@@ -42,6 +42,9 @@ namespace CONFIG
     void set_color_back_tree( int* color );
     void set_color_back_tree_board( int* color );
 
+    // ツリービューでgtkrcの設定を使用するか
+    const bool get_use_tree_gtkrc();
+
     // フォント
     const std::string& get_fontname_main();
     const std::string& get_fontname_popup();

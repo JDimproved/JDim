@@ -22,6 +22,9 @@ int color_back[ COLOR_SIZE ];
 int color_back_popup[ COLOR_SIZE ];
 int color_back_tree[ COLOR_SIZE ];
 int color_back_tree_board[ COLOR_SIZE ];
+
+bool use_tree_gtkrc;
+
 std::string fontname_main;
 std::string fontname_popup;
 std::string fontname_tree;
@@ -243,6 +246,9 @@ const bool CONFIG::init_config()
     color_back_popup[ 1 ] = cf.get_option( "color_popup_G", 65000 );
     color_back_popup[ 2 ] = cf.get_option( "color_popup_B", 63000 );
 
+    // ツリービューでgtkrcの設定を使用するか
+    use_tree_gtkrc = cf.get_option( "use_tree_gtkrc", false );
+
     // boardビューで古いスレも表示
     show_oldarticle = cf.get_option( "show_oldarticle", false );
 
@@ -423,6 +429,8 @@ void CONFIG::save_conf_impl( const std::string& path )
     cf.update( "color_popup_G", color_back_popup[ 1 ] );
     cf.update( "color_popup_B", color_back_popup[ 2 ] );
 
+    cf.update( "use_tree_gtkrc", use_tree_gtkrc );
+
     cf.update( "show_oldarticle", show_oldarticle );
     cf.update( "newthread_hour", newthread_hour );
 
@@ -492,6 +500,7 @@ void CONFIG::set_color_back_popup( int* color ) { memcpy( color_back_popup, colo
 void CONFIG::set_color_back_tree( int* color ) { memcpy( color_back_tree, color, sizeof( int )*COLOR_SIZE ); }
 void CONFIG::set_color_back_tree_board( int* color ) { memcpy( color_back_tree_board, color, sizeof( int )*COLOR_SIZE ); }
 
+const bool CONFIG::get_use_tree_gtkrc(){ return use_tree_gtkrc; }
 
 const std::string& CONFIG::get_fontname_main() { return fontname_main; }
 const std::string& CONFIG::get_fontname_popup() { return fontname_popup; }
