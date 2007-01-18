@@ -20,6 +20,10 @@ namespace CONFIG
         // 操作文字列取得
         virtual const std::string get_str_motion( int id );
 
+        // editviewの操作をemacs風にする
+        bool is_emacs_mode();
+        void toggle_emacs_mode();
+
       private:
 
         void load_conf();

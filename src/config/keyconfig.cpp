@@ -45,7 +45,7 @@ KeyConfig::KeyConfig()
 
 KeyConfig::~KeyConfig()
 {
-    MouseKeyConf::save_conf( CACHE::path_keyconf() );
+    save_conf( CACHE::path_keyconf() );
 }
 
 
@@ -136,16 +136,17 @@ void KeyConfig::load_conf()
     SETMOTION( "ExecWrite", "Alt+w" ); 
 
     // EDIT
-    SETMOTION( "HomeEdit", "" );
-    SETMOTION( "EndEdit", "Ctrl+e" );
-
-    SETMOTION( "UpEdit", "Ctrl+p" );
-    SETMOTION( "DownEdit", "Ctrl+n" );
-    SETMOTION( "RightEdit", "Ctrl+f" );
-    SETMOTION( "LeftEdit", "Ctrl+b" );
-
-    SETMOTION( "DeleteEdit", "Ctrl+d" );
     SETMOTION( "UndoEdit", "Ctrl+/ Ctrl+z" );
+
+    SETMOTION( "HomeEdit", "" );
+    SETMOTION( "EndEdit", "" );
+
+    SETMOTION( "UpEdit", "" );
+    SETMOTION( "DownEdit", "" );
+    SETMOTION( "RightEdit", "" );
+    SETMOTION( "LeftEdit", "" );
+
+    SETMOTION( "DeleteEdit", "" );
 }
 
 
@@ -167,7 +168,7 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
     std::cout << "id = " << id << std::endl;
 #endif
 
-    int mode = MouseKeyConf::get_mode( id );
+    int mode = get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
 
     guint motion;
@@ -222,7 +223,7 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
         if( motion >= 'A' && motion <= 'Z' ) shift = true;
         if( motion == '?' || motion == '<' || motion == '>' || motion == '+' ) shift = true;
 
-        int id_check = MouseKeyConf::check_conflict( mode, motion, ctrl, shift, alt, false );
+        int id_check = check_conflict( mode, motion, ctrl, shift, alt, false );
         if( id_check != CONTROL::None ){
             MISC::ERRMSG( "key config : " + str_motion + " is already used." );
             return;
@@ -234,7 +235,7 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
 #endif
 
     MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, false );
-    MouseKeyConf::vec_items().push_back( item );
+    vec_items().push_back( item );
 }
 
 
@@ -246,4 +247,54 @@ const std::string KeyConfig::get_str_motion( int id )
     str_motion = MISC::replace_str( str_motion, "Plus", "+" );
 
     return str_motion;
+}
+
+
+// editviewの操作をemacs風か
+bool KeyConfig::is_emacs_mode()
+{
+    return ( get_str_motion( CONTROL::UpEdit ).find( "Ctrl+p" ) != std::string::npos );
+}
+
+
+// editviewの操作をemacs風にする
+void KeyConfig::toggle_emacs_mode()
+{
+    bool mode = is_emacs_mode();
+
+    remove_items( CONTROL::HomeEdit );
+    remove_items( CONTROL::HomeEdit );
+    remove_items( CONTROL::EndEdit );
+
+    remove_items( CONTROL::UpEdit );
+    remove_items( CONTROL::DownEdit );
+    remove_items( CONTROL::RightEdit );
+    remove_items( CONTROL::LeftEdit );
+
+    remove_items( CONTROL::DeleteEdit );
+
+    if( mode ){
+
+        set_one_motion( "HomeEdit", "" );
+        set_one_motion( "EndEdit", "" );
+
+        set_one_motion( "UpEdit", "" );
+        set_one_motion( "DownEdit", "" );
+        set_one_motion( "RightEdit", "" );
+        set_one_motion( "LeftEdit", "" );
+
+        set_one_motion( "DeleteEdit", "" );
+    }
+    else{
+
+        set_one_motion( "HomeEdit", "Ctrl+a" );
+        set_one_motion( "EndEdit", "Ctrl+e" );
+
+        set_one_motion( "UpEdit", "Ctrl+p" );
+        set_one_motion( "DownEdit", "Ctrl+n" );
+        set_one_motion( "RightEdit", "Ctrl+f" );
+        set_one_motion( "LeftEdit", "Ctrl+b" );
+
+        set_one_motion( "DeleteEdit", "Ctrl+d" );
+    }
 }
