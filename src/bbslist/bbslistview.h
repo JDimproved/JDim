@@ -22,7 +22,6 @@ namespace BBSLIST
 
         virtual void shutdown();
 
-        virtual void reload();
         virtual void show_view();
         virtual void update_view();
 

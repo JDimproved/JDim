@@ -22,7 +22,7 @@ BBSListViewMain::BBSListViewMain( const std::string& url,
                                   const std::string& arg1, const std::string& arg2 )
     : BBSListViewBase( url, arg1, arg2 ), m_load_etc( false )
 {
-    BBSListViewBase::set_expand_collapse( true );
+    set_expand_collapse( true );
 }
 
 
@@ -47,20 +47,6 @@ void BBSListViewMain::shutdown()
 
 
 //
-// リロード
-//
-// 更新が終わったらBBSListViewMain::update_view()が呼ばれる
-//
-void BBSListViewMain::reload()
-{
-    DBTREE::download_bbsmenu();
-    set_status( "loading..." );
-    BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
-}
-
-
-
-//
 // 表示
 //
 void BBSListViewMain::show_view()
@@ -70,11 +56,14 @@ void BBSListViewMain::show_view()
 #endif    
 
     // 板一覧のxmlが空ならサーバから取得
-    if( DBTREE::get_xml_bbsmenu().empty() ) reload();
+    // 更新が終わったらBBSListViewMain::update_view()が呼ばれる
+    if( DBTREE::get_xml_bbsmenu().empty() ){
+        DBTREE::download_bbsmenu();
+        set_status( "loading..." );
+        BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
+    }
 
     else update_view();
-
-    get_toolbar().set_label( "板一覧" );
 }
 
 
