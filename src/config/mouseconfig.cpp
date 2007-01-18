@@ -47,7 +47,7 @@ MouseConfig::MouseConfig()
 
 MouseConfig::~MouseConfig()
 {
-    MouseKeyConf::save_conf( CACHE::path_mouseconf() );
+    save_conf( CACHE::path_mouseconf() );
 }
 
 
@@ -90,7 +90,7 @@ void MouseConfig::set_one_motion( const std::string& name, const std::string& st
     int id = CONTROL::get_id( name );
     if( id == CONTROL::None ) return;
 
-    int mode = MouseKeyConf::get_mode( id );
+    int mode = get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
 
     bool ctrl = false;
@@ -99,14 +99,14 @@ void MouseConfig::set_one_motion( const std::string& name, const std::string& st
     guint motion = atoi( str_motion.c_str() );
     if( !motion ) return;
 
-    int id_check = MouseKeyConf::check_conflict( mode, motion, ctrl, shift, alt, false );
+    int id_check = check_conflict( mode, motion, ctrl, shift, alt, false );
     if( id_check != CONTROL::None ){
         MISC::ERRMSG( "mouse config : " + str_motion + " is already used." );
         return;
     }
 
     MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, false );
-    MouseKeyConf::vec_items().push_back( item );
+    vec_items().push_back( item );
 }
 
 

@@ -43,7 +43,7 @@ ButtonConfig::ButtonConfig()
 
 ButtonConfig::~ButtonConfig()
 {
-    MouseKeyConf::save_conf( CACHE::path_buttonconf() );
+    save_conf( CACHE::path_buttonconf() );
 }
 
 
@@ -121,7 +121,7 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
     std::cout << "id = " << id << std::endl;
 #endif
 
-    int mode = MouseKeyConf::get_mode( id );
+    int mode = get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
 
     bool ctrl = false;
@@ -159,7 +159,7 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
 
     // データベース登録
     MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick );
-    MouseKeyConf::vec_items().push_back( item );
+    vec_items().push_back( item );
 }
 
 
@@ -167,19 +167,19 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
 // 中ボタンでタブで開くか
 bool ButtonConfig::tab_midbutton()
 {
-    return ( MouseKeyConf::get_str_motion( CONTROL::OpenArticleTabButton ).find( "Mid" ) != std::string::npos );
+    return ( get_str_motion( CONTROL::OpenArticleTabButton ).find( "Mid" ) != std::string::npos );
 }
 
 
 // タブで開くボタンを入れ替える
 void ButtonConfig::toggle_tab_button()
 {
-    if( tab_midbutton() ){
+    remove_items( CONTROL::OpenBoardButton );
+    remove_items( CONTROL::OpenBoardTabButton );
+    remove_items( CONTROL::OpenArticleButton );
+    remove_items( CONTROL::OpenArticleTabButton );
 
-        MouseKeyConf::remove_items( CONTROL::OpenBoardButton );
-        MouseKeyConf::remove_items( CONTROL::OpenBoardTabButton );
-        MouseKeyConf::remove_items( CONTROL::OpenArticleButton );
-        MouseKeyConf::remove_items( CONTROL::OpenArticleTabButton );
+    if( tab_midbutton() ){
 
         set_one_motion( "OpenBoardButton", "Mid" );
         set_one_motion( "OpenBoardTabButton", "Left" );
@@ -187,11 +187,6 @@ void ButtonConfig::toggle_tab_button()
         set_one_motion( "OpenArticleTabButton", "Left" );
     }
     else{
-
-        MouseKeyConf::remove_items( CONTROL::OpenBoardButton );
-        MouseKeyConf::remove_items( CONTROL::OpenBoardTabButton );
-        MouseKeyConf::remove_items( CONTROL::OpenArticleButton );
-        MouseKeyConf::remove_items( CONTROL::OpenArticleTabButton );
 
         set_one_motion( "OpenBoardButton", "Left" );
         set_one_motion( "OpenBoardTabButton", "Mid" );
@@ -205,21 +200,15 @@ void ButtonConfig::toggle_tab_button()
 // ポップアップ表示の時にクリックでワープするか
 bool ButtonConfig::is_popup_warpmode()
 {
-    return ( MouseKeyConf::get_str_motion( CONTROL::PopupWarpButton).find( "Left" ) != std::string::npos );
+    return ( get_str_motion( CONTROL::PopupWarpButton).find( "Left" ) != std::string::npos );
 }
 
 
 // ポップアップ表示の時にクリックでワープする
 void ButtonConfig::toggle_popup_warpmode()
 {
-    if( is_popup_warpmode() ){
+    remove_items( CONTROL::PopupWarpButton );
 
-        MouseKeyConf::remove_items( CONTROL::PopupWarpButton );
-        set_one_motion( "PopupWarpButton", "" );
-    }
-    else{
-
-        MouseKeyConf::remove_items( CONTROL::PopupWarpButton );
-        set_one_motion( "PopupWarpButton", "Left" );
-    }
+    if( is_popup_warpmode() ) set_one_motion( "PopupWarpButton", "" );
+    else set_one_motion( "PopupWarpButton", "Left" );
 }
