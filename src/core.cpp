@@ -595,8 +595,7 @@ void Core::create_toolbar()
     m_toolbar.set_size_request( 8 );
 
     m_tooltip.set_tip( m_button_go, "移動" );
-    m_tooltip.set_tip( m_button_search_cache,
-                       "キャッシュ内の全ログ検索\n\nある板のログのみを対象に検索する場合は\nスレ一覧のログ検索ボタンを押してください" );
+    m_tooltip.set_tip( m_button_search_cache,"キャッシュ内の全ログ検索 " );
     m_tooltip.set_tip( m_button_bbslist, "板一覧" );
     m_tooltip.set_tip( m_button_favorite, "お気に入り" );
     m_tooltip.set_tip( m_button_board,
