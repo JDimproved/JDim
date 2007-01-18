@@ -170,6 +170,8 @@ namespace BBSLIST
         void slot_push_up_search();
         void slot_entry_operate( int controlid );
 
+        void slot_combo_changed();
+
         void set_info_to_sharedbuffer( Gtk::TreePath& path );
 
     };

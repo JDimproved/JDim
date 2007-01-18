@@ -13,6 +13,15 @@
 #include "controlutil.h"
 #include "controlid.h"
 
+
+enum
+{
+    COMBO_BBSLIST = 0,
+    COMBO_FAVORITE = 1
+};
+
+
+
 namespace BBSLIST
 {
     class BBSListtToolBar : public Gtk::VBox
@@ -24,7 +33,7 @@ namespace BBSLIST
 
         // ラベルバー
         Gtk::HBox m_hbox_label;
-        Gtk::Entry m_label;
+        Gtk::ComboBoxText m_combo;
         SKELETON::ImgButton m_button_close;
 
         // 検索バー
@@ -35,22 +44,8 @@ namespace BBSLIST
 
         Gtk::Tooltips m_tooltip;
 
-        void set_label( const std::string& label )
-        {
-            m_label.set_text( label );
-            m_tooltip.set_tip( m_label, label );
-        }
-
-        // vboxがrealizeしたらラベル(Gtk::Entry)の背景色を変える
-        void slot_vbox_realize()
-        {
-            Gdk::Color color_bg = get_style()->get_bg( Gtk::STATE_NORMAL );
-            m_label.modify_base( Gtk::STATE_NORMAL, color_bg );
-
-            color_bg = get_style()->get_bg( Gtk::STATE_ACTIVE );
-            m_label.modify_base( Gtk::STATE_ACTIVE, color_bg );
-        }
-
+        void set_combo( int page ){ m_combo.set_active( page ); }
+        int  get_combo(){ return m_combo.get_active_row_number(); }
 
         BBSListtToolBar() :
         m_button_close( Gtk::Stock::CLOSE ),
@@ -58,16 +53,11 @@ namespace BBSLIST
         m_button_down_search( Gtk::Stock::GO_DOWN )
         {
             // ラベルバー
-            signal_realize().connect( sigc::mem_fun(*this, &BBSListtToolBar::slot_vbox_realize ) );
+            m_combo.append_text( "板一覧" );
+            m_combo.append_text( "お気に入り" );
 
-            // スレ名ラベル
-            // Gtk::Label を使うと勝手にリサイズするときがあるので
-            // 面倒でも　Gtk::Entry を使う。背景色は on_realize() で指定する。
-            m_label.set_editable( false );
-            m_label.set_activates_default( false );
-            m_label.set_has_frame( false );
             m_tooltip.set_tip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
-            m_hbox_label.pack_start( m_label, Gtk::PACK_EXPAND_WIDGET, 2 );
+            m_hbox_label.pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 2 );
             m_hbox_label.pack_start( m_button_close, Gtk::PACK_SHRINK );
 
             // 検索バー

@@ -76,6 +76,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_toolbar.m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_push_down_search ) );
     m_toolbar.m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_entry_operate ) );
     m_toolbar.m_button_close.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::close_view ) );
+    m_toolbar.m_combo.signal_changed().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_combo_changed ) );
 
     pack_start( m_toolbar, Gtk::PACK_SHRINK );    
     pack_start( m_scrwin );
@@ -407,6 +408,9 @@ void BBSListViewBase::focus_view()
     }
 
     m_treeview.grab_focus();
+
+    if( get_url() == URL_BBSLISTVIEW ) get_toolbar().set_combo( COMBO_BBSLIST );
+    if( get_url() == URL_FAVORITEVIEW ) get_toolbar().set_combo( COMBO_FAVORITE );
 }
 
 
@@ -754,6 +758,8 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
 
         SHOW_POPUPMENU( false );
     }
+
+    else operate_view( get_control().button_press( event ) );
 
     event->type = type_copy;
 
@@ -2196,4 +2202,21 @@ void BBSListViewBase::slot_push_down_search()
 void BBSListViewBase::slot_entry_operate( int controlid )
 {
     if( controlid == CONTROL::Cancel ) focus_view();
+}
+
+
+
+// ラベルのコンボボックスの表示が変わった
+void BBSListViewBase::slot_combo_changed()
+{
+    switch( get_toolbar().get_combo() ){
+
+        case COMBO_BBSLIST:
+            CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
+            break;
+
+        case COMBO_FAVORITE:
+            CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW );
+            break;
+    }
 }

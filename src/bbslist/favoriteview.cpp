@@ -60,8 +60,6 @@ bool FavoriteListView::set_command( const std::string& command, const std::strin
 //
 void FavoriteListView::show_view()
 {
-    get_toolbar().set_label( "お気に入り" );
-
     std::string xml;
     CACHE::load_rawdata( CACHE::path_xml_favorite() , xml );
     xml2tree( xml );
@@ -116,7 +114,7 @@ void  FavoriteListView::append_favorite()
     
     SelectListDialog diag( get_url(), get_treestore() );
     if( diag.run() != Gtk::RESPONSE_OK ) return;
-    BBSListViewBase::append_from_buffer( diag.get_path(), true, true );
+    append_from_buffer( diag.get_path(), true, true );
 }
 
 
