@@ -264,6 +264,12 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
 
 
+    m_action_group->add( Gtk::Action::create( "Key_Menu", "キーボード設定" ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューをEmacs風のキーバインドにする", std::string(),
+                                                    CONFIG::get_keyconfig()->is_emacs_mode() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
+
     m_action_group->add( Gtk::Action::create( "Color_Menu", "色" ) );
     m_action_group->add( Gtk::Action::create( "ColorChar", "スレ文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
     m_action_group->add( Gtk::Action::create( "ColorSepa", "新着セパレータ色" ), sigc::mem_fun( *this, &Core::slot_changecolor_separator ) );
@@ -360,6 +366,12 @@ void Core::run( bool init )
         "<menu action='Mouse_Menu'>"
         "<menuitem action='ToggleTab'/>"
         "<menuitem action='TogglePopupWarp'/>"
+        "</menu>"
+
+        "<separator/>"
+
+        "<menu action='Key_Menu'>"
+        "<menuitem action='ToggleEmacsMode'/>"
         "</menu>"
 
         "<separator/>"
@@ -1292,9 +1304,6 @@ void Core::slot_toggle_oldarticle()
 void Core::slot_toggle_tabbutton()
 {
     CONFIG::get_buttonconfig()->toggle_tab_button();
-
-    Gtk::MessageDialog mdiag( "JDの再起動後に有効になります\n\nJDを再起動してください" );
-    mdiag.run();
 }
 
 
@@ -1304,6 +1313,14 @@ void Core::slot_toggle_tabbutton()
 void Core::slot_toggle_popupwarpmode()
 {
     CONFIG::get_buttonconfig()->toggle_popup_warpmode();
+}
+
+
+//
+// editview を emacs風のキーバインドにする
+void Core::slot_toggle_emacsmode()
+{
+    CONFIG::get_keyconfig()->toggle_emacs_mode();
 }
 
 
