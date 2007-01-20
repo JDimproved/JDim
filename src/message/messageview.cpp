@@ -31,22 +31,6 @@ MessageViewMain::~MessageViewMain()
 
 
 //
-// サブジェクトの背景色を変える
-//
-void MessageViewMain::on_realize()
-{
-    SKELETON::View::on_realize();
-
-    Gdk::Color color_bg = get_style()->get_bg( Gtk::STATE_NORMAL );
-    get_entry_subject().modify_base( get_entry_subject().get_state(), color_bg );
-
-    get_text_message().focus_view();
-}
-
-
-
-
-//
 // ポストするメッセージ作成
 //
 std::string MessageViewMain::create_message()
@@ -92,13 +76,10 @@ void MessageViewMain::reload()
 {
     setup_view();
 
-    get_entry_subject().set_editable( true );
-    get_entry_subject().set_activates_default( true );
-    get_entry_subject().set_has_frame( true );
-    get_entry_subject().set_text( std::string() );
-
     set_message( msg );
 
+    get_entry_subject().set_editable( true );
+    get_entry_subject().set_text( std::string() );
     get_entry_subject().grab_focus();
 }
 

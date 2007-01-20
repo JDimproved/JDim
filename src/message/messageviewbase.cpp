@@ -47,7 +47,8 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_preview( 0 ),
       m_button_write( ICON::WRITE ),
       m_button_cancel( Gtk::Stock::CLOSE ),
-      m_button_undo( Gtk::Stock::UNDO )
+      m_button_undo( Gtk::Stock::UNDO ),
+      m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" )
 {
 #ifdef _DEBUG
     std::cout << "MessageViewBase::MessageViewBase " << get_url() << std::endl;
@@ -164,14 +165,7 @@ void MessageViewBase::save_name()
 //
 void MessageViewBase::pack_widget()
 {
-    // Gtk::Label を使うと勝手にリサイズするときがあるので
-    // Gtk::Entry を使う。背景色を変えるときは on_realize() で指定する。
-    m_entry_subject.set_editable( false );
-    m_entry_subject.set_activates_default( false );
-    m_entry_subject.set_has_frame( false );
     m_entry_subject.set_text( DBTREE::article_subject( get_url() ) );
-
-    m_label_board.set_text( " [ " + DBTREE::board_name( get_url() ) + " ]  " );
 
     m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
     m_button_cancel.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_cancel_clicked ) );
@@ -182,7 +176,6 @@ void MessageViewBase::pack_widget()
     m_tooltip.set_tip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
 
     m_toolbar.pack_start( m_button_write, Gtk::PACK_SHRINK );
-    m_toolbar.pack_start( m_label_board, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 );
     m_toolbar.pack_start( m_button_undo, Gtk::PACK_SHRINK );
     m_toolbar.pack_end( m_button_cancel, Gtk::PACK_SHRINK );

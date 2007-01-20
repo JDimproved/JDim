@@ -5,6 +5,7 @@
 
 #include "skeleton/view.h"
 #include "skeleton/editview.h"
+#include "skeleton/label_entry.h"
 #include "skeleton/imgbutton.h"
 
 namespace JDLIB
@@ -32,13 +33,12 @@ namespace MESSAGE
         Gtk::CheckButton m_check_fixmail;
 
         Gtk::HBox m_toolbar;
-        Gtk::Label m_label_board;
         SKELETON::ImgButton m_button_write;
         SKELETON::ImgButton m_button_cancel;
         SKELETON::ImgButton m_button_undo;
         Gtk::Tooltips m_tooltip;
 
-        Gtk::Entry m_entry_subject;
+        SKELETON::LabelEntry m_entry_subject;
         Gtk::Entry m_entry_name;
         Gtk::Entry m_entry_mail;
         SKELETON::EditView m_text_message;
@@ -61,7 +61,7 @@ namespace MESSAGE
 
       protected:
         
-        Gtk::Entry& get_entry_subject() { return m_entry_subject; }
+        SKELETON::LabelEntry& get_entry_subject() { return m_entry_subject; }
         Gtk::Entry& get_entry_name(){ return m_entry_name; }
         Gtk::Entry& get_entry_mail(){ return m_entry_mail; }
         SKELETON::EditView& get_text_message() { return m_text_message; }
@@ -116,8 +116,8 @@ namespace MESSAGE
         void post_msg( const std::string& msg, bool new_article );
 
         void save_name();
-        virtual void setup_view();
-        virtual void pack_widget();
+        void setup_view();
+        void pack_widget();
     };
 }
 

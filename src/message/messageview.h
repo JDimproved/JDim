@@ -19,9 +19,6 @@ namespace MESSAGE
       private:
         virtual void write();
         virtual std::string create_message();
-
-      protected:
-        virtual void on_realize();
     };
 
 
