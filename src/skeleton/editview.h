@@ -98,6 +98,7 @@ namespace SKELETON
         Glib::ustring get_text(){ return m_textview.get_buffer()->get_text(); }
 
         void set_editable( bool editable ){ m_textview.set_editable( editable ); }
+        void set_accepts_tab( bool accept ){ m_textview.set_accepts_tab( accept ); }
 
         void modify_font( const Pango::FontDescription& font_desc ){ m_textview.modify_font( font_desc ); }
 
