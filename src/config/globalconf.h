@@ -189,6 +189,12 @@ namespace CONFIG
     const bool get_strict_char_width();
     void set_strict_char_width( bool strictwidth );
 
+    // ユーザーコマンドで選択できない項目を非表示にする
+    const bool get_hide_usrcmd();
+
+    // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
+    const int get_max_show_usrcmd();
+
     // タブに表示する文字列の最小値
     const int get_tab_min_str();
 

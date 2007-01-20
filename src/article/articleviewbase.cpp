@@ -262,6 +262,8 @@ void ArticleViewBase::setup_action()
         Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( cmdname, cmdlabel );
         action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::slot_usrcmd ), i ) );
     }
+    bool submenu_usrcmd = CONFIG::get_max_show_usrcmd() <= usrcmd_size;
+    if( submenu_usrcmd ) action_group()->add( Gtk::Action::create( "Usrcmd_Menu", "ユーザコマンド" ) );
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
@@ -370,7 +372,9 @@ void ArticleViewBase::setup_action()
     "<menuitem action='OpenBrowser'/>";
 
     // ユーザコマンド
+    if( submenu_usrcmd ) str_ui += "<menu action='Usrcmd_Menu'>";
     for( int i = 0; i < usrcmd_size; ++i ) str_ui += "<menuitem action='usrcmd" + MISC::itostr( i ) + std::string( "'/>" );
+    if( submenu_usrcmd ) str_ui += "</menu>";
 
     Glib::ustring str_ui2 = 
 
@@ -394,7 +398,9 @@ void ArticleViewBase::setup_action()
     "<menuitem action='OpenBrowser'/>";
 
     // ユーザコマンド
+    if( submenu_usrcmd ) str_ui2 += "<menu action='Usrcmd_Menu'>";
     for( int i = 0; i < usrcmd_size; ++i ) str_ui2 += "<menuitem action='usrcmd" + MISC::itostr( i ) + std::string( "'/>" );
+    if( submenu_usrcmd ) str_ui2 += "</menu>";
 
     Glib::ustring str_ui3 = 
     "<separator/>"
@@ -2031,13 +2037,21 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     }
 
     // ユーザコマンド
+    // 選択不可かどうか判断して visible か sensitive にする
     const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
     for( int i = 0; i < usrcmd_size; ++i ){
         std::string str_cmd = "usrcmd" + MISC::itostr( i );
         act = action_group()->get_action( str_cmd );
         if( act ){
-            if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_sensitive( true );
-            else act->set_sensitive( false );
+
+            if( CONFIG::get_hide_usrcmd() ){
+                if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_visible( true );
+                else act->set_visible( false );
+            }
+            else{
+                if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_sensitive( true );
+                else act->set_sensitive( false );
+            }
         }
     }
 

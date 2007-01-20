@@ -92,6 +92,9 @@ double adjust_line_space;
 bool draw_underline;
 bool strict_char_width;
 
+bool hide_usrcmd;
+int max_show_usrcmd;
+
 int tab_min_str;
 
 bool show_tab_icon;
@@ -300,6 +303,12 @@ const bool CONFIG::init_config()
     // スレビューで文字幅の近似を厳密にする
     strict_char_width = cf.get_option( "strict_char_width", false );
 
+    // ユーザーコマンドで選択できない項目を非表示にする
+    hide_usrcmd = cf.get_option( "hide_usrcmd", false );
+
+    // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
+    max_show_usrcmd = cf.get_option( "max_show_usrcmd", 3 );
+
     // タブに表示する文字列の最小値
     tab_min_str = cf.get_option( "tab_min_str", 4 );
 
@@ -455,6 +464,9 @@ void CONFIG::save_conf_impl( const std::string& path )
     cf.update( "draw_underline", draw_underline );
     cf.update( "strict_char_width", strict_char_width );
 
+    cf.update( "hide_usrcmd", hide_usrcmd );
+    cf.update( "max_show_usrcmd", max_show_usrcmd );
+
     cf.update( "tab_min_str", tab_min_str );
 
     cf.update( "show_tab_icon", show_tab_icon );
@@ -608,6 +620,10 @@ const bool CONFIG::get_draw_underline(){ return draw_underline; }
 
 const bool CONFIG::get_strict_char_width(){ return strict_char_width; }
 void CONFIG::set_strict_char_width( bool strictwidth ){ strict_char_width = strictwidth; }
+
+const bool CONFIG::get_hide_usrcmd(){ return hide_usrcmd; }
+const int CONFIG::get_max_show_usrcmd(){ return max_show_usrcmd; }
+
 
 const int CONFIG::get_tab_min_str(){ return tab_min_str; }
 
