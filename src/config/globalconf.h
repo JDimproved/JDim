@@ -123,6 +123,10 @@ namespace CONFIG
     const int get_imgpopup_width();
     const int get_imgpopup_height();
 
+    // 画像ビューを使用する
+    const bool get_use_image_view();
+    void set_use_image_view( bool image_view );
+
     // 画像にモザイクかける
     const bool get_use_mosaic();
     void set_use_mosaic( bool mosaic );

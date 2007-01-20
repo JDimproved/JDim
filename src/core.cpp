@@ -584,7 +584,7 @@ void Core::create_toolbar()
     m_toolbar_vbox.pack_start( m_button_favorite, Gtk::PACK_SHRINK );
     m_toolbar_vbox.pack_start( m_button_board, Gtk::PACK_SHRINK );
     m_toolbar_vbox.pack_start( m_button_thread, Gtk::PACK_SHRINK );
-    m_toolbar_vbox.pack_start( m_button_image, Gtk::PACK_SHRINK );
+    if( CONFIG::get_use_image_view() ) m_toolbar_vbox.pack_start( m_button_image, Gtk::PACK_SHRINK );
     m_toolbar_vbox.pack_start( m_vspr_toolbar_1, Gtk::PACK_SHRINK );
     m_toolbar_vbox.pack_start( m_entry_url );
     m_toolbar_vbox.pack_start( m_button_go, Gtk::PACK_SHRINK );
@@ -1950,7 +1950,7 @@ void Core::exec_command()
         }
 
         // 画像の場合
-        else if( DBIMG::is_loadable( command.url ) ){
+        else if( DBIMG::is_loadable( command.url ) && CONFIG::get_use_image_view() ){
 
             if( ! SESSION::is_online() ){
                 Gtk::MessageDialog mdiag( "オフラインです" );

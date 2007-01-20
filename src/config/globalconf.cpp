@@ -66,6 +66,7 @@ int brownsercombo_id;
 
 int imgpopup_width;
 int imgpopup_height;
+bool use_image_view;
 bool use_mosaic;
 bool zoom_to_fit;
 int del_img_day;
@@ -190,6 +191,9 @@ const bool CONFIG::init_config()
     // 画像ポップアップサイズ
     imgpopup_width = cf.get_option( "imgpopup_width", 320 );
     imgpopup_height = cf.get_option( "imgpopup_height", 240 );
+
+    // 画像ビューを使用する
+    use_image_view = cf.get_option( "use_image_view", 1 );
 
     // 画像にモザイクかける
     use_mosaic = cf.get_option( "use_mosaic", 1 );
@@ -396,6 +400,7 @@ void CONFIG::save_conf_impl( const std::string& path )
 
     cf.update( "imgpopup_width", imgpopup_width );
     cf.update( "imgpopup_height", imgpopup_height );
+    cf.update( "use_image_view", use_image_view );
     cf.update( "use_mosaic", use_mosaic );
     cf.update( "zoom_to_fit", zoom_to_fit );
     cf.update( "del_img_day", del_img_day );
@@ -562,6 +567,8 @@ void CONFIG::set_brownsercombo_id( int id ){ brownsercombo_id = id; }
 
 const int CONFIG::get_imgpopup_width(){ return imgpopup_width; }
 const int CONFIG::get_imgpopup_height(){ return imgpopup_height; }
+const bool CONFIG::get_use_image_view(){ return use_image_view; }
+void CONFIG::set_use_image_view( bool image_view ){ use_image_view = image_view; }
 const bool CONFIG::get_use_mosaic(){ return use_mosaic; }
 void CONFIG::set_use_mosaic( bool mosaic ) { use_mosaic = mosaic; }
 const bool CONFIG::get_zoom_to_fit(){ return zoom_to_fit; }

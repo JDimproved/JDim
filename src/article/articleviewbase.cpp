@@ -1775,7 +1775,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
   
     /////////////////////////////////////////////////////////////////
     // 画像クリック
-    else if( DBIMG::is_loadable( url ) ){
+    else if( DBIMG::is_loadable( url ) && CONFIG::get_use_image_view() ){
 
         hide_popup();
 
