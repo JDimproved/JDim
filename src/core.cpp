@@ -1221,9 +1221,19 @@ void Core::slot_show_hide_leftpane( bool show )
     // 非表示になったときは SESSION::focused_admin_sidebar() で指定されるadminにフォーカスを移す
     else{
 
+#ifdef _DEBUG
+        std::cout << "focused_admin = " << SESSION::focused_admin_sidebar() << std::endl;
+#endif
+
         if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_BOARD ) switch_board();
         else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_ARTICLE ) switch_article();
         else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_IMAGE ) switch_image();
+        else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_NO ){
+
+            if( ! BOARD::get_admin()->empty() ) switch_board();
+            else if( ! ARTICLE::get_admin()->empty() ) switch_article();
+            else if( ! IMAGE::get_admin()->empty() ) switch_image();
+        }
     }
 }
 
