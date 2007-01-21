@@ -4,11 +4,11 @@
 #define _JDVER_H
 
 // cvs 版の時は JDVERSION_CVS をdefineする
-#define JDVERSION_CVS
+//#define JDVERSION_CVS
 
 #define JDCOPYRIGHT "(c) 2006-2007 JD project"
-#define JDVERSIONSTR "1.8.5-beta070114"
-#define JDVERSION 185070114
+#define JDVERSIONSTR "1.8.5-rc070121"
+#define JDVERSION 185070121
 #define JDURL "http://jd4linux.sourceforge.jp/"
 #define JDBBS "http://jd4linux.sourceforge.jp/cgi-bin/bbs/support/"
 #define JD2CHLOG "http://jd4linux.sourceforge.jp/old2ch/"
