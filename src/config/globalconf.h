@@ -178,6 +178,14 @@ namespace CONFIG
     // 0以上なら多重ポップアップの説明を表示する
     const int get_instruct_popup();
 
+    // スレビューを開いたときにスレ一覧との切り替え方法を説明する
+    const bool get_instruct_tglart();
+    void set_instruct_tglart( bool set );
+
+    // 画像ビューを開いたときにスレビューとの切り替え方法を説明する
+    const bool get_instruct_tglimg();
+    void set_instruct_tglimg( bool set );
+
     // スレ表示の行間調整
     const double get_adjust_underline_pos();
     const double get_adjust_line_space();

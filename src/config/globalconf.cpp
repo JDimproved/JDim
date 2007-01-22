@@ -85,6 +85,10 @@ int margin_popup;
 int mouse_radius;
 int history_size;
 int instruct_popup;
+bool instruct_tglart;
+bool instruct_tglart_end;
+bool instruct_tglimg;
+bool instruct_tglimg_end;
 
 double adjust_underline_pos;
 double adjust_line_space;
@@ -293,6 +297,14 @@ const bool CONFIG::init_config()
     // 0以上なら多重ポップアップの説明を表示する
     instruct_popup = cf.get_option( "instruct_popup", 100 );    
 
+    // スレビューを開いたときにスレ一覧との切り替え方法を説明する
+    instruct_tglart = cf.get_option( "instruct_tglart", true );
+    instruct_tglart_end = false;
+
+    // 画像ビューを開いたときにスレビューとの切り替え方法を説明する
+    instruct_tglimg = cf.get_option( "instruct_tglimg", true );
+    instruct_tglimg_end = false;
+    
     // スレ表示の行間調整
     adjust_underline_pos = cf.get_option( "adjust_underline_pos", 1.0 );
     adjust_line_space = cf.get_option( "adjust_line_space", 1.0 );
@@ -457,6 +469,8 @@ void CONFIG::save_conf_impl( const std::string& path )
     cf.update( "mouse_radius", mouse_radius );
     cf.update( "history_size", history_size );
     cf.update( "instruct_popup", instruct_popup );
+    cf.update( "instruct_tglart", instruct_tglart );
+    cf.update( "instruct_tglimg", instruct_tglimg );
 
     cf.update( "adjust_underline_pos", adjust_underline_pos );
     cf.update( "adjust_line_space", adjust_line_space );
@@ -612,6 +626,27 @@ const int CONFIG::get_instruct_popup(){
     if( instruct_popup ) return instruct_popup--;
     return 0;
 }
+
+
+const bool CONFIG::get_instruct_tglart(){
+
+    if( instruct_tglart_end ) return false;
+
+    instruct_tglart_end = true; // 一度表示したら表示しない
+    return instruct_tglart;
+}
+void CONFIG::set_instruct_tglart( bool tgl ){ instruct_tglart = tgl; }
+
+const bool CONFIG::get_instruct_tglimg(){
+
+    if( instruct_tglimg_end ) return false;
+
+    instruct_tglimg_end = true; // 一度表示したら表示しない
+    return instruct_tglimg;
+}
+
+void CONFIG::set_instruct_tglimg( bool tgl ){ instruct_tglimg = tgl; }
+
 
 const double CONFIG::get_adjust_underline_pos(){ return adjust_underline_pos; }
 const double CONFIG::get_adjust_line_space(){ return adjust_line_space; }
