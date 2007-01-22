@@ -2044,6 +2044,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         act = action_group()->get_action( str_cmd );
         if( act ){
 
+#if GTKMMVER >= 260
             if( CONFIG::get_hide_usrcmd() ){
                 if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_visible( true );
                 else act->set_visible( false );
@@ -2052,6 +2053,10 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
                 if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_sensitive( true );
                 else act->set_sensitive( false );
             }
+#else
+            if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+#endif            
         }
     }
 
