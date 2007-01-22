@@ -39,13 +39,6 @@
 using namespace CORE;
 
 
-enum
-{
-    MODE_2PANE = 0,
-    MODE_3PANE,
-    MODE_V3PANE
-};
-
 Core* instance_core;
 
 
@@ -217,9 +210,9 @@ void Core::run( bool init )
     Glib::RefPtr< Gtk::RadioAction > raction2 = Gtk::RadioAction::create( radiogroup, "v3Pane", "縦3pane" );
 
     switch( SESSION::get_mode_pane() ){
-        case MODE_2PANE: raction0->set_active( true ); break;
-        case MODE_3PANE: raction1->set_active( true ); break;
-        case MODE_V3PANE: raction2->set_active( true ); break;
+        case SESSION::MODE_2PANE: raction0->set_active( true ); break;
+        case SESSION::MODE_3PANE: raction1->set_active( true ); break;
+        case SESSION::MODE_V3PANE: raction2->set_active( true ); break;
     }
 
     m_action_group->add( raction0, sigc::mem_fun( *this, &Core::slot_toggle_2pane ) );
@@ -459,7 +452,7 @@ void Core::run( bool init )
     int mode_pane = SESSION::get_mode_pane();
     m_notebook.set_show_tabs( false );
 
-    if( mode_pane == MODE_2PANE ){ // 2ペーン
+    if( mode_pane == SESSION::MODE_2PANE ){ // 2ペーン
 
         m_notebook.append_page( *BOARD::get_admin()->get_widget(), "スレ一覧" );
         m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
@@ -473,7 +466,7 @@ void Core::run( bool init )
         m_hpaned.add2( m_vbox_article );
     }
 
-    else if( mode_pane == MODE_3PANE ){ // 3ペーン
+    else if( mode_pane == SESSION::MODE_3PANE ){ // 3ペーン
 
         m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
         m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
@@ -498,7 +491,7 @@ void Core::run( bool init )
         m_hpaned.add2( m_vpaned_r );
     }
 
-    else if( mode_pane == MODE_V3PANE ){ // 縦3ペーン
+    else if( mode_pane == SESSION::MODE_V3PANE ){ // 縦3ペーン
 
         m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
         m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
@@ -1262,7 +1255,7 @@ void Core::slot_toggle_toolbarpos( int pos )
 //
 void Core::slot_toggle_2pane()
 {
-    if( SESSION::get_mode_pane() == MODE_2PANE ) return;
+    if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ) return;
     SESSION::set_mode_pane( 0 );
 
     Gtk::MessageDialog mdiag( "JDの再起動後に2paneになります\n\nJDを再起動してください" );
@@ -1276,8 +1269,8 @@ void Core::slot_toggle_2pane()
 //
 void Core::slot_toggle_3pane()
 {
-    if( SESSION::get_mode_pane() == MODE_3PANE ) return;
-    SESSION::set_mode_pane( MODE_3PANE );
+    if( SESSION::get_mode_pane() == SESSION::MODE_3PANE ) return;
+    SESSION::set_mode_pane( SESSION::MODE_3PANE );
 
     Gtk::MessageDialog mdiag( "JDの再起動後に3paneになります\n\nJDを再起動してください" );
     mdiag.run();
@@ -1289,8 +1282,8 @@ void Core::slot_toggle_3pane()
 //
 void Core::slot_toggle_v3pane()
 {
-    if( SESSION::get_mode_pane() == MODE_V3PANE ) return;
-    SESSION::set_mode_pane( MODE_V3PANE );
+    if( SESSION::get_mode_pane() == SESSION::MODE_V3PANE ) return;
+    SESSION::set_mode_pane( SESSION::MODE_V3PANE );
 
     Gtk::MessageDialog mdiag( "JDの再起動後に縦3paneになります\n\nJDを再起動してください" );
     mdiag.run();
@@ -2084,7 +2077,7 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
     std::cout << "Core::slot_switch_page " << page << std::endl;
 #endif
 
-    if( SESSION::get_mode_pane() == MODE_2PANE ){
+    if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
         switch( page){
 
@@ -2186,7 +2179,7 @@ void Core::empty_page( const std::string& url )
         hide_imagetab();
 
         // 空でないadminを前に出す
-        if( SESSION::get_mode_pane() == MODE_2PANE ){
+        if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
             if( m_notebook.get_current_page() == 2 ){
                 if( ! ARTICLE::get_admin()->empty() ) switch_article();
@@ -2211,7 +2204,7 @@ void Core::empty_page( const std::string& url )
     else if( url == URL_ARTICLEADMIN ){
 
         // 空でないadminを前に出す
-        if( SESSION::get_mode_pane() == MODE_2PANE ){
+        if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
             if( m_notebook.get_current_page() == 1 ){
                 if( BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
@@ -2235,7 +2228,7 @@ void Core::empty_page( const std::string& url )
     else if( url == URL_BOARDADMIN ){
 
         // 空でないadminを前に出す
-        if( SESSION::get_mode_pane() == MODE_2PANE ){
+        if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
             if( m_notebook.get_current_page() == 0 ){
                 if( ! ARTICLE::get_admin()->empty() ) switch_article();
@@ -2362,8 +2355,8 @@ void Core::switch_article()
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
 
-            if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
-            else if( SESSION::get_mode_pane() != MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+            if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
+            else if( SESSION::get_mode_pane() != SESSION::MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
         }
 
         ARTICLE::get_admin()->set_command( "focus_current_view" );
@@ -2393,14 +2386,14 @@ void Core::switch_board()
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
 
-            if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+            if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
         }
 
         BOARD::get_admin()->set_command( "focus_current_view" );
         SESSION::set_focused_admin( SESSION::FOCUS_BOARD );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_BOARD );
 
-        if( SESSION::get_mode_pane() == MODE_2PANE ) SESSION::set_img_shown( false );
+        if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ) SESSION::set_img_shown( false );
     }
 
     set_toggle_view_button();
@@ -2476,8 +2469,8 @@ void Core::switch_image()
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
 
-            if( SESSION::get_mode_pane() == MODE_2PANE && m_notebook.get_current_page() != 2 ) m_notebook.set_current_page( 2 );
-            else if( SESSION::get_mode_pane() != MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
+            if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && m_notebook.get_current_page() != 2 ) m_notebook.set_current_page( 2 );
+            else if( SESSION::get_mode_pane() != SESSION::MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
 
             // 画像強制表示
             IMAGE::get_admin()->set_command( "show_image" );
@@ -2598,7 +2591,7 @@ void Core::show_imagetab()
     if( ! m_imagetab_shown ){
 
         int pos = 0;
-        if( SESSION::toolbar_pos() == 1 && SESSION::get_mode_pane() == MODE_2PANE ) pos = 1;
+        if( SESSION::toolbar_pos() == 1 && SESSION::get_mode_pane() == SESSION::MODE_2PANE ) pos = 1;
         m_vbox_article.pack_start( IMAGE::get_admin()->tab(), Gtk::PACK_SHRINK );
         m_vbox_article.reorder_child( IMAGE::get_admin()->tab(), pos );
 

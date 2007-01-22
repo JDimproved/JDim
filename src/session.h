@@ -21,6 +21,15 @@ namespace SESSION
         FOCUS_NO
     };
 
+    // ペーンモード
+    enum
+    {
+        MODE_2PANE = 0,
+        MODE_3PANE,
+        MODE_V3PANE
+    };
+
+
     void init_session();
     void save_session();
 
