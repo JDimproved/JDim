@@ -78,7 +78,8 @@ Core::Core( WinMain& win_main )
       m_button_thread( ICON::THREAD ),
       m_button_image( ICON::IMAGE ),
       m_enable_menuslot( true ),
-      m_boot( true )
+      m_boot( true ),
+      m_init( false )
 {
     instance_core = this;
     m_disp.connect( sigc::mem_fun( *this, &Core::exec_command ) );
@@ -615,6 +616,8 @@ void Core::create_toolbar()
 //
 void Core::first_setup()
 {
+    m_init = true;
+
     show_setupdiag( "JDセットアップへようこそ\n\nはじめにネットワークの設定をおこなって下さい" );
 
     slot_setup_proxy();
@@ -635,6 +638,8 @@ void Core::first_setup()
 
     show_setupdiag( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
     show_setupdiag( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします\nリストが表示されるまでしばらくお待ち下さい" );
+
+    m_init = false;
 }
 
 
@@ -1983,7 +1988,7 @@ void Core::exec_command()
     else if( command.command  == "empty_command" ){}
 
     // 起動中
-    if( m_boot ){
+    if( m_boot && ! m_init ){
 
         // coreと全てのadminクラスのコマンドの実行が終わった
         if( m_list_command.size() == 0
@@ -2412,6 +2417,9 @@ void Core::switch_bbslist()
 
 void Core::switch_favorite()
 {
+#ifdef _DEBUT
+    std::cout << "Core::switch_favorite\n";
+#endif    
     if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR
         && BBSLIST::get_admin()->get_current_url() == URL_FAVORITEVIEW ) slot_toggle_sidebar();
     else switch_sidebar( URL_FAVORITEVIEW );

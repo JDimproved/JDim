@@ -116,6 +116,9 @@ namespace CORE
         // 起動中
         bool m_boot;
 
+        // 初期設定中
+        bool m_init;
+
     public:
 
         Core( WinMain& win_main );
