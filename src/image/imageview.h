@@ -20,6 +20,7 @@ namespace IMAGE
         size_t m_length_prev;
         bool m_show_status;
         bool m_show_label;
+        bool m_show_instdialog;
 
       public:
         ImageViewMain( const std::string& url );
@@ -40,6 +41,7 @@ namespace IMAGE
         virtual bool slot_motion_notify( GdkEventMotion* event );
 
       private:
+        void show_instruct_diag();
         void set_label();
         void remove_label();
    };

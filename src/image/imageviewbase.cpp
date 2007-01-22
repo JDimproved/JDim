@@ -624,6 +624,7 @@ bool ImageViewBase::slot_button_release( GdkEventButton* event )
         SKELETON::View::show_popupmenu( "", false );
     }
 
+    else operate_view( get_control().button_press( event ) );
 
     event->type = type_copy;
 

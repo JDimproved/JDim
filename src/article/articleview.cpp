@@ -13,6 +13,8 @@
 
 #include "jdlib/misctime.h"
 
+#include "config/globalconf.h"
+
 #include "command.h"
 #include "global.h"
 #include "httpcode.h"
@@ -101,6 +103,7 @@ void ArticleViewMain::reload()
 void ArticleViewMain::show_view()
 {
     m_gotonum_reserve = 0;
+    m_show_instdialog = false;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::show_view\n";
@@ -148,6 +151,11 @@ void ArticleViewMain::show_view()
 
     // オフラインならダウンロードを開始しない
     if( ! SESSION::is_online() ) return;
+
+    // 板一覧との切り替え方法説明ダイアログ表示
+    if( CONFIG::get_instruct_tglart() && SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
+        m_show_instdialog = true;
+    }
 
     // 差分 download 開始
     get_article()->download_dat();
@@ -249,6 +257,26 @@ void ArticleViewMain::update_finish()
 
     if( m_gotonum_reserve ) goto_num( m_gotonum_reserve );
     m_gotonum_reserve = 0;
+
+    if( m_show_instdialog ) show_instruct_diag();
+}
+
+
+//
+// 板一覧との切り替え方法説明ダイアログ表示
+//
+void ArticleViewMain::show_instruct_diag()
+{
+    Gtk::MessageDialog mdiag(
+        "スレビューからスレ一覧表示に戻る方法として\n\n(1) マウスジェスチャを使う( 右ボタンを押しながら下にドラッグして離す )\n\n(2) マウスの5ボタンを押す\n\n(3) Alt+x か h か ← を押す\n\n(4) ツールバーのスレ一覧アイコンを押す\n\n(5) 表示メニューからスレ一覧を選ぶ\n\nなどがあります。詳しくはオンラインマニュアルを参照してください。" );
+    Gtk::CheckButton chkbutton( "今後表示しない" );
+    mdiag.get_vbox()->pack_start( chkbutton, Gtk::PACK_SHRINK );
+    mdiag.set_title( "ヒント" );
+    mdiag.show_all_children();
+    mdiag.run();
+
+    if( chkbutton.get_active() ) CONFIG::set_instruct_tglart( false );
+    m_show_instdialog = false;
 }
 
 

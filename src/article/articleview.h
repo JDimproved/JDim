@@ -17,6 +17,8 @@ namespace ARTICLE
         // ジャンプ予約, goto_num() のコメント参照
         int m_gotonum_reserve; 
 
+        bool m_show_instdialog;
+
       public:
         ArticleViewMain( const std::string& url );
         ~ArticleViewMain();
@@ -29,6 +31,9 @@ namespace ARTICLE
         virtual void update_view();
         virtual void update_finish();
         virtual void relayout();
+
+      private:
+        void show_instruct_diag();
     };
 
 

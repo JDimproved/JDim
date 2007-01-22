@@ -9,6 +9,8 @@
 
 #include "dbimg/img.h"
 
+#include "config/globalconf.h"
+
 #include "command.h"
 #include "httpcode.h"
 #include "controlid.h"
@@ -33,7 +35,8 @@ ImageViewMain::ImageViewMain( const std::string& url )
       m_scrwin( 0 ),
       m_length_prev( 0 ),
       m_show_status( false ),
-      m_show_label( false )
+      m_show_label( false ),
+      m_show_instdialog( true )
 {
 #ifdef _DEBUG    
     std::cout << "ImageViewMain::ImageViewMain : " << get_url() << std::endl;
@@ -98,9 +101,29 @@ void ImageViewMain::clock_in()
             }
 
             show_status();
+
+            if( m_show_instdialog && get_imagearea()->is_ready() && CONFIG::get_instruct_tglimg() ) show_instruct_diag();
         }
 
     }
+}
+
+
+//
+// スレビューとの切り替え方法説明ダイアログ表示
+//
+void ImageViewMain::show_instruct_diag()
+{
+    Gtk::MessageDialog mdiag(
+        "画像ビューからスレ一ビューに戻る方法として\n\n(1) マウスジェスチャを使う( 右ボタンを押しながら左にドラッグして離す )\n\n(2) マウスの5ボタンを押す\n\n(3) Alt+x か h か ← を押す\n\n(4) ツールバーのスレビューアイコンを押す\n\n(5) 表示メニューからスレビューを選ぶ\n\nなどがあります。詳しくはオンラインマニュアルを参照してください。" );
+    Gtk::CheckButton chkbutton( "今後表示しない" );
+    mdiag.get_vbox()->pack_start( chkbutton, Gtk::PACK_SHRINK );
+    mdiag.set_title( "ヒント" );
+    mdiag.show_all_children();
+    mdiag.run();
+
+    if( chkbutton.get_active() ) CONFIG::set_instruct_tglimg( false );
+    m_show_instdialog = false;
 }
 
 
