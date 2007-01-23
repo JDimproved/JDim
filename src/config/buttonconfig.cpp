@@ -174,12 +174,14 @@ bool ButtonConfig::tab_midbutton()
 // タブで開くボタンを入れ替える
 void ButtonConfig::toggle_tab_button()
 {
+    bool tab = tab_midbutton();
+
     remove_items( CONTROL::OpenBoardButton );
     remove_items( CONTROL::OpenBoardTabButton );
     remove_items( CONTROL::OpenArticleButton );
     remove_items( CONTROL::OpenArticleTabButton );
 
-    if( tab_midbutton() ){
+    if( tab ){
 
         set_one_motion( "OpenBoardButton", "Mid" );
         set_one_motion( "OpenBoardTabButton", "Left" );
@@ -207,8 +209,10 @@ bool ButtonConfig::is_popup_warpmode()
 // ポップアップ表示の時にクリックでワープする
 void ButtonConfig::toggle_popup_warpmode()
 {
+    bool warp = is_popup_warpmode();
+
     remove_items( CONTROL::PopupWarpButton );
 
-    if( is_popup_warpmode() ) set_one_motion( "PopupWarpButton", "" );
+    if( warp ) set_one_motion( "PopupWarpButton", "" );
     else set_one_motion( "PopupWarpButton", "Left" );
 }
