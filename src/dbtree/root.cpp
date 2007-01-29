@@ -101,6 +101,8 @@ BoardBase* Root::get_board( const std::string& url, int count )
 //    std::cout << "Root::get_board : count = " << count << " url = " << url << std::endl;
 #endif
 
+    const int max_count = 50;
+
     // キャッシュ
     if( url == m_get_board_url && m_get_board ){
 #ifdef _DEBUG
@@ -110,11 +112,6 @@ BoardBase* Root::get_board( const std::string& url, int count )
     }
     m_get_board_url = url;
     m_get_board = NULL;
-
-    if( count > 20 ){
-        MISC::ERRMSG( "Root::get_board: could not find board" );
-        return m_board_null;
-    }
 
     // 先頭が http:// でなかったら足して再帰呼び出し
     if( url.find( "http://" ) != 0 ) return get_board( "http://" + url , count + 1 );
@@ -133,9 +130,10 @@ BoardBase* Root::get_board( const std::string& url, int count )
 
 
     // 移転した時はrootを付け変えて再帰呼び出し
-    std::string new_url = is_board_moved( url );
-    if( ! new_url.empty() ) return get_board( new_url, count + 1 );
-
+    if( count < max_count ){
+        std::string new_url = is_board_moved( url );
+        if( ! new_url.empty() ) return get_board( new_url, count + 1 );
+    }
 
     // 2ch型の場合、板パスを見てもし一致したら新ホストに移転したと判断して移転テーブルを更新する
     if( is_2ch( url ) ){
@@ -145,20 +143,41 @@ BoardBase* Root::get_board( const std::string& url, int count )
 
             BoardBase* board = *( it );
 
-            if( url.find( board->get_path_board() + "/" ) != std::string::npos ){
+            if( is_2ch( board->get_root() ) && url.find( board->get_path_board() + "/" ) != std::string::npos ){
 
                 // 板移転テーブルを更新
-                MOVETABLE movetable;
-                movetable.old_root = MISC::get_hostname( url );
-                movetable.new_root = board->get_root();
-                movetable.path_board = board->get_path_board();
-                m_movetable.push_back( movetable );
 
-                std::ostringstream ss;
-                ss << board->get_name() << std::endl
-                   << "旧 URL = " << movetable.old_root + board->get_path_board() << "/" << std::endl
-                   << "新 URL  = " << board->url_boardbase() << std::endl;
-                MISC::MSG( ss.str() );
+                if( count < max_count ){ 
+
+                    MOVETABLE movetable;
+                    movetable.old_root = MISC::get_hostname( url );
+                    movetable.new_root = board->get_root();
+                    movetable.path_board = board->get_path_board();
+                    m_movetable.push_back( movetable );
+
+                    std::ostringstream ss;
+                    ss << board->get_name() << std::endl
+                       << "旧 URL = " << movetable.old_root + board->get_path_board() << "/" << std::endl
+                       << "新 URL  = " << board->url_boardbase() << std::endl;
+                    MISC::MSG( ss.str() );
+
+                }
+                else{ // 移転テーブルが循環している場合
+
+                    std::string str = "移転テーブルが破損していたので修復しました\n";
+
+                    std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
+                    for( ; it_move != m_movetable.end(); ++it_move ){
+
+                        if( is_2ch( ( *it_move ).old_root ) && url.find( ( *it_move ).path_board + "/" ) != std::string::npos ){
+
+                            ( *it_move ).new_root = board->get_root();
+                            str += ( *it_move ).old_root + board->get_path_board() + "/ -> " + board->url_boardbase() + "\n";
+                        }
+                    }
+
+                    MISC::MSG( str );
+                }
 
                 //移転テーブル保存
                 save_movetable();
