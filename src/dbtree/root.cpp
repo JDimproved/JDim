@@ -98,7 +98,7 @@ void Root::clear()
 BoardBase* Root::get_board( const std::string& url, int count )
 {
 #ifdef _DEBUG
-//    std::cout << "Root::get_board : count = " << count << " url = " << url << std::endl;
+    std::cout << "Root::get_board : count = " << count << " url = " << url << std::endl;
 #endif
 
     const int max_count = 50;
@@ -114,7 +114,7 @@ BoardBase* Root::get_board( const std::string& url, int count )
     m_get_board = NULL;
 
     // 先頭が http:// でなかったら足して再帰呼び出し
-    if( url.find( "http://" ) != 0 ) return get_board( "http://" + url , count + 1 );
+    if( count < max_count && url.find( "http://" ) != 0 ) return get_board( "http://" + url , count + 1 );
 
     // サーチ
     std::list< BoardBase* >::iterator it;
@@ -189,7 +189,7 @@ BoardBase* Root::get_board( const std::string& url, int count )
         }
 
         // 最後が "/" で終わってなかったら足して再帰呼び出し
-        if( url[ url.length() ] != '/' ) return get_board( url + "/" , count + 1 );
+        if( count < max_count && url[ url.length() -1 ] != '/' ) return get_board( url + "/" , count + 1 );
     }
 
     // それでも見つからなかったらNULLクラスを返す
