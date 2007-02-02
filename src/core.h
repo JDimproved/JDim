@@ -205,6 +205,7 @@ namespace CORE
         bool slot_timeout( int timer_number );
         void slot_switch_page( GtkNotebookPage*, guint page );
         void set_toggle_view_button();
+        void set_sensitive_view_button();
         bool slot_focus_out_event( GdkEventFocus* ev );
         bool slot_focus_in_event( GdkEventFocus* ev );
         void slot_active_url();

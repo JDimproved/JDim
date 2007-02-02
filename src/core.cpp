@@ -730,6 +730,21 @@ void Core::slot_activate_menubar()
         else tact->set_active( false );
     }
 
+    // 表示->スレ一覧に切替 (アクティブ状態を切り替える)
+    act = m_action_group->get_action( "Show_Board" );
+    if( BOARD::get_admin()->empty() ) act->set_sensitive( false );
+    else act->set_sensitive( true );
+
+    // 表示->スレビューに切替 (アクティブ状態を切り替える)
+    act = m_action_group->get_action( "Show_Thread" );
+    if( ARTICLE::get_admin()->empty() ) act->set_sensitive( false );
+    else act->set_sensitive( true );
+
+    // 表示->画像ビューに切替 (アクティブ状態を切り替える)
+    act = m_action_group->get_action( "Show_Image" );
+    if( CONFIG::get_use_image_view() && ! IMAGE::get_admin()->empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
     m_enable_menuslot = true;
 }
 
@@ -2337,6 +2352,29 @@ void Core::set_toggle_view_button()
 
 
 //
+// ビューのトグルボタンのアクティブ状態を切り替える
+//
+void Core::set_sensitive_view_button()
+{
+    m_enable_menuslot = false;
+
+    // スレ一覧ボタンの切り替え
+    if( BOARD::get_admin()->empty() ) m_button_board.set_sensitive( false );
+    else m_button_board.set_sensitive( true );
+
+    // スレビューボタンの切り替え
+    if( ARTICLE::get_admin()->empty() ) m_button_thread.set_sensitive( false );
+    else m_button_thread.set_sensitive( true );
+
+    // 画像ビューボタンの切り替え
+    if( IMAGE::get_admin()->empty() ) m_button_image.set_sensitive( false );
+    else m_button_image.set_sensitive( true );
+
+    m_enable_menuslot = true;
+}
+
+
+//
 // 各viewにスイッチ
 //
 void Core::switch_article()
@@ -2366,6 +2404,7 @@ void Core::switch_article()
         SESSION::set_img_shown( false );
     }
 
+    set_sensitive_view_button();
     set_toggle_view_button();
 }
 
@@ -2396,6 +2435,7 @@ void Core::switch_board()
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ) SESSION::set_img_shown( false );
     }
 
+    set_sensitive_view_button();
     set_toggle_view_button();
 }
 
@@ -2449,6 +2489,7 @@ void Core::switch_sidebar( const std::string& url )
         SESSION::set_focused_admin( SESSION::FOCUS_SIDEBAR );
     }
 
+    set_sensitive_view_button();
     set_toggle_view_button();
 }
 
@@ -2483,6 +2524,7 @@ void Core::switch_image()
         SESSION::set_img_shown( true );
     }
 
+    set_sensitive_view_button();
     set_toggle_view_button();
 }
 
