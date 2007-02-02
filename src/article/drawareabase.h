@@ -117,6 +117,9 @@ namespace ARTICLE
         int m_mrg_right; // 右マージン幅 (ピクセル値)
         int m_down_size; // 字下げ幅(ピクセル)
 
+        int m_configure_width;
+        int m_configure_height;
+
         // スクロール情報
         SCROLLINFO m_scrollinfo;
         guint32 m_wheel_scroll_time; // 前回ホイールを回した時刻

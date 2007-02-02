@@ -43,6 +43,7 @@ using namespace ARTICLE;
 
 #define IS_ALPHABET( chr ) ( ( chr >= 'a' && chr <= 'z' ) || ( chr >= 'A' && chr <= 'Z' ) )
 
+#define LAYOUT_MIN_HEIGHT 2 // viewの高さがこの値よりも小さい時はリサイズしていないと考える
 
 //////////////////////////////////////////////////////////
 
@@ -58,6 +59,8 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_backscreen( 0 )
     , m_pango_layout( 0 )
     , m_draw_frame( false )
+    , m_configure_width( 0 )
+    , m_configure_height( 0 )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::DrawAreaBase " << m_url << std::endl;;
@@ -331,7 +334,7 @@ void DrawAreaBase::focus_out()
 {
     if( !m_gc ) return;
 
-    get_window()->set_cursor();
+    if( get_window() ) get_window()->set_cursor();
 
     m_key_press = false;
     if( m_scrollinfo.mode != SCROLL_AUTO ) m_scrollinfo.reset();
@@ -546,7 +549,6 @@ void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
     // nowrap = true の時は十分大きい横幅で計算して wrap させない
     const int width = nowrap ? BIG_WIDTH : m_view.get_width();
     const int height = m_view.get_height();
-    const int min_height = 2;
 
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::layout_impl : nowrap = " << nowrap << " width = " << width << " height  = " << height<< std::endl
@@ -554,7 +556,7 @@ void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
 #endif
 
     //表示はされてるがまだリサイズしてない状況
-    if( !nowrap && height < min_height ){
+    if( !nowrap && height < LAYOUT_MIN_HEIGHT ){
 #ifdef _DEBUG
         std::cout << "drawarea is not resized yet.\n";
 #endif        
@@ -618,7 +620,7 @@ void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
     if( !m_window ) return;
 
     // 表示はされてるがまだリサイズしてない状況
-    if( height < min_height ) return;
+    if( height < LAYOUT_MIN_HEIGHT ) return;
     
     // スクロールバーが表示されていないならここで作成
     if( ! m_vscrbar && m_height_client > height ) create_scrbar();
@@ -2548,8 +2550,19 @@ bool DrawAreaBase::slot_configure_event( GdkEventConfigure* event )
 {
 #ifdef _DEBUG    
     std::cout << "DrawAreaBase::slot_configure_event x = " << event->x << " y =  " << event->y
-              << " width = " << m_view.get_width() << " heith = " << m_view.get_height() << std::endl;
+              << " width = " << m_view.get_width() << " heigth = " << m_view.get_height()
+              << " pre_width = " << m_configure_width << " pre_height = " << m_configure_height << std::endl;
 #endif
+
+    const int width = m_view.get_width();
+    const int height = m_view.get_height();
+
+    if( height < LAYOUT_MIN_HEIGHT ) return true;
+
+    // サイズが変わっていないときは再レイアウトしない
+    if( m_configure_width == width &&  m_configure_height == height ) return true;
+    m_configure_width = width;
+    m_configure_height = height;
 
     // リサイズする前のレス番号を保存しておいて
     // redrawした後にジャンプ
