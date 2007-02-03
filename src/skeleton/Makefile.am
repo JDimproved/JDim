@@ -12,7 +12,8 @@ libskeleton_a_SOURCES = \
 	entry.cpp \
 	login.cpp \
 	hpaned.cpp \
-	vpaned.cpp
+	vpaned.cpp \
+	vbox.cpp
 
 noinst_HEADERS = \
 	admin.h \
@@ -31,7 +32,8 @@ noinst_HEADERS = \
 	prefdiag.h \
 	login.h \
 	hpaned.h \
-	vpaned.h
+	vpaned.h \
+	vbox.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src
