@@ -17,7 +17,7 @@ using namespace SKELETON;
 
 
 DragableNoteBook::DragableNoteBook()
-    : Gtk::Notebook()
+    : SKELETON::JDNotebook()
     , m_page( -1 )
     , m_drag( 0 )
     , m_dragable( false )

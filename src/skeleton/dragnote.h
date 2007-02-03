@@ -6,6 +6,7 @@
 #ifndef _DRAGNOTE_H
 #define _DRAGNOTE_H
 
+#include "notebook.h"
 #include "tooltip.h"
 
 #include "control.h"
@@ -24,7 +25,7 @@ namespace SKELETON
     typedef sigc::signal< void, int > SIG_DRAG_BEGIN;
     typedef sigc::signal< void > SIG_DRAG_END;
 
-    class DragableNoteBook : public Gtk::Notebook
+    class DragableNoteBook : public SKELETON::JDNotebook
     {
         SIG_TAB_CLOSE m_sig_tab_close;
         SIG_TAB_RELOAD m_sig_tab_reload;
