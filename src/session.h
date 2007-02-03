@@ -31,6 +31,13 @@ namespace SESSION
     };
 
 
+    // ツールバーの位置
+    enum
+    {
+        TOOLBAR_NORMAL = 0,
+        TOOLBAR_RIGHT
+    };
+
     void init_session();
     void save_session();
 

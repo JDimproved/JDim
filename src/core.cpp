@@ -222,12 +222,12 @@ void Core::run( bool init )
     raction1 = Gtk::RadioAction::create( rg_toolbar, "ToolbarPos1", "サイドバーの右に表示する" );
 
     switch( SESSION::toolbar_pos() ){
-        case 0: raction0->set_active( true ); break;
-        case 1: raction1->set_active( true ); break;
+        case SESSION::TOOLBAR_NORMAL: raction0->set_active( true ); break;
+        case SESSION::TOOLBAR_RIGHT: raction1->set_active( true ); break;
     }
 
-    m_action_group->add( raction0, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), 0 ) );
-    m_action_group->add( raction1, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), 1 ) );
+    m_action_group->add( raction0, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
+    m_action_group->add( raction1, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_RIGHT ) );
 
     // 設定
     m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
@@ -503,7 +503,7 @@ void Core::pack_widget( bool unpack )
             m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
             m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
 
-            if( SESSION::toolbar_pos() == 1 ) m_vbox_article.pack_start( m_toolbar, Gtk::PACK_SHRINK );
+            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) m_vbox_article.pack_start( m_toolbar, Gtk::PACK_SHRINK );
             m_vbox_article.pack_start( m_notebook );
 
             m_hpaned.add1( *m_sidebar );
@@ -515,7 +515,7 @@ void Core::pack_widget( bool unpack )
             m_notebook.remove_page( *ARTICLE::get_admin()->get_widget() );
             m_notebook.remove_page( *IMAGE::get_admin()->get_widget() );
 
-            if( SESSION::toolbar_pos() == 1 ) m_vbox_article.remove( m_toolbar );
+            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) m_vbox_article.remove( m_toolbar );
             m_vbox_article.remove( m_notebook );
 
             m_hpaned.remove( *m_sidebar );
@@ -532,7 +532,7 @@ void Core::pack_widget( bool unpack )
 
             m_vbox_article.pack_start( m_notebook );
 
-            if( SESSION::toolbar_pos() == 1 ){
+            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
 
                 m_vbox_board.pack_start( m_toolbar, Gtk::PACK_SHRINK );
                 m_vbox_board.pack_start( *BOARD::get_admin()->get_widget() );
@@ -555,7 +555,7 @@ void Core::pack_widget( bool unpack )
 
             m_vbox_article.remove( m_notebook );
 
-            if( SESSION::toolbar_pos() == 1 ){
+            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
 
                 m_vbox_board.remove( m_toolbar );
                 m_vbox_board.remove( *BOARD::get_admin()->get_widget() );
@@ -585,7 +585,7 @@ void Core::pack_widget( bool unpack )
             m_hpaned_r.add1( *BOARD::get_admin()->get_widget() );
             m_hpaned_r.add2( m_vbox_article );
 
-            if( SESSION::toolbar_pos() == 1 ){
+            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
 
                 m_vbox_articleboard.pack_start( m_toolbar, Gtk::PACK_SHRINK );
                 m_vbox_articleboard.pack_start( m_hpaned_r );
@@ -608,7 +608,7 @@ void Core::pack_widget( bool unpack )
             m_hpaned_r.remove( *BOARD::get_admin()->get_widget() );
             m_hpaned_r.remove( m_vbox_article );
 
-            if( SESSION::toolbar_pos() == 1 ){
+            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
 
                 m_vbox_articleboard.remove( m_toolbar );
                 m_vbox_articleboard.remove( m_hpaned_r );
@@ -628,7 +628,7 @@ void Core::pack_widget( bool unpack )
 
         m_vbox_main.pack_end( m_stat_scrbar, Gtk::PACK_SHRINK );
         m_vbox_main.pack_end( m_hpaned );
-        if( SESSION::toolbar_pos() == 0 ) m_vbox_main.pack_end( m_toolbar, Gtk::PACK_SHRINK );
+        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL ) m_vbox_main.pack_end( m_toolbar, Gtk::PACK_SHRINK );
         m_vbox_main.pack_end( *m_menubar, Gtk::PACK_SHRINK );
 
         m_vbox_main.show_all_children();
@@ -637,7 +637,7 @@ void Core::pack_widget( bool unpack )
 
         m_vbox_main.remove( m_stat_scrbar );
         m_vbox_main.remove( m_hpaned );
-        if( SESSION::toolbar_pos() == 0 ) m_vbox_main.remove( m_toolbar );
+        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL ) m_vbox_main.remove( m_toolbar );
         m_vbox_main.remove( *m_menubar );
     }
 
@@ -2784,8 +2784,10 @@ void Core::show_imagetab()
 {
     if( ! m_imagetab_shown ){
 
+        // ツールバーの位置がサイドバーの右側の時はツールバーの下に挿入する
         int pos = 0;
-        if( SESSION::toolbar_pos() == 1 && SESSION::get_mode_pane() == SESSION::MODE_2PANE ) pos = 1;
+        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT && SESSION::get_mode_pane() == SESSION::MODE_2PANE ) pos = 1;
+
         m_vbox_article.pack_start( IMAGE::get_admin()->tab(), Gtk::PACK_SHRINK );
         m_vbox_article.reorder_child( IMAGE::get_admin()->tab(), pos );
 
