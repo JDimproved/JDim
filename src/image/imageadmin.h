@@ -39,7 +39,7 @@ namespace IMAGE
         ~ImageAdmin();
 
         Gtk::HBox& tab() { return m_tab; }
-        Gtk::EventBox& view() { return m_view; }
+        virtual Gtk::Widget* get_widget() { return &m_view; }
 
         virtual bool empty();
         virtual void clock_in();
