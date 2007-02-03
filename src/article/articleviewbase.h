@@ -170,7 +170,7 @@ namespace ARTICLE
         std::string get_html_url4report( std::list< int >& list_resnum );
         
         // drawarea の signal を受け取る slots
-        bool slot_button_press( GdkEventButton* event );
+        bool slot_button_press( std::string url, int res_number, GdkEventButton* event );
         bool slot_button_release( std::string url, int res_number, GdkEventButton* event );
         bool slot_motion_notify( GdkEventMotion* event );
         bool slot_key_press( GdkEventKey* event );
@@ -197,6 +197,7 @@ namespace ARTICLE
         void slot_open_browser();
         void slot_write_res();
         void slot_quote_res();
+        void slot_quote_selection_res();
         void slot_copy_current_url();
         void slot_copy_name();
         void slot_copy_id();

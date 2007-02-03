@@ -191,6 +191,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Copy", "Copy"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_selection_str ) );
     action_group()->add( Gtk::Action::create( "WriteRes", "レスする" ),sigc::mem_fun( *this, &ArticleViewBase::slot_write_res ) );
     action_group()->add( Gtk::Action::create( "QuoteRes", "参照レスする"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_res ) );
+    action_group()->add( Gtk::Action::create( "QuoteSelectionRes", "引用してレスする"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_selection_res ) );
     action_group()->add( Gtk::Action::create( "CopyRes", "レスをコピー"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), false ) );
     action_group()->add( Gtk::Action::create( "CopyResRef", "参照コピー"),
@@ -367,6 +368,9 @@ void ArticleViewBase::setup_action()
     "<menuitem action='ExecSearchCacheAll'/>"
     "</menu>"
     "</menu>"
+
+    "<separator/>"
+    "<menuitem action='QuoteSelectionRes' />"
 
     "<separator/>"
     "<menuitem action='OpenBrowser'/>";
@@ -1309,7 +1313,7 @@ bool ArticleViewBase::slot_leave_notify( GdkEventCrossing* event )
 //
 // drawarea のクリックイベント
 //
-bool ArticleViewBase::slot_button_press( GdkEventButton* event )
+bool ArticleViewBase::slot_button_press( std::string url, int res_number, GdkEventButton* event )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_button_press url = " << get_url() << std::endl;
@@ -2012,6 +2016,12 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
     // 範囲選択されてない
     std::string str_select = m_drawarea->str_selection();
+    act = action_group()->get_action( "QuoteSelectionRes" );
+    if( act ){
+        if( str_select.empty() ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     act = action_group()->get_action( "Copy" );
     if( act ){
         if( str_select.empty() ) act->set_sensitive( false );
@@ -2350,6 +2360,37 @@ void ArticleViewBase::slot_quote_res()
                             ">>" + m_str_num + "\n" + m_article->get_res_str( atoi( m_str_num.c_str() ), true ) + "\n" );
 }
 
+
+//
+// 選択部分を引用してレスする
+//
+#include <iostream>
+void ArticleViewBase::slot_quote_selection_res()
+{
+    assert( m_article );
+
+    int num_from = m_drawarea->get_selection_resnum_from();
+    if( ! num_from ) return;
+
+    int num_to = m_drawarea->get_selection_resnum_to();
+
+    std::string str_num = MISC::itostr( num_from );
+    if( num_from < num_to ) str_num += "-" + MISC::itostr( num_to );
+
+    std::string str_res;
+    str_res = CONFIG::get_ref_prefix();
+
+    std::string query = m_drawarea->str_selection();
+    if( query.empty() ) return;
+
+    query = MISC::replace_str( query, "\n", "\n" + str_res );
+
+//#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_quote_selection_res number = " << str_num << std::endl;
+//#endif    
+
+    CORE::core_set_command( "open_message", m_url_article, ">>" + str_num + "\n" + str_res + query + "\n\n" );
+}
 
 
 

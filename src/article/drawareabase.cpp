@@ -351,6 +351,26 @@ const std::string DrawAreaBase::str_selection()
 }
 
 
+// 範囲選択を開始したレス番号
+const int DrawAreaBase::get_selection_resnum_from()
+{
+    if( ! m_selection.select ) return 0;
+    if( ! m_selection.caret_from.layout ) return 0;
+
+    return m_selection.caret_from.layout->res_number;
+}
+
+
+// 範囲選択を終了したレス番号
+const int DrawAreaBase::get_selection_resnum_to()
+{
+    if( ! m_selection.select ) return 0;
+    if( ! m_selection.caret_to.layout ) return 0;
+
+    return m_selection.caret_to.layout->res_number;
+}
+
+
 
 //
 // 表示されている最後のレスの番号
@@ -2649,6 +2669,12 @@ void DrawAreaBase::slot_realize()
 //
 bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 {
+    std::string url;
+    int res_num = 0;
+
+    if( m_layout_current && m_layout_current->link ) url = m_layout_current->link;
+    if( m_layout_current ) res_num = m_layout_current->res_number;
+
     int x, y;
     int pos = get_vscr_val();
     x = ( int ) event->x;
@@ -2717,7 +2743,7 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
     // 再描画
     redraw_view();
 
-    m_sig_button_press.emit( event );
+    m_sig_button_press.emit( url, res_num, event );
 
     return true;
 }

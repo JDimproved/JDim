@@ -22,7 +22,7 @@ namespace ARTICLE
     class LayoutTree;
 
     // マウスボタンプレスとリリースのシグナル。リリース時にマウスがリンクの上にある時そのURLを渡す
-    typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_PRESS;
+    typedef sigc::signal< bool, std::string, int, GdkEventButton* > SIG_BUTTON_PRESS;
     typedef sigc::signal< bool, std::string, int, GdkEventButton* > SIG_BUTTON_RELEASE;
 
     typedef sigc::signal< bool, GdkEventCrossing* > SIG_LEAVE_NOTIFY;
@@ -165,7 +165,15 @@ namespace ARTICLE
         const int get_separator_new() const { return m_separator_new; }
         void set_separator_new( int num ){ m_separator_new = num; };
 
-        const std::string str_selection(); // 範囲選択中の文字列
+        // 範囲選択中の文字列
+        const std::string str_selection(); 
+
+        // 範囲選択を開始したレス番号
+        const int get_selection_resnum_from();
+
+        // 範囲選択を終了したレス番号
+        const int get_selection_resnum_to();
+
         const int get_seen_current() const { return m_seen_current; } // 現在見ているレスの番号
         int max_number();   // 表示されている最後のレスの番号
 
