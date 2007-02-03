@@ -461,8 +461,10 @@ void Core::run( bool init )
     m_stat_scrbar.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
     m_stat_scrbar.set_size_request( 8 );
 
+    // その他設定とwidgetのパッキング
     m_notebook.set_show_tabs( false );
     m_vbox_main.set_spacing( 4 );
+    m_hpaned.set_mode( SKELETON::HPANED_MODE_LEFT );
 
     pack_widget( false );
 
@@ -497,156 +499,82 @@ void Core::pack_widget( bool unpack )
 
     if( mode_pane == SESSION::MODE_2PANE ){ // 2ペーン
 
-        if( ! unpack ){ // pack
+        m_notebook.append_remove_page( unpack, *BOARD::get_admin()->get_widget(), "スレ一覧" );
+        m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
+        m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
 
-            m_notebook.append_page( *BOARD::get_admin()->get_widget(), "スレ一覧" );
-            m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
-            m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
+        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) m_vbox_article.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
+        m_vbox_article.pack_remove_start( unpack, m_notebook );
 
-            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) m_vbox_article.pack_start( m_toolbar, Gtk::PACK_SHRINK );
-            m_vbox_article.pack_start( m_notebook );
-
-            m_hpaned.add1( *m_sidebar );
-            m_hpaned.add2( m_vbox_article );
-        }
-        else{ // unpack
-
-            m_notebook.remove_page( *BOARD::get_admin()->get_widget() );
-            m_notebook.remove_page( *ARTICLE::get_admin()->get_widget() );
-            m_notebook.remove_page( *IMAGE::get_admin()->get_widget() );
-
-            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) m_vbox_article.remove( m_toolbar );
-            m_vbox_article.remove( m_notebook );
-
-            m_hpaned.remove( *m_sidebar );
-            m_hpaned.remove( m_vbox_article );
-        }
+        m_hpaned.add_remove1( unpack, *m_sidebar );
+        m_hpaned.add_remove2( unpack, m_vbox_article );
     }
 
     else if( mode_pane == SESSION::MODE_3PANE ){ // 3ペーン
 
-        if( ! unpack ){ // pack
+        m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
+        m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
 
-            m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
-            m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
+        m_vbox_article.pack_remove_start( unpack, m_notebook );
 
-            m_vbox_article.pack_start( m_notebook );
+        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
 
-            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
+            m_vbox_board.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_board.pack_remove_start( unpack, *BOARD::get_admin()->get_widget() );
 
-                m_vbox_board.pack_start( m_toolbar, Gtk::PACK_SHRINK );
-                m_vbox_board.pack_start( *BOARD::get_admin()->get_widget() );
-
-                m_vpaned_r.add1( m_vbox_board );
-                m_vpaned_r.add2( m_vbox_article );
-            }
-            else{
-                m_vpaned_r.add1( *BOARD::get_admin()->get_widget() );
-                m_vpaned_r.add2( m_vbox_article );
-            }
-
-            m_hpaned.add1( *m_sidebar );
-            m_hpaned.add2( m_vpaned_r );
+            m_vpaned_r.add_remove1( unpack, m_vbox_board );
+            m_vpaned_r.add_remove2( unpack, m_vbox_article );
         }
-        else { // unpack
-
-            m_notebook.remove_page( *ARTICLE::get_admin()->get_widget() );
-            m_notebook.remove_page( *IMAGE::get_admin()->get_widget() );
-
-            m_vbox_article.remove( m_notebook );
-
-            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
-
-                m_vbox_board.remove( m_toolbar );
-                m_vbox_board.remove( *BOARD::get_admin()->get_widget() );
-
-                m_vpaned_r.remove( m_vbox_board );
-                m_vpaned_r.remove( m_vbox_article );
-            }
-            else{
-                m_vpaned_r.remove( *BOARD::get_admin()->get_widget() );
-                m_vpaned_r.remove( m_vbox_article );
-            }
-
-            m_hpaned.remove( *m_sidebar );
-            m_hpaned.remove( m_vpaned_r );
+        else{
+            m_vpaned_r.add_remove1( unpack, *BOARD::get_admin()->get_widget() );
+            m_vpaned_r.add_remove2( unpack, m_vbox_article );
         }
+
+        m_hpaned.add_remove1( unpack, *m_sidebar );
+        m_hpaned.add_remove2( unpack, m_vpaned_r );
     }
 
     else if( mode_pane == SESSION::MODE_V3PANE ){ // 縦3ペーン
 
-        if( !unpack ){ // pack
+        m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
+        m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
 
-            m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
-            m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
+        m_vbox_article.pack_remove_start( unpack, m_notebook );
 
-            m_vbox_article.pack_start( m_notebook );
+        m_hpaned_r.add_remove1( unpack, *BOARD::get_admin()->get_widget() );
+        m_hpaned_r.add_remove2( unpack, m_vbox_article );
 
-            m_hpaned_r.add1( *BOARD::get_admin()->get_widget() );
-            m_hpaned_r.add2( m_vbox_article );
+        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
 
-            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
+            m_vbox_articleboard.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_articleboard.pack_remove_start( unpack, m_hpaned_r );
 
-                m_vbox_articleboard.pack_start( m_toolbar, Gtk::PACK_SHRINK );
-                m_vbox_articleboard.pack_start( m_hpaned_r );
-
-                m_hpaned.add1( *m_sidebar );
-                m_hpaned.add2( m_vbox_articleboard );
-            }
-            else{
-                m_hpaned.add1( *m_sidebar );
-                m_hpaned.add2( m_hpaned_r );
-            }
+            m_hpaned.add_remove1( unpack, *m_sidebar );
+            m_hpaned.add_remove2( unpack, m_vbox_articleboard );
         }
-        else{ // unpack
-
-            m_notebook.remove_page( *ARTICLE::get_admin()->get_widget() );
-            m_notebook.remove_page( *IMAGE::get_admin()->get_widget() );
-
-            m_vbox_article.remove( m_notebook );
-
-            m_hpaned_r.remove( *BOARD::get_admin()->get_widget() );
-            m_hpaned_r.remove( m_vbox_article );
-
-            if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
-
-                m_vbox_articleboard.remove( m_toolbar );
-                m_vbox_articleboard.remove( m_hpaned_r );
-
-                m_hpaned.remove( *m_sidebar );
-                m_hpaned.remove( m_vbox_articleboard );
-            }
-            else{
-                m_hpaned.remove( *m_sidebar );
-                m_hpaned.remove( m_hpaned_r );
-            }
+        else{
+            m_hpaned.add_remove1( unpack, *m_sidebar );
+            m_hpaned.add_remove2( unpack, m_hpaned_r );
         }
     }
 
     // メインwindowのパッキング
+    m_vbox_main.pack_remove_end( unpack, m_stat_scrbar, Gtk::PACK_SHRINK );
+    m_vbox_main.pack_remove_end( unpack, m_hpaned );
+    if( SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL ) m_vbox_main.pack_remove_end( unpack, m_toolbar, Gtk::PACK_SHRINK );
+    m_vbox_main.pack_remove_end( unpack, *m_menubar, Gtk::PACK_SHRINK );
+
     if( ! unpack ){
 
-        m_vbox_main.pack_end( m_stat_scrbar, Gtk::PACK_SHRINK );
-        m_vbox_main.pack_end( m_hpaned );
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL ) m_vbox_main.pack_end( m_toolbar, Gtk::PACK_SHRINK );
-        m_vbox_main.pack_end( *m_menubar, Gtk::PACK_SHRINK );
-
         m_vbox_main.show_all_children();
+
+        // ペーンの位置設定
+        m_vpaned_r.set_position( SESSION::vpane_main_pos() );
+        m_hpaned_r.set_position( SESSION::hpane_main_r_pos() );
+
+        // サイドバーの位置設定
+        m_hpaned.set_position( SESSION::hpane_main_pos() );
     }
-    else{ // unpack
-
-        m_vbox_main.remove( m_stat_scrbar );
-        m_vbox_main.remove( m_hpaned );
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL ) m_vbox_main.remove( m_toolbar );
-        m_vbox_main.remove( *m_menubar );
-    }
-
-    // ペーンの位置設定
-    m_vpaned_r.set_position( SESSION::vpane_main_pos() );
-    m_hpaned_r.set_position( SESSION::hpane_main_r_pos() );
-
-    // サイドバーの位置設定
-    m_hpaned.set_position( SESSION::hpane_main_pos() );
 
     m_enable_menuslot = true;
 }

@@ -13,6 +13,9 @@
 
 #include "skeleton/imgbutton.h"
 #include "skeleton/hpaned.h"
+#include "skeleton/vpaned.h"
+#include "skeleton/notebook.h"
+#include "skeleton/vbox.h"
 
 #include "command_args.h"
 
@@ -62,23 +65,23 @@ namespace CORE
 
         WinMain& m_win_main;
         
-        Gtk::VBox m_vbox_main;
+        SKELETON::JDVBox m_vbox_main;
         SKELETON::JDHPaned m_hpaned;
 
         // サイドバー
         Gtk::Widget* m_sidebar;
 
         // (縦/横) 3ペーンモード時の右側ペーン
-        Gtk::VPaned m_vpaned_r; 
-        Gtk::HPaned m_hpaned_r;
+        SKELETON::JDVPaned m_vpaned_r; 
+        SKELETON::JDHPaned m_hpaned_r;
 
         // 右ペーンで使用するwidget
-        Gtk::VBox m_vbox_article;
-        Gtk::VBox m_vbox_board;
-        Gtk::VBox m_vbox_articleboard;
-        Gtk::Notebook m_notebook;
+        SKELETON::JDVBox m_vbox_article;
+        SKELETON::JDVBox m_vbox_board;
+        SKELETON::JDVBox m_vbox_articleboard;
+        SKELETON::JDNotebook m_notebook;
         bool m_imagetab_shown;
-        Gtk::VPaned m_vpaned_message; // 埋め込み書き込みビュー用
+        SKELETON::JDVPaned m_vpaned_message; // 埋め込み書き込みビュー用
 
         // ツールバー
         Gtk::ScrolledWindow m_toolbar;
