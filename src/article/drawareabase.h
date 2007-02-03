@@ -117,6 +117,8 @@ namespace ARTICLE
         int m_mrg_right; // 右マージン幅 (ピクセル値)
         int m_down_size; // 字下げ幅(ピクセル)
 
+        // ビューのリサイズ用
+        bool m_configure_reserve; // true の時は再描画する前に再レイアウトする
         int m_configure_width;
         int m_configure_height;
 
@@ -255,6 +257,7 @@ namespace ARTICLE
         void init_font();
 
         // 描画、レイアウト関係
+        void configure_impl();
         void layout_one_node( LAYOUT* node, int& x, int& y, int width_win, int& mrg_level ); 
         bool draw_backscreen( bool redraw_all = false ); // バックスクリーン描画
         int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );

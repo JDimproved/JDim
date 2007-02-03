@@ -59,6 +59,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_backscreen( 0 )
     , m_pango_layout( 0 )
     , m_draw_frame( false )
+    , m_configure_reserve( false )
     , m_configure_width( 0 )
     , m_configure_height( 0 )
 {
@@ -523,7 +524,8 @@ void DrawAreaBase::clear_screen()
 
 
 //
-// バックスクリーンを描き直して再描画予約(queue_draw())する。再レイアウトはしない
+// バックスクリーンを描き直して再描画予約(queue_draw())する。
+// 再レイアウトはしないが configureの予約がある場合は再レイアウトしてから再描画する
 //
 void DrawAreaBase::redraw_view()
 {
@@ -531,6 +533,7 @@ void DrawAreaBase::redraw_view()
     std::cout << "DrawAreaBase::redraw_view()\n";
 #endif
 
+    configure_impl();
     draw_backscreen( true );
     m_view.queue_draw();
 }
@@ -743,6 +746,7 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
     if( ! m_backscreen ) return false;
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
+    if( ! m_view.is_drawable() ) return false;
 
     int width_view = m_view.get_width();
     int height_view = m_view.get_height();
@@ -2568,19 +2572,31 @@ void DrawAreaBase::slot_change_adjust()
 //
 bool DrawAreaBase::slot_configure_event( GdkEventConfigure* event )
 {
-#ifdef _DEBUG    
-    std::cout << "DrawAreaBase::slot_configure_event x = " << event->x << " y =  " << event->y
-              << " width = " << m_view.get_width() << " heigth = " << m_view.get_height()
-              << " pre_width = " << m_configure_width << " pre_height = " << m_configure_height << std::endl;
-#endif
+    // 表示されていないview(is_drawable() != true ) は表示された段階で
+    // redraw_view() したときに configure_impl() を呼び出す
+    m_configure_reserve = true;
+    configure_impl();
+
+    return true;
+}
+
+//
+// drawarea がリサイズ実行
+//
+void DrawAreaBase::configure_impl()
+{
+    if( ! m_configure_reserve ) return;
+    if( ! m_view.is_drawable() ) return;
+
+    m_configure_reserve = false;
 
     const int width = m_view.get_width();
     const int height = m_view.get_height();
 
-    if( height < LAYOUT_MIN_HEIGHT ) return true;
+    if( height < LAYOUT_MIN_HEIGHT ) return;
 
     // サイズが変わっていないときは再レイアウトしない
-    if( m_configure_width == width &&  m_configure_height == height ) return true;
+    if( m_configure_width == width &&  m_configure_height == height ) return;
     m_configure_width = width;
     m_configure_height = height;
 
@@ -2588,12 +2604,16 @@ bool DrawAreaBase::slot_configure_event( GdkEventConfigure* event )
     // redrawした後にジャンプ
     int seen_current = m_seen_current;
 
+#ifdef _DEBUG    
+    std::cout << "DrawAreaBase::configure_impl seen = " << seen_current
+              << " width = " << m_view.get_width() << " heigth = " << m_view.get_height()
+              << " pre_width = " << m_configure_width << " pre_height = " << m_configure_height << std::endl;
+#endif
+
     layout();
     redraw_view();
 
     if( seen_current ) goto_num( seen_current );
-
-    return true;
 }
 
 
