@@ -487,11 +487,17 @@ void Core::pack_widget( bool unpack )
 {
     m_enable_menuslot = false;
 
+    if( unpack ){
+        SESSION::set_hpane_main_pos( m_hpaned.get_position() );
+        SESSION::set_vpane_main_pos( m_vpaned_r.get_position() );
+        SESSION::set_hpane_main_r_pos( m_hpaned_r.get_position() );
+    }
+
     int mode_pane = SESSION::get_mode_pane();
 
     if( mode_pane == SESSION::MODE_2PANE ){ // 2ペーン
 
-        if( ! unpack ){
+        if( ! unpack ){ // pack
 
             m_notebook.append_page( *BOARD::get_admin()->get_widget(), "スレ一覧" );
             m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
@@ -519,49 +525,101 @@ void Core::pack_widget( bool unpack )
 
     else if( mode_pane == SESSION::MODE_3PANE ){ // 3ペーン
 
-        m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
-        m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
+        if( ! unpack ){ // pack
 
-        m_vbox_article.pack_start( m_notebook );
+            m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
+            m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
 
-        if( SESSION::toolbar_pos() == 1 ){
+            m_vbox_article.pack_start( m_notebook );
 
-            m_vbox_board.pack_start( m_toolbar, Gtk::PACK_SHRINK );
-            m_vbox_board.pack_start( *BOARD::get_admin()->get_widget() );
+            if( SESSION::toolbar_pos() == 1 ){
 
-            m_vpaned_r.add1( m_vbox_board );
-            m_vpaned_r.add2( m_vbox_article );
+                m_vbox_board.pack_start( m_toolbar, Gtk::PACK_SHRINK );
+                m_vbox_board.pack_start( *BOARD::get_admin()->get_widget() );
+
+                m_vpaned_r.add1( m_vbox_board );
+                m_vpaned_r.add2( m_vbox_article );
+            }
+            else{
+                m_vpaned_r.add1( *BOARD::get_admin()->get_widget() );
+                m_vpaned_r.add2( m_vbox_article );
+            }
+
+            m_hpaned.add1( *m_sidebar );
+            m_hpaned.add2( m_vpaned_r );
         }
-        else{
-            m_vpaned_r.add1( *BOARD::get_admin()->get_widget() );
-            m_vpaned_r.add2( m_vbox_article );
-        }
+        else { // unpack
 
-        m_hpaned.add1( *m_sidebar );
-        m_hpaned.add2( m_vpaned_r );
+            m_notebook.remove_page( *ARTICLE::get_admin()->get_widget() );
+            m_notebook.remove_page( *IMAGE::get_admin()->get_widget() );
+
+            m_vbox_article.remove( m_notebook );
+
+            if( SESSION::toolbar_pos() == 1 ){
+
+                m_vbox_board.remove( m_toolbar );
+                m_vbox_board.remove( *BOARD::get_admin()->get_widget() );
+
+                m_vpaned_r.remove( m_vbox_board );
+                m_vpaned_r.remove( m_vbox_article );
+            }
+            else{
+                m_vpaned_r.remove( *BOARD::get_admin()->get_widget() );
+                m_vpaned_r.remove( m_vbox_article );
+            }
+
+            m_hpaned.remove( *m_sidebar );
+            m_hpaned.remove( m_vpaned_r );
+        }
     }
 
     else if( mode_pane == SESSION::MODE_V3PANE ){ // 縦3ペーン
 
-        m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
-        m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
+        if( !unpack ){ // pack
 
-        m_vbox_article.pack_start( m_notebook );
+            m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
+            m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
 
-        m_hpaned_r.add1( *BOARD::get_admin()->get_widget() );
-        m_hpaned_r.add2( m_vbox_article );
+            m_vbox_article.pack_start( m_notebook );
 
-        if( SESSION::toolbar_pos() == 1 ){
+            m_hpaned_r.add1( *BOARD::get_admin()->get_widget() );
+            m_hpaned_r.add2( m_vbox_article );
 
-            m_vbox_articleboard.pack_start( m_toolbar, Gtk::PACK_SHRINK );
-            m_vbox_articleboard.pack_start( m_hpaned_r );
+            if( SESSION::toolbar_pos() == 1 ){
 
-            m_hpaned.add1( *m_sidebar );
-            m_hpaned.add2( m_vbox_articleboard );
+                m_vbox_articleboard.pack_start( m_toolbar, Gtk::PACK_SHRINK );
+                m_vbox_articleboard.pack_start( m_hpaned_r );
+
+                m_hpaned.add1( *m_sidebar );
+                m_hpaned.add2( m_vbox_articleboard );
+            }
+            else{
+                m_hpaned.add1( *m_sidebar );
+                m_hpaned.add2( m_hpaned_r );
+            }
         }
-        else{
-            m_hpaned.add1( *m_sidebar );
-            m_hpaned.add2( m_hpaned_r );
+        else{ // unpack
+
+            m_notebook.remove_page( *ARTICLE::get_admin()->get_widget() );
+            m_notebook.remove_page( *IMAGE::get_admin()->get_widget() );
+
+            m_vbox_article.remove( m_notebook );
+
+            m_hpaned_r.remove( *BOARD::get_admin()->get_widget() );
+            m_hpaned_r.remove( m_vbox_article );
+
+            if( SESSION::toolbar_pos() == 1 ){
+
+                m_vbox_articleboard.remove( m_toolbar );
+                m_vbox_articleboard.remove( m_hpaned_r );
+
+                m_hpaned.remove( *m_sidebar );
+                m_hpaned.remove( m_vbox_articleboard );
+            }
+            else{
+                m_hpaned.remove( *m_sidebar );
+                m_hpaned.remove( m_hpaned_r );
+            }
         }
     }
 
@@ -1309,10 +1367,12 @@ void Core::slot_toggle_toolbarpos( int pos )
 void Core::slot_toggle_2pane()
 {
     if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ) return;
-    SESSION::set_mode_pane( 0 );
 
-    Gtk::MessageDialog mdiag( "JDの再起動後に2paneになります\n\nJDを再起動してください" );
-    mdiag.run();
+    pack_widget( true );
+    SESSION::set_mode_pane( SESSION::MODE_2PANE );
+    pack_widget( false );
+
+    restore_focus( true );
 }
 
 
@@ -1323,10 +1383,12 @@ void Core::slot_toggle_2pane()
 void Core::slot_toggle_3pane()
 {
     if( SESSION::get_mode_pane() == SESSION::MODE_3PANE ) return;
-    SESSION::set_mode_pane( SESSION::MODE_3PANE );
 
-    Gtk::MessageDialog mdiag( "JDの再起動後に3paneになります\n\nJDを再起動してください" );
-    mdiag.run();
+    pack_widget( true );
+    SESSION::set_mode_pane( SESSION::MODE_3PANE );
+    pack_widget( false );
+
+    restore_focus( true );
 }
 
 
@@ -1336,10 +1398,12 @@ void Core::slot_toggle_3pane()
 void Core::slot_toggle_v3pane()
 {
     if( SESSION::get_mode_pane() == SESSION::MODE_V3PANE ) return;
-    SESSION::set_mode_pane( SESSION::MODE_V3PANE );
 
-    Gtk::MessageDialog mdiag( "JDの再起動後に縦3paneになります\n\nJDを再起動してください" );
-    mdiag.run();
+    pack_widget( true );
+    SESSION::set_mode_pane( SESSION::MODE_V3PANE );
+    pack_widget( false );
+
+    restore_focus( true );
 }
 
 
