@@ -2440,6 +2440,28 @@ void Core::set_sensitive_view_button()
 
 
 //
+// 右ペーンの最大化表示切り替え
+//
+void Core::toggle_maximize_rightpane()
+{
+    if( SESSION::get_mode_pane() == SESSION::MODE_3PANE ){
+
+        // スレ一覧を最大化
+        if( ! BOARD::get_admin()->empty() &&
+            ( ARTICLE::get_admin()->empty() && IMAGE::get_admin()->empty() ) ) m_vpaned_r.toggle_maximize( 1 );
+
+        // スレビューを最大化
+        else if( BOARD::get_admin()->empty() &&
+                 ( ! ARTICLE::get_admin()->empty() || ! IMAGE::get_admin()->empty() ) ) m_vpaned_r.toggle_maximize( 2 );
+
+        // 戻す
+        else if( ! BOARD::get_admin()->empty() &&
+                 ( ! ARTICLE::get_admin()->empty() || ! IMAGE::get_admin()->empty() ) ) m_vpaned_r.toggle_maximize( 0 );
+    }
+}
+
+
+//
 // 各viewにスイッチ
 //
 void Core::switch_article()
@@ -2472,6 +2494,7 @@ void Core::switch_article()
 
     set_sensitive_view_button();
     set_toggle_view_button();
+    toggle_maximize_rightpane();
 }
 
 
@@ -2504,6 +2527,7 @@ void Core::switch_board()
 
     set_sensitive_view_button();
     set_toggle_view_button();
+    toggle_maximize_rightpane();
 }
 
 
@@ -2558,6 +2582,7 @@ void Core::switch_sidebar( const std::string& url )
 
     set_sensitive_view_button();
     set_toggle_view_button();
+    toggle_maximize_rightpane();
 }
 
 
@@ -2594,6 +2619,7 @@ void Core::switch_image()
 
     set_sensitive_view_button();
     set_toggle_view_button();
+    toggle_maximize_rightpane();
 }
 
 

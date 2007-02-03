@@ -227,6 +227,7 @@ namespace CORE
 
         void set_toggle_view_button();
         void set_sensitive_view_button();
+        void toggle_maximize_rightpane();
 
         void switch_article();
         void switch_board();
