@@ -78,6 +78,7 @@ namespace CORE
         Gtk::VBox m_vbox_articleboard;
         Gtk::Notebook m_notebook;
         bool m_imagetab_shown;
+        Gtk::VPaned m_vpaned_message; // 埋め込み書き込みビュー用
 
         // ツールバー
         Gtk::ScrolledWindow m_toolbar;
@@ -106,6 +107,9 @@ namespace CORE
         Gtk::Label m_label_stat;
 #endif
         Gtk::Label m_mginfo;
+        Gtk::ScrolledWindow m_stat_scrbar;
+
+        Gtk::MenuBar* m_menubar;
 
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
@@ -136,6 +140,7 @@ namespace CORE
 
     private:
 
+        void pack_widget( bool unpack );
         void create_toolbar();
 
         // 初回起動時のセットアップ
@@ -202,10 +207,11 @@ namespace CORE
         // 起動完了直後に実行する処理
         void exec_command_after_boot();
 
+        // フォーカス回復
+        void restore_focus( bool force );
+
         bool slot_timeout( int timer_number );
         void slot_switch_page( GtkNotebookPage*, guint page );
-        void set_toggle_view_button();
-        void set_sensitive_view_button();
         bool slot_focus_out_event( GdkEventFocus* ev );
         bool slot_focus_in_event( GdkEventFocus* ev );
         void slot_active_url();
@@ -216,12 +222,16 @@ namespace CORE
         // あるadminののnotebookのページがスイッチした
         void switch_page( const std::string& url );
 
+        void set_toggle_view_button();
+        void set_sensitive_view_button();
+
         void switch_article();
         void switch_board();
         void switch_bbslist();
         void switch_favorite();
         void switch_sidebar( const std::string& url = std::string() );
         void switch_image();
+        void switch_message();
         void toggle_article();
         void switch_leftview();
         void switch_rightview();

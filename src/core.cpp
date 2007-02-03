@@ -117,9 +117,6 @@ Core::~Core()
     SESSION::set_vpane_main_pos( m_vpaned_r.get_position() );
     SESSION::set_hpane_main_r_pos( m_hpaned_r.get_position() );
 
-    // メインnotebookのページ番号
-    SESSION::set_notebook_main_page( m_notebook.get_current_page() );
-
     // ログ検索マネージャ削除
     CORE::delete_search_manager();
 
@@ -416,20 +413,20 @@ void Core::run( bool init )
         "</menubar>"
         "</ui>";
     m_ui_manager->add_ui_from_string( str_ui );
-    Gtk::MenuBar* menubar = dynamic_cast< Gtk::MenuBar* >( m_ui_manager->get_widget("/menu_bar") );
-    assert( menubar );
+    m_menubar = dynamic_cast< Gtk::MenuBar* >( m_ui_manager->get_widget("/menu_bar") );
+    assert( m_menubar );
 
     // 板履歴メニュー追加
     m_histmenu_board = Gtk::manage( new HistoryMenuBoard() );
-    menubar->items().insert( --(--( menubar->items().end() )), *m_histmenu_board );
+    m_menubar->items().insert( --(--( m_menubar->items().end() )), *m_histmenu_board );
 
     // スレ履歴メニュー追加
     m_histmenu_thread = Gtk::manage( new HistoryMenuThread() );
-    menubar->items().insert( --(--( menubar->items().end() )), *m_histmenu_thread );
+    m_menubar->items().insert( --(--( m_menubar->items().end() )), *m_histmenu_thread );
 
 
     // メニューにショートカットキーやマウスジェスチャを表示
-    Gtk::Menu_Helpers::MenuList& items = menubar->items();
+    Gtk::Menu_Helpers::MenuList& items = m_menubar->items();
     Gtk::Menu_Helpers::MenuList::iterator it_item = items.begin();
     for( ; it_item != items.end(); ++it_item ){
         Gtk::Menu* menu = dynamic_cast< Gtk::Menu* >( (*it_item).get_submenu() );
@@ -448,29 +445,82 @@ void Core::run( bool init )
     m_sidebar = BBSLIST::get_admin()->get_widget();
     assert( m_sidebar );
 
-    // 左右ペーン
-    int mode_pane = SESSION::get_mode_pane();
+    // ステータスバー
+    std::string str_tmp;
+#if GTKMMVER <= 240
+    m_statbar.pack_start( m_mginfo );
+#else
+    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
+    m_statbar.pack_end( m_mginfo, Gtk::PACK_SHRINK );
+    m_mginfo.set_width_chars( MAX_MG_LNG * 2 + 16 );
+    m_mginfo.set_justify( Gtk::JUSTIFY_LEFT );
+#endif
+    m_statbar.show_all_children();
+
+    m_stat_scrbar.add( m_statbar );
+    m_stat_scrbar.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+    m_stat_scrbar.set_size_request( 8 );
+
     m_notebook.set_show_tabs( false );
+    m_vbox_main.set_spacing( 4 );
+
+    pack_widget( false );
+
+    m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
+    m_hpaned.sig_show_hide_leftpane().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
+
+    m_win_main.add( m_vbox_main );
+    m_win_main.signal_focus_out_event().connect( sigc::mem_fun(*this, &Core::slot_focus_out_event ) );
+    m_win_main.signal_focus_in_event().connect( sigc::mem_fun(*this, &Core::slot_focus_in_event ) );
+    m_win_main.show_all_children();
+
+    // 各管理クラスが開いていたURLを復元
+    core_set_command( "restore_views" );
+}
+
+
+
+//
+// widget のパック
+//
+void Core::pack_widget( bool unpack )
+{
+    m_enable_menuslot = false;
+
+    int mode_pane = SESSION::get_mode_pane();
 
     if( mode_pane == SESSION::MODE_2PANE ){ // 2ペーン
 
-        m_notebook.append_page( *BOARD::get_admin()->get_widget(), "スレ一覧" );
-        m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
-        m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
-        m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
+        if( ! unpack ){
 
-        if( SESSION::toolbar_pos() == 1 ) m_vbox_article.pack_start( m_toolbar, Gtk::PACK_SHRINK );
-        m_vbox_article.pack_start( m_notebook );
+            m_notebook.append_page( *BOARD::get_admin()->get_widget(), "スレ一覧" );
+            m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
+            m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
 
-        m_hpaned.add1( *m_sidebar );
-        m_hpaned.add2( m_vbox_article );
+            if( SESSION::toolbar_pos() == 1 ) m_vbox_article.pack_start( m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_article.pack_start( m_notebook );
+
+            m_hpaned.add1( *m_sidebar );
+            m_hpaned.add2( m_vbox_article );
+        }
+        else{ // unpack
+
+            m_notebook.remove_page( *BOARD::get_admin()->get_widget() );
+            m_notebook.remove_page( *ARTICLE::get_admin()->get_widget() );
+            m_notebook.remove_page( *IMAGE::get_admin()->get_widget() );
+
+            if( SESSION::toolbar_pos() == 1 ) m_vbox_article.remove( m_toolbar );
+            m_vbox_article.remove( m_notebook );
+
+            m_hpaned.remove( *m_sidebar );
+            m_hpaned.remove( m_vbox_article );
+        }
     }
 
     else if( mode_pane == SESSION::MODE_3PANE ){ // 3ペーン
 
         m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
-        m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
-        m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
+        m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
 
         m_vbox_article.pack_start( m_notebook );
 
@@ -494,8 +544,7 @@ void Core::run( bool init )
     else if( mode_pane == SESSION::MODE_V3PANE ){ // 縦3ペーン
 
         m_notebook.append_page( *ARTICLE::get_admin()->get_widget(), "スレッド" );
-        m_notebook.append_page( IMAGE::get_admin()->view(), "画像" );
-        m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
+        m_notebook.append_page( *IMAGE::get_admin()->get_widget(), "画像" );
 
         m_vbox_article.pack_start( m_notebook );
 
@@ -516,48 +565,34 @@ void Core::run( bool init )
         }
     }
 
+    // メインwindowのパッキング
+    if( ! unpack ){
+
+        m_vbox_main.pack_end( m_stat_scrbar, Gtk::PACK_SHRINK );
+        m_vbox_main.pack_end( m_hpaned );
+        if( SESSION::toolbar_pos() == 0 ) m_vbox_main.pack_end( m_toolbar, Gtk::PACK_SHRINK );
+        m_vbox_main.pack_end( *m_menubar, Gtk::PACK_SHRINK );
+
+        m_vbox_main.show_all_children();
+    }
+    else{ // unpack
+
+        m_vbox_main.remove( m_stat_scrbar );
+        m_vbox_main.remove( m_hpaned );
+        if( SESSION::toolbar_pos() == 0 ) m_vbox_main.remove( m_toolbar );
+        m_vbox_main.remove( *m_menubar );
+    }
+
     // ペーンの位置設定
     m_vpaned_r.set_position( SESSION::vpane_main_pos() );
     m_hpaned_r.set_position( SESSION::hpane_main_r_pos() );
 
     // サイドバーの位置設定
     m_hpaned.set_position( SESSION::hpane_main_pos() );
-    m_hpaned.sig_show_hide_leftpane().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
-    // ステータスバー
-    std::string str_tmp;
-#if GTKMMVER <= 240
-    m_statbar.pack_start( m_mginfo );
-#else
-    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
-    m_statbar.pack_end( m_mginfo, Gtk::PACK_SHRINK );
-    m_mginfo.set_width_chars( MAX_MG_LNG * 2 + 16 );
-    m_mginfo.set_justify( Gtk::JUSTIFY_LEFT );
-#endif
-    m_statbar.show_all_children();
-    
-    // メインwindowのパッキング
-    m_vbox_main.set_spacing( 4 );
-
-    Gtk::ScrolledWindow *scrbar = Gtk::manage( new Gtk::ScrolledWindow() );
-    scrbar->add( m_statbar );
-    scrbar->set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
-    scrbar->set_size_request( 8 );
-
-    m_vbox_main.pack_end( *scrbar, Gtk::PACK_SHRINK );
-    m_vbox_main.pack_end( m_hpaned );
-    if( SESSION::toolbar_pos() == 0 ) m_vbox_main.pack_end( m_toolbar, Gtk::PACK_SHRINK );
-
-    m_vbox_main.pack_end( *menubar, Gtk::PACK_SHRINK );
-
-    m_win_main.add( m_vbox_main );
-    m_win_main.signal_focus_out_event().connect( sigc::mem_fun(*this, &Core::slot_focus_out_event ) );
-    m_win_main.signal_focus_in_event().connect( sigc::mem_fun(*this, &Core::slot_focus_in_event ) );
-    m_win_main.show_all_children();
-
-    // 各管理クラスが開いていたURLを復元
-    core_set_command( "restore_views" );
+    m_enable_menuslot = true;
 }
+
 
 
 //
@@ -1241,6 +1276,7 @@ void Core::slot_show_hide_leftpane( bool show )
         if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_BOARD ) switch_board();
         else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_ARTICLE ) switch_article();
         else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_IMAGE ) switch_image();
+        else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_MESSAGE ) switch_message();
         else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_NO ){
 
             if( ! BOARD::get_admin()->empty() ) switch_board();
@@ -1258,10 +1294,12 @@ void Core::slot_show_hide_leftpane( bool show )
 void Core::slot_toggle_toolbarpos( int pos )
 {
     if( SESSION::toolbar_pos() == pos ) return;
-    SESSION::set_toolbar_pos( pos );
 
-    Gtk::MessageDialog mdiag( "JDの再起動後に位置が変わります\n\nJDを再起動してください" );
-    mdiag.run();
+    pack_widget( true );
+    SESSION::set_toolbar_pos( pos );
+    pack_widget( false );
+
+    restore_focus( true );
 }
 
 
@@ -1689,7 +1727,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         // ダイアログから削除したときにフォーカスが外れるので
         // フォーカス状態を回復してからcloseする
-        if( SESSION::focused_admin() == SESSION::FOCUS_IMAGE ) IMAGE::get_admin()->set_command( "restore_focus" );
+        restore_focus( false );
 
         IMAGE::get_admin()->set_command( "close_view", command.url );
         return;
@@ -1851,6 +1889,8 @@ void Core::exec_command()
     else if( command.command  == "switch_sidebar" ) switch_sidebar( command.url );
 
     else if( command.command  == "switch_image" ) switch_image();
+
+    else if( command.command  == "switch_message" ) switch_message();
 
     else if( command.command  == "toggle_article" ) toggle_article();
 
@@ -2023,23 +2063,7 @@ void Core::exec_command_after_boot()
     std::cout << "Core::exec_command_after_boot\n";
 #endif
 
-    int admin = SESSION::focused_admin();
-    int admin_sidebar = SESSION::focused_admin_sidebar();
-    SESSION::set_focused_admin( SESSION::FOCUS_NO );
-    SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
-
-    // adminの表示状態回復
-    m_notebook.set_current_page( SESSION::notebook_main_page() );
-
-    // フォーカス状態回復
-    switch( admin ){
-        case SESSION::FOCUS_SIDEBAR: switch_sidebar(); break;
-        case SESSION::FOCUS_BOARD: switch_board(); break;
-        case SESSION::FOCUS_ARTICLE: switch_article(); break;
-        case SESSION::FOCUS_IMAGE: switch_image(); break;
-    }
-    SESSION::set_focused_admin( admin );
-    SESSION::set_focused_admin_sidebar( admin_sidebar );
+    restore_focus( true );
 
     // サイドバー表示状態変更
     if( ! SESSION::show_sidebar() ) m_hpaned.show_hide_leftpane();
@@ -2060,6 +2084,49 @@ void Core::exec_command_after_boot()
 #ifdef _DEBUG
     std::cout << "\n\n----------- boot fin --------------\n\n";
 #endif
+}
+
+
+//
+// フォーカス回復
+//
+// force : true の時は強制的に回復(処理が重い)
+//
+void Core::restore_focus( bool force )
+{
+    if( ! force ){
+
+        // フォーカス状態回復
+        switch( SESSION::focused_admin() )
+        {
+            case SESSION::FOCUS_SIDEBAR: BBSLIST::get_admin()->set_command( "restore_focus" ); break;
+            case SESSION::FOCUS_BOARD: BOARD::get_admin()->set_command( "restore_focus" ); break;
+            case SESSION::FOCUS_ARTICLE: ARTICLE::get_admin()->set_command( "restore_focus" ); break;
+            case SESSION::FOCUS_IMAGE: IMAGE::get_admin()->set_command( "restore_focus" ); break;
+            case SESSION::FOCUS_MESSAGE: MESSAGE::get_admin()->set_command( "restore_focus" ); break;
+        }
+
+    } else {
+        
+        int admin = SESSION::focused_admin();
+        int admin_sidebar = SESSION::focused_admin_sidebar();
+        SESSION::set_focused_admin( SESSION::FOCUS_NO );
+        SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
+
+        // adminの表示状態回復
+        m_notebook.set_current_page( SESSION::notebook_main_page() );
+
+        // フォーカス状態回復
+        switch( admin ){
+            case SESSION::FOCUS_SIDEBAR: switch_sidebar(); break;
+            case SESSION::FOCUS_BOARD: switch_board(); break;
+            case SESSION::FOCUS_ARTICLE: switch_article(); break;
+            case SESSION::FOCUS_IMAGE: switch_image(); break;
+            case SESSION::FOCUS_MESSAGE: switch_message(); break;
+        }
+        SESSION::set_focused_admin( admin );
+        SESSION::set_focused_admin_sidebar( admin_sidebar );
+    }
 }
 
 
@@ -2139,14 +2206,7 @@ bool Core::slot_focus_in_event( GdkEventFocus* )
     std::cout << "Core::slot_focus_in_event admin = " << SESSION::focused_admin() << std::endl;
 #endif
 
-    // フォーカス状態回復
-    switch( SESSION::focused_admin() )
-    {
-        case SESSION::FOCUS_SIDEBAR: BBSLIST::get_admin()->set_command( "restore_focus" ); break;
-        case SESSION::FOCUS_BOARD: BOARD::get_admin()->set_command( "restore_focus" ); break;
-        case SESSION::FOCUS_ARTICLE: ARTICLE::get_admin()->set_command( "restore_focus" ); break;
-        case SESSION::FOCUS_IMAGE: IMAGE::get_admin()->set_command( "restore_focus" ); break;
-    }
+    restore_focus( false );
 
     return true;
 }
@@ -2187,6 +2247,8 @@ void Core::empty_page( const std::string& url )
         focused_admin = SESSION::FOCUS_ARTICLE;
     else if( SESSION::focused_admin() == SESSION::FOCUS_IMAGE && ! IMAGE::get_admin()->empty() )
         focused_admin = SESSION::FOCUS_IMAGE;
+    else if( SESSION::focused_admin() == SESSION::FOCUS_MESSAGE && ! MESSAGE::get_admin()->empty() )
+        focused_admin = SESSION::FOCUS_MESSAGE;
 
     // 画像ビューが空になった
     if( url == URL_IMAGEADMIN ){
@@ -2265,6 +2327,7 @@ void Core::empty_page( const std::string& url )
         case SESSION::FOCUS_BOARD: switch_board(); break;
         case SESSION::FOCUS_ARTICLE: switch_article(); break;
         case SESSION::FOCUS_IMAGE: switch_image(); break;
+        case SESSION::FOCUS_MESSAGE: switch_message(); break;
     }
 }
 
@@ -2281,6 +2344,7 @@ void Core::switch_page( const std::string& url )
     else if( url == URL_BOARDADMIN && SESSION::focused_admin() == SESSION::FOCUS_BOARD ) switch_board();
     else if( url == URL_ARTICLEADMIN && SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_article();
     else if( url == URL_IMAGEADMIN && SESSION::focused_admin() == SESSION::FOCUS_IMAGE ) switch_image();
+    else if( url == URL_MESSAGEADMIN && SESSION::focused_admin() == SESSION::FOCUS_MESSAGE ) switch_message();
 }
 
 
@@ -2345,6 +2409,15 @@ void Core::set_toggle_view_button()
             else m_button_image.set_active( false );
 
             break;
+
+        case SESSION::FOCUS_MESSAGE:
+                m_button_bbslist.set_active( false );
+                m_button_favorite.set_active( false );
+                m_button_board.set_active( false );
+                m_button_thread.set_active( false );
+                m_button_image.set_active( false );
+
+            break;
     }
 
     m_enable_menuslot = true;
@@ -2395,6 +2468,7 @@ void Core::switch_article()
 
             if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
             else if( SESSION::get_mode_pane() != SESSION::MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+            SESSION::set_notebook_main_page( m_notebook.get_current_page() );
         }
 
         ARTICLE::get_admin()->set_command( "focus_current_view" );
@@ -2426,6 +2500,7 @@ void Core::switch_board()
             ARTICLE::get_admin()->set_command( "delete_popup" );
 
             if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+            SESSION::set_notebook_main_page( m_notebook.get_current_page() );
         }
 
         BOARD::get_admin()->set_command( "focus_current_view" );
@@ -2512,6 +2587,7 @@ void Core::switch_image()
 
             if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && m_notebook.get_current_page() != 2 ) m_notebook.set_current_page( 2 );
             else if( SESSION::get_mode_pane() != SESSION::MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
+            SESSION::set_notebook_main_page( m_notebook.get_current_page() );
 
             // 画像強制表示
             IMAGE::get_admin()->set_command( "show_image" );
@@ -2526,6 +2602,18 @@ void Core::switch_image()
 
     set_sensitive_view_button();
     set_toggle_view_button();
+}
+
+
+void Core::switch_message()
+{
+    if( m_boot ) return;
+    if( ! m_enable_menuslot ) return;
+    if( ! SESSION::get_embedded_mes() ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::switch_message\n";
+#endif
 }
 
 
