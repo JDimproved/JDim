@@ -11,7 +11,8 @@ libskeleton_a_SOURCES = \
 	tablabel.cpp \
 	entry.cpp \
 	login.cpp \
-	hpaned.cpp
+	hpaned.cpp \
+	vpaned.cpp
 
 noinst_HEADERS = \
 	admin.h \
@@ -29,7 +30,8 @@ noinst_HEADERS = \
 	label_entry.h \
 	prefdiag.h \
 	login.h \
-	hpaned.h
+	hpaned.h \
+	vpaned.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src
