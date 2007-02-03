@@ -45,7 +45,7 @@ namespace SKELETON
 
         virtual bool empty();
         const std::string& get_url() const{ return m_url; }
-        Gtk::Widget* get_widget();
+        virtual Gtk::Widget* get_widget();
 
         // フォーカスされているか
         const bool has_focus() const { return m_focus; }
