@@ -13,6 +13,7 @@ libskeleton_a_SOURCES = \
 	login.cpp \
 	hpaned.cpp \
 	vpaned.cpp \
+	notebook.cpp \
 	vbox.cpp
 
 noinst_HEADERS = \
@@ -33,6 +34,7 @@ noinst_HEADERS = \
 	login.h \
 	hpaned.h \
 	vpaned.h \
+	notebook.h \
 	vbox.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
