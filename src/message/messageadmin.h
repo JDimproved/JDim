@@ -35,6 +35,8 @@ namespace MESSAGE
         MessageAdmin();
         ~MessageAdmin();
 
+        bool empty(){ return ( ! m_view ); }
+
         void clock_in();
 
         void set_command( const std::string& command, const std::string& url = std::string() , const std::string& arg1 = std::string() );
