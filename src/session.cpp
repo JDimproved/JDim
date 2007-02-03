@@ -55,6 +55,8 @@ int win_toolbar_pos;
 int win_focused_admin;
 int win_focused_admin_sidebar;
 
+bool embedded_mes;
+
 int win_mes_x;
 int win_mes_y;
 int win_mes_width;
@@ -146,6 +148,8 @@ void SESSION::init_session()
 
     img_shown = false;
 
+    embedded_mes = cf.get_option( "embedded_mes", false );
+
     win_mes_x = cf.get_option( "mes_x", 0 );
     win_mes_y = cf.get_option( "mes_y", 0 );
     win_mes_width = cf.get_option( "mes_width", 300 );
@@ -201,6 +205,7 @@ void SESSION::init_session()
               << board_col_write << std::endl
               << board_col_speed << std::endl
 
+              << "embedded_mes = " << embedded_mes << std::endl
               << "wx=" << win_mes_x << std::endl
               << "wy=" << win_mes_y << std::endl
               << "ww=" << win_mes_width << std::endl
@@ -271,6 +276,7 @@ void SESSION::save_session()
         << "col_write = " << board_col_write << std::endl
         << "col_speed = " << board_col_speed << std::endl
 
+        << "embedded_mes = " << embedded_mes << std::endl
         << "mes_x = " << win_mes_x << std::endl
         << "mes_y = " << win_mes_y << std::endl
         << "mes_width = " << win_mes_width << std::endl
@@ -386,6 +392,9 @@ void SESSION::set_col_speed( int width ){ board_col_speed = width; }
 
 bool SESSION::is_img_shown(){ return img_shown; }
 void SESSION::set_img_shown( bool set ){ img_shown = set; }
+
+// 埋め込みmessageを使用
+bool SESSION::get_embedded_mes(){ return embedded_mes; }
 
 // message ウィンドウの位置
 int SESSION::mes_x(){ return win_mes_x; }

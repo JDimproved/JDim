@@ -18,6 +18,7 @@ namespace SESSION
         FOCUS_BOARD,
         FOCUS_ARTICLE,
         FOCUS_IMAGE,
+        FOCUS_MESSAGE,
         FOCUS_NO
     };
 
@@ -132,6 +133,9 @@ namespace SESSION
     // image が画面に表示されているか
     bool is_img_shown();
     void set_img_shown( bool set );
+
+    // 埋め込みmessageを使用
+    bool get_embedded_mes();
 
     // message ウィンドウの位置
     int mes_x();
