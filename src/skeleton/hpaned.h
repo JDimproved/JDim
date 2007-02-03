@@ -12,6 +12,12 @@
 
 namespace SKELETON
 {
+    enum
+    {
+        HPANED_MODE_NORMAL, // 折り畳まない
+        HPANED_MODE_LEFT // 仕切りをクリックすると左ページを閉じる
+    };
+
     // 左ペーン表示/表示切り替え時にemit
     typedef sigc::signal< void, bool > SIG_SHOW_HIDE_LEFTPANE;
 
@@ -19,15 +25,24 @@ namespace SKELETON
     {
         SIG_SHOW_HIDE_LEFTPANE m_sig_show_hide_leftpane;
 
+        int m_mode;
+
         bool m_clicked;
         bool m_drag;
         int m_pos;
 
       public:
+
         JDHPaned();
         ~JDHPaned();
 
         SIG_SHOW_HIDE_LEFTPANE sig_show_hide_leftpane() { return m_sig_show_hide_leftpane; }
+
+        void set_mode( int mode ){ m_mode = mode; }
+
+        // unpack = true の時取り除く
+        void add_remove1( bool unpack, Gtk::Widget& child );
+        void add_remove2( bool unpack, Gtk::Widget& child );
 
         int get_position();
         void set_position( int position );
