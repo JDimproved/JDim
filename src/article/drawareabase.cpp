@@ -746,7 +746,6 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
     if( ! m_backscreen ) return false;
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
-    if( ! m_view.is_drawable() ) return false;
 
     int width_view = m_view.get_width();
     int height_view = m_view.get_height();
