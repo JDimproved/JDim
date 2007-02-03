@@ -2364,7 +2364,6 @@ void ArticleViewBase::slot_quote_res()
 //
 // 選択部分を引用してレスする
 //
-#include <iostream>
 void ArticleViewBase::slot_quote_selection_res()
 {
     assert( m_article );
@@ -2385,9 +2384,9 @@ void ArticleViewBase::slot_quote_selection_res()
 
     query = MISC::replace_str( query, "\n", "\n" + str_res );
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_quote_selection_res number = " << str_num << std::endl;
-//#endif    
+#endif    
 
     CORE::core_set_command( "open_message", m_url_article, ">>" + str_num + "\n" + str_res + query + "\n\n" );
 }
