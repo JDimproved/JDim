@@ -513,6 +513,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         m_button_undo.set_sensitive( false );
 
         std::string msg = m_text_message.get_text();
+        msg = MISC::replace_str( msg, "\"", "&quot;" );
         msg = MISC::replace_str( msg, "<", "&lt;" );
         msg = MISC::replace_str( msg, ">", "&gt;" );
         msg = MISC::replace_str( msg, "\n", " <br> " );
@@ -523,6 +524,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         if( ! m_entry_name.get_text().empty() ){
 
             std::string name = m_entry_name.get_text();
+            name = MISC::replace_str( name, "\"", "&quot;" );
             name = MISC::replace_str( name, "<", "&lt;" );
             name = MISC::replace_str( name, ">", "&gt;" );
 

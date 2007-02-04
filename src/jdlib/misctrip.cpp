@@ -15,96 +15,62 @@
 #include <unistd.h> // crypt
 
 
-namespace MISC
+//
+// key から salt を取得
+//
+const std::string MISC::get_salt( const std::string& key )
 {
-    //
-    // HTMLエスケープ
-    //
-    // ["<>] を &quot; &lt; &gt; に変換
-    //
-    bool html_escape( const char *input, char *key, unsigned int bufsize )
+    if( key.empty() ) return std::string();
+
+    // key の2,3バイト目を salt として取り出す
+    std::string salt = key.substr( 1, 2 );
+
+    // salt の末尾に "H." を足す
+    salt += "H.";
+
+    // その他の仕様に合わせて salt を変換
+    unsigned int i;
+    for( i=0; i < salt.length(); i++ )
     {
-        const unsigned int margin = 16;
-
-        unsigned int i, n;
-        for( i=0, n=0; i<=strlen(input); i++, n++ )
+        // 0x2e〜0x7aの範囲にないものは '.'(0x2e)
+        if( salt[i] < 0x2e || salt[i] > 0x7a )
         {
-            if( n >= bufsize - margin ) return false;
-
-            switch(input[i])
-            {
-                case '"' :
-                    key[n] = '&'; n++;
-                    key[n] = 'q'; n++;
-                    key[n] = 'u'; n++;
-                    key[n] = 'o'; n++;
-                    key[n] = 't'; n++;
-                    key[n] = ';'; 
-                    break;
-                case '<' :
-                    key[n] = '&'; n++;
-                    key[n] = 'l'; n++;
-                    key[n] = 't'; n++;
-                    key[n] = ';';
-                    break;
-                case '>' :
-                    key[n] = '&'; n++;
-                    key[n] = 'g'; n++;
-                    key[n] = 't'; n++;
-                    key[n] = ';';
-                    break;
-                default :
-                    key[n] = input[i];
-                    break;
-            }
+            salt[i] = 0x2e;
         }
-
-        return true;
-    }
-
-
-    //
-    // salt の変換
-    //
-    void convert_salt( char *salt )
-    {
-        unsigned int i;
-        for (i=0; i<strlen(salt); i++)
+        // :;<=>?@ (0x3a〜0x40) は A〜G (0x41〜0x47)
+        else if( salt[i] >= 0x3a && salt[i] <= 0x40 )
         {
-            // 0x2e〜0x7aの範囲にないものは '.'(0x2e)
-            if ( salt[i] < 0x2e || salt[i] > 0x7a )
-            {
-                salt[i] = 0x2e;
-            }
-            // :;<=>?@ (0x3a〜0x40) は A〜G (0x41〜0x47)
-            else if ( salt[i] >= 0x3a && salt[i] <= 0x40 )
-            {
-                salt[i] += 7;
-            }
-            // [\]^_` (0x5b〜0x60) は a〜f (0x61〜0x66)
-            else if ( salt[i] >= 0x5b && salt[i] <= 0x60 )
-            {
-                salt[i] += 6;
-            }
+            salt[i] += 7;
+        }
+        // [\]^_` (0x5b〜0x60) は a〜f (0x61〜0x66)
+        else if( salt[i] >= 0x5b && salt[i] <= 0x60 )
+        {
+            salt[i] += 6;
         }
     }
 
+    return salt;
+}
 
-    //
-    // トリップ生成
-    //
-    void create_trip( const char *key, const char *salt, char *trip )
-    {
-        // とりあえず crypt()
-        char *crypted = crypt(key, salt);
 
-        // crypted の末尾10文字を trip にコピー
-        strcpy( trip, &crypted[ strlen(crypted) - 10 ] );
-    }
+//
+// key と salt から trip を計算
+//
+const std::string MISC::create_trip( const std::string& key, const std::string& salt )
+{
+    if( key.empty() || salt.empty() ) return std::string();
 
-    
-};
+    // crypt( key, salt )
+    const char *temp = crypt( key.c_str(), salt.c_str() );
 
+    const std::string crypted( temp );
+
+    // crypted(必ず13文字) から末尾10文字を trip として取り出す
+    // crypted.substr( crypted.length()-10, 10 );
+    const std::string trip = crypted.substr( 3, 10 );
+
+    return trip;
+}
 
 
 //
@@ -112,37 +78,27 @@ namespace MISC
 //
 // str は UTF-8 であること
 //
-std::string MISC::get_trip( const std::string& str, const std::string& charset )
+const std::string MISC::get_trip( const std::string& str, const std::string& charset )
 {
-    const int chrbuf = 256;
+    if( str.empty() ) return std::string();
 
-    // key 用の変数
-    char key[ chrbuf ];
+    // str の文字コードを UTF-8 から charset に変更して key に代入する
+    std::string key = MISC::Iconv( str, "UTF-8", charset );
 
-    std::string str_enc = MISC::Iconv( str, "UTF-8", charset );
+    // "<> をHTMLエスケープ
+    key = MISC::replace_str( key, "\"", "&quot;" );
+    key = MISC::replace_str( key, "<", "&lt;" );
+    key = MISC::replace_str( key, ">", "&gt;" );
 
-    // input を元にHTMLエスケープ処理した値を key に入れる
-    if( ! MISC::html_escape( str_enc.c_str(), key, chrbuf ) ) return std::string();
+    // key を元に salt を取得
+    const std::string salt = get_salt( key );
 
-    // key の2,3文字目を salt とする
-    char salt[ chrbuf ] = { key[1], key[2], '\0' };
-
-    // salt の末尾に"H."を足しておく
-    strncat(salt, "H.", 2);
-
-    // salt を仕様に合わせて変換する
-    MISC::convert_salt( salt );
-
-    // トリップ生成
-    char trip[ chrbuf ];
-    MISC::create_trip( key, salt, trip );
-
-    std::string str_trip( trip );
+    // trip を計算
+    const std::string trip = create_trip( key, salt );
 
 #ifdef _DEBUG
-    std::cout << "MISC::get_trip : " << str << " -> " << str_trip << std::endl;
+    std::cout << "MISC::get_trip : " << str << " -> " << trip << std::endl;
 #endif
 
-    return str_trip;
+    return trip;
 }
-

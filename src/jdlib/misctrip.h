@@ -15,8 +15,14 @@
 
 namespace MISC
 {
+    // key から salt を取得
+    const std::string get_salt( const std::string& key );
+
+    // key と salt から trip を計算
+    const std:: string create_trip( const std::string& key, const std::string& salt );
+
     // トリップ取得
-    std::string get_trip( const std::string& str, const std::string& charset );
+    const std::string get_trip( const std::string& str, const std::string& charset );
 };
 
 #endif
