@@ -236,6 +236,18 @@ void EditTextView::undo()
 
 
 //
+// マウスボタン入力のフック
+//
+bool EditTextView::on_button_press_event( GdkEventButton* event )
+{
+    m_sig_button_press.emit( event );
+
+    return Gtk::TextView::on_button_press_event( event );
+}
+
+
+
+//
 // キー入力のフック
 //
 bool EditTextView::on_key_press_event( GdkEventKey* event )

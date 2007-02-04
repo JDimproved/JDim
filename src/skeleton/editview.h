@@ -11,6 +11,7 @@ namespace SKELETON
 {
     typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_PRESS;
     typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_RELEASE;
+    typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_PRESS;
 
     // undo 用のバッファ
     struct UNDO_DATA
@@ -27,6 +28,7 @@ namespace SKELETON
     {
         SIG_KEY_PRESS m_sig_key_press;
         SIG_KEY_RELEASE m_sig_key_release;
+        SIG_BUTTON_PRESS m_sig_button_press;
 
         // 入力コントローラ
         CONTROL::Control m_control;
@@ -47,6 +49,7 @@ namespace SKELETON
 
         SIG_KEY_PRESS sig_key_press(){ return m_sig_key_press; }
         SIG_KEY_RELEASE sig_key_release(){ return m_sig_key_release; }
+        SIG_BUTTON_PRESS sig_button_press() { return m_sig_button_press; }
 
         EditTextView();
 
@@ -63,6 +66,8 @@ namespace SKELETON
         void undo();
 
       protected:
+
+        virtual bool on_button_press_event( GdkEventButton* event );
 
         virtual bool on_key_press_event( GdkEventKey* event );
         virtual bool on_key_release_event( GdkEventKey* event );
@@ -89,6 +94,7 @@ namespace SKELETON
         }
         virtual ~EditView(){}
 
+        SIG_BUTTON_PRESS sig_button_press(){ return m_textview.sig_button_press(); }
         SIG_KEY_PRESS sig_key_press(){ return m_textview.sig_key_press(); }
         SIG_KEY_RELEASE sig_key_release(){ return m_textview.sig_key_release(); }
 
