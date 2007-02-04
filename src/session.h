@@ -84,9 +84,11 @@ namespace SESSION
     int hpane_main_pos();
     int vpane_main_pos();
     int hpane_main_r_pos();
+    int vpane_main_mes_pos();
     void set_hpane_main_pos( int pos );
     void set_vpane_main_pos( int pos );
     void set_hpane_main_r_pos( int pos );
+    void set_vpane_main_mes_pos( int pos );
 
     // メインnotebookのページ番号
     int notebook_main_page();
@@ -143,6 +145,7 @@ namespace SESSION
 
     // 埋め込みmessageを使用
     bool get_embedded_mes();
+    void set_embedded_mes( bool set );
 
     // message ウィンドウの位置
     int mes_x();

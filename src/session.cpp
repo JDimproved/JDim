@@ -24,6 +24,7 @@ bool win_maximized;
 int win_hpane_main_pos;
 int win_vpane_main_pos;
 int win_hpane_main_r_pos;
+int win_vpane_main_mes_pos;
 
 int win_notebook_main_page;
 
@@ -107,6 +108,7 @@ void SESSION::init_session()
     win_hpane_main_pos = cf.get_option( "hpane_main_pos", 190 );
     win_vpane_main_pos = cf.get_option( "vpane_main_pos", 200 );
     win_hpane_main_r_pos = cf.get_option( "hpane_main_r_pos", 300 );
+    win_vpane_main_mes_pos = cf.get_option( "vpane_main_mes_pos", 400 );
 
     win_notebook_main_page = cf.get_option( "notebook_main_page", 0 );
 
@@ -174,6 +176,7 @@ void SESSION::init_session()
               << "hpane=" << win_hpane_main_pos << std::endl
               << "vpane=" << win_vpane_main_pos << std::endl
               << "hpane_r=" << win_hpane_main_r_pos << std::endl
+              << "vpane_mes=" << win_vpane_main_mes_pos << std::endl
 
               << "notebook_main_page=" << win_notebook_main_page << std::endl
 
@@ -254,6 +257,7 @@ void SESSION::save_session()
         << "hpane_main_pos = " << win_hpane_main_pos << std::endl
         << "vpane_main_pos = " << win_vpane_main_pos << std::endl
         << "hpane_main_r_pos = " << win_hpane_main_r_pos << std::endl
+        << "vpane_main_mes_pos = " << win_vpane_main_mes_pos << std::endl
 
         << "notebook_main_page = " << win_notebook_main_page << std::endl
 
@@ -334,10 +338,12 @@ void SESSION::set_show_sidebar( bool showurl ){ win_show_sidebar = showurl; }
 int SESSION::hpane_main_pos(){ return win_hpane_main_pos; }
 int SESSION::vpane_main_pos(){ return win_vpane_main_pos; }
 int SESSION::hpane_main_r_pos(){ return win_hpane_main_r_pos; }
+int SESSION::vpane_main_mes_pos(){ return win_vpane_main_mes_pos; }
 
 void SESSION::set_hpane_main_pos( int pos ){ win_hpane_main_pos = pos; }
 void SESSION::set_vpane_main_pos( int pos ){ win_vpane_main_pos = pos; }
 void SESSION::set_hpane_main_r_pos( int pos ){ win_hpane_main_r_pos = pos; }
+void SESSION::set_vpane_main_mes_pos( int pos ){ win_vpane_main_mes_pos = pos; }
 
 // メインnotebookのページ番号
 int SESSION::notebook_main_page(){ return win_notebook_main_page; }
@@ -395,6 +401,7 @@ void SESSION::set_img_shown( bool set ){ img_shown = set; }
 
 // 埋め込みmessageを使用
 bool SESSION::get_embedded_mes(){ return embedded_mes; }
+void SESSION::set_embedded_mes( bool set ){ embedded_mes = set; }
 
 // message ウィンドウの位置
 int SESSION::mes_x(){ return win_mes_x; }
