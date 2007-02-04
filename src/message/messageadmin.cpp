@@ -14,12 +14,13 @@
 #include "command.h"
 #include "global.h"
 #include "controlid.h"
+#include "session.h"
 
 MESSAGE::MessageAdmin* instance_messageadmin = NULL;
 
 MESSAGE::MessageAdmin* MESSAGE::get_admin()
 {
-    if( ! instance_messageadmin ) instance_messageadmin = new MESSAGE::MessageAdmin();
+    if( ! instance_messageadmin ) instance_messageadmin = new MESSAGE::MessageAdmin( URL_MESSAGEADMIN );
     return instance_messageadmin;
 
 }
@@ -33,9 +34,10 @@ void MESSAGE::delete_admin()
 using namespace MESSAGE;
 
 
-MessageAdmin::MessageAdmin()
-    : m_win( 0 ),
-      m_view( 0 )
+MessageAdmin::MessageAdmin( const std::string& url )
+    : m_url( url ),
+      m_win( NULL ),
+      m_view( NULL )
 {
     m_disp.connect( sigc::mem_fun( *this, &MessageAdmin::exec_command ) );
 }
@@ -111,7 +113,7 @@ void MessageAdmin::exec_command()
         close_view();
     }
 
-    else if( command.command  == "focus_view" ) focus_view();
+    else if( command.command  == "focus_current_view" ) focus_view();
 
     else if( command.command == "relayout_all" ){
         if( m_view ) m_view->relayout();
@@ -157,8 +159,17 @@ void MessageAdmin::redraw_view( const std::string& url )
 //
 void MessageAdmin::close_view()
 {
-    if( m_win ) delete m_win;
-    if( m_view ) delete m_view;
+    if( m_win ){
+        m_win->remove();
+        delete m_win;
+    }
+
+    if( m_view ){
+        m_vbox.remove( *m_view );
+        delete m_view;
+
+        CORE::core_set_command( "empty_page", m_url );
+    }
 
     m_view = NULL;
     m_win = NULL;
@@ -173,6 +184,11 @@ void MessageAdmin::focus_view()
     if( m_view ) m_view->focus_view();
 }
 
+
+void MessageAdmin::switch_admin()
+{
+    CORE::core_set_command( "switch_message" );
+}
 
 
 //
@@ -221,8 +237,18 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
     }
 
     m_view = CORE::ViewFactory( type, url_msg, args );
-    m_win = new MESSAGE::MessageWin();
-    m_win->set_title( title );
-    m_win->add( *m_view );
-    m_win->show_all();
+
+    m_vbox.pack_start( *m_view );
+    m_vbox.show_all();
+
+    // ウィンドウ表示
+    if( ! SESSION::get_embedded_mes() ){
+
+        m_win = new MESSAGE::MessageWin();
+        m_win->set_title( title );
+        m_win->add( m_vbox );
+        m_win->show_all();
+    }
+
+    switch_admin();
 }

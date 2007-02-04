@@ -116,6 +116,7 @@ Core::~Core()
     SESSION::set_hpane_main_pos( m_hpaned.get_position() );
     SESSION::set_vpane_main_pos( m_vpaned_r.get_position() );
     SESSION::set_hpane_main_r_pos( m_hpaned_r.get_position() );
+    SESSION::set_vpane_main_mes_pos( m_vpaned_message.get_position() );
 
     // ログ検索マネージャ削除
     CORE::delete_search_manager();
@@ -216,6 +217,10 @@ void Core::run( bool init )
     m_action_group->add( raction1, sigc::mem_fun( *this, &Core::slot_toggle_3pane ) );
     m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
 
+    // 埋め込みmessage
+    m_action_group->add( Gtk::ToggleAction::create( "EmbMes", "書き込みビューを埋め込み表示", std::string(), SESSION::get_embedded_mes() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_embedded_mes ) );
+
     // ツールバー位置
     Gtk::RadioButtonGroup rg_toolbar;
     raction0 = Gtk::RadioAction::create( rg_toolbar, "ToolbarPos0", "メニューバーの下に表示する" );
@@ -310,6 +315,7 @@ void Core::run( bool init )
         "<ui>"
         "<menubar name='menu_bar'>"
 
+    // ファイル
         "<menu action='Menu_File'>"
         "<menuitem action='Online'/>"
         "<separator/>"
@@ -322,11 +328,13 @@ void Core::run( bool init )
         "<menuitem action='Quit'/>"
         "</menu>"
 
+    // ログイン
         "<menu action='Menu_Login'>"
         "<menuitem action='Login2ch'/>"
         "<menuitem action='SetupPasswd'/>"
         "</menu>"
 
+    // 表示
         "<menu action='Menu_View'>"
         "<menuitem action='Show_Board'/>"
         "<menuitem action='Show_Thread'/>"
@@ -346,8 +354,11 @@ void Core::run( bool init )
         "<menuitem action='2Pane'/>"
         "<menuitem action='3Pane'/>"
         "<menuitem action='v3Pane'/>"
+        "<separator/>"
+        "<menuitem action='EmbMes'/>"
         "</menu>"
 
+    // 設定
         "<menu action='Menu_Config'>"
         "<menuitem action='OldArticle'/>"
         "<menuitem action='RestoreViews'/>"
@@ -399,7 +410,7 @@ void Core::run( bool init )
         "<menuitem action='DeleteImages'/>"
         "</menu>"                         
 
-
+    // ヘルプ
         "<menu action='Menu_Help'>"
         "<menuitem action='Manual'/>"
         "<separator/>"
@@ -493,6 +504,7 @@ void Core::pack_widget( bool unpack )
         SESSION::set_hpane_main_pos( m_hpaned.get_position() );
         SESSION::set_vpane_main_pos( m_vpaned_r.get_position() );
         SESSION::set_hpane_main_r_pos( m_hpaned_r.get_position() );
+        SESSION::set_vpane_main_mes_pos( m_vpaned_message.get_position() );
     }
 
     int mode_pane = SESSION::get_mode_pane();
@@ -500,7 +512,16 @@ void Core::pack_widget( bool unpack )
     if( mode_pane == SESSION::MODE_2PANE ){ // 2ペーン
 
         m_notebook.append_remove_page( unpack, *BOARD::get_admin()->get_widget(), "スレ一覧" );
-        m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
+
+        if( SESSION::get_embedded_mes() ){ // 埋め込みmessage
+
+            m_vpaned_message.add_remove1( unpack, *ARTICLE::get_admin()->get_widget() );
+            m_vpaned_message.add_remove2( unpack, *MESSAGE::get_admin()->get_widget() );
+
+            m_notebook.append_remove_page( unpack, m_vpaned_message, "スレッド" );
+        }
+        else m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
+
         m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
 
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) m_vbox_article.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
@@ -571,6 +592,12 @@ void Core::pack_widget( bool unpack )
         // ペーンの位置設定
         m_vpaned_r.set_position( SESSION::vpane_main_pos() );
         m_hpaned_r.set_position( SESSION::hpane_main_r_pos() );
+        m_vpaned_message.set_position( SESSION::vpane_main_mes_pos() );
+
+        // 埋め込みmessage
+        if( SESSION::get_embedded_mes() ){
+            if( MESSAGE::get_admin()->empty() ) m_vpaned_message.toggle_maximize( 1 );
+        }
 
         // サイドバーの位置設定
         m_hpaned.set_position( SESSION::hpane_main_pos() );
@@ -1335,6 +1362,16 @@ void Core::slot_toggle_v3pane()
 }
 
 
+//
+// 埋め込みmessageビュー
+//
+void Core::slot_toggle_embedded_mes()
+{
+    SESSION::set_embedded_mes( ! SESSION::get_embedded_mes() );
+
+    Gtk::MessageDialog mdiag( "(開発中) 2paneでのみ有効です。再起動してください。" );
+    mdiag.run();
+}
 
 
 //
@@ -1734,7 +1771,11 @@ void Core::set_command( const COMMAND_ARGS& command )
             Gtk::MessageDialog mdiag( "オフラインです" );
             mdiag.run();
         }
-        else MESSAGE::get_admin()->set_command( "open_view", command.url, command.arg1 );
+        else{
+
+            if( SESSION::get_embedded_mes() ) m_vpaned_message.toggle_maximize( 0 );
+            MESSAGE::get_admin()->set_command( "open_view", command.url, command.arg1 );
+        }
     }
 
     else if( command.command == "create_new_thread" ){
@@ -2063,6 +2104,11 @@ void Core::exec_command_after_boot()
     // ツールバー表示切り替え
     if( ! SESSION::show_toolbar() ) m_vbox_main.remove( m_toolbar );
 
+    // 埋め込みmessage表示切り替え
+    if( SESSION::get_embedded_mes() ){
+        if( MESSAGE::get_admin()->empty() ) m_vpaned_message.toggle_maximize( 1 );
+    }
+
     // タイマーセット
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
     sigc::connection conn = Glib::signal_timeout().connect( slot_timeout, TIMER_TIMEOUT );
@@ -2309,6 +2355,23 @@ void Core::empty_page( const std::string& url )
         if( focused_admin == SESSION::FOCUS_NO ){
             focused_admin = SESSION::FOCUS_SIDEBAR;
             SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
+        }
+    }
+
+    // 埋め込みmessageビューが空になった
+    if( url == URL_MESSAGEADMIN && SESSION::get_embedded_mes() ){
+
+        m_vpaned_message.toggle_maximize( 1 );
+
+        // フォーカス切り替え
+        if( focused_admin == SESSION::FOCUS_NO ){
+
+            if( ! ARTICLE::get_admin()->empty() ) focused_admin = SESSION::FOCUS_ARTICLE;
+            else if( ! BOARD::get_admin()->empty() ) focused_admin = SESSION::FOCUS_BOARD;
+            else{
+                focused_admin = SESSION::FOCUS_SIDEBAR;
+                SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
+            }
         }
     }
 
@@ -2632,6 +2695,23 @@ void Core::switch_message()
 #ifdef _DEBUG
     std::cout << "Core::switch_message\n";
 #endif
+
+    if( ! MESSAGE::get_admin()->empty() ){
+
+        if( SESSION::focused_admin() != SESSION::FOCUS_MESSAGE ){
+
+            FOCUS_OUT_ALL();
+            ARTICLE::get_admin()->set_command( "delete_popup" );
+        }
+
+        MESSAGE::get_admin()->set_command( "focus_current_view" );
+        SESSION::set_focused_admin( SESSION::FOCUS_MESSAGE );
+        SESSION::set_focused_admin_sidebar( SESSION::FOCUS_MESSAGE );
+    }
+
+    set_sensitive_view_button();
+    set_toggle_view_button();
+    toggle_maximize_rightpane();
 }
 
 

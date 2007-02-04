@@ -198,6 +198,7 @@ namespace CORE
         void slot_toggle_2pane();
         void slot_toggle_3pane();
         void slot_toggle_v3pane();
+        void slot_toggle_embedded_mes();
         void slot_toggle_oldarticle();
         void slot_toggle_tabbutton();
         void slot_toggle_popupwarpmode();

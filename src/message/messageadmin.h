@@ -27,15 +27,19 @@ namespace MESSAGE
         Glib::Dispatcher m_disp;
         std::list< COMMAND_ARGS > m_list_command;
 
+        std::string m_url;
+
         MessageWin* m_win;
         SKELETON::View* m_view;
+        Gtk::VBox m_vbox;
 
       public:
 
-        MessageAdmin();
+        MessageAdmin( const std::string& url );
         ~MessageAdmin();
 
         bool empty(){ return ( ! m_view ); }
+        Gtk::Widget* get_widget(){ return &m_vbox; }
 
         void clock_in();
 
@@ -48,6 +52,7 @@ namespace MESSAGE
         void redraw_view( const std::string& url );
         void close_view();
         void focus_view();
+        void switch_admin();
     };
     
     MESSAGE::MessageAdmin* get_admin();

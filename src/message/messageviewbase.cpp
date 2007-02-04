@@ -225,6 +225,7 @@ void MessageViewBase::pack_widget()
 
     m_text_message.set_accepts_tab( false );
     m_text_message.sig_key_release().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_release ) );    
+    m_text_message.sig_button_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_button_press ) );
     m_text_message.get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::show_status ) );
 
     // プレビュー
@@ -233,6 +234,7 @@ void MessageViewBase::pack_widget()
     m_notebook.append_page( m_msgview, "メッセージ" );
     m_notebook.append_page( *m_preview, "プレビュー" );
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &MessageViewBase::slot_switch_page ) );
+    m_notebook.set_current_page( PAGE_MESSAGE );
 
     pack_start( m_toolbar, Gtk::PACK_SHRINK );
     pack_start( m_notebook );
@@ -258,9 +260,13 @@ void MessageViewBase::redraw_view()
 
 void MessageViewBase::focus_view()
 {
-    m_text_message.focus_view();
-}
+#ifdef _DEBUG
+    std::cout << "MessageViewBase::focus_view page = " << m_notebook.get_current_page() << std::endl;
+#endif
 
+    if( m_notebook.get_current_page() == PAGE_MESSAGE ) m_text_message.focus_view();
+    else if( m_preview && m_notebook.get_current_page() == PAGE_PREVIEW ) m_preview->focus_view();
+}
 
 
 //
@@ -387,6 +393,22 @@ bool MessageViewBase::slot_key_release( GdkEventKey* event )
 #endif
 
     operate_view( SKELETON::View::get_control().key_press( event ) );
+
+    return true;
+}
+
+
+
+//
+// テキストビューでマウスボタン押した
+//
+bool MessageViewBase::slot_button_press( GdkEventButton* event )
+{
+#ifdef _DEBUG
+    std::cout << "MessageViewBase::slot_button_press\n";
+#endif
+
+    CORE::core_set_command( "switch_message" );
 
     return true;
 }
@@ -567,9 +589,10 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 
         // 編集ボタン有効化
         m_button_undo.set_sensitive( true );
-
-        MESSAGE::get_admin()->set_command( "focus_view" );
     }
+
+    CORE::core_set_command( "switch_message" );
+    MESSAGE::get_admin()->set_command( "focus_current_view" );
 }
 
 
