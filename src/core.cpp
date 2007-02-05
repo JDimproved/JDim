@@ -515,10 +515,16 @@ void Core::pack_widget( bool unpack )
 
         if( SESSION::get_embedded_mes() ){ // 埋め込みmessage
 
+            // 書き込みウィンドウを閉じる
+            if( ! unpack ) MESSAGE::get_admin()->set_command( "close_window" );
+
             m_vpaned_message.add_remove1( unpack, *ARTICLE::get_admin()->get_widget() );
             m_vpaned_message.add_remove2( unpack, *MESSAGE::get_admin()->get_widget() );
 
             m_notebook.append_remove_page( unpack, m_vpaned_message, "スレッド" );
+
+            // 書き込みウィンドウ表示
+            if( unpack ) MESSAGE::get_admin()->set_command( "open_window" );
         }
         else m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
 
@@ -1367,10 +1373,11 @@ void Core::slot_toggle_v3pane()
 //
 void Core::slot_toggle_embedded_mes()
 {
+    pack_widget( true );
     SESSION::set_embedded_mes( ! SESSION::get_embedded_mes() );
+    pack_widget( false );
 
-    Gtk::MessageDialog mdiag( "(開発中) 2paneでのみ有効です。再起動してください。" );
-    mdiag.run();
+    restore_focus( true );
 }
 
 

@@ -29,6 +29,8 @@ namespace MESSAGE
 
         std::string m_url;
 
+        std::string m_title;
+
         MessageWin* m_win;
         SKELETON::View* m_view;
         Gtk::VBox m_vbox;
@@ -46,6 +48,9 @@ namespace MESSAGE
         void set_command( const std::string& command, const std::string& url = std::string() , const std::string& arg1 = std::string() );
 
       private:
+
+        void open_window();
+        void close_window();
 
         void exec_command();
         void open_view( const std::string& url, const std::string& msg, bool new_thread );

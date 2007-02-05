@@ -69,6 +69,16 @@ void MessageAdmin::set_command( const std::string& command, const std::string& u
               << url << " " << arg1 << " " << std::endl;
 #endif
 
+    if( command == "open_window" ){
+        open_window();
+        return;
+    }
+    else if( command == "close_window" ){
+        close_window();
+        return;
+    }
+
+
     COMMAND_ARGS command_arg;
     command_arg.command = command;
     command_arg.url = url;
@@ -159,20 +169,41 @@ void MessageAdmin::redraw_view( const std::string& url )
 //
 void MessageAdmin::close_view()
 {
-    if( m_win ){
-        m_win->remove();
-        delete m_win;
-    }
+    close_window();
 
     if( m_view ){
         m_vbox.remove( *m_view );
         delete m_view;
+        m_view = NULL;
 
         CORE::core_set_command( "empty_page", m_url );
     }
+}
 
-    m_view = NULL;
-    m_win = NULL;
+
+//
+// ウィンドウ開く
+//
+void MessageAdmin::open_window()
+{
+    if( ! m_win && ! empty() ){
+        m_win = new MESSAGE::MessageWin();
+        m_win->set_title( m_title );
+        m_win->add( m_vbox );
+        m_win->show_all();
+    }
+}
+
+//
+// ウィンドウ閉じる
+//
+void MessageAdmin::close_window()
+{
+    if( m_win ){
+        m_win->remove();
+        delete m_win;
+        m_win = NULL;
+    }
 }
 
 
@@ -216,7 +247,6 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
 
     close_view();
 
-    std::string title;
     std::string url_msg;
     int type;
     CORE::VIEWFACTORY_ARGS args;
@@ -224,7 +254,7 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
         type = CORE::VIEW_MESSAGE;
         args.arg1 = msg;
         url_msg = url;
-        title = "JD - [ 書き込み ] " + DBTREE::article_subject( url );
+        m_title = "JD - [ 書き込み ] " + DBTREE::article_subject( url );
     }
 
     // 新スレ
@@ -233,7 +263,7 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
         type = CORE::VIEW_NEWTHREAD;
         args.arg1 = msg;
         url_msg = DBTREE::url_datbase( url ) + "0000000000" + DBTREE::board_ext( url );
-        title = "JD - [ 新スレ作成 ] " + DBTREE::board_name( url );
+        m_title = "JD - [ 新スレ作成 ] " + DBTREE::board_name( url );
     }
 
     m_view = CORE::ViewFactory( type, url_msg, args );
@@ -242,13 +272,7 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
     m_vbox.show_all();
 
     // ウィンドウ表示
-    if( ! SESSION::get_embedded_mes() ){
-
-        m_win = new MESSAGE::MessageWin();
-        m_win->set_title( title );
-        m_win->add( m_vbox );
-        m_win->show_all();
-    }
+    if( ! SESSION::get_embedded_mes() ) open_window();
 
     switch_admin();
 }
