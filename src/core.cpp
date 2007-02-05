@@ -38,6 +38,13 @@
 
 using namespace CORE;
 
+enum
+{
+    PAGE_ARTICLE = 0,
+    PAGE_IMAGE,
+    PAGE_BOARD
+};
+
 
 Core* instance_core;
 
@@ -500,6 +507,8 @@ void Core::pack_widget( bool unpack )
 {
     m_enable_menuslot = false;
 
+    int mode_pane = SESSION::get_mode_pane();
+
     if( unpack ){
         SESSION::set_hpane_main_pos( m_hpaned.get_position() );
         SESSION::set_vpane_main_pos( m_vpaned_r.get_position() );
@@ -507,28 +516,31 @@ void Core::pack_widget( bool unpack )
         SESSION::set_vpane_main_mes_pos( m_vpaned_message.get_position() );
     }
 
-    int mode_pane = SESSION::get_mode_pane();
+    if( SESSION::get_embedded_mes() ){ // 埋め込みmessage
 
-    if( mode_pane == SESSION::MODE_2PANE ){ // 2ペーン
+        // 書き込みウィンドウを閉じる
+        MESSAGE::get_admin()->set_command( "close_window" );
+
+        m_vpaned_message.add_remove1( unpack, *ARTICLE::get_admin()->get_widget() );
+        m_vpaned_message.add_remove2( unpack, *MESSAGE::get_admin()->get_widget() );
+
+        m_notebook.append_remove_page( unpack, m_vpaned_message, "スレッド" );
+    }
+    else{
+
+        // 書き込みウィンドウ表示
+        MESSAGE::get_admin()->set_command( "open_window" );
+
+        m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
+    }
+
+    m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
+
+
+    // 2ペーン
+    if( mode_pane == SESSION::MODE_2PANE ){ 
 
         m_notebook.append_remove_page( unpack, *BOARD::get_admin()->get_widget(), "スレ一覧" );
-
-        if( SESSION::get_embedded_mes() ){ // 埋め込みmessage
-
-            // 書き込みウィンドウを閉じる
-            if( ! unpack ) MESSAGE::get_admin()->set_command( "close_window" );
-
-            m_vpaned_message.add_remove1( unpack, *ARTICLE::get_admin()->get_widget() );
-            m_vpaned_message.add_remove2( unpack, *MESSAGE::get_admin()->get_widget() );
-
-            m_notebook.append_remove_page( unpack, m_vpaned_message, "スレッド" );
-
-            // 書き込みウィンドウ表示
-            if( unpack ) MESSAGE::get_admin()->set_command( "open_window" );
-        }
-        else m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
-
-        m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
 
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) m_vbox_article.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
         m_vbox_article.pack_remove_start( unpack, m_notebook );
@@ -537,10 +549,8 @@ void Core::pack_widget( bool unpack )
         m_hpaned.add_remove2( unpack, m_vbox_article );
     }
 
-    else if( mode_pane == SESSION::MODE_3PANE ){ // 3ペーン
-
-        m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
-        m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
+    // 3ペーン
+    else if( mode_pane == SESSION::MODE_3PANE ){ 
 
         m_vbox_article.pack_remove_start( unpack, m_notebook );
 
@@ -561,10 +571,8 @@ void Core::pack_widget( bool unpack )
         m_hpaned.add_remove2( unpack, m_vpaned_r );
     }
 
-    else if( mode_pane == SESSION::MODE_V3PANE ){ // 縦3ペーン
-
-        m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
-        m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
+    // 縦3ペーン
+    else if( mode_pane == SESSION::MODE_V3PANE ){ 
 
         m_vbox_article.pack_remove_start( unpack, m_notebook );
 
@@ -2208,25 +2216,13 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
     std::cout << "Core::slot_switch_page " << page << std::endl;
 #endif
 
-    if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
+    switch( page){
 
-        switch( page){
+        case PAGE_ARTICLE: switch_article(); break;
 
-            case 0: switch_board(); break;
+        case PAGE_IMAGE: switch_image(); break;
 
-            case 1: switch_article(); break;
-
-            case 2: switch_image(); break;
-        }
-    }
-    else{
-
-        switch( page ){
-
-            case 0: switch_article(); break;
-
-            case 1: switch_image(); break;
-        }
+        case PAGE_BOARD: switch_board(); break;
     }
 }
 
@@ -2307,7 +2303,7 @@ void Core::empty_page( const std::string& url )
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
-            if( m_notebook.get_current_page() == 2 ){
+            if( m_notebook.get_current_page() == PAGE_IMAGE ){
                 if( ! ARTICLE::get_admin()->empty() ) switch_article();
                 else if( ! BOARD::get_admin()->empty() ) switch_board();
             }
@@ -2332,7 +2328,7 @@ void Core::empty_page( const std::string& url )
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
-            if( m_notebook.get_current_page() == 1 ){
+            if( m_notebook.get_current_page() == PAGE_ARTICLE ){
                 if( BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
                 else if( ! BOARD::get_admin()->empty() ) switch_board();
             }
@@ -2356,7 +2352,7 @@ void Core::empty_page( const std::string& url )
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
-            if( m_notebook.get_current_page() == 0 ){
+            if( m_notebook.get_current_page() == PAGE_BOARD ){
                 if( ! ARTICLE::get_admin()->empty() ) switch_article();
                 else if( ! IMAGE::get_admin()->empty() ) switch_image();
             }
@@ -2554,8 +2550,7 @@ void Core::switch_article()
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
 
-            if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
-            else if( SESSION::get_mode_pane() != SESSION::MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+            if( m_notebook.get_current_page() != PAGE_ARTICLE ) m_notebook.set_current_page( PAGE_ARTICLE );
             SESSION::set_notebook_main_page( m_notebook.get_current_page() );
         }
 
@@ -2588,7 +2583,8 @@ void Core::switch_board()
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
 
-            if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && m_notebook.get_current_page() != 0 ) m_notebook.set_current_page( 0 );
+            if( SESSION::get_mode_pane() == SESSION::MODE_2PANE
+                && m_notebook.get_current_page() != PAGE_BOARD ) m_notebook.set_current_page( PAGE_BOARD );
             SESSION::set_notebook_main_page( m_notebook.get_current_page() );
         }
 
@@ -2676,8 +2672,7 @@ void Core::switch_image()
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
 
-            if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && m_notebook.get_current_page() != 2 ) m_notebook.set_current_page( 2 );
-            else if( SESSION::get_mode_pane() != SESSION::MODE_2PANE && m_notebook.get_current_page() != 1 ) m_notebook.set_current_page( 1 );
+            if( m_notebook.get_current_page() != PAGE_IMAGE ) m_notebook.set_current_page( PAGE_IMAGE );
             SESSION::set_notebook_main_page( m_notebook.get_current_page() );
 
             // 画像強制表示
