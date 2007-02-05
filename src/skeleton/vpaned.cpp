@@ -7,15 +7,51 @@
 
 using namespace SKELETON;
 
+
+enum
+{
+    MAXMODE_NORMAL = 0,
+    MAXMODE_PAGE1,
+    MAXMODE_PAGE2
+};
+
+
 JDVPaned::JDVPaned()
     : Gtk::VPaned(),
       m_clicked( false ),
-      m_drag( false )
-{}
+      m_drag( false ),
+      m_mode( MAXMODE_NORMAL )
+{
+    m_pre_height = get_height();
+}
 
 
 JDVPaned::~JDVPaned()
 {}
+
+
+//
+// クロック入力
+//
+void JDVPaned::clock_in()
+{
+    // Gtk::Paned は configure_event()をキャッチ出来ないので
+    // 応急処置としてタイマーの中でサイズが変更したか調べて
+    // 変わっていたら仕切りの位置を調整する
+    if( m_pre_height != get_height() ){
+
+        int pos = Gtk::VPaned::get_position();
+
+#ifdef _DEBUG
+        std::cout << "JDVPande::resize pos = " << pos
+                  << " preheight = " << m_pre_height << " height = " << get_height() << std::endl;
+#endif
+
+        if( m_mode == MAXMODE_PAGE1 ) Gtk::VPaned::set_position( get_height() );
+
+        m_pre_height = get_height();
+    }
+}
 
 
 int JDVPaned::get_position()
@@ -54,24 +90,29 @@ void JDVPaned::add_remove2( bool unpack, Gtk::Widget& child )
 // page = 0 の時は元に戻す
 void JDVPaned::toggle_maximize( int page )
 {
-    int maxpos = property_max_position();
     int pos = Gtk::VPaned::get_position();
 
 #ifdef _DEBUG
     std::cout << "JDVPaned::toggle_maximize page = " << page << " current_pos = " << pos
-              << " pos = " << get_position() << " maxpos = " << maxpos << std::endl;
+              << " pos = " << get_position() << std::endl;
 #endif
 
     // 復元
-    if( page == 0 && pos != get_position() ) Gtk::VPaned::set_position( get_position() );
+    if( page == 0 && pos != get_position() ){
 
-    else if( page == 1 && pos < maxpos ){
+        m_mode = MAXMODE_NORMAL;
+        Gtk::VPaned::set_position( get_position() );
+    }
 
-        Gtk::VPaned::set_position( maxpos );
+    else if( page == 1 ){
+
+        m_mode = MAXMODE_PAGE1;
+        Gtk::VPaned::set_position( get_height() );
     }
 
     else if( page == 2 && pos > 0 ){
 
+        m_mode = MAXMODE_PAGE2;
         Gtk::VPaned::set_position( 0 );
     }
 }
@@ -99,7 +140,11 @@ bool JDVPaned::on_button_release_event( GdkEventButton* event )
 #endif
 
     // 仕切りをドラッグした場合
-    if( m_clicked && m_drag ) m_pos = Gtk::VPaned::get_position();
+    if( m_clicked && m_drag ){
+        m_mode = MAXMODE_NORMAL;
+        m_pos = Gtk::VPaned::get_position();
+    }
+
     m_clicked = false;
     m_drag = false;
 

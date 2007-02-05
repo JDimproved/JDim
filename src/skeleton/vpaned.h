@@ -14,12 +14,18 @@ namespace SKELETON
     {
         bool m_clicked;
         bool m_drag;
+
+        int m_mode;
         int m_pos;
+
+        int m_pre_height;
 
       public:
 
         JDVPaned();
         ~JDVPaned();
+
+        void clock_in();
 
         int get_position();
         void set_position( int position );
