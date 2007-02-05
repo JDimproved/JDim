@@ -2183,6 +2183,10 @@ bool Core::slot_timeout( int timer_number )
     ARTICLE::get_admin()->clock_in();
     IMAGE::get_admin()->clock_in();
     MESSAGE::get_admin()->clock_in();
+
+    // Panedにクロック入力
+    m_vpaned_r.clock_in();
+    m_vpaned_message.clock_in();
     
     return true;
 }
