@@ -199,6 +199,7 @@ namespace CORE
         void slot_toggle_3pane();
         void slot_toggle_v3pane();
         void slot_toggle_embedded_mes();
+        void slot_toggle_embedded_img();
         void slot_toggle_oldarticle();
         void slot_toggle_tabbutton();
         void slot_toggle_popupwarpmode();
@@ -214,8 +215,18 @@ namespace CORE
         // フォーカス回復
         void restore_focus( bool force );
 
+        // メインタイマー
         bool slot_timeout( int timer_number );
+
+        // 右ペーンのnotebookのタブの切替え
         void slot_switch_page( GtkNotebookPage*, guint page );
+
+        // 右ペーンのnotebookのページ番号
+        int get_right_current_page();
+
+        // 右ペーンのnotebookのページをセット
+        void set_right_current_page( int page );
+
         bool slot_focus_out_event( GdkEventFocus* ev );
         bool slot_focus_in_event( GdkEventFocus* ev );
         void slot_active_url();

@@ -60,7 +60,7 @@ Core* CORE::get_instance()
 ARTICLE::get_admin()->set_command( "focus_out" ); \
 BOARD::get_admin()->set_command( "focus_out" ); \
 BBSLIST::get_admin()->set_command( "focus_out" ); \
-IMAGE::get_admin()->set_command( "focus_out" ); \
+if( SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command( "focus_out" ); \
 }while(0)
 
 
@@ -228,6 +228,10 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "EmbMes", "書き込みビューを埋め込み表示", std::string(), SESSION::get_embedded_mes() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_embedded_mes ) );
 
+    // 埋め込みImage
+    m_action_group->add( Gtk::ToggleAction::create( "EmbImg", "画像ビューを埋め込み表示", std::string(), SESSION::get_embedded_img() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_embedded_img ) );
+
     // ツールバー位置
     Gtk::RadioButtonGroup rg_toolbar;
     raction0 = Gtk::RadioAction::create( rg_toolbar, "ToolbarPos0", "メニューバーの下に表示する" );
@@ -363,6 +367,7 @@ void Core::run( bool init )
         "<menuitem action='v3Pane'/>"
         "<separator/>"
         "<menuitem action='EmbMes'/>"
+        "<menuitem action='EmbImg'/>"
         "</menu>"
 
     // 設定
@@ -519,7 +524,7 @@ void Core::pack_widget( bool unpack )
     if( SESSION::get_embedded_mes() ){ // 埋め込みmessage
 
         // 書き込みウィンドウを閉じる
-        MESSAGE::get_admin()->set_command( "close_window" );
+        MESSAGE::get_admin()->set_command_immediately( "close_window" );
 
         m_vpaned_message.add_remove1( unpack, *ARTICLE::get_admin()->get_widget() );
         m_vpaned_message.add_remove2( unpack, *MESSAGE::get_admin()->get_widget() );
@@ -529,13 +534,26 @@ void Core::pack_widget( bool unpack )
     else{
 
         // 書き込みウィンドウ表示
-        MESSAGE::get_admin()->set_command( "open_window" );
+        MESSAGE::get_admin()->set_command_immediately( "open_window" );
 
         m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
     }
 
-    m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
+    if( SESSION::get_embedded_img() ){ // 埋め込みimage
 
+        // 画像ウィンドウを閉じる
+        IMAGE::get_admin()->set_command_immediately( "close_window" );
+
+        m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
+    }
+    else{
+
+        // 画像ウィンドウ表示
+        IMAGE::get_admin()->set_command_immediately( "open_window" );
+    }
+
+    // 画像インジケータ
+    if( unpack ) hide_imagetab();
 
     // 2ペーン
     if( mode_pane == SESSION::MODE_2PANE ){ 
@@ -612,6 +630,9 @@ void Core::pack_widget( bool unpack )
         if( SESSION::get_embedded_mes() ){
             if( MESSAGE::get_admin()->empty() ) m_vpaned_message.toggle_maximize( 1 );
         }
+
+        // 画像インジケータ
+        if( ! IMAGE::get_admin()->empty() ) show_imagetab();
 
         // サイドバーの位置設定
         m_hpaned.set_position( SESSION::hpane_main_pos() );
@@ -1390,6 +1411,19 @@ void Core::slot_toggle_embedded_mes()
 
 
 //
+// 埋め込みimageビュー
+//
+void Core::slot_toggle_embedded_img()
+{
+    pack_widget( true );
+    SESSION::set_embedded_img( ! SESSION::get_embedded_img() );
+    pack_widget( false );
+
+    restore_focus( true );
+}
+
+
+//
 // 過去ログ表示切替え
 //
 void Core::slot_toggle_oldarticle()
@@ -2086,12 +2120,12 @@ void Core::exec_command()
     // 起動中
     if( m_boot && ! m_init ){
 
-        // coreと全てのadminクラスのコマンドの実行が終わった
+        // coreがコマンドを全て実行して、かつ全てのadminクラスがブートした
         if( m_list_command.size() == 0
-            && ! BBSLIST::get_admin()->has_commands()
-            && ! BOARD::get_admin()->has_commands()
-            && ! ARTICLE::get_admin()->has_commands()
-            && ! IMAGE::get_admin()->has_commands() ){
+            && ! BBSLIST::get_admin()->is_booting()
+            && ! BOARD::get_admin()->is_booting()
+            && ! ARTICLE::get_admin()->is_booting()
+            && ! IMAGE::get_admin()->is_booting() ){
 
             // 起動完了
             m_boot = false;
@@ -2167,7 +2201,7 @@ void Core::restore_focus( bool force )
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
 
         // adminの表示状態回復
-        m_notebook.set_current_page( SESSION::notebook_main_page() );
+        set_right_current_page( SESSION::notebook_main_page() );
 
         // フォーカス状態回復
         switch( admin ){
@@ -2210,13 +2244,15 @@ bool Core::slot_timeout( int timer_number )
 //
 // 右ペーンのnotebookのタブの切替え
 //
-void Core::slot_switch_page( GtkNotebookPage*, guint page )
+void Core::slot_switch_page( GtkNotebookPage*, guint )
 {
+    int page = get_right_current_page();
+
 #ifdef _DEBUG
     std::cout << "Core::slot_switch_page " << page << std::endl;
 #endif
 
-    switch( page){
+    switch( page ){
 
         case PAGE_ARTICLE: switch_article(); break;
 
@@ -2225,6 +2261,43 @@ void Core::slot_switch_page( GtkNotebookPage*, guint page )
         case PAGE_BOARD: switch_board(); break;
     }
 }
+
+
+// 右ペーンのnotebookのページ番号
+int Core::get_right_current_page()
+{
+    int mode = SESSION::get_mode_pane();
+    int page = m_notebook.get_current_page();
+
+    if( mode == SESSION::MODE_2PANE ){
+
+        // 2paneで画像ビューをウィンドウ表示している場合
+        if( ! SESSION::get_embedded_img() && page == 1 ) page = PAGE_BOARD;
+    }
+
+    return page;
+}
+
+
+// 右ペーンのnotebookのページをセット
+void Core::set_right_current_page( int page )
+{
+    if( get_right_current_page() == page ) return;
+
+    // 画像ビューをウィンドウ表示している場合
+    if( ! SESSION::get_embedded_img() && page == PAGE_IMAGE ) return;
+
+    if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
+
+        // 2paneで画像ビューをウィンドウ表示している場合
+        if( ! SESSION::get_embedded_img() && page == PAGE_BOARD ) page = 1;
+    }
+    else if( page == PAGE_BOARD ) return; // 2pane以外ではboardはnotebookに含まれない
+
+    m_notebook.set_current_page( page );
+    SESSION::set_notebook_main_page( get_right_current_page() );
+}
+
 
 
 //
@@ -2295,15 +2368,15 @@ void Core::empty_page( const std::string& url )
     else if( SESSION::focused_admin() == SESSION::FOCUS_MESSAGE && ! MESSAGE::get_admin()->empty() )
         focused_admin = SESSION::FOCUS_MESSAGE;
 
-    // 画像ビューが空になった
-    if( url == URL_IMAGEADMIN ){
+    // 埋め込み画像ビューが空になった
+    if( url == URL_IMAGEADMIN && SESSION::get_embedded_img() ){
 
         hide_imagetab();
 
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
-            if( m_notebook.get_current_page() == PAGE_IMAGE ){
+            if( get_right_current_page() == PAGE_IMAGE ){
                 if( ! ARTICLE::get_admin()->empty() ) switch_article();
                 else if( ! BOARD::get_admin()->empty() ) switch_board();
             }
@@ -2328,7 +2401,7 @@ void Core::empty_page( const std::string& url )
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
-            if( m_notebook.get_current_page() == PAGE_ARTICLE ){
+            if( get_right_current_page() == PAGE_ARTICLE ){
                 if( BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
                 else if( ! BOARD::get_admin()->empty() ) switch_board();
             }
@@ -2352,7 +2425,7 @@ void Core::empty_page( const std::string& url )
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
-            if( m_notebook.get_current_page() == PAGE_BOARD ){
+            if( get_right_current_page() == PAGE_BOARD ){
                 if( ! ARTICLE::get_admin()->empty() ) switch_article();
                 else if( ! IMAGE::get_admin()->empty() ) switch_image();
             }
@@ -2461,6 +2534,7 @@ void Core::set_toggle_view_button()
             break;
 
         case SESSION::FOCUS_IMAGE:
+
             if( ! IMAGE::get_admin()->empty() ){
                 m_button_bbslist.set_active( false );
                 m_button_favorite.set_active( false );
@@ -2487,7 +2561,7 @@ void Core::set_toggle_view_button()
 
 
 //
-// ビューのトグルボタンのアクティブ状態を切り替える
+// ビューのトグルボタンのsensitive状態を切り替える
 //
 void Core::set_sensitive_view_button()
 {
@@ -2502,7 +2576,7 @@ void Core::set_sensitive_view_button()
     else m_button_thread.set_sensitive( true );
 
     // 画像ビューボタンの切り替え
-    if( IMAGE::get_admin()->empty() ) m_button_image.set_sensitive( false );
+    if( SESSION::get_embedded_img() && IMAGE::get_admin()->empty() ) m_button_image.set_sensitive( false );
     else m_button_image.set_sensitive( true );
 
     m_enable_menuslot = true;
@@ -2549,9 +2623,7 @@ void Core::switch_article()
 
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
-
-            if( m_notebook.get_current_page() != PAGE_ARTICLE ) m_notebook.set_current_page( PAGE_ARTICLE );
-            SESSION::set_notebook_main_page( m_notebook.get_current_page() );
+            set_right_current_page( PAGE_ARTICLE );
         }
 
         ARTICLE::get_admin()->set_command( "focus_current_view" );
@@ -2564,6 +2636,7 @@ void Core::switch_article()
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
+    m_win_main.present();
 }
 
 
@@ -2582,10 +2655,7 @@ void Core::switch_board()
 
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
-
-            if( SESSION::get_mode_pane() == SESSION::MODE_2PANE
-                && m_notebook.get_current_page() != PAGE_BOARD ) m_notebook.set_current_page( PAGE_BOARD );
-            SESSION::set_notebook_main_page( m_notebook.get_current_page() );
+            set_right_current_page( PAGE_BOARD );
         }
 
         BOARD::get_admin()->set_command( "focus_current_view" );
@@ -2598,6 +2668,7 @@ void Core::switch_board()
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
+    m_win_main.present();
 }
 
 
@@ -2653,6 +2724,7 @@ void Core::switch_sidebar( const std::string& url )
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
+    m_win_main.present();
 }
 
 
@@ -2667,28 +2739,30 @@ void Core::switch_image()
 
     if( ! IMAGE::get_admin()->empty() ){
 
-        if( SESSION::focused_admin() != SESSION::FOCUS_IMAGE ){
+        if( SESSION::get_embedded_img() ){ // 埋め込み画像ビュー
 
-            FOCUS_OUT_ALL();
-            ARTICLE::get_admin()->set_command( "delete_popup" );
+            if( SESSION::focused_admin() != SESSION::FOCUS_IMAGE ){
 
-            if( m_notebook.get_current_page() != PAGE_IMAGE ) m_notebook.set_current_page( PAGE_IMAGE );
-            SESSION::set_notebook_main_page( m_notebook.get_current_page() );
+                FOCUS_OUT_ALL();
+                ARTICLE::get_admin()->set_command( "delete_popup" );
+                set_right_current_page( PAGE_IMAGE );
 
-            // 画像強制表示
-            IMAGE::get_admin()->set_command( "show_image" );
+                // 画像強制表示
+                IMAGE::get_admin()->set_command( "show_image" );
+            }
+
+            SESSION::set_focused_admin( SESSION::FOCUS_IMAGE );
+            SESSION::set_focused_admin_sidebar( SESSION::FOCUS_IMAGE );
         }
 
         IMAGE::get_admin()->set_command( "focus_current_view" );
-        SESSION::set_focused_admin( SESSION::FOCUS_IMAGE );
-        SESSION::set_focused_admin_sidebar( SESSION::FOCUS_IMAGE );
-
         SESSION::set_img_shown( true );
     }
 
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
+    if( SESSION::get_embedded_img() ) m_win_main.present();
 }
 
 
@@ -2718,6 +2792,7 @@ void Core::switch_message()
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
+    if( SESSION::get_embedded_mes() ) m_win_main.present();
 }
 
 
@@ -2732,9 +2807,17 @@ void Core::toggle_article()
 // 左移動
 void Core::switch_leftview()
 {
-    int next_admin = SESSION::focused_admin() -1;
+    int next_admin = SESSION::focused_admin();
+
+    // 画像ウィンドウがフォーカスを持っている
+    if( ! SESSION::get_embedded_img() && IMAGE::get_admin()->has_focus() ) next_admin = SESSION::FOCUS_IMAGE;
     
-    while( next_admin >= SESSION::FOCUS_SIDEBAR ){
+    for(;;){
+
+        if( next_admin == SESSION::FOCUS_IMAGE ) next_admin = SESSION::FOCUS_ARTICLE;
+        else if( next_admin == SESSION::FOCUS_ARTICLE ) next_admin = SESSION::FOCUS_BOARD;
+        else if( next_admin == SESSION::FOCUS_BOARD ) next_admin = SESSION::FOCUS_SIDEBAR;
+        else break;
 
         if( next_admin == SESSION::FOCUS_SIDEBAR && ! BBSLIST::get_admin()->empty() ){
             switch_sidebar();
@@ -2748,8 +2831,6 @@ void Core::switch_leftview()
             switch_article();
             break;
         }
-
-        --next_admin;
     }
 }
 
@@ -2757,9 +2838,14 @@ void Core::switch_leftview()
 // 右移動
 void Core::switch_rightview()
 {
-    int next_admin = SESSION::focused_admin() +1;
+    int next_admin = SESSION::focused_admin();
     
-    while( next_admin <= SESSION::FOCUS_IMAGE ){
+    for(;;){
+
+        if( next_admin == SESSION::FOCUS_SIDEBAR ) next_admin = SESSION::FOCUS_BOARD;
+        else if( next_admin == SESSION::FOCUS_BOARD ) next_admin = SESSION::FOCUS_ARTICLE;
+        else if( next_admin == SESSION::FOCUS_ARTICLE ) next_admin = SESSION::FOCUS_IMAGE;
+        else break;
 
         if( next_admin == SESSION::FOCUS_BOARD && ! BOARD::get_admin()->empty() ){
             switch_board();
@@ -2773,8 +2859,6 @@ void Core::switch_rightview()
             switch_image();
             break;
         }
-
-        ++next_admin;
     }
 }
 
@@ -2822,7 +2906,7 @@ void Core::set_history_board( const std::string& url )
 //
 void Core::show_imagetab()
 {
-    if( ! m_imagetab_shown ){
+    if( SESSION::get_embedded_img() && ! m_imagetab_shown ){
 
         // ツールバーの位置がサイドバーの右側の時はツールバーの下に挿入する
         int pos = 0;
