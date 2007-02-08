@@ -19,6 +19,8 @@ namespace IMAGE
         SCROLL_RIGHT
     };
 
+    class ImageWin;
+
     class ImageAdmin : public SKELETON::Admin
     {
         Gtk::HBox m_tab;
@@ -26,6 +28,8 @@ namespace IMAGE
         Gtk::ScrolledWindow m_scrwin;
         Gtk::Button m_left, m_right;
         Gtk::EventBox m_view;
+
+        ImageWin* m_win;
 
         // Gtk::manageで作ってるので view は deleteしなくても良い
         std::list< SKELETON::View* > m_list_view;
@@ -40,6 +44,12 @@ namespace IMAGE
 
         Gtk::HBox& tab() { return m_tab; }
         virtual Gtk::Widget* get_widget() { return &m_view; }
+
+        // フォーカスされているか
+        virtual const bool has_focus();
+
+        // 起動中
+        virtual const bool is_booting();
 
         virtual bool empty();
         virtual void clock_in();
@@ -57,6 +67,9 @@ namespace IMAGE
         virtual void command_local( const COMMAND_ARGS& command );
 
       private:
+
+        void open_window();
+        void close_window();
         
         virtual void restore();
         virtual void switch_admin();
@@ -69,6 +82,7 @@ namespace IMAGE
         virtual void redraw_current_view();
         virtual void close_view( const std::string& url );
         virtual void focus_current_view();
+        virtual void focus_out();
         void close_other_views( const std::string& url );
         void close_left_views( const std::string& url );
         void close_right_views( const std::string& url );

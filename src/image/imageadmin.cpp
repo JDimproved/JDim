@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "imageadmin.h"
+#include "imagewin.h"
 
 #include "dbimg/imginterface.h"
 
@@ -39,6 +40,7 @@ using namespace IMAGE;
 
 ImageAdmin::ImageAdmin( const std::string& url )
     : SKELETON::Admin( url )
+    , m_win( NULL )
     , m_scroll( SCROLL_NO )
 {
     m_scrwin.add( m_iconbox );
@@ -72,6 +74,28 @@ ImageAdmin::~ImageAdmin()
     // 開いているURLを保存
     SESSION::set_image_URLs( get_URLs() );
     SESSION::set_image_page( get_current_page() );
+
+    close_window();
+}
+
+
+
+const bool ImageAdmin::has_focus()
+{
+    if( ! SESSION::get_embedded_img() && m_win ) return m_win->has_focus();
+
+    return Admin::has_focus();
+}
+
+
+//
+// 起動中
+//
+const bool ImageAdmin::is_booting()
+{
+    if( m_win && m_win->is_booting() ) return true;
+
+    return Admin::is_booting();
 }
 
 
@@ -161,8 +185,8 @@ void ImageAdmin::clock_in()
     }
 
     // アクティブなviewにだけクロックを送る
-    // admin が画面に表示されていないなら何もしない
-    if( SESSION::is_img_shown() ){
+    // 埋め込み表示で、かつ admin が画面に表示されていないなら何もしない
+    if( ! SESSION::get_embedded_img() || SESSION::is_img_shown() ){
         SKELETON::View* view = get_current_view();
         if( view ) view->clock_in();
     }
@@ -243,6 +267,16 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
         SKELETON::View* view = get_current_view();
         if( view ) view->scroll_right();
     }
+
+    // window 開け閉じ
+    else if( command.command == "open_window" ){
+        open_window();
+        return;
+    }
+    else if( command.command == "close_window" ){
+        close_window();
+        return;
+    }
 }
 
 
@@ -277,6 +311,10 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
         view->show_view();
         m_list_view.push_back( view );
     }
+
+    // 画像ウィンドウ表示
+    if( ! SESSION::get_embedded_img() ) open_window();
+    if( m_win ) m_win->focus_out();
 
     switch_img( command.url );
 }
@@ -491,8 +529,38 @@ void ImageAdmin::close_view( const std::string& url )
         delete view;
     }
 
-    if( m_iconbox.children().size() == 0 ) CORE::core_set_command( "empty_page", get_url() );
+    if( empty() ){
+
+        close_window();
+        CORE::core_set_command( "empty_page", get_url() );
+    }
     else if( ! url_next.empty() ) switch_img( url_next );
+}
+
+
+//
+// ウィンドウ開く
+//
+void ImageAdmin::open_window()
+{
+    if( ! m_win && ! empty() ){
+        m_win = new IMAGE::ImageWin();
+        m_win->set_title( "JD 画像ビュー" );
+        m_win->pack_remove( false, m_tab, m_view );
+        m_win->show_all();
+    }
+}
+
+//
+// ウィンドウ閉じる
+//
+void ImageAdmin::close_window()
+{
+    if( m_win ){
+        m_win->pack_remove( true, m_tab, m_view );
+        delete m_win;
+        m_win = NULL;
+    }
 }
 
 
@@ -556,16 +624,34 @@ void ImageAdmin::focus_current_view()
     SKELETON::View* view_icon = get_current_icon();
     if( view_icon ) {
 
+        if( m_win ) m_win->focus_in();
+
         focus_out_all();
 
         view_icon->focus_view();
-        CORE::core_set_command( "set_url", view_icon->get_url() );
-
         SKELETON::View* view = get_current_view();
-        if( view ) CORE::core_set_command( "set_status", "", view->get_status() );
+
+        if( SESSION::get_embedded_img() ){
+
+            CORE::core_set_command( "set_url", view_icon->get_url() );
+            if( view ) CORE::core_set_command( "set_status", "", view->get_status() );
+        }
     }
 }
 
+
+//
+// フォーカスアウトする
+//
+void ImageAdmin::focus_out()
+{
+#ifdef _DEBUG
+    std::cout << "ImageAdmin::focus_out\n";
+#endif
+
+    Admin::focus_out();
+    if( m_win ) m_win->focus_out();
+}
 
 
 
@@ -642,7 +728,11 @@ void ImageAdmin::switch_img( const std::string& url )
         }
     }
 
-    if( has_focus() ) focus_current_view();
+    if( ! SESSION::get_embedded_img() ){
+
+        if( ! m_win->is_folded() ) focus_current_view();
+    }
+    else if( has_focus() ) focus_current_view();
 }
 
 

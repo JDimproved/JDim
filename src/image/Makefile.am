@@ -3,6 +3,7 @@ noinst_LIBRARIES = libimage.a
 libimage_a_SOURCES = \
 	imageadmin.cpp \
 	preference.cpp \
+	imagewin.cpp \
 \
 	imageareabase.cpp \
 	imagearea.cpp \
@@ -17,6 +18,7 @@ libimage_a_SOURCES = \
 noinst_HEADERS = \
 	imageadmin.h \
 	preference.h \
+	imagewin.h \
 \
 	imageareabase.h \
 	imagearea.h \
