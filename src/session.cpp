@@ -56,6 +56,14 @@ int win_toolbar_pos;
 int win_focused_admin;
 int win_focused_admin_sidebar;
 
+bool embedded_img;
+
+int img_x;
+int img_y;
+int img_width;
+int img_height;
+bool img_maximized;
+
 bool embedded_mes;
 
 int win_mes_x;
@@ -66,6 +74,9 @@ bool win_mes_maximized;
 
 std::string img_dir_dat_save;
 std::string img_dir_img_save;
+
+bool popupmenu_shown;
+
 
 /////////////////////////////////////
 
@@ -150,6 +161,14 @@ void SESSION::init_session()
 
     img_shown = false;
 
+    embedded_img = false;
+
+    img_x = cf.get_option( "img_x", 0 );
+    img_y = cf.get_option( "img_y", 0 );
+    img_width = cf.get_option( "img_width", 600 );
+    img_height = cf.get_option( "img_height", 500 );
+    img_maximized = cf.get_option( "img_maximized", false );
+
     embedded_mes = cf.get_option( "embedded_mes", false );
 
     win_mes_x = cf.get_option( "mes_x", 0 );
@@ -160,6 +179,8 @@ void SESSION::init_session()
 
     img_dir_dat_save = cf.get_option( "img_dir_dat_save", "" );
     img_dir_img_save = cf.get_option( "img_dir_img_save", "" );
+
+    popupmenu_shown = false;
 
 #ifdef _DEBUG
     std::cout << "x=" << win_x << std::endl
@@ -280,6 +301,12 @@ void SESSION::save_session()
         << "col_write = " << board_col_write << std::endl
         << "col_speed = " << board_col_speed << std::endl
 
+        << "img_x = " << img_x << std::endl
+        << "img_y = " << img_y << std::endl
+        << "img_width = " << img_width << std::endl
+        << "img_height = " << img_height << std::endl
+        << "img_maximized = " << img_maximized << std::endl
+
         << "embedded_mes = " << embedded_mes << std::endl
         << "mes_x = " << win_mes_x << std::endl
         << "mes_y = " << win_mes_y << std::endl
@@ -399,6 +426,24 @@ void SESSION::set_col_speed( int width ){ board_col_speed = width; }
 bool SESSION::is_img_shown(){ return img_shown; }
 void SESSION::set_img_shown( bool set ){ img_shown = set; }
 
+
+// 埋め込みimage使用
+bool SESSION::get_embedded_img(){ return embedded_img; }
+void SESSION::set_embedded_img( bool set ){ embedded_img = set; }
+
+int SESSION::get_img_x(){ return img_x; }
+int SESSION::get_img_y(){ return img_y; }
+int SESSION::get_img_width(){ return img_width; }
+int SESSION::get_img_height(){ return img_height; }
+bool SESSION::get_img_maximized(){ return img_maximized; }
+
+void SESSION::set_img_x( int x ){ img_x = x; }
+void SESSION::set_img_y( int y ){ img_y = y; }
+void SESSION::set_img_width( int width ){ img_width = width; }
+void SESSION::set_img_height( int height ){ img_height = height; }
+void SESSION::set_img_maximized( bool maximized ){ img_maximized = maximized; }
+
+
 // 埋め込みmessageを使用
 bool SESSION::get_embedded_mes(){ return embedded_mes; }
 void SESSION::set_embedded_mes( bool set ){ embedded_mes = set; }
@@ -424,3 +469,7 @@ void SESSION::set_dir_dat_save( const std::string& dir ){ img_dir_dat_save = dir
 // 最後に画像を保存したディレクトリ
 const std::string& SESSION::dir_img_save(){ return img_dir_img_save; }
 void SESSION::set_dir_img_save( const std::string& dir ){ img_dir_img_save = dir; }
+
+// ポップアップメニュー表示中
+const bool SESSION::is_popupmenu_shown(){ return popupmenu_shown; }
+void SESSION::set_popupmenu_shown( bool shown ){ popupmenu_shown = shown; }

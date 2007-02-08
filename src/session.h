@@ -143,6 +143,22 @@ namespace SESSION
     bool is_img_shown();
     void set_img_shown( bool set );
 
+    // 埋め込みimage使用
+    bool get_embedded_img();
+    void set_embedded_img( bool set );
+
+    // imageウィンドウの位置
+    int get_img_x();
+    int get_img_y();
+    int get_img_width();
+    int get_img_height();
+    bool get_img_maximized();
+    void set_img_x( int x );
+    void set_img_y( int y );
+    void set_img_width( int width );
+    void set_img_height( int height );
+    void set_img_maximized( bool maximized );
+
     // 埋め込みmessageを使用
     bool get_embedded_mes();
     void set_embedded_mes( bool set );
@@ -166,6 +182,10 @@ namespace SESSION
     // 最後に画像を保存したディレクトリ
     const std::string& dir_img_save();
     void set_dir_img_save( const std::string& dir );
+
+    // ポップアップメニュー表示中
+    const bool is_popupmenu_shown();
+    void set_popupmenu_shown( bool shown );
 }
 
 #endif
