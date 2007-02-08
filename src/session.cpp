@@ -161,7 +161,7 @@ void SESSION::init_session()
 
     img_shown = false;
 
-    embedded_img = false;
+    embedded_img = cf.get_option( "embedded_img", true );
 
     img_x = cf.get_option( "img_x", 0 );
     img_y = cf.get_option( "img_y", 0 );
@@ -301,6 +301,7 @@ void SESSION::save_session()
         << "col_write = " << board_col_write << std::endl
         << "col_speed = " << board_col_speed << std::endl
 
+        << "embedded_img = " << embedded_img << std::endl
         << "img_x = " << img_x << std::endl
         << "img_y = " << img_y << std::endl
         << "img_width = " << img_width << std::endl
