@@ -45,14 +45,22 @@ namespace MESSAGE
 
         void clock_in();
 
-        void set_command( const std::string& command, const std::string& url = std::string() , const std::string& arg1 = std::string() );
+        void set_command_immediately( const std::string& command,
+                          const std::string& url = std::string() , const std::string& arg1 = std::string() );
+
+        void set_command( const std::string& command,
+                          const std::string& url = std::string() , const std::string& arg1 = std::string() );
 
       private:
 
         void open_window();
         void close_window();
 
+        void set_command_impl( const bool immediately, const std::string& command,
+                               const std::string& url = std::string() , const std::string& arg1 = std::string() );
+
         void exec_command();
+
         void open_view( const std::string& url, const std::string& msg, bool new_thread );
         void redraw_view( const std::string& url );
         void close_view();

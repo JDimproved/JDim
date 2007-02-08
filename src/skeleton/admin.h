@@ -61,8 +61,19 @@ namespace SKELETON
         // 一定時間毎に clock_in() が Core から呼び出される
         virtual void clock_in();
 
-        // コマンド入力
+        // コマンド入力(通常)
         void set_command( const std::string& command,
+                          const std::string& url = std::string(),
+                          const std::string& arg1 = std::string(),
+                          const std::string& arg2 = std::string(),
+                          const std::string& arg3 = std::string(),
+                          const std::string& arg4 = std::string(),
+                          const std::string& arg5 = std::string(),
+                          const std::string& arg6 = std::string()
+            );
+
+        // コマンド入力(即時実行)
+        void set_command_immediately( const std::string& command,
                           const std::string& url = std::string(),
                           const std::string& arg1 = std::string(),
                           const std::string& arg2 = std::string(),
@@ -87,6 +98,20 @@ namespace SKELETON
 
         DragableNoteBook* get_notebook(){ return m_notebook; }
 
+        // コマンド入力
+        // immediately = true のときディスパッチャを呼ばずにすぐさま実行
+        void set_command_impl( const bool immediately,
+                          const std::string& command,
+                          const std::string& url = std::string(),
+                          const std::string& arg1 = std::string(),
+                          const std::string& arg2 = std::string(),
+                          const std::string& arg3 = std::string(),
+                          const std::string& arg4 = std::string(),
+                          const std::string& arg5 = std::string(),
+                          const std::string& arg6 = std::string()
+            );
+
+        // admin共通コマンド実行
         virtual void exec_command();
 
         // 派生クラス固有のコマンドを実行

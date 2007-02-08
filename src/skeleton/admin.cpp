@@ -273,18 +273,46 @@ void Admin::clock_in()
 
 
 //
-// コマンド受付
-//
-// 違うスレッドからもコマンドが来るので、すぐにはコマンドを実行
-// しないで、一旦Dispatcherでメインスレッドにコマンドを渡してからメインスレッドで実行する
+// コマンド受付(通常)
 //
 void Admin::set_command( const std::string& command, const std::string& url,
                          const std::string& arg1, const std::string& arg2,
                          const std::string& arg3, const std::string& arg4,
                          const std::string& arg5, const std::string& arg6 )
 {
+    set_command_impl( false, command, url, arg1, arg2, arg3, arg4, arg5, arg6 );
+}
+
+
+//
+// コマンド受付(即実行)
+//
+void Admin::set_command_immediately( const std::string& command, const std::string& url,
+                         const std::string& arg1, const std::string& arg2,
+                         const std::string& arg3, const std::string& arg4,
+                         const std::string& arg5, const std::string& arg6 )
+{
+    set_command_impl( true, command, url, arg1, arg2, arg3, arg4, arg5, arg6 );
+}
+
+
+
+//
+// コマンド受付
+//
+// immediately = false の場合はすぐにコマンドを実行しないで一旦Dispatcherで
+// メインスレッドにコマンドを渡してからメインスレッドで実行する。通常は
+// immediately = false で呼び出して、緊急にコマンドを実行させたい場合は
+// immediately = true とすること。
+//
+void Admin::set_command_impl( const bool immediately,
+                         const std::string& command, const std::string& url,
+                         const std::string& arg1, const std::string& arg2,
+                         const std::string& arg3, const std::string& arg4,
+                         const std::string& arg5, const std::string& arg6 )
+{
 #ifdef _DEBUG
-    std::cout << "Admin::set_command : " << command << " " << url << std::endl
+    std::cout << "Admin::set_command : immediately = " << immediately <<  " command = " << command << " url = " << url << std::endl
               << arg1 << " " << arg2 << std::endl
               << arg3 << " " << arg4 << std::endl
               << arg5 << " " << arg6 << std::endl;
@@ -299,8 +327,17 @@ void Admin::set_command( const std::string& command, const std::string& url,
     command_arg.arg4 = arg4;
     command_arg.arg5 = arg5;
     command_arg.arg6 = arg6;
-    m_list_command.push_back( command_arg );
-    m_disp.emit();
+
+    if( immediately ){
+
+        m_list_command.push_front( command_arg );
+        exec_command();
+    }
+    else{
+
+        m_list_command.push_back( command_arg );
+        m_disp.emit();
+    }
 }
 
 

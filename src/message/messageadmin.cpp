@@ -60,31 +60,47 @@ void MessageAdmin::clock_in()
 
 
 //
-// コマンドセット
+// コマンドセット(通常)
 //
 void MessageAdmin::set_command( const std::string& command, const std::string& url, const std::string& arg1 )
 {
+    set_command_impl( false, command, url, arg1 );
+}
+
+//
+// コマンドセット(即実行)
+//
+void MessageAdmin::set_command_immediately( const std::string& command, const std::string& url, const std::string& arg1 )
+{
+    set_command_impl( true, command, url, arg1 );
+}
+
+
+//
+// コマンドセット
+//
+void MessageAdmin::set_command_impl( bool immediately, const std::string& command, const std::string& url, const std::string& arg1 )
+{
 #ifdef _DEBUG
-    std::cout << "MessageAdmin::set_command : " << command << " "
-              << url << " " << arg1 << " " << std::endl;
+    std::cout << "MessageAdmin::set_command : immediately = " << immediately
+              << " command = " << command << " url = " << url << " " << arg1 << " " << std::endl;
 #endif
-
-    if( command == "open_window" ){
-        open_window();
-        return;
-    }
-    else if( command == "close_window" ){
-        close_window();
-        return;
-    }
-
 
     COMMAND_ARGS command_arg;
     command_arg.command = command;
     command_arg.url = url;
     command_arg.arg1 = arg1;
-    m_list_command.push_back( command_arg );
-    m_disp.emit();
+
+    if( immediately ){
+
+        m_list_command.push_front( command_arg );
+        exec_command();
+
+    }else{
+
+        m_list_command.push_back( command_arg );
+        m_disp.emit();
+    }
 }
 
 
@@ -144,6 +160,16 @@ void MessageAdmin::exec_command()
     }
     else if( command.command == "tab_right" ){
         if( m_view ) m_view->operate_view( CONTROL::TabRight );
+    }
+
+    // window 開け閉じ
+    else if( command.command == "open_window" ){
+        open_window();
+        return;
+    }
+    else if( command.command == "close_window" ){
+        close_window();
+        return;
     }
 }
 
