@@ -471,6 +471,7 @@ void ImageViewBase::operate_view( const int& control )
             slot_resize_image( 100 );
             break;
 
+        case CONTROL::ReloadTabButton:
         case CONTROL::Reload:
             reload();
             break;
@@ -479,6 +480,7 @@ void ImageViewBase::operate_view( const int& control )
             stop();
             break;
 
+        case CONTROL::CloseTabButton:
         case CONTROL::Quit:
             close_view();
             break;
@@ -580,6 +582,13 @@ bool ImageViewBase::slot_button_press( GdkEventButton* event )
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
+    // クリック
+    // 反応を良くするため slot_button_release() ではなくてここで処理する
+    if( SKELETON::View::get_control().button_alloted( event, CONTROL::ClickButton ) ){
+        IMAGE::get_admin()->set_command( "switch_image", get_url() );
+        CORE::core_set_command( "switch_image" );
+    }
+
     return true;
 }
 
@@ -606,20 +615,8 @@ bool ImageViewBase::slot_button_release( GdkEventButton* event )
     GdkEventType type_copy = event->type;
     if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
 
-    // クリック
-    if( SKELETON::View::get_control().button_alloted( event, CONTROL::ClickButton ) ){
-        IMAGE::get_admin()->set_command( "switch_image", get_url() );
-        CORE::core_set_command( "switch_image" );
-    }
-
-    // 再読み込み
-    else if( SKELETON::View::get_control().button_alloted( event, CONTROL::ReloadTabButton ) ) reload();
-
-    // 閉じる
-    else if( SKELETON::View::get_control().button_alloted( event, CONTROL::CloseTabButton ) ) close_view();
-
     // ポップアップメニュー
-    else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
+    if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
         SKELETON::View::show_popupmenu( "", false );
     }
