@@ -47,8 +47,11 @@ namespace SKELETON
         const std::string& get_url() const{ return m_url; }
         virtual Gtk::Widget* get_widget();
 
+        // 起動中
+        virtual const bool is_booting();
+
         // フォーカスされているか
-        const bool has_focus() const { return m_focus; }
+        virtual const bool has_focus() const { return m_focus; }
 
         // タブの数
         virtual int get_tab_nums();

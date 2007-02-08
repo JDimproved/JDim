@@ -190,6 +190,13 @@ Gtk::Widget* Admin::get_widget()
 }
 
 
+
+const bool Admin::is_booting()
+{
+    return ( has_commands() );
+}
+
+
 // SIGHUPを受け取った
 void Admin::shutdown()
 {
