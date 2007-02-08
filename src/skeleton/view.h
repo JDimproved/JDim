@@ -51,9 +51,6 @@ namespace SKELETON
         int m_autoreload_sec; // 何秒おきにリロードするか
         int m_autoreload_counter; // オートリロード用のカウンタ
 
-        // ポップアップメニューが表示されているかどうか
-        bool m_popupmenu_shown; 
-
         // キーボード数字入力ジャンプ用
         int m_keyjump_counter;
         int m_keyjump_num;
@@ -125,9 +122,6 @@ namespace SKELETON
 
         // view 上にマウスポインタがあれば true
         bool is_mouse_on_view();
-
-        // ポップアップメニューが表示されているか
-        const bool is_popupmenu_shown() const { return m_popupmenu_shown; }
 
         // 各view個別のコマンド
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() ){ return true; }

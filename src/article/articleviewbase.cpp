@@ -1939,7 +1939,7 @@ void ArticleViewBase::hide_popup( bool force )
 
             // ポップアップメニューが表示されてたらhideしない
             // ( ポップアップメニューがhideしたときにhideする )
-            if( popup_article->is_popupmenu_shown() ) return;
+            if( SESSION::is_popupmenu_shown() ) return;
 
 #ifdef _DEBUG
         std::cout << "target = " << popup_article->get_url() << std::endl;

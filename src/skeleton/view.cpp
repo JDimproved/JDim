@@ -8,6 +8,7 @@
 #include "jdlib/miscutil.h"
 
 #include "global.h"
+#include "session.h"
 #include "command.h"
 
 using namespace SKELETON;
@@ -21,7 +22,6 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
       m_enable_mg( false ),
       m_enable_autoreload( false ),
       m_autoreload_mode( AUTORELOAD_NOT ),
-      m_popupmenu_shown( false ),
       m_keyjump_counter( 0 ),
       m_keyjump_num( 0 )
 {}
@@ -146,7 +146,7 @@ void View::show_popupmenu( const std::string& url, bool use_slot )
         if( use_slot ) popupmenu->popup( sigc::mem_fun( *this, &View::slot_popup_menu_position ), 0, gtk_get_current_event_time() );
         else popupmenu->popup( 0, gtk_get_current_event_time() );
 
-        m_popupmenu_shown = true;
+        SESSION::set_popupmenu_shown( true );
     }
 }
 
@@ -169,7 +169,7 @@ void View::slot_popup_menu_position( int& x, int& y, bool& push_in)
 //
 void View::slot_hide_popupmenu()
 {
-    m_popupmenu_shown = false;
+    SESSION::set_popupmenu_shown( false );
 
     // もしviewがポップアップウィンドウ上にあって、かつ
     // メニューを消したときにマウスポインタが領域外にあれば自分自身をhide
