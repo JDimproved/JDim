@@ -7,6 +7,8 @@
 #include "boardbase.h"
 #include "articlebase.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "jdlib/jdiconv.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/miscutil.h"
@@ -710,7 +712,7 @@ void BoardBase::receive_finish()
         // 移転した場合
         if( get_code() == HTTP_REDIRECT ){
 
-            Gtk::MessageDialog mdiag( "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            SKELETON::MsgDiag mdiag( "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
             if( mdiag.run() == Gtk::RESPONSE_OK ) CORE::core_set_command( "reload_bbsmenu" );
         }
 

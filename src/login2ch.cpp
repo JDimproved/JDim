@@ -9,6 +9,8 @@
 #include "session.h"
 #include "command.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "config/globalconf.h"
 
 #include "jdlib/loaderdata.h"
@@ -189,17 +191,17 @@ void Login2ch::receive_finish()
 
     // エラー表示
     if( ! SESSION::is_online() ){
-        Gtk::MessageDialog mdiag( "オフラインです" );
+        SKELETON::MsgDiag mdiag( "オフラインです" );
         mdiag.run();
     }
     else if( get_username().empty() || get_passwd().empty() ){
-        Gtk::MessageDialog mdiag( "IDかパスワードが空白です" );
+        SKELETON::MsgDiag mdiag( "IDかパスワードが空白です" );
         mdiag.run();
     }
     else if( show_err ){
         std::string str_err = "ログインに失敗しました。\n";
         str_err += get_str_code();
-        Gtk::MessageDialog mdiag( str_err );
+        SKELETON::MsgDiag mdiag( str_err );
         mdiag.run();  
     }
 

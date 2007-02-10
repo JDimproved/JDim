@@ -7,6 +7,8 @@
 
 #include <gtkmm.h>
 
+#include "command.h"
+
 namespace SKELETON
 {
     class PrefDiag : public Gtk::Dialog
@@ -22,9 +24,15 @@ namespace SKELETON
 
             add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK )
             ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_ok_clicked ) );
-        }
 
-        virtual ~PrefDiag(){}
+            // ダイアログを消したときに画像ウィンドウにフォーカスが移ってしまうので
+            // 画像ウィンドウをhideしておいてデストラクタでshowする
+            CORE::core_set_command( "hide_imagewindow" );
+       }
+
+        virtual ~PrefDiag(){
+            CORE::core_set_command( "show_imagewindow" );
+        }
 
         const std::string& get_url() const { return m_url; }
     };

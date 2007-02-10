@@ -5,6 +5,8 @@
 
 #include "post.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "jdlib/loaderdata.h"
 #include "jdlib/jdiconv.h"
 #include "jdlib/miscmsg.h"
@@ -47,14 +49,26 @@ Post::~Post()
 #endif
 
     clear();
-}
 
+    if( m_writingdiag ) delete m_writingdiag;
+    m_writingdiag = NULL;
+}
 
 
 void Post::clear()
 {
     if( m_rawdata ) free( m_rawdata );
     m_rawdata = NULL;
+
+    if( m_writingdiag ) m_writingdiag->hide();
+}
+
+
+void Post::emit_sigfin()
+{
+    m_sig_fin.emit();
+
+    clear();
 
     if( m_writingdiag ) delete m_writingdiag;
     m_writingdiag = NULL;
@@ -75,7 +89,8 @@ void Post::post_msg()
     // 書き込み中ダイアログ表示
     Gtk::Window* toplevel = dynamic_cast< Gtk::Window* >( m_parent->get_toplevel() );
     if( ! CONFIG::get_hide_writing_dialog() && toplevel ){
-        m_writingdiag = new Gtk::MessageDialog( *toplevel, "書き込み中・・・", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, false );
+
+        if( ! m_writingdiag ) m_writingdiag = new SKELETON::MsgDiag( *toplevel, "書き込み中・・・", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, false );
         m_writingdiag->show();
 
         // gtkのバージョンによってはラベルが選択状態になっている場合があるので
@@ -167,8 +182,9 @@ void Post::receive_finish()
     if( get_code() != HTTP_OK
         && ! ( get_code() == HTTP_REDIRECT && ! location().empty() ) // リダイレクトは成功(かもしれない)
         ){
+
         m_errmsg = get_str_code();
-        m_sig_fin.emit();
+        emit_sigfin();
         return;
     }
 
@@ -252,7 +268,7 @@ void Post::receive_finish()
 #endif        
 
         DBTREE::article_update_writetime( m_url );
-        m_sig_fin.emit();
+        emit_sigfin();
         return;
     }
 
@@ -267,6 +283,9 @@ void Post::receive_finish()
         if( ! CONFIG::get_always_write_ok() ){
 
             std::string diagmsg = MISC::replace_str( msg, "<br>", "\n" );
+
+            // m_writingdiag を表示中なので SKELETON::MsgDiag ではなくて
+            // Gtk::MessageDialog でOK
             Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( diagmsg, false,
                                                                 Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, false );
             Gtk::CheckButton ckbt( "次回から表示しない(_D)", true );
@@ -287,8 +306,9 @@ void Post::receive_finish()
             delete mdiag;
 
             if( ret != Gtk::RESPONSE_OK ){
+
                 set_code( HTTP_CANCEL );
-                m_sig_fin.emit();
+                emit_sigfin();
                 return;
             }
             CONFIG::set_always_write_ok( ckbt_active );
@@ -326,7 +346,7 @@ void Post::receive_finish()
         MISC::ERRMSG( str );
 
         set_code( HTTP_ERR );
-        m_sig_fin.emit();
+        emit_sigfin();
         return;
     }
 }

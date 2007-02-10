@@ -7,6 +7,8 @@
 #include "nodetreebase.h"
 #include "interface.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 #include "jdlib/miscmsg.h"
@@ -938,7 +940,7 @@ void ArticleBase::delete_cache()
     if( empty() ) return;
 
     if( m_bookmarked_thread ){
-        Gtk::MessageDialog mdiag( "「" + get_subject() + "」はブックマークされています。\n\nスレを削除しますか？"
+        SKELETON::MsgDiag mdiag( "「" + get_subject() + "」はブックマークされています。\n\nスレを削除しますか？"
                                   ,false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         if( mdiag.run() == Gtk::RESPONSE_NO ) return;
     }

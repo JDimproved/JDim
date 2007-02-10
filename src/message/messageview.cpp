@@ -6,6 +6,8 @@
 #include "messageview.h"
 #include "post.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "jdlib/miscutil.h"
 
 #include "dbtree/interface.h"
@@ -40,7 +42,7 @@ std::string MessageViewMain::create_message()
     std::string mail = get_entry_mail().get_text();
 
     if( msg.empty() ){
-        Gtk::MessageDialog mdiag( "本文が空白です" ); mdiag.run();
+        SKELETON::MsgDiag mdiag( "本文が空白です" ); mdiag.run();
         return std::string();
     }
 
@@ -97,16 +99,16 @@ std::string MessageViewNew::create_message()
     std::string mail = get_entry_mail().get_text();
 
     if( subject.empty() ){
-        Gtk::MessageDialog mdiag( "スレタイトルが空白です" ); mdiag.run();
+        SKELETON::MsgDiag mdiag( "スレタイトルが空白です" ); mdiag.run();
         return std::string();
     }
 
     if( msg.empty() ){
-        Gtk::MessageDialog mdiag( "本文が空白です" ); mdiag.run();
+        SKELETON::MsgDiag mdiag( "本文が空白です" ); mdiag.run();
         return std::string();
     }
     
-    Gtk::MessageDialog mdiag( "新スレを作成しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+    SKELETON::MsgDiag mdiag( "新スレを作成しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
     if( mdiag.run() == Gtk::RESPONSE_OK ) return DBTREE::create_newarticle_message( get_url(), subject, name, mail, msg );
 
     return std::string();

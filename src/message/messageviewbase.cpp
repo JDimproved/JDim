@@ -8,6 +8,8 @@
 #include "messageviewbase.h"
 #include "post.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 #include "jdlib/misctrip.h"
@@ -312,7 +314,7 @@ void MessageViewBase::slot_write_clicked()
 */
 
     if( m_post && m_post->is_loading() ){
-        Gtk::MessageDialog mdiag( "書き込み中です" );
+        SKELETON::MsgDiag mdiag( "書き込み中です" );
         mdiag.run();
         return;
     }
@@ -325,7 +327,7 @@ void MessageViewBase::slot_write_clicked()
 
         std::string name = get_entry_name().get_text();
         if( name.empty() ){
-            Gtk::MessageDialog mdiag( "名前欄が空白です。fusianasan 書き込みになる可能性があります。" );
+            SKELETON::MsgDiag mdiag( "名前欄が空白です。fusianasan 書き込みになる可能性があります。" );
             mdiag.run();
             return;
         }
@@ -336,7 +338,7 @@ void MessageViewBase::slot_write_clicked()
     if( m_max_line ){
 
         if( m_text_message.get_buffer()->get_line_count() > m_max_line ){
-            Gtk::MessageDialog mdiag( "行数が多すぎます。" );
+            SKELETON::MsgDiag mdiag( "行数が多すぎます。" );
             mdiag.run();
             return;
         }
@@ -346,7 +348,7 @@ void MessageViewBase::slot_write_clicked()
     if( m_max_str ){
 
         if( m_lng_str_enc > m_max_str ){
-            Gtk::MessageDialog mdiag( "文字数が多すぎます。" );
+            SKELETON::MsgDiag mdiag( "文字数が多すぎます。" );
             mdiag.run();
             return;
         }
@@ -506,14 +508,14 @@ void MessageViewBase::post_fin()
     // タイムアウト
     else if( code == HTTP_TIMEOUT ){
 
-        Gtk::MessageDialog mdiag( "タイムアウトしました\n\n書き込み自体は成功している可能性があります。\nメッセージのバックアップをとってからスレを再読み込みして下さい。" );
+        SKELETON::MsgDiag mdiag( "タイムアウトしました\n\n書き込み自体は成功している可能性があります。\nメッセージのバックアップをとってからスレを再読み込みして下さい。" );
         mdiag.run();
     }
 
     // 失敗
     else if( code != HTTP_CANCEL ){
 
-        Gtk::MessageDialog mdiag( "書き込みに失敗しました\n\n" + m_post->errmsg(), false, Gtk::MESSAGE_ERROR  );
+        SKELETON::MsgDiag mdiag( "書き込みに失敗しました\n\n" + m_post->errmsg(), false, Gtk::MESSAGE_ERROR  );
         mdiag.run();
     }
 }

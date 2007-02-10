@@ -7,6 +7,7 @@
 #include "messagewin.h"
 
 #include "skeleton/view.h"
+#include "skeleton/msgdiag.h"
 
 #include "dbtree/interface.h"
 
@@ -125,13 +126,13 @@ void MessageAdmin::exec_command()
     else if( command.command  == "close_currentview" ){
 
         if( m_view && m_view->set_command( "loading" ) ){
-            Gtk::MessageDialog mdiag( "書き込み中です" );
+            SKELETON::MsgDiag mdiag( "書き込み中です" );
             mdiag.run();
             return;
         }
 
         if( m_view && ! m_view->set_command( "empty" ) ){
-            Gtk::MessageDialog mdiag( "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            SKELETON::MsgDiag mdiag( "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
             if( mdiag.run() == Gtk::RESPONSE_OK );
             else return;
         }
@@ -260,13 +261,13 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
 #endif
 
     if( m_view && m_view->set_command( "loading" ) ){
-        Gtk::MessageDialog mdiag( "書き込み中です" );
+        SKELETON::MsgDiag mdiag( "書き込み中です" );
         mdiag.run();
         return;
     }
 
     if( m_view && ! m_view->set_command( "empty" ) ){
-        Gtk::MessageDialog mdiag( "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+        SKELETON::MsgDiag mdiag( "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
         if( mdiag.run() == Gtk::RESPONSE_OK );
         else return;
     }

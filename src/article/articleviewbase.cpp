@@ -9,6 +9,8 @@
 #include "drawareamain.h"
 #include "toolbar.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "jdlib/miscutil.h"
 #include "jdlib/miscx.h"
 
@@ -579,7 +581,7 @@ void ArticleViewBase::focus_out()
 void ArticleViewBase::close_view()
 {
     if( m_article->is_loading() ){
-        Gtk::MessageDialog mdiag( "読み込み中です" );
+        SKELETON::MsgDiag mdiag( "読み込み中です" );
         mdiag.run();
         return;
     }
@@ -681,7 +683,7 @@ void ArticleViewBase::operate_view( const int& control )
             // 削除
         case CONTROL::Delete:
         {
-            Gtk::MessageDialog mdiag( "ログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            SKELETON::MsgDiag mdiag( "ログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
             if( mdiag.run() != Gtk::RESPONSE_OK ) return;
             delete_view();
             break;
@@ -1794,7 +1796,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
 
         else if( ! DBIMG::is_cached( url ) && ! SESSION::is_online() ){
-            Gtk::MessageDialog mdiag( "オフラインです" );
+            SKELETON::MsgDiag mdiag( "オフラインです" );
             mdiag.run();
         }
 

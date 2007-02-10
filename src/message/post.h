@@ -48,6 +48,7 @@ namespace MESSAGE
 
       private:
         void clear();
+        void emit_sigfin();
 
         virtual void receive_data( const char* data, size_t size );
         virtual void receive_finish();

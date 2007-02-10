@@ -5,6 +5,8 @@
 
 #include "cache.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "config/globalconf.h"
 
 #include "jdlib/miscutil.h"
@@ -604,7 +606,7 @@ std::string CACHE::open_save_diag( const std::string& file_from, const std::stri
         // 既にファイルがある場合は問い合わせる
         if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
 
-            Gtk::MessageDialog mdiag( "ファイルが存在します。ファイル名を変更しますか？",
+            SKELETON::MsgDiag mdiag( "ファイルが存在します。ファイル名を変更しますか？",
                                       false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
 
             if( mdiag.run() ==  Gtk::RESPONSE_OK ) return CACHE::open_save_diag( file_from,  path_to );

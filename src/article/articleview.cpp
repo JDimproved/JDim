@@ -8,6 +8,8 @@
 #include "drawareamain.h"
 #include "toolbar.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "dbtree/interface.h"
 #include "dbtree/articlebase.h"
 
@@ -267,7 +269,7 @@ void ArticleViewMain::update_finish()
 //
 void ArticleViewMain::show_instruct_diag()
 {
-    Gtk::MessageDialog mdiag(
+    SKELETON::MsgDiag mdiag(
         "スレビューからスレ一覧表示に戻る方法として\n\n(1) マウスジェスチャを使う( 右ボタンを押しながら下にドラッグして離す )\n\n(2) マウスの5ボタンを押す\n\n(3) Alt+x か h か ← を押す\n\n(4) ツールバーのスレ一覧アイコンを押す\n\n(5) 表示メニューからスレ一覧を選ぶ\n\nなどがあります。詳しくはオンラインマニュアルを参照してください。" );
     Gtk::CheckButton chkbutton( "今後表示しない" );
     mdiag.get_vbox()->pack_start( chkbutton, Gtk::PACK_SHRINK );
@@ -902,7 +904,7 @@ void ArticleViewSearchCache::show_view()
         }
     }
     else if( CORE::get_search_manager()->is_searching() ){
-        Gtk::MessageDialog mdiag( "他の検索スレッドが実行中です" );
+        SKELETON::MsgDiag mdiag( "他の検索スレッドが実行中です" );
         mdiag.run();
     }
 }
@@ -973,7 +975,7 @@ void ArticleViewSearchCache::slot_search_fin()
 void ArticleViewSearchCache::reload()
 {
     if( CORE::get_search_manager()->is_searching() ){
-        Gtk::MessageDialog mdiag( "他の検索スレッドが実行中です" );
+        SKELETON::MsgDiag mdiag( "他の検索スレッドが実行中です" );
         mdiag.run();
     }
 
