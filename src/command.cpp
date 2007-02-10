@@ -27,4 +27,12 @@ void CORE::core_set_command( const std::string& command, const std::string& url,
 }
 
 
-Gtk::Widget* CORE::get_toplevel(){ return CORE::get_instance()->get_toplevel(); }
+Gtk::Widget* CORE::get_toplevel()
+{
+    return CORE::get_instance()->get_toplevel();
+}
+
+Gtk::Window* CORE::get_mainwindow()
+{
+    return dynamic_cast< Gtk::Window* >( CORE::get_instance()->get_toplevel() );
+}
