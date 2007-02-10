@@ -277,6 +277,15 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
         close_window();
         return;
     }
+
+    // window のshow/hide
+    else if( command.command == "show_window" ){
+        if( m_win ) m_win->show_win();
+    }
+
+    else if( command.command == "hide_window" ){
+        if( m_win ) m_win->hide_win();
+    }
 }
 
 

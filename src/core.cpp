@@ -18,6 +18,8 @@
 #include "controlid.h"
 #include "jdversion.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "config/globalconf.h"
 #include "config/keyconfig.h"
 #include "config/mouseconfig.h"
@@ -725,7 +727,7 @@ void Core::first_setup()
 //
 void Core::show_setupdiag( const std::string& msg )
 {
-    Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg );
+    SKELETON::MsgDiag* mdiag = new SKELETON::MsgDiag( msg );
     mdiag->set_title( "JDセットアップ" );
     mdiag->set_keep_above( true );
     mdiag->set_skip_taskbar_hint( false );
@@ -850,7 +852,7 @@ void Core::slot_toggle_strict_charwidth()
     CONFIG::set_strict_char_width( ! CONFIG::get_strict_char_width() );
 
     if( CONFIG::get_strict_char_width() ){
-        Gtk::MessageDialog mdiag( "スレビューのフォント幅の近似を厳密におこないます\n\nパフォーマンスが低下しますので通常は設定しないでください" );
+        SKELETON::MsgDiag mdiag( "スレビューのフォント幅の近似を厳密におこないます\n\nパフォーマンスが低下しますので通常は設定しないでください" );
         mdiag.run();
     }
 
@@ -867,7 +869,7 @@ void Core::slot_toggle_use_mosaic()
 {
     CONFIG::set_use_mosaic( ! CONFIG::get_use_mosaic() );
 
-    Gtk::MessageDialog mdiag( "次に開いた画像から有効になります" );
+    SKELETON::MsgDiag mdiag( "次に開いた画像から有効になります" );
     mdiag.run();
 }
 
@@ -1174,7 +1176,7 @@ void Core::slot_show_about()
        << JDVERSIONSTR 
 #endif
        << std::endl << std::endl << JDCOPYRIGHT;
-    Gtk::MessageDialog mdiag( ss.str() );
+    SKELETON::MsgDiag mdiag( ss.str() );
     mdiag.run();
 }
     
@@ -1430,7 +1432,7 @@ void Core::slot_toggle_oldarticle()
 {
     CONFIG::set_show_oldarticle( ! CONFIG::get_show_oldarticle() );
 
-    Gtk::MessageDialog mdiag( "次に開いた板から有効になります" );
+    SKELETON::MsgDiag mdiag( "次に開いた板から有効になります" );
     mdiag.run();
 }
 
@@ -1800,6 +1802,16 @@ void Core::set_command( const COMMAND_ARGS& command )
         DBIMG::delete_cache( command.url );
         return;
     }
+    else if( command.command == "hide_imagewindow" ){
+
+        IMAGE::get_admin()->set_command_immediately( "hide_window" );
+        return;
+    }
+    else if( command.command == "show_imagewindow" ){
+
+        IMAGE::get_admin()->set_command_immediately( "show_window" );
+        return;
+    }
 
     else if( command.command == "close_image_view" ){
 
@@ -1817,7 +1829,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command == "open_message" ){
 
         if( ! SESSION::is_online() ){
-            Gtk::MessageDialog mdiag( "オフラインです" );
+            SKELETON::MsgDiag mdiag( "オフラインです" );
             mdiag.run();
         }
         else{
@@ -1830,11 +1842,11 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command == "create_new_thread" ){
 
         if( ! SESSION::is_online() ){
-            Gtk::MessageDialog mdiag( "オフラインです" );
+            SKELETON::MsgDiag mdiag( "オフラインです" );
             mdiag.run();
         }
         else if( DBTREE::url_bbscgi_new( command.url ).empty() ){
-            Gtk::MessageDialog mdiag( "この板では新スレを立てることは出来ません" );
+            SKELETON::MsgDiag mdiag( "この板では新スレを立てることは出来ません" );
             mdiag.run();
         }
         else MESSAGE::get_admin()->set_command( "create_new_thread", command.url, command.arg1 );
@@ -1904,6 +1916,13 @@ void Core::set_command( const COMMAND_ARGS& command )
         BBSLIST::get_admin()->set_command( "redraw_current_view" );
         IMAGE::get_admin()->set_command( "redraw_current_view" );
 
+        return;
+    }
+
+    // フォーカス回復
+    else if( command.command == "restore_focus" ){
+
+        restore_focus( true );
         return;
     }
 
@@ -2098,7 +2117,7 @@ void Core::exec_command()
         else if( DBIMG::is_loadable( command.url ) && CONFIG::get_use_image_view() ){
 
             if( ! SESSION::is_online() ){
-                Gtk::MessageDialog mdiag( "オフラインです" );
+                SKELETON::MsgDiag mdiag( "オフラインです" );
                 mdiag.run();
             }
             else{
@@ -2181,10 +2200,18 @@ void Core::exec_command_after_boot()
 //
 void Core::restore_focus( bool force )
 {
+    int admin = SESSION::focused_admin();
+
+#ifdef _DEBUG
+    std::cout << "Core::restore_focus admin = " << admin << std::endl;
+#endif
+
+    if( ! SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command( "focus_out" );
+
     if( ! force ){
 
         // フォーカス状態回復
-        switch( SESSION::focused_admin() )
+        switch( admin )
         {
             case SESSION::FOCUS_SIDEBAR: BBSLIST::get_admin()->set_command( "restore_focus" ); break;
             case SESSION::FOCUS_BOARD: BOARD::get_admin()->set_command( "restore_focus" ); break;
@@ -2195,7 +2222,6 @@ void Core::restore_focus( bool force )
 
     } else {
         
-        int admin = SESSION::focused_admin();
         int admin_sidebar = SESSION::focused_admin_sidebar();
         SESSION::set_focused_admin( SESSION::FOCUS_NO );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );

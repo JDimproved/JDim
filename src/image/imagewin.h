@@ -24,6 +24,7 @@ namespace IMAGE
 
         SKELETON::JDVBox m_vbox;
         Gtk::ScrolledWindow m_scrwin;
+        Gtk::Widget* m_tab;
 
       public:
 
@@ -44,6 +45,9 @@ namespace IMAGE
         void focus_in();
         void focus_out();
 
+        void show_win();
+        void hide_win();
+
       protected:
 
         virtual bool on_expose_event( GdkEventExpose* event );
@@ -54,6 +58,11 @@ namespace IMAGE
         virtual bool on_delete_event( GdkEventAny* event );
         virtual bool on_window_state_event( GdkEventWindowState* event );
         virtual bool on_configure_event( GdkEventConfigure* event );
+
+      private:
+
+        // ウィンドウを折り畳んだときの高さ
+        int get_min_height();
     };
 }
 

@@ -15,9 +15,11 @@ using namespace IMAGE;
 
 #define IMGWIN_FOLDSIZE 10
 
+// タイトルバーの高さの取得方法が分からないのでとりあえずdefineしておく
+#define IMGWIN_TITLBARHEIGHT 16
 
 ImageWin::ImageWin()
-    : m_boot( true ), m_folded( false )
+    : m_boot( true ), m_focus( false ), m_folded( false ), m_tab( NULL )
 {
     // サイズ設定
     int x = SESSION::get_img_x();
@@ -42,7 +44,7 @@ ImageWin::ImageWin()
     show_all_children();
 
     property_window_position().set_value( Gtk::WIN_POS_NONE );
-    if( CORE::get_toplevel() ) set_transient_for( *dynamic_cast< Gtk::Window* >( CORE::get_toplevel() ) );
+    if( CORE::get_mainwindow() ) set_transient_for( *CORE::get_mainwindow() );
 }
 
 
@@ -74,12 +76,26 @@ ImageWin::~ImageWin()
 }
 
 
+//
+// ウィンドウを折り畳んだときの高さ
+//
+// (TODO) ウィンドウの最小高さの取得方法が分からないのでタブの高さを使っているのをなんとかする
+//
+int ImageWin::get_min_height()
+{
+    if( m_tab && m_tab->get_height() > 1 ) return m_tab->get_height() + IMGWIN_TITLBARHEIGHT;
+
+    return 0;
+}
+
 
 void ImageWin::pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view )
 {
 #ifdef _DEBUG
     std::cout << "ImageWin::pack_remove remove - " << unpack << std::endl;
 #endif
+
+    m_tab = &tab;
 
     m_vbox.pack_remove_start( unpack, tab, Gtk::PACK_SHRINK );
 
@@ -149,7 +165,6 @@ void ImageWin::focus_out()
 
     // 折り畳み
     if( ! m_folded ){
-        m_height = get_height();
         resize( get_width(), IMGWIN_FOLDSIZE );
         m_folded = true;
     }
@@ -176,10 +191,42 @@ bool ImageWin::on_focus_out_event( GdkEventFocus* event )
     std::cout << "ImageWin::on_focus_out_event in = " << event->in << std::endl;
 #endif
 
-    focus_out();
     m_focus = false;
 
     return Gtk::Window::on_focus_out_event( event );
+}
+
+
+//
+// ImageWin::hide_win() でwindowを隠した後に show する
+//
+void ImageWin::show_win()
+{
+#ifdef _DEBUG
+    std::cout << "\nImageWin::show_win\n";
+#endif
+
+    if( CORE::get_mainwindow() ) set_transient_for( *CORE::get_mainwindow() );
+    CORE::core_set_command( "restore_focus" );
+}
+
+
+//
+// hide する
+//
+// (注意) 実際には hide しないで transient 指定を外して lower するだけ
+//
+void ImageWin::hide_win()
+{
+#ifdef _DEBUG
+    std::cout << "\nImageWin::hide_win\n";
+#endif
+
+    // ダミーwindowを使ってtransientを外す
+    Gtk::Window dummy;
+    set_transient_for( dummy );
+
+    get_window()->lower();
 }
 
 
@@ -212,8 +259,8 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 
 bool ImageWin::on_configure_event( GdkEventConfigure* event )
 {
-    // リサイズ中
-    if( ! m_focus ) m_height = get_height();
+    // リサイズ中: ウィンドウを折り畳んでいるときは m_height を更新しない
+    if( ! m_focus && get_height() > get_min_height() ) m_height = get_height();
 
 #ifdef _DEBUG
     std::cout << "ImageWin::on_configure_event height = " << m_height << std::endl;
