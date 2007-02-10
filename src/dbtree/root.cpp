@@ -397,6 +397,16 @@ void Root::update_boards( const std::string xml )
 
 
 //
+// 直接データベースに板を追加/アップデート
+//
+void Root::update_board( const std::string& url, const std::string& name, const std::string& basicauth, bool etc )
+{
+    m_move_info = std::string();
+    set_board( url, name, basicauth, etc );
+    if( ! m_move_info.empty() ) save_movetable();
+}
+
+//
 // 板のタイプに合わせて板情報をセット
 // ついでに移転の判定もする
 //

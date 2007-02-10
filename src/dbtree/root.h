@@ -82,6 +82,9 @@ namespace DBTREE
         // 配下の全boardbaseクラスに、全articlebaseクラスのあぼーん状態の更新をさせる
         void update_abone_all_article();
 
+        // 直接データベースに板を追加/アップデート        
+        void update_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
+
         // 板が移転したかチェックする
         // 移転した時は移転後のURLを返す
         const std::string is_board_moved( const std::string& url );

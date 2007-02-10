@@ -52,6 +52,9 @@ namespace DBTREE
     // 移転した時は移転後のURLを返す
     const std::string is_board_moved( const std::string& url );
 
+    // 板を登録/移転などでアップデート
+    void update_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
+
     // bbslist系
     const std::string& get_xml_bbsmenu();
     const std::string& get_xml_etc();

@@ -141,6 +141,12 @@ const std::string  DBTREE::is_board_moved( const std::string& url )
 }
 
 
+void DBTREE::update_board( const std::string& url, const std::string& name, const std::string& basicauth, bool etc )
+{
+    get_root()->update_board( url, name, basicauth, etc );
+}
+
+
 const std::string& DBTREE::get_xml_bbsmenu()
 {
     return get_root()->xml_bbsmenu();
