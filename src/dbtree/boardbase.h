@@ -106,6 +106,9 @@ namespace DBTREE
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
         bool m_read_info;
 
+        // 移転を調査するために url_boardbase を読んでいる
+        bool m_read_url_boardbase;
+
         // クッキー, 書き込み時に必要
         std::list< std::string > m_list_cookies_for_write;
 

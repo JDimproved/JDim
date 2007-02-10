@@ -6,6 +6,7 @@
 #include "root.h"
 #include "boardbase.h"
 #include "articlebase.h"
+#include "interface.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -625,7 +626,7 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string url )
 void BoardBase::download_subject()
 {
 #ifdef _DEBUG
-    std::cout << "BoardBase::download_subject() " << url_boardbase() << std::endl;
+    std::cout << "BoardBase::download_subject " << url_subject() << std::endl;
 #endif
 
     if( empty() ) return;
@@ -633,6 +634,7 @@ void BoardBase::download_subject()
 
     clear();
     m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
+    m_read_url_boardbase = false;
 
     // オフライン
     if( ! SESSION::is_online() ){
@@ -692,35 +694,80 @@ void BoardBase::receive_data( const char* data, size_t size )
 void BoardBase::receive_finish()
 {
     // 別スレッドでSETTING.TXT のダウンロード開始
-    download_setting();
+    if( SESSION::is_online() ) download_setting();
+
+    m_list_subject.clear();
 
     bool read_from_cache = false;
     std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
     std::string path_oldsubject = CACHE::path_board_root_fast( url_boardbase() ) + "old-" + m_subjecttxt;
 
 #ifdef _DEBUG
-    std::cout << "BoardBase::receive_finish code = " << get_str_code() << std::endl;
+    std::cout << "----------------------------------\nBoardBase::receive_finish code = " << get_str_code() << std::endl;
+    std::cout << "size = " << m_lng_rawdata << std::endl;
 #endif
 
-    // エラー or 移転
-    if( get_code() != HTTP_ERR
+    // 移転チェック
+    if( m_read_url_boardbase ){
+
+#ifdef _DEBUG
+        std::cout << "move check\n";
+#endif
+        m_rawdata[ m_lng_rawdata ] = '\0';
+        set_date_modified( std::string() );
+        CORE::core_set_command( "update_board", url_subject() );
+
+        if( get_code() == HTTP_OK && std::string( m_rawdata ).find( "window.location.href" ) != std::string::npos ){
+
+#ifdef _DEBUG
+            std::cout << m_rawdata << std::endl;
+#endif
+            JDLIB::Regex regex;
+            std::string query = ".*window.location.href=\"([^\"]*)\".*";
+            if( regex.exec( query, m_rawdata ) ){
+
+                std::string new_url = regex.str( 1 );
+                std::string msg = new_url + " に移転しました。\n\nデータベースを更新しますか？";
+
+                SKELETON::MsgDiag mdiag( msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+                mdiag.set_default_response( Gtk::RESPONSE_OK );
+                if( mdiag.run() == Gtk::RESPONSE_OK ){
+
+                    DBTREE::update_board( new_url, get_name() );
+                    CORE::core_set_command( "open_board", url_subject() );
+                }
+            }
+        }
+
+        clear();
+        return;
+    }
+
+    // サーバーからtimeoutなどのエラーが返った or 移転
+    if( get_code() != HTTP_ERR // HTTP_ERR はローダでの内部のエラー
         && get_code() != HTTP_OK
         && get_code() != HTTP_NOT_MODIFIED ){
 
         m_lng_rawdata = 0;
 
-        // 移転した場合
+        // 移転した場合bbsmenuを更新
         if( get_code() == HTTP_REDIRECT ){
 
             SKELETON::MsgDiag mdiag( "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            mdiag.set_default_response( Gtk::RESPONSE_OK );
             if( mdiag.run() == Gtk::RESPONSE_OK ) CORE::core_set_command( "reload_bbsmenu" );
+
+            set_date_modified( std::string() );
+            CORE::core_set_command( "update_board", url_subject() );
+            clear();
+            return;
         }
 
-        // エラー
-        else read_from_cache = true;
+        // サーバからエラーが返ったらキャッシュからデータをロード
+        read_from_cache = true;
     }
 
-    // not modified か offline ならキャッシュからデータをロード
+    // ローダがエラーを返した or not modified or offline ならキャッシュからデータをロード
     if( get_code() == HTTP_ERR
         || get_code() == HTTP_NOT_MODIFIED
         || ! SESSION::is_online() ) read_from_cache = true;
@@ -731,41 +778,43 @@ void BoardBase::receive_finish()
         m_lng_rawdata = CACHE::load_rawdata( path_subject, m_rawdata, SIZE_OF_RAWDATA );
 
 #ifdef _DEBUG
-        std::cout << "BoardBase::receive_finish read cache " << path_subject << std::endl;
-        std::cout << "size = " << m_lng_rawdata << std::endl;
+        std::cout << "read from cache " << path_subject << std::endl;
 #endif
     }
 
+#ifdef _DEBUG
+        std::cout << "size(final) = " << m_lng_rawdata << std::endl;
+#endif
+
+    // データが無い
     if( m_lng_rawdata == 0 ){
+
+        set_date_modified( std::string() );
+
+        // 移転した可能性があるので url_boardbase をロードして解析
+        if( SESSION::is_online() && get_code() == HTTP_OK ){
+
+#ifdef _DEBUG
+            std::cout << "reload " << url_boardbase() << std::endl;
+#endif
+            JDLIB::LOADERDATA data;    
+            data.url = url_boardbase();
+            data.agent = CONFIG::get_agent_for_data();
+            if( CONFIG::get_use_proxy_for_data() ) data.host_proxy = CONFIG::get_proxy_for_data();
+            else data.host_proxy = std::string();
+            data.port_proxy = CONFIG::get_proxy_port_for_data();
+            data.size_buf = CONFIG::get_loader_bufsize();
+            data.timeout = CONFIG::get_loader_timeout_img();
+
+            if( start_load( data ) ){
+                m_read_url_boardbase = true;
+                return;
+            }
+        }
 
         CORE::core_set_command( "update_board", url_subject() );
         clear();
         return;
-    }
-
-    // codeが200なら情報を保存して subject.txt をキャッシュに保存
-    if( SESSION::is_online() && get_code() == HTTP_OK ){
-
-#ifdef _DEBUG
-        std::cout << "rename " << path_subject << " " << path_oldsubject << std::endl;
-        std::cout << "save " << path_subject << std::endl;    
-#endif
-
-        save_info();
-
-        // subject.txtをキャッシュ
-        if( CACHE::mkdir_boardroot( url_boardbase() ) ){
-
-            // 古いファイルをrename
-            if( CACHE::file_exists( path_subject ) == CACHE::EXIST_FILE ){
-                if( rename( path_subject.c_str(), path_oldsubject.c_str() ) != 0 ){
-                    MISC::ERRMSG( "rename failed " + path_subject );
-                }
-            }
-
-            // subject.txt セーブ
-            CACHE::save_rawdata( path_subject, m_rawdata, m_lng_rawdata );
-        }
     }
 
     // UTF-8に変換しておく
@@ -777,8 +826,6 @@ void BoardBase::receive_finish()
     //////////////////////////////
     // データベース更新
     // subject.txtを解析して現行スレだけリスト(m_list_subject)に加える
-
-    m_list_subject.clear();
 
     // 一度全てのarticleをdat落ち状態にして subject.txt に
     // 含まれているものだけ parse_subject()の中で通常状態にする
@@ -794,39 +841,84 @@ void BoardBase::receive_finish()
     // subject.txtをパースしながらデータベース更新
     parse_subject( rawdata_utf8 );
 
-    // DAT落ちなどでsubject.txtに無いスレもリストに加える
-    // サブジェクトやロード数などの情報が無いのでスレのinfoファイルから
-    // 取得する必要がある
-    if( CONFIG::get_show_oldarticle() ){
-        for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+    // list_subject 更新
+    if( ! m_list_subject.empty() ){
 
-            if( ( *it )->is_cached()
-                && ( ( *it )->get_status() & STATUS_OLD )
-                ){
-
-                // info 読み込み
-                // TODO : 数が多いとboardビューを開くまで時間がかかるのをなんとかする
 #ifdef _DEBUG
-                std::cout << "read article_info << " << ( *it )->get_url() << std::endl;
+        std::cout << "list_subject was updated\n";
+#endif
+
+        // DAT落ちなどでsubject.txtに無いスレもリストに加える
+        // サブジェクトやロード数などの情報が無いのでスレのinfoファイルから
+        // 取得する必要がある
+        if( CONFIG::get_show_oldarticle() ){
+
+            for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+
+                if( ( *it )->is_cached()
+                    && ( ( *it )->get_status() & STATUS_OLD )
+                    ){
+
+                    // info 読み込み
+                    // TODO : 数が多いとboardビューを開くまで時間がかかるのをなんとかする
+#ifdef _DEBUG
+                    std::cout << "read article_info << " << ( *it )->get_url() << std::endl;
 #endif                
-                ( *it )->read_info();
+                    ( *it )->read_info();
 
-                // read_info()で状態が変わる時があるのでDAT落ちにしてからリスト(m_list_subject)に加える
-                int status = ( *it )->get_status();
+                    // read_info()で状態が変わる時があるのでDAT落ちにしてからリスト(m_list_subject)に加える
+                    int status = ( *it )->get_status();
 
-                if( status & STATUS_NORMAL ){
-                    status &= ~STATUS_NORMAL;
-                    status |= STATUS_OLD;
-                    ( *it )->set_status( status );
-                    ( *it )->save_info( true );
+                    if( status & STATUS_NORMAL ){
+                        status &= ~STATUS_NORMAL;
+                        status |= STATUS_OLD;
+                        ( *it )->set_status( status );
+                        ( *it )->save_info( true );
+                    }
+
+                    if( ! get_abone_thread( *it ) ) m_list_subject.push_back( *it );
                 }
-
-                if( ! get_abone_thread( *it ) ) m_list_subject.push_back( *it );
             }
         }
+
+        // オンライン、かつcodeが200なら情報を保存して subject.txt をキャッシュに保存
+        if( SESSION::is_online() && get_code() == HTTP_OK ){
+
+#ifdef _DEBUG
+            std::cout << "save info and subject.txt\n";
+            std::cout << "rename " << path_subject << " " << path_oldsubject << std::endl;
+            std::cout << "save " << path_subject << std::endl;    
+#endif
+
+            save_info();
+
+            // subject.txtをキャッシュ
+            if( CACHE::mkdir_boardroot( url_boardbase() ) ){
+
+                // 古いファイルをrename
+                if( CACHE::file_exists( path_subject ) == CACHE::EXIST_FILE ){
+                    if( rename( path_subject.c_str(), path_oldsubject.c_str() ) != 0 ){
+                        MISC::ERRMSG( "rename failed " + path_subject );
+                    }
+                }
+
+                // subject.txt セーブ
+                CACHE::save_rawdata( path_subject, m_rawdata, m_lng_rawdata );
+            }
+        }
+
+        m_list_subject_created = true;
     }
 
-    m_list_subject_created = true;
+    // list_subject が更新されなかった
+    else{
+
+#ifdef _DEBUG
+        std::cout << "list_subject was NOT updated\n";
+#endif
+
+        set_date_modified( std::string() );
+    }
 
     // コアにデータベース更新を知らせる
     CORE::core_set_command( "update_board", url_subject() );
@@ -1092,13 +1184,13 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
 //
 void BoardBase::read_board_info()
 {
-#ifdef _DEBUG
-    std::cout << "BoardBase::read_board_info " << m_id << std::endl;
-#endif    
-
     if( empty() ) return;
     
     std::string path_info = CACHE::path_jdboard_info( url_boardbase() );
+
+#ifdef _DEBUG
+    std::cout << "BoardBase::read_board_info " << path_info << std::endl;
+#endif    
 
     JDLIB::ConfLoader cf( path_info, std::string() );
 
@@ -1240,7 +1332,7 @@ void BoardBase::save_summary()
     sstr_out << ")";
 
 #ifdef _DEBUG
-    std::cout << sstr_out.str() << std::endl;
+//    std::cout << sstr_out.str() << std::endl;
 #endif
 
     if( count ) CACHE::save_rawdata( path_summary, sstr_out.str() );
