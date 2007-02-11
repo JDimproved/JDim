@@ -1766,17 +1766,22 @@ void Core::set_command( const COMMAND_ARGS& command )
         BBSLIST::get_admin()->set_command( "update_view", URL_BBSLISTVIEW );
         return;
     }
+    else if( command.command  == "update_bbslist_item" ){
+
+        BBSLIST::get_admin()->set_command( "update_item", URL_BBSLISTVIEW );
+        return;
+    }
+
     else if( command.command  == "append_favorite" ){
 
         BBSLIST::get_admin()->set_command( "append_favorite", command.url, command.arg1, command.arg2 );
         return;
     }
-    else if( command.command  == "update_favorite" ){
+    else if( command.command  == "update_favorite_item" ){
 
-        BBSLIST::get_admin()->set_command( "update_view", URL_FAVORITEVIEW );
+        BBSLIST::get_admin()->set_command( "update_item", URL_FAVORITEVIEW );
         return;
     }
-
     else if( command.command  == "save_favorite" ){
 
         BBSLIST::get_admin()->set_command( "save_favorite" );
