@@ -62,7 +62,7 @@ Core* CORE::get_instance()
 ARTICLE::get_admin()->set_command( "focus_out" ); \
 BOARD::get_admin()->set_command( "focus_out" ); \
 BBSLIST::get_admin()->set_command( "focus_out" ); \
-if( SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command( "focus_out" ); \
+IMAGE::get_admin()->set_command( "focus_out" ); \
 }while(0)
 
 
@@ -2210,8 +2210,6 @@ void Core::restore_focus( bool force )
 #ifdef _DEBUG
     std::cout << "Core::restore_focus admin = " << admin << std::endl;
 #endif
-
-    if( ! SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command( "focus_out" );
 
     if( ! force ){
 

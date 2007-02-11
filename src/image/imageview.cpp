@@ -15,6 +15,7 @@
 #include "httpcode.h"
 #include "controlid.h"
 #include "session.h"
+#include "global.h"
 
 #include <sstream>
 
@@ -27,6 +28,7 @@
 #define MIN( a, b ) ( a < b ? a : b )
 #endif
 
+#define IMGWIN_REDRAWTIME 250 // msec
 
 using namespace IMAGE;
 
@@ -86,7 +88,7 @@ void ImageViewMain::clock_in()
     }
 
     // ロード中でない
-    else if( SESSION::is_img_shown() && get_imagearea() ){
+    else if( get_imagearea() ){
 
         // バックグラウンドで開いた時やロード直後に画像を表示すると重くなるので
         // ビューがアクティブになった(クロック入力が来た) 時点で画面を表示する
@@ -94,6 +96,7 @@ void ImageViewMain::clock_in()
 
             m_pre_width = get_width();
             m_pre_height = get_height();
+            m_redraw_count = 10000;
 
             get_imagearea()->show_image();
 
@@ -116,16 +119,23 @@ void ImageViewMain::clock_in()
                  && ( m_pre_width != get_width() || m_pre_height != get_height() )
             ){
 
-            m_pre_width = get_width();
-            m_pre_height = get_height();
+            // 毎回再描画していると遅いのでカウンタを付ける
+            ++m_redraw_count;
+            if( m_redraw_count >= ( IMGWIN_REDRAWTIME / TIMER_TIMEOUT ) ) {
+
+                m_pre_width = get_width();
+                m_pre_height = get_height();
+                m_redraw_count = 0;
 
 #ifdef _DEBUG
-            std::cout << "ImageViewMain::clock_in resize\n" << get_url()
-                      << " " << m_pre_width << " - " << m_pre_height << std::endl;
+                std::cout << "ImageViewMain::clock_in resize\n" << get_url()
+                          << " " << m_pre_width << " - " << m_pre_height << std::endl;
 #endif
-            get_imagearea()->show_image();
-            show_status();
+                get_imagearea()->show_image();
+                show_status();
+            }
         }
+        else m_redraw_count = 0;
     }
 }
 

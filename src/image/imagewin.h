@@ -18,8 +18,7 @@ namespace IMAGE
         bool m_boot;
         bool m_maximized;
 
-        bool m_focus;
-        int m_folded;
+        int m_mode;
         int m_height;
 
         SKELETON::JDVBox m_vbox;
@@ -34,11 +33,8 @@ namespace IMAGE
         // 起動中
         const bool is_booting() const { return m_boot; }
 
-        // フォーカス
-        const bool has_focus() const { return m_focus; }
-
-        // フォーカスが外れて折りたたまれている
-        const bool is_folded() const { return m_folded; }
+        // フォーカス状態
+        const bool has_focus();
 
         void pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view );
 

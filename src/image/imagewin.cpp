@@ -18,8 +18,19 @@ using namespace IMAGE;
 // タイトルバーの高さの取得方法が分からないのでとりあえずdefineしておく
 #define IMGWIN_TITLBARHEIGHT 16
 
+
+// ウィンドウ状態
+enum
+{
+    IMGWIN_NORMAL = 0, // 開いている
+    IMGWIN_FOLDING,    // 折り畳み中
+    IMGWIN_FOLD,       // 折り畳んでいる
+    IMGWIN_EXPANDING   // 展開中
+};
+
+
 ImageWin::ImageWin()
-    : m_boot( true ), m_focus( false ), m_folded( false ), m_tab( NULL )
+    : m_boot( true ), m_mode( IMGWIN_NORMAL ), m_tab( NULL )
 {
     // サイズ設定
     int x = SESSION::get_img_x();
@@ -57,7 +68,7 @@ ImageWin::~ImageWin()
     int y = 0;
 
     get_size( width, height );
-    if( m_folded ) height = m_height;
+    if( ! has_focus() ) height = m_height;
 
     if( get_window() ) get_window()->get_root_origin( x, y );
 
@@ -74,6 +85,16 @@ ImageWin::~ImageWin()
     }
     SESSION::set_img_maximized( m_maximized );
 }
+
+
+//
+// フォーカスされている = 開いている
+//
+const bool ImageWin::has_focus()
+{
+    return ( m_mode == IMGWIN_NORMAL );
+}
+
 
 
 //
@@ -143,11 +164,10 @@ void ImageWin::focus_in()
 #endif
 
     // 展開
-    if( m_folded ){
+    if( ! has_focus() ){
 
         resize( get_width(), m_height );
-        m_folded = false;
-        SESSION::set_img_shown( true ); 
+        m_mode = IMGWIN_EXPANDING;
     }
 
     present();
@@ -165,10 +185,14 @@ void ImageWin::focus_out()
     if( CORE::get_dnd_manager()->now_dnd() ) return;
 
     // 折り畳み
-    if( ! m_folded ){
+    if( has_focus() ){
+
         resize( get_width(), IMGWIN_FOLDSIZE );
-        m_folded = true;
-        SESSION::set_img_shown( false ); 
+        m_mode = IMGWIN_FOLDING;
+
+        // もう折り畳んだということにして、 on_configure_eventの中ではなくて
+        // ここで set_img_shown( false ) しておく
+        SESSION::set_img_shown( false );
     }
 
 }
@@ -181,7 +205,6 @@ bool ImageWin::on_focus_in_event( GdkEventFocus* event )
 #endif
 
     if( ! m_boot ) CORE::core_set_command( "switch_image" );
-    m_focus = true;
 
     return Gtk::Window::on_focus_in_event( event );
 }
@@ -193,7 +216,7 @@ bool ImageWin::on_focus_out_event( GdkEventFocus* event )
     std::cout << "ImageWin::on_focus_out_event in = " << event->in << std::endl;
 #endif
 
-    m_focus = false;
+    if( ! m_boot ) focus_out();
 
     return Gtk::Window::on_focus_out_event( event );
 }
@@ -249,7 +272,7 @@ bool ImageWin::on_delete_event( GdkEventAny* event )
 
 bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 {
-    m_maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+    if( ! m_boot )  m_maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
 
 #ifdef _DEBUG
     std::cout << "ImageWin::on_window_state_event : maximized = " << m_maximized << std::endl;
@@ -261,12 +284,24 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 
 bool ImageWin::on_configure_event( GdkEventConfigure* event )
 {
-    // リサイズ中: ウィンドウを折り畳んでいるときは m_height を更新しない
-    if( ! m_focus && get_height() > get_min_height() ) m_height = get_height();
+    if( ! m_boot ){
+
+        // 開いた
+        if( m_mode == IMGWIN_EXPANDING ){
+            m_mode = IMGWIN_NORMAL;
+            SESSION::set_img_shown( true );
+        }
+
+        // 閉じた
+        else if( m_mode == IMGWIN_FOLDING ) m_mode = IMGWIN_FOLD;
+
+        // リサイズ中
+        else if( get_height() > get_min_height() ) m_height = get_height();
 
 #ifdef _DEBUG
-    std::cout << "ImageWin::on_configure_event height = " << m_height << std::endl;
+        std::cout << "ImageWin::on_configure_event mode = " << m_mode << " height = " << m_height << std::endl;
 #endif     
+    }
 
     return Gtk::Window::on_configure_event( event );
 }

@@ -184,9 +184,10 @@ void ImageAdmin::clock_in()
         if( view ) view->clock_in();
     }
 
-    // アクティブなviewにだけクロックを送る
-    // 埋め込み表示で、かつ admin が画面に表示されていないなら何もしない
-    if( ! SESSION::get_embedded_img() || SESSION::is_img_shown() ){
+    // 画像が表示されている場合viewにクロックを回す
+    if( SESSION::is_img_shown() ){
+
+        // アクティブなviewにだけクロックを送る
         SKELETON::View* view = get_current_view();
         if( view ) view->clock_in();
     }
@@ -650,21 +651,6 @@ void ImageAdmin::focus_current_view()
 
 
 //
-// フォーカスアウトする
-//
-void ImageAdmin::focus_out()
-{
-#ifdef _DEBUG
-    std::cout << "ImageAdmin::focus_out\n";
-#endif
-
-    Admin::focus_out();
-    if( m_win ) m_win->focus_out();
-}
-
-
-
-//
 // 全アイコンのフォーカスをはずす
 //
 void ImageAdmin::focus_out_all()
@@ -737,11 +723,7 @@ void ImageAdmin::switch_img( const std::string& url )
         }
     }
 
-    if( ! SESSION::get_embedded_img() ){
-
-        if( ! m_win->is_folded() ) focus_current_view();
-    }
-    else if( has_focus() ) focus_current_view();
+    if( has_focus() ) focus_current_view();
 }
 
 

@@ -24,6 +24,7 @@ namespace IMAGE
 
         int m_pre_width;
         int m_pre_height;
+        int m_redraw_count;
 
       public:
         ImageViewMain( const std::string& url );
