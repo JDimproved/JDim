@@ -25,7 +25,8 @@ enum
     IMGWIN_NORMAL = 0, // 開いている
     IMGWIN_FOLDING,    // 折り畳み中
     IMGWIN_FOLD,       // 折り畳んでいる
-    IMGWIN_EXPANDING   // 展開中
+    IMGWIN_EXPANDING,  // 展開中
+    IMGWIN_MAXIMIZING  // 最大化中
 };
 
 
@@ -269,10 +270,12 @@ bool ImageWin::on_delete_event( GdkEventAny* event )
 }
 
 
-
 bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 {
-    if( ! m_boot )  m_maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+    if( ! m_boot ){
+        m_maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+        m_mode = IMGWIN_MAXIMIZING;
+    }
 
 #ifdef _DEBUG
     std::cout << "ImageWin::on_window_state_event : maximized = " << m_maximized << std::endl;
@@ -294,6 +297,9 @@ bool ImageWin::on_configure_event( GdkEventConfigure* event )
 
         // 閉じた
         else if( m_mode == IMGWIN_FOLDING ) m_mode = IMGWIN_FOLD;
+
+        // 最大最小化
+        else if( m_mode == IMGWIN_MAXIMIZING ) m_mode = IMGWIN_NORMAL;
 
         // リサイズ中
         else if( get_height() > get_min_height() ) m_height = get_height();
