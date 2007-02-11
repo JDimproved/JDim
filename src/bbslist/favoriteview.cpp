@@ -68,9 +68,9 @@ void FavoriteListView::show_view()
 
 
 //
-// アップデート
+// 内容更新
 //
-void FavoriteListView::update_view()
+void FavoriteListView::update_item( const std::string& )
 {
     update_urls();
 }

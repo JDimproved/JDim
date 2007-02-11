@@ -68,7 +68,7 @@ void BBSListViewMain::show_view()
 
 
 //
-// アップデート
+// 表示更新
 //
 void BBSListViewMain::update_view()
 {
@@ -88,6 +88,15 @@ void BBSListViewMain::update_view()
     xml2tree( xml );
     set_status( std::string() );
     BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
+}
+
+
+//
+// 内容更新
+//
+void BBSListViewMain::update_item( const std::string& )
+{
+    update_urls();
 }
 
 

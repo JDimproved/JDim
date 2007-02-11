@@ -24,6 +24,7 @@ namespace BBSLIST
 
         virtual void show_view();
         virtual void update_view();
+        virtual void update_item( const std::string& );
 
       protected:
 
