@@ -157,7 +157,6 @@ namespace SESSION
     void set_img_y( int y );
     void set_img_width( int width );
     void set_img_height( int height );
-    void set_img_maximized( bool maximized );
 
     // 埋め込みmessageを使用
     bool get_embedded_mes();

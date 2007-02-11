@@ -62,7 +62,6 @@ int img_x;
 int img_y;
 int img_width;
 int img_height;
-bool img_maximized;
 
 bool embedded_mes;
 
@@ -167,7 +166,6 @@ void SESSION::init_session()
     img_y = cf.get_option( "img_y", 0 );
     img_width = cf.get_option( "img_width", 600 );
     img_height = cf.get_option( "img_height", 500 );
-    img_maximized = cf.get_option( "img_maximized", false );
 
     embedded_mes = cf.get_option( "embedded_mes", false );
 
@@ -306,7 +304,6 @@ void SESSION::save_session()
         << "img_y = " << img_y << std::endl
         << "img_width = " << img_width << std::endl
         << "img_height = " << img_height << std::endl
-        << "img_maximized = " << img_maximized << std::endl
 
         << "embedded_mes = " << embedded_mes << std::endl
         << "mes_x = " << win_mes_x << std::endl
@@ -436,13 +433,11 @@ int SESSION::get_img_x(){ return img_x; }
 int SESSION::get_img_y(){ return img_y; }
 int SESSION::get_img_width(){ return img_width; }
 int SESSION::get_img_height(){ return img_height; }
-bool SESSION::get_img_maximized(){ return img_maximized; }
 
 void SESSION::set_img_x( int x ){ img_x = x; }
 void SESSION::set_img_y( int y ){ img_y = y; }
 void SESSION::set_img_width( int width ){ img_width = width; }
 void SESSION::set_img_height( int height ){ img_height = height; }
-void SESSION::set_img_maximized( bool maximized ){ img_maximized = maximized; }
 
 
 // 埋め込みmessageを使用

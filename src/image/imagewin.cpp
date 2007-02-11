@@ -31,23 +31,20 @@ enum
 
 
 ImageWin::ImageWin()
-    : m_boot( true ), m_mode( IMGWIN_FOLD ), m_tab( NULL )
+    : m_boot( true ), m_maximized( false ), m_mode( IMGWIN_FOLD ), m_tab( NULL )
 {
     // サイズ設定
-    int x = SESSION::get_img_x();
-    int y = SESSION::get_img_y();
-    int w = SESSION::get_img_width();
+    m_x = SESSION::get_img_x();
+    m_y = SESSION::get_img_y();
+    m_width = SESSION::get_img_width();
     m_height = SESSION::get_img_height();
-    m_maximized = SESSION::get_img_maximized();
 
 #ifdef _DEBUG
-    std::cout << "MessageWin::MessageWin x y w h = " << x << " " << y << " " << w << " " << m_height << std::endl;
+    std::cout << "MessageWin::MessageWin x y w h = " << m_x << " " << m_y << " " << m_width << " " << m_height << std::endl;
 #endif
 
-    move( x, y );
-    resize( w, m_height );
-
-    if( m_maximized ) maximize();
+    move( m_x, m_y );
+    resize( m_width, m_height );
 
     m_scrwin.set_size_request( 0, 0 );
     m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
@@ -58,35 +55,23 @@ ImageWin::ImageWin()
     property_window_position().set_value( Gtk::WIN_POS_NONE );
     if( CORE::get_mainwindow() ) set_transient_for( *CORE::get_mainwindow() );
 
-    SESSION::set_img_shown( false );
+    SESSION::set_img_shown( true );
 }
 
 
 
 ImageWin::~ImageWin()
 {
-    // ウィンドウサイズを保存
-    int width, height;;
-    int x = 0;
-    int y = 0;
-
-    get_size( width, height );
-    if( ! has_focus() ) height = m_height;
-
-    if( get_window() ) get_window()->get_root_origin( x, y );
-
 #ifdef _DEBUG
-    std::cout << "ImageWin::~ImageWin window size : x = " << x << " y = " << y << " w = " << width << " h = " << height
-              << " max = " << m_maximized << std::endl;
+    std::cout << "ImageWin::~ImageWin window size : x = " << m_x << " y = " << m_y
+              << " w = " << m_width << " h = " << m_height << std::endl;
 #endif
 
-    if( ! m_maximized ){
-        SESSION::set_img_x( x );
-        SESSION::set_img_y( y );
-        SESSION::set_img_width( width );
-        SESSION::set_img_height( height );
-    }
-    SESSION::set_img_maximized( m_maximized );
+    // ウィンドウサイズを保存
+    SESSION::set_img_x( m_x );
+    SESSION::set_img_y( m_y );
+    SESSION::set_img_width( m_width );
+    SESSION::set_img_height( m_height );
 
     SESSION::set_img_shown( false );
     CORE::core_set_command( "restore_focus" );
@@ -168,8 +153,10 @@ void ImageWin::focus_in()
     std::cout << "ImageWin::focus_in mode = " << m_mode << std::endl;
 #endif
 
+    if( m_maximized ) return;
+
     // 展開
-    resize( get_width(), m_height );
+    resize( m_width, m_height );
     if( m_mode == IMGWIN_FOLD
         || m_mode == IMGWIN_FOLDING // folding 中にキャンセル
         ) m_mode = IMGWIN_EXPANDING;
@@ -189,7 +176,7 @@ void ImageWin::focus_out()
     if( CORE::get_dnd_manager()->now_dnd() ) return;
 
     // 折り畳み
-    resize( get_width(), IMGWIN_FOLDSIZE );
+    resize( m_width, IMGWIN_FOLDSIZE );
 
     if( m_mode == IMGWIN_NORMAL
         || m_mode == IMGWIN_EXPANDING // expanding 中にキャンセル
@@ -277,7 +264,10 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 {
     if( ! m_boot ){
         m_maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
-        m_mode = IMGWIN_MAXIMIZING;
+        if( m_maximized ){
+            m_mode = IMGWIN_MAXIMIZING;
+            present();
+        }       
     }
 
 #ifdef _DEBUG
@@ -293,7 +283,7 @@ bool ImageWin::on_configure_event( GdkEventConfigure* event )
     if( ! m_boot && ! m_maximized ){
 
         // 開いた
-        if( m_mode == IMGWIN_EXPANDING ){
+        if( m_mode == IMGWIN_EXPANDING || m_mode == IMGWIN_MAXIMIZING ){
             m_mode = IMGWIN_NORMAL;
             SESSION::set_img_shown( true );
         }
@@ -301,11 +291,13 @@ bool ImageWin::on_configure_event( GdkEventConfigure* event )
         // 閉じた
         else if( m_mode == IMGWIN_FOLDING ) m_mode = IMGWIN_FOLD;
 
-        // 最大化中
-        else if( m_mode == IMGWIN_MAXIMIZING ) m_mode = IMGWIN_NORMAL;
+        // 移動、リサイズ中
+        else if( get_height() > get_min_height() ){
 
-        // リサイズ中
-        else if( get_height() > get_min_height() ) m_height = get_height();
+            if( get_window() ) get_window()->get_root_origin( m_x, m_y );
+            m_width = get_width();
+            m_height = get_height();
+        }
 
 #ifdef _DEBUG
         std::cout << "ImageWin::on_configure_event mode = " << m_mode << " height = " << m_height << std::endl;

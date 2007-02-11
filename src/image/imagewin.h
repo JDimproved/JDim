@@ -19,6 +19,10 @@ namespace IMAGE
         bool m_maximized;
 
         int m_mode;
+
+        int m_x;
+        int m_y;
+        int m_width;
         int m_height;
 
         SKELETON::JDVBox m_vbox;
