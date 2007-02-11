@@ -14,6 +14,7 @@
 #include "command.h"
 #include "httpcode.h"
 #include "controlid.h"
+#include "session.h"
 
 #include <sstream>
 
@@ -85,11 +86,14 @@ void ImageViewMain::clock_in()
     }
 
     // ロード中でない
-    else{
+    else if( SESSION::is_img_shown() && get_imagearea() ){
 
         // バックグラウンドで開いた時やロード直後に画像を表示すると重くなるので
         // ビューがアクティブになった(クロック入力が来た) 時点で画面を表示する
-        if( get_imagearea() && ! get_imagearea()->is_ready() ) {
+        if( ! get_imagearea()->is_ready() ) {
+
+            m_pre_width = get_width();
+            m_pre_height = get_height();
 
             get_imagearea()->show_image();
 
@@ -105,6 +109,23 @@ void ImageViewMain::clock_in()
             if( m_show_instdialog && get_imagearea()->is_ready() && CONFIG::get_instruct_tglimg() ) show_instruct_diag();
         }
 
+        // サイズが変わって、かつ zoom to fit モードの場合再描画
+        else if( get_img()->is_cached()
+                 && get_img()->is_zoom_to_fit()
+                 && get_width() > 1 && get_height() > 1
+                 && ( m_pre_width != get_width() || m_pre_height != get_height() )
+            ){
+
+            m_pre_width = get_width();
+            m_pre_height = get_height();
+
+#ifdef _DEBUG
+            std::cout << "ImageViewMain::clock_in resize\n" << get_url()
+                      << " " << m_pre_width << " - " << m_pre_height << std::endl;
+#endif
+            get_imagearea()->show_image();
+            show_status();
+        }
     }
 }
 

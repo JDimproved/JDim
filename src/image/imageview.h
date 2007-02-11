@@ -22,6 +22,9 @@ namespace IMAGE
         bool m_show_label;
         bool m_show_instdialog;
 
+        int m_pre_width;
+        int m_pre_height;
+
       public:
         ImageViewMain( const std::string& url );
 

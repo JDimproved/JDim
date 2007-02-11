@@ -147,6 +147,7 @@ void ImageWin::focus_in()
 
         resize( get_width(), m_height );
         m_folded = false;
+        SESSION::set_img_shown( true ); 
     }
 
     present();
@@ -167,6 +168,7 @@ void ImageWin::focus_out()
     if( ! m_folded ){
         resize( get_width(), IMGWIN_FOLDSIZE );
         m_folded = true;
+        SESSION::set_img_shown( false ); 
     }
 
 }
