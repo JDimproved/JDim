@@ -39,7 +39,7 @@ namespace SKELETON
                  Gtk::MessageType type = Gtk::MESSAGE_INFO,
                  Gtk::ButtonsType buttons = Gtk::BUTTONS_OK,
                  bool modal = false)
-        : Gtk::MessageDialog( message, use_markup, type, buttons, modal )
+        : Gtk::MessageDialog( *CORE::get_mainwindow(), message, use_markup, type, buttons, modal )
         {
             hide_imagewindow();
         }
