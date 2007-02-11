@@ -82,7 +82,7 @@ ImageAdmin::~ImageAdmin()
 
 const bool ImageAdmin::has_focus()
 {
-    if( ! SESSION::get_embedded_img() && m_win ) return m_win->has_focus();
+    if( m_win ) return m_win->has_focus();
 
     return Admin::has_focus();
 }

@@ -2211,6 +2211,8 @@ void Core::restore_focus( bool force )
     std::cout << "Core::restore_focus admin = " << admin << std::endl;
 #endif
 
+    if( ! SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command( "focus_out" );
+
     if( ! force ){
 
         // フォーカス状態回復
@@ -2659,7 +2661,7 @@ void Core::switch_article()
         SESSION::set_focused_admin( SESSION::FOCUS_ARTICLE );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_ARTICLE );
 
-        SESSION::set_img_shown( false );
+        if( SESSION::get_embedded_img() ) SESSION::set_img_shown( false );
     }
 
     set_sensitive_view_button();
@@ -2691,7 +2693,9 @@ void Core::switch_board()
         SESSION::set_focused_admin( SESSION::FOCUS_BOARD );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_BOARD );
 
-        if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ) SESSION::set_img_shown( false );
+        // 3paneの時はboardに切り替えても(フォーカスアウトしても)
+        // 画像は表示されたままの時があることに注意
+        if( SESSION::get_embedded_img() && SESSION::get_mode_pane() == SESSION::MODE_2PANE ) SESSION::set_img_shown( false );
     }
 
     set_sensitive_view_button();
@@ -2785,7 +2789,7 @@ void Core::switch_image()
         }
 
         IMAGE::get_admin()->set_command( "focus_current_view" );
-        SESSION::set_img_shown( true );
+        if( SESSION::get_embedded_img() ) SESSION::set_img_shown( true );
     }
 
     set_sensitive_view_button();
@@ -2838,9 +2842,9 @@ void Core::switch_leftview()
 {
     int next_admin = SESSION::focused_admin();
 
-    // 画像ウィンドウがフォーカスを持っている
-    if( ! SESSION::get_embedded_img() && IMAGE::get_admin()->has_focus() ) next_admin = SESSION::FOCUS_IMAGE;
-    
+    // 画像ウィンドウが表示されている
+    if( ! SESSION::get_embedded_img() && SESSION::is_img_shown() ) next_admin = SESSION::FOCUS_IMAGE;
+
     for(;;){
 
         if( next_admin == SESSION::FOCUS_IMAGE ) next_admin = SESSION::FOCUS_ARTICLE;

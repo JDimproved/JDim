@@ -31,14 +31,14 @@ enum
 
 
 ImageWin::ImageWin()
-    : m_boot( true ), m_mode( IMGWIN_NORMAL ), m_tab( NULL )
+    : m_boot( true ), m_mode( IMGWIN_FOLD ), m_tab( NULL )
 {
     // サイズ設定
     int x = SESSION::get_img_x();
     int y = SESSION::get_img_y();
     int w = SESSION::get_img_width();
     m_height = SESSION::get_img_height();
-    m_maximized = SESSION::mes_maximized();
+    m_maximized = SESSION::get_img_maximized();
 
 #ifdef _DEBUG
     std::cout << "MessageWin::MessageWin x y w h = " << x << " " << y << " " << w << " " << m_height << std::endl;
@@ -57,6 +57,8 @@ ImageWin::ImageWin()
 
     property_window_position().set_value( Gtk::WIN_POS_NONE );
     if( CORE::get_mainwindow() ) set_transient_for( *CORE::get_mainwindow() );
+
+    SESSION::set_img_shown( false );
 }
 
 
@@ -85,6 +87,9 @@ ImageWin::~ImageWin()
         SESSION::set_img_height( height );
     }
     SESSION::set_img_maximized( m_maximized );
+
+    SESSION::set_img_shown( false );
+    CORE::core_set_command( "restore_focus" );
 }
 
 
@@ -157,19 +162,17 @@ bool ImageWin::on_expose_event( GdkEventExpose* event )
 }
 
 
-
 void ImageWin::focus_in()
 {
 #ifdef _DEBUG
-    std::cout << "ImageWin::focus_in\n";
+    std::cout << "ImageWin::focus_in mode = " << m_mode << std::endl;
 #endif
 
     // 展開
-    if( ! has_focus() ){
-
-        resize( get_width(), m_height );
-        m_mode = IMGWIN_EXPANDING;
-    }
+    resize( get_width(), m_height );
+    if( m_mode == IMGWIN_FOLD
+        || m_mode == IMGWIN_FOLDING // folding 中にキャンセル
+        ) m_mode = IMGWIN_EXPANDING;
 
     present();
 }
@@ -178,7 +181,7 @@ void ImageWin::focus_in()
 void ImageWin::focus_out()
 {
 #ifdef _DEBUG
-    std::cout << "ImageWin::focus_out\n";
+    std::cout << "ImageWin::focus_out mode = " << m_mode << std::endl;;
 #endif
 
     // ポップアップメニューを表示しているかD&D中はfocus_outしない
@@ -186,16 +189,15 @@ void ImageWin::focus_out()
     if( CORE::get_dnd_manager()->now_dnd() ) return;
 
     // 折り畳み
-    if( has_focus() ){
+    resize( get_width(), IMGWIN_FOLDSIZE );
 
-        resize( get_width(), IMGWIN_FOLDSIZE );
-        m_mode = IMGWIN_FOLDING;
+    if( m_mode == IMGWIN_NORMAL
+        || m_mode == IMGWIN_EXPANDING // expanding 中にキャンセル
+        ) m_mode = IMGWIN_FOLDING;
 
-        // もう折り畳んだということにして、 on_configure_eventの中ではなくて
-        // ここで set_img_shown( false ) しておく
-        SESSION::set_img_shown( false );
-    }
-
+    // もう折り畳んだということにして、 on_configure_eventの中ではなくて
+    // ここで set_img_shown( false ) しておく
+    SESSION::set_img_shown( false );
 }
 
 
@@ -264,7 +266,8 @@ bool ImageWin::on_delete_event( GdkEventAny* event )
 #endif
 
     hide();
-    CORE::core_set_command( "switch_leftview" );    
+    SESSION::set_img_shown( false );
+    CORE::core_set_command( "restore_focus" );
 
     return true;
 }
@@ -287,7 +290,7 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 
 bool ImageWin::on_configure_event( GdkEventConfigure* event )
 {
-    if( ! m_boot ){
+    if( ! m_boot && ! m_maximized ){
 
         // 開いた
         if( m_mode == IMGWIN_EXPANDING ){
@@ -298,7 +301,7 @@ bool ImageWin::on_configure_event( GdkEventConfigure* event )
         // 閉じた
         else if( m_mode == IMGWIN_FOLDING ) m_mode = IMGWIN_FOLD;
 
-        // 最大最小化
+        // 最大化中
         else if( m_mode == IMGWIN_MAXIMIZING ) m_mode = IMGWIN_NORMAL;
 
         // リサイズ中
