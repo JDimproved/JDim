@@ -26,12 +26,13 @@ enum
     IMGWIN_FOLDING,    // 折り畳み中
     IMGWIN_FOLD,       // 折り畳んでいる
     IMGWIN_EXPANDING,  // 展開中
-    IMGWIN_MAXIMIZING  // 最大化中
+    IMGWIN_MAXIMIZING, // 最大化中
+    IMGWIN_HIDE        // hide 中
 };
 
 
 ImageWin::ImageWin()
-    : m_boot( true ), m_maximized( false ), m_mode( IMGWIN_FOLD ), m_tab( NULL )
+    : m_boot( true ), m_maximized( false ), m_tab( NULL )
 {
     // サイズ設定
     m_x = SESSION::get_img_x();
@@ -45,6 +46,8 @@ ImageWin::ImageWin()
 
     move( m_x, m_y );
     resize( m_width, m_height );
+    m_mode = IMGWIN_NORMAL;
+    SESSION::set_img_shown( true );
 
     m_scrwin.set_size_request( 0, 0 );
     m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
@@ -54,8 +57,6 @@ ImageWin::ImageWin()
 
     property_window_position().set_value( Gtk::WIN_POS_NONE );
     if( CORE::get_mainwindow() ) set_transient_for( *CORE::get_mainwindow() );
-
-    SESSION::set_img_shown( true );
 }
 
 
@@ -75,6 +76,13 @@ ImageWin::~ImageWin()
 
     SESSION::set_img_shown( false );
     CORE::core_set_command( "restore_focus" );
+}
+
+
+// hide 中
+const bool ImageWin::is_hide()
+{
+    return ( m_mode == IMGWIN_HIDE );
 }
 
 
@@ -159,6 +167,7 @@ void ImageWin::focus_in()
     resize( m_width, m_height );
     if( m_mode == IMGWIN_FOLD
         || m_mode == IMGWIN_FOLDING // folding 中にキャンセル
+        || m_mode == IMGWIN_HIDE
         ) m_mode = IMGWIN_EXPANDING;
 
     present();
@@ -194,7 +203,7 @@ bool ImageWin::on_focus_in_event( GdkEventFocus* event )
     std::cout << "ImageWin::on_focus_in_event in = " << event->in << std::endl;
 #endif
 
-    if( ! m_boot ) CORE::core_set_command( "switch_image" );
+    if( ! m_boot && ! has_focus() ) CORE::core_set_command( "switch_image" );
 
     return Gtk::Window::on_focus_in_event( event );
 }
@@ -252,9 +261,15 @@ bool ImageWin::on_delete_event( GdkEventAny* event )
     std::cout << "ImageWin::on_delete_event\n";
 #endif
 
-    hide();
-    SESSION::set_img_shown( false );
-    CORE::core_set_command( "restore_focus" );
+    if( m_maximized ) unmaximize();
+
+    else{
+
+        hide();
+        m_mode = IMGWIN_HIDE;
+        SESSION::set_img_shown( false );
+        CORE::core_set_command( "restore_focus" );
+    }
 
     return true;
 }

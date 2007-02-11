@@ -2384,6 +2384,7 @@ void Core::empty_page( const std::string& url )
     std::cout << "Core::empty_page url = " << url << std::endl;
 #endif
 
+    bool emb_img = SESSION::get_embedded_img();
     int focused_admin = SESSION::FOCUS_NO;
 
     // emptyになったadminとフォーカスされているadminが異なる場合は
@@ -2400,7 +2401,7 @@ void Core::empty_page( const std::string& url )
         focused_admin = SESSION::FOCUS_MESSAGE;
 
     // 埋め込み画像ビューが空になった
-    if( url == URL_IMAGEADMIN && SESSION::get_embedded_img() ){
+    if( url == URL_IMAGEADMIN && emb_img ){
 
         hide_imagetab();
 
@@ -2433,11 +2434,11 @@ void Core::empty_page( const std::string& url )
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
             if( get_right_current_page() == PAGE_ARTICLE ){
-                if( BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
+                if( emb_img && BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
                 else if( ! BOARD::get_admin()->empty() ) switch_board();
             }
         }
-        else if( ! IMAGE::get_admin()->empty() ) switch_image();
+        else if( emb_img && ! IMAGE::get_admin()->empty() ) switch_image();
 
         // フォーカス切り替え
         if( focused_admin == SESSION::FOCUS_NO ){
@@ -2458,7 +2459,7 @@ void Core::empty_page( const std::string& url )
 
             if( get_right_current_page() == PAGE_BOARD ){
                 if( ! ARTICLE::get_admin()->empty() ) switch_article();
-                else if( ! IMAGE::get_admin()->empty() ) switch_image();
+                else if( emb_img && ! IMAGE::get_admin()->empty() ) switch_image();
             }
         }
 
@@ -2832,7 +2833,9 @@ void Core::switch_message()
 // 2paneの時にboard <-> article 切替え
 void Core::toggle_article()
 {
-    if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_board();
+    // 画像ウィンドウが表示されている場合
+    if( ! SESSION::get_embedded_img() && SESSION::is_img_shown() ) switch_article(); 
+    else if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_board();
     else switch_article();
 }
 

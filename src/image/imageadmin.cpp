@@ -300,32 +300,27 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
     std::cout << "ImageAdmin::open_view url = " << command.url << std::endl;
 #endif
 
-    // 既に表示されているなら表示
-    if( get_view( command.url ) ){
-        switch_img( command.url );
-        return;
+    // まだ表示されていない
+    if( ! get_view( command.url ) ){
+
+        // アイコン作成 & 表示
+        SKELETON::View* icon = Gtk::manage( CORE::ViewFactory( CORE::VIEW_IMAGEICON, command.url ) );
+        if( icon ){
+            icon->set_size_request( ICON_SIZE ,  ICON_SIZE );
+            icon->show_view();
+            m_iconbox.pack_start( *icon, Gtk::PACK_SHRINK );
+            m_iconbox.show_all_children();
+        }
+
+        // view作成
+        SKELETON::View* view = Gtk::manage( CORE::ViewFactory( CORE::VIEW_IMAGEVIEW, command.url ) );
+        if( view ){
+            view->show_view();
+            m_list_view.push_back( view );
+        }
     }
 
-    // アイコン作成 & 表示
-    SKELETON::View* icon = Gtk::manage( CORE::ViewFactory( CORE::VIEW_IMAGEICON, command.url ) );
-    if( icon ){
-        icon->set_size_request( ICON_SIZE ,  ICON_SIZE );
-        icon->show_view();
-        m_iconbox.pack_start( *icon, Gtk::PACK_SHRINK );
-        m_iconbox.show_all_children();
-    }
-
-    // view作成
-    SKELETON::View* view = Gtk::manage( CORE::ViewFactory( CORE::VIEW_IMAGEVIEW, command.url ) );
-    if( view ){
-        view->show_view();
-        m_list_view.push_back( view );
-    }
-
-    // 画像ウィンドウ表示
-    if( ! SESSION::get_embedded_img() ) open_window();
-    if( m_win ) m_win->focus_out();
-
+    open_window();
     switch_img( command.url );
 }
 
@@ -553,13 +548,15 @@ void ImageAdmin::close_view( const std::string& url )
 //
 void ImageAdmin::open_window()
 {
-    if( ! m_win && ! empty() ){
+    if( ! SESSION::get_embedded_img() && ! m_win && ! empty() ){
         m_win = new IMAGE::ImageWin();
         m_win->set_title( "JD 画像ビュー" );
         m_win->pack_remove( false, m_tab, m_view );
         m_win->show_all();
     }
+    else if( m_win && m_win->is_hide() ) m_win->focus_in();
 }
+
 
 //
 // ウィンドウ閉じる

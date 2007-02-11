@@ -37,6 +37,9 @@ namespace IMAGE
         // 起動中
         const bool is_booting() const { return m_boot; }
 
+        // hide 中
+        const bool is_hide();
+
         // フォーカス状態
         const bool has_focus();
 
