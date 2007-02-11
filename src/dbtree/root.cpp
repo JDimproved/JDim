@@ -1,6 +1,7 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
+//#define _SHOW_GETBOARD
 //#define _SHOW_BOARD
 #include "jddebug.h"
 
@@ -97,7 +98,7 @@ void Root::clear()
 //
 BoardBase* Root::get_board( const std::string& url, int count )
 {
-#ifdef _DEBUG
+#ifdef _SHOW_GETBOARD
     std::cout << "Root::get_board : count = " << count << " url = " << url << std::endl;
 #endif
 
@@ -105,8 +106,8 @@ BoardBase* Root::get_board( const std::string& url, int count )
 
     // キャッシュ
     if( url == m_get_board_url && m_get_board ){
-#ifdef _DEBUG
-//        std::cout << "hit cache\n";
+#ifdef _SHOW_GETBOARD
+        std::cout << "hit cache\n";
 #endif
         return m_get_board;
     }
@@ -195,7 +196,7 @@ BoardBase* Root::get_board( const std::string& url, int count )
     // それでも見つからなかったらNULLクラスを返す
     
 #ifdef _DEBUG            
-    std::cout << "not found\nreturn Board_Null\n";
+    std::cout << "Root::get_board: not found\nreturn Board_Null\n";
 #endif
     
     return m_board_null;
@@ -203,6 +204,8 @@ BoardBase* Root::get_board( const std::string& url, int count )
 
 
 // ローカルキャッシュから板一覧XML読み込み
+//
+// (注) 板一覧 XML の保存は BBSLIST::BBSListViewMain が行う
 void Root::load_cache()
 {
     clear();
@@ -271,14 +274,8 @@ void Root::receive_finish()
 
         // データベース更新
         update_boards( m_xml_bbsmenu );
-        
-        // XML保存
-        std::string file_out = CACHE::path_xml_listmain();
-        CACHE::save_rawdata( file_out, m_xml_bbsmenu.data(), m_xml_bbsmenu.length() );
-#ifdef _DEBUG
-        std::cout << "Root::receive_finish save to " << file_out << std::endl;
-#endif        
-        // 板リストview更新
+
+        // bbslistview更新
         CORE::core_set_command( "update_bbslist" );
     }
 
@@ -401,10 +398,17 @@ void Root::update_boards( const std::string xml )
 //
 void Root::update_board( const std::string& url, const std::string& name, const std::string& basicauth, bool etc )
 {
+#ifdef _DEBUG
+    std::cout << "Root::update_board " << url << " " << name << std::endl;
+#endif
+
     m_move_info = std::string();
     set_board( url, name, basicauth, etc );
+
+    // 移転があった
     if( ! m_move_info.empty() ) save_movetable();
 }
+
 
 //
 // 板のタイプに合わせて板情報をセット
@@ -766,10 +770,13 @@ void Root::save_movetable()
     
     CACHE::save_rawdata( file_move, movetable.str() );
 
-    // お気に入りに登録されているURLも更新
-    CORE::core_set_command( "update_favorite" );
+    // 板一覧に登録されているURL更新
+    CORE::core_set_command( "update_bbslist_item" );
 
-    // 履歴メニューのURLも更新
+    // お気に入りに登録されているURL更新
+    CORE::core_set_command( "update_favorite_item" );
+
+    // 履歴メニューのURL更新
     CORE::core_set_command( "update_history" );
 }
 
