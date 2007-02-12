@@ -17,6 +17,7 @@ namespace IMAGE
     {
         bool m_boot;
         bool m_maximized;
+        bool m_iconified;
 
         int m_mode;
 

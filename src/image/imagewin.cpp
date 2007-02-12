@@ -31,7 +31,7 @@ enum
 
 
 ImageWin::ImageWin()
-    : Gtk::Window(), m_boot( true ), m_maximized( false ), m_tab( NULL )
+    : Gtk::Window(), m_boot( true ), m_maximized( false ), m_iconified( false ), m_tab( NULL )
 {
     // サイズ設定
     m_x = SESSION::get_img_x();
@@ -192,9 +192,11 @@ void ImageWin::pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view )
 void ImageWin::focus_in()
 {
 #ifdef _DEBUG
-    std::cout << "ImageWin::focus_in mode = " << m_mode << std::endl;
+    std::cout << "ImageWin::focus_in mode = " << m_mode 
+              << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
 #endif
 
+    if( m_iconified ) deiconify();
     if( m_maximized ) return;
 
     if( ( m_mode == IMGWIN_FOLD
@@ -213,15 +215,18 @@ void ImageWin::focus_in()
 void ImageWin::focus_out()
 {
 #ifdef _DEBUG
-    std::cout << "ImageWin::focus_out mode = " << m_mode << std::endl;;
+    std::cout << "ImageWin::focus_out mode = " << m_mode
+              << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
 #endif
 
     // ポップアップメニューを表示しているかD&D中はfocus_outしない
     if( SESSION::is_popupmenu_shown() ) return;
     if( CORE::get_dnd_manager()->now_dnd() ) return;
 
+    if( m_maximized ) iconify();
+
     // 折り畳み
-    if( m_mode == IMGWIN_NORMAL
+    else if( m_mode == IMGWIN_NORMAL
         || m_mode == IMGWIN_EXPANDING // expanding 中にキャンセル
         ){
 
@@ -239,7 +244,7 @@ void ImageWin::focus_out()
 bool ImageWin::on_focus_in_event( GdkEventFocus* event )
 {
 #ifdef _DEBUG
-    std::cout << "ImageWin::on_focus_in_event in = " << event->in << std::endl;
+    std::cout << "ImageWin::on_focus_in_event\n";
 #endif
 
     if( ! m_boot ){
@@ -255,7 +260,7 @@ bool ImageWin::on_focus_in_event( GdkEventFocus* event )
 bool ImageWin::on_focus_out_event( GdkEventFocus* event )
 {
 #ifdef _DEBUG
-    std::cout << "ImageWin::on_focus_out_event in = " << event->in << std::endl;
+    std::cout << "ImageWin::on_focus_out_event\n";
 #endif
 
     if( ! m_boot ) focus_out();
@@ -319,13 +324,18 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
     if( ! m_boot ){
 
         m_maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
-        if( m_maximized ){
+        m_iconified = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+
+        if( m_iconified ){}
+
+        else if( m_maximized ){
             m_mode = IMGWIN_EXPANDING;
             Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageWin::slot_idle ) );
         }
 
 #ifdef _DEBUG
-        std::cout << "ImageWin::on_window_state_event : maximized = " << m_maximized << std::endl;
+        std::cout << "ImageWin::on_window_state_event : "
+                  << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
 #endif     
     }
 
@@ -336,7 +346,7 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 bool ImageWin::on_configure_event( GdkEventConfigure* event )
 {
     // サイズ変更
-    if( ! m_boot && ! m_maximized
+    if( ! m_boot && ! m_maximized && ! m_iconified
         && ( m_mode == IMGWIN_FOLD )
         && get_height() > get_min_height() ){
 
