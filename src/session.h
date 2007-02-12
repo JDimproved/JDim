@@ -38,8 +38,18 @@ namespace SESSION
         TOOLBAR_RIGHT
     };
 
+    // WM
+    enum
+    {
+        WM_GNOME = 0,
+        WM_XFCE,
+        WM_UNKNON
+    };
+
     void init_session();
     void save_session();
+
+    const int get_wm();
 
     const int get_mode_pane();
     void set_mode_pane( int mode );

@@ -324,6 +324,22 @@ void SESSION::save_session()
 }
 
 
+// WM 判定
+//
+// TODO: getenv( "DESKTOP_SESSION" )で判定できない場合の判定方法を考える
+//
+const int SESSION::get_wm()
+{
+    std::string wm;
+    if( getenv( "DESKTOP_SESSION" ) ) wm = getenv( "DESKTOP_SESSION" );
+
+    if( wm.find( "xfce" ) != std::string::npos ) return WM_XFCE;
+    if( wm.find( "gnome" ) != std::string::npos ) return WM_GNOME;
+
+    return WM_UNKNON;
+}
+
+
 const int SESSION::get_mode_pane() { return mode_pane; }
 void SESSION::set_mode_pane( int mode ){ mode_pane = mode; }
 
