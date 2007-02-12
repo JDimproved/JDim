@@ -86,6 +86,8 @@ Core::Core( WinMain& win_main )
     instance_core = this;
     m_disp.connect( sigc::mem_fun( *this, &Core::exec_command ) );
 
+    m_win_main.signal_window_state_event().connect( sigc::mem_fun( *this, &Core::slot_window_state_event ) );
+
     // データベースのルート作成
     DBTREE::create_root();
     DBIMG::create_root();
@@ -2336,11 +2338,20 @@ void Core::set_right_current_page( int page )
 //
 bool Core::slot_focus_out_event( GdkEventFocus* )
 {
-    FOCUS_OUT_ALL();
-
 #ifdef _DEBUG
     std::cout << "Core::slot_focus_out_event admin = " << SESSION::focused_admin() << std::endl;
 #endif
+
+    FOCUS_OUT_ALL();
+
+    // GNOME環境ではタスクトレイなどで切り替えたときに画像windowがフォーカスされてしまうので
+    // 一時的に transient 指定を外す。フォーカスインしたときに transient 指定を戻す
+    // slot_focus_in_event(), slot_window_state_event() も参照すること
+
+    // TODO : メインウィンドウを最小化したあとに戻すと画像ウィンドウが開くのを直す
+    if( SESSION::get_wm() == SESSION::WM_GNOME && ! SESSION::get_embedded_img() ){
+        IMAGE::get_admin()->set_command_immediately( "set_transient_win", "", "false" );
+    }
 
     return true;
 }
@@ -2355,11 +2366,36 @@ bool Core::slot_focus_in_event( GdkEventFocus* )
     std::cout << "Core::slot_focus_in_event admin = " << SESSION::focused_admin() << std::endl;
 #endif
 
+    if( SESSION::get_wm() == SESSION::WM_GNOME && ! SESSION::get_embedded_img() ){
+        IMAGE::get_admin()->set_command_immediately( "set_transient_win", "", "true" );
+    }
     restore_focus( false );
 
     return true;
 }
 
+
+//
+// メインウィンドウの状態が変わった
+//
+bool Core::slot_window_state_event( GdkEventWindowState* event )
+{
+#ifdef _DEBUG
+    std::cout << "Core::slot_window_state_event\n";
+#endif     
+
+    // 画像ウィンドウを表示しているときに transient 指定を外すと画像ウィンドウが
+    // 表示されなくなるのでtransient指定を戻す
+    if( SESSION::get_wm() == SESSION::WM_GNOME &&
+        ! SESSION::get_embedded_img() && ( event->new_window_state & GDK_WINDOW_STATE_ICONIFIED ) ){
+        IMAGE::get_admin()->set_command_immediately( "set_transient_win", "", "true" );
+    }
+
+    // タブ幅調整
+    CORE::core_set_command( "adjust_tabwidth" );
+
+    return true;
+}
 
 
 //

@@ -29,6 +29,8 @@ namespace IMAGE
         Gtk::ScrolledWindow m_scrwin;
         Gtk::Widget* m_tab;
 
+        Gtk::Window m_dummywin; // set_transient()で使うダミーwindow
+
       public:
 
         ImageWin();
@@ -43,6 +45,7 @@ namespace IMAGE
         // フォーカス状態
         const bool has_focus();
 
+        void set_transient( bool set );
         void pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view );
 
         void focus_in();
@@ -53,8 +56,6 @@ namespace IMAGE
 
       protected:
 
-        virtual bool on_expose_event( GdkEventExpose* event );
-
         virtual bool on_focus_in_event( GdkEventFocus* event );
         virtual bool on_focus_out_event( GdkEventFocus* event );
 
@@ -63,6 +64,8 @@ namespace IMAGE
         virtual bool on_configure_event( GdkEventConfigure* event );
 
       private:
+
+        bool slot_idle();
 
         // ウィンドウを折り畳んだときの高さ
         int get_min_height();

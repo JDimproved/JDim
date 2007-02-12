@@ -145,8 +145,5 @@ bool WinMain::on_window_state_event( GdkEventWindowState* event )
     std::cout << "WinMain::on_window_state_event : maximized = " << m_maximized << std::endl;
 #endif     
 
-    // タブ幅調整
-    CORE::core_set_command( "adjust_tabwidth" );
-
     return Gtk::Window::on_window_state_event( event );
 }

@@ -287,6 +287,10 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
     else if( command.command == "hide_window" ){
         if( m_win ) m_win->hide_win();
     }
+
+    else if( command.command == "set_transient_win" ){
+        if( m_win ) m_win->set_transient( (command.arg1 == "true" ) );
+    }
 }
 
 

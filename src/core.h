@@ -229,6 +229,7 @@ namespace CORE
 
         bool slot_focus_out_event( GdkEventFocus* ev );
         bool slot_focus_in_event( GdkEventFocus* ev );
+        bool slot_window_state_event( GdkEventWindowState* event );
         void slot_active_url();
 
         // あるadminがemptyになったので他のadminにスイッチ
