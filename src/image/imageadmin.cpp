@@ -622,6 +622,16 @@ void ImageAdmin::close_right_views( const std::string& url )
 
 
 //
+// ステータス表示
+//
+void ImageAdmin::set_status( const std::string& url, const std::string& stat )
+{
+    if( m_win ) m_win->set_status( stat );
+    else Admin::set_status( url, stat );
+}
+
+
+//
 // 現在のviewをフォーカスする
 //
 // 他のクラスからは直接呼ばないで、set_command()経由で呼ぶこと
@@ -640,13 +650,10 @@ void ImageAdmin::focus_current_view()
         focus_out_all();
 
         view_icon->focus_view();
+        if( ! m_win ) CORE::core_set_command( "set_url", view_icon->get_url() );
+
         SKELETON::View* view = get_current_view();
-
-        if( SESSION::get_embedded_img() ){
-
-            CORE::core_set_command( "set_url", view_icon->get_url() );
-            if( view ) CORE::core_set_command( "set_status", "", view->get_status() );
-        }
+        if( view ) set_status( view_icon->get_url(), view->get_status() );
     }
 }
 

@@ -16,6 +16,7 @@ namespace IMAGE
     class ImageWin : public Gtk::Window
     {
         bool m_boot;
+        bool m_transient;
         bool m_maximized;
         bool m_iconified;
 
@@ -27,10 +28,19 @@ namespace IMAGE
         int m_height;
 
         SKELETON::JDVBox m_vbox;
+        SKELETON::JDVBox m_vbox_view;
         Gtk::ScrolledWindow m_scrwin;
         Gtk::Widget* m_tab;
 
         Gtk::Window m_dummywin; // set_transient()で使うダミーwindow
+
+        // ステータスバー
+#if GTKMMVER <= 240
+        Gtk::Statusbar m_statbar;
+#else
+        Gtk::HBox m_statbar;
+        Gtk::Label m_label_stat;
+#endif
 
       public:
 
@@ -48,6 +58,8 @@ namespace IMAGE
 
         void set_transient( bool set );
         void pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view );
+
+        void set_status( const std::string& stat );
 
         void focus_in();
         void focus_out();

@@ -31,7 +31,7 @@ enum
 
 
 ImageWin::ImageWin()
-    : Gtk::Window(), m_boot( true ), m_maximized( false ), m_iconified( false ), m_tab( NULL )
+    : Gtk::Window(), m_boot( true ), m_transient( false ), m_maximized( false ), m_iconified( false ), m_tab( NULL )
 {
     // サイズ設定
     m_x = SESSION::get_img_x();
@@ -48,8 +48,17 @@ ImageWin::ImageWin()
     m_mode = IMGWIN_NORMAL;
     SESSION::set_img_shown( true );
 
+#if GTKMMVER >= 260
+    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
+#endif
+
+    m_vbox_view.pack_end( m_statbar, Gtk::PACK_SHRINK );
+
     m_scrwin.set_size_request( 0, 0 );
     m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+    m_scrwin.add( m_vbox_view );
+
+    m_vbox.pack_end( m_scrwin );
 
     add( m_vbox );
     show_all_children();
@@ -122,14 +131,24 @@ bool ImageWin::slot_idle()
 
 void ImageWin::set_transient( bool set )
 {
+    if( set && ! m_transient && CORE::get_mainwindow() ){
+
 #ifdef _DEBUG
     std::cout << "ImageWin::set_transient set = " << set << std::endl;
 #endif
-
-    if( set && CORE::get_mainwindow() ) set_transient_for( *CORE::get_mainwindow() );
+        set_transient_for( *CORE::get_mainwindow() );
+        m_transient = true;
+    }
 
     // ダミーwindowを使ってtransientを外す
-    else set_transient_for( m_dummywin );
+    else if( m_transient ){
+
+#ifdef _DEBUG
+    std::cout << "ImageWin::set_transient set = " << set << std::endl;
+#endif
+        set_transient_for( m_dummywin );
+        m_transient = false;
+    }
 }
 
 
@@ -172,21 +191,23 @@ void ImageWin::pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view )
 
     m_tab = &tab;
 
-    m_vbox.pack_remove_start( unpack, tab, Gtk::PACK_SHRINK );
-
-    if( unpack ){
-
-        // ScrolledWindow は Gtk::Viewport を作って widget を add するときがあるので注意
-        Gtk::Viewport *vport = dynamic_cast< Gtk::Viewport* >( m_scrwin.get_child() );
-        if( vport ) vport->remove();
-        else m_scrwin.remove();
-    }
-    else m_scrwin.add( view );
-
-    m_vbox.pack_remove_start( unpack, m_scrwin );
+    m_vbox.pack_remove_end( unpack, tab, Gtk::PACK_SHRINK );
+    m_vbox_view.pack_remove_end( unpack, view );
 
     if( ! unpack ) m_vbox.show_all_children();
 }
+
+
+
+void ImageWin::set_status( const std::string& stat )
+{
+#if GTKMMVER <= 240
+    m_statbar.push( stat );
+#else
+    m_label_stat.set_text( stat );
+#endif
+}
+
 
 
 void ImageWin::focus_in()

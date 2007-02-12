@@ -81,6 +81,7 @@ namespace IMAGE
         virtual void redraw_view( const std::string& url );
         virtual void redraw_current_view();
         virtual void close_view( const std::string& url );
+        virtual void set_status( const std::string& url, const std::string& stat );
         virtual void focus_current_view();
         void close_other_views( const std::string& url );
         void close_left_views( const std::string& url );
