@@ -330,13 +330,19 @@ void SESSION::save_session()
 //
 const int SESSION::get_wm()
 {
+    int ret = WM_UNKNON;
+
     std::string wm;
     if( getenv( "DESKTOP_SESSION" ) ) wm = getenv( "DESKTOP_SESSION" );
 
-    if( wm.find( "xfce" ) != std::string::npos ) return WM_XFCE;
-    if( wm.find( "gnome" ) != std::string::npos ) return WM_GNOME;
+    if( wm.find( "xfce" ) != std::string::npos ) ret = WM_XFCE;
+    else if( wm.find( "gnome" ) != std::string::npos ) ret = WM_GNOME;
 
-    return WM_UNKNON;
+    if( ret == WM_UNKNON ){
+        if( getenv( "GNOME_DESKTOP_SESSION_ID" ) ) ret = WM_GNOME;
+    }
+
+    return ret;
 }
 
 
