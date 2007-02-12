@@ -478,10 +478,7 @@ void Admin::exec_command()
     // ステータス表示
     // アクティブなviewから依頼が来たらコアに渡す
     else if( command.command == "set_status" ){
-
-        SKELETON::View* view = get_current_view();
-        if( m_focus && view && view->get_url() == command.url )
-            CORE::core_set_command( "set_status", command.url, command.arg1 );
+        set_status( command.url, command.arg1 );
     }
 
     // オートリロードのキャンセル
@@ -871,6 +868,20 @@ void Admin::update_finish( const std::string& url )
 
     SKELETON::View* view = get_view( url );
     if( view ) view->update_finish();
+}
+
+
+
+//
+// ステータス表示
+//
+void Admin::set_status( const std::string& url, const std::string& stat )
+{
+    // アクティブなviewからコマンドが来たら表示する
+    SKELETON::View* view = get_current_view();
+    if( m_focus && view && view->get_url() == url ){
+        CORE::core_set_command( "set_status", url, stat );
+    }
 }
 
 
