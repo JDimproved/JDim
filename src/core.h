@@ -64,6 +64,12 @@ namespace CORE
         sigc::connection m_sigc_switch_page;
 
         WinMain& m_win_main;
+
+        // フォーカス制御用カウンタ
+        int m_count_focusout;
+
+        // アイコン化されている
+        bool m_iconified;
         
         SKELETON::JDVBox m_vbox_main;
         SKELETON::JDHPaned m_hpaned;

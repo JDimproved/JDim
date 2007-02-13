@@ -15,6 +15,7 @@ int mode_pane;
 bool mode_online;
 bool mode_login2ch;
 
+int win_manager;
 int win_x;
 int win_y;
 int win_width;
@@ -55,6 +56,9 @@ int win_toolbar_pos;
 
 int win_focused_admin;
 int win_focused_admin_sidebar;
+
+bool focus_win_main;
+bool focus_win_img;
 
 bool embedded_img;
 
@@ -179,6 +183,18 @@ void SESSION::init_session()
     img_dir_img_save = cf.get_option( "img_dir_img_save", "" );
 
     popupmenu_shown = false;
+
+    // WM 判定
+    // TODO: 環境変数で判定できない場合の判定方法を考える
+    win_manager = WM_UNKNON;
+    std::string str_wm;
+    if( getenv( "DESKTOP_SESSION" ) ) str_wm = getenv( "DESKTOP_SESSION" );
+    if( str_wm.find( "xfce" ) != std::string::npos ) win_manager = WM_XFCE;
+    else if( str_wm.find( "gnome" ) != std::string::npos ) win_manager = WM_GNOME;
+    if( win_manager == WM_UNKNON ){
+        if( getenv( "GNOME_DESKTOP_SESSION_ID" ) ) win_manager = WM_GNOME;
+    }
+
 
 #ifdef _DEBUG
     std::cout << "x=" << win_x << std::endl
@@ -325,26 +341,7 @@ void SESSION::save_session()
 
 
 // WM 判定
-//
-// TODO: getenv( "DESKTOP_SESSION" )で判定できない場合の判定方法を考える
-//
-const int SESSION::get_wm()
-{
-    int ret = WM_UNKNON;
-
-    std::string wm;
-    if( getenv( "DESKTOP_SESSION" ) ) wm = getenv( "DESKTOP_SESSION" );
-
-    if( wm.find( "xfce" ) != std::string::npos ) ret = WM_XFCE;
-    else if( wm.find( "gnome" ) != std::string::npos ) ret = WM_GNOME;
-
-    if( ret == WM_UNKNON ){
-        if( getenv( "GNOME_DESKTOP_SESSION_ID" ) ) ret = WM_GNOME;
-    }
-
-    return ret;
-}
-
+const int SESSION::get_wm(){ return win_manager; }
 
 const int SESSION::get_mode_pane() { return mode_pane; }
 void SESSION::set_mode_pane( int mode ){ mode_pane = mode; }
@@ -371,6 +368,15 @@ int SESSION::focused_admin(){ return win_focused_admin; }
 void SESSION::set_focused_admin( int admin ){ win_focused_admin = admin; }
 int SESSION::focused_admin_sidebar(){ return win_focused_admin_sidebar; }
 void SESSION::set_focused_admin_sidebar( int admin ){ win_focused_admin_sidebar = admin; }
+
+
+// 各window がフォーカスされているか
+const bool SESSION::is_focus_win_main(){ return focus_win_main; }
+void SESSION::set_focus_win_main( bool set ){ focus_win_main = set; }
+
+const bool SESSION::is_focus_win_img(){ return focus_win_img; }
+void SESSION::set_focus_win_img( bool set ){ focus_win_img = set; }
+
 
 void SESSION::set_x( int x ){ win_x = x; }
 void SESSION::set_y( int y ){ win_y = y; }

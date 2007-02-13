@@ -141,7 +141,7 @@ void ImageWin::set_transient( bool set )
     }
 
     // ダミーwindowを使ってtransientを外す
-    else if( m_transient ){
+    else if( ! set && m_transient ){
 
 #ifdef _DEBUG
     std::cout << "ImageWin::set_transient set = " << set << std::endl;
@@ -217,6 +217,8 @@ void ImageWin::focus_in()
               << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
 #endif
 
+    SESSION::set_focus_win_img( true );
+
     if( m_iconified ) deiconify();
     if( m_maximized ) return;
 
@@ -239,6 +241,8 @@ void ImageWin::focus_out()
     std::cout << "ImageWin::focus_out mode = " << m_mode
               << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
 #endif
+
+    SESSION::set_focus_win_img( false );
 
     // ポップアップメニューを表示しているかD&D中はfocus_outしない
     if( SESSION::is_popupmenu_shown() ) return;
