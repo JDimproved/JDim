@@ -23,7 +23,6 @@ using namespace IMAGE;
 enum
 {
     IMGWIN_NORMAL = 0, // 開いている
-    IMGWIN_FOLDING,    // 折り畳み中
     IMGWIN_FOLD,       // 折り畳んでいる
     IMGWIN_EXPANDING,  // 展開中
     IMGWIN_HIDE        // hide 中
@@ -43,10 +42,12 @@ ImageWin::ImageWin()
     std::cout << "MessageWin::MessageWin x y w h = " << m_x << " " << m_y << " " << m_width << " " << m_height << std::endl;
 #endif
 
+    m_dummywin.resize( 1, 1 );
+    m_dummywin.move( -1, -1 );
+
+    set_skip_taskbar_hint( true );
     move( m_x, m_y );
-    resize( m_width, m_height );
-    m_mode = IMGWIN_NORMAL;
-    SESSION::set_img_shown( true );
+    focus_out();
 
 #if GTKMMVER >= 260
     m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
@@ -88,6 +89,23 @@ ImageWin::~ImageWin()
 }
 
 
+void ImageWin::clock_in()
+{
+    // 遅延リサイズ( focus_in()にある説明を参照 )
+    if( m_mode == IMGWIN_EXPANDING ){
+
+        ++m_resize_count;
+        if( m_resize_count > 5 ){ 
+            
+            resize( m_width, m_height );
+            m_mode = IMGWIN_NORMAL;
+            SESSION::set_img_shown( true );
+            present();
+        }
+    }
+}
+
+
 bool ImageWin::slot_idle()
 {
     // ブート完了
@@ -101,28 +119,6 @@ bool ImageWin::slot_idle()
         // ImageAdmin 経由で Coreにブートが終わったことを知らせるため
         // ダミーコマンドを送る
         IMAGE::get_admin()->set_command( "imgwin_boot_fin" );
-    }
-
-    // 開いた
-    else if( m_mode == IMGWIN_EXPANDING ){
-
-#ifdef _DEBUG
-    std::cout << "----------------\nImageWin::slot_idle expanded\n";
-#endif
-
-        m_mode = IMGWIN_NORMAL;
-        SESSION::set_img_shown( true );
-        present();
-    }
-
-    // 閉じた
-    else if( m_mode == IMGWIN_FOLDING ){
-
-#ifdef _DEBUG
-        std::cout << "----------------\nImageWin::slot_idle folded\n";
-#endif
-
-        m_mode = IMGWIN_FOLD;
     }
 
     return false;
@@ -220,17 +216,14 @@ void ImageWin::focus_in()
     SESSION::set_focus_win_img( true );
 
     if( m_iconified ) deiconify();
-    if( m_maximized ) return;
 
-    if( ( m_mode == IMGWIN_FOLD
-          || m_mode == IMGWIN_FOLDING // folding 中にキャンセル
-          || m_mode == IMGWIN_HIDE )
-        ){
-
-        resize( m_width, m_height );
-
+    // 開く
+    //
+    // GNOME環境では focus in 動作中に resize() が失敗する時が
+    // あるので、遅延させて clock_in() の中でリサイズする
+    if( ! m_maximized ){
         m_mode = IMGWIN_EXPANDING;
-        Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageWin::slot_idle ) );
+        m_resize_count = 0;
     }
 }
 
@@ -251,18 +244,11 @@ void ImageWin::focus_out()
     if( m_maximized ) iconify();
 
     // 折り畳み
-    else if( m_mode == IMGWIN_NORMAL
-        || m_mode == IMGWIN_EXPANDING // expanding 中にキャンセル
-        ){
-
+    else{
         resize( m_width, IMGWIN_FOLDSIZE );
-        m_mode = IMGWIN_FOLDING;
-        Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageWin::slot_idle ) );
+        m_mode = IMGWIN_FOLD;
+        SESSION::set_img_shown( false );
     }
-
-    // もう折り畳んだということにして、 on_configure_eventの中ではなくて
-    // ここで set_img_shown( false ) しておく
-    SESSION::set_img_shown( false );
 }
 
 
@@ -272,11 +258,7 @@ bool ImageWin::on_focus_in_event( GdkEventFocus* event )
     std::cout << "ImageWin::on_focus_in_event\n";
 #endif
 
-    if( ! m_boot ){
-
-        if( ! has_focus() ) CORE::core_set_command( "switch_image" );
-
-    }
+    if( ! m_boot ) CORE::core_set_command( "switch_image" );
 
     return Gtk::Window::on_focus_in_event( event );
 }
@@ -354,8 +336,8 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
         if( m_iconified ){}
 
         else if( m_maximized ){
-            m_mode = IMGWIN_EXPANDING;
-            Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageWin::slot_idle ) );
+            m_mode = IMGWIN_NORMAL;
+            SESSION::set_img_shown( true );
         }
 
 #ifdef _DEBUG

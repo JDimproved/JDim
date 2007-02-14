@@ -203,6 +203,8 @@ void ImageAdmin::clock_in()
             m_counter_scroll = 0;
         }
     }
+
+    if( m_win ) m_win->clock_in();
 }
 
 
@@ -558,7 +560,10 @@ void ImageAdmin::open_window()
         m_win->pack_remove( false, m_tab, m_view );
         m_win->show_all();
     }
-    else if( m_win && m_win->is_hide() ) m_win->focus_in();
+    else if( m_win && m_win->is_hide() ){
+        m_win->show();
+        m_win->focus_in();
+    }
 }
 
 

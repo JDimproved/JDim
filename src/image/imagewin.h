@@ -21,6 +21,7 @@ namespace IMAGE
         bool m_iconified;
 
         int m_mode;
+        int m_resize_count;
 
         int m_x;
         int m_y;
@@ -46,6 +47,8 @@ namespace IMAGE
 
         ImageWin();
         ~ImageWin();
+
+        void clock_in();
 
         // 起動中
         const bool is_booting() const { return m_boot; }
