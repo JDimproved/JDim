@@ -21,7 +21,7 @@ namespace IMAGE
         bool m_iconified;
 
         int m_mode;
-        int m_resize_count;
+        int m_counter;
 
         int m_x;
         int m_y;

@@ -9,6 +9,7 @@
 #include "session.h"
 #include "dndmanager.h"
 #include "command.h"
+#include "global.h"
 
 
 using namespace IMAGE;
@@ -18,6 +19,8 @@ using namespace IMAGE;
 // タイトルバーの高さの取得方法が分からないのでとりあえずdefineしておく
 #define IMGWIN_TITLBARHEIGHT 16
 
+#define UNGRAB_TIME 100 //msec
+
 
 // ウィンドウ状態
 enum
@@ -25,7 +28,8 @@ enum
     IMGWIN_NORMAL = 0, // 開いている
     IMGWIN_FOLD,       // 折り畳んでいる
     IMGWIN_EXPANDING,  // 展開中
-    IMGWIN_HIDE        // hide 中
+    IMGWIN_HIDE,       // hide 中
+    IMGWIN_UNGRAB      // ブート直後にungrab
 };
 
 
@@ -44,6 +48,8 @@ ImageWin::ImageWin()
 
     m_dummywin.resize( 1, 1 );
     m_dummywin.move( -1, -1 );
+    m_dummywin.show();
+    m_dummywin.set_skip_taskbar_hint( true );
 
     set_skip_taskbar_hint( true );
     move( m_x, m_y );
@@ -94,13 +100,26 @@ void ImageWin::clock_in()
     // 遅延リサイズ( focus_in()にある説明を参照 )
     if( m_mode == IMGWIN_EXPANDING ){
 
-        ++m_resize_count;
-        if( m_resize_count > 5 ){ 
-            
-            resize( m_width, m_height );
-            m_mode = IMGWIN_NORMAL;
-            SESSION::set_img_shown( true );
-            present();
+        ++m_counter;
+        if( m_counter > 5 ){ 
+
+            if( get_height() < m_height ) resize( m_width, m_height );
+            else{
+                m_mode = IMGWIN_NORMAL;
+                SESSION::set_img_shown( true );
+                present();
+            }
+        }
+    }
+
+    // ブート直後にフォーカスをメインウィンドウに戻す
+    else if( m_mode == IMGWIN_UNGRAB ){
+
+        ++m_counter;
+        if( m_counter > UNGRAB_TIME / TIMER_TIMEOUT ){ 
+
+            CORE::core_set_command( "restore_focus" );
+            m_mode = IMGWIN_FOLD;
         }
     }
 }
@@ -112,9 +131,15 @@ bool ImageWin::slot_idle()
     if( m_boot ){
 
 #ifdef _DEBUG
-    std::cout << "----------------\nImageWin::slot_idle boot end\n";
+        std::cout << "----------------\nImageWin::slot_idle boot end mode = " << m_mode << std::endl;
 #endif
         m_boot = false;
+
+        // 遅延させて clock_in()の中でフォーカスをメインウィンドウに戻す
+        if( m_mode == IMGWIN_FOLD ){
+            m_mode = IMGWIN_UNGRAB;
+            m_counter = 0;
+        }
 
         // ImageAdmin 経由で Coreにブートが終わったことを知らせるため
         // ダミーコマンドを送る
@@ -223,7 +248,7 @@ void ImageWin::focus_in()
     // あるので、遅延させて clock_in() の中でリサイズする
     if( ! m_maximized ){
         m_mode = IMGWIN_EXPANDING;
-        m_resize_count = 0;
+        m_counter = 0;
     }
 }
 
@@ -241,14 +266,12 @@ void ImageWin::focus_out()
     if( SESSION::is_popupmenu_shown() ) return;
     if( CORE::get_dnd_manager()->now_dnd() ) return;
 
-    if( m_maximized ) iconify();
+    if( m_maximized ) unmaximize();
 
     // 折り畳み
-    else{
-        resize( m_width, IMGWIN_FOLDSIZE );
-        m_mode = IMGWIN_FOLD;
-        SESSION::set_img_shown( false );
-    }
+    resize( m_width, IMGWIN_FOLDSIZE );
+    m_mode = IMGWIN_FOLD;
+    SESSION::set_img_shown( false );
 }
 
 
@@ -258,7 +281,7 @@ bool ImageWin::on_focus_in_event( GdkEventFocus* event )
     std::cout << "ImageWin::on_focus_in_event\n";
 #endif
 
-    if( ! m_boot ) CORE::core_set_command( "switch_image" );
+    if( ! m_boot && m_mode != IMGWIN_UNGRAB ) CORE::core_set_command( "switch_image" );
 
     return Gtk::Window::on_focus_in_event( event );
 }
