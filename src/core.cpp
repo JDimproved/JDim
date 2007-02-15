@@ -1812,17 +1812,6 @@ void Core::set_command( const COMMAND_ARGS& command )
         DBIMG::delete_cache( command.url );
         return;
     }
-    else if( command.command == "hide_imagewindow" ){
-
-        IMAGE::get_admin()->set_command_immediately( "hide_window" );
-        return;
-    }
-    else if( command.command == "show_imagewindow" ){
-
-        IMAGE::get_admin()->set_command_immediately( "show_window" );
-        return;
-    }
-
     else if( command.command == "close_image_view" ){
 
         // ダイアログから削除したときにフォーカスが外れるので

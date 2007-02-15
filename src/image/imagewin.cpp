@@ -34,7 +34,13 @@ enum
 
 
 ImageWin::ImageWin()
-    : Gtk::Window(), m_boot( true ), m_transient( false ), m_maximized( false ), m_iconified( false ), m_tab( NULL )
+    : Gtk::Window(),
+      m_boot( true ),
+      m_enable_close( true ),
+      m_transient( false ),
+      m_maximized( false ),
+      m_iconified( false ),
+      m_tab( NULL )
 {
     // サイズ設定
     m_x = SESSION::get_img_x();
@@ -219,7 +225,7 @@ void ImageWin::pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view )
 }
 
 
-
+// ステータスバー表示
 void ImageWin::set_status( const std::string& stat )
 {
 #if GTKMMVER <= 240
@@ -230,7 +236,7 @@ void ImageWin::set_status( const std::string& stat )
 }
 
 
-
+// フォーカスイン
 void ImageWin::focus_in()
 {
 #ifdef _DEBUG
@@ -246,13 +252,14 @@ void ImageWin::focus_in()
     //
     // GNOME環境では focus in 動作中に resize() が失敗する時が
     // あるので、遅延させて clock_in() の中でリサイズする
-    if( ! m_maximized ){
+    if( m_enable_close && ! m_maximized ){
         m_mode = IMGWIN_EXPANDING;
         m_counter = 0;
     }
 }
 
 
+// フォーカスアウト
 void ImageWin::focus_out()
 {
 #ifdef _DEBUG
@@ -269,12 +276,15 @@ void ImageWin::focus_out()
     if( m_maximized ) unmaximize();
 
     // 折り畳み
-    resize( m_width, IMGWIN_FOLDSIZE );
-    m_mode = IMGWIN_FOLD;
-    SESSION::set_img_shown( false );
+    if( m_enable_close ){
+        resize( m_width, IMGWIN_FOLDSIZE );
+        m_mode = IMGWIN_FOLD;
+        SESSION::set_img_shown( false );
+    }
 }
 
 
+// フォーカスインイベント
 bool ImageWin::on_focus_in_event( GdkEventFocus* event )
 {
 #ifdef _DEBUG
@@ -287,6 +297,7 @@ bool ImageWin::on_focus_in_event( GdkEventFocus* event )
 }
 
 
+// フォーカスアウトイベント
 bool ImageWin::on_focus_out_event( GdkEventFocus* event )
 {
 #ifdef _DEBUG
@@ -299,37 +310,7 @@ bool ImageWin::on_focus_out_event( GdkEventFocus* event )
 }
 
 
-//
-// ImageWin::hide_win() でwindowを隠した後に show する
-//
-void ImageWin::show_win()
-{
-#ifdef _DEBUG
-    std::cout << "ImageWin::show_win\n";
-#endif
-
-    set_transient( true );
-    CORE::core_set_command( "restore_focus" );
-}
-
-
-//
-// hide する
-//
-// (注意) 実際には hide しないで transient 指定を外して lower するだけ
-//
-void ImageWin::hide_win()
-{
-#ifdef _DEBUG
-    std::cout << "ImageWin::hide_win\n";
-#endif
-
-    set_transient( false );
-    get_window()->lower();
-}
-
-
-
+// Xボタンを押した
 bool ImageWin::on_delete_event( GdkEventAny* event )
 {
 #ifdef _DEBUG
@@ -349,6 +330,7 @@ bool ImageWin::on_delete_event( GdkEventAny* event )
 }
 
 
+// 最大、最小化
 bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 {
     if( ! m_boot ){
@@ -373,11 +355,12 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 }
 
 
+// サイズ変更
 bool ImageWin::on_configure_event( GdkEventConfigure* event )
 {
-    // サイズ変更
+    // 最大、最小化しているときは除く
     if( ! m_boot && ! m_maximized && ! m_iconified
-        && ( m_mode == IMGWIN_FOLD )
+        && m_mode == IMGWIN_FOLD
         && get_height() > get_min_height() ){
 
         if( get_window() ) get_window()->get_root_origin( m_x, m_y );

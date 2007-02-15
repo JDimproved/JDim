@@ -16,6 +16,7 @@ namespace IMAGE
     class ImageWin : public Gtk::Window
     {
         bool m_boot;
+        bool m_enable_close;
         bool m_transient;
         bool m_maximized;
         bool m_iconified;
@@ -59,6 +60,9 @@ namespace IMAGE
         // フォーカス状態
         const bool has_focus();
 
+        // ウィンドウの開け閉め許可
+        void set_enable_close( bool enable ){ m_enable_close = enable; }
+
         void set_transient( bool set );
         void pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view );
 
@@ -66,9 +70,6 @@ namespace IMAGE
 
         void focus_in();
         void focus_out();
-
-        void show_win();
-        void hide_win();
 
       protected:
 

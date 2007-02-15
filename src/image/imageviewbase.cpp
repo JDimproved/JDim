@@ -524,15 +524,19 @@ void ImageViewBase::operate_view( const int& control )
 
         case CONTROL::Delete:
 
+            IMAGE::get_admin()->set_command_immediately( "disable_close_win" );
+
             if( !m_img->is_protected() ){
                 Gtk::MessageDialog mdiag( "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-                if( mdiag.run() != Gtk::RESPONSE_OK ) return;
-                delete_view();
+                if( mdiag.run() == Gtk::RESPONSE_OK ) delete_view();
             }
             else{
+                IMAGE::get_admin()->set_command_immediately( "disable_close_win" );
                 Gtk::MessageDialog mdiag( "キャッシュ保護されています" );
                 mdiag.run();
             }
+
+            IMAGE::get_admin()->set_command_immediately( "enable_close_win" );
 
             break;
 
@@ -833,7 +837,9 @@ void ImageViewBase::slot_save()
 {
     if( ! m_enable_menuslot ) return;
 
+    IMAGE::get_admin()->set_command_immediately( "disable_close_win" );
     m_img->save( std::string() );
+    IMAGE::get_admin()->set_command_immediately( "enable_close_win" );
 }
 
 

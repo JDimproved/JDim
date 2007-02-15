@@ -281,15 +281,16 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
         return;
     }
 
-    // window のshow/hide
-    else if( command.command == "show_window" ){
-        if( m_win ) m_win->show_win();
+    // window 開け閉じ可能/不可
+    else if( command.command == "enable_close_win" ){
+        if( m_win ) m_win->set_enable_close( true );
     }
 
-    else if( command.command == "hide_window" ){
-        if( m_win ) m_win->hide_win();
+    else if( command.command == "disable_close_win" ){
+        if( m_win ) m_win->set_enable_close( false );
     }
 
+    // window のtransient指定
     else if( command.command == "set_transient_win" ){
         if( m_win ) m_win->set_transient( (command.arg1 == "true" ) );
     }
@@ -899,6 +900,8 @@ void ImageAdmin::save_all()
 
     int overwrite = 0; // -1 なら全てNO、1ならすべてYES
 
+    set_command_immediately( "disable_close_win" );
+
     std::list< std::string > list_urls = get_URLs();
 
     // ディレクトリ選択
@@ -998,4 +1001,6 @@ void ImageAdmin::save_all()
         }
         else MISC::ERRMSG( "can't create " + path_dir );
     }
+
+    set_command_immediately( "enable_close_win" );
 }
