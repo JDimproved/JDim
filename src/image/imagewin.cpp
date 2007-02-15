@@ -54,7 +54,7 @@ ImageWin::ImageWin()
 
     m_dummywin.resize( 1, 1 );
     m_dummywin.move( -1, -1 );
-    m_dummywin.show();
+    m_dummywin.hide();
     m_dummywin.set_skip_taskbar_hint( true );
 
     set_skip_taskbar_hint( true );
@@ -246,7 +246,7 @@ void ImageWin::focus_in()
 
     SESSION::set_focus_win_img( true );
 
-    if( m_mode == IMGWIN_HIDE ) show();
+    show();
     if( m_iconified ) deiconify();
 
     // 開く
