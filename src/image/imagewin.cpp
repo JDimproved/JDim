@@ -246,6 +246,7 @@ void ImageWin::focus_in()
 
     SESSION::set_focus_win_img( true );
 
+    if( m_mode == IMGWIN_HIDE ) show();
     if( m_iconified ) deiconify();
 
     // 開く

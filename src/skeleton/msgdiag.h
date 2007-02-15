@@ -7,6 +7,8 @@
 
 #include <gtkmm.h>
 
+#include "command.h"
+
 namespace SKELETON
 {
     class MsgDiag : public Gtk::MessageDialog
