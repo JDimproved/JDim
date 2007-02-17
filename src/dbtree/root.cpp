@@ -326,12 +326,12 @@ void Root::bbsmenu2xml( const std::string& menu )
 
             if( ! regex.exec( " ?<A HREF=(http://[^>]*/) ?(TARGET=_blank)?>(.*)</A>.*", line ) ) continue;
 
-            bool link = false;
+            bool link = true;
             std::string url = MISC::remove_space( regex.str( 1 ) );
             std::string name = MISC::remove_space( regex.str( 3 ) );
 
-            // url, nameのチェック
-            if( !regex.exec( "http://.*/.*/", url ) ) link = true;
+            // urlのタイプ, 名前のチェック
+            if( regex.exec( "http://.*/.*/", url ) && ( is_2ch( url ) || is_machi( url ) ) ) link = false;
             if( name.empty() ) continue;
 
             // XML に追加
@@ -789,7 +789,7 @@ bool Root::is_2ch( const std::string& url )
 {
     std::string hostname = MISC::get_hostname( url );
 
-    if( hostname.find( ".2ch.net" ) != std::string::npos
+    if( ( hostname.find( ".2ch.net" ) != std::string::npos && hostname.find( "info.2ch.net" ) == std::string::npos )
         || hostname.find( ".bbspink.com" ) != std::string::npos ) return true;
 
     return false;
