@@ -1525,6 +1525,17 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         }
     }
 
+    // IDポップアップ
+    else if( CONFIG::get_idpopup_by_mo() && url.find( PROTO_ID ) == 0 ){
+
+        args.arg1 = m_article->get_id_name( res_number );
+        int num_id = m_article->get_num_id_name( res_number );
+
+        if( num_id >= 1 ){
+            view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPID, m_url_article, args );
+        }
+    }
+
     // ID:〜の範囲選択の上にポインタがあるときIDポップアップ
     else if( url.find( "ID:" ) == 0 ){
 
