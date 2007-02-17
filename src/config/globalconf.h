@@ -119,6 +119,9 @@ namespace CONFIG
     const int get_brownsercombo_id();
     void set_brownsercombo_id( int id );
 
+    // IDの上にマウスオーバーしたときにIDをポップアップ表示する
+    const bool get_idpopup_by_mo();
+
     // 画像ポップアップサイズ
     const int get_imgpopup_width();
     const int get_imgpopup_height();

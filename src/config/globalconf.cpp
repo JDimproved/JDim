@@ -64,6 +64,8 @@ int loader_timeout_img;
 std::string command_openurl;
 int brownsercombo_id;
 
+bool idpopup_by_mo;
+
 int imgpopup_width;
 int imgpopup_height;
 bool use_image_view;
@@ -194,6 +196,9 @@ const bool CONFIG::init_config()
 
     // ブラウザ設定ダイアログのコンボボックスの番号
     brownsercombo_id = cf.get_option( "brownsercombo_id", 0 );
+
+    // IDの上にマウスオーバーしたときにIDをポップアップ表示する
+    idpopup_by_mo = cf.get_option( "idpopup_by_mo", false );
 
     // 画像ポップアップサイズ
     imgpopup_width = cf.get_option( "imgpopup_width", 320 );
@@ -419,6 +424,8 @@ void CONFIG::save_conf_impl( const std::string& path )
     cf.update( "command_openurl", command_openurl );
     cf.update( "brownsercombo_id", brownsercombo_id );
 
+    cf.update( "idpopup_by_mo", idpopup_by_mo );
+
     cf.update( "imgpopup_width", imgpopup_width );
     cf.update( "imgpopup_height", imgpopup_height );
     cf.update( "use_image_view", use_image_view );
@@ -590,6 +597,8 @@ void CONFIG::set_command_openurl( const std::string& command ){ command_openurl 
 
 const int CONFIG::get_brownsercombo_id(){ return brownsercombo_id; }
 void CONFIG::set_brownsercombo_id( int id ){ brownsercombo_id = id; }
+
+const bool CONFIG::get_idpopup_by_mo(){ return idpopup_by_mo; }
 
 const int CONFIG::get_imgpopup_width(){ return imgpopup_width; }
 const int CONFIG::get_imgpopup_height(){ return imgpopup_height; }
