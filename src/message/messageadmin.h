@@ -33,7 +33,7 @@ namespace MESSAGE
 
         MessageWin* m_win;
         SKELETON::View* m_view;
-        Gtk::VBox m_vbox;
+        Gtk::EventBox m_eventbox;
 
       public:
 
@@ -41,7 +41,7 @@ namespace MESSAGE
         ~MessageAdmin();
 
         bool empty(){ return ( ! m_view ); }
-        Gtk::Widget* get_widget(){ return &m_vbox; }
+        Gtk::Widget* get_widget(){ return &m_eventbox; }
 
         void clock_in();
 
@@ -64,6 +64,7 @@ namespace MESSAGE
         void open_view( const std::string& url, const std::string& msg, bool new_thread );
         void redraw_view( const std::string& url );
         void close_view();
+        void set_status( const std::string& url, const std::string& stat );
         void focus_view();
         void switch_admin();
     };

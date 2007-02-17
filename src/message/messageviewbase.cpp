@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 //#define _DEBUG_KEY
 #include "jddebug.h"
 
@@ -218,10 +218,6 @@ void MessageViewBase::pack_widget()
     m_hbox_name_mail.pack_start( m_check_fixmail, Gtk::PACK_SHRINK );
     m_hbox_name_mail.pack_start( m_entry_mail );
 
-#if GTKMMVER >= 260
-    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
-#endif
-
     m_msgview.pack_start( m_hbox_name_mail, Gtk::PACK_SHRINK );    
     m_msgview.pack_start( m_text_message );
 
@@ -240,7 +236,6 @@ void MessageViewBase::pack_widget()
 
     pack_start( m_toolbar, Gtk::PACK_SHRINK );
     pack_start( m_notebook );
-    pack_start( m_statbar, Gtk::PACK_SHRINK );
 
     // フォントセット
     init_font( CONFIG::get_fontname_message() );
@@ -268,6 +263,8 @@ void MessageViewBase::focus_view()
 
     if( m_notebook.get_current_page() == PAGE_MESSAGE ) m_text_message.focus_view();
     else if( m_preview && m_notebook.get_current_page() == PAGE_PREVIEW ) m_preview->focus_view();
+
+    MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
 
 
@@ -622,11 +619,8 @@ void MessageViewBase::show_status()
 
     ss << " ]";
 
-#if GTKMMVER <= 240
-    m_statbar.push( ss.str() );
-#else
-    m_label_stat.set_text( ss.str() );
-#endif        
+    set_status( ss.str() );
+    MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
 
 

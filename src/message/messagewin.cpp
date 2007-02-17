@@ -21,13 +21,21 @@ MessageWin::MessageWin()
     int h = SESSION::mes_height();
     m_maximized = SESSION::mes_maximized();
 
+    resize( w, h );
+    move( x, y );
+    if( m_maximized ) maximize();
+
 #ifdef _DEBUG
     std::cout << "MessageWin::MessageWin x y w h = " << x << " " << y << " " << w << " " << h << std::endl;
 #endif
 
-    resize( w, h );
-    move( x, y );
-    if( m_maximized ) maximize();
+#if GTKMMVER >= 260
+    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
+#endif
+
+    m_vbox.pack_end( m_statbar, Gtk::PACK_SHRINK );
+    add( m_vbox );
+    show_all_children();
 
     property_window_position().set_value( Gtk::WIN_POS_NONE );
     if( CORE::get_toplevel() ) set_transient_for( *dynamic_cast< Gtk::Window* >( CORE::get_toplevel() ) );
@@ -62,6 +70,28 @@ MessageWin::~MessageWin()
     SESSION::set_mes_maximized( m_maximized );
 }
 
+
+void MessageWin::pack_remove( bool unpack, Gtk::Widget& view )
+{
+#ifdef _DEBUG
+    std::cout << "MessageWin::pack_remove remove - " << unpack << std::endl;
+#endif
+
+    m_vbox.pack_remove_end( unpack, view );
+
+    if( ! unpack ) m_vbox.show_all_children();
+}
+
+
+// ステータスバー表示
+void MessageWin::set_status( const std::string& stat )
+{
+#if GTKMMVER <= 240
+    m_statbar.push( stat );
+#else
+    m_label_stat.set_text( stat );
+#endif
+}
 
 
 

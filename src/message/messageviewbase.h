@@ -43,14 +43,6 @@ namespace MESSAGE
         Gtk::Entry m_entry_mail;
         SKELETON::EditView m_text_message;
 
-        // ステータスバー
-#if GTKMMVER <= 240
-        Gtk::Statusbar m_statbar;
-#else
-        Gtk::HBox m_statbar;
-        Gtk::Label m_label_stat;
-#endif
-
         // 文字数計算用
         JDLIB::Iconv* m_iconv;
         char* m_str_iconv;

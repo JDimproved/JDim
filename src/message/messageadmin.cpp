@@ -172,6 +172,11 @@ void MessageAdmin::exec_command()
         close_window();
         return;
     }
+
+    // ステータス表示
+    else if( command.command == "set_status" ){
+        set_status( command.url, command.arg1 );
+    }
 }
 
 
@@ -199,12 +204,24 @@ void MessageAdmin::close_view()
     close_window();
 
     if( m_view ){
-        m_vbox.remove( *m_view );
+        m_eventbox.remove();
         delete m_view;
         m_view = NULL;
 
         CORE::core_set_command( "empty_page", m_url );
     }
+}
+
+
+
+//
+// ステータス表示
+//
+void MessageAdmin::set_status( const std::string& url, const std::string& stat )
+{
+    if( m_win ) m_win->set_status( stat );
+//    else Admin::set_status( url, stat );
+    else CORE::core_set_command( "set_status", url, stat );
 }
 
 
@@ -216,8 +233,9 @@ void MessageAdmin::open_window()
     if( ! m_win && ! empty() ){
         m_win = new MESSAGE::MessageWin();
         m_win->set_title( m_title );
-        m_win->add( m_vbox );
+        m_win->pack_remove( false, m_eventbox );
         m_win->show_all();
+        focus_view();
     }
 }
 
@@ -227,7 +245,7 @@ void MessageAdmin::open_window()
 void MessageAdmin::close_window()
 {
     if( m_win ){
-        m_win->remove();
+        m_win->pack_remove( true, m_eventbox );
         delete m_win;
         m_win = NULL;
     }
@@ -295,8 +313,8 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
 
     m_view = CORE::ViewFactory( type, url_msg, args );
 
-    m_vbox.pack_start( *m_view );
-    m_vbox.show_all();
+    m_eventbox.add( *m_view );
+    m_eventbox.show_all();
 
     // ウィンドウ表示
     if( ! SESSION::get_embedded_mes() ) open_window();
