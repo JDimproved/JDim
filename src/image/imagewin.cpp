@@ -19,6 +19,8 @@ using namespace IMAGE;
 // タイトルバーの高さの取得方法が分からないのでとりあえずdefineしておく
 #define IMGWIN_TITLBARHEIGHT 16
 
+
+#define FOCUS_TIME  100 //msec
 #define UNGRAB_TIME 100 //msec
 
 
@@ -27,9 +29,9 @@ enum
 {
     IMGWIN_NORMAL = 0, // 開いている
     IMGWIN_FOLD,       // 折り畳んでいる
-    IMGWIN_EXPANDING,  // 展開中
+    IMGWIN_EXPANDING,  // 展開中( clock_in() 参照 )
     IMGWIN_HIDE,       // hide 中
-    IMGWIN_UNGRAB      // ブート直後にungrab
+    IMGWIN_UNGRAB      // ブート直後にungrabする( clock_in() 参照 )
 };
 
 
@@ -106,11 +108,15 @@ void ImageWin::clock_in()
     // 遅延リサイズ( focus_in()にある説明を参照 )
     if( m_mode == IMGWIN_EXPANDING ){
 
+        const int wait = FOCUS_TIME / TIMER_TIMEOUT;
         ++m_counter;
-        if( m_counter > 5 ){ 
+        if( m_counter > wait && ! ( m_counter % wait ) ){ 
 
             if( get_height() < m_height ) resize( m_width, m_height );
             else{
+#ifdef _DEBUG
+                std::cout << "ImageWin::clock_in resize\n";
+#endif
                 m_mode = IMGWIN_NORMAL;
                 SESSION::set_img_shown( true );
                 present();
@@ -123,7 +129,16 @@ void ImageWin::clock_in()
 
         ++m_counter;
         if( m_counter > UNGRAB_TIME / TIMER_TIMEOUT ){ 
+#ifdef _DEBUG
+            std::cout << "ImageWin::clock_in ungrab\n";
+#endif
 
+            // WMによってはフォーカスが外れない時があるのでlower()して
+            // 無理矢理フォーカスを外す
+            set_transient( false );
+            get_window()->lower();
+            set_transient( true );
+                
             CORE::core_set_command( "restore_focus" );
             m_mode = IMGWIN_FOLD;
         }
@@ -240,11 +255,9 @@ void ImageWin::set_status( const std::string& stat )
 void ImageWin::focus_in()
 {
 #ifdef _DEBUG
-    std::cout << "ImageWin::focus_in mode = " << m_mode 
+    std::cout << "ImageWin::focus_in mode = " << m_mode << " enable_close = " << m_enable_close
               << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
 #endif
-
-    SESSION::set_focus_win_img( true );
 
     show();
     if( m_iconified ) deiconify();
@@ -252,8 +265,8 @@ void ImageWin::focus_in()
     // 開く
     //
     // GNOME環境では focus in 動作中に resize() が失敗する時が
-    // あるので、遅延させて clock_in() の中でリサイズする
-    if( m_enable_close && ! m_maximized ){
+    // あるので、遅延させて clock_in() の中でリサイズとpresentする
+    if( m_enable_close && ! m_maximized && m_mode != IMGWIN_EXPANDING ){
         m_mode = IMGWIN_EXPANDING;
         m_counter = 0;
     }
@@ -268,8 +281,6 @@ void ImageWin::focus_out()
               << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
 #endif
 
-    SESSION::set_focus_win_img( false );
-
     // ポップアップメニューを表示しているかD&D中はfocus_outしない
     if( SESSION::is_popupmenu_shown() ) return;
     if( CORE::get_dnd_manager()->now_dnd() ) return;
@@ -277,10 +288,11 @@ void ImageWin::focus_out()
     if( m_maximized ) unmaximize();
 
     // 折り畳み
-    if( m_enable_close ){
+    if( m_enable_close && m_mode != IMGWIN_FOLD ){
         resize( m_width, IMGWIN_FOLDSIZE );
         m_mode = IMGWIN_FOLD;
         SESSION::set_img_shown( false );
+        CORE::core_set_command( "restore_focus" );
     }
 }
 
@@ -291,6 +303,8 @@ bool ImageWin::on_focus_in_event( GdkEventFocus* event )
 #ifdef _DEBUG
     std::cout << "ImageWin::on_focus_in_event\n";
 #endif
+
+    SESSION::set_focus_win_img( true );
 
     if( ! m_boot && m_mode != IMGWIN_UNGRAB ) CORE::core_set_command( "switch_image" );
 
@@ -304,6 +318,8 @@ bool ImageWin::on_focus_out_event( GdkEventFocus* event )
 #ifdef _DEBUG
     std::cout << "ImageWin::on_focus_out_event\n";
 #endif
+
+    SESSION::set_focus_win_img( false );
 
     if( ! m_boot ) focus_out();
 
@@ -339,9 +355,10 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
         m_maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
         m_iconified = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
 
-        if( m_iconified ){}
+        if( m_iconified ) SESSION::set_img_shown( false );
+        else SESSION::set_img_shown( true );
 
-        else if( m_maximized ){
+        if( m_maximized ){
             m_mode = IMGWIN_NORMAL;
             SESSION::set_img_shown( true );
         }
@@ -356,7 +373,7 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 }
 
 
-// サイズ変更
+// サイズ変更イベント
 bool ImageWin::on_configure_event( GdkEventConfigure* event )
 {
     // 最大、最小化しているときは除く
