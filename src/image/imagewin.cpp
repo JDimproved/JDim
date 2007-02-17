@@ -20,6 +20,7 @@ using namespace IMAGE;
 #define IMGWIN_TITLBARHEIGHT 16
 
 
+#define FOCUSOUT_TIMEOUT 250 // msec
 #define FOCUS_TIME  100 //msec
 #define UNGRAB_TIME 100 //msec
 
@@ -41,7 +42,7 @@ ImageWin::ImageWin()
       m_enable_close( true ),
       m_transient( false ),
       m_maximized( false ),
-      m_iconified( false ),
+      m_count_focusout( 0 ),
       m_tab( NULL )
 {
     // サイズ設定
@@ -103,14 +104,17 @@ ImageWin::~ImageWin()
 }
 
 
+// クロック入力
 void ImageWin::clock_in()
 {
+    int waitcount;
+
     // 遅延リサイズ( focus_in()にある説明を参照 )
     if( m_mode == IMGWIN_EXPANDING ){
 
-        const int wait = FOCUS_TIME / TIMER_TIMEOUT;
+        waitcount = FOCUS_TIME / TIMER_TIMEOUT;
         ++m_counter;
-        if( m_counter > wait && ! ( m_counter % wait ) ){ 
+        if( m_counter > waitcount && ! ( m_counter % waitcount ) ){ 
 
             if( get_height() < m_height ) resize( m_width, m_height );
             else{
@@ -143,6 +147,28 @@ void ImageWin::clock_in()
             m_mode = IMGWIN_FOLD;
         }
     }
+
+    // GNOME環境ではタスクトレイなどで切り替えたときに画像windowがフォーカスされてしまうので
+    // メインウィンドウと画像ウィンドウが同時にフォーカスアウトしたら
+    // 一時的に transient 指定を外す。フォーカスインしたときに transient 指定を戻す
+    // slot_focus_in_event(), slot_window_state_event() も参照すること
+    if( SESSION::get_wm() == SESSION::WM_GNOME
+        && ! SESSION::is_iconified_win_main() // メインウィンドウが最小化しているときに transient を外すと画像ウィンドウが表示されなくなる
+        && ! SESSION::is_focus_win_main() && ! SESSION::is_focus_win_img() ){
+
+        waitcount = FOCUSOUT_TIMEOUT / TIMER_TIMEOUT;
+
+        if( m_count_focusout < waitcount  ) ++m_count_focusout;
+        if( m_count_focusout == waitcount ){
+
+#ifdef _DEBUG
+            std::cout << "ImageWin::clock_in focus timeout\n";
+#endif
+            set_transient( false );
+            ++m_count_focusout;
+        }
+    }
+    else m_count_focusout = 0;
 }
 
 
@@ -258,11 +284,12 @@ void ImageWin::focus_in()
 
 #ifdef _DEBUG
     std::cout << "ImageWin::focus_in mode = " << m_mode << " enable_close = " << m_enable_close
-              << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
+              << " maximized = " << m_maximized
+              << " iconified = " << SESSION::is_iconified_win_img()  << std::endl;
 #endif
 
     show();
-    if( m_iconified ) deiconify();
+    if( SESSION::is_iconified_win_img() ) deiconify();
 
     // 開く
     //
@@ -286,7 +313,8 @@ void ImageWin::focus_out()
 
 #ifdef _DEBUG
     std::cout << "ImageWin::focus_out mode = " << m_mode
-              << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
+              << " maximized = " << m_maximized
+              << " iconified = " << SESSION::is_iconified_win_img() << std::endl;
 #endif
 
     // 折り畳み
@@ -355,9 +383,9 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
     if( ! m_boot ){
 
         m_maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
-        m_iconified = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+        SESSION::set_iconified_win_img( event->new_window_state & GDK_WINDOW_STATE_ICONIFIED );
 
-        if( m_iconified ) SESSION::set_img_shown( false );
+        if( SESSION::is_iconified_win_img() ) SESSION::set_img_shown( false );
         else SESSION::set_img_shown( true );
 
         if( m_maximized ){
@@ -367,7 +395,8 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 
 #ifdef _DEBUG
         std::cout << "ImageWin::on_window_state_event : "
-                  << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
+                  << " maximized = " << m_maximized
+                  << " iconified = " << SESSION::is_iconified_win_img() << std::endl;
 #endif     
     }
 
@@ -379,7 +408,7 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 bool ImageWin::on_configure_event( GdkEventConfigure* event )
 {
     // 最大、最小化しているときは除く
-    if( ! m_boot && ! m_maximized && ! m_iconified
+    if( ! m_boot && ! m_maximized && ! SESSION::is_iconified_win_img()
         && m_mode == IMGWIN_FOLD
         && get_height() > get_min_height() ){
 

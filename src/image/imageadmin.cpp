@@ -289,11 +289,6 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
     else if( command.command == "disable_close_win" ){
         if( m_win ) m_win->set_enable_close( false );
     }
-
-    // window のtransient指定
-    else if( command.command == "set_transient_win" ){
-        if( m_win ) m_win->set_transient( (command.arg1 == "true" ) );
-    }
 }
 
 
@@ -662,6 +657,23 @@ void ImageAdmin::focus_current_view()
         if( view ) set_status( view_icon->get_url(), view->get_status() );
     }
 }
+
+
+//
+// 現在のviewをフォーカスアウトする
+//
+void ImageAdmin::focus_out()
+{
+#ifdef _DEBUG
+    std::cout << "ImageAdmin::focus_out\n";
+#endif
+
+    // 画像ビューが隠れないようにフォーカスアウトする前に transient 指定をしておく
+    if( m_win ) m_win->set_transient( true );
+
+    SKELETON::Admin::focus_out();
+}
+
 
 
 //

@@ -18,11 +18,13 @@ namespace IMAGE
         bool m_boot;
         bool m_enable_close;
         bool m_transient;
-        bool m_maximized;
-        bool m_iconified;
+
+        bool m_maximized; // 最大化されている
 
         int m_mode;
         int m_counter;
+
+        int m_count_focusout; // フォーカス制御用カウンタ
 
         int m_x;
         int m_y;

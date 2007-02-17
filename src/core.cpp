@@ -47,7 +47,6 @@ enum
     PAGE_BOARD
 };
 
-#define FOCUSOUT_TIMEOUT 250 // msec
 
 Core* instance_core;
 
@@ -72,8 +71,6 @@ IMAGE::get_admin()->set_command( "focus_out" ); \
 
 Core::Core( WinMain& win_main )
     : m_win_main( win_main ),
-      m_count_focusout( 0 ),
-      m_iconified( false ),
       m_imagetab_shown( 0 ),
       m_button_go( Gtk::Stock::JUMP_TO ),
       m_button_search_cache( Gtk::Stock::FIND ),
@@ -2205,6 +2202,7 @@ void Core::restore_focus( bool force )
     std::cout << "Core::restore_focus admin = " << admin << std::endl;
 #endif
 
+    // 画像ウィンドウが表示されているときは画像ウィンドウのフォーカスを外す
     if( ! SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command( "focus_out" );
 
     if( ! force ){
@@ -2261,24 +2259,7 @@ bool Core::slot_timeout( int timer_number )
     // Panedにクロック入力
     m_vpaned_r.clock_in();
     m_vpaned_message.clock_in();
-
-
-    // GNOME環境ではタスクトレイなどで切り替えたときに画像windowがフォーカスされてしまうので
-    // メインウィンドウと画像ウィンドウが同時にフォーカスアウトしたら
-    // 一時的に transient 指定を外す。フォーカスインしたときに transient 指定を戻す
-    // slot_focus_in_event(), slot_window_state_event() も参照すること
-    if( ! SESSION::get_embedded_img()
-        && ! m_iconified // 最小化しているときに transient off にすると画像ウィンドウが非表示になる
-        && SESSION::get_wm() == SESSION::WM_GNOME
-        && ! SESSION::is_focus_win_main() && ! SESSION::is_focus_win_img() ){
-
-        if( m_count_focusout < FOCUSOUT_TIMEOUT / TIMER_TIMEOUT ) ++m_count_focusout;
-        if( m_count_focusout == FOCUSOUT_TIMEOUT / TIMER_TIMEOUT ){
-            IMAGE::get_admin()->set_command_immediately( "set_transient_win", "", "false" );
-        }
-    }
-    else m_count_focusout = 0;
-    
+   
     return true;
 }
 
@@ -2368,7 +2349,6 @@ bool Core::slot_focus_in_event( GdkEventFocus* )
 #endif
 
     SESSION::set_focus_win_main( true );
-    IMAGE::get_admin()->set_command_immediately( "set_transient_win", "", "true" ); // slot_timeout() 参照
     restore_focus( false );
 
     return true;
@@ -2384,7 +2364,7 @@ bool Core::slot_window_state_event( GdkEventWindowState* event )
     std::cout << "Core::slot_window_state_event\n";
 #endif     
 
-    m_iconified = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+    SESSION::set_iconified_win_main( event->new_window_state & GDK_WINDOW_STATE_ICONIFIED );
 
     // タブ幅調整
     CORE::core_set_command( "adjust_tabwidth" );
