@@ -93,6 +93,14 @@ namespace SESSION
     const bool is_focus_win_img(); // 画像ウィンドウ
     void set_focus_win_img( bool set );
 
+    // 各window が最小化されているか
+    const bool is_iconified_win_main(); // メインウィンドウ
+    void set_iconified_win_main( bool set );
+
+    const bool is_iconified_win_img(); // 画像ウィンドウ
+    void set_iconified_win_img( bool set );
+
+
     // サイドバーを閉じる前にフォーカスされていたadmin
     int focused_admin_sidebar();
     void set_focused_admin_sidebar( int admin );

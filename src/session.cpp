@@ -60,6 +60,9 @@ int win_focused_admin_sidebar;
 bool focus_win_main;
 bool focus_win_img;
 
+bool iconified_win_main;
+bool iconified_win_img;
+
 bool embedded_img;
 
 int img_x;
@@ -376,6 +379,14 @@ void SESSION::set_focus_win_main( bool set ){ focus_win_main = set; }
 
 const bool SESSION::is_focus_win_img(){ return focus_win_img; }
 void SESSION::set_focus_win_img( bool set ){ focus_win_img = set; }
+
+
+    // 各window が最小化されているか
+const bool SESSION::is_iconified_win_main(){ return iconified_win_main; }
+void SESSION::set_iconified_win_main( bool set ){ iconified_win_main = set; }
+
+const bool SESSION::is_iconified_win_img(){ return iconified_win_img; }
+void SESSION::set_iconified_win_img( bool set ){ iconified_win_img = set; }
 
 
 void SESSION::set_x( int x ){ win_x = x; }
