@@ -105,9 +105,9 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
 
     std::string cmd = m_list_cmd[ num ];
 
-    cmd = MISC::replace_str( cmd, "$URL", url );
+    cmd = MISC::replace_str( cmd, "$URL", DBTREE::url_readcgi( url, 0, 0 ) );
     cmd = MISC::replace_str( cmd, "$DATURL", DBTREE::url_dat( url ) );
-    cmd = MISC::replace_str( cmd, "$DATPATH", CACHE::path_dat( url ) );
+    cmd = MISC::replace_str( cmd, "$LOCALDAT", CACHE::path_dat( url ) );
     cmd = MISC::replace_str( cmd, "$LINK", link );
     cmd = MISC::replace_str( cmd, "$SERVERL", MISC::get_hostname( link ) );
     cmd = MISC::replace_str( cmd, "$SERVER", MISC::get_hostname( url ) );
