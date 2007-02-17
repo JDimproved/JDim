@@ -1497,13 +1497,14 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
     else if( url.find( PROTO_RES ) == 0 ){
 
         args.arg1 = url.substr( strlen( PROTO_RES ) );
+        int tmp_num = atoi( args.arg1.c_str() );
 
 #ifdef _DEBUG
         std::cout << "res = " << args.arg1 << std::endl;
 #endif
 
         // あぼーんされたレスの内容をポップアップ表示
-        if( m_article->get_abone( atoi( args.arg1.c_str() ) ) ){
+        if( m_article->get_abone( tmp_num ) ){
 
             args.arg2 = "false"; // 板名、スレ名非表示
             args.arg3 = "true"; // あぼーんレスの内容を表示
@@ -1513,7 +1514,9 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         }
 
         // 参照ポップアップ
-        else if( CONFIG::get_refpopup_by_mo() ) view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPREFER, m_url_article, args );
+        else if( CONFIG::get_refpopup_by_mo() && m_article->get_res_reference( tmp_num ).size() ){
+            view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPREFER, m_url_article, args );
+        }
     }
 
     // 抽出(or)
