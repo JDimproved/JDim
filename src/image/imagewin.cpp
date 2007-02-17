@@ -254,6 +254,8 @@ void ImageWin::set_status( const std::string& stat )
 // フォーカスイン
 void ImageWin::focus_in()
 {
+    if( ! m_enable_close ) return;
+
 #ifdef _DEBUG
     std::cout << "ImageWin::focus_in mode = " << m_mode << " enable_close = " << m_enable_close
               << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
@@ -266,7 +268,7 @@ void ImageWin::focus_in()
     //
     // GNOME環境では focus in 動作中に resize() が失敗する時が
     // あるので、遅延させて clock_in() の中でリサイズとpresentする
-    if( m_enable_close && ! m_maximized && m_mode != IMGWIN_EXPANDING ){
+    if( ! m_maximized && m_mode != IMGWIN_EXPANDING ){
         m_mode = IMGWIN_EXPANDING;
         m_counter = 0;
     }
@@ -276,19 +278,19 @@ void ImageWin::focus_in()
 // フォーカスアウト
 void ImageWin::focus_out()
 {
-#ifdef _DEBUG
-    std::cout << "ImageWin::focus_out mode = " << m_mode
-              << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
-#endif
+    if( ! m_enable_close ) return;
 
     // ポップアップメニューを表示しているかD&D中はfocus_outしない
     if( SESSION::is_popupmenu_shown() ) return;
     if( CORE::get_dnd_manager()->now_dnd() ) return;
 
-    if( m_maximized ) unmaximize();
+#ifdef _DEBUG
+    std::cout << "ImageWin::focus_out mode = " << m_mode
+              << " maximized = " << m_maximized << " iconified = " << m_iconified << std::endl;
+#endif
 
     // 折り畳み
-    if( m_enable_close && m_mode != IMGWIN_FOLD ){
+    if( m_mode != IMGWIN_FOLD ){
         resize( m_width, IMGWIN_FOLDSIZE );
         m_mode = IMGWIN_FOLD;
         SESSION::set_img_shown( false );
