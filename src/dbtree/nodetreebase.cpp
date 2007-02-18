@@ -1089,14 +1089,14 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
         node_name = createTextNode( "：", COLOR_CHAR );
     }
 
-    // トリップ付きの時は中の数字をリンクにしない
-    for( i = 0; i < lng; ++i ) if( str[ i ] == '<' && str[ i+2 ] == 'b' ) break;
+    // トリップなど</b>〜<b>が含まれている場合。</b>〜<b>の中の数字はリンクにしない
+    for( i = 0; i < lng; ++i ) if( str[ i ] == '<' && ( str[ i+2 ] == 'b' || str[ i+2 ] == 'B' ) ) break;
     if( i != lng ){
 
         pos_trip_begin = i;
         pos_trip_end = lng -1;
         for( i = pos_trip_begin + 4; i < lng; ++i ){
-            if( str[ i ] == '<' && str[ i+1 ] == 'b' ){
+                if( str[ i ] == '<' && ( str[ i+1 ] == 'b' || str[ i+1 ] == 'B' ) ){
                 pos_trip_end = i + 2;
                 break;
             }
@@ -1117,7 +1117,7 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
         digitlink = false;
 
         // トリップ
-        parse_html( str + pos_trip_begin, pos_trip_end - pos_trip_begin + 1, COLOR_CHAR_NAME, digitlink, bold );
+        parse_html( str + pos_trip_begin, pos_trip_end - pos_trip_begin + 1, COLOR_CHAR_NAME_B, digitlink, bold );
 
         // トリップの後
         if( pos_trip_end < lng-1 )

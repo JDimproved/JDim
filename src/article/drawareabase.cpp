@@ -234,6 +234,7 @@ void DrawAreaBase::init_color()
     m_color[ COLOR_CHAR_AGE ].set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
 
     m_color[ COLOR_CHAR_NAME ] = Gdk::Color( "darkgreen" );    
+    m_color[ COLOR_CHAR_NAME_B ] = Gdk::Color( "darkblue" );
     m_color[ COLOR_CHAR_SELECTION  ] = Gdk::Color( "white" );
     m_color[ COLOR_CHAR_LINK ] = Gdk::Color( "blue" );
     m_color[ COLOR_CHAR_LINK_PUR ] = Gdk::Color( "magenta" );
