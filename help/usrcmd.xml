@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="usrcmd.xsl"?>
+
+<document title="ユーザーコマンド登録" modified="20070201">
+
+<command>
+    <cmd>$VIEW</cmd>
+    <description>webブラウザで開く (例) $VIEW $LINK でリンクをブラウザで開く</description>
+</command>
+<command>
+</command>
+<command>
+    <cmd>$URL</cmd>
+    <description>スレのURL(例: http://pc10.2ch.net/test/read.cgi/linux/1155578592/ )</description>
+</command>
+<command>
+    <cmd>$DATURL</cmd>
+    <description>サーバー上のdatファイルのURL (例: http://pc10.2ch.net/linux/dat/0123456789.dat)</description>
+</command>
+<command>
+    <cmd>$SERVER</cmd>
+    <description>スレのURLから取り出したサーバー名(http://などのプロトコル含む)</description>
+</command>
+<command>
+    <cmd>$HOSTNAME</cmd>
+    <description>スレのURLから取り出したサーバー名(http://などのプロトコル除く)</description>
+</command>
+<command>
+</command>
+<command>
+    <cmd>$LINK</cmd>
+    <description>マウスの下にリンクがあればそのURL</description>
+</command>
+<command>
+    <cmd>$SERVERL</cmd>
+    <description>リンクから取り出したサーバー名(http://などのプロトコル含む)</description>
+</command>
+<command>
+    <cmd>$HOSTNAMEL</cmd>
+    <description>リンクから取り出したサーバー名(http://などのプロトコル除く)</description>
+</command>
+<command>
+</command>
+<command>
+    <cmd>$TEXT</cmd>
+    <description>範囲選択した文字列(UTF-8)</description>
+</command>
+<command>
+    <cmd>$TEXTU</cmd>
+    <description>範囲選択した文字列(UTF-8)をURLエンコード</description>
+</command>
+<command>
+    <cmd>$TEXTX</cmd>
+    <description>範囲選択した文字列をEUCに変換してURLエンコード</description>
+</command>
+<command>
+    <cmd>$TEXTE</cmd>
+    <description>範囲選択した文字列をSJIS(MS932)に変換してURLエンコード</description>
+</command>
+<command>
+</command>
+<command>
+    <cmd>$LOCALDAT</cmd>
+    <description>キャッシュディレクトリにあるdatファイルの場所 (例: ~/.jd/pc10.2ch.net/linux/0123456789.dat)</description>
+</command>
+
+</document>

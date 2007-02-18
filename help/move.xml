@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="main.xsl"?>
+
+<document title="板移転について" modified="20070201">
+
+<p>
+「ファイル」メニューから板リストを再読込したときに移転した板があるときは自動で移転処理する。
+なお移転処理をしたあとは一度JDを再起動することを推奨する。
+</p>
+
+<p>
+移転情報テーブルはキャッシュディレクトリ内の move.info ファイルに記録されるので
+もしテーブルが壊れたときは手動で修正すること。
+</p>
+
+<p>move.infoの形式は次の通り。</p>
+
+<p>
+<span class="red">旧サーバ </span>
+<span class="green">新サーバ </span>
+<span class="blue">/板ID</span>
+</p>
+
+<p>(例)</p>
+
+<p>
+<span class="red">http://pc5.2ch.net </span>
+<span class="green">http://pc8.2ch.net </span>
+<span class="blue">/linux</span>
+<br />
+<span class="red">http://pc2.2ch.net </span>
+<span class="green">http://pc8.2ch.net </span>
+<span class="blue">/linux</span>
+</p>
+
+</document>

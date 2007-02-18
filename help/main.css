@@ -1,0 +1,166 @@
+html
+{
+    background-color: #fdfdf5;
+    color: #000000;
+}
+body
+{
+    margin-left: 20pt;
+    max-width: 640pt;
+}
+
+/* タイトルヘッダ */
+h1#title
+{
+    background-color: #fdfdf5;
+    color: #000000;
+}
+h1#title > img
+{
+    width: 96px;
+    height: 96px;
+    vertical-align: middle;
+}
+h1#title > span#text
+{
+    margin-left : 20pt;
+}
+
+p#modified
+{
+    text-align: right;
+}
+
+/* アンカー要素 */
+a:link
+{
+    background-color: #fdfdf5;
+    color: #0000ff;
+}
+a:visited
+{
+    background-color: #fdfdf5;
+    color: #505050;
+}
+a:link:hover, a:visited:hover
+{
+    text-decoration: none;
+    background-color: #fdfdf5;
+    color: #ff0000;
+}
+
+/* 全要素共通 */
+*.nowrap
+{
+    white-space: nowrap;
+}
+*.red
+{
+    background-color: #fdfdf5;
+    color: #c00000;
+}
+*.green
+{
+    background-color: #fdfdf5;
+    color: #005000;
+}
+*.blue
+{
+    background-color: #fdfdf5;
+    color: #0000a0;
+}
+*.example
+{
+    margin-left: 12pt;
+    padding: 4pt;
+    border: 1pt solid #000000;
+    max-width: 320pt;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+/* リスト */
+ul.none
+{
+    list-style-type: none;
+}
+ul.disc
+{
+    list-style-type: disc;
+}ul.decimal
+{
+    list-style-type: decimal;
+}
+ul > li
+{
+    margin: 4pt;
+}
+
+/* その他ブロック要素 */
+table
+{
+    max-width: 600pt;
+    margin-left: 12pt;
+}
+
+div.border
+{
+    border: 1pt solid #000000;
+    margin: 12pt;
+    padding: 12pt;
+}
+div.basictext
+{
+    margin-left: 12pt;
+}
+
+
+/* Q&A */
+div.qa
+{
+    margin-top: 28pt;
+    border: 1pt solid #000000;
+    padding: 4pt;
+}
+div.qa > p.question
+{
+    background-color: #f0f0f0;
+    color: #000000;
+    width: 100%;
+}
+
+/* スレ風の表示 */
+p.age, p.sage
+{
+    background-color: #fdfdf5;
+    color: #000000;
+    margin-top: 20pt;
+}
+p.age > span.number
+{
+    background-color: #fdfdf5;
+    color: #ff00ff;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+p.sage > span.number
+{
+    background-color: #fdfdf5;
+    color: #0000ff;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+p.age > span.underline, p.sage > span.underline
+{
+    text-decoration: underline;
+    margin-left: 4pt;
+    cursor: pointer;
+}
+p.age > span.nanashi, p.sage > span.nanashi
+{
+    background-color: #fdfdf5;
+    color: #007000;
+    font-weight: bold;
+}

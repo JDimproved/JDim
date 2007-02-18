@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="install.xsl"?>
+
+<document title="インストール方法補足、及びディストロ別インストール方法" modified="20070201">
+
+
+<dist name="Linux From Scratch">
+<res>
+<number>2</number>
+<name>名無しさん</name> 
+<mail>sage</mail>
+<date>2006/08/01(火) 02:04:59 ID:NAwqBb9Y</date>
+<basictext>
+いきなり趣旨とはちょっと反するかもしれないので申し訳ないが、
+とりあえずLFSでソースからインストールする場合。
+READMEにも書いてあるんだけど、それに付け足し。
+LFSで入る以外に必要なもの。
+xlib(libsm,libice)
+glib>=2.6.0
+gtk>=2.6.0
+libsigc++>=2.0
+glibmm>=2.6.0
+gtkmm>=2.6.0
+openssl>=0.9
+Optional: libgnomeui>=2.0
+libgnomeuiを使う時は、
+$sed -i 's/^use_xsmp.*/use_xsmp=no/' configure.in
+$sed -i 's/^use_gnomeui.*/use_gnomeui=yes/' configure.in
+としておく。
+$./autogen.sh
+$./configure $arguments
+$make
+#make install
+gtkやglib以下の依存関係は複雑なので割愛。
+GNOME等でメニューに入れたいときは、同梱のjd.desktopを/usr/share/applications、
+jd.pngを/usr/share/pixmaps以下にインストール。
+</basictext>
+</res>
+</dist>
+
+
+<dist name="Gentoo">
+<res>
+<number>5</number>
+<name>名無しさん</name>
+<mail>sage</mail>
+<date>2006/08/02(水) 01:16:43 ID:xq3j5ix+</date>
+<basictext>
+長くなって済みませんがGentooで手軽にCVSから最新版を入れる方法です。
+リリース版はebuildjpにあるのでそちらからインストール出来ます。
+<br />
+・ /usr/local/myportage等の適当なディレクトリを作成し、
+  /etc/make.confのPORTDIR_OVERLAYへ追加する。
+・ /usr/local/myportage/www-client/jdへ以下のファイルを
+  jd-9999.ebuild等の名前で保存し、emerge jdして終わり。
+<br />
+--------こっから--------
+# Copyright 1999-2006 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header$
+<br />
+inherit eutils cvs
+<br />
+DESCRIPTION="gtk2 based 2ch browser written in C++"
+HOMEPAGE="http://sourceforge.jp/projects/jd4linux"
+SRC_URI=""
+<br />
+ECVS_SERVER="cvs.sourceforge.jp:/cvsroot/jd4linux"
+ECVS_MODULE="jd"
+ECVS_BRANCH="HEAD"
+<br />
+LICENSE="GPL-2"
+SLOT="0"
+KEYWORDS="~x86 ~amd64"
+IUSE="gnome"
+<pre>
+RDEPEND=">=dev-cpp/gtkmm-2.6
+       >=dev-cpp/glibmm-2.6
+       >=dev-libs/libsigc++-2.0
+       >=dev-libs/openssl-0.9.7
+       gnome? ( >=dev-cpp/libgnomeuimm-2.0.0 )"
+DEPEND="${RDEPEND}
+       sys-devel/automake
+       sys-devel/autoconf
+       sys-devel/libtool"
+S="${WORKDIR}/${ECVS_MODULE}"
+src_unpack() {
+       cvs_src_unpack
+       cd ${S}
+       if use gnome; then
+               sed -i -e 's/^use_xsmp.*/use_xsmp=no/' configure.in || die
+               sed -i -e 's/^use_gnomeui.*/use_gnomeui=yes/' configure.in || die
+       fi
+       sh autogen.sh || die "autogen.sh failed"
+       sed -i -e '/^CXXFLAGS/s:-ggdb::' configure || die "sed failed"
+}
+src_install() {
+       make DESTDIR="${D}" install || die "make install failed"
+       doicon ${PN}.png
+       domenu ${PN}.desktop
+       dodoc COPYING README ChangeLog INSTALL
+}
+</pre>
+--------ここまで--------
+</basictext>
+</res>
+</dist>
+
+
+<dist name="FedoraCore">
+<other>
+<p>Fedora Extras に含まれているので</p>
+<div class="example">yum install jd</div>
+<p>だけでOK。</p>
+</other>
+
+<res>
+<number>9</number>
+<name>名無しさん</name>
+<mail>sage</mail>
+<date>2006/08/05(土) 01:23:07 ID:PTY4PKcU</date>
+<basictext>
+こんにちは
+FC4ですがrpmbuildで簡単にバイナリパッケージ作れました。
+追加パッケージがいくつか必要でしたがyumでサクッと。
+<br />
+ただ、カスタマイズしたり前からのアップグレードでクリーンインストールとは
+だいぶ違うかもしれないので、役に立つかどうか。
+</basictext>
+</res>
+
+<res>
+<number>11</number>
+<name>作者 ★</name>
+<mail>sage</mail>
+<date>2006/08/28(月) 01:05:50 ID:xE0/NJmk00000000</date>
+<basictext>
+FC6T2
+<br />
+開発環境込みでインストールして、yumの設定をしてから、
+<br />
+yum install gtkmm24-devel
+<br />
+あとは
+<br />
+rpmbuild -tb ～.tgz
+<br />
+だけ
+</basictext>
+</res>
+</dist>
+
+
+<dist name="Ubuntu">
+<other>
+<p>ubuntu-jaのリポジトリを登録して Synaptic から JDを検索してインストール可能</p>
+</other>
+
+<res>
+<number>10</number>
+<name>作者 ★</name>
+<mail>sage</mail>
+<date>2006/08/17(木) 22:20:59 ID:xlMhDdJ2</date>
+<basictext>
+Ubuntu-jp CD起動版でJDをインストールする方法
+<br />
+メモリは512M、バージョンは6.06で試しました。普通にHDDにインストールした
+Ubuntuでも同じようにしてインストール出来ると思います。
+<br />
+(1) synapticで必要なパッケージをインストールする
+<br />
+設定→リポジトリで「コミュニティーによるメンテナンス」を選んでから
+<br />
+libgtkmm-2.4.dev
+autoconf
+automake1.9
+libtool
+libssl-dev
+gcc
+g++
+make
+<br />
+を検索で探してインストールする。途中でディスク容量が足りなくなったら
+sudo rm -f /var/cache/apt/archives/*.deb でディスクを空ける
+<br />
+(2) makeする
+<br />
+ディスク容量が足りない場合は/tmpあたりにjdのソースを解凍してmakeする
+<br />
+./autogen.sh
+./configure
+make
+<br />
+(3) src/jd で実行する
+</basictext>
+</res>
+</dist>
+
+
+<dist name="FreeBSD">
+
+<res>
+<number>916</number>
+<name>FreeBSD User</name>
+<mail>sage</mail>
+<date>2007/01/22(月) 12:40:06 ID:qV2aC6Fa</date>
+<basictext>
+返事遅れて申し訳ないです。&gt;作者さん
+<br />
+インストール方法、FreeBSDでのまとめです。
+<br />
+<br />
+まず、/usr/ports/x11-toolkits/gtkmm24をportinstall
+次にautoconf、automake、libtoolをGNUサイトからソースを持って来て
+./configure make make installする。(FreeBSDでは標準では付いていないので)
+zlib、opensslも公式サイトからソースとって来て
+./configure(ここの部分たしか./configの場合もあったような) make make install。
+<br />
+portsを使ってもいいんだけど、いろいろ面倒になるだろうから
+今紹介した方法が手っ取り早いかと思います。
+<br />
+あと、重要なのが
+/usr/ports/devel/gmakeをportinstallでインストールする。
+<br />
+そしてJDのソース取って
+中に入り
+<br />
+sh autogen.sh
+./configure
+gmake (makeではない)
+<br />
+src/jdで起動。
+<br />
+日本語おかしかったらごめんなさい。
+間違ってる所がある場合は指摘をお願いします。
+</basictext>
+</res>
+</dist>
+
+</document>

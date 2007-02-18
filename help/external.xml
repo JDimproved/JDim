@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="main.xsl"?>
+
+<document title="外部板登録" modified="20070201">
+
+<p>現在の対応板</p>
+<ul class="none">
+<li>2ch互換板</li>
+<li>livedoorしたらば</li>
+<li>まちBBS</li>
+</ul>
+
+<p>まちBBSは板一覧ビューに表示される(表示されてい無い時は板一覧を更新する)。</p>
+
+<p>
+その他の板を登録するにはキャッシュディレクトリにある etc.txt にアドレスを書く。
+登録した板は板一覧ビューの先頭に表示される。
+</p>
+
+<p>etc.txtの形式はnavi2ch互換で</p>
+<ul class="none">
+<li class="red">板の名前</li>
+<li class="green">板のURL</li>
+<li class="blue">板のID</li>
+</ul>
+
+<p>の順。なお板のIDはJDでは使用しないので適当で可。またURLの最後は必ず'/'で終わらせること。</p>
+
+<p>
+またBASIC認証のある板の場合は http://ID:PASSWD@hoge.com/board/ のようにIDとパスワード
+の組を:で区切ってホスト名の前に書き、ホスト名とは@で区切る。
+</p>
+
+<p>なお空白行と # から始まるコメント行は無視される(ただしnavi2chと互換性が無くなるので注意)。</p>
+
+<p>(例)</p>
+
+<p># コメント</p>
+
+<p class="etc">
+<span class="red">Linux板</span><br />
+<span class="green">http://pc8.2ch.net/linux/</span><br />
+<span class="blue">linux</span>
+</p>
+
+<p class="etc">
+<span class="red">JBBSの板(適当)</span><br />
+<span class="green">http://jbbs.livedoor.jp/computer/123456/</span><br />
+<span class="blue">123456</span>
+</p>
+
+</document>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="config.xsl"?>
+
+<document title="設定ファイル" modified="20070201">
+
+
+<config name="・ネットワーク">
+<key>
+    <name>url_bbsmenu</name> 
+    <description>板一覧を取得するサーバ</description>
+</key>
+<key>
+    <name>agent_for2ch</name>
+    <description>2chにアクセスするときのエージェント名</description>
+</key>
+<key>
+    <name>agent_for_data</name>
+    <description>2ch以外のサーバにアクセスするときのエージェント名</description>
+</key>
+<key>
+    <name>x_2ch_ua</name>
+    <description>ログイン認証サーバにアクセスするときのエージェント名</description>
+</key>
+<key>
+    <name>loader_timeout</name>
+    <description>スレの読み込み時のタイムアウト値(秒)</description>
+</key>
+<key>
+    <name>loader_timeout_post</name>
+    <description>書き込み時のタイムアウト値(秒)</description>
+</key>
+<key>
+    <name>loader_timeout_img</name>
+    <description>画像ロード時のタイムアウト値(秒)</description>
+</key>
+<key>
+    <name>loader_bufsize</name>
+    <description>ダウンローダのバッファサイズ(kbyte)</description>
+</key>
+</config>
+
+
+<config name="・板一覧、スレ一覧">
+<key>
+    <name>tree_scroll_size</name>
+    <description>ツリービューでマウスホイールを回したときのスクロール量(行数)</description>
+</key>
+<key>
+    <name>open_one_category</name>
+    <description>板一覧でカテゴリを常にひとつだけ開く</description>
+</key>
+<key>
+    <name>newthread_hour</name>
+    <description>指定した値(時間)よりも後に立てられたスレを新着とみなす</description>
+</key>
+<key>
+    <name>use_tree_gtkrc</name>
+    <description>ツリービューの背景色設定にgtkrcを用いる</description>
+</key>
+</config>
+
+
+<config name="・スレビュー">
+<key>
+    <name>margin_popup</name>
+    <description>ポップアップとカーソルの間のマージン(ピクセル)</description>
+</key>
+<key>
+    <name>instruct_popup</name>
+    <description>0以上なら多重ポップアップの説明を表示する</description>
+</key>
+<key>
+    <name>refpopup_by_mo</name>
+    <description>レス番号の上にマウスオーバーしたときに参照ポップアップ表示する</description>
+</key>
+<key>
+    <name>namepopup_by_mo</name>
+    <description>下線の引いてある「名前」の上にマウスオーバーしたときにポップアップ表示する</description>
+</key>
+<key>
+    <name>idpopup_by_mo</name>
+    <description>IDの上にマウスオーバーしたときにIDをポップアップ表示する</description>
+</key>
+<key>
+    <name>instruct_tglart</name>
+    <description>スレビューとスレ一覧の切り替え方法説明ダイアログを表示する</description>
+</key>
+<key>
+    <name>instruct_tglimg</name>
+    <description>画像ビューとスレビューの切り替え方法説明ダイアログを表示する</description>
+</key>
+<key>
+    <name>draw_underline</name>
+    <description>スレ表示のリンクの下線を表示する</description>
+</key>
+<key>
+    <name>adjust_underline_pos</name>
+    <description>スレ表示のリンクの下線の位置を調整する</description>
+</key>
+<key>
+    <name>adjust_line_space</name>
+    <description>スレ表示の行間スペースを調整する</description>
+</key>
+<key>
+    <name>ref_prefix</name>
+    <description>レスを参照コピーするときに前に付ける文字列</description>
+</key>
+<key>
+    <name>ref_prefix_space</name>
+    <description>ref_prefixの後のスペースの数</description>
+</key>
+<key>
+    <name>hide_usrcmd</name>
+    <description>選択不可のユーザコマンドを非表示にする(gtkmm26以上)</description>
+</key>
+<key>
+    <name>max_show_usrcmd</name>
+    <description>ユーザコマンド数が指定した数以上の時はサブメニュー表示にする</description>
+</key>
+<key>
+    <name>color_char_age_{RGB}</name>
+    <description>ageているレスのメール欄の色(それぞれRGB要素)</description>
+</key>
+<key>
+    <name>color_sepa{RGB}</name>
+    <description>新着のセパレータの色(それぞれRGB要素)</description>
+</key>
+</config>
+
+
+<config name="・書き込みウィンドウ">
+<key>
+    <name>always_write_ok</name>
+    <description>書き込み時に確認ダイアログを表示しない</description>
+</key>
+<key>
+    <name>hide_writing_dialog</name>
+    <description>書き込み中ダイアログを表示しない</description>
+</key>
+</config>
+
+<config name="・画像">
+<key>
+    <name>imgpopup_width</name>
+    <description>画像ポップアップの幅(ピクセル)</description>
+</key>
+<key>
+    <name>imgpopup_height</name>
+    <description>画像ポップアップの高さ(ピクセル)</description>
+</key>
+<key>
+    <name>zoom_to_fit</name>
+    <description>画像を開いたときにウィンドウサイズに合わせる</description>
+</key>
+<key>
+    <name>max_img_size</name>
+    <description>ダウンロードする画像の最大サイズ(Mbyte)</description>
+</key>
+<key>
+    <name>use_imge_view</name>
+    <description>画像のリンクをクリックした時に画像ビューで表示する</description>
+</key>
+</config>
+
+
+<config name="・その他">
+<key>
+    <name>mouse_radius</name>
+    <description>マウスジェスチャの判定開始半径</description>
+</key>
+<key>
+    <name>history_size</name>
+    <description>履歴の保持数</description>
+</key>
+<key>
+    <name>ab_min_str</name>
+    <description>タブに表示する文字列の最小文字数</description>
+</key>
+<key>
+    <name>show_tab_icon</name>
+    <description>タブにアイコンを表示する</description>
+</key>
+<key>
+    <name>restore_board</name>
+    <description>起動時に開いていたスレ一覧を復元する</description>
+</key>
+<key>
+    <name>restore_article</name>
+    <description>起動時に開いていたスレを復元する</description>
+</key>
+<key>
+    <name>restore_image</name>
+    <description>起動時に開いていた画像を復元する</description>
+</key>
+</config>
+
+</document>

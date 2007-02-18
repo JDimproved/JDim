@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="usrcmd_collection.xsl"?>
+
+<document title="ユーザーコマンド設定集" modified="20070203">
+
+<command title="DATファイルの内容を表示する">
+<name>DAT表示</name>
+<exec>$VIEW $LOCALDAT</exec>
+</command>
+
+<command title="wgetによるダウンロード">
+<before>
+<p>
+次のスクリプト(mywget.sh)をキャッシュディレクトリ(ここでは~/.jdとする)に作る。<br />
+保存先は適宜変更すること。
+</p>
+<basictext class="example">
+#!/bin/sh
+cd ~/download
+wget $1
+echo "エンターキーを押してください"
+read a
+</basictext>
+<p>キャッシュディレクトリ内にあるユーザコマンド設定ファイル( usrcmd.txt ) に</p>
+</before>
+
+<name>wgetでダウンロード</name>
+<exec>xterm -e "~/.jd/mywget.sh $LINK"</exec>
+
+<after><p>の2行を追加する。</p></after>
+</command>
+
+
+<command title="Yahoo株価">
+<name>Yahoo株価</name>
+<exec>$VIEW http://quote.yahoo.co.jp/q?d=1y&amp;s=$TEXTE</exec>
+</command>
+
+
+<command title="サーバの負荷状態を調べる">
+<name>鯖のご様子</name>
+<exec>$VIEW http://sv2ch.baila6.jp/server.cgi?server=$HOSTNAME</exec>
+</command>
+
+
+<command title="サーバを指定してgoogleで検索">
+<name>このサーバーで検索(Google)</name>
+<exec>$VIEW http://www.google.co.jp/search?q=site:$HOSTNAME%20$TEXTU</exec>
+</command>
+
+
+<command title="Wikipedia">
+<name>Wikipedia検索(ja)</name>
+<exec>$VIEW http://ja.wikipedia.org/wiki/%E7%89%B9%E5%88%A5:Search?search=$TEXTU</exec>
+</command>
+
+
+<command title="Ubuntu Forumで検索">
+<name>Ubuntu Forumで検索</name>
+<exec>$VIEW http://www.ubuntuforums.org/search.php?do=process&amp;query=$TEXT</exec>
+</command>
+
+
+<command title="選択したURL(ttp://等は除外)をブラウザで開く">
+<name>選択したURLをブラウザで開く(UTF-8)</name>
+<exec>$VIEW http://$TEXTU</exec>
+</command>
+
+<command title="関連キーワードをブラウザで開く">
+<name>関連キーワード</name>
+<exec>$VIEW http://p2.2ch.io/getf.cgi?$URL</exec>
+</command>
+
+
+</document>

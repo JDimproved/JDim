@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="main.xsl"?>
+
+<document title="make、実行方法" modified="20070201">
+
+<h3 class="green">・動作環境</h3>
+<ul class="none">
+<li>gtkmm24-2.4.8 以上必須</li>
+<li>zlib-1.2 以上必須</li>
+<li>openssl-0.9 以上必須</li>
+<li></li>
+<li>kernel2.6以上推奨</li>
+<li>gtkmm2.8以上推奨 ( 2.6より低いとレイアウトが一部崩れる、2.8より低いとスレ一覧表示が遅い )</li>
+<li>UTF-8環境推奨 ( EUC環境ては LANG=&quot;ja_JP.UTF-8&quot; を指定する必要がある )</li>
+</ul>
+
+<h3 class="green">・makeに必要なツール、ライブラリ</h3>
+<ul class="none">
+<li>autoconf</li>
+<li>automake</li>
+<li>libtool</li>
+<li>gtkmm24-devel</li>
+<li>zlib-devel</li>
+<li>openssl-devel( 又は libssl-devel )</li>
+</ul>
+
+<h3 class="green">・make 方法( rpmbuild の場合 )</h3>
+<ul class="none">
+<li>rpmbuild -tb 〜.tgz でrpmファイルが出来るのであとは rpm -Uvh 〜.rpm</li>
+<li>ライブラリが足りないといわれたら yum install 〜-devel</li>
+<li>起動はメニューから起動するか、端末で jd と打ち込んでエンターを押す。</li>
+</ul>
+
+<h3 class="green">・make 方法( configure + make の場合 )</h3>
+<ul class="none">
+<li>autoreconf -i ( 又は ./autogen.sh )</li>
+<li>./configure</li>
+<li>make</li>
+<li>(お好みで) strip src/jd</li>
+</ul>
+
+<p><a href="install.xml">インストール方法補足、及びディストロ別インストール方法</a></p>
+
+<p>
+最近のディストリビューションの場合は autogen.sh よりも autoreconf -i の方を推奨。<br />
+実行するには直接 src/jd を起動するか手動で /usr/bin あたりに src/jd を cp する。
+</p>
+
+<p>
+以上の操作でmakeが通らなかったり動作が変な時は configure のオプションを変更する。
+</p>
+
+<p>
+XSMPを使ってセッション管理をするには ./configure --with-sessionlib=xsmp<br />
+GNOMEUIを使ってセッション管理をするには ./configure --with-sessionlib=gnomeui<br />
+セッション管理を無効にするには ./configure --with-sessionlib=no<br />
+とする。デフォルトでは XSMPを使用する。
+</p>
+
+<p>
+描画に PangoLayoutを使うには ./configure --with-pangolayout とする<br />
+デフォルトでは PangoGlyphString を使用する。
+</p>
+
+<p>
+またmigemoがUTF-8の辞書でインストールされているときは ./configure --with-migemo で<br />
+migemoによる検索が有効になる。デフォルトでは無効になっている。
+</p>
+
+<p>
+cpu に core2 duo を使用しているときは ./configure --with-core2duo でcore2 duo向けに最適化される
+</p>
+
+</document>
