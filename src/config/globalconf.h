@@ -122,6 +122,9 @@ namespace CONFIG
     // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
     const bool get_refpopup_by_mo();
 
+    // 名前の上にマウスオーバーしたときにポップアップ表示する
+    const bool get_namepopup_by_mo();
+
     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
     const bool get_idpopup_by_mo();
 
