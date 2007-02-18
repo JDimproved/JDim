@@ -1161,7 +1161,7 @@ void Core::slot_show_old2ch()
 //
 void Core::slot_show_manual()
 {
-    open_by_browser( std::string( JDURL ) + "README.txt" );
+    open_by_browser( std::string( JDHELP ) );
 }
 
 
