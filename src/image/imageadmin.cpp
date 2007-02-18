@@ -552,7 +552,6 @@ void ImageAdmin::open_window()
 {
     if( ! SESSION::get_embedded_img() && ! m_win && ! empty() ){
         m_win = new IMAGE::ImageWin();
-        m_win->set_title( "JD 画像ビュー" );
         m_win->pack_remove( false, m_tab, m_view );
         m_win->show_all();
     }
