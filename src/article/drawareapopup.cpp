@@ -8,6 +8,7 @@
 #include "config/globalconf.h"
 
 #include "global.h"
+#include "colorid.h"
 
 using namespace ARTICLE;
 
@@ -30,9 +31,9 @@ DrawAreaPopup::DrawAreaPopup( const std::string& url, bool show_abone )
 
 
 // 背景色
-const int* DrawAreaPopup::rgb_color_back()
+const std::string& DrawAreaPopup::str_color_back()
 {
-    return  CONFIG::get_color_back_popup();
+    return CONFIG::get_color( COLOR_BACK_POPUP );
 }
 
 

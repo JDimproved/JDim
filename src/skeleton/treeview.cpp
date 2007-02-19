@@ -13,6 +13,7 @@
 
 #include "controlid.h"
 #include "command.h"
+#include "colorid.h"
 
 #ifndef MAX
 #define MAX( a, b ) ( a > b ? a : b )
@@ -30,7 +31,7 @@
 using namespace SKELETON;
 
 
-JDTreeView::JDTreeView( const std::string& fontname, const int *rgb )
+JDTreeView::JDTreeView( const std::string& fontname, const int colorid )
     : m_reorderable( false ),
       m_drag( false ),
       m_popup_win( NULL ),
@@ -49,7 +50,7 @@ JDTreeView::JDTreeView( const std::string& fontname, const int *rgb )
     add_events( Gdk::LEAVE_NOTIFY_MASK );
     add_events( Gdk::SCROLL_MASK );
 
-    init_color( rgb );
+    init_color( colorid );
     init_font( fontname );
 
     get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
@@ -67,13 +68,12 @@ JDTreeView::~JDTreeView()
 //
 // 色初期化
 //
-void JDTreeView::init_color( const int *rgb )
+void JDTreeView::init_color( const int colorid )
 {
     if( CONFIG::get_use_tree_gtkrc() ) return;
 
     // 背景色
-    Gdk::Color color;
-    color.set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
+    Gdk::Color color( CONFIG::get_color( colorid ) );
     modify_base( get_state(), color );
 }
 

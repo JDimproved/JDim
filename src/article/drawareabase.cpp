@@ -25,6 +25,7 @@
 #include "global.h"
 #include "httpcode.h"
 #include "controlid.h"
+#include "colorid.h"
 
 #include <math.h>
 #include <sstream>
@@ -82,10 +83,13 @@ DrawAreaBase::~DrawAreaBase()
 }
 
 
-// 背景色( virtual )
-const int* DrawAreaBase::rgb_color_back()
+// 背景色
+//
+// virtual 指定にして drawareaの種類別に色を分ける
+//
+const std::string& DrawAreaBase::str_color_back()
 {
-    return  CONFIG::get_color_back();
+    return  CONFIG::get_color( COLOR_BACK );
 }
 
 
@@ -224,14 +228,10 @@ void DrawAreaBase::create_scrbar()
 void DrawAreaBase::init_color()
 {
     Glib::RefPtr< Gdk::Colormap > colormap = get_default_colormap();
-    const int *rgb;
     
     // 文字色
-    rgb = CONFIG::get_color_char();
-    m_color[ COLOR_CHAR ].set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
-
-    rgb = CONFIG::get_color_char_age();
-    m_color[ COLOR_CHAR_AGE ].set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
+    m_color[ COLOR_CHAR ] = Gdk::Color( CONFIG::get_color( COLOR_CHAR ) );
+    m_color[ COLOR_CHAR_AGE ] = Gdk::Color( CONFIG::get_color( COLOR_CHAR_AGE ) );
 
     m_color[ COLOR_CHAR_NAME ] = Gdk::Color( "darkgreen" );    
     m_color[ COLOR_CHAR_NAME_B ] = Gdk::Color( "darkblue" );
@@ -243,14 +243,12 @@ void DrawAreaBase::init_color()
     m_color[ COLOR_CHAR_BOOKMARK ] = Gdk::Color( "red" );    
 
     // 背景色
-    rgb = rgb_color_back();
-    m_color[ COLOR_BACK ].set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
+    m_color[ COLOR_BACK ] = Gdk::Color( str_color_back() );
     m_color[ COLOR_BACK_SELECTION ] = Gdk::Color( "blue" );
     m_color[ COLOR_BACK_HIGHLIGHT ] = Gdk::Color( "yellow" );
 
     // 新着セパレータ
-    rgb = CONFIG::get_color_separator();
-    m_color[ COLOR_SEPARATOR_NEW ].set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
+    m_color[ COLOR_SEPARATOR_NEW ] = Gdk::Color( CONFIG::get_color( COLOR_SEPARATOR_NEW ) );
 
     // 画像
     m_color[ COLOR_IMG_NOCACHE ] = Gdk::Color( "brown" );

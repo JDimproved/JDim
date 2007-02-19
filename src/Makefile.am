@@ -11,8 +11,8 @@ jd_LDADD = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIB
 	./image/libimage.a \
 	./message/libmessage.a \
 	./skeleton/libskeleton.a \
-	./jdlib/libjdlib.a  \
 	./config/libconfig.a \
+	./jdlib/libjdlib.a  \
 	./icons/libicon.a
 
 jd_SOURCES = \

@@ -9,19 +9,15 @@
 #include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
 
+#include "colorid.h"
+
 #define COLOR_SIZE 3
 
 bool restore_board;
 bool restore_article;
 bool restore_image;
 
-int color_char[ COLOR_SIZE ];
-int color_char_age[ COLOR_SIZE ];
-int color_sepa[ COLOR_SIZE ];
-int color_back[ COLOR_SIZE ];
-int color_back_popup[ COLOR_SIZE ];
-int color_back_tree[ COLOR_SIZE ];
-int color_back_tree_board[ COLOR_SIZE ];
+std::string m_str_color[ COLOR_NUM ];
 
 bool use_tree_gtkrc;
 
@@ -233,42 +229,26 @@ const bool CONFIG::init_config()
     // bbsmenu.htmlのURL
     url_bbsmenu = cf.get_option( "url_bbsmenu", "http://menu.2ch.net/bbsmenu.html" );
 
-    // 色 ( RGB の順 ) 範囲は 0 - 65535
-
     // 文字色
-    color_char[ 0 ] = cf.get_option( "color_char_R", 0 );
-    color_char[ 1 ] = cf.get_option( "color_char_G", 0 );
-    color_char[ 2 ] = cf.get_option( "color_char_B", 0 );
+    m_str_color[ COLOR_CHAR ] = "#000000000000";
 
-    // ageの時のメール欄
-    color_char_age[ 0 ] = cf.get_option( "color_char_age_R", 65000 );
-    color_char_age[ 1 ] = cf.get_option( "color_char_age_G", 0 );
-    color_char_age[ 2 ] = cf.get_option( "color_char_age_B", 0 );
+    // ageの時のメール欄の色
+    m_str_color[ COLOR_CHAR_AGE ] = "#fde800000000";
 
-    // 新着セパレータ
-    color_sepa[ 0 ] = cf.get_option( "color_sepa_R", 32000 );
-    color_sepa[ 1 ] = cf.get_option( "color_sepa_G", 32000 );
-    color_sepa[ 2 ] = cf.get_option( "color_sepa_B", 32000 );
-
-    // 背景色
-    color_back[ 0 ] = cf.get_option( "color_back_R", 65000 );
-    color_back[ 1 ] = cf.get_option( "color_back_G", 65000 );
-    color_back[ 2 ] = cf.get_option( "color_back_B", 63000 );
-
-    // ツリービュー(板一覧)の背景色
-    color_back_tree[ 0 ] = cf.get_option( "color_tree_R", 65000 );
-    color_back_tree[ 1 ] = cf.get_option( "color_tree_G", 65000 );
-    color_back_tree[ 2 ] = cf.get_option( "color_tree_B", 63000 );
-
-    // ツリービュー(スレ一覧)の背景色
-    color_back_tree_board[ 0 ] = cf.get_option( "color_tree_board_R", color_back_tree[ 0 ] );
-    color_back_tree_board[ 1 ] = cf.get_option( "color_tree_board_G", color_back_tree[ 1 ] );
-    color_back_tree_board[ 2 ] = cf.get_option( "color_tree_board_B", color_back_tree[ 2 ] );
+    // スレ背景色
+    m_str_color[ COLOR_BACK ] = "#fde8fde8f618";
 
     // ポップアップの背景色
-    color_back_popup[ 0 ] = cf.get_option( "color_popup_R", 65000 );
-    color_back_popup[ 1 ] = cf.get_option( "color_popup_G", 65000 );
-    color_back_popup[ 2 ] = cf.get_option( "color_popup_B", 63000 );
+    m_str_color[ COLOR_BACK_POPUP ] = m_str_color[ COLOR_BACK ];
+
+    // 板一覧の背景色
+    m_str_color[ COLOR_BACK_BBS ] = m_str_color[ COLOR_BACK ];
+
+    // スレ一覧の背景色
+    m_str_color[ COLOR_BACK_BOARD ] = m_str_color[ COLOR_BACK ];
+
+    // 新着セパレータ
+    m_str_color[ COLOR_SEPARATOR_NEW ] = "#7d007d007d00";
 
     // ツリービューでgtkrcの設定を使用するか
     use_tree_gtkrc = cf.get_option( "use_tree_gtkrc", false );
@@ -444,34 +424,6 @@ void CONFIG::save_conf_impl( const std::string& path )
     cf.update( "del_img_day", del_img_day );
     cf.update( "max_img_size", max_img_size );
 
-    cf.update( "color_char_R", color_char[ 0 ] );
-    cf.update( "color_char_G", color_char[ 1 ] );
-    cf.update( "color_char_B", color_char[ 2 ] );
-
-    cf.update( "color_char_age_R", color_char_age[ 0 ] );
-    cf.update( "color_char_age_G", color_char_age[ 1 ] );
-    cf.update( "color_char_age_B", color_char_age[ 2 ] );
-
-    cf.update( "color_sepa_R", color_sepa[ 0 ] );
-    cf.update( "color_sepa_G", color_sepa[ 1 ] );
-    cf.update( "color_sepa_B", color_sepa[ 2 ] );
-
-    cf.update( "color_back_R", color_back[ 0 ] );
-    cf.update( "color_back_G", color_back[ 1 ] );
-    cf.update( "color_back_B", color_back[ 2 ] );
-
-    cf.update( "color_tree_R", color_back_tree[ 0 ] );
-    cf.update( "color_tree_G", color_back_tree[ 1 ] );
-    cf.update( "color_tree_B", color_back_tree[ 2 ] );
-
-    cf.update( "color_tree_board_R", color_back_tree_board[ 0 ] );
-    cf.update( "color_tree_board_G", color_back_tree_board[ 1 ] );
-    cf.update( "color_tree_board_B", color_back_tree_board[ 2 ] );
-
-    cf.update( "color_popup_R", color_back_popup[ 0 ] );
-    cf.update( "color_popup_G", color_back_popup[ 1 ] );
-    cf.update( "color_popup_B", color_back_popup[ 2 ] );
-
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
 
     cf.update( "show_oldarticle", show_oldarticle );
@@ -532,21 +484,19 @@ void CONFIG::set_restore_article( bool restore ){ restore_article = restore; }
 const bool CONFIG::get_restore_image(){ return restore_image; }
 void CONFIG::set_restore_image( bool restore ){ restore_image = restore; }
 
-const int* CONFIG::get_color_char() { return color_char; }
-const int* CONFIG::get_color_char_age() { return color_char_age; }
-const int* CONFIG::get_color_separator() { return color_sepa; }
-const int* CONFIG::get_color_back() { return color_back; }
-const int* CONFIG::get_color_back_popup() { return color_back_popup; }
-const int* CONFIG::get_color_back_tree() { return color_back_tree; }
-const int* CONFIG::get_color_back_tree_board() { return color_back_tree_board; }
 
-void CONFIG::set_color_char( int* color ) { memcpy( color_char, color, sizeof( int )*COLOR_SIZE ); }
-void CONFIG::set_color_char_age( int* color ) { memcpy( color_char_age, color, sizeof( int )*COLOR_SIZE ); }
-void CONFIG::set_color_separator( int* color ) { memcpy( color_sepa, color, sizeof( int )*COLOR_SIZE ); }
-void CONFIG::set_color_back( int* color ) { memcpy( color_back, color, sizeof( int )*COLOR_SIZE ); }
-void CONFIG::set_color_back_popup( int* color ) { memcpy( color_back_popup, color, sizeof( int )*COLOR_SIZE ); }
-void CONFIG::set_color_back_tree( int* color ) { memcpy( color_back_tree, color, sizeof( int )*COLOR_SIZE ); }
-void CONFIG::set_color_back_tree_board( int* color ) { memcpy( color_back_tree_board, color, sizeof( int )*COLOR_SIZE ); }
+// 色
+const std::string& CONFIG::get_color( int id )
+{
+    assert( id < COLOR_NUM );
+    return m_str_color[ id ];
+}
+
+void CONFIG::set_color( int id, const std::string& color )
+{
+    assert( id < COLOR_NUM );
+    m_str_color[ id ] = color;
+}
 
 const bool CONFIG::get_use_tree_gtkrc(){ return use_tree_gtkrc; }
 

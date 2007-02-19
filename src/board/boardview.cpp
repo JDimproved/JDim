@@ -24,6 +24,7 @@
 #include "controlid.h"
 #include "prefdiagfactory.h"
 #include "httpcode.h"
+#include "colorid.h"
 
 #include "icons/iconmanager.h"
 
@@ -106,7 +107,7 @@ m_treeview.append_column( *col ); \
 
 BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
-      m_treeview( CONFIG::get_fontname_tree_board(), CONFIG::get_color_back_tree_board() ),
+      m_treeview( CONFIG::get_fontname_tree_board(), COLOR_BACK_BOARD ),
       m_col( COL_NUM_COL ),
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
@@ -750,7 +751,7 @@ void BoardView::redraw_view()
 //
 void BoardView::relayout()
 {
-    m_treeview.init_color( CONFIG::get_color_back_tree_board() );
+    m_treeview.init_color( COLOR_BACK_BOARD );
     m_treeview.init_font( CONFIG::get_fontname_tree_board() );
 }
 

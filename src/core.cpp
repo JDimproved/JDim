@@ -16,6 +16,7 @@
 #include "prefdiagfactory.h"
 #include "controlutil.h"
 #include "controlid.h"
+#include "colorid.h"
 #include "jdversion.h"
 
 #include "skeleton/msgdiag.h"
@@ -26,6 +27,7 @@
 #include "config/buttonconfig.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/miscgtk.h"
 
 #include "dbtree/interface.h"
 #include "dbimg/imginterface.h"
@@ -283,7 +285,6 @@ void Core::run( bool init )
 
     m_action_group->add( Gtk::Action::create( "Color_Menu", "色" ) );
     m_action_group->add( Gtk::Action::create( "ColorChar", "スレ文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
-    m_action_group->add( Gtk::Action::create( "ColorSepa", "新着セパレータ色" ), sigc::mem_fun( *this, &Core::slot_changecolor_separator ) );
     m_action_group->add( Gtk::Action::create( "ColorBack", "スレ背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
     m_action_group->add( Gtk::Action::create( "ColorBackPopup", "ポップアップ背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_popup ) );
     m_action_group->add( Gtk::Action::create( "ColorBackTree", "ツリー背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
@@ -968,10 +969,10 @@ void Core::slot_changefont_message()
 //
 void Core::slot_changecolor_back_tree()
 {
-    int rgb[ 3 ];
-    if( open_color_diag( "ツリー背景色", CONFIG::get_color_back_tree(), rgb ) ){
-        CONFIG::set_color_back_tree( rgb );
-        CONFIG::set_color_back_tree_board( rgb );
+    if( open_color_diag( "ツリー背景色", COLOR_BACK_BBS ) ){
+
+        CONFIG::set_color( COLOR_BACK_BOARD, CONFIG::get_color( COLOR_BACK_BBS ) );
+
         BBSLIST::get_admin()->set_command( "relayout_all" );
         BOARD::get_admin()->set_command( "relayout_all" );
     }
@@ -983,9 +984,7 @@ void Core::slot_changecolor_back_tree()
 //
 void Core::slot_changecolor_back()
 {
-    int rgb[ 3 ];
-    if( open_color_diag( "スレ背景", CONFIG::get_color_back(), rgb ) ){
-        CONFIG::set_color_back( rgb );
+    if( open_color_diag( "スレ背景", COLOR_BACK ) ){
         ARTICLE::get_admin()->set_command( "relayout_all" );
     }
 }
@@ -996,22 +995,7 @@ void Core::slot_changecolor_back()
 //
 void Core::slot_changecolor_char()
 {
-    int rgb[ 3 ];
-    if( open_color_diag( "文字色", CONFIG::get_color_char(), rgb ) ){
-        CONFIG::set_color_char( rgb );
-        ARTICLE::get_admin()->set_command( "relayout_all" );
-    }
-}
-
-
-//
-// 新着セパレータ色変更
-//
-void Core::slot_changecolor_separator()
-{
-    int rgb[ 3 ];
-    if( open_color_diag( "新着セパレータ", CONFIG::get_color_separator(), rgb ) ){
-        CONFIG::set_color_separator( rgb );
+    if( open_color_diag( "文字色", COLOR_CHAR ) ){
         ARTICLE::get_admin()->set_command( "relayout_all" );
     }
 }
@@ -1023,9 +1007,7 @@ void Core::slot_changecolor_separator()
 //
 void Core::slot_changecolor_back_popup()
 {
-    int rgb[ 3 ];
-    if( open_color_diag( "ポップアップ背景", CONFIG::get_color_back_popup(), rgb ) ){
-        CONFIG::set_color_back_popup( rgb );
+    if( open_color_diag( "ポップアップ背景", COLOR_BACK_POPUP ) ){
         ARTICLE::get_admin()->set_command( "relayout_all" );
     }
 }
@@ -1035,20 +1017,15 @@ void Core::slot_changecolor_back_popup()
 //
 // 色選択ダイアログを開く
 //
-bool Core::open_color_diag( std::string title, const int* rgb, int* rgb_out )
+bool Core::open_color_diag( std::string title, int id )
 {
-    Gdk::Color color;
-    color.set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
+    Gdk::Color color( CONFIG::get_color( id ) );
 
     Gtk::ColorSelectionDialog diag( title );
     diag.get_colorsel()->set_current_color( color );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
-        color = diag.get_colorsel()->get_current_color();
-        rgb_out[ 0 ] = color.get_red();
-        rgb_out[ 1 ] = color.get_green();
-        rgb_out[ 2 ] = color.get_blue();
-
+        CONFIG::set_color( id, MISC::color_to_str( diag.get_colorsel()->get_current_color() ) );
         return true;
     }
 

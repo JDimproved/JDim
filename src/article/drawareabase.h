@@ -242,7 +242,7 @@ namespace ARTICLE
       private:
 
         // 背景色
-        virtual const int* rgb_color_back();
+        virtual const std::string& str_color_back();
 
         // フォント
         virtual const std::string& fontname(); 

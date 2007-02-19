@@ -25,22 +25,9 @@ namespace CONFIG
     const bool get_restore_image();
     void set_restore_image( bool restore );
 
-    // 色 ( RGB の順 ) 範囲は 0 - 65535
-    const int* get_color_char();          // 文字
-    const int* get_color_char_age();      // age ているときのメール欄
-    const int* get_color_separator();     // 新着セパレータ
-    const int* get_color_back();          // 背景
-    const int* get_color_back_popup();    // ポップアップの背景
-    const int* get_color_back_tree();     // 板一覧の背景
-    const int* get_color_back_tree_board();// スレ一覧の背景
-    
-    void set_color_char( int* color );
-    void set_color_char_age( int* color );
-    void set_color_separator( int* color );
-    void set_color_back( int* color );
-    void set_color_back_popup( int* color );
-    void set_color_back_tree( int* color );
-    void set_color_back_tree_board( int* color );
+    // 色 ( # + 12桁の16進数 の形式 )
+    const std::string& get_color( int id );
+    void set_color( int id, const std::string& color );
 
     // ツリービューでgtkrcの設定を使用するか
     const bool get_use_tree_gtkrc();

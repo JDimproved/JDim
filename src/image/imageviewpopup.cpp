@@ -10,6 +10,8 @@
 
 #include "config/globalconf.h"
 
+#include "colorid.h"
+
 // 枠を描く
 #define DRAW_FRAME( color ) m_event_frame->modify_bg( Gtk::STATE_NORMAL, color ); 
 
@@ -28,9 +30,7 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
     get_event().set_border_width( 1 );
 
     // 色の設定
-    Gdk::Color color_bg;
-    const int *rgb = CONFIG::get_color_back();
-    color_bg.set_rgb( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
+    Gdk::Color color_bg( CONFIG::get_color( COLOR_BACK ) );
     get_event().modify_bg( Gtk::STATE_NORMAL, color_bg );
     DRAW_FRAME( Gdk::Color( "black" ) );
 

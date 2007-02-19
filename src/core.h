@@ -172,12 +172,11 @@ namespace CORE
         void slot_changefont_message();
 
         void slot_changecolor_char();
-        void slot_changecolor_separator();
         void slot_changecolor_back();
         void slot_changecolor_back_popup();
         void slot_changecolor_back_tree();
 
-        bool open_color_diag( std::string title, const int* rgb, int* rgb_out );
+        bool open_color_diag( std::string title, int id );
 
         void slot_setup_proxy();
         void slot_setup_passwd();
