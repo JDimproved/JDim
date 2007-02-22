@@ -20,8 +20,8 @@ dnl
 dnl OSを判定してOS別の設定
 dnl 
 case "${host_os}" in 
- linux*) 
-   echo "os = linux"
+ linux*|gnu*|*-gnu)
+   echo "os = linux or gnu"
    AC_DEFUN([AM_ICONV],[])
    AC_DEFINE(ICONV_CONST, , "iconv_const")
    ;;
