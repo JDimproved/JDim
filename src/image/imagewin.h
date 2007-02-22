@@ -16,7 +16,7 @@ namespace IMAGE
     class ImageWin : public Gtk::Window
     {
         bool m_boot;
-        bool m_enable_close;
+        bool m_enable_fold;
         bool m_transient;
 
         bool m_maximized; // 最大化されている
@@ -59,11 +59,8 @@ namespace IMAGE
         // hide 中
         const bool is_hide();
 
-        // フォーカス状態
-        const bool has_focus();
-
-        // ウィンドウの開け閉め許可
-        void set_enable_close( bool enable ){ m_enable_close = enable; }
+        // ダイアログ表示などでフォーカスが外れてもウインドウを畳まないようにする
+        void set_enable_fold( bool enable );
 
         void set_transient( bool set );
         void pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view );

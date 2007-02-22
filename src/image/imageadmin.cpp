@@ -282,12 +282,12 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
     }
 
     // window 開け閉じ可能/不可
-    else if( command.command == "enable_close_win" ){
-        if( m_win ) m_win->set_enable_close( true );
+    else if( command.command == "enable_fold_win" ){
+        if( m_win ) m_win->set_enable_fold( true );
     }
 
-    else if( command.command == "disable_close_win" ){
-        if( m_win ) m_win->set_enable_close( false );
+    else if( command.command == "disable_fold_win" ){
+        if( m_win ) m_win->set_enable_fold( false );
     }
 }
 
@@ -911,7 +911,7 @@ void ImageAdmin::save_all()
 
     int overwrite = 0; // -1 なら全てNO、1ならすべてYES
 
-    set_command_immediately( "disable_close_win" );
+    set_command_immediately( "disable_fold_win" );
 
     std::list< std::string > list_urls = get_URLs();
 
@@ -1013,5 +1013,5 @@ void ImageAdmin::save_all()
         else MISC::ERRMSG( "can't create " + path_dir );
     }
 
-    set_command_immediately( "enable_close_win" );
+    set_command_immediately( "enable_fold_win" );
 }

@@ -39,7 +39,7 @@ enum
 ImageWin::ImageWin()
     : Gtk::Window(),
       m_boot( true ),
-      m_enable_close( true ),
+      m_enable_fold( true ),
       m_transient( false ),
       m_maximized( false ),
       m_count_focusout( 0 ),
@@ -232,11 +232,21 @@ const bool ImageWin::is_hide()
 
 
 //
-// フォーカスされている = 開いている
+// ダイアログ表示などでフォーカスが外れてもウインドウを畳まないようにする
 //
-const bool ImageWin::has_focus()
+void ImageWin::set_enable_fold( bool enable )
 {
-    return ( m_mode == IMGWIN_NORMAL );
+    if( m_mode != IMGWIN_NORMAL ) return;
+    if( m_enable_fold == enable ) return;
+
+#ifdef _DEBUG
+    std::cout << "ImageWin::set_enable_fold " << enable << std::endl;
+#endif
+
+    m_enable_fold = enable;
+
+    // XFCE 環境の場合はここでpresent()しておかないとフォーカスが外れる
+    if( m_enable_fold ) present(); 
 }
 
 
@@ -283,10 +293,10 @@ void ImageWin::set_status( const std::string& stat )
 // フォーカスイン
 void ImageWin::focus_in()
 {
-    if( ! m_enable_close ) return;
+    if( ! m_enable_fold ) return;
 
 #ifdef _DEBUG
-    std::cout << "ImageWin::focus_in mode = " << m_mode << " enable_close = " << m_enable_close
+    std::cout << "ImageWin::focus_in mode = " << m_mode << " enable_fold = " << m_enable_fold
               << " maximized = " << m_maximized
               << " iconified = " << SESSION::is_iconified_win_img()  << std::endl;
 #endif
@@ -308,7 +318,7 @@ void ImageWin::focus_in()
 // フォーカスアウト
 void ImageWin::focus_out()
 {
-    if( ! m_enable_close ) return;
+    if( ! m_enable_fold ) return;
 
     // ポップアップメニューを表示しているかD&D中はfocus_outしない
     if( SESSION::is_popupmenu_shown() ) return;

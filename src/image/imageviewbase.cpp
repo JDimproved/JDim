@@ -425,7 +425,11 @@ void ImageViewBase::slot_close_all_views()
 void ImageViewBase::slot_preference()
 {
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_IMAGE, get_url() );
+
+    IMAGE::get_admin()->set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
     pref->run();
+    IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );  // run 直後に呼ぶこと
+
     delete pref;
 }
 
@@ -524,19 +528,22 @@ void ImageViewBase::operate_view( const int& control )
 
         case CONTROL::Delete:
 
-            IMAGE::get_admin()->set_command_immediately( "disable_close_win" );
-
             if( !m_img->is_protected() ){
+
                 Gtk::MessageDialog mdiag( "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+
+                IMAGE::get_admin()->set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
                 if( mdiag.run() == Gtk::RESPONSE_OK ) delete_view();
+                IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );  // run 直後に呼ぶこと
             }
             else{
-                IMAGE::get_admin()->set_command_immediately( "disable_close_win" );
-                Gtk::MessageDialog mdiag( "キャッシュ保護されています" );
-                mdiag.run();
-            }
 
-            IMAGE::get_admin()->set_command_immediately( "enable_close_win" );
+                Gtk::MessageDialog mdiag( "キャッシュ保護されています" );
+
+                IMAGE::get_admin()->set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
+                mdiag.run();
+                IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );  // run 直後に呼ぶこと
+            }
 
             break;
 
@@ -837,9 +844,9 @@ void ImageViewBase::slot_save()
 {
     if( ! m_enable_menuslot ) return;
 
-    IMAGE::get_admin()->set_command_immediately( "disable_close_win" );
+    IMAGE::get_admin()->set_command_immediately( "disable_fold_win" );
     m_img->save( std::string() );
-    IMAGE::get_admin()->set_command_immediately( "enable_close_win" );
+    IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );
 }
 
 
