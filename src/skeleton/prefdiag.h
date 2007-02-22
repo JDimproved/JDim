@@ -15,12 +15,16 @@ namespace SKELETON
     {
         std::string m_url;
         virtual void slot_ok_clicked(){}
+        virtual void slot_cancel_clicked(){}
 
       public:
 
         PrefDiag( const std::string& url, bool add_cancel = true ) : m_url( url )
         {
-            if( add_cancel ) add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+            if( add_cancel ){
+                add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL )
+                ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_cancel_clicked ) );
+            }
 
             add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK )
             ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_ok_clicked ) );
