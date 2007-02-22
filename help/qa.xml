@@ -5,8 +5,12 @@
 
 <qa>
     <question>cvs から最新のコードを取得したい</question>
-    <answer>次の順で操作すると最新のコードがチェックアウトできる</answer>
+
+    <answer>
+http://cvs.sourceforge.jp/cgi-bin/viewcvs.cgi/jd4linux/jd.tar.gz?view=tar
+</answer>
     <other>
+からtar玉を取得できる。または次の手順で操作すると最新のコードがチェックアウトできる。
     <ul class="decimal">
     <li>端末を開く</li>
     <li>cvs -d:pserver:anonymous@cvs.sourceforge.jp:/cvsroot/jd4linux login</li>

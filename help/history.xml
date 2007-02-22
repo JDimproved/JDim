@@ -515,7 +515,15 @@ etc.txtの一番上が表示されなかったバグを修正
 ユーザコマンドに$DATURLと$LOCALDATを追加
 http://info.2ch.net を板として認識していたバグを修正
 idpopup_by_mo, refpopup_by_mo,namepopup_by_mo 設定追加
-名前欄のbタグで囲まれたトリップなどの文字列に色を付けられるようにした
+名前欄のbタグで囲まれたトリップなどの文字列に色を付けられるようにした( thank to tamagodake氏)
+</release>
+
+
+<release version="1.8.8-beta" date="2007/02/()">
+ヘルプファイルをXML化した( thank to tamagodake氏)
+フォント、色設定ダイアログ追加( thank to tamagodake氏)
+スレ一覧の速度の計算アルゴリズムを変えた
+Debian GNU/kFreeBSD に configure.inを対応した
 </release>
 
 

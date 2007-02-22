@@ -147,13 +147,15 @@ rpmbuild -tb ～.tgz
 <br />
 だけ
 </basictext>
-</res>
+</res>ntu
 </dist>
 
 
 <dist name="Ubuntu">
 <other>
-<p>ubuntu-jaのリポジトリを登録して Synaptic から JDを検索してインストール可能</p>
+<div class="example">
+ubuntu-jaの日本語セットアップヘルパからインストール可能です
+</div>
 </other>
 
 <res>
@@ -171,7 +173,7 @@ Ubuntuでも同じようにしてインストール出来ると思います。
 <br />
 設定→リポジトリで「コミュニティーによるメンテナンス」を選んでから
 <br />
-libgtkmm-2.4.dev
+libgtkmm-2.4-dev
 autoconf
 automake1.9
 libtool
@@ -237,4 +239,51 @@ src/jdで起動。
 </res>
 </dist>
 
+
+
+<dist name="Nexenta">
+
+<basictext>
+92 名前：名無しさん [sage]：2007/02/19(月) 19:37:16 ID:kxhxXt6o
+
+Nexenta という GNU/OpenSolaris な環境で jd-1.8.8-beta070218 をビルドしてみました。
+必要なパッケージ、ビルド方法はについては
+「インストール方法補足、及びディストロ別インストール方法」の Ubuntu と同じです。
+# その Ubuntu の項目ですが、libgtkmm-2.4.dev は libgtkmm-2.4-dev の間違いかと。
+
+途中で timegm が未定義と言われるので、src/jdlib/misctime.cpp に
+ttp://zunda.freeshell.org/d/20050308.html#p05
+の中身をコピペしてみました。
+今度は ICONV_CONST が未定義と言われるので、src/jdlib/jdiconv.cpp に
+#define ICONV_CONST const
+を追加しました。
+さらに MSG_NOSIGNAL が未定義と言われるので、src/jdlib/loader.cpp に
+#define MSG_NOSIGNAL 0
+を追加しました。
+とりあえずこの3点の応急措置だけでうまくいくようです。
+</basictext>
+</dist>
+
+
+<dist name="ArchLinux">
+
+<basictext>
+85 名前：28 [sage]：2007/02/21(水) 20:23:05 ID:H9gM2cIp
+
+少し前にArchLinuxでビルドできないと言っていた者です。
+以前はArchLinux-0.7.2-i686だったのですが、
+今回ArchLinux-0.8-beta-x86_64で試してみたところ、何事もなくビルドできました。
+0.8-beta-i686では未確認ですが、手順は以下の通りです。
+
+# pacman -S gtkmm
+$ autoreconf -i
+$ ./configure
+$ make
+</basictext>
+</dist>
+
+
+
 </document>
+
+

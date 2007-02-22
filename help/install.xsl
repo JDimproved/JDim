@@ -22,6 +22,10 @@
         <h3 class="blue"><a name="{generate-id()}"><xsl:value-of select="@name" /></a></h3>
         <xsl:apply-templates select="other" />
         <xsl:apply-templates select="res" />
+
+        <pre>
+        <xsl:value-of select="basictext" />
+        </pre>
     </div>
 </xsl:template>
 

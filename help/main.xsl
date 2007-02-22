@@ -15,7 +15,6 @@
     <img src="jd.png" width="96" height="96" alt="JDロゴ" />
     <span id="text"><xsl:value-of select="document/@title" /></span>
     </h1>
-    <p id="modified">更新:<xsl:value-of select="document/@modified" /></p>
 
     <xsl:apply-templates select="document" />
     </body>
