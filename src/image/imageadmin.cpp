@@ -80,14 +80,6 @@ ImageAdmin::~ImageAdmin()
 
 
 
-const bool ImageAdmin::has_focus()
-{
-    if( m_win ) return m_win->has_focus();
-
-    return Admin::has_focus();
-}
-
-
 //
 // 起動中
 //
@@ -911,8 +903,6 @@ void ImageAdmin::save_all()
 
     int overwrite = 0; // -1 なら全てNO、1ならすべてYES
 
-    set_command_immediately( "disable_fold_win" );
-
     std::list< std::string > list_urls = get_URLs();
 
     // ディレクトリ選択
@@ -925,7 +915,11 @@ void ImageAdmin::save_all()
     diag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
     diag.set_default_response( Gtk::RESPONSE_ACCEPT );
     
-    if( diag.run() == Gtk::RESPONSE_ACCEPT ){
+    set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
+    int ret = diag.run();
+    set_command_immediately( "enable_fold_win" ); // run 直後に呼ぶこと
+
+    if( ret  == Gtk::RESPONSE_ACCEPT ){
 
         diag.hide();
 
@@ -973,7 +967,11 @@ void ImageAdmin::save_all()
                             mdiag.add_button( "上書き", Gtk::RESPONSE_YES + 100 );
                             mdiag.add_button( "すべていいえ", Gtk::RESPONSE_NO + 200 );
                             mdiag.add_button( "すべて上書き", Gtk::RESPONSE_YES + 200 );
-                            int ret = mdiag.run();
+
+                            set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
+                            ret = mdiag.run();
+                            set_command_immediately( "enable_fold_win" ); // run 直後に呼ぶこと
+
                             mdiag.hide();
 
                             switch( ret ){
@@ -1012,6 +1010,4 @@ void ImageAdmin::save_all()
         }
         else MISC::ERRMSG( "can't create " + path_dir );
     }
-
-    set_command_immediately( "enable_fold_win" );
 }
