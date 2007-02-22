@@ -80,14 +80,6 @@ enum
 
 #define URL_MESSAGEADMIN "jdadmin://message"
 
-// フォントID
-enum
-{
-    FONT_MAIN = 0,
-    FONT_POPUP,
-    FONT_NUM
-};
-
 
 // タイプ
 enum 
