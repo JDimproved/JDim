@@ -36,7 +36,8 @@ jd_SOURCES = \
 \
 	viewfactory.cpp \
 \
-	prefdiagfactory.cpp
+	prefdiagfactory.cpp \
+	fontcolorpref.cpp
 
 
 noinst_HEADERS = \
@@ -56,6 +57,7 @@ noinst_HEADERS = \
 	historymenu.h \
 	historysubmenu.h \
 	colorid.h \
+	fontid.h \
 	controlid.h \
 	controllabel.h \
 	control.h \
@@ -72,7 +74,8 @@ noinst_HEADERS = \
 	browserpref.h \
 	globalabonepref.h \
 	globalabonethreadpref.h \
-	passwdpref.h
+	passwdpref.h \
+	fontcolorpref.h
 
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@

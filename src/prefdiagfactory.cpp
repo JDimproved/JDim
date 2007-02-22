@@ -7,6 +7,7 @@
 #include "proxypref.h"
 #include "globalabonepref.h"
 #include "globalabonethreadpref.h"
+#include "fontcolorpref.h"
 
 #include "board/preference.h"
 #include "article/preference.h"
@@ -39,6 +40,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( int type, const std::string& url )
 
         case PREFDIAG_IMAGE:
             return new IMAGE::Preferences( url );
+
+        case PREFDIAG_FONTCOLOR:
+            return new CORE::FontColorPref( url );
 
         default:
             return NULL;
