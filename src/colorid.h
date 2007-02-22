@@ -5,7 +5,8 @@
 
 enum
 {
-    COLOR_DEFAULT = 0,
+    COLOR_FOR_THREAD = 0,
+
     COLOR_CHAR,             // スレビューなど基本の文字
     COLOR_CHAR_NAME,        // 名前欄
     COLOR_CHAR_NAME_B,      // トリップや fusianasan 等、<b>が含まれている名前欄
@@ -24,12 +25,15 @@ enum
 
     COLOR_BACK,             // スレビューなど基本の背景
     COLOR_BACK_POPUP,       // ポップアップの背景
-    COLOR_BACK_BBS,         // 板一覧の背景
-    COLOR_BACK_BOARD,       // スレ一覧の背景
     COLOR_BACK_SELECTION,   // 選択範囲
     COLOR_BACK_HIGHLIGHT,   // ハイライト文字の背景色
 
     COLOR_SEPARATOR_NEW,    // 新着セパレータ
+
+    END_COLOR_FOR_THREAD,
+
+    COLOR_BACK_BBS,         // 板一覧の背景
+    COLOR_BACK_BOARD,       // スレ一覧の背景
 
     COLOR_NUM
 };

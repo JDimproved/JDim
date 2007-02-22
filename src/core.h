@@ -161,23 +161,10 @@ namespace CORE
         void slot_activate_menubar();
 
         void slot_toggle_save_postlog();
-        void slot_toggle_strict_charwidth();
         void slot_toggle_use_mosaic();
         void slot_delete_all_images();
 
-        void slot_changefont_tree();
-        void slot_changefont_tree_board();
-        void slot_changefont_main();
-        void slot_changefont_popup();
-        void slot_changefont_message();
-
-        void slot_changecolor_char();
-        void slot_changecolor_back();
-        void slot_changecolor_back_popup();
-        void slot_changecolor_back_tree();
-
-        bool open_color_diag( std::string title, int id );
-
+        void slot_setup_fontcolor();
         void slot_setup_proxy();
         void slot_setup_passwd();
         void slot_setup_browser();

@@ -33,17 +33,8 @@ namespace CONFIG
     const bool get_use_tree_gtkrc();
 
     // フォント
-    const std::string& get_fontname_main();
-    const std::string& get_fontname_popup();
-    const std::string& get_fontname_tree();
-    const std::string& get_fontname_tree_board();
-    const std::string& get_fontname_message();
-
-    void set_fontname_main( const std::string& name );
-    void set_fontname_popup( const std::string& name );
-    void set_fontname_tree( const std::string& name );
-    void set_fontname_tree_board( const std::string& name );
-    void set_fontname_message( const std::string& name );
+    const std::string& get_fontname( int id );
+    void set_fontname( int id, const std::string& fontname );
 
     // レスを参照するときに前に付ける文字
     const std::string& get_ref_prefix();

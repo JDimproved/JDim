@@ -26,6 +26,7 @@
 #include "viewfactory.h"
 #include "controlutil.h"
 #include "controlid.h"
+#include "fontid.h"
 #include "cache.h"
 
 #include <sstream>
@@ -238,7 +239,7 @@ void MessageViewBase::pack_widget()
     pack_start( m_notebook );
 
     // フォントセット
-    init_font( CONFIG::get_fontname_message() );
+    init_font( CONFIG::get_fontname( FONT_MESSAGE ) );
 
     show_status();
 }
@@ -419,7 +420,7 @@ bool MessageViewBase::slot_button_press( GdkEventButton* event )
 //
 void MessageViewBase::relayout()
 {
-    init_font( CONFIG::get_fontname_message() );
+    init_font( CONFIG::get_fontname( FONT_MESSAGE ) );
 }
 
 

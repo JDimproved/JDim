@@ -283,22 +283,7 @@ void Core::run( bool init )
                                                     CONFIG::get_keyconfig()->is_emacs_mode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
 
-    m_action_group->add( Gtk::Action::create( "Color_Menu", "色" ) );
-    m_action_group->add( Gtk::Action::create( "ColorChar", "スレ文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
-    m_action_group->add( Gtk::Action::create( "ColorBack", "スレ背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
-    m_action_group->add( Gtk::Action::create( "ColorBackPopup", "ポップアップ背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_popup ) );
-    m_action_group->add( Gtk::Action::create( "ColorBackTree", "ツリー背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
-
-
-    m_action_group->add( Gtk::Action::create( "Font_Menu", "フォント" ) );
-    m_action_group->add( Gtk::Action::create( "FontTree", "板一覧" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
-    m_action_group->add( Gtk::Action::create( "FontTreeBoard", "スレ一覧" ), sigc::mem_fun( *this, &Core::slot_changefont_tree_board ) );
-    m_action_group->add( Gtk::Action::create( "FontMenu", "スレッド" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
-    m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップ" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
-    m_action_group->add( Gtk::Action::create( "FontMessage", "書き込みウィンドウ" ), sigc::mem_fun( *this, &Core::slot_changefont_message ) );
-    m_action_group->add( Gtk::ToggleAction::create( "StrictCharWidth", "フォント幅の近似計算を厳密におこなう",
-                                                    std::string(), CONFIG::get_strict_char_width() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_strict_charwidth ) );
+    m_action_group->add( Gtk::Action::create( "FontColorPref", "フォントと色の設定" ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
 
 
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
@@ -395,25 +380,7 @@ void Core::run( bool init )
 
         "<separator/>"
 
-        "<menu action='Font_Menu'>"
-        "<menuitem action='FontMenu'/>"
-        "<menuitem action='FontPopup'/>"
-        "<menuitem action='FontTree'/>"
-        "<menuitem action='FontTreeBoard'/>"
-        "<menuitem action='FontMessage'/>"
-        "<separator/>"
-        "<menuitem action='StrictCharWidth' />"
-        "</menu>"
-
-        "<separator/>"
-
-        "<menu action='Color_Menu'>"
-        "<menuitem action='ColorChar'/>"
-//        "<menuitem action='ColorSepa'/>"
-        "<menuitem action='ColorBack'/>"
-        "<menuitem action='ColorBackPopup'/>"
-        "<menuitem action='ColorBackTree'/>"
-        "</menu>"
+        "<menuitem action='FontColorPref' />"
 
         "<separator/>"
         "<menuitem action='SetupProxy'/>"
@@ -704,18 +671,9 @@ void Core::first_setup()
     slot_setup_proxy();
     slot_setup_browser();
 
-    show_setupdiag( "JDセットアップ\n\nスレ、ポップアップ、ツリービューの順にフォントの設定をおこなって下さい" );
+    show_setupdiag( "JDセットアップ\n\nフォントと色の設定をおこなって下さい" );
 
-    slot_changefont_main();
-
-    CONFIG::set_fontname_popup( CONFIG::get_fontname_main() );
-    slot_changefont_popup();
-
-    CONFIG::set_fontname_tree( CONFIG::get_fontname_popup() );
-    slot_changefont_tree();
-
-    CONFIG::set_fontname_tree_board( CONFIG::get_fontname_tree() );
-    CONFIG::set_fontname_message( CONFIG::get_fontname_main() );
+    slot_setup_fontcolor();
 
     show_setupdiag( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
     show_setupdiag( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします\nリストが表示されるまでしばらくお待ち下さい" );
@@ -848,24 +806,6 @@ void Core::slot_toggle_save_postlog()
 
 
 //
-// フォント幅の近似計算を厳密におこなう
-//
-void Core::slot_toggle_strict_charwidth()
-{
-    CONFIG::set_strict_char_width( ! CONFIG::get_strict_char_width() );
-
-    if( CONFIG::get_strict_char_width() ){
-        SKELETON::MsgDiag mdiag( "スレビューのフォント幅の近似を厳密におこないます\n\nパフォーマンスが低下しますので通常は設定しないでください" );
-        mdiag.run();
-    }
-
-    ARTICLE::get_admin()->set_command( "init_font" );
-    ARTICLE::get_admin()->set_command( "relayout_all" );
-}
-
-
-
-//
 // 画像モザイクon/off
 //
 void Core::slot_toggle_use_mosaic()
@@ -888,148 +828,13 @@ void Core::slot_delete_all_images()
 
 
 //
-// ツリーフォント(板一覧)変更
+// フォントと色の設定
 //
-void Core::slot_changefont_tree()
+void Core::slot_setup_fontcolor()
 {
-    Gtk::FontSelectionDialog diag;
-    diag.set_font_name( CONFIG::get_fontname_tree() );
-    diag.set_title( "板一覧フォント" );
-    if( diag.run() == Gtk::RESPONSE_OK ){
-        CONFIG::set_fontname_tree( diag.get_font_name() );
-        BBSLIST::get_admin()->set_command( "relayout_all" );
-    }
-}
-
-
-//
-// ツリーフォント(スレ一覧)変更
-//
-void Core::slot_changefont_tree_board()
-{
-    Gtk::FontSelectionDialog diag;
-    diag.set_font_name( CONFIG::get_fontname_tree_board() );
-    diag.set_title( "スレ一覧フォント" );
-    if( diag.run() == Gtk::RESPONSE_OK ){
-        CONFIG::set_fontname_tree_board( diag.get_font_name() );
-        BOARD::get_admin()->set_command( "relayout_all" );
-    }
-}
-
-
-
-//
-// メインフォント変更
-//
-void Core::slot_changefont_main()
-{
-    Gtk::FontSelectionDialog diag;
-    diag.set_font_name( CONFIG::get_fontname_main() );
-    diag.set_title( "スレフォント" );
-    if( diag.run() == Gtk::RESPONSE_OK ){
-        CONFIG::set_fontname_main( diag.get_font_name() );
-        ARTICLE::get_admin()->set_command( "init_font" );
-        ARTICLE::get_admin()->set_command( "relayout_all" );
-    }
-}
-
-
-//
-// ポップアップフォント変更
-//
-void Core::slot_changefont_popup()
-{
-    Gtk::FontSelectionDialog diag;
-    diag.set_font_name( CONFIG::get_fontname_popup() );
-    diag.set_title( "ポップアップフォント" );
-    if( diag.run() == Gtk::RESPONSE_OK ){
-        CONFIG::set_fontname_popup( diag.get_font_name() );
-        ARTICLE::get_admin()->set_command( "init_font" );
-    }
-}
-
-
-//
-// 書き込みフォント変更
-//
-void Core::slot_changefont_message()
-{
-    Gtk::FontSelectionDialog diag;
-    diag.set_font_name( CONFIG::get_fontname_message() );
-    diag.set_title( "書き込みウィンドウフォント" );
-    if( diag.run() == Gtk::RESPONSE_OK ){
-        CONFIG::set_fontname_message( diag.get_font_name() );
-        MESSAGE::get_admin()->set_command( "relayout_all" );
-    }
-}
-
-
-//
-// ツリー背景色変更
-//
-void Core::slot_changecolor_back_tree()
-{
-    if( open_color_diag( "ツリー背景色", COLOR_BACK_BBS ) ){
-
-        CONFIG::set_color( COLOR_BACK_BOARD, CONFIG::get_color( COLOR_BACK_BBS ) );
-
-        BBSLIST::get_admin()->set_command( "relayout_all" );
-        BOARD::get_admin()->set_command( "relayout_all" );
-    }
-}
-
-
-//
-// 背景色変更
-//
-void Core::slot_changecolor_back()
-{
-    if( open_color_diag( "スレ背景", COLOR_BACK ) ){
-        ARTICLE::get_admin()->set_command( "relayout_all" );
-    }
-}
-
-
-//
-// 文字色変更
-//
-void Core::slot_changecolor_char()
-{
-    if( open_color_diag( "文字色", COLOR_CHAR ) ){
-        ARTICLE::get_admin()->set_command( "relayout_all" );
-    }
-}
-
-
-
-//
-// ポップアップ背景色変更
-//
-void Core::slot_changecolor_back_popup()
-{
-    if( open_color_diag( "ポップアップ背景", COLOR_BACK_POPUP ) ){
-        ARTICLE::get_admin()->set_command( "relayout_all" );
-    }
-}
-
-
-
-//
-// 色選択ダイアログを開く
-//
-bool Core::open_color_diag( std::string title, int id )
-{
-    Gdk::Color color( CONFIG::get_color( id ) );
-
-    Gtk::ColorSelectionDialog diag( title );
-    diag.get_colorsel()->set_current_color( color );
-    if( diag.run() == Gtk::RESPONSE_OK ){
-
-        CONFIG::set_color( id, MISC::color_to_str( diag.get_colorsel()->get_current_color() ) );
-        return true;
-    }
-
-    return false;
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_FONTCOLOR, "" );
+    pref->run();
+    delete pref;
 }
 
 
@@ -1690,6 +1495,11 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "relayout_all" );
     }
 
+    // 全articleviewのフォントの初期化
+    else if( command.command == "init_font_all_article" ){
+        ARTICLE::get_admin()->set_command( "init_font" );
+    }
+
 
     ////////////////////////////
     // board系のコマンド
@@ -1736,6 +1546,11 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
    
+    // 全boardviewの再レイアウト
+    else if( command.command == "relayout_all_board" ){
+        BOARD::get_admin()->set_command( "relayout_all" );
+    }
+
 
     ////////////////////////////
     // bbslist系のコマンド
@@ -1765,6 +1580,11 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         BBSLIST::get_admin()->set_command( "save_favorite" );
         return;
+    }
+
+    // 全bbslistviewの再レイアウト
+    else if( command.command == "relayout_all_bbslist" ){
+        BBSLIST::get_admin()->set_command( "relayout_all" );
     }
 
 

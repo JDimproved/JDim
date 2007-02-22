@@ -7,7 +7,7 @@
 
 #include "jdlib/miscutil.h"
 
-#include "global.h"
+#include "fontid.h"
 #include "config/globalconf.h"
 
 

@@ -93,6 +93,7 @@ namespace ARTICLE
         CARET_POSITION m_caret_pos_dragstart; // ドラッグを開始したキャレット位置
 
         // 色
+        int m_colorid_back; // 背景色
         Gdk::Color m_color[ COLOR_NUM ];
 
         // 新着セパレータの位置(レス番号),  0 なら表示しない
@@ -108,6 +109,7 @@ namespace ARTICLE
         std::list< SELECTION > m_multi_selection;
       
         // レイアウト用
+        int m_fontid;
         int m_font_ascent;
         int m_font_descent;
         int m_font_height;
@@ -162,6 +164,14 @@ namespace ARTICLE
         void clock_in();
         void focus_view();
         void focus_out();
+
+        // フォントID( fontid.h にある ID を指定)
+        const int get_fontid() const { return m_fontid; }
+        void set_fontid( int id ){ m_fontid = id; }
+
+        // 背景色のID( colorid.h にある ID を指定)
+        const int get_colorid_back() const { return m_colorid_back; }
+        void set_colorid_back( int id ){ m_colorid_back = id; }
 
         // 新着セパレータのあるレス番号の取得とセット
         const int get_separator_new() const { return m_separator_new; }
@@ -240,15 +250,6 @@ namespace ARTICLE
         virtual bool slot_configure_event( GdkEventConfigure* event );
 
       private:
-
-        // 背景色
-        virtual const std::string& str_color_back();
-
-        // フォント
-        virtual const std::string& fontname(); 
-
-        // フォントモード
-        virtual const int fontmode();
 
         // 初期化関係
         void clear();

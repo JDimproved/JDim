@@ -7,8 +7,8 @@
 
 #include "config/globalconf.h"
 
-#include "global.h"
 #include "colorid.h"
+#include "fontid.h"
 
 using namespace ARTICLE;
 
@@ -25,31 +25,15 @@ DrawAreaPopup::DrawAreaPopup( const std::string& url, bool show_abone )
     std::cout << "DrawAreaPopup::DrawAreaPopup url = " << url << std::endl;
 #endif
 
+    // フォント設定
+    set_fontid( FONT_POPUP );
+
+    // 背景色
+    set_colorid_back( COLOR_BACK_POPUP );
+
     setup( show_abone, false );
     set_draw_frame( true );
 }
-
-
-// 背景色
-const std::string& DrawAreaPopup::str_color_back()
-{
-    return CONFIG::get_color( COLOR_BACK_POPUP );
-}
-
-
-// フォント
-const std::string& DrawAreaPopup::fontname()
-{
-    return CONFIG::get_fontname_popup();
-
-}
-
-// フォントモード
-const int DrawAreaPopup::fontmode()
-{
-    return FONT_POPUP;
-}
-
 
 
 //

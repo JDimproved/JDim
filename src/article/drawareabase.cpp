@@ -26,6 +26,7 @@
 #include "httpcode.h"
 #include "controlid.h"
 #include "colorid.h"
+#include "fontid.h"
 
 #include <math.h>
 #include <sstream>
@@ -67,8 +68,13 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::DrawAreaBase " << m_url << std::endl;;
 #endif
-}
 
+    // フォント設定
+    set_fontid( FONT_MAIN );
+
+    // 背景色
+    set_colorid_back( COLOR_BACK );
+}
 
 
 DrawAreaBase::~DrawAreaBase()
@@ -80,30 +86,6 @@ DrawAreaBase::~DrawAreaBase()
     if( m_layout_tree ) delete m_layout_tree;
     m_layout_tree = NULL;
     clear();
-}
-
-
-// 背景色
-//
-// virtual 指定にして drawareaの種類別に色を分ける
-//
-const std::string& DrawAreaBase::str_color_back()
-{
-    return  CONFIG::get_color( COLOR_BACK );
-}
-
-
-// フォント
-const std::string& DrawAreaBase::fontname()
-{
-    return CONFIG::get_fontname_main();
-
-}
-
-// フォントモード
-const int DrawAreaBase::fontmode()
-{
-    return FONT_MAIN;
 }
 
 
@@ -223,40 +205,17 @@ void DrawAreaBase::create_scrbar()
 
 
 //
-// 色初期化
+// 色初期化 ( colorid.h 参照 )
 //
 void DrawAreaBase::init_color()
 {
     Glib::RefPtr< Gdk::Colormap > colormap = get_default_colormap();
-    
-    // 文字色
-    m_color[ COLOR_CHAR ] = Gdk::Color( CONFIG::get_color( COLOR_CHAR ) );
-    m_color[ COLOR_CHAR_AGE ] = Gdk::Color( CONFIG::get_color( COLOR_CHAR_AGE ) );
 
-    m_color[ COLOR_CHAR_NAME ] = Gdk::Color( "darkgreen" );    
-    m_color[ COLOR_CHAR_NAME_B ] = Gdk::Color( "darkblue" );
-    m_color[ COLOR_CHAR_SELECTION  ] = Gdk::Color( "white" );
-    m_color[ COLOR_CHAR_LINK ] = Gdk::Color( "blue" );
-    m_color[ COLOR_CHAR_LINK_LOW ] = Gdk::Color( "magenta" );
-    m_color[ COLOR_CHAR_LINK_HIGH ] = Gdk::Color( "red" );    
-    m_color[ COLOR_CHAR_HIGHLIGHT ] = Gdk::Color( "black" );
-    m_color[ COLOR_CHAR_BOOKMARK ] = Gdk::Color( "red" );    
+    for( int i = COLOR_FOR_THREAD +1 ; i < END_COLOR_FOR_THREAD; ++i ){
 
-    // 背景色
-    m_color[ COLOR_BACK ] = Gdk::Color( str_color_back() );
-    m_color[ COLOR_BACK_SELECTION ] = Gdk::Color( "blue" );
-    m_color[ COLOR_BACK_HIGHLIGHT ] = Gdk::Color( "yellow" );
-
-    // 新着セパレータ
-    m_color[ COLOR_SEPARATOR_NEW ] = Gdk::Color( CONFIG::get_color( COLOR_SEPARATOR_NEW ) );
-
-    // 画像
-    m_color[ COLOR_IMG_NOCACHE ] = Gdk::Color( "brown" );
-    m_color[ COLOR_IMG_LOADING ] = Gdk::Color( "darkorange" );
-    m_color[ COLOR_IMG_CACHED ]  = Gdk::Color( "darkcyan" );
-    m_color[ COLOR_IMG_ERR ] = Gdk::Color( "red" );
-
-    for( int i = 0; i < COLOR_NUM; ++i ) colormap->alloc_color( m_color[ i ] );
+        m_color[ i ] = Gdk::Color( CONFIG::get_color( i ) );
+        colormap->alloc_color( m_color[ i ] );
+    }
 }
 
 
@@ -266,13 +225,15 @@ void DrawAreaBase::init_color()
 //
 void DrawAreaBase::init_font()
 {
-    if( fontname().empty() ) return;
+    std::string fontname = CONFIG::get_fontname( get_fontid() );
+
+    if( fontname.empty() ) return;
 
     m_context = get_pango_context();
     assert( m_context );
 
     // layoutにフォントをセット
-    Pango::FontDescription pfd( fontname() );
+    Pango::FontDescription pfd( fontname );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
     m_pango_layout->set_font_description( pfd );
     modify_font( pfd );
@@ -755,7 +716,7 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
     int upper = pos_y;
     int lower = upper + height_view;
 
-    m_gc->set_foreground( m_color[ COLOR_BACK ] );
+    m_gc->set_foreground( m_color[ get_colorid_back() ] );
 
     // 画面全体を再描画
     if( redraw_all ){
@@ -893,7 +854,7 @@ bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
     if( ! m_layout_tree->top_header()
         || ! m_backscreen
         ){
-        m_window->set_background( m_color[ COLOR_BACK ] );
+        m_window->set_background( m_color[ get_colorid_back() ] );
         m_window->clear();
         return false;
     }
@@ -1125,7 +1086,7 @@ void DrawAreaBase::draw_one_node( LAYOUT* layout, const int& width_view, const i
                 int y = layout->y - pos_y;
 
                 m_pango_layout->set_text( ">" );
-                m_backscreen->draw_layout( m_gc, 0, y, m_pango_layout, m_color[ COLOR_CHAR_BOOKMARK ], m_color[ COLOR_BACK ] );
+                m_backscreen->draw_layout( m_gc, 0, y, m_pango_layout, m_color[ COLOR_CHAR_BOOKMARK ], m_color[ get_colorid_back() ] );
             }
 
             // 新着セパレータ
@@ -1219,20 +1180,20 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
     
     // 通常描画
     if( ! draw_selection ){
-        layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, COLOR_BACK );
+        layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, get_colorid_back() );
 
     } else { // 範囲選択の前後描画
 
         // 前
-        if( byte_from ) layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, COLOR_BACK, 0, byte_from );
+        if( byte_from ) layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, get_colorid_back(), 0, byte_from );
 
         // ここでは選択部分の座標計算のみ( do_draw = false )してハイライト後に選択部分を描画
         x_selection = x;
         y_selection = y;
-        layout_draw_one_node( layout, x, y, width, height, width_view, false, bold, color_text, COLOR_BACK,  byte_from, byte_to );
+        layout_draw_one_node( layout, x, y, width, height, width_view, false, bold, color_text, get_colorid_back(),  byte_from, byte_to );
     
         // 後
-        if( byte_to != strlen( layout->text ) ) layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, COLOR_BACK, byte_to );
+        if( byte_to != strlen( layout->text ) ) layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, get_colorid_back(), byte_to );
     }
      
     // 検索結果のハイライト
@@ -1377,7 +1338,7 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
                 && ( ! is_wrapped( node_x + PANGO_PIXELS( width_line ),  width_view - m_mrg_right, node->text + pos_to )
                      || draw_head  ) ) {
 
-            width_line += get_width_of_one_char( node->text + pos_to, byte_char, pre_char, wide_mode, fontmode() );
+            width_line += get_width_of_one_char( node->text + pos_to, byte_char, pre_char, wide_mode, get_fontid() );
             pos_to += byte_char;
             n_str += byte_char;
             ++n_ustr;
@@ -2104,7 +2065,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
 
                 while( *pos != '\0' ){
 
-                    int char_width = get_width_of_one_char( pos, byte_char, pre_char, wide_mode, fontmode() );
+                    int char_width = get_width_of_one_char( pos, byte_char, pre_char, wide_mode, get_fontid() );
                                     
                     // マウスポインタの下にノードがある場合
                     if( ( tmp_x + PANGO_PIXELS( width_line ) <= x && tmp_x + PANGO_PIXELS( width_line + char_width ) >= x )
@@ -2254,7 +2215,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
 
                 while( *pos != '\0' ){
 
-                    int char_width = get_width_of_one_char( pos, byte_char, pre_char, wide_mode, fontmode() );
+                    int char_width = get_width_of_one_char( pos, byte_char, pre_char, wide_mode, get_fontid() );
 
                     // x,yの下に現在のノードがあったら左側の仮位置を確定する
                     if( ! pos_left

@@ -24,17 +24,6 @@ namespace ARTICLE
 
         // リサイズした
         virtual bool slot_configure_event( GdkEventConfigure* event );
-
-      private:
-
-        // 背景色
-        virtual const std::string& str_color_back();
-
-        // フォント
-        virtual const std::string& fontname(); 
-
-        // フォントモード
-        virtual const int fontmode();
     };
 }
 

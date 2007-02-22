@@ -10,6 +10,7 @@
 #include "jdlib/miscutil.h"
 
 #include "colorid.h"
+#include "fontid.h"
 
 #define COLOR_SIZE 3
 
@@ -18,14 +19,9 @@ bool restore_article;
 bool restore_image;
 
 std::string m_str_color[ COLOR_NUM ];
+std::string m_fontname[ FONT_NUM ];
 
 bool use_tree_gtkrc;
-
-std::string fontname_main;
-std::string fontname_popup;
-std::string fontname_tree;
-std::string fontname_tree_board;
-std::string fontname_message;
 
 std::string ref_prefix;
 int ref_prefix_space;
@@ -140,11 +136,19 @@ const bool CONFIG::init_config()
     restore_image = cf.get_option( "restore_image", false );
 
     // フォント
-    fontname_main = cf.get_option( "fontname_main", "Kochi Gothic 12" );
-    fontname_popup = cf.get_option( "fontname_popup","Kochi Gothic 9" );
-    fontname_tree = cf.get_option( "fontname_tree","Kochi Gothic 10" );
-    fontname_tree_board = cf.get_option( "fontname_tree_board",fontname_tree );
-    fontname_message = cf.get_option( "fontname_message",fontname_message );
+    m_fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", "Kochi Gothic 12" );
+
+    // ポップアップのフォント
+    m_fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", "Kochi Gothic 9" );
+
+    // スレ一覧のフォント
+    m_fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", "Kochi Gothic 10" );
+
+    // 板一覧のフォント
+    m_fontname[ FONT_BOARD ] = cf.get_option( "fontname_board", m_fontname[ FONT_BBS ] );
+
+    // 書き込みウィンドウのフォント
+    m_fontname[ FONT_MESSAGE ] = cf.get_option( "fontname_message", m_fontname[ FONT_MAIN ] );
 
     // レスを参照するときに前に付ける文字
     ref_prefix = cf.get_option( "ref_prefix", ">" );
@@ -229,26 +233,79 @@ const bool CONFIG::init_config()
     // bbsmenu.htmlのURL
     url_bbsmenu = cf.get_option( "url_bbsmenu", "http://menu.2ch.net/bbsmenu.html" );
 
-    // 文字色
-    m_str_color[ COLOR_CHAR ] = "#000000000000";
 
-    // ageの時のメール欄の色
-    m_str_color[ COLOR_CHAR_AGE ] = "#fde800000000";
+    /////////
+    // 色
+
+    // 文字色
+    m_str_color[ COLOR_CHAR ] = cf.get_option( "cl_char", "#000000000000" );
+
+    // 名前欄の文字色
+    m_str_color[ COLOR_CHAR_NAME ] = cf.get_option( "cl_char_name", "#000064640000" );
+
+    // トリップ等の名前欄の文字色
+    m_str_color[ COLOR_CHAR_NAME_B ] = cf.get_option( "cl_char_name_b", "#000000008b8b" );
+
+    // ageの時のメール欄の文字色
+    m_str_color[ COLOR_CHAR_AGE ] = cf.get_option( "cl_char_age", "#fde800000000" );
+
+    // 選択範囲の文字色
+    m_str_color[ COLOR_CHAR_SELECTION ] = cf.get_option( "cl_char_selection", "#ffffffffffff" );
+
+    // ハイライトの文字色
+    m_str_color[ COLOR_CHAR_HIGHLIGHT ] = cf.get_option( "cl_char_highlight", m_str_color[ COLOR_CHAR ] );
+
+    // ブックマークの文字色
+    m_str_color[ COLOR_CHAR_BOOKMARK ] = cf.get_option( "cl_char_bookmark", m_str_color[ COLOR_CHAR_AGE ] );
+
+    // リンク(通常)の文字色
+    m_str_color[ COLOR_CHAR_LINK ] = cf.get_option( "cl_char_link", "#00000000ffff" );
+
+    // リンク(複数)の文字色
+    m_str_color[ COLOR_CHAR_LINK_LOW ] = cf.get_option( "cl_char_link_low", "#ffff0000ffff" );
+
+    // リンク(多数)の文字色
+    m_str_color[ COLOR_CHAR_LINK_HIGH ] = cf.get_option( "cl_char_link_high", m_str_color[ COLOR_CHAR_AGE ] );
+
+
+    // 画像(キャッシュ無)の色
+    m_str_color[ COLOR_IMG_NOCACHE ] = cf.get_option( "cl_img_nocache", "#a5a52a2a2a2a" );
+
+    // 画像(キャッシュ有)の色
+    m_str_color[ COLOR_IMG_CACHED ] = cf.get_option( "cl_img_cached", "#00008b8b8b8b" );
+
+    // 画像(ロード中)の色
+    m_str_color[ COLOR_IMG_LOADING ] = cf.get_option( "cl_img_loading", "#ffff8c8c0000" );
+
+    // 画像(エラー)の色
+    m_str_color[ COLOR_IMG_ERR ] = cf.get_option( "cl_img_err", m_str_color[ COLOR_CHAR_AGE ] );
+
 
     // スレ背景色
-    m_str_color[ COLOR_BACK ] = "#fde8fde8f618";
+    m_str_color[ COLOR_BACK ] = cf.get_option( "cl_back", "#fde8fde8f618" );
 
     // ポップアップの背景色
-    m_str_color[ COLOR_BACK_POPUP ] = m_str_color[ COLOR_BACK ];
+    m_str_color[ COLOR_BACK_POPUP ] = cf.get_option( "cl_back_popup", m_str_color[ COLOR_BACK ] );
 
     // 板一覧の背景色
-    m_str_color[ COLOR_BACK_BBS ] = m_str_color[ COLOR_BACK ];
+    m_str_color[ COLOR_BACK_BBS ] = cf.get_option( "cl_back_bbs", m_str_color[ COLOR_BACK ] );
 
     // スレ一覧の背景色
-    m_str_color[ COLOR_BACK_BOARD ] = m_str_color[ COLOR_BACK ];
+    m_str_color[ COLOR_BACK_BOARD ] = cf.get_option( "cl_back_board", m_str_color[ COLOR_BACK ] );
+
+    // 選択範囲の背景色
+    m_str_color[ COLOR_BACK_SELECTION ] = cf.get_option( "cl_back_selection", m_str_color[ COLOR_CHAR_LINK ] );
+
+    // ハイライトの背景色
+    m_str_color[ COLOR_BACK_HIGHLIGHT ] = cf.get_option( "cl_back_highlight", "#ffffffff0000" );
+
 
     // 新着セパレータ
-    m_str_color[ COLOR_SEPARATOR_NEW ] = "#7d007d007d00";
+    m_str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", "#7d007d007d00" );
+
+
+    /////////////////////////
+
 
     // ツリービューでgtkrcの設定を使用するか
     use_tree_gtkrc = cf.get_option( "use_tree_gtkrc", false );
@@ -375,11 +432,11 @@ void CONFIG::save_conf_impl( const std::string& path )
     cf.update( "url_login2ch", url_login2ch );
     cf.update( "url_bbsmenu", url_bbsmenu );
 
-    cf.update( "fontname_main", fontname_main );
-    cf.update( "fontname_popup", fontname_popup );
-    cf.update( "fontname_tree", fontname_tree );
-    cf.update( "fontname_tree_board", fontname_tree_board );
-    cf.update( "fontname_message", fontname_message );
+    cf.update( "fontname_main", m_fontname[ FONT_MAIN ] );
+    cf.update( "fontname_popup", m_fontname[ FONT_POPUP ] );
+    cf.update( "fontname_bbs", m_fontname[ FONT_BBS ] );
+    cf.update( "fontname_board", m_fontname[ FONT_BOARD ] );
+    cf.update( "fontname_message", m_fontname[ FONT_MESSAGE ] );
 
     cf.update( "ref_prefix", ref_prefix );
     cf.update( "ref_prefix_space", ref_prefix_space );
@@ -423,6 +480,30 @@ void CONFIG::save_conf_impl( const std::string& path )
     cf.update( "zoom_to_fit", zoom_to_fit );
     cf.update( "del_img_day", del_img_day );
     cf.update( "max_img_size", max_img_size );
+
+/*
+    cf.update( "cl_char", m_str_color[ COLOR_CHAR ] );
+    cf.update( "cl_char_name", m_str_color[ COLOR_CHAR_NAME ] );
+    cf.update( "cl_char_name_b", m_str_color[ COLOR_CHAR_NAME_B ] );
+    cf.update( "cl_char_age", m_str_color[ COLOR_CHAR_AGE ] );
+    cf.update( "cl_char_selection", m_str_color[ COLOR_CHAR_SELECTION ] );
+    cf.update( "cl_char_highlight", m_str_color[ COLOR_CHAR_HIGHLIGHT ] );
+    cf.update( "cl_char_bookmark", m_str_color[ COLOR_CHAR_BOOKMARK ] );
+    cf.update( "cl_char_link", m_str_color[ COLOR_CHAR_LINK ] );
+    cf.update( "cl_char_link_low", m_str_color[ COLOR_CHAR_LINK_LOW ] );
+    cf.update( "cl_char_link_high", m_str_color[ COLOR_CHAR_LINK_HIGH ] );
+    cf.update( "cl_img_nocache", m_str_color[ COLOR_IMG_NOCACHE ] );
+    cf.update( "cl_img_cached", m_str_color[ COLOR_IMG_CACHED ] );
+    cf.update( "cl_img_loading", m_str_color[ COLOR_IMG_LOADING ] );
+    cf.update( "cl_img_err", m_str_color[ COLOR_IMG_ERR ] );
+    cf.update( "cl_back", m_str_color[ COLOR_BACK ] );
+    cf.update( "cl_back_popup", m_str_color[ COLOR_BACK_POPUP ] );
+    cf.update( "cl_back_board", m_str_color[ COLOR_BACK_BOARD ] );
+    cf.update( "cl_back_bbs", m_str_color[ COLOR_BACK_BBS ] );
+    cf.update( "cl_back_selection", m_str_color[ COLOR_BACK_SELECTION ] );
+    cf.update( "cl_back_highlight",m_str_color[ COLOR_BACK_HIGHLIGHT ]  );
+    cf.update( "cl_sepa_new", m_str_color[ COLOR_SEPARATOR_NEW ] );
+*/
 
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
 
@@ -500,17 +581,19 @@ void CONFIG::set_color( int id, const std::string& color )
 
 const bool CONFIG::get_use_tree_gtkrc(){ return use_tree_gtkrc; }
 
-const std::string& CONFIG::get_fontname_main() { return fontname_main; }
-const std::string& CONFIG::get_fontname_popup() { return fontname_popup; }
-const std::string& CONFIG::get_fontname_tree() { return fontname_tree; }
-const std::string& CONFIG::get_fontname_tree_board() { return fontname_tree_board; }
-const std::string& CONFIG::get_fontname_message() { return fontname_message; }
 
-void CONFIG::set_fontname_main( const std::string& name) { fontname_main = name; }
-void CONFIG::set_fontname_popup( const std::string& name) { fontname_popup = name; }
-void CONFIG::set_fontname_tree( const std::string& name) { fontname_tree = name; }
-void CONFIG::set_fontname_tree_board( const std::string& name) { fontname_tree_board = name; }
-void CONFIG::set_fontname_message( const std::string& name) { fontname_message = name; }
+// フォント
+const std::string& CONFIG::get_fontname( int id )
+{
+    assert( id < FONT_NUM );
+    return m_fontname[ id ];
+}
+
+void CONFIG::set_fontname( int id, const std::string& fontname )
+{
+    assert( id < FONT_NUM );
+    m_fontname[ id ] = fontname;
+}
 
 const std::string&  CONFIG::get_ref_prefix(){ return ref_prefix; }
 
