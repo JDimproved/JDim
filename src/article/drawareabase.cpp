@@ -237,8 +237,8 @@ void DrawAreaBase::init_color()
     m_color[ COLOR_CHAR_NAME_B ] = Gdk::Color( "darkblue" );
     m_color[ COLOR_CHAR_SELECTION  ] = Gdk::Color( "white" );
     m_color[ COLOR_CHAR_LINK ] = Gdk::Color( "blue" );
-    m_color[ COLOR_CHAR_LINK_PUR ] = Gdk::Color( "magenta" );
-    m_color[ COLOR_CHAR_LINK_RED ] = Gdk::Color( "red" );    
+    m_color[ COLOR_CHAR_LINK_LOW ] = Gdk::Color( "magenta" );
+    m_color[ COLOR_CHAR_LINK_HIGH ] = Gdk::Color( "red" );    
     m_color[ COLOR_CHAR_HIGHLIGHT ] = Gdk::Color( "black" );
     m_color[ COLOR_CHAR_BOOKMARK ] = Gdk::Color( "red" );    
 

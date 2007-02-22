@@ -2168,9 +2168,9 @@ void NodeTreeBase::check_reference( int number )
                             // 参照数を更新して色を変更
                             ++( tmphead->headinfo->num_reference );
                             if( tmphead->headinfo->num_reference >= 3 )
-                                tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_RED;
+                                tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_HIGH;
                             else if( tmphead->headinfo->num_reference >= 1 )
-                                tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_PUR;
+                                tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK_LOW;
                             else tmphead->headinfo->node_res->color_text = COLOR_CHAR_LINK;
                         }
                     }
@@ -2255,7 +2255,7 @@ void NodeTreeBase::check_id_name( int number )
 void NodeTreeBase::set_num_id_name( NODE* header, int num_id_name )
 {
     header->headinfo->num_id_name = num_id_name;        
-    if( num_id_name >= 4 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK_RED;        
+    if( num_id_name >= 4 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK_HIGH;
     else if( num_id_name >= 2 ) header->headinfo->node_id_name->color_text = COLOR_CHAR_LINK;
     else header->headinfo->node_id_name->color_text = COLOR_CHAR;
 }

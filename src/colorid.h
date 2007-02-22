@@ -14,8 +14,8 @@ enum
     COLOR_CHAR_HIGHLIGHT,   // ハイライトの文字
     COLOR_CHAR_BOOKMARK,    // ブックマーク
     COLOR_CHAR_LINK,        // リンク
-    COLOR_CHAR_LINK_PUR,    // レス番号やIDなどの複数現れたリンク
-    COLOR_CHAR_LINK_RED,    // レス番号やIDなどの多数現れたリンク
+    COLOR_CHAR_LINK_LOW,    // レス番号やIDなどの複数現れたリンク
+    COLOR_CHAR_LINK_HIGH,   // レス番号やIDなどの多数現れたリンク
 
     COLOR_IMG_NOCACHE, // 画像のリンク(キャッシュ無)
     COLOR_IMG_CACHED,  // 画像のリンク(キャッシュ有)
@@ -27,7 +27,7 @@ enum
     COLOR_BACK_BBS,         // 板一覧の背景
     COLOR_BACK_BOARD,       // スレ一覧の背景
     COLOR_BACK_SELECTION,   // 選択範囲
-    COLOR_BACK_HIGHLIGHT,   // ハイライト文字
+    COLOR_BACK_HIGHLIGHT,   // ハイライト文字の背景色
 
     COLOR_SEPARATOR_NEW,    // 新着セパレータ
 
