@@ -361,7 +361,7 @@ int main( int argc, char **argv )
 #endif
 
     // 全体設定ロード
-    bool init = !( CONFIG::init_config() );
+    bool init = !( CONFIG::load_conf() );
 
     // 初回起動時にルートを作る
     if( init ) CACHE::mkdir_root();
