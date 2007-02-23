@@ -17,6 +17,7 @@
 #include "controlutil.h"
 #include "controlid.h"
 #include "colorid.h"
+#include "fontid.h"
 #include "jdversion.h"
 
 #include "skeleton/msgdiag.h"
@@ -253,6 +254,8 @@ void Core::run( bool init )
 
     // 設定
     m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
+
+    m_action_group->add( Gtk::Action::create( "General_Menu", "一般" ) );
     m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示", std::string(), CONFIG::get_show_oldarticle() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
 
@@ -266,7 +269,7 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
 
 
-    m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス設定" ) );
+    m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス、キーボード設定" ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "シングルクリックでタブを開く", std::string(),
                                                     ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
@@ -276,26 +279,35 @@ void Core::run( bool init )
                                                     CONFIG::get_buttonconfig()->is_popup_warpmode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
 
-
-    m_action_group->add( Gtk::Action::create( "Key_Menu", "キーボード設定" ) );
-
     m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューをEmacs風のキーバインドにする", std::string(),
                                                     CONFIG::get_keyconfig()->is_emacs_mode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
 
-    m_action_group->add( Gtk::Action::create( "FontColorPref", "フォントと色の設定" ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
 
 
+    m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色の設定" ) );
+    m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
+    m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
+    m_action_group->add( Gtk::Action::create( "FontTree", "板、スレ一覧フォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
+    m_action_group->add( Gtk::Action::create( "ColorChar", "文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
+    m_action_group->add( Gtk::Action::create( "ColorBack", "スレビュー背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
+    m_action_group->add( Gtk::Action::create( "ColorBackTree", "板、スレ一覧背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
+    m_action_group->add( Gtk::Action::create( "FontColorPref", "詳細設定" ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
+
+    m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク設定" ) );
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
     m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ" ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
 
-    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
-    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん" ), sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
+    m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん設定" ) );
+    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん(スレビュー対象)" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
+    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん(スレ一覧対象)" ),
+                         sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "デフォルトで透明/連鎖あぼ〜ん", std::string(),
                                                     ( CONFIG::get_abone_transparent() && CONFIG::get_abone_chain() ) ),
                                                     sigc::mem_fun( *this, &Core::slot_toggle_abone_transp_chain ) );
 
+    m_action_group->add( Gtk::Action::create( "Image_Menu", "画像設定" ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア" ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
@@ -362,36 +374,59 @@ void Core::run( bool init )
 
     // 設定
         "<menu action='Menu_Config'>"
+
+        "<menu action='General_Menu'>"
         "<menuitem action='OldArticle'/>"
         "<menuitem action='RestoreViews'/>"
         "<menuitem action='SavePostLog'/>"
+        "</menu>"
+
         "<separator/>"
 
         "<menu action='Mouse_Menu'>"
         "<menuitem action='ToggleTab'/>"
         "<menuitem action='TogglePopupWarp'/>"
-        "</menu>"
-
         "<separator/>"
-
-        "<menu action='Key_Menu'>"
         "<menuitem action='ToggleEmacsMode'/>"
         "</menu>"
 
         "<separator/>"
 
-        "<menuitem action='FontColorPref' />"
+        "<menu action='FontColor_Menu'>"
+        "<menuitem action='FontMain'/>"
+        "<menuitem action='FontPopup'/>"
+        "<menuitem action='FontTree'/>"
+        "<separator/>"
+        "<menuitem action='ColorChar'/>"
+        "<menuitem action='ColorBack'/>"
+        "<menuitem action='ColorBackTree'/>"
+        "<separator/>"
+        "<menuitem action='FontColorPref'/>"
+        "</menu>"
 
         "<separator/>"
+        "<menu action='Net_Menu'>"
         "<menuitem action='SetupProxy'/>"
         "<menuitem action='SetupBrowser'/>"
+        "</menu>"
+
         "<separator/>"
+
+        "<menu action='Abone_Menu'>"
         "<menuitem action='SetupAbone'/>"
         "<menuitem action='SetupAboneThread'/>"
-        "<menuitem action='TranspChainAbone'/>"
         "<separator/>"
+        "<menuitem action='TranspChainAbone'/>"
+        "</menu>"
+
+        "<separator/>"
+
+        "<menu action='Image_Menu'>"
         "<menuitem action='UseMosaic'/>"    
+        "<separator/>"
         "<menuitem action='DeleteImages'/>"
+        "</menu>"
+
         "</menu>"                         
 
     // ヘルプ
@@ -671,9 +706,15 @@ void Core::first_setup()
     slot_setup_proxy();
     slot_setup_browser();
 
-    show_setupdiag( "JDセットアップ\n\nフォントと色の設定をおこなって下さい" );
+    show_setupdiag( "JDセットアップ\n\nスレッド、ポップアップ、板・スレ一覧の順にフォントの設定をおこなって下さい" );
 
-    slot_setup_fontcolor();
+    slot_changefont_main();
+
+    CONFIG::set_fontname( FONT_POPUP, CONFIG::get_fontname( FONT_MAIN ) );
+    slot_changefont_popup();
+ 
+    CONFIG::set_fontname( FONT_BBS, CONFIG::get_fontname( FONT_POPUP ) );
+    slot_changefont_tree();
 
     show_setupdiag( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
     show_setupdiag( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします\nリストが表示されるまでしばらくお待ち下さい" );
@@ -828,7 +869,123 @@ void Core::slot_delete_all_images()
 
 
 //
+// メインフォント変更
+//
+void Core::slot_changefont_main()
+{
+    Gtk::FontSelectionDialog diag;
+    diag.set_font_name( CONFIG::get_fontname( FONT_MAIN ) );
+    diag.set_title( "スレフォント" );
+    if( diag.run() == Gtk::RESPONSE_OK ){
+
+        CONFIG::set_fontname( FONT_MAIN, diag.get_font_name() );
+        ARTICLE::get_admin()->set_command( "init_font" );
+        ARTICLE::get_admin()->set_command( "relayout_all" );
+
+        CONFIG::set_fontname( FONT_MESSAGE, diag.get_font_name() );
+        MESSAGE::get_admin()->set_command( "relayout_all" );
+    }
+}
+
+
+//
+// ポップアップフォント変更
+//
+void Core::slot_changefont_popup()
+{
+    Gtk::FontSelectionDialog diag;
+    diag.set_font_name( CONFIG::get_fontname( FONT_POPUP ) );
+    diag.set_title( "ポップアップフォント" );
+    if( diag.run() == Gtk::RESPONSE_OK ){
+
+        CONFIG::set_fontname( FONT_POPUP, diag.get_font_name() );
+        ARTICLE::get_admin()->set_command( "init_font" );
+    }
+}
+
+ 
+//
+// 板、スレ一覧のフォント変更
+//
+void Core::slot_changefont_tree()
+{
+    Gtk::FontSelectionDialog diag;
+    diag.set_font_name( CONFIG::get_fontname( FONT_BBS ) );
+    diag.set_title( "板一、スレ覧フォント" );
+    if( diag.run() == Gtk::RESPONSE_OK ){
+
+        CONFIG::set_fontname( FONT_BBS, diag.get_font_name() );
+        BBSLIST::get_admin()->set_command( "relayout_all" );
+
+        CONFIG::set_fontname( FONT_BOARD, diag.get_font_name() );
+        BOARD::get_admin()->set_command( "relayout_all" );
+    }
+}
+
+
+
+//
+// 文字色変更
+//
+void Core::slot_changecolor_char()
+{
+    if( open_color_diag( "文字色", COLOR_CHAR ) ){
+        ARTICLE::get_admin()->set_command( "relayout_all" );
+    }
+}
+
+
+//
+// スレ、ポップアップ背景色変更
+//
+void Core::slot_changecolor_back()
+{
+    if( open_color_diag( "スレ、ポップアップ背景色", COLOR_BACK ) ){
+
+        CONFIG::set_color( COLOR_BACK_POPUP, CONFIG::get_color( COLOR_BACK) );
+
+        ARTICLE::get_admin()->set_command( "relayout_all" );
+    }
+}
+
+
+//
+// 板一覧、スレ一覧背景色変更
+//
+void Core::slot_changecolor_back_tree()
+{
+    if( open_color_diag( "ツリー背景色", COLOR_BACK_BBS ) ){
+
+        CONFIG::set_color( COLOR_BACK_BOARD, CONFIG::get_color( COLOR_BACK_BBS ) );
+
+        BBSLIST::get_admin()->set_command( "relayout_all" );
+        BOARD::get_admin()->set_command( "relayout_all" );
+    }
+}
+
+
+//
+// 色選択ダイアログを開く
 // フォントと色の設定
+//
+bool Core::open_color_diag( std::string title, int id )
+{
+    Gdk::Color color( CONFIG::get_color( id ) );
+
+    Gtk::ColorSelectionDialog diag( title );
+    diag.get_colorsel()->set_current_color( color );
+    if( diag.run() == Gtk::RESPONSE_OK ){
+
+        CONFIG::set_color( id, MISC::color_to_str( diag.get_colorsel()->get_current_color() ) );
+        return true;
+    }
+
+    return false;
+}
+
+
+//
+// フォントと色の詳細設定
 //
 void Core::slot_setup_fontcolor()
 {
