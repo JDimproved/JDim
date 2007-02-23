@@ -4,767 +4,265 @@
 #include "jddebug.h"
 
 #include "globalconf.h"
-#include "cache.h"
+#include "configitems.h"
 
-#include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
 
-#include "colorid.h"
-#include "fontid.h"
 
-#define COLOR_SIZE 3
-
-bool restore_board;
-bool restore_article;
-bool restore_image;
-
-std::string m_str_color[ COLOR_NUM ];
-std::string m_fontname[ FONT_NUM ];
-
-bool use_tree_gtkrc;
-
-std::string ref_prefix;
-int ref_prefix_space;
-
-std::string url_login2ch;
-std::string url_bbsmenu;
-std::string path_cacheroot;
-
-std::string agent_for2ch;
-
-bool use_proxy_for2ch;
-std::string proxy_for2ch;
-int proxy_port_for2ch;
-
-bool use_proxy_for2ch_w;
-std::string proxy_for2ch_w;
-int proxy_port_for2ch_w;
-
-std::string agent_for_data;
-
-bool use_proxy_for_data;
-std::string proxy_for_data;
-int proxy_port_for_data;
-
-std::string x_2ch_ua;
-
-int loader_bufsize;
-int loader_timeout;
-int loader_timeout_post;
-int loader_timeout_img;
-
-std::string command_openurl;
-int brownsercombo_id;
-
-bool refpopup_by_mo;
-bool namepopup_by_mo;
-bool idpopup_by_mo;
-
-int imgpopup_width;
-int imgpopup_height;
-bool use_image_view;
-bool use_mosaic;
-bool zoom_to_fit;
-int del_img_day;
-int max_img_size;
-
-bool show_oldarticle;
-int newthread_hour;
-
-int tree_scroll_size;
-bool open_one_category;
-bool always_write_ok;
-bool save_postlog;
-bool hide_writing_dialog;
-
-int margin_popup;
-int mouse_radius;
-int history_size;
-int instruct_popup;
-bool instruct_tglart;
-bool instruct_tglart_end;
-bool instruct_tglimg;
-bool instruct_tglimg_end;
-
-double adjust_underline_pos;
-double adjust_line_space;
-
-bool draw_underline;
-bool strict_char_width;
-
-bool hide_usrcmd;
-int max_show_usrcmd;
-
-int tab_min_str;
-
-bool show_tab_icon;
-
-std::list< std::string > list_abone_word_thread;
-std::list< std::string > list_abone_regex_thread;
-
-std::list< std::string > list_abone_name;
-std::list< std::string > list_abone_word;
-std::list< std::string > list_abone_regex;
-
-bool abone_transparent;
-bool abone_chain;
+CONFIG::ConfigItems* instance_confitem = NULL;
+CONFIG::ConfigItems* instance_confitem_bkup = NULL;
 
 
-//
-// 初期設定
-//
-const bool CONFIG::init_config()
+CONFIG::ConfigItems* CONFIG::get_confitem()
 {
-    std::string path_conf = CACHE::path_conf();
-
-    // 新設定ファイルが無かったら旧ファイルから読み込む
-    if( CACHE::file_exists( path_conf ) != CACHE::EXIST_FILE ){
-
-        if( CACHE::file_exists( CACHE::path_conf_old() ) == CACHE::EXIST_FILE ) path_conf = CACHE::path_conf_old();
-    }
-
-    JDLIB::ConfLoader cf( path_conf, std::string() );
-
-#ifdef _DEBUG
-    std::cout << "CONFIG::init_config" << std::endl
-              << "conffile = " << path_conf << " empty = " << cf.empty() << std::endl;
-#endif
-
-    // 前回開いたviewを復元するか
-    restore_board = cf.get_option( "restore_board", false );
-    restore_article = cf.get_option( "restore_article", false );
-    restore_image = cf.get_option( "restore_image", false );
-
-    // フォント
-    m_fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", "Kochi Gothic 12" );
-
-    // ポップアップのフォント
-    m_fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", "Kochi Gothic 9" );
-
-    // スレ一覧のフォント
-    m_fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", "Kochi Gothic 10" );
-
-    // 板一覧のフォント
-    m_fontname[ FONT_BOARD ] = cf.get_option( "fontname_board", m_fontname[ FONT_BBS ] );
-
-    // 書き込みウィンドウのフォント
-    m_fontname[ FONT_MESSAGE ] = cf.get_option( "fontname_message", m_fontname[ FONT_MAIN ] );
-
-    // レスを参照するときに前に付ける文字
-    ref_prefix = cf.get_option( "ref_prefix", ">" );
-
-    // ref_prefix の後のスペースの数
-    // JDLIB::ConfLoader の中で MISC::remove_space() が呼ばれて空白が消えるので別設定とした
-    ref_prefix_space = cf.get_option( "ref_prefix_space", 1 );
-    for( int i = 0; i < ref_prefix_space; ++i ) ref_prefix += " ";
-
-    // キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
-    path_cacheroot = cf.get_option( "path_cacheroot", "~/.jd/" );
-
-    // 読み込み用プロクシとポート番号
-    use_proxy_for2ch = cf.get_option( "use_proxy_for2ch", 0 );
-    proxy_for2ch = cf.get_option( "proxy_for2ch", "" );
-    proxy_port_for2ch = cf.get_option( "proxy_port_for2ch", 8080 );
-
-    // 書き込み用プロクシとポート番号
-    use_proxy_for2ch_w = cf.get_option( "use_proxy_for2ch_w", 0 );
-    proxy_for2ch_w = cf.get_option( "proxy_for2ch_w", "" );
-    proxy_port_for2ch_w = cf.get_option( "proxy_port_for2ch_w", 8080 );
-
-    // 2chの外にアクセスするときのプロクシとポート番号
-    use_proxy_for_data = cf.get_option( "use_proxy_for_data", 0 );
-    proxy_for_data = cf.get_option( "proxy_for_data", "" );
-    proxy_port_for_data = cf.get_option( "proxy_port_for_data", 8080 );
-
-    // 2ch にアクセスするときのエージェント名
-    agent_for2ch = cf.get_option( "agent_for2ch", "Monazilla/1.00 JD" );
-
-    // 2ch外にアクセスするときのエージェント名
-    agent_for_data = cf.get_option( "agent_for_data", "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8) Gecko/20051111 Firefox/1.5" );
-
-    // 2ch にログインするときのX-2ch-UA
-    x_2ch_ua = cf.get_option( "x_2ch_ua", "Navigator for 2ch 1.7.5" );
-
-    // ローダのバッファサイズ
-    loader_bufsize = cf.get_option( "loader_bufsize", 32 );
-
-    // ローダのタイムアウト値
-    loader_timeout = cf.get_option( "loader_timeout", 10 );
-    loader_timeout_post = cf.get_option( "loader_timeout_post", 30 ); // ポスト
-    loader_timeout_img = cf.get_option( "loader_timeout_img", 30 ); // 画像
-
-    // リンクをクリックしたときに実行するコマンド
-    command_openurl = cf.get_option( "command_openurl", "" );
-
-    // ブラウザ設定ダイアログのコンボボックスの番号
-    brownsercombo_id = cf.get_option( "brownsercombo_id", 0 );
-
-    // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
-    refpopup_by_mo = cf.get_option( "refpopup_by_mo", false );
-
-    // 名前の上にマウスオーバーしたときにポップアップ表示する
-    namepopup_by_mo = cf.get_option( "namepopup_by_mo", false );
-
-    // IDの上にマウスオーバーしたときにIDをポップアップ表示する
-    idpopup_by_mo = cf.get_option( "idpopup_by_mo", false );
-
-    // 画像ポップアップサイズ
-    imgpopup_width = cf.get_option( "imgpopup_width", 320 );
-    imgpopup_height = cf.get_option( "imgpopup_height", 240 );
-
-    // 画像ビューを使用する
-    use_image_view = cf.get_option( "use_image_view", 1 );
-
-    // 画像にモザイクかける
-    use_mosaic = cf.get_option( "use_mosaic", 1 );
-
-    // 画像をデフォルトでウィンドウサイズに合わせる
-    zoom_to_fit = cf.get_option( "zoom_to_fit", 1 );
-
-    // 画像キャッシュ削除の日数
-    del_img_day = cf.get_option( "del_img_day", 20 );
-
-    // ダウンロードする画像の最大サイズ(Mbyte)
-    max_img_size = cf.get_option( "max_img_size", 16 );
-
-    // 2chの認証サーバ
-    url_login2ch = cf.get_option( "url_login2ch", "https://2chv.tora3.net/futen.cgi" );
-
-    // bbsmenu.htmlのURL
-    url_bbsmenu = cf.get_option( "url_bbsmenu", "http://menu.2ch.net/bbsmenu.html" );
-
-
-    /////////
-    // 色
-
-    // 文字色
-    m_str_color[ COLOR_CHAR ] = cf.get_option( "cl_char", "#000000000000" );
-
-    // 名前欄の文字色
-    m_str_color[ COLOR_CHAR_NAME ] = cf.get_option( "cl_char_name", "#000064640000" );
-
-    // トリップ等の名前欄の文字色
-    m_str_color[ COLOR_CHAR_NAME_B ] = cf.get_option( "cl_char_name_b", "#000000008b8b" );
-
-    // ageの時のメール欄の文字色
-    m_str_color[ COLOR_CHAR_AGE ] = cf.get_option( "cl_char_age", "#fde800000000" );
-
-    // 選択範囲の文字色
-    m_str_color[ COLOR_CHAR_SELECTION ] = cf.get_option( "cl_char_selection", "#ffffffffffff" );
-
-    // ハイライトの文字色
-    m_str_color[ COLOR_CHAR_HIGHLIGHT ] = cf.get_option( "cl_char_highlight", m_str_color[ COLOR_CHAR ] );
-
-    // ブックマークの文字色
-    m_str_color[ COLOR_CHAR_BOOKMARK ] = cf.get_option( "cl_char_bookmark", m_str_color[ COLOR_CHAR_AGE ] );
-
-    // リンク(通常)の文字色
-    m_str_color[ COLOR_CHAR_LINK ] = cf.get_option( "cl_char_link", "#00000000ffff" );
-
-    // リンク(複数)の文字色
-    m_str_color[ COLOR_CHAR_LINK_LOW ] = cf.get_option( "cl_char_link_low", "#ffff0000ffff" );
-
-    // リンク(多数)の文字色
-    m_str_color[ COLOR_CHAR_LINK_HIGH ] = cf.get_option( "cl_char_link_high", m_str_color[ COLOR_CHAR_AGE ] );
-
-
-    // 画像(キャッシュ無)の色
-    m_str_color[ COLOR_IMG_NOCACHE ] = cf.get_option( "cl_img_nocache", "#a5a52a2a2a2a" );
-
-    // 画像(キャッシュ有)の色
-    m_str_color[ COLOR_IMG_CACHED ] = cf.get_option( "cl_img_cached", "#00008b8b8b8b" );
-
-    // 画像(ロード中)の色
-    m_str_color[ COLOR_IMG_LOADING ] = cf.get_option( "cl_img_loading", "#ffff8c8c0000" );
-
-    // 画像(エラー)の色
-    m_str_color[ COLOR_IMG_ERR ] = cf.get_option( "cl_img_err", m_str_color[ COLOR_CHAR_AGE ] );
-
-
-    // スレ背景色
-    m_str_color[ COLOR_BACK ] = cf.get_option( "cl_back", "#fde8fde8f618" );
-
-    // ポップアップの背景色
-    m_str_color[ COLOR_BACK_POPUP ] = cf.get_option( "cl_back_popup", m_str_color[ COLOR_BACK ] );
-
-    // 板一覧の背景色
-    m_str_color[ COLOR_BACK_BBS ] = cf.get_option( "cl_back_bbs", m_str_color[ COLOR_BACK ] );
-
-    // スレ一覧の背景色
-    m_str_color[ COLOR_BACK_BOARD ] = cf.get_option( "cl_back_board", m_str_color[ COLOR_BACK ] );
-
-    // 選択範囲の背景色
-    m_str_color[ COLOR_BACK_SELECTION ] = cf.get_option( "cl_back_selection", m_str_color[ COLOR_CHAR_LINK ] );
-
-    // ハイライトの背景色
-    m_str_color[ COLOR_BACK_HIGHLIGHT ] = cf.get_option( "cl_back_highlight", "#ffffffff0000" );
-
-
-    // 新着セパレータ
-    m_str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", "#7d007d007d00" );
-
-
-    /////////////////////////
-
-
-    // ツリービューでgtkrcの設定を使用するか
-    use_tree_gtkrc = cf.get_option( "use_tree_gtkrc", false );
-
-    // boardビューで古いスレも表示
-    show_oldarticle = cf.get_option( "show_oldarticle", false );
-
-    // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
-    newthread_hour = cf.get_option( "newthread_hour", 24 );
-
-
-    /////////////////////////
-    // UI 周りの設定
-
-    // ツリービューのスクロール量(行数)
-    tree_scroll_size = cf.get_option( "tree_scroll_size", 4 );
-
-    // 板一覧でカテゴリを常にひとつだけ開く
-    open_one_category = cf.get_option( "open_one_category", false );
-
-    // 書き込み時に書き込み確認ダイアログを出すかどうか
-    always_write_ok = cf.get_option( "always_write_ok", false );
-
-    // 書き込みログを保存
-    save_postlog = cf.get_option( "save_postlog", false );
-
-    // 書き込み中のダイアログを表示しない
-    hide_writing_dialog = cf.get_option( "hide_writing_dialog", false );
-
-    // ポップアップとカーソルの間のマージン
-    margin_popup = cf.get_option( "margin_popup", 30 );
-
-    // マウスジェスチャの判定開始半径
-    mouse_radius = cf.get_option( "mouse_radius", 25 );
-
-    // 履歴の保持数
-    history_size = cf.get_option( "history_size", 20 );
-
-    // 0以上なら多重ポップアップの説明を表示する
-    instruct_popup = cf.get_option( "instruct_popup", 100 );    
-
-    // スレビューを開いたときにスレ一覧との切り替え方法を説明する
-    instruct_tglart = cf.get_option( "instruct_tglart", true );
-    instruct_tglart_end = false;
-
-    // 画像ビューを開いたときにスレビューとの切り替え方法を説明する
-    instruct_tglimg = cf.get_option( "instruct_tglimg", true );
-    instruct_tglimg_end = false;
-    
-    // スレ表示の行間調整
-    adjust_underline_pos = cf.get_option( "adjust_underline_pos", 1.0 );
-    adjust_line_space = cf.get_option( "adjust_line_space", 1.0 );
-
-    // リンク下線を表示
-    draw_underline = cf.get_option( "draw_underline", true );
-
-    // スレビューで文字幅の近似を厳密にする
-    strict_char_width = cf.get_option( "strict_char_width", false );
-
-    // ユーザーコマンドで選択できない項目を非表示にする
-    hide_usrcmd = cf.get_option( "hide_usrcmd", false );
-
-    // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
-    max_show_usrcmd = cf.get_option( "max_show_usrcmd", 3 );
-
-    // タブに表示する文字列の最小値
-    tab_min_str = cf.get_option( "tab_min_str", 4 );
-
-    // タブにアイコンを表示するか
-    show_tab_icon = cf.get_option( "show_tab_icon", true );
-
-    std::list< std::string > list_tmp;
-    std::list< std::string >::iterator it_tmp;
-    std::string str_tmp;
-
-    // スレ あぼーん word
-    str_tmp = cf.get_option( "abonewordthread", "" );
-    if( ! str_tmp.empty() ) list_abone_word_thread = MISC::strtolist( str_tmp );
-
-    // スレ あぼーん regex
-    str_tmp = cf.get_option( "aboneregexthread", "" );
-    if( ! str_tmp.empty() ) list_abone_regex_thread = MISC::strtolist( str_tmp );
-
-    // あぼーん name
-    str_tmp = cf.get_option( "abonename", "" );
-    if( ! str_tmp.empty() ) list_abone_name = MISC::strtolist( str_tmp );
-
-    // あぼーん word
-    str_tmp = cf.get_option( "aboneword", "" );
-    if( ! str_tmp.empty() ) list_abone_word = MISC::strtolist( str_tmp );
-
-    // あぼーん regex
-    str_tmp = cf.get_option( "aboneregex", "" );
-    if( ! str_tmp.empty() ) list_abone_regex = MISC::strtolist( str_tmp );
-
-    // デフォルトで透明、連鎖あぼーんをするか
-    abone_transparent = cf.get_option( "abone_transparent", false );
-    abone_chain = cf.get_option( "abone_chain", false );
-
-    return ! cf.empty();
+    if( ! instance_confitem ) instance_confitem = new CONFIG::ConfigItems();
+    return instance_confitem;
 }
 
 
-//
-// コンフィグファイル保存
-// 
+void CONFIG::delete_confitem()
+{
+    if( instance_confitem ) delete instance_confitem;
+    instance_confitem = NULL;
+
+    if( instance_confitem_bkup ) delete instance_confitem_bkup;
+    instance_confitem_bkup = NULL;
+}
+
+
+const bool CONFIG::load_conf()
+{
+    return get_confitem()->load();
+}
+
+
 void CONFIG::save_conf()
 {
-    save_conf_impl( CACHE::path_conf() );
-    if( CACHE::file_exists( CACHE::path_conf_old() ) == CACHE::EXIST_FILE ) save_conf_impl( CACHE::path_conf_old() );
+    get_confitem()->save();
 }
 
-void CONFIG::save_conf_impl( const std::string& path )
+
+void CONFIG::bkup_conf()
 {
-#ifdef _DEBUG
-    std::cout << "CONFIG::save_conf_impl path = " << path << std::endl;
-#endif
-
-    JDLIB::ConfLoader cf( path, std::string() );
-
-    cf.update( "restore_board", restore_board );
-    cf.update( "restore_article", restore_article );
-    cf.update( "restore_image", restore_image );
-    cf.update( "url_login2ch", url_login2ch );
-    cf.update( "url_bbsmenu", url_bbsmenu );
-
-    cf.update( "fontname_main", m_fontname[ FONT_MAIN ] );
-    cf.update( "fontname_popup", m_fontname[ FONT_POPUP ] );
-    cf.update( "fontname_bbs", m_fontname[ FONT_BBS ] );
-    cf.update( "fontname_board", m_fontname[ FONT_BOARD ] );
-    cf.update( "fontname_message", m_fontname[ FONT_MESSAGE ] );
-
-    cf.update( "ref_prefix", ref_prefix );
-    cf.update( "ref_prefix_space", ref_prefix_space );
-
-    cf.update( "path_cacheroot", path_cacheroot );
-
-    cf.update( "agent_for2ch", agent_for2ch );
-
-    cf.update( "use_proxy_for2ch", use_proxy_for2ch );
-    cf.update( "proxy_for2ch", proxy_for2ch );
-    cf.update( "proxy_port_for2ch", proxy_port_for2ch );
-
-    cf.update( "use_proxy_for2ch_w", use_proxy_for2ch_w );
-    cf.update( "proxy_for2ch_w", proxy_for2ch_w );
-    cf.update( "proxy_port_for2ch_w", proxy_port_for2ch_w );
-
-    cf.update( "agent_for_data", agent_for_data );
-
-    cf.update( "use_proxy_for_data", use_proxy_for_data );
-    cf.update( "proxy_for_data", proxy_for_data );
-    cf.update( "proxy_port_for_data", proxy_port_for_data );
-
-    cf.update( "x_2ch_ua", x_2ch_ua );
-
-    cf.update( "loader_bufsize", loader_bufsize );
-    cf.update( "loader_timeout", loader_timeout );
-    cf.update( "loader_timeout_post", loader_timeout_post );
-    cf.update( "loader_timeout_img", loader_timeout_img );
-
-    cf.update( "command_openurl", command_openurl );
-    cf.update( "brownsercombo_id", brownsercombo_id );
-
-    cf.update( "refpopup_by_mo", refpopup_by_mo );
-    cf.update( "namepopup_by_mo", namepopup_by_mo );
-    cf.update( "idpopup_by_mo", idpopup_by_mo );
-
-    cf.update( "imgpopup_width", imgpopup_width );
-    cf.update( "imgpopup_height", imgpopup_height );
-    cf.update( "use_image_view", use_image_view );
-    cf.update( "use_mosaic", use_mosaic );
-    cf.update( "zoom_to_fit", zoom_to_fit );
-    cf.update( "del_img_day", del_img_day );
-    cf.update( "max_img_size", max_img_size );
-
-/*
-    cf.update( "cl_char", m_str_color[ COLOR_CHAR ] );
-    cf.update( "cl_char_name", m_str_color[ COLOR_CHAR_NAME ] );
-    cf.update( "cl_char_name_b", m_str_color[ COLOR_CHAR_NAME_B ] );
-    cf.update( "cl_char_age", m_str_color[ COLOR_CHAR_AGE ] );
-    cf.update( "cl_char_selection", m_str_color[ COLOR_CHAR_SELECTION ] );
-    cf.update( "cl_char_highlight", m_str_color[ COLOR_CHAR_HIGHLIGHT ] );
-    cf.update( "cl_char_bookmark", m_str_color[ COLOR_CHAR_BOOKMARK ] );
-    cf.update( "cl_char_link", m_str_color[ COLOR_CHAR_LINK ] );
-    cf.update( "cl_char_link_low", m_str_color[ COLOR_CHAR_LINK_LOW ] );
-    cf.update( "cl_char_link_high", m_str_color[ COLOR_CHAR_LINK_HIGH ] );
-    cf.update( "cl_img_nocache", m_str_color[ COLOR_IMG_NOCACHE ] );
-    cf.update( "cl_img_cached", m_str_color[ COLOR_IMG_CACHED ] );
-    cf.update( "cl_img_loading", m_str_color[ COLOR_IMG_LOADING ] );
-    cf.update( "cl_img_err", m_str_color[ COLOR_IMG_ERR ] );
-    cf.update( "cl_back", m_str_color[ COLOR_BACK ] );
-    cf.update( "cl_back_popup", m_str_color[ COLOR_BACK_POPUP ] );
-    cf.update( "cl_back_board", m_str_color[ COLOR_BACK_BOARD ] );
-    cf.update( "cl_back_bbs", m_str_color[ COLOR_BACK_BBS ] );
-    cf.update( "cl_back_selection", m_str_color[ COLOR_BACK_SELECTION ] );
-    cf.update( "cl_back_highlight",m_str_color[ COLOR_BACK_HIGHLIGHT ]  );
-    cf.update( "cl_sepa_new", m_str_color[ COLOR_SEPARATOR_NEW ] );
-*/
-
-    cf.update( "use_tree_gtkrc", use_tree_gtkrc );
-
-    cf.update( "show_oldarticle", show_oldarticle );
-    cf.update( "newthread_hour", newthread_hour );
-
-    cf.update( "tree_scroll_size", tree_scroll_size );
-    cf.update( "open_one_category", open_one_category );
-    cf.update( "always_write_ok", always_write_ok );
-    cf.update( "save_postlog", save_postlog );
-    cf.update( "hide_writing_dialog", hide_writing_dialog );
-    cf.update( "margin_popup", margin_popup );
-    cf.update( "mouse_radius", mouse_radius );
-    cf.update( "history_size", history_size );
-    cf.update( "instruct_popup", instruct_popup );
-    cf.update( "instruct_tglart", instruct_tglart );
-    cf.update( "instruct_tglimg", instruct_tglimg );
-
-    cf.update( "adjust_underline_pos", adjust_underline_pos );
-    cf.update( "adjust_line_space", adjust_line_space );
-
-    cf.update( "draw_underline", draw_underline );
-    cf.update( "strict_char_width", strict_char_width );
-
-    cf.update( "hide_usrcmd", hide_usrcmd );
-    cf.update( "max_show_usrcmd", max_show_usrcmd );
-
-    cf.update( "tab_min_str", tab_min_str );
-
-    cf.update( "show_tab_icon", show_tab_icon );
-
-    // スレあぼーん情報
-    std::string str_abone_word_thread = MISC::listtostr( list_abone_word_thread );
-    std::string str_abone_regex_thread = MISC::listtostr( list_abone_regex_thread );
-
-    cf.update( "abonewordthread", str_abone_word_thread );
-    cf.update( "aboneregexthread", str_abone_regex_thread );
-
-    // あぼーん情報
-    std::string str_abone_name = MISC::listtostr( list_abone_name );
-    std::string str_abone_word = MISC::listtostr( list_abone_word );
-    std::string str_abone_regex = MISC::listtostr( list_abone_regex );
-
-    cf.update( "abonename", str_abone_name );
-    cf.update( "aboneword", str_abone_word );
-    cf.update( "aboneregex", str_abone_regex );
-
-    cf.update( "abone_transparent", abone_transparent );
-    cf.update( "abone_chain", abone_chain );
-
-    cf.save();
+    if( ! instance_confitem_bkup ) instance_confitem_bkup = new CONFIG::ConfigItems();
+    *instance_confitem_bkup = * instance_confitem;
 }
 
 
-const bool CONFIG::get_restore_board(){ return restore_board; }
-void CONFIG::set_restore_board( bool restore ){ restore_board = restore; }
-const bool CONFIG::get_restore_article(){ return restore_article; }
-void CONFIG::set_restore_article( bool restore ){ restore_article = restore; }
-const bool CONFIG::get_restore_image(){ return restore_image; }
-void CONFIG::set_restore_image( bool restore ){ restore_image = restore; }
+void CONFIG::restore_conf()
+{
+    if( ! instance_confitem_bkup ) return;
+    *instance_confitem = * instance_confitem_bkup;
+}
+
+
+//////////////////////////////////////////////////////////////
+
+
+
+const bool CONFIG::get_restore_board(){ return get_confitem()->restore_board; }
+void CONFIG::set_restore_board( bool restore ){ get_confitem()->restore_board = restore; }
+const bool CONFIG::get_restore_article(){ return get_confitem()->restore_article; }
+void CONFIG::set_restore_article( bool restore ){ get_confitem()->restore_article = restore; }
+const bool CONFIG::get_restore_image(){ return get_confitem()->restore_image; }
+void CONFIG::set_restore_image( bool restore ){ get_confitem()->restore_image = restore; }
 
 
 // 色
 const std::string& CONFIG::get_color( int id )
 {
-    assert( id < COLOR_NUM );
-    return m_str_color[ id ];
+    return get_confitem()->str_color[ id ];
 }
 
 void CONFIG::set_color( int id, const std::string& color )
 {
-    assert( id < COLOR_NUM );
-    m_str_color[ id ] = color;
+    get_confitem()->str_color[ id ] = color;
 }
 
-const bool CONFIG::get_use_tree_gtkrc(){ return use_tree_gtkrc; }
+const bool CONFIG::get_use_tree_gtkrc(){ return get_confitem()->use_tree_gtkrc; }
 
 
 // フォント
 const std::string& CONFIG::get_fontname( int id )
 {
-    assert( id < FONT_NUM );
-    return m_fontname[ id ];
+    return get_confitem()->fontname[ id ];
 }
 
 void CONFIG::set_fontname( int id, const std::string& fontname )
 {
-    assert( id < FONT_NUM );
-    m_fontname[ id ] = fontname;
+    get_confitem()->fontname[ id ] = fontname;
 }
 
-const std::string&  CONFIG::get_ref_prefix(){ return ref_prefix; }
+const std::string&  CONFIG::get_ref_prefix(){ return get_confitem()->ref_prefix; }
 
-const std::string& CONFIG::get_url_login2ch() { return url_login2ch; }
-const std::string& CONFIG::get_url_bbsmenu() { return url_bbsmenu; }
+const std::string& CONFIG::get_url_login2ch() { return get_confitem()->url_login2ch; }
+const std::string& CONFIG::get_url_bbsmenu() { return get_confitem()->url_bbsmenu; }
 
-const std::string& CONFIG::get_agent_for2ch() { return agent_for2ch; }
+const std::string& CONFIG::get_agent_for2ch() { return get_confitem()->agent_for2ch; }
 
-const bool CONFIG::get_use_proxy_for2ch() { return use_proxy_for2ch; }
-const std::string& CONFIG::get_proxy_for2ch() { return proxy_for2ch; }
-const int CONFIG::get_proxy_port_for2ch() { return proxy_port_for2ch; }
+const bool CONFIG::get_use_proxy_for2ch() { return get_confitem()->use_proxy_for2ch; }
+const std::string& CONFIG::get_proxy_for2ch() { return get_confitem()->proxy_for2ch; }
+const int CONFIG::get_proxy_port_for2ch() { return get_confitem()->proxy_port_for2ch; }
 
-void CONFIG::set_use_proxy_for2ch( bool set ){ use_proxy_for2ch = set; }
-void CONFIG::set_proxy_for2ch( const std::string& proxy ){ proxy_for2ch = proxy; }
-void CONFIG::set_proxy_port_for2ch( int port ){ proxy_port_for2ch = port; }
+void CONFIG::set_use_proxy_for2ch( bool set ){ get_confitem()->use_proxy_for2ch = set; }
+void CONFIG::set_proxy_for2ch( const std::string& proxy ){ get_confitem()->proxy_for2ch = proxy; }
+void CONFIG::set_proxy_port_for2ch( int port ){ get_confitem()->proxy_port_for2ch = port; }
 
-const bool CONFIG::get_use_proxy_for2ch_w() { return use_proxy_for2ch_w; }
-const std::string& CONFIG::get_proxy_for2ch_w() { return proxy_for2ch_w; }
-const int CONFIG::get_proxy_port_for2ch_w() { return proxy_port_for2ch_w; }
+const bool CONFIG::get_use_proxy_for2ch_w() { return get_confitem()->use_proxy_for2ch_w; }
+const std::string& CONFIG::get_proxy_for2ch_w() { return get_confitem()->proxy_for2ch_w; }
+const int CONFIG::get_proxy_port_for2ch_w() { return get_confitem()->proxy_port_for2ch_w; }
 
-void CONFIG::set_use_proxy_for2ch_w( bool set ){ use_proxy_for2ch_w = set; }
-void CONFIG::set_proxy_for2ch_w( const std::string& proxy ){ proxy_for2ch_w = proxy; }
-void CONFIG::set_proxy_port_for2ch_w( int port ){ proxy_port_for2ch_w = port; }
+void CONFIG::set_use_proxy_for2ch_w( bool set ){ get_confitem()->use_proxy_for2ch_w = set; }
+void CONFIG::set_proxy_for2ch_w( const std::string& proxy ){ get_confitem()->proxy_for2ch_w = proxy; }
+void CONFIG::set_proxy_port_for2ch_w( int port ){ get_confitem()->proxy_port_for2ch_w = port; }
 
-const std::string& CONFIG::get_agent_for_data() { return agent_for_data; }
+const std::string& CONFIG::get_agent_for_data() { return get_confitem()->agent_for_data; }
 
-const bool CONFIG::get_use_proxy_for_data() { return use_proxy_for_data; }
-const std::string& CONFIG::get_proxy_for_data() { return proxy_for_data; }
-const int CONFIG::get_proxy_port_for_data() { return proxy_port_for_data; }
+const bool CONFIG::get_use_proxy_for_data() { return get_confitem()->use_proxy_for_data; }
+const std::string& CONFIG::get_proxy_for_data() { return get_confitem()->proxy_for_data; }
+const int CONFIG::get_proxy_port_for_data() { return get_confitem()->proxy_port_for_data; }
 
-const std::string& CONFIG::get_x_2ch_ua() { return x_2ch_ua; }
+const std::string& CONFIG::get_x_2ch_ua() { return get_confitem()->x_2ch_ua; }
 
-void CONFIG::set_use_proxy_for_data( bool set ){ use_proxy_for_data = set; }
-void CONFIG::set_proxy_for_data( const std::string& proxy ){ proxy_for_data = proxy; }
-void CONFIG::set_proxy_port_for_data( int port ){ proxy_port_for_data = port; }
+void CONFIG::set_use_proxy_for_data( bool set ){ get_confitem()->use_proxy_for_data = set; }
+void CONFIG::set_proxy_for_data( const std::string& proxy ){ get_confitem()->proxy_for_data = proxy; }
+void CONFIG::set_proxy_port_for_data( int port ){ get_confitem()->proxy_port_for_data = port; }
 
-const int CONFIG::get_loader_bufsize(){ return loader_bufsize; }
-const int CONFIG::get_loader_timeout(){ return loader_timeout; }
-const int CONFIG::get_loader_timeout_post(){ return loader_timeout_post; }
-const int CONFIG::get_loader_timeout_img(){ return loader_timeout_img; }
+const int CONFIG::get_loader_bufsize(){ return get_confitem()->loader_bufsize; }
+const int CONFIG::get_loader_timeout(){ return get_confitem()->loader_timeout; }
+const int CONFIG::get_loader_timeout_post(){ return get_confitem()->loader_timeout_post; }
+const int CONFIG::get_loader_timeout_img(){ return get_confitem()->loader_timeout_img; }
 
-const std::string& CONFIG::get_command_openurl() { return command_openurl; }
-void CONFIG::set_command_openurl( const std::string& command ){ command_openurl = command; }
+const std::string& CONFIG::get_command_openurl() { return get_confitem()->command_openurl; }
+void CONFIG::set_command_openurl( const std::string& command ){ get_confitem()->command_openurl = command; }
 
-const int CONFIG::get_brownsercombo_id(){ return brownsercombo_id; }
-void CONFIG::set_brownsercombo_id( int id ){ brownsercombo_id = id; }
+const int CONFIG::get_brownsercombo_id(){ return get_confitem()->brownsercombo_id; }
+void CONFIG::set_brownsercombo_id( int id ){ get_confitem()->brownsercombo_id = id; }
 
-const bool CONFIG::get_refpopup_by_mo(){ return refpopup_by_mo; }
-const bool CONFIG::get_namepopup_by_mo(){ return namepopup_by_mo; }
-const bool CONFIG::get_idpopup_by_mo(){ return idpopup_by_mo; }
+const bool CONFIG::get_refpopup_by_mo(){ return get_confitem()->refpopup_by_mo; }
+const bool CONFIG::get_namepopup_by_mo(){ return get_confitem()->namepopup_by_mo; }
+const bool CONFIG::get_idpopup_by_mo(){ return get_confitem()->idpopup_by_mo; }
 
-const int CONFIG::get_imgpopup_width(){ return imgpopup_width; }
-const int CONFIG::get_imgpopup_height(){ return imgpopup_height; }
-const bool CONFIG::get_use_image_view(){ return use_image_view; }
-void CONFIG::set_use_image_view( bool image_view ){ use_image_view = image_view; }
-const bool CONFIG::get_use_mosaic(){ return use_mosaic; }
-void CONFIG::set_use_mosaic( bool mosaic ) { use_mosaic = mosaic; }
-const bool CONFIG::get_zoom_to_fit(){ return zoom_to_fit; }
-void CONFIG::set_zoom_to_fit( bool fit ){ zoom_to_fit = fit; }
-const int CONFIG::get_del_img_day(){ return del_img_day; }
-void CONFIG::set_del_img_day( int day ){ del_img_day = day; }
-const int CONFIG::get_max_img_size(){ return max_img_size; }
+const int CONFIG::get_imgpopup_width(){ return get_confitem()->imgpopup_width; }
+const int CONFIG::get_imgpopup_height(){ return get_confitem()->imgpopup_height; }
+const bool CONFIG::get_use_image_view(){ return get_confitem()->use_image_view; }
+void CONFIG::set_use_image_view( bool image_view ){ get_confitem()->use_image_view = image_view; }
+const bool CONFIG::get_use_mosaic(){ return get_confitem()->use_mosaic; }
+void CONFIG::set_use_mosaic( bool mosaic ) { get_confitem()->use_mosaic = mosaic; }
+const bool CONFIG::get_zoom_to_fit(){ return get_confitem()->zoom_to_fit; }
+void CONFIG::set_zoom_to_fit( bool fit ){ get_confitem()->zoom_to_fit = fit; }
+const int CONFIG::get_del_img_day(){ return get_confitem()->del_img_day; }
+void CONFIG::set_del_img_day( int day ){ get_confitem()->del_img_day = day; }
+const int CONFIG::get_max_img_size(){ return get_confitem()->max_img_size; }
 
-const bool CONFIG::get_show_oldarticle(){ return show_oldarticle; }
-void CONFIG::set_show_oldarticle( bool showarticle ){ show_oldarticle = showarticle; }
+const bool CONFIG::get_show_oldarticle(){ return get_confitem()->show_oldarticle; }
+void CONFIG::set_show_oldarticle( bool showarticle ){ get_confitem()->show_oldarticle = showarticle; }
 
-const int CONFIG::get_newthread_hour(){ return newthread_hour; }
+const int CONFIG::get_newthread_hour(){ return get_confitem()->newthread_hour; }
 
-const int CONFIG::get_tree_scroll_size(){ return tree_scroll_size; }
-const bool CONFIG::get_open_one_category(){ return open_one_category; }
-const bool CONFIG::get_always_write_ok() { return always_write_ok; }
-void CONFIG::set_always_write_ok( bool write_ok ){ always_write_ok = write_ok; }
-const bool CONFIG::get_save_postlog(){ return save_postlog; }
-void CONFIG::set_save_postlog( bool save ){ save_postlog = save; }
-const bool CONFIG::get_hide_writing_dialog(){ return hide_writing_dialog; }
+const int CONFIG::get_tree_scroll_size(){ return get_confitem()->tree_scroll_size; }
+const bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; }
+const bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }
+void CONFIG::set_always_write_ok( bool write_ok ){ get_confitem()->always_write_ok = write_ok; }
+const bool CONFIG::get_save_postlog(){ return get_confitem()->save_postlog; }
+void CONFIG::set_save_postlog( bool save ){ get_confitem()->save_postlog = save; }
+const bool CONFIG::get_hide_writing_dialog(){ return get_confitem()->hide_writing_dialog; }
 
-const int CONFIG::get_margin_popup(){ return margin_popup; }
-const int CONFIG::get_mouse_radius(){ return mouse_radius; }
-const int CONFIG::get_history_size(){ return history_size; }
+const int CONFIG::get_margin_popup(){ return get_confitem()->margin_popup; }
+const int CONFIG::get_mouse_radius(){ return get_confitem()->mouse_radius; }
+const int CONFIG::get_history_size(){ return get_confitem()->history_size; }
 
 // 0以上なら多重ポップアップの説明を表示する
 // 呼び出される度に--する
 const int CONFIG::get_instruct_popup(){
-    if( instruct_popup ) return instruct_popup--;
+    if( get_confitem()->instruct_popup ) return get_confitem()->instruct_popup--;
     return 0;
 }
 
 
 const bool CONFIG::get_instruct_tglart(){
 
-    if( instruct_tglart_end ) return false;
+    if( get_confitem()->instruct_tglart_end ) return false;
 
-    instruct_tglart_end = true; // 一度表示したら表示しない
-    return instruct_tglart;
+    get_confitem()->instruct_tglart_end = true; // 一度表示したら表示しない
+    return get_confitem()->instruct_tglart;
 }
-void CONFIG::set_instruct_tglart( bool tgl ){ instruct_tglart = tgl; }
+void CONFIG::set_instruct_tglart( bool tgl ){ get_confitem()->instruct_tglart = tgl; }
 
 const bool CONFIG::get_instruct_tglimg(){
 
-    if( instruct_tglimg_end ) return false;
+    if( get_confitem()->instruct_tglimg_end ) return false;
 
-    instruct_tglimg_end = true; // 一度表示したら表示しない
-    return instruct_tglimg;
+    get_confitem()->instruct_tglimg_end = true; // 一度表示したら表示しない
+    return get_confitem()->instruct_tglimg;
 }
 
-void CONFIG::set_instruct_tglimg( bool tgl ){ instruct_tglimg = tgl; }
+void CONFIG::set_instruct_tglimg( bool tgl ){ get_confitem()->instruct_tglimg = tgl; }
 
 
-const double CONFIG::get_adjust_underline_pos(){ return adjust_underline_pos; }
-const double CONFIG::get_adjust_line_space(){ return adjust_line_space; }
+const double CONFIG::get_adjust_underline_pos(){ return get_confitem()->adjust_underline_pos; }
+const double CONFIG::get_adjust_line_space(){ return get_confitem()->adjust_line_space; }
 
-const bool CONFIG::get_draw_underline(){ return draw_underline; }
+const bool CONFIG::get_draw_underline(){ return get_confitem()->draw_underline; }
 
-const bool CONFIG::get_strict_char_width(){ return strict_char_width; }
-void CONFIG::set_strict_char_width( bool strictwidth ){ strict_char_width = strictwidth; }
+const bool CONFIG::get_strict_char_width(){ return get_confitem()->strict_char_width; }
+void CONFIG::set_strict_char_width( bool strictwidth ){ get_confitem()->strict_char_width = strictwidth; }
 
-const bool CONFIG::get_hide_usrcmd(){ return hide_usrcmd; }
-const int CONFIG::get_max_show_usrcmd(){ return max_show_usrcmd; }
+const bool CONFIG::get_hide_usrcmd(){ return get_confitem()->hide_usrcmd; }
+const int CONFIG::get_max_show_usrcmd(){ return get_confitem()->max_show_usrcmd; }
 
 
-const int CONFIG::get_tab_min_str(){ return tab_min_str; }
+const int CONFIG::get_tab_min_str(){ return get_confitem()->tab_min_str; }
 
-const bool CONFIG::get_show_tab_icon(){ return show_tab_icon; }
+const bool CONFIG::get_show_tab_icon(){ return get_confitem()->show_tab_icon; }
 
-std::list< std::string >& CONFIG::get_list_abone_word_thread(){ return list_abone_word_thread; }
-std::list< std::string >& CONFIG::get_list_abone_regex_thread(){ return list_abone_regex_thread; }
+std::list< std::string >& CONFIG::get_list_abone_word_thread(){ return get_confitem()->list_abone_word_thread; }
+std::list< std::string >& CONFIG::get_list_abone_regex_thread(){ return get_confitem()->list_abone_regex_thread; }
 
 
 void CONFIG::set_list_abone_word_thread( std::list< std::string >& word )
 {
     // 前後の空白と空白行を除く
-    list_abone_word_thread = MISC::remove_space_from_list( word );
-    list_abone_word_thread = MISC::remove_nullline_from_list( list_abone_word_thread );
+    get_confitem()->list_abone_word_thread = MISC::remove_space_from_list( word );
+    get_confitem()->list_abone_word_thread = MISC::remove_nullline_from_list( get_confitem()->list_abone_word_thread );
 }
 
 
 void CONFIG::set_list_abone_regex_thread( std::list< std::string >& regex )
 {
     // 前後の空白と空白行を除く
-    list_abone_regex_thread = MISC::remove_space_from_list( regex );
-    list_abone_regex_thread = MISC::remove_nullline_from_list( list_abone_regex_thread );
+    get_confitem()->list_abone_regex_thread = MISC::remove_space_from_list( regex );
+    get_confitem()->list_abone_regex_thread = MISC::remove_nullline_from_list( get_confitem()->list_abone_regex_thread );
 }
 
 
-std::list< std::string >& CONFIG::get_list_abone_name(){ return list_abone_name; }
-std::list< std::string >& CONFIG::get_list_abone_word(){ return list_abone_word; }
-std::list< std::string >& CONFIG::get_list_abone_regex(){ return list_abone_regex; }
+std::list< std::string >& CONFIG::get_list_abone_name(){ return get_confitem()->list_abone_name; }
+std::list< std::string >& CONFIG::get_list_abone_word(){ return get_confitem()->list_abone_word; }
+std::list< std::string >& CONFIG::get_list_abone_regex(){ return get_confitem()->list_abone_regex; }
 
 void CONFIG::set_list_abone_name( std::list< std::string >& name )
 {
     // 前後の空白と空白行を除く
-    list_abone_name = MISC::remove_space_from_list( name );
-    list_abone_name = MISC::remove_nullline_from_list( list_abone_name );
+    get_confitem()->list_abone_name = MISC::remove_space_from_list( name );
+    get_confitem()->list_abone_name = MISC::remove_nullline_from_list( get_confitem()->list_abone_name );
 }
 
 void CONFIG::set_list_abone_word( std::list< std::string >& word )
 {
     // 前後の空白と空白行を除く
-    list_abone_word = MISC::remove_space_from_list( word );
-    list_abone_word = MISC::remove_nullline_from_list( list_abone_word );
+    get_confitem()->list_abone_word = MISC::remove_space_from_list( word );
+    get_confitem()->list_abone_word = MISC::remove_nullline_from_list( get_confitem()->list_abone_word );
 }
 
 
 void CONFIG::set_list_abone_regex( std::list< std::string >& regex )
 {
     // 前後の空白と空白行を除く
-    list_abone_regex = MISC::remove_space_from_list( regex );
-    list_abone_regex = MISC::remove_nullline_from_list( list_abone_regex );
+    get_confitem()->list_abone_regex = MISC::remove_space_from_list( regex );
+    get_confitem()->list_abone_regex = MISC::remove_nullline_from_list( get_confitem()->list_abone_regex );
 }
 
-const bool CONFIG::get_abone_transparent(){ return abone_transparent; }
-void CONFIG::set_abone_transparent( bool set ){ abone_transparent = set; }
-const bool CONFIG::get_abone_chain(){ return abone_chain; }
-void CONFIG::set_abone_chain( bool set ){ abone_chain = set; }
+const bool CONFIG::get_abone_transparent(){ return get_confitem()->abone_transparent; }
+void CONFIG::set_abone_transparent( bool set ){ get_confitem()->abone_transparent = set; }
+const bool CONFIG::get_abone_chain(){ return get_confitem()->abone_chain; }
+void CONFIG::set_abone_chain( bool set ){ get_confitem()->abone_chain = set; }

@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "skeleton/msgdiag.h"
@@ -16,19 +16,19 @@
 using namespace CORE;
 
 FontColorPref::FontColorPref( const std::string& url )
-: SKELETON::PrefDiag( url )
+    : SKELETON::PrefDiag( url )
 {
-    //CONFIG::make_memento();
+    CONFIG::bkup_conf();
 
     // フォント設定をセット
-    set_font_settings( "スレッド", FONT_MAIN );
+    set_font_settings( "スレビュー", FONT_MAIN );
     set_font_settings( "ポップアップ", FONT_POPUP );
     set_font_settings( "板一覧", FONT_BBS );
     set_font_settings( "スレ一覧", FONT_BOARD );
     set_font_settings( "書き込みエディタ", FONT_MESSAGE );
 
     // 色設定をセット
-    set_color_settings( "文字: スレッド", COLOR_CHAR );
+    set_color_settings( "文字: スレビュー", COLOR_CHAR );
     set_color_settings( "文字: 名前欄", COLOR_CHAR_NAME );
     set_color_settings( "文字: 名前欄(トリップ等)", COLOR_CHAR_NAME_B );
     set_color_settings( "文字: メール欄(非sage)", COLOR_CHAR_AGE );
@@ -43,7 +43,7 @@ FontColorPref::FontColorPref( const std::string& url )
     set_color_settings( "文字: 画像(ロード中)", COLOR_IMG_LOADING );
     set_color_settings( "文字: 画像(エラー)", COLOR_IMG_ERR );
     set_color_settings( "特殊: 新着セパレータ", COLOR_SEPARATOR_NEW );
-    set_color_settings( "背景: スレッド", COLOR_BACK );
+    set_color_settings( "背景: スレビュー", COLOR_BACK );
     set_color_settings( "背景: ポップアップ", COLOR_BACK_POPUP );
     set_color_settings( "背景: 選択範囲", COLOR_BACK_SELECTION );
     set_color_settings( "背景: ハイライト", COLOR_BACK_HIGHLIGHT );
@@ -52,7 +52,7 @@ FontColorPref::FontColorPref( const std::string& url )
 
     pack_widget();
 
-    set_title( "フォントと色の設定" );
+    set_title( "フォントと色の詳細設定" );
     show_all_children();
     resize( 480, 240 );
 }
@@ -145,6 +145,8 @@ void FontColorPref::slot_cancel_clicked()
 #ifdef _DEBUG
     std::cout << "FontColorPref::slot_cancel_clicked\n";
 #endif
+
+    CONFIG::restore_conf();
 }
 
 

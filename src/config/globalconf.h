@@ -11,11 +11,21 @@
 
 namespace CONFIG
 {
-    // 設定読み込み
-    const bool init_config();
+    class ConfigItems;
 
+    ConfigItems* get_confitem();
+    void delete_confitem();
+
+    // 設定読み込み、書き込み
+    const bool load_conf();
     void save_conf();
-    void save_conf_impl( const std::string& path );
+
+    // 設定の一時的なバックアップと復元
+    void bkup_conf();
+    void restore_conf();
+
+
+    /////////////////////////////////////////////
     
     // 前回開いたviewを復元するか
     const bool get_restore_board();

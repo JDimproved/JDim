@@ -125,6 +125,7 @@ Core::~Core()
     // 設定保存
     // セッション情報は WinMain::~WinMain() で保存する
     CONFIG::save_conf();
+    CONFIG::delete_confitem();
 
     // PANEの敷居の位置保存
     SESSION::set_hpane_main_pos( m_hpaned.get_position() );
