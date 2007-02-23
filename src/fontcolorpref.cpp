@@ -13,6 +13,8 @@
 #include "colorid.h"
 #include "fontid.h"
 
+#define WARNING_STRICTCHAR "スレビューのフォント幅の近似を厳密に行います\n\nパフォーマンスが著しく低下します\n通常は設定しないでください"
+
 using namespace CORE;
 
 FontColorPref::FontColorPref( const std::string& url )
@@ -21,34 +23,35 @@ FontColorPref::FontColorPref( const std::string& url )
     CONFIG::bkup_conf();
 
     // フォント設定をセット
-    set_font_settings( "スレビュー", FONT_MAIN );
-    set_font_settings( "ポップアップ", FONT_POPUP );
-    set_font_settings( "板一覧", FONT_BBS );
-    set_font_settings( "スレ一覧", FONT_BOARD );
-    set_font_settings( "書き込みエディタ", FONT_MESSAGE );
+    set_font_settings( "スレビュー", FONT_MAIN, "スレビューのフォント" );
+    set_font_settings( "ポップアップ", FONT_POPUP, "ポップアップのフォント" );
+    set_font_settings( "板一覧", FONT_BBS, "板一覧のフォント" );
+    set_font_settings( "スレ一覧", FONT_BOARD, "スレ一覧のフォント" );
+    set_font_settings( "書き込みエディタ", FONT_MESSAGE, "書き込みエディタのフォント" );
 
     // 色設定をセット
-    set_color_settings( "文字: スレビュー", COLOR_CHAR );
-    set_color_settings( "文字: 名前欄", COLOR_CHAR_NAME );
-    set_color_settings( "文字: 名前欄(トリップ等)", COLOR_CHAR_NAME_B );
-    set_color_settings( "文字: メール欄(非sage)", COLOR_CHAR_AGE );
-    set_color_settings( "文字: 選択範囲", COLOR_CHAR_SELECTION );
-    set_color_settings( "文字: ハイライト", COLOR_CHAR_HIGHLIGHT );
-    set_color_settings( "文字: ブックマーク", COLOR_CHAR_BOOKMARK );
-    set_color_settings( "文字: リンク(通常)", COLOR_CHAR_LINK );
-    set_color_settings( "文字: リンク(複数)", COLOR_CHAR_LINK_LOW );
-    set_color_settings( "文字: リンク(多数)", COLOR_CHAR_LINK_HIGH );
-    set_color_settings( "文字: 画像(キャッシュ無)", COLOR_IMG_NOCACHE );
-    set_color_settings( "文字: 画像(キャッシュ有)", COLOR_IMG_CACHED );
-    set_color_settings( "文字: 画像(ロード中)", COLOR_IMG_LOADING );
-    set_color_settings( "文字: 画像(エラー)", COLOR_IMG_ERR );
-    set_color_settings( "特殊: 新着セパレータ", COLOR_SEPARATOR_NEW );
-    set_color_settings( "背景: スレビュー", COLOR_BACK );
-    set_color_settings( "背景: ポップアップ", COLOR_BACK_POPUP );
-    set_color_settings( "背景: 選択範囲", COLOR_BACK_SELECTION );
-    set_color_settings( "背景: ハイライト", COLOR_BACK_HIGHLIGHT );
-    set_color_settings( "背景: 板一覧", COLOR_BACK_BBS );
-    set_color_settings( "背景: スレ一覧", COLOR_BACK_BOARD );
+    set_color_settings( "文字: スレビュー", COLOR_CHAR, "スレビューの基本の文字色" );
+    set_color_settings( "文字: 名前欄", COLOR_CHAR_NAME, "名前欄の通常の文字色" );
+    set_color_settings( "文字: 名前欄(トリップ等)", COLOR_CHAR_NAME_B, "名前欄のトリップ等の文字色" );
+    set_color_settings( "文字: メール欄(非sage)", COLOR_CHAR_AGE, "sage でないメール欄の文字色" );
+    set_color_settings( "文字: 選択範囲", COLOR_CHAR_SELECTION, "選択範囲の文字色" );
+    set_color_settings( "文字: ハイライト", COLOR_CHAR_HIGHLIGHT, "検索結果などのハイライトの文字色" );
+    set_color_settings( "文字: ブックマーク", COLOR_CHAR_BOOKMARK, "レスのブックマークの文字色" );
+    set_color_settings( "文字: リンク(通常)", COLOR_CHAR_LINK, "通常のリンクや参照されていないレス番号、複数発言したIDの文字色" );
+    set_color_settings( "文字: リンク(参照)", COLOR_CHAR_LINK_LOW, "他のレスから参照されたレス番号の文字色" );
+    set_color_settings( "文字: リンク(多数)", COLOR_CHAR_LINK_HIGH, "参照された数が多いレス番号や多く発言したIDの文字色" );
+    set_color_settings( "文字: 画像(キャッシュ無)", COLOR_IMG_NOCACHE, "画像として扱うリンクのうち、キャッシュされていない物の文字色" );
+    set_color_settings( "文字: 画像(キャッシュ有)", COLOR_IMG_CACHED, "画像として扱うリンクのうち、キャッシュされている物の文字色" );
+    set_color_settings( "文字: 画像(ロード中)", COLOR_IMG_LOADING, "画像として扱うリンクのうち、ロード中の物の文字色" );
+    set_color_settings( "文字: 画像(エラー)", COLOR_IMG_ERR, "画像として扱うリンクのうち、エラーになっている物の文字色" );
+    set_color_settings( "特殊: 新着しおり", COLOR_SEPARATOR_NEW, "新着しおりの色" );
+    set_color_settings( "背景: スレビュー", COLOR_BACK, "スレビューの背景色" );
+    set_color_settings( "背景: ポップアップ", COLOR_BACK_POPUP, "ポップアップの背景色" );
+    set_color_settings( "背景: 選択範囲", COLOR_BACK_SELECTION, "選択範囲の背景色" );
+    set_color_settings( "背景: ハイライト", COLOR_BACK_HIGHLIGHT, "検索結果などのハイライトの背景色" );
+    set_color_settings( "背景: 板一覧", COLOR_BACK_BBS, "板一覧の背景色" );
+    set_color_settings( "背景: スレ一覧", COLOR_BACK_BOARD, "スレ一覧の背景色" );
+
 
     pack_widget();
 
@@ -70,18 +73,22 @@ void FontColorPref::pack_widget()
     const int mrg = 8;
 
     // フォント
+    m_event_font.add( m_combo_font );
     m_combo_font.set_active( 0 );
     m_fontbutton.set_font_name( CONFIG::get_fontname( m_font_tbl[ 0 ] ) );
+    m_tooltips.set_tip( m_event_font, m_tooltips_font[ 0 ] );
+    m_tooltips.set_tip( m_fontbutton, m_tooltips_font[ 0 ] );
 
     m_hbox_font.set_spacing( mrg );
     m_hbox_font.set_border_width( mrg );
-    m_hbox_font.pack_start( m_combo_font, Gtk::PACK_SHRINK );
+    m_hbox_font.pack_start( m_event_font, Gtk::PACK_SHRINK );
     m_hbox_font.pack_start( m_fontbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
 
     m_vbox_font.pack_start( m_hbox_font, Gtk::PACK_SHRINK );
 
     m_checkbutton_font.set_label( "フォント幅の近似計算を厳密に行う");
     m_checkbutton_font.set_active( CONFIG::get_strict_char_width() );
+    m_tooltips.set_tip( m_checkbutton_font, WARNING_STRICTCHAR );
 
     m_vbox_font.pack_start( m_checkbutton_font, Gtk::PACK_SHRINK, mrg );
 
@@ -96,12 +103,15 @@ void FontColorPref::pack_widget()
 
 
     // 色
+    m_event_color.add( m_combo_color );
     m_combo_color.set_active( 0 );
     m_colorbutton.set_color( Gdk::Color( CONFIG::get_color( m_color_tbl[ 0 ] ) ) );
+    m_tooltips.set_tip( m_event_color, m_tooltips_color[ 0 ] );
+    m_tooltips.set_tip( m_colorbutton, m_tooltips_color[ 0 ] );
 
     m_hbox_color.set_spacing( mrg );
     m_hbox_color.set_border_width( mrg );
-    m_hbox_color.pack_start( m_combo_color, Gtk::PACK_SHRINK );
+    m_hbox_color.pack_start( m_event_color, Gtk::PACK_SHRINK );
     m_hbox_color.pack_start( m_colorbutton, Gtk::PACK_SHRINK, mrg );
 
     m_vbox_color.pack_start( m_hbox_color, Gtk::PACK_EXPAND_WIDGET, mrg );
@@ -153,12 +163,13 @@ void FontColorPref::slot_cancel_clicked()
 //
 // フォント設定の名前と設定値をセット
 //
-void FontColorPref::set_font_settings( const std::string& name, const int fontid )
+void FontColorPref::set_font_settings( const std::string& name, const int fontid, const std::string& tooltip )
 {
     if( ! name.empty() && fontid < FONT_NUM )
     {
         m_combo_font.append_text( name );
         m_font_tbl.push_back( fontid );
+        m_tooltips_font.push_back( tooltip );
     }
 }
 
@@ -166,7 +177,7 @@ void FontColorPref::set_font_settings( const std::string& name, const int fontid
 //
 // 色設定の名前と設定値をセット
 //
-void FontColorPref::set_color_settings( const std::string& name, const int colorid )
+void FontColorPref::set_color_settings( const std::string& name, const int colorid, const std::string& tooltip )
 {
     if( ! name.empty() && colorid < COLOR_NUM )
     {
@@ -175,6 +186,7 @@ void FontColorPref::set_color_settings( const std::string& name, const int color
 #endif
         m_combo_color.append_text( name );
         m_color_tbl.push_back( colorid );
+        m_tooltips_color.push_back( tooltip );
     }
 }
 
@@ -186,6 +198,8 @@ void FontColorPref::slot_combo_font_changed()
 {
     int num = m_combo_font.get_active_row_number();
     m_fontbutton.set_font_name( CONFIG::get_fontname( m_font_tbl[ num ] ) );
+    m_tooltips.set_tip( m_event_font, m_tooltips_font[ num ] );
+    m_tooltips.set_tip( m_fontbutton, m_tooltips_font[ num ] );
 }
 
 
@@ -197,6 +211,8 @@ void FontColorPref::slot_combo_color_changed()
     int num = m_combo_color.get_active_row_number();
 
     m_colorbutton.set_color( Gdk::Color( CONFIG::get_color( m_color_tbl[ num ] ) ) );
+    m_tooltips.set_tip( m_event_color, m_tooltips_color[ num ] );
+    m_tooltips.set_tip( m_colorbutton, m_tooltips_color[ num ] );
 }
 
 
@@ -209,7 +225,7 @@ void FontColorPref::slot_checkbutton_font_toggled()
 
     if( result )
     {
-        SKELETON::MsgDiag mdiag( "スレビューのフォント幅の近似を厳密に行います\n\nパフォーマンスが低下しますので通常は設定しないでください" );
+        SKELETON::MsgDiag mdiag( WARNING_STRICTCHAR );
         mdiag.run();
     }
 

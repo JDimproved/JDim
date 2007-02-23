@@ -11,9 +11,14 @@ namespace CORE
 {
     class FontColorPref : public SKELETON::PrefDiag
     {
+        // ツールチップ
+        Gtk::Tooltips m_tooltips;
+
         // フォントの設定
         std::vector< int > m_font_tbl;
+        std::vector< std::string > m_tooltips_font;
 
+        Gtk::EventBox m_event_font;
         Gtk::ComboBoxText m_combo_font;
         Gtk::FontButton m_fontbutton;
         Gtk::CheckButton m_checkbutton_font;
@@ -23,7 +28,9 @@ namespace CORE
 
         // 色の設定
         std::vector< int > m_color_tbl;
+        std::vector< std::string > m_tooltips_color;
 
+        Gtk::EventBox m_event_color;
         Gtk::ComboBoxText m_combo_color;
         Gtk::ColorButton m_colorbutton;
         Gtk::HBox m_hbox_color;
@@ -41,13 +48,13 @@ namespace CORE
         void pack_widget();
 
         // フォントの設定
-        void set_font_settings( const std::string& name, const int fontid );
+        void set_font_settings( const std::string& name, const int fontid, const std::string& tooltip );
         void slot_combo_font_changed();
         void slot_fontbutton_on_set();
         void slot_checkbutton_font_toggled();
 
         // 色の設定
-        void set_color_settings( const std::string& name, const int colorid );
+        void set_color_settings( const std::string& name, const int colorid, const std::string& tooltip );
         void slot_combo_color_changed();
         void slot_colorbutton_on_set();
 
