@@ -19,11 +19,11 @@ using namespace ARTICLE;
 
 Preferences::Preferences( const std::string& url )
     : SKELETON::PrefDiag( url )
-    ,m_label_name( DBTREE::article_subject( get_url() ), Gtk::ALIGN_LEFT )
-    ,m_label_url( false, "URL : ", DBTREE:: url_readcgi( get_url(),0,0 ) )
-    ,m_label_url_dat( false, "DAT : ", DBTREE:: url_dat( get_url() ) )
+    ,m_label_name( "スレタイトル : " + DBTREE::article_subject( get_url() ), Gtk::ALIGN_LEFT )
+    ,m_label_url( false, "スレのURL : ", DBTREE:: url_readcgi( get_url(),0,0 ) )
+    ,m_label_url_dat( false, "DATファイルのURL : ", DBTREE:: url_dat( get_url() ) )
     ,m_label_cache( false, "ローカルキャッシュパス : ", std::string() )
-    ,m_label_size( false, "サイズ(byte) : ", std::string() )
+    ,m_label_size( false, "サイズ( byte / kb ) : ", std::string() )
     ,m_check_transpabone( "透明あぼ〜ん" )
     ,m_check_chainabone( "連鎖あぼ〜ん" )
     ,m_label_since( false, "スレ立て日時 : ", DBTREE::article_since_date( get_url() ) )
@@ -32,8 +32,11 @@ Preferences::Preferences( const std::string& url )
 {
     // 一般
     if( DBTREE::article_is_cached( get_url() ) ){
+
+        int size = DBTREE::article_lng_dat( get_url() );
+
         m_label_cache.set_text( CACHE::path_dat( get_url() ) );
-        m_label_size.set_text( MISC::itostr( DBTREE::article_lng_dat( get_url() ) ) );
+        m_label_size.set_text( MISC::itostr( size )  + " / " + MISC::itostr( size/1024 ) );
         m_label_modified.set_text( MISC::timettostr( DBTREE::article_time_modified( get_url() ) ) );
         if( DBTREE::article_write_time( get_url() ) ) m_label_write.set_text( DBTREE::article_write_date( get_url() ) );
     }
@@ -60,7 +63,7 @@ Preferences::Preferences( const std::string& url )
     m_vbox_info.pack_start( m_label_write, Gtk::PACK_SHRINK );
 
     if( CONFIG::get_abone_transparent() || CONFIG::get_abone_chain() ){
-        m_label_abone.set_text( "チェック出来ない場合は「デフォルトで透明/連鎖あぼ〜ん」を解除して下さい" );
+        m_label_abone.set_text( "チェック出来ない場合は設定メニューから「デフォルトで透明/連鎖あぼ〜ん」を解除して下さい" );
         m_label_abone.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
         m_vbox_info.pack_end( m_label_abone, Gtk::PACK_SHRINK );
     }
@@ -116,7 +119,7 @@ Preferences::Preferences( const std::string& url )
     m_notebook.append_page( m_edit_regex, "NG 正規表現" );
 
     get_vbox()->pack_start( m_notebook );
-    set_title( "スレのプロパティ" );
+    set_title( "「" + DBTREE::article_subject( get_url() ) + "」のプロパティ" );
     resize( 600, 400 );
     show_all_children();
 }
