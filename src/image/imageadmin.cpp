@@ -275,6 +275,7 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
     // window 開け閉じ
     else if( command.command == "open_window" ){
         open_window();
+        if( m_win ) m_win->focus_in();
         return;
     }
     else if( command.command == "close_window" ){
