@@ -6,37 +6,13 @@
 #define _DELIMGDIAG_H
 
 #include "skeleton/prefdiag.h"
+#include "skeleton/spinbutton.h"
 
 #include "config/globalconf.h"
 
 #include "cache.h"
 
 #include <sstream>
-
-
-#if GTKMMVER <= 240
-// gtkのバージョンが2.4以下の時はスピンが回ったときに
-// 明示的に値をセットする必要がある
-class SpinButton24 : public Gtk::SpinButton
-{
-
-public:
-
-    SpinButton24() : Gtk::SpinButton(){}
-
-protected:
-
-    virtual void on_spinbutton_digits_changed(){
-        const size_t size = 256;
-        char str[ size ];
-        snprintf( str, size, "%d", (int)get_value() );
-        set_text( str );
-    }
-};
-
-#endif
-
-
 
 namespace DBIMG
 {
@@ -47,11 +23,7 @@ namespace DBIMG
         Gtk::HBox m_hbox;
         Gtk::Label m_spinlabel;
 
-#if GTKMMVER <= 240
-        SpinButton24 m_spin;
-#else
-        Gtk::SpinButton m_spin;
-#endif
+        SKELETON::SpinButton m_spin;
 
         // OK押した
         virtual void slot_ok_clicked(){
