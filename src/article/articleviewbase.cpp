@@ -2422,7 +2422,7 @@ void ArticleViewBase::slot_quote_selection_res()
     std::cout << "ArticleViewBase::slot_quote_selection_res number = " << str_num << std::endl;
 #endif    
 
-    CORE::core_set_command( "open_message", m_url_article, ">>" + str_num + "\n" + str_res + query + "\n\n" );
+    CORE::core_set_command( "open_message", m_url_article, ">>" + str_num + "\n" + str_res + query + "\n" );
 }
 
 
