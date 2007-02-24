@@ -22,6 +22,13 @@ EditTextView::EditTextView() :
 }
 
 
+void EditTextView::insert( const std::string& str )
+{
+    get_buffer()->insert_at_cursor( "\n" + str );
+    scroll_to( get_buffer()->get_insert(), 0.0 );
+}
+
+
 void EditTextView::cursor_up_down( bool up )
 {
     Gtk::TextIter it = get_buffer()->get_insert()->get_iter();

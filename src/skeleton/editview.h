@@ -53,6 +53,7 @@ namespace SKELETON
 
         EditTextView();
 
+        void insert( const std::string& str );
 
         void cursor_up();
         void cursor_down();        
@@ -102,6 +103,8 @@ namespace SKELETON
 
         void set_text( const Glib::ustring& text ){ m_textview.get_buffer()->set_text( text ); }
         Glib::ustring get_text(){ return m_textview.get_buffer()->get_text(); }
+
+        void insert( const std::string& str ){ m_textview.insert( str ); }
 
         void set_editable( bool editable ){ m_textview.set_editable( editable ); }
         void set_accepts_tab( bool accept ){ m_textview.set_accepts_tab( accept ); }
