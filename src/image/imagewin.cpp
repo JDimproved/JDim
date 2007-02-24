@@ -236,7 +236,6 @@ const bool ImageWin::is_hide()
 //
 void ImageWin::set_enable_fold( bool enable )
 {
-    if( m_mode != IMGWIN_NORMAL ) return;
     if( m_enable_fold == enable ) return;
 
 #ifdef _DEBUG
@@ -246,7 +245,7 @@ void ImageWin::set_enable_fold( bool enable )
     m_enable_fold = enable;
 
     // XFCE 環境の場合はここでpresent()しておかないとフォーカスが外れる
-    if( m_enable_fold ) present(); 
+    if( m_mode == IMGWIN_NORMAL && m_enable_fold ) present(); 
 }
 
 
