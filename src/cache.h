@@ -8,6 +8,11 @@
 #include <string>
 #include <list>
 
+namespace Gtk
+{
+    class Window;
+}
+
 namespace CACHE
 {
     /////////////////////////////////////////////////
@@ -115,7 +120,9 @@ namespace CACHE
     // ファイル操作
     bool jdmkdir( const std::string& path );
     bool jdcopy( const std::string& file_from, const std::string& file_to );
-    std::string open_save_diag( const std::string& file_from, const std::string& file_to );
+
+    // 保存ダイアログを表示して file_from を 保存する
+    std::string open_save_diag( Gtk::Window* parent, const std::string& file_from, const std::string& file_to );
 
     // dir ディレクトリ内のレギュラーファイルのリストを取得
     std::list< std::string > get_filelist( const std::string& dir );

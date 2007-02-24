@@ -6,6 +6,7 @@
 #include "cache.h"
 
 #include "skeleton/msgdiag.h"
+#include "skeleton/filediag.h"
 
 #include "config/globalconf.h"
 
@@ -563,16 +564,18 @@ bool CACHE::jdcopy( const std::string& file_from, const std::string& file_to )
 
 
 //
-// 保存ダイアログを表示
+// 保存ダイアログを表示して file_from を 保存する
 //
-// 戻り値は保存先(失敗したらempty())
+// parent == NULL の時はメインウィンドウをparentにする
+// file_toはデフォルトの保存先
+// 戻り値は保存先(保存に失敗したらempty())
 //
-std::string CACHE::open_save_diag( const std::string& file_from, const std::string& file_to )
+std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& file_from, const std::string& file_to )
 {
     if( file_from.empty() ) return std::string();
     if( file_to.empty() ) return std::string();
 
-    Gtk::FileChooserDialog diag( "save", Gtk::FILE_CHOOSER_ACTION_SAVE );
+    SKELETON::FileDiag diag( parent, "save", Gtk::FILE_CHOOSER_ACTION_SAVE );
 
     std::string name = MISC::get_filename( file_to );
     std::string dir = MISC::get_dir( file_to );
@@ -587,12 +590,7 @@ std::string CACHE::open_save_diag( const std::string& file_from, const std::stri
 
     diag.set_current_folder( dir );
     diag.set_current_name( name );
-
-    // ボタン追加 + saveボタンをデフォルトボタンにセット
-    diag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-    diag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
-    diag.set_default_response( Gtk::RESPONSE_ACCEPT );
-    
+   
     if( diag.run() == Gtk::RESPONSE_ACCEPT ){
 
         diag.hide();
@@ -606,10 +604,10 @@ std::string CACHE::open_save_diag( const std::string& file_from, const std::stri
         // 既にファイルがある場合は問い合わせる
         if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
 
-            SKELETON::MsgDiag mdiag( "ファイルが存在します。ファイル名を変更しますか？",
+            SKELETON::MsgDiag mdiag( parent, "ファイルが存在します。ファイル名を変更しますか？",
                                       false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
 
-            if( mdiag.run() ==  Gtk::RESPONSE_OK ) return CACHE::open_save_diag( file_from,  path_to );
+            if( mdiag.run() ==  Gtk::RESPONSE_OK ) return CACHE::open_save_diag( parent, file_from,  path_to );
 
             return std::string();
         }
