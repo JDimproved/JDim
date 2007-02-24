@@ -298,7 +298,7 @@ void ImageWin::focus_in()
     show();
     if( SESSION::is_iconified_win_img() ) deiconify();
 
-    if( get_window() ){
+    if( ! m_maximized && get_window() ){
         int x, y;
         get_window()->get_root_origin( x, y );
         if( x != m_x || y != m_y ) move( m_x, m_y );
