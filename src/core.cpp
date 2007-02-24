@@ -730,7 +730,7 @@ void Core::first_setup()
 //
 void Core::show_setupdiag( const std::string& msg )
 {
-    SKELETON::MsgDiag* mdiag = new SKELETON::MsgDiag( msg );
+    SKELETON::MsgDiag* mdiag = new SKELETON::MsgDiag( NULL, msg );
     mdiag->set_title( "JDセットアップ" );
     mdiag->set_keep_above( true );
     mdiag->set_skip_taskbar_hint( false );
@@ -854,7 +854,7 @@ void Core::slot_toggle_use_mosaic()
 {
     CONFIG::set_use_mosaic( ! CONFIG::get_use_mosaic() );
 
-    SKELETON::MsgDiag mdiag( "次に開いた画像から有効になります" );
+    SKELETON::MsgDiag mdiag( NULL, "次に開いた画像から有効になります" );
     mdiag.run();
 }
 
@@ -1118,7 +1118,7 @@ void Core::slot_show_about()
        << JDVERSIONSTR 
 #endif
        << std::endl << std::endl << JDCOPYRIGHT;
-    SKELETON::MsgDiag mdiag( ss.str() );
+    SKELETON::MsgDiag mdiag( NULL, ss.str() );
     mdiag.run();
 }
     
@@ -1374,7 +1374,7 @@ void Core::slot_toggle_oldarticle()
 {
     CONFIG::set_show_oldarticle( ! CONFIG::get_show_oldarticle() );
 
-    SKELETON::MsgDiag mdiag( "次に開いた板から有効になります" );
+    SKELETON::MsgDiag mdiag( NULL, "次に開いた板から有効になります" );
     mdiag.run();
 }
 
@@ -1774,13 +1774,25 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    else if( command.command == "enable_fold_image_win" ){
+
+        IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );
+        return;
+    }
+    else if( command.command == "disable_fold_image_win" ){
+
+        IMAGE::get_admin()->set_command_immediately( "disable_fold_win" );
+        return;
+    }
+
+
     ////////////////////////////
     // message系
 
     else if( command.command == "open_message" ){
 
         if( ! SESSION::is_online() ){
-            SKELETON::MsgDiag mdiag( "オフラインです" );
+            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
             mdiag.run();
         }
         else{
@@ -1793,11 +1805,11 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command == "create_new_thread" ){
 
         if( ! SESSION::is_online() ){
-            SKELETON::MsgDiag mdiag( "オフラインです" );
+            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
             mdiag.run();
         }
         else if( DBTREE::url_bbscgi_new( command.url ).empty() ){
-            SKELETON::MsgDiag mdiag( "この板では新スレを立てることは出来ません" );
+            SKELETON::MsgDiag mdiag( NULL, "この板では新スレを立てることは出来ません" );
             mdiag.run();
         }
         else MESSAGE::get_admin()->set_command( "create_new_thread", command.url, command.arg1 );
@@ -2068,7 +2080,7 @@ void Core::exec_command()
         else if( DBIMG::is_loadable( command.url ) && CONFIG::get_use_image_view() ){
 
             if( ! SESSION::is_online() ){
-                SKELETON::MsgDiag mdiag( "オフラインです" );
+                SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
                 mdiag.run();
             }
             else{
