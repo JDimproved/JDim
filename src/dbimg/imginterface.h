@@ -9,6 +9,11 @@
 
 #include <string>
 
+namespace Gtk
+{
+    class Window;
+}
+
 namespace DBIMG
 {
     class Img;
@@ -23,7 +28,7 @@ namespace DBIMG
     DBIMG::Img* get_img( const std::string& url );
     void download_img( const std::string& url );
     void stop_load( const std::string& url );
-    bool save( const std::string& url, const std::string& path_to );
+    bool save( const std::string& url, Gtk::Window* parent, const std::string& path_to );
     void delete_cache( const std::string& url );
     void delete_all_files();
     bool is_cached( const std::string& url );

@@ -9,6 +9,11 @@
 
 #include <string>
 
+namespace Gtk
+{
+    class Window;
+}
+
 namespace DBIMG
 {
     // 画像タイプ
@@ -62,7 +67,7 @@ namespace DBIMG
         void set_protect( bool protect );
 
         void download_img();
-        bool save( const std::string& path_to );
+        bool save( Gtk::Window* parent, const std::string& path_to );
         
       private:
 

@@ -128,7 +128,7 @@ void Img::download_img()
 //
 // path_to はデフォルトのファイル名
 //
-bool Img::save( const std::string& path_to )
+bool Img::save( Gtk::Window* parent, const std::string& path_to )
 {
     if( is_loading() ) return false;
 
@@ -138,7 +138,7 @@ bool Img::save( const std::string& path_to )
     std::string name = MISC::get_filename( path_to );
     if( name.empty() ) name = MISC::get_filename( m_url );    
 
-    std::string save_to = CACHE::open_save_diag( CACHE::path_img( m_url ), dir + name );
+    std::string save_to = CACHE::open_save_diag( parent, CACHE::path_img( m_url ), dir + name );
 
     if( ! save_to.empty() ){
         SESSION::set_dir_img_save( MISC::get_dir( save_to ) );

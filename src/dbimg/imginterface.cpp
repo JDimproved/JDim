@@ -64,10 +64,10 @@ void DBIMG::stop_load( const std::string& url )
 
 
 
-bool DBIMG::save( const std::string& url, const std::string& path_to )
+bool DBIMG::save( const std::string& url, Gtk::Window* parent, const std::string& path_to )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
-    if( img ) return img->save( path_to );
+    if( img ) return img->save( parent, path_to );
 
     return true;
 }
