@@ -130,10 +130,13 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
 {
     if( command == "empty" ) return get_message().empty();
 
-    if( command == "loading" ){
+    else if( command == "loading" ){
         if( !m_post ) return false;
         return m_post->is_loading();
     }
+
+    // メッセージを追加
+    else if( command == "add_message" ) m_text_message.insert( arg );
 
     return false;
 }

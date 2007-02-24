@@ -289,6 +289,17 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
         return;
     }
 
+    // 既存のビューにメッセージを追加
+    if( m_view && url == m_view->get_url() )
+    {
+        m_view->set_command( "add_message", msg );
+
+        switch_admin();
+        set_command( "focus_current_view" );
+        return;
+    }
+
+    // URLが異なればビューを破棄
     if( m_view && ! m_view->set_command( "empty" ) ){
         SKELETON::MsgDiag mdiag( m_win, "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
         if( mdiag.run() == Gtk::RESPONSE_OK );
