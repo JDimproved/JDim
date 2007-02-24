@@ -29,7 +29,6 @@ namespace CORE
         );
 
     // メインウィンドウ取得
-    Gtk::Widget* get_toplevel();
     Gtk::Window* get_mainwindow();
 }
 

@@ -38,7 +38,7 @@ MessageWin::MessageWin()
     show_all_children();
 
     property_window_position().set_value( Gtk::WIN_POS_NONE );
-    if( CORE::get_toplevel() ) set_transient_for( *dynamic_cast< Gtk::Window* >( CORE::get_toplevel() ) );
+    set_transient_for( *CORE::get_mainwindow() );
 }
 
 
