@@ -32,6 +32,7 @@ noinst_HEADERS = \
 	label_entry.h \
 	prefdiag.h \
 	msgdiag.h \
+	filediag.h \
 	login.h \
 	hpaned.h \
 	vpaned.h \
