@@ -27,6 +27,7 @@ noinst_HEADERS = \
 	dragnote.h \
 	tablabel.h \
 	imgbutton.h \
+	spinbutton.h \
 	popupwin.h \
 	entry.h \
 	label_entry.h \
