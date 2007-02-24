@@ -9,6 +9,8 @@
 #include "dbimg/imginterface.h"
 
 #include "skeleton/view.h"
+#include "skeleton/msgdiag.h"
+#include "skeleton/filediag.h"
 
 #include "command.h"
 #include "cache.h"
@@ -76,6 +78,13 @@ ImageAdmin::~ImageAdmin()
     SESSION::set_image_page( get_current_page() );
 
     close_window();
+}
+
+
+
+Gtk::Window* ImageAdmin::get_win()
+{
+    return dynamic_cast< Gtk::Window* >( m_win );
 }
 
 
@@ -906,20 +915,11 @@ void ImageAdmin::save_all()
     std::list< std::string > list_urls = get_URLs();
 
     // ディレクトリ選択
-    Gtk::FileChooserDialog diag( "save", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
+    SKELETON::FileDiag diag( m_win, "save", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
 
     diag.set_current_folder( SESSION::dir_img_save() );
-
-    // ボタン追加 + saveボタンをデフォルトボタンにセット
-    diag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-    diag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
-    diag.set_default_response( Gtk::RESPONSE_ACCEPT );
     
-    set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
-    int ret = diag.run();
-    set_command_immediately( "enable_fold_win" ); // run 直後に呼ぶこと
-
-    if( ret  == Gtk::RESPONSE_ACCEPT ){
+    if( diag.run() == Gtk::RESPONSE_ACCEPT ){
 
         diag.hide();
 
@@ -960,18 +960,15 @@ void ImageAdmin::save_all()
 
                         for(;;){
 
-                            Gtk::MessageDialog mdiag( "ファイルが存在します。ファイル名を変更しますか？", 
-                                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+                            SKELETON::MsgDiag mdiag( m_win, "ファイルが存在します。ファイル名を変更しますか？", 
+                                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
                             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
                             mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
                             mdiag.add_button( "上書き", Gtk::RESPONSE_YES + 100 );
                             mdiag.add_button( "すべていいえ", Gtk::RESPONSE_NO + 200 );
                             mdiag.add_button( "すべて上書き", Gtk::RESPONSE_YES + 200 );
 
-                            set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
-                            ret = mdiag.run();
-                            set_command_immediately( "enable_fold_win" ); // run 直後に呼ぶこと
-
+                            int ret = mdiag.run();
                             mdiag.hide();
 
                             switch( ret ){
@@ -986,7 +983,7 @@ void ImageAdmin::save_all()
 
                                     // 名前変更
                                 case Gtk::RESPONSE_YES:
-                                    if( ! DBIMG::save( url, path_to ) ) continue;
+                                    if( ! DBIMG::save( url, m_win, path_to ) ) continue;
                                     break;
 
                                     //  すべていいえ

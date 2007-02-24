@@ -44,6 +44,7 @@ namespace IMAGE
 
         Gtk::HBox& tab() { return m_tab; }
         virtual Gtk::Widget* get_widget() { return &m_view; }
+        virtual Gtk::Window* get_win();
 
         // 起動中
         virtual const bool is_booting();

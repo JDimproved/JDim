@@ -54,6 +54,12 @@ MessageAdmin::~MessageAdmin()
 }
 
 
+Gtk::Window* MessageAdmin::get_win()
+{
+    return dynamic_cast< Gtk::Window* >( m_win );
+}
+
+
 void MessageAdmin::clock_in()
 {
     if( m_view ) m_view->clock_in();
@@ -126,13 +132,13 @@ void MessageAdmin::exec_command()
     else if( command.command  == "close_currentview" ){
 
         if( m_view && m_view->set_command( "loading" ) ){
-            SKELETON::MsgDiag mdiag( "書き込み中です" );
+            SKELETON::MsgDiag mdiag( m_win, "書き込み中です" );
             mdiag.run();
             return;
         }
 
         if( m_view && ! m_view->set_command( "empty" ) ){
-            SKELETON::MsgDiag mdiag( "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            SKELETON::MsgDiag mdiag( m_win, "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
             if( mdiag.run() == Gtk::RESPONSE_OK );
             else return;
         }
@@ -220,7 +226,6 @@ void MessageAdmin::close_view()
 void MessageAdmin::set_status( const std::string& url, const std::string& stat )
 {
     if( m_win ) m_win->set_status( stat );
-//    else Admin::set_status( url, stat );
     else CORE::core_set_command( "set_status", url, stat );
 }
 
@@ -279,13 +284,13 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
 #endif
 
     if( m_view && m_view->set_command( "loading" ) ){
-        SKELETON::MsgDiag mdiag( "書き込み中です" );
+        SKELETON::MsgDiag mdiag( m_win, "書き込み中です" );
         mdiag.run();
         return;
     }
 
     if( m_view && ! m_view->set_command( "empty" ) ){
-        SKELETON::MsgDiag mdiag( "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+        SKELETON::MsgDiag mdiag( m_win, "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
         if( mdiag.run() == Gtk::RESPONSE_OK );
         else return;
     }

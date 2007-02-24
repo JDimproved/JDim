@@ -42,6 +42,7 @@ namespace MESSAGE
 
         bool empty(){ return ( ! m_view ); }
         Gtk::Widget* get_widget(){ return &m_eventbox; }
+        Gtk::Window* get_win();
 
         void clock_in();
 
