@@ -46,6 +46,7 @@ namespace SKELETON
         virtual bool empty();
         const std::string& get_url() const{ return m_url; }
         virtual Gtk::Widget* get_widget();
+        virtual Gtk::Window* get_win(){ return NULL; }
 
         // 起動中
         virtual const bool is_booting();
