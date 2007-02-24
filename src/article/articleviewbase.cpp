@@ -2391,7 +2391,7 @@ void ArticleViewBase::slot_quote_res()
 #endif    
 
     CORE::core_set_command( "open_message" ,m_url_article,
-                            ">>" + m_str_num + "\n" + m_article->get_res_str( atoi( m_str_num.c_str() ), true ) + "\n" );
+                            ">>" + m_str_num + "\n" + m_article->get_res_str( atoi( m_str_num.c_str() ), true ) );
 }
 
 
