@@ -22,9 +22,22 @@ EditTextView::EditTextView() :
 }
 
 
-void EditTextView::insert( const std::string& str )
+//
+// カーソルの位置に挿入
+//
+// use_br == true なら改行を入れる
+//
+void EditTextView::insert( const std::string& str, bool use_br )
 {
-    get_buffer()->insert_at_cursor( "\n" + str );
+    std::string br;
+
+    if( use_br ){
+        Gtk::TextIter it = get_buffer()->get_insert()->get_iter();
+        if( it.get_chars_in_line() > 1 ) br = "\n\n";
+        else if( it.backward_char() && it.get_chars_in_line() > 1 ) br = "\n";
+    }
+
+    get_buffer()->insert_at_cursor( br + str );
     scroll_to( get_buffer()->get_insert(), 0.0 );
 }
 

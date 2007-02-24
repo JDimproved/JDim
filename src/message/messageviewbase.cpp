@@ -136,7 +136,7 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
     }
 
     // メッセージを追加
-    else if( command == "add_message" ) m_text_message.insert( arg );
+    else if( command == "add_message" ) m_text_message.insert( arg, true );
 
     return false;
 }
