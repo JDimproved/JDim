@@ -3,6 +3,7 @@
 //#define _DEBUG
 #include "jddebug.h"
 
+#include "messageadmin.h"
 #include "post.h"
 
 #include "skeleton/msgdiag.h"
@@ -284,26 +285,24 @@ void Post::receive_finish()
 
             std::string diagmsg = MISC::replace_str( msg, "<br>", "\n" );
 
-            // m_writingdiag を表示中なので SKELETON::MsgDiag ではなくて
-            // Gtk::MessageDialog でOK
-            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( diagmsg, false,
-                                                                Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, false );
+            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+                                     diagmsg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, false );
             Gtk::CheckButton ckbt( "次回から表示しない(_D)", true );
-            mdiag->get_vbox()->pack_start( ckbt, Gtk::PACK_SHRINK );
-            mdiag->add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+            mdiag.get_vbox()->pack_start( ckbt, Gtk::PACK_SHRINK );
+            mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
 
             // OKボタンをデフォルトにする
             Gtk::Button okbt( Gtk::Stock::OK );
-            mdiag->add_action_widget( okbt, Gtk::RESPONSE_OK );
+            mdiag.add_action_widget( okbt, Gtk::RESPONSE_OK );
             okbt.set_flags( Gtk::CAN_DEFAULT );
             okbt.grab_default();
             okbt.grab_focus();
 
-            mdiag->show_all_children();
+            mdiag.show_all_children();
 
-            int ret = mdiag->run();
+            int ret = mdiag.run();
             bool ckbt_active = ckbt.get_active();
-            delete mdiag;
+            mdiag.hide();
 
             if( ret != Gtk::RESPONSE_OK ){
 

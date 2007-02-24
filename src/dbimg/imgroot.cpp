@@ -13,6 +13,8 @@
 #include "jdlib/misctime.h"
 #endif
 
+#include "skeleton/msgdiag.h"
+
 #include "cache.h"
 #include "command.h"
 
@@ -238,7 +240,7 @@ void ImgRoot::delete_all_files()
     }
 
     if( !num_files ){
-        Gtk::MessageDialog mdiag2( "削除するファイルはありません", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK );
+        SKELETON::MsgDiag mdiag2( NULL, "削除するファイルはありません", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK );
         mdiag2.run();
         return;
     }
@@ -248,7 +250,7 @@ void ImgRoot::delete_all_files()
        << "削除するファイルの合計サイズ : " << ( size_files / 1024 / 1024 ) << "M\n\n"
        << "本当に画像を削除しますか？";
 
-    Gtk::MessageDialog mdiag2( ss.str(), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+    SKELETON::MsgDiag mdiag2( NULL, ss.str(), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
     if( mdiag2.run() != Gtk::RESPONSE_OK ) return;
 
     std::vector< std::string >::iterator it_url = list_urls.begin();
