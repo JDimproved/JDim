@@ -13,7 +13,7 @@
 #include "colorid.h"
 #include "fontid.h"
 
-#define WARNING_STRICTCHAR "スレビューのフォント幅の近似を厳密に行います\n\nパフォーマンスが著しく低下します\n通常は設定しないでください"
+#define WARNING_STRICTCHAR "スレビューのフォント幅の近似計算を厳密に行います\n\nレイアウトが崩れにくくなるかわりにパフォーマンスが著しく低下します。通常は設定しないでください"
 
 using namespace CORE;
 
@@ -225,7 +225,7 @@ void FontColorPref::slot_checkbutton_font_toggled()
 
     if( result )
     {
-        SKELETON::MsgDiag mdiag( WARNING_STRICTCHAR );
+        SKELETON::MsgDiag mdiag( NULL, WARNING_STRICTCHAR );
         mdiag.run();
     }
 

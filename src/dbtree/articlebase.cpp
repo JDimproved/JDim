@@ -940,7 +940,7 @@ void ArticleBase::delete_cache()
     if( empty() ) return;
 
     if( m_bookmarked_thread ){
-        SKELETON::MsgDiag mdiag( "「" + get_subject() + "」はブックマークされています。\n\nスレを削除しますか？"
+        SKELETON::MsgDiag mdiag( NULL, "「" + get_subject() + "」はブックマークされています。\n\nスレを削除しますか？"
                                   ,false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         if( mdiag.run() == Gtk::RESPONSE_NO ) return;
     }
@@ -1002,7 +1002,7 @@ bool ArticleBase::save_dat( const std::string& path_to )
     std::string name = MISC::get_filename( path_to );
     if( name.empty() ) name = MISC::get_filename( m_url );    
 
-    std::string save_to = CACHE::open_save_diag( CACHE::path_dat( m_url ), dir + name );
+    std::string save_to = CACHE::open_save_diag( NULL, CACHE::path_dat( m_url ), dir + name );
 
     if( ! save_to.empty() ){
         SESSION::set_dir_dat_save( MISC::get_dir( save_to ) );

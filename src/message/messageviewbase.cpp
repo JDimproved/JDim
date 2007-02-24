@@ -305,14 +305,8 @@ void MessageViewBase::operate_view( const int& control )
 //
 void MessageViewBase::slot_write_clicked()
 {
-/* 書き込み確認(やってみたらうざかったので様子見)
-
-    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu_write" ) );
-    if( popupmenu ) popupmenu->popup( 0, gtk_get_current_event_time() );      
-*/
-
     if( m_post && m_post->is_loading() ){
-        SKELETON::MsgDiag mdiag( "書き込み中です" );
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "書き込み中です" );
         mdiag.run();
         return;
     }
@@ -325,7 +319,7 @@ void MessageViewBase::slot_write_clicked()
 
         std::string name = get_entry_name().get_text();
         if( name.empty() ){
-            SKELETON::MsgDiag mdiag( "名前欄が空白です。fusianasan 書き込みになる可能性があります。" );
+            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "名前欄が空白です。fusianasan 書き込みになる可能性があります。" );
             mdiag.run();
             return;
         }
@@ -336,7 +330,7 @@ void MessageViewBase::slot_write_clicked()
     if( m_max_line ){
 
         if( m_text_message.get_buffer()->get_line_count() > m_max_line ){
-            SKELETON::MsgDiag mdiag( "行数が多すぎます。" );
+            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "行数が多すぎます。" );
             mdiag.run();
             return;
         }
@@ -346,7 +340,7 @@ void MessageViewBase::slot_write_clicked()
     if( m_max_str ){
 
         if( m_lng_str_enc > m_max_str ){
-            SKELETON::MsgDiag mdiag( "文字数が多すぎます。" );
+            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "文字数が多すぎます。" );
             mdiag.run();
             return;
         }
@@ -506,14 +500,16 @@ void MessageViewBase::post_fin()
     // タイムアウト
     else if( code == HTTP_TIMEOUT ){
 
-        SKELETON::MsgDiag mdiag( "タイムアウトしました\n\n書き込み自体は成功している可能性があります。\nメッセージのバックアップをとってからスレを再読み込みして下さい。" );
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+                                 "タイムアウトしました\n\n書き込み自体は成功している可能性があります。\nメッセージのバックアップをとってからスレを再読み込みして下さい。" );
         mdiag.run();
     }
 
     // 失敗
     else if( code != HTTP_CANCEL ){
 
-        SKELETON::MsgDiag mdiag( "書き込みに失敗しました\n\n" + m_post->errmsg(), false, Gtk::MESSAGE_ERROR  );
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+                                 "書き込みに失敗しました\n\n" + m_post->errmsg(), false, Gtk::MESSAGE_ERROR  );
         mdiag.run();
     }
 }

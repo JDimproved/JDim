@@ -729,7 +729,7 @@ void BoardBase::receive_finish()
                 std::string new_url = regex.str( 1 );
                 std::string msg = new_url + " に移転しました。\n\nデータベースを更新しますか？";
 
-                SKELETON::MsgDiag mdiag( msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+                SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
                 mdiag.set_default_response( Gtk::RESPONSE_OK );
                 if( mdiag.run() == Gtk::RESPONSE_OK ){
 
@@ -753,7 +753,7 @@ void BoardBase::receive_finish()
         // 移転した場合bbsmenuを更新
         if( get_code() == HTTP_REDIRECT ){
 
-            SKELETON::MsgDiag mdiag( "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            SKELETON::MsgDiag mdiag( NULL, "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
             mdiag.set_default_response( Gtk::RESPONSE_OK );
             if( mdiag.run() == Gtk::RESPONSE_OK ) CORE::core_set_command( "reload_bbsmenu" );
 

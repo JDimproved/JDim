@@ -581,7 +581,7 @@ void ArticleViewBase::focus_out()
 void ArticleViewBase::close_view()
 {
     if( m_article->is_loading() ){
-        SKELETON::MsgDiag mdiag( "読み込み中です" );
+        SKELETON::MsgDiag mdiag( NULL, "読み込み中です" );
         mdiag.run();
         return;
     }
@@ -683,7 +683,7 @@ void ArticleViewBase::operate_view( const int& control )
             // 削除
         case CONTROL::Delete:
         {
-            SKELETON::MsgDiag mdiag( "ログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
             if( mdiag.run() != Gtk::RESPONSE_OK ) return;
             delete_view();
             break;
@@ -1828,7 +1828,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
 
         else if( ! DBIMG::is_cached( url ) && ! SESSION::is_online() ){
-            SKELETON::MsgDiag mdiag( "オフラインです" );
+            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
             mdiag.run();
         }
 
@@ -2753,7 +2753,7 @@ void ArticleViewBase::slot_deleteimage()
 //
 void ArticleViewBase::slot_saveimage()
 {
-    DBIMG::save( m_url_tmp, std::string() );
+    DBIMG::save( m_url_tmp, NULL, std::string() );
 }
 
 

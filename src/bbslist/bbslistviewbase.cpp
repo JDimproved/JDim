@@ -528,7 +528,7 @@ void  BBSListViewBase::operate_view( const int& control )
             
         case CONTROL::Delete:
         {
-            SKELETON::MsgDiag mdiag( "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
             if( mdiag.run() != Gtk::RESPONSE_OK ) return;
             delete_view();
             break;
@@ -1656,7 +1656,7 @@ void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
         // 移動先がサブディレクトリに含まれないかチェック
         if( is_dir( ( *it_src ) ) ){
             if( path.to_string().find( path_src.to_string() ) != Glib::ustring::npos ){
-                SKELETON::MsgDiag mdiag( "移動先は送り側のディレクトリのサブディレクトリです", false, Gtk::MESSAGE_ERROR );
+                SKELETON::MsgDiag mdiag( NULL, "移動先は送り側のディレクトリのサブディレクトリです", false, Gtk::MESSAGE_ERROR );
                 mdiag.run();
                 return;
             }
@@ -1809,7 +1809,7 @@ void BBSListViewBase::delete_selected_rows()
     for( ; it != list_it.end(); ++it ){
 
         if( is_dir( (*it ) ) ){
-            SKELETON::MsgDiag mdiag( "ディレクトリを削除すると中のファイルも削除されます。削除しますか？",
+            SKELETON::MsgDiag mdiag( NULL, "ディレクトリを削除すると中のファイルも削除されます。削除しますか？",
                                       false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
             if( mdiag.run() != Gtk::RESPONSE_OK ) return;
 

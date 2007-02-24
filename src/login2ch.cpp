@@ -191,17 +191,17 @@ void Login2ch::receive_finish()
 
     // エラー表示
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( "オフラインです" );
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
         mdiag.run();
     }
     else if( get_username().empty() || get_passwd().empty() ){
-        SKELETON::MsgDiag mdiag( "IDかパスワードが空白です" );
+        SKELETON::MsgDiag mdiag( NULL, "IDかパスワードが空白です" );
         mdiag.run();
     }
     else if( show_err ){
         std::string str_err = "ログインに失敗しました。\n";
         str_err += get_str_code();
-        SKELETON::MsgDiag mdiag( str_err );
+        SKELETON::MsgDiag mdiag( NULL, str_err );
         mdiag.run();  
     }
 

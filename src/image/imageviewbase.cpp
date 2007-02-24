@@ -7,6 +7,8 @@
 #include "imageviewbase.h"
 #include "imageareabase.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "dbtree/interface.h"
 
 #include "dbimg/imginterface.h"
@@ -530,19 +532,14 @@ void ImageViewBase::operate_view( const int& control )
 
             if( !m_img->is_protected() ){
 
-                Gtk::MessageDialog mdiag( "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-
-                IMAGE::get_admin()->set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
+                SKELETON::MsgDiag mdiag( IMAGE::get_admin()->get_win(),
+                                         "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
                 if( mdiag.run() == Gtk::RESPONSE_OK ) delete_view();
-                IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );  // run 直後に呼ぶこと
             }
             else{
 
-                Gtk::MessageDialog mdiag( "キャッシュ保護されています" );
-
-                IMAGE::get_admin()->set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
+                SKELETON::MsgDiag mdiag( IMAGE::get_admin()->get_win(), "キャッシュ保護されています" );
                 mdiag.run();
-                IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );  // run 直後に呼ぶこと
             }
 
             break;
@@ -844,9 +841,7 @@ void ImageViewBase::slot_save()
 {
     if( ! m_enable_menuslot ) return;
 
-    IMAGE::get_admin()->set_command_immediately( "disable_fold_win" );
-    m_img->save( std::string() );
-    IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );
+    m_img->save( IMAGE::get_admin()->get_win(), std::string() );
 }
 
 
