@@ -23,6 +23,8 @@ namespace CORE
         PREFDIAG_GLOBALABONE,
         PREFDIAG_FONTCOLOR,
 
+        PREFDIAG_DELIMG,
+
         PREFDIAG_BOARD,
         PREFDIAG_ARTICLE,
         PREFDIAG_IMAGE,
@@ -30,7 +32,7 @@ namespace CORE
         PREFDIAG_NONE
     };
     
-    SKELETON::PrefDiag* PrefDiagFactory( int type, const std::string& url );
+    SKELETON::PrefDiag* PrefDiagFactory( Gtk::Window* parent, int type, const std::string& url );
 }
 
 #endif

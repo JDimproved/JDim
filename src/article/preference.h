@@ -37,7 +37,7 @@ namespace ARTICLE
 
       public:
 
-        Preferences( const std::string& url );
+        Preferences( Gtk::Window* parent, const std::string& url );
         virtual ~Preferences();
 
       private:

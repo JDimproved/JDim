@@ -78,8 +78,8 @@ namespace CORE
 
       public:
 
-        ProxyPref( const std::string& url )
-        : SKELETON::PrefDiag( url )
+        ProxyPref( Gtk::Window* parent, const std::string& url )
+        : SKELETON::PrefDiag( parent, url )
         , m_frame_2ch( "2ch読み込み用" ), m_frame_2ch_w( "2ch書き込み用" ), m_frame_data( "その他のサーバ用(外部板、画像など)" )
         {
             // 2ch用

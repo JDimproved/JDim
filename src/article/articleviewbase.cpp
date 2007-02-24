@@ -925,7 +925,7 @@ void ArticleViewBase::slot_push_preferences()
     std::cout << "ArticleViewBase::slot_push_preference\n";
 #endif
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_ARTICLE, m_url_article );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, m_url_article );
     pref->run();
     delete pref;
 }
@@ -940,7 +940,7 @@ void ArticleViewBase::slot_preferences_image()
     if( m_url_tmp.empty() ) return;
     std::string url = m_url_tmp;
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_IMAGE, url );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_IMAGE, url );
     pref->run();
     delete pref;
 }

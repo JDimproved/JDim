@@ -34,8 +34,8 @@ namespace CORE
 
       public:
 
-        BrowserPref( const std::string& url )
-        : SKELETON::PrefDiag( url ),
+        BrowserPref( Gtk::Window* parent, const std::string& url )
+        : SKELETON::PrefDiag( parent, url ),
         m_label_notice( "コンボボックスの中から使用するWebブラウザを選択して下さい\nリンククリック時に %LINK をURLに変換します" )
         {
             int i = 0;

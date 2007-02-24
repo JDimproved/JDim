@@ -426,7 +426,7 @@ void ImageViewBase::slot_close_all_views()
 //
 void ImageViewBase::slot_preference()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_IMAGE, get_url() );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( IMAGE::get_admin()->get_win(), CORE::PREFDIAG_IMAGE, get_url() );
 
     IMAGE::get_admin()->set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
     pref->run();

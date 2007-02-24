@@ -5,7 +5,6 @@
 
 #include "imgroot.h"
 #include "img.h"
-#include "delimgdiag.h"
 
 #include "jdlib/confloader.h"
 
@@ -15,8 +14,11 @@
 
 #include "skeleton/msgdiag.h"
 
+#include "config/globalconf.h"
+
 #include "cache.h"
 #include "command.h"
+#include "prefdiagfactory.h"
 
 #include <gtkmm.h>
 #include <sys/time.h>
@@ -187,8 +189,10 @@ void ImgRoot::delete_all_files()
     std::cout << "ImgRoot::delete_all_files\n";
 #endif
 
-    DelImgDiag deldiag;
-    if( deldiag.run() != Gtk::RESPONSE_OK ) return;
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_DELIMG, "" );
+    int ret = pref->run();
+    delete pref;
+    if( ret != Gtk::RESPONSE_OK ) return;
 
     std::vector< std::string > list_urls;
     int num_files = 0;

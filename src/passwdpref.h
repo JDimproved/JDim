@@ -59,8 +59,8 @@ namespace CORE
 
       public:
 
-        PasswdPref( const std::string& url )
-        : SKELETON::PrefDiag( url )
+        PasswdPref( Gtk::Window* parent, const std::string& url )
+        : SKELETON::PrefDiag( parent, url )
         , m_frame_2ch( "2chログイン用 ID" )
         , m_label_sid_2ch( false, "SID：", LOGIN::get_login2ch()->get_sessionid() )
         {

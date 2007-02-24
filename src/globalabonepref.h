@@ -41,8 +41,8 @@ namespace CORE
 
       public:
 
-        GlobalAbonePref( const std::string& url )
-        : SKELETON::PrefDiag( url )
+        GlobalAbonePref( Gtk::Window* parent, const std::string& url )
+        : SKELETON::PrefDiag( parent, url )
         {
             std::string str_name, str_word, str_regex;
             std::list< std::string >::iterator it;

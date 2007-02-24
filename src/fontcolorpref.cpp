@@ -17,8 +17,8 @@
 
 using namespace CORE;
 
-FontColorPref::FontColorPref( const std::string& url )
-    : SKELETON::PrefDiag( url )
+FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
+    : SKELETON::PrefDiag( parent, url )
 {
     CONFIG::bkup_conf();
 

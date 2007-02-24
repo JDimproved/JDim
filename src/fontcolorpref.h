@@ -39,7 +39,7 @@ namespace CORE
 
       public:
 
-        FontColorPref( const std::string& url );
+        FontColorPref( Gtk::Window* parent, const std::string& url );
         ~FontColorPref();
 
       private:

@@ -20,7 +20,7 @@ namespace IMAGE
         SKELETON::LabelEntry m_label_url_ref;
 
       public:
-        Preferences( const std::string& url );
+        Preferences( Gtk::Window* parent, const std::string& url );
     };
 
 }

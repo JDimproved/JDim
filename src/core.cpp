@@ -990,7 +990,7 @@ bool Core::open_color_diag( std::string title, int id )
 //
 void Core::slot_setup_fontcolor()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_FONTCOLOR, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_FONTCOLOR, "" );
     pref->run();
     delete pref;
 }
@@ -1001,7 +1001,7 @@ void Core::slot_setup_fontcolor()
 //
 void Core::slot_setup_proxy()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_PROXY, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PROXY, "" );
     pref->run();
     delete pref;
 }
@@ -1012,7 +1012,7 @@ void Core::slot_setup_proxy()
 //
 void Core::slot_setup_abone()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_GLOBALABONE, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_GLOBALABONE, "" );
     pref->run();
     delete pref;
 }
@@ -1023,7 +1023,7 @@ void Core::slot_setup_abone()
 //
 void Core::slot_setup_abone_thread()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_GLOBALABONETHREAD, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_GLOBALABONETHREAD, "" );
     pref->run();
     delete pref;
 }
@@ -1050,7 +1050,7 @@ void Core::slot_toggle_abone_transp_chain()
 //
 void Core::slot_setup_passwd()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_PASSWD, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PASSWD, "" );
     pref->run();
     delete pref;
 }
@@ -1062,7 +1062,7 @@ void Core::slot_setup_passwd()
 //
 void Core::slot_setup_browser()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_BROWSER, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BROWSER, "" );
     pref->run();
     delete pref;
 }

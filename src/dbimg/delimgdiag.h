@@ -32,7 +32,7 @@ namespace DBIMG
 
       public:
 
-        DelImgDiag(): SKELETON::PrefDiag( "" )
+        DelImgDiag( Gtk::Window* parent, const std::string& url ): SKELETON::PrefDiag( parent, url )
         {
             std::stringstream ss;
             ss << "現在の画像キャッシュサイズ : " << ( CACHE::get_dirsize( CACHE::path_img_root() ) / 1024 / 1024 ) << "M";

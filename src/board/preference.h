@@ -89,7 +89,7 @@ namespace BOARD
         SKELETON::EditView m_edit_settingtxt;
 
       public:
-        Preferences( const std::string& url );
+        Preferences( Gtk::Window* parent, const std::string& url );
 
       private:
         void slot_delete_cookie();

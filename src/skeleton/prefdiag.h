@@ -19,7 +19,9 @@ namespace SKELETON
 
       public:
 
-        PrefDiag( const std::string& url, bool add_cancel = true ) : m_url( url )
+        // parent == NULL のときはメインウィンドウをparentにする
+        PrefDiag( Gtk::Window* parent, const std::string& url, bool add_cancel = true )
+        : Gtk::Dialog(), m_url( url )
         {
             if( add_cancel ){
                 add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL )
@@ -29,16 +31,24 @@ namespace SKELETON
             add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK )
             ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_ok_clicked ) );
 
-            // ダイアログを消したときに画像ウィンドウにフォーカスが移ってしまうので
-            // 画像ウィンドウをhideしておいてデストラクタでshowする
-            CORE::core_set_command( "hide_imagewindow" );
+            if( parent ) set_transient_for( *parent );
+            else set_transient_for( *CORE::get_mainwindow() );
        }
 
-        virtual ~PrefDiag(){
-            CORE::core_set_command( "show_imagewindow" );
-        }
+        virtual ~PrefDiag(){}
 
         const std::string& get_url() const { return m_url; }
+
+        virtual int run(){
+
+            // run() 前後でフォーカスが外れて画像ウィンドウの開け閉めをしないように
+            // Image admin にコマンドを送る
+            CORE::core_set_command( "disable_fold_image_win" );
+            int ret = Gtk::Dialog::run();
+            CORE::core_set_command( "enable_fold_image_win" );
+
+            return ret;
+        }
     };
 }
 

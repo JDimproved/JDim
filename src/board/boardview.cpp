@@ -1826,7 +1826,7 @@ void BoardView::slot_entry_operate( int controlid )
 //
 void BoardView::slot_push_preferences()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_BOARD, get_url() );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, get_url() );
     pref->run();
     delete pref;
 }
@@ -1840,7 +1840,7 @@ void BoardView::slot_preferences_article()
     if( m_path_selected.empty() ) return;
     std::string url = path2daturl( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( CORE::PREFDIAG_ARTICLE, url );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, url );
     pref->run();
     delete pref;
 }

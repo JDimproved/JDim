@@ -10,8 +10,8 @@
 
 using namespace IMAGE;
 
-Preferences::Preferences( const std::string& url )
-    : SKELETON::PrefDiag( url, false )
+Preferences::Preferences( Gtk::Window* parent, const std::string& url )
+    : SKELETON::PrefDiag( parent, url, false )
     ,m_label_url( false, "URL：", get_url() )
     ,m_label_cache( false, "ローカルキャッシュパス：", CACHE::path_img( get_url() ) )
     ,m_label_ref( false, "参照元スレ：" )
@@ -33,7 +33,7 @@ Preferences::Preferences( const std::string& url )
     m_vbox_info.pack_start( m_label_ref, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_url_ref, Gtk::PACK_SHRINK );
 
-    set_title( "プロパティ" );
+    set_title( "画像のプロパティ" );
     get_vbox()->pack_start( m_vbox_info );
     resize( 600, 400 );
     show_all_children();
