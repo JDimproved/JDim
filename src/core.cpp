@@ -634,16 +634,13 @@ void Core::pack_widget( bool unpack )
         m_hpaned_r.set_position( SESSION::hpane_main_r_pos() );
         m_vpaned_message.set_position( SESSION::vpane_main_mes_pos() );
 
-        // 埋め込みmessage
-        if( SESSION::get_embedded_mes() ){
-            if( MESSAGE::get_admin()->empty() ) m_vpaned_message.toggle_maximize( 1 );
-        }
-
         // 画像インジケータ
         if( ! IMAGE::get_admin()->empty() ) show_imagetab();
 
         // サイドバーの位置設定
         m_hpaned.set_position( SESSION::hpane_main_pos() );
+
+        toggle_maximize_rightpane();
     }
 
     m_enable_menuslot = true;
@@ -1430,12 +1427,16 @@ void Core::set_command( const COMMAND_ARGS& command )
     std::cout << "Core::set_command : " << command.command << " " << command.url
               << " " << command.arg1 << " " << command.arg2 << " " << command.arg3 << " " << command.arg4 << std::endl;
 #endif
+
+    bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );    
     
     ////////////////////////////
     // article系のコマンド
 
     // メインビュー
     if( command.command  == "open_article" ) {
+
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url,
@@ -1461,6 +1462,8 @@ void Core::set_command( const COMMAND_ARGS& command )
     // 
     if( command.command  == "open_article_list" ) {
 
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+
         ARTICLE::get_admin()->set_command( "open_list",
                                            std::string(),
 
@@ -1473,6 +1476,8 @@ void Core::set_command( const COMMAND_ARGS& command )
 
     // キーワードで抽出( AND/OR )
     else if( command.command  == "open_article_keyword" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
 
         std::string mode_str = "KEYWORD";
         if( command.arg2 == "true" ) mode_str = "KEYWORD_OR";  // OR 抽出
@@ -1495,6 +1500,8 @@ void Core::set_command( const COMMAND_ARGS& command )
     // レス抽出
     else if( command.command  == "open_article_res" ) { 
 
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
@@ -1516,6 +1523,8 @@ void Core::set_command( const COMMAND_ARGS& command )
     // 名前 で抽出
     else if( command.command  == "open_article_name" ) { 
 
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
@@ -1535,6 +1544,8 @@ void Core::set_command( const COMMAND_ARGS& command )
     // ID で抽出
     else if( command.command  == "open_article_id" ) { 
 
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
@@ -1553,6 +1564,8 @@ void Core::set_command( const COMMAND_ARGS& command )
     // ブックマークで抽出
     else if( command.command  == "open_article_bm" ) { 
 
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
@@ -1569,6 +1582,8 @@ void Core::set_command( const COMMAND_ARGS& command )
     // URL抽出
     else if( command.command  == "open_article_url" ) { 
 
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
@@ -1584,6 +1599,8 @@ void Core::set_command( const COMMAND_ARGS& command )
 
     // 参照抽出
     else if( command.command  == "open_article_refer" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1602,6 +1619,8 @@ void Core::set_command( const COMMAND_ARGS& command )
 
     // ログ検索
     else if( command.command  == "open_article_searchcache" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
 
         std::string mode_str = "SEARCHCACHE";
         if( command.arg2 == "true" ) mode_str = "SEARCHCACHE_OR";  // OR 検索
@@ -1797,7 +1816,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         }
         else{
 
-            if( SESSION::get_embedded_mes() ) m_vpaned_message.toggle_maximize( 0 );
+            if( SESSION::get_embedded_mes() ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
             MESSAGE::get_admin()->set_command( "open_view", command.url, command.arg1 );
         }
     }
@@ -2135,11 +2154,6 @@ void Core::exec_command_after_boot()
     // ツールバー表示切り替え
     if( ! SESSION::show_toolbar() ) m_vbox_main.remove( m_toolbar );
 
-    // 埋め込みmessage表示切り替え
-    if( SESSION::get_embedded_mes() ){
-        if( MESSAGE::get_admin()->empty() ) m_vpaned_message.toggle_maximize( 1 );
-    }
-
     // タイマーセット
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
     sigc::connection conn = Glib::signal_timeout().connect( slot_timeout, TIMER_TIMEOUT );
@@ -2363,6 +2377,7 @@ void Core::empty_page( const std::string& url )
 #endif
 
     bool emb_img = SESSION::get_embedded_img();
+    bool emb_mes = SESSION::get_embedded_mes();
     int focused_admin = SESSION::FOCUS_NO;
 
     // emptyになったadminとフォーカスされているadminが異なる場合は
@@ -2411,7 +2426,9 @@ void Core::empty_page( const std::string& url )
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
-            if( get_right_current_page() == PAGE_ARTICLE ){
+            if( get_right_current_page() == PAGE_ARTICLE
+                && ! ( emb_mes && ! MESSAGE::get_admin()->empty() ) // 埋め込み書き込みビューが非表示
+                ){
                 if( emb_img && BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
                 else if( ! BOARD::get_admin()->empty() ) switch_board();
             }
@@ -2421,7 +2438,8 @@ void Core::empty_page( const std::string& url )
         // フォーカス切り替え
         if( focused_admin == SESSION::FOCUS_NO ){
 
-            if( ! BOARD::get_admin()->empty() ) focused_admin = SESSION::FOCUS_BOARD;
+            if( emb_mes && ! MESSAGE::get_admin()->empty() ) focused_admin = SESSION::FOCUS_MESSAGE;
+            else if( ! BOARD::get_admin()->empty() ) focused_admin = SESSION::FOCUS_BOARD;
             else{
                 focused_admin = SESSION::FOCUS_SIDEBAR;
                 SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
@@ -2449,9 +2467,7 @@ void Core::empty_page( const std::string& url )
     }
 
     // 埋め込みmessageビューが空になった
-    if( url == URL_MESSAGEADMIN && SESSION::get_embedded_mes() ){
-
-        m_vpaned_message.toggle_maximize( 1 );
+    if( url == URL_MESSAGEADMIN && emb_mes ){
 
         // フォーカス切り替え
         if( focused_admin == SESSION::FOCUS_NO ){
@@ -2560,7 +2576,8 @@ void Core::set_toggle_view_button()
                 m_button_bbslist.set_active( false );
                 m_button_favorite.set_active( false );
                 m_button_board.set_active( false );
-                m_button_thread.set_active( false );
+                if( SESSION::get_embedded_mes() ) m_button_thread.set_active( true );
+                else m_button_thread.set_active( false );
                 m_button_image.set_active( false );
 
             break;
@@ -2582,8 +2599,9 @@ void Core::set_sensitive_view_button()
     else m_button_board.set_sensitive( true );
 
     // スレビューボタンの切り替え
-    if( ARTICLE::get_admin()->empty() ) m_button_thread.set_sensitive( false );
-    else m_button_thread.set_sensitive( true );
+    if( ! ARTICLE::get_admin()->empty()
+        || ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() ) ) m_button_thread.set_sensitive( true );
+    else m_button_thread.set_sensitive( false );
 
     // 画像ビューボタンの切り替え
     if( SESSION::get_embedded_img() && IMAGE::get_admin()->empty() ) m_button_image.set_sensitive( false );
@@ -2598,19 +2616,28 @@ void Core::set_sensitive_view_button()
 //
 void Core::toggle_maximize_rightpane()
 {
-    if( SESSION::get_mode_pane() == SESSION::MODE_3PANE ){
+    int mode = SESSION::get_mode_pane();
+    bool emp_board = BOARD::get_admin()->empty();
+    bool emp_article = ARTICLE::get_admin()->empty();
+    bool emp_img = IMAGE::get_admin()->empty();
+    bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
+
+    // 埋め込みmessage
+    if( SESSION::get_embedded_mes() ){
+        if( ! emp_article && emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_MAX_PAGE1 );
+        else if( emp_article && ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_MAX_PAGE2 );
+    }
+
+    if( mode == SESSION::MODE_3PANE ){
 
         // スレ一覧を最大化
-        if( ! BOARD::get_admin()->empty() &&
-            ( ARTICLE::get_admin()->empty() && IMAGE::get_admin()->empty() ) ) m_vpaned_r.toggle_maximize( 1 );
+        if( ! emp_board && emp_article && emp_img && emp_mes ) m_vpaned_r.toggle_maximize( 1 );
 
         // スレビューを最大化
-        else if( BOARD::get_admin()->empty() &&
-                 ( ! ARTICLE::get_admin()->empty() || ! IMAGE::get_admin()->empty() ) ) m_vpaned_r.toggle_maximize( 2 );
+        else if( emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) m_vpaned_r.toggle_maximize( 2 );
 
         // 戻す
-        else if( ! BOARD::get_admin()->empty() &&
-                 ( ! ARTICLE::get_admin()->empty() || ! IMAGE::get_admin()->empty() ) ) m_vpaned_r.toggle_maximize( 0 );
+        else if( ! emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) m_vpaned_r.toggle_maximize( 0 );
     }
 }
 
@@ -2641,6 +2668,13 @@ void Core::switch_article()
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_ARTICLE );
 
         if( SESSION::get_embedded_img() ) SESSION::set_img_shown( false );
+    }
+
+
+    // articleは空だが、埋め込みmessageが表示されている場合
+    else if( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() ){
+        switch_message();
+        return;
     }
 
     set_sensitive_view_button();
@@ -2787,14 +2821,18 @@ void Core::switch_message()
     std::cout << "Core::switch_message\n";
 #endif
 
+    // 埋め込み書き込みビュー使用
+    bool emb_mes = SESSION::get_embedded_mes();
+
     if( ! MESSAGE::get_admin()->empty() ){
 
-        if( SESSION::get_embedded_mes() ){ // 埋め込み書き込みビュー
+        if( emb_mes ){ 
 
             if( SESSION::focused_admin() != SESSION::FOCUS_MESSAGE ){
 
                 FOCUS_OUT_ALL();
                 ARTICLE::get_admin()->set_command( "delete_popup" );
+                set_right_current_page( PAGE_ARTICLE );
             }
 
             SESSION::set_focused_admin( SESSION::FOCUS_MESSAGE );
@@ -2807,7 +2845,7 @@ void Core::switch_message()
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
-    if( SESSION::get_embedded_mes() ) m_win_main.present();
+    if( emb_mes ) m_win_main.present();
 }
 
 
