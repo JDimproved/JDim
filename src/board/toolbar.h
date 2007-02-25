@@ -62,12 +62,12 @@ namespace BOARD
             m_tooltip.set_tip( m_button_new_article, CONTROL::get_label_motion( CONTROL::NewArticle ) );
             m_tooltip.set_tip( m_button_preferences, CONTROL::get_label_motion( CONTROL::Property )  );
         
+            m_buttonbar.pack_start( m_button_new_article, Gtk::PACK_SHRINK );
             m_buttonbar.pack_start( m_entry_search );
             m_buttonbar.pack_end( m_button_close, Gtk::PACK_SHRINK );    
             m_buttonbar.pack_end( m_button_delete, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_preferences, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_favorite, Gtk::PACK_SHRINK );
-            m_buttonbar.pack_end( m_button_new_article, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_stop, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_reload, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_search_cache, Gtk::PACK_SHRINK );

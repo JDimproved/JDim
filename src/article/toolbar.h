@@ -146,13 +146,13 @@ namespace ARTICLE
             m_tooltip.set_tip( m_button_open_search, CONTROL::get_label_motion( CONTROL::Search ) );
 
             // ボタンとかラベルのバー
+            m_buttonbar.pack_start( m_button_write, Gtk::PACK_SHRINK );
             m_buttonbar.pack_start( m_button_board, Gtk::PACK_SHRINK );
             m_buttonbar.pack_start( m_label, Gtk::PACK_EXPAND_WIDGET, 2 );
             m_buttonbar.pack_end( m_button_close, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_delete, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_preferences, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_favorite, Gtk::PACK_SHRINK );
-            m_buttonbar.pack_end( m_button_write, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_stop, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_reload, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_open_search, Gtk::PACK_SHRINK );
