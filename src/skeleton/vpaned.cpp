@@ -8,19 +8,11 @@
 using namespace SKELETON;
 
 
-enum
-{
-    MAXMODE_NORMAL = 0,
-    MAXMODE_PAGE1,
-    MAXMODE_PAGE2
-};
-
-
 JDVPaned::JDVPaned()
     : Gtk::VPaned(),
       m_clicked( false ),
       m_drag( false ),
-      m_mode( MAXMODE_NORMAL )
+      m_mode( VPANE_NORMAL )
 {
     m_pre_height = get_height();
 }
@@ -46,7 +38,8 @@ void JDVPaned::clock_in()
                   << " preheight = " << m_pre_height << " height = " << get_height() << std::endl;
 #endif
 
-        if( m_mode == MAXMODE_PAGE1 ) Gtk::VPaned::set_position( get_height() );
+        if( m_mode == VPANE_MAX_PAGE1 ) Gtk::VPaned::set_position( get_height() );
+        else if( m_mode == VPANE_MAX_PAGE2 ) Gtk::VPaned::set_position( 0 );
 
         m_pre_height = get_height();
     }
@@ -67,7 +60,7 @@ int JDVPaned::get_position()
 void JDVPaned::set_position( int position )
 {
     m_pos = position;
-    Gtk::VPaned::set_position( position );
+    Gtk::VPaned::set_position( get_height() - position );
 }
 
 // unpack = true の時取り除く
@@ -86,7 +79,7 @@ void JDVPaned::add_remove2( bool unpack, Gtk::Widget& child )
 
 
 // ページ最大化切り替え
-// page = 0 の時は元に戻す
+// page には VPANE_NORMAL などを指定
 void JDVPaned::toggle_maximize( int page )
 {
     int pos = Gtk::VPaned::get_position();
@@ -96,22 +89,24 @@ void JDVPaned::toggle_maximize( int page )
               << " pos = " << get_position() << std::endl;
 #endif
 
+    int height = get_height();
+
     // 復元
-    if( page == 0 && m_mode != MAXMODE_NORMAL && pos != get_position() ){
+    if( page == 0 && m_mode != VPANE_NORMAL && pos != height - get_position() ){
 
-        m_mode = MAXMODE_NORMAL;
-        Gtk::VPaned::set_position( get_position() );
+        m_mode = VPANE_NORMAL;
+        Gtk::VPaned::set_position( height - get_position() );
     }
 
-    else if( page == 1 && m_mode != MAXMODE_PAGE1 ){
+    else if( page == 1 && m_mode != VPANE_MAX_PAGE1 ){
 
-        m_mode = MAXMODE_PAGE1;
-        Gtk::VPaned::set_position( get_height() );
+        m_mode = VPANE_MAX_PAGE1;
+        Gtk::VPaned::set_position( height );
     }
 
-    else if( page == 2 && m_mode != MAXMODE_PAGE2 && pos > 0 ){
+    else if( page == 2 && m_mode != VPANE_MAX_PAGE2 && pos > 0 ){
 
-        m_mode = MAXMODE_PAGE2;
+        m_mode = VPANE_MAX_PAGE2;
         Gtk::VPaned::set_position( 0 );
     }
 }
@@ -140,8 +135,8 @@ bool JDVPaned::on_button_release_event( GdkEventButton* event )
 
     // 仕切りをドラッグした場合
     if( m_clicked && m_drag ){
-        m_mode = MAXMODE_NORMAL;
-        m_pos = Gtk::VPaned::get_position();
+        m_mode = VPANE_NORMAL;
+        m_pos = get_height() - Gtk::VPaned::get_position();
     }
 
     m_clicked = false;

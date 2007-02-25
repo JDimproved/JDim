@@ -10,6 +10,13 @@
 
 namespace SKELETON
 {
+    enum
+    {
+        VPANE_NORMAL = 0,
+        VPANE_MAX_PAGE1,
+        VPANE_MAX_PAGE2
+    };
+
     class JDVPaned : public Gtk::VPaned
     {
         bool m_clicked;
@@ -35,7 +42,7 @@ namespace SKELETON
         void add_remove2( bool unpack, Gtk::Widget& child );
 
         // ページ最大化切り替え
-        // page = 0 の時は元に戻す
+        // page には VPANE_NORMAL などを指定
         void toggle_maximize( int page );
 
       protected:
