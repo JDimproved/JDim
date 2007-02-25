@@ -187,6 +187,10 @@ namespace SESSION
     bool get_embedded_mes();
     void set_embedded_mes( bool set );
 
+    // 書き込み後にmessageを閉じる
+    bool get_close_mes();
+    void set_close_mes( bool set );
+
     // message ウィンドウの位置
     int mes_x();
     int mes_y();

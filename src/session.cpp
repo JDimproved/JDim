@@ -71,6 +71,7 @@ int img_width;
 int img_height;
 
 bool embedded_mes;
+bool close_mes;
 
 int win_mes_x;
 int win_mes_y;
@@ -175,6 +176,7 @@ void SESSION::init_session()
     img_height = cf.get_option( "img_height", 500 );
 
     embedded_mes = cf.get_option( "embedded_mes", false );
+    close_mes = cf.get_option( "close_mes", true );
 
     win_mes_x = cf.get_option( "mes_x", 0 );
     win_mes_y = cf.get_option( "mes_y", 0 );
@@ -247,6 +249,7 @@ void SESSION::init_session()
               << board_col_speed << std::endl
 
               << "embedded_mes = " << embedded_mes << std::endl
+              << "close_mes = " << close_mes << std::endl;
               << "wx=" << win_mes_x << std::endl
               << "wy=" << win_mes_y << std::endl
               << "ww=" << win_mes_width << std::endl
@@ -325,6 +328,7 @@ void SESSION::save_session()
         << "img_height = " << img_height << std::endl
 
         << "embedded_mes = " << embedded_mes << std::endl
+        << "close_mes = " << close_mes << std::endl
         << "mes_x = " << win_mes_x << std::endl
         << "mes_y = " << win_mes_y << std::endl
         << "mes_width = " << win_mes_width << std::endl
@@ -482,6 +486,11 @@ void SESSION::set_img_height( int height ){ img_height = height; }
 // 埋め込みmessageを使用
 bool SESSION::get_embedded_mes(){ return embedded_mes; }
 void SESSION::set_embedded_mes( bool set ){ embedded_mes = set; }
+
+// 書き込み後にmessageを閉じる
+bool SESSION::get_close_mes(){ return close_mes; }
+void SESSION::set_close_mes( bool set ){ close_mes = set; }
+
 
 // message ウィンドウの位置
 int SESSION::mes_x(){ return win_mes_x; }
