@@ -2782,7 +2782,6 @@ void Core::switch_message()
 {
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
-    if( ! SESSION::get_embedded_mes() ) return;
 
 #ifdef _DEBUG
     std::cout << "Core::switch_message\n";
@@ -2790,15 +2789,19 @@ void Core::switch_message()
 
     if( ! MESSAGE::get_admin()->empty() ){
 
-        if( SESSION::focused_admin() != SESSION::FOCUS_MESSAGE ){
+        if( SESSION::get_embedded_mes() ){ // 埋め込み書き込みビュー
 
-            FOCUS_OUT_ALL();
-            ARTICLE::get_admin()->set_command( "delete_popup" );
+            if( SESSION::focused_admin() != SESSION::FOCUS_MESSAGE ){
+
+                FOCUS_OUT_ALL();
+                ARTICLE::get_admin()->set_command( "delete_popup" );
+            }
+
+            SESSION::set_focused_admin( SESSION::FOCUS_MESSAGE );
+            SESSION::set_focused_admin_sidebar( SESSION::FOCUS_MESSAGE );
         }
 
         MESSAGE::get_admin()->set_command( "focus_current_view" );
-        SESSION::set_focused_admin( SESSION::FOCUS_MESSAGE );
-        SESSION::set_focused_admin_sidebar( SESSION::FOCUS_MESSAGE );
     }
 
     set_sensitive_view_button();

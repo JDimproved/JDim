@@ -40,9 +40,8 @@ void JDVPaned::clock_in()
     // 変わっていたら仕切りの位置を調整する
     if( m_pre_height != get_height() ){
 
-        int pos = Gtk::VPaned::get_position();
-
 #ifdef _DEBUG
+        int pos = Gtk::VPaned::get_position();
         std::cout << "JDVPande::resize pos = " << pos
                   << " preheight = " << m_pre_height << " height = " << get_height() << std::endl;
 #endif
@@ -98,19 +97,19 @@ void JDVPaned::toggle_maximize( int page )
 #endif
 
     // 復元
-    if( page == 0 && pos != get_position() ){
+    if( page == 0 && m_mode != MAXMODE_NORMAL && pos != get_position() ){
 
         m_mode = MAXMODE_NORMAL;
         Gtk::VPaned::set_position( get_position() );
     }
 
-    else if( page == 1 ){
+    else if( page == 1 && m_mode != MAXMODE_PAGE1 ){
 
         m_mode = MAXMODE_PAGE1;
         Gtk::VPaned::set_position( get_height() );
     }
 
-    else if( page == 2 && pos > 0 ){
+    else if( page == 2 && m_mode != MAXMODE_PAGE2 && pos > 0 ){
 
         m_mode = MAXMODE_PAGE2;
         Gtk::VPaned::set_position( 0 );
