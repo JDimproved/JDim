@@ -66,7 +66,7 @@ namespace MESSAGE
         void redraw_view( const std::string& url );
         void close_view();
         void set_status( const std::string& url, const std::string& stat );
-        void focus_view();
+        void focus_current_view();
         void switch_admin();
     };
     

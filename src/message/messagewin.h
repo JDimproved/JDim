@@ -30,6 +30,8 @@ namespace MESSAGE
         void pack_remove( bool unpack, Gtk::Widget& view );
         void set_status( const std::string& stat );
 
+        void focus_in();
+
       protected:
         virtual bool on_delete_event( GdkEventAny* event );
         virtual bool on_window_state_event( GdkEventWindowState* event );

@@ -28,6 +28,7 @@
 #include "controlid.h"
 #include "fontid.h"
 #include "cache.h"
+#include "session.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -51,6 +52,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_button_write( ICON::WRITE ),
       m_button_cancel( Gtk::Stock::CLOSE ),
       m_button_undo( Gtk::Stock::UNDO ),
+      m_button_not_close( Gtk::Stock::CANCEL ),
       m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" )
 {
 #ifdef _DEBUG
@@ -173,18 +175,25 @@ void MessageViewBase::pack_widget()
 {
     m_entry_subject.set_text( DBTREE::article_subject( get_url() ) );
 
+    m_button_not_close.set_active( ! SESSION::get_close_mes() );
+
     m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
     m_button_cancel.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_cancel_clicked ) );
     m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_undo_clicked ) );
+    m_button_not_close.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_not_close_clicked ) );
     
     m_tooltip.set_tip( m_button_write, CONTROL::get_label_motion( CONTROL::ExecWrite ) );
     m_tooltip.set_tip( m_button_cancel, CONTROL::get_label_motion( CONTROL::CancelWrite ) );
     m_tooltip.set_tip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
+    m_tooltip.set_tip( m_button_not_close, "書き込み後にビューを閉じない" );
 
     m_toolbar.pack_start( m_button_write, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 );
     m_toolbar.pack_start( m_button_undo, Gtk::PACK_SHRINK );
+
     m_toolbar.pack_end( m_button_cancel, Gtk::PACK_SHRINK );
+    m_toolbar.pack_end( m_button_not_close, Gtk::PACK_SHRINK );
+
 
     // 書き込みビュー
     m_label_name.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
@@ -372,6 +381,16 @@ void MessageViewBase::slot_undo_clicked()
 
 
 //
+// undoボタンを押した
+//
+void MessageViewBase::slot_not_close_clicked()
+{
+    SESSION::set_close_mes( ! SESSION::get_close_mes() );
+}
+
+
+
+//
 // テキストビューのキー操作
 //
 bool MessageViewBase::slot_key_release( GdkEventKey* event )
@@ -496,7 +515,10 @@ void MessageViewBase::post_fin()
         ){
         save_postlog();
         m_text_message.set_text( std::string() );
-        close_view();
+
+        if( SESSION::get_close_mes() ) close_view();
+        else m_notebook.set_current_page( PAGE_MESSAGE );
+
         reload();
     }
 

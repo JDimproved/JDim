@@ -146,7 +146,7 @@ void MessageAdmin::exec_command()
         close_view();
     }
 
-    else if( command.command  == "focus_current_view" ) focus_view();
+    else if( command.command  == "focus_current_view" ) focus_current_view();
 
     else if( command.command == "relayout_all" ){
         if( m_view ) m_view->relayout();
@@ -235,14 +235,19 @@ void MessageAdmin::set_status( const std::string& url, const std::string& stat )
 //
 void MessageAdmin::open_window()
 {
-    if( ! m_win && ! empty() ){
+    if( ! SESSION::get_embedded_mes() && ! m_win && ! empty() ){
         m_win = new MESSAGE::MessageWin();
         m_win->set_title( m_title );
         m_win->pack_remove( false, m_eventbox );
         m_win->show_all();
-        focus_view();
+        focus_current_view();
+    }
+    else if( m_win ){
+        m_win->show();
+        m_win->focus_in();
     }
 }
+
 
 //
 // ウィンドウ閉じる
@@ -260,8 +265,9 @@ void MessageAdmin::close_window()
 //
 // フォーカス
 //
-void MessageAdmin::focus_view()
+void MessageAdmin::focus_current_view()
 {
+    if( m_win ) m_win->focus_in();
     if( m_view ) m_view->focus_view();
 }
 
@@ -289,13 +295,12 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
         return;
     }
 
-    // 既存のビューにメッセージを追加
+    // 既存のビューにメッセージを追加してフォーカスを移す
     if( m_view && url == m_view->get_url() )
     {
-        m_view->set_command( "add_message", msg );
+        if( ! msg.empty() ) m_view->set_command( "add_message", msg );
 
         switch_admin();
-        set_command( "focus_current_view" );
         return;
     }
 
@@ -306,7 +311,12 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
         else return;
     }
 
-    close_view();
+    // 古いビューを破棄
+    if( m_view ){
+        m_eventbox.remove();
+        delete m_view;
+        m_view = NULL;
+    }
 
     std::string url_msg;
     int type;
@@ -333,7 +343,7 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
     m_eventbox.show_all();
 
     // ウィンドウ表示
-    if( ! SESSION::get_embedded_mes() ) open_window();
+    open_window();
 
     switch_admin();
 }

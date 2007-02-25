@@ -94,6 +94,11 @@ void MessageWin::set_status( const std::string& stat )
 }
 
 
+void MessageWin::focus_in()
+{
+    present();
+}
+
 
 bool MessageWin::on_delete_event( GdkEventAny* event )
 {
