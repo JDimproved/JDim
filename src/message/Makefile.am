@@ -5,6 +5,7 @@ libmessage_a_SOURCES = \
 	messagewin.cpp \
 	messageviewbase.cpp \
 	messageview.cpp \
+	aamenu.cpp \
 	post.cpp
 
 noinst_HEADERS = \
@@ -12,6 +13,7 @@ noinst_HEADERS = \
 	messagewin.h \
 	messageviewbase.h \
 	messageview.h \
+	aamenu.h \
 	post.h 
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@

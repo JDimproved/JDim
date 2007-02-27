@@ -7,6 +7,7 @@
 #include "messageadmin.h"
 #include "messageviewbase.h"
 #include "post.h"
+#include "aamenu.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -29,6 +30,7 @@
 #include "fontid.h"
 #include "cache.h"
 #include "session.h"
+#include "aamanager.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -53,7 +55,8 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_button_cancel( Gtk::Stock::CLOSE ),
       m_button_undo( Gtk::Stock::UNDO ),
       m_button_not_close( Gtk::Stock::CANCEL ),
-      m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" )
+      m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" ),
+      m_popupmenu( NULL )
 {
 #ifdef _DEBUG
     std::cout << "MessageViewBase::MessageViewBase " << get_url() << std::endl;
@@ -92,6 +95,9 @@ MessageViewBase::~MessageViewBase()
 
     if( m_str_iconv ) free( m_str_iconv );
     m_str_iconv = NULL;
+
+    if( m_popupmenu ) delete m_popupmenu;
+    m_popupmenu = NULL;
 }
 
 
@@ -313,6 +319,19 @@ void MessageViewBase::operate_view( const int& control )
 
 
 //
+// AA ポップアップメニューの位置を決める
+//
+void MessageViewBase::slot_popup_aamenu_pos( int& x, int& y, bool& push_in )
+{
+    Gdk::Rectangle rect = m_text_message.get_cursor_root_origin();
+
+    x = rect.get_x();
+    y = rect.get_y() + rect.get_height();
+    push_in = false;
+}
+
+
+//
 // 書き込むボタン押した
 //
 void MessageViewBase::slot_write_clicked()
@@ -407,6 +426,16 @@ bool MessageViewBase::slot_key_release( GdkEventKey* event )
               << " shift = " << shift
               << " alt = " << alt << std::endl;
 #endif
+
+    if( ( ( event->state ) & GDK_MOD1_MASK ) && event->keyval == 'a' ){
+
+        if( CORE::get_aamanager()->get_size() ){
+
+            if( m_popupmenu ) delete m_popupmenu;
+            m_popupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ), get_url() ) );
+            m_popupmenu->popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &MessageViewBase::slot_popup_aamenu_pos ) ), 0, gtk_get_current_event_time() );
+        }
+    }
 
     operate_view( SKELETON::View::get_control().key_press( event ) );
 

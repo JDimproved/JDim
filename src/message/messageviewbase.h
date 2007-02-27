@@ -17,6 +17,7 @@ namespace JDLIB
 namespace MESSAGE
 {
     class Post;
+    class AAMenu;
 
     class MessageViewBase : public SKELETON::View
     {
@@ -51,6 +52,9 @@ namespace MESSAGE
         int m_max_str;
         int m_lng_str_enc;
         int m_lng_iconv;
+
+        // AA 選択ポップアップ
+        AAMenu* m_popupmenu;
 
       protected:
         
@@ -87,6 +91,8 @@ namespace MESSAGE
       private:
 
         virtual void write(){};
+
+        void slot_popup_aamenu_pos( int& x, int& y, bool& push_in );
 
         void tab_left();
         void tab_right();
