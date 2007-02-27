@@ -84,6 +84,10 @@ namespace CACHE
     std::string path_img( const std::string& url );
     std::string path_img_info( const std::string& url );
 
+    // AA
+    std::string path_aalist();
+    std::string path_aadir();
+
     // 書き込みログ
     std::string path_postlog();
 

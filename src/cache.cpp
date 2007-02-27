@@ -300,6 +300,23 @@ std::string CACHE::path_img_info( const std::string& url )
 }
 
 
+//
+// アスキーアートファイル
+//
+std::string CACHE::path_aalist()
+{
+    return CACHE::path_root() +  "aalist.txt";
+}
+
+
+//
+// アスキーアートファイル格納用ディレクトリ .jd/aa/
+//
+std::string CACHE::path_aadir()
+{
+    return CACHE::path_root() +  "aa/";
+}
+
 
 //
 // キャッシュのルートディレクトリをmkdir
