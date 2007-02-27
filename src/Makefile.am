@@ -26,6 +26,7 @@ jd_SOURCES = \
 	dndmanager.cpp \
 	usrcmdmanager.cpp \
 	searchmanager.cpp \
+	aamanager.cpp \
 	historymenu.cpp \
 	historysubmenu.cpp \
 	control.cpp \
@@ -54,6 +55,7 @@ noinst_HEADERS = \
 	dndmanager.h \
 	usrcmdmanager.h \
 	searchmanager.h \
+	aamanager.h \
 	historymenu.h \
 	historysubmenu.h \
 	colorid.h \

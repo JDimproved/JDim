@@ -11,6 +11,7 @@
 #include "dndmanager.h"
 #include "usrcmdmanager.h"
 #include "searchmanager.h"
+#include "aamanager.h"
 #include "historymenu.h"
 #include "login2ch.h"
 #include "prefdiagfactory.h"
@@ -141,6 +142,9 @@ Core::~Core()
 
     // D&Dマネージャ削除
     CORE::delete_dnd_manager();
+
+    // AA マネージャ削除
+    CORE::delete_aamanager();
 
     // マウス、キーコンフィグ削除
     CONFIG::delete_keyconfig();
