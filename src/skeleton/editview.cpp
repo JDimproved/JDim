@@ -322,3 +322,23 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
 
     return Gtk::TextView::on_key_release_event( event );
 }
+
+
+//
+// カーソルの画面上の座標
+//
+Gdk::Rectangle EditTextView::get_cursor_root_origin()
+{
+    Gdk::Rectangle rect;
+    int wx, wy;
+    int x, y;
+
+    get_iter_location( get_buffer()->get_insert()->get_iter(), rect );
+    buffer_to_window_coords( Gtk::TEXT_WINDOW_TEXT,  rect.get_x(), rect.get_y(), wx, wy );
+    get_window( Gtk::TEXT_WINDOW_TEXT )->get_origin( x, y );
+
+    rect.set_x( x + wx );
+    rect.set_y( y + wy );
+
+    return rect;
+}
