@@ -64,6 +64,9 @@ namespace MISC
 
     // \" を " に置き換え
     std::string recover_quot( const std::string& str );
+
+    // str 中に含まれている str2 の 数を返す
+    int count_str( const std::string& str, const std::string& str2 );
     
     //文字 -> 整数変換
     int str_to_uint( const char* str, unsigned int& dig, unsigned int& n );
