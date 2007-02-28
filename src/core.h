@@ -193,7 +193,7 @@ namespace CORE
         void slot_toggle_toolbar();
         void slot_toggle_sidebar();
         void slot_search_cache();
-        void slot_show_hide_leftpane( bool show );
+        void slot_show_hide_leftpane( int mode );
         void slot_toggle_toolbarpos( int pos );
         void slot_toggle_2pane();
         void slot_toggle_3pane();

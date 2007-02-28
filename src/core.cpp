@@ -499,12 +499,12 @@ void Core::run( bool init )
     // その他設定とwidgetのパッキング
     m_notebook.set_show_tabs( false );
     m_vbox_main.set_spacing( 4 );
-    m_hpaned.set_mode( SKELETON::HPANED_MODE_LEFT );
+    m_hpaned.set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
 
     pack_widget( false );
 
     m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
-    m_hpaned.sig_show_hide_leftpane().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
+    m_hpaned.sig_pane_modechanged().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
     m_win_main.add( m_vbox_main );
     m_win_main.signal_focus_out_event().connect( sigc::mem_fun(*this, &Core::slot_focus_out_event ) );
@@ -1232,7 +1232,8 @@ void Core::slot_toggle_sidebar()
         && ARTICLE::get_admin()->empty() 
         && IMAGE::get_admin()->empty() ) return;
 
-    m_hpaned.show_hide_leftpane();
+    if( SESSION::show_sidebar() ) m_hpaned.set_mode( SKELETON::PANE_MAX_PAGE2 );
+    else m_hpaned.set_mode( SKELETON::PANE_NORMAL );
 }
 
 
@@ -1248,13 +1249,14 @@ void Core::slot_search_cache()
 //
 // サイドバーの表示が切り替わったときに呼ばれる
 //
-void Core::slot_show_hide_leftpane( bool show )
+void Core::slot_show_hide_leftpane( int mode )
 {
 #ifdef _DEBUG
-    std::cout << "slot_show_hide_leftpane show = " << show << std::endl;
+    std::cout << "slot_show_hide_leftpane mode = " << mode << std::endl;
 #endif
 
-    SESSION::set_show_sidebar( show );
+    if( mode == SKELETON::PANE_NORMAL ) SESSION::set_show_sidebar( true );
+    else SESSION::set_show_sidebar( false );
 
     // 表示されたらbbslistをフォーカス
     if( SESSION::show_sidebar() ) switch_sidebar();
@@ -1440,7 +1442,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // メインビュー
     if( command.command  == "open_article" ) {
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url,
@@ -1466,7 +1468,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // 
     if( command.command  == "open_article_list" ) {
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_list",
                                            std::string(),
@@ -1481,7 +1483,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // キーワードで抽出( AND/OR )
     else if( command.command  == "open_article_keyword" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         std::string mode_str = "KEYWORD";
         if( command.arg2 == "true" ) mode_str = "KEYWORD_OR";  // OR 抽出
@@ -1504,7 +1506,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // レス抽出
     else if( command.command  == "open_article_res" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1527,7 +1529,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // 名前 で抽出
     else if( command.command  == "open_article_name" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1548,7 +1550,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // ID で抽出
     else if( command.command  == "open_article_id" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1568,7 +1570,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // ブックマークで抽出
     else if( command.command  == "open_article_bm" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1586,7 +1588,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // URL抽出
     else if( command.command  == "open_article_url" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1604,7 +1606,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // 参照抽出
     else if( command.command  == "open_article_refer" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1624,7 +1626,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // ログ検索
     else if( command.command  == "open_article_searchcache" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
 
         std::string mode_str = "SEARCHCACHE";
         if( command.arg2 == "true" ) mode_str = "SEARCHCACHE_OR";  // OR 検索
@@ -1820,7 +1822,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         }
         else{
 
-            if( SESSION::get_embedded_mes() ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_NORMAL );
+            if( SESSION::get_embedded_mes() ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
             MESSAGE::get_admin()->set_command( "open_view", command.url, command.arg1 );
         }
     }
@@ -2153,7 +2155,7 @@ void Core::exec_command_after_boot()
     restore_focus( true );
 
     // サイドバー表示状態変更
-    if( ! SESSION::show_sidebar() ) m_hpaned.show_hide_leftpane();
+    if( ! SESSION::show_sidebar() ) m_hpaned.set_mode( SKELETON::PANE_MAX_PAGE2 );
 
     // ツールバー表示切り替え
     if( ! SESSION::show_toolbar() ) m_vbox_main.remove( m_toolbar );
@@ -2242,6 +2244,7 @@ bool Core::slot_timeout( int timer_number )
     MESSAGE::get_admin()->clock_in();
 
     // Panedにクロック入力
+    m_hpaned.clock_in();
     m_vpaned_r.clock_in();
     m_vpaned_message.clock_in();
    
@@ -2628,20 +2631,20 @@ void Core::toggle_maximize_rightpane()
 
     // 埋め込みmessage
     if( SESSION::get_embedded_mes() ){
-        if( ! emp_article && emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_MAX_PAGE1 );
-        else if( emp_article && ! emp_mes ) m_vpaned_message.toggle_maximize( SKELETON::VPANE_MAX_PAGE2 );
+        if( ! emp_article && emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_MAX_PAGE1 );
+        else if( emp_article && ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_MAX_PAGE2 );
     }
 
     if( mode == SESSION::MODE_3PANE ){
 
         // スレ一覧を最大化
-        if( ! emp_board && emp_article && emp_img && emp_mes ) m_vpaned_r.toggle_maximize( 1 );
+        if( ! emp_board && emp_article && emp_img && emp_mes ) m_vpaned_r.set_mode( SKELETON::PANE_MAX_PAGE1 );
 
         // スレビューを最大化
-        else if( emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) m_vpaned_r.toggle_maximize( 2 );
+        else if( emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) m_vpaned_r.set_mode( SKELETON::PANE_MAX_PAGE2 );
 
         // 戻す
-        else if( ! emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) m_vpaned_r.toggle_maximize( 0 );
+        else if( ! emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) m_vpaned_r.set_mode( SKELETON::PANE_NORMAL );
     }
 }
 

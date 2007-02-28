@@ -11,6 +11,7 @@ libskeleton_a_SOURCES = \
 	tablabel.cpp \
 	entry.cpp \
 	login.cpp \
+	panecontrol.cpp \
 	hpaned.cpp \
 	vpaned.cpp \
 	notebook.cpp \
@@ -35,6 +36,7 @@ noinst_HEADERS = \
 	msgdiag.h \
 	filediag.h \
 	login.h \
+	panecontrol.h \
 	hpaned.h \
 	vpaned.h \
 	notebook.h \

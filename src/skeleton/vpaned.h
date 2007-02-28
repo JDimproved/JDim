@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 //
-// VPandeクラス
+// VPanedクラス
 //
 
 #ifndef _VPANED_H
@@ -8,44 +8,40 @@
 
 #include <gtkmm.h>
 
+#include "panecontrol.h"
+
 namespace SKELETON
 {
-    enum
-    {
-        VPANE_NORMAL = 0,
-        VPANE_MAX_PAGE1,
-        VPANE_MAX_PAGE2
-    };
-
     class JDVPaned : public Gtk::VPaned
     {
-        bool m_clicked;
-        bool m_drag;
-
-        int m_mode;
-        int m_pos;
-
-        int m_pre_height;
+        VPaneControl m_pctrl;
 
       public:
 
         JDVPaned();
-        ~JDVPaned();
+        virtual ~JDVPaned(){}
 
-        void clock_in();
+        SIG_PANE_MODECHANGED& sig_pane_modechanged() { return m_pctrl.sig_pane_modechanged(); }
+        void clock_in(){ m_pctrl.clock_in(); }
 
-        int get_position();
-        void set_position( int position );
+        // セパレータの位置の取得やセット
+        int get_position(){ return m_pctrl.get_position(); }
+        void set_position( int position ){ m_pctrl.set_position( position ); }
+
+        // PANE_MAX_PAGE1 などを指定
+        void set_mode( int mode ){ m_pctrl.set_mode( mode ); }
+        const int get_mode() const { return m_pctrl.get_mode(); }
+
+        // PANE_CLICK_FOLD_PAGE1 などを指定
+        void set_click_fold( int mode ){ m_pctrl.set_click_fold( mode ); }
+        const int get_click_fold() const { return m_pctrl.get_click_fold(); }
 
         // unpack = true の時取り除く
-        void add_remove1( bool unpack, Gtk::Widget& child );
-        void add_remove2( bool unpack, Gtk::Widget& child );
-
-        // ページ最大化切り替え
-        // page には VPANE_NORMAL などを指定
-        void toggle_maximize( int page );
+        void add_remove1( bool unpack, Gtk::Widget& child ){ m_pctrl.add_remove1( unpack, child ); }
+        void add_remove2( bool unpack, Gtk::Widget& child ){ m_pctrl.add_remove2( unpack, child ); }
 
       protected:
+
         virtual bool on_button_press_event( GdkEventButton* event );
         virtual bool on_button_release_event( GdkEventButton* event );
         virtual bool on_motion_notify_event( GdkEventMotion* event );
