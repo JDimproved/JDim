@@ -121,7 +121,7 @@ const std::string ArticleBase::get_org_url()
 const int ArticleBase::get_speed()
 {
     time_t current_t = time( NULL );
-    return ( get_number() * 60 * 60 * 24 ) / ( current_t - get_since_time() );
+    return ( get_number() * 60 * 60 * 24 ) / MAX( 1, current_t - get_since_time() );
 }
 
 
