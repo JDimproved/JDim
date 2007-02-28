@@ -48,41 +48,38 @@ AAManager::AAManager()
         m_list_label = MISC::remove_nullline_from_list( m_list_label );
 
         std::list< std::string >::iterator it = m_list_label.begin();
-        for( ; it != m_list_label.end() ; ++it ){
-
-            std::string aa_label = *it;
+        for( ; it != m_list_label.end() ; ++it )
+        {
+            std::string asciiart = *it;
 
 #ifdef _DEBUG
-            std::cout << "label = " << aa_label << std::endl;
+            std::cout << "label = " << asciiart << std::endl;
 #endif
-            // AA 設定
-            std::string asciiart = aa_label;
 
-            // 先頭に"*"がある場合は取り除く
-            if( aa_label.find_first_of( "*", 0 ) == 0 )
+            // 先頭に"**"がある場合は、"*"を一つ取り除いて一行AAとして扱う
+            if( asciiart.find( "**", 0 ) == 0 )
             {
-                aa_label.erase( 0, 1 );
+                // **example -> *example
+                asciiart.erase( 0, 1 );
+            }
+            // "*"が一つだけある場合は、"*"を取り除いてファイル名とみなす
+            else if( asciiart.find( "*", 0 ) == 0 )
+            {
+                // *example -> example
+                asciiart.erase( 0, 1 );
 
-                // 再び"*"がある場合は、そのまま一行AAとして扱う
-                if( aa_label.find_first_of( "*", 0 ) == 0 )
-                {
-                    asciiart = aa_label;
-                }
-                // そうでない場合は複数行のAAのファイル名とみなしてロード
-                else
-                {
-                    // *example -> .jd/aa/example
-                    std::string aafile_path = CACHE::path_aadir().append( aa_label );
+                // example -> .jd/aa/example
+                std::string aafile_path = CACHE::path_aadir().append( asciiart );
+
 #ifdef _DEBUG
-                    std::cout << "load : " << aafile_path << std::endl;
+                std::cout << "load : " << aafile_path << std::endl;
 #endif
-                    // ファイルが存在しなければ".txt"を追加( .jd/aa/example -> .jd/aa/example.txt )
-                    if( CACHE::file_exists( aafile_path ) != CACHE::EXIST_FILE ) aafile_path.append( ".txt" );
 
-                    if( CACHE::file_exists( aafile_path ) != CACHE::EXIST_FILE ) asciiart = aafile_path + " が存在しません";
-                    else if( CACHE::get_filesize( aafile_path ) > AA_LIMIT ) asciiart = "ファイルサイズが大きすぎます";
-                    else CACHE::load_rawdata( aafile_path, asciiart );
-                }
+                // ファイルが存在しなければ".txt"を追加( .jd/aa/example -> .jd/aa/example.txt )
+                if( CACHE::file_exists( aafile_path ) != CACHE::EXIST_FILE ) aafile_path.append( ".txt" );
+                if( CACHE::file_exists( aafile_path ) != CACHE::EXIST_FILE ) asciiart = aafile_path + " が存在しません";
+                else if( CACHE::get_filesize( aafile_path ) > AA_LIMIT ) asciiart = "ファイルサイズが大きすぎます";
+                else CACHE::load_rawdata( aafile_path, asciiart );
             }
 
 #ifdef _DEBUG
