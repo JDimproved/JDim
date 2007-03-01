@@ -83,8 +83,7 @@ namespace CORE
 
         // 右ペーンで使用するwidget
         SKELETON::JDVBox m_vbox_article;
-        SKELETON::JDVBox m_vbox_board;
-        SKELETON::JDVBox m_vbox_articleboard;
+        SKELETON::JDVBox m_vbox_toolbar;
         SKELETON::JDNotebook m_notebook;
         bool m_imagetab_shown;
         SKELETON::JDVPaned m_vpaned_message; // 埋め込み書き込みビュー用
@@ -148,6 +147,10 @@ namespace CORE
         void shutdown();
 
     private:
+
+        bool is_3pane();
+        Gtk::Paned* get_rpane();
+        SKELETON::PaneControl* get_rpctrl();
 
         void pack_widget( bool unpack );
         void create_toolbar();

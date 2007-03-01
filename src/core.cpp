@@ -129,10 +129,10 @@ Core::~Core()
     CONFIG::delete_confitem();
 
     // PANEの敷居の位置保存
-    SESSION::set_hpane_main_pos( m_hpaned.get_position() );
-    SESSION::set_vpane_main_pos( m_vpaned_r.get_position() );
-    SESSION::set_hpane_main_r_pos( m_hpaned_r.get_position() );
-    SESSION::set_vpane_main_mes_pos( m_vpaned_message.get_position() );
+    SESSION::set_hpane_main_pos( m_hpaned.get_ctrl().get_position() );
+    SESSION::set_vpane_main_pos( m_vpaned_r.get_ctrl().get_position() );
+    SESSION::set_hpane_main_r_pos( m_hpaned_r.get_ctrl().get_position() );
+    SESSION::set_vpane_main_mes_pos( m_vpaned_message.get_ctrl().get_position() );
 
     // ログ検索マネージャ削除
     CORE::delete_search_manager();
@@ -499,12 +499,12 @@ void Core::run( bool init )
     // その他設定とwidgetのパッキング
     m_notebook.set_show_tabs( false );
     m_vbox_main.set_spacing( 4 );
-    m_hpaned.set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
+    m_hpaned.get_ctrl().set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
 
     pack_widget( false );
 
     m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
-    m_hpaned.sig_pane_modechanged().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
+    m_hpaned.get_ctrl().sig_pane_modechanged().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
     m_win_main.add( m_vbox_main );
     m_win_main.signal_focus_out_event().connect( sigc::mem_fun(*this, &Core::slot_focus_out_event ) );
@@ -515,6 +515,40 @@ void Core::run( bool init )
     core_set_command( "restore_views" );
 }
 
+
+//
+// 3paneモードか
+//
+bool Core::is_3pane()
+{
+    int mode_pane = SESSION::get_mode_pane();
+
+    return( mode_pane == SESSION::MODE_3PANE || mode_pane == SESSION::MODE_V3PANE );
+}
+
+
+//
+// 右側ペーンコントロール取得
+//
+Gtk::Paned* Core::get_rpane()
+{
+    Gtk::Paned* paned_r = &m_vpaned_r;
+    if( SESSION::get_mode_pane() == SESSION::MODE_V3PANE ) paned_r = &m_hpaned_r;
+
+    return paned_r;
+}
+
+
+//
+// 右側ペーン取得
+//
+SKELETON::PaneControl* Core::get_rpctrl()
+{
+    SKELETON::PaneControl* pctrl = &m_vpaned_r.get_ctrl();
+    if( SESSION::get_mode_pane() == SESSION::MODE_V3PANE ) pctrl = &m_hpaned_r.get_ctrl();
+
+    return pctrl;
+}
 
 
 //
@@ -527,10 +561,10 @@ void Core::pack_widget( bool unpack )
     int mode_pane = SESSION::get_mode_pane();
 
     if( unpack ){
-        SESSION::set_hpane_main_pos( m_hpaned.get_position() );
-        SESSION::set_vpane_main_pos( m_vpaned_r.get_position() );
-        SESSION::set_hpane_main_r_pos( m_hpaned_r.get_position() );
-        SESSION::set_vpane_main_mes_pos( m_vpaned_message.get_position() );
+        SESSION::set_hpane_main_pos( m_hpaned.get_ctrl().get_position() );
+        SESSION::set_vpane_main_pos( m_vpaned_r.get_ctrl().get_position() );
+        SESSION::set_hpane_main_r_pos( m_hpaned_r.get_ctrl().get_position() );
+        SESSION::set_vpane_main_mes_pos( m_vpaned_message.get_ctrl().get_position() );
     }
 
     if( SESSION::get_embedded_mes() ){ // 埋め込みmessage
@@ -538,8 +572,8 @@ void Core::pack_widget( bool unpack )
         // 書き込みウィンドウを閉じる
         MESSAGE::get_admin()->set_command_immediately( "close_window" );
 
-        m_vpaned_message.add_remove1( unpack, *ARTICLE::get_admin()->get_widget() );
-        m_vpaned_message.add_remove2( unpack, *MESSAGE::get_admin()->get_widget() );
+        m_vpaned_message.get_ctrl().add_remove1( unpack, *ARTICLE::get_admin()->get_widget() );
+        m_vpaned_message.get_ctrl().add_remove2( unpack, *MESSAGE::get_admin()->get_widget() );
 
         m_notebook.append_remove_page( unpack, m_vpaned_message, "スレッド" );
     }
@@ -575,51 +609,29 @@ void Core::pack_widget( bool unpack )
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) m_vbox_article.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
         m_vbox_article.pack_remove_start( unpack, m_notebook );
 
-        m_hpaned.add_remove1( unpack, *m_sidebar );
-        m_hpaned.add_remove2( unpack, m_vbox_article );
+        m_hpaned.get_ctrl().add_remove1( unpack, *m_sidebar );
+        m_hpaned.get_ctrl().add_remove2( unpack, m_vbox_article );
     }
 
     // 3ペーン
-    else if( mode_pane == SESSION::MODE_3PANE ){ 
+    else if( is_3pane() ){
 
         m_vbox_article.pack_remove_start( unpack, m_notebook );
 
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
-
-            m_vbox_board.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
-            m_vbox_board.pack_remove_start( unpack, *BOARD::get_admin()->get_widget() );
-
-            m_vpaned_r.add_remove1( unpack, m_vbox_board );
-            m_vpaned_r.add_remove2( unpack, m_vbox_article );
-        }
-        else{
-            m_vpaned_r.add_remove1( unpack, *BOARD::get_admin()->get_widget() );
-            m_vpaned_r.add_remove2( unpack, m_vbox_article );
-        }
-
-        m_hpaned.add_remove1( unpack, *m_sidebar );
-        m_hpaned.add_remove2( unpack, m_vpaned_r );
-    }
-
-    // 縦3ペーン
-    else if( mode_pane == SESSION::MODE_V3PANE ){ 
-
-        m_vbox_article.pack_remove_start( unpack, m_notebook );
-
-        m_hpaned_r.add_remove1( unpack, *BOARD::get_admin()->get_widget() );
-        m_hpaned_r.add_remove2( unpack, m_vbox_article );
+        get_rpctrl()->add_remove1( unpack, *BOARD::get_admin()->get_widget() );
+        get_rpctrl()->add_remove2( unpack, m_vbox_article );
 
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
 
-            m_vbox_articleboard.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
-            m_vbox_articleboard.pack_remove_start( unpack, m_hpaned_r );
+            m_vbox_toolbar.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_toolbar.pack_remove_start( unpack, *get_rpane() );
 
-            m_hpaned.add_remove1( unpack, *m_sidebar );
-            m_hpaned.add_remove2( unpack, m_vbox_articleboard );
+            m_hpaned.get_ctrl().add_remove1( unpack, *m_sidebar );
+            m_hpaned.get_ctrl().add_remove2( unpack, m_vbox_toolbar );
         }
         else{
-            m_hpaned.add_remove1( unpack, *m_sidebar );
-            m_hpaned.add_remove2( unpack, m_hpaned_r );
+            m_hpaned.get_ctrl().add_remove1( unpack, *m_sidebar );
+            m_hpaned.get_ctrl().add_remove2( unpack, *get_rpane() );
         }
     }
 
@@ -634,15 +646,15 @@ void Core::pack_widget( bool unpack )
         m_vbox_main.show_all_children();
 
         // ペーンの位置設定
-        m_vpaned_r.set_position( SESSION::vpane_main_pos() );
-        m_hpaned_r.set_position( SESSION::hpane_main_r_pos() );
-        m_vpaned_message.set_position( SESSION::vpane_main_mes_pos() );
+        m_vpaned_r.get_ctrl().set_position( SESSION::vpane_main_pos() );
+        m_hpaned_r.get_ctrl().set_position( SESSION::hpane_main_r_pos() );
+        m_vpaned_message.get_ctrl().set_position( SESSION::vpane_main_mes_pos() );
 
         // 画像インジケータ
         if( ! IMAGE::get_admin()->empty() ) show_imagetab();
 
         // サイドバーの位置設定
-        m_hpaned.set_position( SESSION::hpane_main_pos() );
+        m_hpaned.get_ctrl().set_position( SESSION::hpane_main_pos() );
 
         toggle_maximize_rightpane();
     }
@@ -1232,8 +1244,8 @@ void Core::slot_toggle_sidebar()
         && ARTICLE::get_admin()->empty() 
         && IMAGE::get_admin()->empty() ) return;
 
-    if( SESSION::show_sidebar() ) m_hpaned.set_mode( SKELETON::PANE_MAX_PAGE2 );
-    else m_hpaned.set_mode( SKELETON::PANE_NORMAL );
+    if( SESSION::show_sidebar() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE2 );
+    else m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 }
 
 
@@ -1442,7 +1454,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // メインビュー
     if( command.command  == "open_article" ) {
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url,
@@ -1468,7 +1480,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // 
     if( command.command  == "open_article_list" ) {
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_list",
                                            std::string(),
@@ -1483,7 +1495,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // キーワードで抽出( AND/OR )
     else if( command.command  == "open_article_keyword" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         std::string mode_str = "KEYWORD";
         if( command.arg2 == "true" ) mode_str = "KEYWORD_OR";  // OR 抽出
@@ -1506,7 +1518,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // レス抽出
     else if( command.command  == "open_article_res" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1529,7 +1541,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // 名前 で抽出
     else if( command.command  == "open_article_name" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1550,7 +1562,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // ID で抽出
     else if( command.command  == "open_article_id" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1570,7 +1582,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // ブックマークで抽出
     else if( command.command  == "open_article_bm" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1588,7 +1600,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // URL抽出
     else if( command.command  == "open_article_url" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1606,7 +1618,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // 参照抽出
     else if( command.command  == "open_article_refer" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -1626,7 +1638,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // ログ検索
     else if( command.command  == "open_article_searchcache" ) { 
 
-        if( ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         std::string mode_str = "SEARCHCACHE";
         if( command.arg2 == "true" ) mode_str = "SEARCHCACHE_OR";  // OR 検索
@@ -1822,7 +1834,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         }
         else{
 
-            if( SESSION::get_embedded_mes() ) m_vpaned_message.set_mode( SKELETON::PANE_NORMAL );
+            if( SESSION::get_embedded_mes() ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
             MESSAGE::get_admin()->set_command( "open_view", command.url, command.arg1 );
         }
     }
@@ -2155,7 +2167,7 @@ void Core::exec_command_after_boot()
     restore_focus( true );
 
     // サイドバー表示状態変更
-    if( ! SESSION::show_sidebar() ) m_hpaned.set_mode( SKELETON::PANE_MAX_PAGE2 );
+    if( ! SESSION::show_sidebar() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE2 );
 
     // ツールバー表示切り替え
     if( ! SESSION::show_toolbar() ) m_vbox_main.remove( m_toolbar );
@@ -2244,9 +2256,10 @@ bool Core::slot_timeout( int timer_number )
     MESSAGE::get_admin()->clock_in();
 
     // Panedにクロック入力
-    m_hpaned.clock_in();
-    m_vpaned_r.clock_in();
-    m_vpaned_message.clock_in();
+    m_hpaned.get_ctrl().clock_in();
+    m_vpaned_r.get_ctrl().clock_in();
+    m_hpaned_r.get_ctrl().clock_in();
+    m_vpaned_message.get_ctrl().clock_in();
    
     return true;
 }
@@ -2623,7 +2636,6 @@ void Core::set_sensitive_view_button()
 //
 void Core::toggle_maximize_rightpane()
 {
-    int mode = SESSION::get_mode_pane();
     bool emp_board = BOARD::get_admin()->empty();
     bool emp_article = ARTICLE::get_admin()->empty();
     bool emp_img = IMAGE::get_admin()->empty();
@@ -2631,20 +2643,20 @@ void Core::toggle_maximize_rightpane()
 
     // 埋め込みmessage
     if( SESSION::get_embedded_mes() ){
-        if( ! emp_article && emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_MAX_PAGE1 );
-        else if( emp_article && ! emp_mes ) m_vpaned_message.set_mode( SKELETON::PANE_MAX_PAGE2 );
+        if( ! emp_article && emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE1 );
+        else if( emp_article && ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE2 );
     }
 
-    if( mode == SESSION::MODE_3PANE ){
+    if( is_3pane() ){
 
         // スレ一覧を最大化
-        if( ! emp_board && emp_article && emp_img && emp_mes ) m_vpaned_r.set_mode( SKELETON::PANE_MAX_PAGE1 );
+        if( ! emp_board && emp_article && emp_img && emp_mes ) get_rpctrl()->set_mode( SKELETON::PANE_MAX_PAGE1 );
 
         // スレビューを最大化
-        else if( emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) m_vpaned_r.set_mode( SKELETON::PANE_MAX_PAGE2 );
+        else if( emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) get_rpctrl()->set_mode( SKELETON::PANE_MAX_PAGE2 );
 
         // 戻す
-        else if( ! emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) m_vpaned_r.set_mode( SKELETON::PANE_NORMAL );
+        else if( ! emp_board && ( ! emp_article || ! emp_img || ! emp_mes ) ) get_rpctrl()->set_mode( SKELETON::PANE_NORMAL );
     }
 }
 
