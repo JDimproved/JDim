@@ -63,7 +63,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
 #endif
 
     // コントロールモード設定
-    get_control().set_mode( CONTROL::MODE_MESSAGE );
+    get_control().add_mode( CONTROL::MODE_MESSAGE );
 
     m_max_line = DBTREE::line_number( get_url() ) * 2;
     m_max_str = DBTREE::message_count( get_url() );
@@ -335,9 +335,28 @@ void MessageViewBase::operate_view( const int& control )
         case CONTROL::TabRight:
             tab_right();
             break;
+
+        case CONTROL::InputAA:
+            show_aalist_popup();
+            break;
     }
 }
 
+
+//
+// AA ポップアップメニュー表示
+//
+void MessageViewBase::show_aalist_popup()
+{
+    if( CORE::get_aamanager()->get_size() ){
+
+        if( m_popupmenu ) delete m_popupmenu;
+        m_popupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ), get_url() ) );
+        m_popupmenu->popup( Gtk::Menu::SlotPositionCalc(
+                                sigc::mem_fun( *this, &MessageViewBase::slot_popup_aamenu_pos ) ),
+                            0, gtk_get_current_event_time() );
+    }
+}
 
 
 //
@@ -448,16 +467,6 @@ bool MessageViewBase::slot_key_release( GdkEventKey* event )
               << " shift = " << shift
               << " alt = " << alt << std::endl;
 #endif
-
-    if( ( ( event->state ) & GDK_MOD1_MASK ) && event->keyval == 'a' ){
-
-        if( CORE::get_aamanager()->get_size() ){
-
-            if( m_popupmenu ) delete m_popupmenu;
-            m_popupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ), get_url() ) );
-            m_popupmenu->popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &MessageViewBase::slot_popup_aamenu_pos ) ), 0, gtk_get_current_event_time() );
-        }
-    }
 
     operate_view( SKELETON::View::get_control().key_press( event ) );
 

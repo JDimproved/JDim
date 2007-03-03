@@ -27,7 +27,7 @@ namespace SKELETON
 
         JDEntry(){}
 
-        void set_mode( int mode ){ m_control.set_mode( mode ); }
+        void add_mode( int mode ){ m_control.add_mode( mode ); }
 
       protected:
 

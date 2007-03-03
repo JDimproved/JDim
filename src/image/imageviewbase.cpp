@@ -44,10 +44,10 @@ ImageViewBase::ImageViewBase( const std::string& url, const std::string& arg1, c
     assert( m_img );
 
     // マウスジェスチャ可能
-    SKELETON::View::set_enable_mg( true );
+    set_enable_mg( true );
 
     // コントロールモード設定
-    SKELETON::View::get_control().set_mode( CONTROL::MODE_IMAGE );
+    get_control().add_mode( CONTROL::MODE_IMAGE );
 }
 
 
@@ -564,7 +564,7 @@ bool ImageViewBase::slot_key_press( GdkEventKey* event )
     std::cout << "ImageViewBase::slot_key_press url = " << get_url() << std::endl;
 #endif
 
-    operate_view( SKELETON::View::get_control().key_press( event ) );
+    operate_view( get_control().key_press( event ) );
 
     return true;
 }
@@ -581,10 +581,10 @@ bool ImageViewBase::slot_button_press( GdkEventButton* event )
 #endif
 
     // マウスジェスチャ
-    SKELETON::View::get_control().MG_start( event );
+    get_control().MG_start( event );
 
     // ホイールマウスジェスチャ
-    SKELETON::View::get_control().MG_wheel_start( event );
+    get_control().MG_wheel_start( event );
 
     // ダブルクリック
     m_dblclick = false;
@@ -592,7 +592,7 @@ bool ImageViewBase::slot_button_press( GdkEventButton* event )
 
     // クリック
     // 反応を良くするため slot_button_release() ではなくてここで処理する
-    if( SKELETON::View::get_control().button_alloted( event, CONTROL::ClickButton ) ){
+    if( get_control().button_alloted( event, CONTROL::ClickButton ) ){
         IMAGE::get_admin()->set_command( "switch_image", get_url() );
         CORE::core_set_command( "switch_image" );
     }
@@ -608,11 +608,11 @@ bool ImageViewBase::slot_button_press( GdkEventButton* event )
 bool ImageViewBase::slot_button_release( GdkEventButton* event )
 {
     /// マウスジェスチャ
-    int mg = SKELETON::View::get_control().MG_end( event );
+    int mg = get_control().MG_end( event );
 
     // ホイールマウスジェスチャ
     // 実行された場合は何もしない 
-    if( SKELETON::View::get_control().MG_wheel_end( event ) ) return true;
+    if( get_control().MG_wheel_end( event ) ) return true;
 
     if( mg != CONTROL::None && enable_mg() ){
         operate_view( mg );
@@ -624,9 +624,9 @@ bool ImageViewBase::slot_button_release( GdkEventButton* event )
     if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
 
     // ポップアップメニュー
-    if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
+    if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
-        SKELETON::View::show_popupmenu( "", false );
+        show_popupmenu( "", false );
     }
 
     else operate_view( get_control().button_press( event ) );
@@ -644,7 +644,7 @@ bool ImageViewBase::slot_button_release( GdkEventButton* event )
 bool ImageViewBase::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
-    SKELETON::View::get_control().MG_motion( event );
+    get_control().MG_motion( event );
 
     return true;
 }
@@ -657,7 +657,7 @@ bool ImageViewBase::slot_motion_notify( GdkEventMotion* event )
 bool ImageViewBase::slot_scroll_event( GdkEventScroll* event )
 {
     // ホイールマウスジェスチャ
-    int control = SKELETON::View::get_control().MG_wheel_scroll( event );
+    int control = get_control().MG_wheel_scroll( event );
     if( enable_mg() && control != CONTROL::None ){
         operate_view( control );
         return true;

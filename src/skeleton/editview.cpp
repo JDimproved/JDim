@@ -16,7 +16,8 @@ EditTextView::EditTextView() :
     m_line_offset( -1 )
 {
     // コントロールモード設定
-    m_control.set_mode( CONTROL::MODE_EDIT );
+    m_control.add_mode( CONTROL::MODE_EDIT );
+    m_control.add_mode( CONTROL::MODE_MESSAGE );
 
     get_buffer()->signal_changed().connect( sigc::mem_fun( *this, &EditTextView::slot_buffer_changed ) );
 }
@@ -280,10 +281,12 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
 
         // MessageViewでショートカットで書き込むと文字が挿入されてしまうので
         // キャンセルする
-        case CONTROL::ExecWrite: return true;
-        case CONTROL::CancelWrite: return true;
+        case CONTROL::ExecWrite:
+        case CONTROL::CancelWrite:
+        case CONTROL::InputAA:
+            return true;
 
-        case CONTROL::HomeEdit: cursor_home(); return true;
+        case CONTROL::HomeEdit: cursor_home(); 
         case CONTROL::EndEdit: cursor_end(); return true;
 
         case CONTROL::UpEdit: cursor_up(); return true;
@@ -298,16 +301,19 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
     return Gtk::TextView::on_key_press_event( event );
 }
 
+
 bool EditTextView::on_key_release_event( GdkEventKey* event )
 {
     m_sig_key_release.emit( event );
 
-    // MessageViewでショートカットで書き込むと文字が挿入されてしまうので
-    // キャンセルする
-    if( event->state & GDK_MOD1_MASK && event->keyval == 'w' ) return true;
-    if( event->state & GDK_MOD1_MASK && event->keyval == 'q' ) return true;
-
     switch( m_control.key_press( event ) ){
+
+        // MessageViewでショートカットで書き込むと文字が挿入されてしまうので
+        // キャンセルする
+        case CONTROL::ExecWrite:
+        case CONTROL::CancelWrite:
+        case CONTROL::InputAA:
+            return true;
 
         case CONTROL::HomeEdit:
         case CONTROL::EndEdit:

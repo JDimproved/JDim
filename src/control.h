@@ -10,12 +10,13 @@
 #define _CONTROL_H
 
 #include <gtkmm.h>
+#include <vector>
 
 namespace CONTROL
 {
     class Control
     {
-        int m_mode;
+        std::vector< int > m_mode;
 
         // マウスジェスチャ用変数
         bool m_mg; // true ならマウスジェスチャのモードになっている
@@ -30,11 +31,11 @@ namespace CONTROL
         Control();
 
         // コントロールモード設定
-        void set_mode( int mode ){ m_mode = mode; }
+        void add_mode( int mode );
 
         // キー入力
         // 戻り値はコントロールID
-        int key_press( GdkEventKey* event );  // 戻り値はコントロールID
+        int key_press( GdkEventKey* event );
 
         // マウスボタン
         int button_press( GdkEventButton* event ); // 戻り値はコントロールID

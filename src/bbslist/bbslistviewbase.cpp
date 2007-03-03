@@ -54,7 +54,7 @@
 #define SHOW_POPUPMENU(slot) do{\
 std::string url = path2url( m_path_selected ); \
 if( ! m_path_selected.empty() && url.empty() ) url = "dummy_url"; \
-SKELETON::View::show_popupmenu( url, slot ); \
+show_popupmenu( url, slot ); \
 }while(0)
 
 
@@ -303,10 +303,10 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     CONTROL::set_menu_motion( popupmenu );
 
     // マウスジェスチャ可
-    SKELETON::View::set_enable_mg( true );
+    set_enable_mg( true );
 
     // コントロールモード設定
-    SKELETON::View::get_control().set_mode( CONTROL::MODE_BBSLIST );
+    get_control().add_mode( CONTROL::MODE_BBSLIST );
 }
 
 
@@ -707,10 +707,10 @@ void BBSListViewBase::copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store )
 bool BBSListViewBase::slot_button_press( GdkEventButton* event )
 {
     // マウスジェスチャ
-    SKELETON::View::get_control().MG_start( event );
+    get_control().MG_start( event );
 
     // ホイールマウスジェスチャ
-    SKELETON::View::get_control().MG_wheel_start( event );
+    get_control().MG_wheel_start( event );
 
     // ダブルクリック
     m_dblclick = false;
@@ -728,11 +728,11 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
 bool BBSListViewBase::slot_button_release( GdkEventButton* event )
 {
     /// マウスジェスチャ
-    int mg = SKELETON::View::get_control().MG_end( event );
+    int mg = get_control().MG_end( event );
 
     // ホイールマウスジェスチャ
     // 実行された場合は何もしない 
-    if( SKELETON::View::get_control().MG_wheel_end( event ) ) return true;
+    if( get_control().MG_wheel_end( event ) ) return true;
 
     if( mg != CONTROL::None && enable_mg() ){
         operate_view( mg );
@@ -748,8 +748,8 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
     if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
 
     // 板を開く
-    bool openboard = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenBoardButton );
-    bool openboardtab = SKELETON::View::get_control().button_alloted( event, CONTROL::OpenBoardTabButton );
+    bool openboard = get_control().button_alloted( event, CONTROL::OpenBoardButton );
+    bool openboardtab = get_control().button_alloted( event, CONTROL::OpenBoardTabButton );
     if( openboard || openboardtab ){
 
         // 複数行選択中
@@ -758,7 +758,7 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
         else if( m_treeview.get_row( m_path_selected ) ) open_row( m_path_selected, openboardtab );
     }
     // ポップアップメニューボタン
-    else if( SKELETON::View::get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
+    else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
         SHOW_POPUPMENU( false );
     }
@@ -779,7 +779,7 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
 bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
-    SKELETON::View::get_control().MG_motion( event );
+    get_control().MG_motion( event );
 
     int x = (int)event->x;
     int y = (int)event->y;
@@ -840,7 +840,7 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 bool BBSListViewBase::slot_key_press( GdkEventKey* event )
 {
-    int key = SKELETON::View::get_control().key_press( event );
+    int key = get_control().key_press( event );
 
     // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
     // 一番上のスレが開くので、open_row() は slot_key_release() で処理する
@@ -867,7 +867,7 @@ bool BBSListViewBase::slot_key_release( GdkEventKey* event )
     
     // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
     // 一番上のスレが開くので、open_row() は slot_key_release() で処理する
-    int key = SKELETON::View::get_control().key_press( event );
+    int key = get_control().key_press( event );
     if( key == CONTROL::OpenBoard ) operate_view( key );
     if( key == CONTROL::OpenBoardTab ) operate_view( key );
 
@@ -881,7 +881,7 @@ bool BBSListViewBase::slot_key_release( GdkEventKey* event )
 bool BBSListViewBase::slot_scroll_event( GdkEventScroll* event )
 {
     // ホイールマウスジェスチャ
-    int control = SKELETON::View::get_control().MG_wheel_scroll( event );
+    int control = get_control().MG_wheel_scroll( event );
     if( enable_mg() && control != CONTROL::None ){
         operate_view( control );
         return true;

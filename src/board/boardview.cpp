@@ -359,7 +359,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     set_enable_autoreload( true );
 
     // コントロールモード設定
-    get_control().set_mode( CONTROL::MODE_BOARD );
+    get_control().add_mode( CONTROL::MODE_BOARD );
 }
 
 

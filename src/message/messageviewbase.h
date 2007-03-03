@@ -92,6 +92,7 @@ namespace MESSAGE
 
         virtual void write(){};
 
+        void show_aalist_popup();
         void slot_popup_aamenu_pos( int& x, int& y, bool& push_in );
 
         void tab_left();

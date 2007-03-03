@@ -23,11 +23,20 @@ bool mg_wheel_done;
 
 
 Control::Control()
-    : m_mode( CONTROL::MODE_COMMON )
 {
+    add_mode( CONTROL::MODE_COMMON );
+
     MG_reset();
     MG_wheel_reset();
 }
+
+
+
+void Control::add_mode( int mode )
+{
+    m_mode.push_back( mode );;
+}
+
 
 
 
@@ -52,7 +61,14 @@ int Control::key_press( GdkEventKey* event )
     std::cout << "\n";
 #endif    
 
-    return CONFIG::get_keyconfig()->get_id( m_mode, key, ctrl, shift, alt, false );
+    int control = CONTROL::None;
+    std::vector< int >::iterator it = m_mode.begin();
+    for( ; it != m_mode.end(); ++it ){
+        control = CONFIG::get_keyconfig()->get_id( *it, key, ctrl, shift, alt, false );
+        if( control != CONTROL::None ) break;
+    }
+
+    return control;
 }
 
 
@@ -70,7 +86,14 @@ int Control::button_press( GdkEventButton* event )
     bool shift = ( event->state ) & GDK_SHIFT_MASK;
     bool alt = ( event->state ) & GDK_MOD1_MASK;
 
-    return CONFIG::get_buttonconfig()->get_id( m_mode, button, ctrl, shift, alt, false );
+    int control = CONTROL::None;
+    std::vector< int >::iterator it = m_mode.begin();
+    for( ; it != m_mode.end(); ++it ){
+        control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, false );
+        if( control != CONTROL::None ) break;
+    }
+
+    return control;
 }
 
 // eventがidに割り当てられていたらtrue
@@ -199,7 +222,13 @@ bool Control::MG_motion( GdkEventMotion* event )
             ++m_mg_lng;
             m_mg_direction += str_direction;
 
-            int control = CONFIG::get_mouseconfig()->get_id( m_mode, m_mg_value, false, false, false, false );
+            int control = CONTROL::None;
+            std::vector< int >::iterator it = m_mode.begin();
+            for( ; it != m_mode.end(); ++it ){
+                control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, false, false, false, false );
+                if( control != CONTROL::None ) break;
+            }
+
             CORE::core_set_command( "set_mginfo", "", m_mg_direction + CONTROL::get_label( control ) );
         }
     }
@@ -222,7 +251,13 @@ int Control::MG_end( GdkEventButton* event )
     std::cout << "Control::MG_end val = " << m_mg_value << std::endl;
 #endif
 
-    int control = CONFIG::get_mouseconfig()->get_id( m_mode, m_mg_value, false, false, false, false );
+    int control = CONTROL::None;
+    std::vector< int >::iterator it = m_mode.begin();
+    for( ; it != m_mode.end(); ++it ){
+        control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, false, false, false, false );
+        if( control != CONTROL::None ) break;
+    }
+
     std::string str_command = CONTROL::get_label( control );
 
     if( m_mg_lng ){
@@ -296,12 +331,24 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
 
     if( direction == GDK_SCROLL_LEFT ){
         button = 6;
-        control = CONFIG::get_buttonconfig()->get_id( m_mode, button, ctrl, shift, alt, false );
+
+        int control = CONTROL::None;
+        std::vector< int >::iterator it = m_mode.begin();
+        for( ; it != m_mode.end(); ++it ){
+            control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, false );
+            if( control != CONTROL::None ) break;
+        }
     }
 
     else if( direction == GDK_SCROLL_RIGHT ){
         button = 7;
-        control = CONFIG::get_buttonconfig()->get_id( m_mode, button, ctrl, shift, alt, false );
+
+        int control = CONTROL::None;
+        std::vector< int >::iterator it = m_mode.begin();
+        for( ; it != m_mode.end(); ++it ){
+            control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, false );
+            if( control != CONTROL::None ) break;
+        }
     }
 
     else if( ( mask & button ) && direction == GDK_SCROLL_UP ) control = CONTROL::TabLeft;

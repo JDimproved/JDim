@@ -74,7 +74,7 @@ namespace BOARD
             m_buttonbar.pack_end( m_button_up_search, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_down_search, Gtk::PACK_SHRINK );
 
-            m_entry_search.set_mode( CONTROL::MODE_BOARD );
+            m_entry_search.add_mode( CONTROL::MODE_BOARD );
 
             m_buttonbar.set_border_width( 1 );
             add( m_buttonbar );

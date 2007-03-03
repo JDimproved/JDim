@@ -166,6 +166,7 @@ namespace CONTROL
 
         CancelWrite,
         ExecWrite,
+        InputAA,
 
         MESSAGEMOTION_END,
 

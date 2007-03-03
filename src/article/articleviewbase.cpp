@@ -62,7 +62,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
     set_enable_mg( true );
 
     // コントロールモード設定
-    get_control().set_mode( CONTROL::MODE_ARTICLE );
+    get_control().add_mode( CONTROL::MODE_ARTICLE );
 }
 
 
