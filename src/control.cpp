@@ -332,7 +332,6 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
     if( direction == GDK_SCROLL_LEFT ){
         button = 6;
 
-        int control = CONTROL::None;
         std::vector< int >::iterator it = m_mode.begin();
         for( ; it != m_mode.end(); ++it ){
             control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, false );
@@ -343,7 +342,6 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
     else if( direction == GDK_SCROLL_RIGHT ){
         button = 7;
 
-        int control = CONTROL::None;
         std::vector< int >::iterator it = m_mode.begin();
         for( ; it != m_mode.end(); ++it ){
             control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, false );
