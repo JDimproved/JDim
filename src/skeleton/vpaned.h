@@ -25,6 +25,7 @@ namespace SKELETON
 
       protected:
 
+        virtual void on_realize();
         virtual bool on_button_press_event( GdkEventButton* event );
         virtual bool on_button_release_event( GdkEventButton* event );
         virtual bool on_motion_notify_event( GdkEventMotion* event );

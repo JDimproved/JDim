@@ -52,6 +52,7 @@ namespace SKELETON
         void clock_in();
 
         // セパレータの位置の取得やセット
+        void update_position();
         int get_position();
         void set_position( int position );
 

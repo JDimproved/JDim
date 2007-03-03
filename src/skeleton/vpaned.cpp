@@ -14,6 +14,13 @@ JDVPaned::JDVPaned()
 {}
 
 
+void JDVPaned::on_realize()
+{
+    Gtk::VPaned::on_realize();
+    m_pctrl.update_position();
+}
+
+
 bool JDVPaned::on_button_press_event( GdkEventButton* event )
 {
     m_pctrl.button_press_event( event );

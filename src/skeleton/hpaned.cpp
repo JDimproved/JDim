@@ -7,9 +7,18 @@
 
 using namespace SKELETON;
 
+
 JDHPaned::JDHPaned()
-    : Gtk::HPaned(),  m_pctrl( *this )
+    : Gtk::HPaned(),
+      m_pctrl( *this )
 {}
+
+
+void JDHPaned::on_realize()
+{
+    Gtk::HPaned::on_realize();
+    m_pctrl.update_position();
+}
 
 
 bool JDHPaned::on_button_press_event( GdkEventButton* event )

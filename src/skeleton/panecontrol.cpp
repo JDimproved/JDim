@@ -39,12 +39,26 @@ void PaneControl::clock_in()
                   << " presize = " << m_pre_size << " size = " << get_size() << std::endl;
 #endif
 
-        if( m_mode == PANE_MAX_PAGE1 ) m_paned.set_position( get_size() );
-        else if( m_mode == PANE_MAX_PAGE2 ) m_paned.set_position( 0 );
-        else set_position( m_pos );
-
+        update_position();
         m_pre_size = get_size();
     }
+}
+
+
+//
+// モードにしたがってセパレータの位置を更新
+//
+void PaneControl::update_position()
+{
+#ifdef _DEBUG
+    std::cout << "PaneControl::update_position mode << " << m_mode << " pos = " << m_pos << std::endl;
+#endif
+
+    int pos = m_paned.get_position();
+
+    if( m_mode == PANE_MAX_PAGE1 ) m_paned.set_position( get_size() );
+    else if( m_mode == PANE_MAX_PAGE2 && pos > 0 ) m_paned.set_position( 0 );
+    else if( m_mode == PANE_NORMAL && pos != get_size() - m_pos ) m_paned.set_position( get_size() - m_pos );
 }
 
 
@@ -59,15 +73,18 @@ int PaneControl::get_position()
     return m_pos;
 }
 
+
 void PaneControl::set_position( int position )
 {
+    if( position == m_pos ) return;
+
 #ifdef _DEBUG
     std::cout << "PaneControl::set_position " << position
               << " size = " << get_size() << std::endl;
 #endif
 
     m_pos = position;
-    m_paned.set_position( get_size() - position );
+    update_position();
 }
 
 
@@ -78,33 +95,18 @@ void PaneControl::set_mode( int mode )
 {
     if( mode == m_mode ) return;
 
-    m_mode = mode;
+#ifdef _DEBUG
     int pos = m_paned.get_position();
     int size = get_size();
 
-#ifdef _DEBUG
     std::cout << "PaneControl::set_mode = " << mode
               << " size = " << size
               << " current_pos = " << pos
               << " pos = " << get_position() << std::endl;
 #endif
 
-    // 復元
-    if( mode == PANE_NORMAL && pos != size - get_position() ){
-
-        m_paned.set_position( size - get_position() );
-    }
-
-    else if( mode == PANE_MAX_PAGE1 ){
-
-        m_paned.set_position( size );
-    }
-
-    else if( mode == PANE_MAX_PAGE2 && pos > 0 ){
-
-        m_paned.set_position( 0 );
-    }
-
+    m_mode = mode;
+    update_position();
     m_sig_pane_modechanged.emit( m_mode );
 }
 
