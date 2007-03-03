@@ -6,12 +6,14 @@
 
 #include <gtkmm.h>
 
+#include "skeleton/popupwinbase.h"
+
 namespace MESSAGE
 {
     class AAMenu : public Gtk::Menu
     {
         Gtk::Window& m_parent;
-        Gtk::Window m_popup;
+        SKELETON::PopupWinBase m_popup;
         Gtk::TextView m_textview;
 
         std::string m_url;
@@ -34,6 +36,9 @@ namespace MESSAGE
 
         void set_text( const std::string& text );
         void create_popupmenu();
+
+        void slot_select_item( int num );
+        void slot_configured_popup( int width );
         void slot_aainput_menu_clicked( int num );
     };
 }
