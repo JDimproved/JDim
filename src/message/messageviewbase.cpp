@@ -263,7 +263,7 @@ void MessageViewBase::pack_widget()
     m_msgview.pack_start( m_text_message );
 
     m_text_message.set_accepts_tab( false );
-    m_text_message.sig_key_release().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_release ) );    
+    m_text_message.sig_key_release().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );    
     m_text_message.sig_button_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_button_press ) );
     m_text_message.get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::show_status ) );
 
@@ -453,7 +453,7 @@ void MessageViewBase::slot_not_close_clicked()
 //
 // テキストビューのキー操作
 //
-bool MessageViewBase::slot_key_release( GdkEventKey* event )
+bool MessageViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG_KEY
     guint key = event->keyval;
@@ -461,7 +461,7 @@ bool MessageViewBase::slot_key_release( GdkEventKey* event )
     bool shift = ( event->state ) & GDK_SHIFT_MASK;
     bool alt = ( event->state ) & GDK_MOD1_MASK;
 
-    std::cout << "MessageViewBase::slot_key_release"
+    std::cout << "MessageViewBase::slot_key_press"
               << " key = " << key
               << " ctrl = " << ctrl
               << " shift = " << shift

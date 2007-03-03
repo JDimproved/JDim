@@ -102,7 +102,7 @@ namespace MESSAGE
         void slot_cancel_clicked();
         void slot_undo_clicked();
         void slot_not_close_clicked();
-        bool slot_key_release( GdkEventKey* event );
+        bool slot_key_press( GdkEventKey* event );
         bool slot_button_press( GdkEventButton* event );
         void slot_switch_page( GtkNotebookPage*, guint page );
 
