@@ -286,7 +286,7 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::InputAA:
             return true;
 
-        case CONTROL::HomeEdit: cursor_home(); 
+        case CONTROL::HomeEdit: cursor_home(); return true; 
         case CONTROL::EndEdit: cursor_end(); return true;
 
         case CONTROL::UpEdit: cursor_up(); return true;
@@ -317,10 +317,12 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
 
         case CONTROL::HomeEdit:
         case CONTROL::EndEdit:
+
         case CONTROL::UpEdit:
         case CONTROL::DownEdit:
         case CONTROL::RightEdit:
         case CONTROL::LeftEdit:
+
         case CONTROL::DeleteEdit:
         case CONTROL::UndoEdit:
             return true;
