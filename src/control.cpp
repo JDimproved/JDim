@@ -24,8 +24,6 @@ bool mg_wheel_done;
 
 Control::Control()
 {
-    add_mode( CONTROL::MODE_COMMON );
-
     MG_reset();
     MG_wheel_reset();
 }
