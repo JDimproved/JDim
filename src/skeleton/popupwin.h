@@ -10,12 +10,13 @@
 #ifndef _POPUPWIN_H
 #define _POPUPWIN_H
 
+#include "popupwinbase.h"
 #include "view.h"
 
 
 namespace SKELETON
 {
-    class PopupWin : public Gtk::Window
+    class PopupWin : public PopupWinBase
     {
         SIG_HIDE_POPUP m_sig_hide_popup;
 
@@ -91,7 +92,7 @@ namespace SKELETON
 
 
         PopupWin( Gtk::Widget* parent, SKELETON::View* view, int mrg_y )
-            : Gtk::Window( Gtk::WINDOW_POPUP ),
+        : PopupWinBase( POPUPWIN_NOFRAME ),
               m_parent( parent ),
               m_view( view ),
               m_mrg_y( mrg_y )

@@ -6,11 +6,11 @@
 #ifndef _TOOLTIP_H
 #define _TOOLTIP_H
 
-#include <gtkmm.h>
+#include "popupwinbase.h"
 
 namespace SKELETON
 {
-    class Tooltip : public Gtk::Window
+    class Tooltip : public PopupWinBase
     {
         Glib::RefPtr< Gdk::GC > m_gc;
         Gtk::Label m_label;
@@ -30,10 +30,6 @@ namespace SKELETON
 
         void show_tooltip();
         void hide_tooltip();
-
-      protected:
-        virtual void on_realize();
-        virtual bool on_expose_event( GdkEventExpose* event );
     };
 }
 

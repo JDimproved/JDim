@@ -3,12 +3,12 @@ noinst_LIBRARIES = libskeleton.a
 libskeleton_a_SOURCES = \
 	admin.cpp \
 	loadable.cpp \
-	tooltip.cpp \
 	treeview.cpp \
 	view.cpp \
 	editview.cpp \
 	dragnote.cpp \
 	tablabel.cpp \
+	tooltip.cpp \
 	entry.cpp \
 	login.cpp \
 	panecontrol.cpp \
@@ -21,7 +21,6 @@ noinst_HEADERS = \
 	admin.h \
 	loadable.h \
 	lockable.h \
-	tooltip.h \
 	treeview.h \
 	view.h \
 	editview.h \
@@ -29,7 +28,9 @@ noinst_HEADERS = \
 	tablabel.h \
 	imgbutton.h \
 	spinbutton.h \
+	popupwinbase.h \
 	popupwin.h \
+	tooltip.h \
 	entry.h \
 	label_entry.h \
 	prefdiag.h \

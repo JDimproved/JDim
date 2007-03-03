@@ -11,7 +11,7 @@ using namespace SKELETON;
 
 // ツールチップ
 Tooltip::Tooltip()
-    : Gtk::Window( Gtk::WINDOW_POPUP ),
+    : PopupWinBase( POPUPWIN_DRAWFRAME ),
       m_counter( 0 ),
       m_min_width( 0 )
 {
@@ -20,28 +20,6 @@ Tooltip::Tooltip()
     set_border_width( 4 );
     add( m_label );
     show_all_children();
-}
-
-
-void Tooltip::on_realize()
-{
-    Gtk::Window::on_realize();
-
-    Glib::RefPtr< Gdk::Window > window = get_window();
-    m_gc = Gdk::GC::create( window );    
-}
-
-
-
-bool Tooltip::on_expose_event( GdkEventExpose* event )
-{
-    Gtk::Window::on_expose_event( event );
-
-    // 黒枠を描く
-    Glib::RefPtr< Gdk::Window > window = get_window();
-    m_gc->set_foreground( Gdk::Color( "black" ) );
-    window->draw_rectangle( m_gc, false, 0, 0, get_width()-1, get_height()-1 );
-    return true;    
 }
 
 
