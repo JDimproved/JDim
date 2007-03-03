@@ -1,6 +1,6 @@
 // AA 管理クラス
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 #include "aamanager.h"
 
@@ -43,8 +43,6 @@ AAManager::AAManager()
     if( CACHE::load_rawdata( CACHE::path_aalist(), aa_lines ) ){
 
         m_list_label = MISC::get_lines( aa_lines );
-        m_list_label = MISC::remove_commentline_from_list( m_list_label );
-        m_list_label = MISC::remove_space_from_list( m_list_label );
         m_list_label = MISC::remove_nullline_from_list( m_list_label );
 
         std::list< std::string >::iterator it = m_list_label.begin();
