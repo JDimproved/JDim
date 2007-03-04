@@ -35,6 +35,7 @@ ArticleViewPreview::ArticleViewPreview( const std::string& url )
     setup_view();
 
     // コントロールモード設定
+    get_control().clear_mode();
     get_control().add_mode( CONTROL::MODE_MESSAGE );
 }
 

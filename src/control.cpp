@@ -36,6 +36,10 @@ void Control::add_mode( int mode )
 }
 
 
+void Control::clear_mode()
+{
+    m_mode.clear();
+}
 
 
 ///////////////////////////////////////

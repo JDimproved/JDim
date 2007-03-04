@@ -32,6 +32,7 @@ namespace CONTROL
 
         // コントロールモード設定
         void add_mode( int mode );
+        void clear_mode();
 
         // キー入力
         // 戻り値はコントロールID
