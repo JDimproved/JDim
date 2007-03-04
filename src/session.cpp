@@ -60,8 +60,10 @@ int win_focused_admin_sidebar;
 bool focus_win_main;
 bool focus_win_img;
 
-bool iconified_win_main;
-bool iconified_win_img;
+bool iconified_win_main = false;
+bool iconified_win_img = false;
+
+bool dialog_shown = false;
 
 bool embedded_img;
 
@@ -391,6 +393,10 @@ void SESSION::set_iconified_win_main( bool set ){ iconified_win_main = set; }
 
 const bool SESSION::is_iconified_win_img(){ return iconified_win_img; }
 void SESSION::set_iconified_win_img( bool set ){ iconified_win_img = set; }
+
+// ダイアログ表示中
+const bool SESSION::is_dialog_shown(){ return dialog_shown; }
+void SESSION::set_dialog_shown( bool set ){ dialog_shown = set; }
 
 
 void SESSION::set_x( int x ){ win_x = x; }

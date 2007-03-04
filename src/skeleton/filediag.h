@@ -43,11 +43,13 @@ namespace SKELETON
 
         virtual int run(){
 
-            // run() 前後でフォーカスが外れて画像ウィンドウの開け閉めをしないように
-            // Image admin にコマンドを送る
-            CORE::core_set_command( "disable_fold_image_win" );
+            SESSION::set_dialog_shown( true );
+            CORE::core_set_command( "dialog_shown" );
+
             int ret = Gtk::FileChooserDialog::run();
-            CORE::core_set_command( "enable_fold_image_win" );
+
+            SESSION::set_dialog_shown( false );
+            CORE::core_set_command( "dialog_hidden" );
 
             return ret;
         }

@@ -100,6 +100,9 @@ namespace SESSION
     const bool is_iconified_win_img(); // 画像ウィンドウ
     void set_iconified_win_img( bool set );
 
+    // ダイアログ表示中
+    const bool is_dialog_shown();
+    void set_dialog_shown( bool set );
 
     // サイドバーを閉じる前にフォーカスされていたadmin
     int focused_admin_sidebar();

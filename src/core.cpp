@@ -63,10 +63,10 @@ Core* CORE::get_instance()
 
 // 全ビューをフォーカスアウト
 #define FOCUS_OUT_ALL() do{ \
-ARTICLE::get_admin()->set_command( "focus_out" ); \
-BOARD::get_admin()->set_command( "focus_out" ); \
-BBSLIST::get_admin()->set_command( "focus_out" ); \
-IMAGE::get_admin()->set_command( "focus_out" ); \
+ARTICLE::get_admin()->set_command_immediately( "focus_out" ); \
+BOARD::get_admin()->set_command_immediately( "focus_out" ); \
+BBSLIST::get_admin()->set_command_immediately( "focus_out" ); \
+IMAGE::get_admin()->set_command_immediately( "focus_out" ); \
 }while(0)
 
 
@@ -1803,25 +1803,9 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
     else if( command.command == "close_image_view" ){
 
-        // ダイアログから削除したときにフォーカスが外れるので
-        // フォーカス状態を回復してからcloseする
-        restore_focus( false );
-
         IMAGE::get_admin()->set_command( "close_view", command.url );
         return;
     }
-
-    else if( command.command == "enable_fold_image_win" ){
-
-        IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );
-        return;
-    }
-    else if( command.command == "disable_fold_image_win" ){
-
-        IMAGE::get_admin()->set_command_immediately( "disable_fold_win" );
-        return;
-    }
-
 
     ////////////////////////////
     // message系
@@ -1850,6 +1834,23 @@ void Core::set_command( const COMMAND_ARGS& command )
             mdiag.run();
         }
         else MESSAGE::get_admin()->set_command( "create_new_thread", command.url, command.arg1 );
+    }
+
+    ////////////////////////////
+    // ダイアログボックスが表示/非表示状態になった
+
+    else if( command.command == "dialog_shown" ){ // 表示された
+
+        // フォーカスが外れて画像ウィンドウの開け閉めをしないようにする
+        IMAGE::get_admin()->set_command_immediately( "disable_fold_win" );
+
+        return;
+    }
+    else if( command.command == "dialog_hidden" ){ // 非表示になった
+
+        IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );
+
+        return;
     }
 
     ////////////////////////////
@@ -2202,18 +2203,18 @@ void Core::restore_focus( bool force )
 #endif
 
     // 画像ウィンドウが表示されているときは画像ウィンドウのフォーカスを外す
-    if( ! SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command( "focus_out" );
+    if( ! SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command_immediately( "focus_out" );
 
     if( ! force ){
 
         // フォーカス状態回復
         switch( admin )
         {
-            case SESSION::FOCUS_SIDEBAR: BBSLIST::get_admin()->set_command( "restore_focus" ); break;
-            case SESSION::FOCUS_BOARD: BOARD::get_admin()->set_command( "restore_focus" ); break;
-            case SESSION::FOCUS_ARTICLE: ARTICLE::get_admin()->set_command( "restore_focus" ); break;
-            case SESSION::FOCUS_IMAGE: IMAGE::get_admin()->set_command( "restore_focus" ); break;
-            case SESSION::FOCUS_MESSAGE: MESSAGE::get_admin()->set_command( "restore_focus" ); break;
+            case SESSION::FOCUS_SIDEBAR: BBSLIST::get_admin()->set_command_immediately( "restore_focus" ); break;
+            case SESSION::FOCUS_BOARD: BOARD::get_admin()->set_command_immediately( "restore_focus" ); break;
+            case SESSION::FOCUS_ARTICLE: ARTICLE::get_admin()->set_command_immediately( "restore_focus" ); break;
+            case SESSION::FOCUS_IMAGE: IMAGE::get_admin()->set_command_immediately( "restore_focus" ); break;
+            case SESSION::FOCUS_MESSAGE: MESSAGE::get_admin()->set_command_immediately( "restore_focus" ); break;
         }
 
     } else {
@@ -2332,6 +2333,8 @@ bool Core::slot_focus_out_event( GdkEventFocus* )
 #ifdef _DEBUG
     std::cout << "Core::slot_focus_out_event admin = " << SESSION::focused_admin() << std::endl;
 #endif
+
+    if( SESSION::is_dialog_shown() ) return true;
 
     SESSION::set_focus_win_main( false );
     FOCUS_OUT_ALL();
@@ -2682,7 +2685,7 @@ void Core::switch_article()
             set_right_current_page( PAGE_ARTICLE );
         }
 
-        ARTICLE::get_admin()->set_command( "focus_current_view" );
+        ARTICLE::get_admin()->set_command_immediately( "focus_current_view" );
         SESSION::set_focused_admin( SESSION::FOCUS_ARTICLE );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_ARTICLE );
 
@@ -2721,7 +2724,7 @@ void Core::switch_board()
             set_right_current_page( PAGE_BOARD );
         }
 
-        BOARD::get_admin()->set_command( "focus_current_view" );
+        BOARD::get_admin()->set_command_immediately( "focus_current_view" );
         SESSION::set_focused_admin( SESSION::FOCUS_BOARD );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_BOARD );
 
@@ -2782,7 +2785,7 @@ void Core::switch_sidebar( const std::string& url )
 
         if( ! url.empty() ) BBSLIST::get_admin()->set_command( "switch_view", url );
 
-        BBSLIST::get_admin()->set_command( "focus_current_view" ); 
+        BBSLIST::get_admin()->set_command_immediately( "focus_current_view" ); 
         SESSION::set_focused_admin( SESSION::FOCUS_SIDEBAR );
     }
 
@@ -2820,7 +2823,7 @@ void Core::switch_image()
             SESSION::set_focused_admin_sidebar( SESSION::FOCUS_IMAGE );
         }
 
-        IMAGE::get_admin()->set_command( "focus_current_view" );
+        IMAGE::get_admin()->set_command_immediately( "focus_current_view" );
         if( SESSION::get_embedded_img() ) SESSION::set_img_shown( true );
     }
 
@@ -2858,7 +2861,7 @@ void Core::switch_message()
             SESSION::set_focused_admin_sidebar( SESSION::FOCUS_MESSAGE );
         }
 
-        MESSAGE::get_admin()->set_command( "focus_current_view" );
+        MESSAGE::get_admin()->set_command_immediately( "focus_current_view" );
     }
 
     set_sensitive_view_button();
