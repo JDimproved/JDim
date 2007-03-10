@@ -205,6 +205,7 @@ namespace CORE
         void slot_toggle_oldarticle();
         void slot_toggle_tabbutton();
         void slot_toggle_popupwarpmode();
+        void slot_shortmargin_popup();
         void slot_toggle_emacsmode();
         void slot_toggle_restore_views();
 

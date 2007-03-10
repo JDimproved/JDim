@@ -27,6 +27,7 @@
 #include "config/keyconfig.h"
 #include "config/mouseconfig.h"
 #include "config/buttonconfig.h"
+#include "config/defaultconf.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
@@ -240,13 +241,17 @@ void Core::run( bool init )
     // マウス、キーボード
     m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス、キーボード" ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "シングルクリックでタブを開く", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "板、スレ一覧でシングルクリックでタブを開く", std::string(),
                                                     ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "シングルクリックで多重ポップアップモードに移行する", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "スレビューでシングルクリックで多重ポップアップモードに移行する", std::string(),
                                                     CONFIG::get_buttonconfig()->is_popup_warpmode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "ShortMarginPopup", "スレビューでマウス移動で多重ポップアップモードに移行する", std::string(),
+                                                    ( CONFIG::get_margin_popup() != CONFIG::MARGIN_POPUP ) ),
+                         sigc::mem_fun( *this, &Core::slot_shortmargin_popup ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューをEmacs風のキーバインドにする", std::string(),
                                                     CONFIG::get_keyconfig()->is_emacs_mode() ),
@@ -377,6 +382,7 @@ void Core::run( bool init )
         "<menu action='Mouse_Menu'>"
         "<menuitem action='ToggleTab'/>"
         "<menuitem action='TogglePopupWarp'/>"
+        "<menuitem action='ShortMarginPopup'/>"
         "<separator/>"
         "<menuitem action='ToggleEmacsMode'/>"
         "</menu>"
@@ -1431,6 +1437,18 @@ void Core::slot_toggle_tabbutton()
 void Core::slot_toggle_popupwarpmode()
 {
     CONFIG::get_buttonconfig()->toggle_popup_warpmode();
+}
+
+
+//
+// マウス移動で多重ポップアップモードに移行
+//
+void Core::slot_shortmargin_popup()
+{
+    int margin = 2;
+    if( CONFIG::get_margin_popup() != CONFIG::MARGIN_POPUP ) margin = CONFIG::MARGIN_POPUP;
+
+    CONFIG::set_margin_popup( margin );
 }
 
 
