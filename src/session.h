@@ -35,7 +35,9 @@ namespace SESSION
     enum
     {
         TOOLBAR_NORMAL = 0,
-        TOOLBAR_RIGHT
+        TOOLBAR_RIGHT,
+
+        TOOLBAR_NO
     };
 
     // WM
@@ -76,9 +78,6 @@ namespace SESSION
     void set_show_sidebar( bool showbar );
 
     // ツールバー
-    bool show_toolbar();
-    void set_show_toolbar( bool show );
-
     int toolbar_pos();
     void set_toolbar_pos( int pos );
 

@@ -51,7 +51,6 @@ bool img_shown;
 
 bool win_show_sidebar;
 
-bool win_show_toolbar;
 int win_toolbar_pos;
 
 int win_focused_admin;
@@ -119,7 +118,6 @@ void SESSION::init_session()
 
     win_show_sidebar = cf.get_option( "show_sidebar", true );
 
-    win_show_toolbar = cf.get_option( "show_toolbar", true );
     win_toolbar_pos = cf.get_option( "toolbar_pos", 0 );
 
     win_focused_admin = cf.get_option( "focused_admin", FOCUS_NO );
@@ -209,7 +207,6 @@ void SESSION::init_session()
               << "w=" << win_width << std::endl
               << "h=" << win_height << std::endl
               << "m=" << win_maximized << std::endl
-              << "toolbar=" << win_show_toolbar << std::endl
               << "toolbar_pos=" << win_toolbar_pos << std::endl
               << "sidebar=" << win_show_sidebar << std::endl
               << "focused_admin=" << win_focused_admin << std::endl
@@ -291,7 +288,6 @@ void SESSION::save_session()
         << "width = " << win_width << std::endl
         << "height = " << win_height << std::endl
         << "maximized = " << win_maximized << std::endl
-        << "show_toolbar = " << win_show_toolbar << std::endl
         << "toolbar_pos = " << win_toolbar_pos << std::endl
         << "show_sidebar = " << win_show_sidebar << std::endl
         << "focused_admin = " << win_focused_admin << std::endl
@@ -368,8 +364,6 @@ int SESSION::height(){ return win_height; }
 bool SESSION::maximized(){ return win_maximized; }
 bool SESSION::show_sidebar(){ return win_show_sidebar; }
 
-bool SESSION::show_toolbar(){ return win_show_toolbar; }
-void SESSION::set_show_toolbar( bool show ){ win_show_toolbar = show; }
 int SESSION::toolbar_pos(){ return win_toolbar_pos; }
 void SESSION::set_toolbar_pos( int pos ){ win_toolbar_pos = pos; }
 
