@@ -314,7 +314,7 @@ const std::string get_locale()
 {
     std::string locale;
 
-    char* env_name[] = { "LANGUAGE", "LC_ALL", "LC_CTYPE", "LANG" };
+    char* env_name[] = { "LC_ALL", "LC_CTYPE", "LANG" };
 
     unsigned int i;
     for( i = 0; i < sizeof( env_name ) / 4; ++i )
