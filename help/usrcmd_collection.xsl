@@ -9,36 +9,32 @@
     </ul>
 
     <ul class="decimal">
-        <xsl:apply-templates select="command" />
+        <xsl:apply-templates />
     </ul>
 </xsl:template>
 
 <xsl:template match="command" mode="link">
     <li>
-        <a href="#{generate-id()}"><xsl:value-of select="@title" /></a>
+        <a href="#{generate-id()}"><xsl:value-of select="@header" /></a>
     </li>
 </xsl:template>
 
 <xsl:template match="command">
     <li>
     <h3>
-        <a name="{generate-id()}"><xsl:value-of select="@title" /></a>
+        <a name="{generate-id()}"><xsl:value-of select="@header" /></a>
     </h3>
-    <xsl:apply-templates select="before" />
-    <p>
-    <span class="red"><xsl:value-of select="name" /></span><br />
-    <span class="green"><xsl:value-of select="exec" /></span>
-    </p>
-    <xsl:apply-templates select="after" />
+    
+    <p><xsl:apply-templates /></p>
     </li>
 </xsl:template>
 
-<xsl:template match="before">
-    <xsl:apply-templates />
+<xsl:template match="name">
+    <span class="red"><xsl:value-of select="." /></span><br />
 </xsl:template>
 
-<xsl:template match="after">
-    <xsl:apply-templates />
+<xsl:template match="exec">
+    <span class="green"><xsl:value-of select="." /></span>
 </xsl:template>
 
 </xsl:stylesheet>

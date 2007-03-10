@@ -5,6 +5,8 @@
 
 <xsl:template match="/document">
     <p>サポートBBSの「ディストロ別インストール情報」スレに投稿された書き込みなどを転載しています。</p>
+    <p>尚、ここに書かれている事は記載された時点での情報です。<br />
+    JDまたはディストリビュータ側の変更により内容が異なる場合があります。</p>
     <ul class="disc">
         <xsl:apply-templates select="dist" mode="link" />
     </ul>
@@ -22,10 +24,6 @@
         <h3 class="blue"><a name="{generate-id()}"><xsl:value-of select="@name" /></a></h3>
         <xsl:apply-templates select="other" />
         <xsl:apply-templates select="res" />
-
-        <pre>
-        <xsl:value-of select="basictext" />
-        </pre>
     </div>
 </xsl:template>
 
@@ -46,8 +44,12 @@
     </p>
 
     <div class="basictext">
-        <xsl:apply-templates name="basictext" select="basictext" />
+        <xsl:apply-templates select="content" />
     </div>
+</xsl:template>
+
+<xsl:template match="content">
+    <xsl:apply-templates />
 </xsl:template>
 
 </xsl:stylesheet>

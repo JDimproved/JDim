@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="main.xsl"?>
 
-<document title="make、実行方法" modified="20070201">
+<document header="make、実行方法" modified="20070307">
 
 <h3 class="green">・動作環境</h3>
 <ul class="none">
@@ -41,14 +41,12 @@
 
 <p><a href="install.xml">インストール方法補足、及びディストロ別インストール方法</a></p>
 
-<p>
-最近のディストリビューションの場合は autogen.sh よりも autoreconf -i の方を推奨。<br />
-実行するには直接 src/jd を起動するか手動で /usr/bin あたりに src/jd を cp する。
-</p>
+<div class="border">
+<p>最近のディストリビューションの場合は autogen.sh よりも autoreconf -i の方を推奨。</p>
 
-<p>
-以上の操作でmakeが通らなかったり動作が変な時は configure のオプションを変更する。
-</p>
+<p>実行するには直接 src/jd を起動するか手動で /usr/bin あたりに src/jd を cp する。</p>
+
+<p>以上の操作でmakeが通らなかったり動作が変な時は configure のオプションを変更する。</p>
 
 <p>
 XSMPを使ってセッション管理をするには ./configure --with-sessionlib=xsmp<br />
@@ -70,5 +68,6 @@ migemoによる検索が有効になる。デフォルトでは無効になっ�
 <p>
 cpu に core2 duo を使用しているときは ./configure --with-core2duo でcore2 duo向けに最適化される
 </p>
+</div>
 
 </document>

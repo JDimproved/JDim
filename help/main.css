@@ -10,20 +10,20 @@ body
 }
 
 /* タイトルヘッダ */
-h1#title
+h1#header
 {
     background-color: #fdfdf5;
     color: #000000;
 }
-h1#title > img
+h1#header > img
 {
     width: 96px;
     height: 96px;
     vertical-align: middle;
 }
-h1#title > span#text
+h1#header > span#text
 {
-    margin-left : 20pt;
+    margin-left : 16pt;
 }
 
 p#modified
@@ -74,9 +74,15 @@ a:link:hover, a:visited:hover
     margin-left: 12pt;
     padding: 4pt;
     border: 1pt solid #000000;
-    max-width: 320pt;
+    max-width: 400pt;
     background-color: #ffffff;
     color: #000000;
+    /*overflow-x: scroll;
+    white-space: nowrap;*/
+}
+*.small
+{
+    font-size: 80%;	
 }
 
 /* リスト */
@@ -101,6 +107,7 @@ table
 {
     max-width: 600pt;
     margin-left: 12pt;
+    empty-cells: show;
 }
 
 div.border

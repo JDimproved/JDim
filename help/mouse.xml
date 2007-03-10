@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="main.xsl"?>
 
-<document title="マウスジェスチャ" modified="20070201">
+<document header="マウスジェスチャ" modified="20070307">
 
 <p>右ボタンを押しながら下のジェスチャを入力しボタンを放すとコマンドが実行される</p>
 
-<table>
-<tr><td class="red">←</td><td>: 前のビューに戻る</td></tr>
-<tr><td class="red">→</td><td>: 次のビューに進む</td></tr>
-<tr><td class="red">↓→</td><td>: 閉じる</td></tr>
-<tr><td class="red">↑↓</td><td>: 再読込</td></tr>
-<tr><td class="red">↑</td><td>: ロード停止(Escape)</td></tr>
-<tr><td class="red">↓</td><td>: スレ一覧ビュー ←→ スレビュー切替 (2ペーンモード時)</td></tr>
-<tr><td class="red">↑←</td><td>: 左のタブへ移動</td></tr>
-<tr><td class="red">↑→</td><td>: 右のタブへ移動</td></tr>
-<tr><td class="red">→↑</td><td>: Home</td></tr>
-<tr><td class="red">→↓</td><td>: End</td></tr>
-<tr><td class="red">→↓→</td><td>: 新着へ移動</td></tr>
-<tr><td class="red">↓←</td><td>: 書き込み</td></tr>
-<tr><td class="red">↓↑</td><td>: 画像のモザイク解除</td></tr>
-</table>
+<array>
+<item><key class="red">←</key><value>: 前のビューに戻る</value></item>
+<item><key class="red">→</key><value>: 次のビューに進む</value></item>
+<item><key class="red">↓→</key><value>: 閉じる</value></item>
+<item><key class="red">↑↓</key><value>: 再読込</value></item>
+<item><key class="red">↑</key><value>: ロード停止(Escape)</value></item>
+<item><key class="red">↓</key><value>: スレ一覧ビュー ←→ スレビュー切替 (2ペーンモード時)</value></item>
+<item><key class="red">↑←</key><value>: 左のタブへ移動</value></item>
+<item><key class="red">↑→</key><value>: 右のタブへ移動</value></item>
+<item><key class="red">→↑</key><value>: Home</value></item>
+<item><key class="red">→↓</key><value>: End</value></item>
+<item><key class="red">→↓→</key><value>: 新着へ移動</value></item>
+<item><key class="red">↓←</key><value>: 書き込み</value></item>
+<item><key class="red">↓↑</key><value>: 画像のモザイク解除</value></item>
+</array>
 
 <p>また右ボタンを押しながらホイールを回転させるとタブを切り替える</p>
 

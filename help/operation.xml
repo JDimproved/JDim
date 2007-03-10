@@ -1,225 +1,576 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="operation.xsl"?>
-
-<document title="操作方法" modified="20070201">
-
-<h3>共通操作</h3>
-<basictext class="basictext">
-h, 左: 前のビューに戻る(例えばスレビューならスレ一覧ビューに戻る)
-l, 右: 次のビューに進む
-Alt + x, マウスのボタン５ : スレ一覧ビュー &lt;-&gt; スレビュー 切替え (2ペーンモード時)
-q, Ctrl+w : 閉じる
-s, F5, マウスのボタン４ : 再読込
-ESC : ロード停止
-ctrl + h, ctrl + 左, ctrl + Pageup, Ctrl + Shift + Tab : 左のタブへ移動
-ctrl + l, ctrl + 右, ctrl + PageDown, Ctrl + Tab : 右のタブへ移動
-タブをダブルクリック : 再読み込み
-タブを中クリック : 閉じる
-タブをドラッグ -> タブにドロップ :  ページの入れ替え
-タブをドラッグ -> お気に入りにドロップ :  お気に入り登録
-Shift+F10, Ctrl+m : メニュー表示
-F9: サイドバー(板一覧)表示切り替え
-</basictext>
+<?xml-stylesheet type="text/xsl" href="main.xsl"?>
 
 
-<h3>スレ一覧ビュー ←→ スレビュー の切り替え方法</h3>
-<basictext class="basictext">
-デフォルトでは 2pane 表示になっているので、スレ一覧ビューとスレビューを切り替えたいときは
-<br />
-(1) マウスジェスチャ(マウス右ボタンを押しながら ↓ に動かしてボタンを放す)を使う
-(2) ←→キー、又は h,l キー又は alt+x で切り替える
-(3) マウスのボタン５ を押す
-(4) ツールバーのアイコンで切り替える
-(5)「表示」メニューで切り替える
-</basictext>
+<document header="操作方法" modified="20070307">
+
+<block class="border" header="共通操作">
+
+<array>
+<item>
+    <key class="blue">h, 左</key> 
+    <value>前のビューに戻る(例えばスレビューならスレ一覧ビューに戻る)</value>
+</item>
+<item>
+    <key class="blue">l, 右</key>
+    <value>次のビューに進む</value>
+</item>
+<item>
+    <key class="blue">Alt+x, マウスのボタン５</key>
+    <value>スレ一覧ビュー &lt;-&gt; スレビュー 切替え (2ペーンモード時)</value>
+</item>
+<item>
+    <key class="blue">q, Ctrl+w, タブを中クリック</key>
+    <value>閉じる</value>
+</item>
+<item>
+    <key class="blue">s, F5, マウスのボタン4, タブをダブルクリック</key>
+    <value>再読み込み</value>
+</item>
+<item>
+    <key class="blue">Esc</key>
+    <value>ロード停止</value>
+</item>
+<item>
+    <key class="blue">Ctrl+h, Ctrl+左, Ctrl+PageUp, Ctrl+Shift+Tab</key>
+    <value>左のタブへ移動</value>
+</item>
+<item>
+    <key class="blue">Ctrl+l, Ctrl+右, Ctrl+PageDown, Ctrl+Tab</key>
+    <value>右のタブへ移動</value>
+</item>
+<item>
+    <key class="blue">タブをドラッグ -&gt; タブにドロップ</key>
+    <value>ページの入れ替え</value>
+</item>
+<item>
+    <key class="blue">タブをドラッグ -&gt; お気に入りにドロップ</key>
+    <value>お気に入り登録</value>
+</item>
+<item>
+    <key class="blue">Shift+F10, Ctrl+m</key>
+    <value>メニュー表示</value>
+</item>
+<item>
+    <key class="blue">F9</key>
+    <value>サイドバー(板一覧)表示切り替え</value>
+</item>
+</array>
+
+</block>
 
 
-<h3>検索</h3>
-<basictext class="basictext">
-Ctrl+f, / : 検索ボックスにフォーカスを移して後方検索開始
-? : 検索ボックスにフォーカスを移して前方検索開始
-検索ボックスに検索文字列を入れてEnter: 検索開始
-検索ボックスに検索文字列入れてCtrl+Enter: ( スレビューのみ ) レス抽出
-Esc : 検索中止
-Enter, F3, n : 後方検索
-Shift+Enter, Ctrl+F3, N : 前方検索
-<br />
-( スレビューのみ )単語をスペースで分けて検索すると全ての単語を検索する
-</basictext>
+<block class="border" header="スレ一覧ビュー ←→ スレビュー の切り替え方法">
+
+<p>デフォルトでは 2pane 表示になっているので、スレ一覧ビューとスレビューを切り替えたいときは</p>
+<ul class="decimal">
+    <li>マウスジェスチャ(マウス右ボタンを押しながら ↓ に動かしてボタンを放す)を使う</li>
+    <li>←→キー、又は h, l キー又は Alt+x で切り替える</li>
+    <li>マウスのボタン5 を押す</li>
+    <li>ツールバーのアイコンで切り替える</li>
+    <li>「表示」メニューで切り替える</li>
+</ul>
+
+</block>
 
 
-<h3>ログ検索</h3>
-<basictext class="basictext">
+<block class="border" header="検索">
+
+<array>
+<item>
+    <key class="blue">Ctrl+f, /</key>
+    <value>検索ボックスにフォーカスを移して後方検索開始</value>
+</item>
+<item>
+     <key class="blue">?</key>
+     <value> 検索ボックスにフォーカスを移して前方検索開始</value>
+</item>
+<item>
+    <key class="blue">検索ボックスに検索文字列を入れてEnter</key>
+    <value> 検索開始</value>
+</item>
+<item>
+    <key class="blue">検索ボックスに検索文字列入れてCtrl+Enter</key>
+    <value>( スレビューのみ ) レス抽出</value>
+</item>
+<item>
+    <key class="blue">Esc</key>
+    <value>検索中止</value>
+</item>
+<item>
+    <key class="blue">Enter, F3, n</key>
+    <value>後方検索</value>
+</item>
+<item>
+    <key class="blue">Shift+Enter, Ctrl+F3, N</key>
+    <value>前方検索</value>
+</item>
+</array>
+
+
+<p>( スレビューのみ )単語をスペースで分けて検索すると全ての単語を検索する</p>
+
+
+</block>
+
+
+<block class="border" header="ログ検索">
+
+<p>
 キャッシュ内にある全ログの中からキーワードを検索する場合はファイルメニューの
 ログ検索を選択するかツールバーにあるログ検索ボタンを押すと現れる検索ビュー
 にキーワードを入力してEnterを押す。
-<br />
+</p>
+<p>
 ある特定の板の中にあるログだけを対象にして検索をする場合は、スレ一覧を
 開いてスレ一覧検索ボックスにキーワードを入力してからCtrl+Enterを押すか、
 スレ一覧のツールバーにあるログ検索ボタンを押して検索ビューを表示する。
-<br />
+</p>
+<p>
 またスレビューで範囲選択をしてから右クリックメニューの中のログ検索メニュー
 から検索することもできる。
-<br />
-検索ビューの操作方法はスレビューの操作方法と同じである。
-</basictext>
+</p>
+<p>検索ビューの操作方法はスレビューの操作方法と同じである。</p>
+
+</block>
 
 
-<h3>板一覧、外部板、お気に入りの操作</h3>
-<basictext class="basictext">
-j , 下 : １行下
-k, 上 : １行上
-h, 左 : ディレクトリ閉じる
-l, 右 : (ディレクトリが開いてないなら)ディレクトリを開く
-<br />
-PageUp: 上のページに移動
-PageDown: 下のページに移動
-Home, g, &lt; : Home
-End, G, &gt; : End
-<br />
-space : 板やスレを開く
-Ctrl+space : 板やスレをタブで開く
-del : 選択行削除( お気に入りのみ )
-<br />
-行をクリック : 板を開く
-行を中ボタンクリック : 板をタブで開く
-Ctrl+クリック : 複数行選択
-Shift+クリック : 複数行を範囲選択
-中ボタンドラッグ : 複数行を範囲選択
-複数行選択中+選択範囲をクリック : 選択されている行をタブで全て開く
-複数行選択中+選択範囲外をクリック : 選択解除
-<br />
-板一覧とスレ一覧/スレビューの間のしきいをクリックするとサイドバー(板一覧)を折り畳む
-もう一度クリックで復帰する
-</basictext>
+<block class="border" header="板一覧、外部板、お気に入りの操作">
+
+<array>
+<item>
+    <key class="blue">j , 下</key>
+    <value>１行下</value>
+</item>
+<item>
+    <key class="blue">k, 上</key>
+    <value>１行上</value>
+</item>
+<item>
+    <key class="blue">h, 左</key>
+    <value>ディレクトリ閉じる</value>
+</item>
+<item>
+    <key class="blue">l, 右</key>
+    <value>(ディレクトリが開いてないなら)ディレクトリを開く</value>
+</item>
+<item>
+    <key class="blue">PageUp</key>
+    <value>上のページに移動</value>
+</item>
+<item>
+    <key class="blue">PageDown</key>
+    <value>下のページに移動</value>
+</item>
+<item>
+    <key class="blue">Home, g, &lt;</key>
+    <value>Home</value>
+</item>
+<item>
+    <key class="blue">End, G, &gt;</key>
+    <value>End</value>
+</item>
+<item>
+    <key class="blue">space</key>
+    <value>板やスレを開く</value>
+</item>
+<item>
+    <key class="blue">Ctrl+Space</key>
+    <value>板やスレをタブで開く</value>
+</item>
+<item>
+    <key class="blue">Delete</key>
+    <value>選択行削除( お気に入りのみ )</value>
+</item>
+<item>
+    <key class="blue">行をクリック</key>
+    <value>板を開く</value>
+</item>
+<item>
+    <key class="blue">行を中ボタンクリック</key>
+    <value>板をタブで開く</value>
+</item>
+<item>
+    <key class="blue">Ctrl+クリック</key>
+    <value>複数行選択</value>
+</item>
+<item>
+    <key class="blue">Shift+クリック</key>
+    <value>複数行を範囲選択</value>
+</item>
+<item>
+    <key class="blue">中ボタンドラッグ</key>
+    <value>複数行を範囲選択</value>
+</item>
+<item>
+    <key class="blue">複数行選択中+選択範囲をクリック</key>
+    <value>選択されている行をタブで全て開く</value>
+</item>
+<item>
+    <key class="blue">複数行選択中+選択範囲外をクリック</key>
+    <value>選択解除</value>
+</item>
+</array>
 
 
-<h3>スレ一覧の操作</h3>
-<basictext class="basictext">
-基本操作は板一覧やお気に入りと同じ
-<br />
-del : 選択スレのキャッシュ削除
-<br />
-選択スレをドラッグ -> Favoriteにドロップ : 選択スレをお気に入りに登録 
-列名クリック : ソート状態変更
-<br />
-右クリックメニューからスレのブックマーク設定/解除ができる
+<p>板一覧とスレ一覧/スレビューの間のしきいをクリックするとサイドバー(板一覧)を折り畳む</p>
+<p>もう一度クリックで復帰する</p>
+
+
+</block>
+
+
+<block class="border" header="スレ一覧の操作">
+
+
+<p>基本操作は板一覧やお気に入りと同じ</p>
+
+
+<array>
+<item>
+    <key class="blue">Delete</key>
+    <value>選択スレのキャッシュ削除</value>
+</item>
+<item>
+     <key class="blue">選択スレをドラッグ -&gt; Favoriteにドロップ</key>
+     <value>選択スレをお気に入りに登録</value>
+</item>
+<item>
+     <key class="blue">列名クリック</key><value>ソート状態変更</value>
+</item>
+</array>
+
+<p>
+右クリックメニューからスレのブックマーク設定/解除ができる<br />
 マーク列でソートをかけることによってビューの上の方に配置できる
-<br />
+</p>
+<p>
 列幅の変更は、最後に閉じたBoardビューの幅が記憶されるので
 他のスレ一覧ビューを全て閉じてからおこなうこと
-<br />
+</p>
+<p>
 数字を入力すると対象番号のスレにジャンプする
-<br />
+</p>
+<p>
 基本はA列でソートしたいが、A列の値が同じグループの中ではB列でソートしたい
 というときはB列をクリックしてソートしてからA列をクリックする
+</p>
+<p>
 例えば「マークでソートして新着スレや既読スレのグループの中では書き込み日で
 ソートしたい」という場合は書き込み日の列をクリックしてからマーク列をクリックする
-</basictext>
+</p>
+
+</block>
 
 
-<h3>スレビューの操作</h3>
-<basictext class="basictext">
-多段ポップアップの方法
-<br />
+<block class="border" header="スレビューの操作">
+
+<p>多段ポップアップの方法</p>
+<p>
 ポップアップ表示されている時にマウスの右ボタンをクリックし、そのままボタンを離さずに
 カーソルを動かすと、ポップアップが固定されて閉じなくなるのでカーソルを他のホップアップ
-の上に移動できる。ポップアップの外にカーソルが出ると閉じる
-<br />
-本文中の数字を範囲選択してマウスポインタを上に移動 : 対応したレスをポップアップ表示
-本文中の"ID:〜"を範囲選択してマウスポインタを上に移動 : ID抽出してポップアップ表示
-<br />
-何もないところで中クリック : オートスクロール開始
-何もないところで右クリック : 通常メニュー表示
-<br />
-レスアンカーの上でクリック : メニュー表示
-レスアンカーの上で中クリック : 対象の周辺のレスを抽出して別のタブに表示
-レスアンカーの上で右クリック : 通常メニュー表示
-<br />
-レス番号の上でクリック : メニュー表示
-レス番号の上で中クリック : ブックマーク設定/解除
-レス番号の上で右クリック : 現在のレスを参照しているレスを抽出してポップアップ表示
-<br />
-名前の文字の上でクリック : メニュー表示
-名前の文字の上で中クリック : 名前抽出して別のタブに表示
-名前の文字の上で右クリック : 名前抽出してポップアップ表示
-<br />
-IDの上でクリック : メニュー表示
-IDの上で中クリック : ID抽出して別のタブに表示
-IDの上で右クリック : ID抽出してポップアップ表示
-<br />
-リンクの上でクリック : 開く
-リンクの上で右クリック : 通常メニュー表示
-<br />
-画像リンクの上でクリック : 開く
-画像リンクの上でCtrl+クリック : バックグラウンドで開く
-画像リンクの上で中クリック : バックグラウンドで開く
-画像リンクの上で右クリック : 通常メニュー表示
-<br />
-ESC: ロード停止、ポップアップ表示を消す
-<br />
-Space, PageDown : １ページ下
-d : 半ページ下
-j , 下 : １行下
-<br />
-b, PageUp : １ページ上
-u : 半ページ上
-k, 上 : １行上
-<br />
-F2 : 次のブックマークに移動
-Ctrl+F2 : 前のブックマークに移動
-<br />
-w : 書き込みウィンドウ表示
-<br />
-Home, g, &lt; : Home
-End, G, &gt; : End
-F4 : 新着へ移動
-BackSpace : ジャンプした時にジャンプ元のレスに戻る
-数字入力で対象のレスにジャンプする
-</basictext>
+の上に移動できる。ポップアップの外にカーソルが出ると閉じる。
+またタッチパッドなどを使用しているときは、設定メニューから「シングルクリックで多重ポップアップモードに移行する」
+を有効にするとタップするだけでカーソルがポップアップの上に移動するようになる。
+</p>
+
+<array>
+<item>
+    <key class="blue">本文中の数字を範囲選択してマウスポインタを上に移動</key>
+    <value>対応したレスをポップアップ表示</value>
+</item>
+<item>
+    <key class="blue">本文中の"ID:〜"を範囲選択してマウスポインタを上に移動</key>
+    <value>ID抽出してポップアップ表示</value>
+</item>
+<item>
+    <key class="blue">何もないところで中クリック</key>
+    <value>オートスクロール開始</value>
+</item>
+<item>
+    <key class="blue">何もないところで右クリック</key>
+    <value>通常メニュー表示</value>
+</item>
+<item>
+    <key class="blue">レスアンカーの上でクリック</key>
+    <value>メニュー表示</value>
+</item>
+<item>
+    <key class="blue">レスアンカーの上で中クリック</key>
+    <value>対象の周辺のレスを抽出して別のタブに表示</value>
+</item>
+<item>
+    <key class="blue">レスアンカーの上で右クリック</key>
+    <value>通常メニュー表示</value>
+</item>
+<item>
+    <key class="blue">レス番号の上でクリック</key>
+    <value>メニュー表示</value>
+</item>
+<item>
+    <key class="blue">レス番号の上で中クリック</key>
+    <value>ブックマーク設定/解除</value>
+</item>
+<item>
+    <key class="blue">レス番号の上で右クリック</key>
+    <value>現在のレスを参照しているレスを抽出してポップアップ表示</value>
+</item>
+<item>
+    <key class="blue">名前の文字の上でクリック</key>
+    <value>メニュー表示</value>
+</item>
+<item>
+    <key class="blue">名前の文字の上で中クリック</key>
+    <value>名前抽出して別のタブに表示</value>
+</item>
+<item>
+    <key class="blue">名前の文字の上で右クリック</key>
+    <value>名前抽出してポップアップ表示</value>
+</item>
+<item>
+    <key class="blue">IDの上でクリック</key>
+    <value>メニュー表示</value>
+</item>
+<item>
+    <key class="blue">IDの上で中クリック</key>
+    <value>ID抽出して別のタブに表示</value>
+</item>
+<item>
+    <key class="blue">IDの上で右クリック</key>
+    <value>ID抽出してポップアップ表示</value>
+</item>
+<item>
+    <key class="blue">リンクの上でクリック</key>
+    <value>開く</value>
+</item>
+<item>
+    <key class="blue">リンクの上で右クリック</key>
+    <value>通常メニュー表示</value>
+</item>
+<item>
+    <key class="blue">画像リンクの上でクリック</key>
+    <value>開く</value>
+</item>
+<item>
+    <key class="blue">画像リンクの上でCtrl+クリック</key>
+    <value>バックグラウンドで開く</value>
+</item>
+<item>
+    <key class="blue">画像リンクの上で中クリック</key>
+    <value>バックグラウンドで開く</value>
+</item>
+<item>
+    <key class="blue">画像リンクの上で右クリック</key>
+    <value>通常メニュー表示</value>
+</item>
+<item>
+    <key class="blue">Esc</key>
+    <value>ロード停止、ポップアップ表示を消す</value>
+</item>
+<item>
+    <key class="blue">Space, PageDown</key>
+    <value>１ページ下</value>
+</item>
+<item>
+    <key class="blue">d</key>
+    <value>半ページ下</value>
+</item>
+<item>
+    <key class="blue">j, 下</key>
+    <value>１行下</value>
+</item>
+<item>
+    <key class="blue">b, PageUp</key>
+    <value>１ページ上</value>
+</item>
+<item>
+    <key class="blue">u</key>
+    <value>半ページ上</value>
+</item>
+<item>
+    <key class="blue">k, 上</key>
+    <value>１行上</value>
+</item>
+<item>
+    <key class="blue">F2</key>
+    <value>次のブックマークに移動</value>
+</item>
+<item>
+    <key class="blue">Ctrl+F2</key>
+    <value>前のブックマークに移動</value>
+</item>
+<item>
+    <key class="blue">w</key>
+    <value>書き込みウィンドウ表示</value>
+</item>
+<item>
+    <key class="blue">Home, g, &lt;</key>
+    <value>Home</value>
+</item>
+<item>
+    <key class="blue">End, G, &gt;</key>
+    <value>End</value>
+</item>
+<item>
+    <key class="blue">F4</key>
+    <value>新着へ移動</value>
+</item>
+<item>
+    <key class="blue">BackSpace</key>
+    <value>ジャンプした時にジャンプ元のレスに戻る</value>
+</item>
+<item>
+    <key class="blue">数字入力</key>
+    <value>対象のレスにジャンプする</value>
+</item>
+</array>
+
+</block>
 
 
-<h3>書き込みビューの操作</h3>
-<basictext class="basictext">
-alt + c : 書き込みをキャンセル
-alt + w : 書き込み実行
-Ctrl+z, Ctrl+/ : undo
-<br />
-また設定メニューでキーボードのバインドをemacs風にすると
-次の操作が可能になる。
-<br />
-Ctrl+p, 上 : カーソルを上に移動
-Ctrl+n, 下 : カーソルを下に移動
-Ctrl+f, 右 : カーソルを右に移動
-Ctrl+b, 右 : カーソルを左に移動
-<br />
-Ctrl+a : 行の先頭に移動
-Ctrl+e : 行の最後に移動
-<br />
-Ctrl+d : 一文字削除
-</basictext>
+<block class="border" header="書き込みビューの操作">
+
+<array>
+<item>
+    <key class="blue">Alt+c</key>
+    <value>書き込みをキャンセル</value>
+</item>
+<item>
+    <key class="blue">Alt+w</key>
+    <value>書き込み実行</value>
+</item>
+<item>
+    <key class="blue">Ctrl+z, Ctrl+/</key>
+    <value>undo</value>
+</item>
+<!--<item>
+    <key class="blue">Alt+a</key>
+    <value>アスキーアート入力用のポップアップを表示</value>
+</item>-->
+</array>
+
+<!--<p>アスキーアート入力用ポップアップの操作</p>
+
+<array>
+<item>
+    <key class="blue">下, j, Ctrl+n, Space</key>
+    <value>選択項目を下に</value>
+</item>
+<item>
+    <key class="blue">上, k, Ctrl+p</key>
+    <value>選択項目を上に</value>
+</item>
+<item>
+    <key class="blue">Enter</key>
+    <value>選択項目を決定</value>
+</item>
+</array>-->
+
+<p>また設定メニューでキーボードのバインドをemacs風にすると次の操作が可能になる。</p>
+
+<array>
+<item>
+    <key class="blue">Ctrl+p, 上</key>
+    <value>カーソルを上に移動</value>
+</item>
+<item>
+    <key class="blue">Ctrl+n, 下</key>
+    <value>カーソルを下に移動</value>
+</item>
+<item>
+    <key class="blue">Ctrl+f, 右</key>
+    <value>カーソルを右に移動</value>
+</item>
+<item>
+    <key class="blue">Ctrl+b, 左</key>
+    <value>カーソルを左に移動</value>
+</item>
+<item>
+    <key class="blue">Ctrl+a</key>
+    <value>行の先頭に移動</value>
+</item>
+<item>
+    <key class="blue">Ctrl+e</key>
+    <value>行の最後に移動</value>
+</item>
+<item>
+    <key class="blue">Ctrl+d</key>
+    <value>一文字削除</value>
+</item>
+</array>
+
+</block>
 
 
-<h3>画像ビューの操作</h3>
-<basictext class="basictext">
-マウスでドラッグ : 画面スクロール
-ダブルクリック : 画像再読み込み
-中クリック : 閉じる
-右クリック : メニュー表示
-<br />
-K, Shift+上 : 画像を上にスクロール
-J, Shift+下 : 画像を下にスクロール
-L, Shift+左 : 画像を左にスクロール
-H, Shift+右 : 画像を右にスクロール
-<br />
-z: 元の画像サイズ
-x: 画像を画面にフィットさせる
-+: 画像の拡大
--: 画像の縮小
-c: 画像のモザイク解除
-Ctrl+s : 保存
-Delete : 削除
-Esc : ロード停止
-</basictext>
+<block class="border" header="画像ビューの操作">
+
+<array>
+<item>
+    <key class="blue">マウスでドラッグ</key>
+    <value>画面スクロール</value>
+</item>
+<item>
+    <key class="blue">ダブルクリック</key>
+    <value>画像再読み込み</value>
+</item>
+<item>
+    <key class="blue">中クリック</key>
+    <value>閉じる</value>
+</item>
+<item>
+    <key class="blue">右クリック</key>
+    <value>メニュー表示</value>
+</item>
+<item>
+    <key class="blue">K, Shift+上</key>
+    <value>画像を上にスクロール</value>
+</item>
+<item>
+    <key class="blue">J, Shift+下</key>
+    <value>画像を下にスクロール</value>
+</item>
+<item>
+    <key class="blue">L, Shift+左</key>
+    <value>画像を左にスクロール</value>
+</item>
+<item>
+    <key class="blue">H, Shift+右</key>
+    <value>画像を右にスクロール</value>
+</item>
+<item>
+    <key class="blue">z</key>
+    <value>元の画像サイズ</value>
+</item>
+<item>
+    <key class="blue">x</key>
+    <value>画像を画面にフィットさせる</value>
+</item>
+<item>
+    <key class="blue">+</key>
+    <value>画像の拡大</value>
+</item>
+<item>
+    <key class="blue">-</key>
+    <value>画像の縮小</value>
+</item>
+<item>
+    <key class="blue">c</key>
+    <value>画像のモザイク解除</value>
+</item>
+<item>
+    <key class="blue">Ctrl+s</key>
+    <value>保存</value>
+</item>
+<item>
+    <key class="blue">Delete</key>
+    <value>削除</value>
+</item>
+<item>
+    <key class="blue">Esc</key>
+    <value>ロード停止</value>
+</item>
+</array>
+
+</block>
 
 </document>

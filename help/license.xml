@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="main.xsl"?>
 
-<document title="ライセンス、コピーライト" modified="20070201">
+<document header="ライセンス、コピーライト" modified="20070307">
 
 <p>
     <a href="http://www.gnu.org/licenses/gpl.ja.html">GPL2</a>

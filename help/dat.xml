@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="main.xsl"?>
 
-<document title="datファイルのインポート" modified="20070201">
+<document header="datファイルのインポート" modified="20070307">
 
 <p>
 JDのキャッシュ構造はnavi2chの上位互換仕様なので、navi2chからインポートする場合は

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="main.xsl"?>
 
-<document title="オンラインマニュアル" modified="20070203">
+<document header="オンラインマニュアル" modified="20070307">
 
 <p>jd - a 2ch browser for Linux</p>
 
