@@ -195,18 +195,12 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Menu_File", "ファイル(_F)" ) );    
     m_action_group->add( Gtk::ToggleAction::create( "Online", "オンライン", std::string(), SESSION::is_online() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_online ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Login2ch", "2chにログイン", std::string(), false ),
+                        sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内ログ検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
     m_action_group->add( Gtk::Action::create( "Quit", "終了" ), sigc::mem_fun(*this, &Core::slot_quit ) );
-
-
-    // ログイン
-    m_action_group->add( Gtk::Action::create( "Menu_Login", "ログイン(_L)" ) );    
-    m_action_group->add( Gtk::ToggleAction::create( "Login2ch", "2chにログイン", std::string(), false ),
-                        sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
-    m_action_group->add( Gtk::Action::create( "SetupPasswd", "設定" ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
-
 
     // 表示
     m_action_group->add( Gtk::Action::create( "Menu_View", "表示(_V)" ) );    
@@ -306,6 +300,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク" ) );
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
     m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ" ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
+    m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード設定" ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
 
     m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん" ) );
     m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん(スレビュー対象)を編集" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
@@ -341,6 +336,8 @@ void Core::run( bool init )
         "<menu action='Menu_File'>"
         "<menuitem action='Online'/>"
         "<separator/>"
+        "<menuitem action='Login2ch'/>"
+        "<separator/>"
         "<menuitem action='SearchCache'/>"    
         "<separator/>"
         "<menuitem action='SaveFavorite'/>"
@@ -348,12 +345,6 @@ void Core::run( bool init )
         "<menuitem action='ReloadList'/>"
         "<separator/>"
         "<menuitem action='Quit'/>"
-        "</menu>"
-
-    // ログイン
-        "<menu action='Menu_Login'>"
-        "<menuitem action='Login2ch'/>"
-        "<menuitem action='SetupPasswd'/>"
         "</menu>"
 
     // 表示
@@ -425,6 +416,7 @@ void Core::run( bool init )
         "<menu action='Net_Menu'>"
         "<menuitem action='SetupProxy'/>"
         "<menuitem action='SetupBrowser'/>"
+        "<menuitem action='SetupPasswd'/>"
         "</menu>"
 
         "<separator/>"
@@ -2669,7 +2661,7 @@ void Core::set_sensitive_view_button()
     else m_button_thread.set_sensitive( false );
 
     // 画像ビューボタンの切り替え
-    if( SESSION::get_embedded_img() && IMAGE::get_admin()->empty() ) m_button_image.set_sensitive( false );
+    if( IMAGE::get_admin()->empty() ) m_button_image.set_sensitive( false );
     else m_button_image.set_sensitive( true );
 
     m_enable_menuslot = true;

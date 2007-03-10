@@ -176,6 +176,8 @@ namespace ARTICLE
             m_searchbar.pack_end( m_button_up_search, Gtk::PACK_SHRINK );
             m_searchbar.pack_end( m_button_down_search, Gtk::PACK_SHRINK );
 
+            m_entry_search.add_mode( CONTROL::MODE_COMMON );
+
             add( m_vbox );
             set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
             set_size_request( 8 );
@@ -212,6 +214,8 @@ namespace ARTICLE
             m_hbox.pack_end( m_button_close, Gtk::PACK_SHRINK );
             m_hbox.pack_end( m_button_stop, Gtk::PACK_SHRINK );
             m_hbox.pack_end( m_button_reload, Gtk::PACK_SHRINK );
+
+            m_entry_search.add_mode( CONTROL::MODE_COMMON );
 
             m_hbox.set_border_width( 1 );
             add( m_hbox );
