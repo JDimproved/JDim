@@ -18,7 +18,7 @@ namespace SKELETON
 
       public:
 
-        JDHPaned();
+        JDHPaned( int fixmode );
         virtual ~JDHPaned(){}
 
         HPaneControl& get_ctrl(){ return m_pctrl; }

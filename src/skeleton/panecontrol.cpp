@@ -7,12 +7,14 @@
 
 using namespace SKELETON;
 
+#define PANE_PAGE_MINSIZE 32
 
-PaneControl::PaneControl( Gtk::Paned& paned )
+PaneControl::PaneControl( Gtk::Paned& paned, int fixmode )
     : m_paned( paned ),
       m_click_fold( PANE_CLICK_NORMAL ),
       m_clicked( false ),
       m_drag( false ),
+      m_fixmode( fixmode ),
       m_mode( PANE_NORMAL )
 {
     m_pre_size = -1;
@@ -51,20 +53,36 @@ void PaneControl::clock_in()
 void PaneControl::update_position()
 {
 #ifdef _DEBUG
-    std::cout << "PaneControl::update_position mode << " << m_mode << " pos = " << m_pos << std::endl;
+    std::cout << "PaneControl::update_position fixmode = " << m_fixmode
+              << " mode = " << m_mode << " pos = " << m_pos << " size = " << get_size() << std::endl;
 #endif
 
     int pos = m_paned.get_position();
 
     if( m_mode == PANE_MAX_PAGE1 ) m_paned.set_position( get_size() );
     else if( m_mode == PANE_MAX_PAGE2 && pos > 0 ) m_paned.set_position( 0 );
-    else if( m_mode == PANE_NORMAL && pos != get_size() - m_pos ) m_paned.set_position( get_size() - m_pos );
+    else if( m_mode == PANE_NORMAL ){
+
+        int newpos = 0;
+
+        if( m_fixmode == PANE_FIXSIZE_PAGE1 && pos != m_pos ){
+            newpos = MIN( m_pos, get_size() - PANE_PAGE_MINSIZE );
+        }
+        else if( m_fixmode == PANE_FIXSIZE_PAGE2 && pos != get_size() - m_pos ){
+            newpos = MAX( get_size() - m_pos, PANE_PAGE_MINSIZE );
+        }
+
+        if( newpos ) m_paned.set_position( newpos );
+    }
 }
 
 
 int PaneControl::get_position()
 {
-    if( ! m_pos ) m_pos = get_size() - m_paned.get_position();
+    if( ! m_pos ){
+        if( m_fixmode == PANE_FIXSIZE_PAGE1 ) m_pos = m_paned.get_position();
+        else if( m_fixmode == PANE_FIXSIZE_PAGE2 ) m_pos = get_size() - m_paned.get_position();
+    }
 
 #ifdef _DEBUG
     std::cout << "PaneControl::get_position " << m_pos << std::endl;
@@ -79,7 +97,7 @@ void PaneControl::set_position( int position )
     if( position == m_pos ) return;
 
 #ifdef _DEBUG
-    std::cout << "PaneControl::set_position " << position
+    std::cout << "PaneControl::set_position position = " << position
               << " size = " << get_size() << std::endl;
 #endif
 
@@ -129,13 +147,14 @@ void PaneControl::add_remove2( bool unpack, Gtk::Widget& child )
 
 void PaneControl::button_press_event( GdkEventButton* event )
 {
-#ifdef _DEBUG
-    std::cout << "PaneControl::_button_press_event\n";
-    std::cout << "x = " << event->x << " pos = " << m_pos << std::endl;
-#endif
-    
-    m_clicked = true;
+    m_clicked = is_separater_clicked( event ); // 仕切りをクリックしたかチェック
     m_drag = false;
+
+#ifdef _DEBUG
+    std::cout << "PaneControl::button_press_event"
+              << " x = " << event->x << " y = " << event->y << " pos = " << m_pos << " current_pos = " << m_paned.get_position()
+              << " click = " << m_clicked << std::endl;
+#endif
 }
 
 
@@ -163,10 +182,12 @@ void PaneControl::button_release_event( GdkEventButton* event )
     // 仕切りをドラッグした場合
     else if( m_clicked && m_drag ){
         m_mode = PANE_NORMAL;
-        m_pos = get_size() - m_paned.get_position();
+
+        if( m_fixmode == PANE_FIXSIZE_PAGE1 ) m_pos = m_paned.get_position();
+        else if( m_fixmode == PANE_FIXSIZE_PAGE2 ) m_pos = get_size() - m_paned.get_position();
 
 #ifdef _DEBUG
-        std::cout << "pos = " << m_pos << std::endl;
+        std::cout << "new pos = " << m_pos << std::endl;
 #endif
     }
 

@@ -8,9 +8,9 @@
 using namespace SKELETON;
 
 
-JDHPaned::JDHPaned()
+JDHPaned::JDHPaned( int fixmode )
     : Gtk::HPaned(),
-      m_pctrl( *this )
+      m_pctrl( *this, fixmode )
 {}
 
 

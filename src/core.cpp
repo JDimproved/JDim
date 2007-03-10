@@ -75,7 +75,11 @@ IMAGE::get_admin()->set_command_immediately( "focus_out" ); \
 
 Core::Core( WinMain& win_main )
     : m_win_main( win_main ),
+      m_hpaned( SKELETON::PANE_FIXSIZE_PAGE1 ),
+      m_vpaned_r( SKELETON::PANE_FIXSIZE_PAGE1 ),
+      m_hpaned_r( SKELETON::PANE_FIXSIZE_PAGE1 ),
       m_imagetab_shown( 0 ),
+      m_vpaned_message( SKELETON::PANE_FIXSIZE_PAGE2 ),
       m_button_go( Gtk::Stock::JUMP_TO ),
       m_button_search_cache( Gtk::Stock::FIND ),
       m_button_bbslist( ICON::DIR ),
@@ -206,25 +210,70 @@ void Core::run( bool init )
 
     // 表示
     m_action_group->add( Gtk::Action::create( "Menu_View", "表示(_V)" ) );    
-    m_action_group->add( Gtk::Action::create( "Show_Board", "スレ一覧に切替" ), sigc::mem_fun(*this, &Core::switch_board ) );
-    m_action_group->add( Gtk::Action::create( "Show_Thread", "スレビューに切替" ), sigc::mem_fun(*this, &Core::switch_article ) );
-    m_action_group->add( Gtk::Action::create( "Show_Image", "画像ビューに切替" ), sigc::mem_fun(*this, &Core::switch_image ) );
 
-    m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Toolbar", "表示", std::string(), SESSION::show_toolbar() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_toolbar ) );
+    m_action_group->add( Gtk::Action::create( "Show_Board", "スレ一覧" ),
+                         sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_board ), false ) );
+    m_action_group->add( Gtk::Action::create( "Show_Thread", "スレビュー" ),
+                         sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_article ), false ) );
+    m_action_group->add( Gtk::Action::create( "Show_Image", "画像ビュー" ), 
+                         sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_image ), false ) );
 
+    // サイドバー
     m_action_group->add( Gtk::Action::create( "Sidebar_Menu", "サイドバー" ) );
     m_action_group->add( Gtk::ToggleAction::create( "Show_BBS", "板一覧", std::string(), SESSION::show_sidebar() ),
-                         sigc::mem_fun( *this, &Core::switch_bbslist ) );
+                         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_BBSLISTVIEW, false ) );
     m_action_group->add( Gtk::ToggleAction::create( "Show_FAVORITE", "お気に入り", std::string(), SESSION::show_sidebar() ),
-                         sigc::mem_fun( *this, &Core::switch_favorite ) );
+                         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
+
+
+    // 設定
+    m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
+
+    m_action_group->add( Gtk::Action::create( "General_Menu", "一般" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示", std::string(), CONFIG::get_show_oldarticle() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "起動時に開いていたビューを復元", std::string(),
+                                                    ( CONFIG::get_restore_board()
+                                                      & CONFIG::get_restore_board()
+                                                      & CONFIG::get_restore_board() ) ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_restore_views ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
+
+
+    // マウス、キーボード
+    m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス、キーボード" ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "シングルクリックでタブを開く", std::string(),
+                                                    ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "シングルクリックで多重ポップアップモードに移行する", std::string(),
+                                                    CONFIG::get_buttonconfig()->is_popup_warpmode() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューをEmacs風のキーバインドにする", std::string(),
+                                                    CONFIG::get_keyconfig()->is_emacs_mode() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
+
+
+    // 外観
+    m_action_group->add( Gtk::Action::create( "View_Menu", "外観" ) );
+
+    // ツールバー
+    m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), SESSION::show_toolbar() ),
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する", std::string(), SESSION::show_toolbar() ),
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_RIGHT ) );
 
     // pane 設定
     Gtk::RadioButtonGroup radiogroup;
-    Glib::RefPtr< Gtk::RadioAction > raction0 = Gtk::RadioAction::create( radiogroup, "2Pane", "2pane" );
-    Glib::RefPtr< Gtk::RadioAction > raction1 = Gtk::RadioAction::create( radiogroup, "3Pane", "3pane" );
-    Glib::RefPtr< Gtk::RadioAction > raction2 = Gtk::RadioAction::create( radiogroup, "v3Pane", "縦3pane" );
+    Glib::RefPtr< Gtk::RadioAction > raction0 = Gtk::RadioAction::create( radiogroup, "2Pane", "２ペイン表示" );
+    Glib::RefPtr< Gtk::RadioAction > raction1 = Gtk::RadioAction::create( radiogroup, "3Pane", "３ペイン表示" );
+    Glib::RefPtr< Gtk::RadioAction > raction2 = Gtk::RadioAction::create( radiogroup, "v3Pane", "縦３ペイン表示" );
 
     switch( SESSION::get_mode_pane() ){
         case SESSION::MODE_2PANE: raction0->set_active( true ); break;
@@ -244,53 +293,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "EmbImg", "画像ビューを埋め込み表示", std::string(), SESSION::get_embedded_img() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_embedded_img ) );
 
-    // ツールバー位置
-    Gtk::RadioButtonGroup rg_toolbar;
-    raction0 = Gtk::RadioAction::create( rg_toolbar, "ToolbarPos0", "メニューバーの下に表示する" );
-    raction1 = Gtk::RadioAction::create( rg_toolbar, "ToolbarPos1", "サイドバーの右に表示する" );
 
-    switch( SESSION::toolbar_pos() ){
-        case SESSION::TOOLBAR_NORMAL: raction0->set_active( true ); break;
-        case SESSION::TOOLBAR_RIGHT: raction1->set_active( true ); break;
-    }
-
-    m_action_group->add( raction0, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
-    m_action_group->add( raction1, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_RIGHT ) );
-
-    // 設定
-    m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
-
-    m_action_group->add( Gtk::Action::create( "General_Menu", "一般" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示", std::string(), CONFIG::get_show_oldarticle() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
-
-    m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "起動時に開いていたビューを復元", std::string(),
-                                                    ( CONFIG::get_restore_board()
-                                                      & CONFIG::get_restore_board()
-                                                      & CONFIG::get_restore_board() ) ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_restore_views ) );
-
-    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
-
-
-    m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス、キーボード設定" ) );
-
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "シングルクリックでタブを開く", std::string(),
-                                                    ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
-
-    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "シングルクリックで多重ポップアップモードに移行する", std::string(),
-                                                    CONFIG::get_buttonconfig()->is_popup_warpmode() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
-
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューをEmacs風のキーバインドにする", std::string(),
-                                                    CONFIG::get_keyconfig()->is_emacs_mode() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
-
-
-
-    m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色の設定" ) );
+    m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色" ) );
     m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
     m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
     m_action_group->add( Gtk::Action::create( "FontTree", "板、スレ一覧フォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
@@ -299,20 +303,20 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "ColorBackTree", "板、スレ一覧背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
     m_action_group->add( Gtk::Action::create( "FontColorPref", "詳細設定" ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
 
-    m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク設定" ) );
+    m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク" ) );
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
     m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ" ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
 
-    m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん設定" ) );
-    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん(スレビュー対象)" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
-    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん(スレ一覧対象)" ),
+    m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん" ) );
+    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん(スレビュー対象)を編集" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
+    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん(スレ一覧対象)を編集" ),
                          sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "デフォルトで透明/連鎖あぼ〜ん", std::string(),
                                                     ( CONFIG::get_abone_transparent() && CONFIG::get_abone_chain() ) ),
                                                     sigc::mem_fun( *this, &Core::slot_toggle_abone_transp_chain ) );
 
-    m_action_group->add( Gtk::Action::create( "Image_Menu", "画像設定" ) );
+    m_action_group->add( Gtk::Action::create( "Image_Menu", "画像" ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア" ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
@@ -354,27 +358,18 @@ void Core::run( bool init )
 
     // 表示
         "<menu action='Menu_View'>"
-        "<menuitem action='Show_Board'/>"
-        "<menuitem action='Show_Thread'/>"
-        "<menuitem action='Show_Image'/>"
-        "<separator/>"
-        "<menu action='Toolbar_Menu'>"
-        "<menuitem action='Toolbar'/>"
-        "<separator/>"
-        "<menuitem action='ToolbarPos0'/>"
-        "<menuitem action='ToolbarPos1'/>"
-        "</menu>"
+
         "<menu action='Sidebar_Menu'>"
         "<menuitem action='Show_BBS'/>"
         "<menuitem action='Show_FAVORITE'/>"
         "</menu>"
         "<separator/>"
-        "<menuitem action='2Pane'/>"
-        "<menuitem action='3Pane'/>"
-        "<menuitem action='v3Pane'/>"
+
+        "<menuitem action='Show_Board'/>"
+        "<menuitem action='Show_Thread'/>"
+        "<menuitem action='Show_Image'/>"
         "<separator/>"
-        "<menuitem action='EmbMes'/>"
-        "<menuitem action='EmbImg'/>"
+
         "</menu>"
 
     // 設定
@@ -393,6 +388,23 @@ void Core::run( bool init )
         "<menuitem action='TogglePopupWarp'/>"
         "<separator/>"
         "<menuitem action='ToggleEmacsMode'/>"
+        "</menu>"
+
+        "<separator/>"
+
+        "<menu action='View_Menu'>"
+
+        "<menu action='Toolbar_Menu'>"
+        "<menuitem action='ToolbarPos0'/>"
+        "<menuitem action='ToolbarPos1'/>"
+        "</menu>"
+        "<separator/>"
+        "<menuitem action='2Pane'/>"
+        "<menuitem action='3Pane'/>"
+        "<menuitem action='v3Pane'/>"
+        "<separator/>"
+        "<menuitem action='EmbMes'/>"
+        "<menuitem action='EmbImg'/>"
         "</menu>"
 
         "<separator/>"
@@ -606,7 +618,8 @@ void Core::pack_widget( bool unpack )
 
         m_notebook.append_remove_page( unpack, *BOARD::get_admin()->get_widget(), "スレ一覧" );
 
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) m_vbox_article.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
+        if( SESSION::show_toolbar() && SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT )
+            m_vbox_article.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
         m_vbox_article.pack_remove_start( unpack, m_notebook );
 
         m_hpaned.get_ctrl().add_remove1( unpack, *m_sidebar );
@@ -621,7 +634,7 @@ void Core::pack_widget( bool unpack )
         get_rpctrl()->add_remove1( unpack, *BOARD::get_admin()->get_widget() );
         get_rpctrl()->add_remove2( unpack, m_vbox_article );
 
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
+        if( SESSION::show_toolbar() && SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
 
             m_vbox_toolbar.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
             m_vbox_toolbar.pack_remove_start( unpack, *get_rpane() );
@@ -638,7 +651,8 @@ void Core::pack_widget( bool unpack )
     // メインwindowのパッキング
     m_vbox_main.pack_remove_end( unpack, m_stat_scrbar, Gtk::PACK_SHRINK );
     m_vbox_main.pack_remove_end( unpack, m_hpaned );
-    if( SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL ) m_vbox_main.pack_remove_end( unpack, m_toolbar, Gtk::PACK_SHRINK );
+    if( SESSION::show_toolbar() && SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL )
+        m_vbox_main.pack_remove_end( unpack, m_toolbar, Gtk::PACK_SHRINK );
     m_vbox_main.pack_remove_end( unpack, *m_menubar, Gtk::PACK_SHRINK );
 
     if( ! unpack ){
@@ -669,11 +683,14 @@ void Core::pack_widget( bool unpack )
 //
 void Core::create_toolbar()
 {
-    m_button_bbslist.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_bbslist ) );
-    m_button_favorite.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_favorite ) ); 
-    m_button_board.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_board ) );
-    m_button_thread.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_article ) );
-    m_button_image.signal_clicked().connect( sigc::mem_fun( *this, &Core::switch_image ) );
+    m_button_bbslist.signal_clicked().connect(
+        sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_BBSLISTVIEW, false ) );
+    m_button_favorite.signal_clicked().connect(
+        sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
+
+    m_button_board.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_board ), false ) );
+    m_button_thread.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_article ), false ) );
+    m_button_image.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_image ), false ) );
     m_button_search_cache.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
@@ -818,6 +835,20 @@ void Core::slot_activate_menubar()
     if( tact ){
 
         if( SESSION::show_sidebar() && BBSLIST::get_admin()->get_current_url() == URL_FAVORITEVIEW ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // ツールバー
+    act = m_action_group->get_action( "ToolbarPos0" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::show_toolbar() && SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+    act = m_action_group->get_action( "ToolbarPos1" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::show_toolbar() && SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1206,46 +1237,31 @@ void Core::slot_toggle_login2ch()
 }
 
 
-
-//
-// ツールバー表示切替え
-//
-void Core::slot_toggle_toolbar()
-{
-    SESSION::set_show_toolbar( !SESSION::show_toolbar() );
-
-    if( SESSION::show_toolbar() ){
-
-        Gtk::Widget* menubar = m_ui_manager->get_widget("/menu_bar");
-        assert( menubar );
-
-        m_vbox_main.remove( *menubar );
-        m_vbox_main.pack_end( m_toolbar, Gtk::PACK_SHRINK );
-        m_vbox_main.pack_end( *menubar, Gtk::PACK_SHRINK );
-    }
-    else m_vbox_main.remove( m_toolbar );
-
-    m_win_main.show_all_children();
-}
-
-
 //
 // サイドバー表示切替え
 //
-void Core::slot_toggle_sidebar()
+void Core::toggle_sidebar()
 {
+    bool emp_img = ! ( SESSION::get_embedded_img() && ! IMAGE::get_admin()->empty() );
+    bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
+    bool emp_all = ( BOARD::get_admin()->empty() && ARTICLE::get_admin()->empty() && emp_mes && emp_img );
+
 #ifdef _DEBUG
-    std::cout << "Core::slot_toggle_sidebar focus = " << SESSION::focused_admin() << std::endl;
+    std::cout << "Core::toggle_sidebar focus = " << SESSION::focused_admin() << " empty = " << emp_all << std::endl;
 #endif
+
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
-    if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR
-        && BOARD::get_admin()->empty()
-        && ARTICLE::get_admin()->empty() 
-        && IMAGE::get_admin()->empty() ) return;
 
+    // 右ペーンが空のときは閉じない
+    if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR && emp_all ) return;
+
+    // サイドバーの表示が切り替わったら slot_show_hide_leftpane()が呼び出される
     if( SESSION::show_sidebar() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE2 );
-    else m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+    else{
+        if( emp_all ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE1 );
+        else m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+    }
 }
 
 
@@ -1263,6 +1279,8 @@ void Core::slot_search_cache()
 //
 void Core::slot_show_hide_leftpane( int mode )
 {
+    const bool present = false;
+
 #ifdef _DEBUG
     std::cout << "slot_show_hide_leftpane mode = " << mode << std::endl;
 #endif
@@ -1271,7 +1289,7 @@ void Core::slot_show_hide_leftpane( int mode )
     else SESSION::set_show_sidebar( false );
 
     // 表示されたらbbslistをフォーカス
-    if( SESSION::show_sidebar() ) switch_sidebar();
+    if( SESSION::show_sidebar() ) switch_sidebar( std::string(), present );
 
     // 非表示になったときは SESSION::focused_admin_sidebar() で指定されるadminにフォーカスを移す
     else{
@@ -1280,15 +1298,15 @@ void Core::slot_show_hide_leftpane( int mode )
         std::cout << "focused_admin = " << SESSION::focused_admin_sidebar() << std::endl;
 #endif
 
-        if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_BOARD ) switch_board();
-        else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_ARTICLE ) switch_article();
-        else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_IMAGE ) switch_image();
-        else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_MESSAGE ) switch_message();
+        if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_BOARD ) switch_board( present );
+        else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_ARTICLE ) switch_article( present );
+        else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_IMAGE ) switch_image( present );
+        else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_MESSAGE ) switch_message( present );
         else if( SESSION::focused_admin_sidebar() == SESSION::FOCUS_NO ){
 
-            if( ! BOARD::get_admin()->empty() ) switch_board();
-            else if( ! ARTICLE::get_admin()->empty() ) switch_article();
-            else if( ! IMAGE::get_admin()->empty() ) switch_image();
+            if( ! BOARD::get_admin()->empty() ) switch_board( present );
+            else if( ! ARTICLE::get_admin()->empty() ) switch_article( present );
+            else if( ! IMAGE::get_admin()->empty() ) switch_image( present );
         }
     }
 }
@@ -1300,13 +1318,24 @@ void Core::slot_show_hide_leftpane( int mode )
 //
 void Core::slot_toggle_toolbarpos( int pos )
 {
-    if( SESSION::toolbar_pos() == pos ) return;
+    if( m_boot ) return;
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::slot_toggle_toolbarpos pos = " << pos << " show = " << SESSION::show_toolbar() << std::endl;
+#endif
 
     pack_widget( true );
+
+    // 表示切り替え
+    if( ! SESSION::show_toolbar() ) SESSION::set_show_toolbar( true );
+    else if( SESSION::toolbar_pos() == pos ) SESSION::set_show_toolbar( false );
+
     SESSION::set_toolbar_pos( pos );
+
     pack_widget( false );
 
-    restore_focus( true );
+    restore_focus( true, false );
 }
 
 
@@ -1321,7 +1350,7 @@ void Core::slot_toggle_2pane()
     SESSION::set_mode_pane( SESSION::MODE_2PANE );
     pack_widget( false );
 
-    restore_focus( true );
+    restore_focus( true, false );
 }
 
 
@@ -1337,7 +1366,7 @@ void Core::slot_toggle_3pane()
     SESSION::set_mode_pane( SESSION::MODE_3PANE );
     pack_widget( false );
 
-    restore_focus( true );
+    restore_focus( true, false );
 }
 
 
@@ -1352,7 +1381,7 @@ void Core::slot_toggle_v3pane()
     SESSION::set_mode_pane( SESSION::MODE_V3PANE );
     pack_widget( false );
 
-    restore_focus( true );
+    restore_focus( true, false );
 }
 
 
@@ -1365,7 +1394,7 @@ void Core::slot_toggle_embedded_mes()
     SESSION::set_embedded_mes( ! SESSION::get_embedded_mes() );
     pack_widget( false );
 
-    restore_focus( true );
+    restore_focus( true, false );
 }
 
 
@@ -1378,7 +1407,7 @@ void Core::slot_toggle_embedded_img()
     SESSION::set_embedded_img( ! SESSION::get_embedded_img() );
     pack_widget( false );
 
-    restore_focus( true );
+    restore_focus( true, false );
 }
 
 
@@ -1833,7 +1862,10 @@ void Core::set_command( const COMMAND_ARGS& command )
             SKELETON::MsgDiag mdiag( NULL, "この板では新スレを立てることは出来ません" );
             mdiag.run();
         }
-        else MESSAGE::get_admin()->set_command( "create_new_thread", command.url, command.arg1 );
+        else{
+            if( SESSION::get_embedded_mes() ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+            MESSAGE::get_admin()->set_command( "create_new_thread", command.url, command.arg1 );
+        }
     }
 
     ////////////////////////////
@@ -1923,7 +1955,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // フォーカス回復
     else if( command.command == "restore_focus" ){
 
-        restore_focus( true );
+        restore_focus( true, false );
         return;
     }
 
@@ -1938,6 +1970,8 @@ void Core::set_command( const COMMAND_ARGS& command )
 // coreが自前でする処理
 void Core::exec_command()
 {
+    const bool present = false;
+
     if( m_list_command.size() == 0 ) return;
     
     COMMAND_ARGS command = m_list_command.front();
@@ -1984,15 +2018,15 @@ void Core::exec_command()
     }
 
     // ビューの切替え
-    else if( command.command  == "switch_article" ) switch_article();
+    else if( command.command  == "switch_article" ) switch_article( present );
 
-    else if( command.command  == "switch_board" ) switch_board();
+    else if( command.command  == "switch_board" ) switch_board( present );
 
-    else if( command.command  == "switch_sidebar" ) switch_sidebar( command.url );
+    else if( command.command  == "switch_sidebar" ) switch_sidebar( command.url, present );
 
-    else if( command.command  == "switch_image" ) switch_image();
+    else if( command.command  == "switch_image" ) switch_image( present );
 
-    else if( command.command  == "switch_message" ) switch_message();
+    else if( command.command  == "switch_message" ) switch_message( present );
 
     else if( command.command  == "toggle_article" ) toggle_article();
 
@@ -2001,7 +2035,7 @@ void Core::exec_command()
     else if( command.command  == "switch_rightview" ) switch_rightview();
 
     // サイドバー表示/非表示
-    else if( command.command  == "toggle_sidebar" ) slot_toggle_sidebar();
+    else if( command.command  == "toggle_sidebar" ) toggle_sidebar();
 
     // 2chへのログイン処理が完了した
     else if( command.command  == "login2ch_finished" ) set_maintitle();
@@ -2165,13 +2199,10 @@ void Core::exec_command_after_boot()
     std::cout << "Core::exec_command_after_boot\n";
 #endif
 
-    restore_focus( true );
+    restore_focus( true, true );
 
     // サイドバー表示状態変更
     if( ! SESSION::show_sidebar() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE2 );
-
-    // ツールバー表示切り替え
-    if( ! SESSION::show_toolbar() ) m_vbox_main.remove( m_toolbar );
 
     // タイマーセット
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
@@ -2193,8 +2224,9 @@ void Core::exec_command_after_boot()
 // フォーカス回復
 //
 // force : true の時は強制的に回復(処理が重い)
+// present : フォーカス回復後にメインウィンドウをpresentする
 //
-void Core::restore_focus( bool force )
+void Core::restore_focus( bool force, bool present )
 {
     int admin = SESSION::focused_admin();
 
@@ -2217,8 +2249,8 @@ void Core::restore_focus( bool force )
             case SESSION::FOCUS_MESSAGE: MESSAGE::get_admin()->set_command_immediately( "restore_focus" ); break;
         }
 
-    } else {
-        
+    } else { // 強制的に回復
+
         int admin_sidebar = SESSION::focused_admin_sidebar();
         SESSION::set_focused_admin( SESSION::FOCUS_NO );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
@@ -2228,11 +2260,11 @@ void Core::restore_focus( bool force )
 
         // フォーカス状態回復
         switch( admin ){
-            case SESSION::FOCUS_SIDEBAR: switch_sidebar(); break;
-            case SESSION::FOCUS_BOARD: switch_board(); break;
-            case SESSION::FOCUS_ARTICLE: switch_article(); break;
-            case SESSION::FOCUS_IMAGE: switch_image(); break;
-            case SESSION::FOCUS_MESSAGE: switch_message(); break;
+            case SESSION::FOCUS_SIDEBAR: switch_sidebar( std::string(), present ); break;
+            case SESSION::FOCUS_BOARD: switch_board( present ); break;
+            case SESSION::FOCUS_ARTICLE: switch_article( present ); break;
+            case SESSION::FOCUS_IMAGE: switch_image( present ); break;
+            case SESSION::FOCUS_MESSAGE: switch_message( present ); break;
         }
         SESSION::set_focused_admin( admin );
         SESSION::set_focused_admin_sidebar( admin_sidebar );
@@ -2271,6 +2303,7 @@ bool Core::slot_timeout( int timer_number )
 //
 void Core::slot_switch_page( GtkNotebookPage*, guint )
 {
+    const bool present = false;
     int page = get_right_current_page();
 
 #ifdef _DEBUG
@@ -2279,11 +2312,11 @@ void Core::slot_switch_page( GtkNotebookPage*, guint )
 
     switch( page ){
 
-        case PAGE_ARTICLE: switch_article(); break;
+        case PAGE_ARTICLE: switch_article( present ); break;
 
-        case PAGE_IMAGE: switch_image(); break;
+        case PAGE_IMAGE: switch_image( present ); break;
 
-        case PAGE_BOARD: switch_board(); break;
+        case PAGE_BOARD: switch_board( present ); break;
     }
 }
 
@@ -2353,7 +2386,7 @@ bool Core::slot_focus_in_event( GdkEventFocus* )
 #endif
 
     SESSION::set_focus_win_main( true );
-    restore_focus( false );
+    restore_focus( false, false );
 
     return true;
 }
@@ -2399,8 +2432,11 @@ void Core::empty_page( const std::string& url )
     std::cout << "Core::empty_page url = " << url << std::endl;
 #endif
 
-    bool emb_img = SESSION::get_embedded_img();
-    bool emb_mes = SESSION::get_embedded_mes();
+    const bool present = false;
+
+    bool emp_img = ! ( SESSION::get_embedded_img() && ! IMAGE::get_admin()->empty() );
+    bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
+
     int focused_admin = SESSION::FOCUS_NO;
 
     // emptyになったadminとフォーカスされているadminが異なる場合は
@@ -2417,7 +2453,7 @@ void Core::empty_page( const std::string& url )
         focused_admin = SESSION::FOCUS_MESSAGE;
 
     // 埋め込み画像ビューが空になった
-    if( url == URL_IMAGEADMIN && emb_img ){
+    if( url == URL_IMAGEADMIN && SESSION::get_embedded_img() ){
 
         hide_imagetab();
 
@@ -2425,11 +2461,11 @@ void Core::empty_page( const std::string& url )
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
             if( get_right_current_page() == PAGE_IMAGE ){
-                if( ! ARTICLE::get_admin()->empty() ) switch_article();
-                else if( ! BOARD::get_admin()->empty() ) switch_board();
+                if( ! ARTICLE::get_admin()->empty() ) switch_article( present );
+                else if( ! BOARD::get_admin()->empty() ) switch_board( present );
             }
         }
-        else if( ! ARTICLE::get_admin()->empty() ) switch_article();
+        else if( ! ARTICLE::get_admin()->empty() ) switch_article( present );
 
         // フォーカス切り替え
         if( focused_admin == SESSION::FOCUS_NO ){
@@ -2449,19 +2485,18 @@ void Core::empty_page( const std::string& url )
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
-            if( get_right_current_page() == PAGE_ARTICLE
-                && ! ( emb_mes && ! MESSAGE::get_admin()->empty() ) // 埋め込み書き込みビューが非表示
-                ){
-                if( emb_img && BOARD::get_admin()->empty() && ! IMAGE::get_admin()->empty() ) switch_image();
-                else if( ! BOARD::get_admin()->empty() ) switch_board();
+            if( get_right_current_page() == PAGE_ARTICLE && emp_mes ) {
+
+                if( BOARD::get_admin()->empty() && ! emp_img ) switch_image( present );
+                else if( ! BOARD::get_admin()->empty() ) switch_board( present );
             }
         }
-        else if( emb_img && ! IMAGE::get_admin()->empty() ) switch_image();
+        else if( ! emp_img ) switch_image( present );
 
         // フォーカス切り替え
         if( focused_admin == SESSION::FOCUS_NO ){
 
-            if( emb_mes && ! MESSAGE::get_admin()->empty() ) focused_admin = SESSION::FOCUS_MESSAGE;
+            if( ! emp_mes ) focused_admin = SESSION::FOCUS_MESSAGE;
             else if( ! BOARD::get_admin()->empty() ) focused_admin = SESSION::FOCUS_BOARD;
             else{
                 focused_admin = SESSION::FOCUS_SIDEBAR;
@@ -2477,8 +2512,8 @@ void Core::empty_page( const std::string& url )
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
             if( get_right_current_page() == PAGE_BOARD ){
-                if( ! ARTICLE::get_admin()->empty() ) switch_article();
-                else if( emb_img && ! IMAGE::get_admin()->empty() ) switch_image();
+                if( ! ARTICLE::get_admin()->empty() ) switch_article( present );
+                else if( ! emp_img ) switch_image( present );
             }
         }
 
@@ -2490,7 +2525,7 @@ void Core::empty_page( const std::string& url )
     }
 
     // 埋め込みmessageビューが空になった
-    if( url == URL_MESSAGEADMIN && emb_mes ){
+    else if( url == URL_MESSAGEADMIN && SESSION::get_embedded_mes() ){
 
         // フォーカス切り替え
         if( focused_admin == SESSION::FOCUS_NO ){
@@ -2507,11 +2542,11 @@ void Core::empty_page( const std::string& url )
     // 切り替え実行
     switch( focused_admin ){
 
-        case SESSION::FOCUS_SIDEBAR: switch_sidebar(); break;
-        case SESSION::FOCUS_BOARD: switch_board(); break;
-        case SESSION::FOCUS_ARTICLE: switch_article(); break;
-        case SESSION::FOCUS_IMAGE: switch_image(); break;
-        case SESSION::FOCUS_MESSAGE: switch_message(); break;
+        case SESSION::FOCUS_SIDEBAR: switch_sidebar( std::string(), present ); break;
+        case SESSION::FOCUS_BOARD: switch_board( present ); break;
+        case SESSION::FOCUS_ARTICLE: switch_article( present ); break;
+        case SESSION::FOCUS_IMAGE: switch_image( present ); break;
+        case SESSION::FOCUS_MESSAGE: switch_message( present ); break;
     }
 }
 
@@ -2524,11 +2559,17 @@ void Core::empty_page( const std::string& url )
 //
 void Core::switch_page( const std::string& url )
 {
-    if( url == URL_BBSLISTADMIN && SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR ) switch_sidebar();
-    else if( url == URL_BOARDADMIN && SESSION::focused_admin() == SESSION::FOCUS_BOARD ) switch_board();
-    else if( url == URL_ARTICLEADMIN && SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_article();
-    else if( url == URL_IMAGEADMIN && SESSION::focused_admin() == SESSION::FOCUS_IMAGE ) switch_image();
-    else if( url == URL_MESSAGEADMIN && SESSION::focused_admin() == SESSION::FOCUS_MESSAGE ) switch_message();
+#ifdef _DEBUG
+    std::cout << "Core::switch_page " << url << std::endl;
+#endif
+
+    const bool present = false;
+
+    if( url == URL_BBSLISTADMIN ) switch_sidebar( std::string(), present );
+    else if( url == URL_BOARDADMIN ) switch_board( present );
+    else if( url == URL_ARTICLEADMIN ) switch_article( present );
+    else if( url == URL_IMAGEADMIN ) switch_image( present );
+    else if( url == URL_MESSAGEADMIN ) switch_message( present );
 }
 
 
@@ -2617,13 +2658,14 @@ void Core::set_sensitive_view_button()
 {
     m_enable_menuslot = false;
 
+    bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
+
     // スレ一覧ボタンの切り替え
     if( BOARD::get_admin()->empty() ) m_button_board.set_sensitive( false );
     else m_button_board.set_sensitive( true );
 
     // スレビューボタンの切り替え
-    if( ! ARTICLE::get_admin()->empty()
-        || ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() ) ) m_button_thread.set_sensitive( true );
+    if( ! ARTICLE::get_admin()->empty() || ! emp_mes ) m_button_thread.set_sensitive( true );
     else m_button_thread.set_sensitive( false );
 
     // 画像ビューボタンの切り替え
@@ -2641,7 +2683,7 @@ void Core::toggle_maximize_rightpane()
 {
     bool emp_board = BOARD::get_admin()->empty();
     bool emp_article = ARTICLE::get_admin()->empty();
-    bool emp_img = IMAGE::get_admin()->empty();
+    bool emp_img = ! ( SESSION::get_embedded_img() && ! IMAGE::get_admin()->empty() );
     bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
 
     // 埋め込みmessage
@@ -2667,7 +2709,7 @@ void Core::toggle_maximize_rightpane()
 //
 // 各viewにスイッチ
 //
-void Core::switch_article()
+void Core::switch_article( bool present )
 {
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
@@ -2675,6 +2717,8 @@ void Core::switch_article()
 #ifdef _DEBUG
     std::cout << "Core::switch_article\n";
 #endif
+
+    bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
 
     if( ! ARTICLE::get_admin()->empty() ){
 
@@ -2694,19 +2738,19 @@ void Core::switch_article()
 
 
     // articleは空だが、埋め込みmessageが表示されている場合
-    else if( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() ){
-        switch_message();
+    else if( ! emp_mes ){
+        switch_message( present );
         return;
     }
 
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
-    m_win_main.present();
+    if( present ) m_win_main.present();
 }
 
 
-void Core::switch_board()
+void Core::switch_board( bool present )
 {
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
@@ -2736,26 +2780,7 @@ void Core::switch_board()
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
-    m_win_main.present();
-}
-
-
-void Core::switch_bbslist()
-{
-    if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR
-        && BBSLIST::get_admin()->get_current_url() == URL_BBSLISTVIEW ) slot_toggle_sidebar();
-    else switch_sidebar( URL_BBSLISTVIEW );
-}
-
-
-void Core::switch_favorite()
-{
-#ifdef _DEBUT
-    std::cout << "Core::switch_favorite\n";
-#endif    
-    if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR
-        && BBSLIST::get_admin()->get_current_url() == URL_FAVORITEVIEW ) slot_toggle_sidebar();
-    else switch_sidebar( URL_FAVORITEVIEW );
+    if( present ) m_win_main.present();
 }
 
 
@@ -2763,7 +2788,7 @@ void Core::switch_favorite()
 // url は表示するページ( URL_BBSLISTVIEW or URL_FAVORITEVIEW )
 // urlが空の時はフォーカスを移すだけ
 //
-void Core::switch_sidebar( const std::string& url )
+void Core::switch_sidebar( const std::string& url, bool present )
 {
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
@@ -2774,13 +2799,22 @@ void Core::switch_sidebar( const std::string& url )
 
     if( ! BBSLIST::get_admin()->empty() ){
 
+        // サイドバーを開く
+        if( ! SESSION::show_sidebar() ) toggle_sidebar();
+
+        // 閉じる
+        else if( BBSLIST::get_admin()->get_current_url() == url ){
+            toggle_sidebar();
+            return;
+        }
+
         if( SESSION::focused_admin() != SESSION::FOCUS_SIDEBAR ){
 
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
 
             // サイドバーが隠れていたら開く
-            if( ! SESSION::show_sidebar() ) slot_toggle_sidebar();
+            if( ! SESSION::show_sidebar() ) toggle_sidebar();
         }
 
         if( ! url.empty() ) BBSLIST::get_admin()->set_command( "switch_view", url );
@@ -2792,11 +2826,11 @@ void Core::switch_sidebar( const std::string& url )
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
-    m_win_main.present();
+    if( present ) m_win_main.present();
 }
 
 
-void Core::switch_image()
+void Core::switch_image( bool present )
 {
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
@@ -2830,11 +2864,11 @@ void Core::switch_image()
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
-    if( SESSION::get_embedded_img() ) m_win_main.present();
+    if( present && SESSION::get_embedded_img() ) m_win_main.present();
 }
 
 
-void Core::switch_message()
+void Core::switch_message( bool present )
 {
     if( m_boot ) return;
     if( ! m_enable_menuslot ) return;
@@ -2867,23 +2901,29 @@ void Core::switch_message()
     set_sensitive_view_button();
     set_toggle_view_button();
     toggle_maximize_rightpane();
-    if( emb_mes ) m_win_main.present();
+    if( present && emb_mes ) m_win_main.present();
 }
 
 
 // 2paneの時にboard <-> article 切替え
 void Core::toggle_article()
 {
+    const bool present = true;
+
     // 画像ウィンドウが表示されている場合
-    if( ! SESSION::get_embedded_img() && SESSION::is_img_shown() ) switch_article(); 
-    else if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_board();
-    else switch_article();
+    if( ! SESSION::get_embedded_img() && SESSION::is_img_shown() ){
+        if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_article( present );
+        else switch_board( present );
+    }
+    else if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_board( present );
+    else switch_article( present );
 }
 
 
 // 左移動
 void Core::switch_leftview()
 {
+    const bool present = true;
     int next_admin = SESSION::focused_admin();
 
     // 画像ウィンドウが表示されている
@@ -2897,15 +2937,15 @@ void Core::switch_leftview()
         else break;
 
         if( next_admin == SESSION::FOCUS_SIDEBAR && ! BBSLIST::get_admin()->empty() ){
-            switch_sidebar();
+            switch_sidebar( std::string(), present );
             break;
         }
         else if( next_admin == SESSION::FOCUS_BOARD && ! BOARD::get_admin()->empty() ){
-            switch_board();
+            switch_board( present );
             break;
         }
         else if( next_admin == SESSION::FOCUS_ARTICLE && ! ARTICLE::get_admin()->empty() ){
-            switch_article();
+            switch_article( present );
             break;
         }
     }
@@ -2915,6 +2955,7 @@ void Core::switch_leftview()
 // 右移動
 void Core::switch_rightview()
 {
+    const bool present = true;
     int next_admin = SESSION::focused_admin();
     
     for(;;){
@@ -2925,15 +2966,15 @@ void Core::switch_rightview()
         else break;
 
         if( next_admin == SESSION::FOCUS_BOARD && ! BOARD::get_admin()->empty() ){
-            switch_board();
+            switch_board( present );
             break;
         }
         else if( next_admin == SESSION::FOCUS_ARTICLE && ! ARTICLE::get_admin()->empty() ){
-            switch_article();
+            switch_article( present );
             break;
         }
         else if( next_admin == SESSION::FOCUS_IMAGE && ! IMAGE::get_admin()->empty() ){
-            switch_image();
+            switch_image( present );
             break;
         }
     }

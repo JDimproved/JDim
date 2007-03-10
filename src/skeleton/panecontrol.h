@@ -10,6 +10,14 @@
 
 namespace SKELETON
 {
+    // コンストラクタで指定
+    enum
+    {
+        PANE_FIXSIZE_PAGE1, // リサイズ時にPAGE1のサイズを固定する
+        PANE_FIXSIZE_PAGE2  // リサイズ時にPAGE2のサイズを固定する
+    };
+
+    // set_mode()で指定
     enum
     {
         PANE_NORMAL = 0,
@@ -17,6 +25,7 @@ namespace SKELETON
         PANE_MAX_PAGE2  // PAGE2 最大化
     };
 
+    // set_click_fold()で指定
     enum
     {
         PANE_CLICK_NORMAL,       // セパレータクリックで折り畳まない
@@ -37,6 +46,7 @@ namespace SKELETON
         bool m_clicked;
         bool m_drag;
 
+        int m_fixmode;
         int m_mode;
         int m_pos;
 
@@ -44,7 +54,7 @@ namespace SKELETON
 
       public:
 
-        PaneControl( Gtk::Paned& paned );
+        PaneControl( Gtk::Paned& paned, int fixmode );
         virtual ~PaneControl();
 
         SIG_PANE_MODECHANGED& sig_pane_modechanged() { return m_sig_pane_modechanged; }
@@ -76,6 +86,7 @@ namespace SKELETON
 
         Gtk::Paned& get_paned(){ return m_paned; }
         virtual int get_size() = 0;
+        virtual bool is_separater_clicked( GdkEventButton* event ) = 0;
     };
 
 
@@ -85,11 +96,18 @@ namespace SKELETON
     {
       public:
 
-        HPaneControl( Gtk::Paned& paned ) : PaneControl( paned ) {}
+        HPaneControl( Gtk::Paned& paned, int fixmode ) : PaneControl( paned, fixmode ) {}
         ~HPaneControl(){}
 
       protected:
+
         virtual int get_size(){ return get_paned().get_width(); }
+
+        virtual bool is_separater_clicked( GdkEventButton* event ){
+            if( event->type == GDK_BUTTON_PRESS && event->button == 1
+                && event->x >= 0 && event->x <= 8 ) return true;
+            return false;
+        }
     };
 
 
@@ -99,14 +117,19 @@ namespace SKELETON
     {
       public:
 
-        VPaneControl( Gtk::Paned& paned ) : PaneControl( paned ) {}
+        VPaneControl( Gtk::Paned& paned, int fixmode ) : PaneControl( paned, fixmode ) {}
         ~VPaneControl(){}
 
       protected:
+
         virtual int get_size(){ return get_paned().get_height(); }
+
+        virtual bool is_separater_clicked( GdkEventButton* event ){
+            if( event->type == GDK_BUTTON_PRESS && event->button == 1
+                && event->y >= 0 && event->y <= 8 ) return true;
+            return false;
+        }
     };
-
-
 }
 
 #endif

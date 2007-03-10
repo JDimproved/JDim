@@ -193,8 +193,7 @@ namespace CORE
         void slot_save_favorite();
         void slot_toggle_online();
         void slot_toggle_login2ch();
-        void slot_toggle_toolbar();
-        void slot_toggle_sidebar();
+        void toggle_sidebar();
         void slot_search_cache();
         void slot_show_hide_leftpane( int mode );
         void slot_toggle_toolbarpos( int pos );
@@ -216,7 +215,7 @@ namespace CORE
         void exec_command_after_boot();
 
         // フォーカス回復
-        void restore_focus( bool force );
+        void restore_focus( bool force, bool present );
 
         // メインタイマー
         bool slot_timeout( int timer_number );
@@ -245,13 +244,12 @@ namespace CORE
         void set_sensitive_view_button();
         void toggle_maximize_rightpane();
 
-        void switch_article();
-        void switch_board();
-        void switch_bbslist();
-        void switch_favorite();
-        void switch_sidebar( const std::string& url = std::string() );
-        void switch_image();
-        void switch_message();
+        void switch_article( bool present );
+        void switch_board( bool present );
+        void switch_sidebar( const std::string& url, bool present );
+        void switch_image( bool present );
+        void switch_message( bool present );
+
         void toggle_article();
         void switch_leftview();
         void switch_rightview();

@@ -104,9 +104,6 @@ void WinMain::save_session()
 
     if( m_core ){
 
-        delete m_core;
-        m_core = NULL;
-
         if( get_window() ){
 
             // ウィンドウのサイズや位置を保存
@@ -129,6 +126,9 @@ void WinMain::save_session()
             }
             SESSION::set_maximized( m_maximized );
         }
+
+        delete m_core;
+        m_core = NULL;
 
         SESSION::save_session();
 
