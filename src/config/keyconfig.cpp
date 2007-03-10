@@ -78,6 +78,7 @@ void KeyConfig::load_conf()
 
     SETMOTION( "ShowPopupMenu", "Shift+F10 Ctrl+m" );
 
+    SETMOTION( "ShowMenuBar", "F8" );
     SETMOTION( "ShowSideBar", "F9" );
 
     SETMOTION( "Home", "Home g <" );

@@ -33,6 +33,7 @@ namespace CONTROL
 
         { "ShowPopupMenu", "メニュー表示" },
 
+        { "ShowMenuBar", "メニューバー表示" },
         { "ShowSideBar", "サイドバー表示" },
         
         { "PageUp", "上のページに移動" },
