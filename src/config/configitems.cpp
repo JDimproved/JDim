@@ -234,6 +234,9 @@ const bool ConfigItems::load()
     // ツリービューのスクロール量(行数)
     tree_scroll_size = cf.get_option( "tree_scroll_size", 4 );
 
+    // スレビューのスクロール量
+    scroll_size = cf.get_option( "scroll_size", SCROLL_SIZE );
+
     // 板一覧でカテゴリを常にひとつだけ開く
     open_one_category = cf.get_option( "open_one_category", false );
 
@@ -391,7 +394,6 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "del_img_day", del_img_day );
     cf.update( "max_img_size", max_img_size );
 
-/*
     cf.update( "cl_char", str_color[ COLOR_CHAR ] );
     cf.update( "cl_char_name", str_color[ COLOR_CHAR_NAME ] );
     cf.update( "cl_char_name_b", str_color[ COLOR_CHAR_NAME_B ] );
@@ -413,7 +415,6 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_back_selection", str_color[ COLOR_BACK_SELECTION ] );
     cf.update( "cl_back_highlight",str_color[ COLOR_BACK_HIGHLIGHT ]  );
     cf.update( "cl_sepa_new", str_color[ COLOR_SEPARATOR_NEW ] );
-*/
 
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
 
@@ -421,6 +422,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "newthread_hour", newthread_hour );
 
     cf.update( "tree_scroll_size", tree_scroll_size );
+    cf.update( "scroll_size", scroll_size );
     cf.update( "open_one_category", open_one_category );
     cf.update( "always_write_ok", always_write_ok );
     cf.update( "save_postlog", save_postlog );

@@ -149,6 +149,9 @@ namespace CONFIG
     // ツリービューのスクロール量(行数)
     const int get_tree_scroll_size();
 
+    // スレビューのスクロール量
+    const int get_scroll_size();
+
     // 板一覧でカテゴリを常にひとつだけ開く
     const bool get_open_one_category();
 

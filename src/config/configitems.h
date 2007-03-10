@@ -122,6 +122,9 @@ namespace CONFIG
         // ツリービューのスクロール量(行数)
         int tree_scroll_size;
 
+        // スレビューのスクロール量
+        int scroll_size;
+
         // 板一覧でカテゴリを常にひとつだけ開く
         bool open_one_category;
 

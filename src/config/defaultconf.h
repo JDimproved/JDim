@@ -9,7 +9,8 @@
 namespace CONFIG
 {
     enum{
-        MARGIN_POPUP = 30 // レスアンカーとポップアップの間のマージン
+        MARGIN_POPUP = 30, // レスアンカーとポップアップの間のマージン
+        SCROLL_SIZE = 3, // スレビューのスクロール量
     };
 }
 

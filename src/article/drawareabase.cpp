@@ -1560,6 +1560,7 @@ bool DrawAreaBase::set_scroll( const int& control )
 //
 void DrawAreaBase::wheelscroll( GdkEventScroll* event )
 {
+    const int speed = CONFIG::get_scroll_size();
     const int time_cancel = 15; // msec
     if( !m_vscrbar ) return;
 
@@ -1577,8 +1578,8 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
             m_scrollinfo.reset();
             m_scrollinfo.mode = SCROLL_NORMAL;
         
-            if( event->direction == GDK_SCROLL_UP ) m_scrollinfo.dy = -( int ) adjust->get_step_increment() *3;
-            else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() *3;
+            if( event->direction == GDK_SCROLL_UP ) m_scrollinfo.dy = -( int ) adjust->get_step_increment() * speed;
+            else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() * speed;
 
             exec_scroll( false );
         }

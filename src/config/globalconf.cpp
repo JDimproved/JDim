@@ -161,6 +161,7 @@ void CONFIG::set_show_oldarticle( bool showarticle ){ get_confitem()->show_oldar
 const int CONFIG::get_newthread_hour(){ return get_confitem()->newthread_hour; }
 
 const int CONFIG::get_tree_scroll_size(){ return get_confitem()->tree_scroll_size; }
+const int CONFIG::get_scroll_size(){ return get_confitem()->scroll_size; }
 const bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; }
 const bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }
 void CONFIG::set_always_write_ok( bool write_ok ){ get_confitem()->always_write_ok = write_ok; }
