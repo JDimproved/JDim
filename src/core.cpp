@@ -261,6 +261,10 @@ void Core::run( bool init )
     // 外観
     m_action_group->add( Gtk::Action::create( "View_Menu", "外観" ) );
 
+
+    m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "ShowMenuBar", std::string(), SESSION::show_menubar() ),
+                         sigc::mem_fun( *this, &Core::toggle_menubar ) );
+
     // ツールバー
     m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー" ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), false ),
@@ -390,6 +394,9 @@ void Core::run( bool init )
         "<separator/>"
 
         "<menu action='View_Menu'>"
+
+        "<menuitem action='ShowMenuBar'/>"
+        "<separator/>"
 
         "<menu action='Toolbar_Menu'>"
         "<menuitem action='ToolbarPos0'/>"
@@ -651,7 +658,7 @@ void Core::pack_widget( bool unpack )
     m_vbox_main.pack_remove_end( unpack, m_hpaned );
     if( SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL )
         m_vbox_main.pack_remove_end( unpack, m_toolbar, Gtk::PACK_SHRINK );
-    m_vbox_main.pack_remove_end( unpack, *m_menubar, Gtk::PACK_SHRINK );
+    if( SESSION::show_menubar() ) m_vbox_main.pack_remove_end( unpack, *m_menubar, Gtk::PACK_SHRINK );
 
     if( ! unpack ){
 
@@ -833,6 +840,14 @@ void Core::slot_activate_menubar()
     if( tact ){
 
         if( SESSION::show_sidebar() && BBSLIST::get_admin()->get_current_url() == URL_FAVORITEVIEW ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // メニューバー
+    act = m_action_group->get_action( "ShowMenuBar" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::show_menubar() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1232,6 +1247,26 @@ void Core::slot_toggle_login2ch()
 
     // ログオフ中ならログイン開始
     else LOGIN::get_login2ch()->start_login();
+}
+
+
+//
+// メニューバー表示切替え
+//
+void Core::toggle_menubar()
+{
+    if( m_boot ) return;
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::toggle_menubar\n";
+#endif
+
+    pack_widget( true );
+    SESSION::set_show_menubar( ! SESSION::show_menubar() );
+    pack_widget( false );
+
+    restore_focus( true, false );
 }
 
 
@@ -2041,6 +2076,9 @@ void Core::exec_command()
     else if( command.command  == "switch_leftview" ) switch_leftview();
 
     else if( command.command  == "switch_rightview" ) switch_rightview();
+
+    // メニューバー表示/非表示
+    else if( command.command  == "toggle_menubar" ) toggle_menubar();
 
     // サイドバー表示/非表示
     else if( command.command  == "toggle_sidebar" ) toggle_sidebar();
