@@ -165,6 +165,7 @@ namespace CONFIG
 
     // ポップアップとカーソルの間のマージン
     const int get_margin_popup();
+    void set_margin_popup( int margin );
 
     // マウスジェスチャの判定開始半径
     const int get_mouse_radius();

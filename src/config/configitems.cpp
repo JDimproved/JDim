@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "configitems.h"
+#include "defaultconf.h"
 #include "cache.h"
 
 #include "jdlib/confloader.h"
@@ -11,6 +12,7 @@
 
 #include "colorid.h"
 #include "fontid.h"
+#include "global.h"
 
 using namespace CONFIG;
 
@@ -245,7 +247,7 @@ const bool ConfigItems::load()
     hide_writing_dialog = cf.get_option( "hide_writing_dialog", false );
 
     // ポップアップとカーソルの間のマージン
-    margin_popup = cf.get_option( "margin_popup", 30 );
+    margin_popup = cf.get_option( "margin_popup", MARGIN_POPUP );
 
     // マウスジェスチャの判定開始半径
     mouse_radius = cf.get_option( "mouse_radius", 25 );

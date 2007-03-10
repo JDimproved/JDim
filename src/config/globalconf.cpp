@@ -169,6 +169,8 @@ void CONFIG::set_save_postlog( bool save ){ get_confitem()->save_postlog = save;
 const bool CONFIG::get_hide_writing_dialog(){ return get_confitem()->hide_writing_dialog; }
 
 const int CONFIG::get_margin_popup(){ return get_confitem()->margin_popup; }
+void CONFIG::set_margin_popup( int margin ){ get_confitem()->margin_popup = margin; }
+
 const int CONFIG::get_mouse_radius(){ return get_confitem()->mouse_radius; }
 const int CONFIG::get_history_size(){ return get_confitem()->history_size; }
 
