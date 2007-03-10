@@ -49,11 +49,15 @@
 </item>
 <item>
     <key class="blue">Shift+F10, Ctrl+m</key>
-    <value>メニュー表示</value>
+    <value>ポップアップメニュー表示</value>
+</item>
+<item>
+    <key class="blue">F8</key>
+    <value>メニューバー表示切り替え</value>
 </item>
 <item>
     <key class="blue">F9</key>
-    <value>サイドバー(板一覧)表示切り替え</value>
+    <value>サイドバー表示切り替え</value>
 </item>
 </array>
 
