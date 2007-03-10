@@ -13,6 +13,7 @@
 #include "dbtree/interface.h"
 #include "dbtree/articlebase.h"
 
+#include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 
 #include "config/globalconf.h"
@@ -938,10 +939,12 @@ void ArticleViewSearchCache::relayout()
 
             DBTREE::ArticleBase* article = DBTREE::get_article( *it );
             if( article ){
-                comment << "[ " << DBTREE::board_name( article->get_url() ) << " ] ";
+
+                if( m_searchall ) comment << "[ <a href=\"" << DBTREE::url_subject( article->get_url() ) << "\">"
+                                          << DBTREE::board_name( article->get_url() ) << "</a> ] ";
+                comment << "<a href=\"" << *it << "\">" << article->get_subject() << "</a><br>";
                 comment << "<a href=\"" << PROTO_OR << *it + KEYWORD_SIGN + query << "\">"
-                        << article->get_subject() << "</a><br>";
-                comment << *it << "<br><br>";
+                        << "抽出表示する" << "</a><br><br>";
             }
         }
     }

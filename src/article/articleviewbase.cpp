@@ -1109,6 +1109,8 @@ void ArticleViewBase::show_name( const std::string& name, bool show_option )
     if( show_option && ! list_resnum.empty() ){
         if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
+
+        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br>";
     }
 
     append_html( comment.str() );
@@ -1137,6 +1139,8 @@ void ArticleViewBase::show_id( const std::string& id_name, bool show_option )
     if( show_option && ! list_resnum.empty() ){
         if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
+
+        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br>";
     }
       
     append_html( comment.str() );
@@ -1228,6 +1232,8 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or, 
     if( show_option && ! list_resnum.empty() ){
         if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
+
+        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br>";
     }
 
     append_html( comment.str() );
