@@ -77,6 +77,10 @@ namespace SESSION
     void set_maximized( bool maximized );
     void set_show_sidebar( bool showbar );
 
+    // メニューバー
+    bool show_menubar();
+    void set_show_menubar( bool show );
+
     // ツールバー
     int toolbar_pos();
     void set_toolbar_pos( int pos );
