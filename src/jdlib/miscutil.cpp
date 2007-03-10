@@ -490,6 +490,41 @@ std::string MISC::itostr( int n )
 
 
 
+// listで指定した数字を文字に変換
+std::string MISC::intlisttostr( std::list< int >& list_num )
+{
+    std::ostringstream comment;
+
+    std::list < int >::iterator it = list_num.begin();
+
+    bool comma = false;
+    int num_from = *it;
+    int num_to = -1;
+    ++it;
+    for(;;){
+
+        int num = *it;
+        if( num_from + 1 != num || it == list_num.end() ){
+                
+            if( comma ) comment << ",";
+            comment << num_from;
+            if( num_to != -1 ) comment << "-" << num_to;
+            num_from = num;
+            num_to = -1;
+            comma = true;
+
+            if( it == list_num.end() ) break;
+        }
+        else num_to = num;
+
+        ++it;
+    }
+
+    return comment.str();
+}
+
+
+
 // strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
 std::string MISC::cut_str( const std::string& str, unsigned int maxsize )
 {
