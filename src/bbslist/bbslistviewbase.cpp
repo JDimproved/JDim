@@ -431,6 +431,24 @@ void BBSListViewBase::focus_out()
 
 
 
+
+//
+// ビュー切り替え
+//
+void BBSListViewBase::switch_view()
+{
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::switch_view\n";
+#endif
+
+    CORE::core_set_command( "switch_sidebar" );
+}
+
+
+
+//
+// 閉じる
+//
 void BBSListViewBase::close_view()
 {
     CORE::core_set_command( "toggle_sidebar" );
@@ -721,7 +739,7 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
-    CORE::core_set_command( "switch_sidebar" );
+    switch_view();
 
     return true;
 }

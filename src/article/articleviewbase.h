@@ -81,6 +81,7 @@ namespace ARTICLE
         virtual void redraw_view();
         virtual void focus_view();
         virtual void focus_out();
+        virtual void switch_view();
         virtual void close_view();
         virtual void delete_view();
         virtual void operate_view( const int& control );

@@ -62,6 +62,7 @@ namespace BOARD
         virtual void update_view();
         virtual void focus_view();
         virtual void focus_out();
+        virtual void switch_view();
         virtual void close_view();
         virtual void delete_view();
         virtual void update_item( const std::string& id_dat );

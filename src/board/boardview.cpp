@@ -456,7 +456,8 @@ void BoardView::exec_sort()
 
     m_liststore->set_sort_column( -2, Gtk::SORT_ASCENDING );
     m_liststore->set_sort_column( m_col, Gtk::SORT_ASCENDING );
-    CORE::core_set_command( "switch_board" );
+
+    switch_view();
 }
 
 
@@ -852,6 +853,22 @@ void BoardView::focus_out()
 }
 
 
+//
+// ビュー切り替え
+//
+void BoardView::switch_view()
+{
+#ifdef _DEBUG
+    std::cout << "BoardView::switch_view\n";
+#endif
+
+    CORE::core_set_command( "switch_board" );
+}
+
+
+//
+// 閉じる
+//
 void BoardView::close_view()
 {
     BOARD::get_admin()->set_command( "close_currentview" );
@@ -1301,7 +1318,7 @@ bool BoardView::slot_button_press( GdkEventButton* event )
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
-    CORE::core_set_command( "switch_board" );
+    switch_view();
 
     return true;
 }

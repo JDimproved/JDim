@@ -576,6 +576,20 @@ void ArticleViewBase::focus_out()
 
 
 //
+// ビュー切り替え
+//
+void ArticleViewBase::switch_view()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::switch_view\n";
+#endif
+
+    CORE::core_set_command( "switch_article" );
+}
+
+
+
+//
 // 閉じる
 //
 void ArticleViewBase::close_view()
@@ -1338,7 +1352,7 @@ bool ArticleViewBase::slot_button_press( std::string url, int res_number, GdkEve
     // ホイールマウスジェスチャ
     get_control().MG_wheel_start( event );
 
-    CORE::core_set_command( "switch_article" );
+    switch_view();
 
     return true;
 }

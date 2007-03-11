@@ -16,6 +16,7 @@ namespace ARTICLE
         ArticleViewPreview( const std::string& url );
         ~ArticleViewPreview();
 
+        virtual void switch_view();
         virtual void operate_view( const int& control );
         virtual void append_dat( const std::string& dat, int num = 0 );
 

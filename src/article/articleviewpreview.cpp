@@ -14,6 +14,7 @@
 #include "jdlib/misctime.h"
 
 #include "controlid.h"
+#include "command.h"
 
 #include <sys/time.h>
 
@@ -60,6 +61,21 @@ ArticleViewPreview::~ArticleViewPreview()
 void ArticleViewPreview::pack_widget()
 {
     pack_start( *drawarea() );
+}
+
+
+
+
+//
+// ビュー切り替え
+//
+void ArticleViewPreview::switch_view()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewPreview::switch_view\n";
+#endif
+
+    CORE::core_set_command( "switch_message" );
 }
 
 

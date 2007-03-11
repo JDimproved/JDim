@@ -484,7 +484,7 @@ bool MessageViewBase::slot_button_press( GdkEventButton* event )
     std::cout << "MessageViewBase::slot_button_press\n";
 #endif
 
-    CORE::core_set_command( "switch_message" );
+    switch_view();
 
     return true;
 }
@@ -499,6 +499,19 @@ void MessageViewBase::relayout()
     init_font( CONFIG::get_fontname( FONT_MESSAGE ) );
 }
 
+
+
+//
+// ビュー切り替え
+//
+void MessageViewBase::switch_view()
+{
+#ifdef _DEBUG
+    std::cout << "MessageViewBase::switch_view\n";
+#endif
+
+    CORE::core_set_command( "switch_message" );
+}
 
 
 //
@@ -672,7 +685,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         m_button_undo.set_sensitive( true );
     }
 
-    CORE::core_set_command( "switch_message" );
+    switch_view();
     MESSAGE::get_admin()->set_command( "focus_current_view" );
 }
 

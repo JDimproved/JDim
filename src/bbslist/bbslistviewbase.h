@@ -97,6 +97,7 @@ namespace BBSLIST
         virtual void relayout();
         virtual void focus_view();
         virtual void focus_out();
+        virtual void switch_view();
         virtual void close_view();
         virtual void operate_view( const int& control );
         virtual void goto_top();

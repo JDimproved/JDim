@@ -165,6 +165,7 @@ namespace SKELETON
         virtual void update_finish(){}        
         virtual void focus_view(){}
         virtual void focus_out(){ m_control.MG_reset(); }
+        virtual void switch_view(){}
         virtual void close_view(){}
         virtual void delete_view(){}
         virtual void update_item( const std::string& ){}
