@@ -97,14 +97,6 @@ OpenArticleTab = Ctrl+Enter
 </block>
 
 
-<block class="border" header="他にJDを起動していないのに起動時に「他にJDが起動されている」というダイアログが表示される。">
-    <p>
-    何らかの理由でロックファイル( ~/.jd/JDLOCK ) が残っているとその表示が出るので
-    ロックファイルを消してからJDを起動する。
-    </p>
-</block>
-
-
 <block class="border" header="デフォルト名無しがfusianasanの板に書き込むのが恐い">
     <p>
     SETTING.TXTをロードしてデフォルト名無しがfusianasanだった時は
