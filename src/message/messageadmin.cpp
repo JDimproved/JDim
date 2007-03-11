@@ -160,13 +160,13 @@ void MessageAdmin::exec_command()
 
     // view の操作
     else if( command.command == "exec_Write" ){
-        if( m_view ) m_view->operate_view( CONTROL::ExecWrite );
+        if( m_view ) m_view->set_command( command.command );
     }
     else if( command.command == "tab_left" ){
-        if( m_view ) m_view->operate_view( CONTROL::TabLeft );
+        if( m_view ) m_view->set_command( command.command );
     }
     else if( command.command == "tab_right" ){
-        if( m_view ) m_view->operate_view( CONTROL::TabRight );
+        if( m_view ) m_view->set_command( command.command );
     }
 
     // window 開け閉じ

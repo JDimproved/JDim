@@ -49,10 +49,12 @@ MessageViewBase::MessageViewBase( const std::string& url )
     : SKELETON::View( url ),
       m_post( 0 ),
       m_preview( 0 ),
+      m_enable_menuslot( true ),
       m_button_write( ICON::WRITE ),
       m_button_cancel( Gtk::Stock::CLOSE ),
       m_button_undo( Gtk::Stock::UNDO ),
       m_button_not_close( Gtk::Stock::CANCEL ),
+      m_button_preview( Gtk::Stock::NEW ),
       m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" )
 {
 #ifdef _DEBUG
@@ -137,6 +139,10 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
         return m_post->is_loading();
     }
 
+    else if( command == "exec_Write" ) slot_write_clicked();
+    else if( command == "tab_left" ) tab_left();
+    else if( command == "tab_right" ) tab_right();
+
     // メッセージを追加
     else if( command == "add_message" )
     {
@@ -195,22 +201,29 @@ void MessageViewBase::save_name()
 //
 void MessageViewBase::pack_widget()
 {
+    // ツールバー
     m_entry_subject.set_text( DBTREE::article_subject( get_url() ) );
 
     m_button_not_close.set_active( ! SESSION::get_close_mes() );
 
     m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
-    m_button_cancel.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_cancel_clicked ) );
+    m_button_cancel.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::close_view ) );
     m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_undo_clicked ) );
     m_button_not_close.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_not_close_clicked ) );
+    m_button_preview.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_preview_clicked ) );
     
     m_tooltip.set_tip( m_button_write, CONTROL::get_label_motion( CONTROL::ExecWrite ) );
     m_tooltip.set_tip( m_button_cancel, CONTROL::get_label_motion( CONTROL::CancelWrite ) );
     m_tooltip.set_tip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
     m_tooltip.set_tip( m_button_not_close, "書き込み後にビューを閉じない" );
+    m_tooltip.set_tip( m_button_preview,
+                       "プレビュー表示\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n" + CONTROL::get_label_motion( CONTROL::TabRight ) + "\n"
+                       + CONTROL::get_label_motion( CONTROL::TabLeft )
+        );
 
     m_toolbar.pack_start( m_button_write, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 );
+    m_toolbar.pack_start( m_button_preview, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_button_undo, Gtk::PACK_SHRINK );
 
     m_toolbar.pack_end( m_button_cancel, Gtk::PACK_SHRINK );
@@ -257,13 +270,14 @@ void MessageViewBase::pack_widget()
     m_msgview.pack_start( m_text_message );
 
     m_text_message.set_accepts_tab( false );
-    m_text_message.sig_key_release().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );    
+    m_text_message.sig_key_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );    
     m_text_message.sig_button_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_button_press ) );
     m_text_message.get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::show_status ) );
 
     // プレビュー
     m_preview = CORE::ViewFactory( CORE::VIEW_ARTICLEPREVIEW, get_url() );
 
+    m_notebook.set_show_tabs( false );
     m_notebook.append_page( m_msgview, "メッセージ" );
     m_notebook.append_page( *m_preview, "プレビュー" );
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &MessageViewBase::slot_switch_page ) );
@@ -314,20 +328,20 @@ void MessageViewBase::operate_view( const int& control )
             
             // 書き込まずに閉じる
         case CONTROL::CancelWrite:
-            slot_cancel_clicked();
+            MESSAGE::get_admin()->set_command( "close_currentview" );
             break;
 
             // 書き込み実行
         case CONTROL::ExecWrite:
-            slot_write_clicked();
+            MESSAGE::get_admin()->set_command( "exec_Write" );
             break;
 
         case CONTROL::TabLeft:
-            tab_left();
+            MESSAGE::get_admin()->set_command( "tab_left" );
             break;
 
         case CONTROL::TabRight:
-            tab_right();
+            MESSAGE::get_admin()->set_command( "tab_right" );
             break;
     }
 }
@@ -385,15 +399,6 @@ void MessageViewBase::slot_write_clicked()
 
 
 //
-// キャンセルボタンを押した
-//
-void MessageViewBase::slot_cancel_clicked()
-{
-    close_view();
-}
-
-
-//
 // undoボタンを押した
 //
 void MessageViewBase::slot_undo_clicked()
@@ -403,17 +408,34 @@ void MessageViewBase::slot_undo_clicked()
 
 
 //
-// undoボタンを押した
+// ビューを閉じないボタンを押した
 //
 void MessageViewBase::slot_not_close_clicked()
 {
+    if( ! m_enable_menuslot ) return;
+
     SESSION::set_close_mes( ! SESSION::get_close_mes() );
 }
 
 
+//
+// プレビューボタンを押した
+//
+void MessageViewBase::slot_preview_clicked()
+{
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "MessageViewBase::slot_preview_clicked page = " << m_notebook.get_current_page() << std::endl;
+#endif
+
+    if( m_notebook.get_current_page() == PAGE_MESSAGE ) tab_right();
+    else tab_left();
+}
+
 
 //
-// テキストビューのキー操作
+// テキストビューでキーを押した
 //
 bool MessageViewBase::slot_key_press( GdkEventKey* event )
 {
@@ -434,7 +456,6 @@ bool MessageViewBase::slot_key_press( GdkEventKey* event )
 
     return true;
 }
-
 
 
 //
@@ -495,10 +516,14 @@ void MessageViewBase::close_view()
 //
 void MessageViewBase::tab_left()
 {
-    int page = m_notebook.get_current_page();
-    if( page == PAGE_MESSAGE ) return;
+#ifdef _DEBUG
+    std::cout << "MessageViewBase::tab_left\n";
+#endif
 
-    m_notebook.set_current_page( PAGE_MESSAGE );
+    int page = m_notebook.get_current_page();
+    if( page == PAGE_MESSAGE ) m_notebook.set_current_page( PAGE_PREVIEW );
+    else m_notebook.set_current_page( PAGE_MESSAGE );
+
     focus_view();
 }
 
@@ -508,10 +533,14 @@ void MessageViewBase::tab_left()
 //
 void MessageViewBase::tab_right()
 {
-    int page = m_notebook.get_current_page();
-    if( page == PAGE_PREVIEW ) return;
+#ifdef _DEBUG
+    std::cout << "MessageViewBase::tab_right\n";
+#endif
 
-    m_notebook.set_current_page( PAGE_PREVIEW );
+    int page = m_notebook.get_current_page();
+    if( page == PAGE_PREVIEW ) m_notebook.set_current_page( PAGE_MESSAGE );
+    else m_notebook.set_current_page( PAGE_PREVIEW );
+
     m_preview->focus_view();
 }
 
@@ -584,11 +613,15 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
     std::cout << "MessageViewBase::slot_switch_page : " << get_url() << " page = " << page << std::endl;
 #endif
 
+    // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
+    m_enable_menuslot = false;
+
     // プレビュー表示
     if( m_preview && page == PAGE_PREVIEW ){
 
-        // 編集ボタン無効化
+        // 各ボタンの状態更新
         m_button_undo.set_sensitive( false );
+        m_button_preview.set_active( true );
 
         std::string msg = m_text_message.get_text();
         msg = MISC::replace_str( msg, "\"", "&quot;" );
@@ -643,12 +676,15 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
     // メッセージビュー
     else if( page == PAGE_MESSAGE ){
 
-        // 編集ボタン有効化
+        // 各ボタンの状態更新
         m_button_undo.set_sensitive( true );
+        m_button_preview.set_active( false );
     }
 
     switch_view();
     MESSAGE::get_admin()->set_command( "focus_current_view" );
+
+    m_enable_menuslot = true;
 }
 
 

@@ -293,6 +293,8 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         // キャンセルする
         case CONTROL::ExecWrite:
         case CONTROL::CancelWrite:
+        case CONTROL::TabLeft:
+        case CONTROL::TabRight:
             return true;
 
         case CONTROL::HomeEdit: cursor_home(); return true; 
@@ -323,6 +325,8 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
         // キャンセルする
         case CONTROL::ExecWrite:
         case CONTROL::CancelWrite:
+        case CONTROL::TabLeft:
+        case CONTROL::TabRight:
             return true;
 
         case CONTROL::HomeEdit:
