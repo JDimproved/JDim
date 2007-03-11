@@ -159,7 +159,6 @@ namespace CONTROL
 
         { "CancelWrite", "書き込みキャンセル" },
         { "ExecWrite", "書き込み実行" },
-        { "InputAA", "アスキーアート入力" },
 
         { "", "" },
 
@@ -177,6 +176,8 @@ namespace CONTROL
 
         { "DeleteEdit", "一文字削除" },
         { "UndoEdit", "元に戻す(Undo)" },
+
+        { "InputAA", "アスキーアート入力" },
 
         { "", "" },
 

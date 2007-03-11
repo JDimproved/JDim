@@ -135,7 +135,6 @@ void KeyConfig::load_conf()
     // MESSAGE
     SETMOTION( "CancelWrite", "Alt+q" );
     SETMOTION( "ExecWrite", "Alt+w" ); 
-    SETMOTION( "InputAA", "Alt+a" );
 
     // EDIT
     SETMOTION( "HomeEdit", "" );
@@ -149,6 +148,8 @@ void KeyConfig::load_conf()
     SETMOTION( "DeleteEdit", "" );
 
     SETMOTION( "UndoEdit", "Ctrl+/ Ctrl+z" );
+
+    SETMOTION( "InputAA", "Alt+a" );
 }
 
 

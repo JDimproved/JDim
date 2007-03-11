@@ -167,7 +167,6 @@ namespace CONTROL
 
         CancelWrite,
         ExecWrite,
-        InputAA,
 
         MESSAGEMOTION_END,
 
@@ -184,6 +183,8 @@ namespace CONTROL
 
         DeleteEdit,
         UndoEdit,
+
+        InputAA,
 
         EDITMOTION_END,
 
