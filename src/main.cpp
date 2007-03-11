@@ -13,8 +13,8 @@
 
 #include <signal.h>
 #include <string>
-#include <fstream>
 #include <sys/time.h>
+#include <errno.h>
 
 #ifdef USE_GNOMEUI
 #include <gnome.h>
@@ -34,26 +34,53 @@ struct XSMPDATA
 
 WinMain* Win_Main = NULL;
 
+//
 // ロック
-// 既にロックされていたら false
-bool lock_jd()
+//
+// 下のいずれかの値が戻る
+//
+
+enum
 {
+    LOCK_OK = 0,  // ロックした
+    LOCK_ALIVE,   // 他のJDが起動している
+    LOCK_EXIST    // ロックファイルはあるがJDは起動していない
+};
+
+int lock_jd()
+{
+    pid_t pid = getpid();
+    char str_pid[ 256 ];
     std::string path = CACHE::path_lock();
 
-    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) return false;
+    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ){
 
-    std::ofstream ofs;
-    ofs.open( path.c_str() );
-    if( !ofs.is_open() ){
+        CACHE::load_rawdata( path, str_pid, 256 );
+        pid = atoi( str_pid );
+
+#ifdef _DEBUG
+        std::cout << "lock file exits pid = " << pid << std::endl;
+#endif
+
+        int killret = kill( pid, 0 );
+        if( killret == 0 ||  errno == EPERM ){
+
+#ifdef _DEBUG
+            std::cout << "other jd is alive\n";
+#endif
+            return LOCK_ALIVE;
+
+        }
+
+        return LOCK_EXIST;
+    }
+
+    snprintf( str_pid, 256, "%d", pid );
+    if( ! CACHE::save_rawdata( path, str_pid, strlen( str_pid ) ) ){
         MISC::ERRMSG( "can't open " + path );
     }
-    else{
 
-        ofs << "lock";
-        ofs.close();
-    }
-
-    return true;
+    return LOCK_OK;
 }
 
 
@@ -392,15 +419,29 @@ int main( int argc, char **argv )
     if( init ) CACHE::mkdir_root();
 
     // ロック
-    if( ! lock_jd() ){
+    int lock = lock_jd();
+    if( lock == LOCK_ALIVE ){
 
         Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDは既に起動しています。起動しますか？",
                                                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
         int ret = mdiag->run();
         delete mdiag;
         if( ret != Gtk::RESPONSE_OK ) return 0;
-    }
 
+        unlock_jd();
+        lock_jd();
+    }
+    else if( lock == LOCK_EXIST ){ 
+
+        Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "前回起動時にJDが異常終了しました。\n\nロックファイルを削除して起動しますか？",
+                                                            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+        int ret = mdiag->run();
+        delete mdiag;
+        if( ret != Gtk::RESPONSE_OK ) return 0;
+
+        unlock_jd();
+        lock_jd();
+    }
 
     const std::string locale = get_locale();
     if( locale != "ja_JP.UTF-8" && locale != "ja_JP.utf8" ){
