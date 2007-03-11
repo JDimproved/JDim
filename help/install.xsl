@@ -22,34 +22,17 @@
 <xsl:template match="dist">
     <div class="border">
         <h3 class="blue"><a name="{generate-id()}"><xsl:value-of select="@name" /></a></h3>
-        <xsl:apply-templates select="other" />
-        <xsl:apply-templates select="res" />
+        <xsl:apply-templates />
     </div>
 </xsl:template>
 
-<xsl:template match="other">
-    <xsl:apply-templates />
-</xsl:template>
-
-<xsl:template match="res">
-    <p><xsl:attribute name="class">
-    <xsl:choose>
-        <xsl:when test="contains( mail, 'sage' )">sage</xsl:when>
-        <xsl:otherwise>age</xsl:otherwise>
-    </xsl:choose>
-    </xsl:attribute>
-    <span class="number"><xsl:value-of select="number" /></span>
-    <span class="underline">名前</span>:<span class="nanashi"><xsl:value-of select="name" /></span>
-    <span class="mail"> [<xsl:value-of select="mail" />]</span>:<xsl:value-of select="date" />
-    </p>
-
-    <div class="basictext">
-        <xsl:apply-templates select="content" />
-    </div>
-</xsl:template>
-
-<xsl:template match="content">
-    <xsl:apply-templates />
+<xsl:template match="other|res">
+    <pre>
+    <xsl:if test="name()='res'">
+        <xsl:attribute name="class">res</xsl:attribute>
+    </xsl:if>
+    <xsl:value-of select="substring-after( ., '&#x0A;' )" />
+    </pre>
 </xsl:template>
 
 </xsl:stylesheet>

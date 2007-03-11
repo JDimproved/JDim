@@ -82,7 +82,7 @@ a:link:hover, a:visited:hover
 }
 *.small
 {
-    font-size: 80%;	
+    font-size: 80%;    
 }
 
 /* リスト */
@@ -116,11 +116,21 @@ div.border
     margin: 12pt;
     padding: 12pt;
 }
-div.basictext
+
+pre.res, pre.history
 {
     margin-left: 12pt;
 }
-
+/*pre.res:first-letter
+{
+    color: #000080;
+}*/
+pre.res:first-line
+{
+    font-weight: bold;
+    color: #005000;
+    line-height: 160%;
+}
 
 /* Q&A */
 div.qa

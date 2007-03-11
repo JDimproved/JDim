@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="main.xsl"?>
 
 
-<document header="操作方法" modified="20070307">
+<document header="操作方法" modified="20070311">
 
 <block class="border" header="共通操作">
 
@@ -48,12 +48,12 @@
     <value>お気に入り登録</value>
 </item>
 <item>
-    <key class="blue">Shift+F10, Ctrl+m</key>
-    <value>ポップアップメニュー表示</value>
+     <key class="blue">Shift+F10, Ctrl+m</key>
+     <value>ポップアップメニュー表示</value>
 </item>
 <item>
     <key class="blue">F8</key>
-    <value>メニューバー表示切り替え</value>
+      <value>メニューバー表示切り替え</value>
 </item>
 <item>
     <key class="blue">F9</key>
@@ -273,9 +273,7 @@
 <p>
 ポップアップ表示されている時にマウスの右ボタンをクリックし、そのままボタンを離さずに
 カーソルを動かすと、ポップアップが固定されて閉じなくなるのでカーソルを他のホップアップ
-の上に移動できる。ポップアップの外にカーソルが出ると閉じる。
-またタッチパッドなどを使用しているときは、設定メニューから「シングルクリックで多重ポップアップモードに移行する」
-を有効にするとタップするだけでカーソルがポップアップの上に移動するようになる。
+の上に移動できる。ポップアップの外にカーソルが出ると閉じる
 </p>
 
 <array>

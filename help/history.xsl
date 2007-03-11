@@ -27,7 +27,7 @@
         <xsl:otherwise><xsl:number format="1" /></xsl:otherwise>
     </xsl:choose>
     </span>
-    <span class="underline">バージョン</span>:<span class="nanashi"><xsl:value-of select="@version" /></span>
+    <span class="underline">バージョン</span>：<span class="nanashi"><xsl:value-of select="@version" /></span>
     <span><xsl:attribute name="class">
     <xsl:choose>
         <xsl:when test="name()='prerelease'"></xsl:when>
@@ -39,12 +39,12 @@
         <xsl:when test="name()='prerelease'">sage</xsl:when>
         <xsl:when test="position()=last()"><a name="new">new</a></xsl:when>
         <xsl:otherwise>sage</xsl:otherwise>
-    </xsl:choose>]</span>:<xsl:value-of select="@date" /> 00:00:00
+    </xsl:choose>]</span>：<xsl:value-of select="@date" /> 00:00:00
     </p>
 
-    <div class="basictext">
-        <xsl:apply-templates />
-    </div>
+    <pre class="history">
+        <xsl:value-of select="substring-after( ., '&#x0A;' )" />
+    </pre>
 </xsl:template>
 
 </xsl:stylesheet>
