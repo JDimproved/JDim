@@ -167,6 +167,9 @@ namespace CONFIG
         // スレビューで文字幅の近似を厳密にする        
         bool strict_char_width;
 
+        // datのパース時にURL判定を甘くする(^なども含める)
+        bool loose_url;
+
         // ユーザーコマンドで選択できない項目を非表示にする
         bool hide_usrcmd;
 

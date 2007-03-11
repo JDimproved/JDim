@@ -211,6 +211,8 @@ const bool CONFIG::get_draw_underline(){ return get_confitem()->draw_underline; 
 const bool CONFIG::get_strict_char_width(){ return get_confitem()->strict_char_width; }
 void CONFIG::set_strict_char_width( bool strictwidth ){ get_confitem()->strict_char_width = strictwidth; }
 
+const bool CONFIG::get_loose_url(){ return get_confitem()->loose_url; }
+
 const bool CONFIG::get_hide_usrcmd(){ return get_confitem()->hide_usrcmd; }
 const int CONFIG::get_max_show_usrcmd(){ return get_confitem()->max_show_usrcmd; }
 

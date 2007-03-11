@@ -198,6 +198,9 @@ namespace CONFIG
     const bool get_strict_char_width();
     void set_strict_char_width( bool strictwidth );
 
+    // datのパース時にURL判定を甘くする(^なども含める)
+    const bool get_loose_url();
+
     // ユーザーコマンドで選択できない項目を非表示にする
     const bool get_hide_usrcmd();
 

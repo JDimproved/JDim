@@ -279,6 +279,9 @@ const bool ConfigItems::load()
     // スレビューで文字幅の近似を厳密にする
     strict_char_width = cf.get_option( "strict_char_width", false );
 
+    // datのパース時にURL判定を甘くする(^なども含める)
+    loose_url = cf.get_option( "loose_url", LOOSE_URL );
+
     // ユーザーコマンドで選択できない項目を非表示にする
     hide_usrcmd = cf.get_option( "hide_usrcmd", false );
 
@@ -439,6 +442,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "draw_underline", draw_underline );
     cf.update( "strict_char_width", strict_char_width );
+    cf.update( "loose_url", loose_url );
 
     cf.update( "hide_usrcmd", hide_usrcmd );
     cf.update( "max_show_usrcmd", max_show_usrcmd );
