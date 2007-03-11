@@ -1666,6 +1666,9 @@ enum
 
 bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* str_link, int lng_link )
 {
+    // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
+    const bool loose_url = CONFIG::get_loose_url();
+
     // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
     int linktype = LINKTYPE_NONE;
 
@@ -1696,63 +1699,74 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
     if( linktype == LINKTYPE_NONE ) return false;
 
     // リンクの長さを取得
+    bool url_encode = false;
+    char cchar = *( str_in + n_in );
     n_in = 0;
     while(
         // バッファサイズを越えない
         n_in < lng_in
 
         // < ではない
-        && !( *( str_in + n_in ) == '&' && *( str_in + n_in +1 ) == 'l' && *( str_in + n_in +2 ) == 't'
+        && !( cchar == '&' && *( str_in + n_in +1 ) == 'l' && *( str_in + n_in +2 ) == 't'
               && *( str_in + n_in +3) == ';' ) 
 
         // > ではない
-        && !( *( str_in + n_in ) == '&' && *( str_in + n_in +1 ) == 'g' && *( str_in + n_in +2 ) == 't'
+        && !( cchar == '&' && *( str_in + n_in +1 ) == 'g' && *( str_in + n_in +2 ) == 't'
               && *( str_in + n_in +3 ) == ';' ) 
 
         // " ではない
-        && !( *( str_in + n_in ) == '&' && *( str_in + n_in +1 ) == 'q' && *( str_in + n_in +2 ) == 'u'
+        && !( cchar == '&' && *( str_in + n_in +1 ) == 'q' && *( str_in + n_in +2 ) == 'u'
               && *( str_in + n_in +3 ) == 'o' && *( str_in + n_in +4 ) == 't' && *( str_in + n_in +5 ) == ';' ) 
 
         // [-a-zA-Z0-9!#$%&'()~=@;+:*,./?_] が続く限りwhileで回す
         && (
-            ( *( str_in + n_in ) >= '0' && *( str_in + n_in ) <= '9' )
-            || ( *( str_in + n_in ) >= 'a' && *( str_in + n_in ) <= 'z' )
-            || ( *( str_in + n_in ) >= 'A' && *( str_in + n_in ) <= 'Z' )
-            || *( str_in + n_in ) == '!'
-            || *( str_in + n_in ) == '#'
-            || *( str_in + n_in ) == '$'
-            || *( str_in + n_in ) == '%'
-            || *( str_in + n_in ) == '&'
-            || *( str_in + n_in ) == '\''
-            || *( str_in + n_in ) == '('
-            || *( str_in + n_in ) == ')'
-            || *( str_in + n_in ) == '~'
-            || *( str_in + n_in ) == '-'
-            || *( str_in + n_in ) == '='
-            || *( str_in + n_in ) == '@'
-            || *( str_in + n_in ) == ';'
-            || *( str_in + n_in ) == '+'
-            || *( str_in + n_in ) == ':'
-            || *( str_in + n_in ) == '*'
-            || *( str_in + n_in ) == ','
-            || *( str_in + n_in ) == '.'
-            || *( str_in + n_in ) == '/'
-            || *( str_in + n_in ) == '?'
-            || *( str_in + n_in ) == '_'
+            ( cchar >= '0' && cchar <= '9' )
+            || ( cchar >= 'a' && cchar <= 'z' )
+            || ( cchar >= 'A' && cchar <= 'Z' )
+            || cchar == '!'
+            || cchar == '#'
+            || cchar == '$'
+            || cchar == '%'
+            || cchar == '&'
+            || cchar == '\''
+            || cchar == '('
+            || cchar == ')'
+            || cchar == '~'
+            || cchar == '-'
+            || cchar == '='
+            || cchar == '@'
+            || cchar == ';'
+            || cchar == '+'
+            || cchar == ':'
+            || cchar == '*'
+            || cchar == ','
+            || cchar == '.'
+            || cchar == '/'
+            || cchar == '?'
+            || cchar == '_'
+
+            || ( loose_url && cchar == '^' )
+
             )
-        ) ++n_in;
+        ){
+
+        if( loose_url && cchar == '^' ) url_encode = true;
+
+        ++n_in;
+        cchar = *( str_in + n_in );
+    }
 
     // 最後に ()が来たら除く
     if( *( str_in + n_in -1 ) == '('
         || *( str_in + n_in -1 ) == ')' ) --n_in;
 
     int offset = 0;
-    if( linktype == LINKTYPE_TTP || linktype == LINKTYPE_TP ){ // ttp://, tp:// の場合、リンクの先頭にhを補間
+    if( linktype == LINKTYPE_TTP || linktype == LINKTYPE_TP ){ // ttp://, tp:// の場合、リンクの先頭にhを補完
 
         str_link[ 0 ] = 'h';
         offset = 1;
 
-        if( linktype == LINKTYPE_TP ){ // tp:// の場合、さらにリンク先頭にtを補間
+        if( linktype == LINKTYPE_TP ){ // tp:// の場合、さらにリンク先頭にtを補完
             str_link[ 1 ] = 't';
             offset = 2;
         }
@@ -1760,8 +1774,24 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
 
     if( n_in + offset > lng_link ) return false;
 
-    memcpy( str_link + offset, str_in, n_in );
-    str_link[ n_in + offset ] = '\0';
+    if( ! url_encode ){
+        memcpy( str_link + offset, str_in, n_in );
+        str_link[ n_in + offset ] = '\0';
+    }
+    else{ // URLエンコードが必要な場合
+
+        char *pos = str_link + offset;
+        for( int i = 0; i < n_in; ++i, ++pos ){
+
+            if( str_in[ i ] == '^' ){ // '^' -> %5e
+                *( pos++ ) = '%';
+                *( pos++ ) = '5';
+                *pos = 'e';
+            }
+            else *pos = str_in[ i ];
+        }
+        *pos = '\0';
+    }
 
     return true;
 }
