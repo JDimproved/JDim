@@ -522,14 +522,16 @@ idpopup_by_mo, refpopup_by_mo,namepopup_by_mo 設定追加<br />
 ヘルプファイルをXML化した( thank to tamagodake氏)<br />
 フォント、色詳細設定ダイアログ追加( thank to tamagodake氏)<br />
 スレ一覧の速度の計算アルゴリズムを変えた<br />
-Debian GNU/kFreeBSD に configure.inを対応した
-ダイアログボックスのフォーカス処理をきちんとするようにした
-書き込みビューを開いているときにスレビューの「レス」「参照してレス」、および「引用してレス」
-を選択すると書き込みビューに引用できるようにした( thank to tamagodake氏)
-書き込みビューに「書き込み後に閉じない」ボタン追加
-メニュー項目の見直しと整理
-utf8環境で起動していないときは警告を出すようにした( thank to tamagodake氏)
-メニューバーの表示設定追加(F8)
+Debian GNU/kFreeBSD に configure.inを対応した<br />
+ダイアログボックスのフォーカス処理をきちんとするようにした<br />
+書き込みビューを開いているときにスレビューの「レス」「参照してレス」、および「引用してレス」<br />
+を選択すると書き込みビューに引用できるようにした( thank to tamagodake氏)<br />
+書き込みビューに「書き込み後に閉じない」ボタン追加<br />
+メニュー項目の見直しと整理<br />
+utf8環境で起動していないときは警告を出すようにした( thank to tamagodake氏)<br />
+メニューバーの表示設定追加(F8)<br />
+スレビューでのホイールスクロール速度設定追加( jd.confのscroll_size )<br />
+RFC規定外の文字(^など)もURL判定に用いる設定追加( jd.confのloose_url)<br />
 </prerelease>
 
 

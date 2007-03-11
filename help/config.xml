@@ -77,6 +77,10 @@
 
 <array header="・スレビュー">
 <item>
+    <key class="blue">scroll_size</key>
+    <value>スレビューでマウスホイールを回したときのスクロール速度</value>
+</item>
+<item>
     <key class="blue">margin_popup</key>
     <value>ポップアップとカーソルの間のマージン(ピクセル)</value>
 </item>
@@ -131,6 +135,10 @@
 <item>
     <key class="blue">max_show_usrcmd</key>
     <value>ユーザコマンド数が指定した数以上の時はサブメニュー表示にする</value>
+</item>
+<item>
+    <key class="blue">loose_url</key>
+    <value>RFC規定外の文字(^など)もURL判定に用いる</value>
 </item>
 </array>
 
