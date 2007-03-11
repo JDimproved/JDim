@@ -7,7 +7,6 @@
 #include "messageadmin.h"
 #include "messageviewbase.h"
 #include "post.h"
-#include "aamenu.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -30,7 +29,6 @@
 #include "fontid.h"
 #include "cache.h"
 #include "session.h"
-#include "aamanager.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -55,8 +53,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_button_cancel( Gtk::Stock::CLOSE ),
       m_button_undo( Gtk::Stock::UNDO ),
       m_button_not_close( Gtk::Stock::CANCEL ),
-      m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" ),
-      m_popupmenu( NULL )
+      m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" )
 {
 #ifdef _DEBUG
     std::cout << "MessageViewBase::MessageViewBase " << get_url() << std::endl;
@@ -95,9 +92,6 @@ MessageViewBase::~MessageViewBase()
 
     if( m_str_iconv ) free( m_str_iconv );
     m_str_iconv = NULL;
-
-    if( m_popupmenu ) delete m_popupmenu;
-    m_popupmenu = NULL;
 }
 
 
@@ -164,7 +158,7 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
             if( mdiag.run() != Gtk::RESPONSE_OK ) return false;
         }
 
-        m_text_message.insert( arg, true );
+        m_text_message.insert_str( arg, true );
     }
 
 
@@ -335,41 +329,9 @@ void MessageViewBase::operate_view( const int& control )
         case CONTROL::TabRight:
             tab_right();
             break;
-
-        case CONTROL::InputAA:
-            show_aalist_popup();
-            break;
     }
 }
 
-
-//
-// AA ポップアップメニュー表示
-//
-void MessageViewBase::show_aalist_popup()
-{
-    if( CORE::get_aamanager()->get_size() ){
-
-        if( m_popupmenu ) delete m_popupmenu;
-        m_popupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ), get_url() ) );
-        m_popupmenu->popup( Gtk::Menu::SlotPositionCalc(
-                                sigc::mem_fun( *this, &MessageViewBase::slot_popup_aamenu_pos ) ),
-                            0, gtk_get_current_event_time() );
-    }
-}
-
-
-//
-// AA ポップアップメニューの位置を決める
-//
-void MessageViewBase::slot_popup_aamenu_pos( int& x, int& y, bool& push_in )
-{
-    Gdk::Rectangle rect = m_text_message.get_cursor_root_origin();
-
-    x = rect.get_x();
-    y = rect.get_y() + rect.get_height();
-    push_in = false;
-}
 
 
 //
