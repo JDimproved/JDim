@@ -4,8 +4,10 @@
 #include "jddebug.h"
 
 #include "editview.h"
+#include "aamenu.h"
 
 #include "controlid.h"
+#include "aamanager.h"
 
 using namespace SKELETON;
 
@@ -13,7 +15,8 @@ using namespace SKELETON;
 EditTextView::EditTextView() :
     Gtk::TextView(),
     m_cancel_change( false ),
-    m_line_offset( -1 )
+    m_line_offset( -1 ),
+    m_popupmenu( NULL )
 {
     // コントロールモード設定
     m_control.add_mode( CONTROL::MODE_EDIT );
@@ -23,12 +26,19 @@ EditTextView::EditTextView() :
 }
 
 
+EditTextView::~EditTextView()
+{
+    if( m_popupmenu ) delete m_popupmenu;
+    m_popupmenu = NULL;
+}
+
+
 //
 // カーソルの位置に挿入
 //
 // use_br == true なら改行を入れる
 //
-void EditTextView::insert( const std::string& str, bool use_br )
+void EditTextView::insert_str( const std::string& str, bool use_br )
 {
     std::string br;
 
@@ -283,7 +293,6 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         // キャンセルする
         case CONTROL::ExecWrite:
         case CONTROL::CancelWrite:
-        case CONTROL::InputAA:
             return true;
 
         case CONTROL::HomeEdit: cursor_home(); return true; 
@@ -296,6 +305,8 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
 
         case CONTROL::DeleteEdit: delete_char(); return true;
         case CONTROL::UndoEdit: undo(); return true;
+
+        case CONTROL::InputAA: show_aalist_popup(); return true;
     }
 
     return Gtk::TextView::on_key_press_event( event );
@@ -312,7 +323,6 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
         // キャンセルする
         case CONTROL::ExecWrite:
         case CONTROL::CancelWrite:
-        case CONTROL::InputAA:
             return true;
 
         case CONTROL::HomeEdit:
@@ -325,6 +335,8 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
 
         case CONTROL::DeleteEdit:
         case CONTROL::UndoEdit:
+
+        case CONTROL::InputAA:
             return true;
     }
 
@@ -349,4 +361,44 @@ Gdk::Rectangle EditTextView::get_cursor_root_origin()
     rect.set_y( y + wy );
 
     return rect;
+}
+
+
+//
+// AA ポップアップメニュー表示
+//
+void EditTextView::show_aalist_popup()
+{
+    if( CORE::get_aamanager()->get_size() )
+    {
+        if( m_popupmenu ) delete m_popupmenu;
+        m_popupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ) ) );
+        m_popupmenu->popup( Gtk::Menu::SlotPositionCalc(
+                            sigc::mem_fun( *this, &EditTextView::slot_popup_aamenu_pos ) ),
+                            0, gtk_get_current_event_time() );
+
+        m_popupmenu->sig_selected().connect( sigc::mem_fun( *this, &EditTextView::slot_aamenu_selected ) );
+    }
+}
+
+
+//
+// AA ポップアップの表示位置を決定
+//
+void EditTextView::slot_popup_aamenu_pos( int& x, int& y, bool& push_in )
+{
+    Gdk::Rectangle rect = get_cursor_root_origin();
+
+    x = rect.get_x();
+    y = rect.get_y() + rect.get_height();
+    push_in = false;
+}
+
+
+//
+// AAポップアップで選択された
+//
+void EditTextView::slot_aamenu_selected( const std::string& aa )
+{
+    insert_str( aa, false );
 }

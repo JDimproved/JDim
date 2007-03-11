@@ -1,6 +1,7 @@
 noinst_LIBRARIES = libskeleton.a
 
 libskeleton_a_SOURCES = \
+	aamenu.cpp \
 	admin.cpp \
 	loadable.cpp \
 	treeview.cpp \
@@ -18,6 +19,7 @@ libskeleton_a_SOURCES = \
 	vbox.cpp
 
 noinst_HEADERS = \
+	aamenu.h \
 	admin.h \
 	loadable.h \
 	lockable.h \

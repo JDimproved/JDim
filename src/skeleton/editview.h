@@ -9,6 +9,8 @@
 
 namespace SKELETON
 {
+    class AAMenu;
+
     typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_PRESS;
     typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_RELEASE;
     typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_PRESS;
@@ -45,6 +47,9 @@ namespace SKELETON
         int m_pre_line;
         int m_line_offset;
 
+        // AAポップアップ
+        AAMenu* m_popupmenu;
+
       public:
 
         SIG_KEY_PRESS sig_key_press(){ return m_sig_key_press; }
@@ -52,8 +57,9 @@ namespace SKELETON
         SIG_BUTTON_PRESS sig_button_press() { return m_sig_button_press; }
 
         EditTextView();
+        virtual ~EditTextView();
 
-        void insert( const std::string& str, bool use_br );
+        void insert_str( const std::string& str, bool use_br );
 
         void cursor_up();
         void cursor_down();        
@@ -79,7 +85,13 @@ namespace SKELETON
         void slot_buffer_changed();
 
       private:
+
         void cursor_up_down( bool up );
+
+        // AA ポップアップ
+        void slot_popup_aamenu_pos( int& x, int& y, bool& push_in );
+        void show_aalist_popup();
+        void slot_aamenu_selected( const std::string& aa );
     };
 
 
@@ -107,7 +119,7 @@ namespace SKELETON
         void set_text( const Glib::ustring& text ){ m_textview.get_buffer()->set_text( text ); }
         Glib::ustring get_text(){ return m_textview.get_buffer()->get_text(); }
 
-        void insert( const std::string& str, bool use_br ){ m_textview.insert( str, use_br ); }
+        void insert_str( const std::string& str, bool use_br ){ m_textview.insert_str( str, use_br ); }
 
         void set_editable( bool editable ){ m_textview.set_editable( editable ); }
         void set_accepts_tab( bool accept ){ m_textview.set_accepts_tab( accept ); }
