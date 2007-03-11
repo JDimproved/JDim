@@ -2766,7 +2766,7 @@ void Core::switch_article( bool present )
             set_right_current_page( PAGE_ARTICLE );
         }
 
-        ARTICLE::get_admin()->set_command_immediately( "focus_current_view" );
+        ARTICLE::get_admin()->set_command( "focus_current_view" );
         SESSION::set_focused_admin( SESSION::FOCUS_ARTICLE );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_ARTICLE );
 
@@ -2805,7 +2805,7 @@ void Core::switch_board( bool present )
             set_right_current_page( PAGE_BOARD );
         }
 
-        BOARD::get_admin()->set_command_immediately( "focus_current_view" );
+        BOARD::get_admin()->set_command( "focus_current_view" );
         SESSION::set_focused_admin( SESSION::FOCUS_BOARD );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_BOARD );
 
@@ -2831,16 +2831,25 @@ void Core::switch_sidebar( const std::string& url, bool present )
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
-    std::cout << "Core::switch_sidebar url - " << url << std::endl;
+    std::cout << "Core::switch_sidebar url = " << url
+              << " current = " << BBSLIST::get_admin()->get_current_url() << std::endl;
 #endif
 
     if( ! BBSLIST::get_admin()->empty() ){
 
         // サイドバーを開く
-        if( ! SESSION::show_sidebar() ) toggle_sidebar();
+        if( ! SESSION::show_sidebar() ){
+#ifdef _DEBUG
+            std::cout << "open\n";
+#endif
+            toggle_sidebar();
+        }
 
         // 閉じる
         else if( BBSLIST::get_admin()->get_current_url() == url ){
+#ifdef _DEBUG
+            std::cout << "close\n";
+#endif
             toggle_sidebar();
             return;
         }
@@ -2849,14 +2858,11 @@ void Core::switch_sidebar( const std::string& url, bool present )
 
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
-
-            // サイドバーが隠れていたら開く
-            if( ! SESSION::show_sidebar() ) toggle_sidebar();
         }
 
         if( ! url.empty() ) BBSLIST::get_admin()->set_command( "switch_view", url );
 
-        BBSLIST::get_admin()->set_command_immediately( "focus_current_view" ); 
+        BBSLIST::get_admin()->set_command( "focus_current_view" ); 
         SESSION::set_focused_admin( SESSION::FOCUS_SIDEBAR );
     }
 
@@ -2894,7 +2900,7 @@ void Core::switch_image( bool present )
             SESSION::set_focused_admin_sidebar( SESSION::FOCUS_IMAGE );
         }
 
-        IMAGE::get_admin()->set_command_immediately( "focus_current_view" );
+        IMAGE::get_admin()->set_command( "focus_current_view" );
         if( SESSION::get_embedded_img() ) SESSION::set_img_shown( true );
     }
 
@@ -2932,7 +2938,7 @@ void Core::switch_message( bool present )
             SESSION::set_focused_admin_sidebar( SESSION::FOCUS_MESSAGE );
         }
 
-        MESSAGE::get_admin()->set_command_immediately( "focus_current_view" );
+        MESSAGE::get_admin()->set_command( "focus_current_view" );
     }
 
     set_sensitive_view_button();

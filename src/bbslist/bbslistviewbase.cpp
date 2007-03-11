@@ -411,10 +411,17 @@ void BBSListViewBase::focus_view()
         return;
     }
 
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::focus_view url = " << get_url() << std::endl;
+#endif 
+
     m_treeview.grab_focus();
 
-    if( get_url() == URL_BBSLISTVIEW ) get_toolbar().set_combo( COMBO_BBSLIST );
-    if( get_url() == URL_FAVORITEVIEW ) get_toolbar().set_combo( COMBO_FAVORITE );
+    if( get_url() == URL_BBSLISTVIEW && get_toolbar().get_combo()  != COMBO_BBSLIST )
+        get_toolbar().set_combo( COMBO_BBSLIST );
+
+    else if( get_url() == URL_FAVORITEVIEW && get_toolbar().get_combo() != COMBO_FAVORITE )
+        get_toolbar().set_combo( COMBO_FAVORITE );
 }
 
 
@@ -881,11 +888,10 @@ bool BBSListViewBase::slot_key_press( GdkEventKey* event )
 bool BBSListViewBase::slot_key_release( GdkEventKey* event )
 {
 #ifdef _DEBUG
-    guint key = event->keyval;
     bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
     bool shift = ( event->state ) & GDK_SHIFT_MASK;
 
-    std::cout << "BBSListViewBase::slot_key_release key = " << key << " ctrl = " << ctrl << " shift = " << shift << std::endl;
+    std::cout << "BBSListViewBase::slot_key_release key = " << event->keyval << " ctrl = " << ctrl << " shift = " << shift << std::endl;
 #endif
     
     // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
@@ -2236,14 +2242,19 @@ void BBSListViewBase::slot_entry_operate( int controlid )
 // ラベルのコンボボックスの表示が変わった
 void BBSListViewBase::slot_combo_changed()
 {
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::slot_combo_changed url = " << get_url()
+              << " combo = " << get_toolbar().get_combo() << std::endl;
+#endif
+
     switch( get_toolbar().get_combo() ){
 
         case COMBO_BBSLIST:
-            CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
+            if( get_url() != URL_BBSLISTVIEW ) CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
             break;
 
         case COMBO_FAVORITE:
-            CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW );
+            if( get_url() != URL_FAVORITEVIEW ) CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW );
             break;
     }
 }
