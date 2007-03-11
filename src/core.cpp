@@ -261,10 +261,6 @@ void Core::run( bool init )
     // 外観
     m_action_group->add( Gtk::Action::create( "View_Menu", "外観" ) );
 
-
-    m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "ShowMenuBar", std::string(), SESSION::show_menubar() ),
-                         sigc::mem_fun( *this, &Core::toggle_menubar ) );
-
     // ツールバー
     m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー" ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), false ),
@@ -395,9 +391,6 @@ void Core::run( bool init )
 
         "<menu action='View_Menu'>"
 
-        "<menuitem action='ShowMenuBar'/>"
-        "<separator/>"
-
         "<menu action='Toolbar_Menu'>"
         "<menuitem action='ToolbarPos0'/>"
         "<menuitem action='ToolbarPos1'/>"
@@ -464,17 +457,23 @@ void Core::run( bool init )
 
         "</menubar>"
         "</ui>";
+
     m_ui_manager->add_ui_from_string( str_ui );
     m_menubar = dynamic_cast< Gtk::MenuBar* >( m_ui_manager->get_widget("/menu_bar") );
     assert( m_menubar );
 
-    // 板履歴メニュー追加
-    m_histmenu_board = Gtk::manage( new HistoryMenuBoard() );
-    m_menubar->items().insert( --(--( m_menubar->items().end() )), *m_histmenu_board );
+    // 履歴メニュー追加
+    Gtk::MenuItem* menuitem = Gtk::manage( new Gtk::MenuItem( "履歴(_S)", true ) );
+    m_menubar->items().insert( --(--( m_menubar->items().end() )), *menuitem );
 
-    // スレ履歴メニュー追加
-    m_histmenu_thread = Gtk::manage( new HistoryMenuThread() );
-    m_menubar->items().insert( --(--( m_menubar->items().end() )), *m_histmenu_thread );
+    Gtk::Menu* submenu = Gtk::manage( new Gtk::Menu() );
+    menuitem->set_submenu( *submenu );
+
+    m_histmenu_board = Gtk::manage( new HistoryMenuBoard() );  // 板履歴
+    submenu->append( *m_histmenu_board );
+    
+    m_histmenu_thread = Gtk::manage( new HistoryMenuThread() ); // スレ履歴
+    submenu->append( *m_histmenu_thread );
 
 
     // メニューにショートカットキーやマウスジェスチャを表示
@@ -840,14 +839,6 @@ void Core::slot_activate_menubar()
     if( tact ){
 
         if( SESSION::show_sidebar() && BBSLIST::get_admin()->get_current_url() == URL_FAVORITEVIEW ) tact->set_active( true );
-        else tact->set_active( false );
-    }
-
-    // メニューバー
-    act = m_action_group->get_action( "ShowMenuBar" );
-    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-    if( tact ){
-        if( SESSION::show_menubar() ) tact->set_active( true );
         else tact->set_active( false );
     }
 

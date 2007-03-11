@@ -80,7 +80,7 @@ void HistoryMenuBase::slot_clear()
 
 
 HistoryMenuThread::HistoryMenuThread()
-    : CORE::HistoryMenuBase( "スレ履歴(_T)" )
+    : CORE::HistoryMenuBase( "スレ履歴" )
 {
     setup( Gtk::manage( new CORE::HistorySubMenu( CACHE::path_xml_history() ) ) );
 }
@@ -88,7 +88,7 @@ HistoryMenuThread::HistoryMenuThread()
 
 
 HistoryMenuBoard::HistoryMenuBoard()
-    : CORE::HistoryMenuBase( "板履歴(_B)" )
+    : CORE::HistoryMenuBase( "板履歴" )
 {
     setup( Gtk::manage( new CORE::HistorySubMenu( CACHE::path_xml_history_board() ) ) );
 }
