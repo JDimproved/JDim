@@ -1,4 +1,4 @@
-// AA 管理クラス
+// ライセンス: GPL2
 
 //#define _DEBUG
 #include "jddebug.h"
