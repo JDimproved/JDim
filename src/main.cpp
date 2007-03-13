@@ -435,6 +435,8 @@ int main( int argc, char **argv )
 
         Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "前回起動時にJDが異常終了しました。\n\nロックファイルを削除して起動しますか？",
                                                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+
+        mdiag->set_default_response( Gtk::RESPONSE_OK );
         int ret = mdiag->run();
         delete mdiag;
         if( ret != Gtk::RESPONSE_OK ) return 0;
