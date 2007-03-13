@@ -7,6 +7,8 @@
 #ifndef _SEARCHMANAGER_H
 #define _SEARCHMANAGER_H
 
+#include "skeleton/dispatchable.h"
+
 #include <gtkmm.h>
 #include <pthread.h>
 
@@ -15,14 +17,13 @@
 
 namespace CORE
 {
-    class Search_Manager
+    class Search_Manager : public SKELETON::Dispatchable
     {
         typedef sigc::signal< void > SIG_SEARCH_FIN;
 
         SIG_SEARCH_FIN m_sig_search_fin;
 
         pthread_t m_thread;
-        Glib::Dispatcher m_disp;
 
         std::string m_id;
         std::string m_url;
@@ -55,6 +56,7 @@ namespace CORE
       private:
         static void* launcher( void* );
         void thread_search();
+        virtual void callback_dispatch();
         void search_fin();
     };
 

@@ -58,6 +58,10 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
       m_current_bm( 0 ),
       m_show_url4report( false )
 {
+#ifdef _DEBUG    
+    std::cout << "ArticleViewBase::ArticleViewBase : " << get_url() << std::endl;
+#endif
+
     // マウスジェスチャ可能
     set_enable_mg( true );
 

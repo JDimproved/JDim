@@ -39,9 +39,7 @@ MessageAdmin::MessageAdmin( const std::string& url )
     : m_url( url ),
       m_win( NULL ),
       m_view( NULL )
-{
-    m_disp.connect( sigc::mem_fun( *this, &MessageAdmin::exec_command ) );
-}
+{}
 
 
 MessageAdmin::~MessageAdmin()
@@ -106,9 +104,19 @@ void MessageAdmin::set_command_impl( bool immediately, const std::string& comman
     }else{
 
         m_list_command.push_back( command_arg );
-        m_disp.emit();
+        dispatch();
     }
 }
+
+
+//
+// ディスパッチャのコールバック関数
+//
+void MessageAdmin::callback_dispatch()
+{
+    while( m_list_command.size() ) exec_command();
+}
+
 
 
 //

@@ -20,11 +20,12 @@
 
 (3) ローダがデータを受け取るとreceive()がコールバックされてhttpコードやサイズを取得する
 (4) receive()からreceive_data()が呼び出される 
-(5) ロードが終了したらfinish()が呼ばれてディスパッチャを使ってメインスレッドに制御を戻す
+(5) ロードが終了したらfinish()が呼ばれて  Dispatchable::dispatch()により
+    ディスパッチャを使ってメインスレッドに制御を戻す
 
 --------ここからメインスレッドに戻る
 
-(6) ディスパッチャ経由でfinish_disp()が呼ばれる
+(6) ディスパッチャ経由で Dispatchable::callback_dispatch() が呼び出される
 (7) クッキー、更新時刻などを取得する
 (8) delete_loader()でローダの停止を待って削除する
 (9) receive_finish()を呼び出す 
@@ -41,6 +42,8 @@
 #ifndef _LOADABLE_H
 #define _LOADABLE_H
 
+#include "dispatchable.h"
+
 #include <gtkmm.h>
 #include <list>
 
@@ -53,11 +56,9 @@ namespace JDLIB
 
 namespace SKELETON
 {
-    class Loadable
+    class Loadable : public Dispatchable
     {
-        Glib::Dispatcher m_disp;
         JDLIB::Loader* m_loader;
-        bool m_enable_disp;
 
         // ローダからコピーしたデータ
         int m_code;
@@ -103,7 +104,7 @@ namespace SKELETON
         // receive_data() を呼び出す
         void receive( const char* data, size_t size );
 
-        // ディスパッチャ経由で finish_disp()、 receive_finish()を呼ぶ
+        // ディスパッチャ経由で Dispatchable::callback_dispatch()、 receive_finish()を呼ぶ
         // ロード直後に直接 receive_finish() は呼ばないこと
         void finish();
 
@@ -120,7 +121,7 @@ namespace SKELETON
         virtual void receive_finish(){};
 
         void delete_loader();
-        void finish_disp();
+        virtual void callback_dispatch();
 
         const int get_loader_code();
         const std::string get_loader_str_code();

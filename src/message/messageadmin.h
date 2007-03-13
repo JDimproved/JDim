@@ -7,6 +7,8 @@
 #ifndef _MESSAGEADMIN_H
 #define _MESSAGEADMIN_H
 
+#include "skeleton/dispatchable.h"
+
 #include <gtkmm.h>
 #include <string>
 
@@ -22,9 +24,8 @@ namespace MESSAGE
     class MessageWin;
 
     // SKELETON::Admin を継承していない(独自Adminクラス)
-    class MessageAdmin
+    class MessageAdmin : public SKELETON::Dispatchable
     {
-        Glib::Dispatcher m_disp;
         std::list< COMMAND_ARGS > m_list_command;
 
         std::string m_url;
@@ -59,6 +60,8 @@ namespace MESSAGE
 
         void set_command_impl( const bool immediately, const std::string& command,
                                const std::string& url = std::string() , const std::string& arg1 = std::string() );
+
+        virtual void callback_dispatch();
 
         void exec_command();
 

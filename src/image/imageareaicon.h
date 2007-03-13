@@ -7,16 +7,16 @@
 #ifndef _IMAGEAREAICON_H
 #define _IMAGEAREAICON_H
 
+#include "skeleton/dispatchable.h"
+
 #include "imageareabase.h"
 
 #include <pthread.h>
 
 namespace IMAGE
 {
-    class ImageAreaIcon : public ImageAreaBase
+    class ImageAreaIcon : public ImageAreaBase, public SKELETON::Dispatchable
     {
-        Glib::Dispatcher m_disp;
-
         bool m_thread_running;
         pthread_t m_thread;
         bool m_shown;
@@ -35,7 +35,9 @@ namespace IMAGE
       private:
         static void* launcher( void* );
         virtual void show_image_thread();
-        void slot_set_image();
+
+        virtual void callback_dispatch();
+        void set_image();
     };
 }
 

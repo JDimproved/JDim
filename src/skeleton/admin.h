@@ -7,6 +7,8 @@
 #ifndef _ADMIN_H
 #define _ADMIN_H
 
+#include "dispatchable.h"
+
 #include <gtkmm.h>
 #include <string>
 #include <list>
@@ -18,14 +20,13 @@ namespace SKELETON
     class View;
     class DragableNoteBook;
 
-    class Admin
+    class Admin : public Dispatchable
     {
         std::string m_url;
         DragableNoteBook* m_notebook;
 
         bool m_focus;
 
-        Glib::Dispatcher m_disp;
         std::list< COMMAND_ARGS > m_list_command;
 
         // 右クリックメニュー用
@@ -114,6 +115,8 @@ namespace SKELETON
                           const std::string& arg5 = std::string(),
                           const std::string& arg6 = std::string()
             );
+
+        virtual void callback_dispatch();
 
         // admin共通コマンド実行
         virtual void exec_command();

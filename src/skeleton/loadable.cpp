@@ -14,19 +14,13 @@ using namespace SKELETON;
 
 Loadable::Loadable()
     : m_loader( 0 )
-    , m_enable_disp( true )
 {
-    m_disp.connect( sigc::mem_fun( *this, &SKELETON::Loadable::finish_disp ) );
     clear_load_data();
 }
 
 
 Loadable::~Loadable()
 {
-    // dispatch禁止
-    // loadableのインスタンスが無くなった後でdispachすると落ちる
-    m_enable_disp = false;
-
     delete_loader();
 }
 
@@ -84,6 +78,10 @@ bool Loadable::start_load( const JDLIB::LOADERDATA& data )
 {
     if( is_loading() ) return false;
 
+#ifdef _DEBUG
+    std::cout << "Loadable::start_load url = " << data.url << std::endl;
+#endif
+
     assert( m_loader == NULL );
     m_loader = JDLIB::create_loader();
 
@@ -137,24 +135,26 @@ void Loadable::receive( const char* data, size_t size )
 }
 
 
-// 別スレッドで動いているローダからfinish()を呼ばれたらディスパッチしてメインスレッドに処理を移す
+// 別スレッドで動いているローダからfinish()を呼ばれたらディスパッチして
+// メインスレッドに制御を戻してから callback_dispatch()を呼び出す。
 // そうしないと色々不具合が生じる
 void Loadable::finish()
 {
 #ifdef _DEBUG
     std::cout << "Loadable::finish\n";
 #endif
-    if( m_enable_disp ) m_disp.emit();
+
+    dispatch();
 }
 
 
 //
 // ローダを削除してreceive_finish()をコール
 //
-void Loadable::finish_disp()
+void Loadable::callback_dispatch()
 {
 #ifdef _DEBUG
-    std::cout << "Loadable::finish_disp\n";
+    std::cout << "Loadable::callback_dispatch\n";
 #endif
 
     // ローダを削除する前に情報保存
@@ -174,7 +174,6 @@ void Loadable::finish_disp()
     std::cout << "code = " << m_code << std::endl;
     std::cout << "str_code = " << m_str_code << std::endl;
     std::cout << "modified = " << m_date_modified << std::endl;
-    std::cout << "cookie = " << m_cookie << std::endl;
     std::cout << "location = " << m_location << std::endl;
     std::cout << "total_length = " << m_total_length << std::endl;
     std::cout << "current length = " << m_current_length << std::endl;

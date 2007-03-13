@@ -27,8 +27,6 @@ ImageAreaIcon::ImageAreaIcon( const std::string& url )
     std::cout << "ImageAreaIcon::ImageAreaIcon url = " << url << std::endl;
 #endif 
 
-    m_disp.connect( sigc::mem_fun( *this, &ImageAreaIcon::slot_set_image ) );
-
     set_width( ICON_SIZE );
     set_height( ICON_SIZE );
 
@@ -119,8 +117,8 @@ void ImageAreaIcon::show_image_thread()
         else  m_pixbuf_err->copy_area( 0, 0, get_width()/4, get_height()/4, m_pixbuf, 4, 4 );
 
         // 表示
-        // ImageAreaIcon::slot_set_image()を呼び出す
-        m_disp.emit();
+        // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
+        dispatch();
     }
 
     // 画像を読み込んで縮小表示
@@ -146,8 +144,8 @@ void ImageAreaIcon::show_image_thread()
             m_pixbuf_icon = pixbuf->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
 
             // 表示
-            // mageAreaIcon::slot_set_image()を呼び出す
-            m_disp.emit();
+            // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
+            dispatch();
 
             m_shown = true;
         }
@@ -167,16 +165,27 @@ void ImageAreaIcon::show_image_thread()
 }
 
 
+
+//
+// ディスパッチャのコールバック関数
+//
+void ImageAreaIcon::callback_dispatch()
+{
+    set_image();
+}
+
+
+
 //
 // 表示
 //
 // スレッドの中でset()すると固まるときがあるのでディスパッチャで
 // メインスレッドに戻してからセットする
 //
-void ImageAreaIcon::slot_set_image()
+void ImageAreaIcon::set_image()
 {
 #ifdef _DEBUG
-    std::cout << "ImageAreaIcon::slot_set_image()\n";
+    std::cout << "ImageAreaIcon::set_image()\n";
 #endif    
 
     clear();

@@ -34,9 +34,7 @@ using namespace CORE;
 
 Search_Manager::Search_Manager()
     : m_searching( false )
-{
-    m_disp.connect( sigc::mem_fun( *this, &Search_Manager::search_fin ) );
-}
+{}
 
 Search_Manager::~Search_Manager()
 {
@@ -102,7 +100,16 @@ void Search_Manager::thread_search()
     if( m_searchall ) m_urllist = DBTREE::search_cache_all( m_url, m_query, m_mode_or, m_stop );
     else m_urllist = DBTREE::search_cache( m_url, m_query, m_mode_or, m_stop );
 
-    m_disp.emit();
+    dispatch();
+}
+
+
+//
+// ディスパッチャのコールバック関数
+//
+void Search_Manager::callback_dispatch()
+{
+    search_fin();
 }
 
 

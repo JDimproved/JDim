@@ -30,8 +30,6 @@ Admin::Admin( const std::string& url )
     , m_notebook( 0 )
     , m_focus( false )
 {
-    m_disp.connect( sigc::mem_fun( *this, &Admin::exec_command ) );
-
     m_notebook = new DragableNoteBook();
 
     m_notebook->signal_switch_page().connect( sigc::mem_fun( *this, &Admin::slot_switch_page ) );
@@ -343,8 +341,17 @@ void Admin::set_command_impl( const bool immediately,
     else{
 
         m_list_command.push_back( command_arg );
-        m_disp.emit();
+        dispatch(); // 一度メインループに戻った後にcallback_dispatch() が呼び戻される
     }
+}
+
+
+//
+// ディスパッチャのコールバック関数
+//
+void Admin::callback_dispatch()
+{
+    while( m_list_command.size() ) exec_command();
 }
 
 

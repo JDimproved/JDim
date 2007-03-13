@@ -12,6 +12,7 @@
 #include "usrcmdmanager.h"
 #include "searchmanager.h"
 #include "aamanager.h"
+#include "dispatchmanager.h"
 #include "historymenu.h"
 #include "login2ch.h"
 #include "prefdiagfactory.h"
@@ -90,10 +91,13 @@ Core::Core( WinMain& win_main )
       m_button_image( ICON::IMAGE ),
       m_enable_menuslot( true ),
       m_boot( true ),
-      m_init( false )
+      m_init( false ),
+      m_quit( false )
 {
+    // ディスパッチマネージャ作成
+    CORE::get_dispmanager();
+
     instance_core = this;
-    m_disp.connect( sigc::mem_fun( *this, &Core::exec_command ) );
 
     m_win_main.signal_window_state_event().connect( sigc::mem_fun( *this, &Core::slot_window_state_event ) );
 
@@ -127,6 +131,8 @@ Core::~Core()
 #ifdef _DEBUG
     std::cout << "Core::~Core\n";
 #endif
+
+    m_quit = true;
 
     // 設定保存
     // セッション情報は WinMain::~WinMain() で保存する
@@ -172,6 +178,9 @@ Core::~Core()
     // データベース削除
     DBTREE::delete_root();
     DBIMG::delete_root();
+
+    // ディスパッチマネージャ削除
+    CORE::delete_dispatchmanager();
 }
 
 
@@ -1504,6 +1513,8 @@ void Core::slot_toggle_restore_views()
 //
 void Core::set_command( const COMMAND_ARGS& command )
 {
+    if( m_quit ) return;
+
 #ifdef _DEBUG
     std::cout << "Core::set_command : " << command.command << " " << command.url
               << " " << command.arg1 << " " << command.arg2 << " " << command.arg3 << " " << command.arg4 << std::endl;
@@ -1997,7 +2008,16 @@ void Core::set_command( const COMMAND_ARGS& command )
     // Coreが自前で処理するコマンド( Core::exec_command() で処理 )
 
     m_list_command.push_back( command );
-    m_disp.emit();
+    dispatch(); // 一度メインループに戻った後にcallback_dispatch() が呼び戻される
+}
+
+
+//
+// ディスパッチャのコールバック関数
+//
+void Core::callback_dispatch()
+{
+    while( m_list_command.size() ) exec_command();
 }
 
 

@@ -11,6 +11,7 @@
 #include <list>
 #include <string>
 
+#include "skeleton/dispatchable.h"
 #include "skeleton/imgbutton.h"
 #include "skeleton/hpaned.h"
 #include "skeleton/vpaned.h"
@@ -57,9 +58,8 @@ namespace CORE
     class HistoryMenuThread;
     class HistoryMenuBoard;
 
-    class Core
+    class Core : public SKELETON::Dispatchable
     {
-        Glib::Dispatcher m_disp;
         std::list< COMMAND_ARGS > m_list_command;
         sigc::connection m_sigc_switch_page;
 
@@ -130,6 +130,9 @@ namespace CORE
 
         // 初期設定中
         bool m_init;
+
+        // 終了中
+        bool m_quit;
 
     public:
 
@@ -209,6 +212,8 @@ namespace CORE
         void slot_shortmargin_popup();
         void slot_toggle_emacsmode();
         void slot_toggle_restore_views();
+
+        virtual void callback_dispatch();
 
         // coreが自前でするコマンド処理
         void exec_command();
