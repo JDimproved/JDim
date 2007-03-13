@@ -3,6 +3,7 @@ noinst_LIBRARIES = libskeleton.a
 libskeleton_a_SOURCES = \
 	aamenu.cpp \
 	admin.cpp \
+	dispatchable.cpp \
 	loadable.cpp \
 	treeview.cpp \
 	view.cpp \
@@ -21,6 +22,7 @@ libskeleton_a_SOURCES = \
 noinst_HEADERS = \
 	aamenu.h \
 	admin.h \
+	dispatchable.h \
 	loadable.h \
 	lockable.h \
 	treeview.h \
