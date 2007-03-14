@@ -225,6 +225,9 @@ const bool ConfigItems::load()
     // ツリービューでgtkrcの設定を使用するか
     use_tree_gtkrc = cf.get_option( "use_tree_gtkrc", false );
 
+    // ツリービューの行間スペース
+    tree_ypad = cf.get_option( "tree_ypad", TREE_YPAD );
+
     // boardビューで古いスレも表示
     show_oldarticle = cf.get_option( "show_oldarticle", false );
 
@@ -420,6 +423,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_sepa_new", str_color[ COLOR_SEPARATOR_NEW ] );
 
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
+
+    cf.update( "tree_ypad", tree_ypad );
 
     cf.update( "show_oldarticle", show_oldarticle );
     cf.update( "newthread_hour", newthread_hour );

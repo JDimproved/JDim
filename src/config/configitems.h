@@ -113,6 +113,9 @@ namespace CONFIG
         // ツリービューでgtkrcの設定を使用するか
         bool use_tree_gtkrc;
 
+        // ツリービューの行間スペース
+        int tree_ypad;
+
         // boardビューで古いスレも表示
         bool show_oldarticle;
 

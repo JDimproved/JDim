@@ -81,6 +81,8 @@ void CONFIG::set_color( int id, const std::string& color )
 
 const bool CONFIG::get_use_tree_gtkrc(){ return get_confitem()->use_tree_gtkrc; }
 
+const int CONFIG::get_tree_ypad(){ return get_confitem()->tree_ypad; }
+
 
 // フォント
 const std::string& CONFIG::get_fontname( int id )

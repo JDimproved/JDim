@@ -42,6 +42,9 @@ namespace CONFIG
     // ツリービューでgtkrcの設定を使用するか
     const bool get_use_tree_gtkrc();
 
+    // ツリービューの行間スペース
+    const int get_tree_ypad();
+
     // フォント
     const std::string& get_fontname( int id );
     void set_fontname( int id, const std::string& fontname );
