@@ -1037,7 +1037,8 @@ void BBSListViewBase::slot_rename()
 #endif
 
     m_ren_text->property_editable() = true;     // edit可
-    m_treeview.set_cursor( m_path_selected, *m_treeview.get_column( 0 ), true );
+    m_treeview.set_cursor( m_path_selected, *m_treeview.get_column( COL_NAME ), true );
+
     // メニューが消えるとfocus_viewが呼ばれて名前変更モードが終了するのでfocus_viewをキャンセルする
     m_cancel_focus = true;
     m_ren_text->property_editable() = false;
@@ -1328,13 +1329,15 @@ Gtk::TreeViewColumn* BBSListViewBase::create_column()
 
     m_ren_text = Gtk::manage( new Gtk::CellRendererText() );
     m_ren_text->signal_edited().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_ren_text_on_edited ) );
-    m_ren_text->property_underline().set_value( Pango::UNDERLINE_SINGLE );
+    m_ren_text->property_underline() = Pango::UNDERLINE_SINGLE;
+
+    // 行間スペース
+    m_ren_text->property_ypad() = CONFIG::get_tree_ypad();
 
     col->pack_start( *m_ren_text, true );
-    col->add_attribute( *m_ren_text, "text", 0 );
-    col->add_attribute( *m_ren_text, "underline", 1 );
+    col->add_attribute( *m_ren_text, "text", COL_NAME );
+    col->add_attribute( *m_ren_text, "underline", COL_UNDERLINE );
     col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
-    col->add_attribute( *m_ren_text, "underline", 1 );
     
     return col;
 }

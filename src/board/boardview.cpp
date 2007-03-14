@@ -34,7 +34,8 @@
 
 using namespace BOARD;
 
-#define COLUMN_TITLE_ID    "ID"
+#define COLUMN_TITLE_MARK  "!"
+#define COLUMN_TITLE_ID    "番号"
 #define COLUMN_TITLE_NAME  "タイトル"
 #define COLUMN_TITLE_RES   "レス"
 #define COLUMN_TITLE_LOAD  "取得"
@@ -105,7 +106,7 @@ m_treeview.append_column( *col ); \
 }while(0)
 
 
-
+#include <iostream>
 BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
       m_treeview( CONFIG::get_fontname( FONT_BOARD ), COLOR_BACK_BOARD ),
@@ -155,7 +156,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 #endif
 
     // columnのappend
-    APPEND_COLUMN( " ", m_columns.m_col_mark );
+    APPEND_COLUMN( COLUMN_TITLE_MARK, m_columns.m_col_mark );
     APPEND_COLUMN( COLUMN_TITLE_ID, m_columns.m_col_id );
     APPEND_COLUMN( COLUMN_TITLE_NAME, m_columns.m_col_subject );
     APPEND_COLUMN( COLUMN_TITLE_RES, m_columns.m_col_res );
@@ -221,12 +222,53 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
         // ヘッダをクリックしたときに呼ぶslot
         column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_col_clicked ), i ) );
 
-        // subjectの背景色設定
-        if( i == COL_SUBJECT ){
-            Gtk::CellRendererText* rentext = dynamic_cast< Gtk::CellRendererText* >( column->get_first_cell_renderer() );
-            if( rentext ){
-                rentext->property_cell_background().set_value( "yellow" );
-                column->add_attribute( *rentext, "cell_background_set", COL_DRAWBG ); 
+        // ヘッダの位置
+        switch( i ){
+            case COL_MARK:
+                column->set_alignment( 0.5 );
+                break;
+
+            case COL_ID:
+            case COL_RES:
+            case COL_STR_LOAD:
+            case COL_STR_NEW:
+            case COL_SPEED:
+                column->set_alignment( 1.0 );
+                break;
+
+            default:
+                column->set_alignment( 0.0 );
+                break;
+        }
+
+        Gtk::CellRendererText* rentext = dynamic_cast< Gtk::CellRendererText* >( column->get_first_cell_renderer() );
+        if( rentext ){
+
+            // 列間スペース
+            rentext->property_xpad() = 4;
+
+            // 行間スペース
+            rentext->property_ypad() = CONFIG::get_tree_ypad();;
+
+            // subjectの背景色設定
+            // COL_DRAWBG 列を1にセットするとsubjectの背景色が変わる
+            if( i == COL_SUBJECT ){
+                rentext->property_cell_background() = "yellow";
+                column->add_attribute( *rentext, "cell_background_set", COL_DRAWBG );
+            }
+
+            // 文字位置
+            switch( i ){
+                case COL_ID:
+                case COL_RES:
+                case COL_STR_LOAD:
+                case COL_STR_NEW:
+                case COL_SPEED:
+                    rentext->property_xalign() = 1.0;
+                    break;
+
+                default:
+                    rentext->property_xalign() = 0.0;
             }
         }
     }

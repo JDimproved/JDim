@@ -11,6 +11,24 @@
 
 namespace BBSLIST
 {
+    // 列ID
+    enum
+    {
+        COL_NAME = 0,
+
+        COL_VISIBLE_END,
+
+        // 以下は不可視
+
+        COL_UNDERLINE = COL_VISIBLE_END,
+        COL_URL,
+        COL_IMAGE,
+        COL_TYPE,
+            
+        COL_NUM_COL
+    };
+
+
     class TreeColumns : public Gtk::TreeModel::ColumnRecord
     {
 
