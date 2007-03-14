@@ -72,6 +72,10 @@
     <key class="blue">use_tree_gtkrc</key>
     <value>ツリービューの背景色設定にgtkrcを用いる</value>
 </item>
+<item>
+    <key class="blue">tree_ypad</key>
+    <value>行間スペース</value>
+</item>
 </array>
 
 
