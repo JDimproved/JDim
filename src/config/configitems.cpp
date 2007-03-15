@@ -212,8 +212,10 @@ const bool ConfigItems::load()
     str_color[ COLOR_BACK_SELECTION ] = cf.get_option( "cl_back_selection", str_color[ COLOR_CHAR_LINK ] );
 
     // ハイライトの背景色
-    str_color[ COLOR_BACK_HIGHLIGHT ] = cf.get_option( "cl_back_highlight", "#ffffffff0000" );
+    str_color[ COLOR_BACK_HIGHLIGHT ] = cf.get_option( "cl_back_highlight", CONF_COLOR_HL );
 
+    // ハイライトの背景色(ツリー用)
+    str_color[ COLOR_BACK_HIGHLIGHT_TREE ] = cf.get_option( "cl_back_highlight_tree", CONF_COLOR_HL_TREE );
 
     // 新着セパレータ
     str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", "#7d007d007d00" );
@@ -420,6 +422,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_back_bbs", str_color[ COLOR_BACK_BBS ] );
     cf.update( "cl_back_selection", str_color[ COLOR_BACK_SELECTION ] );
     cf.update( "cl_back_highlight",str_color[ COLOR_BACK_HIGHLIGHT ]  );
+    cf.update( "cl_back_highlight_tree",str_color[ COLOR_BACK_HIGHLIGHT_TREE ]  );
     cf.update( "cl_sepa_new", str_color[ COLOR_SEPARATOR_NEW ] );
 
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
