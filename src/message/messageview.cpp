@@ -47,6 +47,13 @@ std::string MessageViewMain::create_message()
         return std::string();
     }
 
+    if( SESSION::get_article_current_url().find( get_url() ) == std::string::npos ){
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+                                 "！！！誤爆注意！！！\n\nスレビューで開いているスレと異なるスレに書き込もうとしています\n\n誤爆する可能性がありますが書き込みますか？",
+                                 false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO );
+        if( mdiag.run() == Gtk::RESPONSE_NO ) return std::string();
+    }
+
     return DBTREE::create_write_message( get_url(), name, mail, msg );
 }
 
