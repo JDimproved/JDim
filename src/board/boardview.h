@@ -84,6 +84,7 @@ namespace BOARD
 
     private:
 
+        int get_title_id( int col );
         void save_column_width();
 
         // ソート用

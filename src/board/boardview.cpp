@@ -34,16 +34,6 @@
 
 using namespace BOARD;
 
-#define COLUMN_TITLE_MARK  "!"
-#define COLUMN_TITLE_ID    "番号"
-#define COLUMN_TITLE_NAME  "タイトル"
-#define COLUMN_TITLE_RES   "レス"
-#define COLUMN_TITLE_LOAD  "取得"
-#define COLUMN_TITLE_NEW   "新着"
-#define COLUMN_TITLE_SINCE "since"
-#define COLUMN_TITLE_WRITE "最終書込"
-#define COLUMN_TITLE_SPEED "速度"
-
 
 // row -> path
 #define GET_PATH( row ) m_liststore->get_path( row )
@@ -165,16 +155,17 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     APPEND_COLUMN( COLUMN_TITLE_SINCE, m_columns.m_col_since );
     APPEND_COLUMN( COLUMN_TITLE_WRITE, m_columns.m_col_write );
     APPEND_COLUMN( COLUMN_TITLE_SPEED, m_columns.m_col_speed );
-    m_treeview.set_column_for_height( 2 );
 
     // サイズを調整しつつソートの設定
     for( guint i = 0; i < COL_VISIBLE_END; i++ ){
         
-        Gtk::TreeView::Column* column = m_treeview.get_column( i );
+        int id = get_title_id( i );
+        if( id < 0 ) continue;
 
+        Gtk::TreeView::Column* column = m_treeview.get_column( i );
         int width = 0;
 
-        switch( i ){
+        switch( id ){
 
         case COL_MARK:
             width = SESSION::col_mark();
@@ -186,6 +177,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
         case COL_SUBJECT:
             width = SESSION::col_subject();
+            m_treeview.set_column_for_height( id );
             break;
 
         case COL_RES:
@@ -220,10 +212,10 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
         column->set_clickable( true );        
 
         // ヘッダをクリックしたときに呼ぶslot
-        column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_col_clicked ), i ) );
+        column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_col_clicked ), id ) );
 
         // ヘッダの位置
-        switch( i ){
+        switch( id ){
             case COL_MARK:
                 column->set_alignment( 0.5 );
                 break;
@@ -252,13 +244,13 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
             // subjectの背景色設定
             // COL_DRAWBG 列を1にセットするとsubjectの背景色が変わる
-            if( i == COL_SUBJECT ){
+            if( id == COL_SUBJECT ){
                 rentext->property_cell_background() = "yellow";
                 column->add_attribute( *rentext, "cell_background_set", COL_DRAWBG );
             }
 
             // 文字位置
-            switch( i ){
+            switch( id ){
                 case COL_ID:
                 case COL_RES:
                 case COL_STR_LOAD:
@@ -427,6 +419,34 @@ const std::string BoardView::url_for_copy()
 
 
 //
+// i列目のIDを取得
+//
+// 失敗の時は-1を変えす
+//
+int BoardView::get_title_id( int col )
+{
+    Gtk::TreeView::Column* column = m_treeview.get_column( col );
+    if( ! column ) return -1;
+
+    std::string title = column->get_title();
+    int id = -1;
+
+    if( title == COLUMN_TITLE_MARK ) id = COL_MARK;
+    else if( title == COLUMN_TITLE_ID ) id = COL_ID;
+    else if( title == COLUMN_TITLE_NAME ) id = COL_SUBJECT;
+    else if( title == COLUMN_TITLE_RES ) id = COL_RES;
+    else if( title == COLUMN_TITLE_LOAD ) id = COL_STR_LOAD;
+    else if( title == COLUMN_TITLE_NEW ) id = COL_STR_NEW;
+    else if( title == COLUMN_TITLE_SINCE ) id = COL_SINCE;
+    else if( title == COLUMN_TITLE_WRITE ) id = COL_WRITE;
+    else if( title == COLUMN_TITLE_SPEED ) id = COL_SPEED;
+
+    return id;
+}
+
+
+
+//
 // 列の幅の大きさを取得してセッションデータベース更新
 //
 void BoardView::save_column_width()
@@ -437,13 +457,16 @@ void BoardView::save_column_width()
 
     for( guint i = 0; i < COL_VISIBLE_END; i++ ){
         
+        int id = get_title_id( i );
+        if( id < 0 ) continue;
+
         Gtk::TreeView::Column* column = m_treeview.get_column( i );
 
         int width = 0;
         if( column ) width = column->get_width();
-        if( !width ) continue;
+        if( ! width ) continue;
 
-        switch( i ){
+        switch( id ){
 
         case COL_MARK:
             SESSION::set_col_mark( width );
