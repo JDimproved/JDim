@@ -147,7 +147,7 @@ void ImageWin::clock_in()
             get_window()->lower();
             set_transient( true );
                 
-            CORE::core_set_command( "restore_focus" );
+            CORE::core_set_command( "restore_focus", "", "present" );
             m_mode = IMGWIN_FOLD;
         }
     }

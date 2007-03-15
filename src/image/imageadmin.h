@@ -66,9 +66,6 @@ namespace IMAGE
 
       private:
 
-        void open_window();
-        void close_window();
-        
         virtual void restore();
         virtual void switch_admin();
         virtual void open_view( const COMMAND_ARGS& command );
@@ -82,6 +79,8 @@ namespace IMAGE
         virtual void set_status( const std::string& url, const std::string& stat );
         virtual void focus_current_view();
         virtual void focus_out();
+        virtual void open_window();
+        virtual void close_window();
 
         void close_other_views( const std::string& url );
         void close_left_views( const std::string& url );

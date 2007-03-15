@@ -149,6 +149,9 @@ namespace SKELETON
         virtual void focus_out();
         virtual void set_tablabel( const std::string& url, const std::string& str_label );
         virtual void set_tabicon( const std::string& url, const std::string& iconname ){}
+        virtual void relayout_all();
+        virtual void open_window(){}
+        virtual void close_window(){}
 
         // オートリロードのモード設定
         virtual bool set_autoreload_mode( const std::string& url, int mode, int sec );

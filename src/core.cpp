@@ -839,7 +839,7 @@ void Core::slot_activate_menubar()
     Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
 
-        if( SESSION::show_sidebar() && BBSLIST::get_admin()->get_current_url() == URL_BBSLISTVIEW ) tact->set_active( true );
+        if( SESSION::show_sidebar() && SESSION::get_bbslist_current_url() == URL_BBSLISTVIEW ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -847,7 +847,7 @@ void Core::slot_activate_menubar()
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
 
-        if( SESSION::show_sidebar() && BBSLIST::get_admin()->get_current_url() == URL_FAVORITEVIEW ) tact->set_active( true );
+        if( SESSION::show_sidebar() && SESSION::get_bbslist_current_url() == URL_FAVORITEVIEW ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1909,7 +1909,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         }
         else{
             if( SESSION::get_embedded_mes() ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
-            MESSAGE::get_admin()->set_command( "create_new_thread", command.url, command.arg1 );
+            MESSAGE::get_admin()->set_command( "open_view", command.url, command.arg1, "new" );
         }
     }
 
@@ -2000,7 +2000,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     // フォーカス回復
     else if( command.command == "restore_focus" ){
 
-        restore_focus( true, false );
+        restore_focus( true, ( command.arg1 == "present" ) );
         return;
     }
 
@@ -2641,7 +2641,7 @@ void Core::set_toggle_view_button()
 
         case SESSION::FOCUS_SIDEBAR:
 
-            if( BBSLIST::get_admin()->get_current_page() == 0 ){
+            if( SESSION::get_bbslist_current_page() == 0 ){
                 m_button_bbslist.set_active( true );
                 m_button_favorite.set_active( false );
             }
@@ -2852,7 +2852,7 @@ void Core::switch_sidebar( const std::string& url, bool present )
 
 #ifdef _DEBUG
     std::cout << "Core::switch_sidebar url = " << url
-              << " current = " << BBSLIST::get_admin()->get_current_url() << std::endl;
+              << " current = " << SESSION::get_bbslist_current_url() << std::endl;
 #endif
 
     if( ! BBSLIST::get_admin()->empty() ){
@@ -2866,7 +2866,7 @@ void Core::switch_sidebar( const std::string& url, bool present )
         }
 
         // 閉じる
-        else if( BBSLIST::get_admin()->get_current_url() == url ){
+        else if( SESSION::get_bbslist_current_url() == url ){
 #ifdef _DEBUG
             std::cout << "close\n";
 #endif

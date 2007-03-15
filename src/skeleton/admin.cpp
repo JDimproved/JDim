@@ -463,15 +463,7 @@ void Admin::exec_command()
     }
 
     // 全てのビューを再描画
-    else if( command.command == "relayout_all" ){
-
-        std::list< SKELETON::View* > list_view = get_list_view();
-        std::list< SKELETON::View* >::iterator it = list_view.begin();
-        for( ; it != list_view.end(); ++it ){
-            SKELETON::View* view = ( *it );
-            if( view ) view->relayout();
-        }
-    }
+    else if( command.command == "relayout_all" ) relayout_all();
 
     // タイトル表示
     // アクティブなviewから依頼が来たらコアに渡す
@@ -495,6 +487,16 @@ void Admin::exec_command()
 
     // タブを隠す
     else if( command.command == "hide_tabs" ) m_notebook->set_show_tabs( false );
+
+    // window 開け閉じ
+    else if( command.command == "open_window" ){
+        open_window();
+        return;
+    }
+    else if( command.command == "close_window" ){
+        close_window();
+        return;
+    }
 
     // 個別のコマンド処理
     else command_local( command );
@@ -977,6 +979,20 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label )
     if( view ) m_notebook->set_tab_fulltext( str_label, m_notebook->page_num( *view ) );
 }
 
+
+
+//
+// 再レイアウト実行
+//
+void Admin::relayout_all()
+{
+    std::list< SKELETON::View* > list_view = get_list_view();
+    std::list< SKELETON::View* >::iterator it = list_view.begin();
+    for( ; it != list_view.end(); ++it ){
+        SKELETON::View* view = ( *it );
+        if( view ) view->relayout();
+    }
+}
 
 
 

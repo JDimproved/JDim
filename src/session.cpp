@@ -9,6 +9,9 @@
 #include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
 
+#include "bbslist/bbslistadmin.h"
+#include "article/articleadmin.h"
+
 #include <sstream>
 
 int mode_pane;
@@ -463,6 +466,20 @@ int SESSION::col_since(){ return board_col_since; }
 int SESSION::col_write(){ return board_col_write; }
 int SESSION::col_speed(){ return board_col_speed; }
 
+
+// 現在開いている bbslist のページ
+const int SESSION::get_bbslist_current_page()
+{
+    return BBSLIST::get_admin()->get_current_page();
+}
+
+// 現在開いている bbslist のurl
+const std::string SESSION::get_bbslist_current_url()
+{
+    return BBSLIST::get_admin()->get_current_url();
+}
+
+
 void SESSION::set_col_mark( int width ){ board_col_mark = width; }
 void SESSION::set_col_id( int width ){ board_col_id = width; }
 void SESSION::set_col_subject( int width ){ board_col_subject = width; }
@@ -472,6 +489,14 @@ void SESSION::set_col_new( int width ){ board_col_new = width; }
 void SESSION::set_col_since( int width ){ board_col_since = width; }
 void SESSION::set_col_write( int width ){ board_col_write = width; }
 void SESSION::set_col_speed( int width ){ board_col_speed = width; }
+
+
+// 現在開いているarticle のurl
+const std::string SESSION::get_article_current_url()
+{
+    return ARTICLE::get_admin()->get_current_url();
+}
+
 
 bool SESSION::is_img_shown(){ return img_shown; }
 void SESSION::set_img_shown( bool set ){ img_shown = set; }

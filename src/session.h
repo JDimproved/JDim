@@ -121,11 +121,11 @@ namespace SESSION
     void set_hpane_main_r_pos( int pos );
     void set_vpane_main_mes_pos( int pos );
 
-    // メインnotebookのページ番号
+    // 前回閉じたときに開いていたメインnotebookのページ番号
     int notebook_main_page();
     void set_notebook_main_page( int page );
 
-    // bbslistの開いてるページ番号
+    // 前回閉じたときに開いていたbbslistの開いてるページ番号
     int bbslist_page();
     void set_bbslist_page( int page );
 
@@ -150,6 +150,13 @@ namespace SESSION
     void set_image_URLs( const std::list< std::string >& urls );
 
 
+    // 現在開いている bbslist のページ
+    const int get_bbslist_current_page();
+
+    // 現在開いている bbslist のurl
+    const std::string get_bbslist_current_url();
+
+
     // board ビューの列幅
     int col_mark();
     int col_id();
@@ -169,6 +176,11 @@ namespace SESSION
     void set_col_since( int width );
     void set_col_write( int width );
     void set_col_speed( int width );
+
+
+    // 現在開いているarticle のurl
+    const std::string get_article_current_url();
+
 
     // image が画面に表示されているか
     bool is_img_shown();

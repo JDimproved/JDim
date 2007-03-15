@@ -546,6 +546,7 @@ void ImageViewBase::operate_view( const int& control )
 
                 SKELETON::MsgDiag mdiag( IMAGE::get_admin()->get_win(),
                                          "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+                mdiag.set_default_response( Gtk::RESPONSE_OK );
                 if( mdiag.run() == Gtk::RESPONSE_OK ) delete_view();
             }
             else{

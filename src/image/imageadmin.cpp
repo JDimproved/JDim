@@ -272,17 +272,6 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
         if( view ) view->scroll_right();
     }
 
-    // window 開け閉じ
-    else if( command.command == "open_window" ){
-        open_window();
-        if( m_win ) m_win->focus_in();
-        return;
-    }
-    else if( command.command == "close_window" ){
-        close_window();
-        return;
-    }
-
     // window 開け閉じ可能/不可
     else if( command.command == "enable_fold_win" ){
         if( m_win ) m_win->set_enable_fold( true );

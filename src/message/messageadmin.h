@@ -1,76 +1,56 @@
 // ライセンス: GPL2
 
 //
-// 書き込みウィンドウの管理クラス
+// 書き込みビューの管理クラス
 //
 
 #ifndef _MESSAGEADMIN_H
 #define _MESSAGEADMIN_H
 
-#include "skeleton/dispatchable.h"
-
-#include <gtkmm.h>
-#include <string>
-
-#include "command_args.h"
-
-namespace SKELETON
-{
-    class View;
-}
+#include "skeleton/admin.h"
 
 namespace MESSAGE
 {
     class MessageWin;
 
-    // SKELETON::Admin を継承していない(独自Adminクラス)
-    class MessageAdmin : public SKELETON::Dispatchable
+    class MessageAdmin : public SKELETON::Admin
     {
-        std::list< COMMAND_ARGS > m_list_command;
-
-        std::string m_url;
-
-        std::string m_title;
-
         MessageWin* m_win;
         SKELETON::View* m_view;
-        Gtk::EventBox m_eventbox;
+        Gtk::EventBox m_eventbox; // notebook の代わりにeventboxを使用する
+
+        std::string m_title;
 
       public:
 
         MessageAdmin( const std::string& url );
-        ~MessageAdmin();
+        virtual ~MessageAdmin();
 
-        bool empty(){ return ( ! m_view ); }
-        Gtk::Widget* get_widget(){ return &m_eventbox; }
-        Gtk::Window* get_win();
+        virtual bool empty(){ return ( ! m_view ); }
+        virtual Gtk::Widget* get_widget(){ return &m_eventbox; }
+        virtual Gtk::Window* get_win();
 
-        void clock_in();
+        virtual void clock_in();
 
-        void set_command_immediately( const std::string& command,
-                          const std::string& url = std::string() , const std::string& arg1 = std::string() );
+      protected:
 
-        void set_command( const std::string& command,
-                          const std::string& url = std::string() , const std::string& arg1 = std::string() );
+        virtual void command_local( const COMMAND_ARGS& command );
 
       private:
 
-        void open_window();
-        void close_window();
-
-        void set_command_impl( const bool immediately, const std::string& command,
-                               const std::string& url = std::string() , const std::string& arg1 = std::string() );
-
-        virtual void callback_dispatch();
-
-        void exec_command();
-
-        void open_view( const std::string& url, const std::string& msg, bool new_thread );
-        void redraw_view( const std::string& url );
-        void close_view();
-        void set_status( const std::string& url, const std::string& stat );
-        void focus_current_view();
-        void switch_admin();
+        virtual void open_view( const COMMAND_ARGS& command );
+        virtual void switch_admin();
+        virtual void tab_left();
+        virtual void tab_right();
+        virtual void redraw_view( const std::string& url );
+        virtual void redraw_current_view();
+        virtual void close_view( const std::string& url );
+        virtual void close_current_view();
+        virtual void set_status( const std::string& url, const std::string& stat );
+        virtual void focus_current_view();
+        virtual void relayout_all();
+        virtual void open_window();
+        virtual void close_window();
     };
     
     MESSAGE::MessageAdmin* get_admin();

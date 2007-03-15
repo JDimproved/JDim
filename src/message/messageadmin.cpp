@@ -36,7 +36,7 @@ using namespace MESSAGE;
 
 
 MessageAdmin::MessageAdmin( const std::string& url )
-    : m_url( url ),
+    : SKELETON::Admin( url ),
       m_win( NULL ),
       m_view( NULL )
 {}
@@ -48,7 +48,7 @@ MessageAdmin::~MessageAdmin()
     std::cout << "MessageAdmin::~MessageAdmin\n";
 #endif 
    
-    close_view();
+    if( m_view ) close_view( m_view->get_url() );
 }
 
 
@@ -65,133 +65,20 @@ void MessageAdmin::clock_in()
 
 
 //
-// コマンドセット(通常)
+// ローカルコマンド実行
 //
-void MessageAdmin::set_command( const std::string& command, const std::string& url, const std::string& arg1 )
-{
-    set_command_impl( false, command, url, arg1 );
-}
-
-//
-// コマンドセット(即実行)
-//
-void MessageAdmin::set_command_immediately( const std::string& command, const std::string& url, const std::string& arg1 )
-{
-    set_command_impl( true, command, url, arg1 );
-}
-
-
-//
-// コマンドセット
-//
-void MessageAdmin::set_command_impl( bool immediately, const std::string& command, const std::string& url, const std::string& arg1 )
+void MessageAdmin::command_local( const COMMAND_ARGS& command )
 {
 #ifdef _DEBUG
-    std::cout << "MessageAdmin::set_command : immediately = " << immediately
-              << " command = " << command << " url = " << url << " " << arg1 << " " << std::endl;
+    std::cout << "MessageAdmin::command_local command = " << command.command << std::endl;
 #endif
 
-    COMMAND_ARGS command_arg;
-    command_arg.command = command;
-    command_arg.url = url;
-    command_arg.arg1 = arg1;
-
-    if( immediately ){
-
-        m_list_command.push_front( command_arg );
-        exec_command();
-
-    }else{
-
-        m_list_command.push_back( command_arg );
-        dispatch();
+    // 書き込み実行
+    if( command.command == "exec_Write" ){
+        if( m_view ) m_view->set_command( command.command );
     }
 }
 
-
-//
-// ディスパッチャのコールバック関数
-//
-void MessageAdmin::callback_dispatch()
-{
-    while( m_list_command.size() ) exec_command();
-}
-
-
-
-//
-// コマンド実行
-//
-void MessageAdmin::exec_command()
-{
-    if( m_list_command.size() == 0 ) return;
-    
-    COMMAND_ARGS command = m_list_command.front();
-    m_list_command.pop_front();
-
-#ifdef _DEBUG
-    std::cout << "MessageAdmin::exec_command command = " << command.command << std::endl;
-#endif
-
-    if( command.command == "open_view" ) open_view( command.url, command.arg1, false );
-
-    else if( command.command == "create_new_thread" ) open_view( command.url, command.arg1, true );
-
-    else if( command.command  == "close_currentview" ){
-
-        if( m_view && m_view->set_command( "loading" ) ){
-            SKELETON::MsgDiag mdiag( m_win, "書き込み中です" );
-            mdiag.run();
-            return;
-        }
-
-        if( m_view && ! m_view->set_command( "empty" ) ){
-            SKELETON::MsgDiag mdiag( m_win, "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-            if( mdiag.run() == Gtk::RESPONSE_OK );
-            else return;
-        }
-
-        close_view();
-    }
-
-    else if( command.command  == "focus_current_view" ) focus_current_view();
-
-    else if( command.command == "relayout_all" ){
-        if( m_view ) m_view->relayout();
-    }
-    else if( command.command == "redraw" ){
-        redraw_view( command.url );
-    }
-    else if( command.command == "redraw_current_view" ){
-        if( m_view ) m_view->redraw_view();
-    }
-
-    // view の操作
-    else if( command.command == "exec_Write" ){
-        if( m_view ) m_view->set_command( command.command );
-    }
-    else if( command.command == "tab_left" ){
-        if( m_view ) m_view->set_command( command.command );
-    }
-    else if( command.command == "tab_right" ){
-        if( m_view ) m_view->set_command( command.command );
-    }
-
-    // window 開け閉じ
-    else if( command.command == "open_window" ){
-        open_window();
-        return;
-    }
-    else if( command.command == "close_window" ){
-        close_window();
-        return;
-    }
-
-    // ステータス表示
-    else if( command.command == "set_status" ){
-        set_status( command.url, command.arg1 );
-    }
-}
 
 
 //
@@ -209,23 +96,53 @@ void MessageAdmin::redraw_view( const std::string& url )
 }
 
 
+void MessageAdmin::redraw_current_view()
+{
+#ifdef _DEBUG
+    std::cout << "MessageAdmin::redraw_current_view\n";
+#endif
+
+    if( m_view ) m_view->redraw_view();
+}
+
 
 //
 // 閉じる
 //
-void MessageAdmin::close_view()
+void MessageAdmin::close_view( const std::string& url )
 {
-    close_window();
+    if( m_view && m_view->get_url() == url ){
 
-    if( m_view ){
+        close_window();
+
         m_eventbox.remove();
         delete m_view;
         m_view = NULL;
 
-        CORE::core_set_command( "empty_page", m_url );
+        CORE::core_set_command( "empty_page", get_url() );
     }
 }
 
+
+//
+// 現在のビューを閉じる
+//
+void MessageAdmin::close_current_view()
+{
+    if( m_view && m_view->set_command( "loading" ) ){
+        SKELETON::MsgDiag mdiag( m_win, "書き込み中です" );
+        mdiag.run();
+        return;
+    }
+
+    if( m_view && ! m_view->set_command( "empty" ) ){
+        SKELETON::MsgDiag mdiag( m_win, "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+        if( mdiag.run() == Gtk::RESPONSE_OK );
+        else return;
+    }
+
+    if( m_view ) close_view( m_view->get_url() );
+}
 
 
 //
@@ -286,13 +203,30 @@ void MessageAdmin::switch_admin()
 }
 
 
+void MessageAdmin::tab_left()
+{
+    if( m_view ) m_view->set_command( "tab_left" );
+}
+
+
+void MessageAdmin::tab_right()
+{
+    if( m_view ) m_view->set_command( "tab_right" );
+}
+
+
+
 //
 // 開く
 //
-// new_thread = true なら新スレを立てる
+// command.arg2 == "new" なら新スレ
 //
-void MessageAdmin::open_view( const std::string& url, const std::string& msg, bool new_thread )
+void MessageAdmin::open_view( const COMMAND_ARGS& command )
 {
+    std::string url = command.url;
+    std::string msg = command.arg1;
+    bool new_thread = ( command.arg2 == "new" );
+
 #ifdef _DEBUG
     std::cout << "MessageAdmin::open_view " << url << std::endl;
 #endif
@@ -354,4 +288,13 @@ void MessageAdmin::open_view( const std::string& url, const std::string& msg, bo
     open_window();
 
     switch_admin();
+}
+
+
+//
+// 再レイアウト実行
+//
+void MessageAdmin::relayout_all()
+{
+    if( m_view ) m_view->relayout();    
 }
