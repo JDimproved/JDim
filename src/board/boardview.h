@@ -87,6 +87,8 @@ namespace BOARD
         int get_title_id( int col );
         void save_column_width();
 
+        void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
+
         // ソート用
         void exec_sort();
         void slot_col_clicked( int col );

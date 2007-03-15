@@ -51,6 +51,7 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "背景: ハイライト", COLOR_BACK_HIGHLIGHT, "検索結果などのハイライトの背景色" );
     set_color_settings( "背景: 板一覧", COLOR_BACK_BBS, "板一覧の背景色" );
     set_color_settings( "背景: スレ一覧", COLOR_BACK_BOARD, "スレ一覧の背景色" );
+    set_color_settings( "背景: ハイライト(ツリー)", COLOR_BACK_HIGHLIGHT_TREE, "板、スレ一覧での検索結果などのハイライトの背景色" );
 
 
     pack_widget();

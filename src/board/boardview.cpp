@@ -163,6 +163,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
         if( id < 0 ) continue;
 
         Gtk::TreeView::Column* column = m_treeview.get_column( i );
+        if( ! column ) continue;
+
         int width = 0;
 
         switch( id ){
@@ -233,7 +235,12 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
                 break;
         }
 
-        Gtk::CellRendererText* rentext = dynamic_cast< Gtk::CellRendererText* >( column->get_first_cell_renderer() );
+        Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+
+        // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
+        if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &BoardView::slot_cell_data ) );
+
+        Gtk::CellRendererText* rentext = dynamic_cast< Gtk::CellRendererText* >( cell );
         if( rentext ){
 
             // 列間スペース
@@ -241,13 +248,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
             // 行間スペース
             rentext->property_ypad() = CONFIG::get_tree_ypad();;
-
-            // subjectの背景色設定
-            // COL_DRAWBG 列を1にセットするとsubjectの背景色が変わる
-            if( id == COL_SUBJECT ){
-                rentext->property_cell_background() = "yellow";
-                column->add_attribute( *rentext, "cell_background_set", COL_DRAWBG );
-            }
 
             // 文字位置
             switch( id ){
@@ -507,6 +507,28 @@ void BoardView::save_column_width()
     }
 } 
    
+
+
+//
+// 実際の描画の際に cellrendere のプロパティをセットするスロット関数
+//
+void BoardView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
+{
+    Gtk::TreeModel::Row row = *it;
+    Gtk::TreePath path = m_liststore->get_path( row );
+
+#ifdef _DEBUG
+    std::cout << "BoardView::slot_cell_data path = " << path.to_string() << std::endl;
+#endif
+
+    // ハイライト色
+    if( row[ m_columns.m_col_drawbg ] ){
+        cell->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
+        cell->property_cell_background_set() = true;
+    }
+    else cell->property_cell_background_set() = false;
+}
+
 
 
 //

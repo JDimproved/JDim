@@ -27,6 +27,7 @@ enum
     COLOR_BACK_POPUP,       // ポップアップの背景
     COLOR_BACK_SELECTION,   // 選択範囲
     COLOR_BACK_HIGHLIGHT,   // ハイライト文字の背景色
+    COLOR_BACK_HIGHLIGHT_TREE,  // ハイライト文字の背景色(ツリー用)
 
     COLOR_SEPARATOR_NEW,    // 新着セパレータ
 
