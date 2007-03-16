@@ -160,6 +160,8 @@ namespace CONTROL
         { "CancelWrite", "書き込みキャンセル" },
         { "ExecWrite", "書き込み実行" },
 
+        { "FocusWrite", "書き込みボタンにフォーカスを移す" },
+
         { "", "" },
 
         // EDIT

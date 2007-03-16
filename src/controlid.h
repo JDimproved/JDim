@@ -168,6 +168,8 @@ namespace CONTROL
         CancelWrite,
         ExecWrite,
 
+        FocusWrite,
+
         MESSAGEMOTION_END,
 
         // EDIT 系

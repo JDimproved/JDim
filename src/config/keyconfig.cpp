@@ -136,6 +136,8 @@ void KeyConfig::load_conf()
     SETMOTION( "CancelWrite", "Alt+q" );
     SETMOTION( "ExecWrite", "Alt+w" ); 
 
+    SETMOTION( "FocusWrite", "Tab" ); 
+
     // EDIT
     SETMOTION( "HomeEdit", "" );
     SETMOTION( "EndEdit", "" );
