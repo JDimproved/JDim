@@ -343,6 +343,11 @@ void MessageViewBase::operate_view( const int& control )
         case CONTROL::TabRight:
             MESSAGE::get_admin()->set_command( "tab_right" );
             break;
+
+            // 書き込みボタンにフォーカスを移す
+        case CONTROL::FocusWrite:
+            m_button_write.grab_focus();
+            break;
     }
 }
 
@@ -641,7 +646,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 
             std::string trip;
 
-            unsigned int i = name.find( "#" );
+	    std::string::size_type i = name.find( "#" );
             if( i != std::string::npos ){
 
                 trip = MISC::get_trip( name.substr( i+1 ), DBTREE::board_charset( get_url() ) );
