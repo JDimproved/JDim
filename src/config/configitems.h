@@ -67,6 +67,9 @@ namespace CONFIG
         int loader_timeout_post;
         int loader_timeout_img;
 
+        // ipv6使用
+        bool use_ipv6;
+
         // リンクをクリックしたときに実行するコマンド
         std::string command_openurl;
 

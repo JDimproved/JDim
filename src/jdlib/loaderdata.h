@@ -7,6 +7,8 @@
 #ifndef _LOADERDATA_H
 #define _LOADERDATA_H
 
+#include "config/globalconf.h"
+
 #include <string>
 #include <list>
 
@@ -29,6 +31,7 @@ namespace JDLIB
         long port;
         bool use_ssl; // https
         bool async; // 非同期ソケット使用
+        bool use_ipv6; // ipv6使用
 
         std::string str_post;
         
@@ -68,6 +71,7 @@ namespace JDLIB
             port = 0;
             use_ssl = false;
             async = true;
+            use_ipv6 = CONFIG::get_use_ipv6();
             
             str_post.clear();
 

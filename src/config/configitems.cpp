@@ -108,6 +108,9 @@ const bool ConfigItems::load()
     loader_timeout_post = cf.get_option( "loader_timeout_post", 30 ); // ポスト
     loader_timeout_img = cf.get_option( "loader_timeout_img", 30 ); // 画像
 
+    // ipv6使用
+    use_ipv6 = cf.get_option( "use_ipv6", USE_IPV6 );
+
     // リンクをクリックしたときに実行するコマンド
     command_openurl = cf.get_option( "command_openurl", "" );
 
@@ -386,6 +389,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "loader_timeout", loader_timeout );
     cf.update( "loader_timeout_post", loader_timeout_post );
     cf.update( "loader_timeout_img", loader_timeout_img );
+
+    cf.update( "use_ipv6", use_ipv6 );
 
     cf.update( "command_openurl", command_openurl );
     cf.update( "brownsercombo_id", brownsercombo_id );

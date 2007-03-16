@@ -307,6 +307,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     m_data.timeout = MAX( TIMEOUT_MIN, data_in.timeout );
     m_data.ex_field = data_in.ex_field;
     m_data.basicauth = data_in.basicauth;
+    m_data.use_ipv6 = data_in.use_ipv6;
 
 #ifdef _DEBUG    
     std::cout << "host: " << m_data.host << std::endl;
@@ -737,7 +738,8 @@ struct addrinfo* Loader::get_addrinfo( const std::string& hostname, int port )
     const int poststrlng = 256;
     char port_str[ poststrlng ];
     memset( &hints, 0, sizeof( addrinfo ) );
-    hints.ai_family = AF_UNSPEC;
+    if( m_data.use_ipv6 ) hints.ai_family = AF_UNSPEC;
+    else hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
     snprintf( port_str, poststrlng, "%d", port );
@@ -749,6 +751,7 @@ struct addrinfo* Loader::get_addrinfo( const std::string& hostname, int port )
     
 #ifdef _DEBUG    
     std::cout << "host = " << hostname
+              << " ipv6 = " << m_data.use_ipv6
               << ", ip =" << inet_ntoa( (  ( sockaddr_in* )( res->ai_addr ) )->sin_addr ) << std::endl;
 #endif
 

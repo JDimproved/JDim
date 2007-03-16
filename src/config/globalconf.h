@@ -102,6 +102,9 @@ namespace CONFIG
     const int get_loader_timeout_post();
     const int get_loader_timeout_img();
 
+    // ipv6使用
+    const bool get_use_ipv6();
+
     // リンクをクリックしたときに実行するコマンド
     const std::string& get_command_openurl();
     void set_command_openurl( const std::string& command );
