@@ -142,6 +142,7 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
     else if( command == "exec_Write" ) slot_write_clicked();
     else if( command == "tab_left" ) tab_left();
     else if( command == "tab_right" ) tab_right();
+    else if( command == "focus_write" ) focus_writebutton();
 
     // メッセージを追加
     else if( command == "add_message" )
@@ -346,7 +347,7 @@ void MessageViewBase::operate_view( const int& control )
 
             // 書き込みボタンにフォーカスを移す
         case CONTROL::FocusWrite:
-            m_button_write.grab_focus();
+            focus_writebutton();
             break;
     }
 }
@@ -549,6 +550,15 @@ void MessageViewBase::tab_right()
     m_preview->focus_view();
 }
 
+
+
+//
+// 書き込みボタンをフォーカス
+//
+void MessageViewBase::focus_writebutton()
+{
+    m_button_write.grab_focus();
+}
 
 
 //

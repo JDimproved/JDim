@@ -94,6 +94,8 @@ namespace MESSAGE
         void tab_left();
         void tab_right();
 
+        void focus_writebutton();
+
         void slot_write_clicked();
         void slot_undo_clicked();
         void slot_not_close_clicked();

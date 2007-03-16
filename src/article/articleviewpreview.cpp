@@ -106,6 +106,10 @@ void ArticleViewPreview::operate_view( const int& control )
             MESSAGE::get_admin()->set_command( "tab_right" );
         break;
 
+        case CONTROL::FocusWrite:
+            MESSAGE::get_admin()->set_command( "focus_write" );
+        break;
+
         default:
             ArticleViewBase::operate_view( control );
             break;

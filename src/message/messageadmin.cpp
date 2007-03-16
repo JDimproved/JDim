@@ -77,6 +77,10 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
     if( command.command == "exec_Write" ){
         if( m_view ) m_view->set_command( command.command );
     }
+    // 書き込みボタンにフォーカスを移す
+    else if( command.command == "focus_write" ){
+        if( m_view ) m_view->set_command( command.command );
+    }
 }
 
 
