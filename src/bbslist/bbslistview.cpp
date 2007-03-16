@@ -77,7 +77,7 @@ void BBSListViewMain::update_view()
     // 外部板挿入
     m_load_etc = false;
     std::string xml_etc = DBTREE::get_xml_etc();
-    unsigned int pos = xml.find( "<subdir" );
+    std::string::size_type pos = xml.find( "<subdir" );
     if( !xml.empty() && !xml_etc.empty() && pos != std::string::npos ){
 
         m_load_etc = true;
@@ -139,7 +139,7 @@ void BBSListViewMain::save_xml( const std::string& file )
             const std::string str2 = "</subdir";
             const std::string str3 = ">\n";
 
-            unsigned int pos = xml.find( str1 );
+	    std::string::size_type pos = xml.find( str1 );
             if( pos != std::string::npos ){
 
                 unsigned int pos_end = xml.find( str2, pos + str1.length() );

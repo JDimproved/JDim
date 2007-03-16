@@ -337,7 +337,7 @@ std::string MISC::remove_space( const std::string& str )
 std::string MISC::remove_str( const std::string& str1, const std::string& str2 )
 {
     std::string str_out;
-    unsigned int pos = str1.find( str2 );
+    std::string::size_type pos = str1.find( str2 );
     if( pos != std::string::npos ) str_out = str1.substr( 0, pos ) + str1.substr( pos + str2.length() );
     return str_out;
 }
