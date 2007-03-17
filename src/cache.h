@@ -104,6 +104,13 @@ namespace CACHE
         EXIST_ERROR      // エラー
     };
 
+    // ファイルタイプ( file_open_diag() で使用 )
+    enum
+    {
+        FILE_TYPE_ALL = 0,
+        FILE_TYPE_TEXT
+    };
+
     // キャッシュの mkdir 関係
     bool mkdir_root();
     bool mkdir_imgroot();
@@ -124,6 +131,9 @@ namespace CACHE
     // ファイル操作
     bool jdmkdir( const std::string& path );
     bool jdcopy( const std::string& file_from, const std::string& file_to );
+
+    // ファイル選択ダイアログを表示する
+    std::string open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type );
 
     // 保存ダイアログを表示して file_from を 保存する
     std::string open_save_diag( Gtk::Window* parent, const std::string& file_from, const std::string& file_to );

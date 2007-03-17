@@ -581,6 +581,49 @@ bool CACHE::jdcopy( const std::string& file_from, const std::string& file_to )
 
 
 //
+// ファイル選択ダイアログを表示する
+//
+// parent == NULL の時はメインウィンドウをparentにする
+// open_path はデフォルトの参照先
+// 戻り値は選択されたファイルのpath
+//
+std::string CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type )
+{
+    std::string dir = MISC::get_dir( open_path );
+    if( dir.empty() ) dir = getenv( "HOME" );
+
+    SKELETON::FileDiag diag( parent, "ファイルを開く", Gtk::FILE_CHOOSER_ACTION_OPEN );
+
+    diag.set_current_folder( dir );
+
+    Gtk::FileFilter filter;
+    switch( type ) 
+    {
+        case FILE_TYPE_TEXT:
+            filter.set_name( "全てのテキストファイル" );
+            filter.add_mime_type( "text/plain" );
+            diag.add_filter( filter );
+            break;
+    }
+
+    Gtk::FileFilter all;
+    all.set_name( "全てのファイル" );
+    all.add_pattern( "*" );
+    diag.add_filter( all );
+
+    if( diag.run() == Gtk::RESPONSE_ACCEPT )
+    {
+        diag.hide();
+
+        return diag.get_filename();
+    }
+
+    return std::string();
+}
+
+
+
+//
 // 保存ダイアログを表示して file_from を 保存する
 //
 // parent == NULL の時はメインウィンドウをparentにする
