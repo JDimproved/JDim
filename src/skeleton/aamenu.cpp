@@ -70,7 +70,7 @@ void AAMenu::create_popupmenu()
     std::list< std::string >::iterator it = list_aa_labels.begin();
     for( ; it != list_aa_labels.end() ; ++it, ++menu_id )
     {
-        std::string aa_label = *it;
+        Glib::ustring aa_label = *it;
 
 #ifdef _DEBUG
         std::cout << "label = " << aa_label << std::endl;
