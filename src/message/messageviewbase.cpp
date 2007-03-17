@@ -52,6 +52,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_enable_menuslot( true ),
       m_button_write( ICON::WRITE ),
       m_button_cancel( Gtk::Stock::CLOSE ),
+      m_button_open( Gtk::Stock::OPEN ),
       m_button_undo( Gtk::Stock::UNDO ),
       m_button_not_close( Gtk::Stock::CANCEL ),
       m_button_preview( ICON::THREAD ),
@@ -209,12 +210,14 @@ void MessageViewBase::pack_widget()
 
     m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
     m_button_cancel.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::close_view ) );
+    m_button_open.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_draft_open ) );
     m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_undo_clicked ) );
     m_button_not_close.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_not_close_clicked ) );
     m_button_preview.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_preview_clicked ) );
     
     m_tooltip.set_tip( m_button_write, CONTROL::get_label_motion( CONTROL::ExecWrite ) );
     m_tooltip.set_tip( m_button_cancel, CONTROL::get_label_motion( CONTROL::CancelWrite ) );
+    m_tooltip.set_tip( m_button_open, "テキストファイル挿入" );
     m_tooltip.set_tip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
     m_tooltip.set_tip( m_button_not_close, "書き込み後にビューを閉じない" );
     m_tooltip.set_tip( m_button_preview,
@@ -226,6 +229,7 @@ void MessageViewBase::pack_widget()
     m_toolbar.pack_start( m_button_write, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 );
     m_toolbar.pack_start( m_button_undo, Gtk::PACK_SHRINK );
+    m_toolbar.pack_start( m_button_open, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_button_not_close, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_button_cancel, Gtk::PACK_SHRINK );
 
@@ -401,6 +405,24 @@ void MessageViewBase::slot_write_clicked()
     }
 
     write();
+}
+
+
+//
+// ファイル挿入
+//
+void MessageViewBase::slot_draft_open()
+{
+    std::string open_path = CACHE::open_load_diag( MESSAGE::get_admin()->get_win(), SESSION::get_dir_draft(), CACHE::FILE_TYPE_TEXT );
+
+    if( ! open_path.empty() )
+    {
+        std::string draft;
+
+        SESSION::set_dir_draft( MISC::get_dir( open_path ) );
+        CACHE::load_rawdata( open_path, draft );
+        if( ! draft.empty() ) set_command( "add_message", draft );
+    }
 }
 
 

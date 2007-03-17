@@ -36,6 +36,7 @@ namespace MESSAGE
         Gtk::HBox m_toolbar;
         SKELETON::ImgButton m_button_write;
         SKELETON::ImgButton m_button_cancel;
+        SKELETON::ImgButton m_button_open;
         SKELETON::ImgButton m_button_undo;
         SKELETON::ImgToggleButton m_button_not_close;
         SKELETON::ImgToggleButton m_button_preview;
@@ -97,6 +98,7 @@ namespace MESSAGE
         void focus_writebutton();
 
         void slot_write_clicked();
+        void slot_draft_open();
         void slot_undo_clicked();
         void slot_not_close_clicked();
         void slot_preview_clicked();
