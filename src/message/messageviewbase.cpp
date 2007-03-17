@@ -98,6 +98,18 @@ MessageViewBase::~MessageViewBase()
 }
 
 
+//
+// コピー用URL( readcgi型 )
+//
+// メインウィンドウのURLバーなどに表示する)
+//
+const std::string MessageViewBase::url_for_copy()
+{
+    return DBTREE::url_readcgi( get_url(), 0, 0 );
+}
+
+
+
 void MessageViewBase::clock_in()
 {
     if( m_preview ) m_preview->clock_in();
@@ -317,8 +329,6 @@ void MessageViewBase::focus_view()
 
     if( m_notebook.get_current_page() == PAGE_MESSAGE ) m_text_message.focus_view();
     else if( m_preview && m_notebook.get_current_page() == PAGE_PREVIEW ) m_preview->focus_view();
-
-    MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
 
 

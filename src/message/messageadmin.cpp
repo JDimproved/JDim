@@ -14,7 +14,6 @@
 #include "viewfactory.h"
 #include "command.h"
 #include "global.h"
-#include "controlid.h"
 #include "session.h"
 
 MESSAGE::MessageAdmin* instance_messageadmin = NULL;
@@ -47,7 +46,7 @@ MessageAdmin::~MessageAdmin()
 #ifdef _DEBUG
     std::cout << "MessageAdmin::~MessageAdmin\n";
 #endif 
-   
+
     if( m_view ) close_view( m_view->get_url() );
 }
 
@@ -55,12 +54,6 @@ MessageAdmin::~MessageAdmin()
 Gtk::Window* MessageAdmin::get_win()
 {
     return dynamic_cast< Gtk::Window* >( m_win );
-}
-
-
-void MessageAdmin::clock_in()
-{
-    if( m_view ) m_view->clock_in();
 }
 
 
@@ -81,32 +74,6 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
     else if( command.command == "focus_write" ){
         if( m_view ) m_view->set_command( command.command );
     }
-}
-
-
-
-//
-// ビューを再描画
-//
-void MessageAdmin::redraw_view( const std::string& url )
-{
-#ifdef _DEBUG
-        std::cout << "MessageAdmin::redraw_view url = " << url << std::endl;
-#endif
-
-    if( m_view && m_view->get_url() == url ){
-        m_view->redraw_view();
-    }
-}
-
-
-void MessageAdmin::redraw_current_view()
-{
-#ifdef _DEBUG
-    std::cout << "MessageAdmin::redraw_current_view\n";
-#endif
-
-    if( m_view ) m_view->redraw_view();
 }
 
 
@@ -150,12 +117,32 @@ void MessageAdmin::close_current_view()
 
 
 //
+// タイトル表示
+//
+void MessageAdmin::set_title( const std::string& url, const std::string& title )
+{
+    if( m_win ) m_win->set_title( "JD - " + title );
+    else Admin::set_title( url, title );
+}
+
+
+//
+// URLバーにアドレス表示
+//
+void MessageAdmin::set_url( const std::string& url, const std::string& url_show )
+{
+    if( m_win ){}
+    else Admin::set_url( url, url_show );
+}
+
+
+//
 // ステータス表示
 //
 void MessageAdmin::set_status( const std::string& url, const std::string& stat )
 {
     if( m_win ) m_win->set_status( stat );
-    else CORE::core_set_command( "set_status", url, stat );
+    else Admin::set_status( url, stat );
 }
 
 
@@ -166,7 +153,6 @@ void MessageAdmin::open_window()
 {
     if( ! SESSION::get_embedded_mes() && ! m_win && ! empty() ){
         m_win = new MESSAGE::MessageWin();
-        m_win->set_title( m_title );
         m_win->pack_remove( false, m_eventbox );
         m_win->show_all();
         focus_current_view();
@@ -194,10 +180,25 @@ void MessageAdmin::close_window()
 //
 // フォーカス
 //
+void MessageAdmin::focus_view( int )
+{
+#ifdef _DEBUG
+    std::cout << "MessageAdmin::focus_view\n";
+#endif
+
+    if( m_win ) m_win->focus_in();
+    if( m_view ){
+        m_view->focus_view();
+        set_title( m_view->get_url(), m_view->get_title() );
+        set_url( m_view->get_url(), m_view->url_for_copy() );
+        set_status( m_view->get_url(), m_view->get_status() );
+    }
+}
+
+
 void MessageAdmin::focus_current_view()
 {
-    if( m_win ) m_win->focus_in();
-    if( m_view ) m_view->focus_view();
+    focus_view( 0 );
 }
 
 
@@ -271,7 +272,6 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
         type = CORE::VIEW_MESSAGE;
         args.arg1 = msg;
         url_msg = url;
-        m_title = "JD - [ 書き込み ] " + DBTREE::article_subject( url );
     }
 
     // 新スレ
@@ -280,7 +280,6 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
         type = CORE::VIEW_NEWTHREAD;
         args.arg1 = msg;
         url_msg = DBTREE::url_datbase( url ) + "0000000000" + DBTREE::board_ext( url );
-        m_title = "JD - [ 新スレ作成 ] " + DBTREE::board_name( url );
     }
 
     m_view = CORE::ViewFactory( type, url_msg, args );
@@ -301,4 +300,20 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
 void MessageAdmin::relayout_all()
 {
     if( m_view ) m_view->relayout();    
+}
+
+
+
+SKELETON::View* MessageAdmin::get_view( const std::string& url, bool )
+{
+    return get_current_view();
+}
+
+
+//
+// カレントview 取得
+//
+SKELETON::View* MessageAdmin::get_current_view()
+{
+    return dynamic_cast< SKELETON::View* >( m_view );
 }

@@ -76,7 +76,10 @@ namespace IMAGE
         virtual void redraw_view( const std::string& url );
         virtual void redraw_current_view();
         virtual void close_view( const std::string& url );
+        virtual void set_title( const std::string& url, const std::string& title );
+        virtual void set_url( const std::string& url, const std::string& url_show );
         virtual void set_status( const std::string& url, const std::string& stat );
+        virtual void focus_view( int page );
         virtual void focus_current_view();
         virtual void focus_out();
         virtual void open_window();
@@ -93,8 +96,9 @@ namespace IMAGE
         SKELETON::View* get_icon( const std::string& url );
         SKELETON::View* get_nth_icon( unsigned int n );
         SKELETON::View* get_current_icon();
-        SKELETON::View* get_view( const std::string& url );
-        SKELETON::View* get_current_view();
+
+        virtual SKELETON::View* get_view( const std::string& url, bool use_find = false );
+        virtual SKELETON::View* get_current_view();
 
         // スクロール
         void scroll_tab( int scroll );

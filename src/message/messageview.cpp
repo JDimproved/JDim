@@ -24,6 +24,9 @@ using namespace MESSAGE;
 {
     setup_view();
     set_message( msg );
+
+    // タイトルセット
+    set_title( "[ 書き込み ] " + DBTREE::article_subject( get_url() ) );
 }
 
 
@@ -102,6 +105,9 @@ void MessageViewMain::reload()
     get_entry_subject().set_editable( true );
     get_entry_subject().set_text( std::string() );
     get_entry_subject().grab_focus();
+
+    // タイトルセット
+    set_title( "[ 新スレ作成 ] " + DBTREE::article_subject( get_url() ) );
 }
 
 

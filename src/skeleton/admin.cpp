@@ -468,10 +468,7 @@ void Admin::exec_command()
     // タイトル表示
     // アクティブなviewから依頼が来たらコアに渡す
     else if( command.command == "set_title" ){
-
-        SKELETON::View* view = get_current_view();
-        if( m_focus && view && view->get_url() == command.url )
-            CORE::core_set_command( "set_title", command.url, command.arg1 );
+        set_title( command.url, command.arg1 );
     }
 
     // ステータス表示
@@ -880,6 +877,31 @@ void Admin::update_finish( const std::string& url )
 }
 
 
+//
+// タイトル表示
+//
+void Admin::set_title( const std::string& url, const std::string& title )
+{
+    // アクティブなviewからコマンドが来たら表示する
+    SKELETON::View* view = get_current_view();
+    if( m_focus && view && view->get_url() == url ){
+        CORE::core_set_command( "set_title", url, title );
+    }
+}
+
+
+//
+// URLバーにアドレス表示
+//
+void Admin::set_url( const std::string& url, const std::string& url_show )
+{
+    // アクティブなviewからコマンドが来たら表示する
+    SKELETON::View* view = get_current_view();
+    if( m_focus && view && view->get_url() == url ){
+        CORE::core_set_command( "set_url", url, url_show );
+    }
+}
+
 
 //
 // ステータス表示
@@ -908,9 +930,9 @@ void Admin::focus_view( int page )
     SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) {
         view->focus_view();
-        CORE::core_set_command( "set_title", "", view->get_title() );
-        CORE::core_set_command( "set_url", view->url_for_copy() );
-        CORE::core_set_command( "set_status", "", view->get_status() );
+        set_title( view->get_url(), view->get_title() );
+        set_url( view->get_url(), view->url_for_copy() );
+        set_status( view->get_url(), view->get_status() );
     }
 }
 

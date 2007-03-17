@@ -142,6 +142,8 @@ namespace SKELETON
         virtual void close_view( View* view );
         virtual void close_all_view( const std::string& url );
         virtual void close_current_view();
+        virtual void set_title( const std::string& url, const std::string& title );
+        virtual void set_url( const std::string& url, const std::string& url_show );
         virtual void set_status( const std::string& url, const std::string& stat );
         virtual void focus_view( int page );
         virtual void focus_current_view();

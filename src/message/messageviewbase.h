@@ -65,10 +65,10 @@ namespace MESSAGE
       public:
 
         MessageViewBase( const std::string& url );
-        ~MessageViewBase();
+        virtual ~MessageViewBase();
 
-        // フォント初期化
-        void init_font( const std::string& fontname );
+        // コピー用のURL
+        virtual const std::string url_for_copy();
 
         // コマンド
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
@@ -83,14 +83,15 @@ namespace MESSAGE
         virtual void focus_view();
         virtual void operate_view( const int& control );
 
-        void post_fin();
+      private:
+
+        // フォント初期化
+        void init_font( const std::string& fontname );
 
         // 書き込みログ保存
         void save_postlog();
 
-      private:
-
-        virtual void write(){};
+        virtual void write() = 0;
 
         void tab_left();
         void tab_right();
@@ -106,7 +107,7 @@ namespace MESSAGE
         bool slot_button_press( GdkEventButton* event );
         void slot_switch_page( GtkNotebookPage*, guint page );
 
-        virtual std::string create_message(){ return std::string() ;}
+        virtual std::string create_message() = 0;
 
         void show_status();
 
@@ -116,6 +117,7 @@ namespace MESSAGE
         Glib::ustring get_message(){ return m_text_message.get_text(); }
 
         void post_msg( const std::string& msg, bool new_article );
+        void post_fin();
 
         void save_name();
         void setup_view();

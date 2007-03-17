@@ -57,6 +57,9 @@ ImageViewMain::ImageViewMain( const std::string& url )
     pack_start( *m_scrwin );
 
     setup_common();
+
+    // タイトルセット
+    set_title( "[ 画像 ]" );
 }
 
 

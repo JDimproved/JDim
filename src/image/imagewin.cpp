@@ -47,8 +47,6 @@ ImageWin::ImageWin()
       m_count_focusout( 0 ),
       m_tab( NULL )
 {
-    set_title( "JD 画像ビュー" );
-
     // サイズ設定
     m_x = SESSION::get_img_x();
     m_y = SESSION::get_img_y();

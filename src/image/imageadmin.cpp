@@ -613,6 +613,26 @@ void ImageAdmin::close_right_views( const std::string& url )
 
 
 //
+// タイトル表示
+//
+void ImageAdmin::set_title( const std::string& url, const std::string& title )
+{
+    if( m_win ) m_win->set_title( "JD - " + title );
+    else Admin::set_title( url, title );
+}
+
+
+//
+// URLバーにアドレス表示
+//
+void ImageAdmin::set_url( const std::string& url, const std::string& url_show )
+{
+    if( m_win ){}
+    else Admin::set_url( url, url_show );
+}
+
+
+//
 // ステータス表示
 //
 void ImageAdmin::set_status( const std::string& url, const std::string& stat )
@@ -627,10 +647,10 @@ void ImageAdmin::set_status( const std::string& url, const std::string& stat )
 //
 // 他のクラスからは直接呼ばないで、set_command()経由で呼ぶこと
 //
-void ImageAdmin::focus_current_view()
+void ImageAdmin::focus_view( int)
 {
 #ifdef _DEBUG
-    std::cout << "ImageAdmin::focus_current_view\n";
+    std::cout << "ImageAdmin::focus_view\n";
 #endif
 
     SKELETON::View* view_icon = get_current_icon();
@@ -641,11 +661,19 @@ void ImageAdmin::focus_current_view()
         focus_out_all();
 
         view_icon->focus_view();
-        if( ! m_win ) CORE::core_set_command( "set_url", view_icon->get_url() );
 
         SKELETON::View* view = get_current_view();
-        if( view ) set_status( view_icon->get_url(), view->get_status() );
+        if( view ){
+            set_url( view_icon->get_url(), view->get_url() );
+            set_title( view_icon->get_url(), view->get_title() );
+            set_status( view_icon->get_url(), view->get_status() );
+        }
     }
+}
+
+void ImageAdmin::focus_current_view()
+{
+    focus_view( 0 );
 }
 
 
@@ -800,7 +828,7 @@ SKELETON::View* ImageAdmin::get_current_icon()
 //
 // view 取得
 //
-SKELETON::View* ImageAdmin::get_view( const std::string& url )
+SKELETON::View* ImageAdmin::get_view( const std::string& url, bool )
 {
     std::list< SKELETON::View* >::iterator it_view;
     for( it_view = m_list_view.begin(); it_view != m_list_view.end(); ++it_view ){
