@@ -1608,6 +1608,9 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            command.arg2  // ジャンプ番号( empty ならジャンプしない )
             );
 
+        // 画像ウィンドウが開いている時にメインウィンドウを前面に出す
+        switch_article( true );
+
         return;
     }
 
@@ -2772,7 +2775,7 @@ void Core::switch_article( bool present )
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
-    std::cout << "Core::switch_article\n";
+    std::cout << "Core::switch_article present = " << present << std::endl;
 #endif
 
     bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
