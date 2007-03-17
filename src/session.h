@@ -229,6 +229,10 @@ namespace SESSION
     const std::string& dir_img_save();
     void set_dir_img_save( const std::string& dir );
 
+    // 下書きファイルのディレクトリ
+    const std::string& get_dir_draft();
+    void set_dir_draft( const std::string& dir );
+
     // ポップアップメニュー表示中
     const bool is_popupmenu_shown();
     void set_popupmenu_shown( bool shown );

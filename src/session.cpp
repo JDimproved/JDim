@@ -88,6 +88,8 @@ bool win_mes_maximized;
 std::string img_dir_dat_save;
 std::string img_dir_img_save;
 
+std::string dir_draft;
+
 bool popupmenu_shown;
 
 
@@ -193,6 +195,8 @@ void SESSION::init_session()
 
     img_dir_dat_save = cf.get_option( "img_dir_dat_save", "" );
     img_dir_img_save = cf.get_option( "img_dir_img_save", "" );
+
+    dir_draft = cf.get_option( "dir_draft", "" );
 
     popupmenu_shown = false;
 
@@ -343,7 +347,8 @@ void SESSION::save_session()
         << "mes_maximized = " << win_mes_maximized << std::endl
 
         << "img_dir_dat_save = " << img_dir_dat_save << std::endl
-        << "img_dir_img_save = " << img_dir_img_save << std::endl;
+        << "img_dir_img_save = " << img_dir_img_save << std::endl
+        << "dir_draft = " << dir_draft << std::endl;
 
     CACHE::save_rawdata( CACHE::path_session(), oss.str() );
 
@@ -547,6 +552,11 @@ void SESSION::set_dir_dat_save( const std::string& dir ){ img_dir_dat_save = dir
 // 最後に画像を保存したディレクトリ
 const std::string& SESSION::dir_img_save(){ return img_dir_img_save; }
 void SESSION::set_dir_img_save( const std::string& dir ){ img_dir_img_save = dir; }
+
+// 下書きファイルのディレクトリ
+const std::string& SESSION::get_dir_draft(){ return dir_draft; }
+void SESSION::set_dir_draft( const std::string& dir ){ dir_draft = dir; }
+
 
 // ポップアップメニュー表示中
 const bool SESSION::is_popupmenu_shown(){ return popupmenu_shown; }
