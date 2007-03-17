@@ -658,6 +658,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 
         // 各ボタンの状態更新
         m_button_undo.set_sensitive( false );
+        m_button_open.set_sensitive( false );
         m_button_preview.set_active( true );
 
         std::string msg = m_text_message.get_text();
@@ -715,6 +716,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 
         // 各ボタンの状態更新
         m_button_undo.set_sensitive( true );
+        m_button_open.set_sensitive( false );
         m_button_preview.set_active( false );
     }
 
