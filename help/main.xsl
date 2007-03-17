@@ -10,11 +10,25 @@
     <link rel="stylesheet" type="text/css" href="main.css" />
     </head>
     <body>
+    
     <p><a href="./help.xml">トップに戻る</a></p>
+
     <h1 id="header">
     <img src="jd.png" width="96" height="96" alt="JDロゴ" />
     <span id="text"><xsl:value-of select="document/@header" /></span>
     </h1>
+
+    <p id="version">
+    Version:
+    <xsl:choose>
+    <xsl:when test="document('history.xml')//prerelease">
+        <xsl:value-of select="document('history.xml')//prerelease/@version" />
+    </xsl:when>
+    <xsl:otherwise>
+        <xsl:value-of select="document('history.xml')//release[last()]/@version" />
+    </xsl:otherwise>
+    </xsl:choose>
+    </p>
 
     <xsl:apply-templates select="document" />
     </body>

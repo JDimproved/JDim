@@ -52,6 +52,10 @@
     <key class="blue">loader_bufsize</key>
     <value>ダウンローダのバッファサイズ(kbyte)</value>
 </item>
+<item>
+    <key class="blue">use_ipv6</key>
+    <value>ipv6を使用する</value>
+</item>
 </array>
 
 

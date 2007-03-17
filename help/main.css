@@ -5,8 +5,7 @@ html
 }
 body
 {
-    margin-left: 20pt;
-    max-width: 640pt;
+    margin: 0 20pt;
 }
 
 /* タイトルヘッダ */
@@ -26,9 +25,12 @@ h1#header > span#text
     margin-left : 16pt;
 }
 
-p#modified
+p#version
 {
+    position: relative;
+    top: -16pt;
     text-align: right;
+    font-size: 80%;
 }
 
 /* アンカー要素 */
@@ -105,7 +107,6 @@ ul > li
 /* その他ブロック要素 */
 table
 {
-    max-width: 600pt;
     margin-left: 12pt;
     empty-cells: show;
 }
@@ -130,20 +131,6 @@ pre.res:first-line
     font-weight: bold;
     color: #005000;
     line-height: 160%;
-}
-
-/* Q&A */
-div.qa
-{
-    margin-top: 28pt;
-    border: 1pt solid #000000;
-    padding: 4pt;
-}
-div.qa > p.question
-{
-    background-color: #f0f0f0;
-    color: #000000;
-    width: 100%;
 }
 
 /* スレ風の表示 */
