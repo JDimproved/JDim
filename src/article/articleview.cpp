@@ -41,7 +41,7 @@ ArticleViewMain::ArticleViewMain( const std::string& url )
 #endif
 
     // オートリロード可
-    SKELETON::View::set_enable_autoreload( true );
+    set_enable_autoreload( true );
 
     setup_view();
 }
@@ -248,12 +248,12 @@ void ArticleViewMain::update_finish()
            << " / " << DBTREE::article_lng_dat( url_article() )/1024 << " k ] "
            << str_stat;
 
-    SKELETON::View::set_status( ss_tmp.str() );
-    ARTICLE::get_admin()->set_command( "set_status", get_url(), SKELETON::View::get_status() );
+    set_status( ss_tmp.str() );
+    ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
 
     // タイトルセット
-    SKELETON::View::set_title( DBTREE::article_subject( url_article() ) );
-    ARTICLE::get_admin()->set_command( "set_title", get_url(), SKELETON::View::get_title() );
+    set_title( DBTREE::article_subject( url_article() ) );
+    ARTICLE::get_admin()->set_command( "set_title", get_url(), get_title() );
 
     // 全体再描画
     drawarea()->redraw_view();

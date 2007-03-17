@@ -664,9 +664,9 @@ void ImageAdmin::focus_view( int)
 
         SKELETON::View* view = get_current_view();
         if( view ){
-            set_url( view_icon->get_url(), view->get_url() );
-            set_title( view_icon->get_url(), view->get_title() );
-            set_status( view_icon->get_url(), view->get_status() );
+            set_url( view->get_url(), view->get_url() );
+            set_title( view->get_url(), view->get_title() );
+            set_status( view->get_url(), view->get_status() );
         }
     }
 }

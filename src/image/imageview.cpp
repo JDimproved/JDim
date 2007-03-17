@@ -60,6 +60,7 @@ ImageViewMain::ImageViewMain( const std::string& url )
 
     // タイトルセット
     set_title( "[ 画像 ]" );
+    IMAGE::get_admin()->set_command( "set_title", get_url(), get_title() );
 }
 
 
