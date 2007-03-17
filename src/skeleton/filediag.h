@@ -13,25 +13,30 @@ namespace SKELETON
 {
     class FileDiag : public Gtk::FileChooserDialog
     {
+        Gtk::FileChooserAction m_action;
+
       public:
 
         // ボタン追加 + saveボタンをデフォルトボタンにセット
         void add_buttons(){
 
             add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-            add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
+
+            if( m_action == Gtk::FILE_CHOOSER_ACTION_OPEN ) add_button( Gtk::Stock::OPEN, Gtk::RESPONSE_ACCEPT );
+            else add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
+
             set_default_response( Gtk::RESPONSE_ACCEPT );
         }
 
         FileDiag( Gtk::Window& parent, const Glib::ustring& title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN )
-        : Gtk::FileChooserDialog( parent, title, action )
+        : Gtk::FileChooserDialog( parent, title, action ), m_action( action )
         {
             add_buttons();
         }
 
         // parent がポインタの時は  NULL かどうかで場合分け
         FileDiag( Gtk::Window* parent, const Glib::ustring& title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN )
-        : Gtk::FileChooserDialog( title, action )
+        : Gtk::FileChooserDialog( title, action ), m_action( action )
         {
             add_buttons();
 
