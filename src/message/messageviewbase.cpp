@@ -54,7 +54,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_button_cancel( Gtk::Stock::CLOSE ),
       m_button_undo( Gtk::Stock::UNDO ),
       m_button_not_close( Gtk::Stock::CANCEL ),
-      m_button_preview( Gtk::Stock::NEW ),
+      m_button_preview( ICON::THREAD ),
       m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" )
 {
 #ifdef _DEBUG
@@ -218,17 +218,17 @@ void MessageViewBase::pack_widget()
     m_tooltip.set_tip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
     m_tooltip.set_tip( m_button_not_close, "書き込み後にビューを閉じない" );
     m_tooltip.set_tip( m_button_preview,
-                       "プレビュー表示\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n" + CONTROL::get_label_motion( CONTROL::TabRight ) + "\n"
+                       "書き込みビュー ←→ プレビュー表示切り替え\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n" + CONTROL::get_label_motion( CONTROL::TabRight ) + "\n"
                        + CONTROL::get_label_motion( CONTROL::TabLeft )
         );
 
+    m_toolbar.pack_start( m_button_preview, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_button_write, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 );
-    m_toolbar.pack_start( m_button_preview, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_button_undo, Gtk::PACK_SHRINK );
+    m_toolbar.pack_start( m_button_not_close, Gtk::PACK_SHRINK );
+    m_toolbar.pack_start( m_button_cancel, Gtk::PACK_SHRINK );
 
-    m_toolbar.pack_end( m_button_cancel, Gtk::PACK_SHRINK );
-    m_toolbar.pack_end( m_button_not_close, Gtk::PACK_SHRINK );
 
 
     // 書き込みビュー
