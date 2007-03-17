@@ -518,7 +518,7 @@ idpopup_by_mo, refpopup_by_mo,namepopup_by_mo 設定追加
 名前欄のbタグで囲まれたトリップなどの文字列に色を付けられるようにした( thank to tamagodake氏)
 </release>
 
-<prerelease version="1.8.8-beta0703??" date="2007/03/??()">
+<release version="1.8.8-beta070317" date="2007/03/17(土)">
 ヘルプファイルをXML化した( thank to tamagodake氏)
 フォント、色詳細設定ダイアログ追加( thank to tamagodake氏)
 スレ一覧の速度の計算アルゴリズムを変えた
@@ -540,7 +540,8 @@ RFC規定外の文字(^など)もURL判定に用いる設定追加( jd.confのlo
 ツリービューのハイライト色の設定追加
 make時にx86_64で警告が出る問題を修正( thanks to 180氏)
 ipv6使用オプション追加( jd.confのuse_ipv6)
-</prerelease>
+書き込みビューにファイル挿入ボタン追加
+</release>
 
 
 </document>
