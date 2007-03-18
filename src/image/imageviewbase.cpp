@@ -374,19 +374,6 @@ void ImageViewBase::slot_move_tail()
 
 
 //
-// ビュー切り替え
-//
-void ImageViewBase::switch_view()
-{
-#ifdef _DEBUG
-    std::cout << "ImageViewBase::switch_view\n";
-#endif
-
-    CORE::core_set_command( "switch_image" );
-}
-
-
-//
 // 閉じる
 //
 void ImageViewBase::close_view()
@@ -612,8 +599,7 @@ bool ImageViewBase::slot_button_press( GdkEventButton* event )
     // 反応を良くするため slot_button_release() ではなくてここで処理する
     if( get_control().button_alloted( event, CONTROL::ClickButton ) ){
         IMAGE::get_admin()->set_command( "switch_image", get_url() );
-
-        switch_view();
+        IMAGE::get_admin()->set_command( "switch_admin" );
     }
 
     return true;

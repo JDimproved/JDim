@@ -69,6 +69,7 @@ ARTICLE::get_admin()->set_command_immediately( "focus_out" ); \
 BOARD::get_admin()->set_command_immediately( "focus_out" ); \
 BBSLIST::get_admin()->set_command_immediately( "focus_out" ); \
 IMAGE::get_admin()->set_command_immediately( "focus_out" ); \
+MESSAGE::get_admin()->set_command_immediately( "focus_out" ); \
 }while(0)
 
 
@@ -777,6 +778,7 @@ void Core::shutdown()
     BOARD::get_admin()->shutdown();
     BBSLIST::get_admin()->shutdown();
     IMAGE::get_admin()->shutdown();
+    MESSAGE::get_admin()->shutdown();
 }
 
 
@@ -1976,6 +1978,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         BOARD::get_admin()->set_command( "redraw_current_view" );
         BBSLIST::get_admin()->set_command( "redraw_current_view" );
         IMAGE::get_admin()->set_command( "redraw_current_view" );
+        MESSAGE::get_admin()->set_command( "redraw_current_view" );
 
         return;
     }
@@ -2220,7 +2223,9 @@ void Core::exec_command()
             && ! BBSLIST::get_admin()->is_booting()
             && ! BOARD::get_admin()->is_booting()
             && ! ARTICLE::get_admin()->is_booting()
-            && ! IMAGE::get_admin()->is_booting() ){
+            && ! IMAGE::get_admin()->is_booting()
+            && ! MESSAGE::get_admin()->is_booting()
+            ){
 
             // 起動完了
             m_boot = false;

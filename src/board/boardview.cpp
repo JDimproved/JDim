@@ -947,18 +947,6 @@ void BoardView::focus_out()
 }
 
 
-//
-// ビュー切り替え
-//
-void BoardView::switch_view()
-{
-#ifdef _DEBUG
-    std::cout << "BoardView::switch_view\n";
-#endif
-
-    CORE::core_set_command( "switch_board" );
-}
-
 
 //
 // 閉じる
@@ -1412,7 +1400,7 @@ bool BoardView::slot_button_press( GdkEventButton* event )
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
-    switch_view();
+    BOARD::get_admin()->set_command( "switch_admin" );
 
     return true;
 }

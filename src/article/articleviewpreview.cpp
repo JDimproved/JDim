@@ -64,22 +64,6 @@ void ArticleViewPreview::pack_widget()
 }
 
 
-
-
-//
-// ビュー切り替え
-//
-void ArticleViewPreview::switch_view()
-{
-#ifdef _DEBUG
-    std::cout << "ArticleViewPreview::switch_view\n";
-#endif
-
-    CORE::core_set_command( "switch_message" );
-}
-
-
-
 //
 // viewの操作
 //
@@ -127,4 +111,21 @@ void ArticleViewPreview::append_dat( const std::string& dat, int num )
 {
     drawarea()->clear_screen();
     ArticleViewBase::append_dat( dat, get_article()->get_number_load() +1 );
+}
+
+
+//
+// drawarea のクリックイベント
+//
+// ArticleViewBase::slot_button_press()をオーパロードしてマウスジェスチャを無効にする
+//
+bool ArticleViewPreview::slot_button_press( std::string url, int res_number, GdkEventButton* event )
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewPreview::slot_button_press url = " << get_url() << std::endl;
+#endif
+
+    MESSAGE::get_admin()->set_command( "switch_admin" );
+
+    return true;
 }

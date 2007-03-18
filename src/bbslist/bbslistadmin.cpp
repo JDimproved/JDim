@@ -76,7 +76,7 @@ void BBSListAdmin::restore()
 
 void BBSListAdmin::switch_admin()
 {
-    CORE::core_set_command( "switch_sidebar" );
+    if( ! has_focus() ) CORE::core_set_command( "switch_sidebar" );
 }
 
 

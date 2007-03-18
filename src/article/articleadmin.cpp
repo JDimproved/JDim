@@ -211,7 +211,7 @@ void ArticleAdmin::restore()
 
 void ArticleAdmin::switch_admin()
 {
-    CORE::core_set_command( "switch_article" );
+    if( ! has_focus() ) CORE::core_set_command( "switch_article" );
 }
 
 

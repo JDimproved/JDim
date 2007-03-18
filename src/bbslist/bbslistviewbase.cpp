@@ -437,22 +437,6 @@ void BBSListViewBase::focus_out()
 }
 
 
-
-
-//
-// ビュー切り替え
-//
-void BBSListViewBase::switch_view()
-{
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::switch_view\n";
-#endif
-
-    CORE::core_set_command( "switch_sidebar" );
-}
-
-
-
 //
 // 閉じる
 //
@@ -746,7 +730,7 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
-    switch_view();
+    BBSLIST::get_admin()->set_command( "switch_admin" );
 
     return true;
 }

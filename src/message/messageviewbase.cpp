@@ -505,7 +505,7 @@ bool MessageViewBase::slot_button_press( GdkEventButton* event )
     std::cout << "MessageViewBase::slot_button_press\n";
 #endif
 
-    switch_view();
+    MESSAGE::get_admin()->set_command( "switch_admin" );
 
     return true;
 }
@@ -518,20 +518,6 @@ bool MessageViewBase::slot_button_press( GdkEventButton* event )
 void MessageViewBase::relayout()
 {
     init_font( CONFIG::get_fontname( FONT_MESSAGE ) );
-}
-
-
-
-//
-// ビュー切り替え
-//
-void MessageViewBase::switch_view()
-{
-#ifdef _DEBUG
-    std::cout << "MessageViewBase::switch_view\n";
-#endif
-
-    CORE::core_set_command( "switch_message" );
 }
 
 
@@ -730,7 +716,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         m_button_preview.set_active( false );
     }
 
-    switch_view();
+    MESSAGE::get_admin()->set_command( "switch_admin" );
     MESSAGE::get_admin()->set_command( "focus_current_view" );
 
     m_enable_menuslot = true;

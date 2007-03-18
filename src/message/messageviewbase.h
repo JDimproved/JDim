@@ -77,7 +77,6 @@ namespace MESSAGE
         virtual void clock_in();
         virtual void reload(){}
         virtual void relayout();
-        virtual void switch_view();
         virtual void close_view();
         virtual void redraw_view();
         virtual void focus_view();

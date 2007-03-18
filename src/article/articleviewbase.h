@@ -81,7 +81,6 @@ namespace ARTICLE
         virtual void redraw_view();
         virtual void focus_view();
         virtual void focus_out();
-        virtual void switch_view();
         virtual void close_view();
         virtual void delete_view();
         virtual void operate_view( const int& control );
@@ -171,7 +170,7 @@ namespace ARTICLE
         std::string get_html_url4report( std::list< int >& list_resnum );
         
         // drawarea の signal を受け取る slots
-        bool slot_button_press( std::string url, int res_number, GdkEventButton* event );
+        virtual bool slot_button_press( std::string url, int res_number, GdkEventButton* event );
         bool slot_button_release( std::string url, int res_number, GdkEventButton* event );
         bool slot_motion_notify( GdkEventMotion* event );
         bool slot_key_press( GdkEventKey* event );

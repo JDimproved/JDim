@@ -93,7 +93,7 @@ void BoardAdmin::restore()
 
 void BoardAdmin::switch_admin()
 {
-    CORE::core_set_command( "switch_board" );
+    if( ! has_focus() ) CORE::core_set_command( "switch_board" );
 }
 
 

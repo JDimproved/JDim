@@ -129,7 +129,7 @@ void MessageAdmin::close_window()
 
 void MessageAdmin::switch_admin()
 {
-    CORE::core_set_command( "switch_message" );
+    if( ! has_focus() ) CORE::core_set_command( "switch_message" );
 }
 
 

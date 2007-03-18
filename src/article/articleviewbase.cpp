@@ -538,6 +538,10 @@ void ArticleViewBase::stop()
 //
 void ArticleViewBase::redraw_view()
 {
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::redraw_view\n";
+#endif
+
     assert( m_drawarea );
     m_drawarea->redraw_view();
 }
@@ -554,7 +558,7 @@ void ArticleViewBase::focus_view()
 #endif
 
     m_drawarea->focus_view();
-    m_drawarea->redraw_view();
+    redraw_view();
 }
 
 
@@ -577,20 +581,6 @@ void ArticleViewBase::focus_out()
 
     hide_popup();
 }
-
-
-//
-// ビュー切り替え
-//
-void ArticleViewBase::switch_view()
-{
-#ifdef _DEBUG
-    std::cout << "ArticleViewBase::switch_view\n";
-#endif
-
-    CORE::core_set_command( "switch_article" );
-}
-
 
 
 //
@@ -702,6 +692,7 @@ void ArticleViewBase::operate_view( const int& control )
         case CONTROL::Delete:
         {
             SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            mdiag.set_default_response( Gtk::RESPONSE_OK );
             if( mdiag.run() != Gtk::RESPONSE_OK ) return;
             delete_view();
             break;
@@ -852,7 +843,7 @@ void ArticleViewBase::slot_push_up_search()
 {
     m_search_invert = true;
     slot_active_search();
-    m_drawarea->redraw_view();
+    redraw_view();
 }
 
 
@@ -864,7 +855,7 @@ void ArticleViewBase::slot_push_down_search()
 {
     m_search_invert = false;
     slot_active_search();
-    m_drawarea->redraw_view();
+    redraw_view();
 }
 
 
@@ -1279,7 +1270,7 @@ void ArticleViewBase::append_html( const std::string& html )
 
     assert( m_drawarea );
     m_drawarea->append_html( html );
-    m_drawarea->redraw_view();
+    redraw_view();
 }
 
 
@@ -1291,7 +1282,7 @@ void ArticleViewBase::append_dat( const std::string& dat, int num )
 {
     assert( m_drawarea );
     m_drawarea->append_dat( dat, num );
-    m_drawarea->redraw_view();
+    redraw_view();
 }
 
 
@@ -1302,7 +1293,7 @@ void ArticleViewBase::append_res( std::list< int >& list_resnum )
 {
     assert( m_drawarea );
     m_drawarea->append_res( list_resnum );
-    m_drawarea->redraw_view();
+    redraw_view();
 }
 
 
@@ -1315,7 +1306,7 @@ void ArticleViewBase::append_res( std::list< int >& list_resnum, std::list< bool
 {
     assert( m_drawarea );
     m_drawarea->append_res( list_resnum, list_joint );
-    m_drawarea->redraw_view();
+    redraw_view();
 }
 
 
@@ -1356,7 +1347,7 @@ bool ArticleViewBase::slot_button_press( std::string url, int res_number, GdkEve
     // ホイールマウスジェスチャ
     get_control().MG_wheel_start( event );
 
-    switch_view();
+    ARTICLE::get_admin()->set_command( "switch_admin" );
 
     return true;
 }
@@ -1883,7 +1874,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             CORE::core_set_command( "open_image", url );
             if( top ) CORE::core_set_command( "switch_image" );
 
-            m_drawarea->redraw_view();
+            redraw_view();
         }
     }
 
@@ -2367,7 +2358,7 @@ void ArticleViewBase::slot_bookmark()
     bool bookmark = ! DBTREE::is_bookmarked( m_url_article, number );
     DBTREE::set_bookmark( m_url_article, number, bookmark );
     if( bookmark ) m_current_bm = number;
-    m_drawarea->redraw_view();
+    redraw_view();
     ARTICLE::get_admin()->set_command( "redraw_views", m_url_article );
 }
 

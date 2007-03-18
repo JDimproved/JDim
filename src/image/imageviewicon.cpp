@@ -180,7 +180,7 @@ bool ImageViewIcon::slot_scroll_event( GdkEventScroll* event )
     if( event->direction == GDK_SCROLL_DOWN ) control = CONTROL::TabRight;
 
     ImageViewBase::operate_view( control );
-    switch_view();
+    IMAGE::get_admin()->set_command( "switch_admin" );
 
     return true;
 }

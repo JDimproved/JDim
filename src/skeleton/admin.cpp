@@ -470,6 +470,11 @@ void Admin::exec_command()
         restore_focus();
     }
 
+    // adminクラスを前面に出す
+    else if( command.command == "switch_admin" ){
+        switch_admin();
+    }
+
     // タブに文字をセット、タブ幅調整
     else if( command.command  == "set_tablabel" ){
         set_tablabel( command.url, command.arg1 );
