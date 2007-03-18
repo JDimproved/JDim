@@ -96,7 +96,6 @@ m_treeview.append_column( *col ); \
 }while(0)
 
 
-#include <iostream>
 BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
       m_treeview( CONFIG::get_fontname( FONT_BOARD ), COLOR_BACK_BOARD ),
@@ -536,6 +535,10 @@ void BoardView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::i
 //
 void BoardView::exec_sort()
 {
+#ifdef _DEBUG
+    std::cout << "BoardView::exec_sort\n";
+#endif
+
     if( m_col < 0 || m_col >= COL_VISIBLE_END ){
         m_col = COL_ID;
         m_sortmode = SORTMODE_ASCEND;
@@ -543,8 +546,6 @@ void BoardView::exec_sort()
 
     m_liststore->set_sort_column( -2, Gtk::SORT_ASCENDING );
     m_liststore->set_sort_column( m_col, Gtk::SORT_ASCENDING );
-
-    switch_view();
 }
 
 
@@ -586,6 +587,7 @@ void BoardView::slot_col_clicked( int col )
     DBTREE::board_set_view_sort_pre_mode( get_url(), m_previous_sortmode );
 
     exec_sort();
+    focus_view();
 }
 
 
@@ -829,8 +831,9 @@ void BoardView::redraw_view()
     m_previous_sortmode = DBTREE::board_view_sort_pre_mode( get_url() );
 
     exec_sort();
-
     goto_top();
+
+    if( BOARD::get_admin()->has_focus() ) focus_view();
 }
 
 
@@ -927,6 +930,10 @@ void BoardView::update_view()
 
 void BoardView::focus_view()
 {
+#ifdef _DEBUG
+    std::cout << "BoardView::focus_view\n";
+#endif
+
     m_treeview.grab_focus();
 }
 
