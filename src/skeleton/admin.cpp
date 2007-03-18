@@ -436,7 +436,7 @@ void Admin::exec_command()
     }
 
     // フォーカスイン、アウト
-    if( command.command == "focus_current_view" ){
+    else if( command.command == "focus_current_view" ){
         m_focus = true;
         focus_current_view();
     }
@@ -551,10 +551,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
     SKELETON::View* view;
     SKELETON::View* current_view = get_current_view();
 
-    // 現在のviewのフォーカスを外し、列幅保存
-    if( current_view ) {
-        current_view->focus_out();
-    }
+    if( current_view ) current_view->focus_out();
 
     // urlを既に開いていたら表示してリロード
     if( ! ( command.arg2 == "true" ) ){
@@ -614,6 +611,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
         if( current_view ) delete current_view;
     }
 
+    m_notebook->show_all();
     switch_admin();
     view->show();
     view->show_view();
@@ -790,7 +788,7 @@ void Admin::close_view( SKELETON::View* view )
 #endif
 
     // 全てのビューが無くなったらコアに知らせる
-    if( m_notebook->get_n_pages() == 0 ){
+    if( empty() ){
 #ifdef _DEBUG
         std::cout << "empty\n";
 #endif
