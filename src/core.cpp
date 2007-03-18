@@ -2245,6 +2245,12 @@ void Core::exec_command_after_boot()
     std::cout << "Core::exec_command_after_boot\n";
 #endif
 
+    // フォーカス回復
+    // 前回終了時に書き込みビューがフォーカスされていたらリセットする
+    if( SESSION::focused_admin() == SESSION::FOCUS_MESSAGE ){
+        SESSION::set_focused_admin( SESSION::FOCUS_NO );
+        SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
+    }
     restore_focus( true, true );
 
     // サイドバー表示状態変更
@@ -2298,6 +2304,13 @@ void Core::restore_focus( bool force, bool present )
     } else { // 強制的に回復
 
         int admin_sidebar = SESSION::focused_admin_sidebar();
+
+        if( admin == SESSION::FOCUS_NO ){
+            if( ! ARTICLE::get_admin()->empty() ) admin = admin_sidebar = SESSION::FOCUS_ARTICLE;
+            else if( ! BOARD::get_admin()->empty() ) admin = admin_sidebar = SESSION::FOCUS_BOARD;
+            else if( ! BBSLIST::get_admin()->empty() ) admin = admin_sidebar = SESSION::FOCUS_SIDEBAR;
+        }
+
         SESSION::set_focused_admin( SESSION::FOCUS_NO );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
 
