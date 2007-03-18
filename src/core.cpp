@@ -505,25 +505,8 @@ void Core::run( bool init )
     m_sidebar = BBSLIST::get_admin()->get_widget();
     assert( m_sidebar );
 
-    // ステータスバー
-    std::string str_tmp;
-#if GTKMMVER <= 240
-    m_statbar.pack_start( m_mginfo );
-#else
-    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
-    m_statbar.pack_end( m_mginfo, Gtk::PACK_SHRINK );
-    m_mginfo.set_width_chars( MAX_MG_LNG * 2 + 16 );
-    m_mginfo.set_justify( Gtk::JUSTIFY_LEFT );
-#endif
-    m_statbar.show_all_children();
-
-    m_stat_scrbar.add( m_statbar );
-    m_stat_scrbar.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
-    m_stat_scrbar.set_size_request( 8 );
-
     // その他設定とwidgetのパッキング
     m_notebook.set_show_tabs( false );
-    m_vbox_main.set_spacing( 4 );
     m_hpaned.get_ctrl().set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
 
     pack_widget( false );
@@ -531,7 +514,6 @@ void Core::run( bool init )
     m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
     m_hpaned.get_ctrl().sig_pane_modechanged().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
-    m_win_main.add( m_vbox_main );
     m_win_main.signal_focus_out_event().connect( sigc::mem_fun(*this, &Core::slot_focus_out_event ) );
     m_win_main.signal_focus_in_event().connect( sigc::mem_fun(*this, &Core::slot_focus_in_event ) );
     m_win_main.show_all_children();
@@ -662,15 +644,13 @@ void Core::pack_widget( bool unpack )
     }
 
     // メインwindowのパッキング
-    m_vbox_main.pack_remove_end( unpack, m_stat_scrbar, Gtk::PACK_SHRINK );
-    m_vbox_main.pack_remove_end( unpack, m_hpaned );
+    m_win_main.pack_remove_end( unpack, m_win_main.get_statbar(), Gtk::PACK_SHRINK );
+    m_win_main.pack_remove_end( unpack, m_hpaned );
     if( SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL )
-        m_vbox_main.pack_remove_end( unpack, m_toolbar, Gtk::PACK_SHRINK );
-    if( SESSION::show_menubar() ) m_vbox_main.pack_remove_end( unpack, *m_menubar, Gtk::PACK_SHRINK );
+        m_win_main.pack_remove_end( unpack, m_toolbar, Gtk::PACK_SHRINK );
+    if( SESSION::show_menubar() ) m_win_main.pack_remove_end( unpack, *m_menubar, Gtk::PACK_SHRINK );
 
     if( ! unpack ){
-
-        m_vbox_main.show_all_children();
 
         // ペーンの位置設定
         m_vpaned_r.get_ctrl().set_position( SESSION::vpane_main_pos() );
@@ -2117,16 +2097,17 @@ void Core::exec_command()
     }
 
     else if( command.command  == "set_status" ){
-#if GTKMMVER <= 240
-        m_statbar.push( command.arg1 );
-#else
-        m_label_stat.set_text( command.arg1 );
-#endif        
+        m_win_main.set_status( command.arg1 );
     }
 
     // マウスジェスチャ
     else if( command.command  == "set_mginfo" ){
-        m_mginfo.set_text( command.arg1 );
+
+        // 画像ウィンドウが表示されている場合
+        if( ! SESSION::get_embedded_img() && SESSION::is_img_shown()
+            && SESSION::is_focus_win_img() ) IMAGE::get_admin()->set_command( "set_mginfo", "", command.arg1 );
+
+        else m_win_main.set_mginfo( command.arg1 );
     }
 
     // bbsmenu再読み込み

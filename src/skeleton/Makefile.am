@@ -1,6 +1,7 @@
 noinst_LIBRARIES = libskeleton.a
 
 libskeleton_a_SOURCES = \
+	window.cpp \
 	aamenu.cpp \
 	admin.cpp \
 	dispatchable.cpp \
@@ -20,6 +21,7 @@ libskeleton_a_SOURCES = \
 	vbox.cpp
 
 noinst_HEADERS = \
+	window.h \
 	aamenu.h \
 	admin.h \
 	dispatchable.h \

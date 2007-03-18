@@ -71,7 +71,6 @@ namespace CORE
         // アイコン化されている
         bool m_iconified;
         
-        SKELETON::JDVBox m_vbox_main;
         SKELETON::JDHPaned m_hpaned;
 
         // サイドバー
@@ -106,16 +105,6 @@ namespace CORE
         // タイトルに表示する文字列
         // set_maintitle() 参照
         std::string m_title;
-
-        // ステータスバー
-#if GTKMMVER <= 240
-        Gtk::Statusbar m_statbar;
-#else
-        Gtk::HBox m_statbar;
-        Gtk::Label m_label_stat;
-#endif
-        Gtk::Label m_mginfo;
-        Gtk::ScrolledWindow m_stat_scrbar;
 
         Gtk::MenuBar* m_menubar;
 

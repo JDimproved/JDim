@@ -42,7 +42,6 @@ using namespace IMAGE;
 
 ImageAdmin::ImageAdmin( const std::string& url )
     : SKELETON::Admin( url )
-    , m_win( NULL )
     , m_scroll( SCROLL_NO )
 {
     m_scrwin.add( m_iconbox );
@@ -81,20 +80,14 @@ ImageAdmin::~ImageAdmin()
 }
 
 
-
-Gtk::Window* ImageAdmin::get_win()
-{
-    return dynamic_cast< Gtk::Window* >( m_win );
-}
-
-
-
 //
 // 起動中
 //
 const bool ImageAdmin::is_booting()
 {
-    if( m_win && m_win->is_booting() ) return true;
+    ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
+
+    if( win && win->is_booting() ) return true;
 
     return Admin::is_booting();
 }
@@ -205,7 +198,7 @@ void ImageAdmin::clock_in()
         }
     }
 
-    if( m_win ) m_win->clock_in();
+    if( get_jdwin() ) get_jdwin()->clock_in();
 }
 
 
@@ -230,6 +223,8 @@ int ImageAdmin::get_current_page()
 //
 void ImageAdmin::command_local( const COMMAND_ARGS& command )
 {
+    ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
+
     // 切り替え
     if( command.command == "switch_image" ) switch_img( command.url );
 
@@ -274,11 +269,11 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
 
     // window 開け閉じ可能/不可
     else if( command.command == "enable_fold_win" ){
-        if( m_win ) m_win->set_enable_fold( true );
+        if( win ) win->set_enable_fold( true );
     }
 
     else if( command.command == "disable_fold_win" ){
-        if( m_win ) m_win->set_enable_fold( false );
+        if( win ) win->set_enable_fold( false );
     }
 }
 
@@ -541,14 +536,18 @@ void ImageAdmin::close_view( const std::string& url )
 //
 void ImageAdmin::open_window()
 {
-    if( ! SESSION::get_embedded_img() && ! m_win && ! empty() ){
-        m_win = new IMAGE::ImageWin();
-        m_win->pack_remove( false, m_tab, m_view );
-        m_win->show_all();
+    ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
+
+    if( ! SESSION::get_embedded_img() && ! win && ! empty() ){
+        win = new IMAGE::ImageWin();
+        set_jdwin( win );
+        win->pack_remove_tab( false, m_tab );
+        win->pack_remove_view( false, m_view );
+        win->show_all();
     }
-    else if( m_win && m_win->is_hide() ){
-        m_win->show();
-        m_win->focus_in();
+    else if( win && win->is_hide() ){
+        win->show();
+        win->focus_in();
     }
 }
 
@@ -558,10 +557,13 @@ void ImageAdmin::open_window()
 //
 void ImageAdmin::close_window()
 {
-    if( m_win ){
-        m_win->pack_remove( true, m_tab, m_view );
-        delete m_win;
-        m_win = NULL;
+    ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
+
+    if( win ){
+        win->pack_remove_tab( true, m_tab );
+        win->pack_remove_view( true, m_view );
+
+        delete_jdwin();
     }
 }
 
@@ -611,37 +613,6 @@ void ImageAdmin::close_right_views( const std::string& url )
 }
 
 
-
-//
-// タイトル表示
-//
-void ImageAdmin::set_title( const std::string& url, const std::string& title )
-{
-    if( m_win ) m_win->set_title( "JD - " + title );
-    else Admin::set_title( url, title );
-}
-
-
-//
-// URLバーにアドレス表示
-//
-void ImageAdmin::set_url( const std::string& url, const std::string& url_show )
-{
-    if( m_win ){}
-    else Admin::set_url( url, url_show );
-}
-
-
-//
-// ステータス表示
-//
-void ImageAdmin::set_status( const std::string& url, const std::string& stat )
-{
-    if( m_win ) m_win->set_status( stat );
-    else Admin::set_status( url, stat );
-}
-
-
 //
 // 現在のviewをフォーカスする
 //
@@ -656,7 +627,7 @@ void ImageAdmin::focus_view( int)
     SKELETON::View* view_icon = get_current_icon();
     if( view_icon ) {
 
-        if( m_win ) m_win->focus_in();
+        if( get_jdwin() ) get_jdwin()->focus_in();
 
         focus_out_all();
 
@@ -687,7 +658,8 @@ void ImageAdmin::focus_out()
 #endif
 
     // 画像ビューが隠れないようにフォーカスアウトする前に transient 指定をしておく
-    if( m_win ) m_win->set_transient( true );
+    ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
+    if( win ) win->set_transient( true );
 
     SKELETON::Admin::focus_out();
 }
@@ -933,7 +905,7 @@ void ImageAdmin::save_all()
     std::list< std::string > list_urls = get_URLs();
 
     // ディレクトリ選択
-    SKELETON::FileDiag diag( m_win, "save", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
+    SKELETON::FileDiag diag( get_win(), "save", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
 
     diag.set_current_folder( SESSION::dir_img_save() );
     
@@ -978,7 +950,7 @@ void ImageAdmin::save_all()
 
                         for(;;){
 
-                            SKELETON::MsgDiag mdiag( m_win, "ファイルが存在します。ファイル名を変更しますか？", 
+                            SKELETON::MsgDiag mdiag( get_win(), "ファイルが存在します。ファイル名を変更しますか？", 
                                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
                             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
                             mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
@@ -1001,7 +973,7 @@ void ImageAdmin::save_all()
 
                                     // 名前変更
                                 case Gtk::RESPONSE_YES:
-                                    if( ! DBIMG::save( url, m_win, path_to ) ) continue;
+                                    if( ! DBIMG::save( url, get_win(), path_to ) ) continue;
                                     break;
 
                                     //  すべていいえ

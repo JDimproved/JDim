@@ -8,6 +8,7 @@
 
 #include "skeleton/view.h"
 #include "skeleton/msgdiag.h"
+#include "skeleton/dragnote.h"
 
 #include "dbtree/interface.h"
 
@@ -35,10 +36,10 @@ using namespace MESSAGE;
 
 
 MessageAdmin::MessageAdmin( const std::string& url )
-    : SKELETON::Admin( url ),
-      m_win( NULL ),
-      m_view( NULL )
-{}
+    : SKELETON::Admin( url )
+{
+    get_notebook()->set_show_tabs( false );
+}
 
 
 MessageAdmin::~MessageAdmin()
@@ -46,14 +47,6 @@ MessageAdmin::~MessageAdmin()
 #ifdef _DEBUG
     std::cout << "MessageAdmin::~MessageAdmin\n";
 #endif 
-
-    if( m_view ) close_view( m_view->get_url() );
-}
-
-
-Gtk::Window* MessageAdmin::get_win()
-{
-    return dynamic_cast< Gtk::Window* >( m_win );
 }
 
 
@@ -66,13 +59,15 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
     std::cout << "MessageAdmin::command_local command = " << command.command << std::endl;
 #endif
 
+    SKELETON::View *view = get_current_view();
+
     // 書き込み実行
     if( command.command == "exec_Write" ){
-        if( m_view ) m_view->set_command( command.command );
+        if( view ) view->set_command( command.command );
     }
     // 書き込みボタンにフォーカスを移す
     else if( command.command == "focus_write" ){
-        if( m_view ) m_view->set_command( command.command );
+        if( view ) view->set_command( command.command );
     }
 }
 
@@ -82,67 +77,23 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
 //
 void MessageAdmin::close_view( const std::string& url )
 {
-    if( m_view && m_view->get_url() == url ){
+    SKELETON::View *view = get_current_view();
+    if( ! view ) return;
 
-        close_window();
-
-        m_eventbox.remove();
-        delete m_view;
-        m_view = NULL;
-
-        CORE::core_set_command( "empty_page", get_url() );
-    }
-}
-
-
-//
-// 現在のビューを閉じる
-//
-void MessageAdmin::close_current_view()
-{
-    if( m_view && m_view->set_command( "loading" ) ){
-        SKELETON::MsgDiag mdiag( m_win, "書き込み中です" );
+    if( view->set_command( "loading" ) ){
+        SKELETON::MsgDiag mdiag( get_win(), "書き込み中です" );
         mdiag.run();
         return;
     }
 
-    if( m_view && ! m_view->set_command( "empty" ) ){
-        SKELETON::MsgDiag mdiag( m_win, "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+    if( ! view->set_command( "empty" ) ){
+        SKELETON::MsgDiag mdiag( get_win(), "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
         if( mdiag.run() == Gtk::RESPONSE_OK );
         else return;
     }
 
-    if( m_view ) close_view( m_view->get_url() );
-}
-
-
-//
-// タイトル表示
-//
-void MessageAdmin::set_title( const std::string& url, const std::string& title )
-{
-    if( m_win ) m_win->set_title( "JD - " + title );
-    else Admin::set_title( url, title );
-}
-
-
-//
-// URLバーにアドレス表示
-//
-void MessageAdmin::set_url( const std::string& url, const std::string& url_show )
-{
-    if( m_win ){}
-    else Admin::set_url( url, url_show );
-}
-
-
-//
-// ステータス表示
-//
-void MessageAdmin::set_status( const std::string& url, const std::string& stat )
-{
-    if( m_win ) m_win->set_status( stat );
-    else Admin::set_status( url, stat );
+    Admin::close_view( url );
+    if( empty() ) close_window();
 }
 
 
@@ -151,15 +102,15 @@ void MessageAdmin::set_status( const std::string& url, const std::string& stat )
 //
 void MessageAdmin::open_window()
 {
-    if( ! SESSION::get_embedded_mes() && ! m_win && ! empty() ){
-        m_win = new MESSAGE::MessageWin();
-        m_win->pack_remove( false, m_eventbox );
-        m_win->show_all();
-        focus_current_view();
+    if( ! SESSION::get_embedded_mes() && ! get_jdwin() && ! empty() ){
+        MESSAGE::MessageWin *win = new MESSAGE::MessageWin();
+        set_jdwin( win );
+        win->pack_remove_end( false, *get_widget() );
+        win->show_all();
     }
-    else if( m_win ){
-        m_win->show();
-        m_win->focus_in();
+    else if( get_jdwin() ){
+        get_jdwin()->show();
+        get_jdwin()->focus_in();
     }
 }
 
@@ -169,36 +120,10 @@ void MessageAdmin::open_window()
 //
 void MessageAdmin::close_window()
 {
-    if( m_win ){
-        m_win->pack_remove( true, m_eventbox );
-        delete m_win;
-        m_win = NULL;
+    if( get_jdwin() ){
+        get_jdwin()->pack_remove_end( true, *get_widget() );
+        delete_jdwin();
     }
-}
-
-
-//
-// フォーカス
-//
-void MessageAdmin::focus_view( int )
-{
-#ifdef _DEBUG
-    std::cout << "MessageAdmin::focus_view\n";
-#endif
-
-    if( m_win ) m_win->focus_in();
-    if( m_view ){
-        m_view->focus_view();
-        set_title( m_view->get_url(), m_view->get_title() );
-        set_url( m_view->get_url(), m_view->url_for_copy() );
-        set_status( m_view->get_url(), m_view->get_status() );
-    }
-}
-
-
-void MessageAdmin::focus_current_view()
-{
-    focus_view( 0 );
 }
 
 
@@ -210,13 +135,15 @@ void MessageAdmin::switch_admin()
 
 void MessageAdmin::tab_left()
 {
-    if( m_view ) m_view->set_command( "tab_left" );
+    SKELETON::View *view = get_current_view();
+    if( view ) view->set_command( "tab_left" );
 }
 
 
 void MessageAdmin::tab_right()
 {
-    if( m_view ) m_view->set_command( "tab_right" );
+    SKELETON::View *view = get_current_view();
+    if( view ) view->set_command( "tab_right" );
 }
 
 
@@ -236,33 +163,35 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
     std::cout << "MessageAdmin::open_view " << url << std::endl;
 #endif
 
-    if( m_view && m_view->set_command( "loading" ) ){
-        SKELETON::MsgDiag mdiag( m_win, "書き込み中です" );
-        mdiag.run();
-        return;
-    }
+    SKELETON::View *current_view = get_current_view();
+    if( current_view ){
 
-    // 既存のビューにメッセージを追加してフォーカスを移す
-    if( m_view && url == m_view->get_url() )
-    {
-        if( ! msg.empty() ) m_view->set_command( "add_message", msg );
+        if( current_view->set_command( "loading" ) ){
+            SKELETON::MsgDiag mdiag( get_win(), "書き込み中です" );
+            mdiag.run();
+            return;
+        }
 
-        switch_admin();
-        return;
-    }
+        // 既存のビューにメッセージを追加してフォーカスを移す
+        if( url == current_view->get_url() )
+        {
+            if( ! msg.empty() ) current_view->set_command( "add_message", msg );
 
-    // URLが異なればビューを破棄
-    if( m_view && ! m_view->set_command( "empty" ) ){
-        SKELETON::MsgDiag mdiag( m_win, "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-        if( mdiag.run() == Gtk::RESPONSE_OK );
-        else return;
-    }
+            switch_admin();
+            return;
+        }
 
-    // 古いビューを破棄
-    if( m_view ){
-        m_eventbox.remove();
-        delete m_view;
-        m_view = NULL;
+        // URLが異なればビューを破棄
+        if( ! current_view->set_command( "empty" ) ){
+            SKELETON::MsgDiag mdiag( get_win(), "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            if( mdiag.run() == Gtk::RESPONSE_OK );
+            else return;
+        }
+
+        // 古いビューを破棄
+        int page = get_notebook()->get_current_page();
+        get_notebook()->remove_page( page );
+        delete current_view;
     }
 
     std::string url_msg;
@@ -282,38 +211,17 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
         url_msg = DBTREE::url_datbase( url ) + "0000000000" + DBTREE::board_ext( url );
     }
 
-    m_view = CORE::ViewFactory( type, url_msg, args );
+    SKELETON::View *view = CORE::ViewFactory( type, url_msg, args );
 
-    m_eventbox.add( *m_view );
-    m_eventbox.show_all();
+    get_notebook()->append_page( url_msg, *view );
 
     // ウィンドウ表示
     open_window();
 
+    get_notebook()->show_all();
     switch_admin();
-}
-
-
-//
-// 再レイアウト実行
-//
-void MessageAdmin::relayout_all()
-{
-    if( m_view ) m_view->relayout();    
-}
-
-
-
-SKELETON::View* MessageAdmin::get_view( const std::string& url, bool )
-{
-    return get_current_view();
-}
-
-
-//
-// カレントview 取得
-//
-SKELETON::View* MessageAdmin::get_current_view()
-{
-    return dynamic_cast< SKELETON::View* >( m_view );
+    view->show();
+    view->show_view();
+    set_current_page( get_notebook()->page_num( *view ) );
+    focus_current_view();
 }

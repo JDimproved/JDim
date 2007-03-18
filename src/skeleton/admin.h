@@ -17,12 +17,15 @@
 
 namespace SKELETON
 {
+    class JDWindow;
     class View;
     class DragableNoteBook;
 
     class Admin : public Dispatchable
     {
         std::string m_url;
+
+        JDWindow * m_win;
         DragableNoteBook* m_notebook;
 
         bool m_focus;
@@ -47,7 +50,7 @@ namespace SKELETON
         virtual bool empty();
         const std::string& get_url() const{ return m_url; }
         virtual Gtk::Widget* get_widget();
-        virtual Gtk::Window* get_win(){ return NULL; }
+        virtual Gtk::Window* get_win();
 
         // 起動中
         virtual const bool is_booting();
@@ -100,6 +103,10 @@ namespace SKELETON
         virtual void shutdown();
 
     protected:
+
+        JDWindow* get_jdwin(){ return m_win; }
+        void set_jdwin( JDWindow* win ){ m_win = win; }
+        void delete_jdwin();
 
         DragableNoteBook* get_notebook(){ return m_notebook; }
 

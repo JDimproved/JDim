@@ -39,11 +39,10 @@ enum
 
 
 ImageWin::ImageWin()
-    : Gtk::Window(),
+    : SKELETON::JDWindow(),
       m_boot( true ),
       m_enable_fold( true ),
       m_transient( false ),
-      m_maximized( false ),
       m_count_focusout( 0 ),
       m_tab( NULL )
 {
@@ -66,25 +65,21 @@ ImageWin::ImageWin()
     move( m_x, m_y );
     focus_out();
 
-#if GTKMMVER >= 260
-    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
-#endif
-
-    m_vbox_view.pack_end( m_statbar, Gtk::PACK_SHRINK );
+    m_vbox_view.pack_end( get_statbar(), Gtk::PACK_SHRINK );
 
     m_scrwin.set_size_request( 0, 0 );
     m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
     m_scrwin.add( m_vbox_view );
 
-    m_vbox.pack_end( m_scrwin );
-
-    add( m_vbox );
+    pack_remove_end( false, m_scrwin );
     show_all_children();
 
     property_window_position().set_value( Gtk::WIN_POS_NONE );
     set_transient( true );
 
     Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageWin::slot_idle ) );
+
+    show_all_children();
 }
 
 
@@ -262,29 +257,22 @@ int ImageWin::get_min_height()
 }
 
 
-void ImageWin::pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view )
+void ImageWin::pack_remove_tab( bool unpack, Widget& tab )
 {
-#ifdef _DEBUG
-    std::cout << "ImageWin::pack_remove remove - " << unpack << std::endl;
-#endif
-
     m_tab = &tab;
+    pack_remove_start( unpack, tab, Gtk::PACK_SHRINK );
 
-    m_vbox.pack_remove_end( unpack, tab, Gtk::PACK_SHRINK );
-    m_vbox_view.pack_remove_end( unpack, view );
-
-    if( ! unpack ) m_vbox.show_all_children();
 }
 
 
-// ステータスバー表示
-void ImageWin::set_status( const std::string& stat )
+void ImageWin::pack_remove_view( bool unpack, Widget& view )
 {
-#if GTKMMVER <= 240
-    m_statbar.push( stat );
-#else
-    m_label_stat.set_text( stat );
+#ifdef _DEBUG
+    std::cout << "ImageWin::pack_remove_view unpack = " << unpack << std::endl;
 #endif
+
+    m_vbox_view.pack_remove_end( unpack, view );
+    if( ! unpack ) m_vbox_view.show_all();
 }
 
 
@@ -296,7 +284,7 @@ void ImageWin::focus_in()
     show();
     if( SESSION::is_iconified_win_img() ) deiconify();
 
-    if( ! m_maximized && get_window() ){
+    if( ! is_maximized() && get_window() ){
         int x, y;
         get_window()->get_root_origin( x, y );
         if( x != m_x || y != m_y ) move( m_x, m_y );
@@ -307,14 +295,14 @@ void ImageWin::focus_in()
     //
     // GNOME環境では focus in 動作中に resize() が失敗する時が
     // あるので、遅延させて clock_in() の中でリサイズとpresentする
-    if( ! m_maximized && m_mode != IMGWIN_EXPANDING ){
+    if( ! is_maximized() && m_mode != IMGWIN_EXPANDING ){
         m_mode = IMGWIN_EXPANDING;
         m_counter = 0;
     }
 
 #ifdef _DEBUG
     std::cout << "ImageWin::focus_in mode = " << m_mode
-              << " maximized = " << m_maximized
+              << " maximized = " << is_maximized()
               << " iconified = " << SESSION::is_iconified_win_img()  << std::endl;
 #endif
 }
@@ -329,7 +317,7 @@ void ImageWin::focus_out()
     if( SESSION::is_popupmenu_shown() ) return;
     if( CORE::get_dnd_manager()->now_dnd() ) return;
 
-    if( m_maximized ) unmaximize();
+    if( is_maximized() ) unmaximize();
 
     // 折り畳み
     if( m_mode != IMGWIN_FOLD ){
@@ -341,7 +329,7 @@ void ImageWin::focus_out()
 
 #ifdef _DEBUG
     std::cout << "ImageWin::focus_out mode = " << m_mode
-              << " maximized = " << m_maximized
+              << " maximized = " << is_maximized()
               << " iconified = " << SESSION::is_iconified_win_img() << std::endl;
 #endif
 }
@@ -384,12 +372,12 @@ bool ImageWin::on_delete_event( GdkEventAny* event )
     std::cout << "ImageWin::on_delete_event\n";
 #endif
 
-    if( m_maximized ) unmaximize();
+    if( is_maximized() ) unmaximize();
 
     else{
 
         // hideする前に座標保存
-        if( ! m_maximized && ! SESSION::is_iconified_win_img() && get_window() ){
+        if( ! is_maximized() && ! SESSION::is_iconified_win_img() && get_window() ){
             get_window()->get_root_origin( m_x, m_y );
         }
 
@@ -418,11 +406,11 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
         else if( SESSION::is_iconified_win_img() && ! iconified ) SESSION::set_img_shown( true );
 
         // 通常 -> 最大化
-        if( ! m_maximized && maximized ){
+        if( ! is_maximized() && maximized ){
             m_mode = IMGWIN_NORMAL;
             SESSION::set_img_shown( true );
         }
-        else if( m_maximized && ! maximized ){
+        else if( is_maximized() && ! maximized ){
 
             // 最大 -> 折り畳み
             if( m_mode == IMGWIN_FOLD ) m_mode = IMGWIN_UNMAX_FOLD;
@@ -434,15 +422,14 @@ bool ImageWin::on_window_state_event( GdkEventWindowState* event )
 #ifdef _DEBUG
         std::cout << "ImageWin::on_window_state_event : "
                   << " mode = " << m_mode
-                  << " maximized = " << m_maximized << " -> " << maximized
+                  << " maximized = " << is_maximized() << " -> " << maximized
                   << " iconified = " << SESSION::is_iconified_win_img() << " -> " << iconified << std::endl;
 #endif     
 
-        m_maximized = maximized;
         SESSION::set_iconified_win_img( iconified );
     }
 
-    return Gtk::Window::on_window_state_event( event );
+    return SKELETON::JDWindow::on_window_state_event( event );
 }
 
 
@@ -456,7 +443,7 @@ bool ImageWin::on_configure_event( GdkEventConfigure* event )
         else if( m_mode == IMGWIN_UNMAX_FOLD ) m_mode = IMGWIN_FOLD;
 
         // 最大、最小化しているときは除く
-        else if( ! m_maximized && ! SESSION::is_iconified_win_img() ){
+        else if( ! is_maximized() && ! SESSION::is_iconified_win_img() ){
 
             if( get_window() ) get_window()->get_root_origin( m_x, m_y );
 
@@ -470,7 +457,7 @@ bool ImageWin::on_configure_event( GdkEventConfigure* event )
         std::cout << "ImageWin::on_configure_event resizing "
                   << " mode = " << m_mode
                   << " show = " << SESSION::is_img_shown()
-                  << " maximized = " << m_maximized
+                  << " maximized = " << is_maximized()
                   << " iconified = " << SESSION::is_iconified_win_img()
                   << " x = " << m_x << " y = " << m_y
                   << " w = " << m_width << " height = " << m_height << std::endl;

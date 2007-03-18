@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "admin.h"
+#include "window.h"
 #include "view.h"
 #include "dragnote.h"
 
@@ -26,9 +27,10 @@ using namespace SKELETON;
 
 
 Admin::Admin( const std::string& url )
-    : m_url( url )
-    , m_notebook( 0 )
-    , m_focus( false )
+    : m_url( url ),
+      m_win( NULL ),
+      m_notebook( NULL ),
+      m_focus( false )
 {
     m_notebook = new DragableNoteBook();
 
@@ -177,6 +179,9 @@ Admin::~Admin()
     }
     m_list_command.clear();
 
+    close_window();
+    delete_jdwin();
+
     if( m_notebook ) delete m_notebook;
 }
 
@@ -187,6 +192,20 @@ Gtk::Widget* Admin::get_widget()
     return dynamic_cast< Gtk::Widget*>( m_notebook );
 }
 
+
+Gtk::Window* Admin::get_win()
+{
+    return dynamic_cast< Gtk::Window*>( m_win );
+}
+
+
+void Admin::delete_jdwin()
+{
+    if( m_win ){
+        delete m_win;
+        m_win = NULL;
+    }
+}
 
 
 const bool Admin::is_booting()
@@ -273,6 +292,8 @@ void Admin::clock_in()
     }
 
     m_notebook->clock_in();
+
+    if( m_win ) m_win->clock_in();
 }
 
 
@@ -475,6 +496,11 @@ void Admin::exec_command()
     // アクティブなviewから依頼が来たらコアに渡す
     else if( command.command == "set_status" ){
         set_status( command.url, command.arg1 );
+    }
+
+    // マウスジェスチャ
+    else if( command.command  == "set_mginfo" ){
+        if( m_win ) m_win->set_mginfo( command.arg1 );
     }
 
     // オートリロードのキャンセル
@@ -880,10 +906,14 @@ void Admin::update_finish( const std::string& url )
 //
 void Admin::set_title( const std::string& url, const std::string& title )
 {
-    // アクティブなviewからコマンドが来たら表示する
-    SKELETON::View* view = get_current_view();
-    if( m_focus && view && view->get_url() == url ){
-        CORE::core_set_command( "set_title", url, title );
+    if( m_win ) m_win->set_title( "JD - " + title );
+    else{
+
+        // アクティブなviewからコマンドが来たら表示する
+        SKELETON::View* view = get_current_view();
+        if( m_focus && view && view->get_url() == url ){
+            CORE::core_set_command( "set_title", url, title );
+        }
     }
 }
 
@@ -893,10 +923,14 @@ void Admin::set_title( const std::string& url, const std::string& title )
 //
 void Admin::set_url( const std::string& url, const std::string& url_show )
 {
-    // アクティブなviewからコマンドが来たら表示する
-    SKELETON::View* view = get_current_view();
-    if( m_focus && view && view->get_url() == url ){
-        CORE::core_set_command( "set_url", url, url_show );
+    if( m_win ){}
+    else{
+
+        // アクティブなviewからコマンドが来たら表示する
+        SKELETON::View* view = get_current_view();
+        if( m_focus && view && view->get_url() == url ){
+            CORE::core_set_command( "set_url", url, url_show );
+        }
     }
 }
 
@@ -906,10 +940,14 @@ void Admin::set_url( const std::string& url, const std::string& url_show )
 //
 void Admin::set_status( const std::string& url, const std::string& stat )
 {
-    // アクティブなviewからコマンドが来たら表示する
-    SKELETON::View* view = get_current_view();
-    if( m_focus && view && view->get_url() == url ){
-        CORE::core_set_command( "set_status", url, stat );
+    if( m_win ) m_win->set_status( stat );
+    else{
+        
+        // アクティブなviewからコマンドが来たら表示する
+        SKELETON::View* view = get_current_view();
+        if( m_focus && view && view->get_url() == url ){
+            CORE::core_set_command( "set_status", url, stat );
+        }
     }
 }
 
@@ -924,6 +962,8 @@ void Admin::focus_view( int page )
 #ifdef _DEBUG
     std::cout << "Admin::focus_view : " << m_url << " page = " << page << std::endl;
 #endif
+
+    if( m_win ) m_win->focus_in();
     
     SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) {

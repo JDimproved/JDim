@@ -9,17 +9,15 @@
 
 #include <gtkmm.h>
 
-#include "skeleton/vbox.h"
+#include "skeleton/window.h"
 
 namespace IMAGE
 {
-    class ImageWin : public Gtk::Window
+    class ImageWin : public SKELETON::JDWindow
     {
         bool m_boot;
         bool m_enable_fold;
         bool m_transient;
-
-        bool m_maximized; // 最大化されている
 
         int m_mode;
         int m_counter;
@@ -31,27 +29,22 @@ namespace IMAGE
         int m_width;
         int m_height;
 
-        SKELETON::JDVBox m_vbox;
         SKELETON::JDVBox m_vbox_view;
         Gtk::ScrolledWindow m_scrwin;
         Gtk::Widget* m_tab;
 
         Gtk::Window m_dummywin; // set_transient()で使うダミーwindow
 
-        // ステータスバー
-#if GTKMMVER <= 240
-        Gtk::Statusbar m_statbar;
-#else
-        Gtk::HBox m_statbar;
-        Gtk::Label m_label_stat;
-#endif
-
       public:
 
         ImageWin();
-        ~ImageWin();
+        virtual ~ImageWin();
 
-        void clock_in();
+        virtual void clock_in();
+
+        virtual void focus_in();
+        virtual void focus_out();
+
 
         // 起動中
         const bool is_booting() const { return m_boot; }
@@ -63,12 +56,9 @@ namespace IMAGE
         void set_enable_fold( bool enable );
 
         void set_transient( bool set );
-        void pack_remove( bool unpack, Gtk::Widget& tab, Gtk::Widget& view );
 
-        void set_status( const std::string& stat );
-
-        void focus_in();
-        void focus_out();
+        void pack_remove_tab( bool unpack, Widget& tab );
+        void pack_remove_view( bool unpack, Widget& view );
 
       protected:
 

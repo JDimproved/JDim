@@ -22,8 +22,8 @@
 
 
 WinMain::WinMain( bool init )
-    : Gtk::Window( Gtk::WINDOW_TOPLEVEL )
-    , m_core( 0 ), m_maximized( 0 )
+    : SKELETON::JDWindow(),
+      m_core( NULL )
 {
 #ifdef _DEBUG
     std::cout << "WinMain::WinMain init = " << init << std::endl;
@@ -49,6 +49,8 @@ WinMain::WinMain( bool init )
     resize( SESSION::width(), SESSION::height() );
     move( SESSION::x(), SESSION::y() );
     if( SESSION::maximized() ) maximize();
+
+    set_spacing( 4 );
 
     set_modal( false );
     property_window_position().set_value( Gtk::WIN_POS_NONE );
@@ -115,16 +117,16 @@ void WinMain::save_session()
 
 #ifdef _DEBUG
             std::cout << "window size : x = " << x << " y = " << y << " w = " << width << " h = " << height
-                      << " max = " << m_maximized << std::endl;
+                      << " max = " << is_maximized() << std::endl;
 #endif
 
-            if( !m_maximized ){
+            if( ! is_maximized() ){
                 SESSION::set_x( x );
                 SESSION::set_y( y );
                 SESSION::set_width( width );
                 SESSION::set_height( height );
             }
-            SESSION::set_maximized( m_maximized );
+            SESSION::set_maximized( is_maximized() );
         }
 
         delete m_core;
@@ -134,16 +136,4 @@ void WinMain::save_session()
 
         JDLIB::check_loader_alive();
     }
-}
-
-
-bool WinMain::on_window_state_event( GdkEventWindowState* event )
-{
-    m_maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
-    
-#ifdef _DEBUG
-    std::cout << "WinMain::on_window_state_event : maximized = " << m_maximized << std::endl;
-#endif     
-
-    return Gtk::Window::on_window_state_event( event );
 }

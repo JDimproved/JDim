@@ -6,30 +6,27 @@
 #ifndef _MAINWIN_H
 #define _MAINWIN_H
 
-#include <gtkmm.h>
+#include "skeleton/window.h"
 
 namespace CORE
 {
     class Core;
 }
 
-class WinMain : public Gtk::Window
+class WinMain : public SKELETON::JDWindow
 {
     CORE::Core* m_core;
-    bool m_maximized;
     
   public:
+
     WinMain( bool init );
-    ~WinMain();
+    virtual ~WinMain();
 
     // 緊急シャットダウン
     void shutdown();
 
     // 通常のセッション保存
     void save_session();
-
-  protected:
-    virtual bool on_window_state_event( GdkEventWindowState* event );
 };
 
 
