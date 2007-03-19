@@ -65,12 +65,6 @@ namespace CORE
 
         WinMain& m_win_main;
 
-        // フォーカス制御用カウンタ
-        int m_count_focusout;
-
-        // アイコン化されている
-        bool m_iconified;
-        
         SKELETON::JDHPaned m_hpaned;
 
         // サイドバー

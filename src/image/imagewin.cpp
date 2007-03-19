@@ -147,8 +147,8 @@ void ImageWin::clock_in()
 
     // GNOME環境ではタスクトレイなどで切り替えたときに画像windowがフォーカスされてしまうので
     // メインウィンドウと画像ウィンドウが同時にフォーカスアウトしたら
-    // 一時的に transient 指定を外す。フォーカスインしたときに transient 指定を戻す
-    // slot_focus_in_event(), slot_window_state_event() も参照すること
+    // 一時的に transient 指定を外す。メインウィンドウがフォーカスインしたときに
+    // ImageAdmin::focus_out() で transient 指定を戻す
     if( SESSION::get_wm() == SESSION::WM_GNOME
         && ! SESSION::is_iconified_win_main() // メインウィンドウが最小化しているときに transient を外すと画像ウィンドウが表示されなくなる
         && ! SESSION::is_focus_win_main() && ! SESSION::is_focus_win_img() ){
@@ -279,6 +279,13 @@ void ImageWin::pack_remove_view( bool unpack, Widget& view )
 // フォーカスイン
 void ImageWin::focus_in()
 {
+    // メインウィンドウが最小化しているときはメインウィンドウを開く
+    if( SESSION::is_iconified_win_main() ){
+            m_mode = IMGWIN_UNGRAB;
+            m_counter = 0;
+            return;
+    }
+
     if( ! m_enable_fold ) return;
 
     show();
