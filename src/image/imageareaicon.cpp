@@ -14,7 +14,35 @@
 #include "httpcode.h"
 
 
-typedef void* ( *FUNC )( void * );
+//
+// スレッドのランチャ
+//
+// icon_launcherの引数で直接 ImageAreaIcon のポインタを渡すと
+// スレッドが起動する前に ImageAreaIcon が delete されると落ちるのでリストを使う
+
+std::list< IMAGE::ImageAreaIcon* > icon_launcher_list_icon;
+
+void icon_launcher_set( IMAGE::ImageAreaIcon* icon ){ icon_launcher_list_icon.push_back( icon ); }
+void icon_launcher_remove( IMAGE::ImageAreaIcon* icon ){ icon_launcher_list_icon.remove( icon ); }
+
+void* icon_launcher( void* )
+{
+#ifdef _DEBUG
+    std::cout << "start icon_launcher\n";
+#endif
+
+    if( ! icon_launcher_list_icon.size() ) return 0;
+
+    IMAGE::ImageAreaIcon* icon = *( icon_launcher_list_icon.begin() );
+    icon_launcher_list_icon.remove( icon );
+    icon->show_image_thread();
+
+    return 0;
+}
+
+
+
+//////////////////////////////////
 
 using namespace IMAGE;
 
@@ -30,13 +58,20 @@ ImageAreaIcon::ImageAreaIcon( const std::string& url )
     set_width( ICON_SIZE );
     set_height( ICON_SIZE );
 
-    show_image_thread();
+    if( ! is_cached() ) show_indicator( true );
+    else show_image();
 }
 
 
 
 ImageAreaIcon::~ImageAreaIcon()
-{}
+{
+#ifdef _DEBUG    
+    std::cout << "ImageAreaIcon::~ImageAreaIcon url = " << get_url() << std::endl;
+#endif 
+
+    icon_launcher_remove( this );
+}
 
 
 //
@@ -52,29 +87,23 @@ void ImageAreaIcon::show_image()
     // 既に画像が表示されている
     if( m_shown && is_cached() ) return;
 
+#ifdef _DEBUG    
+    std::cout << "ImageAreaIcon::show_image url = " << get_url() << std::endl;
+#endif 
+
     m_shown = false;
 
+    icon_launcher_set( this );
     int status;
-    if( ( status = pthread_create( &m_thread, NULL,  ( FUNC ) launcher, ( void * ) this ) )){
+    if( ( status = pthread_create( &m_thread, NULL, icon_launcher, NULL ) ) ){
         MISC::ERRMSG( "ImageAreaIcon::show_image : could not start thread" );
+        icon_launcher_remove( this );
     }
     else{
         m_thread_running = true;
         pthread_detach( m_thread );
     }
 }
-
-
-//
-// スレッドのランチャ (static)
-//
-void* ImageAreaIcon::launcher( void* dat )
-{
-    ImageAreaIcon* tt = ( ImageAreaIcon * ) dat;
-    tt->show_image_thread();
-    return 0;
-}
-
 
 
 //
@@ -91,34 +120,7 @@ void ImageAreaIcon::show_image_thread()
     // キャッシュされてない時は読み込みorエラーマークを表示
     if( ! is_cached() ){
 
-        m_pixbuf_icon.clear();
-
-        // インジゲータ画像作成
-        if( ! m_pixbuf ){
-
-            m_pixbuf = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width(), get_height() );
-            m_pixbuf_err = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width()/4, get_height()/4 );
-            m_pixbuf_loading = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width()/4, get_height()/4 );
-
-            assert( m_pixbuf );
-            assert( m_pixbuf_err );
-            assert( m_pixbuf_loading );
-
-            m_pixbuf->fill( 0xffffff00 );
-            m_pixbuf_loading->fill( 0xffbf0000 );
-            m_pixbuf_err->fill( 0xff000000 );
-        }
-
-        // 読み込み中
-        if( get_img()->is_loading()
-            || get_img()->get_code() == HTTP_INIT ) m_pixbuf_loading->copy_area( 0, 0, get_width()/4, get_height()/4, m_pixbuf, 4, 4 );
-
-        // エラー
-        else  m_pixbuf_err->copy_area( 0, 0, get_width()/4, get_height()/4, m_pixbuf, 4, 4 );
-
-        // 表示
-        // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
-        dispatch();
+        show_indicator( ( get_img()->is_loading() || get_img()->get_code() == HTTP_INIT ) );
     }
 
     // 画像を読み込んで縮小表示
@@ -143,6 +145,10 @@ void ImageAreaIcon::show_image_thread()
             set_height( (int)( get_height_org() * scale ) );
             m_pixbuf_icon = pixbuf->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
 
+            m_pixbuf.clear();
+            m_pixbuf_loading.clear();
+            m_pixbuf_err.clear();
+
             // 表示
             // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
             dispatch();
@@ -153,6 +159,8 @@ void ImageAreaIcon::show_image_thread()
         {
             set_errmsg( err.what() );
             MISC::ERRMSG( get_errmsg() );
+
+            show_indicator( false );
         }
     }
 
@@ -162,6 +170,40 @@ void ImageAreaIcon::show_image_thread()
 
     m_thread_running = false;
     set_ready( true );
+}
+
+
+//
+// インジゲータ画像表示
+// 
+void ImageAreaIcon::show_indicator( bool loading )
+{
+    m_pixbuf_icon.clear();
+
+    if( ! m_pixbuf ){
+
+        m_pixbuf = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width(), get_height() );
+        m_pixbuf_err = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width()/4, get_height()/4 );
+        m_pixbuf_loading = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width()/4, get_height()/4 );
+
+        assert( m_pixbuf );
+        assert( m_pixbuf_err );
+        assert( m_pixbuf_loading );
+
+        m_pixbuf->fill( 0xffffff00 );
+        m_pixbuf_loading->fill( 0xffbf0000 );
+        m_pixbuf_err->fill( 0xff000000 );
+    }
+
+    // 読み込み中
+    if( loading ) m_pixbuf_loading->copy_area( 0, 0, get_width()/4, get_height()/4, m_pixbuf, 4, 4 );
+
+    // エラー
+    else  m_pixbuf_err->copy_area( 0, 0, get_width()/4, get_height()/4, m_pixbuf, 4, 4 );
+
+    // 表示
+    // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
+    dispatch();
 }
 
 

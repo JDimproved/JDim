@@ -31,11 +31,11 @@ namespace IMAGE
         ~ImageAreaIcon();
 
         virtual void show_image();
-
-      private:
-        static void* launcher( void* );
         virtual void show_image_thread();
 
+      private:
+
+        void show_indicator( bool loading );
         virtual void callback_dispatch();
         void set_image();
     };
