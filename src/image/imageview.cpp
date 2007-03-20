@@ -115,7 +115,8 @@ void ImageViewMain::clock_in()
 
             show_status();
 
-            if( m_show_instdialog && get_imagearea()->is_ready() && CONFIG::get_instruct_tglimg() ) show_instruct_diag();
+            if( m_show_instdialog && get_imagearea() && get_imagearea()->is_ready()
+                && CONFIG::get_instruct_tglimg() ) show_instruct_diag();
         }
 
         // サイズが変わって、かつ zoom to fit モードの場合再描画
