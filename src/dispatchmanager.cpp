@@ -76,10 +76,13 @@ void DispatchManager::remove( SKELETON::Dispatchable* child )
 void DispatchManager::slot_dispatch()
 {
     // リストに登録されている Dispatchable の callback_dispatch()をまとめて実行
-    while( m_children.size() ){
-        SKELETON::Dispatchable* child = *( m_children.begin() );
+    std::list< SKELETON::Dispatchable* > children = m_children;
+    m_children.clear();
+
+    while( children.size() ){
+        SKELETON::Dispatchable* child = *( children.begin() );
         child->callback_dispatch();
-        m_children.remove( child );
+        children.remove( child );
     }
 
 #ifdef _DEBUG
