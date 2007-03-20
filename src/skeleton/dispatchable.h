@@ -19,6 +19,7 @@ namespace SKELETON
     class Dispatchable
     {
         friend class CORE::DispatchManager;
+        bool m_dispatchable;
 
       public:
 
@@ -30,6 +31,8 @@ namespace SKELETON
         // dispacth()でDispatchManagerに登録されてcallback_disp()が呼び戻される
         //  cancel_dispatch()で呼び出しをキャンセルする
         virtual void callback_dispatch() = 0;
+
+        void set_dispatchable( bool dispatchable ){ m_dispatchable = dispatchable; }
 
         void dispatch( SKELETON::Dispatchable* dest );
         void cancel_dispatch( SKELETON::Dispatchable* dest );

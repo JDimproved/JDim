@@ -11,6 +11,7 @@ using namespace SKELETON;
 
 
 Dispatchable::Dispatchable()
+    : m_dispatchable( true )
 {}
 
 
@@ -21,18 +22,22 @@ Dispatchable::~Dispatchable()
 #endif
 
     cancel_dispatch();
+
+    // 継承クラスのデストラクタ内でdispatchすると落ちるので
+    // dispatch不可にする
+    set_dispatchable( false );
 }
 
 
 void Dispatchable::dispatch( Dispatchable* dest )
 {
-    CORE::get_dispmanager()->add( dest );   
+    if( m_dispatchable ) CORE::get_dispmanager()->add( dest );   
 }
 
 
 void Dispatchable::cancel_dispatch( Dispatchable* dest )
 {
-    CORE::get_dispmanager()->remove( dest );
+    if( m_dispatchable ) CORE::get_dispmanager()->remove( dest );
 }
 
 
