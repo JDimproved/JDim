@@ -1,3 +1,4 @@
+
 // ライセンス: GPL2
 
 //#define _DEBUG
@@ -213,6 +214,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
     m_action_group->add( Gtk::Action::create( "Quit", "終了" ), sigc::mem_fun(*this, &Core::slot_quit ) );
 
+    //////////////////////////////////////////////////////
+
     // 表示
     m_action_group->add( Gtk::Action::create( "Menu_View", "表示(_V)" ) );    
 
@@ -230,6 +233,41 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "Show_FAVORITE", "お気に入り", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
 
+    // 外観
+    m_action_group->add( Gtk::Action::create( "View_Menu", "外観" ) );
+
+    // ツールバー
+    m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), false ),
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する", std::string(), false ),
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_RIGHT ) );
+
+    // pane 設定
+    Gtk::RadioButtonGroup radiogroup;
+    Glib::RefPtr< Gtk::RadioAction > raction0 = Gtk::RadioAction::create( radiogroup, "2Pane", "２ペイン表示" );
+    Glib::RefPtr< Gtk::RadioAction > raction1 = Gtk::RadioAction::create( radiogroup, "3Pane", "３ペイン表示" );
+    Glib::RefPtr< Gtk::RadioAction > raction2 = Gtk::RadioAction::create( radiogroup, "v3Pane", "縦３ペイン表示" );
+
+    switch( SESSION::get_mode_pane() ){
+        case SESSION::MODE_2PANE: raction0->set_active( true ); break;
+        case SESSION::MODE_3PANE: raction1->set_active( true ); break;
+        case SESSION::MODE_V3PANE: raction2->set_active( true ); break;
+    }
+
+    m_action_group->add( raction0, sigc::mem_fun( *this, &Core::slot_toggle_2pane ) );
+    m_action_group->add( raction1, sigc::mem_fun( *this, &Core::slot_toggle_3pane ) );
+    m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
+
+    // 埋め込みmessage
+    m_action_group->add( Gtk::ToggleAction::create( "EmbMes", "書き込みビューを埋め込み表示", std::string(), SESSION::get_embedded_mes() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_embedded_mes ) );
+
+    // 埋め込みImage
+    m_action_group->add( Gtk::ToggleAction::create( "EmbImg", "画像ビューを埋め込み表示", std::string(), SESSION::get_embedded_img() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_embedded_img ) );
+
+    //////////////////////////////////////////////////////
 
     // 設定
     m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
@@ -267,43 +305,9 @@ void Core::run( bool init )
                                                     CONFIG::get_keyconfig()->is_emacs_mode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
 
-
-    // 外観
-    m_action_group->add( Gtk::Action::create( "View_Menu", "外観" ) );
-
-    // ツールバー
-    m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), false ),
-                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する", std::string(), false ),
-                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_RIGHT ) );
-
-    // pane 設定
-    Gtk::RadioButtonGroup radiogroup;
-    Glib::RefPtr< Gtk::RadioAction > raction0 = Gtk::RadioAction::create( radiogroup, "2Pane", "２ペイン表示" );
-    Glib::RefPtr< Gtk::RadioAction > raction1 = Gtk::RadioAction::create( radiogroup, "3Pane", "３ペイン表示" );
-    Glib::RefPtr< Gtk::RadioAction > raction2 = Gtk::RadioAction::create( radiogroup, "v3Pane", "縦３ペイン表示" );
-
-    switch( SESSION::get_mode_pane() ){
-        case SESSION::MODE_2PANE: raction0->set_active( true ); break;
-        case SESSION::MODE_3PANE: raction1->set_active( true ); break;
-        case SESSION::MODE_V3PANE: raction2->set_active( true ); break;
-    }
-
-    m_action_group->add( raction0, sigc::mem_fun( *this, &Core::slot_toggle_2pane ) );
-    m_action_group->add( raction1, sigc::mem_fun( *this, &Core::slot_toggle_3pane ) );
-    m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
-
-    // 埋め込みmessage
-    m_action_group->add( Gtk::ToggleAction::create( "EmbMes", "書き込みビューを埋め込み表示", std::string(), SESSION::get_embedded_mes() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_embedded_mes ) );
-
-    // 埋め込みImage
-    m_action_group->add( Gtk::ToggleAction::create( "EmbImg", "画像ビューを埋め込み表示", std::string(), SESSION::get_embedded_img() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_embedded_img ) );
-
-
+    // フォントと色
     m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色" ) );
+
     m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
     m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
     m_action_group->add( Gtk::Action::create( "FontTree", "板、スレ一覧フォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
@@ -330,6 +334,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア" ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
+
+    //////////////////////////////////////////////////////
 
     // help
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
@@ -376,6 +382,21 @@ void Core::run( bool init )
         "<menuitem action='Show_Image'/>"
         "<separator/>"
 
+        "<menu action='View_Menu'>"
+
+        "<menu action='Toolbar_Menu'>"
+        "<menuitem action='ToolbarPos0'/>"
+        "<menuitem action='ToolbarPos1'/>"
+        "</menu>"
+        "<separator/>"
+        "<menuitem action='2Pane'/>"
+        "<menuitem action='3Pane'/>"
+        "<menuitem action='v3Pane'/>"
+        "<separator/>"
+        "<menuitem action='EmbMes'/>"
+        "<menuitem action='EmbImg'/>"
+        "</menu>"
+
         "</menu>"
 
     // 設定
@@ -395,23 +416,6 @@ void Core::run( bool init )
         "<menuitem action='ShortMarginPopup'/>"
         "<separator/>"
         "<menuitem action='ToggleEmacsMode'/>"
-        "</menu>"
-
-        "<separator/>"
-
-        "<menu action='View_Menu'>"
-
-        "<menu action='Toolbar_Menu'>"
-        "<menuitem action='ToolbarPos0'/>"
-        "<menuitem action='ToolbarPos1'/>"
-        "</menu>"
-        "<separator/>"
-        "<menuitem action='2Pane'/>"
-        "<menuitem action='3Pane'/>"
-        "<menuitem action='v3Pane'/>"
-        "<separator/>"
-        "<menuitem action='EmbMes'/>"
-        "<menuitem action='EmbImg'/>"
         "</menu>"
 
         "<separator/>"
@@ -1420,6 +1424,8 @@ void Core::slot_toggle_embedded_img()
     SESSION::set_embedded_img( ! SESSION::get_embedded_img() );
     pack_widget( false );
 
+    SESSION::set_focused_admin( SESSION::FOCUS_NO );
+    SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
     restore_focus( true, false );
 }
 
