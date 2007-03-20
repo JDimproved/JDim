@@ -34,8 +34,6 @@ namespace IMAGE
         int m_width;
         int m_height;
 
-       
-
       protected:
 
         JDLIB::ConstPtr< DBIMG::Img >& get_img(){ return  m_img; }
@@ -47,10 +45,12 @@ namespace IMAGE
         void set_width( int width ){ m_width = width; }
         void set_height( int height ){ m_height = height; }
 
+        void set_image(  Glib::RefPtr< Gdk::Pixbuf >& pixbuf, bool mosaic, bool do_scale, double scale );
+
       public:
 
         ImageAreaBase( const std::string& url );
-        ~ImageAreaBase();
+        virtual ~ImageAreaBase();
 
         const std::string& get_url() const{ return m_url;}
         const std::string& get_errmsg() const{ return m_errmsg;}        
@@ -60,13 +60,8 @@ namespace IMAGE
         const int get_width() const { return m_width; }
         const int get_height() const { return m_height; }
 
-        virtual void show_image(){}
+        virtual void show_image() = 0;
         void set_fit_in_win( bool fit );
-        const bool is_cached();
-
-      protected:
-
-        void set_image(  Glib::RefPtr< Gdk::Pixbuf >& pixbuf, bool mosaic, bool do_scale, double scale );
     };
 }
 

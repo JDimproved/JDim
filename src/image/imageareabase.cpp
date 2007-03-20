@@ -40,17 +40,6 @@ ImageAreaBase::~ImageAreaBase()
 
 
 //
-// キャッシュされてるか判定
-//
-const bool ImageAreaBase::is_cached()
-{
-    if( m_img->is_loading() ) return false;
-    return ( m_img->is_cached() && m_img->get_code() == HTTP_OK );
-}
-
-
-
-//
 // 画像をセット
 //
 void ImageAreaBase::set_image( Glib::RefPtr< Gdk::Pixbuf >& pixbuf, bool mosaic, bool do_scale, double scale )

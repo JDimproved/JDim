@@ -80,7 +80,6 @@ void ImageViewIcon::clock_in()
 
         // 画像表示
         show_view();
-        get_imagearea()->show_image();
     }
 }
 
@@ -125,6 +124,7 @@ void ImageViewIcon::show_view()
     if( get_imagearea() ) get_imagearea()->show_image();
 
     // 画像貼り付け
+    // ロード中の時はclock_in()経由でもう一度 show_view()が呼び出される
     else{
 
         set_imagearea( Gtk::manage( new ImageAreaIcon( get_url() ) ) );

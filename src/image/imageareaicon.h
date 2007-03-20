@@ -25,7 +25,6 @@ namespace IMAGE
 
     class ImageAreaIcon : public ImageAreaBase, public SKELETON::Dispatchable
     {
-        bool m_thread_running;
         pthread_t m_thread;
         bool m_shown;
         int m_imagetype; // dispatch()前に表示する画像を入れる
@@ -36,14 +35,16 @@ namespace IMAGE
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_icon;
 
       public:
+
         ImageAreaIcon( const std::string& url );
-        ~ImageAreaIcon();
+        virtual ~ImageAreaIcon();
 
         virtual void show_image();
-        virtual void show_image_thread();
+        void show_image_thread();
 
       private:
 
+        void wait();
         void show_indicator( bool loading );
         virtual void callback_dispatch();
         void set_image();

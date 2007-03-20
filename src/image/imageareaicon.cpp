@@ -48,7 +48,7 @@ using namespace IMAGE;
 
 ImageAreaIcon::ImageAreaIcon( const std::string& url )
     : ImageAreaBase( url )
-    , m_thread_running( false )
+    , m_thread( 0 )
     , m_shown( false )
 {
 #ifdef _DEBUG    
@@ -58,7 +58,7 @@ ImageAreaIcon::ImageAreaIcon( const std::string& url )
     set_width( ICON_SIZE );
     set_height( ICON_SIZE );
 
-    if( ! is_cached() ) show_indicator( true );
+    if( ! get_img()->is_cached() ) show_indicator( true );
     else show_image();
 }
 
@@ -71,6 +71,18 @@ ImageAreaIcon::~ImageAreaIcon()
 #endif 
 
     icon_launcher_remove( this );
+    wait();
+}
+
+
+void ImageAreaIcon::wait()
+{
+#ifdef _DEBUG    
+    std::cout << "ImageAreaIcon::wait\n";
+#endif 
+
+    if( m_thread ) pthread_join( m_thread, NULL );
+    m_thread = 0;
 }
 
 
@@ -78,14 +90,14 @@ ImageAreaIcon::~ImageAreaIcon()
 // 表示
 //
 // メインスレッドで大きい画像を開くと反応が無くなるので別の
-// スレッドを起動して開く。スレッドはデタッチしておく
+// スレッドを起動して開く。
 //
 void ImageAreaIcon::show_image()
 {
-    if( m_thread_running ) return; // スレッド動作中
+    wait();
 
     // 既に画像が表示されている
-    if( m_shown && is_cached() ) return;
+    if( m_shown && get_img()->is_cached() ) return;
 
 #ifdef _DEBUG    
     std::cout << "ImageAreaIcon::show_image url = " << get_url() << std::endl;
@@ -107,10 +119,7 @@ void ImageAreaIcon::show_image()
         MISC::ERRMSG( "ImageAreaIcon::show_image : could not start thread" );
         icon_launcher_remove( this );
     }
-    else{
-        m_thread_running = true;
-        pthread_detach( m_thread );
-    }
+    else  pthread_detach( m_thread );
 }
 
 
@@ -124,7 +133,7 @@ void ImageAreaIcon::show_image_thread()
 #endif
 
     // キャッシュされてない時は読み込みorエラーマークを表示
-    if( ! is_cached() ){
+    if( ! get_img()->is_cached() ){
 
         show_indicator( ( get_img()->is_loading() || get_img()->get_code() == HTTP_INIT ) );
     }
@@ -170,8 +179,6 @@ void ImageAreaIcon::show_image_thread()
 #ifdef _DEBUG
     std::cout << "ImageAreaIcon::show_image_thread finished\n";
 #endif    
-
-    m_thread_running = false;
 }
 
 
@@ -219,6 +226,7 @@ void ImageAreaIcon::show_indicator( bool loading )
 void ImageAreaIcon::callback_dispatch()
 {
     set_image();
+    wait();
 }
 
 
