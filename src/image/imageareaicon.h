@@ -15,11 +15,20 @@
 
 namespace IMAGE
 {
+    // m_imagetype にセットする値
+    enum
+    {
+        IMAGE_SHOW_ICON = 0,
+        IMAGE_SHOW_INDICATOR
+    };
+
+
     class ImageAreaIcon : public ImageAreaBase, public SKELETON::Dispatchable
     {
         bool m_thread_running;
         pthread_t m_thread;
         bool m_shown;
+        int m_imagetype; // dispatch()前に表示する画像を入れる
 
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf;
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_loading;

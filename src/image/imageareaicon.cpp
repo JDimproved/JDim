@@ -91,7 +91,15 @@ void ImageAreaIcon::show_image()
     std::cout << "ImageAreaIcon::show_image url = " << get_url() << std::endl;
 #endif 
 
+    if( m_pixbuf ){
+        m_pixbuf.clear();
+        m_pixbuf_loading.clear();
+        m_pixbuf_err.clear();
+    }
+    if( m_pixbuf_icon ) m_pixbuf_icon.clear();
+
     m_shown = false;
+    set_ready( false );
 
     icon_launcher_set( this );
     int status;
@@ -114,8 +122,6 @@ void ImageAreaIcon::show_image_thread()
 #ifdef _DEBUG
     std::cout << "ImageAreaIcon::show_image_thread url = " << get_url() << std::endl;
 #endif
-
-    set_ready( false );
 
     // キャッシュされてない時は読み込みorエラーマークを表示
     if( ! is_cached() ){
@@ -147,6 +153,7 @@ void ImageAreaIcon::show_image_thread()
 
             // 表示
             // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
+            m_imagetype = IMAGE_SHOW_ICON;
             dispatch();
 
             m_shown = true;
@@ -165,7 +172,6 @@ void ImageAreaIcon::show_image_thread()
 #endif    
 
     m_thread_running = false;
-    set_ready( true );
 }
 
 
@@ -174,6 +180,10 @@ void ImageAreaIcon::show_image_thread()
 // 
 void ImageAreaIcon::show_indicator( bool loading )
 {
+#ifdef _DEBUG
+        std::cout << "ImageAreaIcon::show_indicato load = "  << loading << std::endl;
+#endif        
+
     if( ! m_pixbuf ){
 
         m_pixbuf = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width(), get_height() );
@@ -197,6 +207,7 @@ void ImageAreaIcon::show_indicator( bool loading )
 
     // 表示
     // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
+    m_imagetype = IMAGE_SHOW_INDICATOR;
     dispatch();
 }
 
@@ -221,25 +232,27 @@ void ImageAreaIcon::callback_dispatch()
 void ImageAreaIcon::set_image()
 {
 #ifdef _DEBUG
-    std::cout << "ImageAreaIcon::set_image()\n";
+    std::cout << "ImageAreaIcon::set_image type = " << m_imagetype << std::endl;
 #endif    
 
     clear();
-    if( m_pixbuf_icon ){
+    if( m_imagetype == IMAGE_SHOW_ICON ){
+
+#ifdef _DEBUG
+    std::cout << "show icon\n";
+#endif    
 
         set( m_pixbuf_icon );
-
-        if( m_pixbuf ){
-            m_pixbuf.clear();
-            m_pixbuf_loading.clear();
-            m_pixbuf_err.clear();
-        }
     }
 
-    else if( m_pixbuf ){
+    else if( m_imagetype == IMAGE_SHOW_INDICATOR ){
+
+#ifdef _DEBUG
+    std::cout << "show indicator\n";
+#endif    
 
         set( m_pixbuf );
-
-        if( m_pixbuf_icon ) m_pixbuf_icon.clear();
     }
+
+    set_ready( true );
 }
