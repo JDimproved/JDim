@@ -145,10 +145,6 @@ void ImageAreaIcon::show_image_thread()
             set_height( (int)( get_height_org() * scale ) );
             m_pixbuf_icon = pixbuf->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
 
-            m_pixbuf.clear();
-            m_pixbuf_loading.clear();
-            m_pixbuf_err.clear();
-
             // 表示
             // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
             dispatch();
@@ -178,8 +174,6 @@ void ImageAreaIcon::show_image_thread()
 // 
 void ImageAreaIcon::show_indicator( bool loading )
 {
-    m_pixbuf_icon.clear();
-
     if( ! m_pixbuf ){
 
         m_pixbuf = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width(), get_height() );
@@ -231,6 +225,21 @@ void ImageAreaIcon::set_image()
 #endif    
 
     clear();
-    if( m_pixbuf_icon ) set( m_pixbuf_icon );
-    else if( m_pixbuf ) set( m_pixbuf );
+    if( m_pixbuf_icon ){
+
+        set( m_pixbuf_icon );
+
+        if( m_pixbuf ){
+            m_pixbuf.clear();
+            m_pixbuf_loading.clear();
+            m_pixbuf_err.clear();
+        }
+    }
+
+    else if( m_pixbuf ){
+
+        set( m_pixbuf );
+
+        if( m_pixbuf_icon ) m_pixbuf_icon.clear();
+    }
 }
