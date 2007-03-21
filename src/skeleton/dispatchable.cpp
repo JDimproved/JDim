@@ -21,24 +21,20 @@ Dispatchable::~Dispatchable()
     std::cout << "Dispatchable::~Dispatchable\n";
 #endif
 
-    cancel_dispatch();
+    set_dispatchable( false );
 }
 
 
 void Dispatchable::set_dispatchable( bool dispatchable )
 {
+    Glib::Mutex::Lock lock( m_mutex );
     m_dispatchable = dispatchable;
-    if( ! m_dispatchable ) cancel_dispatch();
+    if( ! m_dispatchable ) CORE::get_dispmanager()->remove( this );
 }
 
 
 void Dispatchable::dispatch()
 {
+    Glib::Mutex::Lock lock( m_mutex );
     if( m_dispatchable ) CORE::get_dispmanager()->add( this );
-}
-
-
-void Dispatchable::cancel_dispatch()
-{
-    if( m_dispatchable ) CORE::get_dispmanager()->remove( this );
 }

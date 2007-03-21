@@ -12,6 +12,8 @@
 #ifndef _DISPATCHABLE_H
 #define _DISPATCHABLE_H
 
+#include <glibmm.h>
+
 namespace CORE
 {
     class DispatchManager;
@@ -21,6 +23,8 @@ namespace SKELETON
 {
     class Dispatchable
     {
+        Glib::Mutex m_mutex;
+
         friend class CORE::DispatchManager;
         bool m_dispatchable;
 
@@ -31,14 +35,12 @@ namespace SKELETON
 
       protected:
 
+        void dispatch();
         void set_dispatchable( bool dispatchable );
 
         // dispacth()でDispatchManagerに登録されてcallback_disp()が呼び戻される
         //  cancel_dispatch()で呼び出しをキャンセルする
         virtual void callback_dispatch() = 0;
-
-        void dispatch();
-        void cancel_dispatch();
     };
 }
 

@@ -20,10 +20,18 @@
 // icon_launcherの引数で直接 ImageAreaIcon のポインタを渡すと
 // スレッドが起動する前に ImageAreaIcon が delete されると落ちるのでリストを使う
 
+Glib::StaticMutex icon_launcher_mutex = GLIBMM_STATIC_MUTEX_INIT;
 std::list< IMAGE::ImageAreaIcon* > icon_launcher_list_icon;
 
-void icon_launcher_set( IMAGE::ImageAreaIcon* icon ){ icon_launcher_list_icon.push_back( icon ); }
-void icon_launcher_remove( IMAGE::ImageAreaIcon* icon ){ icon_launcher_list_icon.remove( icon ); }
+void icon_launcher_set( IMAGE::ImageAreaIcon* icon ){
+    Glib::Mutex::Lock lock( icon_launcher_mutex);
+    icon_launcher_list_icon.push_back( icon );
+}
+
+void icon_launcher_remove( IMAGE::ImageAreaIcon* icon ){
+    Glib::Mutex::Lock lock( icon_launcher_mutex);
+    icon_launcher_list_icon.remove( icon );
+}
 
 void* icon_launcher( void* )
 {
@@ -122,7 +130,6 @@ void ImageAreaIcon::show_image()
         MISC::ERRMSG( "ImageAreaIcon::show_image : could not start thread" );
         icon_launcher_remove( this );
     }
-    else  pthread_detach( m_thread );
 }
 
 
