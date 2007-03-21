@@ -62,6 +62,7 @@ ImageWin::ImageWin()
     m_dummywin.set_skip_taskbar_hint( true );
 
     set_skip_taskbar_hint( true );
+    resize( m_width, 1 );
     move( m_x, m_y );
     focus_out();
 
