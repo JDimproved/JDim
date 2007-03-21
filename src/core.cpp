@@ -741,11 +741,7 @@ void Core::first_setup()
     show_setupdiag( "JDセットアップ\n\nスレッド、ポップアップ、板・スレ一覧の順にフォントの設定をおこなって下さい" );
 
     slot_changefont_main();
-
-    CONFIG::set_fontname( FONT_POPUP, CONFIG::get_fontname( FONT_MAIN ) );
     slot_changefont_popup();
- 
-    CONFIG::set_fontname( FONT_BBS, CONFIG::get_fontname( FONT_POPUP ) );
     slot_changefont_tree();
 
     show_setupdiag( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );

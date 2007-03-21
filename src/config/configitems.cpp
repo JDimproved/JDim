@@ -51,13 +51,13 @@ const bool ConfigItems::load()
     restore_image = cf.get_option( "restore_image", false );
 
     // フォント
-    fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", "Kochi Gothic 12" );
+    fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", std::string( DEFAULT_FONT ) + " " + std::string( FONTSIZE_THREAD ) );
 
     // ポップアップのフォント
-    fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", "Kochi Gothic 9" );
+    fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", std::string( DEFAULT_FONT ) + " " + std::string( FONTSIZE_POPUP ) );
 
     // スレ一覧のフォント
-    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", "Kochi Gothic 10" );
+    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", std::string( DEFAULT_FONT ) + " " + std::string( FONTSIZE_TREE ) );
 
     // 板一覧のフォント
     fontname[ FONT_BOARD ] = cf.get_option( "fontname_board", fontname[ FONT_BBS ] );
