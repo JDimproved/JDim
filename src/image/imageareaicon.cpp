@@ -70,8 +70,7 @@ ImageAreaIcon::ImageAreaIcon( const std::string& url )
     set_width( ICON_SIZE );
     set_height( ICON_SIZE );
 
-    if( ! get_img()->is_cached() ) show_indicator( true );
-    else show_image();
+    show_image();
 }
 
 
@@ -109,14 +108,14 @@ void ImageAreaIcon::wait()
 //
 void ImageAreaIcon::show_image()
 {
+#ifdef _DEBUG    
+    std::cout << "ImageAreaIcon::show_image url = " << get_url() << std::endl;
+#endif 
+
     wait();
 
     // 既に画像が表示されている
     if( m_shown && get_img()->is_cached() ) return;
-
-#ifdef _DEBUG    
-    std::cout << "ImageAreaIcon::show_image url = " << get_url() << std::endl;
-#endif 
 
     if( m_pixbuf ){
         m_pixbuf.clear();
@@ -128,11 +127,21 @@ void ImageAreaIcon::show_image()
     m_shown = false;
     set_ready( false );
 
-    icon_launcher_set( this );
-    int status;
-    if( ( status = pthread_create( &m_thread, NULL, icon_launcher, NULL ) ) ){
-        MISC::ERRMSG( "ImageAreaIcon::show_image : could not start thread" );
-        icon_launcher_remove( this );
+    // キャッシュされてない時は読み込みorエラーマークを表示
+    if( ! get_img()->is_cached() ){
+        show_indicator( ( get_img()->is_loading() || get_img()->get_code() == HTTP_INIT ) );
+        set_image();
+    }
+
+    // スレッドを起動してバックグラウンドでアイコン表示
+    else{
+
+        icon_launcher_set( this );
+        int status;
+        if( ( status = pthread_create( &m_thread, NULL, icon_launcher, NULL ) ) ){
+            MISC::ERRMSG( "ImageAreaIcon::show_image : could not start thread" );
+            icon_launcher_remove( this );
+        }
     }
 }
 
@@ -146,49 +155,38 @@ void ImageAreaIcon::show_image_thread()
     std::cout << "ImageAreaIcon::show_image_thread url = " << get_url() << std::endl;
 #endif
 
-    // キャッシュされてない時は読み込みorエラーマークを表示
-    if( ! get_img()->is_cached() ){
+    try{
+        // 画像ロード
+        std::string path_cache = CACHE::path_img( get_url() );
+        Glib::RefPtr< Gdk::Pixbuf > pixbuf;
+        pixbuf = Gdk::Pixbuf::create_from_file( path_cache );
+        set_width_org( pixbuf->get_width() );
+        set_height_org( pixbuf->get_height() );
 
-        show_indicator( ( get_img()->is_loading() || get_img()->get_code() == HTTP_INIT ) );
+        // 縮小比率を計算して縮小
+        double scale;
+        double scale_w = ( double ) ICON_SIZE / get_width_org();
+        double scale_h = ( double ) ICON_SIZE / get_height_org();
+        scale = MIN( scale_w, scale_h );
+        set_width( (int)( get_width_org() * scale ) );
+        set_height( (int)( get_height_org() * scale ) );
+        m_pixbuf_icon = pixbuf->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
+
+        m_imagetype = IMAGE_SHOW_ICON;
+        m_shown = true;
+    }
+    catch( Glib::Error& err )
+    {
+        set_errmsg( err.what() );
+        MISC::ERRMSG( get_errmsg() );
+
+        show_indicator( false );
     }
 
-    // 画像を読み込んで縮小表示
-    else{
-
-        try{
-
-            // 画像ロード
-            std::string path_cache = CACHE::path_img( get_url() );
-            Glib::RefPtr< Gdk::Pixbuf > pixbuf;
-            pixbuf = Gdk::Pixbuf::create_from_file( path_cache );
-            set_width_org( pixbuf->get_width() );
-            set_height_org( pixbuf->get_height() );
-
-            // 縮小比率を計算して縮小
-            
-            double scale;
-            double scale_w = ( double ) ICON_SIZE / get_width_org();
-            double scale_h = ( double ) ICON_SIZE / get_height_org();
-            scale = MIN( scale_w, scale_h );
-            set_width( (int)( get_width_org() * scale ) );
-            set_height( (int)( get_height_org() * scale ) );
-            m_pixbuf_icon = pixbuf->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
-
-            // 表示
-            // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
-            m_imagetype = IMAGE_SHOW_ICON;
-            dispatch();
-
-            m_shown = true;
-        }
-        catch( Glib::Error& err )
-        {
-            set_errmsg( err.what() );
-            MISC::ERRMSG( get_errmsg() );
-
-            show_indicator( false );
-        }
-    }
+    // 表示
+    // スレッドの中でset_image()すると固まるときがあるのでディスパッチャ経由で
+    // allback_dispatch() -> set_image() と呼び出す
+    dispatch();
 
 #ifdef _DEBUG
     std::cout << "ImageAreaIcon::show_image_thread finished\n";
@@ -202,7 +200,7 @@ void ImageAreaIcon::show_image_thread()
 void ImageAreaIcon::show_indicator( bool loading )
 {
 #ifdef _DEBUG
-        std::cout << "ImageAreaIcon::show_indicato load = "  << loading << std::endl;
+        std::cout << "ImageAreaIcon::show_indicator load = "  << loading << std::endl;
 #endif        
 
     if( ! m_pixbuf ){
@@ -226,10 +224,7 @@ void ImageAreaIcon::show_indicator( bool loading )
     // エラー
     else  m_pixbuf_err->copy_area( 0, 0, get_width()/4, get_height()/4, m_pixbuf, 4, 4 );
 
-    // 表示
-    // ディスパッチャ経由で callback_dispatch() -> set_image() と呼び出される
     m_imagetype = IMAGE_SHOW_INDICATOR;
-    dispatch();
 }
 
 
@@ -247,9 +242,6 @@ void ImageAreaIcon::callback_dispatch()
 
 //
 // 表示
-//
-// スレッドの中でset()すると固まるときがあるのでディスパッチャで
-// メインスレッドに戻してからセットする
 //
 void ImageAreaIcon::set_image()
 {
