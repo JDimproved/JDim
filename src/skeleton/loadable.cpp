@@ -21,6 +21,9 @@ Loadable::Loadable()
 
 Loadable::~Loadable()
 {
+    // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
+    set_dispatchable( false );
+
     delete_loader();
 }
 

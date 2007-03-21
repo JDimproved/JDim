@@ -38,6 +38,9 @@ Search_Manager::Search_Manager()
 
 Search_Manager::~Search_Manager()
 {
+    // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
+    set_dispatchable( false );
+
     stop();
 }
 

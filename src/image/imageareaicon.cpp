@@ -70,6 +70,9 @@ ImageAreaIcon::~ImageAreaIcon()
     std::cout << "ImageAreaIcon::~ImageAreaIcon url = " << get_url() << std::endl;
 #endif 
 
+    // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
+    set_dispatchable( false );
+
     icon_launcher_remove( this );
     wait();
 }

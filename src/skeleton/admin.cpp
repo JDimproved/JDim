@@ -161,6 +161,10 @@ Admin::~Admin()
 #ifdef _DEBUG
     std::cout << "Admin::~Admin " << m_url << std::endl;
 #endif
+
+    // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
+    set_dispatchable( false );
+
     int pages = m_notebook->get_n_pages();
 
 #ifdef _DEBUG

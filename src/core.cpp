@@ -134,6 +134,9 @@ Core::~Core()
     std::cout << "Core::~Core\n";
 #endif
 
+    // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
+    set_dispatchable( false );
+
     m_quit = true;
 
     // 設定保存
