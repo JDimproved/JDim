@@ -340,19 +340,12 @@ void xsmp_session_end( XSMPDATA* xsmpdata )
 const std::string get_locale()
 {
     std::string locale;
+    if( getenv( "LANG" ) ) locale = std::string( getenv( "LANG" ) );
 
-    char* env_name[] = { "LC_ALL", "LC_CTYPE", "LANG" };
-
-    unsigned int i;
-    for( i = 0; i < sizeof( env_name ) / 4; ++i )
-    {
-        if( getenv( env_name[i] ) )
-        {
-            locale = std::string( getenv( env_name[i] ) );
-            break;
-        }
-    }
-
+#ifdef _DEBUG
+    std::cout << "locale = " << locale << std::endl;
+#endif
+    
     return locale;
 }
 
@@ -446,10 +439,11 @@ int main( int argc, char **argv )
     }
 
     const std::string locale = get_locale();
-    if( locale != "ja_JP.UTF-8" && locale != "ja_JP.utf8" ){
+    if( locale.find( "euc" ) != std::string::npos ||
+        locale.find( "EUC" ) != std::string::npos ){
 
         Gtk::MessageDialog* mdiag = new Gtk::MessageDialog(
-            "JDはUTF-8環境以外では動作しません\n\n環境変数を変更するか「LANG=\"ja_JP.UTF-8\" jd」等で起動して下さい\n\n起動しますか？",
+            "JDはEUC環境では正常に動作しません\n\n環境変数を変更するか\n\nenv LANG=ja_JP.utf8 jd\n\n又は\n\nLANG=\"ja_JP.UTF-8\" jd\n\nにより起動して下さい\n\n起動しますか？",
             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
         int ret = mdiag->run();
         delete mdiag;
