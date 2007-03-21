@@ -240,7 +240,11 @@ void ImageWin::set_enable_fold( bool enable )
     m_enable_fold = enable;
 
     // XFCE 環境の場合はここでpresent()しておかないとフォーカスが外れる
-    if( m_mode == IMGWIN_NORMAL && m_enable_fold ) present(); 
+    if( m_mode == IMGWIN_NORMAL && m_enable_fold ){
+
+        if( SESSION::get_wm() == SESSION::WM_KDE ) CORE::core_set_command( "switch_image" );
+        else present();
+    }
 }
 
 
