@@ -38,3 +38,13 @@ std::string MISC::color_to_str( const int* l_rgb )
 
     return str_value;
 }
+
+// Gdk::Color -> int 変換
+guint32 MISC::color_to_int( const Gdk::Color& color )
+{
+    guint32 red = color.get_red() >> 8;
+    guint32 green = color.get_green() >> 8;
+    guint32 blue = color.get_blue() >> 8;
+
+    return ( red << 24 ) + ( green << 16 ) + ( blue << 8 );
+}

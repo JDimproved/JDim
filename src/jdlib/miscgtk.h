@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-// gtk 関係の関数
+// gtk, gdk 関係の関数
 
 #ifndef _MISCGTK_H
 #define _MISCGTK_H
@@ -14,6 +14,9 @@ namespace MISC
 
     // int[3] -> 16進数表記の文字列
     std::string color_to_str( const int* l_rgb );
+
+    // Gdk::Color -> int 変換
+    guint32 color_to_int( const Gdk::Color& color );
 }
 
 #endif
