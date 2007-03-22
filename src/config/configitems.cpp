@@ -5,7 +5,6 @@
 
 #include "configitems.h"
 #include "defaultconf.h"
-#include "cache.h"
 
 #include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
@@ -13,6 +12,8 @@
 #include "colorid.h"
 #include "fontid.h"
 #include "global.h"
+#include "cache.h"
+#include "browsers.h"
 
 using namespace CONFIG;
 
@@ -111,11 +112,11 @@ const bool ConfigItems::load()
     // ipv6使用
     use_ipv6 = cf.get_option( "use_ipv6", USE_IPV6 );
 
-    // リンクをクリックしたときに実行するコマンド
-    command_openurl = cf.get_option( "command_openurl", "" );
-
     // ブラウザ設定ダイアログのコンボボックスの番号
-    brownsercombo_id = cf.get_option( "brownsercombo_id", 0 );
+    browsercombo_id = cf.get_option( "brownsercombo_id", BROWSER_NO );
+
+    // リンクをクリックしたときに実行するコマンド
+    command_openurl = cf.get_option( "command_openurl", CORE::get_browser_name( BROWSER_NO ) );
 
     // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
     refpopup_by_mo = cf.get_option( "refpopup_by_mo", false );
@@ -393,7 +394,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_ipv6", use_ipv6 );
 
     cf.update( "command_openurl", command_openurl );
-    cf.update( "brownsercombo_id", brownsercombo_id );
+    cf.update( "brownsercombo_id", browsercombo_id );
 
     cf.update( "refpopup_by_mo", refpopup_by_mo );
     cf.update( "namepopup_by_mo", namepopup_by_mo );

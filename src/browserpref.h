@@ -23,29 +23,29 @@ namespace CORE
 
         // OK押した
         virtual void slot_ok_clicked(){
-            CONFIG::set_brownsercombo_id( m_combo.get_active_row_number() );
+            CONFIG::set_browsercombo_id( m_combo.get_active_row_number() );
             CONFIG::set_command_openurl( MISC::remove_space( m_entry_browser.get_text() ) );
         }
 
         // コンボボックスが変わった
         void slot_changed(){
-            m_entry_browser.set_text( CORE::browsers[ m_combo.get_active_row_number() ][ 1 ] );
+            m_entry_browser.set_text( CORE::get_browser_name( m_combo.get_active_row_number() ) );
         }
 
       public:
 
         BrowserPref( Gtk::Window* parent, const std::string& url )
         : SKELETON::PrefDiag( parent, url ),
-        m_label_notice( "コンボボックスの中から使用するWebブラウザを選択して下さい\nリンククリック時に %LINK をURLに変換します" )
+        m_label_notice( "コンボボックスの中から使用するWebブラウザを選択して下さい\nリンククリック時に %LINK をURLに置換します" )
         {
             int i = 0;
             for(;;){
-
-                if( !strlen( CORE::browsers[ i ][ 0 ] ) ) break;
-                m_combo.append_text( CORE::browsers[ i++ ][ 0 ] );
+                std::string label = CORE::get_browser_label( i++ );
+                if( label.empty() ) break;
+                m_combo.append_text( label );
             }
 
-            m_combo.set_active( CONFIG::get_brownsercombo_id() );
+            m_combo.set_active( CONFIG::get_browsercombo_id() );
             m_combo.signal_changed().connect( sigc::mem_fun(*this, &BrowserPref::slot_changed ) );
 
             m_entry_browser.set_text( CONFIG::get_command_openurl() );

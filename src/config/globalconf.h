@@ -110,8 +110,8 @@ namespace CONFIG
     void set_command_openurl( const std::string& command );
 
     // ブラウザ設定ダイアログのコンボボックスの番号
-    const int get_brownsercombo_id();
-    void set_brownsercombo_id( int id );
+    const int get_browsercombo_id();
+    void set_browsercombo_id( int id );
 
     // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
     const bool get_refpopup_by_mo();

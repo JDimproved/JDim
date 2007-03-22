@@ -14,6 +14,7 @@ namespace CONFIG
 {
     enum{
         USE_IPV6 = 1,         // ipv6使用
+        BROWSER_NO = 2,       // browsers.h のラベル番号
         TREE_YPAD = 1,        // ツリービューの行間スペース
         SCROLL_SIZE = 3,      // スレビューのスクロール量
         MARGIN_POPUP = 30,    // レスアンカーとポップアップの間のマージン

@@ -74,7 +74,7 @@ namespace CONFIG
         std::string command_openurl;
 
         // ブラウザ設定ダイアログのコンボボックスの番号
-        int brownsercombo_id;
+        int browsercombo_id;
 
         // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
         bool refpopup_by_mo;

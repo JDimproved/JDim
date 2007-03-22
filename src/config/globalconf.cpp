@@ -139,8 +139,8 @@ const bool CONFIG::get_use_ipv6(){ return get_confitem()->use_ipv6; }
 const std::string& CONFIG::get_command_openurl() { return get_confitem()->command_openurl; }
 void CONFIG::set_command_openurl( const std::string& command ){ get_confitem()->command_openurl = command; }
 
-const int CONFIG::get_brownsercombo_id(){ return get_confitem()->brownsercombo_id; }
-void CONFIG::set_brownsercombo_id( int id ){ get_confitem()->brownsercombo_id = id; }
+const int CONFIG::get_browsercombo_id(){ return get_confitem()->browsercombo_id; }
+void CONFIG::set_browsercombo_id( int id ){ get_confitem()->browsercombo_id = id; }
 
 const bool CONFIG::get_refpopup_by_mo(){ return get_confitem()->refpopup_by_mo; }
 const bool CONFIG::get_namepopup_by_mo(){ return get_confitem()->namepopup_by_mo; }
