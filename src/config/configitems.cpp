@@ -8,6 +8,7 @@
 
 #include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
+#include "jdlib/miscgtk.h"
 
 #include "colorid.h"
 #include "fontid.h"
@@ -18,6 +19,42 @@
 using namespace CONFIG;
 
 
+//
+// デフォルトフォント取得
+//
+bool find_font( std::list< std::string > list_fonts, const std::string& name )
+{
+    std::list < std::string >::iterator it = list_fonts.begin();
+    for( ; it != list_fonts.end(); ++it ){
+
+        if( ( *it ) == name ) return true;
+    }
+
+    return false;
+}
+
+std::string get_default_font()
+{
+    std::list< std::string > list_fonts = MISC::get_font_families();
+
+    std::string name;
+
+    name = "IPA モナー Pゴシック"; if( find_font( list_fonts, name ) ) return name;
+    name = "IPAMonaPGothic"; if( find_font( list_fonts, name ) ) return name;
+    name = "Mona"; if( find_font( list_fonts, name ) ) return name;
+    name = "VL Pゴシック"; if( find_font( list_fonts, name ) ) return name;
+    name = "VL PGothic"; if( find_font( list_fonts, name ) ) return name;
+    name = "さざなみゴシック"; if( find_font( list_fonts, name ) ) return name;
+    name = "Sazanami Gothic"; if( find_font( list_fonts, name ) ) return name;
+    name = "Luxi Sans"; if( find_font( list_fonts, name ) ) return name;
+
+    return std::string();
+}
+
+
+////////////////////////////////////////
+
+
 ConfigItems::ConfigItems()
 {
     str_color.resize( COLOR_NUM );
@@ -26,7 +63,6 @@ ConfigItems::ConfigItems()
 
 ConfigItems::~ConfigItems()
 {}
-
 
 // 設定読み込み
 const bool ConfigItems::load()
@@ -51,14 +87,16 @@ const bool ConfigItems::load()
     restore_article = cf.get_option( "restore_article", false );
     restore_image = cf.get_option( "restore_image", false );
 
+    std::string defaultfont = get_default_font();
+
     // フォント
-    fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", std::string( DEFAULT_FONT ) + " " + std::string( FONTSIZE_THREAD ) );
+    fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", defaultfont + " " + std::string( FONTSIZE_THREAD ) );
 
     // ポップアップのフォント
-    fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", std::string( DEFAULT_FONT ) + " " + std::string( FONTSIZE_POPUP ) );
+    fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", defaultfont + " " + std::string( FONTSIZE_POPUP ) );
 
     // スレ一覧のフォント
-    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", std::string( DEFAULT_FONT ) + " " + std::string( FONTSIZE_TREE ) );
+    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", defaultfont + " " + std::string( FONTSIZE_TREE ) );
 
     // 板一覧のフォント
     fontname[ FONT_BOARD ] = cf.get_option( "fontname_board", fontname[ FONT_BBS ] );

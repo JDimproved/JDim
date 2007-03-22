@@ -6,10 +6,6 @@
 #ifndef _DEFAULTCONF_H
 #define _DEFAULTCONF_H
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 namespace CONFIG
 {
     enum{
@@ -20,13 +16,6 @@ namespace CONFIG
         MARGIN_POPUP = 30,    // レスアンカーとポップアップの間のマージン
         LOOSE_URL = 1         // datのパース時にURL判定を甘くする(^なども含める)
     };
-
-// フォント
-#ifdef MONAFONT
- #define DEFAULT_FONT "Mona"
-#else
- #define DEFAULT_FONT "IPA モナー Pゴシック"
-#endif
 
 #define FONTSIZE_THREAD "12"
 #define FONTSIZE_POPUP  "10"
