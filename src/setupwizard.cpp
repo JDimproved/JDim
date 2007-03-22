@@ -17,7 +17,7 @@ using namespace CORE;
 
 PageStart::PageStart() : Gtk::VBox(),
                          m_label( "１/４．JD セットアップ開始", Gtk::ALIGN_LEFT ),
-                         m_label2( "このウィザードでネットワークとフォントの設定をおこないます", Gtk::ALIGN_LEFT )
+                         m_label2( "JDセットアップウィザードへようこそ\n\nこのウィザードでネットワークとフォントの設定をおこないます\n\n設定を始めるには［次へ］を押してください", Gtk::ALIGN_LEFT )
 {
     m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
     m_hbox_label.set_spacing( SPACING_SIZE );
@@ -164,8 +164,10 @@ PageEnd::PageEnd() : Gtk::VBox(),
 
 
 SetupWizard::SetupWizard()
-    : Gtk::Dialog( "JD セットアップウィザード" ), m_fin( "完了(_C)", true ), m_back( "<<戻る(_B)", true ), m_next( "次へ(_N)>>", true )
+    : Gtk::Dialog(), m_fin( "完了(_C)", true ), m_back( "<< 戻る(_B)", true ), m_next( "次へ(_N) >>", true )
 {
+    set_title( "JD セットアップウィザード" );
+
     // ボタン
     m_hbox_buttons.set_spacing( SPACING_SIZE / 2 );
     m_hbox_buttons.pack_end( m_fin, Gtk::PACK_SHRINK );
