@@ -32,6 +32,8 @@ jd_SOURCES = \
 	historysubmenu.cpp \
 	control.cpp \
 	controlutil.cpp \
+	browsers.cpp \
+	setupwizard.cpp \
 \
 	session.cpp \
 	login2ch.cpp \
@@ -67,6 +69,8 @@ noinst_HEADERS = \
 	control.h \
 	controlutil.h \
 	command_args.h \
+	browsers.h \
+	setupwizard.h \
 \
 	session.h \
 	login2ch.h \

@@ -22,6 +22,7 @@
 #include "colorid.h"
 #include "fontid.h"
 #include "jdversion.h"
+#include "setupwizard.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -733,19 +734,8 @@ void Core::first_setup()
 {
     m_init = true;
 
-    show_setupdiag( "JDセットアップへようこそ\n\nはじめにネットワークの設定をおこなって下さい" );
-
-    slot_setup_proxy();
-    slot_setup_browser();
-
-    show_setupdiag( "JDセットアップ\n\nスレッド、ポップアップ、板・スレ一覧の順にフォントの設定をおこなって下さい" );
-
-    slot_changefont_main();
-    slot_changefont_popup();
-    slot_changefont_tree();
-
-    show_setupdiag( "JDセットアップ\n\nその他の設定は起動後に設定メニューからおこなって下さい" );
-    show_setupdiag( "JDセットアップ完了\n\nOKを押すとJDを起動して板のリストをロードします\nリストが表示されるまでしばらくお待ち下さい" );
+    SetupWizard wizard;
+    wizard.run();
 
     m_init = false;
 }
@@ -954,7 +944,7 @@ void Core::slot_changefont_tree()
 {
     Gtk::FontSelectionDialog diag;
     diag.set_font_name( CONFIG::get_fontname( FONT_BBS ) );
-    diag.set_title( "板一、スレ覧フォント" );
+    diag.set_title( "板／スレ一覧フォント" );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
         CONFIG::set_fontname( FONT_BBS, diag.get_font_name() );
