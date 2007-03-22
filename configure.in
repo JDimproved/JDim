@@ -190,16 +190,6 @@ AC_ARG_WITH(core2duo,[ --with-core2duo    (use core2duo)],
 
 
 dnl
-dnl checking mona-ttf font
-dnl
-AC_ARG_WITH(monafont,[ --with-monafont    (use mona font)],
-       [ if test "$withval" != "no" ;then
-               echo "use mona font"
-               AC_DEFINE( MONAFONT, , "use mona font")
-       fi ])
-
-
-dnl
 dnl checking pangolayout
 dnl
 AC_ARG_WITH(pangolayout,[ --with-pangolayout    (use pangolayout)],
