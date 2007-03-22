@@ -16,37 +16,28 @@
 #include "cache.h"
 #include "browsers.h"
 
-using namespace CONFIG;
+#include <set>
 
+using namespace CONFIG;
 
 //
 // デフォルトフォント取得
 //
-bool find_font( std::list< std::string > list_fonts, const std::string& name )
-{
-    std::list < std::string >::iterator it = list_fonts.begin();
-    for( ; it != list_fonts.end(); ++it ){
 
-        if( ( *it ) == name ) return true;
-    }
-
-    return false;
-}
+#define IS_DEFAULT_FONT( name ) do{ if( set_fonts.find( name ) != set_fonts.end() ) return name; } while(0)
 
 std::string get_default_font()
 {
-    std::list< std::string > list_fonts = MISC::get_font_families();
+    std::set< std::string > set_fonts = MISC::get_font_families();
 
-    std::string name;
-
-    name = "IPA モナー Pゴシック"; if( find_font( list_fonts, name ) ) return name;
-    name = "IPAMonaPGothic"; if( find_font( list_fonts, name ) ) return name;
-    name = "Mona"; if( find_font( list_fonts, name ) ) return name;
-    name = "VL Pゴシック"; if( find_font( list_fonts, name ) ) return name;
-    name = "VL PGothic"; if( find_font( list_fonts, name ) ) return name;
-    name = "さざなみゴシック"; if( find_font( list_fonts, name ) ) return name;
-    name = "Sazanami Gothic"; if( find_font( list_fonts, name ) ) return name;
-    name = "Luxi Sans"; if( find_font( list_fonts, name ) ) return name;
+    IS_DEFAULT_FONT( "IPA モナー Pゴシック" );
+    IS_DEFAULT_FONT( "IPAMonaPGothic" );
+    IS_DEFAULT_FONT( "Mona" );
+    IS_DEFAULT_FONT( "VL Pゴシック" );
+    IS_DEFAULT_FONT( "VL PGothic" );
+    IS_DEFAULT_FONT( "さざなみゴシック" );
+    IS_DEFAULT_FONT( "Sazanami Gothic" );
+    IS_DEFAULT_FONT( "Luxi Sans" );
 
     return std::string();
 }

@@ -7,7 +7,7 @@
 
 #include <gtkmm.h>
 
-#include <list>
+#include <set>
 
 namespace MISC
 {
@@ -20,8 +20,8 @@ namespace MISC
     // Gdk::Color -> int 変換
     guint32 color_to_int( const Gdk::Color& color );
 
-    // 使用可能なフォントの一覧をリストで取得
-    std::list< std::string > get_font_families();
+    // 使用可能なフォントの一覧を取得
+    std::set< std::string > get_font_families();
 }
 
 #endif
