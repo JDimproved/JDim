@@ -48,3 +48,22 @@ guint32 MISC::color_to_int( const Gdk::Color& color )
 
     return ( red << 24 ) + ( green << 16 ) + ( blue << 8 );
 }
+
+
+// 使用可能なフォントの一覧をリストで取得
+std::list< std::string > MISC::get_font_families()
+{
+    std::list< std::string > list_out;
+
+    Gtk::DrawingArea dummy;
+    std::list< Glib::RefPtr< Pango::FontFamily > > list_families = dummy.get_pango_context()->list_families();
+    std::list< Glib::RefPtr< Pango::FontFamily > >::iterator it = list_families.begin();
+    for(; it != list_families.end(); ++it ){
+#ifdef _DEBUG
+        std::cout << (*it)->get_name() << std::endl;
+#endif
+        list_out.push_back( (*it)->get_name() );
+    }
+
+    return list_out;
+}
