@@ -741,22 +741,6 @@ void Core::first_setup()
 }
 
 
-
-//
-// セットアップ中ダイアログ表示
-//
-void Core::show_setupdiag( const std::string& msg )
-{
-    SKELETON::MsgDiag* mdiag = new SKELETON::MsgDiag( NULL, msg );
-    mdiag->set_title( "JDセットアップ" );
-    mdiag->set_keep_above( true );
-    mdiag->set_skip_taskbar_hint( false );
-    mdiag->run();
-    delete mdiag;
-}
-
-
-
 //
 // SIGHUPを受け取った
 //

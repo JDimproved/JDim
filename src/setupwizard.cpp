@@ -167,6 +167,7 @@ SetupWizard::SetupWizard()
     : Gtk::Dialog(), m_fin( "完了(_C)", true ), m_back( "<< 戻る(_B)", true ), m_next( "次へ(_N) >>", true )
 {
     set_title( "JD セットアップウィザード" );
+    set_keep_above( true );
 
     // ボタン
     m_hbox_buttons.set_spacing( SPACING_SIZE / 2 );
