@@ -37,7 +37,7 @@ std::string get_default_font()
     IS_DEFAULT_FONT( "VL PGothic" );
     IS_DEFAULT_FONT( "さざなみゴシック" );
     IS_DEFAULT_FONT( "Sazanami Gothic" );
-    IS_DEFAULT_FONT( "Luxi Sans" );
+    IS_DEFAULT_FONT( "Sans" );
 
     return std::string();
 }
