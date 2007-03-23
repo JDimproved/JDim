@@ -25,9 +25,6 @@
 #endif
 
 
-// row -> tree 変換
-#define GET_PATH( row ) get_model()->get_path( row )
-
 using namespace SKELETON;
 
 
@@ -200,7 +197,9 @@ void JDTreeView::delete_popup()
 //
 void JDTreeView::goto_top()
 {
-    Gtk::TreePath path = GET_PATH( *( get_model()->children().begin() ) );
+    if( ! get_model() ) return;
+
+    Gtk::TreePath path = get_model()->get_path(  *( get_model()->children().begin() ) );
     scroll_to_row( path, 0 );
     set_cursor( path );
 }
@@ -211,7 +210,9 @@ void JDTreeView::goto_top()
 //
 void JDTreeView::goto_bottom()
 {
-    Gtk::TreePath path = GET_PATH( *( get_model()->children().rbegin() ) );
+    if( ! get_model() ) return;
+
+    Gtk::TreePath path = get_model()->get_path( *( get_model()->children().rbegin() ) );
     scroll_to_row( path, 0 );
     set_cursor( path );
 }
@@ -363,13 +364,15 @@ Gtk::TreeModel::Row JDTreeView::get_row( const Gtk::TreePath& path )
 //
 void JDTreeView::expand_parents( const Gtk::TreePath& path )
 {
+    if( ! get_model() ) return;
+
     for( int level = 1; level < path.get_depth(); ++level ){
                     
         Gtk::TreeModel::Row row_tmp = get_row( path );
         for( int i = 0; i < path.get_depth() - level; ++i ){
             if( row_tmp.parent() ) row_tmp = *( row_tmp.parent() );
         }
-        Gtk::TreePath path_tmp  = GET_PATH( row_tmp );
+        Gtk::TreePath path_tmp  = get_model()->get_path( row_tmp );
         expand_row( path_tmp, false );
     }
 }
