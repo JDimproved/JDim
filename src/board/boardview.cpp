@@ -1069,6 +1069,7 @@ void BoardView::operate_view( const int& control )
         case CONTROL::Delete:
         {
             SKELETON::MsgDiag mdiag( NULL, "選択した行のログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            mdiag.set_default_response( Gtk::RESPONSE_OK );
             if( mdiag.run() != Gtk::RESPONSE_OK ) return;
             delete_view();
             break;
