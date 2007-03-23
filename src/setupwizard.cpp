@@ -164,24 +164,24 @@ PageEnd::PageEnd() : Gtk::VBox(),
 
 
 SetupWizard::SetupWizard()
-    : Gtk::Dialog(), m_fin( "完了(_C)", true ), m_back( "<< 戻る(_B)", true ), m_next( "次へ(_N) >>", true )
+    : Gtk::Dialog(), m_back( "<< 戻る(_B)", true ), m_next( "次へ(_N) >>", true )
 {
     set_title( "JD セットアップウィザード" );
     set_keep_above( true );
+    set_resizable( false );
 
     // ボタン
-    m_hbox_buttons.set_spacing( SPACING_SIZE / 2 );
-    m_hbox_buttons.pack_end( m_fin, Gtk::PACK_SHRINK );
-    m_hbox_buttons.pack_end( m_next, Gtk::PACK_SHRINK );
-    m_hbox_buttons.pack_end( m_back, Gtk::PACK_SHRINK );
+    get_action_area()->set_spacing( SPACING_SIZE / 2 );
+    get_action_area()->pack_start( m_back, Gtk::PACK_SHRINK );
+    get_action_area()->pack_start( m_next, Gtk::PACK_SHRINK );
+    m_fin = add_button( "完了(_C)", Gtk::RESPONSE_OK );
 
     m_back.set_sensitive( false );
     m_next.set_sensitive( true );
-    m_fin.set_sensitive( false );
+    m_fin->set_sensitive( false );
 
     m_back.signal_clicked().connect( sigc::mem_fun( *this, &SetupWizard::slot_back ) );
     m_next.signal_clicked().connect( sigc::mem_fun( *this, &SetupWizard::slot_next ) );
-    m_fin.signal_clicked().connect( sigc::mem_fun( *this, &SetupWizard::slot_fin ) );
 
     // ページ
     m_notebook.append_page( m_page_start );
@@ -195,7 +195,6 @@ SetupWizard::SetupWizard()
     m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &SetupWizard::slot_switch_page ) );
 
     get_vbox()->pack_start( m_notebook, Gtk::PACK_EXPAND_PADDING, SPACING_SIZE );
-    get_vbox()->pack_start( m_hbox_buttons, Gtk::PACK_SHRINK );
 
     show_all_children();
 }
@@ -214,25 +213,25 @@ void SetupWizard::slot_switch_page( GtkNotebookPage* notebookpage, guint page )
         case 0:
             m_back.set_sensitive( false );
             m_next.set_sensitive( true );
-            m_fin.set_sensitive( false );
+            m_fin->set_sensitive( false );
             break;
             
         case 1:
             m_back.set_sensitive( true );
             m_next.set_sensitive( true );
-            m_fin.set_sensitive( false );
+            m_fin->set_sensitive( false );
             break;
 
         case 2:
             m_back.set_sensitive( true );
             m_next.set_sensitive( true );
-            m_fin.set_sensitive( false );
+            m_fin->set_sensitive( false );
             break;
 
         case 3:
             m_back.set_sensitive( true );
             m_next.set_sensitive( false );
-            m_fin.set_sensitive( true );
+            m_fin->set_sensitive( true );
             break;
     }
 }
@@ -247,9 +246,4 @@ void SetupWizard::slot_next()
 {
     int page = m_notebook.get_current_page();
     m_notebook.set_current_page( page + 1 );
-}
-
-void SetupWizard::slot_fin()
-{
-    response( Gtk::RESPONSE_YES );
 }

@@ -113,8 +113,7 @@ namespace CORE
         PageFont m_page_font;
         PageEnd  m_page_end;
 
-        Gtk::HBox m_hbox_buttons;
-        Gtk::Button m_fin;
+        Gtk::Button* m_fin;
         Gtk::Button m_back;
         Gtk::Button m_next;
 
