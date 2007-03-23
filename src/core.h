@@ -226,9 +226,6 @@ namespace CORE
         // あるadminがemptyになったので他のadminにスイッチ
         void empty_page( const std::string& url );
 
-        // あるadminののnotebookのページがスイッチした
-        void switch_page( const std::string& url );
-
         void set_toggle_view_button();
         void set_sensitive_view_button();
         void toggle_maximize_rightpane();

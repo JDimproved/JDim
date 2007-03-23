@@ -938,7 +938,7 @@ void Admin::set_url( const std::string& url, const std::string& url_show )
         // アクティブなviewからコマンドが来たら表示する
         SKELETON::View* view = get_current_view();
         if( m_focus && view && view->get_url() == url ){
-            CORE::core_set_command( "set_url", url, url_show );
+            CORE::core_set_command( "set_url", url_show );
         }
     }
 }
@@ -1221,17 +1221,22 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
     std::cout << "Admin::slot_switch_page : " << m_url << " page = " << page << std::endl;
 #endif
 
-    // タブのアイコンを通常に戻す
+    // タブのアイコンを通常に戻して再描画
     SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ){
 #ifdef _DEBUG
         std::cout << "url = " << view->get_url() << std::endl;
 #endif
         set_tabicon( view->get_url(), "switch_page" );
-    }
 
-    // coreにページが切り替わったことを知らせて、core経由でviewをフォーカスする
-    CORE::core_set_command( "switch_page", m_url );
+        view->redraw_view();
+
+        if( m_focus ){
+            set_title( view->get_url(), view->get_title() );
+            set_url( view->get_url(), view->url_for_copy() );
+            set_status( view->get_url(), view->get_status() );
+        }
+    }
 }
 
 

@@ -2065,9 +2065,6 @@ void Core::exec_command()
     // あるnotebookが空になった
     else if( command.command  == "empty_page" ) empty_page( command.url );
 
-    // あるadminのnotebookのページが切り替わった
-    else if( command.command  == "switch_page" ) switch_page( command.url );
-
     // タイトル、URL、ステータスなどの表示
     else if( command.command  == "set_title" ){
         m_title = command.arg1;
@@ -2586,28 +2583,6 @@ void Core::empty_page( const std::string& url )
         case SESSION::FOCUS_IMAGE: switch_image( present ); break;
         case SESSION::FOCUS_MESSAGE: switch_message( present ); break;
     }
-}
-
-
-
-//
-// あるadminのnotebookのページがスイッチした
-//
-// url : adminのurl
-//
-void Core::switch_page( const std::string& url )
-{
-#ifdef _DEBUG
-    std::cout << "Core::switch_page " << url << std::endl;
-#endif
-
-    const bool present = false;
-
-    if( url == URL_BBSLISTADMIN ) switch_sidebar( std::string(), present );
-    else if( url == URL_BOARDADMIN ) switch_board( present );
-    else if( url == URL_ARTICLEADMIN ) switch_article( present );
-    else if( url == URL_IMAGEADMIN ) switch_image( present );
-    else if( url == URL_MESSAGEADMIN ) switch_message( present );
 }
 
 
