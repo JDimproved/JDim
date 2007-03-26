@@ -895,6 +895,8 @@ void BoardView::update_view()
             row[ m_columns.m_col_since_t ] = art->get_since_time();
             row[ m_columns.m_col_id_dat ] = art->get_id();
 
+            row[ m_columns.m_col_drawbg ] = false;
+
             update_row_common( art, row, id );
 
             // 更新があるかチェック
@@ -1297,7 +1299,6 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
     // タイトル、レス数、抽出
     row[ m_columns.m_col_subject ] = art->get_subject();
     row[ m_columns.m_col_res ] = art->get_number();
-    row[ m_columns.m_col_drawbg ] = false;
 
     // 読み込み数
 
