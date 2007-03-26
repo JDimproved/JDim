@@ -800,7 +800,7 @@ SKELETON::View* ImageAdmin::get_current_icon()
 //
 // view 取得
 //
-SKELETON::View* ImageAdmin::get_view( const std::string& url, bool )
+SKELETON::View* ImageAdmin::get_view( const std::string& url )
 {
     std::list< SKELETON::View* >::iterator it_view;
     for( it_view = m_list_view.begin(); it_view != m_list_view.end(); ++it_view ){

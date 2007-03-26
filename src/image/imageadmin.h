@@ -89,7 +89,7 @@ namespace IMAGE
         SKELETON::View* get_nth_icon( unsigned int n );
         SKELETON::View* get_current_icon();
 
-        virtual SKELETON::View* get_view( const std::string& url, bool use_find = false );
+        virtual SKELETON::View* get_view( const std::string& url );
         virtual SKELETON::View* get_current_view();
 
         // スクロール

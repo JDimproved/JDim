@@ -201,7 +201,7 @@ void ArticleViewMain::update_finish()
 {
     int status = DBTREE::article_status( url_article() );
     std::string str_stat;
-    if( status & STATUS_OLD ) str_stat = "[ DAT落ち or 移転しました ]";
+    if( status & STATUS_OLD ) str_stat = "[ DAT落ち 又は 移転しました ]";
     if( status & STATUS_BROKEN ) str_stat = "[ 壊れています ]";
 
     if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += " [ " + DBTREE::article_ext_err( url_article() ) + " ]";
