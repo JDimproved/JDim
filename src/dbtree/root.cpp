@@ -532,6 +532,9 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
             movetable.path_board = board->get_path_board();
             m_movetable.push_back( movetable );
 
+            // coreに知らせてviewなども更新
+            CORE::core_set_command( "update_host", old_root, root );
+
 #ifdef _DEBUG
             std::cout << "movetable was updated.\n";
 #endif

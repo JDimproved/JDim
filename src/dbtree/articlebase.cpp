@@ -78,7 +78,7 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
     memset( &m_write_time, 0, sizeof( struct timeval ) );
 
     // m_url にURLセット
-    update_url( datbase );
+    update_datbase( datbase );
 
     // この段階では移転前の旧ホスト名は分からないのでとりあえず現在のホスト名をセットしておく
     // あとで BoardBase::url_dat()でURLを変換する時に旧ホスト名を教えてもらってinfoファイルに保存しておく。
@@ -297,7 +297,7 @@ const int ArticleBase::get_hour()
 //
 // 移転があったときなどに上位クラスのboardbaseから呼ばれる
 //
-void ArticleBase::update_url( const std::string& datbase )
+void ArticleBase::update_datbase( const std::string& datbase )
 {
     if( m_id.empty() ) return;
 
@@ -305,12 +305,21 @@ void ArticleBase::update_url( const std::string& datbase )
     std::string old_url = m_url;
 #endif
 
+    // URL 更新
     m_url = datbase + m_id;
 
+    // info ファイルのパスも更新
+    if( ! m_path_article_info.empty() ){
+        m_path_article_info = CACHE::path_article_info( m_url, m_id );  // info
+        m_path_article_ext_info = CACHE::path_article_ext_info( m_url, m_id ); // 拡張info
+    }
+
 #ifdef _DEBUG
-    if( !old_url.empty() ) std::cout << "ArticleBase::update_url from "  << old_url
+    if( !old_url.empty() ) std::cout << "ArticleBase::update_datbase from "  << old_url
                                      << " to " << m_url << std::endl;
 #endif
+
+    if( m_nodetree ) m_nodetree->update_url( m_url );
 }
 
 
@@ -942,6 +951,7 @@ void ArticleBase::delete_cache()
     if( m_bookmarked_thread ){
         SKELETON::MsgDiag mdiag( NULL, "「" + get_subject() + "」はブックマークされています。\n\nスレを削除しますか？"
                                   ,false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+        mdiag.set_default_response( Gtk::RESPONSE_YES );
         if( mdiag.run() == Gtk::RESPONSE_NO ) return;
     }
 

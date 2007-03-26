@@ -713,15 +713,17 @@ void Core::create_toolbar()
 
     m_tooltip.set_tip( m_button_go, "移動" );
     m_tooltip.set_tip( m_button_search_cache,"キャッシュ内の全ログ検索 " );
-    m_tooltip.set_tip( m_button_bbslist, "板一覧" );
-    m_tooltip.set_tip( m_button_favorite, "お気に入り" );
+    m_tooltip.set_tip( m_button_bbslist, "板一覧\n\nお気に入りに切替え "
+                       + CONTROL::get_motion( CONTROL::TabRight ) );
+    m_tooltip.set_tip( m_button_favorite, "お気に入り\n\n板一覧に切替え "
+                       + CONTROL::get_motion( CONTROL::TabLeft ) );
     m_tooltip.set_tip( m_button_board,
                        "スレ一覧\n\n"
                        + CONTROL::get_label_motion( CONTROL::ToggleArticle ) );
     m_tooltip.set_tip( m_button_thread,
                        "スレビュー\n\n"
                        + CONTROL::get_label_motion( CONTROL::ToggleArticle ) );
-    m_tooltip.set_tip( m_button_image,"画像ビュー\n\nスレビュー切替 "
+    m_tooltip.set_tip( m_button_image,"画像ビュー\n\nスレビューに切替 "
                        + CONTROL::get_motion( CONTROL::ToggleArticle ) + " , " + CONTROL::get_motion( CONTROL::Left ) );
 }
 
@@ -1715,11 +1717,14 @@ void Core::set_command( const COMMAND_ARGS& command )
     // articleの削除
     else if( command.command == "delete_article" ){
 
+        DBTREE::delete_article( command.url );
+
+        if( DBTREE::article_is_cached( command.url ) ) return;
+
         ARTICLE::get_admin()->set_command( "close_view", command.url,
                                            "true" // command.url を含む全てのビューを閉じる
             );
 
-        DBTREE::delete_article( command.url );
         return;
     }
 
@@ -1962,6 +1967,22 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    ///////////////////////////////
+
+    // 移転があった
+    else if( command.command == "update_host" ){
+
+        ARTICLE::get_admin()->set_command( "update_host", command.url, command.arg1 );
+        BOARD::get_admin()->set_command( "update_host", command.url, command.arg1 );
+        BBSLIST::get_admin()->set_command( "update_host", command.url, command.arg1 );
+        IMAGE::get_admin()->set_command( "update_host", command.url, command.arg1 );
+        MESSAGE::get_admin()->set_command( "update_host", command.url, command.arg1 );
+
+        return;
+    }
+
+    ///////////////////////////////
+
     // フォーカス回復
     else if( command.command == "restore_focus" ){
 
@@ -2062,8 +2083,13 @@ void Core::exec_command()
     // 2chへのログイン処理が完了した
     else if( command.command  == "login2ch_finished" ) set_maintitle();
 
-    // あるnotebookが空になった
+    // あるadminのnotebookが空になった
     else if( command.command  == "empty_page" ) empty_page( command.url );
+
+    // あるadminのnotebookがswitchした
+    else if( command.command  == "page_switched" ){
+        set_toggle_view_button();
+    }
 
     // タイトル、URL、ステータスなどの表示
     else if( command.command  == "set_title" ){

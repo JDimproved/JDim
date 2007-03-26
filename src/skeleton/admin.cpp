@@ -1254,9 +1254,9 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
             set_title( view->get_url(), view->get_title() );
             set_url( view->get_url(), view->url_for_copy() );
             set_status( view->get_url(), view->get_status() );
-
-            CORE::core_set_command( "page_switched", m_url, view->get_url() );
         }
+
+        CORE::core_set_command( "page_switched", m_url, view->get_url() );
     }
 }
 

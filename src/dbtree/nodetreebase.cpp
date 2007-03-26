@@ -100,6 +100,28 @@ bool NodeTreeBase::empty()
 
 
 //
+// url の更新
+//
+// 移転があったときなどにarticlebaseから呼ばれる
+//
+void NodeTreeBase::update_url( const std::string& url )
+{
+    if( empty() ) return;
+
+#ifdef _DEBUG
+    std::string old_url = m_url;
+#endif
+
+    m_url = url;
+
+#ifdef _DEBUG
+    if( ! old_url.empty() ) std::cout << "NodeTreeBase::update_url from "  << old_url
+                                     << " to " << m_url << std::endl;
+#endif
+}
+
+
+//
 // バッファなどのクリア
 //
 void NodeTreeBase::clear()
@@ -116,7 +138,6 @@ void NodeTreeBase::clear()
 
     m_ext_err = std::string();
 }
-
 
 
 //
@@ -893,7 +914,9 @@ void NodeTreeBase::receive_finish()
         && get_code() != HTTP_NOT_MODIFIED
         ){
         std::ostringstream err;
-        err << m_url << " load failed. : " << get_str_code();
+        err << m_url << std::endl
+            << "load failed. : " << get_str_code();
+        if( get_code() == HTTP_REDIRECT ) err << " location = " << location();
         MISC::ERRMSG( err.str() );
     }
 

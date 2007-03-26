@@ -251,7 +251,7 @@ void BoardBase::update_root( const std::string& root )
 
     // 配下の ArticleBase にも知らせてあげる
     std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->update_url( url_datbase() );
+    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->update_datbase( url_datbase() );
 }
 
 

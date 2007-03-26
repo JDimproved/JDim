@@ -88,6 +88,7 @@ namespace DBTREE
         virtual ~NodeTreeBase();
 
         bool empty();
+        void update_url( const std::string& url );
 
         SIG_UPDATED& sig_updated() { return m_sig_updated; }
         SIG_FINISHED& sig_finished() { return m_sig_finished; }

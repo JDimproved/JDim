@@ -106,8 +106,8 @@ namespace DBTREE
 
         const std::string& get_url() const { return m_url; }
 
-        // 移転があったときなどにURLを更新
-        void update_url( const std::string& datbase );
+        // 移転があったときなどにdatファイルのベースアドレスを更新
+        void update_datbase( const std::string& datbase );
 
         // 移転する前のオリジナルのURL
         const std::string get_org_url();
