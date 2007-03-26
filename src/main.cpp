@@ -333,23 +333,6 @@ void xsmp_session_end( XSMPDATA* xsmpdata )
 #endif
 
 
-
-//
-// ロケールを取得する( 優先度が最も高いもの )
-//
-const std::string get_locale()
-{
-    std::string locale;
-    if( getenv( "LANG" ) ) locale = std::string( getenv( "LANG" ) );
-
-#ifdef _DEBUG
-    std::cout << "locale = " << locale << std::endl;
-#endif
-    
-    return locale;
-}
-
-
 ////////////////////////////////////////////////////////////
 
 int main( int argc, char **argv )
@@ -436,21 +419,6 @@ int main( int argc, char **argv )
 
         unlock_jd();
         lock_jd();
-    }
-
-    const std::string locale = get_locale();
-    if( locale.find( "euc" ) != std::string::npos ||
-        locale.find( "EUC" ) != std::string::npos ){
-
-        Gtk::MessageDialog* mdiag = new Gtk::MessageDialog(
-            "JDはEUC環境では正常に動作しません\n\n環境変数を変更するか\n\nenv LANG=ja_JP.utf8 jd\n\n又は\n\nLANG=\"ja_JP.UTF-8\" jd\n\nにより起動して下さい\n\n起動しますか？",
-            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-        int ret = mdiag->run();
-        delete mdiag;
-        if( ret != Gtk::RESPONSE_OK ){
-            unlock_jd();
-            return 0;
-        }
     }
 
     // バックアップファイル復元
