@@ -405,6 +405,11 @@ void Admin::exec_command()
         restore();
     }
 
+    // 移転などでホストの更新
+    else if( command.command == "update_host" ){
+        update_host( command.url, command.arg1 );
+    }
+
     // viewを開く
     else if( command.command == "open_view" ){
         open_view( command );
@@ -567,6 +572,25 @@ void Admin::open_list( const std::string& str_list )
     switch_view( *( list_url.begin() ) );
 }
 
+
+//
+// 移転などでviewのホスト名を更新
+//
+void Admin::update_host( const std::string& oldhost, const std::string& newhost )
+{
+#ifdef _DEBUG
+    std::cout << "Admin::update_host " << oldhost << " -> " << newhost << std::endl;
+#endif
+
+    int pages = m_notebook->get_n_pages();
+    if( pages ){
+
+        for( int i = 0; i < pages; ++i ){
+            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+            if( view && view->get_url().find( oldhost ) == 0 ) view->update_host( newhost );
+        }
+    }
+}
 
 
 //
@@ -1100,19 +1124,14 @@ bool Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
 //
 // ビュークラス取得
 //
-// use_find が true なら == の代わりに findを使う
-//
-View* Admin::get_view( const std::string& url, bool use_find )
+View* Admin::get_view( const std::string& url )
 {
     int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
             SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
-            if( view ){
-                if( view->get_url() == url ) return view;
-                else if( use_find && view->get_url().find ( url ) != std::string::npos ) return view;
-            }
+            if( view && view->get_url() == url ) return view;
         }
     }
     
@@ -1235,6 +1254,8 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
             set_title( view->get_url(), view->get_title() );
             set_url( view->get_url(), view->url_for_copy() );
             set_status( view->get_url(), view->get_status() );
+
+            CORE::core_set_command( "page_switched", m_url, view->get_url() );
         }
     }
 }

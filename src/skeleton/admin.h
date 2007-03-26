@@ -108,6 +108,9 @@ namespace SKELETON
         void set_jdwin( JDWindow* win ){ m_win = win; }
         void delete_jdwin();
 
+        // 移転などでviewのホスト名を更新
+        void update_host( const std::string& oldhost, const std::string& newhost );
+
         DragableNoteBook* get_notebook(){ return m_notebook; }
 
         // コマンド入力
@@ -173,7 +176,7 @@ namespace SKELETON
         void open_list( const std::string& str_list );
         virtual COMMAND_ARGS get_open_list_args( const std::string& url ){ return COMMAND_ARGS(); }
         virtual View* create_view( const COMMAND_ARGS& command ){ return NULL; };
-        virtual View* get_view( const std::string& url, bool use_find = false );
+        virtual View* get_view( const std::string& url );
         std::list< View* > get_list_view( const std::string& url );
         std::list< View* > get_list_view();
         virtual View* get_current_view();

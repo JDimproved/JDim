@@ -27,6 +27,26 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
 {}
 
 
+//
+// host の更新
+//
+// 移転があったときなどにadminから呼ばれる
+//
+void View::update_host( const std::string& host )
+{
+#ifdef _DEBUG
+    std::string old_url = m_url;
+#endif
+
+    m_url = host + m_url.substr( MISC::get_hostname( m_url ).length() );
+
+#ifdef _DEBUG
+    if( ! old_url.empty() ) std::cout << "View::update_host from "  << old_url
+                                     << " to " << m_url << std::endl;
+#endif
+}
+
+
 // クロック入力
 // clock_in_always()はviewの種類に依らず常に呼び出されるので重い処理を含めてはいけない
 void View::clock_in_always()

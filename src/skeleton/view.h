@@ -119,6 +119,7 @@ namespace SKELETON
 
         virtual const std::string& get_url(){ return m_url; }
         void set_url( const std::string& url ){ m_url = url; }
+        void update_host( const std::string& host );
 
         // view 上にマウスポインタがあれば true
         bool is_mouse_on_view();
