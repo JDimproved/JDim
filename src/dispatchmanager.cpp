@@ -45,6 +45,7 @@ DispatchManager::~DispatchManager()
 
 void DispatchManager::add( SKELETON::Dispatchable* child )
 {
+    // 既にlistに登録されていたらキャンセルする
     std::list< SKELETON::Dispatchable* >::iterator it = m_children.begin();
     for( ; it != m_children.end(); ++it ){
         if( *it == child ) return;
@@ -75,11 +76,14 @@ void DispatchManager::remove( SKELETON::Dispatchable* child )
 
 void DispatchManager::slot_dispatch()
 {
+    size_t size = m_children.size();
+    if( ! size  ) return;
+
     SKELETON::Dispatchable* child = *( m_children.begin() );
     if( child ) child->callback_dispatch();
     m_children.remove( child );
 
 #ifdef _DEBUG
-    std::cout << "DispatchManager::slot_dispatch size = " << m_children.size() << std::endl;
+    std::cout << "DispatchManager::slot_dispatch size = " << size << std::endl;
 #endif
 }
