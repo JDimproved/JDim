@@ -15,7 +15,9 @@
     <li>cvs -z3 -d:pserver:anonymous@cvs.sourceforge.jp:/cvsroot/jd4linux co jd</li>
     <li>ソースコードがダウンロードされて jd ディレクトリが出来るので後は普通にmakeする</li>
     </ul>
-    <ul class="none"><li>また更新されたファイルだけをダウンロードするには</li></ul>
+
+    <p>また更新されたファイルだけをダウンロードするには</p>
+
     <ul class="decimal">
     <li>端末を開いて CVS ディレクトリのある jd ディレクトリに移動</li>
     <li>cvs -d:pserver:anonymous@cvs.sourceforge.jp:/cvsroot/jd4linux login</li>
@@ -134,7 +136,8 @@ OpenArticleTab = Ctrl+Enter
     fc-cache -fv する。
     </p>
 
-<pre class="example">&lt;match target=&quot;font&quot;&gt;
+<pre class="example">
+&lt;match target=&quot;font&quot;&gt;
     &lt;test name=&quot;family&quot; compare=&quot;eq&quot;&gt;
         &lt;string&gt;IPA モナー Pゴシック&lt;/string&gt;
         &lt;string&gt;IPA モナー P明朝&lt;/string&gt;

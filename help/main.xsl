@@ -47,11 +47,18 @@
     <xsl:apply-templates select="a|array|block|br|div|h1|h2|h3|hr|li|p|pre|q|span|table|td|th|tr|ul" />
 </xsl:template>
 
-<xsl:template match="a|array|block|br|div|h1|h2|h3|hr|li|p|pre|q|span|table|td|th|tr|ul">
+<xsl:template match="a|array|block|br|div|h1|h2|h3|hr|li|p|q|span|table|td|th|tr|ul">
     <xsl:copy>
         <xsl:for-each select="@*"><xsl:copy /></xsl:for-each>
         <xsl:apply-templates />
     </xsl:copy>
+</xsl:template>
+
+<xsl:template match="pre">
+    <pre>
+        <xsl:for-each select="@*"><xsl:copy /></xsl:for-each>
+        <xsl:value-of select="substring-after( ., '&#x0A;' )" />
+    </pre>
 </xsl:template>
 
 
