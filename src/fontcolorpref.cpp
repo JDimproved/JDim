@@ -87,7 +87,7 @@ void FontColorPref::pack_widget()
 
     m_vbox_font.pack_start( m_hbox_font, Gtk::PACK_SHRINK );
 
-    m_checkbutton_font.set_label( "フォント幅の近似計算を厳密に行う");
+    m_checkbutton_font.set_label( "スレビューでフォント幅の近似計算を厳密に行う");
     m_checkbutton_font.set_active( CONFIG::get_strict_char_width() );
     m_tooltips.set_tip( m_checkbutton_font, WARNING_STRICTCHAR );
 
@@ -98,13 +98,22 @@ void FontColorPref::pack_widget()
     m_spin_space.set_range( 0.1, 10.0 );
     m_spin_space.set_increments( 0.1, 0.1 );
     m_spin_space.set_value( CONFIG::get_adjust_line_space() );
-    m_label_space1.set_text( "行の高さ： " );
-    m_label_space2.set_text( " 行" );
-    m_label_space2.set_alignment( Gtk::ALIGN_LEFT );
-    m_hbox_space.pack_start( m_label_space1, Gtk::PACK_SHRINK );
+    m_label_space.set_text( "行の高さ： " );
+    m_hbox_space.pack_start( m_label_space, Gtk::PACK_SHRINK );
     m_hbox_space.pack_start( m_spin_space, Gtk::PACK_SHRINK );
-    m_hbox_space.pack_start( m_label_space2, Gtk::PACK_EXPAND_WIDGET );
     m_vbox_font.pack_start( m_hbox_space, Gtk::PACK_SHRINK );
+    m_tooltips.set_tip( m_spin_space, "スレビューにおいて行の高さを調節します( 標準は 1 )" );
+
+    // 下線位置
+    m_spin_ubar.set_digits( 1 );
+    m_spin_ubar.set_range( 0.1, 10.0 );
+    m_spin_ubar.set_increments( 0.1, 0.1 );
+    m_spin_ubar.set_value( CONFIG::get_adjust_underline_pos() );
+    m_label_ubar.set_text( "下線位置： " );
+    m_hbox_ubar.pack_start( m_label_ubar, Gtk::PACK_SHRINK );
+    m_hbox_ubar.pack_start( m_spin_ubar, Gtk::PACK_SHRINK );
+    m_vbox_font.pack_start( m_hbox_ubar, Gtk::PACK_SHRINK );
+    m_tooltips.set_tip( m_spin_ubar, "スレビューにおいてアンカーなどの下線の位置を調節します( 標準は 1 )" );
 
     m_frame_font.set_border_width( mrg );
     m_frame_font.set_label( "フォントの設定" );
@@ -155,6 +164,7 @@ void FontColorPref::slot_ok_clicked()
 #endif
 
     CONFIG::set_adjust_line_space( m_spin_space.get_value() );
+    CONFIG::set_adjust_underline_pos( m_spin_ubar.get_value() );
 
     CORE::core_set_command( "relayout_all_bbslist" );
     CORE::core_set_command( "relayout_all_board" );

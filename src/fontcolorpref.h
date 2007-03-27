@@ -24,11 +24,14 @@ namespace CORE
         Gtk::FontButton m_fontbutton;
         Gtk::CheckButton m_checkbutton_font;
 
-        Gtk::Label m_label_space1;
-        Gtk::Label m_label_space2;
+        Gtk::Label m_label_space;
         SKELETON::SpinButtonDouble m_spin_space;
 
+        Gtk::Label m_label_ubar;
+        SKELETON::SpinButtonDouble m_spin_ubar;
+
         Gtk::HBox m_hbox_space;
+        Gtk::HBox m_hbox_ubar;
         Gtk::HBox m_hbox_font;
         Gtk::VBox m_vbox_font;
         Gtk::Frame m_frame_font;
