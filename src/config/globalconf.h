@@ -196,6 +196,7 @@ namespace CONFIG
     // スレ表示の行間調整
     const double get_adjust_underline_pos();
     const double get_adjust_line_space();
+    void set_adjust_line_space( double space );
 
     // スレ表示でリンクの下に下線を引く
     const bool get_draw_underline();

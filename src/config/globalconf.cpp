@@ -208,6 +208,7 @@ void CONFIG::set_instruct_tglimg( bool tgl ){ get_confitem()->instruct_tglimg = 
 
 const double CONFIG::get_adjust_underline_pos(){ return get_confitem()->adjust_underline_pos; }
 const double CONFIG::get_adjust_line_space(){ return get_confitem()->adjust_line_space; }
+void CONFIG::set_adjust_line_space( double space ){ get_confitem()->adjust_line_space = space; }
 
 const bool CONFIG::get_draw_underline(){ return get_confitem()->draw_underline; }
 
