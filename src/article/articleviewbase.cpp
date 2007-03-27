@@ -822,6 +822,8 @@ void ArticleViewBase::open_searchbar( bool invert )
 //
 void ArticleViewBase::slot_push_open_search()
 {
+    if( ! m_toolbar ) return;
+
     if( ! m_toolbar->m_searchbar_shown ) open_searchbar( false );
     else slot_push_close_search();
 }
@@ -869,6 +871,8 @@ void ArticleViewBase::slot_push_down_search()
 //
 void ArticleViewBase::slot_push_drawout_and()
 {
+    if( ! m_toolbar ) return;
+
     std::string query = m_toolbar->m_entry_search.get_text();
     if( query.empty() ) return;
 
@@ -881,6 +885,8 @@ void ArticleViewBase::slot_push_drawout_and()
 //
 void ArticleViewBase::slot_push_drawout_or()
 {
+    if( ! m_toolbar ) return;
+
     std::string query = m_toolbar->m_entry_search.get_text();
     if( query.empty() ) return;
 
@@ -2798,6 +2804,8 @@ void ArticleViewBase::slot_toggle_protectimage()
 //
 void ArticleViewBase::slot_active_search()
 {
+    if( ! m_toolbar ) return;
+
     focus_view();
     std::string query = m_toolbar->m_entry_search.get_text();
     if( query.empty() ) return;
