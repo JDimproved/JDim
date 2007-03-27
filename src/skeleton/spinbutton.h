@@ -19,7 +19,6 @@ namespace SKELETON
       public:
 
         SpinButton() : Gtk::SpinButton(){}
-        ~SpinButton(){}
 
       protected:
 
@@ -28,6 +27,25 @@ namespace SKELETON
             const size_t size = 256;
             char str[ size ];
             snprintf( str, size, "%d", (int)get_value() );
+            set_text( str );
+        }
+#endif
+
+    };
+
+    class SpinButtonDouble : public Gtk::SpinButton
+    {
+      public:
+
+        SpinButtonDouble() : Gtk::SpinButton(){}
+
+      protected:
+
+#if GTKMMVER <= 240
+        virtual void on_spinbutton_digits_changed(){
+            const size_t size = 256;
+            char str[ size ];
+            snprintf( str, size, "%4.3lf", get_value() );
             set_text( str );
         }
 #endif
