@@ -121,10 +121,6 @@
     <value>スレ表示のリンクの下線を表示する</value>
 </item>
 <item>
-    <key class="blue">adjust_underline_pos</key>
-    <value>スレ表示のリンクの下線の位置を調整する</value>
-</item>
-<item>
     <key class="blue">ref_prefix</key>
     <value>レスを参照コピーするときに前に付ける文字列</value>
 </item>
