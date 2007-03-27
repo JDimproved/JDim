@@ -50,9 +50,9 @@ OpenArticleTab = Ctrl+Enter
 
 <block class="border" header="スレ表示で文字列の行間のスペースを調節したい">
     <p>
-    設定ファイル(~/.jd/jd.conf)を開いて adjust_line_space の数字を変える。
-    1より小さいと狭くなり、1より大きいと広くなる。また adjust_underline_pos
-    の数字でリンクの下の下線の位置を調節できる。
+    フォントと色の設定から詳細ダイアログを開いて行高さの数字を変える。
+    1より小さいと狭くなり、1より大きいと広くなる。また設定ファイル(~/.jd/jd.conf)の
+    adjust_underline_posの数字でリンクの下の下線の位置を調節できる。
     </p>
 </block>
 

@@ -125,10 +125,6 @@
     <value>スレ表示のリンクの下線の位置を調整する</value>
 </item>
 <item>
-    <key class="blue">adjust_line_space</key>
-    <value>スレ表示の行間スペースを調整する</value>
-</item>
-<item>
     <key class="blue">ref_prefix</key>
     <value>レスを参照コピーするときに前に付ける文字列</value>
 </item>
