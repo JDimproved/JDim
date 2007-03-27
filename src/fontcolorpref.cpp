@@ -93,6 +93,20 @@ void FontColorPref::pack_widget()
 
     m_vbox_font.pack_start( m_checkbutton_font, Gtk::PACK_SHRINK, mrg );
 
+    // 行高さ
+    m_spin_space.set_digits( 1 );
+    m_spin_space.set_range( 0.1, 10.0 );
+    m_spin_space.set_increments( 0.1, 0.1 );
+    m_spin_space.set_value( CONFIG::get_adjust_line_space() );
+    m_label_space1.set_text( "行の高さ： " );
+    m_label_space2.set_text( " 行" );
+    m_label_space2.set_alignment( Gtk::ALIGN_LEFT );
+    m_hbox_space.pack_start( m_label_space1, Gtk::PACK_SHRINK );
+    m_hbox_space.pack_start( m_spin_space, Gtk::PACK_SHRINK );
+    m_hbox_space.pack_start( m_label_space2, Gtk::PACK_EXPAND_WIDGET );
+    m_vbox_font.pack_start( m_hbox_space, Gtk::PACK_SHRINK );
+
+    m_frame_font.set_border_width( mrg );
     m_frame_font.set_label( "フォントの設定" );
     m_frame_font.add( m_vbox_font );
 
@@ -140,6 +154,8 @@ void FontColorPref::slot_ok_clicked()
     std::cout << "FontColorPref::slot_ok_clicked\n";
 #endif
 
+    CONFIG::set_adjust_line_space( m_spin_space.get_value() );
+
     CORE::core_set_command( "relayout_all_bbslist" );
     CORE::core_set_command( "relayout_all_board" );
 
@@ -149,7 +165,7 @@ void FontColorPref::slot_ok_clicked()
 
 
 //
-// 設定ダイアログで OK が押された
+// 設定ダイアログでキャンセルが押された
 //
 void FontColorPref::slot_cancel_clicked()
 {

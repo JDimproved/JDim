@@ -4,6 +4,7 @@
 #define _FONTCOLORPREF_H
 
 #include "skeleton/prefdiag.h"
+#include "skeleton/spinbutton.h"
 
 #include <vector>
 
@@ -22,6 +23,12 @@ namespace CORE
         Gtk::ComboBoxText m_combo_font;
         Gtk::FontButton m_fontbutton;
         Gtk::CheckButton m_checkbutton_font;
+
+        Gtk::Label m_label_space1;
+        Gtk::Label m_label_space2;
+        SKELETON::SpinButtonDouble m_spin_space;
+
+        Gtk::HBox m_hbox_space;
         Gtk::HBox m_hbox_font;
         Gtk::VBox m_vbox_font;
         Gtk::Frame m_frame_font;
