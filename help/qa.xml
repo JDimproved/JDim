@@ -33,11 +33,11 @@
 </block>
 
 
-<block class="border" header="GNOMEやKDEなどでCapsキーをCtrlに変更するとショートカットが効かない">
+<block class="border" header="GNOMEやKDEなどでCapsキーをCtrlに変更するとショートカットが効かない時がある">
 <p>
 nocaps設定でCapsをCtrlに変更した場合、Ctrl+小文字を押すとCtrl+大文字がJDに入力される
-(例えばCtrl+hを押すとJDにはCtrl+Hを押したとXから知らされる)。xmodmap -e 'remove Lock = Control_L' 
-により正常動作するようになる。またはnocapsではなくてswapcaps設定を用いてCapsとCtrlを交換すると正常動作する。
+(例えばCtrl+hを押すとJDにはCtrl+Hを押したとXから知らされる)ため正常に動作しないことがある。
+xmodmap -e 'remove Lock = Control_L' により正常動作するようになる。またはnocapsではなくてswapcaps設定を用いてCapsとCtrlを交換すると正常動作する。
 </p>
 </block>
 
