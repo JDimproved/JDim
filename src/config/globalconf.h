@@ -193,8 +193,11 @@ namespace CONFIG
     const bool get_instruct_tglimg();
     void set_instruct_tglimg( bool set );
 
-    // スレ表示の行間調整
+    // 下線位置調整
     const double get_adjust_underline_pos();
+    void set_adjust_underline_pos( double pos );
+
+    // スレ表示の行間調整
     const double get_adjust_line_space();
     void set_adjust_line_space( double space );
 
