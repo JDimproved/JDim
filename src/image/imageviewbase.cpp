@@ -681,6 +681,12 @@ void ImageViewBase::slot_reload_force()
 {
     if( ! m_enable_menuslot ) return;
 
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
+
     m_img->set_code( 0 );
     reload();
     CORE::core_set_command( "redraw", get_url() );

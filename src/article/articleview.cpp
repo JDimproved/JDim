@@ -87,7 +87,11 @@ void ArticleViewMain::goto_num( int num )
 void ArticleViewMain::reload()
 {
     // オフライン
-    if( ! SESSION::is_online() ) return;
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
 
     // オートリロードのカウンタを0にする
     View::reset_autoreload_counter();

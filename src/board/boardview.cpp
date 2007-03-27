@@ -753,10 +753,19 @@ void BoardView::clock_in()
 //
 void BoardView::reload()
 {
+    // オフライン
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
+
     // オートリロードのカウンタを0にする
     View::reset_autoreload_counter();
 
     show_view();
+
+    // 板履歴更新
     CORE::core_set_command( "set_history_board", get_url() );
 }
 

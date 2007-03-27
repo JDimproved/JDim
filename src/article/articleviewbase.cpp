@@ -517,7 +517,11 @@ void ArticleViewBase::clock_in()
 void ArticleViewBase::reload()
 {
     // オフライン
-    if( ! SESSION::is_online() ) return;
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
 
     CORE::core_set_command( "open_article", m_url_article , "left", "" );
 }

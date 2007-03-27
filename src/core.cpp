@@ -1157,6 +1157,12 @@ void Core::slot_quit()
 //
 void Core::slot_reload_list()
 {
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
+
     DBTREE::download_bbsmenu();
     CORE::core_set_command( "set_status","", "loading...." );        
 }
