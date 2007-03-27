@@ -2044,19 +2044,20 @@ void BBSListViewBase::xml2tree( const std::string& xml )
     }
 
     // 前回閉じた位置まで移動
-    if( !focused_path.empty() ){
-        Gtk::TreePath path = Gtk::TreePath( focused_path );
-        if( m_treeview.get_row( path ) ){
-            m_treeview.set_cursor( path );
-        }
-        else m_treeview.get_selection()->unselect_all();
+    if( focused_path.empty() ){
+        focused_path = "0";
+        y = 0;
     }
-    else m_treeview.get_selection()->unselect_all();
 
-    if( y != -1 ){
-        // この段階ではまだスクロールバーが表示されてない時があるのでclock_in()で移動する
-        m_jump_y = y;
+    Gtk::TreePath path = Gtk::TreePath( focused_path );
+    if( m_treeview.get_row( path ) ) m_treeview.set_cursor( path );
+    else{
+        m_treeview.get_selection()->unselect_all();
+        y = 0;
     }
+
+    // この段階ではまだスクロールバーが表示されてない時があるのでclock_in()で移動する
+    m_jump_y = y;
 
     m_ready_tree = true;
 }
