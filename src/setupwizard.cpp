@@ -232,6 +232,7 @@ void SetupWizard::slot_switch_page( GtkNotebookPage* notebookpage, guint page )
             m_back.set_sensitive( true );
             m_next.set_sensitive( false );
             m_fin->set_sensitive( true );
+            m_fin->grab_focus();
             break;
     }
 }
