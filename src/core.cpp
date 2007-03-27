@@ -2248,11 +2248,6 @@ void Core::exec_command_after_boot()
 #endif
 
     // フォーカス回復
-    // 前回終了時に書き込みビューがフォーカスされていたらリセットする
-    if( SESSION::focused_admin() == SESSION::FOCUS_MESSAGE ){
-        SESSION::set_focused_admin( SESSION::FOCUS_NO );
-        SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
-    }
     restore_focus( true, true );
 
     // サイドバー表示状態変更
@@ -2284,6 +2279,22 @@ void Core::restore_focus( bool force, bool present )
 {
     int admin = SESSION::focused_admin();
 
+    // フォーカスするadminがemptyならリセット
+    bool reset_focus = false;
+    switch( admin )
+    {
+        case SESSION::FOCUS_SIDEBAR: if( BBSLIST::get_admin()->empty() ) reset_focus = true; break;
+        case SESSION::FOCUS_BOARD: if( BOARD::get_admin()->empty() ) reset_focus = true; break;
+        case SESSION::FOCUS_ARTICLE: if( ARTICLE::get_admin()->empty() ) reset_focus = true; break;
+        case SESSION::FOCUS_IMAGE: if( IMAGE::get_admin()->empty() ) reset_focus = true; break;
+        case SESSION::FOCUS_MESSAGE: if( MESSAGE::get_admin()->empty() ) reset_focus = true; break;
+    }
+    if( reset_focus ){
+        SESSION::set_focused_admin( SESSION::FOCUS_NO );
+        SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
+        admin = SESSION::FOCUS_NO;
+    }
+
 #ifdef _DEBUG
     std::cout << "Core::restore_focus admin = " << admin << std::endl;
 #endif
@@ -2291,7 +2302,7 @@ void Core::restore_focus( bool force, bool present )
     // 画像ウィンドウが表示されているときは画像ウィンドウのフォーカスを外す
     if( ! SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command_immediately( "focus_out" );
 
-    if( ! force ){
+    if( ! force ){ // 通常回復
 
         // フォーカス状態回復
         switch( admin )
