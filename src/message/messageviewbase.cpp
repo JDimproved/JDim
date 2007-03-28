@@ -227,14 +227,14 @@ void MessageViewBase::pack_widget()
     m_button_not_close.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_not_close_clicked ) );
     m_button_preview.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_preview_clicked ) );
     
-    m_tooltip.set_tip( m_button_write, CONTROL::get_label_motion( CONTROL::ExecWrite ) );
+    m_tooltip.set_tip( m_button_write, CONTROL::get_label_motion( CONTROL::ExecWrite ) + "\n\nTabキーで書き込みボタンにフォーカスを移すことも可能" );
     m_tooltip.set_tip( m_button_cancel, CONTROL::get_label_motion( CONTROL::CancelWrite ) );
     m_tooltip.set_tip( m_button_open, "テキストファイル挿入" );
     m_tooltip.set_tip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
     m_tooltip.set_tip( m_button_not_close, "書き込み後にビューを閉じない" );
     m_tooltip.set_tip( m_button_preview,
-                       "書き込みビュー ←→ プレビュー表示切り替え\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n" + CONTROL::get_label_motion( CONTROL::TabRight ) + "\n"
-                       + CONTROL::get_label_motion( CONTROL::TabLeft )
+                       "書き込みビュー ←→ プレビュー表示切り替え\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
+                       + CONTROL::get_label_motion( CONTROL::TabRight ) + "\n\n"+ CONTROL::get_label_motion( CONTROL::TabLeft )
         );
 
     m_toolbar.pack_start( m_button_preview, Gtk::PACK_SHRINK );
@@ -255,6 +255,9 @@ void MessageViewBase::pack_widget()
 
     m_check_fixname.set_label( "固定" );
     m_check_fixmail.set_label( "固定" );
+
+    m_tooltip.set_tip( m_check_fixname, "チェックすると名前欄を保存して固定にする" );
+    m_tooltip.set_tip( m_check_fixmail, "チェックするとメール欄を保存して固定にする" );
 
     // 名前
     
