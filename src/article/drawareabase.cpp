@@ -2913,7 +2913,15 @@ bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
 
     m_sig_key_press.emit( event );
 
-    m_key_press = true;
+    // 修飾キーを押したときは m_key_press をtrueにしない
+    // そうしないと Shift + ○ をスクロールに割り当てたときに
+    // 2回スクロールする。DrawAreaBase::set_scroll()も参照すること。
+    bool ctrl = ( event->keyval == GDK_Control_L || event->keyval == GDK_Control_R );
+    bool eisu = ( event->keyval == GDK_Eisu_toggle || event->keyval == GDK_Caps_Lock );
+    bool shift = ( event->keyval == GDK_Shift_L || event->keyval == GDK_Shift_R );
+    bool alt = ( event->keyval == GDK_Alt_L || event->keyval == GDK_Alt_R );
+    if( ! ctrl && ! eisu && ! shift && ! alt ) m_key_press = true;
+
     return true;
 }
 
