@@ -87,6 +87,9 @@ namespace MESSAGE
         // フォント初期化
         void init_font( const std::string& fontname );
 
+        // 色初期化
+        void init_color();
+
         // 書き込みログ保存
         void save_postlog();
 

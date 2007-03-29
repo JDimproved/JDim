@@ -29,6 +29,7 @@
 #include "fontid.h"
 #include "cache.h"
 #include "session.h"
+#include "colorid.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -138,6 +139,19 @@ void MessageViewBase::init_font( const std::string& fontname )
     m_entry_mail.modify_font( pfd );
     m_text_message.modify_font( pfd );
 }
+
+
+//
+// 色初期化
+//
+void MessageViewBase::init_color()
+{
+    m_text_message.modify_text( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE ) ) );
+    m_text_message.modify_text( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE_SELECTION ) ) );
+    m_text_message.modify_base( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE ) ) );
+    m_text_message.modify_base( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE_SELECTION ) ) );
+}
+
 
 
 //
@@ -308,6 +322,9 @@ void MessageViewBase::pack_widget()
 
     // フォントセット
     init_font( CONFIG::get_fontname( FONT_MESSAGE ) );
+
+    // 色セット
+    init_color();
 
     show_status();
 }
@@ -521,6 +538,7 @@ bool MessageViewBase::slot_button_press( GdkEventButton* event )
 void MessageViewBase::relayout()
 {
     init_font( CONFIG::get_fontname( FONT_MESSAGE ) );
+    init_color();
 }
 
 
