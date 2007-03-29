@@ -119,6 +119,9 @@ namespace SKELETON
         void set_text( const Glib::ustring& text ){ m_textview.get_buffer()->set_text( text ); }
         Glib::ustring get_text(){ return m_textview.get_buffer()->get_text(); }
 
+        void modify_text( Gtk::StateType state, const Gdk::Color& color ){ m_textview.modify_text( state, color ); }
+        void modify_base( Gtk::StateType state, const Gdk::Color& color ){ m_textview.modify_base( state, color ); }
+
         void insert_str( const std::string& str, bool use_br ){ m_textview.insert_str( str, use_br ); }
 
         void set_editable( bool editable ){ m_textview.set_editable( editable ); }
