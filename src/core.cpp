@@ -949,7 +949,11 @@ void Core::slot_changefont_tree()
 void Core::slot_changecolor_char()
 {
     if( open_color_diag( "文字色", COLOR_CHAR ) ){
+
         ARTICLE::get_admin()->set_command( "relayout_all" );
+
+        CONFIG::set_color( COLOR_CHAR_MESSAGE, CONFIG::get_color( COLOR_CHAR ) );
+        MESSAGE::get_admin()->set_command( "relayout_all" );
     }
 }
 
@@ -962,6 +966,9 @@ void Core::slot_changecolor_back()
     if( open_color_diag( "スレ、ポップアップ背景色", COLOR_BACK ) ){
 
         CONFIG::set_color( COLOR_BACK_POPUP, CONFIG::get_color( COLOR_BACK) );
+
+        CONFIG::set_color( COLOR_BACK_MESSAGE, CONFIG::get_color( COLOR_BACK) );
+        MESSAGE::get_admin()->set_command( "relayout_all" );
 
         ARTICLE::get_admin()->set_command( "relayout_all" );
     }
@@ -1886,6 +1893,11 @@ void Core::set_command( const COMMAND_ARGS& command )
             if( SESSION::get_embedded_mes() ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
             MESSAGE::get_admin()->set_command( "open_view", command.url, command.arg1, "new" );
         }
+    }
+
+    // messageviewの再レイアウト
+    else if( command.command == "relayout_all_message" ){
+        MESSAGE::get_admin()->set_command( "relayout_all" );
     }
 
     ////////////////////////////
