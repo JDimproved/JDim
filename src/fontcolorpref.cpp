@@ -40,6 +40,8 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "文字: リンク(通常)", COLOR_CHAR_LINK, "通常のリンクや参照されていないレス番号、複数発言したIDの文字色" );
     set_color_settings( "文字: リンク(参照)", COLOR_CHAR_LINK_LOW, "他のレスから参照されたレス番号の文字色" );
     set_color_settings( "文字: リンク(多数)", COLOR_CHAR_LINK_HIGH, "参照された数が多いレス番号や多く発言したIDの文字色" );
+    set_color_settings( "文字: 書き込みエディタ", COLOR_CHAR_MESSAGE, "書き込みエディタの文字色" );
+    set_color_settings( "文字: 書き込みエディタ(選択範囲)", COLOR_CHAR_MESSAGE_SELECTION, "書き込みエディタ(選択範囲)の文字色" );
     set_color_settings( "文字: 画像(キャッシュ無)", COLOR_IMG_NOCACHE, "画像として扱うリンクのうち、キャッシュされていない物の文字色" );
     set_color_settings( "文字: 画像(キャッシュ有)", COLOR_IMG_CACHED, "画像として扱うリンクのうち、キャッシュされている物の文字色" );
     set_color_settings( "文字: 画像(ロード中)", COLOR_IMG_LOADING, "画像として扱うリンクのうち、ロード中の物の文字色" );
@@ -52,6 +54,8 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "背景: 板一覧", COLOR_BACK_BBS, "板一覧の背景色" );
     set_color_settings( "背景: スレ一覧", COLOR_BACK_BOARD, "スレ一覧の背景色" );
     set_color_settings( "背景: ハイライト(ツリー)", COLOR_BACK_HIGHLIGHT_TREE, "板、スレ一覧での検索結果などのハイライトの背景色" );
+    set_color_settings( "背景: 書き込みエディタ", COLOR_BACK_MESSAGE, "書き込みエディタの背景色" );
+    set_color_settings( "背景: 書き込みエディタ(選択範囲)", COLOR_BACK_MESSAGE_SELECTION, "書き込みエディタ(選択範囲)の背景色" );
 
 
     pack_widget();
@@ -171,6 +175,8 @@ void FontColorPref::slot_ok_clicked()
 
     CORE::core_set_command( "init_font_all_article" );
     CORE::core_set_command( "relayout_all_article" );
+
+    CORE::core_set_command( "relayout_all_message" );
 }
 
 

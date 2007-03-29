@@ -215,6 +215,11 @@ const bool ConfigItems::load()
     // リンク(多数)の文字色
     str_color[ COLOR_CHAR_LINK_HIGH ] = cf.get_option( "cl_char_link_high", str_color[ COLOR_CHAR_AGE ] );
 
+    // メッセージビューの文字色
+    str_color[ COLOR_CHAR_MESSAGE ] = cf.get_option( "cl_char_message", str_color[ COLOR_CHAR ] );
+
+    // メッセージビュー(選択範囲)の文字色
+    str_color[ COLOR_CHAR_MESSAGE_SELECTION ] = cf.get_option( "cl_char_message_selection", str_color[ COLOR_CHAR_SELECTION ] );
 
     // 画像(キャッシュ無)の色
     str_color[ COLOR_IMG_NOCACHE ] = cf.get_option( "cl_img_nocache", "#a5a52a2a2a2a" );
@@ -249,6 +254,12 @@ const bool ConfigItems::load()
 
     // ハイライトの背景色(ツリー用)
     str_color[ COLOR_BACK_HIGHLIGHT_TREE ] = cf.get_option( "cl_back_highlight_tree", CONF_COLOR_HL_TREE );
+
+    // メッセージビューの背景色
+    str_color[ COLOR_BACK_MESSAGE ] = cf.get_option( "cl_back_message", str_color[ COLOR_BACK ] );
+
+    // メッセージビューの背景色
+    str_color[ COLOR_BACK_MESSAGE_SELECTION ] = cf.get_option( "cl_back_message_selection", str_color[ COLOR_BACK_SELECTION ] );
 
     // 新着セパレータ
     str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", "#7d007d007d00" );
@@ -447,6 +458,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_char_link", str_color[ COLOR_CHAR_LINK ] );
     cf.update( "cl_char_link_low", str_color[ COLOR_CHAR_LINK_LOW ] );
     cf.update( "cl_char_link_high", str_color[ COLOR_CHAR_LINK_HIGH ] );
+    cf.update( "cl_char_message", str_color[ COLOR_CHAR_MESSAGE ] );
+    cf.update( "cl_char_message_selection", str_color[ COLOR_CHAR_MESSAGE_SELECTION ] );
     cf.update( "cl_img_nocache", str_color[ COLOR_IMG_NOCACHE ] );
     cf.update( "cl_img_cached", str_color[ COLOR_IMG_CACHED ] );
     cf.update( "cl_img_loading", str_color[ COLOR_IMG_LOADING ] );
@@ -458,6 +471,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_back_selection", str_color[ COLOR_BACK_SELECTION ] );
     cf.update( "cl_back_highlight",str_color[ COLOR_BACK_HIGHLIGHT ]  );
     cf.update( "cl_back_highlight_tree",str_color[ COLOR_BACK_HIGHLIGHT_TREE ]  );
+    cf.update( "cl_back_message", str_color[ COLOR_BACK_MESSAGE ] );
+    cf.update( "cl_back_message_selection", str_color[ COLOR_BACK_MESSAGE_SELECTION ] );
     cf.update( "cl_sepa_new", str_color[ COLOR_SEPARATOR_NEW ] );
 
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
