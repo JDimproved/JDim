@@ -166,14 +166,14 @@ void SESSION::init_session()
     }
 
     board_col_mark = cf.get_option( "col_mark", 30 );
-    board_col_id = cf.get_option( "col_id", 30 );
-    board_col_subject = cf.get_option(  "col_subject", 350 );
-    board_col_number = cf.get_option( "col_number", 50 );
-    board_col_load = cf.get_option( "col_load", 50 );
-    board_col_new = cf.get_option( "col_new", 50 );
-    board_col_since = cf.get_option( "col_since", 100 );
-    board_col_write = cf.get_option( "col_write", 100 );
-    board_col_speed = cf.get_option( "col_speed", 50 );
+    board_col_id = cf.get_option( "col_id", 45 );
+    board_col_subject = cf.get_option(  "col_subject", 190 );
+    board_col_number = cf.get_option( "col_number", 45 );
+    board_col_load = cf.get_option( "col_load", 45 );
+    board_col_new = cf.get_option( "col_new", 45 );
+    board_col_since = cf.get_option( "col_since", 70 );
+    board_col_write = cf.get_option( "col_write", 70 );
+    board_col_speed = cf.get_option( "col_speed", 45 );
 
     img_shown = false;
 
