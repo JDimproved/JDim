@@ -367,7 +367,24 @@ void ArticleBase::reset_status()
 
 void ArticleBase::set_subject( const std::string& subject )
 {
-    if( ! subject.empty() && subject != m_subject ){
+    if( subject.empty() ) return;
+
+    // 特殊文字の置き換え(応急処置)
+    if( subject.find( "&" ) != std::string::npos ){
+
+        std::string subject_tmp = subject;
+        subject_tmp = MISC::replace_str( subject_tmp, "&quot;", "\"" );
+        subject_tmp = MISC::replace_str( subject_tmp, "&lt;", "<" );
+        subject_tmp = MISC::replace_str( subject_tmp, "&gt;", ">" );
+        subject_tmp = MISC::replace_str( subject_tmp, "&amp;", "&" );
+
+        if( subject_tmp != m_subject ){
+            m_subject = subject_tmp;
+            m_save_info = true;
+        }
+    }
+    else if( subject != m_subject ){
+
         m_subject = subject;
         m_save_info = true;
     }
@@ -832,7 +849,7 @@ void ArticleBase::slot_node_updated()
 #endif
 
     // nodetreeから情報取得
-    if( ! m_nodetree->get_subject().empty() ) m_subject = m_nodetree->get_subject();
+    if( ! m_nodetree->get_subject().empty() ) set_subject( m_nodetree->get_subject() );
 
 
     // スレが更新している場合
@@ -1203,7 +1220,7 @@ void ArticleBase::read_info()
         CORE::core_set_command( "set_status","", "スレ情報更新中・・・しばらくお待ち下さい" );
         MISC::MSG( "updating " + m_url );
 
-        m_subject = get_nodetree()->get_subject();
+        set_subject( get_nodetree()->get_subject() );
         m_number_load = get_nodetree()->get_res_number();
 
         if( !m_number_load ){
