@@ -608,6 +608,7 @@ void ArticleViewBase::close_view()
 void ArticleViewBase::delete_view()
 {
     CORE::core_set_command( "delete_article", m_url_article );
+    ARTICLE::get_admin()->set_command( "switch_admin" );
 }
 
 
