@@ -196,11 +196,11 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "CopyID", "IDコピー"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_id ) );
     action_group()->add( Gtk::Action::create( "Copy", "Copy"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_selection_str ) );
     action_group()->add( Gtk::Action::create( "WriteRes", "レスする" ),sigc::mem_fun( *this, &ArticleViewBase::slot_write_res ) );
-    action_group()->add( Gtk::Action::create( "QuoteRes", "参照レスする"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_res ) );
+    action_group()->add( Gtk::Action::create( "QuoteRes", "引用してレスする"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_res ) );
     action_group()->add( Gtk::Action::create( "QuoteSelectionRes", "引用してレスする"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_selection_res ) );
     action_group()->add( Gtk::Action::create( "CopyRes", "レスをコピー"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), false ) );
-    action_group()->add( Gtk::Action::create( "CopyResRef", "参照コピー"),
+    action_group()->add( Gtk::Action::create( "CopyResRef", "引用コピー"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), true ) );
     action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
