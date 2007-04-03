@@ -207,6 +207,26 @@ src/jdで起動。
 
 日本語おかしかったらごめんなさい。
 間違ってる所がある場合は指摘をお願いします。
+
+
+432 名前：login:Penguin [sage]：2007/04/01(日) 09:33:20 ID:zbV3M4xb
+FreeBSDを語ろう Part14
+http://pc11.2ch.net/test/read.cgi/unix/1168465315/897
+897 名前：名無しさん＠お腹いっぱい。[sage] 投稿日：2007/03/28(水) 08:43:04
+やっと jd を FreeBSD でコンパイルできたよ。
+こつは configure に
+OPENSSL_CFLAGS="-I/usr/include"
+OPENSSL_LIBS="-L/usr/lib -lssl"
+を付け加えることと、gmake を使うことだった。
+ここんところの gtk, gnome, glib... の関連で結構やっぱ大変だった… 
+
+436 名前：login:Penguin [sage]：2007/04/03(火) 21:51:07 ID:VdahYQw8 (2)
+&gt;&gt;432
+FreeBSD 6.2-STABLEだが、
+configureいじらなくてもmakeまで通ったよ。
+WITH_OPENSSL_BETA=yesな環境だからかな？ 
+
+
 </res>
 </dist>
 
