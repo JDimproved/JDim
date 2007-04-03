@@ -10,7 +10,7 @@
 # Defined by upsteam
 #
 %define         main_ver      1.8.8
-%define         strtag        rc070330
+%define         strtag        070403
 %define         repoid        22352
 
 
@@ -24,7 +24,7 @@
 %define         icondir       %{_datadir}/icons/hicolor/96x96/apps/
 
 # Define this if this is pre-version
-%define         pre_release   1
+%define         pre_release   0
 
 %if %{pre_release}
 %define         rel           0.%{vendor_rel}.%{strtag}%{?dist}
