@@ -18,6 +18,7 @@
 
 #ifdef HAVE_MIGEMO_H
 #include "jdlib/jdmigemo.h"
+#include "config/globalconf.h"
 #endif
 
 
@@ -59,7 +60,7 @@ WinMain::WinMain( bool init )
 
     // migemo 初期化
 #ifdef HAVE_MIGEMO_H
-    jd_migemo_init( "/usr/share/migemo/utf-8/migemo-dict" );
+    jd_migemo_init( CONFIG::get_migemodict_path().c_str() );
 #endif
 
     // 後はcoreを作って任せる

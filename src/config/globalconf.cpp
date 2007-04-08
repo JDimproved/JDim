@@ -1,5 +1,9 @@
 // ライセンス: GPL2
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 //#define _DEBUG
 #include "jddebug.h"
 
@@ -277,3 +281,8 @@ const bool CONFIG::get_abone_transparent(){ return get_confitem()->abone_transpa
 void CONFIG::set_abone_transparent( bool set ){ get_confitem()->abone_transparent = set; }
 const bool CONFIG::get_abone_chain(){ return get_confitem()->abone_chain; }
 void CONFIG::set_abone_chain( bool set ){ get_confitem()->abone_chain = set; }
+
+
+#ifdef HAVE_MIGEMO_H
+const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }
+#endif

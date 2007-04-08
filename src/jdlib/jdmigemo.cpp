@@ -69,6 +69,9 @@ int jd_migemo_regcomp(regex_t *preg,const char *regex,int cflags)
 
 int jd_migemo_init(const char *filename)
 {
+#ifdef _DEBUG
+	std::cout << "migemo-dict: " << filename << std::endl;
+#endif
     migemo_object=migemo_open(filename);
     if(migemo_is_enable(migemo_object)){
         return 1;

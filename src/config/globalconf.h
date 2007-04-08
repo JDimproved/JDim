@@ -245,6 +245,11 @@ namespace CONFIG
 
     const bool get_abone_chain();
     void set_abone_chain( bool set );
+
+#ifdef HAVE_MIGEMO_H
+    // migemo-dictの場所
+    const std::string& get_migemodict_path();
+#endif
 }
 
 

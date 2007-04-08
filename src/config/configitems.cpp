@@ -371,6 +371,11 @@ const bool ConfigItems::load()
     abone_transparent = cf.get_option( "abone_transparent", false );
     abone_chain = cf.get_option( "abone_chain", false );
 
+#ifdef HAVE_MIGEMO_H
+    // migemo-dictの場所
+    migemodict_path = cf.get_option( "migemodict_path", "/usr/share/migemo/utf-8/migemo-dict" );
+#endif
+
     return ! cf.empty();
 }
 
@@ -527,6 +532,10 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "abone_transparent", abone_transparent );
     cf.update( "abone_chain", abone_chain );
+
+#ifdef HAVE_MIGEMO_H
+    cf.update( "migemodict_path", migemodict_path );
+#endif
 
     cf.save();
 }

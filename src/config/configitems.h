@@ -207,6 +207,10 @@ namespace CONFIG
         bool abone_transparent;
         bool abone_chain;
 
+#ifdef HAVE_MIGEMO_H
+        // migemo-dictの場所
+        std::string migemodict_path;
+#endif
 
         /////////////////////////
 
