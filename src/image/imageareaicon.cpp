@@ -43,6 +43,8 @@ void* icon_launcher( void* )
     std::cout << "start icon_launcher\n";
 #endif
 
+    Glib::Mutex::Lock lock( icon_launcher_mutex);
+
     if( ! icon_launcher_list_icon.size() ) return 0;
 
     IMAGE::ImageAreaIcon* icon = *( icon_launcher_list_icon.begin() );
