@@ -1735,8 +1735,6 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     // あぼーんクリック
     else if( url.find( PROTO_ABONE ) == 0 ){
 
-        if( ! res_exist ) return true;
-
         hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){

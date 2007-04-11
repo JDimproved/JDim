@@ -140,7 +140,7 @@ void Preferences::slot_ok_clicked()
     std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
 
     std::vector< char > vec_abone_res;
-    vec_abone_res.resize( DBTREE::article_number_load( get_url() ) );
+    vec_abone_res.resize( DBTREE::article_number_load( get_url() ) + 1 );
     std::list< std::string > list_res = MISC::get_lines( m_edit_res.get_text() );
     std::list< std::string >::iterator it = list_res.begin();
     for( ; it != list_res.end(); ++it ){
