@@ -30,6 +30,9 @@ namespace BOARD
         // ダブルクリック状態
         bool m_dblclick;
 
+        // 押したキー
+        int m_pressed_key;
+
         // ソートで使う変数
         int m_col;
         int m_previous_col;

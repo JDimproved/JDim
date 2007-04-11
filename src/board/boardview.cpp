@@ -1526,17 +1526,17 @@ bool BoardView::slot_motion_notify( GdkEventMotion* event )
 //
 bool BoardView::slot_key_press( GdkEventKey* event )
 {
-    int key = get_control().key_press( event );
+    m_pressed_key = get_control().key_press( event );
 
-    if( key != CONTROL::None ){
+    if( m_pressed_key != CONTROL::None ){
 
         // キー入力でスレを開くとkey_releaseイベントがboadviewが画面から
         // 消えてから送られてWIDGET_REALIZED_FOR_EVENT assertionが出るので
         // OpenArticle(Tab)は slot_key_release() で処理する
-        if( key == CONTROL::OpenArticle ) return true;
-        if( key == CONTROL::OpenArticleTab ) return true;
+        if( m_pressed_key == CONTROL::OpenArticle ) return true;
+        if( m_pressed_key == CONTROL::OpenArticleTab ) return true;
 
-        operate_view( key );
+        operate_view( m_pressed_key );
     }
     else release_keyjump_key( event->keyval );
 
@@ -1551,11 +1551,15 @@ bool BoardView::slot_key_release( GdkEventKey* event )
 {
     int key = get_control().key_press( event );
 
-    // キー入力でスレを開くとkey_releaseイベントがboadviewが画面から
-    // 消えてから送られてWIDGET_REALIZED_FOR_EVENT assertionが出るので
-    // OpenArticle(Tab)はここで処理する
-    if( key == CONTROL::OpenArticle ) operate_view( key );
-    if( key == CONTROL::OpenArticleTab ) operate_view( key );
+    // 押したキーと違うときは処理しない
+    if( key == m_pressed_key ){
+
+        // キー入力でスレを開くとkey_releaseイベントがboadviewが画面から
+        // 消えてから送られてWIDGET_REALIZED_FOR_EVENT assertionが出るので
+        // OpenArticle(Tab)はここで処理する
+        if( key == CONTROL::OpenArticle ) operate_view( key );
+        if( key == CONTROL::OpenArticleTab ) operate_view( key );
+    }
    
     return true;
 }
