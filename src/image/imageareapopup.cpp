@@ -7,16 +7,7 @@
 
 #include "dbimg/img.h"
 
-#include "jdlib/miscmsg.h"
-
 #include "config/globalconf.h"
-
-#include "cache.h"
-
-#ifndef MAX
-#define MAX( a, b ) ( a > b ? a : b )
-#endif
-
 
 #ifndef MIN
 #define MIN( a, b ) ( a < b ? a : b )
@@ -46,42 +37,30 @@ void ImageAreaPopup::show_image()
     std::cout << "ImageAreaPopup::show_image url = " << get_url() << std::endl;
 #endif    
 
+    if( ! get_img()->is_cached() ) return;
+
     set_errmsg( std::string() );
-    bool mosaic = get_img()->get_mosaic();
     int width_max = CONFIG::get_imgpopup_width();
     int height_max = CONFIG::get_imgpopup_height();
 
     clear();
 
-    try{
+    // 縮小比率を計算
+    double scale;
+    int w_org = get_img()->get_width();
+    int h_org = get_img()->get_height();
+    double scale_w = ( double ) width_max / w_org;
+    double scale_h = ( double ) height_max / h_org;
+    scale = MIN( scale_w, scale_h );
 
-        // 画像ロード
-        std::string path_cache = CACHE::path_img( get_url() );
-        Glib::RefPtr< Gdk::Pixbuf > pixbuf;
-        pixbuf = Gdk::Pixbuf::create_from_file( path_cache );
-        set_width_org( pixbuf->get_width() );
-        set_height_org( pixbuf->get_height() );
-        set_width( get_width_org() );
-        set_height( get_height_org() );
-
-        // スケール調整
-        bool do_scale = false;
-        double scale;
-
-        double scale_w = ( double ) width_max / get_width();
-        double scale_h = ( double ) height_max / get_height();
-        scale = MIN( scale_w, scale_h );
-        if( scale < 1 ) do_scale = true;
-
-        set_image( pixbuf, mosaic, do_scale, scale );
+    if( scale < 1 ){
+        set_width( (int)( w_org * scale ) );
+        set_height( (int)( h_org * scale ) );
     }
-    catch( Glib::Error& err )
-    {
-        set_errmsg( err.what() );
-        MISC::ERRMSG( get_errmsg() );
-        set_width( width_max );
-        set_height( width_max );
+    else{
+        set_width( w_org );
+        set_height( h_org );
     }
 
-    set_ready( true );
+    set_image();
 }

@@ -6,6 +6,7 @@ libarticle_a_SOURCES = \
 	drawareabase.cpp \
 	drawareamain.cpp \
 	drawareapopup.cpp \
+	embeddedimage.cpp \
 \
 	articleviewbase.cpp \
 	articleview.cpp \
@@ -22,6 +23,7 @@ noinst_HEADERS = \
 	drawareabase.h \
 	drawareamain.h \
 	drawareapopup.h \
+	embeddedimage.h \
 \
 	articleviewbase.h \
 	articleview.h \

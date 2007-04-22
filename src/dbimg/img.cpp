@@ -7,6 +7,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
+#include "jdlib/miscgtk.h"
 #include "jdlib/confloader.h"
 #include "jdlib/loaderdata.h"
 
@@ -68,6 +69,8 @@ void Img::clear()
     m_size = 100;
     m_protect = false;
     m_type = T_UNKNOWN;
+    m_width = 0;
+    m_height = 0;
 }
 
 
@@ -149,6 +152,29 @@ bool Img::save( Gtk::Window* parent, const std::string& path_to )
 }
 
 
+//
+// 高さ、幅
+//
+const int Img::get_width()
+{
+    if( ! m_width ){
+        MISC::get_img_size( CACHE::path_img( m_url ), m_width, m_height );
+        if( m_width ) save_info();
+    }
+
+    return m_width;
+}
+
+const int Img::get_height()
+{
+    if( ! m_height ){
+        MISC::get_img_size( CACHE::path_img( m_url ), m_width, m_height );
+        if( m_height ) save_info();
+    }
+
+    return m_height;
+}
+
 
 //
 // モザイクon/off
@@ -157,6 +183,10 @@ void Img::set_mosaic( bool mosaic )
 {
     m_mosaic = mosaic;
     save_info();
+
+    // 再描画
+    CORE::core_set_command( "redraw_article" );
+    CORE::core_set_command( "redraw_message" );
 }
 
 
@@ -304,6 +334,8 @@ void Img::read_info()
     m_mosaic = cf.get_option( "mosaic", CONFIG::get_use_mosaic() );
     m_protect = cf.get_option( "protect", 0 );
     m_type = cf.get_option( "type", T_UNKNOWN );
+    m_width = cf.get_option( "width", 0 );
+    m_height = cf.get_option( "height", 0 );
 
     if( ! total_length() ) set_total_length( CACHE::get_filesize( CACHE::path_img( m_url ) ) );
     set_current_length( total_length() );
@@ -316,6 +348,8 @@ void Img::read_info()
     std::cout << "mosaic = " << m_mosaic << std::endl;
     std::cout << "protect = " << m_protect << std::endl;
     std::cout << "type = " << m_type << std::endl;
+    std::cout << "width = " << m_width << std::endl;
+    std::cout << "height = " << m_height << std::endl;
 #endif
 }
 
@@ -337,7 +371,9 @@ void Img::save_info()
         << "byte = " << total_length() << std::endl
         << "mosaic = " << m_mosaic << std::endl
         << "protect = " << m_protect << std::endl
-        << "type = " << m_type << std::endl;
+        << "type = " << m_type << std::endl
+        << "width = " << m_width << std::endl
+        << "height = " << m_height << std::endl;
 
 #ifdef _DEBUG
     std::cout << "Img::save_info file = " << path_info << std::endl;

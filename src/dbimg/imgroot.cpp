@@ -20,7 +20,6 @@
 #include "command.h"
 #include "prefdiagfactory.h"
 
-#include <gtkmm.h>
 #include <sys/time.h>
 
 #include <sstream>

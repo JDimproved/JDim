@@ -548,7 +548,14 @@ void ArticleViewBase::redraw_view()
 
     assert( m_drawarea );
     m_drawarea->redraw_view();
+
+    // ポップアップが表示されていたらポップアップも再描画
+    if( is_popup_shown() ){
+        ArticleViewBase* popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
+        if( popup_article ) return popup_article->redraw_view();
+    }
 }
+
 
 //
 // フォーカスイン
@@ -1848,7 +1855,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
   
     /////////////////////////////////////////////////////////////////
     // 画像クリック
-    else if( DBIMG::is_loadable( url ) && CONFIG::get_use_image_view() ){
+    else if( DBIMG::is_loadable( url ) && ( CONFIG::get_use_image_view() || CONFIG::get_use_inline_image() ) ){
 
         hide_popup();
 
@@ -1864,6 +1871,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         else{
 
             bool top = true;
+            bool load = false;
 
             // バックで開く
             if( control.button_alloted( event, CONTROL::OpenBackImageButton ) ) top = false;
@@ -1878,10 +1886,14 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
                 hide_popup();
                 show_popup( CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url ) );
                 top = false;
+                load = true;
             }
 
-            CORE::core_set_command( "open_image", url );
-            if( top ) CORE::core_set_command( "switch_image" );
+            if( CONFIG::get_use_image_view() ){
+                CORE::core_set_command( "open_image", url );
+                if( top ) CORE::core_set_command( "switch_image" );
+            }
+            else if( ! load && control.button_alloted( event, CONTROL::ClickButton ) ) CORE::core_set_command( "open_url", url );
 
             redraw_view();
         }

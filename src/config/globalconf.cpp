@@ -152,8 +152,13 @@ const bool CONFIG::get_idpopup_by_mo(){ return get_confitem()->idpopup_by_mo; }
 
 const int CONFIG::get_imgpopup_width(){ return get_confitem()->imgpopup_width; }
 const int CONFIG::get_imgpopup_height(){ return get_confitem()->imgpopup_height; }
+
 const bool CONFIG::get_use_image_view(){ return get_confitem()->use_image_view; }
 void CONFIG::set_use_image_view( bool image_view ){ get_confitem()->use_image_view = image_view; }
+
+const bool CONFIG::get_use_inline_image(){ return get_confitem()->use_inline_image; }
+void CONFIG::set_use_inline_image( bool inline_img ){ get_confitem()->use_inline_image = inline_img; }
+
 const bool CONFIG::get_use_mosaic(){ return get_confitem()->use_mosaic; }
 void CONFIG::set_use_mosaic( bool mosaic ) { get_confitem()->use_mosaic = mosaic; }
 const bool CONFIG::get_zoom_to_fit(){ return get_confitem()->zoom_to_fit; }

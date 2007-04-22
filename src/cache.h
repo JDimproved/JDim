@@ -88,6 +88,12 @@ namespace CACHE
     std::string path_aalist();
     std::string path_aadir();
 
+    // css
+    std::string path_css();
+
+    // html
+    std::string path_reshtml();
+
     // 書き込みログ
     std::string path_postlog();
 

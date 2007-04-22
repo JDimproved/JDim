@@ -70,7 +70,6 @@ namespace DBTREE
         
         // パース用雑用変数
         NODE* m_node_previous;
-        int m_id_node;
 
         // その他のエラーメッセージ
         std::string m_ext_err;
@@ -203,12 +202,12 @@ namespace DBTREE
 
       private:
 
-        NODE* createNode();        
+        NODE* createNode();
         NODE* create_header_node();
+        NODE* create_block_node();
         NODE* createIDNumNode();
         NODE* createBrNode();
         NODE* createSpNode( const int& type );
-        NODE* create_node_downleft();
         NODE* create_linknode( const char* text, int n, const char* link, int n_link, int color_text, bool bold );
         NODE* create_ancnode( const char* text, int n, const char* link, int n_link, int color_text, bool bold,
                               ANCINFO* ancinfo, int lng_ancinfo );
@@ -251,7 +250,6 @@ namespace DBTREE
 
         // number番のレスが参照しているレスのレス番号の参照数(num_reference)と色をチェック
         void check_reference( int number );
-
 
         // 発言数とIDの色のクリア
         void clear_id_name();

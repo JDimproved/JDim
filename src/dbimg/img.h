@@ -31,6 +31,8 @@ namespace DBIMG
         std::string m_url;
 
         int m_type; // 画像タイプ
+        int m_width;
+        int m_height;
         bool m_mosaic; // モザイクかける
         bool m_zoom_to_fit; // windowにサイズをあわせる
         int m_size; // 画像の大きさ(パーセントで)
@@ -47,6 +49,10 @@ namespace DBIMG
         void clear();
 
         const std::string& url() const { return m_url; }
+
+        const int get_width();
+        const int get_height();
+
         const bool is_cached();
 
         const bool get_mosaic() const { return m_mosaic; }

@@ -39,17 +39,17 @@ DrawAreaPopup::DrawAreaPopup( const std::string& url, bool show_abone )
 //
 // レイアウト実行
 //
-void DrawAreaPopup::layout()
+void DrawAreaPopup::exec_layout()
 {
     // まだクライアント領域のサイズが未取得のときはwrapなしで強制的にレイアウトする
     // (親ウィンドウにクライアントのサイズを知らせるため)
     bool nowrap = ( width_client() == 0 || height_client() == 0 );
 
 #ifdef _DEBUG
-    std::cout << "DrawAreaPopup::layout() " << get_url() << " nowrap = " << nowrap << std::endl;
+    std::cout << "DrawAreaPopup::exec_layout() " << get_url() << " nowrap = " << nowrap << std::endl;
 #endif
 
-    layout_impl( nowrap, POPUP_OFFSET_Y, POPUP_RIGHT_MRG );
+    if( exec_layout_impl( nowrap, POPUP_OFFSET_Y, POPUP_RIGHT_MRG ) ) draw_backscreen( true );
 }
 
 
@@ -60,7 +60,7 @@ void DrawAreaPopup::layout()
 //
 bool DrawAreaPopup::slot_configure_event( GdkEventConfigure* event )
 {
-    layout();
+    exec_layout();
     redraw_view();
     DrawAreaBase::goto_top();
 

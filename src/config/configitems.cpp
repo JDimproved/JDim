@@ -167,6 +167,9 @@ const bool ConfigItems::load()
     // 画像ビューを使用する
     use_image_view = cf.get_option( "use_image_view", 1 );
 
+    // インライン画像を表示する
+    use_inline_image = cf.get_option( "use_inline_image", INLINE_IMG );
+
     // 画像にモザイクかける
     use_mosaic = cf.get_option( "use_mosaic", 1 );
 
@@ -452,6 +455,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "imgpopup_width", imgpopup_width );
     cf.update( "imgpopup_height", imgpopup_height );
     cf.update( "use_image_view", use_image_view );
+    cf.update( "use_inline_image", use_inline_image );
     cf.update( "use_mosaic", use_mosaic );
     cf.update( "zoom_to_fit", zoom_to_fit );
     cf.update( "del_img_day", del_img_day );

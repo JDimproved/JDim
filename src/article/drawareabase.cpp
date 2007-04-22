@@ -8,6 +8,7 @@
 #include "drawareabase.h"
 #include "layouttree.h"
 #include "font.h"
+#include "embeddedimage.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
@@ -27,6 +28,8 @@
 #include "controlid.h"
 #include "colorid.h"
 #include "fontid.h"
+#include "cache.h"
+#include "cssmanager.h"
 
 #include <math.h>
 #include <sstream>
@@ -41,11 +44,12 @@ using namespace ARTICLE;
 #define SCROLLSPEED_MID  ( m_vscrbar ? m_vscrbar->get_adjustment()->get_page_size()/2 : 0 )
 #define SCROLLSPEED_SLOW ( m_vscrbar ? m_vscrbar->get_adjustment()->get_step_increment()*2 : 0 )
 
-#define SEPARATOR_HEIGHT 6 // 新着セパレータの高さ
-
 #define IS_ALPHABET( chr ) ( ( chr >= 'a' && chr <= 'z' ) || ( chr >= 'A' && chr <= 'Z' ) )
 
 #define LAYOUT_MIN_HEIGHT 2 // viewの高さがこの値よりも小さい時はリサイズしていないと考える
+
+#define EIMG_ICONSIZE 25  // 埋め込み画像のアイコンサイズ
+#define EIMG_MRG 10       // 埋め込み画像のアイコンの間隔
 
 //////////////////////////////////////////////////////////
 
@@ -74,6 +78,10 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
 
     // 背景色
     set_colorid_back( COLOR_BACK );
+
+    // bodyのcssプロパティ
+    int classid = CORE::get_css_manager()->get_classid( "body" );
+    m_css_body = CORE::get_css_manager()->get_property( classid );
 }
 
 
@@ -148,6 +156,18 @@ void DrawAreaBase::setup( bool show_abone, bool show_scrbar )
 
 
 //
+// 背景色のID( colorid.h にある ID を指定)
+//
+const int DrawAreaBase::get_colorid_back()
+{
+    if( m_css_body.bg_color >= 0 ) return m_css_body.bg_color;
+
+    return m_colorid_back;
+}
+
+
+
+//
 // 変数初期化
 //
 void DrawAreaBase::clear()
@@ -155,7 +175,6 @@ void DrawAreaBase::clear()
     m_scrollinfo.reset();
 
     m_selection.select = false;
-    m_separator_new = 0;
     m_multi_selection.clear();
     m_layout_current = NULL;
     m_width_client = 0;
@@ -168,10 +187,14 @@ void DrawAreaBase::clear()
     m_wheel_scroll_time = 0;
     m_caret_pos = CARET_POSITION();
     m_caret_pos_pre = CARET_POSITION();
-    m_caret_pos_current = CARET_POSITION();
     m_caret_pos_dragstart = CARET_POSITION();
 
     m_jump_history.clear();
+
+    // 埋め込み画像削除
+    std::list< EmbeddedImage* >::iterator it = m_eimgs.begin();
+    for( ; it != m_eimgs.end(); ++it ) if( *it ) delete *it;
+    m_eimgs.clear();
 }
 
 
@@ -209,11 +232,22 @@ void DrawAreaBase::create_scrbar()
 //
 void DrawAreaBase::init_color()
 {
+    std::list< std::string >& colors = CORE::get_css_manager()->get_colors();
+    const int usrcolor = colors.size();
+    m_color.resize( END_COLOR_FOR_THREAD + usrcolor );
+
     Glib::RefPtr< Gdk::Colormap > colormap = get_default_colormap();
 
-    for( int i = COLOR_FOR_THREAD +1 ; i < END_COLOR_FOR_THREAD; ++i ){
+    int i = COLOR_FOR_THREAD +1;
+    for( ; i < END_COLOR_FOR_THREAD; ++i ){
 
         m_color[ i ] = Gdk::Color( CONFIG::get_color( i ) );
+        colormap->alloc_color( m_color[ i ] );
+    }
+
+    std::list< std::string >::iterator it = colors.begin();
+    for( ; it != colors.end(); ++it, ++i ){
+        m_color[ i ] = Gdk::Color( ( *it ) );
         colormap->alloc_color( m_color[ i ] );
     }
 }
@@ -259,14 +293,11 @@ void DrawAreaBase::init_font()
                                   * CONFIG::get_adjust_underline_pos() ); 
 #endif
 
-    // 左右マージン幅取得
+    // 左右padding取得
     // マージン幅は真面目にやると大変そうなので文字列 wstr の平均を取る
     int width = m_pango_layout->get_pixel_ink_extents().get_width() / 5;
-    m_mrg_right = width /2 * 3;
-    m_mrg_left = width;
 
-    // 字下げ量
-    m_down_size = m_mrg_left;
+    m_mrg_right = width /2 * 3;
 }
 
 
@@ -301,6 +332,19 @@ void DrawAreaBase::focus_out()
     if( m_scrollinfo.mode != SCROLL_AUTO ) m_scrollinfo.reset();
 
 }
+
+
+// 新着セパレータのあるレス番号の取得とセット
+const int DrawAreaBase::get_separator_new()
+{
+    return m_layout_tree->get_separator_new();
+}
+
+void DrawAreaBase::set_separator_new( int num )
+{
+    m_layout_tree->set_separator_new( num );
+}
+
 
 
 // 範囲選択中の文字列
@@ -356,12 +400,39 @@ void DrawAreaBase::append_res( int from_num, int to_num )
     std::cout << "DrawAreaBase::append_res from " << from_num << " to " << to_num << std::endl;
 #endif
 
+    // スクロールバーが一番下にある(つまり新着スレがappendされた)場合は少しだけスクロールする
+    bool scroll = false;
+    const int pos = get_vscr_val();
+    if( ! m_layout_tree->get_separator_new() && pos && pos == get_vscr_maxval() ){
+
+#ifdef _DEBUG
+        std::cout << "on bottom pos = " << pos << std::endl;
+#endif
+        scroll = true;
+    }
+
     for( int num = from_num; num <= to_num; ++num ) m_layout_tree->append_node( m_article->res_header( num ), false );
 
     // クライアント領域のサイズをリセットして再レイアウト
     m_width_client = 0;
     m_height_client = 0;
-    layout();
+    exec_layout();
+
+    if( scroll ){
+
+        CORE::CSS_PROPERTY* css = m_layout_tree->get_separator()->css;
+        RECTANGLE* rect = m_layout_tree->get_separator()->rect;
+
+        m_scrollinfo.reset();
+        m_scrollinfo.dy = 0;
+        if( css ) m_scrollinfo.dy += css->mrg_top + css->mrg_bottom;
+        if( rect ) m_scrollinfo.dy += rect->height;
+        if( m_scrollinfo.dy ){
+            m_scrollinfo.mode = SCROLL_NORMAL;
+            exec_scroll( false );
+        }
+    }
+
 }
 
 
@@ -415,7 +486,7 @@ void DrawAreaBase::append_res( std::list< int >& list_resnum, std::list< bool >&
     // クライアント領域のサイズをリセットして再レイアウト
     m_width_client = 0;
     m_height_client = 0;
-    layout();
+    exec_layout();
 }
 
 
@@ -438,7 +509,7 @@ void DrawAreaBase::append_html( const std::string& html )
     // クライアント領域のサイズをリセットして再レイアウト
     m_width_client = 0;
     m_height_client = 0;
-    layout();
+    exec_layout();
 }
 
 
@@ -461,7 +532,7 @@ void DrawAreaBase::append_dat( const std::string& dat, int num )
     // クライアント領域のサイズをリセットして再レイアウト
     m_width_client = 0;
     m_height_client = 0;
-    layout();
+    exec_layout();
 }
 
 
@@ -477,7 +548,7 @@ void DrawAreaBase::clear_screen()
     clear();
     init_color();
     init_font();
-    layout();
+    exec_layout();
     redraw_view();
 }
 
@@ -503,11 +574,11 @@ void DrawAreaBase::redraw_view()
 
 
 //
-// レイアウト実行
+// レイアウト(ノードの座標演算)実行
 //
-void DrawAreaBase::layout()
+void DrawAreaBase::exec_layout()
 {
-    layout_impl( false, 0, 0 );
+    exec_layout_impl( false, 0, 0 );
 }
 
 
@@ -520,75 +591,197 @@ void DrawAreaBase::layout()
 // offset_y は y 座標の上オフセット行数
 // right_mrg は右マージン量(ピクセル)
 //
-void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
+bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
 {
-    if( ! m_layout_tree ) return;
-
     // レイアウトがセットされていない
-    if( ! m_layout_tree->top_header() ) return;
+    if( ! m_layout_tree ) return false;
+    if( ! m_layout_tree->top_header() ) return false;
     
     // drawareaのウィンドウサイズ
-
     // nowrap = true の時は十分大きい横幅で計算して wrap させない
-    const int width = nowrap ? BIG_WIDTH : m_view.get_width();
-    const int height = m_view.get_height();
+    const int width_view = nowrap ? BIG_WIDTH : m_view.get_width();
+    const int height_view = m_view.get_height();
 
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::layout_impl : nowrap = " << nowrap << " width = " << width << " height  = " << height<< std::endl
+    std::cout << "DrawAreaBase::layout_impl : nowrap = " << nowrap << " width_view = " << width_view << " height_view  = " << height_view << std::endl
               << "m_width_client = " << m_width_client << " m_height_client = " << m_height_client << std::endl;
 #endif
 
     //表示はされてるがまだリサイズしてない状況
-    if( !nowrap && height < LAYOUT_MIN_HEIGHT ){
+    if( ! nowrap && height_view < LAYOUT_MIN_HEIGHT ){
 #ifdef _DEBUG
         std::cout << "drawarea is not resized yet.\n";
 #endif        
-        return;
+        return false;
     }
+
+    // 新着セパレータの挿入
+    m_layout_tree->move_separator();
 
     m_width_client = 0;
     m_height_client = 0;
-    int mrg_level; // 現在の左字下げレベル
     int x, y = 0;
-    LAYOUT* tmpheader = m_layout_tree->top_header();
+    LAYOUT* header = m_layout_tree->top_header();
+
+    CORE::get_css_manager()->set_size( &m_css_body, m_font_height );
 
     y += offset_y * m_br_size;
+    y += m_css_body.padding_top;
     
-    while( tmpheader ){
+    while( header ){
 
-        // ヘッダの座標等をセット
-        mrg_level = 0;
-        tmpheader->mrg_level = mrg_level;
-        x = m_mrg_left + m_down_size * tmpheader->mrg_level;
-        tmpheader->x = x;
-        tmpheader->y = y;
-        tmpheader->width = 0;
+        LAYOUT* layout = header->next_layout;
+        if( ! layout ) break;
+
+        CORE::get_css_manager()->set_size( header->css, m_font_height );
+
+        // ヘッダブロックの位置をセット
+        x = m_css_body.padding_left + header->css->mrg_left;
+        y += header->css->mrg_top;
+
+        if( ! header->rect ) header->rect = m_layout_tree->create_rect();
+        header->rect->x = x;
+        header->rect->y = y;
+
+        // 幅が固定でない場合はここで幅を計算
+        if( ! header->css->width ){
+            header->rect->width = width_view
+            - ( m_css_body.padding_left + m_css_body.padding_right )
+            - ( header->css->mrg_left + header->css->mrg_right );
+        }
+        else header->rect->width = header->css->width;
+
+        x += header->css->padding_left;
+        y += header->css->padding_top;
+
+        LAYOUT* current_div = NULL;
+        int br_size = m_br_size; // 現在行の改行サイズ
 
         // 先頭の子ノードから順にレイアウトしていく
-        LAYOUT* tmplayout  = tmpheader->next_layout;
-        while ( tmplayout ){
-            
-            layout_one_node( tmplayout, x, y, width, mrg_level );
+        while ( layout ){
 
-            // ブロック幅更新
-            int width_tmp = tmplayout->width + m_mrg_left + m_down_size * tmplayout->mrg_level;
-            if( width_tmp> tmpheader->width ) tmpheader->width = width_tmp;
-            
-            tmplayout = tmplayout->next_layout;
+            switch( layout->type ){
+
+                case DBTREE::NODE_DIV:  // div
+
+                    // 違うdivに切り替わったら以前のdivの高さを更新
+                    if( current_div ){
+
+                        y += br_size;
+                        y += current_div->css->padding_bottom;
+                        current_div->rect->height = y - current_div->rect->y;
+
+                        y += current_div->css->mrg_bottom;
+
+                        // align 調整
+                        if( current_div->css->align != CORE::ALIGN_LEFT ) set_align( current_div, layout->id, current_div->css->align );
+                    }
+
+                    current_div = layout;
+
+                    CORE::get_css_manager()->set_size( current_div->css, m_font_height );
+
+                    x = header->rect->x + header->css->padding_left;
+                    x += current_div->css->mrg_left;
+                    y += current_div->css->mrg_top;
+
+                    if( ! current_div->rect ) current_div->rect = m_layout_tree->create_rect();
+                    current_div->rect->x = x;
+                    current_div->rect->y = y;
+
+                    if( ! current_div->css->width ){ // divの幅が固定でない場合はここで幅を計算
+
+                        current_div->rect->width = header->rect->width
+                        - ( header->css->padding_left + header->css->padding_right )
+                        - ( current_div->css->mrg_left + current_div->css->mrg_right );
+                    }
+                    else current_div->rect->width = current_div->css->width;
+
+                    x += current_div->css->padding_left;
+                    y += current_div->css->padding_top;
+
+                    break;
+
+                    //////////////////////////////////////////
+
+                case DBTREE::NODE_IDNUM: // 発言数ノード
+
+                    if( ! set_num_id( layout ) ) break;
+
+                case DBTREE::NODE_TEXT: // テキスト
+                case DBTREE::NODE_LINK: // リンク
+
+                    // ノードをレイアウトして次のノードの左上座標を計算
+                    // x,y,br_size が参照なので更新された値が戻る
+                    layout_one_text_node( layout, x, y, br_size, width_view );
+
+                    break;
+
+                    //////////////////////////////////////////
+
+                case DBTREE::NODE_IMG: // img
+
+                    // レイアウトして次のノードの左上座標を計算
+                    // x,y, br_size が参照なので更新された値が戻る
+                    layout_one_img_node( layout, x, y, br_size, m_width_client );
+
+                    break;
+
+                    //////////////////////////////////////////
+
+                case DBTREE::NODE_BR: // 改行
+
+                    x = 0;
+                    if( layout->div ) x = layout->div->rect->x + layout->div->css->padding_left;
+                    y += br_size;
+
+                    break;
+
+                    //////////////////////////////////////////
+
+                case DBTREE::NODE_ZWSP: // 幅0スペース
+                    break;
+            }
+
+            // クライアント領域の幅を更新
+            if( layout->type != DBTREE::NODE_DIV && layout->rect ){
+                    
+                int width_tmp = layout->rect->x + layout->rect->width;
+                width_tmp += ( header->css->padding_right + header->css->mrg_right );
+
+                // divの中なら右スペースの分も足す
+                if( layout->div ) width_tmp += ( layout->div->css->padding_right + layout->div->css->mrg_right );
+
+                if( width_tmp > m_width_client ) m_width_client = width_tmp;
+            }
+
+            layout = layout->next_layout;
         }
-        y += m_br_size;
-        
-        // ブロック高さ確定
-        tmpheader->height = y - tmpheader->y;
 
-        // クライアント領域全体幅更新
-        if( tmpheader->width > m_width_client ) m_width_client = tmpheader->width;
+        y += br_size;
 
-        tmpheader = tmpheader->next_header;
+        // 属している div の高さ確定
+        if( current_div ){
+            y += current_div->css->padding_bottom;
+            current_div->rect->height = y - current_div->rect->y;
+            y += current_div->css->mrg_bottom;
 
-        // ブロック間はスペースを入れる
-        y += m_br_size;
+            // align 調整
+            if( current_div->css->align != CORE::ALIGN_LEFT ) set_align( current_div, 0, current_div->css->align );
+        }
+
+        // ヘッダブロック高さ確定
+        y += header->css->padding_bottom;
+        header->rect->height = y - header->rect->y;
+        if( header->next_header ) y += header->css->mrg_bottom;
+
+        // align 調整
+        if( header->css->align != CORE::ALIGN_LEFT ) set_align( header, 0, header->css->align );
+
+        header = header->next_header;
     }
+
+    y += m_css_body.padding_bottom;
 
     // クライアント領域の幅、高さ確定
     m_width_client += right_mrg;
@@ -600,13 +793,13 @@ void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
 #endif
 
     // 実際に画面に表示されてない
-    if( !m_window ) return;
+    if( !m_window ) return false;
 
     // 表示はされてるがまだリサイズしてない状況
-    if( height < LAYOUT_MIN_HEIGHT ) return;
+    if( height_view < LAYOUT_MIN_HEIGHT ) return false;
     
     // スクロールバーが表示されていないならここで作成
-    if( ! m_vscrbar && m_height_client > height ) create_scrbar();
+    if( ! m_vscrbar && m_height_client > height_view ) create_scrbar();
 
     // adjustment 範囲変更
     Gtk::Adjustment* adjust = m_vscrbar ? m_vscrbar->get_adjustment(): NULL;
@@ -614,10 +807,10 @@ void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
 
         double current = adjust->get_value();
         adjust->set_lower( 0 );
-        adjust->set_upper( y + m_br_size );
-        adjust->set_page_size(  height );
+        adjust->set_upper( y );
+        adjust->set_page_size(  height_view );
         adjust->set_step_increment( m_br_size );
-        adjust->set_page_increment(  height / 2 );
+        adjust->set_page_increment(  height_view / 2 );
         adjust->set_value( MAX( 0, MIN( adjust->get_upper() - adjust->get_page_size() , current ) ) );
     }
 
@@ -628,264 +821,287 @@ void DrawAreaBase::layout_impl( bool nowrap, int offset_y, int right_mrg )
 
     m_backscreen.clear();
     m_backscreen = Gdk::Pixmap::create( m_window, m_view.get_width(), m_view.get_height() );
-    draw_backscreen( true );
 
     // 予約されているならジャンプ予約を実行
     if( m_goto_num_reserve ) goto_num( m_goto_num_reserve );
-}
-
-
-
-//
-// ノードひとつのレイアウト関数
-//
-// draw_one_node()と違い実際に描画はしない。ノードの座標計算に使う
-//
-// x,y : ノードの初期座標(左上)、次のノードの左上座標が入って返る
-// mrg_level : 字下げ下げレベル
-//
-void DrawAreaBase::layout_one_node( LAYOUT* layout, int& x, int& y, int width_view, int& mrg_level )
-{
-    int width, height;
-
-    switch( layout->type ){
-
-        case DBTREE::NODE_IDNUM: // 発言数ノード
-
-            if( !set_num_id( layout ) ) break;
-
-        case DBTREE::NODE_TEXT: // テキスト
-        case DBTREE::NODE_LINK: // リンク
-
-            layout->mrg_level = mrg_level;    
-            layout->x = x;
-            layout->y = y;
-            if( ! layout->lng_text ) layout->lng_text = strlen( layout->text );
-
-            // 次のノードの左上座標を計算(x,y,width,height,が参照なので更新された値が戻る)
-            layout_draw_one_node( layout, x, y, width, height, width_view, false, layout->bold );
-
-            layout->width = width;
-            layout->height = height;
-
-            break;
-
-
-        case DBTREE::NODE_BR: // 改行
-        
-            layout->x = x;
-            layout->y = y;
-        
-            x = m_mrg_left + m_down_size * mrg_level;        
-            y += m_br_size;
-
-            break;
-
-            // スペース
-        case DBTREE::NODE_ZWSP: break;
-
-        case DBTREE::NODE_DOWN_LEFT: // 字下げ
-            ++mrg_level;
-            x = m_mrg_left + m_down_size * mrg_level;
-            break;
-    }
-}
-
-
-
-//
-// バックスクリーン描画
-//
-// ここで書かれた画面がexposeイベントで表画面にコピーされる
-//
-// redraw_all = true なら全画面を描画、falseならスクロールした分だけ
-//
-bool DrawAreaBase::draw_backscreen( bool redraw_all )
-{
-    if( ! m_gc ) return false;
-    if( ! m_backscreen ) return false;
-    if( ! m_layout_tree ) return false;
-    if( ! m_layout_tree->top_header() ) return false;
-
-    int width_view = m_view.get_width();
-    int height_view = m_view.get_height();
-    int pos_y = get_vscr_val();
-
-    // 移動量、再描画範囲の上限、下限
-    int dy = 0;
-    int upper = pos_y;
-    int lower = upper + height_view;
-
-    m_gc->set_foreground( m_color[ get_colorid_back() ] );
-
-    // 画面全体を再描画
-    if( redraw_all ){
-        m_backscreen->draw_rectangle( m_gc, true, 0, 0, width_view,  height_view );
-    }
-    else{
-
-        dy = pos_y - m_pre_pos_y;
-
-        // 上にスクロールした
-        if( dy > 0 ){
-
-            // キーを押しっぱなしの時は描画を省略する
-            if( m_key_press ) dy = MIN( dy, (int)SCROLLSPEED_SLOW );
-
-            if( dy < height_view ){
-                upper += ( height_view - dy );
-                m_backscreen->draw_drawable( m_gc, m_backscreen, 0, dy, 0, 0, width_view , height_view - dy );
-            }
-
-            m_backscreen->draw_rectangle( m_gc, true, 0, MAX( 0, height_view - dy ), width_view, MIN( dy, height_view ) );
-        }
-
-        // 下にスクロールした
-        else if( dy < 0 ){
-
-            // キーを押しっぱなしの時は描画を省略する
-            if( m_key_press ) dy = MAX( dy, (int)-SCROLLSPEED_SLOW );
-
-            if( -dy < height_view ){
-                lower = upper - dy;
-                lower += SEPARATOR_HEIGHT * 2; // 新着セパレータの分を広げる
-                m_backscreen->draw_drawable( m_gc, m_backscreen, 0, 0, 0, -dy, width_view , height_view + dy );
-            }
-
-            m_backscreen->draw_rectangle( m_gc, true, 0, 0, width_view, MIN( -dy, height_view ) );
-        }
-    }
-    
-    m_pre_pos_y = pos_y;
-
-    if( !redraw_all && ! dy ) return false;
-
-#ifdef _DEBUG
-//    std::cout << "DrawAreaBase::draw_backscreen all = " << redraw_all << " y = " << pos_y <<" dy = " << dy << std::endl;
-#endif    
-
-    // 新着セパレータのの位置の調整
-    // あぼーんなどで表示されていないときは表示位置を移動する
-    if( m_separator_new && ! m_layout_tree->get_header_of_res( m_separator_new ) ){
-
-        int num = m_separator_new;
-        int max_number = m_layout_tree->max_res_number();
-        while( ! m_layout_tree->get_header_of_res( num ) && num++ < max_number );
-
-        if( m_layout_tree->get_header_of_res( num ) ) m_separator_new = num;;
-    }
-
-    // 一番最後のレスが半分以上表示されていたら最後のレス番号をm_seen_currentにセット
-    m_seen_current = 0;
-    int num = m_layout_tree->max_res_number();
-    const LAYOUT* lastheader = m_layout_tree->get_header_of_res( num );
-
-    // あぼーんなどで表示されていないときは前のレスを調べる
-    if( !lastheader ){
-        while( ! m_layout_tree->get_header_of_res( num ) && num-- > 0 );
-        lastheader = m_layout_tree->get_header_of_res( num );
-    }
-    if( lastheader && lastheader->y + lastheader->height/2 < pos_y + height_view ){
-
-        m_seen_current = m_layout_tree->max_res_number();
-    }
-
-    // ノード描画
-    LAYOUT* tmpheader = m_layout_tree->top_header();
-    while( tmpheader ){
-
-        // 現在みているスレ番号取得
-        if( ! m_seen_current ){
-
-            if( ! tmpheader->next_header // 最後のレス
-                || ( tmpheader->next_header->y >= ( pos_y + m_br_size ) // 改行分下にずらす
-                     && tmpheader->y <= ( pos_y + m_br_size ) ) ){
-
-                m_seen_current = tmpheader->res_number;
-            }
-        }
-
-        // ヘッダが範囲に含まれてるなら描画
-        if( tmpheader->y + tmpheader->height > upper
-            && tmpheader->y < lower ){
-
-            // ノードが範囲に含まれてるなら描画
-            LAYOUT* tmplayout  = tmpheader;
-            while ( tmplayout ){
-                if( tmplayout->y + tmplayout->height > upper && tmplayout->y < lower ) draw_one_node( tmplayout, width_view, pos_y );
-                tmplayout = tmplayout->next_layout;
-            }
-        }
-
-        tmpheader = tmpheader->next_header;        
-    }
 
     return true;
 }
 
 
 //
-// 枠の描画
+// ブロック要素のalign設定
 //
-void DrawAreaBase::draw_frame()
+// id_end == 0 の時は最後のノードまでおこなう
+//
+void DrawAreaBase::set_align( LAYOUT* div, int id_end, int align )
 {
-    int width_win = m_view.get_width();
-    int height_win = m_view.get_height();
-    m_gc->set_foreground( m_color[ COLOR_CHAR ] );
-    m_window->draw_rectangle( m_gc, false, 0, 0, width_win-1, height_win-1 );
-}
-
-
-
-//
-// バックスクリーンを表画面に描画
-//
-// draw_backscreen()でバックスクリーンを描画してから呼ぶこと
-// 
-bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
-{
-    if( ! m_layout_tree ) return false;
-
-    // まだ realize してない
-    if( !m_gc ) return false;
-
-    // レイアウトがセットされていない or まだリサイズしていない( m_backscreen == NULL )
-    // なら画面消去して終わり
-    if( ! m_layout_tree->top_header()
-        || ! m_backscreen
-        ){
-        m_window->set_background( m_color[ get_colorid_back() ] );
-        m_window->clear();
-        return false;
-    }
-    
-    if( !width )  width = m_view.get_width();
-    if( !height ) height = m_view.get_height();
-
-    // バックスクリーンをコピー
-    m_window->draw_drawable( m_gc, m_backscreen, x, y, x, y, width, height );
-
-#ifdef _DRAW_CARET
-    // キャレット描画
-    int xx = m_caret_pos.x;
-    int yy = m_caret_pos.y - get_vscr_val();
-    if( yy >= 0 ){
-        m_gc->set_foreground( m_color[ COLOR_CHAR ] );
-        m_window->draw_line( m_gc, xx, yy, xx, yy + m_underline_pos );
-    }
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::set_align width = " << div->rect->width << std::endl;
 #endif
 
-    // オートスクロールのマーカ
-    if( m_scrollinfo.mode != SCROLL_NOT && m_scrollinfo.show_marker ){
-        m_gc->set_foreground( m_color[ COLOR_CHAR ] );
-        m_window->draw_arc( m_gc, false, m_scrollinfo.x - AUTOSCR_CIRCLE/2, m_scrollinfo.y - AUTOSCR_CIRCLE/2 ,
-                            AUTOSCR_CIRCLE, AUTOSCR_CIRCLE, 0, 360 * 64 );
+    LAYOUT* layout_from = NULL;
+    LAYOUT* layout_to = NULL;
+    RECTANGLE* rect_from = NULL;
+    RECTANGLE* rect_to = NULL;
+
+    LAYOUT* layout = div->next_layout;
+    int width_line = 0;
+    while( layout && ( ! id_end || layout->id != id_end ) ){
+
+        RECTANGLE* rect = layout->rect;
+        while( rect ){
+
+            if( ! layout_from ){
+                layout_from = layout;
+                rect_from = rect;
+                width_line = 0;
+            }
+
+            layout_to = layout;
+            rect_to = rect;
+            width_line += rect->width;
+
+#ifdef _DEBUG
+            std::cout << "id = " << layout->id << " w = " << width_line << std::endl;
+#endif
+
+            if( rect->end ) break;
+
+            // wrap
+            set_align_line( div, layout_from, layout_to, rect_from, rect_to, width_line, align );
+            layout_from = NULL;
+
+            rect = rect->next_rect;
+        }
+
+        // 改行
+        if( layout_from && ( ! layout->next_layout || layout->type == DBTREE::NODE_BR || layout->id == id_end -1 ) ){ 
+            set_align_line( div, layout_from, layout_to, rect_from, rect_to, width_line, align );
+            layout_from = NULL;
+        }
+
+        layout = layout->next_layout;
+    }
+}
+
+void DrawAreaBase::set_align_line( LAYOUT* div, LAYOUT* layout_from, LAYOUT* layout_to, RECTANGLE* rect_from, RECTANGLE* rect_to,
+                                   int width_line, int align )
+{
+    int padding = div->rect->width - div->css->padding_left - div->css->padding_right - width_line;
+
+    if( align == CORE::ALIGN_CENTER ) padding /= 2;
+
+#ifdef _DEBUG
+    std::cout << "from = " << layout_from->id << " padding = " << padding << std::endl;
+#endif
+
+    for(;;){
+
+        bool break_for = ( layout_from == layout_to && rect_from == rect_to );
+
+        if( rect_from ){
+            rect_from->x += padding;
+            rect_from = rect_from->next_rect;
+        }
+        if( ! rect_from ){
+            layout_from = layout_from->next_layout;
+            if( layout_from ) rect_from = layout_from->rect;
+        }
+
+        if( break_for ) break;
+    }
+}
+
+
+
+//
+// テキストノードの座標を計算する関数
+//
+// x,y (参照)  : ノードの初期座標(左上)を渡して、次のノードの左上座標が入って返る
+// br_size : 改行量
+// width_view : 描画領域の幅
+//
+void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br_size, const int width_view )
+{
+    if( ! layout->lng_text ) layout->lng_text = strlen( layout->text );
+
+    int byte_to = layout->lng_text; 
+    LAYOUT* div = layout->div;
+
+    // wrap 処理用の閾値計算
+    // x が border よりも右に来たら wrap する
+    int border = 0;
+    if( div ) border = div->rect->x + div->rect->width - div->css->padding_right;
+    else border = width_view;
+    border -= m_mrg_right;
+
+    // 先頭の RECTANGLE型のメモリ確保
+    // wrapが起きたらまたRECTANGLE型のメモリを確保してリストの後ろに繋ぐ
+    bool head_rect = true;
+    RECTANGLE* rect = layout->rect;
+
+    int pos_start = 0;
+    for(;;){
+
+        // 横に何文字並べるか計算
+        char pre_char = 0;
+        bool draw_head = true; // 先頭は最低1文字描画
+        int pos_to = pos_start;
+        int width_line = 0;
+        int n_byte = 0;
+        int n_ustr = 0; // utfで数えたときの文字数
+
+        // この文字列の全角/半角モードの初期値を決定
+        bool wide_mode = set_init_wide_mode( layout->text, pos_start, byte_to );
+
+        // 右端がはみ出るまで文字を足していく
+        while( pos_to < byte_to 
+                && ( ! is_wrapped( x + PANGO_PIXELS( width_line ), border, layout->text + pos_to )
+                     || draw_head  ) ) {
+
+            int byte_char;
+            width_line += get_width_of_one_char( layout->text + pos_to, byte_char, pre_char, wide_mode, get_fontid() );
+            pos_to += byte_char;
+            n_byte += byte_char;
+            ++n_ustr;
+            draw_head = false;
+        }
+
+        // 幅確定
+        width_line = PANGO_PIXELS( width_line );
+        if( ! width_line ) break;
+        if( layout->bold ) ++width_line;
+
+        // RECTANGLEのメモリ確保
+        if( head_rect ){ // 先頭
+            if( ! rect ) rect = layout->rect = m_layout_tree->create_rect();
+            head_rect = false;
+        }
+        else{ // wrap したので次のRECTANGLEを確保してリストで繋ぐ
+            rect->end = false;
+            if( ! rect->next_rect ) rect->next_rect = m_layout_tree->create_rect();
+            rect = rect->next_rect;
+        }
+
+        // 座標情報更新
+        br_size = m_br_size;
+        rect->end = true;
+        rect->x = x;
+        rect->y = y;
+        rect->width = width_line;
+        rect->height = br_size;
+        rect->pos_start = pos_start;
+        rect->n_byte = n_byte;
+        rect->n_ustr = n_ustr;
+
+#ifdef _DEBUG
+//        std::cout << do_draw << " " << layout->id_header << " " << layout->id
+//                  << " x = " << layout->rect->x << " y = " << layout->rect->y
+//                  << " w = " << layout->rect->width << " h = " << layout->rect->height << std::endl;
+#endif
+
+        x += rect->width;
+        if( pos_to >= byte_to ) break;
+
+        // wrap 処理
+        x = 0;
+        if( div ) x = div->rect->x + div->css->padding_left;
+        y += br_size;
+
+        pos_start = pos_to;
+    }
+}
+
+
+
+//
+// 画像ノードの座標を計算する関数
+//
+// x,y (参照)  : ノードの初期座標(左上)を渡して、次のノードの左上座標が入って返る
+// br_size : 現在行での改行量
+// width_view : 描画領域の幅
+//
+void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_size, const int width_view )
+{
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::layout_one_img_node link = " << layout->link << std::endl;
+#endif
+
+    const int iconsize = EIMG_ICONSIZE;
+    const int mrg = EIMG_MRG;
+
+    DBTREE::NODE* node = layout->node;
+    if( ! node ) return;
+
+    // 座標とサイズのセット
+    RECTANGLE* rect = layout->rect;
+    if( ! rect ) rect = layout->rect = m_layout_tree->create_rect();
+    rect->x = x;
+    rect->y = y;
+    rect->width = iconsize;
+    rect->height = iconsize;
+
+    // 既に表示済みの場合
+    if( layout->eimg && layout->eimg->get_width() ){
+        rect->width = layout->eimg->get_width();
+        rect->height = layout->eimg->get_height();
     }
 
-    // フレーム描画
-    if( m_draw_frame ) draw_frame();
+    // wrap 処理用の閾値計算
+    // x が border よりも右に来たら wrap する
+    LAYOUT* div = layout->div;
+    int border = 0;
+    if( div ) border = div->rect->x + div->rect->width - div->css->padding_right;
+    else border = width_view;
 
-    return true;
+    // wrap
+    if( x + ( rect->width + mrg ) >= border ){
+
+        x = 0;
+        if( div ) x = div->rect->x + div->css->padding_left;
+        y += br_size;
+        br_size = m_br_size;
+
+        rect->x = x;
+        rect->y = y;
+    }
+
+    x += rect->width + mrg;
+    if( br_size < rect->height + mrg ) br_size = rect->height + mrg;
+}
+
+
+
+//
+// 文字列の全角/半角モードの初期値を決定する関数
+//
+bool DrawAreaBase::set_init_wide_mode( const char* str, const int pos_start, const int pos_to )
+{
+    if( ! CONFIG::get_strict_char_width() ) return false;
+
+    bool wide_mode = true;
+    int i = pos_start;
+    while( i < pos_to ){
+
+        int byte_tmp;
+        MISC::utf8toucs2( str + i, byte_tmp );
+
+        // 文字列に全角が含まれていたら全角モードで開始
+        if( byte_tmp != 1 ) break;
+
+        // アルファベットが含まれていたら半角モードで開始
+        if( IS_ALPHABET( str[ i ] ) ){
+            wide_mode = false;
+            break;
+        }
+
+        // 数字など、全てアルファベットと全角文字以外の文字で出来ていたら
+        // 全角モードにする
+        i += byte_tmp;
+    }
+
+    return wide_mode;
 }
 
 
@@ -1024,17 +1240,243 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_c
 
 
 //
+// 文字列を wrap するか判定する関数
+//
+// str != NULL なら禁則処理も考える
+//
+bool DrawAreaBase::is_wrapped( const int x, const int border, const char* str )
+{
+    const unsigned char* tmpchar = ( const unsigned char* ) str;
+
+    if( x < border
+
+        // 禁則文字
+        || ( tmpchar && tmpchar[ 0 ] == ',' )
+
+        || ( tmpchar && tmpchar[ 0 ] == '.' )
+
+        // UTF-8で"。"
+        || ( tmpchar && tmpchar[ 0 ] == 0xe3 && tmpchar[ 1 ] == 0x80 && tmpchar[ 2 ] == 0x82 )
+
+        // UTF-8で"、"
+        || ( tmpchar && tmpchar[ 0 ] == 0xe3 && tmpchar[ 1 ] == 0x80 && tmpchar[ 2 ] == 0x81 )
+
+        ) return false;
+
+    return true;
+}
+
+
+//
+// バックスクリーン描画
+//
+// ここで書かれた画面がexposeイベントで表画面にコピーされる
+//
+// redraw_all = true なら全画面を描画、falseならスクロールした分だけ
+//
+bool DrawAreaBase::draw_backscreen( bool redraw_all )
+{
+    if( ! m_gc ) return false;
+    if( ! m_backscreen ) return false;
+    if( ! m_layout_tree ) return false;
+    if( ! m_layout_tree->top_header() ) return false;
+
+    int width_view = m_view.get_width();
+    int height_view = m_view.get_height();
+    int pos_y = get_vscr_val();
+
+    // 移動量、再描画範囲の上限、下限
+    int dy = 0;
+    int upper = pos_y;
+    int lower = upper + height_view;
+
+    m_gc->set_foreground( m_color[ get_colorid_back() ] );
+
+    // 画面全体を再描画
+    if( redraw_all ){
+        m_backscreen->draw_rectangle( m_gc, true, 0, 0, width_view,  height_view );
+    }
+    else{
+
+        dy = pos_y - m_pre_pos_y;
+
+        // 上にスクロールした
+        if( dy > 0 ){
+
+            // キーを押しっぱなしの時は描画を省略する
+            if( m_key_press ) dy = MIN( dy, (int)SCROLLSPEED_SLOW );
+
+            if( dy < height_view ){
+                upper += ( height_view - dy );
+                m_backscreen->draw_drawable( m_gc, m_backscreen, 0, dy, 0, 0, width_view , height_view - dy );
+            }
+
+            m_backscreen->draw_rectangle( m_gc, true, 0, MAX( 0, height_view - dy ), width_view, MIN( dy, height_view ) );
+        }
+
+        // 下にスクロールした
+        else if( dy < 0 ){
+
+            // キーを押しっぱなしの時は描画を省略する
+            if( m_key_press ) dy = MAX( dy, (int)-SCROLLSPEED_SLOW );
+
+            if( -dy < height_view ){
+                lower = upper - dy;
+                m_backscreen->draw_drawable( m_gc, m_backscreen, 0, 0, 0, -dy, width_view , height_view + dy );
+            }
+
+            m_backscreen->draw_rectangle( m_gc, true, 0, 0, width_view, MIN( -dy, height_view ) );
+        }
+    }
+    
+    m_pre_pos_y = pos_y;
+
+    if( !redraw_all && ! dy ) return false;
+
+#ifdef _DEBUG
+//    std::cout << "DrawAreaBase::draw_backscreen all = " << redraw_all << " y = " << pos_y <<" dy = " << dy << std::endl;
+#endif    
+
+    // 一番最後のレスが半分以上表示されていたら最後のレス番号をm_seen_currentにセット
+    m_seen_current = 0;
+    int num = m_layout_tree->max_res_number();
+    const LAYOUT* lastheader = m_layout_tree->get_header_of_res_const( num );
+
+    // あぼーんなどで表示されていないときは前のレスを調べる
+    if( !lastheader ){
+        while( ! m_layout_tree->get_header_of_res_const( num ) && num-- > 0 );
+        lastheader = m_layout_tree->get_header_of_res_const( num );
+    }
+    if( lastheader && lastheader->rect->y + lastheader->rect->height/2 < pos_y + height_view ){
+
+        m_seen_current = m_layout_tree->max_res_number();
+    }
+
+    // ノード描画
+    bool relayout = false;
+    LAYOUT* header = m_layout_tree->top_header();
+    while( header ){
+
+        // 現在みているスレ番号取得
+        if( ! m_seen_current ){
+
+            if( ! header->next_header // 最後のレス
+                || ( header->next_header->rect->y >= ( pos_y + m_br_size ) // 改行分下にずらす
+                     && header->rect->y <= ( pos_y + m_br_size ) ) ){
+
+                m_seen_current = header->res_number;
+            }
+        }
+
+        // ヘッダが描画範囲に含まれてるなら描画
+        if( header->rect->y + header->rect->height > upper && header->rect->y < lower ){
+
+            // ノードが描画範囲に含まれてるなら描画
+            LAYOUT* layout  = header;
+            while ( layout ){
+
+                RECTANGLE* rect = layout->rect;
+                while( rect ){
+
+                    if( rect->y + rect->height > upper && rect->y < lower ){
+                        if( draw_one_node( layout, width_view, pos_y, upper, lower ) ) relayout = true;
+                        break;
+                    }
+                    rect = rect->next_rect;
+                }
+
+                layout = layout->next_layout;
+            }
+        }
+
+        header = header->next_header;        
+    }
+
+    // 再レイアウト
+    if( relayout ) exec_layout();
+
+    return true;
+}
+
+
+
+//
+// バックスクリーンを表画面に描画
+//
+// draw_backscreen()でバックスクリーンを描画してから呼ぶこと
+// 
+bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
+{
+    if( ! m_layout_tree ) return false;
+
+    // まだ realize してない
+    if( !m_gc ) return false;
+
+    // レイアウトがセットされていない or まだリサイズしていない( m_backscreen == NULL )
+    // なら画面消去して終わり
+    if( ! m_layout_tree->top_header()
+        || ! m_backscreen
+        ){
+        m_window->set_background( m_color[ get_colorid_back() ] );
+        m_window->clear();
+        return false;
+    }
+    
+    if( !width )  width = m_view.get_width();
+    if( !height ) height = m_view.get_height();
+
+    // バックスクリーンをコピー
+    m_window->draw_drawable( m_gc, m_backscreen, x, y, x, y, width, height );
+
+#ifdef _DRAW_CARET
+    // キャレット描画
+    int xx = m_caret_pos.x;
+    int yy = m_caret_pos.y - get_vscr_val();
+    if( yy >= 0 ){
+        m_gc->set_foreground( m_color[ COLOR_CHAR ] );
+        m_window->draw_line( m_gc, xx, yy, xx, yy + m_underline_pos );
+    }
+#endif
+
+    // オートスクロールのマーカ
+    if( m_scrollinfo.mode != SCROLL_NOT && m_scrollinfo.show_marker ){
+        m_gc->set_foreground( m_color[ COLOR_CHAR ] );
+        m_window->draw_arc( m_gc, false, m_scrollinfo.x - AUTOSCR_CIRCLE/2, m_scrollinfo.y - AUTOSCR_CIRCLE/2 ,
+                            AUTOSCR_CIRCLE, AUTOSCR_CIRCLE, 0, 360 * 64 );
+    }
+
+    // フレーム描画
+    if( m_draw_frame ) draw_frame();
+
+    return true;
+}
+
+
+//
 // ノードひとつを描画する関数
 //
 // width_view : 描画領域の幅
 // pos_y : 描画領域の開始座標
 //
-void DrawAreaBase::draw_one_node( LAYOUT* layout, const int& width_view, const int& pos_y )
+// 戻り値 : true なら描画後に再レイアウトを実行する
+//
+bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const int pos_y, const int upper, const int lower )
 {
-    if( ! m_article ) return;
+    bool relayout = false;
+
+    if( ! m_article ) return relayout;
 
     // ノード種類別の処理
     switch( layout->type ){
+
+        // div
+        case DBTREE::NODE_DIV:
+            draw_div( layout, pos_y, upper, lower );
+            break;
+
+
+            //////////////////////////////////////////
+
 
             // リンクノード
         case DBTREE::NODE_LINK: 
@@ -1064,11 +1506,18 @@ void DrawAreaBase::draw_one_node( LAYOUT* layout, const int& width_view, const i
                 }
             }
 
+
+            //////////////////////////////////////////
+
+
             // テキストノード
         case DBTREE::NODE_TEXT:
 
             draw_one_text_node( layout, width_view, pos_y );
             break;
+
+
+            //////////////////////////////////////////
 
 
             // 発言回数ノード
@@ -1077,27 +1526,36 @@ void DrawAreaBase::draw_one_node( LAYOUT* layout, const int& width_view, const i
             if( set_num_id( layout ) ) draw_one_text_node( layout, width_view, pos_y );
             break;
 
+
+            //////////////////////////////////////////
+
+
         // ヘッダ
         case DBTREE::NODE_HEADER:
+
+            draw_div( layout, pos_y, upper, lower );
 
             // ブックマークのマーク描画
             if( layout->res_number && m_article->is_bookmarked( layout->res_number ) ){
 
-                int y = layout->y - pos_y;
+                int y = layout->rect->y - pos_y;
 
                 m_pango_layout->set_text( ">" );
                 m_backscreen->draw_layout( m_gc, 0, y, m_pango_layout, m_color[ COLOR_CHAR_BOOKMARK ], m_color[ get_colorid_back() ] );
             }
 
-            // 新着セパレータ
-            if( m_separator_new && m_separator_new == layout->res_number ){
-
-                int y = layout->y - pos_y - SEPARATOR_HEIGHT *2;
-                m_gc->set_foreground( m_color[ COLOR_SEPARATOR_NEW ] );
-                m_backscreen->draw_rectangle( m_gc, true, 0, y, width_view, SEPARATOR_HEIGHT );
-            }
-
             break;
+
+
+            //////////////////////////////////////////
+
+            // 画像ノード
+        case DBTREE::NODE_IMG:
+            if( draw_one_img_node( layout, pos_y ) ) relayout = true;
+            break;
+
+
+            //////////////////////////////////////////
 
 
             // ノードが増えたらここに追加していくこと
@@ -1105,8 +1563,96 @@ void DrawAreaBase::draw_one_node( LAYOUT* layout, const int& width_view, const i
         default:
             break;
     }
+
+    return relayout;
 }
 
+
+
+//
+// div 要素の描画
+//
+void DrawAreaBase::draw_div( LAYOUT* layout_div, const int pos_y, const int upper, const int lower )
+{
+    if( ! lower ) return;
+
+    int bg_color = layout_div->css->bg_color;
+
+    int border_left_color = layout_div->css->border_left_color;
+    int border_right_color = layout_div->css->border_right_color;
+    int border_top_color = layout_div->css->border_top_color;
+    int border_bottom_color = layout_div->css->border_bottom_color;
+
+    if( bg_color < 0 && border_left_color < 0 && border_top_color < 0 && border_bottom_color < 0 ) return;
+
+    int border_left = layout_div->css->border_left_width;
+    int border_right = layout_div->css->border_right_width;
+    int border_top = layout_div->css->border_top_width;;
+    int border_bottom = layout_div->css->border_bottom_width;;
+
+    int border_style = layout_div->css->border_style;
+
+    int y_div = layout_div->rect->y;
+    int height_div = layout_div->rect->height;
+
+    if( y_div < upper ){
+
+        if( border_top && y_div + border_top > upper ) border_top -= ( upper - y_div );
+        else border_top = 0;
+
+        height_div -= ( upper - y_div );
+        y_div = upper;
+    }
+    if( y_div + height_div > lower ){
+
+        if( border_bottom && y_div + height_div - border_bottom < lower ) border_bottom -= ( y_div + height_div - lower );
+        else border_bottom = 0;
+
+        height_div = ( lower - y_div );
+    }
+
+    // 背景
+    if( bg_color >= 0 ){
+        m_gc->set_foreground( m_color[ bg_color ] );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - pos_y, layout_div->rect->width, height_div );
+    }
+
+    // left
+    if( border_style == CORE::BORDER_SOLID && border_left_color >= 0 && border_left ){
+        m_gc->set_foreground( m_color[ border_left_color ] );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - pos_y, border_left, height_div );
+    }
+
+    // right
+    if( border_style == CORE::BORDER_SOLID && border_right_color >= 0 && border_right ){
+        m_gc->set_foreground( m_color[ border_right_color ] );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x + layout_div->rect->width - border_right, y_div - pos_y, border_right, height_div );
+    }
+
+    // top
+    if( border_style == CORE::BORDER_SOLID && border_top_color >= 0 && border_top ){
+        m_gc->set_foreground( m_color[ border_top_color ] );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - pos_y, layout_div->rect->width, border_top );
+    }
+
+    // bottom
+    if( border_style == CORE::BORDER_SOLID && border_bottom_color >= 0 && border_bottom ){
+        m_gc->set_foreground( m_color[ border_bottom_color ] );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div + height_div - border_bottom - pos_y, layout_div->rect->width, border_bottom );
+    }
+}
+
+
+//
+// 枠の描画
+//
+void DrawAreaBase::draw_frame()
+{
+    int width_win = m_view.get_width();
+    int height_win = m_view.get_height();
+    m_gc->set_foreground( m_color[ COLOR_CHAR ] );
+    m_window->draw_rectangle( m_gc, false, 0, 0, width_win-1, height_win-1 );
+}
 
 
 //
@@ -1115,15 +1661,8 @@ void DrawAreaBase::draw_one_node( LAYOUT* layout, const int& width_view, const i
 // width_view : 描画領域の幅
 // pos_y : 描画領域の開始座標
 //
-void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, const int& pos_y )
+void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, const int pos_y )
 {
-    int x = layout->x;
-    int y = layout->y - pos_y;
-    int width, height;
-
-    int x_selection;
-    int y_selection;
-    
     int id_header = layout->id_header;
     int id = layout->id ;
     
@@ -1135,8 +1674,6 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
 
     unsigned int byte_from = 0;
     unsigned int byte_to = 0;
-
-    bool bold = layout->bold;
 
     // 範囲選択の描画をする必要があるかどうかの判定
     // 二度書きすると重いので、ちょっと式は複雑になるけど同じ所を二度書きしないようにする
@@ -1177,23 +1714,22 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
 
     int color_text = COLOR_CHAR;
     if( layout->color_text ) color_text = *layout->color_text;
+    if( color_text == COLOR_CHAR && layout->div && layout->div->css->color >= 0 ) color_text = layout->div->css->color;
+
+    int color_back = get_colorid_back();
+    if( layout->div && layout->div->css->bg_color >= 0 ) color_back = layout->div->css->bg_color;
+    else if( layout->header && layout->header->css->bg_color >= 0 ) color_back = layout->header->css->bg_color;
     
     // 通常描画
-    if( ! draw_selection ){
-        layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, get_colorid_back() );
+    if( ! draw_selection ) draw_string( layout, pos_y, width_view, color_text, color_back, 0, 0 );
 
-    } else { // 範囲選択の前後描画
+    else { // 範囲選択の前後描画
 
         // 前
-        if( byte_from ) layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, get_colorid_back(), 0, byte_from );
+        if( byte_from ) draw_string( layout, pos_y, width_view, color_text, color_back, 0, byte_from );
 
-        // ここでは選択部分の座標計算のみ( do_draw = false )してハイライト後に選択部分を描画
-        x_selection = x;
-        y_selection = y;
-        layout_draw_one_node( layout, x, y, width, height, width_view, false, bold, color_text, get_colorid_back(),  byte_from, byte_to );
-    
         // 後
-        if( byte_to != strlen( layout->text ) ) layout_draw_one_node( layout, x, y, width, height, width_view, true, bold, color_text, get_colorid_back(), byte_to );
+        if( byte_to != strlen( layout->text ) ) draw_string( layout, pos_y, width_view, color_text, color_back, byte_to, strlen( layout->text ) );
     }
      
     // 検索結果のハイライト
@@ -1203,161 +1739,222 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int& width_view, co
         for( it = m_multi_selection.begin(); it != m_multi_selection.end(); ++it ){
             if( layout->id_header == ( *it ).caret_from.layout->id_header && layout->id == ( *it ).caret_from.layout->id ){
 
-                // 描画開始位置の座標を計算( do_draw = false )、
-                x = layout->x;
-                y = layout->y - pos_y;
                 int byte_from2 = ( *it ).caret_from.byte;
                 int byte_to2 = ( *it ).caret_to.byte;
-                if( byte_from2 ) layout_draw_one_node( layout, x, y, width, height,
-                                                       width_view, false, bold, COLOR_CHAR_HIGHLIGHT , COLOR_BACK_HIGHLIGHT, 0, byte_from2 );
 
-                // ハイライト描画
-                layout_draw_one_node( layout, x, y, width, height,
-                                      width_view, true, bold, COLOR_CHAR_HIGHLIGHT , COLOR_BACK_HIGHLIGHT, byte_from2, byte_to2 );
+                draw_string( layout, pos_y, width_view, COLOR_CHAR_HIGHLIGHT, COLOR_BACK_HIGHLIGHT, byte_from2, byte_to2 );
             }
         }
     }
 
     // 範囲選択部分を描画
     if( draw_selection && byte_from != byte_to ){
-        layout_draw_one_node( layout, x_selection, y_selection, width, height, width_view, true, bold,
-                                            COLOR_CHAR_SELECTION , COLOR_BACK_SELECTION, byte_from, byte_to );
+
+        draw_string( layout, pos_y, width_view, COLOR_CHAR_SELECTION, COLOR_BACK_SELECTION, byte_from, byte_to );
     }
 }
 
 
+
 //
-// 文字列の全角/半角モードの初期値を決定する関数
+// 画像ノードひとつを描画する関数
 //
-bool DrawAreaBase::set_init_wide_mode( const char* str, const int pos_start, const int pos_to )
+// width_view : 描画領域の幅
+// pos_y : 描画領域の開始座標
+//
+// 戻り値 : true なら描画後に再レイアウトを実行する
+//
+bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y )
 {
-    if( ! CONFIG::get_strict_char_width() ) return false;
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::draw_one_img_node link = " << layout->link << std::endl;
+#endif
 
-    bool wide_mode = true;
-    int i = pos_start;
-    while( i < pos_to ){
+    bool relayout = false;
 
-        int byte_tmp;
-        MISC::utf8toucs2( str + i, byte_tmp );
+    if( ! layout->link ) return relayout;
 
-        // 文字列に全角が含まれていたら全角モードで開始
-        if( byte_tmp != 1 ) break;
+    RECTANGLE* rect = layout->rect;
+    if( ! rect ) return relayout;
 
-        // アルファベットが含まれていたら半角モードで開始
-        if( IS_ALPHABET( str[ i ] ) ){
-            wide_mode = false;
-            break;
+    DBTREE::NODE* node = layout->node;
+    if( ! node ) return relayout;
+
+    DBIMG::Img* img = node->linkinfo->img;
+    if( ! img ){
+        img = node->linkinfo->img = DBIMG::get_img( layout->link );
+        if( ! img ) return relayout;
+    }
+
+    int color = COLOR_IMG_ERR;
+    int code = img->get_code();
+
+    if( img->is_loading() ) color = COLOR_IMG_LOADING;
+
+    else if( code == HTTP_ERR || code == HTTP_INIT ){
+
+        // 画像が削除された場合
+        if( layout->eimg ){
+
+            delete layout->eimg;
+            m_eimgs.remove( layout->eimg );
+            layout->eimg = NULL;
+
+            // 後のノードの座標を再計算
+            relayout = true;
+            
         }
 
-        // 数字など、全てアルファベットと全角文字以外の文字で出来ていたら
-        // 全角モードにする
-        i += byte_tmp;
+        color = COLOR_IMG_NOCACHE;
     }
 
-    return wide_mode;
+    // 画像描画
+    else if( code == HTTP_OK ){
+
+        color = COLOR_IMG_CACHED;
+
+        // 埋め込み画像を作成
+        if( ! layout->eimg ){
+
+            layout->eimg = new EmbeddedImage( layout->link );
+
+            // EmbeddedImageのアドレスを記憶しておいてDrawAreaBa::clear()でdeleteする
+            m_eimgs.push_back( layout->eimg );
+
+            layout->eimg->show();
+
+            // 後のノードの座標を再計算
+            relayout = true;
+        }
+
+        // 描画
+        else{
+
+            Glib::RefPtr< Gdk::Pixbuf > pixbuf = layout->eimg->get_pixbuf();
+            if( pixbuf ){
+
+                // モザイク
+                if( img->get_mosaic() ){
+
+                    const int size_mosaic = 5;
+
+                    Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
+                    pixbuf2 = pixbuf->scale_simple(
+                        MAX( 1, pixbuf->get_width() / size_mosaic ),
+                        MAX( 1, pixbuf->get_height() / size_mosaic ),
+                        Gdk::INTERP_NEAREST );
+
+                    m_backscreen->draw_pixbuf( m_gc, pixbuf2->scale_simple( pixbuf->get_width(), pixbuf->get_height(), Gdk::INTERP_NEAREST ),
+                                               0, 0, rect->x, rect->y - pos_y,
+                                               pixbuf->get_width(), pixbuf->get_height(), Gdk::RGB_DITHER_NONE, 0, 0 );
+                }
+
+                // 通常
+                else{
+                    m_backscreen->draw_pixbuf( m_gc, pixbuf,
+                                               0, 0, rect->x, rect->y - pos_y,
+                                               pixbuf->get_width(), pixbuf->get_height(), Gdk::RGB_DITHER_NONE, 0, 0 );
+                }
+
+
+
+            }
+            else color = COLOR_IMG_ERR;
+        }
+    }
+
+    // 枠の描画
+    m_gc->set_foreground( m_color[ color ] );
+    m_backscreen->draw_rectangle( m_gc, false, rect->x -1, rect->y -1  - pos_y, rect->width +2, rect->height +2 );
+
+    if( code != HTTP_OK ){
+        int x_tmp = rect->x + rect->width / 10;
+        int y_tmp = rect->y + rect->height / 10;
+        int width_tmp = rect->width / 4;
+        int height_tmp = rect->width / 4;
+        m_backscreen->draw_rectangle( m_gc, true, x_tmp, y_tmp - pos_y, width_tmp, height_tmp );
+    }
+
+    return relayout;
 }
 
 
 
 
 //
-// 文字列を wrap するか判定する関数
+// 文字を描画する関数
 //
-// str != NULL なら禁則処理も考える
-//
-bool DrawAreaBase::is_wrapped( const int x, const int boarder, const char* str )
-{
-    const unsigned char* tmpchar = ( const unsigned char* ) str;
-
-    if( x < boarder
-
-        // 禁則文字
-        || ( tmpchar && tmpchar[ 0 ] == ',' )
-
-        || ( tmpchar && tmpchar[ 0 ] == '.' )
-
-        // UTF-8で"。"
-        || ( tmpchar && tmpchar[ 0 ] == 0xe3 && tmpchar[ 1 ] == 0x80 && tmpchar[ 2 ] == 0x82 )
-
-        // UTF-8で"、"
-        || ( tmpchar && tmpchar[ 0 ] == 0xe3 && tmpchar[ 1 ] == 0x80 && tmpchar[ 2 ] == 0x81 )
-
-        ) return false;
-
-    return true;
-}
-
-
-
-//
-// 実際にレイアウトノード内の文字の座標を計算したり描画する関数
-//
-// node_x,node_y (参照)  : ノードの初期座標(左上)、次のノードの左上座標が入って返る
-// node_width, node_height (参照) : ノードの幅、高さが入って返る
-// do_draw : true なら描画, false なら座標計算のみ
-// byte_from バイト目の文字から byte_to バイト目の「ひとつ前」の文字まで描画
+// ノードの byte_from バイト目の文字から byte_to バイト目の「ひとつ前」の文字まで描画
 // byte_to が 0 なら最後まで描画
-// bold : 太字
 //
 // たとえば node->text = "abcdefg" で byte_from = 1, byte_to = 3 なら "bc" を描画
 //
-void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y, int& node_width, int& node_height,
-                                         int width_view, bool do_draw, bool bold,
-                                         int color, int color_back, int byte_from, int byte_to )
+void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_view,
+                                const int color, const int color_back, const int byte_from, const int byte_to )
 {
     assert( node->text != NULL );
+    assert( m_layout_tree );
 
     if( ! node->lng_text ) return;
     if( byte_from >= node->lng_text ) return;
-    if( byte_to > node->lng_text ) byte_to = node->lng_text;
-    if( byte_to == 0 ) byte_to = node->lng_text; 
 
-    node_width = 0;
-    node_height = m_br_size;
+    RECTANGLE* rect = node->rect;
+    while( rect ){
 
-    char pre_char = 0;
-    int pos_start = byte_from;
+        int x = rect->x;
+        int width_line = rect->width;
+        int pos_start = rect->pos_start;
+        int n_byte = rect->n_byte;
+        int n_ustr = rect->n_ustr;
 
-    for(;;){
+        // 描画する位置が指定されている場合
+        if( byte_to
+            && ! ( byte_from <= pos_start && pos_start + n_byte <= byte_to ) ){
 
-        // 横に何文字並べるか計算
+            if( pos_start > byte_to || pos_start + n_byte < byte_from ) width_line = 0;
+            else{
 
-        int byte_char;
-        int pos_to = pos_start;
-        int n_str = 0;
-        int n_ustr = 0;
-        int width_line = 0;
+                // この文字列の全角/半角モードの初期値を決定
+                bool wide_mode = set_init_wide_mode( node->text, pos_start, pos_start + n_byte );
 
-        // この文字列の全角/半角モードの初期値を決定
-        bool wide_mode = set_init_wide_mode( node->text, pos_start, byte_to );
+                // 左座標計算
+                char pre_char = 0;
+                int byte_char;
+                while( pos_start < byte_from ){
+                    x += PANGO_PIXELS( get_width_of_one_char( node->text + pos_start, byte_char, pre_char, wide_mode, get_fontid() ) );
+                    pos_start += byte_char;
+                }
 
-        // 右端がはみ出るまで文字を足していく
-        bool draw_head = ! ( byte_from ); // 先頭は最低1文字描画
-        if( ! node_x ) draw_head = true;
-        while(  pos_to < byte_to 
-                && ( ! is_wrapped( node_x + PANGO_PIXELS( width_line ),  width_view - m_mrg_right, node->text + pos_to )
-                     || draw_head  ) ) {
+                // 幅とバイト数計算
+                int pos_to = pos_start;
+                int byte_to_tmp = byte_to;
+                if( rect->pos_start + n_byte < byte_to_tmp ) byte_to_tmp = rect->pos_start + n_byte;
+                width_line = 0;
+                n_byte = 0;
+                n_ustr = 0;
+                while( pos_to < byte_to_tmp ){
+                    width_line += get_width_of_one_char( node->text + pos_to, byte_char, pre_char, wide_mode, get_fontid() );
+                    pos_to += byte_char;
+                    n_byte += byte_char;
+                    ++n_ustr;
+                }
 
-            width_line += get_width_of_one_char( node->text + pos_to, byte_char, pre_char, wide_mode, get_fontid() );
-            pos_to += byte_char;
-            n_str += byte_char;
-            ++n_ustr;
-            draw_head = false;
+                width_line = PANGO_PIXELS( width_line );
+            }
         }
 
-        width_line = PANGO_PIXELS( width_line );
+        if( width_line ){
 
-        // pos_start から pos_to の前まで描画
-        if( width_line && do_draw ){
+            int xx = x;
 
 #ifdef USE_PANGOLAYOUT  // Pango::Layout を使って文字を描画
 
             m_pango_layout->set_text( Glib::ustring( node->text + pos_start, n_ustr ) );
-            m_backscreen->draw_layout( m_gc, node_x, node_y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
+            m_backscreen->draw_layout( m_gc, node_x, pos_y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
 
-            if( bold ){
+            if( node->bold ){
                 m_gc->set_foreground( m_color[ color ] );
-                m_backscreen->draw_layout( m_gc, node_x+1, node_y, m_pango_layout );
+                m_backscreen->draw_layout( m_gc, node_x+1, pos_y, m_pango_layout );
             }
             
 #else // Pango::GlyphString を使って文字を描画
@@ -1365,68 +1962,43 @@ void DrawAreaBase::layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y,
             assert( m_context );
 
             m_gc->set_foreground( m_color[ color_back ] );
-            m_backscreen->draw_rectangle( m_gc, true, node_x, node_y, width_line, m_font_height );
+            m_backscreen->draw_rectangle( m_gc, true, x, rect->y - pos_y, width_line, m_font_height );
 
             m_gc->set_foreground( m_color[ color ] );
 
             Pango::AttrList attr;
-            std::string text = std::string( node->text + pos_start, n_str );
+            std::string text = std::string( node->text + pos_start, n_byte );
             std::list< Pango::Item > list_item = m_context->itemize( text, attr );
 
-            int xx = node_x;
             std::list< Pango::Item >::iterator it = list_item.begin();
             for( ; it != list_item.end(); ++it ){
 
                 Pango::Item &item = *it;
                 Pango::GlyphString grl = item.shape( text.substr( item.get_offset(), item.get_length() ) ) ;
-                Pango::Rectangle rect = grl.get_logical_extents(  item.get_analysis().get_font() );
-                int width = PANGO_PIXELS( rect.get_width() );
+                Pango::Rectangle pango_rect = grl.get_logical_extents(  item.get_analysis().get_font() );
+                int width = PANGO_PIXELS( pango_rect.get_width() );
 
-                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), xx, node_y + m_font_ascent, grl );
-                if( bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), xx+1, node_y + m_font_ascent, grl );
-                xx += width;
+                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x, rect->y - pos_y + m_font_ascent, grl );
+                if( node->bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x +1, rect->y - pos_y + m_font_ascent, grl );
+                x += width;
             }
 
             // 実際のラインの長さと近似値を合わせる ( 応急処置 )
-            if( abs( xx - node_x - width_line ) > 2 ){ 
-//                std::stringstream ss_err;
-//                ss_err << text << " e = " << width_line << " r = " << xx - node_x;
-//                MISC::ERRMSG( ss_err.str() );
-                width_line = xx - node_x;
-            }
-
+            if( ! byte_to && abs( x - rect->x - rect->width ) > 2 ) rect->width = x - rect->x;
 #endif
+
             // リンクの時は下線を引く
             if( node->link && CONFIG::get_draw_underline() ){
 
                 m_gc->set_foreground( m_color[ color ] );
-                m_backscreen->draw_line( m_gc, node_x, node_y + m_underline_pos, node_x + width_line, node_y + m_underline_pos );
+                m_backscreen->draw_line( m_gc, xx, rect->y - pos_y + m_underline_pos, xx + width_line, rect->y - pos_y + m_underline_pos );
             }
         }
 
-        if( bold ) ++width_line;
-
-        // ノードの幅更新
-        node_x += width_line;
-        int width_tmp = node_x - ( m_mrg_left + m_down_size * node->mrg_level );
-        if( width_tmp > node_width ) node_width = width_tmp;
-        
-        // wrap 処理
-        if( pos_to < byte_to && is_wrapped( node_x, width_view - m_mrg_right, NULL ) ) {
-
-            // 改行
-            node_x = ( m_mrg_left + m_down_size * node->mrg_level );            
-            node_y += m_br_size;
-
-            // ノード高さ更新
-            node_height += m_br_size;
-        }
-
-        if( pos_to >= byte_to ) break;
-        pos_start = pos_to;
+        if( rect->end ) break;
+        rect = rect->next_rect;
     }
 }
-
 
 
 
@@ -1611,8 +2183,8 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
 #ifdef _DEBUG
             std::cout << "DrawAreaBase::exec_scroll : goto " << m_scrollinfo.res << std::endl;
 #endif        
-            const LAYOUT* layout = m_layout_tree->get_header_of_res( m_scrollinfo.res );
-            if( layout ) y = layout->y;
+            const LAYOUT* layout = m_layout_tree->get_header_of_res_const( m_scrollinfo.res );
+            if( layout ) y = layout->rect->y;
             m_scrollinfo.reset();
         }
         break;
@@ -1750,8 +2322,8 @@ void DrawAreaBase::goto_num( int num )
     if( number_load < num ) num = number_load;
 
     // num番が表示されていないときは近くの番号をセット
-    while( ! m_layout_tree->get_header_of_res( num ) && num++ < number_load );
-    while( ! m_layout_tree->get_header_of_res( num ) && num-- > 1 );
+    while( ! m_layout_tree->get_header_of_res_const( num ) && num++ < number_load );
+    while( ! m_layout_tree->get_header_of_res_const( num ) && num-- > 1 );
 
 #ifdef _DEBUG
     std::cout << "exec goto_num num = " << num << std::endl;
@@ -1761,7 +2333,7 @@ void DrawAreaBase::goto_num( int num )
     m_scrollinfo.reset();
     m_scrollinfo.mode = SCROLL_TO_NUM;
     m_scrollinfo.res = num;
-    exec_scroll( true );
+    exec_scroll( false );
 }
 
 
@@ -1793,11 +2365,12 @@ void DrawAreaBase::goto_top()
 
 void DrawAreaBase::goto_new()
 {
-    if( m_separator_new ){
+    const int separator_new = m_layout_tree->get_separator_new();
+    if( separator_new ){
 
         m_jump_history.push_back( get_seen_current() );
 
-        int num = m_separator_new > 1 ? m_separator_new -1 : 1;
+        int num = separator_new > 1 ? separator_new -1 : 1;
         goto_num( num );
     }
 }
@@ -1971,7 +2544,7 @@ void DrawAreaBase::search_move( bool reverse )
             m_caret_pos_dragstart = ( *it ).caret_from;
             set_selection( ( *it ).caret_to, false );
 
-            int y = MAX( 0, ( *it ).caret_from.layout->y - 10 );
+            int y = MAX( 0, ( *it ).caret_from.layout->rect->y - 10 );
 
 #ifdef _DEBUG
             std::cout << "move to y = " << y << std::endl;
@@ -1997,6 +2570,44 @@ void DrawAreaBase::clear_highlight()
 }    
 
 
+//
+// ポインタがRECTANGLEの上にあるか判定
+//
+bool DrawAreaBase::is_pointer_on_rect( RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
+                                       const int x, const int y,
+                                       int& pos, int& width_line, int& char_width, int& byte_char )
+{
+    pos = pos_start;
+    width_line = 0;
+    char_width = 0;
+    byte_char = 0;
+
+    if( ! ( rect->y <= y && y <= rect->y + rect->height ) ) return false;
+
+    // この文字列の全角/半角モードの初期値を決定
+    bool wide_mode = set_init_wide_mode( text, pos_start, pos_to );
+    char pre_char = 0;
+
+    while( pos < pos_to ){
+
+        char_width = get_width_of_one_char( text + pos, byte_char, pre_char, wide_mode, get_fontid() );
+                                    
+        // マウスポインタの下にノードがある場合
+        if( rect->x + PANGO_PIXELS( width_line ) <= x && x <= rect->x + PANGO_PIXELS( width_line + char_width ) ){
+
+            width_line = PANGO_PIXELS( width_line );
+            char_width = PANGO_PIXELS( char_width );
+            return true;
+        }
+
+        // 次の文字へ
+        pos += byte_char;
+        width_line += char_width;
+    }
+
+    return false;
+}
+
 
 
 //
@@ -2007,7 +2618,7 @@ void DrawAreaBase::clear_highlight()
 //
 // 戻り値: 座標(x,y)の下のレイアウトノード。ノード外にある場合はNULL
 //
-LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
+LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 {
     if( ! m_layout_tree ) return NULL;
     
@@ -2015,143 +2626,158 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos,  int x, int y )
     std::cout << "DrawAreaBase::set_caret\n";
 #endif
 
-    int width_view = m_view.get_width();
-    
     // 先頭のレイアウトブロックから順に調べる
-    LAYOUT* tmpheader = m_layout_tree->top_header();
-    while( tmpheader ){
+    LAYOUT* header = m_layout_tree->top_header();
+    while( header ){
 
-        // y が含まれているブロックだけチェックする
-        int height_block = tmpheader->next_header ? ( tmpheader->next_header->y - tmpheader->y ) : BIG_HEIGHT;
-        if( tmpheader->y <= y && tmpheader->y + height_block >= y ){        
+        // y が含まれているヘッダブロックだけチェックする
+        int height_block = header->next_header ? ( header->next_header->rect->y - header->rect->y ) : BIG_HEIGHT;
+        if( ! ( header->rect->y <= y && header->rect->y + height_block >= y ) ){
+            header = header->next_header;
+            continue;
+        }
+
+        // ヘッダブロック内のノードを順に調べていく
+        LAYOUT* layout = header->next_layout;
+        while( layout ){
+
+            RECTANGLE* rect = layout->rect;
+            if( ! rect ){
+                layout = layout->next_layout;
+                continue;
+            }
+
+            int tmp_x = rect->x;
+            int tmp_y = rect->y;
+            int width = rect->width;
+            int height = rect->height;
+            int pos_start = rect->pos_start;
+            int n_byte = rect->n_byte;
+
+            // テキストノードでは無い
+            if( ! layout->text ){
+                layout = layout->next_layout;
+                continue;
+            }
+
+
+            //////////////////////////////////////////////
+            //
+            // 現在のノードの中、又は左か右にあるか調べる
+            //
+            for(;;){
+
+                int pos;
+                int width_line;
+                int char_width;
+                int byte_char;
+
+                // ノードの中にある場合
+                if( is_pointer_on_rect( rect, layout->text, pos_start, pos_start + n_byte, x, y,
+                                        pos, width_line, char_width, byte_char ) ){
 
 #ifdef _DEBUG_CARETMOVE
-            std::cout << "header id = " << tmpheader->id_header << std::endl;
-#endif                    
-            // ブロック内のノードを順に調べていく
-            LAYOUT* tmplayout = tmpheader->next_layout;
-            while( tmplayout ){
-
-#ifdef _DEBUG_CARETMOVE
-                std::cout << "node id = " << tmplayout->id << std::endl;
+                    std::cout << "found: on node\n";
+                    std::cout << "header id = " << header->id_header << std::endl;
+                    std::cout << "node id = " << layout->id << std::endl;
+                    std::cout << "pos = " << pos << std::endl;
 #endif
-
-                if( ! tmplayout->text ){
-                    tmplayout = tmplayout->next_layout;
-                    continue;
+                    // キャレットをセットして終了
+                    caret_pos.set( layout, pos, x, tmp_x + width_line, tmp_y, char_width, byte_char );
+                    return layout;
                 }
-            
-                int tmp_x = tmplayout->x;
-                int tmp_y = tmplayout->y;
-                const char* pos = tmplayout->text;
-                int byte_char = 0;
 
-                // 左のマージンの上にポインタがある場合
-                if( ( tmp_y <= y && tmp_y + m_br_size >= y  ) && x <= tmp_x ){
+                else if( tmp_y <= y && y <= tmp_y + height ){
+
+                    // 左のマージンの上にポインタがある場合
+                    if( x < tmp_x ){
 
 #ifdef _DEBUG_CARETMOVE
-                    std::cout << "found: left\n";
+                        std::cout << "found: left\n";
+                        std::cout << "header id = " << header->id_header << std::endl;
+                        std::cout << "node id = " << layout->id << std::endl;
+                        std::cout << "pos = " << pos_start << std::endl;
 #endif
-                    // 左端にキャレットをセットして終了
-                    caret_pos.set( tmplayout, 0, x, tmp_x, tmp_y, 0, byte_char );
-                    return NULL;
-                }
+                        // 左端にキャレットをセットして終了
+                        caret_pos.set( layout, pos_start, x, tmp_x, tmp_y );
 
-                // ノードの中のテキストを調べていく
-                char pre_char = 0;
-                int width_line = 0;
-
-                // この文字列の全角/半角モードの初期値を決定
-                bool wide_mode = set_init_wide_mode( tmplayout->text, 0, tmplayout->lng_text );
-
-                while( *pos != '\0' ){
-
-                    int char_width = get_width_of_one_char( pos, byte_char, pre_char, wide_mode, get_fontid() );
-                                    
-                    // マウスポインタの下にノードがある場合
-                    if( ( tmp_x + PANGO_PIXELS( width_line ) <= x && tmp_x + PANGO_PIXELS( width_line + char_width ) >= x )
-                        && ( tmp_y <= y && tmp_y + m_br_size >= y ) ){
-
-#ifdef _DEBUG_CARETMOVE                  
-                        std::cout << "found: on node\n";
-                        if( tmplayout->link != NULL ) std::cout << "link = " << tmplayout->link << std::endl;
-#endif
-                        // キャレットをセットして終了
-                        caret_pos.set( tmplayout, ( int )( pos - tmplayout->text ), x, tmp_x + PANGO_PIXELS( width_line ),
-                                       tmp_y, PANGO_PIXELS( char_width ), byte_char );
-                        return tmplayout;
+                        return NULL;
                     }
-
-                    // 次の文字へ
-                    pos += byte_char;
-                    width_line += char_width;
-
-                    if( *pos != '\0' && is_wrapped( tmp_x + PANGO_PIXELS( width_line ), width_view - m_mrg_right, pos ) ){ // wrap
-
-                        // wrapが起きたときに右のマージンの上にポインタがある場合
-                        if( ( tmp_y <= y && tmp_y + m_br_size >= y  ) && x >= tmp_x + PANGO_PIXELS( width_line ) ){ 
-#ifdef _DEBUG_CARETMOVE
-                            std::cout << "found: right (wrap)\n";
-#endif
-                            // 右端にキャレットをセットして終わり
-                            caret_pos.set( tmplayout, ( int )( pos - tmplayout->text ) - byte_char, x, tmp_x + PANGO_PIXELS( width_line ), tmp_y, 0, 0 );
-                            return NULL;
-                        }
-
-                        // 改行
-                        tmp_x = m_mrg_left + m_down_size * tmplayout->mrg_level;
-                        tmp_y += m_br_size;
-                        width_line = 0;
-                    }
-                }
-
-                // とりあえずノードの中にはポインタは無かったので
-                // 今のノードと次のノード or ブロックの間にyが無いか調べる
-
-                int next_y = -1; // 次のノード or ブロックのy座標
-                LAYOUT* tmplayout2 = tmplayout->next_layout;
-
-                // 次のノードを取得する(文字列の含まれないノードは飛ばす)
-                while( tmplayout2 && !tmplayout2->text ) tmplayout2 = tmplayout2->next_layout;
-
-                // 次のノードのy座標を取得
-                if( tmplayout2 ) next_y = tmplayout2->y;
-
-                // 最終ノードなので次のブロックの y 座標を取得
-                else{
-                    
-                    if( tmpheader->next_header ) next_y = tmpheader->next_header->y;
-                    else next_y = y + BIG_HEIGHT; // 最終ブロックの最終行ということ
-                }
-                
-                if(
-                    // 次のノード or ブロックに行くとyを飛び越える場合
-                    next_y > y 
 
                     // 右のマージンの上にポインタがある場合
-                    || (
-                        ( tmplayout->type == DBTREE::NODE_BR // 改行ノード
-                          || tmplayout->next_layout == NULL // 最終ノード
-                          || tmplayout->next_layout->type == DBTREE::NODE_BR // 一番右端のノード
-                            )
-                        && ( tmp_y <= y && tmp_y + m_br_size >= y  ) && x >= tmp_x + PANGO_PIXELS( width_line ) )
+                    else if( layout->next_layout == NULL || layout->next_layout->type == DBTREE::NODE_BR ){
 
-                    ){
 #ifdef _DEBUG_CARETMOVE
-                    std::cout << "found: right\n";
+                        std::cout << "found: right\n";
+                        std::cout << "header id = " << header->id_header << std::endl;
+                        std::cout << "node id = " << layout->id << std::endl;
+                        std::cout << "pos = " << pos_start + n_byte << std::endl;
 #endif
-                    // 現在のノードの右端にキャレットをセット
-                    caret_pos.set( tmplayout, ( int )( pos - tmplayout->text ), x, tmp_x + PANGO_PIXELS( width_line ), tmp_y, 0, 0 );
-                    return NULL;
+
+                        // 右端にキャレットをセットして終わり
+                        caret_pos.set( layout, pos_start + n_byte, x, tmp_x + width, tmp_y );
+                        return NULL;
+                    }
                 }
 
-                // 次のノードへ
-                tmplayout = tmplayout->next_layout;
+                rect = rect->next_rect;
+                if( ! rect ) break;
+
+                tmp_x = rect->x;
+                tmp_y = rect->y;
+                width = rect->width;
+                height = rect->height;
+                pos_start = rect->pos_start;
+                n_byte = rect->n_byte;
             }
+
+
+            //////////////////////////////////////////////
+            //
+            // 現在のノードと次のノード、又はヘッダブロックの間にポインタがあるか調べる
+            //
+            int next_y = -1; // 次のノード or ブロックのy座標
+
+            // 次のノードを取得する
+            LAYOUT* layout_next = layout->next_layout;
+            while( layout_next && ! ( layout_next->rect && layout_next->text ) ){
+
+                layout_next = layout_next->next_layout;
+
+                // 次のノードが画像ノード場合
+                // 現在のノードの右端にキャレットをセットして画像ノードを返す
+                if( layout_next && layout_next->type == DBTREE::NODE_IMG
+                    && ( layout_next->rect->x <= x && x <= layout_next->rect->x + layout_next->rect->width )
+                    && ( layout_next->rect->y <= y && y <= layout_next->rect->y + layout_next->rect->height ) ){
+
+                    caret_pos.set( layout, pos_start + n_byte, x, tmp_x + width, tmp_y );
+                    return layout_next;
+                }
+            }
+
+            // 次のノードのy座標を取得
+            if( layout_next ) next_y = layout_next->rect->y;
+            else next_y = y + BIG_HEIGHT;
+                
+            if( next_y > y ){
+
+#ifdef _DEBUG_CARETMOVE
+                std::cout << "found: between\n";
+                std::cout << "header id = " << header->id_header << std::endl;
+                std::cout << "node id = " << layout->id << std::endl;
+#endif
+                // 現在のノードの右端にキャレットをセット
+                caret_pos.set( layout, pos_start + n_byte, x, tmp_x + width, tmp_y );
+
+                return NULL;
+            }
+
+            // 次のノードへ
+            layout = layout->next_layout;
         }
 
         // 次のブロックへ
-        tmpheader = tmpheader->next_header;        
+        header = header->next_header;        
     }
 
     return NULL;
@@ -2175,122 +2801,104 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
     std::cout << "DrawAreaBase::set_carets_dclick\n";
 #endif
     
-    int width_view = m_view.get_width();
-    
-    // 先頭のレイアウトブロックから順に調べる
-    LAYOUT* tmpheader = m_layout_tree->top_header();
-    while( tmpheader ){
+    // 先頭のヘッダブロックから順に調べる
+    LAYOUT* header = m_layout_tree->top_header();
+    while( header ){
 
         // y が含まれているブロックだけチェックする
-        int height_block = tmpheader->next_header ? tmpheader->next_header->y - tmpheader->y : BIG_HEIGHT;
-        if( tmpheader->y <= y && tmpheader->y + height_block >= y ){        
+        if( header->rect->y <= y && y <= header->rect->y + header->rect->height ){        
 
-            // ブロック内のノードを順に調べていく
-            LAYOUT* tmplayout = tmpheader->next_layout;
-            while( tmplayout ){
+            LAYOUT* layout = header->next_layout;
+            while( layout ){
 
-                if( ! tmplayout->text ){
-                    tmplayout = tmplayout->next_layout;
+                RECTANGLE* rect = layout->rect;
+
+                if( ! layout->text || ! rect ){
+                    layout = layout->next_layout;
                     continue;
                 }
-            
-                int tmp_x = tmplayout->x;
-                int tmp_y = tmplayout->y;
-                int byte_char = 0;
-                const char* pos = tmplayout->text;
 
-                int x_left = 0, y_left = 0;
-                const char* pos_left = NULL;
-                const char* pos_right = NULL;
+                // ポインタの下にあるノードを探す
+                int pos;
+                while( rect ){
 
-                
-                const char* pos_tmp = pos; // 仮の左開始位置
-                bool mode_ascii = ( *( ( unsigned char* )( pos ) ) < 128 );
+                    int width_line;
+                    int char_width;
+                    int byte_char;
 
-                // ノードの中のテキストを調べていく
-                char pre_char = 0;
-                int width_line = 0;
+                    if( is_pointer_on_rect( rect, layout->text, rect->pos_start, rect->pos_start + rect->n_byte,
+                                            x, y,
+                                            pos, width_line, char_width, byte_char ) ) break;
 
-                // この文字列の全角/半角モードの初期値を決定
-                bool wide_mode = set_init_wide_mode( tmplayout->text, 0, tmplayout->lng_text );
+                    rect = rect->next_rect;
+                }
 
-                while( *pos != '\0' ){
+                if( ! rect ){
+                    layout = layout->next_layout;
+                    continue;
+                }
 
-                    int char_width = get_width_of_one_char( pos, byte_char, pre_char, wide_mode, get_fontid() );
+                bool mode_ascii = ( *( ( unsigned char* )( layout->text + pos ) ) < 128 );
 
-                    // x,yの下に現在のノードがあったら左側の仮位置を確定する
-                    if( ! pos_left
-                        && tmp_x + PANGO_PIXELS( width_line ) <= x && tmp_x + PANGO_PIXELS( width_line + char_width ) >= x
-                        && tmp_y <= y && tmp_y + m_br_size >= y ){
+                // 左位置を求める
+                int pos_left = 0;
+                int pos_tmp = 0;
+                while( pos_tmp < pos ){
 
-                        pos_left = pos_tmp;
-                    }
+                    int byte_char;
+                    MISC::utf8toucs2( layout->text + pos_tmp, byte_char );
 
-                    unsigned char code = *( ( unsigned char* )( pos ) );
-                    unsigned char code_next = *( ( unsigned char* )( pos + byte_char ) );
+                    unsigned char code = *( ( unsigned char* )( layout->text + pos_tmp ) );
+                    unsigned char code_next = *( ( unsigned char* )( layout->text + pos_tmp + byte_char ) );
 
                     if( code_next == '\0'
                         || code == ' '
                         || code == ','
                         || code == '('
                         || code == ')'
-                        || ( mode_ascii && code_next >= 128 )
-                        || ( !mode_ascii && code_next < 128 ) ){
+                        || ( mode_ascii && code >= 128 && code_next < 128 )
+                        || ( ! mode_ascii && code < 128 && code_next >= 128 ) ) pos_left = pos_tmp + byte_char;
 
-                        // 左側が確定していなかったら左側の仮位置を移動
-                        if( ! pos_left ){
-
-                            x_left = tmp_x + PANGO_PIXELS( width_line );
-                            y_left = tmp_y;
-
-                            pos_tmp = pos + byte_char;
-                            mode_ascii = ( *( ( unsigned char* )( pos_tmp ) ) < 128 );
-                        }
-
-                        // 確定
-                        else{
-
-                            pos_right = pos;
-                            int x_right = tmp_x + PANGO_PIXELS( width_line );
-
-                            if( code != ' ' && code != ',' && code != '(' && code != ')' ) pos_right += byte_char;
-
-                            // キャレット設定
-                            caret_left.set( tmplayout, ( int )( pos_left - tmplayout->text ), x_left, x_left, y_left );
-                            caret_right.set( tmplayout, ( int )( pos_right - tmplayout->text ), x_right , x_right, tmp_y );
-
-#ifdef _DEBUG
-                            std::cout << "from : " << caret_left.byte << std::endl;
-                            std::cout << "to : " << caret_right.byte << std::endl;
-                            std::cout << "string : " << std::string( caret_left.layout->text )
-                            .substr( caret_left.byte, caret_right.byte - caret_left.byte ) << std::endl;
-#endif
-
-                            return true;
-                        }
-                    }
-                    
-                    pos += byte_char;
-                    width_line += char_width;
-
-                    if( *pos != '\0' && is_wrapped( tmp_x + PANGO_PIXELS( width_line ), width_view - m_mrg_right, pos ) ){ // wrap
-
-                        // 改行
-                        tmp_x = m_mrg_left + m_down_size * tmplayout->mrg_level;
-                        tmp_y += m_br_size;
-                        width_line = 0;
-                    }
+                    pos_tmp += byte_char;
                 }
 
-                // 次のノードへ
-                tmplayout = tmplayout->next_layout;
-            }
+                // 右位置を求める
+                int pos_right = pos;
+                while( pos_right < layout->lng_text ){
 
-            return false;
+                    int byte_char;
+                    MISC::utf8toucs2( layout->text + pos_right, byte_char );
+
+                    unsigned char code = *( ( unsigned char* )( layout->text + pos_right ) );
+                    unsigned char code_next = *( ( unsigned char* )( layout->text + pos_right + byte_char ) );
+
+                    if( code == ' '
+                        || code == ','
+                        || code == '('
+                        || code == ')' ) break;
+
+                    pos_right += byte_char;
+
+                    if( code_next == '\0'
+                        || ( mode_ascii && code < 128 && code_next >= 128 )
+                        || ( ! mode_ascii && code >= 128 && code_next < 128 ) ) break;
+                }
+
+#ifdef _DEBUG
+                std::cout << "mode_ascii = " << mode_ascii << " pos = " << pos
+                          << " pos_left = " << pos_left << " pos_right = " << pos_right << std::endl;
+#endif
+
+                // キャレット設定
+                caret_left.set( layout, pos_left );
+                caret_right.set( layout, pos_right );
+
+                return true;
+            }
         }
 
         // 次のブロックへ
-        tmpheader = tmpheader->next_header;        
+        header = header->next_header;        
     }
 
     return false;
@@ -2391,7 +2999,7 @@ bool DrawAreaBase::set_selection( CARET_POSITION& caret_pos, bool redraw )
 
     while ( layout ){
 
-        draw_one_node( layout, width_view, pos_y );
+        draw_one_node( layout, width_view, pos_y, 0, 0 );
         if( layout == layout_to ) break;
 
         if( layout->next_layout ) layout = layout->next_layout;
@@ -2570,7 +3178,7 @@ void DrawAreaBase::configure_impl()
               << " pre_width = " << m_configure_width << " pre_height = " << m_configure_height << std::endl;
 #endif
 
-    layout();
+    exec_layout();
     redraw_view();
 
     if( seen_current ) goto_num( seen_current );
@@ -2638,7 +3246,7 @@ void DrawAreaBase::slot_realize()
     m_gc = Gdk::GC::create( m_window );
     assert( m_gc );
 
-    layout();
+    exec_layout();
     m_view.grab_focus();
 }
 
@@ -2799,9 +3407,10 @@ bool DrawAreaBase::slot_motion_notify_event( GdkEventMotion* event )
 bool DrawAreaBase::motion_mouse()
 {
     const int pos = get_vscr_val();
+    CARET_POSITION caret_pos;
 
-    // 現在のマウスポインタの下にあるレイアウトノードとキャレットの更新
-    m_layout_current = set_caret( m_caret_pos_current, m_x_pointer , m_y_pointer + pos );
+    // 現在のマウスポインタの下にあるレイアウトノードとキャレットの取得
+    m_layout_current = set_caret( caret_pos, m_x_pointer , m_y_pointer + pos );
 
     int res_num = 0;
     if( m_layout_current ) res_num = m_layout_current->res_number;
@@ -2816,7 +3425,7 @@ bool DrawAreaBase::motion_mouse()
         if( m_layout_current->link  ) link_current =  m_layout_current->link;
 
         // IDや数字などの範囲選択の上にポインタがある
-        else link_current = get_selection_as_url( m_caret_pos_current );
+        else link_current = get_selection_as_url( caret_pos );
     }
 
     if( link_current != m_link_current ) link_changed = true; // 前回とリンクの文字列が変わった
@@ -2825,7 +3434,7 @@ bool DrawAreaBase::motion_mouse()
     // ドラッグ中なら範囲選択
     if( m_drugging ){
 
-        if( set_selection( m_caret_pos_current ) ){
+        if( set_selection( caret_pos ) ){
 
             if( m_scrollinfo.mode == SCROLL_NOT ) draw_drawarea();
         }

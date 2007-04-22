@@ -20,15 +20,31 @@ namespace DBTREE
     enum
     {
         NODE_HEADER = 0, // ヘッダ
+        NODE_BLOCK, // ブロック先頭
         NODE_TEXT,  // テキスト
         NODE_LINK,  // リンク
         NODE_IDNUM, // 発言回数(IDの出現数)
-        NODE_BR,     // 改行
-        NODE_DOWN_LEFT, // 左マージンのレベルをひとつ下げる。ヘッダの時点でレベル1
-        // スペース
+        NODE_BR,    // 改行
+        NODE_DIV,   // div
+        NODE_IMG,   // img
+
+        // スペース(幅0)
         NODE_ZWSP,
 
         NODE_NONE
+    };
+
+    // HEADERINFO::block
+    enum
+    {
+        BLOCK_NUMBER = 0, // レス番号
+        BLOCK_NAME,    // 名前
+        BLOCK_MAIL,   // メール
+        BLOCK_DATE,   // 日付
+        BLOCK_ID_NAME, // ID
+        BLOCK_MES,    // 本文
+
+        BLOCK_NUM
     };
 
     struct NODE;
@@ -51,13 +67,8 @@ namespace DBTREE
         char* name; // 名前
         int num_id_name; // 同じIDのレスの個数( = 発言数 )
 
-        NODE* node_res;  // レス番号ノードの先頭アドレス(リンクの色を変えるときなどに必要)
-        NODE* node_name; // 名前ノードの先頭アドレス
-        NODE* node_mail; // メールノードの先頭アドレス
-        NODE* node_id_name;  // IDノードの先頭アドレス(IDを取得したり、リンクの色を変えるときなどに必要)
-        NODE* node_body; // 本文ノードの先頭アドレス
+        NODE* block[ BLOCK_NUM ];
     };
-
 
     // リンク情報
     struct LINKINFO
@@ -88,7 +99,6 @@ namespace DBTREE
         unsigned char type;
 
         short id_header; // ヘッダID ( つまりレス番号、ルートヘッダは0 )
-        short id; // ヘッダノードから順に 0,1,2,....
         NODE* next_node; // 最終ノードはNULL
         
         char* text;

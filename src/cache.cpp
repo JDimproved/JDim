@@ -319,6 +319,24 @@ std::string CACHE::path_aadir()
 
 
 //
+// css
+//
+std::string CACHE::path_css()
+{
+    return CACHE::path_root() +  "jd.css";
+}
+
+
+//
+// res.html
+//
+std::string CACHE::path_reshtml()
+{
+    return CACHE::path_root() +  "Res.html";
+}
+
+
+//
 // キャッシュのルートディレクトリをmkdir
 //
 // 例えば  "/home/hoge/.jd/"　を作成

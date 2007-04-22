@@ -26,6 +26,8 @@ namespace IMAGE
     class ImageAreaIcon : public ImageAreaBase, public SKELETON::Dispatchable
     {
         pthread_t m_thread;
+        bool m_stop;
+
         bool m_shown;
         int m_imagetype; // dispatch()前に表示する画像を入れる
 
@@ -44,6 +46,7 @@ namespace IMAGE
 
       private:
 
+        void stop();
         void wait();
         void show_indicator( bool loading );
         virtual void callback_dispatch();

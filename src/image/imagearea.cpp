@@ -7,14 +7,6 @@
 
 #include "dbimg/img.h"
 
-#include "jdlib/miscmsg.h"
-
-#include "cache.h"
-
-#ifndef MAX
-#define MAX( a, b ) ( a > b ? a : b )
-#endif
-
 
 #ifndef MIN
 #define MIN( a, b ) ( a < b ? a : b )
@@ -45,68 +37,55 @@ void ImageAreaMain::show_image()
 #endif    
 
     set_errmsg( std::string() );
-    int width_max = get_width();
-    int height_max = get_height();
+    int width_max = 0;
+    int height_max = 0;
 
     if( get_parent() && get_parent()->get_parent() ){     // 親(EventBox)の親(ScrolledWindow)がいるときはそのサイズ
         const int mrg = 32;
         width_max = get_parent()->get_parent()->get_width() - mrg;
         height_max = get_parent()->get_parent()->get_height() - mrg;
     }
+    else{
+        width_max = Gtk::Image::get_width();
+        height_max = Gtk::Image::get_height();
+    }
 
     // まだrealizeしてなくてウィンドウサイズが取得できていないのでImageViewMain::clock_in()経由で後でもう一度呼ぶ
     if( ! is_ready()  && ( width_max <= 1 || height_max <= 1 ) ) return;
 
-    bool mosaic = get_img()->get_mosaic();
     bool zoom_to_fit = get_img()->is_zoom_to_fit();
     int size = get_img()->get_size();
 
     clear();
 
-    try{
+    // スケール調整
+    double scale = 1;
+    int w_org = get_img()->get_width();
+    int h_org = get_img()->get_height();
+    set_width( w_org );
+    set_height( h_org );
 
-        // 画像ロード
-        std::string path_cache = CACHE::path_img( get_url() );
-        Glib::RefPtr< Gdk::Pixbuf > pixbuf;
-        pixbuf = Gdk::Pixbuf::create_from_file( path_cache );
-        set_width_org( pixbuf->get_width() );
-        set_height_org( pixbuf->get_height() );
-        set_width( get_width_org() );
-        set_height( get_height_org() );
+    // 画面サイズに合わせる
+    if( zoom_to_fit && w_org && h_org ){
+        double scale_w = ( double ) width_max / w_org;
+        double scale_h = ( double ) height_max / h_org;
+        scale = MIN( scale_w, scale_h );
 
-        // スケール調整
-        bool do_scale = false;
-        double scale = 0;
-
-        // 画面サイズに合わせる
-        if( zoom_to_fit ){
-            double scale_w = ( double ) width_max / get_width();
-            double scale_h = ( double ) height_max / get_height();
-            scale = MIN( scale_w, scale_h );
-            if( scale < 1 ) do_scale = true;
+        if( scale < 1 ){
+            set_width( (int)( w_org * scale ) );
+            set_height( (int)( h_org * scale ) );
         }
-
-        else{
-
-            // サイズ変更
-            if( size != 100 ){
-                scale = size/100.;
-                do_scale = true;
-            }
-        }
-
-        set_image( pixbuf, mosaic, do_scale, scale );
-
-        //データベースのサイズ情報更新
-        get_img()->set_size( get_width() * 100 / get_width_org() );
-    }
-    catch( Glib::Error& err )
-    {
-        set_errmsg( err.what() );
-        MISC::ERRMSG( get_errmsg() );
-        set_width( width_max );
-        set_height( width_max );
     }
 
-    set_ready( true );
+    // サイズ変更
+    else if( size != 100 ){
+        scale = size/100.;
+        set_width( (int)( w_org * scale ) );
+        set_height( (int)( h_org * scale ) );
+    }
+
+    set_image();
+
+    //データベースのサイズ情報更新
+    get_img()->set_size( get_width() * 100 / get_img()->get_width() );
 }

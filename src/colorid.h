@@ -36,6 +36,7 @@ enum
     COLOR_SEPARATOR_NEW,    // 新着セパレータ
 
     END_COLOR_FOR_THREAD,
+    USRCOLOR_BASE = END_COLOR_FOR_THREAD,
 
     COLOR_BACK_BBS,         // 板一覧の背景
     COLOR_BACK_BOARD,       // スレ一覧の背景

@@ -26,6 +26,10 @@ namespace CONFIG
 #define CONF_COLOR_HL      "#ffffffff0000"  // ハイライト色
 #define CONF_COLOR_HL_TREE CONF_COLOR_HL    // ツリーのハイライト色
 
+
+// インライン画像を表示する
+#define INLINE_IMG 0
+
 }
 
 #endif

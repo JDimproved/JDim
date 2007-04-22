@@ -337,6 +337,10 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Image_Menu", "画像" ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
+    m_action_group->add( Gtk::ToggleAction::create( "UseImgView", "画像ビューを使用する", std::string(), CONFIG::get_use_image_view() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_use_imgview ) );
+    m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する", std::string(), CONFIG::get_use_inline_image() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア" ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
 
     //////////////////////////////////////////////////////
@@ -397,8 +401,12 @@ void Core::run( bool init )
         "<menuitem action='3Pane'/>"
         "<menuitem action='v3Pane'/>"
         "<separator/>"
-        "<menuitem action='EmbMes'/>"
-        "<menuitem action='EmbImg'/>"
+        "<menuitem action='EmbMes'/>";
+
+    if( CONFIG::get_use_image_view() ) str_ui +=  "<menuitem action='EmbImg'/>";
+
+    str_ui +=
+
         "</menu>"
 
         "</menu>"
@@ -456,6 +464,8 @@ void Core::run( bool init )
 
         "<menu action='Image_Menu'>"
         "<menuitem action='UseMosaic'/>"    
+        "<menuitem action='UseImgView'/>"    
+        "<menuitem action='UseInlineImg'/>"    
         "<separator/>"
         "<menuitem action='DeleteImages'/>"
         "</menu>"
@@ -873,6 +883,30 @@ void Core::slot_toggle_use_mosaic()
     CONFIG::set_use_mosaic( ! CONFIG::get_use_mosaic() );
 
     SKELETON::MsgDiag mdiag( NULL, "次に開いた画像から有効になります" );
+    mdiag.run();
+}
+
+
+//
+// 画像ビューon/off
+//
+void Core::slot_toggle_use_imgview()
+{
+    CONFIG::set_use_image_view( ! CONFIG::get_use_image_view() );
+
+    SKELETON::MsgDiag mdiag( NULL, "JDの再起動後に有効になります。再起動してください" );
+    mdiag.run();
+}
+
+
+//
+// インライン画像on/off
+//
+void Core::slot_toggle_use_inlineimg()
+{
+    CONFIG::set_use_inline_image( ! CONFIG::get_use_inline_image() );
+
+    SKELETON::MsgDiag mdiag( NULL, "次に開いたスレビューから有効になります" );
     mdiag.run();
 }
 

@@ -276,8 +276,8 @@ void ImageViewMain::show_status()
         if( get_imagearea() ){
 
             std::stringstream ss;
-            ss << get_imagearea()->get_width_org() << " x " << get_imagearea()->get_height_org();
-            if( get_imagearea()->get_width_org() )
+            ss << get_img()->get_width() << " x " << get_img()->get_height();
+            if( get_img()->get_width() )
                 ss << " (" << get_img()->get_size() << " %)";
             ss << " " << get_img()->total_length()/1024 << " kb ";
             if( get_img()->is_protected() ) ss << " キャッシュ保護されています";

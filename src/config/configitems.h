@@ -92,6 +92,9 @@ namespace CONFIG
         // 画像ビューを使用する
         bool use_image_view;
 
+        // インライン画像を表示する
+        bool use_inline_image;
+
         // 画像にモザイクかける
         bool use_mosaic;
 

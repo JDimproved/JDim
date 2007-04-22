@@ -130,6 +130,10 @@ namespace CONFIG
     const bool get_use_image_view();
     void set_use_image_view( bool image_view );
 
+    // インライン画像表示をする
+    const bool get_use_inline_image();
+    void set_use_inline_image( bool inline_img );
+
     // 画像にモザイクかける
     const bool get_use_mosaic();
     void set_use_mosaic( bool mosaic );

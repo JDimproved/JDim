@@ -12,14 +12,15 @@
 
 #include "colorid.h"
 #include "control.h"
+#include "cssmanager.h"
 
 #include <gtkmm.h>
-#include <string>
 
 namespace ARTICLE
 {
     struct LAYOUT;
     class LayoutTree;
+    class EmbeddedImage;
 
     // マウスボタンプレスとリリースのシグナル。リリース時にマウスがリンクの上にある時そのURLを渡す
     typedef sigc::signal< bool, std::string, int, GdkEventButton* > SIG_BUTTON_PRESS;
@@ -89,15 +90,11 @@ namespace ARTICLE
         // キャレット情報
         CARET_POSITION m_caret_pos;           // 現在のキャレットの位置(クリックやドラッグすると移動)
         CARET_POSITION m_caret_pos_pre;       // 移動前のキャレットの位置(選択範囲の描画などで使用する)
-        CARET_POSITION m_caret_pos_current;   // 現在のマウスポインタの下のキャレットの位置(マウスを動かすと移動)
         CARET_POSITION m_caret_pos_dragstart; // ドラッグを開始したキャレット位置
 
         // 色
-        int m_colorid_back; // 背景色
-        Gdk::Color m_color[ COLOR_NUM ];
-
-        // 新着セパレータの位置(レス番号),  0 なら表示しない
-        int m_separator_new; 
+        int m_colorid_back;     // デフォルトの背景色
+        std::vector< Gdk::Color > m_color;
 
         // 枠を描くか
         bool m_draw_frame;
@@ -109,15 +106,14 @@ namespace ARTICLE
         std::list< SELECTION > m_multi_selection;
       
         // レイアウト用
+        CORE::CSS_PROPERTY m_css_body; // body の cssプロパティ
         int m_fontid;
         int m_font_ascent;
         int m_font_descent;
         int m_font_height;
         int m_underline_pos; // 下線の位置(文字の上からのピクセル値)
         int m_br_size; // 改行量 (ピクセル値)
-        int m_mrg_left; // 左マージン幅 (ピクセル値)
-        int m_mrg_right; // 右マージン幅 (ピクセル値)
-        int m_down_size; // 字下げ幅(ピクセル)
+        int m_mrg_right; // wrap計算のときに使用する右マージン幅 (ピクセル値)
 
         // ビューのリサイズ用
         bool m_configure_reserve; // true の時は再描画する前に再レイアウトする
@@ -141,6 +137,9 @@ namespace ARTICLE
 
         // 入力コントローラ
         CONTROL::Control m_control;
+
+        // 埋め込み画像のポインタ
+        std::list< EmbeddedImage* > m_eimgs;
 
       public:
 
@@ -169,13 +168,9 @@ namespace ARTICLE
         const int get_fontid() const { return m_fontid; }
         void set_fontid( int id ){ m_fontid = id; }
 
-        // 背景色のID( colorid.h にある ID を指定)
-        const int get_colorid_back() const { return m_colorid_back; }
-        void set_colorid_back( int id ){ m_colorid_back = id; }
-
         // 新着セパレータのあるレス番号の取得とセット
-        const int get_separator_new() const { return m_separator_new; }
-        void set_separator_new( int num ){ m_separator_new = num; };
+        const int get_separator_new();
+        void set_separator_new( int num );
 
         // 範囲選択中の文字列
         const std::string str_selection(); 
@@ -232,12 +227,19 @@ namespace ARTICLE
 
       protected:
 
+        // バックスクリーン描画
+        bool draw_backscreen( bool redraw_all = false );
+
+        // 背景色のID( colorid.h にある ID を指定)
+        const int get_colorid_back();
+        void set_colorid_back( int id ){ m_colorid_back = id; }
+
         // 共通セットアップ
         void setup( bool show_abone, bool show_scrbar );
 
         // レイアウト処理
-        virtual void layout();
-        void layout_impl( bool nowrap, int offset_y, int right_mrg );
+        virtual void exec_layout();
+        bool exec_layout_impl( bool nowrap, int offset_y, int right_mrg );
 
         // バックスクリーンをDrawAreaにコピー
         bool draw_drawarea( int x = 0, int y = 0, int width = 0, int height = 0 );
@@ -257,19 +259,28 @@ namespace ARTICLE
         void init_color();
         void init_font();
 
-        // 描画、レイアウト関係
-        void configure_impl();
-        void layout_one_node( LAYOUT* node, int& x, int& y, int width_win, int& mrg_level ); 
-        bool draw_backscreen( bool redraw_all = false ); // バックスクリーン描画
-        int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );
-        void draw_one_node( LAYOUT* layout, const int& width_win, const int& pos_y );
-        void draw_one_text_node( LAYOUT* layout, const int& width_win, const int& pos_y );
-        bool set_init_wide_mode( const char* str, const int pos_start, const int pos_to );
-        bool is_wrapped( const int x, const int boarder, const char* str );
-        void layout_draw_one_node( LAYOUT* node, int& node_x, int& node_y, int& node_width, int& node_height,
-                                   int width_view, bool do_draw, bool bold = false, 
-                                   int color = COLOR_CHAR, int color_back = COLOR_BACK, int byte_from = 0, int byte_to = 0 );
+        // レイアウト処理
+        void set_align( LAYOUT* div, int id_end, int align );
+        void set_align_line( LAYOUT* div, LAYOUT* layout_from, LAYOUT* layout_to, RECTANGLE* rect_from, RECTANGLE* rect_to,
+                             int width_line, int align );
+        void layout_one_text_node( LAYOUT* node, int& node_x, int& node_y, int& br_size, const int width_view );
+        void layout_one_img_node( LAYOUT* node, int& node_x, int& node_y, int& brsize, const int width_view );
 
+        // 文字の幅などの情報
+        int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );
+        bool set_init_wide_mode( const char* str, const int pos_start, const int pos_to );
+        bool is_wrapped( const int x, const int border, const char* str );
+
+        // 描画
+        bool draw_one_node( LAYOUT* layout, const int width_win, const int pos_y, const int upper, const int lower );
+        void draw_div( LAYOUT* layout_div, const int pos_y, const int upper, const int lower );
+        void draw_one_text_node( LAYOUT* layout, const int width_win, const int pos_y );
+        void draw_string( LAYOUT* node, const int pos_y, const int width_view,
+                          const int color, const int color_back, const int byte_from, const int byte_to );
+        bool draw_one_img_node( LAYOUT* layout, const int pos_y );
+
+        // drawarea がリサイズ実行
+        void configure_impl();
 
         // 整数 -> 文字変換してノードに発言数をセット
         int set_num_id( LAYOUT* layout );
@@ -280,6 +291,9 @@ namespace ARTICLE
         int get_vscr_maxval();
 
         // キャレット関係
+        bool is_pointer_on_rect( RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
+                                 const int x, const int y,
+                                 int& pos, int& width_line, int& char_width, int& byte_char );
         LAYOUT* set_caret( CARET_POSITION& caret_pos, int x, int y );
         bool set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,  int x, int y );
 
