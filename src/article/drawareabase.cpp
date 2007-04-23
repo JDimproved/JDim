@@ -428,6 +428,7 @@ void DrawAreaBase::append_res( int from_num, int to_num )
         if( css ) m_scrollinfo.dy += css->mrg_top + css->mrg_bottom;
         if( rect ) m_scrollinfo.dy += rect->height;
         if( m_scrollinfo.dy ){
+            redraw_view();
             m_scrollinfo.mode = SCROLL_NORMAL;
             exec_scroll( false );
         }
