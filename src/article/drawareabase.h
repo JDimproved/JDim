@@ -238,7 +238,7 @@ namespace ARTICLE
         void setup( bool show_abone, bool show_scrbar );
 
         // レイアウト処理
-        virtual void exec_layout();
+        virtual bool exec_layout();
         bool exec_layout_impl( bool nowrap, int offset_y, int right_mrg );
 
         // バックスクリーンをDrawAreaにコピー

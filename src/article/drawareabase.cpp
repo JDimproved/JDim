@@ -548,8 +548,7 @@ void DrawAreaBase::clear_screen()
     clear();
     init_color();
     init_font();
-    exec_layout();
-    redraw_view();
+    if( exec_layout() ) redraw_view();
 }
 
 
@@ -576,9 +575,9 @@ void DrawAreaBase::redraw_view()
 //
 // レイアウト(ノードの座標演算)実行
 //
-void DrawAreaBase::exec_layout()
+bool DrawAreaBase::exec_layout()
 {
-    exec_layout_impl( false, 0, 0 );
+    return exec_layout_impl( false, 0, 0 );
 }
 
 
@@ -1392,8 +1391,10 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
         header = header->next_header;        
     }
 
-    // 再レイアウト
-    if( relayout ) exec_layout();
+    // 再レイアウト & 再描画
+    if( relayout ){
+        if( exec_layout() ) redraw_view();
+    }
 
     return true;
 }
@@ -3178,8 +3179,7 @@ void DrawAreaBase::configure_impl()
               << " pre_width = " << m_configure_width << " pre_height = " << m_configure_height << std::endl;
 #endif
 
-    exec_layout();
-    redraw_view();
+    if( exec_layout() ) redraw_view();
 
     if( seen_current ) goto_num( seen_current );
 }

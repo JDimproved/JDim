@@ -20,7 +20,7 @@ namespace ARTICLE
       protected:
 
         // レイアウト実行
-        virtual void exec_layout();
+        virtual bool exec_layout();
 
         // リサイズした
         virtual bool slot_configure_event( GdkEventConfigure* event );
