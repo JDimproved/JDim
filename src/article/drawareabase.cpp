@@ -3060,6 +3060,7 @@ bool DrawAreaBase::set_selection_str()
             if( start_copy ){
 
                 if( tmplayout->type == DBTREE::NODE_BR ) m_selection.str += "\n";
+                else if( tmplayout->type == DBTREE::NODE_DIV ) m_selection.str += "\n";
 
                 else if( tmplayout->text ){
                     if( copy_from || copy_to ) m_selection.str += std::string( tmplayout->text ).substr( copy_from, copy_to - copy_from );

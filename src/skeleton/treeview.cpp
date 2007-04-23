@@ -198,6 +198,7 @@ void JDTreeView::delete_popup()
 void JDTreeView::goto_top()
 {
     if( ! get_model() ) return;
+    if( ! get_model()->children().size() ) return;
 
     Gtk::TreePath path = get_model()->get_path(  *( get_model()->children().begin() ) );
     scroll_to_row( path, 0 );
@@ -211,6 +212,7 @@ void JDTreeView::goto_top()
 void JDTreeView::goto_bottom()
 {
     if( ! get_model() ) return;
+    if( ! get_model()->children().size() ) return;
 
     Gtk::TreePath path = get_model()->get_path( *( get_model()->children().rbegin() ) );
     scroll_to_row( path, 0 );

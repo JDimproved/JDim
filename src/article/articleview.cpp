@@ -301,8 +301,8 @@ void ArticleViewMain::relayout()
     int separator_new = drawarea()->get_separator_new();
 
     drawarea()->clear_screen();
-    drawarea()->append_res( 1, get_article()->get_number_load() );
     drawarea()->set_separator_new( separator_new );
+    drawarea()->append_res( 1, get_article()->get_number_load() );
     drawarea()->goto_num( seen );
     drawarea()->redraw_view();
 }
