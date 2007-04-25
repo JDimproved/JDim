@@ -351,7 +351,7 @@ void DrawAreaBase::hide_separator_new()
     if( ! get_separator_new() ) return;
 
     m_layout_tree->set_separator_new( 0 );
-    if( exec_layout() ) redraw_view();    
+    exec_layout();
 }
 
 
@@ -814,12 +814,15 @@ bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
     if( adjust ){
 
         double current = adjust->get_value();
+        double newpos = MAX( 0, MIN( m_height_client - height_view , current ) );
+        m_pre_pos_y = (int) newpos;
+
         adjust->set_lower( 0 );
-        adjust->set_upper( y );
-        adjust->set_page_size(  height_view );
+        adjust->set_upper( m_height_client );
+        adjust->set_page_size( height_view );
         adjust->set_step_increment( m_br_size );
         adjust->set_page_increment(  height_view / 2 );
-        adjust->set_value( MAX( 0, MIN( adjust->get_upper() - adjust->get_page_size() , current ) ) );
+        adjust->set_value( newpos );
     }
 
     // 裏描画画面作成と初期描画
@@ -845,7 +848,7 @@ bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
 void DrawAreaBase::set_align( LAYOUT* div, int id_end, int align )
 {
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::set_align width = " << div->rect->width << std::endl;
+//    std::cout << "DrawAreaBase::set_align width = " << div->rect->width << std::endl;
 #endif
 
     LAYOUT* layout_from = NULL;
@@ -871,7 +874,7 @@ void DrawAreaBase::set_align( LAYOUT* div, int id_end, int align )
             width_line += rect->width;
 
 #ifdef _DEBUG
-            std::cout << "id = " << layout->id << " w = " << width_line << std::endl;
+//            std::cout << "id = " << layout->id << " w = " << width_line << std::endl;
 #endif
 
             if( rect->end ) break;
@@ -901,7 +904,7 @@ void DrawAreaBase::set_align_line( LAYOUT* div, LAYOUT* layout_from, LAYOUT* lay
     if( align == CORE::ALIGN_CENTER ) padding /= 2;
 
 #ifdef _DEBUG
-    std::cout << "from = " << layout_from->id << " padding = " << padding << std::endl;
+//    std::cout << "from = " << layout_from->id << " padding = " << padding << std::endl;
 #endif
 
     for(;;){
