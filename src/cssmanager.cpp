@@ -181,202 +181,300 @@ void Css_Manager::set_default_css()
 //
 // css 読み込み
 //
-
-#define GET_PROPVAL() {\
-std::string sizestr = regex.str( 2 ); \
-size = atof( sizestr.c_str() ); \
-type = SIZETYPE_PX; \
-if( sizestr.find( "em" ) != std::string::npos ) type = SIZETYPE_EM; \
-}while(0)
-
 bool Css_Manager::read_css()
 {
-    const std::string cssfile = CACHE::path_css();
+    const std::string css_file = CACHE::path_css();
 
 #ifdef _DEBUG
-    std::cout << "Css_Manager::read_css file = " << cssfile << std::endl;
+    std::cout << "Css_Manager::read_css file = " << css_file << std::endl;
 #endif    
 
-    std::string cssdat;
-    if( ! CACHE::load_rawdata( cssfile, cssdat ) ) return false;
+    std::string css_data;
+    if( ! CACHE::load_rawdata( css_file, css_data ) ) return false;
 
 #ifdef _DEBUG
-    std::cout << "css : \n" << cssdat << "--------------\n\n";
+    std::cout << "css : \n" << css_data << "--------------\n\n";
 #endif
 
-    // '}' でcssを分ける
-    std::list< std::string > blocks = MISC::StringTokenizer( cssdat, '}' );
+    // 改行を取り除く
+    css_data = MISC::remove_str( css_data, "\n" );
+    // コメントを取り除く
+    css_data = MISC::remove_commentrange_from_str( css_data, "/*", "*/" );
 
-    JDLIB::Regex regex;
+    size_t start_pos = 0, l_pos = 0, r_pos = 0;
+    while( ( l_pos = css_data.find( "{", start_pos ) ) != std::string::npos &&
+            ( r_pos = css_data.find( "}", l_pos + 1 ) ) != std::string::npos )
+    {
+        // セレクタ部分を取り出す
+        std::string selector = MISC::remove_space( css_data.substr( start_pos, l_pos - start_pos ) );
+        start_pos = r_pos + 1;
+        if( selector.find( "." ) == 0 ) selector.erase( 0, 1 );
+        if( selector.empty() ) break;
 
-    std::list< std::string >::iterator it_block = blocks.begin();
-    for( ; it_block != blocks.end(); ++it_block ){
-
-        std::string classname;
-        std::string block = MISC::tolower_str( MISC::remove_str( *it_block, " " ) );
-
-        // name取得
-        if( regex.exec( "^(body)\\{", block, 0, true ) || regex.exec( "^\\.([^\\{]*)\\{", block, 0, true ) 
-            ){
-
-            classname = MISC::remove_space( regex.str( 1 ) );
+        // {中身}を取り出す
+        std::string range = css_data.substr( l_pos + 1, r_pos - l_pos - 1 );
 
 #ifdef _DEBUG
-            std::cout << std::endl << "name = " << classname << std::endl;
+        std::cout << "selector = " << selector << std::endl;
 #endif
+
+        // 中身を";"で分ける
+        std::list< std::string > properties = MISC::StringTokenizer( range, ';' );
+
+        // プロパティペア(名前, 値)の作成
+        std::map< std::string, std::string > css_pair;
+        std::list< std::string >::iterator it = properties.begin();
+        while( it != properties.end() )
+        {
+            size_t colon = (*it).find( ":" );
+            std::string key = MISC::remove_space( (*it).substr( 0, colon ) );
+            std::string value = MISC::remove_space( (*it).substr( colon + 1 ) );
+
+#ifdef _DEBUG
+            std::cout << "  key = " << key << " value = " << value << std::endl;
+#endif
+
+            css_pair.insert( make_pair( key, value ) );
+
+            ++it;
         }
 
-        CSS_PROPERTY css;
-        clear_property( &css );
-
-#ifdef _DEBUG
-        std::cout << block << "------------------\n" << std::endl;
-#endif
-
-        // 各プロパティ取得
-        // 改行を消した後に ';' で文字列を分ける
-        block = MISC::remove_str( block, "\n" );
-        std::list< std::string > props = MISC::StringTokenizer( block, ';' );
-        std::list< std::string >::iterator it_prop = props.begin();
-        for( ; it_prop != props.end(); ++it_prop ){
-
-            std::string& prop = *it_prop;
-
-            /////////////////////
-            // background-color
-            if( regex.exec( "background-color:(.*)", prop, 0, true ) ){
-
-                std::string color = regex.str( 1 );
-
-#ifdef _DEBUG
-                std::cout << "backgraound-color = " << color << std::endl;
-#endif
-
-                m_colors.push_back( MISC::htmlcolor_to_str( color ) );
-                css.bg_color = USRCOLOR_BASE + m_colors.size()-1;
-            }
-
-            /////////////////////
-            // border-color
-            else if( regex.exec( "border-([^-]*)-color:(.*)", prop, 0, true ) ){
-
-                std::string mode = regex.str( 1 );
-                std::string color = regex.str( 2 );
-
-#ifdef _DEBUG
-                std::cout << "border-" << mode << "-color = " << color << std::endl;
-#endif
-                m_colors.push_back( MISC::htmlcolor_to_str( color ) );
-                int colorid = USRCOLOR_BASE + m_colors.size()-1;
-
-                if( mode == "left" ) css.border_left_color = colorid;
-                if( mode == "right" ) css.border_right_color = colorid;
-                if( mode == "top" ) css.border_top_color = colorid;
-                if( mode == "bottom" ) css.border_bottom_color = colorid;
-            }
-
-            /////////////////////
-            // color
-            else if( regex.exec( "color:(.*)", prop, 0, true ) ){
-
-                std::string color = regex.str( 1 );
-
-#ifdef _DEBUG
-                std::cout << "color = " << color << std::endl;
-#endif
-
-                m_colors.push_back( MISC::htmlcolor_to_str( color ) );
-                css.color = USRCOLOR_BASE + m_colors.size()-1;
-            }
-
-            /////////////////////
-            // text-align
-            else if( regex.exec( "text-align:(.*)", prop, 0, true ) ){
-
-                std::string align = regex.str( 1 );
-
-#ifdef _DEBUG
-                std::cout << "text-align = " << align << std::endl;
-#endif
-
-                if( align == "left" ) css.align = ALIGN_LEFT;
-                if( align == "center" ) css.align = ALIGN_CENTER;
-                if( align == "right" ) css.align = ALIGN_RIGHT;
-            }
-
-            /////////////////////
-            // padding
-            else if( regex.exec( "padding-([^:]*):(.*)", prop, 0, true ) ){
-
-                std::string mode = regex.str( 1 );
-                int type;
-                double size;
-                GET_PROPVAL();
-
-#ifdef _DEBUG
-                std::cout << "padding-" << mode << " size = " << size << " type = " << type << std::endl;
-#endif
-                if( mode == "left" ) if( type == SIZETYPE_EM ) css.padding_left_em = size; else css.padding_left_px = (int)size;
-                if( mode == "right" ) if( type == SIZETYPE_EM ) css.padding_right_em = size; else css.padding_right_px = (int)size;
-                if( mode == "top" ) if( type == SIZETYPE_EM ) css.padding_top_em = size; else css.padding_top_px = (int)size;
-                if( mode == "bottom" ) if( type == SIZETYPE_EM ) css.padding_bottom_em = size; else css.padding_bottom_px = (int)size;
-            }
-
-
-            /////////////////////
-            // mrg
-            else if( regex.exec( "mrg-([^:]*):(.*)", prop, 0, true ) ){
-
-                std::string mode = regex.str( 1 );
-                int type;
-                double size;
-                GET_PROPVAL();
-
-#ifdef _DEBUG
-                std::cout << "mrg-" << mode << " size = " << size << " type = " << type << std::endl;
-#endif
-                if( mode == "left" ) if( type == SIZETYPE_EM ) css.mrg_left_em = size; else css.mrg_left_px = (int)size;
-                if( mode == "right" ) if( type == SIZETYPE_EM ) css.mrg_right_em = size; else css.mrg_right_px = (int)size;
-                if( mode == "top" ) if( type == SIZETYPE_EM ) css.mrg_top_em = size; else css.mrg_top_px = (int)size;
-                if( mode == "bottom" ) if( type == SIZETYPE_EM ) css.mrg_bottom_em = size; else css.mrg_bottom_px = (int)size;
-            }
-
-            /////////////////////
-            // border-width
-            else if( regex.exec( "border-([^-]*)-width:(.*)", prop, 0, true ) ){
-
-                std::string mode = regex.str( 1 );
-                int type;
-                double size;
-                GET_PROPVAL();
-
-#ifdef _DEBUG
-                std::cout << "border-" << mode << "-width size = " << size << " type = " << type << std::endl;
-#endif
-                if( mode == "left" ) if( type == SIZETYPE_EM ) css.border_left_width_em = size; else css.border_left_width_px = (int)size;
-                if( mode == "right" ) if( type == SIZETYPE_EM ) css.border_right_width_em = size; else css.border_right_width_px = (int)size;
-                if( mode == "top" ) if( type == SIZETYPE_EM ) css.border_top_width_em = size; else css.border_top_width_px = (int)size;
-                if( mode == "bottom" ) if( type == SIZETYPE_EM ) css.border_bottom_width_em = size; else css.border_bottom_width_px = (int)size;
-            }
-
-            /////////////////////
-            // border-style
-            else if( regex.exec( "border-style:(.*)", prop, 0, true ) ){
-
-                std::string style = regex.str( 1 );
-
-#ifdef _DEBUG
-                std::cout << "border-style" << style << std::endl;
-#endif
-                if( style == "solid" ) css.border_style = BORDER_SOLID;
-            }
-        }
-
-        set_property( classname, css );
+        // 各プロパティを作成
+        if( css_pair.size() ) set_property( selector, create_property( css_pair ) );
     }
 
     return true;
 }
+
+
+
+// CSS_PROPERTY を作成
+#define GET_PROPVAL() {\
+std::string sizestr = value; \
+size = atof( sizestr.c_str() ); \
+type = SIZETYPE_PX; \
+if( sizestr.find( "em" ) != std::string::npos ) type = SIZETYPE_EM; \
+}while(0)
+CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string > css_pair )
+{
+    CSS_PROPERTY css;
+    clear_property( &css );
+
+    JDLIB::Regex regex;
+
+    std::map< std::string, std::string >::iterator it = css_pair.begin();
+    for( ; it != css_pair.end(); ++it )
+    {
+        const std::string key = (*it).first;
+        const std::string value = (*it).second;
+
+        // background-color
+        if( key == "background-color" )
+        {
+
+#ifdef _DEBUG
+            std::cout << "background-color = " << value << std::endl;
+#endif
+
+            m_colors.push_back( MISC::htmlcolor_to_str( value ) );
+            css.bg_color = USRCOLOR_BASE + m_colors.size()-1;
+        }
+        // border-color
+        else if( key == "border-color" )
+        {
+
+#ifdef _DEBUG
+            std::cout << "border-color = " << value << std::endl;
+#endif
+
+            m_colors.push_back( MISC::htmlcolor_to_str( value ) );
+            int colorid = USRCOLOR_BASE + m_colors.size()-1;
+
+            css.border_left_color = colorid;
+            css.border_right_color = colorid;
+            css.border_top_color = colorid;
+            css.border_bottom_color = colorid;
+        }
+        // border-*-color
+        else if( regex.exec( "border-([a-z]+)-color", key, 0, true ) )
+        {
+            std::string mode = regex.str( 1 );
+
+#ifdef _DEBUG
+            std::cout << "border-" << mode << "-color = " << value << std::endl;
+#endif
+            m_colors.push_back( MISC::htmlcolor_to_str( value ) );
+            int colorid = USRCOLOR_BASE + m_colors.size()-1;
+
+            if( mode == "left" ) css.border_left_color = colorid;
+            else if( mode == "right" ) css.border_right_color = colorid;
+            else if( mode == "top" ) css.border_top_color = colorid;
+            else if( mode == "bottom" ) css.border_bottom_color = colorid;
+        }
+        // border-style
+        else if( key == "border-style" )
+        {
+
+#ifdef _DEBUG
+            std::cout << "border-style = " << value << std::endl;
+#endif
+            if( value == "solid" ) css.border_style = BORDER_SOLID;
+        }
+        // border-width
+        else if( key == "border-width" )
+        {
+            int type;
+            double size;
+            GET_PROPVAL();
+
+#ifdef _DEBUG
+            std::cout << "border-width = " << size << std::endl;
+#endif
+
+            if( type == SIZETYPE_EM )
+            {
+                css.border_left_width_em = size;
+                css.border_right_width_em = size;
+                css.border_right_width_em = size;
+                css.border_bottom_width_em = size;
+            }
+            else
+            {
+                css.border_left_width_px = (int)size;
+                css.border_right_width_px = (int)size;
+                css.border_top_width_px = (int)size;
+                css.border_bottom_width_px = (int)size;
+            }
+        }
+        // border-*-width
+        else if( regex.exec( "border-([a-z]+)-width", key, 0, true ) )
+        {
+            std::string mode = regex.str( 1 );
+            int type;
+            double size;
+            GET_PROPVAL();
+
+#ifdef _DEBUG
+            std::cout << "border-" << mode << "-width size = " << size << " type = " << type << std::endl;
+#endif
+            if( mode == "left" ) if( type == SIZETYPE_EM ) css.border_left_width_em = size; else css.border_left_width_px = (int)size;
+            else if( mode == "right" ) if( type == SIZETYPE_EM ) css.border_right_width_em = size; else css.border_right_width_px = (int)size;
+            else if( mode == "top" ) if( type == SIZETYPE_EM ) css.border_top_width_em = size; else css.border_top_width_px = (int)size;
+            else if( mode == "bottom" ) if( type == SIZETYPE_EM ) css.border_bottom_width_em = size; else css.border_bottom_width_px = (int)size;
+        }
+        // color
+        else if( key == "color" )
+        {
+
+#ifdef _DEBUG
+            std::cout << "color = " << value << std::endl;
+#endif
+
+            m_colors.push_back( MISC::htmlcolor_to_str( value ) );
+            css.color = USRCOLOR_BASE + m_colors.size()-1;
+        }
+        // margin
+        else if( key == "margin" )
+        {
+            int type;
+            double size;
+            GET_PROPVAL();
+
+#ifdef _DEBUG
+            std::cout << "margin = " << size << std::endl;
+#endif
+
+            if( type == SIZETYPE_EM )
+            {
+                css.mrg_left_em = size;
+                css.mrg_right_em = size;
+                css.mrg_right_em = size;
+                css.mrg_bottom_em = size;
+            }
+            else
+            {
+                css.mrg_left_px = (int)size;
+                css.mrg_right_px = (int)size;
+                css.mrg_top_px = (int)size;
+                css.mrg_bottom_px = (int)size;
+            }
+        }
+        // margin-*
+        else if( regex.exec( "margin-([a-z]+)", key, 0, true ) )
+        {
+            std::string mode = regex.str( 1 );
+            int type;
+            double size;
+            GET_PROPVAL();
+
+#ifdef _DEBUG
+            std::cout << "margin-" << mode << " size = " << size << " type = " << type << std::endl;
+#endif
+
+            if( mode == "left" ) if( type == SIZETYPE_EM ) css.mrg_left_em = size; else css.mrg_left_px = (int)size;
+            else if( mode == "right" ) if( type == SIZETYPE_EM ) css.mrg_right_em = size; else css.mrg_right_px = (int)size;
+            else if( mode == "top" ) if( type == SIZETYPE_EM ) css.mrg_top_em = size; else css.mrg_top_px = (int)size;
+            else if( mode == "bottom" ) if( type == SIZETYPE_EM ) css.mrg_bottom_em = size; else css.mrg_bottom_px = (int)size;
+        }            
+        // padding
+        else if( key == "padding" )
+        {
+            int type;
+            double size;
+            GET_PROPVAL();
+
+#ifdef _DEBUG
+            std::cout << "padding = " << size << std::endl;
+#endif
+
+            if( type == SIZETYPE_EM )
+            {
+                css.padding_left_em = size;
+                css.padding_right_em = size;
+                css.padding_top_em = size;
+                css.padding_bottom_em = size;
+            }
+            else
+            {
+                css.padding_left_px = (int)size;
+                css.padding_right_px = (int)size;
+                css.padding_top_px = (int)size;
+                css.padding_bottom_px = (int)size;
+            }
+        }
+        // padding-*
+        else if( regex.exec( "padding-([a-z]+)", key, 0, true ) )
+        {
+            std::string mode = regex.str( 1 );
+            int type;
+            double size;
+            GET_PROPVAL();
+
+#ifdef _DEBUG
+            std::cout << "padding-" << mode << " size = " << size << " type = " << type << std::endl;
+#endif
+            if( mode == "left" ) if( type == SIZETYPE_EM ) css.padding_left_em = size; else css.padding_left_px = (int)size;
+            else if( mode == "right" ) if( type == SIZETYPE_EM ) css.padding_right_em = size; else css.padding_right_px = (int)size;
+            else if( mode == "top" ) if( type == SIZETYPE_EM ) css.padding_top_em = size; else css.padding_top_px = (int)size;
+            else if( mode == "bottom" ) if( type == SIZETYPE_EM ) css.padding_bottom_em = size; else css.padding_bottom_px = (int)size;
+        }
+        // text-align
+        else if( key == "text-align" )
+        {
+
+#ifdef _DEBUG
+            std::cout << "text-align = " << value << std::endl;
+#endif
+
+            if( value == "left" ) css.align = ALIGN_LEFT;
+            else if( value == "center" ) css.align = ALIGN_CENTER;
+            else if( value == "right" ) css.align = ALIGN_RIGHT;
+        }
+    }
+
+    return css;
+}
+
 
 
 //
