@@ -1952,11 +1952,11 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
 #ifdef USE_PANGOLAYOUT  // Pango::Layout を使って文字を描画
 
             m_pango_layout->set_text( Glib::ustring( node->text + pos_start, n_ustr ) );
-            m_backscreen->draw_layout( m_gc, node_x, pos_y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
+            m_backscreen->draw_layout( m_gc,x, rect->y - pos_y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
 
             if( node->bold ){
                 m_gc->set_foreground( m_color[ color ] );
-                m_backscreen->draw_layout( m_gc, node_x+1, pos_y, m_pango_layout );
+                m_backscreen->draw_layout( m_gc, x+1, rect->y - pos_y, m_pango_layout );
             }
             
 #else // Pango::GlyphString を使って文字を描画
