@@ -31,6 +31,9 @@ namespace MISC
     // list_inからコメント行(#)を除いてリストを返す
     std::list< std::string > remove_commentline_from_list( std::list< std::string >& list_in );
 
+    // strからコメントの範囲を取り除く ( /* コメント */ など )
+    std::string remove_commentrange_from_str( std::string& str, const std::string& start, const std::string& end );
+
     // 空白とカンマで区切られた str_in の文字列をリストにして出力
     // \"は " に置換される
     // (例)  "aaa" "bbb" "\"ccc\""  → aaa と bbb と "ccc"
