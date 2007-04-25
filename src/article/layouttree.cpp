@@ -536,17 +536,7 @@ void LayoutTree::move_separator()
     LAYOUT* header_before;
     LAYOUT* header_after;
 
-    // 表示中なら取り除く
-    if( m_separator_new ){
-        header_before = get_header_of_res( m_separator_new -1 );
-        if( header_before ) header_before->next_header = m_separator_header->next_header;
-
-#ifdef _DEBUG
-        std::cout << "removed num = " << m_separator_new << std::endl;
-#endif    
-    }
-
-    m_separator_new = 0;
+    hide_separator();
 
     if( ! num ) return;
 
@@ -566,4 +556,24 @@ void LayoutTree::move_separator()
 #ifdef _DEBUG
     std::cout << "set before = " << num_tmp << " after = " << m_separator_new << std::endl;
 #endif    
+}
+
+
+//
+// 新着セパレータ消去
+//
+void LayoutTree::hide_separator()
+{
+    // 表示中なら取り除く
+    if( m_separator_new ){
+
+#ifdef _DEBUG
+    std::cout << "LayoutTree::hide_separator num = " << m_separator_new << std::endl;
+#endif    
+
+        LAYOUT* header_before = get_header_of_res( m_separator_new -1 );
+        if( header_before ) header_before->next_header = m_separator_header->next_header;
+    }
+
+    m_separator_new = 0;
 }

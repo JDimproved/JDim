@@ -146,6 +146,7 @@ namespace ARTICLE
         // set_separator_new()にレス番号をセットしてからmove_separator()を呼ぶ
         void set_separator_new( int num ){ m_separator_new_reserve = num; }
         void move_separator();
+        void hide_separator();
         const int get_separator_new() const { return m_separator_new; }
 
       private:

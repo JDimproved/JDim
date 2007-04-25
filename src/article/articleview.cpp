@@ -240,11 +240,15 @@ void ArticleViewMain::update_finish()
     std::cout << "ArticleViewMain::update_finish " << str_label << " code = " << code << std::endl;;
 #endif
 
+    // 新着セパレータを消す
+    int number_new = DBTREE::article_number_new( url_article() );
+    if( ! number_new ) drawarea()->hide_separator_new();
+
     // ステータス表示
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::article_str_code( url_article() )
            << " [ 全 " << DBTREE::article_number_load( url_article() )
-           << " / 新着 " << DBTREE::article_number_new( url_article() );
+           << " / 新着 " << number_new;
 
     if( DBTREE::article_write_time( url_article() ) ) ss_tmp << " / 最終書込 " << DBTREE::article_write_date( url_article() );
 

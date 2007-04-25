@@ -171,6 +171,7 @@ namespace ARTICLE
         // 新着セパレータのあるレス番号の取得とセット
         const int get_separator_new();
         void set_separator_new( int num );
+        void hide_separator_new();
 
         // 範囲選択中の文字列
         const std::string str_selection(); 

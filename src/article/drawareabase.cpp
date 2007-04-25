@@ -345,6 +345,14 @@ void DrawAreaBase::set_separator_new( int num )
     m_layout_tree->set_separator_new( num );
 }
 
+// 新着セパレータを隠す
+void DrawAreaBase::hide_separator_new()
+{
+    if( ! get_separator_new() ) return;
+
+    m_layout_tree->set_separator_new( 0 );
+    if( exec_layout() ) redraw_view();    
+}
 
 
 // 範囲選択中の文字列
