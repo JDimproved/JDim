@@ -19,6 +19,8 @@
 
 #define SIZE_OF_HEAP 256 * 1024
 
+#define STEP_ID 10
+#define STEP_SEPARATOR 1
 
 // 埋め込み画像用構造体
 #define MAX_IMGITEM 512
@@ -82,7 +84,7 @@ void LayoutTree::clear()
     m_last_header = NULL;
     m_max_res_number = 0;
 
-    m_id_header = -1; // ルートヘッダのIDが 0 になるように -1 を入れておく
+    m_id_header = -STEP_ID; // ルートヘッダのIDが 0 になるように -STEP_ID を入れておく
     m_root_header = create_layout_header();
     
     if( m_local_nodetree ) delete m_local_nodetree;
@@ -132,7 +134,7 @@ LAYOUT* LayoutTree::create_layout_header()
 {
     m_last_layout = NULL;
     m_id_layout = 0;
-    ++m_id_header;
+    m_id_header += STEP_ID;
 
     int classid = CORE::get_css_manager()->get_classid( "res" );
     LAYOUT* header = create_layout_div( classid );
@@ -508,13 +510,17 @@ LAYOUT* LayoutTree::get_header_of_res( int number )
 //
 LAYOUT* LayoutTree::create_separator()
 {
+    m_last_layout = NULL;
+    m_id_layout = 0;
+
     int classid = CORE::get_css_manager()->get_classid( "separator" );
     LAYOUT* header = create_layout_div( classid );
     header->type = DBTREE::NODE_HEADER;
 
     if( header->css->bg_color < 0 ) header->css->bg_color = COLOR_SEPARATOR_NEW;
 
-    create_layout_text( "ここまで読んだ", NULL, false );
+    LAYOUT* layout = create_layout_text( "ここまで読んだ", NULL, false );
+    layout->header = header;
 
     return header;
 }
@@ -533,6 +539,7 @@ void LayoutTree::move_separator()
 
     if( num == m_separator_new ) return;
 
+    // header_before　と　header_after　の間に挿入する
     LAYOUT* header_before;
     LAYOUT* header_after;
 
@@ -549,9 +556,17 @@ void LayoutTree::move_separator()
     while( ! ( header_before = get_header_of_res( num_tmp ) ) && num_tmp-- > 1 );
     if( ! header_before ) return;
 
+    m_separator_new = num;
     header_before->next_header = m_separator_header;
     m_separator_header->next_header = header_after;
-    m_separator_new = num;
+
+    // セパレータのヘッダID変更
+    int id_header = header_before->id_header + STEP_SEPARATOR;
+    LAYOUT* layout = m_separator_header;
+    while( layout ){
+        layout->id_header = id_header;
+        layout = layout->next_layout;
+    }
 
 #ifdef _DEBUG
     std::cout << "set before = " << num_tmp << " after = " << m_separator_new << std::endl;
