@@ -245,13 +245,12 @@ std::list< std::string > MISC::remove_commentline_from_list( std::list< std::str
 //
 std::string MISC::remove_commentrange_from_str( std::string& str, const std::string& start, const std::string& end )
 {
-    size_t start_pos = 0, l_pos = 0, r_pos = 0;
+    size_t l_pos = 0, r_pos = 0;
 
-    while( ( l_pos = str.find( start, start_pos ) ) != std::string::npos &&
+    while( ( l_pos = str.find( start ) ) != std::string::npos &&
             ( r_pos = str.find( end, l_pos + start.length() ) ) != std::string::npos )
     {
         str.erase( l_pos, r_pos - l_pos + end.length() );
-        start_pos = r_pos + end.length();
     }
 
     return str;
