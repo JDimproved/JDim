@@ -1269,7 +1269,7 @@ void BoardBase::read_board_info()
 
     std::string str_tmp;
 
-    // あぼーん id
+    // あぼーん id は再起動ごとにリセット
 //    str_tmp = cf.get_option( "aboneid", "" );
 //    if( ! str_tmp.empty() ) m_list_abone_id = MISC::strtolist( str_tmp );
 
@@ -1362,6 +1362,7 @@ void BoardBase::save_jdboard_info()
          << "view_sort_pre_mode = " << m_view_sort_pre_mode << std::endl
          << "check_noname = " << m_check_noname << std::endl
 
+    // IDは再起動ごとにリセット
 //         << "aboneid = " << str_abone_id << std::endl
          << "abonename = " << str_abone_name << std::endl
          << "aboneword = " << str_abone_word << std::endl

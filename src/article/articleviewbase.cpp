@@ -234,7 +234,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "AboneName", "NG 名前に追加 (対象: ローカル)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
     action_group()->add( Gtk::Action::create( "AboneWord", "NG ワードに追加 (対象: ローカル)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word ) );
 
-    action_group()->add( Gtk::Action::create( "AboneIDBoard", "NG IDに追加 (対象: 板)" ) );
+    action_group()->add( Gtk::Action::create( "AboneIDBoard", "NG IDに追加 (対象: 板、一時的)" ) );
     action_group()->add( Gtk::Action::create( "SetAboneIDBoard", "追加する"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id_board ) );
     action_group()->add( Gtk::Action::create( "AboneNameBoard", "NG 名前に追加 (対象: 板)" ) );
     action_group()->add( Gtk::Action::create( "SetAboneNameBoard", "追加する"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name_board ) );

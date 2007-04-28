@@ -326,8 +326,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード設定" ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
 
     m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん" ) );
-    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん設定(対象: スレビュー)を編集" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
-    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん設定(対象: スレ一覧)を編集" ),
+    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん設定(対象: スレビュー)" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
+    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん設定(対象: スレ一覧)" ),
                          sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "デフォルトで透明/連鎖あぼ〜ん", std::string(),
