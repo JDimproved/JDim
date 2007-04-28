@@ -1267,9 +1267,11 @@ void BoardBase::read_board_info()
 
     m_check_noname = cf.get_option( "check_noname", false );
 
+    std::string str_tmp;
+
     // あぼーん id
-    std::string str_tmp = cf.get_option( "aboneid", "" );
-    if( ! str_tmp.empty() ) m_list_abone_id = MISC::strtolist( str_tmp );
+//    str_tmp = cf.get_option( "aboneid", "" );
+//    if( ! str_tmp.empty() ) m_list_abone_id = MISC::strtolist( str_tmp );
 
     // あぼーん name
     str_tmp = cf.get_option( "abonename", "" );
@@ -1360,7 +1362,7 @@ void BoardBase::save_jdboard_info()
          << "view_sort_pre_mode = " << m_view_sort_pre_mode << std::endl
          << "check_noname = " << m_check_noname << std::endl
 
-         << "aboneid = " << str_abone_id << std::endl
+//         << "aboneid = " << str_abone_id << std::endl
          << "abonename = " << str_abone_name << std::endl
          << "aboneword = " << str_abone_word << std::endl
          << "aboneregex = " << str_abone_regex << std::endl
