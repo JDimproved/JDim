@@ -230,12 +230,20 @@ void ArticleViewBase::setup_action()
     // あぼーん系
     action_group()->add( Gtk::Action::create( "AboneWord_Menu", "NG ワード" ) );
     action_group()->add( Gtk::Action::create( "AboneRes", "レスをあぼ〜んする"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_res ) );
-    action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
-    action_group()->add( Gtk::Action::create( "AboneName", "NG 名前に追加 (ローカルあぼ〜ん)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
-    action_group()->add( Gtk::Action::create( "GlobalAboneName", "NG 名前に追加 (全体あぼ〜ん)" ) );
+    action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加 (対象: ローカル)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
+    action_group()->add( Gtk::Action::create( "AboneName", "NG 名前に追加 (対象: ローカル)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
+    action_group()->add( Gtk::Action::create( "AboneWord", "NG ワードに追加 (対象: ローカル)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word ) );
+
+    action_group()->add( Gtk::Action::create( "AboneIDBoard", "NG IDに追加 (対象: 板)" ) );
+    action_group()->add( Gtk::Action::create( "SetAboneIDBoard", "追加する"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id_board ) );
+    action_group()->add( Gtk::Action::create( "AboneNameBoard", "NG 名前に追加 (対象: 板)" ) );
+    action_group()->add( Gtk::Action::create( "SetAboneNameBoard", "追加する"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name_board ) );
+    action_group()->add( Gtk::Action::create( "AboneWordBoard", "NG ワードに追加 (対象: 板)" ) );
+    action_group()->add( Gtk::Action::create( "SetAboneWordBoard", "追加する"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word_board ) );
+
+    action_group()->add( Gtk::Action::create( "GlobalAboneName", "NG 名前に追加 (対象: 全体)" ) );
     action_group()->add( Gtk::Action::create( "SetGlobalAboneName", "追加する"), sigc::mem_fun( *this, &ArticleViewBase::slot_global_abone_name ) );
-    action_group()->add( Gtk::Action::create( "AboneWord", "NG ワードに追加 (ローカルあぼ〜ん)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word ) );
-    action_group()->add( Gtk::Action::create( "GlobalAboneWord", "NG ワードに追加 (全体あぼ〜ん)" ) );
+    action_group()->add( Gtk::Action::create( "GlobalAboneWord", "NG ワードに追加 (対象: 全体)" ) );
     action_group()->add( Gtk::Action::create( "SetGlobalAboneWord", "追加する"), sigc::mem_fun( *this, &ArticleViewBase::slot_global_abone_word ) );
 
     action_group()->add( Gtk::ToggleAction::create( "TranspAbone", "透明あぼ〜ん", std::string(), false ),
@@ -323,7 +331,13 @@ void ArticleViewBase::setup_action()
     "<menuitem action='DrawoutID'/>"
     "<menuitem action='CopyID'/>"
     "<separator/>"
+
     "<menuitem action='AboneID'/>"
+
+    "<menu action='AboneIDBoard'>"
+    "<menuitem action='SetAboneIDBoard'/>"
+    "</menu>"
+
     "</popup>"
 
     // 名前をクリックしたときのメニュー
@@ -331,10 +345,17 @@ void ArticleViewBase::setup_action()
     "<menuitem action='DrawoutNAME'/>"
     "<menuitem action='CopyNAME'/>"
     "<separator/>"
+
     "<menuitem action='AboneName'/>"
+
+    "<menu action='AboneNameBoard'>"
+    "<menuitem action='SetAboneNameBoard'/>"
+    "</menu>"
+
     "<menu action='GlobalAboneName'>"
     "<menuitem action='SetGlobalAboneName'/>"
     "</menu>"
+
     "</popup>"
 
     // あぼーんをクリックしたときのメニュー
@@ -362,10 +383,17 @@ void ArticleViewBase::setup_action()
     "</menu>"
 
     "<menu action='AboneWord_Menu'>"
+
     "<menuitem action='AboneWord'/>"
+
+    "<menu action='AboneWordBoard'>"
+    "<menuitem action='SetAboneWordBoard'/>"
+    "</menu>"
+
     "<menu action='GlobalAboneWord'>"
     "<menuitem action='SetGlobalAboneWord'/>"
     "</menu>"
+
     "</menu>"
 
     "<menu action='SearchCache_Menu'>"
@@ -2696,7 +2724,7 @@ void ArticleViewBase::slot_abone_name()
 
 
 //
-// 範囲選択した文字列でであぼ〜ん
+// 範囲選択した文字列であぼ〜ん
 //
 void ArticleViewBase::slot_abone_word()
 {
@@ -2704,6 +2732,38 @@ void ArticleViewBase::slot_abone_word()
 
     // 再レイアウト
     ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
+}
+
+
+//
+// IDであぼ〜ん(板レベル)
+//
+// 呼び出す前に m_id_name にIDをセットしておくこと
+//
+void ArticleViewBase::slot_abone_id_board()
+{
+    DBTREE::add_abone_id_board( m_url_article, m_id_name );
+}
+
+
+
+//
+// 名前であぼ〜ん(板レベル)
+//
+// 呼び出す前に m_name に名前をセットしておくこと
+//
+void ArticleViewBase::slot_abone_name_board()
+{
+    DBTREE::add_abone_name_board( m_url_article, m_name );
+}
+
+
+//
+// 範囲選択した文字列であぼ〜ん(板レベル)
+//
+void ArticleViewBase::slot_abone_word_board()
+{
+    DBTREE::add_abone_word_board( m_url_article, m_drawarea->str_selection() );
 }
 
 
@@ -2719,7 +2779,7 @@ void ArticleViewBase::slot_global_abone_name()
 
 
 //
-// 範囲選択した文字列でであぼ〜ん(全体)
+// 範囲選択した文字列であぼ〜ん(全体)
 //
 void ArticleViewBase::slot_global_abone_word()
 {

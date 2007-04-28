@@ -1886,9 +1886,18 @@ void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id,
     m_list_abone_id = list_abone_id;
     m_list_abone_name = list_abone_name;
 
+    m_list_abone_id_board = DBTREE::get_abone_list_id_board( m_url );
+    m_list_abone_name_board = DBTREE::get_abone_list_name_board( m_url );
+
     // 設定ファイルには改行は"\\n"で保存されているので "\n"　に変換する
     m_list_abone_word = MISC::replace_str_list( list_abone_word, "\\n", "\n" );
     m_list_abone_regex = MISC::replace_str_list( list_abone_regex, "\\n", "\n" );
+
+    m_list_abone_word_board = DBTREE::get_abone_list_word_board( m_url );
+    m_list_abone_word_board = MISC::replace_str_list( m_list_abone_word_board, "\\n", "\n" );
+    m_list_abone_regex_board = DBTREE::get_abone_list_regex_board( m_url );
+    m_list_abone_regex_board = MISC::replace_str_list( m_list_abone_regex_board, "\\n", "\n" );
+
     m_list_abone_word_global = MISC::replace_str_list( CONFIG::get_list_abone_word(), "\\n", "\n" );
     m_list_abone_regex_global = MISC::replace_str_list( CONFIG::get_list_abone_regex(), "\\n", "\n" );
 
@@ -1962,13 +1971,16 @@ bool NodeTreeBase::check_abone_res( int number )
 
 
 //
-// number番のあぼーん判定(ID)
+// number番のあぼーん判定( id / board id )
 //
 // あぼーんの時はtrueを返す
 //
 bool NodeTreeBase::check_abone_id( int number )
 {
-    if( m_list_abone_id.empty() ) return false;
+    bool check_id = ! m_list_abone_id.empty();
+    bool check_id_board = ! m_list_abone_id_board.empty();
+
+    if( !check_id && !check_id_board ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
@@ -1978,13 +1990,29 @@ bool NodeTreeBase::check_abone_id( int number )
 
     int ln_protoid = strlen( PROTO_ID );
 
-    std::list< std::string >::iterator it = m_list_abone_id.begin();
-    for( ; it != m_list_abone_id.end(); ++it ){
+    // ローカルID
+    if( check_id ){
+        std::list< std::string >::iterator it = m_list_abone_id.begin();
+        for( ; it != m_list_abone_id.end(); ++it ){
 
-        // std::string の find は遅いのでstrcmp使う
-        if( strcmp( head->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link + ln_protoid, ( *it ).c_str() ) == 0 ){
-            head->headinfo->abone = true;
-            return true;
+            // std::string の find は遅いのでstrcmp使う
+            if( strcmp( head->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link + ln_protoid, ( *it ).c_str() ) == 0 ){
+                head->headinfo->abone = true;
+                return true;
+            }
+        }
+    }
+
+    // 板レベル ID
+    if( check_id_board ){
+        std::list< std::string >::iterator it = m_list_abone_id_board.begin();
+        for( ; it != m_list_abone_id_board.end(); ++it ){
+
+            // std::string の find は遅いのでstrcmp使う
+            if( strcmp( head->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link + ln_protoid, ( *it ).c_str() ) == 0 ){
+                head->headinfo->abone = true;
+                return true;
+            }
         }
     }
 
@@ -1993,16 +2021,17 @@ bool NodeTreeBase::check_abone_id( int number )
 
 
 //
-// number番のあぼーん判定(name, global name )
+// number番のあぼーん判定(name /  board name /  global name )
 //
 // あぼーんの時はtrueを返す
 //
 bool NodeTreeBase::check_abone_name( int number )
 {
     bool check_name = ! m_list_abone_name.empty();
+    bool check_name_board = ! m_list_abone_name_board.empty();
     bool check_name_global = ! CONFIG::get_list_abone_name().empty();
 
-    if( !check_name && !check_name_global ) return false;
+    if( !check_name && !check_name_board && !check_name_global ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
@@ -2013,6 +2042,7 @@ bool NodeTreeBase::check_abone_name( int number )
     std::list< std::string >::iterator it;
     std::string name_str( head->headinfo->name );
 
+    // ローカル name
     if( check_name ){
         it = m_list_abone_name.begin();
         for( ; it != m_list_abone_name.end(); ++it ){
@@ -2023,6 +2053,18 @@ bool NodeTreeBase::check_abone_name( int number )
         }
     }
 
+    // 板レベル name
+    if( check_name_board ){
+        it = m_list_abone_name_board.begin();
+        for( ; it != m_list_abone_name_board.end(); ++it ){
+            if( name_str.find( *it ) != std::string::npos ){
+                head->headinfo->abone = true;
+                return true;
+            }
+        }
+    }
+
+    // 全体 name
     if( check_name_global ){
         it = CONFIG::get_list_abone_name().begin();
         for( ; it != CONFIG::get_list_abone_name().end(); ++it ){
@@ -2039,7 +2081,7 @@ bool NodeTreeBase::check_abone_name( int number )
 
 
 //
-// number番のあぼーん判定( word, regex, global word, global regex )
+// number番のあぼーん判定( word, regex  /  board word, board regex / global word, global regex )
 //
 // あぼーんの時はtrueを返す
 //
@@ -2047,10 +2089,16 @@ bool NodeTreeBase::check_abone_word( int number )
 {
     bool check_word = ! m_list_abone_word.empty();
     bool check_regex = ! m_list_abone_regex.empty();
+
+    bool check_word_board = ! m_list_abone_word_board.empty();
+    bool check_regex_board = ! m_list_abone_regex_board.empty();
+
     bool check_word_global = ! m_list_abone_word_global.empty();
     bool check_regex_global = ! m_list_abone_regex_global.empty();
 
-    if( !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
+    if( !check_word && !check_regex
+        && !check_word_board && !check_regex_board
+        && !check_word_global && !check_regex_global ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
@@ -2077,6 +2125,30 @@ bool NodeTreeBase::check_abone_word( int number )
 
         std::list< std::string >::iterator it = m_list_abone_regex.begin();
         for( ; it != m_list_abone_regex.end(); ++it ){
+            if( regex.exec( *it, res_str ) ){
+                head->headinfo->abone = true;
+                return true;
+            }
+        }
+    }
+
+    // 板レベル NG word
+    if( check_word_board ){
+
+        std::list< std::string >::iterator it = m_list_abone_word_board.begin();
+        for( ; it != m_list_abone_word_board.end(); ++it ){
+            if( res_str.find( *it ) != std::string::npos ){
+                head->headinfo->abone = true;
+                return true;
+            }
+        }
+    }
+
+    // 板レベル NG regex
+    if( check_regex_board ){
+
+        std::list< std::string >::iterator it = m_list_abone_regex_board.begin();
+        for( ; it != m_list_abone_regex_board.end(); ++it ){
             if( regex.exec( *it, res_str ) ){
                 head->headinfo->abone = true;
                 return true;

@@ -62,7 +62,7 @@ namespace CORE
             for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
             m_edit_regex.set_text( str_regex );
 
-            m_label_warning.set_text( "全体あぼ〜んはスレ表示速度の低下を招きます。指定のし過ぎに気を付けてください。" );
+            m_label_warning.set_text( "ここでのあぼーん設定は全板の全スレに適用されます。\n\n設定のし過ぎは全板の全スレの表示速度を低下させます。\n\n指定のし過ぎに気を付けてください。" );
 
             m_notebook.append_page( m_label_warning, "注意" );
             m_notebook.append_page( m_edit_name, "NG 名前" );

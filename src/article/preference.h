@@ -22,8 +22,11 @@ namespace ARTICLE
         SKELETON::LabelEntry m_label_size;
 
         // あぼーん
-        Gtk::Label m_label_abone;
+        Gtk::VBox m_vbox_abone;
+        Gtk::Notebook m_notebook_abone;
         SKELETON::EditView m_edit_id, m_edit_res, m_edit_name, m_edit_word, m_edit_regex;
+
+        Gtk::Label m_label_abone;
 
         // 透明あぼーん
         Gtk::CheckButton m_check_transpabone;

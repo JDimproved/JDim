@@ -1086,6 +1086,69 @@ void BoardBase::update_abone_thread()
 //
 // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
 //
+void BoardBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names, std::list< std::string >& words, std::list< std::string >& regexs )
+{
+    if( empty() ) return;
+
+    // 前後の空白と空白行を除く
+
+    m_list_abone_id = MISC::remove_space_from_list( ids );
+    m_list_abone_id = MISC::remove_nullline_from_list( m_list_abone_id );
+
+    m_list_abone_name = MISC::remove_space_from_list( names );
+    m_list_abone_name = MISC::remove_nullline_from_list( m_list_abone_name );
+
+    m_list_abone_word = MISC::remove_space_from_list( words );
+    m_list_abone_word = MISC::remove_nullline_from_list( m_list_abone_word );
+
+    m_list_abone_regex = MISC::remove_space_from_list( regexs );
+    m_list_abone_regex = MISC::remove_nullline_from_list( m_list_abone_regex );
+
+    update_abone_all_article();
+    CORE::core_set_command( "relayout_all_article" );
+}
+
+
+// あぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう)
+void BoardBase::add_abone_id( const std::string& id )
+{
+    if( empty() ) return;
+    if( id.empty() ) return;
+
+    std::string id_tmp = id.substr( strlen( PROTO_ID ) );
+
+    m_list_abone_id.push_back( id_tmp );
+
+    update_abone_all_article();
+    CORE::core_set_command( "relayout_all_article" );
+}
+
+void BoardBase::add_abone_name( const std::string& name )
+{
+    if( empty() ) return;
+    if( name.empty() ) return;
+
+    m_list_abone_name.push_back( name );
+
+    update_abone_all_article();
+    CORE::core_set_command( "relayout_all_article" );
+}
+
+void BoardBase::add_abone_word( const std::string& word )
+{
+    if( empty() ) return;
+    if( word.empty() ) return;
+
+    m_list_abone_word.push_back( word );
+
+    update_abone_all_article();
+    CORE::core_set_command( "relayout_all_article" );
+}
+
+
+//
+// あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
+//
 void BoardBase::reset_abone_thread( std::list< std::string >& threads,
                                     std::list< std::string >& words, std::list< std::string >& regexs )
 {
@@ -1204,8 +1267,24 @@ void BoardBase::read_board_info()
 
     m_check_noname = cf.get_option( "check_noname", false );
 
+    // あぼーん id
+    std::string str_tmp = cf.get_option( "aboneid", "" );
+    if( ! str_tmp.empty() ) m_list_abone_id = MISC::strtolist( str_tmp );
+
+    // あぼーん name
+    str_tmp = cf.get_option( "abonename", "" );
+    if( ! str_tmp.empty() ) m_list_abone_name = MISC::strtolist( str_tmp );
+
+    // あぼーん word
+    str_tmp = cf.get_option( "aboneword", "" );
+    if( ! str_tmp.empty() ) m_list_abone_word = MISC::strtolist( str_tmp );
+
+    // あぼーん regex
+    str_tmp = cf.get_option( "aboneregex", "" );
+    if( ! str_tmp.empty() ) m_list_abone_regex = MISC::strtolist( str_tmp );
+
     // スレ あぼーん
-    std::string str_tmp = cf.get_option( "abonethread", "" );
+    str_tmp = cf.get_option( "abonethread", "" );
     if( ! str_tmp.empty() ) m_list_abone_thread = MISC::strtolist( str_tmp );
 
     // スレ あぼーん word
@@ -1263,9 +1342,15 @@ void BoardBase::save_jdboard_info()
 #endif
 
     // あぼーん情報
-    std::string str_abone = MISC::listtostr( m_list_abone_thread );
-    std::string str_abone_word = MISC::listtostr( m_list_abone_word_thread );
-    std::string str_abone_regex = MISC::listtostr( m_list_abone_regex_thread );
+    std::string str_abone_id = MISC::listtostr( m_list_abone_id );
+    std::string str_abone_name = MISC::listtostr( m_list_abone_name );
+    std::string str_abone_word = MISC::listtostr( m_list_abone_word );
+    std::string str_abone_regex = MISC::listtostr( m_list_abone_regex );
+
+    // スレあぼーん情報
+    std::string str_abone_thread = MISC::listtostr( m_list_abone_thread );
+    std::string str_abone_word_thread = MISC::listtostr( m_list_abone_word_thread );
+    std::string str_abone_regex_thread = MISC::listtostr( m_list_abone_regex_thread );
     
     std::ostringstream sstr;
     sstr << "modified = " << date_modified() << std::endl
@@ -1274,10 +1359,17 @@ void BoardBase::save_jdboard_info()
          << "view_sort_pre_column = " << m_view_sort_pre_column << std::endl
          << "view_sort_pre_mode = " << m_view_sort_pre_mode << std::endl
          << "check_noname = " << m_check_noname << std::endl
-         << "abonethread = " << str_abone << std::endl
-         << "abonewordthread = " << str_abone_word << std::endl
-         << "aboneregexthread = " << str_abone_regex << std::endl
+
+         << "aboneid = " << str_abone_id << std::endl
+         << "abonename = " << str_abone_name << std::endl
+         << "aboneword = " << str_abone_word << std::endl
+         << "aboneregex = " << str_abone_regex << std::endl
+
+         << "abonethread = " << str_abone_thread << std::endl
+         << "abonewordthread = " << str_abone_word_thread << std::endl
+         << "aboneregexthread = " << str_abone_regex_thread << std::endl
          << "mode_local_proxy = " << m_mode_local_proxy << std::endl
+
          << "local_proxy = " << m_local_proxy << std::endl
          << "local_proxy_port = " << m_local_proxy_port << std::endl
          << "mode_local_proxy_w = " << m_mode_local_proxy_w << std::endl

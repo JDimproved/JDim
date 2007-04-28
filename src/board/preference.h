@@ -83,7 +83,13 @@ namespace BOARD
         SKELETON::LabelEntry m_label_byte;
 
         // あぼーん
-        SKELETON::EditView m_edit_thread, m_edit_word, m_edit_regex;
+        Gtk::Notebook m_notebook_abone;
+        Gtk::Label m_label_warning;
+        SKELETON::EditView m_edit_id, m_edit_name, m_edit_word, m_edit_regex;
+
+        // スレッドあぼーん
+        Gtk::Notebook m_notebook_abone_thread;
+        SKELETON::EditView m_edit_thread, m_edit_word_thread, m_edit_regex_thread;
 
         // SETTING.TXT
         SKELETON::EditView m_edit_settingtxt;

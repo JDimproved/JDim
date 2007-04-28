@@ -54,6 +54,12 @@ namespace DBTREE
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
+
+        std::list< std::string > m_list_abone_id_board;   // あぼーんするID(板レベル)
+        std::list< std::string > m_list_abone_name_board; // あぼーんする名前(板レベル)
+        std::list< std::string > m_list_abone_word_board; // あぼーんする文字列(板レベル)
+        std::list< std::string > m_list_abone_regex_board; // あぼーんする正規表現(板レベル)
+
         std::list< std::string > m_list_abone_word_global; // あぼーんする文字列(全体)
         std::list< std::string > m_list_abone_regex_global; // あぼーんする正規表現(全体)
         std::vector< char > m_vec_abone_res; // レスあぼーん情報

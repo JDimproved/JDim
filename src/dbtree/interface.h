@@ -188,12 +188,24 @@ namespace DBTREE
     const std::string create_newarticle_message( const std::string& url, const std::string& subject,
                                                  const std::string& name, const std::string& mail, const std::string& msg );
 
-
     // あぼーん関係
 
-    //
-    // 各boadbase別のあぼーん情報
-    //
+    // 板レベルのあぼーん
+    // グローバルなあぼーん情報は globalconf が管理
+    std::list< std::string > get_abone_list_id_board( const std::string& url );
+    std::list< std::string > get_abone_list_name_board( const std::string& url );
+    std::list< std::string > get_abone_list_word_board( const std::string& url );
+    std::list< std::string > get_abone_list_regex_board( const std::string& url );
+
+    // 板レベルのあぼーん情報の同時セットと更新
+    void reset_abone_board( const std::string& url,
+                            std::list< std::string >& ids, std::list< std::string >& names,
+                            std::list< std::string >& words, std::list< std::string >& regexs );
+
+    // 個別のあぼーん情報のセットと更新
+    void add_abone_id_board( const std::string& url, const std::string& id );
+    void add_abone_name_board( const std::string& url, const std::string& name );
+    void add_abone_word_board( const std::string& url, const std::string& word );
 
     // 全boardbaseクラスのあぼーん状態の更新
     // ビューの再描画も同時に行われる

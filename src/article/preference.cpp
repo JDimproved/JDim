@@ -41,15 +41,6 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         if( DBTREE::article_write_time( get_url() ) ) m_label_write.set_text( DBTREE::article_write_date( get_url() ) );
     }
 
-    // 透明あぼーん
-    m_check_transpabone.set_active( DBTREE::get_abone_transparent( get_url() ) );
-
-    // 連鎖あぼーん
-    m_check_chainabone.set_active( DBTREE::get_abone_chain( get_url() ) );
-
-    if( CONFIG::get_abone_transparent() ) m_check_transpabone.set_sensitive( false );
-    if( CONFIG::get_abone_chain() ) m_check_chainabone.set_sensitive( false );
-
     m_vbox_info.set_border_width( 16 );
     m_vbox_info.set_spacing( 8 );
     m_vbox_info.pack_start( m_label_name, Gtk::PACK_SHRINK );
@@ -62,13 +53,28 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox_info.pack_start( m_label_modified, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_write, Gtk::PACK_SHRINK );
 
+    // あぼーん設定
+
+    m_vbox_abone.set_border_width( 16 );
+    m_vbox_abone.set_spacing( 8 );
+
+    // 透明あぼーん
+    m_check_transpabone.set_active( DBTREE::get_abone_transparent( get_url() ) );
+
+    // 連鎖あぼーん
+    m_check_chainabone.set_active( DBTREE::get_abone_chain( get_url() ) );
+
+    if( CONFIG::get_abone_transparent() ) m_check_transpabone.set_sensitive( false );
+    if( CONFIG::get_abone_chain() ) m_check_chainabone.set_sensitive( false );
+
+    m_vbox_abone.pack_start( m_check_transpabone, Gtk::PACK_SHRINK );
+    m_vbox_abone.pack_start( m_check_chainabone, Gtk::PACK_SHRINK );
+
     if( CONFIG::get_abone_transparent() || CONFIG::get_abone_chain() ){
         m_label_abone.set_text( "チェック出来ない場合は設定メニューから「デフォルトで透明/連鎖あぼ〜ん」を解除して下さい" );
         m_label_abone.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
-        m_vbox_info.pack_end( m_label_abone, Gtk::PACK_SHRINK );
+        m_vbox_abone.pack_start( m_label_abone, Gtk::PACK_SHRINK );
     }
-    m_vbox_info.pack_end( m_check_chainabone, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_end( m_check_transpabone, Gtk::PACK_SHRINK );
 
     if( DBTREE::article_is_cached( get_url() ) ){ 
 
@@ -111,12 +117,15 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         m_edit_regex.set_editable( false );
     }
 
+    m_notebook_abone.append_page( m_vbox_abone, "一般" );
+    m_notebook_abone.append_page( m_edit_id, "NG ID" );
+    m_notebook_abone.append_page( m_edit_res, "NG レス番号" );
+    m_notebook_abone.append_page( m_edit_name, "NG 名前" );
+    m_notebook_abone.append_page( m_edit_word, "NG ワード" );
+    m_notebook_abone.append_page( m_edit_regex, "NG 正規表現" );
+
     m_notebook.append_page( m_vbox_info, "一般" );
-    m_notebook.append_page( m_edit_id, "NG ID" );
-    m_notebook.append_page( m_edit_res, "NG レス番号" );
-    m_notebook.append_page( m_edit_name, "NG 名前" );
-    m_notebook.append_page( m_edit_word, "NG ワード" );
-    m_notebook.append_page( m_edit_regex, "NG 正規表現" );
+    m_notebook.append_page( m_notebook_abone, "あぼーん設定" );
 
     get_vbox()->pack_start( m_notebook );
     set_title( "「" + DBTREE::article_subject( get_url() ) + "」のプロパティ" );

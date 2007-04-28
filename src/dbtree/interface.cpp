@@ -431,11 +431,58 @@ std::list< std::string > DBTREE::search_cache( const std::string& url, const std
     return DBTREE::get_board( url )->search_cache( query, mode_or, stop );
 }
 
+/////////////////////////////////////////////////
+
+std::list< std::string > DBTREE::get_abone_list_id_board( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_list_id();
+}
+
+std::list< std::string > DBTREE::get_abone_list_name_board( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_list_name();
+}
+
+std::list< std::string > DBTREE::get_abone_list_word_board( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_list_word();
+}
+
+std::list< std::string > DBTREE::get_abone_list_regex_board( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_list_regex();
+}
+
+void DBTREE::reset_abone_board( const std::string& url,
+                        std::list< std::string >& ids, std::list< std::string >& names,
+                        std::list< std::string >& words, std::list< std::string >& regexs )
+{
+    DBTREE::get_board( url )->reset_abone( ids, names, words, regexs );
+}
+
+
+void DBTREE::add_abone_id_board( const std::string& url, const std::string& id )
+{
+    DBTREE::get_board( url )->add_abone_id( id );
+}
+
+void DBTREE::add_abone_name_board( const std::string& url, const std::string& name )
+{
+    DBTREE::get_board( url )->add_abone_name( name );
+}
+
+void DBTREE::add_abone_word_board( const std::string& url, const std::string& word )
+{
+    DBTREE::get_board( url )->add_abone_word( word );
+}
+
+
+/////////////////////////////////////////////////
+
 
 void DBTREE::update_abone_all_board()
 {
     DBTREE::get_root()->update_abone_all_board();
-
 }
 
 void DBTREE::update_abone_board( const std::string& url )
@@ -464,6 +511,8 @@ void DBTREE::reset_abone_thread( const std::string& url,
 {
     DBTREE::get_board( url )->reset_abone_thread( threads, words, regexs );
 }
+
+/////////////////////////////////////////////////
 
 
 const bool DBTREE::article_is_cached( const std::string& url )

@@ -95,9 +95,6 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_write, Gtk::PACK_SHRINK );
 
-    std::string str_thread, str_word, str_regex;
-    std::list< std::string >::iterator it;
-
     // プロキシ
     m_vbox_proxy.set_border_width( 16 );
     m_vbox_proxy.set_spacing( 8 );
@@ -124,21 +121,59 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox_proxy.pack_start( m_proxy_frame, Gtk::PACK_SHRINK );
     m_vbox_proxy.pack_start( m_proxy_frame_w, Gtk::PACK_SHRINK );
 
+    // あぼーん
+    std::string str_id, str_name, str_word, str_regex;
+    std::string str_thread, str_word_thread, str_regex_thread;
+    std::list< std::string >::iterator it;
+
+    // ID
+    std::list< std::string > list_id = DBTREE::get_abone_list_id_board( get_url() );
+    for( it = list_id.begin(); it != list_id.end(); ++it ) if( ! ( *it ).empty() ) str_id += ( *it ) + "\n";
+    m_edit_id.set_text( str_id );
+
+    // name
+    std::list< std::string > list_name = DBTREE::get_abone_list_name_board( get_url() );
+    for( it = list_name.begin(); it != list_name.end(); ++it ) if( ! ( *it ).empty() ) str_name += ( *it ) + "\n";
+    m_edit_name.set_text( str_name );
+
+    // word
+    std::list< std::string > list_word = DBTREE::get_abone_list_word_board( get_url() );
+    for( it = list_word.begin(); it != list_word.end(); ++it ) if( ! ( *it ).empty() ) str_word += ( *it ) + "\n";
+    m_edit_word.set_text( str_word );
+
+    // regex
+    std::list< std::string > list_regex = DBTREE::get_abone_list_regex_board( get_url() );
+    for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
+    m_edit_regex.set_text( str_regex );
+
+    m_label_warning.set_text( "ここでのあぼーん設定は「" +  DBTREE::board_name( get_url() ) + "」板の全スレに適用されます。\n\n設定のし過ぎは板内の全スレの表示速度を低下させます。\n\n指定のし過ぎに気を付けてください。" );
+
+    m_notebook_abone.append_page( m_label_warning, "注意" );
+    m_notebook_abone.append_page( m_edit_id, "NG ID" );
+    m_notebook_abone.append_page( m_edit_name, "NG 名前" );
+    m_notebook_abone.append_page( m_edit_word, "NG ワード" );
+    m_notebook_abone.append_page( m_edit_regex, "NG 正規表現" );
+
+    // スレッドあぼーん
+
     // スレあぼーん
     std::list< std::string > list_thread = DBTREE::get_abone_list_thread( get_url() );
     for( it = list_thread.begin(); it != list_thread.end(); ++it ) if( ! ( *it ).empty() ) str_thread += ( *it ) + "\n";
     m_edit_thread.set_text( str_thread );
 
     // スレwordあぼーん
-    std::list< std::string > list_word = DBTREE::get_abone_list_word_thread( get_url() );
-    for( it = list_word.begin(); it != list_word.end(); ++it ) if( ! ( *it ).empty() ) str_word += ( *it ) + "\n";
-    m_edit_word.set_text( str_word );
+    std::list< std::string > list_word_thread = DBTREE::get_abone_list_word_thread( get_url() );
+    for( it = list_word_thread.begin(); it != list_word_thread.end(); ++it ) if( ! ( *it ).empty() ) str_word_thread += ( *it ) + "\n";
+    m_edit_word_thread.set_text( str_word_thread );
 
     // スレregexあぼーん
-    std::list< std::string > list_regex = DBTREE::get_abone_list_regex_thread( get_url() );
-    for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
-    m_edit_regex.set_text( str_regex );
+    std::list< std::string > list_regex_thread = DBTREE::get_abone_list_regex_thread( get_url() );
+    for( it = list_regex_thread.begin(); it != list_regex_thread.end(); ++it ) if( ! ( *it ).empty() ) str_regex_thread += ( *it ) + "\n";
+    m_edit_regex_thread.set_text( str_regex_thread );
 
+    m_notebook_abone_thread.append_page( m_edit_thread, "NG スレタイトル" );
+    m_notebook_abone_thread.append_page( m_edit_word_thread, "NG ワード" );
+    m_notebook_abone_thread.append_page( m_edit_regex_thread, "NG 正規表現" );
 
     // SETTING.TXT
     m_edit_settingtxt.set_editable( false );
@@ -146,9 +181,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
 
     m_notebook.append_page( m_vbox, "一般" );
     m_notebook.append_page( m_vbox_proxy, "プロキシ設定" );
-    m_notebook.append_page( m_edit_thread, "NG スレタイトル" );
-    m_notebook.append_page( m_edit_word, "NG ワード(スレあぼ〜ん用)" );
-    m_notebook.append_page( m_edit_regex, "NG 正規表現(スレあぼ〜ん用)" );
+    m_notebook.append_page( m_notebook_abone, "あぼーん設定(スレビュー)" );
+    m_notebook.append_page( m_notebook_abone_thread, "あぼーん設定(スレ一覧)" );
     m_notebook.append_page( m_edit_settingtxt, "SETTING.TXT" );
 
     get_vbox()->pack_start( m_notebook );
@@ -189,10 +223,17 @@ void Preferences::slot_ok_clicked()
     DBTREE::board_set_local_proxy_port_w( get_url(), atoi( m_proxy_frame_w.entry_port.get_text().c_str() ) );
 
     // あぼーん再設定
-    std::list< std::string > list_thread = MISC::get_lines( m_edit_thread.get_text() );
+    std::list< std::string > list_id = MISC::get_lines( m_edit_id.get_text() );
+    std::list< std::string > list_name = MISC::get_lines( m_edit_name.get_text() );
     std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text() );
     std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
-    DBTREE::reset_abone_thread( get_url(), list_thread, list_word, list_regex );  // 板の再描画も行われる
+    DBTREE::reset_abone_board( get_url(), list_id, list_name, list_word, list_regex ); 
+
+    // スレあぼーん再設定
+    std::list< std::string > list_thread = MISC::get_lines( m_edit_thread.get_text() );
+    std::list< std::string > list_word_thread = MISC::get_lines( m_edit_word_thread.get_text() );
+    std::list< std::string > list_regex_thread = MISC::get_lines( m_edit_regex_thread.get_text() );
+    DBTREE::reset_abone_thread( get_url(), list_thread, list_word_thread, list_regex_thread );  // 板の再描画も行われる
 
     // 書き込み設定
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );
