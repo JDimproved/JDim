@@ -107,6 +107,7 @@ namespace IMAGE
         void slot_save_all();
         void slot_favorite();
         void slot_toggle_protectimage();
+        void slot_abone_img();
         void slot_close_other_views();
         void slot_close_left_views();
         void slot_close_right_views();

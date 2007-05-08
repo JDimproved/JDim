@@ -17,10 +17,22 @@ namespace IMAGE
         SKELETON::LabelEntry m_label_url;
         SKELETON::LabelEntry m_label_cache;
         SKELETON::LabelEntry m_label_ref;
+
+        Gtk::HBox m_hbox_ref;
         SKELETON::LabelEntry m_label_url_ref;
+        Gtk::Button m_open_ref;
+
+        SKELETON::LabelEntry m_label_wh;
+        SKELETON::LabelEntry m_label_size;
+
+        Gtk::CheckButton m_check_protect;
 
       public:
         Preferences( Gtk::Window* parent, const std::string& url );
+
+      private:
+        virtual void slot_ok_clicked();
+        void slot_open_ref();
     };
 
 }

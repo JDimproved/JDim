@@ -1881,7 +1881,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         show_imagetab();
 
         // キャッシュに無かったらロード
-        if( ! DBIMG::is_cached( command.url ) ) DBIMG::download_img( command.url );
+        if( ! DBIMG::is_cached( command.url ) ) DBIMG::download_img( command.url, std::string() );
 
         IMAGE::get_admin()->set_command( "open_view", command.url );
         return;
@@ -1891,9 +1891,11 @@ void Core::set_command( const COMMAND_ARGS& command )
         DBIMG::delete_cache( command.url );
         return;
     }
-    else if( command.command == "close_image_view" ){
 
-        IMAGE::get_admin()->set_command( "close_view", command.url );
+    // キャッシュに無い画像を閉じる
+    else if( command.command == "close_nocached_image_views" ){
+
+        IMAGE::get_admin()->set_command( "close_nocached_views" );
         return;
     }
 
@@ -2255,7 +2257,7 @@ void Core::exec_command()
             }
             else{
                 // キャッシュに無かったらロード
-                if( ! DBIMG::is_cached( command.url ) ) DBIMG::download_img( command.url );
+                if( ! DBIMG::is_cached( command.url ) ) DBIMG::download_img( command.url, std::string() );
 
                 CORE::core_set_command( "open_image", command.url );
                 CORE::core_set_command( "switch_image" );

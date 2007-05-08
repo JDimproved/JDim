@@ -9,7 +9,8 @@ noinst_HEADERS = \
 	imgroot.h \
 	img.h \
 	imginterface.h \
-	delimgdiag.h
+	delimgdiag.h \
+	delimgcachediag.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

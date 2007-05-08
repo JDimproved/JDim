@@ -80,9 +80,16 @@ namespace CACHE
     // 画像関係
     std::string path_img_root();
     std::string path_img_info_root();
+    std::string path_img_protect_root();
+    std::string path_img_protect_info_root();
+    std::string path_img_abone_root();
     std::string filename_img( const std::string& url );
+    std::string filename_img_info( const std::string& url );
     std::string path_img( const std::string& url );
     std::string path_img_info( const std::string& url );
+    std::string path_img_protect( const std::string& url );
+    std::string path_img_protect_info( const std::string& url );
+    std::string path_img_abone( const std::string& url );
 
     // AA
     std::string path_aalist();
@@ -120,6 +127,7 @@ namespace CACHE
     // キャッシュの mkdir 関係
     bool mkdir_root();
     bool mkdir_imgroot();
+    bool mkdir_imgroot_favorite();
     bool mkdir_parent_of_board( const std::string& url );
     bool mkdir_boardroot( const std::string& url );
 
@@ -137,6 +145,7 @@ namespace CACHE
     // ファイル操作
     bool jdmkdir( const std::string& path );
     bool jdcopy( const std::string& file_from, const std::string& file_to );
+    bool jdmv( const std::string& file_from, const std::string& file_to );
 
     // ファイル選択ダイアログを表示する
     std::string open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type );

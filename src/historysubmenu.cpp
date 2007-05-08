@@ -29,17 +29,35 @@ HistorySubMenu::HistorySubMenu( const std::string path_xml )
     : Gtk::Menu(),
       m_path_xml( path_xml )
 {
+    Gtk::MenuItem* item;
+
     // メニュー項目作成
     for( int i = 0; i < CONFIG::get_history_size(); ++i ){
-        Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( HIST_NONAME ) );
+        item = Gtk::manage( new Gtk::MenuItem( HIST_NONAME ) );
         m_itemlist.push_back( item );
         append( *item );
-        item->signal_activate().connect( sigc::bind<int>( sigc::mem_fun( *this, &HistorySubMenu::slot_activate ), i ));
+        item->signal_button_press_event().connect( sigc::bind<int>( sigc::mem_fun( *this, &HistorySubMenu::slot_button_press ), i ));
 
         CORE::HIST_ITEM* histitem = new CORE::HIST_ITEM;
         histitem->type = TYPE_UNKNOWN;
         m_histlist.push_back( histitem );
     }
+
+    // ポップアップメニュー作成
+    m_popupmenu.signal_deactivate().connect( sigc::mem_fun( *this, &HistorySubMenu::deactivate ) );
+
+    item = Gtk::manage( new Gtk::MenuItem( "開く" ) );
+    item->signal_activate().connect( sigc::mem_fun( *this, &HistorySubMenu::slot_open_history ) );
+    m_popupmenu.append( *item );
+
+    item = Gtk::manage( new Gtk::SeparatorMenuItem() );
+    m_popupmenu.append( *item );
+
+    item = Gtk::manage( new Gtk::MenuItem( "削除" ) );
+    item->signal_activate().connect( sigc::mem_fun( *this, &HistorySubMenu::slot_remove_history ) );
+    m_popupmenu.append( *item );
+
+    m_popupmenu.show_all_children();
 
     std::string xml;
     CACHE::load_rawdata( m_path_xml, xml );
@@ -222,12 +240,9 @@ std::string HistorySubMenu::list2xml()
 
 
 
-// メニューアイテムがactiveになった
-void HistorySubMenu::slot_activate( int i )
+// 履歴を開く
+void HistorySubMenu::open_history( int i )
 {
-#ifdef _DEBUG
-    std::cout << "HistorySubMenu::slot_activate" << i << std::endl;
-#endif
     std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
     for( int i2 = 0; i2 < i && it != m_histlist.end() ; ++it, ++i2 );
     if( it == m_histlist.end() ) return;
@@ -245,6 +260,26 @@ void HistorySubMenu::slot_activate( int i )
 
 
 
+// メニューアイテムがactiveになった
+bool HistorySubMenu::slot_button_press( GdkEventButton* event, int i )
+{
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::slot_button_press button = " << event->button << " no = " << i << std::endl;
+#endif
+
+    m_number_menuitem = i;
+
+    // ポップアップメニュー表示
+    if( event->button == 3 ){
+        m_popupmenu.popup( 0, gtk_get_current_event_time() );
+        return true;
+    }
+
+    open_history( i );
+    return true;
+}
+
+
 // ラベルをセット
 void HistorySubMenu::set_menulabel()
 {
@@ -255,25 +290,59 @@ void HistorySubMenu::set_menulabel()
     std::list< CORE::HIST_ITEM* >::iterator it_hist = m_histlist.begin();
     std::list< Gtk::MenuItem* >::iterator it_item = m_itemlist.begin();
     for(; it_hist != m_histlist.end(); ++it_hist, ++it_item ){
-        if( !( *it_hist )->url.empty() ){
 
-            std::string url = ( *it_hist )->url;
-            std::string name = ( *it_hist )->name;
-            int type = ( *it_hist )->type;
+        std::string url = ( *it_hist )->url;
+        std::string name = ( *it_hist )->name;
+        int type = ( *it_hist )->type;
 
-            if( url.empty() ) name = HIST_NONAME;
-            else if( name.empty() ){
+        if( url.empty() ) name = HIST_NONAME;
+        else if( name.empty() ){
 
-                if( type == TYPE_BOARD ) name = DBTREE::board_name( url );
-                else if( type == TYPE_THREAD ) name = DBTREE::article_subject( url );
+            if( type == TYPE_BOARD ) name = DBTREE::board_name( url );
+            else if( type == TYPE_THREAD ) name = DBTREE::article_subject( url );
 
-                if( name.empty() ) name = "???";
-                else ( *it_hist )->name = name;
-            }
-
-            dynamic_cast< Gtk::Label* >( (*it_item)->get_child() )->set_text( MISC::cut_str( name, HIST_MAX_LNG ) );
+            if( name.empty() ) name = "???";
+            else ( *it_hist )->name = name;
         }
+
+        dynamic_cast< Gtk::Label* >( (*it_item)->get_child() )->set_text( MISC::cut_str( name, HIST_MAX_LNG ) );
     }
 }
 
 
+// 指定した履歴を開く
+// これを呼ぶ前に m_number_menuitem に番号をセットしておく
+void HistorySubMenu::slot_open_history()
+{
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::slot_open_history no = " << m_number_menuitem << std::endl;
+#endif
+
+    open_history( m_number_menuitem );
+}
+
+
+// 指定した履歴を削除
+// これを呼ぶ前に m_number_menuitem に番号をセットしておく
+void HistorySubMenu::slot_remove_history()
+{
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::slot_remove_history no = " << m_number_menuitem << std::endl;
+#endif 
+
+    if( m_histlist.size() <= ( size_t ) m_number_menuitem ) return;
+
+    std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
+    for( int i = 0; i < m_number_menuitem; ++i, ++it );
+    CORE::HIST_ITEM* item = *it;
+    m_histlist.remove( item );
+
+#ifdef _DEBUG
+    std::cout << "remove " << item->name << std::endl;
+#endif
+
+    item->url = std::string();
+    item->name = std::string();
+    item->type = TYPE_UNKNOWN;
+    m_histlist.push_back( item );
+}

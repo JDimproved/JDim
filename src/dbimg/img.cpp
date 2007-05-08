@@ -41,8 +41,8 @@ Img::Img( const std::string& url )
 #ifdef _DEBUG
     std::cout << "Img::Img url = " << m_url <<  std::endl;
 #endif
-    clear();
-    read_info();
+
+    reset();
 }
 
 
@@ -59,18 +59,31 @@ Img::~Img()
 }
 
 
+//
+// リセット( 情報をクリアしてinfoファイル再読み込み )
+//
+void Img::reset()
+{
+    clear();
+    read_info();
+}
+
+
+// 情報クリア
 void Img::clear()
 {
-    // HTTPコードのクリア
-    Loadable::clear_load_data();
+    m_protect = false;
+
+    m_refurl = std::string();
+    clear_load_data(); // HTTPコードのクリア
 
     m_mosaic = CONFIG::get_use_mosaic();
     m_zoom_to_fit = CONFIG::get_zoom_to_fit();
     m_size = 100;
-    m_protect = false;
     m_type = T_UNKNOWN;
     m_width = 0;
     m_height = 0;
+    m_abone = false;
 }
 
 
@@ -83,16 +96,43 @@ const bool Img::is_cached()
 }
 
 
+//
+// あぼーん状態セット
+//
+// キャッシュに無くてもinfoを作るので is_cached() でチェックしない
+//
+void Img::set_abone( bool abone )
+{
+    if( m_abone == abone ) return;
+
+#ifdef _DEBUG
+    std::cout << "Img::set_abone = " << abone << std::endl;
+#endif
+
+    if( abone ) clear();
+    m_abone = abone;
+    save_info();
+}
+
+
+std::string Img::get_cache_path()
+{
+    if( m_protect ) return CACHE::path_img_protect( m_url );
+
+    return CACHE::path_img( m_url );
+}
+
 
 //
 // ロード開始
 //
 // receive_data()　と receive_finish() がコールバックされる
 //
-void Img::download_img()
+void Img::download_img( const std::string& refurl )
 {
 #ifdef _DEBUG
-    std::cout << "Img::download_img url = " << m_url <<  std::endl;
+    std::cout << "Img::download_img url = " << m_url
+              << " refurl = " << refurl <<  std::endl;
 #endif
 
     if( is_loading() ) return;
@@ -100,7 +140,7 @@ void Img::download_img()
     if( ! CACHE::mkdir_imgroot() ) return;
 
     // ダウンロード開始
-    std::string path = CACHE::path_img( m_url );
+    std::string path = get_cache_path();
     m_fout = fopen( path.c_str(), "wb" );
     if( m_fout == NULL ){
         MISC::ERRMSG( "fopen failed : " + path );
@@ -108,6 +148,7 @@ void Img::download_img()
     }
 
     clear();
+    m_refurl = refurl;
                
     JDLIB::LOADERDATA data;
     data.url = m_url;
@@ -124,8 +165,6 @@ void Img::download_img()
 
 
 
-
-
 //
 // キャッシュ保存
 //
@@ -133,7 +172,7 @@ void Img::download_img()
 //
 bool Img::save( Gtk::Window* parent, const std::string& path_to )
 {
-    if( is_loading() ) return false;
+    if( ! is_cached() ) return false;
 
     std::string dir = MISC::get_dir( path_to );
     if( dir.empty() ) dir = SESSION::dir_img_save();
@@ -141,7 +180,7 @@ bool Img::save( Gtk::Window* parent, const std::string& path_to )
     std::string name = MISC::get_filename( path_to );
     if( name.empty() ) name = MISC::get_filename( m_url );    
 
-    std::string save_to = CACHE::open_save_diag( parent, CACHE::path_img( m_url ), dir + name );
+    std::string save_to = CACHE::open_save_diag( parent, get_cache_path(), dir + name );
 
     if( ! save_to.empty() ){
         SESSION::set_dir_img_save( MISC::get_dir( save_to ) );
@@ -157,8 +196,10 @@ bool Img::save( Gtk::Window* parent, const std::string& path_to )
 //
 const int Img::get_width()
 {
+    if( ! is_cached() ) return 0;
+
     if( ! m_width ){
-        MISC::get_img_size( CACHE::path_img( m_url ), m_width, m_height );
+        MISC::get_img_size( get_cache_path(), m_width, m_height );
         if( m_width ) save_info();
     }
 
@@ -167,8 +208,10 @@ const int Img::get_width()
 
 const int Img::get_height()
 {
+    if( ! is_cached() ) return 0;
+
     if( ! m_height ){
-        MISC::get_img_size( CACHE::path_img( m_url ), m_width, m_height );
+        MISC::get_img_size( get_cache_path(), m_width, m_height );
         if( m_height ) save_info();
     }
 
@@ -181,6 +224,8 @@ const int Img::get_height()
 //
 void Img::set_mosaic( bool mosaic )
 {
+    if( ! is_cached() ) return;
+
     m_mosaic = mosaic;
     save_info();
 
@@ -196,8 +241,20 @@ void Img::set_mosaic( bool mosaic )
 //
 void Img::set_protect( bool protect )
 {
+    if( ! is_cached() ) return;
+
+    if( m_protect == protect ) return;
+
+    if( protect ){
+        CACHE::jdmv( CACHE::path_img( m_url ), CACHE::path_img_protect( m_url ) );
+        CACHE::jdmv( CACHE::path_img_info( m_url ), CACHE::path_img_protect_info( m_url ) );
+    }
+    else{
+        CACHE::jdmv( CACHE::path_img_protect( m_url ), CACHE::path_img( m_url ) );
+        CACHE::jdmv( CACHE::path_img_protect_info( m_url ), CACHE::path_img_info( m_url ) );
+    }
+
     m_protect = protect;
-    save_info();
 }
 
 
@@ -295,7 +352,7 @@ void Img::receive_finish()
 
     // 読み込み失敗の場合はファイルを消しておく
     if( ! total_length() ){
-        std::string path = CACHE::path_img( m_url );
+        std::string path = get_cache_path();
         if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
     }
 
@@ -325,31 +382,68 @@ void Img::read_info()
     std::cout << "Img::read_info\n";
 #endif
 
-    JDLIB::ConfLoader cf( CACHE::path_img_info( m_url ), std::string() );
+    std::string filename = CACHE::filename_img_info( m_url );
+    std::string path_info = CACHE::path_img_info_root() + filename;
+    bool exist = false;
 
-    m_refurl = cf.get_option( "refurl", "" );
-    set_code( cf.get_option( "code", HTTP_INIT ) );
-    set_str_code( cf.get_option( "str_code", "" ) );
-    set_total_length( cf.get_option( "byte", 0 ) );
-    m_mosaic = cf.get_option( "mosaic", CONFIG::get_use_mosaic() );
-    m_protect = cf.get_option( "protect", 0 );
-    m_type = cf.get_option( "type", T_UNKNOWN );
-    m_width = cf.get_option( "width", 0 );
-    m_height = cf.get_option( "height", 0 );
+    do{
 
-    if( ! total_length() ) set_total_length( CACHE::get_filesize( CACHE::path_img( m_url ) ) );
-    set_current_length( total_length() );
+        // 通常
+        if( CACHE::file_exists( path_info ) == CACHE::EXIST_FILE ){ 
+            m_protect = false;
+            exist = true;
+            break;
+        }
+
+        // 保護の場合
+        path_info = CACHE::path_img_protect_info_root() + filename;
+        if( CACHE::file_exists( path_info ) == CACHE::EXIST_FILE ){
+            m_protect = true;
+            exist = true;
+            break;
+        }
+
+        // あぼーんの場合
+        path_info = CACHE::path_img_abone_root() + filename;
+        if( CACHE::file_exists( path_info ) == CACHE::EXIST_FILE ){
+            m_abone = true;
+            exist = false;
+            break;
+        }
+
+    }while( 0 );
+
+    if( exist ){
+
+        JDLIB::ConfLoader cf( path_info, std::string() );
+
+        m_refurl = cf.get_option( "refurl", "" );
+        set_code( cf.get_option( "code", HTTP_INIT ) );
+        set_str_code( cf.get_option( "str_code", "" ) );
+        set_total_length( cf.get_option( "byte", 0 ) );
+        m_mosaic = cf.get_option( "mosaic", CONFIG::get_use_mosaic() );
+        m_type = cf.get_option( "type", T_UNKNOWN );
+        m_width = cf.get_option( "width", 0 );
+        m_height = cf.get_option( "height", 0 );
+        m_abone = cf.get_option( "abone", 0 );
+
+        if( ! total_length() ) set_total_length( CACHE::get_filesize( get_cache_path() ) );
+        set_current_length( total_length() );
+    }
 
 #ifdef _DEBUG
+    std::cout << "path_info = " << path_info << std::endl;
+    std::cout << "exist = " << exist << std::endl;
+    std::cout << "protect = " << m_protect << std::endl;
     std::cout << "refurl = " << m_refurl << std::endl;
     std::cout << "code = " << get_code() << std::endl;
     std::cout << "str_code = " << get_str_code() << std::endl;
     std::cout << "byte = " << total_length() << std::endl;
     std::cout << "mosaic = " << m_mosaic << std::endl;
-    std::cout << "protect = " << m_protect << std::endl;
     std::cout << "type = " << m_type << std::endl;
     std::cout << "width = " << m_width << std::endl;
     std::cout << "height = " << m_height << std::endl;
+    std::cout << "abone = " << m_abone << std::endl;
 #endif
 }
 
@@ -361,8 +455,28 @@ void Img::save_info()
 {
     if( is_loading() ) return;
     if( ! CACHE::mkdir_imgroot() ) return;
+    if( ! CACHE::mkdir_imgroot_favorite() ) return;
 
-    std::string path_info = CACHE::path_img_info( m_url );
+    std::string path_info;
+
+    if( ! is_cached() && ! m_abone ){
+
+        // あぼーん情報ファイルがあったら消しておく
+        path_info = CACHE::path_img_abone( m_url );
+        if( CACHE::file_exists( path_info ) == CACHE::EXIST_FILE ){
+#ifdef _DEBUG
+            std::cout << "unlink " << path_info << std::endl;
+#endif 
+            unlink( path_info.c_str() );
+        }
+
+        if( get_code() == HTTP_INIT ) return;
+    }
+
+    if( m_protect ) path_info = CACHE::path_img_protect_info( m_url );
+    if( m_abone ) path_info = CACHE::path_img_abone( m_url );
+    else path_info = CACHE::path_img_info( m_url );
+
     std::ostringstream oss;
     oss << "url = " << m_url << std::endl
         << "refurl = " << m_refurl << std::endl
@@ -370,13 +484,14 @@ void Img::save_info()
         << "str_code = " << get_str_code() << std::endl
         << "byte = " << total_length() << std::endl
         << "mosaic = " << m_mosaic << std::endl
-        << "protect = " << m_protect << std::endl
         << "type = " << m_type << std::endl
         << "width = " << m_width << std::endl
-        << "height = " << m_height << std::endl;
+        << "height = " << m_height << std::endl
+        << "abone = " << m_abone << std::endl;
 
 #ifdef _DEBUG
     std::cout << "Img::save_info file = " << path_info << std::endl;
+    std::cout << "protect = " << m_protect << std::endl;
     std::cout << oss.str() << std::endl;
 #endif
 

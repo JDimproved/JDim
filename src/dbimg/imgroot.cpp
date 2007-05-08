@@ -5,6 +5,7 @@
 
 #include "imgroot.h"
 #include "img.h"
+#include "delimgcachediag.h"
 
 #include "jdlib/confloader.h"
 
@@ -143,20 +144,21 @@ bool ImgRoot::is_loadable( const char* url, int n )
 //
 // キャッシュ削除
 //
-void ImgRoot::delete_cache( const std::string& url, bool redraw )
+void ImgRoot::delete_cache( const std::string& url )
 {
 #ifdef _DEBUG
     std::cout << "ImgRoot::delete_cache  url = " << url << std::endl;
 #endif
 
-    Img* img = search_img( url );
-    if( img && ! img->is_protected() ){
-        img->clear();
-        img->clear_load_data();
-    }
+    Img* img = get_img( url );
+    if( img && img->is_protected() ) return;
 
-    // ビューを閉じる
-    CORE::core_set_command( "close_image_view", url );
+    bool abone = false;
+    if( img ) abone = img->get_abone();
+
+#ifdef _DEBUG
+    std::cout << "abone = " << abone << std::endl;
+#endif
 
     // キャッシュ削除
     std::string path = CACHE::path_img( url );
@@ -167,20 +169,16 @@ void ImgRoot::delete_cache( const std::string& url, bool redraw )
     if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
 
     // 再描画
-    if( redraw ){
-        CORE::core_set_command( "redraw_article" );
-        CORE::core_set_command( "redraw_message" );
-    }
+    if( img ) img->reset();
+    redraw_imgs();
 }
-
-
 
 
 //
 // 全キャッシュ削除
 //
-// image/info フォルダにあるファイルを全て取得してinfoファイルから
-// 含まれているURLを取得して保護されていない画像は delete_cache() を呼んで消す
+// image/info フォルダにあるファイルを全て取得して
+// 期限切れのファイルを削除
 //
 void ImgRoot::delete_all_files()
 {
@@ -193,82 +191,38 @@ void ImgRoot::delete_all_files()
     delete pref;
     if( ret != Gtk::RESPONSE_OK ) return;
 
-    std::vector< std::string > list_urls;
-    int num_files = 0;
-    int64_t size_files = 0;
+    // 画像キャッシュ削除ダイアログ表示
+    DelImgCacheDiag* deldiag = new DelImgCacheDiag();
+    deldiag->run();
+    delete deldiag;
 
-    std::list< std::string >list_infofile;
-    std::string path_info_root = CACHE::path_img_info_root();
-    list_infofile = CACHE::get_filelist( path_info_root );
+    reset_imgs();
+    redraw_imgs();
+}
 
-    std::list< std::string >::iterator it_info = list_infofile.begin();
-    for(; it_info != list_infofile.end(); ++it_info ){
 
-        std::string path_info = CACHE::path_img_info_root() + ( *it_info );
-
-        JDLIB::ConfLoader cf( path_info, std::string() );
-
-        std::string url = cf.get_option( "url", "" );
-        bool protect = cf.get_option( "protect", 0 );
-
-        if( url.empty() ) continue;
-        if( protect ) continue;
-
-        std::string path_file = CACHE::path_img( url );
-
-        // 経過日数を計算
-        struct timeval tv;
-        struct timezone tz;
-        gettimeofday( &tv, &tz );
-        time_t mtime = CACHE::get_filemtime( path_file );
-
-        // 404などでinfoファイルはあるが画像が無い場合は infoのmtimeを見る
-        if( ! mtime ) mtime = CACHE::get_filemtime( path_info );
-
-        time_t days = ( tv.tv_sec - mtime ) / ( 60 * 60 * 24 );
-        if( days >= CONFIG::get_del_img_day() ){
-
-#ifdef _DEBUG
-            std::cout << "\ninfo  = " << path_info << std::endl;
-            std::cout << "path = " << path_file << std::endl;
-            std::cout << "url = " << url << std::endl;
-            std::cout << "protect = " << protect << std::endl;
-            std::cout << "mtime = " << MISC::timettostr( mtime ) << std::endl;
-            std::cout << "days = " << days << std::endl;
-#endif
-            list_urls.push_back( url );
-            ++num_files;
-            size_files += CACHE::get_filesize( path_file );
-        }
-    }
-
-    if( !num_files ){
-        SKELETON::MsgDiag mdiag2( NULL, "削除するファイルはありません", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK );
-        mdiag2.run();
-        return;
-    }
-
-    std::stringstream ss;
-    ss << "削除するファイルの数 : " << num_files << "\n"
-       << "削除するファイルの合計サイズ : " << ( size_files / 1024 / 1024 ) << "M\n\n"
-       << "本当に画像を削除しますか？";
-
-    SKELETON::MsgDiag mdiag2( NULL, ss.str(), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-    if( mdiag2.run() != Gtk::RESPONSE_OK ) return;
-
-    std::vector< std::string >::iterator it_url = list_urls.begin();
-    for(; it_url != list_urls.end(); ++it_url ){
-
-#ifdef _DEBUG
-        std::cout << "delete " << *it_url << std::endl;
-#endif
-
-        delete_cache( *it_url,
-                      false // ビューの再描画はしない
-            );
-    }
-
-    // ビュー再描画
+//
+// 画像の再描画
+//
+void ImgRoot::redraw_imgs()
+{
+    CORE::core_set_command( "close_nocached_image_views" );
     CORE::core_set_command( "redraw_article" );
     CORE::core_set_command( "redraw_message" );
 }
+
+
+//
+// Img クラスの情報をリセット
+//
+void ImgRoot::reset_imgs()
+{
+    std::list< Img* >::iterator it;
+    for( it = m_list_img.begin(); it != m_list_img.end(); ++it ){
+        Img* img = *( it );
+        if( img ) img->reset();
+    }
+}
+
+
+

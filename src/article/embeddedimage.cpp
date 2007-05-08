@@ -8,12 +8,12 @@
 
 #include "jdlib/miscgtk.h"
 #include "jdlib/miscmsg.h"
+#include "jdlib/miscthread.h"
 
 #include "dbimg/imginterface.h"
 #include "dbimg/img.h"
 
-#include "cache.h"
-
+#include "message/messageadmin.h"
 
 //
 // スレッドのランチャ
@@ -35,7 +35,10 @@ void* eimg_launcher( void* dat )
 
     // 再描画
     --redraw_counter;
-    if( ! redraw_counter ) ARTICLE::get_admin()->set_command( "redraw_current_view" );
+    if( ! redraw_counter ){
+        ARTICLE::get_admin()->set_command( "redraw_current_view" );
+        MESSAGE::get_admin()->set_command( "redraw_current_view" );
+    }
 
 #ifdef _DEBUG
     std::cout << "end\n";
@@ -123,10 +126,11 @@ void EmbeddedImage::show()
     if( ! m_width || ! m_height ) return;
 
     // スレッド起動して縮小
+    const int stacksize = 8;
     int status;
     m_stop = false;
-    if( ( status = pthread_create( & m_thread, NULL, eimg_launcher, ( void* )this ) ) ){
-        MISC::ERRMSG( std::string( "EmbeddedImage::show : could not start thread" ) + strerror( status ) );
+    if( ( status = MISC::thread_create( & m_thread, eimg_launcher, ( void* )this, stacksize ) ) ){
+        MISC::ERRMSG( std::string( "EmbeddedImage::show : could not start thread " ) + strerror( status ) );
     }
 }
 
@@ -140,12 +144,12 @@ void EmbeddedImage::resize_thread()
 
     std::string errmsg;
 
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( CACHE::path_img( m_url ), m_width, m_height, m_stop, errmsg );
+    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), m_width, m_height, m_stop, errmsg );
     if( loader ) m_pixbuf = loader->get_pixbuf();
 
     // メインスレッドにリサイズが終わったことを知らせて
     // メインスレッドがpthread_join()を呼び出す
-    // そうしないとメモリを食いつぶしてpthread_create出来なくなる
+    // そうしないとメモリを食い潰す
     dispatch();
 }
 

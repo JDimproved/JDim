@@ -29,7 +29,6 @@
 #include "session.h"
 #include "viewfactory.h"
 #include "sharedbuffer.h"
-#include "cache.h"
 #include "prefdiagfactory.h"
 #include "usrcmdmanager.h"
 
@@ -268,6 +267,8 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DeleteImage_Menu", "削除" ) );    
     action_group()->add( Gtk::Action::create( "DeleteImage", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::slot_deleteimage ) );
     action_group()->add( Gtk::Action::create( "SaveImage", "保存"), sigc::mem_fun( *this, &ArticleViewBase::slot_saveimage ) );
+    action_group()->add( Gtk::ToggleAction::create( "AboneImage", "画像をあぼ〜んする", std::string(), false ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_abone_img ) );
 
     // ユーザコマンド
     const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
@@ -450,6 +451,8 @@ void ArticleViewBase::setup_action()
     "<menu action='DeleteImage_Menu'>"
     "<menuitem action='DeleteImage'/>"
     "</menu>"
+    "<separator/>"
+    "<menuitem action='AboneImage'/>"
     "<separator/>"
     "<menuitem action='PreferenceImage'/>"
     "</popup>"
@@ -1535,14 +1538,22 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
     SKELETON::View* view_popup = NULL;
 
     // 画像ポップアップ
-    if( DBIMG::is_loadable( url )
-        && ( DBIMG::is_loading( url ) || ( DBIMG::get_code( url ) != HTTP_ERR && DBIMG::get_code( url ) != HTTP_INIT ) ) ){
+    if( DBIMG::is_loadable( url ) ){
+
+        // あぼーん
+        if( DBIMG::get_abone( url ) ){
+            args.arg1 = "あぼ〜んされています";
+            view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPHTML, m_url_article, args );
+        }
+
+        else if ( DBIMG::is_loading( url ) || ( DBIMG::get_code( url ) != HTTP_ERR && DBIMG::get_code( url ) != HTTP_INIT ) ) {
 
 #ifdef _DEBUG
-        std::cout << "image " << DBIMG::get_code( url ) << " " << DBIMG::is_loading( url ) << "\n";
+            std::cout << "image " << DBIMG::get_code( url ) << " " << DBIMG::is_loading( url ) << "\n";
 #endif
 
-        view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
+            view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
+        }
     }
 
     // レスポップアップ
@@ -1896,6 +1907,11 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             mdiag.run();
         }
 
+        else if( DBIMG::get_abone( url )){
+            SKELETON::MsgDiag mdiag( NULL, "あぼ〜んされています" );
+            mdiag.run();
+        }
+
         else{
 
             bool top = true;
@@ -1906,11 +1922,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         
             // キャッシュに無かったらロード
             if( ! DBIMG::is_cached( url ) ){
-                std::stringstream refurl;
-                refurl << DBTREE::url_readcgi( m_url_article, res_number, 0 );
-                DBIMG::set_refurl( url, refurl.str() );
-
-                DBIMG::download_img( url );
+                DBIMG::download_img( url, DBTREE::url_readcgi( m_url_article, res_number, 0 ) );
                 hide_popup();
                 show_popup( CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url ) );
                 top = false;
@@ -2257,6 +2269,29 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
             if(  DBIMG::is_cached( url ) ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
+
+        // プロパティ
+        act = action_group()->get_action( "PreferenceImage" );
+        if( act ){
+
+            if(  DBIMG::is_cached( url ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+        }
+
+        // あぼーん
+        act = action_group()->get_action( "AboneImage" );
+        if( act ){
+
+            if( DBIMG::is_cached( url ) && DBIMG::is_protected( url ) ) act->set_sensitive( false );
+            else{
+
+                act->set_sensitive( true );
+
+                Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+                if( DBIMG::get_abone( url ) ) tact->set_active( true );
+                else tact->set_active( false );
+            }
+        }
     }
 
     m_enable_menuslot = true;
@@ -2422,7 +2457,7 @@ void ArticleViewBase::slot_open_browser()
     std::string url = m_url_tmp;
 
     // 画像、かつキャッシュにある場合
-    if( DBIMG::is_loadable( url ) && DBIMG::is_cached( url ) ) url = "file://" + CACHE::path_img( url );
+    if( DBIMG::is_loadable( url ) && DBIMG::is_cached( url ) ) url = "file://" + DBIMG::get_cache_path( url );
 
     CORE::core_set_command( "open_url_browser", url );
 }
@@ -2868,6 +2903,18 @@ void ArticleViewBase::slot_toggle_protectimage()
     DBIMG::set_protect( m_url_tmp , ! DBIMG::is_protected( m_url_tmp ) );
 }
 
+
+//
+// 画像あぼ〜ん
+//
+void ArticleViewBase::slot_abone_img()
+{
+    if( ! m_enable_menuslot ) return;
+    if( m_url_tmp.empty() ) return;
+
+    DBIMG::set_abone( m_url_tmp , ! DBIMG::get_abone( m_url_tmp ) );
+    if( DBIMG::get_abone( m_url_tmp ) ) CORE::core_set_command( "delete_image", m_url_tmp );
+}
 
 
 //

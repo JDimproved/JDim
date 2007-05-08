@@ -143,6 +143,8 @@ void ImageViewBase::setup_common()
     action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する", std::string(), false ),
                          sigc::mem_fun( *this, &ImageViewBase::slot_toggle_protectimage ) );
 
+    action_group()->add( Gtk::Action::create( "AboneImage", "画像をあぼ〜んする"), sigc::mem_fun( *this, &ImageViewBase::slot_abone_img ) );
+
     action_group()->add( Gtk::Action::create( "Preference", "Property"), sigc::mem_fun( *this, &ImageViewBase::slot_preference ) );
 
     ui_manager() = Gtk::UIManager::create();    
@@ -191,6 +193,10 @@ void ImageViewBase::setup_common()
     "<menu action='DeleteMenu'>"
     "<menuitem action='DeleteImage'/>"
     "</menu>"
+
+    "<separator/>"
+    "<menuitem action='AboneImage'/>"
+
     "<separator/>"
 
     "<menuitem action='Preference'/>"
@@ -251,6 +257,10 @@ void ImageViewBase::setup_common()
     "</menu>"
     "<separator/>"
 
+    "<separator/>"
+    "<menuitem action='AboneImage'/>"
+
+    "<separator/>"
     "<menuitem action='Preference'/>"
 
     "</popup>"
@@ -320,7 +330,8 @@ void ImageViewBase::reload()
     std::cout << "ImageViewBase::reload url = " << get_url() << std::endl;
 #endif
 
-    m_img->download_img();
+    std::string refurl = m_img->get_refurl();
+    m_img->download_img( refurl );
 }
 
 
@@ -804,7 +815,7 @@ void ImageViewBase::slot_open_browser()
     if( ! m_enable_menuslot ) return;
 
     std::string url = get_url();
-    if( m_img->is_cached() ) url = "file://" + CACHE::path_img( get_url() );
+    if( m_img->is_cached() ) url = "file://" + m_img->get_cache_path();
     CORE::core_set_command( "open_url_browser", url );
 }
 
@@ -817,7 +828,7 @@ void ImageViewBase::slot_open_ref()
 {
     if( ! m_enable_menuslot ) return;
 
-    std::string refurl = m_img->refurl();
+    std::string refurl = m_img->get_refurl();
 
     int center, from, to;
     std::string url = DBTREE::url_dat( refurl, center, to );
@@ -893,6 +904,15 @@ void ImageViewBase::slot_toggle_protectimage()
 }
 
 
+//
+// 画像あぼーん
+//
+void ImageViewBase::slot_abone_img()
+{
+    m_img->set_abone( true );
+    delete_view();
+}
+
 
 //
 // 共有バッファセット
@@ -948,7 +968,7 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     // 参照元スレ
     act = action_group()->get_action( "OpenRef" );
     if( act ){
-        if( ! m_img->refurl().empty() ) act->set_sensitive( true );
+        if( ! m_img->get_refurl().empty() ) act->set_sensitive( true );
         else act->set_sensitive( false );
     }
     
@@ -980,6 +1000,13 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     act = action_group()->get_action( "LoadStop" );
     if( act ){
         if( m_img->is_loading() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+
+    // あぼーん
+    act = action_group()->get_action( "AboneImage" );
+    if( act ){
+        if( m_img->is_cached() && ! m_img->is_protected() ) act->set_sensitive( true );
         else act->set_sensitive( false );
     }
 

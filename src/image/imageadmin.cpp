@@ -249,6 +249,9 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
 
     else if( command.command  == "close_all_views" ) close_other_views( std::string() );
 
+    // キャッシュに無いviewを削除
+    else if( command.command  == "close_nocached_views" ) close_nocached_views();
+
     // 画面のスクロール
     else if( command.command == "scroll_up" ){
         SKELETON::View* view = get_current_view();
@@ -614,6 +617,22 @@ void ImageAdmin::close_right_views( const std::string& url )
 
 
 //
+// キャッシュに無い画像を閉じる
+//
+void ImageAdmin::close_nocached_views()
+{
+    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
+    for(; it !=  m_iconbox.children().end(); ++it ){
+        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+        if( view ){
+            std::string url = view->get_url();
+            if( ! DBIMG::is_cached( url ) ) set_command( "close_view", url );
+        }
+    }
+}
+
+
+//
 // 現在のviewをフォーカスする
 //
 // 他のクラスからは直接呼ばないで、set_command()経由で呼ぶこと
@@ -931,7 +950,7 @@ void ImageAdmin::save_all()
                 std::string url = (*it);
                 if( ! DBIMG::is_cached( url ) ) continue;
 
-                std::string path_from = CACHE::path_img( url );
+                std::string path_from = DBIMG::get_cache_path( url );
                 std::string path_to = path_dir + MISC::get_filename( url );
 
 #ifdef _DEBUG

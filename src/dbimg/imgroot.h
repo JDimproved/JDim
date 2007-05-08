@@ -31,10 +31,14 @@ namespace DBIMG
         bool is_loadable( const char* url, int n );
 
         // キャッシュ削除
-        void delete_cache( const std::string& url, bool redraw );
+        void delete_cache( const std::string& url );
 
         // 全キャッシュ削除
         void delete_all_files();
+
+      private:
+        void redraw_imgs();
+        void reset_imgs();
     };
 }
 

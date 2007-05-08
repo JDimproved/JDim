@@ -9,10 +9,10 @@
 
 #include "jdlib/miscmsg.h"
 #include "jdlib/miscgtk.h"
+#include "jdlib/miscthread.h"
 
 #include "config/globalconf.h"
 
-#include "cache.h"
 #include "global.h"
 #include "httpcode.h"
 #include "colorid.h"
@@ -148,10 +148,11 @@ void ImageAreaIcon::show_image()
         set_width( (int)( w_org * scale ) );
         set_height( (int)( h_org * scale ) );
 
+        const int stacksize = 8;        
         int status;
         m_stop = false;
-        if( ( status = pthread_create( &m_thread, NULL, icon_launcher, ( void* ) this ) ) ){
-            MISC::ERRMSG( std::string( "ImageAreaIcon::show_image : could not start thread" ) + strerror( status ) );
+        if( ( status = MISC::thread_create( &m_thread, icon_launcher, ( void* ) this, stacksize ) ) ){
+            MISC::ERRMSG( std::string( "ImageAreaIcon::show_image : could not start thread " ) + strerror( status ) );
         }
     }
 }
@@ -167,7 +168,7 @@ void ImageAreaIcon::show_image_thread()
 #endif
 
     std::string errmsg;
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( CACHE::path_img( get_url() ), get_width(), get_height(), m_stop, errmsg );
+    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( get_img()->get_cache_path(), get_width(), get_height(), m_stop, errmsg );
     if( loader ) m_pixbuf_icon = loader->get_pixbuf();
 
     if( m_pixbuf_icon ){

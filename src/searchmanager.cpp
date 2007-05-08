@@ -6,10 +6,9 @@
 #include "searchmanager.h"
 
 #include "jdlib/miscmsg.h"
+#include "jdlib/miscthread.h"
 
 #include "dbtree/interface.h"
-
-typedef void* ( *FUNC )( void * );
 
 CORE::Search_Manager* instance_search_manager = NULL;
 
@@ -65,9 +64,10 @@ bool Search_Manager::search( const std::string& id,
     // 読み込んでおかないと大量の warning が出る
     if( m_searchall ) DBTREE::read_boardinfo_all();
 
+    const int stacksize = 8;
     int status;
-    if( ( status = pthread_create( &m_thread, NULL,  ( FUNC ) launcher, ( void * ) this ) )){
-        MISC::ERRMSG( "Search_Manager::search : could not start thread" );
+    if( ( status = MISC::thread_create( &m_thread, ( STARTFUNC ) launcher, ( void * ) this, stacksize ) )){
+        MISC::ERRMSG( std::string( "Search_Manager::search : could not start thread " ) + strerror( status ) );
     }
     else{
         m_searching = true;

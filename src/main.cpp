@@ -360,6 +360,16 @@ int main( int argc, char **argv )
         exit( 1 );
     }
 
+    GMemVTable vtable;
+    vtable = *glib_mem_profiler_table;
+    vtable.malloc = malloc;
+    vtable.realloc = realloc;
+    vtable.free = free;
+    vtable.calloc = calloc;
+    vtable.try_malloc = malloc;
+    vtable.try_realloc = realloc;
+    g_mem_set_vtable( &vtable );
+
     Gtk::Main m( &argc, &argv );
 
     // XSMPによるセッション管理

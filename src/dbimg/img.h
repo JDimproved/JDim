@@ -38,6 +38,7 @@ namespace DBIMG
         int m_size; // 画像の大きさ(パーセントで)
         bool m_protect; // true ならキャッシュを保護する( delete_cache()で削除しない )
         std::string m_refurl; // 参照元URL
+        bool m_abone; // あぼーんされている
 
         // 保存用ファイルハンドラ
         FILE* m_fout;
@@ -46,14 +47,19 @@ namespace DBIMG
         Img( const std::string& url );
         ~Img();
 
+        void reset();
         void clear();
 
         const std::string& url() const { return m_url; }
+        std::string get_cache_path();
 
         const int get_width();
         const int get_height();
 
         const bool is_cached();
+
+        const bool get_abone() const { return m_abone; }
+        void set_abone( bool abone );
 
         const bool get_mosaic() const { return m_mosaic; }
         void set_mosaic( bool mosaic );
@@ -67,12 +73,11 @@ namespace DBIMG
         void set_size( int size ) { m_size = size; }
 
         const bool is_protected() const { return m_protect; }
-        const std::string& refurl() const { return m_refurl; }
-        void set_refurl( const std::string& refurl ){ m_refurl = refurl; }
+        const std::string& get_refurl() const { return m_refurl; }
 
         void set_protect( bool protect );
 
-        void download_img();
+        void download_img( const std::string& refurl );
         bool save( Gtk::Window* parent, const std::string& path_to );
         
       private:

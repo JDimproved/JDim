@@ -259,6 +259,33 @@ std::string CACHE::path_img_info_root()
 
 
 //
+// 保護画像キャッシュのルートパス
+//
+std::string CACHE::path_img_protect_root()
+{
+    return CACHE::path_root() + "image_protect/";
+}
+
+
+//
+// 保護画像キャッシュのinfoファイルのルートパス
+//
+std::string CACHE::path_img_protect_info_root()
+{
+    return path_img_protect_root() + "info/";
+}
+
+
+//
+// 画像あぼーんinfoファイルのルートパス
+//
+std::string CACHE::path_img_abone_root()
+{
+    return path_root() + "image_abone/";
+}
+
+
+//
 // 書き込みログ
 //
 std::string CACHE::path_postlog()
@@ -283,6 +310,15 @@ std::string CACHE::filename_img( const std::string& url )
 
 
 //
+// 画像キャッシュ情報ファイルの名前
+//
+std::string CACHE::filename_img_info( const std::string& url )
+{
+    return filename_img( url ) + ".info";
+}
+
+
+//
 // 画像キャッシュファイルのパス
 //
 std::string CACHE::path_img( const std::string& url )
@@ -296,7 +332,34 @@ std::string CACHE::path_img( const std::string& url )
 //
 std::string CACHE::path_img_info( const std::string& url )
 {
-    return CACHE::path_img_info_root() + filename_img( url ) + ".info";
+    return CACHE::path_img_info_root() + filename_img_info( url );
+}
+
+
+//
+// 保護画像キャッシュファイルのパス
+//
+std::string CACHE::path_img_protect( const std::string& url )
+{
+    return CACHE::path_img_protect_root() + filename_img( url );
+}
+
+
+//
+// 保護画像infoファイルのパス
+//
+std::string CACHE::path_img_protect_info( const std::string& url )
+{
+    return CACHE::path_img_protect_info_root() + filename_img_info( url );
+}
+
+
+//
+// 画像あぼーんinfoファイルのパス
+//
+std::string CACHE::path_img_abone( const std::string& url )
+{
+    return CACHE::path_img_abone_root() + filename_img_info( url );
 }
 
 
@@ -357,7 +420,7 @@ bool CACHE::mkdir_root()
 //
 // 画像キャッシュのルートディレクトリをmkdir
 //
-// 例えば  "/home/hoge/.jd/image/" と "/home/hoge/.jd/image/info/" を作成
+// 例えば  "/home/hoge/.jd/image/" と "/home/hoge/.jd/image/info/" などを作成
 //
 bool CACHE::mkdir_imgroot()
 {
@@ -375,8 +438,39 @@ bool CACHE::mkdir_imgroot()
         return false;
     }
     
+    // abone ディレクトリ
+    std::string path_abone_root = CACHE::path_img_abone_root();
+    if( ! CACHE::jdmkdir( path_abone_root ) ){
+        MISC::ERRMSG( "can't create " + path_abone_root );
+        return false;
+    }
+
     return true;
 }
+
+
+//
+// 保護画像キャッシュのルートディレクトリをmkdir
+//
+bool CACHE::mkdir_imgroot_favorite()
+{
+    // root
+    std::string path_img_root = CACHE::path_img_protect_root();
+    if( ! CACHE::jdmkdir( path_img_root ) ){
+        MISC::ERRMSG( "can't create " + path_img_root );
+        return false;
+    }
+
+    // info ディレクトリ
+    std::string path_info_root = CACHE::path_img_protect_info_root();
+    if( ! CACHE::jdmkdir( path_info_root ) ){
+        MISC::ERRMSG( "can't create " + path_info_root );
+        return false;
+    }
+    
+    return true;
+}
+
 
 //
 // キャッシュのひとつ上のディレクトリをmkdir
@@ -595,6 +689,19 @@ bool CACHE::jdcopy( const std::string& file_from, const std::string& file_to )
     free( data );
 
     return true;
+}
+
+//
+// mv
+//
+bool CACHE::jdmv( const std::string& file_from, const std::string& file_to )
+{
+    if( CACHE::jdcopy( file_from, file_to ) ){
+        unlink( file_from.c_str() );
+        return true;
+    }
+
+    return false;
 }
 
 

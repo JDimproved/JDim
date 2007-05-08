@@ -12,7 +12,6 @@
 #include "dbimg/img.h"
 
 #include "httpcode.h"
-#include "cache.h"
 
 using namespace IMAGE;
 
@@ -48,7 +47,7 @@ void ImageAreaBase::set_image()
     bool stop = false;
     std::string errmsg;
 
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( CACHE::path_img( get_url() ), get_width(), get_height(), stop, errmsg );
+    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), get_width(), get_height(), stop, errmsg );
     if( loader ){
 
         if( m_img->get_mosaic() ) set_mosaic( loader->get_pixbuf() );

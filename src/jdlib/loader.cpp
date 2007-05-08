@@ -7,6 +7,7 @@
 #include "loader.h"
 #include "miscmsg.h"
 #include "miscutil.h"
+#include "miscthread.h"
 
 #include "skeleton/loadable.h"
 
@@ -33,9 +34,6 @@
 
 // タイムアウトの最小値 (秒)
 #define TIMEOUT_MIN 10             
-
-
-typedef void* ( *FUNC )( void * );
 
 
 //
@@ -329,12 +327,13 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
 #endif
 
     // スレッドを起動して run_main() 実行
-    m_stop = false;
+    const int stacksize = 8;
     int status;
-    if( ( status = pthread_create( &m_thread, NULL,  ( FUNC ) launcher, ( void * ) this ) )){
+    m_stop = false;
+    if( ( status = MISC::thread_create( &m_thread, ( STARTFUNC ) launcher, ( void * ) this, stacksize ) )){
 
         m_data.code = HTTP_ERR;
-        m_data.str_code = std::string( "pthread_create failed : " ) + strerror( status );
+        m_data.str_code = std::string( "Loader::run : could not start thread : " ) + strerror( status );
         MISC::ERRMSG( m_data.str_code );
         return false;
     }

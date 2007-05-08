@@ -242,6 +242,7 @@ namespace ARTICLE
         void slot_deleteimage();
         void slot_toggle_protectimage();
         void slot_saveimage();
+        void slot_abone_img();
 
         // 検索
         virtual void open_searchbar( bool invert );
