@@ -1129,17 +1129,17 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
     int pos_trip_end = 0;
     int i;
     const bool defaultname = ( strncmp( m_default_noname.data(), str, lng ) == 0 );
-    NODE* node; // plainな名前の取得用
 
-    header->headinfo->block[ BLOCK_NAME ] = create_block_node();
+    header->headinfo->block[ BLOCK_NAMELINK ] = create_block_node();
 
     // デフォルトの名前で無いときはリンクにする
-    if( defaultname ) node = createTextNode( "名前：", COLOR_CHAR );
+    if( defaultname ) createTextNode( "名前", COLOR_CHAR );
     else{
         const char namestr[] = "名前";
         create_linknode( namestr, strlen( namestr ) , PROTO_NAME, strlen( PROTO_NAME ), COLOR_CHAR, false );
-        node = createTextNode( "：", COLOR_CHAR );
     }
+
+    NODE* node = header->headinfo->block[ BLOCK_NAME ] = create_block_node();
 
     // トリップなど</b>〜<b>が含まれている場合。</b>〜<b>の中の数字はリンクにしない
     for( i = 0; i < lng; ++i ) if( str[ i ] == '<' && ( str[ i+2 ] == 'b' || str[ i+2 ] == 'B' ) ) break;

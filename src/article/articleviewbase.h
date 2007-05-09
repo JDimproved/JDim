@@ -220,7 +220,6 @@ namespace ARTICLE
         void slot_abone_id();
         void slot_abone_name();
         void slot_abone_word();
-        void slot_abone_id_board();
         void slot_abone_name_board();
         void slot_abone_word_board();
         void slot_global_abone_name();

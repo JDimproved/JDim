@@ -654,6 +654,8 @@ void Css_Manager::set_default_html()
     create_divnode( "title" );
     create_blocknode( DBTREE::BLOCK_NUMBER );
     create_textnode( " " );
+    create_blocknode( DBTREE::BLOCK_NAMELINK );
+    create_textnode( "：" );
     create_blocknode( DBTREE::BLOCK_NAME );
     create_textnode( " " );
     create_blocknode( DBTREE::BLOCK_MAIL );
@@ -722,6 +724,7 @@ bool Css_Manager::read_html()
             create_divnode( regex.str( 1 ) );
         }
         else if( block.find( "number" ) == 0 ) create_blocknode( DBTREE::BLOCK_NUMBER );
+        else if( block.find( "namelink" ) == 0 ) create_blocknode( DBTREE::BLOCK_NAMELINK );
         else if( block.find( "name" ) == 0 ) create_blocknode( DBTREE::BLOCK_NAME );
         else if( block.find( "mail" ) == 0 ) create_blocknode( DBTREE::BLOCK_MAIL );
         else if( block.find( "date" ) == 0 ) create_blocknode( DBTREE::BLOCK_DATE );

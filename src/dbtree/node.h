@@ -38,6 +38,7 @@ namespace DBTREE
     enum
     {
         BLOCK_NUMBER = 0, // レス番号
+        BLOCK_NAMELINK,    // 「名前」の文字列(デフォルト名前で無いときはリンク)
         BLOCK_NAME,    // 名前
         BLOCK_MAIL,   // メール
         BLOCK_DATE,   // 日付
