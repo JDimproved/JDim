@@ -118,18 +118,11 @@ void ImageViewBase::setup_common()
 
     action_group()->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &ImageViewBase::close_view ) );
 
-    action_group()->add( Gtk::Action::create( "CloseOther_Menu", "他の画像を閉じる" ) );
-    action_group()->add( Gtk::Action::create( "CloseOther", "閉じる" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_other_views ) );
-
-    action_group()->add( Gtk::Action::create( "CloseLeft_Menu", "左の画像を閉じる" ) );
-    action_group()->add( Gtk::Action::create( "CloseLeft", "閉じる" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_left_views ) );
-
-    action_group()->add( Gtk::Action::create( "CloseRight_Menu", "右の画像を閉じる" ) );
-    action_group()->add( Gtk::Action::create( "CloseRight", "閉じる" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_right_views ) );
-
-    action_group()->add( Gtk::Action::create( "CloseAll_Menu", "全ての画像を閉じる" ) );
-    action_group()->add( Gtk::Action::create( "CloseAll", "閉じる" ),
-                         sigc::mem_fun( *this, &ImageViewBase::slot_close_all_views ) );
+    action_group()->add( Gtk::Action::create( "Close_Menu", "複数の画像を閉じる" ) );
+    action_group()->add( Gtk::Action::create( "CloseOther", "他の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_other_views ) );
+    action_group()->add( Gtk::Action::create( "CloseLeft", "左の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_left_views ) );
+    action_group()->add( Gtk::Action::create( "CloseRight", "右の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_right_views ) );
+    action_group()->add( Gtk::Action::create( "CloseAll", "全ての画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_all_views ) );
 
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_open_browser ) );
@@ -219,16 +212,10 @@ void ImageViewBase::setup_common()
     "<menuitem action='Quit'/>"
     "<separator/>"
 
-    "<menu action='CloseAll_Menu'>"
+    "<menu action='Close_Menu'>"
     "<menuitem action='CloseAll'/>"
-    "</menu>"
-    "<menu action='CloseOther_Menu'>"
     "<menuitem action='CloseOther'/>"
-    "</menu>"
-    "<menu action='CloseLeft_Menu'>"
     "<menuitem action='CloseLeft'/>"
-    "</menu>"
-    "<menu action='CloseRight_Menu'>"
     "<menuitem action='CloseRight'/>"
     "</menu>"
     "<separator/>"

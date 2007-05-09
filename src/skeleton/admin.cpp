@@ -51,17 +51,13 @@ Admin::Admin( const std::string& url )
     m_action_group = Gtk::ActionGroup::create();
     m_action_group->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &Admin::slot_close_tab ) );
 
-    m_action_group->add( Gtk::Action::create( "CloseOther_Menu", "他のタブを閉じる" ) );
-    m_action_group->add( Gtk::Action::create( "CloseOther", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseLeft_Menu", "左のタブを閉じる" ) );
-    m_action_group->add( Gtk::Action::create( "CloseLeft", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseRight_Menu", "右のタブを閉じる" ) );
-    m_action_group->add( Gtk::Action::create( "CloseRight", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseAll_Menu", "全てのタブを閉じる" ) );
-    m_action_group->add( Gtk::Action::create( "CloseAll", "閉じる" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる" ) );
+    m_action_group->add( Gtk::Action::create( "CloseOther", "他のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseLeft", "左のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseRight", "右のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseAll", "全てのタブ" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
 
-    m_action_group->add( Gtk::Action::create( "ReloadAll_Menu", "全てのタブを更新" ) );
-    m_action_group->add( Gtk::Action::create( "ReloadAll", "更新する" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "ReloadAll", "全てのタブを更新" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
     m_action_group->add( Gtk::Action::create( "CancelReloadAll", "更新キャンセル" ),
                          sigc::mem_fun( *this, &Admin::slot_cancel_reload_all_tabs ) );
 
@@ -83,23 +79,15 @@ Admin::Admin( const std::string& url )
     "<menuitem action='Quit'/>"
     "<separator/>"
 
-    "<menu action='CloseAll_Menu'>"
+    "<menu action='Close_Tab_Menu'>"
     "<menuitem action='CloseAll'/>"
-    "</menu>"
-    "<menu action='CloseOther_Menu'>"
     "<menuitem action='CloseOther'/>"
-    "</menu>"
-    "<menu action='CloseLeft_Menu'>"
     "<menuitem action='CloseLeft'/>"
-    "</menu>"
-    "<menu action='CloseRight_Menu'>"
     "<menuitem action='CloseRight'/>"
     "</menu>"
     "<separator/>"
 
-    "<menu action='ReloadAll_Menu'>"
     "<menuitem action='ReloadAll'/>"
-    "</menu>"
     "<menuitem action='CancelReloadAll'/>"
     "<separator/>"
 
