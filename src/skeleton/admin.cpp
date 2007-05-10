@@ -523,6 +523,11 @@ void Admin::exec_command()
         return;
     }
 
+    // ツールバー表示切り替え
+    else if( command.command == "toggle_toolbar" ){
+        toggle_toolbar();
+    }
+
     // 個別のコマンド処理
     else command_local( command );
 }
@@ -1075,6 +1080,19 @@ void Admin::relayout_all()
     }
 }
 
+
+//
+// ツールバー表示切り替え
+//
+void Admin::toggle_toolbar()
+{
+    std::list< SKELETON::View* > list_view = get_list_view();
+    std::list< SKELETON::View* >::iterator it = list_view.begin();
+    for( ; it != list_view.end(); ++it ){
+        SKELETON::View* view = ( *it );
+        if( view ) view->toggle_toolbar();
+    }
+}
 
 
 //

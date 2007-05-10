@@ -20,7 +20,7 @@
 
 namespace ARTICLE
 {
-    class ArticleToolBar : public Gtk::ScrolledWindow
+    class ArticleToolBar : public Gtk::VBox
     {
         friend class ArticleViewBase;
         friend class ArticleViewMain;
@@ -34,12 +34,11 @@ namespace ARTICLE
 
         Gtk::Tooltips m_tooltip;
 
-        Gtk::VBox m_vbox;
-
         // ラベル、ボタンバー
+        Gtk::ScrolledWindow m_scrwin;
         Gtk::HBox m_buttonbar;
         Gtk::Entry m_label;
-
+        bool m_toolbar_shown;
         Gtk::Button m_button_board;
         SKELETON::ImgButton m_button_favorite;
         SKELETON::ImgButton m_button_write;
@@ -66,9 +65,7 @@ namespace ARTICLE
         void show_searchbar()
         {
             if( ! m_searchbar_shown ){
-                if( m_vbox.get_height() < 8 ) set_size_request( 8 ); // まだrealizeしていない
-                else set_size_request( 8, m_vbox.get_height()*2 );
-                m_vbox.pack_start( m_searchbar, Gtk::PACK_SHRINK );
+                pack_start( m_searchbar, Gtk::PACK_SHRINK );
                 show_all_children();
                 m_searchbar_shown = true;
             }
@@ -78,14 +75,31 @@ namespace ARTICLE
         void hide_searchbar()
         {
             if( m_searchbar_shown ){
-                m_vbox.remove( m_searchbar );
-                if( m_vbox.get_height() < 8 ) set_size_request( 8 ); // まだrealizeしていない
-                else set_size_request( 8, m_vbox.get_height()/2 );
+                remove( m_searchbar );
                 show_all_children();
                 m_searchbar_shown = false;
             }
         }
 
+        // ツールバーを表示
+        void show_toolbar()
+        {
+            if( ! m_toolbar_shown ){
+                pack_start( m_scrwin, Gtk::PACK_SHRINK );
+                show_all_children();
+                m_toolbar_shown = true;
+            }
+        }
+
+        // ツールバーを隠す
+        void hide_toolbar()
+        {
+            if( m_toolbar_shown ){
+                remove( m_scrwin );
+                show_all_children();
+                m_toolbar_shown = false;
+            }
+        }
 
         void set_label( const std::string& label )
         {
@@ -96,15 +110,16 @@ namespace ARTICLE
         // vboxがrealizeしたらラベル(Gtk::Entry)の背景色を変える
         void slot_vbox_realize()
         {
-            Gdk::Color color_bg = m_vbox.get_style()->get_bg( Gtk::STATE_NORMAL );
+            Gdk::Color color_bg = get_style()->get_bg( Gtk::STATE_NORMAL );
             m_label.modify_base( Gtk::STATE_NORMAL, color_bg );
 
-            color_bg = m_vbox.get_style()->get_bg( Gtk::STATE_ACTIVE );
+            color_bg = get_style()->get_bg( Gtk::STATE_ACTIVE );
             m_label.modify_base( Gtk::STATE_ACTIVE, color_bg );
         }
 
-        ArticleToolBar() :
+        ArticleToolBar( bool show_bar ) :
 
+        m_toolbar_shown( 0 ),
         m_button_favorite( Gtk::Stock::COPY ),
         m_button_write( ICON::WRITE ),
         m_button_close( Gtk::Stock::CLOSE ),
@@ -122,7 +137,7 @@ namespace ARTICLE
         m_button_drawout_or( Gtk::Stock::ADD ),
         m_button_clear_hl( Gtk::Stock::CLEAR )
         {
-            m_vbox.signal_realize().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_vbox_realize ) );
+            signal_realize().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_vbox_realize ) );
 
             // スレ名ラベル
             // Gtk::Label を使うと勝手にリサイズするときがあるので
@@ -158,7 +173,11 @@ namespace ARTICLE
             m_buttonbar.pack_end( m_button_open_search, Gtk::PACK_SHRINK );
 
             m_buttonbar.set_border_width( 1 );
-            m_vbox.pack_start( m_buttonbar, Gtk::PACK_SHRINK );
+            m_scrwin.add( m_buttonbar );
+            m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+
+            set_size_request( 8 );
+            if( show_bar ) show_toolbar();
 
             // 検索バー
             m_tooltip.set_tip( m_button_close_search, CONTROL::get_label_motion( CONTROL::CloseSearchBar ) );
@@ -177,11 +196,6 @@ namespace ARTICLE
             m_searchbar.pack_end( m_button_down_search, Gtk::PACK_SHRINK );
 
             m_entry_search.add_mode( CONTROL::MODE_COMMON );
-
-            add( m_vbox );
-            set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
-            set_size_request( 8 );
-            show_all_children();
         }
         
         virtual ~ArticleToolBar(){}

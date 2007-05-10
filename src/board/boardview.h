@@ -74,6 +74,7 @@ namespace BOARD
         virtual void goto_num( int num );
         virtual void scroll_left();
         virtual void scroll_right();
+        virtual void toggle_toolbar();
 
         void row_up();
         void row_down();

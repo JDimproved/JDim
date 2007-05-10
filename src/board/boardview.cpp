@@ -102,7 +102,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
       m_col( COL_NUM_COL ),
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
-      m_previous_sortmode( false )
+      m_previous_sortmode( false ),
+      m_toolbar( SESSION::get_show_board_toolbar() )
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
@@ -1193,6 +1194,16 @@ void BoardView::scroll_right()
                               hadjust->get_value() + hadjust->get_step_increment() ) );
 }
 
+
+
+//
+// ツールバー表示切り替え
+//
+void BoardView::toggle_toolbar()
+{
+    if( SESSION::get_show_board_toolbar() ) m_toolbar.show_toolbar();
+    else m_toolbar.hide_toolbar();
+}
 
 
 //

@@ -164,6 +164,7 @@ namespace SKELETON
         virtual void relayout_all();
         virtual void open_window(){}
         virtual void close_window(){}
+        virtual void toggle_toolbar();
 
         // オートリロードのモード設定
         virtual bool set_autoreload_mode( const std::string& url, int mode, int sec );

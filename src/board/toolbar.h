@@ -17,13 +17,14 @@
 
 namespace BOARD
 {
-    class BoardToolBar : public Gtk::ScrolledWindow
+    class BoardToolBar : public Gtk::VBox
     {
 
         friend class BoardView;
 
+        Gtk::ScrolledWindow m_scrwin;
         Gtk::HBox m_buttonbar;
-
+        bool m_toolbar_shown;
         SKELETON::JDEntry m_entry_search;
         SKELETON::ImgButton m_button_close;
         SKELETON::ImgButton m_button_reload;
@@ -38,7 +39,29 @@ namespace BOARD
 
         Gtk::Tooltips m_tooltip;
 
-        BoardToolBar() :
+        // ツールバーを表示
+        void show_toolbar()
+        {
+            if( ! m_toolbar_shown ){
+                pack_start( m_scrwin, Gtk::PACK_SHRINK );
+                show_all_children();
+                m_toolbar_shown = true;
+            }
+        }
+
+        // ツールバーを隠す
+        void hide_toolbar()
+        {
+            if( m_toolbar_shown ){
+                remove( m_scrwin );
+                show_all_children();
+                m_toolbar_shown = false;
+            }
+        }
+
+
+        BoardToolBar( bool show_bar ) :
+        m_toolbar_shown( false ),
         m_button_close( Gtk::Stock::CLOSE ),
         m_button_reload( Gtk::Stock::REFRESH ),
         m_button_delete( Gtk::Stock::DELETE ),
@@ -77,9 +100,11 @@ namespace BOARD
             m_entry_search.add_mode( CONTROL::MODE_BOARD );
 
             m_buttonbar.set_border_width( 1 );
-            add( m_buttonbar );
-            set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+            m_scrwin.add( m_buttonbar );
+            m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+
             set_size_request( 8 );
+            if( show_bar ) show_toolbar();
         }
 
     };

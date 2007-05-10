@@ -64,12 +64,12 @@ namespace SESSION
     const bool login2ch();
     void set_login2ch( bool login );
 
-    int x();
-    int y();
-    int width();
-    int height();
-    bool maximized();
-    bool show_sidebar();
+    const int x();
+    const int y();
+    const int width();
+    const int height();
+    const bool maximized();
+    const bool show_sidebar();
    
     void set_x( int x );
     void set_y( int y );
@@ -79,15 +79,23 @@ namespace SESSION
     void set_show_sidebar( bool showbar );
 
     // メニューバー
-    bool show_menubar();
+    const bool show_menubar();
     void set_show_menubar( bool show );
 
     // ツールバー
-    int toolbar_pos();
+    const int toolbar_pos();
     void set_toolbar_pos( int pos );
 
+    // スレ一覧のツールバー
+    const bool get_show_board_toolbar();
+    void set_show_board_toolbar( bool show );
+
+    // スレビューのツールバー
+    const bool get_show_article_toolbar();
+    void set_show_article_toolbar( bool show );
+
     // フォーカスされているadmin
-    int focused_admin();
+    const int focused_admin();
     void set_focused_admin( int admin );
 
     // 各window がフォーカスされているか

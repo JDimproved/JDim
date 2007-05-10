@@ -242,10 +242,16 @@ void Core::run( bool init )
 
     // ツールバー
     m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー" ) );
+    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メイン" ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), false ),
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する", std::string(), false ),
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_RIGHT ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBoard", "スレ一覧", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_toolbarboard ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "スレビュー", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_toolbararticle ) );
 
     // pane 設定
     Gtk::RadioButtonGroup radiogroup;
@@ -393,8 +399,12 @@ void Core::run( bool init )
         "<menu action='View_Menu'>"
 
         "<menu action='Toolbar_Menu'>"
+        "<menu action='Toolbar_Main_Menu'>"
         "<menuitem action='ToolbarPos0'/>"
         "<menuitem action='ToolbarPos1'/>"
+        "</menu>"
+        "<menuitem action='ToolbarBoard'/>"
+        "<menuitem action='ToolbarArticle'/>"
         "</menu>"
         "<separator/>"
         "<menuitem action='2Pane'/>"
@@ -835,7 +845,18 @@ void Core::slot_activate_menubar()
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) tact->set_active( true );
         else tact->set_active( false );
     }
-
+    act = m_action_group->get_action( "ToolbarBoard" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::get_show_board_toolbar() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+    act = m_action_group->get_action( "ToolbarArticle" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::get_show_article_toolbar() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
 
     // ログイン
     act = m_action_group->get_action( "Login2ch" );
@@ -1375,6 +1396,32 @@ void Core::slot_toggle_toolbarpos( int pos )
     pack_widget( false );
 
     restore_focus( true, false );
+}
+
+
+//
+// スレ一覧のツールバー表示切り替え
+//
+void Core::slot_toggle_toolbarboard()
+{
+    if( m_boot ) return;
+    if( ! m_enable_menuslot ) return;
+
+    SESSION::set_show_board_toolbar( ! SESSION::get_show_board_toolbar() );
+    BOARD::get_admin()->set_command_immediately( "toggle_toolbar" );
+}
+
+
+//
+// スレビューのツールバー表示切り替え
+//
+void Core::slot_toggle_toolbararticle()
+{
+    if( m_boot ) return;
+    if( ! m_enable_menuslot ) return;
+
+    SESSION::set_show_article_toolbar( ! SESSION::get_show_article_toolbar() );
+    ARTICLE::get_admin()->set_command_immediately( "toggle_toolbar" );
 }
 
 

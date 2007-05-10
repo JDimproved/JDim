@@ -58,6 +58,9 @@ bool win_show_menubar;
 
 int win_toolbar_pos;
 
+bool show_board_toolbar;
+bool show_article_toolbar;
+
 int win_focused_admin;
 int win_focused_admin_sidebar;
 
@@ -128,6 +131,9 @@ void SESSION::init_session()
     win_show_menubar = cf.get_option( "show_menubar", true );
 
     win_toolbar_pos = cf.get_option( "toolbar_pos", 0 );
+
+    show_board_toolbar = cf.get_option( "show_board_toolbar", true );
+    show_article_toolbar = cf.get_option( "show_article_toolbar", true );
 
     win_focused_admin = cf.get_option( "focused_admin", FOCUS_NO );
     win_focused_admin_sidebar = cf.get_option( "focused_admin_sidebar", FOCUS_NO );
@@ -308,6 +314,8 @@ void SESSION::save_session()
         << "height = " << win_height << std::endl
         << "maximized = " << win_maximized << std::endl
         << "toolbar_pos = " << win_toolbar_pos << std::endl
+        << "show_board_toolbar = " << show_board_toolbar << std::endl
+        << "show_article_toolbar = " << show_article_toolbar << std::endl
         << "show_sidebar = " << win_show_sidebar << std::endl
         << "show_menubar = " << win_show_menubar << std::endl
         << "focused_admin = " << win_focused_admin << std::endl
@@ -378,20 +386,26 @@ void SESSION::set_online( bool mode ){ mode_online = mode; }
 const bool SESSION::login2ch(){ return mode_login2ch; }
 void SESSION::set_login2ch( bool login ){ mode_login2ch = login; }
 
-int SESSION::x(){ return win_x; }
-int SESSION::y(){ return win_y; }
-int SESSION::width(){ return win_width; }
-int SESSION::height(){ return win_height; }
-bool SESSION::maximized(){ return win_maximized; }
-bool SESSION::show_sidebar(){ return win_show_sidebar; }
+const int SESSION::x(){ return win_x; }
+const int SESSION::y(){ return win_y; }
+const int SESSION::width(){ return win_width; }
+const int SESSION::height(){ return win_height; }
+const bool SESSION::maximized(){ return win_maximized; }
+const bool SESSION::show_sidebar(){ return win_show_sidebar; }
 
-bool SESSION::show_menubar(){ return win_show_menubar; }
+const bool SESSION::show_menubar(){ return win_show_menubar; }
 void SESSION::set_show_menubar( bool show ){ win_show_menubar = show; }
 
-int SESSION::toolbar_pos(){ return win_toolbar_pos; }
+const int SESSION::toolbar_pos(){ return win_toolbar_pos; }
 void SESSION::set_toolbar_pos( int pos ){ win_toolbar_pos = pos; }
 
-int SESSION::focused_admin(){ return win_focused_admin; }
+const bool SESSION::get_show_board_toolbar(){ return show_board_toolbar; }
+void SESSION::set_show_board_toolbar( bool show ){ show_board_toolbar = show; }
+
+const bool SESSION::get_show_article_toolbar(){ return show_article_toolbar; }
+void SESSION::set_show_article_toolbar( bool show ){ show_article_toolbar = show; }
+
+const int SESSION::focused_admin(){ return win_focused_admin; }
 void SESSION::set_focused_admin( int admin ){ win_focused_admin = admin; }
 int SESSION::focused_admin_sidebar(){ return win_focused_admin_sidebar; }
 void SESSION::set_focused_admin_sidebar( int admin ){ win_focused_admin_sidebar = admin; }

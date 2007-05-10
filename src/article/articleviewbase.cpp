@@ -153,7 +153,7 @@ void ArticleViewBase::setup_view()
 void ArticleViewBase::pack_widget()
 {
     // ツールバーの設定
-    m_toolbar = Gtk::manage( new ArticleToolBar() );
+    m_toolbar = Gtk::manage( new ArticleToolBar( SESSION::get_show_article_toolbar() ) );
     m_toolbar->m_button_close.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::close_view ) );
     m_toolbar->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::reload ) );
     m_toolbar->m_button_write.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_write ) );
@@ -821,6 +821,18 @@ void ArticleViewBase::goto_num( int num )
     m_drawarea->goto_num( num );
 }
 
+
+//
+// ツールバー表示切り替え
+//
+void ArticleViewBase::toggle_toolbar()
+{
+    if( m_toolbar ){
+
+        if( SESSION::get_show_article_toolbar() ) m_toolbar->show_toolbar();
+        else m_toolbar->hide_toolbar();
+    }
+}
 
 
 //

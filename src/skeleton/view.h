@@ -177,6 +177,7 @@ namespace SKELETON
         virtual void scroll_down(){}
         virtual void scroll_left(){}
         virtual void scroll_right(){}
+        virtual void toggle_toolbar(){}
     };
 }
 
