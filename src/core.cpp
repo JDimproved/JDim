@@ -321,8 +321,9 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
     m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
     m_action_group->add( Gtk::Action::create( "FontTree", "板、スレ一覧フォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
-    m_action_group->add( Gtk::Action::create( "ColorChar", "文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
+    m_action_group->add( Gtk::Action::create( "ColorChar", "スレビュー文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
     m_action_group->add( Gtk::Action::create( "ColorBack", "スレビュー背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
+    m_action_group->add( Gtk::Action::create( "ColorCharTree", "板、スレ一覧文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char_tree ) );
     m_action_group->add( Gtk::Action::create( "ColorBackTree", "板、スレ一覧背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
     m_action_group->add( Gtk::Action::create( "FontColorPref", "詳細設定" ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
 
@@ -449,6 +450,7 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='ColorChar'/>"
         "<menuitem action='ColorBack'/>"
+        "<menuitem action='ColorCharTree'/>"
         "<menuitem action='ColorBackTree'/>"
         "<separator/>"
         "<menuitem action='FontColorPref'/>"
@@ -999,11 +1001,11 @@ void Core::slot_changefont_tree()
 
 
 //
-// 文字色変更
+// スレ文字色変更
 //
 void Core::slot_changecolor_char()
 {
-    if( open_color_diag( "文字色", COLOR_CHAR ) ){
+    if( open_color_diag( "スレビュー文字色", COLOR_CHAR ) ){
 
         ARTICLE::get_admin()->set_command( "relayout_all" );
 
@@ -1018,7 +1020,7 @@ void Core::slot_changecolor_char()
 //
 void Core::slot_changecolor_back()
 {
-    if( open_color_diag( "スレ、ポップアップ背景色", COLOR_BACK ) ){
+    if( open_color_diag( "スレビュー背景色", COLOR_BACK ) ){
 
         CONFIG::set_color( COLOR_BACK_POPUP, CONFIG::get_color( COLOR_BACK) );
 
@@ -1031,11 +1033,27 @@ void Core::slot_changecolor_back()
 
 
 //
+// 板、スレ一覧文字色変更
+//
+void Core::slot_changecolor_char_tree()
+{
+    if( open_color_diag( "板、スレ一覧文字色", COLOR_CHAR_BBS ) ){
+
+        CONFIG::set_color( COLOR_CHAR_BOARD, CONFIG::get_color( COLOR_CHAR_BBS ) );
+
+        BBSLIST::get_admin()->set_command( "relayout_all" );
+        BOARD::get_admin()->set_command( "relayout_all" );
+    }
+}
+
+
+
+//
 // 板一覧、スレ一覧背景色変更
 //
 void Core::slot_changecolor_back_tree()
 {
-    if( open_color_diag( "ツリー背景色", COLOR_BACK_BBS ) ){
+    if( open_color_diag( "板、スレ一覧背景色", COLOR_BACK_BBS ) ){
 
         CONFIG::set_color( COLOR_BACK_BOARD, CONFIG::get_color( COLOR_BACK_BBS ) );
 

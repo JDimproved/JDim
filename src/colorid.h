@@ -5,6 +5,8 @@
 
 enum
 {
+    // スレビューで使用する色
+    
     COLOR_FOR_THREAD = 0,
 
     COLOR_CHAR,             // スレビューなど基本の文字
@@ -36,12 +38,18 @@ enum
     COLOR_SEPARATOR_NEW,    // 新着セパレータ
 
     END_COLOR_FOR_THREAD,
-    USRCOLOR_BASE = END_COLOR_FOR_THREAD,
+
+    // その他の色
+
+    COLOR_CHAR_BBS, // 板一覧の文字
+    COLOR_CHAR_BOARD, // スレ一覧の文字
 
     COLOR_BACK_BBS,         // 板一覧の背景
     COLOR_BACK_BOARD,       // スレ一覧の背景
 
-    COLOR_NUM
+    COLOR_NUM,
+
+    USRCOLOR_BASE = COLOR_NUM // cssで使用する色番号のベース
 };
 
 #endif

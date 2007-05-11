@@ -193,7 +193,7 @@ const bool ConfigItems::load()
     // 色
 
     // 文字色
-    str_color[ COLOR_CHAR ] = cf.get_option( "cl_char", "#000000000000" );
+    str_color[ COLOR_CHAR ] = cf.get_option( "cl_char", CONF_COLOR_CHAR );
 
     // 名前欄の文字色
     str_color[ COLOR_CHAR_NAME ] = cf.get_option( "cl_char_name", "#000064640000" );
@@ -214,7 +214,7 @@ const bool ConfigItems::load()
     str_color[ COLOR_CHAR_BOOKMARK ] = cf.get_option( "cl_char_bookmark", str_color[ COLOR_CHAR_AGE ] );
 
     // リンク(通常)の文字色
-    str_color[ COLOR_CHAR_LINK ] = cf.get_option( "cl_char_link", "#00000000ffff" );
+    str_color[ COLOR_CHAR_LINK ] = cf.get_option( "cl_char_link", CONF_COLOR_CHAR_LINK );
 
     // リンク(複数)の文字色
     str_color[ COLOR_CHAR_LINK_LOW ] = cf.get_option( "cl_char_link_low", "#ffff0000ffff" );
@@ -242,19 +242,13 @@ const bool ConfigItems::load()
 
 
     // スレ背景色
-    str_color[ COLOR_BACK ] = cf.get_option( "cl_back", "#fde8fde8f618" );
+    str_color[ COLOR_BACK ] = cf.get_option( "cl_back", CONF_COLOR_BACK );
 
     // ポップアップの背景色
-    str_color[ COLOR_BACK_POPUP ] = cf.get_option( "cl_back_popup", str_color[ COLOR_BACK ] );
-
-    // 板一覧の背景色
-    str_color[ COLOR_BACK_BBS ] = cf.get_option( "cl_back_bbs", str_color[ COLOR_BACK ] );
-
-    // スレ一覧の背景色
-    str_color[ COLOR_BACK_BOARD ] = cf.get_option( "cl_back_board", str_color[ COLOR_BACK ] );
+    str_color[ COLOR_BACK_POPUP ] = cf.get_option( "cl_back_popup", CONF_COLOR_BACK_POPUP );
 
     // 選択範囲の背景色
-    str_color[ COLOR_BACK_SELECTION ] = cf.get_option( "cl_back_selection", str_color[ COLOR_CHAR_LINK ] );
+    str_color[ COLOR_BACK_SELECTION ] = cf.get_option( "cl_back_selection", CONF_COLOR_BACK_SELECTION );
 
     // ハイライトの背景色
     str_color[ COLOR_BACK_HIGHLIGHT ] = cf.get_option( "cl_back_highlight", CONF_COLOR_HL );
@@ -263,14 +257,25 @@ const bool ConfigItems::load()
     str_color[ COLOR_BACK_HIGHLIGHT_TREE ] = cf.get_option( "cl_back_highlight_tree", CONF_COLOR_HL_TREE );
 
     // メッセージビューの背景色
-    str_color[ COLOR_BACK_MESSAGE ] = cf.get_option( "cl_back_message", str_color[ COLOR_BACK ] );
+    str_color[ COLOR_BACK_MESSAGE ] = cf.get_option( "cl_back_message", CONF_COLOR_BACK_MESSAGE );
 
-    // メッセージビューの背景色
-    str_color[ COLOR_BACK_MESSAGE_SELECTION ] = cf.get_option( "cl_back_message_selection", str_color[ COLOR_BACK_SELECTION ] );
+    // メッセージビューの選択色
+    str_color[ COLOR_BACK_MESSAGE_SELECTION ] = cf.get_option( "cl_back_message_selection", CONF_COLOR_BACK_MESSAGE_SELECTION );
 
     // 新着セパレータ
-    str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", "#7d007d007d00" );
+    str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", CONF_COLOR_SEPARATOR_NEW );
 
+    // 板一覧の文字
+    str_color[ COLOR_CHAR_BBS ] = cf.get_option( "cl_chr_bbs", CONF_COLOR_CHAR_BBS );
+
+    // スレ一覧の文字
+    str_color[ COLOR_CHAR_BOARD ] = cf.get_option( "cl_chr_board", CONF_COLOR_CHAR_BOARD );
+
+    // 板一覧の背景色
+    str_color[ COLOR_BACK_BBS ] = cf.get_option( "cl_back_bbs", CONF_COLOR_BACK_BBS );
+
+    // スレ一覧の背景色
+    str_color[ COLOR_BACK_BOARD ] = cf.get_option( "cl_back_board", CONF_COLOR_BACK_BOARD );
 
     /////////////////////////
 
@@ -479,14 +484,16 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_img_err", str_color[ COLOR_IMG_ERR ] );
     cf.update( "cl_back", str_color[ COLOR_BACK ] );
     cf.update( "cl_back_popup", str_color[ COLOR_BACK_POPUP ] );
-    cf.update( "cl_back_board", str_color[ COLOR_BACK_BOARD ] );
-    cf.update( "cl_back_bbs", str_color[ COLOR_BACK_BBS ] );
     cf.update( "cl_back_selection", str_color[ COLOR_BACK_SELECTION ] );
     cf.update( "cl_back_highlight",str_color[ COLOR_BACK_HIGHLIGHT ]  );
     cf.update( "cl_back_highlight_tree",str_color[ COLOR_BACK_HIGHLIGHT_TREE ]  );
     cf.update( "cl_back_message", str_color[ COLOR_BACK_MESSAGE ] );
     cf.update( "cl_back_message_selection", str_color[ COLOR_BACK_MESSAGE_SELECTION ] );
     cf.update( "cl_sepa_new", str_color[ COLOR_SEPARATOR_NEW ] );
+    cf.update( "cl_chr_bbs", str_color[ COLOR_CHAR_BBS ] );
+    cf.update( "cl_chr_board", str_color[ COLOR_CHAR_BOARD ] );
+    cf.update( "cl_back_bbs", str_color[ COLOR_BACK_BBS ] );
+    cf.update( "cl_back_board", str_color[ COLOR_BACK_BOARD ] );
 
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
 

@@ -46,6 +46,8 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "文字: 画像(キャッシュ有)", COLOR_IMG_CACHED, "画像として扱うリンクのうち、キャッシュされている物の文字色" );
     set_color_settings( "文字: 画像(ロード中)", COLOR_IMG_LOADING, "画像として扱うリンクのうち、ロード中の物の文字色" );
     set_color_settings( "文字: 画像(エラー)", COLOR_IMG_ERR, "画像として扱うリンクのうち、エラーになっている物の文字色" );
+    set_color_settings( "文字: 板一覧", COLOR_CHAR_BBS, "板一覧の文字色" );
+    set_color_settings( "文字: スレ一覧", COLOR_CHAR_BOARD, "スレ一覧の文字色" );
     set_color_settings( "特殊: 新着しおり", COLOR_SEPARATOR_NEW, "新着しおりの色" );
     set_color_settings( "背景: スレビュー", COLOR_BACK, "スレビューの背景色" );
     set_color_settings( "背景: ポップアップ", COLOR_BACK_POPUP, "ポップアップの背景色" );

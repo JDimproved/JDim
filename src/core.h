@@ -159,6 +159,7 @@ namespace CORE
         void slot_changefont_tree();
         void slot_changecolor_char();
         void slot_changecolor_back();
+        void slot_changecolor_char_tree();
         void slot_changecolor_back_tree();
         bool open_color_diag( std::string title, int id );
         

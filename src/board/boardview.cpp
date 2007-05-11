@@ -98,7 +98,7 @@ m_treeview.append_column( *col ); \
 
 BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
-      m_treeview( CONFIG::get_fontname( FONT_BOARD ), COLOR_BACK_BOARD ),
+      m_treeview( CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD ),
       m_col( COL_NUM_COL ),
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
@@ -853,7 +853,7 @@ void BoardView::redraw_view()
 //
 void BoardView::relayout()
 {
-    m_treeview.init_color( COLOR_BACK_BOARD );
+    m_treeview.init_color( COLOR_CHAR_BOARD, COLOR_BACK_BOARD );
     m_treeview.init_font( CONFIG::get_fontname( FONT_BOARD ) );
 }
 

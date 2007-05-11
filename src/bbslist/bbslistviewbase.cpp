@@ -63,7 +63,7 @@ using namespace BBSLIST;
 
 BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
-      m_treeview( CONFIG::get_fontname( FONT_BBS ), COLOR_BACK_BBS ),
+      m_treeview( CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS ),
       m_ready_tree( false ),
       m_jump_y( -1 ),
       m_dnd_counter( 0 ),
@@ -395,7 +395,7 @@ void BBSListViewBase::clock_in()
 //
 void BBSListViewBase::relayout()
 {
-    m_treeview.init_color( COLOR_BACK_BBS );
+    m_treeview.init_color( COLOR_CHAR_BBS, COLOR_BACK_BBS );
     m_treeview.init_font( CONFIG::get_fontname( FONT_BBS ) );
 }
 

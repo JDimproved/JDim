@@ -28,7 +28,7 @@
 using namespace SKELETON;
 
 
-JDTreeView::JDTreeView( const std::string& fontname, const int colorid )
+JDTreeView::JDTreeView( const std::string& fontname, const int colorid_text, const int colorid_bg )
     : m_reorderable( false ),
       m_drag( false ),
       m_popup_win( NULL ),
@@ -47,7 +47,7 @@ JDTreeView::JDTreeView( const std::string& fontname, const int colorid )
     add_events( Gdk::LEAVE_NOTIFY_MASK );
     add_events( Gdk::SCROLL_MASK );
 
-    init_color( colorid );
+    init_color( colorid_text, colorid_bg );
     init_font( fontname );
 
     get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
@@ -65,13 +65,17 @@ JDTreeView::~JDTreeView()
 //
 // 色初期化
 //
-void JDTreeView::init_color( const int colorid )
+void JDTreeView::init_color( const int colorid_text, const int colorid_bg )
 {
     if( CONFIG::get_use_tree_gtkrc() ) return;
 
+    // 文字色
+    Gdk::Color color( CONFIG::get_color( colorid_text ) );
+    modify_text( get_state(), color );
+
     // 背景色
-    Gdk::Color color( CONFIG::get_color( colorid ) );
-    modify_base( get_state(), color );
+    Gdk::Color color_bg( CONFIG::get_color( colorid_bg ) );
+    modify_base( get_state(), color_bg );
 }
 
 
