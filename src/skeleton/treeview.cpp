@@ -28,7 +28,7 @@
 using namespace SKELETON;
 
 
-JDTreeView::JDTreeView( const std::string& fontname, const int colorid_text, const int colorid_bg )
+JDTreeView::JDTreeView( const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
     : m_reorderable( false ),
       m_drag( false ),
       m_popup_win( NULL ),
@@ -47,7 +47,7 @@ JDTreeView::JDTreeView( const std::string& fontname, const int colorid_text, con
     add_events( Gdk::LEAVE_NOTIFY_MASK );
     add_events( Gdk::SCROLL_MASK );
 
-    init_color( colorid_text, colorid_bg );
+    init_color( colorid_text, colorid_bg, colorid_bg_even );
     init_font( fontname );
 
     get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
@@ -65,17 +65,21 @@ JDTreeView::~JDTreeView()
 //
 // 色初期化
 //
-void JDTreeView::init_color( const int colorid_text, const int colorid_bg )
+void JDTreeView::init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even )
 {
     if( CONFIG::get_use_tree_gtkrc() ) return;
 
     // 文字色
-    Gdk::Color color( CONFIG::get_color( colorid_text ) );
-    modify_text( get_state(), color );
+    m_color_text.set( CONFIG::get_color( colorid_text ) );
+    modify_text( get_state(), m_color_text );
 
     // 背景色
-    Gdk::Color color_bg( CONFIG::get_color( colorid_bg ) );
-    modify_base( get_state(), color_bg );
+    m_color_bg.set( CONFIG::get_color( colorid_bg ) );
+    modify_base( get_state(), m_color_bg );
+
+    m_use_bg_even = ! ( CONFIG::get_color( colorid_bg ) == CONFIG::get_color( colorid_bg_even ) );
+    m_color_bg_even.set( CONFIG::get_color( colorid_bg_even ) );
+
 }
 
 
@@ -762,3 +766,49 @@ void JDTreeView::slot_selection_changed()
     if( size >= 2 ) str = "選択数 " + MISC::itostr( size );
     CORE::core_set_command( "set_mginfo" ,"", str );
 }
+
+
+
+//
+// 実際の描画の際に cellrenderer のプロパティをセットするスロット関数
+//
+void JDTreeView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
+{
+    if( ! m_use_bg_even ){
+        cell->property_cell_background_set() = false;
+        return;
+    }
+
+    Gtk::TreeModel::Row row = *it;
+    Gtk::TreePath path = get_model()->get_path( row );
+    std::string path_str = path.to_string();
+
+#ifdef _DEBUG
+    std::cout << "JDTreeView::slot_cell_data path = " << path_str << std::endl;
+#endif
+
+    bool even = false;
+
+    int rownum = atoi( path_str.c_str() );
+    if( rownum %2 ) even = true;
+
+    size_t pos = path_str.find( ":" );
+    while( pos != std::string::npos ){
+        path_str = path_str.substr( pos+1 );
+        rownum = atoi( path_str.c_str() );
+
+        if( ( even && ( rownum %2 ) ) || ( ! even && !( rownum %2 ) ) ) even = true;
+        else even = false;
+
+        pos = path_str.find( ":" );
+    }
+
+    // 偶数行に色を塗る
+    if( even ){
+        cell->property_cell_background_gdk() = m_color_bg_even;
+        cell->property_cell_background_set() = true;
+    }
+
+    else cell->property_cell_background_set() = false;
+}
+

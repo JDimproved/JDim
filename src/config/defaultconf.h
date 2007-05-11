@@ -43,7 +43,9 @@ namespace CONFIG
 #define CONF_COLOR_CHAR_BOARD CONF_COLOR_CHAR // スレ一覧の文字
 
 #define CONF_COLOR_BACK_BBS   CONF_COLOR_BACK // 板一覧の背景色
+#define CONF_COLOR_BACK_BBS_EVEN CONF_COLOR_BACK // 板一覧の背景色(偶数行)
 #define CONF_COLOR_BACK_BOARD CONF_COLOR_BACK // スレ一覧の背景色
+#define CONF_COLOR_BACK_BOARD_EVEN CONF_COLOR_BACK // スレ一覧の背景色(偶数行)
 
 
 // インライン画像を表示する

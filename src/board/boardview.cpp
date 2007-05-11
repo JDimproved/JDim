@@ -98,7 +98,7 @@ m_treeview.append_column( *col ); \
 
 BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
-      m_treeview( CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD ),
+      m_treeview( CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
       m_col( COL_NUM_COL ),
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
@@ -526,7 +526,8 @@ void BoardView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::i
         cell->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
         cell->property_cell_background_set() = true;
     }
-    else cell->property_cell_background_set() = false;
+
+    else m_treeview.slot_cell_data( cell, it );
 }
 
 
@@ -853,7 +854,7 @@ void BoardView::redraw_view()
 //
 void BoardView::relayout()
 {
-    m_treeview.init_color( COLOR_CHAR_BOARD, COLOR_BACK_BOARD );
+    m_treeview.init_color( COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN );
     m_treeview.init_font( CONFIG::get_fontname( FONT_BOARD ) );
 }
 

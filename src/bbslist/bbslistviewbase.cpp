@@ -63,7 +63,7 @@ using namespace BBSLIST;
 
 BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
-      m_treeview( CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS ),
+      m_treeview( CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN ),
       m_ready_tree( false ),
       m_jump_y( -1 ),
       m_dnd_counter( 0 ),
@@ -395,7 +395,7 @@ void BBSListViewBase::clock_in()
 //
 void BBSListViewBase::relayout()
 {
-    m_treeview.init_color( COLOR_CHAR_BBS, COLOR_BACK_BBS );
+    m_treeview.init_color( COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN );
     m_treeview.init_font( CONFIG::get_fontname( FONT_BBS ) );
 }
 
@@ -1322,7 +1322,10 @@ Gtk::TreeViewColumn* BBSListViewBase::create_column()
     col->add_attribute( *m_ren_text, "text", COL_NAME );
     col->add_attribute( *m_ren_text, "underline", COL_UNDERLINE );
     col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
-    
+
+    col->set_cell_data_func( *col->get_first_cell_renderer(), sigc::mem_fun( m_treeview, &SKELETON::JDTreeView::slot_cell_data ) );    
+    col->set_cell_data_func( *m_ren_text, sigc::mem_fun( m_treeview, &SKELETON::JDTreeView::slot_cell_data ) );    
+
     return col;
 }
 

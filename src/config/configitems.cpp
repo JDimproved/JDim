@@ -274,8 +274,14 @@ const bool ConfigItems::load()
     // 板一覧の背景色
     str_color[ COLOR_BACK_BBS ] = cf.get_option( "cl_back_bbs", CONF_COLOR_BACK_BBS );
 
+    // 板一覧の背景色(偶数行)
+    str_color[ COLOR_BACK_BBS_EVEN ] = cf.get_option( "cl_back_bbs_even", CONF_COLOR_BACK_BBS_EVEN );
+
     // スレ一覧の背景色
     str_color[ COLOR_BACK_BOARD ] = cf.get_option( "cl_back_board", CONF_COLOR_BACK_BOARD );
+
+    // スレ一覧の背景色(偶数行)
+    str_color[ COLOR_BACK_BOARD_EVEN ] = cf.get_option( "cl_back_board_even", CONF_COLOR_BACK_BOARD_EVEN );
 
     /////////////////////////
 
@@ -493,7 +499,9 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_chr_bbs", str_color[ COLOR_CHAR_BBS ] );
     cf.update( "cl_chr_board", str_color[ COLOR_CHAR_BOARD ] );
     cf.update( "cl_back_bbs", str_color[ COLOR_BACK_BBS ] );
+    cf.update( "cl_back_bbs_even", str_color[ COLOR_BACK_BBS_EVEN ] );
     cf.update( "cl_back_board", str_color[ COLOR_BACK_BOARD ] );
+    cf.update( "cl_back_board_even", str_color[ COLOR_BACK_BOARD_EVEN ] );
 
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
 

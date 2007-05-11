@@ -54,7 +54,9 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "背景: 選択範囲", COLOR_BACK_SELECTION, "選択範囲の背景色" );
     set_color_settings( "背景: ハイライト", COLOR_BACK_HIGHLIGHT, "検索結果などのハイライトの背景色" );
     set_color_settings( "背景: 板一覧", COLOR_BACK_BBS, "板一覧の背景色" );
+    set_color_settings( "背景: 板一覧(偶数行)", COLOR_BACK_BBS_EVEN, "板一覧の背景色(偶数行)" );
     set_color_settings( "背景: スレ一覧", COLOR_BACK_BOARD, "スレ一覧の背景色" );
+    set_color_settings( "背景: スレ一覧(偶数行)", COLOR_BACK_BOARD_EVEN, "スレ一覧の背景色(偶数行)" );
     set_color_settings( "背景: ハイライト(ツリー)", COLOR_BACK_HIGHLIGHT_TREE, "板、スレ一覧での検索結果などのハイライトの背景色" );
     set_color_settings( "背景: 書き込みエディタ", COLOR_BACK_MESSAGE, "書き込みエディタの背景色" );
     set_color_settings( "背景: 書き込みエディタ(選択範囲)", COLOR_BACK_MESSAGE_SELECTION, "書き込みエディタ(選択範囲)の背景色" );

@@ -1055,7 +1055,10 @@ void Core::slot_changecolor_back_tree()
 {
     if( open_color_diag( "板、スレ一覧背景色", COLOR_BACK_BBS ) ){
 
+        CONFIG::set_color( COLOR_BACK_BBS_EVEN, CONFIG::get_color( COLOR_BACK_BBS ) );
+
         CONFIG::set_color( COLOR_BACK_BOARD, CONFIG::get_color( COLOR_BACK_BBS ) );
+        CONFIG::set_color( COLOR_BACK_BOARD_EVEN, CONFIG::get_color( COLOR_BACK_BBS ) );
 
         BBSLIST::get_admin()->set_command( "relayout_all" );
         BOARD::get_admin()->set_command( "relayout_all" );

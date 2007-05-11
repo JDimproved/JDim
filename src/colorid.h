@@ -38,6 +38,7 @@ enum
     COLOR_SEPARATOR_NEW,    // 新着セパレータ
 
     END_COLOR_FOR_THREAD,
+    USRCOLOR_BASE = END_COLOR_FOR_THREAD, // cssで使用する色番号のベース
 
     // その他の色
 
@@ -45,11 +46,11 @@ enum
     COLOR_CHAR_BOARD, // スレ一覧の文字
 
     COLOR_BACK_BBS,         // 板一覧の背景
+    COLOR_BACK_BBS_EVEN,    // 板一覧の背景(偶数行)
     COLOR_BACK_BOARD,       // スレ一覧の背景
+    COLOR_BACK_BOARD_EVEN,  // スレ一覧の背景(偶数行)
 
-    COLOR_NUM,
-
-    USRCOLOR_BASE = COLOR_NUM // cssで使用する色番号のベース
+    COLOR_NUM
 };
 
 #endif

@@ -53,6 +53,12 @@ namespace SKELETON
 
         Tooltip m_tooltip;
 
+        // 色
+        bool m_use_bg_even;
+        Gdk::Color m_color_text;
+        Gdk::Color m_color_bg;
+        Gdk::Color m_color_bg_even;
+
         // ポップアップウィンドウ用
         PopupWin* m_popup_win;
         std::string m_pre_popup_url;
@@ -77,7 +83,7 @@ namespace SKELETON
         SIG_DRAG_DROP sig_drag_drop() { return m_sig_drag_drop; }
         SIG_DRAG_END sig_drag_end() { return m_sig_drag_end; }
 
-        JDTreeView( const std::string& fontname, const int colorid_text, const int colorid_bg );
+        JDTreeView( const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even );
         ~JDTreeView();
 
        
@@ -85,7 +91,7 @@ namespace SKELETON
         void clock_in();
 
         // 色初期化
-        void init_color( const int colorid_text, const int colorid_bg );
+        void init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even );
 
         // フォント初期化
         void init_font( const std::string& fontname );
@@ -144,6 +150,9 @@ namespace SKELETON
 
         // マウスホイールの処理
         void wheelscroll( GdkEventScroll* event );
+
+        // 実際の描画の際に cellrenderer のプロパティをセットするスロット関数
+        void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
 
       protected:
 
