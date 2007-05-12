@@ -13,7 +13,8 @@ namespace IMAGE
 {
     class ImageViewPopup : public ImageViewBase
     {
-        Gtk::EventBox* m_event_frame;
+        Gtk::EventBox m_event_frame;
+        Gtk::EventBox m_event_margin;
         Gtk::Label* m_label;
         size_t m_length_prev;
 

@@ -11,9 +11,7 @@
 #include "config/globalconf.h"
 
 #include "colorid.h"
-
-// 枠を描く
-#define DRAW_FRAME( color ) m_event_frame->modify_bg( Gtk::STATE_NORMAL, color ); 
+#include "cssmanager.h"
 
 using namespace IMAGE;
 
@@ -24,15 +22,23 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
 {
 
     //枠を描くためにm_eventの外にもう一つEventBoxを作る ( Gtk::HBox は modify_fg() 無効なので )
-    m_event_frame = Gtk::manage( new Gtk::EventBox() );
-    pack_start( *m_event_frame );
-    m_event_frame->add( get_event() );
-    get_event().set_border_width( 1 );
+    pack_start( m_event_frame );
+    m_event_frame.add( m_event_margin );
+    m_event_margin.add( get_event() );
 
-    // 色の設定
+    // 枠の幅
+    m_event_margin.set_border_width( 1 );
+
+    // マージン
+    get_event().set_border_width( 0 );
+
+    // 枠色
+    m_event_frame.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "black" ) );
+
+    // 背景色
     Gdk::Color color_bg( CONFIG::get_color( COLOR_BACK ) );
+    m_event_margin.modify_bg( Gtk::STATE_NORMAL, color_bg );
     get_event().modify_bg( Gtk::STATE_NORMAL, color_bg );
-    DRAW_FRAME( Gdk::Color( "black" ) );
 
     setup_common();
 }
@@ -127,6 +133,17 @@ void ImageViewPopup::show_view()
         if( imagearea->get_errmsg().empty() ){
             remove_label();
             set_imagearea( imagearea );
+
+            // マージンを空ける
+            int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
+            if( classid >= 0 ){
+                CORE::CSS_PROPERTY css = CORE::get_css_manager()->get_property( classid );
+                const int margin = css.mrg_left_px;
+                get_event().set_border_width( margin );
+
+                set_width_client( width_client() + margin*2 );
+                set_height_client( height_client() + margin*2 );
+            }
         }
 
         // 画像よみこみエラー

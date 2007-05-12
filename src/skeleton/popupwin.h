@@ -4,7 +4,7 @@
 // ポップアップウィンドウ
 //
 // SKELETON::Viewをポップアップ表示する。
-// 表示するSKELETON::Viewはコンストラクタでdeleteするので呼出元でdeleteしなくても良い
+// 表示するSKELETON::Viewはデストラクタでdeleteするので呼出元でdeleteしなくても良い
 //
 
 #ifndef _POPUPWIN_H
