@@ -327,7 +327,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
 #endif
 
     // スレッドを起動して run_main() 実行
-    const int stacksize = 8;
+    const int stacksize = 64;
     int status;
     m_stop = false;
     if( ( status = MISC::thread_create( &m_thread, ( STARTFUNC ) launcher, ( void * ) this, stacksize ) )){

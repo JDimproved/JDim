@@ -6,7 +6,7 @@
 #define _IMGROOT_H
 
 #include <string>
-#include <list>
+#include <map>
 
 namespace DBIMG
 {
@@ -14,7 +14,7 @@ namespace DBIMG
 
     class ImgRoot
     {
-        std::list< Img* > m_list_img;
+        std::map< std::string, Img* > m_map_img;
         
       public:
         ImgRoot();

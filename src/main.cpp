@@ -360,7 +360,6 @@ int main( int argc, char **argv )
         exit( 1 );
     }
 
-/*
     GMemVTable vtable;
     vtable = *glib_mem_profiler_table;
     vtable.malloc = malloc;
@@ -370,7 +369,6 @@ int main( int argc, char **argv )
     vtable.try_malloc = malloc;
     vtable.try_realloc = realloc;
     g_mem_set_vtable( &vtable );
-*/
 
     Gtk::Main m( &argc, &argv );
 

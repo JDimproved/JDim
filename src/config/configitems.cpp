@@ -183,10 +183,10 @@ const bool ConfigItems::load()
     max_img_size = cf.get_option( "max_img_size", 16 );
 
     // 2chの認証サーバ
-    url_login2ch = cf.get_option( "url_login2ch", "https://2chv.tora3.net/futen.cgi" );
+    url_login2ch = cf.get_option( "url_login2ch", CONF_LOGIN2CH );
 
     // bbsmenu.htmlのURL
-    url_bbsmenu = cf.get_option( "url_bbsmenu", "http://menu.2ch.net/bbsmenu.html" );
+    url_bbsmenu = cf.get_option( "url_bbsmenu", CONF_BBSMENU );
 
 
     /////////

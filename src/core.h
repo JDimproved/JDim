@@ -135,6 +135,8 @@ namespace CORE
     private:
 
         bool is_3pane();
+        bool is_all_admin_empty();
+
         Gtk::Paned* get_rpane();
         SKELETON::PaneControl* get_rpctrl();
 

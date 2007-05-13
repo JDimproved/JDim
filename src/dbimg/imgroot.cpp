@@ -34,8 +34,8 @@ ImgRoot::ImgRoot()
 
 ImgRoot::~ImgRoot()
 {
-    std::list< Img* >::iterator it;
-    for( it = m_list_img.begin(); it != m_list_img.end(); ++it ) delete( *it );  
+    std::map< std::string, Img* >::iterator it;
+    for( it = m_map_img.begin(); it != m_map_img.end(); ++it ) delete ( *it ).second;  
 }
 
 
@@ -50,7 +50,7 @@ Img* ImgRoot::get_img( const std::string& url )
     // 無ければ作る
     if( img == NULL ){
         img = new Img( url );
-        m_list_img.push_back( img );
+        m_map_img.insert( make_pair( url, img ) );
     }
 
     return img;
@@ -64,15 +64,8 @@ Img* ImgRoot::get_img( const std::string& url )
 //
 Img* ImgRoot::search_img( const std::string& url )
 {
-    Img* img;
-
-    // 線形リストなので遅い
-    std::list< Img* >::iterator it;
-    for( it = m_list_img.begin(); it != m_list_img.end(); ++it ){
-
-        img = *( it );
-        if( img->url() == url ) return img;
-    }
+    std::map< std::string, Img* >::iterator it = m_map_img.find( url );
+    if( it != m_map_img.end() ) return ( *it ).second;
 
     return NULL;
 }
@@ -217,9 +210,9 @@ void ImgRoot::redraw_imgs()
 //
 void ImgRoot::reset_imgs()
 {
-    std::list< Img* >::iterator it;
-    for( it = m_list_img.begin(); it != m_list_img.end(); ++it ){
-        Img* img = *( it );
+    std::map< std::string, Img* >::iterator it;
+    for( it = m_map_img.begin(); it != m_map_img.end(); ++it ){
+        Img* img = ( *it ).second;
         if( img ) img->reset();
     }
 }

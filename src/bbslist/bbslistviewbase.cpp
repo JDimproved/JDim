@@ -616,7 +616,7 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
             break;
 
         case TYPE_IMAGE:
-            if( act_image ) act_image->set_sensitive( true );
+            if( act_image && ! DBIMG::get_abone( url ) ) act_image->set_sensitive( true );
             break;
 
         case TYPE_DIR:
@@ -816,7 +816,7 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 
             m_treeview.hide_tooltip();
 
-            if( DBIMG::is_loadable( url ) && DBIMG::get_code( url ) != HTTP_ERR ){
+            if( DBIMG::is_loadable( url ) && DBIMG::get_code( url ) != HTTP_ERR && DBIMG::get_code( url ) != HTTP_INIT ){
 
                 if( m_treeview.pre_popup_url() != url ){
 
@@ -1358,8 +1358,15 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
             break;
 
         case TYPE_IMAGE:
-            CORE::core_set_command( "open_image", url );
-            CORE::core_set_command( "switch_image" );
+
+            if( DBIMG::get_abone( url )){
+                SKELETON::MsgDiag mdiag( NULL, "あぼ〜んされています" );
+                mdiag.run();
+            }
+            else{
+                CORE::core_set_command( "open_image", url );
+                CORE::core_set_command( "switch_image" );
+            }
             break;
 
         case TYPE_LINK:

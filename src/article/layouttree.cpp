@@ -324,7 +324,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, bool joint )
 
                         for( int i = 0; i < imgdata.num; ++i ){
 #ifdef _DEBUG
-                            std::cout << imgdata[ i ].link << std::endl;
+                            std::cout << imgdata.item[ i ].link << std::endl;
 #endif
                             LAYOUT* tmplayout = create_layout_img( imgdata.item[ i ].link );
                             tmplayout->res_number = res_number;
@@ -583,10 +583,14 @@ void LayoutTree::hide_separator()
     if( m_separator_new ){
 
 #ifdef _DEBUG
-    std::cout << "LayoutTree::hide_separator num = " << m_separator_new << std::endl;
+        std::cout << "LayoutTree::hide_separator num = " << m_separator_new
+                  << " next = " << m_separator_header->next_header->res_number << std::endl;
 #endif    
 
-        LAYOUT* header_before = get_header_of_res( m_separator_new -1 );
+        // あぼーんしているレスは飛ばす
+        LAYOUT* header_before;
+        int num_tmp = m_separator_new -1;;
+        while( ! ( header_before = get_header_of_res( num_tmp ) ) && num_tmp-- > 1 );
         if( header_before ) header_before->next_header = m_separator_header->next_header;
     }
 

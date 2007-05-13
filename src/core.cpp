@@ -565,6 +565,15 @@ bool Core::is_3pane()
 }
 
 
+// (bbslistを除く)全adminがemptyか
+bool Core::is_all_admin_empty()
+{
+    bool emp_img = ! ( SESSION::get_embedded_img() && ! IMAGE::get_admin()->empty() );
+    bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
+    return ( BOARD::get_admin()->empty() && ARTICLE::get_admin()->empty() && emp_mes && emp_img );
+}
+
+
 //
 // 右側ペーンコントロール取得
 //
@@ -1321,39 +1330,46 @@ void Core::toggle_menubar()
 
 
 //
-// サイドバー表示切替え
-//
-void Core::toggle_sidebar()
-{
-    bool emp_img = ! ( SESSION::get_embedded_img() && ! IMAGE::get_admin()->empty() );
-    bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
-    bool emp_all = ( BOARD::get_admin()->empty() && ARTICLE::get_admin()->empty() && emp_mes && emp_img );
-
-#ifdef _DEBUG
-    std::cout << "Core::toggle_sidebar focus = " << SESSION::focused_admin() << " empty = " << emp_all << std::endl;
-#endif
-
-    if( m_boot ) return;
-    if( ! m_enable_menuslot ) return;
-
-    // 右ペーンが空のときは閉じない
-    if( SESSION::focused_admin() == SESSION::FOCUS_SIDEBAR && emp_all ) return;
-
-    // サイドバーの表示が切り替わったら slot_show_hide_leftpane()が呼び出される
-    if( SESSION::show_sidebar() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE2 );
-    else{
-        if( emp_all ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE1 );
-        else m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
-    }
-}
-
-
-//
 // キャッシュ内のログ検索
 //
 void Core::slot_search_cache()
 {
     CORE::core_set_command( "open_article_searchcache", "dummyurl" , "", "false", "all" );
+}
+
+
+//
+// サイドバー表示切替え
+//
+// url を開いているときは閉じる
+// 閉じているときは開く
+//
+// サイドバーの表示が切り替わったら slot_show_hide_leftpane()が呼び出される
+//
+void Core::toggle_sidebar()
+{
+    if( m_boot ) return;
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::toggle_sidebar focus = " << SESSION::focused_admin()
+              << " mode = " << m_hpaned.get_ctrl().get_mode()
+              << " empty = " << is_all_admin_empty() << std::endl;
+#endif
+
+    // 閉じていたらサイドバーを開く
+    if( ! SESSION::show_sidebar() ){
+
+        // 右ペーンが空の時は常に最大化
+        if( is_all_admin_empty() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE1 );
+
+        // 通常
+        else m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+
+    }
+
+    // 開いていたら閉じる( 右ペーンが空の時は閉じない )
+    else if( ! is_all_admin_empty() )  m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE2 );
 }
 
 
@@ -1371,8 +1387,8 @@ void Core::slot_show_hide_leftpane( int mode )
     if( mode == SKELETON::PANE_NORMAL ) SESSION::set_show_sidebar( true );
     else SESSION::set_show_sidebar( false );
 
-    // 表示されたらbbslistをフォーカス
-    if( SESSION::show_sidebar() ) switch_sidebar( std::string(), present );
+    // 表示されたらサイドバーをフォーカス
+    if( SESSION::focused_admin() != SESSION::FOCUS_SIDEBAR && SESSION::show_sidebar() ) switch_sidebar( std::string(), present );
 
     // 非表示になったときは SESSION::focused_admin_sidebar() で指定されるadminにフォーカスを移す
     else{
@@ -2369,11 +2385,11 @@ void Core::exec_command_after_boot()
     std::cout << "Core::exec_command_after_boot\n";
 #endif
 
-    // フォーカス回復
-    restore_focus( true, true );
-
     // サイドバー表示状態変更
     if( ! SESSION::show_sidebar() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE2 );
+
+    // フォーカス回復
+    restore_focus( true, true );
 
     // タイマーセット
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
@@ -2894,6 +2910,8 @@ void Core::switch_article( bool present )
 
     if( ! ARTICLE::get_admin()->empty() ){
 
+        if( m_hpaned.get_ctrl().get_mode() == SKELETON::PANE_MAX_PAGE1 ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+
         if( SESSION::focused_admin() != SESSION::FOCUS_ARTICLE ){
 
             FOCUS_OUT_ALL();
@@ -2933,6 +2951,8 @@ void Core::switch_board( bool present )
 
     if( ! BOARD::get_admin()->empty() ){
 
+        if( m_hpaned.get_ctrl().get_mode() == SKELETON::PANE_MAX_PAGE1 ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+
         if( SESSION::focused_admin() != SESSION::FOCUS_BOARD ){
 
             FOCUS_OUT_ALL();
@@ -2959,6 +2979,7 @@ void Core::switch_board( bool present )
 //
 // url は表示するページ( URL_BBSLISTVIEW or URL_FAVORITEVIEW )
 // urlが空の時はフォーカスを移すだけ
+// present が true の時はメインウィンドウを前面に出す
 //
 void Core::switch_sidebar( const std::string& url, bool present )
 {
@@ -2972,28 +2993,23 @@ void Core::switch_sidebar( const std::string& url, bool present )
 
     if( ! BBSLIST::get_admin()->empty() ){
 
-        // サイドバーを開く
-        if( ! SESSION::show_sidebar() ){
-#ifdef _DEBUG
-            std::cout << "open\n";
-#endif
-            toggle_sidebar();
-        }
-
-        // 閉じる
-        else if( SESSION::get_bbslist_current_url() == url ){
-#ifdef _DEBUG
-            std::cout << "close\n";
-#endif
-            toggle_sidebar();
-            return;
-        }
-
         if( SESSION::focused_admin() != SESSION::FOCUS_SIDEBAR ){
 
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
         }
+
+        // urlがフォーカスされていて、かつ他のadminがemptyで無いときは閉じる
+        else if( SESSION::get_bbslist_current_url() == url && ! is_all_admin_empty() ){
+            toggle_sidebar();
+            return;
+        }
+
+        // 閉じていたら開く
+        if( ! SESSION::show_sidebar() ) toggle_sidebar();
+
+        // 右ペーンがemptyなら最大化
+        else if( is_all_admin_empty() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE1 );
 
         if( ! url.empty() ) BBSLIST::get_admin()->set_command( "switch_view", url );
 
@@ -3020,6 +3036,8 @@ void Core::switch_image( bool present )
     if( ! IMAGE::get_admin()->empty() ){
 
         if( SESSION::get_embedded_img() ){ // 埋め込み画像ビュー
+
+            if( m_hpaned.get_ctrl().get_mode() == SKELETON::PANE_MAX_PAGE1 ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
             if( SESSION::focused_admin() != SESSION::FOCUS_IMAGE ){
 
@@ -3061,6 +3079,8 @@ void Core::switch_message( bool present )
     if( ! MESSAGE::get_admin()->empty() ){
 
         if( emb_mes ){ 
+
+            if( m_hpaned.get_ctrl().get_mode() == SKELETON::PANE_MAX_PAGE1 ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
             if( SESSION::focused_admin() != SESSION::FOCUS_MESSAGE ){
 

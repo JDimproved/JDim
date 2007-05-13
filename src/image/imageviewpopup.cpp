@@ -20,23 +20,31 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
     , m_label( NULL )
     , m_length_prev( 0 )
 {
+    std::string border_color = "black";
+    std::string bg_color = CONFIG::get_color( COLOR_BACK );
+    int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
+    if( classid >= 0 ){
+        CORE::CSS_PROPERTY css = CORE::get_css_manager()->get_property( classid );
+        if( css.border_left_color >= 0 ) border_color = CORE::get_css_manager()->get_color( css.border_left_color );
+        if( css.bg_color > 0 ) bg_color = CORE::get_css_manager()->get_color( css.bg_color );
+    }
 
     //枠を描くためにm_eventの外にもう一つEventBoxを作る ( Gtk::HBox は modify_fg() 無効なので )
     pack_start( m_event_frame );
     m_event_frame.add( m_event_margin );
     m_event_margin.add( get_event() );
 
-    // 枠の幅
-    m_event_margin.set_border_width( 1 );
+    // 枠の幅(表示するときにセットする)
+    m_event_margin.set_border_width( 0 );
 
-    // マージン
+    // マージン(表示するときにセットする)
     get_event().set_border_width( 0 );
 
     // 枠色
-    m_event_frame.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "black" ) );
+    m_event_frame.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( border_color ) );
 
     // 背景色
-    Gdk::Color color_bg( CONFIG::get_color( COLOR_BACK ) );
+    Gdk::Color color_bg( bg_color );
     m_event_margin.modify_bg( Gtk::STATE_NORMAL, color_bg );
     get_event().modify_bg( Gtk::STATE_NORMAL, color_bg );
 
@@ -137,12 +145,17 @@ void ImageViewPopup::show_view()
             // マージンを空ける
             int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
             if( classid >= 0 ){
+
                 CORE::CSS_PROPERTY css = CORE::get_css_manager()->get_property( classid );
+
+                const int border_width = css.border_left_width_px;
+                m_event_margin.set_border_width( border_width );
+
                 const int margin = css.mrg_left_px;
                 get_event().set_border_width( margin );
 
-                set_width_client( width_client() + margin*2 );
-                set_height_client( height_client() + margin*2 );
+                set_width_client( width_client() + margin*2 + border_width*2 );
+                set_height_client( height_client() + margin*2 + border_width*2 );
             }
         }
 

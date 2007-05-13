@@ -9,6 +9,7 @@
 
 #include <map>
 #include <list>
+#include <vector>
 #include <string>
 
 #include "jdlib/heap.h"
@@ -134,7 +135,7 @@ namespace CORE
         JDLIB::HEAP m_heap;
 
         std::map< int, CSS_PROPERTY > m_css;
-        std::list< std::string > m_colors;
+        std::vector< std::string > m_colors;
         std::list< std::string > m_css_class;
 
         DOM* m_dom;
@@ -145,11 +146,14 @@ namespace CORE
         Css_Manager();
         virtual ~Css_Manager(){}
 
-        // クラス名からID取得
-        int get_classid( const std::string& classname );
+        // ユーザ設定の色取得
+        std::string get_color( int colorid );
 
         // ユーザ設定の色( 先頭は黒 )
-        std::list< std::string >& get_colors() { return m_colors; }
+        std::vector< std::string >& get_colors() { return m_colors; }
+
+        // クラス名からID取得
+        int get_classid( const std::string& classname );
 
         // プロパティ取得
         CSS_PROPERTY get_property( const int id );

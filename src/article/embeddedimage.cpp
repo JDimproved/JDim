@@ -126,7 +126,7 @@ void EmbeddedImage::show()
     if( ! m_width || ! m_height ) return;
 
     // スレッド起動して縮小
-    const int stacksize = 8;
+    const int stacksize = 64;
     int status;
     m_stop = false;
     if( ( status = MISC::thread_create( & m_thread, eimg_launcher, ( void* )this, stacksize ) ) ){

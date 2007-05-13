@@ -64,7 +64,7 @@ bool Search_Manager::search( const std::string& id,
     // 読み込んでおかないと大量の warning が出る
     if( m_searchall ) DBTREE::read_boardinfo_all();
 
-    const int stacksize = 8;
+    const int stacksize = 64;
     int status;
     if( ( status = MISC::thread_create( &m_thread, ( STARTFUNC ) launcher, ( void * ) this, stacksize ) )){
         MISC::ERRMSG( std::string( "Search_Manager::search : could not start thread " ) + strerror( status ) );

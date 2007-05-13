@@ -304,9 +304,9 @@ void Root::bbsmenu2xml( const std::string& menu )
 
         // カテゴリに入る
         size_t i;
-        if( ( i = line.find( "<BR><BR><B>" ) ) != std::string::npos ){
+        if( ( i = line.find( "<BR><B>" ) ) != std::string::npos ){
 
-            if( ! regex.exec( " ?<BR><BR><B>(.*)</B><BR>.*", line ) ) continue;
+            if( ! regex.exec( " ?<BR><B>(.*)</B><BR>.*", line ) ) continue;
 
             if( ! str_category.empty() ) m_xml_bbsmenu += "</subdir open=\"0\" >\n";
             str_category = MISC::remove_space( regex.str( 1 ) );
@@ -324,11 +324,11 @@ void Root::bbsmenu2xml( const std::string& menu )
         // URLと板名取得
         if( ! str_category.empty() ){
 
-            if( ! regex.exec( " ?<A HREF=(http://[^>]*/) ?(TARGET=_blank)?>(.*)</A>.*", line ) ) continue;
+            if( ! regex.exec( " ?<A HREF=(http://[^>]*/(.*\\.html?)?) ?(TARGET=_blank)?>(.*)</A>.*", line ) ) continue;
 
             bool link = true;
             std::string url = MISC::remove_space( regex.str( 1 ) );
-            std::string name = MISC::remove_space( regex.str( 3 ) );
+            std::string name = MISC::remove_space( regex.str( 4 ) );
 
             // urlのタイプ, 名前のチェック
             if( regex.exec( "http://.*/.*/", url ) && ( is_2ch( url ) || is_machi( url ) ) ) link = false;

@@ -78,6 +78,16 @@ void Css_Manager::clear_property( CSS_PROPERTY* css )
 
 
 //
+// ユーザ設定の色取得
+// 
+std::string Css_Manager::get_color( int colorid )
+{
+    colorid -= USRCOLOR_BASE;
+    return m_colors[ colorid ];
+}
+
+
+//
 // クラス名からID取得
 //
 int Css_Manager::get_classid( const std::string& classname )
@@ -167,6 +177,7 @@ void Css_Manager::set_default_css()
 
     set_property( "title", css );
 
+
     /////////////////
     // mes
     clear_property( &css );
@@ -174,6 +185,18 @@ void Css_Manager::set_default_css()
     css.padding_left_em = 1.5;
 
     set_property( "mes", css );
+
+
+    /////////////////
+    // imgpopup
+    clear_property( &css );
+
+    css.border_left_width_px = 1;
+    css.border_right_width_px = 1;
+    css.border_top_width_px = 1;
+    css.border_bottom_width_px = 1;
+
+    set_property( "imgpopup", css );
 }
 
 
