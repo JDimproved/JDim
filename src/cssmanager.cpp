@@ -724,7 +724,7 @@ bool Css_Manager::read_html()
         std::cout << "block = " << block << std::endl;
 #endif
 
-        unsigned int pos = block.find( "<" );
+        std::string::size_type pos = block.find( "<" );
         if( pos == std::string::npos ){
             create_textnode( block.c_str() );
             continue;
