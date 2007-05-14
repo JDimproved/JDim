@@ -210,9 +210,9 @@ void ArticleViewMain::update_finish()
 
     if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += " [ " + DBTREE::article_ext_err( url_article() ) + " ]";
 
-    // ラベルセット
-    toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
-    toolbar()->set_label( str_stat + DBTREE::article_subject( url_article() ) );
+    // 板名とスレ名をセット
+    if( toolbar()->m_button_board.get_label().empty() ) toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+    if( toolbar()->get_label().empty() ) toolbar()->set_label( str_stat + DBTREE::article_subject( url_article() ) );
 
     // タブのラベルセット
     std::string str_label = str_stat + DBTREE::article_subject( url_article() );

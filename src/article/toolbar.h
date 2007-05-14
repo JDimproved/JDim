@@ -107,6 +107,9 @@ namespace ARTICLE
             m_tooltip.set_tip( m_label, label );
         }
 
+        const std::string get_label(){ return m_label.get_text(); }
+
+
         // vboxがrealizeしたらラベル(Gtk::Entry)の背景色を変える
         void slot_vbox_realize()
         {
