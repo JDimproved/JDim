@@ -31,6 +31,8 @@ namespace BBSLIST
         friend class FavoriteListView;
         friend class SelectListView;
 
+        bool m_toolbar_shown;
+
         // ラベルバー
         Gtk::HBox m_hbox_label;
         Gtk::ComboBoxText m_combo;
@@ -47,7 +49,33 @@ namespace BBSLIST
         void set_combo( int page ){ m_combo.set_active( page ); }
         int  get_combo(){ return m_combo.get_active_row_number(); }
 
-        BBSListtToolBar() :
+        // ツールバーを表示
+        void show_toolbar()
+        {
+            if( ! m_toolbar_shown ){
+                pack_start( m_hbox_search, Gtk::PACK_SHRINK );
+                show_all_children();
+                m_toolbar_shown = true;
+            }
+        }
+
+        // ツールバーを隠す
+        void hide_toolbar()
+        {
+            if( m_toolbar_shown ){
+                remove( m_hbox_search );
+                show_all_children();
+                m_toolbar_shown = false;
+            }
+        }
+
+        void remove_label()
+        {
+            remove( m_hbox_label );
+        }
+
+        BBSListtToolBar( bool show_bar ) :
+        m_toolbar_shown( false ),
         m_button_close( Gtk::Stock::CLOSE ),
         m_button_up_search( Gtk::Stock::GO_UP ),
         m_button_down_search( Gtk::Stock::GO_DOWN )
@@ -67,14 +95,8 @@ namespace BBSLIST
             m_hbox_search.pack_end( m_button_up_search, Gtk::PACK_SHRINK );
             m_hbox_search.pack_end( m_button_down_search, Gtk::PACK_SHRINK );
 
-
             pack_start( m_hbox_label, Gtk::PACK_SHRINK );
-            pack_start( m_hbox_search, Gtk::PACK_SHRINK );
-        }
-
-        void remove_label()
-        {
-            remove( m_hbox_label );
+            if( show_bar ) show_toolbar();
         }
     };
 }

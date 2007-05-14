@@ -101,6 +101,7 @@ namespace BBSLIST
         virtual void operate_view( const int& control );
         virtual void goto_top();
         virtual void goto_bottom();
+        virtual void toggle_toolbar();
 
         // selectdialogで使う
         Gtk::TreePath get_current_path() { return m_treeview.get_current_path(); }

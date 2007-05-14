@@ -240,17 +240,22 @@ void Core::run( bool init )
     // 外観
     m_action_group->add( Gtk::Action::create( "View_Menu", "外観" ) );
 
+    // メニューバー
+    m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "メニューバー", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::toggle_menubar ) );
+
     // ツールバー
-    m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー" ) );
-    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メイン" ) );
+    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "ツールバー" ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), false ),
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する", std::string(), false ),
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_RIGHT ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBoard", "スレ一覧", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBbslist", "ツールバー(サイドバー)", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_toolbarbbslist ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBoard", "ツールバー(スレ一覧)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbarboard ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "スレビュー", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "ツールバー(スレビュー)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbararticle ) );
 
     // pane 設定
@@ -399,14 +404,16 @@ void Core::run( bool init )
 
         "<menu action='View_Menu'>"
 
-        "<menu action='Toolbar_Menu'>"
+        "<menuitem action='ShowMenuBar'/>"
+        "<separator/>"
+
         "<menu action='Toolbar_Main_Menu'>"
         "<menuitem action='ToolbarPos0'/>"
         "<menuitem action='ToolbarPos1'/>"
         "</menu>"
+        "<menuitem action='ToolbarBbslist'/>"
         "<menuitem action='ToolbarBoard'/>"
         "<menuitem action='ToolbarArticle'/>"
-        "</menu>"
         "<separator/>"
         "<menuitem action='2Pane'/>"
         "<menuitem action='3Pane'/>"
@@ -843,6 +850,14 @@ void Core::slot_activate_menubar()
         else tact->set_active( false );
     }
 
+    // メニューバー
+    act = m_action_group->get_action( "ShowMenuBar" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::show_menubar() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
     // ツールバー
     act = m_action_group->get_action( "ToolbarPos0" );
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
@@ -854,6 +869,12 @@ void Core::slot_activate_menubar()
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+    act = m_action_group->get_action( "ToolbarBbslist" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::get_show_bbslist_toolbar() ) tact->set_active( true );
         else tact->set_active( false );
     }
     act = m_action_group->get_action( "ToolbarBoard" );
@@ -1326,6 +1347,11 @@ void Core::toggle_menubar()
     pack_widget( false );
 
     restore_focus( true, false );
+
+    if( ! SESSION::show_menubar() ){
+        SKELETON::MsgDiag mdiag( NULL, "メニューバーを再表示するには\n\n" + CONTROL::get_motion( CONTROL::ShowMenuBar ) + "\n\nを押してください" );
+        mdiag.run();
+    }
 }
 
 
@@ -1433,6 +1459,19 @@ void Core::slot_toggle_toolbarpos( int pos )
     pack_widget( false );
 
     restore_focus( true, false );
+}
+
+
+//
+// 板一覧のツールバー表示切り替え
+//
+void Core::slot_toggle_toolbarbbslist()
+{
+    if( m_boot ) return;
+    if( ! m_enable_menuslot ) return;
+
+    SESSION::set_show_bbslist_toolbar( ! SESSION::get_show_bbslist_toolbar() );
+    BBSLIST::get_admin()->set_command_immediately( "toggle_toolbar" );
 }
 
 

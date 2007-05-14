@@ -86,6 +86,10 @@ namespace SESSION
     const int toolbar_pos();
     void set_toolbar_pos( int pos );
 
+    // 板一覧のツールバー
+    const bool get_show_bbslist_toolbar();
+    void set_show_bbslist_toolbar( bool show );
+
     // スレ一覧のツールバー
     const bool get_show_board_toolbar();
     void set_show_board_toolbar( bool show );
