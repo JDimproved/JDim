@@ -86,12 +86,35 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         for( it = list_id.begin(); it != list_id.end(); ++it ) if( ! ( *it ).empty() ) str_id += ( *it ) + "\n";
         m_edit_id.set_text( str_id );
 
-        // res
+        // あぼーんレス番号
+        // 連番は 12-34 の様なフォーマットに変換
         std::vector< char > vec_res = DBTREE::get_abone_vec_res( get_url() );
         std::vector< char >::iterator it_res = vec_res.begin();
-        for( int res = 0 ; it_res != vec_res.end(); ++it_res, ++res ){
-            if( ( *it_res ) ) str_res += MISC::itostr( res ) + "\n";
+        int res = 0;
+        int pre_res = 0;
+        int count = 0;
+        for( ; it_res != vec_res.end(); ++res ){
+
+            if( ( *it_res ) ){
+                if( ! pre_res ) pre_res = res;
+                ++count;
+            }
+
+            ++it_res;
+
+            if( !( *it_res ) || it_res == vec_res.end() ){
+
+                if( pre_res ){
+                    str_res += MISC::itostr( pre_res );
+                    if( count > 1 ) str_res += "-" + MISC::itostr( pre_res + count -1 );
+                    str_res += "\n";
+                    pre_res = 0;
+                    count = 0;
+                }
+            }
         }
+
+
         m_edit_res.set_text( str_res );
 
         // name
@@ -148,13 +171,21 @@ void Preferences::slot_ok_clicked()
     std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text() );
     std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
 
+    // あぼーんレス番号
     std::vector< char > vec_abone_res;
     vec_abone_res.resize( DBTREE::article_number_load( get_url() ) + 1 );
     std::list< std::string > list_res = MISC::get_lines( m_edit_res.get_text() );
     std::list< std::string >::iterator it = list_res.begin();
     for( ; it != list_res.end(); ++it ){
-        int number = atoi( (*it).c_str() );
-        if( number ) vec_abone_res[ number ] = true;
+
+        std::string num_str = ( *it );
+        int number = atoi( num_str.c_str() );
+        if( number >= 1 ){
+            int number_end = number;
+            size_t pos = num_str.find( "-" );
+            if( pos != std::string::npos ) number_end = MAX( number, atoi( num_str.substr( pos + 1 ).c_str() ) );
+            for( int i = number; i <= number_end; ++i ) vec_abone_res[ i ] = true;
+        }
     }
 
     DBTREE::reset_abone( get_url(), list_id, list_name, list_word, list_regex, vec_abone_res
