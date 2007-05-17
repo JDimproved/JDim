@@ -3,8 +3,8 @@
 #ifndef _JDVER_H
 #define _JDVER_H
 
-// cvs 版の時は JDVERSION_CVS をdefineする
-#define JDVERSION_CVS
+// svn 版の時は JDVERSION_SVN をdefineする
+#define JDVERSION_SVN
 
 #define JDCOPYRIGHT "(c) 2006-2007 JD project"
 #define JDVERSIONSTR "1.9.5-beta070516"

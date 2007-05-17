@@ -810,8 +810,8 @@ void Core::set_maintitle()
 
     if( m_title.empty() ){
 
-#ifdef JDVERSION_CVS
-        title = std::string( "JD - " ) + "cvs." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
+#ifdef JDVERSION_SVN
+        title = std::string( "JD - " ) + "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
 #else
         title = std::string( "JD - " ) + std::string( JDVERSIONSTR );
 #endif
@@ -1243,8 +1243,8 @@ void Core::slot_show_about()
 {
     std::stringstream ss;
     ss << "バージョン "
-#ifdef JDVERSION_CVS
-       << "cvs." + std::string( __DATE__ ) + "-" + std::string( __TIME__ )
+#ifdef JDVERSION_SVN
+       << "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ )
 #else
        << JDVERSIONSTR 
 #endif
@@ -1894,6 +1894,9 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "close_view", command.url,
                                            "true" // command.url を含む全てのビューを閉じる
             );
+
+        // もう一度開く
+        if( command.arg1 == "reopen" ) core_set_command( "open_article", command.url , "true", "" );
 
         return;
     }

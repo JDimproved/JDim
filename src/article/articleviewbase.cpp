@@ -202,6 +202,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "CopyResRef", "引用コピー"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), true ) );
     action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
+    action_group()->add( Gtk::Action::create( "DeleteOpen", "削除して開き直す"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
     action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
@@ -289,6 +290,7 @@ void ArticleViewBase::setup_action()
     // 削除ボタン押したときのポップアップ
     "<popup name='popup_menu_delete'>"
     "<menuitem action='Delete'/>"
+    "<menuitem action='DeleteOpen'/>"
     "</popup>"
 
     // レス番号をクリックしたときのメニュー
@@ -639,6 +641,15 @@ void ArticleViewBase::delete_view()
 {
     CORE::core_set_command( "delete_article", m_url_article );
     ARTICLE::get_admin()->set_command( "switch_admin" );
+}
+
+
+//
+// 記事削除 & 再オープン
+//
+void ArticleViewBase::delete_open_view()
+{
+    CORE::core_set_command( "delete_article", m_url_article, "reopen" );
 }
 
 

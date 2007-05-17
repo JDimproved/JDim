@@ -89,6 +89,9 @@ namespace ARTICLE
         virtual void goto_num( int num );
         virtual void toggle_toolbar();
 
+        // 記事削除 & 再オープン
+        void delete_open_view();
+
     protected:
 
         DrawAreaBase* drawarea();
