@@ -149,6 +149,9 @@ namespace CONFIG
         // ポップアップとカーソルの間のマージン
         int margin_popup;
 
+        // 画像ポップアップとカーソルの間のマージン
+        int margin_imgpopup;
+
         // マウスジェスチャの判定開始半径
         int mouse_radius;
 
@@ -209,6 +212,9 @@ namespace CONFIG
         // デフォルトで透明、連鎖あぼーんをするか
         bool abone_transparent;
         bool abone_chain;
+
+        // 右ペーンが空の時にサイドバーを閉じるか
+        bool expand_sidebar;
 
 #ifdef HAVE_MIGEMO_H
         // migemo-dictの場所

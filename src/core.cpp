@@ -313,7 +313,7 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "ShortMarginPopup", "スレビューでマウス移動で多重ポップアップモードに移行する", std::string(),
-                                                    ( CONFIG::get_margin_popup() != CONFIG::MARGIN_POPUP ) ),
+                                                    ( CONFIG::get_margin_popup() != CONFIG::CONF_MARGIN_POPUP ) ),
                          sigc::mem_fun( *this, &Core::slot_shortmargin_popup ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューをEmacs風のキーバインドにする", std::string(),
@@ -1387,7 +1387,7 @@ void Core::toggle_sidebar()
     if( ! SESSION::show_sidebar() ){
 
         // 右ペーンが空の時は常に最大化
-        if( is_all_admin_empty() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE1 );
+        if( CONFIG::get_expand_sidebar() && is_all_admin_empty() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE1 );
 
         // 通常
         else m_hpaned.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
@@ -1612,7 +1612,7 @@ void Core::slot_toggle_popupwarpmode()
 void Core::slot_shortmargin_popup()
 {
     int margin = 2;
-    if( CONFIG::get_margin_popup() != CONFIG::MARGIN_POPUP ) margin = CONFIG::MARGIN_POPUP;
+    if( CONFIG::get_margin_popup() != CONFIG::CONF_MARGIN_POPUP ) margin = CONFIG::CONF_MARGIN_POPUP;
 
     CONFIG::set_margin_popup( margin );
 }
@@ -3048,7 +3048,7 @@ void Core::switch_sidebar( const std::string& url, bool present )
         if( ! SESSION::show_sidebar() ) toggle_sidebar();
 
         // 右ペーンがemptyなら最大化
-        else if( is_all_admin_empty() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE1 );
+        else if( CONFIG::get_expand_sidebar() && is_all_admin_empty() ) m_hpaned.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE1 );
 
         if( ! url.empty() ) BBSLIST::get_admin()->set_command( "switch_view", url );
 

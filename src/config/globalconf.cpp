@@ -184,6 +184,8 @@ const bool CONFIG::get_hide_writing_dialog(){ return get_confitem()->hide_writin
 const int CONFIG::get_margin_popup(){ return get_confitem()->margin_popup; }
 void CONFIG::set_margin_popup( int margin ){ get_confitem()->margin_popup = margin; }
 
+const int CONFIG::get_margin_imgpopup(){ return get_confitem()->margin_imgpopup; }
+
 const int CONFIG::get_mouse_radius(){ return get_confitem()->mouse_radius; }
 const int CONFIG::get_history_size(){ return get_confitem()->history_size; }
 
@@ -287,6 +289,7 @@ void CONFIG::set_abone_transparent( bool set ){ get_confitem()->abone_transparen
 const bool CONFIG::get_abone_chain(){ return get_confitem()->abone_chain; }
 void CONFIG::set_abone_chain( bool set ){ get_confitem()->abone_chain = set; }
 
+const bool CONFIG::get_expand_sidebar(){ return get_confitem()->expand_sidebar; }
 
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }

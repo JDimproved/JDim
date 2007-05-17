@@ -85,13 +85,13 @@ const bool ConfigItems::load()
     std::string defaultfont = get_default_font();
 
     // フォント
-    fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", defaultfont + " " + std::string( FONTSIZE_THREAD ) );
+    fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", defaultfont + " " + std::string( CONF_FONTSIZE_THREAD ) );
 
     // ポップアップのフォント
-    fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", defaultfont + " " + std::string( FONTSIZE_POPUP ) );
+    fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", defaultfont + " " + std::string( CONF_FONTSIZE_POPUP ) );
 
     // スレ一覧のフォント
-    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", defaultfont + " " + std::string( FONTSIZE_TREE ) );
+    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", defaultfont + " " + std::string(CONF_FONTSIZE_TREE ) );
 
     // 板一覧のフォント
     fontname[ FONT_BOARD ] = cf.get_option( "fontname_board", fontname[ FONT_BBS ] );
@@ -143,13 +143,13 @@ const bool ConfigItems::load()
     loader_timeout_img = cf.get_option( "loader_timeout_img", 30 ); // 画像
 
     // ipv6使用
-    use_ipv6 = cf.get_option( "use_ipv6", USE_IPV6 );
+    use_ipv6 = cf.get_option( "use_ipv6", CONF_USE_IPV6 );
 
     // ブラウザ設定ダイアログのコンボボックスの番号
-    browsercombo_id = cf.get_option( "brownsercombo_id", BROWSER_NO );
+    browsercombo_id = cf.get_option( "brownsercombo_id", CONF_BROWSER_NO );
 
     // リンクをクリックしたときに実行するコマンド
-    command_openurl = cf.get_option( "command_openurl", CORE::get_browser_name( BROWSER_NO ) );
+    command_openurl = cf.get_option( "command_openurl", CORE::get_browser_name( CONF_BROWSER_NO ) );
 
     // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
     refpopup_by_mo = cf.get_option( "refpopup_by_mo", false );
@@ -168,7 +168,7 @@ const bool ConfigItems::load()
     use_image_view = cf.get_option( "use_image_view", 1 );
 
     // インライン画像を表示する
-    use_inline_image = cf.get_option( "use_inline_image", INLINE_IMG );
+    use_inline_image = cf.get_option( "use_inline_image", CONF_INLINE_IMG );
 
     // 画像にモザイクかける
     use_mosaic = cf.get_option( "use_mosaic", 1 );
@@ -196,37 +196,37 @@ const bool ConfigItems::load()
     str_color[ COLOR_CHAR ] = cf.get_option( "cl_char", CONF_COLOR_CHAR );
 
     // 名前欄の文字色
-    str_color[ COLOR_CHAR_NAME ] = cf.get_option( "cl_char_name", "#000064640000" );
+    str_color[ COLOR_CHAR_NAME ] = cf.get_option( "cl_char_name", CONF_COLOR_CHAR_NAME );
 
     // トリップ等の名前欄の文字色
-    str_color[ COLOR_CHAR_NAME_B ] = cf.get_option( "cl_char_name_b", "#000000008b8b" );
+    str_color[ COLOR_CHAR_NAME_B ] = cf.get_option( "cl_char_name_b", CONF_COLOR_CHAR_NAME_B );
 
     // ageの時のメール欄の文字色
-    str_color[ COLOR_CHAR_AGE ] = cf.get_option( "cl_char_age", "#fde800000000" );
+    str_color[ COLOR_CHAR_AGE ] = cf.get_option( "cl_char_age", CONF_COLOR_CHAR_AGE );
 
     // 選択範囲の文字色
-    str_color[ COLOR_CHAR_SELECTION ] = cf.get_option( "cl_char_selection", "#ffffffffffff" );
+    str_color[ COLOR_CHAR_SELECTION ] = cf.get_option( "cl_char_selection", CONF_COLOR_CHAR_SELECTION );
 
     // ハイライトの文字色
-    str_color[ COLOR_CHAR_HIGHLIGHT ] = cf.get_option( "cl_char_highlight", str_color[ COLOR_CHAR ] );
+    str_color[ COLOR_CHAR_HIGHLIGHT ] = cf.get_option( "cl_char_highlight", CONF_COLOR_CHAR_HIGHLIGHT );
 
     // ブックマークの文字色
-    str_color[ COLOR_CHAR_BOOKMARK ] = cf.get_option( "cl_char_bookmark", str_color[ COLOR_CHAR_AGE ] );
+    str_color[ COLOR_CHAR_BOOKMARK ] = cf.get_option( "cl_char_bookmark", CONF_COLOR_CHAR_BOOKMARK );
 
     // リンク(通常)の文字色
     str_color[ COLOR_CHAR_LINK ] = cf.get_option( "cl_char_link", CONF_COLOR_CHAR_LINK );
 
     // リンク(複数)の文字色
-    str_color[ COLOR_CHAR_LINK_LOW ] = cf.get_option( "cl_char_link_low", "#ffff0000ffff" );
+    str_color[ COLOR_CHAR_LINK_LOW ] = cf.get_option( "cl_char_link_low", CONF_COLOR_CHAR_LINK_LOW );
 
     // リンク(多数)の文字色
-    str_color[ COLOR_CHAR_LINK_HIGH ] = cf.get_option( "cl_char_link_high", str_color[ COLOR_CHAR_AGE ] );
+    str_color[ COLOR_CHAR_LINK_HIGH ] = cf.get_option( "cl_char_link_high", CONF_COLOR_CHAR_LINK_HIGH );
 
     // メッセージビューの文字色
-    str_color[ COLOR_CHAR_MESSAGE ] = cf.get_option( "cl_char_message", str_color[ COLOR_CHAR ] );
+    str_color[ COLOR_CHAR_MESSAGE ] = cf.get_option( "cl_char_message", CONF_COLOR_CHAR_MESSAGE );
 
     // メッセージビュー(選択範囲)の文字色
-    str_color[ COLOR_CHAR_MESSAGE_SELECTION ] = cf.get_option( "cl_char_message_selection", str_color[ COLOR_CHAR_SELECTION ] );
+    str_color[ COLOR_CHAR_MESSAGE_SELECTION ] = cf.get_option( "cl_char_message_selection", CONF_COLOR_CHAR_MESSAGE_SELECTION );
 
     // 画像(キャッシュ無)の色
     str_color[ COLOR_IMG_NOCACHE ] = cf.get_option( "cl_img_nocache", "#a5a52a2a2a2a" );
@@ -290,7 +290,7 @@ const bool ConfigItems::load()
     use_tree_gtkrc = cf.get_option( "use_tree_gtkrc", false );
 
     // ツリービューの行間スペース
-    tree_ypad = cf.get_option( "tree_ypad", TREE_YPAD );
+    tree_ypad = cf.get_option( "tree_ypad", CONF_TREE_YPAD );
 
     // boardビューで古いスレも表示
     show_oldarticle = cf.get_option( "show_oldarticle", false );
@@ -302,7 +302,7 @@ const bool ConfigItems::load()
     tree_scroll_size = cf.get_option( "tree_scroll_size", 4 );
 
     // スレビューのスクロール量
-    scroll_size = cf.get_option( "scroll_size", SCROLL_SIZE );
+    scroll_size = cf.get_option( "scroll_size", CONF_SCROLL_SIZE );
 
     // 板一覧でカテゴリを常にひとつだけ開く
     open_one_category = cf.get_option( "open_one_category", false );
@@ -317,7 +317,10 @@ const bool ConfigItems::load()
     hide_writing_dialog = cf.get_option( "hide_writing_dialog", false );
 
     // ポップアップとカーソルの間のマージン
-    margin_popup = cf.get_option( "margin_popup", MARGIN_POPUP );
+    margin_popup = cf.get_option( "margin_popup", CONF_MARGIN_POPUP );
+
+    // 画像ポップアップとカーソルの間のマージン
+    margin_imgpopup = cf.get_option( "margin_imgpopup", CONF_MARGIN_IMGPOPUP );
 
     // マウスジェスチャの判定開始半径
     mouse_radius = cf.get_option( "mouse_radius", 25 );
@@ -347,7 +350,7 @@ const bool ConfigItems::load()
     strict_char_width = cf.get_option( "strict_char_width", false );
 
     // datのパース時にURL判定を甘くする(^なども含める)
-    loose_url = cf.get_option( "loose_url", LOOSE_URL );
+    loose_url = cf.get_option( "loose_url", CONF_LOOSE_URL );
 
     // ユーザーコマンドで選択できない項目を非表示にする
     hide_usrcmd = cf.get_option( "hide_usrcmd", false );
@@ -386,12 +389,15 @@ const bool ConfigItems::load()
     if( ! str_tmp.empty() ) list_abone_regex = MISC::strtolist( str_tmp );
 
     // デフォルトで透明、連鎖あぼーんをするか
-    abone_transparent = cf.get_option( "abone_transparent", false );
-    abone_chain = cf.get_option( "abone_chain", false );
+    abone_transparent = cf.get_option( "abone_transparent", CONF_ABONE_TRANSPARENT );
+    abone_chain = cf.get_option( "abone_chain", CONF_ABONE_CHAIN );
+
+    // 右ペーンが空の時にサイドバーを閉じるか
+    expand_sidebar = cf.get_option( "expand_sidebar", CONF_EXPAND_SIDEBAR );
 
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
-    migemodict_path = cf.get_option( "migemodict_path", "/usr/share/migemo/utf-8/migemo-dict" );
+    migemodict_path = cf.get_option( "migemodict_path", CONF_MIGEMO_PATH );
 #endif
 
     return ! cf.empty();
@@ -517,6 +523,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "save_postlog", save_postlog );
     cf.update( "hide_writing_dialog", hide_writing_dialog );
     cf.update( "margin_popup", margin_popup );
+    cf.update( "margin_imgpopup", margin_imgpopup );
     cf.update( "mouse_radius", mouse_radius );
     cf.update( "history_size", history_size );
     cf.update( "instruct_popup", instruct_popup );
@@ -555,6 +562,8 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "abone_transparent", abone_transparent );
     cf.update( "abone_chain", abone_chain );
+
+    cf.update( "expand_sidebar", expand_sidebar );
 
 #ifdef HAVE_MIGEMO_H
     cf.update( "migemodict_path", migemodict_path );

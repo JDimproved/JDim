@@ -1540,6 +1540,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
 
     CORE::VIEWFACTORY_ARGS args;
     SKELETON::View* view_popup = NULL;
+    int margin_popup = CONFIG::get_margin_popup();
 
     // 画像ポップアップ
     if( DBIMG::is_loadable( url ) ){
@@ -1557,6 +1558,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
 #endif
 
             view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
+            margin_popup = CONFIG::get_margin_imgpopup();
         }
     }
 
@@ -1687,7 +1689,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         }
     }
 
-    if( view_popup ) show_popup( view_popup );
+    if( view_popup ) show_popup( view_popup, margin_popup );
 }
 
 
@@ -1743,7 +1745,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
                 CORE::VIEWFACTORY_ARGS args;
                 args.arg1 = m_id_name;
                 SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPID, m_url_article, args );
-                show_popup( view_popup );
+                const int margin_popup = CONFIG::get_margin_popup();
+                show_popup( view_popup, margin_popup );
             }
             else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_id();
             else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
@@ -1772,7 +1775,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
                 CORE::VIEWFACTORY_ARGS args;
                 args.arg1 = m_name;
                 SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPNAME, m_url_article, args );
-                show_popup( view_popup );
+                const int margin_popup = CONFIG::get_margin_popup();
+                show_popup( view_popup, margin_popup );
             }
             else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_name();
             else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
@@ -1876,7 +1880,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
                 CORE::VIEWFACTORY_ARGS args;
                 args.arg1 = m_str_num;
                 SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPREFER, m_url_article, args );
-                show_popup( view_popup );
+                const int margin_popup = CONFIG::get_margin_popup();
+                show_popup( view_popup, margin_popup );
             }
         }
     }
@@ -1928,7 +1933,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             if( ! DBIMG::is_cached( url ) ){
                 DBIMG::download_img( url, DBTREE::url_readcgi( m_url_article, res_number, 0 ) );
                 hide_popup();
-                show_popup( CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url ) );
+                SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
+                const int margin_popup = CONFIG::get_margin_imgpopup();
+                show_popup( view_popup, margin_popup );
                 top = false;
                 load = true;
             }
@@ -1987,16 +1994,14 @@ const bool ArticleViewBase::is_mouse_on_popup()
 // view にあらかじめ内容をセットしてから呼ぶこと
 // viewは SKELETON::PopupWin のデストラクタで削除される
 //
-void ArticleViewBase::show_popup( SKELETON::View* view )
+void ArticleViewBase::show_popup( SKELETON::View* view, int margin )
 {
     hide_popup();
     if( !view ) return;
 
     delete_popup();
 
-    const int mrg = CONFIG::get_margin_popup();;
-    
-    m_popup_win = new SKELETON::PopupWin( this, view, mrg );
+    m_popup_win = new SKELETON::PopupWin( this, view, margin );
     m_popup_win->signal_leave_notify_event().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_popup_leave_notify_event ) );
     m_popup_win->sig_hide_popup().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_hide_popup ) );
     m_popup_shown = true;

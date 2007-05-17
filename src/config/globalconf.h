@@ -180,6 +180,9 @@ namespace CONFIG
     const int get_margin_popup();
     void set_margin_popup( int margin );
 
+    // 画像ポップアップとカーソルの間のマージン
+    const int get_margin_imgpopup();
+
     // マウスジェスチャの判定開始半径
     const int get_mouse_radius();
 
@@ -249,6 +252,9 @@ namespace CONFIG
 
     const bool get_abone_chain();
     void set_abone_chain( bool set );
+
+    // 右ペーンが空の時にサイドバーを閉じるか
+    const bool get_expand_sidebar();
 
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所

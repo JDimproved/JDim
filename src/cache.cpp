@@ -790,9 +790,9 @@ std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& file_
         if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
 
             SKELETON::MsgDiag mdiag( parent, "ファイルが存在します。ファイル名を変更しますか？",
-                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
-            if( mdiag.run() ==  Gtk::RESPONSE_OK ) return CACHE::open_save_diag( parent, file_from,  path_to );
+            if( mdiag.run() ==  Gtk::RESPONSE_YES ) return CACHE::open_save_diag( parent, file_from,  path_to );
 
             return std::string();
         }
