@@ -202,7 +202,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "CopyResRef", "引用コピー"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), true ) );
     action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
-    action_group()->add( Gtk::Action::create( "DeleteOpen", "削除して開き直す"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
+    action_group()->add( Gtk::Action::create( "DeleteOpen", "削除して再読み込み"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
     action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
@@ -290,6 +290,11 @@ void ArticleViewBase::setup_action()
     // 削除ボタン押したときのポップアップ
     "<popup name='popup_menu_delete'>"
     "<menuitem action='Delete'/>"
+    "<menuitem action='DeleteOpen'/>"
+    "</popup>"
+
+    // 壊れていますをクリックしたときのポップアップ
+    "<popup name='popup_menu_broken'>"
     "<menuitem action='DeleteOpen'/>"
     "</popup>"
 
@@ -649,7 +654,11 @@ void ArticleViewBase::delete_view()
 //
 void ArticleViewBase::delete_open_view()
 {
-    CORE::core_set_command( "delete_article", m_url_article, "reopen" );
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+    }
+    else CORE::core_set_command( "delete_article", m_url_article, "reopen" );
 }
 
 
@@ -737,10 +746,14 @@ void ArticleViewBase::operate_view( const int& control )
             // 削除
         case CONTROL::Delete:
         {
-            SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-            mdiag.set_default_response( Gtk::RESPONSE_OK );
-            if( mdiag.run() != Gtk::RESPONSE_OK ) return;
-            delete_view();
+            SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+            mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+            mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+            mdiag.add_button( "削除して再読み込み", Gtk::RESPONSE_YES + 100 );
+            mdiag.set_default_response( Gtk::RESPONSE_YES );
+            int ret = mdiag.run();
+            if( ret == Gtk::RESPONSE_YES ) delete_view();
+            else if( ret == Gtk::RESPONSE_YES + 100 ) delete_open_view();
             break;
         }
 
@@ -1808,6 +1821,17 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     }
 
     /////////////////////////////////////////////////////////////////
+    // 壊れていますクリック
+    else if( url.find( PROTO_BROKEN ) == 0 ){
+
+        hide_popup();
+
+        if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
+            show_popupmenu( url, false );
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////
     // 荒らし報告用URL表示クリック
     else if( url.find( PROTO_URL4REPORT ) == 0 ){
 
@@ -2356,6 +2380,11 @@ Gtk::Menu* ArticleViewBase::get_popupmenu( const std::string& url )
     // あぼーんポップアップメニュー
     else if( url.find( PROTO_ABONE ) == 0 ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_abone" ) );
+    }
+
+    // 壊れていますポップアップメニュー
+    else if( url.find( PROTO_BROKEN ) == 0 ){
+        popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_broken" ) );
     }
 
     // 画像ポップアップメニュー

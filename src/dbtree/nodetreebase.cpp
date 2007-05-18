@@ -1087,7 +1087,13 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 
         m_broken = true;
         header->headinfo->block[ BLOCK_NAME ] = create_block_node();
+
         createTextNode( " 壊れています", COLOR_CHAR );
+
+        header->headinfo->block[ BLOCK_MES ] = create_block_node();
+        const char str_broken[] = "ここ";
+        create_linknode( str_broken, strlen( str_broken ) , PROTO_BROKEN, strlen( PROTO_BROKEN ), COLOR_CHAR_LINK, false );
+        createTextNode( "をクリックしてスレを再読み込みして下さい。", COLOR_CHAR );
         
         return pos;
     }
