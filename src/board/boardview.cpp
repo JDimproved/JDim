@@ -1317,22 +1317,25 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
 {
     if( art->empty() ) return;
 
+    const int load = art->get_number_load();
+    const int res = art->get_number();
+
     // タイトル、レス数、抽出
     row[ m_columns.m_col_subject ] = art->get_subject();
-    row[ m_columns.m_col_res ] = art->get_number();
+    row[ m_columns.m_col_res ] = res;
 
     // 読み込み数
 
-    if( art->get_number_load() ){
+    if( load ){
         const int tmpsize = 32;
         char tmp[ tmpsize ];
-        snprintf( tmp, tmpsize, "%d", art->get_number_load() );
+        snprintf( tmp, tmpsize, "%d", load );
         row[ m_columns.m_col_str_load ] = tmp;
-        snprintf( tmp, tmpsize, "%d", art->get_number() - art->get_number_load() );
+        snprintf( tmp, tmpsize, "%d", res - load );
         row[ m_columns.m_col_str_new ] = tmp;
 
-        row[ m_columns.m_col_load ] = art->get_number_load();
-        row[ m_columns.m_col_new ] = art->get_number() - art->get_number_load();
+        row[ m_columns.m_col_load ] = load;
+        row[ m_columns.m_col_new ] = res - load;
     }
     else{
         row[ m_columns.m_col_str_load ] = "";

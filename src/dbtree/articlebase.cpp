@@ -393,7 +393,7 @@ void ArticleBase::set_subject( const std::string& subject )
 
 void ArticleBase::set_number( int number )
 {
-    if( number && number != m_number ){
+    if( number && number > m_number ){
         m_number = number;
         if( m_number_load < m_number ) m_enable_load = true;
     }
