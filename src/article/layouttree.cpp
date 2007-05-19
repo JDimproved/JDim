@@ -386,6 +386,10 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
             case DBTREE::NODE_ZWSP: // 幅0スペース
                 tmplayout = create_layout_sp( tmpnode->type );
                 break;
+
+            case DBTREE::NODE_HTAB: // 水平タブ
+                tmplayout = create_layout_sp( tmpnode->type );
+                break;
         }
 
         if( tmplayout ){

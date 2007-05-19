@@ -31,6 +31,9 @@ namespace DBTREE
         // スペース(幅0)
         NODE_ZWSP,
 
+        // 水平タブ(0x09)
+        NODE_HTAB,
+
         NODE_NONE
     };
 

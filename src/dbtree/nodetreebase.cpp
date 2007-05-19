@@ -446,6 +446,7 @@ std::list< int > NodeTreeBase::get_res_query( const std::string& query, bool mod
 node = head->headinfo->block[ id ]; \
 while( node ){ \
 if( node->type == DBTREE::NODE_BR ) str_res += "\n" + ref_prefix; \
+else if( node->type == DBTREE::NODE_HTAB ) str_res += "\t"; \
 else if( node->text ) str_res += node->text; \
 node = node->next_node; \
 } }while(0) \
@@ -645,6 +646,17 @@ NODE* NodeTreeBase::createSpNode( const int& type )
 {
     NODE* tmpnode = createNode();
     tmpnode->type = type;
+    return tmpnode;
+}
+
+
+//
+// 水平タブノード
+//
+NODE* NodeTreeBase::createHTabNode()
+{
+    NODE* tmpnode = createNode();
+    tmpnode->type = NODE_HTAB;
     return tmpnode;
 }
 
@@ -1536,6 +1548,16 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 --pos;
                 continue;
             }
+        }
+
+        ///////////////////////
+        // 水平タブ(0x09)
+        if( *pos == 0x09 ){
+
+            // フラッシュしてからタブノードをつくる
+            createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+            createHTabNode();
+            continue;
         }
 
         // 連続する空白は一個にする

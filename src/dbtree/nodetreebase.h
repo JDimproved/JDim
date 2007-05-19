@@ -214,6 +214,7 @@ namespace DBTREE
         NODE* createIDNumNode();
         NODE* createBrNode();
         NODE* createSpNode( const int& type );
+        NODE* createHTabNode();
         NODE* create_linknode( const char* text, int n, const char* link, int n_link, int color_text, bool bold );
         NODE* create_ancnode( const char* text, int n, const char* link, int n_link, int color_text, bool bold,
                               ANCINFO* ancinfo, int lng_ancinfo );

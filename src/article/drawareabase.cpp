@@ -51,6 +51,8 @@ using namespace ARTICLE;
 #define EIMG_ICONSIZE 25  // 埋め込み画像のアイコンサイズ
 #define EIMG_MRG 10       // 埋め込み画像のアイコンの間隔
 
+#define SPACE_TAB (m_font_height * 4) // 水平タブをどれだけ空けるか
+
 //////////////////////////////////////////////////////////
 
 
@@ -748,6 +750,12 @@ bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
                     //////////////////////////////////////////
 
                 case DBTREE::NODE_ZWSP: // 幅0スペース
+                    break;
+
+                    //////////////////////////////////////////
+
+                case DBTREE::NODE_HTAB: // 水平タブ
+                    x += SPACE_TAB;
                     break;
             }
 
@@ -3073,6 +3081,7 @@ bool DrawAreaBase::set_selection_str()
 
                 if( tmplayout->type == DBTREE::NODE_BR ) m_selection.str += "\n";
                 else if( tmplayout->type == DBTREE::NODE_DIV ) m_selection.str += "\n";
+                else if( tmplayout->type == DBTREE::NODE_HTAB ) m_selection.str += "\t";
 
                 else if( tmplayout->text ){
                     if( copy_from || copy_to ) m_selection.str += std::string( tmplayout->text ).substr( copy_from, copy_to - copy_from );
