@@ -164,6 +164,8 @@ void ArticleViewMain::show_view()
         m_show_instdialog = true;
     }
 
+    slot_push_claar_hl();
+
     // 差分 download 開始
     get_article()->download_dat();
     if( get_article()->is_loading() ){

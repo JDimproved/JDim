@@ -2432,13 +2432,15 @@ void DrawAreaBase::goto_back()
 //
 // 検索実行
 //
-bool DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
+// 戻り値: ヒット数
+//
+int DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
 {
     assert( m_layout_tree );
 
     JDLIB::Regex regex;
 
-    if( list_query.size() == 0 ) return false;
+    if( list_query.size() == 0 ) return 0;
 
 #ifdef _DEBUG    
     std::cout << "ArticleViewBase::search size = " << list_query.size() << std::endl;
@@ -2504,7 +2506,7 @@ bool DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
     std::cout << "m_multi_selection.size = " << m_multi_selection.size() << std::endl;
 #endif
     
-    if( m_multi_selection.size() == 0 ) return false;
+    if( m_multi_selection.size() == 0 ) return 0;
 
     // 初期位置をセット
     // selection.select = true のアイテムが現在選択中
@@ -2526,7 +2528,7 @@ bool DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
     }
     
     redraw_view();
-    return true;
+    return m_multi_selection.size();
 }
 
 
@@ -2534,14 +2536,16 @@ bool DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
 //
 // 次の検索結果に移動
 //
-void DrawAreaBase::search_move( bool reverse )
+// 戻り値: ヒット数
+//
+int DrawAreaBase::search_move( bool reverse )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::search_move " << m_multi_selection.size() << std::endl;
 #endif
 
-    if( ! m_vscrbar ) return;
-    if( m_multi_selection.size() == 0 ) return;
+    if( m_multi_selection.size() == 0 ) return 0;
+    if( ! m_vscrbar ) return m_multi_selection.size();
 
     std::list< SELECTION >::iterator it;
     for( it = m_multi_selection.begin(); it != m_multi_selection.end(); ++it ){
@@ -2577,9 +2581,11 @@ void DrawAreaBase::search_move( bool reverse )
             if( ( int ) adjust->get_value() > y || ( int ) adjust->get_value() + ( int ) adjust->get_page_size() - m_br_size < y )
                 adjust->set_value( y );
 
-            return;
+            return m_multi_selection.size();
         }
     }
+
+    return m_multi_selection.size();
 }
 
 

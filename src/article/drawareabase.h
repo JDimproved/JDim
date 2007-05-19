@@ -222,8 +222,8 @@ namespace ARTICLE
         void goto_back();
 
         // 検索
-        bool search( std::list< std::string >& list_query, bool reverse );
-        void search_move( bool reverse );
+        int search( std::list< std::string >& list_query, bool reverse );
+        int search_move( bool reverse );
         void clear_highlight();
 
       protected:

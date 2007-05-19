@@ -967,6 +967,7 @@ void ArticleViewBase::slot_push_drawout_or()
 void ArticleViewBase::slot_push_claar_hl()
 {
     assert( m_drawarea );
+    if( m_query.empty() ) return;
 
     m_query = std::string();
     m_drawarea->clear_highlight();
@@ -2958,21 +2959,24 @@ void ArticleViewBase::slot_abone_img()
 void ArticleViewBase::slot_active_search()
 {
     if( ! m_toolbar ) return;
-
-    focus_view();
     std::string query = m_toolbar->m_entry_search.get_text();
     if( query.empty() ) return;
 
     std::list< std::string > list_query;
     list_query = MISC::split_line( query );
 
-    if( m_query == query ) m_drawarea->search_move( m_search_invert );
-    
-    else{
+    if( m_query != query ){
         m_query = query;
         m_drawarea->set_jump_history();
+        m_drawarea->search( list_query, m_search_invert );
+    }
 
-        if( m_drawarea->search( list_query, m_search_invert ) ) m_drawarea->search_move( m_search_invert );
+    int hit = m_drawarea->search_move( m_search_invert );
+
+    if( ! hit ) CORE::core_set_command( "set_mginfo", "", "検索結果： ヒット無し" );
+    else{
+        focus_view();
+        CORE::core_set_command( "set_mginfo", "", "検索結果： " + MISC::itostr( hit ) + "件" );
     }
 }
 

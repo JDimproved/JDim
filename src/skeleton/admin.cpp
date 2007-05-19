@@ -973,6 +973,7 @@ void Admin::set_status( const std::string& url, const std::string& stat )
         SKELETON::View* view = get_current_view();
         if( m_focus && view && view->get_url() == url ){
             CORE::core_set_command( "set_status", url, stat );
+            CORE::core_set_command( "set_mginfo", "", "" );
         }
     }
 }
