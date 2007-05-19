@@ -134,6 +134,9 @@ namespace CONFIG
         // スレビューのスクロール量
         int scroll_size;
 
+        // スレビューのスクロール量(キー上下)
+        int key_scroll_size;
+
         // 板一覧でカテゴリを常にひとつだけ開く
         bool open_one_category;
 

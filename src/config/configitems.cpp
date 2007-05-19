@@ -299,10 +299,13 @@ const bool ConfigItems::load()
     newthread_hour = cf.get_option( "newthread_hour", 24 );
 
     // ツリービューのスクロール量(行数)
-    tree_scroll_size = cf.get_option( "tree_scroll_size", 4 );
+    tree_scroll_size = cf.get_option( "tree_scroll_size", CONF_TREE_SCROLL_SIZE );
 
     // スレビューのスクロール量
     scroll_size = cf.get_option( "scroll_size", CONF_SCROLL_SIZE );
+
+    // スレビューのスクロール量(キー上下)
+    key_scroll_size = cf.get_option( "key_scroll_size", CONF_KEY_SCROLL_SIZE );
 
     // 板一覧でカテゴリを常にひとつだけ開く
     open_one_category = cf.get_option( "open_one_category", false );
@@ -518,6 +521,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "tree_scroll_size", tree_scroll_size );
     cf.update( "scroll_size", scroll_size );
+    cf.update( "key_scroll_size", key_scroll_size );
     cf.update( "open_one_category", open_one_category );
     cf.update( "always_write_ok", always_write_ok );
     cf.update( "save_postlog", save_postlog );

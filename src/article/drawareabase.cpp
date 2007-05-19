@@ -40,9 +40,11 @@ using namespace ARTICLE;
 #define BIG_WIDTH 100000
 #define BIG_HEIGHT 100000
 
+
+
 #define SCROLLSPEED_FAST ( m_vscrbar ? m_vscrbar->get_adjustment()->get_page_size() : 0 )
 #define SCROLLSPEED_MID  ( m_vscrbar ? m_vscrbar->get_adjustment()->get_page_size()/2 : 0 )
-#define SCROLLSPEED_SLOW ( m_vscrbar ? m_vscrbar->get_adjustment()->get_step_increment()*2 : 0 )
+#define SCROLLSPEED_SLOW ( m_vscrbar ? m_vscrbar->get_adjustment()->get_step_increment()*CONFIG::get_key_scroll_size() : 0 )
 
 #define IS_ALPHABET( chr ) ( ( chr >= 'a' && chr <= 'z' ) || ( chr >= 'A' && chr <= 'Z' ) )
 

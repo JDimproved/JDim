@@ -12,7 +12,9 @@ namespace CONFIG
         CONF_USE_IPV6 = 1,          // ipv6使用
         CONF_BROWSER_NO = 2,        // browsers.h のラベル番号
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
+        CONF_TREE_SCROLL_SIZE = 4,  // ツリービューのスクロール量(行数)
         CONF_SCROLL_SIZE = 3,       // スレビューのスクロール量
+        CONF_KEY_SCROLL_SIZE = 2,   // スレビューのスクロール量(キー上下)
         CONF_MARGIN_POPUP = 30,     // レスアンカーとポップアップの間のマージン
         CONF_MARGIN_IMGPOPUP = CONF_MARGIN_POPUP,  // レスアンカーと画像ポップアップの間のマージン
         CONF_LOOSE_URL = 1,         // datのパース時にURL判定を甘くする(^なども含める)

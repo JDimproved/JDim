@@ -162,6 +162,9 @@ namespace CONFIG
     // スレビューのスクロール量
     const int get_scroll_size();
 
+    // スレビューのスクロール量(キー上下)
+    const int get_key_scroll_size();
+
     // 板一覧でカテゴリを常にひとつだけ開く
     const bool get_open_one_category();
 
