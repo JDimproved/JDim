@@ -6,6 +6,10 @@
 #ifndef _DEFAULTCONF_H
 #define _DEFAULTCONF_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 namespace CONFIG
 {
     enum{
@@ -70,7 +74,11 @@ namespace CONFIG
 #define CONF_COLOR_BACK_BOARD_EVEN str_color[ COLOR_BACK_BOARD ] // スレ一覧の背景色(偶数行)
 
 // migemo-dictの場所
+#ifdef MIGEMODIR
+#define CONF_MIGEMO_PATH MIGEMODIR
+#else    
 #define CONF_MIGEMO_PATH "/usr/share/migemo/utf-8/migemo-dict"
+#endif
 
 }
 

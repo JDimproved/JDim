@@ -179,6 +179,12 @@ AC_ARG_WITH(migemo,[ --with-migemo    (enable migemo search)],
        fi ])
 
 
+AC_ARG_WITH(migemodir,[ --with-migemodir    (specifiy migemo directory)],
+       [ if test "$withval" ;then
+               echo "migemodir = $withval"
+               AC_DEFINE_UNQUOTED(MIGEMODIR, "$withval" , "migemodir")
+       fi ])
+
 dnl
 dnl checking core2duo
 dnl
