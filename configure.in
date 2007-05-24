@@ -179,10 +179,10 @@ AC_ARG_WITH(migemo,[ --with-migemo    (enable migemo search)],
        fi ])
 
 
-AC_ARG_WITH(migemodir,[ --with-migemodir    (specifiy migemo directory)],
+AC_ARG_WITH(migemodict,[ --with-migemodict    (specifiy the path of migemo dictionary)],
        [ if test "$withval" ;then
-               echo "migemodir = $withval"
-               AC_DEFINE_UNQUOTED(MIGEMODIR, "$withval" , "migemodir")
+               echo "migemodict = $withval"
+               AC_DEFINE_UNQUOTED(MIGEMODICT, "$withval" , "migemodict")
        fi ])
 
 dnl

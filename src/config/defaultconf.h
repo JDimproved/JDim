@@ -74,8 +74,8 @@ namespace CONFIG
 #define CONF_COLOR_BACK_BOARD_EVEN str_color[ COLOR_BACK_BOARD ] // スレ一覧の背景色(偶数行)
 
 // migemo-dictの場所
-#ifdef MIGEMODIR
-#define CONF_MIGEMO_PATH MIGEMODIR
+#ifdef MIGEMODICT
+#define CONF_MIGEMO_PATH MIGEMODICT
 #else    
 #define CONF_MIGEMO_PATH "/usr/share/migemo/utf-8/migemo-dict"
 #endif
