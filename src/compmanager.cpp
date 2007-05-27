@@ -101,7 +101,12 @@ void Completion_Manager::set_query( int mode, std::string& query )
 
 void Completion_Manager::clear( int mode )
 {
-    if( mode < COMP_SIZE )  m_lists[ mode ]->clear();
+    if( mode < COMP_SIZE ){
+        m_lists[ mode ]->clear();
+
+        std::string path = CACHE::path_completion( mode );
+        unlink( path.c_str() );
+    }
 }
 
 

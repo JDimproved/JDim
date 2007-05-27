@@ -140,12 +140,22 @@ MISC::Img_Size::Img_Size( const std::string& file )
         try {
 
             Glib::RefPtr< Gdk::PixbufLoader > loader = Gdk::PixbufLoader::create();
-            loader->signal_size_prepared().connect( sigc::mem_fun( *this, &Img_Size::slot_size_prepared ) );
 
+#if GTKMMVER > 240
+            loader->signal_size_prepared().connect( sigc::mem_fun( *this, &Img_Size::slot_size_prepared ) );
+#endif
             while( ! m_width ){
                 readsize = fread( data, 1, bufsize, f );
                 if( readsize ) loader->write( data, readsize );
                 if( feof( f ) ) break;
+
+#if GTKMMVER <= 240 // gdkのバージョンが古い場合はpixbufを取得してサイズを得る
+
+                if( loader->get_pixbuf() ){
+                    m_width = loader->get_pixbuf()->get_width();
+                    m_height = loader->get_pixbuf()->get_height();
+                }
+#endif
             }
 
             loader->close();
