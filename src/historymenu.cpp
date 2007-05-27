@@ -92,3 +92,11 @@ HistoryMenuBoard::HistoryMenuBoard()
 {
     setup( Gtk::manage( new CORE::HistorySubMenu( CACHE::path_xml_history_board() ) ) );
 }
+
+
+
+HistoryMenuClose::HistoryMenuClose()
+    : CORE::HistoryMenuBase( "最近閉じたスレ" )
+{
+    setup( Gtk::manage( new CORE::HistorySubMenu( CACHE::path_xml_history_close() ) ) );
+}

@@ -11,7 +11,7 @@
 #include <gtkmm.h>
 
 #include "skeleton/imgbutton.h"
-#include "skeleton/entry.h"
+#include "skeleton/compentry.h"
 
 #include "icons/iconmanager.h"
 
@@ -52,7 +52,7 @@ namespace ARTICLE
         // 検索バー
         Gtk::HBox m_searchbar;
         bool m_searchbar_shown;
-        SKELETON::JDEntry m_entry_search;
+        SKELETON::SearchEntry m_entry_search;
         SKELETON::ImgButton m_button_close_search;
         SKELETON::ImgButton m_button_up_search;
         SKELETON::ImgButton m_button_down_search;
@@ -213,7 +213,7 @@ namespace ARTICLE
 
         Gtk::Tooltips m_tooltip;
 
-        SKELETON::JDEntry m_entry_search;
+        SKELETON::SearchEntry m_entry_search;
         SKELETON::ImgButton m_button_close;
         SKELETON::ImgButton m_button_reload;
         SKELETON::ImgButton m_button_stop;

@@ -137,6 +137,13 @@ std::string CACHE::path_xml_history_board()
 }
 
 
+// 最近閉じたスレの履歴
+std::string CACHE::path_xml_history_close()
+{
+    return CACHE::path_root() +  "history_close.xml";
+}
+
+
 // 板移転情報
 std::string CACHE::path_movetable()
 {
@@ -292,6 +299,16 @@ std::string CACHE::path_postlog()
 {
     return CACHE::path_root() +  "post.log";
 }
+
+
+//
+// 検索や名前などの補完情報
+//
+std::string CACHE::path_completion( int mode )
+{
+    return CACHE::path_root() +  "comp" + MISC::itostr( mode ) + ".info";
+}
+
 
 
 //

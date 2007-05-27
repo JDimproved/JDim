@@ -11,6 +11,7 @@
 #include "global.h"
 #include "dndmanager.h"
 #include "usrcmdmanager.h"
+#include "compmanager.h"
 #include "searchmanager.h"
 #include "aamanager.h"
 #include "dispatchmanager.h"
@@ -156,6 +157,9 @@ Core::~Core()
 
     // ユーザコマンドマネージャ削除
     CORE::delete_usrcmd_manager();
+
+    // 補完マネージャ削除
+    CORE::delete_completion_manager();
 
     // D&Dマネージャ削除
     CORE::delete_dnd_manager();
@@ -332,11 +336,13 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "ColorBackTree", "板、スレ一覧背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
     m_action_group->add( Gtk::Action::create( "FontColorPref", "詳細設定" ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
 
+    // ネットワーク
     m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク" ) );
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
     m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ" ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
     m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード設定" ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
 
+    // あぼーん
     m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん" ) );
     m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん設定(対象: スレビュー)" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
     m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん設定(対象: スレ一覧)" ),
@@ -346,6 +352,7 @@ void Core::run( bool init )
                                                     ( CONFIG::get_abone_transparent() && CONFIG::get_abone_chain() ) ),
                                                     sigc::mem_fun( *this, &Core::slot_toggle_abone_transp_chain ) );
 
+    // 画像
     m_action_group->add( Gtk::Action::create( "Image_Menu", "画像" ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
@@ -354,6 +361,18 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する", std::string(), CONFIG::get_use_inline_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア" ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
+
+    // プライバシー
+    m_action_group->add( Gtk::Action::create( "Privacy_Menu", "プライバシー" ) );
+    m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "履歴情報を全てクリア" ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
+    m_action_group->add( Gtk::Action::create( "Privacy_SubMenu", "履歴情報を個別にクリア" ) );
+    m_action_group->add( Gtk::Action::create( "ClearBoard", "板履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_board ) );
+    m_action_group->add( Gtk::Action::create( "ClearThread", "スレ履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_thread ) );
+    m_action_group->add( Gtk::Action::create( "ClearClose", "最近閉じたスレ履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_close ) );
+    m_action_group->add( Gtk::Action::create( "ClearSearch", "検索履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_search ) );
+    m_action_group->add( Gtk::Action::create( "ClearName", "書き込み名前履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_name ) );
+    m_action_group->add( Gtk::Action::create( "ClearMail", "書き込みメール履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_mail ) );
+
 
     //////////////////////////////////////////////////////
 
@@ -489,6 +508,23 @@ void Core::run( bool init )
         "<menuitem action='DeleteImages'/>"
         "</menu>"
 
+        "<separator/>"
+
+    // プライバシー
+        "<menu action='Privacy_Menu'>"
+        "<menuitem action='ClearAllPrivacy'/>"
+        "<separator/>"
+        "<menu action='Privacy_SubMenu'>"
+        "<menuitem action='ClearBoard'/>"
+        "<menuitem action='ClearThread'/>"
+        "<menuitem action='ClearClose'/>"
+        "<separator/>"
+        "<menuitem action='ClearSearch'/>"
+        "<menuitem action='ClearName'/>"    
+        "<menuitem action='ClearMail'/>"    
+        "</menu>"
+        "</menu>"
+
         "</menu>"                         
 
     // ヘルプ
@@ -521,6 +557,9 @@ void Core::run( bool init )
     
     m_histmenu_thread = Gtk::manage( new HistoryMenuThread() ); // スレ履歴
     submenu->append( *m_histmenu_thread );
+
+    m_histmenu_close = Gtk::manage( new HistoryMenuClose() ); // 最近閉じたスレ履歴
+    submenu->append( *m_histmenu_close );
 
 
     // メニューにショートカットキーやマウスジェスチャを表示
@@ -735,17 +774,17 @@ void Core::create_toolbar()
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
 
-    m_toolbar_vbox.pack_start( m_button_bbslist, Gtk::PACK_SHRINK );
-    m_toolbar_vbox.pack_start( m_button_favorite, Gtk::PACK_SHRINK );
-    m_toolbar_vbox.pack_start( m_button_board, Gtk::PACK_SHRINK );
-    m_toolbar_vbox.pack_start( m_button_thread, Gtk::PACK_SHRINK );
-    if( CONFIG::get_use_image_view() ) m_toolbar_vbox.pack_start( m_button_image, Gtk::PACK_SHRINK );
-    m_toolbar_vbox.pack_start( m_vspr_toolbar_1, Gtk::PACK_SHRINK );
-    m_toolbar_vbox.pack_start( m_entry_url );
-    m_toolbar_vbox.pack_start( m_button_go, Gtk::PACK_SHRINK );
-    m_toolbar_vbox.pack_start( m_vspr_toolbar_2, Gtk::PACK_SHRINK );
-    m_toolbar_vbox.pack_start( m_button_search_cache, Gtk::PACK_SHRINK );
-    m_toolbar.add( m_toolbar_vbox );
+    m_toolbar_hbox.pack_start( m_button_bbslist, Gtk::PACK_SHRINK );
+    m_toolbar_hbox.pack_start( m_button_favorite, Gtk::PACK_SHRINK );
+    m_toolbar_hbox.pack_start( m_button_board, Gtk::PACK_SHRINK );
+    m_toolbar_hbox.pack_start( m_button_thread, Gtk::PACK_SHRINK );
+    if( CONFIG::get_use_image_view() ) m_toolbar_hbox.pack_start( m_button_image, Gtk::PACK_SHRINK );
+    m_toolbar_hbox.pack_start( m_vspr_toolbar_1, Gtk::PACK_SHRINK );
+    m_toolbar_hbox.pack_start( m_entry_url );
+    m_toolbar_hbox.pack_start( m_button_go, Gtk::PACK_SHRINK );
+    m_toolbar_hbox.pack_start( m_vspr_toolbar_2, Gtk::PACK_SHRINK );
+    m_toolbar_hbox.pack_start( m_button_search_cache, Gtk::PACK_SHRINK );
+    m_toolbar.add( m_toolbar_hbox );
     m_toolbar.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
     m_toolbar.set_size_request( 8 );
 
@@ -972,6 +1011,49 @@ void Core::slot_delete_all_images()
     DBIMG::delete_all_files();
     IMAGE::get_admin()->set_command( "close_uncached_views" );
 }
+
+
+// 各プライバシー情報のクリア
+void Core::slot_clear_privacy()
+{
+    slot_clear_board();
+    slot_clear_thread();
+    slot_clear_close();
+    slot_clear_search();
+    slot_clear_name();
+    slot_clear_mail();
+}
+
+void Core::slot_clear_board()
+{
+    if( m_histmenu_board ) m_histmenu_board->slot_clear();
+}
+
+void Core::slot_clear_thread()
+{
+    if( m_histmenu_thread ) m_histmenu_thread->slot_clear();
+}
+
+void Core::slot_clear_close()
+{
+    if( m_histmenu_close ) m_histmenu_close->slot_clear();
+}
+
+void Core::slot_clear_search()
+{
+    get_completion_manager()->clear( CORE::COMP_SEARCH );
+}
+
+void Core::slot_clear_name()
+{
+    get_completion_manager()->clear( CORE::COMP_NAME );
+}
+
+void Core::slot_clear_mail()
+{
+    get_completion_manager()->clear( CORE::COMP_MAIL );
+}
+
 
 
 //
@@ -2232,9 +2314,12 @@ void Core::exec_command()
         
     else if( command.command  == "set_history_board" ) set_history_board( command.url );
 
+    else if( command.command  == "set_history_close" ) set_history_close( command.url );
+
     else if( command.command  == "update_history" ){
         if( m_histmenu_thread ) m_histmenu_thread->update();
         if( m_histmenu_board ) m_histmenu_board->update();
+        if( m_histmenu_close ) m_histmenu_close->update();
     }
 
     // ビューの切替え
@@ -3256,6 +3341,11 @@ void Core::set_history_article( const std::string& url )
 void Core::set_history_board( const std::string& url )
 {
     if( m_histmenu_board ) m_histmenu_board->append( url, DBTREE::board_name( url ), TYPE_BOARD );
+}
+
+void Core::set_history_close( const std::string& url )
+{
+    if( m_histmenu_close ) m_histmenu_close->append( url, DBTREE::article_subject( url ), TYPE_THREAD );
 }
 
 

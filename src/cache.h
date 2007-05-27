@@ -49,11 +49,14 @@ namespace CACHE
     // ユーザーコマンド設定ファイル
     std::string path_usrcmd();
 
-    // 履歴
+    // スレ履歴
     std::string path_xml_history();
 
     // 板履歴
     std::string path_xml_history_board();
+
+    // 最近閉じたスレの履歴
+    std::string path_xml_history_close();
 
     // 板移転情報
     std::string path_movetable();
@@ -103,6 +106,9 @@ namespace CACHE
 
     // 書き込みログ
     std::string path_postlog();
+
+    // 検索や名前などの補完情報
+    std::string path_completion( int mode );
 
     /////////////////////////////////////////////////
     //

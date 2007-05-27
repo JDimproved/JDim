@@ -128,7 +128,7 @@ namespace BOARD
 
         // 検索
         bool drawout();
-        void search();
+        void slot_active_search();
         void slot_push_down_search();
         void slot_push_up_search();
         void slot_entry_operate( int controlid );

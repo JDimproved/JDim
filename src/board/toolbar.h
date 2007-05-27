@@ -8,7 +8,7 @@
 #include <gtkmm.h>
 
 #include "skeleton/imgbutton.h"
-#include "skeleton/entry.h"
+#include "skeleton/compentry.h"
 
 #include "icons/iconmanager.h"
 
@@ -25,7 +25,7 @@ namespace BOARD
         Gtk::ScrolledWindow m_scrwin;
         Gtk::HBox m_buttonbar;
         bool m_toolbar_shown;
-        SKELETON::JDEntry m_entry_search;
+        SKELETON::SearchEntry m_entry_search;
         SKELETON::ImgButton m_button_close;
         SKELETON::ImgButton m_button_reload;
         SKELETON::ImgButton m_button_delete;

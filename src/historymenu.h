@@ -25,6 +25,9 @@ namespace CORE
         void append( const std::string& url, const std::string& name, int type );
         void update();
 
+        // 履歴クリア
+        void slot_clear();
+
       protected:
 
         void setup( CORE::HistorySubMenu* submenu );
@@ -33,9 +36,6 @@ namespace CORE
 
         // メニューがactiveになった時にラベルをセットする
         void slot_activate_menu();
-
-        // 履歴クリア
-        void slot_clear();
     };
 
 
@@ -55,6 +55,13 @@ namespace CORE
         HistoryMenuBoard();
     };
 
+
+    // 最近閉じたスレ履歴
+    class HistoryMenuClose : public CORE::HistoryMenuBase
+    {
+      public:
+        HistoryMenuClose();
+    };
 }
 
 #endif

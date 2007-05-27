@@ -8,6 +8,7 @@
 #include "command.h"
 #include "cache.h"
 #include "xml.h"
+#include "prefdiagfactory.h"
 
 #include "dbtree/interface.h"
 
@@ -53,8 +54,15 @@ HistorySubMenu::HistorySubMenu( const std::string path_xml )
     item = Gtk::manage( new Gtk::SeparatorMenuItem() );
     m_popupmenu.append( *item );
 
-    item = Gtk::manage( new Gtk::MenuItem( "削除" ) );
+    item = Gtk::manage( new Gtk::MenuItem( "履歴から削除" ) );
     item->signal_activate().connect( sigc::mem_fun( *this, &HistorySubMenu::slot_remove_history ) );
+    m_popupmenu.append( *item );
+
+    item = Gtk::manage( new Gtk::SeparatorMenuItem() );
+    m_popupmenu.append( *item );
+
+    item = Gtk::manage( new Gtk::MenuItem( "プロバティ" ) );
+    item->signal_activate().connect( sigc::mem_fun( *this, &HistorySubMenu::slot_show_property ) );
     m_popupmenu.append( *item );
 
     m_popupmenu.show_all_children();
@@ -94,6 +102,22 @@ void HistorySubMenu::clear()
     for(; it_item != m_itemlist.end(); ++it_item ){
         dynamic_cast< Gtk::Label* >( (*it_item)->get_child() )->set_text( HIST_NONAME );
     }
+}
+
+
+// 上から num 版目の HIST_ITEM 取得
+CORE::HIST_ITEM* HistorySubMenu::get_item( int num )
+{
+    CORE::HIST_ITEM* item = NULL;
+
+    if( m_histlist.size() > ( size_t ) num ){
+
+        std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
+        for( int i = 0; i < num && it != m_histlist.end() ; ++it, ++i );
+        if( it != m_histlist.end() ) item = *it;
+    }
+
+    return item;
 }
 
 
@@ -243,12 +267,11 @@ std::string HistorySubMenu::list2xml()
 // 履歴を開く
 void HistorySubMenu::open_history( int i )
 {
-    std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
-    for( int i2 = 0; i2 < i && it != m_histlist.end() ; ++it, ++i2 );
-    if( it == m_histlist.end() ) return;
+    CORE::HIST_ITEM* item = get_item( i );
+    if( ! item ) return;
 
-    std::string& url = ( *it )->url;
-    int type = ( *it )->type;
+    std::string& url = item->url;
+    int type = item->type;
     if( !url.empty() ){
 #ifdef _DEBUG
         std::cout << "open " << url << std::endl;
@@ -330,11 +353,9 @@ void HistorySubMenu::slot_remove_history()
     std::cout << "HistorySubMenu::slot_remove_history no = " << m_number_menuitem << std::endl;
 #endif 
 
-    if( m_histlist.size() <= ( size_t ) m_number_menuitem ) return;
+    CORE::HIST_ITEM* item = get_item( m_number_menuitem );
+    if( ! item ) return;
 
-    std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
-    for( int i = 0; i < m_number_menuitem; ++i, ++it );
-    CORE::HIST_ITEM* item = *it;
     m_histlist.remove( item );
 
 #ifdef _DEBUG
@@ -345,4 +366,35 @@ void HistorySubMenu::slot_remove_history()
     item->name = std::string();
     item->type = TYPE_UNKNOWN;
     m_histlist.push_back( item );
+}
+
+
+// プロバティ表示
+// これを呼ぶ前に m_number_menuitem に番号をセットしておく
+void HistorySubMenu::slot_show_property()
+{
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::slot_show_property no = " << m_number_menuitem << std::endl;
+#endif
+
+    CORE::HIST_ITEM* item = get_item( m_number_menuitem );
+    if( ! item ) return;
+
+    std::string& url = item->url;
+    int type = item->type;
+    if( !url.empty() ){
+
+#ifdef _DEBUG
+        std::cout << "open " << url << std::endl;
+#endif
+
+        SKELETON::PrefDiag* pref;
+        if( type == TYPE_THREAD ) pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, DBTREE::url_dat( url ) ); 
+        else if( type == TYPE_BOARD ) pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, DBTREE::url_subject( url ) );
+
+        if( pref ){
+            pref->run();
+            delete pref;
+        }
+    }
 }

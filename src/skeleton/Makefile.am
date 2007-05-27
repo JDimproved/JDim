@@ -6,6 +6,7 @@ libskeleton_a_SOURCES = \
 	admin.cpp \
 	dispatchable.cpp \
 	loadable.cpp \
+	treeviewbase.cpp \
 	treeview.cpp \
 	view.cpp \
 	editview.cpp \
@@ -13,6 +14,7 @@ libskeleton_a_SOURCES = \
 	tablabel.cpp \
 	tooltip.cpp \
 	entry.cpp \
+	compentry.cpp \
 	login.cpp \
 	panecontrol.cpp \
 	hpaned.cpp \
@@ -27,6 +29,7 @@ noinst_HEADERS = \
 	dispatchable.h \
 	loadable.h \
 	lockable.h \
+	treeviewbase.h \
 	treeview.h \
 	view.h \
 	editview.h \
@@ -38,6 +41,7 @@ noinst_HEADERS = \
 	popupwin.h \
 	tooltip.h \
 	entry.h \
+	compentry.h \
 	label_entry.h \
 	prefdiag.h \
 	msgdiag.h \

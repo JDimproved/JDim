@@ -43,6 +43,9 @@ namespace CORE
 
       private:
 
+        // 上から num 版目の HIST_ITEM 取得
+        CORE::HIST_ITEM* get_item( int num );
+
         void xml2list( const std::string& xml );
         std::string list2xml();
 
@@ -54,6 +57,7 @@ namespace CORE
         // ポップアップメニューのslot
         void slot_open_history();
         void slot_remove_history();
+        void slot_show_property();
     };
 }
 

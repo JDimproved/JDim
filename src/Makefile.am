@@ -25,6 +25,7 @@ jd_SOURCES = \
 	sharedbuffer.cpp \
 	dndmanager.cpp \
 	usrcmdmanager.cpp \
+	compmanager.cpp \
 	searchmanager.cpp \
 	aamanager.cpp \
 	dispatchmanager.cpp \
@@ -58,6 +59,7 @@ noinst_HEADERS = \
 	sharedbuffer.h \
 	dndmanager.h \
 	usrcmdmanager.h \
+	compmanager.h \
 	searchmanager.h \
 	aamanager.h \
 	dispatchmanager.h \

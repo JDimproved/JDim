@@ -205,25 +205,35 @@ void Post::receive_finish()
     regex.exec( ".*<title>([^<]*)</title>.*", str, 0, true, false );
     title = MISC::remove_space( regex.str( 1 ) );
 
+    // 2chタグ
+    regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", str, 0, false, false );
+    tag_2ch = MISC::remove_space( regex.str( 1 ) );
+
     // エラー
     // 一番内側の<b>〜</b>を探す
     m_errmsg = std::string();
     if( regex.exec( "([^>]|[^b]>)*<b>(([^>]|[^b]>)*)</b>.*", str, 0, true, false ) ){
-
         m_errmsg = regex.str( 2 );
+    }
+    else
+        if( tag_2ch.find( "error" ) != std::string::npos ){
+        if( regex.exec( "error +-->(.*)</body>", str, 0, true, false ) ) m_errmsg = regex.str( 1 );
+    }
+
+    if( ! m_errmsg.empty() ){
+
+        m_errmsg = MISC::replace_str( m_errmsg, "\n", "" ); 
 
         // <a 〜を取り除く
         while( regex.exec( "(.*)<a +href *= *\"([^\"]*)\" *>(.*)</a>(.*)", m_errmsg ) ){
             m_errmsg = regex.str( 1 ) + " " + regex.str( 2 ) + " " + regex.str( 3 ) + regex.str( 4 );
         }
 
-        // 改行
+        // 改行その他
         m_errmsg= MISC::replace_str( m_errmsg, "<br>", "\n" );
+        m_errmsg= MISC::replace_str( m_errmsg, "<hr>", "\n-------------------\n" );
     }
 
-    // 2chタグ
-    regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", str, 0, false, false );
-    tag_2ch = MISC::remove_space( regex.str( 1 ) );
 
     // 書き込み確認
     regex.exec( ".*<font size=\\+1 color=#FF0000>([^<]*)</font>.*", str );

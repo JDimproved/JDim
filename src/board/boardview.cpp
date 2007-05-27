@@ -108,7 +108,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
 
-    m_toolbar.m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BoardView::search ) );
+    m_toolbar.m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BoardView::slot_active_search ) );
     m_toolbar.m_button_close.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::close_view ) );
     m_toolbar.m_button_reload.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::reload ) );
     m_toolbar.m_button_stop.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::stop ) );
@@ -1815,17 +1815,15 @@ std::string BoardView::path2daturl( const Gtk::TreePath& path )
 //
 bool BoardView::drawout()
 {
-    bool find = false;
+    if( m_toolbar.m_entry_search.completion() ) return false;
+
+    int hit = 0;
     bool reset = false;
 
-    focus_view();
     std::string query = m_toolbar.m_entry_search.get_text();
 
     // 空の時はリセット
-    if( query.empty() ){
-        find = true;
-        reset = true;
-    }
+    if( query.empty() ) reset = true;
 
     if( m_pre_query == query ) return false;
     m_pre_query = query;
@@ -1848,7 +1846,7 @@ bool BoardView::drawout()
         if( reset ) row[ m_columns.m_col_drawbg ] = false;
         else if( regex.exec( query, subject, 0, true, true, true ) ){
             row[ m_columns.m_col_drawbg ] = true;
-            find = true;
+            ++hit;
 
 #ifdef _DEBUG
             std::cout << subject << " " << row[ m_columns.m_col_mark_val ] << std::endl;
@@ -1858,7 +1856,17 @@ bool BoardView::drawout()
         else row[ m_columns.m_col_drawbg ] = false;
     }
 
-    if( find ) redraw_view();
+    if( reset || hit ) redraw_view();
+
+    if( reset ){
+        focus_view();
+        CORE::core_set_command( "set_mginfo", "", "" );
+    }
+    else if( ! hit ) CORE::core_set_command( "set_mginfo", "", "検索結果： ヒット無し" );
+    else{
+        focus_view();
+        CORE::core_set_command( "set_mginfo", "", "検索結果： " + MISC::itostr( hit ) + "件" );
+    }
 
     return true;
 }
@@ -1868,8 +1876,10 @@ bool BoardView::drawout()
 //
 // 検索移動
 //
-void BoardView::search()
+void BoardView::slot_active_search()
 {
+    if( m_toolbar.m_entry_search.completion() ) return;
+
     if( drawout() ) return;
 
     focus_view();
@@ -1924,7 +1934,7 @@ void BoardView::search()
 void BoardView::slot_push_up_search()
 {
     m_search_invert = true;
-    search();
+    slot_active_search();
 }
 
 
@@ -1933,13 +1943,15 @@ void BoardView::slot_push_up_search()
 void BoardView::slot_push_down_search()
 {
     m_search_invert = false;
-    search();
+    slot_active_search();
 }
 
 
 // キャッシュ検索
 void BoardView::slot_search_cache()
 {
+    if( m_toolbar.m_entry_search.completion() ) return;
+
     std::string query = m_toolbar.m_entry_search.get_text();
     CORE::core_set_command( "open_article_searchcache", get_url() , query, "false" );
 }

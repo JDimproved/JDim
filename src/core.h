@@ -57,6 +57,7 @@ namespace CORE
     class DND_Manager;
     class HistoryMenuThread;
     class HistoryMenuBoard;
+    class HistoryMenuClose;
 
     class Core : public SKELETON::Dispatchable
     {
@@ -84,7 +85,7 @@ namespace CORE
         // ツールバー
         Gtk::ScrolledWindow m_toolbar;
         Gtk::Tooltips m_tooltip;
-        Gtk::HBox m_toolbar_vbox;
+        Gtk::HBox m_toolbar_hbox;
         Gtk::Entry m_entry_url;
         SKELETON::ImgButton m_button_go;
         SKELETON::ImgButton m_button_search_cache;
@@ -106,6 +107,7 @@ namespace CORE
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
         HistoryMenuThread* m_histmenu_thread;
         HistoryMenuBoard* m_histmenu_board;
+        HistoryMenuClose* m_histmenu_close;
         bool m_enable_menuslot;
 
         // 起動中
@@ -155,6 +157,14 @@ namespace CORE
         void slot_toggle_use_imgview();
         void slot_toggle_use_inlineimg();
         void slot_delete_all_images();
+
+        void slot_clear_privacy();
+        void slot_clear_board();
+        void slot_clear_thread();
+        void slot_clear_close();
+        void slot_clear_search();
+        void slot_clear_name();
+        void slot_clear_mail();
 
         void slot_changefont_main();
         void slot_changefont_popup();
@@ -251,6 +261,7 @@ namespace CORE
 
         void set_history_article( const std::string& url );
         void set_history_board( const std::string& url );
+        void set_history_close( const std::string& url );
 
         // 画像インジケータ表示/非表示
         void show_imagetab();

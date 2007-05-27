@@ -8,7 +8,7 @@
 #include <gtkmm.h>
 
 #include "skeleton/imgbutton.h"
-#include "skeleton/entry.h"
+#include "skeleton/compentry.h"
 
 #include "controlutil.h"
 #include "controlid.h"
@@ -40,7 +40,7 @@ namespace BBSLIST
 
         // 検索バー
         Gtk::HBox m_hbox_search;
-        SKELETON::JDEntry m_entry_search;
+        SKELETON::SearchEntry m_entry_search;
         SKELETON::ImgButton m_button_up_search;
         SKELETON::ImgButton m_button_down_search;
 
@@ -94,6 +94,8 @@ namespace BBSLIST
             m_hbox_search.pack_start( m_entry_search );
             m_hbox_search.pack_end( m_button_up_search, Gtk::PACK_SHRINK );
             m_hbox_search.pack_end( m_button_down_search, Gtk::PACK_SHRINK );
+
+            m_entry_search.add_mode( CONTROL::MODE_BBSLIST );
 
             pack_start( m_hbox_label, Gtk::PACK_SHRINK );
             if( show_bar ) show_toolbar();

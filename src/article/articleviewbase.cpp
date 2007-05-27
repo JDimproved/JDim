@@ -31,6 +31,7 @@
 #include "sharedbuffer.h"
 #include "prefdiagfactory.h"
 #include "usrcmdmanager.h"
+#include "compmanager.h"
 
 #include <sstream>
 
@@ -939,6 +940,7 @@ void ArticleViewBase::slot_push_down_search()
 void ArticleViewBase::slot_push_drawout_and()
 {
     if( ! m_toolbar ) return;
+    if( m_toolbar->m_entry_search.completion() ) return;
 
     std::string query = m_toolbar->m_entry_search.get_text();
     if( query.empty() ) return;
@@ -953,6 +955,7 @@ void ArticleViewBase::slot_push_drawout_and()
 void ArticleViewBase::slot_push_drawout_or()
 {
     if( ! m_toolbar ) return;
+    if( m_toolbar->m_entry_search.completion() ) return;
 
     std::string query = m_toolbar->m_entry_search.get_text();
     if( query.empty() ) return;
@@ -2425,6 +2428,7 @@ void ArticleViewBase::slot_drawout_selection_str()
 
     if( query.empty() ) return;
 
+    CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, query );
     CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "false" );
 }
 
@@ -2959,8 +2963,15 @@ void ArticleViewBase::slot_abone_img()
 void ArticleViewBase::slot_active_search()
 {
     if( ! m_toolbar ) return;
+    if( m_toolbar->m_entry_search.completion() ) return;
+
     std::string query = m_toolbar->m_entry_search.get_text();
-    if( query.empty() ) return;
+    if( query.empty() ){
+        slot_push_claar_hl();
+        focus_view();
+        CORE::core_set_command( "set_mginfo", "", "" );
+        return;
+    }
 
     std::list< std::string > list_query;
     list_query = MISC::split_line( query );
@@ -2973,7 +2984,10 @@ void ArticleViewBase::slot_active_search()
 
     int hit = m_drawarea->search_move( m_search_invert );
 
-    if( ! hit ) CORE::core_set_command( "set_mginfo", "", "検索結果： ヒット無し" );
+    if( ! hit ){
+        slot_push_claar_hl();
+        CORE::core_set_command( "set_mginfo", "", "検索結果： ヒット無し" );
+    }
     else{
         focus_view();
         CORE::core_set_command( "set_mginfo", "", "検索結果： " + MISC::itostr( hit ) + "件" );

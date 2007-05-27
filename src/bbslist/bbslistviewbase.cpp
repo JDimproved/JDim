@@ -76,7 +76,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
 
-    m_toolbar.m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BBSListViewBase::search ) );
+    m_toolbar.m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_active_search ) );
     m_toolbar.m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_push_up_search ) );
     m_toolbar.m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_push_down_search ) );
     m_toolbar.m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_entry_operate ) );
@@ -2163,13 +2163,19 @@ void BBSListViewBase::update_urls()
 //
 // m_search_invert = true なら前方検索
 //
-void BBSListViewBase::search()
+void BBSListViewBase::slot_active_search()
 {
+    if( m_toolbar.m_entry_search.completion() ) return;
+
     JDLIB::Regex regex;
 
-    focus_view();
+    CORE::core_set_command( "set_mginfo", "", "" );
+
     std::string query = m_toolbar.m_entry_search.get_text();
-    if( query.empty() ) return;
+    if( query.empty() ){
+        focus_view();
+        return;
+    }
     
     Gtk::TreePath path = m_treeview.get_current_path();
     if( !m_treeview.get_row( path ) ){
@@ -2187,9 +2193,10 @@ void BBSListViewBase::search()
     Gtk::TreePath path_start = path;
 
 #ifdef _DEBUG
-    std::cout << "BBSListViewBase::search() path = " << path.to_string() << " query = " << query << std::endl;
+    std::cout << "BBSListViewBase::slot_active_search() path = " << path.to_string() << " query = " << query << std::endl;
 #endif
-    
+
+    bool hit = false;
     for(;;){
 
         // 後方
@@ -2204,19 +2211,26 @@ void BBSListViewBase::search()
             else path = m_treeview.prev_path( path, false );
         }
 
-        if( path == path_start ) break;
-        
         Glib::ustring name = path2name( path );
         Glib::ustring url = path2url( path );
 
-        if( regex.exec( query, name, 0, true, true, true ) || regex.exec( query, url, 0, true ) ){
+        if( regex.exec( query, name, 0, true, true, true ) || regex.exec( query, url, 0, true ) ) hit = true;
+
+        // 一周したら終わり
+        if( path == path_start ) break;
+
+        // カーソル移動
+        if( hit ){
             m_treeview.expand_parents( path );
             m_treeview.scroll_to_row( path, 0.1 );
             m_treeview.set_cursor( path );
             show_status();
-            return;
+            break;
         }
     }
+
+    if( hit ) focus_view();
+    else CORE::core_set_command( "set_mginfo", "", "検索結果： ヒット無し" );
 }
 
 
@@ -2224,7 +2238,7 @@ void BBSListViewBase::search()
 void BBSListViewBase::slot_push_up_search()
 {
     m_search_invert = true;
-    search();
+    slot_active_search();
 }
 
 
@@ -2233,7 +2247,7 @@ void BBSListViewBase::slot_push_up_search()
 void BBSListViewBase::slot_push_down_search()
 {
     m_search_invert = false;
-    search();
+    slot_active_search();
 }
 
 

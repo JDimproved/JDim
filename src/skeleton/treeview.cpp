@@ -29,10 +29,10 @@ using namespace SKELETON;
 
 
 JDTreeView::JDTreeView( const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
-    : m_reorderable( false ),
+    : JDTreeViewBase(),
+      m_reorderable( false ),
       m_drag( false ),
-      m_popup_win( NULL ),
-      m_column_for_height( 0 )
+      m_popup_win( NULL )
 {
 #ifdef _DEBUG
     std::cout << "JDTreeView::JDTreeView\n";
@@ -40,12 +40,7 @@ JDTreeView::JDTreeView( const std::string& fontname, const int colorid_text, con
 
     set_enable_search( false );
     set_rules_hint( CONFIG::get_use_tree_gtkrc() );
-    add_events( Gdk::BUTTON_PRESS_MASK );
-    add_events( Gdk::KEY_PRESS_MASK );
-    add_events( Gdk::KEY_RELEASE_MASK );
-    add_events( Gdk::POINTER_MOTION_MASK );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
-    add_events( Gdk::SCROLL_MASK );
 
     init_color( colorid_text, colorid_bg, colorid_bg_even );
     init_font( fontname );
@@ -198,198 +193,6 @@ void JDTreeView::delete_popup()
 }
 
 
-
-
-//
-// 先頭へ
-//
-void JDTreeView::goto_top()
-{
-    if( ! get_model() ) return;
-    if( ! get_model()->children().size() ) return;
-
-    Gtk::TreePath path = get_model()->get_path(  *( get_model()->children().begin() ) );
-    scroll_to_row( path, 0 );
-    set_cursor( path );
-}
-
-
-//
-// 一番最後へ
-//
-void JDTreeView::goto_bottom()
-{
-    if( ! get_model() ) return;
-    if( ! get_model()->children().size() ) return;
-
-    Gtk::TreePath path = get_model()->get_path( *( get_model()->children().rbegin() ) );
-    scroll_to_row( path, 0 );
-    set_cursor( path );
-}
-
-
-
-//
-// 選択行を上へ移動
-//
-void JDTreeView::row_up()
-{
-    Gtk::TreePath path = get_current_path();
-    if( !get_row( path ) ) return;
-
-    path = prev_path( path );
-    set_cursor( path );
-}    
-
-
-
-//
-// 選択行を下へ移動
-//
-void JDTreeView::row_down()
-{
-    Gtk::TreePath path = get_current_path();
-    if( !get_row( path ) ) return;
-
-    path = next_path( path );
-    if( path.get_depth() && get_row( path ) ) set_cursor( path );
-} 
-   
-
-
-//
-// page up
-//
-void JDTreeView::page_up()
-{
-    bool set_top = false;
-
-    // スクロール
-    Gtk::Adjustment *adj = get_vadjustment();
-    double val = adj->get_value();
-    if( val > adj->get_page_size()/2 ) set_top = true;
-    val = MAX( 0, val - adj->get_page_size() );
-    adj->set_value( val );
-
-    // 選択行移動
-    Gtk::TreePath path;
-    if( set_top ) path = get_path_under_xy( 0, (int)adj->get_page_size() - 4 );
-    else path = get_path_under_xy( 0, 0 );
-    if( path.get_depth() && get_row( path ) )set_cursor( path );
-}
-
-
-//
-// page down
-//
-void JDTreeView::page_down()
-{
-    bool set_bottom = false;
-
-    // スクロール
-    Gtk::Adjustment *adj = get_vadjustment();
-    double val = adj->get_value();
-    if( val < adj->get_upper() - adj->get_page_size() - adj->get_page_size()/2 ) set_bottom = true;
-    val = MIN( adj->get_upper() - adj->get_page_size(), val + adj->get_page_size() );
-    adj->set_value( val );
-
-    // 選択行移動
-    Gtk::TreePath path;
-    if( set_bottom ) path = get_path_under_xy( 0, 0 );
-    else path = get_path_under_xy( 0, (int)adj->get_page_size() - 4 );
-    if( path.get_depth() && get_row( path ) ) set_cursor( path );
-}
-
-
-
-//
-// path の前の path を取得
-//
-// check_expand = true なら行が開いてるかチェックして開いて無い時はdown()しない
-//
-Gtk::TreePath JDTreeView::prev_path( const Gtk::TreePath& path, bool check_expand )
-{
-    Gtk::TreePath path_out( path );
-
-    // 前に移動
-    if( path_out.prev() && ( row_expanded( path_out ) || ! check_expand ) ){
-
-        Gtk::TreePath path_tmp = path_out;
-        while( get_row( path_out ) && ( path_out = next_path( path_out, check_expand ) ) != path ) path_tmp = path_out;
-        if( get_row( path_tmp ) ) return path_tmp;
-    }
-
-    // 一番上まで到達したらup
-    path_out = path;
-    if( ! path_out.prev() && path_out.get_depth() >= 2 ) path_out.up();
-
-    return path_out;;
-}
-
-
-
-//
-// path の次の path を取得
-//
-// check_expand = true なら行が開いてるかチェックして開いて無い時はdown()しない
-//
-Gtk::TreePath JDTreeView::next_path( const Gtk::TreePath& path, bool check_expand )
-{
-    if( !get_row( path ) ) return path;
-    Gtk::TreePath path_out( path );
-
-    if( row_expanded( path_out ) || ! check_expand ){
-        path_out.down();
-        if( get_row( path_out ) ) return path_out;
-    }
-
-    // next()してレベルの一番下まで到達したら上のレベルに移動
-    path_out = path;
-    while( path_out.next(), ( ! get_row( path_out ) && path_out.get_depth() >=2 ) ) path_out.up();
-
-    return path_out;
-}
-
-
-
-
-//
-// path->row 変換
-//
-Gtk::TreeModel::Row JDTreeView::get_row( const Gtk::TreePath& path )
-{
-    if( path.empty() || ! get_model() ) return Gtk::TreeModel::Row();
-
-    Gtk::TreeModel::Row row = *( get_model()->get_iter( path ) );
-    if( !row ) return Gtk::TreeModel::Row();
-    if( path != get_model()->get_path( row ) ) return Gtk::TreeModel::Row();
-
-    return row;
-}
-
-
-
-//
-// pathの親を再起的に開く
-//
-void JDTreeView::expand_parents( const Gtk::TreePath& path )
-{
-    if( ! get_model() ) return;
-
-    for( int level = 1; level < path.get_depth(); ++level ){
-                    
-        Gtk::TreeModel::Row row_tmp = get_row( path );
-        for( int i = 0; i < path.get_depth() - level; ++i ){
-            if( row_tmp.parent() ) row_tmp = *( row_tmp.parent() );
-        }
-        Gtk::TreePath path_tmp  = get_model()->get_path( row_tmp );
-        expand_row( path_tmp, false );
-    }
-}
-
-
-
-
 //
 // マウスボタンを押した
 //
@@ -398,7 +201,7 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
     m_drag = false;
     m_selection_canceled = false;
-    m_sig_button_press.emit( event );
+    sig_button_press().emit( event );
 
     // ドラッグして範囲選択
     // m_path_dragstart が empty でない時に範囲選択を行う
@@ -420,7 +223,7 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
                 ){
                 get_selection()->unselect_all();
                 if( get_row( path ) ) set_cursor( path );
-                m_selection_canceled = true; // ボタンを話したときにシグナルをemitしないようにする
+                m_selection_canceled = true; // ボタンを離したときにシグナルをemitしないようにする
             }
             else return true;
         }
@@ -471,7 +274,7 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
     // 左の△ボタンを押してディレクトリを開け閉めした場合は信号のemitをキャンセル
     if( expanded != row_expanded( path ) ) emit_sig = false;
 
-    if( emit_sig ) m_sig_button_release.emit( event );
+    if( emit_sig ) sig_button_release().emit( event );
 
     return ret;
 }
@@ -559,26 +362,6 @@ void JDTreeView::on_drag_end( const Glib::RefPtr< Gdk::DragContext >& context )
 
 
 //
-// キーボードのキーを押した
-//
-bool JDTreeView::on_key_press_event( GdkEventKey* event )
-{
-    m_sig_key_press.emit( event );
-    return true;
-}
-
-
-//
-// キーボードのキーを離した
-//
-bool JDTreeView::on_key_release_event( GdkEventKey* event )
-{
-    m_sig_key_release.emit( event );
-    return true;
-}
-
-
-//
 // マウスを動かした
 //
 bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
@@ -597,7 +380,7 @@ bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
         m_path_dragpre = path;
     }
 
-    m_sig_motion_notify.emit( event );
+    sig_motion_notify().emit( event );
 
     return Gtk::TreeView::on_motion_notify_event( event );
 }
@@ -607,7 +390,7 @@ bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
 // マウスのwheelを回した
 bool JDTreeView::on_scroll_event( GdkEventScroll* event )
 {
-    m_sig_scroll_event.emit( event );
+    sig_scroll_event().emit( event );
 
     return true;
 }
@@ -642,117 +425,12 @@ void JDTreeView::wheelscroll( GdkEventScroll* event )
 }
 
 
-
 bool JDTreeView::on_leave_notify_event( GdkEventCrossing* event )
 {
     m_tooltip.hide_tooltip();
     delete_popup();
     return Gtk::TreeView::on_leave_notify_event( event );
 }
-
-
-
-
-//
-// 現在フォーカスしてる行の最初のパスを取得
-//
-Gtk::TreeModel::Path JDTreeView::get_current_path()
-{
-    Gtk::TreeModel::Path path;
-    
-    std::list< Gtk::TreeModel::Path > paths = get_selection()->get_selected_rows();
-    if( paths.size() ){
-    
-        std::list< Gtk::TreeModel::Path >::iterator it = paths.begin();
-        path = ( *it );
-    }
-
-    return path;
-}
-
-
-
-//
-// x, y 座標の下のパスを取得
-//
-Gtk::TreeModel::Path JDTreeView::get_path_under_xy( int x, int y )
-{
-    Gtk::TreeModel::Path path;
-    Gtk::TreeViewColumn* column;
-    int cell_x, cell_y;
-    if( !get_path_at_pos( x, y, path, column, cell_x, cell_y ) ) return Gtk::TreeModel::Path();
-
-    return path;
-}
-
-
-
-//
-// 現在のマウスポインタの下のパスを取得
-//
-Gtk::TreeModel::Path JDTreeView::get_path_under_mouse()
-{
-    int x, y;
-    get_pointer( x, y );
-    return get_path_under_xy( x, y );
-}
-
-
-//
-// 現在のマウスポインタの下のセルの幅高さとセル内での座標を取得
-//
-void JDTreeView::get_cell_xy_wh( int& cell_x, int& cell_y, int& cell_w, int& cell_h )
-{
-    cell_x = cell_y = cell_w = cell_h = -1;
-
-    Gtk::TreeModel::Path path;
-    Gtk::TreeViewColumn* column;
-    int x, y, o_x, o_y;
-    Gdk::Rectangle rect;
-
-    get_pointer( x, y );
-    get_path_at_pos( x, y, path, column, cell_x, cell_y );
-    if( column ) column->cell_get_size( rect, o_x, o_y, cell_w, cell_h );
-}
-
-
-//
-// 行のセルの高さ
-//
-int JDTreeView::get_row_height()
-{
-    Gtk::TreeViewColumn* column = get_column( m_column_for_height );
-    if( !column ) return 0;
-
-    int x,y,w,h;
-    Gdk::Rectangle rect;
-    column->cell_get_size( rect, x, y, w, h );
-
-    return h;
-}
-
-
-
-//
-// 選択中の Gtk::TreeModel::iterator のリストを取得
-//
-// 削除などを実行してから get_model()->get_iter() するとパスが変わってエラーが出るので
-// 先に iterator だけ取得しておく
-//
-std::list< Gtk::TreeModel::iterator > JDTreeView::get_selected_iterators()
-{
-    std::list< Gtk::TreeModel::iterator > list_it;
-    
-    if( get_model() ){
-
-        std::list< Gtk::TreeModel::Path > paths = get_selection()->get_selected_rows();
-        std::list< Gtk::TreeModel::Path >::iterator it = paths.begin();
-        for( ; it != paths.end(); ++it ) list_it.push_back( get_model()->get_iter( ( *it ) ) );
-    }
-
-    return list_it;
-}
-
 
 
 //
@@ -811,4 +489,3 @@ void JDTreeView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::
 
     else cell->property_cell_background_set() = false;
 }
-

@@ -56,9 +56,13 @@ ArticleViewMain::~ArticleViewMain()
     int seen = drawarea()->get_seen_current();
         
 #ifdef _DEBUG    
-        std::cout << "set seen to " << seen << std::endl;
+    std::cout << "set seen to " << seen << std::endl;
 #endif
-        if( seen >= 1 ) get_article()->set_number_seen( seen );
+
+    if( seen >= 1 ) get_article()->set_number_seen( seen );
+
+    // 閉じたタブ履歴更新
+    CORE::core_set_command( "set_history_close", url_article() );
 }
 
 

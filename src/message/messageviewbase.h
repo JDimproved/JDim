@@ -7,6 +7,7 @@
 #include "skeleton/editview.h"
 #include "skeleton/label_entry.h"
 #include "skeleton/imgbutton.h"
+#include "skeleton/compentry.h"
 
 namespace JDLIB
 {
@@ -43,8 +44,8 @@ namespace MESSAGE
         Gtk::Tooltips m_tooltip;
 
         SKELETON::LabelEntry m_entry_subject;
-        Gtk::Entry m_entry_name;
-        Gtk::Entry m_entry_mail;
+        SKELETON::NameEntry m_entry_name;
+        SKELETON::MailEntry m_entry_mail;
         SKELETON::EditView m_text_message;
 
         // 文字数計算用
@@ -58,8 +59,8 @@ namespace MESSAGE
       protected:
         
         SKELETON::LabelEntry& get_entry_subject() { return m_entry_subject; }
-        Gtk::Entry& get_entry_name(){ return m_entry_name; }
-        Gtk::Entry& get_entry_mail(){ return m_entry_mail; }
+        SKELETON::CompletionEntry& get_entry_name(){ return m_entry_name; }
+        SKELETON::CompletionEntry& get_entry_mail(){ return m_entry_mail; }
         SKELETON::EditView& get_text_message() { return m_text_message; }
 
       public:
