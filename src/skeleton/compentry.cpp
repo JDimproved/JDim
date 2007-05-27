@@ -166,10 +166,12 @@ void CompletionEntry::slot_entry_key_press( int keyval )
 
 
 // entryでボタンを押した
-void CompletionEntry::slot_entry_button_press( int button )
+void CompletionEntry::slot_entry_button_press( GdkEventButton* event )
 {
+    if( event->type != GDK_BUTTON_PRESS ) return;
+
 #ifdef _DEBUG    
-    std::cout << "CompletionEntry::slot_entry_button_press button = " << button
+    std::cout << "CompletionEntry::slot_entry_button_press button = " << event->button
               << " focused = " << m_focused << std::endl;
 #endif
 
@@ -243,7 +245,7 @@ bool CompletionEntry::slot_entry_focus_out( GdkEventFocus* )
 bool CompletionEntry::slot_treeview_motion( GdkEventMotion* )
 {
     Gtk::TreeModel::Path path = m_treeview.get_path_under_mouse();
-    m_treeview.set_cursor( path );
+    if( path.get_depth() > 0 ) m_treeview.set_cursor( path );
 
     return true;
 }

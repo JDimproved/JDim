@@ -70,7 +70,7 @@ namespace SKELETON
         void slot_entry_key_press( int keyval );
 
         // entryでボタンを押した
-        void slot_entry_button_press( int button );
+        void slot_entry_button_press( GdkEventButton* event );
 
         // entry操作
         void slot_entry_operate( int controlid );

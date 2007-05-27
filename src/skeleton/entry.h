@@ -14,7 +14,7 @@ namespace SKELETON
 {
     class JDEntry : public Gtk::Entry
     {
-        typedef sigc::signal< void, int > SIG_BUTTON_PRESS;
+        typedef sigc::signal< void, GdkEventButton* > SIG_BUTTON_PRESS;
         typedef sigc::signal< void, int > SIG_KEY_PRESS;
         typedef sigc::signal< void, int > SIG_OPERATE;
 

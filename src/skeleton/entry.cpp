@@ -19,7 +19,7 @@ bool JDEntry::on_button_press_event( GdkEventButton* event )
     std::cout << "JDEntry::on_button_press_event\n";
 #endif
 
-    m_sig_button_press.emit( event->button );
+    m_sig_button_press.emit( event );
 
     return Gtk::Entry::on_button_press_event( event );
 }
