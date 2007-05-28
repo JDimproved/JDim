@@ -388,7 +388,7 @@ void HistorySubMenu::slot_show_property()
         std::cout << "open " << url << std::endl;
 #endif
 
-        SKELETON::PrefDiag* pref;
+        SKELETON::PrefDiag* pref = NULL;
         if( type == TYPE_THREAD ) pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, DBTREE::url_dat( url ) ); 
         else if( type == TYPE_BOARD ) pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, DBTREE::url_subject( url ) );
 
