@@ -104,7 +104,6 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %files
 %defattr(-,root,root,-)
 %doc COPYING ChangeLog README
-%doc help/
 %{_bindir}/%{name}
 %{_datadir}/applications/%{vendorname}-%{name}.desktop
 %{icondir}/%{name}.png
