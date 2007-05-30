@@ -17,6 +17,7 @@
 #include "viewfactory.h"
 #include "global.h"
 #include "session.h"
+#include "httpcode.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
@@ -626,7 +627,7 @@ void ImageAdmin::close_nocached_views()
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
         if( view ){
             std::string url = view->get_url();
-            if( ! DBIMG::is_cached( url ) ) set_command( "close_view", url );
+            if( ! DBIMG::is_cached( url ) && DBIMG::get_code( url ) == HTTP_INIT ) set_command( "close_view", url );
         }
     }
 }
