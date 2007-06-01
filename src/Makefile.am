@@ -1,4 +1,4 @@
-SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton config icons
+SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton config icons xml
 
 bin_PROGRAMS = jd
 
@@ -13,14 +13,14 @@ jd_LDADD = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIB
 	./skeleton/libskeleton.a \
 	./config/libconfig.a \
 	./jdlib/libjdlib.a  \
-	./icons/libicon.a
+	./icons/libicon.a \
+	./xml/libxml.a
 
 jd_SOURCES = \
 	main.cpp \
 	winmain.cpp \
 	core.cpp \
 	cache.cpp \
-	xml.cpp \
 	command.cpp \
 	sharedbuffer.cpp \
 	dndmanager.cpp \
@@ -51,7 +51,6 @@ noinst_HEADERS = \
 	httpcode.h \
 	core.h \
 	cache.h \
-	xml.h \
 	jddebug.h \
 	global.h \
 	jdversion.h \

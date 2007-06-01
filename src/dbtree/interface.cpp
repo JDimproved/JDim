@@ -153,7 +153,13 @@ const std::string& DBTREE::get_xml_bbsmenu()
 }
 
 
-const std::string& DBTREE::get_xml_etc()
+const XML::Document& DBTREE::get_xml_document()
+{
+    return get_root()->xml_document();
+}
+
+
+const std::map< std::string, std::string >& DBTREE::get_xml_etc()
 {
     return get_root()->xml_etc();
 }

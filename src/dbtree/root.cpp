@@ -28,6 +28,9 @@
 
 #define SIZE_OF_RAWDATA ( 2 * 1024 * 1024 )  //  bbsmenu.html の最大サイズ
 
+// ルート要素名( list_main.xml )
+#define ROOT_NODE_NAME "boardlist"
+
 using namespace DBTREE;
 
 
@@ -47,7 +50,7 @@ Root::Root()
     , m_board_null( 0 )
     , m_get_board( NULL )
 {
-    m_xml_bbsmenu.clear();
+    m_document.clear();
     clear();
     clear_load_data();
     load_movetable();
@@ -215,10 +218,13 @@ void Root::load_cache()
     std::cout << "Root::load_cache xml  = " << file_in << std::endl;
 #endif    
 
-    if( CACHE::load_rawdata( file_in, m_xml_bbsmenu ) ){
+    if( CACHE::load_rawdata( file_in, m_xml_bbsmenu ) )
+    {
+        // Domノードを初期化
+        m_document.init( m_xml_bbsmenu );
 
-        // xml の内容からDBに板を登録
-        update_boards( m_xml_bbsmenu );
+        // Domノードの内容からDBに板を登録
+        update_boards();
     }
 }
 
@@ -233,7 +239,7 @@ void Root::download_bbsmenu()
     if( is_loading() ) return;
 
     clear();
-    m_xml_bbsmenu.clear();
+    m_document.clear();
     m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
 
     JDLIB::LOADERDATA data;
@@ -270,10 +276,10 @@ void Root::receive_finish()
     const char* rawdata_utf8 = libiconv->convert( m_rawdata , m_lng_rawdata,  byte_out );
     bbsmenu2xml( rawdata_utf8 );
 
-    if( !m_xml_bbsmenu.empty() ){
-
+    if( m_document.hasChildNodes() )
+    {
         // データベース更新
-        update_boards( m_xml_bbsmenu );
+        update_boards();
 
         // bbslistview更新
         CORE::core_set_command( "update_bbslist" );
@@ -290,99 +296,108 @@ void Root::receive_finish()
 //
 void Root::bbsmenu2xml( const std::string& menu )
 {
+    if( menu.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "Root::bbsmenu2xml\n";
+#endif
+
     JDLIB::Regex regex;
-    m_xml_bbsmenu.clear();
 
-    std::list< std::string > lines =  MISC::get_lines( menu );
+    // menu のノードツリーを取得( menu がHTMLなので第二引数は true )
+    XML::Document html( menu, true );
 
-    // 行単位でパースしていく
-    std::string str_category;
-    std::list< std::string >::iterator it;
-    for( it = lines.begin(); it != lines.end(); ++it ){
+    // XML用のノードツリーにルートノードを追加
+    m_document.clear();
+    XML::Dom* boardlist = m_document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME ) );
 
-        std::string& line = (*it);
+    // カテゴリの要素 <subdir></subdir>
+    XML::Dom* subdir = 0;
 
-        // カテゴリに入る
-        size_t i;
-        if( ( i = line.find( "<BR><B>" ) ) != std::string::npos ){
+    // カテゴリの有効/無効
+    bool enabled = true;
 
-            if( ! regex.exec( " ?<BR><B>(.*)</B><BR>.*", line ) ) continue;
+    // 現在の仕様では HTML > BODY > font[size="2"] の子要素が対象
+    XML::DomList targets = html.getElementsByTagName( "font" )[0]->childNodes();
+    std::list< XML::Dom* >::iterator it = targets.begin();
+    while( it != targets.end() )
+    {
+        // 要素b( カテゴリ名 )
+        if( (*it)->nodeName() == "b" )
+        {
+            const std::string category = (*it)->firstChild()->nodeValue();
 
-            if( ! str_category.empty() ) m_xml_bbsmenu += "</subdir open=\"0\" >\n";
-            str_category = MISC::remove_space( regex.str( 1 ) );
-
-            if( str_category == "チャット"
-                || str_category == "ツール類"
-                || str_category == "他のサイト" ) str_category = std::string();
-            else{
-                m_xml_bbsmenu += "<subdir name=\"";
-                m_xml_bbsmenu += str_category;
-                m_xml_bbsmenu += "\" >\n";
+            // 追加しないカテゴリ
+            if( category == "チャット"
+             || category == "ツール類"
+             || category == "他のサイト" )
+            {
+                enabled = false;
+                ++it;
+                continue;
             }
+            else enabled = true;
+
+            // <subdir>
+            subdir = boardlist->appendChild( XML::NODE_TYPE_ELEMENT, "subdir" );
+            subdir->setAttribute( "name", category );
+        }
+        // 要素bに続く要素a( 板URL )
+        else if( subdir && enabled && (*it)->nodeName() == "a" )
+        {
+            const std::string board_name = (*it)->firstChild()->nodeValue();
+            const std::string url = (*it)->getAttribute( "href" );
+
+            // 板として扱うURLかどうかで要素名を変える
+            std::string element_name;
+            if( regex.exec( "^http://.*/.*/$", url )
+             && ( is_2ch( url ) || is_machi( url ) ) ) element_name = "board";
+            else element_name = "link";
+
+            XML::Dom* board = subdir->appendChild( XML::NODE_TYPE_ELEMENT, element_name );
+            board->setAttribute( "name", board_name );
+            board->setAttribute( "url", url );
         }
 
-        // URLと板名取得
-        if( ! str_category.empty() ){
-
-            if( ! regex.exec( " ?<A HREF=(http://[^>]*/(.*\\.html?)?) ?(TARGET=_blank)?>(.*)</A>.*", line ) ) continue;
-
-            bool link = true;
-            std::string url = MISC::remove_space( regex.str( 1 ) );
-            std::string name = MISC::remove_space( regex.str( 4 ) );
-
-            // urlのタイプ, 名前のチェック
-            if( regex.exec( "http://.*/.*/", url ) && ( is_2ch( url ) || is_machi( url ) ) ) link = false;
-            if( name.empty() ) continue;
-
-            // XML に追加
-            std::ostringstream st_xml;
-            st_xml.clear();
-            if( link ) st_xml << "<link url=\"";
-            else st_xml << "<board url=\"";
-            st_xml << url;
-            st_xml << "\" name=\"";
-            st_xml << name;
-            st_xml <<  "\" />\n";
-
-            m_xml_bbsmenu += st_xml.str();
-        }
+        ++it;
     }
-    if( ! str_category.empty() ) m_xml_bbsmenu += "</subdir open=\"0\" >\n";
+
+#ifdef _DEBUG
+    std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
+#endif
 }
+
 
 
 //
 // XML に含まれる板情報を取り出してデータベースを更新
 //
-void Root::update_boards( const std::string xml )
+void Root::update_boards()
 {
 #ifdef _DEBUG
     std::cout << "Root::update_boards\n";
+    std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
 #endif
-
-    JDLIB::Regex regex;
 
     m_move_info = std::string();
 
-    // XMLを行ごとにばらして<board>タグを見る
-    std::list< std::string > lines =  MISC::get_lines( xml );
-    std::list< std::string >::iterator it;
-    for( it = lines.begin(); it != lines.end(); ++it ){
-        
-        std::string& line = (*it);
+    XML::DomList boards = m_document.getElementsByTagName( "board" );
 
-        if( ! regex.exec( " ?<board url=\"(.*)\" ?name=\"(.*)\" ?/>.*", line ) ) continue;
-
-        std::string url = MISC::remove_space( regex.str( 1 ) );
-        std::string name = MISC::remove_space( regex.str( 2 ) );
+    std::list< XML::Dom* >::iterator it = boards.begin();
+    while( it != boards.end() )
+    {
+        const std::string name = (*it)->getAttribute( "name" );
+        const std::string url = (*it)->getAttribute( "url" );
 
         //板情報セット
         set_board( url, name );
+
+        ++it;
     }
 
     // 移転があった
-    if( ! m_move_info.empty() ){
-        
+    if( ! m_move_info.empty() )
+    {
         SKELETON::EditViewDialog diag( m_move_info, "移転板一覧", false );
         diag.resize( 600, 400 );
         diag.run();
@@ -587,17 +602,17 @@ int Root::is_moved( const std::string& root,
 //
 // 外部板読み込み
 //
-// etc.txt(Navi2ch互換) を読み込んで外部板登録してXMLに変換
+// etc.txt(Navi2ch互換) を読み込んで外部板登録してペア( 名前, URL )に変換
 //
 void Root::load_etc()
 {
-    m_xml_etc = std::string();
+    m_xml_etc.clear();
 
     JDLIB::Regex regex;
     std::string file_etctxt = CACHE::path_etcboard();
     std::string etcboard;
-    if( CACHE::load_rawdata( file_etctxt, etcboard ) ){
-
+    if( CACHE::load_rawdata( file_etctxt, etcboard ) )
+    {
         std::list< std::string > list_etc = MISC::get_lines( etcboard );
         list_etc = MISC::remove_commentline_from_list( list_etc );
         list_etc = MISC::remove_space_from_list( list_etc );
@@ -617,34 +632,29 @@ void Root::load_etc()
 
             // basic認証
             std::string basicauth;
-            if( regex.exec( "http://([^/]+:[^/]+@)(.+)$" , url ) ){
+            if( regex.exec( "http://([^/]+:[^/]+@)(.+)$" , url ) )
+            {
                 basicauth = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
                 url = "http://" + regex.str( 2 );
             }
-                
+
 #ifdef _DEBUG
             std::cout << "etc board : " << url << " " << name << std::endl;
             std::cout << "id:passwd = " << basicauth << std::endl;
 #endif
 
             // DBに登録
-            if( set_board( url, name, basicauth, true ) ){
-
-                m_xml_etc += "<board url=\"";
-                m_xml_etc += url;
-                m_xml_etc += "\" name=\"";
-                m_xml_etc += name;
-                m_xml_etc +=  "\" />\n";
+            if( set_board( url, name, basicauth, true ) )
+            {
+                m_xml_etc.insert( make_pair( name, url ) );
             }
-
         }
     }
 
 #ifdef _DEBUG
-    std::cout << m_xml_etc << std::endl;
+    std::cout << "外部板数：" << m_xml_etc.size() << std::endl;
 #endif
 }
-
 
 
 //

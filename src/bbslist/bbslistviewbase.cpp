@@ -27,7 +27,6 @@
 #include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "viewfactory.h"
-#include "xml.h"
 #include "prefdiagfactory.h"
 #include "colorid.h"
 #include "fontid.h"
@@ -1867,189 +1866,101 @@ void BBSListViewBase::delete_selected_rows()
 
 
 //
+// 全てのツリーに m_columns.m_expand の値をセットする( tree2xml()で使用 )
+//
+void BBSListViewBase::set_expanded_row( const Gtk::TreeModel::Children& children )
+{
+    Gtk::TreeModel::iterator it = children.begin();
+    while( it != children.end() )
+    {
+        Gtk::TreePath path = m_treestore->get_path( *it );
+
+        // ツリーが開いているか
+        if( m_treeview.row_expanded( path ) ) (*it)[ m_columns.m_expand ] = true;
+        else (*it)[ m_columns.m_expand ] = false;
+
+        // 再帰
+        if( ! (*it)->children().empty() ) set_expanded_row( (*it)->children() );
+
+        ++it;
+    }
+}
+
+
+//
 // tree -> XML 変換
 //
 //
-std::string BBSListViewBase::tree2xml()
+void BBSListViewBase::tree2xml( const std::string& root_name )
 {
-    if( ! m_ready_tree ) return std::string();
-    
+    if( ! m_ready_tree || m_treestore->children().empty() ) return;
+
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::tree2xml\n";
 #endif
 
-    std::stringstream xml;
+    // 全てのツリーに row[ m_columns.expand ] の値をセットする
+    set_expanded_row( m_treestore->children() );
 
-    if( m_treestore->children().empty() ) return std::string();
-    
-    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
-    Gtk::TreeModel::Row row;
+    // m_treestore からノードツリーを作成
+    m_document.init( m_treestore, root_name );
+
+#ifdef _DEBUG
+    std::cout << " ルートノード名=" << root_name;
+    std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
+#endif
 
     // 座標
     int y = 0;
     Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
-    if( adjust ){
-
+    if( adjust )
+    {
         if( m_jump_y != -1 && adjust->get_upper() > m_jump_y ) y = m_jump_y;
         else  y = ( int ) adjust->get_value();
     }
     else if( m_jump_y != -1 ) y = m_jump_y;
 
-    xml << "<pos y=\"" << y << "\"";
-
     // 選択中のパス
+    std::string path;
     Gtk::TreeModel::Path focused_path = m_treeview.get_current_path();
-    if( !focused_path.empty() ) xml << " path=\"" << focused_path.to_string() << "\"";
-    xml << "/>\n";
+    if( ! focused_path.empty() ) path = focused_path.to_string();
 
-    while( 1 ){
-
-        if( ( row = m_treeview.get_row( path ) ) ){
-
-            Glib::ustring url = row[ m_columns.m_col_url ];
-            Glib::ustring name = row[ m_columns.m_col_name ];
-            int type = row[ m_columns.m_type ];
-
-            switch( type ){
-
-            case TYPE_DIR: // サブディレクトリ
-                XML_MAKE_DIR(name);
-                path.down();
-                break;
-
-            case TYPE_BOARD: // 板
-                XML_MAKE_BOARD(url,name);
-                path.next();
-                break;
-                
-            case TYPE_THREAD: // スレ
-                XML_MAKE_THREAD(url,name);
-                path.next();
-                break;
-
-            case TYPE_IMAGE: // 画像
-                XML_MAKE_IMAGE(url,name);
-                path.next();
-                break;
-
-            case TYPE_COMMENT: // コメント
-                XML_MAKE_COMMENT(name);
-                path.next();
-                break;
-
-            case TYPE_LINK: // リンク
-                XML_MAKE_LINK(url,name);
-                path.next();
-                break;
-            }
-        }
-
-        // サブディレクトリ内ならupする
-        else{
-
-            if( path.get_depth() >= 2 ){
-
-                path.up();
-
-                // サブディレクトリが開いてるか開いてないか
-                xml << "</subdir open=\"";
-                if( m_treeview.row_expanded( path ) ) xml << "1\" >\n";
-                else xml << "0\" >\n";
-
-                path.next();
-            }
-            else break;
-        }
-    }
-
-#ifdef _DEBUG_XML    
-    std::cout << xml.str() << std::endl;
-#endif 
-
-    return xml.str();
+    // ルート要素に属性( path, y )の値を設定
+    XML::Dom* root = m_document.get_root_element( root_name );
+    root->setAttribute( "y", y );
+    root->setAttribute( "path", path );
 }
 
 
 //
 // XML -> tree 変換
 //
-void BBSListViewBase::xml2tree( const std::string& xml )
+void BBSListViewBase::xml2tree( const std::string& root_name, const std::string& xml )
 {
-    JDLIB::Regex regex;
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::xml2tree\n";
+#endif
 
     m_ready_tree = false;
     m_treestore->clear();
-    
-    std::list< std::string > lines = MISC::get_lines( xml );
-    if( lines.empty() ) return;
 
 #if GTKMMVER >= 280
     m_treeview.unset_model();
 #endif
 
-    // XML を解析してツリーを作る
-    std::list< Gtk::TreePath > list_path_expand;
-    Gtk::TreeModel::Row row;
-    int y = -1;
-    std::string focused_path;
-    int level = 0, type;
-    std::string url, name;
-    std::list< std::string >::iterator it;
-    for( it = lines.begin(); it != lines.end(); ++it ){
-
-        std::string& line = *( it );
-
-        // 座標
-        if( y == -1 && regex.exec( "< *pos +y=\"([^\"]*)\"( +path=\"([^\"]*)\")? */>", line, 0, true ) ){
-
-            y = atoi( regex.str( 1 ).c_str() );
-            focused_path = regex.str( 3 );
+    // 新規に文字列からDOMノードツリーを作成する場合
+    if( ! xml.empty() ) m_document.init( xml );
 
 #ifdef _DEBUG
-            std::cout << "y = " << y << " path = " << focused_path << std::endl;
+    std::cout << " ルートノード名=" << root_name;
+    std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
 #endif
-        }
-        
-        // タイプ別
-        else if( ( type = XML::get_type( line, url, name ) ) != TYPE_UNKNOWN ){
 
-            // 板やスレ
-            if( type != TYPE_DIR ){
-                Gtk::TreeModel::Row row_tmp = *( m_treestore->append( row.children() ) );
-                setup_row( row_tmp, url, name, type );
-            }
+    // 開いてるツリーの格納用
+    std::list< Gtk::TreePath > list_path_expand;
 
-            // サブディレクトリ
-            else{
-
-                // レベル0ならルートに追加
-                if( level == 0 ) row = *( m_treestore->append() );
-
-                // サブディレクトリの中にサブディレクトリを作る
-                else row = *( m_treestore->append( row.children() ) );
-
-                setup_row( row, std::string(), name,  type );
-
-                ++level;
-            }
-        }
-        
-        // サブディレクトリ終わり
-        else if( regex.exec( "</subdir +open=\"(.*)\" *>", line, 0, true ) ){
-
-            // expand
-            if( regex.str( 1 ) == "1" ){
-                Gtk::TreePath path = GET_PATH( row );
-                list_path_expand.push_back( path );
-            }
-
-            // 終わり
-            if( level == 0 ) break;
-
-            row = *( row.parent() );
-            --level;
-        }
-    }
+    // Domノードから Gtk::TreeStore を生成
+    m_treestore = m_document.get_treestore( root_name, list_path_expand );
 
 #if GTKMMVER >= 280
     m_treeview.set_model( m_treestore );
@@ -2058,26 +1969,37 @@ void BBSListViewBase::xml2tree( const std::string& xml )
 
     // ディレクトリオープン
     std::list< Gtk::TreePath >::iterator it_path = list_path_expand.begin();
-    for( ; it_path != list_path_expand.end(); ++it_path ){
+    while( it_path != list_path_expand.end() )
+    {
         m_treeview.expand_parents( *it_path );
         m_treeview.expand_row( *it_path, false );
+        ++it_path;
     }
 
-    // 前回閉じた位置まで移動
-    if( focused_path.empty() ){
-        focused_path = "0";
-        y = 0;
-    }
+    // ルート要素を取り出す
+    XML::Dom* root = m_document.get_root_element( root_name );
 
-    Gtk::TreePath path = Gtk::TreePath( focused_path );
-    if( m_treeview.get_row( path ) ) m_treeview.set_cursor( path );
-    else{
-        m_treeview.get_selection()->unselect_all();
-        y = 0;
-    }
+	// ルート要素から属性( path, y )の値を取得
+	std::string focused_path = root->getAttribute( "path" );
+	int y = atoi( root->getAttribute( "y" ).c_str() );
 
-    // この段階ではまだスクロールバーが表示されてない時があるのでclock_in()で移動する
-    m_jump_y = y;
+	// 前回閉じた位置まで移動
+	if( focused_path.empty() )
+	{
+		focused_path = "0";
+		y = 0;
+	}
+
+	Gtk::TreePath path = Gtk::TreePath( focused_path );
+	if( m_treeview.get_row( path ) ) m_treeview.set_cursor( path );
+	else
+	{
+		m_treeview.get_selection()->unselect_all();
+		y = 0;
+	}
+
+	// この段階ではまだスクロールバーが表示されてない時があるのでclock_in()で移動する
+	m_jump_y = y;
 
     m_ready_tree = true;
 }
@@ -2090,6 +2012,7 @@ void BBSListViewBase::xml2tree( const std::string& xml )
 void BBSListViewBase::update_urls()
 {
     if( ! m_ready_tree ) return;
+
     if( m_treestore->children().empty() ) return; 
    
 #ifdef _DEBUG

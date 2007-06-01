@@ -9,6 +9,7 @@
 #define _ROOT_H
 
 #include "skeleton/loadable.h"
+#include "xml/document.h"
 
 #include <string>
 #include <list>
@@ -48,9 +49,10 @@ namespace DBTREE
         std::list< MOVETABLE > m_movetable;
 
         std::string m_xml_bbsmenu;
+        XML::Document m_document;
         char* m_rawdata;
         size_t m_lng_rawdata;
-        std::string m_xml_etc; // 外部板のXML
+        std::map< std::string, std::string > m_xml_etc; // 外部板のXML
         std::string m_move_info;
 
         // NULL board クラス
@@ -68,7 +70,8 @@ namespace DBTREE
 
         // 板一覧、外部板一覧のxml
         const std::string& xml_bbsmenu() const { return m_xml_bbsmenu; }
-        const std::string& xml_etc() const { return m_xml_etc; }
+        const XML::Document& xml_document() const { return m_document; }
+        const std::map< std::string, std::string >& xml_etc() const { return m_xml_etc; }
 
         // Board クラスのポインタ取得
         BoardBase* get_board( const std::string& url, int count = 0 );
@@ -104,7 +107,7 @@ namespace DBTREE
         void bbsmenu2xml( const std::string& menu );
 
         // XML に含まれる板情報を取り出してデータベースを更新
-        void update_boards( const std::string xml );
+        void update_boards();
 
         void load_cache();
         bool set_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );

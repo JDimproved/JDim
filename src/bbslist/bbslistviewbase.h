@@ -11,6 +11,7 @@
 #include "skeleton/treeview.h"
 
 #include "jdlib/constptr.h"
+#include "xml/document.h"
 
 #include "columns.h"
 #include "toolbar.h"
@@ -64,6 +65,11 @@ namespace BBSLIST
 
       protected:
 
+        // DOM共有オブジェクト
+        XML::Document m_document;
+
+      protected:
+
         Glib::RefPtr< Gtk::TreeStore >& get_treestore() { return m_treestore; }
         SKELETON::JDTreeView& get_treeview() { return  m_treeview; }
         BBSListtToolBar& get_toolbar() { return m_toolbar; }
@@ -75,9 +81,9 @@ namespace BBSLIST
         void append_from_buffer( Gtk::TreeModel::Path path, bool after, bool scroll );
         void delete_selected_rows();
 
-        // tree <-> XML 変換
-        std::string tree2xml();
-        void xml2tree( const std::string& xml );
+        // tree <-> XML( DOM )変換
+        void tree2xml( const std::string& root_name );
+        void xml2tree( const std::string& root_name, const std::string& xml = std::string() );
 
         // 移転があったときに行に含まれるURLを変更する
         void update_urls();
@@ -175,6 +181,8 @@ namespace BBSLIST
 
         void set_info_to_sharedbuffer( Gtk::TreePath& path );
 
+        // 全てのツリーに m_columns.m_expand の値をセットする
+        void set_expanded_row( const Gtk::TreeModel::Children& children );
     };
 };
 

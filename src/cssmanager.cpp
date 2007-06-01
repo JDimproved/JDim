@@ -222,7 +222,7 @@ bool Css_Manager::read_css()
     // 改行を取り除く
     css_data = MISC::remove_str( css_data, "\n" );
     // コメントを取り除く
-    css_data = MISC::remove_commentrange_from_str( css_data, "/*", "*/" );
+    css_data = MISC::remove_str( css_data, "/*", "*/" );
 
     size_t start_pos = 0, l_pos = 0, r_pos = 0;
     while( ( l_pos = css_data.find( "{", start_pos ) ) != std::string::npos &&

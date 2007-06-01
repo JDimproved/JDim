@@ -9,6 +9,9 @@
 
 namespace MISC
 {
+    // gettimeofday()の秒を文字列で取得
+    std::string get_sec_str();
+
     // timeval を str に変換
     std::string timevaltostr( struct timeval& tv );
 

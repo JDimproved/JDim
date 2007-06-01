@@ -7,6 +7,7 @@
 #include "bbslistadmin.h"
 
 #include "dbtree/interface.h"
+#include "jdlib/misctime.h"
 
 #include "cache.h"
 #include "command.h"
@@ -15,6 +16,9 @@
 using namespace BBSLIST;
 
 #define SUBDIR_ETCLIST "外部板"
+
+// ルート要素名( list_main.xml )
+#define ROOT_NODE_NAME "boardlist"
 
 // メインビュー
 
@@ -55,9 +59,13 @@ void BBSListViewMain::show_view()
     std::cout << "BBSListViewMain::show_view : " << get_url() << std::endl;
 #endif    
 
-    // 板一覧のxmlが空ならサーバから取得
+    // BBSListViewBase::m_document に Root::m_document を代入
+    m_document = DBTREE::get_xml_document();
+
+    // 板一覧のDomノードが空ならサーバから取得
     // 更新が終わったらBBSListViewMain::update_view()が呼ばれる
-    if( DBTREE::get_xml_bbsmenu().empty() ){
+    if( ! m_document.hasChildNodes() )
+    {
         DBTREE::download_bbsmenu();
         set_status( "loading..." );
         BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
@@ -72,23 +80,60 @@ void BBSListViewMain::show_view()
 //
 void BBSListViewMain::update_view()
 {
-    std::string xml = DBTREE::get_xml_bbsmenu();
+    // BBSListViewBase::m_document に Root::m_document を代入
+    m_document = DBTREE::get_xml_document();
 
-    // 外部板挿入
+    // 外部板のペア( 名前, URL )を取得
     m_load_etc = false;
-    std::string xml_etc = DBTREE::get_xml_etc();
-    std::string::size_type pos = xml.find( "<subdir" );
-    if( !xml.empty() && !xml_etc.empty() && pos != std::string::npos ){
+    std::map< std::string, std::string > list_etc = DBTREE::get_xml_etc();
 
-        m_load_etc = true;
-        xml_etc = "<subdir name=\"" + std::string( SUBDIR_ETCLIST) + "\">\n" + xml_etc + "</subdir open=\"0\" >\n";
-        xml.insert( pos, xml_etc );
+    // ルート要素を取得
+    XML::Dom* root = m_document.get_root_element( std::string( ROOT_NODE_NAME ) );
+
+    // 旧様式のXMLならば別の名前で保存する
+    if( ! root )
+    {
+    	// 別のファイル名
+        const std::string file = CACHE::path_xml_listmain() + "." + MISC::get_sec_str();
+
+		// Root::m_xml_bbsmenu を取得
+		const std::string xml_bbsmenu = DBTREE::get_xml_bbsmenu();
+
+        if( ! xml_bbsmenu.empty() ) CACHE::save_rawdata( file, xml_bbsmenu );
     }
 
-    xml2tree( xml );
+    // 外部板挿入
+    if( ! list_etc.empty() )
+    {
+        m_load_etc = true;
+
+        // <subdir>を挿入
+        XML::Dom* subdir = 0;
+
+        // ルート要素の有無で処理を分ける( 旧様式=無, 新様式=有 )
+        if( root ) subdir = root->insertBefore( XML::NODE_TYPE_ELEMENT, "subdir", root->firstChild() );
+        else subdir = m_document.insertBefore( XML::NODE_TYPE_ELEMENT, "subdir", m_document.firstChild() );
+
+        subdir->setAttribute( "name", std::string( SUBDIR_ETCLIST ) );
+
+        // 子要素( <board> )を追加
+        std::map< std::string, std::string >::iterator it = list_etc.begin();
+        while( it != list_etc.end() )
+        {
+            XML::Dom* board = subdir->appendChild( XML::NODE_TYPE_ELEMENT, "board" );
+            board->setAttribute( "name", (*it).first );
+            board->setAttribute( "url", (*it).second );
+
+            ++it;
+        }
+    }
+
+    // BBSListViewBase::xml2tree() m_document -> tree
+    xml2tree( std::string( ROOT_NODE_NAME ) );
     set_status( std::string() );
     BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
+
 
 
 //
@@ -128,26 +173,30 @@ Gtk::Menu* BBSListViewMain::get_popupmenu( const std::string& url )
 //
 void BBSListViewMain::save_xml( const std::string& file )
 {
-    if( get_ready_tree() ){
+    if( ! get_ready_tree() ) return;
 
-        std::string xml = tree2xml();
+    // BBSListViewBase::tree2xml() tree -> m_document
+    tree2xml( std::string( ROOT_NODE_NAME ) );
 
-        // 外部板を取り除く
-        if( m_load_etc ){
+    // 外部板を取り除く
+    if( m_load_etc )
+    {
+        XML::Dom* root = m_document.get_root_element( std::string( ROOT_NODE_NAME ) );
 
-            const std::string str1 = "<subdir";
-            const std::string str2 = "</subdir";
-            const std::string str3 = ">\n";
-
-	    std::string::size_type pos = xml.find( str1 );
-            if( pos != std::string::npos ){
-
-                unsigned int pos_end = xml.find( str2, pos + str1.length() );
-                pos_end = xml.find( str3, pos_end );
-                xml.erase( pos, pos_end - pos + str3.length() );
+        XML::DomList domlist = root->childNodes();
+        std::list< XML::Dom* >::iterator it = domlist.begin();
+        while( it != domlist.end() )
+        {
+            if( (*it)->nodeName() == "subdir"
+             && (*it)->getAttribute( "name" ) == std::string( SUBDIR_ETCLIST ) )    
+            {
+                root->removeChild( *it );
+                break;
             }
+            ++it;
         }
-
-        CACHE::save_rawdata( file , xml );
     }
+
+    CACHE::save_rawdata( file, m_document.get_xml() );
 }
+

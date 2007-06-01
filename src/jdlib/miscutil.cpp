@@ -241,24 +241,6 @@ std::list< std::string > MISC::remove_commentline_from_list( std::list< std::str
 
 
 //
-// strからコメントの範囲を取り除く ( /* コメント */ など )
-//
-std::string MISC::remove_commentrange_from_str( std::string& str, const std::string& start, const std::string& end )
-{
-    size_t l_pos = 0, r_pos = 0;
-
-    while( ( l_pos = str.find( start ), l_pos ) != std::string::npos &&
-            ( r_pos = str.find( end, l_pos + start.length() ) ) != std::string::npos )
-    {
-        str.erase( l_pos, r_pos - l_pos + end.length() );
-    }
-
-    return str;
-}
-
-
-
-//
 // 空白とカンマで区切られた str_in の文字列をリストにして出力
 //
 // \"は " に置換される
@@ -350,12 +332,54 @@ std::string MISC::remove_space( const std::string& str )
 
 
 //
+// str前後の改行、タブ、スペースを削除
+//
+std::string MISC::remove_spaces( const std::string& str )
+{
+    size_t l = 0, r = str.length();
+
+    while( l < str.length()
+    	 && ( str[l] == '\n'
+           || str[l] == '\t'
+           || str[l] == ' ' ) ) ++l;
+
+    while( r > 0
+    	 && ( str[r] == '\n'
+           || str[r] == '\t'
+           || str[r] == ' ' ) ) --r;
+
+    return str.substr( l, r - l );
+}
+
+
+
+//
 // str1からstr2で示された文字列を除く
 //
 std::string MISC::remove_str( const std::string& str1, const std::string& str2 )
 {
     return MISC::replace_str( str1, str2, "" );
 }
+
+
+//
+// start 〜 end の範囲をstrから取り除く ( /* コメント */ など )
+//
+std::string MISC::remove_str( const std::string& str, const std::string& start, const std::string& end )
+{
+    std::string str_out = str;
+
+    size_t l_pos = 0, r_pos = 0;
+
+    while( ( l_pos = str_out.find( start, l_pos ) ) != std::string::npos &&
+            ( r_pos = str_out.find( end, l_pos + start.length() ) ) != std::string::npos )
+    {
+        str_out.erase( l_pos, r_pos - l_pos + end.length() );
+    }
+
+    return str_out;
+}
+
 
 
 //
@@ -558,6 +582,43 @@ std::string MISC::cut_str( const std::string& str, unsigned int maxsize )
     if( pos != outstr.length() ) outstr = outstr.substr( 0, pos ) + "...";
 
     return outstr;
+}
+
+
+
+//
+// HTMLエスケープ
+//
+std::string MISC::html_escape( const std::string& str )
+{
+    if( str.empty() ) return str;
+
+    std::string str_out = str;
+
+     str_out = replace_str( str_out, "&", "&amp;" );
+    str_out = replace_str( str_out, "\"", "&quot;" );
+    str_out = replace_str( str_out, "<", "&lt;" );
+    str_out = replace_str( str_out, ">", "&gt;" );
+
+    return str_out;
+}
+
+
+//
+// HTMLアンエスケープ
+//
+std::string MISC::html_unescape( const std::string& str )
+{
+    if( str.empty() ) return str;
+
+    std::string str_out = str;
+
+    str_out = replace_str( str_out, "&amp;", "&" );
+    str_out = replace_str( str_out, "&quot;", "\"" );
+    str_out = replace_str( str_out, "&lt;", "<" );
+    str_out = replace_str( str_out, "&gt;", ">" );
+
+    return str_out;
 }
 
 

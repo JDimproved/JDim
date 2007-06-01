@@ -24,7 +24,8 @@ namespace BBSLIST
         COL_URL,
         COL_IMAGE,
         COL_TYPE,
-            
+        COL_EXPAND,
+
         COL_NUM_COL
     };
 
@@ -39,13 +40,15 @@ namespace BBSLIST
         Gtk::TreeModelColumn< Glib::ustring > m_col_url;
         Gtk::TreeModelColumn< Glib::RefPtr< Gdk::Pixbuf > >  m_col_image;
         Gtk::TreeModelColumn< int > m_type;
-        
+        Gtk::TreeModelColumn< bool > m_expand; // Dom::parse() で使用
+
         TreeColumns(){
             add( m_col_name );
             add( m_underline );
             add( m_col_url );
             add( m_col_image );
             add( m_type );
+            add( m_expand );
         }
 
         ~TreeColumns(){}

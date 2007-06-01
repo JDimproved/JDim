@@ -1,0 +1,53 @@
+// License GPL2
+
+// Document( Dom派生 )クラス
+
+#ifndef _DOCUMENT_H
+#define _DOCUMENT_H
+
+#include "dom.h"
+
+
+namespace XML
+{
+    class Document : public Dom
+    {
+        // コメントなどを取り除く
+        std::string remove_comments( const std::string& str );
+
+        // コピーコンストラクタは使わない
+        Document( const Document& );
+
+      public:
+
+        // 文字列を元にノードツリーを作る場合( html = HTMLモード )
+        Document( const std::string& str, const bool html = false );
+
+        // Gtk::TreeStore を元にノードツリーを作る場合
+        Document( Glib::RefPtr< Gtk::TreeStore > treestore, const std::string& root_name );
+
+        // 何も無い状態からノードツリーを作る場合
+        Document();
+
+        ~Document();
+
+        // このクラスは代入可能
+        Document& operator=( const Document& document );
+
+        // クリア
+        void clear();
+
+        // 初期化
+        void init( const std::string& str, const bool html = false );
+        void init( Glib::RefPtr< Gtk::TreeStore > treestore,
+                    const std::string& root_name );
+
+        // Gtk::TreeStore を生成する
+        Glib::RefPtr< Gtk::TreeStore > get_treestore( const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand );
+
+        // ルート要素を取得する
+        Dom* get_root_element( const std::string& node_name = std::string() );
+    };
+}
+
+#endif

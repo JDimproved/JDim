@@ -6,10 +6,14 @@
 #include "favoriteview.h"
 #include "bbslistadmin.h"
 #include "selectdialog.h"
+#include "jdlib/misctime.h"
 
 #include "cache.h"
 #include "sharedbuffer.h"
 #include "global.h"
+
+// ルート要素名( fovorite.xml )
+#define ROOT_NODE_NAME "favorite"
 
 using namespace BBSLIST;
 
@@ -61,8 +65,19 @@ bool FavoriteListView::set_command( const std::string& command, const std::strin
 void FavoriteListView::show_view()
 {
     std::string xml;
-    CACHE::load_rawdata( CACHE::path_xml_favorite() , xml );
-    xml2tree( xml );
+    CACHE::load_rawdata( CACHE::path_xml_favorite(), xml );
+
+    xml2tree( std::string( ROOT_NODE_NAME ), xml );
+
+    // 旧様式のXMLならば別の名前で保存する
+    if( ! xml.empty() && ! m_document.get_root_element( std::string( ROOT_NODE_NAME ) ) )
+    {
+    	// 別のファイル名
+        const std::string file = CACHE::path_xml_favorite() + "." + MISC::get_sec_str();
+
+        CACHE::save_rawdata( file, xml );
+    }
+
     update_urls();
 }
 
@@ -123,5 +138,11 @@ void  FavoriteListView::append_favorite()
 //
 void FavoriteListView::save_xml( const std::string& file )
 {
-    if( get_ready_tree() ) CACHE::save_rawdata( file , tree2xml() );
+    if( get_ready_tree() )
+    {
+        tree2xml( std::string( ROOT_NODE_NAME ) );
+
+        CACHE::save_rawdata( file, m_document.get_xml() );
+    }
 }
+

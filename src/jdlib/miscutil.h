@@ -31,9 +31,6 @@ namespace MISC
     // list_inからコメント行(#)を除いてリストを返す
     std::list< std::string > remove_commentline_from_list( std::list< std::string >& list_in );
 
-    // strからコメントの範囲を取り除く ( /* コメント */ など )
-    std::string remove_commentrange_from_str( std::string& str, const std::string& start, const std::string& end );
-
     // 空白とカンマで区切られた str_in の文字列をリストにして出力
     // \"は " に置換される
     // (例)  "aaa" "bbb" "\"ccc\""  → aaa と bbb と "ccc"
@@ -47,8 +44,14 @@ namespace MISC
     // strの前後の空白削除
     std::string remove_space( const std::string& str );
 
+    // str前後の改行、タブ、スペースを削除
+    std::string remove_spaces( const std::string& str );
+
     // str1からstr2で示された文字列を除く
     std::string remove_str( const std::string& str1, const std::string& str2 );
+
+    // start 〜 end の範囲をstrから取り除く ( /* コメント */ など )
+    std::string remove_str( const std::string& str, const std::string& start, const std::string& end );
 
     // 正規表現を使ってstr1からqueryで示された文字列を除く
     std::string remove_str_regex( const std::string& str1, const std::string& query );
@@ -82,6 +85,12 @@ namespace MISC
 
     // strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
     std::string cut_str( const std::string& str, unsigned int maxsize );
+
+    // HTMLエスケープ
+    std::string html_escape( const std::string& str );
+
+    // HTMLアンエスケープ
+    std::string html_unescape( const std::string& str );
 
     // urlエンコード
     std::string url_encode( const char* str, size_t n );

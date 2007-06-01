@@ -7,14 +7,18 @@
 #include "global.h"
 #include "command.h"
 #include "cache.h"
-#include "xml.h"
 #include "prefdiagfactory.h"
 
 #include "dbtree/interface.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/misctime.h"
 
 #include "config/globalconf.h"
+
+#include "xml/document.h"
+#include "xml/tools.h"
+
 
 #include <sstream>
 #include <list>
@@ -22,6 +26,9 @@
 using namespace CORE;
 
 #define HIST_NONAME "--------------"
+
+// ルート要素名( history.xml, history_board.xml history_close.xml )
+#define ROOT_NODE_NAME "history"
 
 // 履歴に表示する文字数(半角)
 #define HIST_MAX_LNG 50
@@ -199,30 +206,52 @@ void HistorySubMenu::update()
 //
 void HistorySubMenu::xml2list( const std::string& xml )
 {
+    if( xml.empty() ) return;
+
+    XML::Document document( xml );
+
+    XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME ) );
+
+    // ルート要素の有無で処理を分ける( 旧様式=無, 新様式=有 )
+    XML::DomList domlist;
+    if( root ) domlist = root->childNodes();
+    else
+    {
+        domlist = document.childNodes();
+
+        // 別のファイル名
+        const std::string file = m_path_xml + "." + MISC::get_sec_str();
+
+        // 旧様式のXMLを別の名前で保存する
+        CACHE::save_rawdata( file, xml );
+    }
+
+
 #ifdef _DEBUG
-    std::cout << "HistorySubMenu::xml2list\n";
-    std::cout << xml << std::endl;
+    std::cout << "HistoryMenu::xml2list\n";
+    std::cout << " 子ノード数=" << documen.childNodes().size() << std::endl;
 #endif
 
-    std::list< std::string > lines = MISC::get_lines( xml );
-    if( lines.empty() ) return;
-
     std::list< CORE::HIST_ITEM* >::iterator it_hist = m_histlist.begin();
-    std::list< std::string >::iterator it = lines.begin();
-    for( ; it != lines.end() && it_hist != m_histlist.end() ; ++it ){
+    std::list< XML::Dom* >::iterator it = domlist.begin();
+    while( it != domlist.end() && it_hist != m_histlist.end() )
+    {
+        if( (*it)->nodeType() == XML::NODE_TYPE_ELEMENT )    
+        {
+            const int type = XML::get_type( (*it)->nodeName() );
+            const std::string name = (*it)->getAttribute( "name" );
+            const std::string url = (*it)->getAttribute( "url" );
 
-        std::string url;
-        std::string name;
-        std::string& line = *( it );
-
-        int type = XML::get_type( line, url, name );
-        if( type != TYPE_UNKNOWN && !url.empty() ){
-            ( *it_hist )->url = url;
-            ( *it_hist )->name = name;
-            ( *it_hist )->type = type;
-            ++it_hist;
-            if( it_hist == m_histlist.end() ) break;
+            if( type != TYPE_UNKNOWN && ! name.empty() && ! url.empty() )
+            {
+                ( *it_hist )->url = url;
+                ( *it_hist )->name = name;
+                ( *it_hist )->type = type;
+                ++it_hist;
+                if( it_hist == m_histlist.end() ) break;
+            }
         }
+        ++it;
     }
 }
 
@@ -233,33 +262,39 @@ void HistorySubMenu::xml2list( const std::string& xml )
 //
 std::string HistorySubMenu::list2xml()
 {
-    std::stringstream xml;
+	// Domノードを作成
+    XML::Document document;
+
+    // ルート要素を追加
+    XML::Dom* root = document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME ) );
 
     std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
-    for(; it != m_histlist.end(); ++it ){
+    while( it != m_histlist.end() )
+    {
+        const Glib::ustring name = ( *it )->name;
+        const Glib::ustring url = ( *it )->url;
+        const int type = ( *it )->type;
+        const std::string node_name = XML::get_name( type );
 
-        Glib::ustring url = ( *it )->url;
-        Glib::ustring name = ( *it )->name;
-        int type = ( *it )->type;
-
-        switch( type ){
-
-            case TYPE_BOARD: // 板
-                XML_MAKE_BOARD(url,name);
-                break;
-                
-            case TYPE_THREAD: // スレ
-                XML_MAKE_THREAD(url,name);
-                break;
+        if( type != TYPE_UNKNOWN && ! name.empty() && ! url.empty() )
+        {
+            XML::Dom* node = root->appendChild( XML::NODE_TYPE_ELEMENT, node_name );
+            node->setAttribute( "name", name );
+            node->setAttribute( "url", url );
         }
+        ++it;
     }
+
+    std::string xml;
+
+    if( root->hasChildNodes() ) xml = document.get_xml();
 
 #ifdef _DEBUG
     std::cout << "HistoryMenu::list2xml\n";
-    std::cout << xml.str() << std::endl;
+    std::cout << xml << std::endl;
 #endif
 
-    return xml.str();
+    return xml;
 }
 
 

@@ -7,6 +7,24 @@
 
 #include <sstream>
 #include <time.h>
+#include <sys/time.h>
+
+
+//
+// gettimeofday()の秒を文字列で取得
+//
+std::string MISC::get_sec_str()
+{
+	std::ostringstream sec_str;
+
+	struct timeval tv;
+    struct timezone tz;
+    gettimeofday( &tv, &tz );
+
+    sec_str << tv.tv_sec;
+
+    return sec_str.str();
+}
 
 
 //

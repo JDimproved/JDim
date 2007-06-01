@@ -11,6 +11,8 @@
 #include <list>
 #include <vector>
 
+#include "xml/document.h"
+
 namespace DBTREE
 {
     class Root;
@@ -57,7 +59,8 @@ namespace DBTREE
 
     // bbslist系
     const std::string& get_xml_bbsmenu();
-    const std::string& get_xml_etc();
+    const XML::Document& get_xml_document();
+    const std::map< std::string, std::string >& get_xml_etc();
     void download_bbsmenu();
     
     // board 系
