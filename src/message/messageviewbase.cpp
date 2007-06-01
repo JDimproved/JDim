@@ -51,6 +51,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_post( 0 ),
       m_preview( 0 ),
       m_enable_menuslot( true ),
+      m_enable_focus( true ),
       m_button_write( ICON::WRITE ),
       m_button_cancel( Gtk::Stock::CLOSE ),
       m_button_open( Gtk::Stock::OPEN ),
@@ -635,7 +636,11 @@ void MessageViewBase::post_fin()
         m_text_message.set_text( std::string() );
 
         if( SESSION::get_close_mes() ) close_view();
-        else m_notebook.set_current_page( PAGE_MESSAGE );
+        else if( m_notebook.get_current_page() != PAGE_MESSAGE ){
+            m_enable_focus = false;
+            m_notebook.set_current_page( PAGE_MESSAGE );
+            m_enable_focus = true;
+        }
 
         reload();
     }
@@ -737,8 +742,10 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         m_button_preview.set_active( false );
     }
 
-    MESSAGE::get_admin()->set_command( "switch_admin" );
-    MESSAGE::get_admin()->set_command( "focus_current_view" );
+    if( m_enable_focus ){
+        MESSAGE::get_admin()->set_command( "switch_admin" );
+        MESSAGE::get_admin()->set_command( "focus_current_view" );
+    }
 
     m_enable_menuslot = true;
 }

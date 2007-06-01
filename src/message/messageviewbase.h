@@ -34,6 +34,8 @@ namespace MESSAGE
         Gtk::CheckButton m_check_fixmail;
 
         bool m_enable_menuslot;
+        bool m_enable_focus;
+
         Gtk::HBox m_toolbar;
         SKELETON::ImgButton m_button_write;
         SKELETON::ImgButton m_button_cancel;
