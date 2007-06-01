@@ -69,6 +69,7 @@ namespace SKELETON
         void cursor_end();
 
         void delete_char();
+        void backsp_char();
 
         void undo();
 

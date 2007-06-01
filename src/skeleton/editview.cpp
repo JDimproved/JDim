@@ -157,6 +157,14 @@ void EditTextView::delete_char()
 }
 
 
+void EditTextView::backsp_char()
+{
+    Gtk::TextIter it = get_buffer()->get_insert()->get_iter();
+    Gtk::TextIter it2 = it;
+    if( it2.backward_char() ) get_buffer()->erase( it2, it );
+}
+
+
 //
 // バッファの文字列が変化したときに UNDO バッファを変更する
 //
@@ -308,6 +316,7 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::LeftEdit: cursor_left(); return true;
 
         case CONTROL::DeleteEdit: delete_char(); return true;
+        case CONTROL::BackspEdit: backsp_char(); return true;
         case CONTROL::UndoEdit: undo(); return true;
 
         case CONTROL::InputAA: show_aalist_popup(); return true;
@@ -345,6 +354,7 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
         case CONTROL::LeftEdit:
 
         case CONTROL::DeleteEdit:
+        case CONTROL::BackspEdit:
         case CONTROL::UndoEdit:
 
         case CONTROL::InputAA:

@@ -148,6 +148,7 @@ void KeyConfig::load_conf()
     SETMOTION( "LeftEdit", "" );
 
     SETMOTION( "DeleteEdit", "" );
+    SETMOTION( "BackspEdit", "" );
 
     SETMOTION( "UndoEdit", "Ctrl+/ Ctrl+z" );
 

@@ -184,6 +184,7 @@ namespace CONTROL
         LeftEdit,
 
         DeleteEdit,
+        BackspEdit,
         UndoEdit,
 
         InputAA,

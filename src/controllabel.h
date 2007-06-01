@@ -177,6 +177,7 @@ namespace CONTROL
         { "LeftEdit", "カーソルを左へ移動" },
 
         { "DeleteEdit", "一文字削除" },
+        { "BackspEdit", "バックスペース" },
         { "UndoEdit", "元に戻す(Undo)" },
 
         { "InputAA", "アスキーアート入力" },
