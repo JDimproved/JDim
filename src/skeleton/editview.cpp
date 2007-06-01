@@ -283,7 +283,7 @@ bool EditTextView::on_button_press_event( GdkEventButton* event )
 //
 bool EditTextView::on_key_press_event( GdkEventKey* event )
 {
-    m_sig_key_press.emit( event );
+    bool cancel_event = false;
     m_delete_pushed = false;
     if( event->keyval == GDK_Delete ) m_delete_pushed = true;
 
@@ -296,7 +296,8 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::FocusWrite:
         case CONTROL::TabLeft:
         case CONTROL::TabRight:
-            return true;
+            cancel_event = true;
+            break;
 
         case CONTROL::HomeEdit: cursor_home(); return true; 
         case CONTROL::EndEdit: cursor_end(); return true;
@@ -312,13 +313,16 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::InputAA: show_aalist_popup(); return true;
     }
 
+    m_sig_key_press.emit( event );
+    if( cancel_event ) return true;
+
     return Gtk::TextView::on_key_press_event( event );
 }
 
 
 bool EditTextView::on_key_release_event( GdkEventKey* event )
 {
-    m_sig_key_release.emit( event );
+    bool cancel_event = false;
 
     switch( m_control.key_press( event ) ){
 
@@ -329,7 +333,8 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
         case CONTROL::FocusWrite:
         case CONTROL::TabLeft:
         case CONTROL::TabRight:
-            return true;
+            cancel_event = true;
+            break;
 
         case CONTROL::HomeEdit:
         case CONTROL::EndEdit:
@@ -345,6 +350,9 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
         case CONTROL::InputAA:
             return true;
     }
+
+    m_sig_key_release.emit( event );
+    if( cancel_event ) return true;
 
     return Gtk::TextView::on_key_release_event( event );
 }
