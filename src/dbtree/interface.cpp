@@ -437,6 +437,37 @@ std::list< std::string > DBTREE::search_cache( const std::string& url, const std
     return DBTREE::get_board( url )->search_cache( query, mode_or, stop );
 }
 
+void DBTREE::board_update_writetime( const std::string& url )
+{
+    DBTREE::get_board( url )->update_writetime();
+}
+
+const time_t DBTREE::board_write_time( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_write_time();
+}
+
+const time_t DBTREE::board_write_pass( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_write_pass();
+}
+
+const time_t DBTREE::board_samba_sec( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_samba_sec();
+}
+
+void DBTREE::board_set_samba_sec( const std::string& url, time_t sec )
+{
+    DBTREE::get_board( url )->set_samba_sec( sec );
+}
+
+time_t DBTREE::board_write_leftsec( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_write_leftsec();
+}
+
+
 /////////////////////////////////////////////////
 
 std::list< std::string > DBTREE::get_abone_list_id_board( const std::string& url )
@@ -587,6 +618,11 @@ const std::string DBTREE::article_write_date( const std::string& url )
     return DBTREE::get_article( url )->get_write_date();
 }
 
+// 経過時間(秒
+const time_t DBTREE::article_write_pass( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_write_pass();
+}
 
 
 const int DBTREE::article_status( const std::string& url )

@@ -58,6 +58,10 @@ namespace MESSAGE
         int m_lng_str_enc;
         int m_lng_iconv;
 
+        // 経過時間表示用
+        int m_counter;
+        std::string m_str_pass;
+
       protected:
         
         SKELETON::LabelEntry& get_entry_subject() { return m_entry_subject; }

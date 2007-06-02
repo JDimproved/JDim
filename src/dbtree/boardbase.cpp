@@ -39,12 +39,15 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_root( root )
     , m_path_board( path_board )
     , m_name( name )
+    , m_samba_sec( 0 )
     , m_rawdata( 0 )
     , m_read_info( 0 )
     , m_article_null( 0 )
 {
     clear();
     clear_load_data();
+
+    memset( &m_write_time, 0, sizeof( struct timeval ) );
 
     // 板情報はクラスが作られた時点ではまだ読まない
     // BoardBase::read_info() の説明を見ること
@@ -207,6 +210,53 @@ ArticleBase* BoardBase::append_article( const std::string& id, bool cached )
 {
     // ベースクラスでは何もしない
     return get_article_null();
+}
+
+
+//
+// 書き込み時間更新
+//
+void BoardBase::update_writetime()
+{
+    struct timeval tv;
+    struct timezone tz;
+    if( gettimeofday( &tv, &tz ) == 0 ){
+
+        m_write_time = tv;
+
+#ifdef _DEBUG
+        std::cout << "BoardBase::update_writetime : " << m_write_time.tv_sec << std::endl;
+#endif
+    }
+}
+
+
+//
+// 経過時間(秒)
+//
+const time_t BoardBase::get_write_pass()
+{
+    time_t ret = 0;
+    struct timeval tv;
+    struct timezone tz;
+
+    if( m_write_time.tv_sec && gettimeofday( &tv, &tz ) == 0 ) ret = MAX( 0, tv.tv_sec - m_write_time.tv_sec );
+
+    return ret;
+}
+
+
+//
+// 書き込み可能までの残り秒
+//
+time_t BoardBase::get_write_leftsec()
+{
+    const time_t mrg = 2;
+
+    if( ! m_samba_sec ) return 0;
+    if( ! get_write_pass() ) return 0;
+
+    return MAX( 0, m_samba_sec + mrg - get_write_pass() );
 }
 
 

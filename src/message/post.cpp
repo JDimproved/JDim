@@ -232,8 +232,17 @@ void Post::receive_finish()
         // 改行その他
         m_errmsg= MISC::replace_str( m_errmsg, "<br>", "\n" );
         m_errmsg= MISC::replace_str( m_errmsg, "<hr>", "\n-------------------\n" );
-    }
 
+        // samba秒取得
+        if( regex.exec( "ＥＲＲＯＲ +- +593 +([0-9]+) +sec", m_errmsg ) ){
+            time_t sec = atoi( regex.str( 1 ).c_str() );
+#ifdef _DEBUG
+            std::cout << "samba = " << sec << std::endl;
+#endif
+            DBTREE::board_set_samba_sec( m_url, sec );
+            DBTREE::board_update_writetime( m_url );
+        }
+    }
 
     // 書き込み確認
     regex.exec( ".*<font size=\\+1 color=#FF0000>([^<]*)</font>.*", str );

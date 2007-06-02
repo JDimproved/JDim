@@ -434,8 +434,25 @@ void ArticleBase::update_writetime()
         // BoardViewの行を更新
         CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
     }
+
+    // 板の書き込み時間も更新
+    DBTREE::board_update_writetime( m_url );
 }
 
+
+//
+// 経過時間(秒)
+//
+const time_t ArticleBase::get_write_pass()
+{
+    time_t ret = 0;
+    struct timeval tv;
+    struct timezone tz;
+
+    if( m_write_time.tv_sec && gettimeofday( &tv, &tz ) == 0 ) ret = MAX( 0, tv.tv_sec - m_write_time.tv_sec );
+
+    return ret;
+}
 
 
 //

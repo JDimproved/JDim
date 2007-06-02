@@ -109,6 +109,12 @@ namespace DBTREE
     const std::string& board_get_write_mail( const std::string& url );
     void board_set_write_name( const std::string& url, const std::string& name );
     void board_set_write_mail( const std::string& url, const std::string& mail );
+    void board_update_writetime( const std::string& url );
+    const time_t board_write_time( const std::string& url );
+    const time_t board_write_pass( const std::string& url );
+    const time_t board_samba_sec( const std::string& url );
+    void board_set_samba_sec( const std::string& url, time_t sec );
+    time_t board_write_leftsec( const std::string& url );
 
     // 全板の情報ファイル読み込み
     void read_boardinfo_all();
@@ -128,6 +134,7 @@ namespace DBTREE
     const int article_hour( const std::string& url );
     const time_t article_write_time( const std::string& url );
     const std::string article_write_date( const std::string& url );
+    const time_t article_write_pass( const std::string& url );
     const int article_status( const std::string& url );
     void article_reset_status( const std::string& url );
     const int article_code( const std::string& url );

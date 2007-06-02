@@ -30,6 +30,7 @@
 #include "cache.h"
 #include "session.h"
 #include "colorid.h"
+#include "global.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -39,6 +40,8 @@ using namespace MESSAGE;
 
 #define MAX_STR_ICONV 128*1024
 
+#define PASS_TIMEOUT 500
+#define PASS_MAXTIME 120
 
 enum{
     PAGE_MESSAGE = 0,
@@ -58,7 +61,8 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_button_undo( Gtk::Stock::UNDO ),
       m_button_not_close( Gtk::Stock::CANCEL ),
       m_button_preview( ICON::THREAD ),
-      m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" )
+      m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" ),
+      m_counter( 0 )
 {
 #ifdef _DEBUG
     std::cout << "MessageViewBase::MessageViewBase " << get_url() << std::endl;
@@ -115,6 +119,23 @@ const std::string MessageViewBase::url_for_copy()
 void MessageViewBase::clock_in()
 {
     if( m_preview ) m_preview->clock_in();
+
+    // 経過時刻表示
+    ++m_counter;
+    if( m_counter % ( PASS_TIMEOUT / TIMER_TIMEOUT ) == 0 ){
+
+        m_counter = 0;
+
+        time_t left = DBTREE::board_write_leftsec( get_url() );
+        if( left ){
+            m_str_pass = "  ( 再書込可能まて残り " + MISC::itostr( left ) + " 秒 )";
+            MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() + m_str_pass );
+        }
+        else if( ! m_str_pass.empty() ){
+            m_str_pass = std::string();
+            MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
+        }
+    }
 }
 
 
@@ -394,6 +415,13 @@ void MessageViewBase::operate_view( const int& control )
 //
 void MessageViewBase::slot_write_clicked()
 {
+    time_t left = DBTREE::board_write_leftsec( get_url() );
+    if( left ){
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "samba規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう少しお待ち下さい。" );
+        mdiag.run();
+        return;
+    }
+
     if( m_post && m_post->is_loading() ){
         SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "書き込み中です" );
         mdiag.run();
@@ -773,10 +801,12 @@ void MessageViewBase::show_status()
     ss << "   /  文字数 " << m_lng_str_enc;
     if( m_max_str ) ss << "/ " << m_max_str;
 
+    if( DBTREE::article_write_time( get_url() ) ) ss << "  /  最終書込 " << DBTREE::article_write_date( get_url() );
+
     ss << " ]";
 
     set_status( ss.str() );
-    MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
+    MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() + m_str_pass );
 }
 
 

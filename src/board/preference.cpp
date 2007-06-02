@@ -32,7 +32,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
 
       m_label_noname( false, "デフォルト名無し：", DBTREE::default_noname( get_url() ) ),
       m_label_line( false, "1レスの最大改行数：" ),
-      m_label_byte( false, "1レスの最大バイト数：" )
+      m_label_byte( false, "1レスの最大バイト数：" ),
+      m_label_samba( false, "Samba24：" )
 {
     m_edit_cookies.set_editable( false );
 
@@ -82,6 +83,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     // 一般ページのパッキング
     m_label_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
     m_label_byte.set_text( MISC::itostr( DBTREE::message_count( get_url() ) ) );
+    m_label_samba.set_text( MISC::itostr( DBTREE::board_samba_sec( get_url() ) ) );
 
     m_vbox.set_border_width( 16 );
     m_vbox.set_spacing( 8 );
@@ -92,6 +94,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox.pack_start( m_label_noname, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_line, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_byte, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_label_samba, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_write, Gtk::PACK_SHRINK );
 

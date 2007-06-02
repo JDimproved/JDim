@@ -207,8 +207,9 @@ namespace DBTREE
         const std::string get_access_time_str();
 
         // 最終書き込み時間
-        const time_t& get_write_time() const { return m_write_time.tv_sec; }
-        const std::string& get_write_date() const { return m_write_time_date; }
+        const time_t& get_write_time() const { return m_write_time.tv_sec; } // 秒
+        const std::string& get_write_date() const { return m_write_time_date; } // string型
+        const time_t get_write_pass(); // 経過時間(秒)
 
         // スレ立て時刻
         const time_t& get_since_time() const { return m_since_time; };

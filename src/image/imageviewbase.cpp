@@ -120,8 +120,8 @@ void ImageViewBase::setup_common()
 
     action_group()->add( Gtk::Action::create( "Close_Menu", "複数の画像を閉じる" ) );
     action_group()->add( Gtk::Action::create( "CloseOther", "他の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_other_views ) );
-    action_group()->add( Gtk::Action::create( "CloseLeft", "左の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_left_views ) );
-    action_group()->add( Gtk::Action::create( "CloseRight", "右の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_right_views ) );
+    action_group()->add( Gtk::Action::create( "CloseLeft", "左←の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_left_views ) );
+    action_group()->add( Gtk::Action::create( "CloseRight", "右→の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_right_views ) );
     action_group()->add( Gtk::Action::create( "CloseAll", "全ての画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_all_views ) );
 
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"),

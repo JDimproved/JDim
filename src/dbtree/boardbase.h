@@ -106,6 +106,12 @@ namespace DBTREE
         std::string m_write_name;      
         std::string m_write_mail;
 
+        // 最終書き込み時間
+        struct timeval m_write_time;   
+
+        // samba(秒)
+        time_t m_samba_sec;
+
         char* m_rawdata;
         int m_lng_rawdata;
 
@@ -338,6 +344,14 @@ namespace DBTREE
 
         void set_write_name( const std::string& name ){ m_write_name = name; }
         void set_write_mail( const std::string& mail ){ m_write_mail = mail; }
+
+        // 最終書き込み時間
+        void update_writetime();
+        const time_t& get_write_time() const { return m_write_time.tv_sec; } // 秒
+        const time_t get_write_pass(); // 経過時間(秒)
+        const time_t get_samba_sec() const { return m_samba_sec; } // samba(秒)
+        void set_samba_sec( time_t sec ){ m_samba_sec = sec; }
+        time_t get_write_leftsec(); // 書き込み可能までの残り秒
 
         // 板情報の取得
         void read_info();

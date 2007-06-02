@@ -8,7 +8,7 @@
 
 #ifdef JDVERSION_BETA
 // svn 版の時は JDVERSION_SVN をdefineする
-//#define JDVERSION_SVN
+#define JDVERSION_SVN
 #define JDHELP "http://jd4linux.sourceforge.jp/manual/develop/"
 #else
 #define JDHELP "http://jd4linux.sourceforge.jp/manual/"

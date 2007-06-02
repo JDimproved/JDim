@@ -82,6 +82,8 @@ namespace BOARD
         SKELETON::LabelEntry m_label_line;
         SKELETON::LabelEntry m_label_byte;
 
+        SKELETON::LabelEntry m_label_samba;
+
         // あぼーん
         Gtk::Notebook m_notebook_abone;
         Gtk::Label m_label_warning;
