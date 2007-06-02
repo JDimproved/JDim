@@ -21,6 +21,9 @@
 #define ICON_SIZE 32 
 
 
+// 書き込みビューのメール欄の空白
+#define JD_MAIL_BLANK "jd_mail_blank"
+
 //
 // str をクリップボードにコピー
 //

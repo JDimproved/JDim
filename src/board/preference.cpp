@@ -9,6 +9,7 @@
 
 #include "cache.h"
 #include "command.h"
+#include "global.h"
 
 using namespace BOARD;
 
@@ -42,6 +43,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_entry_writename.set_text(DBTREE::board_get_write_name( get_url() ) ); 
     m_entry_writemail.set_text(DBTREE::board_get_write_mail( get_url() ) );
     if( m_entry_writemail.get_text().empty() ) m_entry_writemail.set_text( "sage" );
+    // JD_MAIL_BLANK の場合空白をセットする
+    else if( m_entry_writemail.get_text() == JD_MAIL_BLANK ) m_entry_writemail.set_text( std::string() );
 
     m_hbox_write.set_spacing( 8 );
     m_hbox_write.pack_start( m_entry_writename );
@@ -241,7 +244,10 @@ void Preferences::slot_ok_clicked()
     // 書き込み設定
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );
     DBTREE::board_set_write_name( get_url(), m_entry_writename.get_text() );
-    DBTREE::board_set_write_mail( get_url(), m_entry_writemail.get_text() );
+
+    std::string tmpmail = m_entry_writemail.get_text();
+    if( tmpmail.empty() ) tmpmail = JD_MAIL_BLANK; // 空白の場合 JD_MAIL_BLANK をセットする
+    DBTREE::board_set_write_mail( get_url(), tmpmail );
 
     DBTREE::board_save_info( get_url() );
 }

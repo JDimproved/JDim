@@ -311,7 +311,12 @@ void MessageViewBase::pack_widget()
         m_entry_mail.set_text( DBTREE::write_mail( get_url() ) );
     }
     else if( ! DBTREE::board_get_write_mail( get_url() ).empty() ){
-        m_entry_mail.set_text( DBTREE::board_get_write_mail( get_url() ) );
+
+        std::string tmpmail = DBTREE::board_get_write_mail( get_url() );
+
+        // 空白セット
+        if( tmpmail == JD_MAIL_BLANK ) m_entry_mail.set_text( std::string() );
+        else m_entry_mail.set_text( tmpmail );
     }
     else m_entry_mail.set_text( "sage" );
 
