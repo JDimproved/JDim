@@ -213,7 +213,7 @@ void CompletionEntry::slot_entry_acivate()
     std::cout << "CompletionEntry::slot_entry_acivate\n";
 #endif
 
-    m_sig_activate.emit();
+    if( ! completion() ) m_sig_activate.emit();
 }
 
 

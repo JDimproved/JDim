@@ -16,7 +16,6 @@ namespace SKELETON
     class LabelEntry : public Gtk::HBox
     {
         bool m_editable;
-        Gtk::HBox m_hbox;
         Gtk::Label m_label;
         Gtk::Entry m_entry;
 
