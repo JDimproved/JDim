@@ -149,10 +149,7 @@ void EditTextView::cursor_end()
 void EditTextView::delete_char()
 {
     // 範囲選択消去
-    if( get_buffer()->get_has_selection() ){
-        get_buffer()->erase_selection();
-        return;
-    }
+    if( get_buffer()->erase_selection() ) return;
 
     Gtk::TextIter it = get_buffer()->get_insert()->get_iter();
     Gtk::TextIter it2 = it;
@@ -166,10 +163,7 @@ void EditTextView::delete_char()
 void EditTextView::backsp_char()
 {
     // 範囲選択消去
-    if( get_buffer()->get_has_selection() ){
-        get_buffer()->erase_selection();
-        return;
-    }
+    if( get_buffer()->erase_selection() ) return;
 
     Gtk::TextIter it = get_buffer()->get_insert()->get_iter();
     Gtk::TextIter it2 = it;
