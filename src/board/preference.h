@@ -82,7 +82,9 @@ namespace BOARD
         SKELETON::LabelEntry m_label_line;
         SKELETON::LabelEntry m_label_byte;
 
+        Gtk::HBox m_hbox_samba;
         SKELETON::LabelEntry m_label_samba;
+        Gtk::Button m_button_clearsamba;
 
         // あぼーん
         Gtk::Notebook m_notebook_abone;
@@ -100,6 +102,7 @@ namespace BOARD
         Preferences( Gtk::Window* parent, const std::string& url );
 
       private:
+        void slot_clear_samba();
         void slot_delete_cookie();
         virtual void slot_ok_clicked();
     };

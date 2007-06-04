@@ -128,7 +128,7 @@ void MessageViewBase::clock_in()
 
         time_t left = DBTREE::board_write_leftsec( get_url() );
         if( left ){
-            m_str_pass = "  ( 再書込可能まて残り " + MISC::itostr( left ) + " 秒 )";
+            m_str_pass = "  ( 書込規制中 残り " + MISC::itostr( left ) + " 秒 )";
             MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() + m_str_pass );
         }
         else if( ! m_str_pass.empty() ){
@@ -422,7 +422,7 @@ void MessageViewBase::slot_write_clicked()
 {
     time_t left = DBTREE::board_write_leftsec( get_url() );
     if( left ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "samba規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう少しお待ち下さい。" );
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "書き込み規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう少しお待ち下さい。" );
         mdiag.run();
         return;
     }
