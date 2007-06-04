@@ -2449,6 +2449,29 @@ void Core::exec_command()
                                          "" );
         }
 
+        // 画像の場合
+        else if( DBIMG::is_loadable( command.url ) ){
+
+            // 画像ビューを使用
+            if( CONFIG::get_use_image_view() ){
+
+                if( ! SESSION::is_online() ){
+                    SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+                    mdiag.run();
+                }
+                else{
+                    // キャッシュに無かったらロード
+                    if( ! DBIMG::is_cached( command.url ) ) DBIMG::download_img( command.url, std::string() );
+
+                    CORE::core_set_command( "open_image", command.url );
+                    CORE::core_set_command( "switch_image" );
+                }
+            }
+
+            // 外部ビュアー使用
+            else open_by_browser( command.url );
+        }
+
         // 掲示板のベースURLの場合
         else if( ! url_subject.empty() ){
 
@@ -2457,22 +2480,6 @@ void Core::exec_command()
 #endif
 
             CORE::core_set_command( "open_board" , url_subject, "true" );
-        }
-
-        // 画像の場合
-        else if( DBIMG::is_loadable( command.url ) && CONFIG::get_use_image_view() ){
-
-            if( ! SESSION::is_online() ){
-                SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
-                mdiag.run();
-            }
-            else{
-                // キャッシュに無かったらロード
-                if( ! DBIMG::is_cached( command.url ) ) DBIMG::download_img( command.url, std::string() );
-
-                CORE::core_set_command( "open_image", command.url );
-                CORE::core_set_command( "switch_image" );
-            }
         }
 
         // その他

@@ -143,6 +143,7 @@ void CompletionEntry::show_popup( bool show_all )
 
     m_treeview.unset_cursor();
     m_treeview.scroll_to_point( -1, 0 );
+    m_treeview.get_column_cell_renderer( 0 )->property_cell_background_gdk() = get_style()->get_bg( Gtk::STATE_NORMAL );
 }
 
 
