@@ -1360,6 +1360,9 @@ void BoardBase::read_board_info()
     m_write_name = cf.get_option( "write_name", "" );
     m_write_mail = cf.get_option( "write_mail", "" );
 
+    // samba24
+    m_samba_sec = cf.get_option( "samba_sec", 0 );
+
 #ifdef _DEBUG
     std::cout << "modified = " << date_modified() << std::endl;
 #endif
@@ -1430,6 +1433,7 @@ void BoardBase::save_jdboard_info()
          << "local_proxy_port_w = " << m_local_proxy_port_w << std::endl
          << "write_name = " << m_write_name << std::endl
          << "write_mail = " << m_write_mail << std::endl
+         << "samba_sec = " << m_samba_sec << std::endl
     ;
 
     CACHE::save_rawdata( path_info, sstr.str() );
