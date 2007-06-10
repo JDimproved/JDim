@@ -1287,7 +1287,7 @@ void Core::slot_setup_browser()
 //
 void Core::slot_show_hp()
 {
-    open_by_browser( JDURL );
+    open_by_browser( CONFIG::get_url_jdhp() );
 }
 
 
@@ -1314,7 +1314,7 @@ void Core::slot_show_old2ch()
 //
 void Core::slot_show_manual()
 {
-    open_by_browser( std::string( JDHELP ) );
+    open_by_browser( JDHELP );
 }
 
 

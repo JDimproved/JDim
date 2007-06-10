@@ -52,6 +52,9 @@ namespace CONFIG
     // レスを参照するときに前に付ける文字
     const std::string& get_ref_prefix();
 
+    // JD ホームページのアドレス
+    const std::string& get_url_jdhp();
+
     // 2chの認証サーバ
     const std::string& get_url_login2ch();
 

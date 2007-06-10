@@ -107,6 +107,9 @@ namespace CONFIG
         // ダウンロードする画像の最大サイズ(Mbyte)        
         int max_img_size;
 
+        // JD ホームページのアドレス
+        std::string url_jdhp;
+
         // 2chの認証サーバ
         std::string url_login2ch;
 

@@ -182,6 +182,9 @@ const bool ConfigItems::load()
     // ダウンロードする画像の最大サイズ(Mbyte)
     max_img_size = cf.get_option( "max_img_size", 16 );
 
+    // JD ホームページのアドレス
+    url_jdhp = cf.get_option( "url_jdhp", CONF_JDHP );
+
     // 2chの認証サーバ
     url_login2ch = cf.get_option( "url_login2ch", CONF_LOGIN2CH );
 
@@ -429,6 +432,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "restore_board", restore_board );
     cf.update( "restore_article", restore_article );
     cf.update( "restore_image", restore_image );
+    cf.update( "url_jdhp", url_jdhp );
     cf.update( "url_login2ch", url_login2ch );
     cf.update( "url_bbsmenu", url_bbsmenu );
 

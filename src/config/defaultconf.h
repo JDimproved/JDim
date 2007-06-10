@@ -33,6 +33,8 @@ namespace CONFIG
 #define CONF_FONTSIZE_POPUP  "10"
 #define CONF_FONTSIZE_TREE   "10"
 
+// JD ホームページのアドレス
+#define CONF_JDHP "http://jd4linux.sourceforge.jp/"
 
 // 2chの認証サーバ
 #define CONF_LOGIN2CH "https://2chv.tora3.net/futen.cgi"
