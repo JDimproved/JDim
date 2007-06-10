@@ -156,6 +156,9 @@ namespace DBTREE
         // number番のレスの文字列を返す
         // ref == true なら先頭に ">" を付ける        
         const std::string get_res_str( int number, bool ref = false );
+
+        // number　番のレスの生文字列を返す
+        const std::string get_raw_res_str( int number );
         
         // 明示的にhtml を加える
         // パースして追加したノードのポインタを返す

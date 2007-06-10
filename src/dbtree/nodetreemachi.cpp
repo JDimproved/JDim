@@ -214,14 +214,14 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
         if( line.empty() ) continue;
 
         if( ! m_regex->exec( reg, line ) ){
-#if _DEBUG
+#ifdef _DEBUG
             std::cout << "失敗\n";
             std::cout << line << std::endl;
 #endif
             continue;
         }
 
-#if _DEBUG
+#ifdef _DEBUG
 /*
         std::cout << "1 " << m_regex->str( 1 ) << std::endl;
         std::cout << "2 " << m_regex->str( 2 ) << std::endl;

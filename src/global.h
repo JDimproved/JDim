@@ -103,6 +103,7 @@ enum
     TYPE_DIR_END, // お気に入りの追加の時にサブディレクトリの終了の意味で使う
     TYPE_COMMENT,
     TYPE_LINK,
+    TYPE_AA,
 
     TYPE_UNKNOWN
 };

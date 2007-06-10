@@ -399,6 +399,15 @@ std::string CACHE::path_aadir()
 
 
 //
+// AAの使用履歴ファイル
+//
+std::string CACHE::path_aahistory()
+{
+    return CACHE::path_root() +  "history_aa.xml";
+}
+
+
+//
 // css
 //
 std::string CACHE::path_css()

@@ -95,8 +95,9 @@ namespace CACHE
     std::string path_img_abone( const std::string& url );
 
     // AA
-    std::string path_aalist();
-    std::string path_aadir();
+    std::string path_aalist(); // アスキーアートファイル
+    std::string path_aadir();  // アスキーアートファイル格納用ディレクトリ .jd/aa/
+    std::string path_aahistory();  // AAの使用履歴ファイル
 
     // css
     std::string path_css();

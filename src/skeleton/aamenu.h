@@ -8,6 +8,7 @@
 #define _AAMENU_H
 
 #include <gtkmm.h>
+#include <map>
 
 #include "popupwinbase.h"
 
@@ -23,16 +24,17 @@ namespace SKELETON
         SKELETON::PopupWinBase m_popup;
         Gtk::TextView m_textview;
 
-        int m_activeitem;
+        std::map< Gtk::MenuItem*, int > m_map_items;
+
+        Gtk::MenuItem* m_activeitem;
 
       public:
 
         AAMenu( Gtk::Window& parent );
-        virtual ~AAMenu(){}
+        virtual ~AAMenu();
 
+        // 選択されたらemitされる
         SIG_AAMENU_SELECTED sig_selected() { return m_sig_selected; }
-
-        int get_size();
 
       protected:
 
@@ -42,12 +44,18 @@ namespace SKELETON
 
       private:
 
+        const int get_size();
+
         void set_text( const std::string& text );
+        void create_menuitem( Glib::RefPtr< Gtk::ActionGroup > actiongroup, Gtk::Menu* menu, const int id );
         void create_popupmenu();
 
-        void slot_select_item( int num );
-        void slot_configured_popup( int width );
-        void slot_aainput_menu_clicked( int num );
+        bool move_down();
+        bool move_up();
+
+        void slot_select_item( Gtk::MenuItem* item );
+        void slot_configured_popup( int width, int height );
+        void slot_aainput_menu_clicked( Gtk::MenuItem* item );
     };
 }
 

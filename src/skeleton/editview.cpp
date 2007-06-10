@@ -16,7 +16,7 @@ EditTextView::EditTextView() :
     Gtk::TextView(),
     m_cancel_change( false ),
     m_line_offset( -1 ),
-    m_popupmenu( NULL )
+    m_aapopupmenu( NULL )
 {
     // コントロールモード設定
     m_control.add_mode( CONTROL::MODE_EDIT );
@@ -28,8 +28,8 @@ EditTextView::EditTextView() :
 
 EditTextView::~EditTextView()
 {
-    if( m_popupmenu ) delete m_popupmenu;
-    m_popupmenu = NULL;
+    if( m_aapopupmenu ) delete m_aapopupmenu;
+    m_aapopupmenu = NULL;
 }
 
 
@@ -401,13 +401,13 @@ void EditTextView::show_aalist_popup()
 {
     if( CORE::get_aamanager()->get_size() )
     {
-        if( m_popupmenu ) delete m_popupmenu;
-        m_popupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ) ) );
-        m_popupmenu->popup( Gtk::Menu::SlotPositionCalc(
+        if( m_aapopupmenu ) delete m_aapopupmenu;
+        m_aapopupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ) ) );
+        m_aapopupmenu->popup( Gtk::Menu::SlotPositionCalc(
                             sigc::mem_fun( *this, &EditTextView::slot_popup_aamenu_pos ) ),
                             0, gtk_get_current_event_time() );
 
-        m_popupmenu->sig_selected().connect( sigc::mem_fun( *this, &EditTextView::slot_aamenu_selected ) );
+        m_aapopupmenu->sig_selected().connect( sigc::mem_fun( *this, &EditTextView::slot_aamenu_selected ) );
     }
 }
 

@@ -170,7 +170,7 @@ namespace CORE
         int register_class( const std::string& classname );
 
         // cssプロパティ関係
-        CSS_PROPERTY create_property( std::map< std::string, std::string > css_pair );
+        CSS_PROPERTY create_property( std::map< std::string, std::string >& css_pair );
         void set_property( const std::string& classname, const CSS_PROPERTY& css );
         void clear_property( CSS_PROPERTY* css );
         void set_default_css();

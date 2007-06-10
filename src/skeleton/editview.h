@@ -48,7 +48,7 @@ namespace SKELETON
         int m_line_offset;
 
         // AAポップアップ
-        AAMenu* m_popupmenu;
+        AAMenu* m_aapopupmenu;
 
       public:
 

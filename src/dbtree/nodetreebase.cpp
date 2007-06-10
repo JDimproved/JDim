@@ -482,6 +482,52 @@ const std::string NodeTreeBase::get_res_str( int number, bool ref )
 
 
 
+//
+// number　番のレスの生文字列を返す
+//
+const std::string NodeTreeBase::get_raw_res_str( int number )
+{
+#ifdef _DEBUG
+    std::cout << "NodeTreeBase::get_raw_res_str : num = " << number << std::endl;
+#endif
+    std::string retstr;
+
+    std::string str;
+    std::string path_cache = CACHE::path_dat( m_url );
+    if( ! CACHE::load_rawdata( path_cache, str ) ) return std::string();
+
+    char* rawlines = ( char* ) malloc( str.size() + 64 );
+    strcpy( rawlines, str.c_str() );
+
+    // dat形式に変換
+
+    int id_header = m_id_header;
+    m_id_header = 0;
+    init_loading();
+
+    int byte;
+    const char* datlines = raw2dat( rawlines, byte );
+    if( byte ){
+
+        std::list< std::string > lines = MISC::get_lines( datlines );
+        std::list< std::string >::iterator it = lines.begin();
+        for( int i = 1; it != lines.end() && i < number ; ++it, ++i );
+        if( it != lines.end() ) retstr = *it;
+    }
+
+#ifdef _DEBUG
+    std::cout << retstr << std::endl;
+#endif
+
+    clear();
+    m_id_header = id_header;
+    if( rawlines ) free( rawlines );
+
+    return retstr;
+}
+
+
+
 
 //
 // number番を書いた人の名前を取得

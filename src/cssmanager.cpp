@@ -278,7 +278,7 @@ size = atof( sizestr.c_str() ); \
 type = SIZETYPE_PX; \
 if( sizestr.find( "em" ) != std::string::npos ) type = SIZETYPE_EM; \
 }while(0)
-CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string > css_pair )
+CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >& css_pair )
 {
     CSS_PROPERTY css;
     clear_property( &css );

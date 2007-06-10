@@ -21,7 +21,7 @@ namespace SKELETON
     // Gtk::Windows は signal_configure_event()を発行しないようなので
     // 自前でconfigureイベントをフックしてシグナルを発行する
     //
-    typedef sigc::signal< void, int > SIG_CONFIGURED_POPUP;
+    typedef sigc::signal< void, int, int > SIG_CONFIGURED_POPUP;
 
     class PopupWinBase : public Gtk::Window
     {
@@ -66,7 +66,7 @@ namespace SKELETON
         virtual bool on_configure_event( GdkEventConfigure* event )
         {
             bool ret = Gtk::Window::on_configure_event( event );
-            m_sig_configured.emit( get_width() );
+            m_sig_configured.emit( get_width(), get_height() );
 
             return ret;
         }
