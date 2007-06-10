@@ -156,7 +156,7 @@ void ArticleViewBase::pack_widget()
     // ツールバーの設定
     m_toolbar = Gtk::manage( new ArticleToolBar( SESSION::get_show_article_toolbar() ) );
     m_toolbar->m_button_close.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::close_view ) );
-    m_toolbar->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::reload ) );
+    m_toolbar->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_reload ) );
     m_toolbar->m_button_write.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_write ) );
     m_toolbar->m_button_delete.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_delete ) );        
     m_toolbar->m_button_board.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_open_board ) );
@@ -709,7 +709,7 @@ void ArticleViewBase::operate_view( const int& control )
             
         // リロード
         case CONTROL::Reload:
-            reload();
+            slot_push_reload();
             break;
 
             // コピー
@@ -976,6 +976,15 @@ void ArticleViewBase::slot_push_claar_hl()
     m_drawarea->clear_highlight();
 }
 
+
+//
+// リロードボタン
+//
+void ArticleViewBase::slot_push_reload()
+{
+    if( CONFIG::get_reload_allthreads() ) ARTICLE::get_admin()->set_command( "reload_all_tabs" );
+    else reload();
+}
 
 
 //

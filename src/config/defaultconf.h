@@ -22,6 +22,7 @@ namespace CONFIG
         CONF_MARGIN_POPUP = 30,     // レスアンカーとポップアップの間のマージン
         CONF_MARGIN_IMGPOPUP = CONF_MARGIN_POPUP,  // レスアンカーと画像ポップアップの間のマージン
         CONF_LOOSE_URL = 1,         // datのパース時にURL判定を甘くする(^なども含める)
+        CONF_RELOAD_ALLTHREAD = 0,  // スレビューで再読み込みボタンを押したときに全タブを更新する
         CONF_INLINE_IMG = 0,        // インライン画像を表示する
         CONF_ABONE_TRANSPARENT = 0, // デフォルトで透明あぼーんをする
         CONF_ABONE_CHAIN = 0,       // デフォルトで連鎖あぼーんをする

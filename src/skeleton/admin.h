@@ -182,6 +182,9 @@ namespace SKELETON
         std::list< View* > get_list_view();
         virtual View* get_current_view();
 
+        void reload_all_tabs();
+        void reload_all_tabs( const int from_page );
+
         // 指定したページに表示切替え
         virtual void set_current_page( int page );
 

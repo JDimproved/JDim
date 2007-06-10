@@ -361,6 +361,9 @@ const bool ConfigItems::load()
     // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
     max_show_usrcmd = cf.get_option( "max_show_usrcmd", 3 );
 
+    // スレビューで再読み込みボタンを押したときに全タブを更新する
+    reload_allthreads = cf.get_option( "reload_allthreads", CONF_RELOAD_ALLTHREAD );
+
     // タブに表示する文字列の最小値
     tab_min_str = cf.get_option( "tab_min_str", 4 );
 
@@ -543,6 +546,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "hide_usrcmd", hide_usrcmd );
     cf.update( "max_show_usrcmd", max_show_usrcmd );
+    cf.update( "reload_allthreads", reload_allthreads );
 
     cf.update( "tab_min_str", tab_min_str );
 

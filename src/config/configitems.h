@@ -191,6 +191,9 @@ namespace CONFIG
         // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
         int max_show_usrcmd;
 
+        // スレビューで再読み込みボタンを押したときに全タブを更新する
+        bool reload_allthreads;
+
         // タブに表示する文字列の最小値        
         int tab_min_str;
 

@@ -227,6 +227,9 @@ namespace CONFIG
     // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
     const int get_max_show_usrcmd();
 
+    // スレビューで再読み込みボタンを押したときに全タブを更新する
+    const bool get_reload_allthreads();
+
     // タブに表示する文字列の最小値
     const int get_tab_min_str();
 

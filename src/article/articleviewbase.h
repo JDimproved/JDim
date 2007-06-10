@@ -151,6 +151,7 @@ namespace ARTICLE
 
         // ツールバーのボタンを押したときのスロット
         void slot_push_close_search();
+        void slot_push_reload();
         void slot_push_write();
         void slot_push_delete();
         void slot_push_open_board();

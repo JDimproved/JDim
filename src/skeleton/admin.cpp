@@ -505,6 +505,11 @@ void Admin::exec_command()
         if( m_win ) m_win->set_mginfo( command.arg1 );
     }
 
+    // 全タブオートリロード
+    else if( command.command == "reload_all_tabs" ){
+        reload_all_tabs();
+    }
+
     // オートリロードのキャンセル
     else if( command.command == "cancel_reload" ){
         slot_cancel_reload_all_tabs();
@@ -1443,13 +1448,35 @@ void Admin::slot_reload_all_tabs()
     std::cout << "Admin::slot_reload_all_tabs " << m_clicked_page << std::endl;
 #endif
 
+    reload_all_tabs( m_clicked_page );
+}
+
+
+//
+// 開いているタブから全てのタブを更新
+//
+void Admin::reload_all_tabs()
+{
+    reload_all_tabs( m_notebook->get_current_page() );
+}
+
+
+//
+// from_page から全てのタブを更新
+//
+void Admin::reload_all_tabs( const int from_page )
+{
+#ifdef _DEBUG
+    std::cout << "Admin::reload_all_tabs from = " << from_page << std::endl;
+#endif
+
     if( ! SESSION::is_online() ) return;
 
     int waittime = 0;
     int pages = m_notebook->get_n_pages();
 
     // クリックしたタブから右側
-    for( int i = m_clicked_page ; i < pages; ++i ){
+    for( int i = from_page ; i < pages; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ){
             if( set_autoreload_mode( view->get_url(), AUTORELOAD_ONCE, waittime ) ) waittime += AUTORELOAD_MINSEC;
@@ -1457,7 +1484,7 @@ void Admin::slot_reload_all_tabs()
     }
 
     // クリックしたタブから左側
-    for( int i = 0 ; i < m_clicked_page; ++i ){
+    for( int i = 0 ; i < from_page; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ){
             if( set_autoreload_mode( view->get_url(), AUTORELOAD_ONCE, waittime ) ) waittime += AUTORELOAD_MINSEC;

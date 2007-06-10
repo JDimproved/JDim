@@ -235,6 +235,7 @@ const bool CONFIG::get_loose_url(){ return get_confitem()->loose_url; }
 const bool CONFIG::get_hide_usrcmd(){ return get_confitem()->hide_usrcmd; }
 const int CONFIG::get_max_show_usrcmd(){ return get_confitem()->max_show_usrcmd; }
 
+const bool CONFIG::get_reload_allthreads(){ return get_confitem()->reload_allthreads; }
 
 const int CONFIG::get_tab_min_str(){ return get_confitem()->tab_min_str; }
 
