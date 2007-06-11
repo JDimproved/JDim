@@ -46,6 +46,9 @@ namespace IMAGE
 
       private:
 
+        const int width_indicator();
+        const int height_indicator();
+
         void stop();
         void wait();
         void show_indicator( bool loading );

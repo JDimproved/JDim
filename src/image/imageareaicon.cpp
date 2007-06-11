@@ -195,6 +195,19 @@ void ImageAreaIcon::show_image_thread()
 
 
 //
+// インジケータ幅、高さ
+const int ImageAreaIcon::width_indicator()
+{
+    return MAX( 1, get_width()/4 );
+}
+
+const int ImageAreaIcon::height_indicator()
+{
+    return MAX( 1, get_height()/4 );
+}
+
+
+//
 // インジゲータ画像表示
 // 
 void ImageAreaIcon::show_indicator( bool loading )
@@ -206,8 +219,8 @@ void ImageAreaIcon::show_indicator( bool loading )
     if( ! m_pixbuf ){
 
         m_pixbuf = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width(), get_height() );
-        m_pixbuf_err = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width()/4, get_height()/4 );
-        m_pixbuf_loading = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, get_width()/4, get_height()/4 );
+        m_pixbuf_err = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, width_indicator(), height_indicator() );
+        m_pixbuf_loading = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, false, 8, width_indicator(), height_indicator() );
 
         assert( m_pixbuf );
         assert( m_pixbuf_err );
@@ -219,10 +232,10 @@ void ImageAreaIcon::show_indicator( bool loading )
     }
 
     // 読み込み中
-    if( loading ) m_pixbuf_loading->copy_area( 0, 0, get_width()/4, get_height()/4, m_pixbuf, 4, 4 );
+    if( loading ) m_pixbuf_loading->copy_area( 0, 0, width_indicator(), height_indicator(), m_pixbuf, 4, 4 );
 
     // エラー
-    else  m_pixbuf_err->copy_area( 0, 0, get_width()/4, get_height()/4, m_pixbuf, 4, 4 );
+    else  m_pixbuf_err->copy_area( 0, 0, width_indicator(), height_indicator(), m_pixbuf, 4, 4 );
 
     m_imagetype = IMAGE_SHOW_INDICATOR;
 }

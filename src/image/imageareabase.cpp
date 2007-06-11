@@ -39,6 +39,22 @@ ImageAreaBase::~ImageAreaBase()
 
 
 //
+// 幅、高さセット
+//
+// 0にするとGdk::Pixbuf::create()で落ちるので注意
+//
+void ImageAreaBase::set_width( const int width )
+{
+    m_width = MAX( 1, width );
+}
+
+void ImageAreaBase::set_height( const int height )
+{
+    m_height = MAX( 1, height );
+}
+
+
+//
 // 画像表示
 //
 void ImageAreaBase::set_image()

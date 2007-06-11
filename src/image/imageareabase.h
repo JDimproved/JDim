@@ -38,8 +38,8 @@ namespace IMAGE
         void set_errmsg( const std::string& errmsg ){ m_errmsg = errmsg; }
         void set_ready( bool ready ){ m_ready = ready; }
 
-        void set_width( int width ){ m_width = width; }
-        void set_height( int height ){ m_height = height; }
+        void set_width( const int width );
+        void set_height( const int height );
 
         void set_image();
         void set_mosaic( Glib::RefPtr< Gdk::Pixbuf > pixbuf );

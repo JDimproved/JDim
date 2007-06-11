@@ -91,6 +91,7 @@ void Img::clear()
 const bool Img::is_cached()
 {
     if( is_loading() ) return false;
+    if( ! total_length() ) return false;
 
     return ( get_code() == HTTP_OK );
 }
@@ -354,6 +355,11 @@ void Img::receive_finish()
     if( ! total_length() ){
         std::string path = get_cache_path();
         if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+
+        if( get_code() == HTTP_OK ){
+            set_code( HTTP_CANCEL );
+            set_str_code( "サーバ上にファイルが存在しません" );
+        }
     }
 
     // 読み込み失敗の場合でもエラーメッセージを残すので info　は保存する
