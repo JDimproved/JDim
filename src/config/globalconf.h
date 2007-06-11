@@ -195,6 +195,9 @@ namespace CONFIG
     // 履歴の保持数
     const int get_history_size();
 
+    // AA履歴の保持数
+    const int get_aahistory_size();
+
     // 0以上なら多重ポップアップの説明を表示する
     const int get_instruct_popup();
 

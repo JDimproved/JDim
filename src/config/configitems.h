@@ -164,6 +164,9 @@ namespace CONFIG
         // 履歴の保持数        
         int history_size;
 
+        // AA履歴の保持数
+        int aahistory_size;
+
         // 0以上なら多重ポップアップの説明を表示する
         int instruct_popup;
 

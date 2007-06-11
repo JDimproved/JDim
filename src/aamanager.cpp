@@ -9,6 +9,8 @@
 #include "xml/document.h"
 #include "xml/tools.h"
 
+#include "config/globalconf.h"
+
 #include "cache.h"
 #include "global.h"
 
@@ -34,7 +36,6 @@ void CORE::delete_aamanager()
 // ルート要素名
 #define ROOT_NODE_NAME "history"
 
-#define MAX_AAHISTORY 7
 #define AA_LIMIT 4096
 
 using namespace CORE;
@@ -156,7 +157,7 @@ void AAManager::load_history()
     std::list< std::string > tmp_history;
     XML::DomList domlist = root->childNodes();
     std::list< XML::Dom* >::iterator it = domlist.begin();
-    for( ; it != domlist.end(); ++it ){
+    for( ; it != domlist.end() && (int) tmp_history.size() < CONFIG::get_aahistory_size(); ++it ){
 
         if( ( *it )->nodeType() == XML::NODE_TYPE_ELEMENT ){
             
@@ -270,7 +271,7 @@ void AAManager::append_history( const int id )
         }
 
         // 含まれていない場合
-        while( m_history.size() >= MAX_AAHISTORY ) m_history.pop_back();
+        while( (int) m_history.size() >= CONFIG::get_aahistory_size() ) m_history.pop_back();
         m_history.push_front( id );
     }
 }

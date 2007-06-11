@@ -299,7 +299,7 @@ const bool ConfigItems::load()
     show_oldarticle = cf.get_option( "show_oldarticle", false );
 
     // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
-    newthread_hour = cf.get_option( "newthread_hour", 24 );
+    newthread_hour = cf.get_option( "newthread_hour", CONF_NEWTHREAD_HOUR );
 
     // ツリービューのスクロール量(行数)
     tree_scroll_size = cf.get_option( "tree_scroll_size", CONF_TREE_SCROLL_SIZE );
@@ -329,13 +329,16 @@ const bool ConfigItems::load()
     margin_imgpopup = cf.get_option( "margin_imgpopup", CONF_MARGIN_IMGPOPUP );
 
     // マウスジェスチャの判定開始半径
-    mouse_radius = cf.get_option( "mouse_radius", 25 );
+    mouse_radius = cf.get_option( "mouse_radius", CONF_MOUSE_RADIUS );
 
     // 履歴の保持数
-    history_size = cf.get_option( "history_size", 20 );
+    history_size = cf.get_option( "history_size", CONF_HISTORY );
+
+    // AA履歴の保持数
+    aahistory_size = cf.get_option( "aahistory_size", CONF_AAHISTORY );
 
     // 0以上なら多重ポップアップの説明を表示する
-    instruct_popup = cf.get_option( "instruct_popup", 100 );    
+    instruct_popup = cf.get_option( "instruct_popup", CONF_INSTRUCT_POPUP );    
 
     // スレビューを開いたときにスレ一覧との切り替え方法を説明する
     instruct_tglart = cf.get_option( "instruct_tglart", true );
@@ -537,6 +540,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "margin_imgpopup", margin_imgpopup );
     cf.update( "mouse_radius", mouse_radius );
     cf.update( "history_size", history_size );
+    cf.update( "aahistory_size", aahistory_size );
     cf.update( "instruct_popup", instruct_popup );
     cf.update( "instruct_tglart", instruct_tglart );
     cf.update( "instruct_tglimg", instruct_tglimg );
