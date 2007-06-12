@@ -38,10 +38,12 @@ namespace CACHE
     // 板
     std::string path_xml_listmain();
     std::string path_xml_listmain_bkup();
+    std::string path_xml_listmain_old();
 
     // お気に入り
     std::string path_xml_favorite();
     std::string path_xml_favorite_bkup();
+    std::string path_xml_favorite_old();
 
     // 外部板設定ファイル( navi2ch 互換 )
     std::string path_etcboard();
@@ -51,12 +53,15 @@ namespace CACHE
 
     // スレ履歴
     std::string path_xml_history();
+    std::string path_xml_history_old();
 
     // 板履歴
     std::string path_xml_history_board();
+    std::string path_xml_history_board_old();
 
     // 最近閉じたスレの履歴
     std::string path_xml_history_close();
+    std::string path_xml_history_close_old();
 
     // 板移転情報
     std::string path_movetable();

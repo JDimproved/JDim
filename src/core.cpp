@@ -2473,7 +2473,7 @@ void Core::exec_command()
         }
 
         // 掲示板のベースURLの場合
-        else if( ! url_subject.empty() ){
+        else if( ! url_subject.empty() && command.url.rfind( "/" ) == command.url.length() - 1 ){
 
 #ifdef _DEBUG
             std::cout << "exec : open_board url = " << url_subject << std::endl;

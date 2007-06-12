@@ -90,18 +90,6 @@ void BBSListViewMain::update_view()
     // ルート要素を取得
     XML::Dom* root = m_document.get_root_element( std::string( ROOT_NODE_NAME ) );
 
-    // 旧様式のXMLならば別の名前で保存する
-    if( ! root )
-    {
-    	// 別のファイル名
-        const std::string file = CACHE::path_xml_listmain() + "." + MISC::get_sec_str();
-
-		// Root::m_xml_bbsmenu を取得
-		const std::string xml_bbsmenu = DBTREE::get_xml_bbsmenu();
-
-        if( ! xml_bbsmenu.empty() ) CACHE::save_rawdata( file, xml_bbsmenu );
-    }
-
     // 外部板挿入
     if( ! list_etc.empty() )
     {

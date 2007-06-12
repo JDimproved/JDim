@@ -21,7 +21,8 @@ namespace CORE
 
     class HistorySubMenu : public Gtk::Menu
     {
-        std::string m_path_xml;
+        std::string m_path_load_xml;
+        std::string m_path_save_xml;
         std::list< Gtk::MenuItem* > m_itemlist;
         std::list< CORE::HIST_ITEM* > m_histlist;
 
@@ -31,7 +32,7 @@ namespace CORE
 
       public:
 
-        HistorySubMenu( const std::string path_xml );
+        HistorySubMenu( const std::string path_load_xml, const std::string path_save_xml );
         ~HistorySubMenu();
 
         void clear();

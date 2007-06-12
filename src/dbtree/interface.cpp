@@ -147,12 +147,6 @@ void DBTREE::update_board( const std::string& url, const std::string& name, cons
 }
 
 
-const std::string& DBTREE::get_xml_bbsmenu()
-{
-    return get_root()->xml_bbsmenu();
-}
-
-
 const XML::Document& DBTREE::get_xml_document()
 {
     return get_root()->xml_document();

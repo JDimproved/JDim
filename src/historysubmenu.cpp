@@ -33,9 +33,10 @@ using namespace CORE;
 // 履歴に表示する文字数(半角)
 #define HIST_MAX_LNG 50
 
-HistorySubMenu::HistorySubMenu( const std::string path_xml )
+HistorySubMenu::HistorySubMenu( const std::string path_load_xml, const std::string path_save_xml )
     : Gtk::Menu(),
-      m_path_xml( path_xml )
+      m_path_load_xml( path_load_xml ),
+      m_path_save_xml( path_save_xml )
 {
     Gtk::MenuItem* item;
 
@@ -75,7 +76,7 @@ HistorySubMenu::HistorySubMenu( const std::string path_xml )
     m_popupmenu.show_all_children();
 
     std::string xml;
-    CACHE::load_rawdata( m_path_xml, xml );
+    CACHE::load_rawdata( m_path_load_xml, xml );
     xml2list( xml );
 }
 
@@ -88,7 +89,7 @@ HistorySubMenu::~HistorySubMenu()
 #endif
 
     // XML保存
-    CACHE::save_rawdata( m_path_xml, list2xml() );
+    CACHE::save_rawdata( m_path_save_xml, list2xml() );
 
     std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
     for(; it != m_histlist.end(); ++it ) delete ( *it );
@@ -215,17 +216,7 @@ void HistorySubMenu::xml2list( const std::string& xml )
     // ルート要素の有無で処理を分ける( 旧様式=無, 新様式=有 )
     XML::DomList domlist;
     if( root ) domlist = root->childNodes();
-    else
-    {
-        domlist = document.childNodes();
-
-        // 別のファイル名
-        const std::string file = m_path_xml + "." + MISC::get_sec_str();
-
-        // 旧様式のXMLを別の名前で保存する
-        CACHE::save_rawdata( file, xml );
-    }
-
+    else domlist = document.childNodes();
 
 #ifdef _DEBUG
     std::cout << "HistoryMenu::xml2list\n";

@@ -82,7 +82,13 @@ void HistoryMenuBase::slot_clear()
 HistoryMenuThread::HistoryMenuThread()
     : CORE::HistoryMenuBase( "スレ履歴" )
 {
-    setup( Gtk::manage( new CORE::HistorySubMenu( CACHE::path_xml_history() ) ) );
+    // ファイルが存在しなければ入力を旧ファイル名にする
+    std::string file_in = CACHE::path_xml_history();
+    if( CACHE::file_exists( file_in ) != CACHE::EXIST_FILE ) file_in = CACHE::path_xml_history_old();
+
+    const std::string file_out = CACHE::path_xml_history();
+
+    setup( Gtk::manage( new CORE::HistorySubMenu( file_in, file_out ) ) );
 }
 
 
@@ -90,7 +96,13 @@ HistoryMenuThread::HistoryMenuThread()
 HistoryMenuBoard::HistoryMenuBoard()
     : CORE::HistoryMenuBase( "板履歴" )
 {
-    setup( Gtk::manage( new CORE::HistorySubMenu( CACHE::path_xml_history_board() ) ) );
+    // ファイルが存在しなければ入力を旧ファイル名にする
+    std::string file_in = CACHE::path_xml_history_board();
+    if( CACHE::file_exists( file_in ) != CACHE::EXIST_FILE ) file_in = CACHE::path_xml_history_board_old();
+
+    const std::string file_out = CACHE::path_xml_history_board();
+
+    setup( Gtk::manage( new CORE::HistorySubMenu( file_in, file_out ) ) );
 }
 
 
@@ -98,5 +110,11 @@ HistoryMenuBoard::HistoryMenuBoard()
 HistoryMenuClose::HistoryMenuClose()
     : CORE::HistoryMenuBase( "最近閉じたスレ" )
 {
-    setup( Gtk::manage( new CORE::HistorySubMenu( CACHE::path_xml_history_close() ) ) );
+    // ファイルが存在しなければ入力を旧ファイル名にする
+    std::string file_in = CACHE::path_xml_history_close();
+    if( CACHE::file_exists( file_in ) != CACHE::EXIST_FILE ) file_in = CACHE::path_xml_history_close_old();
+
+    const std::string file_out = CACHE::path_xml_history_close();
+
+    setup( Gtk::manage( new CORE::HistorySubMenu( file_in, file_out ) ) );
 }

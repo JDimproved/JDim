@@ -65,18 +65,17 @@ bool FavoriteListView::set_command( const std::string& command, const std::strin
 void FavoriteListView::show_view()
 {
     std::string xml;
-    CACHE::load_rawdata( CACHE::path_xml_favorite(), xml );
+
+    // ファイルが存在しなければ入力を旧ファイル名にする
+    std::string file_in = CACHE::path_xml_favorite();
+    if( CACHE::file_exists( file_in ) != CACHE::EXIST_FILE )
+    {
+    	file_in = CACHE::path_xml_favorite_old();
+    }
+
+    CACHE::load_rawdata( file_in, xml );
 
     xml2tree( std::string( ROOT_NODE_NAME ), xml );
-
-    // 旧様式のXMLならば別の名前で保存する
-    if( ! xml.empty() && ! m_document.get_root_element( std::string( ROOT_NODE_NAME ) ) )
-    {
-    	// 別のファイル名
-        const std::string file = CACHE::path_xml_favorite() + "." + MISC::get_sec_str();
-
-        CACHE::save_rawdata( file, xml );
-    }
 
     update_urls();
 }

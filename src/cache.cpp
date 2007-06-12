@@ -87,24 +87,34 @@ std::string CACHE::path_root()
 // 板リスト
 std::string CACHE::path_xml_listmain()
 {
-    return CACHE::path_root() +  "list_main.xml";
+    return CACHE::path_root() +  "boards.xml";
 }
 
 std::string CACHE::path_xml_listmain_bkup()
 {
     return CACHE::path_xml_listmain() + ".bkup";
 }
+// 1.9.5-beta070611以前
+std::string CACHE::path_xml_listmain_old()
+{
+    return CACHE::path_root() +  "list_main.xml";
+}
 
 
 // お気に入り
 std::string CACHE::path_xml_favorite()
 {
-    return CACHE::path_root() +  "favorite.xml";
+    return CACHE::path_root() +  "bookmark.xml";
 }
 
 std::string CACHE::path_xml_favorite_bkup()
 {
     return CACHE::path_xml_favorite() + ".bkup";
+}
+// 1.9.5-beta070611以前
+std::string CACHE::path_xml_favorite_old()
+{
+    return CACHE::path_root() +  "favorite.xml";
 }
 
 
@@ -126,6 +136,11 @@ std::string CACHE::path_usrcmd()
 // 履歴
 std::string CACHE::path_xml_history()
 {
+    return CACHE::path_root() +  "hist.xml";
+}
+// 1.9.5-beta070611以前
+std::string CACHE::path_xml_history_old()
+{
     return CACHE::path_root() +  "history.xml";
 }
 
@@ -133,12 +148,22 @@ std::string CACHE::path_xml_history()
 // 板履歴
 std::string CACHE::path_xml_history_board()
 {
+    return CACHE::path_root() +  "hist_board.xml";
+}
+// 1.9.5-beta070611以前
+std::string CACHE::path_xml_history_board_old()
+{
     return CACHE::path_root() +  "history_board.xml";
 }
 
 
 // 最近閉じたスレの履歴
 std::string CACHE::path_xml_history_close()
+{
+    return CACHE::path_root() +  "hist_close.xml";
+}
+// 1.9.5-beta070611以前
+std::string CACHE::path_xml_history_close_old()
 {
     return CACHE::path_root() +  "history_close.xml";
 }

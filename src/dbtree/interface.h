@@ -58,7 +58,6 @@ namespace DBTREE
     void update_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
 
     // bbslist系
-    const std::string& get_xml_bbsmenu();
     const XML::Document& get_xml_document();
     const std::map< std::string, std::string >& get_xml_etc();
     void download_bbsmenu();
