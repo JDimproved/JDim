@@ -32,7 +32,7 @@ namespace CORE
 
       public:
 
-        HistorySubMenu( const std::string path_load_xml, const std::string path_save_xml );
+        HistorySubMenu( const std::string& path_load_xml, const std::string& path_save_xml );
         ~HistorySubMenu();
 
         void clear();

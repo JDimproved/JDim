@@ -10,7 +10,7 @@
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 
 // svn 版の時は JDVERSION_SVN をdefineする
-//#define JDVERSION_SVN
+#define JDVERSION_SVN
 
 // ベータ版の場合は define する
 #define JDVERSION_BETA

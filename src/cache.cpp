@@ -428,7 +428,7 @@ std::string CACHE::path_aadir()
 //
 std::string CACHE::path_aahistory()
 {
-    return CACHE::path_root() +  "history_aa.xml";
+    return CACHE::path_root() +  "hist_aa.xml";
 }
 
 

@@ -33,7 +33,7 @@ using namespace CORE;
 // 履歴に表示する文字数(半角)
 #define HIST_MAX_LNG 50
 
-HistorySubMenu::HistorySubMenu( const std::string path_load_xml, const std::string path_save_xml )
+HistorySubMenu::HistorySubMenu( const std::string& path_load_xml, const std::string& path_save_xml )
     : Gtk::Menu(),
       m_path_load_xml( path_load_xml ),
       m_path_save_xml( path_save_xml )
