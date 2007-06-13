@@ -356,8 +356,10 @@ void Root::bbsmenu2xml( const std::string& menu )
 
             // 板として扱うURLかどうかで要素名を変える
             std::string element_name;
-            if( regex.exec( "^http://.*/.*/$", url )
-             && ( is_2ch( url ) || is_machi( url ) ) ) element_name = "board";
+            if( CONFIG::use_link_as_board() ) element_name = "board";
+            else if( ( regex.exec( "^http://.*/.*/$", url ) && is_2ch( url ) )
+                     || is_machi( url )
+                     || is_JBBS( url ) ) element_name = "board";
             else element_name = "link";
 
             XML::Dom* board = subdir->appendChild( XML::NODE_TYPE_ELEMENT, element_name );
@@ -463,7 +465,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     // JBBS
     else if( is_JBBS( url ) ){
 
-        if( ! regex.exec( "(http://[^/]*)/(.*)/$" , url ) ) return false;
+        if( ! regex.exec( "(http://[^/]*)/(.*)/(index2?\\.html?)?$" , url ) ) return false;
         root = "http://jbbs.livedoor.jp";
         path_board = "/" + regex.str( 2 );
 
@@ -473,7 +475,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     // まち
     else if( is_machi( url ) ){
 
-        if( ! regex.exec( "(http://[^/]*)/([^/]*)/$" , url ) ) return false;
+        if( ! regex.exec( "(http://[^/]*)/([^/]*)/(index2?\\.html?)?$" , url ) ) return false;
         root = regex.str( 1 );
         path_board = "/" + regex.str( 2 );
 
@@ -483,7 +485,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     // その他は互換型
     else{
 
-        if( ! regex.exec( "(http://.*)/([^/]*)/$" , url ) ) return false;
+        if( ! regex.exec( "(http://.*)/([^/]*)/([^\\.]+\\.html?)?$" , url ) ) return false;
         root = regex.str( 1 );
         path_board = "/" + regex.str( 2 );
 

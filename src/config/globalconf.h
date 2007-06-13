@@ -61,6 +61,9 @@ namespace CONFIG
     // bbsmenu.htmlのURL
     const std::string& get_url_bbsmenu();    
 
+    // bbsmenu.htmlの内にあるリンクは全て板とみなす
+    const bool use_link_as_board();
+
     // 2ch にアクセスするときのエージェント名
     const std::string& get_agent_for2ch();
 

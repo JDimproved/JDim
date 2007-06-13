@@ -116,6 +116,9 @@ namespace CONFIG
         // bbsmenu.htmlのURL
         std::string url_bbsmenu;
 
+        // bbsmenu.htmlの内にあるリンクは全て板とみなす
+        bool use_link_as_board;
+
         // 色
         std::vector< std::string > str_color;
 

@@ -106,6 +106,8 @@ const std::string& CONFIG::get_url_jdhp() { return get_confitem()->url_jdhp; }
 const std::string& CONFIG::get_url_login2ch() { return get_confitem()->url_login2ch; }
 const std::string& CONFIG::get_url_bbsmenu() { return get_confitem()->url_bbsmenu; }
 
+const bool CONFIG::use_link_as_board(){ return get_confitem()->use_link_as_board; }
+
 const std::string& CONFIG::get_agent_for2ch() { return get_confitem()->agent_for2ch; }
 
 const bool CONFIG::get_use_proxy_for2ch() { return get_confitem()->use_proxy_for2ch; }

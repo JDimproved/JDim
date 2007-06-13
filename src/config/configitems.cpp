@@ -161,26 +161,26 @@ const bool ConfigItems::load()
     idpopup_by_mo = cf.get_option( "idpopup_by_mo", false );
 
     // 画像ポップアップサイズ
-    imgpopup_width = cf.get_option( "imgpopup_width", 320 );
-    imgpopup_height = cf.get_option( "imgpopup_height", 240 );
+    imgpopup_width = cf.get_option( "imgpopup_width", CONF_IMGPOPUP_WIDTH );
+    imgpopup_height = cf.get_option( "imgpopup_height", CONF_IMGPOPUP_HEIGHT );
 
     // 画像ビューを使用する
-    use_image_view = cf.get_option( "use_image_view", 1 );
+    use_image_view = cf.get_option( "use_image_view", CONF_USE_IMAGE_VIEW );
 
     // インライン画像を表示する
     use_inline_image = cf.get_option( "use_inline_image", CONF_INLINE_IMG );
 
-    // 画像にモザイクかける
-    use_mosaic = cf.get_option( "use_mosaic", 1 );
+    // 画像にモザイクをかける
+    use_mosaic = cf.get_option( "use_mosaic", CONF_USE_MOSAIC );
 
     // 画像をデフォルトでウィンドウサイズに合わせる
-    zoom_to_fit = cf.get_option( "zoom_to_fit", 1 );
+    zoom_to_fit = cf.get_option( "zoom_to_fit", CONF_ZOOM_TO_FIT );
 
     // 画像キャッシュ削除の日数
-    del_img_day = cf.get_option( "del_img_day", 20 );
+    del_img_day = cf.get_option( "del_img_day", CONF_DEL_IMG_DAY );
 
     // ダウンロードする画像の最大サイズ(Mbyte)
-    max_img_size = cf.get_option( "max_img_size", 16 );
+    max_img_size = cf.get_option( "max_img_size", CONF_MAX_IMG_SIZE );
 
     // JD ホームページのアドレス
     url_jdhp = cf.get_option( "url_jdhp", CONF_JDHP );
@@ -190,6 +190,9 @@ const bool ConfigItems::load()
 
     // bbsmenu.htmlのURL
     url_bbsmenu = cf.get_option( "url_bbsmenu", CONF_BBSMENU );
+
+    // bbsmenu.htmlの内にあるリンクは全て板とみなす
+    use_link_as_board = cf.get_option( "use_link_as_board", CONF_LINK_AS_BOARD );
 
 
     /////////
@@ -438,6 +441,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "url_jdhp", url_jdhp );
     cf.update( "url_login2ch", url_login2ch );
     cf.update( "url_bbsmenu", url_bbsmenu );
+    cf.update( "use_link_as_board", use_link_as_board );
 
     cf.update( "fontname_main", fontname[ FONT_MAIN ] );
     cf.update( "fontname_popup", fontname[ FONT_POPUP ] );
