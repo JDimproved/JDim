@@ -191,7 +191,7 @@ const bool ConfigItems::load()
     // bbsmenu.htmlのURL
     url_bbsmenu = cf.get_option( "url_bbsmenu", CONF_BBSMENU );
 
-    // bbsmenu.htmlの内にあるリンクは全て板とみなす
+    // bbsmenu.html内にあるリンクは全て板とみなす
     use_link_as_board = cf.get_option( "use_link_as_board", CONF_LINK_AS_BOARD );
 
 

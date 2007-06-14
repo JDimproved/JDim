@@ -36,7 +36,7 @@ namespace CONFIG
         CONF_ZOOM_TO_FIT = 1,       // 画像をデフォルトでウィンドウサイズに合わせる
         CONF_DEL_IMG_DAY = 20,      // 画像キャッシュ削除の日数
         CONF_MAX_IMG_SIZE = 16,     // ダウンロードする画像の最大サイズ(Mbyte)
-        CONF_LINK_AS_BOARD = 0,     // bbsmenu.htmlの内にあるリンクは全て板とみなす
+        CONF_LINK_AS_BOARD = 0,     // bbsmenu.html内にあるリンクは全て板とみなす
         CONF_ABONE_TRANSPARENT = 0, // デフォルトで透明あぼーんをする
         CONF_ABONE_CHAIN = 0,       // デフォルトで連鎖あぼーんをする
         CONF_EXPAND_SIDEBAR = 0       // 右ペーンが空の時にサイドバーを閉じる

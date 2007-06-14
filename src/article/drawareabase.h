@@ -183,6 +183,8 @@ namespace ARTICLE
         const int get_selection_resnum_to();
 
         const int get_seen_current() const { return m_seen_current; } // 現在見ているレスの番号
+        const int get_goto_num_reserve() const { return m_goto_num_reserve; } // 初期化時のジャンプ予約(レス番号)
+
         int max_number();   // 表示されている最後のレスの番号
 
         // レスをappendして再レイアウト

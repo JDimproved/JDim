@@ -2323,7 +2323,7 @@ void DrawAreaBase::goto_num( int num )
         m_goto_num_reserve = num;
 
 #ifdef _DEBUG
-        std::cout << "reserve goto_num(1)\n";
+        std::cout << "reserve goto_num(1) num = " << m_goto_num_reserve << std::endl;
 #endif
         return;
     }
@@ -2333,7 +2333,7 @@ void DrawAreaBase::goto_num( int num )
         m_goto_num_reserve = num;
 
 #ifdef _DEBUG
-        std::cout << "reserve goto_num(2)\n";
+        std::cout << "reserve goto_num(2) num = " << m_goto_num_reserve << std::endl;;
 #endif
         return;
     }

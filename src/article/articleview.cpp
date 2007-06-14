@@ -308,12 +308,14 @@ void ArticleViewMain::relayout()
 #endif
 
     int seen = drawarea()->get_seen_current();
+    int num_reserve = drawarea()->get_goto_num_reserve();
     int separator_new = drawarea()->get_separator_new();
 
     drawarea()->clear_screen();
     drawarea()->set_separator_new( separator_new );
     drawarea()->append_res( 1, get_article()->get_number_load() );
-    drawarea()->goto_num( seen );
+    if( num_reserve ) drawarea()->goto_num( num_reserve );
+    else if( seen ) drawarea()->goto_num( seen );
     drawarea()->redraw_view();
 }
 
