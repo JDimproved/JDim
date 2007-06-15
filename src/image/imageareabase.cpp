@@ -69,14 +69,21 @@ void ImageAreaBase::set_image()
     // 画像ロード
     bool stop = false;
     std::string errmsg;
+
+    // アニメーションoff
     bool pixbufonly = ( w_org != get_width() || h_org != get_height() );
+
+    // pixbufonly = trueにすると プログレッシブJPGではモザイクがかかったようになる
+    const int minsize = w_org/4;
+    if( pixbufonly && get_width() > minsize  && m_img->get_type() == DBIMG::T_JPG ) pixbufonly = false;
 
     Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), stop, pixbufonly, errmsg );
     if( loader ){
 
         if( m_img->get_mosaic() ) set_mosaic( loader->get_pixbuf() );
         else{
-            if( pixbufonly ) set( loader->get_pixbuf()->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST ) );
+            if( w_org != get_width() || h_org != get_height() )
+                set( loader->get_pixbuf()->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST ) );
             else set( loader->get_animation() );
         }
     }

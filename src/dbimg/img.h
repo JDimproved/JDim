@@ -53,6 +53,8 @@ namespace DBIMG
         const std::string& url() const { return m_url; }
         std::string get_cache_path();
 
+        const int get_type() const { return m_type; }
+
         const int get_width();
         const int get_height();
 
