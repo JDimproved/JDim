@@ -26,31 +26,45 @@ namespace MISC
     // 使用可能なフォントの一覧を取得
     std::set< std::string > get_font_families();
 
-
     // 画像の幅と高さを取得
     void get_img_size( const std::string& filename, int& width, int& height );
 
-    class Img_Size
+    // 画像ローダ取得
+    // stop を trueにすると読み込みを停止する
+    Glib::RefPtr< Gdk::PixbufLoader > get_ImageLoder( const std::string& file, bool& stop, bool pixbufonly, std::string& errmsg );
+
+    class ImgLoader
     {
+        Glib::RefPtr< Gdk::PixbufLoader > m_loader;
+
+        std::string m_file;
+        std::string m_errmsg;
         int m_width;
         int m_height;
+        bool m_stop;
+
+        bool m_pixbufonly;
+        int m_y;
 
       public:
 
-        Img_Size( const std::string& file );
-        ~Img_Size(){}
+        ImgLoader( const std::string& file );
 
+        virtual ~ImgLoader(){}
+
+        Glib::RefPtr< Gdk::PixbufLoader > get_loader(){ return  m_loader; }
+        const std::string& get_errmsg() const { return m_errmsg; }
         const int get_width() const { return m_width; }
         const int get_height() const{ return m_height; }
 
+        bool get_size();
+        bool load( bool& stop, bool pixbufonly, bool sizeonly );
+
       private:
         void slot_size_prepared( int w, int h );
+        void slot_area_updated(int x, int y, int w, int h );
     };
 
-
-    // 画像ローダ取得
-    // stop を trueにすると読み込みを停止する
-    Glib::RefPtr< Gdk::PixbufLoader > get_ImageLoder( const std::string& file, int width, int height, bool& stop, std::string& errmsg );
 }
 
 #endif

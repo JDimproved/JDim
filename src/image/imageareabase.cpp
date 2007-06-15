@@ -59,15 +59,26 @@ void ImageAreaBase::set_height( const int height )
 //
 void ImageAreaBase::set_image()
 {
+#ifdef _DEBUG
+    std::cout << "ImageAreaBase::set_image\n";
+#endif
+
+    int w_org = get_img()->get_width();
+    int h_org = get_img()->get_height();
+
     // 画像ロード
     bool stop = false;
     std::string errmsg;
+    bool pixbufonly = ( w_org != get_width() || h_org != get_height() );
 
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), get_width(), get_height(), stop, errmsg );
+    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), stop, pixbufonly, errmsg );
     if( loader ){
 
         if( m_img->get_mosaic() ) set_mosaic( loader->get_pixbuf() );
-        else set( loader->get_animation() );
+        else{
+            if( pixbufonly ) set( loader->get_pixbuf()->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST ) );
+            else set( loader->get_animation() );
+        }
     }
     else{
         set_errmsg( errmsg );
@@ -88,5 +99,5 @@ void ImageAreaBase::set_mosaic( Glib::RefPtr< Gdk::Pixbuf > pixbuf )
 
     Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
     pixbuf2 = pixbuf->scale_simple( get_width() / size_mosaic, get_height() / size_mosaic, Gdk::INTERP_NEAREST );
-    set( pixbuf2->scale_simple( m_width, m_height, Gdk::INTERP_NEAREST ) );
+    set( pixbuf2->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST ) );
 }

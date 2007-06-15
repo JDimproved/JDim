@@ -168,8 +168,8 @@ void ImageAreaIcon::show_image_thread()
 #endif
 
     std::string errmsg;
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( get_img()->get_cache_path(), get_width(), get_height(), m_stop, errmsg );
-    if( loader ) m_pixbuf_icon = loader->get_pixbuf();
+    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( get_img()->get_cache_path(), m_stop, true, errmsg );
+    if( loader ) m_pixbuf_icon = loader->get_pixbuf()->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );;
 
     if( m_pixbuf_icon ){
         m_imagetype = IMAGE_SHOW_ICON;

@@ -144,8 +144,8 @@ void EmbeddedImage::resize_thread()
 
     std::string errmsg;
 
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), m_width, m_height, m_stop, errmsg );
-    if( loader ) m_pixbuf = loader->get_pixbuf();
+    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), m_stop, true, errmsg );
+    if( loader ) m_pixbuf = loader->get_pixbuf()->scale_simple( m_width, m_height, Gdk::INTERP_NEAREST );
 
     // メインスレッドにリサイズが終わったことを知らせて
     // メインスレッドがpthread_join()を呼び出す

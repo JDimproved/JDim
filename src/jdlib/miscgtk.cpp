@@ -119,69 +119,10 @@ void MISC::get_img_size( const std::string& filename, int& width, int& height )
 {
     width = height = 0;
 
-    MISC::Img_Size imgsize( filename );
-    width = imgsize.get_width();
-    height = imgsize.get_height();
-}
-
-
-MISC::Img_Size::Img_Size( const std::string& file )
-    : m_width( 0 ),
-      m_height( 0 )
-{
-    FILE* f = NULL;
-    const size_t bufsize = 1024;
-    size_t readsize = 0;
-    guint8 data[ bufsize ];
-
-    f = fopen( file.c_str(), "rb" );
-    if( f ){
-
-        try {
-
-            Glib::RefPtr< Gdk::PixbufLoader > loader = Gdk::PixbufLoader::create();
-
-#if GTKMMVER > 240
-            loader->signal_size_prepared().connect( sigc::mem_fun( *this, &Img_Size::slot_size_prepared ) );
-#endif
-            while( ! m_width ){
-                readsize = fread( data, 1, bufsize, f );
-                if( readsize ) loader->write( data, readsize );
-                if( feof( f ) ) break;
-
-#if GTKMMVER <= 240 // gdkのバージョンが古い場合はpixbufを取得してサイズを得る
-
-                if( loader->get_pixbuf() ){
-                    m_width = loader->get_pixbuf()->get_width();
-                    m_height = loader->get_pixbuf()->get_height();
-                }
-#endif
-            }
-
-            loader->close();
-        }
-        catch( Glib::Error& err )
-        {
-//            MISC::ERRMSG( err.what() );
-        }
-
-        fclose( f );
-    }
-
-#ifdef _DEBUG
-    std::cout << "Img_Size::Img_Size read = " << readsize << "  w = " << m_width << " h = " << m_height << std::endl;
-#endif
-}
-
-
-void MISC::Img_Size::slot_size_prepared( int w, int h )
-{
-#ifdef _DEBUG
-    std::cout << "Img_Size::slot_size_prepared w = " << w << " h = " << h << std::endl;
-#endif
-
-    m_width = w;
-    m_height = h;
+    MISC::ImgLoader imgloader( filename );
+    imgloader.get_size();
+    width = imgloader.get_width();
+    height = imgloader.get_height();
 }
 
 
@@ -190,36 +131,128 @@ void MISC::Img_Size::slot_size_prepared( int w, int h )
 //
 // stop を trueにすると読み込みを停止する
 //
-Glib::RefPtr< Gdk::PixbufLoader > MISC::get_ImageLoder( const std::string& file, int width, int height, bool& stop, std::string& errmsg )
+Glib::RefPtr< Gdk::PixbufLoader > MISC::get_ImageLoder( const std::string& file, bool& stop, bool pixbufonly, std::string& errmsg )
 {
-    Glib::RefPtr< Gdk::PixbufLoader > loader;
+    MISC::ImgLoader imgloader( file );
+    if( ! imgloader.load( stop, pixbufonly, false ) ) errmsg = imgloader.get_errmsg();
+    return imgloader.get_loader();
+}
 
+
+
+MISC::ImgLoader::ImgLoader( const std::string& file )
+    : m_file( file ),
+      m_width( 0 ),
+      m_height( 0 ),
+      m_stop( false ),
+      m_y( 0 )
+{}
+    
+
+// 画像サイズ取得
+bool MISC::ImgLoader::get_size()
+{
+    bool stop = false;
+    return load( stop, true, true );
+}
+
+
+// 画像読み込み
+// stop を trueにすると読み込みを停止する
+bool MISC::ImgLoader::load( bool& stop, bool pixbufonly, bool sizeonly )
+{
+    if( sizeonly && m_width && m_height ) return true;
+    if( m_loader ) return true;
+
+    m_pixbufonly = pixbufonly;
+
+#ifdef _DEBUG
+    std::cout << "MISC::ImgLoader sizeonly = " << sizeonly
+              << " file = " << m_file << std::endl;
+    size_t total = 0;
+#endif
+
+    bool ret = true;
+
+    FILE* f = NULL;
     const size_t bufsize = 8192;
     size_t readsize = 0;
     guint8 data[ bufsize ];
 
-    FILE* f = fopen( file.c_str(), "rb" );
+    f = fopen( m_file.c_str(), "rb" );
     if( f ){
 
         try {
 
-            loader = Gdk::PixbufLoader::create();
-            loader->set_size( width, height );
+            m_loader = Gdk::PixbufLoader::create();
 
-            while( ! stop ){
+#if GTKMMVER > 240
+            if( sizeonly ) m_loader->signal_size_prepared().connect( sigc::mem_fun( *this, &ImgLoader::slot_size_prepared ) );
+#endif
+
+            m_loader->signal_area_updated().connect( sigc::mem_fun( *this, &ImgLoader::slot_area_updated ) );
+
+            while( ! m_stop && ! stop  ){
+
                 readsize = fread( data, 1, bufsize, f );
-                if( readsize ) loader->write( data, readsize );
+                if( readsize ) m_loader->write( data, readsize );
+
+#ifdef _DEBUG
+                total += readsize;
+                std::cout << readsize << " / " << total << std::endl;
+#endif
                 if( feof( f ) ) break;
+
+#if GTKMMVER <= 240 // gdkのバージョンが古い場合はpixbufを取得してサイズを得る
+
+                if( sizeonly && m_loader->get_pixbuf() ){
+                    m_width = m_loader->get_pixbuf()->get_width();
+                    m_height = m_loader->get_pixbuf()->get_height();
+                    m_stop = true;
+                }
+#endif
             }
-            loader->close();
+
+            m_loader->close();
         }
         catch( Glib::Error& err )
         {
-            errmsg = err.what();
+            m_errmsg = err.what();
+            ret = false;
         }
 
         fclose( f );
     }
 
-    return loader;
+#ifdef _DEBUG
+    std::cout << "ImgLoader::load read = " << total << "  w = " << m_width << " h = " << m_height << std::endl;
+#endif
+
+    return ret;
+}
+
+
+void MISC::ImgLoader::slot_size_prepared( int w, int h )
+{
+#ifdef _DEBUG
+    std::cout << "ImgLoader::slot_size_prepared w = " << w << " h = " << h << std::endl;
+#endif
+
+    m_width = w;
+    m_height = h;
+    m_stop = true;
+}
+
+
+void MISC::ImgLoader::slot_area_updated(int x, int y, int w, int h )
+{
+    if( m_pixbufonly ){
+
+#ifdef _DEBUG
+        std::cout << "ImgLoader::slot_area_updated x = " << x << " y = " << y << " w = " << w << " h = " << h << std::endl;
+#endif
+
+        if( y < m_y ) m_stop = true;
+        m_y = y;
+    }
 }
