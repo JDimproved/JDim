@@ -1157,7 +1157,9 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     }
     
     // 名前
-    parseName( header, section[ 0 ], section_lng[ 0 ] );
+    int color_name = COLOR_CHAR_NAME;
+    if( ! section_lng[ 1 ] ) color_name = COLOR_CHAR_NAME_NOMAIL;
+    parseName( header, section[ 0 ], section_lng[ 0 ], color_name );
     
     // メール
     parseMail( header, section[ 1 ], section_lng[ 1 ] );
@@ -1185,7 +1187,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 //
 // 名前
 //
-void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
+void NodeTreeBase::parseName( NODE* header, const char* str, int lng, int color_name )
 {
     bool digitlink = true;
     const bool bold = true;
@@ -1227,7 +1229,7 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
                   << " begin = " << pos_trip_begin << " end = " << pos_trip_end << std::endl;
 #endif
         // トリップの前(名前部分)
-        parse_html( str, pos_trip_begin, COLOR_CHAR_NAME, digitlink, bold );
+        parse_html( str, pos_trip_begin, color_name, digitlink, bold );
 
         // あとは数字が入ってもリンクしない
         digitlink = false;
@@ -1237,17 +1239,17 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng )
 
         // トリップの後
         if( pos_trip_end < lng-1 )
-            parse_html( str + pos_trip_end + 1, lng - pos_trip_end - 1, COLOR_CHAR_NAME, digitlink, bold );
+            parse_html( str + pos_trip_end + 1, lng - pos_trip_end - 1, color_name, digitlink, bold );
     }
 
     // デフォルト名無しと同じときはアンカーを作らない
     else if( defaultname ){
         digitlink = false;
-        parse_html( str, lng, COLOR_CHAR_NAME, digitlink, bold );
+        parse_html( str, lng, color_name, digitlink, bold );
     }
 
     // 通常の場合は先頭に数字があったらアンカーにする
-    else parse_html( str, lng, COLOR_CHAR_NAME, digitlink, bold );
+    else parse_html( str, lng, color_name, digitlink, bold );
 
     // plainな名前取得
     std::string str_tmp;

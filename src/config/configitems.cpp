@@ -135,12 +135,12 @@ const bool ConfigItems::load()
     x_2ch_ua = cf.get_option( "x_2ch_ua", "Navigator for 2ch 1.7.5" );
 
     // ローダのバッファサイズ
-    loader_bufsize = cf.get_option( "loader_bufsize", 32 );
+    loader_bufsize = cf.get_option( "loader_bufsize", CONF_LOADER_BUFSIZE );
 
     // ローダのタイムアウト値
-    loader_timeout = cf.get_option( "loader_timeout", 10 );
-    loader_timeout_post = cf.get_option( "loader_timeout_post", 30 ); // ポスト
-    loader_timeout_img = cf.get_option( "loader_timeout_img", 30 ); // 画像
+    loader_timeout = cf.get_option( "loader_timeout", CONF_LOADER_TIMEOUT );
+    loader_timeout_post = cf.get_option( "loader_timeout_post", CONF_LOADER_TIMEOUT_POST ); // ポスト
+    loader_timeout_img = cf.get_option( "loader_timeout_img", CONF_LOADER_TIMEOUT_IMG ); // 画像
 
     // ipv6使用
     use_ipv6 = cf.get_option( "use_ipv6", CONF_USE_IPV6 );
@@ -207,6 +207,9 @@ const bool ConfigItems::load()
     // トリップ等の名前欄の文字色
     str_color[ COLOR_CHAR_NAME_B ] = cf.get_option( "cl_char_name_b", CONF_COLOR_CHAR_NAME_B );
 
+    // 名前無し時の名前欄の文字色
+    str_color[ COLOR_CHAR_NAME_NOMAIL ] = cf.get_option( "cl_char_name_nomail", CONF_COLOR_CHAR_NAME_NOMAIL );
+
     // ageの時のメール欄の文字色
     str_color[ COLOR_CHAR_AGE ] = cf.get_option( "cl_char_age", CONF_COLOR_CHAR_AGE );
 
@@ -235,17 +238,16 @@ const bool ConfigItems::load()
     str_color[ COLOR_CHAR_MESSAGE_SELECTION ] = cf.get_option( "cl_char_message_selection", CONF_COLOR_CHAR_MESSAGE_SELECTION );
 
     // 画像(キャッシュ無)の色
-    str_color[ COLOR_IMG_NOCACHE ] = cf.get_option( "cl_img_nocache", "#a5a52a2a2a2a" );
+    str_color[ COLOR_IMG_NOCACHE ] = cf.get_option( "cl_img_nocache", CONF_COLOR_IMG_NOCACHE );
 
     // 画像(キャッシュ有)の色
-    str_color[ COLOR_IMG_CACHED ] = cf.get_option( "cl_img_cached", "#00008b8b8b8b" );
+    str_color[ COLOR_IMG_CACHED ] = cf.get_option( "cl_img_cached", CONF_COLOR_IMG_CACHED );
 
     // 画像(ロード中)の色
-    str_color[ COLOR_IMG_LOADING ] = cf.get_option( "cl_img_loading", "#ffff8c8c0000" );
+    str_color[ COLOR_IMG_LOADING ] = cf.get_option( "cl_img_loading", CONF_COLOR_IMG_LOADING );
 
     // 画像(エラー)の色
-    str_color[ COLOR_IMG_ERR ] = cf.get_option( "cl_img_err", str_color[ COLOR_CHAR_AGE ] );
-
+    str_color[ COLOR_IMG_ERR ] = cf.get_option( "cl_img_err", CONF_COLOR_IMG_ERR );
 
     // スレ背景色
     str_color[ COLOR_BACK ] = cf.get_option( "cl_back", CONF_COLOR_BACK );
@@ -498,6 +500,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_char", str_color[ COLOR_CHAR ] );
     cf.update( "cl_char_name", str_color[ COLOR_CHAR_NAME ] );
     cf.update( "cl_char_name_b", str_color[ COLOR_CHAR_NAME_B ] );
+    cf.update( "cl_char_name_nomail", str_color[ COLOR_CHAR_NAME_NOMAIL ] );
     cf.update( "cl_char_age", str_color[ COLOR_CHAR_AGE ] );
     cf.update( "cl_char_selection", str_color[ COLOR_CHAR_SELECTION ] );
     cf.update( "cl_char_highlight", str_color[ COLOR_CHAR_HIGHLIGHT ] );

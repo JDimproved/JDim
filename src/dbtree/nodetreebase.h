@@ -229,7 +229,7 @@ namespace DBTREE
         void add_raw_lines( char* rawines, size_t size );
         const char* add_one_dat_line( const char* datline );
 
-        void parseName( NODE* header, const char* str, int lng );
+        void parseName( NODE* header, const char* str, int lng, int color_name );
         void parseMail( NODE* header, const char* str, int lng );
         void parse_date_id( NODE* header, const char* str, int lng );
         void parse_html( const char* str, int lng, int color_text, bool digitlink = false, bool bold = false, bool ahref = false );

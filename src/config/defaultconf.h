@@ -13,6 +13,10 @@
 namespace CONFIG
 {
     enum{
+        CONF_LOADER_BUFSIZE = 32,   // ローダのバッファサイズ
+        CONF_LOADER_TIMEOUT = 10,   // ローダのタイムアウト値        
+        CONF_LOADER_TIMEOUT_POST = 30, // ポストローダのタイムアウト値        
+        CONF_LOADER_TIMEOUT_IMG = 30,  // 画像ローダのタイムアウト値
         CONF_USE_IPV6 = 1,          // ipv6使用
         CONF_BROWSER_NO = 2,        // browsers.h のラベル番号
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
@@ -59,6 +63,7 @@ namespace CONFIG
 #define CONF_COLOR_CHAR    "#000000000000"     // スレの文字
 #define CONF_COLOR_CHAR_NAME "#000064640000"   //名前欄の文字色
 #define CONF_COLOR_CHAR_NAME_B "#000000008b8b" // トリップ等の名前欄の文字色
+#define CONF_COLOR_CHAR_NAME_NOMAIL "#000064640000"   //メール無し時の名前欄の文字色
 #define CONF_COLOR_CHAR_AGE "#fde800000000"    // ageの時のメール欄の文字色
 #define CONF_COLOR_CHAR_SELECTION "#ffffffffffff"  // 選択範囲の文字色
 #define CONF_COLOR_CHAR_HIGHLIGHT str_color[ COLOR_CHAR ] // ハイライトの文字色
@@ -68,6 +73,11 @@ namespace CONFIG
 #define CONF_COLOR_CHAR_LINK_HIGH str_color[ COLOR_CHAR_AGE ] // リンク(多数)の文字色
 #define CONF_COLOR_CHAR_MESSAGE str_color[ COLOR_CHAR ] // メッセージビューの文字色
 #define CONF_COLOR_CHAR_MESSAGE_SELECTION str_color[ COLOR_CHAR_SELECTION ] // メッセージビュー(選択範囲)の文字色
+
+#define CONF_COLOR_IMG_NOCACHE "#a5a52a2a2a2a" // 画像(キャッシュ無)の色
+#define CONF_COLOR_IMG_CACHED  "#00008b8b8b8b" // 画像(キャッシュ有)の色
+#define CONF_COLOR_IMG_LOADING "#ffff8c8c0000"  // 画像(ロード中)の色
+#define CONF_COLOR_IMG_ERR str_color[ COLOR_CHAR_AGE ] // 画像(エラー)の色
 
 #define CONF_COLOR_BACK           "#fde8fde8f618" // スレ背景色
 #define CONF_COLOR_BACK_POPUP     str_color[ COLOR_BACK ] // ポップアップ背景色

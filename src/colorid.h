@@ -12,6 +12,7 @@ enum
     COLOR_CHAR,             // スレビューなど基本の文字
     COLOR_CHAR_NAME,        // 名前欄
     COLOR_CHAR_NAME_B,      // トリップや fusianasan 等、<b>が含まれている名前欄
+    COLOR_CHAR_NAME_NOMAIL, // メールが無いときの名前欄
     COLOR_CHAR_AGE,         // 非sageのメール欄
     COLOR_CHAR_SELECTION,   // 選択範囲の文字
     COLOR_CHAR_HIGHLIGHT,   // ハイライトの文字

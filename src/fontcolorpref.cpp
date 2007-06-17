@@ -33,6 +33,7 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "文字: スレビュー", COLOR_CHAR, "スレビューの基本の文字色" );
     set_color_settings( "文字: 名前欄", COLOR_CHAR_NAME, "名前欄の通常の文字色" );
     set_color_settings( "文字: 名前欄(トリップ等)", COLOR_CHAR_NAME_B, "名前欄のトリップ等の文字色" );
+    set_color_settings( "文字: 名前欄(メール無し)", COLOR_CHAR_NAME_NOMAIL, "メール無しの名前欄の文字色" );
     set_color_settings( "文字: メール欄(非sage)", COLOR_CHAR_AGE, "sage でないメール欄の文字色" );
     set_color_settings( "文字: 選択範囲", COLOR_CHAR_SELECTION, "選択範囲の文字色" );
     set_color_settings( "文字: ハイライト", COLOR_CHAR_HIGHLIGHT, "検索結果などのハイライトの文字色" );
