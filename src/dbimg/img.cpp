@@ -144,7 +144,8 @@ void Img::download_img( const std::string& refurl )
     std::string path = get_cache_path();
     m_fout = fopen( path.c_str(), "wb" );
     if( m_fout == NULL ){
-        MISC::ERRMSG( "fopen failed : " + path );
+        m_type = T_OPENFAILED;
+        receive_finish();
         return;
     }
 
@@ -309,7 +310,13 @@ void Img::receive_data( const char* data, size_t size )
     }
 
     if( m_fout &&
-        ( m_type != T_NOIMG && m_type != T_LARGE ) ) fwrite( data, 1, size, m_fout );
+        ( m_type != T_NOIMG && m_type != T_LARGE ) ){
+
+        if( fwrite( data, 1, size, m_fout ) != size ){
+            m_type = T_WRITEFAILED; // 書き込み失敗
+            stop_load();
+        }
+    }
 
 #ifdef _DEBUG
     std::cout << "Img::receive_data code = " << get_code() << " "
@@ -347,6 +354,19 @@ void Img::receive_finish()
         set_str_code( ss.str() );
         set_current_length( 0 );
     }
+
+    else if( m_type == T_OPENFAILED ){
+        set_code( HTTP_CANCEL );
+        set_str_code( "ファイルのオープンに失敗しました" );
+        set_current_length( 0 );
+    }
+
+    else if( m_type == T_WRITEFAILED ){
+        set_code( HTTP_CANCEL );
+        set_str_code( "ハードディスクへの書き込みに失敗しました" );
+        set_current_length( 0 );
+    }
+
     else if( m_type == T_UNKNOWN ) set_current_length( 0 );
 
     set_total_length( current_length() );

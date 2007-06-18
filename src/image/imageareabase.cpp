@@ -78,7 +78,7 @@ void ImageAreaBase::set_image()
     if( pixbufonly && get_width() > minsize  && m_img->get_type() == DBIMG::T_JPG ) pixbufonly = false;
 
     Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), stop, pixbufonly, errmsg );
-    if( loader ){
+    if( loader && loader->get_pixbuf() ){
 
         if( m_img->get_mosaic() ) set_mosaic( loader->get_pixbuf() );
         else{

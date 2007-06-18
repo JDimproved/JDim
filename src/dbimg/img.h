@@ -23,6 +23,8 @@ namespace DBIMG
         T_PNG,
         T_GIF,
         T_LARGE,
+        T_OPENFAILED,
+        T_WRITEFAILED,
         T_UNKNOWN
     };
 

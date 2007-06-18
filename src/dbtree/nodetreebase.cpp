@@ -468,7 +468,13 @@ const std::string NodeTreeBase::get_res_str( int number, bool ref )
     str_res += ref_prefix;
 
     NODE* node;
-    for( int block = 0; block < BLOCK_MES; ++ block )  GETNODESTR( block );
+    GETNODESTR( BLOCK_NUMBER ); str_res += " ";
+    GETNODESTR( BLOCK_NAMELINK ); str_res += "：";
+    GETNODESTR( BLOCK_NAME ); str_res += " ";
+    GETNODESTR( BLOCK_MAIL ); str_res += "： ";
+    GETNODESTR( BLOCK_DATE ); str_res += " ";
+    GETNODESTR( BLOCK_ID_NAME ); str_res += " ";
+
     str_res += "\n" + ref_prefix;
     GETNODESTR( BLOCK_MES );
     str_res += "\n";

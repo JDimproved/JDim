@@ -2652,7 +2652,7 @@ void ArticleViewBase::slot_copy_res( bool ref )
     if( ref ) tmpstr = CONFIG::get_ref_prefix();
     std::string board_name = DBTREE::board_name( m_url_article );
     if( ! board_name.empty() ) tmpstr += "[ " + board_name + " ] ";
-    tmpstr += DBTREE::article_subject( m_url_article ) + "\n";
+    tmpstr += DBTREE::article_subject( m_url_article ) + "\n\n";
     tmpstr += m_article->get_res_str( atoi( m_str_num.c_str() ), ref );
 
     COPYCLIP( tmpstr );
