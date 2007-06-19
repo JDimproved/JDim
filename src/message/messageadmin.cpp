@@ -92,8 +92,11 @@ void MessageAdmin::close_view( const std::string& url )
         else return;
     }
 
-    Admin::close_view( url );
-    if( empty() ) close_window();
+    if( ! SESSION::get_close_mes() ) view->set_command( "clear_message" );
+    else{
+        Admin::close_view( url );
+        if( empty() ) close_window();
+    }
 }
 
 

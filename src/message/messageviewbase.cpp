@@ -193,6 +193,18 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
     else if( command == "tab_right" ) tab_right();
     else if( command == "focus_write" ) focus_writebutton();
 
+    // メッセージをクリア
+    else if( command == "clear_message" ){
+
+        m_text_message.set_text( std::string() );
+
+        if( m_notebook.get_current_page() != PAGE_MESSAGE ){
+            m_enable_focus = false;
+            m_notebook.set_current_page( PAGE_MESSAGE );
+            m_enable_focus = true;
+        }
+    }
+
     // メッセージを追加
     else if( command == "add_message" )
     {
@@ -390,7 +402,7 @@ void MessageViewBase::operate_view( const int& control )
             
             // 書き込まずに閉じる
         case CONTROL::CancelWrite:
-            MESSAGE::get_admin()->set_command( "close_currentview" );
+            close_view();
             break;
 
             // 書き込み実行
@@ -668,12 +680,7 @@ void MessageViewBase::post_fin()
         save_postlog();
         m_text_message.set_text( std::string() );
 
-        if( SESSION::get_close_mes() ) close_view();
-        else if( m_notebook.get_current_page() != PAGE_MESSAGE ){
-            m_enable_focus = false;
-            m_notebook.set_current_page( PAGE_MESSAGE );
-            m_enable_focus = true;
-        }
+        close_view();
 
         reload();
     }
