@@ -104,6 +104,9 @@ namespace ARTICLE
         // ポップアップメニュー取得
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
+        // レスポップアップを隠す
+        void hide_popup( bool force = false );
+
         // 初期設定
         void setup_view();
 
@@ -194,7 +197,6 @@ namespace ARTICLE
         void show_popup( SKELETON::View* view, int margin );
         bool slot_popup_leave_notify_event( GdkEventCrossing* event );
         void slot_hide_popup();
-        void hide_popup( bool force = false );
         void delete_popup(); // ポップアップ強制削除
         void warp_pointer_to_popup(); // マウスポインタをポップアップの上に移動する
         

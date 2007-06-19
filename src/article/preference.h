@@ -24,6 +24,8 @@ namespace ARTICLE
         // あぼーん
         Gtk::VBox m_vbox_abone;
         Gtk::Notebook m_notebook_abone;
+        Gtk::VBox m_vbox_abone_id;
+        Gtk::Label m_label_abone_id;
         SKELETON::EditView m_edit_id, m_edit_res, m_edit_name, m_edit_word, m_edit_regex;
 
         Gtk::Label m_label_abone;

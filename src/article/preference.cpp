@@ -140,8 +140,13 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         m_edit_regex.set_editable( false );
     }
 
+    m_label_abone_id.set_text( "ここでIDを削除してもレスが表示されない場合は板全体に対してIDがあぼーん指定されている可能性があります。\n板のプロパティのあぼーん設定も確認してください。" );
+    m_vbox_abone.set_spacing( 8 );
+    m_vbox_abone_id.pack_start( m_label_abone_id, Gtk::PACK_SHRINK );
+    m_vbox_abone_id.pack_start( m_edit_id );
+
     m_notebook_abone.append_page( m_vbox_abone, "一般" );
-    m_notebook_abone.append_page( m_edit_id, "NG ID" );
+    m_notebook_abone.append_page( m_vbox_abone_id, "NG ID" );
     m_notebook_abone.append_page( m_edit_res, "NG レス番号" );
     m_notebook_abone.append_page( m_edit_name, "NG 名前" );
     m_notebook_abone.append_page( m_edit_word, "NG ワード" );

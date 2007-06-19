@@ -307,6 +307,8 @@ void ArticleViewMain::relayout()
     std::cout << "ArticleViewMain::relayout\n";
 #endif
 
+    hide_popup( true );
+
     int seen = drawarea()->get_seen_current();
     int num_reserve = drawarea()->get_goto_num_reserve();
     int separator_new = drawarea()->get_separator_new();
