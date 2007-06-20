@@ -157,7 +157,7 @@ namespace CONTROL
 
         { "", "" },
 
-        { "CancelWrite", "書き込みキャンセル" },
+        { "CancelWrite", "書き込みビューを閉じる" },
         { "ExecWrite", "書き込み実行" },
 
         { "FocusWrite", "書き込みボタンにフォーカスを移す" },

@@ -269,7 +269,7 @@ void MessageViewBase::pack_widget()
     m_button_not_close.set_active( ! SESSION::get_close_mes() );
 
     m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
-    m_button_cancel.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::close_view ) );
+    m_button_cancel.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_close_clicked ) );
     m_button_open.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_draft_open ) );
     m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_undo_clicked ) );
     m_button_not_close.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_not_close_clicked ) );
@@ -499,6 +499,19 @@ void MessageViewBase::slot_draft_open()
         CACHE::load_rawdata( open_path, draft );
         if( ! draft.empty() ) set_command( "add_message", draft );
     }
+}
+
+
+//
+// closeボタンを押した
+//
+void MessageViewBase::slot_close_clicked()
+{
+    if( !SESSION::get_close_mes() ){
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "「ビューを閉じない」ボタンが押されています。" );
+        mdiag.run();
+    }
+    else close_view();
 }
 
 

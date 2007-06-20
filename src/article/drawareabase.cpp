@@ -3138,7 +3138,31 @@ std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos 
         int num = MISC::str_to_uint( select_str.c_str(), dig, n );
 
         // 数字
-        if( n == strlen( select_str.c_str() ) && dig && num ) url = PROTO_ANCHORE + MISC::itostr( num );
+        if( dig && num ){
+
+            url = PROTO_ANCHORE + MISC::itostr( num );
+
+            for(;;){
+
+                select_str = select_str.substr( n );
+                if( select_str.empty() ) break;
+
+                std::string tmpstr, tmpstr2;
+                if( select_str.find( "-" ) == 0 ) tmpstr = tmpstr2 = "-";
+                else if ( select_str.find( "=" ) == 0 ) tmpstr = tmpstr2 = "=";
+                else if ( select_str.find( "," ) == 0 ) tmpstr = tmpstr2 = ",";
+                else if( select_str.find( "－" ) == 0 ){ tmpstr = "－"; tmpstr2 = "-"; }
+                else if( select_str.find( "−" ) == 0 ){ tmpstr = "−"; tmpstr2 = "-"; }
+                else if ( select_str.find( "＝" ) == 0 ){ tmpstr = "＝"; tmpstr2 = "="; }
+                else if ( select_str.find( "，" ) == 0 ){ tmpstr = "，"; tmpstr2 = ","; }
+
+                select_str = select_str.substr( tmpstr.length() );
+
+                num = MISC::str_to_uint( select_str.c_str(), dig, n );
+                if( dig && num ) url += tmpstr2 + MISC::itostr( num );
+                else break;
+            }
+        }
 
         // ID
         else if( select_str.find( "ID:" ) == 0 ) url = select_str;
