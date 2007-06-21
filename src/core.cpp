@@ -2252,8 +2252,24 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    ///////////////////////////////
+
+    // タイトル、URL、ステータスなどの表示
+    else if( command.command  == "set_title" ){
+        m_title = command.arg1;
+        set_maintitle();
+    }
+
+    else if( command.command  == "set_url" ){
+        m_entry_url.set_text( command.url );
+    }
+
+    else if( command.command  == "set_status" ){
+        m_win_main.set_status( command.arg1 );
+    }
+
     ////////////////////////////
-    // Coreが自前で処理するコマンド( Core::exec_command() で処理 )
+    // その他 Coreが自前で処理するコマンド( Core::exec_command() で処理 )
 
     m_list_command.push_back( command );
     dispatch(); // 一度メインループに戻った後にcallback_dispatch() が呼び戻される
@@ -2354,20 +2370,6 @@ void Core::exec_command()
     // あるadminのnotebookがswitchした
     else if( command.command  == "page_switched" ){
         set_toggle_view_button();
-    }
-
-    // タイトル、URL、ステータスなどの表示
-    else if( command.command  == "set_title" ){
-        m_title = command.arg1;
-        set_maintitle();
-    }
-
-    else if( command.command  == "set_url" ){
-        m_entry_url.set_text( command.url );
-    }
-
-    else if( command.command  == "set_status" ){
-        m_win_main.set_status( command.arg1 );
     }
 
     // マウスジェスチャ

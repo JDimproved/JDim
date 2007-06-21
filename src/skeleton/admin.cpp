@@ -491,13 +491,13 @@ void Admin::exec_command()
     // タイトル表示
     // アクティブなviewから依頼が来たらコアに渡す
     else if( command.command == "set_title" ){
-        set_title( command.url, command.arg1 );
+        set_title( command.url, command.arg1, false );
     }
 
     // ステータス表示
     // アクティブなviewから依頼が来たらコアに渡す
     else if( command.command == "set_status" ){
-        set_status( command.url, command.arg1 );
+        set_status( command.url, command.arg1, false );
     }
 
     // マウスジェスチャ
@@ -589,6 +589,20 @@ void Admin::update_host( const std::string& oldhost, const std::string& newhost 
         }
     }
 }
+
+
+//
+// URLやステータスを更新
+//
+void Admin::update_status( View* view, const bool force )
+{
+    if( view ){
+        set_title( view->get_url(), view->get_title(), force );
+        set_url( view->get_url(), view->url_for_copy(), force );
+        set_status( view->get_url(), view->get_status(), force );
+    }
+}
+
 
 
 //
@@ -935,15 +949,16 @@ void Admin::update_finish( const std::string& url )
 //
 // タイトル表示
 //
-void Admin::set_title( const std::string& url, const std::string& title )
+void Admin::set_title( const std::string& url, const std::string& title, const bool force )
 {
     if( m_win ) m_win->set_title( "JD - " + title );
     else{
 
-        // アクティブなviewからコマンドが来たら表示する
         SKELETON::View* view = get_current_view();
-        if( m_focus && view && view->get_url() == url ){
-            CORE::core_set_command( "set_title", url, title );
+        if( view ){
+
+            // アクティブなviewからコマンドが来たら表示する
+            if( force || ( m_focus && view->get_url() == url ) ) CORE::core_set_command( "set_title", url, title );
         }
     }
 }
@@ -952,15 +967,16 @@ void Admin::set_title( const std::string& url, const std::string& title )
 //
 // URLバーにアドレス表示
 //
-void Admin::set_url( const std::string& url, const std::string& url_show )
+void Admin::set_url( const std::string& url, const std::string& url_show, const bool force )
 {
     if( m_win ){}
     else{
 
-        // アクティブなviewからコマンドが来たら表示する
         SKELETON::View* view = get_current_view();
-        if( m_focus && view && view->get_url() == url ){
-            CORE::core_set_command( "set_url", url_show );
+        if( view ){
+
+            // アクティブなviewからコマンドが来たら表示する
+            if( force || ( m_focus && view->get_url() == url ) ) CORE::core_set_command( "set_url", url_show );
         }
     }
 }
@@ -969,16 +985,19 @@ void Admin::set_url( const std::string& url, const std::string& url_show )
 //
 // ステータス表示
 //
-void Admin::set_status( const std::string& url, const std::string& stat )
+void Admin::set_status( const std::string& url, const std::string& stat, const bool force )
 {
     if( m_win ) m_win->set_status( stat );
     else{
         
-        // アクティブなviewからコマンドが来たら表示する
         SKELETON::View* view = get_current_view();
-        if( m_focus && view && view->get_url() == url ){
-            CORE::core_set_command( "set_status", url, stat );
-            CORE::core_set_command( "set_mginfo", "", "" );
+        if( view ){
+            
+            // アクティブなviewからコマンドが来たら表示する
+            if( force || ( m_focus && view->get_url() == url ) ){
+                CORE::core_set_command( "set_status", url, stat );
+                CORE::core_set_command( "set_mginfo", "", "" );
+            }
         }
     }
 }
@@ -1000,9 +1019,7 @@ void Admin::focus_view( int page )
     SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) {
         view->focus_view();
-        set_title( view->get_url(), view->get_title() );
-        set_url( view->get_url(), view->url_for_copy() );
-        set_status( view->get_url(), view->get_status() );
+        update_status( view, false );
     }
 }
 
@@ -1261,12 +1278,7 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
         set_tabicon( view->get_url(), "switch_page" );
 
         view->redraw_view();
-
-        if( m_focus ){
-            set_title( view->get_url(), view->get_title() );
-            set_url( view->get_url(), view->url_for_copy() );
-            set_status( view->get_url(), view->get_status() );
-        }
+        if( m_focus ) update_status( view, false );
 
         CORE::core_set_command( "page_switched", m_url, view->get_url() );
     }

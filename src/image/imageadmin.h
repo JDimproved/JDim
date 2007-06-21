@@ -102,6 +102,7 @@ namespace IMAGE
         void slot_release_left();
         void slot_release_right();
 
+        bool copy_file( const std::string& url, const std::string& path_from, const std::string& path_to );
         void save_all();
     };
 

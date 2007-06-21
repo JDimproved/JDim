@@ -654,11 +654,7 @@ void ImageAdmin::focus_view( int)
         view_icon->focus_view();
 
         SKELETON::View* view = get_current_view();
-        if( view ){
-            set_url( view->get_url(), view->get_url() );
-            set_title( view->get_url(), view->get_title() );
-            set_status( view->get_url(), view->get_status() );
-        }
+        if( view ) update_status( view, false );
     }
 }
 
@@ -911,6 +907,36 @@ void ImageAdmin::slot_release_right()
     m_scroll = SCROLL_NO;
 }
 
+
+
+//
+// 画像ファイルのコピー
+//
+bool ImageAdmin::copy_file( const std::string& url, const std::string& path_from, const std::string& path_to )
+{
+#ifdef _DEBUG
+    std::cout << "ImageAdmin::copy_file url = " << url << std::endl
+              << "from = " << path_from << std::endl
+              << "to = " << path_to << std::endl;
+#endif
+
+    if( ! CACHE::jdcopy( path_from, path_to ) ){
+
+        // ビューを切り替えてURLやステータス更新
+        switch_img( url );
+        SKELETON::View* view = get_current_view();
+        if( view ) update_status( view, true );
+
+        SKELETON::MsgDiag mdiag( get_win(), path_to + "\n\nの保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。\n\n画像保存をキャンセルしました。原因を解決してからもう一度保存を行ってください。" );
+        mdiag.run();
+
+        return false;
+    }
+
+    return true;
+}
+
+
 //
 // すべて保存
 //
@@ -963,14 +989,19 @@ void ImageAdmin::save_all()
                 if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
 
                     // すべて上書き
-                    if( overwrite == 1 ) CACHE::jdcopy( path_from, path_to ); 
+                    if( overwrite == 1 ){
+                        if( ! copy_file( url, path_from, path_to ) ) return;
+                    }
                     else if( overwrite != -1 ){
-                    
+
+                        // ビューを切り替えてURLやステータス更新
                         switch_img( url );
+                        SKELETON::View* view = get_current_view();
+                        if( view ) update_status( view, true );
 
                         for(;;){
 
-                            SKELETON::MsgDiag mdiag( get_win(), "ファイルが存在します。ファイル名を変更しますか？", 
+                            SKELETON::MsgDiag mdiag( get_win(), "ファイルが存在します。ファイル名を変更して保存しますか？", 
                                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
                             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
                             mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
@@ -988,7 +1019,7 @@ void ImageAdmin::save_all()
                                     overwrite = 1;
                                     // 上書き
                                 case Gtk::RESPONSE_YES + 100:
-                                    CACHE::jdcopy( path_from, path_to );
+                                    if( ! copy_file( url, path_from, path_to ) ) return;
                                     break;
 
                                     // 名前変更
@@ -1011,7 +1042,7 @@ void ImageAdmin::save_all()
                     }
 
                 }
-                else CACHE::jdcopy( path_from, path_to );
+                else if( ! copy_file( url, path_from, path_to ) ) return;
             }
 
         }

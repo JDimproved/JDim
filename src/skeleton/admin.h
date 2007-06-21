@@ -111,6 +111,9 @@ namespace SKELETON
         // 移転などでviewのホスト名を更新
         void update_host( const std::string& oldhost, const std::string& newhost );
 
+        // URLやステータスを更新
+        void update_status( View* view, const bool force );
+
         DragableNoteBook* get_notebook(){ return m_notebook; }
 
         // コマンド入力
@@ -152,9 +155,9 @@ namespace SKELETON
         virtual void close_view( View* view );
         virtual void close_all_view( const std::string& url );
         virtual void close_current_view();
-        virtual void set_title( const std::string& url, const std::string& title );
-        virtual void set_url( const std::string& url, const std::string& url_show );
-        virtual void set_status( const std::string& url, const std::string& stat );
+        virtual void set_title( const std::string& url, const std::string& title, const bool force );
+        virtual void set_url( const std::string& url, const std::string& url_show, const bool force );
+        virtual void set_status( const std::string& url, const std::string& stat, const bool force );
         virtual void focus_view( int page );
         virtual void focus_current_view();
         virtual void restore_focus();

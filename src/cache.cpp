@@ -602,15 +602,16 @@ size_t CACHE::load_rawdata( const std::string& path, char* data, size_t n )
 }
 
 
-bool CACHE::save_rawdata( const std::string& path, const std::string& str, bool append )
+size_t CACHE::save_rawdata( const std::string& path, const std::string& str, bool append )
 {
     return save_rawdata( path, str.c_str(), str.length(), append );
 }
 
 
 
-bool CACHE::save_rawdata( const std::string& path, const char* data, size_t n, bool append )
+size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n, bool append )
 {
+    size_t count = 0;
     std::ofstream fout;
     if( append ) fout.open( path.c_str(), std::ios::app );
     else fout.open( path.c_str() );
@@ -619,9 +620,10 @@ bool CACHE::save_rawdata( const std::string& path, const char* data, size_t n, b
         return false;
     }
     fout.write( data, n );
+    count = fout.tellp();
     fout.close();
 
-    return true;
+    return count;
 }
 
 
@@ -723,7 +725,7 @@ bool CACHE::jdcopy( const std::string& file_from, const std::string& file_to )
 #ifdef _DEBUG
     std::cout << "CACHE::jdcopy : from = " << file_from << std::endl;
     std::cout << "to = " << file_to << std::endl;
-    std::cout << "size = " << buf_stat.st_size << std::endl;
+    std::cout << "read size = " << buf_stat.st_size << std::endl;
 #endif    
 
     // 32Mより大きい画像はエラー出す
@@ -731,15 +733,23 @@ bool CACHE::jdcopy( const std::string& file_from, const std::string& file_to )
             MISC::ERRMSG( "CACHE::jdcopy: size is too big : " + file_from );
             return false;
     }
-    
+
+    bool ret = false;
     char* data = (char*)malloc( sizeof( char ) *  buf_stat.st_size );
 
-    load_rawdata( file_from, data, buf_stat.st_size );
-    save_rawdata( file_to, data, buf_stat.st_size );
+    size_t readsize = load_rawdata( file_from, data, buf_stat.st_size );
+    if( readsize ){
+        size_t savesize = save_rawdata( file_to, data, buf_stat.st_size );
+        if( readsize == savesize ) ret = true;
+
+#ifdef _DEBUG
+    std::cout << "save size = " << savesize << std::endl;
+#endif
+    }
     
     free( data );
 
-    return true;
+    return ret;
 }
 
 //
@@ -840,15 +850,24 @@ std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& file_
         // 既にファイルがある場合は問い合わせる
         if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
 
-            SKELETON::MsgDiag mdiag( parent, "ファイルが存在します。ファイル名を変更しますか？",
-                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            SKELETON::MsgDiag mdiag( parent, "ファイルが存在します。ファイル名を変更して保存しますか？", 
+                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+            mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+            mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+            mdiag.add_button( "上書き", Gtk::RESPONSE_YES + 100 );
 
-            if( mdiag.run() ==  Gtk::RESPONSE_YES ) return CACHE::open_save_diag( parent, file_from,  path_to );
+            int ret = mdiag.run();
+            mdiag.hide();
 
-            return std::string();
+            if( ret ==  Gtk::RESPONSE_YES ) return CACHE::open_save_diag( parent, file_from,  path_to );
+            else if( ret == Gtk::RESPONSE_NO ) return std::string();
         }
 
         if( CACHE::jdcopy( file_from, path_to ) ) return path_to;
+        else{
+            SKELETON::MsgDiag mdiag( parent, file_to + "\n\nの保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。" );
+            mdiag.run();
+        }
     }
 
     return std::string();

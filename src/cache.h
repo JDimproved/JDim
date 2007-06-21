@@ -146,8 +146,8 @@ namespace CACHE
     // 生データ読み書き
     size_t load_rawdata( const std::string& path, std::string& str );
     size_t load_rawdata( const std::string& path, char* data, size_t n );    
-    bool save_rawdata( const std::string& path, const std::string& str, bool append = false );
-    bool save_rawdata( const std::string& path, const char* data, size_t n, bool append = false );
+    size_t save_rawdata( const std::string& path, const std::string& str, bool append = false );
+    size_t save_rawdata( const std::string& path, const char* data, size_t n, bool append = false );
 
     // ファイル情報
     long file_exists( const std::string& path );
