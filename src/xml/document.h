@@ -42,8 +42,8 @@ namespace XML
         void init( Glib::RefPtr< Gtk::TreeStore > treestore,
                     const std::string& root_name );
 
-        // Gtk::TreeStore を生成する
-        Glib::RefPtr< Gtk::TreeStore > get_treestore( const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand );
+        // Gtk::TreeStore をセットする
+        void set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand );
 
         // ルート要素を取得する
         Dom* get_root_element( const std::string& node_name = std::string() );

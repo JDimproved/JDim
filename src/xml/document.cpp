@@ -117,13 +117,13 @@ std::string Document::remove_comments( const std::string& str )
 
 
 //
-// Gtk::TreeStore を生成する
+// Gtk::TreeStore をセット
 //
 // list_path_expand = 後で Gtk::TreeView::expand_row() をするためのリスト
 //
-Glib::RefPtr< Gtk::TreeStore > Document::get_treestore( const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand )
+void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand )
 {
-    Glib::RefPtr< Gtk::TreeStore > treestore = Gtk::TreeStore::create( m_columns );
+    treestore->clear();
 
     if( ! m_childNodes.empty() )
     {
@@ -134,8 +134,6 @@ Glib::RefPtr< Gtk::TreeStore > Document::get_treestore( const std::string& root_
         if( root ) root->append_treestore( treestore, list_path_expand );
         else append_treestore( treestore, list_path_expand );
     }
-
-    return treestore;
 }
 
 

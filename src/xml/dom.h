@@ -9,10 +9,9 @@
 #include <list>
 #include <map>
 #include <set>
+#include <gtkmm.h>
 
 #include "domlist.h"
-#include "bbslist/columns.h"
-
 
 namespace XML
 {
@@ -46,11 +45,6 @@ namespace XML
 
         // 子要素リスト
         std::list< Dom* > m_childNodes;
-
-      protected:
-
-        // Gtk::TreeModel::ColumnRecord の派生クラス( bbslist/columns.h )
-        BBSLIST::TreeColumns m_columns;
 
       private:
 

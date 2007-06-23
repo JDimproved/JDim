@@ -1959,8 +1959,8 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
     // 開いてるツリーの格納用
     std::list< Gtk::TreePath > list_path_expand;
 
-    // Domノードから Gtk::TreeStore を生成
-    m_treestore = m_document.get_treestore( root_name, list_path_expand );
+    // Domノードから Gtk::TreeStore をセット
+    m_document.set_treestore( m_treestore, root_name, list_path_expand );
 
 #if GTKMMVER >= 280
     m_treeview.set_model( m_treestore );

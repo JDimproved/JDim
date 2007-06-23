@@ -9,6 +9,8 @@
 #include "global.h"
 #include "tools.h"
 
+#include "bbslist/columns.h"
+
 #include <sstream>
 
 #define SIZE_OF_RAWDATA ( 2 * 1024 * 1024 )
@@ -435,6 +437,8 @@ void Dom::parse( const Gtk::TreeModel::Children& children )
 {
     if( ! this || children.empty() ) return;
 
+    BBSLIST::TreeColumns columns;
+
     // Gtk::TreeModel::Children を走査
     Gtk::TreeModel::iterator it = children.begin();
     while( it != children.end() )
@@ -442,10 +446,10 @@ void Dom::parse( const Gtk::TreeModel::Children& children )
         Gtk::TreeModel::Row row = *it;
 
         // 各値を取得( bbslist/columns.h を参照 )
-        const int type = row[ m_columns.m_type ];
-        const Glib::ustring url = row[ m_columns.m_col_url ];
-        const Glib::ustring name = row[ m_columns.m_col_name ];
-        const bool expand = row[ m_columns.m_expand ];
+        const int type = row[ columns.m_type ];
+        const Glib::ustring url = row[ columns.m_col_url ];
+        const Glib::ustring name = row[ columns.m_col_name ];
+        const bool expand = row[ columns.m_expand ];
 
         if( type != TYPE_UNKNOWN )
         {
@@ -480,6 +484,8 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
 {
     if( ! this ) return;
 
+    BBSLIST::TreeColumns columns;
+
     // ノードの子要素を走査
     std::list< Dom* >::iterator it = m_childNodes.begin();
     while( it != m_childNodes.end() )
@@ -499,10 +505,10 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                 else row = *( treestore->append() );
 
                 // 各値をセット
-                row[ m_columns.m_type ] = type;
-                row[ m_columns.m_col_name ] = (*it)->getAttribute( "name" );
-                row[ m_columns.m_col_url ] = (*it)->getAttribute( "url" );
-                row[ m_columns.m_col_image ] = XML::get_icon( type );
+                row[ columns.m_type ] = type;
+                row[ columns.m_col_name ] = (*it)->getAttribute( "name" );
+                row[ columns.m_col_url ] = (*it)->getAttribute( "url" );
+                row[ columns.m_col_image ] = XML::get_icon( type );
 
                 // 開いているツリーを追加
                 if( type == TYPE_DIR
