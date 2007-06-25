@@ -2,21 +2,21 @@
 # For using svn: do
 # export SVNROOT="http://svn.sourceforge.jp/svnroot/jd4linux/jd"
 # svn checkout $SVNROOT/trunk
-# cd trunk
-# svn checkout $SVNROOT/help
-# chmod -R go+rX .
-# cd ..
 # mv trunk jd-%%{main_ver}-%%{strtag}
 # tar czf jd-%%{main_ver}-%%{strtag}.tgz jd-%%{main_ver}-%%{strtag}
-#
+##########################################
+
 ##########################################
 # Defined by upsteam
 #
 %define         main_ver      1.9.5
-%define         strtag        beta070616
-%define         repoid        24814
+%define         strtag        rc070625
+%define         repoid        25845
+# Define this if this is pre-version
+%define         pre_release   1
+##########################################
 
-
+##########################################
 # Defined by vendor
 #
 %define         vendor_rel    1
@@ -24,18 +24,22 @@
 # overwrite Vendor entry in Summary
 %define         vendorname    fedora
 %define         gtkmmdevel    gtkmm24-devel
+%define         fontpackage   fonts-japanese
 %define         icondir       %{_datadir}/icons/hicolor/96x96/apps/
+##########################################
 
-# Define this if this is pre-version
-%define         pre_release   1
-
+##########################################
 %if %{pre_release}
 %define         rel           0.%{vendor_rel}.%{strtag}%{?dist}
 %else
 %define         rel           %{vendor_rel}%{?dist}
 %endif
 
-
+# By default, Migemo support is disabled.
+%if             0%{?fedora} >= 5
+%define         _with_migemo  1
+%endif
+%define         migemo_dict   %{_datadir}/cmigemo/utf-8/migemo-dict
 ##########################################
 
 Name:           jd
@@ -55,7 +59,10 @@ BuildRequires:  libtool automake
 BuildRequires:  openssl-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  libSM-devel
-Requires:       fonts-japanese
+%if 0%{?_with_migemo} >= 1
+BuildRequires:  cmigemo-devel
+%endif
+Requires:       %{fontpackage}
 
 
 %description
@@ -71,7 +78,12 @@ sh autogen.sh
 # set TZ for __TIME__
 export TZ='Asia/Tokyo'
 
-%configure
+%configure \
+%if 0%{?_with_migemo} >= 1
+   --with-migemo \
+   --with-migemodict=%{migemo_dict}
+%endif
+
 %{__make} %{?_smp_mflags}
 
 %install
@@ -83,8 +95,6 @@ export TZ='Asia/Tokyo'
 
 %{__install} -p -m 644 %{name}.png $RPM_BUILD_ROOT%{icondir}
 
-# desktop-file-tools 0.10->0.11 change
-# 0.11 no longer accepts Application, X-Fedora, X-Red-Hat-Base
 desktop-file-install \
    --vendor %{vendorname} \
    --dir $RPM_BUILD_ROOT%{_datadir}/applications \
