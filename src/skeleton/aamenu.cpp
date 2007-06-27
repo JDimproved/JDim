@@ -178,6 +178,10 @@ bool AAMenu::move_up()
 // キー入力のフック
 bool AAMenu::on_key_press_event( GdkEventKey* event )
 {
+#ifdef _DEBUG
+    std::cout << "AAMenu::on_key_press_event key = " << event->keyval << std::endl;
+#endif
+
     // 下移動
     if( event->keyval == GDK_j
              || ( ( event->state & GDK_CONTROL_MASK ) && event->keyval == GDK_n )
@@ -194,10 +198,18 @@ bool AAMenu::on_key_press_event( GdkEventKey* event )
 
         int id = CORE::get_aamanager()->shortcut2id( event->string[ 0 ] );
 
+#ifdef _DEBUG
+        std::cout << "id = " << id << " key = " << event->string[ 0 ] << std::endl;
+#endif
+
         if( id >= 0 ){
-            m_sig_selected.emit( CORE::get_aamanager()->get_aa( id ) );
-            CORE::get_aamanager()->append_history( id );
-            hide();
+
+            std::string aa = CORE::get_aamanager()->get_aa( id );
+            if( ! aa.empty() ){
+                m_sig_selected.emit( aa );
+                CORE::get_aamanager()->append_history( id );
+                hide();
+            }
         }
     }
 

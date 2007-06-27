@@ -225,11 +225,31 @@ void AAManager::save_history()
 }
 
 
+// ラベル、AA取得
+const std::string AAManager::get_label( const int id )
+{
+    if( id >= m_vec_label.size() ) return std::string();
+    return m_vec_label[ id ];
+}
+
+const std::string AAManager::get_aa( const int id )
+{
+    if( id >= m_vec_aa.size() ) return std::string();
+    return m_vec_aa[ id ]; 
+}
+
+
 //
 // ショートカットキー取得
 //
 const std::string AAManager::id2shortcut( const int id )
 {
+    if( id >= (int) m_map_shortcut.size() ) return std::string();
+
+#ifdef _DEBUG
+    std::cout << "AAManager::id2shortcut id = " << id << std::endl;
+#endif
+
     int key = m_map_shortcut[ id ];
     if( !key ) return std::string();
 
@@ -243,9 +263,10 @@ const std::string AAManager::id2shortcut( const int id )
 // ショートカットからid取得
 const int AAManager::shortcut2id( const char key )
 {
+    if( key == '\0' ) return -1;
+
     std::map< int, char >::iterator it = m_map_shortcut.begin();
     for( ; it != m_map_shortcut.end(); ++it ){
-
         if( (*it).second == key ) return (*it).first;
     }
 
