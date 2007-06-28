@@ -186,7 +186,11 @@ bool AAMenu::on_key_press_event( GdkEventKey* event )
     if( event->keyval == GDK_j
              || ( ( event->state & GDK_CONTROL_MASK ) && event->keyval == GDK_n )
              || event->keyval == GDK_space
-        ) move_down();
+        ){
+
+        move_down();
+        if( event->keyval == GDK_space ) return true;
+    }
 
     // 上移動
     else if( event->keyval == GDK_k
