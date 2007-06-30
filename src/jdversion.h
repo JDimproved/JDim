@@ -4,17 +4,17 @@
 #define _JDVER_H
 
 #define JDCOPYRIGHT "(c) 2006-2007 JD project"
-#define JDVERSIONSTR "1.9.5-rc070625"
+#define JDVERSIONSTR "1.9.5-070630"
 #define JDVERSION 195
-#define JDVERSION_FULL ( JDVERSION * 1000000 + 070625 )
+#define JDVERSION_FULL ( JDVERSION * 1000000 + 070630 )
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 
 // svn 版の時は JDVERSION_SVN をdefineする
-#define JDVERSION_SVN
+//#define JDVERSION_SVN
 
 // ベータ版の場合は define する
-#define JDVERSION_BETA
+//#define JDVERSION_BETA
 
 #ifdef JDVERSION_BETA
 #define JDHELP CONFIG::get_url_jdhp()+"manual/develop/"
