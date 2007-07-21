@@ -74,7 +74,9 @@ namespace ARTICLE
         // SKELETON::View の関数のオーバロード
         virtual const int width_client();
         virtual const int height_client();
+        virtual const int get_icon( const std::string& iconname );
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
+
         virtual void clock_in();
         virtual void reload();
         virtual void stop();

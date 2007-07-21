@@ -24,6 +24,7 @@ namespace SKELETON
 
         Tooltip();
         void clock_in();
+        void modify_font_label( const std::string& fontname );
 
         void set_text( const std::string& text );
         void set_min_width( const int& min_width ){ m_min_width = min_width; }

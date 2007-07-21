@@ -49,12 +49,7 @@ Dom::~Dom()
     std::cout << "~Dom() : " << m_nodeName << ", " << m_childNodes.size() << std::endl;
 #endif
 
-    std::list< Dom* >::iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
-    {
-        if( *it ) delete *it;
-        ++it;
-    }
+    clear();
 }
 
 // コピーコンストラクタ
@@ -64,26 +59,25 @@ Dom::Dom( const Dom& dom )
       m_nodeName( dom.m_nodeName ),
       m_nodeValue( dom.m_nodeValue ),
       m_parentNode( 0 ),
-      m_attributes( dom.m_attributes ),
-      m_childNodes( dom.m_childNodes )
+      m_attributes( dom.m_attributes )
 {
-    m_childNodes.clear();
+    copy_childNodes( dom );
+}
 
-    std::list< Dom* > children = dom.m_childNodes;
 
-    std::list< Dom* >::iterator it = children.begin();
-    while( it != children.end() )
+//
+// 子ノードのクリア
+//
+void Dom::clear()
+{
+    std::list< Dom* >::iterator it = m_childNodes.begin();
+    while( it != m_childNodes.end() )
     {
-        Dom* node = new Dom( (*it)->nodeType(), (*it)->nodeName() );
-        node->nodeValue( (*it)->nodeValue() );
-        node->parentNode( this );
-        node->attributes( (*it)->attributes() );
-        node->childNodes( (*it)->childNodes() );
-
-        m_childNodes.push_back( node );
-
+        if( *it ) delete *it;
         ++it;
     }
+
+    m_childNodes.clear();
 }
 
 
@@ -505,10 +499,7 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                 else row = *( treestore->append() );
 
                 // 各値をセット
-                row[ columns.m_type ] = type;
-                row[ columns.m_col_name ] = (*it)->getAttribute( "name" );
-                row[ columns.m_col_url ] = (*it)->getAttribute( "url" );
-                row[ columns.m_col_image ] = XML::get_icon( type );
+                columns.setup_row( row, (*it)->getAttribute( "url" ), (*it)->getAttribute( "name" ), type );
 
                 // 開いているツリーを追加
                 if( type == TYPE_DIR
@@ -630,21 +621,6 @@ Dom* Dom::ownerDocument()
 
 
 //
-// ノード：cloneNode()
-//
-Dom* Dom::cloneNode( const bool flag )
-{
-    if( ! this ) return 0;
-
-    Dom* node = new Dom( *this );
-
-    if( flag ) node->m_childNodes = m_childNodes;
-
-    return node;
-}
-
-
-//
 // ノード：parentNode
 //
 Dom* Dom::parentNode()
@@ -684,9 +660,33 @@ DomList Dom::childNodes()
     return result;
 }
 
-void Dom::childNodes( DomList children )
+
+//
+// dom の子ノードをコピーする
+//
+void Dom::copy_childNodes( const Dom& dom )
 {
-    if( this ) m_childNodes = children.get_list();
+    clear();
+
+    DomList children;
+    children = dom.m_childNodes;
+
+    if( this && children.size() ){
+
+        std::list< Dom* >::iterator it = children.begin();
+        while( it != children.end() )
+        {
+            Dom* node = new Dom( (*it)->nodeType(), (*it)->nodeName() );
+            node->nodeValue( (*it)->nodeValue() );
+            node->parentNode( this );
+            node->attributes( (*it)->attributes() );
+            node->copy_childNodes( *(*it) );
+
+            m_childNodes.push_back( node );
+
+            ++it;
+        }
+    }
 }
 
 

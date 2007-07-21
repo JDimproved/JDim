@@ -6,7 +6,8 @@ libbbslist_a_SOURCES = \
 	bbslistview.cpp \
 	favoriteview.cpp \
 	selectlistview.cpp \
-	selectdialog.cpp 
+	selectdialog.cpp \
+	columns.cpp
 
 noinst_HEADERS = \
 	bbslistadmin.h \

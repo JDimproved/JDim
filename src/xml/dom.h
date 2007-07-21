@@ -68,7 +68,7 @@ namespace XML
 
         // プロパティをセットするアクセッサ
         void parentNode( Dom* parent );
-        void childNodes( DomList children );
+        void copy_childNodes( const Dom& dom ); // dom の子ノードをコピーする
 
         // ノードを分解して Gtk::TreeStore へ Gtk::TreeModel::Row を追加
         void append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
@@ -80,6 +80,9 @@ namespace XML
         // コンストラクタ、デストラクタ
         Dom( const int& type, const std::string& name, const bool html = false );
         virtual ~Dom();
+
+        // クリア
+        void clear();
 
         // XMLタグ構造の文字列を生成
         std::string get_xml( const int n = 0 );
@@ -103,7 +106,6 @@ namespace XML
         // を返すようにしてあります。
 
         Dom* ownerDocument();
-        Dom* cloneNode( const bool flag = true );
         Dom* parentNode();
         const bool hasChildNodes();
         DomList childNodes();

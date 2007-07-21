@@ -86,6 +86,8 @@ void JDTreeView::init_font( const std::string& fontname )
     Pango::FontDescription pfd( fontname );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
     modify_font( pfd );
+
+    m_tooltip.modify_font_label( fontname );
 }
 
 
@@ -442,7 +444,7 @@ void JDTreeView::slot_selection_changed()
 
     std::string str;
     if( size >= 2 ) str = "選択数 " + MISC::itostr( size );
-    CORE::core_set_command( "set_mginfo" ,"", str );
+    CORE::core_set_command( "set_info" ,"", str );
 }
 
 

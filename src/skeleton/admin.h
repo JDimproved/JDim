@@ -47,6 +47,8 @@ namespace SKELETON
         Admin( const std::string& url );
         virtual ~Admin();
 
+        void setup_menu( const bool enable_checkupdate );
+
         virtual bool empty();
         const std::string& get_url() const{ return m_url; }
         virtual Gtk::Widget* get_widget();
@@ -163,11 +165,11 @@ namespace SKELETON
         virtual void restore_focus();
         virtual void focus_out();
         virtual void set_tablabel( const std::string& url, const std::string& str_label );
-        virtual void set_tabicon( const std::string& url, const std::string& iconname ){}
         virtual void relayout_all();
         virtual void open_window(){}
         virtual void close_window(){}
         virtual void toggle_toolbar();
+        virtual void toggle_icon( const std::string& url );
 
         // オートリロードのモード設定
         virtual bool set_autoreload_mode( const std::string& url, int mode, int sec );
@@ -185,6 +187,10 @@ namespace SKELETON
         std::list< View* > get_list_view();
         virtual View* get_current_view();
 
+        // タブの更新チェック
+        void check_update_all_tabs( const int from_page );
+
+        // タブの再読み込み
         void reload_all_tabs();
         void reload_all_tabs( const int from_page );
 
@@ -193,6 +199,9 @@ namespace SKELETON
 
         // notebookのタブが切り替わったときに呼ばれるslot
         void slot_switch_page( GtkNotebookPage*, guint page );
+
+        // タブをクリック
+        virtual void slot_tab_click( int page );
 
         // タブを閉じる
         virtual void slot_tab_close( int page );
@@ -209,6 +218,8 @@ namespace SKELETON
         virtual void slot_close_left_tabs();
         virtual void slot_close_right_tabs();
         virtual void slot_close_all_tabs();
+        virtual void slot_check_update_all_tabs();
+        virtual void slot_check_update_reload_all_tabs();
         virtual void slot_reload_all_tabs();
         virtual void slot_cancel_reload_all_tabs();
         virtual void slot_open_by_browser();

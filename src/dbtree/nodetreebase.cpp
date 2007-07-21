@@ -60,6 +60,7 @@ NodeTreeBase::NodeTreeBase( const std::string url, const std::string& modified )
       m_heap( SIZE_OF_HEAP ),
       m_buffer_lines( 0 ),
       m_parsed_text( 0 ),
+      m_check_update( false ),
       m_fout ( 0 )
 {
     set_date_modified( modified );
@@ -857,6 +858,7 @@ void NodeTreeBase::load_cache()
 
             const char* data = str.data();
             size_t size = 0;
+            m_check_update = false;
             init_loading();
             while( size < str.length() ){
                 size_t size_tmp = MIN( MAXSISE_OF_LINES, str.length() - size );
@@ -888,13 +890,16 @@ void NodeTreeBase::init_loading()
 //
 // ロード開始
 //
-void NodeTreeBase::download_dat()
+void NodeTreeBase::download_dat( const bool check_update )
 {
 #ifdef _DEBUG    
-    std::cout << "NodeTreeBase::download_dat : " << m_url << std::endl;
+    std::cout << "NodeTreeBase::download_dat : " << m_url << " lng = " << m_lng_dat << std::endl
+              << "modified = " << date_modified() << " check_update = " << check_update << std::endl;
 #endif
 
     if( is_loading() ) return;
+
+    m_check_update = check_update;
 
     // オフライン
     if( ! SESSION::is_online() ){
@@ -913,29 +918,36 @@ void NodeTreeBase::download_dat()
 
     init_loading();
 
-    // 保存ディレクトリ作成(無ければ)
-    if( CACHE::mkdir_boardroot( m_url ) ){
+    if( ! m_check_update ){
+
+        // 保存ディレクトリ作成(無ければ)
+        if( CACHE::mkdir_boardroot( m_url ) ){
     
-        // 保存ファイルオープン
-        std::string path_cache = CACHE::path_dat( m_url );
+            // 保存ファイルオープン
+            std::string path_cache = CACHE::path_dat( m_url );
 
 #ifdef _DEBUG
-        std::cout << "open " << path_cache.c_str() << std::endl;
+            std::cout << "open " << path_cache.c_str() << std::endl;
 #endif
 
-        m_fout = fopen( path_cache.c_str(), "ab" );
-        if( m_fout == NULL ){
-            MISC::ERRMSG( "fopen failed : " + path_cache );
+            m_fout = fopen( path_cache.c_str(), "ab" );
+            if( m_fout == NULL ){
+                MISC::ERRMSG( "fopen failed : " + path_cache );
+            }
         }
-    }
-    else{
-        MISC::ERRMSG( "could not create " + DBTREE::url_boardbase( m_url ) );
+        else{
+            MISC::ERRMSG( "could not create " + DBTREE::url_boardbase( m_url ) );
+        }
     }
 
     // ロード開始
     // ロード完了したら receive_finish() が呼ばれる
     JDLIB::LOADERDATA data;
     create_loaderdata( data );
+
+    // 更新チェックの時はHEADを使う
+    if( m_check_update ) data.head = true;
+
     if( data.url.empty() || ! start_load( data ) ){
         m_sig_finished.emit();
         clear();
@@ -960,6 +972,8 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
 
         return;
     }
+
+    if( m_check_update ) return;
 
     // レジューム処理
     // レジュームした時に先頭が '\n' かチェック
@@ -1016,22 +1030,27 @@ void NodeTreeBase::receive_finish()
         MISC::ERRMSG( err.str() );
     }
 
-    // Requested Range Not Satisfiable
-    if( get_code() == HTTP_RANGE_ERR ) m_broken = true;
+    if( ! m_check_update ){
 
-    // データがロードされなかったらキャッシュを消す
-    if( get_res_number() == 0 ){
+        // Requested Range Not Satisfiable
+        if( get_code() == HTTP_RANGE_ERR ) m_broken = true;
 
-        std::string path = CACHE::path_dat( m_url );
-        if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
-        set_date_modified( std::string() );
+        // データがロードされなかったらキャッシュを消す
+        if( get_res_number() == 0 ){
+
+            std::string path = CACHE::path_dat( m_url );
+            if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+            set_date_modified( std::string() );
+        }
+
+        // その他、何かエラーがあったらmodifiedをクリアしておく
+        if( !get_ext_err().empty() ) set_date_modified( std::string() );
     }
 
-    // その他、何かエラーがあったらmodifiedをクリアしておく
-    if( !get_ext_err().empty() ) set_date_modified( std::string() );
-
 #ifdef _DEBUG
-    std::cout << "NodeTreeBase::receive_finish lng = " << m_lng_dat << " code = " << get_code() << " " << get_str_code() << std::endl;
+    std::cout << "NodeTreeBase::receive_finish lng = " << m_lng_dat
+              << " code = " << get_code() << " " << get_str_code()
+              << " modified = " << date_modified() << std::endl;
 #endif    
     
     // 親 article クラスにシグナルを打ってツリー構造が変わったことを教える

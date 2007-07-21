@@ -4,12 +4,8 @@
 #include "jddebug.h"
 
 #include "favoriteview.h"
-#include "bbslistadmin.h"
-#include "selectdialog.h"
-#include "jdlib/misctime.h"
 
 #include "cache.h"
-#include "sharedbuffer.h"
 #include "global.h"
 
 // ルート要素名( fovorite.xml )
@@ -24,8 +20,10 @@ FavoriteListView::FavoriteListView( const std::string& url,
 {
     // D&D可
     get_treeview().set_reorderable_view( true );
-}
 
+    get_toolbar().set_combo( COMBO_FAVORITE );
+}
+ 
 
 FavoriteListView::~FavoriteListView()
 {
@@ -33,30 +31,18 @@ FavoriteListView::~FavoriteListView()
     std::cout << "FavoriteList::~FavoriteList : " << get_url() << std::endl;
 #endif 
 
-    save_xml( CACHE::path_xml_favorite() );
+    save_xml( false );
 }
 
 
-void FavoriteListView::shutdown()
+// xml保存
+void FavoriteListView::save_xml( bool backup )
 {
-#ifdef _DEBUG    
-    std::cout << "FavoriteList::shutdown\n";
-#endif
-    save_xml( CACHE::path_xml_favorite_bkup() );
+    std::string file = CACHE::path_xml_favorite();
+    if( backup ) file = CACHE::path_xml_favorite_bkup();
+
+    save_xml_impl( file, ROOT_NODE_NAME, "" );
 }
-
-
-//
-// コマンド
-//
-bool FavoriteListView::set_command( const std::string& command, const std::string& arg )
-{
-    if( command == "append_favorite" ) append_favorite();
-    if( command == "save_favorite" ) save_xml( CACHE::path_xml_favorite() );
-
-    return true;
-}
-
 
 
 //
@@ -79,16 +65,6 @@ void FavoriteListView::show_view()
 
     update_urls();
 }
-
-
-//
-// 内容更新
-//
-void FavoriteListView::update_item( const std::string& )
-{
-    update_urls();
-}
-
 
 
 //
@@ -115,33 +91,3 @@ Gtk::Menu* FavoriteListView::get_popupmenu( const std::string& url )
 
     return popupmenu;
 }
-
-
-//
-// お気に入りにアイテム追加
-//
-// あらかじめ共有バッファにデータを入れておくこと
-//
-void  FavoriteListView::append_favorite()
-{
-    if( CORE::SBUF_size() == 0 ) return;
-    
-    SelectListDialog diag( get_url(), get_treestore() );
-    if( diag.run() != Gtk::RESPONSE_OK ) return;
-    append_from_buffer( diag.get_path(), true, true );
-}
-
-
-//
-// お気に入り保存
-//
-void FavoriteListView::save_xml( const std::string& file )
-{
-    if( get_ready_tree() )
-    {
-        tree2xml( std::string( ROOT_NODE_NAME ) );
-
-        CACHE::save_rawdata( file, m_document.get_xml() );
-    }
-}
-

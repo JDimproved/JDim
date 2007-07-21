@@ -132,7 +132,7 @@ void View::release_keyjump_key( int key )
         m_keyjump_num *= 10;
         m_keyjump_num += key - '0';
 
-        CORE::core_set_command( "set_mginfo", "", MISC::itostr( m_keyjump_num ) );
+        CORE::core_set_command( "set_info", "", MISC::itostr( m_keyjump_num ) );
     }
 }
 

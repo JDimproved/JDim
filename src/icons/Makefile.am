@@ -4,7 +4,7 @@ libicon_a_SOURCES = \
 	iconmanager.cpp
 
 icon_headers = jd16.h jd32.h jd48.h \
-	dir.h board.h board_update.h thread.h thread_update.h \
+	dir.h board.h board_update.h board_updated.h thread.h thread_update.h thread_updated.h thread_old.h \
 	image.h link.h loading.h loading_stop.h check.h down.h \
 	update.h newthread.h bkmark.h bkmark_update.h favorite.h write.h
 

@@ -42,6 +42,7 @@ enum
     STATUS_NORMAL = 1,   // 通常
     STATUS_OLD = 2,      // DAT落ち or 板が移転した
     STATUS_BROKEN = 4,   // あぼーんなどで壊れている
+    STATUS_UPDATE = 8   // 更新可能
 };
 
 
@@ -56,6 +57,8 @@ enum
 // オートリロードの最小秒数
 #define AUTORELOAD_MINSEC 10
 
+// 更新チェックの最小秒数
+#define CHECKUPDATE_MINSEC 300
 
 // プロトコル
 #define PROTO_ANCHORE "anc://"
@@ -98,6 +101,8 @@ enum
     // その他一般的なデータタイプ
     TYPE_BOARD,
     TYPE_THREAD,
+    TYPE_THREAD_UPDATE,
+    TYPE_THREAD_OLD,
     TYPE_IMAGE,
     TYPE_DIR,
     TYPE_DIR_END, // お気に入りの追加の時にサブディレクトリの終了の意味で使う

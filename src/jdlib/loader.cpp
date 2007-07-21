@@ -608,7 +608,17 @@ void Loader::run_main()
         if( m_stop ) break;
 
         // サーバ側がcloseした
-        if( read_size == 0 ) break;
+        if( read_size == 0 ){
+
+            // ヘッダを取得する前にcloseした
+            if( receiving_header && m_data.size_data == 0 ){
+                m_data.code = HTTP_ERR;         
+                errmsg = "no data";
+                goto EXIT_LOADING;
+            }
+
+            break;
+        }
 
         // ヘッダ取得
         if( receiving_header ){
@@ -877,8 +887,6 @@ bool Loader::receive_header( char* buf, size_t& read_size )
 bool Loader::analyze_header()
 {
     // コード
-    m_data.code = HTTP_INIT;
-    m_data.str_code.clear();
     std::string str_tmp = analyze_header_option( "HTTP/1.1 " );
     if( ! str_tmp.empty() ){
         m_data.str_code = "HTTP/1.1 "  + str_tmp;

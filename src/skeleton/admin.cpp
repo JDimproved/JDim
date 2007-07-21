@@ -17,6 +17,7 @@
 #include "global.h"
 #include "controlutil.h"
 #include "controlid.h"
+#include "updatemanager.h"
 
 
 #define MOVETAB_MENU { 5, 10, 15, 20, 25, 30 }
@@ -37,6 +38,7 @@ Admin::Admin( const std::string& url )
     m_notebook->signal_switch_page().connect( sigc::mem_fun( *this, &Admin::slot_switch_page ) );
     m_notebook->set_scrollable( true );
 
+    m_notebook->sig_tab_click().connect( sigc::mem_fun( *this, &Admin::slot_tab_click ) );
     m_notebook->sig_tab_close().connect( sigc::mem_fun( *this, &Admin::slot_tab_close ) );
     m_notebook->sig_tab_reload().connect( sigc::mem_fun( *this, &Admin::slot_tab_reload ) );
     m_notebook->sig_tab_menu().connect( sigc::mem_fun( *this, &Admin::slot_tab_menu ) );
@@ -46,21 +48,64 @@ Admin::Admin( const std::string& url )
     m_notebook->sig_drag_end().connect( sigc::mem_fun(*this, &Admin::slot_drag_end ) );
 
     m_list_command.clear();
+}
 
+
+Admin::~Admin()
+{
+#ifdef _DEBUG
+    std::cout << "Admin::~Admin " << m_url << std::endl;
+#endif
+
+    // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
+    set_dispatchable( false );
+
+    int pages = m_notebook->get_n_pages();
+
+#ifdef _DEBUG
+    std::cout << "pages = " << pages << std::endl;
+#endif
+    if( pages ){
+
+        for( int i = 0; i < pages; ++i ){
+
+            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( 0 ) );
+
+            m_notebook->remove_page( 0 );
+
+            if( view ) delete view;
+        }
+    }
+    m_list_command.clear();
+
+    close_window();
+    delete_jdwin();
+
+    if( m_notebook ) delete m_notebook;
+}
+
+
+//
+// メニューのセットアップ
+//
+void Admin::setup_menu( const bool enable_checkupdate )
+{
     // 右クリックメニュー
     m_action_group = Gtk::ActionGroup::create();
     m_action_group->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &Admin::slot_close_tab ) );
 
     m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる" ) );
     m_action_group->add( Gtk::Action::create( "CloseOther", "他のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseLeft", "左のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseRight", "右のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseLeft", "左←のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseRight", "右→のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseAll", "全てのタブ" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
 
-    m_action_group->add( Gtk::Action::create( "ReloadAll", "全てのタブを更新" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CancelReloadAll", "更新キャンセル" ),
-                         sigc::mem_fun( *this, &Admin::slot_cancel_reload_all_tabs ) );
-
+    m_action_group->add( Gtk::Action::create( "Reload_Tab_Menu", "全てのタブの再読み込み" ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdateAll", "更新チェックのみ" ), sigc::mem_fun( *this, &Admin::slot_check_update_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdateReloadAll", "更新されたタブを再読み込み" ),
+                         sigc::mem_fun( *this, &Admin::slot_check_update_reload_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "ReloadAll", "再読み込み" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CancelReloadAll", "キャンセル" ), sigc::mem_fun( *this, &Admin::slot_cancel_reload_all_tabs ) );
 
     m_action_group->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く" ), sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
     m_action_group->add( Gtk::Action::create( "CopyURL", "URLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
@@ -87,8 +132,21 @@ Admin::Admin( const std::string& url )
     "</menu>"
     "<separator/>"
 
-    "<menuitem action='ReloadAll'/>"
+    "<menu action='Reload_Tab_Menu'>"
+    "<menuitem action='ReloadAll'/>";
+
+    if( enable_checkupdate ){
+
+        str_ui += 
+        "<menuitem action='CheckUpdateAll'/>"
+        "<menuitem action='CheckUpdateReloadAll'/>";
+    }
+
+    str_ui +=
+
+    "<separator/>"
     "<menuitem action='CancelReloadAll'/>"
+    "</menu>"
     "<separator/>"
 
     "<menuitem action='OpenBrowser'/>"
@@ -142,41 +200,6 @@ Admin::Admin( const std::string& url )
     // ポップアップメニューにアクセレータを表示
     CONTROL::set_menu_motion( popupmenu );
 }
-
-
-Admin::~Admin()
-{
-#ifdef _DEBUG
-    std::cout << "Admin::~Admin " << m_url << std::endl;
-#endif
-
-    // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
-    set_dispatchable( false );
-
-    int pages = m_notebook->get_n_pages();
-
-#ifdef _DEBUG
-    std::cout << "pages = " << pages << std::endl;
-#endif
-    if( pages ){
-
-        for( int i = 0; i < pages; ++i ){
-
-            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( 0 ) );
-
-            m_notebook->remove_page( 0 );
-
-            if( view ) delete view;
-        }
-    }
-    m_list_command.clear();
-
-    close_window();
-    delete_jdwin();
-
-    if( m_notebook ) delete m_notebook;
-}
-
 
 
 Gtk::Widget* Admin::get_widget()
@@ -480,11 +503,6 @@ void Admin::exec_command()
         m_notebook->adjust_tabwidth();
     }
 
-    // タブのアイコンをセット
-    else if( command.command  == "set_tabicon" ){
-        set_tabicon( command.url, command.arg1 );
-    }
-
     // 全てのビューを再描画
     else if( command.command == "relayout_all" ) relayout_all();
 
@@ -533,6 +551,11 @@ void Admin::exec_command()
         toggle_toolbar();
     }
 
+    // アイコン表示切り替え
+    else if( command.command == "toggle_icon" ){
+        toggle_icon( command.url );
+    }
+
     // 個別のコマンド処理
     else command_local( command );
 }
@@ -555,7 +578,16 @@ void Admin::open_list( const std::string& str_list )
     std::list< std::string >::iterator it = list_url.begin();
     for( ; it != list_url.end(); ++it, waittime += AUTORELOAD_MINSEC ){
 
+        // 各admin別の引数をセット
         COMMAND_ARGS command_arg = get_open_list_args( ( *it ) );
+
+        // 共通の引数をセット
+        command_arg.command = "open_view";
+        command_arg.url = (*it);
+        command_arg.arg1 = "true";   // タブで開く
+        command_arg.arg2 = "false";  // 既に開いているかチェック
+        command_arg.arg3 = "noswitch";  // タブを切り替えない
+
         open_view( command_arg );
 
         // 一番最初のページは普通にオンラインで開く
@@ -567,6 +599,8 @@ void Admin::open_list( const std::string& str_list )
     }
 
     SESSION::set_online( online );
+
+    switch_admin();
     switch_view( *( list_url.begin() ) );
 }
 
@@ -610,7 +644,9 @@ void Admin::update_status( View* view, const bool force )
 //
 // command.arg1: "true" なら新しいtabを開く, "right" ならアクティブなtabの右に、"left"なら左に開く
 // command.arg2: "true" なら既にurlを開いているかチェックしない
-// command.arg3: モード。"auto"なら表示されていればリロードせずに切替え、されていなければ新しいタブで開いてロード
+// command.arg3: モード
+//   arg3 == "auto"なら表示されていればリロードせずに切替え、されていなければ新しいタブで開いてロード(スレ番号ジャンプなどで使用)
+//   arg3 == "noswitch"ならタブを切り替えない(連続して開くときに使用)
 //
 // その他のargは各ビュー別の設定
 //
@@ -628,19 +664,22 @@ void Admin::open_view( const COMMAND_ARGS& command )
     if( ! ( command.arg2 == "true" ) ){
         view = get_view( command.url );
         if( view ){
+
+            if( ! ( command.arg3 == "noswitch" ) ){
             
-            int page = m_notebook->page_num( *view );
+                int page = m_notebook->page_num( *view );
 #ifdef _DEBUG
-            std::cout << "page = " << page << std::endl;
+                std::cout << "page = " << page << std::endl;
 #endif        
-            set_current_page( page );
-            switch_admin();
+                set_current_page( page );
+                switch_admin();
+            }
 
             // オートモードは切り替えのみ
             if( command.arg3 == "auto" ) return;
 
             view->show_view();
-            focus_current_view();
+
             return;
         }
     }
@@ -683,11 +722,13 @@ void Admin::open_view( const COMMAND_ARGS& command )
     }
 
     m_notebook->show_all();
-    switch_admin();
     view->show();
     view->show_view();
-    set_current_page( m_notebook->page_num( *view ) );
-    focus_current_view();
+
+    if( ! ( command.arg3 == "noswitch" ) ){
+        switch_admin();
+        set_current_page( m_notebook->page_num( *view ) );
+    }
 }
 
 
@@ -1030,6 +1071,8 @@ void Admin::focus_view( int page )
 //
 void Admin::focus_current_view()
 {
+    if( ! m_focus ) return;
+
 #ifdef _DEBUG
     std::cout << "Admin::focus_current_view : " << m_url << std::endl;
 #endif
@@ -1119,6 +1162,42 @@ void Admin::toggle_toolbar()
 
 
 //
+// アイコン表示切り替え
+//
+void Admin::toggle_icon( const std::string& url )
+{
+    SKELETON::View* view = get_view( url );
+    if( view ){
+
+        std::string iconname = "default";
+
+        // まだロード中
+        if( view->is_loading() ) iconname = "loading";
+
+        // オートリロードモードでロード待ち
+        else if( view->get_autoreload_mode() != AUTORELOAD_NOT ) iconname = "loading_stop";
+
+        // 更新あり   
+        else if( view->is_updated() ){
+
+            // タブがアクティブの時は通常アイコンを表示
+            if( get_notebook()->page_num( *view ) == get_notebook()->get_current_page() ) iconname = "default";
+            else iconname = "updated";
+        }
+
+        // 更新チェック済み
+        else if( view->is_check_update() ) iconname = "update";
+
+        // 古い
+        else if( view->is_old() ) iconname = "old";
+
+        int id = view->get_icon( iconname );
+        get_notebook()->set_tabicon( iconname, get_notebook()->page_num( *view ), id );
+    }
+}
+
+
+//
 // オートリロードのモード設定
 //
 // 成功したらtrueを返す
@@ -1138,9 +1217,7 @@ bool Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
         // モード設定が成功したらアイコン変更
         if( view->get_autoreload_mode() == mode ){
 
-            if( mode != AUTORELOAD_NOT ) set_tabicon( view->get_url(), "loading_stop" );
-            else set_tabicon( view->get_url(), "default" );
-
+            toggle_icon( view->get_url() );
             return true;
         }
     }
@@ -1275,13 +1352,29 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
 #ifdef _DEBUG
         std::cout << "url = " << view->get_url() << std::endl;
 #endif
-        set_tabicon( view->get_url(), "switch_page" );
+        toggle_icon( view->get_url() );
 
         view->redraw_view();
-        if( m_focus ) update_status( view, false );
+        if( m_focus ){
+            update_status( view, false );
+            focus_current_view();
+        }
 
         CORE::core_set_command( "page_switched", m_url, view->get_url() );
     }
+}
+
+
+//
+// タブをクリック
+//
+void Admin::slot_tab_click( int page )
+{
+#ifdef _DEBUG
+    std::cout << "Admin::slot_tab_click " << page << std::endl;
+#endif
+
+    set_current_page( page );
 }
 
 
@@ -1319,6 +1412,8 @@ void Admin::slot_tab_reload( int page )
 //
 void Admin::slot_tab_menu( int page, int x, int y )
 {
+    if( ! m_ui_manager ) return;
+
 #ifdef _DEBUG
     std::cout << "Admin::slot_tab_menu " << page << std::endl;
 #endif
@@ -1450,9 +1545,59 @@ void Admin::slot_close_all_tabs()
 }
 
 
+//
+// 右クリックメニューの全てのタブの更新チェック
+//
+void Admin::slot_check_update_all_tabs()
+{
+    check_update_all_tabs( m_clicked_page );
+
+    CORE::get_checkupdate_manager()->run( false );
+}
+
 
 //
-// 右クリックメニューの全てを更新
+// 右クリックメニューの全てのタブの更新チェックと再読み込み
+//
+void Admin::slot_check_update_reload_all_tabs()
+{
+    check_update_all_tabs( m_clicked_page );
+
+    CORE::get_checkupdate_manager()->run( true );
+}
+
+
+//
+// from_page から全てのタブを更新チェック
+//
+// この後で CORE::get_checkupdate_manager()->run() すること
+//
+void Admin::check_update_all_tabs( const int from_page )
+{
+#ifdef _DEBUG
+    std::cout << "Admin::check_update_all_tabs from = " << from_page << std::endl;
+#endif
+
+    if( ! SESSION::is_online() ) return;
+
+    int pages = m_notebook->get_n_pages();
+
+    // クリックしたタブから右側
+    for( int i = from_page ; i < pages; ++i ){
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        if( view && view->get_enable_autoreload() ) CORE::get_checkupdate_manager()->push_back( view->get_url() );
+    }
+
+    // クリックしたタブから左側
+    for( int i = 0 ; i < from_page; ++i ){
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        if( view && view->get_enable_autoreload() ) CORE::get_checkupdate_manager()->push_back( view->get_url() );
+    }
+}
+
+
+//
+// 右クリックメニューの全ての再読み込み
 //
 void Admin::slot_reload_all_tabs()
 {
@@ -1465,7 +1610,7 @@ void Admin::slot_reload_all_tabs()
 
 
 //
-// 開いているタブから全てのタブを更新
+// 開いているタブから全てのタブを再読み込み
 //
 void Admin::reload_all_tabs()
 {
@@ -1474,7 +1619,7 @@ void Admin::reload_all_tabs()
 
 
 //
-// from_page から全てのタブを更新
+// from_page から全てのタブを再読み込み
 //
 void Admin::reload_all_tabs( const int from_page )
 {
@@ -1514,6 +1659,8 @@ void Admin::slot_cancel_reload_all_tabs()
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ) set_autoreload_mode( view->get_url(), AUTORELOAD_NOT, 0 );
     }
+
+    CORE::get_checkupdate_manager()->stop();
 }
 
 

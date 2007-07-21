@@ -337,18 +337,18 @@ void Img::receive_finish()
     // 指定サイズよりも大きい
     if( total_length() > (size_t)CONFIG::get_max_img_size() * 1024 * 1024 ){
         m_type = T_LARGE;
-        set_code( HTTP_CANCEL );
+        set_code( HTTP_ERR );
     }
 
     // エラーメッセージのセット
     if( m_type == T_NOIMG ){
-        set_code( HTTP_CANCEL );
+        set_code( HTTP_ERR );
         set_str_code( "画像ファイルではありません" );
         set_current_length( 0 );
     }
 
     else if( m_type == T_LARGE ){
-        set_code( HTTP_CANCEL );
+        set_code( HTTP_ERR );
         std::stringstream ss;
         ss << "ファイルサイズが大きすぎます ( " << ( total_length() / 1024 / 1024 ) << " M )";
         set_str_code( ss.str() );
@@ -356,13 +356,13 @@ void Img::receive_finish()
     }
 
     else if( m_type == T_OPENFAILED ){
-        set_code( HTTP_CANCEL );
+        set_code( HTTP_ERR );
         set_str_code( "ファイルのオープンに失敗しました" );
         set_current_length( 0 );
     }
 
     else if( m_type == T_WRITEFAILED ){
-        set_code( HTTP_CANCEL );
+        set_code( HTTP_ERR );
         set_str_code( "ハードディスクへの書き込みに失敗しました" );
         set_current_length( 0 );
     }
@@ -377,7 +377,7 @@ void Img::receive_finish()
         if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
 
         if( get_code() == HTTP_OK ){
-            set_code( HTTP_CANCEL );
+            set_code( HTTP_ERR );
             set_str_code( "サーバ上にファイルが存在しません" );
         }
     }

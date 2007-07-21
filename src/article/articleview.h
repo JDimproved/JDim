@@ -26,6 +26,12 @@ namespace ARTICLE
         virtual void goto_num( int num );
 
         // SKELETON::View の関数のオーバロード
+        virtual const bool is_loading();
+        virtual const bool is_updated();
+        virtual const bool is_check_update();
+        virtual const bool is_old();
+        virtual const bool is_broken();
+
         virtual void reload();
         virtual void show_view();
         virtual void update_view();
@@ -179,12 +185,15 @@ namespace ARTICLE
         bool m_mode_or;
         bool m_searchall;
         std::list< std::string > m_url_readcgi;
+        bool m_loading;
 
       public:
         ArticleViewSearchCache( const std::string& url_board, const std::string& query, bool mode_or, bool searchall );
         ~ArticleViewSearchCache();
 
         // SKELETON::View の関数のオーバロード
+        virtual const bool is_loading(){ return m_loading; }
+
         virtual void focus_view();
         virtual void show_view();
         virtual void relayout();

@@ -24,7 +24,6 @@ namespace BOARD
 
         virtual void restore();
         virtual void switch_admin();
-        virtual void set_tabicon( const std::string& url, const std::string& iconname );
 
       private:
         virtual void slot_drag_begin( int page );

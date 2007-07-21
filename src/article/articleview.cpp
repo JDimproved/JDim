@@ -73,7 +73,7 @@ ArticleViewMain::~ArticleViewMain()
 //
 void ArticleViewMain::goto_num( int num )
 {
-    if( get_article()->get_number_load() < num  && get_article()->is_loading() ){
+    if( get_article()->get_number_load() < num  && is_loading() ){
 
         m_gotonum_reserve = num;
         return;
@@ -84,6 +84,38 @@ void ArticleViewMain::goto_num( int num )
 }
 
 
+// ロード中
+const bool ArticleViewMain::is_loading()
+{
+    return get_article()->is_loading();
+}
+
+
+// 更新した
+const bool ArticleViewMain::is_updated()
+{
+    int code = DBTREE::article_code( url_article() );
+    return ( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT );
+}
+
+
+// 更新チェックして更新可能か
+const bool ArticleViewMain::is_check_update()
+{
+    return ( get_article()->get_status() & STATUS_UPDATE );
+}
+
+// 古いデータか
+const bool ArticleViewMain::is_old()
+{
+    return ( get_article()->get_status() & STATUS_OLD );
+}
+
+// 壊れているか
+const bool ArticleViewMain::is_broken()
+{
+    return ( get_article()->get_status() & STATUS_BROKEN );
+}
 
 //
 // 再読み込み
@@ -171,14 +203,14 @@ void ArticleViewMain::show_view()
     slot_push_claar_hl();
 
     // 差分 download 開始
-    get_article()->download_dat();
-    if( get_article()->is_loading() ){
+    get_article()->download_dat( false );
+    if( is_loading() ){
 
         set_status( "loading..." );
         ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
 
         // タブのアイコン状態を更新
-        ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
+        ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
     }
 }
 
@@ -209,40 +241,33 @@ void ArticleViewMain::update_view()
 //
 void ArticleViewMain::update_finish()
 {
-    int status = DBTREE::article_status( url_article() );
     std::string str_stat;
-    if( status & STATUS_OLD ) str_stat = "[ DAT落ち 又は 移転しました ]";
-    if( status & STATUS_BROKEN ) str_stat = "[ 壊れています ]";
+    if( is_old() ) str_stat = "[ DAT落ち 又は 移転しました ] ";
+    if( is_check_update() ) str_stat += "[ 更新可能です ] ";
+    if( is_broken() ) str_stat += "[ 壊れています ] ";
 
-    if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += " [ " + DBTREE::article_ext_err( url_article() ) + " ]";
+    if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += "[ " + DBTREE::article_ext_err( url_article() ) + " ] ";
 
     // 板名とスレ名をセット
     if( toolbar()->m_button_board.get_label().empty() ) toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
-    if( toolbar()->get_label().empty() ) toolbar()->set_label( str_stat + DBTREE::article_subject( url_article() ) );
+
+    std::string str_tablabel;
+    if( is_broken() ){
+        toolbar()->broken();
+        str_tablabel = "[ 壊れています ]";
+    }
+    if( toolbar()->get_label().empty() || ! str_tablabel.empty() ) toolbar()->set_label( str_tablabel + DBTREE::article_subject( url_article() ) );
 
     // タブのラベルセット
-    std::string str_label = str_stat + DBTREE::article_subject( url_article() );
+    std::string str_label = DBTREE::article_subject( url_article() );
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label ); 
 
     // タブのアイコン状態を更新
-    int code = DBTREE::article_code( url_article() );
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 
-    // まだロード中
-    if( get_article()->is_loading() ){
-        ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
-    }
-    // オートリロードモードでロード待ち
-    else if( View::get_autoreload_mode() != AUTORELOAD_NOT ){
-        ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading_stop" );
-    }
-    // 更新あり   
-    else if( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ){
-        ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "update" );
-    }
-    // 通常状態
-    else ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "default" );
 
 #ifdef _DEBUG
+    int code = DBTREE::article_code( url_article() );
     std::cout << "ArticleViewMain::update_finish " << str_label << " code = " << code << std::endl;;
 #endif
 
@@ -828,7 +853,8 @@ void ArticleViewDrawout::relayout()
 ArticleViewSearchCache::ArticleViewSearchCache( const std::string& url_board,
                                                 const std::string& query, bool mode_or, bool searchall )
     : ArticleViewBase( url_board ), m_cachetoolbar( NULL )
-    , m_url_board( url_board ), m_mode_or( mode_or ), m_searchall( searchall )
+    , m_url_board( url_board ), m_mode_or( mode_or ), m_searchall( searchall ),
+      m_loading( false )
 {
     struct timeval tv;
     struct timezone tz;
@@ -919,7 +945,8 @@ void ArticleViewSearchCache::show_view()
 
         if( CORE::get_search_manager()->is_searching() ){
             append_html( "検索中・・・" );
-            ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
+            m_loading = true;
+            ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
         }
     }
     else if( CORE::get_search_manager()->is_searching() ){
@@ -986,7 +1013,8 @@ void ArticleViewSearchCache::slot_search_fin()
     m_url_readcgi =  CORE::get_search_manager()->get_urllist();
     relayout();
 
-    ARTICLE::get_admin()->set_command( "set_tabicon", get_url(), "default" );
+    m_loading = false;
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 

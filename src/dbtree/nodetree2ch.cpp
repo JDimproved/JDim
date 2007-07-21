@@ -111,15 +111,15 @@ void NodeTree2ch::receive_finish()
     std::cout << "code = " << get_code() << std::endl;
 #endif
 
-    // オンライン、ログインしている、かつdat落ちの場合はofflaw.cgi経由で旧URLで再取得
-    if( LOGIN::get_login2ch()->login_now() && SESSION::is_online() && ! m_use_offlaw
+    // 更新チェックではなく、オンライン、ログインしている、かつdat落ちの場合はofflaw.cgi経由で旧URLで再取得
+    if( ! is_checking_update() && LOGIN::get_login2ch()->login_now() && SESSION::is_online() && ! m_use_offlaw
         && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_NOT_FOUND )
         ){
 #ifdef _DEBUG    
     std::cout << "reload by offlaw\n";
 #endif
         m_use_offlaw = true;
-        download_dat();
+        download_dat( is_checking_update() );
         return;
     }
 

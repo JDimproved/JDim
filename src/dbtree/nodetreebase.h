@@ -70,6 +70,7 @@ namespace DBTREE
         char* m_buffer_lines;
         int m_byte_buffer_lines_left;
         char* m_parsed_text;
+        bool m_check_update; // HEADによる更新チェックのみ
         
         // キャッシュ保存用ファイルハンドラ
         FILE *m_fout;
@@ -107,6 +108,7 @@ namespace DBTREE
         const size_t get_lng_dat() const { return m_lng_dat; }
         const bool is_broken() const{ return m_broken; }
         const std::string& get_ext_err() const { return m_ext_err; }
+        const bool is_checking_update() const { return m_check_update; }
 
         // number番のレスのヘッダノードのポインタを返す
         NODE* res_header( int number );
@@ -171,7 +173,7 @@ namespace DBTREE
         NODE* append_dat( const std::string& dat );
 
         // ロード開始
-        void download_dat();
+        void download_dat( const bool check_update );
 
         // あぼーんしているか
         bool get_abone( int number );

@@ -49,6 +49,12 @@ namespace BOARD
         // ポップアップメニュー用
         Gtk::TreeModel::Path m_path_selected;
 
+        // 更新された
+        bool m_updated;
+
+        // ロード中
+        bool m_loading;
+
     public:
         BoardView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
         ~BoardView();
@@ -56,6 +62,10 @@ namespace BOARD
         virtual const std::string url_for_copy();
 
         // SKELETON::View の関数のオーバロード
+        virtual const int get_icon( const std::string& iconname );
+        virtual const bool is_updated();
+        virtual const bool is_loading(){ return m_loading; }
+
         virtual void clock_in();
         virtual void reload();
         virtual void stop();

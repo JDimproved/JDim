@@ -22,6 +22,7 @@
 #include "global.h"
 #include "login2ch.h"
 #include "session.h"
+#include "updatemanager.h"
 
 #include <sstream>
 
@@ -75,6 +76,7 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
 #endif
 
     memset( &m_access_time, 0, sizeof( struct timeval ) );
+    memset( &m_check_update_time, 0, sizeof( struct timeval ) );
     memset( &m_write_time, 0, sizeof( struct timeval ) );
 
     // m_url にURLセット
@@ -841,23 +843,47 @@ void ArticleBase::stop_load()
 // DAT落ちの場合はロードしないので、強制的にリロードしたいときは reset_status() で
 // ステータスをリセットしてからロードする
 //
-void ArticleBase::download_dat()
+// check_update == true の時はHEADによる更新チェックをおこなう
+//
+void ArticleBase::download_dat( const bool check_update )
 {
     if( empty() ) return;
 
 #ifdef _DEBUG
-    std::cout << "ArticleBase::download_dat " << m_url << std::endl;;
-    std::cout << "status = " << m_status << std::endl;
+    std::cout << "ArticleBase::download_dat " << m_url << " status = " << m_status << " checkupdate = " << check_update << std::endl;
 #endif
 
-    // DAT落ちしていてログイン中で無い時はロードしない
-    if( ! ( ( m_status & STATUS_OLD ) && ! LOGIN::get_login2ch()->login_now() ) ){
+    struct timeval tv;
+    struct timezone tz;
+    if( gettimeofday( &tv, &tz ) != 0 ) tv.tv_sec = 0;
+
+    if( check_update ){
+
+        if( ! SESSION::is_online() ) return;
+
+        // 一度更新チェックしたらしばらくは再チェックできないようにする
+        time_t passed = 0;
+        if( tv.tv_sec ) passed = MAX( 0, tv.tv_sec - m_check_update_time.tv_sec );
 
 #ifdef _DEBUG
-        std::cout << "start\n";
-#endif       
-        get_nodetree()->download_dat();
+        std::cout << "check_update passed = " << passed << std::endl;
+#endif
+
+        if( passed <= CHECKUPDATE_MINSEC ) return;
     }
+
+    if( SESSION::is_online() && tv.tv_sec ) m_check_update_time = tv;
+
+    // DAT落ちしていてログイン中で無い時はロードしない
+    if( ( m_status & STATUS_OLD ) && ! LOGIN::get_login2ch()->login_now() ){
+        CORE::core_set_command( "toggle_favorite_icon", m_url );
+        return;
+    }
+
+#ifdef _DEBUG
+    std::cout << "start\n";
+#endif       
+    get_nodetree()->download_dat( check_update );
 }
 
 
@@ -870,13 +896,15 @@ void ArticleBase::slot_node_updated()
 {
     assert( m_nodetree );
 
+    // 更新チェック中
+    if( m_nodetree->is_checking_update() ) return;
+
 #ifdef _DEBUG
     std::cout << "ArticleBase::slot_node_updated" << std::endl;
 #endif
 
     // nodetreeから情報取得
     if( ! m_nodetree->get_subject().empty() ) set_subject( m_nodetree->get_subject() );
-
 
     // スレが更新している場合
     if( m_number_load != m_nodetree->get_res_number() ){
@@ -904,14 +932,9 @@ void ArticleBase::slot_load_finished()
 
     slot_node_updated();
 
-    // nodetreeから情報取得
+    // HTTPコード取得
+    int old_code = m_code;
     m_code = m_nodetree->get_code();
-    m_str_code = m_nodetree->get_str_code();
-    m_date_modified = m_nodetree->date_modified();
-    if( m_number_before_load < m_number_load ) m_number_new = m_number_load - m_number_before_load;
-    else m_number_new = 0;
-    m_number_before_load = m_number_load;
-    m_ext_err = m_nodetree->get_ext_err();
 
     // 状態更新
     int old_status = m_status;
@@ -921,6 +944,7 @@ void ArticleBase::slot_load_finished()
         if( m_code == HTTP_REDIRECT || m_code == HTTP_NOT_FOUND ){
             m_status &= ~STATUS_NORMAL;
             m_status |= STATUS_OLD;
+            CORE::core_set_command( "toggle_favorite_icon", m_url );
         }
 
         // 既にDAT落ち状態では無いときは通常状態にする
@@ -935,6 +959,37 @@ void ArticleBase::slot_load_finished()
 
     // 状態が変わっていたら情報保存
     if( old_status != m_status ) m_save_info = true;
+
+    // 更新チェック
+    if( m_nodetree->is_checking_update() ){
+
+#ifdef _DEBUG
+        std::cout << "check_update code = " << m_code << std::endl;
+#endif
+
+        // スレタブとお気に入りのアイコンを更新
+        if( m_code == HTTP_OK || m_code == HTTP_PARTIAL_CONTENT ){
+
+            show_updateicon( true );
+        }
+
+        // code と modified を戻しておく
+        m_code = old_code;
+        m_nodetree->set_date_modified( m_date_modified );
+
+        // 次のスレを更新チェック
+        CORE::get_checkupdate_manager()->pop_front();
+
+        return;
+    }
+
+    // nodetreeから情報取得
+    m_str_code = m_nodetree->get_str_code();
+    m_date_modified = m_nodetree->date_modified();
+    if( m_number_before_load < m_number_load ) m_number_new = m_number_load - m_number_before_load;
+    else m_number_new = 0;
+    m_number_before_load = m_number_load;
+    m_ext_err = m_nodetree->get_ext_err();
 
     // スレの数が0ならスレ情報はセーブしない
     if( ! m_number_load ) m_cached = false;
@@ -953,6 +1008,8 @@ void ArticleBase::slot_load_finished()
         m_read_info = true;
         m_save_info = true;
         m_enable_load = false;
+
+        show_updateicon( false );
     }
 
 #ifdef _DEBUG
@@ -979,6 +1036,39 @@ void ArticleBase::slot_load_finished()
 
 
 
+//
+// 更新アイコン表示
+//
+// updated == true の時に表示。falseなら戻す
+//
+void ArticleBase::show_updateicon( const bool update )
+{
+#ifdef _DEBUG
+    std::cout << "ArticleBase::show_updateicon update = " << update << " status = " << m_status << std::endl;
+#endif
+
+    struct timeval tv;
+    struct timezone tz;
+    if( gettimeofday( &tv, &tz ) != 0 ) m_check_update_time = tv;
+
+    if( update ){
+
+        if( ! ( m_status & STATUS_UPDATE ) ){
+            m_status |= STATUS_UPDATE;
+            CORE::core_set_command( "toggle_article_icon", m_url);
+            CORE::core_set_command( "toggle_favorite_icon", m_url );
+        }
+    }
+    else{
+
+        // お気に入りのアイコン表示を戻す。スレタブのアイコンの方はArticleViewが戻す
+        if( m_status & STATUS_UPDATE ){
+            m_status &= ~STATUS_UPDATE;
+            CORE::core_set_command( "toggle_favorite_icon", m_url );
+        }
+    }
+}
+
 
 //
 // キャッシュ削除
@@ -1002,6 +1092,7 @@ void ArticleBase::delete_cache()
     m_status = STATUS_UNKNOWN;
     m_date_modified.clear();
     memset( &m_access_time, 0, sizeof( struct timeval ) );
+    memset( &m_check_update_time, 0, sizeof( struct timeval ) );
     memset( &m_write_time, 0, sizeof( struct timeval ) );
     m_write_time_date.clear();
 
@@ -1036,6 +1127,9 @@ void ArticleBase::delete_cache()
 
     // BoardViewの行を更新
     CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
+
+    // お気に入りのアイコン表示を戻す
+    CORE::core_set_command( "toggle_favorite_icon", m_url );
 }
 
 
@@ -1170,6 +1264,7 @@ void ArticleBase::read_info()
         m_status = STATUS_UNKNOWN;
         GET_INFOVALUE( str_tmp, "status = " );
         if( ! str_tmp.empty() ) m_status = atoi( str_tmp.c_str() );
+        m_status &= ~STATUS_UPDATE; // 更新可能状態解除
 
         // あぼーん ID
         GET_INFOVALUE( str_tmp, "aboneid = " );

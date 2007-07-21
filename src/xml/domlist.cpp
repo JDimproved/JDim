@@ -1,7 +1,7 @@
 // License GPL2
 
 //#define _DEBUG
-//#include "jddebug.h"
+#include "jddebug.h"
 
 #include "domlist.h"
 
@@ -20,7 +20,7 @@ DomList::~DomList()
 }
 
 // std::list< Dom* > が代入された場合
-DomList& DomList::operator =( std::list< Dom* >& list )
+DomList& DomList::operator =( const std::list< Dom* >& list )
 {
     m_list = list;
 

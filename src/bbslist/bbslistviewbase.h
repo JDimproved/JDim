@@ -68,8 +68,6 @@ namespace BBSLIST
         // DOM共有オブジェクト
         XML::Document m_document;
 
-      protected:
-
         Glib::RefPtr< Gtk::TreeStore >& get_treestore() { return m_treestore; }
         SKELETON::JDTreeView& get_treeview() { return  m_treeview; }
         BBSListtToolBar& get_toolbar() { return m_toolbar; }
@@ -88,8 +86,21 @@ namespace BBSLIST
         // 移転があったときに行に含まれるURLを変更する
         void update_urls();
 
+        // アイコン表示の切り替え
+        void toggle_icon( const std::string& url );
+
         // path からその行のタイプを取得
         int path2type( const Gtk::TreePath& path );
+
+        // お気に入りにアイテム追加
+        // あらかじめ共有バッファに追加するデータをセットしておくこと
+        void append_item();
+
+        // xml保存
+        virtual void save_xml( bool backup ){}
+
+        // remove_dir != empty()の時はその名前のディレクトリを削除する
+        void save_xml_impl( const std::string& file, const std::string& root, const std::string& remove_dir );
 
       public:
 
@@ -99,11 +110,16 @@ namespace BBSLIST
         // SKELETON::View の関数のオーバロード
         virtual const std::string url_for_copy(){ return std::string(); }
 
+        virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
+
+        virtual void shutdown();
+
         virtual void clock_in();
         virtual void relayout();
         virtual void focus_view();
         virtual void focus_out();
         virtual void close_view();
+        virtual void update_item( const std::string& );
         virtual void operate_view( const int& control );
         virtual void goto_top();
         virtual void goto_bottom();
@@ -120,6 +136,7 @@ namespace BBSLIST
         void page_up();
         void page_down();
         void select_all_dir( Gtk::TreeModel::Path path );
+        void check_update_dir( Gtk::TreeModel::Path path );
 
         bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );
@@ -136,12 +153,17 @@ namespace BBSLIST
         void slot_copy_url();
         void slot_copy_title_url();
         void slot_select_all_dir();
+        void slot_check_update_dir();
+        void slot_check_update_open_dir();
+        void slot_cancel_check_update();
         void slot_preferences_board();
         void slot_preferences_article();
         void slot_preferences_image();
         void slot_row_exp( const Gtk::TreeModel::iterator& it, const Gtk::TreeModel::Path& path );
         void slot_row_col( const Gtk::TreeModel::iterator& it, const Gtk::TreeModel::Path& path );        
         void slot_ren_text_on_edited( const Glib::ustring& path, const Glib::ustring& text );
+        void slot_checkupdate_selected_rows();
+        void slot_checkupdate_open_selected_rows();
 
         // D&D 関係
         void slot_drag_begin();
@@ -155,6 +177,7 @@ namespace BBSLIST
         virtual bool open_row( Gtk::TreePath& path, bool tab );
         virtual void switch_rightview();
         void open_selected_rows();
+        void checkupdate_selected_rows();
         Glib::ustring path2url( const Gtk::TreePath& path );
         Glib::ustring path2name( const Gtk::TreePath& path );
         bool is_dir( Gtk::TreeModel::iterator& it );
@@ -164,7 +187,6 @@ namespace BBSLIST
                                          Gtk::TreeModel::Path path_dest = Gtk::TreeModel::Path()
                                          , bool subdir = true, bool after = true );
 
-        void setup_row( Gtk::TreeModel::Row& row, Glib::ustring url, Glib::ustring name, int type );
         bool copy_row( Gtk::TreeModel::iterator& src, Gtk::TreeModel::iterator& dest, bool subdir, bool after = true );
         void move_selected_row( const Gtk::TreePath& path, bool after );
 

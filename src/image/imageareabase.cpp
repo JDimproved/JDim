@@ -11,8 +11,6 @@
 #include "dbimg/imginterface.h"
 #include "dbimg/img.h"
 
-#include "httpcode.h"
-
 using namespace IMAGE;
 
 

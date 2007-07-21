@@ -103,7 +103,9 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
       m_previous_sortmode( false ),
-      m_toolbar( SESSION::get_show_board_toolbar() )
+      m_toolbar( SESSION::get_show_board_toolbar() ),
+      m_updated( false ),
+      m_loading( false )
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
@@ -406,6 +408,27 @@ BoardView::~BoardView()
     save_column_width();
 }
 
+
+// アイコンのID取得
+const int BoardView::get_icon( const std::string& iconname )
+{
+    int id = ICON::NONE;
+
+    if( iconname == "default" ) id = ICON::BOARD;
+    if( iconname == "loading" ) id = ICON::LOADING;
+    if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
+    if( iconname == "updated" ) id = ICON::BOARD_UPDATED;
+
+    return id;
+}
+
+
+// 更新した
+const bool BoardView::is_updated()
+{
+    int code = DBTREE::board_code( get_url() );
+    return ( ( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) && m_updated );
+}
 
 
 //
@@ -802,9 +825,6 @@ void BoardView::show_view()
     set_title( DBTREE::board_name( get_url() ) );
     BOARD::get_admin()->set_command( "set_title", get_url(), get_title() );
 
-    // タブにアイコンを表示
-    BOARD::get_admin()->set_command( "set_tabicon", get_url(), "loading" );
-
     // タブに名前をセット
     BOARD::get_admin()->set_command( "set_tablabel", get_url(), DBTREE::board_name( get_url() ) );
 
@@ -813,12 +833,16 @@ void BoardView::show_view()
 #endif
     m_liststore->clear();
     m_pre_query = std::string();
+    m_loading = true;
     
     // download 開始
     // 終わったら update_view() が呼ばれる
     DBTREE::board_download_subject( get_url() );
     set_status( "loading..." );
     BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
+
+    // タブにアイコンを表示
+    BOARD::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -871,8 +895,8 @@ void BoardView::update_view()
     std::cout << "BoardView::update_view " << get_url() << std::endl;
 #endif    
 
-    // 更新されたか
-    bool updated = false;
+    m_updated = false;
+    m_loading = false;
 
     // 画面消去
 #if GTKMMVER >= 280
@@ -911,7 +935,7 @@ void BoardView::update_view()
             update_row_common( art, row, id );
 
             // 更新があるかチェック
-            if( art->get_number_load() && art->get_number() > art->get_number_load() ) updated = true;
+            if( art->get_number_load() && art->get_number() > art->get_number_load() ) m_updated = true;
         }
 
 #if GTKMMVER >= 280
@@ -927,19 +951,9 @@ void BoardView::update_view()
     BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
 
     // タブのアイコン状態を更新
-    int code = DBTREE::board_code( get_url() );
-
-    // オートリロードモードでロード待ち
-    if( View::get_autoreload_mode() != AUTORELOAD_NOT ){
-        BOARD::get_admin()->set_command( "set_tabicon", get_url(), "loading_stop" );
-    }
-    // 更新あり   
-    else  if( ( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) && updated ){
-        BOARD::get_admin()->set_command( "set_tabicon", get_url(), "update" );
-    }
-    // 通常
-    else BOARD::get_admin()->set_command( "set_tabicon", get_url(), "default" );
+    BOARD::get_admin()->set_command( "toggle_icon", get_url() );
 }
+
 
 void BoardView::focus_view()
 {
@@ -1355,35 +1369,41 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
     if( art->is_bookmarked_thread() && art->enable_load() ){
         mark_val = COL_MARKVAL_BKMARKED_UPDATED;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::BKMARK_UPDATE );
+        art->show_updateicon( true );
     }
 
     // ブックマーク
     else if( art->is_bookmarked_thread() ){
         mark_val = COL_MARKVAL_BKMARKED;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::BKMARK );
+        art->show_updateicon( false );
     }
 
     // dat落ち
     else if( art->get_status() & STATUS_OLD ){
         mark_val = COL_MARKVAL_OLD;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::DOWN );
+        art->show_updateicon( false );
     }
 
     // キャッシュはあるが規定のレス数を越えていて全てのレスが既読
     else if( art->is_finished() ){
         mark_val = COL_MARKVAL_FINISHED;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::CHECK );
+        art->show_updateicon( false );
     }
 
     // 新着あり
     else if( art->is_cached() && art->enable_load() ){
         mark_val = COL_MARKVAL_UPDATED;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::UPDATE );
+        art->show_updateicon( true );
     }
     // キャッシュあり、新着無し
     else if( art->is_cached() ){
         mark_val = COL_MARKVAL_CACHED;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::CHECK );
+        art->show_updateicon( false );
     }
     // キャッシュ無し、新着
     else if( art->get_hour() < CONFIG::get_newthread_hour() ){
@@ -1860,12 +1880,12 @@ bool BoardView::drawout()
 
     if( reset ){
         focus_view();
-        CORE::core_set_command( "set_mginfo", "", "" );
+        CORE::core_set_command( "set_info", "", "" );
     }
-    else if( ! hit ) CORE::core_set_command( "set_mginfo", "", "検索結果： ヒット無し" );
+    else if( ! hit ) CORE::core_set_command( "set_info", "", "検索結果： ヒット無し" );
     else{
         focus_view();
-        CORE::core_set_command( "set_mginfo", "", "検索結果： " + MISC::itostr( hit ) + "件" );
+        CORE::core_set_command( "set_info", "", "検索結果： " + MISC::itostr( hit ) + "件" );
     }
 
     return true;

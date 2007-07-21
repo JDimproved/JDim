@@ -15,6 +15,8 @@
 #include "searchmanager.h"
 #include "aamanager.h"
 #include "dispatchmanager.h"
+#include "cssmanager.h"
+#include "updatemanager.h"
 #include "historymenu.h"
 #include "login2ch.h"
 #include "prefdiagfactory.h"
@@ -167,6 +169,9 @@ Core::~Core()
     // AA マネージャ削除
     CORE::delete_aamanager();
 
+    // 更新チェックマネージャ削除
+    CORE::delete_checkupdate_manager();
+
     // マウス、キーコンフィグ削除
     CONFIG::delete_keyconfig();
     CONFIG::delete_mouseconfig();
@@ -181,6 +186,9 @@ Core::~Core()
     ARTICLE::delete_admin();
     IMAGE::delete_admin();
     MESSAGE::delete_admin();
+
+    // cssマネージャ削除
+    CORE::delete_css_manager();
 
     // ログインマネージャ削除
     LOGIN::delete_login2ch();
@@ -1993,6 +2001,12 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "init_font" );
     }
 
+    // タブアイコンのセット
+    else if( command.command  == "toggle_article_icon" ){
+
+        ARTICLE::get_admin()->set_command( "toggle_icon", command.url );
+        return;
+    }
 
     ////////////////////////////
     // board系のコマンド
@@ -2058,10 +2072,9 @@ void Core::set_command( const COMMAND_ARGS& command )
         BBSLIST::get_admin()->set_command( "update_item", URL_BBSLISTVIEW );
         return;
     }
-
     else if( command.command  == "append_favorite" ){
 
-        BBSLIST::get_admin()->set_command( "append_favorite", command.url, command.arg1, command.arg2 );
+        BBSLIST::get_admin()->set_command( "append_item", URL_FAVORITEVIEW );
         return;
     }
     else if( command.command  == "update_favorite_item" ){
@@ -2071,7 +2084,12 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
     else if( command.command  == "save_favorite" ){
 
-        BBSLIST::get_admin()->set_command( "save_favorite" );
+        BBSLIST::get_admin()->set_command( "save_xml", URL_FAVORITEVIEW );
+        return;
+    }
+    else if( command.command  == "toggle_favorite_icon" ){
+
+        BBSLIST::get_admin()->set_command( "toggle_icon", command.url );
         return;
     }
 
@@ -2268,6 +2286,20 @@ void Core::set_command( const COMMAND_ARGS& command )
         m_win_main.set_status( command.arg1 );
     }
 
+    else if( command.command  == "set_info" ){
+        m_win_main.set_mginfo( command.arg1 );
+    }
+
+    // マウスジェスチャ
+    else if( command.command  == "set_mginfo" ){
+
+        // 画像ウィンドウが表示されている場合
+        if( ! SESSION::get_embedded_img() && SESSION::is_img_shown()
+            && SESSION::is_focus_win_img() ) IMAGE::get_admin()->set_command( "set_mginfo", "", command.arg1 );
+
+        else m_win_main.set_mginfo( command.arg1 );
+    }
+
     ////////////////////////////
     // その他 Coreが自前で処理するコマンド( Core::exec_command() で処理 )
 
@@ -2370,16 +2402,6 @@ void Core::exec_command()
     // あるadminのnotebookがswitchした
     else if( command.command  == "page_switched" ){
         set_toggle_view_button();
-    }
-
-    // マウスジェスチャ
-    else if( command.command  == "set_mginfo" ){
-
-        // 画像ウィンドウが表示されている場合
-        if( ! SESSION::get_embedded_img() && SESSION::is_img_shown()
-            && SESSION::is_focus_win_img() ) IMAGE::get_admin()->set_command( "set_mginfo", "", command.arg1 );
-
-        else m_win_main.set_mginfo( command.arg1 );
     }
 
     // bbsmenu再読み込み
@@ -3055,7 +3077,7 @@ void Core::switch_article( bool present )
             set_right_current_page( PAGE_ARTICLE );
         }
 
-        ARTICLE::get_admin()->set_command( "focus_current_view" );
+        ARTICLE::get_admin()->set_command_immediately( "focus_current_view" );
         SESSION::set_focused_admin( SESSION::FOCUS_ARTICLE );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_ARTICLE );
 
@@ -3096,7 +3118,7 @@ void Core::switch_board( bool present )
             set_right_current_page( PAGE_BOARD );
         }
 
-        BOARD::get_admin()->set_command( "focus_current_view" );
+        BOARD::get_admin()->set_command_immediately( "focus_current_view" );
         SESSION::set_focused_admin( SESSION::FOCUS_BOARD );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_BOARD );
 
@@ -3130,7 +3152,6 @@ void Core::switch_sidebar( const std::string& url, bool present )
     if( ! BBSLIST::get_admin()->empty() ){
 
         if( SESSION::focused_admin() != SESSION::FOCUS_SIDEBAR ){
-
             FOCUS_OUT_ALL();
             ARTICLE::get_admin()->set_command( "delete_popup" );
         }
@@ -3149,7 +3170,7 @@ void Core::switch_sidebar( const std::string& url, bool present )
 
         if( ! url.empty() ) BBSLIST::get_admin()->set_command( "switch_view", url );
 
-        BBSLIST::get_admin()->set_command( "focus_current_view" ); 
+        BBSLIST::get_admin()->set_command_immediately( "focus_current_view" ); 
         SESSION::set_focused_admin( SESSION::FOCUS_SIDEBAR );
     }
 
@@ -3189,7 +3210,7 @@ void Core::switch_image( bool present )
             SESSION::set_focused_admin_sidebar( SESSION::FOCUS_IMAGE );
         }
 
-        IMAGE::get_admin()->set_command( "focus_current_view" );
+        IMAGE::get_admin()->set_command_immediately( "focus_current_view" );
         if( SESSION::get_embedded_img() ) SESSION::set_img_shown( true );
     }
 
@@ -3229,7 +3250,7 @@ void Core::switch_message( bool present )
             SESSION::set_focused_admin_sidebar( SESSION::FOCUS_MESSAGE );
         }
 
-        MESSAGE::get_admin()->set_command( "focus_current_view" );
+        MESSAGE::get_admin()->set_command_immediately( "focus_current_view" );
     }
 
     set_sensitive_view_button();

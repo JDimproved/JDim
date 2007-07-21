@@ -42,6 +42,7 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_samba_sec( 0 )
     , m_rawdata( 0 )
     , m_read_info( 0 )
+    , m_append_articles( false )
     , m_article_null( 0 )
 {
     clear();
@@ -281,9 +282,6 @@ void BoardBase::read_info()
 
         // 板の情報ファイル読み込み
         read_board_info();
-
-        // キャッシュにあるレスをデータベースに登録
-        append_all_article_in_cache();
 
         // キャッシュからSETTING.TXT のロード
         load_setting();
@@ -565,6 +563,9 @@ ArticleBase* BoardBase::get_article( const std::string id )
 {
     if( id.empty() ) return get_article_null();
 
+    // キャッシュにあるレスをデータベースに登録
+    append_all_article_in_cache();
+
     // 線形リストなので遅い
     // TODO : ハッシュにする
     std::list< ArticleBase* >::iterator it;
@@ -605,7 +606,7 @@ ArticleBase* BoardBase::get_article_create( const std::string id )
 
         // データベースに無いので新規登録
         //
-        // なおRoot::get_board()　経由で呼ばれる BoardBase::read_info() でキャッシュにある
+        // なおget_article()でキャッシュにある
         // スレは全てDBに登録されているので DBに無いということはキャッシュにも無いということ。
         // よって append_article()に  cached = false　をパラメータとして渡す
 
@@ -1014,6 +1015,9 @@ std::list< std::string > BoardBase::get_filelist_in_cache()
 //
 void BoardBase::append_all_article_in_cache()
 {
+    if( m_append_articles ) return;
+    m_append_articles = true;
+
 #ifdef _DEBUG
     std::cout << "BoardBase::append_all_article_in_cache\n";
 #endif

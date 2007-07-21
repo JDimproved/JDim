@@ -117,31 +117,10 @@ void DragableNoteBook::remove_page( int page )
 //
 // タブにアイコンをセットする
 //
-void DragableNoteBook::set_tabicon( const std::string& iconname, int page,
-                                    int id_default, int id_update )
+void DragableNoteBook::set_tabicon( const std::string& iconname, const int page, const int id )
 {
     SKELETON::TabLabel* tablabel = get_tablabel( page );
-    if( tablabel ){
-
-        int id = id_default;
-
-        // タブが切り替わったときにAdmin::slot_switch_page から呼ばれる
-        if( iconname == "switch_page" ){
-
-            // update 状態以外の時はアイコンを変更しない
-            if( tablabel->get_id_icon() != id_update ) return;
-        }
-
-        if( iconname == "loading" ) id = ICON::LOADING;
-        if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
-        if( iconname == "update" ){
-
-            // タブがアクティブの時は通常アイコンを表示
-            if( page != get_current_page() ) id = id_update;
-        }
-
-        tablabel->set_id_icon( id );
-    }
+    if( tablabel && id != ICON::NONE ) tablabel->set_id_icon( id );
 }
 
 
@@ -372,7 +351,7 @@ bool DragableNoteBook::on_button_release_event( GdkEventButton* event )
         if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
 
         // ページ切替え
-        if( m_control.button_alloted( event, CONTROL::ClickButton ) ) set_current_page( m_page );
+        if( m_control.button_alloted( event, CONTROL::ClickButton ) ) m_sig_tab_click.emit( m_page );
 
         // タブを閉じる
         else if( m_control.button_alloted( event, CONTROL::CloseTabButton ) ){

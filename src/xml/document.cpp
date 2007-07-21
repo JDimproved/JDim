@@ -16,84 +16,53 @@ using namespace XML;
 Document::Document( const std::string& str, const bool html )
     : Dom( NODE_TYPE_DOCUMENT, "#document", html )
 {
-    if( ! str.empty() ) parse( remove_comments( str ) );
+    init( str );
 }
+
 
 // Gtk::TreeStore を元にノードツリーを作る場合
 Document::Document( Glib::RefPtr< Gtk::TreeStore > treestore, const std::string& root_name )
     : Dom( NODE_TYPE_DOCUMENT, "#document" )
 {
-    // XMLとして必要なのでルート要素を作成
-    Dom* root = appendChild( NODE_TYPE_ELEMENT, root_name );
-
-    // ルート以下に追加
-    root->parse( treestore->children() );
+    init( treestore, root_name );
 }
+
 
 // 何も無い状態からノードツリーを作る場合
 Document::Document()
     : Dom( NODE_TYPE_DOCUMENT, "#document" )
-{
-    
-}
+{}
 
-Document::~Document()
-{
 
-}
-
+//
 // このクラスは代入可能
+//
 Document& Document::operator=( const Document& document )
 {
     if( this == &document ) return *this;
-
-    m_childNodes.clear();
-
-    std::list< Dom* > children = document.m_childNodes;
-
-    std::list< Dom* >::iterator it = children.begin();
-    while( it != children.end() )
-    {
-        Dom* node = new Dom( (*it)->nodeType(), (*it)->nodeName() );
-        node->nodeValue( (*it)->nodeValue() );
-        node->parentNode( this );
-        node->attributes( (*it)->attributes() );
-        node->childNodes( (*it)->childNodes() );
-
-        m_childNodes.push_back( node );
-
-        ++it;
-    }
+    copy_childNodes( document );
 
     return *this;
 }
 
-
-//
-// クリア
-//
-void Document::clear()
-{
-    m_childNodes.clear();
-}
-
-
 //
 // 初期化
 //
-void Document::init( const std::string& str, const bool html )
+void Document::init( const std::string& str )
 {
     clear();
 
     if( ! str.empty() ) parse( remove_comments( str ) );
 }
 
-void Document::init( Glib::RefPtr< Gtk::TreeStore > treestore,
-                      const std::string& root_name )
+void Document::init( Glib::RefPtr< Gtk::TreeStore > treestore, const std::string& root_name )
 {
     clear();
 
+    // XMLとして必要なのでルート要素を作成
     Dom* root = appendChild( NODE_TYPE_ELEMENT, root_name );
+
+    // ルート以下に追加
     root->parse( treestore->children() );
 }
 
@@ -125,7 +94,7 @@ void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, const s
 {
     treestore->clear();
 
-    if( ! m_childNodes.empty() )
+    if( childNodes().size() )
     {
         // ルートの子要素以下が対象
         Dom* root = get_root_element( root_name );
@@ -146,8 +115,9 @@ Dom* Document::get_root_element( const std::string& node_name )
 
     if( ! this ) return node;
 
-    std::list< Dom* >::iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
+    DomList children = childNodes();
+    std::list< Dom* >::iterator it = children.begin();
+    while( it != children.end() )
     {
         if( (*it)->nodeType() == NODE_TYPE_ELEMENT )
         {

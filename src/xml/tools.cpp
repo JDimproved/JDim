@@ -24,7 +24,12 @@ std::string XML::get_name( const int type_id )
             break;
             
         case TYPE_THREAD: // スレ
+        case TYPE_THREAD_UPDATE: // 更新可能スレ
             name = "thread";
+            break;
+
+        case TYPE_THREAD_OLD: // dat落ちスレ
+            name = "thread_old";
             break;
 
         case TYPE_IMAGE: // 画像
@@ -79,6 +84,10 @@ int XML::get_type( const std::string& node_name )
     {
         type = TYPE_THREAD;
     }
+    else if( node_name == "thread_old" )
+    {
+        type = TYPE_THREAD_OLD;
+    }
     else if( node_name == "aa" )
     {
         type = TYPE_AA;
@@ -107,6 +116,14 @@ Glib::RefPtr< Gdk::Pixbuf > XML::get_icon( const int type_id )
 
         case TYPE_THREAD:
             icon = ICON::get_icon( ICON::THREAD );
+            break;
+
+        case TYPE_THREAD_UPDATE:
+            icon = ICON::get_icon( ICON::THREAD_UPDATE );
+            break;
+
+        case TYPE_THREAD_OLD:
+            icon = ICON::get_icon( ICON::THREAD_OLD );
             break;
 
         case TYPE_IMAGE:

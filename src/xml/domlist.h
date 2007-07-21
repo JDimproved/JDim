@@ -10,8 +10,7 @@
 #ifndef _DOMLIST_H
 #define _DOMLIST_H
 
-#include "dom.h"
-
+#include <list>
 
 namespace XML
 {
@@ -29,7 +28,7 @@ namespace XML
         ~DomList();
 
         // std::list< Dom* > が代入された場合
-        DomList& operator =( std::list< Dom* >& list );
+        DomList& operator =( const std::list< Dom* >& list );
 
         // 添字によるアクセス
         Dom* operator []( const unsigned int n );

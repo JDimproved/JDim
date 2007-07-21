@@ -142,11 +142,32 @@ namespace SKELETON
         void set_width_client( int val ){ m_width_client = val; }
         void set_height_client( int val ){ m_height_client = val; }
 
+        // オートリロード可能か
+        const bool get_enable_autoreload() const { return m_enable_autoreload; }
+
         // オートリロードのモード設定
         void set_autoreload_mode( int mode, int sec );
 
         // 現在のオートリロードのモード取得
         const int get_autoreload_mode() const { return m_autoreload_mode; }
+
+        // アイコンのID取得
+        virtual const int get_icon( const std::string& iconname ){ return -1; }
+
+        // ロード中
+        virtual const bool is_loading(){ return false;}
+
+        // 更新した
+        virtual const bool is_updated(){ return false;}
+
+        // 更新チェックして更新可能か
+        virtual const bool is_check_update(){ return false;}
+
+        // 古いデータか
+        virtual const bool is_old(){ return false;}
+
+        // 壊れているか
+        virtual const bool is_broken(){ return false; }
 
         // shutdown( SIGHUP )用
         virtual void shutdown(){}

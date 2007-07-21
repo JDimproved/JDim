@@ -11,6 +11,7 @@ libjdlib_a_SOURCES = \
         heap.cpp \
 	jdiconv.cpp \
 	loader.cpp \
+	loaderdata.cpp \
 	confloader.cpp \
 	jdregex.cpp \
 	jdmigemo.cpp

@@ -20,17 +20,15 @@ namespace BBSLIST
         BBSListViewMain( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
         virtual ~BBSListViewMain();
 
-        virtual void shutdown();
-
         virtual void show_view();
         virtual void update_view();
-        virtual void update_item( const std::string& );
 
       protected:
 
-        virtual Gtk::Menu* get_popupmenu( const std::string& url );
+        // xml保存
+        virtual void save_xml( bool backup );
 
-        void save_xml( const std::string& file );
+        virtual Gtk::Menu* get_popupmenu( const std::string& url );
     };
 };
 

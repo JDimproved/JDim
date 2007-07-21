@@ -103,15 +103,22 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
     SKELETON::View* view = get_view( command.url );
     if( view ){
 
-        // お気に入り追加
+        // アイテム追加
         // append_favorite を呼ぶ前に共有バッファにコピーデータをセットしておくこと
-        if( command.command  == "append_favorite" ) view->set_command( "append_favorite" );
-    }
+        if( command.command  == "append_item" ) view->set_command( "append_item" );
 
-    // お気に入り保存
-    else  if( command.command  == "save_favorite" ){
-
-        view = get_view( URL_FAVORITEVIEW );
-        if( view ) view->set_command( "save_favorite" );
+        // XML保存
+        else if( command.command  == "save_xml" ) view->set_command( "save_xml" );
     }
+}
+
+
+//
+// アイコン表示切り替え
+//
+void BBSListAdmin::toggle_icon( const std::string& url )
+{
+    // お気に入り
+    SKELETON::View* view = get_view( URL_FAVORITEVIEW );
+    if( view ) view->set_command( "toggle_icon", url );
 }

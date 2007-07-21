@@ -50,6 +50,8 @@ ArticleAdmin::ArticleAdmin( const std::string& url )
 
     get_notebook()->set_dragable( true );
     get_notebook()->set_fixtab( false );
+
+    setup_menu( true );
 }
 
 
@@ -215,33 +217,15 @@ void ArticleAdmin::switch_admin()
 }
 
 
-
-//
-// タブにアイコンをセットする
-//
-void ArticleAdmin::set_tabicon( const std::string& url, const std::string& iconname )
-{
-    SKELETON::View* view = get_view( url );
-    if( view ) get_notebook()->set_tabicon( iconname, get_notebook()->page_num( *view ),
-                                            ICON::THREAD, ICON::THREAD_UPDATE );
-}
-
-
-
 //
 // リストで与えられたページをタブで連続して開くとき(Admin::open_list())の引数セット
 //
 COMMAND_ARGS ArticleAdmin::get_open_list_args( const std::string& url )
 {
     COMMAND_ARGS command_arg;
-    command_arg.command = "open_view";
-    command_arg.url = url;
-    command_arg.arg1 = "true";   // タブで開く
-    command_arg.arg2 = "false";  // 既に開いているかチェック
-    command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
     command_arg.arg4 = "MAIN";
 
-    CORE::core_set_command( "set_history_article", command_arg.url );
+    CORE::core_set_command( "set_history_article", url );
 
     return command_arg;
 }

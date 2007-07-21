@@ -202,6 +202,14 @@ namespace ARTICLE
         }
         
         virtual ~ArticleToolBar(){}
+
+        // スレが壊れている場合はラベルの色を変える
+        void broken()
+        {
+            m_label.modify_text( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
+            m_label.modify_base( Gtk::STATE_NORMAL, Gdk::Color( "red" ) );
+            m_label.modify_base( Gtk::STATE_ACTIVE, Gdk::Color( "red" ) );
+        }
     };
 
 

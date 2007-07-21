@@ -118,6 +118,9 @@ namespace DBTREE
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
         bool m_read_info;
 
+        // キャッシュにあるこの板に属するスレをデータベースに登録したか
+        bool m_append_articles;
+
         // 移転を調査するために url_boardbase を読んでいる
         bool m_read_url_boardbase;
 

@@ -57,6 +57,7 @@ namespace DBTREE
         int m_number_seen;           // どこまで読んだか
         int m_number_max;            // 規定の最大レス数
         struct timeval m_access_time;  // ユーザが最後にロードした時間
+        struct timeval m_check_update_time;  // 最終更新チェック時間
         struct timeval m_write_time;   // 最終書き込み時間
         std::string m_write_time_date; // 書き込み月日( string型 )
         std::string m_write_name;      // 書き込み時の名前
@@ -232,7 +233,7 @@ namespace DBTREE
         // エラーメッセージ
         const std::string& get_ext_err() const { return m_ext_err; }
 
-        // 状態 ( global.hで定義 )
+        // DAT落ちかどうかなどの状態 ( global.hで定義 )
         const int get_status() const{ return m_status; }
         void set_status( int status ){ m_status = status; }
         void reset_status();
@@ -295,7 +296,7 @@ namespace DBTREE
 
         // 「スレ」のブックマーク
         void set_bookmarked_thread( bool bookmarked );
-        const int is_bookmarked_thread() const { return m_bookmarked_thread; }
+        const bool is_bookmarked_thread() const { return m_bookmarked_thread; }
 
         // 「レス」のブックマーク
         int get_num_bookmark();
@@ -312,7 +313,10 @@ namespace DBTREE
         // スレッドのロード開始
         const bool is_loading();
         void stop_load();
-        void download_dat();
+        void download_dat( const bool check_update );
+
+        // 更新アイコン表示
+        void show_updateicon( const bool update );
 
       private:
 

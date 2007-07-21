@@ -10,8 +10,12 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <map>
 
-#include "xml/document.h"
+namespace XML
+{
+    class Document;
+};
 
 namespace DBTREE
 {
@@ -145,7 +149,9 @@ namespace DBTREE
     const int article_number_seen( const std::string& url );
     void article_set_number_seen( const std::string& url, int seen );
     const int article_number_new( const std::string& url );    
-    void article_download_dat( const std::string& url );
+    const bool article_is_loading( const std::string& url );
+    void article_download_dat( const std::string& url, const bool check_update );
+    void article_stop_load( const std::string& url );
     const int article_get_speed( const std::string& url );
 
     // キャッシュ削除

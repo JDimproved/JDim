@@ -29,6 +29,8 @@ namespace BBSLIST
         virtual void close_view( const std::string& url ){}
         virtual void close_all_view( const std::string& url ){}
 
+        virtual void toggle_icon( const std::string& url );
+
         // タブメニュー表示キャンセル
         virtual void slot_tab_menu( int page, int x, int y ){}
     };

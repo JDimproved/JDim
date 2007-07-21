@@ -14,7 +14,9 @@ namespace ICON
 {
     enum
     {
-        JD16,
+        NONE = -1,
+
+        JD16 = 0,
         JD32,
         JD48,
 
@@ -30,10 +32,16 @@ namespace ICON
 
         DIR,
         FAVORITE,
+
         BOARD,
         BOARD_UPDATE,
+        BOARD_UPDATED,
+
         THREAD,
         THREAD_UPDATE,
+        THREAD_UPDATED,
+        THREAD_OLD,
+
         IMAGE,
         LINK,
 

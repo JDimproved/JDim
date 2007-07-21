@@ -677,9 +677,20 @@ const int DBTREE::article_number_new( const std::string& url )
     return DBTREE::get_article( url )->get_number_new();
 }
 
-void DBTREE::article_download_dat( const std::string& url )
+const bool DBTREE::article_is_loading( const std::string& url )
 {
-    DBTREE::get_article( url )->download_dat();
+    return DBTREE::get_article( url )->is_loading();
+}
+
+void DBTREE::article_download_dat( const std::string& url, const bool check_update )
+{
+    DBTREE::get_article( url )->download_dat( check_update );
+}
+
+
+void DBTREE::article_stop_load( const std::string& url )
+{
+    DBTREE::get_article( url )->stop_load();
 }
 
 
@@ -687,7 +698,6 @@ const int DBTREE::article_get_speed( const std::string& url )
 {
     return DBTREE::get_article( url )->get_speed();
 }
-
 
 const std::string& DBTREE::get_agent( const std::string& url )
 {

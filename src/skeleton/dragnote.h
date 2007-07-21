@@ -17,6 +17,7 @@ namespace SKELETON
 {
     class TabLabel;
 
+    typedef sigc::signal< void, int > SIG_TAB_CLICK;
     typedef sigc::signal< void, int > SIG_TAB_CLOSE;
     typedef sigc::signal< void, int > SIG_TAB_RELOAD;
     typedef sigc::signal< void, int, int , int > SIG_TAB_MENU;
@@ -27,6 +28,7 @@ namespace SKELETON
 
     class DragableNoteBook : public SKELETON::JDNotebook
     {
+        SIG_TAB_CLICK m_sig_tab_click;
         SIG_TAB_CLOSE m_sig_tab_close;
         SIG_TAB_RELOAD m_sig_tab_reload;
         SIG_TAB_MENU  m_sig_tab_menu;
@@ -52,6 +54,7 @@ namespace SKELETON
 
       public:
 
+        SIG_TAB_CLICK sig_tab_click() { return m_sig_tab_click; }
         SIG_TAB_CLOSE sig_tab_close() { return m_sig_tab_close; }
         SIG_TAB_RELOAD sig_tab_reload(){ return m_sig_tab_reload; }
         SIG_TAB_MENU sig_tab_menu() { return m_sig_tab_menu; }
@@ -73,8 +76,7 @@ namespace SKELETON
         void set_tab_fulltext( const std::string& str, int page );
 
         // タブにアイコンをセットする
-        void set_tabicon( const std::string& iconname, int page,
-                          int id_default, int id_update );
+        void set_tabicon( const std::string& iconname, const int page, const int icon );
 
         // ドラッグ可/不可切り替え(デフォルト false );
         void set_dragable( bool dragable ){ m_dragable = dragable; }

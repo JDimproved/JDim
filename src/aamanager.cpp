@@ -228,13 +228,13 @@ void AAManager::save_history()
 // ラベル、AA取得
 const std::string AAManager::get_label( const int id )
 {
-    if( id >= m_vec_label.size() ) return std::string();
+    if( id >= (int) m_vec_label.size() ) return std::string();
     return m_vec_label[ id ];
 }
 
 const std::string AAManager::get_aa( const int id )
 {
-    if( id >= m_vec_aa.size() ) return std::string();
+    if( id >= (int) m_vec_aa.size() ) return std::string();
     return m_vec_aa[ id ]; 
 }
 

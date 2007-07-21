@@ -500,6 +500,22 @@ const int ArticleViewBase::height_client()
 }
 
 
+// アイコンのID取得
+const int ArticleViewBase::get_icon( const std::string& iconname )
+{
+    int id = ICON::NONE;
+
+    if( iconname == "default" ) id = ICON::THREAD;
+    if( iconname == "loading" ) id = ICON::LOADING;
+    if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
+    if( iconname == "old" ) id = ICON::THREAD_OLD;
+    if( iconname == "update" ) id = ICON::THREAD_UPDATE;  // 更新チェックしで更新があった場合
+    if( iconname == "updated" ) id = ICON::THREAD_UPDATED;
+
+    return id;
+}
+
+
 //
 // コマンド
 //
@@ -1588,7 +1604,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPHTML, m_url_article, args );
         }
 
-        else if ( DBIMG::is_loading( url ) || ( DBIMG::get_code( url ) != HTTP_ERR && DBIMG::get_code( url ) != HTTP_INIT ) ) {
+        else if ( DBIMG::is_loading( url ) || DBIMG::get_code( url ) != HTTP_INIT ) {
 
 #ifdef _DEBUG
             std::cout << "image " << DBIMG::get_code( url ) << " " << DBIMG::is_loading( url ) << "\n";
@@ -2978,7 +2994,7 @@ void ArticleViewBase::slot_active_search()
     if( query.empty() ){
         slot_push_claar_hl();
         focus_view();
-        CORE::core_set_command( "set_mginfo", "", "" );
+        CORE::core_set_command( "set_info", "", "" );
         return;
     }
 
@@ -2995,11 +3011,11 @@ void ArticleViewBase::slot_active_search()
 
     if( ! hit ){
         slot_push_claar_hl();
-        CORE::core_set_command( "set_mginfo", "", "検索結果： ヒット無し" );
+        CORE::core_set_command( "set_info", "", "検索結果： ヒット無し" );
     }
     else{
         focus_view();
-        CORE::core_set_command( "set_mginfo", "", "検索結果： " + MISC::itostr( hit ) + "件" );
+        CORE::core_set_command( "set_info", "", "検索結果： " + MISC::itostr( hit ) + "件" );
     }
 }
 

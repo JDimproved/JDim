@@ -29,16 +29,13 @@ namespace XML
         // 何も無い状態からノードツリーを作る場合
         Document();
 
-        ~Document();
+        virtual ~Document(){};
 
         // このクラスは代入可能
         Document& operator=( const Document& document );
 
-        // クリア
-        void clear();
-
         // 初期化
-        void init( const std::string& str, const bool html = false );
+        void init( const std::string& str );
         void init( Glib::RefPtr< Gtk::TreeStore > treestore,
                     const std::string& root_name );
 

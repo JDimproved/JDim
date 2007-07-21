@@ -23,6 +23,15 @@ Tooltip::Tooltip()
 }
 
 
+// フォント
+void Tooltip::modify_font_label( const std::string& fontname )
+{
+    Pango::FontDescription pfd( fontname );
+    pfd.set_weight( Pango::WEIGHT_NORMAL );
+    m_label.modify_font( pfd );
+}
+
+
 //
 // クロック入力
 //

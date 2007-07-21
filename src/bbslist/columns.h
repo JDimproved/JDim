@@ -42,16 +42,10 @@ namespace BBSLIST
         Gtk::TreeModelColumn< int > m_type;
         Gtk::TreeModelColumn< bool > m_expand; // Dom::parse() で使用
 
-        TreeColumns(){
-            add( m_col_name );
-            add( m_underline );
-            add( m_col_url );
-            add( m_col_image );
-            add( m_type );
-            add( m_expand );
-        }
+        TreeColumns();
+        ~TreeColumns();
 
-        ~TreeColumns(){}
+        void setup_row( Gtk::TreeModel::Row& row, const Glib::ustring url, const Glib::ustring name, const int type );
     };
 }
 

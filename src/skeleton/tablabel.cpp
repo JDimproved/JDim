@@ -53,6 +53,7 @@ void TabLabel::set_id_icon( int id )
 {
     if( ! CONFIG::get_show_tab_icon() ) return;
     if( m_id_icon == id ) return;
+    if( id == ICON::NONE ) return;
 
     if( !m_image ){
         m_image = new Gtk::Image();
