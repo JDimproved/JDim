@@ -2304,7 +2304,8 @@ void BBSListViewBase::slot_active_search()
 {
     if( m_toolbar.m_entry_search.completion() ) return;
 
-    JDLIB::Regex regex;
+    JDLIB::Regex regex_name;
+    JDLIB::Regex regex_url;
 
     CORE::core_set_command( "set_info", "", "" );
 
@@ -2332,6 +2333,9 @@ void BBSListViewBase::slot_active_search()
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::slot_active_search() path = " << path.to_string() << " query = " << query << std::endl;
 #endif
+	
+    regex_name.compile( query, true, true, true );
+    regex_url.compile( query, true );
 
     bool hit = false;
     for(;;){
@@ -2351,7 +2355,7 @@ void BBSListViewBase::slot_active_search()
         Glib::ustring name = path2name( path );
         Glib::ustring url = path2url( path );
 
-        if( regex.exec( query, name, 0, true, true, true ) || regex.exec( query, url, 0, true ) ) hit = true;
+        if( regex_name.exec( name, 0 ) || regex_url.exec( url, 0 ) ) hit = true;
 
         // 一周したら終わり
         if( path == path_start ) break;

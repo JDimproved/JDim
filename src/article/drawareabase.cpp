@@ -2438,13 +2438,22 @@ int DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
 {
     assert( m_layout_tree );
 
-    JDLIB::Regex regex;
+    std::list< JDLIB::Regex > list_regex;
 
     if( list_query.size() == 0 ) return 0;
 
 #ifdef _DEBUG    
     std::cout << "ArticleViewBase::search size = " << list_query.size() << std::endl;
 #endif
+
+    std::list< std::string >::iterator it_query;
+    for( it_query = list_query.begin(); it_query != list_query.end() ; ++it_query ){
+
+        std::string &query = ( *it_query );
+        
+        list_regex.push_back( JDLIB::Regex() );
+        list_regex.back().compile( query, true, true, true );
+    }
 
     m_multi_selection.clear();
 
@@ -2466,11 +2475,11 @@ int DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
                 for(;;){
 
                     int lng = 0;
-                    std::list< std::string >::iterator it_query;
-                    for( it_query = list_query.begin(); it_query != list_query.end() ; ++it_query ){
+                    std::list< JDLIB::Regex >::iterator it_regex;
+                    for( it_regex = list_regex.begin(); it_regex != list_regex.end() ; ++it_regex ){
 
-                        std::string query = ( *it_query );
-                        if( regex.exec( query, tmplayout->text, offset, true, true, true ) ){
+                        JDLIB::Regex &regex = ( *it_regex );
+                        if( regex.exec( tmplayout->text, offset ) ){
 
                             offset = regex.pos( 0 );
                             lng = regex.str( 0 ).length();

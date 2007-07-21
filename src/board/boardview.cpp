@@ -1858,13 +1858,16 @@ bool BoardView::drawout()
     JDLIB::Regex regex;
     Gtk::TreeModel::Children child = m_liststore->children();
     Gtk::TreeModel::Children::iterator it = child.begin();
+
+    if ( ! reset ) regex.compile( query, true, true, true );
+
     for( ; it != child.end() ; ++it ){
 
         Gtk::TreeModel::Row row = *( it );
         Glib::ustring subject = row[ m_columns.m_col_subject ];
 
         if( reset ) row[ m_columns.m_col_drawbg ] = false;
-        else if( regex.exec( query, subject, 0, true, true, true ) ){
+        else if( regex.exec( subject, 0 ) ){
             row[ m_columns.m_col_drawbg ] = true;
             ++hit;
 
