@@ -221,10 +221,13 @@ void CompletionEntry::slot_entry_acivate()
 // entry からsignal_changedを受け取った
 void CompletionEntry::slot_entry_changed()
 {
-    if( ! m_enable_changed ) return;
+    if( m_enable_changed ){
 
-    if( m_entry.get_text().empty() ) hide_popup();
-    else show_popup( false );
+        if( m_entry.get_text().empty() ) hide_popup();
+        else show_popup( false );
+    }
+
+    m_sig_changed.emit();
 }
 
 

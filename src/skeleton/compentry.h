@@ -19,9 +19,11 @@ namespace SKELETON
     {
         typedef sigc::signal< void, int > SIG_OPERATE;
         typedef sigc::signal< void > SIG_ACTIVATE;
+        typedef sigc::signal< void > SIG_CHANGED;
 
         SIG_OPERATE m_sig_operate;
         SIG_ACTIVATE m_sig_activate;
+        SIG_CHANGED m_sig_changed;
 
         int m_mode;
 
@@ -42,6 +44,7 @@ namespace SKELETON
 
         SIG_OPERATE signal_operate(){ return m_sig_operate; }
         SIG_ACTIVATE signal_activate(){ return m_sig_activate; }
+        SIG_CHANGED signal_changed(){ return m_sig_changed; }
 
         void add_mode( int mode ){ m_entry.add_mode( mode ); }
 

@@ -110,6 +110,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
 
+    m_toolbar.m_entry_search.signal_changed().connect( sigc::mem_fun( *this, &BoardView::slot_changed_search ) );
     m_toolbar.m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BoardView::slot_active_search ) );
     m_toolbar.m_button_close.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::close_view ) );
     m_toolbar.m_button_reload.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::reload ) );
@@ -867,8 +868,6 @@ void BoardView::redraw_view()
 
     exec_sort();
     goto_top();
-
-    if( BOARD::get_admin()->has_focus() ) focus_view();
 }
 
 
@@ -1845,9 +1844,6 @@ bool BoardView::drawout()
     // 空の時はリセット
     if( query.empty() ) reset = true;
 
-    if( m_pre_query == query ) return false;
-    m_pre_query = query;
-    
 #ifdef _DEBUG
     std::cout << "BoardView::drawout query = " <<  query << std::endl;
 #endif
@@ -1879,21 +1875,25 @@ bool BoardView::drawout()
         else row[ m_columns.m_col_drawbg ] = false;
     }
 
-    if( reset || hit ) redraw_view();
+    redraw_view();
 
-    if( reset ){
-        focus_view();
-        CORE::core_set_command( "set_info", "", "" );
-    }
+    if( reset ) CORE::core_set_command( "set_info", "", "" );
     else if( ! hit ) CORE::core_set_command( "set_info", "", "検索結果： ヒット無し" );
-    else{
-        focus_view();
-        CORE::core_set_command( "set_info", "", "検索結果： " + MISC::itostr( hit ) + "件" );
-    }
+    else CORE::core_set_command( "set_info", "", "検索結果： " + MISC::itostr( hit ) + "件" );
 
     return true;
 }
 
+
+
+//
+// 検索ボックスの文字列が変わった
+//
+void BoardView::slot_changed_search()
+{
+    drawout();
+    m_pre_query = std::string();
+}
 
 
 //
@@ -1903,10 +1903,15 @@ void BoardView::slot_active_search()
 {
     if( m_toolbar.m_entry_search.completion() ) return;
 
-    if( drawout() ) return;
+    std::string query = m_toolbar.m_entry_search.get_text();
+    if( m_pre_query != query ){
+        drawout();
+        focus_view();
+        m_pre_query = query;
+        return;
+    }
 
     focus_view();
-    std::string query = m_toolbar.m_entry_search.get_text();
     if( query.empty() ) return;
    
     Gtk::TreePath path = m_treeview.get_current_path();;
