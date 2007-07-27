@@ -126,13 +126,13 @@ const bool ConfigItems::load()
     proxy_port_for_data = cf.get_option( "proxy_port_for_data", 8080 );
 
     // 2ch にアクセスするときのエージェント名
-    agent_for2ch = cf.get_option( "agent_for2ch", "Monazilla/1.00 JD" );
+    agent_for2ch = cf.get_option( "agent_for2ch", AGENT_FOR2CH );
 
     // 2ch外にアクセスするときのエージェント名
-    agent_for_data = cf.get_option( "agent_for_data", "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8) Gecko/20051111 Firefox/1.5" );
+    agent_for_data = cf.get_option( "agent_for_data", AGENT_FOR_DATA );
 
     // 2ch にログインするときのX-2ch-UA
-    x_2ch_ua = cf.get_option( "x_2ch_ua", "Navigator for 2ch 1.7.5" );
+    x_2ch_ua = cf.get_option( "x_2ch_ua", CONF_X_2CH_UA );
 
     // ローダのバッファサイズ
     loader_bufsize = cf.get_option( "loader_bufsize", CONF_LOADER_BUFSIZE );
@@ -141,6 +141,7 @@ const bool ConfigItems::load()
     loader_timeout = cf.get_option( "loader_timeout", CONF_LOADER_TIMEOUT );
     loader_timeout_post = cf.get_option( "loader_timeout_post", CONF_LOADER_TIMEOUT_POST ); // ポスト
     loader_timeout_img = cf.get_option( "loader_timeout_img", CONF_LOADER_TIMEOUT_IMG ); // 画像
+    loader_timeout_checkupdate = cf.get_option( "loader_timeout_checkupdate", CONF_LOADER_TIMEOUT_CHECKUPDATE ); // 更新チェック
 
     // ipv6使用
     use_ipv6 = cf.get_option( "use_ipv6", CONF_USE_IPV6 );
@@ -478,6 +479,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "loader_timeout", loader_timeout );
     cf.update( "loader_timeout_post", loader_timeout_post );
     cf.update( "loader_timeout_img", loader_timeout_img );
+    cf.update( "loader_timeout_checkupdate", loader_timeout_checkupdate );
 
     cf.update( "use_ipv6", use_ipv6 );
 

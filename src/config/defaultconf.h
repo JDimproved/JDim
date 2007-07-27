@@ -17,6 +17,7 @@ namespace CONFIG
         CONF_LOADER_TIMEOUT = 10,   // ローダのタイムアウト値        
         CONF_LOADER_TIMEOUT_POST = 30, // ポストローダのタイムアウト値        
         CONF_LOADER_TIMEOUT_IMG = 30,  // 画像ローダのタイムアウト値
+        CONF_LOADER_TIMEOUT_CHECKUPDATE = 10,  // 更新チェックのタイムアウト値
         CONF_USE_IPV6 = 1,          // ipv6使用
         CONF_BROWSER_NO = 2,        // browsers.h のラベル番号
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
@@ -49,6 +50,15 @@ namespace CONFIG
 #define CONF_FONTSIZE_THREAD "12"
 #define CONF_FONTSIZE_POPUP  "10"
 #define CONF_FONTSIZE_TREE   "10"
+
+// 2ch にアクセスするときのエージェント名
+#define AGENT_FOR2CH "Monazilla/1.00 JD"
+
+// 2ch外にアクセスするときのエージェント名
+#define AGENT_FOR_DATA "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8.1.5) Gecko/20070713 Firefox/2.0.0.5"
+
+// 2ch にログインするときのX-2ch-UA
+#define CONF_X_2CH_UA "Navigator for 2ch 1.7.5"
 
 // JD ホームページのアドレス
 #define CONF_JDHP "http://jd4linux.sourceforge.jp/"

@@ -946,7 +946,10 @@ void NodeTreeBase::download_dat( const bool check_update )
     create_loaderdata( data );
 
     // 更新チェックの時はHEADを使う
-    if( m_check_update ) data.head = true;
+    if( m_check_update ){
+        data.head = true;
+        data.timeout = CONFIG::get_loader_timeout_checkupdate();
+    }
 
     if( data.url.empty() || ! start_load( data ) ){
         m_sig_finished.emit();

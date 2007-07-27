@@ -107,6 +107,7 @@ namespace CONFIG
     const int get_loader_timeout();
     const int get_loader_timeout_post();
     const int get_loader_timeout_img();
+    const int get_loader_timeout_checkupdate();
 
     // ipv6使用
     const bool get_use_ipv6();

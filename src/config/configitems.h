@@ -66,6 +66,7 @@ namespace CONFIG
         int loader_timeout;
         int loader_timeout_post;
         int loader_timeout_img;
+        int loader_timeout_checkupdate;
 
         // ipv6使用
         bool use_ipv6;
