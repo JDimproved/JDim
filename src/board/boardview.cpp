@@ -1834,8 +1834,6 @@ std::string BoardView::path2daturl( const Gtk::TreePath& path )
 //
 bool BoardView::drawout()
 {
-    if( m_toolbar.m_entry_search.completion() ) return false;
-
     int hit = 0;
     bool reset = false;
 

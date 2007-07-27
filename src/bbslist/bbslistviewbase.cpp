@@ -17,6 +17,7 @@
 #include "dbimg/imginterface.h"
 
 #include "config/globalconf.h"
+#include "config/buttonconfig.h"
 
 #include "icons/iconmanager.h"
 
@@ -1515,6 +1516,8 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
             break;
 
         case TYPE_DIR:
+
+            if( ! CONFIG::get_buttonconfig()->tab_midbutton() ) tab = !tab;
             if( tab ) slot_check_update_open_dir();
             else if( ! m_treeview.row_expanded( path ) ) m_treeview.expand_row( path, false );
             else m_treeview.collapse_row( path );
