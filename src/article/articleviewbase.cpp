@@ -205,9 +205,9 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
     action_group()->add( Gtk::Action::create( "DeleteOpen", "削除して再読み込み"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
-    action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
-    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存"), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ..."), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
+    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存..."), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
 
     // ログ検索
     action_group()->add( Gtk::Action::create( "SearchCache_Menu", "ログ検索" ) );
@@ -266,7 +266,7 @@ void ArticleViewBase::setup_action()
                          sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_protectimage ) );
     action_group()->add( Gtk::Action::create( "DeleteImage_Menu", "削除" ) );    
     action_group()->add( Gtk::Action::create( "DeleteImage", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::slot_deleteimage ) );
-    action_group()->add( Gtk::Action::create( "SaveImage", "保存"), sigc::mem_fun( *this, &ArticleViewBase::slot_saveimage ) );
+    action_group()->add( Gtk::Action::create( "SaveImage", "保存..."), sigc::mem_fun( *this, &ArticleViewBase::slot_saveimage ) );
     action_group()->add( Gtk::ToggleAction::create( "AboneImage", "画像をあぼ〜んする", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_abone_img ) );
 

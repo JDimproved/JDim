@@ -302,7 +302,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "UnsetBookMark", "ブックマーク解除"),
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_UNSET ) );
     action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く"), sigc::mem_fun( *this, &BoardView::slot_open_tab ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加"), sigc::mem_fun( *this, &BoardView::slot_favorite_thread ) );
+    action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加..."), sigc::mem_fun( *this, &BoardView::slot_favorite_thread ) );
     action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに登録"), sigc::mem_fun( *this, &BoardView::slot_favorite_board ) );
     action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動"), sigc::mem_fun( *this, &BoardView::goto_top ) );
     action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動"), sigc::mem_fun( *this, &BoardView::goto_bottom ) );
@@ -313,9 +313,9 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BoardView::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"), sigc::mem_fun( *this, &BoardView::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "AboneThread", "スレをあぼ〜んする"), sigc::mem_fun( *this, &BoardView::slot_abone_thread ) );
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ"), sigc::mem_fun( *this, &BoardView::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ"), sigc::mem_fun( *this, &BoardView::slot_push_preferences ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存"), sigc::mem_fun( *this, &BoardView::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ..."), sigc::mem_fun( *this, &BoardView::slot_preferences_article ) );
+    action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ..."), sigc::mem_fun( *this, &BoardView::slot_push_preferences ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存..."), sigc::mem_fun( *this, &BoardView::slot_save_dat ) );
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );

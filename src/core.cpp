@@ -335,25 +335,25 @@ void Core::run( bool init )
     // フォントと色
     m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色" ) );
 
-    m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
-    m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント" ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
-    m_action_group->add( Gtk::Action::create( "FontTree", "板、スレ一覧フォント" ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
-    m_action_group->add( Gtk::Action::create( "ColorChar", "スレビュー文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
-    m_action_group->add( Gtk::Action::create( "ColorBack", "スレビュー背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
-    m_action_group->add( Gtk::Action::create( "ColorCharTree", "板、スレ一覧文字色" ), sigc::mem_fun( *this, &Core::slot_changecolor_char_tree ) );
-    m_action_group->add( Gtk::Action::create( "ColorBackTree", "板、スレ一覧背景色" ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
-    m_action_group->add( Gtk::Action::create( "FontColorPref", "詳細設定" ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
+    m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
+    m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
+    m_action_group->add( Gtk::Action::create( "FontTree", "板、スレ一覧フォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
+    m_action_group->add( Gtk::Action::create( "ColorChar", "スレビュー文字色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
+    m_action_group->add( Gtk::Action::create( "ColorBack", "スレビュー背景色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
+    m_action_group->add( Gtk::Action::create( "ColorCharTree", "板、スレ一覧文字色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char_tree ) );
+    m_action_group->add( Gtk::Action::create( "ColorBackTree", "板、スレ一覧背景色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
+    m_action_group->add( Gtk::Action::create( "FontColorPref", "詳細設定..." ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
 
     // ネットワーク
     m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク" ) );
-    m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ" ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
-    m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ" ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
-    m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード設定" ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
+    m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ..." ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
+    m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ..." ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
+    m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード設定..." ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
 
     // あぼーん
     m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん" ) );
-    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん設定(対象: スレビュー)" ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
-    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん設定(対象: スレ一覧)" ),
+    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん設定(対象: スレビュー)..." ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
+    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん設定(対象: スレ一覧)..." ),
                          sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "デフォルトで透明/連鎖あぼ〜ん", std::string(),
@@ -368,7 +368,7 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgview ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する", std::string(), CONFIG::get_use_inline_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
-    m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア" ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
+    m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
 
     // プライバシー
     m_action_group->add( Gtk::Action::create( "Privacy_Menu", "プライバシー" ) );
@@ -386,11 +386,11 @@ void Core::run( bool init )
 
     // help
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
-    m_action_group->add( Gtk::Action::create( "Hp", "ホームページ" ), sigc::mem_fun( *this, &Core::slot_show_hp ) );
+    m_action_group->add( Gtk::Action::create( "Hp", "ホームページ..." ), sigc::mem_fun( *this, &Core::slot_show_hp ) );
     m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
-    m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル" ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
-    m_action_group->add( Gtk::Action::create( "About", "JDについて" ), sigc::mem_fun( *this, &Core::slot_show_about ) );
+    m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル..." ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
+    m_action_group->add( Gtk::Action::create( "About", "JDについて..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
     
 
     m_ui_manager = Gtk::UIManager::create();    

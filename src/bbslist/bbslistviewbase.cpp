@@ -169,9 +169,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル" ),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_cancel_check_update ) );
 
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
-    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ"), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
+    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
+    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
 
 
     ui_manager() = Gtk::UIManager::create();    
