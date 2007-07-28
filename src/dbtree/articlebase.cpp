@@ -998,7 +998,9 @@ void ArticleBase::slot_load_finished()
     else{
 
         // スレが更新している場合はスレ情報を更新
-        if( m_number_new ){
+        if( m_number_new
+            || m_date_modified != m_old_modified // ときどき modified が誤って返るときがあるので最新の値を保存しておく
+            ){
 
             struct timeval tv;
             struct timezone tz;
@@ -1014,9 +1016,6 @@ void ArticleBase::slot_load_finished()
 
             show_updateicon( false );
         }
-
-        // ときどき modified が誤って返るときがあるので最新の値を保存しておく
-        else if( m_date_modified != m_old_modified ) m_save_info = true;
     }
 
 #ifdef _DEBUG
