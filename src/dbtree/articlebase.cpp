@@ -985,6 +985,7 @@ void ArticleBase::slot_load_finished()
 
     // nodetreeから情報取得
     m_str_code = m_nodetree->get_str_code();
+    std::string m_old_modified = m_date_modified;
     m_date_modified = m_nodetree->date_modified();
     if( m_number_before_load < m_number_load ) m_number_new = m_number_load - m_number_before_load;
     else m_number_new = 0;
@@ -994,22 +995,28 @@ void ArticleBase::slot_load_finished()
     // スレの数が0ならスレ情報はセーブしない
     if( ! m_number_load ) m_cached = false;
 
-    // スレが更新している場合はスレ情報を更新
-    else if( m_number_new ){
+    else{
 
-        struct timeval tv;
-        struct timezone tz;
-        if( gettimeofday( &tv, &tz ) == 0 ) m_access_time = tv;
+        // スレが更新している場合はスレ情報を更新
+        if( m_number_new ){
 
-        if( m_number < m_number_load ) m_number = m_number_load;
-        m_number_seen = m_number_load;
+            struct timeval tv;
+            struct timezone tz;
+            if( gettimeofday( &tv, &tz ) == 0 ) m_access_time = tv;
 
-        m_cached = true;
-        m_read_info = true;
-        m_save_info = true;
-        m_enable_load = false;
+            if( m_number < m_number_load ) m_number = m_number_load;
+            m_number_seen = m_number_load;
 
-        show_updateicon( false );
+            m_cached = true;
+            m_read_info = true;
+            m_save_info = true;
+            m_enable_load = false;
+
+            show_updateicon( false );
+        }
+
+        // ときどき modified が誤って返るときがあるので最新の値を保存しておく
+        else if( m_date_modified != m_old_modified ) m_save_info = true;
     }
 
 #ifdef _DEBUG
