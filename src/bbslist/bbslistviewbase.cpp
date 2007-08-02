@@ -162,6 +162,11 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "SelectDir", "全て選択"), sigc::mem_fun( *this, &BBSListViewBase::slot_select_all_dir ) );
 
+    action_group()->add( Gtk::Action::create( "CheckUpdateRoot_Menu", "全て更新チェック" ) );
+    action_group()->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ"), sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_root ) );
+    action_group()->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く"),
+                         sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_open_root ) );
+
     action_group()->add( Gtk::Action::create( "CheckUpdate_Menu", "更新チェック" ) );
     action_group()->add( Gtk::Action::create( "CheckUpdateDir", "更新チェックのみ"), sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_dir ) );
     action_group()->add( Gtk::Action::create( "CheckUpdateOpenDir", "更新されたスレをタブで開く"),
@@ -253,6 +258,13 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     // お気に入り+何もないところをクリック
     "<popup name='popup_menu_favorite_space'>"
     "<menuitem action='NewDir'/>"
+    "<separator/>"
+    "<menu action='CheckUpdateRoot_Menu'>"
+    "<menuitem action='CheckUpdateRoot'/>"
+    "<menuitem action='CheckUpdateOpenRoot'/>"
+    "<separator/>"
+    "<menuitem action='CancelCheckUpdate'/>"
+    "</menu>"
     "</popup>"
 
 
@@ -1196,6 +1208,39 @@ void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path )
             path.next();
         }
     }
+}
+
+
+//
+// ルート以下を全更新チェック
+//
+void BBSListViewBase::slot_check_update_root()
+{
+	const Gtk::TreeModel::Children children = m_treestore->children();
+
+    Gtk::TreeModel::iterator it = children.begin();
+    while( it != children.end() )
+    {
+        check_update_dir( m_treestore->get_path( *it ) );
+        ++it;
+    }
+
+    CORE::get_checkupdate_manager()->run( false );
+}
+
+// ルート以下を全更新チェックして開く
+void BBSListViewBase::slot_check_update_open_root()
+{
+	const Gtk::TreeModel::Children children = m_treestore->children();
+
+    Gtk::TreeModel::iterator it = children.begin();
+    while( it != children.end() )
+    {
+        check_update_dir( m_treestore->get_path( *it ) );
+        ++it;
+    }
+
+    CORE::get_checkupdate_manager()->run( true );
 }
 
 

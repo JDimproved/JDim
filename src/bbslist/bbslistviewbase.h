@@ -153,6 +153,8 @@ namespace BBSLIST
         void slot_copy_url();
         void slot_copy_title_url();
         void slot_select_all_dir();
+        void slot_check_update_root();
+        void slot_check_update_open_root();
         void slot_check_update_dir();
         void slot_check_update_open_dir();
         void slot_cancel_check_update();
