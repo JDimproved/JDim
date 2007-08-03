@@ -99,6 +99,9 @@ const bool ConfigItems::load()
     // 書き込みウィンドウのフォント
     fontname[ FONT_MESSAGE ] = cf.get_option( "fontname_message", fontname[ FONT_MAIN ] );
 
+    // Gtk::Entryのデフォルトフォント
+    fontname[ FONT_ENTRY_DEFAULT ] = MISC::get_entry_font();
+
     // レスを参照するときに前に付ける文字
     ref_prefix = cf.get_option( "ref_prefix", ">" );
 
@@ -238,6 +241,9 @@ const bool ConfigItems::load()
     // メッセージビュー(選択範囲)の文字色
     str_color[ COLOR_CHAR_MESSAGE_SELECTION ] = cf.get_option( "cl_char_message_selection", CONF_COLOR_CHAR_MESSAGE_SELECTION );
 
+    // Gtk::Entryのデフォルトの文字色
+    str_color[ COLOR_CHAR_ENTRY_DEFAULT ] = MISC::get_entry_color_text();
+
     // 画像(キャッシュ無)の色
     str_color[ COLOR_IMG_NOCACHE ] = cf.get_option( "cl_img_nocache", CONF_COLOR_IMG_NOCACHE );
 
@@ -270,6 +276,9 @@ const bool ConfigItems::load()
 
     // メッセージビューの選択色
     str_color[ COLOR_BACK_MESSAGE_SELECTION ] = cf.get_option( "cl_back_message_selection", CONF_COLOR_BACK_MESSAGE_SELECTION );
+
+    // Gtk::Entryのデフォルトの背景色
+    str_color[ COLOR_BACK_ENTRY_DEFAULT ] = MISC::get_entry_color_base();
 
     // 新着セパレータ
     str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", CONF_COLOR_SEPARATOR_NEW );

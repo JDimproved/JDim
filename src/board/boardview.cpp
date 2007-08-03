@@ -1998,7 +1998,7 @@ void BoardView::slot_entry_operate( int controlid )
 //
 void BoardView::slot_push_preferences()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, get_url() );
+    SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, get_url() );
     pref->run();
     delete pref;
 }

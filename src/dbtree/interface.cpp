@@ -182,6 +182,26 @@ const time_t DBTREE::board_time_modified( const std::string& url )
     return DBTREE::get_board( url )->time_modified();
 }
 
+const std::string& DBTREE::board_get_modified_localrule( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_modified_localrule();
+}
+
+void DBTREE::board_set_modified_localrule( const std::string& url, const std::string& modified )
+{
+    DBTREE::get_board( url )->set_modified_localrule( modified );
+}
+
+const std::string& DBTREE::board_get_modified_setting( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_modified_setting();
+}
+
+void DBTREE::board_set_modified_setting( const std::string& url, const std::string& modified )
+{
+    DBTREE::get_board( url )->set_modified_setting( modified );
+}
+
 
 const std::string DBTREE::board_name( const std::string& url )
 {
@@ -723,6 +743,13 @@ const int DBTREE::get_proxy_port_w( const std::string& url )
 {
     return DBTREE::get_board( url )->get_proxy_port_w();
 }
+
+
+const std::string DBTREE::localrule( const std::string& url )
+{
+    return DBTREE::get_board( url )->localrule();
+}
+
 
 const std::string DBTREE::settingtxt( const std::string& url )
 {

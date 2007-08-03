@@ -17,7 +17,6 @@ namespace ARTICLE
         ~ArticleViewPreview();
 
         virtual void operate_view( const int& control );
-        virtual void append_dat( const std::string& dat, int num = 0 );
 
       private:
         virtual void pack_widget();

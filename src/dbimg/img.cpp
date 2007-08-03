@@ -29,6 +29,23 @@
 #define MIN( a, b ) ( a < b ? a : b )
 #endif
 
+// 最大リダイレクト回数
+#define MAX_REDIRECT 5  
+
+
+// 情報ファイルから値を読み込み
+// dbtree/articlebase.cpp からコピペ
+#define GET_INFOVALUE(target,targetname) \
+do { \
+target = std::string(); \
+option = targetname; \
+it2 = it; \
+while( it2 != lines.end() && ( *it2 ).find( option ) != 0 ) ++it2; \
+if( it2 != lines.end() ){ \
+    target = ( *it2 ).substr( option.length() ); \
+    it = ++it2; \
+} } while( false )
+
 
 using namespace DBIMG;
 
@@ -36,6 +53,7 @@ using namespace DBIMG;
 Img::Img( const std::string& url )
     : SKELETON::Loadable()
     ,m_url( url )
+    ,m_count_redirect( 0 )
     ,m_fout( 0 )
 {
 #ifdef _DEBUG
@@ -64,6 +82,8 @@ Img::~Img()
 //
 void Img::reset()
 {
+    m_url_alt = std::string();
+    m_count_redirect = 0;
     clear();
     read_info();
 }
@@ -129,11 +149,13 @@ std::string Img::get_cache_path()
 //
 // receive_data()　と receive_finish() がコールバックされる
 //
-void Img::download_img( const std::string& refurl )
+void Img::download_img( const std::string refurl )
 {
 #ifdef _DEBUG
-    std::cout << "Img::download_img url = " << m_url
-              << " refurl = " << refurl <<  std::endl;
+    std::cout << "Img::download_img url = ";
+    if( ! m_url_alt.empty() ) std::cout << m_url_alt << std::endl;
+    else std::cout << m_url << std::endl;
+    std::cout << "refurl = " << refurl <<  std::endl;
 #endif
 
     if( is_loading() ) return;
@@ -153,7 +175,10 @@ void Img::download_img( const std::string& refurl )
     m_refurl = refurl;
                
     JDLIB::LOADERDATA data;
-    data.url = m_url;
+
+    if( ! m_url_alt.empty() ) data.url = m_url_alt;
+    else data.url = m_url;
+
     data.agent = CONFIG::get_agent_for_data();
     if( CONFIG::get_use_proxy_for_data() ) data.host_proxy = CONFIG::get_proxy_for_data();
     else data.host_proxy = std::string();
@@ -382,18 +407,32 @@ void Img::receive_finish()
         }
     }
 
+#ifdef _DEBUG
+    std::cout << "Img::receive_finish code = " << get_code() << std::endl
+              << "total byte = " << total_length() << std::endl
+              << "type = " << m_type << std::endl
+              << "refurl = " << m_refurl << std::endl;
+#endif
+
+    // リダイレクト
+    if( get_code() == HTTP_REDIRECT ){
+#ifdef _DEBUG
+        std::cout << "redirect url = " << location() << std::endl;
+#endif
+        if( ! location().empty() && m_count_redirect < MAX_REDIRECT ){
+            ++m_count_redirect;
+            m_url_alt = location();
+            download_img( m_refurl );
+            return;
+        }
+    }
+
     // 読み込み失敗の場合でもエラーメッセージを残すので info　は保存する
     save_info();
 
     CORE::core_set_command( "redraw", m_url );
     CORE::core_set_command( "redraw_article" );
     CORE::core_set_command( "redraw_message" );
-
-#ifdef _DEBUG
-    std::cout << "Img::receive_finish code = " << get_code() << std::endl
-              << "total byte = " << total_length() << std::endl
-              << "type = " << m_type << std::endl;
-#endif
 }
 
 
@@ -411,6 +450,7 @@ void Img::read_info()
     std::string filename = CACHE::filename_img_info( m_url );
     std::string path_info = CACHE::path_img_info_root() + filename;
     bool exist = false;
+    m_abone = false;
 
     do{
 
@@ -441,19 +481,68 @@ void Img::read_info()
 
     if( exist ){
 
+/*
         JDLIB::ConfLoader cf( path_info, std::string() );
 
         m_refurl = cf.get_option( "refurl", "" );
-        set_code( cf.get_option( "code", HTTP_INIT ) );
-        set_str_code( cf.get_option( "str_code", "" ) );
-        set_total_length( cf.get_option( "byte", 0 ) );
-        m_mosaic = cf.get_option( "mosaic", CONFIG::get_use_mosaic() );
-        m_type = cf.get_option( "type", T_UNKNOWN );
-        m_width = cf.get_option( "width", 0 );
-        m_height = cf.get_option( "height", 0 );
-        m_abone = cf.get_option( "abone", 0 );
 
-        if( ! total_length() ) set_total_length( CACHE::get_filesize( get_cache_path() ) );
+        set_code( cf.get_option( "code", HTTP_INIT ) );
+
+        set_str_code( cf.get_option( "str_code", "" ) );
+
+        set_total_length( cf.get_option( "byte", 0 ) );
+
+        m_mosaic = cf.get_option( "mosaic", CONFIG::get_use_mosaic() );
+
+        m_type = cf.get_option( "type", T_UNKNOWN );
+
+        m_width = cf.get_option( "width", 0 );
+
+        m_height = cf.get_option( "height", 0 );
+*/
+        // TODO : JDLIB::ConfLoaderFast を作る
+        std::string str_info, str_tmp;
+        std::list< std::string > list_tmp;
+        std::list< std::string >::iterator it_tmp;
+        CACHE::load_rawdata( path_info, str_info );
+
+        std::list< std::string > lines = MISC::get_lines( str_info );
+        std::list < std::string >::iterator it = lines.begin(), it2;
+        std::string option; // GET_INFOVALUE　で使用
+
+        GET_INFOVALUE( m_refurl, "refurl = " );
+
+        set_code( HTTP_INIT );
+        GET_INFOVALUE( str_tmp, "code = " );
+        if( ! str_tmp.empty() ) set_code( atoi( str_tmp.c_str() ) );
+        
+        GET_INFOVALUE( str_tmp, "str_code = " );
+        set_str_code( str_tmp );
+
+        set_total_length( 0 );
+        GET_INFOVALUE( str_tmp, "byte = " );
+        if( ! str_tmp.empty() ) set_total_length( atoi( str_tmp.c_str() ) );
+
+        m_mosaic = CONFIG::get_use_mosaic();
+        GET_INFOVALUE( str_tmp, "mosaic = " );
+        if( ! str_tmp.empty() ) m_mosaic =  atoi( str_tmp.c_str() );
+
+        m_type = T_UNKNOWN;
+        GET_INFOVALUE( str_tmp, "type = " );
+        if( ! str_tmp.empty() ) m_type =  atoi( str_tmp.c_str() );
+
+        m_width = 0;
+        GET_INFOVALUE( str_tmp, "width = " );
+        if( ! str_tmp.empty() ) m_width =  atoi( str_tmp.c_str() );
+
+        m_height = 0;
+        GET_INFOVALUE( str_tmp, "height = " );
+        if( ! str_tmp.empty() ) m_height =  atoi( str_tmp.c_str() );
+
+        if( ! total_length() ){
+            set_total_length( CACHE::get_filesize( get_cache_path() ) );
+            if( total_length() ) save_info();
+        }
         set_current_length( total_length() );
     }
 
@@ -512,8 +601,7 @@ void Img::save_info()
         << "mosaic = " << m_mosaic << std::endl
         << "type = " << m_type << std::endl
         << "width = " << m_width << std::endl
-        << "height = " << m_height << std::endl
-        << "abone = " << m_abone << std::endl;
+        << "height = " << m_height << std::endl;
 
 #ifdef _DEBUG
     std::cout << "Img::save_info file = " << path_info << std::endl;

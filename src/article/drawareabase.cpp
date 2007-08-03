@@ -80,6 +80,9 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     // フォント設定
     set_fontid( FONT_MAIN );
 
+    // 文字色
+    set_colorid_text( COLOR_CHAR );
+
     // 背景色
     set_colorid_back( COLOR_BACK );
 
@@ -1456,14 +1459,14 @@ bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
     int xx = m_caret_pos.x;
     int yy = m_caret_pos.y - get_vscr_val();
     if( yy >= 0 ){
-        m_gc->set_foreground( m_color[ COLOR_CHAR ] );
+        m_gc->set_foreground( m_color[ get_colorid_text() ] );
         m_window->draw_line( m_gc, xx, yy, xx, yy + m_underline_pos );
     }
 #endif
 
     // オートスクロールのマーカ
     if( m_scrollinfo.mode != SCROLL_NOT && m_scrollinfo.show_marker ){
-        m_gc->set_foreground( m_color[ COLOR_CHAR ] );
+        m_gc->set_foreground( m_color[ get_colorid_text() ] );
         m_window->draw_arc( m_gc, false, m_scrollinfo.x - AUTOSCR_CIRCLE/2, m_scrollinfo.y - AUTOSCR_CIRCLE/2 ,
                             AUTOSCR_CIRCLE, AUTOSCR_CIRCLE, 0, 360 * 64 );
     }
@@ -1673,7 +1676,7 @@ void DrawAreaBase::draw_frame()
 {
     int width_win = m_view.get_width();
     int height_win = m_view.get_height();
-    m_gc->set_foreground( m_color[ COLOR_CHAR ] );
+    m_gc->set_foreground( m_color[ get_colorid_text() ] );
     m_window->draw_rectangle( m_gc, false, 0, 0, width_win-1, height_win-1 );
 }
 
@@ -1735,8 +1738,8 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, con
 
     }
 
-    int color_text = COLOR_CHAR;
-    if( layout->color_text ) color_text = *layout->color_text;
+    int color_text = get_colorid_text();
+    if( layout->color_text && *layout->color_text != COLOR_CHAR ) color_text = *layout->color_text;
     if( color_text == COLOR_CHAR && layout->div && layout->div->css->color >= 0 ) color_text = layout->div->css->color;
 
     int color_back = get_colorid_back();

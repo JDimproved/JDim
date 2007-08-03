@@ -70,6 +70,10 @@ namespace DBTREE
     const std::string board_path( const std::string& url );
     const std::string board_id( const std::string& url );
     const time_t board_time_modified( const std::string& url );
+    const std::string& board_get_modified_localrule( const std::string& url );
+    void board_set_modified_localrule( const std::string& url, const std::string& modified );
+    const std::string& board_get_modified_setting( const std::string& url );
+    void board_set_modified_setting( const std::string& url, const std::string& modified );
     const std::string board_name( const std::string& url );
     const std::string board_subjecttxt( const std::string& url );
     const std::string board_charset( const std::string& url );
@@ -170,6 +174,9 @@ namespace DBTREE
     const int get_proxy_port( const std::string& url );
     const std::string get_proxy_host_w( const std::string& url ); // 書き込み用
     const int get_proxy_port_w( const std::string& url );
+
+    // ローカルルール
+    const std::string localrule( const std::string& url );
 
     // setting.txt
     const std::string settingtxt( const std::string& url );

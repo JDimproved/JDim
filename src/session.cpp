@@ -275,7 +275,7 @@ void SESSION::init_session()
               << board_col_speed << std::endl
 
               << "embedded_mes = " << embedded_mes << std::endl
-              << "close_mes = " << close_mes << std::endl;
+              << "close_mes = " << close_mes << std::endl
               << "wx=" << win_mes_x << std::endl
               << "wy=" << win_mes_y << std::endl
               << "ww=" << win_mes_width << std::endl

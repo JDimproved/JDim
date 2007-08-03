@@ -146,7 +146,7 @@ namespace ARTICLE
         void append_html( const std::string& html );
 
         // dat追加
-        virtual void append_dat( const std::string& dat, int num = 0 );
+        virtual void append_dat( const std::string& dat, int num );
 
         // リストで指定したレスを表示
         void append_res( std::list< int >& list_resnum );
@@ -241,7 +241,7 @@ namespace ARTICLE
         void slot_save_dat();
 
         // リンクの処理
-        void slot_on_url( std::string url, int res_number );
+        virtual void slot_on_url( std::string url, int res_number );
         void slot_leave_url();
         bool click_url( std::string url, int res_number, GdkEventButton* event );
 

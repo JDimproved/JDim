@@ -101,19 +101,6 @@ void ArticleViewPreview::operate_view( const int& control )
 }
 
 
-
-//
-// dat をappend
-//
-// ArticleViewBase::append_dat()をオーパロードしてappendする前に表示を消す
-//
-void ArticleViewPreview::append_dat( const std::string& dat, int num )
-{
-    drawarea()->clear_screen();
-    ArticleViewBase::append_dat( dat, get_article()->get_number_load() +1 );
-}
-
-
 //
 // drawarea のクリックイベント
 //

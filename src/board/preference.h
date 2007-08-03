@@ -3,6 +3,7 @@
 #ifndef _BOARD_PREFERENCES_H
 #define _BOARD_PREFERENCES_H
 
+#include "skeleton/view.h"
 #include "skeleton/prefdiag.h"
 #include "skeleton/editview.h"
 #include "skeleton/label_entry.h"
@@ -95,16 +96,22 @@ namespace BOARD
         Gtk::Notebook m_notebook_abone_thread;
         SKELETON::EditView m_edit_thread, m_edit_word_thread, m_edit_regex_thread;
 
+        // ローカルルール
+        SKELETON::View* m_localrule;
+
         // SETTING.TXT
         SKELETON::EditView m_edit_settingtxt;
 
       public:
         Preferences( Gtk::Window* parent, const std::string& url );
+        virtual ~Preferences();
 
       private:
         void slot_clear_samba();
         void slot_delete_cookie();
+        void slot_switch_page( GtkNotebookPage*, guint page );
         virtual void slot_ok_clicked();
+        virtual bool slot_timeout( int timer_number );
     };
 
 }

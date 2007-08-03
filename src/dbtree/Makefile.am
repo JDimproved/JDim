@@ -12,6 +12,7 @@ libdbtree_a_SOURCES = \
 	boardmachi.cpp \
 \
 	settingloader.cpp \
+	ruleloader.cpp \
 	boardfactory.cpp \
 \
 	articlebase.cpp \
@@ -39,6 +40,7 @@ noinst_HEADERS = \
 	boardmachi.h \
 \
 	settingloader.h \
+	ruleloader.h \
 	boardfactory.h \
 \
 	articlebase.h \

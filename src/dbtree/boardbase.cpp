@@ -157,6 +157,13 @@ const int BoardBase::get_proxy_port_w()
 }
 
 
+// ローカルルール
+const std::string BoardBase::localrule()
+{
+    return "利用できません";
+}
+
+
 // setting.txt
 const std::string BoardBase::settingtxt()
 {
@@ -283,8 +290,8 @@ void BoardBase::read_info()
         // 板の情報ファイル読み込み
         read_board_info();
 
-        // キャッシュからSETTING.TXT のロード
-        load_setting();
+        // キャッシュからローカルルールとSETTING.TXT のロード
+        load_rule_setting();
     }
 }
 
@@ -686,6 +693,7 @@ void BoardBase::download_subject()
     clear();
     m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
     m_read_url_boardbase = false;
+    m_load_rule_setting = false;
 
     // オフライン
     if( ! SESSION::is_online() ){
@@ -698,6 +706,8 @@ void BoardBase::download_subject()
     }
 
     // オンライン
+
+    m_load_rule_setting = true;
 
     // subject.txtのキャッシュが無かったら modified をリセット
     std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
@@ -744,8 +754,8 @@ void BoardBase::receive_data( const char* data, size_t size )
 //
 void BoardBase::receive_finish()
 {
-    // 別スレッドでSETTING.TXT のダウンロード開始
-    if( SESSION::is_online() ) download_setting();
+    // 別スレッドでローカルルールとSETTING.TXT のダウンロード開始
+    if( m_load_rule_setting ) download_rule_setting();
 
     m_list_subject.clear();
 
@@ -1314,6 +1324,9 @@ void BoardBase::read_board_info()
     std::string modified = cf.get_option( "modified", "" );
     set_date_modified( modified );
 
+    m_modified_localrule = cf.get_option( "modified_localrule", "" );
+    m_modified_setting = cf.get_option( "modified_setting", "" );
+
     m_view_sort_column = cf.get_option( "view_sort_column", -1 );
     m_view_sort_mode = cf.get_option( "view_sort_mode", 0 );
     m_view_sort_pre_column = cf.get_option( "view_sort_pre_column", -1 );
@@ -1413,6 +1426,8 @@ void BoardBase::save_jdboard_info()
     
     std::ostringstream sstr;
     sstr << "modified = " << date_modified() << std::endl
+         << "modified_localrule = " << m_modified_localrule << std::endl
+         << "modified_setting = " << m_modified_setting << std::endl
          << "view_sort_column = " << m_view_sort_column << std::endl
          << "view_sort_mode = " << m_view_sort_mode << std::endl
          << "view_sort_pre_column = " << m_view_sort_pre_column << std::endl

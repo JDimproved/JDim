@@ -22,6 +22,7 @@ enum
     COLOR_CHAR_LINK_HIGH,   // レス番号やIDなどの多数現れたリンク
     COLOR_CHAR_MESSAGE,           // メッセージビューの文字
     COLOR_CHAR_MESSAGE_SELECTION, // メッセージビュー(選択範囲)の文字
+    COLOR_CHAR_ENTRY_DEFAULT,      // Gtk::Entryのデフォルトの文字色
 
     COLOR_IMG_NOCACHE, // 画像のリンク(キャッシュ無)
     COLOR_IMG_CACHED,  // 画像のリンク(キャッシュ有)
@@ -35,6 +36,7 @@ enum
     COLOR_BACK_HIGHLIGHT_TREE,  // ハイライト文字の背景色(ツリー用)
     COLOR_BACK_MESSAGE,            // メッセージビューの背景色
     COLOR_BACK_MESSAGE_SELECTION,  // メッセージビュー(選択範囲)の背景色
+    COLOR_BACK_ENTRY_DEFAULT,      // Gtk::Entryのデフォルトの背景色
 
     COLOR_SEPARATOR_NEW,    // 新着セパレータ
 

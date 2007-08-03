@@ -93,6 +93,7 @@ namespace ARTICLE
         CARET_POSITION m_caret_pos_dragstart; // ドラッグを開始したキャレット位置
 
         // 色
+        int m_colorid_text;     // デフォルトの文字色
         int m_colorid_back;     // デフォルトの背景色
         std::vector< Gdk::Color > m_color;
 
@@ -232,6 +233,10 @@ namespace ARTICLE
 
         // バックスクリーン描画
         bool draw_backscreen( bool redraw_all = false );
+
+        // 文字色のID( colorid.h にある ID を指定)
+        const int get_colorid_text() const{ return m_colorid_text; }
+        void set_colorid_text( int id ){ m_colorid_text = id; }
 
         // 背景色のID( colorid.h にある ID を指定)
         const int get_colorid_back();

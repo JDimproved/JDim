@@ -194,7 +194,7 @@ namespace DBTREE
         virtual void clear();
         virtual void init_loading();
 
-        // ロード用デー多作制
+        // ロード用データ作成
         virtual void create_loaderdata( JDLIB::LOADERDATA& data ){}
 
         // 保存前にrawデータを加工

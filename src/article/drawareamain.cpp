@@ -5,8 +5,6 @@
 
 #include "drawareamain.h"
 
-#include "dbtree/articlebase.h"
-
 using namespace ARTICLE;
 
 

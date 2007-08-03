@@ -14,6 +14,8 @@ enum
 
     FONT_MESSAGE,    // 書き込みビューのエディタ
 
+    FONT_ENTRY_DEFAULT,    // Gtk::Entryのデフォルトフォント
+
     FONT_NUM
 };
 

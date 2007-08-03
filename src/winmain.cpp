@@ -111,6 +111,7 @@ void WinMain::save_session()
 
             // ウィンドウのサイズや位置を保存
             int x, y, width, height;;
+            bool maximized = is_maximized();
             get_window()->get_root_origin( x, y );
             get_size( width, height );
             x = MAX( 0, x );
@@ -118,16 +119,16 @@ void WinMain::save_session()
 
 #ifdef _DEBUG
             std::cout << "window size : x = " << x << " y = " << y << " w = " << width << " h = " << height
-                      << " max = " << is_maximized() << std::endl;
+                      << " max = " << maximized << std::endl;
 #endif
 
-            if( ! is_maximized() ){
+            if( ! maximized ){
                 SESSION::set_x( x );
                 SESSION::set_y( y );
                 SESSION::set_width( width );
                 SESSION::set_height( height );
             }
-            SESSION::set_maximized( is_maximized() );
+            SESSION::set_maximized( maximized );
         }
 
         delete m_core;

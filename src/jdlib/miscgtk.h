@@ -26,10 +26,19 @@ namespace MISC
     // 使用可能なフォントの一覧を取得
     std::set< std::string > get_font_families();
 
+    // gtk::entryのフォント名を取得
+    std::string get_entry_font();
+
+    // gtk::entryの文字色を16進数表記の文字列で取得
+    std::string get_entry_color_text();
+
+    // gtk::entryの背景色を16進数表記の文字列で取得
+    std::string get_entry_color_base();
+    
     // 画像の幅と高さを取得
     void get_img_size( const std::string& filename, int& width, int& height );
 
-    // 画像ローダ取得
+    // PixbufLoaderローダ取得
     // stop を trueにすると読み込みを停止する
     Glib::RefPtr< Gdk::PixbufLoader > get_ImageLoder( const std::string& file, bool& stop, bool pixbufonly, std::string& errmsg );
 

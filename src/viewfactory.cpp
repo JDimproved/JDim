@@ -10,6 +10,7 @@
 
 #include "article/articleview.h"
 #include "article/articleviewpreview.h"
+#include "article/articleviewinfo.h"
 #include "article/articleviewpopup.h"
 
 #include "image/imageview.h"
@@ -64,6 +65,9 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
 
         case VIEW_ARTICLEPREVIEW:
             return new ARTICLE::ArticleViewPreview( url );
+
+        case VIEW_ARTICLEINFO:
+            return new ARTICLE::ArticleViewInfo( url );
 
         case VIEW_ARTICLESEARCHCAHCE:
             return new ARTICLE::ArticleViewSearchCache( url, args.arg1, ( args.arg2 == "OR" ), ( args.arg3 == "all" ) );

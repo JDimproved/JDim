@@ -38,6 +38,7 @@ UCSTBL ucstbl[] = {
     { 8205, "zwj;" },
     { 8206, "lrm;" },
     { 8207, "rlm;" },
+    { 8212, "mdash;" },
     { 8776, "asymp;" },
 
     { 9824, "spades;" },

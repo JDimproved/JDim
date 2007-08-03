@@ -16,11 +16,13 @@ libskeleton_a_SOURCES = \
 	entry.cpp \
 	compentry.cpp \
 	login.cpp \
+	prefdiag.cpp \
 	panecontrol.cpp \
 	hpaned.cpp \
 	vpaned.cpp \
 	notebook.cpp \
-	vbox.cpp
+	vbox.cpp \
+	textloader.cpp
 
 noinst_HEADERS = \
 	window.h \
@@ -51,7 +53,8 @@ noinst_HEADERS = \
 	hpaned.h \
 	vpaned.h \
 	notebook.h \
-	vbox.h
+	vbox.h \
+	textloader.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

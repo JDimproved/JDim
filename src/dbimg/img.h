@@ -31,6 +31,8 @@ namespace DBIMG
     class Img : public SKELETON::Loadable
     {
         std::string m_url;
+        std::string m_url_alt; // リダイレクトなどで使用するアドレス
+        int m_count_redirect; // リダイレクト回数
 
         int m_type; // 画像タイプ
         int m_width;
@@ -81,7 +83,7 @@ namespace DBIMG
 
         void set_protect( bool protect );
 
-        void download_img( const std::string& refurl );
+        void download_img( const std::string refurl );
         bool save( Gtk::Window* parent, const std::string& path_to );
         
       private:

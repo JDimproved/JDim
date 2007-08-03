@@ -43,6 +43,15 @@ namespace DBTREE
         // 一度でも m_list_subject が作られた(=subject.txtを開いた)らtrue
         bool m_list_subject_created;
 
+        // ローカルルールのmodified 時刻
+        std::string m_modified_localrule;
+
+        // setting.txtの modified 時刻
+        std::string m_modified_setting;
+
+        // subjectダウンロード後にローカルルールとsetting.txtをロードする
+        bool m_load_rule_setting;
+
         // ビュワーでソートをする列番号、ソード順
         int m_view_sort_column;
         int m_view_sort_mode;
@@ -167,6 +176,14 @@ namespace DBTREE
         // boardviewに表示するスレッドのリストを取得
         std::list< ArticleBase* >& get_list_subject(){ return m_list_subject; }
 
+        // ローカルルールの modified 時刻
+        const std::string& get_modified_localrule() const { return m_modified_localrule; }
+        void set_modified_localrule( const std::string& modified ){ m_modified_localrule = modified; }
+
+        // setting.txtの modified 時刻
+        const std::string& get_modified_setting() const { return m_modified_setting; }
+        void set_modified_setting( const std::string& modified ){ m_modified_setting = modified; }
+
         // boardviewでソートする列番号とソート順
         const int get_view_sort_column() const { return m_view_sort_column; }
         void set_view_sort_column( int column ){ m_view_sort_column = column; }
@@ -202,6 +219,9 @@ namespace DBTREE
         virtual const int get_proxy_port();
         virtual const std::string get_proxy_host_w();
         virtual const int get_proxy_port_w();
+
+        // ローカルルール
+        virtual const std::string localrule();
 
         // SETTING.TXT
         virtual const std::string settingtxt();
@@ -388,9 +408,9 @@ namespace DBTREE
         void save_board_info();
         void save_jdboard_info();
 
-        // setting.txtの読み込み及びダウンロード
-        virtual void load_setting(){}
-        virtual void download_setting(){}
+        // ローカルルールとsetting.txtの読み込み及びダウンロード
+        virtual void load_rule_setting(){}
+        virtual void download_rule_setting(){}
     };
 }
 

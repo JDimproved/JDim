@@ -5,12 +5,14 @@ libarticle_a_SOURCES = \
 \
 	drawareabase.cpp \
 	drawareamain.cpp \
+	drawareainfo.cpp \
 	drawareapopup.cpp \
 	embeddedimage.cpp \
 \
 	articleviewbase.cpp \
 	articleview.cpp \
 	articleviewpreview.cpp \
+	articleviewinfo.cpp \
 	articleviewpopup.cpp \
 \
 	layouttree.cpp \
@@ -22,12 +24,14 @@ noinst_HEADERS = \
 \
 	drawareabase.h \
 	drawareamain.h \
+	drawareainfo.h \
 	drawareapopup.h \
 	embeddedimage.h \
 \
 	articleviewbase.h \
 	articleview.h \
 	articleviewpreview.h \
+	articleviewinfo.h \
 	articleviewpopup.h \
 \
 	layouttree.h \

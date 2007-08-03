@@ -783,6 +783,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         std::cout << ss.str() << std::endl;
 #endif
 
+        m_preview->set_command( "clear_screen" );
         m_preview->set_command( "append_dat", ss.str() );
     }
 

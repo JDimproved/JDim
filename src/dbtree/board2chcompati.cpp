@@ -6,6 +6,7 @@
 #include "board2chcompati.h"
 #include "article2chcompati.h"
 #include "settingloader.h"
+#include "ruleloader.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
@@ -31,8 +32,9 @@ using namespace DBTREE;
 
 Board2chCompati::Board2chCompati( const std::string& root, const std::string& path_board, const std::string& name,
     const std::string& basicauth)
-    : BoardBase( root, path_board, name )
-    , m_settingloader( 0 )
+    : BoardBase( root, path_board, name ),
+      m_settingloader( NULL ),
+      m_ruleloader( NULL )
 {
     set_path_dat( "/dat" );
     set_path_readcgi( "/test/read.cgi" );
@@ -51,6 +53,9 @@ Board2chCompati::~Board2chCompati()
 {
     if( m_settingloader ) delete m_settingloader;
     m_settingloader = NULL;
+
+    if( m_ruleloader ) delete m_ruleloader;
+    m_ruleloader = NULL;
 }
 
 
@@ -335,12 +340,29 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
 }
 
 
+const std::string Board2chCompati::localrule()
+{
+    if( m_ruleloader ){
+        if( m_ruleloader->is_loading() ) return "ロード中です";
+        else if( m_ruleloader->get_code() == HTTP_OK ){
+            if( m_ruleloader->get_data().empty() ) return "ローカルルールはありません";
+            else return m_ruleloader->get_data();
+        }
+        else return "ロードに失敗しました : " + m_ruleloader->get_str_code();
+    }
+
+    return BoardBase::localrule();
+}
+
 
 const std::string Board2chCompati::settingtxt()
 {
     if( m_settingloader ){
         if( m_settingloader->is_loading() ) return "ロード中です";
-        else if( m_settingloader->get_code() == HTTP_OK ) return m_settingloader->settingtxt();
+        else if( m_settingloader->get_code() == HTTP_OK ){
+            if( m_settingloader->get_data().empty() ) return "SETTING.TXTはありません";
+            else return m_settingloader->get_data();
+        }
         else return "ロードに失敗しました : " + m_settingloader->get_str_code();
     }
 
@@ -375,34 +397,39 @@ const int Board2chCompati::message_count()
 }    
 
 
-
 //
-// SETTING.TXTをキャッシュから読み込む
+// ローカルルールとSETTING.TXTをキャッシュから読み込む
 //
 // BoardBase::read_info()で呼び出す
 //
-void Board2chCompati::load_setting()
+void Board2chCompati::load_rule_setting()
 {
 #ifdef _DEBUG
-    std::cout << "Board2chCompati::load_setting\n";
+    std::cout << "Board2chCompati::load_rule_setting\n";
 #endif
 
+    if( ! m_ruleloader ) m_ruleloader = new RuleLoader( url_boardbase() );
+    m_ruleloader->load_text();
+
     if( ! m_settingloader ) m_settingloader = new SettingLoader( url_boardbase() );
-    m_settingloader->load_setting();
+    m_settingloader->load_text();
 }
 
 
 //
-// SETTING.TXTをサーバからダウンロード
+// ローカルルールとSETTING.TXTをサーバからダウンロード
 //
 // 読み込むタイミングはsubject.txtを読み終わった直後( BoardBase::receive_finish() )
 //
-void Board2chCompati::download_setting()
+void Board2chCompati::download_rule_setting()
 {
 #ifdef _DEBUG
-    std::cout << "Board2chCompati::download_setting\n";
+    std::cout << "Board2chCompati::download_rule_setting\n";
 #endif
 
+    if( ! m_ruleloader ) m_ruleloader = new RuleLoader( url_boardbase() );
+    m_ruleloader->download_text();
+
     if( ! m_settingloader ) m_settingloader = new SettingLoader( url_boardbase() );
-    m_settingloader->download_setting();
+    m_settingloader->download_text();
 }

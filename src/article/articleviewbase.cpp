@@ -526,7 +526,9 @@ bool ArticleViewBase::set_command( const std::string& command, const std::string
               << "command = " << command << std::endl;
 #endif    
 
-    if( command == "append_dat" ) append_dat( arg );
+    if( command == "append_dat" ) append_dat( arg, -1 );
+    else if( command == "append_html" ) append_html( arg );
+    else if( command == "clear_screen" ) if( m_drawarea ) m_drawarea->clear_screen();
     else if( command == "goto_num" ) goto_num( atoi( arg.c_str() ) );
     else if( command == "delete_popup" ) delete_popup();
 
@@ -1382,11 +1384,14 @@ void ArticleViewBase::append_html( const std::string& html )
 
 
 //
-// dat をappend
+// dat をレス番号 num 番として append
+//
+// num < 0 の時は現在の最大スレ番号の後に追加
 //
 void ArticleViewBase::append_dat( const std::string& dat, int num )
 {
     assert( m_drawarea );
+    if( num < 0 ) num = get_article()->get_number_load() +1;
     m_drawarea->append_dat( dat, num );
     redraw_view();
 }
@@ -2018,9 +2023,17 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     // ブラウザで開く
     else if( control.button_alloted( event, CONTROL::ClickButton ) ){
 
+        std::string tmp_url = url;
+
+        // 相対パス
+        if( url.find( "./" ) == 0 ) tmp_url = DBTREE::url_boardbase( m_url_article ) + url.substr( 1 );
+
+        // 絶対パス
+        else if( url.find( "/" ) == 0 ) tmp_url = DBTREE::url_root( m_url_article ) + url.substr( 1 );
+
         hide_popup();
 
-        CORE::core_set_command( "open_url", url );
+        CORE::core_set_command( "open_url", tmp_url );
     }
 
     /////////////////////////////////////////////////////////////////

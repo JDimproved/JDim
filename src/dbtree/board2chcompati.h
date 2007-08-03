@@ -12,10 +12,12 @@
 namespace DBTREE
 {
     class SettingLoader;
+    class RuleLoader;
 
     class Board2chCompati : public BoardBase
     {
         SettingLoader* m_settingloader;
+        RuleLoader* m_ruleloader;
 
       public:
 
@@ -34,6 +36,9 @@ namespace DBTREE
         // 新スレ作成用のsubbbscgi のURL
         virtual const std::string url_subbbscgi_new();
 
+        // ローカルルール
+        virtual const std::string localrule();
+
         // SETTING.TXT 
         virtual const std::string settingtxt();
         virtual const std::string default_noname();
@@ -47,8 +52,8 @@ namespace DBTREE
         virtual ArticleBase* append_article( const std::string& id, bool cached );
         virtual void parse_subject( const char* str_subject_txt );
 
-        virtual void load_setting();
-        virtual void download_setting();
+        virtual void load_rule_setting();
+        virtual void download_rule_setting();
     };
 }
 

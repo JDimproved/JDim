@@ -1456,22 +1456,12 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
         // HTMLタグ
         if( *pos == '<' ){ 
 
+            bool br = false;
+
             // 改行 <br>
             if( ( *( pos + 1 ) == 'b' || *( pos + 1 ) == 'B' )
-                &&  ( *( pos + 2 ) == 'r' || *( pos + 2 ) == 'R' ) ){  
-
-                // フラッシュ
-                if( *( pos - 1 ) == ' ' ) --lng_text; // 改行前の空白を取り除く
-                createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
-
-                pos += 4;
-                
-                // 改行ノード作成
-                createBrNode();
-
-                // 改行直後と行頭の空白は全て除く
-                while( *pos == ' ' ) ++pos;
-            }
+                && ( *( pos + 2 ) == 'r' || *( pos + 2 ) == 'R' )
+                ) br = true;
 
             //  ahref == true かつ <a href=～></a>
             else if( ahref &&
@@ -1480,14 +1470,15 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 // フラッシュ
                 createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
-                while( pos < pos_end && *pos != '"' ) ++pos;
-                if( pos >= pos_end ) continue;
+                while( pos < pos_end && *pos != '=' ) ++pos;
                 ++pos;
+                if( *pos == '"' || *pos == ' ' ) ++pos;
+                if( pos >= pos_end ) continue;
 
                 const char* pos_link_start = pos;
                 int lng_link = 0;
 
-                while( pos < pos_end && *pos != '"' ){ ++pos; ++lng_link; }
+                while( pos < pos_end && ( *pos != '"' && *pos != ' ' && *pos != '>' ) ){ ++pos; ++lng_link; }
                 if( pos >= pos_end ) continue;
 
                 while( pos < pos_end && *pos != '>' ) ++pos;
@@ -1505,12 +1496,68 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 ++pos;
 
                 if( lng_link && lng_str ){
-                    create_linknode( pos_str_start, lng_str , pos_link_start, lng_link, COLOR_CHAR, false );
+                    create_linknode( pos_str_start, lng_str , pos_link_start, lng_link, COLOR_CHAR_LINK, false );
                 }
             }
 
             // </a>
             else if( *( pos + 1 ) == '/' && ( *( pos + 2 ) == 'a' || *( pos + 2 ) == 'A' ) && *( pos + 3 ) == '>' ) pos += 4;
+
+            // 改行にするタグ
+            else if(
+                // <p>
+                (
+                    ( *( pos + 1 ) == 'p' || *( pos + 1 ) == 'P' )
+                    && *( pos + 2 ) == '>'
+                    )
+
+                // </p>
+                || (
+                    ( *( pos + 2 ) == 'p' || *( pos + 2 ) == 'P' )
+                    && *( pos + 3 ) == '>'
+                    && *( pos + 1 ) == '/'
+                    )
+
+                // <dd>
+                || (
+                    ( *( pos + 1 ) == 'd' || *( pos + 1 ) == 'D' )
+                    && ( *( pos + 2 ) == 'd' || *( pos + 2 ) == 'D' )
+                    )
+
+                // </dl>
+                || (
+                    ( *( pos + 2 ) == 'd' || *( pos + 2 ) == 'D' )
+                    && ( *( pos + 3 ) == 'l' || *( pos + 3 ) == 'L' )
+                    && *( pos + 1 ) == '/'
+                    )
+
+                // </ul>
+                || (
+                    ( *( pos + 2 ) == 'u' || *( pos + 2 ) == 'U' )
+                    && ( *( pos + 3 ) == 'l' || *( pos + 3 ) == 'L' )
+                    && *( pos + 1 ) == '/'
+                    )
+
+                // </li>
+                || (
+                    ( *( pos + 2 ) == 'l' || *( pos + 2 ) == 'L' )
+                    && ( *( pos + 3 ) == 'i' || *( pos + 3 ) == 'I' )
+                    && *( pos + 1 ) == '/'
+                    )
+                ) br = true;
+
+            // <li>は・にする
+            else if( ( *( pos + 1 ) == 'l' || *( pos + 2 ) == 'L' )
+                     && ( *( pos + 2 ) == 'i' || *( pos + 3 ) == 'I' )
+                ){
+
+                pos += 4;
+
+                int n_in = 0;
+                int n_out = 0;
+                DBTREE::decode_char( "&#12539;", n_in, m_parsed_text + lng_text, n_out );
+                lng_text += n_out;
+            }
 
             // その他のタグは無視。タグを取り除いて中身だけを見る
             else {
@@ -1520,6 +1567,21 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 
                 while( pos < pos_end && *pos != '>' ) ++pos;
                 ++pos;
+            }
+
+            // 改行実行
+            if( br ){
+
+                // フラッシュ
+                if( *( pos - 1 ) == ' ' ) --lng_text; // 改行前の空白を取り除く
+                createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+
+                // 改行ノード作成
+                createBrNode();
+
+                // 改行直後と行頭の空白は全て除く
+                while( *pos != '>' ) ++pos; ++pos;
+                while( *pos == ' ' ) ++pos;
             }
 
             // forのところで++されるので--しておく
@@ -1633,6 +1695,14 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
             // フラッシュしてからタブノードをつくる
             createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
             createHTabNode();
+            continue;
+        }
+
+        ///////////////////////
+        // LF(0x0A), CR(0x0D)
+        if( *pos == 0x0A || *pos == 0x0D ){
+
+            // 無視する
             continue;
         }
 

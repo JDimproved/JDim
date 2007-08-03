@@ -23,6 +23,7 @@
 #include "controlutil.h"
 #include "controlid.h"
 #include "prefdiagfactory.h"
+#include "httpcode.h"
 
 #include <sstream>
 
@@ -685,7 +686,9 @@ void ImageViewBase::slot_reload_force()
         return;
     }
 
-    m_img->set_code( 0 );
+    // コードをリセットしてから再読み込みをかける
+    m_img->reset();
+    m_img->set_code( HTTP_INIT );
     reload();
     CORE::core_set_command( "redraw", get_url() );
 }

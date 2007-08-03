@@ -114,6 +114,30 @@ std::set< std::string > MISC::get_font_families()
 }
 
 
+// gtk::entryのフォント名を取得
+std::string MISC::get_entry_font()
+{
+    Gtk::Entry entry;
+    return entry.get_style()->get_font().to_string();
+}
+
+
+// gtk::entryの文字色を16進数表記の文字列で取得
+std::string MISC::get_entry_color_text()
+{
+    Gtk::Entry entry;
+    return color_to_str( entry.get_style()->get_text( Gtk::STATE_NORMAL ) );
+}
+
+
+// gtk::entryの背景色を16進数表記の文字列で取得
+std::string MISC::get_entry_color_base()
+{
+    Gtk::Entry entry;
+    return color_to_str( entry.get_style()->get_base( Gtk::STATE_NORMAL ) );
+}
+
+
 // 画像の幅と高さを取得
 void MISC::get_img_size( const std::string& filename, int& width, int& height )
 {
@@ -127,7 +151,7 @@ void MISC::get_img_size( const std::string& filename, int& width, int& height )
 
 
 //
-// 画像ローダ取得
+// PixbufLoaderローダ取得
 //
 // stop を trueにすると読み込みを停止する
 //
@@ -159,6 +183,8 @@ bool MISC::ImgLoader::get_size()
 
 // 画像読み込み
 // stop を trueにすると読み込みを停止する
+// 動画でpixbufonly = true の時はアニメーションさせない
+// sizeonly = true の時はサイズの取得のみ
 bool MISC::ImgLoader::load( bool& stop, bool pixbufonly, bool sizeonly )
 {
     if( sizeonly && m_width && m_height ) return true;

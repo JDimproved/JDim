@@ -6,7 +6,7 @@
 #ifndef _SETTINGLOADER_H
 #define _SETTINGLOADER_H
 
-#include "skeleton/loadable.h"
+#include "skeleton/textloader.h"
 
 #include <string>
 
@@ -15,18 +15,12 @@ namespace JDLIB
     class LOADERDATA;
 }
 
-
 namespace DBTREE
 {
-    class SettingLoader : public SKELETON::Loadable
+    class SettingLoader : public SKELETON::TextLoader
     {
-        bool m_loaded; // 読み込み済みか
-
+        bool m_parsed;
         std::string m_url_boadbase;
-        char* m_rawdata;
-        int m_lng_rawdata;
-
-        std::string m_settingtxt;
 
         // デフォルト名無し
         std::string m_default_noname;
@@ -38,24 +32,25 @@ namespace DBTREE
         int m_message_count;
 
       public:
+
         SettingLoader( const std::string& url_boardbase );
         ~SettingLoader();
 
-        const std::string& settingtxt() const { return m_settingtxt; }
         const std::string& default_noname() const { return m_default_noname; }
         const int line_number() { return m_line_number; }
         const int message_count() { return m_message_count; }
 
-        void load_setting();
-        void download_setting();
+      protected:
 
-      private:
+        virtual const std::string get_url();
+        virtual const std::string get_path();
+        virtual const std::string get_charset();
 
-        void clear();
-        void parse( const std::string& setting );
+        // ロード用データ作成
+        virtual void create_loaderdata( JDLIB::LOADERDATA& data );
 
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        // ロード後に呼び出される
+        virtual void parse_data();
     };
 }
 

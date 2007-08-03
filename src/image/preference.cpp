@@ -8,6 +8,8 @@
 
 #include "jdlib/miscutil.h"
 
+#include "command.h"
+
 #include <sstream>
 
 using namespace IMAGE;

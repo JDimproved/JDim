@@ -1,5 +1,8 @@
 // ライセンス: GPL2
 
+//#define _DEBUG
+#include "jddebug.h"
+
 #include "preference.h"
 
 #include "dbtree/interface.h"
@@ -10,6 +13,7 @@
 #include "cache.h"
 #include "command.h"
 #include "global.h"
+#include "viewfactory.h"
 
 using namespace BOARD;
 
@@ -35,7 +39,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
       m_label_line( false, "1レスの最大改行数：" ),
       m_label_byte( false, "1レスの最大バイト数：" ),
       m_label_samba( false, "書き込み規制秒数 (Samba24) ：" ),
-      m_button_clearsamba( "秒数クリア" )
+      m_button_clearsamba( "秒数クリア" ),
+      m_localrule( NULL )
 {
     m_edit_cookies.set_editable( false );
 
@@ -87,7 +92,10 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     // 一般ページのパッキング
     m_label_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
     m_label_byte.set_text( MISC::itostr( DBTREE::message_count( get_url() ) ) );
-    m_label_samba.set_text( MISC::itostr( DBTREE::board_samba_sec( get_url() ) ) );
+
+    int samba_sec = DBTREE::board_samba_sec( get_url() );
+    if( ! samba_sec ) m_label_samba.set_text( "未取得" );
+    else m_label_samba.set_text( MISC::itostr( samba_sec ) );
 
     m_button_clearsamba.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_samba ) );
     m_hbox_samba.pack_start( m_label_samba, Gtk::PACK_SHRINK );
@@ -105,6 +113,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox.pack_start( m_hbox_samba, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_write, Gtk::PACK_SHRINK );
+
+    // ローカルルール
+    m_localrule = CORE::ViewFactory( CORE::VIEW_ARTICLEINFO, get_url() );
 
     // プロキシ
     m_vbox_proxy.set_border_width( 16 );
@@ -191,15 +202,24 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_edit_settingtxt.set_text( DBTREE::settingtxt( get_url() ) );
 
     m_notebook.append_page( m_vbox, "一般" );
+    m_notebook.append_page( *m_localrule, "ローカルルール" );
     m_notebook.append_page( m_vbox_proxy, "プロキシ設定" );
     m_notebook.append_page( m_notebook_abone, "あぼーん設定(スレビュー)" );
     m_notebook.append_page( m_notebook_abone_thread, "あぼーん設定(スレ一覧)" );
     m_notebook.append_page( m_edit_settingtxt, "SETTING.TXT" );
+    m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Preferences::slot_switch_page ) );
 
     get_vbox()->pack_start( m_notebook );
     set_title( "「" + DBTREE::board_name( get_url() ) + "」のプロパティ" );
     resize( 600, 400 );
     show_all_children();
+}
+
+
+Preferences::~Preferences()
+{
+    if( m_localrule ) delete m_localrule;
+    m_localrule = NULL;
 }
 
 
@@ -216,6 +236,16 @@ void Preferences::slot_delete_cookie()
     DBTREE::board_set_hana_for_write( get_url(), std::string() );
 
     m_edit_cookies.set_text( "未取得" );
+}
+
+
+
+void Preferences::slot_switch_page( GtkNotebookPage*, guint page )
+{
+    if( m_notebook.get_nth_page( page ) == m_localrule ){
+        m_localrule->set_command( "clear_screen" );
+        m_localrule->set_command( "append_html", DBTREE::localrule( get_url() ) );
+    }
 }
 
 
@@ -262,4 +292,11 @@ void Preferences::slot_ok_clicked()
     DBTREE::board_set_write_mail( get_url(), tmpmail );
 
     DBTREE::board_save_info( get_url() );
+}
+
+
+bool Preferences::slot_timeout( int timer_number )
+{
+    if( m_localrule ) m_localrule->clock_in();    
+    return true;
 }
