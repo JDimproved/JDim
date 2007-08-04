@@ -80,10 +80,13 @@ namespace DBIMG
         const int get_size() const { return m_size; }
         void set_size( int size ) { m_size = size; }
 
-        const bool is_protected() const { return m_protect; }
         const std::string& get_refurl() const { return m_refurl; }
 
+        const bool is_protected() const { return m_protect; }
         void set_protect( bool protect );
+
+        // 拡張子が偽装されているか
+        const bool is_fake(); 
 
         void download_img( const std::string refurl );
         bool save( Gtk::Window* parent, const std::string& path_to );

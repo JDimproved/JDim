@@ -2947,6 +2947,16 @@ void ArticleViewBase::slot_toggle_abone_transp_chain()
 void ArticleViewBase::slot_cancel_mosaic()
 {
     if( ! DBIMG::is_cached( m_url_tmp ) ) return;
+
+    if( DBIMG::is_fake( m_url_tmp ) ){
+
+        SKELETON::MsgDiag mdiag( NULL,
+                                 "拡張子が偽装されています。モザイクを解除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+
+        mdiag.set_default_response( Gtk::RESPONSE_NO );
+        if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+    }
+
     DBIMG::set_mosaic( m_url_tmp, false );
     CORE::core_set_command( "redraw", m_url_tmp );
 }

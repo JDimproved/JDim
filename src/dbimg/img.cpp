@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "img.h"
+#include "imginterface.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
@@ -149,9 +150,12 @@ std::string Img::get_cache_path()
 //
 void Img::download_img( const std::string refurl )
 {
+    // ダウンロード初回(リダイレクトでは無い)
+    if( ! m_count_redirect ) m_url_alt = std::string();
+
 #ifdef _DEBUG
     std::cout << "Img::download_img url = ";
-    if( ! m_url_alt.empty() ) std::cout << m_url_alt << std::endl;
+    if( ! m_url_alt.empty() ) std::cout << m_url_alt << "(" << m_count_redirect << ")" << std::endl;
     else std::cout << m_url << std::endl;
     std::cout << "refurl = " << refurl <<  std::endl;
 #endif
@@ -283,6 +287,26 @@ void Img::set_protect( bool protect )
 }
 
 
+// 拡張子が偽装されているか
+const bool Img::is_fake()
+{
+    if( ! is_cached() ) return false;
+
+    bool ret = false;
+    std::string url = m_url;
+    if( ! m_url_alt.empty() ) url = m_url_alt;
+
+    if( DBIMG::is_jpg( url ) && m_type != T_JPG ) ret = true;
+    if( DBIMG::is_png( url ) && m_type != T_PNG ) ret = true;
+    if( DBIMG::is_gif( url ) && m_type != T_GIF ) ret = true;
+
+#ifdef _DEBUG
+    std::cout << "Img::is_fake url = " << url << " ret = " << ret << std::endl;
+#endif
+
+    return ret;
+}
+
 
 //
 // データ受信
@@ -401,8 +425,6 @@ void Img::receive_finish()
         else m_type = T_NODATA;
     }
     m_count_redirect = 0;
-    m_url_alt = std::string();
-
 
 
     //////////////////////////////////////////////////
@@ -469,6 +491,9 @@ void Img::receive_finish()
               << "type = " << m_type << std::endl
               << "refurl = " << m_refurl << std::endl;
 #endif
+
+    // 拡張子が偽装されている時はモザイク表示にする
+    if( is_fake() ) m_mosaic = true;
 
     // 読み込み失敗の場合でもエラーメッセージを残すので info　は保存する
     save_info();

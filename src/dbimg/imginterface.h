@@ -22,8 +22,20 @@ namespace DBIMG
     void delete_root();
 
     // ロード可能な画像ファイルかチェック
-    bool is_loadable( const std::string& url );
-    bool is_loadable( const char* url, int n );
+    const bool is_loadable( const std::string& url );
+    const bool is_loadable( const char* url, int n );
+
+    // 拡張子だけをみて画像の種類を判断
+    // キャッシュに無くても判断可能
+    const bool is_jpg( const std::string& url );
+    const bool is_png( const std::string& url );
+    const bool is_gif( const std::string& url );
+
+    // 実際の画像ファイルの種類を判断
+    // キャッシュに無いときは判断不能
+    const bool is_jpg_real( const std::string& url );
+    const bool is_png_real( const std::string& url );
+    const bool is_gif_real( const std::string& url );
 
     DBIMG::Img* get_img( const std::string& url );
     std::string get_cache_path( const std::string& url );
@@ -48,9 +60,10 @@ namespace DBIMG
     void set_size( const std::string& url, int size );
     std::string get_refurl( const std::string& url );
 
-    size_t byte( const std::string& url );
-    size_t get_filesize( const std::string& url );
-    bool is_protected( const std::string& url );
+    const size_t byte( const std::string& url );
+    const size_t get_filesize( const std::string& url );
+    const bool is_protected( const std::string& url );
+    const bool is_fake( const std::string& url );
     void set_protect( const std::string& url, bool protect );
 }
 

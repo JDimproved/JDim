@@ -23,6 +23,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     ,m_open_ref( "開く" )
     ,m_label_wh( false, "大きさ : ", std::string() )
     ,m_label_size( false, "サイズ( byte / kb ) : ", std::string() )
+    ,m_label_type( false, "種類 : ", std::string() )
     ,m_check_protect( "キャッシュを保護する" )
 {
     // 一般
@@ -45,6 +46,12 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     int size = DBIMG::get_filesize( get_url() );
     m_label_size.set_text( MISC::itostr( size )  + " / " + MISC::itostr( size/1024 ) );
 
+    std::string type;
+    if( DBIMG::is_jpg_real( get_url() ) ) type = "JPEG";
+    if( DBIMG::is_png_real( get_url() ) ) type = "PNG";
+    if( DBIMG::is_gif_real( get_url() ) ) type = "GIF";
+    if( DBIMG::is_fake( get_url() ) ) type += " ※偽装されています※";
+    m_label_type.set_text( type );
 
     m_check_protect.set_active( DBIMG::is_protected( get_url() ) );
 
@@ -56,6 +63,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox_info.pack_start( m_hbox_ref, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_wh, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_size, Gtk::PACK_SHRINK );
+    m_vbox_info.pack_start( m_label_type, Gtk::PACK_SHRINK );
 
     m_vbox_info.pack_end( m_check_protect, Gtk::PACK_SHRINK );
 

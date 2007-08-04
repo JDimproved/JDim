@@ -80,8 +80,16 @@ bool ImgRoot::is_loadable( const std::string& url )
 
 bool ImgRoot::is_loadable( const char* url, int n )
 {
-    // 今のところ拡張子だけを見る
+    if( is_jpg( url, n ) ) return true;
+    if( is_png( url, n ) ) return true;
+    if( is_gif( url, n ) ) return true;
 
+    return false;
+}
+
+// 今のところ拡張子だけを見る
+bool ImgRoot::is_jpg( const char* url, int n )
+{
     // .jpg
     if( *( url + n -4 ) == '.' &&
         *( url + n -3 ) == 'j' &&
@@ -106,6 +114,11 @@ bool ImgRoot::is_loadable( const char* url, int n )
         *( url + n -2 ) == 'E' &&
         *( url + n -1 ) == 'G'  ) return true;
 
+    return false;
+}
+
+bool ImgRoot::is_png( const char* url, int n )
+{
     // .png
     if( *( url + n -4 ) == '.' &&
         *( url + n -3 ) == 'p' &&
@@ -117,6 +130,11 @@ bool ImgRoot::is_loadable( const char* url, int n )
         *( url + n -2 ) == 'N' &&
         *( url + n -1 ) == 'G'  ) return true;
 
+    return false;
+}
+
+bool ImgRoot::is_gif( const char* url, int n )
+{
     // .gif
     if( *( url + n -4 ) == '.' &&
         *( url + n -3 ) == 'g' &&

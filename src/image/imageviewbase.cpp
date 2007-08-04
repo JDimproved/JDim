@@ -530,9 +530,9 @@ void ImageViewBase::operate_view( const int& control )
             if( !m_img->is_protected() ){
 
                 SKELETON::MsgDiag mdiag( IMAGE::get_admin()->get_win(),
-                                         "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-                mdiag.set_default_response( Gtk::RESPONSE_OK );
-                if( mdiag.run() == Gtk::RESPONSE_OK ) delete_view();
+                                         "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+                mdiag.set_default_response( Gtk::RESPONSE_NO );
+                if( mdiag.run() == Gtk::RESPONSE_YES ) delete_view();
             }
             else{
 
@@ -701,6 +701,16 @@ void ImageViewBase::slot_cancel_mosaic()
     if( ! m_enable_menuslot ) return;
 
     if( ! m_img->is_cached() ) return;
+
+    if( m_img->is_fake() ){
+
+        SKELETON::MsgDiag mdiag( IMAGE::get_admin()->get_win(),
+                                 "拡張子が偽装されています。モザイクを解除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+
+        mdiag.set_default_response( Gtk::RESPONSE_NO );
+        if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+    }
+
     m_img->set_mosaic( false );
     CORE::core_set_command( "redraw", get_url() );
 }

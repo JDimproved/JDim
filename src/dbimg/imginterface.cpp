@@ -25,7 +25,7 @@ void DBIMG::delete_root()
 }
 
 
-bool DBIMG::is_loadable( const std::string& url )
+const bool DBIMG::is_loadable( const std::string& url )
 {
     if( instance_dbimg_root ) return instance_dbimg_root->is_loadable( url );
 
@@ -33,9 +33,66 @@ bool DBIMG::is_loadable( const std::string& url )
 }
 
 
-bool DBIMG::is_loadable( const char* url, int n )
+const bool DBIMG::is_loadable( const char* url, int n )
 {
     if( instance_dbimg_root ) return instance_dbimg_root->is_loadable( url, n );
+
+    return false;
+}
+
+
+const bool DBIMG::is_jpg( const std::string& url )
+{
+    if( instance_dbimg_root ) return instance_dbimg_root->is_jpg( url.c_str(), url.length() );
+
+    return false;
+}
+
+
+const bool DBIMG::is_png( const std::string& url )
+{
+    if( instance_dbimg_root ) return instance_dbimg_root->is_png( url.c_str(), url.length() );
+
+    return false;
+}
+
+
+const bool DBIMG::is_gif( const std::string& url )
+{
+    if( instance_dbimg_root ) return instance_dbimg_root->is_gif( url.c_str(), url.length() );
+
+    return false;
+}
+
+
+const bool DBIMG::is_jpg_real( const std::string& url )
+{
+    int type = T_UNKNOWN;
+    DBIMG::Img* img = DBIMG::get_img( url );
+    if( img ) type = img->get_type();
+    if( type == T_JPG ) return true;
+
+    return false;
+}
+
+
+const bool DBIMG::is_png_real( const std::string& url )
+{
+    int type = T_UNKNOWN;
+    DBIMG::Img* img = DBIMG::get_img( url );
+    if( img ) type = img->get_type();
+    if( type == T_PNG ) return true;
+
+    return false;
+}
+
+
+const bool DBIMG::is_gif_real( const std::string& url )
+{
+    int type = T_UNKNOWN;
+    DBIMG::Img* img = DBIMG::get_img( url );
+    if( img ) type = img->get_type();
+    if( type == T_GIF ) return true;
 
     return false;
 }
@@ -211,14 +268,14 @@ std::string DBIMG::get_refurl( const std::string& url )
 }
 
 
-size_t DBIMG::byte( const std::string& url )
+const size_t DBIMG::byte( const std::string& url )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->current_length();
     return 0;
 }
 
-size_t DBIMG::get_filesize( const std::string& url )
+const size_t DBIMG::get_filesize( const std::string& url )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->total_length();
@@ -226,11 +283,18 @@ size_t DBIMG::get_filesize( const std::string& url )
 }
 
 
-bool DBIMG::is_protected( const std::string& url )
+const bool DBIMG::is_protected( const std::string& url )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->is_protected();
     return true;
+}
+
+const bool DBIMG::is_fake( const std::string& url )
+{
+    DBIMG::Img* img = DBIMG::get_img( url );
+    if( img ) return img->is_fake();
+    return false;
 }
 
 

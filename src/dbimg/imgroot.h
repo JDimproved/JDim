@@ -30,6 +30,10 @@ namespace DBIMG
         bool is_loadable( const std::string& url );
         bool is_loadable( const char* url, int n );
 
+        bool is_jpg( const char* url, int n );
+        bool is_png( const char* url, int n );
+        bool is_gif( const char* url, int n );
+
         // キャッシュ削除
         void delete_cache( const std::string& url );
 

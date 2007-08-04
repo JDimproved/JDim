@@ -24,6 +24,7 @@ namespace IMAGE
 
         SKELETON::LabelEntry m_label_wh;
         SKELETON::LabelEntry m_label_size;
+        SKELETON::LabelEntry m_label_type;
 
         Gtk::CheckButton m_check_protect;
 
