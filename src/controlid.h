@@ -14,7 +14,8 @@ namespace CONTROL
         MODE_BBSLIST,
         MODE_BOARD,
         MODE_ARTICLE,
-        MODE_IMAGE,
+        MODE_IMAGEICON,
+        MODE_IMAGEVIEW,
         MODE_MESSAGE,
         MODE_EDIT,
 
@@ -151,8 +152,8 @@ namespace CONTROL
 
         ARTICLEMOTION_END,
 
-        // IMAGE 系
-        IMAGEMOTION,
+        // IMAGE ICON 系
+        IMAGEICONMOTION,
 
         CancelMosaic,
         ZoomFitImage,
@@ -160,7 +161,16 @@ namespace CONTROL
         ZoomOutImage,
         OrgSizeImage,
 
-        IMAGEMOTION_END,
+        IMAGEICONMOTION_END,
+
+        // IMAGE VIEW 系
+        IMAGEVIEWMOTION,
+
+        CloseImageButton, // 以下、マウスボタン専用の設定
+        ScrollImageButton,
+        CancelMosaicButton,
+
+        IMAGEVIEWMOTION_END,
 
         // MESSAGE 系
         MESSAGEMOTION,

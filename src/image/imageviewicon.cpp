@@ -32,6 +32,9 @@ ImageViewIcon::ImageViewIcon( const std::string& url )
     std::cout << "ImageViewIcon::ImageViewIcon : " << get_url() << std::endl;
 #endif
 
+    // コントロールモード設定
+    get_control().add_mode( CONTROL::MODE_IMAGEICON );
+
     //枠を描くためにm_eventの外にもう一つEventBoxを作る ( Gtk::HBox は modify_fg() 無効なので )
     m_event_frame = Gtk::manage( new Gtk::EventBox() );
     pack_start( *m_event_frame );

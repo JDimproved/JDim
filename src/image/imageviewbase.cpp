@@ -46,9 +46,6 @@ ImageViewBase::ImageViewBase( const std::string& url, const std::string& arg1, c
 
     // マウスジェスチャ可能
     set_enable_mg( true );
-
-    // コントロールモード設定
-    get_control().add_mode( CONTROL::MODE_IMAGE );
 }
 
 
@@ -456,6 +453,7 @@ void ImageViewBase::operate_view( const int& control )
     switch( control ){
 
         case CONTROL::CancelMosaic:
+        case CONTROL::CancelMosaicButton:
             slot_cancel_mosaic();
             break;
 
@@ -484,6 +482,7 @@ void ImageViewBase::operate_view( const int& control )
             stop();
             break;
 
+        case CONTROL::CloseImageButton:
         case CONTROL::CloseTabButton:
         case CONTROL::Quit:
             close_view();

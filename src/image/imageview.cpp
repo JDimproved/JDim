@@ -47,6 +47,9 @@ ImageViewMain::ImageViewMain( const std::string& url )
     std::cout << "ImageViewMain::ImageViewMain : " << get_url() << std::endl;
 #endif
 
+    // コントロールモード設定
+    get_control().add_mode( CONTROL::MODE_IMAGEVIEW );
+
     // スクロールウィンドウを作ってEventBoxを貼る
     m_scrwin = Gtk::manage( new Gtk::ScrolledWindow() );
     assert( m_scrwin );
@@ -362,7 +365,7 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
     if( m_scrwin ){
 
         GdkEventButton event_button;
-        get_control().get_eventbutton( CONTROL::ClickButton, event_button );
+        get_control().get_eventbutton( CONTROL::ScrollImageButton, event_button );
 
 #ifdef _DEBUG
         std::cout << "state = " << event->state << " / " << GDK_BUTTON1_MASK << " button = " << event_button.button << std::endl;

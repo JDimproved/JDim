@@ -141,7 +141,7 @@ namespace CONTROL
 
         { "", "" },
 
-        // IMAGE
+        // IMAGE ICON
 
         { "", "" },
 
@@ -150,6 +150,16 @@ namespace CONTROL
         { "ZoomInImage", "ズームイン" },
         { "ZoomOutImage", "ズームアウト" },
         { "OrgSizeImage", "元の画像サイズ" },
+
+        { "", "" },
+
+        // IMAGE VIEW
+
+        { "", "" },
+
+        { "CloseImageButton", "画像を閉じる" },
+        { "ScrollImageButton", "画像スクロール" },
+        { "CancelMosaicButton", "モザイク解除" },
 
         { "", "" },
 

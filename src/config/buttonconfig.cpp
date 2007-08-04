@@ -101,6 +101,11 @@ void ButtonConfig::load_conf()
 
     SETMOTION( "OpenBeButton", "Left Mid" );
     SETMOTION( "PopupmenuBeButton", "Right" );
+
+    // IMAGE用ボタン設定
+    SETMOTION( "CloseImageButton", "Mid" );
+    SETMOTION( "ScrollImageButton", "Left" );
+    SETMOTION( "CancelMosaicButton", "" );
 }
 
 

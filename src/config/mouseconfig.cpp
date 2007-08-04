@@ -77,7 +77,7 @@ void MouseConfig::load_conf()
     SETMOTION( "GotoNew", "626" );
 
     // IMAGE
-    SETMOTION( "CancelMosaic", "28" );
+    SETMOTION( "CancelMosaicButton", "28" );
 }
 
 
