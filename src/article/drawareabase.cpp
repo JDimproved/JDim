@@ -1527,7 +1527,10 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 
                     if( img->is_loading() ) node->color_text = COLOR_IMG_LOADING;
                     else if( img->get_code() == HTTP_OK ) node->color_text = COLOR_IMG_CACHED;
-                    else if( img->get_code() == HTTP_INIT ) node->color_text = COLOR_IMG_NOCACHE;
+                    else if( img->get_code() == HTTP_INIT ){
+                        if( img->get_abone() ) node->color_text = COLOR_IMG_ERR;
+                        else node->color_text = COLOR_IMG_NOCACHE;
+                    }
                     else node->color_text = COLOR_IMG_ERR;
                 }
             }
@@ -1831,7 +1834,8 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y )
             
         }
 
-        color = COLOR_IMG_NOCACHE;
+        if( img->get_abone() ) color = COLOR_IMG_ERR;
+        else color = COLOR_IMG_NOCACHE;
     }
 
     // 画像描画

@@ -25,6 +25,8 @@ namespace DBIMG
         T_LARGE,
         T_OPENFAILED,
         T_WRITEFAILED,
+        T_NOT_FOUND,
+        T_NODATA,
         T_UNKNOWN
     };
 

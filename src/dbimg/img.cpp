@@ -82,8 +82,6 @@ Img::~Img()
 //
 void Img::reset()
 {
-    m_url_alt = std::string();
-    m_count_redirect = 0;
     clear();
     read_info();
 }
@@ -293,6 +291,11 @@ void Img::receive_data( const char* data, size_t size )
 {
     if( ! size ) return;
 
+#ifdef _DEBUG
+    std::cout << "Img::receive_data code = " << get_code() << " "
+              << current_length() << " / " << total_length() << std::endl;
+#endif
+
     // 先頭のシグネチャを見て画像かどうかをチェック
     if( m_type == T_UNKNOWN && get_code() == HTTP_OK ){
 
@@ -323,19 +326,39 @@ void Img::receive_data( const char* data, size_t size )
 
         // 画像ファイルではない
         else{
+
             m_type = T_NOIMG;
+
+            // リダイレクトしたら 404 を疑う
+            // データに "404" "not" "found" という文字列が含まれていたら not found と仮定
+            if( ! m_url_alt.empty() ){
+
+                // std::stringにいきなりデータを入れるのはなんとなく恐いので strncasecmp() を使用
+                unsigned char notfound = 0;
+                for( unsigned int i = 0; i < size; ++i ){
+                    if( strncasecmp( data + i, "404", 3 ) == 0 ) notfound |= 1;
+                    if( strncasecmp( data + i, "not", 3 ) == 0 ) notfound |= 2;
+                    if( strncasecmp( data + i, "found", 5 ) == 0 ) notfound |= 4;
+                }
+                if( notfound == 7 )  m_type = T_NOT_FOUND;
+            }
+
             stop_load();
+
+#ifdef _DEBUG
+            std::cout << data << std::endl;
+#endif
         }
 
         // 指定サイズよりも大きい
-        if( m_type != T_NOIMG && total_length() > (size_t)CONFIG::get_max_img_size() * 1024 * 1024 ){
+        if( m_type != T_NOIMG && m_type != T_NOT_FOUND && total_length() > (size_t)CONFIG::get_max_img_size() * 1024 * 1024 ){
             m_type = T_LARGE;
             stop_load();
         }
     }
 
     if( m_fout &&
-        ( m_type != T_NOIMG && m_type != T_LARGE ) ){
+        ( m_type != T_NOIMG && m_type != T_NOT_FOUND && m_type != T_LARGE ) ){
 
         if( fwrite( data, 1, size, m_fout ) != size ){
             m_type = T_WRITEFAILED; // 書き込み失敗
@@ -344,9 +367,7 @@ void Img::receive_data( const char* data, size_t size )
     }
 
 #ifdef _DEBUG
-    std::cout << "Img::receive_data code = " << get_code() << " "
-              << current_length() << " / " << total_length() << std::endl
-              << "type = " << m_type << std::endl;
+    std::cout << "type = " << m_type << std::endl;
 #endif
 }
 
@@ -359,16 +380,43 @@ void Img::receive_finish()
     if( m_fout ) fclose( m_fout );
     m_fout = NULL;
 
-    // 指定サイズよりも大きい
-    if( total_length() > (size_t)CONFIG::get_max_img_size() * 1024 * 1024 ){
-        m_type = T_LARGE;
-        set_code( HTTP_ERR );
-    }
+    // データが無い
+    if( get_code() == HTTP_OK && ! current_length() ) m_type = T_NODATA;
 
+    // リダイレクト
+    if( get_code() == HTTP_REDIRECT ){
+#ifdef _DEBUG
+        std::cout << "302 redirect url = " << location() << std::endl;
+#endif
+        // アドレスに "404", ".htm" が含まれていたら not found と仮定
+        std::string url_tmp = MISC::tolower_str( location() );
+        if( url_tmp.find( "404" ) != std::string::npos && url_tmp.find( ".htm" ) != std::string::npos ) m_type = T_NOT_FOUND;
+
+        else if( ! location().empty() && m_count_redirect < MAX_REDIRECT ){
+            ++m_count_redirect;
+            m_url_alt = location();
+            download_img( m_refurl );
+            return;
+        }
+        else m_type = T_NODATA;
+    }
+    m_count_redirect = 0;
+    m_url_alt = std::string();
+
+
+
+    //////////////////////////////////////////////////
     // エラーメッセージのセット
+
     if( m_type == T_NOIMG ){
         set_code( HTTP_ERR );
         set_str_code( "画像ファイルではありません" );
+        set_current_length( 0 );
+    }
+
+    else if( m_type == T_NOT_FOUND ){
+        set_code( HTTP_NOT_FOUND );
+        set_str_code( "404 Not Found" );
         set_current_length( 0 );
     }
 
@@ -392,7 +440,17 @@ void Img::receive_finish()
         set_current_length( 0 );
     }
 
-    else if( m_type == T_UNKNOWN ) set_current_length( 0 );
+    else if( m_type == T_NODATA ){
+        set_code( HTTP_ERR );
+        set_str_code( "サーバ上にファイルが存在しません" );
+        set_current_length( 0 );
+    }
+
+    else if( m_type == T_UNKNOWN ){
+        set_code( HTTP_ERR );
+        set_str_code( "未知の画像形式です" );
+        set_current_length( 0 );
+    }
 
     set_total_length( current_length() );
 
@@ -400,11 +458,9 @@ void Img::receive_finish()
     if( ! total_length() ){
         std::string path = get_cache_path();
         if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
-
-        if( get_code() == HTTP_OK ){
-            set_code( HTTP_ERR );
-            set_str_code( "サーバ上にファイルが存在しません" );
-        }
+#ifdef _DEBUG
+        std::cout << "unlink cache\n";
+#endif
     }
 
 #ifdef _DEBUG
@@ -413,19 +469,6 @@ void Img::receive_finish()
               << "type = " << m_type << std::endl
               << "refurl = " << m_refurl << std::endl;
 #endif
-
-    // リダイレクト
-    if( get_code() == HTTP_REDIRECT ){
-#ifdef _DEBUG
-        std::cout << "redirect url = " << location() << std::endl;
-#endif
-        if( ! location().empty() && m_count_redirect < MAX_REDIRECT ){
-            ++m_count_redirect;
-            m_url_alt = location();
-            download_img( m_refurl );
-            return;
-        }
-    }
 
     // 読み込み失敗の場合でもエラーメッセージを残すので info　は保存する
     save_info();

@@ -146,13 +146,6 @@ void ImgRoot::delete_cache( const std::string& url )
     Img* img = get_img( url );
     if( img && img->is_protected() ) return;
 
-    bool abone = false;
-    if( img ) abone = img->get_abone();
-
-#ifdef _DEBUG
-    std::cout << "abone = " << abone << std::endl;
-#endif
-
     // キャッシュ削除
     std::string path = CACHE::path_img( url );
     if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
