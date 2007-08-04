@@ -163,6 +163,9 @@ namespace CONFIG
     // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
     const int get_newthread_hour();
 
+    // スレ一覧でインクリメント検索をする
+    const bool get_inc_search_board();
+
     // ツリービューのスクロール量(行数)
     const int get_tree_scroll_size();
 

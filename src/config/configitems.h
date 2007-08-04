@@ -129,11 +129,14 @@ namespace CONFIG
         // ツリービューの行間スペース
         int tree_ypad;
 
-        // boardビューで古いスレも表示
+        // スレ一覧で古いスレも表示
         bool show_oldarticle;
 
         // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
         int newthread_hour;
+
+        // スレ一覧でインクリメント検索をする
+        bool inc_search_board;
 
         // ツリービューのスクロール量(行数)
         int tree_scroll_size;
@@ -147,7 +150,7 @@ namespace CONFIG
         // 板一覧でカテゴリを常にひとつだけ開く
         bool open_one_category;
 
-        // 書き込み時に書き込み確認ダイアログを出すかどうか
+        // 書き込み時に書き込み確認ダイアログを出さない
         bool always_write_ok;
 
         // 書き込みログを保存

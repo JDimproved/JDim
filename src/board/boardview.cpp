@@ -1889,8 +1889,10 @@ bool BoardView::drawout()
 //
 void BoardView::slot_changed_search()
 {
-    drawout();
-    m_pre_query = std::string();
+    if( CONFIG::get_inc_search_board() ){
+        drawout();
+        m_pre_query = std::string();
+    }
 }
 
 

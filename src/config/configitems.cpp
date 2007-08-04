@@ -305,16 +305,19 @@ const bool ConfigItems::load()
 
 
     // ツリービューでgtkrcの設定を使用するか
-    use_tree_gtkrc = cf.get_option( "use_tree_gtkrc", false );
+    use_tree_gtkrc = cf.get_option( "use_tree_gtkrc", CONF_USE_TREE_GTKRC );
 
     // ツリービューの行間スペース
     tree_ypad = cf.get_option( "tree_ypad", CONF_TREE_YPAD );
 
-    // boardビューで古いスレも表示
-    show_oldarticle = cf.get_option( "show_oldarticle", false );
+    // スレ一覧で古いスレも表示
+    show_oldarticle = cf.get_option( "show_oldarticle", CONF_SHOW_OLDARTICLE );
 
     // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
     newthread_hour = cf.get_option( "newthread_hour", CONF_NEWTHREAD_HOUR );
+
+    // スレ一覧でインクリメント検索をする
+    inc_search_board = cf.get_option( "inc_search_board", CONF_INC_SEARCH_BOARD );
 
     // ツリービューのスクロール量(行数)
     tree_scroll_size = cf.get_option( "tree_scroll_size", CONF_TREE_SCROLL_SIZE );
@@ -326,16 +329,16 @@ const bool ConfigItems::load()
     key_scroll_size = cf.get_option( "key_scroll_size", CONF_KEY_SCROLL_SIZE );
 
     // 板一覧でカテゴリを常にひとつだけ開く
-    open_one_category = cf.get_option( "open_one_category", false );
+    open_one_category = cf.get_option( "open_one_category", CONF_OPEN_ONE_CATEGORY );
 
-    // 書き込み時に書き込み確認ダイアログを出すかどうか
-    always_write_ok = cf.get_option( "always_write_ok", false );
+    // 書き込み時に書き込み確認ダイアログを出さない
+    always_write_ok = cf.get_option( "always_write_ok", CONF_ALWAYS_WRITE_OK );
 
     // 書き込みログを保存
-    save_postlog = cf.get_option( "save_postlog", false );
+    save_postlog = cf.get_option( "save_postlog", CONF_SAVE_POSTLOG );
 
     // 「書き込み中」のダイアログを表示しない
-    hide_writing_dialog = cf.get_option( "hide_writing_dialog", false );
+    hide_writing_dialog = cf.get_option( "hide_writing_dialog", CONF_HIDE_WRITING_DIALOG );
 
     // ポップアップとカーソルの間のマージン
     margin_popup = cf.get_option( "margin_popup", CONF_MARGIN_POPUP );
@@ -546,6 +549,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "show_oldarticle", show_oldarticle );
     cf.update( "newthread_hour", newthread_hour );
+    cf.update( "inc_search_board", inc_search_board );
 
     cf.update( "tree_scroll_size", tree_scroll_size );
     cf.update( "scroll_size", scroll_size );

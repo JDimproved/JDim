@@ -178,6 +178,8 @@ void CONFIG::set_show_oldarticle( bool showarticle ){ get_confitem()->show_oldar
 
 const int CONFIG::get_newthread_hour(){ return get_confitem()->newthread_hour; }
 
+const bool CONFIG::get_inc_search_board(){ return get_confitem()->inc_search_board; }
+
 const int CONFIG::get_tree_scroll_size(){ return get_confitem()->tree_scroll_size; }
 const int CONFIG::get_scroll_size(){ return get_confitem()->scroll_size; }
 const int CONFIG::get_key_scroll_size(){ return get_confitem()->key_scroll_size; }
