@@ -243,8 +243,10 @@ bool MISC::ImgLoader::load( bool& stop, bool pixbufonly, bool sizeonly )
         }
         catch( Glib::Error& err )
         {
-            m_errmsg = err.what();
-            ret = false;
+            if( ! m_stop ){
+                m_errmsg = err.what();
+                ret = false;
+            }
         }
 
         fclose( f );

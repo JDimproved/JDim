@@ -468,7 +468,7 @@ void Img::receive_finish()
         set_current_length( 0 );
     }
 
-    else if( m_type == T_UNKNOWN ){
+    else if( get_code() == HTTP_OK && m_type == T_UNKNOWN ){
         set_code( HTTP_ERR );
         set_str_code( "未知の画像形式です" );
         set_current_length( 0 );
