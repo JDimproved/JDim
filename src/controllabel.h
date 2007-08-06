@@ -45,13 +45,13 @@ namespace CONTROL
         { "Back", "戻る" },
 
         { "Quit", "閉じる" },
-        { "Save", "保存" },
+        { "Save", "名前を付けて保存..." },
         { "Delete", "削除" },
         { "Reload", "再読み込み" },
         { "StopLoading", "読み込み中止" },
         { "Copy", "コピー" },
-        { "AppendFavorite", "お気に入りに追加" },
-        { "Property", "プロパティ" },
+        { "AppendFavorite", "お気に入りに追加..." },
+        { "Property", "プロパティ..." },
 
         { "Search", "検索" },
         { "CloseSearchBar", "検索バーを閉じる" },

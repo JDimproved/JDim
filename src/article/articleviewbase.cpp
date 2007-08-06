@@ -266,7 +266,7 @@ void ArticleViewBase::setup_action()
                          sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_protectimage ) );
     action_group()->add( Gtk::Action::create( "DeleteImage_Menu", "削除" ) );    
     action_group()->add( Gtk::Action::create( "DeleteImage", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::slot_deleteimage ) );
-    action_group()->add( Gtk::Action::create( "SaveImage", "保存..."), sigc::mem_fun( *this, &ArticleViewBase::slot_saveimage ) );
+    action_group()->add( Gtk::Action::create( "SaveImage", "名前を付けて保存..."), sigc::mem_fun( *this, &ArticleViewBase::slot_saveimage ) );
     action_group()->add( Gtk::ToggleAction::create( "AboneImage", "画像をあぼ〜んする", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_abone_img ) );
 
