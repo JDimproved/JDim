@@ -524,11 +524,14 @@ bool ArticleViewBase::set_command( const std::string& command, const std::string
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::set_command " << get_url() << std::endl
               << "command = " << command << std::endl;
-#endif    
+#endif
 
     if( command == "append_dat" ) append_dat( arg, -1 );
     else if( command == "append_html" ) append_html( arg );
-    else if( command == "clear_screen" ) if( m_drawarea ) m_drawarea->clear_screen();
+    else if( command == "clear_screen" )
+    {
+    	if( m_drawarea ) m_drawarea->clear_screen();
+    }
     else if( command == "goto_num" ) goto_num( atoi( arg.c_str() ) );
     else if( command == "delete_popup" ) delete_popup();
 
