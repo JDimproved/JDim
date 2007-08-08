@@ -5,6 +5,7 @@
 
 #include "session.h"
 #include "cache.h"
+#include "global.h"
 
 #include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
@@ -19,11 +20,6 @@ bool mode_online;
 bool mode_login2ch;
 
 int win_manager;
-int win_x;
-int win_y;
-int win_width;
-int win_height;
-bool win_maximized;
 
 int win_hpane_main_pos;
 int win_vpane_main_pos;
@@ -40,6 +36,8 @@ std::list< std::string > board_urls;
 std::list< std::string > article_urls;
 std::list< std::string > image_urls;
 
+std::string items_board;
+
 int board_col_mark;
 int board_col_id;
 int board_col_subject;
@@ -49,8 +47,6 @@ int board_col_new;
 int board_col_since;
 int board_col_write;
 int board_col_speed;
-
-bool img_shown;
 
 bool win_show_sidebar;
 
@@ -65,29 +61,44 @@ bool show_article_toolbar;
 int win_focused_admin;
 int win_focused_admin_sidebar;
 
-bool focus_win_main;
-bool focus_win_img;
+int x_win_main;
+int y_win_main;
+int x_win_img;
+int y_win_img;
+int x_win_mes;
+int y_win_mes;
+
+
+int width_win_main;
+int height_win_main;
+int width_win_img;
+int height_win_img;
+int width_win_mes;
+int height_win_mes;
+
+
+bool focus_win_main = false;
+bool focus_win_img = false;
+bool focus_win_mes = false;
+
+bool maximized_win_main = false;
+bool maximized_win_img = false;
+bool maximized_win_mes = false;
 
 bool iconified_win_main = false;
 bool iconified_win_img = false;
+bool iconified_win_mes = false;
+
+bool shown_win_main = false;
+bool shown_win_img = false;
+bool shown_win_mes = false;
 
 bool dialog_shown = false;
 
 bool embedded_img;
 
-int img_x;
-int img_y;
-int img_width;
-int img_height;
-
 bool embedded_mes;
 bool close_mes;
-
-int win_mes_x;
-int win_mes_y;
-int win_mes_width;
-int win_mes_height;
-bool win_mes_maximized;
 
 std::string img_dir_dat_save;
 std::string img_dir_img_save;
@@ -121,11 +132,11 @@ void SESSION::init_session()
     // paneのモード
     mode_pane = cf.get_option( "mode_pane", 0 );
 
-    win_x = cf.get_option( "x", 0 );
-    win_y = cf.get_option( "y", 0 );
-    win_width = cf.get_option( "width", 800 );
-    win_height = cf.get_option( "height", 600 );
-    win_maximized = cf.get_option( "maximized", false );
+    x_win_main = cf.get_option( "x", 0 );
+    y_win_main = cf.get_option( "y", 0 );
+    width_win_main = cf.get_option( "width", 800 );
+    height_win_main = cf.get_option( "height", 600 );
+    maximized_win_main = cf.get_option( "maximized", false );
 
     win_show_sidebar = cf.get_option( "show_sidebar", true );
 
@@ -173,6 +184,17 @@ void SESSION::init_session()
         for( ; it_tmp != list_tmp.end(); ++it_tmp ) if( !(*it_tmp).empty() ) image_urls.push_back( (*it_tmp));
     }
 
+    items_board = cf.get_option( "items_board",
+                                 COLUMN_TITLE_MARK + std::string ( " " ) +
+                                 COLUMN_TITLE_ID + std::string ( " " ) +
+                                 COLUMN_TITLE_NAME + std::string ( " " ) +
+                                 COLUMN_TITLE_RES + std::string ( " " ) +
+                                 COLUMN_TITLE_LOAD + std::string ( " " ) +
+                                 COLUMN_TITLE_NEW + std::string ( " " ) +
+                                 COLUMN_TITLE_SINCE + std::string ( " " ) +
+                                 COLUMN_TITLE_WRITE + std::string ( " " ) +
+                                 COLUMN_TITLE_SPEED + std::string ( " " ) );
+
     board_col_mark = cf.get_option( "col_mark", 30 );
     board_col_id = cf.get_option( "col_id", 45 );
     board_col_subject = cf.get_option(  "col_subject", 190 );
@@ -183,23 +205,20 @@ void SESSION::init_session()
     board_col_write = cf.get_option( "col_write", 70 );
     board_col_speed = cf.get_option( "col_speed", 45 );
 
-    img_shown = false;
-
     embedded_img = cf.get_option( "embedded_img", true );
 
-    img_x = cf.get_option( "img_x", 0 );
-    img_y = cf.get_option( "img_y", 0 );
-    img_width = cf.get_option( "img_width", 600 );
-    img_height = cf.get_option( "img_height", 500 );
+    x_win_img = cf.get_option( "x_win_img", 0 );
+    y_win_img = cf.get_option( "y_win_img", 0 );
+    width_win_img = cf.get_option( "width_win_img", 600 );
+    height_win_img = cf.get_option( "height_win_img", 400 );
 
     embedded_mes = cf.get_option( "embedded_mes", false );
     close_mes = cf.get_option( "close_mes", true );
 
-    win_mes_x = cf.get_option( "mes_x", 0 );
-    win_mes_y = cf.get_option( "mes_y", 0 );
-    win_mes_width = cf.get_option( "mes_width", 300 );
-    win_mes_height = cf.get_option( "mes_height", 300 );
-    win_mes_maximized = cf.get_option( "mes_maximized", false );
+    x_win_mes = cf.get_option( "x_win_mes", 0 );
+    y_win_mes = cf.get_option( "y_win_mes", 0 );
+    width_win_mes = cf.get_option( "width_win_mes", 600 );
+    height_win_mes = cf.get_option( "height_win_mes", 400 );
 
     img_dir_dat_save = cf.get_option( "img_dir_dat_save", "" );
     img_dir_img_save = cf.get_option( "img_dir_img_save", "" );
@@ -228,11 +247,11 @@ void SESSION::init_session()
     }
 
 #ifdef _DEBUG
-    std::cout << "x=" << win_x << std::endl
-              << "y=" << win_y << std::endl
-              << "w=" << win_width << std::endl
-              << "h=" << win_height << std::endl
-              << "m=" << win_maximized << std::endl
+    std::cout << "x=" << x_win_main << std::endl
+              << "y=" << y_win_main << std::endl
+              << "w=" << width_win_main << std::endl
+              << "h=" << height_win_main << std::endl
+              << "max=" << maximized_win_main << std::endl
               << "toolbar_pos=" << win_toolbar_pos << std::endl
               << "sidebar=" << win_show_sidebar << std::endl
               << "menubar=" << win_show_menubar << std::endl
@@ -276,11 +295,10 @@ void SESSION::init_session()
 
               << "embedded_mes = " << embedded_mes << std::endl
               << "close_mes = " << close_mes << std::endl
-              << "wx=" << win_mes_x << std::endl
-              << "wy=" << win_mes_y << std::endl
-              << "ww=" << win_mes_width << std::endl
-              << "wh=" << win_mes_height << std::endl
-              << "wm=" << win_mes_maximized << std::endl;
+              << "wx=" << x_win_mes << std::endl
+              << "wy=" << y_win_mes << std::endl
+              << "ww=" << width_win_mes << std::endl
+              << "wh=" << height_win_mes << std::endl;
 #endif    
 }
 
@@ -310,11 +328,11 @@ void SESSION::save_session()
     oss << "mode_pane = " << mode_pane << std::endl
         << "mode_online = " << mode_online << std::endl
         << "mode_login2ch = " << mode_login2ch << std::endl
-        << "x = " << win_x << std::endl
-        << "y = " << win_y << std::endl
-        << "width = " << win_width << std::endl
-        << "height = " << win_height << std::endl
-        << "maximized = " << win_maximized << std::endl
+        << "x = " << x_win_main << std::endl
+        << "y = " << y_win_main << std::endl
+        << "width = " << width_win_main << std::endl
+        << "height = " << height_win_main << std::endl
+        << "maximized = " << maximized_win_main << std::endl
         << "toolbar_pos = " << win_toolbar_pos << std::endl
         << "show_bbslist_toolbar = " << show_bbslist_toolbar << std::endl
         << "show_board_toolbar = " << show_board_toolbar << std::endl
@@ -339,7 +357,8 @@ void SESSION::save_session()
         << "board_urls = " << str_board_urls << std::endl
         << "article_urls = " << str_article_urls << std::endl
         << "image_urls = " << str_image_urls << std::endl
-        
+
+        << "items_board = " << items_board << std::endl
         << "col_mark = " << board_col_mark << std::endl
         << "col_id = " << board_col_id << std::endl
         << "col_subject = " << board_col_subject << std::endl
@@ -351,18 +370,17 @@ void SESSION::save_session()
         << "col_speed = " << board_col_speed << std::endl
 
         << "embedded_img = " << embedded_img << std::endl
-        << "img_x = " << img_x << std::endl
-        << "img_y = " << img_y << std::endl
-        << "img_width = " << img_width << std::endl
-        << "img_height = " << img_height << std::endl
+        << "x_win_img = " << x_win_img << std::endl
+        << "y_win_img = " << y_win_img << std::endl
+        << "width_win_img = " << width_win_img << std::endl
+        << "height_win_img = " << height_win_img << std::endl
 
         << "embedded_mes = " << embedded_mes << std::endl
         << "close_mes = " << close_mes << std::endl
-        << "mes_x = " << win_mes_x << std::endl
-        << "mes_y = " << win_mes_y << std::endl
-        << "mes_width = " << win_mes_width << std::endl
-        << "mes_height = " << win_mes_height << std::endl
-        << "mes_maximized = " << win_mes_maximized << std::endl
+        << "x_win_mes = " << x_win_mes << std::endl
+        << "y_win_mes = " << y_win_mes << std::endl
+        << "width_win_mes = " << width_win_mes << std::endl
+        << "height_win_mes = " << height_win_mes << std::endl
 
         << "img_dir_dat_save = " << img_dir_dat_save << std::endl
         << "img_dir_img_save = " << img_dir_img_save << std::endl
@@ -389,11 +407,6 @@ void SESSION::set_online( bool mode ){ mode_online = mode; }
 const bool SESSION::login2ch(){ return mode_login2ch; }
 void SESSION::set_login2ch( bool login ){ mode_login2ch = login; }
 
-const int SESSION::x(){ return win_x; }
-const int SESSION::y(){ return win_y; }
-const int SESSION::width(){ return win_width; }
-const int SESSION::height(){ return win_height; }
-const bool SESSION::maximized(){ return win_maximized; }
 const bool SESSION::show_sidebar(){ return win_show_sidebar; }
 
 const bool SESSION::show_menubar(){ return win_show_menubar; }
@@ -417,6 +430,40 @@ int SESSION::focused_admin_sidebar(){ return win_focused_admin_sidebar; }
 void SESSION::set_focused_admin_sidebar( int admin ){ win_focused_admin_sidebar = admin; }
 
 
+// 各windowの座標
+const int SESSION::get_x_win_main(){ return x_win_main; }
+const int SESSION::get_y_win_main(){ return y_win_main; }
+void SESSION::set_x_win_main( int x ){ x_win_main = x; }
+void SESSION::set_y_win_main( int y ){ y_win_main = y; }
+
+const int SESSION::get_x_win_img(){ return x_win_img; }
+const int SESSION::get_y_win_img(){ return y_win_img; }
+void SESSION::set_x_win_img( int x ){ x_win_img = x; }
+void SESSION::set_y_win_img( int y ){ y_win_img = y; }
+
+const int SESSION::get_x_win_mes(){ return x_win_mes; }
+const int SESSION::get_y_win_mes(){ return y_win_mes; }
+void SESSION::set_x_win_mes( int x ){ x_win_mes = x; }
+void SESSION::set_y_win_mes( int y ){ y_win_mes = y; }
+
+
+// 各windowのサイズ
+const int SESSION::get_width_win_main(){ return width_win_main; }
+const int SESSION::get_height_win_main(){ return height_win_main; }
+void SESSION::set_width_win_main( int width ){ width_win_main = width; }
+void SESSION::set_height_win_main( int height ){ height_win_main = height; }
+
+const int SESSION::get_width_win_img(){ return width_win_img; }
+const int SESSION::get_height_win_img(){ return height_win_img; }
+void SESSION::set_width_win_img( int width ){ width_win_img = width; }
+void SESSION::set_height_win_img( int height ){ height_win_img = height; }
+
+const int SESSION::get_width_win_mes(){ return width_win_mes; }
+const int SESSION::get_height_win_mes(){ return height_win_mes; }
+void SESSION::set_width_win_mes( int width ){ width_win_mes = width; }
+void SESSION::set_height_win_mes( int height ){ height_win_mes = height; }
+
+
 // 各window がフォーカスされているか
 const bool SESSION::is_focus_win_main(){ return focus_win_main; }
 void SESSION::set_focus_win_main( bool set ){ focus_win_main = set; }
@@ -424,26 +471,48 @@ void SESSION::set_focus_win_main( bool set ){ focus_win_main = set; }
 const bool SESSION::is_focus_win_img(){ return focus_win_img; }
 void SESSION::set_focus_win_img( bool set ){ focus_win_img = set; }
 
+const bool SESSION::is_focus_win_mes(){ return focus_win_mes; }
+void SESSION::set_focus_win_mes( bool set ){ focus_win_mes = set; }
 
-    // 各window が最小化されているか
+
+// 各window が最大化されているか
+const bool SESSION::is_maximized_win_main(){ return maximized_win_main; }
+void SESSION::set_maximized_win_main( bool set ){ maximized_win_main = set; }
+
+const bool SESSION::is_maximized_win_img(){ return maximized_win_img; }
+void SESSION::set_maximized_win_img( bool set ){ maximized_win_img = set; }
+
+bool SESSION::is_maximized_win_mes(){ return maximized_win_mes; }
+void SESSION::set_maximized_win_mes( bool set ){ maximized_win_mes = set; }
+
+
+// 各window が最小化されているか
 const bool SESSION::is_iconified_win_main(){ return iconified_win_main; }
 void SESSION::set_iconified_win_main( bool set ){ iconified_win_main = set; }
 
 const bool SESSION::is_iconified_win_img(){ return iconified_win_img; }
 void SESSION::set_iconified_win_img( bool set ){ iconified_win_img = set; }
 
+const bool SESSION::is_iconified_win_mes(){ return iconified_win_mes; }
+void SESSION::set_iconified_win_mes( bool set ){ iconified_win_mes = set; }
+
+
+// 各window が画面に表示されているか
+const bool SESSION::is_shown_win_main(){ return shown_win_main; }
+void SESSION::set_shown_win_main( bool set ){ shown_win_main = set; }
+
+const bool SESSION::is_shown_win_img(){ return shown_win_img; }
+void SESSION::set_shown_win_img( bool set ){ shown_win_img = set; }
+
+const bool SESSION::is_shown_win_mes(){ return shown_win_mes; }
+void SESSION::set_shown_win_mes( bool set ){ shown_win_mes = set; }
+
+
 // ダイアログ表示中
 const bool SESSION::is_dialog_shown(){ return dialog_shown; }
 void SESSION::set_dialog_shown( bool set ){ dialog_shown = set; }
 
-
-void SESSION::set_x( int x ){ win_x = x; }
-void SESSION::set_y( int y ){ win_y = y; }
-void SESSION::set_width( int width ){ win_width = width; }
-void SESSION::set_height( int height ){ win_height = height; }
-void SESSION::set_maximized( bool maximized ){ win_maximized = maximized; }
 void SESSION::set_show_sidebar( bool showurl ){ win_show_sidebar = showurl; }
-
 
 
 // メインウィンドウのペインの敷居の位置
@@ -486,6 +555,10 @@ void SESSION::set_image_page( int page ){ win_image_page = page; }
 const std::list< std::string >& SESSION::image_URLs(){ return image_urls; }
 void SESSION::set_image_URLs( const std::list< std::string >& urls ){ image_urls = urls; }
 
+
+// スレ一覧の項目
+const std::string& SESSION::get_items_board(){ return items_board; }
+void SESSION::set_items_board( const std::string& items ){ items_board = items; }
 
 // board ビューの列幅
 int SESSION::col_mark(){ return board_col_mark; }
@@ -530,23 +603,9 @@ const std::string SESSION::get_article_current_url()
 }
 
 
-bool SESSION::is_img_shown(){ return img_shown; }
-void SESSION::set_img_shown( bool set ){ img_shown = set; }
-
-
 // 埋め込みimage使用
 bool SESSION::get_embedded_img(){ return embedded_img; }
 void SESSION::set_embedded_img( bool set ){ embedded_img = set; }
-
-int SESSION::get_img_x(){ return img_x; }
-int SESSION::get_img_y(){ return img_y; }
-int SESSION::get_img_width(){ return img_width; }
-int SESSION::get_img_height(){ return img_height; }
-
-void SESSION::set_img_x( int x ){ img_x = x; }
-void SESSION::set_img_y( int y ){ img_y = y; }
-void SESSION::set_img_width( int width ){ img_width = width; }
-void SESSION::set_img_height( int height ){ img_height = height; }
 
 
 // 埋め込みmessageを使用
@@ -556,20 +615,6 @@ void SESSION::set_embedded_mes( bool set ){ embedded_mes = set; }
 // 書き込み後にmessageを閉じる
 bool SESSION::get_close_mes(){ return close_mes; }
 void SESSION::set_close_mes( bool set ){ close_mes = set; }
-
-
-// message ウィンドウの位置
-int SESSION::mes_x(){ return win_mes_x; }
-int SESSION::mes_y(){ return win_mes_y; }
-int SESSION::mes_width(){ return win_mes_width; }
-int SESSION::mes_height(){ return win_mes_height; }
-bool SESSION::mes_maximized(){ return win_mes_maximized; }
-
-void SESSION::set_mes_x( int x ){ win_mes_x = x; }
-void SESSION::set_mes_y( int y ){ win_mes_y = y; }
-void SESSION::set_mes_width( int width ){ win_mes_width = width; }
-void SESSION::set_mes_height( int height ){ win_mes_height = height; }
-void SESSION::set_mes_maximized( bool maximized ){ win_mes_maximized = maximized; }
 
 
 // 最後にdatを保存したディレクトリ

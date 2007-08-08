@@ -50,6 +50,7 @@ namespace CONTROL
         { "Reload", "再読み込み" },
         { "StopLoading", "読み込み中止" },
         { "Copy", "コピー" },
+        { "SelectAll", "全て選択" },
         { "AppendFavorite", "お気に入りに追加..." },
         { "Property", "プロパティ..." },
 

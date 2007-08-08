@@ -105,15 +105,17 @@ void MessageAdmin::close_view( const std::string& url )
 //
 void MessageAdmin::open_window()
 {
-    if( ! SESSION::get_embedded_mes() && ! get_jdwin() && ! empty() ){
-        MESSAGE::MessageWin *win = new MESSAGE::MessageWin();
+    SKELETON::JDWindow* win = get_jdwin();
+
+    if( ! SESSION::get_embedded_mes() && ! win && ! empty() ){
+        win = new MESSAGE::MessageWin();
         set_jdwin( win );
         win->pack_remove_end( false, *get_widget() );
         win->show_all();
     }
-    else if( get_jdwin() ){
-        get_jdwin()->show();
-        get_jdwin()->focus_in();
+    else if( win && win->is_hide() ){
+        win->show();
+        win->focus_in();
     }
 }
 

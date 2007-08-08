@@ -35,6 +35,18 @@
 } while( false )
 
 
+// スレ一覧の列の項目
+#define COLUMN_TITLE_MARK  "!"
+#define COLUMN_TITLE_ID    "番号"
+#define COLUMN_TITLE_NAME  "タイトル"
+#define COLUMN_TITLE_RES   "レス"
+#define COLUMN_TITLE_LOAD  "取得"
+#define COLUMN_TITLE_NEW   "新着"
+#define COLUMN_TITLE_SINCE "since"
+#define COLUMN_TITLE_WRITE "最終書込"
+#define COLUMN_TITLE_SPEED "速度"
+
+
 // スレッド状態( or を取る)
 enum
 {

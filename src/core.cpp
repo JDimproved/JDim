@@ -105,8 +105,6 @@ Core::Core( WinMain& win_main )
 
     instance_core = this;
 
-    m_win_main.signal_window_state_event().connect( sigc::mem_fun( *this, &Core::slot_window_state_event ) );
-
     // データベースのルート作成
     DBTREE::create_root();
     DBIMG::create_root();
@@ -294,6 +292,9 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "EmbImg", "画像ビューを埋め込み表示", std::string(), SESSION::get_embedded_img() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_embedded_img ) );
 
+    // スレ一覧の表示項目
+    m_action_group->add( Gtk::Action::create( "SetupBoardItem", "スレ一覧表示項目設定..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
+
     //////////////////////////////////////////////////////
 
     // 設定
@@ -445,6 +446,8 @@ void Core::run( bool init )
         "<menuitem action='2Pane'/>"
         "<menuitem action='3Pane'/>"
         "<menuitem action='v3Pane'/>"
+        "<separator/>"
+        "<menuitem action='SetupBoardItem'/>"
         "<separator/>"
         "<menuitem action='EmbMes'/>";
 
@@ -1276,6 +1279,16 @@ void Core::slot_setup_passwd()
     delete pref;
 }
 
+
+//
+// スレ一覧の表示項目
+//
+void Core::slot_setup_boarditem()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEM, "" );
+    pref->run();
+    delete pref;
+}
 
 
 //
@@ -2169,12 +2182,14 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         // フォーカスが外れて画像ウィンドウの開け閉めをしないようにする
         IMAGE::get_admin()->set_command_immediately( "disable_fold_win" );
+        MESSAGE::get_admin()->set_command_immediately( "disable_fold_win" );
 
         return;
     }
     else if( command.command == "dialog_hidden" ){ // 非表示になった
 
         IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );
+        MESSAGE::get_admin()->set_command_immediately( "enable_fold_win" );
 
         return;
     }
@@ -2294,7 +2309,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "set_mginfo" ){
 
         // 画像ウィンドウが表示されている場合
-        if( ! SESSION::get_embedded_img() && SESSION::is_img_shown()
+        if( ! SESSION::get_embedded_img() && SESSION::is_shown_win_img()
             && SESSION::is_focus_win_img() ) IMAGE::get_admin()->set_command( "set_mginfo", "", command.arg1 );
 
         else m_win_main.set_mginfo( command.arg1 );
@@ -2595,8 +2610,9 @@ void Core::restore_focus( bool force, bool present )
     std::cout << "Core::restore_focus admin = " << admin << std::endl;
 #endif
 
-    // 画像ウィンドウが表示されているときは画像ウィンドウのフォーカスを外す
+    // ウィンドウが表示されているときはウィンドウのフォーカスを外す
     if( ! SESSION::get_embedded_img() ) IMAGE::get_admin()->set_command_immediately( "focus_out" );
+    if( ! SESSION::get_embedded_mes() ) MESSAGE::get_admin()->set_command_immediately( "focus_out" );
 
     if( ! force ){ // 通常回復
 
@@ -2737,7 +2753,6 @@ bool Core::slot_focus_out_event( GdkEventFocus* )
 
     if( SESSION::is_dialog_shown() ) return true;
 
-    SESSION::set_focus_win_main( false );
     FOCUS_OUT_ALL();
 
     return true;
@@ -2753,26 +2768,7 @@ bool Core::slot_focus_in_event( GdkEventFocus* )
     std::cout << "Core::slot_focus_in_event admin = " << SESSION::focused_admin() << std::endl;
 #endif
 
-    SESSION::set_focus_win_main( true );
     restore_focus( false, false );
-
-    return true;
-}
-
-
-//
-// メインウィンドウの状態が変わった
-//
-bool Core::slot_window_state_event( GdkEventWindowState* event )
-{
-#ifdef _DEBUG
-    std::cout << "Core::slot_window_state_event\n";
-#endif     
-
-    SESSION::set_iconified_win_main( event->new_window_state & GDK_WINDOW_STATE_ICONIFIED );
-
-    // タブ幅調整
-    CORE::core_set_command( "adjust_tabwidth" );
 
     return true;
 }
@@ -3081,7 +3077,7 @@ void Core::switch_article( bool present )
         SESSION::set_focused_admin( SESSION::FOCUS_ARTICLE );
         SESSION::set_focused_admin_sidebar( SESSION::FOCUS_ARTICLE );
 
-        if( SESSION::get_embedded_img() ) SESSION::set_img_shown( false );
+        if( SESSION::get_embedded_img() ) SESSION::set_shown_win_img( false );
     }
 
 
@@ -3124,7 +3120,7 @@ void Core::switch_board( bool present )
 
         // 3paneの時はboardに切り替えても(フォーカスアウトしても)
         // 画像は表示されたままの時があることに注意
-        if( SESSION::get_embedded_img() && SESSION::get_mode_pane() == SESSION::MODE_2PANE ) SESSION::set_img_shown( false );
+        if( SESSION::get_embedded_img() && SESSION::get_mode_pane() == SESSION::MODE_2PANE ) SESSION::set_shown_win_img( false );
     }
 
     set_sensitive_view_button();
@@ -3211,7 +3207,7 @@ void Core::switch_image( bool present )
         }
 
         IMAGE::get_admin()->set_command_immediately( "focus_current_view" );
-        if( SESSION::get_embedded_img() ) SESSION::set_img_shown( true );
+        if( SESSION::get_embedded_img() ) SESSION::set_shown_win_img( true );
     }
 
     set_sensitive_view_button();
@@ -3266,7 +3262,7 @@ void Core::toggle_article()
     const bool present = true;
 
     // 画像ウィンドウが表示されている場合
-    if( ! SESSION::get_embedded_img() && SESSION::is_img_shown() ){
+    if( ! SESSION::get_embedded_img() && SESSION::is_shown_win_img() ){
         if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_article( present );
         else switch_board( present );
     }
@@ -3282,7 +3278,7 @@ void Core::switch_leftview()
     int next_admin = SESSION::focused_admin();
 
     // 画像ウィンドウが表示されている
-    if( ! SESSION::get_embedded_img() && SESSION::is_img_shown() ) next_admin = SESSION::FOCUS_IMAGE;
+    if( ! SESSION::get_embedded_img() && SESSION::is_shown_win_img() ) next_admin = SESSION::FOCUS_IMAGE;
 
     for(;;){
 

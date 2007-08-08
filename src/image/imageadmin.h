@@ -41,9 +41,6 @@ namespace IMAGE
         Gtk::HBox& tab() { return m_tab; }
         virtual Gtk::Widget* get_widget() { return &m_view; }
 
-        // 起動中
-        virtual const bool is_booting();
-
         virtual bool empty();
         virtual void clock_in();
 
@@ -73,7 +70,6 @@ namespace IMAGE
         virtual void close_view( const std::string& url );
         virtual void focus_view( int page );
         virtual void focus_current_view();
-        virtual void focus_out();
         virtual void open_window();
         virtual void close_window();
 

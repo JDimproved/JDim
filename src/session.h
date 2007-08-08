@@ -64,18 +64,8 @@ namespace SESSION
     const bool login2ch();
     void set_login2ch( bool login );
 
-    const int x();
-    const int y();
-    const int width();
-    const int height();
-    const bool maximized();
+    // サイドバー表示中
     const bool show_sidebar();
-   
-    void set_x( int x );
-    void set_y( int y );
-    void set_width( int width );
-    void set_height( int height );
-    void set_maximized( bool maximized );
     void set_show_sidebar( bool showbar );
 
     // メニューバー
@@ -102,6 +92,41 @@ namespace SESSION
     const int focused_admin();
     void set_focused_admin( int admin );
 
+
+    // 各windowの座標
+    const int get_x_win_main(); // メインウィンドウ
+    const int get_y_win_main();
+    void set_x_win_main( int x );
+    void set_y_win_main( int y );
+
+    const int get_x_win_img(); // 画像ウィンドウ
+    const int get_y_win_img();
+    void set_x_win_img( int x );
+    void set_y_win_img( int y );
+
+    const int get_x_win_mes(); // 書き込みウィンドウ
+    const int get_y_win_mes();
+    void set_x_win_mes( int x );
+    void set_y_win_mes( int y );
+
+
+    // 各windowのサイズ
+    const int get_width_win_main(); // メインウィンドウ
+    const int get_height_win_main();
+    void set_width_win_main( int width );
+    void set_height_win_main( int height );
+
+    const int get_width_win_img(); // 画像ウィンドウ
+    const int get_height_win_img();
+    void set_width_win_img( int width );
+    void set_height_win_img( int height );
+
+    const int get_width_win_mes(); // 書き込みウィンドウ
+    const int get_height_win_mes();
+    void set_width_win_mes( int width );
+    void set_height_win_mes( int height );
+
+
     // 各window がフォーカスされているか
     const bool is_focus_win_main(); // メインウィンドウ
     void set_focus_win_main( bool set );
@@ -109,12 +134,43 @@ namespace SESSION
     const bool is_focus_win_img(); // 画像ウィンドウ
     void set_focus_win_img( bool set );
 
+    const bool is_focus_win_mes(); // 書き込みウィンドウ
+    void set_focus_win_mes( bool set );
+
+
+    // 各window が最大化されているか
+    const bool is_maximized_win_main(); // メインウィンドウ
+    void set_maximized_win_main( bool maximized );
+
+    const bool is_maximized_win_img(); // 画像ウィンドウ
+    void set_maximized_win_img( bool set );
+
+    bool is_maximized_win_mes(); // 書き込みウィンドウ
+    void set_maximized_win_mes( bool maximized );
+
+
     // 各window が最小化されているか
     const bool is_iconified_win_main(); // メインウィンドウ
     void set_iconified_win_main( bool set );
 
     const bool is_iconified_win_img(); // 画像ウィンドウ
     void set_iconified_win_img( bool set );
+
+    const bool is_iconified_win_mes(); // 書き込みウィンドウ
+    void set_iconified_win_mes( bool set );
+
+
+    // 各window が画面に表示されているか
+    const bool is_shown_win_main(); // メインウィンドウ
+    void set_shown_win_main( bool set );
+
+    const bool is_shown_win_img(); // 画像ウィンドウ
+    void set_shown_win_img( bool set );
+
+    const bool is_shown_win_mes(); // 書き込みウィンドウ
+    void set_shown_win_mes( bool set );
+
+
 
     // ダイアログ表示中
     const bool is_dialog_shown();
@@ -170,7 +226,11 @@ namespace SESSION
     const std::string get_bbslist_current_url();
 
 
-    // board ビューの列幅
+    // スレ一覧の項目
+    const std::string& get_items_board();
+    void set_items_board( const std::string& items );
+
+    // スレ一覧の列幅
     int col_mark();
     int col_id();
     int col_subject();
@@ -195,24 +255,10 @@ namespace SESSION
     const std::string get_article_current_url();
 
 
-    // image が画面に表示されているか
-    bool is_img_shown();
-    void set_img_shown( bool set );
-
     // 埋め込みimage使用
     bool get_embedded_img();
     void set_embedded_img( bool set );
 
-    // imageウィンドウの位置
-    int get_img_x();
-    int get_img_y();
-    int get_img_width();
-    int get_img_height();
-    bool get_img_maximized();
-    void set_img_x( int x );
-    void set_img_y( int y );
-    void set_img_width( int width );
-    void set_img_height( int height );
 
     // 埋め込みmessageを使用
     bool get_embedded_mes();
@@ -222,17 +268,6 @@ namespace SESSION
     bool get_close_mes();
     void set_close_mes( bool set );
 
-    // message ウィンドウの位置
-    int mes_x();
-    int mes_y();
-    int mes_width();
-    int mes_height();
-    bool mes_maximized();
-    void set_mes_x( int x );
-    void set_mes_y( int y );
-    void set_mes_width( int width );
-    void set_mes_height( int height );
-    void set_mes_maximized( bool maximized );
 
     // 最後にdatを保存したディレクトリ
     const std::string& dir_dat_save();

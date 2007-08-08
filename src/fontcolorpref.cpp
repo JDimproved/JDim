@@ -12,6 +12,7 @@
 #include "fontcolorpref.h"
 #include "colorid.h"
 #include "fontid.h"
+#include "command.h"
 
 #define WARNING_STRICTCHAR "スレビューのフォント幅の近似計算を厳密に行います\n\nレイアウトが崩れにくくなるかわりにパフォーマンスが著しく低下します。通常は設定しないでください"
 

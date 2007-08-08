@@ -6,6 +6,8 @@
 #include "messageadmin.h"
 #include "messagewin.h"
 
+#include "jdlib/miscgtk.h"
+
 #include "session.h"
 #include "command.h"
 
@@ -13,25 +15,16 @@ using namespace MESSAGE;
 
 
 MessageWin::MessageWin()
-    : SKELETON::JDWindow()
+    : SKELETON::JDWindow( true )
 {
-    // サイズ設定
-    int x = SESSION::mes_x();
-    int y = SESSION::mes_y();
-    int w = SESSION::mes_width();
-    int h = SESSION::mes_height();
-
-    resize( w, h );
-    move( x, y );
-    set_maximized( SESSION::mes_maximized() ); 
-
 #ifdef _DEBUG
-    std::cout << "MessageWin::MessageWin x y w h = " << x << " " << y << " " << w << " " << h << std::endl;
+    std::cout << "MessageWin::MessageWin x y w h = "
+              << get_x_win() << " " << get_y_win()
+              << " " << get_width_win() << " " << get_height_win() << std::endl;
 #endif
 
-    pack_remove_end( false, get_statbar(), Gtk::PACK_SHRINK );
-    property_window_position().set_value( Gtk::WIN_POS_NONE );
-    set_transient_for( *CORE::get_mainwindow() );
+    get_vbox().pack_remove_end( false, get_statbar(), Gtk::PACK_SHRINK );
+    init_win();
 
     show_all_children();
 }
@@ -40,35 +33,12 @@ MessageWin::MessageWin()
 MessageWin::~MessageWin()
 {
 #ifdef _DEBUG
-    std::cout << "MessageWin::~MessageWin\n";
+    std::cout << "MessageWin::~MessageWin window size : x = " << get_x_win() << " y = " << get_y_win()
+              << " w = " << get_width_win() << " h = " << get_height_win() << " max = " << is_maximized_win() << std::endl;
 #endif
 
-    // ウィンドウサイズを保存
-    int width, height;;
-    int x = 0;
-    int y = 0;
-    get_size( width, height );
-    if( get_window() ) get_window()->get_root_origin( x, y );
-
-#ifdef _DEBUG
-    std::cout << "window size : x = " << x << " y = " << y << " w = " << width << " h = " << height
-              << " max = " << is_maximized() << std::endl;
-#endif
-
-    if( ! is_maximized() ){
-
-        SESSION::set_mes_x( x );
-        SESSION::set_mes_y( y );
-        SESSION::set_mes_width( width );
-        SESSION::set_mes_height( height );
-    }
-    SESSION::set_mes_maximized( is_maximized() );
-}
-
-
-void MessageWin::focus_in()
-{
-    present();
+    set_shown_win( false );
+    CORE::core_set_command( "restore_focus" );
 }
 
 
@@ -81,4 +51,95 @@ bool MessageWin::on_delete_event( GdkEventAny* event )
     MESSAGE::get_admin()->set_command( "close_currentview" );
 
     return true;
+}
+
+
+const int MessageWin::get_x_win()
+{
+    return SESSION::get_x_win_mes();
+}
+
+const int MessageWin::get_y_win()
+{
+    return SESSION::get_y_win_mes();
+}
+
+void MessageWin::set_x_win( int x )
+{
+    SESSION::set_x_win_mes( x );
+}
+
+void MessageWin::set_y_win( int y )
+{
+    SESSION::set_y_win_mes( y );
+}
+
+const int MessageWin::get_width_win()
+{
+    return SESSION::get_width_win_mes();
+}
+
+const int MessageWin::get_height_win()
+{
+    return SESSION::get_height_win_mes();
+}
+
+void MessageWin::set_width_win( int width )
+{
+    SESSION::set_width_win_mes( width );
+}
+
+void MessageWin::set_height_win( int height )
+{
+    SESSION::set_height_win_mes( height );
+}
+
+const bool MessageWin::is_focus_win()
+{
+    return SESSION::is_focus_win_mes();
+}
+
+void MessageWin::set_focus_win( bool set )
+{
+    SESSION::set_focus_win_mes( set );
+}
+
+
+const bool MessageWin::is_maximized_win()
+{
+    return SESSION::is_maximized_win_mes();
+}
+
+void MessageWin::set_maximized_win( bool set )
+{
+    SESSION::set_maximized_win_mes( set );
+}
+
+
+const bool MessageWin::is_iconified_win()
+{
+    return SESSION::is_iconified_win_mes();
+}
+
+void MessageWin::set_iconified_win( bool set )
+{
+    SESSION::set_iconified_win_mes( set );
+}
+
+
+const bool MessageWin::is_shown_win()
+{
+    return SESSION::is_shown_win_mes();
+}
+
+
+void MessageWin::set_shown_win( bool set )
+{
+    SESSION::set_shown_win_mes( set );
+}
+
+
+void MessageWin::switch_admin()
+{
+    CORE::core_set_command( "switch_message" );    
 }

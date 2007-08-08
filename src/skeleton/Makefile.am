@@ -17,6 +17,7 @@ libskeleton_a_SOURCES = \
 	compentry.cpp \
 	login.cpp \
 	prefdiag.cpp \
+	msgdiag.cpp \
 	panecontrol.cpp \
 	hpaned.cpp \
 	vpaned.cpp \

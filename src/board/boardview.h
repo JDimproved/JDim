@@ -126,6 +126,7 @@ namespace BOARD
         void slot_push_favorite();
         void slot_copy_url();
         void slot_copy_title_url();
+        void slot_select_all();
         void slot_open_browser();
         void slot_push_preferences();
         void slot_preferences_article();

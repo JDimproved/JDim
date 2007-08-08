@@ -2954,17 +2954,17 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
 //
 // 範囲選択の範囲を計算してm_selectionにセット & 範囲選択箇所の再描画
 //
-//
-// caret_left から caret_right まで範囲選択状態にする
 // redraw : true なら再描画, false なら範囲の計算のみ
 //
+// caret_left から caret_right まで範囲選択状態にする
+//
 
-bool DrawAreaBase::set_selection( CARET_POSITION& caret_left, CARET_POSITION& caret_right )
+bool DrawAreaBase::set_selection( CARET_POSITION& caret_left, CARET_POSITION& caret_right, const bool redraw )
 {
     m_caret_pos_pre = caret_left;
     m_caret_pos = caret_left;
     m_caret_pos_dragstart = caret_left;
-    return set_selection( caret_right );
+    return set_selection( caret_right, redraw );
 }
 
 
@@ -2977,7 +2977,7 @@ bool DrawAreaBase::set_selection( CARET_POSITION& caret_left, CARET_POSITION& ca
 //
 // m_caret_pos_pre から caret_pos まで範囲選択状態にする
 //
-bool DrawAreaBase::set_selection( CARET_POSITION& caret_pos, bool redraw )
+bool DrawAreaBase::set_selection( CARET_POSITION& caret_pos, const bool redraw )
 {
     if( ! caret_pos.layout ) return false;
     if( ! m_caret_pos_dragstart.layout ) return false;
@@ -3190,6 +3190,63 @@ std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos 
 
     return url;
 }
+
+
+// 全選択
+void DrawAreaBase::select_all()
+{
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::select_all\n";
+#endif
+
+    CARET_POSITION caret_left, caret_right;
+    LAYOUT* layout = NULL;
+    LAYOUT* layout_back = NULL;
+
+    // 先頭
+    LAYOUT* header = m_layout_tree->top_header();
+    while( header ){
+
+        layout = header->next_layout;
+        while( layout && ! layout->text ){
+            layout = layout->next_layout;
+        }
+        if( layout ) break;
+
+        header = header->next_header;
+    }
+    if( ! layout ) return;
+
+#ifdef _DEBUG
+    std::cout << "id = " << layout->id_header << "-" << layout->id << " text = " << layout->text << std::endl;
+#endif
+
+    caret_left.set( layout, 0 );
+
+    // 最後
+    while( header ){
+
+        layout = header->next_layout;
+        while( layout ){
+            if( layout->text ) layout_back = layout;
+            layout = layout->next_layout;
+        }
+
+        header = header->next_header;
+    }
+    if( ! layout_back ) return;
+
+#ifdef _DEBUG
+    std::cout << "-> id = " << layout_back->id_header << "-" << layout_back->id << " text = " << layout_back->text << std::endl;
+#endif
+
+    caret_right.set( layout_back, layout_back->lng_text );
+
+    set_selection( caret_left, caret_right, false );
+    set_selection_str();
+    redraw_view();
+}
+
 
 
 //

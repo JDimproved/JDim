@@ -36,6 +36,7 @@
 #include "colorid.h"
 #include "fontid.h"
 #include "updatemanager.h"
+#include "session.h"
 
 #include <sstream>
 //#include <gtk/gtkversion.h> // GTK_CHECK_VERSION
@@ -76,6 +77,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
       m_search_invert( 0 ),
       m_cancel_focus( 0 ),
       m_expand_collapse( 0 ),
+      m_cancel_expand( false ),
       m_expanding( 0 )
 {
     m_scrwin.add( m_treeview );
@@ -569,7 +571,12 @@ void  BBSListViewBase::operate_view( const int& control )
             goto_bottom();
             break;
 
-            // 展開 or 選択
+            // 全て選択
+        case CONTROL::SelectAll:
+            slot_select_all();
+            break;
+
+            // 展開 or 開く
         case CONTROL::OpenBoardTab:
             open_tab = true;
         case CONTROL::OpenBoard:
@@ -1154,6 +1161,27 @@ void BBSListViewBase::slot_copy_title_url()
 }
 
 
+//
+// 指定したディレクトリ以下のディレクトリを全て開く
+//
+void BBSListViewBase::expand_all_dir( Gtk::TreeModel::Path path )
+{
+    if( is_dir( path ) ){
+
+        if( ! m_treeview.row_expanded( path ) ){
+            m_cancel_expand = true; // slot_row_exp()の呼び出しをキャンセル
+            m_treeview.expand_row( path, false );
+            m_cancel_expand = false;
+        }
+        path.down();
+
+        while( m_treeview.get_row( path ) ){
+            expand_all_dir( path );
+            path.next();
+        }
+    }
+}
+
 
 //
 // ディレクトリ内を全選択
@@ -1184,6 +1212,30 @@ void BBSListViewBase::slot_select_all_dir()
 {
     select_all_dir( m_path_selected );
 }
+
+
+
+//
+// 全選択
+//
+void BBSListViewBase::slot_select_all()
+{
+    SKELETON::MsgDiag mdiag( NULL, "全ての行を選択しますか？\n\n(注意) ディレクトリは全て展開されます。", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    mdiag.set_default_response( Gtk::RESPONSE_NO );
+    if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
+    Gtk::TreeModel::Children child = m_treestore->children();
+    Gtk::TreeModel::Children::iterator it = child.begin();
+    for( ; it != child.end() ; ++it ) expand_all_dir( m_treestore->get_path( *it ) );
+
+    it = child.begin();
+    m_treeview.scroll_to_row( m_treestore->get_path( *it ), 0 );
+    for( ; it != child.end() ; ++it ){
+        m_treeview.get_selection()->select( *it );
+        select_all_dir( m_treestore->get_path( *it ) );
+    }
+}
+
 
 
 //
@@ -1323,6 +1375,8 @@ void BBSListViewBase::slot_preferences_image()
 //
 void BBSListViewBase::slot_row_exp( const Gtk::TreeModel::iterator&, const Gtk::TreeModel::Path& path )
 {
+    if( m_cancel_expand ) return;
+
     // 他のフォルダを全て閉じる
     if( CONFIG::get_open_one_category() && m_expand_collapse ){
 

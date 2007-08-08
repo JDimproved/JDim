@@ -316,8 +316,8 @@ void Img::receive_data( const char* data, size_t size )
     if( ! size ) return;
 
 #ifdef _DEBUG
-    std::cout << "Img::receive_data code = " << get_code() << " "
-              << current_length() << " / " << total_length() << std::endl;
+    std::cout << "Img::receive_data code = " << get_code() << std::endl
+              << "size / total = " << current_length() << " / " << total_length() << std::endl;
 #endif
 
     // 先頭のシグネチャを見て画像かどうかをチェック
@@ -401,6 +401,17 @@ void Img::receive_data( const char* data, size_t size )
 //
 void Img::receive_finish()
 {
+#ifdef _DEBUG
+    std::cout << "Img::receive_finish code = " << get_code() << std::endl
+              << "total byte = " << total_length() << std::endl
+              << "cookies : " << std::endl;
+
+    if( cookies().size() ){
+        std::list< std::string >::iterator it = cookies().begin();
+        for( ; it != cookies().end() ; ++it ) std::cout << *it << std::endl;
+    }
+#endif
+
     if( m_fout ) fclose( m_fout );
     m_fout = NULL;
 
@@ -486,9 +497,7 @@ void Img::receive_finish()
     }
 
 #ifdef _DEBUG
-    std::cout << "Img::receive_finish code = " << get_code() << std::endl
-              << "total byte = " << total_length() << std::endl
-              << "type = " << m_type << std::endl
+    std::cout << "type = " << m_type << std::endl
               << "refurl = " << m_refurl << std::endl;
 #endif
 

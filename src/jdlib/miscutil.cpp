@@ -241,7 +241,7 @@ std::list< std::string > MISC::remove_commentline_from_list( std::list< std::str
 
 
 //
-// 空白とカンマで区切られた str_in の文字列をリストにして出力
+// 空白と""で区切られた str_in の文字列をリストにして出力
 //
 // \"は " に置換される
 //
@@ -264,7 +264,7 @@ std::list< std::string > MISC::strtolist( std::string& str_in )
 
 
 //
-// list_in の文字列リストを空白とカンマで区切ってストリングにして出力
+// list_in の文字列リストを空白と""で区切ってストリングにして出力
 //
 // "は \" に置換される
 //

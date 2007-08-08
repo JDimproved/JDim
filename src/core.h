@@ -178,6 +178,7 @@ namespace CORE
         void slot_setup_fontcolor();
         void slot_setup_proxy();
         void slot_setup_passwd();
+        void slot_setup_boarditem();
         void slot_setup_browser();
         void slot_setup_abone();
         void slot_setup_abone_thread();
@@ -238,7 +239,6 @@ namespace CORE
 
         bool slot_focus_out_event( GdkEventFocus* ev );
         bool slot_focus_in_event( GdkEventFocus* ev );
-        bool slot_window_state_event( GdkEventWindowState* event );
         void slot_active_url();
 
         // あるadminがemptyになったので他のadminにスイッチ

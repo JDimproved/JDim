@@ -81,20 +81,6 @@ ImageAdmin::~ImageAdmin()
 }
 
 
-//
-// 起動中
-//
-const bool ImageAdmin::is_booting()
-{
-    ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
-
-    if( win && win->is_booting() ) return true;
-
-    return Admin::is_booting();
-}
-
-
-
 // 前回開いていたURLを復元
 void ImageAdmin::restore()
 {
@@ -180,7 +166,7 @@ void ImageAdmin::clock_in()
     }
 
     // 画像が表示されている場合viewにクロックを回す
-    if( SESSION::is_img_shown() ){
+    if( SESSION::is_shown_win_img() ){
 
         // アクティブなviewにだけクロックを送る
         SKELETON::View* view = get_current_view();
@@ -224,8 +210,6 @@ int ImageAdmin::get_current_page()
 //
 void ImageAdmin::command_local( const COMMAND_ARGS& command )
 {
-    ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
-
     // 切り替え
     if( command.command == "switch_image" ) switch_img( command.url );
 
@@ -269,15 +253,6 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
     else if( command.command == "scroll_right" ){
         SKELETON::View* view = get_current_view();
         if( view ) view->scroll_right();
-    }
-
-    // window 開け閉じ可能/不可
-    else if( command.command == "enable_fold_win" ){
-        if( win ) win->set_enable_fold( true );
-    }
-
-    else if( command.command == "disable_fold_win" ){
-        if( win ) win->set_enable_fold( false );
     }
 }
 
@@ -546,7 +521,7 @@ void ImageAdmin::open_window()
         win = new IMAGE::ImageWin();
         set_jdwin( win );
         win->pack_remove_tab( false, m_tab );
-        win->pack_remove_view( false, m_view );
+        win->pack_remove_end( false, m_view );
         win->show_all();
     }
     else if( win && win->is_hide() ){
@@ -565,8 +540,7 @@ void ImageAdmin::close_window()
 
     if( win ){
         win->pack_remove_tab( true, m_tab );
-        win->pack_remove_view( true, m_view );
-
+        win->pack_remove_end( true, m_view );
         delete_jdwin();
     }
 }
@@ -662,24 +636,6 @@ void ImageAdmin::focus_current_view()
 {
     focus_view( 0 );
 }
-
-
-//
-// 現在のviewをフォーカスアウトする
-//
-void ImageAdmin::focus_out()
-{
-#ifdef _DEBUG
-    std::cout << "ImageAdmin::focus_out\n";
-#endif
-
-    // 画像ビューが隠れないようにフォーカスアウトする前に transient 指定をしておく
-    ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
-    if( win ) win->set_transient( true );
-
-    SKELETON::Admin::focus_out();
-}
-
 
 
 //

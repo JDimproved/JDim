@@ -12,6 +12,11 @@
 #include <gtkmm.h>
 #include <string>
 
+namespace SKELETON
+{
+    class MsgDiag;
+}
+
 
 namespace MESSAGE
 {
@@ -35,7 +40,7 @@ namespace MESSAGE
         bool m_new_article; // 新スレ作成
 
         // 書き込んでいますのダイアログ
-        Gtk::MessageDialog* m_writingdiag;
+        SKELETON::MsgDiag* m_writingdiag;
 
       public:
 

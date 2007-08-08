@@ -55,7 +55,7 @@ namespace SKELETON
         virtual Gtk::Window* get_win();
 
         // 起動中
-        virtual const bool is_booting();
+        const bool is_booting();
 
         // フォーカスされているか
         virtual const bool has_focus() const { return m_focus; }

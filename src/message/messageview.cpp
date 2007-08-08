@@ -14,6 +14,7 @@
 #include "dbtree/interface.h"
 
 #include "command.h"
+#include "session.h"
 
 #include <sstream>
 

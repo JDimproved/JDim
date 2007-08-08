@@ -86,7 +86,7 @@ namespace SKELETON
         const std::string& get_str_code() const { return m_str_code; }
         void set_str_code( const std::string& str_code ){ m_str_code = str_code; }
 
-        const std::list< std::string >& cookies() const { return m_cookies; }
+        std::list< std::string >& cookies() { return m_cookies; }
         const std::string& location() const { return m_location; }
 
         const size_t total_length() const { return m_total_length; }

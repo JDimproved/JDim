@@ -24,6 +24,7 @@
 #include "controlid.h"
 #include "prefdiagfactory.h"
 #include "httpcode.h"
+#include "session.h"
 
 #include <sstream>
 

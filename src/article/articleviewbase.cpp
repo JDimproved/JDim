@@ -737,6 +737,11 @@ void ArticleViewBase::operate_view( const int& control )
         case CONTROL::Copy:
             slot_copy_selection_str();
             break;
+
+            // 全て選択
+        case CONTROL::SelectAll:
+            slot_select_all();
+            break;
         
             // 検索
         case CONTROL::Search:
@@ -2219,10 +2224,13 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
 
     // 範囲選択されてない
+    const unsigned int max_selection_str = 1024;
+    const unsigned int max_selection_str_quote = 8192;
+
     std::string str_select = m_drawarea->str_selection();
     act = action_group()->get_action( "QuoteSelectionRes" );
     if( act ){
-        if( str_select.empty() ) act->set_sensitive( false );
+        if( str_select.empty() || str_select.length() > max_selection_str_quote ) act->set_sensitive( false );
         else act->set_sensitive( true );
     }
 
@@ -2234,19 +2242,19 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
     act = action_group()->get_action( "DrawoutWord" );
     if( act ){
-        if( str_select.empty() ) act->set_sensitive( false );
+        if( str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
         else act->set_sensitive( true );
     }
 
     act = action_group()->get_action( "AboneWord_Menu" );
     if( act ){
-        if( str_select.empty() ) act->set_sensitive( false );
+        if( str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
         else act->set_sensitive( true );
     }
 
     act = action_group()->get_action( "SearchCache_Menu" );
     if( act ){
-        if( str_select.empty() ) act->set_sensitive( false );
+        if( str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
         else act->set_sensitive( true );
     }
 
@@ -2457,6 +2465,14 @@ void ArticleViewBase::slot_copy_selection_str()
     COPYCLIP( m_drawarea->str_selection() );
 }
 
+
+//
+// 全選択
+//
+void ArticleViewBase::slot_select_all()
+{
+    if( m_drawarea ) m_drawarea->select_all();
+}
 
 
 //

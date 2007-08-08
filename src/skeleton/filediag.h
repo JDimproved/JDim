@@ -8,6 +8,7 @@
 #include <gtkmm.h>
 
 #include "command.h"
+#include "session.h"
 
 namespace SKELETON
 {

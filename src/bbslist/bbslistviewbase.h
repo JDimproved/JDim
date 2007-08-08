@@ -61,7 +61,8 @@ namespace BBSLIST
 
         // あるフォルダを開いたときに他のフォルダを閉じる
         bool m_expand_collapse;
-        bool m_expanding; // 行を開いている最中ならtrueにしてsignal_row_collapsed()を無視する
+        bool m_cancel_expand; // signal_row_expanded() をキャンセルする
+        bool m_expanding; // 行を開いている最中にtrueにしてsignal_row_collapsed()をキャンセルする
 
       protected:
 
@@ -135,6 +136,7 @@ namespace BBSLIST
         void row_down();
         void page_up();
         void page_down();
+        void expand_all_dir( Gtk::TreeModel::Path path );
         void select_all_dir( Gtk::TreeModel::Path path );
         void check_update_dir( Gtk::TreeModel::Path path );
 
@@ -153,6 +155,7 @@ namespace BBSLIST
         void slot_copy_url();
         void slot_copy_title_url();
         void slot_select_all_dir();
+        void slot_select_all();
         void slot_check_update_root();
         void slot_check_update_open_root();
         void slot_check_update_dir();

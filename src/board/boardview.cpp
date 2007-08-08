@@ -148,16 +148,27 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
 #endif
 
-    // columnのappend
-    APPEND_COLUMN( COLUMN_TITLE_MARK, m_columns.m_col_mark );
-    APPEND_COLUMN( COLUMN_TITLE_ID, m_columns.m_col_id );
-    APPEND_COLUMN( COLUMN_TITLE_NAME, m_columns.m_col_subject );
-    APPEND_COLUMN( COLUMN_TITLE_RES, m_columns.m_col_res );
-    APPEND_COLUMN( COLUMN_TITLE_LOAD, m_columns.m_col_str_load );
-    APPEND_COLUMN( COLUMN_TITLE_NEW, m_columns.m_col_str_new );
-    APPEND_COLUMN( COLUMN_TITLE_SINCE, m_columns.m_col_since );
-    APPEND_COLUMN( COLUMN_TITLE_WRITE, m_columns.m_col_write );
-    APPEND_COLUMN( COLUMN_TITLE_SPEED, m_columns.m_col_speed );
+
+    // 列のappend
+    std::string order = SESSION::get_items_board();
+    std::list< std::string > list_order = MISC::split_line( order );
+    std::list< std::string >::iterator it = list_order.begin();
+    for( ; it != list_order.end(); ++it ){
+
+#ifdef _DEBUG
+        std::cout << *it << std::endl;
+#endif
+
+        if( *it == COLUMN_TITLE_MARK ) APPEND_COLUMN( COLUMN_TITLE_MARK, m_columns.m_col_mark );
+        if( *it == COLUMN_TITLE_ID ) APPEND_COLUMN( COLUMN_TITLE_ID, m_columns.m_col_id );
+        if( *it == COLUMN_TITLE_NAME ) APPEND_COLUMN( COLUMN_TITLE_NAME, m_columns.m_col_subject );
+        if( *it == COLUMN_TITLE_RES ) APPEND_COLUMN( COLUMN_TITLE_RES, m_columns.m_col_res );
+        if( *it == COLUMN_TITLE_LOAD ) APPEND_COLUMN( COLUMN_TITLE_LOAD, m_columns.m_col_str_load );
+        if( *it == COLUMN_TITLE_NEW ) APPEND_COLUMN( COLUMN_TITLE_NEW, m_columns.m_col_str_new );
+        if( *it == COLUMN_TITLE_SINCE ) APPEND_COLUMN( COLUMN_TITLE_SINCE, m_columns.m_col_since );
+        if( *it == COLUMN_TITLE_WRITE ) APPEND_COLUMN( COLUMN_TITLE_WRITE, m_columns.m_col_write );
+        if( *it == COLUMN_TITLE_SPEED ) APPEND_COLUMN( COLUMN_TITLE_SPEED, m_columns.m_col_speed );
+    }
 
     // サイズを調整しつつソートの設定
     for( guint i = 0; i < COL_VISIBLE_END; i++ ){
@@ -1038,8 +1049,13 @@ void BoardView::operate_view( const int& control )
         case CONTROL::End:
             goto_bottom();
             break;
+
+            // 全て選択
+        case CONTROL::SelectAll:
+            slot_select_all();
+            break;
     
-            // 選択
+            // スレを開く
         case CONTROL::OpenArticleTab:
             open_tab = true;
         case CONTROL::OpenArticle:
@@ -1094,9 +1110,9 @@ void BoardView::operate_view( const int& control )
 
         case CONTROL::Delete:
         {
-            SKELETON::MsgDiag mdiag( NULL, "選択した行のログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-            mdiag.set_default_response( Gtk::RESPONSE_OK );
-            if( mdiag.run() != Gtk::RESPONSE_OK ) return;
+            SKELETON::MsgDiag mdiag( NULL, "選択した行のログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            mdiag.set_default_response( Gtk::RESPONSE_YES );
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
             delete_view();
             break;
         }
@@ -1758,6 +1774,21 @@ void BoardView::slot_copy_title_url()
        << url << std::endl;
 
     COPYCLIP( ss.str() );
+}
+
+
+//
+// 全選択
+//
+void BoardView::slot_select_all()
+{
+    SKELETON::MsgDiag mdiag( NULL, "全ての行を選択しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    mdiag.set_default_response( Gtk::RESPONSE_NO );
+    if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
+    Gtk::TreeModel::Children child = m_liststore->children();
+    Gtk::TreeModel::Children::iterator it = child.begin();
+    for( ; it != child.end() ; ++it ) m_treeview.get_selection()->select( *it );
 }
 
 

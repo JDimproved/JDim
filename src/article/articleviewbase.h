@@ -211,6 +211,7 @@ namespace ARTICLE
         void slot_copy_name();
         void slot_copy_id();
         void slot_copy_selection_str();
+        void slot_select_all();
         void slot_drawout_selection_str();
         void slot_search_cacheall();
         void slot_search_cachelocal();

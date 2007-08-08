@@ -174,6 +174,9 @@ namespace ARTICLE
         void set_separator_new( int num );
         void hide_separator_new();
 
+        // 全選択
+        void select_all(); 
+
         // 範囲選択中の文字列
         const std::string str_selection(); 
 
@@ -306,8 +309,8 @@ namespace ARTICLE
         bool set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,  int x, int y );
 
         // 範囲選択関係
-        bool set_selection( CARET_POSITION& caret_left, CARET_POSITION& caret_right );
-        bool set_selection( CARET_POSITION& caret_pos, bool redraw = true );
+        bool set_selection( CARET_POSITION& caret_left, CARET_POSITION& caret_right, const bool redraw = true );
+        bool set_selection( CARET_POSITION& caret_pos, const bool redraw = true );
         bool set_selection_str();
         std::string get_selection_as_url( const CARET_POSITION& caret_pos );
 

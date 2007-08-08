@@ -8,6 +8,7 @@
 #include "globalabonepref.h"
 #include "globalabonethreadpref.h"
 #include "fontcolorpref.h"
+#include "boarditempref.h"
 
 #include "dbimg/delimgdiag.h"
 
@@ -37,7 +38,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
         case PREFDIAG_FONTCOLOR:
             return new CORE::FontColorPref( parent, url );
 
-            
+        case PREFDIAG_BOARDITEM:
+            return new CORE::BoardItemPref( parent, url );            
+
 
         case PREFDIAG_DELIMG:
             return new DBIMG::DelImgDiag( parent, url );

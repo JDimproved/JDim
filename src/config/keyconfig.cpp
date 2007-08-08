@@ -92,6 +92,7 @@ void KeyConfig::load_conf()
     SETMOTION( "Reload", "F5 s" );
     SETMOTION( "StopLoading", "Escape" ); // = CONTROL::Cancel
     SETMOTION( "Copy", "Ctrl+c" );
+    SETMOTION( "SelectAll", "Ctrl+a" );
 
     SETMOTION( "Search", "Ctrl+f /" );
     SETMOTION( "SearchInvert", "?" );

@@ -225,6 +225,8 @@ void Admin::delete_jdwin()
 
 const bool Admin::is_booting()
 {
+    if( get_jdwin() && get_jdwin()->is_booting() ) return true;
+
     return ( has_commands() );
 }
 
@@ -554,6 +556,15 @@ void Admin::exec_command()
     // アイコン表示切り替え
     else if( command.command == "toggle_icon" ){
         toggle_icon( command.url );
+    }
+
+    // window 開け閉じ可能/不可
+    else if( command.command == "enable_fold_win" ){
+        if( get_jdwin() ) get_jdwin()->set_enable_fold( true );
+    }
+
+    else if( command.command == "disable_fold_win" ){
+        if( get_jdwin() ) get_jdwin()->set_enable_fold( false );
     }
 
     // 個別のコマンド処理
@@ -1110,6 +1121,9 @@ void Admin::focus_out()
 #ifdef _DEBUG
     std::cout << "Admin::focus_out : " << m_url << std::endl;
 #endif
+
+    // ウィンドウ表示の時、ビューが隠れないようにフォーカスアウトする前に transient 指定をしておく
+    if( get_jdwin() ) get_jdwin()->set_transient( true );
 
     SKELETON::View* view = get_current_view();
     if( view ) view->focus_out();

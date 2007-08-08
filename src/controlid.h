@@ -65,6 +65,7 @@ namespace CONTROL
         StopLoading,
         Cancel = StopLoading,
         Copy,
+        SelectAll,
         AppendFavorite,
         Property,
     

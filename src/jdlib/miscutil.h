@@ -31,12 +31,12 @@ namespace MISC
     // list_inからコメント行(#)を除いてリストを返す
     std::list< std::string > remove_commentline_from_list( std::list< std::string >& list_in );
 
-    // 空白とカンマで区切られた str_in の文字列をリストにして出力
+    // 空白と""で区切られた str_in の文字列をリストにして出力
     // \"は " に置換される
     // (例)  "aaa" "bbb" "\"ccc\""  → aaa と bbb と "ccc"
     std::list< std::string > strtolist( std::string& str_in );
 
-    // list_in の文字列リストを空白とカンマで区切ってストリングにして出力
+    // list_in の文字列リストを空白と""で区切ってストリングにして出力
     // "は \" に置換される
     // (例)  "aaa" "bbb" "\"ccc\""
     std::string listtostr( std::list< std::string >& list_in );
