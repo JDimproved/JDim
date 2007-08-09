@@ -8,6 +8,8 @@
 
 #include "jdlib/miscgtk.h"
 
+#include "config/globalconf.h"
+
 #include "session.h"
 #include "command.h"
 
@@ -15,7 +17,7 @@ using namespace MESSAGE;
 
 
 MessageWin::MessageWin()
-    : SKELETON::JDWindow( true )
+    : SKELETON::JDWindow( CONFIG::get_fold_message() )
 {
 #ifdef _DEBUG
     std::cout << "MessageWin::MessageWin x y w h = "
@@ -25,6 +27,8 @@ MessageWin::MessageWin()
 
     get_vbox().pack_remove_end( false, get_statbar(), Gtk::PACK_SHRINK );
     init_win();
+
+    if( ! CONFIG::get_fold_message() ) set_transient_for( *CORE::get_mainwindow() );
 
     show_all_children();
 }

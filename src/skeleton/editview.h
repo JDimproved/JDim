@@ -47,6 +47,9 @@ namespace SKELETON
         int m_pre_line;
         int m_line_offset;
 
+        // コンテキストメニュー
+        Gtk::Menu* m_context_menu;
+
         // AAポップアップ
         AAMenu* m_aapopupmenu;
 
@@ -83,16 +86,22 @@ namespace SKELETON
         virtual bool on_key_press_event( GdkEventKey* event );
         virtual bool on_key_release_event( GdkEventKey* event );
 
+        virtual void on_populate_popup( Gtk::Menu* menu );
+
         void slot_buffer_changed();
 
       private:
 
         void cursor_up_down( bool up );
 
+        bool slot_select_aamenu( GdkEventButton* event );
+        void slot_hide_popupmenu();
+
         // AA ポップアップ
         void slot_popup_aamenu_pos( int& x, int& y, bool& push_in );
         void show_aalist_popup();
         void slot_aamenu_selected( const std::string& aa );
+        void slot_hide_aamenu();
     };
 
 

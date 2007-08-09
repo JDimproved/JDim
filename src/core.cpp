@@ -310,6 +310,10 @@ void Core::run( bool init )
                                                       & CONFIG::get_restore_board() ) ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_views ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleFoldMessage", "非アクティブ時に書き込みビューを折りたたむ", std::string(),
+                                                    CONFIG::get_fold_message() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_fold_message ) );
+
     m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
 
@@ -465,6 +469,7 @@ void Core::run( bool init )
         "<menu action='General_Menu'>"
         "<menuitem action='OldArticle'/>"
         "<menuitem action='RestoreViews'/>"
+        "<menuitem action='ToggleFoldMessage'/>"
         "<menuitem action='SavePostLog'/>"
         "</menu>"
 
@@ -1739,6 +1744,18 @@ void Core::slot_toggle_restore_views()
     CONFIG::set_restore_board( ! status );
     CONFIG::set_restore_article( ! status );
     CONFIG::set_restore_image( ! status );
+}
+
+
+//
+// 非アクティブ時に書き込みビューを折りたたむ
+//
+void Core::slot_toggle_fold_message()
+{
+    CONFIG::set_fold_message( ! CONFIG::get_fold_message() );
+
+    SKELETON::MsgDiag mdiag( NULL, "次に書き込みビューを開いた時から有効になります" );
+    mdiag.run();
 }
 
 

@@ -340,6 +340,9 @@ const bool ConfigItems::load()
     // 「書き込み中」のダイアログを表示しない
     hide_writing_dialog = cf.get_option( "hide_writing_dialog", CONF_HIDE_WRITING_DIALOG );
 
+    // 非アクティブ時に書き込みビューを折りたたむ
+    fold_message = cf.get_option( "fold_message", CONF_FOLD_MESSAGE );
+
     // ポップアップとカーソルの間のマージン
     margin_popup = cf.get_option( "margin_popup", CONF_MARGIN_POPUP );
 
@@ -558,6 +561,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "always_write_ok", always_write_ok );
     cf.update( "save_postlog", save_postlog );
     cf.update( "hide_writing_dialog", hide_writing_dialog );
+    cf.update( "fold_message", fold_message );
     cf.update( "margin_popup", margin_popup );
     cf.update( "margin_imgpopup", margin_imgpopup );
     cf.update( "mouse_radius", mouse_radius );

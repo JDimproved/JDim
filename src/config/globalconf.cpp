@@ -190,6 +190,8 @@ void CONFIG::set_always_write_ok( bool write_ok ){ get_confitem()->always_write_
 const bool CONFIG::get_save_postlog(){ return get_confitem()->save_postlog; }
 void CONFIG::set_save_postlog( bool save ){ get_confitem()->save_postlog = save; }
 const bool CONFIG::get_hide_writing_dialog(){ return get_confitem()->hide_writing_dialog; }
+const bool CONFIG::get_fold_message(){ return get_confitem()->fold_message; }
+void CONFIG::set_fold_message( bool fold ){ get_confitem()->fold_message = fold; }
 
 const int CONFIG::get_margin_popup(){ return get_confitem()->margin_popup; }
 void CONFIG::set_margin_popup( int margin ){ get_confitem()->margin_popup = margin; }

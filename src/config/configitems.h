@@ -159,6 +159,9 @@ namespace CONFIG
         // 「書き込み中」のダイアログを表示しない
         bool hide_writing_dialog;
 
+        // 非アクティブ時に書き込みビューを折りたたむ
+        bool fold_message;
+
         // ポップアップとカーソルの間のマージン
         int margin_popup;
 

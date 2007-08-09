@@ -7,7 +7,9 @@
 #include "aamenu.h"
 
 #include "controlid.h"
+#include "controlutil.h"
 #include "aamanager.h"
+#include "session.h"
 
 using namespace SKELETON;
 
@@ -16,6 +18,7 @@ EditTextView::EditTextView() :
     Gtk::TextView(),
     m_cancel_change( false ),
     m_line_offset( -1 ),
+    m_context_menu( NULL ),
     m_aapopupmenu( NULL )
 {
     // コントロールモード設定
@@ -374,6 +377,56 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
 }
 
 
+// コンテキストメニュー表示
+void EditTextView::on_populate_popup( Gtk::Menu* menu )
+{
+#ifdef _DEBUG
+    std::cout << "EditTextView::on_populate_popup\n";
+#endif
+
+    m_context_menu = menu;
+    SESSION::set_popupmenu_shown( true );
+    menu->signal_hide().connect( sigc::mem_fun( *this, &EditTextView::slot_hide_popupmenu ) );
+
+    // AA入力メニュー追加
+    if( CORE::get_aamanager()->get_size() ){
+
+        Gtk::MenuItem* menuitem = Gtk::manage( new Gtk::SeparatorMenuItem() );
+        menu->prepend( *menuitem );
+
+        std::string label = CONTROL::get_label( CONTROL::InputAA );
+        std::string motion = CONTROL::get_motion( CONTROL::InputAA );
+
+        menuitem = Gtk::manage( new Gtk::MenuItem( label + "  " + motion ) );
+        menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_select_aamenu ) );
+        menu->prepend( *menuitem );
+
+        menu->show_all_children();
+    }
+
+    Gtk::TextView::on_populate_popup( menu );
+}
+
+
+bool EditTextView::slot_select_aamenu( GdkEventButton* event )
+{
+    if( m_context_menu ) m_context_menu->hide();
+    show_aalist_popup();
+    return true;
+}
+
+
+void EditTextView::slot_hide_popupmenu()
+{
+#ifdef _DEBUG
+    std::cout << "EditTextView::slot_hide_popupmenu\n";
+#endif
+
+    m_context_menu = NULL;
+    SESSION::set_popupmenu_shown( false );
+}
+
+
 //
 // カーソルの画面上の座標
 //
@@ -402,12 +455,15 @@ void EditTextView::show_aalist_popup()
     if( CORE::get_aamanager()->get_size() )
     {
         if( m_aapopupmenu ) delete m_aapopupmenu;
+
+        SESSION::set_popupmenu_shown( true );
         m_aapopupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ) ) );
         m_aapopupmenu->popup( Gtk::Menu::SlotPositionCalc(
                             sigc::mem_fun( *this, &EditTextView::slot_popup_aamenu_pos ) ),
                             0, gtk_get_current_event_time() );
 
         m_aapopupmenu->sig_selected().connect( sigc::mem_fun( *this, &EditTextView::slot_aamenu_selected ) );
+        m_aapopupmenu->signal_hide().connect( sigc::mem_fun( *this, &EditTextView::slot_hide_aamenu ) );
     }
 }
 
@@ -431,4 +487,12 @@ void EditTextView::slot_popup_aamenu_pos( int& x, int& y, bool& push_in )
 void EditTextView::slot_aamenu_selected( const std::string& aa )
 {
     insert_str( aa, false );
+}
+
+
+//
+// AAポップアップが閉じた
+void EditTextView::slot_hide_aamenu()
+{
+    SESSION::set_popupmenu_shown( false );
 }

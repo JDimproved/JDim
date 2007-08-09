@@ -213,6 +213,7 @@ namespace CORE
         void slot_shortmargin_popup();
         void slot_toggle_emacsmode();
         void slot_toggle_restore_views();
+        void slot_toggle_fold_message();
 
         virtual void callback_dispatch();
 
