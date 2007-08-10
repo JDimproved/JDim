@@ -617,11 +617,20 @@ size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n,
     else fout.open( path.c_str() );
     if( !fout.is_open() ){
         MISC::ERRMSG( "can't open " + path );
-        return false;
+        return 0;
     }
     fout.write( data, n );
     count = fout.tellp();
     fout.close();
+
+#ifdef _DEBUG
+    std::cout << "CACHE::save_rawdata n = " << n << " count = " << count << std::endl;
+#endif
+
+    if( n != count ){
+        MISC::ERRMSG( "failed to save " + path );
+        return 0;
+    }
 
     return count;
 }

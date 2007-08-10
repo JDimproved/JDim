@@ -234,16 +234,15 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
     {
         if( ! get_message().empty() ){
 
-            std::string save_to = CACHE::open_save_diag( MESSAGE::get_admin()->get_win(), SESSION::get_dir_draft(), "draft.txt", CACHE::FILE_TYPE_TEXT );
+            std::string filename = "draft-" + MISC::get_filename( get_url() );
+            if( filename.find( ".dat" ) != std::string::npos ) filename = MISC::replace_str( filename, ".dat", ".txt" );
+            else filename += ".txt";
+            std::string save_to = CACHE::open_save_diag( MESSAGE::get_admin()->get_win(), SESSION::get_dir_draft(), filename, CACHE::FILE_TYPE_TEXT );
             if( ! save_to.empty() ){
 
                 SESSION::set_dir_draft( MISC::get_dir( save_to ) );
 
-                if( CACHE::save_rawdata( save_to, get_message() ) == get_message().length() ){
-                    SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "保存しました。" );
-                    mdiag.run();
-                }
-                else{
+                if( CACHE::save_rawdata( save_to, get_message() ) != get_message().raw().length() ){
                     SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
                                              "保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。" );
                     mdiag.run();

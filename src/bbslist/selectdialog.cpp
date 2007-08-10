@@ -5,6 +5,9 @@
 
 #include "viewfactory.h"
 
+#include "command.h"
+#include "session.h"
+
 using namespace BBSLIST;
 
 
@@ -37,4 +40,26 @@ Gtk::TreePath SelectListDialog::get_path()
     if( m_selectview ) return m_selectview->get_current_path();
 
     return Gtk::TreePath();
+}
+
+
+int SelectListDialog::run()
+{
+#ifdef _DEBUG
+    std::cout << "SelectListDialog::run start\n";
+#endif
+
+    SESSION::set_dialog_shown( true );
+    CORE::core_set_command( "dialog_shown" );
+
+    int ret = Gtk::Dialog::run();
+
+    SESSION::set_dialog_shown( false );
+    CORE::core_set_command( "dialog_hidden" );
+
+#ifdef _DEBUG
+    std::cout << "SelectListDialog::run fin\n";
+#endif
+
+    return ret;
 }

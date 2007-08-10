@@ -24,6 +24,8 @@ namespace BBSLIST
         virtual ~SelectListDialog();
 
         Gtk::TreePath get_path();
+
+        virtual int run();
     };
 };
 
