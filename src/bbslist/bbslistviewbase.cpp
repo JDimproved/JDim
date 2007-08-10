@@ -164,11 +164,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "SelectDir", "全て選択"), sigc::mem_fun( *this, &BBSListViewBase::slot_select_all_dir ) );
 
-    action_group()->add( Gtk::Action::create( "CheckUpdateRoot_Menu", "全て更新チェック" ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ"), sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_root ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く"),
-                         sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_open_root ) );
-
     action_group()->add( Gtk::Action::create( "CheckUpdate_Menu", "更新チェック" ) );
     action_group()->add( Gtk::Action::create( "CheckUpdateDir", "更新チェックのみ"), sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_dir ) );
     action_group()->add( Gtk::Action::create( "CheckUpdateOpenDir", "更新されたスレをタブで開く"),
@@ -242,7 +237,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<popup name='popup_menu_favorite_mul'>"
     "<menuitem action='OpenRows'/>"
     "<separator/>"
-
     "<menu action='CheckUpdate_Menu'>"
     "<menuitem action='CheckUpdateRows'/>"
     "<menuitem action='CheckUpdateOpenRows'/>"
@@ -260,19 +254,11 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     // お気に入り+何もないところをクリック
     "<popup name='popup_menu_favorite_space'>"
     "<menuitem action='NewDir'/>"
-    "<separator/>"
-    "<menu action='CheckUpdateRoot_Menu'>"
-    "<menuitem action='CheckUpdateRoot'/>"
-    "<menuitem action='CheckUpdateOpenRoot'/>"
-    "<separator/>"
-    "<menuitem action='CancelCheckUpdate'/>"
-    "</menu>"
     "</popup>"
 
 
     // お気に入りディレクトリメニュー
     "<popup name='popup_menu_favorite_dir'>"
-
     "<menu action='CheckUpdate_Menu'>"
     "<menuitem action='CheckUpdateDir'/>"
     "<menuitem action='CheckUpdateOpenDir'/>"
@@ -377,6 +363,10 @@ bool BBSListViewBase::set_command( const std::string& command, const std::string
     if( command == "append_item" ) append_item();
     else if( command == "save_xml" ) save_xml( false );
     else if( command == "toggle_icon" ) toggle_icon( arg );
+
+    else if( command == "check_update_root" ) check_update_root( false );
+    else if( command == "check_update_open_root" ) check_update_root( true );
+    else if( command == "cancel_check_update" ) slot_cancel_check_update();
 
     return true;
 }
@@ -677,6 +667,19 @@ void  BBSListViewBase::operate_view( const int& control )
             // メニューバー表示/非表示
         case CONTROL::ShowMenuBar:
             CORE::core_set_command( "toggle_menubar" );
+            break;
+
+            // お気に入り更新チェック
+        case CONTROL::CheckUpdateRoot:
+            CORE::core_set_command( "check_update_root" );
+            break;
+
+        case CONTROL::CheckUpdateOpenRoot:
+            CORE::core_set_command( "check_update_open_root" );
+            break;
+
+        case CONTROL::StopLoading:
+            CORE::core_set_command( "cancel_check_update" );
             break;
     }
 }
@@ -1264,39 +1267,6 @@ void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path )
 
 
 //
-// ルート以下を全更新チェック
-//
-void BBSListViewBase::slot_check_update_root()
-{
-	const Gtk::TreeModel::Children children = m_treestore->children();
-
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() )
-    {
-        check_update_dir( m_treestore->get_path( *it ) );
-        ++it;
-    }
-
-    CORE::get_checkupdate_manager()->run( false );
-}
-
-// ルート以下を全更新チェックして開く
-void BBSListViewBase::slot_check_update_open_root()
-{
-	const Gtk::TreeModel::Children children = m_treestore->children();
-
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() )
-    {
-        check_update_dir( m_treestore->get_path( *it ) );
-        ++it;
-    }
-
-    CORE::get_checkupdate_manager()->run( true );
-}
-
-
-//
 // ディレクトリ内を全更新チェック
 //
 // m_path_selected にパスをセットしておくこと
@@ -1314,6 +1284,42 @@ void BBSListViewBase::slot_check_update_open_dir()
     check_update_dir( m_path_selected );
 
     CORE::get_checkupdate_manager()->run( true );
+}
+
+
+//
+// ルート以下を全て更新チェック( 再帰用 )
+//
+// 呼び出した後に CORE::get_checkupdate_manager()->run() を実行すること
+//
+void BBSListViewBase::check_update_root( const Gtk::TreeModel::Children& children )
+{
+    Gtk::TreeModel::iterator it = children.begin();
+    while( it != children.end() )
+    {
+        Gtk::TreeModel::Row row = *it;
+
+        const int type = row2type( row );
+        const std::string url = row2url( row );
+
+        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ) );
+        else if( type == TYPE_DIR ) check_update_root( row.children() );
+
+        ++it;
+    }
+}
+
+
+//
+// ルート以下を全て更新チェック( command 呼び出し用 )
+//
+// tab_open はタブで開くか否か
+//
+void BBSListViewBase::check_update_root( const bool tab_open )
+{
+    check_update_root( m_treestore->children() );
+
+    CORE::get_checkupdate_manager()->run( tab_open );
 }
 
 
@@ -1749,6 +1755,35 @@ Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
 }
 
 
+//
+// row -> url 変換
+//
+Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
+{
+    if( ! row ) return Glib::ustring();
+
+    Glib::ustring url =  row[ m_columns.m_col_url ];
+    if( url.empty() ) return url;
+
+    // 移転があったら url を最新のものに変換しておく
+    int type = row2type( row );
+    switch( type ){
+
+        case TYPE_BOARD:
+            url = DBTREE::url_boardbase( url );
+            break;
+
+        case TYPE_THREAD:
+        case TYPE_THREAD_UPDATE:
+        case TYPE_THREAD_OLD:
+            url = DBTREE::url_readcgi( url, 0, 0 );
+            break;
+    }
+
+    return url;
+}
+
+
 
 //
 // path -> name 変換
@@ -1772,6 +1807,15 @@ int BBSListViewBase::path2type( const Gtk::TreePath& path )
     return row[ m_columns.m_type ];
 }
 
+
+//
+// row -> type 変換
+//
+int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
+{
+    if( ! row ) return TYPE_UNKNOWN;
+    return row[ m_columns.m_type ];
+}
 
 
 

@@ -191,6 +191,9 @@ namespace CORE
         void slot_show_about();
         void slot_quit();
         void slot_reload_list();
+        void slot_check_update_root();
+        void slot_check_update_open_root();
+        void slot_cancel_check_update();
         void slot_save_favorite();
         void slot_toggle_online();
         void slot_toggle_login2ch();

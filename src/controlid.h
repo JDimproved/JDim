@@ -104,6 +104,9 @@ namespace CONTROL
         OpenBoardButton, // 以下、マウスボタン専用の設定
         OpenBoardTabButton,
 
+        CheckUpdateRoot,
+        CheckUpdateOpenRoot,
+
         BBSLISTMOTION_END,
 
         // BOARD系

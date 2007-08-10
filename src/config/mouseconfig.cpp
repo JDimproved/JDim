@@ -69,9 +69,13 @@ void MouseConfig::load_conf()
     SETMOTION( "End", "62" );
     SETMOTION( "Quit", "26" );
     SETMOTION( "Reload", "82" );
-    SETMOTION( "Escape", "8" );
+    SETMOTION( "StopLoading", "8" );
     SETMOTION( "NewArticle", "24" );
     SETMOTION( "WriteMessage", "24" );
+
+    // 全お気に入り更新チェック
+    SETMOTION( "CheckUpdateRoot", "48" );
+    SETMOTION( "CheckUpdateOpenRoot", "42" );
 
     // ARTICLE
     SETMOTION( "GotoNew", "626" );

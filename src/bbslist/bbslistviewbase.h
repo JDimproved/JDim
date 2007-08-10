@@ -92,6 +92,8 @@ namespace BBSLIST
 
         // path からその行のタイプを取得
         int path2type( const Gtk::TreePath& path );
+        // row からタイプを取得
+        int row2type( const Gtk::TreeModel::Row& row );
 
         // お気に入りにアイテム追加
         // あらかじめ共有バッファに追加するデータをセットしておくこと
@@ -139,6 +141,8 @@ namespace BBSLIST
         void expand_all_dir( Gtk::TreeModel::Path path );
         void select_all_dir( Gtk::TreeModel::Path path );
         void check_update_dir( Gtk::TreeModel::Path path );
+        void check_update_root( const Gtk::TreeModel::Children& children );
+        void check_update_root( const bool tab_open = false );
 
         bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );
@@ -156,8 +160,6 @@ namespace BBSLIST
         void slot_copy_title_url();
         void slot_select_all_dir();
         void slot_select_all();
-        void slot_check_update_root();
-        void slot_check_update_open_root();
         void slot_check_update_dir();
         void slot_check_update_open_dir();
         void slot_cancel_check_update();
@@ -184,6 +186,7 @@ namespace BBSLIST
         void open_selected_rows();
         void checkupdate_selected_rows();
         Glib::ustring path2url( const Gtk::TreePath& path );
+        Glib::ustring row2url( const Gtk::TreeModel::Row& row );
         Glib::ustring path2name( const Gtk::TreePath& path );
         bool is_dir( Gtk::TreeModel::iterator& it );
         bool is_dir( const Gtk::TreePath& path );

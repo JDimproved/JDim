@@ -224,7 +224,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "Login2ch", "2chにログイン", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
-    m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内ログ検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
+
     m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
     m_action_group->add( Gtk::Action::create( "Quit", "終了" ), sigc::mem_fun(*this, &Core::slot_quit ) );
 
@@ -382,6 +382,18 @@ void Core::run( bool init )
 
     //////////////////////////////////////////////////////
 
+    // ツール
+    m_action_group->add( Gtk::Action::create( "Menu_Tool", "ツール(_T)" ) );    
+    m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内ログ検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "全お気に入り更新チェック" ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ"), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く"),
+                         sigc::mem_fun( *this, &Core::slot_check_update_open_root ) );
+    m_action_group->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル" ),
+                         sigc::mem_fun( *this, &Core::slot_cancel_check_update ) );
+
+    //////////////////////////////////////////////////////
+
     // help
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
     m_action_group->add( Gtk::Action::create( "Hp", "ホームページ..." ), sigc::mem_fun( *this, &Core::slot_show_hp ) );
@@ -403,8 +415,6 @@ void Core::run( bool init )
         "<menuitem action='Online'/>"
         "<separator/>"
         "<menuitem action='Login2ch'/>"
-        "<separator/>"
-        "<menuitem action='SearchCache'/>"    
         "<separator/>"
         "<menuitem action='SaveFavorite'/>"
         "<separator/>"
@@ -525,6 +535,18 @@ void Core::run( bool init )
         "</menu>"
 
         "</menu>"                         
+
+    // ツール
+        "<menu action='Menu_Tool'>"
+        "<menuitem action='SearchCache'/>"    
+        "<separator/>"
+        "<menu action='CheckUpdate_Menu'>"
+        "<menuitem action='CheckUpdateRoot'/>"
+        "<menuitem action='CheckUpdateOpenRoot'/>"
+        "<separator/>"
+        "<menuitem action='CancelCheckUpdate'/>"
+        "</menu>"
+        "</menu>"
 
     // ヘルプ
         "<menu action='Menu_Help'>"
@@ -1369,6 +1391,33 @@ void Core::slot_reload_list()
 }
 
 
+//
+// お気に入りルートからの更新チェック( 通常 )
+//
+void Core::slot_check_update_root()
+{
+    CORE::core_set_command( "check_update_root", "" );
+}
+
+
+//
+// お気に入りルートからの更新チェック( タブで開く )
+//
+void Core::slot_check_update_open_root()
+{
+    CORE::core_set_command( "check_update_open_root", "" );
+}
+
+
+//
+// 更新チェックをキャンセル
+//
+void Core::slot_cancel_check_update()
+{
+    CORE::core_set_command( "cancel_check_update", "" );
+}
+
+
 
 //
 // お気に入り保存
@@ -2090,6 +2139,21 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "update_favorite_item" ){
 
         BBSLIST::get_admin()->set_command( "update_item", URL_FAVORITEVIEW );
+        return;
+    }
+    else if( command.command  == "check_update_root" ){
+
+        BBSLIST::get_admin()->set_command( "check_update_root", URL_FAVORITEVIEW );
+        return;
+    }
+    else if( command.command  == "check_update_open_root" ){
+
+        BBSLIST::get_admin()->set_command( "check_update_open_root", URL_FAVORITEVIEW );
+        return;
+    }
+    else if( command.command  == "cancel_update" ){
+
+        BBSLIST::get_admin()->set_command( "cancel_update", URL_FAVORITEVIEW );
         return;
     }
     else if( command.command  == "save_favorite" ){

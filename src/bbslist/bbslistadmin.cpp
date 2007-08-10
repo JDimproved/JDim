@@ -107,6 +107,11 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
         // append_favorite を呼ぶ前に共有バッファにコピーデータをセットしておくこと
         if( command.command  == "append_item" ) view->set_command( "append_item" );
 
+        // お気に入りルート更新チェック
+        else if( command.command  == "check_update_root" ) view->set_command( "check_update_root" );
+        else if( command.command == "check_update_open_root" ) view->set_command( "check_update_open_root" );
+        else if( command.command == "cancel_check_update" ) view->set_command( "cancel_check_update" );
+
         // XML保存
         else if( command.command  == "save_xml" ) view->set_command( "save_xml" );
     }
