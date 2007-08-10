@@ -88,7 +88,6 @@ namespace CORE
         Gtk::HBox m_toolbar_hbox;
         Gtk::Entry m_entry_url;
         SKELETON::ImgButton m_button_go;
-        SKELETON::ImgButton m_button_search_cache;
         SKELETON::ImgToggleButton m_button_bbslist;
         SKELETON::ImgToggleButton m_button_favorite;
         SKELETON::ImgToggleButton m_button_board;

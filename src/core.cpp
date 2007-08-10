@@ -89,7 +89,6 @@ Core::Core( WinMain& win_main )
       m_imagetab_shown( 0 ),
       m_vpaned_message( SKELETON::PANE_FIXSIZE_PAGE2 ),
       m_button_go( Gtk::Stock::JUMP_TO ),
-      m_button_search_cache( Gtk::Stock::FIND ),
       m_button_bbslist( ICON::DIR ),
       m_button_favorite( ICON::FAVORITE ),
       m_button_board( ICON::BOARD ),
@@ -791,7 +790,6 @@ void Core::create_toolbar()
     m_button_board.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_board ), false ) );
     m_button_thread.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_article ), false ) );
     m_button_image.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_image ), false ) );
-    m_button_search_cache.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
 
@@ -804,13 +802,11 @@ void Core::create_toolbar()
     m_toolbar_hbox.pack_start( m_entry_url );
     m_toolbar_hbox.pack_start( m_button_go, Gtk::PACK_SHRINK );
     m_toolbar_hbox.pack_start( m_vspr_toolbar_2, Gtk::PACK_SHRINK );
-    m_toolbar_hbox.pack_start( m_button_search_cache, Gtk::PACK_SHRINK );
     m_toolbar.add( m_toolbar_hbox );
     m_toolbar.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
     m_toolbar.set_size_request( 8 );
 
     m_tooltip.set_tip( m_button_go, "移動" );
-    m_tooltip.set_tip( m_button_search_cache,"キャッシュ内の全ログ検索 " );
     m_tooltip.set_tip( m_button_bbslist, "板一覧\n\nお気に入りに切替え "
                        + CONTROL::get_motion( CONTROL::TabRight ) );
     m_tooltip.set_tip( m_button_favorite, "お気に入り\n\n板一覧に切替え "
