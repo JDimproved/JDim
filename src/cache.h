@@ -11,6 +11,7 @@
 namespace Gtk
 {
     class Window;
+    class FileChooserDialog;
 }
 
 namespace CACHE
@@ -133,7 +134,8 @@ namespace CACHE
     enum
     {
         FILE_TYPE_ALL = 0,
-        FILE_TYPE_TEXT
+        FILE_TYPE_TEXT,
+        FILE_TYPE_DAT
     };
 
     // キャッシュの mkdir 関係
@@ -159,11 +161,17 @@ namespace CACHE
     bool jdcopy( const std::string& file_from, const std::string& file_to );
     bool jdmv( const std::string& file_from, const std::string& file_to );
 
+    // 保存ダイアログを表示して file_from を file_to に保存する
+    std::string copy_file( Gtk::Window* parent, const std::string& file_from, const std::string& file_to, const int type );
+
+    // ファイル選択ダイアログにフィルタ追加
+    void add_filter_to_diag( Gtk::FileChooserDialog& diag, const int type );
+
     // ファイル選択ダイアログを表示する
     std::string open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type );
 
-    // 保存ダイアログを表示して file_from を 保存する
-    std::string open_save_diag( Gtk::Window* parent, const std::string& file_from, const std::string& file_to );
+    // 保存ファイル選択ダイアログを表示する
+    std::string open_save_diag( Gtk::Window* parent, const std::string& dir, const std::string& name, const int type );
 
     // dir ディレクトリ内のレギュラーファイルのリストを取得
     std::list< std::string > get_filelist( const std::string& dir );

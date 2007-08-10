@@ -87,9 +87,7 @@ void MessageAdmin::close_view( const std::string& url )
     }
 
     if( ! view->set_command( "empty" ) ){
-        SKELETON::MsgDiag mdiag( get_win(), "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-        if( mdiag.run() == Gtk::RESPONSE_OK );
-        else return;
+        if( ! delete_message( view ) ) return;
     }
 
     if( ! SESSION::get_close_mes() ) view->set_command( "clear_message" );
@@ -188,9 +186,7 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
 
         // URLが異なればビューを破棄
         if( ! current_view->set_command( "empty" ) ){
-            SKELETON::MsgDiag mdiag( get_win(), "編集中のメッセージを破棄しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-            if( mdiag.run() == Gtk::RESPONSE_OK );
-            else return;
+            if( ! delete_message( current_view ) ) return;
         }
 
         // 古いビューを破棄
@@ -229,4 +225,31 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
     view->show_view();
     set_current_page( get_notebook()->page_num( *view ) );
     focus_current_view();
+}
+
+
+//
+// メッセージを破棄するか尋ねる
+//
+// 破棄する場合はtrueが戻る
+//
+bool MessageAdmin::delete_message( SKELETON::View * view )
+{
+    SKELETON::MsgDiag mdiag( get_win(),
+                             "編集中のメッセージを破棄しますか？\n\n保存ボタンを押すとメッセージを保存できます。",
+                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+
+    mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+    mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+    mdiag.add_button( "保存", Gtk::RESPONSE_YES + 100 );
+
+    for(;;){
+        int ret = mdiag.run();
+        mdiag.hide();
+        if( ret == Gtk::RESPONSE_NO ) return false;
+        else if( ret == Gtk::RESPONSE_YES + 100 ) view->set_command( "save_message" );
+        else return true;
+    }
+
+    return true;
 }

@@ -171,6 +171,8 @@ const bool CONFIG::get_zoom_to_fit(){ return get_confitem()->zoom_to_fit; }
 void CONFIG::set_zoom_to_fit( bool fit ){ get_confitem()->zoom_to_fit = fit; }
 const int CONFIG::get_del_img_day(){ return get_confitem()->del_img_day; }
 void CONFIG::set_del_img_day( int day ){ get_confitem()->del_img_day = day; }
+const int CONFIG::get_del_imgabone_day(){ return get_confitem()->del_imgabone_day; }
+void CONFIG::set_del_imgabone_day( int day ){ get_confitem()->del_imgabone_day = day; }
 const int CONFIG::get_max_img_size(){ return get_confitem()->max_img_size; }
 
 const bool CONFIG::get_show_oldarticle(){ return get_confitem()->show_oldarticle; }

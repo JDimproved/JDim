@@ -155,7 +155,7 @@ void Img::download_img( const std::string refurl )
 
 #ifdef _DEBUG
     std::cout << "Img::download_img url = ";
-    if( ! m_url_alt.empty() ) std::cout << m_url_alt << "(" << m_count_redirect << ")" << std::endl;
+    if( ! m_url_alt.empty() ) std::cout << m_url_alt << "  count = " << m_count_redirect << std::endl;
     else std::cout << m_url << std::endl;
     std::cout << "refurl = " << refurl <<  std::endl;
 #endif
@@ -209,7 +209,7 @@ bool Img::save( Gtk::Window* parent, const std::string& path_to )
     std::string name = MISC::get_filename( path_to );
     if( name.empty() ) name = MISC::get_filename( m_url );    
 
-    std::string save_to = CACHE::open_save_diag( parent, get_cache_path(), dir + name );
+    std::string save_to = CACHE::copy_file( parent, get_cache_path(), dir + name, CACHE::FILE_TYPE_ALL );
 
     if( ! save_to.empty() ){
         SESSION::set_dir_img_save( MISC::get_dir( save_to ) );
@@ -553,6 +553,8 @@ void Img::read_info()
             exist = false;
             break;
         }
+
+        path_info = std::string();
 
     }while( 0 );
 

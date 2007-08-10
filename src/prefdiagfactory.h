@@ -17,6 +17,7 @@ namespace CORE
     enum
     {
         PREFDIAG_PASSWD,
+        PREFDIAG_PRIVARY,
         PREFDIAG_BROWSER,
         PREFDIAG_PROXY,
         PREFDIAG_GLOBALABONETHREAD,

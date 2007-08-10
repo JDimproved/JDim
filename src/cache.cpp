@@ -767,6 +767,70 @@ bool CACHE::jdmv( const std::string& file_from, const std::string& file_to )
 
 
 //
+// 保存ダイアログを表示して file_from を file_to に保存する
+//
+// parent == NULL の時はメインウィンドウをparentにする
+// file_toはデフォルトの保存先
+// 戻り値は保存先(保存に失敗したらempty())
+//
+std::string CACHE::copy_file( Gtk::Window* parent, const std::string& file_from, const std::string& file_to, const int type )
+{
+    if( file_from.empty() ) return std::string();
+    if( file_to.empty() ) return std::string();
+
+    std::string name = MISC::get_filename( file_to );
+    std::string dir = MISC::get_dir( file_to );
+    if( dir.empty() ) dir = MISC::get_dir( file_from );
+
+#ifdef _DEBUG
+    std::cout << "CACHE::open_copy_diag\n";
+    std::cout << "from = " << file_from  << std::endl;
+    std::cout << "dir = " << dir << std::endl;
+    std::cout << "name = " << name << std::endl;
+#endif
+
+    std::string path_to = CACHE::open_save_diag( parent, dir, name, type );
+    if( path_to.empty() ) return std::string();
+
+    if( CACHE::jdcopy( file_from, path_to ) ) return path_to;
+    else{
+        SKELETON::MsgDiag mdiag( parent, file_to + "\n\nの保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。" );
+        mdiag.run();
+    }
+
+    return std::string();
+}
+
+
+// ファイル選択ダイアログにフィルタ追加
+void CACHE::add_filter_to_diag( Gtk::FileChooserDialog& diag, const int type )
+{
+    if( type == FILE_TYPE_ALL ) return;
+
+    Gtk::FileFilter filter;
+    switch( type ) 
+    {
+        case FILE_TYPE_TEXT:
+            filter.set_name( "全てのテキストファイル" );
+            filter.add_mime_type( "text/plain" );
+            diag.add_filter( filter );
+            break;
+
+        case FILE_TYPE_DAT:
+            filter.set_name( "全てのDATファイル" );
+            filter.add_pattern( "*.dat" );
+            diag.add_filter( filter );
+            break;
+    }
+
+    Gtk::FileFilter all;
+    all.set_name( "全てのファイル" );
+    all.add_pattern( "*" );
+    diag.add_filter( all );
+}
+
+
+//
 // ファイル選択ダイアログを表示する
 //
 // parent == NULL の時はメインウィンドウをparentにする
@@ -781,21 +845,7 @@ std::string CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_
     SKELETON::FileDiag diag( parent, "ファイルを開く", Gtk::FILE_CHOOSER_ACTION_OPEN );
 
     diag.set_current_folder( dir );
-
-    Gtk::FileFilter filter;
-    switch( type ) 
-    {
-        case FILE_TYPE_TEXT:
-            filter.set_name( "全てのテキストファイル" );
-            filter.add_mime_type( "text/plain" );
-            diag.add_filter( filter );
-            break;
-    }
-
-    Gtk::FileFilter all;
-    all.set_name( "全てのファイル" );
-    all.add_pattern( "*" );
-    diag.add_filter( all );
+    add_filter_to_diag( diag, type );
 
     if( diag.run() == Gtk::RESPONSE_ACCEPT )
     {
@@ -808,70 +858,56 @@ std::string CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_
 }
 
 
-
 //
-// 保存ダイアログを表示して file_from を 保存する
+// 保存ファイル選択ダイアログを表示する
 //
 // parent == NULL の時はメインウィンドウをparentにする
-// file_toはデフォルトの保存先
-// 戻り値は保存先(保存に失敗したらempty())
+// dirとnameはデフォルトの参照先
+// 戻り値は選択されたファイルのpath
 //
-std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& file_from, const std::string& file_to )
+std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& dir, const std::string& name, const int type )
 {
-    if( file_from.empty() ) return std::string();
-    if( file_to.empty() ) return std::string();
-
-    SKELETON::FileDiag diag( parent, "save", Gtk::FILE_CHOOSER_ACTION_SAVE );
-
-    std::string name = MISC::get_filename( file_to );
-    std::string dir = MISC::get_dir( file_to );
-    if( dir.empty() ) dir = MISC::get_dir( file_from );
-
 #ifdef _DEBUG
-    std::cout << "CACHE::open_copy_diag\n";
-    std::cout << "from = " << file_from  << std::endl;
+    std::cout << "CACHE::open_save_diag\n";
     std::cout << "dir = " << dir << std::endl;
     std::cout << "name = " << name << std::endl;
 #endif
 
+    SKELETON::FileDiag diag( parent, "保存先選択", Gtk::FILE_CHOOSER_ACTION_SAVE );
     diag.set_current_folder( dir );
     diag.set_current_name( name );
-   
-    if( diag.run() == Gtk::RESPONSE_ACCEPT ){
+    add_filter_to_diag( diag, type );
 
-        diag.hide();
+    if( diag.run() != Gtk::RESPONSE_ACCEPT ) return std::string();
+    diag.hide();
         
-        std::string path_to = diag.get_filename();
+    std::string path_to = diag.get_filename();
 
 #ifdef _DEBUG
-        std::cout << "to   = " << path_to  << std::endl;
+    std::cout << "to   = " << path_to  << std::endl;
 #endif
 
-        // 既にファイルがある場合は問い合わせる
-        if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
+    // 既にファイルがある場合は問い合わせる
+    if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
 
-            SKELETON::MsgDiag mdiag( parent, "ファイルが存在します。ファイル名を変更して保存しますか？", 
-                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
-            mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-            mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
-            mdiag.add_button( "上書き", Gtk::RESPONSE_YES + 100 );
+        SKELETON::MsgDiag mdiag( parent, "ファイルが存在します。ファイル名を変更して保存しますか？", 
+                                 false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+        mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+        mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+        mdiag.add_button( "上書き", Gtk::RESPONSE_YES + 100 );
 
-            int ret = mdiag.run();
-            mdiag.hide();
+        int ret = mdiag.run();
+        mdiag.hide();
 
-            if( ret ==  Gtk::RESPONSE_YES ) return CACHE::open_save_diag( parent, file_from,  path_to );
-            else if( ret == Gtk::RESPONSE_NO ) return std::string();
+        if( ret ==  Gtk::RESPONSE_YES ){
+            return CACHE::open_save_diag( parent, MISC::get_dir( path_to ), MISC::get_filename( path_to ), type );
         }
-
-        if( CACHE::jdcopy( file_from, path_to ) ) return path_to;
-        else{
-            SKELETON::MsgDiag mdiag( parent, file_to + "\n\nの保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。" );
-            mdiag.run();
-        }
+        else if( ret == Gtk::RESPONSE_NO ) return std::string();
     }
 
-    return std::string();
+    return path_to;
 }
+
 
 
 //

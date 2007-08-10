@@ -183,6 +183,9 @@ const bool ConfigItems::load()
     // 画像キャッシュ削除の日数
     del_img_day = cf.get_option( "del_img_day", CONF_DEL_IMG_DAY );
 
+    // 画像あぼーん削除の日数
+    del_imgabone_day = cf.get_option( "del_imgabone_day", CONF_DEL_IMGABONE_DAY );
+
     // ダウンロードする画像の最大サイズ(Mbyte)
     max_img_size = cf.get_option( "max_img_size", CONF_MAX_IMG_SIZE );
 
@@ -512,6 +515,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_mosaic", use_mosaic );
     cf.update( "zoom_to_fit", zoom_to_fit );
     cf.update( "del_img_day", del_img_day );
+    cf.update( "del_imgabone_day", del_imgabone_day );
     cf.update( "max_img_size", max_img_size );
 
     cf.update( "cl_char", str_color[ COLOR_CHAR ] );

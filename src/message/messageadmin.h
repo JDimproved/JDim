@@ -24,6 +24,8 @@ namespace MESSAGE
 
       private:
 
+        bool delete_message( SKELETON::View * view );
+
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void switch_admin();
         virtual void tab_left();

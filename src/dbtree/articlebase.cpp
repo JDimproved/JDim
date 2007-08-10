@@ -1155,7 +1155,7 @@ bool ArticleBase::save_dat( const std::string& path_to )
     std::string name = MISC::get_filename( path_to );
     if( name.empty() ) name = MISC::get_filename( m_url );    
 
-    std::string save_to = CACHE::open_save_diag( NULL, CACHE::path_dat( m_url ), dir + name );
+    std::string save_to = CACHE::copy_file( NULL, CACHE::path_dat( m_url ), dir + name, CACHE::FILE_TYPE_DAT );
 
     if( ! save_to.empty() ){
         SESSION::set_dir_dat_save( MISC::get_dir( save_to ) );

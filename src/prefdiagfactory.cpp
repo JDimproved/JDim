@@ -3,6 +3,7 @@
 #include "prefdiagfactory.h"
 
 #include "passwdpref.h"
+#include "privacypref.h"
 #include "browserpref.h"
 #include "proxypref.h"
 #include "globalabonepref.h"
@@ -22,6 +23,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
     {
         case PREFDIAG_PASSWD:
             return new CORE::PasswdPref( parent, url );
+
+        case PREFDIAG_PRIVARY:
+            return new CORE::PrivacyPref( parent, url );
 
         case PREFDIAG_BROWSER:
             return new CORE::BrowserPref( parent, url );

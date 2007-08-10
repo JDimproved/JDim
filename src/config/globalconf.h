@@ -153,6 +153,10 @@ namespace CONFIG
     const int get_del_img_day();
     void set_del_img_day( int day );
 
+    // 画像あぼーん削除の日数
+    const int get_del_imgabone_day();
+    void set_del_imgabone_day( int day );
+
     // ダウンロードする画像の最大サイズ(Mbyte)
     const int get_max_img_size();
 

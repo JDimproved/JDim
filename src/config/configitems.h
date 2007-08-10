@@ -105,6 +105,9 @@ namespace CONFIG
         // 画像キャッシュ削除の日数
         int del_img_day;
 
+        // 画像あぼーん削除の日数
+        int del_imgabone_day;
+
         // ダウンロードする画像の最大サイズ(Mbyte)        
         int max_img_size;
 

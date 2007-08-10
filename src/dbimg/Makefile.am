@@ -3,7 +3,8 @@ noinst_LIBRARIES = libdbimg.a
 libdbimg_a_SOURCES = \
 	imgroot.cpp \
 	img.cpp \
-	imginterface.cpp
+	imginterface.cpp \
+	delimgcachediag.cpp
 
 noinst_HEADERS = \
 	imgroot.h \

@@ -136,7 +136,7 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
 //
 bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::string& selection )
 {
-    const int max_selection_str = 1024;
+    const unsigned int max_selection_str = 1024;
 
     if( num >= m_size ) return false;
 

@@ -229,6 +229,28 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
         m_text_message.insert_str( arg, true );
     }
 
+    // メッセージ保存
+    else if ( "save_message" )
+    {
+        if( ! get_message().empty() ){
+
+            std::string save_to = CACHE::open_save_diag( MESSAGE::get_admin()->get_win(), SESSION::get_dir_draft(), "draft.txt", CACHE::FILE_TYPE_TEXT );
+            if( ! save_to.empty() ){
+
+                SESSION::set_dir_draft( MISC::get_dir( save_to ) );
+
+                if( CACHE::save_rawdata( save_to, get_message() ) == get_message().length() ){
+                    SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "保存しました。" );
+                    mdiag.run();
+                }
+                else{
+                    SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+                                             "保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。" );
+                    mdiag.run();
+                }
+            }
+        }
+    }
 
     return false;
 }
@@ -434,7 +456,7 @@ void MessageViewBase::slot_write_clicked()
 {
     time_t left = DBTREE::board_write_leftsec( get_url() );
     if( left ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "書き込み規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう少しお待ち下さい。規制秒数が短くなった場合は板のプロパティからリセットできます。" );
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "書き込み規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう暫くお待ち下さい。規制秒数が短くなった場合は板のプロパティからリセットできます。" );
         mdiag.run();
         return;
     }

@@ -88,6 +88,7 @@ noinst_HEADERS = \
 	globalabonepref.h \
 	globalabonethreadpref.h \
 	passwdpref.h \
+	privacypref.h \
 	boarditempref.h \
 	fontcolorpref.h
 

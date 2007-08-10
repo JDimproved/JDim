@@ -907,7 +907,7 @@ void ImageAdmin::save_all()
     std::list< std::string > list_urls = get_URLs();
 
     // ディレクトリ選択
-    SKELETON::FileDiag diag( get_win(), "save", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
+    SKELETON::FileDiag diag( get_win(), "保存先選択", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
 
     diag.set_current_folder( SESSION::dir_img_save() );
     

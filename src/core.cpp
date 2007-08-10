@@ -373,18 +373,11 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgview ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する", std::string(), CONFIG::get_use_inline_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
-    m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュクリア..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
+    m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュの消去..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
 
     // プライバシー
     m_action_group->add( Gtk::Action::create( "Privacy_Menu", "プライバシー" ) );
-    m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "履歴情報を全てクリア" ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
-    m_action_group->add( Gtk::Action::create( "Privacy_SubMenu", "履歴情報を個別にクリア" ) );
-    m_action_group->add( Gtk::Action::create( "ClearBoard", "板履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_board ) );
-    m_action_group->add( Gtk::Action::create( "ClearThread", "スレ履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_thread ) );
-    m_action_group->add( Gtk::Action::create( "ClearClose", "最近閉じたスレ履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_close ) );
-    m_action_group->add( Gtk::Action::create( "ClearSearch", "検索履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_search ) );
-    m_action_group->add( Gtk::Action::create( "ClearName", "書き込み名前履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_name ) );
-    m_action_group->add( Gtk::Action::create( "ClearMail", "書き込みメール履歴クリア" ), sigc::mem_fun( *this, &Core::slot_clear_mail ) );
+    m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "プライバシー情報の消去..." ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
 
 
     //////////////////////////////////////////////////////
@@ -529,16 +522,6 @@ void Core::run( bool init )
     // プライバシー
         "<menu action='Privacy_Menu'>"
         "<menuitem action='ClearAllPrivacy'/>"
-        "<separator/>"
-        "<menu action='Privacy_SubMenu'>"
-        "<menuitem action='ClearBoard'/>"
-        "<menuitem action='ClearThread'/>"
-        "<menuitem action='ClearClose'/>"
-        "<separator/>"
-        "<menuitem action='ClearSearch'/>"
-        "<menuitem action='ClearName'/>"    
-        "<menuitem action='ClearMail'/>"    
-        "</menu>"
         "</menu>"
 
         "</menu>"                         
@@ -1029,15 +1012,12 @@ void Core::slot_delete_all_images()
 }
 
 
-// 各プライバシー情報のクリア
+// プライバシー情報のクリア
 void Core::slot_clear_privacy()
 {
-    slot_clear_board();
-    slot_clear_thread();
-    slot_clear_close();
-    slot_clear_search();
-    slot_clear_name();
-    slot_clear_mail();
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PRIVARY, "" );
+    pref->run();
+    delete pref;
 }
 
 void Core::slot_clear_board()
@@ -2401,6 +2381,21 @@ void Core::exec_command()
         if( m_histmenu_board ) m_histmenu_board->update();
         if( m_histmenu_close ) m_histmenu_close->update();
     }
+
+
+    // 履歴のクリア
+    else if( command.command  == "clear_board" ) slot_clear_board();
+
+    else if( command.command  == "clear_thread" ) slot_clear_thread();
+
+    else if( command.command  == "clear_closed_thread" ) slot_clear_close();
+
+    else if( command.command  == "clear_search" ) slot_clear_search();
+
+    else if( command.command  == "clear_name" ) slot_clear_name();
+
+    else if( command.command  == "clear_mail" ) slot_clear_mail();
+
 
     // ビューの切替え
     else if( command.command  == "switch_article" ) switch_article( present );
