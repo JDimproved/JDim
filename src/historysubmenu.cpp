@@ -45,7 +45,8 @@ HistorySubMenu::HistorySubMenu( const std::string& path_load_xml, const std::str
         item = Gtk::manage( new Gtk::MenuItem( HIST_NONAME ) );
         m_itemlist.push_back( item );
         append( *item );
-        item->signal_button_press_event().connect( sigc::bind<int>( sigc::mem_fun( *this, &HistorySubMenu::slot_button_press ), i ));
+        item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_active ), i ) );
+        item->signal_button_press_event().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_button_press ), i ) );
 
         CORE::HIST_ITEM* histitem = new CORE::HIST_ITEM;
         histitem->type = TYPE_UNKNOWN;
@@ -220,7 +221,7 @@ void HistorySubMenu::xml2list( const std::string& xml )
 
 #ifdef _DEBUG
     std::cout << "HistoryMenu::xml2list\n";
-    std::cout << " 子ノード数=" << documen.childNodes().size() << std::endl;
+    std::cout << " 子ノード数=" << document.childNodes().size() << std::endl;
 #endif
 
     std::list< CORE::HIST_ITEM* >::iterator it_hist = m_histlist.begin();
@@ -310,6 +311,18 @@ void HistorySubMenu::open_history( int i )
 
 
 // メニューアイテムがactiveになった
+void HistorySubMenu::slot_active( const int i )
+{
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::slot_key_press key = " << "no = " << i << std::endl;
+#endif
+
+    m_number_menuitem = i;
+
+    open_history( i );
+}
+
+// マウスボタンをクリックした
 bool HistorySubMenu::slot_button_press( GdkEventButton* event, int i )
 {
 #ifdef _DEBUG
@@ -319,15 +332,13 @@ bool HistorySubMenu::slot_button_press( GdkEventButton* event, int i )
     m_number_menuitem = i;
 
     // ポップアップメニュー表示
-    if( event->button == 3 ){
+    if( event->button == 3 )
+    {
         m_popupmenu.popup( 0, gtk_get_current_event_time() );
-        return true;
     }
 
-    open_history( i );
     return true;
 }
-
 
 // ラベルをセット
 void HistorySubMenu::set_menulabel()

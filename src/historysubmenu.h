@@ -53,6 +53,7 @@ namespace CORE
         void open_history( int i );
 
         // メニューアイテムがactiveになった
+        void slot_active( const int i );
         bool slot_button_press( GdkEventButton* event, int i );
 
         // ポップアップメニューのslot
