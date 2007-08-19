@@ -895,12 +895,20 @@ bool Loader::analyze_header()
         str_tmp = analyze_header_option( "HTTP/1.0 " );
         if( ! str_tmp.empty() ) m_data.str_code = "HTTP/1.0 "  + str_tmp;
     }
-    size_t i = str_tmp.find( " " );
-    if( i == std::string::npos ){
+
+    if( str_tmp.empty() ){
         MISC::ERRMSG( "could not find HTTP/1.1" );
         return false;
     }
-    m_data.code = atoi( str_tmp.substr( 0, i ).c_str() );
+
+    size_t i = str_tmp.find( " " );
+    if( i == std::string::npos ) m_data.code = atoi( str_tmp.c_str() );
+    else m_data.code = atoi( str_tmp.substr( 0, i ).c_str() );
+
+    if( m_data.code == 0 ){
+        MISC::ERRMSG( "could not get http status code" );
+        return false;
+    }
 
     // サイズ
     m_data.length = 0;
