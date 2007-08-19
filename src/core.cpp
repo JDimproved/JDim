@@ -28,6 +28,7 @@
 #include "setupwizard.h"
 
 #include "skeleton/msgdiag.h"
+#include "skeleton/aboutdiag.h"
 
 #include "config/globalconf.h"
 #include "config/keyconfig.h"
@@ -395,7 +396,7 @@ void Core::run( bool init )
 
     // help
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
-    m_action_group->add( Gtk::Action::create( "Hp", "ホームページ..." ), sigc::mem_fun( *this, &Core::slot_show_hp ) );
+    m_action_group->add( Gtk::Action::create( "Hp", "JDホームページ" ), sigc::mem_fun( *this, &Core::slot_show_hp ) );
     m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
     m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル..." ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
@@ -1347,16 +1348,43 @@ void Core::slot_show_manual()
 //
 void Core::slot_show_about()
 {
-    std::stringstream ss;
-    ss << "バージョン "
+    std::stringstream version_org;
+    std::stringstream license_org;
+
+    const Glib::ustring product_name = "JD";
+    const Glib::ustring icon_name = "jd";
+    const Glib::ustring comments = "JDはLinux用 2ch ブラウザです";
+    const Glib::ustring website = "http://jd4linux.sourceforge.jp/";
+    const Glib::ustring copyright = JDCOPYRIGHT;
+
+
+    license_org << "JD は GNOME 上で作動する 2ch ブラウザです。\n" << JDCOPYRIGHT << "\n\n"
+    "本プログラムはフリー・ソフトウェアです。あなたは、Free Software\n"
+    "Foundation が公表したGNU 一般公有使用許諾の「バージョン２」或い\n"
+    "はそれ以降の各バージョンの中からいずれかを選択し、そのバージョン\n"
+    "が定める条項に従って本プログラムを再頒布または変更することができ\n"
+    "ます。\n\n"
+    "本プログラムは有用とは思いますが、頒布にあたっては、市場性及び特\n"
+    "定目的適合性についての暗黙の保証を含めて、いかなる保証も行ないま\n"
+    "せん。詳細についてはGNU 一般公有使用許諾書をお読みください。\n\n"
+    "あなたは、本プログラムと一緒にGNU 一般公有使用許諾の写しを受け取っ\n"
+    "ているはずです。そうでない場合は、Free Software Foundation, Inc.,\n"
+    "51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA へ手紙を\n"
+    "書いてください。";
+
+    version_org << "バージョン "
 #ifdef JDVERSION_SVN
-       << "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ )
+                << "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
 #else
-       << JDVERSIONSTR 
+    << JDVERSIONSTR;
 #endif
-       << std::endl << std::endl << JDCOPYRIGHT;
-    SKELETON::MsgDiag mdiag( NULL, ss.str() );
-    mdiag.run();
+
+ 
+    const Glib::ustring version = Glib::locale_to_utf8( version_org.str() );
+    const Glib::ustring license = Glib::locale_to_utf8( license_org.str() );
+
+    SKELETON::AboutDiag about( product_name, version, icon_name, comments, website, copyright, license );
+    about.run();
 }
     
 

@@ -18,6 +18,7 @@ libskeleton_a_SOURCES = \
 	login.cpp \
 	prefdiag.cpp \
 	msgdiag.cpp \
+	aboutdiag.cpp \
 	panecontrol.cpp \
 	hpaned.cpp \
 	vpaned.cpp \
@@ -48,6 +49,7 @@ noinst_HEADERS = \
 	label_entry.h \
 	prefdiag.h \
 	msgdiag.h \
+	aboutdiag.h \
 	filediag.h \
 	login.h \
 	panecontrol.h \
