@@ -76,9 +76,7 @@ int lock_jd()
     }
 
     snprintf( str_pid, 256, "%d", pid );
-    if( ! CACHE::save_rawdata( path, str_pid, strlen( str_pid ) ) ){
-        MISC::ERRMSG( "can't open " + path );
-    }
+    CACHE::save_rawdata( path, str_pid, strlen( str_pid ) );
 
     return LOCK_OK;
 }

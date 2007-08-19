@@ -612,6 +612,7 @@ size_t CACHE::save_rawdata( const std::string& path, const std::string& str, boo
 size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n, bool append )
 {
     size_t count = 0;
+    size_t byte = 0;
     std::ofstream fout;
     if( append ) fout.open( path.c_str(), std::ios::app );
     else fout.open( path.c_str() );
@@ -619,20 +620,28 @@ size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n,
         MISC::ERRMSG( "can't open " + path );
         return 0;
     }
+
+    if( append ) count = fout.tellp();
+
+#ifdef _DEBUG
+    std::cout << "CACHE::save_rawdata current = " << count << std::endl;
+#endif
+
     fout.write( data, n );
-    count = fout.tellp();
+    byte = fout.tellp();
+    byte -= count;
     fout.close();
 
 #ifdef _DEBUG
-    std::cout << "CACHE::save_rawdata n = " << n << " count = " << count << std::endl;
+    std::cout << "n = " << n << " byte = " << byte << std::endl;
 #endif
 
-    if( n != count ){
+    if( n != byte ){
         MISC::ERRMSG( "failed to save " + path );
         return 0;
     }
 
-    return count;
+    return byte;
 }
 
 
