@@ -87,11 +87,12 @@ int Control::button_press( GdkEventButton* event )
     bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
     bool shift = ( event->state ) & GDK_SHIFT_MASK;
     bool alt = ( event->state ) & GDK_MOD1_MASK;
+    bool dblclick = ( event->type == GDK_2BUTTON_PRESS );
 
     int control = CONTROL::None;
     std::vector< int >::iterator it = m_mode.begin();
     for( ; it != m_mode.end(); ++it ){
-        control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, false );
+        control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick );
         if( control != CONTROL::None ) break;
     }
 

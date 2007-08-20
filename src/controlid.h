@@ -165,6 +165,8 @@ namespace CONTROL
         ZoomOutImage,
         OrgSizeImage,
 
+        CloseImageTabButton, // 以下、マウスボタン専用の設定
+
         IMAGEICONMOTION_END,
 
         // IMAGE VIEW 系

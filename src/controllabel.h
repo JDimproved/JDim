@@ -155,6 +155,8 @@ namespace CONTROL
         { "ZoomOutImage", "ズームアウト" },
         { "OrgSizeImage", "元の画像サイズ" },
 
+        { "CloseImageTabButton", "タブを閉じる" },
+
         { "", "" },
 
         // IMAGE VIEW

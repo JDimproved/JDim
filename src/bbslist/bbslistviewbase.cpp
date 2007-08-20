@@ -838,6 +838,7 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
     get_control().MG_wheel_start( event );
 
     // ダブルクリック
+    // button_release_eventでは event->type に必ず GDK_BUTTON_RELEASE が入る
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 

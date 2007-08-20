@@ -484,7 +484,7 @@ void ImageViewBase::operate_view( const int& control )
             break;
 
         case CONTROL::CloseImageButton:
-        case CONTROL::CloseTabButton:
+        case CONTROL::CloseImageTabButton:
         case CONTROL::Quit:
             close_view();
             break;
@@ -578,6 +578,7 @@ bool ImageViewBase::slot_key_press( GdkEventKey* event )
 //
 // ボタンクリック
 //
+#include <iostream>
 bool ImageViewBase::slot_button_press( GdkEventButton* event )
 {
 #ifdef _DEBUG
@@ -591,6 +592,7 @@ bool ImageViewBase::slot_button_press( GdkEventButton* event )
     get_control().MG_wheel_start( event );
 
     // ダブルクリック
+    // button_release_eventでは event->type に必ず GDK_BUTTON_RELEASE が入る
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 

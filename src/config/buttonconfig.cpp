@@ -102,6 +102,9 @@ void ButtonConfig::load_conf()
     SETMOTION( "OpenBeButton", "Left Mid" );
     SETMOTION( "PopupmenuBeButton", "Right" );
 
+    // IMAGE ICON用ボタン設定
+    SETMOTION( "CloseImageTabButton", "Mid" );
+
     // IMAGE用ボタン設定
     SETMOTION( "CloseImageButton", "Mid" );
     SETMOTION( "ScrollImageButton", "Left" );
