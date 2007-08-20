@@ -200,6 +200,9 @@ namespace ARTICLE
         virtual void reload();
         virtual void stop();
 
+      protected:
+        virtual void slot_push_write(){} // 書き込みキャンセル
+
       private:
         virtual void pack_widget();
         void slot_search_fin();
