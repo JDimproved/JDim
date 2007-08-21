@@ -938,7 +938,7 @@ void ArticleViewSearchCache::show_view()
     drawarea()->clear_screen();
     drawarea()->clear_highlight();
 
-    if( m_searchall ) append_html( "検索対象：キャッシュ内の全ログ<br><br>ある板のログのみを対象に検索する場合はスレ一覧のログ検索ボタンを押してください<br>" );
+    if( m_searchall ) append_html( "検索対象：キャッシュ内の全ログ<br>" );
     else append_html( "検索対象：" + DBTREE::board_name( m_url_board ) + "<br>" );
 
     if( CORE::get_search_manager()->get_id() == get_url() ){

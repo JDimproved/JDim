@@ -120,7 +120,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_toolbar.m_button_favorite.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_favorite ) );
     m_toolbar.m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_up_search ) );
     m_toolbar.m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_down_search ) );
-    m_toolbar.m_button_search_cache.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_search_cache ) );
     m_toolbar.m_button_preferences.signal_clicked().connect( sigc::mem_fun(*this, &BoardView::slot_push_preferences ) );
     m_toolbar.m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BoardView::slot_entry_operate ) );
 
@@ -770,6 +769,17 @@ int BoardView::slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::T
     if( ! ret ) ret = compare_col( COL_ID, SORTMODE_ASCEND, row_a, row_b );
 
     return ret;
+}
+
+
+//
+// コマンド
+//
+bool BoardView::set_command( const std::string& command, const std::string& arg )
+{
+    if( command == "search_cache" ) search_cache();
+
+    return true;
 }
 
 
@@ -2007,8 +2017,8 @@ void BoardView::slot_push_down_search()
 }
 
 
-// キャッシュ検索
-void BoardView::slot_search_cache()
+// キャッシュ内のログ検索
+void BoardView::search_cache()
 {
     if( m_toolbar.m_entry_search.completion() ) return;
 
@@ -2023,7 +2033,7 @@ void BoardView::slot_search_cache()
 void BoardView::slot_entry_operate( int controlid )
 {
     if( controlid == CONTROL::Cancel ) focus_view();
-    else if( controlid == CONTROL::SearchCache ) slot_search_cache();
+    else if( controlid == CONTROL::SearchCache ) search_cache();
 }
 
 

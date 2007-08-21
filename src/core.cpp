@@ -384,7 +384,9 @@ void Core::run( bool init )
 
     // ツール
     m_action_group->add( Gtk::Action::create( "Menu_Tool", "ツール(_T)" ) );    
-    m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内ログ検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
+    m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索" ) );
+    m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "現在開いている板のログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
+    m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "全お気に入り更新チェック" ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ"), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く"),
@@ -538,7 +540,12 @@ void Core::run( bool init )
 
     // ツール
         "<menu action='Menu_Tool'>"
+
+        "<menu action='SearchCache_Menu'>"
+        "<menuitem action='SearchCacheBoard'/>"    
         "<menuitem action='SearchCache'/>"    
+        "</menu>"
+
         "<separator/>"
         "<menu action='CheckUpdate_Menu'>"
         "<menuitem action='CheckUpdateRoot'/>"
@@ -1513,6 +1520,15 @@ void Core::toggle_menubar()
         SKELETON::MsgDiag mdiag( NULL, "メニューバーを再表示するには\n\n" + CONTROL::get_motion( CONTROL::ShowMenuBar ) + "\n\nを押してください" );
         mdiag.run();
     }
+}
+
+
+//
+// キャッシュ内のログ検索
+//
+void Core::slot_search_cache_board()
+{
+    BOARD::get_admin()->set_command( "search_cache" );
 }
 
 

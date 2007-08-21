@@ -65,6 +65,7 @@ namespace BOARD
         virtual const int get_icon( const std::string& iconname );
         virtual const bool is_updated();
         virtual const bool is_loading(){ return m_loading; }
+        virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
 
         virtual void clock_in();
         virtual void reload();
@@ -144,7 +145,9 @@ namespace BOARD
         void slot_push_down_search();
         void slot_push_up_search();
         void slot_entry_operate( int controlid );
-        void slot_search_cache();
+
+        // キャッシュ内のログ検索
+        void search_cache();
 
         // d&d
         void slot_drag_begin();

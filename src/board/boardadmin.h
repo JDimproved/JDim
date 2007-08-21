@@ -21,6 +21,7 @@ namespace BOARD
       protected:
         virtual COMMAND_ARGS get_open_list_args( const std::string& url );
         SKELETON::View* create_view( const COMMAND_ARGS& command );
+        virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();
         virtual void switch_admin();
