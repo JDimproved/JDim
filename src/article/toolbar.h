@@ -22,6 +22,8 @@ namespace ARTICLE
 {
     class ArticleToolBar : public Gtk::VBox
     {
+        bool m_broken;
+
         friend class ArticleViewBase;
         friend class ArticleViewMain;
         friend class ArticleViewRes;
@@ -118,10 +120,13 @@ namespace ARTICLE
 
             color_bg = get_style()->get_bg( Gtk::STATE_ACTIVE );
             m_label.modify_base( Gtk::STATE_ACTIVE, color_bg );
+
+            // realize する前にbroken()が呼び出された
+            if( m_broken ) broken();
         }
 
         ArticleToolBar( bool show_bar ) :
-
+        m_broken( false ),
         m_toolbar_shown( 0 ),
         m_button_favorite( Gtk::Stock::COPY ),
         m_button_write( ICON::WRITE ),
@@ -206,6 +211,8 @@ namespace ARTICLE
         // スレが壊れている場合はラベルの色を変える
         void broken()
         {
+            m_broken = true;
+
             m_label.modify_text( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
             m_label.modify_base( Gtk::STATE_NORMAL, Gdk::Color( "red" ) );
             m_label.modify_base( Gtk::STATE_ACTIVE, Gdk::Color( "red" ) );
