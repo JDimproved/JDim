@@ -171,6 +171,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル" ),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_cancel_check_update ) );
 
+    action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
+
     action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
@@ -193,6 +195,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='CopyTitleURL'/>"
     "<separator/>"
     "<menuitem action='AppendFavorite'/>"
+    "<separator/>"
+    "<menuitem action='SearchCacheBoard'/>"
     "<separator/>"
     "<menuitem action='PreferenceBoard'/>"
     "</popup>"
@@ -227,6 +231,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menu action='Delete_Menu'>"
     "<menuitem action='Delete'/>"
     "</menu>"
+    "<separator/>"
+    "<menuitem action='SearchCacheBoard'/>"
     "<separator/>"
     "<menuitem action='PreferenceArticle'/>"
     "<menuitem action='PreferenceBoard'/>"
@@ -301,6 +307,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menu action='Delete_Menu'>"
     "<menuitem action='Delete'/>"
     "</menu>"
+    "<separator/>"
+    "<menuitem action='SearchCacheBoard'/>"
     "<separator/>"
     "<menuitem action='PreferenceArticle'/>"
     "<menuitem action='PreferenceBoard'/>"
@@ -693,12 +701,14 @@ void  BBSListViewBase::operate_view( const int& control )
 //
 void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
 {
-    Glib::RefPtr< Gtk::Action > act_board, act_article, act_image, act_opentab;
+    Glib::RefPtr< Gtk::Action > act_search, act_board, act_article, act_image, act_opentab;
+    act_search = action_group()->get_action( "SearchCacheBoard" );
     act_board = action_group()->get_action( "PreferenceBoard" );
     act_article = action_group()->get_action( "PreferenceArticle" );
     act_image = action_group()->get_action( "PreferenceImage" );
     act_opentab = action_group()->get_action( "OpenTab" );
 
+    if( act_search ) act_search->set_sensitive( false );
     if( act_board ) act_board->set_sensitive( false );
     if( act_article ) act_article->set_sensitive( false );
     if( act_image ) act_image->set_sensitive( false );
@@ -708,6 +718,7 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
     switch( type ){
 
         case TYPE_BOARD:
+            if( act_search ) act_search->set_sensitive( true );
             if( act_board ) act_board->set_sensitive( true );
             break;
 
@@ -1330,6 +1341,18 @@ void BBSListViewBase::check_update_root( const bool tab_open )
 void BBSListViewBase::slot_cancel_check_update()
 {
     CORE::get_checkupdate_manager()->stop();
+}
+
+
+//
+// キャッシュ内のログ検索
+//
+void BBSListViewBase::slot_search_cache_board()
+{
+    if( m_path_selected.empty() ) return;
+    std::string url = path2url( m_path_selected );
+
+    CORE::core_set_command( "open_article_searchcache", url , "", "false" );
 }
 
 

@@ -49,7 +49,7 @@ bool Search_Manager::search( const std::string& id,
                              bool mode_or, bool searchall )
 {
 #ifdef _DEBUG
-    std::cout << "Search_Manager::search " << query << std::endl;
+    std::cout << "Search_Manager::search url = " << url << " query = " << query << std::endl;
 #endif
 
     if( m_searching ) return false;

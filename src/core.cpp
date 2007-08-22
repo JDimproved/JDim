@@ -1524,11 +1524,12 @@ void Core::toggle_menubar()
 
 
 //
-// キャッシュ内のログ検索
+// 現在開いている板のキャッシュ内のログ検索
 //
 void Core::slot_search_cache_board()
 {
-    BOARD::get_admin()->set_command( "search_cache" );
+    std::string url = BOARD::get_admin()->get_current_url();
+    if( ! url.empty() ) CORE::core_set_command( "open_article_searchcache", url , "", "false" );
 }
 
 

@@ -1255,6 +1255,10 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
 
     if( empty() ) return list_out;
 
+    // キャッシュにあるレスをデータベースに登録
+    if( m_list_article.size() == 0 ) append_all_article_in_cache();
+    if( m_list_article.size() == 0 ) return list_out;
+
     std::string query_local = MISC::Iconv( query, "UTF-8", get_charset() );
     std::list< std::string > list_query = MISC::split_line( query_local );
 

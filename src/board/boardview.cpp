@@ -777,8 +777,6 @@ int BoardView::slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::T
 //
 bool BoardView::set_command( const std::string& command, const std::string& arg )
 {
-    if( command == "search_cache" ) search_cache();
-
     return true;
 }
 

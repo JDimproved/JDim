@@ -128,13 +128,7 @@ SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
 // ローカルなコマンド
 //
 void BoardAdmin::command_local( const COMMAND_ARGS& command )
-{
-    // ログ検索
-    if( command.command  == "search_cache" ){
-        SKELETON::View* view = get_current_view();
-        if( view ) view->set_command( "search_cache" );
-    }
-}
+{}
 
 
 //

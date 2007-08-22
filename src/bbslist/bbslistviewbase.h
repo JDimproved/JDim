@@ -163,6 +163,7 @@ namespace BBSLIST
         void slot_check_update_dir();
         void slot_check_update_open_dir();
         void slot_cancel_check_update();
+        void slot_search_cache_board();
         void slot_preferences_board();
         void slot_preferences_article();
         void slot_preferences_image();
