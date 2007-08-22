@@ -468,6 +468,23 @@ void Core::run( bool init )
 
         "</menu>"
 
+    // ツール
+        "<menu action='Menu_Tool'>"
+
+        "<menu action='SearchCache_Menu'>"
+        "<menuitem action='SearchCacheBoard'/>"    
+        "<menuitem action='SearchCache'/>"    
+        "</menu>"
+
+        "<separator/>"
+        "<menu action='CheckUpdate_Menu'>"
+        "<menuitem action='CheckUpdateRoot'/>"
+        "<menuitem action='CheckUpdateOpenRoot'/>"
+        "<separator/>"
+        "<menuitem action='CancelCheckUpdate'/>"
+        "</menu>"
+        "</menu>"
+
     // 設定
         "<menu action='Menu_Config'>"
 
@@ -538,23 +555,6 @@ void Core::run( bool init )
 
         "</menu>"                         
 
-    // ツール
-        "<menu action='Menu_Tool'>"
-
-        "<menu action='SearchCache_Menu'>"
-        "<menuitem action='SearchCacheBoard'/>"    
-        "<menuitem action='SearchCache'/>"    
-        "</menu>"
-
-        "<separator/>"
-        "<menu action='CheckUpdate_Menu'>"
-        "<menuitem action='CheckUpdateRoot'/>"
-        "<menuitem action='CheckUpdateOpenRoot'/>"
-        "<separator/>"
-        "<menuitem action='CancelCheckUpdate'/>"
-        "</menu>"
-        "</menu>"
-
     // ヘルプ
         "<menu action='Menu_Help'>"
         "<menuitem action='Manual'/>"
@@ -575,7 +575,7 @@ void Core::run( bool init )
 
     // 履歴メニュー追加
     Gtk::MenuItem* menuitem = Gtk::manage( new Gtk::MenuItem( "履歴(_S)", true ) );
-    m_menubar->items().insert( --(--( m_menubar->items().end() )), *menuitem );
+    m_menubar->items().insert( --(--(--( m_menubar->items().end() ))), *menuitem );
 
     Gtk::Menu* submenu = Gtk::manage( new Gtk::Menu() );
     menuitem->set_submenu( *submenu );
