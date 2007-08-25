@@ -77,6 +77,10 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
 //
 void MessageAdmin::close_view( const std::string& url )
 {
+#ifdef _DEBUG
+    std::cout << "MessageAdmin::close_view url = " << url << std::endl;
+#endif
+
     SKELETON::View *view = get_current_view();
     if( ! view ) return;
 
@@ -106,6 +110,11 @@ void MessageAdmin::open_window()
     SKELETON::JDWindow* win = get_jdwin();
 
     if( ! SESSION::get_embedded_mes() && ! win && ! empty() ){
+
+#ifdef _DEBUG
+    std::cout << "MessageAdmin::open_window\n";
+#endif
+
         win = new MESSAGE::MessageWin();
         set_jdwin( win );
         win->pack_remove_end( false, *get_widget() );
@@ -124,6 +133,10 @@ void MessageAdmin::open_window()
 void MessageAdmin::close_window()
 {
     if( get_jdwin() ){
+
+#ifdef _DEBUG
+    std::cout << "MessageAdmin::close_window\n";
+#endif
         get_jdwin()->pack_remove_end( true, *get_widget() );
         delete_jdwin();
     }

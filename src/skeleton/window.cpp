@@ -396,9 +396,9 @@ void JDWindow::focus_out()
 // フォーカスインイベント
 bool JDWindow::on_focus_in_event( GdkEventFocus* event )
 {
-    if( ! m_boot ){
+    set_focus_win( true );
 
-        set_focus_win( true );
+    if( ! m_boot ){
 
         // 折りたたみ処理
         if( m_fold_when_focusout ){
@@ -418,9 +418,9 @@ bool JDWindow::on_focus_in_event( GdkEventFocus* event )
 // フォーカスアウトイベント
 bool JDWindow::on_focus_out_event( GdkEventFocus* event )
 {
-    if( ! m_boot ){
+    set_focus_win( false );
 
-        set_focus_win( false );
+    if( ! m_boot ){
 
         // 折りたたみ処理
         if( m_fold_when_focusout ){
