@@ -37,8 +37,10 @@ PageNet::PageNet() : Gtk::VBox(),
                      m_label( "２/４．ネットワークの設定をします", Gtk::ALIGN_LEFT ),
                      m_proxy( "プロキシ設定" ),
                      m_browser( "ブラウザ設定" ),
+                     m_frame( "ブラウザ起動コマンド" ),   // フレーム
                      m_label_browser( CONFIG::get_command_openurl(), Gtk::ALIGN_LEFT )
 {
+
     m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
     m_hbox_label.set_spacing( SPACING_SIZE );
     m_hbox_label.pack_start( m_icon, Gtk::PACK_SHRINK );
@@ -46,15 +48,25 @@ PageNet::PageNet() : Gtk::VBox(),
 
     m_vbox.set_spacing( SPACING_SIZE );
     m_vbox.pack_start( m_proxy, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_browser, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_label_browser, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_browser, Gtk::PACK_SHRINK );    
 
+    // m_hbox_commnad に m_label_browser を格納
+    m_hbox_command.set_spacing( SPACING_SIZE );
+    m_hbox_command.pack_start( m_label_browser, Gtk::PACK_SHRINK );
+    m_hbox_command.set_border_width( SPACING_SIZE );
+
+    // フレーム内にHBoxを格納
+    m_frame.add( m_hbox_command );
+   
     m_proxy.signal_clicked().connect( sigc::mem_fun( *this, &PageNet::slot_setup_proxy ) );
     m_browser.signal_clicked().connect( sigc::mem_fun( *this, &PageNet::slot_setup_browser ) );
 
     set_spacing( SPACING_SIZE );
     pack_start( m_hbox_label, Gtk::PACK_SHRINK );
     pack_start( m_vbox, Gtk::PACK_SHRINK );
+
+    // フレームの追加
+    pack_start( m_frame, Gtk::PACK_SHRINK );
 }
 
 

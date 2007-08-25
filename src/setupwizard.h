@@ -38,6 +38,13 @@ namespace CORE
         Gtk::VBox m_vbox;
         Gtk::Button m_proxy;
         Gtk::Button m_browser;
+
+        // フレームの追加
+        Gtk::Frame m_frame;
+
+        // フレーム内に挿入する HBox
+        Gtk::HBox m_hbox_command;
+
         Gtk::Label m_label_browser;
 
       public:
