@@ -318,10 +318,10 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
 
 
-    // マウス、キーボード
-    m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス、キーボード" ) );
+    // マウス／キーボード
+    m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード" ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "板、スレ一覧でシングルクリックでタブを開く", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "板／スレ一覧でシングルクリックでタブを開く", std::string(),
                                                     ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
@@ -342,11 +342,11 @@ void Core::run( bool init )
 
     m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
     m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
-    m_action_group->add( Gtk::Action::create( "FontTree", "板、スレ一覧フォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
+    m_action_group->add( Gtk::Action::create( "FontTree", "板／スレ一覧フォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
     m_action_group->add( Gtk::Action::create( "ColorChar", "スレビュー文字色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
     m_action_group->add( Gtk::Action::create( "ColorBack", "スレビュー背景色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
-    m_action_group->add( Gtk::Action::create( "ColorCharTree", "板、スレ一覧文字色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char_tree ) );
-    m_action_group->add( Gtk::Action::create( "ColorBackTree", "板、スレ一覧背景色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
+    m_action_group->add( Gtk::Action::create( "ColorCharTree", "板／スレ一覧文字色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char_tree ) );
+    m_action_group->add( Gtk::Action::create( "ColorBackTree", "板／スレ一覧背景色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
     m_action_group->add( Gtk::Action::create( "FontColorPref", "詳細設定..." ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
 
     // ネットワーク
@@ -1085,7 +1085,7 @@ void Core::slot_changefont_main()
 {
     Gtk::FontSelectionDialog diag;
     diag.set_font_name( CONFIG::get_fontname( FONT_MAIN ) );
-    diag.set_title( "スレフォント" );
+    diag.set_title( "スレビューフォント" );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
         CONFIG::set_fontname( FONT_MAIN, diag.get_font_name() );
@@ -1115,7 +1115,7 @@ void Core::slot_changefont_popup()
 
  
 //
-// 板、スレ一覧のフォント変更
+// 板／スレ一覧のフォント変更
 //
 void Core::slot_changefont_tree()
 {
@@ -1167,11 +1167,11 @@ void Core::slot_changecolor_back()
 
 
 //
-// 板、スレ一覧文字色変更
+// 板／スレ一覧文字色変更
 //
 void Core::slot_changecolor_char_tree()
 {
-    if( open_color_diag( "板、スレ一覧文字色", COLOR_CHAR_BBS ) ){
+    if( open_color_diag( "板／スレ一覧文字色", COLOR_CHAR_BBS ) ){
 
         CONFIG::set_color( COLOR_CHAR_BOARD, CONFIG::get_color( COLOR_CHAR_BBS ) );
 
@@ -1183,11 +1183,11 @@ void Core::slot_changecolor_char_tree()
 
 
 //
-// 板一覧、スレ一覧背景色変更
+// 板／スレ一覧背景色変更
 //
 void Core::slot_changecolor_back_tree()
 {
-    if( open_color_diag( "板、スレ一覧背景色", COLOR_BACK_BBS ) ){
+    if( open_color_diag( "板／スレ一覧背景色", COLOR_BACK_BBS ) ){
 
         CONFIG::set_color( COLOR_BACK_BBS_EVEN, CONFIG::get_color( COLOR_BACK_BBS ) );
 
