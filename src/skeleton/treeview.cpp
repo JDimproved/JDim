@@ -103,11 +103,16 @@ void JDTreeView::set_reorderable_view( bool reorderable )
         targets.push_back( Gtk::TargetEntry( "text/plain", Gtk::TARGET_SAME_APP, 0 ) );
 
         // ドラッグ開始ボタン設定
-        // タブで開くボタンを左クリックに割り当てていたらドラッグ開始ボタンを中ボタンにする
         Gdk::ModifierType type = Gdk::BUTTON1_MASK;
         GdkEventButton event;
         m_control.get_eventbutton( CONTROL::DragStartButton, event );
-        if( event.button == 2 ) type = Gdk::BUTTON2_MASK;
+        switch( event.button ){
+            case 1: type = Gdk::BUTTON1_MASK; break;
+            case 2: type = Gdk::BUTTON2_MASK; break;
+            case 3: type = Gdk::BUTTON3_MASK; break;
+            case 4: type = Gdk::BUTTON4_MASK; break;
+            case 5: type = Gdk::BUTTON5_MASK; break;
+        }
 
         drag_source_set( targets, type );
         drag_dest_set( targets );
