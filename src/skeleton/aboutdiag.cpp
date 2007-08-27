@@ -3,6 +3,7 @@
 //#define _DEBUG
 #include "jddebug.h"
 
+#if GTKMMVER >= 260
 #include "aboutdiag.h"
 
 #include "command.h"
@@ -50,3 +51,4 @@ int AboutDiag::run()
 
     return ret;
 }
+#endif  // GTKMMVER

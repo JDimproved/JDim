@@ -28,7 +28,10 @@
 #include "setupwizard.h"
 
 #include "skeleton/msgdiag.h"
+
+#if GTKMMVER >= 260
 #include "skeleton/aboutdiag.h"
+#endif
 
 #include "config/globalconf.h"
 #include "config/keyconfig.h"
@@ -1356,6 +1359,8 @@ void Core::slot_show_manual()
 void Core::slot_show_about()
 {
     std::stringstream version_org;
+
+#if GTKMMVER >= 260
     std::stringstream license_org;
 
     const Glib::ustring product_name = "JD";
@@ -1392,6 +1397,21 @@ void Core::slot_show_about()
 
     SKELETON::AboutDiag about( product_name, version, icon_name, comments, website, copyright, license );
     about.run();
+
+#else   // GTKMMVER
+
+    version_org << "バージョン "
+#ifdef JDVERSION_SVN
+        << "svn." + std::string(__DATE__) + "-" + std::string(__TIME__)
+#else
+        << JDVERSIONSTR
+#endif
+
+        << std::endl << std::endl << JDCOPYRIGHT;
+    SKELETON::MsgDiag mdiag( NULL, version_org.str() );
+    mdiag.run();
+
+#endif  // GTKMMVER
 }
     
 

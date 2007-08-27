@@ -7,6 +7,7 @@
 
 #include <gtkmm.h>
 
+#if GTKMMVER >= 260
 namespace SKELETON
 {
     class AboutDiag : public Gtk::AboutDialog
@@ -26,5 +27,5 @@ namespace SKELETON
         virtual int run();
     };
 }
-
+#endif  // GTKMMVER
 #endif
