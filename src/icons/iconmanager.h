@@ -19,6 +19,7 @@ namespace ICON
         JD16 = 0,
         JD32,
         JD48,
+        JD96,
 
         BKMARK_UPDATE,
         BKMARK,

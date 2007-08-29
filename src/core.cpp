@@ -1360,29 +1360,26 @@ void Core::slot_show_about()
 {
     std::stringstream version_org;
 
-#if GTKMMVER >= 260
     std::stringstream license_org;
 
-    const Glib::ustring product_name = "JD";
-    const Glib::ustring icon_name = "jd";
     const Glib::ustring comments = "JDはLinux用 2ch ブラウザです";
     const Glib::ustring website = "http://jd4linux.sourceforge.jp/";
     const Glib::ustring copyright = JDCOPYRIGHT;
 
 
-    license_org << "JD は GNOME 上で作動する 2ch ブラウザです。\n" << JDCOPYRIGHT << "\n\n"
-    "本プログラムはフリー・ソフトウェアです。あなたは、Free Software\n"
-    "Foundation が公表したGNU 一般公有使用許諾の「バージョン２」或い\n"
-    "はそれ以降の各バージョンの中からいずれかを選択し、そのバージョン\n"
-    "が定める条項に従って本プログラムを再頒布または変更することができ\n"
+    license_org << "JD は GNOME 上で動作する 2ch ブラウザです。\n\n" << JDCOPYRIGHT << "\n\n"
+    "本プログラムはフリー・ソフトウェアです。あなたは、Free Software"
+    "Foundation が公表したGNU 一般公有使用許諾の「バージョン２」或い"
+    "はそれ以降の各バージョンの中からいずれかを選択し、そのバージョン"
+    "が定める条項に従って本プログラムを再頒布または変更することができ"
     "ます。\n\n"
-    "本プログラムは有用とは思いますが、頒布にあたっては、市場性及び特\n"
-    "定目的適合性についての暗黙の保証を含めて、いかなる保証も行ないま\n"
+    "本プログラムは有用とは思いますが、頒布にあたっては、市場性及び特"
+    "定目的適合性についての暗黙の保証を含めて、いかなる保証も行ないま"
     "せん。詳細についてはGNU 一般公有使用許諾書をお読みください。\n\n"
-    "あなたは、本プログラムと一緒にGNU 一般公有使用許諾の写しを受け取っ\n"
-    "ているはずです。そうでない場合は、Free Software Foundation, Inc.,\n"
-    "51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA へ手紙を\n"
-    "書いてください。";
+    "あなたは、本プログラムと一緒にGNU 一般公有使用許諾の写しを受け取っ"
+    "ているはずです。そうでない場合は、Free Software Foundation, Inc.,"
+    "51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA へ手紙を"
+    "書いてください。\n";
 
     version_org << "バージョン "
 #ifdef JDVERSION_SVN
@@ -1395,23 +1392,14 @@ void Core::slot_show_about()
     const Glib::ustring version = Glib::locale_to_utf8( version_org.str() );
     const Glib::ustring license = Glib::locale_to_utf8( license_org.str() );
 
-    SKELETON::AboutDiag about( product_name, version, icon_name, comments, website, copyright, license );
+    SKELETON::AboutDiag about( "JDについて" );
+    about.set_logo( ICON::get_icon( ICON::JD96 ) );
+    about.set_version( version );
+    about.set_comments( comments );
+    about.set_website( website );
+    about.set_copyright( copyright );
+    about.set_license( license );
     about.run();
-
-#else   // GTKMMVER
-
-    version_org << "バージョン "
-#ifdef JDVERSION_SVN
-        << "svn." + std::string(__DATE__) + "-" + std::string(__TIME__)
-#else
-        << JDVERSIONSTR
-#endif
-
-        << std::endl << std::endl << JDCOPYRIGHT;
-    SKELETON::MsgDiag mdiag( NULL, version_org.str() );
-    mdiag.run();
-
-#endif  // GTKMMVER
 }
     
 
