@@ -46,7 +46,6 @@ int AboutDiag::run()
 #ifdef _DEBUG
     std::cout << "AboutDiag::run fin\n";
 #endif
-
     return ret;
 }
 
@@ -98,6 +97,14 @@ void AboutDiag::init()
     get_vbox()->pack_start( m_notebook, Gtk::PACK_EXPAND_WIDGET, MARGIN );
 
     show_all_children();
+
+    // バージョンの文字列の長さが短い( x.x.x-YYMMDD )と
+    // ウィンドウの幅が狭すぎるので"幅/高さ"いずれかの大
+    // きい方に合わせて4:3を保持するようにする。
+    int win_w, win_h;
+    get_size( win_w, win_h );
+    if( win_w * 0.75 < win_h ) set_size_request( win_h / 0.75, win_h );
+    else set_size_request( win_w, win_w * 0.75 );
 }
 
 
