@@ -401,7 +401,6 @@ void Core::run( bool init )
 
     // help
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
-    m_action_group->add( Gtk::Action::create( "Hp", "JDホームページ" ), sigc::mem_fun( *this, &Core::slot_show_hp ) );
     m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
     m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル..." ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
@@ -562,7 +561,6 @@ void Core::run( bool init )
         "<menu action='Menu_Help'>"
         "<menuitem action='Manual'/>"
         "<separator/>"
-        "<menuitem action='Hp'/>"
         "<menuitem action='Bbs'/>"
         "<menuitem action='OldLog'/>"
         "<separator/>"
@@ -1318,15 +1316,6 @@ void Core::slot_setup_browser()
 
 
 //
-// HP
-//
-void Core::slot_show_hp()
-{
-    open_by_browser( CONFIG::get_url_jdhp() );
-}
-
-
-//
 // サポートBBS
 //
 void Core::slot_show_bbs()
@@ -1368,18 +1357,18 @@ void Core::slot_show_about()
 
 
     license_org << "JD は GNOME 上で動作する 2ch ブラウザです。\n\n" << JDCOPYRIGHT << "\n\n"
-    "本プログラムはフリー・ソフトウェアです。あなたは、Free Software"
-    "Foundation が公表したGNU 一般公有使用許諾の「バージョン２」或い"
-    "はそれ以降の各バージョンの中からいずれかを選択し、そのバージョン"
-    "が定める条項に従って本プログラムを再頒布または変更することができ"
-    "ます。\n\n"
-    "本プログラムは有用とは思いますが、頒布にあたっては、市場性及び特"
-    "定目的適合性についての暗黙の保証を含めて、いかなる保証も行ないま"
-    "せん。詳細についてはGNU 一般公有使用許諾書をお読みください。\n\n"
-    "あなたは、本プログラムと一緒にGNU 一般公有使用許諾の写しを受け取っ"
-    "ているはずです。そうでない場合は、Free Software Foundation, Inc.,"
-    "51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA へ手紙を"
-    "書いてください。\n";
+    "このプログラムはフリーソフトウェアです。あなたはこれを、フリーソフトウェ"
+    "ア財団によって発行された GNU 一般公衆利用許諾契約書(バージョン2)の定める"
+    "条件の下で再頒布または改変することができます。\n\n"
+
+    "このプログラムは有用であることを願って頒布されますが、*全くの無保証* "
+    "です。商業可能性の保証や特定の目的への適合性は、言外に示されたものも含"
+    "め全く存在しません。詳しくはGNU 一般公衆利用許諾契約書をご覧ください。\n\n"
+
+    "あなたはこのプログラムと共に、GNU 一般公衆利用許諾契約書の複製物を一部"
+    "受け取ったはずです。もし受け取っていなければ、フリーソフトウェア財団ま"
+    "で請求してください(宛先は the Free Software Foundation, Inc., 59"
+    "Temple Place, Suite 330, Boston, MA 02111-1307 USA)。\n";
 
     version_org << "バージョン "
 #ifdef JDVERSION_SVN
