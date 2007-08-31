@@ -404,7 +404,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
     m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル..." ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
-    m_action_group->add( Gtk::Action::create( "About", "JDについて..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
+    m_action_group->add( Gtk::Action::create( "About", "JDについて" ), sigc::mem_fun( *this, &Core::slot_show_about ) );
     
 
     m_ui_manager = Gtk::UIManager::create();    
@@ -1352,23 +1352,30 @@ void Core::slot_show_about()
     std::stringstream license_org;
 
     const Glib::ustring comments = "JDはLinux用 2ch ブラウザです";
-    const Glib::ustring website = "http://jd4linux.sourceforge.jp/";
     const Glib::ustring copyright = JDCOPYRIGHT;
 
-
-    license_org << "JD は GNOME 上で動作する 2ch ブラウザです。\n\n" << JDCOPYRIGHT << "\n\n"
+    // [ ライセンス表記 ]
+    //
+    // 以下の文章は和訳を元にバージョン及び住所を訂正した物です。
+    // http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+    // http://www.opensource.jp/gpl/gpl.ja.html#SEC4 (和訳)
+    license_org <<
+    "JD は GNOME 上で動作する 2ch ブラウザです。\n"
+    "\n" <<
+    JDCOPYRIGHT << "\n"
+    "\n"
     "このプログラムはフリーソフトウェアです。あなたはこれを、フリーソフトウェ"
     "ア財団によって発行された GNU 一般公衆利用許諾契約書(バージョン2)の定める"
-    "条件の下で再頒布または改変することができます。\n\n"
-
+    "条件の下で再頒布または改変することができます。\n"
+    "\n"
     "このプログラムは有用であることを願って頒布されますが、*全くの無保証* "
     "です。商業可能性の保証や特定の目的への適合性は、言外に示されたものも含"
-    "め全く存在しません。詳しくはGNU 一般公衆利用許諾契約書をご覧ください。\n\n"
-
+    "め全く存在しません。詳しくはGNU 一般公衆利用許諾契約書をご覧ください。\n"
+    "\n"
     "あなたはこのプログラムと共に、GNU 一般公衆利用許諾契約書の複製物を一部"
     "受け取ったはずです。もし受け取っていなければ、フリーソフトウェア財団ま"
-    "で請求してください(宛先は the Free Software Foundation, Inc., 59"
-    "Temple Place, Suite 330, Boston, MA 02111-1307 USA)。\n";
+    "で請求してください(宛先は the Free Software Foundation, Inc., 51 "
+    "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA)。\n";
 
     version_org << "バージョン "
 #ifdef JDVERSION_SVN
@@ -1385,7 +1392,7 @@ void Core::slot_show_about()
     about.set_logo( ICON::get_icon( ICON::JD96 ) );
     about.set_version( version );
     about.set_comments( comments );
-    about.set_website( website );
+    about.set_website( CONFIG::get_url_jdhp() );
     about.set_copyright( copyright );
     about.set_license( license );
     about.run();
