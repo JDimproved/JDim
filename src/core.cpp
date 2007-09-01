@@ -28,10 +28,7 @@
 #include "setupwizard.h"
 
 #include "skeleton/msgdiag.h"
-
-#if GTKMMVER >= 260
 #include "skeleton/aboutdiag.h"
-#endif
 
 #include "config/globalconf.h"
 #include "config/keyconfig.h"

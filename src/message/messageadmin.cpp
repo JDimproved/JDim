@@ -254,7 +254,7 @@ bool MessageAdmin::delete_message( SKELETON::View * view )
 
     mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
     mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
-    mdiag.add_button( "保存", Gtk::RESPONSE_YES + 100 );
+    mdiag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_YES + 100 );
 
     for(;;){
         int ret = mdiag.run();
