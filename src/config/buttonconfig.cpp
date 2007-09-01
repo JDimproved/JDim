@@ -173,15 +173,15 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
 
 
 // タブで開くボタンを入れ替えているか
-bool ButtonConfig::is_toggled_tab_button()
+const bool ButtonConfig::is_toggled_tab_button()
 {
-    return ( get_str_motion( CONTROL::OpenArticleTabButton ).find( "Mid" ) == std::string::npos );
+    return ( get_str_motion( CONTROL::OpenArticleTabButton ).find( "Left" ) != std::string::npos );
 }
 
 
 // タブで開くボタンを入れ替える
 // toggle == true なら左ボタンをタブで開くボタンにする
-void ButtonConfig::toggle_tab_button( bool toggle )
+void ButtonConfig::toggle_tab_button( const bool toggle )
 {
     remove_items( CONTROL::OpenBoardButton );
     remove_items( CONTROL::OpenBoardTabButton );
@@ -207,7 +207,7 @@ void ButtonConfig::toggle_tab_button( bool toggle )
 
 
 // ポップアップ表示の時にクリックでワープするか
-bool ButtonConfig::is_popup_warpmode()
+const bool ButtonConfig::is_popup_warpmode()
 {
     return ( get_str_motion( CONTROL::PopupWarpButton).find( "Left" ) != std::string::npos );
 }

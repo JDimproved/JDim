@@ -21,11 +21,11 @@ namespace CONFIG
         virtual const std::string get_str_motion( int id );
 
         // editviewの操作をemacs風にする
-        bool is_emacs_mode();
+        const bool is_emacs_mode();
         void toggle_emacs_mode();
 
-        bool is_toggled_tab_key(); // タブで開くキーを入れ替えているか
-        void toggle_tab_key( bool toggle ); // タブで開くキーを入れ替える
+        const bool is_toggled_tab_key(); // タブで開くキーを入れ替えているか
+        void toggle_tab_key( const bool toggle ); // タブで開くキーを入れ替える
 
       private:
 

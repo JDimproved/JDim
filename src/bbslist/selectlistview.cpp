@@ -48,7 +48,7 @@ Gtk::Menu* SelectListView::get_popupmenu( const std::string& url )
 //
 // 選択した行を開く 
 //
-bool SelectListView::open_row( Gtk::TreePath& path, bool tab )
+const bool SelectListView::open_row( Gtk::TreePath& path, const bool tab )
 {
     if( ! get_treeview().get_row( path ) ) return false;
 

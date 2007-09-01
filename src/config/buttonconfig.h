@@ -17,10 +17,10 @@ namespace CONFIG
         ButtonConfig();
         virtual ~ButtonConfig();
 
-        bool is_toggled_tab_button(); // タブで開くボタンを入れ替えているか
-        void toggle_tab_button( bool toggle ); // タブで開くボタンを入れ替える
+        const bool is_toggled_tab_button(); // タブで開くボタンを入れ替えているか
+        void toggle_tab_button( const bool toggle ); // タブで開くボタンを入れ替える
 
-        bool is_popup_warpmode(); // ポップアップ表示の時にクリックでワープするか
+        const bool is_popup_warpmode(); // ポップアップ表示の時にクリックでワープするか
         void toggle_popup_warpmode(); // ポップアップ表示の時にクリックでワープする
 
 

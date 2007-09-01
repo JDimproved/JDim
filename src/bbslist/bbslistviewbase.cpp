@@ -575,11 +575,33 @@ void  BBSListViewBase::operate_view( const int& control )
             slot_select_all();
             break;
 
-            // 展開 or 開く
+            // 開く
+        case CONTROL::OpenBoardTabButton:
+            open_tab = true;
+            // pathがディレクトリでタブで開くボタンを入れ替えている時はディレクトリ開閉にする
+            if( path2type( path ) == TYPE_DIR && CONFIG::get_buttonconfig()->is_toggled_tab_button() ) open_tab = false;
+            open_row( path, open_tab );
+            break;
+
+        case CONTROL::OpenBoardButton:
+            open_tab = false;
+            // pathがディレクトリでタブで開くボタンを入れ替えている時は更新チェックにする
+            if( path2type( path ) == TYPE_DIR && CONFIG::get_buttonconfig()->is_toggled_tab_button() ) open_tab = true;
+            open_row( path, open_tab );
+            break;
+
         case CONTROL::OpenBoardTab:
             open_tab = true;
+            // pathがディレクトリでタブで開くキーを入れ替えている時はディレクトリ開閉にする
+            if( path2type( path ) == TYPE_DIR && CONFIG::get_keyconfig()->is_toggled_tab_key() ) open_tab = false;
+            open_row( path, open_tab );
+            break;
+
         case CONTROL::OpenBoard:
-            if( m_treeview.get_row( path ) ) open_row( path, open_tab );
+            open_tab = false;
+            // pathがディレクトリでタブで開くキーを入れ替えている時は更新チェックにする
+            if( path2type( path ) == TYPE_DIR && CONFIG::get_keyconfig()->is_toggled_tab_key() ) open_tab = true;
+            open_row( path, open_tab );
             break;
 
         case CONTROL::Right:
@@ -876,18 +898,16 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
     GdkEventType type_copy = event->type;
     if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
 
-    // 板を開く
-    bool openboard = get_control().button_alloted( event, CONTROL::OpenBoardButton );
-    bool openboardtab = get_control().button_alloted( event, CONTROL::OpenBoardTabButton );
-    if( openboard || openboardtab ){
-        if( m_treeview.get_row( m_path_selected ) ) open_row( m_path_selected, openboardtab );
-    }
+    // 行を開く
+    if( get_control().button_alloted( event, CONTROL::OpenBoardButton ) ) operate_view( CONTROL::OpenBoardButton );
+
+    // タブで開く
+    else if( get_control().button_alloted( event, CONTROL::OpenBoardTabButton ) ) operate_view( CONTROL::OpenBoardTabButton );
+
     // ポップアップメニューボタン
-    else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
+    else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ) SHOW_POPUPMENU( false );
 
-        SHOW_POPUPMENU( false );
-    }
-
+    // その他の操作
     else operate_view( get_control().button_press( event ) );
 
     event->type = type_copy;
@@ -992,8 +1012,7 @@ bool BBSListViewBase::slot_key_release( GdkEventKey* event )
     // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
     // 一番上のスレが開くので、open_row() は slot_key_release() で処理する
     int key = get_control().key_press( event );
-    if( key == CONTROL::OpenBoard ) operate_view( key );
-    if( key == CONTROL::OpenBoardTab ) operate_view( key );
+    if( key == CONTROL::OpenBoard || key == CONTROL::OpenBoardTab ) operate_view( key );
 
     return true;
 }
@@ -1622,7 +1641,7 @@ Gtk::TreeViewColumn* BBSListViewBase::create_column()
 //
 // 選択した行を開く 
 //
-bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
+const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 {
     if( !m_treeview.get_row( path ) ) return false;
 
@@ -1663,10 +1682,6 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
             break;
 
         case TYPE_DIR:
-
-            // タブで開くボタンとキーを入れ替えている時はシングルクリックでディレクトリの開閉をする
-            if( CONFIG::get_buttonconfig()->is_toggled_tab_button() && CONFIG::get_keyconfig()->is_toggled_tab_key() ) tab = !tab;
-
             if( tab ) slot_check_update_open_dir();
             else if( ! m_treeview.row_expanded( path ) ) m_treeview.expand_row( path, false );
             else m_treeview.collapse_row( path );
@@ -1674,7 +1689,7 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
     }
     
 #ifdef _DEBUG    
-    std::cout << "BBSListViewBase::open_row : path = " << path.to_string() << std::endl;
+    std::cout << "BBSListViewBase::open_row : path = " << path.to_string() << " tab = " << tab << std::endl;
 #endif        
 
     return true;

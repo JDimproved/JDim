@@ -258,7 +258,7 @@ const std::string KeyConfig::get_str_motion( int id )
 
 
 // editviewの操作をemacs風か
-bool KeyConfig::is_emacs_mode()
+const bool KeyConfig::is_emacs_mode()
 {
     return ( get_str_motion( CONTROL::UpEdit ).find( "Ctrl+p" ) != std::string::npos );
 }
@@ -308,15 +308,16 @@ void KeyConfig::toggle_emacs_mode()
 
 
 // タブで開くキーを入れ替えているか
-bool KeyConfig::is_toggled_tab_key()
+const bool KeyConfig::is_toggled_tab_key()
 {
-    return ( get_str_motion( CONTROL::OpenArticleTab ).find( "Ctrl+Space" ) == std::string::npos );
+    return ( get_str_motion( CONTROL::OpenArticleTab ).find( "Space" ) != std::string::npos
+             && get_str_motion( CONTROL::OpenArticleTab ).find( "Ctrl+Space" ) == std::string::npos );
 }
 
 
 // タブで開くキーを入れ替える
 // toggle == true ならスペースをタブで開くボタンにする
-void KeyConfig::toggle_tab_key( bool toggle )
+void KeyConfig::toggle_tab_key( const bool toggle )
 {
     remove_items( CONTROL::OpenBoard );
     remove_items( CONTROL::OpenBoardTab );

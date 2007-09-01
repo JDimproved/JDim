@@ -182,7 +182,7 @@ namespace BBSLIST
         void slot_receive_dnd_end();
 
         Gtk::TreeViewColumn* create_column();
-        virtual bool open_row( Gtk::TreePath& path, bool tab );
+        virtual const bool open_row( Gtk::TreePath& path, const bool tab );
         virtual void switch_rightview();
         void open_selected_rows();
         void checkupdate_selected_rows();
