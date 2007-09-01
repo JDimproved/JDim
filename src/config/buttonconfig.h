@@ -17,8 +17,8 @@ namespace CONFIG
         ButtonConfig();
         virtual ~ButtonConfig();
 
-        bool tab_midbutton(); // 中ボタンでタブで開くか
-        void toggle_tab_button(); // タブで開くボタンを入れ替える
+        bool is_toggled_tab_button(); // タブで開くボタンを入れ替えているか
+        void toggle_tab_button( bool toggle ); // タブで開くボタンを入れ替える
 
         bool is_popup_warpmode(); // ポップアップ表示の時にクリックでワープするか
         void toggle_popup_warpmode(); // ポップアップ表示の時にクリックでワープする

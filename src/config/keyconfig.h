@@ -24,6 +24,9 @@ namespace CONFIG
         bool is_emacs_mode();
         void toggle_emacs_mode();
 
+        bool is_toggled_tab_key(); // タブで開くキーを入れ替えているか
+        void toggle_tab_key( bool toggle ); // タブで開くキーを入れ替える
+
       private:
 
         void load_conf();

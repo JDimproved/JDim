@@ -18,6 +18,7 @@
 
 #include "config/globalconf.h"
 #include "config/buttonconfig.h"
+#include "config/keyconfig.h"
 
 #include "icons/iconmanager.h"
 
@@ -578,16 +579,7 @@ void  BBSListViewBase::operate_view( const int& control )
         case CONTROL::OpenBoardTab:
             open_tab = true;
         case CONTROL::OpenBoard:
-
-            if( m_treeview.get_row( path ) ){
-
-                if( ! m_treeview.row_expanded( path ) ){
-                    if( ! open_row( path, open_tab ) ){
-                        m_treeview.expand_row( path, false );
-                    }
-                }
-                else m_treeview.collapse_row( path );
-            }
+            if( m_treeview.get_row( path ) ) open_row( path, open_tab );
             break;
 
         case CONTROL::Right:
@@ -1029,6 +1021,8 @@ bool BBSListViewBase::slot_scroll_event( GdkEventScroll* event )
 //
 void BBSListViewBase::slot_open_tab()
 {
+    if( m_path_selected.empty() ) return;
+
     open_row( m_path_selected, true );
 }
 
@@ -1038,6 +1032,8 @@ void BBSListViewBase::slot_open_tab()
 //
 void BBSListViewBase::slot_open_browser()
 {
+    if( m_path_selected.empty() ) return;
+
     std::string url = path2url( m_path_selected );
     CORE::core_set_command( "open_url_browser", url );
 }
@@ -1106,6 +1102,8 @@ void BBSListViewBase::slot_append_favorite()
 //
 void BBSListViewBase::slot_newdir()
 {
+    if( m_path_selected.empty() ) return;
+
     Gtk::TreeModel::Path path = append_row( std::string(), "New Directory", TYPE_DIR, m_path_selected, true );
     m_treeview.set_cursor( path );
     show_status();
@@ -1120,6 +1118,8 @@ void BBSListViewBase::slot_newdir()
 //
 void BBSListViewBase::slot_newcomment()
 {
+    if( m_path_selected.empty() ) return;
+
     Gtk::TreeModel::Path path = append_row( std::string(), "Comment", TYPE_COMMENT, m_path_selected, true );
     m_treeview.set_cursor( path );
     m_path_selected = path;
@@ -1225,6 +1225,8 @@ void BBSListViewBase::select_all_dir( Gtk::TreeModel::Path path )
 //
 void BBSListViewBase::slot_select_all_dir()
 {
+    if( m_path_selected.empty() ) return;
+
     select_all_dir( m_path_selected );
 }
 
@@ -1260,6 +1262,12 @@ void BBSListViewBase::slot_select_all()
 //
 void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path )
 {
+    if( path.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::check_update_dir path = " << path.to_string() << std::endl;
+#endif
+
     if( is_dir( path ) ){
 
         path.down();
@@ -1285,16 +1293,26 @@ void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path )
 //
 void BBSListViewBase::slot_check_update_dir()
 {
-    check_update_dir( m_path_selected );
+    if( m_path_selected.empty() ) return;
 
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::slot_check_check_update_dir path = " << m_path_selected.to_string() << std::endl;
+#endif
+
+    check_update_dir( m_path_selected );
     CORE::get_checkupdate_manager()->run( false );
 }
 
 // 全更新チェックして開く
 void BBSListViewBase::slot_check_update_open_dir()
 {
-    check_update_dir( m_path_selected );
+    if( m_path_selected.empty() ) return;
 
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::slot_check_check_update_open_dir path = " << m_path_selected.to_string() << std::endl;
+#endif
+
+    check_update_dir( m_path_selected );
     CORE::get_checkupdate_manager()->run( true );
 }
 
@@ -1646,7 +1664,9 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, bool tab )
 
         case TYPE_DIR:
 
-            if( ! CONFIG::get_buttonconfig()->tab_midbutton() ) tab = !tab;
+            // タブで開くボタンとキーを入れ替えている時はシングルクリックでディレクトリの開閉をする
+            if( CONFIG::get_buttonconfig()->is_toggled_tab_button() && CONFIG::get_keyconfig()->is_toggled_tab_key() ) tab = !tab;
+
             if( tab ) slot_check_update_open_dir();
             else if( ! m_treeview.row_expanded( path ) ) m_treeview.expand_row( path, false );
             else m_treeview.collapse_row( path );

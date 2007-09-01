@@ -172,24 +172,23 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
 
 
 
-// 中ボタンでタブで開くか
-bool ButtonConfig::tab_midbutton()
+// タブで開くボタンを入れ替えているか
+bool ButtonConfig::is_toggled_tab_button()
 {
-    return ( get_str_motion( CONTROL::OpenArticleTabButton ).find( "Mid" ) != std::string::npos );
+    return ( get_str_motion( CONTROL::OpenArticleTabButton ).find( "Mid" ) == std::string::npos );
 }
 
 
 // タブで開くボタンを入れ替える
-void ButtonConfig::toggle_tab_button()
+// toggle == true なら左ボタンをタブで開くボタンにする
+void ButtonConfig::toggle_tab_button( bool toggle )
 {
-    bool tab = tab_midbutton();
-
     remove_items( CONTROL::OpenBoardButton );
     remove_items( CONTROL::OpenBoardTabButton );
     remove_items( CONTROL::OpenArticleButton );
     remove_items( CONTROL::OpenArticleTabButton );
 
-    if( tab ){
+    if( toggle ){
 
         set_one_motion( "OpenBoardButton", "Mid" );
         set_one_motion( "OpenBoardTabButton", "Left" );

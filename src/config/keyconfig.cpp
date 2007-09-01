@@ -305,3 +305,36 @@ void KeyConfig::toggle_emacs_mode()
         set_one_motion( "DeleteEdit", "Ctrl+d" );
     }
 }
+
+
+// タブで開くキーを入れ替えているか
+bool KeyConfig::is_toggled_tab_key()
+{
+    return ( get_str_motion( CONTROL::OpenArticleTab ).find( "Ctrl+Space" ) == std::string::npos );
+}
+
+
+// タブで開くキーを入れ替える
+// toggle == true ならスペースをタブで開くボタンにする
+void KeyConfig::toggle_tab_key( bool toggle )
+{
+    remove_items( CONTROL::OpenBoard );
+    remove_items( CONTROL::OpenBoardTab );
+    remove_items( CONTROL::OpenArticle );
+    remove_items( CONTROL::OpenArticleTab );
+
+    if( toggle ){
+
+        set_one_motion( "OpenBoard", "Ctrl+Space" );
+        set_one_motion( "OpenBoardTab", "Space" );
+        set_one_motion( "OpenArticle", "Ctrl+Space" );
+        set_one_motion( "OpenArticleTab", "Space" );
+    }
+    else{
+
+        set_one_motion( "OpenBoard", "Space" );
+        set_one_motion( "OpenBoardTab", "Ctrl+Space" );
+        set_one_motion( "OpenArticle", "Space" );
+        set_one_motion( "OpenArticleTab", "Ctrl+Space" );
+    }
+}

@@ -321,8 +321,8 @@ void Core::run( bool init )
     // マウス／キーボード
     m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード" ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "板／スレ一覧でシングルクリックでタブを開く", std::string(),
-                                                    ! CONFIG::get_buttonconfig()->tab_midbutton()  ),
+    bool toggled = CONFIG::get_buttonconfig()->is_toggled_tab_button() && CONFIG::get_keyconfig()->is_toggled_tab_key();
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "板／スレ一覧でシングルクリック／スペースでタブを開く", std::string(), toggled ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "スレビューでシングルクリックで多重ポップアップモードに移行する", std::string(),
@@ -1772,7 +1772,10 @@ void Core::slot_toggle_oldarticle()
 //
 void Core::slot_toggle_tabbutton()
 {
-    CONFIG::get_buttonconfig()->toggle_tab_button();
+    bool toggled = CONFIG::get_buttonconfig()->is_toggled_tab_button() && CONFIG::get_keyconfig()->is_toggled_tab_key();
+
+    CONFIG::get_buttonconfig()->toggle_tab_button( !toggled );
+    CONFIG::get_keyconfig()->toggle_tab_key( !toggled );
 }
 
 
