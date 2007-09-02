@@ -26,13 +26,13 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     // フォント設定をセット
     set_font_settings( "スレビュー", FONT_MAIN, "スレビューのフォント" );
     set_font_settings( "ポップアップ", FONT_POPUP, "ポップアップのフォント" );
-    set_font_settings( "板一覧", FONT_BBS, "板一覧のフォント" );
+    set_font_settings( "板一覧／お気に入り", FONT_BBS, "板一覧／お気に入りのフォント" );
     set_font_settings( "スレ一覧", FONT_BOARD, "スレ一覧のフォント" );
     set_font_settings( "書き込みエディタ", FONT_MESSAGE, "書き込みエディタのフォント" );
 
     // 色設定をセット
     set_color_settings( "文字: スレビュー", COLOR_CHAR, "スレビューの基本の文字色" );
-    set_color_settings( "文字: 名前欄", COLOR_CHAR_NAME, "名前欄の通常の文字色" );
+    set_color_settings( "文字: 名前欄(通常)", COLOR_CHAR_NAME, "名前欄の通常の文字色" );
     set_color_settings( "文字: 名前欄(トリップ等)", COLOR_CHAR_NAME_B, "名前欄のトリップ等の文字色" );
     set_color_settings( "文字: 名前欄(メール無し)", COLOR_CHAR_NAME_NOMAIL, "メール無しの名前欄の文字色" );
     set_color_settings( "文字: メール欄(非sage)", COLOR_CHAR_AGE, "sage でないメール欄の文字色" );
@@ -48,17 +48,17 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "文字: 画像(キャッシュ有)", COLOR_IMG_CACHED, "画像として扱うリンクのうち、キャッシュされている物の文字色" );
     set_color_settings( "文字: 画像(ロード中)", COLOR_IMG_LOADING, "画像として扱うリンクのうち、ロード中の物の文字色" );
     set_color_settings( "文字: 画像(エラー)", COLOR_IMG_ERR, "画像として扱うリンクのうち、エラーになっている物の文字色" );
-    set_color_settings( "文字: 板一覧", COLOR_CHAR_BBS, "板一覧の文字色" );
+    set_color_settings( "文字: 板一覧／お気に入り", COLOR_CHAR_BBS, "板一覧／お気に入りの文字色" );
     set_color_settings( "文字: スレ一覧", COLOR_CHAR_BOARD, "スレ一覧の文字色" );
     set_color_settings( "特殊: 新着しおり", COLOR_SEPARATOR_NEW, "新着しおりの色" );
     set_color_settings( "背景: スレビュー", COLOR_BACK, "スレビューの背景色" );
     set_color_settings( "背景: ポップアップ", COLOR_BACK_POPUP, "ポップアップの背景色" );
     set_color_settings( "背景: 選択範囲", COLOR_BACK_SELECTION, "選択範囲の背景色" );
     set_color_settings( "背景: ハイライト", COLOR_BACK_HIGHLIGHT, "検索結果などのハイライトの背景色" );
-    set_color_settings( "背景: 板一覧", COLOR_BACK_BBS, "板一覧の背景色" );
-    set_color_settings( "背景: 板一覧(偶数行)", COLOR_BACK_BBS_EVEN, "板一覧の背景色(偶数行)" );
-    set_color_settings( "背景: スレ一覧", COLOR_BACK_BOARD, "スレ一覧の背景色" );
-    set_color_settings( "背景: スレ一覧(偶数行)", COLOR_BACK_BOARD_EVEN, "スレ一覧の背景色(偶数行)" );
+    set_color_settings( "背景: 板一覧／お気に入り(奇数行)", COLOR_BACK_BBS, "板一覧／お気に入りの奇数行の背景色" );
+    set_color_settings( "背景: 板一覧／お気に入り(偶数行)", COLOR_BACK_BBS_EVEN, "板一覧／お気に入りの偶数行の背景色" );
+    set_color_settings( "背景: スレ一覧(奇数行)", COLOR_BACK_BOARD, "スレ一覧の奇数行の背景色" );
+    set_color_settings( "背景: スレ一覧(偶数行)", COLOR_BACK_BOARD_EVEN, "スレ一覧の偶数行の背景色" );
     set_color_settings( "背景: ハイライト(ツリー)", COLOR_BACK_HIGHLIGHT_TREE, "板、スレ一覧での検索結果などのハイライトの背景色" );
     set_color_settings( "背景: 書き込みエディタ", COLOR_BACK_MESSAGE, "書き込みエディタの背景色" );
     set_color_settings( "背景: 書き込みエディタ(選択範囲)", COLOR_BACK_MESSAGE_SELECTION, "書き込みエディタ(選択範囲)の背景色" );
