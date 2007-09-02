@@ -301,10 +301,10 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
 
     m_action_group->add( Gtk::Action::create( "General_Menu", "一般" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示", std::string(), CONFIG::get_show_oldarticle() ),
+    m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示する", std::string(), CONFIG::get_show_oldarticle() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "起動時に開いていたビューを復元", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "前回開いていた各ビューを起動時に復元する", std::string(),
                                                     ( CONFIG::get_restore_board()
                                                       & CONFIG::get_restore_board()
                                                       & CONFIG::get_restore_board() ) ),
@@ -314,7 +314,7 @@ void Core::run( bool init )
                                                     CONFIG::get_fold_message() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_fold_message ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
+    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存する(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
 
 
@@ -322,14 +322,14 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード" ) );
 
     bool toggled = CONFIG::get_buttonconfig()->is_toggled_tab_button() && CONFIG::get_keyconfig()->is_toggled_tab_key();
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "板／スレ一覧でシングルクリック／スペースでタブを開く", std::string(), toggled ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "板／スレ一覧でクリック／スペースでタブを開く", std::string(), toggled ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "スレビューでシングルクリックで多重ポップアップモードに移行する", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "スレビューでアンカーをクリックして多重ポップアップモードに移行する", std::string(),
                                                     CONFIG::get_buttonconfig()->is_popup_warpmode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ShortMarginPopup", "スレビューでマウス移動で多重ポップアップモードに移行する", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "ShortMarginPopup", "スレビューでカーソルを移動して多重ポップアップモードに移行する", std::string(),
                                                     ( CONFIG::get_margin_popup() != CONFIG::CONF_MARGIN_POPUP ) ),
                          sigc::mem_fun( *this, &Core::slot_shortmargin_popup ) );
 
@@ -361,7 +361,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん設定(対象: スレ一覧)..." ),
                          sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "デフォルトで透明/連鎖あぼ〜ん", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "スレビューで透明／連鎖あぼ〜んをデフォルト設定にする", std::string(),
                                                     ( CONFIG::get_abone_transparent() && CONFIG::get_abone_chain() ) ),
                                                     sigc::mem_fun( *this, &Core::slot_toggle_abone_transp_chain ) );
 
