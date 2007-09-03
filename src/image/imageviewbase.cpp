@@ -87,6 +87,8 @@ void ImageViewBase::setup_common()
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "CancelMosaic", "CancelMosaic"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_cancel_mosaic ) );
+    action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示"),
+                         sigc::mem_fun( *this, &ImageViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::Action::create( "LoadStop", "ロード中止"), sigc::mem_fun( *this, &ImageViewBase::stop ) );
     action_group()->add( Gtk::Action::create( "Reload", "強制再読み込み"), sigc::mem_fun( *this, &ImageViewBase::slot_reload_force ) );
     action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &ImageViewBase::slot_favorite ) );
@@ -123,6 +125,9 @@ void ImageViewBase::setup_common()
     action_group()->add( Gtk::Action::create( "CloseRight", "右→の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_right_views ) );
     action_group()->add( Gtk::Action::create( "CloseAll", "全ての画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_all_views ) );
 
+    action_group()->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする", std::string(), false ),
+                         sigc::mem_fun( *this, &ImageViewBase::slot_lock ) );
+
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "OpenRef", "参照元のレスを開く"), sigc::mem_fun( *this, &ImageViewBase::slot_open_ref ) );
@@ -149,6 +154,7 @@ void ImageViewBase::setup_common()
     "<popup name='popup_menu'>"
 
     "<menuitem action='CancelMosaic'/>"
+    "<menuitem action='ShowLargeImg'/>"
     "<separator/>"
 
     "<menu action='Size_Menu'>"
@@ -206,6 +212,9 @@ void ImageViewBase::setup_common()
     "<menuitem action='MoveHead'/>"
     "<menuitem action='MoveTail'/>"
     "</menu>"
+    "<separator/>"
+
+    "<menuitem action='LockTab'/>"
     "<separator/>"
 
     "<menuitem action='Quit'/>"
@@ -719,6 +728,14 @@ void ImageViewBase::slot_cancel_mosaic()
 }
 
 
+//
+// 大きい画像を表示
+//
+void ImageViewBase::slot_show_large_img()
+{
+    m_img->show_large_img();
+}
+
 
 //
 // ウィンドウにサイズを合わせる
@@ -806,6 +823,18 @@ void ImageViewBase::slot_resize_image( int size )
     m_img->set_zoom_to_fit( false );
     m_img->set_size( size );
     CORE::core_set_command( "redraw", get_url() );
+}
+
+
+//
+// ロックする
+//
+void ImageViewBase::slot_lock()
+{
+    if( ! m_enable_menuslot ) return;
+
+    if( is_locked() ) unlock();
+    else lock();
 }
 
 
@@ -949,10 +978,33 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
 
     bool current_protect = m_img->is_protected();
 
+    // ロック
+    act = action_group()->get_action( "LockTab" );
+    if( act ){
+
+        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+        if( is_locked() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // 閉じる
+    act = action_group()->get_action( "Quit" );
+    if( act ){
+        if( is_locked() ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     // モザイク
     act = action_group()->get_action( "CancelMosaic" );
     if( act ){
         if( m_img->is_cached() && m_img->get_mosaic() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+
+    // サイズの大きい画像を表示
+    act = action_group()->get_action( "ShowLargeImg" );
+    if( act ){
+        if( m_img->get_type() == DBIMG::T_LARGE ) act->set_sensitive( true );
         else act->set_sensitive( false );
     }
 
@@ -994,7 +1046,7 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     // 削除
     act = action_group()->get_action( "DeleteMenu" );
     if( act ){
-        if( m_img->is_cached() && ! m_img->is_protected() ) act->set_sensitive( true );
+        if( ( m_img->is_cached() || m_img->get_type() == DBIMG::T_LARGE ) && ! m_img->is_protected() ) act->set_sensitive( true );
         else act->set_sensitive( false );
     }
 
@@ -1008,7 +1060,7 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     // あぼーん
     act = action_group()->get_action( "AboneImage" );
     if( act ){
-        if( m_img->is_cached() && ! m_img->is_protected() ) act->set_sensitive( true );
+        if( ! m_img->is_protected() ) act->set_sensitive( true );
         else act->set_sensitive( false );
     }
 

@@ -108,8 +108,11 @@ namespace CONFIG
         // 画像あぼーん削除の日数
         int del_imgabone_day;
 
-        // ダウンロードする画像の最大サイズ(Mbyte)        
+        // ダウンロードする画像の最大ファイルサイズ(Mbyte)        
         int max_img_size;
+
+        // 画像の最大サイズ(Mピクセル)
+        int max_img_pixel;
 
         // JD ホームページのアドレス
         std::string url_jdhp;
@@ -191,8 +194,10 @@ namespace CONFIG
         bool instruct_tglimg;
         bool instruct_tglimg_end;
 
-        // スレ表示の行間調整
+        // 下線位置
         double adjust_underline_pos;
+
+        // 行間スペース
         double adjust_line_space;
 
         // リンク下線を表示
@@ -200,6 +205,17 @@ namespace CONFIG
 
         // スレビューで文字幅の近似を厳密にする        
         bool strict_char_width;
+
+        // スレビューで発言数(ID)をカウントする
+        bool check_id;
+
+        // レス参照で色を変える回数
+        int num_reference_high;
+        int num_reference_low;
+
+        // 発言数で色を変える回数
+        int num_id_high;
+        int num_id_low;
 
         // datのパース時にURL判定を甘くする(^なども含める)
         bool loose_url;

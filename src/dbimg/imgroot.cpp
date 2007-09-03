@@ -13,10 +13,6 @@
 #include "jdlib/misctime.h"
 #endif
 
-#include "skeleton/msgdiag.h"
-
-#include "config/globalconf.h"
-
 #include "cache.h"
 #include "command.h"
 #include "prefdiagfactory.h"

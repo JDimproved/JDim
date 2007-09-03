@@ -262,6 +262,8 @@ void ArticleViewBase::setup_action()
 
     // 画像系
     action_group()->add( Gtk::Action::create( "Cancel_Mosaic", "モザイク解除"), sigc::mem_fun( *this, &ArticleViewBase::slot_cancel_mosaic ) );
+    action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示"),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_protectimage ) );
     action_group()->add( Gtk::Action::create( "DeleteImage_Menu", "削除" ) );    
@@ -433,6 +435,7 @@ void ArticleViewBase::setup_action()
     // 画像メニュー
     "<popup name='popup_menu_img'>"
     "<menuitem action='Cancel_Mosaic'/>"
+    "<menuitem action='ShowLargeImg'/>"
     "<separator/>"
     "<menuitem action='OpenBrowser'/>";
 
@@ -2336,6 +2339,13 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
             else act->set_sensitive( false );
         }
 
+        // サイズの大きい画像を表示
+        act = action_group()->get_action( "ShowLargeImg" );
+        if( act ){
+            if( DBIMG::get_type( url ) == DBIMG::T_LARGE ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+        }
+
         // 保護のトグル切替え
         act = action_group()->get_action( "ProtectImage" );
         if( act ){
@@ -2355,7 +2365,8 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         act = action_group()->get_action( "DeleteImage_Menu" );
         if( act ){
 
-            if( DBIMG::is_cached( url ) && ! DBIMG::is_protected( url ) ) act->set_sensitive( true );
+            if( ( DBIMG::is_cached( url ) || DBIMG::get_type( url ) == DBIMG::T_LARGE )
+                && ! DBIMG::is_protected( url ) ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
 
@@ -2379,7 +2390,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         act = action_group()->get_action( "AboneImage" );
         if( act ){
 
-            if( DBIMG::is_cached( url ) && DBIMG::is_protected( url ) ) act->set_sensitive( false );
+            if( DBIMG::is_protected( url ) ) act->set_sensitive( false );
             else{
 
                 act->set_sensitive( true );
@@ -2978,6 +2989,15 @@ void ArticleViewBase::slot_cancel_mosaic()
 
     DBIMG::set_mosaic( m_url_tmp, false );
     CORE::core_set_command( "redraw", m_url_tmp );
+}
+
+
+//
+// 大きい画像を表示
+//
+void ArticleViewBase::slot_show_large_img()
+{
+    DBIMG::show_large_img( m_url_tmp );
 }
 
 

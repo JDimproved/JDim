@@ -23,7 +23,8 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
       m_enable_autoreload( false ),
       m_autoreload_mode( AUTORELOAD_NOT ),
       m_keyjump_counter( 0 ),
-      m_keyjump_num( 0 )
+      m_keyjump_num( 0 ),
+      m_locked( false )
 {}
 
 

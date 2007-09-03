@@ -283,7 +283,13 @@ namespace DBTREE
     void set_abone_chain( const std::string& url, bool set );
 
 
-    // ブックマーク
+    //　ブックマーク関係
+
+    // スレのブックマーク
+    const bool is_bookmarked_thread( const std::string& url );
+    void set_bookmarked_thread( const std::string& url, bool bookmarked );
+
+    // レスのブックマーク
     const bool is_bookmarked( const std::string& url, int number );
     void set_bookmark( const std::string& url, int number, bool set );
 }

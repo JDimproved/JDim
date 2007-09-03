@@ -75,6 +75,7 @@ ImageAdmin::~ImageAdmin()
 
     // 開いているURLを保存
     SESSION::set_image_URLs( get_URLs() );
+    SESSION::set_image_locked( get_locked() );
     SESSION::set_image_page( get_current_page() );
 
     close_window();
@@ -84,17 +85,31 @@ ImageAdmin::~ImageAdmin()
 // 前回開いていたURLを復元
 void ImageAdmin::restore()
 {
-    std::list< std::string > list_tmp;
-    std::list< std::string >::iterator it_tmp;
+#ifdef _DEBUG
+    std::cout << "ImageAdmin::restore\n";
+#endif
 
-    list_tmp = SESSION::image_URLs();
-    it_tmp = list_tmp.begin();
-    for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+    std::list< std::string > list_url = SESSION::image_URLs();
+    std::list< std::string >::iterator it_url= list_url.begin();
 
-        if( !(*it_tmp).empty() ){
-            COMMAND_ARGS command_arg;
-            command_arg.command = "open_view";
-            command_arg.url = (*it_tmp);
+    std::list< bool > list_locked = SESSION::get_image_locked();
+    std::list< bool >::iterator it_locked = list_locked.begin();
+
+    for( ; it_url != list_url.end(); ++it_url ){
+
+        COMMAND_ARGS command_arg;
+        command_arg.command = "open_view";
+
+        // タブのロック状態
+        std::string lock;
+        if( it_locked != list_locked.end() ){
+            if( (*it_locked ) ) lock = "lock";
+            ++it_locked;
+        }
+
+        if( !(*it_url).empty() ){
+            command_arg.url = (*it_url);
+            command_arg.arg3 = lock;
 
             open_view( command_arg );
         }
@@ -273,6 +288,7 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
         // アイコン作成 & 表示
         SKELETON::View* icon = Gtk::manage( CORE::ViewFactory( CORE::VIEW_IMAGEICON, command.url ) );
         if( icon ){
+            if( command.arg3 == "lock" ) icon->lock();
             icon->set_size_request( ICON_SIZE ,  ICON_SIZE );
             icon->show_view();
             m_iconbox.pack_start( *icon, Gtk::PACK_SHRINK );
@@ -469,6 +485,7 @@ void ImageAdmin::close_view( const std::string& url )
     SKELETON::View* view = get_view( url );
 
     if( ! icon && ! view ) return;
+    if( DBIMG::is_cached( url ) && icon->is_locked() ) return;
 
     // 現在表示中のviewを閉じた場合は次か前の画像に切り替える
     if( view && view == get_current_view() ){
@@ -744,7 +761,7 @@ SKELETON::View* ImageAdmin::get_icon( const std::string& url)
 //
 // アイコン取得(番号で)
 //
-SKELETON::View* ImageAdmin::get_nth_icon( unsigned int n )
+SKELETON::View* ImageAdmin::get_nth_icon( const unsigned int n )
 {
     if( n >= m_iconbox.children().size() ) return NULL;
 
@@ -1004,4 +1021,41 @@ void ImageAdmin::save_all()
         }
         else MISC::ERRMSG( "can't create " + path_dir );
     }
+}
+
+
+// ページがロックされているかリストで取得
+std::list< bool > ImageAdmin::get_locked()
+{
+    std::list< bool > locked;
+
+    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
+    for(; it !=  m_iconbox.children().end(); ++it ){
+        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+        if( view ) locked.push_back( view->is_locked() );
+    }
+
+    return locked;
+}
+
+
+// タブのロック/アンロック
+const bool ImageAdmin::is_locked( const int page )
+{
+    SKELETON::View* view = get_nth_icon( page );
+    if( view ) return view->is_locked();
+
+    return false;
+}
+
+void ImageAdmin::lock( const int page )
+{
+    SKELETON::View* view = get_nth_icon( page );
+    if( view ) return view->lock();
+}
+
+void ImageAdmin::unlock( const int page )
+{
+    SKELETON::View* view = get_nth_icon( page );
+    if( view ) return view->unlock();
 }

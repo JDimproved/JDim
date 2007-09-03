@@ -96,10 +96,12 @@ namespace IMAGE
         void slot_move_tail();
         void slot_reload_force();
         void slot_cancel_mosaic();
+        void slot_show_large_img();
         void slot_fit_win();
         void slot_zoom_in();
         void slot_zoom_out();
         void slot_resize_image( int size );
+        void slot_lock();
         void slot_open_browser();
         void slot_open_ref();
         void slot_copy_url();

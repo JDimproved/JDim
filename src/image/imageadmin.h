@@ -54,9 +54,8 @@ namespace IMAGE
         virtual int get_current_page();
 
       protected:
-        virtual void command_local( const COMMAND_ARGS& command );
 
-      private:
+        virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();
         virtual void switch_admin();
@@ -73,6 +72,19 @@ namespace IMAGE
         virtual void open_window();
         virtual void close_window();
 
+        virtual SKELETON::View* get_view( const std::string& url );
+        virtual SKELETON::View* get_current_view();
+
+        // ページがロックされているかリストで取得
+        virtual std::list< bool > get_locked();
+
+        // タブのロック/アンロック
+        virtual const bool is_locked( const int page );
+        virtual void lock( const int page );
+        virtual void unlock( const int page );
+
+      private:
+
         void close_other_views( const std::string& url );
         void close_left_views( const std::string& url );
         void close_right_views( const std::string& url );
@@ -83,11 +95,8 @@ namespace IMAGE
 
         SKELETON::View* get_icon( const std::string& url, int& pos );
         SKELETON::View* get_icon( const std::string& url );
-        SKELETON::View* get_nth_icon( unsigned int n );
+        SKELETON::View* get_nth_icon( const unsigned int n );
         SKELETON::View* get_current_icon();
-
-        virtual SKELETON::View* get_view( const std::string& url );
-        virtual SKELETON::View* get_current_view();
 
         // スクロール
         void scroll_tab( int scroll );

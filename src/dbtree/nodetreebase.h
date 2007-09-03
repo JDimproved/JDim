@@ -20,6 +20,13 @@ namespace JDLIB
 
 namespace DBTREE
 {
+    enum
+    {
+        LINK_LOW = 0,
+        LINK_HIGH,
+        LINK_NUM
+    };
+
     //ノードツリーのベースクラス
     class NodeTreeBase : public SKELETON::Loadable
     {
@@ -47,6 +54,12 @@ namespace DBTREE
         NODE** m_vec_header;  // レスのヘッダのポインタの配列
         
         std::string m_subject;
+
+        // 参照で色を変える回数
+        int m_num_reference[ LINK_NUM ];
+
+        // 発言数で色を変える回数
+        int m_num_id[ LINK_NUM ];
 
         // あぼーん情報
         // 実体は親のarticlebaseクラスが持っていてcopy_abone_info()でコピーする

@@ -16,6 +16,23 @@ namespace Gtk
 
 namespace DBIMG
 {
+    // get_type()で取得する画像タイプ
+    enum{
+        T_NOIMG = 0,
+
+        T_JPG,
+        T_PNG,
+        T_GIF,
+
+        T_LARGE,
+        T_NOSIZE,
+        T_OPENFAILED,
+        T_WRITEFAILED,
+        T_NOT_FOUND,
+        T_NODATA,
+        T_UNKNOWN
+    };
+
     class Img;
 
     void create_root();
@@ -38,27 +55,29 @@ namespace DBIMG
     const bool is_gif_real( const std::string& url );
 
     DBIMG::Img* get_img( const std::string& url );
-    std::string get_cache_path( const std::string& url );
+    const std::string get_cache_path( const std::string& url );
     void download_img( const std::string& url, const std::string& refurl );
     void stop_load( const std::string& url );
-    bool save( const std::string& url, Gtk::Window* parent, const std::string& path_to );
+    const bool save( const std::string& url, Gtk::Window* parent, const std::string& path_to );
     void delete_cache( const std::string& url );
     void delete_all_files();
-    int get_width( const std::string& url );    
-    int get_height( const std::string& url );    
-    bool is_cached( const std::string& url );
-    bool get_abone( const std::string& url ); 
+    const int get_width( const std::string& url );    
+    const int get_height( const std::string& url );    
+    const bool is_cached( const std::string& url );
+    const int get_type( const std::string& url );
+    const bool get_abone( const std::string& url ); 
     void set_abone( const std::string& url, bool abone ); 
-    bool is_loading( const std::string& url );
-    int get_code( const std::string& url );
-    std::string get_str_code( const std::string& url );
-    bool get_mosaic( const std::string& url );
+    const bool is_loading( const std::string& url );
+    const int get_code( const std::string& url );
+    const std::string get_str_code( const std::string& url );
+    const bool get_mosaic( const std::string& url );
     void set_mosaic( const std::string& url, bool mosaic );
-    bool is_zoom_to_fit( const std::string& url );
+    void show_large_img( const std::string& url );
+    const bool is_zoom_to_fit( const std::string& url );
     void set_zoom_to_fit( const std::string& url, bool fit );
-    int get_size( const std::string& url );
+    const int get_size( const std::string& url );
     void set_size( const std::string& url, int size );
-    std::string get_refurl( const std::string& url );
+    const std::string get_refurl( const std::string& url );
 
     const size_t byte( const std::string& url );
     const size_t get_filesize( const std::string& url );

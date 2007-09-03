@@ -77,6 +77,14 @@ NodeTreeBase::NodeTreeBase( const std::string url, const std::string& modified )
 
     m_default_noname = DBTREE::default_noname( m_url );
 
+    // 参照で色を変える回数
+    m_num_reference[ LINK_HIGH ] = CONFIG::get_num_reference_high();
+    m_num_reference[ LINK_LOW ] = CONFIG::get_num_reference_low();
+
+    // 発言数で色を変える回数
+    m_num_id[ LINK_HIGH ] = CONFIG::get_num_id_high();
+    m_num_id[ LINK_LOW ] = CONFIG::get_num_id_low();
+
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::NodeTreeBase url = " << m_url << " modified = " << date_modified()
               << " noname = " << m_default_noname << std::endl;
@@ -172,6 +180,20 @@ NODE* NodeTreeBase::res_header( int number )
 //
 int NodeTreeBase::get_num_id_name( const std::string& id )
 {
+    if( id.empty() ) return 0;
+
+    if( ! CONFIG::get_check_id() ){ // IDの数を数えていない場合は全て数える
+
+        int count = 0;
+        for( int i = 1; i <= m_id_header; ++i ){
+
+            if( get_id_name( i ) == id ) count++;
+        }
+        return count;
+    }
+
+    // IDの数を数えている場合
+
     for( int i = 1; i <= m_id_header; ++i ){
 
         if( get_id_name( i ) == id ) return get_num_id_name( i );
@@ -188,6 +210,9 @@ int NodeTreeBase::get_num_id_name( int number )
 {
     NODE* head = res_header( number );
     if( ! head ) return 0;
+
+    // IDの数を数えていない場合
+    if( ! CONFIG::get_check_id() ) return get_num_id_name( get_id_name( number ) );
 
     return head->headinfo->num_id_name;
 }
@@ -2502,10 +2527,16 @@ void NodeTreeBase::check_reference( int number )
 
                                 // 参照数を更新して色を変更
                                 ++( tmphead->headinfo->num_reference );
-                                if( tmphead->headinfo->num_reference >= 3 )
+
+                                // 参照回数大
+                                if( tmphead->headinfo->num_reference >= m_num_reference[ LINK_HIGH ] )
                                     tmphead->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK_HIGH;
-                                else if( tmphead->headinfo->num_reference >= 1 )
+
+                                // 参照回数中
+                                else if( tmphead->headinfo->num_reference >= m_num_reference[ LINK_LOW ] )
                                     tmphead->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK_LOW;
+
+                                // 参照無し
                                 else tmphead->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK;
                             }
                         }
@@ -2541,6 +2572,8 @@ void NodeTreeBase::clear_id_name()
 //
 void NodeTreeBase::update_id_name( int from_number, int to_number )
 {
+    if( ! CONFIG::get_check_id() ) return;
+
     if( empty() ) return;
     if( to_number < from_number ) return;
     for( int i = from_number ; i <= to_number; ++i ) check_id_name( i );
@@ -2594,8 +2627,8 @@ void NodeTreeBase::set_num_id_name( NODE* header, int num_id_name )
     if( header->headinfo->block[ BLOCK_ID_NAME ] ){
 
         header->headinfo->num_id_name = num_id_name;        
-        if( num_id_name >= 4 ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_HIGH;
-        else if( num_id_name >= 2 ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK;
+        if( num_id_name >= m_num_id[ LINK_HIGH ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_HIGH;
+        else if( num_id_name >= m_num_id[ LINK_LOW ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK;
         else header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR;
     }
 }

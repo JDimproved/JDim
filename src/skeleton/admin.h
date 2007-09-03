@@ -214,6 +214,7 @@ namespace SKELETON
 
         // 右クリックメニュー
         virtual void slot_close_tab();
+        virtual void slot_lock();
         virtual void slot_close_other_tabs();
         virtual void slot_close_left_tabs();
         virtual void slot_close_right_tabs();
@@ -225,6 +226,14 @@ namespace SKELETON
         virtual void slot_open_by_browser();
         virtual void slot_copy_url();
         virtual void slot_copy_title_url();
+
+        // ページがロックされているかリストで取得
+        virtual std::list< bool > get_locked();
+
+        // タブのロック/アンロック
+        virtual const bool is_locked( const int page );
+        virtual void lock( const int page );
+        virtual void unlock( const int page );
     };
 }
 

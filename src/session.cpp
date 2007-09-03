@@ -32,9 +32,15 @@ int win_bbslist_page;
 int win_board_page;
 int win_article_page;
 int win_image_page;
+
 std::list< std::string > board_urls;
+std::list< bool > board_locked;
+
 std::list< std::string > article_urls;
+std::list< bool > article_locked;
+
 std::list< std::string > image_urls;
+std::list< bool > image_locked;
 
 std::string items_board;
 
@@ -111,15 +117,38 @@ bool popupmenu_shown;
 /////////////////////////////////////
 
 
+void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls, const std::string& id_locked,
+                     std::list< std::string >& list_urls , std::list< bool >& list_locked )
+{
+    std::string str_tmp;
+    std::list< std::string > list_tmp;
+    std::list< std::string >::iterator it_tmp;
+
+    str_tmp = cf.get_option( id_urls, "");
+    if( ! str_tmp.empty() ){
+        list_tmp = MISC::split_line( str_tmp );
+        it_tmp = list_tmp.begin();
+        for( ; it_tmp != list_tmp.end(); ++it_tmp ) if( !(*it_tmp).empty() ) list_urls.push_back( (*it_tmp));
+    }
+
+    str_tmp = cf.get_option( id_locked, "");
+    if( ! str_tmp.empty() ){
+        list_tmp = MISC::split_line( str_tmp );
+        it_tmp = list_tmp.begin();
+        for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+            if( ( *it_tmp ) == "1" ) list_locked.push_back( true );
+            else list_locked.push_back( false );
+        }
+    }
+}
+
+
 // セッション情報読み込み
 void SESSION::init_session()
 {
 #ifdef _DEBUG
     std::cout << "SESSION::init_session\n";
 #endif
-    std::string str_tmp;
-    std::list< std::string > list_tmp;
-    std::list< std::string >::iterator it_tmp;
 
     JDLIB::ConfLoader cf( CACHE::path_session(), std::string() );
 
@@ -163,26 +192,9 @@ void SESSION::init_session()
     win_article_page = cf.get_option( "article_page", 0 );
     win_image_page = cf.get_option( "image_page", 0 );
 
-    str_tmp = cf.get_option( "board_urls", "");
-    if( ! str_tmp.empty() ){
-        list_tmp = MISC::split_line( str_tmp );
-        it_tmp = list_tmp.begin();
-        for( ; it_tmp != list_tmp.end(); ++it_tmp ) if( !(*it_tmp).empty() ) board_urls.push_back( (*it_tmp));
-    }
-
-    str_tmp = cf.get_option( "article_urls", "");
-    if( ! str_tmp.empty() ){
-        list_tmp = MISC::split_line( str_tmp );
-        it_tmp = list_tmp.begin();
-        for( ; it_tmp != list_tmp.end(); ++it_tmp ) if( !(*it_tmp).empty() ) article_urls.push_back( (*it_tmp));
-    }
-
-    str_tmp = cf.get_option( "image_urls", "");
-    if( ! str_tmp.empty() ){
-        list_tmp = MISC::split_line( str_tmp );
-        it_tmp = list_tmp.begin();
-        for( ; it_tmp != list_tmp.end(); ++it_tmp ) if( !(*it_tmp).empty() ) image_urls.push_back( (*it_tmp));
-    }
+    read_list_urls( cf, "board_urls", "board_locked", board_urls, board_locked );
+    read_list_urls( cf, "article_urls", "article_locked", article_urls, article_locked );
+    read_list_urls( cf, "image_urls", "image_locked", image_urls, image_locked );
 
     items_board = cf.get_option( "items_board",
                                  COLUMN_TITLE_MARK + std::string ( " " ) +
@@ -307,22 +319,49 @@ void SESSION::init_session()
 // セッション情報保存
 void SESSION::save_session()
 {
+    // 開いているタブのURL
     std::string str_board_urls;
     std::string str_article_urls;
     std::string str_image_urls;
 
-    std::list< std::string >::iterator it = board_urls.begin();
-    for( ; it != board_urls.end(); ++it ){
-        if( ! ( *it ).empty() ) str_board_urls += " \"" + ( *it ) + "\"";
+    std::list< std::string >::iterator it_url = board_urls.begin();
+    for( ; it_url != board_urls.end(); ++it_url ){
+        if( ! ( *it_url ).empty() ) str_board_urls += " \"" + ( *it_url ) + "\"";
     }
-    it = article_urls.begin();
-    for( ; it != article_urls.end(); ++it ){
-        if( ! ( *it ).empty() ) str_article_urls += " \"" + ( *it ) + "\"";
+    it_url = article_urls.begin();
+    for( ; it_url != article_urls.end(); ++it_url ){
+        if( ! ( *it_url ).empty() ) str_article_urls += " \"" + ( *it_url ) + "\"";
     }
-    it = image_urls.begin();
-    for( ; it != image_urls.end(); ++it ){
-        if( ! ( *it ).empty() ) str_image_urls += " \"" + ( *it ) + "\"";
+    it_url = image_urls.begin();
+    for( ; it_url != image_urls.end(); ++it_url ){
+        if( ! ( *it_url ).empty() ) str_image_urls += " \"" + ( *it_url ) + "\"";
     }
+
+    // 開いているタブのロック状態
+    std::string str_board_locked;
+    std::string str_article_locked;
+    std::string str_image_locked;
+
+    std::list< bool >::iterator it_locked = board_locked.begin();
+    for( ; it_locked != board_locked.end(); ++it_locked ){
+        if( *it_locked ) str_board_locked += " 1";
+        else str_board_locked += " 0";
+    }
+
+    it_locked = article_locked.begin();
+    for( ; it_locked != article_locked.end(); ++it_locked ){
+        if( *it_locked ) str_article_locked += " 1";
+        else str_article_locked += " 0";
+    }
+
+    it_locked = image_locked.begin();
+    for( ; it_locked != image_locked.end(); ++it_locked ){
+        if( *it_locked ) str_image_locked += " 1";
+        else str_image_locked += " 0";
+    }
+
+
+    // 保存内容作成
 
     std::ostringstream oss;
     oss << "mode_pane = " << mode_pane << std::endl
@@ -350,13 +389,18 @@ void SESSION::save_session()
         << "notebook_main_page = " << win_notebook_main_page << std::endl
 
         << "bbslist_page = " << win_bbslist_page << std::endl
-        << "board_page = " << win_board_page << std::endl
-        << "article_page = " << win_article_page << std::endl
-        << "image_page = " << win_image_page << std::endl
 
+        << "board_page = " << win_board_page << std::endl
         << "board_urls = " << str_board_urls << std::endl
+        << "board_locked = " << str_board_locked << std::endl
+
+        << "article_page = " << win_article_page << std::endl
         << "article_urls = " << str_article_urls << std::endl
+        << "article_locked = " << str_article_locked << std::endl
+
+        << "image_page = " << win_image_page << std::endl
         << "image_urls = " << str_image_urls << std::endl
+        << "image_locked = " << str_image_locked << std::endl
 
         << "items_board = " << items_board << std::endl
         << "col_mark = " << board_col_mark << std::endl
@@ -541,13 +585,19 @@ void SESSION::set_board_page( int page ){ win_board_page = page; }
 const std::list< std::string >& SESSION::board_URLs(){ return board_urls; }
 void SESSION::set_board_URLs( const std::list< std::string >& urls ){ board_urls = urls; }
 
+// スレ一覧のロック状態
+const std::list< bool >& SESSION::get_board_locked(){ return board_locked; }
+void SESSION::set_board_locked( const std::list< bool >& locked ){ board_locked = locked; }
 
-// 前回閉じたときに開いていたarticleのページ番号とURL
+// 前回閉じたときに開いていたスレタブのページ番号とURL
 int SESSION::article_page(){ return win_article_page; }
 void SESSION::set_article_page( int page ){ win_article_page = page; }
-const std::list< std::string >& SESSION::article_URLs(){ return article_urls; }
+const std::list< std::string >& SESSION::get_article_URLs(){ return article_urls; }
 void SESSION::set_article_URLs( const std::list< std::string >& urls ){ article_urls = urls; }
 
+// スレタブのロック状態
+const std::list< bool >& SESSION::get_article_locked(){ return article_locked; }
+void SESSION::set_article_locked( const std::list< bool >& locked ){ article_locked = locked; }
 
 // 前回閉じたときに開いていたimageのページ番号とURL
 int SESSION::image_page(){ return win_image_page; }
@@ -555,6 +605,9 @@ void SESSION::set_image_page( int page ){ win_image_page = page; }
 const std::list< std::string >& SESSION::image_URLs(){ return image_urls; }
 void SESSION::set_image_URLs( const std::list< std::string >& urls ){ image_urls = urls; }
 
+// 画像タブのロック状態
+const std::list< bool >& SESSION::get_image_locked(){ return image_locked; }
+void SESSION::set_image_locked( const std::list< bool >& locked ){ image_locked = locked; }
 
 // スレ一覧の項目
 const std::string& SESSION::get_items_board(){ return items_board; }

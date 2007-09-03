@@ -248,6 +248,7 @@ namespace ARTICLE
 
         // 画像ポップアップメニュー用
         void slot_cancel_mosaic();
+        void slot_show_large_img();
         void slot_deleteimage();
         void slot_toggle_protectimage();
         void slot_saveimage();

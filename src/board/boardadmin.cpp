@@ -59,6 +59,7 @@ BoardAdmin::~BoardAdmin()
 
     // 開いているURLを保存
     SESSION::set_board_URLs( get_URLs() );
+    SESSION::set_board_locked( get_locked() );
     SESSION::set_board_page( get_current_page() );
 }
 
@@ -70,19 +71,30 @@ void BoardAdmin::restore()
     bool online = SESSION::is_online();
     SESSION::set_online( false );
 
-    std::list< std::string > list_tmp;
-    std::list< std::string >::iterator it_tmp;
+    std::list< std::string > list_url = SESSION::board_URLs();
+    std::list< std::string >::iterator it_url = list_url.begin();
 
-    list_tmp = SESSION::board_URLs();
-    it_tmp = list_tmp.begin();
-    for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+    std::list< bool > list_locked = SESSION::get_board_locked();
+    std::list< bool >::iterator it_locked = list_locked.begin();
 
-        if( !(*it_tmp).empty() ){
-            COMMAND_ARGS command_arg;
-            command_arg.command = "open_view";
-            command_arg.url = (*it_tmp);
+    for( ; it_url != list_url.end(); ++it_url ){
+
+        COMMAND_ARGS command_arg;
+        command_arg.command = "open_view";
+
+        // タブのロック状態
+        std::string lock;
+        if( it_locked != list_locked.end() ){
+            if( (*it_locked ) ) lock = "lock";
+            ++it_locked;
+        }
+
+        if( !( *it_url ).empty() ){
+
+            command_arg.url = ( *it_url );
             command_arg.arg1 = "true";
-            command_arg.arg2 = "false"; // オフラインで開く(上でオフラインにしているので関係なし)
+            command_arg.arg2 = "false";
+            command_arg.arg3 = lock;
 
             open_view( command_arg );
         }

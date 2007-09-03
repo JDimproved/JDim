@@ -135,7 +135,7 @@ void Img::set_abone( bool abone )
 }
 
 
-std::string Img::get_cache_path()
+const std::string Img::get_cache_path()
 {
     if( m_protect ) return CACHE::path_img_protect( m_url );
 
@@ -199,7 +199,7 @@ void Img::download_img( const std::string refurl )
 //
 // path_to はデフォルトのファイル名
 //
-bool Img::save( Gtk::Window* parent, const std::string& path_to )
+const bool Img::save( Gtk::Window* parent, const std::string& path_to )
 {
     if( ! is_cached() ) return false;
 
@@ -221,34 +221,6 @@ bool Img::save( Gtk::Window* parent, const std::string& path_to )
 
 
 //
-// 高さ、幅
-//
-const int Img::get_width()
-{
-    if( ! is_cached() ) return 0;
-
-    if( ! m_width ){
-        MISC::get_img_size( get_cache_path(), m_width, m_height );
-        if( m_width ) save_info();
-    }
-
-    return m_width;
-}
-
-const int Img::get_height()
-{
-    if( ! is_cached() ) return 0;
-
-    if( ! m_height ){
-        MISC::get_img_size( get_cache_path(), m_width, m_height );
-        if( m_height ) save_info();
-    }
-
-    return m_height;
-}
-
-
-//
 // モザイクon/off
 //
 void Img::set_mosaic( bool mosaic )
@@ -263,6 +235,28 @@ void Img::set_mosaic( bool mosaic )
     CORE::core_set_command( "redraw_message" );
 }
 
+
+//
+// サイズの大きいファイルを表示
+//
+void Img::show_large_img()
+{
+    if( m_type != T_LARGE ) return;
+
+    const int size = 256;
+    char data[ size ];
+    CACHE::load_rawdata( get_cache_path(), data, size );
+    m_type = get_image_type( ( const unsigned char* ) data );
+    if( m_type != T_NOIMG ){
+
+        set_code( HTTP_OK );
+        set_str_code( "" );
+
+        CORE::core_set_command( "redraw", m_url );
+        CORE::core_set_command( "redraw_article" );
+        CORE::core_set_command( "redraw_message" );
+    }
+}
 
 
 //
@@ -284,6 +278,37 @@ void Img::set_protect( bool protect )
     }
 
     m_protect = protect;
+}
+
+
+//
+// 画像の先頭のシグネチャを見て画像かどうかをチェック
+//
+const int Img::get_image_type( const unsigned char *sign )
+{
+    int type = T_NOIMG;
+
+    // jpeg は FF D8
+    if( sign[ 0 ] == 0xFF
+        && sign[ 1 ] == 0xD8 ) type = T_JPG;
+
+    // png は 0x89 0x50 0x4e 0x47 0xd 0xa 0x1a 0xa
+    else if( sign[ 0 ] == 0x89
+             && sign[ 1 ] == 0x50
+             && sign[ 2 ] == 0x4e
+             && sign[ 3 ] == 0x47
+             && sign[ 4 ] == 0x0d
+             && sign[ 5 ] == 0x0a
+             && sign[ 6 ] == 0x1a
+             && sign[ 7 ] == 0x0a ) type = T_PNG;
+
+    // gif
+    else if( sign[ 0 ] == 'G'
+             && sign[ 1 ] == 'I'
+             && sign[ 2 ] == 'F' ) type = T_GIF;
+
+
+    return type;
 }
 
 
@@ -326,32 +351,10 @@ void Img::receive_data( const char* data, size_t size )
 #ifdef _DEBUG
         assert( size > 8 );
 #endif        
-        // ファイル判定用のシグネチャ
-        const unsigned char *sign = ( const unsigned char* )data;
 
-        // jpeg は FF D8
-        if( sign[ 0 ] == 0xFF
-            && sign[ 1 ] == 0xD8 ) m_type = T_JPG;
+        m_type = get_image_type( ( const unsigned char* ) data );
 
-        // png は 0x89 0x50 0x4e 0x47 0xd 0xa 0x1a 0xa
-        else if( sign[ 0 ] == 0x89
-                 && sign[ 1 ] == 0x50
-                 && sign[ 2 ] == 0x4e
-                 && sign[ 3 ] == 0x47
-                 && sign[ 4 ] == 0x0d
-                 && sign[ 5 ] == 0x0a
-                 && sign[ 6 ] == 0x1a
-                 && sign[ 7 ] == 0x0a ) m_type = T_PNG;
-
-        // gif
-        else if( sign[ 0 ] == 'G'
-                 && sign[ 1 ] == 'I'
-                 && sign[ 2 ] == 'F' ) m_type = T_GIF;
-
-        // 画像ファイルではない
-        else{
-
-            m_type = T_NOIMG;
+        if( m_type == T_NOIMG ){
 
             // リダイレクトしたら 404 を疑う
             // データに "404" "not" "found" という文字列が含まれていたら not found と仮定
@@ -373,16 +376,9 @@ void Img::receive_data( const char* data, size_t size )
             std::cout << data << std::endl;
 #endif
         }
-
-        // 指定サイズよりも大きい
-        if( m_type != T_NOIMG && m_type != T_NOT_FOUND && total_length() > (size_t)CONFIG::get_max_img_size() * 1024 * 1024 ){
-            m_type = T_LARGE;
-            stop_load();
-        }
     }
 
-    if( m_fout &&
-        ( m_type != T_NOIMG && m_type != T_NOT_FOUND && m_type != T_LARGE ) ){
+    if( m_fout && m_type != T_NOIMG && m_type != T_NOT_FOUND ){
 
         if( fwrite( data, 1, size, m_fout ) != size ){
             m_type = T_WRITEFAILED; // 書き込み失敗
@@ -437,6 +433,15 @@ void Img::receive_finish()
     }
     m_count_redirect = 0;
 
+    if( get_code() != HTTP_OK ) set_current_length( 0 );
+
+    // 画像サイズ取得
+    if( get_code() == HTTP_OK && current_length() ){
+
+        MISC::get_img_size( get_cache_path(), m_width, m_height );
+        if( ! m_width || ! m_height ) m_type = T_NOSIZE;
+    }
+
 
     //////////////////////////////////////////////////
     // エラーメッセージのセット
@@ -450,14 +455,6 @@ void Img::receive_finish()
     else if( m_type == T_NOT_FOUND ){
         set_code( HTTP_NOT_FOUND );
         set_str_code( "404 Not Found" );
-        set_current_length( 0 );
-    }
-
-    else if( m_type == T_LARGE ){
-        set_code( HTTP_ERR );
-        std::stringstream ss;
-        ss << "ファイルサイズが大きすぎます ( " << ( total_length() / 1024 / 1024 ) << " M )";
-        set_str_code( ss.str() );
         set_current_length( 0 );
     }
 
@@ -479,10 +476,31 @@ void Img::receive_finish()
         set_current_length( 0 );
     }
 
+    else if( m_type == T_NOSIZE ){
+
+        set_code( HTTP_ERR );
+        set_str_code( "画像サイズを取得出来ません" );
+        set_current_length( 0 );
+    }
+
     else if( get_code() == HTTP_OK && m_type == T_UNKNOWN ){
         set_code( HTTP_ERR );
         set_str_code( "未知の画像形式です" );
         set_current_length( 0 );
+    }
+
+    // 画像やファイルサイズが大きい
+    else if( current_length() > (size_t) CONFIG::get_max_img_size() * 1024 * 1024
+             || m_width * m_height > CONFIG::get_max_img_pixel() * 1000 * 1000
+        ){
+
+        m_type = T_LARGE;
+
+        set_code( HTTP_ERR );
+        std::stringstream ss;
+        ss << "サイズが大きすぎます ( " << ( total_length() / 1024 / 1024 ) << " M, " << m_width << " x " << m_height
+           << " )  ※コンテキストメニューから表示可能";
+        set_str_code( ss.str() );
     }
 
     set_total_length( current_length() );

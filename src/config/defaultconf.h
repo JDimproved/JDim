@@ -13,6 +13,9 @@
 namespace CONFIG
 {
     enum{
+        CONF_RESTORE_BOARD = 0,     // スレ一覧を復元
+        CONF_RESTORE_ARTICLE = 0,   // スレを復元
+        CONF_RESTORE_IMAGE = 0,     // 画像を復元
         CONF_LOADER_BUFSIZE = 32,   // ローダのバッファサイズ
         CONF_LOADER_TIMEOUT = 10,   // ローダのタイムアウト値        
         CONF_LOADER_TIMEOUT_POST = 30, // ポストローダのタイムアウト値        
@@ -20,6 +23,9 @@ namespace CONFIG
         CONF_LOADER_TIMEOUT_CHECKUPDATE = 10,  // 更新チェックのタイムアウト値
         CONF_USE_IPV6 = 1,          // ipv6使用
         CONF_BROWSER_NO = 2,        // browsers.h のラベル番号
+        CONF_REFPOPUP_BY_MO = 0,    // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
+        CONF_NAMEPOPUP_BY_MO = 0,   // 名前の上にマウスオーバーしたときにポップアップ表示する
+        CONF_IDPOPUP_BY_MO = 0,     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
         CONF_USE_TREE_GTKRC = 0,    // ツリービューでgtkrcの設定を使用するか
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
         CONF_SHOW_OLDARTICLE = 0,   // スレ一覧で古いスレも表示
@@ -39,8 +45,23 @@ namespace CONFIG
         CONF_HISTORY = 20,          // 履歴の保持数
         CONF_AAHISTORY = 7,         // AA履歴の保持数
         CONF_INSTRUCT_POPUP = 100,  // 0以上なら多重ポップアップの説明を表示する
+        CONF_INSTRUCT_TGLART = 1, // スレビューを開いたときにスレ一覧との切り替え方法を説明する
+        CONF_INSTRUCT_TGLIMG = 1, // 画像ビューを開いたときにスレビューとの切り替え方法を説明する
+        CONF_ADJUST_UNDERLINE_POS = 1, // 下線位置
+        CONF_ADJUST_LINE_SPACE = 1,    // 行間スペース
+        CONF_DRAW_UNDERLINE = 1,     // リンク下線を表示
+        CONF_STRICT_CHAR_WIDTH = 0,  // スレビューで文字幅の近似を厳密にする
+        CONF_CHECK_ID = 1,           // スレビューで発言数(ID)をカウントする
+        CONF_NUM_REFERENCE_HIGH = 3,//レス参照で色を変える回数 (高) 
+        CONF_NUM_REFERENCE_LOW = 1, //レス参照で色を変える回数 (低) 
+        CONF_NUM_ID_HIGH = 4,       // 発言数で色を変える回数 (高)
+        CONF_NUM_ID_LOW = 2,        // 発言数で色を変える回数 (低)
         CONF_LOOSE_URL = 1,         // datのパース時にURL判定を甘くする(^なども含める)
+        CONF_HIDE_USRCMD = 0, // ユーザーコマンドで選択できない項目を非表示にする
+        CONF_MAX_SHOW_USRCMD = 3, // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
         CONF_RELOAD_ALLTHREAD = 0,  // スレビューで再読み込みボタンを押したときに全タブを更新する
+        CONF_TAB_MIN_STR = 4, // タブに表示する文字列の最小値
+        CONF_SHOW_TAB_ICON = 1, // タブにアイコンを表示するか
         CONF_IMGPOPUP_WIDTH = 320,  // 画像ポップアップ幅
         CONF_IMGPOPUP_HEIGHT = 240, // 画像ポップアップ高さ
         CONF_USE_IMAGE_VIEW = 1,    // 画像ビューを使用する
@@ -50,6 +71,7 @@ namespace CONFIG
         CONF_DEL_IMG_DAY = 20,      // 画像キャッシュ削除の日数
         CONF_DEL_IMGABONE_DAY = 20, // 画像あぼーん削除の日数
         CONF_MAX_IMG_SIZE = 16,     // ダウンロードする画像の最大サイズ(Mbyte)
+        CONF_MAX_IMG_PIXEL = 20,     // 画像の最大サイズ(Mピクセル)
         CONF_LINK_AS_BOARD = 0,     // bbsmenu.html内にあるリンクは全て板とみなす
         CONF_ABONE_TRANSPARENT = 0, // デフォルトで透明あぼーんをする
         CONF_ABONE_CHAIN = 0,       // デフォルトで連鎖あぼーんをする

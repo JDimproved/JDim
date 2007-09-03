@@ -94,6 +94,9 @@ void Admin::setup_menu( const bool enable_checkupdate )
     m_action_group = Gtk::ActionGroup::create();
     m_action_group->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &Admin::slot_close_tab ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする", std::string(), false ),
+                         sigc::mem_fun( *this, &Admin::slot_lock ) );
+
     m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる" ) );
     m_action_group->add( Gtk::Action::create( "CloseOther", "他のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseLeft", "左←のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
@@ -121,6 +124,10 @@ void Admin::setup_menu( const bool enable_checkupdate )
 
     // 通常
     "<popup name='popup_menu'>"
+
+    "<menuitem action='LockTab'/>"
+    "<separator/>"
+
     "<menuitem action='Quit'/>"
     "<separator/>"
 
@@ -286,7 +293,6 @@ std::list<std::string> Admin::get_URLs()
 
     return urls;
 }
-
 
 
 //
@@ -658,6 +664,7 @@ void Admin::update_status( View* view, const bool force )
 // command.arg3: モード
 //   arg3 == "auto"なら表示されていればリロードせずに切替え、されていなければ新しいタブで開いてロード(スレ番号ジャンプなどで使用)
 //   arg3 == "noswitch"ならタブを切り替えない(連続して開くときに使用)
+//   arg3 == "lock" なら開いてロックする
 //
 // その他のargは各ビュー別の設定
 //
@@ -689,6 +696,9 @@ void Admin::open_view( const COMMAND_ARGS& command )
             // オートモードは切り替えのみ
             if( command.arg3 == "auto" ) return;
 
+            // ロック
+            if( command.arg3 == "lock" ) lock( m_notebook->page_num( *view ) );
+
             view->show_view();
 
             return;
@@ -702,6 +712,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
     int page = m_notebook->get_current_page();
     bool open_tab = (  page == -1 || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left"
                        || command.arg3 == "auto" // オートモードの時もタブで開く
+                       || is_locked( page )
         );
 
     // タブで表示
@@ -740,6 +751,9 @@ void Admin::open_view( const COMMAND_ARGS& command )
         switch_admin();
         set_current_page( m_notebook->page_num( *view ) );
     }
+
+    // ロック
+    if( command.arg3 == "lock" ) lock( m_notebook->page_num( *view ) );
 }
 
 
@@ -894,6 +908,8 @@ void Admin::close_view( SKELETON::View* view )
 
     int page = m_notebook->page_num( *view );
     int current_page = m_notebook->get_current_page();
+
+    if( is_locked( page ) ) return;
 
     // もし現在表示中のビューを消すときは予めひとつ右のビューにスイッチしておく
     // そうしないと左のビューを一度表示してしまうので遅くなる
@@ -1432,6 +1448,25 @@ void Admin::slot_tab_menu( int page, int x, int y )
     std::cout << "Admin::slot_tab_menu " << page << std::endl;
 #endif
 
+    Glib::RefPtr< Gtk::Action > act;
+    m_clicked_page = -1; // メニューのactive状態を変えたときにslot関数が呼び出されるのをキャンセル
+
+    // ロック
+    act = m_action_group->get_action( "LockTab" );
+    if( page >= 0 && act ){
+
+        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+        if( is_locked( page ) ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // 閉じる
+    act = m_action_group->get_action( "Quit" );
+    if( act ){
+        if( is_locked( page ) ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     m_clicked_page = page;
 
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
@@ -1476,12 +1511,26 @@ void Admin::slot_tab_menu( int page, int x, int y )
 //
 void Admin::slot_close_tab()
 {
+    if( m_clicked_page < 0 ) return;
+
 #ifdef _DEBUG
     std::cout << "Admin::slot_close_tab " << m_clicked_page << std::endl;
 #endif
 
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) close_view( view->get_url() );
+}
+
+
+//
+// ロック
+//
+void Admin::slot_lock()
+{
+    if( m_clicked_page < 0 ) return;
+
+    if( is_locked( m_clicked_page ) ) unlock( m_clicked_page );
+    else lock( m_clicked_page );
 }
 
 
@@ -1713,4 +1762,39 @@ void Admin::slot_copy_title_url()
     if( view ) str += "\n" + view->url_for_copy();
     
     COPYCLIP( str );
+}
+
+
+// ページがロックされているかリストで取得
+std::list< bool > Admin::get_locked()
+{
+    std::list< bool > locked;
+    
+    int pages = m_notebook->get_n_pages();
+    if( pages ){
+        for( int i = 0; i < pages; ++i ) locked.push_back( is_locked( i ) );
+    }
+
+    return locked;
+}
+
+// タブのロック/アンロック
+const bool Admin::is_locked( const int page )
+{
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+    if( view ) return view->is_locked();
+
+    return false;
+}
+
+void Admin::lock( const int page )
+{
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+    if( view ) return view->lock();
+}
+
+void Admin::unlock( const int page )
+{
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+    if( view ) return view->unlock();
 }

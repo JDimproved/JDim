@@ -16,20 +16,6 @@ namespace Gtk
 
 namespace DBIMG
 {
-    // 画像タイプ
-    enum{
-        T_NOIMG = 0,
-        T_JPG,
-        T_PNG,
-        T_GIF,
-        T_LARGE,
-        T_OPENFAILED,
-        T_WRITEFAILED,
-        T_NOT_FOUND,
-        T_NODATA,
-        T_UNKNOWN
-    };
-
     class Img : public SKELETON::Loadable
     {
         std::string m_url;
@@ -57,12 +43,13 @@ namespace DBIMG
         void clear();
 
         const std::string& url() const { return m_url; }
-        std::string get_cache_path();
+        const std::string get_cache_path();
 
         const int get_type() const { return m_type; }
 
-        const int get_width();
-        const int get_height();
+        // 高さ、幅
+        const int get_width() const { return m_width; }
+        const int get_height() const { return m_height; }
 
         const bool is_cached();
 
@@ -71,6 +58,8 @@ namespace DBIMG
 
         const bool get_mosaic() const { return m_mosaic; }
         void set_mosaic( bool mosaic );
+
+        void show_large_img();
 
         const bool is_zoom_to_fit() const { return m_zoom_to_fit; }
         void set_zoom_to_fit( bool fit ) { m_zoom_to_fit = fit; }
@@ -89,9 +78,11 @@ namespace DBIMG
         const bool is_fake(); 
 
         void download_img( const std::string refurl );
-        bool save( Gtk::Window* parent, const std::string& path_to );
+        const bool save( Gtk::Window* parent, const std::string& path_to );
         
       private:
+
+        const int get_image_type( const unsigned char *sign );
 
         virtual void receive_data( const char* data, size_t size );
         virtual void receive_finish();

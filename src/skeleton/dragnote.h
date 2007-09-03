@@ -87,7 +87,6 @@ namespace SKELETON
         // タブ幅調整
         bool adjust_tabwidth();
 
-
       private:
 
         // タブ作成

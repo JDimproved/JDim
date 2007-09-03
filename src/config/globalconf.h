@@ -157,8 +157,11 @@ namespace CONFIG
     const int get_del_imgabone_day();
     void set_del_imgabone_day( int day );
 
-    // ダウンロードする画像の最大サイズ(Mbyte)
+    // ダウンロードする画像の最大ファイルサイズ(Mbyte)
     const int get_max_img_size();
+
+    // 画像の最大サイズ(Mピクセル)
+    const int get_max_img_pixel();
 
     // スレ一覧にdat落ちしたスレも表示する
     const bool get_show_oldarticle();
@@ -238,6 +241,17 @@ namespace CONFIG
     // スレビューで文字幅の近似を厳密にする
     const bool get_strict_char_width();
     void set_strict_char_width( bool strictwidth );
+
+    // スレビューで発言数(ID)をカウントする
+    const bool get_check_id();
+
+    // レス参照で色を変える回数
+    const int get_num_reference_high();
+    const int get_num_reference_low();
+
+    // 発言数で色を変える回数
+    const int get_num_id_high();
+    const int get_num_id_low();
 
     // datのパース時にURL判定を甘くする(^なども含める)
     const bool get_loose_url();

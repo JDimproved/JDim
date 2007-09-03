@@ -297,7 +297,6 @@ bool DragableNoteBook::adjust_tabwidth()
 }
 
 
-
 //
 // ボタン押した
 //

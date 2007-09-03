@@ -78,9 +78,9 @@ const bool ConfigItems::load()
 #endif
 
     // 前回開いたviewを復元するか
-    restore_board = cf.get_option( "restore_board", false );
-    restore_article = cf.get_option( "restore_article", false );
-    restore_image = cf.get_option( "restore_image", false );
+    restore_board = cf.get_option( "restore_board", CONF_RESTORE_BOARD );
+    restore_article = cf.get_option( "restore_article", CONF_RESTORE_ARTICLE );
+    restore_image = cf.get_option( "restore_image", CONF_RESTORE_IMAGE );
 
     std::string defaultfont = get_default_font();
 
@@ -156,13 +156,13 @@ const bool ConfigItems::load()
     command_openurl = cf.get_option( "command_openurl", CORE::get_browser_name( CONF_BROWSER_NO ) );
 
     // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
-    refpopup_by_mo = cf.get_option( "refpopup_by_mo", false );
+    refpopup_by_mo = cf.get_option( "refpopup_by_mo", CONF_REFPOPUP_BY_MO );
 
     // 名前の上にマウスオーバーしたときにポップアップ表示する
-    namepopup_by_mo = cf.get_option( "namepopup_by_mo", false );
+    namepopup_by_mo = cf.get_option( "namepopup_by_mo", CONF_NAMEPOPUP_BY_MO );
 
     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
-    idpopup_by_mo = cf.get_option( "idpopup_by_mo", false );
+    idpopup_by_mo = cf.get_option( "idpopup_by_mo", CONF_IDPOPUP_BY_MO );
 
     // 画像ポップアップサイズ
     imgpopup_width = cf.get_option( "imgpopup_width", CONF_IMGPOPUP_WIDTH );
@@ -186,8 +186,11 @@ const bool ConfigItems::load()
     // 画像あぼーん削除の日数
     del_imgabone_day = cf.get_option( "del_imgabone_day", CONF_DEL_IMGABONE_DAY );
 
-    // ダウンロードする画像の最大サイズ(Mbyte)
+    // ダウンロードする画像の最大ファイルサイズ(Mbyte)
     max_img_size = cf.get_option( "max_img_size", CONF_MAX_IMG_SIZE );
+
+    // 画像の最大サイズ(Mピクセル)
+    max_img_pixel = cf.get_option( "max_img_pixel", CONF_MAX_IMG_PIXEL );
 
     // JD ホームページのアドレス
     url_jdhp = cf.get_option( "url_jdhp", CONF_JDHP );
@@ -365,40 +368,53 @@ const bool ConfigItems::load()
     instruct_popup = cf.get_option( "instruct_popup", CONF_INSTRUCT_POPUP );    
 
     // スレビューを開いたときにスレ一覧との切り替え方法を説明する
-    instruct_tglart = cf.get_option( "instruct_tglart", true );
+    instruct_tglart = cf.get_option( "instruct_tglart", CONF_INSTRUCT_TGLART );
     instruct_tglart_end = false;
 
     // 画像ビューを開いたときにスレビューとの切り替え方法を説明する
-    instruct_tglimg = cf.get_option( "instruct_tglimg", true );
+    instruct_tglimg = cf.get_option( "instruct_tglimg", CONF_INSTRUCT_TGLIMG );
     instruct_tglimg_end = false;
     
-    // スレ表示の行間調整
-    adjust_underline_pos = cf.get_option( "adjust_underline_pos", 1.0 );
-    adjust_line_space = cf.get_option( "adjust_line_space", 1.0 );
+    // 下線位置
+    adjust_underline_pos = cf.get_option( "adjust_underline_pos", CONF_ADJUST_UNDERLINE_POS );
+
+    // 行間スペース
+    adjust_line_space = cf.get_option( "adjust_line_space", CONF_ADJUST_LINE_SPACE );
 
     // リンク下線を表示
-    draw_underline = cf.get_option( "draw_underline", true );
+    draw_underline = cf.get_option( "draw_underline", CONF_DRAW_UNDERLINE );
 
     // スレビューで文字幅の近似を厳密にする
-    strict_char_width = cf.get_option( "strict_char_width", false );
+    strict_char_width = cf.get_option( "strict_char_width", CONF_STRICT_CHAR_WIDTH );
+
+    // スレビューで発言数(ID)をカウントする
+    check_id = cf.get_option( "check_id", CONF_CHECK_ID );
+
+    // レス参照で色を変える回数
+    num_reference_high = cf.get_option( "num_reference_high", CONF_NUM_REFERENCE_HIGH );
+    num_reference_low = cf.get_option( "num_reference_low", CONF_NUM_REFERENCE_LOW );
+
+    // 発言数で色を変える回数
+    num_id_high = cf.get_option( "num_id_high", CONF_NUM_ID_HIGH );
+    num_id_low = cf.get_option( "num_id_low", CONF_NUM_ID_LOW );
 
     // datのパース時にURL判定を甘くする(^なども含める)
     loose_url = cf.get_option( "loose_url", CONF_LOOSE_URL );
 
     // ユーザーコマンドで選択できない項目を非表示にする
-    hide_usrcmd = cf.get_option( "hide_usrcmd", false );
+    hide_usrcmd = cf.get_option( "hide_usrcmd", CONF_HIDE_USRCMD );
 
     // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
-    max_show_usrcmd = cf.get_option( "max_show_usrcmd", 3 );
+    max_show_usrcmd = cf.get_option( "max_show_usrcmd", CONF_MAX_SHOW_USRCMD );
 
     // スレビューで再読み込みボタンを押したときに全タブを更新する
     reload_allthreads = cf.get_option( "reload_allthreads", CONF_RELOAD_ALLTHREAD );
 
     // タブに表示する文字列の最小値
-    tab_min_str = cf.get_option( "tab_min_str", 4 );
+    tab_min_str = cf.get_option( "tab_min_str", CONF_TAB_MIN_STR );
 
     // タブにアイコンを表示するか
-    show_tab_icon = cf.get_option( "show_tab_icon", true );
+    show_tab_icon = cf.get_option( "show_tab_icon", CONF_SHOW_TAB_ICON );
 
     std::list< std::string > list_tmp;
     std::list< std::string >::iterator it_tmp;
@@ -517,6 +533,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "del_img_day", del_img_day );
     cf.update( "del_imgabone_day", del_imgabone_day );
     cf.update( "max_img_size", max_img_size );
+    cf.update( "max_img_pixel", max_img_pixel );
 
     cf.update( "cl_char", str_color[ COLOR_CHAR ] );
     cf.update( "cl_char_name", str_color[ COLOR_CHAR_NAME ] );
@@ -580,6 +597,13 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "draw_underline", draw_underline );
     cf.update( "strict_char_width", strict_char_width );
+    cf.update( "check_id", check_id );
+
+    cf.update( "num_reference_high", num_reference_high );
+    cf.update( "num_reference_low", num_reference_low );
+    cf.update( "num_id_high", num_id_high );
+    cf.update( "num_id_low", num_id_low );
+
     cf.update( "loose_url", loose_url );
 
     cf.update( "hide_usrcmd", hide_usrcmd );

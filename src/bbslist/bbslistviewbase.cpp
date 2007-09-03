@@ -2154,6 +2154,9 @@ void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after,
 #ifdef _DEBUG
                 std::cout << "-> type =  " << type << std::endl;
 #endif
+
+                // ブックマークセット
+                DBTREE::set_bookmarked_thread( info.url, true );
             }
 
             path = append_row( info.url, info.name, type, path, subdir, after );

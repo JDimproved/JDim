@@ -174,6 +174,7 @@ void CONFIG::set_del_img_day( int day ){ get_confitem()->del_img_day = day; }
 const int CONFIG::get_del_imgabone_day(){ return get_confitem()->del_imgabone_day; }
 void CONFIG::set_del_imgabone_day( int day ){ get_confitem()->del_imgabone_day = day; }
 const int CONFIG::get_max_img_size(){ return get_confitem()->max_img_size; }
+const int CONFIG::get_max_img_pixel(){ return get_confitem()->max_img_pixel; }
 
 const bool CONFIG::get_show_oldarticle(){ return get_confitem()->show_oldarticle; }
 void CONFIG::set_show_oldarticle( bool showarticle ){ get_confitem()->show_oldarticle = showarticle; }
@@ -242,6 +243,13 @@ const bool CONFIG::get_draw_underline(){ return get_confitem()->draw_underline; 
 
 const bool CONFIG::get_strict_char_width(){ return get_confitem()->strict_char_width; }
 void CONFIG::set_strict_char_width( bool strictwidth ){ get_confitem()->strict_char_width = strictwidth; }
+
+const bool CONFIG::get_check_id(){ return get_confitem()->check_id; }
+
+const int CONFIG::get_num_reference_high(){ return get_confitem()->num_reference_high; }
+const int CONFIG::get_num_reference_low(){ return get_confitem()->num_reference_low; }
+const int CONFIG::get_num_id_high(){ return get_confitem()->num_id_high; }
+const int CONFIG::get_num_id_low(){ return get_confitem()->num_id_low; }
 
 const bool CONFIG::get_loose_url(){ return get_confitem()->loose_url; }
 

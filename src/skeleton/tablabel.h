@@ -32,6 +32,8 @@ namespace SKELETON
         Gtk::HBox m_hbox;
         int m_id_icon;
 
+        bool m_locked;
+
         Gtk::Label m_label;
 
         // アイコン画像

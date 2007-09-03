@@ -12,7 +12,7 @@
 using namespace SKELETON;
 
 TabLabel::TabLabel( const std::string& url )
-    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_image( NULL ), m_image_width( 0 ), m_under_mouse( false )
+    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_locked( false ), m_image( NULL ), m_image_width( 0 ), m_under_mouse( false )
 {
 #ifdef _DEBUG
     std::cout << "TabLabel::TabLabel " << m_url << std::endl;
@@ -81,7 +81,6 @@ void TabLabel::resize_tab( int lng )
     ulabel.resize( lng );
     m_label.set_text( ulabel );
 }
-
 
 
 //

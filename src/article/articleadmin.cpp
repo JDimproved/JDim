@@ -62,6 +62,7 @@ ArticleAdmin::~ArticleAdmin()
 #endif
 
     SESSION::set_article_URLs( get_URLs() );
+    SESSION::set_article_locked( get_locked() );
     SESSION::set_article_page( get_current_page() );
     ARTICLE::init_font();
 }
@@ -79,17 +80,25 @@ void ArticleAdmin::restore()
     bool online = SESSION::is_online();
     SESSION::set_online( false );
 
-    std::list< std::string > list_tmp;
-    std::list< std::string >::iterator it_tmp;
+    std::list< std::string > list_url = SESSION::get_article_URLs();
+    std::list< std::string >::iterator it_url = list_url.begin();
 
-    list_tmp = SESSION::article_URLs();
-    it_tmp = list_tmp.begin();
-    for( ; it_tmp != list_tmp.end(); ++it_tmp ){
+    std::list< bool > list_locked = SESSION::get_article_locked();
+    std::list< bool >::iterator it_locked = list_locked.begin();
 
-        std::string url = (*it_tmp);
+    for( ; it_url != list_url.end(); ++it_url ){
+
+        std::string url = (*it_url);
         COMMAND_ARGS command_arg;
         command_arg.command = "open_view";
         command_arg.url = std::string();
+
+        // タブのロック状態
+        std::string lock;
+        if( it_locked != list_locked.end() ){
+            if( (*it_locked ) ) lock = "lock";
+            ++it_locked;
+        }
 
         // レス抽出
         if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + RES_SIGN + "(.*)"
@@ -98,7 +107,7 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+            command_arg.arg3 = lock;
 
             command_arg.arg4 = "RES";
             command_arg.arg5 = regex.str( 2 );
@@ -111,7 +120,7 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+            command_arg.arg3 = lock;
 
             command_arg.arg4 = "NAME";
             command_arg.arg5 = regex.str( 2 );
@@ -123,7 +132,7 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+            command_arg.arg3 = lock;
 
             command_arg.arg4 = "ID";
             command_arg.arg5 = regex.str( 2 );
@@ -135,7 +144,7 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+            command_arg.arg3 = lock;
 
             command_arg.arg4 = "BM";
         }
@@ -146,7 +155,7 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+            command_arg.arg3 = lock;
 
             command_arg.arg4 = "URL";
         }
@@ -157,7 +166,7 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+            command_arg.arg3 = lock;
 
             command_arg.arg4 = "REF";
             command_arg.arg5 = regex.str( 2 );
@@ -170,7 +179,7 @@ void ArticleAdmin::restore()
             command_arg.url = regex.str( 1 );
             command_arg.arg1 = "true"; // タブで開く
             command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+            command_arg.arg3 = lock;
 
             if( regex.str( 3 ) == "1" ) command_arg.arg4 = "KEYWORD_OR";
             else command_arg.arg4 = "KEYWORD";
@@ -187,7 +196,7 @@ void ArticleAdmin::restore()
             command_arg.url = url;
             command_arg.arg1 = "true";   // タブで開く
             command_arg.arg2 = "false";  // 既に開いているかチェック
-            command_arg.arg3 = "false";  // オフラインで開く(上でオフラインにしているので関係なし)
+            command_arg.arg3 = lock;
 
             command_arg.arg4 = "MAIN";
         }

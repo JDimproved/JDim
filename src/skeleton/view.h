@@ -55,6 +55,9 @@ namespace SKELETON
         int m_keyjump_counter;
         int m_keyjump_num;
 
+        // ロック状態
+        bool m_locked;
+
       protected:
 
         // UI
@@ -120,6 +123,11 @@ namespace SKELETON
         virtual const std::string& get_url(){ return m_url; }
         void set_url( const std::string& url ){ m_url = url; }
         void update_host( const std::string& host );
+
+        // ロック/アンロック
+        const bool is_locked() const { return m_locked; }
+        void lock(){ m_locked = true; }
+        void unlock(){ m_locked = false; }
 
         // view 上にマウスポインタがあれば true
         bool is_mouse_on_view();
