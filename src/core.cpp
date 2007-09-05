@@ -870,15 +870,8 @@ void Core::set_maintitle()
 
     std::string title;
 
-    if( m_title.empty() ){
-
-#ifdef JDVERSION_SVN
-        title = std::string( "JD - " ) + "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
-#else
-        title = std::string( "JD - " ) + std::string( JDVERSIONSTR );
-#endif
-
-    } else title = "JD - " + m_title;
+    if( m_title.empty() ) title = "JD - " + std::string( JDVERSIONSTR );
+    else title = "JD - " + m_title;
 
     if( LOGIN::get_login2ch()->login_now() ) title +=" [ ログイン中 ]";
     if( ! SESSION::is_online() ) title += " [ オフライン ]";
@@ -1374,13 +1367,7 @@ void Core::slot_show_about()
     "で請求してください(宛先は the Free Software Foundation, Inc., 51 "
     "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA)。\n";
 
-    version_org << "バージョン "
-#ifdef JDVERSION_SVN
-                << "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
-#else
-    << JDVERSIONSTR;
-#endif
-
+    version_org << "バージョン " << JDVERSIONSTR;
  
     const Glib::ustring version = Glib::locale_to_utf8( version_org.str() );
     const Glib::ustring license = Glib::locale_to_utf8( license_org.str() );

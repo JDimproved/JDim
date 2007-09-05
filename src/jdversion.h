@@ -16,7 +16,12 @@
 
 #define JDVERSION ( MAJORVERSION * 100 + MINORVERSION * 10 + MICROVERSION )
 #define JDVERSION_FULL ( JDVERSION * 1000000 + atoi( JDDATE ) )
+
+#ifdef JDVERSION_SVN
+#define JDVERSIONSTR ( "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ ) )
+#else
 #define JDVERSIONSTR ( MISC::itostr( MAJORVERSION ) + "." + MISC::itostr( MINORVERSION ) + "." + MISC::itostr( MICROVERSION ) + "-" + std::string( JDTAG ) + std::string( JDDATE ) )
+#endif
 
 #define JDCOPYRIGHT "(c) 2006-2007 JD project"
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
