@@ -10,6 +10,13 @@
 #include "controlutil.h"
 #include "aamanager.h"
 #include "session.h"
+#include "jdversion.h"
+
+#include "jdlib/miscutil.h"
+#include "config/globalconf.h"
+
+#include <sstream>
+
 
 using namespace SKELETON;
 
@@ -377,7 +384,9 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
 }
 
 
+//
 // コンテキストメニュー表示
+//
 void EditTextView::on_populate_popup( Gtk::Menu* menu )
 {
 #ifdef _DEBUG
@@ -388,11 +397,26 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
     SESSION::set_popupmenu_shown( true );
     menu->signal_hide().connect( sigc::mem_fun( *this, &EditTextView::slot_hide_popupmenu ) );
 
+    // セパレータ
+    Gtk::MenuItem* menuitem = Gtk::manage( new Gtk::SeparatorMenuItem() );
+    menu->prepend( *menuitem );
+
+    // JDの動作環境を記入
+    menuitem = Gtk::manage( new Gtk::MenuItem( "JDの動作環境を記入" ) );
+    menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_write_jdinfo ) );
+    menu->prepend( *menuitem );
+
+    // クリップボードから引用
+    menuitem = Gtk::manage( new Gtk::MenuItem( "クリップボードから引用" ) );
+    menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_quote_clipboard ) );
+
+    Glib::RefPtr< Gtk::Clipboard > clip = Gtk::Clipboard::get();
+    if( clip->wait_is_text_available() ) menuitem->set_sensitive( true );
+    else menuitem->set_sensitive( false );
+    menu->prepend( *menuitem );
+
     // AA入力メニュー追加
     if( CORE::get_aamanager()->get_size() ){
-
-        Gtk::MenuItem* menuitem = Gtk::manage( new Gtk::SeparatorMenuItem() );
-        menu->prepend( *menuitem );
 
         std::string label = CONTROL::get_label( CONTROL::InputAA );
         std::string motion = CONTROL::get_motion( CONTROL::InputAA );
@@ -400,14 +424,17 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
         menuitem = Gtk::manage( new Gtk::MenuItem( label + "  " + motion ) );
         menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_select_aamenu ) );
         menu->prepend( *menuitem );
-
-        menu->show_all_children();
     }
+
+    menu->show_all_children();
 
     Gtk::TextView::on_populate_popup( menu );
 }
 
 
+//
+// AA追加メニュー
+//
 bool EditTextView::slot_select_aamenu( GdkEventButton* event )
 {
     if( m_context_menu ) m_context_menu->hide();
@@ -416,6 +443,47 @@ bool EditTextView::slot_select_aamenu( GdkEventButton* event )
 }
 
 
+//
+// クリップボードから引用して貼り付け
+//
+bool EditTextView::slot_quote_clipboard( GdkEventButton* event )
+{
+    Glib::RefPtr< Gtk::Clipboard > clip = Gtk::Clipboard::get();
+    Glib::ustring text = clip->wait_for_text();
+
+    std::string str_res;
+    str_res = CONFIG::get_ref_prefix();
+
+    text = MISC::replace_str( text, "\n", "\n" + str_res );
+    insert_str( str_res + text, false );
+    return true;
+}
+
+
+//
+// JDの動作環境を記入
+//
+bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
+{
+    std::stringstream jd_info;
+
+    jd_info <<
+    "[バージョン] " << JDVERSIONSTR << "\n" <<
+    "[ディストリ ] " << "\n" <<
+    "[パッケージ] " << "\n" <<
+    "[ DE／WM ] " << "\n" <<
+    "[gtkmm-2.4] " << GTKMM_VERSION << "\n" <<
+    "[glibmm-2.4] " << GLIBMM_VERSION << "\n" <<
+    "[ そ の 他 ]\n";
+
+    insert_str( jd_info.str(), false );
+    return true;
+}
+
+
+//
+// ポップアッップを隠す
+//
 void EditTextView::slot_hide_popupmenu()
 {
 #ifdef _DEBUG

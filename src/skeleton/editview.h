@@ -97,6 +97,12 @@ namespace SKELETON
         bool slot_select_aamenu( GdkEventButton* event );
         void slot_hide_popupmenu();
 
+        // クリップボードから引用
+        bool slot_quote_clipboard( GdkEventButton* event );
+ 
+        // JDの動作環境を記入
+        bool slot_write_jdinfo( GdkEventButton* event );
+
         // AA ポップアップ
         void slot_popup_aamenu_pos( int& x, int& y, bool& push_in );
         void show_aalist_popup();
