@@ -19,6 +19,8 @@ namespace CORE
     {
         Gtk::Label m_label_notice;
         Gtk::ComboBoxText m_combo;
+        Gtk::Frame m_frame;
+        Gtk::HBox m_hbox;
         Gtk::Entry m_entry_browser;
 
         // OK押した
@@ -49,13 +51,17 @@ namespace CORE
             m_combo.signal_changed().connect( sigc::mem_fun(*this, &BrowserPref::slot_changed ) );
 
             m_entry_browser.set_text( CONFIG::get_command_openurl() );
-
+            m_hbox.set_spacing( 8 );
+            m_hbox.set_border_width( 8 );
+            m_hbox.add( m_entry_browser );
+            m_frame.set_label( "ブラウザ起動コマンド" );
+            m_frame.add( m_hbox );
             m_label_notice.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
 
             get_vbox()->set_spacing( 0 );
             get_vbox()->pack_start( m_label_notice, Gtk::PACK_EXPAND_WIDGET, 8 );
             get_vbox()->pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 0 );
-            get_vbox()->pack_start( m_entry_browser, Gtk::PACK_EXPAND_WIDGET, 8 );
+            get_vbox()->pack_start( m_frame, Gtk::PACK_EXPAND_WIDGET, 8 );
 
             set_title( "Webブラウザ設定" );
             show_all_children();

@@ -353,7 +353,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク" ) );
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ..." ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
     m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ..." ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
-    m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード設定..." ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
+    m_action_group->add( Gtk::Action::create( "SetupPasswd", "2chログイン..." ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
 
     // あぼーん
     m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん" ) );

@@ -72,7 +72,7 @@ namespace CORE
             get_vbox()->pack_start( m_frame_2ch );
             get_vbox()->pack_start( m_label_sid_2ch );
 
-            set_title( "パスワード設定" );
+            set_title( "2chログイン設定" );
             show_all_children();
         }
 
