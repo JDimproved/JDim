@@ -360,6 +360,13 @@ void JDWindow::focus_in()
                   << " iconified = " << is_iconified_win()  << std::endl;
 #endif
     }
+
+    else{
+        show();
+        if( is_iconified_win() ) deiconify();
+        present();
+    }
+
 }
 
 
