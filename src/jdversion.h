@@ -3,6 +3,10 @@
 #ifndef _JDVER_H
 #define _JDVER_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 // svn 版の時は JDVERSION_SVN をdefineする
 #define JDVERSION_SVN
 
@@ -18,8 +22,15 @@
 #define JDVERSION_FULL ( JDVERSION * 1000000 + atoi( JDDATE ) )
 
 #ifdef JDVERSION_SVN
-#define JDVERSIONSTR ( "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ ) )
+#ifdef SVN_REVISION
+// リビジョンが取得できた場合のSVN版のバージョン
+#define JDVERSIONSTR ( "SVN Rev." + MISC::itostr( SVN_REVISION ) )
 #else
+// リビジョンが取得できなかった場合のSVN版のバージョン
+#define JDVERSIONSTR ( "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ ) )
+#endif
+#else
+// 通常版のバージョン
 #define JDVERSIONSTR ( MISC::itostr( MAJORVERSION ) + "." + MISC::itostr( MINORVERSION ) + "." + MISC::itostr( MICROVERSION ) + "-" + std::string( JDTAG ) + std::string( JDDATE ) )
 #endif
 

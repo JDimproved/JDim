@@ -36,6 +36,25 @@ esac
 
 AM_ICONV
 
+dnl
+dnl SVNのリビジョンを取得
+dnl
+SVN_REVISION
+dnl
+dnl 1021:1024MS のような形式の場合には 1024 にする。
+dnl svnversion の結果が整数の場合だけマクロに追加する。
+dnl
+AC_PATH_PROG(SVNVERSION, svnversion)
+if test -n "$SVNVERSION"
+then
+    SVN_REVISION=`$SVNVERSION -n | cut -d : -f 2 | tr -d 'MS'`
+
+    expr $SVN_REVISION + 1
+    if test $? -lt 2
+    then
+       AC_DEFINE_UNQUOTED(SVN_REVISION, $SVN_REVISION, [Revision number of svn])
+    fi
+fi
 
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
