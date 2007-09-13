@@ -577,17 +577,21 @@ void  BBSListViewBase::operate_view( const int& control )
 
             // 開く
         case CONTROL::OpenBoardTabButton:
-            open_tab = true;
-            // pathがディレクトリでタブで開くボタンを入れ替えている時はディレクトリ開閉にする
-            if( path2type( path ) == TYPE_DIR && CONFIG::get_buttonconfig()->is_toggled_tab_button() ) open_tab = false;
-            open_row( path, open_tab );
+            if( ! m_path_selected.empty() ){
+                open_tab = true;
+                // pathがディレクトリでタブで開くボタンを入れ替えている時はディレクトリ開閉にする
+                if( path2type( path ) == TYPE_DIR && CONFIG::get_buttonconfig()->is_toggled_tab_button() ) open_tab = false;
+                open_row( path, open_tab );
+            }
             break;
 
         case CONTROL::OpenBoardButton:
-            open_tab = false;
-            // pathがディレクトリでタブで開くボタンを入れ替えている時は更新チェックにする
-            if( path2type( path ) == TYPE_DIR && CONFIG::get_buttonconfig()->is_toggled_tab_button() ) open_tab = true;
-            open_row( path, open_tab );
+            if( ! m_path_selected.empty() ){
+                open_tab = false;
+                // pathがディレクトリでタブで開くボタンを入れ替えている時は更新チェックにする
+                if( path2type( path ) == TYPE_DIR && CONFIG::get_buttonconfig()->is_toggled_tab_button() ) open_tab = true;
+                open_row( path, open_tab );
+            }
             break;
 
         case CONTROL::OpenBoardTab:
