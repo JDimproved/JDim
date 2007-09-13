@@ -482,7 +482,7 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
 //    "[リポジトリ ] " << REPOSITORY_URL << "\n" <<
 //#endif
     "[ディストリ ] " << "\n" <<
-    "[パッケージ] " << "バイナリ/ソース( <入手元> )" << "\n" <<
+    "[パッケージ] " << "バイナリ/ソース( <配布元> )" << "\n" <<
     "[ DE／WM ] " << desktop_environment << "\n" <<
     "[gtkmm-2.4] " << GTKMM_VERSION << "\n" <<
     "[glibmm-2.4] " << GLIBMM_VERSION << "\n" <<
