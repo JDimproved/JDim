@@ -7,6 +7,7 @@
 #include "skeleton/prefdiag.h"
 #include "skeleton/editview.h"
 #include "skeleton/label_entry.h"
+#include "skeleton/spinbutton.h"
 
 namespace BOARD
 {
@@ -74,7 +75,6 @@ namespace BOARD
         ProxyFrame m_proxy_frame_w;
 
         // 情報
-        Gtk::VBox m_vbox_info;
         Gtk::Label m_label_name;
         SKELETON::LabelEntry m_label_url;
         SKELETON::LabelEntry m_label_cache;
@@ -95,6 +95,18 @@ namespace BOARD
         // スレッドあぼーん
         Gtk::Notebook m_notebook_abone_thread;
         SKELETON::EditView m_edit_thread, m_edit_word_thread, m_edit_regex_thread;
+
+        Gtk::VBox m_vbox_abone_thread;
+        Gtk::Label m_label_abone_thread;
+
+        Gtk::HBox m_hbox_number;
+        Gtk::Label m_label_number;
+        SKELETON::SpinButton m_spin_number;
+
+        Gtk::HBox m_hbox_hour;
+        Gtk::Label m_label_hour;
+        SKELETON::SpinButton m_spin_hour;
+
 
         // ローカルルール
         SKELETON::View* m_localrule;

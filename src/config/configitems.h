@@ -241,6 +241,12 @@ namespace CONFIG
         // スレ あぼーん regex
         std::list< std::string > list_abone_regex_thread;
 
+        // スレ あぼーん レス数
+        int abone_number_thread;
+
+        // スレ あぼーん スレ立てからの経過時間
+        int abone_hour_thread;
+
         // あぼーん name
         std::list< std::string > list_abone_name;
 

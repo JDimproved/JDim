@@ -103,30 +103,30 @@ const bool ConfigItems::load()
     fontname[ FONT_ENTRY_DEFAULT ] = MISC::get_entry_font();
 
     // レスを参照するときに前に付ける文字
-    ref_prefix = cf.get_option( "ref_prefix", ">" );
+    ref_prefix = cf.get_option( "ref_prefix", CONF_REF_PREFIX );
 
-    // ref_prefix の後のスペースの数
+    // 参照文字( CONF_REF_PREFIX ) の後のスペースの数
     // JDLIB::ConfLoader の中で MISC::remove_space() が呼ばれて空白が消えるので別設定とした
-    ref_prefix_space = cf.get_option( "ref_prefix_space", 1 );
+    ref_prefix_space = cf.get_option( "ref_prefix_space", CONF_REF_PREFIX_SPACE );
     for( int i = 0; i < ref_prefix_space; ++i ) ref_prefix += " ";
 
     // キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
-    path_cacheroot = cf.get_option( "path_cacheroot", "~/.jd/" );
+    path_cacheroot = cf.get_option( "path_cacheroot", CONF_PATH_CACHEROOT );
 
     // 読み込み用プロクシとポート番号
-    use_proxy_for2ch = cf.get_option( "use_proxy_for2ch", 0 );
+    use_proxy_for2ch = cf.get_option( "use_proxy_for2ch", CONF_USE_PROXY_FOR2CH );
     proxy_for2ch = cf.get_option( "proxy_for2ch", "" );
-    proxy_port_for2ch = cf.get_option( "proxy_port_for2ch", 8080 );
+    proxy_port_for2ch = cf.get_option( "proxy_port_for2ch", CONF_PROXY_PORT_FOR2CH );
 
     // 書き込み用プロクシとポート番号
-    use_proxy_for2ch_w = cf.get_option( "use_proxy_for2ch_w", 0 );
+    use_proxy_for2ch_w = cf.get_option( "use_proxy_for2ch_w", CONF_USE_PROXY_FOR2CH_W );
     proxy_for2ch_w = cf.get_option( "proxy_for2ch_w", "" );
-    proxy_port_for2ch_w = cf.get_option( "proxy_port_for2ch_w", 8080 );
+    proxy_port_for2ch_w = cf.get_option( "proxy_port_for2ch_w", CONF_PROXY_PORT_FOR2CH_W );
 
     // 2chの外にアクセスするときのプロクシとポート番号
-    use_proxy_for_data = cf.get_option( "use_proxy_for_data", 0 );
+    use_proxy_for_data = cf.get_option( "use_proxy_for_data", CONF_USE_PROXY_FOR_DATA );
     proxy_for_data = cf.get_option( "proxy_for_data", "" );
-    proxy_port_for_data = cf.get_option( "proxy_port_for_data", 8080 );
+    proxy_port_for_data = cf.get_option( "proxy_port_for_data", CONF_PROXY_PORT_FOR_DATA );
 
     // 2ch にアクセスするときのエージェント名
     agent_for2ch = cf.get_option( "agent_for2ch", AGENT_FOR2CH );
@@ -428,6 +428,12 @@ const bool ConfigItems::load()
     str_tmp = cf.get_option( "aboneregexthread", "" );
     if( ! str_tmp.empty() ) list_abone_regex_thread = MISC::strtolist( str_tmp );
 
+    // スレ あぼーん( レス数 )
+    abone_number_thread = cf.get_option( "abone_number_thread", CONF_ABONE_NUMBER_THREAD );
+
+    // スレ あぼーん( スレ立てからの経過時間 )
+    abone_hour_thread = cf.get_option( "abone_hour_thread", CONF_ABONE_HOUR_THREAD );
+
     // あぼーん name
     str_tmp = cf.get_option( "abonename", "" );
     if( ! str_tmp.empty() ) list_abone_name = MISC::strtolist( str_tmp );
@@ -620,6 +626,9 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "abonewordthread", str_abone_word_thread );
     cf.update( "aboneregexthread", str_abone_regex_thread );
+
+    cf.update( "abone_number_thread", abone_number_thread );
+    cf.update( "abone_hour_thread", abone_hour_thread );
 
     // あぼーん情報
     std::string str_abone_name = MISC::listtostr( list_abone_name );

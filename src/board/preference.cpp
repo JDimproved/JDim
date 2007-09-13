@@ -168,7 +168,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
     m_edit_regex.set_text( str_regex );
 
-    m_label_warning.set_text( "ここでのあぼーん設定は「" +  DBTREE::board_name( get_url() ) + "」板の全スレに適用されます。\n\n設定のし過ぎは板内の全スレの表示速度を低下させます。\n\n指定のし過ぎに気を付けてください。\n\nなおNG IDはJDを再起動するとリセットされます。" );
+    m_label_warning.set_text( "ここでのあぼーん設定は「" +  DBTREE::board_name( get_url() ) + "」板の全スレに適用されます。\n\n設定のし過ぎは板内の全スレの表示速度を低下させます。\n\n設定のし過ぎに気を付けてください。\n\nなおNG IDはJDを再起動するとリセットされます。" );
 
     m_notebook_abone.append_page( m_label_warning, "注意" );
     m_notebook_abone.append_page( m_edit_id, "NG ID" );
@@ -177,6 +177,33 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_notebook_abone.append_page( m_edit_regex, "NG 正規表現" );
 
     // スレッドあぼーん
+
+    // スレ数、時間
+    m_label_abone_thread.set_text( "以下の数字が0の時は、設定メニューの全体あぼ〜ん設定で指定した数字が用いられます。\n\n" );
+
+    m_label_number.set_text( "スレ以上のレスをあぼ〜ん" );
+    m_spin_number.set_range( 0, 1001 );
+    m_spin_number.set_increments( 1, 1 );
+    m_spin_number.set_value( DBTREE::get_abone_number_thread( get_url() ) );
+            
+    m_hbox_number.set_spacing( 4 );
+    m_hbox_number.pack_start( m_spin_number, Gtk::PACK_SHRINK );
+    m_hbox_number.pack_start( m_label_number, Gtk::PACK_SHRINK );
+
+    m_label_hour.set_text( "時間以上スレ立てから経過したレスをあぼ〜ん" );
+    m_spin_hour.set_range( 0, 1000 );
+    m_spin_hour.set_increments( 1, 1 );
+    m_spin_hour.set_value( DBTREE::get_abone_hour_thread( get_url() ) );
+            
+    m_hbox_hour.set_spacing( 4 );
+    m_hbox_hour.pack_start( m_spin_hour, Gtk::PACK_SHRINK );
+    m_hbox_hour.pack_start( m_label_hour, Gtk::PACK_SHRINK );
+
+    m_vbox_abone_thread.set_border_width( 16 );
+    m_vbox_abone_thread.set_spacing( 8 );
+    m_vbox_abone_thread.pack_start( m_label_abone_thread, Gtk::PACK_SHRINK );
+    m_vbox_abone_thread.pack_start( m_hbox_number, Gtk::PACK_SHRINK );
+    m_vbox_abone_thread.pack_start( m_hbox_hour, Gtk::PACK_SHRINK );
 
     // スレあぼーん
     std::list< std::string > list_thread = DBTREE::get_abone_list_thread( get_url() );
@@ -193,6 +220,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     for( it = list_regex_thread.begin(); it != list_regex_thread.end(); ++it ) if( ! ( *it ).empty() ) str_regex_thread += ( *it ) + "\n";
     m_edit_regex_thread.set_text( str_regex_thread );
 
+    m_notebook_abone_thread.append_page( m_vbox_abone_thread, "一般" );
     m_notebook_abone_thread.append_page( m_edit_thread, "NG スレタイトル" );
     m_notebook_abone_thread.append_page( m_edit_word_thread, "NG ワード" );
     m_notebook_abone_thread.append_page( m_edit_regex_thread, "NG 正規表現" );
@@ -281,7 +309,9 @@ void Preferences::slot_ok_clicked()
     std::list< std::string > list_thread = MISC::get_lines( m_edit_thread.get_text() );
     std::list< std::string > list_word_thread = MISC::get_lines( m_edit_word_thread.get_text() );
     std::list< std::string > list_regex_thread = MISC::get_lines( m_edit_regex_thread.get_text() );
-    DBTREE::reset_abone_thread( get_url(), list_thread, list_word_thread, list_regex_thread );  // 板の再描画も行われる
+    const int number = m_spin_number.get_value_as_int();
+    const int hour = m_spin_hour.get_value_as_int();
+    DBTREE::reset_abone_thread( get_url(), list_thread, list_word_thread, list_regex_thread, number, hour );  // 板の再描画も行われる
 
     // 書き込み設定
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );

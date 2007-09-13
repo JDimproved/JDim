@@ -46,6 +46,7 @@ namespace DBIMG
         const std::string get_cache_path();
 
         const int get_type() const { return m_type; }
+        void set_type( const int type ){ m_type = type; }
 
         // 高さ、幅
         const int get_width() const { return m_width; }

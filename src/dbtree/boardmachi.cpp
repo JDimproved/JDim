@@ -288,7 +288,7 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
                 article->set_status( status );
 
                 // boardビューに表示するリスト更新
-                if( ! BoardBase::get_abone_thread( article ) ) get_list_subject().push_back( article );
+                if( ! BoardBase::is_abone_thread( article ) ) get_list_subject().push_back( article );
             }
         }
     }

@@ -254,8 +254,13 @@ void ArticleViewMain::update_finish()
     std::string str_tablabel;
     if( is_broken() ){
         toolbar()->broken();
-        str_tablabel = "[ 壊れています ]";
+        str_tablabel = "[ 壊れています ]  ";
     }
+    else if( is_old() ){
+        toolbar()->old();
+        str_tablabel = "[ DAT落ち ]  ";
+    }
+
     if( toolbar()->get_label().empty() || ! str_tablabel.empty() ) toolbar()->set_label( str_tablabel + DBTREE::article_subject( url_article() ) );
 
     // タブのラベルセット

@@ -114,6 +114,8 @@ void Admin::setup_menu( const bool enable_checkupdate )
     m_action_group->add( Gtk::Action::create( "CopyURL", "URLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
     m_action_group->add( Gtk::Action::create( "CopyTitle", "タイトルとURLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_title_url ) );
 
+    m_action_group->add( Gtk::Action::create( "Preference", "プロパティ..."), sigc::mem_fun( *this, &Admin::show_preference ) );
+
     m_ui_manager = Gtk::UIManager::create();    
     m_ui_manager->insert_action_group( m_action_group );
 
@@ -161,6 +163,9 @@ void Admin::setup_menu( const bool enable_checkupdate )
 
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitle'/>"
+
+    "<separator/>"
+    "<menuitem action='Preference'/>"
 
     "</popup>"
 
@@ -473,8 +478,11 @@ void Admin::exec_command()
     else if( command.command == "update_finish" ){
         update_finish( command.url );
     }
+    else if( command.command == "unlock_views" ){
+        unlock_all_view( command.url );
+    }
     else if( command.command == "close_view" ){
-        if( command.arg1 == "true" ) close_all_view( command.url );
+        if( command.arg1 == "closeall" ) close_all_view( command.url );
         else close_view( command.url );
     }
     else if( command.command == "close_currentview" ){
@@ -571,6 +579,12 @@ void Admin::exec_command()
 
     else if( command.command == "disable_fold_win" ){
         if( get_jdwin() ) get_jdwin()->set_enable_fold( false );
+    }
+
+    // プロパティ表示
+    else if( command.command == "show_current_preferences" ){
+        SKELETON::View* view = get_current_view();
+        if( view ) view->show_preference();
     }
 
     // 個別のコマンド処理
@@ -935,6 +949,26 @@ void Admin::close_view( SKELETON::View* view )
     }
 }
 
+
+
+//
+// url を含むビューを全てアンロック
+//
+void Admin::unlock_all_view( const std::string& url )
+{
+#ifdef _DEBUG
+    std::cout << "Admin::unlock_all_view : " << url << std::endl;
+#endif
+
+    std::list< View* > list_view = get_list_view( url );
+
+    std::list< View* >::iterator it = list_view.begin();
+    for( ; it != list_view.end(); ++it ){
+
+        SKELETON::View* view = ( *it );
+        if( view && view->is_locked() ) view->unlock();
+    }
+}
 
 
 //
@@ -1797,4 +1831,11 @@ void Admin::unlock( const int page )
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) return view->unlock();
+}
+
+// プロパティ表示
+void Admin::show_preference()
+{
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    if( view ) view->show_preference();
 }

@@ -94,6 +94,26 @@ const std::string ArticleViewBase::url_for_copy()
 }
 
 
+//
+// タブのロック
+//
+void ArticleViewBase::lock()
+{
+    View::lock();
+    if( m_toolbar ) m_toolbar->lock();
+}
+
+
+//
+// タブのアンロック
+//
+void ArticleViewBase::unlock()
+{
+    View::unlock();
+    if( m_toolbar ) m_toolbar->unlock();
+}
+
+
 JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& ArticleViewBase::get_article()
 {
     assert( m_article );
@@ -162,7 +182,6 @@ void ArticleViewBase::pack_widget()
     m_toolbar->m_button_board.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_open_board ) );
     m_toolbar->m_button_favorite.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_favorite ) );
     m_toolbar->m_button_stop.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::stop ) );
-    m_toolbar->m_button_preferences.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_preferences ) );
     m_toolbar->m_button_open_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_open_search ) );
 
     // 検索バー
@@ -202,10 +221,10 @@ void ArticleViewBase::setup_action()
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), false ) );
     action_group()->add( Gtk::Action::create( "CopyResRef", "引用コピー"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), true ) );
-    action_group()->add( Gtk::Action::create( "Delete", "削除する"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
-    action_group()->add( Gtk::Action::create( "DeleteOpen", "削除して再読み込み"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
+    action_group()->add( Gtk::Action::create( "Delete", "削除"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
+    action_group()->add( Gtk::Action::create( "DeleteOpen", "スレ情報を消さずにスレ再取得"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
-    action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ..."), sigc::mem_fun( *this, &ArticleViewBase::slot_push_preferences ) );
+    action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ..."), sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
     action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存..."), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
 
@@ -293,6 +312,7 @@ void ArticleViewBase::setup_action()
     // 削除ボタン押したときのポップアップ
     "<popup name='popup_menu_delete'>"
     "<menuitem action='Delete'/>"
+    "<separator/>"
     "<menuitem action='DeleteOpen'/>"
     "</popup>"
 
@@ -675,15 +695,23 @@ void ArticleViewBase::delete_view()
 
 
 //
-// 記事削除 & 再オープン
+// スレ再取得
 //
 void ArticleViewBase::delete_open_view()
 {
     if( ! SESSION::is_online() ){
         SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
         mdiag.run();
+        return;
     }
-    else CORE::core_set_command( "delete_article", m_url_article, "reopen" );
+
+    if( DBTREE::article_status( m_url_article ) & STATUS_OLD ){
+        SKELETON::MsgDiag mdiag( NULL, "DAT落ちしています。\n\nログが消える恐れがあります。実行しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+        mdiag.set_default_response( Gtk::RESPONSE_NO );
+        if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+    }
+
+    CORE::core_set_command( "delete_article", m_url_article, "reopen", MISC::itostr( drawarea()->get_seen_current() ) );
 }
 
 
@@ -776,10 +804,11 @@ void ArticleViewBase::operate_view( const int& control )
             // 削除
         case CONTROL::Delete:
         {
-            SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+            SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？\n\n「スレ再取得」を押すとあぼ〜んなどのスレ情報を削除せずにスレを再取得します。",
+                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
             mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
-            mdiag.add_button( "削除して再読み込み", Gtk::RESPONSE_YES + 100 );
+            mdiag.add_button( "スレ再取得", Gtk::RESPONSE_YES + 100 );
             mdiag.set_default_response( Gtk::RESPONSE_YES );
             int ret = mdiag.run();
             if( ret == Gtk::RESPONSE_YES ) delete_view();
@@ -1050,12 +1079,12 @@ void ArticleViewBase::slot_push_open_board()
 
 
 //
-// 設定ボタン
+// プロパティ表示
 //
-void ArticleViewBase::slot_push_preferences()
+void ArticleViewBase::show_preference()
 {
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::slot_push_preference\n";
+    std::cout << "ArticleViewBase::show_preference\n";
 #endif
 
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, m_url_article );
@@ -1998,6 +2027,11 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         else if( DBIMG::get_abone( url )){
             SKELETON::MsgDiag mdiag( NULL, "あぼ〜んされています" );
+            mdiag.run();
+        }
+
+        else if( DBIMG::get_type( url ) == DBIMG::T_LARGE ){
+            SKELETON::MsgDiag mdiag( NULL, "画像サイズが大きすぎます。\n\n表示するにはリンクの上でコンテキストメニューを開いて\n「サイズが大きい画像を表示」をクリックしてください。" );
             mdiag.run();
         }
 

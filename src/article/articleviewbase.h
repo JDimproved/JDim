@@ -71,6 +71,9 @@ namespace ARTICLE
         const std::string& url_article() const { return m_url_article; }
         virtual const std::string url_for_copy();
 
+        virtual void lock();
+        virtual void unlock();
+
         // SKELETON::View の関数のオーバロード
         virtual const int width_client();
         virtual const int height_client();
@@ -90,6 +93,7 @@ namespace ARTICLE
         virtual void goto_bottom();
         virtual void goto_num( int num );
         virtual void toggle_toolbar();
+        virtual void show_preference();
 
         // 記事削除 & 再オープン
         void delete_open_view();
@@ -160,7 +164,6 @@ namespace ARTICLE
         virtual void slot_push_write();
         void slot_push_delete();
         void slot_push_open_board();
-        void slot_push_preferences();
         void slot_preferences_image();
         void slot_push_open_search();
         void slot_push_up_search();

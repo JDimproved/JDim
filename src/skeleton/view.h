@@ -126,8 +126,8 @@ namespace SKELETON
 
         // ロック/アンロック
         const bool is_locked() const { return m_locked; }
-        void lock(){ m_locked = true; }
-        void unlock(){ m_locked = false; }
+        virtual void lock(){ m_locked = true; }
+        virtual void unlock(){ m_locked = false; }
 
         // view 上にマウスポインタがあれば true
         bool is_mouse_on_view();
@@ -207,6 +207,7 @@ namespace SKELETON
         virtual void scroll_left(){}
         virtual void scroll_right(){}
         virtual void toggle_toolbar(){}
+        virtual void show_preference(){}
     };
 }
 

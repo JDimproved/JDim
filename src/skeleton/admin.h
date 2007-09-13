@@ -155,6 +155,7 @@ namespace SKELETON
         virtual void update_finish( const std::string& url );        
         virtual void close_view( const std::string& url );
         virtual void close_view( View* view );
+        virtual void unlock_all_view( const std::string& url );
         virtual void close_all_view( const std::string& url );
         virtual void close_current_view();
         virtual void set_title( const std::string& url, const std::string& title, const bool force );
@@ -234,6 +235,9 @@ namespace SKELETON
         virtual const bool is_locked( const int page );
         virtual void lock( const int page );
         virtual void unlock( const int page );
+
+        // プロパティ表示
+        void show_preference();
     };
 }
 

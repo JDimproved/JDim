@@ -1079,7 +1079,7 @@ void ArticleBase::show_updateicon( const bool update )
 //
 // キャッシュ削除
 //
-void ArticleBase::delete_cache()
+void ArticleBase::delete_cache( const bool cache_only )
 {
 #ifdef _DEBUG
     std::cout << "ArticleBase::delete_cache  url = " << m_url << std::endl;
@@ -1095,41 +1095,46 @@ void ArticleBase::delete_cache()
     }
 
     m_number_load = m_number_seen = m_number_before_load = 0;
+    m_cached = false;
     m_status = STATUS_UNKNOWN;
     m_date_modified.clear();
     memset( &m_access_time, 0, sizeof( struct timeval ) );
     memset( &m_check_update_time, 0, sizeof( struct timeval ) );
-    memset( &m_write_time, 0, sizeof( struct timeval ) );
-    m_write_time_date.clear();
 
-    m_write_name.clear();
-    m_write_mail.clear();
-    m_write_fixname = false;
-    m_write_fixmail = false;
+    if( ! cache_only ){
 
-    m_vec_bookmark.clear();
-    m_list_abone_id.clear();
-    m_list_abone_name.clear();
-    m_list_abone_word.clear();
-    m_list_abone_regex.clear();
-    m_vec_abone_res.clear();
-    m_abone_transparent = false;
-    m_abone_chain = false;
-    m_cached = false;
-    m_read_info = false;
-    m_save_info = false;
-    m_enable_load = false;
-    m_bookmarked_thread = false;
+        memset( &m_write_time, 0, sizeof( struct timeval ) );
+        m_write_time_date.clear();
+
+        m_write_name.clear();
+        m_write_mail.clear();
+        m_write_fixname = false;
+        m_write_fixmail = false;
+
+        m_vec_bookmark.clear();
+        m_list_abone_id.clear();
+        m_list_abone_name.clear();
+        m_list_abone_word.clear();
+        m_list_abone_regex.clear();
+        m_vec_abone_res.clear();
+        m_abone_transparent = false;
+        m_abone_chain = false;
+        m_read_info = false;
+        m_save_info = false;
+        m_enable_load = false;
+        m_bookmarked_thread = false;
     
+        // info
+        if( CACHE::file_exists( m_path_article_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_info.c_str() );
+
+        // 拡張info
+        if( CACHE::file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_ext_info.c_str() );
+
+    }
+
     // キャッシュ
     std::string path_dat = CACHE::path_dat( m_url );
     if( CACHE::file_exists( path_dat ) == CACHE::EXIST_FILE ) unlink( path_dat.c_str() );
-
-    // info
-    if( CACHE::file_exists( m_path_article_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_info.c_str() );
-
-    // 拡張info
-    if( CACHE::file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_ext_info.c_str() );
 
     // BoardViewの行を更新
     CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );

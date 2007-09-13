@@ -1204,7 +1204,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
         header->headinfo->block[ BLOCK_MES ] = create_block_node();
         const char str_broken[] = "ここ";
         create_linknode( str_broken, strlen( str_broken ) , PROTO_BROKEN, strlen( PROTO_BROKEN ), COLOR_CHAR_LINK, false );
-        createTextNode( "をクリックしてスレを再読み込みして下さい。", COLOR_CHAR );
+        createTextNode( "をクリックしてスレを再取得して下さい。", COLOR_CHAR );
         
         return pos;
     }

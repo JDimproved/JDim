@@ -556,11 +556,22 @@ std::list< std::string > DBTREE::get_abone_list_regex_thread( const std::string&
     return DBTREE::get_board( url )->get_abone_list_regex_thread();
 }
 
+const int DBTREE::get_abone_number_thread( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_number_thread();
+}
+
+const int DBTREE::get_abone_hour_thread( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_hour_thread();
+}
+
 
 void DBTREE::reset_abone_thread( const std::string& url,
-                                 std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs )
+                                 std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs,
+                                 const int number, const int hour )
 {
-    DBTREE::get_board( url )->reset_abone_thread( threads, words, regexs );
+    DBTREE::get_board( url )->reset_abone_thread( threads, words, regexs, number, hour );
 }
 
 /////////////////////////////////////////////////
@@ -828,9 +839,9 @@ const std::string DBTREE::create_newarticle_message( const std::string& url, con
 
 
 // キャッシュ削除
-void DBTREE::delete_article( const std::string& url )
+void DBTREE::delete_article( const std::string& url, const bool cache_only )
 {
-    DBTREE::get_article( url )->delete_cache();
+    DBTREE::get_article( url )->delete_cache( cache_only );
 }
 
 

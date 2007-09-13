@@ -142,7 +142,7 @@ void ImageViewBase::setup_common()
 
     action_group()->add( Gtk::Action::create( "AboneImage", "画像をあぼ〜んする"), sigc::mem_fun( *this, &ImageViewBase::slot_abone_img ) );
 
-    action_group()->add( Gtk::Action::create( "Preference", "Property"), sigc::mem_fun( *this, &ImageViewBase::slot_preference ) );
+    action_group()->add( Gtk::Action::create( "Preference", "Property"), sigc::mem_fun( *this, &ImageViewBase::show_preference ) );
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
@@ -429,7 +429,7 @@ void ImageViewBase::slot_close_all_views()
 //
 // プロパティ
 //
-void ImageViewBase::slot_preference()
+void ImageViewBase::show_preference()
 {
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( IMAGE::get_admin()->get_win(), CORE::PREFDIAG_IMAGE, get_url() );
 
@@ -700,6 +700,7 @@ void ImageViewBase::slot_reload_force()
     // コードをリセットしてから再読み込みをかける
     m_img->reset();
     m_img->set_code( HTTP_INIT );
+    m_img->set_type( DBIMG::T_UNKNOWN );
     reload();
     CORE::core_set_command( "redraw", get_url() );
 }

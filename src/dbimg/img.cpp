@@ -163,6 +163,7 @@ void Img::download_img( const std::string refurl )
     if( is_loading() ) return;
     if( is_cached() ) return;
     if( ! CACHE::mkdir_imgroot() ) return;
+    if( get_type() == T_LARGE ) return;
 
     // ダウンロード開始
     std::string path = get_cache_path();

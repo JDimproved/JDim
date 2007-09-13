@@ -12,6 +12,8 @@
 #include "jdlib/miscmsg.h"
 #include "jdlib/jdregex.h"
 
+#include "config/globalconf.h"
+
 #include "httpcode.h"
 #include "global.h"
 
@@ -334,7 +336,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
             article->set_status( status );
 
             // boardビューに表示するリスト更新
-            if( ! BoardBase::get_abone_thread( article ) ) get_list_subject().push_back( article );
+            if( ! BoardBase::is_abone_thread( article ) ) get_list_subject().push_back( article );
         }
     }
 }
@@ -432,4 +434,13 @@ void Board2chCompati::download_rule_setting()
 
     if( ! m_settingloader ) m_settingloader = new SettingLoader( url_boardbase() );
     m_settingloader->download_text();
+}
+
+
+//
+// レス数であぼーん(グローバル)
+//
+const int Board2chCompati::get_abone_number_global()
+{
+    return CONFIG::get_abone_number_thread();
 }

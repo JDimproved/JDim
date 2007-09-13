@@ -69,6 +69,7 @@ namespace IMAGE
         virtual void close_view();
         virtual void delete_view();
         virtual void operate_view( const int& control );
+        virtual void show_preference();
 
       protected:
 
@@ -114,7 +115,6 @@ namespace IMAGE
         void slot_close_left_views();
         void slot_close_right_views();
         void slot_close_all_views();
-        void slot_preference();
     };
 
 }

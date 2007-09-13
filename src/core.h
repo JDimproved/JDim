@@ -178,6 +178,9 @@ namespace CORE
         void slot_setup_proxy();
         void slot_setup_passwd();
         void slot_setup_boarditem();
+        void slot_board_pref();
+        void slot_article_pref();
+        void slot_image_pref();
         void slot_setup_browser();
         void slot_setup_abone();
         void slot_setup_abone_thread();

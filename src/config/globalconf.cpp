@@ -282,6 +282,13 @@ void CONFIG::set_list_abone_regex_thread( std::list< std::string >& regex )
 }
 
 
+const int CONFIG::get_abone_number_thread(){ return get_confitem()->abone_number_thread; } 
+void CONFIG::set_abone_number_thread( const int number ){ get_confitem()->abone_number_thread = number; }
+
+const int CONFIG::get_abone_hour_thread(){ return get_confitem()->abone_hour_thread; } 
+void CONFIG::set_abone_hour_thread( const int hour ){ get_confitem()->abone_hour_thread = hour; }
+
+
 std::list< std::string >& CONFIG::get_list_abone_name(){ return get_confitem()->list_abone_name; }
 std::list< std::string >& CONFIG::get_list_abone_word(){ return get_confitem()->list_abone_word; }
 std::list< std::string >& CONFIG::get_list_abone_regex(){ return get_confitem()->list_abone_regex; }

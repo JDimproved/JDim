@@ -300,6 +300,10 @@ void Core::run( bool init )
     // 設定
     m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
 
+    m_action_group->add( Gtk::Action::create( "BoardPref", "表示中の板のプロパティ..." ), sigc::mem_fun( *this, &Core::slot_board_pref ) );
+    m_action_group->add( Gtk::Action::create( "ArticlePref", "表示中のスレのプロパティ..." ), sigc::mem_fun( *this, &Core::slot_article_pref ) );
+    m_action_group->add( Gtk::Action::create( "ImagePref", "表示中の画像のプロパティ..." ), sigc::mem_fun( *this, &Core::slot_image_pref ) );
+
     m_action_group->add( Gtk::Action::create( "General_Menu", "一般" ) );
     m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示する", std::string(), CONFIG::get_show_oldarticle() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
@@ -486,6 +490,12 @@ void Core::run( bool init )
 
     // 設定
         "<menu action='Menu_Config'>"
+
+        "<menuitem action='BoardPref'/>"
+        "<menuitem action='ArticlePref'/>"
+        "<menuitem action='ImagePref'/>"
+
+        "<separator/>"
 
         "<menu action='General_Menu'>"
         "<menuitem action='OldArticle'/>"
@@ -969,6 +979,21 @@ void Core::slot_activate_menubar()
     if( CONFIG::get_use_image_view() && ! IMAGE::get_admin()->empty() ) act->set_sensitive( true );
     else act->set_sensitive( false );
 
+    // スレ一覧のプロパティ
+    act = m_action_group->get_action( "BoardPref" );
+    if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+    
+    // スレのプロパティ
+    act = m_action_group->get_action( "ArticlePref" );
+    if( ! ARTICLE::get_admin()->empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
+    // 画像のプロパティ
+    act = m_action_group->get_action( "ImagePref" );
+    if( ! IMAGE::get_admin()->empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
     m_enable_menuslot = true;
 }
 
@@ -1290,6 +1315,32 @@ void Core::slot_setup_boarditem()
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEM, "" );
     pref->run();
     delete pref;
+}
+
+
+//
+// スレ一覧のプロパティ
+//
+void Core::slot_board_pref()
+{
+    BOARD::get_admin()->set_command( "show_current_preferences" );
+}
+
+
+//
+// スレのプロパティ
+//
+void Core::slot_article_pref()
+{
+    ARTICLE::get_admin()->set_command( "show_current_preferences" );
+}
+
+//
+// 画像のプロパティ
+//
+void Core::slot_image_pref()
+{
+    IMAGE::get_admin()->set_command( "show_current_preferences" );
 }
 
 
@@ -2066,18 +2117,22 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     // articleの削除
+    //
+    // command.arg1 == "reopen" のときはキャッシュだけ再読み込み
+    //
     else if( command.command == "delete_article" ){
 
-        DBTREE::delete_article( command.url );
+        DBTREE::delete_article( command.url, ( command.arg1 == "reopen" ) );
 
         if( DBTREE::article_is_cached( command.url ) ) return;
 
+        ARTICLE::get_admin()->set_command( "unlock_views", command.url );
         ARTICLE::get_admin()->set_command( "close_view", command.url,
-                                           "true" // command.url を含む全てのビューを閉じる
+                                           "closeall" // command.url を含む全てのビューを閉じる
             );
 
         // もう一度開く
-        if( command.arg1 == "reopen" ) core_set_command( "open_article", command.url , "true", "" );
+        if( command.arg1 == "reopen" ) core_set_command( "open_article", command.url , "true", "",  command.arg2 );
 
         return;
     }

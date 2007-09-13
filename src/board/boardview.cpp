@@ -120,7 +120,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_toolbar.m_button_favorite.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_favorite ) );
     m_toolbar.m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_up_search ) );
     m_toolbar.m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_down_search ) );
-    m_toolbar.m_button_preferences.signal_clicked().connect( sigc::mem_fun(*this, &BoardView::slot_push_preferences ) );
     m_toolbar.m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BoardView::slot_entry_operate ) );
 
     pack_start( m_toolbar, Gtk::PACK_SHRINK );    
@@ -324,7 +323,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"), sigc::mem_fun( *this, &BoardView::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "AboneThread", "スレをあぼ〜んする"), sigc::mem_fun( *this, &BoardView::slot_abone_thread ) );
     action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ..."), sigc::mem_fun( *this, &BoardView::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ..."), sigc::mem_fun( *this, &BoardView::slot_push_preferences ) );
+    action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ..."), sigc::mem_fun( *this, &BoardView::show_preference ) );
     action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存..."), sigc::mem_fun( *this, &BoardView::slot_save_dat ) );
 
     ui_manager() = Gtk::UIManager::create();    
@@ -450,6 +449,25 @@ const std::string BoardView::url_for_copy()
     return DBTREE::url_boardbase( get_url() );
 }
 
+
+//
+// タブのロック
+//
+void BoardView::lock()
+{
+    View::lock();
+    m_toolbar.lock();
+}
+
+
+//
+// タブのアンロック
+//
+void BoardView::unlock()
+{
+    View::unlock();
+    m_toolbar.unlock();
+}
 
 
 //
@@ -2038,7 +2056,7 @@ void BoardView::slot_entry_operate( int controlid )
 //
 // 板プロパティ表示
 //
-void BoardView::slot_push_preferences()
+void BoardView::show_preference()
 {
     SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, get_url() );
     pref->run();
@@ -2093,7 +2111,9 @@ void BoardView::slot_abone_thread()
     // 板の再描画も行われる
     std::list< std::string > words = DBTREE::get_abone_list_word_thread( get_url() );
     std::list< std::string > regexs = DBTREE::get_abone_list_regex_thread( get_url() );
-    DBTREE::reset_abone_thread( get_url(), threads, words, regexs );
+    const int number = DBTREE::get_abone_number_thread( get_url() );
+    const int hour = DBTREE::get_abone_hour_thread( get_url() );
+    DBTREE::reset_abone_thread( get_url(), threads, words, regexs, number, hour );
 }
 
 

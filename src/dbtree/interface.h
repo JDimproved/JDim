@@ -159,7 +159,7 @@ namespace DBTREE
     const int article_get_speed( const std::string& url );
 
     // キャッシュ削除
-    void delete_article( const std::string& url );  
+    void delete_article( const std::string& url, const bool cache_only );  
 
     // キャッシュ保存
     bool article_save_dat( const std::string& url, const std::string& path_to );
@@ -243,10 +243,13 @@ namespace DBTREE
     std::list< std::string > get_abone_list_word_thread( const std::string& url );
     std::list< std::string > get_abone_list_regex_thread( const std::string& url );
     std::vector< char > get_abone_vec_res( const std::string& url );
+    const int get_abone_number_thread( const std::string& url );
+    const int get_abone_hour_thread( const std::string& url );
 
     // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
     void reset_abone_thread( const std::string& url,
-                             std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs );
+                             std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs,
+                             const int number, const int hour );
 
     //
     // 各articlebase別のあぼーん情報

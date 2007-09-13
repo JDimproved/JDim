@@ -937,7 +937,7 @@ void BoardBase::receive_finish()
                         ( *it )->save_info( true );
                     }
 
-                    if( ! get_abone_thread( *it ) ) m_list_subject.push_back( *it );
+                    if( ! is_abone_thread( *it ) ) m_list_subject.push_back( *it );
                 }
             }
         }
@@ -1067,19 +1067,28 @@ void BoardBase::update_abone_all_article()
 //
 // スレあぼーん判定
 //
-const bool BoardBase::get_abone_thread( ArticleBase* article )
+const bool BoardBase::is_abone_thread( ArticleBase* article )
 {
     if( ! article ) return false;
+    if( article->empty() ) return false;
 
-    bool check_thread = ! m_list_abone_thread.empty();
-    bool check_word = ! m_list_abone_word_thread.empty();
-    bool check_regex = ! m_list_abone_regex_thread.empty();
-    bool check_word_global = ! CONFIG::get_list_abone_word_thread().empty();
-    bool check_regex_global = ! CONFIG::get_list_abone_regex_thread().empty();
+    const int check_number = article->get_number_load() ? 0: ( m_abone_number_thread ? m_abone_number_thread : get_abone_number_global() );
+    const int check_hour = article->get_number_load() ? 0: ( m_abone_hour_thread ? m_abone_hour_thread : CONFIG::get_abone_hour_thread() );
+    const bool check_thread = ! m_list_abone_thread.empty();
+    const bool check_word = ! m_list_abone_word_thread.empty();
+    const bool check_regex = ! m_list_abone_regex_thread.empty();
+    const bool check_word_global = ! CONFIG::get_list_abone_word_thread().empty();
+    const bool check_regex_global = ! CONFIG::get_list_abone_regex_thread().empty();
 
-    if( !check_thread && !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
+    if( !check_number && !check_hour && !check_thread && !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
 
     JDLIB::Regex regex;
+
+    // レスの数であぼーん
+    if( check_number ) if( article->get_number() >= check_number ) return true;
+
+    // スレ立てからの時間であぼーん
+    if( check_hour ) if( article->get_hour() >= check_hour ) return true;
     
     // スレあぼーん
     if( check_thread ){
@@ -1214,7 +1223,8 @@ void BoardBase::add_abone_word( const std::string& word )
 // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
 //
 void BoardBase::reset_abone_thread( std::list< std::string >& threads,
-                                    std::list< std::string >& words, std::list< std::string >& regexs )
+                                    std::list< std::string >& words, std::list< std::string >& regexs,
+                                    const int number, const int hour )
 {
     if( empty() ) return;
 
@@ -1232,6 +1242,9 @@ void BoardBase::reset_abone_thread( std::list< std::string >& threads,
 
     m_list_abone_regex_thread = MISC::remove_space_from_list( regexs );
     m_list_abone_regex_thread = MISC::remove_nullline_from_list( m_list_abone_regex_thread );
+
+    m_abone_number_thread = number;
+    m_abone_hour_thread = hour;
 
     update_abone_thread();
 }
@@ -1368,6 +1381,12 @@ void BoardBase::read_board_info()
     str_tmp = cf.get_option( "aboneregexthread", "" );
     if( ! str_tmp.empty() ) m_list_abone_regex_thread = MISC::strtolist( str_tmp );
 
+    // レス数であぼーん
+    m_abone_number_thread = cf.get_option( "abonenumberthread", 0 );
+
+    // スレ立てからの経過時間であぼーん
+    m_abone_hour_thread = cf.get_option( "abonehourthread", 0 );
+
     // ローカルプロキシ
     m_mode_local_proxy = cf.get_option( "mode_local_proxy", 0 );
     m_local_proxy = cf.get_option( "local_proxy", "" );
@@ -1447,6 +1466,8 @@ void BoardBase::save_jdboard_info()
          << "abonethread = " << str_abone_thread << std::endl
          << "abonewordthread = " << str_abone_word_thread << std::endl
          << "aboneregexthread = " << str_abone_regex_thread << std::endl
+         << "abonenumberthread = " << m_abone_number_thread << std::endl
+         << "abonehourthread = " << m_abone_hour_thread << std::endl
          << "mode_local_proxy = " << m_mode_local_proxy << std::endl
 
          << "local_proxy = " << m_local_proxy << std::endl

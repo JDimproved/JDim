@@ -16,6 +16,13 @@ namespace CONFIG
         CONF_RESTORE_BOARD = 0,     // スレ一覧を復元
         CONF_RESTORE_ARTICLE = 0,   // スレを復元
         CONF_RESTORE_IMAGE = 0,     // 画像を復元
+        CONF_REF_PREFIX_SPACE = 1, // 参照文字( CONF_REF_PREFIX ) の後のスペースの数
+        CONF_USE_PROXY_FOR2CH = 0, // 2ch 読み込み用プロクシを使用するか
+        CONF_PROXY_PORT_FOR2CH = 8080, // 2ch 読み込み用プロクシポート番号
+        CONF_USE_PROXY_FOR2CH_W = 0, // 2ch 書き込み用プロクシを使用するか
+        CONF_PROXY_PORT_FOR2CH_W = 8080, // 2ch 書き込み用プロクシポート番号
+        CONF_USE_PROXY_FOR_DATA = 0, // 2ch 以外にアクセスするときにプロクシを使用するか
+        CONF_PROXY_PORT_FOR_DATA = 8080, // 2ch 以外にアクセスするときのプロクシポート番号
         CONF_LOADER_BUFSIZE = 32,   // ローダのバッファサイズ
         CONF_LOADER_TIMEOUT = 10,   // ローダのタイムアウト値        
         CONF_LOADER_TIMEOUT_POST = 30, // ポストローダのタイムアウト値        
@@ -73,6 +80,8 @@ namespace CONFIG
         CONF_MAX_IMG_SIZE = 16,     // ダウンロードする画像の最大サイズ(Mbyte)
         CONF_MAX_IMG_PIXEL = 20,     // 画像の最大サイズ(Mピクセル)
         CONF_LINK_AS_BOARD = 0,     // bbsmenu.html内にあるリンクは全て板とみなす
+        CONF_ABONE_NUMBER_THREAD = 0, // スレあぼーん( レス数 )
+        CONF_ABONE_HOUR_THREAD = 0,   // スレあぼーん( スレ立てからの経過時間 )
         CONF_ABONE_TRANSPARENT = 0, // デフォルトで透明あぼーんをする
         CONF_ABONE_CHAIN = 0,       // デフォルトで連鎖あぼーんをする
         CONF_EXPAND_SIDEBAR = 0       // 右ペーンが空の時にサイドバーを閉じる
@@ -81,6 +90,12 @@ namespace CONFIG
 #define CONF_FONTSIZE_THREAD "12"
 #define CONF_FONTSIZE_POPUP  "10"
 #define CONF_FONTSIZE_TREE   "10"
+
+// レスを参照するときに前に付ける文字
+#define CONF_REF_PREFIX ">"
+
+// キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
+#define CONF_PATH_CACHEROOT "~/.jd/"
 
 // 2ch にアクセスするときのエージェント名
 #define AGENT_FOR2CH "Monazilla/1.00 JD"

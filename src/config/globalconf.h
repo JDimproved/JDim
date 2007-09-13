@@ -278,6 +278,12 @@ namespace CONFIG
     void set_list_abone_word_thread( std::list< std::string >& word );
     void set_list_abone_regex_thread( std::list< std::string >& regex );
 
+    const int get_abone_number_thread();
+    void set_abone_number_thread( const int number );
+
+    const int get_abone_hour_thread();
+    void set_abone_hour_thread( const int hour );
+
     // articleviewでのレスの全体あぼーん
     std::list< std::string >& get_list_abone_name(); // 名前
     std::list< std::string >& get_list_abone_word(); // ワード

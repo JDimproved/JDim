@@ -17,12 +17,13 @@
 
 #include "controlutil.h"
 #include "controlid.h"
+#include "global.h"
 
 namespace ARTICLE
 {
     class ArticleToolBar : public Gtk::VBox
     {
-        bool m_broken;
+        int m_status;
 
         friend class ArticleViewBase;
         friend class ArticleViewMain;
@@ -49,7 +50,6 @@ namespace ARTICLE
         SKELETON::ImgButton m_button_reload;
         SKELETON::ImgButton m_button_stop;
         SKELETON::ImgButton m_button_open_search;
-        SKELETON::ImgButton m_button_preferences;
 
         // 検索バー
         Gtk::HBox m_searchbar;
@@ -121,12 +121,13 @@ namespace ARTICLE
             color_bg = get_style()->get_bg( Gtk::STATE_ACTIVE );
             m_label.modify_base( Gtk::STATE_ACTIVE, color_bg );
 
-            // realize する前にbroken()が呼び出された
-            if( m_broken ) broken();
+            // realize する前にbroken()やold()が呼び出された
+            if( m_status == STATUS_BROKEN ) broken();
+            else if( m_status == STATUS_OLD ) old();
         }
 
         ArticleToolBar( bool show_bar ) :
-        m_broken( false ),
+        m_status( STATUS_NORMAL ),
         m_toolbar_shown( 0 ),
         m_button_favorite( Gtk::Stock::COPY ),
         m_button_write( ICON::WRITE ),
@@ -135,7 +136,6 @@ namespace ARTICLE
         m_button_reload( Gtk::Stock::REFRESH ),
         m_button_stop( Gtk::Stock::STOP ),
         m_button_open_search( Gtk::Stock::FIND ),
-        m_button_preferences( Gtk::Stock::PREFERENCES ),
 
         m_searchbar_shown( 0 ),
         m_button_close_search( Gtk::Stock::UNDO ),
@@ -165,7 +165,6 @@ namespace ARTICLE
             m_tooltip.set_tip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite )
                 + "\n\nまたはスレのタブをお気に入りに直接Ｄ＆Ｄする" );
             m_tooltip.set_tip( m_button_stop, CONTROL::get_label_motion( CONTROL::StopLoading ) );
-            m_tooltip.set_tip( m_button_preferences, CONTROL::get_label_motion( CONTROL::Property ) );
             m_tooltip.set_tip( m_button_open_search, CONTROL::get_label_motion( CONTROL::Search ) );
 
             // ボタンとかラベルのバー
@@ -174,7 +173,6 @@ namespace ARTICLE
             m_buttonbar.pack_start( m_label, Gtk::PACK_EXPAND_WIDGET, 2 );
             m_buttonbar.pack_end( m_button_close, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_delete, Gtk::PACK_SHRINK );
-            m_buttonbar.pack_end( m_button_preferences, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_favorite, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_stop, Gtk::PACK_SHRINK );
             m_buttonbar.pack_end( m_button_reload, Gtk::PACK_SHRINK );
@@ -208,14 +206,36 @@ namespace ARTICLE
         
         virtual ~ArticleToolBar(){}
 
-        // スレが壊れている場合はラベルの色を変える
+        // スレが壊れている
         void broken()
         {
-            m_broken = true;
+            m_status = STATUS_BROKEN;
 
             m_label.modify_text( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
             m_label.modify_base( Gtk::STATE_NORMAL, Gdk::Color( "red" ) );
             m_label.modify_base( Gtk::STATE_ACTIVE, Gdk::Color( "red" ) );
+        }
+
+        // DAT落ち
+        void old()
+        {
+            m_status = STATUS_OLD;
+
+            m_label.modify_text( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
+            m_label.modify_base( Gtk::STATE_NORMAL, Gdk::Color( "blue" ) );
+            m_label.modify_base( Gtk::STATE_ACTIVE, Gdk::Color( "blue" ) );
+        }
+
+        // タブのロック
+        void lock()
+        {
+            m_button_close.set_sensitive( false );
+        }
+
+        // タブのアンロック
+        void unlock()
+        {
+            m_button_close.set_sensitive( true );
         }
     };
 

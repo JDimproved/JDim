@@ -54,6 +54,9 @@ namespace DBTREE
 
         virtual void load_rule_setting();
         virtual void download_rule_setting();
+
+        // レス数であぼーん(グローバル)
+        virtual const int get_abone_number_global();
     };
 }
 

@@ -61,6 +61,9 @@ namespace BOARD
 
         virtual const std::string url_for_copy();
 
+        virtual void lock();
+        virtual void unlock();
+
         // SKELETON::View の関数のオーバロード
         virtual const int get_icon( const std::string& iconname );
         virtual const bool is_updated();
@@ -86,6 +89,7 @@ namespace BOARD
         virtual void scroll_left();
         virtual void scroll_right();
         virtual void toggle_toolbar();
+        virtual void show_preference();
 
         void row_up();
         void row_down();
@@ -129,7 +133,6 @@ namespace BOARD
         void slot_copy_title_url();
         void slot_select_all();
         void slot_open_browser();
-        void slot_push_preferences();
         void slot_preferences_article();
         void slot_save_dat();
         void slot_abone_thread();

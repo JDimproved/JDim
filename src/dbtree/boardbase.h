@@ -91,16 +91,18 @@ namespace DBTREE
         std::string m_charset;
         std::string m_name; // 板名
 
-        // あぼーん情報
-        std::list< std::string > m_list_abone_id; // あぼーんするスレのタイトル
+        // ローカルあぼーん情報(板内の全レス対象)
+        std::list< std::string > m_list_abone_id; // あぼーんするID
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
 
-        // スレあぼーん情報
+        // ローカルスレあぼーん情報
         std::list< std::string > m_list_abone_thread; // あぼーんするスレのタイトル
         std::list< std::string > m_list_abone_word_thread; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex_thread; // あぼーんする正規表現
+        int m_abone_number_thread; // レスの数
+        int m_abone_hour_thread; // スレ立てからの経過時間
 
         // ローカルプロキシ設定
         int m_mode_local_proxy;
@@ -165,7 +167,7 @@ namespace DBTREE
         void set_charset( const std::string& str ){ m_charset = str; }
 
         // articleがスレあぼーんされているか
-        const bool get_abone_thread( ArticleBase* article );
+        const bool is_abone_thread( ArticleBase* article );
 
       public:
 
@@ -339,12 +341,15 @@ namespace DBTREE
         std::list< std::string > get_abone_list_thread(){ return m_list_abone_thread; }
         std::list< std::string > get_abone_list_word_thread(){ return m_list_abone_word_thread; }
         std::list< std::string > get_abone_list_regex_thread(){ return m_list_abone_regex_thread; }
+        const int get_abone_number_thread(){ return m_abone_number_thread; }
+        const int get_abone_hour_thread(){ return m_abone_hour_thread; }
 
         // スレあぼーん状態の更新
         void update_abone_thread();
 
         // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
-        void reset_abone_thread( std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs );
+        void reset_abone_thread( std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs,
+                                 const int number, const int hour );
 
         // ローカルプロキシ設定
         const int get_mode_local_proxy() const { return m_mode_local_proxy; }
@@ -411,6 +416,10 @@ namespace DBTREE
         // ローカルルールとsetting.txtの読み込み及びダウンロード
         virtual void load_rule_setting(){}
         virtual void download_rule_setting(){}
+
+        // レス数であぼーん(グローバル)
+        // 2ch以外の板ではキャンセルする
+        virtual const int get_abone_number_global(){ return 0; }
     };
 }
 
