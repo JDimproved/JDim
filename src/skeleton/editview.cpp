@@ -467,23 +467,26 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
 {
     std::stringstream jd_info;
 
-    // ウィンドウマネージャを取得
-    std::string window_manager;
+    // デスクトップ環境を取得( 環境変数から判別可能の場合 )
+    std::string desktop_environment;
     switch( SESSION::get_wm() )
     {
-        case SESSION::WM_GNOME : window_manager = "GNOME"; break;
-        case SESSION::WM_XFCE  : window_manager = "XFCE";  break;
-        case SESSION::WM_KDE   : window_manager = "KDE";   break;
+        case SESSION::WM_GNOME : desktop_environment = "GNOME"; break;
+        case SESSION::WM_XFCE  : desktop_environment = "XFCE";  break;
+        case SESSION::WM_KDE   : desktop_environment = "KDE";   break;
     }
 
     jd_info <<
     "[バージョン] " << JDVERSIONSTR << "\n" <<
+//#ifdef REPOSITORY_URL
+//    "[リポジトリ ] " << REPOSITORY_URL << "\n" <<
+//#endif
     "[ディストリ ] " << "\n" <<
-    "[パッケージ] " << "使用 / ソースから作成" << "\n" <<
-    "[ DE／WM ] " << window_manager << "\n" <<
+    "[パッケージ] " << "バイナリ/ソース( <入手元> )" << "\n" <<
+    "[ DE／WM ] " << desktop_environment << "\n" <<
     "[gtkmm-2.4] " << GTKMM_VERSION << "\n" <<
     "[glibmm-2.4] " << GLIBMM_VERSION << "\n" <<
-    "[ そ の 他 ]\n";
+    "[ そ の 他 ] \n";
 
     insert_str( jd_info.str(), false );
     return true;
