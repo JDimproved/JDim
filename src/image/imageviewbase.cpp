@@ -1010,7 +1010,7 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     }
 
     // サイズ系メニュー、お気に入り、保存
-    char *sizemenu[] = { "Size_Menu", "OrgSizeImage", "ZoomFitImage", "ZoomInImage", "ZoomOutImage",
+    char* sizemenu[] = { "Size_Menu", "OrgSizeImage", "ZoomFitImage", "ZoomInImage", "ZoomOutImage",
                          "AppendFavorite", "Save" };
     for( int i = 0; i < 7; ++i ){
         act = action_group()->get_action( sizemenu[ i ] );
