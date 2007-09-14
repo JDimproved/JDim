@@ -103,8 +103,8 @@ void AboutDiag::init()
     // きい方に合わせて4:3を保持するようにする。
     int win_w, win_h;
     get_size( win_w, win_h );
-    if( win_w * 0.75 < win_h ) set_size_request( win_h / 0.75, win_h );
-    else set_size_request( win_w, win_w * 0.75 );
+    if( win_w * 3 / 4 < win_h ) set_size_request( win_h * 4 / 3, win_h );
+    else set_size_request( win_w, win_w * 3 / 4 );
 }
 
 
@@ -131,7 +131,7 @@ void AboutDiag::set_version( const Glib::ustring& version )
 
     Pango::FontDescription font_discription_version = m_label_version.get_style()->get_font();
     const int label_version_font_size = font_discription_version.get_size();
-    font_discription_version.set_size( label_version_font_size * 1.6 );
+    font_discription_version.set_size( label_version_font_size + label_version_font_size * 2 / 3 );
     font_discription_version.set_weight( Pango::WEIGHT_BOLD );
     m_label_version.modify_font( font_discription_version );
 }
