@@ -88,6 +88,14 @@ namespace SESSION
     const bool get_show_article_toolbar();
     void set_show_article_toolbar( bool show );
 
+    // スレ一覧のタブ表示
+    const bool get_show_board_tab();
+    void set_show_board_tab( bool show );
+
+    // スレビューのタブ
+    const bool get_show_article_tab();
+    void set_show_article_tab( bool show );
+
     // フォーカスされているadmin
     const int focused_admin();
     void set_focused_admin( int admin );

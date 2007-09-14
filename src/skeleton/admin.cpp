@@ -567,6 +567,11 @@ void Admin::exec_command()
         toggle_toolbar();
     }
 
+    // タブ表示切り替え
+    else if( command.command == "toggle_tab" ){
+        toggle_tab();
+    }
+
     // アイコン表示切り替え
     else if( command.command == "toggle_icon" ){
         toggle_icon( command.url );
@@ -1222,6 +1227,16 @@ void Admin::toggle_toolbar()
         SKELETON::View* view = ( *it );
         if( view ) view->toggle_toolbar();
     }
+}
+
+
+//
+// タブ表示切り替え
+//
+void Admin::toggle_tab()
+{
+    if( m_notebook->get_show_tabs() ) m_notebook->set_show_tabs( false );
+    else m_notebook->set_show_tabs( true );
 }
 
 

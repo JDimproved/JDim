@@ -207,6 +207,8 @@ namespace CORE
         void slot_toggle_toolbarbbslist();
         void slot_toggle_toolbararticle();
         void slot_toggle_toolbarboard();
+        void slot_toggle_tabboard();
+        void slot_toggle_tabarticle();
         void slot_toggle_2pane();
         void slot_toggle_3pane();
         void slot_toggle_v3pane();

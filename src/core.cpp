@@ -255,7 +255,7 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::toggle_menubar ) );
 
     // ツールバー
-    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "ツールバー" ) );
+    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "ツールバー(メイン)" ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), false ),
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する", std::string(), false ),
@@ -267,6 +267,12 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbarboard ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "ツールバー(スレビュー)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbararticle ) );
+
+    // タブ
+    m_action_group->add( Gtk::ToggleAction::create( "TabBoard", "タブ(スレ一覧)", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_tabboard ) );
+    m_action_group->add( Gtk::ToggleAction::create( "TabArticle", "タブ(スレビュー)", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_tabarticle ) );
 
     // pane 設定
     Gtk::RadioButtonGroup radiogroup;
@@ -454,6 +460,9 @@ void Core::run( bool init )
         "<menuitem action='ToolbarBbslist'/>"
         "<menuitem action='ToolbarBoard'/>"
         "<menuitem action='ToolbarArticle'/>"
+        "<separator/>"
+        "<menuitem action='TabBoard'/>"
+        "<menuitem action='TabArticle'/>"
         "<separator/>"
         "<menuitem action='2Pane'/>"
         "<menuitem action='3Pane'/>"
@@ -952,6 +961,20 @@ void Core::slot_activate_menubar()
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
         if( SESSION::get_show_article_toolbar() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // タブ
+    act = m_action_group->get_action( "TabBoard" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::get_show_board_tab() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+    act = m_action_group->get_action( "TabArticle" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::get_show_article_tab() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1715,6 +1738,32 @@ void Core::slot_toggle_toolbararticle()
 
     SESSION::set_show_article_toolbar( ! SESSION::get_show_article_toolbar() );
     ARTICLE::get_admin()->set_command_immediately( "toggle_toolbar" );
+}
+
+
+//
+// スレ一覧のタブ表示切り替え
+//
+void Core::slot_toggle_tabboard()
+{
+    if( m_boot ) return;
+    if( ! m_enable_menuslot ) return;
+
+    SESSION::set_show_board_tab( ! SESSION::get_show_board_tab() );
+    BOARD::get_admin()->set_command_immediately( "toggle_tab" );
+}
+
+
+//
+// スレビューのタブ表示切り替え
+//
+void Core::slot_toggle_tabarticle()
+{
+    if( m_boot ) return;
+    if( ! m_enable_menuslot ) return;
+
+    SESSION::set_show_article_tab( ! SESSION::get_show_article_tab() );
+    ARTICLE::get_admin()->set_command_immediately( "toggle_tab" );
 }
 
 

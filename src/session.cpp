@@ -64,6 +64,9 @@ bool show_bbslist_toolbar;
 bool show_board_toolbar;
 bool show_article_toolbar;
 
+bool show_board_tab;
+bool show_article_tab;
+
 int win_focused_admin;
 int win_focused_admin_sidebar;
 
@@ -176,6 +179,9 @@ void SESSION::init_session()
     show_bbslist_toolbar = cf.get_option( "show_bbslist_toolbar", true );
     show_board_toolbar = cf.get_option( "show_board_toolbar", true );
     show_article_toolbar = cf.get_option( "show_article_toolbar", true );
+
+    show_board_tab = cf.get_option( "show_board_tab", true );
+    show_article_tab = cf.get_option( "show_article_tab", true );
 
     win_focused_admin = cf.get_option( "focused_admin", FOCUS_NO );
     win_focused_admin_sidebar = cf.get_option( "focused_admin_sidebar", FOCUS_NO );
@@ -376,6 +382,8 @@ void SESSION::save_session()
         << "show_bbslist_toolbar = " << show_bbslist_toolbar << std::endl
         << "show_board_toolbar = " << show_board_toolbar << std::endl
         << "show_article_toolbar = " << show_article_toolbar << std::endl
+        << "show_board_tab = " << show_board_tab << std::endl
+        << "show_article_tab = " << show_article_tab << std::endl
         << "show_sidebar = " << win_show_sidebar << std::endl
         << "show_menubar = " << win_show_menubar << std::endl
         << "focused_admin = " << win_focused_admin << std::endl
@@ -467,6 +475,12 @@ void SESSION::set_show_board_toolbar( bool show ){ show_board_toolbar = show; }
 
 const bool SESSION::get_show_article_toolbar(){ return show_article_toolbar; }
 void SESSION::set_show_article_toolbar( bool show ){ show_article_toolbar = show; }
+
+const bool SESSION::get_show_board_tab(){ return show_board_tab; }
+void SESSION::set_show_board_tab( bool show ){ show_board_tab = show; }
+
+const bool SESSION::get_show_article_tab(){ return show_article_tab; }
+void SESSION::set_show_article_tab( bool show ){ show_article_tab = show; }
 
 const int SESSION::focused_admin(){ return win_focused_admin; }
 void SESSION::set_focused_admin( int admin ){ win_focused_admin = admin; }

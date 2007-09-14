@@ -46,6 +46,7 @@ BoardAdmin::BoardAdmin( const std::string& url )
 {
     get_notebook()->set_dragable( true );
     get_notebook()->set_fixtab( false );
+    if( ! SESSION::get_show_board_tab() ) get_notebook()->set_show_tabs( false );
 
     setup_menu( false );
 }
