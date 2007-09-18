@@ -11,7 +11,7 @@
 #
 %define         main_ver      1.9.6
 %define         strtag        beta070804
-%define         repoid        25845
+%define         repoid        26577
 # Define this if this is pre-version
 %define         pre_release   1
 ##########################################
@@ -48,7 +48,7 @@ Release:        %{rel}
 Summary:        A 2ch browser
 
 Group:          Applications/Internet
-License:        GPL
+License:        GPLv2
 URL:            http://jd4linux.sourceforge.jp/
 Source0:        http://osdn.dl.sourceforge.jp/jd4linux/%{repoid}/%{name}-%{main_ver}-%{strtag}.tgz
 #Source0:	%{name}-%{main_ver}-%{strtag}.tgz
@@ -70,7 +70,7 @@ JD is a 2ch browser based on gtkmm2.
 
 %prep
 %setup -q -n %{name}-%{main_ver}-%{strtag}
-find . -name .svn | sort -r | xargs %{__rm} -rf
+#find . -name .svn | sort -r | xargs %{__rm} -rf
 
 %build
 sh autogen.sh
@@ -90,15 +90,14 @@ export TZ='Asia/Tokyo'
 %{__rm} -rf $RPM_BUILD_ROOT
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
-%{__mkdir_p} $RPM_BUILD_ROOT%{_datadir}/applications
 %{__mkdir_p} $RPM_BUILD_ROOT%{icondir}
-
 %{__install} -p -m 644 %{name}.png $RPM_BUILD_ROOT%{icondir}
 
 desktop-file-install \
    --vendor %{vendorname} \
    --dir $RPM_BUILD_ROOT%{_datadir}/applications \
-   %{name}.desktop
+   --delete-original \
+   $RPM_BUILD_ROOT%{_datadir}/applications/%{name}.desktop
 
 %clean
 %{__rm} -rf $RPM_BUILD_ROOT
@@ -116,6 +115,7 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %doc COPYING ChangeLog README
 %{_bindir}/%{name}
 %{_datadir}/applications/%{vendorname}-%{name}.desktop
+%{_datadir}/pixmaps/%{name}.png
 %{icondir}/%{name}.png
 
 %changelog
