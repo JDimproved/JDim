@@ -82,7 +82,7 @@ void BBSListViewMain::show_view()
 void BBSListViewMain::update_view()
 {
     // BBSListViewBase::m_document に Root::m_document を代入
-    if( ! m_document.hasChildNodes() ) m_document = DBTREE::get_xml_document();
+    m_document = DBTREE::get_xml_document();
 
     // 外部板のペア( 名前, URL )を取得
     m_load_etc = false;
