@@ -488,7 +488,8 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
     "[glibmm-2.4] " << GLIBMM_VERSION << "\n" <<
     "[ そ の 他 ] \n";
 
-    insert_str( jd_info.str(), false );
+    insert_str( Glib::locale_to_utf8( jd_info.str() ), false );
+
     return true;
 }
 

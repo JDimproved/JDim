@@ -411,7 +411,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
     m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル..." ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
-    m_action_group->add( Gtk::Action::create( "About", "JDについて" ), sigc::mem_fun( *this, &Core::slot_show_about ) );
+    m_action_group->add( Gtk::Action::create( "About", "JDについて(_A)" ), sigc::mem_fun( *this, &Core::slot_show_about ) );
     
 
     m_ui_manager = Gtk::UIManager::create();    
@@ -1411,10 +1411,8 @@ void Core::slot_show_manual()
 //
 void Core::slot_show_about()
 {
-    std::stringstream version_org;
-
-    std::stringstream license_org;
-
+    std::stringstream version;
+    std::stringstream license;
     const Glib::ustring comments = "JDはLinux用 2ch ブラウザです";
     const Glib::ustring copyright = JDCOPYRIGHT;
 
@@ -1423,7 +1421,7 @@ void Core::slot_show_about()
     // 以下の文章は和訳を元にバージョン及び住所を訂正した物です。
     // http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
     // http://www.opensource.jp/gpl/gpl.ja.html#SEC4 (和訳)
-    license_org <<
+    license <<
     "JD は GNOME 上で動作する 2ch ブラウザです。\n"
     "\n" <<
     JDCOPYRIGHT << "\n"
@@ -1441,18 +1439,15 @@ void Core::slot_show_about()
     "で請求してください(宛先は the Free Software Foundation, Inc., 51 "
     "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA)。\n";
 
-    version_org << "バージョン " << JDVERSIONSTR;
- 
-    const Glib::ustring version = Glib::locale_to_utf8( version_org.str() );
-    const Glib::ustring license = Glib::locale_to_utf8( license_org.str() );
+    version << "バージョン " << JDVERSIONSTR;
 
     SKELETON::AboutDiag about( "JDについて" );
     about.set_logo( ICON::get_icon( ICON::JD96 ) );
-    about.set_version( version );
+    about.set_version( Glib::locale_to_utf8( version.str() ) );
     about.set_comments( comments );
     about.set_website( CONFIG::get_url_jdhp() );
     about.set_copyright( copyright );
-    about.set_license( license );
+    about.set_license( Glib::locale_to_utf8( license.str() ) );
     about.run();
 }
     
