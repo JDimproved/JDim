@@ -1475,7 +1475,7 @@ void Core::slot_reload_list()
     }
 
     DBTREE::download_bbsmenu();
-    CORE::core_set_command( "set_status","", "loading...." );        
+    CORE::core_set_command( "set_status","", "板一覧再読み込み中...." );        
 }
 
 
@@ -2254,6 +2254,8 @@ void Core::set_command( const COMMAND_ARGS& command )
 
     else if( command.command  == "update_bbslist" ){
 
+        CORE::core_set_command( "set_status","" ,"" );        
+        CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
         BBSLIST::get_admin()->set_command( "update_view", URL_BBSLISTVIEW );
         return;
     }
