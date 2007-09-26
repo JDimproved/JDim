@@ -411,7 +411,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
     m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル..." ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
-    m_action_group->add( Gtk::Action::create( "About", "JDについて(_A)" ), sigc::mem_fun( *this, &Core::slot_show_about ) );
+    m_action_group->add( Gtk::Action::create( "About", "JDについて..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
     
 
     m_ui_manager = Gtk::UIManager::create();    
@@ -1443,11 +1443,11 @@ void Core::slot_show_about()
 
     SKELETON::AboutDiag about( "JDについて" );
     about.set_logo( ICON::get_icon( ICON::JD96 ) );
-    about.set_version( Glib::locale_to_utf8( version.str() ) );
+    about.set_version( version.str() );
     about.set_comments( comments );
     about.set_website( CONFIG::get_url_jdhp() );
     about.set_copyright( copyright );
-    about.set_license( Glib::locale_to_utf8( license.str() ) );
+    about.set_license( license.str() );
     about.run();
 }
     

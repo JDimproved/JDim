@@ -476,6 +476,13 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
         case SESSION::WM_KDE   : desktop_environment = "KDE";   break;
     }
 
+    // $LANG が ja_JP.UTF-8 でない場合は"その他"に追加する。
+    std::string other;
+    std::string lang = std::string( getenv( "LANG" ) );
+    if( lang.empty() ||
+        lang != "ja_JP.utf8" &&
+        lang != "ja_JP.UTF-8" ) other.append( "LANG = " + lang );
+
     jd_info <<
     "[バージョン] " << JDVERSIONSTR << "\n" <<
 //#ifdef REPOSITORY_URL
@@ -486,16 +493,16 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
     "[ DE／WM ] " << desktop_environment << "\n" <<
     "[gtkmm-2.4] " << GTKMM_VERSION << "\n" <<
     "[glibmm-2.4] " << GLIBMM_VERSION << "\n" <<
-    "[ そ の 他 ] \n";
+    "[ そ の 他 ] " << other << "\n";
 
-    insert_str( Glib::locale_to_utf8( jd_info.str() ), false );
+    insert_str( jd_info.str(), false );
 
     return true;
 }
 
 
 //
-// ポップアッップを隠す
+// ポップアップを隠す
 //
 void EditTextView::slot_hide_popupmenu()
 {
