@@ -27,7 +27,7 @@ using namespace CORE;
 
 #define HIST_NONAME "--------------"
 
-// ルート要素名( history.xml, history_board.xml history_close.xml )
+// ルート要素名( hist.xml, hist_board.xml, hist_close.xml )
 #define ROOT_NODE_NAME "history"
 
 // 履歴に表示する文字数(半角)

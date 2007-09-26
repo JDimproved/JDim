@@ -103,8 +103,8 @@ void AboutDiag::init()
     // きい方に合わせて4:3を保持するようにする。
     int win_w, win_h;
     get_size( win_w, win_h );
-    if( win_w * 3 / 4 < win_h ) set_size_request( win_h * 4 / 3, win_h );
-    else set_size_request( win_w, win_w * 3 / 4 );
+    if( win_w * 3 / 4 < win_h ) set_size_request( win_h * 4 / 3, -1 );
+    else set_size_request( -1, win_w * 3 / 4 );
 }
 
 

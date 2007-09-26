@@ -15,7 +15,7 @@ using namespace BBSLIST;
 
 #define SUBDIR_ETCLIST "外部板"
 
-// ルート要素名( list_main.xml )
+// ルート要素名( boards.xml )
 #define ROOT_NODE_NAME "boardlist"
 
 // メインビュー

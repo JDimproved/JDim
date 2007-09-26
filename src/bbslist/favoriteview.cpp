@@ -8,7 +8,7 @@
 #include "cache.h"
 #include "global.h"
 
-// ルート要素名( fovorite.xml )
+// ルート要素名( bookmark.xml )
 #define ROOT_NODE_NAME "favorite"
 
 using namespace BBSLIST;
