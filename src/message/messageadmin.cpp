@@ -249,19 +249,20 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
 bool MessageAdmin::delete_message( SKELETON::View * view )
 {
     SKELETON::MsgDiag mdiag( get_win(),
-                             "編集中のメッセージを破棄しますか？\n\n保存ボタンを押すとメッセージを保存できます。",
-                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+                             "編集中のメッセージを閉じる前に内容を保存しますか？\n\n保存ボタンを押すとメッセージを保存できます。",
+                             false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE );
 
-    mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-    mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
-    mdiag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_YES + 100 );
+    mdiag.add_button( "保存せずに閉じる(_W)", Gtk::RESPONSE_NO );
+    mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+    mdiag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_YES );
+    mdiag.set_default_response( Gtk::RESPONSE_YES );
 
     for(;;){
         int ret = mdiag.run();
         mdiag.hide();
-        if( ret == Gtk::RESPONSE_NO ) return false;
-        else if( ret == Gtk::RESPONSE_YES + 100 ) view->set_command( "save_message" );
-        else return true;
+        if( ret == Gtk::RESPONSE_NO ) return true;
+        else if( ret == Gtk::RESPONSE_YES ) view->set_command( "save_message" );
+        else return false;
     }
 
     return true;

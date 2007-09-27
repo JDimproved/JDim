@@ -314,7 +314,8 @@ void MessageViewBase::pack_widget()
     m_toolbar.pack_start( m_button_not_close, Gtk::PACK_SHRINK );
     m_toolbar.pack_start( m_button_cancel, Gtk::PACK_SHRINK );
 
-
+    if( SESSION::get_close_mes() ) m_button_cancel.set_sensitive( true );
+    else m_button_cancel.set_sensitive( false );
 
     // 書き込みビュー
     m_label_name.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
@@ -553,6 +554,9 @@ void MessageViewBase::slot_not_close_clicked()
     if( ! m_enable_menuslot ) return;
 
     SESSION::set_close_mes( ! SESSION::get_close_mes() );
+
+    if( SESSION::get_close_mes() ) m_button_cancel.set_sensitive( true );
+    else m_button_cancel.set_sensitive( false );
 }
 
 
