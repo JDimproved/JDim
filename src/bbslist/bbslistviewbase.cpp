@@ -1125,7 +1125,7 @@ void BBSListViewBase::slot_append_favorite()
 //
 void BBSListViewBase::slot_newdir()
 {
-    if( m_path_selected.empty() ) return;
+    // これは m_path_selected が空でも実行する
 
     Gtk::TreeModel::Path path = append_row( std::string(), "New Directory", TYPE_DIR, m_path_selected, true );
     m_treeview.set_cursor( path );
