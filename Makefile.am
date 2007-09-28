@@ -8,19 +8,31 @@ icon_DATA = jd.png
 
 EXTRA_DIST = AUTHORS TODO README configure 
 
+DEFS += -DHAVE_BUILDINFO_H
+BUILDINFO_HEADER = buildinfo.h
+CC_VERSION = $(shell $(CC) -dumpversion 2>/dev/null)
 SVN_REPOSITORY = $(shell LANG=C svn info | $(AWK) '/^URL/ {print $$2}' 2>/dev/null)
 SVN_REVISION = $(shell LANG=C svnversion -n 2>/dev/null)
 
-all: svnversion.h
+all: $(BUILDINFO_HEADER)
 
-.PHONY: svnversion.h
+.PHONY: $(BUILDINFO_HEADER)
 
-svnversion.h:
+$(BUILDINFO_HEADER):
 	-rm -f $@.new
 
 	@echo '/* This file is generated from Makefile by make. */' >> $@.new
-	@echo '#ifndef _SVNVERSION_H' >> $@.new
-	@echo '#define _SVNVERSION_H' >> $@.new
+	@echo '#ifndef _BUILDINFO_H' >> $@.new
+	@echo '#define _BUILDINFO_H' >> $@.new
+	@echo '' >> $@.new
+
+	@echo '// Build information.' >> $@.new
+
+	@if test -n $(CC_VERSION); \
+	then \
+	    echo '#define CC_VERSION "$(CC_VERSION)"' >> $@.new; \
+	fi
+
 	@echo '' >> $@.new
 
 	@echo '// Version information of SVN.' >> $@.new
@@ -42,10 +54,10 @@ svnversion.h:
 	@diff -Nq $@ $@.new >/dev/null 2>&1; \
 	if test $$? -eq 1; \
 	then \
-	    echo 'SVN: Modified.'; \
+	    echo '$@: Modified.'; \
 	    mv -f $@.new $@; \
 	else \
-	    echo 'SVN: Not modified.'; \
+	    echo '$@: Not modified.'; \
 	    rm -f $@.new; \
 	    test -e $@ || touch $@; \
 	fi

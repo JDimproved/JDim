@@ -3,6 +3,10 @@
 #ifndef _JDVER_H
 #define _JDVER_H
 
+#ifdef HAVE_BUILDINFO_H
+#include "buildinfo.h"
+#endif
+
 // svn 版の時は JDVERSION_SVN をdefineする
 //#define JDVERSION_SVN
 
@@ -19,7 +23,6 @@
 
 //--------------------------------
 #ifdef JDVERSION_SVN // SVN版
-#include "svnversion.h"
 
 #ifdef SVN_REPOSITORY // リポジトリ
 #define REPOSITORY_URL SVN_REPOSITORY
