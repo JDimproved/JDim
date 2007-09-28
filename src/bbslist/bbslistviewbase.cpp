@@ -2554,13 +2554,27 @@ void BBSListViewBase::slot_active_search()
 
         // 後方
         if( !m_search_invert ){
+
             path = m_treeview.next_path( path, false );
+
+            // 一番最後を過ぎたら先頭に戻る
             if( ! m_treeview.get_row( path ) ) path =  GET_PATH( *( m_treestore->children().begin() ) );
         }
 
         // 前方
         else{
-            if( path == GET_PATH( *( m_treestore->children().begin() ) ) ) path = GET_PATH( *( m_treestore->children().rbegin() ) );
+
+            // 先頭にいるときは最後に戻る
+            if( path == GET_PATH( *( m_treestore->children().begin() ) ) ){
+
+                path = GET_PATH( *( m_treestore->children().rbegin() ) );
+                Gtk::TreePath path_tmp = path;
+                while( m_treeview.get_row( path_tmp ) ){
+                    path = path_tmp;
+                    path_tmp = m_treeview.next_path( path_tmp, false );
+                }
+            }
+
             else path = m_treeview.prev_path( path, false );
         }
 
