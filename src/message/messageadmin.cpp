@@ -257,13 +257,21 @@ bool MessageAdmin::delete_message( SKELETON::View * view )
     mdiag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_YES );
     mdiag.set_default_response( Gtk::RESPONSE_YES );
 
-    for(;;){
-        int ret = mdiag.run();
-        mdiag.hide();
-        if( ret == Gtk::RESPONSE_NO ) return true;
-        else if( ret == Gtk::RESPONSE_YES ) view->set_command( "save_message" );
-        else return false;
+    int ret = mdiag.run();
+    mdiag.hide();
+    bool result = false;
+
+    switch( ret )
+    {
+        case Gtk::RESPONSE_NO:
+            result = true;
+            break;
+
+        case Gtk::RESPONSE_YES:
+            view->set_command( "save_message" );
+            result = true;
+            break;
     }
 
-    return true;
+    return result;
 }
