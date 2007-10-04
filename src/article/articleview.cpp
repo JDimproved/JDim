@@ -895,6 +895,8 @@ ArticleViewSearchCache::~ArticleViewSearchCache()
 #ifdef _DEBUG    
     std::cout << "ArticleViewSearchCache::~ArticleViewSearchCache : " << get_url() << std::endl;
 #endif
+
+    stop();
 }
 
 
