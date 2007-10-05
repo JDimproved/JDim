@@ -8,7 +8,6 @@ icon_DATA = jd.png
 
 EXTRA_DIST = AUTHORS TODO README configure 
 
-DEFS += -DHAVE_BUILDINFO_H
 BUILDINFO_HEADER = buildinfo.h
 CC_VERSION = $(shell $(CC) -dumpversion 2>/dev/null)
 SVN_REPOSITORY = $(shell LANG=C svn info | $(AWK) '/^URL/ {print $$2}' 2>/dev/null)

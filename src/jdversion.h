@@ -3,6 +3,9 @@
 #ifndef _JDVER_H
 #define _JDVER_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #ifdef HAVE_BUILDINFO_H
 #include "buildinfo.h"
 #endif

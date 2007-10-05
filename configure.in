@@ -16,6 +16,8 @@ AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 AC_LANG_CPLUSPLUS
 
+AC_DEFINE(HAVE_BUILDINFO_H, 1, Define to 1 if you have the 'buildinfo.h' header file.)
+
 dnl
 dnl OSを判定してOS別の設定
 dnl 
