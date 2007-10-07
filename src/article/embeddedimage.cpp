@@ -143,8 +143,9 @@ void EmbeddedImage::resize_thread()
 #endif
 
     std::string errmsg;
-
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), m_stop, true, errmsg );
+    bool pixbufonly = true;
+    if( m_img->get_type() == DBIMG::T_BMP ) pixbufonly = false; // BMP の場合 pixbufonly = true にすると真っ黒になる
+    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), m_stop, pixbufonly, errmsg );
     if( loader && loader->get_pixbuf() ) m_pixbuf = loader->get_pixbuf()->scale_simple( m_width, m_height, Gdk::INTERP_NEAREST );
 
     // メインスレッドにリサイズが終わったことを知らせて
