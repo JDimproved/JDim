@@ -27,6 +27,7 @@ jd_SOURCES = \
 	usrcmdmanager.cpp \
 	compmanager.cpp \
 	searchmanager.cpp \
+	searchloader.cpp \
 	aamanager.cpp \
 	dispatchmanager.cpp \
 	cssmanager.cpp \
@@ -40,6 +41,7 @@ jd_SOURCES = \
 \
 	session.cpp \
 	login2ch.cpp \
+	loginbe.cpp \
 \
 	viewfactory.cpp \
 \
@@ -61,6 +63,7 @@ noinst_HEADERS = \
 	usrcmdmanager.h \
 	compmanager.h \
 	searchmanager.h \
+	searchloader.h \
 	aamanager.h \
 	dispatchmanager.h \
 	cssmanager.h \
@@ -79,6 +82,7 @@ noinst_HEADERS = \
 \
 	session.h \
 	login2ch.h \
+	loginbe.h \
 \
 	viewfactory.h \
 \

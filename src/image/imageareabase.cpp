@@ -75,6 +75,9 @@ void ImageAreaBase::set_image()
     const int minsize = w_org/4;
     if( pixbufonly && get_width() > minsize  && m_img->get_type() == DBIMG::T_JPG ) pixbufonly = false;
 
+    // BMP の場合 pixbufonly = true にすると真っ黒になる
+    if( pixbufonly && m_img->get_type() == DBIMG::T_BMP ) pixbufonly = false;
+
     Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), stop, pixbufonly, errmsg );
     if( errmsg.empty() && loader && loader->get_pixbuf() ){
 

@@ -26,6 +26,9 @@ namespace DBTREE
         virtual const std::string get_proxy_host_w();
         virtual const int get_proxy_port_w();
 
+        // 書き込み用クッキー
+        virtual const std::string cookie_for_write();
+
         // 新スレ作成用のメッセージ変換
         virtual const std::string create_newarticle_message( const std::string& subject,
                                                              const std::string& name, const std::string& mail, const std::string& msg );

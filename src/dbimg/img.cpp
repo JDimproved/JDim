@@ -247,7 +247,7 @@ void Img::show_large_img()
     const int size = 256;
     char data[ size ];
     CACHE::load_rawdata( get_cache_path(), data, size );
-    m_type = get_image_type( ( const unsigned char* ) data );
+    m_type = DBIMG::get_image_type( ( const unsigned char* ) data );
     if( m_type != T_NOIMG ){
 
         set_code( HTTP_OK );
@@ -282,37 +282,6 @@ void Img::set_protect( bool protect )
 }
 
 
-//
-// 画像の先頭のシグネチャを見て画像かどうかをチェック
-//
-const int Img::get_image_type( const unsigned char *sign )
-{
-    int type = T_NOIMG;
-
-    // jpeg は FF D8
-    if( sign[ 0 ] == 0xFF
-        && sign[ 1 ] == 0xD8 ) type = T_JPG;
-
-    // png は 0x89 0x50 0x4e 0x47 0xd 0xa 0x1a 0xa
-    else if( sign[ 0 ] == 0x89
-             && sign[ 1 ] == 0x50
-             && sign[ 2 ] == 0x4e
-             && sign[ 3 ] == 0x47
-             && sign[ 4 ] == 0x0d
-             && sign[ 5 ] == 0x0a
-             && sign[ 6 ] == 0x1a
-             && sign[ 7 ] == 0x0a ) type = T_PNG;
-
-    // gif
-    else if( sign[ 0 ] == 'G'
-             && sign[ 1 ] == 'I'
-             && sign[ 2 ] == 'F' ) type = T_GIF;
-
-
-    return type;
-}
-
-
 // 拡張子が偽装されているか
 const bool Img::is_fake()
 {
@@ -322,9 +291,7 @@ const bool Img::is_fake()
     std::string url = m_url;
     if( ! m_url_alt.empty() ) url = m_url_alt;
 
-    if( DBIMG::is_jpg( url ) && m_type != T_JPG ) ret = true;
-    if( DBIMG::is_png( url ) && m_type != T_PNG ) ret = true;
-    if( DBIMG::is_gif( url ) && m_type != T_GIF ) ret = true;
+    if( DBIMG::get_type_ext( url ) != m_type ) ret = true;
 
 #ifdef _DEBUG
     std::cout << "Img::is_fake url = " << url << " ret = " << ret << std::endl;
@@ -353,7 +320,7 @@ void Img::receive_data( const char* data, size_t size )
         assert( size > 8 );
 #endif        
 
-        m_type = get_image_type( ( const unsigned char* ) data );
+        m_type = DBIMG::get_image_type( ( const unsigned char* ) data );
 
         if( m_type == T_NOIMG ){
 

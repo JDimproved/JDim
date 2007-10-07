@@ -6,6 +6,7 @@
 #include "imgroot.h"
 #include "img.h"
 #include "delimgcachediag.h"
+#include "imginterface.h"
 
 #include "jdlib/confloader.h"
 
@@ -67,21 +68,61 @@ Img* ImgRoot::search_img( const std::string& url )
 }
 
 
-
-bool ImgRoot::is_loadable( const std::string& url )
+//
+// 画像データの先頭のシグネチャを見て画像のタイプを取得
+// 画像ではない場合は T_NOIMG を返す
+//
+const int ImgRoot::get_image_type( const unsigned char *sign )
 {
-    return is_loadable( url.c_str(), url.length() );
+    int type = T_NOIMG;
+
+    // jpeg は FF D8
+    if( sign[ 0 ] == 0xFF
+        && sign[ 1 ] == 0xD8 ) type = T_JPG;
+
+    // png は 0x89 0x50 0x4e 0x47 0xd 0xa 0x1a 0xa
+    else if( sign[ 0 ] == 0x89
+             && sign[ 1 ] == 0x50
+             && sign[ 2 ] == 0x4e
+             && sign[ 3 ] == 0x47
+             && sign[ 4 ] == 0x0d
+             && sign[ 5 ] == 0x0a
+             && sign[ 6 ] == 0x1a
+             && sign[ 7 ] == 0x0a ) type = T_PNG;
+
+    // gif
+    else if( sign[ 0 ] == 'G'
+             && sign[ 1 ] == 'I'
+             && sign[ 2 ] == 'F' ) type = T_GIF;
+
+    // bitmap
+    if( sign[ 0 ] == 'B'
+        && sign[ 1 ] == 'M' ) type = T_BMP;
+
+    return type;
 }
 
 
-bool ImgRoot::is_loadable( const char* url, int n )
+//
+// 拡張子からタイプを取得
+// 画像ではない場合は T_UNKNOWN を返す
+//
+int ImgRoot::get_type_ext( const std::string& url )
 {
-    if( is_jpg( url, n ) ) return true;
-    if( is_png( url, n ) ) return true;
-    if( is_gif( url, n ) ) return true;
-
-    return false;
+    return get_type_ext( url.c_str(), url.length() );
 }
+
+
+int ImgRoot::get_type_ext( const char* url, int n )
+{
+    if( is_jpg( url, n ) ) return T_JPG;
+    if( is_png( url, n ) ) return T_PNG;
+    if( is_gif( url, n ) ) return T_GIF;
+    if( is_bmp( url, n ) ) return T_BMP;
+
+    return T_UNKNOWN;
+}
+
 
 // 今のところ拡張子だけを見る
 bool ImgRoot::is_jpg( const char* url, int n )
@@ -145,7 +186,21 @@ bool ImgRoot::is_gif( const char* url, int n )
     return false;
 }
 
+bool ImgRoot::is_bmp( const char* url, int n )
+{
+    // .bmp
+    if( *( url + n -4 ) == '.' &&
+        *( url + n -3 ) == 'b' &&
+        *( url + n -2 ) == 'm' &&
+        *( url + n -1 ) == 'p'  ) return true;
 
+    if( *( url + n -4 ) == '.' &&
+        *( url + n -3 ) == 'B' &&
+        *( url + n -2 ) == 'M' &&
+        *( url + n -1 ) == 'P'  ) return true;
+
+    return false;
+}
 
 
 //

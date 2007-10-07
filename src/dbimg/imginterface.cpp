@@ -25,78 +25,35 @@ void DBIMG::delete_root()
 }
 
 
-const bool DBIMG::is_loadable( const std::string& url )
-{
-    if( instance_dbimg_root ) return instance_dbimg_root->is_loadable( url );
 
-    return false;
+const int DBIMG::get_type_ext( const std::string& url )
+{
+    if( instance_dbimg_root ) return instance_dbimg_root->get_type_ext( url );
+    return T_UNKNOWN;
 }
 
 
-const bool DBIMG::is_loadable( const char* url, int n )
+const int DBIMG::get_image_type( const unsigned char *sign )
 {
-    if( instance_dbimg_root ) return instance_dbimg_root->is_loadable( url, n );
+    if( instance_dbimg_root ) return instance_dbimg_root->get_image_type( sign );
+    return T_UNKNOWN;
+}
 
-    return false;
+const int DBIMG::get_type_ext( const char* url, int n )
+{
+    if( instance_dbimg_root )  return instance_dbimg_root->get_type_ext( url, n );
+    return T_UNKNOWN;
 }
 
 
-const bool DBIMG::is_jpg( const std::string& url )
-{
-    if( instance_dbimg_root ) return instance_dbimg_root->is_jpg( url.c_str(), url.length() );
-
-    return false;
-}
-
-
-const bool DBIMG::is_png( const std::string& url )
-{
-    if( instance_dbimg_root ) return instance_dbimg_root->is_png( url.c_str(), url.length() );
-
-    return false;
-}
-
-
-const bool DBIMG::is_gif( const std::string& url )
-{
-    if( instance_dbimg_root ) return instance_dbimg_root->is_gif( url.c_str(), url.length() );
-
-    return false;
-}
-
-
-const bool DBIMG::is_jpg_real( const std::string& url )
+const int DBIMG::get_type_real( const std::string& url )
 {
     int type = T_UNKNOWN;
     DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) type = img->get_type();
-    if( type == T_JPG ) return true;
 
-    return false;
+    return type;
 }
-
-
-const bool DBIMG::is_png_real( const std::string& url )
-{
-    int type = T_UNKNOWN;
-    DBIMG::Img* img = DBIMG::get_img( url );
-    if( img ) type = img->get_type();
-    if( type == T_PNG ) return true;
-
-    return false;
-}
-
-
-const bool DBIMG::is_gif_real( const std::string& url )
-{
-    int type = T_UNKNOWN;
-    DBIMG::Img* img = DBIMG::get_img( url );
-    if( img ) type = img->get_type();
-    if( type == T_GIF ) return true;
-
-    return false;
-}
-
 
 
 DBIMG::Img* DBIMG::get_img( const std::string& url )
@@ -172,14 +129,6 @@ const bool DBIMG::is_cached( const std::string& url )
     DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->is_cached();
     return false;
-}
-
-
-const int DBIMG::get_type( const std::string& url )
-{
-    DBIMG::Img* img = DBIMG::get_img( url );
-    if( img ) return img->get_type();
-    return T_UNKNOWN;
 }
 
 

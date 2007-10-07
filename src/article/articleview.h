@@ -9,6 +9,8 @@
 
 #include "articleviewbase.h"
 
+#include "searchmanager.h"
+
 namespace ARTICLE
 {
     // メインビュー
@@ -173,23 +175,32 @@ namespace ARTICLE
 
     /////////////////////////////////////////////////////////////////////////
 
-    class CacheSearchToolBar;
+    class SearchToolBar;
 
-    // キャッシュ検索ビュー
-    class ArticleViewSearchCache : public ArticleViewBase
+    // 検索モード
+    // コンストラクタの searchmode で指定する
+    enum{
+        SEARCHMODE_LOG = 0,
+        SEARCHMODE_ALLLOG,
+        SEARCHMODE_TITLE
+    };
+
+    // ログやスレタイ検索抽出ビュー
+    class ArticleViewSearch : public ArticleViewBase
     {
-
-        CacheSearchToolBar* m_cachetoolbar;
+        SearchToolBar* m_searchtoolbar;
 
         std::string m_url_board;
+        int m_searchmode;
         bool m_mode_or;
-        bool m_searchall;
-        std::list< std::string > m_url_readcgi;
+        std::list< CORE::SEARCHDATA > m_list_searchdata;
         bool m_loading;
 
       public:
-        ArticleViewSearchCache( const std::string& url_board, const std::string& query, bool mode_or, bool searchall );
-        ~ArticleViewSearchCache();
+
+        // mode_or == true なら OR 検索する
+        ArticleViewSearch( const std::string& url_board, const std::string& query, int searchmode, bool mode_or = false );
+        ~ArticleViewSearch();
 
         // SKELETON::View の関数のオーバロード
         virtual const bool is_loading(){ return m_loading; }

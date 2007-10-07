@@ -64,6 +64,12 @@ namespace CONFIG
     // bbsmenu.html内にあるリンクは全て板とみなす
     const bool use_link_as_board();
 
+    // スレタイ検索用アドレス
+    const std::string& get_url_search_title();
+
+    // スレタイ検索用正規表現
+    const std::string& get_search_title_regex();
+
     // 2ch にアクセスするときのエージェント名
     const std::string& get_agent_for2ch();
 

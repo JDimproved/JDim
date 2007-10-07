@@ -1674,7 +1674,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
             lng_link = strlen( tmplink );
 
             // 画像リンク
-            if( DBIMG::is_loadable( tmplink, lng_link ) ){
+            if( DBIMG::get_type_ext( tmplink, lng_link ) != DBIMG::T_UNKNOWN ){
                 create_imgnode( pos, n_in, tmplink , lng_link, COLOR_IMG_NOCACHE, bold );
             }
 

@@ -204,6 +204,11 @@ const bool ConfigItems::load()
     // bbsmenu.html内にあるリンクは全て板とみなす
     use_link_as_board = cf.get_option( "use_link_as_board", CONF_LINK_AS_BOARD );
 
+    // スレタイ検索用アドレス
+    url_search_title = cf.get_option( "url_search_title", CONF_URL_SEARCH_TITLE );
+
+    // スレタイ検索用正規表現
+    search_title_regex = cf.get_option( "search_title_regex", CONF_SEARCH_TITLE_REGEX );
 
     /////////
     // 色
@@ -485,6 +490,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "url_login2ch", url_login2ch );
     cf.update( "url_bbsmenu", url_bbsmenu );
     cf.update( "use_link_as_board", use_link_as_board );
+    cf.update( "url_search_title", url_search_title );
+    cf.update( "search_title_regex", search_title_regex );
 
     cf.update( "fontname_main", fontname[ FONT_MAIN ] );
     cf.update( "fontname_popup", fontname[ FONT_POPUP ] );

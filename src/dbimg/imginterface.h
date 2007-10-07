@@ -16,13 +16,14 @@ namespace Gtk
 
 namespace DBIMG
 {
-    // get_type()で取得する画像タイプ
+    // DBIMG::get_type_*() で取得する画像タイプ
     enum{
         T_NOIMG = 0,
 
         T_JPG,
         T_PNG,
         T_GIF,
+        T_BMP,
 
         T_LARGE,
         T_NOSIZE,
@@ -38,21 +39,19 @@ namespace DBIMG
     void create_root();
     void delete_root();
 
-    // ロード可能な画像ファイルかチェック
-    const bool is_loadable( const std::string& url );
-    const bool is_loadable( const char* url, int n );
+    // 画像データの先頭のシグネチャを見て画像のタイプを取得
+    // 画像ではない場合は T_NOIMG を返す
+    const int get_image_type( const unsigned char *sign );
 
     // 拡張子だけをみて画像の種類を判断
     // キャッシュに無くても判断可能
-    const bool is_jpg( const std::string& url );
-    const bool is_png( const std::string& url );
-    const bool is_gif( const std::string& url );
+    // 画像ではない場合は T_UNKNOWN を返す
+    const int get_type_ext( const std::string& url );
+    const int get_type_ext( const char* url, int n );
 
     // 実際の画像ファイルの種類を判断
-    // キャッシュに無いときは判断不能
-    const bool is_jpg_real( const std::string& url );
-    const bool is_png_real( const std::string& url );
-    const bool is_gif_real( const std::string& url );
+    // 画像がキャッシュに無いときは判断不能( T_UNKNOWN を返す )
+    const int get_type_real( const std::string& url );
 
     DBIMG::Img* get_img( const std::string& url );
     const std::string get_cache_path( const std::string& url );

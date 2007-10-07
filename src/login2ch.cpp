@@ -195,7 +195,7 @@ void Login2ch::receive_finish()
         mdiag.run();
     }
     else if( get_username().empty() || get_passwd().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "IDまたはパスワードが設定されていません\n\n設定→ネットワーク→2chログインで設定してください" );
+        SKELETON::MsgDiag mdiag( NULL, "IDまたはパスワードが設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
         mdiag.run();
     }
     else if( show_err ){

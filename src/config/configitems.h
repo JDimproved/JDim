@@ -126,6 +126,12 @@ namespace CONFIG
         // bbsmenu.htmlの内にあるリンクは全て板とみなす
         bool use_link_as_board;
 
+        // スレタイ検索用アドレス
+        std::string url_search_title;
+
+        // スレタイ検索用正規表現
+        std::string search_title_regex;
+
         // 色
         std::vector< std::string > str_color;
 

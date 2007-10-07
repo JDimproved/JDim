@@ -18,6 +18,7 @@
 int mode_pane;
 bool mode_online;
 bool mode_login2ch;
+bool mode_loginbe;
 
 int win_manager;
 
@@ -160,6 +161,9 @@ void SESSION::init_session()
 
     // 2chログイン
     mode_login2ch = cf.get_option( "mode_login2ch", false );
+
+    // beログイン
+    mode_loginbe = cf.get_option( "mode_loginbe", false );
 
     // paneのモード
     mode_pane = cf.get_option( "mode_pane", 0 );
@@ -373,6 +377,7 @@ void SESSION::save_session()
     oss << "mode_pane = " << mode_pane << std::endl
         << "mode_online = " << mode_online << std::endl
         << "mode_login2ch = " << mode_login2ch << std::endl
+        << "mode_loginbe = " << mode_loginbe << std::endl
         << "x = " << x_win_main << std::endl
         << "y = " << y_win_main << std::endl
         << "width = " << width_win_main << std::endl
@@ -458,6 +463,9 @@ void SESSION::set_online( bool mode ){ mode_online = mode; }
 
 const bool SESSION::login2ch(){ return mode_login2ch; }
 void SESSION::set_login2ch( bool login ){ mode_login2ch = login; }
+
+const bool SESSION::loginbe(){ return mode_loginbe; }
+void SESSION::set_loginbe( bool login ){ mode_loginbe = login; }
 
 const bool SESSION::show_sidebar(){ return win_show_sidebar; }
 

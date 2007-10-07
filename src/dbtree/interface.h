@@ -33,7 +33,7 @@ namespace DBTREE
     ArticleBase* get_article( const std::string& url );
 
     // urlの変換関係
-    const std::string url_subject( const std::string& url );    
+    const std::string url_subject( const std::string& url ); // 板の subject.txt の URL
     const std::string url_root( const std::string& url );
     const std::string url_boardbase( const std::string& url );
     const std::string url_datbase( const std::string& url );
@@ -127,6 +127,7 @@ namespace DBTREE
     void read_boardinfo_all();
 
     // キャッシュ内のログ検索
+    // datファイルのURL(read.cgi型)を返す
     std::list< std::string > search_cache_all( const std::string& url, const std::string& query, bool mode_or, bool& stop );
     std::list< std::string > search_cache( const std::string& url, const std::string& query, bool mode_or, bool& top );
     

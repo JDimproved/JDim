@@ -19,6 +19,7 @@
 #include "updatemanager.h"
 #include "historymenu.h"
 #include "login2ch.h"
+#include "loginbe.h"
 #include "prefdiagfactory.h"
 #include "controlutil.h"
 #include "controlid.h"
@@ -109,8 +110,11 @@ Core::Core( WinMain& win_main )
     DBTREE::create_root();
     DBIMG::create_root();
 
-    // ログインマネージャ作成
+    // 2chログインマネージャ作成
     LOGIN::get_login2ch();
+
+    // BEログインマネージャ作成
+    LOGIN::get_loginbe();
 
     // 各管理クラス作成
     BBSLIST::get_admin();
@@ -188,8 +192,11 @@ Core::~Core()
     // cssマネージャ削除
     CORE::delete_css_manager();
 
-    // ログインマネージャ削除
+    // 2chログインマネージャ削除
     LOGIN::delete_login2ch();
+
+    // BEログインマネージャ削除
+    LOGIN::delete_loginbe();
 
     // データベース削除
     DBTREE::delete_root();
@@ -223,6 +230,8 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_online ) );
     m_action_group->add( Gtk::ToggleAction::create( "Login2ch", "2chにログイン", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
+    m_action_group->add( Gtk::ToggleAction::create( "LoginBe", "BEにログイン", std::string(), false ),
+                        sigc::mem_fun( *this, &Core::slot_toggle_loginbe ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
     m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
@@ -363,7 +372,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク" ) );
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ..." ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
     m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ..." ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
-    m_action_group->add( Gtk::Action::create( "SetupPasswd", "2chログイン..." ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
+    m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード..." ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
 
     // あぼーん
     m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん" ) );
@@ -397,6 +406,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索" ) );
     m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "現在開いている板のログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
+    m_action_group->add( Gtk::Action::create( "SearchTitle", "スレタイ検索"), sigc::mem_fun( *this, &Core::slot_search_title ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "全お気に入り更新チェック" ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ"), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く"),
@@ -426,6 +436,7 @@ void Core::run( bool init )
         "<menuitem action='Online'/>"
         "<separator/>"
         "<menuitem action='Login2ch'/>"
+        "<menuitem action='LoginBe'/>"
         "<separator/>"
         "<menuitem action='SaveFavorite'/>"
         "<separator/>"
@@ -487,8 +498,11 @@ void Core::run( bool init )
         "<menuitem action='SearchCacheBoard'/>"    
         "<menuitem action='SearchCache'/>"    
         "</menu>"
-
         "<separator/>"
+
+        "<menuitem action='SearchTitle'/>"    
+        "<separator/>"
+
         "<menu action='CheckUpdate_Menu'>"
         "<menuitem action='CheckUpdateRoot'/>"
         "<menuitem action='CheckUpdateOpenRoot'/>"
@@ -892,7 +906,8 @@ void Core::set_maintitle()
     if( m_title.empty() ) title = "JD - " + std::string( JDVERSIONSTR );
     else title = "JD - " + m_title;
 
-    if( LOGIN::get_login2ch()->login_now() ) title +=" [ ログイン中 ]";
+    if( LOGIN::get_login2ch()->login_now() ) title +=" [ ● ]";
+    if( LOGIN::get_loginbe()->login_now() ) title +=" [ BE ]";
     if( ! SESSION::is_online() ) title += " [ オフライン ]";
     m_win_main.set_title( title );
 }
@@ -978,12 +993,21 @@ void Core::slot_activate_menubar()
         else tact->set_active( false );
     }
 
-    // ログイン
+    // 2chログイン
     act = m_action_group->get_action( "Login2ch" );
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
     if( tact ){
 
         if( LOGIN::get_login2ch()->login_now() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // BEログイン
+    act = m_action_group->get_action( "LoginBe" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
+    if( tact ){
+
+        if( LOGIN::get_loginbe()->login_now() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1556,6 +1580,27 @@ void Core::slot_toggle_login2ch()
 
 
 //
+// BEにログイン
+//
+void Core::slot_toggle_loginbe()
+{
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::slot_toggle_loginbe\n";
+#endif
+
+    // ログイン中ならログアウト
+    if( LOGIN::get_loginbe()->login_now() ) LOGIN::get_loginbe()->logout();
+
+    // ログオフ中ならログイン開始
+    else LOGIN::get_loginbe()->start_login();
+
+    set_maintitle();
+}
+
+
+//
 // メニューバー表示切替え
 //
 void Core::toggle_menubar()
@@ -1586,7 +1631,7 @@ void Core::toggle_menubar()
 void Core::slot_search_cache_board()
 {
     std::string url = BOARD::get_admin()->get_current_url();
-    if( ! url.empty() ) CORE::core_set_command( "open_article_searchcache", url , "", "false" );
+    if( ! url.empty() ) CORE::core_set_command( "open_article_searchlog", url );
 }
 
 
@@ -1595,7 +1640,16 @@ void Core::slot_search_cache_board()
 //
 void Core::slot_search_cache()
 {
-    CORE::core_set_command( "open_article_searchcache", "dummyurl" , "", "false", "all" );
+    CORE::core_set_command( "open_article_searchalllog" );
+}
+
+
+//
+// スレタイ検索
+//
+void Core::slot_search_title()
+{
+    CORE::core_set_command( "open_article_searchtitle" );
 }
 
 
@@ -2122,13 +2176,10 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     // ログ検索
-    else if( command.command  == "open_article_searchcache" ) { 
+    else if( command.command  == "open_article_searchlog" ) { 
 
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
-        std::string mode_str = "SEARCHCACHE";
-        if( command.arg2 == "true" ) mode_str = "SEARCHCACHE_OR";  // OR 検索
-        
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
@@ -2137,10 +2188,52 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
 
-                                           mode_str, // モード
+                                           "SEARCHLOG", // ログ検索
 
-                                           command.arg1, // query
-                                           command.arg3  // "all" の時は全ログを検索
+                                           command.arg1 // query
+            );
+
+        return;
+    }
+
+    // 全ログ検索
+    else if( command.command  == "open_article_searchalllog" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+        
+        ARTICLE::get_admin()->set_command( "open_view",
+                                           "dummy",
+
+                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           "left", // タブで開く
+                                           "true", // url 開いてるかチェックしない
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
+
+                                           "SEARCHALLLOG", // 全ログ検索
+
+                                           command.arg1 // query
+            );
+
+        return;
+    }
+
+
+    // スレタイ検索
+    else if( command.command  == "open_article_searchtitle" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+
+        ARTICLE::get_admin()->set_command( "open_view",
+                                           "dummy",
+
+                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           "left", // タブで開く
+                                           "true", // url 開いてるかチェックしない
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
+
+                                           "SEARCHTITLE", // モード
+
+                                           command.arg1 // query
             );
 
         return;
@@ -2698,7 +2791,7 @@ void Core::exec_command()
         }
 
         // 画像の場合
-        else if( DBIMG::is_loadable( command.url ) ){
+        else if( DBIMG::get_type_ext( command.url ) != DBIMG::T_UNKNOWN ){
 
             // 画像ビューを使用
             if( CONFIG::get_use_image_view() ){
@@ -2779,6 +2872,9 @@ void Core::exec_command_after_boot()
 
     // 2chログイン
     if( SESSION::login2ch() ) slot_toggle_login2ch();
+
+    // BEログイン
+    if( SESSION::loginbe() ) slot_toggle_loginbe();
 
     // タイトル表示
     set_maintitle();

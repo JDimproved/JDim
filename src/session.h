@@ -64,6 +64,10 @@ namespace SESSION
     const bool login2ch();
     void set_login2ch( bool login );
 
+    // BEログイン中
+    const bool loginbe();
+    void set_loginbe( bool login );
+
     // サイドバー表示中
     const bool show_sidebar();
     void set_show_sidebar( bool showbar );

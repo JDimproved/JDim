@@ -228,12 +228,13 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
     action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存..."), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
 
-    // ログ検索
-    action_group()->add( Gtk::Action::create( "SearchCache_Menu", "ログ検索" ) );
+    // 検索
+    action_group()->add( Gtk::Action::create( "Search_Menu", "検索" ) );
+    action_group()->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索" ) );
+    action_group()->add( Gtk::Action::create( "SearchCacheLocal", "この板のログのみを検索"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
     action_group()->add( Gtk::Action::create( "SearchCacheAll", "キャッシュ内の全ログを検索") );
     action_group()->add( Gtk::Action::create( "ExecSearchCacheAll", "検索する"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cacheall ) );
-    action_group()->add( Gtk::Action::create( "SearchCacheLocal", "この板内のログのみを検索"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
-
+    action_group()->add( Gtk::Action::create( "SearchTitle", "スレタイ検索"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
 
     // 抽出系
     action_group()->add( Gtk::Action::create( "Drawout_Menu", "抽出" ) );
@@ -419,11 +420,17 @@ void ArticleViewBase::setup_action()
 
     "</menu>"
 
+    "<menu action='Search_Menu'>"
+
     "<menu action='SearchCache_Menu'>"
     "<menuitem action='SearchCacheLocal'/>"
     "<menu action='SearchCacheAll'>"
     "<menuitem action='ExecSearchCacheAll'/>"
     "</menu>"
+    "</menu>"
+
+    "<menuitem action='SearchTitle' />"
+
     "</menu>"
 
     "<separator/>"
@@ -1641,7 +1648,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
     int margin_popup = CONFIG::get_margin_popup();
 
     // 画像ポップアップ
-    if( DBIMG::is_loadable( url ) ){
+    if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){
 
         // あぼーん
         if( DBIMG::get_abone( url ) ){
@@ -2012,7 +2019,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
   
     /////////////////////////////////////////////////////////////////
     // 画像クリック
-    else if( DBIMG::is_loadable( url ) && ( CONFIG::get_use_image_view() || CONFIG::get_use_inline_image() ) ){
+    else if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && ( CONFIG::get_use_image_view() || CONFIG::get_use_inline_image() ) ){
 
         hide_popup();
 
@@ -2030,7 +2037,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             mdiag.run();
         }
 
-        else if( DBIMG::get_type( url ) == DBIMG::T_LARGE ){
+        else if( DBIMG::get_type_real( url ) == DBIMG::T_LARGE ){
             SKELETON::MsgDiag mdiag( NULL, "画像サイズが大きすぎます。\n\n表示するにはリンクの上でコンテキストメニューを開いて\n「サイズが大きい画像を表示」をクリックしてください。" );
             mdiag.run();
         }
@@ -2289,7 +2296,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
-    act = action_group()->get_action( "SearchCache_Menu" );
+    act = action_group()->get_action( "Search_Menu" );
     if( act ){
         if( str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
         else act->set_sensitive( true );
@@ -2364,7 +2371,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
 
     // 画像
-    if( DBIMG::is_loadable( url ) ){ 
+    if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){ 
 
         // モザイク
         act = action_group()->get_action( "Cancel_Mosaic" );
@@ -2376,7 +2383,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         // サイズの大きい画像を表示
         act = action_group()->get_action( "ShowLargeImg" );
         if( act ){
-            if( DBIMG::get_type( url ) == DBIMG::T_LARGE ) act->set_sensitive( true );
+            if( DBIMG::get_type_real( url ) == DBIMG::T_LARGE ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
 
@@ -2399,7 +2406,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         act = action_group()->get_action( "DeleteImage_Menu" );
         if( act ){
 
-            if( ( DBIMG::is_cached( url ) || DBIMG::get_type( url ) == DBIMG::T_LARGE )
+            if( ( DBIMG::is_cached( url ) || DBIMG::get_type_real( url ) == DBIMG::T_LARGE )
                 && ! DBIMG::is_protected( url ) ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
@@ -2486,7 +2493,7 @@ Gtk::Menu* ArticleViewBase::get_popupmenu( const std::string& url )
     }
 
     // 画像ポップアップメニュー
-    else if( DBIMG::is_loadable( url ) ){ 
+    else if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){ 
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_img" ) );
     }
 
@@ -2536,7 +2543,7 @@ void ArticleViewBase::slot_drawout_selection_str()
 
 
 //
-// ログ検索実行
+// 全ログ検索実行
 //
 void ArticleViewBase::slot_search_cacheall()
 {
@@ -2549,7 +2556,7 @@ void ArticleViewBase::slot_search_cacheall()
     std::cout << "ArticleViewBase::slot_search_cacheall "<< query << std::endl;
 #endif
     
-    CORE::core_set_command( "open_article_searchcache", "dummyurl" , query, "false", "all" );
+    CORE::core_set_command( "open_article_searchalllog", "" , query );
 }
 
 
@@ -2570,7 +2577,25 @@ void ArticleViewBase::slot_search_cachelocal()
               << query << std::endl;
 #endif
     
-    CORE::core_set_command( "open_article_searchcache", url , query, "false" );
+    CORE::core_set_command( "open_article_searchlog", url , query );
+}
+
+
+//
+// スレタイ検索実行
+//
+void ArticleViewBase::slot_search_title()
+{
+    std::string query = m_drawarea->str_selection();
+    query = MISC::replace_str( query, "\n", "" );
+
+    if( query.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_search_title query = " << query << std::endl;
+#endif
+    
+    CORE::core_set_command( "open_article_searchtitle", "" , query );
 }
 
 
@@ -2613,7 +2638,7 @@ void ArticleViewBase::slot_open_browser()
     std::string url = m_url_tmp;
 
     // 画像、かつキャッシュにある場合
-    if( DBIMG::is_loadable( url ) && DBIMG::is_cached( url ) ) url = "file://" + DBIMG::get_cache_path( url );
+    if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && DBIMG::is_cached( url ) ) url = "file://" + DBIMG::get_cache_path( url );
 
     CORE::core_set_command( "open_url_browser", url );
 }

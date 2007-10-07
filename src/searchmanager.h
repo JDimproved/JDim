@@ -1,7 +1,7 @@
 // ライセンス: GPL2
 
 //
-// ログ検索クラス
+// ログ、スレタイ検索クラス
 //
 
 #ifndef _SEARCHMANAGER_H
@@ -17,6 +17,16 @@
 
 namespace CORE
 {
+    class SearchLoader;
+
+    struct SEARCHDATA
+    {
+        std::string url_readcgi;
+        std::string boardname;
+        std::string subject;
+        int num;
+    };
+
     class Search_Manager : public SKELETON::Dispatchable
     {
         typedef sigc::signal< void > SIG_SEARCH_FIN;
@@ -31,12 +41,15 @@ namespace CORE
         bool m_mode_or;
         bool m_searchall;
 
-        std::list< std::string > m_urllist;
+        std::list< SEARCHDATA > m_list_data;
 
         // 検索実行中
         bool m_searching;
 
         bool m_stop;
+
+        // スレタイ検索ローダ
+        SearchLoader* m_searchloader;
 
       public:
 
@@ -47,10 +60,15 @@ namespace CORE
 
         const bool is_searching() const { return m_searching; }
         const std::string& get_id() const { return m_id; }
-        const std::list< std::string >& get_urllist() const { return m_urllist; }
+        const std::list< SEARCHDATA >& get_list_data() const { return m_list_data; }
 
+        // ログ検索
         bool search( const std::string& id, const std::string& url, const std::string& query,
                      bool mode_or, bool searchall );
+
+        // スレタイ検索
+        bool search_title( const std::string& id, const std::string& query );
+
         void stop();
 
       private:
@@ -58,6 +76,7 @@ namespace CORE
         void thread_search();
         virtual void callback_dispatch();
         void search_fin();
+        void search_fin_title();
     };
 
     ///////////////////////////////////////

@@ -115,6 +115,12 @@ namespace CONFIG
 // bbsmenu.htmlのURL
 #define CONF_BBSMENU "http://menu.2ch.net/bbsmenu.html"
 
+// スレタイ検索用アドレス
+#define CONF_URL_SEARCH_TITLE "http://find.2ch.net/?STR=$TEXTX&COUNT=50&TYPE=TITLE&BBS=ALL"
+
+// スレタイ検索用正規表現
+#define CONF_SEARCH_TITLE_REGEX "<a href=\"(http[^\"]*)\">(.+?)</a> \\(([0-9]{1,4})\\)"
+
 // 色
 #define CONF_COLOR_CHAR    "#000000000000"     // スレの文字
 #define CONF_COLOR_CHAR_NAME "#000064640000"   //名前欄の文字色

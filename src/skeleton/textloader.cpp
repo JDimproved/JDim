@@ -7,6 +7,7 @@
 
 #include "jdlib/jdiconv.h"
 #include "jdlib/loaderdata.h"
+#include "jdlib/miscmsg.h"
 
 #include "httpcode.h"
 #include "session.h"
@@ -53,11 +54,21 @@ void TextLoader::clear()
 }
 
 
+void TextLoader::reset()
+{
+    m_loaded = false;
+    m_data = std::string();
+    clear();
+}
+
+
 //
 // キャッシュからロード
 //
 void TextLoader::load_text()
 {
+    if( get_path().empty() ) return;
+
     init();
     set_code( HTTP_INIT );
     receive_finish();
@@ -72,6 +83,7 @@ void TextLoader::download_text()
 #ifdef _DEBUG
     std::cout << "TextLoader::download_text url = " << get_url() << std::endl;
 #endif
+    if( get_url().empty() ) return;
     if( is_loading() ) return;
     if( m_loaded ) return; // 読み込み済み
     if( ! SESSION::is_online() ){
@@ -93,13 +105,16 @@ void TextLoader::download_text()
 
 
 //
-// ローダよりsubject.txt受信
+// ローダよりデータ受信
 //
 void TextLoader::receive_data( const char* data, size_t size )
 {
     if( m_lng_rawdata + size < SIZE_OF_RAWDATA ){
         memcpy( m_rawdata + m_lng_rawdata , data, size );
         m_lng_rawdata += size;
+    }
+    else{
+        MISC::ERRMSG( "TextLoader : received failed ( BOF )\n" );
     }
 }
 
@@ -116,7 +131,7 @@ void TextLoader::receive_finish()
 #endif
 
     // 初期化時やnot modifiedの時はキャッシュから読み込み
-    if( get_code() == HTTP_INIT || get_code() == HTTP_NOT_MODIFIED ){
+    if( ! get_path().empty() && ( get_code() == HTTP_INIT || get_code() == HTTP_NOT_MODIFIED ) ){
 
         m_lng_rawdata = CACHE::load_rawdata( get_path(), m_rawdata, SIZE_OF_RAWDATA );
 
@@ -139,7 +154,7 @@ void TextLoader::receive_finish()
     }
 
     // キャッシュに保存
-    if( get_code() == HTTP_OK && m_lng_rawdata ){
+    if( ! get_path().empty() && get_code() == HTTP_OK && m_lng_rawdata ){
 
         CACHE::save_rawdata( get_path(), m_rawdata, m_lng_rawdata );
 
@@ -165,8 +180,3 @@ void TextLoader::receive_finish()
 
     parse_data();
 }
-
-
-//////////////////////////
-
-    

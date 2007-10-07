@@ -218,6 +218,7 @@ namespace ARTICLE
         void slot_drawout_selection_str();
         void slot_search_cacheall();
         void slot_search_cachelocal();
+        void slot_search_title();
         void slot_usrcmd( int num );
         void slot_copy_res( bool ref );
         void slot_favorite();

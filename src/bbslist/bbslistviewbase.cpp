@@ -951,7 +951,7 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 
             m_treeview.hide_tooltip();
 
-            if( DBIMG::is_loadable( url ) && DBIMG::get_code( url ) != HTTP_INIT ){
+            if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && DBIMG::get_code( url ) != HTTP_INIT ){
 
                 if( m_treeview.pre_popup_url() != url ){
 
@@ -1393,7 +1393,7 @@ void BBSListViewBase::slot_search_cache_board()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    CORE::core_set_command( "open_article_searchcache", url , "", "false" );
+    CORE::core_set_command( "open_article_searchlog", url );
 }
 
 

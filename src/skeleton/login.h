@@ -43,8 +43,8 @@ namespace SKELETON
         const std::string& get_sessionid() const { return m_sessionid; }
         void set_sessionid( const std::string& sessionid ){ m_sessionid = sessionid; }
 
-        virtual void start_login(){}
-        virtual void logout(){}
+        virtual void start_login()=0;
+        virtual void logout()=0;
 
       private:
         void read_info();

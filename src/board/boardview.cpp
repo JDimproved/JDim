@@ -2039,7 +2039,7 @@ void BoardView::search_cache()
     if( m_toolbar.m_entry_search.completion() ) return;
 
     std::string query = m_toolbar.m_entry_search.get_text();
-    CORE::core_set_command( "open_article_searchcache", get_url() , query, "false" );
+    CORE::core_set_command( "open_article_searchlog", get_url() , query );
 }
 
 

@@ -26,13 +26,14 @@ namespace DBIMG
         // 検索(無ければNULL)
         Img* search_img( const std::string& url );
 
-        // url が画像のURLかどうか
-        bool is_loadable( const std::string& url );
-        bool is_loadable( const char* url, int n );
+        // 画像データの先頭のシグネチャを見て画像のタイプを取得
+        // 画像ではない場合は T_NOIMG を返す
+        const int get_image_type( const unsigned char *sign );
 
-        bool is_jpg( const char* url, int n );
-        bool is_png( const char* url, int n );
-        bool is_gif( const char* url, int n );
+        // 拡張子から画像タイプを取得
+        // 画像ではない場合は T_UNKNOWN を返す
+        int get_type_ext( const std::string& url );
+        int get_type_ext( const char* url, int n );
 
         // キャッシュ削除
         void delete_cache( const std::string& url );
@@ -41,6 +42,12 @@ namespace DBIMG
         void delete_all_files();
 
       private:
+
+        bool is_jpg( const char* url, int n );
+        bool is_png( const char* url, int n );
+        bool is_gif( const char* url, int n );
+        bool is_bmp( const char* url, int n );
+
         void redraw_imgs();
         void reset_imgs();
     };

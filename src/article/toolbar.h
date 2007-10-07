@@ -240,9 +240,9 @@ namespace ARTICLE
     };
 
 
-    class CacheSearchToolBar : public Gtk::ScrolledWindow
+    class SearchToolBar : public Gtk::ScrolledWindow
     {
-        friend class ArticleViewSearchCache;
+        friend class ArticleViewSearch;
 
         Gtk::HBox m_hbox;
 
@@ -253,7 +253,7 @@ namespace ARTICLE
         SKELETON::ImgButton m_button_reload;
         SKELETON::ImgButton m_button_stop;
 
-        CacheSearchToolBar() :
+        SearchToolBar() :
         m_button_close( Gtk::Stock::CLOSE ),
         m_button_reload( Gtk::Stock::REFRESH ),
         m_button_stop( Gtk::Stock::STOP )
@@ -277,7 +277,7 @@ namespace ARTICLE
             show_all_children();
         }
         
-        virtual ~CacheSearchToolBar(){}
+        virtual ~SearchToolBar(){}
     };
 }
 

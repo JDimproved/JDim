@@ -108,6 +108,9 @@ const std::string& CONFIG::get_url_bbsmenu() { return get_confitem()->url_bbsmen
 
 const bool CONFIG::use_link_as_board(){ return get_confitem()->use_link_as_board; }
 
+const std::string& CONFIG::get_url_search_title(){ return get_confitem()->url_search_title; }
+const std::string& CONFIG::get_search_title_regex(){ return get_confitem()->search_title_regex; }
+
 const std::string& CONFIG::get_agent_for2ch() { return get_confitem()->agent_for2ch; }
 
 const bool CONFIG::get_use_proxy_for2ch() { return get_confitem()->use_proxy_for2ch; }

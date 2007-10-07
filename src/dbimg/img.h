@@ -83,8 +83,6 @@ namespace DBIMG
         
       private:
 
-        const int get_image_type( const unsigned char *sign );
-
         virtual void receive_data( const char* data, size_t size );
         virtual void receive_finish();
 

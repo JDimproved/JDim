@@ -47,10 +47,14 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_label_size.set_text( MISC::itostr( size )  + " / " + MISC::itostr( size/1024 ) );
 
     std::string type;
-    if( DBIMG::is_jpg_real( get_url() ) ) type = "JPEG";
-    if( DBIMG::is_png_real( get_url() ) ) type = "PNG";
-    if( DBIMG::is_gif_real( get_url() ) ) type = "GIF";
-    if( DBIMG::is_fake( get_url() ) ) type += " ※偽装されています※";
+    switch( DBIMG::get_type_real( get_url() ) ){
+        case DBIMG::T_JPG: type = "JPEG"; break;
+        case DBIMG::T_PNG: type = "PNG"; break;
+        case DBIMG::T_GIF: type = "GIF"; break;
+        case DBIMG::T_BMP: type = "BMP"; break;
+    }
+
+    if( DBIMG::is_fake( get_url() ) ) type += " ※拡張子が偽装されています※";
     m_label_type.set_text( type );
 
     m_check_protect.set_active( DBIMG::is_protected( get_url() ) );

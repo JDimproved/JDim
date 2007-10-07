@@ -323,11 +323,22 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
         view_args.arg1 = command.arg5; // 対象レス番号
     }
 
-    // ログ検索(AND)
-    else if( command.arg4 == "SEARCHCACHE" ){
-        type = CORE::VIEW_ARTICLESEARCHCAHCE;
+    // ログ検索
+    else if( command.arg4 == "SEARCHLOG" ){
+        type = CORE::VIEW_ARTICLESEARCHLOG;
         view_args.arg1 = command.arg5;  // query
-        view_args.arg3 = command.arg6;  // "all" の時は全ログ検索
+    }
+
+    // 全キャッシュログ検索
+    else if( command.arg4 == "SEARCHALLLOG" ){
+        type = CORE::VIEW_ARTICLESEARCHALLLOG;
+        view_args.arg1 = command.arg5;  // query
+    }
+
+    // タイトル検索
+    else if( command.arg4 == "SEARCHTITLE" ){
+        type = CORE::VIEW_ARTICLESEARCHTITLE;
+        view_args.arg1 = command.arg5;  // query
     }
 
     else return NULL;

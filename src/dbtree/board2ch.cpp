@@ -12,6 +12,7 @@
 #include "jdlib/misctime.h"
 
 #include "login2ch.h"
+#include "loginbe.h"
 
 #include <sstream>
 
@@ -86,6 +87,29 @@ const int Board2ch::get_proxy_port_w()
 }
 
 
+//書き込み用クッキー作成
+const std::string Board2ch::cookie_for_write()
+{
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::cookie_for_write\n";
+#endif
+
+    std::string cookie = Board2chCompati::cookie_for_write();
+
+    // BE ログイン中
+    if( LOGIN::get_loginbe()->login_now() ){
+        if( ! cookie.empty() ) cookie += "; ";
+        cookie += "DMDM=" + LOGIN::get_loginbe()->get_username() + "; MDMD=" + LOGIN::get_loginbe()->get_passwd();
+    }
+
+#ifdef _DEBUG
+    std::cout << "cookie = " << cookie << std::endl;
+#endif 
+
+    return cookie;
+}
+
+
 // 新スレ作成時の書き込みメッセージ作成
 const std::string Board2ch::create_newarticle_message( const std::string& subject,
                                                        const std::string& name, const std::string& mail, const std::string& msg )
@@ -102,7 +126,8 @@ const std::string Board2ch::create_newarticle_message( const std::string& subjec
     std::string hana = hana_for_write();
     if( ! hana.empty() ) ss_post << "&hana=" << hana;
 
-    // ログイン中
+    // 2chログイン中
+    // sidを送る
     if( LOGIN::get_login2ch()->login_now() ){
         std::string sid = LOGIN::get_login2ch()->get_sessionid();
         ss_post << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );

@@ -9,45 +9,86 @@
 #include "skeleton/label_entry.h"
 
 #include "login2ch.h"
+#include "loginbe.h"
+
 #include "jdlib/miscutil.h"
+
+enum
+{
+    BOXSPACING = 8
+};
 
 namespace CORE
 {
-    class PasswdFrame : public Gtk::Frame
+    // 2chログイン用
+    class PasswdFrame2ch : public Gtk::Frame
     {
         Gtk::VBox m_vbox;
-        Gtk::HBox m_hbox;
+        SKELETON::LabelEntry m_label_sid_2ch;
 
       public:
 
         SKELETON::LabelEntry entry_id;
         SKELETON::LabelEntry entry_passwd;
 
-        PasswdFrame( const std::string& title )
-        : entry_id( true, "ID：" ), entry_passwd( true, "パスワード：" )
+      PasswdFrame2ch()
+      : m_label_sid_2ch( false, "SID：", LOGIN::get_login2ch()->get_sessionid() ),
+        entry_id( true, "ID：" ), entry_passwd( true, "パスワード：" )
         {
-            m_hbox.set_spacing( 8 );
+            m_vbox.set_border_width( BOXSPACING );
 
-            m_hbox.pack_start( entry_id );
+            entry_id.set_border_width( BOXSPACING );
+            m_vbox.pack_start( entry_id );
 
+            entry_passwd.set_border_width( BOXSPACING );
             entry_passwd.set_visibility( false );
-            m_hbox.pack_start( entry_passwd, Gtk::PACK_SHRINK );
+            m_vbox.pack_start( entry_passwd, Gtk::PACK_SHRINK );
 
-            m_hbox.set_border_width( 8 );
-            m_vbox.set_spacing( 8 );
-            m_vbox.pack_start( m_hbox, Gtk::PACK_SHRINK );
+            m_label_sid_2ch.set_border_width( BOXSPACING );
+            m_vbox.pack_start( m_label_sid_2ch );
 
-            set_label( title );
+            set_label( "2chログイン用" );
             set_border_width( 8 );
+            add( m_vbox );
+        }
+    };
+
+    // BEログイン用
+    class PasswdFrameBe : public Gtk::Frame
+    {
+        Gtk::VBox m_vbox;
+        Gtk::Label m_label;
+
+      public:
+
+        SKELETON::LabelEntry entry_id;
+        SKELETON::LabelEntry entry_passwd;
+
+      PasswdFrameBe()
+        : m_label( "パスワードではなく認証コードを入れて下さい" ),
+        entry_id( true, "メールアドレス：" ), entry_passwd( true, "認証コード：" )
+        {
+            m_vbox.set_border_width( BOXSPACING );
+
+            entry_id.set_border_width( BOXSPACING );
+            m_vbox.pack_start( entry_id );
+
+            entry_passwd.set_border_width( BOXSPACING );
+            entry_passwd.set_visibility( false );
+            m_vbox.pack_start( entry_passwd, Gtk::PACK_SHRINK );
+
+            m_vbox.pack_start( m_label );
+
+            set_label( "BE ログイン用" );
+            set_border_width( BOXSPACING );
             add( m_vbox );
         }
     };
 
     class PasswdPref : public SKELETON::PrefDiag
     {
-        // 2chログイン用
-        PasswdFrame m_frame_2ch;
-        SKELETON::LabelEntry m_label_sid_2ch;
+        PasswdFrame2ch m_frame_2ch;
+        PasswdFrameBe m_frame_be;
 
         // OK押した
         virtual void slot_ok_clicked(){
@@ -55,24 +96,31 @@ namespace CORE
             // 2ch
             LOGIN::get_login2ch()->set_username( MISC::remove_space( m_frame_2ch.entry_id.get_text() ) );
             LOGIN::get_login2ch()->set_passwd( MISC::remove_space( m_frame_2ch.entry_passwd.get_text() ) );
+
+            // BE
+            LOGIN::get_loginbe()->set_username( MISC::remove_space( m_frame_be.entry_id.get_text() ) );
+            LOGIN::get_loginbe()->set_passwd( MISC::remove_space( m_frame_be.entry_passwd.get_text() ) );
         }
 
       public:
 
         PasswdPref( Gtk::Window* parent, const std::string& url )
         : SKELETON::PrefDiag( parent, url )
-        , m_frame_2ch( "2chログイン用 ID" )
-        , m_label_sid_2ch( false, "SID：", LOGIN::get_login2ch()->get_sessionid() )
+        , m_frame_2ch(), m_frame_be()
         {
-            // 2ch用
+            // 2chログイン用
             m_frame_2ch.entry_id.set_text( LOGIN::get_login2ch()->get_username() );
             m_frame_2ch.entry_passwd.set_text( LOGIN::get_login2ch()->get_passwd() );
 
-            get_vbox()->set_spacing( 8 );
-            get_vbox()->pack_start( m_frame_2ch );
-            get_vbox()->pack_start( m_label_sid_2ch );
+            // beログイン用
+            m_frame_be.entry_id.set_text( LOGIN::get_loginbe()->get_username() );
+            m_frame_be.entry_passwd.set_text( LOGIN::get_loginbe()->get_passwd() );
 
-            set_title( "2chログイン設定" );
+            get_vbox()->set_spacing( BOXSPACING );
+            get_vbox()->pack_start( m_frame_2ch );
+            get_vbox()->pack_start( m_frame_be );
+
+            set_title( "パスワード設定" );
             show_all_children();
         }
 

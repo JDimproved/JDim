@@ -2,6 +2,9 @@
 //
 // テキストファイルの簡易ローダ
 //
+// ロードしたファイルはget_path()で示されたパスに保存される
+// get_path() が empty() ならば保存しない
+//
 
 #ifndef _TEXTLODER_H
 #define _TEXTLODER_H
@@ -32,7 +35,14 @@ namespace SKELETON
 
         const std::string& get_data() const { return m_data; }
 
+        // 一度ロードしたらreset()を呼ばない限りリロードしない
+        void reset();
+
+        // キャッシュからロード
         void load_text();
+
+        // ダウンロード開始
+        // not modifiedの時はキャッシュから読み込む
         void download_text();
 
       protected:

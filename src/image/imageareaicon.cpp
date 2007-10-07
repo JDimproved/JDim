@@ -6,6 +6,7 @@
 #include "imageareaicon.h"
 
 #include "dbimg/img.h"
+#include "dbimg/imginterface.h"
 
 #include "jdlib/miscmsg.h"
 #include "jdlib/miscgtk.h"
@@ -168,7 +169,9 @@ void ImageAreaIcon::show_image_thread()
 #endif
 
     std::string errmsg;
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( get_img()->get_cache_path(), m_stop, true, errmsg );
+    bool pixbufonly = true;
+    if( get_img()->get_type() == DBIMG::T_BMP ) pixbufonly = false; // BMP の場合 pixbufonly = true にすると真っ黒になる
+    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( get_img()->get_cache_path(), m_stop, pixbufonly, errmsg );
     if( loader && loader->get_pixbuf() ) m_pixbuf_icon = loader->get_pixbuf()->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );;
 
     if( m_pixbuf_icon ){

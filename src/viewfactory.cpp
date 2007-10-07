@@ -69,8 +69,14 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
         case VIEW_ARTICLEINFO:
             return new ARTICLE::ArticleViewInfo( url );
 
-        case VIEW_ARTICLESEARCHCAHCE:
-            return new ARTICLE::ArticleViewSearchCache( url, args.arg1, ( args.arg2 == "OR" ), ( args.arg3 == "all" ) );
+        case VIEW_ARTICLESEARCHLOG:
+            return new ARTICLE::ArticleViewSearch( url, args.arg1, ARTICLE::SEARCHMODE_LOG , ( args.arg2 == "OR" ) );
+
+        case VIEW_ARTICLESEARCHALLLOG:
+            return new ARTICLE::ArticleViewSearch( url, args.arg1, ARTICLE::SEARCHMODE_ALLLOG, ( args.arg2 == "OR" ) );
+
+        case VIEW_ARTICLESEARCHTITLE:
+            return new ARTICLE::ArticleViewSearch( url, args.arg1, ARTICLE::SEARCHMODE_TITLE );
 
             /////////////////
 

@@ -198,10 +198,12 @@ namespace CORE
         void slot_save_favorite();
         void slot_toggle_online();
         void slot_toggle_login2ch();
+        void slot_toggle_loginbe();
         void toggle_menubar();
         void toggle_sidebar();
         void slot_search_cache_board();
         void slot_search_cache();
+        void slot_search_title();
         void slot_show_hide_leftpane( int mode );
         void slot_toggle_toolbarpos( int pos );
         void slot_toggle_toolbarbbslist();
