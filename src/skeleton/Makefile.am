@@ -17,6 +17,7 @@ libskeleton_a_SOURCES = \
 	compentry.cpp \
 	login.cpp \
 	prefdiag.cpp \
+	selectitempref.cpp \
 	msgdiag.cpp \
 	aboutdiag.cpp \
 	panecontrol.cpp \
@@ -48,6 +49,7 @@ noinst_HEADERS = \
 	compentry.h \
 	label_entry.h \
 	prefdiag.h \
+	selectitempref.h \
 	msgdiag.h \
 	aboutdiag.h \
 	filediag.h \

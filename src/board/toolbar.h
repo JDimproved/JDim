@@ -10,11 +10,6 @@
 #include "skeleton/imgbutton.h"
 #include "skeleton/compentry.h"
 
-#include "icons/iconmanager.h"
-
-#include "controlutil.h"
-#include "controlid.h"
-
 namespace BOARD
 {
     class BoardToolBar : public Gtk::VBox
@@ -37,80 +32,19 @@ namespace BOARD
 
         Gtk::Tooltips m_tooltip;
 
+        BoardToolBar( bool show_bar );
+
         // ツールバーを表示
-        void show_toolbar()
-        {
-            if( ! m_toolbar_shown ){
-                pack_start( m_scrwin, Gtk::PACK_SHRINK );
-                show_all_children();
-                m_toolbar_shown = true;
-            }
-        }
+        void show_toolbar();
 
         // ツールバーを隠す
-        void hide_toolbar()
-        {
-            if( m_toolbar_shown ){
-                remove( m_scrwin );
-                show_all_children();
-                m_toolbar_shown = false;
-            }
-        }
-
-
-        BoardToolBar( bool show_bar ) :
-        m_toolbar_shown( false ),
-        m_button_close( Gtk::Stock::CLOSE ),
-        m_button_reload( Gtk::Stock::REFRESH ),
-        m_button_delete( Gtk::Stock::DELETE ),
-        m_button_stop( Gtk::Stock::STOP ),
-        m_button_favorite( Gtk::Stock::COPY ),
-        m_button_up_search( Gtk::Stock::GO_UP ),
-        m_button_down_search( Gtk::Stock::GO_DOWN ),
-        m_button_new_article( ICON::WRITE )
-        {
-            m_tooltip.set_tip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
-            m_tooltip.set_tip( m_button_reload, CONTROL::get_label_motion( CONTROL::Reload ) );
-            m_tooltip.set_tip( m_button_delete, CONTROL::get_label_motion( CONTROL::Delete ) );
-            m_tooltip.set_tip( m_button_stop, CONTROL::get_label_motion( CONTROL::StopLoading ) );
-            m_tooltip.set_tip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite )
-                + "\n\nまたは板のタブか選択したスレをお気に入りに直接Ｄ＆Ｄする" );
-            m_tooltip.set_tip( m_button_up_search, CONTROL::get_label_motion( CONTROL::SearchPrev ) );
-            m_tooltip.set_tip( m_button_down_search, CONTROL::get_label_motion( CONTROL::SearchNext ) );
-            m_tooltip.set_tip( m_button_new_article, CONTROL::get_label_motion( CONTROL::NewArticle ) );
-        
-            m_buttonbar.pack_start( m_button_new_article, Gtk::PACK_SHRINK );
-            m_buttonbar.pack_start( m_entry_search );
-            m_buttonbar.pack_end( m_button_close, Gtk::PACK_SHRINK );    
-            m_buttonbar.pack_end( m_button_delete, Gtk::PACK_SHRINK );
-            m_buttonbar.pack_end( m_button_favorite, Gtk::PACK_SHRINK );
-            m_buttonbar.pack_end( m_button_stop, Gtk::PACK_SHRINK );
-            m_buttonbar.pack_end( m_button_reload, Gtk::PACK_SHRINK );
-            m_buttonbar.pack_end( m_button_up_search, Gtk::PACK_SHRINK );
-            m_buttonbar.pack_end( m_button_down_search, Gtk::PACK_SHRINK );
-
-            m_entry_search.add_mode( CONTROL::MODE_BOARD );
-
-            m_buttonbar.set_border_width( 1 );
-            m_scrwin.add( m_buttonbar );
-            m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
-
-            set_size_request( 8 );
-            if( show_bar ) show_toolbar();
-        }
+        void hide_toolbar();
 
         // タブのロック
-        void lock()
-        {
-            m_button_close.set_sensitive( false );
-        }
+        void lock();
 
         // タブのアンロック
-        void unlock()
-        {
-            m_button_close.set_sensitive( true );
-        }
-
+        void unlock();
     };
 }
 

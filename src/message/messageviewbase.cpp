@@ -761,10 +761,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         m_button_open.set_sensitive( false );
         m_button_preview.set_active( true );
 
-        std::string msg = m_text_message.get_text();
-        msg = MISC::replace_str( msg, "\"", "&quot;" );
-        msg = MISC::replace_str( msg, "<", "&lt;" );
-        msg = MISC::replace_str( msg, ">", "&gt;" );
+        std::string msg = MISC::html_escape( m_text_message.get_text() );
         msg = MISC::replace_str( msg, "\n", " <br> " );
         
         std::stringstream ss;
@@ -772,10 +769,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         // 名前 + トリップ
         if( ! m_entry_name.get_text().empty() ){
 
-            std::string name = m_entry_name.get_text();
-            name = MISC::replace_str( name, "\"", "&quot;" );
-            name = MISC::replace_str( name, "<", "&lt;" );
-            name = MISC::replace_str( name, ">", "&gt;" );
+            std::string name = MISC::html_escape( m_entry_name.get_text() );
 
             std::string trip;
 
@@ -791,9 +785,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         }
         else ss << DBTREE::default_noname( get_url() );
 
-        std::string mail = m_entry_mail.get_text();
-        mail = MISC::replace_str( mail, "<", "&lt;" );
-        mail = MISC::replace_str( mail, ">", "&gt;" );
+        std::string mail = MISC::html_escape( m_entry_mail.get_text() );
 
         ss << "<>" << mail  << "<>";
 

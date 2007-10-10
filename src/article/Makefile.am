@@ -17,7 +17,8 @@ libarticle_a_SOURCES = \
 \
 	layouttree.cpp \
 	font.cpp \
-	preference.cpp
+	preference.cpp \
+	toolbar.cpp
 
 noinst_HEADERS = \
 	articleadmin.h \

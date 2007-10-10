@@ -7,6 +7,7 @@
 #define _SESSION_H
 
 #include <list>
+#include <vector>
 
 namespace SESSION
 {
@@ -76,19 +77,19 @@ namespace SESSION
     const bool show_menubar();
     void set_show_menubar( bool show );
 
-    // ツールバー
+    // ツールバー位置
     const int toolbar_pos();
     void set_toolbar_pos( int pos );
 
-    // 板一覧のツールバー
+    // 板一覧のツールバー表示
     const bool get_show_bbslist_toolbar();
     void set_show_bbslist_toolbar( bool show );
 
-    // スレ一覧のツールバー
+    // スレ一覧のツールバー表示
     const bool get_show_board_toolbar();
     void set_show_board_toolbar( bool show );
 
-    // スレビューのツールバー
+    // スレビューのツールバー表示
     const bool get_show_article_toolbar();
     void set_show_article_toolbar( bool show );
 
@@ -247,10 +248,25 @@ namespace SESSION
     // 現在開いている bbslist のurl
     const std::string get_bbslist_current_url();
 
+    // サイドバーのツールバー項目
+    const std::string& get_items_sidebar_str();
+    void set_items_sidebar_str( const std::string& items );
+    const int get_item_sidebar( const int num );
+
+    // スレビューのツールバーの項目
+    const std::string& get_items_article_toolbar_str();
+    void set_items_article_toolbar_str( const std::string& items_str );
+    const int get_item_article_toolbar( const int num );
+
+    // スレ一覧のツールバー項目
+    const std::string& get_items_board_toolbar_str();
+    void set_items_board_toolbar_str( const std::string& items );
+    const int get_item_board_toolbar( const int num );
 
     // スレ一覧の項目
-    const std::string& get_items_board();
-    void set_items_board( const std::string& items );
+    const std::string& get_items_board_str();
+    void set_items_board_str( const std::string& items );
+    const int get_item_board( const int num );
 
     // スレ一覧の列幅
     int col_mark();

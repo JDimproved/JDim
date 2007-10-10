@@ -1395,14 +1395,17 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
         // BE:
         else if( str[ start_block ] == 'B' && str[ start_block + 1 ] == 'E' ){
 
+            const int strlen_of_BE = 3; // = strlen( "BE:" );
+
             // フラッシュ
             if( lng_text ) createTextNodeN( str + start, lng_text, COLOR_CHAR );
 
             // id 取得
-            lng_id_tmp = 0;
-            while( str[ start_block + lng_id_tmp ] != '-' && lng_id_tmp < lng_block ) ++lng_id_tmp;
-            lng_id_tmp -= 3;
-            memcpy( tmpid, str + start_block + 3, lng_id_tmp );
+            int lng_header = 0;
+            while( str[ start_block + lng_header ] != '-' && lng_header < lng_block ) ++lng_header;
+            lng_id_tmp = lng_header - strlen_of_BE;
+            if( str[ start_block + lng_header ] == '-' ) ++lng_header;
+            memcpy( tmpid, str + start_block + strlen_of_BE, lng_id_tmp );
             tmpid[ lng_id_tmp ] = '\0';
 
             // リンク文字作成
@@ -1410,8 +1413,8 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             memcpy( tmplink + sizeof( PROTO_BE ) -1, tmpid, lng_id_tmp + 1 );
 
             // リンク作成
-            create_linknode( "BE:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
-            createTextNodeN( tmpid, lng_id_tmp, COLOR_CHAR);
+            create_linknode( "?", 1, tmplink, strlen( tmplink ), COLOR_CHAR, false );
+            createTextNodeN( str + start_block + lng_header, lng_block - lng_header, COLOR_CHAR);
 
             // 次のブロックへ移動
             start = start_block + lng_block;

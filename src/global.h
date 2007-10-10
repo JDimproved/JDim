@@ -35,16 +35,61 @@
 } while( false )
 
 
-// スレ一覧の列の項目
-#define COLUMN_TITLE_MARK  "!"
-#define COLUMN_TITLE_ID    "番号"
-#define COLUMN_TITLE_NAME  "タイトル"
-#define COLUMN_TITLE_RES   "レス"
-#define COLUMN_TITLE_LOAD  "取得"
-#define COLUMN_TITLE_NEW   "新着"
-#define COLUMN_TITLE_SINCE "since"
-#define COLUMN_TITLE_WRITE "最終書込"
-#define COLUMN_TITLE_SPEED "速度"
+// SKELETON::SelectItemPrefの項目名
+#define ITEM_NAME_MARK  "!"
+#define ITEM_NAME_ID    "番号"
+#define ITEM_NAME_NAME  "タイトル"
+#define ITEM_NAME_RES   "レス"
+#define ITEM_NAME_LOAD  "取得"
+#define ITEM_NAME_NEW   "新着"
+#define ITEM_NAME_SINCE "since"
+#define ITEM_NAME_LASTWRITE "最終書込"
+#define ITEM_NAME_SPEED "速度"
+
+#define ITEM_NAME_WRITEMSG  "書き込み"
+#define ITEM_NAME_OPENBOARD "板を開く"
+#define ITEM_NAME_SEARCH    "検索"
+#define ITEM_NAME_RELOAD    "再読み込み"
+#define ITEM_NAME_STOPLOADING "読み込み中止"
+#define ITEM_NAME_FAVORITE  "お気に入りに追加"
+#define ITEM_NAME_DELETE    "削除"
+#define ITEM_NAME_QUIT      "閉じる"
+
+#define ITEM_NAME_NEWARTICLE   "新スレ作成"
+#define ITEM_NAME_SEARCHBOX    "検索ボックス"
+#define ITEM_NAME_SEARCH_NEXT  "次検索"
+#define ITEM_NAME_SEARCH_PREV  "前検索"
+
+
+// SESSION::get_item_*() の戻り値
+enum
+{
+    ITEM_MARK = 0,
+    ITEM_ID,
+    ITEM_NAME,
+    ITEM_RES,
+    ITEM_LOAD,
+    ITEM_NEW,
+    ITEM_SINCE,
+    ITEM_LASTWRITE,
+    ITEM_SPEED,
+
+    ITEM_WRITEMSG,
+    ITEM_OPENBOARD,
+    ITEM_SEARCH,
+    ITEM_RELOAD,
+    ITEM_STOPLOADING,
+    ITEM_FAVORITE,
+    ITEM_DELETE,
+    ITEM_QUIT,
+
+    ITEM_NEWARTICLE,
+    ITEM_SEARCHBOX,
+    ITEM_SEARCH_NEXT,
+    ITEM_SEARCH_PREV,
+
+    ITEM_END
+};
 
 
 // スレッド状態( or を取る)

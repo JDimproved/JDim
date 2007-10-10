@@ -380,14 +380,10 @@ void ArticleBase::set_subject( const std::string& subject )
 {
     if( subject.empty() ) return;
 
-    // 特殊文字の置き換え(応急処置)
+    // 特殊文字の置き換え
     if( subject.find( "&" ) != std::string::npos ){
 
-        std::string subject_tmp = subject;
-        subject_tmp = MISC::replace_str( subject_tmp, "&quot;", "\"" );
-        subject_tmp = MISC::replace_str( subject_tmp, "&lt;", "<" );
-        subject_tmp = MISC::replace_str( subject_tmp, "&gt;", ">" );
-        subject_tmp = MISC::replace_str( subject_tmp, "&amp;", "&" );
+        std::string subject_tmp = MISC::html_unescape( subject );
 
         if( subject_tmp != m_subject ){
             m_subject = subject_tmp;

@@ -717,8 +717,18 @@ void ImageViewBase::slot_cancel_mosaic()
 
     if( m_img->is_fake() ){
 
+        std::string type = "本当の画像タイプは";
+        switch( DBIMG::get_type_real( get_url() ) ){
+            case DBIMG::T_JPG: type += "JPEG"; break;
+            case DBIMG::T_PNG: type += "PNG"; break;
+            case DBIMG::T_GIF: type += "GIF"; break;
+            case DBIMG::T_BMP: type += "BMP"; break;
+        }
+        type += "です。";
+
         SKELETON::MsgDiag mdiag( IMAGE::get_admin()->get_win(),
-                                 "拡張子が偽装されています。モザイクを解除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+                                 "拡張子が偽装されています。" + type + "\n\nモザイクを解除しますか？",
+                                 false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
         mdiag.set_default_response( Gtk::RESPONSE_NO );
         if( mdiag.run() != Gtk::RESPONSE_YES ) return;

@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 
-bool DBTREE::check_spchar( const char* n_in, const char* spchar )
+bool check_spchar( const char* n_in, const char* spchar )
 {
     int i = 0;
     while( spchar[ i ] != '\0' ){
@@ -22,6 +22,57 @@ bool DBTREE::check_spchar( const char* n_in, const char* spchar )
     return true;
 }
 
+
+//
+// ユニコード文字参照  &#数字;
+//
+// in_char[1] == "#" であること
+//
+int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out )
+{
+    int ret = DBTREE::NODE_TEXT;
+    int lng = 0;
+    char str_num[ 16 ];
+
+    n_in = n_out = 0;
+
+    // 桁数取得(最大4桁)
+    if( in_char[ 2 ] == ';' ) return DBTREE::NODE_NONE;
+    else if( in_char[ 3 ] == ';' ) lng = 1;
+    else if( in_char[ 4 ] == ';' ) lng = 2;
+    else if( in_char[ 5 ] == ';' ) lng = 3;
+    else if( in_char[ 6 ] == ';' ) lng = 4;
+    else if( in_char[ 7 ] == ';' ) lng = 5;
+    else return DBTREE::NODE_NONE;
+
+    // 全て数字かどうかチェック
+    for( int i = 0; i < lng; ++i ) if( in_char[ 2 + i ] < '0' || in_char[ 2 + i ] > '9' ) return DBTREE::NODE_NONE;
+
+    memcpy( str_num, in_char + 2, lng );
+    str_num[ lng ] = '\0';
+
+    int num = atoi( str_num );
+
+    switch( num ){
+
+        //zwnj,zwj,lrm,rlm は今のところ無視(zwspにする)
+        case UCS_ZWSP:
+        case UCS_ZWNJ:
+        case UCS_ZWJ:
+        case UCS_LRM:
+        case UCS_RLM:
+            ret = DBTREE::NODE_ZWSP;
+            break;
+
+        default:
+            n_out = MISC::ucs2toutf8( num, out_char );
+            if( ! n_out ) return DBTREE::NODE_NONE;
+    }
+
+    n_in = 3 + lng;
+
+    return ret;
+}    
 
 
 //
@@ -68,57 +119,3 @@ int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n
     out_char[ n_out ] = '\0';
     return ret;
 }
-
-
-
-//
-// ユニコード文字参照  &#数字;
-//
-// in_char[1] == "#" であること
-//
-int DBTREE::decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out )
-{
-    int ret = DBTREE::NODE_TEXT;
-    int lng = 0;
-    char str_num[ 16 ];
-
-    n_in = n_out = 0;
-
-    // 桁数取得(最大4桁)
-    if( in_char[ 2 ] == ';' ) return NODE_NONE;
-    else if( in_char[ 3 ] == ';' ) lng = 1;
-    else if( in_char[ 4 ] == ';' ) lng = 2;
-    else if( in_char[ 5 ] == ';' ) lng = 3;
-    else if( in_char[ 6 ] == ';' ) lng = 4;
-    else if( in_char[ 7 ] == ';' ) lng = 5;
-    else return NODE_NONE;
-
-    // 全て数字かどうかチェック
-    for( int i = 0; i < lng; ++i ) if( in_char[ 2 + i ] < '0' || in_char[ 2 + i ] > '9' ) return NODE_NONE;
-
-    memcpy( str_num, in_char + 2, lng );
-    str_num[ lng ] = '\0';
-
-    int num = atoi( str_num );
-
-    switch( num ){
-
-        //zwnj,zwj,lrm,rlm は今のところ無視(zwspにする)
-        case UCS_ZWSP:
-        case UCS_ZWNJ:
-        case UCS_ZWJ:
-        case UCS_LRM:
-        case UCS_RLM:
-            ret = DBTREE::NODE_ZWSP;
-            break;
-
-        default:
-            n_out = MISC::ucs2toutf8( num, out_char );
-            if( ! n_out ) return DBTREE::NODE_NONE;
-    }
-
-    n_in = 3 + lng;
-
-    return ret;
-}    
-                                                                

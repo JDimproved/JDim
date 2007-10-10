@@ -46,6 +46,9 @@ jd_SOURCES = \
 	viewfactory.cpp \
 \
 	prefdiagfactory.cpp \
+	boarditempref.cpp \
+	articleitempref.cpp \
+	sidebaritempref.cpp \
 	fontcolorpref.cpp
 
 
@@ -94,6 +97,8 @@ noinst_HEADERS = \
 	passwdpref.h \
 	privacypref.h \
 	boarditempref.h \
+	articleitempref.h \
+	sidebaritempref.h \
 	fontcolorpref.h
 
 

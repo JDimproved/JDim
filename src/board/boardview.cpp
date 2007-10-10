@@ -24,6 +24,7 @@
 #include "controlid.h"
 #include "prefdiagfactory.h"
 #include "httpcode.h"
+#include "controlutil.h"
 #include "colorid.h"
 #include "fontid.h"
 
@@ -148,24 +149,22 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
 
     // 列のappend
-    std::string order = SESSION::get_items_board();
-    std::list< std::string > list_order = MISC::split_line( order );
-    std::list< std::string >::iterator it = list_order.begin();
-    for( ; it != list_order.end(); ++it ){
-
-#ifdef _DEBUG
-        std::cout << *it << std::endl;
-#endif
-
-        if( *it == COLUMN_TITLE_MARK ) APPEND_COLUMN( COLUMN_TITLE_MARK, m_columns.m_col_mark );
-        if( *it == COLUMN_TITLE_ID ) APPEND_COLUMN( COLUMN_TITLE_ID, m_columns.m_col_id );
-        if( *it == COLUMN_TITLE_NAME ) APPEND_COLUMN( COLUMN_TITLE_NAME, m_columns.m_col_subject );
-        if( *it == COLUMN_TITLE_RES ) APPEND_COLUMN( COLUMN_TITLE_RES, m_columns.m_col_res );
-        if( *it == COLUMN_TITLE_LOAD ) APPEND_COLUMN( COLUMN_TITLE_LOAD, m_columns.m_col_str_load );
-        if( *it == COLUMN_TITLE_NEW ) APPEND_COLUMN( COLUMN_TITLE_NEW, m_columns.m_col_str_new );
-        if( *it == COLUMN_TITLE_SINCE ) APPEND_COLUMN( COLUMN_TITLE_SINCE, m_columns.m_col_since );
-        if( *it == COLUMN_TITLE_WRITE ) APPEND_COLUMN( COLUMN_TITLE_WRITE, m_columns.m_col_write );
-        if( *it == COLUMN_TITLE_SPEED ) APPEND_COLUMN( COLUMN_TITLE_SPEED, m_columns.m_col_speed );
+    int num = 0;
+    for(;;){
+        int item = SESSION::get_item_board( num );
+        if( item == ITEM_END ) break;
+        switch( item ){
+            case ITEM_MARK: APPEND_COLUMN( ITEM_NAME_MARK, m_columns.m_col_mark ); break;
+            case ITEM_ID: APPEND_COLUMN( ITEM_NAME_ID, m_columns.m_col_id ); break;
+            case ITEM_NAME: APPEND_COLUMN( ITEM_NAME_NAME, m_columns.m_col_subject ); break;
+            case ITEM_RES: APPEND_COLUMN( ITEM_NAME_RES, m_columns.m_col_res ); break;
+            case ITEM_LOAD: APPEND_COLUMN( ITEM_NAME_LOAD, m_columns.m_col_str_load ); break;
+            case ITEM_NEW: APPEND_COLUMN( ITEM_NAME_NEW, m_columns.m_col_str_new ); break;
+            case ITEM_SINCE: APPEND_COLUMN( ITEM_NAME_SINCE, m_columns.m_col_since ); break;
+            case ITEM_LASTWRITE: APPEND_COLUMN( ITEM_NAME_LASTWRITE, m_columns.m_col_write ); break;
+            case ITEM_SPEED: APPEND_COLUMN( ITEM_NAME_SPEED, m_columns.m_col_speed ); break;
+        }
+        ++num;
     }
 
     // サイズを調整しつつソートの設定
@@ -483,15 +482,15 @@ int BoardView::get_title_id( int col )
     std::string title = column->get_title();
     int id = -1;
 
-    if( title == COLUMN_TITLE_MARK ) id = COL_MARK;
-    else if( title == COLUMN_TITLE_ID ) id = COL_ID;
-    else if( title == COLUMN_TITLE_NAME ) id = COL_SUBJECT;
-    else if( title == COLUMN_TITLE_RES ) id = COL_RES;
-    else if( title == COLUMN_TITLE_LOAD ) id = COL_STR_LOAD;
-    else if( title == COLUMN_TITLE_NEW ) id = COL_STR_NEW;
-    else if( title == COLUMN_TITLE_SINCE ) id = COL_SINCE;
-    else if( title == COLUMN_TITLE_WRITE ) id = COL_WRITE;
-    else if( title == COLUMN_TITLE_SPEED ) id = COL_SPEED;
+    if( title == ITEM_NAME_MARK ) id = COL_MARK;
+    else if( title == ITEM_NAME_ID ) id = COL_ID;
+    else if( title == ITEM_NAME_NAME ) id = COL_SUBJECT;
+    else if( title == ITEM_NAME_RES ) id = COL_RES;
+    else if( title == ITEM_NAME_LOAD ) id = COL_STR_LOAD;
+    else if( title == ITEM_NAME_NEW ) id = COL_STR_NEW;
+    else if( title == ITEM_NAME_SINCE ) id = COL_SINCE;
+    else if( title == ITEM_NAME_LASTWRITE ) id = COL_WRITE;
+    else if( title == ITEM_NAME_SPEED ) id = COL_SPEED;
 
     return id;
 }
@@ -1586,9 +1585,9 @@ bool BoardView::slot_motion_notify( GdkEventMotion* event )
     if( m_treeview.get_path_at_pos( x, y, path, column, cell_x, cell_y ) ){
 
         m_treeview.set_tooltip_min_width( column->get_width() );
-        if( column->get_title() == COLUMN_TITLE_NAME ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_subject ) );
-        else if( column->get_title() == COLUMN_TITLE_SINCE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_since ) );
-        else if( column->get_title() == COLUMN_TITLE_WRITE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_write ) );
+        if( column->get_title() == ITEM_NAME_NAME ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_subject ) );
+        else if( column->get_title() == ITEM_NAME_SINCE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_since ) );
+        else if( column->get_title() == ITEM_NAME_LASTWRITE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_write ) );
         else m_treeview.set_str_tooltip( std::string() );
     }
 

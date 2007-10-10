@@ -308,7 +308,10 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_embedded_img ) );
 
     // スレ一覧の表示項目
-    m_action_group->add( Gtk::Action::create( "SetupBoardItem", "スレ一覧表示項目設定..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
+    m_action_group->add( Gtk::Action::create( "SetupBoardItemColumn", "リスト項目設定(スレ一覧)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditemcolumn ) );
+    m_action_group->add( Gtk::Action::create( "SetupSidebarItem", "ツールバー項目設定(サイドバー)..." ), sigc::mem_fun( *this, &Core::slot_setup_sidebaritem ) );
+    m_action_group->add( Gtk::Action::create( "SetupBoardItem", "ツールバー項目設定(スレ一覧)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
+    m_action_group->add( Gtk::Action::create( "SetupArticleItem", "ツールバー項目設定(スレビュー)..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem ) );
 
     //////////////////////////////////////////////////////
 
@@ -404,7 +407,7 @@ void Core::run( bool init )
     // ツール
     m_action_group->add( Gtk::Action::create( "Menu_Tool", "ツール(_T)" ) );    
     m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索" ) );
-    m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "現在開いている板のログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
+    m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "表示中の板のログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_action_group->add( Gtk::Action::create( "SearchTitle", "スレタイ検索"), sigc::mem_fun( *this, &Core::slot_search_title ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "全お気に入り更新チェック" ) );
@@ -479,7 +482,10 @@ void Core::run( bool init )
         "<menuitem action='3Pane'/>"
         "<menuitem action='v3Pane'/>"
         "<separator/>"
+        "<menuitem action='SetupBoardItemColumn'/>"
+        "<menuitem action='SetupSidebarItem'/>"
         "<menuitem action='SetupBoardItem'/>"
+        "<menuitem action='SetupArticleItem'/>"
         "<separator/>"
         "<menuitem action='EmbMes'/>";
 
@@ -1026,6 +1032,11 @@ void Core::slot_activate_menubar()
     if( CONFIG::get_use_image_view() && ! IMAGE::get_admin()->empty() ) act->set_sensitive( true );
     else act->set_sensitive( false );
 
+    // 開いている板のログ検索
+    act = m_action_group->get_action( "SearchCacheBoard" );
+    if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
     // スレ一覧のプロパティ
     act = m_action_group->get_action( "BoardPref" );
     if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
@@ -1355,11 +1366,44 @@ void Core::slot_setup_passwd()
 
 
 //
-// スレ一覧の表示項目
+// ツールバーのアイコン(サイドバー)の表示項目
+//
+void Core::slot_setup_sidebaritem()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_SIDEBARITEM, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// リスト項目(スレ一覧)の設定
+//
+void Core::slot_setup_boarditemcolumn()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEMCOLUM, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// ツールバーのアイコン(スレ一覧)の表示項目
 //
 void Core::slot_setup_boarditem()
 {
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEM, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// ツールバーのアイコン(スレビュー)の表示項目
+//
+void Core::slot_setup_articleitem()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLEITEM, "" );
     pref->run();
     delete pref;
 }

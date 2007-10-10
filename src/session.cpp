@@ -43,7 +43,17 @@ std::list< bool > article_locked;
 std::list< std::string > image_urls;
 std::list< bool > image_locked;
 
-std::string items_board;
+std::string items_sidebar_str;
+std::vector< int > items_sidebar;
+
+std::string items_article_toolbar_str;
+std::vector< int > items_article_toolbar;
+
+std::string items_board_toolbar_str;
+std::vector< int > items_board_toolbar;
+
+std::string items_board_str;
+std::vector< int > items_board;
 
 int board_col_mark;
 int board_col_id;
@@ -118,7 +128,46 @@ std::string dir_draft;
 bool popupmenu_shown;
 
 
+
 /////////////////////////////////////
+
+
+// 項目名 -> 番号変換
+std::vector< int > parse_items( const std::string& items_str )
+{
+    std::vector< int > items;
+    std::list< std::string > list_order = MISC::split_line( items_str );
+    std::list< std::string >::iterator it = list_order.begin();
+    for( ; it != list_order.end(); ++it ){
+
+        if( *it == ITEM_NAME_MARK ) items.push_back(ITEM_MARK );
+        if( *it == ITEM_NAME_ID ) items.push_back(ITEM_ID );
+        if( *it == ITEM_NAME_NAME ) items.push_back(ITEM_NAME );
+        if( *it == ITEM_NAME_RES ) items.push_back(ITEM_RES );
+        if( *it == ITEM_NAME_LOAD ) items.push_back(ITEM_LOAD );
+        if( *it == ITEM_NAME_NEW ) items.push_back(ITEM_NEW );
+        if( *it == ITEM_NAME_SINCE ) items.push_back(ITEM_SINCE );
+        if( *it == ITEM_NAME_LASTWRITE ) items.push_back(ITEM_LASTWRITE );
+        if( *it == ITEM_NAME_SPEED ) items.push_back(ITEM_SPEED );
+
+        if( *it == ITEM_NAME_WRITEMSG ) items.push_back( ITEM_WRITEMSG );
+        if( *it == ITEM_NAME_OPENBOARD ) items.push_back(ITEM_OPENBOARD );
+        if( *it == ITEM_NAME_SEARCH ) items.push_back(ITEM_SEARCH );
+        if( *it == ITEM_NAME_RELOAD ) items.push_back( ITEM_RELOAD );
+        if( *it == ITEM_NAME_STOPLOADING ) items.push_back( ITEM_STOPLOADING );
+        if( *it == ITEM_NAME_FAVORITE ) items.push_back( ITEM_FAVORITE );
+        if( *it == ITEM_NAME_DELETE ) items.push_back( ITEM_DELETE );
+        if( *it == ITEM_NAME_QUIT ) items.push_back( ITEM_QUIT );
+
+        if( *it == ITEM_NAME_NEWARTICLE ) items.push_back( ITEM_NEWARTICLE );
+        if( *it == ITEM_NAME_SEARCHBOX ) items.push_back( ITEM_SEARCHBOX );
+        if( *it == ITEM_NAME_SEARCH_NEXT ) items.push_back( ITEM_SEARCH_NEXT );
+        if( *it == ITEM_NAME_SEARCH_PREV ) items.push_back( ITEM_SEARCH_PREV );
+    }
+    items.push_back( ITEM_END );
+
+    return items;
+}
 
 
 void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls, const std::string& id_locked,
@@ -206,16 +255,51 @@ void SESSION::init_session()
     read_list_urls( cf, "article_urls", "article_locked", article_urls, article_locked );
     read_list_urls( cf, "image_urls", "image_locked", image_urls, image_locked );
 
-    items_board = cf.get_option( "items_board",
-                                 COLUMN_TITLE_MARK + std::string ( " " ) +
-                                 COLUMN_TITLE_ID + std::string ( " " ) +
-                                 COLUMN_TITLE_NAME + std::string ( " " ) +
-                                 COLUMN_TITLE_RES + std::string ( " " ) +
-                                 COLUMN_TITLE_LOAD + std::string ( " " ) +
-                                 COLUMN_TITLE_NEW + std::string ( " " ) +
-                                 COLUMN_TITLE_SINCE + std::string ( " " ) +
-                                 COLUMN_TITLE_WRITE + std::string ( " " ) +
-                                 COLUMN_TITLE_SPEED + std::string ( " " ) );
+    items_sidebar_str = cf.get_option( "items_sidebar",
+                                 ITEM_NAME_SEARCHBOX + std::string ( " " ) +
+                                 ITEM_NAME_SEARCH_NEXT + std::string ( " " ) +
+                                 ITEM_NAME_SEARCH_PREV + std::string ( " " ) );
+
+    items_sidebar =  parse_items( items_sidebar_str );
+
+    items_article_toolbar_str = cf.get_option( "items_article_toolbar",
+                                 ITEM_NAME_WRITEMSG + std::string ( " " ) +
+                                 ITEM_NAME_OPENBOARD + std::string ( " " ) +
+                                 ITEM_NAME_NAME + std::string ( " " ) +
+                                 ITEM_NAME_SEARCH + std::string ( " " ) +
+                                 ITEM_NAME_RELOAD + std::string ( " " ) +
+                                 ITEM_NAME_STOPLOADING + std::string ( " " ) +
+                                 ITEM_NAME_FAVORITE + std::string ( " " ) +
+                                 ITEM_NAME_DELETE + std::string ( " " ) +
+                                 ITEM_NAME_QUIT + std::string ( " " ) );
+
+    items_article_toolbar =  parse_items( items_article_toolbar_str );
+
+    items_board_toolbar_str = cf.get_option( "items_board_toolbar",
+                                 ITEM_NAME_NEWARTICLE + std::string ( " " ) +
+                                 ITEM_NAME_SEARCHBOX + std::string ( " " ) +
+                                 ITEM_NAME_SEARCH_NEXT + std::string ( " " ) +
+                                 ITEM_NAME_SEARCH_PREV + std::string ( " " ) +
+                                 ITEM_NAME_RELOAD + std::string ( " " ) +
+                                 ITEM_NAME_STOPLOADING + std::string ( " " ) +
+                                 ITEM_NAME_FAVORITE + std::string ( " " ) +
+                                 ITEM_NAME_DELETE + std::string ( " " ) +
+                                 ITEM_NAME_QUIT + std::string ( " " ) );
+
+    items_board_toolbar =  parse_items( items_board_toolbar_str );
+
+    items_board_str = cf.get_option( "items_board",
+                                 ITEM_NAME_MARK + std::string ( " " ) +
+                                 ITEM_NAME_ID + std::string ( " " ) +
+                                 ITEM_NAME_NAME + std::string ( " " ) +
+                                 ITEM_NAME_RES + std::string ( " " ) +
+                                 ITEM_NAME_LOAD + std::string ( " " ) +
+                                 ITEM_NAME_NEW + std::string ( " " ) +
+                                 ITEM_NAME_SINCE + std::string ( " " ) +
+                                 ITEM_NAME_LASTWRITE + std::string ( " " ) +
+                                 ITEM_NAME_SPEED + std::string ( " " ) );
+
+    items_board =  parse_items( items_board_str );
 
     board_col_mark = cf.get_option( "col_mark", 30 );
     board_col_id = cf.get_option( "col_id", 45 );
@@ -415,7 +499,11 @@ void SESSION::save_session()
         << "image_urls = " << str_image_urls << std::endl
         << "image_locked = " << str_image_locked << std::endl
 
-        << "items_board = " << items_board << std::endl
+        << "items_sidebar = " << items_sidebar_str << std::endl
+        << "items_article_toolbar = " << items_article_toolbar_str << std::endl
+        << "items_board_toolbar = " << items_board_toolbar_str << std::endl
+        << "items_board = " << items_board_str << std::endl
+
         << "col_mark = " << board_col_mark << std::endl
         << "col_id = " << board_col_id << std::endl
         << "col_subject = " << board_col_subject << std::endl
@@ -631,9 +719,42 @@ void SESSION::set_image_URLs( const std::list< std::string >& urls ){ image_urls
 const std::list< bool >& SESSION::get_image_locked(){ return image_locked; }
 void SESSION::set_image_locked( const std::list< bool >& locked ){ image_locked = locked; }
 
+// サイドバーのツールバーの項目
+const std::string& SESSION::get_items_sidebar_str(){ return items_sidebar_str; }
+void SESSION::set_items_sidebar_str( const std::string& items_str )
+{
+    items_sidebar_str = items_str;
+    items_sidebar = parse_items( items_sidebar_str );
+}
+const int SESSION::get_item_sidebar( const int num ){ return items_sidebar[ num ]; }
+
+// スレビューのツールバーの項目
+const std::string& SESSION::get_items_article_toolbar_str(){ return items_article_toolbar_str; }
+void SESSION::set_items_article_toolbar_str( const std::string& items_str )
+{
+    items_article_toolbar_str = items_str;
+    items_article_toolbar = parse_items( items_article_toolbar_str );
+}
+const int SESSION::get_item_article_toolbar( const int num ){ return items_article_toolbar[ num ]; }
+
+// スレ一覧のツールバー項目
+const std::string& SESSION::get_items_board_toolbar_str(){ return items_board_toolbar_str; }
+void SESSION::set_items_board_toolbar_str( const std::string& items_str )
+{
+    items_board_toolbar_str = items_str;
+    items_board_toolbar = parse_items( items_board_toolbar_str );
+}
+const int SESSION::get_item_board_toolbar( const int num ){ return items_board_toolbar[ num ]; }
+
 // スレ一覧の項目
-const std::string& SESSION::get_items_board(){ return items_board; }
-void SESSION::set_items_board( const std::string& items ){ items_board = items; }
+const std::string& SESSION::get_items_board_str(){ return items_board_str; }
+void SESSION::set_items_board_str( const std::string& items_str )
+{
+    items_board_str = items_str;
+    items_board = parse_items( items_board_str );
+}
+const int SESSION::get_item_board( const int num ){ return items_board[ num ]; }
+
 
 // board ビューの列幅
 int SESSION::col_mark(){ return board_col_mark; }

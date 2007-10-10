@@ -22,6 +22,7 @@
 #include "global.h"
 #include "httpcode.h"
 #include "session.h"
+#include "controlid.h"
 
 #include <sstream>
 #include <sys/time.h>

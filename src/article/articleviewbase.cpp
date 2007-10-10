@@ -32,6 +32,8 @@
 #include "prefdiagfactory.h"
 #include "usrcmdmanager.h"
 #include "compmanager.h"
+#include "controlutil.h"
+#include "controlid.h"
 
 #include <sstream>
 

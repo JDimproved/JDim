@@ -29,6 +29,7 @@
 #include "command.h"
 #include "global.h"
 #include "httpcode.h"
+#include "controlutil.h"
 #include "controlid.h"
 #include "dndmanager.h"
 #include "sharedbuffer.h"

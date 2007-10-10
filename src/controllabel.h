@@ -6,6 +6,7 @@
 #define _CONTROLLABEL_H
 
 #include "controlid.h"
+#include "global.h"
 
 #define MAX_CONTROL_LABEL 64
 
@@ -44,22 +45,22 @@ namespace CONTROL
 
         { "Back", "戻る" },
 
-        { "Quit", "閉じる" },
+        { "Quit", ITEM_NAME_QUIT },
         { "Save", "名前を付けて保存..." },
-        { "Delete", "削除" },
-        { "Reload", "再読み込み" },
-        { "StopLoading", "読み込み中止" },
+        { "Delete", ITEM_NAME_DELETE },
+        { "Reload", ITEM_NAME_RELOAD },
+        { "StopLoading", ITEM_NAME_STOPLOADING },
         { "Copy", "コピー" },
         { "SelectAll", "全て選択" },
-        { "AppendFavorite", "お気に入りに追加..." },
+        { "AppendFavorite", ITEM_NAME_FAVORITE },
         { "Property", "プロパティ..." },
 
-        { "Search", "検索" },
+        { "Search", ITEM_NAME_SEARCH },
         { "CloseSearchBar", "検索バーを閉じる" },
         { "HiLightOff", "ハイライト解除" },
         { "SearchInvert", "前方検索" },
-        { "SearchNext", "次検索" },
-        { "SearchPrev", "前検索" },
+        { "SearchNext", ITEM_NAME_SEARCH_NEXT },
+        { "SearchPrev", ITEM_NAME_SEARCH_PREV },
         { "DrawOutAnd", "AND 抽出" },
         { "DrawOutOr", "OR 抽出" },
 
@@ -102,7 +103,7 @@ namespace CONTROL
 
         { "OpenArticle", "スレを開く" },
         { "OpenArticleTab", "タブでスレを開く" },
-        { "NewArticle", "新スレ作成" },
+        { "NewArticle", ITEM_NAME_NEWARTICLE },
         { "SearchCache", "ログ検索" },
 
         { "OpenArticleButton", "スレを開く" },
@@ -121,8 +122,8 @@ namespace CONTROL
         { "DownFast", "高速下移動" },
 
         { "GotoNew", "新着へ移動" },
-        { "OpenParentBoard", "板を開く" },
-        { "WriteMessage", "書き込み" },
+        { "OpenParentBoard", ITEM_NAME_OPENBOARD },
+        { "WriteMessage", ITEM_NAME_WRITEMSG },
 
         { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },

@@ -9,7 +9,9 @@
 #include "globalabonepref.h"
 #include "globalabonethreadpref.h"
 #include "fontcolorpref.h"
+#include "sidebaritempref.h"
 #include "boarditempref.h"
+#include "articleitempref.h"
 
 #include "dbimg/delimgdiag.h"
 
@@ -42,14 +44,20 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
         case PREFDIAG_FONTCOLOR:
             return new CORE::FontColorPref( parent, url );
 
+        case PREFDIAG_SIDEBARITEM:
+            return new CORE::SidebarItemPref( parent, url );            
+
+        case PREFDIAG_BOARDITEMCOLUM:
+            return new CORE::BoardItemColumnPref( parent, url );            
+
         case PREFDIAG_BOARDITEM:
             return new CORE::BoardItemPref( parent, url );            
 
+        case PREFDIAG_ARTICLEITEM:
+            return new CORE::ArticleItemPref( parent, url );            
 
         case PREFDIAG_DELIMG:
             return new DBIMG::DelImgDiag( parent, url );
-
-
 
         case PREFDIAG_BOARD:
             return new BOARD::Preferences( parent, url );

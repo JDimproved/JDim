@@ -10,8 +10,6 @@
 #include "skeleton/imgbutton.h"
 #include "skeleton/compentry.h"
 
-#include "controlutil.h"
-#include "controlid.h"
 
 
 enum
@@ -46,60 +44,19 @@ namespace BBSLIST
 
         Gtk::Tooltips m_tooltip;
 
+        BBSListtToolBar( bool show_bar );
+        virtual ~BBSListtToolBar(){}
+
         void set_combo( int page ){ m_combo.set_active( page ); }
         int  get_combo(){ return m_combo.get_active_row_number(); }
 
         // ツールバーを表示
-        void show_toolbar()
-        {
-            if( ! m_toolbar_shown ){
-                pack_start( m_hbox_search, Gtk::PACK_SHRINK );
-                show_all_children();
-                m_toolbar_shown = true;
-            }
-        }
+        void show_toolbar();
 
         // ツールバーを隠す
-        void hide_toolbar()
-        {
-            if( m_toolbar_shown ){
-                remove( m_hbox_search );
-                show_all_children();
-                m_toolbar_shown = false;
-            }
-        }
+        void hide_toolbar();
 
-        void remove_label()
-        {
-            remove( m_hbox_label );
-        }
-
-        BBSListtToolBar( bool show_bar ) :
-        m_toolbar_shown( false ),
-        m_button_close( Gtk::Stock::CLOSE ),
-        m_button_up_search( Gtk::Stock::GO_UP ),
-        m_button_down_search( Gtk::Stock::GO_DOWN )
-        {
-            // ラベルバー
-            m_combo.append_text( "板一覧" );
-            m_combo.append_text( "お気に入り" );
-
-            m_tooltip.set_tip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
-            m_hbox_label.pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 2 );
-            m_hbox_label.pack_start( m_button_close, Gtk::PACK_SHRINK );
-
-            // 検索バー
-            m_tooltip.set_tip( m_button_up_search, CONTROL::get_label_motion( CONTROL::SearchPrev ) );
-            m_tooltip.set_tip( m_button_down_search, CONTROL::get_label_motion( CONTROL::SearchNext ) );
-            m_hbox_search.pack_start( m_entry_search );
-            m_hbox_search.pack_end( m_button_up_search, Gtk::PACK_SHRINK );
-            m_hbox_search.pack_end( m_button_down_search, Gtk::PACK_SHRINK );
-
-            m_entry_search.add_mode( CONTROL::MODE_BBSLIST );
-
-            pack_start( m_hbox_label, Gtk::PACK_SHRINK );
-            if( show_bar ) show_toolbar();
-        }
+        void remove_label();
     };
 }
 

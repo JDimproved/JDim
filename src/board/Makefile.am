@@ -3,6 +3,7 @@ noinst_LIBRARIES = libboard.a
 libboard_a_SOURCES = \
 	boardadmin.cpp \
 	boardview.cpp \
+	toolbar.cpp \
 	preference.cpp
 
 noinst_HEADERS = \

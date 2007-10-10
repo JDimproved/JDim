@@ -8,6 +8,8 @@
 #include "jdiconv.h"
 #include "jdregex.h"
 
+#include "dbtree/spchar_decoder.h"
+
 #include <sstream>
 
 
@@ -593,12 +595,34 @@ std::string MISC::html_escape( const std::string& str )
 {
     if( str.empty() ) return str;
 
-    std::string str_out = str;
+    std::string str_out;
 
-     str_out = replace_str( str_out, "&", "&amp;" );
-    str_out = replace_str( str_out, "\"", "&quot;" );
-    str_out = replace_str( str_out, "<", "&lt;" );
-    str_out = replace_str( str_out, ">", "&gt;" );
+    for( size_t pos = 0; pos < str.length(); ++pos ){
+
+        char tmpchar = str.c_str()[ pos ];
+
+        if( tmpchar == '&' ){
+
+            const int bufsize = 64;
+            char out_char[ bufsize ];
+            int n_in, n_out;
+            DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out );
+
+            if( n_out ) str_out += tmpchar;
+            else str_out += "&amp;";
+        }
+        else if( tmpchar == '\"' ) str_out += "&quot;";
+        else if( tmpchar == '<' ) str_out += "&lt;";
+        else if( tmpchar == '>' ) str_out += "&gt;";
+        else str_out += tmpchar;
+    }
+
+#ifdef _DEBUG
+    if( str != str_out ){
+        std::cout << "MISC::html_escape\nstr = " << str << std::endl
+                  << "out = " << str_out << std::endl;
+    }
+#endif
 
     return str_out;
 }
@@ -610,13 +634,30 @@ std::string MISC::html_escape( const std::string& str )
 std::string MISC::html_unescape( const std::string& str )
 {
     if( str.empty() ) return str;
+    if( str.find( "&" ) == std::string::npos ) return str;
 
-    std::string str_out = str;
+    std::string str_out;
 
-    str_out = replace_str( str_out, "&amp;", "&" );
-    str_out = replace_str( str_out, "&quot;", "\"" );
-    str_out = replace_str( str_out, "&lt;", "<" );
-    str_out = replace_str( str_out, "&gt;", ">" );
+    for( size_t pos = 0; pos < str.length(); ++pos ){
+
+        const int bufsize = 64;
+        char out_char[ bufsize ];
+        int n_in, n_out;
+        DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out );
+
+        if( n_out ){
+            str_out += out_char;
+            pos += n_in -1;
+        }
+        else str_out += str.c_str()[ pos ];
+    }
+
+#ifdef _DEBUG
+    if( str != str_out ){
+        std::cout << "MISC::html_unescape\nstr = " << str << std::endl
+                  << "out = " << str_out << std::endl;
+    }
+#endif
 
     return str_out;
 }

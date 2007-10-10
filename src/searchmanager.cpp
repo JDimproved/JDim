@@ -228,11 +228,14 @@ void Search_Manager::search_fin_title()
 
             std::string line = MISC::remove_space( *it );
 
+            // & が &amp; に置き換わっているので直す
+            if( line.find( "&" ) != std::string::npos ) line = MISC::replace_str( line, "&amp;", "&" );
+
             if( ! line.empty() && regex.exec( line ) ){
 
                 SEARCHDATA data;
                 data.url_readcgi = DBTREE::url_readcgi( regex.str( 1 ), 0, 0 );
-                data.subject = regex.str( 2 );
+                data.subject = MISC::html_unescape( regex.str( 2 ) );
                 data.num = atoi( regex.str( 3 ).c_str() );
 
                 if( ! data.url_readcgi.empty() ){
