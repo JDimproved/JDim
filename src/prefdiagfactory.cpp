@@ -12,6 +12,7 @@
 #include "sidebaritempref.h"
 #include "boarditempref.h"
 #include "articleitempref.h"
+#include "msgitempref.h"
 
 #include "dbimg/delimgdiag.h"
 
@@ -55,6 +56,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
 
         case PREFDIAG_ARTICLEITEM:
             return new CORE::ArticleItemPref( parent, url );            
+
+        case PREFDIAG_MSGITEM:
+            return new CORE::MsgItemPref( parent, url );            
 
         case PREFDIAG_DELIMG:
             return new DBIMG::DelImgDiag( parent, url );

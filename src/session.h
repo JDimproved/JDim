@@ -268,6 +268,11 @@ namespace SESSION
     void set_items_board_str( const std::string& items );
     const int get_item_board( const int num );
 
+    // 書き込みビューのツールバー項目
+    const std::string& get_items_msg_toolbar_str();
+    void set_items_msg_toolbar_str( const std::string& items );
+    const int get_item_msg_toolbar( const int num );
+
     // スレ一覧の列幅
     int col_mark();
     int col_id();

@@ -181,6 +181,7 @@ namespace CORE
         void slot_setup_boarditemcolumn();
         void slot_setup_boarditem();
         void slot_setup_articleitem();
+        void slot_setup_msgitem();
         void slot_board_pref();
         void slot_article_pref();
         void slot_image_pref();

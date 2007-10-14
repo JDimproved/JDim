@@ -50,7 +50,7 @@ ArticleToolBar::ArticleToolBar( bool show_bar ) :
     m_tooltip.set_tip( m_button_reload, CONTROL::get_label_motion( CONTROL::Reload ) );
     m_tooltip.set_tip( m_button_delete, CONTROL::get_label_motion( CONTROL::Delete ) );
     m_tooltip.set_tip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite )
-                       + "\n\nまたはスレのタブをお気に入りに直接Ｄ＆Ｄする" );
+                       + "...\n\nスレのタブをお気に入りに直接Ｄ＆Ｄしても登録可能" );
     m_tooltip.set_tip( m_button_stop, CONTROL::get_label_motion( CONTROL::StopLoading ) );
     m_tooltip.set_tip( m_button_open_search, CONTROL::get_label_motion( CONTROL::Search ) );
 

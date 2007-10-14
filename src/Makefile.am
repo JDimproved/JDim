@@ -48,6 +48,7 @@ jd_SOURCES = \
 	prefdiagfactory.cpp \
 	boarditempref.cpp \
 	articleitempref.cpp \
+	msgitempref.cpp \
 	sidebaritempref.cpp \
 	fontcolorpref.cpp
 
@@ -98,6 +99,7 @@ noinst_HEADERS = \
 	privacypref.h \
 	boarditempref.h \
 	articleitempref.h \
+	msgitempref.h \
 	sidebaritempref.h \
 	fontcolorpref.h
 

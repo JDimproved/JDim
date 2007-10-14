@@ -311,7 +311,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_UNSET ) );
     action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く"), sigc::mem_fun( *this, &BoardView::slot_open_tab ) );
     action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加..."), sigc::mem_fun( *this, &BoardView::slot_favorite_thread ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに登録"), sigc::mem_fun( *this, &BoardView::slot_favorite_board ) );
+    action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに登録..."), sigc::mem_fun( *this, &BoardView::slot_favorite_board ) );
     action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動"), sigc::mem_fun( *this, &BoardView::goto_top ) );
     action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動"), sigc::mem_fun( *this, &BoardView::goto_bottom ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );    

@@ -260,27 +260,29 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "View_Menu", "外観" ) );
 
     // メニューバー
-    m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "メニューバー", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "メニューバー表示", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_menubar ) );
 
     // ツールバー
-    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "ツールバー(メイン)" ) );
+    m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー表示" ) );
+    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メイン" ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), false ),
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する", std::string(), false ),
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_RIGHT ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBbslist", "ツールバー(サイドバー)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBbslist", "サイドバー", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbarbbslist ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBoard", "ツールバー(スレ一覧)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBoard", "スレ一覧", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbarboard ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "ツールバー(スレビュー)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "スレビュー", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbararticle ) );
 
     // タブ
-    m_action_group->add( Gtk::ToggleAction::create( "TabBoard", "タブ(スレ一覧)", std::string(), false ),
+    m_action_group->add( Gtk::Action::create( "Tab_Menu", "タブ表示" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "TabBoard", "スレ一覧", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabboard ) );
-    m_action_group->add( Gtk::ToggleAction::create( "TabArticle", "タブ(スレビュー)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "TabArticle", "スレビュー", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabarticle ) );
 
     // pane 設定
@@ -307,11 +309,16 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "EmbImg", "画像ビューを埋め込み表示", std::string(), SESSION::get_embedded_img() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_embedded_img ) );
 
-    // スレ一覧の表示項目
-    m_action_group->add( Gtk::Action::create( "SetupBoardItemColumn", "リスト項目設定(スレ一覧)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditemcolumn ) );
-    m_action_group->add( Gtk::Action::create( "SetupSidebarItem", "ツールバー項目設定(サイドバー)..." ), sigc::mem_fun( *this, &Core::slot_setup_sidebaritem ) );
-    m_action_group->add( Gtk::Action::create( "SetupBoardItem", "ツールバー項目設定(スレ一覧)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
-    m_action_group->add( Gtk::Action::create( "SetupArticleItem", "ツールバー項目設定(スレビュー)..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem ) );
+    // リスト表示項目設定
+    m_action_group->add( Gtk::Action::create( "ListItem_Menu", "リスト項目設定" ) );
+    m_action_group->add( Gtk::Action::create( "SetupBoardItemColumn", "スレ一覧..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditemcolumn ) );
+
+    // ツールバー項目設定
+    m_action_group->add( Gtk::Action::create( "Item_Menu", "ツールバー項目設定" ) );
+    m_action_group->add( Gtk::Action::create( "SetupSidebarItem", "サイドバー..." ), sigc::mem_fun( *this, &Core::slot_setup_sidebaritem ) );
+    m_action_group->add( Gtk::Action::create( "SetupBoardItem", "スレ一覧..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
+    m_action_group->add( Gtk::Action::create( "SetupArticleItem", "スレビュー..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem ) );
+    m_action_group->add( Gtk::Action::create( "SetupMsgItem", "書き込みビュー..." ), sigc::mem_fun( *this, &Core::slot_setup_msgitem ) );
 
     //////////////////////////////////////////////////////
 
@@ -409,7 +416,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索" ) );
     m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "表示中の板のログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
-    m_action_group->add( Gtk::Action::create( "SearchTitle", "スレタイ検索"), sigc::mem_fun( *this, &Core::slot_search_title ) );
+    m_action_group->add( Gtk::Action::create( "SearchTitle", CONFIG::get_url_search_menu() ), sigc::mem_fun( *this, &Core::slot_search_title ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "全お気に入り更新チェック" ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ"), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く"),
@@ -429,6 +436,20 @@ void Core::run( bool init )
 
     m_ui_manager = Gtk::UIManager::create();    
     m_ui_manager->insert_action_group( m_action_group );
+
+    Glib::ustring menu_font = 
+        "<menu action='FontColor_Menu'>"
+        "<menuitem action='FontMain'/>"
+        "<menuitem action='FontPopup'/>"
+        "<menuitem action='FontTree'/>"
+        "<separator/>"
+        "<menuitem action='ColorChar'/>"
+        "<menuitem action='ColorBack'/>"
+        "<menuitem action='ColorCharTree'/>"
+        "<menuitem action='ColorBackTree'/>"
+        "<separator/>"
+        "<menuitem action='FontColorPref'/>"
+    "</menu>";
 
     Glib::ustring str_ui = 
         "<ui>"
@@ -467,6 +488,13 @@ void Core::run( bool init )
         "<menuitem action='ShowMenuBar'/>"
         "<separator/>"
 
+        "<menu action='Tab_Menu'>"
+        "<menuitem action='TabBoard'/>"
+        "<menuitem action='TabArticle'/>"
+        "</menu>"
+        "<separator/>"
+
+        "<menu action='Toolbar_Menu'>"
         "<menu action='Toolbar_Main_Menu'>"
         "<menuitem action='ToolbarPos0'/>"
         "<menuitem action='ToolbarPos1'/>"
@@ -474,20 +502,30 @@ void Core::run( bool init )
         "<menuitem action='ToolbarBbslist'/>"
         "<menuitem action='ToolbarBoard'/>"
         "<menuitem action='ToolbarArticle'/>"
+        "</menu>"
         "<separator/>"
-        "<menuitem action='TabBoard'/>"
-        "<menuitem action='TabArticle'/>"
-        "<separator/>"
-        "<menuitem action='2Pane'/>"
-        "<menuitem action='3Pane'/>"
-        "<menuitem action='v3Pane'/>"
-        "<separator/>"
-        "<menuitem action='SetupBoardItemColumn'/>"
+
+        "<menu action='Item_Menu'>"
         "<menuitem action='SetupSidebarItem'/>"
         "<menuitem action='SetupBoardItem'/>"
         "<menuitem action='SetupArticleItem'/>"
+        "<menuitem action='SetupMsgItem'/>"
+        "</menu>"
         "<separator/>"
-        "<menuitem action='EmbMes'/>";
+
+        "<menu action='ListItem_Menu'>"
+        "<menuitem action='SetupBoardItemColumn'/>"
+        "</menu>"
+        "<separator/>"
+
+        "<menuitem action='2Pane'/>"
+        "<menuitem action='3Pane'/>"
+        "<menuitem action='v3Pane'/>"
+    "<separator/>";
+
+    str_ui += menu_font
+    + "<separator/>"
+    + "<menuitem action='EmbMes'/>";
 
     if( CONFIG::get_use_image_view() ) str_ui +=  "<menuitem action='EmbImg'/>";
 
@@ -543,20 +581,12 @@ void Core::run( bool init )
         "<menuitem action='ToggleEmacsMode'/>"
         "</menu>"
 
-        "<separator/>"
+    "<separator/>";
 
-        "<menu action='FontColor_Menu'>"
-        "<menuitem action='FontMain'/>"
-        "<menuitem action='FontPopup'/>"
-        "<menuitem action='FontTree'/>"
-        "<separator/>"
-        "<menuitem action='ColorChar'/>"
-        "<menuitem action='ColorBack'/>"
-        "<menuitem action='ColorCharTree'/>"
-        "<menuitem action='ColorBackTree'/>"
-        "<separator/>"
-        "<menuitem action='FontColorPref'/>"
-        "</menu>"
+
+    str_ui += menu_font;
+
+    str_ui +=
 
         "<separator/>"
         "<menu action='Net_Menu'>"
@@ -1404,6 +1434,17 @@ void Core::slot_setup_boarditem()
 void Core::slot_setup_articleitem()
 {
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLEITEM, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// ツールバーのアイコン(書き込みビュー)の表示項目
+//
+void Core::slot_setup_msgitem()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_MSGITEM, "" );
     pref->run();
     delete pref;
 }

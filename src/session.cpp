@@ -55,6 +55,9 @@ std::vector< int > items_board_toolbar;
 std::string items_board_str;
 std::vector< int > items_board;
 
+std::string items_msg_toolbar_str;
+std::vector< int > items_msg_toolbar;
+
 int board_col_mark;
 int board_col_id;
 int board_col_subject;
@@ -163,6 +166,11 @@ std::vector< int > parse_items( const std::string& items_str )
         if( *it == ITEM_NAME_SEARCHBOX ) items.push_back( ITEM_SEARCHBOX );
         if( *it == ITEM_NAME_SEARCH_NEXT ) items.push_back( ITEM_SEARCH_NEXT );
         if( *it == ITEM_NAME_SEARCH_PREV ) items.push_back( ITEM_SEARCH_PREV );
+
+        if( *it == ITEM_NAME_INSERTTEXT ) items.push_back( ITEM_INSERTTEXT );
+        if( *it == ITEM_NAME_NOTCLOSE ) items.push_back( ITEM_NOTCLOSE );
+        if( *it == ITEM_NAME_PREVIEW ) items.push_back( ITEM_PREVIEW );
+        if( *it == ITEM_NAME_UNDO ) items.push_back( ITEM_UNDO );
     }
     items.push_back( ITEM_END );
 
@@ -300,6 +308,17 @@ void SESSION::init_session()
                                  ITEM_NAME_SPEED + std::string ( " " ) );
 
     items_board =  parse_items( items_board_str );
+
+    items_msg_toolbar_str = cf.get_option( "items_msg_toolbar",
+                                 ITEM_NAME_PREVIEW + std::string ( " " ) +
+                                 ITEM_NAME_WRITEMSG+ std::string ( " " ) +
+                                 ITEM_NAME_NAME + std::string ( " " ) +
+                                 ITEM_NAME_UNDO + std::string ( " " ) +
+                                 ITEM_NAME_INSERTTEXT + std::string ( " " ) +
+                                 ITEM_NAME_NOTCLOSE + std::string ( " " ) +
+                                 ITEM_NAME_QUIT + std::string ( " " ) );
+
+    items_msg_toolbar =  parse_items( items_msg_toolbar_str );
 
     board_col_mark = cf.get_option( "col_mark", 30 );
     board_col_id = cf.get_option( "col_id", 45 );
@@ -503,6 +522,7 @@ void SESSION::save_session()
         << "items_article_toolbar = " << items_article_toolbar_str << std::endl
         << "items_board_toolbar = " << items_board_toolbar_str << std::endl
         << "items_board = " << items_board_str << std::endl
+        << "items_msg_toolbar = " << items_msg_toolbar_str << std::endl
 
         << "col_mark = " << board_col_mark << std::endl
         << "col_id = " << board_col_id << std::endl
@@ -754,6 +774,15 @@ void SESSION::set_items_board_str( const std::string& items_str )
     items_board = parse_items( items_board_str );
 }
 const int SESSION::get_item_board( const int num ){ return items_board[ num ]; }
+
+// 書き込みビューのツールバー項目
+const std::string& SESSION::get_items_msg_toolbar_str(){ return items_msg_toolbar_str; }
+void SESSION::set_items_msg_toolbar_str( const std::string& items_str )
+{
+    items_msg_toolbar_str = items_str;
+    items_msg_toolbar = parse_items( items_msg_toolbar_str );
+}
+const int SESSION::get_item_msg_toolbar( const int num ){ return items_msg_toolbar[ num ]; }
 
 
 // board ビューの列幅

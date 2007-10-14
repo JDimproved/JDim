@@ -115,7 +115,8 @@ namespace CONFIG
 // bbsmenu.htmlのURL
 #define CONF_BBSMENU "http://menu.2ch.net/bbsmenu.html"
 
-// スレタイ検索用アドレス
+// スレタイ検索用メニュータイトルアドレス
+#define CONF_URL_SEARCH_MENU  "スレタイ検索(find2ch)"
 #define CONF_URL_SEARCH_TITLE "http://find.2ch.net/?STR=$TEXTX&COUNT=50&TYPE=TITLE&BBS=ALL"
 
 // スレタイ検索用正規表現

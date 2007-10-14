@@ -60,6 +60,11 @@
 #define ITEM_NAME_SEARCH_NEXT  "次検索"
 #define ITEM_NAME_SEARCH_PREV  "前検索"
 
+#define ITEM_NAME_INSERTTEXT  "テキストファイル挿入"
+#define ITEM_NAME_NOTCLOSE    "書き込み後に閉じない"
+#define ITEM_NAME_PREVIEW     "プレビュー表示"
+#define ITEM_NAME_UNDO        "元に戻す(Undo)"
+
 
 // SESSION::get_item_*() の戻り値
 enum
@@ -87,6 +92,12 @@ enum
     ITEM_SEARCHBOX,
     ITEM_SEARCH_NEXT,
     ITEM_SEARCH_PREV,
+
+    ITEM_INSERTTEXT,
+    ITEM_NOTCLOSE,
+    ITEM_PREVIEW,
+
+    ITEM_UNDO,
 
     ITEM_END
 };

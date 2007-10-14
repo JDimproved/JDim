@@ -174,8 +174,11 @@ namespace CONTROL
 
         { "", "" },
 
-        { "CancelWrite", "書き込みビューを閉じる" },
-        { "ExecWrite", "書き込み実行" },
+        { "CancelWrite", ITEM_NAME_QUIT },
+        { "ExecWrite", ITEM_NAME_WRITEMSG },
+        { "InsertText", ITEM_NAME_INSERTTEXT  },
+        { "NotClose", ITEM_NAME_NOTCLOSE },
+        { "Preview", ITEM_NAME_PREVIEW },
 
         { "FocusWrite", "書き込みボタンにフォーカスを移す" },
 
@@ -195,7 +198,7 @@ namespace CONTROL
 
         { "DeleteEdit", "一文字削除" },
         { "BackspEdit", "バックスペース" },
-        { "UndoEdit", "元に戻す(Undo)" },
+        { "UndoEdit", ITEM_NAME_UNDO },
 
         { "InputAA", "アスキーアート入力" },
 

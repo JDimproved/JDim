@@ -236,7 +236,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "SearchCacheLocal", "この板のログのみを検索"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
     action_group()->add( Gtk::Action::create( "SearchCacheAll", "キャッシュ内の全ログを検索") );
     action_group()->add( Gtk::Action::create( "ExecSearchCacheAll", "検索する"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cacheall ) );
-    action_group()->add( Gtk::Action::create( "SearchTitle", "スレタイ検索"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
+    action_group()->add( Gtk::Action::create( "SearchTitle", CONFIG::get_url_search_menu() ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
 
     // 抽出系
     action_group()->add( Gtk::Action::create( "Drawout_Menu", "抽出" ) );

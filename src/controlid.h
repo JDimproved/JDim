@@ -183,6 +183,9 @@ namespace CONTROL
 
         CancelWrite,
         ExecWrite,
+        InsertText,
+        NotClose,
+        Preview,
 
         FocusWrite,
 

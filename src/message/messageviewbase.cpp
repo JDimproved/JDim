@@ -298,21 +298,29 @@ void MessageViewBase::pack_widget()
     
     m_tooltip.set_tip( m_button_write, CONTROL::get_label_motion( CONTROL::ExecWrite ) + "\n\nTabキーで書き込みボタンにフォーカスを移すことも可能" );
     m_tooltip.set_tip( m_button_cancel, CONTROL::get_label_motion( CONTROL::CancelWrite ) );
-    m_tooltip.set_tip( m_button_open, "テキストファイル挿入" );
+    m_tooltip.set_tip( m_button_open, CONTROL::get_label_motion( CONTROL::InsertText ) );
     m_tooltip.set_tip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
-    m_tooltip.set_tip( m_button_not_close, "書き込み後にビューを閉じない" );
-    m_tooltip.set_tip( m_button_preview,
-                       "書き込みビュー ←→ プレビュー表示切り替え\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
+    m_tooltip.set_tip( m_button_not_close, CONTROL::get_label_motion( CONTROL::NotClose ) );
+    m_tooltip.set_tip( m_button_preview, CONTROL::get_label_motion( CONTROL::Preview )
+                       + "\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
                        + CONTROL::get_label_motion( CONTROL::TabRight ) + "\n\n"+ CONTROL::get_label_motion( CONTROL::TabLeft )
         );
 
-    m_toolbar.pack_start( m_button_preview, Gtk::PACK_SHRINK );
-    m_toolbar.pack_start( m_button_write, Gtk::PACK_SHRINK );
-    m_toolbar.pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 );
-    m_toolbar.pack_start( m_button_undo, Gtk::PACK_SHRINK );
-    m_toolbar.pack_start( m_button_open, Gtk::PACK_SHRINK );
-    m_toolbar.pack_start( m_button_not_close, Gtk::PACK_SHRINK );
-    m_toolbar.pack_start( m_button_cancel, Gtk::PACK_SHRINK );
+    int num = 0;
+    for(;;){
+        int item = SESSION::get_item_msg_toolbar( num );
+        if( item == ITEM_END ) break;
+        switch( item ){
+            case ITEM_PREVIEW: m_toolbar.pack_start( m_button_preview, Gtk::PACK_SHRINK ); break;
+            case ITEM_WRITEMSG:  m_toolbar.pack_start( m_button_write, Gtk::PACK_SHRINK ); break;
+            case ITEM_NAME: m_toolbar.pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 ); break;
+            case ITEM_UNDO: m_toolbar.pack_start( m_button_undo, Gtk::PACK_SHRINK ); break;
+            case ITEM_INSERTTEXT: m_toolbar.pack_start( m_button_open, Gtk::PACK_SHRINK ); break;
+            case ITEM_NOTCLOSE: m_toolbar.pack_start( m_button_not_close, Gtk::PACK_SHRINK ); break;
+            case ITEM_QUIT: m_toolbar.pack_start( m_button_cancel, Gtk::PACK_SHRINK ); break;
+        }
+        ++num;
+    }
 
     if( SESSION::get_close_mes() ) m_button_cancel.set_sensitive( true );
     else m_button_cancel.set_sensitive( false );
