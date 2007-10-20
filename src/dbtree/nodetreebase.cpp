@@ -1974,12 +1974,14 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
         && !( cchar == '&' && *( str_in + n_in +1 ) == 'q' && *( str_in + n_in +2 ) == 'u'
               && *( str_in + n_in +3 ) == 'o' && *( str_in + n_in +4 ) == 't' && *( str_in + n_in +5 ) == ';' ) 
 
-        // [-a-zA-Z0-9!#$%&'()~=@;+:*,./?_] が続く限りwhileで回す
+        // [ URLとして扱う文字列 ]
+        // RFC 3986 http://www.ietf.org/rfc/rfc3986.txt
+        // RFC 2396 http://www.ietf.org/rfc/rfc2396.txt
+        //
+        // !#$%&'()*+,-./0-9:;=?@A-Z_a-z~ が続く限りwhileで回す
+        // 並びはASCIIコード順(なんとなく)
         && (
-            ( cchar >= '0' && cchar <= '9' )
-            || ( cchar >= 'a' && cchar <= 'z' )
-            || ( cchar >= 'A' && cchar <= 'Z' )
-            || cchar == '!'
+            cchar == '!'
             || cchar == '#'
             || cchar == '$'
             || cchar == '%'
@@ -1987,34 +1989,46 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
             || cchar == '\''
             || cchar == '('
             || cchar == ')'
-            || cchar == '~'
-            || cchar == '-'
-            || cchar == '='
-            || cchar == '@'
-            || cchar == ';'
-            || cchar == '+'
-            || cchar == ':'
             || cchar == '*'
+            || cchar == '+'
             || cchar == ','
+            || cchar == '-'
             || cchar == '.'
             || cchar == '/'
+            || ( cchar >= '0' && cchar <= '9' )
+            || cchar == ':'
+            || cchar == ';'
+            || cchar == '='
             || cchar == '?'
+            || cchar == '@'
+            || ( cchar >= 'A' && cchar <= 'Z' )
             || cchar == '_'
+            || ( cchar >= 'a' && cchar <= 'z' )
+            || cchar == '~'
 
-            || ( loose_url && cchar == '^' )
-
+            // RFC 3986(2.2.)では"[]"が予約文字として定義されているが
+            // RFC 2396(2.4.3.)では除外されていて、普通にURLとして扱う
+            // と問題がありそうなので"loose_url"の扱いにしておく。
+            || ( loose_url && ( cchar == '['
+                             || cchar == ']'
+                             || cchar == '^'
+                             || cchar == '|' ) )
             )
         ){
 
-        if( loose_url && cchar == '^' ) url_encode = true;
+        // "^"と"|"はエンコードする
+        // "[]"はダウンローダに渡す用途のためにエンコードしないでおく
+        if( loose_url && ( cchar == '^' || cchar == '|' ) ) url_encode = true;
 
         ++n_in;
         cchar = *( str_in + n_in );
     }
 
-    // 最後に ()が来たら除く
+    // 最後に ()[] が来たら除く
     if( *( str_in + n_in -1 ) == '('
-        || *( str_in + n_in -1 ) == ')' ) --n_in;
+        || *( str_in + n_in -1 ) == ')'
+        || *( str_in + n_in -1 ) == '['
+        || *( str_in + n_in -1 ) == ']' ) --n_in;
 
     int offset = 0;
     if( linktype == LINKTYPE_TTP || linktype == LINKTYPE_TP ){ // ttp://, tp:// の場合、リンクの先頭にhを補完
@@ -2043,6 +2057,11 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
                 *( pos++ ) = '%';
                 *( pos++ ) = '5';
                 *pos = 'e';
+            }
+            else if( str_in[ i ] == '|' ){ // '|' -> %7c
+                *( pos++ ) = '%';
+                *( pos++ ) = '7';
+                *pos = 'c';
             }
             else *pos = str_in[ i ];
         }
