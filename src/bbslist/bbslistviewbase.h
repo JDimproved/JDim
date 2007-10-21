@@ -14,20 +14,20 @@
 #include "xml/document.h"
 
 #include "columns.h"
-#include "toolbar.h"
 
 #include <gtkmm.h>
 
 
 namespace BBSLIST
 {
+    class BBSListToolBar;
+
     class BBSListViewBase : public SKELETON::View
     {
       private:
 
         Glib::RefPtr< Gtk::TreeStore > m_treestore;
         SKELETON::JDTreeView m_treeview;
-        BBSListtToolBar m_toolbar;
 
         bool m_ready_tree; // ツリーがセットされているならtrue
 
@@ -71,7 +71,7 @@ namespace BBSLIST
 
         Glib::RefPtr< Gtk::TreeStore >& get_treestore() { return m_treestore; }
         SKELETON::JDTreeView& get_treeview() { return  m_treeview; }
-        BBSListtToolBar& get_toolbar() { return m_toolbar; }
+        BBSListToolBar* get_bbslisttoolbar();
         const bool& get_ready_tree() const{ return m_ready_tree; }
         void set_expand_collapse( bool set ){ m_expand_collapse = set; }
 

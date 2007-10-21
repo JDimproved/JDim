@@ -9,11 +9,12 @@
 
 #include "global.h"
 #include "session.h"
+#include "command.h"
 
 using namespace CORE;
 
 SidebarItemPref::SidebarItemPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::SelectItemPref( parent, url )
+    : SKELETON::SelectItemPref( parent, url, true, false, false )
 {
     // 項目設定
     append_hidden( ITEM_NAME_SEARCHBOX );
@@ -28,7 +29,6 @@ SidebarItemPref::SidebarItemPref( Gtk::Window* parent, const std::string& url )
         erase_hidden( *it );
     }
 
-    set_label( "以下の設定は次回起動時から適用されます。" );
     set_title( "ツールバー項目設定(サイドバー)" );
 }
 
@@ -37,6 +37,7 @@ SidebarItemPref::SidebarItemPref( Gtk::Window* parent, const std::string& url )
 void SidebarItemPref::slot_ok_clicked()
 {
     SESSION::set_items_sidebar_str( get_items() );
+    CORE::core_set_command( "update_bbslist_toolbar" );
 }
 
 

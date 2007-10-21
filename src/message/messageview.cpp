@@ -8,6 +8,7 @@
 #include "post.h"
 
 #include "skeleton/msgdiag.h"
+#include "skeleton/label_entry.h"
 
 #include "jdlib/miscutil.h"
 
@@ -103,9 +104,11 @@ void MessageViewMain::reload()
 
     set_message( msg );
 
-    get_entry_subject().set_editable( true );
-    get_entry_subject().set_text( std::string() );
-    get_entry_subject().grab_focus();
+    if( get_entry_subject() ){
+        get_entry_subject()->set_editable( true );
+        get_entry_subject()->set_text( std::string() );
+        get_entry_subject()->grab_focus();
+    }
 
     // タイトルセット
     set_title( "[ 新スレ作成 ] " + DBTREE::article_subject( get_url() ) );
@@ -119,7 +122,8 @@ void MessageViewMain::reload()
 //
 std::string MessageViewNew::create_message()
 {
-    std::string subject = get_entry_subject().get_text();
+    std::string subject;
+    if( get_entry_subject() ) subject = get_entry_subject()->get_text();
     std::string msg = get_text_message().get_text();
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();

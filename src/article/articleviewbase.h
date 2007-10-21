@@ -38,7 +38,6 @@ namespace ARTICLE
 
         // widget
         DrawAreaBase* m_drawarea;
-        ArticleToolBar *m_toolbar;
 
         // slot呼び出し時にURLのやりとりに使う一時変数
         std::string m_url_tmp; // url
@@ -71,9 +70,6 @@ namespace ARTICLE
         const std::string& url_article() const { return m_url_article; }
         virtual const std::string url_for_copy();
 
-        virtual void lock();
-        virtual void unlock();
-
         // SKELETON::View の関数のオーバロード
         virtual const int width_client();
         virtual const int height_client();
@@ -101,7 +97,7 @@ namespace ARTICLE
     protected:
 
         DrawAreaBase* drawarea();
-        ArticleToolBar* toolbar() { return m_toolbar; }
+        ArticleToolBar* get_articletoolbar();
         JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article();
 
         // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える

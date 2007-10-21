@@ -9,11 +9,12 @@
 
 #include "global.h"
 #include "session.h"
+#include "command.h"
 
 using namespace CORE;
 
 ArticleItemPref::ArticleItemPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::SelectItemPref( parent, url )
+    : SKELETON::SelectItemPref( parent, url, true, false, false )
 {
     // 項目設定
     append_hidden( ITEM_NAME_WRITEMSG );
@@ -34,7 +35,6 @@ ArticleItemPref::ArticleItemPref( Gtk::Window* parent, const std::string& url )
         erase_hidden( *it );
     }
 
-    set_label( "以下の設定は次に開いたスレビューから適用されます。" );
     set_title( "ツールバー項目設定(スレビュー)" );
 }
 
@@ -43,6 +43,7 @@ ArticleItemPref::ArticleItemPref( Gtk::Window* parent, const std::string& url )
 void ArticleItemPref::slot_ok_clicked()
 {
     SESSION::set_items_article_toolbar_str( get_items() );
+    CORE::core_set_command( "update_article_toolbar" );
 }
 
 

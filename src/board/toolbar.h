@@ -7,21 +7,16 @@
 
 #include <gtkmm.h>
 
-#include "skeleton/imgbutton.h"
+#include "skeleton/toolbar.h"
 #include "skeleton/compentry.h"
 
 namespace BOARD
 {
-    class BoardToolBar : public Gtk::VBox
+    class BoardToolBar : public SKELETON::ToolBar
     {
-
         friend class BoardView;
 
-        Gtk::ScrolledWindow m_scrwin;
-        Gtk::HBox m_buttonbar;
-        bool m_toolbar_shown;
         SKELETON::SearchEntry m_entry_search;
-        SKELETON::ImgButton m_button_close;
         SKELETON::ImgButton m_button_reload;
         SKELETON::ImgButton m_button_delete;
         SKELETON::ImgButton m_button_stop;
@@ -30,21 +25,14 @@ namespace BOARD
         SKELETON::ImgButton m_button_down_search;
         SKELETON::ImgButton m_button_new_article;
 
-        Gtk::Tooltips m_tooltip;
+      public:
 
-        BoardToolBar( bool show_bar );
+        BoardToolBar();
+        virtual ~BoardToolBar(){}
 
-        // ツールバーを表示
-        void show_toolbar();
-
-        // ツールバーを隠す
-        void hide_toolbar();
-
-        // タブのロック
-        void lock();
-
-        // タブのアンロック
-        void unlock();
+        // ボタンのパッキング
+        virtual void pack_buttons();
+        virtual void unpack_buttons();
     };
 }
 

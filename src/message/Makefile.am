@@ -5,14 +5,16 @@ libmessage_a_SOURCES = \
 	messagewin.cpp \
 	messageviewbase.cpp \
 	messageview.cpp \
-	post.cpp
+	post.cpp \
+	toolbar.cpp
 
 noinst_HEADERS = \
 	messageadmin.h \
 	messagewin.h \
 	messageviewbase.h \
 	messageview.h \
-	post.h 
+	post.h \
+	toolbar.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

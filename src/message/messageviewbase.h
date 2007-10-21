@@ -5,7 +5,6 @@
 
 #include "skeleton/view.h"
 #include "skeleton/editview.h"
-#include "skeleton/label_entry.h"
 #include "skeleton/imgbutton.h"
 #include "skeleton/compentry.h"
 
@@ -15,13 +14,22 @@ namespace JDLIB
 }
 
 
+namespace SKELETON
+{
+    class LabelEntry;
+}
+
+
 namespace MESSAGE
 {
     class Post;
+    class MessageToolBar;
 
     class MessageViewBase : public SKELETON::View
     {
         Post* m_post;
+
+        Gtk::Tooltips m_tooltip;
 
         Gtk::Notebook m_notebook;
         SKELETON::View* m_preview;
@@ -36,16 +44,6 @@ namespace MESSAGE
         bool m_enable_menuslot;
         bool m_enable_focus;
 
-        Gtk::HBox m_toolbar;
-        SKELETON::ImgButton m_button_write;
-        SKELETON::ImgButton m_button_cancel;
-        SKELETON::ImgButton m_button_open;
-        SKELETON::ImgButton m_button_undo;
-        SKELETON::ImgToggleButton m_button_not_close;
-        SKELETON::ImgToggleButton m_button_preview;
-        Gtk::Tooltips m_tooltip;
-
-        SKELETON::LabelEntry m_entry_subject;
         SKELETON::NameEntry m_entry_name;
         SKELETON::MailEntry m_entry_mail;
         SKELETON::EditView m_text_message;
@@ -61,13 +59,6 @@ namespace MESSAGE
         // 経過時間表示用
         int m_counter;
         std::string m_str_pass;
-
-      protected:
-        
-        SKELETON::LabelEntry& get_entry_subject() { return m_entry_subject; }
-        SKELETON::CompletionEntry& get_entry_name(){ return m_entry_name; }
-        SKELETON::CompletionEntry& get_entry_mail(){ return m_entry_mail; }
-        SKELETON::EditView& get_text_message() { return m_text_message; }
 
       public:
 
@@ -125,6 +116,13 @@ namespace MESSAGE
 
         void set_message( const std::string& msg ){ m_text_message.set_text( msg ); }
         Glib::ustring get_message(){ return m_text_message.get_text(); }
+
+        MessageToolBar* get_messagetoolbar();
+
+        SKELETON::LabelEntry* get_entry_subject();
+        SKELETON::CompletionEntry& get_entry_name(){ return m_entry_name; }
+        SKELETON::CompletionEntry& get_entry_mail(){ return m_entry_mail; }
+        SKELETON::EditView& get_text_message() { return m_text_message; }
 
         void post_msg( const std::string& msg, bool new_article );
         void post_fin();

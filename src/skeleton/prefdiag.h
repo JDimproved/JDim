@@ -13,10 +13,12 @@ namespace SKELETON
     {
         std::string m_url;
 
+        Gtk::Button m_bt_apply;
+
       public:
 
         // parent == NULL のときはメインウィンドウをparentにする
-        PrefDiag( Gtk::Window* parent, const std::string& url, bool add_cancel = true );
+        PrefDiag( Gtk::Window* parent, const std::string& url, bool add_cancel = true, bool add_apply = false );
 
         virtual ~PrefDiag(){}
 
@@ -24,10 +26,13 @@ namespace SKELETON
 
         virtual int run();
 
-      private:
+      protected:
 
         virtual void slot_ok_clicked(){}
         virtual void slot_cancel_clicked(){}
+        virtual void slot_apply_clicked(){}
+
+      private:
 
         // タイマーのslot関数
         // コードが繁雑になるのでcoreとは別にする

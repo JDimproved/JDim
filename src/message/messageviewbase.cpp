@@ -7,6 +7,7 @@
 #include "messageadmin.h"
 #include "messageviewbase.h"
 #include "post.h"
+#include "toolbar.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -55,13 +56,6 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_preview( 0 ),
       m_enable_menuslot( true ),
       m_enable_focus( true ),
-      m_button_write( ICON::WRITE ),
-      m_button_cancel( Gtk::Stock::CLOSE ),
-      m_button_open( Gtk::Stock::OPEN ),
-      m_button_undo( Gtk::Stock::UNDO ),
-      m_button_not_close( Gtk::Stock::CANCEL ),
-      m_button_preview( ICON::THREAD ),
-      m_entry_subject( false, " [ " + DBTREE::board_name( url ) + " ]  ", "" ),
       m_counter( 0 )
 {
 #ifdef _DEBUG
@@ -101,6 +95,19 @@ MessageViewBase::~MessageViewBase()
 
     if( m_str_iconv ) free( m_str_iconv );
     m_str_iconv = NULL;
+}
+
+
+MessageToolBar* MessageViewBase::get_messagetoolbar()
+{
+    return dynamic_cast< MessageToolBar* >( get_toolbar() );
+}
+
+
+SKELETON::LabelEntry* MessageViewBase::get_entry_subject()
+{
+    if( ! get_messagetoolbar() ) return NULL;
+    return &get_messagetoolbar()->m_entry_subject;
 }
 
 
@@ -285,45 +292,21 @@ void MessageViewBase::save_name()
 void MessageViewBase::pack_widget()
 {
     // ツールバー
-    m_entry_subject.set_text( DBTREE::article_subject( get_url() ) );
+    set_toolbar( Gtk::manage( new MessageToolBar( " [ " + DBTREE::board_name( get_url() ) + " ]  " ) ) );
+    get_messagetoolbar()->m_entry_subject.set_text( DBTREE::article_subject( get_url() ) );
+    get_messagetoolbar()->m_button_not_close.set_active( ! SESSION::get_close_mes() );
 
-    m_button_not_close.set_active( ! SESSION::get_close_mes() );
-
-    m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
-    m_button_cancel.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_close_clicked ) );
-    m_button_open.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_draft_open ) );
-    m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_undo_clicked ) );
-    m_button_not_close.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_not_close_clicked ) );
-    m_button_preview.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_preview_clicked ) );
+    get_messagetoolbar()->m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
+    get_messagetoolbar()->get_close_button().signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_close_clicked ) );
+    get_messagetoolbar()->m_button_open.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_draft_open ) );
+    get_messagetoolbar()->m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_undo_clicked ) );
+    get_messagetoolbar()->m_button_not_close.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_not_close_clicked ) );
+    get_messagetoolbar()->m_button_preview.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_preview_clicked ) );
     
-    m_tooltip.set_tip( m_button_write, CONTROL::get_label_motion( CONTROL::ExecWrite ) + "\n\nTabキーで書き込みボタンにフォーカスを移すことも可能" );
-    m_tooltip.set_tip( m_button_cancel, CONTROL::get_label_motion( CONTROL::CancelWrite ) );
-    m_tooltip.set_tip( m_button_open, CONTROL::get_label_motion( CONTROL::InsertText ) );
-    m_tooltip.set_tip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
-    m_tooltip.set_tip( m_button_not_close, CONTROL::get_label_motion( CONTROL::NotClose ) );
-    m_tooltip.set_tip( m_button_preview, CONTROL::get_label_motion( CONTROL::Preview )
-                       + "\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
-                       + CONTROL::get_label_motion( CONTROL::TabRight ) + "\n\n"+ CONTROL::get_label_motion( CONTROL::TabLeft )
-        );
+    get_messagetoolbar()->show_toolbar();
 
-    int num = 0;
-    for(;;){
-        int item = SESSION::get_item_msg_toolbar( num );
-        if( item == ITEM_END ) break;
-        switch( item ){
-            case ITEM_PREVIEW: m_toolbar.pack_start( m_button_preview, Gtk::PACK_SHRINK ); break;
-            case ITEM_WRITEMSG:  m_toolbar.pack_start( m_button_write, Gtk::PACK_SHRINK ); break;
-            case ITEM_NAME: m_toolbar.pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 ); break;
-            case ITEM_UNDO: m_toolbar.pack_start( m_button_undo, Gtk::PACK_SHRINK ); break;
-            case ITEM_INSERTTEXT: m_toolbar.pack_start( m_button_open, Gtk::PACK_SHRINK ); break;
-            case ITEM_NOTCLOSE: m_toolbar.pack_start( m_button_not_close, Gtk::PACK_SHRINK ); break;
-            case ITEM_QUIT: m_toolbar.pack_start( m_button_cancel, Gtk::PACK_SHRINK ); break;
-        }
-        ++num;
-    }
-
-    if( SESSION::get_close_mes() ) m_button_cancel.set_sensitive( true );
-    else m_button_cancel.set_sensitive( false );
+    if( SESSION::get_close_mes() ) get_messagetoolbar()->get_close_button().set_sensitive( true );
+    else get_messagetoolbar()->get_close_button().set_sensitive( false );
 
     // 書き込みビュー
     m_label_name.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
@@ -386,7 +369,7 @@ void MessageViewBase::pack_widget()
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &MessageViewBase::slot_switch_page ) );
     m_notebook.set_current_page( PAGE_MESSAGE );
 
-    pack_start( m_toolbar, Gtk::PACK_SHRINK );
+    pack_start( *get_messagetoolbar(), Gtk::PACK_SHRINK );
     pack_start( m_notebook );
 
     // フォントセット
@@ -560,11 +543,12 @@ void MessageViewBase::slot_undo_clicked()
 void MessageViewBase::slot_not_close_clicked()
 {
     if( ! m_enable_menuslot ) return;
+    if( ! get_messagetoolbar() ) return;
 
     SESSION::set_close_mes( ! SESSION::get_close_mes() );
 
-    if( SESSION::get_close_mes() ) m_button_cancel.set_sensitive( true );
-    else m_button_cancel.set_sensitive( false );
+    if( SESSION::get_close_mes() ) get_messagetoolbar()->get_close_button().set_sensitive( true );
+    else get_messagetoolbar()->get_close_button().set_sensitive( false );
 }
 
 
@@ -688,7 +672,8 @@ void MessageViewBase::tab_right()
 //
 void MessageViewBase::focus_writebutton()
 {
-    m_button_write.grab_focus();
+    if( ! get_messagetoolbar() ) return;
+    get_messagetoolbar()->m_button_write.grab_focus();
 }
 
 
@@ -762,12 +747,12 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
     m_enable_menuslot = false;
 
     // プレビュー表示
-    if( m_preview && page == PAGE_PREVIEW ){
+    if( get_messagetoolbar() && m_preview && page == PAGE_PREVIEW ){
 
         // 各ボタンの状態更新
-        m_button_undo.set_sensitive( false );
-        m_button_open.set_sensitive( false );
-        m_button_preview.set_active( true );
+        get_messagetoolbar()->m_button_undo.set_sensitive( false );
+        get_messagetoolbar()->m_button_open.set_sensitive( false );
+        get_messagetoolbar()->m_button_preview.set_active( true );
 
         std::string msg = MISC::html_escape( m_text_message.get_text() );
         msg = MISC::replace_str( msg, "\n", " <br> " );
@@ -813,12 +798,12 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
     }
 
     // メッセージビュー
-    else if( page == PAGE_MESSAGE ){
+    else if( get_messagetoolbar() && page == PAGE_MESSAGE ){
 
         // 各ボタンの状態更新
-        m_button_undo.set_sensitive( true );
-        m_button_open.set_sensitive( true );
-        m_button_preview.set_active( false );
+        get_messagetoolbar()->m_button_undo.set_sensitive( true );
+        get_messagetoolbar()->m_button_open.set_sensitive( true );
+        get_messagetoolbar()->m_button_preview.set_active( false );
     }
 
     if( m_enable_focus ){
@@ -867,7 +852,8 @@ void MessageViewBase::save_postlog()
 {
     if( ! CONFIG::get_save_postlog() ) return;
 
-    std::string subject = get_entry_subject().get_text();
+    std::string subject;
+    if( get_entry_subject() ) subject = get_entry_subject()->get_text();
     std::string msg = get_text_message().get_text();
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();

@@ -170,6 +170,7 @@ namespace SKELETON
         virtual void open_window(){}
         virtual void close_window(){}
         virtual void toggle_toolbar();
+        virtual void update_toolbar();
         virtual void toggle_tab();
         virtual void toggle_icon( const std::string& url );
 

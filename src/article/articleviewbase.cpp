@@ -53,7 +53,6 @@ using namespace ARTICLE;
 ArticleViewBase::ArticleViewBase( const std::string& url )
     : SKELETON::View( url ),
       m_url_article( url ),
-      m_toolbar( 0 ),
       m_popup_win( NULL ),
       m_popup_shown( false ),
       m_enable_menuslot( true ),
@@ -96,26 +95,6 @@ const std::string ArticleViewBase::url_for_copy()
 }
 
 
-//
-// タブのロック
-//
-void ArticleViewBase::lock()
-{
-    View::lock();
-    if( m_toolbar ) m_toolbar->lock();
-}
-
-
-//
-// タブのアンロック
-//
-void ArticleViewBase::unlock()
-{
-    View::unlock();
-    if( m_toolbar ) m_toolbar->unlock();
-}
-
-
 JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& ArticleViewBase::get_article()
 {
     assert( m_article );
@@ -127,6 +106,12 @@ DrawAreaBase* ArticleViewBase::drawarea()
 {
     assert( m_drawarea );
     return m_drawarea;
+}
+
+
+ArticleToolBar* ArticleViewBase::get_articletoolbar()
+{
+    return dynamic_cast< ArticleToolBar* >( get_toolbar() );
 }
 
 
@@ -176,27 +161,29 @@ void ArticleViewBase::setup_view()
 void ArticleViewBase::pack_widget()
 {
     // ツールバーの設定
-    m_toolbar = Gtk::manage( new ArticleToolBar( SESSION::get_show_article_toolbar() ) );
-    m_toolbar->m_button_close.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::close_view ) );
-    m_toolbar->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_reload ) );
-    m_toolbar->m_button_write.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_write ) );
-    m_toolbar->m_button_delete.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_delete ) );        
-    m_toolbar->m_button_board.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_open_board ) );
-    m_toolbar->m_button_favorite.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_favorite ) );
-    m_toolbar->m_button_stop.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::stop ) );
-    m_toolbar->m_button_open_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_open_search ) );
+    set_toolbar( Gtk::manage( new ArticleToolBar() ) );
+    get_articletoolbar()->get_close_button().signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::close_view ) );
+    get_articletoolbar()->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_reload ) );
+    get_articletoolbar()->m_button_write.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_write ) );
+    get_articletoolbar()->m_button_delete.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_delete ) );        
+    get_articletoolbar()->m_button_board.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_open_board ) );
+    get_articletoolbar()->m_button_favorite.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_favorite ) );
+    get_articletoolbar()->m_button_stop.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::stop ) );
+    get_articletoolbar()->m_button_open_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_open_search ) );
 
     // 検索バー
-    m_toolbar->m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_active_search ) );
-    m_toolbar->m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_entry_operate ) );
-    m_toolbar->m_button_close_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_close_search ) );
-    m_toolbar->m_button_up_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_up_search ) );
-    m_toolbar->m_button_down_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_down_search ) );
-    m_toolbar->m_button_drawout_and.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_drawout_and ) );
-    m_toolbar->m_button_drawout_or.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_drawout_or ) );
-    m_toolbar->m_button_clear_hl.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_claar_hl ) );
+    get_articletoolbar()->m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_active_search ) );
+    get_articletoolbar()->m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_entry_operate ) );
+    get_articletoolbar()->m_button_close_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_close_search ) );
+    get_articletoolbar()->m_button_up_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_up_search ) );
+    get_articletoolbar()->m_button_down_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_down_search ) );
+    get_articletoolbar()->m_button_drawout_and.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_drawout_and ) );
+    get_articletoolbar()->m_button_drawout_or.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_drawout_or ) );
+    get_articletoolbar()->m_button_clear_hl.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_claar_hl ) );
 
-    pack_start( *m_toolbar, Gtk::PACK_SHRINK, 2 );
+    if( SESSION::get_show_article_toolbar() ) get_articletoolbar()->show_toolbar();
+
+    pack_start( *get_articletoolbar(), Gtk::PACK_SHRINK, 2 );
     pack_start( *m_drawarea, Gtk::PACK_EXPAND_WIDGET, 2 );
 }
 
@@ -919,11 +906,10 @@ void ArticleViewBase::goto_num( int num )
 //
 void ArticleViewBase::toggle_toolbar()
 {
-    if( m_toolbar ){
+    if( ! get_articletoolbar() ) return;
 
-        if( SESSION::get_show_article_toolbar() ) m_toolbar->show_toolbar();
-        else m_toolbar->hide_toolbar();
-    }
+    if( SESSION::get_show_article_toolbar() ) get_articletoolbar()->show_toolbar();
+    else get_articletoolbar()->hide_toolbar();
 }
 
 
@@ -943,11 +929,11 @@ void ArticleViewBase::goto_new()
 //
 void ArticleViewBase::open_searchbar( bool invert )
 {
-    if( m_toolbar ){ 
-        m_toolbar->show_searchbar(); 
-        m_search_invert = invert;
-        m_toolbar->m_entry_search.grab_focus(); 
-    }
+    if( ! get_articletoolbar() ) return;
+
+    get_articletoolbar()->show_searchbar(); 
+    m_search_invert = invert;
+    get_articletoolbar()->m_entry_search.grab_focus(); 
 }
 
 
@@ -957,9 +943,9 @@ void ArticleViewBase::open_searchbar( bool invert )
 //
 void ArticleViewBase::slot_push_open_search()
 {
-    if( ! m_toolbar ) return;
+    if( ! get_articletoolbar() ) return;
 
-    if( ! m_toolbar->m_searchbar_shown ) open_searchbar( false );
+    if( ! get_articletoolbar()->m_searchbar_shown ) open_searchbar( false );
     else slot_push_close_search();
 }
 
@@ -970,10 +956,10 @@ void ArticleViewBase::slot_push_open_search()
 //
 void ArticleViewBase::slot_push_close_search()
 {
-    if( m_toolbar ){
-        m_toolbar->hide_searchbar();
-        m_drawarea->focus_view();
-    }
+    if( ! get_articletoolbar() ) return;
+
+    get_articletoolbar()->hide_searchbar();
+    m_drawarea->focus_view();
 }
 
 
@@ -1006,10 +992,10 @@ void ArticleViewBase::slot_push_down_search()
 //
 void ArticleViewBase::slot_push_drawout_and()
 {
-    if( ! m_toolbar ) return;
-    if( m_toolbar->m_entry_search.completion() ) return;
+    if( ! get_articletoolbar() ) return;
+    if( get_articletoolbar()->m_entry_search.completion() ) return;
 
-    std::string query = m_toolbar->m_entry_search.get_text();
+    std::string query = get_articletoolbar()->m_entry_search.get_text();
     if( query.empty() ) return;
 
     CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "false" );
@@ -1021,10 +1007,10 @@ void ArticleViewBase::slot_push_drawout_and()
 //
 void ArticleViewBase::slot_push_drawout_or()
 {
-    if( ! m_toolbar ) return;
-    if( m_toolbar->m_entry_search.completion() ) return;
+    if( ! get_articletoolbar() ) return;
+    if( get_articletoolbar()->m_entry_search.completion() ) return;
 
-    std::string query = m_toolbar->m_entry_search.get_text();
+    std::string query = get_articletoolbar()->m_entry_search.get_text();
     if( query.empty() ) return;
 
     CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "true" );
@@ -3110,10 +3096,10 @@ void ArticleViewBase::slot_abone_img()
 //
 void ArticleViewBase::slot_active_search()
 {
-    if( ! m_toolbar ) return;
-    if( m_toolbar->m_entry_search.completion() ) return;
+    if( ! get_articletoolbar() ) return;
+    if( get_articletoolbar()->m_entry_search.completion() ) return;
 
-    std::string query = m_toolbar->m_entry_search.get_text();
+    std::string query = get_articletoolbar()->m_entry_search.get_text();
     if( query.empty() ){
         slot_push_claar_hl();
         focus_view();

@@ -9,11 +9,12 @@
 
 #include "global.h"
 #include "session.h"
+#include "command.h"
 
 using namespace CORE;
 
 BoardItemColumnPref::BoardItemColumnPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::SelectItemPref( parent, url )
+    : SKELETON::SelectItemPref( parent, url, false, true, false )
 {
     // 項目設定
     append_hidden( ITEM_NAME_MARK );
@@ -69,7 +70,7 @@ void BoardItemColumnPref::slot_def()
 
 
 BoardItemPref::BoardItemPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::SelectItemPref( parent, url )
+    : SKELETON::SelectItemPref( parent, url, true, false, false )
 {
     // 項目設定
     append_hidden( ITEM_NAME_NEWARTICLE );
@@ -90,7 +91,6 @@ BoardItemPref::BoardItemPref( Gtk::Window* parent, const std::string& url )
         erase_hidden( *it );
     }
 
-    set_label( "以下の設定は次に開いたスレ一覧から適用されます。" );
     set_title( "ツールバー項目表示設定(スレ一覧)" );
 }
 
@@ -99,6 +99,7 @@ BoardItemPref::BoardItemPref( Gtk::Window* parent, const std::string& url )
 void BoardItemPref::slot_ok_clicked()
 {
     SESSION::set_items_board_toolbar_str( get_items() );
+    CORE::core_set_command( "update_board_toolbar" );
 }
 
 

@@ -7,10 +7,8 @@
 
 #include <gtkmm.h>
 
-#include "skeleton/imgbutton.h"
+#include "skeleton/toolbar.h"
 #include "skeleton/compentry.h"
-
-
 
 enum
 {
@@ -19,44 +17,37 @@ enum
 };
 
 
-
 namespace BBSLIST
 {
-    class BBSListtToolBar : public Gtk::VBox
+    class BBSListToolBar : public SKELETON::ToolBar
     {
         friend class BBSListViewBase;
         friend class BBSListViewMain;
         friend class FavoriteListView;
         friend class SelectListView;
 
-        bool m_toolbar_shown;
-
         // ラベルバー
         Gtk::HBox m_hbox_label;
         Gtk::ComboBoxText m_combo;
-        SKELETON::ImgButton m_button_close;
 
-        // 検索バー
-        Gtk::HBox m_hbox_search;
+        // ツールバー
+        bool m_toolbar_shown;
         SKELETON::SearchEntry m_entry_search;
         SKELETON::ImgButton m_button_up_search;
         SKELETON::ImgButton m_button_down_search;
 
-        Gtk::Tooltips m_tooltip;
+      public:
 
-        BBSListtToolBar( bool show_bar );
-        virtual ~BBSListtToolBar(){}
+        BBSListToolBar();
+        virtual ~BBSListToolBar(){}
 
         void set_combo( int page ){ m_combo.set_active( page ); }
         int  get_combo(){ return m_combo.get_active_row_number(); }
 
-        // ツールバーを表示
-        void show_toolbar();
-
-        // ツールバーを隠す
-        void hide_toolbar();
-
         void remove_label();
+
+        virtual void pack_buttons();
+        virtual void unpack_buttons();
     };
 }
 

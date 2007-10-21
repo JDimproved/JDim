@@ -587,7 +587,6 @@ bool ImageViewBase::slot_key_press( GdkEventKey* event )
 //
 // ボタンクリック
 //
-#include <iostream>
 bool ImageViewBase::slot_button_press( GdkEventButton* event )
 {
 #ifdef _DEBUG

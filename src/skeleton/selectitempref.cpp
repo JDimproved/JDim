@@ -9,13 +9,16 @@
 
 using namespace SKELETON;
 
-SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::PrefDiag( parent, url ),
+SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url, bool use_apply, bool use_label, bool use_separator )
+    : SKELETON::PrefDiag( parent, url, true, use_apply ),
+      m_use_label( use_label ),
+      m_use_separator( use_separator ),
       m_bt_up( "上へ" ),
       m_bt_down( "下へ" ),
       m_bt_del( "→" ),
       m_bt_add( "←" ),
-      m_bt_def( "デフォルト" )
+      m_bt_def( "デフォルト" ),
+      m_bt_separator( "区切り" )
 {
     pack_widgets();
 }
@@ -35,12 +38,14 @@ void SelectItemPref::pack_widgets()
     m_vbox_buttons.pack_start( m_bt_down, Gtk::PACK_SHRINK );
     m_vbox_buttons.pack_start( m_bt_del, Gtk::PACK_SHRINK );
     m_vbox_buttons.pack_start( m_bt_add, Gtk::PACK_SHRINK );
+    if( m_use_separator ) m_vbox_buttons.pack_start( m_bt_separator, Gtk::PACK_SHRINK );
     m_vbox_buttons.pack_start( m_bt_def, Gtk::PACK_SHRINK );
 
     m_bt_up.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_up ) );
     m_bt_down.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_down ) );
     m_bt_del.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_del ) );
     m_bt_add.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_add ) );
+    m_bt_separator.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_sepalator ) );
     m_bt_def.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_def ) );
 
     // 表示項目
@@ -59,7 +64,7 @@ void SelectItemPref::pack_widgets()
     m_table.attach( m_tree_hidden, 2, 3, 0, 1 );//, Gtk::EXPAND, Gtk::EXPAND );
 
     get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_label );
+    if( m_use_label ) get_vbox()->pack_start( m_label );
     get_vbox()->pack_start( m_table );
 
     show_all_children();

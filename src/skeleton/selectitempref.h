@@ -13,6 +13,9 @@ namespace SKELETON
 {
     class SelectItemPref : public SKELETON::PrefDiag
     {
+        bool m_use_label;
+        bool m_use_separator;
+
         Gtk::Table m_table;
         Gtk::Label m_label;
 
@@ -27,6 +30,7 @@ namespace SKELETON
         Gtk::Button m_bt_del;
         Gtk::Button m_bt_add;
         Gtk::Button m_bt_def;
+        Gtk::Button m_bt_separator;
 
         Gtk::TreeView m_tree_hidden;
         Gtk::TreeModelColumn< Glib::ustring > m_col_hidden;
@@ -35,7 +39,7 @@ namespace SKELETON
 
       public:
 
-        SelectItemPref( Gtk::Window* parent, const std::string& url );
+        SelectItemPref( Gtk::Window* parent, const std::string& url, bool use_apply, bool use_label, bool use_separator );
         virtual ~SelectItemPref(){}
 
       protected:
@@ -55,10 +59,7 @@ namespace SKELETON
         // 非表示項目から指定した項目を削除
         void erase_hidden( const std::string& name );
 
-      private:
-
-        // widgetのパック
-        void pack_widgets();
+      protected:
 
         // 上へ
         void slot_up();
@@ -72,8 +73,19 @@ namespace SKELETON
         // 追加ボタン
         void slot_add();
 
+        // 区切りボタン
+        virtual void slot_sepalator(){}
+
+        // 適用ボタン
+        virtual void slot_apply_clicked(){ slot_ok_clicked(); }
+
         // デフォルトボタン
         virtual void slot_def() = 0;
+
+      private:
+
+        // widgetのパック
+        void pack_widgets();
     };
 }
 

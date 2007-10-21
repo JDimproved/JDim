@@ -10,12 +10,12 @@
 
 #include <gtkmm.h>
 
-#include "skeleton/imgbutton.h"
+#include "skeleton/toolbar.h"
 #include "skeleton/compentry.h"
 
 namespace ARTICLE
 {
-    class ArticleToolBar : public Gtk::VBox
+    class ArticleToolBar : public SKELETON::ToolBar
     {
         int m_status;
 
@@ -29,17 +29,11 @@ namespace ARTICLE
         friend class ArticleViewURL;
         friend class ArticleViewDrawout;
 
-        Gtk::Tooltips m_tooltip;
-
         // ラベル、ボタンバー
-        Gtk::ScrolledWindow m_scrwin;
-        Gtk::HBox m_buttonbar;
         Gtk::Entry m_label;
-        bool m_toolbar_shown;
         Gtk::Button m_button_board;
         SKELETON::ImgButton m_button_favorite;
         SKELETON::ImgButton m_button_write;
-        SKELETON::ImgButton m_button_close;
         SKELETON::ImgButton m_button_delete;
         SKELETON::ImgButton m_button_reload;
         SKELETON::ImgButton m_button_stop;
@@ -56,7 +50,9 @@ namespace ARTICLE
         SKELETON::ImgButton m_button_drawout_or;
         SKELETON::ImgButton m_button_clear_hl;
 
-        ArticleToolBar( bool show_bar ); 
+      public:
+
+        ArticleToolBar(); 
         virtual ~ArticleToolBar(){}
 
         // 検索バー表示
@@ -65,31 +61,26 @@ namespace ARTICLE
         // 検索バーを消す
         void hide_searchbar();
 
-        // ツールバーを表示
-        void show_toolbar();
-
-        // ツールバーを隠す
-        void hide_toolbar();
-
         void set_label( const std::string& label );
-
         const std::string get_label(){ return m_label.get_text(); }
 
-        // vboxがrealizeしたらラベル(Gtk::Entry)の背景色を変える
-        void slot_vbox_realize();
-
         // スレが壊れている
-        void broken();
+        void set_broken();
 
         // DAT落ち
-        void old();
+        void set_old();
 
-        // タブのロック
-        void lock();
+        virtual void pack_buttons();
+        virtual void unpack_buttons();
 
-        // タブのアンロック
-        void unlock();
+      private:
+
+        // vboxがrealizeした
+        virtual void slot_vbox_realize();
     };
+
+
+    ////////////////////////////////////////////
 
 
     class SearchToolBar : public Gtk::ScrolledWindow

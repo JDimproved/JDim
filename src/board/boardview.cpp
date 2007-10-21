@@ -5,6 +5,7 @@
 
 #include "boardadmin.h"
 #include "boardview.h"
+#include "toolbar.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -104,26 +105,29 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
       m_previous_sortmode( false ),
-      m_toolbar( SESSION::get_show_board_toolbar() ),
       m_updated( false ),
       m_loading( false )
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
 
-    m_toolbar.m_entry_search.signal_changed().connect( sigc::mem_fun( *this, &BoardView::slot_changed_search ) );
-    m_toolbar.m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BoardView::slot_active_search ) );
-    m_toolbar.m_button_close.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::close_view ) );
-    m_toolbar.m_button_reload.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::reload ) );
-    m_toolbar.m_button_stop.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::stop ) );
-    m_toolbar.m_button_new_article.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_new_article ) );
-    m_toolbar.m_button_delete.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_delete ) );
-    m_toolbar.m_button_favorite.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_favorite ) );
-    m_toolbar.m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_up_search ) );
-    m_toolbar.m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_down_search ) );
-    m_toolbar.m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BoardView::slot_entry_operate ) );
+    set_toolbar( Gtk::manage( new BoardToolBar() ) );
 
-    pack_start( m_toolbar, Gtk::PACK_SHRINK );    
+    get_boardtoolbar()->get_close_button().signal_clicked().connect( sigc::mem_fun( *this, &BoardView::close_view ) );
+    get_boardtoolbar()->m_entry_search.signal_changed().connect( sigc::mem_fun( *this, &BoardView::slot_changed_search ) );
+    get_boardtoolbar()->m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BoardView::slot_active_search ) );
+    get_boardtoolbar()->m_button_reload.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::reload ) );
+    get_boardtoolbar()->m_button_stop.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::stop ) );
+    get_boardtoolbar()->m_button_new_article.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_new_article ) );
+    get_boardtoolbar()->m_button_delete.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_delete ) );
+    get_boardtoolbar()->m_button_favorite.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_favorite ) );
+    get_boardtoolbar()->m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_up_search ) );
+    get_boardtoolbar()->m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_down_search ) );
+    get_boardtoolbar()->m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BoardView::slot_entry_operate ) );
+
+    if( SESSION::get_show_board_toolbar() ) get_boardtoolbar()->show_toolbar();
+
+    pack_start( *get_boardtoolbar(), Gtk::PACK_SHRINK );    
     pack_start( m_scrwin );
     show_all_children();    
 
@@ -446,26 +450,6 @@ const bool BoardView::is_updated()
 const std::string BoardView::url_for_copy()
 {
     return DBTREE::url_boardbase( get_url() );
-}
-
-
-//
-// タブのロック
-//
-void BoardView::lock()
-{
-    View::lock();
-    m_toolbar.lock();
-}
-
-
-//
-// タブのアンロック
-//
-void BoardView::unlock()
-{
-    View::unlock();
-    m_toolbar.unlock();
 }
 
 
@@ -1149,13 +1133,17 @@ void BoardView::operate_view( const int& control )
 
         // 検索
         case CONTROL::Search:
-            m_search_invert = false;
-            m_toolbar.m_entry_search.grab_focus();
+            if( get_boardtoolbar() ){
+                m_search_invert = false;
+                get_boardtoolbar()->m_entry_search.grab_focus();
+            }
             break;
 
         case CONTROL::SearchInvert:
-            m_search_invert = true;
-            m_toolbar.m_entry_search.grab_focus();
+            if( get_boardtoolbar() ){
+                m_search_invert = true;
+                get_boardtoolbar()->m_entry_search.grab_focus();
+            }
             break;
 
         case CONTROL::SearchNext:
@@ -1256,8 +1244,10 @@ void BoardView::scroll_right()
 //
 void BoardView::toggle_toolbar()
 {
-    if( SESSION::get_show_board_toolbar() ) m_toolbar.show_toolbar();
-    else m_toolbar.hide_toolbar();
+    if( ! get_boardtoolbar() ) return;
+
+    if( SESSION::get_show_board_toolbar() ) get_boardtoolbar()->show_toolbar();
+    else get_boardtoolbar()->hide_toolbar();
 }
 
 
@@ -1296,6 +1286,12 @@ void BoardView::page_down()
     m_treeview.page_down();
 } 
    
+
+BoardToolBar* BoardView::get_boardtoolbar()
+{
+    return dynamic_cast< BoardToolBar* >( get_toolbar() );
+}
+
 
 //
 // ポップアップメニュー取得
@@ -1891,10 +1887,12 @@ std::string BoardView::path2daturl( const Gtk::TreePath& path )
 //
 bool BoardView::drawout()
 {
+    if( ! get_boardtoolbar() ) return false;
+
     int hit = 0;
     bool reset = false;
 
-    std::string query = m_toolbar.m_entry_search.get_text();
+    std::string query = get_boardtoolbar()->m_entry_search.get_text();
 
     // 空の時はリセット
     if( query.empty() ) reset = true;
@@ -1958,9 +1956,10 @@ void BoardView::slot_changed_search()
 //
 void BoardView::slot_active_search()
 {
-    if( m_toolbar.m_entry_search.completion() ) return;
+    if( ! get_boardtoolbar() ) return;
+    if( get_boardtoolbar()->m_entry_search.completion() ) return;
 
-    std::string query = m_toolbar.m_entry_search.get_text();
+    std::string query = get_boardtoolbar()->m_entry_search.get_text();
     if( m_pre_query != query ){
         drawout();
         focus_view();
@@ -2035,9 +2034,10 @@ void BoardView::slot_push_down_search()
 // キャッシュ内のログ検索
 void BoardView::search_cache()
 {
-    if( m_toolbar.m_entry_search.completion() ) return;
+    if( ! get_boardtoolbar() ) return;
+    if( get_boardtoolbar()->m_entry_search.completion() ) return;
 
-    std::string query = m_toolbar.m_entry_search.get_text();
+    std::string query = get_boardtoolbar()->m_entry_search.get_text();
     CORE::core_set_command( "open_article_searchlog", get_url() , query );
 }
 

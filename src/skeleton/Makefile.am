@@ -25,6 +25,7 @@ libskeleton_a_SOURCES = \
 	vpaned.cpp \
 	notebook.cpp \
 	vbox.cpp \
+	toolbar.cpp \
 	textloader.cpp
 
 noinst_HEADERS = \
@@ -59,6 +60,7 @@ noinst_HEADERS = \
 	vpaned.h \
 	notebook.h \
 	vbox.h \
+	toolbar.h \
 	textloader.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@

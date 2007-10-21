@@ -5,6 +5,7 @@
 
 #include "bbslistview.h"
 #include "bbslistadmin.h"
+#include "toolbar.h"
 
 #include "dbtree/interface.h"
 
@@ -26,7 +27,7 @@ BBSListViewMain::BBSListViewMain( const std::string& url,
 {
     set_expand_collapse( true );
 
-    get_toolbar().set_combo( COMBO_BBSLIST );
+    if( get_bbslisttoolbar() ) get_bbslisttoolbar()->set_combo( COMBO_BBSLIST );
 }
 
 

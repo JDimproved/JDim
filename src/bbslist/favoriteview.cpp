@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "favoriteview.h"
+#include "toolbar.h"
 
 #include "cache.h"
 #include "global.h"
@@ -21,7 +22,7 @@ FavoriteListView::FavoriteListView( const std::string& url,
     // D&D可
     get_treeview().set_reorderable_view( true );
 
-    get_toolbar().set_combo( COMBO_FAVORITE );
+    if( get_bbslisttoolbar() ) get_bbslisttoolbar()->set_combo( COMBO_FAVORITE );
 }
  
 

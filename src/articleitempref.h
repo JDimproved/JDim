@@ -20,7 +20,7 @@ namespace CORE
 
       private:
 
-        // OK押した
+        // OKボタン
         virtual void slot_ok_clicked();
 
         // デフォルトボタン

@@ -4,6 +4,8 @@
 #include "jddebug.h"
 
 #include "selectlistview.h"
+#include "toolbar.h"
+
 #include "global.h"
 
 using namespace BBSLIST;
@@ -15,7 +17,7 @@ SelectListView::SelectListView( const std::string& url, const std::string& arg1,
     get_treeview().set_reorderable_view( true );
 
     // ツールバーからラベル削除
-    get_toolbar().remove_label();
+    if( get_bbslisttoolbar() ) get_bbslisttoolbar()->remove_label();
 }
 
 

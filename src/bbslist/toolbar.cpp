@@ -13,67 +13,55 @@
 using namespace BBSLIST;
 
 
-BBSListtToolBar::BBSListtToolBar( bool show_bar ) :
+BBSListToolBar::BBSListToolBar() :
+    SKELETON::ToolBar(),
     m_toolbar_shown( false ),
-    m_button_close( Gtk::Stock::CLOSE ),
     m_button_up_search( Gtk::Stock::GO_UP ),
     m_button_down_search( Gtk::Stock::GO_DOWN )
 {
+    // 検索バー
+    set_tooltip( m_button_up_search, CONTROL::get_label_motion( CONTROL::SearchPrev ) );
+    set_tooltip( m_button_down_search, CONTROL::get_label_motion( CONTROL::SearchNext ) );
+    m_hbox_label.pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 2 );
+    m_hbox_label.pack_start( get_close_button(), Gtk::PACK_SHRINK );
+    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
+
     // ラベルバー
     m_combo.append_text( "板一覧" );
     m_combo.append_text( "お気に入り" );
+    set_tooltip( get_close_button(), CONTROL::get_label_motion( CONTROL::Quit ) );
+    pack_buttons();
+    m_entry_search.add_mode( CONTROL::MODE_BBSLIST );
+}
 
-    m_tooltip.set_tip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
-    m_hbox_label.pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 2 );
-    m_hbox_label.pack_start( m_button_close, Gtk::PACK_SHRINK );
 
-    // 検索バー
-    m_tooltip.set_tip( m_button_up_search, CONTROL::get_label_motion( CONTROL::SearchPrev ) );
-    m_tooltip.set_tip( m_button_down_search, CONTROL::get_label_motion( CONTROL::SearchNext ) );
-
-    // ボタンやラベルのバー
+//
+// ボタンのパッキング
+//
+void BBSListToolBar::pack_buttons()
+{
     int num = 0;
     for(;;){
         int item = SESSION::get_item_sidebar( num );
         if( item == ITEM_END ) break;
         switch( item ){
-            case ITEM_SEARCHBOX: m_hbox_search.pack_start( m_entry_search, Gtk::PACK_EXPAND_WIDGET, 2 ); break;
-            case ITEM_SEARCH_NEXT: m_hbox_search.pack_start( m_button_down_search, Gtk::PACK_SHRINK ); break;
-            case ITEM_SEARCH_PREV: m_hbox_search.pack_start( m_button_up_search, Gtk::PACK_SHRINK ); break;
+            case ITEM_SEARCHBOX: get_buttonbar().pack_start( m_entry_search, Gtk::PACK_EXPAND_WIDGET, 2 ); break;
+            case ITEM_SEARCH_NEXT: get_buttonbar().pack_start( m_button_down_search, Gtk::PACK_SHRINK ); break;
+            case ITEM_SEARCH_PREV: get_buttonbar().pack_start( m_button_up_search, Gtk::PACK_SHRINK ); break;
         }
         ++num;
     }
-
-    m_entry_search.add_mode( CONTROL::MODE_BBSLIST );
-
-    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
-    if( show_bar ) show_toolbar();
 }
 
-
-// ツールバーを表示
-void BBSListtToolBar::show_toolbar()
+void BBSListToolBar::unpack_buttons()
 {
-    if( ! m_toolbar_shown ){
-        pack_start( m_hbox_search, Gtk::PACK_SHRINK );
-        show_all_children();
-        m_toolbar_shown = true;
-    }
+    get_buttonbar().remove( m_entry_search );
+    get_buttonbar().remove( m_button_down_search );
+    get_buttonbar().remove( m_button_up_search );
 }
 
 
-// ツールバーを隠す
-void BBSListtToolBar::hide_toolbar()
-{
-    if( m_toolbar_shown ){
-        remove( m_hbox_search );
-        show_all_children();
-        m_toolbar_shown = false;
-    }
-}
-
-
-void BBSListtToolBar::remove_label()
+void BBSListToolBar::remove_label()
 {
     remove( m_hbox_label );
 }

@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "view.h"
+#include "toolbar.h"
 
 #include "jdlib/miscutil.h"
 
@@ -24,7 +25,8 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
       m_autoreload_mode( AUTORELOAD_NOT ),
       m_keyjump_counter( 0 ),
       m_keyjump_num( 0 ),
-      m_locked( false )
+      m_locked( false ),
+      m_toolbar( NULL )
 {}
 
 
@@ -137,6 +139,34 @@ void View::release_keyjump_key( int key )
     }
 }
 
+
+//
+// タブのロック
+//
+void View::lock()
+{
+    m_locked = true;
+    if( m_toolbar ) m_toolbar->lock();
+}
+
+
+//
+// タブのアンロック
+//
+void View::unlock()
+{
+    m_locked = false;
+    if( m_toolbar ) m_toolbar->unlock();
+}
+
+
+// ツールバーボタン表示更新
+void View::update_toolbar()
+{
+    if( ! m_toolbar ) return;
+    m_toolbar->unpack_buttons();
+    m_toolbar->pack_buttons();
+}
 
 
 // view 上にマウスポインタがあれば true

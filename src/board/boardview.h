@@ -8,7 +8,6 @@
 #include "skeleton/view.h"
 #include "skeleton/treeview.h"
 
-#include "toolbar.h"
 #include "columns.h"
 
 #include <gtkmm.h>
@@ -20,6 +19,8 @@ namespace DBTREE
 
 namespace BOARD
 {
+    class BoardToolBar;
+
     class BoardView : public SKELETON::View
     {
         SKELETON::JDTreeView m_treeview;
@@ -43,9 +44,6 @@ namespace BOARD
         bool m_search_invert;
         std::string m_pre_query;
         
-        // ツールバー
-        BoardToolBar m_toolbar;
-
         // ポップアップメニュー用
         Gtk::TreeModel::Path m_path_selected;
 
@@ -60,9 +58,6 @@ namespace BOARD
         ~BoardView();
 
         virtual const std::string url_for_copy();
-
-        virtual void lock();
-        virtual void unlock();
 
         // SKELETON::View の関数のオーバロード
         virtual const int get_icon( const std::string& iconname );
@@ -98,6 +93,7 @@ namespace BOARD
 
       protected:
 
+        BoardToolBar* get_boardtoolbar();
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
     private:

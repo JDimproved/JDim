@@ -567,6 +567,11 @@ void Admin::exec_command()
         toggle_toolbar();
     }
 
+    // ツールバーボタン表示更新
+    else if( command.command == "update_toolbar" ){
+        update_toolbar();
+    }
+
     // タブ表示切り替え
     else if( command.command == "toggle_tab" ){
         toggle_tab();
@@ -1226,6 +1231,20 @@ void Admin::toggle_toolbar()
     for( ; it != list_view.end(); ++it ){
         SKELETON::View* view = ( *it );
         if( view ) view->toggle_toolbar();
+    }
+}
+
+
+//
+// ツールバーボタン表示更新
+//
+void Admin::update_toolbar()
+{
+    std::list< SKELETON::View* > list_view = get_list_view();
+    std::list< SKELETON::View* >::iterator it = list_view.begin();
+    for( ; it != list_view.end(); ++it ){
+        SKELETON::View* view = ( *it );
+        if( view ) view->update_toolbar();
     }
 }
 

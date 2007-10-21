@@ -10,6 +10,8 @@
 
 namespace SKELETON
 {
+    class ToolBar;
+
     // 自分がポップアップviewの時に(ポップアップウィンドウ( SKELETON::PopupWin ) 経由で)
     // 親widgetにhideを依頼するシグナル。PopupWin::PopupWin()でPopupWin::slot_hide_popup()にコネクトされる。
     typedef sigc::signal< void > SIG_HIDE_POPUP;    
@@ -57,6 +59,9 @@ namespace SKELETON
 
         // ロック状態
         bool m_locked;
+
+        // ツールバー
+        ToolBar *m_toolbar;
 
       protected:
 
@@ -112,6 +117,10 @@ namespace SKELETON
         //  ポップアップメニュー取得
         virtual Gtk::Menu* get_popupmenu( const std::string& url ){ return NULL; }
 
+        // ツールバー
+        ToolBar* get_toolbar(){ return m_toolbar; }
+        void set_toolbar( ToolBar* toolbar ){ m_toolbar = toolbar; }
+
     public:
 
         SIG_HIDE_POPUP sig_hide_popup(){ return m_sig_hide_popup; }
@@ -126,8 +135,11 @@ namespace SKELETON
 
         // ロック/アンロック
         const bool is_locked() const { return m_locked; }
-        virtual void lock(){ m_locked = true; }
-        virtual void unlock(){ m_locked = false; }
+        virtual void lock();
+        virtual void unlock();
+
+        // ツールバーボタン表示更新
+        void update_toolbar();
 
         // view 上にマウスポインタがあれば true
         bool is_mouse_on_view();

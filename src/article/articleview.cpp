@@ -249,19 +249,19 @@ void ArticleViewMain::update_finish()
     if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += "[ " + DBTREE::article_ext_err( url_article() ) + " ] ";
 
     // 板名とスレ名をセット
-    if( toolbar()->m_button_board.get_label().empty() ) toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+    if( get_articletoolbar()->m_button_board.get_label().empty() ) get_articletoolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
 
     std::string str_tablabel;
     if( is_broken() ){
-        toolbar()->broken();
+        get_articletoolbar()->set_broken();
         str_tablabel = "[ 壊れています ]  ";
     }
     else if( is_old() ){
-        toolbar()->old();
+        get_articletoolbar()->set_old();
         str_tablabel = "[ DAT落ち ]  ";
     }
 
-    if( toolbar()->get_label().empty() || ! str_tablabel.empty() ) toolbar()->set_label( str_tablabel + DBTREE::article_subject( url_article() ) );
+    if( get_articletoolbar()->get_label().empty() || ! str_tablabel.empty() ) get_articletoolbar()->set_label( str_tablabel + DBTREE::article_subject( url_article() ) );
 
     // タブのラベルセット
     std::string str_label = DBTREE::article_subject( url_article() );
@@ -403,10 +403,10 @@ void ArticleViewRes::show_view()
     show_res( m_str_num, m_show_title );
 
     // ラベルとタブ
-    if( toolbar() ){
+    if( get_articletoolbar() ){
 
-        toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
-        toolbar()->set_label( " [ RES:" + m_str_num + " ] - " + DBTREE::article_subject( url_article() ) );
+        get_articletoolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+        get_articletoolbar()->set_label( " [ RES:" + m_str_num + " ] - " + DBTREE::article_subject( url_article() ) );
         std::string str_label = "[RES] " + DBTREE::article_subject( url_article() );
         ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label );
     }
@@ -471,10 +471,10 @@ void ArticleViewName::show_view()
     show_name( m_str_name, true );
 
     // ラベルとタブ
-    if( toolbar() ){
+    if( get_articletoolbar() ){
 
-        toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
-        toolbar()->set_label( " [ 名前：" + m_str_name + " ] - "
+        get_articletoolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+        get_articletoolbar()->set_label( " [ 名前：" + m_str_name + " ] - "
                                      + DBTREE::article_subject( url_article() ));
         std::string str_label = "[名前] " + DBTREE::article_subject( url_article() );
         ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label );
@@ -542,10 +542,10 @@ void ArticleViewID::show_view()
     show_id( m_str_id, true );
 
     // ラベルとタブ
-    if( toolbar() ){
+    if( get_articletoolbar() ){
 
-        toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
-        toolbar()->set_label( " [ ID:" + m_str_id.substr( strlen( PROTO_ID ) ) + " ] - "
+        get_articletoolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+        get_articletoolbar()->set_label( " [ ID:" + m_str_id.substr( strlen( PROTO_ID ) ) + " ] - "
                                      + DBTREE::article_subject( url_article() ));
         std::string str_label = "[ID] " + DBTREE::article_subject( url_article() );
         ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label );
@@ -611,10 +611,10 @@ void ArticleViewBM::show_view()
     show_bm();
 
     // ラベルとタブ
-    if( toolbar() ){
+    if( get_articletoolbar() ){
 
-        toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
-        toolbar()->set_label( " [ BM ] - " + DBTREE::article_subject( url_article() ));
+        get_articletoolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+        get_articletoolbar()->set_label( " [ BM ] - " + DBTREE::article_subject( url_article() ));
         std::string str_label = "[BM] " + DBTREE::article_subject( url_article() );
         ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label );
     }
@@ -679,10 +679,10 @@ void ArticleViewURL::show_view()
     show_res_with_url();
 
     // ラベルとタブ
-    if( toolbar() ){
+    if( get_articletoolbar() ){
 
-        toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
-        toolbar()->set_label( " [ URL ] - " + DBTREE::article_subject( url_article() ));
+        get_articletoolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+        get_articletoolbar()->set_label( " [ URL ] - " + DBTREE::article_subject( url_article() ));
         std::string str_label = "[URL] " + DBTREE::article_subject( url_article() );
         ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label );
     }
@@ -745,10 +745,10 @@ void ArticleViewRefer::show_view()
     show_refer( atol( m_str_num.c_str() ) );
 
     // ラベルとタブ
-    if( toolbar() ){
+    if( get_articletoolbar() ){
 
-        toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
-        toolbar()->set_label( " [ Re:" + m_str_num + " ] - " + DBTREE::article_subject( url_article() ));
+        get_articletoolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+        get_articletoolbar()->set_label( " [ Re:" + m_str_num + " ] - " + DBTREE::article_subject( url_article() ));
         std::string str_label = "[Re] " + DBTREE::article_subject( url_article() );
         ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label );
     }
@@ -817,10 +817,10 @@ void ArticleViewDrawout::show_view()
     drawout_keywords( m_query, m_mode_or, true );
 
     // ラベルとタブ
-    if( toolbar() ){
+    if( get_articletoolbar() ){
 
-        toolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
-        toolbar()->set_label( DBTREE::article_subject( url_article() ) );
+        get_articletoolbar()->m_button_board.set_label( "[ " + DBTREE::board_name( url_article() ) + " ]" );
+        get_articletoolbar()->set_label( DBTREE::article_subject( url_article() ) );
 
         std::string str_label;
         if( m_mode_or ) str_label = "[OR] " + DBTREE::article_subject( url_article() );
@@ -828,7 +828,7 @@ void ArticleViewDrawout::show_view()
         ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label );
 
         slot_push_open_search();
-        toolbar()->m_entry_search.set_text( m_query );
+        get_articletoolbar()->m_entry_search.set_text( m_query );
     }
 }
 

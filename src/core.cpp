@@ -257,7 +257,7 @@ void Core::run( bool init )
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
 
     // 外観
-    m_action_group->add( Gtk::Action::create( "View_Menu", "外観" ) );
+    m_action_group->add( Gtk::Action::create( "View_Menu", "詳細設定" ) );
 
     // メニューバー
     m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "メニューバー表示", std::string(), false ),
@@ -483,6 +483,11 @@ void Core::run( bool init )
         "<menuitem action='Show_Image'/>"
         "<separator/>"
 
+        "<menuitem action='2Pane'/>"
+        "<menuitem action='3Pane'/>"
+        "<menuitem action='v3Pane'/>"
+        "<separator/>"
+
         "<menu action='View_Menu'>"
 
         "<menuitem action='ShowMenuBar'/>"
@@ -516,11 +521,6 @@ void Core::run( bool init )
         "<menu action='ListItem_Menu'>"
         "<menuitem action='SetupBoardItemColumn'/>"
         "</menu>"
-        "<separator/>"
-
-        "<menuitem action='2Pane'/>"
-        "<menuitem action='3Pane'/>"
-        "<menuitem action='v3Pane'/>"
     "<separator/>";
 
     str_ui += menu_font
@@ -2376,6 +2376,13 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    // ツールバーボタン更新
+    else if( command.command  == "update_article_toolbar" ){
+
+        ARTICLE::get_admin()->set_command( "update_toolbar" );
+        return;
+    }
+
     ////////////////////////////
     // board系のコマンド
 
@@ -2421,6 +2428,13 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
    
+    // ツールバーボタン更新
+    else if( command.command  == "update_board_toolbar" ){
+
+        BOARD::get_admin()->set_command( "update_toolbar" );
+        return;
+    }
+
     // 全boardviewの再レイアウト
     else if( command.command == "relayout_all_board" ){
         BOARD::get_admin()->set_command( "relayout_all" );
@@ -2475,6 +2489,13 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "toggle_favorite_icon" ){
 
         BBSLIST::get_admin()->set_command( "toggle_icon", command.url );
+        return;
+    }
+
+    // ツールバーボタン更新
+    else if( command.command  == "update_bbslist_toolbar" ){
+
+        BBSLIST::get_admin()->set_command( "update_toolbar" );
         return;
     }
 
@@ -2540,6 +2561,13 @@ void Core::set_command( const COMMAND_ARGS& command )
             if( SESSION::get_embedded_mes() ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
             MESSAGE::get_admin()->set_command( "open_view", command.url, command.arg1, "new" );
         }
+    }
+
+    // ツールバーボタン更新
+    else if( command.command  == "update_message_toolbar" ){
+
+        MESSAGE::get_admin()->set_command( "update_toolbar" );
+        return;
     }
 
     // messageviewの再レイアウト
