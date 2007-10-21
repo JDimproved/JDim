@@ -226,70 +226,71 @@ void Core::run( bool init )
 
     // File
     m_action_group->add( Gtk::Action::create( "Menu_File", "ファイル(_F)" ) );    
-    m_action_group->add( Gtk::ToggleAction::create( "Online", "オンライン", std::string(), SESSION::is_online() ),
+    m_action_group->add( Gtk::ToggleAction::create( "Online", "オンライン(_O)", std::string(), SESSION::is_online() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_online ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Login2ch", "2chにログイン", std::string(), false ),
-                        sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
-    m_action_group->add( Gtk::ToggleAction::create( "LoginBe", "BEにログイン", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "Login2ch", "2chにログイン(_L)", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
+    m_action_group->add( Gtk::ToggleAction::create( "LoginBe", "BEにログイン(_B)", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_loginbe ) );
-    m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
+    m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
-    m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
-    m_action_group->add( Gtk::Action::create( "Quit", "終了" ), sigc::mem_fun(*this, &Core::slot_quit ) );
+    m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存(_S)"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
+    m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ),
+                         Gtk::AccelKey( "<Ctrl>Q" ), sigc::mem_fun(*this, &Core::slot_quit ) );
 
     //////////////////////////////////////////////////////
 
     // 表示
     m_action_group->add( Gtk::Action::create( "Menu_View", "表示(_V)" ) );    
 
-    m_action_group->add( Gtk::Action::create( "Show_Board", "スレ一覧" ),
+    m_action_group->add( Gtk::Action::create( "Show_Board", "スレ一覧(_B)" ),
                          sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_board ), false ) );
-    m_action_group->add( Gtk::Action::create( "Show_Thread", "スレビュー" ),
+    m_action_group->add( Gtk::Action::create( "Show_Thread", "スレビュー(_T)" ),
                          sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_article ), false ) );
-    m_action_group->add( Gtk::Action::create( "Show_Image", "画像ビュー" ), 
+    m_action_group->add( Gtk::Action::create( "Show_Image", "画像ビュー(_I)" ), 
                          sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_image ), false ) );
 
     // サイドバー
-    m_action_group->add( Gtk::Action::create( "Sidebar_Menu", "サイドバー" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Show_BBS", "板一覧", std::string(), SESSION::show_sidebar() ),
+    m_action_group->add( Gtk::Action::create( "Sidebar_Menu", "サイドバー(_S)" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Show_BBS", "板一覧(_B)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_BBSLISTVIEW, false ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Show_FAVORITE", "お気に入り", std::string(), SESSION::show_sidebar() ),
+    m_action_group->add( Gtk::ToggleAction::create( "Show_FAVORITE", "お気に入り(_F)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
 
     // 外観
-    m_action_group->add( Gtk::Action::create( "View_Menu", "詳細設定" ) );
+    m_action_group->add( Gtk::Action::create( "View_Menu", "詳細設定(_D)" ) );
 
     // メニューバー
-    m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "メニューバー表示", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "メニューバー表示(_S)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_menubar ) );
 
     // ツールバー
-    m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー表示" ) );
-    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メイン" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する", std::string(), false ),
+    m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー表示(_T)" ) );
+    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メイン(_M)" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する(_U)", std::string(), false ),
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_NORMAL ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する(_R)", std::string(), false ),
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_RIGHT ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBbslist", "サイドバー", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBbslist", "サイドバー(_S)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbarbbslist ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBoard", "スレ一覧", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBoard", "スレ一覧(_B)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbarboard ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "スレビュー", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "スレビュー(_A)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbararticle ) );
 
     // タブ
-    m_action_group->add( Gtk::Action::create( "Tab_Menu", "タブ表示" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "TabBoard", "スレ一覧", std::string(), false ),
+    m_action_group->add( Gtk::Action::create( "Tab_Menu", "タブ表示(_B)" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "TabBoard", "スレ一覧(_B)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabboard ) );
-    m_action_group->add( Gtk::ToggleAction::create( "TabArticle", "スレビュー", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "TabArticle", "スレビュー(_A)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabarticle ) );
 
     // pane 設定
     Gtk::RadioButtonGroup radiogroup;
-    Glib::RefPtr< Gtk::RadioAction > raction0 = Gtk::RadioAction::create( radiogroup, "2Pane", "２ペイン表示" );
-    Glib::RefPtr< Gtk::RadioAction > raction1 = Gtk::RadioAction::create( radiogroup, "3Pane", "３ペイン表示" );
-    Glib::RefPtr< Gtk::RadioAction > raction2 = Gtk::RadioAction::create( radiogroup, "v3Pane", "縦３ペイン表示" );
+    Glib::RefPtr< Gtk::RadioAction > raction0 = Gtk::RadioAction::create( radiogroup, "2Pane", "２ペイン表示(_2)" );
+    Glib::RefPtr< Gtk::RadioAction > raction1 = Gtk::RadioAction::create( radiogroup, "3Pane", "３ペイン表示(_3)" );
+    Glib::RefPtr< Gtk::RadioAction > raction2 = Gtk::RadioAction::create( radiogroup, "v3Pane", "縦３ペイン表示(_V)" );
 
     switch( SESSION::get_mode_pane() ){
         case SESSION::MODE_2PANE: raction0->set_active( true ); break;
@@ -302,140 +303,144 @@ void Core::run( bool init )
     m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
 
     // 埋め込みmessage
-    m_action_group->add( Gtk::ToggleAction::create( "EmbMes", "書き込みビューを埋め込み表示", std::string(), SESSION::get_embedded_mes() ),
+    m_action_group->add( Gtk::ToggleAction::create( "EmbMes", "書き込みビューを埋め込み表示(_E)", std::string(), SESSION::get_embedded_mes() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_embedded_mes ) );
 
     // 埋め込みImage
-    m_action_group->add( Gtk::ToggleAction::create( "EmbImg", "画像ビューを埋め込み表示", std::string(), SESSION::get_embedded_img() ),
+    m_action_group->add( Gtk::ToggleAction::create( "EmbImg", "画像ビューを埋め込み表示(_G)", std::string(), SESSION::get_embedded_img() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_embedded_img ) );
 
     // リスト表示項目設定
-    m_action_group->add( Gtk::Action::create( "ListItem_Menu", "リスト項目設定" ) );
-    m_action_group->add( Gtk::Action::create( "SetupBoardItemColumn", "スレ一覧..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditemcolumn ) );
+    m_action_group->add( Gtk::Action::create( "ListItem_Menu", "リスト項目設定(_L)" ) );
+    m_action_group->add( Gtk::Action::create( "SetupBoardItemColumn", "スレ一覧(_T)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditemcolumn ) );
 
     // ツールバー項目設定
-    m_action_group->add( Gtk::Action::create( "Item_Menu", "ツールバー項目設定" ) );
-    m_action_group->add( Gtk::Action::create( "SetupSidebarItem", "サイドバー..." ), sigc::mem_fun( *this, &Core::slot_setup_sidebaritem ) );
-    m_action_group->add( Gtk::Action::create( "SetupBoardItem", "スレ一覧..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
-    m_action_group->add( Gtk::Action::create( "SetupArticleItem", "スレビュー..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem ) );
-    m_action_group->add( Gtk::Action::create( "SetupMsgItem", "書き込みビュー..." ), sigc::mem_fun( *this, &Core::slot_setup_msgitem ) );
+    m_action_group->add( Gtk::Action::create( "Item_Menu", "ツールバー項目設定(_I)" ) );
+    m_action_group->add( Gtk::Action::create( "SetupSidebarItem", "サイドバー(_S)..." ), sigc::mem_fun( *this, &Core::slot_setup_sidebaritem ) );
+    m_action_group->add( Gtk::Action::create( "SetupBoardItem", "スレ一覧(_B)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
+    m_action_group->add( Gtk::Action::create( "SetupArticleItem", "スレビュー(_A)..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem ) );
+    m_action_group->add( Gtk::Action::create( "SetupMsgItem", "書き込みビュー(_M)..." ), sigc::mem_fun( *this, &Core::slot_setup_msgitem ) );
 
     //////////////////////////////////////////////////////
 
     // 設定
     m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
 
-    m_action_group->add( Gtk::Action::create( "BoardPref", "表示中の板のプロパティ..." ), sigc::mem_fun( *this, &Core::slot_board_pref ) );
-    m_action_group->add( Gtk::Action::create( "ArticlePref", "表示中のスレのプロパティ..." ), sigc::mem_fun( *this, &Core::slot_article_pref ) );
-    m_action_group->add( Gtk::Action::create( "ImagePref", "表示中の画像のプロパティ..." ), sigc::mem_fun( *this, &Core::slot_image_pref ) );
+    m_action_group->add( Gtk::Action::create( "BoardPref", "表示中の板のプロパティ(_B)..." ), sigc::mem_fun( *this, &Core::slot_board_pref ) );
+    m_action_group->add( Gtk::Action::create( "ArticlePref", "表示中のスレのプロパティ(_T)..." ), sigc::mem_fun( *this, &Core::slot_article_pref ) );
+    m_action_group->add( Gtk::Action::create( "ImagePref", "表示中の画像のプロパティ(_I)..." ), sigc::mem_fun( *this, &Core::slot_image_pref ) );
 
-    m_action_group->add( Gtk::Action::create( "General_Menu", "一般" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示する", std::string(), CONFIG::get_show_oldarticle() ),
+    m_action_group->add( Gtk::Action::create( "General_Menu", "一般(_G)" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示する(_S)", std::string(), CONFIG::get_show_oldarticle() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "前回開いていた各ビューを起動時に復元する", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "前回開いていた各ビューを起動時に復元する(_R)", std::string(),
                                                     ( CONFIG::get_restore_board()
                                                       & CONFIG::get_restore_board()
                                                       & CONFIG::get_restore_board() ) ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_views ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleFoldMessage", "非アクティブ時に書き込みビューを折りたたむ", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleFoldMessage", "非アクティブ時に書き込みビューを折りたたむ(_C)", std::string(),
                                                     CONFIG::get_fold_message() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_fold_message ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存する(暫定仕様)", std::string(), CONFIG::get_save_postlog() ),
+    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存する(暫定仕様)(_A)", std::string(), CONFIG::get_save_postlog() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
 
 
     // マウス／キーボード
-    m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード" ) );
+    m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード(_M)" ) );
 
     bool toggled = CONFIG::get_buttonconfig()->is_toggled_tab_button() && CONFIG::get_keyconfig()->is_toggled_tab_key();
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "スレ一覧／スレビューを開く時に常に新しいタブで開く", std::string(), toggled ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "スレ一覧／スレビューを開く時に常に新しいタブで開く(_T)", std::string(), toggled ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "スレビューでアンカーをクリックして多重ポップアップモードに移行する", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "スレビューでアンカーをクリックして多重ポップアップモードに移行する(_W)", std::string(),
                                                     CONFIG::get_buttonconfig()->is_popup_warpmode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ShortMarginPopup", "スレビューでカーソルを移動して多重ポップアップモードに移行する", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "ShortMarginPopup", "スレビューでカーソルを移動して多重ポップアップモードに移行する(_M)", std::string(),
                                                     ( CONFIG::get_margin_popup() != CONFIG::CONF_MARGIN_POPUP ) ),
                          sigc::mem_fun( *this, &Core::slot_shortmargin_popup ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューをEmacs風のキーバインドにする", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューをEmacs風のキーバインドにする(_E)", std::string(),
                                                     CONFIG::get_keyconfig()->is_emacs_mode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
 
     // フォントと色
-    m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色" ) );
+    m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色(_F)" ) );
 
-    m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
-    m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
-    m_action_group->add( Gtk::Action::create( "FontTree", "板／スレ一覧フォント..." ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
-    m_action_group->add( Gtk::Action::create( "ColorChar", "スレビュー文字色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
-    m_action_group->add( Gtk::Action::create( "ColorBack", "スレビュー背景色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
-    m_action_group->add( Gtk::Action::create( "ColorCharTree", "板／スレ一覧文字色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char_tree ) );
-    m_action_group->add( Gtk::Action::create( "ColorBackTree", "板／スレ一覧背景色..." ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
-    m_action_group->add( Gtk::Action::create( "FontColorPref", "詳細設定..." ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
+    m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント(_T)..." ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
+    m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント(_P)..." ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
+    m_action_group->add( Gtk::Action::create( "FontTree", "板／スレ一覧フォント(_B)..." ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
+    m_action_group->add( Gtk::Action::create( "ColorChar", "スレビュー文字色(_C)..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
+    m_action_group->add( Gtk::Action::create( "ColorBack", "スレビュー背景色(_A)..." ), sigc::mem_fun( *this, &Core::slot_changecolor_back ) );
+    m_action_group->add( Gtk::Action::create( "ColorCharTree", "板／スレ一覧文字色(_H)..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char_tree ) );
+    m_action_group->add( Gtk::Action::create( "ColorBackTree", "板／スレ一覧背景色(_K)..." ), sigc::mem_fun( *this, &Core::slot_changecolor_back_tree ) );
+    m_action_group->add( Gtk::Action::create( "FontColorPref", "詳細設定(_R)..." ), sigc::mem_fun( *this, &Core::slot_setup_fontcolor ) );
 
     // ネットワーク
-    m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク" ) );
-    m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ..." ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
-    m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ..." ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
-    m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード..." ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
+    m_action_group->add( Gtk::Action::create( "Net_Menu", "ネットワーク(_N)" ) );
+    m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ(_X)..." ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
+    m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ(_W)..." ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
+    m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード(_P)..." ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
 
     // あぼーん
-    m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん" ) );
-    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん設定(対象: スレビュー)..." ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
-    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん設定(対象: スレ一覧)..." ),
+    m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん(_A)" ) );
+    m_action_group->add( Gtk::Action::create( "SetupAbone", "全体あぼ〜ん設定(対象: スレビュー)(_V)..." ), sigc::mem_fun( *this, &Core::slot_setup_abone ) );
+    m_action_group->add( Gtk::Action::create( "SetupAboneThread", "全体スレあぼ〜ん設定(対象: スレ一覧)(_L)..." ),
                          sigc::mem_fun( *this, &Core::slot_setup_abone_thread ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "スレビューで透明／連鎖あぼ〜んをデフォルト設定にする", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "TranspChainAbone", "スレビューで透明／連鎖あぼ〜んをデフォルト設定にする(_T)", std::string(),
                                                     ( CONFIG::get_abone_transparent() && CONFIG::get_abone_chain() ) ),
                                                     sigc::mem_fun( *this, &Core::slot_toggle_abone_transp_chain ) );
 
     // 画像
-    m_action_group->add( Gtk::Action::create( "Image_Menu", "画像" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける", std::string(), CONFIG::get_use_mosaic() ),
+    m_action_group->add( Gtk::Action::create( "Image_Menu", "画像(_E)" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける(_M)", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseImgView", "画像ビューを使用する", std::string(), CONFIG::get_use_image_view() ),
+    m_action_group->add( Gtk::ToggleAction::create( "UseImgView", "画像ビューを使用する(_V)", std::string(), CONFIG::get_use_image_view() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgview ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する", std::string(), CONFIG::get_use_inline_image() ),
+    m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
-    m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュの消去..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
+    m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュの消去(_D)..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
 
     // プライバシー
-    m_action_group->add( Gtk::Action::create( "Privacy_Menu", "プライバシー" ) );
-    m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "プライバシー情報の消去..." ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
+    m_action_group->add( Gtk::Action::create( "Privacy_Menu", "プライバシー(_P)" ) );
+    m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "プライバシー情報の消去(_D)..." ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
 
 
     //////////////////////////////////////////////////////
 
     // ツール
     m_action_group->add( Gtk::Action::create( "Menu_Tool", "ツール(_T)" ) );    
-    m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索" ) );
-    m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "表示中の板のログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
-    m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
+    m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索(_C)" ) );
+    m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "表示中の板のログを検索(_B_"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
+    m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索(_A)"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_action_group->add( Gtk::Action::create( "SearchTitle", CONFIG::get_url_search_menu() ), sigc::mem_fun( *this, &Core::slot_search_title ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "全お気に入り更新チェック" ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ"), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く"),
+    m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "全お気に入り更新チェック(_U)" ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ(_R)"), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く(_T)"),
                          sigc::mem_fun( *this, &Core::slot_check_update_open_root ) );
-    m_action_group->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル" ),
+    m_action_group->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
                          sigc::mem_fun( *this, &Core::slot_cancel_check_update ) );
 
     //////////////////////////////////////////////////////
 
     // help
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
-    m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
-    m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
-    m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル..." ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
-    m_action_group->add( Gtk::Action::create( "About", "JDについて..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
+    m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板(_B)" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
+    m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ(_L)" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
+    m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
+                         Gtk::AccelKey( "F1" ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
+    m_action_group->add( Gtk::Action::create( "About", "JDについて(_A)..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
     
 
     m_ui_manager = Gtk::UIManager::create();    
     m_ui_manager->insert_action_group( m_action_group );
+
+    // アクセラレータの追加
+    m_win_main.add_accel_group( m_ui_manager->get_accel_group() );
 
     Glib::ustring menu_font = 
         "<menu action='FontColor_Menu'>"

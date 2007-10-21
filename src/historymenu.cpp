@@ -36,11 +36,11 @@ void HistoryMenuBase::setup( CORE::HistorySubMenu* submenu )
 
     // クリア
     Gtk::Menu* menu = Gtk::manage( new Gtk::Menu() );
-    item = Gtk::manage( new Gtk::MenuItem( "クリアする" ) );
+    item = Gtk::manage( new Gtk::MenuItem( "クリアする(_C)", true ) );
     menu->append( *item );
     item->signal_activate().connect( sigc::mem_fun( *this, &HistoryMenuBase::slot_clear ) ); 
 
-    item = Gtk::manage( new Gtk::MenuItem( "履歴クリア" ) );
+    item = Gtk::manage( new Gtk::MenuItem( "履歴クリア(_C)", true ) );
     item->set_submenu( *menu );
     m_submenu->prepend( *item );
 }
@@ -80,7 +80,7 @@ void HistoryMenuBase::slot_clear()
 
 
 HistoryMenuThread::HistoryMenuThread()
-    : CORE::HistoryMenuBase( "スレ履歴" )
+    : CORE::HistoryMenuBase( "スレ履歴(_T)" )
 {
     // ファイルが存在しなければ入力を旧ファイル名にする
     std::string file_in = CACHE::path_xml_history();
@@ -94,7 +94,7 @@ HistoryMenuThread::HistoryMenuThread()
 
 
 HistoryMenuBoard::HistoryMenuBoard()
-    : CORE::HistoryMenuBase( "板履歴" )
+    : CORE::HistoryMenuBase( "板履歴(_B)" )
 {
     // ファイルが存在しなければ入力を旧ファイル名にする
     std::string file_in = CACHE::path_xml_history_board();
@@ -108,7 +108,7 @@ HistoryMenuBoard::HistoryMenuBoard()
 
 
 HistoryMenuClose::HistoryMenuClose()
-    : CORE::HistoryMenuBase( "最近閉じたスレ" )
+    : CORE::HistoryMenuBase( "最近閉じたスレ(_M)" )
 {
     // ファイルが存在しなければ入力を旧ファイル名にする
     std::string file_in = CACHE::path_xml_history_close();
