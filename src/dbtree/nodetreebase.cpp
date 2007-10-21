@@ -1962,49 +1962,55 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
         // バッファサイズを越えない
         n_in < lng_in
 
-        // < ではない
-        && !( cchar == '&' && *( str_in + n_in +1 ) == 'l' && *( str_in + n_in +2 ) == 't'
-              && *( str_in + n_in +3) == ';' ) 
-
-        // > ではない
-        && !( cchar == '&' && *( str_in + n_in +1 ) == 'g' && *( str_in + n_in +2 ) == 't'
-              && *( str_in + n_in +3 ) == ';' ) 
-
-        // " ではない
-        && !( cchar == '&' && *( str_in + n_in +1 ) == 'q' && *( str_in + n_in +2 ) == 'u'
-              && *( str_in + n_in +3 ) == 'o' && *( str_in + n_in +4 ) == 't' && *( str_in + n_in +5 ) == ';' ) 
-
         // [ URLとして扱う文字列 ]
         // RFC 3986 http://www.ietf.org/rfc/rfc3986.txt
         // RFC 2396 http://www.ietf.org/rfc/rfc2396.txt
         //
         // !#$%&'()*+,-./0-9:;=?@A-Z_a-z~ が続く限りwhileで回す
-        // 並びはASCIIコード順(なんとなく)
         && (
-            cchar == '!'
+
+            // 出現頻度が高いと思われる順にチェック
+            ( cchar >= 'a' && cchar <= 'z' )
+            || ( cchar >= '0' && cchar <= '9' )
+            || ( cchar >= 'A' && cchar <= 'Z' )
+            || cchar == '.'
+            || cchar == '/'
+            || cchar == '-'
+            || cchar == '%'
+            || cchar == '?'
+            || cchar == '='
+            || cchar == ':'
+            || cchar == '~'
+
+            // HTML特殊文字を除く
+            || ( cchar == '&'
+             
+                 // < ではない
+                 && !( *( str_in + n_in +1 ) == 'l' && *( str_in + n_in +2 ) == 't'
+                       && *( str_in + n_in +3) == ';' ) 
+
+                 // > ではない
+                 && !( *( str_in + n_in +1 ) == 'g' && *( str_in + n_in +2 ) == 't'
+                       && *( str_in + n_in +3 ) == ';' ) 
+
+                 // " ではない
+                 && !( *( str_in + n_in +1 ) == 'q' && *( str_in + n_in +2 ) == 'u'
+                       && *( str_in + n_in +3 ) == 'o' && *( str_in + n_in +4 ) == 't' && *( str_in + n_in +5 ) == ';' )
+                )
+
+            // あとの並びはASCIIコード順(なんとなく)
+            || cchar == '!'
             || cchar == '#'
             || cchar == '$'
-            || cchar == '%'
-            || cchar == '&'
             || cchar == '\''
             || cchar == '('
             || cchar == ')'
             || cchar == '*'
             || cchar == '+'
             || cchar == ','
-            || cchar == '-'
-            || cchar == '.'
-            || cchar == '/'
-            || ( cchar >= '0' && cchar <= '9' )
-            || cchar == ':'
             || cchar == ';'
-            || cchar == '='
-            || cchar == '?'
             || cchar == '@'
-            || ( cchar >= 'A' && cchar <= 'Z' )
             || cchar == '_'
-            || ( cchar >= 'a' && cchar <= 'z' )
-            || cchar == '~'
 
             // RFC 3986(2.2.)では"[]"が予約文字として定義されているが
             // RFC 2396(2.4.3.)では除外されていて、普通にURLとして扱う
