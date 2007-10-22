@@ -12,6 +12,7 @@
 #include "config/globalconf.h"
 
 #include "controlid.h"
+#include "session.h"
 
 using namespace SKELETON;
 
@@ -199,6 +200,10 @@ int DragableNoteBook::get_page_under_mouse()
 //
 bool DragableNoteBook::adjust_tabwidth()
 {
+    // 起動中とシャットダウン中は処理しない
+    if( SESSION::is_booting() ) return false;
+    if( SESSION::is_quitting() ) return false;
+
     const int mrg_notebook = 30;
 
     if( m_fixtab ) return false;

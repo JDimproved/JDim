@@ -97,9 +97,7 @@ Core::Core( WinMain& win_main )
       m_button_thread( ICON::THREAD ),
       m_button_image( ICON::IMAGE ),
       m_enable_menuslot( true ),
-      m_boot( true ),
-      m_init( false ),
-      m_quit( false )
+      m_init( false )
 {
     // ディスパッチマネージャ作成
     CORE::get_dispmanager();
@@ -143,7 +141,7 @@ Core::~Core()
     // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
     set_dispatchable( false );
 
-    m_quit = true;
+    SESSION::set_quitting( true );
 
     // 設定保存
     // セッション情報は WinMain::~WinMain() で保存する
@@ -940,7 +938,7 @@ void Core::shutdown()
 //
 void Core::set_maintitle()
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
 
     std::string title;
 
@@ -1695,7 +1693,7 @@ void Core::slot_toggle_loginbe()
 //
 void Core::toggle_menubar()
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
@@ -1753,7 +1751,7 @@ void Core::slot_search_title()
 //
 void Core::toggle_sidebar()
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
@@ -1822,7 +1820,7 @@ void Core::slot_show_hide_leftpane( int mode )
 //
 void Core::slot_toggle_toolbarpos( int pos )
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
@@ -1846,7 +1844,7 @@ void Core::slot_toggle_toolbarpos( int pos )
 //
 void Core::slot_toggle_toolbarbbslist()
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
     SESSION::set_show_bbslist_toolbar( ! SESSION::get_show_bbslist_toolbar() );
@@ -1859,7 +1857,7 @@ void Core::slot_toggle_toolbarbbslist()
 //
 void Core::slot_toggle_toolbarboard()
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
     SESSION::set_show_board_toolbar( ! SESSION::get_show_board_toolbar() );
@@ -1872,7 +1870,7 @@ void Core::slot_toggle_toolbarboard()
 //
 void Core::slot_toggle_toolbararticle()
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
     SESSION::set_show_article_toolbar( ! SESSION::get_show_article_toolbar() );
@@ -1885,7 +1883,7 @@ void Core::slot_toggle_toolbararticle()
 //
 void Core::slot_toggle_tabboard()
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
     SESSION::set_show_board_tab( ! SESSION::get_show_board_tab() );
@@ -1898,7 +1896,7 @@ void Core::slot_toggle_tabboard()
 //
 void Core::slot_toggle_tabarticle()
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
     SESSION::set_show_article_tab( ! SESSION::get_show_article_tab() );
@@ -2066,7 +2064,7 @@ void Core::slot_toggle_fold_message()
 //
 void Core::set_command( const COMMAND_ARGS& command )
 {
-    if( m_quit ) return;
+    if( SESSION::is_quitting() ) return;
 
 #ifdef _DEBUG
     std::cout << "Core::set_command : " << command.command << " " << command.url
@@ -2949,7 +2947,7 @@ void Core::exec_command()
     else if( command.command  == "empty_command" ){}
 
     // 起動中
-    if( m_boot && ! m_init ){
+    if( SESSION::is_booting() && ! m_init ){
 
         // coreがコマンドを全て実行して、かつ全てのadminクラスがブートした
         if( m_list_command.size() == 0
@@ -2961,7 +2959,7 @@ void Core::exec_command()
             ){
 
             // 起動完了
-            m_boot = false;
+            SESSION::set_booting( false );
             exec_command_after_boot();
         }
     }
@@ -3476,7 +3474,7 @@ void Core::toggle_maximize_rightpane()
 //
 void Core::switch_article( bool present )
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
@@ -3519,7 +3517,7 @@ void Core::switch_article( bool present )
 
 void Core::switch_board( bool present )
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
@@ -3560,7 +3558,7 @@ void Core::switch_board( bool present )
 //
 void Core::switch_sidebar( const std::string& url, bool present )
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
@@ -3602,7 +3600,7 @@ void Core::switch_sidebar( const std::string& url, bool present )
 
 void Core::switch_image( bool present )
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
@@ -3642,7 +3640,7 @@ void Core::switch_image( bool present )
 
 void Core::switch_message( bool present )
 {
-    if( m_boot ) return;
+    if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG

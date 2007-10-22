@@ -30,6 +30,7 @@
 #include "fontid.h"
 #include "cache.h"
 #include "cssmanager.h"
+#include "session.h"
 
 #include <math.h>
 #include <sstream>
@@ -575,6 +576,10 @@ void DrawAreaBase::clear_screen()
 //
 void DrawAreaBase::redraw_view()
 {
+    // 起動中とシャットダウン中は処理しない
+    if( SESSION::is_booting() ) return;
+    if( SESSION::is_quitting() ) return;
+
 #ifdef _DEBUG    
     std::cout << "DrawAreaBase::redraw_view()\n";
 #endif
@@ -608,6 +613,10 @@ bool DrawAreaBase::exec_layout()
 //
 bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
 {
+    // 起動中とシャットダウン中は処理しない
+    if( SESSION::is_booting() ) return false;
+    if( SESSION::is_quitting() ) return false;
+
     // レイアウトがセットされていない
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
@@ -618,7 +627,7 @@ bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
     const int height_view = m_view.get_height();
 
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::layout_impl : nowrap = " << nowrap << " width_view = " << width_view << " height_view  = " << height_view << std::endl
+    std::cout << "DrawAreaBase::exec_layout_impl : nowrap = " << nowrap << " width_view = " << width_view << " height_view  = " << height_view << std::endl
               << "m_width_client = " << m_width_client << " m_height_client = " << m_height_client << std::endl;
 #endif
 

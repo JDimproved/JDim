@@ -53,6 +53,14 @@ namespace SESSION
     void init_session();
     void save_session();
 
+    // ブート中
+    const bool is_booting();
+    void set_booting( bool boot );
+
+    // 終了中
+    const bool is_quitting();
+    void set_quitting( bool quit );
+
     const int get_wm();
 
     const int get_mode_pane();

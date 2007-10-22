@@ -613,8 +613,12 @@ void ArticleViewBase::stop()
 //
 void ArticleViewBase::redraw_view()
 {
+    // 起動中とシャットダウン中は処理しない
+    if( SESSION::is_booting() ) return;
+    if( SESSION::is_quitting() ) return;
+
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::redraw_view\n";
+    std::cout << "ArticleViewBase::redraw_view " << get_url() << std::endl;
 #endif
 
     assert( m_drawarea );

@@ -109,9 +109,6 @@ namespace CORE
         HistoryMenuClose* m_histmenu_close;
         bool m_enable_menuslot;
 
-        // 起動中
-        bool m_boot;
-
         // 初期設定中
         bool m_init;
 

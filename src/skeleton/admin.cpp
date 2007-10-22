@@ -1440,6 +1440,10 @@ std::string Admin::get_current_url()
 //
 void Admin::slot_switch_page( GtkNotebookPage*, guint page )
 {
+    // 起動中とシャットダウン中は処理しない
+    if( SESSION::is_booting() ) return;
+    if( SESSION::is_quitting() ) return;
+
 #ifdef _DEBUG
     std::cout << "Admin::slot_switch_page : " << m_url << " page = " << page << std::endl;
 #endif

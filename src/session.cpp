@@ -15,6 +15,9 @@
 
 #include <sstream>
 
+bool booting = true;
+bool quitting = false;
+
 int mode_pane;
 bool mode_online;
 bool mode_login2ch;
@@ -559,6 +562,13 @@ void SESSION::save_session()
 
 }
 
+// ブート中
+const bool SESSION::is_booting(){ return booting; }
+void SESSION::set_booting( bool boot ){ booting = boot; }
+
+// 終了中
+const bool SESSION::is_quitting(){ return quitting; }
+void SESSION::set_quitting( bool quit ){ quitting = quit; }
 
 // WM 判定
 const int SESSION::get_wm(){ return win_manager; }
