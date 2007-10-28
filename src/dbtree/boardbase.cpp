@@ -876,6 +876,9 @@ void BoardBase::receive_finish()
     // データベース更新
     // subject.txtを解析して現行スレだけリスト(m_list_subject)に加える
 
+    // キャッシュにあるレスをデータベースに登録
+    append_all_article_in_cache();
+
     // 一度全てのarticleをdat落ち状態にして subject.txt に
     // 含まれているものだけ parse_subject()の中で通常状態にする
     std::list< ArticleBase* >::iterator it;
@@ -911,7 +914,7 @@ void BoardBase::receive_finish()
                     // info 読み込み
                     // TODO : 数が多いとboardビューを開くまで時間がかかるのをなんとかする
 #ifdef _DEBUG
-                    std::cout << "read article_info << " << ( *it )->get_url() << std::endl;
+                    std::cout << "read article_info : " << ( *it )->get_url() << std::endl;
 #endif                
                     ( *it )->read_info();
 
@@ -1285,7 +1288,7 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
     if( empty() ) return list_out;
 
     // キャッシュにあるレスをデータベースに登録
-    if( m_list_article.size() == 0 ) append_all_article_in_cache();
+    append_all_article_in_cache();
     if( m_list_article.size() == 0 ) return list_out;
 
     std::string query_local = MISC::Iconv( query, "UTF-8", get_charset() );

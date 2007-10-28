@@ -313,7 +313,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
 
         // DBにないなら新規に article クラスをDBに登録
         //
-        // なおRoot::get_board()、BoardBase::read_info()経由で BoardBase::append_all_article() が既に呼ばれているので
+        // なお BoardBase::receive_finish() のなかで append_all_article_in_cache() が既に呼び出されているため
         // DBに無いということはキャッシュに無いということ。よって append_article()の呼出に cached = false　を指定する
         if( article->empty() ) article = append_article( id,
                                                          false // キャッシュ無し

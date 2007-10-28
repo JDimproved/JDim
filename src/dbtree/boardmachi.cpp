@@ -260,8 +260,7 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
 
         // DBにないなら新規に article クラスを追加
         //
-        // なおRoot::get_board()　経由で void BoardBase::read_info()及び
-        // BoardBase::read_all_article_info() が既に呼ばれているので
+        // なお BoardBase::receive_finish() のなかで append_all_article_in_cache() が既に呼び出されているため
         // DBに無いということはキャッシュにも無いということ。よって append_article()で  cached = false
 
         if( article->empty() ) article = append_article( id, false );
