@@ -141,7 +141,18 @@ SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
 // ローカルなコマンド
 //
 void BoardAdmin::command_local( const COMMAND_ARGS& command )
-{}
+{
+    // 列項目の更新
+    if( command.command == "update_columns" ){
+
+        std::list< SKELETON::View* > list_view = get_list_view( command.url );
+        std::list< SKELETON::View* >::iterator it = list_view.begin();
+        for( ; it != list_view.end(); ++it ){
+            SKELETON::View* view = ( *it );
+            if( view ) view->set_command( "update_columns" );
+        }
+    }
+}
 
 
 //

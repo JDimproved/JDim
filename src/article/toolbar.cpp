@@ -89,23 +89,10 @@ void ArticleToolBar::pack_buttons()
             case ITEM_FAVORITE: get_buttonbar().pack_start( m_button_favorite, Gtk::PACK_SHRINK ); break;
             case ITEM_DELETE: get_buttonbar().pack_start( m_button_delete, Gtk::PACK_SHRINK ); break;
             case ITEM_QUIT: get_buttonbar().pack_start( get_close_button(), Gtk::PACK_SHRINK ); break;
+            case ITEM_SEPARATOR: pack_separator(); break;
         }
         ++num;
     }
-}
-
-
-void ArticleToolBar::unpack_buttons()
-{
-    get_buttonbar().remove( m_button_write );
-    get_buttonbar().remove( m_button_board );
-    get_buttonbar().remove( m_label );
-    get_buttonbar().remove( m_button_open_search );
-    get_buttonbar().remove( m_button_reload );
-    get_buttonbar().remove( m_button_stop );
-    get_buttonbar().remove( m_button_favorite );
-    get_buttonbar().remove( m_button_delete );
-    get_buttonbar().remove( get_close_button() );
 }
 
 

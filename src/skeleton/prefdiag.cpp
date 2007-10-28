@@ -14,6 +14,12 @@ using namespace SKELETON;
 PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, bool add_cancel, bool add_apply )
     : Gtk::Dialog(), m_url( url ), m_bt_apply( Gtk::Stock::APPLY )
 {
+    if( add_apply ){
+        m_bt_apply.signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_apply_clicked ) );
+        get_action_area()->pack_start( m_bt_apply );
+
+    }
+
     if( add_cancel ){
         add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL )
         ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_cancel_clicked ) );
@@ -21,13 +27,6 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, bool add_cancel
 
     add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK )
     ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_ok_clicked ) );
-
-
-    if( add_apply ){
-        m_bt_apply.signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_apply_clicked ) );
-        get_action_area()->pack_start( m_bt_apply );
-
-    }
 
     if( parent ) set_transient_for( *parent );
     else set_transient_for( *CORE::get_mainwindow() );

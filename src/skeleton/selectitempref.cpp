@@ -7,18 +7,17 @@
 
 #include "jdlib/miscutil.h"
 
+#include "global.h"
+
 using namespace SKELETON;
 
-SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url, bool use_apply, bool use_label, bool use_separator )
-    : SKELETON::PrefDiag( parent, url, true, use_apply ),
-      m_use_label( use_label ),
-      m_use_separator( use_separator ),
+SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url )
+    : SKELETON::PrefDiag( parent, url, true, true ),
       m_bt_up( "上へ" ),
       m_bt_down( "下へ" ),
       m_bt_del( "→" ),
       m_bt_add( "←" ),
-      m_bt_def( "デフォルト" ),
-      m_bt_separator( "区切り" )
+      m_bt_def( "デフォルト" )
 {
     pack_widgets();
 }
@@ -38,14 +37,12 @@ void SelectItemPref::pack_widgets()
     m_vbox_buttons.pack_start( m_bt_down, Gtk::PACK_SHRINK );
     m_vbox_buttons.pack_start( m_bt_del, Gtk::PACK_SHRINK );
     m_vbox_buttons.pack_start( m_bt_add, Gtk::PACK_SHRINK );
-    if( m_use_separator ) m_vbox_buttons.pack_start( m_bt_separator, Gtk::PACK_SHRINK );
     m_vbox_buttons.pack_start( m_bt_def, Gtk::PACK_SHRINK );
 
     m_bt_up.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_up ) );
     m_bt_down.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_down ) );
     m_bt_del.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_del ) );
     m_bt_add.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_add ) );
-    m_bt_separator.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_sepalator ) );
     m_bt_def.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_def ) );
 
     // 表示項目
@@ -55,16 +52,21 @@ void SelectItemPref::pack_widgets()
     m_tree_shown.append_column( "表示", m_col_shown );
 
     // 全体のパッキング
-    m_tree_shown.set_size_request( 200, 300 );
-    m_tree_hidden.set_size_request( 200, 300 );
+
+    m_scrwin_shown.add( m_tree_shown );
+    m_scrwin_shown.set_size_request( 200, 300 );
+    m_scrwin_shown.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS );
+
+    m_scrwin_hidden.add( m_tree_hidden );
+    m_scrwin_hidden.set_size_request( 200, 300 );
+    m_scrwin_hidden.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS );
 
     m_table.resize( 3, 1 );
-    m_table.attach( m_tree_shown, 0, 1, 0, 1 );//, Gtk::FILL, Gtk::FILL );
+    m_table.attach( m_scrwin_shown, 0, 1, 0, 1 );
     m_table.attach( m_vbox_buttons, 1, 2, 0, 1 , Gtk::SHRINK, Gtk::SHRINK );
-    m_table.attach( m_tree_hidden, 2, 3, 0, 1 );//, Gtk::EXPAND, Gtk::EXPAND );
+    m_table.attach( m_scrwin_hidden, 2, 3, 0, 1 );
 
     get_vbox()->set_spacing( 8 );
-    if( m_use_label ) get_vbox()->pack_start( m_label );
     get_vbox()->pack_start( m_table );
 
     show_all_children();
@@ -125,11 +127,16 @@ void SelectItemPref::slot_del()
     Gtk::TreeModel::Row row = *m_tree_shown.get_selection()->get_selected();
     if( row ){
         Glib::ustring item = row[ m_col_shown ];
+
+        // 表示項目から削除
         m_store_shown->erase( row );
 
-        row = *( m_store_hidden->append() );
-        row[ m_col_hidden ] = item;
-        m_tree_hidden.get_selection()->select( row );
+        // 非表示項目に追加
+        if( item != ITEM_NAME_SEPARATOR ){
+            row = *( m_store_hidden->append() );
+            row[ m_col_hidden ] = item;
+            m_tree_hidden.get_selection()->select( row );
+        }
     }
 }
 
@@ -140,8 +147,11 @@ void SelectItemPref::slot_add()
     Gtk::TreeModel::Row row = *m_tree_hidden.get_selection()->get_selected();
     if( row ){
         Glib::ustring item = row[ m_col_hidden ];
-        m_store_hidden->erase( row );
 
+        // 非表示項目から削除
+        if( item != ITEM_NAME_SEPARATOR ) m_store_hidden->erase( row );
+
+        // 表示項目に追加
         row = *( m_store_shown->append() );
         row[ m_col_shown ] = item;
         m_tree_shown.get_selection()->select( row );
@@ -168,6 +178,8 @@ void SelectItemPref::append_hidden( const std::string& name )
 // 非表示項目から指定した項目を削除
 void SelectItemPref::erase_hidden( const std::string& name )
 {
+    if( name == ITEM_NAME_SEPARATOR ) return;
+
     const Gtk::TreeModel::Children children = m_store_hidden->children();
     Gtk::TreeModel::iterator it = children.begin();
     for( ; it != children.end() ; ++it ){

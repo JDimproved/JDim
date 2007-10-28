@@ -13,12 +13,9 @@ namespace SKELETON
 {
     class SelectItemPref : public SKELETON::PrefDiag
     {
-        bool m_use_label;
-        bool m_use_separator;
-
         Gtk::Table m_table;
-        Gtk::Label m_label;
 
+        Gtk::ScrolledWindow m_scrwin_shown;
         Gtk::TreeView m_tree_shown;
         Gtk::TreeModelColumn< Glib::ustring > m_col_shown;
         Gtk::TreeModel::ColumnRecord m_rec_shown;
@@ -30,8 +27,8 @@ namespace SKELETON
         Gtk::Button m_bt_del;
         Gtk::Button m_bt_add;
         Gtk::Button m_bt_def;
-        Gtk::Button m_bt_separator;
 
+        Gtk::ScrolledWindow m_scrwin_hidden;
         Gtk::TreeView m_tree_hidden;
         Gtk::TreeModelColumn< Glib::ustring > m_col_hidden;
         Gtk::TreeModel::ColumnRecord m_rec_hidden;
@@ -39,13 +36,12 @@ namespace SKELETON
 
       public:
 
-        SelectItemPref( Gtk::Window* parent, const std::string& url, bool use_apply, bool use_label, bool use_separator );
+        SelectItemPref( Gtk::Window* parent, const std::string& url );
         virtual ~SelectItemPref(){}
 
       protected:
 
         void clear();
-        void set_label( const std::string& label ){ m_label.set_text( label ); }
 
         // 項目の現在値取得
         std::string get_items();
@@ -72,9 +68,6 @@ namespace SKELETON
 
         // 追加ボタン
         void slot_add();
-
-        // 区切りボタン
-        virtual void slot_sepalator(){}
 
         // 適用ボタン
         virtual void slot_apply_clicked(){ slot_ok_clicked(); }

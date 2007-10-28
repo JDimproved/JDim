@@ -20,6 +20,7 @@ jd_SOURCES = \
 	main.cpp \
 	winmain.cpp \
 	core.cpp \
+	maintoolbar.cpp \
 	cache.cpp \
 	command.cpp \
 	sharedbuffer.cpp \
@@ -46,6 +47,7 @@ jd_SOURCES = \
 	viewfactory.cpp \
 \
 	prefdiagfactory.cpp \
+	mainitempref.cpp \
 	boarditempref.cpp \
 	articleitempref.cpp \
 	msgitempref.cpp \
@@ -57,6 +59,7 @@ noinst_HEADERS = \
 	winmain.h \
 	httpcode.h \
 	core.h \
+	maintoolbar.h \
 	cache.h \
 	jddebug.h \
 	global.h \
@@ -97,6 +100,7 @@ noinst_HEADERS = \
 	globalabonethreadpref.h \
 	passwdpref.h \
 	privacypref.h \
+	mainitempref.h \
 	boarditempref.h \
 	articleitempref.h \
 	msgitempref.h \

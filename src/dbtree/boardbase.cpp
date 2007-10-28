@@ -768,7 +768,7 @@ void BoardBase::receive_finish()
     std::cout << "size = " << m_lng_rawdata << std::endl;
 #endif
 
-    // 移転チェック
+    // url_boardbase をロードして移転が起きたかチェック
     if( m_read_url_boardbase ){
 
 #ifdef _DEBUG
@@ -788,7 +788,7 @@ void BoardBase::receive_finish()
             if( regex.exec( query, m_rawdata ) ){
 
                 std::string new_url = regex.str( 1 );
-                std::string msg = new_url + " に移転しました。\n\nデータベースを更新しますか？";
+                std::string msg = "「" + get_name() + "」は\n\n" + new_url + " に移転しました。\n\nデータベースを更新しますか？";
 
                 SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
                 mdiag.set_default_response( Gtk::RESPONSE_OK );
@@ -798,6 +798,11 @@ void BoardBase::receive_finish()
                     CORE::core_set_command( "open_board", url_subject() );
                 }
             }
+        }
+        else{
+            SKELETON::MsgDiag mdiag( NULL, "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            mdiag.set_default_response( Gtk::RESPONSE_OK );
+            if( mdiag.run() == Gtk::RESPONSE_OK ) CORE::core_set_command( "reload_bbsmenu" );
         }
 
         clear();
@@ -811,14 +816,13 @@ void BoardBase::receive_finish()
 
         m_lng_rawdata = 0;
 
-        // 移転した場合bbsmenuを更新
+        // リダイレクトの場合は移転確認
         if( get_code() == HTTP_REDIRECT ){
 
-            SKELETON::MsgDiag mdiag( NULL, "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-            mdiag.set_default_response( Gtk::RESPONSE_OK );
-            if( mdiag.run() == Gtk::RESPONSE_OK ) CORE::core_set_command( "reload_bbsmenu" );
-
             set_date_modified( std::string() );
+
+            if( start_checkking_if_board_moved() ) return;
+
             CORE::core_set_command( "update_board", url_subject() );
             clear();
             return;
@@ -854,23 +858,7 @@ void BoardBase::receive_finish()
 
         // 移転した可能性があるので url_boardbase をロードして解析
         if( SESSION::is_online() && get_code() == HTTP_OK ){
-
-#ifdef _DEBUG
-            std::cout << "reload " << url_boardbase() << std::endl;
-#endif
-            JDLIB::LOADERDATA data;    
-            data.url = url_boardbase();
-            data.agent = CONFIG::get_agent_for_data();
-            if( CONFIG::get_use_proxy_for_data() ) data.host_proxy = CONFIG::get_proxy_for_data();
-            else data.host_proxy = std::string();
-            data.port_proxy = CONFIG::get_proxy_port_for_data();
-            data.size_buf = CONFIG::get_loader_bufsize();
-            data.timeout = CONFIG::get_loader_timeout_img();
-
-            if( start_load( data ) ){
-                m_read_url_boardbase = true;
-                return;
-            }
+            if( start_checkking_if_board_moved() ) return;
         }
 
         CORE::core_set_command( "update_board", url_subject() );
@@ -988,6 +976,34 @@ void BoardBase::receive_finish()
     clear();
 }
 
+
+//
+// url_boardbase をロードして移転したかどうか解析開始
+//
+// 移転した場合は window.location.href が含まれるテキストがサーバから送られてくる
+//
+bool BoardBase::start_checkking_if_board_moved()
+{
+#ifdef _DEBUG
+    std::cout << "BoardBase::start_checkking_if_board_moved " << url_boardbase() << std::endl;
+#endif
+
+    JDLIB::LOADERDATA data;    
+    data.url = url_boardbase();
+    data.agent = CONFIG::get_agent_for_data();
+    if( CONFIG::get_use_proxy_for_data() ) data.host_proxy = CONFIG::get_proxy_for_data();
+    else data.host_proxy = std::string();
+    data.port_proxy = CONFIG::get_proxy_port_for_data();
+    data.size_buf = CONFIG::get_loader_bufsize();
+    data.timeout = CONFIG::get_loader_timeout_img();
+
+    if( start_load( data ) ){
+        m_read_url_boardbase = true;
+        return true;
+    }
+
+    return false;
+}
 
 
 //

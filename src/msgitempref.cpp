@@ -14,7 +14,7 @@
 using namespace CORE;
 
 MsgItemPref::MsgItemPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::SelectItemPref( parent, url, true, false, false )
+    : SKELETON::SelectItemPref( parent, url )
 {
     // 項目設定
     append_hidden( ITEM_NAME_PREVIEW );
@@ -24,6 +24,7 @@ MsgItemPref::MsgItemPref( Gtk::Window* parent, const std::string& url )
     append_hidden( ITEM_NAME_INSERTTEXT );
     append_hidden( ITEM_NAME_NOTCLOSE );
     append_hidden( ITEM_NAME_QUIT );
+    append_hidden( ITEM_NAME_SEPARATOR );
 
     std::string order = SESSION::get_items_msg_toolbar_str();
     std::list< std::string > list_order = MISC::split_line( order );
@@ -58,4 +59,5 @@ void MsgItemPref::slot_def()
     append_shown( ITEM_NAME_INSERTTEXT );
     append_shown( ITEM_NAME_NOTCLOSE );
     append_shown( ITEM_NAME_QUIT );
+    append_hidden( ITEM_NAME_SEPARATOR );
 }

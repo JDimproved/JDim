@@ -14,12 +14,13 @@
 using namespace CORE;
 
 SidebarItemPref::SidebarItemPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::SelectItemPref( parent, url, true, false, false )
+    : SKELETON::SelectItemPref( parent, url )
 {
     // 項目設定
     append_hidden( ITEM_NAME_SEARCHBOX );
     append_hidden( ITEM_NAME_SEARCH_NEXT );
     append_hidden( ITEM_NAME_SEARCH_PREV );
+    append_hidden( ITEM_NAME_SEPARATOR );
 
     std::string order = SESSION::get_items_sidebar_str();
     std::list< std::string > list_order = MISC::split_line( order );
@@ -50,4 +51,5 @@ void SidebarItemPref::slot_def()
     append_shown( ITEM_NAME_SEARCHBOX );
     append_shown( ITEM_NAME_SEARCH_NEXT );
     append_shown( ITEM_NAME_SEARCH_PREV );
+    append_hidden( ITEM_NAME_SEPARATOR );
 }

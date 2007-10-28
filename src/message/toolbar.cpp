@@ -53,18 +53,8 @@ void MessageToolBar::pack_buttons()
             case ITEM_INSERTTEXT: get_buttonbar().pack_start( m_button_open, Gtk::PACK_SHRINK ); break;
             case ITEM_NOTCLOSE: get_buttonbar().pack_start( m_button_not_close, Gtk::PACK_SHRINK ); break;
             case ITEM_QUIT: get_buttonbar().pack_start( get_close_button(), Gtk::PACK_SHRINK ); break;
+            case ITEM_SEPARATOR: pack_separator(); break;
         }
         ++num;
     }
 }    
-
-void MessageToolBar::unpack_buttons()
-{
-    get_buttonbar().remove( m_button_preview );
-    get_buttonbar().remove( m_button_write );
-    get_buttonbar().remove( m_entry_subject );
-    get_buttonbar().remove( m_button_undo );
-    get_buttonbar().remove( m_button_open );
-    get_buttonbar().remove( m_button_not_close );
-    get_buttonbar().remove( get_close_button() );
-}

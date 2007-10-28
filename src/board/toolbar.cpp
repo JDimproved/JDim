@@ -57,20 +57,8 @@ void BoardToolBar::pack_buttons()
             case ITEM_FAVORITE: get_buttonbar().pack_start( m_button_favorite, Gtk::PACK_SHRINK ); break;
             case ITEM_DELETE: get_buttonbar().pack_start( m_button_delete, Gtk::PACK_SHRINK ); break;
             case ITEM_QUIT: get_buttonbar().pack_start( get_close_button(), Gtk::PACK_SHRINK ); break;
+            case ITEM_SEPARATOR: pack_separator(); break;
         }
         ++num;
     }
 }    
-
-void BoardToolBar::unpack_buttons()
-{
-    get_buttonbar().remove( m_button_new_article );
-    get_buttonbar().remove( m_entry_search );
-    get_buttonbar().remove( m_button_down_search );
-    get_buttonbar().remove( m_button_up_search );
-    get_buttonbar().remove( m_button_reload );
-    get_buttonbar().remove( m_button_stop );
-    get_buttonbar().remove( m_button_favorite );
-    get_buttonbar().remove( m_button_delete );
-    get_buttonbar().remove( get_close_button() );
-}

@@ -14,7 +14,7 @@
 using namespace CORE;
 
 BoardItemColumnPref::BoardItemColumnPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::SelectItemPref( parent, url, false, true, false )
+    : SKELETON::SelectItemPref( parent, url )
 {
     // 項目設定
     append_hidden( ITEM_NAME_MARK );
@@ -35,7 +35,6 @@ BoardItemColumnPref::BoardItemColumnPref( Gtk::Window* parent, const std::string
         erase_hidden( *it );
     }
 
-    set_label( "以下の設定は次に開いたスレ一覧から適用されます。" );
     set_title( "リスト項目設定(スレ一覧)" );
 }
 
@@ -44,6 +43,7 @@ BoardItemColumnPref::BoardItemColumnPref( Gtk::Window* parent, const std::string
 void BoardItemColumnPref::slot_ok_clicked()
 {
     SESSION::set_items_board_str( get_items() );
+    CORE::core_set_command( "update_board_columns" );
 }
 
 
@@ -70,7 +70,7 @@ void BoardItemColumnPref::slot_def()
 
 
 BoardItemPref::BoardItemPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::SelectItemPref( parent, url, true, false, false )
+    : SKELETON::SelectItemPref( parent, url )
 {
     // 項目設定
     append_hidden( ITEM_NAME_NEWARTICLE );
@@ -82,6 +82,7 @@ BoardItemPref::BoardItemPref( Gtk::Window* parent, const std::string& url )
     append_hidden( ITEM_NAME_FAVORITE );
     append_hidden( ITEM_NAME_DELETE );
     append_hidden( ITEM_NAME_QUIT );
+    append_hidden( ITEM_NAME_SEPARATOR );
 
     std::string order = SESSION::get_items_board_toolbar_str();
     std::list< std::string > list_order = MISC::split_line( order );
@@ -117,4 +118,5 @@ void BoardItemPref::slot_def()
     append_shown( ITEM_NAME_FAVORITE );
     append_shown( ITEM_NAME_DELETE );
     append_shown( ITEM_NAME_QUIT );
+    append_hidden( ITEM_NAME_SEPARATOR );
 }

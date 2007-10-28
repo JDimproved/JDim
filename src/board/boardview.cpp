@@ -91,8 +91,9 @@ enum
 
 
 // set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ) を指定して append_columnする
-#define APPEND_COLUMN(title,model) do{ \
-Gtk::TreeView::Column* col = Gtk::manage( new Gtk::TreeViewColumn( title, model ) ); \
+#define APPEND_COLUMN(col,title,model) do{                    \
+if( ! col ) delete col; \
+col = Gtk::manage( new Gtk::TreeViewColumn( title, model ) );   \
 col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ); \
 m_treeview.append_column( *col ); \
 }while(0)
@@ -101,6 +102,15 @@ m_treeview.append_column( *col ); \
 BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
       m_treeview( CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
+      m_col_mark( NULL ),
+      m_col_id( NULL ),
+      m_col_subject( NULL ),
+      m_col_res( NULL ),
+      m_col_str_load( NULL ),     
+      m_col_str_new( NULL ),
+      m_col_since( NULL ),
+      m_col_write( NULL ),
+      m_col_speed( NULL ),
       m_col( COL_NUM_COL ),
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
@@ -151,134 +161,8 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
 #endif
 
-
     // 列のappend
-    int num = 0;
-    for(;;){
-        int item = SESSION::get_item_board( num );
-        if( item == ITEM_END ) break;
-        switch( item ){
-            case ITEM_MARK: APPEND_COLUMN( ITEM_NAME_MARK, m_columns.m_col_mark ); break;
-            case ITEM_ID: APPEND_COLUMN( ITEM_NAME_ID, m_columns.m_col_id ); break;
-            case ITEM_NAME: APPEND_COLUMN( ITEM_NAME_NAME, m_columns.m_col_subject ); break;
-            case ITEM_RES: APPEND_COLUMN( ITEM_NAME_RES, m_columns.m_col_res ); break;
-            case ITEM_LOAD: APPEND_COLUMN( ITEM_NAME_LOAD, m_columns.m_col_str_load ); break;
-            case ITEM_NEW: APPEND_COLUMN( ITEM_NAME_NEW, m_columns.m_col_str_new ); break;
-            case ITEM_SINCE: APPEND_COLUMN( ITEM_NAME_SINCE, m_columns.m_col_since ); break;
-            case ITEM_LASTWRITE: APPEND_COLUMN( ITEM_NAME_LASTWRITE, m_columns.m_col_write ); break;
-            case ITEM_SPEED: APPEND_COLUMN( ITEM_NAME_SPEED, m_columns.m_col_speed ); break;
-        }
-        ++num;
-    }
-
-    // サイズを調整しつつソートの設定
-    for( guint i = 0; i < COL_VISIBLE_END; i++ ){
-        
-        int id = get_title_id( i );
-        if( id < 0 ) continue;
-
-        Gtk::TreeView::Column* column = m_treeview.get_column( i );
-        if( ! column ) continue;
-
-        int width = 0;
-
-        switch( id ){
-
-        case COL_MARK:
-            width = SESSION::col_mark();
-            break;
-
-        case COL_ID:
-            width = SESSION::col_id();
-            break;
-
-        case COL_SUBJECT:
-            width = SESSION::col_subject();
-            m_treeview.set_column_for_height( id );
-            break;
-
-        case COL_RES:
-            width = SESSION::col_number();
-            break;
-
-        case COL_STR_LOAD:
-            width = SESSION::col_load();
-            break;
-
-        case COL_STR_NEW:
-            width = SESSION::col_new();
-            break;
-
-        case COL_SINCE:
-            width = SESSION::col_since();
-            break;
-
-        case COL_WRITE:
-            width = SESSION::col_write();
-            break;
-
-        case COL_SPEED:
-            width = SESSION::col_speed(); 
-            break;
-        }
-
-        if( ! width ) width = DEFAULT_COLMUN_WIDTH;
-
-        column->set_fixed_width( width );
-        column->set_resizable( true );
-        column->set_clickable( true );        
-
-        // ヘッダをクリックしたときに呼ぶslot
-        column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_col_clicked ), id ) );
-
-        // ヘッダの位置
-        switch( id ){
-            case COL_MARK:
-                column->set_alignment( 0.5 );
-                break;
-
-            case COL_ID:
-            case COL_RES:
-            case COL_STR_LOAD:
-            case COL_STR_NEW:
-            case COL_SPEED:
-                column->set_alignment( 1.0 );
-                break;
-
-            default:
-                column->set_alignment( 0.0 );
-                break;
-        }
-
-        Gtk::CellRenderer *cell = column->get_first_cell_renderer();
-
-        // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
-        if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &BoardView::slot_cell_data ) );
-
-        Gtk::CellRendererText* rentext = dynamic_cast< Gtk::CellRendererText* >( cell );
-        if( rentext ){
-
-            // 列間スペース
-            rentext->property_xpad() = 4;
-
-            // 行間スペース
-            rentext->property_ypad() = CONFIG::get_tree_ypad();;
-
-            // 文字位置
-            switch( id ){
-                case COL_ID:
-                case COL_RES:
-                case COL_STR_LOAD:
-                case COL_STR_NEW:
-                case COL_SPEED:
-                    rentext->property_xalign() = 1.0;
-                    break;
-
-                default:
-                    rentext->property_xalign() = 0.0;
-            }
-        }
-    }
+    update_columns();
 
     // ソート関数セット
     m_liststore->set_sort_func( COL_MARK, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );    
@@ -450,6 +334,143 @@ const bool BoardView::is_updated()
 const std::string BoardView::url_for_copy()
 {
     return DBTREE::url_boardbase( get_url() );
+}
+
+
+
+//
+// 列項目の更新
+//
+void BoardView::update_columns()
+{
+    m_treeview.remove_all_columns();
+
+    int num = 0;
+    for(;;){
+        int item = SESSION::get_item_board( num );
+        if( item == ITEM_END ) break;
+        switch( item ){
+            case ITEM_MARK: APPEND_COLUMN( m_col_mark, ITEM_NAME_MARK, m_columns.m_col_mark ); break;
+            case ITEM_ID: APPEND_COLUMN( m_col_id, ITEM_NAME_ID, m_columns.m_col_id ); break;
+            case ITEM_NAME: APPEND_COLUMN( m_col_subject, ITEM_NAME_NAME, m_columns.m_col_subject ); break;
+            case ITEM_RES: APPEND_COLUMN( m_col_res, ITEM_NAME_RES, m_columns.m_col_res ); break;
+            case ITEM_LOAD: APPEND_COLUMN( m_col_str_load, ITEM_NAME_LOAD, m_columns.m_col_str_load ); break;
+            case ITEM_NEW: APPEND_COLUMN( m_col_str_new, ITEM_NAME_NEW, m_columns.m_col_str_new ); break;
+            case ITEM_SINCE: APPEND_COLUMN( m_col_since, ITEM_NAME_SINCE, m_columns.m_col_since ); break;
+            case ITEM_LASTWRITE: APPEND_COLUMN( m_col_write, ITEM_NAME_LASTWRITE, m_columns.m_col_write ); break;
+            case ITEM_SPEED: APPEND_COLUMN( m_col_speed, ITEM_NAME_SPEED, m_columns.m_col_speed ); break;
+        }
+        ++num;
+    }
+
+    // サイズを調整しつつソートの設定
+    for( guint i = 0; i < COL_VISIBLE_END; i++ ){
+        
+        int id = get_title_id( i );
+        if( id < 0 ) continue;
+
+        Gtk::TreeView::Column* column = m_treeview.get_column( i );
+        if( ! column ) continue;
+
+        int width = 0;
+
+        switch( id ){
+
+        case COL_MARK:
+            width = SESSION::col_mark();
+            break;
+
+        case COL_ID:
+            width = SESSION::col_id();
+            break;
+
+        case COL_SUBJECT:
+            width = SESSION::col_subject();
+            m_treeview.set_column_for_height( id );
+            break;
+
+        case COL_RES:
+            width = SESSION::col_number();
+            break;
+
+        case COL_STR_LOAD:
+            width = SESSION::col_load();
+            break;
+
+        case COL_STR_NEW:
+            width = SESSION::col_new();
+            break;
+
+        case COL_SINCE:
+            width = SESSION::col_since();
+            break;
+
+        case COL_WRITE:
+            width = SESSION::col_write();
+            break;
+
+        case COL_SPEED:
+            width = SESSION::col_speed(); 
+            break;
+        }
+
+        if( ! width ) width = DEFAULT_COLMUN_WIDTH;
+
+        column->set_fixed_width( width );
+        column->set_resizable( true );
+        column->set_clickable( true );        
+
+        // ヘッダをクリックしたときに呼ぶslot
+        column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_col_clicked ), id ) );
+
+        // ヘッダの位置
+        switch( id ){
+            case COL_MARK:
+                column->set_alignment( 0.5 );
+                break;
+
+            case COL_ID:
+            case COL_RES:
+            case COL_STR_LOAD:
+            case COL_STR_NEW:
+            case COL_SPEED:
+                column->set_alignment( 1.0 );
+                break;
+
+            default:
+                column->set_alignment( 0.0 );
+                break;
+        }
+
+        Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+
+        // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
+        if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &BoardView::slot_cell_data ) );
+
+        Gtk::CellRendererText* rentext = dynamic_cast< Gtk::CellRendererText* >( cell );
+        if( rentext ){
+
+            // 列間スペース
+            rentext->property_xpad() = 4;
+
+            // 行間スペース
+            rentext->property_ypad() = CONFIG::get_tree_ypad();;
+
+            // 文字位置
+            switch( id ){
+                case COL_ID:
+                case COL_RES:
+                case COL_STR_LOAD:
+                case COL_STR_NEW:
+                case COL_SPEED:
+                    rentext->property_xalign() = 1.0;
+                    break;
+
+                default:
+                    rentext->property_xalign() = 0.0;
+            }
+        }
+    }
 }
 
 
@@ -778,6 +799,8 @@ int BoardView::slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::T
 //
 bool BoardView::set_command( const std::string& command, const std::string& arg )
 {
+    if( command == "update_columns" ) update_columns();
+
     return true;
 }
 

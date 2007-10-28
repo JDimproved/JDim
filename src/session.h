@@ -261,6 +261,11 @@ namespace SESSION
     void set_items_sidebar_str( const std::string& items );
     const int get_item_sidebar( const int num );
 
+    // メインツールバーの項目
+    const std::string& get_items_main_toolbar_str();
+    void set_items_main_toolbar_str( const std::string& items_str );
+    const int get_item_main_toolbar( const int num );
+
     // スレビューのツールバーの項目
     const std::string& get_items_article_toolbar_str();
     void set_items_article_toolbar_str( const std::string& items_str );

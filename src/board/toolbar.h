@@ -30,9 +30,9 @@ namespace BOARD
         BoardToolBar();
         virtual ~BoardToolBar(){}
 
-        // ボタンのパッキング
+      protected:
+
         virtual void pack_buttons();
-        virtual void unpack_buttons();
     };
 }
 

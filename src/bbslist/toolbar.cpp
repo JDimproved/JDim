@@ -48,18 +48,11 @@ void BBSListToolBar::pack_buttons()
             case ITEM_SEARCHBOX: get_buttonbar().pack_start( m_entry_search, Gtk::PACK_EXPAND_WIDGET, 2 ); break;
             case ITEM_SEARCH_NEXT: get_buttonbar().pack_start( m_button_down_search, Gtk::PACK_SHRINK ); break;
             case ITEM_SEARCH_PREV: get_buttonbar().pack_start( m_button_up_search, Gtk::PACK_SHRINK ); break;
+            case ITEM_SEPARATOR: pack_separator(); break;
         }
         ++num;
     }
 }
-
-void BBSListToolBar::unpack_buttons()
-{
-    get_buttonbar().remove( m_entry_search );
-    get_buttonbar().remove( m_button_down_search );
-    get_buttonbar().remove( m_button_up_search );
-}
-
 
 void BBSListToolBar::remove_label()
 {

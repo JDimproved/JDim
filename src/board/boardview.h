@@ -28,6 +28,17 @@ namespace BOARD
         Glib::RefPtr< Gtk::ListStore > m_liststore;
         Gtk::ScrolledWindow m_scrwin;
 
+        // 列
+        Gtk::TreeView::Column* m_col_mark;
+        Gtk::TreeView::Column* m_col_id;
+        Gtk::TreeView::Column* m_col_subject;
+        Gtk::TreeView::Column* m_col_res;
+        Gtk::TreeView::Column* m_col_str_load;        
+        Gtk::TreeView::Column* m_col_str_new;
+        Gtk::TreeView::Column* m_col_since;
+        Gtk::TreeView::Column* m_col_write;
+        Gtk::TreeView::Column* m_col_speed;
+
         // ダブルクリック状態
         bool m_dblclick;
 
@@ -97,6 +108,8 @@ namespace BOARD
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
     private:
+
+        void update_columns();
 
         int get_title_id( int col );
         void save_column_width();

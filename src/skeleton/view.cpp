@@ -164,8 +164,7 @@ void View::unlock()
 void View::update_toolbar()
 {
     if( ! m_toolbar ) return;
-    m_toolbar->unpack_buttons();
-    m_toolbar->pack_buttons();
+    m_toolbar->update();
 }
 
 

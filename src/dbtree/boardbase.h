@@ -401,6 +401,9 @@ namespace DBTREE
         virtual void receive_data( const char* data, size_t size );
         virtual void receive_finish();
 
+        // url_boardbase をロードして移転したかどうか解析開始
+        bool start_checkking_if_board_moved();
+
         virtual ArticleBase* append_article( const std::string& id, bool cached );
         virtual void parse_subject( const char* str_subject_txt ){}
 

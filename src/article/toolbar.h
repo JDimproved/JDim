@@ -70,8 +70,9 @@ namespace ARTICLE
         // DAT落ち
         void set_old();
 
+      protected:
+
         virtual void pack_buttons();
-        virtual void unpack_buttons();
 
       private:
 

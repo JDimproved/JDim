@@ -49,6 +49,9 @@ std::list< bool > image_locked;
 std::string items_sidebar_str;
 std::vector< int > items_sidebar;
 
+std::string items_main_toolbar_str;
+std::vector< int > items_main_toolbar;
+
 std::string items_article_toolbar_str;
 std::vector< int > items_article_toolbar;
 
@@ -145,6 +148,15 @@ std::vector< int > parse_items( const std::string& items_str )
     std::list< std::string > list_order = MISC::split_line( items_str );
     std::list< std::string >::iterator it = list_order.begin();
     for( ; it != list_order.end(); ++it ){
+
+        if( *it == ITEM_NAME_BBSLISTVIEW ) items.push_back(ITEM_BBSLISTVIEW );
+        if( *it == ITEM_NAME_FAVORITEVIEW ) items.push_back(ITEM_FAVORITEVIEW );
+        if( *it == ITEM_NAME_BOARDVIEW ) items.push_back(ITEM_BOARDVIEW );
+        if( *it == ITEM_NAME_ARTICLEVIEW ) items.push_back(ITEM_ARTICLEVIEW );
+        if( *it == ITEM_NAME_IMAGEVIEW ) items.push_back(ITEM_IMAGEVIEW );
+        if( *it == ITEM_NAME_URL ) items.push_back(ITEM_URL );
+        if( *it == ITEM_NAME_GO ) items.push_back(ITEM_GO );
+        if( *it == ITEM_NAME_SEPARATOR ) items.push_back(ITEM_SEPARATOR );
 
         if( *it == ITEM_NAME_MARK ) items.push_back(ITEM_MARK );
         if( *it == ITEM_NAME_ID ) items.push_back(ITEM_ID );
@@ -272,6 +284,18 @@ void SESSION::init_session()
                                  ITEM_NAME_SEARCH_PREV + std::string ( " " ) );
 
     items_sidebar =  parse_items( items_sidebar_str );
+
+    items_main_toolbar_str = cf.get_option( "items_main_toolbar",
+                                 ITEM_NAME_BBSLISTVIEW + std::string ( " " ) +
+                                 ITEM_NAME_FAVORITEVIEW + std::string ( " " ) +
+                                 ITEM_NAME_BOARDVIEW + std::string ( " " ) +
+                                 ITEM_NAME_ARTICLEVIEW + std::string ( " " ) +
+                                 ITEM_NAME_IMAGEVIEW + std::string ( " " ) +
+                                 ITEM_NAME_SEPARATOR + std::string ( " " ) +
+                                 ITEM_NAME_URL + std::string ( " " ) +
+                                 ITEM_NAME_GO + std::string ( " " ) );
+
+    items_main_toolbar =  parse_items( items_main_toolbar_str );
 
     items_article_toolbar_str = cf.get_option( "items_article_toolbar",
                                  ITEM_NAME_WRITEMSG + std::string ( " " ) +
@@ -522,6 +546,7 @@ void SESSION::save_session()
         << "image_locked = " << str_image_locked << std::endl
 
         << "items_sidebar = " << items_sidebar_str << std::endl
+        << "items_main_toolbar = " << items_main_toolbar_str << std::endl
         << "items_article_toolbar = " << items_article_toolbar_str << std::endl
         << "items_board_toolbar = " << items_board_toolbar_str << std::endl
         << "items_board = " << items_board_str << std::endl
@@ -757,6 +782,15 @@ void SESSION::set_items_sidebar_str( const std::string& items_str )
     items_sidebar = parse_items( items_sidebar_str );
 }
 const int SESSION::get_item_sidebar( const int num ){ return items_sidebar[ num ]; }
+
+// メインツールバーの項目
+const std::string& SESSION::get_items_main_toolbar_str(){ return items_main_toolbar_str; }
+void SESSION::set_items_main_toolbar_str( const std::string& items_str )
+{
+    items_main_toolbar_str = items_str;
+    items_main_toolbar = parse_items( items_main_toolbar_str );
+}
+const int SESSION::get_item_main_toolbar( const int num ){ return items_main_toolbar[ num ]; }
 
 // スレビューのツールバーの項目
 const std::string& SESSION::get_items_article_toolbar_str(){ return items_article_toolbar_str; }

@@ -29,9 +29,9 @@ namespace MESSAGE
         MessageToolBar( const std::string& boardname ); 
         virtual ~MessageToolBar(){}
 
-        // ボタンのパッキング
+      protected:
+
         virtual void pack_buttons();
-        virtual void unpack_buttons();
     };
 }
 

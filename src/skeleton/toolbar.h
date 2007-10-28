@@ -29,6 +29,8 @@ namespace SKELETON
         ToolBar();
         virtual ~ToolBar(){}
 
+        bool is_empty();
+
         // ツールバー表示
         void show_toolbar();
 
@@ -41,14 +43,18 @@ namespace SKELETON
         // タブのアンロック
         void unlock();
 
-        // ボタンのパッキング
-        virtual void pack_buttons()=0;
-        virtual void unpack_buttons()=0;
+        // 更新
+        void update();
 
       protected:
 
+        // ボタンのパッキング
+        virtual void pack_buttons()=0;
+        void unpack_buttons();
+
         Gtk::HBox& get_buttonbar(){ return m_buttonbar; }
         Gtk::Button& get_close_button(){ return m_button_close; }
+        void pack_separator();
         void set_tooltip( Gtk::Widget& widget, const std::string& tip ){ m_tooltip.set_tip( widget, tip ); }
 
       private:

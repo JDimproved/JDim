@@ -36,6 +36,15 @@
 
 
 // SKELETON::SelectItemPrefの項目名
+#define ITEM_NAME_BBSLISTVIEW "板一覧"
+#define ITEM_NAME_FAVORITEVIEW "お気に入り"
+#define ITEM_NAME_BOARDVIEW "スレ一覧"
+#define ITEM_NAME_ARTICLEVIEW "スレビュー"
+#define ITEM_NAME_IMAGEVIEW "画像ビュー"
+#define ITEM_NAME_URL "URL"
+#define ITEM_NAME_GO "移動"
+#define ITEM_NAME_SEPARATOR "区切り"
+
 #define ITEM_NAME_MARK  "!"
 #define ITEM_NAME_ID    "番号"
 #define ITEM_NAME_NAME  "タイトル"
@@ -69,7 +78,16 @@
 // SESSION::get_item_*() の戻り値
 enum
 {
-    ITEM_MARK = 0,
+    ITEM_BBSLISTVIEW = 0,
+    ITEM_FAVORITEVIEW,
+    ITEM_BOARDVIEW,
+    ITEM_ARTICLEVIEW,
+    ITEM_IMAGEVIEW,
+    ITEM_URL,
+    ITEM_GO,
+    ITEM_SEPARATOR,
+
+    ITEM_MARK,
     ITEM_ID,
     ITEM_NAME,
     ITEM_RES,

@@ -51,9 +51,9 @@ namespace MESSAGE
     class MessageAdmin;
 }
 
-
 namespace CORE
 {
+    class MainToolBar;
     class DND_Manager;
     class HistoryMenuThread;
     class HistoryMenuBoard;
@@ -83,18 +83,7 @@ namespace CORE
         SKELETON::JDVPaned m_vpaned_message; // 埋め込み書き込みビュー用
 
         // ツールバー
-        Gtk::ScrolledWindow m_toolbar;
-        Gtk::Tooltips m_tooltip;
-        Gtk::HBox m_toolbar_hbox;
-        Gtk::Entry m_entry_url;
-        SKELETON::ImgButton m_button_go;
-        SKELETON::ImgToggleButton m_button_bbslist;
-        SKELETON::ImgToggleButton m_button_favorite;
-        SKELETON::ImgToggleButton m_button_board;
-        SKELETON::ImgToggleButton m_button_thread;
-        SKELETON::ImgToggleButton m_button_image;
-        Gtk::VSeparator m_vspr_toolbar_1;
-        Gtk::VSeparator m_vspr_toolbar_2;
+        MainToolBar* m_toolbar;
 
         // タイトルに表示する文字列
         // set_maintitle() 参照
@@ -111,9 +100,6 @@ namespace CORE
 
         // 初期設定中
         bool m_init;
-
-        // 終了中
-        bool m_quit;
 
     public:
 
@@ -174,6 +160,7 @@ namespace CORE
         void slot_setup_fontcolor();
         void slot_setup_proxy();
         void slot_setup_passwd();
+        void slot_setup_mainitem();
         void slot_setup_sidebaritem();
         void slot_setup_boarditemcolumn();
         void slot_setup_boarditem();

@@ -5,6 +5,7 @@
 #include "jddebug.h"
 
 #include "core.h"
+#include "maintoolbar.h"
 #include "command.h"
 #include "winmain.h"
 #include "session.h"
@@ -90,12 +91,7 @@ Core::Core( WinMain& win_main )
       m_hpaned_r( SKELETON::PANE_FIXSIZE_PAGE1 ),
       m_imagetab_shown( 0 ),
       m_vpaned_message( SKELETON::PANE_FIXSIZE_PAGE2 ),
-      m_button_go( Gtk::Stock::JUMP_TO ),
-      m_button_bbslist( ICON::DIR ),
-      m_button_favorite( ICON::FAVORITE ),
-      m_button_board( ICON::BOARD ),
-      m_button_thread( ICON::THREAD ),
-      m_button_image( ICON::IMAGE ),
+      m_toolbar( NULL ),
       m_enable_menuslot( true ),
       m_init( false )
 {
@@ -202,6 +198,9 @@ Core::~Core()
 
     // ディスパッチマネージャ削除
     CORE::delete_dispatchmanager();
+
+    // ツールバー削除
+    if( m_toolbar ) delete m_toolbar;
 }
 
 
@@ -314,10 +313,11 @@ void Core::run( bool init )
 
     // ツールバー項目設定
     m_action_group->add( Gtk::Action::create( "Item_Menu", "ツールバー項目設定(_I)" ) );
+    m_action_group->add( Gtk::Action::create( "SetupMainItem", "メイン(_M)..." ), sigc::mem_fun( *this, &Core::slot_setup_mainitem ) );
     m_action_group->add( Gtk::Action::create( "SetupSidebarItem", "サイドバー(_S)..." ), sigc::mem_fun( *this, &Core::slot_setup_sidebaritem ) );
     m_action_group->add( Gtk::Action::create( "SetupBoardItem", "スレ一覧(_B)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
     m_action_group->add( Gtk::Action::create( "SetupArticleItem", "スレビュー(_A)..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem ) );
-    m_action_group->add( Gtk::Action::create( "SetupMsgItem", "書き込みビュー(_M)..." ), sigc::mem_fun( *this, &Core::slot_setup_msgitem ) );
+    m_action_group->add( Gtk::Action::create( "SetupMsgItem", "書き込みビュー(_W)..." ), sigc::mem_fun( *this, &Core::slot_setup_msgitem ) );
 
     //////////////////////////////////////////////////////
 
@@ -514,6 +514,7 @@ void Core::run( bool init )
         "<separator/>"
 
         "<menu action='Item_Menu'>"
+        "<menuitem action='SetupMainItem'/>"
         "<menuitem action='SetupSidebarItem'/>"
         "<menuitem action='SetupBoardItem'/>"
         "<menuitem action='SetupArticleItem'/>"
@@ -673,8 +674,9 @@ void Core::run( bool init )
     // 初回起動時の設定
     if( init ) first_setup();
 
-    // ツールバー
+    // ツールバー作成
     create_toolbar();
+    assert( m_toolbar );
 
     // サイドバー
     m_sidebar = BBSLIST::get_admin()->get_widget();
@@ -798,7 +800,7 @@ void Core::pack_widget( bool unpack )
         m_notebook.append_remove_page( unpack, *BOARD::get_admin()->get_widget(), "スレ一覧" );
 
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT )
-            m_vbox_article.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_article.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
         m_vbox_article.pack_remove_start( unpack, m_notebook );
 
         m_hpaned.get_ctrl().add_remove1( unpack, *m_sidebar );
@@ -815,7 +817,7 @@ void Core::pack_widget( bool unpack )
 
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
 
-            m_vbox_toolbar.pack_remove_start( unpack, m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_toolbar.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
             m_vbox_toolbar.pack_remove_start( unpack, *get_rpane() );
 
             m_hpaned.get_ctrl().add_remove1( unpack, *m_sidebar );
@@ -831,7 +833,7 @@ void Core::pack_widget( bool unpack )
     m_win_main.pack_remove_end( unpack, m_win_main.get_statbar(), Gtk::PACK_SHRINK );
     m_win_main.pack_remove_end( unpack, m_hpaned );
     if( SESSION::toolbar_pos() == SESSION::TOOLBAR_NORMAL )
-        m_win_main.pack_remove_end( unpack, m_toolbar, Gtk::PACK_SHRINK );
+        m_win_main.pack_remove_end( unpack, *m_toolbar, Gtk::PACK_SHRINK );
     if( SESSION::show_menubar() ) m_win_main.pack_remove_end( unpack, *m_menubar, Gtk::PACK_SHRINK );
 
     if( ! unpack ){
@@ -860,43 +862,22 @@ void Core::pack_widget( bool unpack )
 //
 void Core::create_toolbar()
 {
-    m_button_bbslist.signal_clicked().connect(
+    if( m_toolbar ) return;
+
+    m_toolbar = new MainToolBar();
+
+    m_toolbar->m_button_bbslist.signal_clicked().connect(
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_BBSLISTVIEW, false ) );
-    m_button_favorite.signal_clicked().connect(
+    m_toolbar->m_button_favorite.signal_clicked().connect(
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
 
-    m_button_board.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_board ), false ) );
-    m_button_thread.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_article ), false ) );
-    m_button_image.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_image ), false ) );
-    m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
-    m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
+    m_toolbar->m_button_board.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_board ), false ) );
+    m_toolbar->m_button_thread.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_article ), false ) );
+    m_toolbar->m_button_image.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_image ), false ) );
+    m_toolbar->m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
+    m_toolbar->m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
 
-    m_toolbar_hbox.pack_start( m_button_bbslist, Gtk::PACK_SHRINK );
-    m_toolbar_hbox.pack_start( m_button_favorite, Gtk::PACK_SHRINK );
-    m_toolbar_hbox.pack_start( m_button_board, Gtk::PACK_SHRINK );
-    m_toolbar_hbox.pack_start( m_button_thread, Gtk::PACK_SHRINK );
-    if( CONFIG::get_use_image_view() ) m_toolbar_hbox.pack_start( m_button_image, Gtk::PACK_SHRINK );
-    m_toolbar_hbox.pack_start( m_vspr_toolbar_1, Gtk::PACK_SHRINK );
-    m_toolbar_hbox.pack_start( m_entry_url );
-    m_toolbar_hbox.pack_start( m_button_go, Gtk::PACK_SHRINK );
-    m_toolbar_hbox.pack_start( m_vspr_toolbar_2, Gtk::PACK_SHRINK );
-    m_toolbar.add( m_toolbar_hbox );
-    m_toolbar.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
-    m_toolbar.set_size_request( 8 );
-
-    m_tooltip.set_tip( m_button_go, "移動" );
-    m_tooltip.set_tip( m_button_bbslist, "板一覧\n\nお気に入りに切替え "
-                       + CONTROL::get_motion( CONTROL::TabRight ) );
-    m_tooltip.set_tip( m_button_favorite, "お気に入り\n\n板一覧に切替え "
-                       + CONTROL::get_motion( CONTROL::TabLeft ) );
-    m_tooltip.set_tip( m_button_board,
-                       "スレ一覧\n\n"
-                       + CONTROL::get_label_motion( CONTROL::ToggleArticle ) );
-    m_tooltip.set_tip( m_button_thread,
-                       "スレビュー\n\n"
-                       + CONTROL::get_label_motion( CONTROL::ToggleArticle ) );
-    m_tooltip.set_tip( m_button_image,"画像ビュー\n\nスレビューに切替 "
-                       + CONTROL::get_motion( CONTROL::ToggleArticle ) + " , " + CONTROL::get_motion( CONTROL::Left ) );
+    m_toolbar->show_toolbar();
 }
 
 
@@ -1393,6 +1374,17 @@ void Core::slot_toggle_abone_transp_chain()
 void Core::slot_setup_passwd()
 {
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PASSWD, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// ツールバーのアイコン(メインツールバー)の表示項目
+//
+void Core::slot_setup_mainitem()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_MAINITEM, "" );
     pref->run();
     delete pref;
 }
@@ -2438,6 +2430,13 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    // 列項目更新
+    else if( command.command  == "update_board_columns" ){
+
+        BOARD::get_admin()->set_command( "update_columns" );
+        return;
+    }
+
     // 全boardviewの再レイアウト
     else if( command.command == "relayout_all_board" ){
         BOARD::get_admin()->set_command( "relayout_all" );
@@ -2697,7 +2696,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     else if( command.command  == "set_url" ){
-        m_entry_url.set_text( command.url );
+        m_toolbar->m_entry_url.set_text( command.url );
     }
 
     else if( command.command  == "set_status" ){
@@ -2773,6 +2772,11 @@ void Core::exec_command()
 
         BOARD::get_admin()->set_command( "adjust_tabwidth" );
         ARTICLE::get_admin()->set_command( "adjust_tabwidth" );
+    }
+
+    // ツールバー更新
+    else if( command.command == "update_main_toolbar" ){
+        m_toolbar->update();
     }
 
     // history 登録
@@ -3200,7 +3204,7 @@ bool Core::slot_focus_in_event( GdkEventFocus* )
 //
 void Core::slot_active_url()
 {
-    std::string url = m_entry_url.get_text();
+    std::string url = m_toolbar->m_entry_url.get_text();
     if( !url.empty() ) CORE::core_set_command( "open_url", url );
 }
 
@@ -3348,64 +3352,64 @@ void Core::set_toggle_view_button()
         case SESSION::FOCUS_SIDEBAR:
 
             if( SESSION::get_bbslist_current_page() == 0 ){
-                m_button_bbslist.set_active( true );
-                m_button_favorite.set_active( false );
+                m_toolbar->m_button_bbslist.set_active( true );
+                m_toolbar->m_button_favorite.set_active( false );
             }
             else{
-                m_button_bbslist.set_active( false );
-                m_button_favorite.set_active( true );
+                m_toolbar->m_button_bbslist.set_active( false );
+                m_toolbar->m_button_favorite.set_active( true );
             }
-            m_button_board.set_active( false );
-            m_button_thread.set_active( false );
-            m_button_image.set_active( false );
+            m_toolbar->m_button_board.set_active( false );
+            m_toolbar->m_button_thread.set_active( false );
+            m_toolbar->m_button_image.set_active( false );
             break;
             
         case SESSION::FOCUS_BOARD:
 
             if( ! BOARD::get_admin()->empty() ){
-                m_button_bbslist.set_active( false );
-                m_button_favorite.set_active( false );
-                m_button_board.set_active( true );
-                m_button_thread.set_active( false );
-                m_button_image.set_active( false );
+                m_toolbar->m_button_bbslist.set_active( false );
+                m_toolbar->m_button_favorite.set_active( false );
+                m_toolbar->m_button_board.set_active( true );
+                m_toolbar->m_button_thread.set_active( false );
+                m_toolbar->m_button_image.set_active( false );
             }
-            else m_button_board.set_active( false );
+            else m_toolbar->m_button_board.set_active( false );
 
             break;
 
         case SESSION::FOCUS_ARTICLE:
 
             if( ! ARTICLE::get_admin()->empty() ){
-                m_button_bbslist.set_active( false );
-                m_button_favorite.set_active( false );
-                m_button_board.set_active( false );
-                m_button_thread.set_active( true );
-                m_button_image.set_active( false );
+                m_toolbar->m_button_bbslist.set_active( false );
+                m_toolbar->m_button_favorite.set_active( false );
+                m_toolbar->m_button_board.set_active( false );
+                m_toolbar->m_button_thread.set_active( true );
+                m_toolbar->m_button_image.set_active( false );
             } 
-            else m_button_thread.set_active( false );
+            else m_toolbar->m_button_thread.set_active( false );
 
             break;
 
         case SESSION::FOCUS_IMAGE:
 
             if( ! IMAGE::get_admin()->empty() ){
-                m_button_bbslist.set_active( false );
-                m_button_favorite.set_active( false );
-                m_button_board.set_active( false );
-                m_button_thread.set_active( false );
-                m_button_image.set_active( true );
+                m_toolbar->m_button_bbslist.set_active( false );
+                m_toolbar->m_button_favorite.set_active( false );
+                m_toolbar->m_button_board.set_active( false );
+                m_toolbar->m_button_thread.set_active( false );
+                m_toolbar->m_button_image.set_active( true );
             }
-            else m_button_image.set_active( false );
+            else m_toolbar->m_button_image.set_active( false );
 
             break;
 
         case SESSION::FOCUS_MESSAGE:
-                m_button_bbslist.set_active( false );
-                m_button_favorite.set_active( false );
-                m_button_board.set_active( false );
-                if( SESSION::get_embedded_mes() ) m_button_thread.set_active( true );
-                else m_button_thread.set_active( false );
-                m_button_image.set_active( false );
+                m_toolbar->m_button_bbslist.set_active( false );
+                m_toolbar->m_button_favorite.set_active( false );
+                m_toolbar->m_button_board.set_active( false );
+                if( SESSION::get_embedded_mes() ) m_toolbar->m_button_thread.set_active( true );
+                else m_toolbar->m_button_thread.set_active( false );
+                m_toolbar->m_button_image.set_active( false );
 
             break;
     }
@@ -3424,16 +3428,16 @@ void Core::set_sensitive_view_button()
     bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
 
     // スレ一覧ボタンの切り替え
-    if( BOARD::get_admin()->empty() ) m_button_board.set_sensitive( false );
-    else m_button_board.set_sensitive( true );
+    if( BOARD::get_admin()->empty() ) m_toolbar->m_button_board.set_sensitive( false );
+    else m_toolbar->m_button_board.set_sensitive( true );
 
     // スレビューボタンの切り替え
-    if( ! ARTICLE::get_admin()->empty() || ! emp_mes ) m_button_thread.set_sensitive( true );
-    else m_button_thread.set_sensitive( false );
+    if( ! ARTICLE::get_admin()->empty() || ! emp_mes ) m_toolbar->m_button_thread.set_sensitive( true );
+    else m_toolbar->m_button_thread.set_sensitive( false );
 
     // 画像ビューボタンの切り替え
-    if( IMAGE::get_admin()->empty() ) m_button_image.set_sensitive( false );
-    else m_button_image.set_sensitive( true );
+    if( IMAGE::get_admin()->empty() ) m_toolbar->m_button_image.set_sensitive( false );
+    else m_toolbar->m_button_image.set_sensitive( true );
 
     m_enable_menuslot = true;
 }
