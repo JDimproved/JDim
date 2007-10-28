@@ -467,6 +467,9 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
 {
     std::stringstream jd_info;
 
+    // ディストリビューション名を取得
+    const std::string distribution = SESSION::get_distribution();
+
     // デスクトップ環境を取得( 環境変数から判別可能の場合 )
     std::string desktop_environment;
     switch( SESSION::get_wm() )
@@ -488,7 +491,7 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
 //#ifdef REPOSITORY_URL
 //    "[リポジトリ ] " << REPOSITORY_URL << "\n" <<
 //#endif
-    "[ディストリ ] " << "\n" <<
+    "[ディストリ ] " << distribution << "\n" <<
     "[パッケージ] " << "バイナリ/ソース( <配布元> )" << "\n" <<
     "[ DE／WM ] " << desktop_environment << "\n" <<
     "[gtkmm-2.4] " << GTKMM_VERSION << "\n" <<

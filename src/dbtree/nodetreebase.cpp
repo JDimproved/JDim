@@ -1903,125 +1903,51 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 //
 // 戻り値 : リンクが現れれば true
 //
-
+// 注意 : MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
 //
-// Thanks to 「パッチ投稿」スレの8氏
-//
-// http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/8
-//
-
-enum
-{
-    LINKTYPE_NONE,
-
-    LINKTYPE_HTTP,
-    LINKTYPE_FTP,
-    LINKTYPE_TTP,
-    LINKTYPE_TP
-};
-
 bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* str_link, int lng_link )
 {
     // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
     const bool loose_url = CONFIG::get_loose_url();
 
     // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
-    int linktype = LINKTYPE_NONE;
+    int linktype = MISC::is_url_scheme( str_in, n_in );
 
-    // http://, https://
-    if( ( *( str_in ) == 'h' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 't' && *( str_in + 3 ) == 'p' ) &&
-        ( ( *( str_in + 4 ) == ':' && *( str_in + 5 ) == '/' && *( str_in + 6 ) == '/' )
-          || ( *( str_in + 4 ) == 's' && *( str_in + 5 ) == ':' && *( str_in + 6 ) == '/' && *( str_in + 7 ) == '/' ) ) ){
-        linktype = LINKTYPE_HTTP;
-    }
-    // ftp://
-    else if( *( str_in ) == 'f' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p' && 
-             *( str_in + 3 ) == ':' && *( str_in + 4 ) == '/' && *( str_in + 5 ) == '/' ){
-        linktype = LINKTYPE_FTP;
-    }
-    // ttp://
-    else if( ( *( str_in ) == 't' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p'  ) && 
-             ( ( *( str_in + 3 ) == ':' && *( str_in + 4 ) == '/' && *( str_in + 5 ) == '/' )
-               || ( *( str_in + 3 ) == 's' && *( str_in + 4 ) == ':' && *( str_in + 5 ) == '/' && *( str_in + 6 ) == '/' ) ) ){
-        linktype = LINKTYPE_TTP;
-    }
-    // tp://
-    else if( ( *( str_in ) == 't' && *( str_in + 1 ) == 'p'  ) &&
-             ( ( *( str_in + 2 ) == ':' && *( str_in + 3 ) == '/' && *( str_in + 4 ) == '/' )
-               || ( *( str_in + 2 ) == 's' && *( str_in + 3 ) == ':' && *( str_in + 4 ) == '/' && *( str_in + 5 ) == '/' ) ) ){
-        linktype = LINKTYPE_TP;
-    }
-    
-    if( linktype == LINKTYPE_NONE ) return false;
+    if( linktype == MISC::SCHEME_NONE ) return false;
 
     // リンクの長さを取得
     bool url_encode = false;
     char cchar = *( str_in + n_in );
-    n_in = 0;
     while(
-        // バッファサイズを越えない
+        // バッファサイズを超えない
         n_in < lng_in
-
-        // [ URLとして扱う文字列 ]
-        // RFC 3986 http://www.ietf.org/rfc/rfc3986.txt
-        // RFC 2396 http://www.ietf.org/rfc/rfc2396.txt
-        //
-        // !#$%&'()*+,-./0-9:;=?@A-Z_a-z~ が続く限りwhileで回す
-        && (
-
-            // 出現頻度が高いと思われる順にチェック
-            ( cchar >= 'a' && cchar <= 'z' )
-            || ( cchar >= '0' && cchar <= '9' )
-            || ( cchar >= 'A' && cchar <= 'Z' )
-            || cchar == '.'
-            || cchar == '/'
-            || cchar == '-'
-            || cchar == '%'
-            || cchar == '?'
-            || cchar == '='
-            || cchar == ':'
-            || cchar == '~'
-
-            // HTML特殊文字を除く
-            || ( cchar == '&'
-             
-                 // < ではない
-                 && !( *( str_in + n_in +1 ) == 'l' && *( str_in + n_in +2 ) == 't'
-                       && *( str_in + n_in +3) == ';' ) 
-
-                 // > ではない
-                 && !( *( str_in + n_in +1 ) == 'g' && *( str_in + n_in +2 ) == 't'
-                       && *( str_in + n_in +3 ) == ';' ) 
-
-                 // " ではない
-                 && !( *( str_in + n_in +1 ) == 'q' && *( str_in + n_in +2 ) == 'u'
-                       && *( str_in + n_in +3 ) == 'o' && *( str_in + n_in +4 ) == 't' && *( str_in + n_in +5 ) == ';' )
-                )
-
-            // あとの並びはASCIIコード順(なんとなく)
-            || cchar == '!'
-            || cchar == '#'
-            || cchar == '$'
-            || cchar == '\''
-            || cchar == '('
-            || cchar == ')'
-            || cchar == '*'
-            || cchar == '+'
-            || cchar == ','
-            || cchar == ';'
-            || cchar == '@'
-            || cchar == '_'
-
-            // RFC 3986(2.2.)では"[]"が予約文字として定義されているが
-            // RFC 2396(2.4.3.)では除外されていて、普通にURLとして扱う
-            // と問題がありそうなので"loose_url"の扱いにしておく。
-            || ( loose_url && ( cchar == '['
-                             || cchar == ']'
-                             || cchar == '^'
-                             || cchar == '|' ) )
+        // URLとして扱う文字かどうか
+        && MISC::is_url_char( &cchar, loose_url )
+        // HTML特殊文字は除く( &〜; )
+        && ! (
+            *( str_in + n_in ) == '&'
+            && (
+                 (
+                   // quot;
+                   *( str_in + n_in + 1 ) == 'q'
+                   && *( str_in + n_in + 2 ) == 'u'
+                   && *( str_in + n_in + 3 ) == 'o'
+                   && *( str_in + n_in + 4 ) == 't'
+                   && *( str_in + n_in + 5 ) == ';'
+                 ) || (
+                   // lt;
+                   *( str_in + n_in + 1 ) == 'l'
+                   && *( str_in + n_in + 2 ) == 't'
+                   && *( str_in + n_in + 3 ) == ';'
+                 ) || (
+                   // gt;
+                   *( str_in + n_in + 1 ) == 'g'
+                   && *( str_in + n_in + 2 ) == 't'
+                   && *( str_in + n_in + 3 ) == ';'
+                 )
             )
-        ){
-
+        )
+    ){
         // "^"と"|"はエンコードする
         // "[]"はダウンローダに渡す用途のためにエンコードしないでおく
         if( loose_url && ( cchar == '^' || cchar == '|' ) ) url_encode = true;
@@ -2037,12 +1963,12 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
         || *( str_in + n_in -1 ) == ']' ) --n_in;
 
     int offset = 0;
-    if( linktype == LINKTYPE_TTP || linktype == LINKTYPE_TP ){ // ttp://, tp:// の場合、リンクの先頭にhを補完
+    if( linktype == MISC::SCHEME_TTP || linktype == MISC::SCHEME_TP ){ // ttp://, tp:// の場合、リンクの先頭にhを補完
 
         str_link[ 0 ] = 'h';
         offset = 1;
 
-        if( linktype == LINKTYPE_TP ){ // tp:// の場合、さらにリンク先頭にtを補完
+        if( linktype == MISC::SCHEME_TP ){ // tp:// の場合、さらにリンク先頭にtを補完
             str_link[ 1 ] = 't';
             offset = 2;
         }
@@ -2669,7 +2595,7 @@ void NodeTreeBase::set_num_id_name( NODE* header, int num_id_name )
 //
 // 取り除いたらtrueを返す
 //
-// Thanks to 「ハッチ投稿」スレの24氏
+// Thanks to 「パッチ投稿」スレの24氏
 //
 // http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/24
 //
@@ -2677,26 +2603,32 @@ bool NodeTreeBase::remove_imenu( char* str_link )
 {
     const int lng_http = 7; // = strlen( "http://" );
 
-    if( ( str_link[ lng_http ] == 'i' && str_link[ lng_http +1 ] == 'm' )
-        || ( str_link[ lng_http ] == 'n' && str_link[ lng_http +1 ] == 'u' )
-        || ( str_link[ lng_http ] == 'p' && str_link[ lng_http +1 ] == 'i' ) ){
+    if(
+      ! (
+        ( str_link[ lng_http ] == 'i' && str_link[ lng_http + 1 ] == 'm' )
+        || ( str_link[ lng_http ] == 'n' && str_link[ lng_http + 1 ] == 'u' )
+        || ( str_link[ lng_http ] == 'p' && str_link[ lng_http + 1 ] == 'i' )
+      )
+    ) return false;
 
-        if( strstr( str_link, "http://ime.nu/" ) == str_link
-               || strstr( str_link, "http://ime.st/" ) == str_link
-               || strstr( str_link, "http://nun.nu/" ) == str_link
-               || strstr( str_link, "http://pinktower.com/" ) == str_link ){
+    if( memcmp( str_link, "http://ime.nu/", 14 ) == 0
+        || memcmp( str_link, "http://ime.st/", 14 ) == 0
+        || memcmp( str_link, "http://nun.nu/", 14 ) == 0
+        || memcmp( str_link, "http://pinktower.com/", 21 ) == 0 )
+    {
+		int linklen = strlen( str_link );
+		int cutsize = 0; 
 
-            int linklen = strlen( str_link ) +1;
-            int cutsize = 0; 
+		if( str_link[ lng_http ] == 'p' ) cutsize = 14; // = strlen( "pinktower.com/" )
+		else cutsize =  7; // = strlen( "ime.nu/" )
 
-            if( str_link[ lng_http ] == 'p' ) cutsize = 14; // = strlen( "pinktower.com/" )
-            else cutsize =  7; // = strlen( "ime.nu/" )
+        // "http://ime.nu/"等、URLがそれだけだった場合は削除しない
+        if( linklen == lng_http + cutsize ) return false;
 
-            memmove( str_link + lng_http, str_link + lng_http + cutsize, linklen - ( lng_http + cutsize ) );
+		memmove( str_link + lng_http, str_link + lng_http + cutsize, linklen + 1 - ( lng_http + cutsize ) );
 
-            return true;
-        }
-    }
+		return true;
+	}
 
     return false;
 }

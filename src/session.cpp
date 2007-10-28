@@ -23,6 +23,8 @@ bool mode_online;
 bool mode_login2ch;
 bool mode_loginbe;
 
+std::string distribution;
+
 int win_manager;
 
 int win_hpane_main_pos;
@@ -379,6 +381,14 @@ void SESSION::init_session()
 
     popupmenu_shown = false;
 
+    // ディストリ判定( "/etc/issue.net"の一行目を読む )
+    std::string issue_net;
+    if( CACHE::load_rawdata( CACHE::path_issue_net(), issue_net ) )
+    {
+    	const size_t lf_pos = issue_net.find( "\n" );
+    	distribution = MISC::remove_spaces( issue_net.substr( 0, lf_pos ) );
+    }
+
     // WM 判定
     // TODO: 環境変数で判定できない場合の判定方法を考える
     win_manager = WM_UNKNON;
@@ -594,6 +604,9 @@ void SESSION::set_booting( bool boot ){ booting = boot; }
 // 終了中
 const bool SESSION::is_quitting(){ return quitting; }
 void SESSION::set_quitting( bool quit ){ quitting = quit; }
+
+// ディストリ判定
+const std::string& SESSION::get_distribution(){ return distribution; }
 
 // WM 判定
 const int SESSION::get_wm(){ return win_manager; }

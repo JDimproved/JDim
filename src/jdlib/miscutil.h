@@ -8,8 +8,20 @@
 #include <string>
 #include <list>
 
+
 namespace MISC
 {
+    // URLスキームタイプ
+	enum
+	{
+		SCHEME_NONE,
+
+		SCHEME_HTTP,
+		SCHEME_FTP,
+		SCHEME_TTP,
+		SCHEME_TP
+	};
+
     // str を "\n" ごとに区切ってlistにして出力
     std::list< std::string > get_lines( const std::string& str );
 
@@ -87,10 +99,16 @@ namespace MISC
     std::string cut_str( const std::string& str, unsigned int maxsize );
 
     // HTMLエスケープ
-    std::string html_escape( const std::string& str );
+    std::string html_escape( const std::string& str, const bool include_url = true );
 
     // HTMLアンエスケープ
     std::string html_unescape( const std::string& str );
+
+    // URL中のスキームを判別する
+    int is_url_scheme( const char* str_in, int& len );
+
+    // URLとして扱う文字かどうか判別する
+    bool is_url_char( const char* str_in, const bool loose_url );
 
     // urlエンコード
     std::string url_encode( const char* str, size_t n );

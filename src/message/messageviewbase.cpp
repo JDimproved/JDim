@@ -754,7 +754,8 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         get_messagetoolbar()->m_button_open.set_sensitive( false );
         get_messagetoolbar()->m_button_preview.set_active( true );
 
-        std::string msg = MISC::html_escape( m_text_message.get_text() );
+        // URLを除外してエスケープ
+        std::string msg = MISC::html_escape( m_text_message.get_text(), false );
         msg = MISC::replace_str( msg, "\n", " <br> " );
         
         std::stringstream ss;

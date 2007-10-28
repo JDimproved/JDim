@@ -95,8 +95,8 @@ namespace JDLIB
         // ヘッダ用
         bool receive_header( char* buf, size_t& read_size );
         bool analyze_header();
-        std::string analyze_header_option( char* option );
-        std::list< std::string > analyze_header_option_list( char* option );
+        std::string analyze_header_option( const std::string& option );
+        std::list< std::string > analyze_header_option_list( const std::string& option );
 
         // chunk用
         bool skip_chunk( char* buf, size_t& read_size );

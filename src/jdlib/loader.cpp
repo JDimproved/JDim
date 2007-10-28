@@ -974,14 +974,15 @@ bool Loader::analyze_header()
 //
 // analyze_header() から呼ばれるオプションの値を取り出す関数
 //
-std::string Loader::analyze_header_option( char* option )
+std::string Loader::analyze_header_option( const std::string& option )
 {
     size_t i = 0, i2 = 0;
     i = m_data.str_header.find( option, 0 );    
     if( i != std::string::npos ){
+        const size_t option_length = option.length();
         i2 = m_data.str_header.find( "\r\n", i );
         if( i2 == std::string::npos ) i2 = m_data.str_header.find( "\n", i );
-        if( i2 != std::string::npos ) return m_data.str_header.substr( i + strlen( option ), i2 - ( i + strlen( option ) ) );
+        if( i2 != std::string::npos ) return m_data.str_header.substr( i + option_length, i2 - ( i + option_length ) );
     }
 
     return std::string();
@@ -992,11 +993,12 @@ std::string Loader::analyze_header_option( char* option )
 //
 // analyze_header() から呼ばれるオプションの値を取り出す関数(リスト版)
 //
-std::list< std::string > Loader::analyze_header_option_list( char* option )
+std::list< std::string > Loader::analyze_header_option_list( const std::string& option )
 {
     std::list< std::string > str_list;
     
     size_t i = 0, i2 = 0;
+    const size_t option_length = option.length();
 
     for(;;){
 
@@ -1007,7 +1009,7 @@ std::list< std::string > Loader::analyze_header_option_list( char* option )
         if( i2 == std::string::npos ) i2 = m_data.str_header.find( "\n", i );
         if( i2 == std::string::npos ) break;
 
-        str_list.push_back( m_data.str_header.substr( i + strlen( option ), i2 - ( i + strlen( option ) ) ) );
+        str_list.push_back( m_data.str_header.substr( i + option_length, i2 - ( i + option_length ) ) );
     }
 
     return str_list;

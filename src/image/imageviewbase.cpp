@@ -1019,14 +1019,23 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     }
 
     // サイズ系メニュー、お気に入り、保存
-    char* sizemenu[] = { "Size_Menu", "OrgSizeImage", "ZoomFitImage", "ZoomInImage", "ZoomOutImage",
-                         "AppendFavorite", "Save" };
-    for( int i = 0; i < 7; ++i ){
-        act = action_group()->get_action( sizemenu[ i ] );
+    std::list< std::string > sizemenus;
+    sizemenus.push_back( "Size_Menu" );
+    sizemenus.push_back( "OrgSizeImage" );
+    sizemenus.push_back( "ZoomFitImage" );
+    sizemenus.push_back( "ZoomInImage" );
+    sizemenus.push_back( "ZoomOutImage" );
+    sizemenus.push_back( "AppendFavorite" );
+    sizemenus.push_back( "Save" );
+    std::list< std::string >::iterator it = sizemenus.begin();
+    while( it != sizemenus.end() ){
+
+        act = action_group()->get_action( *it );
         if( act ){
             if( m_img->is_cached() ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
+        ++it;
     }
 
     // 参照元スレ

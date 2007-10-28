@@ -341,12 +341,12 @@ std::string MISC::remove_spaces( const std::string& str )
     size_t l = 0, r = str.length();
 
     while( l < str.length()
-    	 && ( str[l] == '\n'
+         && ( str[l] == '\n'
            || str[l] == '\t'
            || str[l] == ' ' ) ) ++l;
 
     while( r > 0
-    	 && ( str[r] == '\n'
+         && ( str[r] == '\n'
            || str[r] == '\t'
            || str[r] == ' ' ) ) --r;
 
@@ -591,18 +591,44 @@ std::string MISC::cut_str( const std::string& str, unsigned int maxsize )
 //
 // HTMLエスケープ
 //
-std::string MISC::html_escape( const std::string& str )
+// include_url : URL中でもエスケープする( デフォルト = true )
+//
+std::string MISC::html_escape( const std::string& str, const bool include_url )
 {
     if( str.empty() ) return str;
 
+    bool is_url = false;
+    int scheme = SCHEME_NONE;
     std::string str_out;
 
-    for( size_t pos = 0; pos < str.length(); ++pos ){
-
+    for( size_t pos = 0; pos < str.length(); ++pos )
+    {
         char tmpchar = str.c_str()[ pos ];
 
-        if( tmpchar == '&' ){
+        // URL中はエスケープしない場合
+        if( ! include_url )
+        {
+            // URLとして扱うかどうか
+            // エスケープには影響がないので loose_url としておく
+            if( scheme != SCHEME_NONE ) is_url = is_url_char( str.c_str() + pos, true );
 
+            // URLスキームが含まれているか判別
+            int len = 0;
+            if( ! is_url ) scheme = is_url_scheme( str.c_str() + pos, len );
+
+            // URLスキームが含まれていた場合は文字数分進めてループに戻る
+            if( len > 0 )
+            {
+                str_out += str.substr( pos, len );
+                pos += len - 1; // あとで ++pos される分を引く
+                continue;
+            }
+        }
+
+        // include_url = false でURL中ならエスケープしない
+        if( is_url ) str_out += tmpchar;
+        else if( tmpchar == '&' )
+        {
             const int bufsize = 64;
             char out_char[ bufsize ];
             int n_in, n_out;
@@ -662,6 +688,110 @@ std::string MISC::html_unescape( const std::string& str )
     return str_out;
 }
 
+
+
+//
+// URL中のスキームを判別する
+//
+// 戻り値 : スキームタイプ
+// len    : "http://"等の文字数
+//
+int MISC::is_url_scheme( const char* str_in, int& len )
+{
+    int scheme = SCHEME_NONE;
+    len = 0;
+
+    // 候補になり得ない場合は以降の処理はしない
+    if( *str_in != 'h' && *str_in != 'f' && *str_in != 't' ) return scheme;
+
+    // http https
+    if( *str_in == 'h' && *( str_in + 1 ) == 't'
+        && *( str_in + 2 ) == 't' && *( str_in + 3 ) == 'p' )
+    {
+        scheme = SCHEME_HTTP;
+        len = 4;
+        if( *( str_in + len ) == 's' ) ++len;
+    }
+    // ftp
+    else if( *str_in == 'f' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p' )
+    {
+        scheme = SCHEME_FTP;
+        len = 3;
+    }
+    // ttp ttps
+    else if( *str_in == 't' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p' )
+    {
+        scheme = SCHEME_TTP;
+        len = 3;
+        if( *( str_in + len ) == 's' ) ++len;
+    }
+    // tp tps
+    else if( *str_in == 't' && *( str_in + 1 ) == 'p' )
+    {
+        scheme = SCHEME_TP;
+        len = 2;
+        if( *( str_in + len ) == 's' ) ++len;
+    }
+
+    // 各スキーム後に続く共通の"://"
+    if( *( str_in + len ) == ':' && *( str_in + len + 1 ) == '/'
+        && *( str_in + len + 2 ) == '/' ) len += 3;
+    else scheme = SCHEME_NONE;
+
+    return scheme;
+}
+
+
+//
+// URLとして扱う文字かどうか判別する
+//
+// 基本 : 「!#$%&'()*+,-./0-9:;=?@A-Z_a-z~」
+// 拡張 : 「[]^|」
+//
+// "RFC 3986" : http://www.ietf.org/rfc/rfc3986.txt
+// "RFC 2396" : http://www.ietf.org/rfc/rfc2396.txt
+//
+bool MISC::is_url_char( const char* str_in, const bool loose_url )
+{
+    if(
+        // 出現頻度が高いと思われる順にチェック
+        ( *str_in >= 'a' && *str_in <= 'z' )
+        || ( *str_in >= '0' && *str_in <= '9' )
+        || ( *str_in >= 'A' && *str_in <= 'Z' )
+        || *str_in == '.'
+        || *str_in == '/'
+        || *str_in == '-'
+        || *str_in == '%'
+        || *str_in == '?'
+        || *str_in == '='
+        || *str_in == ':'
+        || *str_in == '~'
+        || *str_in == '&'
+
+        // あとの並びはASCIIコード順(なんとなく)
+        || *str_in == '!'
+        || *str_in == '#'
+        || *str_in == '$'
+        || *str_in == '\''
+        || *str_in == '('
+        || *str_in == ')'
+        || *str_in == '*'
+        || *str_in == '+'
+        || *str_in == ','
+        || *str_in == ';'
+        || *str_in == '@'
+        || *str_in == '_'
+
+        // RFC 3986(2.2.)では"[]"が予約文字として定義されているが
+        // RFC 2396(2.4.3.)では除外されていて、普通にURLとして扱う
+        // と問題がありそうなので"loose_url"の扱いにしておく。
+        || ( loose_url && ( *str_in == '['
+                         || *str_in == ']'
+                         || *str_in == '^'
+                         || *str_in == '|' ) )
+    ) return true;
+    else return false;
+}
 
 
 //

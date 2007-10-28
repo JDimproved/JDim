@@ -206,7 +206,7 @@ void Dom::parse( const std::string& str )
                 // 必要な終了タグが見付からないまま上記のループを抜けた場合は、全体のループを抜ける
                 if( count > 0 ) break;
 
-                // 次のコンストラクタに渡す"子ノード"の素材になる文字列
+                // 次の再帰で使う"子ノード"の素材になる文字列
                 next_source = str.substr( tag_gt_pos + 1, close_tag_lt_pos - tag_gt_pos - 1 );
              }
         }
