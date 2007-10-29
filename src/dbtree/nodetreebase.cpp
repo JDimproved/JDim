@@ -1911,11 +1911,13 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
     const bool loose_url = CONFIG::get_loose_url();
 
     // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
-    int linktype = MISC::is_url_scheme( str_in, n_in );
+    int delim_pos = 0;
+    int linktype = MISC::is_url_scheme( str_in, delim_pos );
 
     if( linktype == MISC::SCHEME_NONE ) return false;
 
     // リンクの長さを取得
+    n_in = delim_pos;
     bool url_encode = false;
     char cchar = *( str_in + n_in );
     while(
@@ -1961,6 +1963,9 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
         || *( str_in + n_in -1 ) == ')'
         || *( str_in + n_in -1 ) == '['
         || *( str_in + n_in -1 ) == ']' ) --n_in;
+
+    // URLとして短かすぎる場合は除外する( 最短ドメイン名の例 "1.cc" )
+    if( n_in - delim_pos < 4 ) return false;
 
     int offset = 0;
     if( linktype == MISC::SCHEME_TTP || linktype == MISC::SCHEME_TP ){ // ttp://, tp:// の場合、リンクの先頭にhを補完
