@@ -382,10 +382,10 @@ const bool ConfigItems::load()
     instruct_tglimg_end = false;
     
     // 下線位置
-    adjust_underline_pos = cf.get_option( "adjust_underline_pos", CONF_ADJUST_UNDERLINE_POS );
+    adjust_underline_pos = cf.get_option( "adjust_underline_pos", ( double )CONF_ADJUST_UNDERLINE_POS );
 
     // 行間スペース
-    adjust_line_space = cf.get_option( "adjust_line_space", CONF_ADJUST_LINE_SPACE );
+    adjust_line_space = cf.get_option( "adjust_line_space", ( double )CONF_ADJUST_LINE_SPACE );
 
     // リンク下線を表示
     draw_underline = cf.get_option( "draw_underline", CONF_DRAW_UNDERLINE );
