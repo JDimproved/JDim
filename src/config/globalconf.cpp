@@ -149,6 +149,7 @@ const int CONFIG::get_loader_timeout_img(){ return get_confitem()->loader_timeou
 const int CONFIG::get_loader_timeout_checkupdate(){ return get_confitem()->loader_timeout_checkupdate; }
 
 const bool CONFIG::get_use_ipv6(){ return get_confitem()->use_ipv6; }
+void CONFIG::set_use_ipv6( bool set ){ get_confitem()->use_ipv6 = set; }
 
 const std::string& CONFIG::get_command_openurl() { return get_confitem()->command_openurl; }
 void CONFIG::set_command_openurl( const std::string& command ){ get_confitem()->command_openurl = command; }

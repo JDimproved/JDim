@@ -118,6 +118,7 @@ namespace CONFIG
 
     // ipv6使用
     const bool get_use_ipv6();
+    void set_use_ipv6( bool set );
 
     // リンクをクリックしたときに実行するコマンド
     const std::string& get_command_openurl();

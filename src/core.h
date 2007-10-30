@@ -160,6 +160,7 @@ namespace CORE
         void slot_setup_fontcolor();
         void slot_setup_proxy();
         void slot_setup_passwd();
+        void slot_toggle_ipv6();
         void slot_setup_mainitem();
         void slot_setup_sidebaritem();
         void slot_setup_boarditemcolumn();

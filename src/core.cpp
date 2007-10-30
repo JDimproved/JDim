@@ -382,6 +382,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SetupProxy", "プロキシ(_X)..." ), sigc::mem_fun( *this, &Core::slot_setup_proxy ) );
     m_action_group->add( Gtk::Action::create( "SetupBrowser", "Webブラウザ(_W)..." ), sigc::mem_fun( *this, &Core::slot_setup_browser ) );
     m_action_group->add( Gtk::Action::create( "SetupPasswd", "パスワード(_P)..." ), sigc::mem_fun( *this, &Core::slot_setup_passwd ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleIPv6", "IPv6使用(_I)", std::string(),
+                                                    CONFIG::get_use_ipv6() ), sigc::mem_fun( *this, &Core::slot_toggle_ipv6 ) );
 
     // あぼーん
     m_action_group->add( Gtk::Action::create( "Abone_Menu", "あぼ〜ん(_A)" ) );
@@ -597,6 +599,8 @@ void Core::run( bool init )
         "<menuitem action='SetupProxy'/>"
         "<menuitem action='SetupBrowser'/>"
         "<menuitem action='SetupPasswd'/>"
+        "<separator/>"
+        "<menuitem action='ToggleIPv6'/>"
         "</menu>"
 
         "<separator/>"
@@ -1377,6 +1381,16 @@ void Core::slot_setup_passwd()
     pref->run();
     delete pref;
 }
+
+
+//
+// IPv6使用
+//
+void Core::slot_toggle_ipv6()
+{
+    CONFIG::set_use_ipv6( ! CONFIG::get_use_ipv6() );
+}
+
 
 
 //
