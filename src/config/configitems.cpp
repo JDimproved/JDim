@@ -150,7 +150,7 @@ const bool ConfigItems::load()
     use_ipv6 = cf.get_option( "use_ipv6", CONF_USE_IPV6 );
 
     // ブラウザ設定ダイアログのコンボボックスの番号
-    browsercombo_id = cf.get_option( "brownsercombo_id", CONF_BROWSER_NO );
+    browsercombo_id = cf.get_option( "browsercombo_id", CONF_BROWSER_NO );
 
     // リンクをクリックしたときに実行するコマンド
     command_openurl = cf.get_option( "command_openurl", CORE::get_browser_name( CONF_BROWSER_NO ) );
@@ -533,7 +533,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_ipv6", use_ipv6 );
 
     cf.update( "command_openurl", command_openurl );
-    cf.update( "brownsercombo_id", browsercombo_id );
+    cf.update( "browsercombo_id", browsercombo_id );
 
     cf.update( "refpopup_by_mo", refpopup_by_mo );
     cf.update( "namepopup_by_mo", namepopup_by_mo );
