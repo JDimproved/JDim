@@ -1648,7 +1648,9 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPHTML, m_url_article, args );
         }
 
-        else if ( DBIMG::is_loading( url ) || DBIMG::get_code( url ) != HTTP_INIT ) {
+        else if(
+            ( ! DBIMG::is_cached( url ) || CONFIG::get_use_image_popup() )
+            && ( DBIMG::is_loading( url ) || DBIMG::get_code( url ) != HTTP_INIT ) ){ 
 
 #ifdef _DEBUG
             std::cout << "image " << DBIMG::get_code( url ) << " " << DBIMG::is_loading( url ) << "\n";
@@ -2045,6 +2047,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             // キャッシュに無かったらロード
             if( ! DBIMG::is_cached( url ) ){
                 DBIMG::download_img( url, DBTREE::url_readcgi( m_url_article, res_number, 0 ) );
+
+                // ポップアップ表示してダウンロードサイズを表示
                 hide_popup();
                 SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
                 const int margin_popup = CONFIG::get_margin_imgpopup();

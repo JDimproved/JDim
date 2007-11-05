@@ -71,6 +71,7 @@ namespace CONFIG
         CONF_SHOW_TAB_ICON = 1, // タブにアイコンを表示するか
         CONF_IMGPOPUP_WIDTH = 320,  // 画像ポップアップ幅
         CONF_IMGPOPUP_HEIGHT = 240, // 画像ポップアップ高さ
+        CONF_USE_IMAGE_POPUP = 1,    // 画像ポップアップを使用する
         CONF_USE_IMAGE_VIEW = 1,    // 画像ビューを使用する
         CONF_INLINE_IMG = 0,        // インライン画像を表示する
         CONF_USE_MOSAIC = 1,        // 画像にモザイクをかける

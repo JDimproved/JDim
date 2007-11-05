@@ -141,6 +141,10 @@ namespace CONFIG
     const int get_imgpopup_width();
     const int get_imgpopup_height();
 
+    // 画像ポップアップを使用する
+    const bool get_use_image_popup();
+    void set_use_image_popup( bool use );
+
     // 画像ビューを使用する
     const bool get_use_image_view();
     void set_use_image_view( bool image_view );

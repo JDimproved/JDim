@@ -164,6 +164,9 @@ const bool CONFIG::get_idpopup_by_mo(){ return get_confitem()->idpopup_by_mo; }
 const int CONFIG::get_imgpopup_width(){ return get_confitem()->imgpopup_width; }
 const int CONFIG::get_imgpopup_height(){ return get_confitem()->imgpopup_height; }
 
+const bool CONFIG::get_use_image_popup(){ return get_confitem()->use_image_popup; }
+void CONFIG::set_use_image_popup( bool use ){ get_confitem()->use_image_popup = use; }
+
 const bool CONFIG::get_use_image_view(){ return get_confitem()->use_image_view; }
 void CONFIG::set_use_image_view( bool image_view ){ get_confitem()->use_image_view = image_view; }
 

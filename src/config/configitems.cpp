@@ -168,6 +168,9 @@ const bool ConfigItems::load()
     imgpopup_width = cf.get_option( "imgpopup_width", CONF_IMGPOPUP_WIDTH );
     imgpopup_height = cf.get_option( "imgpopup_height", CONF_IMGPOPUP_HEIGHT );
 
+    // 画像ポップアップを使用する
+    use_image_popup = cf.get_option( "use_image_popup", CONF_USE_IMAGE_POPUP );
+
     // 画像ビューを使用する
     use_image_view = cf.get_option( "use_image_view", CONF_USE_IMAGE_VIEW );
 
@@ -541,6 +544,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "imgpopup_width", imgpopup_width );
     cf.update( "imgpopup_height", imgpopup_height );
+    cf.update( "use_image_popup", use_image_popup );
     cf.update( "use_image_view", use_image_view );
     cf.update( "use_inline_image", use_inline_image );
     cf.update( "use_mosaic", use_mosaic );

@@ -399,8 +399,10 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Image_Menu", "画像(_E)" ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける(_M)", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseImgView", "画像ビューを使用する(_V)", std::string(), CONFIG::get_use_image_view() ),
+    m_action_group->add( Gtk::ToggleAction::create( "UseImgView", "画像ビューを表示する(_V)", std::string(), CONFIG::get_use_image_view() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgview ) );
+    m_action_group->add( Gtk::ToggleAction::create( "UseImgPopup", "画像ポップアップを表示する(_V)", std::string(), CONFIG::get_use_image_popup() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュの消去(_D)..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
@@ -617,6 +619,7 @@ void Core::run( bool init )
         "<menu action='Image_Menu'>"
         "<menuitem action='UseMosaic'/>"    
         "<menuitem action='UseImgView'/>"    
+        "<menuitem action='UseImgPopup'/>"    
         "<menuitem action='UseInlineImg'/>"    
         "<separator/>"
         "<menuitem action='DeleteImages'/>"
@@ -1105,6 +1108,15 @@ void Core::slot_toggle_use_imgview()
 
     SKELETON::MsgDiag mdiag( NULL, "JDの再起動後に有効になります。再起動してください" );
     mdiag.run();
+}
+
+
+//
+// 画像ポップアップon/off
+//
+void Core::slot_toggle_use_imgpopup()
+{
+    CONFIG::set_use_image_popup( ! CONFIG::get_use_image_popup() );
 }
 
 

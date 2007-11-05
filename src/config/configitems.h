@@ -90,6 +90,9 @@ namespace CONFIG
         int imgpopup_width;
         int imgpopup_height;
 
+        // 画像ポップアップを使用する
+        bool use_image_popup;
+
         // 画像ビューを使用する
         bool use_image_view;
 

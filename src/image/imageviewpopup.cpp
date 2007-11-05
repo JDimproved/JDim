@@ -76,11 +76,17 @@ void ImageViewPopup::clock_in()
 
             set_loading( false );
 
-            // 画像表示
-            show_view();
+            if( CONFIG::get_use_image_popup() ){
 
-            // リサイズ依頼
-            sig_resize_popup().emit();
+                // 画像表示
+                show_view();
+
+                // リサイズ依頼
+                sig_resize_popup().emit();
+            }
+
+            // ポップアップを閉じる
+            else sig_hide_popup().emit();
         }
     }
 }

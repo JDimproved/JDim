@@ -137,6 +137,7 @@ namespace CORE
         void slot_toggle_save_postlog();
         void slot_toggle_use_mosaic();
         void slot_toggle_use_imgview();
+        void slot_toggle_use_imgpopup();
         void slot_toggle_use_inlineimg();
         void slot_delete_all_images();
 
