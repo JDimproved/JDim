@@ -401,7 +401,7 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseImgView", "画像ビューを表示する(_V)", std::string(), CONFIG::get_use_image_view() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgview ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseImgPopup", "画像ポップアップを表示する(_V)", std::string(), CONFIG::get_use_image_popup() ),
+    m_action_group->add( Gtk::ToggleAction::create( "UseImgPopup", "画像ポップアップを表示する(_P)", std::string(), CONFIG::get_use_image_popup() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
