@@ -843,12 +843,32 @@ std::string MISC::url_encode( const char* str, size_t n )
 //
 std::string MISC::charset_url_encode( const std::string& str, const std::string& charset )
 {
-    if( charset.empty() ) return MISC::url_encode( str.c_str(), str.length() );
+    if( charset.empty() || charset == "UTF-8" ) return MISC::url_encode( str.c_str(), str.length() );
 
     std::string str_enc = MISC::Iconv( str, "UTF-8", charset );
     std::string str_encoded = MISC::url_encode( str_enc.c_str(), strlen( str_enc.c_str() ) );
 
     return str_encoded;
+}
+
+
+//
+// 文字コード変換して url エンコード
+//
+// ただし半角スペースのところを+に置き換えて区切る
+//
+std::string MISC::charset_url_encode_split( const std::string& str, const std::string& charset )
+{
+    std::list< std::string > list_str = MISC::split_line( str );
+    std::list< std::string >::iterator it = list_str.begin();
+    std::string str_out;
+    for( ; it != list_str.end(); ++it ){
+
+        if( it != list_str.begin() ) str_out += "+";
+        str_out += MISC::charset_url_encode( *it, charset );
+    }
+
+    return str_out;
 }
 
 

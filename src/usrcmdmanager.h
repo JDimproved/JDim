@@ -29,6 +29,11 @@ namespace CORE
         // 実行
         void exec( int num, const std::string& url, const std::string& link, const std::string& selection );
 
+        // コマンド置換
+        // cmdの$URLをurl, $LINKをlink, $TEXT*をtextで置き換えて出力
+        // text は UTF-8 であること
+        std::string replace_cmd( const std::string& cmd, const std::string& url, const std::string& link, const std::string& text );
+
         bool is_sensitive( int num, const std::string& link, const std::string& selection );
         const std::string get_label( int num );
 

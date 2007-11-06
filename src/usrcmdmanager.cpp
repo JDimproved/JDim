@@ -57,15 +57,6 @@ Usrcmd_Manager::Usrcmd_Manager()
         }
     }
 
-    // デフォルト設定を保存
-    else{
-
-        label = "googleで検索";
-        cmd = "$VIEW http://www.google.co.jp/search?hl=ja&q=$TEXTU&btnG=Google+%E6%A4%9C%E7%B4%A2&lr=";
-        set_cmd( label, cmd );
-        CACHE::save_rawdata( file_usrcmd, label + "\n" + cmd + "\n" );
-    }
-
     m_size = m_list_label.size();
 }
 
@@ -105,19 +96,7 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
 
     std::string cmd = m_list_cmd[ num ];
 
-    cmd = MISC::replace_str( cmd, "$URL", DBTREE::url_readcgi( url, 0, 0 ) );
-    cmd = MISC::replace_str( cmd, "$DATURL", DBTREE::url_dat( url ) );
-    cmd = MISC::replace_str( cmd, "$LOCALDAT", CACHE::path_dat( url ) );
-    cmd = MISC::replace_str( cmd, "$LINK", link );
-    cmd = MISC::replace_str( cmd, "$SERVERL", MISC::get_hostname( link ) );
-    cmd = MISC::replace_str( cmd, "$SERVER", MISC::get_hostname( url ) );
-    cmd = MISC::replace_str( cmd, "$HOSTNAMEL", MISC::get_hostname( link, false ) );
-    cmd = MISC::replace_str( cmd, "$HOSTNAME", MISC::get_hostname( url, false ) );
-
-    cmd = MISC::replace_str( cmd, "$TEXTU", MISC::charset_url_encode( selection, "UTF-8" ) );
-    cmd = MISC::replace_str( cmd, "$TEXTX", MISC::charset_url_encode( selection, "EUC-JP" ) );
-    cmd = MISC::replace_str( cmd, "$TEXTE", MISC::charset_url_encode( selection, "MS932" ) );
-    cmd = MISC::replace_str( cmd, "$TEXT", selection );
+    cmd = replace_cmd( cmd, url, link, selection );
        
 #ifdef _DEBUG
     std::cout << "Usrcmd_Manager::url = " << url << std::endl;
@@ -128,6 +107,46 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
 
     if( m_list_openbrowser[ num ] ) CORE::core_set_command( "open_url_browser", cmd );
     else Glib::spawn_command_line_async( cmd );
+}
+
+
+// コマンド置換
+// cmdの$URLをurl, $LINKをlink, $TEXT*をtextで置き換えて出力
+// text は UTF-8 であること
+std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
+                                         const std::string& url, const std::string& link, const std::string& text )
+{
+    std::string cmd_out = cmd;
+
+    cmd_out = MISC::replace_str( cmd_out, "$URL", DBTREE::url_readcgi( url, 0, 0 ) );
+    cmd_out = MISC::replace_str( cmd_out, "$DATURL", DBTREE::url_dat( url ) );
+    cmd_out = MISC::replace_str( cmd_out, "$LOCALDAT", CACHE::path_dat( url ) );
+    cmd_out = MISC::replace_str( cmd_out, "$LINK", link );
+    cmd_out = MISC::replace_str( cmd_out, "$SERVERL", MISC::get_hostname( link ) );
+    cmd_out = MISC::replace_str( cmd_out, "$SERVER", MISC::get_hostname( url ) );
+    cmd_out = MISC::replace_str( cmd_out, "$HOSTNAMEL", MISC::get_hostname( link, false ) );
+    cmd_out = MISC::replace_str( cmd_out, "$HOSTNAME", MISC::get_hostname( url, false ) );
+
+    if( cmd_out.find( "$TEXTU" ) != std::string::npos ){
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTU", MISC::charset_url_encode_split( text, "UTF-8" ) );
+    }
+    if( cmd_out.find( "$TEXTX" ) != std::string::npos ){
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTX", MISC::charset_url_encode_split( text, "EUC-JP" ) );
+    }
+    if( cmd_out.find( "$TEXTE" ) != std::string::npos ){
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTE", MISC::charset_url_encode_split( text, "MS932" ) );
+    }
+    if( cmd_out.find( "$TEXT" ) != std::string::npos ){
+        cmd_out = MISC::replace_str( cmd_out, "$TEXT",  MISC::charset_url_encode_split( text, "" ) );
+    }
+
+#ifdef _DEBUG
+    std::cout << "Usrcmd_Manager::replace_cmd\n";
+    std::cout << "cmd = " << cmd << std::endl;
+    std::cout << "out = " << cmd_out << std::endl;
+#endif
+
+    return cmd_out;
 }
 
 

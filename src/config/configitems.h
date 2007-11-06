@@ -130,11 +130,15 @@ namespace CONFIG
         bool use_link_as_board;
 
         // スレタイ検索用メニュータイトルアドレス
-        std::string url_search_menu;
+        std::string menu_search_title;
         std::string url_search_title;
 
         // スレタイ検索用正規表現
-        std::string search_title_regex;
+        std::string regex_search_title;
+
+        // web検索用メニュータイトルアドレス
+        std::string menu_search_web;
+        std::string url_search_web;
 
         // 色
         std::vector< std::string > str_color;
@@ -162,6 +166,9 @@ namespace CONFIG
 
         // スレビューのスクロール量(キー上下)
         int key_scroll_size;
+
+        // スレビューでリロード後に一番下までスクロール
+        bool jump_after_reload;
 
         // 板一覧でカテゴリを常にひとつだけ開く
         bool open_one_category;

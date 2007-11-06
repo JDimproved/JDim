@@ -117,6 +117,10 @@ namespace MISC
     // str は UTF-8 であること
     std::string charset_url_encode( const std::string& str, const std::string& charset );
 
+    // 文字コード変換して url エンコード
+    // ただし半角スペースのところを+に置き換えて区切る
+    std::string charset_url_encode_split( const std::string& str, const std::string& charset );
+
     // BASE64
     std::string base64( const std::string& str );
 

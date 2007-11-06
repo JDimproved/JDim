@@ -91,7 +91,7 @@ const bool ConfigItems::load()
     fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", defaultfont + " " + std::string( CONF_FONTSIZE_POPUP ) );
 
     // スレ一覧のフォント
-    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", defaultfont + " " + std::string(CONF_FONTSIZE_TREE ) );
+    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", defaultfont + " " + std::string( CONF_FONTSIZE_TREE ) );
 
     // 板一覧のフォント
     fontname[ FONT_BOARD ] = cf.get_option( "fontname_board", fontname[ FONT_BBS ] );
@@ -208,11 +208,15 @@ const bool ConfigItems::load()
     use_link_as_board = cf.get_option( "use_link_as_board", CONF_LINK_AS_BOARD );
 
     // スレタイ検索用メニュータイトルアドレス
-    url_search_menu = cf.get_option( "url_search_menu", CONF_URL_SEARCH_MENU );
+    menu_search_title = cf.get_option( "menu_search_title", CONF_MENU_SEARCH_TITLE );
     url_search_title = cf.get_option( "url_search_title", CONF_URL_SEARCH_TITLE );
 
     // スレタイ検索用正規表現
-    search_title_regex = cf.get_option( "search_title_regex", CONF_SEARCH_TITLE_REGEX );
+    regex_search_title = cf.get_option( "regex_search_title", CONF_REGEX_SEARCH_TITLE );
+
+    // web検索用メニュータイトルアドレス
+    menu_search_web = cf.get_option( "menu_search_web", CONF_MENU_SEARCH_WEB );
+    url_search_web = cf.get_option( "url_search_web", CONF_URL_SEARCH_WEB );
 
     /////////
     // 色
@@ -342,6 +346,9 @@ const bool ConfigItems::load()
 
     // スレビューのスクロール量(キー上下)
     key_scroll_size = cf.get_option( "key_scroll_size", CONF_KEY_SCROLL_SIZE );
+
+    // スレビューでリロード後に一番下までスクロール
+    jump_after_reload = cf.get_option( "jump_after_reload", CONF_JUMP_AFTER_RELOAD );
 
     // 板一覧でカテゴリを常にひとつだけ開く
     open_one_category = cf.get_option( "open_one_category", CONF_OPEN_ONE_CATEGORY );
@@ -494,9 +501,11 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "url_login2ch", url_login2ch );
     cf.update( "url_bbsmenu", url_bbsmenu );
     cf.update( "use_link_as_board", use_link_as_board );
-    cf.update( "url_search_menu", url_search_menu );
+    cf.update( "menu_search_title", menu_search_title );
     cf.update( "url_search_title", url_search_title );
-    cf.update( "search_title_regex", search_title_regex );
+    cf.update( "regex_search_title", regex_search_title );
+    cf.update( "menu_search_web", menu_search_web );
+    cf.update( "url_search_web", url_search_web );
 
     cf.update( "fontname_main", fontname[ FONT_MAIN ] );
     cf.update( "fontname_popup", fontname[ FONT_POPUP ] );
@@ -597,6 +606,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "tree_scroll_size", tree_scroll_size );
     cf.update( "scroll_size", scroll_size );
     cf.update( "key_scroll_size", key_scroll_size );
+    cf.update( "jump_after_reload", jump_after_reload );
     cf.update( "open_one_category", open_one_category );
     cf.update( "always_write_ok", always_write_ok );
     cf.update( "save_postlog", save_postlog );

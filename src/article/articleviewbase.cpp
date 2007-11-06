@@ -219,11 +219,12 @@ void ArticleViewBase::setup_action()
 
     // 検索
     action_group()->add( Gtk::Action::create( "Search_Menu", "検索(_F)" ) );
+    action_group()->add( Gtk::Action::create( "SearchWeb", CONFIG::get_menu_search_web()+"(_W)" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_web ) );
     action_group()->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索(_C)" ) );
     action_group()->add( Gtk::Action::create( "SearchCacheLocal", "この板のログのみを検索(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
     action_group()->add( Gtk::Action::create( "SearchCacheAll", "キャッシュ内の全ログを検索(_A)") );
     action_group()->add( Gtk::Action::create( "ExecSearchCacheAll", "検索する(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cacheall ) );
-    action_group()->add( Gtk::Action::create( "SearchTitle", CONFIG::get_url_search_menu() ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
+    action_group()->add( Gtk::Action::create( "SearchTitle", CONFIG::get_menu_search_title() + "(_T)" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
 
     // 抽出系
     action_group()->add( Gtk::Action::create( "Drawout_Menu", "抽出(_E)" ) );
@@ -411,14 +412,17 @@ void ArticleViewBase::setup_action()
 
     "<menu action='Search_Menu'>"
 
+    "<menuitem action='SearchWeb'/>"
+    "<menuitem action='SearchTitle' />"
+
+    "<separator/>"
+
     "<menu action='SearchCache_Menu'>"
     "<menuitem action='SearchCacheLocal'/>"
     "<menu action='SearchCacheAll'>"
     "<menuitem action='ExecSearchCacheAll'/>"
     "</menu>"
     "</menu>"
-
-    "<menuitem action='SearchTitle' />"
 
     "</menu>"
 
@@ -2574,6 +2578,28 @@ void ArticleViewBase::slot_search_cachelocal()
 #endif
     
     CORE::core_set_command( "open_article_searchlog", url , query );
+}
+
+
+
+//
+// web検索実行
+//
+void ArticleViewBase::slot_search_web()
+{
+    std::string query = m_drawarea->str_selection();
+    query = MISC::replace_str( query, "\n", "" );
+
+    if( query.empty() ) return;
+
+    std::string url = CORE::get_usrcmd_manager()->replace_cmd( CONFIG::get_url_search_web(), "", "", query );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_search_web query = " << query << std::endl;
+    std::cout << "url = " << url << std::endl;
+#endif
+
+    CORE::core_set_command( "open_url_browser", url );
 }
 
 

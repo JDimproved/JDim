@@ -220,7 +220,7 @@ void Search_Manager::search_fin_title()
     if( ! m_searchloader->get_data().empty() ){
 
         JDLIB::Regex regex;
-        regex.compile( CONFIG::get_search_title_regex() );
+        regex.compile( CONFIG::get_regex_search_title() );
 
         std::list< std::string > lines = MISC::get_lines( m_searchloader->get_data() );
         std::list< std::string >::iterator it;

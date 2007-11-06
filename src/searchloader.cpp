@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "searchloader.h"
+#include "usrcmdmanager.h"
 
 #include "jdlib/loaderdata.h"
 #include "jdlib/miscutil.h"
@@ -38,22 +39,7 @@ SearchLoader::~SearchLoader()
 
 const std::string SearchLoader::get_url()
 {
-    std::string url = CONFIG::get_url_search_title();
-
-    // queryに半角スペースが含まれるときは + でつなぐ
-    std::list< std::string > list_query = MISC::split_line( m_query );
-    std::list< std::string >::iterator it = list_query.begin();
-    std::string query;
-    for( ; it != list_query.end(); ++it ){
-
-        if( it != list_query.begin() ) query += "+";
-        query += MISC::charset_url_encode( *it, get_charset() );
-    }
-
-    url = MISC::replace_str( url, "$TEXTU", query );
-    url = MISC::replace_str( url, "$TEXTX", query );
-    url = MISC::replace_str( url, "$TEXTE", query );
-    url = MISC::replace_str( url, "$TEXT", query );
+    std::string url = get_usrcmd_manager()->replace_cmd( CONFIG::get_url_search_title(), "", "", m_query );
 
 #ifdef _DEBUG
     std::cout << "SearchLoader::get_url url = " << url << std::endl;

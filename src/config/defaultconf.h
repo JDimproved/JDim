@@ -41,6 +41,7 @@ namespace CONFIG
         CONF_TREE_SCROLL_SIZE = 4,  // ツリービューのスクロール量(行数)
         CONF_SCROLL_SIZE = 3,       // スレビューのスクロール量
         CONF_KEY_SCROLL_SIZE = 2,   // スレビューのスクロール量(キー上下)
+        CONF_JUMP_AFTER_RELOAD = 0, // スレビューでリロード後に一番下までスクロール
         CONF_OPEN_ONE_CATEGORY = 0, // 板一覧でカテゴリを常にひとつだけ開く
         CONF_ALWAYS_WRITE_OK = 0,   // 書き込み時に書き込み確認ダイアログを出さない
         CONF_SAVE_POSTLOG = 0,      //書き込みログを保存
@@ -117,11 +118,15 @@ namespace CONFIG
 #define CONF_BBSMENU "http://menu.2ch.net/bbsmenu.html"
 
 // スレタイ検索用メニュータイトルアドレス
-#define CONF_URL_SEARCH_MENU  "スレタイ検索(find2ch)"
+#define CONF_MENU_SEARCH_TITLE  "スレタイ検索(find2ch)"
 #define CONF_URL_SEARCH_TITLE "http://find.2ch.net/?STR=$TEXTX&COUNT=50&TYPE=TITLE&BBS=ALL"
 
 // スレタイ検索用正規表現
-#define CONF_SEARCH_TITLE_REGEX "<a href=\"(http[^\"]*)\">(.+?)</a> \\(([0-9]{1,4})\\)"
+#define CONF_REGEX_SEARCH_TITLE "<a href=\"(http[^\"]*)\">(.+?)</a> \\(([0-9]{1,4})\\)"
+
+// WEB検索用メニュータイトルアドレス
+#define CONF_MENU_SEARCH_WEB  "WEB検索(google)"
+#define CONF_URL_SEARCH_WEB "http://www.google.co.jp/search?hl=ja&q=$TEXTU&btnG=Google+%E6%A4%9C%E7%B4%A2&lr="
 
 // 色
 #define CONF_COLOR_CHAR    "#000000000000"     // スレの文字

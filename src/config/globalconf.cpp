@@ -108,9 +108,12 @@ const std::string& CONFIG::get_url_bbsmenu() { return get_confitem()->url_bbsmen
 
 const bool CONFIG::use_link_as_board(){ return get_confitem()->use_link_as_board; }
 
-const std::string& CONFIG::get_url_search_menu(){ return get_confitem()->url_search_menu; }
+const std::string& CONFIG::get_menu_search_title(){ return get_confitem()->menu_search_title; }
 const std::string& CONFIG::get_url_search_title(){ return get_confitem()->url_search_title; }
-const std::string& CONFIG::get_search_title_regex(){ return get_confitem()->search_title_regex; }
+const std::string& CONFIG::get_regex_search_title(){ return get_confitem()->regex_search_title; }
+
+const std::string& CONFIG::get_menu_search_web(){ return get_confitem()->menu_search_web; }
+const std::string& CONFIG::get_url_search_web(){ return get_confitem()->url_search_web; }
 
 const std::string& CONFIG::get_agent_for2ch() { return get_confitem()->agent_for2ch; }
 
@@ -194,6 +197,8 @@ const bool CONFIG::get_inc_search_board(){ return get_confitem()->inc_search_boa
 const int CONFIG::get_tree_scroll_size(){ return get_confitem()->tree_scroll_size; }
 const int CONFIG::get_scroll_size(){ return get_confitem()->scroll_size; }
 const int CONFIG::get_key_scroll_size(){ return get_confitem()->key_scroll_size; }
+
+const bool CONFIG::get_jump_after_reload(){ return get_confitem()->jump_after_reload; }
 
 const bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; }
 const bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }

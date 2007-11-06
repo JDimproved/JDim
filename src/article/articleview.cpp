@@ -302,7 +302,8 @@ void ArticleViewMain::update_finish()
     // 全体再描画
     drawarea()->redraw_view();
 
-    if( m_gotonum_reserve ) goto_num( m_gotonum_reserve );
+    if( CONFIG::get_jump_after_reload() ) goto_bottom();
+    else if( m_gotonum_reserve ) goto_num( m_gotonum_reserve );
     m_gotonum_reserve = 0;
 
     if( m_show_instdialog ) show_instruct_diag();

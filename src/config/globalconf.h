@@ -65,11 +65,15 @@ namespace CONFIG
     const bool use_link_as_board();
 
     // スレタイ検索用メニュータイトルアドレス
-    const std::string& get_url_search_menu();
+    const std::string& get_menu_search_title();
     const std::string& get_url_search_title();
 
     // スレタイ検索用正規表現
-    const std::string& get_search_title_regex();
+    const std::string& get_regex_search_title();
+
+    // WEB検索用メニュータイトルアドレス
+    const std::string& get_menu_search_web();
+    const std::string& get_url_search_web();
 
     // 2ch にアクセスするときのエージェント名
     const std::string& get_agent_for2ch();
@@ -193,6 +197,9 @@ namespace CONFIG
 
     // スレビューのスクロール量(キー上下)
     const int get_key_scroll_size();
+
+    // スレビューでリロード後に一番下までスクロール
+    const bool get_jump_after_reload();
 
     // 板一覧でカテゴリを常にひとつだけ開く
     const bool get_open_one_category();
