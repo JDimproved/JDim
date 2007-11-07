@@ -2976,6 +2976,9 @@ void Core::exec_command()
     // ある admin クラスのコマンドが空になった
     else if( command.command  == "empty_command" ){}
 
+    // ある jdwindow クラスのブートが終わった
+    else if( command.command  == "window_boot_fin" ){}
+
     // 起動中
     if( SESSION::is_booting() && ! m_init ){
 

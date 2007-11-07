@@ -2682,6 +2682,10 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 
     // 先頭のレイアウトブロックから順に調べる
     LAYOUT* header = m_layout_tree->top_header();
+
+    // まだレイアウト計算していない
+    if( header->next_header && ! header->next_header->rect ) return NULL;
+
     while( header ){
 
         // y が含まれているヘッダブロックだけチェックする
