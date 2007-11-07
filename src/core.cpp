@@ -62,6 +62,14 @@ enum
 };
 
 
+enum
+{
+    IMGVIEW_WINDOW = 0,
+    IMGVIEW_EMB,
+    IMGVIEW_NO
+};
+
+
 Core* instance_core;
 
 
@@ -303,9 +311,17 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "EmbMes", "書き込みビューを埋め込み表示(_E)", std::string(), SESSION::get_embedded_mes() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_embedded_mes ) );
 
-    // 埋め込みImage
-    m_action_group->add( Gtk::ToggleAction::create( "EmbImg", "画像ビューを埋め込み表示(_G)", std::string(), SESSION::get_embedded_img() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_embedded_img ) );
+    // 画像表示設定
+    m_action_group->add( Gtk::Action::create( "ImageView_Menu", "画像表示設定(_G)" ) );
+    m_action_group->add( Gtk::Action::create( "ShowImageView_Menu", "画像ビュー(_V)" ) );
+    m_action_group->add( Gtk::ToggleAction::create( "UseWinImg", "ウィンドウ表示する(_W)", std::string(), false ),
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_WINDOW ) );
+    m_action_group->add( Gtk::ToggleAction::create( "UseEmbImg", "埋め込み表示する(_E)", std::string(), false ),
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_EMB ) );
+    m_action_group->add( Gtk::ToggleAction::create( "UseImgPopup", "画像ポップアップを表示する(_P)", std::string(), CONFIG::get_use_image_popup() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
+    m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
 
     // リスト表示項目設定
     m_action_group->add( Gtk::Action::create( "ListItem_Menu", "リスト項目設定(_L)" ) );
@@ -399,12 +415,6 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "Image_Menu", "画像(_E)" ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける(_M)", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseImgView", "画像ビューを表示する(_V)", std::string(), CONFIG::get_use_image_view() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_use_imgview ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseImgPopup", "画像ポップアップを表示する(_P)", std::string(), CONFIG::get_use_image_popup() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュの消去(_D)..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
 
     // プライバシー
@@ -529,15 +539,24 @@ void Core::run( bool init )
         "<menu action='ListItem_Menu'>"
         "<menuitem action='SetupBoardItemColumn'/>"
         "</menu>"
-    "<separator/>";
+    "<separator/>"
 
-    str_ui += menu_font
+    + menu_font
+
     + "<separator/>"
-    + "<menuitem action='EmbMes'/>";
+    "<menu action='ImageView_Menu'>"
 
-    if( CONFIG::get_use_image_view() ) str_ui +=  "<menuitem action='EmbImg'/>";
+    "<menu action='ShowImageView_Menu'>"
+    "<menuitem action='UseWinImg'/>"    
+    "<menuitem action='UseEmbImg'/>"
+    "</menu>"
 
-    str_ui +=
+    "<menuitem action='UseImgPopup'/>"    
+    "<menuitem action='UseInlineImg'/>"    
+    "</menu>"
+
+    "<separator/>"
+    "<menuitem action='EmbMes'/>"
 
         "</menu>"
 
@@ -618,9 +637,6 @@ void Core::run( bool init )
 
         "<menu action='Image_Menu'>"
         "<menuitem action='UseMosaic'/>"    
-        "<menuitem action='UseImgView'/>"    
-        "<menuitem action='UseImgPopup'/>"    
-        "<menuitem action='UseInlineImg'/>"    
         "<separator/>"
         "<menuitem action='DeleteImages'/>"
         "</menu>"
@@ -1053,6 +1069,26 @@ void Core::slot_activate_menubar()
     if( CONFIG::get_use_image_view() && ! IMAGE::get_admin()->empty() ) act->set_sensitive( true );
     else act->set_sensitive( false );
 
+    // 画像ビュー表示切り替え
+    act = m_action_group->get_action( "UseWinImg" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( ! CONFIG::get_use_image_view() ) tact->set_active( false );
+        else{
+            if( SESSION::get_embedded_img() ) tact->set_active( false );
+            else tact->set_active( true );
+        }
+    }
+    act = m_action_group->get_action( "UseEmbImg" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( ! CONFIG::get_use_image_view() ) tact->set_active( false );
+        else{
+            if( SESSION::get_embedded_img() ) tact->set_active( true );
+            else tact->set_active( false );
+        }
+    }
+
     // 開いている板のログ検索
     act = m_action_group->get_action( "SearchCacheBoard" );
     if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
@@ -1095,18 +1131,6 @@ void Core::slot_toggle_use_mosaic()
     CONFIG::set_use_mosaic( ! CONFIG::get_use_mosaic() );
 
     SKELETON::MsgDiag mdiag( NULL, "次に開いた画像から有効になります" );
-    mdiag.run();
-}
-
-
-//
-// 画像ビューon/off
-//
-void Core::slot_toggle_use_imgview()
-{
-    CONFIG::set_use_image_view( ! CONFIG::get_use_image_view() );
-
-    SKELETON::MsgDiag mdiag( NULL, "JDの再起動後に有効になります。再起動してください" );
     mdiag.run();
 }
 
@@ -1982,12 +2006,30 @@ void Core::slot_toggle_embedded_mes()
 
 
 //
-// 埋め込みimageビュー
+// imageビュー表示設定
 //
-void Core::slot_toggle_embedded_img()
+void Core::slot_toggle_imgview( const int mode )
 {
+    if( SESSION::is_booting() ) return;
+    if( ! m_enable_menuslot ) return;
+
+    int current_mode = IMGVIEW_NO;
+
+    if( CONFIG::get_use_image_view() ){
+        if( SESSION::get_embedded_img() ) current_mode = IMGVIEW_EMB;
+        else current_mode = IMGVIEW_WINDOW;
+    }
+
+    // ビュー使用切り替え
+    if( current_mode == IMGVIEW_NO || current_mode == mode ){
+        CONFIG::set_use_image_view( ! CONFIG::get_use_image_view() );
+        if( ! CONFIG::get_use_image_view() ) IMAGE::get_admin()->set_command( "close_all_views" );
+    }
+
+    // ウィンドウ、埋め込みモード切り替え
     pack_widget( true );
-    SESSION::set_embedded_img( ! SESSION::get_embedded_img() );
+    if( mode == IMGVIEW_EMB ) SESSION::set_embedded_img( true );
+    else SESSION::set_embedded_img( false );
     pack_widget( false );
 
     SESSION::set_focused_admin( SESSION::FOCUS_NO );

@@ -136,7 +136,6 @@ namespace CORE
 
         void slot_toggle_save_postlog();
         void slot_toggle_use_mosaic();
-        void slot_toggle_use_imgview();
         void slot_toggle_use_imgpopup();
         void slot_toggle_use_inlineimg();
         void slot_delete_all_images();
@@ -205,7 +204,7 @@ namespace CORE
         void slot_toggle_3pane();
         void slot_toggle_v3pane();
         void slot_toggle_embedded_mes();
-        void slot_toggle_embedded_img();
+        void slot_toggle_imgview( const int mode );
         void slot_toggle_oldarticle();
         void slot_toggle_tabbutton();
         void slot_toggle_popupwarpmode();
