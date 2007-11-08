@@ -52,6 +52,8 @@ void BBSListToolBar::pack_buttons()
         }
         ++num;
     }
+
+    show_all_children();
 }
 
 void BBSListToolBar::remove_label()

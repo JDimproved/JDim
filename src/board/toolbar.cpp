@@ -61,4 +61,6 @@ void BoardToolBar::pack_buttons()
         }
         ++num;
     }
+
+    show_all_children();
 }    
