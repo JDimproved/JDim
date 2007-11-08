@@ -176,16 +176,16 @@ void SelectItemPref::on_cell_data_hidden( Gtk::CellRenderer* cell, const Gtk::Tr
 //
 bool SelectItemPref::slot_focus_in_shown( GdkEventFocus* event )
 {
-	m_tree_hidden.get_selection()->unselect_all();
+    m_tree_hidden.get_selection()->unselect_all();
 
-	return true;
+    return true;
 }
 
 bool SelectItemPref::slot_focus_in_hidden( GdkEventFocus* event )
 {
-	m_tree_shown.get_selection()->unselect_all();
+    m_tree_shown.get_selection()->unselect_all();
 
-	return true;
+    return true;
 }
 
 
@@ -565,7 +565,12 @@ void SelectItemPref::slot_bottom()
 void SelectItemPref::slot_delete()
 {
     std::list< Gtk::TreePath > selection_path = m_tree_shown.get_selection()->get_selected_rows();
-    if( selection_path.empty() ) return;
+    // 空の場合はフォーカスだけ移して出る
+    if( selection_path.empty() )
+    {
+        set_focus( m_tree_hidden );
+        return;
+    }
 
     std::list< Gtk::TreeRow > erase_rows;
     bool cursor = true;
@@ -584,7 +589,7 @@ void SelectItemPref::slot_delete()
             // 一番上の選択項目にカーソルを付ける
             if( name != ITEM_NAME_SEPARATOR )
             {
-            	append_hidden( name, true, cursor );
+                append_hidden( name, true, cursor );
                 cursor = false;
             }
 
@@ -615,7 +620,12 @@ void SelectItemPref::slot_delete()
 void SelectItemPref::slot_add()
 {
     std::list< Gtk::TreePath > selection_path = m_tree_hidden.get_selection()->get_selected_rows();
-    if( selection_path.empty() ) return;
+    // 空の場合はフォーカスだけ移して出る
+    if( selection_path.empty() )
+    {
+        set_focus( m_tree_shown );
+        return;
+    }
 
     std::list< Gtk::TreeRow > erase_rows;
     bool cursor = true;
