@@ -44,7 +44,7 @@ namespace SKELETON
 
         ImgButton( const Gtk::StockID& stock_id, const std::string label = std::string() ){
 
-            m_img = Gtk::manage( new Gtk::Image( stock_id, Gtk::ICON_SIZE_MENU ) );
+            m_img = Gtk::manage( new Gtk::Image( stock_id, Gtk::ICON_SIZE_BUTTON ) );
             set( label );
         }
     };
@@ -82,7 +82,7 @@ namespace SKELETON
 
         ImgToggleButton( const Gtk::StockID& stock_id, const std::string label = std::string() ){
 
-            m_img = Gtk::manage( new Gtk::Image( stock_id, Gtk::ICON_SIZE_MENU ) );
+            m_img = Gtk::manage( new Gtk::Image( stock_id, Gtk::ICON_SIZE_BUTTON ) );
             set( label );
         }
     };

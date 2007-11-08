@@ -7,8 +7,6 @@
 
 #include "skeleton/selectitempref.h"
 
-#include <string>
-
 namespace CORE
 {
     class BoardItemColumnPref : public SKELETON::SelectItemPref
@@ -22,9 +20,6 @@ namespace CORE
 
         // OK押した
         virtual void slot_ok_clicked();
-
-        // デフォルトボタン
-        virtual void slot_def();
     };
 
     class BoardItemPref : public SKELETON::SelectItemPref
@@ -38,9 +33,6 @@ namespace CORE
 
         // OK押した
         virtual void slot_ok_clicked();
-
-        // デフォルトボタン
-        virtual void slot_def();
     };
 }
 

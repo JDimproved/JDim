@@ -5,6 +5,7 @@
 
 #include "msgitempref.h"
 
+#include "icons/iconmanager.h"
 #include "jdlib/miscutil.h"
 
 #include "global.h"
@@ -13,26 +14,23 @@
 
 using namespace CORE;
 
+#define STOCK_ICON( id ) Gtk::Widget::render_icon( id, Gtk::ICON_SIZE_MENU )
+
 MsgItemPref::MsgItemPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )
 {
-    // 項目設定
-    append_hidden( ITEM_NAME_PREVIEW );
-    append_hidden( ITEM_NAME_WRITEMSG );
-    append_hidden( ITEM_NAME_NAME );
-    append_hidden( ITEM_NAME_UNDO );
-    append_hidden( ITEM_NAME_INSERTTEXT );
-    append_hidden( ITEM_NAME_NOTCLOSE );
-    append_hidden( ITEM_NAME_QUIT );
-    append_hidden( ITEM_NAME_SEPARATOR );
+    // デフォルトの項目を設定( 無効にする場合には最後に false を付ける )
+    append_default_pair( ITEM_NAME_PREVIEW, ICON::get_icon( ICON::THREAD ) );
+    append_default_pair( ITEM_NAME_WRITEMSG, ICON::get_icon( ICON::WRITE ) );
+    append_default_pair( ITEM_NAME_NAME, ICON::get_icon( ICON::TRANSPARENT ) );
+    append_default_pair( ITEM_NAME_UNDO, STOCK_ICON( Gtk::Stock::UNDO ) );
+    append_default_pair( ITEM_NAME_INSERTTEXT, STOCK_ICON( Gtk::Stock::OPEN ) );
+    append_default_pair( ITEM_NAME_NOTCLOSE, STOCK_ICON( Gtk::Stock::CANCEL ) );
+    append_default_pair( ITEM_NAME_QUIT, STOCK_ICON( Gtk::Stock::CLOSE ) );
+    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
 
-    std::string order = SESSION::get_items_msg_toolbar_str();
-    std::list< std::string > list_order = MISC::split_line( order );
-    std::list< std::string >::iterator it = list_order.begin();
-    for( ; it != list_order.end(); ++it ){
-        append_shown( *it );
-        erase_hidden( *it );
-    }
+    // 文字列を元に行を追加
+    append_rows( SESSION::get_items_msg_toolbar_str() );
 
     set_title( "ツールバー項目設定(書き込みビュー)" );
 }
@@ -46,18 +44,3 @@ void MsgItemPref::slot_ok_clicked()
 }
 
 
-// デフォルトボタン
-void MsgItemPref::slot_def()
-{
-    clear();
-
-    // 項目設定
-    append_shown( ITEM_NAME_PREVIEW );
-    append_shown( ITEM_NAME_WRITEMSG );
-    append_shown( ITEM_NAME_NAME );
-    append_shown( ITEM_NAME_UNDO );
-    append_shown( ITEM_NAME_INSERTTEXT );
-    append_shown( ITEM_NAME_NOTCLOSE );
-    append_shown( ITEM_NAME_QUIT );
-    append_hidden( ITEM_NAME_SEPARATOR );
-}

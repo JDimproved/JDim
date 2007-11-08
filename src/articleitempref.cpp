@@ -5,7 +5,7 @@
 
 #include "articleitempref.h"
 
-#include "jdlib/miscutil.h"
+#include "icons/iconmanager.h"
 
 #include "global.h"
 #include "session.h"
@@ -13,55 +13,36 @@
 
 using namespace CORE;
 
+#define STOCK_ICON( id ) Gtk::Widget::render_icon( id, Gtk::ICON_SIZE_MENU )
+
 ArticleItemPref::ArticleItemPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )
 {
-    // 項目設定
-    append_hidden( ITEM_NAME_WRITEMSG );
-    append_hidden( ITEM_NAME_OPENBOARD );
-    append_hidden( ITEM_NAME_NAME );
-    append_hidden( ITEM_NAME_SEARCH );
-    append_hidden( ITEM_NAME_RELOAD );
-    append_hidden( ITEM_NAME_STOPLOADING );
-    append_hidden( ITEM_NAME_FAVORITE );
-    append_hidden( ITEM_NAME_DELETE );
-    append_hidden( ITEM_NAME_QUIT );
-    append_hidden( ITEM_NAME_SEPARATOR );
+    // デフォルトの項目を設定( 無効にする場合には最後に false を付ける )
+    append_default_pair( ITEM_NAME_WRITEMSG, ICON::get_icon( ICON::WRITE ) );
+    append_default_pair( ITEM_NAME_OPENBOARD, ICON::get_icon( ICON::TRANSPARENT ) );
+    append_default_pair( ITEM_NAME_NAME, ICON::get_icon( ICON::TRANSPARENT ) );
+    append_default_pair( ITEM_NAME_SEARCH, STOCK_ICON( Gtk::Stock::FIND ) );
+    append_default_pair( ITEM_NAME_RELOAD, STOCK_ICON( Gtk::Stock::REFRESH ) );
+    append_default_pair( ITEM_NAME_STOPLOADING, STOCK_ICON( Gtk::Stock::STOP ) );
+    append_default_pair( ITEM_NAME_FAVORITE, STOCK_ICON( Gtk::Stock::COPY ) );
+    append_default_pair( ITEM_NAME_DELETE, STOCK_ICON( Gtk::Stock::DELETE ) );
+    append_default_pair( ITEM_NAME_QUIT, STOCK_ICON( Gtk::Stock::CLOSE ) );
+    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
 
-    std::string order = SESSION::get_items_article_toolbar_str();
-    std::list< std::string > list_order = MISC::split_line( order );
-    std::list< std::string >::iterator it = list_order.begin();
-    for( ; it != list_order.end(); ++it ){
-        append_shown( *it );
-        erase_hidden( *it );
-    }
+    // 文字列を元に行を追加
+    append_rows( SESSION::get_items_article_toolbar_str() );
 
     set_title( "ツールバー項目設定(スレビュー)" );
 }
 
 
+//
 // OKを押した
+//
 void ArticleItemPref::slot_ok_clicked()
 {
     SESSION::set_items_article_toolbar_str( get_items() );
     CORE::core_set_command( "update_article_toolbar" );
 }
 
-
-// デフォルトボタン
-void ArticleItemPref::slot_def()
-{
-    clear();
-
-    // 項目設定
-    append_shown( ITEM_NAME_WRITEMSG );
-    append_shown( ITEM_NAME_OPENBOARD );
-    append_shown( ITEM_NAME_NAME );
-    append_shown( ITEM_NAME_SEARCH );
-    append_shown( ITEM_NAME_RELOAD );
-    append_shown( ITEM_NAME_STOPLOADING );
-    append_shown( ITEM_NAME_FAVORITE );
-    append_shown( ITEM_NAME_DELETE );
-    append_shown( ITEM_NAME_QUIT );
-    append_hidden( ITEM_NAME_SEPARATOR );
-}

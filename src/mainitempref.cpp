@@ -5,6 +5,8 @@
 
 #include "mainitempref.h"
 
+#include "config/globalconf.h"
+#include "icons/iconmanager.h"
 #include "jdlib/miscutil.h"
 
 #include "global.h"
@@ -13,26 +15,27 @@
 
 using namespace CORE;
 
+#define STOCK_ICON( id ) Gtk::Widget::render_icon( id, Gtk::ICON_SIZE_MENU )
+
 MainItemPref::MainItemPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )
 {
-    // 項目設定
-    append_hidden( ITEM_NAME_BBSLISTVIEW );
-    append_hidden( ITEM_NAME_FAVORITEVIEW );
-    append_hidden( ITEM_NAME_BOARDVIEW );
-    append_hidden( ITEM_NAME_ARTICLEVIEW );
-    append_hidden( ITEM_NAME_IMAGEVIEW );
-    append_hidden( ITEM_NAME_URL );
-    append_hidden( ITEM_NAME_GO );
-    append_hidden( ITEM_NAME_SEPARATOR );
-
-    std::string order = SESSION::get_items_main_toolbar_str();
-    std::list< std::string > list_order = MISC::split_line( order );
-    std::list< std::string >::iterator it = list_order.begin();
-    for( ; it != list_order.end(); ++it ){
-        append_shown( *it );
-        erase_hidden( *it );
+    // デフォルトの項目を設定( 無効にする場合には最後に false を付ける )
+    append_default_pair( ITEM_NAME_BBSLISTVIEW, ICON::get_icon( ICON::DIR ) );
+    append_default_pair( ITEM_NAME_FAVORITEVIEW, ICON::get_icon( ICON::FAVORITE ) );
+    append_default_pair( ITEM_NAME_BOARDVIEW, ICON::get_icon( ICON::BOARD ) );
+    append_default_pair( ITEM_NAME_ARTICLEVIEW, ICON::get_icon( ICON::THREAD ) );
+    if( CONFIG::get_use_image_view() )
+    {
+        append_default_pair( ITEM_NAME_IMAGEVIEW, ICON::get_icon( ICON::IMAGE ) );
     }
+    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ) );
+    append_default_pair( ITEM_NAME_URL, ICON::get_icon( ICON::TRANSPARENT ) );
+    append_default_pair( ITEM_NAME_GO, STOCK_ICON( Gtk::Stock::JUMP_TO ) );
+    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
+
+    // 文字列を元に列を追加
+    append_rows( SESSION::get_items_main_toolbar_str() );
 
     set_title( "ツールバー項目設定(メイン)" );
 }
@@ -46,20 +49,3 @@ void MainItemPref::slot_ok_clicked()
 }
 
 
-// デフォルトボタン
-void MainItemPref::slot_def()
-{
-    clear();
-
-    // 項目設定
-    append_shown( ITEM_NAME_BBSLISTVIEW );
-    append_shown( ITEM_NAME_FAVORITEVIEW );
-    append_shown( ITEM_NAME_BOARDVIEW );
-    append_shown( ITEM_NAME_ARTICLEVIEW );
-    append_shown( ITEM_NAME_IMAGEVIEW );
-    append_shown( ITEM_NAME_SEPARATOR );
-    append_shown( ITEM_NAME_URL );
-    append_shown( ITEM_NAME_GO );
-
-    append_hidden( ITEM_NAME_SEPARATOR );
-}
