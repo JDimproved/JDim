@@ -627,7 +627,8 @@ bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
     const int height_view = m_view.get_height();
 
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::exec_layout_impl : nowrap = " << nowrap << " width_view = " << width_view << " height_view  = " << height_view << std::endl
+    std::cout << "DrawAreaBase::exec_layout_impl : url = " << m_url << std::endl
+              << "nowrap = " << nowrap << " width_view = " << width_view << " height_view  = " << height_view << std::endl
               << "m_width_client = " << m_width_client << " m_height_client = " << m_height_client << std::endl;
 #endif
 
@@ -2682,6 +2683,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 
     // 先頭のレイアウトブロックから順に調べる
     LAYOUT* header = m_layout_tree->top_header();
+    if( ! header ) return NULL;
 
     // まだレイアウト計算していない
     if( header->next_header && ! header->next_header->rect ) return NULL;
@@ -3314,7 +3316,8 @@ void DrawAreaBase::configure_impl()
     int seen_current = m_seen_current;
 
 #ifdef _DEBUG    
-    std::cout << "DrawAreaBase::configure_impl seen = " << seen_current
+    std::cout << "DrawAreaBase::configure_impl : url = " << m_url << std::endl
+              << "seen = " << seen_current
               << " width = " << m_view.get_width() << " heigth = " << m_view.get_height()
               << " pre_width = " << m_configure_width << " pre_height = " << m_configure_height << std::endl;
 #endif
