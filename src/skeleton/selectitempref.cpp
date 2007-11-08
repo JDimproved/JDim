@@ -19,8 +19,8 @@ SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url )
       m_button_up( Gtk::Stock::GO_UP ),
       m_button_down( Gtk::Stock::GO_DOWN ),
       m_button_bottom( Gtk::Stock::GOTO_BOTTOM ),
-      m_button_delete( Gtk::Stock::GO_FORWARD ),
-      m_button_add( Gtk::Stock::GO_BACK ),
+      m_button_delete( Gtk::Stock::GO_FORWARD, std::string(), Gtk::ICON_SIZE_BUTTON ),
+      m_button_add( Gtk::Stock::GO_BACK, std::string(), Gtk::ICON_SIZE_BUTTON ),
       m_button_default( Gtk::Stock::REVERT_TO_SAVED )
 {
     m_list_default_data.clear();

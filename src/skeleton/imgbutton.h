@@ -42,9 +42,11 @@ namespace SKELETON
             set( label );
         }
 
-        ImgButton( const Gtk::StockID& stock_id, const std::string label = std::string() ){
+        ImgButton( const Gtk::StockID& stock_id,
+                  const std::string label = std::string(),
+                  const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU ){
 
-            m_img = Gtk::manage( new Gtk::Image( stock_id, Gtk::ICON_SIZE_MENU ) );
+            m_img = Gtk::manage( new Gtk::Image( stock_id, icon_size ) );
             set( label );
         }
     };
@@ -80,9 +82,11 @@ namespace SKELETON
             set( label );
         }
 
-        ImgToggleButton( const Gtk::StockID& stock_id, const std::string label = std::string() ){
+        ImgToggleButton( const Gtk::StockID& stock_id,
+                         const std::string label = std::string(),
+                         const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU ){
 
-            m_img = Gtk::manage( new Gtk::Image( stock_id, Gtk::ICON_SIZE_MENU ) );
+            m_img = Gtk::manage( new Gtk::Image( stock_id, icon_size ) );
             set( label );
         }
     };
