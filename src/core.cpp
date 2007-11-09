@@ -308,8 +308,16 @@ void Core::run( bool init )
     m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
 
     // 埋め込みmessage
-    m_action_group->add( Gtk::ToggleAction::create( "EmbMes", "書き込みビューを埋め込み表示(_E)", std::string(), SESSION::get_embedded_mes() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_embedded_mes ) );
+    Gtk::RadioButtonGroup radiogroup_msg;
+    m_action_group->add( Gtk::Action::create( "ShowMsgView_Menu", "書き込みビュー(_M)" ) );
+    Glib::RefPtr< Gtk::RadioAction > raction_msg0 = Gtk::RadioAction::create( radiogroup_msg, "UseWinMsg", "ウィンドウ表示する(_W)" );
+    Glib::RefPtr< Gtk::RadioAction > raction_msg1 = Gtk::RadioAction::create( radiogroup_msg, "UseEmbMsg", "埋め込み表示する(_E)" );
+
+    if( ! SESSION::get_embedded_mes() ) raction_msg0->set_active( true );
+    else raction_msg1->set_active( true );
+
+    m_action_group->add( raction_msg0, sigc::mem_fun( *this, &Core::slot_toggle_winmsg ) );
+    m_action_group->add( raction_msg1, sigc::mem_fun( *this, &Core::slot_toggle_embmsg ) );
 
     // 画像表示設定
     m_action_group->add( Gtk::Action::create( "ImageView_Menu", "画像表示設定(_G)" ) );
@@ -556,7 +564,11 @@ void Core::run( bool init )
     "</menu>"
 
     "<separator/>"
-    "<menuitem action='EmbMes'/>"
+
+    "<menu action='ShowMsgView_Menu'>"
+    "<menuitem action='UseWinMsg'/>"
+    "<menuitem action='UseEmbMsg'/>"
+    "</menu>"
 
         "</menu>"
 
@@ -1993,12 +2005,25 @@ void Core::slot_toggle_v3pane()
 
 
 //
-// 埋め込みmessageビュー
+// messageビューをウィンドウ表示
 //
-void Core::slot_toggle_embedded_mes()
+void Core::slot_toggle_winmsg()
 {
     pack_widget( true );
-    SESSION::set_embedded_mes( ! SESSION::get_embedded_mes() );
+    SESSION::set_embedded_mes( false );
+    pack_widget( false );
+
+    restore_focus( true, false );
+}
+
+
+//
+// messageビューを埋め込み表示
+//
+void Core::slot_toggle_embmsg()
+{
+    pack_widget( true );
+    SESSION::set_embedded_mes( true );
     pack_widget( false );
 
     restore_focus( true, false );
