@@ -152,36 +152,36 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     // ポップアップメニューの設定
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
-    action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く"), sigc::mem_fun( *this, &BBSListViewBase::slot_open_tab ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"), sigc::mem_fun( *this, &BBSListViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &BBSListViewBase::slot_append_favorite ) );
-    action_group()->add( Gtk::Action::create( "NewDir", "新規ディレクトリ"), sigc::mem_fun( *this, &BBSListViewBase::slot_newdir ) );
-    action_group()->add( Gtk::Action::create( "NewCom", "コメント挿入"), sigc::mem_fun( *this, &BBSListViewBase::slot_newcomment ) );
-    action_group()->add( Gtk::Action::create( "Rename", "名前変更"), sigc::mem_fun( *this, &BBSListViewBase::slot_rename ) );
+    action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く(_T)"), sigc::mem_fun( *this, &BBSListViewBase::slot_open_tab ) );
+    action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)"), sigc::mem_fun( *this, &BBSListViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "AppendFavorite", "お気に入りに追加(_F)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_append_favorite ) );
+    action_group()->add( Gtk::Action::create( "NewDir", "新規ディレクトリ(_N)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newdir ) );
+    action_group()->add( Gtk::Action::create( "NewCom", "コメント挿入(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newcomment ) );
+    action_group()->add( Gtk::Action::create( "Rename", "名前変更(_R)"), sigc::mem_fun( *this, &BBSListViewBase::slot_rename ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );    
-    action_group()->add( Gtk::Action::create( "Delete", "お気に入りから削除する"), sigc::mem_fun( *this, &BBSListViewBase::delete_view ) );
-    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く"), sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
+    action_group()->add( Gtk::Action::create( "Delete", "お気に入りから削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view ) );
+    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)"), sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
 
-    action_group()->add( Gtk::Action::create( "CheckUpdateRows", "更新チェックのみ"), sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_selected_rows ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateOpenRows", "更新されたスレをタブで開く"),
+    action_group()->add( Gtk::Action::create( "CheckUpdateRows", "更新チェックのみ(_H)"), sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_selected_rows ) );
+    action_group()->add( Gtk::Action::create( "CheckUpdateOpenRows", "更新されたスレをタブで開く(_E)"),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_open_selected_rows ) );
 
-    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
-    action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
-    action_group()->add( Gtk::Action::create( "SelectDir", "全て選択"), sigc::mem_fun( *this, &BBSListViewBase::slot_select_all_dir ) );
+    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_U)"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
+    action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー(_L)"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
+    action_group()->add( Gtk::Action::create( "SelectDir", "全て選択(_A)"), sigc::mem_fun( *this, &BBSListViewBase::slot_select_all_dir ) );
 
-    action_group()->add( Gtk::Action::create( "CheckUpdate_Menu", "更新チェック" ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateDir", "更新チェックのみ"), sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_dir ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateOpenDir", "更新されたスレをタブで開く"),
+    action_group()->add( Gtk::Action::create( "CheckUpdate_Menu", "更新チェック(_M)" ) );
+    action_group()->add( Gtk::Action::create( "CheckUpdateDir", "更新チェックのみ(_R)"), sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_dir ) );
+    action_group()->add( Gtk::Action::create( "CheckUpdateOpenDir", "更新されたスレをタブで開く(_A)"),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_open_dir ) );
-    action_group()->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル" ),
+    action_group()->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_cancel_check_update ) );
 
-    action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
+    action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索(_S)"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
 
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
-    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ(_P)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
+    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ(_B)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
+    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
 
 
     ui_manager() = Gtk::UIManager::create();    
