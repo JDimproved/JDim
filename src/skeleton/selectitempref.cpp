@@ -53,7 +53,7 @@ void SelectItemPref::pack_widgets()
     view_column_shown->pack_start( *render_text_shown, true );
     view_column_shown->add_attribute( *render_text_shown, "text", 1 );
     // 列の色分け
-    if( render_text_shown && render_text_shown )
+    if( render_pixbuf_shown && render_text_shown )
     {
         Gtk::TreeView::Column* column = m_tree_shown.get_column( 0 );
         column->set_cell_data_func( *render_pixbuf_shown, sigc::mem_fun( *this, &SelectItemPref::on_cell_data_shown ) );
@@ -444,6 +444,9 @@ void SelectItemPref::slot_top()
 
         ++it;
     }
+
+    // フォーカスを移す
+    set_focus( m_tree_shown );
 }
 
 
@@ -482,6 +485,9 @@ void SelectItemPref::slot_up()
 
         ++it;
     }
+
+    // フォーカスを移す
+    set_focus( m_tree_shown );
 }
 
 
@@ -522,6 +528,9 @@ void SelectItemPref::slot_down()
 
         ++it;
     }
+
+    // フォーカスを移す
+    set_focus( m_tree_shown );
 }
 
 
@@ -556,6 +565,9 @@ void SelectItemPref::slot_bottom()
 
         ++it;
     }
+
+    // フォーカスを移す
+    set_focus( m_tree_shown );
 }
 
 
