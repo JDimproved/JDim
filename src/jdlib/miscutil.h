@@ -152,6 +152,9 @@ namespace MISC
 
     // path からファイル名を除いてディレクトリだけ取り出す
     std::string get_dir( const std::string& path );
+
+    // SVNリビジョンとして表示する文字列を返す
+    std::string get_svn_revision( const char* rev );
 }
 
 

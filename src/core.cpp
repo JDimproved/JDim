@@ -958,7 +958,7 @@ void Core::set_maintitle()
 
     std::string title;
 
-    if( m_title.empty() ) title = "JD - " + std::string( JDVERSIONSTR );
+    if( m_title.empty() ) title = "JD - " + JDVERSIONSTR;
     else title = "JD - " + m_title;
 
     if( LOGIN::get_login2ch()->login_now() ) title +=" [ ● ]";
@@ -1605,7 +1605,7 @@ void Core::slot_show_about()
     "で請求してください(宛先は the Free Software Foundation, Inc., 51 "
     "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA)。\n";
 
-    version << "バージョン " << JDVERSIONSTR;
+    version << JDVERSIONSTR;
 
     SKELETON::AboutDiag about( "JDについて" );
     about.set_logo( ICON::get_icon( ICON::JD96 ) );

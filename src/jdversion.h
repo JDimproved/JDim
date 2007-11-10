@@ -32,15 +32,13 @@
 #endif // SVN_REPOSITORY
 
 #ifdef SVN_REVISION // リビジョン
-#define JDVERSIONSTR "SVN Rev." + std::string( SVN_REVISION )
-#else  // SVN_REVISION
-#define JDVERSIONSTR ( "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ ) )
+#define JDVERSIONSTR MISC::get_svn_revision( SVN_REVISION )
 #endif // SVN_REVISION
 
 #else  // JDVERSION_SVN
 
 // 通常版のバージョン
-#define JDVERSIONSTR ( MISC::itostr( MAJORVERSION ) + "." + MISC::itostr( MINORVERSION ) + "." + MISC::itostr( MICROVERSION ) + "-" + std::string( JDTAG ) + std::string( JDDATE ) )
+#define JDVERSIONSTR std::string( MISC::itostr( MAJORVERSION ) + "." + MISC::itostr( MINORVERSION ) + "." + MISC::itostr( MICROVERSION ) + "-" + std::string( JDTAG ) + std::string( JDDATE ) )
 
 #endif // JDVERSION_SVN
 //--------------------------------

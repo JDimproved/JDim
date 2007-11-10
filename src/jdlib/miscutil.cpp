@@ -1121,3 +1121,35 @@ std::string MISC::get_dir( const std::string& path )
 
     return path.substr( 0, i+1 );
 }
+
+
+
+//
+// SVNリビジョンとして表示する文字列を返す
+//
+std::string MISC::get_svn_revision( const char* rev )
+{
+    std::string svn_revision;
+
+    // "2000:2002MS"など[0-9:MS]の形式かどうか
+    bool valid = true;
+    size_t n = strlen( rev );
+    while( n > 0 )
+    {
+        if( ( rev[n] - 0x30 ) > 0x09
+            && rev[n] != ':'
+            && rev[n] != 'M'
+            && rev[n] != 'S' )
+        {
+            valid = false;
+            break;
+        }
+        --n;
+    }
+
+    if( valid ) svn_revision = std::string( "SVN Rev." ) + std::string( rev );
+    else svn_revision = "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
+
+    return svn_revision;
+}
+
