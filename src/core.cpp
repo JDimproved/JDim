@@ -2542,7 +2542,11 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "update_bbslist" ){
 
         CORE::core_set_command( "set_status","" ,"" );        
-        CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
+
+        // フォーカスされていなかったらサイドバーにフォーカス切り替え
+        if( SESSION::focused_admin() != SESSION::FOCUS_SIDEBAR
+            || SESSION::get_bbslist_current_url() != URL_BBSLISTVIEW ) CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
+
         BBSLIST::get_admin()->set_command( "update_view", URL_BBSLISTVIEW );
         return;
     }
