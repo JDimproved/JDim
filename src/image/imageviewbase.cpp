@@ -29,7 +29,7 @@
 #include <sstream>
 
 
-#define SIZE_MENU { 25, 50, 75, 100, 150, 200, 300, 400 }
+#define SIZE_MENU { 25, 50, 75, 100, 150, 200, 400 }
 
 
 
@@ -85,13 +85,13 @@ void ImageViewBase::setup_common()
     // ポップアップメニューの設定
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
-    action_group()->add( Gtk::Action::create( "CancelMosaic", "CancelMosaic"),
+    action_group()->add( Gtk::Action::create( "CancelMosaic", "モザイク解除(_M)"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_cancel_mosaic ) );
-    action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示"),
+    action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_show_large_img ) );
-    action_group()->add( Gtk::Action::create( "LoadStop", "ロード中止"), sigc::mem_fun( *this, &ImageViewBase::stop ) );
-    action_group()->add( Gtk::Action::create( "Reload", "強制再読み込み"), sigc::mem_fun( *this, &ImageViewBase::slot_reload_force ) );
-    action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &ImageViewBase::slot_favorite ) );
+    action_group()->add( Gtk::Action::create( "LoadStop", "ロード中止(_N)"), sigc::mem_fun( *this, &ImageViewBase::stop ) );
+    action_group()->add( Gtk::Action::create( "Reload", "強制再読み込み(_E)"), sigc::mem_fun( *this, &ImageViewBase::slot_reload_force ) );
+    action_group()->add( Gtk::Action::create( "AppendFavorite", "お気に入りに追加(_F)..."), sigc::mem_fun( *this, &ImageViewBase::slot_favorite ) );
 
     action_group()->add( Gtk::Action::create( "ZoomFitImage", "ZoomFitImage" ),
                          sigc::mem_fun( *this, &ImageViewBase::slot_fit_win ) );
@@ -102,47 +102,48 @@ void ImageViewBase::setup_common()
     action_group()->add( Gtk::Action::create( "OrgSizeImage", "OrgSizeImage" ),
                          sigc::bind< int >( sigc::mem_fun( *this, &ImageViewBase::slot_resize_image ), 100 ) );
 
-    action_group()->add( Gtk::Action::create( "Size_Menu", "サイズ変更" ) );
+    action_group()->add( Gtk::Action::create( "Size_Menu", "サイズ変更(_R)" ) );
 
     // サイズ
     unsigned int size[] = SIZE_MENU;
     for( unsigned int i = 0; i < sizeof( size )/sizeof( unsigned int ) ; ++i ){
         int tmp_size = size[ i ];
         std::string str_size = MISC::itostr( tmp_size );
-        Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "Size" + str_size, str_size + "%" );
+        std::string str_shortcut = "(_" + MISC::itostr( i ) + ")";
+        Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "Size" + str_size, str_size + "%" + str_shortcut );
         action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ImageViewBase::slot_resize_image ), tmp_size ) );
     }
 
-    action_group()->add( Gtk::Action::create( "Move_Menu", "移動" ) );
-    action_group()->add( Gtk::Action::create( "MoveHead", "先頭に移動" ), sigc::mem_fun( *this, &ImageViewBase::slot_move_head ) );
-    action_group()->add( Gtk::Action::create( "MoveTail", "最後に移動" ), sigc::mem_fun( *this, &ImageViewBase::slot_move_tail ) );
+    action_group()->add( Gtk::Action::create( "Move_Menu", "移動(_M)" ) );
+    action_group()->add( Gtk::Action::create( "MoveHead", "先頭に移動(_H)" ), sigc::mem_fun( *this, &ImageViewBase::slot_move_head ) );
+    action_group()->add( Gtk::Action::create( "MoveTail", "最後に移動(_T)" ), sigc::mem_fun( *this, &ImageViewBase::slot_move_tail ) );
 
     action_group()->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &ImageViewBase::close_view ) );
 
-    action_group()->add( Gtk::Action::create( "Close_Menu", "複数の画像を閉じる" ) );
-    action_group()->add( Gtk::Action::create( "CloseOther", "他の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_other_views ) );
-    action_group()->add( Gtk::Action::create( "CloseLeft", "左←の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_left_views ) );
-    action_group()->add( Gtk::Action::create( "CloseRight", "右→の画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_right_views ) );
-    action_group()->add( Gtk::Action::create( "CloseAll", "全ての画像" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_all_views ) );
+    action_group()->add( Gtk::Action::create( "Close_Menu", "複数の画像を閉じる(_L)" ) );
+    action_group()->add( Gtk::Action::create( "CloseOther", "他の画像(_O)" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_other_views ) );
+    action_group()->add( Gtk::Action::create( "CloseLeft", "左←の画像(_L)" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_left_views ) );
+    action_group()->add( Gtk::Action::create( "CloseRight", "右→の画像(_R)" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_right_views ) );
+    action_group()->add( Gtk::Action::create( "CloseAll", "全ての画像(_A)" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_all_views ) );
 
-    action_group()->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする", std::string(), false ),
+    action_group()->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする(_K)", std::string(), false ),
                          sigc::mem_fun( *this, &ImageViewBase::slot_lock ) );
 
-    action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く"),
+    action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "OpenRef", "参照元のレスを開く"), sigc::mem_fun( *this, &ImageViewBase::slot_open_ref ) );
-    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー"), sigc::mem_fun( *this, &ImageViewBase::slot_copy_url ) );
-    action_group()->add( Gtk::Action::create( "Save", "Save"), sigc::mem_fun( *this, &ImageViewBase::slot_save ) );
-    action_group()->add( Gtk::Action::create( "SaveAll", "全ての画像を保存..."), sigc::mem_fun( *this, &ImageViewBase::slot_save_all ) );
+    action_group()->add( Gtk::Action::create( "OpenRef", "参照元のレスを開く(_O)"), sigc::mem_fun( *this, &ImageViewBase::slot_open_ref ) );
+    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_C)"), sigc::mem_fun( *this, &ImageViewBase::slot_copy_url ) );
+    action_group()->add( Gtk::Action::create( "Save", "名前を付けて保存(_S)..."), sigc::mem_fun( *this, &ImageViewBase::slot_save ) );
+    action_group()->add( Gtk::Action::create( "SaveAll", "全ての画像を保存(_A)..."), sigc::mem_fun( *this, &ImageViewBase::slot_save_all ) );
 
     action_group()->add( Gtk::Action::create( "DeleteMenu", "Delete" ) );    
-    action_group()->add( Gtk::Action::create( "DeleteImage", "削除する"), sigc::mem_fun( *this, &ImageViewBase::delete_view ) );
-    action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する", std::string(), false ),
+    action_group()->add( Gtk::Action::create( "DeleteImage", "削除する(_D)"), sigc::mem_fun( *this, &ImageViewBase::delete_view ) );
+    action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する(_R)", std::string(), false ),
                          sigc::mem_fun( *this, &ImageViewBase::slot_toggle_protectimage ) );
 
-    action_group()->add( Gtk::Action::create( "AboneImage", "画像をあぼ〜んする"), sigc::mem_fun( *this, &ImageViewBase::slot_abone_img ) );
+    action_group()->add( Gtk::Action::create( "AboneImage", "画像をあぼ〜んする(_B)"), sigc::mem_fun( *this, &ImageViewBase::slot_abone_img ) );
 
-    action_group()->add( Gtk::Action::create( "Preference", "Property"), sigc::mem_fun( *this, &ImageViewBase::show_preference ) );
+    action_group()->add( Gtk::Action::create( "Preference", "プロパティ(_P)..."), sigc::mem_fun( *this, &ImageViewBase::show_preference ) );
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
