@@ -22,11 +22,12 @@ namespace CONFIG
         bool m_shift;
         bool m_alt;
         bool m_dblclick;
+        bool m_save; // 設定ファイルに保存するか
 
     public:
 
-        MouseKeyItem( guint id, int mode, const std::string& name, const std::string& str_motion,
-                      guint motion, bool ctrl, bool shift, bool alt, bool dblclick )
+        MouseKeyItem( const guint id, const int mode, const std::string& name, const std::string& str_motion,
+                      const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick, const bool save )
         : m_id( id ),
         m_mode( mode ),
         m_name( name ),
@@ -35,7 +36,8 @@ namespace CONFIG
         m_ctrl( ctrl ),
         m_shift( shift ),
         m_alt( alt ),
-        m_dblclick( dblclick )
+        m_dblclick( dblclick ),
+        m_save( save )
         {}
 
         const int get_id() const { return m_id; }
@@ -47,6 +49,7 @@ namespace CONFIG
         const bool get_shift() const { return m_shift; }
         const bool get_alt() const { return m_alt; }
         const bool get_dblclick() const { return m_dblclick; }
+        const bool get_save() const { return m_save; }
 
         // モード無視
         int equal( const guint& motion, const bool& ctrl, const bool& shift, const bool& alt, const bool& dblclick )

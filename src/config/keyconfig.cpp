@@ -241,7 +241,10 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
     std::cout << "motion = " << motion << std::endl;
 #endif
 
-    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, false );
+    bool dblclick = false;
+    bool save = true;
+
+    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, save );
     vec_items().push_back( item );
 }
 

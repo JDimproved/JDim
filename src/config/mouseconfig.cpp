@@ -82,6 +82,10 @@ void MouseConfig::load_conf()
 
     // IMAGE
     SETMOTION( "CancelMosaicButton", "28" );
+
+    // この行を入れないと画像ビューのコンテキストメニューにマウスジェスチャが表示されない
+    // ただし設定ファイルには保存しない。MouseConfig::set_one_motion()も参照すること
+    set_motion( "CancelMosaic", str_motion ); 
 }
 
 
@@ -105,11 +109,17 @@ void MouseConfig::set_one_motion( const std::string& name, const std::string& st
 
     int id_check = check_conflict( mode, motion, ctrl, shift, alt, false );
     if( id_check != CONTROL::None ){
-        MISC::ERRMSG( "mouse config : " + str_motion + " is already used." );
+        MISC::ERRMSG( "mouse config : ID " + str_motion + " は既に使われています。" );
         return;
     }
 
-    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, false );
+    bool dblclick = false;
+    bool save = true;
+
+    // "CancelMosaic"は設定ファイルに保存しない
+    if( name == "CancelMosaic" ) save = false;
+
+    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, save );
     vec_items().push_back( item );
 }
 

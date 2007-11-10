@@ -165,8 +165,10 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
 
     // ひとつのボタンに複数の機能が割り当てられているので重複チェックはしない
 
+    bool save = true;
+
     // データベース登録
-    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick );
+    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, save );
     vec_items().push_back( item );
 }
 

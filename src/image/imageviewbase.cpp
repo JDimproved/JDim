@@ -265,7 +265,7 @@ void ImageViewBase::setup_common()
     ui_manager()->add_ui_from_string( str_ui );
 
 
-    // ポップアップメニューにキーアクセレータを表示
+    // ポップアップメニューにキーアクセレータやマウスジェスチャを表示
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
     CONTROL::set_menu_motion( popupmenu );
 

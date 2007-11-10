@@ -11,7 +11,7 @@
 #endif
 
 // svn 版の時は JDVERSION_SVN をdefineする
-//#define JDVERSION_SVN
+#define JDVERSION_SVN
 
 #define MAJORVERSION 1
 #define MINORVERSION 9

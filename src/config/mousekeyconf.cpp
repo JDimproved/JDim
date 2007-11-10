@@ -45,7 +45,7 @@ void MouseKeyConf::save_conf( const std::string& savefile )
         std::string motion;
         std::vector< MouseKeyItem* >::iterator it = m_vec_items.begin();
         for( ; it != m_vec_items.end(); ++it ){
-            if( (*it)->get_id() == id ){
+            if( (*it)->get_id() == id && (*it)->get_save() ){
                 name = (*it)->get_name();
                 if( !motion.empty() ) motion += " ";
                 motion += (*it)->get_str_motion();
