@@ -652,7 +652,7 @@ size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n,
 }
 
 
-long CACHE::file_exists( const std::string& path )
+const int CACHE::file_exists( const std::string& path )
 {
     struct stat buf_stat;
 

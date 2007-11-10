@@ -155,7 +155,7 @@ namespace CACHE
     size_t save_rawdata( const std::string& path, const char* data, size_t n, bool append = false );
 
     // ファイル情報
-    long file_exists( const std::string& path );
+    const int file_exists( const std::string& path );
     size_t get_filesize( const std::string& path );
     time_t get_filemtime( const std::string& path );
 

@@ -399,8 +399,23 @@ int main( int argc, char **argv )
     // 全体設定ロード
     bool init = !( CONFIG::load_conf() );
 
-    // 初回起動時にルートを作る
-    if( init ) CACHE::mkdir_root();
+    if( init ){
+
+        // 設定ファイルが読み込めないときに存在するか確認
+        int exists = CACHE::file_exists( CACHE::path_conf() );
+        if( exists == CACHE::EXIST_FILE || exists == CACHE::EXIST_DIR ){
+
+            std::string msg = "JDの設定ファイル(" + CACHE::path_conf() + ")は存在しますが読み込むことが出来ませんでした。\n\n起動しますか？";
+            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg,
+                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+            int ret = mdiag->run();
+            delete mdiag;
+            if( ret != Gtk::RESPONSE_OK ) return 0;
+        }
+
+        // 初回起動時にルートを作る
+        CACHE::mkdir_root();
+    }
 
     // ロック
     int lock = lock_jd();
