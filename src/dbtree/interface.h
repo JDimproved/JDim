@@ -160,6 +160,7 @@ namespace DBTREE
     const int article_get_speed( const std::string& url );
 
     // キャッシュ削除
+    // cache_only == true の時はキャッシュだけ削除してスレ情報は消さない
     void delete_article( const std::string& url, const bool cache_only );  
 
     // キャッシュ保存

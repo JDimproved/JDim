@@ -42,6 +42,7 @@ namespace ARTICLE
 
       private:
         void delete_popup();
+        void delete_all_popups();
 
         virtual void slot_drag_begin( int page );
         virtual void slot_drag_end();

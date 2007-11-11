@@ -1083,7 +1083,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
     if( empty() ) return;
 
-    if( m_bookmarked_thread ){
+    if( ! cache_only && m_bookmarked_thread ){
         SKELETON::MsgDiag mdiag( NULL, "「" + get_subject() + "」はブックマークされています。\n\nスレを削除しますか？"
                                   ,false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         mdiag.set_default_response( Gtk::RESPONSE_YES );

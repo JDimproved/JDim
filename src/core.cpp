@@ -2441,6 +2441,10 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            "closeall" // command.url を含む全てのビューを閉じる
             );
 
+        // ポップアップも削除して対象となるarticlebaseのロックを解除 (注) ポップアップは遅延してdeleteされる
+        // そうしないと articlebase::unlock_impl()が呼び出されないためnotetreebaseが削除されない
+        ARTICLE::get_admin()->set_command( "delete_all_popups" );  
+
         // もう一度開く
         if( command.arg1 == "reopen" ) core_set_command( "open_article", command.url , "true", "",  command.arg2 );
 

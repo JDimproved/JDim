@@ -245,6 +245,7 @@ namespace DBTREE
         void update_writetime();
 
         // キャッシュ削除
+        // cache_only == true の時はキャッシュだけ削除してスレ情報は消さない
         void delete_cache( const bool cache_only );
 
         // キャッシュ保存
