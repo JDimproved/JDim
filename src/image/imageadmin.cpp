@@ -948,7 +948,7 @@ void ImageAdmin::save_all()
             for( ; it != list_urls.end(); ++it ){
 
                 std::string url = (*it);
-                if( ! DBIMG::is_cached( url ) ) continue;
+                if( ! DBIMG::is_cached( url ) || DBIMG::get_mosaic( url ) ) continue;
 
                 std::string path_from = DBIMG::get_cache_path( url );
                 std::string path_to = path_dir + MISC::get_filename( url );
