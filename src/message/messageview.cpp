@@ -139,8 +139,8 @@ std::string MessageViewNew::create_message()
     }
     
     SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
-                             "新スレを作成しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-    if( mdiag.run() == Gtk::RESPONSE_OK ) return DBTREE::create_newarticle_message( get_url(), subject, name, mail, msg );
+                             "新スレを作成しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    if( mdiag.run() == Gtk::RESPONSE_YES ) return DBTREE::create_newarticle_message( get_url(), subject, name, mail, msg );
 
     return std::string();
 }

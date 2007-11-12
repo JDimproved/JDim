@@ -790,9 +790,9 @@ void BoardBase::receive_finish()
                 std::string new_url = regex.str( 1 );
                 std::string msg = "「" + get_name() + "」は\n\n" + new_url + " に移転しました。\n\nデータベースを更新しますか？";
 
-                SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-                mdiag.set_default_response( Gtk::RESPONSE_OK );
-                if( mdiag.run() == Gtk::RESPONSE_OK ){
+                SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+                mdiag.set_default_response( Gtk::RESPONSE_YES );
+                if( mdiag.run() == Gtk::RESPONSE_YES ){
 
                     DBTREE::update_board( new_url, get_name() );
                     CORE::core_set_command( "open_board", url_subject() );
@@ -800,9 +800,9 @@ void BoardBase::receive_finish()
             }
         }
         else{
-            SKELETON::MsgDiag mdiag( NULL, "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-            mdiag.set_default_response( Gtk::RESPONSE_OK );
-            if( mdiag.run() == Gtk::RESPONSE_OK ) CORE::core_set_command( "reload_bbsmenu" );
+            SKELETON::MsgDiag mdiag( NULL, "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            mdiag.set_default_response( Gtk::RESPONSE_YES );
+            if( mdiag.run() == Gtk::RESPONSE_YES ) CORE::core_set_command( "reload_bbsmenu" );
         }
 
         clear();

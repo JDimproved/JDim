@@ -113,10 +113,10 @@ void restore_bkup()
 
         Gtk::MessageDialog* mdiag
         = new Gtk::MessageDialog( "前回の起動時に正しくJDが終了されませんでした。\n\n板リストとお気に入りをバックアップファイルから復元しますか？\nキャンセルを押すとバックアップファイルを削除します。",
-                                  false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+                                  false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         int ret = mdiag->run();
         delete mdiag;
-        if( ret == Gtk::RESPONSE_OK ){
+        if( ret == Gtk::RESPONSE_YES ){
 
             if( bkup_main ){
                 rename( path_main.c_str(), path_main_old.c_str() );
@@ -407,10 +407,10 @@ int main( int argc, char **argv )
 
             std::string msg = "JDの設定ファイル(" + CACHE::path_conf() + ")は存在しますが読み込むことが出来ませんでした。\n\n起動しますか？";
             Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg,
-                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             int ret = mdiag->run();
             delete mdiag;
-            if( ret != Gtk::RESPONSE_OK ) return 0;
+            if( ret != Gtk::RESPONSE_YES ) return 0;
         }
 
         // 初回起動時にルートを作る
@@ -422,10 +422,10 @@ int main( int argc, char **argv )
     if( lock == LOCK_ALIVE ){
 
         Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDは既に起動しています。起動しますか？",
-                                                            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+                                                            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         int ret = mdiag->run();
         delete mdiag;
-        if( ret != Gtk::RESPONSE_OK ) return 0;
+        if( ret != Gtk::RESPONSE_YES ) return 0;
 
         unlock_jd();
         lock_jd();
@@ -433,12 +433,12 @@ int main( int argc, char **argv )
     else if( lock == LOCK_EXIST ){ 
 
         Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "前回起動時にJDが異常終了しました。\n\nロックファイルを削除して起動しますか？",
-                                                            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
+                                                            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
-        mdiag->set_default_response( Gtk::RESPONSE_OK );
+        mdiag->set_default_response( Gtk::RESPONSE_YES );
         int ret = mdiag->run();
         delete mdiag;
-        if( ret != Gtk::RESPONSE_OK ) return 0;
+        if( ret != Gtk::RESPONSE_YES ) return 0;
 
         unlock_jd();
         lock_jd();

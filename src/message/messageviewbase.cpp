@@ -229,8 +229,8 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
         {
             SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
                                      caution.append( "がスレッドの制限値を超えています。\n\n追加しますか？" ),
-                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-            if( mdiag.run() != Gtk::RESPONSE_OK ) return false;
+                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return false;
         }
 
         m_text_message.insert_str( arg, true );

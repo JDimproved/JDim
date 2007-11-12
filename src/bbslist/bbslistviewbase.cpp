@@ -664,8 +664,8 @@ void  BBSListViewBase::operate_view( const int& control )
             
         case CONTROL::Delete:
         {
-            SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-            if( mdiag.run() != Gtk::RESPONSE_OK ) return;
+            SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
             delete_view();
             break;
         }
@@ -2229,9 +2229,8 @@ void BBSListViewBase::delete_selected_rows()
 
         if( is_dir( (*it ) ) ){
             SKELETON::MsgDiag mdiag( NULL, "ディレクトリを削除するとディレクトリ内の行も全て削除されます。削除しますか？",
-                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-            if( mdiag.run() != Gtk::RESPONSE_OK ) return;
-
+                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
             break;
         }
     }
