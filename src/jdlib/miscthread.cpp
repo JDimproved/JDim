@@ -8,7 +8,7 @@
 #include <limits.h>
 
 // スレッド作成
-int MISC::thread_create( pthread_t* thread, STARTFUNC func , void* arg, int stack_kbyte )
+int MISC::thread_create( pthread_t* thread, STARTFUNC func , void* arg, const int stack_kbyte )
 {
     int status;
     pthread_attr_t attr;

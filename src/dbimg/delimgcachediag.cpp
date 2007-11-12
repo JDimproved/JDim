@@ -15,10 +15,10 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
+#include "jdlib/miscthread.h"
 
 #include <sys/time.h>
 
-typedef void* ( *FUNC )( void * );
 
 using namespace DBIMG;
 
@@ -60,8 +60,8 @@ bool DelImgCacheDiag::on_expose_event( GdkEventExpose* event )
     if( ! m_thread ){
         m_stop = false;
         int status;
-        if( ( status = pthread_create( &m_thread, NULL,  ( FUNC ) launcher, ( void * ) this ) )){
-            MISC::ERRMSG( std::string( "pthread_create failed : " ) + strerror( status ) );
+        if( ( status = MISC::thread_create( &m_thread, ( STARTFUNC ) launcher, ( void * ) this ) )){
+            MISC::ERRMSG( std::string( "thread_create failed : " ) + strerror( status ) );
         }
     }
 

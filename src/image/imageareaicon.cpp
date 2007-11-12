@@ -149,10 +149,9 @@ void ImageAreaIcon::show_image()
         set_width( (int)( w_org * scale ) );
         set_height( (int)( h_org * scale ) );
 
-        const int stacksize = 64;        
         int status;
         m_stop = false;
-        if( ( status = MISC::thread_create( &m_thread, icon_launcher, ( void* ) this, stacksize ) ) ){
+        if( ( status = MISC::thread_create( &m_thread, icon_launcher, ( void* ) this ) ) ){
             MISC::ERRMSG( std::string( "ImageAreaIcon::show_image : could not start thread " ) + strerror( status ) );
         }
     }
