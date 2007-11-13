@@ -27,6 +27,9 @@
 #include <fcntl.h>
 
 
+std::string root_path;
+
+
 // 設定ファイル
 std::string CACHE::path_conf()
 {
@@ -72,22 +75,22 @@ std::string CACHE::path_passwd( const std::string& basename )
 
 
 // キャッシュルートの絶対パス
-// キャッシュ構造は navi2ch の上位互換なので path_cacheroot = "~/.navi2ch/" とすればnavi2chとキャッシュを共有できる
 std::string CACHE::path_root()
 {
-    std::string root;
+    if( root_path.empty() ){
 
-    if( getenv( "JD_CACHE" ) ) root = getenv( "JD_CACHE" );
-    else root = "~/.jd/";
+        if( getenv( "JD_CACHE" ) ) root_path = getenv( "JD_CACHE" );
+        else root_path = "~/.jd/";
 
-    if( root[ root.length() -1 ] != '/' ) root = root + "/";
+        if( root_path[ root_path.length() -1 ] != '/' ) root_path = root_path + "/";
 
-    if( root[ 0 ] == '~' ){
-        std::string home = getenv( "HOME" );
-        root.replace( 0, 1, home );
+        if( root_path[ 0 ] == '~' ){
+            std::string home = getenv( "HOME" );
+            root_path.replace( 0, 1, home );
+        }
     }
 
-    return root;
+    return root_path;
 }
 
 
