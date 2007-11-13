@@ -253,20 +253,6 @@ void ArticleAdmin::delete_popup()
 
 
 //
-// 全ポップアップを消す
-//
-void ArticleAdmin::delete_all_popups()
-{
-    std::list< SKELETON::View* > list_view = get_list_view();
-    std::list< SKELETON::View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-        SKELETON::View* view = ( *it );
-        if( view ) view->set_command( "delete_popup" );
-    }
-}
-
-
-//
 // view の作成
 //
 SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
@@ -384,7 +370,6 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
 
     // ポップアップ消去
     else if( command.command == "delete_popup" ) delete_popup();
-    else if( command.command == "delete_all_popups" ) delete_all_popups();
 
     // command.url を含むビューを全て再レイアウト
     else if( command.command == "relayout_views" ){
