@@ -1149,7 +1149,7 @@ void BBSListViewBase::slot_newdir()
 {
     // これは m_path_selected が空でも実行する
 
-    Gtk::TreeModel::Path path = append_row( std::string(), "New Directory", TYPE_DIR, m_path_selected, true );
+    Gtk::TreeModel::Path path = append_row( std::string(), "新規ディレクトリ", TYPE_DIR, m_path_selected, true );
     m_treeview.set_cursor( path );
     show_status();
     m_path_selected = path;
@@ -1165,7 +1165,7 @@ void BBSListViewBase::slot_newcomment()
 {
     if( m_path_selected.empty() ) return;
 
-    Gtk::TreeModel::Path path = append_row( std::string(), "Comment", TYPE_COMMENT, m_path_selected, true );
+    Gtk::TreeModel::Path path = append_row( std::string(), "コメント", TYPE_COMMENT, m_path_selected, true );
     m_treeview.set_cursor( path );
     m_path_selected = path;
     slot_rename();
@@ -2235,15 +2235,30 @@ void BBSListViewBase::delete_selected_rows()
         }
     }
 
-    // カーソルを一番最後の列の次に移動する
+    // カーソルを一番最後の行の次の行に移動する
     it = list_it.end();
-    Gtk::TreePath next = m_treeview.next_path( GET_PATH( *(--it) ), true );
-    m_treeview.set_cursor( next );
+    --it;
+
+    // ディレクトリを閉じないとそのディレクトリの先頭の列が next になり、ディレクトリが削除されるため
+    // キーボードフォーカスが外れる
+    if( is_dir( *it ) ) m_treeview.collapse_row( GET_PATH( *it ) ); 
+    Gtk::TreePath next = m_treeview.next_path( GET_PATH( *it ), true );
+
+    // もしnextが存在しなかったら全ての行を削除してから一番下に移動
+    bool gotobottom = ( ! m_treeview.get_row( next ) );
+    if( ! gotobottom ) m_treeview.set_cursor( next );
+
+#ifdef _DEBUG
+    std::cout << " BBSListViewBase::delete_selected_rows : ";
+    std::cout << GET_PATH( *it ).to_string() << " -> " << next.to_string() << std::endl;
+#endif
 
     // まとめて削除
-    // ディレクトリ内の列を同時に選択している場合があるので後から消す
+    // ディレクトリ内の行を同時に選択している場合があるので後から消す
     it = list_it.end();
     while( it != list_it.begin() ) m_treestore->erase( ( *(--it) ) );
+
+    if( gotobottom ) m_treeview.goto_bottom();
 }
 
 
