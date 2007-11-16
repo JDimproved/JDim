@@ -198,6 +198,16 @@ AC_ARG_WITH(core2duo,[ --with-core2duo    (use core2duo)],
 
 
 dnl
+dnl checking athlon64
+dnl
+AC_ARG_WITH(athlon64,[ --with-athlon64    (use athlon64)],
+       [ if test "$withval" != "no" ;then
+               echo "use athlon64"
+	       CXXFLAGS="$CXXFLAGS -march=athlon64 -pipe"
+       fi ])
+
+
+dnl
 dnl checking pangolayout
 dnl
 AC_ARG_WITH(pangolayout,[ --with-pangolayout    (use pangolayout)],
