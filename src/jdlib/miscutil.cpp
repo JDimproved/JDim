@@ -1129,9 +1129,9 @@ std::string MISC::get_dir( const std::string& path )
 //
 std::string MISC::get_svn_revision( const char* rev )
 {
-    if( ! rev ) return std::string();
+    std::string svn_revision = "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
 
-    std::string svn_revision;
+    if( ! rev ) return svn_revision;
 
     // "2000:2002MS"など[0-9:MS]の形式かどうか
     bool valid = true;
@@ -1148,7 +1148,6 @@ std::string MISC::get_svn_revision( const char* rev )
     }
 
     if( valid ) svn_revision = std::string( "SVN Rev." ) + std::string( rev );
-    else svn_revision = "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
 
     return svn_revision;
 }

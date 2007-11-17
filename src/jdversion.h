@@ -31,8 +31,10 @@
 #define REPOSITORY_URL SVN_REPOSITORY
 #endif // SVN_REPOSITORY
 
-#ifdef SVN_REVISION // リビジョン
+#ifdef SVN_REVISION
 #define JDVERSIONSTR MISC::get_svn_revision( SVN_REVISION )
+#else
+#define JDVERSIONSTR MISC::get_svn_revision()
 #endif // SVN_REVISION
 
 #else  // JDVERSION_SVN
