@@ -483,12 +483,13 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
     std::string other;
     std::string lang;
     if( getenv( "LANG" ) ) lang = std::string( getenv( "LANG" ) );
-    if( lang.empty() ||
-        lang != "ja_JP.utf8" &&
-        lang != "ja_JP.UTF-8" ) other.append( "LANG = " + lang );
+    if( lang.empty() ) other.append( "LANG = 未定義" );
+    else if( lang != "ja_JP.utf8" && lang != "ja_JP.UTF-8" ) other.append( "LANG = " + lang );
+
+    std::string version = JDVERSIONSTR;
 
     jd_info <<
-    "[バージョン] " << JDVERSIONSTR << "\n" <<
+    "[バージョン] " << version << "\n" <<
 //#ifdef REPOSITORY_URL
 //    "[リポジトリ ] " << REPOSITORY_URL << "\n" <<
 //#endif

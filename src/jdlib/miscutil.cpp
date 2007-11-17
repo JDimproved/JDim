@@ -1129,22 +1129,22 @@ std::string MISC::get_dir( const std::string& path )
 //
 std::string MISC::get_svn_revision( const char* rev )
 {
+    if( ! rev ) return std::string();
+
     std::string svn_revision;
 
     // "2000:2002MS"など[0-9:MS]の形式かどうか
     bool valid = true;
-    size_t n = strlen( rev );
-    while( n > 0 )
+    unsigned int n;
+    for( n = 0; n < strlen( rev ); ++n )
     {
-        if( ( rev[n] - 0x30 ) > 0x09
-            && rev[n] != ':'
+        if( (unsigned int)( rev[n] - 0x30 ) > 0x0A
             && rev[n] != 'M'
             && rev[n] != 'S' )
         {
             valid = false;
             break;
         }
-        --n;
     }
 
     if( valid ) svn_revision = std::string( "SVN Rev." ) + std::string( rev );
