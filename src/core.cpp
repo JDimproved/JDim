@@ -1577,7 +1577,7 @@ void Core::slot_show_manual()
 //
 void Core::slot_show_about()
 {
-    std::stringstream version;
+    std::string version = JDVERSIONSTR;
     std::stringstream license;
     const Glib::ustring comments = "JDはLinux用 2ch ブラウザです";
     const Glib::ustring copyright = JDCOPYRIGHT;
@@ -1605,11 +1605,9 @@ void Core::slot_show_about()
     "で請求してください(宛先は the Free Software Foundation, Inc., 51 "
     "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA)。\n";
 
-    version << JDVERSIONSTR;
-
     SKELETON::AboutDiag about( "JDについて" );
     about.set_logo( ICON::get_icon( ICON::JD96 ) );
-    about.set_version( version.str() );
+    about.set_version( version );
     about.set_comments( comments );
     about.set_website( CONFIG::get_url_jdhp() );
     about.set_copyright( copyright );

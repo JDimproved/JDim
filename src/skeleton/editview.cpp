@@ -467,6 +467,9 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
 {
     std::stringstream jd_info;
 
+    // バージョンを取得
+    const std::string version = JDVERSIONSTR;
+
     // ディストリビューション名を取得
     const std::string distribution = SESSION::get_distribution();
 
@@ -479,14 +482,14 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
         case SESSION::WM_KDE   : desktop_environment = "KDE";   break;
     }
 
-    // $LANG が ja_JP.UTF-8 でない場合は"その他"に追加する。
+    // その他
     std::string other;
+
+    // $LANG が ja_JP.UTF-8 でない場合は"その他"に追加する。
     std::string lang;
     if( getenv( "LANG" ) ) lang = std::string( getenv( "LANG" ) );
-    if( lang.empty() ) other.append( "LANG = 未定義" );
+    if( lang.empty() ) other.append( "LANG 未定義" );
     else if( lang != "ja_JP.utf8" && lang != "ja_JP.UTF-8" ) other.append( "LANG = " + lang );
-
-    std::string version = JDVERSIONSTR;
 
     jd_info <<
     "[バージョン] " << version << "\n" <<
