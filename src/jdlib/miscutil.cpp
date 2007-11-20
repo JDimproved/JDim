@@ -338,17 +338,23 @@ std::string MISC::remove_space( const std::string& str )
 //
 std::string MISC::remove_spaces( const std::string& str )
 {
+	if( str.empty() ) return std::string();
+
     size_t l = 0, r = str.length();
 
     while( l < str.length()
          && ( str[l] == '\n'
+           || str[l] == '\r'
            || str[l] == '\t'
            || str[l] == ' ' ) ) ++l;
 
-    while( r > 0
-         && ( str[r] == '\n'
-           || str[r] == '\t'
-           || str[r] == ' ' ) ) --r;
+    // 最後の文字の位置は文字数より1少ない
+    size_t p = r - 1;
+    while( p > 0
+         && ( str[p] == '\n'
+           || str[p] == '\r'
+           || str[p] == '\t'
+           || str[p] == ' ' ) ){ --p; --r; }
 
     return str.substr( l, r - l );
 }
