@@ -9,11 +9,11 @@
 ##########################################
 # Defined by upsteam
 #
-%define         main_ver      1.9.7
-%define         strtag        071122
+%define         main_ver      1.9.8
+%define         strtag        beta071222
 %define         repoid        26577
 # Define this if this is pre-version
-%define         pre_release   0
+%define         pre_release   1
 ##########################################
 
 ##########################################
