@@ -10,10 +10,10 @@
 # Defined by upsteam
 #
 %define         main_ver      1.9.7
-%define         strtag        rc071115
+%define         strtag        071122
 %define         repoid        26577
 # Define this if this is pre-version
-%define         pre_release   1
+%define         pre_release   0
 ##########################################
 
 ##########################################
