@@ -468,6 +468,7 @@ void LayoutTree::append_html( const std::string& html )
 //
 void LayoutTree::append_dat( const std::string& dat, int num )
 {
+    if( dat.empty() ) return;
     if( ! m_local_nodetree ) m_local_nodetree = new DBTREE::NodeTreeBase( m_url, std::string() );
 
     // ダミーのノードを作って番号を調整する
@@ -476,8 +477,15 @@ void LayoutTree::append_dat( const std::string& dat, int num )
         for(int i = res_num +1 ; i <= num -1; ++i )  m_local_nodetree->append_dat( "<>broken<>\n" );
     }
 
-    DBTREE::NODE* node = m_local_nodetree->append_dat( dat );
-    append_node( node, false );
+    // 改行毎に dat を分割して追加
+    std::list< std::string > lines = MISC::get_lines( dat );
+    std::list< std::string >::iterator it = lines.begin();
+    for( ; it != lines.end(); ++it ){
+        if( ! ( *it ).empty() ){
+            DBTREE::NODE* node = m_local_nodetree->append_dat( (*it) + "\n" );
+            append_node( node, false );
+        }
+    }
 }
 
 
