@@ -170,6 +170,9 @@ namespace CONFIG
         // スレビューでリロード後に一番下までスクロール
         bool jump_after_reload;
 
+        // スレビューでリロード後に新着までスクロール
+        bool jump_new_after_reload;
+
         // 板一覧でカテゴリを常にひとつだけ開く
         bool open_one_category;
 

@@ -2406,12 +2406,19 @@ void DrawAreaBase::goto_top()
 void DrawAreaBase::goto_new()
 {
     const int separator_new = m_layout_tree->get_separator_new();
-    if( separator_new ){
+    const RECTANGLE* rect = m_layout_tree->get_separator()->rect;
+    if( rect && separator_new ){
 
-        m_jump_history.push_back( get_seen_current() );
+        // 新着セパレータが画面に表示されていたら移動しない
+        const int height_view = m_view.get_height();
+        const int pos_y = get_vscr_val();
+        if( rect->y + rect->height <= pos_y || rect->y > pos_y + height_view ){
 
-        int num = separator_new > 1 ? separator_new -1 : 1;
-        goto_num( num );
+            m_jump_history.push_back( get_seen_current() );
+
+            int num = separator_new > 1 ? separator_new -1 : 1;
+            goto_num( num );
+        }
     }
 }
 

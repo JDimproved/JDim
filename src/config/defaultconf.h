@@ -42,6 +42,7 @@ namespace CONFIG
         CONF_SCROLL_SIZE = 3,       // スレビューのスクロール量
         CONF_KEY_SCROLL_SIZE = 2,   // スレビューのスクロール量(キー上下)
         CONF_JUMP_AFTER_RELOAD = 0, // スレビューでリロード後に一番下までスクロール
+        CONF_JUMP_NEW_AFTER_RELOAD = 0, // スレビューでリロード後に新着までスクロール
         CONF_OPEN_ONE_CATEGORY = 0, // 板一覧でカテゴリを常にひとつだけ開く
         CONF_ALWAYS_WRITE_OK = 0,   // 書き込み時に書き込み確認ダイアログを出さない
         CONF_SAVE_POSTLOG = 0,      //書き込みログを保存

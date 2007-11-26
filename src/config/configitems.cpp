@@ -350,6 +350,9 @@ const bool ConfigItems::load()
     // スレビューでリロード後に一番下までスクロール
     jump_after_reload = cf.get_option( "jump_after_reload", CONF_JUMP_AFTER_RELOAD );
 
+    // スレビューでリロード後に新着までスクロール
+    jump_new_after_reload = cf.get_option( "jump_new_after_reload", CONF_JUMP_NEW_AFTER_RELOAD );
+
     // 板一覧でカテゴリを常にひとつだけ開く
     open_one_category = cf.get_option( "open_one_category", CONF_OPEN_ONE_CATEGORY );
 
@@ -607,6 +610,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "scroll_size", scroll_size );
     cf.update( "key_scroll_size", key_scroll_size );
     cf.update( "jump_after_reload", jump_after_reload );
+    cf.update( "jump_new_after_reload", jump_new_after_reload );
     cf.update( "open_one_category", open_one_category );
     cf.update( "always_write_ok", always_write_ok );
     cf.update( "save_postlog", save_postlog );

@@ -199,6 +199,9 @@ const int CONFIG::get_scroll_size(){ return get_confitem()->scroll_size; }
 const int CONFIG::get_key_scroll_size(){ return get_confitem()->key_scroll_size; }
 
 const bool CONFIG::get_jump_after_reload(){ return get_confitem()->jump_after_reload; }
+void CONFIG::set_jump_after_reload( bool set ){ get_confitem()->jump_after_reload = set; }
+const bool CONFIG::get_jump_new_after_reload(){ return get_confitem()->jump_new_after_reload; }
+void CONFIG::set_jump_new_after_reload( bool set ){ get_confitem()->jump_new_after_reload = set; }
 
 const bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; }
 const bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }

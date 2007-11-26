@@ -200,6 +200,11 @@ namespace CONFIG
 
     // スレビューでリロード後に一番下までスクロール
     const bool get_jump_after_reload();
+    void set_jump_after_reload( bool set );
+
+    // スレビューでリロード後に新着までスクロール
+    const bool get_jump_new_after_reload();
+    void set_jump_new_after_reload( bool set );
 
     // 板一覧でカテゴリを常にひとつだけ開く
     const bool get_open_one_category();

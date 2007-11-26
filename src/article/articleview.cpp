@@ -190,7 +190,19 @@ void ArticleViewMain::show_view()
     drawarea()->set_separator_new( to_num + 1 );
 
     // update_finish() を呼んでキャッシュの分を描画
-    if( call_update_finish ) update_finish();    
+    if( call_update_finish ){
+
+        // update_finish()後に一番最後や新着にジャンプしないように設定を一時的に解除する
+        const bool jump_bottom = CONFIG::get_jump_after_reload();
+        const bool jump_new = CONFIG::get_jump_new_after_reload();
+        CONFIG::set_jump_after_reload( false );
+        CONFIG::set_jump_new_after_reload( false );
+
+        update_finish();
+
+        CONFIG::set_jump_after_reload( jump_bottom );
+        CONFIG::set_jump_new_after_reload( jump_new );
+    }
 
     // オフラインならダウンロードを開始しない
     if( ! SESSION::is_online() ) return;
@@ -303,6 +315,7 @@ void ArticleViewMain::update_finish()
     drawarea()->redraw_view();
 
     if( CONFIG::get_jump_after_reload() ) goto_bottom();
+    else if( number_new && CONFIG::get_jump_new_after_reload() ) goto_new();
     else if( m_gotonum_reserve ) goto_num( m_gotonum_reserve );
     m_gotonum_reserve = 0;
 
