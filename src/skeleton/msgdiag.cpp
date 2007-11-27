@@ -8,6 +8,9 @@
 #include "command.h"
 #include "session.h"
 
+#include <gtk/gtkmessagedialog.h>
+#include <gtk/gtklabel.h>
+
 using namespace SKELETON;
 
 
@@ -31,6 +34,13 @@ MsgDiag::MsgDiag( Gtk::Window* parent,
 {
     if( parent ) set_transient_for( *parent );
     else set_transient_for( *CORE::get_mainwindow() );
+
+    // tab でラベルにフォーカスが移らないようにする ( messagedialog.ccg をハックした )
+    Gtk::Widget* wdt = Glib::wrap( gobj()->label );
+    if( wdt ){
+        Gtk::Label* label = dynamic_cast< Gtk::Label* >( wdt );
+        if( label ) label->property_can_focus() = false;
+    }
 }
 
 
