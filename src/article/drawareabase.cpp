@@ -363,6 +363,25 @@ void DrawAreaBase::hide_separator_new()
 }
 
 
+// セパレータが画面に表示されているか
+const bool DrawAreaBase::is_separator_on_screen()
+{
+    if( ! m_layout_tree ) return false;
+
+    const int separator_new = m_layout_tree->get_separator_new();
+    if( ! separator_new ) return false;
+
+    const RECTANGLE* rect = m_layout_tree->get_separator()->rect;
+    if( ! rect ) return false;
+
+    const int height_view = m_view.get_height();
+    const int pos_y = get_vscr_val();
+    if( rect->y + rect->height <= pos_y || rect->y > pos_y + height_view ) return false;
+
+    return true;
+}
+
+
 // 範囲選択中の文字列
 const std::string DrawAreaBase::str_selection()
 {
@@ -2405,20 +2424,14 @@ void DrawAreaBase::goto_top()
 
 void DrawAreaBase::goto_new()
 {
+    if( ! m_layout_tree ) return;
     const int separator_new = m_layout_tree->get_separator_new();
-    const RECTANGLE* rect = m_layout_tree->get_separator()->rect;
-    if( rect && separator_new ){
+    if( separator_new ){
 
-        // 新着セパレータが画面に表示されていたら移動しない
-        const int height_view = m_view.get_height();
-        const int pos_y = get_vscr_val();
-        if( rect->y + rect->height <= pos_y || rect->y > pos_y + height_view ){
+        m_jump_history.push_back( get_seen_current() );
 
-            m_jump_history.push_back( get_seen_current() );
-
-            int num = separator_new > 1 ? separator_new -1 : 1;
-            goto_num( num );
-        }
+        int num = separator_new > 1 ? separator_new -1 : 1;
+        goto_num( num );
     }
 }
 

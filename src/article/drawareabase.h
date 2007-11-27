@@ -174,6 +174,9 @@ namespace ARTICLE
         void set_separator_new( int num );
         void hide_separator_new();
 
+        // セパレータが画面に表示されているか
+        const bool is_separator_on_screen();
+
         // 全選択
         void select_all(); 
 

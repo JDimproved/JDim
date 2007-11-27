@@ -315,7 +315,7 @@ void ArticleViewMain::update_finish()
     drawarea()->redraw_view();
 
     if( CONFIG::get_jump_after_reload() ) goto_bottom();
-    else if( number_new && CONFIG::get_jump_new_after_reload() ) goto_new();
+    else if( number_new && CONFIG::get_jump_new_after_reload() && ! drawarea()->is_separator_on_screen() ) goto_new();
     else if( m_gotonum_reserve ) goto_num( m_gotonum_reserve );
     m_gotonum_reserve = 0;
 
