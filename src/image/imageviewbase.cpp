@@ -15,6 +15,7 @@
 #include "dbimg/img.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/miscgtk.h"
 
 #include "cache.h"
 #include "command.h"
@@ -894,7 +895,7 @@ void ImageViewBase::slot_copy_url()
 {
     if( ! m_enable_menuslot ) return;
 
-    COPYCLIP( get_url() );
+    MISC::CopyClipboard( get_url() );
 }
 
 

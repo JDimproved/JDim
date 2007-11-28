@@ -11,6 +11,7 @@
 #include "dbtree/interface.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/miscgtk.h"
 
 #include "command.h"
 #include "session.h"
@@ -20,9 +21,11 @@
 #include "updatemanager.h"
 
 
-#define MOVETAB_MENU { 5, 10, 15, 20, 25, 30 }
-        
-#define MAX_TABS 50
+enum
+{
+    MAX_TABS = 50
+};
+
 
 using namespace SKELETON;
 
@@ -1819,7 +1822,7 @@ void Admin::slot_open_by_browser()
 void Admin::slot_copy_url()
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
-    if( view ) COPYCLIP( view->url_for_copy() );
+    if( view ) MISC::CopyClipboard( view->url_for_copy() );
 }
 
 
@@ -1833,7 +1836,7 @@ void Admin::slot_copy_title_url()
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) str += "\n" + view->url_for_copy();
     
-    COPYCLIP( str );
+    MISC::CopyClipboard( str );
 }
 
 

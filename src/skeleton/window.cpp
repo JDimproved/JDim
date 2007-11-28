@@ -11,11 +11,15 @@
 #include "command.h"
 
 
-#define FOCUSOUT_TIMEOUT 250 // msec
-#define FOCUS_TIME  100 //msec
-#define UNGRAB_TIME 100 //msec
+enum
+{
+    FOCUSOUT_TIMEOUT = 250, // GNOME環境でフォーカスを外すまでの時間 ( msec )
+    FOCUS_TIME = 100, // JDWindowにフォーカスを移してウィンドウサイズを復元するまでの時間 ( msec )
+    UNGRAB_TIME = 100, // ブート直後にフォーカスをメインウィンドウに戻すまでの時間 ( msec )
 
-#define JDWIN_FOLDSIZE 10
+    JDWIN_FOLDSIZE = 10  // 折りたたみ時に指定するウィンドウ高さ
+};
+
 
 // ウィンドウ状態
 enum

@@ -6,33 +6,20 @@
 #include <string>
 
 
-// msec  内部クロックの周期
-#define TIMER_TIMEOUT 50  
+enum{
 
-// 最大表示可能レス数
-#define MAX_RESNUMBER 11000
+    TIMER_TIMEOUT = 50, // msec  内部クロックの周期
 
+    MAX_RESNUMBER = 11000, // 最大表示可能レス数
 
-// マウスジェスチャの最大ストローク
-#define MAX_MG_LNG 5
+    MAX_MG_LNG = 5,  // マウスジェスチャの最大ストローク
 
-
-// 画像アイコンの大きさ
-#define ICON_SIZE 32 
+    ICON_SIZE = 32 // 画像アイコンの大きさ
+};
 
 
 // 書き込みビューのメール欄の空白
 #define JD_MAIL_BLANK "jd_mail_blank"
-
-//
-// str をクリップボードにコピー
-//
-#define COPYCLIP( str ) do{  \
- Glib::RefPtr< Gtk::Clipboard > clip = Gtk::Clipboard::get(); \
- clip->set_text( str ); \
- clip = Gtk::Clipboard::get( GDK_SELECTION_PRIMARY ); \
- clip->set_text( str ); \
-} while( false )
 
 
 // SKELETON::SelectItemPrefの項目名
@@ -140,11 +127,13 @@ enum
     AUTORELOAD_ON    // オートリロード実行中
 };
 
-// オートリロードの最小秒数
-#define AUTORELOAD_MINSEC 10
+enum
+{
+    AUTORELOAD_MINSEC = 10, // オートリロードの最小秒数
 
-// 更新チェックの最小秒数
-#define CHECKUPDATE_MINSEC 300
+    CHECKUPDATE_MINSEC = 300 // 更新チェックの最小秒数
+};
+
 
 // プロトコル
 #define PROTO_ANCHORE "anc://"

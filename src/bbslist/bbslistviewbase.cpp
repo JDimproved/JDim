@@ -11,6 +11,7 @@
 #include "skeleton/msgdiag.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/miscgtk.h"
 #include "jdlib/jdregex.h"
 
 #include "dbtree/interface.h"
@@ -1201,7 +1202,7 @@ void BBSListViewBase::slot_copy_url()
     if( m_path_selected.empty() ) return;
 
     std::string url = path2url( m_path_selected );
-    COPYCLIP( url );
+    MISC::CopyClipboard( url );
 }
 
 
@@ -1217,7 +1218,7 @@ void BBSListViewBase::slot_copy_title_url()
     ss << name << std::endl
        << url << std::endl;
 
-    COPYCLIP( ss.str() );
+    MISC::CopyClipboard( ss.str() );
 }
 
 

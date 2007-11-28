@@ -10,6 +10,7 @@
 #include "skeleton/msgdiag.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/miscgtk.h"
 #include "jdlib/jdregex.h"
 
 #include "dbtree/interface.h"
@@ -50,7 +51,10 @@ using namespace BOARD;
 #define UNSORTED_COLUMN() do{ m_liststore->gobj()->sort_column_id = -2; } while(0)
 
 
-#define DEFAULT_COLMUN_WIDTH 50
+enum{
+    DEFAULT_COLMUN_WIDTH = 50
+};
+
 
 enum{
     COL_MARKVAL_OLD = -2,        // dat 落ち
@@ -1802,7 +1806,7 @@ void BoardView::slot_copy_url()
     if( m_path_selected.empty() ) return;
 
     std::string url = DBTREE::url_readcgi( path2daturl( m_path_selected ), 0, 0 );
-    COPYCLIP( url );
+    MISC::CopyClipboard( url );
 }
 
 
@@ -1818,7 +1822,7 @@ void BoardView::slot_copy_title_url()
     ss << name << std::endl
        << url << std::endl;
 
-    COPYCLIP( ss.str() );
+    MISC::CopyClipboard( ss.str() );
 }
 
 

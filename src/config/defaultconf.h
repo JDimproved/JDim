@@ -104,7 +104,7 @@ namespace CONFIG
 #define AGENT_FOR2CH "Monazilla/1.00 JD"
 
 // 2ch外にアクセスするときのエージェント名
-#define AGENT_FOR_DATA "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8.1.5) Gecko/20070713 Firefox/2.0.0.5"
+#define AGENT_FOR_DATA "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8.1.10) Gecko/20071115 Firefox/2.0.0.10"
 
 // 2ch にログインするときのX-2ch-UA
 #define CONF_X_2CH_UA "Navigator for 2ch 1.7.5"

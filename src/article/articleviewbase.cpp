@@ -12,6 +12,7 @@
 #include "skeleton/msgdiag.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/miscgtk.h"
 #include "jdlib/miscx.h"
 
 #include "dbtree/articlebase.h"
@@ -2514,7 +2515,7 @@ void ArticleViewBase::slot_copy_selection_str()
 #endif    
 
     if( m_drawarea->str_selection().empty() ) return;
-    COPYCLIP( m_drawarea->str_selection() );
+    MISC::CopyClipboard( m_drawarea->str_selection() );
 }
 
 
@@ -2745,7 +2746,7 @@ void ArticleViewBase::slot_copy_current_url()
     std::cout << "ArticleViewBase::slot_copy_current_url url = " << m_url_tmp << std::endl;
 #endif    
 
-    COPYCLIP( m_url_tmp );
+    MISC::CopyClipboard( m_url_tmp );
 }
 
 
@@ -2757,7 +2758,7 @@ void ArticleViewBase::slot_copy_current_url()
 void ArticleViewBase::slot_copy_name()
 {
     std::string name = m_name;
-    COPYCLIP( name );
+    MISC::CopyClipboard( name );
 }
 
 
@@ -2769,7 +2770,7 @@ void ArticleViewBase::slot_copy_name()
 void ArticleViewBase::slot_copy_id()
 {
     std::string id = "ID:" + m_id_name.substr( strlen( PROTO_ID ) );
-    COPYCLIP( id );
+    MISC::CopyClipboard( id );
 }
 
 
@@ -2795,7 +2796,7 @@ void ArticleViewBase::slot_copy_res( bool ref )
     tmpstr += DBTREE::article_subject( m_url_article ) + "\n\n";
     tmpstr += m_article->get_res_str( atoi( m_str_num.c_str() ), ref );
 
-    COPYCLIP( tmpstr );
+    MISC::CopyClipboard( tmpstr );
 }
 
 

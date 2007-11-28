@@ -138,6 +138,17 @@ std::string MISC::get_entry_color_base()
 }
 
 
+
+// str をクリップボードにコピー
+void MISC::CopyClipboard( const std::string& str )
+{
+    Glib::RefPtr< Gtk::Clipboard > clip = Gtk::Clipboard::get();
+    clip->set_text( str );
+    clip = Gtk::Clipboard::get( GDK_SELECTION_PRIMARY );
+    clip->set_text( str );
+}
+
+
 // 画像の幅と高さを取得
 void MISC::get_img_size( const std::string& filename, int& width, int& height )
 {
