@@ -86,11 +86,11 @@ void ImageViewBase::setup_common()
     // ポップアップメニューの設定
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
-    action_group()->add( Gtk::Action::create( "CancelMosaic", "モザイク解除(_M)"),
+    action_group()->add( Gtk::Action::create( "CancelMosaic", "CancelMosaic"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_cancel_mosaic ) );
     action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_show_large_img ) );
-    action_group()->add( Gtk::Action::create( "LoadStop", "ロード中止(_N)"), sigc::mem_fun( *this, &ImageViewBase::stop ) );
+    action_group()->add( Gtk::Action::create( "LoadStop", "StopLoading" ), sigc::mem_fun( *this, &ImageViewBase::stop ) );
     action_group()->add( Gtk::Action::create( "Reload", "強制再読み込み(_E)"), sigc::mem_fun( *this, &ImageViewBase::slot_reload_force ) );
     action_group()->add( Gtk::Action::create( "AppendFavorite", "お気に入りに追加(_F)..."), sigc::mem_fun( *this, &ImageViewBase::slot_favorite ) );
 
@@ -134,7 +134,7 @@ void ImageViewBase::setup_common()
                          sigc::mem_fun( *this, &ImageViewBase::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "OpenRef", "参照元のレスを開く(_O)"), sigc::mem_fun( *this, &ImageViewBase::slot_open_ref ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_C)"), sigc::mem_fun( *this, &ImageViewBase::slot_copy_url ) );
-    action_group()->add( Gtk::Action::create( "Save", "名前を付けて保存(_S)..."), sigc::mem_fun( *this, &ImageViewBase::slot_save ) );
+    action_group()->add( Gtk::Action::create( "Save", "Save"), sigc::mem_fun( *this, &ImageViewBase::slot_save ) );
     action_group()->add( Gtk::Action::create( "SaveAll", "全ての画像を保存(_A)..."), sigc::mem_fun( *this, &ImageViewBase::slot_save_all ) );
 
     action_group()->add( Gtk::Action::create( "DeleteMenu", "Delete" ) );    
