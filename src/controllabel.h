@@ -74,12 +74,6 @@ namespace CONTROL
         { "DragStartButton", "ドラッグ開始" },
         { "TreeRowSelectionButton", "行範囲選択" },
 
-        
-        { "ScrollUp", "" }, // 上スクロール
-        { "ScrollDown", "" },// 下スクロール
-        { "ScrollLeft", "" }, // 左スクロール
-        { "ScrollRight", "" },// 右スクロール
-
         { "", "" },
 
         // BBSLIST
@@ -105,6 +99,9 @@ namespace CONTROL
         { "OpenArticleTab", "タブでスレを開く" },
         { "NewArticle", ITEM_NAME_NEWARTICLE },
         { "SearchCache", "ログ検索" },
+
+        { "ScrollLeftBoard", "" }, // 左スクロール
+        { "ScrollRightBoard", "" },// 右スクロール
 
         { "OpenArticleButton", "スレを開く" },
         { "OpenArticleTabButton", "タブでスレを開く" },
@@ -155,6 +152,11 @@ namespace CONTROL
         { "ZoomInImage", "ズームイン" },
         { "ZoomOutImage", "ズームアウト" },
         { "OrgSizeImage", "元の画像サイズ" },
+
+        { "ScrollUpImage", "" }, // 上スクロール
+        { "ScrollDownImage", "" },// 下スクロール
+        { "ScrollLeftImage", "" }, // 左スクロール
+        { "ScrollRightImage", "" },// 右スクロール
 
         { "CloseImageTabButton", "タブを閉じる" },
 

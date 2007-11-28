@@ -1108,11 +1108,11 @@ void BoardView::operate_view( const int& control )
             CORE::core_set_command( "switch_rightview" );
             break;
 
-        case CONTROL::ScrollLeft:
+        case CONTROL::ScrollLeftBoard:
             scroll_left();
             break;
 
-        case CONTROL::ScrollRight:
+        case CONTROL::ScrollRightBoard:
             scroll_right();
             break;
 

@@ -100,12 +100,6 @@ void KeyConfig::load_conf()
     SETMOTION( "SearchPrev", "Shift+Enter Ctrl+F3 Ctrl+G N" );
     SETMOTION( "DrawOutAnd", "Ctrl+Enter" );
 
-    SETMOTION( "ScrollUp", "K Shift+Up" );
-    SETMOTION( "ScrollDown", "J Shift+Down" );
-
-    SETMOTION( "ScrollRight", "L Shift+Right" );
-    SETMOTION( "ScrollLeft", "H Shift+Left" );
-
     // BBSLIST
     SETMOTION( "OpenBoard", "Space" );
     SETMOTION( "OpenBoardTab", "Ctrl+Space" );
@@ -115,6 +109,9 @@ void KeyConfig::load_conf()
     SETMOTION( "OpenArticleTab", "Ctrl+Space" );
     SETMOTION( "NewArticle", "w" );
     SETMOTION( "SearchCache", "Ctrl+Enter" );
+
+    SETMOTION( "ScrollRightBoard", "L Shift+Right" );
+    SETMOTION( "ScrollLeftBoard", "H Shift+Left" );
 
     // ARTICLE
     SETMOTION( "UpMid", "u" );
@@ -132,6 +129,12 @@ void KeyConfig::load_conf()
     SETMOTION( "ZoomInImage", "Plus" );
     SETMOTION( "ZoomOutImage", "-" );
     SETMOTION( "OrgSizeImage", "z" );
+
+    SETMOTION( "ScrollUpImage", "K k Shift+Up Up" );
+    SETMOTION( "ScrollDownImage", "J j Shift+Down Down" );
+
+    SETMOTION( "ScrollRightImage", "L Shift+Right" );
+    SETMOTION( "ScrollLeftImage", "H Shift+Left" );
 
     // MESSAGE
     SETMOTION( "CancelWrite", "Alt+q" );

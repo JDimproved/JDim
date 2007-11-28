@@ -68,8 +68,6 @@ void ButtonConfig::load_conf()
     SETMOTION( "Reload", "Button4" );
     SETMOTION( "ToggleArticle", "Button5" );
 
-    SETMOTION( "ScrollRight", "Tilt_Right" );
-    SETMOTION( "ScrollLeft", "Tilt_Left" );
     SETMOTION( "Right", "" );
     SETMOTION( "Left", "" );
 
@@ -80,6 +78,9 @@ void ButtonConfig::load_conf()
     // BOARD用ボタン設定
     SETMOTION( "OpenArticleButton", "Left" );
     SETMOTION( "OpenArticleTabButton", "Mid" );
+
+    SETMOTION( "ScrollRightBoard", "Tilt_Right" );
+    SETMOTION( "ScrollLeftBoard", "Tilt_Left" );
 
     // ARTICLE用ボタン設定
     SETMOTION( "PopupWarpButton", "" );

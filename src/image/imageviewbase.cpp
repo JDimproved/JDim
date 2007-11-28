@@ -508,19 +508,19 @@ void ImageViewBase::operate_view( const int& control )
             IMAGE::get_admin()->set_command( "tab_right" );
             break;
 
-        case CONTROL::ScrollUp:
+        case CONTROL::ScrollUpImage:
             IMAGE::get_admin()->set_command( "scroll_up" );
             break;
 
-        case CONTROL::ScrollDown:
+        case CONTROL::ScrollDownImage:
             IMAGE::get_admin()->set_command( "scroll_down" );
             break;
 
-        case CONTROL::ScrollLeft:
+        case CONTROL::ScrollLeftImage:
             IMAGE::get_admin()->set_command( "scroll_left" );
             break;
 
-        case CONTROL::ScrollRight:
+        case CONTROL::ScrollRightImage:
             IMAGE::get_admin()->set_command( "scroll_right" );
             break;
 

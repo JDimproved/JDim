@@ -88,11 +88,6 @@ namespace CONTROL
         DragStartButton,
         TreeRowSelectionButton,
 
-        ScrollUp,
-        ScrollDown,
-        ScrollLeft,
-        ScrollRight,
-
         COMMONMOTION_END,
 
         // BBSLIST系
@@ -116,6 +111,9 @@ namespace CONTROL
         OpenArticleTab,
         NewArticle,
         SearchCache,
+
+        ScrollLeftBoard,
+        ScrollRightBoard,
 
         OpenArticleButton, // 以下、マウスボタン専用の設定
         OpenArticleTabButton,
@@ -164,6 +162,11 @@ namespace CONTROL
         ZoomInImage,
         ZoomOutImage,
         OrgSizeImage,
+
+        ScrollUpImage,
+        ScrollDownImage,
+        ScrollLeftImage,
+        ScrollRightImage,
 
         CloseImageTabButton, // 以下、マウスボタン専用の設定
 
