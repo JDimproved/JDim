@@ -19,5 +19,7 @@ clean_icon :
 
 iconmanager.cpp : $(icon_headers)
 
-%.h : %.png
+SUFFIXES = .png .h
+
+.png.h:
 	gdk-pixbuf-csource --raw --name=icon_$* $< > $@
