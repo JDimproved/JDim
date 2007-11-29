@@ -120,6 +120,9 @@ void KeyConfig::load_conf()
     SETMOTION( "DownMid", "d" );
     SETMOTION( "DownFast", "Page_Down Space" );
 
+    SETMOTION( "PrevRes", "p" );
+    SETMOTION( "NextRes", "n" );
+
     SETMOTION( "GotoNew", "F4" );
     SETMOTION( "WriteMessage", "w Alt+w" );
 

@@ -118,6 +118,9 @@ namespace CONTROL
         { "DownMid", "中速下移動" },
         { "DownFast", "高速下移動" },
 
+        { "PrevRes", "前のレスへ移動" },
+        { "NextRes", "次のレスへ移動" },
+
         { "GotoNew", "新着へ移動" },
         { "OpenParentBoard", ITEM_NAME_OPENBOARD },
         { "WriteMessage", ITEM_NAME_WRITEMSG },

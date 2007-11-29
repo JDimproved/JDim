@@ -2129,6 +2129,10 @@ bool DrawAreaBase::set_scroll( const int& control )
                 if( enable_down ) dy = SCROLLSPEED_SLOW;
                 break;
 
+            case CONTROL::NextRes:
+                if( enable_down ) goto_next_res();
+                break;
+
                 // 上
             case CONTROL::UpFast:
                 if( enable_up ) dy = - SCROLLSPEED_FAST;
@@ -2140,6 +2144,10 @@ bool DrawAreaBase::set_scroll( const int& control )
 
             case CONTROL::Up:
                 if( enable_up )dy = - SCROLLSPEED_SLOW;
+                break;
+
+            case CONTROL::PrevRes:
+                if( enable_up ) goto_pre_res();
                 break;
 
                 // Home, End, New
@@ -2404,6 +2412,33 @@ void DrawAreaBase::goto_num( int num )
 void DrawAreaBase::set_jump_history()
 {
     m_jump_history.push_back( get_seen_current() );
+}
+
+
+//
+// 次のレスに移動
+//
+void DrawAreaBase::goto_next_res()
+{
+    if( m_seen_current == max_number() ) goto_bottom();
+    else goto_num( m_seen_current + 1 );
+}
+
+
+//
+// 前のレスに移動
+//
+void DrawAreaBase::goto_pre_res()
+{
+    // 表示するレスを検索
+    const LAYOUT* header = m_layout_tree->get_header_of_res_const( m_seen_current );
+    int num = m_seen_current;
+    int pos_y = get_vscr_val();
+    while( header && num && header->rect->y >= pos_y ){
+        num--;
+        header = m_layout_tree->get_header_of_res_const( num );
+    }
+    goto_num( num );
 }
 
 

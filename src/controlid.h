@@ -129,6 +129,9 @@ namespace CONTROL
         DownMid,
         DownFast,
 
+        PrevRes,
+        NextRes,
+
         GotoNew,
         OpenParentBoard,
         WriteMessage,

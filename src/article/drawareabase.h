@@ -225,6 +225,8 @@ namespace ARTICLE
         // ジャンプ
         void set_jump_history(); // ジャンプ履歴に現在のスレを登録
         void goto_num( int num );
+        void goto_next_res();
+        void goto_pre_res();
         void goto_new();
         void goto_top();
         void goto_bottom();
