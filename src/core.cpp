@@ -3101,6 +3101,9 @@ void Core::exec_command_after_boot()
     // タイトル表示
     set_maintitle();
 
+    // 画像ウィンドウが復元されると画面が表示されないので再レイアウト指定
+    ARTICLE::get_admin()->set_command( "relayout_current_view" );
+
 #ifdef _DEBUG
     std::cout << "\n\n----------- boot fin --------------\n\n";
 #endif

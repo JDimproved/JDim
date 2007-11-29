@@ -468,6 +468,9 @@ void Admin::exec_command()
     else if( command.command == "redraw_current_view" ){
         redraw_current_view();
     }
+    else if( command.command == "relayout_current_view" ){
+        relayout_current_view();
+    }
     // command.url を含むview全てを検索して表示中なら再描画
     else if( command.command == "redraw_views" ){
         redraw_views( command.url );
@@ -891,6 +894,20 @@ void Admin::redraw_current_view()
 
     SKELETON::View* view = get_current_view();
     if( view ) view->redraw_view();
+}
+
+
+//
+// 現在のビューを再レイアウト
+//
+void Admin::relayout_current_view()
+{
+#ifdef _DEBUG
+    std::cout << "Admin::relayout_current_view : " << m_url << std::endl;
+#endif
+
+    SKELETON::View* view = get_current_view();
+    if( view ) view->relayout();
 }
 
 

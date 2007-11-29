@@ -149,6 +149,7 @@ namespace SKELETON
         virtual void tab_tail();
         virtual void redraw_view( const std::string& url );
         virtual void redraw_current_view();
+        virtual void relayout_current_view();
         virtual void redraw_views( const std::string& url );
         virtual void update_view( const std::string& url );
         virtual void update_item( const std::string& url,  const std::string& id );
