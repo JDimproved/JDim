@@ -16,7 +16,13 @@ AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 AC_LANG_CPLUSPLUS
 
+dnl
+dnl buildinfo.h
+dnl
 AC_DEFINE(HAVE_BUILDINFO_H, 1, Define to 1 if you have the 'buildinfo.h' header file.)
+AC_PATH_PROG(SVN, svn)
+AC_PATH_PROG(SVNVERSION, svnversion)
+AC_PATH_PROG(DIFF, diff)
 
 dnl
 dnl OSを判定してOS別の設定
