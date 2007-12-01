@@ -268,7 +268,7 @@ bool MessageAdmin::delete_message( SKELETON::View * view )
             break;
 
         case Gtk::RESPONSE_YES:
-            view->set_command( "save_message" );
+            if( ! view->set_command( "save_message" ) ) return delete_message( view );
             result = true;
             break;
     }

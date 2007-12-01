@@ -254,6 +254,7 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
                                              "保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。" );
                     mdiag.run();
                 }
+                else return true;
             }
         }
     }
