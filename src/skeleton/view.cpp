@@ -14,7 +14,10 @@
 
 using namespace SKELETON;
 
-#define KEYJUMP_TIMEOUT 1000
+enum
+{
+    KEYJUMP_TIMEOUT = 1000
+};
 
 
 View::View( const std::string& url, const std::string& arg1 ,const std::string& arg2 )

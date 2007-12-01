@@ -30,8 +30,11 @@
 #define MIN( a, b ) ( a < b ? a : b )
 #endif
 
-// 最大リダイレクト回数
-#define MAX_REDIRECT 5  
+
+enum
+{
+    MAX_REDIRECT = 5  // 最大リダイレクト回数
+};
 
 
 // 情報ファイルから値を読み込み

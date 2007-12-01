@@ -13,8 +13,10 @@
 
 #include <sstream>
 
-#define SIZE_OF_RAWDATA ( 2 * 1024 * 1024 )
-
+enum
+{
+    SIZE_OF_RAWDATA = 2 * 1024 * 1024
+};
 
 using namespace XML;
 

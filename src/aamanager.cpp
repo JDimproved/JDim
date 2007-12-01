@@ -36,7 +36,10 @@ void CORE::delete_aamanager()
 // ルート要素名
 #define ROOT_NODE_NAME "history"
 
-#define AA_LIMIT 4096
+enum
+{
+    AA_LIMIT = 4096
+};
 
 using namespace CORE;
 

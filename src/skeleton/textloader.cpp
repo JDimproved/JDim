@@ -13,7 +13,10 @@
 #include "session.h"
 #include "cache.h"
 
-#define SIZE_OF_RAWDATA ( 1024 * 1024 )
+enum
+{
+    SIZE_OF_RAWDATA = 1024 * 1024
+};
 
 using namespace SKELETON;
 

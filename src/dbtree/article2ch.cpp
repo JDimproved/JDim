@@ -17,8 +17,10 @@
 using namespace DBTREE;
 
 
-// 規定の最大レス数
-#define DEFAULT_NUMBER_MAX_2CH 1000
+enum
+{
+    DEFAULT_NUMBER_MAX_2CH = 1000  // 規定の最大レス数
+};
 
 
 Article2ch::Article2ch( const std::string& datbase, const std::string& id, bool cached )

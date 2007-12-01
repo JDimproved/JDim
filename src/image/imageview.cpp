@@ -30,7 +30,10 @@
 #define MIN( a, b ) ( a < b ? a : b )
 #endif
 
-#define IMGWIN_REDRAWTIME 250 // msec
+enum
+{
+    IMGWIN_REDRAWTIME = 250 // msec
+};
 
 using namespace IMAGE;
 

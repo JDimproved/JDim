@@ -13,7 +13,10 @@
 
 using namespace CORE;
 
-#define SPACING_SIZE 8
+enum
+{
+    SPACING_SIZE = 8
+};
 
 PageStart::PageStart() : Gtk::VBox(),
                          m_label( "１/４．JD セットアップ開始", Gtk::ALIGN_LEFT ),

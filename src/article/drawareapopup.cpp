@@ -13,8 +13,11 @@
 using namespace ARTICLE;
 
 // スクロールバーが付くとレイアウトがずれるのでクライアント領域の横幅をその分広げる
-#define POPUP_RIGHT_MRG 40
-#define POPUP_OFFSET_Y 1
+enum
+{
+    POPUP_RIGHT_MRG = 40,
+    POPUP_OFFSET_Y = 1
+};
 
 
 // show_abone == true ならあぼーんされたスレも表示

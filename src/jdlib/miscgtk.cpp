@@ -7,8 +7,10 @@
 
 #include <errno.h> // ERANGE
 
-// char の初期化用
-#define CHAR_BUF 256
+enum
+{
+    CHAR_BUF = 256 // char の初期化用
+};
 
 
 // Gdk::Color -> 16進数表記の文字列

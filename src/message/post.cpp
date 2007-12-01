@@ -23,8 +23,10 @@
 
 using namespace MESSAGE;
 
-#define SIZE_OF_RAWDATA ( 2 * 1024 * 1024 )
-
+enum
+{
+    SIZE_OF_RAWDATA = 2 * 1024 * 1024
+};
 
 Post::Post( Gtk::Widget* parent, const std::string& url, const std::string& msg, bool new_article )
     : SKELETON::Loadable(),

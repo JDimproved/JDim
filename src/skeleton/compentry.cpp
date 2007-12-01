@@ -10,7 +10,10 @@
 
 using namespace SKELETON;
 
-#define POPUP_SIZE 5
+enum
+{
+    POPUP_SIZE = 5
+};
 
 
 CompletionEntry::CompletionEntry( int mode )

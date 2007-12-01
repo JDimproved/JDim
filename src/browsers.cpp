@@ -2,8 +2,11 @@
 
 #include "browsers.h"
 
-#define MAX_TEXT 256
-#define BROWSER_NUM 5
+enum
+{
+    MAX_TEXT = 256,
+    BROWSER_NUM = 5
+};
 
 namespace CORE
 {

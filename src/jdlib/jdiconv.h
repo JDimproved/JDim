@@ -8,8 +8,11 @@
 
 // iconv の内部で確保するバッファサイズ(バイト)
 //  BUF_SIZE_ICONV_IN を超える入力は扱えないので注意
-#define BUF_SIZE_ICONV_IN ( 1024 * 1024 )
-#define BUF_SIZE_ICONV_OUT ( BUF_SIZE_ICONV_IN /2 * 3 )
+enum
+{
+    BUF_SIZE_ICONV_IN = 1024 * 1024,
+    BUF_SIZE_ICONV_OUT = BUF_SIZE_ICONV_IN /2 * 3
+};
 
 namespace JDLIB
 {

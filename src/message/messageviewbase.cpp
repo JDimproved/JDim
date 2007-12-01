@@ -39,12 +39,18 @@
 
 using namespace MESSAGE;
 
-#define MAX_STR_ICONV 128*1024
+enum
+{
+    MAX_STR_ICONV = 128*1024,
 
-#define PASS_TIMEOUT 500
-#define PASS_MAXTIME 120
+    PASS_TIMEOUT = 500,
+    PASS_MAXTIME = 120,
+};
 
-enum{
+
+// ページ番号
+enum
+{
     PAGE_MESSAGE = 0,
     PAGE_PREVIEW
 };

@@ -17,14 +17,18 @@
 #include "colorid.h"
 #include "cssmanager.h"
 
-#define SIZE_OF_HEAP 256 * 1024
+enum
+{
+    SIZE_OF_HEAP = 256 * 1024,
 
-#define STEP_ID 10
-#define STEP_SEPARATOR 1
+    STEP_ID = 10,
+    STEP_SEPARATOR = 1,
+
+    MAX_IMGITEM = 512 // struct IMGDATA.item[] のサイズ
+};
+
 
 // 埋め込み画像用構造体
-#define MAX_IMGITEM 512
-
 namespace ARTICLE
 {
     struct IMGITEM

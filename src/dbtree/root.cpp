@@ -26,7 +26,10 @@
 
 #include <sstream>
 
-#define SIZE_OF_RAWDATA ( 2 * 1024 * 1024 )  //  bbsmenu.html の最大サイズ
+enum
+{
+    SIZE_OF_RAWDATA = 2 * 1024 * 1024  //  bbsmenu.html の最大サイズ
+};
 
 // ルート要素名( list_main.xml )
 #define ROOT_NODE_NAME "boardlist"

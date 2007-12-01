@@ -26,14 +26,14 @@
 #include <openssl/ssl.h>
 #endif
 
-// 最大スレッド数
-#define MAX_LOADER 6
+enum
+{
+    MAX_LOADER = 6, // 最大スレッド数
 
-// 読み込みバッファの最小値 (byte)
-#define LNG_BUF_MIN ( 16 * 1024 )  
+    LNG_BUF_MIN = 16 * 1024, // 読み込みバッファの最小値 (byte)
 
-// タイムアウトの最小値 (秒)
-#define TIMEOUT_MIN 10             
+    TIMEOUT_MIN = 10 // タイムアウトの最小値 (秒)
+};
 
 
 //

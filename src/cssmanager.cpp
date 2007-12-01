@@ -13,7 +13,10 @@
 #include "colorid.h"
 #include "cache.h"
 
-#define SIZE_OF_HEAP 16 * 1024
+enum
+{
+    SIZE_OF_HEAP = 16 * 1024
+};
 
 CORE::Css_Manager* instance_css_manager = NULL;
 

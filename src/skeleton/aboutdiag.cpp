@@ -10,7 +10,10 @@
 
 using namespace SKELETON;
 
-#define MARGIN 8
+enum
+{
+    MARGIN = 8
+};
 
 
 AboutDiag::AboutDiag( const Glib::ustring& title )

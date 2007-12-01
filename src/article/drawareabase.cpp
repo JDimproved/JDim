@@ -37,10 +37,20 @@
 
 using namespace ARTICLE;
 
-#define AUTOSCR_CIRCLE 24 // オートスクロールの時のサークルの大きさ
-#define BIG_WIDTH 100000
-#define BIG_HEIGHT 100000
+enum
+{
+    AUTOSCR_CIRCLE = 24, // オートスクロールの時のサークルの大きさ
 
+    BIG_WIDTH = 100000,
+    BIG_HEIGHT = 100000,
+
+    LAYOUT_MIN_HEIGHT = 2, // viewの高さがこの値よりも小さい時はリサイズしていないと考える
+
+    EIMG_ICONSIZE = 25,  // 埋め込み画像のアイコンサイズ
+    EIMG_MRG = 10,       // 埋め込み画像のアイコンの間隔
+
+    SPACE_TAB =  4 // 水平タブをどれだけ空けるか ( フォントの高さ * SPACE_TAB )
+};
 
 
 #define SCROLLSPEED_FAST ( m_vscrbar ? m_vscrbar->get_adjustment()->get_page_size() : 0 )
@@ -48,13 +58,6 @@ using namespace ARTICLE;
 #define SCROLLSPEED_SLOW ( m_vscrbar ? m_vscrbar->get_adjustment()->get_step_increment()*CONFIG::get_key_scroll_size() : 0 )
 
 #define IS_ALPHABET( chr ) ( ( chr >= 'a' && chr <= 'z' ) || ( chr >= 'A' && chr <= 'Z' ) )
-
-#define LAYOUT_MIN_HEIGHT 2 // viewの高さがこの値よりも小さい時はリサイズしていないと考える
-
-#define EIMG_ICONSIZE 25  // 埋め込み画像のアイコンサイズ
-#define EIMG_MRG 10       // 埋め込み画像のアイコンの間隔
-
-#define SPACE_TAB (m_font_height * 4) // 水平タブをどれだけ空けるか
 
 //////////////////////////////////////////////////////////
 
@@ -789,7 +792,7 @@ bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
                     //////////////////////////////////////////
 
                 case DBTREE::NODE_HTAB: // 水平タブ
-                    x += SPACE_TAB;
+                    x += m_font_height * SPACE_TAB;
                     break;
             }
 

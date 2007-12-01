@@ -30,8 +30,11 @@ using namespace CORE;
 // ルート要素名( hist.xml, hist_board.xml, hist_close.xml )
 #define ROOT_NODE_NAME "history"
 
-// 履歴に表示する文字数(半角)
-#define HIST_MAX_LNG 50
+enum
+{
+    HIST_MAX_LNG = 50 // 履歴に表示する文字数(半角)
+};
+
 
 HistorySubMenu::HistorySubMenu( const std::string& path_load_xml, const std::string& path_save_xml )
     : Gtk::Menu(),

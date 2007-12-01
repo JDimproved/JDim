@@ -120,8 +120,11 @@ void NodeTreeJBBS::create_loaderdata( JDLIB::LOADERDATA& data )
 // raw データを dat 形式に変換
 //
 
-#define MIN_SECTION 5
-#define MAX_SECTION 8
+enum
+{
+    MIN_SECTION = 5,
+    MAX_SECTION = 8
+};
 
 const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
 {

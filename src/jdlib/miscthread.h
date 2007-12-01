@@ -9,7 +9,10 @@
 
 typedef void* ( *STARTFUNC )( void * );
 
-#define DEFAULT_STACKSIZE 64
+enum
+{
+    DEFAULT_STACKSIZE = 64
+};
 
 namespace MISC
 {

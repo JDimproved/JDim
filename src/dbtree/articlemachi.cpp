@@ -14,8 +14,11 @@
 
 using namespace DBTREE;
 
-// 規定の最大レス数
-#define DEFAULT_NUMBER_MAX_MACHI 300
+
+enum
+{
+    DEFAULT_NUMBER_MAX_MACHI = 300 // 規定の最大レス数
+};
 
 ArticleMachi::ArticleMachi( const std::string& datbase, const std::string& _id, bool cached )
     : ArticleBase( datbase, _id, cached )

@@ -16,7 +16,10 @@
 #include "jdlib/loaderdata.h"
 #include "jdlib/miscmsg.h"
 
-#define SIZE_OF_RAWDATA ( 64 * 1024 )
+enum
+{
+    SIZE_OF_RAWDATA = 64 * 1024
+};
 
 LOGIN::Login2ch* instance_login2ch = NULL;
 

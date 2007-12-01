@@ -23,7 +23,10 @@ struct WIDTH_DATA
 
 WIDTH_DATA* width_of_char[ FONT_NUM ];
 
-#define UCS2_MAX 65536
+enum
+{
+    UCS2_MAX = 65536
+};
 
 
 //

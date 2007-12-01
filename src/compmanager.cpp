@@ -8,7 +8,10 @@
 #include "compmanager.h"
 #include "cache.h"
 
-#define MAX_COMPLETION 50
+enum
+{
+    MAX_COMPLETION = 50
+};
 
 CORE::Completion_Manager* instance_completion_manager = NULL;
 

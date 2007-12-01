@@ -7,7 +7,10 @@
 
 using namespace SKELETON;
 
-#define PANE_PAGE_MINSIZE 32
+enum
+{
+    PANE_PAGE_MINSIZE = 32
+};
 
 PaneControl::PaneControl( Gtk::Paned& paned, int fixmode )
     : m_paned( paned ),

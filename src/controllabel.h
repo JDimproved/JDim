@@ -8,7 +8,10 @@
 #include "controlid.h"
 #include "global.h"
 
-#define MAX_CONTROL_LABEL 64
+enum
+{
+    MAX_CONTROL_LABEL = 64
+};
 
 namespace CONTROL
 {

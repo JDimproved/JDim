@@ -18,7 +18,10 @@
 
 #include <regex.h>
 
-#define REGEX_MAX_NMATCH 32
+enum
+{
+    REGEX_MAX_NMATCH = 32
+};
 
 using namespace JDLIB;
 

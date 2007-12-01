@@ -37,16 +37,20 @@
 #endif
 
 
-#define SECTION_NUM 5
-#define LNG_RES 16
-#define LNG_ID 64
-#define LNG_LINK 256
-#define MAX_ANCINFO 64
-#define RANGE_REF 20
-#define MAX_LINK_DIGIT 4  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
+enum
+{
+    SECTION_NUM = 5,
+    LNG_RES = 16,
+    LNG_ID = 64,
+    LNG_LINK = 256,
+    MAX_ANCINFO = 64,
+    RANGE_REF = 20,
+    MAX_LINK_DIGIT = 4,  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
 
-#define MAXSISE_OF_LINES ( 512 * 1024 )   // ロード時に１回の呼び出しで読み込まれる最大データサイズ
-#define SIZE_OF_HEAP ( MAXSISE_OF_LINES + 64 )
+    MAXSISE_OF_LINES = 512 * 1024,   // ロード時に１回の呼び出しで読み込まれる最大データサイズ
+    SIZE_OF_HEAP = MAXSISE_OF_LINES + 64
+};
+
 
 using namespace DBTREE;
 
