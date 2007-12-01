@@ -2431,13 +2431,10 @@ void DrawAreaBase::goto_next_res()
 void DrawAreaBase::goto_pre_res()
 {
     // 表示するレスを検索
-    const LAYOUT* header = m_layout_tree->get_header_of_res_const( m_seen_current );
+    const LAYOUT* header;
     int num = m_seen_current;
     int pos_y = get_vscr_val();
-    while( header && num && header->rect->y >= pos_y ){
-        num--;
-        header = m_layout_tree->get_header_of_res_const( num );
-    }
+    do{ header = m_layout_tree->get_header_of_res_const( --num ); } while( num && ( ! header || header->rect->y >= pos_y ) );
     goto_num( num );
 }
 
