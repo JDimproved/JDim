@@ -902,7 +902,15 @@ std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& dir, 
 #endif
 
     SKELETON::FileDiag diag( parent, "保存先選択", Gtk::FILE_CHOOSER_ACTION_SAVE );
-    diag.set_current_folder( dir );
+    if( dir.empty() )
+    {
+        const char* home = getenv( "HOME" );
+        if( home ) diag.set_current_folder( home );
+    }
+    else
+    {
+        diag.set_current_folder( dir );
+    }
     diag.set_current_name( name );
     add_filter_to_diag( diag, type );
 
