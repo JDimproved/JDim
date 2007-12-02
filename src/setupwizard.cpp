@@ -38,8 +38,8 @@ PageStart::PageStart() : Gtk::VBox(),
 
 PageNet::PageNet() : Gtk::VBox(),
                      m_label( "２/４．ネットワークの設定をします", Gtk::ALIGN_LEFT ),
-                     m_proxy( "プロキシ設定" ),
-                     m_browser( "ブラウザ設定" ),
+                     m_proxy( "プロキシ設定(_P)", true ),
+                     m_browser( "ブラウザ設定(_W)", true ),
                      m_frame( "ブラウザ起動コマンド" ),   // フレーム
                      m_label_browser( CONFIG::get_command_openurl(), Gtk::ALIGN_LEFT )
 {
@@ -104,13 +104,17 @@ void PageNet::slot_setup_browser()
 PageFont::PageFont() : Gtk::VBox(),
                        m_label( "３/４．フォントの設定をします", Gtk::ALIGN_LEFT ),
                        m_table( 2, 3 ),
-                       m_label_res( "スレ", Gtk::ALIGN_LEFT ),
-                       m_label_popup( "ポップアップ", Gtk::ALIGN_LEFT ),
-                       m_label_tree( "板／スレ一覧", Gtk::ALIGN_LEFT ),
+                       m_label_res( "スレ(_T)", Gtk::ALIGN_LEFT, Gtk::ALIGN_TOP, true ),
+                       m_label_popup( "ポップアップ(_P)", Gtk::ALIGN_LEFT, Gtk::ALIGN_TOP, true ),
+                       m_label_tree( "板／スレ一覧(_O)", Gtk::ALIGN_LEFT, Gtk::ALIGN_TOP,  true ),
                        m_font_res( "スレフォント" ),
                        m_font_popup( "ポップアップフォント" ),
                        m_font_tree( "板／スレ一覧フォント" )
 {
+    m_label_res.set_mnemonic_widget( m_font_res );
+    m_label_popup.set_mnemonic_widget( m_font_popup );
+    m_label_tree.set_mnemonic_widget( m_font_tree );
+
     m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
     m_hbox_label.set_spacing( SPACING_SIZE );
     m_hbox_label.pack_start( m_icon, Gtk::PACK_SHRINK );
