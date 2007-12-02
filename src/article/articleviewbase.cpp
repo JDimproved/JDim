@@ -813,7 +813,7 @@ void ArticleViewBase::operate_view( const int& control )
                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
             mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
-            mdiag.add_button( "スレ再取得", Gtk::RESPONSE_YES + 100 );
+            mdiag.add_button( "スレ再取得(_R)", Gtk::RESPONSE_YES + 100 );
             mdiag.set_default_response( Gtk::RESPONSE_YES );
             int ret = mdiag.run();
             if( ret == Gtk::RESPONSE_YES ) delete_view();

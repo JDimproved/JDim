@@ -25,8 +25,8 @@ namespace CORE
         SKELETON::LabelEntry entry_host;
         SKELETON::LabelEntry entry_port;
 
-        ProxyFrame( const std::string& title )
-        : ckbt( "使用する" ), entry_host( true, "ホスト：" ), entry_port( true, "port：" ) 
+        ProxyFrame( const std::string& title, const Glib::ustring& ckbt_label, const Glib::ustring& host_label, const Glib::ustring& port_label )
+        : ckbt( ckbt_label, true ), entry_host( true, host_label), entry_port( true, port_label ) 
         {
             m_hbox.set_spacing( 8 );
             m_hbox.pack_start( ckbt, Gtk::PACK_SHRINK );
@@ -79,8 +79,10 @@ namespace CORE
       public:
 
         ProxyPref( Gtk::Window* parent, const std::string& url )
-        : SKELETON::PrefDiag( parent, url )
-        , m_frame_2ch( "2ch読み込み用" ), m_frame_2ch_w( "2ch書き込み用" ), m_frame_data( "その他のサーバ用(外部板、画像など)" )
+        : SKELETON::PrefDiag( parent, url ),
+        m_frame_2ch( "2ch読み込み用", "使用する(_U)", "ホスト名(_H)： ", "ポート番号(_P)： " ), 
+        m_frame_2ch_w( "2ch書き込み用", "使用する(_S)", "ホスト名(_N)： ", "ポート番号(_R)： " ),
+        m_frame_data( "その他のサーバ用(外部板、画像など)", "使用する(_E)", "ホスト名(_A)： ", "ポート番号(_T)： " )
         {
             // 2ch用
             if( CONFIG::get_use_proxy_for2ch() ) m_frame_2ch.ckbt.set_active( true );

@@ -97,27 +97,27 @@ void Admin::setup_menu( const bool enable_checkupdate )
     m_action_group = Gtk::ActionGroup::create();
     m_action_group->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &Admin::slot_close_tab ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする(_L)", std::string(), false ),
                          sigc::mem_fun( *this, &Admin::slot_lock ) );
 
-    m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる" ) );
-    m_action_group->add( Gtk::Action::create( "CloseOther", "他のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseLeft", "左←のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseRight", "右→のタブ" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseAll", "全てのタブ" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる(_M)" ) );
+    m_action_group->add( Gtk::Action::create( "CloseOther", "他のタブ(_O)" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseLeft", "左←のタブ(_L)" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseRight", "右→のタブ(_R)" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseAll", "全てのタブ(_A)" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
 
-    m_action_group->add( Gtk::Action::create( "Reload_Tab_Menu", "全てのタブの再読み込み" ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdateAll", "更新チェックのみ" ), sigc::mem_fun( *this, &Admin::slot_check_update_all_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdateReloadAll", "更新されたタブを再読み込み" ),
+    m_action_group->add( Gtk::Action::create( "Reload_Tab_Menu", "全てのタブの再読み込み(_A)" ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdateAll", "更新チェックのみ(_U)" ), sigc::mem_fun( *this, &Admin::slot_check_update_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdateReloadAll", "更新されたタブを再読み込み(_A)" ),
                          sigc::mem_fun( *this, &Admin::slot_check_update_reload_all_tabs ) );
-    m_action_group->add( Gtk::Action::create( "ReloadAll", "再読み込み" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CancelReloadAll", "キャンセル" ), sigc::mem_fun( *this, &Admin::slot_cancel_reload_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "ReloadAll", "再読み込み(_R)" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CancelReloadAll", "キャンセル(_C)" ), sigc::mem_fun( *this, &Admin::slot_cancel_reload_all_tabs ) );
 
-    m_action_group->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く" ), sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
-    m_action_group->add( Gtk::Action::create( "CopyURL", "URLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
-    m_action_group->add( Gtk::Action::create( "CopyTitle", "タイトルとURLをコピー" ), sigc::mem_fun( *this, &Admin::slot_copy_title_url ) );
+    m_action_group->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)" ), sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
+    m_action_group->add( Gtk::Action::create( "CopyURL", "URLをコピー(_U)" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
+    m_action_group->add( Gtk::Action::create( "CopyTitle", "タイトルとURLをコピー(_T)" ), sigc::mem_fun( *this, &Admin::slot_copy_title_url ) );
 
-    m_action_group->add( Gtk::Action::create( "Preference", "プロパティ..."), sigc::mem_fun( *this, &Admin::show_preference ) );
+    m_action_group->add( Gtk::Action::create( "Preference", "プロパティ(_P)..."), sigc::mem_fun( *this, &Admin::show_preference ) );
 
     m_ui_manager = Gtk::UIManager::create();    
     m_ui_manager->insert_action_group( m_action_group );
@@ -192,11 +192,11 @@ void Admin::setup_menu( const bool enable_checkupdate )
     m_move_menu = Gtk::manage( new Gtk::Menu() );
 
     // 先頭、最後に移動
-    item = Gtk::manage( new Gtk::MenuItem( "先頭に移動" ) );
+    item = Gtk::manage( new Gtk::MenuItem( "先頭に移動(_H)", true ) );
     m_move_menu->append( *item );
     item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_head ) );
 
-    item = Gtk::manage( new Gtk::MenuItem( "最後に移動" ) );
+    item = Gtk::manage( new Gtk::MenuItem( "最後に移動(_T)", true ) );
     m_move_menu->append( *item );
     item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_tail ) );
     m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );

@@ -43,7 +43,8 @@ namespace SKELETON
         LabelEntry( const bool editable, const std::string& label, const std::string& text = std::string() )
         : m_editable( editable )
         {
-            m_label.set_text( label );
+            m_label.set_text_with_mnemonic( label );
+            m_label.set_mnemonic_widget ( m_entry );
             m_color_bg_org = m_entry.get_style()->get_base( Gtk::STATE_NORMAL );
 
             setup();
