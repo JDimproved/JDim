@@ -8,7 +8,6 @@
 
 #include "jdlib/miscgtk.h"
 #include "jdlib/miscmsg.h"
-#include "jdlib/miscthread.h"
 
 #include "dbimg/imginterface.h"
 #include "dbimg/img.h"
@@ -93,7 +92,7 @@ void EmbeddedImage::wait()
     std::cout << "EmbeddedImage::wait\n";
 #endif 
 
-    if( m_thread ) pthread_join( m_thread, NULL );
+    MISC::thread_join( m_thread );
     m_thread = 0;
 }
 
@@ -126,10 +125,9 @@ void EmbeddedImage::show()
     if( ! m_width || ! m_height ) return;
 
     // スレッド起動して縮小
-    int status;
     m_stop = false;
-    if( ( status = MISC::thread_create( & m_thread, eimg_launcher, ( void* )this ) ) ){
-        MISC::ERRMSG( std::string( "EmbeddedImage::show : could not start thread " ) + strerror( status ) );
+    if( ! MISC::thread_create( m_thread, eimg_launcher, ( void* )this, MISC::NODETACH ) ){
+        MISC::ERRMSG( "EmbeddedImage::show : could not start thread" );
     }
 }
 

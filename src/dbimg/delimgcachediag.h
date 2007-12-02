@@ -7,6 +7,8 @@
 #ifndef _DELIMGCACHEDIAG_H
 #define _DELIMGCACHEDIAG_H
 
+#include "jdlib/miscthread.h"
+
 #include <gtkmm.h>
 
 namespace DBIMG
@@ -16,7 +18,7 @@ namespace DBIMG
         Gtk::Label m_label;
        
         bool m_stop; // = true にするとスレッド停止
-        pthread_t m_thread;
+        THREAD_T m_thread;
 
       public:
 

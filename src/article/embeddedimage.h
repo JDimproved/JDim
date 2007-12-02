@@ -11,8 +11,7 @@
 #include "skeleton/dispatchable.h"
 
 #include "jdlib/constptr.h"
-
-#include <pthread.h>
+#include "jdlib/miscthread.h"
 
 namespace DBIMG
 {
@@ -26,7 +25,7 @@ namespace ARTICLE
         std::string m_url;
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf;
         JDLIB::ConstPtr< DBIMG::Img > m_img;
-        pthread_t m_thread;
+        THREAD_T m_thread;
 
         bool m_stop;
         int m_width;

@@ -7,13 +7,11 @@
 #include "loader.h"
 #include "miscmsg.h"
 #include "miscutil.h"
-#include "miscthread.h"
 
 #include "skeleton/loadable.h"
 
 #include "httpcode.h"
 
-#include <pthread.h>
 #include <sstream>
 
 #include <errno.h>
@@ -171,7 +169,7 @@ void Loader::clear()
 
 void Loader::wait()
 {
-    if( m_thread ) pthread_join( m_thread, NULL );
+    MISC::thread_join( m_thread );
     m_thread = 0;
 }
 
@@ -327,12 +325,11 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
 #endif
 
     // スレッドを起動して run_main() 実行
-    int status;
     m_stop = false;
-    if( ( status = MISC::thread_create( &m_thread, ( STARTFUNC ) launcher, ( void * ) this ) )){
+    if( ! MISC::thread_create( m_thread, ( STARTFUNC ) launcher, ( void * ) this, MISC::NODETACH ) ){
 
         m_data.code = HTTP_ERR;
-        m_data.str_code = std::string( "Loader::run : could not start thread : " ) + strerror( status );
+        m_data.str_code = "Loader::run : could not start thread";
         MISC::ERRMSG( m_data.str_code );
         return false;
     }

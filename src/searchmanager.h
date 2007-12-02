@@ -10,7 +10,7 @@
 #include "skeleton/dispatchable.h"
 
 #include <gtkmm.h>
-#include <pthread.h>
+#include "jdlib/miscthread.h"
 
 #include <string>
 #include <list>
@@ -33,7 +33,7 @@ namespace CORE
 
         SIG_SEARCH_FIN m_sig_search_fin;
 
-        pthread_t m_thread;
+        THREAD_T m_thread;
 
         std::string m_id;
         std::string m_url;

@@ -8,7 +8,6 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
-#include "jdlib/miscthread.h"
 #include "jdlib/jdregex.h"
 
 #include "dbtree/interface.h"
@@ -37,7 +36,8 @@ void CORE::delete_search_manager()
 using namespace CORE;
 
 Search_Manager::Search_Manager()
-    : m_searching( false ),
+    : m_thread( 0 ),
+      m_searching( false ),
       m_searchloader( NULL )
 {}
 
@@ -64,6 +64,7 @@ bool Search_Manager::search( const std::string& id,
 #endif
 
     if( m_searching ) return false;
+    if( m_thread ) return false;
 
     m_id = id;
     m_url = url;
@@ -77,14 +78,13 @@ bool Search_Manager::search( const std::string& id,
     // 読み込んでおかないと大量の warning が出る
     if( m_searchall ) DBTREE::read_boardinfo_all();
 
-    int status;
-    if( ( status = MISC::thread_create( &m_thread, ( STARTFUNC ) launcher, ( void * ) this ) )){
-        MISC::ERRMSG( std::string( "Search_Manager::search : could not start thread " ) + strerror( status ) );
+    if( ! MISC::thread_create( m_thread, ( STARTFUNC ) launcher, ( void * ) this, MISC::DETACH ) ){
+        MISC::ERRMSG( "Search_Manager::search : could not start thread" );
     }
     else{
         m_searching = true;
-        pthread_detach( m_thread );
     }
+
 
     return true;
 }
@@ -158,6 +158,7 @@ void Search_Manager::search_fin()
 
     m_sig_search_fin.emit();
     m_searching = false;
+    m_thread = 0;
 }
 
 
@@ -191,7 +192,7 @@ bool Search_Manager::search_title( const std::string& id, const std::string& que
     m_query = query;
     m_list_data.clear();
 
-    // スレタイの検索が終わったら search_fin_thread が呼び出される
+    // スレタイの検索が終わったら search_fin_title が呼び出される
     if( ! m_searchloader ){
         m_searchloader = new SearchLoader();
         m_searchloader->sig_search_fin().connect( sigc::mem_fun( *this, &Search_Manager::search_fin_title ) );

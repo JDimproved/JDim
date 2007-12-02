@@ -11,7 +11,7 @@
 
 #include "imageareabase.h"
 
-#include <pthread.h>
+#include "jdlib/miscthread.h"
 
 namespace IMAGE
 {
@@ -25,7 +25,7 @@ namespace IMAGE
 
     class ImageAreaIcon : public ImageAreaBase, public SKELETON::Dispatchable
     {
-        pthread_t m_thread;
+        THREAD_T m_thread;
         bool m_stop;
 
         bool m_shown;

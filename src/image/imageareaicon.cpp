@@ -10,7 +10,6 @@
 
 #include "jdlib/miscmsg.h"
 #include "jdlib/miscgtk.h"
-#include "jdlib/miscthread.h"
 
 #include "config/globalconf.h"
 
@@ -98,7 +97,7 @@ void ImageAreaIcon::wait()
     std::cout << "ImageAreaIcon::wait\n";
 #endif 
 
-    if( m_thread ) pthread_join( m_thread, NULL );
+    MISC::thread_join( m_thread );
     m_thread = 0;
 }
 
@@ -149,10 +148,9 @@ void ImageAreaIcon::show_image()
         set_width( (int)( w_org * scale ) );
         set_height( (int)( h_org * scale ) );
 
-        int status;
         m_stop = false;
-        if( ( status = MISC::thread_create( &m_thread, icon_launcher, ( void* ) this ) ) ){
-            MISC::ERRMSG( std::string( "ImageAreaIcon::show_image : could not start thread " ) + strerror( status ) );
+        if( ! MISC::thread_create( m_thread, icon_launcher, ( void* ) this, MISC::NODETACH ) ) {
+            MISC::ERRMSG( "ImageAreaIcon::show_image : could not start thread" );
         }
     }
 }

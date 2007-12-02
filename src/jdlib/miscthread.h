@@ -9,6 +9,8 @@
 
 typedef void* ( *STARTFUNC )( void * );
 
+typedef pthread_t THREAD_T;
+
 enum
 {
     DEFAULT_STACKSIZE = 64
@@ -16,8 +18,16 @@ enum
 
 namespace MISC
 {
+    enum
+    {
+        DETACH = true,
+        NODETACH = false
+    };
+
     // スレッド作成
-    int thread_create( pthread_t * thread, STARTFUNC func , void * arg, const int stack_kbyte = DEFAULT_STACKSIZE );
+    bool thread_create( THREAD_T& thread, STARTFUNC func , void * arg, const bool detach, const int stack_kbyte = DEFAULT_STACKSIZE );
+
+    bool thread_join( const THREAD_T thread );
 }
 
 #endif

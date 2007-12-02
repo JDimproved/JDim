@@ -10,14 +10,13 @@
 #define _LOADER_H
 
 #include "loaderdata.h"
+#include "miscthread.h"
 
 #include <string>
 #include <list>
 #include <zlib.h>
 
 #include <netdb.h>
-#include <gtkmm.h>
-
 
 // zlibが1.2よりバージョンが低いか判定する
 #ifndef ZLIB_VERNUM
@@ -43,7 +42,7 @@ namespace JDLIB
 
         bool m_stop; // = true にするとスレッド停止
         bool m_loading;
-        pthread_t m_thread;
+        THREAD_T m_thread;
         SKELETON::Loadable* m_loadable;
         
         // 読み込みバッファ

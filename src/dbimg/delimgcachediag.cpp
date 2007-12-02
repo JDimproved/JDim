@@ -15,7 +15,6 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
-#include "jdlib/miscthread.h"
 
 #include <sys/time.h>
 
@@ -59,9 +58,8 @@ bool DelImgCacheDiag::on_expose_event( GdkEventExpose* event )
     // スレッドを起動してキャッシュ削除
     if( ! m_thread ){
         m_stop = false;
-        int status;
-        if( ( status = MISC::thread_create( &m_thread, ( STARTFUNC ) launcher, ( void * ) this ) )){
-            MISC::ERRMSG( std::string( "thread_create failed : " ) + strerror( status ) );
+        if( ! MISC::thread_create( m_thread, ( STARTFUNC ) launcher, ( void * ) this, MISC::NODETACH ) ){
+            MISC::ERRMSG( "DelImgCacheDiag::on_expose_event : could not start thread" );
         }
     }
 
@@ -178,7 +176,7 @@ void DelImgCacheDiag::wait()
     std::cout << "DelImgCacheDiag::wait\n";
 #endif
 
-    if( m_thread ) pthread_join( m_thread, NULL );
+    MISC::thread_join( m_thread );
     m_thread = 0;
 }
 
