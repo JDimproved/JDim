@@ -158,12 +158,17 @@ void ImageViewMain::clock_in()
 //
 void ImageViewMain::show_instruct_diag()
 {
+    const int mrg = 16;
+
     IMAGE::get_admin()->set_command_immediately( "disable_fold_win" );
 
     SKELETON::MsgDiag mdiag( NULL, 
-        "画像ビューからスレビューに戻る方法として\n\n(1) マウスジェスチャを使う( マウスの右ボタンを押しながら左または下にドラッグして右ボタンを離す )\n\n(2) マウスの5ボタンを押す\n\n(3) Alt+x か h か ← を押す\n\n(4) ツールバーのスレビューアイコンを押す\n\n(5) 表示メニューからスレビューを選ぶ\n\nなどがあります。詳しくはオンラインマニュアルを参照してください。" );
-    Gtk::CheckButton chkbutton( "今後表示しない" );
-    mdiag.get_vbox()->pack_start( chkbutton, Gtk::PACK_SHRINK );
+        "画像ビューからスレビューに戻る方法として\n\n(1) マウスジェスチャを使う\n(マウス右ボタンを押しながら左または下にドラッグして右ボタンを離す)\n\n(2) マウスの5ボタンを押す\n\n(3) Alt+x か h か ← を押す\n\n(4) ツールバーのスレビューアイコンを押す\n\n(5) 表示メニューからスレビューを選ぶ\n\nなどがあります。詳しくはオンラインマニュアルを参照してください。" );
+    Gtk::HBox hbox;
+    Gtk::CheckButton chkbutton( "今後表示しない(_D)", true );
+    hbox.pack_start( chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
+    chkbutton.set_alignment( 1.0, 0.0 );
+    mdiag.get_vbox()->pack_start( hbox, Gtk::PACK_SHRINK );
     mdiag.set_title( "ヒント" );
     mdiag.show_all_children();
     mdiag.run();
