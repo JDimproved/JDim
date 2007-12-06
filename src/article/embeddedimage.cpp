@@ -56,7 +56,6 @@ using namespace ARTICLE;
 EmbeddedImage::EmbeddedImage( const std::string& url )
     : m_url( url ),
       m_img ( DBIMG::get_img( m_url ) ),
-      m_thread( 0 ),
       m_width( 0 ),
       m_height( 0 )
 {}
@@ -91,9 +90,7 @@ void EmbeddedImage::wait()
 #ifdef _DEBUG    
     std::cout << "EmbeddedImage::wait\n";
 #endif 
-
-    MISC::thread_join( m_thread );
-    m_thread = 0;
+    m_thread.join();
 }
 
 
@@ -103,7 +100,7 @@ void EmbeddedImage::show()
     std::cout << "EmbeddedImage::show url = " << m_url << std::endl;
 #endif
 
-    if( m_thread ) return;
+    if( m_thread.is_running() ) return;
 
     const int max_width = 100;
     const int max_height = 100;
@@ -126,7 +123,7 @@ void EmbeddedImage::show()
 
     // スレッド起動して縮小
     m_stop = false;
-    if( ! MISC::thread_create( m_thread, eimg_launcher, ( void* )this, MISC::NODETACH ) ){
+    if( ! m_thread.create( eimg_launcher, ( void* )this, JDLIB::NODETACH ) ){
         MISC::ERRMSG( "EmbeddedImage::show : could not start thread" );
     }
 }

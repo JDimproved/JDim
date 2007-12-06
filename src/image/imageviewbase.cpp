@@ -40,6 +40,7 @@ using namespace IMAGE;
 ImageViewBase::ImageViewBase( const std::string& url, const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
       m_loading( false ),
+      m_under_mouse( false ),
       m_enable_menuslot( true )
 {
     // 高速化のためデータベースに直接アクセス
@@ -80,6 +81,8 @@ void ImageViewBase::setup_common()
     m_event.signal_motion_notify_event().connect(  sigc::mem_fun( *this, &ImageViewBase::slot_motion_notify ) );
     m_event.signal_key_press_event().connect( sigc::mem_fun(*this, &ImageViewBase::slot_key_press ) );
     m_event.signal_scroll_event().connect( sigc::mem_fun(*this, &ImageViewBase::slot_scroll_event ) );
+    m_event.signal_enter_notify_event().connect(  sigc::mem_fun( *this, &ImageViewBase::slot_enter_notify_event ) );
+    m_event.signal_leave_notify_event().connect(  sigc::mem_fun( *this, &ImageViewBase::slot_leave_notify_event ) );
 
     m_event.grab_focus();
 
@@ -645,7 +648,7 @@ bool ImageViewBase::slot_button_release( GdkEventButton* event )
         show_popupmenu( "", false );
     }
 
-    else operate_view( get_control().button_press( event ) );
+    else if( is_under_mouse() ) operate_view( get_control().button_press( event ) );
 
     event->type = type_copy;
 
@@ -683,6 +686,31 @@ bool ImageViewBase::slot_scroll_event( GdkEventScroll* event )
 }
 
 
+//
+// マウスが入った
+//
+bool ImageViewBase::slot_enter_notify_event( GdkEventCrossing* event )
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewBase::slot_enter_notify_event\n";
+#endif
+    m_under_mouse = true;
+
+    return true;
+}
+
+//
+// マウスが出た
+//
+bool ImageViewBase::slot_leave_notify_event( GdkEventCrossing* event )
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewBase::slot_leave_notify_event\n";
+#endif
+    m_under_mouse = false;
+
+    return true;
+}
 
 
 //

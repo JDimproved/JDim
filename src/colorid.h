@@ -39,6 +39,8 @@ enum
     COLOR_BACK_ENTRY_DEFAULT,      // Gtk::Entryのデフォルトの背景色
 
     COLOR_SEPARATOR_NEW,    // 新着セパレータ
+    COLOR_FRAME,  // ポップアップフレーム色
+    COLOR_MARKER, // オートスクロールのマーク色
 
     END_COLOR_FOR_THREAD,
     USRCOLOR_BASE = END_COLOR_FOR_THREAD, // cssで使用する色番号のベース

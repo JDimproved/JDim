@@ -84,21 +84,22 @@ namespace ARTICLE
     ////////////////////////////////////////////
 
 
-    class SearchToolBar : public Gtk::ScrolledWindow
+    class SearchToolBar : public SKELETON::ToolBar
     {
         friend class ArticleViewSearch;
 
-        Gtk::HBox m_hbox;
-
-        Gtk::Tooltips m_tooltip;
-
         SKELETON::SearchEntry m_entry_search;
-        SKELETON::ImgButton m_button_close;
         SKELETON::ImgButton m_button_reload;
         SKELETON::ImgButton m_button_stop;
 
+      public:
+
         SearchToolBar();
         virtual ~SearchToolBar(){}
+
+      protected:
+
+        virtual void pack_buttons();
     };
 }
 

@@ -52,7 +52,6 @@ using namespace IMAGE;
 
 ImageAreaIcon::ImageAreaIcon( const std::string& url )
     : ImageAreaBase( url )
-    , m_thread( 0 )
     , m_shown( false )
 {
 #ifdef _DEBUG    
@@ -97,8 +96,7 @@ void ImageAreaIcon::wait()
     std::cout << "ImageAreaIcon::wait\n";
 #endif 
 
-    MISC::thread_join( m_thread );
-    m_thread = 0;
+    m_thread.join();
 }
 
 
@@ -114,7 +112,7 @@ void ImageAreaIcon::show_image()
     std::cout << "ImageAreaIcon::show_image url = " << get_url() << std::endl;
 #endif 
 
-    if( m_thread )  return;
+    if( m_thread.is_running() )  return;
 
     // 既に画像が表示されている
     if( m_shown && get_img()->is_cached() ) return;
@@ -149,7 +147,7 @@ void ImageAreaIcon::show_image()
         set_height( (int)( h_org * scale ) );
 
         m_stop = false;
-        if( ! MISC::thread_create( m_thread, icon_launcher, ( void* ) this, MISC::NODETACH ) ) {
+        if( ! m_thread.create( icon_launcher, ( void* ) this, JDLIB::NODETACH ) ) {
             MISC::ERRMSG( "ImageAreaIcon::show_image : could not start thread" );
         }
     }

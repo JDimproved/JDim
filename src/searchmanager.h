@@ -10,7 +10,7 @@
 #include "skeleton/dispatchable.h"
 
 #include <gtkmm.h>
-#include "jdlib/miscthread.h"
+#include "jdlib/jdthread.h"
 
 #include <string>
 #include <list>
@@ -33,7 +33,7 @@ namespace CORE
 
         SIG_SEARCH_FIN m_sig_search_fin;
 
-        THREAD_T m_thread;
+        JDLIB::Thread m_thread;
 
         std::string m_id;
         std::string m_url;
@@ -73,6 +73,7 @@ namespace CORE
 
       private:
         static void* launcher( void* );
+        void wait();
         void thread_search();
         virtual void callback_dispatch();
         void search_fin();

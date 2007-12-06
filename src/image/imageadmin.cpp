@@ -1040,6 +1040,14 @@ std::list< bool > ImageAdmin::get_locked()
 
 
 // タブのロック/アンロック
+const bool ImageAdmin::is_lockable( const int page )
+{
+    SKELETON::View* view = get_nth_icon( page );
+    if( view ) return view->is_lockable();
+
+    return false;
+}
+
 const bool ImageAdmin::is_locked( const int page )
 {
     SKELETON::View* view = get_nth_icon( page );

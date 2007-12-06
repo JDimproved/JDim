@@ -1547,9 +1547,14 @@ void Admin::slot_tab_menu( int page, int x, int y )
     act = m_action_group->get_action( "LockTab" );
     if( page >= 0 && act ){
 
-        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-        if( is_locked( page ) ) tact->set_active( true );
-        else tact->set_active( false );
+        if( ! is_lockable( page ) ) act->set_sensitive( false );
+        else{
+            act->set_sensitive( true );
+
+            Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+            if( is_locked( page ) ) tact->set_active( true );
+            else tact->set_active( false );
+        }
     }
 
     // 閉じる
@@ -1871,6 +1876,14 @@ std::list< bool > Admin::get_locked()
 }
 
 // タブのロック/アンロック
+const bool Admin::is_lockable( const int page )
+{
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+    if( view ) return view->is_lockable();
+
+    return false;
+}
+
 const bool Admin::is_locked( const int page )
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );

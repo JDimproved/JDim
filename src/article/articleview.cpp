@@ -923,13 +923,15 @@ ArticleViewSearch::~ArticleViewSearch()
 void ArticleViewSearch::pack_widget()
 {
     // ツールバーの設定
-    m_searchtoolbar = Gtk::manage( new SearchToolBar() );
-    m_searchtoolbar->m_button_close.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearch::close_view ) );
+    set_toolbar( m_searchtoolbar = Gtk::manage( new SearchToolBar() ) );
+    m_searchtoolbar->get_close_button().signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearch::close_view ) );
     m_searchtoolbar->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearch::reload ) );
     m_searchtoolbar->m_button_stop.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearch::stop ) );
 
     m_searchtoolbar->m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &ArticleViewSearch::slot_active_search ) );
     m_searchtoolbar->m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &ArticleViewSearch::slot_entry_operate ) );
+
+    m_searchtoolbar->show_toolbar();
 
     pack_start( *m_searchtoolbar, Gtk::PACK_SHRINK, 2 );
     pack_start( *drawarea(), Gtk::PACK_EXPAND_WIDGET, 2 );
@@ -972,10 +974,6 @@ void ArticleViewSearch::show_view()
             m_loading = true;
             ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
         }
-    }
-    else if( CORE::get_search_manager()->is_searching() ){
-        SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
-        mdiag.run();
     }
 }
 
@@ -1056,6 +1054,7 @@ void ArticleViewSearch::reload()
     if( CORE::get_search_manager()->is_searching() ){
         SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
         mdiag.run();
+        return;
     }
 
     std::string query = m_searchtoolbar->m_entry_search.get_text();
@@ -1086,7 +1085,8 @@ void ArticleViewSearch::reload()
 //
 void ArticleViewSearch::stop()
 {
-    CORE::get_search_manager()->stop();
+    if( CORE::get_search_manager()->is_searching()
+        && CORE::get_search_manager()->get_id() == get_url() ) CORE::get_search_manager()->stop();
 }
 
 

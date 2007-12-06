@@ -2349,6 +2349,12 @@ void Core::set_command( const COMMAND_ARGS& command )
     // ログ検索
     else if( command.command  == "open_article_searchlog" ) { 
 
+        if( CORE::get_search_manager()->is_searching() ){
+            SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
+            mdiag.run();
+            return;
+        }
+
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
@@ -2369,6 +2375,12 @@ void Core::set_command( const COMMAND_ARGS& command )
 
     // 全ログ検索
     else if( command.command  == "open_article_searchalllog" ) { 
+
+        if( CORE::get_search_manager()->is_searching() ){
+            SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
+            mdiag.run();
+            return;
+        }
 
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
         
@@ -2391,6 +2403,12 @@ void Core::set_command( const COMMAND_ARGS& command )
 
     // スレタイ検索
     else if( command.command  == "open_article_searchtitle" ) { 
+
+        if( CORE::get_search_manager()->is_searching() ){
+            SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
+            mdiag.run();
+            return;
+        }
 
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 

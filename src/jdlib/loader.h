@@ -10,7 +10,7 @@
 #define _LOADER_H
 
 #include "loaderdata.h"
-#include "miscthread.h"
+#include "jdthread.h"
 
 #include <string>
 #include <list>
@@ -42,7 +42,7 @@ namespace JDLIB
 
         bool m_stop; // = true にするとスレッド停止
         bool m_loading;
-        THREAD_T m_thread;
+        JDLIB::Thread m_thread;
         SKELETON::Loadable* m_loadable;
         
         // 読み込みバッファ

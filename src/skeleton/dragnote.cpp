@@ -359,7 +359,7 @@ bool DragableNoteBook::on_button_release_event( GdkEventButton* event )
         if( m_control.button_alloted( event, CONTROL::ClickButton ) ) m_sig_tab_click.emit( m_page );
 
         // タブを閉じる
-        else if( m_control.button_alloted( event, CONTROL::CloseTabButton ) ){
+        else if( get_page_under_mouse() == m_page && m_control.button_alloted( event, CONTROL::CloseTabButton ) ){
             m_sig_tab_close.emit( m_page );
 
             // タブにページが残ってなかったらそのままreturnしないと落ちる

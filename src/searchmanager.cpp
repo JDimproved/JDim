@@ -36,8 +36,7 @@ void CORE::delete_search_manager()
 using namespace CORE;
 
 Search_Manager::Search_Manager()
-    : m_thread( 0 ),
-      m_searching( false ),
+    : m_searching( false ),
       m_searchloader( NULL )
 {}
 
@@ -47,6 +46,7 @@ Search_Manager::~Search_Manager()
     set_dispatchable( false );
 
     stop();
+    wait();
 
     if( m_searchloader ) delete m_searchloader;
 }
@@ -64,7 +64,7 @@ bool Search_Manager::search( const std::string& id,
 #endif
 
     if( m_searching ) return false;
-    if( m_thread ) return false;
+    if( m_thread.is_running() ) return false;
 
     m_id = id;
     m_url = url;
@@ -78,7 +78,7 @@ bool Search_Manager::search( const std::string& id,
     // 読み込んでおかないと大量の warning が出る
     if( m_searchall ) DBTREE::read_boardinfo_all();
 
-    if( ! MISC::thread_create( m_thread, ( STARTFUNC ) launcher, ( void * ) this, MISC::DETACH ) ){
+    if( ! m_thread.create( ( STARTFUNC ) launcher, ( void * ) this, JDLIB::NODETACH ) ){
         MISC::ERRMSG( "Search_Manager::search : could not start thread" );
     }
     else{
@@ -143,6 +143,7 @@ void Search_Manager::thread_search()
 //
 void Search_Manager::callback_dispatch()
 {
+    wait();
     search_fin();
 }
 
@@ -158,7 +159,6 @@ void Search_Manager::search_fin()
 
     m_sig_search_fin.emit();
     m_searching = false;
-    m_thread = 0;
 }
 
 
@@ -173,6 +173,12 @@ void Search_Manager::stop()
 
     // スレタイ検索停止
     if( m_searchloader ) m_searchloader->stop_load();
+}
+
+
+void Search_Manager::wait()
+{
+    m_thread.join();
 }
 
 

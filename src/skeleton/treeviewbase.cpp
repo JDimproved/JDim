@@ -136,8 +136,18 @@ void JDTreeViewBase::goto_bottom()
     if( ! get_model()->children().size() ) return;
 
     Gtk::TreePath path = get_model()->get_path( *( get_model()->children().rbegin() ) );
-    scroll_to_row( path, 0 );
-    set_cursor( path );
+
+    // ディレクトリを開いている時、一番下の行に移動
+    Gtk::TreePath path_prev = path;
+    while( ! path.empty() ){
+        Gtk::TreePath path_tmp = next_path( path );
+        if( path_tmp == path ) break; // 変化が無くなったらbreak
+        path_prev = path;
+        path = path_tmp;
+    }
+
+    scroll_to_row( path_prev, 0 );
+    set_cursor( path_prev );
 }
 
 

@@ -35,17 +35,16 @@ namespace SKELETON
         Gtk::Statusbar m_statbar;
 #else
         Gtk::HBox m_statbar;
-        Gtk::Label m_label_stat;
+        Gtk::Entry m_label_stat;
 #endif
         Gtk::Label m_mginfo;
-        Gtk::ScrolledWindow m_stat_scrbar;
 
       public:
 
         JDWindow( const bool fold_when_focusout );
         ~JDWindow();
 
-        Gtk::ScrolledWindow& get_statbar(){ return  m_stat_scrbar; }
+        Gtk::HBox& get_statbar(){ return  m_statbar; }
 
         virtual void clock_in();
 

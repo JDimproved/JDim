@@ -302,6 +302,12 @@ const bool ConfigItems::load()
     // 新着セパレータ
     str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", CONF_COLOR_SEPARATOR_NEW );
 
+    // ポップアップフレーム色
+    str_color[ COLOR_FRAME ] = cf.get_option( "cl_frame", CONF_COLOR_FRAME );
+
+    // オートスクロールマーカー色
+    str_color[ COLOR_MARKER ] = cf.get_option( "cl_marker", CONF_COLOR_MARKER );
+
     // 板一覧の文字
     str_color[ COLOR_CHAR_BBS ] = cf.get_option( "cl_chr_bbs", CONF_COLOR_CHAR_BBS );
 
@@ -591,6 +597,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_back_message", str_color[ COLOR_BACK_MESSAGE ] );
     cf.update( "cl_back_message_selection", str_color[ COLOR_BACK_MESSAGE_SELECTION ] );
     cf.update( "cl_sepa_new", str_color[ COLOR_SEPARATOR_NEW ] );
+    cf.update( "cl_frame", str_color[ COLOR_FRAME ] );
+    cf.update( "cl_marker", str_color[ COLOR_MARKER ] );
     cf.update( "cl_chr_bbs", str_color[ COLOR_CHAR_BBS ] );
     cf.update( "cl_chr_board", str_color[ COLOR_CHAR_BOARD ] );
     cf.update( "cl_back_bbs", str_color[ COLOR_BACK_BBS ] );

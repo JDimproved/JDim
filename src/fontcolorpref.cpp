@@ -51,6 +51,8 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "文字: 板一覧／お気に入り", COLOR_CHAR_BBS, "板一覧／お気に入りの文字色" );
     set_color_settings( "文字: スレ一覧", COLOR_CHAR_BOARD, "スレ一覧の文字色" );
     set_color_settings( "特殊: 新着しおり", COLOR_SEPARATOR_NEW, "新着しおりの色" );
+    set_color_settings( "特殊: ポップアップフレーム", COLOR_FRAME, "ポップアップのフレーム色" );
+    set_color_settings( "特殊: オートスクロールマーカ", COLOR_MARKER, "オートスクロールのマーカ色" );
     set_color_settings( "背景: スレビュー", COLOR_BACK, "スレビューの背景色" );
     set_color_settings( "背景: ポップアップ", COLOR_BACK_POPUP, "ポップアップの背景色" );
     set_color_settings( "背景: 選択範囲", COLOR_BACK_SELECTION, "選択範囲の背景色" );

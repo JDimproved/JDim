@@ -1498,7 +1498,7 @@ bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
 
     // オートスクロールのマーカ
     if( m_scrollinfo.mode != SCROLL_NOT && m_scrollinfo.show_marker ){
-        m_gc->set_foreground( m_color[ get_colorid_text() ] );
+        m_gc->set_foreground( m_color[ COLOR_MARKER ] );
         m_window->draw_arc( m_gc, false, m_scrollinfo.x - AUTOSCR_CIRCLE/2, m_scrollinfo.y - AUTOSCR_CIRCLE/2 ,
                             AUTOSCR_CIRCLE, AUTOSCR_CIRCLE, 0, 360 * 64 );
     }
@@ -1711,7 +1711,7 @@ void DrawAreaBase::draw_frame()
 {
     int width_win = m_view.get_width();
     int height_win = m_view.get_height();
-    m_gc->set_foreground( m_color[ get_colorid_text() ] );
+    m_gc->set_foreground( m_color[ COLOR_FRAME ] );
     m_window->draw_rectangle( m_gc, false, 0, 0, width_win-1, height_win-1 );
 }
 
@@ -3540,6 +3540,14 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 //
 bool DrawAreaBase::slot_button_release_event( GdkEventButton* event )
 {
+    // リンクの上でコンテキストメニューを表示してからマウスを移動すると
+    // slot_motion_notify_eventが呼び出されず m_layout_current が変わらないため
+    // リンクを開いてしまう
+    CARET_POSITION caret_pos;
+    m_x_pointer = ( int ) event->x;
+    m_y_pointer = ( int ) event->y;
+    m_layout_current = set_caret( caret_pos, m_x_pointer , m_y_pointer + get_vscr_val() );
+
     std::string url;
     int res_num = 0;
 

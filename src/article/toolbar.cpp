@@ -169,25 +169,27 @@ void ArticleToolBar::set_old()
 
 
 SearchToolBar::SearchToolBar() :
-    m_button_close( Gtk::Stock::CLOSE ),
     m_button_reload( Gtk::Stock::REFRESH ),
     m_button_stop( Gtk::Stock::STOP )
 {
-    m_tooltip.set_tip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
-    m_tooltip.set_tip( m_button_reload, "再検索 " + CONTROL::get_motion( CONTROL::Reload ) );
-    m_tooltip.set_tip( m_button_stop, "検索中止 " + CONTROL::get_motion( CONTROL::StopLoading ) );
+    set_tooltip( m_button_reload, "再検索 " + CONTROL::get_motion( CONTROL::Reload ) );
+    set_tooltip( m_button_stop, "検索中止 " + CONTROL::get_motion( CONTROL::StopLoading ) );
 
-    m_hbox.pack_start( m_entry_search, Gtk::PACK_EXPAND_WIDGET );
-    m_hbox.pack_end( m_button_close, Gtk::PACK_SHRINK );
-    m_hbox.pack_end( m_button_stop, Gtk::PACK_SHRINK );
-    m_hbox.pack_end( m_button_reload, Gtk::PACK_SHRINK );
+    pack_buttons();
+}
+
+
+//
+// ボタンのパッキング
+//
+void SearchToolBar::pack_buttons()
+{
+    get_buttonbar().pack_start( m_entry_search, Gtk::PACK_EXPAND_WIDGET );
+    get_buttonbar().pack_end( get_close_button(), Gtk::PACK_SHRINK );
+    get_buttonbar().pack_end( m_button_stop, Gtk::PACK_SHRINK );
+    get_buttonbar().pack_end( m_button_reload, Gtk::PACK_SHRINK );
 
     m_entry_search.add_mode( CONTROL::MODE_COMMON );
 
-    m_hbox.set_border_width( 1 );
-    add( m_hbox );
-
-    set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
-    set_size_request( 8 );
     show_all_children();
 }

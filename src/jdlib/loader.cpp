@@ -118,7 +118,6 @@ using namespace JDLIB;
 Loader::Loader()
     : m_addrinfo( 0 ),
       m_loading( 0 ),
-      m_thread( 0 ),
       m_buf( 0 ),
       m_buf_zlib_in ( 0 ),
       m_buf_zlib_out ( 0 ),
@@ -169,8 +168,7 @@ void Loader::clear()
 
 void Loader::wait()
 {
-    MISC::thread_join( m_thread );
-    m_thread = 0;
+    m_thread.join();
 }
 
 
@@ -326,7 +324,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
 
     // スレッドを起動して run_main() 実行
     m_stop = false;
-    if( ! MISC::thread_create( m_thread, ( STARTFUNC ) launcher, ( void * ) this, MISC::NODETACH ) ){
+    if( ! m_thread.create( ( STARTFUNC ) launcher, ( void * ) this, JDLIB::NODETACH ) ){
 
         m_data.code = HTTP_ERR;
         m_data.str_code = "Loader::run : could not start thread";

@@ -79,6 +79,7 @@ namespace IMAGE
         virtual std::list< bool > get_locked();
 
         // タブのロック/アンロック
+        virtual const bool is_lockable( const int page );
         virtual const bool is_locked( const int page );
         virtual void lock( const int page );
         virtual void unlock( const int page );

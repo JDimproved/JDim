@@ -23,8 +23,7 @@ using namespace DBIMG;
 
 
 DelImgCacheDiag::DelImgCacheDiag()
-    : m_label( "画像キャッシュ削除中・・・\n\nしばらくお待ち下さい" ),
-      m_thread( 0 )
+    : m_label( "画像キャッシュ削除中・・・\n\nしばらくお待ち下さい" )
 {
     add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL )
     ->signal_clicked().connect( sigc::mem_fun(*this, &DelImgCacheDiag::slot_cancel_clicked ) );
@@ -56,9 +55,9 @@ bool DelImgCacheDiag::on_expose_event( GdkEventExpose* event )
 #endif
 
     // スレッドを起動してキャッシュ削除
-    if( ! m_thread ){
+    if( ! m_thread.is_running() ){
         m_stop = false;
-        if( ! MISC::thread_create( m_thread, ( STARTFUNC ) launcher, ( void * ) this, MISC::NODETACH ) ){
+        if( ! m_thread.create( ( STARTFUNC ) launcher, ( void * ) this, JDLIB::NODETACH ) ){
             MISC::ERRMSG( "DelImgCacheDiag::on_expose_event : could not start thread" );
         }
     }
@@ -175,9 +174,7 @@ void DelImgCacheDiag::wait()
 #ifdef _DEBUG
     std::cout << "DelImgCacheDiag::wait\n";
 #endif
-
-    MISC::thread_join( m_thread );
-    m_thread = 0;
+    m_thread.join();
 }
 
 

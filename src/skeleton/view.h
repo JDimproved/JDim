@@ -57,6 +57,9 @@ namespace SKELETON
         int m_keyjump_counter;
         int m_keyjump_num;
 
+        // ロック可能か
+        bool m_lockable;
+
         // ロック状態
         bool m_locked;
 
@@ -134,6 +137,8 @@ namespace SKELETON
         void update_host( const std::string& host );
 
         // ロック/アンロック
+        const bool is_lockable() const { return m_lockable; }
+        void set_lockable( const bool lockable ){ m_lockable = lockable; }
         const bool is_locked() const { return m_locked; }
         virtual void lock();
         virtual void unlock();

@@ -39,6 +39,7 @@ namespace IMAGE
         bool m_loading;
         Gtk::EventBox m_event;
         bool m_dblclick;
+        bool m_under_mouse;
 
         bool m_enable_menuslot;
 
@@ -58,6 +59,8 @@ namespace IMAGE
 
         ImageViewBase( const std::string& url, const std::string& arg1 = std::string(), const std::string& arg2 = std::string() );
         virtual ~ImageViewBase();
+
+        const bool is_under_mouse() const { return m_under_mouse; }
 
         // コマンド
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
@@ -83,7 +86,8 @@ namespace IMAGE
         virtual bool slot_motion_notify( GdkEventMotion* event );
         bool slot_key_press( GdkEventKey* event );
         virtual bool slot_scroll_event( GdkEventScroll* event );
-
+        bool slot_enter_notify_event( GdkEventCrossing* event );
+        bool slot_leave_notify_event( GdkEventCrossing* event );
 
       private:
 

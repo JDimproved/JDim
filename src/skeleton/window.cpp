@@ -13,6 +13,8 @@
 
 enum
 {
+    MGINFO_CHARS = MAX_MG_LNG * 2 + 16, // マウスジェスチャ表示欄の文字数
+
     FOCUSOUT_TIMEOUT = 250, // GNOME環境でフォーカスを外すまでの時間 ( msec )
     FOCUS_TIME = 100, // JDWindowにフォーカスを移してウィンドウサイズを復元するまでの時間 ( msec )
     UNGRAB_TIME = 100, // ブート直後にフォーカスをメインウィンドウに戻すまでの時間 ( msec )
@@ -56,16 +58,18 @@ JDWindow::JDWindow( const bool fold_when_focusout )
 #if GTKMMVER <= 240
     m_statbar.pack_start( m_mginfo );
 #else
-    m_statbar.pack_start( m_label_stat, Gtk::PACK_SHRINK );
-    m_statbar.pack_end( m_mginfo, Gtk::PACK_SHRINK );
-    m_mginfo.set_width_chars( MAX_MG_LNG * 2 + 16 );
-    m_mginfo.set_justify( Gtk::JUSTIFY_LEFT );
-#endif
-    m_statbar.show_all_children();
+    m_label_stat.set_editable( false );
+    m_label_stat.set_activates_default( false );
+    m_label_stat.set_has_frame( false );
 
-    m_stat_scrbar.add( m_statbar );
-    m_stat_scrbar.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
-    m_stat_scrbar.set_size_request( 8 );
+    m_statbar.pack_start( m_label_stat );
+    m_statbar.pack_start( m_mginfo, Gtk::PACK_SHRINK );
+
+    m_mginfo.set_width_chars( MGINFO_CHARS );
+    m_mginfo.set_alignment( Gtk::ALIGN_LEFT );
+#endif
+
+    m_statbar.show_all_children();
 
     add( m_vbox );
 }
@@ -500,8 +504,8 @@ bool JDWindow::on_window_state_event( GdkEventWindowState* event )
         // 通常 -> アイコン化
         if( ! is_iconified_win() && iconified ) set_shown_win( false );
 
-        // アイコン → 通常
-        else if( is_iconified_win() && ! iconified ) set_shown_win( true );
+        // アイコン -> 通常
+        else if( is_iconified_win() && ! iconified && m_mode != JDWIN_FOLD ) set_shown_win( true );
 
         // 通常 -> 最大化
         if( ! is_maximized_win() && maximized ){

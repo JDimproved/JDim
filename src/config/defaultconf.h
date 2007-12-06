@@ -104,7 +104,7 @@ namespace CONFIG
 #define AGENT_FOR2CH "Monazilla/1.00 JD"
 
 // 2ch外にアクセスするときのエージェント名
-#define AGENT_FOR_DATA "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8.1.10) Gecko/20071115 Firefox/2.0.0.10"
+#define AGENT_FOR_DATA "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11"
 
 // 2ch にログインするときのX-2ch-UA
 #define CONF_X_2CH_UA "Navigator for 2ch 1.7.5"
@@ -160,6 +160,9 @@ namespace CONFIG
 #define CONF_COLOR_BACK_MESSAGE_SELECTION str_color[ COLOR_BACK_SELECTION ] // メッセージビューの選択色
 
 #define CONF_COLOR_SEPARATOR_NEW "#7d007d007d00" // セパレータ
+
+#define CONF_COLOR_FRAME str_color[ COLOR_CHAR ] // ポップアップフレーム色
+#define CONF_COLOR_MARKER str_color[ COLOR_CHAR ] // オートスクロールマーカー色    
 
 #define CONF_COLOR_CHAR_BBS   str_color[ COLOR_CHAR ] // 板一覧の文字
 #define CONF_COLOR_CHAR_BOARD str_color[ COLOR_CHAR ] // スレ一覧の文字
