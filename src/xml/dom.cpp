@@ -91,7 +91,9 @@ void Dom::parse( const std::string& str )
     if( str.empty() || str.size() > SIZE_OF_RAWDATA ) return;
 
     size_t current_pos = 0, tag_lt_pos = 0, tag_gt_pos = 0;
-    while( current_pos < str.length() )
+    const size_t str_length = str.length();
+
+    while( current_pos < str_length )
     {
         //プロパティなどに使う変数
         int type = NODE_TYPE_UNKNOWN;
@@ -152,7 +154,8 @@ void Dom::parse( const std::string& str )
             // 要素名を取り出す
             std::string element_name;
             size_t i = 0;
-            while( i < open_tag.length()
+            const size_t open_tag_length = open_tag.length();
+            while( i < open_tag_length
                  && open_tag[i] != '\n'
                  && open_tag[i] != '\t'
                  && open_tag[i] != ' ' )

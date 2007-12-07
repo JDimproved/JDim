@@ -29,21 +29,22 @@ const std::string MISC::get_salt( const std::string& key )
     salt += "H.";
 
     // その他の仕様に合わせて salt を変換
-    unsigned int i;
-    for( i=0; i < salt.length(); i++ )
+    size_t i;
+    const size_t salt_length = salt.length();
+    for( i = 0; i < salt_length; i++ )
     {
         // 0x2e〜0x7aの範囲にないものは '.'(0x2e)
-        if( salt[i] < 0x2e || salt[i] > 0x7a )
+        if( (unsigned char)( salt[i] - 0x2E ) > 0x4C )
         {
             salt[i] = 0x2e;
         }
         // :;<=>?@ (0x3a〜0x40) は A〜G (0x41〜0x47)
-        else if( salt[i] >= 0x3a && salt[i] <= 0x40 )
+        else if( (unsigned char)( salt[i] - 0x3A ) < 0x07 )
         {
             salt[i] += 7;
         }
         // [\]^_` (0x5b〜0x60) は a〜f (0x61〜0x66)
-        else if( salt[i] >= 0x5b && salt[i] <= 0x60 )
+        else if( (unsigned char)( salt[i] - 0x5B ) < 0x06 )
         {
             salt[i] += 6;
         }

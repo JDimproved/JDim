@@ -3888,10 +3888,15 @@ void Core::open_by_browser( const std::string& url )
     if( !command_openurl.empty() ){
 
         std::string tmp_url = url;
+        size_t tmp_url_length = tmp_url.length();
 
         // urlの先頭と最後のの " を取る
         while( *tmp_url.c_str() == '\"' ) tmp_url = tmp_url.substr( 1 );
-        while( tmp_url.c_str()[ tmp_url.length()-1 ] == '\"' ) tmp_url = tmp_url.substr( 0, tmp_url.length()-1 );
+        while( tmp_url.c_str()[ tmp_url_length - 1 ] == '\"' )
+        {
+            tmp_url = tmp_url.substr( 0, tmp_url_length - 1 );
+            --tmp_url_length;
+        }
 
         command_openurl = MISC::replace_str( command_openurl, "%LINK", tmp_url );
         command_openurl = MISC::replace_str( command_openurl, "%s", tmp_url );

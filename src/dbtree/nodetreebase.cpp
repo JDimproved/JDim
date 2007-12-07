@@ -889,8 +889,9 @@ void NodeTreeBase::load_cache()
             size_t size = 0;
             m_check_update = false;
             init_loading();
-            while( size < str.length() ){
-                size_t size_tmp = MIN( MAXSISE_OF_LINES, str.length() - size );
+            const size_t str_length = str.length();
+            while( size < str_length ){
+                size_t size_tmp = MIN( MAXSISE_OF_LINES, str_length - size );
                 receive_data( data + size, size_tmp );
                 size += size_tmp;
             }

@@ -338,11 +338,11 @@ std::string MISC::remove_space( const std::string& str )
 //
 std::string MISC::remove_spaces( const std::string& str )
 {
-	if( str.empty() ) return std::string();
+    if( str.empty() ) return std::string();
 
     size_t l = 0, r = str.length();
 
-    while( l < str.length()
+    while( l < r
          && ( str[l] == '\n'
            || str[l] == '\r'
            || str[l] == '\t'
@@ -378,11 +378,13 @@ std::string MISC::remove_str( const std::string& str, const std::string& start, 
     std::string str_out = str;
 
     size_t l_pos = 0, r_pos = 0;
+    const size_t start_length = start.length();
+    const size_t end_length = end.length();
 
     while( ( l_pos = str_out.find( start, l_pos ) ) != std::string::npos &&
-            ( r_pos = str_out.find( end, l_pos + start.length() ) ) != std::string::npos )
+            ( r_pos = str_out.find( end, l_pos + start_length ) ) != std::string::npos )
     {
-        str_out.erase( l_pos, r_pos - l_pos + end.length() );
+        str_out.erase( l_pos, r_pos - l_pos + end_length );
     }
 
     return str_out;
@@ -578,8 +580,9 @@ std::string MISC::cut_str( const std::string& str, unsigned int maxsize )
     std::string outstr = str;
     unsigned int pos, lng_str;
     int byte = 0;
+    const size_t outstr_length = outstr.length();
 
-    for( pos = 0, lng_str = 0; pos < outstr.length(); pos += byte ){
+    for( pos = 0, lng_str = 0; pos < outstr_length; pos += byte ){
         MISC::utf8toucs2( outstr.c_str()+pos, byte );
         if( byte > 1 ) lng_str += 2;
         else ++lng_str;
@@ -587,7 +590,7 @@ std::string MISC::cut_str( const std::string& str, unsigned int maxsize )
     }
 
     // カットしたら"..."をつける
-    if( pos != outstr.length() ) outstr = outstr.substr( 0, pos ) + "...";
+    if( pos != outstr_length ) outstr = outstr.substr( 0, pos ) + "...";
 
     return outstr;
 }
@@ -606,8 +609,9 @@ std::string MISC::html_escape( const std::string& str, const bool include_url )
     bool is_url = false;
     int scheme = SCHEME_NONE;
     std::string str_out;
+    const size_t str_length = str.length();
 
-    for( size_t pos = 0; pos < str.length(); ++pos )
+    for( size_t pos = 0; pos < str_length; ++pos )
     {
         char tmpchar = str.c_str()[ pos ];
 
@@ -669,8 +673,9 @@ std::string MISC::html_unescape( const std::string& str )
     if( str.find( "&" ) == std::string::npos ) return str;
 
     std::string str_out;
+    const size_t str_length = str.length();
 
-    for( size_t pos = 0; pos < str.length(); ++pos ){
+    for( size_t pos = 0; pos < str_length; ++pos ){
 
         const int bufsize = 64;
         char out_char[ bufsize ];
@@ -1041,7 +1046,9 @@ int MISC::ucs2toutf8( int ucs2, char* utfstr )
 std::string MISC::toupper_str( const std::string& str )
 {
     std::string str_out;
-    for( size_t i = 0; i < str.length() ; ++i ) str_out += toupper( str[ i ] );
+    const size_t str_length = str.length();
+
+    for( size_t i = 0; i < str_length ; ++i ) str_out += toupper( str[ i ] );
 
     return str_out;
 }
@@ -1067,8 +1074,9 @@ std::list< std::string > MISC::toupper_list( std::list< std::string >& list_str 
 std::string MISC::tolower_str( const std::string& str )
 {
     std::string str_out;
+    const size_t str_length = str.length();
 
-    for( size_t i = 0; i < str.length() ; ++i ) str_out += tolower( str[ i ] );
+    for( size_t i = 0; i < str_length; ++i ) str_out += tolower( str[ i ] );
 
     return str_out;
 }
@@ -1142,9 +1150,10 @@ std::string MISC::get_svn_revision( const char* rev )
     // "2000:2002MS"など[0-9:MS]の形式かどうか
     bool valid = true;
     unsigned int n;
-    for( n = 0; n < strlen( rev ); ++n )
+    const size_t rev_length = strlen( rev );
+    for( n = 0; n < rev_length; ++n )
     {
-        if( (unsigned int)( rev[n] - 0x30 ) > 0x0A
+        if( (unsigned char)( rev[n] - 0x30 ) > 0x0A
             && rev[n] != 'M'
             && rev[n] != 'S' )
         {
