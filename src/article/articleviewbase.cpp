@@ -809,11 +809,14 @@ void ArticleViewBase::operate_view( const int& control )
             // 削除
         case CONTROL::Delete:
         {
-            SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？\n\n「スレ再取得」を押すとあぼ〜んなどのスレ情報を削除せずにスレを再取得します。",
+            SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？\n\n「スレ再取得」を押すと\nあぼ〜んなどのスレ情報を削除せずにスレを再取得します。",
                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
             mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
-            mdiag.add_button( "スレ再取得(_R)", Gtk::RESPONSE_YES + 100 );
+            Gtk::Button *button = mdiag.add_button( "スレ再取得(_R)", Gtk::RESPONSE_YES + 100 );
+            Gtk::Image image( Gtk::Stock::REFRESH, Gtk::ICON_SIZE_BUTTON );
+            button->set_image( image );
+
             mdiag.set_default_response( Gtk::RESPONSE_YES );
             int ret = mdiag.run();
             if( ret == Gtk::RESPONSE_YES ) delete_view();

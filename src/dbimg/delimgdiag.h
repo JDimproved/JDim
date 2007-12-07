@@ -36,7 +36,8 @@ namespace DBIMG
             ss << "現在の画像キャッシュサイズ : " << ( CACHE::get_dirsize( CACHE::path_img_root() ) / 1024 / 1024 ) << "M";
             m_label.set_text( ss.str() );
 
-            m_spinlabel.set_text( "日より以前のキャッシュファイルを消去" );
+            m_spinlabel.set_text_with_mnemonic( "日より以前のキャッシュファイルを消去(_H)" );
+            m_spinlabel.set_mnemonic_widget( m_spin );
             m_spin.set_range( 0, 360 );
             m_spin.set_increments( 1, 1 );
             m_spin.set_value( CONFIG::get_del_img_day() );
@@ -72,7 +73,8 @@ namespace DBIMG
 
         ImgAboneFrame()
         {
-            m_spinlabel.set_text( "日より以前のあぼ〜ん情報を消去" );
+            m_spinlabel.set_text_with_mnemonic( "日より以前のあぼ〜ん情報を消去(_A)" );
+            m_spinlabel.set_mnemonic_widget( m_spin );
             m_spin.set_range( 0, 360 );
             m_spin.set_increments( 1, 1 );
             m_spin.set_value( CONFIG::get_del_imgabone_day()  );

@@ -49,13 +49,13 @@ namespace CORE
 
         PrivacyPref( Gtk::Window* parent, const std::string& url )
         : SKELETON::PrefDiag( parent, url ),
-        m_bt_board( "板履歴" ),
-        m_bt_thread( "スレ履歴" ),
-        m_bt_close( "最近閉じたスレ" ),
-        m_bt_search( "検索履歴" ),
-        m_bt_name( "書き込み名前履歴" ),
-        m_bt_mail( "書き込みメール履歴" ),
-        m_bt_selectall( "全て選択" )
+        m_bt_board( "板履歴(_B)", true ),
+        m_bt_thread( "スレ履歴(_T)", true ),
+        m_bt_close( "最近閉じたスレ(_R)", true ),
+        m_bt_search( "検索履歴(_F)", true ),
+        m_bt_name( "書き込み名前履歴(_N)", true ),
+        m_bt_mail( "書き込みメール履歴(_E)", true ),
+        m_bt_selectall( "全て選択(_A)", true )
         {
             m_vbox.set_spacing( 8 );
             m_vbox.set_border_width( 8 );

@@ -32,8 +32,8 @@ namespace CORE
         SKELETON::LabelEntry entry_passwd;
 
       PasswdFrame2ch()
-      : m_label_sid_2ch( false, "SID：", LOGIN::get_login2ch()->get_sessionid() ),
-        entry_id( true, "ID：" ), entry_passwd( true, "パスワード：" )
+      : m_label_sid_2ch( false, "SID： ", LOGIN::get_login2ch()->get_sessionid() ),
+        entry_id( true, "ID(_I)： " ), entry_passwd( true, "パスワード(_P)： " )
         {
             m_vbox.set_border_width( BOXSPACING );
 
@@ -66,7 +66,7 @@ namespace CORE
 
       PasswdFrameBe()
         : m_label( "パスワードではなく認証コードを入れて下さい" ),
-        entry_id( true, "メールアドレス：" ), entry_passwd( true, "認証コード：" )
+        entry_id( true, "メールアドレス(_E)： " ), entry_passwd( true, "認証コード(_A)： " )
         {
             m_vbox.set_border_width( BOXSPACING );
 
