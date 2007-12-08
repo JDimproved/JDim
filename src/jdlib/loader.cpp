@@ -7,6 +7,7 @@
 #include "loader.h"
 #include "miscmsg.h"
 #include "miscutil.h"
+#include "ssl.h"
 
 #include "skeleton/loadable.h"
 
@@ -19,10 +20,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <signal.h>
-
-#ifndef NOUSE_SSL
-#include <openssl/ssl.h>
-#endif
 
 enum
 {
@@ -257,14 +254,12 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
         // http
         if( m_data.protocol.find( "http://" ) != std::string::npos ) m_data.port = 80;
 
-#ifndef NOUSE_SSL
         // https
         else if( m_data.protocol.find( "https://" ) != std::string::npos ){
             m_data.use_ssl = true;
             m_data.async = false;
-            m_data.port = 443;;
+            m_data.port = 443;
         }
-#endif
 
         // その他
         else{
@@ -276,16 +271,12 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
         }
     }
 
-#ifndef NOUSE_SSL
     // 明示的にssl使用指定
     if( data_in.use_ssl ){
         m_data.use_ssl = true;
         m_data.async = false;
         m_data.port = 443;
     }
-#else
-    m_data.use_ssl = false;
-#endif    
 
     // その他
     m_data.head = data_in.head;
@@ -362,13 +353,7 @@ void Loader::run_main()
     int soc = -1; // ソケットID
     bool use_proxy = ( ! m_data.host_proxy.empty() );
 
-#ifndef NOUSE_SSL
-    // ssl用
-    SSL_CTX *ctx = NULL;
-    SSL* ssl = NULL;
-#else
-    bool ssl = false;
-#endif
+    JDLIB::JDSSL* ssl = NULL;
     
     // 送信メッセージ作成
     std::string msg_send = create_msg_send();
@@ -453,42 +438,16 @@ void Loader::run_main()
 #endif
     }
 
-#ifndef NOUSE_SSL
-    // ssl 初期化
+    // ssl 初期化とコネクト
     if( m_data.use_ssl ){
 
-        SSL_library_init();
-        ctx = SSL_CTX_new( SSLv23_client_method() );
-        if( !ctx ){
+        ssl = new JDLIB::JDSSL();
+        if( ! ssl->connect( soc ) ){
             m_data.code = HTTP_ERR;
-            errmsg = "SSL_CTX_new failed : " + m_data.url;
+            errmsg = ssl->get_errmsg() + " : " + m_data.url;
             goto EXIT_LOADING;
         }
-
-        ssl = SSL_new( ctx );
-        if( !ssl ){
-            m_data.code = HTTP_ERR;
-            errmsg = "SSL_new failed : " + m_data.url;
-            goto EXIT_LOADING;
-        }
-
-        if( SSL_set_fd( ssl, soc ) == 0 ){
-            m_data.code = HTTP_ERR;
-            errmsg = "SSL_set_fd : " + m_data.url;
-            goto EXIT_LOADING;
-        }
-
-        if( SSL_connect( ssl ) != 1 ){
-            m_data.code = HTTP_ERR;
-            errmsg = "SSL_connect : " + m_data.url;
-            goto EXIT_LOADING;
-        }            
-
-#ifdef _DEBUG
-        std::cout << "init ssl ok\n";
-#endif
     }
-#endif
 
     // SEND 又は POST
 
@@ -527,18 +486,16 @@ void Loader::run_main()
 #endif
     }
 
-#ifndef NOUSE_SSL
     // SSL使用
     else{ 
 
-        if( SSL_write( ssl, msg_send.data(), strlen( msg_send.data() ) ) < 0 ){
+        if( ssl->write( msg_send.data(), strlen( msg_send.data() ) ) < 0 ){
 
             m_data.code = HTTP_ERR;
-            errmsg = "send failed(SSL) : " + m_data.url;
+            errmsg = ssl->get_errmsg() + " : " + m_data.url;
             goto EXIT_LOADING;
         }
     }
-#endif
 
     // 受信用バッファを作ってメッセージ受信
     size_t mrg;
@@ -579,18 +536,16 @@ void Loader::run_main()
 
             }
 
-#ifndef NOUSE_SSL
             // SSL
             else{
 
-                tmpsize = SSL_read( ssl, m_buf + read_size, m_lng_buf - read_size - mrg );
+                tmpsize = ssl->read(  m_buf + read_size, m_lng_buf - read_size - mrg );
                 if( tmpsize < 0 ){
                     m_data.code = HTTP_ERR;         
-                    errmsg = "SSL_read() failed";
+                    errmsg = ssl->get_errmsg() + " : " + m_data.url;
                     goto EXIT_LOADING;
                 }
             }
-#endif
 
             if( tmpsize == 0 ) break;
             if( tmpsize > 0 ) read_size += tmpsize;
@@ -663,14 +618,12 @@ void Loader::run_main()
     // 終了処理
 EXIT_LOADING:
 
-#ifndef NOUSE_SSL
     // ssl クローズ
     if( ssl ){
-        SSL_shutdown( ssl );
-        SSL_free( ssl );
+        ssl->close();
+        delete ssl;
+        ssl = NULL;
     }
-    if( ctx ) SSL_CTX_free( ctx );
-#endif
 
     if( soc >= 0 ){
 

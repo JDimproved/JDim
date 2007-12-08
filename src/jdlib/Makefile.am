@@ -11,6 +11,7 @@ libjdlib_a_SOURCES = \
         heap.cpp \
 	jdiconv.cpp \
 	loader.cpp \
+	ssl.cpp \
 	loaderdata.cpp \
 	confloader.cpp \
 	jdregex.cpp \
@@ -29,6 +30,7 @@ noinst_HEADERS = \
 	heap.h \
 	jdiconv.h \
 	loader.h \
+	ssl.h \
 	loaderdata.h \
 	confloader.h \
 	jdregex.h \

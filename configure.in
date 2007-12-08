@@ -73,16 +73,12 @@ PKG_CHECK_MODULES(GTKMM,[gtkmm-2.4 >= 2.8.0], [ echo "gtkmm >= 2.8.0" ; GTKMMVER
    ] ) 
 ] )
 PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.0] )
-PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9] )
 CXXFLAGS="$CXXFLAGS -DGTKMMVER=$GTKMMVER"
 
 AC_SUBST(GTKMM_CFLAGS)
 AC_SUBST(GTKMM_LIBS)
 AC_SUBST(GTHREAD_CFLAGS)
 AC_SUBST(GTHREAD_LIBS)
-AC_SUBST(OPENSSL_CFLAGS)
-AC_SUBST(OPENSSL_LIBS)
-
 
 dnl 
 dnl crypt
@@ -175,6 +171,36 @@ if test x"$use_gnomeui" = "xyes" ; then
   AC_SUBST(GNOMEUI_LIBS)
   CXXFLAGS="$CXXFLAGS -DUSE_GNOMEUI"
 fi
+
+
+dnl
+dnl SSL
+dnl
+
+use_gnutls=yes
+
+AC_ARG_WITH(openssl,[ --with-openssl    (use openssl)],
+       [ if test "$withval" != "no" ;then
+         use_gnutls=no
+       fi ])
+
+case "${use_gnutls}" in 
+ yes)
+   echo "use gnutls"
+   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.0] )
+   AC_DEFINE(USE_GNUTLS, , "use gnutls")
+   AC_SUBST(GNUTLS_CFLAGS)
+   AC_SUBST(GNUTLS_LIBS)
+   ;;
+ *)
+   echo "use openssl"
+   PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9] )
+   AC_DEFINE(USE_OPENSSL, , "use openssl")
+   AC_SUBST(OPENSSL_CFLAGS)
+   AC_SUBST(OPENSSL_LIBS)
+   ;;
+esac
+
 
 dnl
 dnl checking migemo

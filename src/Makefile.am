@@ -2,7 +2,7 @@ SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton config
 
 bin_PROGRAMS = jd
 
-jd_LDADD = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ \
+jd_LDADD = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ \
 	./dbtree/libdbtree.a \
 	./dbimg/libdbimg.a \
 	./bbslist/libbbslist.a \
@@ -108,4 +108,4 @@ noinst_HEADERS = \
 	fontcolorpref.h
 
 
-AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@
+AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@

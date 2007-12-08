@@ -3,7 +3,7 @@
 //
 // ファイルローダ
 //
-// このまま使うよりも SKELETON::Loadable と組み合わせた方が楽
+// SKELETON::Loadable と組み合わせて使用する
 //
 
 #ifndef _LOADER_H
