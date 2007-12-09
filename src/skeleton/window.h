@@ -110,6 +110,14 @@ namespace SKELETON
 
       private:
 
+#if GTKMMVER > 240
+        // m_statbarがrealizeしたらm_label_stat(Gtk::Entry)の背景色を変える
+        void slot_statbar_realize();
+
+        // テーマが変わったときなど、m_statbarの背景色が変わったらm_label_stat(Gtk::Entry)の背景色を変える
+        void slot_statbar_style_changed( Glib::RefPtr< Gtk::Style > style );
+#endif 
+
         // 最大化する
         void maximize_win();
 

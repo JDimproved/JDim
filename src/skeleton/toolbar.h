@@ -61,6 +61,9 @@ namespace SKELETON
 
         // vboxがrealizeしたときに呼び出される
         virtual void slot_vbox_realize(){}
+
+        // テーマが変わったときなど、vboxの背景色が変わったときに呼び出される
+        virtual void slot_vbox_style_changed( Glib::RefPtr< Gtk::Style > style ){}
     };
 }
 

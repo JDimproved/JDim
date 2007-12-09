@@ -130,15 +130,22 @@ void ArticleToolBar::set_label( const std::string& label )
 // vboxがrealizeしたらラベル(Gtk::Entry)の背景色を変える
 void ArticleToolBar::slot_vbox_realize()
 {
+    slot_vbox_style_changed( get_style() );
+
+    // realize する前にbroken()やold()が呼び出された
+    if( m_status == STATUS_BROKEN ) set_broken();
+    else if( m_status == STATUS_OLD ) set_old();
+}
+
+
+// テーマが変わったときなど、vboxの背景色が変わったときに呼び出される
+void ArticleToolBar::slot_vbox_style_changed( Glib::RefPtr< Gtk::Style > )
+{
     Gdk::Color color_bg = get_style()->get_bg( Gtk::STATE_NORMAL );
     m_label.modify_base( Gtk::STATE_NORMAL, color_bg );
 
     color_bg = get_style()->get_bg( Gtk::STATE_ACTIVE );
     m_label.modify_base( Gtk::STATE_ACTIVE, color_bg );
-
-    // realize する前にbroken()やold()が呼び出された
-    if( m_status == STATUS_BROKEN ) set_broken();
-    else if( m_status == STATUS_OLD ) set_old();
 }
 
 

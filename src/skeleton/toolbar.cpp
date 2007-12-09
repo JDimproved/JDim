@@ -18,6 +18,7 @@ ToolBar::ToolBar() :
     m_button_close( Gtk::Stock::CLOSE )
 {
     signal_realize().connect( sigc::mem_fun(*this, &ToolBar::slot_vbox_realize ) );
+    signal_style_changed().connect( sigc::mem_fun(*this, &ToolBar::slot_vbox_style_changed ) );
 
     set_tooltip( m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
 
