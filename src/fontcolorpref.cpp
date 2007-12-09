@@ -92,18 +92,16 @@ void FontColorPref::pack_widget()
     m_tooltips.set_tip( m_event_font, m_tooltips_font[ 0 ] );
     m_tooltips.set_tip( m_fontbutton, m_tooltips_font[ 0 ] );
 
-    m_hbox_font.set_spacing( mrg );
-    m_hbox_font.set_border_width( mrg );
     m_hbox_font.pack_start( m_event_font, Gtk::PACK_SHRINK );
     m_hbox_font.pack_start( m_fontbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
 
-    m_vbox_font.pack_start( m_hbox_font, Gtk::PACK_SHRINK );
+    m_vbox_font.pack_start( m_hbox_font, Gtk::PACK_SHRINK, mrg );
 
     m_checkbutton_font.add_label( "スレビューでフォント幅の近似計算を厳密に行う(_S)", true ),
     m_checkbutton_font.set_active( CONFIG::get_strict_char_width() );
     m_tooltips.set_tip( m_checkbutton_font, WARNING_STRICTCHAR );
-
-    m_vbox_font.pack_start( m_checkbutton_font, Gtk::PACK_SHRINK, mrg );
+    m_hbox_checkbutton.pack_start( m_checkbutton_font, Gtk::PACK_SHRINK );
+    m_vbox_font.pack_start( m_hbox_checkbutton, Gtk::PACK_SHRINK);
 
     // 行高さ
     m_spin_space.set_digits( 1 );
@@ -130,10 +128,10 @@ void FontColorPref::pack_widget()
     m_hbox_ubar.set_spacing( mrg );
     m_hbox_ubar.pack_start( m_label_ubar, Gtk::PACK_SHRINK );
     m_hbox_ubar.pack_start( m_spin_ubar, Gtk::PACK_SHRINK );
+    m_vbox_font.set_border_width( mrg );
     m_vbox_font.pack_start( m_hbox_ubar, Gtk::PACK_SHRINK );
     m_tooltips.set_tip( m_spin_ubar, "スレビューにおいてアンカーなどの下線の位置を調節します( 標準は 1 )" );
 
-    m_frame_font.set_border_width( mrg );
     m_frame_font.set_label( "フォントの設定" );
     m_frame_font.add( m_vbox_font );
 

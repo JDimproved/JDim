@@ -31,6 +31,7 @@ namespace CORE
         SKELETON::SpinButtonDouble m_spin_ubar;
 
         Gtk::HBox m_hbox_space;
+        Gtk::HBox m_hbox_checkbutton;
         Gtk::HBox m_hbox_ubar;
         Gtk::HBox m_hbox_font;
         Gtk::VBox m_vbox_font;
