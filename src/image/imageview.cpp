@@ -167,7 +167,7 @@ void ImageViewMain::show_instruct_diag()
     Gtk::HBox hbox;
     Gtk::CheckButton chkbutton( "今後表示しない(_D)", true );
     hbox.pack_start( chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
-    chkbutton.set_alignment( 1.0, 0.0 );
+//    chkbutton.set_alignment( 1.0, 0.0 );
     mdiag.get_vbox()->pack_start( hbox, Gtk::PACK_SHRINK );
     mdiag.set_title( "ヒント" );
     mdiag.show_all_children();

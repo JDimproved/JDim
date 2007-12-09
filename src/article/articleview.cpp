@@ -328,10 +328,14 @@ void ArticleViewMain::update_finish()
 //
 void ArticleViewMain::show_instruct_diag()
 {
+    const int mrg = 16;
+
     SKELETON::MsgDiag mdiag( NULL, 
-        "スレビューからスレ一覧表示に戻る方法として\n\n(1) マウスジェスチャを使う( マウスの右ボタンを押しながら左または下にドラッグして右ボタンを離す )\n\n(2) マウスの5ボタンを押す\n\n(3) Alt+x か h か ← を押す\n\n(4) ツールバーのスレ一覧アイコンを押す\n\n(5) 表示メニューからスレ一覧を選ぶ\n\nなどがあります。詳しくはオンラインマニュアルを参照してください。" );
-    Gtk::CheckButton chkbutton( "今後表示しない" );
-    mdiag.get_vbox()->pack_start( chkbutton, Gtk::PACK_SHRINK );
+        "スレビューからスレ一覧表示に戻る方法として\n\n(1) マウスジェスチャを使う\n(マウス右ボタンを押しながら左または下にドラッグして右ボタンを離す)\n\n(2) マウスの5ボタンを押す\n\n(3) Alt+x か h か ← を押す\n\n(4) ツールバーのスレ一覧アイコンを押す\n\n(5) 表示メニューからスレ一覧を選ぶ\n\nなどがあります。詳しくはオンラインマニュアルを参照してください。" );
+    Gtk::HBox hbox;
+    Gtk::CheckButton chkbutton( "今後表示しない(_D)", true );
+    hbox.pack_start( chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
+    mdiag.get_vbox()->pack_start( hbox, Gtk::PACK_SHRINK );
     mdiag.set_title( "ヒント" );
     mdiag.show_all_children();
     mdiag.run();
