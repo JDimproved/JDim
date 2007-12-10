@@ -56,7 +56,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  %{gtkmmdevel}
 BuildRequires:  libtool automake
-BuildRequires:  openssl-devel
+BuildRequires:  gnutls-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  libSM-devel
 %if 0%{?_with_migemo} >= 1
