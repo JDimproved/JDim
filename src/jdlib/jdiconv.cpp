@@ -109,6 +109,14 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                         continue;
                     }
 
+                    // <>の誤判別 ( 開発スレ 489 を参照 )
+                    if( code1 == 0x3c && code2 == 0x3e ){
+                        *m_buf_in_tmp = '?';
+                        snprintf( str_tmp, 256, "iconv 0x%x%x> -> ?<>", code0, code1 );
+                        MISC::MSG( str_tmp );
+                        continue;
+                    }
+
                     // マッピング失敗
                     // □(0x81a0)を表示する
                     if( ( code0 >= 0x81 && code0 <=0x9F )
