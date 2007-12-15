@@ -123,6 +123,9 @@ namespace DBTREE
         // samba(秒)
         time_t m_samba_sec;
 
+        // 最大レス数
+        int m_number_max_res;
+
         char* m_rawdata;
         int m_lng_rawdata;
 
@@ -380,6 +383,10 @@ namespace DBTREE
         const time_t get_samba_sec() const { return m_samba_sec; } // samba(秒)
         void set_samba_sec( time_t sec ){ m_samba_sec = sec; }
         time_t get_write_leftsec(); // 書き込み可能までの残り秒
+
+        // 最大レス数
+        const int get_number_max_res() const{ return m_number_max_res; }
+        void set_number_max_res( const int number ){ m_number_max_res = number; }
 
         // 板情報の取得
         void read_info();

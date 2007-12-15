@@ -203,6 +203,13 @@ void ArticleViewMain::show_view()
         CONFIG::set_jump_after_reload( jump_bottom );
         CONFIG::set_jump_new_after_reload( jump_new );
     }
+    else{
+
+        // キャッシュにログが無く、かつオフラインで開くとラベルが表示されないので
+        // ラベルとタブのアイコン状態を更新しておく
+        if( ! SESSION::is_online() ) update_finish();
+    }
+
 
     // オフラインならダウンロードを開始しない
     if( ! SESSION::is_online() ) return;
@@ -277,6 +284,7 @@ void ArticleViewMain::update_finish()
 
     // タブのラベルセット
     std::string str_label = DBTREE::article_subject( url_article() );
+    if( str_label.empty() ) str_label = "???";
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label ); 
 
     // タブのアイコン状態を更新

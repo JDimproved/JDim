@@ -307,7 +307,7 @@ namespace ARTICLE
         int get_vscr_maxval();
 
         // キャレット関係
-        bool is_pointer_on_rect( RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
+        bool is_pointer_on_rect( const RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
                                  const int x, const int y,
                                  int& pos, int& width_line, int& char_width, int& byte_char );
         LAYOUT* set_caret( CARET_POSITION& caret_pos, int x, int y );

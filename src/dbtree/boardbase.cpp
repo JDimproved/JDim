@@ -42,6 +42,7 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_path_board( path_board )
     , m_name( name )
     , m_samba_sec( 0 )
+    , m_number_max_res( 0 )
     , m_rawdata( 0 )
     , m_read_info( 0 )
     , m_append_articles( false )

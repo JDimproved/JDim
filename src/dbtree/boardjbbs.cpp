@@ -61,7 +61,12 @@ ArticleBase* BoardJBBS::append_article( const std::string& id, bool cached )
     if( empty() ) return get_article_null();
 
     ArticleBase* article = new DBTREE::ArticleJBBS( url_datbase(), id, cached );
-    if( article ) get_list_article().push_back( article );
+    if( article ){
+        get_list_article().push_back( article );
+
+        // 最大レス数セット
+        article->set_number_max( get_number_max_res() );
+    }
     else return get_article_null();
 
     return article;

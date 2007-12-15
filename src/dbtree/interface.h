@@ -122,6 +122,8 @@ namespace DBTREE
     const time_t board_samba_sec( const std::string& url );
     void board_set_samba_sec( const std::string& url, time_t sec );
     time_t board_write_leftsec( const std::string& url );
+    const int board_get_number_max_res( const std::string& url );
+    void board_set_number_max_res( const std::string& url, const int number );
 
     // 全板の情報ファイル読み込み
     void read_boardinfo_all();

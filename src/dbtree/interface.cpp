@@ -481,6 +481,16 @@ time_t DBTREE::board_write_leftsec( const std::string& url )
     return DBTREE::get_board( url )->get_write_leftsec();
 }
 
+const int DBTREE::board_get_number_max_res( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_number_max_res();
+}
+
+void DBTREE::board_set_number_max_res( const std::string& url, const int number )
+{
+    DBTREE::get_board( url )->set_number_max_res( number );
+}
+
 
 /////////////////////////////////////////////////
 

@@ -2683,7 +2683,7 @@ void DrawAreaBase::clear_highlight()
 //
 // ポインタがRECTANGLEの上にあるか判定
 //
-bool DrawAreaBase::is_pointer_on_rect( RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
+bool DrawAreaBase::is_pointer_on_rect( const RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
                                        const int x, const int y,
                                        int& pos, int& width_line, int& char_width, int& byte_char )
 {
@@ -2733,7 +2733,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
     if( ! m_layout_tree ) return NULL;
     
 #ifdef _DEBUG_CARETMOVE
-    std::cout << "DrawAreaBase::set_caret\n";
+    std::cout << "DrawAreaBase::set_caret x = " << x << " y = " << y << std::endl;
 #endif
 
     // 先頭のレイアウトブロックから順に調べる
@@ -2756,7 +2756,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
         LAYOUT* layout = header->next_layout;
         while( layout ){
 
-            RECTANGLE* rect = layout->rect;
+            const RECTANGLE* rect = layout->rect;
             if( ! rect ){
                 layout = layout->next_layout;
                 continue;
@@ -2796,6 +2796,9 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
                     std::cout << "header id = " << header->id_header << std::endl;
                     std::cout << "node id = " << layout->id << std::endl;
                     std::cout << "pos = " << pos << std::endl;
+                    std::cout << "tmp_x = " << tmp_x << std::endl;
+                    std::cout << "tmp_y = " << tmp_y << std::endl;
+                    std::cout << layout->text << std::endl;
 #endif
                     // キャレットをセットして終了
                     caret_pos.set( layout, pos, x, tmp_x + width_line, tmp_y, char_width, byte_char );
@@ -2834,6 +2837,9 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
                         return NULL;
                     }
                 }
+
+                // 折り返し無し
+                if( rect->end ) break;
 
                 rect = rect->next_rect;
                 if( ! rect ) break;

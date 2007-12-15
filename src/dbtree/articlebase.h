@@ -96,7 +96,6 @@ namespace DBTREE
         void set_key( const std::string& key ){ m_key = key; }
         void set_since_time( time_t since ){ m_since_time = since; }
         void set_since_date( std::string since ){ m_since_date = since; }
-        void set_number_max( int number ){ m_number_max = number; }
         
       public:
 
@@ -125,6 +124,8 @@ namespace DBTREE
         const int get_number_load() const { return m_number_load; }
         const int get_number_seen() const{  return m_number_seen; }
         const int get_number_max() const { return m_number_max; }
+
+        void set_number_max( int number ){ if( number > 0 ) m_number_max = number; }
 
         // スレ速度
         const int get_speed();

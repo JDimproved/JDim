@@ -19,12 +19,20 @@
 using namespace DBTREE;
 
 
+enum
+{
+    DEFAULT_NUMBER_MAX_2CH = 1000  // 規定の最大レス数
+};
+
+
 Board2ch::Board2ch( const std::string& root, const std::string& path_board, const std::string& name )
     : Board2chCompati( root, path_board, name, std::string() )
 {
 #ifdef _DEBUG
     std::cout << "Board2ch::Board2ch\n";
 #endif
+
+    set_number_max_res( DEFAULT_NUMBER_MAX_2CH );
 }
 
 
@@ -158,7 +166,12 @@ ArticleBase* Board2ch::append_article( const std::string& id, bool cached )
     if( empty() ) return get_article_null();
 
     ArticleBase* article = new DBTREE::Article2ch( url_datbase(), id, cached );
-    if( article ) get_list_article().push_back( article );
+    if( article ){
+        get_list_article().push_back( article );
+
+        // 最大レス数セット
+        article->set_number_max( get_number_max_res() );
+    }
     else return get_article_null();
 
     return article;

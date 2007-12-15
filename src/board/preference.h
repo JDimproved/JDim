@@ -83,6 +83,8 @@ namespace BOARD
         SKELETON::LabelEntry m_label_line;
         SKELETON::LabelEntry m_label_byte;
 
+        SKELETON::LabelEntry m_entry_max_res;
+
         Gtk::HBox m_hbox_samba;
         SKELETON::LabelEntry m_label_samba;
         Gtk::Button m_button_clearsamba;

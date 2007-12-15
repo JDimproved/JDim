@@ -16,6 +16,11 @@
 
 using namespace DBTREE;
 
+enum
+{
+    DEFAULT_NUMBER_MAX_MACHI = 300 // 規定の最大レス数
+};
+
 
 BoardMachi::BoardMachi( const std::string& root, const std::string& path_board, const std::string& name )
     : BoardBase( root, path_board, name )
@@ -32,6 +37,8 @@ BoardMachi::BoardMachi( const std::string& root, const std::string& path_board, 
     set_ext( "" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く  
     set_charset( "MS932" );
+
+    set_number_max_res( DEFAULT_NUMBER_MAX_MACHI );
 }
 
 
@@ -80,7 +87,12 @@ ArticleBase* BoardMachi::append_article( const std::string& id, bool cached )
     if( empty() ) return get_article_null();
 
     ArticleBase* article = new DBTREE::ArticleMachi( url_datbase(), id, cached );
-    if( article ) get_list_article().push_back( article );
+    if( article ){
+        get_list_article().push_back( article );
+
+        // 最大レス数セット
+        article->set_number_max( get_number_max_res() );
+    }
     else return get_article_null();
 
     return article;

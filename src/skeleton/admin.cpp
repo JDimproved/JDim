@@ -1583,10 +1583,9 @@ void Admin::slot_tab_menu( int page, int x, int y )
             if( label ){
 
                 std::string name = m_notebook->get_tab_fulltext( i );
-                if( ! name.empty() ){
-                    const unsigned int maxsize = 50;
-                    label->set_text( MISC::cut_str( name, maxsize ) );
-                }
+                if( name.empty() ) name = "???";
+                const unsigned int maxsize = 50;
+                label->set_text( MISC::cut_str( name, maxsize ) );
             }
             m_move_menu->append( *m_vec_movemenu_items[ i ] );
             m_vec_movemenu_append[ i ] = true;

@@ -15,6 +15,7 @@ libskeleton_a_SOURCES = \
 	tooltip.cpp \
 	entry.cpp \
 	compentry.cpp \
+	label_entry.cpp \
 	login.cpp \
 	prefdiag.cpp \
 	selectitempref.cpp \

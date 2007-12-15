@@ -38,6 +38,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
       m_label_noname( false, "デフォルト名無し：", DBTREE::default_noname( get_url() ) ),
       m_label_line( false, "1レスの最大改行数：" ),
       m_label_byte( false, "1レスの最大バイト数：" ),
+      m_entry_max_res( false, "最大レス数：" ),
       m_label_samba( false, "書き込み規制秒数 (Samba24) ：" ),
       m_button_clearsamba( "秒数クリア" ),
       m_localrule( NULL )
@@ -93,6 +94,10 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_label_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
     m_label_byte.set_text( MISC::itostr( DBTREE::message_count( get_url() ) ) );
 
+    int max_res = DBTREE::board_get_number_max_res( get_url() );
+    if( ! max_res ) m_entry_max_res.set_text( "未設定 " );
+    else m_entry_max_res.set_text( MISC::itostr( max_res ) );
+
     int samba_sec = DBTREE::board_samba_sec( get_url() );
     if( ! samba_sec ) m_label_samba.set_text( "未取得" );
     else m_label_samba.set_text( MISC::itostr( samba_sec ) );
@@ -110,6 +115,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox.pack_start( m_label_noname, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_line, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_byte, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_entry_max_res, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_samba, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_write, Gtk::PACK_SHRINK );
