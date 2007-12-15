@@ -41,7 +41,7 @@ namespace SKELETON
 
       public:
 
-        JDWindow( const bool fold_when_focusout );
+        JDWindow( const bool fold_when_focusout, const bool need_mginfo = true );
         ~JDWindow();
 
         Gtk::HBox& get_statbar(){ return  m_statbar; }

@@ -15,9 +15,10 @@
 
 using namespace MESSAGE;
 
-
+// メッセージウィンドウにはステータスバー内のマウスジェスチャ表示欄が
+// 不要なので SKELETON::JDWindow() の第2引数を flase にする
 MessageWin::MessageWin()
-    : SKELETON::JDWindow( CONFIG::get_fold_message() )
+    : SKELETON::JDWindow( CONFIG::get_fold_message(), false )
 {
 #ifdef _DEBUG
     std::cout << "MessageWin::MessageWin x y w h = "

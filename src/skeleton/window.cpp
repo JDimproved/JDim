@@ -42,7 +42,8 @@ enum
 
 using namespace SKELETON;
 
-JDWindow::JDWindow( const bool fold_when_focusout )
+// メッセージウィンドウでは m_mginfo が不要なので need_mginfo = false になる
+JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
       m_fold_when_focusout( fold_when_focusout ),
       m_boot( fold_when_focusout ),
@@ -56,7 +57,7 @@ JDWindow::JDWindow( const bool fold_when_focusout )
 {
     // ステータスバー
 #if GTKMMVER <= 240
-    m_statbar.pack_start( m_mginfo );
+    if( need_mginfo ) m_statbar.pack_start( m_mginfo );
 #else
     m_statbar.signal_realize().connect( sigc::mem_fun(*this, &JDWindow::slot_statbar_realize ) );
     m_statbar.signal_style_changed().connect( sigc::mem_fun(*this, &JDWindow::slot_statbar_style_changed ) );
@@ -66,7 +67,7 @@ JDWindow::JDWindow( const bool fold_when_focusout )
     m_label_stat.set_has_frame( false );
 
     m_statbar.pack_start( m_label_stat );
-    m_statbar.pack_start( m_mginfo, Gtk::PACK_SHRINK );
+    if( need_mginfo ) m_statbar.pack_start( m_mginfo, Gtk::PACK_SHRINK );
 
     m_mginfo.set_width_chars( MGINFO_CHARS );
     m_mginfo.set_alignment( Gtk::ALIGN_LEFT );
@@ -303,7 +304,7 @@ void JDWindow::set_status( const std::string& stat )
 // マウスジェスチャ表示
 void JDWindow::set_mginfo( const std::string& mginfo )
 {
-    m_mginfo.set_text( mginfo );
+    if( m_mginfo.is_realized() ) m_mginfo.set_text( mginfo );
 }
 
 
