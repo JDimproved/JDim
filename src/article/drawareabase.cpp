@@ -3207,26 +3207,46 @@ bool DrawAreaBase::set_selection_str()
 }
 
 
+
+//
+// caret_pos が範囲選択の上にあるか
+//
+//
+const bool DrawAreaBase::is_caret_on_selection( const CARET_POSITION& caret_pos )
+{
+    LAYOUT* layout = caret_pos.layout;
+
+    if( !layout || ! m_selection.select || m_selection.str.empty() ) return false;
+    if( layout->id_header != m_selection.caret_from.layout->id_header ) return false;
+
+    const int from_id = m_selection.caret_from.layout->id;
+    const int from_byte = m_selection.caret_from.byte;
+
+    const int to_id = m_selection.caret_to.layout->id;
+    const int to_byte = m_selection.caret_to.byte;
+
+    if( to_id < layout->id ) return false;
+    if( to_id == layout->id && to_byte < caret_pos.byte ) return false;
+    if( from_id > layout->id ) return false;
+    if( from_id == layout->id && from_byte > caret_pos.byte ) return false;
+
+    return true;
+}
+
+
 //
 // 範囲選択範囲にcaret_posが含まれていて、かつ条件(IDや数字など)を満たしていたらURLとして範囲選択文字を返す
 //
-// TODO: ノード間をまたがっていると取得できない
-//
+#include <iostream>
 std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos )
 {
     std::string url;
-    LAYOUT* layout = caret_pos.layout;
 
-    if( !layout || ! m_selection.select || m_selection.str.empty() ) return url;
-
-    if( layout->id_header == m_selection.caret_from.layout->id_header
-        && layout->id == m_selection.caret_from.layout->id
-        && caret_pos.byte >= m_selection.caret_from.byte
-        && caret_pos.byte <= m_selection.caret_to.byte
-        ){
+    if( is_caret_on_selection( caret_pos ) ){
 
         unsigned int n,dig;
         std::string select_str = MISC::remove_space( m_selection.str );
+        select_str = MISC::remove_str( select_str, "\n" );
         int num = MISC::str_to_uint( select_str.c_str(), dig, n );
 
         // 数字
@@ -3261,7 +3281,7 @@ std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos 
     }
 
 #ifdef _DEBUG
-//    if( !url.empty() ) std::cout << "DrawAreaBase::get_selection_as_url : " << url << std::endl;
+    if( !url.empty() ) std::cout << "DrawAreaBase::get_selection_as_url : " << url << std::endl;
 #endif
 
     return url;

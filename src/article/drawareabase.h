@@ -317,6 +317,7 @@ namespace ARTICLE
         bool set_selection( CARET_POSITION& caret_left, CARET_POSITION& caret_right, const bool redraw = true );
         bool set_selection( CARET_POSITION& caret_pos, const bool redraw = true );
         bool set_selection_str();
+        const bool is_caret_on_selection( const CARET_POSITION& caret_pos );
         std::string get_selection_as_url( const CARET_POSITION& caret_pos );
 
         // マウスが動いた時の処理
