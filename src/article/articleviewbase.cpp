@@ -1577,7 +1577,7 @@ bool ArticleViewBase::slot_key_press( GdkEventKey* event )
     // ポップアップはキーフォーカスを取れないので親からキー入力を送ってやる
     ArticleViewBase* popup_article = NULL;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
-    if( popup_article ) return popup_article->slot_key_press( event );
+    if( popup_article && DBTREE::article_is_cached( popup_article->url_article() ) ) return popup_article->slot_key_press( event );
 
     int key = get_control().key_press( event );
 
