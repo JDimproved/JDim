@@ -131,6 +131,9 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                     }
                 }
 
+                // 時々空白(0x20)で EILSEQ が出るときがあるのでもう一度トライする
+                if( code0 == 0x20 ) continue;
+
                 //その他、1文字を空白にして続行
                 snprintf( str_tmp, 256, "iconv EILSEQ left = %zd code = %x %x %x", m_byte_left_in, code0, code1, code2 );
                 MISC::ERRMSG( str_tmp );
