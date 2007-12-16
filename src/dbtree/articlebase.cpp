@@ -1315,7 +1315,7 @@ void ArticleBase::read_info()
         if( ! str_tmp.empty() ) m_abone_chain = atoi( str_tmp.c_str() );
 
         // レス番号あぼーん
-        m_abone_chain = false;
+        m_vec_abone_res.clear();
         GET_INFOVALUE( str_tmp, "aboneres = " );
         if( ! str_tmp.empty() ){
 
