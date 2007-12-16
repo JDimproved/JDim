@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "label_entry.h"
+#include "view.h"
 
 using namespace SKELETON;
 
@@ -60,8 +61,10 @@ void LabelEntry::slot_style_changed( Glib::RefPtr< Gtk::Style > )
     // Gtk::Notebook の中にあるとテーマによっては色が変になるので
     // Gtk::Notebook の背景色を使用する
     Gtk::Widget* parent = get_parent();
-    while( parent && ! dynamic_cast< Gtk::Notebook* >( parent ) ) parent = parent->get_parent();
-    if( parent ){
+    while( parent
+           && ! dynamic_cast< Gtk::Notebook* >( parent )
+           && ! dynamic_cast< SKELETON::View* >( parent ) ) parent = parent->get_parent();
+    if( dynamic_cast< Gtk::Notebook* >( parent ) ){
 #ifdef _DEBUG
         std::cout << "in the notebook\n";
 #endif
