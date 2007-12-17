@@ -25,6 +25,8 @@ TabLabel::TabLabel( const std::string& url )
     add( m_hbox );
     m_hbox.pack_start( m_label, Gtk::PACK_SHRINK );
 
+    signal_realize().connect( sigc::mem_fun(*this, &TabLabel::slot_realize ) );
+
     show_all_children();
 }
 
@@ -36,6 +38,41 @@ TabLabel::~TabLabel()
 #endif
 
     if( m_image ) delete m_image;
+}
+
+
+void TabLabel::slot_realize()
+{
+#ifdef _DEBUG
+    std::cout << "LabelEntry::slot_realize\n";
+#endif
+
+    slot_style_changed( get_style() );
+
+    Gtk::Widget* parent = get_parent();
+    if( parent ) parent->signal_style_changed().connect( sigc::mem_fun(*this, &TabLabel::slot_style_changed ) );
+}
+
+
+void TabLabel::slot_style_changed( Glib::RefPtr< Gtk::Style > style )
+{
+#ifdef _DEBUG
+    std::cout << "LabelEntry::slot_style_changed\n";
+#endif
+
+    // Gtk::Labelの背景色を変更
+    // Gtk::LabelとGtk::Boxの背景色を変える場合は親の背景色を変える
+    Gtk::Widget* parent = get_parent();
+    if( parent ){
+
+        // 選択中のタブ
+        Gdk::Color bg = parent->get_style()->get_bg( Gtk::STATE_NORMAL );
+        modify_bg( Gtk::STATE_NORMAL, bg );
+
+        // 選択されていないタブ
+        bg = parent->get_style()->get_bg( Gtk::STATE_ACTIVE );
+        modify_bg( Gtk::STATE_ACTIVE, bg );
+    }
 }
 
 

@@ -132,6 +132,9 @@ namespace CORE
 
         void set_maintitle();
 
+        void slot_realize();
+        void slot_style_changed( Glib::RefPtr< Gtk::Style > );
+
         void slot_activate_menubar();
 
         void slot_toggle_save_postlog();

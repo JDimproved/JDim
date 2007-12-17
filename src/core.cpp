@@ -133,6 +133,9 @@ Core::Core( WinMain& win_main )
 
     // ログ検索マネージャ作成
     CORE::get_search_manager();
+
+    m_win_main.signal_realize().connect( sigc::mem_fun(*this, &Core::slot_realize ) );
+    m_win_main.signal_style_changed().connect( sigc::mem_fun(*this, &Core::slot_style_changed ) );
 }
 
 
@@ -211,6 +214,25 @@ Core::~Core()
     if( m_toolbar ) delete m_toolbar;
 }
 
+
+// メインウィンドウがrealizeしたら右ペーンのnotebookの背景色を変更する
+// テーマによっては notebook の中に notebook を配置すると背景色が正しく
+// 出ない問題がある。開発スレ 493 参照
+void Core::slot_realize()
+{
+#ifdef _DEBUG
+    std::cout << "Core::slot_realize\n";
+#endif
+
+    slot_style_changed( m_win_main.get_style() );
+}
+
+
+void Core::slot_style_changed( Glib::RefPtr< Gtk::Style > )
+{
+    Gdk::Color bg = m_win_main.get_style()->get_bg( Gtk::STATE_NORMAL );
+    m_notebook.modify_bg( Gtk::STATE_NORMAL , bg );
+}
 
 
 Gtk::Widget* Core::get_toplevel()
