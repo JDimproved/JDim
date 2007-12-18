@@ -184,8 +184,8 @@ void ArticleViewBase::pack_widget()
 
     if( SESSION::get_show_article_toolbar() ) get_articletoolbar()->show_toolbar();
 
-    pack_start( *get_articletoolbar(), Gtk::PACK_SHRINK, 2 );
-    pack_start( *m_drawarea, Gtk::PACK_EXPAND_WIDGET, 2 );
+    pack_start( *get_articletoolbar(), Gtk::PACK_SHRINK );
+    pack_start( *m_drawarea, Gtk::PACK_EXPAND_WIDGET );
 }
 
 

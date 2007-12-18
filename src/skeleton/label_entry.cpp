@@ -36,6 +36,7 @@ void LabelEntry::setup()
 }
 
 
+// realizeしたらentryの背景色を変更
 void LabelEntry::slot_realize()
 {
 #ifdef _DEBUG
@@ -46,30 +47,18 @@ void LabelEntry::slot_realize()
 }
 
 
+// テーマが変わったときなどにentryの背景色を変更
 void LabelEntry::slot_style_changed( Glib::RefPtr< Gtk::Style > )
 {
 #ifdef _DEBUG
     std::cout << "LabelEntry::slot_style_changed\n";
 #endif
-
-    //
-    // entryの背景色を変更
-    //
-
     m_color_bg = get_style()->get_bg( Gtk::STATE_NORMAL );
 
-    // Gtk::Notebook の中にあるとテーマによっては色が変になるので
-    // Gtk::Notebook の背景色を使用する
+    // parentがGtk::Boxの場合は背景色を正しく取得出来ないのでさらに上の親を探す
     Gtk::Widget* parent = get_parent();
-    while( parent
-           && ! dynamic_cast< Gtk::Notebook* >( parent )
-           && ! dynamic_cast< SKELETON::View* >( parent ) ) parent = parent->get_parent();
-    if( dynamic_cast< Gtk::Notebook* >( parent ) ){
-#ifdef _DEBUG
-        std::cout << "in the notebook\n";
-#endif
-        m_color_bg = parent->get_style()->get_bg( Gtk::STATE_NORMAL );
-    }
+    while( parent && dynamic_cast< Gtk::Box* >( parent ) ) parent = parent->get_parent();
+    if( parent ) m_color_bg = parent->get_style()->get_bg( Gtk::STATE_NORMAL );
 
     // 背景色変更
     if( ! m_editable ) m_entry.modify_base( Gtk::STATE_NORMAL, m_color_bg );
