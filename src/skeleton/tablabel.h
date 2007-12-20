@@ -82,9 +82,6 @@ namespace SKELETON
 
       private:
 
-        void slot_realize();
-        void slot_style_changed( Glib::RefPtr< Gtk::Style > style );
-
         virtual bool on_enter_notify_event( GdkEventCrossing* event );
         virtual bool on_motion_notify_event( GdkEventMotion* event );
         virtual bool on_leave_notify_event( GdkEventCrossing* event );

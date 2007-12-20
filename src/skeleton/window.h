@@ -35,7 +35,7 @@ namespace SKELETON
         Gtk::Statusbar m_statbar;
 #else
         Gtk::HBox m_statbar;
-        Gtk::Entry m_label_stat;
+        Gtk::Label m_label_stat;
 #endif
         Gtk::Label m_mginfo;
 
@@ -109,14 +109,6 @@ namespace SKELETON
         virtual bool on_configure_event( GdkEventConfigure* event );
 
       private:
-
-#if GTKMMVER > 240
-        // m_statbarがrealizeしたらm_label_stat(Gtk::Entry)の背景色を変える
-        void slot_statbar_realize();
-
-        // テーマが変わったときなど、m_statbarの背景色が変わったらm_label_stat(Gtk::Entry)の背景色を変える
-        void slot_statbar_style_changed( Glib::RefPtr< Gtk::Style > style );
-#endif 
 
         // 最大化する
         void maximize_win();

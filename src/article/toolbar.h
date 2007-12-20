@@ -30,7 +30,8 @@ namespace ARTICLE
         friend class ArticleViewDrawout;
 
         // ラベル、ボタンバー
-        Gtk::Entry m_label;
+        Gtk::EventBox m_label_ebox;
+        Gtk::Label m_label;
         Gtk::Button m_button_board;
         SKELETON::ImgButton m_button_favorite;
         SKELETON::ImgButton m_button_write;
@@ -78,9 +79,6 @@ namespace ARTICLE
 
         // vboxがrealizeした
         virtual void slot_vbox_realize();
-
-        // テーマが変わったときなど、vboxの背景色が変わったときに呼び出される
-        virtual void slot_vbox_style_changed( Glib::RefPtr< Gtk::Style > style );
     };
 
 

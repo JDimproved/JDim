@@ -59,12 +59,8 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
 #if GTKMMVER <= 240
     if( need_mginfo ) m_statbar.pack_start( m_mginfo );
 #else
-    m_statbar.signal_realize().connect( sigc::mem_fun(*this, &JDWindow::slot_statbar_realize ) );
-    m_statbar.signal_style_changed().connect( sigc::mem_fun(*this, &JDWindow::slot_statbar_style_changed ) );
-
-    m_label_stat.set_editable( false );
-    m_label_stat.set_activates_default( false );
-    m_label_stat.set_has_frame( false );
+    m_label_stat.set_size_request( 0, 0 );
+    m_label_stat.set_alignment( Gtk::ALIGN_LEFT );
 
     m_statbar.pack_start( m_label_stat );
     if( need_mginfo ) m_statbar.pack_start( m_mginfo, Gtk::PACK_SHRINK );
@@ -85,26 +81,6 @@ JDWindow::~JDWindow()
     if( m_vbox_view ) delete m_vbox_view;
     if( m_scrwin ) delete m_scrwin;
 }
-
-
-#if GTKMMVER > 240
-// m_statbarがrealizeしたらm_label_stat(Gtk::Entry)の背景色を変える
-void JDWindow::slot_statbar_realize()
-{
-    slot_statbar_style_changed( m_statbar.get_style() );
-}
-
-// テーマが変わったときなど、m_statbarの背景色が変わったらm_label_stat(Gtk::Entry)の背景色を変える
-void JDWindow::slot_statbar_style_changed( Glib::RefPtr< Gtk::Style > )
-{
-    Gdk::Color color_bg = m_statbar.get_style()->get_bg( Gtk::STATE_NORMAL );
-    m_label_stat.modify_base( Gtk::STATE_NORMAL, color_bg );
-
-    color_bg = m_statbar.get_style()->get_bg( Gtk::STATE_ACTIVE );
-    m_label_stat.modify_base( Gtk::STATE_ACTIVE, color_bg );
-}
-
-#endif
 
 
 // windowの初期設定(サイズ変更や移動など)

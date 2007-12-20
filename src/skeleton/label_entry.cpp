@@ -14,54 +14,23 @@ LabelEntry::LabelEntry( const bool editable, const std::string& label, const std
 {
     m_label.set_text_with_mnemonic( label );
     m_label.set_mnemonic_widget ( m_entry );
-    m_color_bg_org = m_entry.get_style()->get_base( Gtk::STATE_NORMAL );
+
+    m_info.set_size_request( 0, 0 );
+    m_info.set_alignment( Gtk::ALIGN_LEFT );
 
     setup();
-
-    m_entry.set_text( text );
-    signal_realize().connect( sigc::mem_fun(*this, &LabelEntry::slot_realize ) );
-    signal_style_changed().connect( sigc::mem_fun(*this, &LabelEntry::slot_style_changed ) );
-
-    pack_start( m_label, Gtk::PACK_SHRINK );
-    pack_start( m_entry );
+    set_text( text );
 }
 
 
 void LabelEntry::setup()
 {
-    m_entry.set_editable( m_editable );
-    m_entry.set_activates_default( m_editable );
-    m_entry.set_has_frame( m_editable );
-    m_entry.property_can_focus() = m_editable;
-}
+    pack_start( m_label, Gtk::PACK_SHRINK );
 
+    if( m_editable ) pack_start( m_entry );
+    else pack_start( m_info );
 
-// realizeしたらentryの背景色を変更
-void LabelEntry::slot_realize()
-{
-#ifdef _DEBUG
-    std::cout << "LabelEntry::slot_realize\n";
-#endif
-
-    slot_style_changed( get_style() );
-}
-
-
-// テーマが変わったときなどにentryの背景色を変更
-void LabelEntry::slot_style_changed( Glib::RefPtr< Gtk::Style > )
-{
-#ifdef _DEBUG
-    std::cout << "LabelEntry::slot_style_changed\n";
-#endif
-    m_color_bg = get_style()->get_bg( Gtk::STATE_NORMAL );
-
-    // parentがGtk::Boxの場合は背景色を正しく取得出来ないのでさらに上の親を探す
-    Gtk::Widget* parent = get_parent();
-    while( parent && dynamic_cast< Gtk::Box* >( parent ) ) parent = parent->get_parent();
-    if( parent ) m_color_bg = parent->get_style()->get_bg( Gtk::STATE_NORMAL );
-
-    // 背景色変更
-    if( ! m_editable ) m_entry.modify_base( Gtk::STATE_NORMAL, m_color_bg );
+    show_all();
 }
 
 
@@ -71,30 +40,32 @@ void LabelEntry::set_editable( const bool editable )
     std::cout << "LabelEntry::set_editable editable = " << editable << std::endl;
 #endif
 
+    remove( m_label );
+    if( m_editable ) remove( m_entry );
+    else remove( m_info );
+
     m_editable = editable;
-
     setup();
-
-    if( ! editable ) m_entry.modify_base( Gtk::STATE_NORMAL, m_color_bg );
-    else m_entry.modify_base( Gtk::STATE_NORMAL, m_color_bg_org );
 }
 
 
 void LabelEntry::set_visibility( bool visibility )
 {
-    m_entry.set_visibility( visibility );
+    if( m_editable ) m_entry.set_visibility( visibility );
 }
 
 
 void LabelEntry::set_text( const std::string& text )
 {
     m_entry.set_text( text );
+    m_info.set_text( text );
 }
 
 
 const Glib::ustring LabelEntry::get_text()
 {
-    return m_entry.get_text();
+    if( m_editable ) return m_entry.get_text();
+    return m_info.get_text();
 }
 
 

@@ -31,12 +31,10 @@ ArticleToolBar::ArticleToolBar() :
     m_button_drawout_or( Gtk::Stock::ADD ),
     m_button_clear_hl( Gtk::Stock::CLEAR )
 {
-    // スレ名ラベル
-    // Gtk::Label を使うと勝手にリサイズするときがあるので
-    // 面倒でも　Gtk::Entry を使う。背景色は on_realize() で指定する。
-    m_label.set_editable( false );
-    m_label.set_activates_default( false );
-    m_label.set_has_frame( false );
+    m_label.set_size_request( 0, 0 );
+    m_label.set_alignment( Gtk::ALIGN_LEFT );
+    m_label_ebox.add( m_label );
+    m_label_ebox.set_visible_window( false );
 
     m_button_board.set_focus_on_click( false );
     m_button_board.set_relief( Gtk::RELIEF_NONE );
@@ -82,7 +80,7 @@ void ArticleToolBar::pack_buttons()
         switch( item ){
             case ITEM_WRITEMSG: get_buttonbar().pack_start( m_button_write, Gtk::PACK_SHRINK ); break;
             case ITEM_OPENBOARD: get_buttonbar().pack_start( m_button_board, Gtk::PACK_SHRINK ); break;
-            case ITEM_NAME: get_buttonbar().pack_start( m_label, Gtk::PACK_EXPAND_WIDGET, 2 ); break;
+            case ITEM_NAME: get_buttonbar().pack_start( m_label_ebox, Gtk::PACK_EXPAND_WIDGET, 2 ); break;
             case ITEM_SEARCH: get_buttonbar().pack_start( m_button_open_search, Gtk::PACK_SHRINK ); break;
             case ITEM_RELOAD: get_buttonbar().pack_start( m_button_reload, Gtk::PACK_SHRINK ); break;
             case ITEM_STOPLOADING: get_buttonbar().pack_start( m_button_stop, Gtk::PACK_SHRINK ); break;
@@ -123,40 +121,27 @@ void ArticleToolBar::hide_searchbar()
 void ArticleToolBar::set_label( const std::string& label )
 {
     m_label.set_text( label );
-    set_tooltip( m_label, label );
+    set_tooltip( m_label_ebox, label );
 }
 
 
 // vboxがrealizeしたらラベル(Gtk::Entry)の背景色を変える
 void ArticleToolBar::slot_vbox_realize()
 {
-    slot_vbox_style_changed( get_style() );
-
     // realize する前にbroken()やold()が呼び出された
     if( m_status == STATUS_BROKEN ) set_broken();
     else if( m_status == STATUS_OLD ) set_old();
 }
-
-
-// テーマが変わったときなど、vboxの背景色が変わったときに呼び出される
-void ArticleToolBar::slot_vbox_style_changed( Glib::RefPtr< Gtk::Style > )
-{
-    Gdk::Color color_bg = get_style()->get_bg( Gtk::STATE_NORMAL );
-    m_label.modify_base( Gtk::STATE_NORMAL, color_bg );
-
-    color_bg = get_style()->get_bg( Gtk::STATE_ACTIVE );
-    m_label.modify_base( Gtk::STATE_ACTIVE, color_bg );
-}
-
 
 // スレが壊れている
 void ArticleToolBar::set_broken()
 {
     m_status = STATUS_BROKEN;
 
+    m_label_ebox.set_visible_window( true );
     m_label.modify_text( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
-    m_label.modify_base( Gtk::STATE_NORMAL, Gdk::Color( "red" ) );
-    m_label.modify_base( Gtk::STATE_ACTIVE, Gdk::Color( "red" ) );
+    m_label_ebox.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "red" ) );
+    m_label_ebox.modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( "red" ) );
 }
 
 // DAT落ち
@@ -164,9 +149,10 @@ void ArticleToolBar::set_old()
 {
     m_status = STATUS_OLD;
 
+    m_label_ebox.set_visible_window( true );
     m_label.modify_text( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
-    m_label.modify_base( Gtk::STATE_NORMAL, Gdk::Color( "blue" ) );
-    m_label.modify_base( Gtk::STATE_ACTIVE, Gdk::Color( "blue" ) );
+    m_label_ebox.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "blue" ) );
+    m_label_ebox.modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( "blue" ) );
 }
 
 
