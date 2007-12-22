@@ -36,6 +36,8 @@ namespace SKELETON
 #else
         Gtk::HBox m_statbar;
         Gtk::Label m_label_stat;
+        Gtk::EventBox m_label_stat_ebox;
+        Gtk::Tooltips m_tooltip;
 #endif
         Gtk::Label m_mginfo;
 

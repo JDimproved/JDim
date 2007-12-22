@@ -63,7 +63,10 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     m_label_stat.set_alignment( Gtk::ALIGN_LEFT );
     m_label_stat.set_selectable( true );
 
-    m_statbar.pack_start( m_label_stat );
+    m_label_stat_ebox.add( m_label_stat );
+    m_label_stat_ebox.set_visible_window( false );
+
+    m_statbar.pack_start( m_label_stat_ebox );
     if( need_mginfo ) m_statbar.pack_start( m_mginfo, Gtk::PACK_SHRINK );
 
     m_mginfo.set_width_chars( MGINFO_CHARS );
@@ -274,6 +277,7 @@ void JDWindow::set_status( const std::string& stat )
     m_statbar.push( stat );
 #else
     m_label_stat.set_text( stat );
+    m_tooltip.set_tip( m_label_stat_ebox, stat );
 #endif
 }
 
