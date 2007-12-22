@@ -33,6 +33,7 @@ ArticleToolBar::ArticleToolBar() :
 {
     m_label.set_size_request( 0, 0 );
     m_label.set_alignment( Gtk::ALIGN_LEFT );
+    m_label.set_selectable( true );
     m_label_ebox.add( m_label );
     m_label_ebox.set_visible_window( false );
 

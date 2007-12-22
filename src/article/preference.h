@@ -15,7 +15,7 @@ namespace ARTICLE
 
         // 情報
         Gtk::VBox m_vbox_info;
-        Gtk::Label m_label_name;
+        SKELETON::LabelEntry m_label_name;
         SKELETON::LabelEntry m_label_url;
         SKELETON::LabelEntry m_label_url_dat;
         SKELETON::LabelEntry m_label_cache;

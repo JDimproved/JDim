@@ -75,7 +75,7 @@ namespace BOARD
         ProxyFrame m_proxy_frame_w;
 
         // 情報
-        Gtk::Label m_label_name;
+        SKELETON::LabelEntry m_label_name;
         SKELETON::LabelEntry m_label_url;
         SKELETON::LabelEntry m_label_cache;
 

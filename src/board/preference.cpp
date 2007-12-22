@@ -30,7 +30,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
       m_proxy_frame( "読み込み用" ),
       m_proxy_frame_w( "書き込み用" ),
 
-      m_label_name( "板タイトル：" + DBTREE::board_name( get_url() ), Gtk::ALIGN_LEFT ),
+      m_label_name( false, "板タイトル：", DBTREE::board_name( get_url() ) ),
       m_label_url( false, "板のURL：", DBTREE::url_boardbase( get_url() ) ),
       m_label_cache( false, "ローカルキャッシュのルートパス", CACHE::path_board_root( DBTREE::url_boardbase( get_url() ) ) ),
 

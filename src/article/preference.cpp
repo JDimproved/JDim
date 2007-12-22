@@ -19,7 +19,7 @@ using namespace ARTICLE;
 
 Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     : SKELETON::PrefDiag( parent, url )
-    ,m_label_name( "スレタイトル : " + DBTREE::article_subject( get_url() ), Gtk::ALIGN_LEFT )
+    ,m_label_name( false, "スレタイトル : ", DBTREE::article_subject( get_url() ) )
     ,m_label_url( false, "スレのURL : ", DBTREE:: url_readcgi( get_url(),0,0 ) )
     ,m_label_url_dat( false, "DATファイルのURL : ", DBTREE:: url_dat( get_url() ) )
     ,m_label_cache( false, "ローカルキャッシュパス : ", std::string() )
