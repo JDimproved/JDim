@@ -134,8 +134,8 @@ Core::Core( WinMain& win_main )
     // ログ検索マネージャ作成
     CORE::get_search_manager();
 
-    m_win_main.signal_realize().connect( sigc::mem_fun(*this, &Core::slot_realize ) );
-    m_win_main.signal_style_changed().connect( sigc::mem_fun(*this, &Core::slot_style_changed ) );
+    m_vbox_article.signal_realize().connect( sigc::mem_fun(*this, &Core::slot_realize ) );
+    m_vbox_article.signal_style_changed().connect( sigc::mem_fun(*this, &Core::slot_style_changed ) );
 }
 
 
@@ -215,7 +215,7 @@ Core::~Core()
 }
 
 
-// メインウィンドウがrealizeしたら右ペーンのnotebookのstyleを変更する
+// 右ペーンのnotebookのparentであるvboxがrealizeしたらnotebookのstyleを変更する
 // テーマによっては notebook の中に notebook を配置すると背景色が正しく
 // 出ない問題があるため。開発スレ 493 参照
 void Core::slot_realize()
@@ -224,15 +224,13 @@ void Core::slot_realize()
     std::cout << "Core::slot_realize\n";
 #endif
 
-    slot_style_changed( m_win_main.get_style() );
+    slot_style_changed( m_vbox_article.get_style() );
 }
 
 
 void Core::slot_style_changed( Glib::RefPtr< Gtk::Style > )
 {
-
-    Gtk::Widget* parent = m_notebook.get_parent();
-    if( parent ) m_notebook.set_style( parent->get_style() );
+    m_notebook.set_style( m_vbox_article.get_style() );
 }
 
 
