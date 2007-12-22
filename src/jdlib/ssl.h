@@ -12,6 +12,12 @@
 #include <gnutls/gnutls.h>
 #else
 #include <openssl/ssl.h>
+
+// gdkmm/device.h で定義される set_key マクロと衝突する
+#ifdef set_key
+#undef set_key
+#endif
+
 #endif
 
 #include <string>
