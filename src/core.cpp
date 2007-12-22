@@ -215,9 +215,9 @@ Core::~Core()
 }
 
 
-// メインウィンドウがrealizeしたら右ペーンのnotebookの背景色を変更する
+// メインウィンドウがrealizeしたら右ペーンのnotebookのstyleを変更する
 // テーマによっては notebook の中に notebook を配置すると背景色が正しく
-// 出ない問題がある。開発スレ 493 参照
+// 出ない問題があるため。開発スレ 493 参照
 void Core::slot_realize()
 {
 #ifdef _DEBUG
@@ -230,8 +230,9 @@ void Core::slot_realize()
 
 void Core::slot_style_changed( Glib::RefPtr< Gtk::Style > )
 {
-    Gdk::Color bg = m_win_main.get_style()->get_bg( Gtk::STATE_NORMAL );
-    m_notebook.modify_bg( Gtk::STATE_NORMAL , bg );
+
+    Gtk::Widget* parent = m_notebook.get_parent();
+    if( parent ) m_notebook.set_style( parent->get_style() );
 }
 
 

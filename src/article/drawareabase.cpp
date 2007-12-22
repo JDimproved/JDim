@@ -3237,7 +3237,6 @@ const bool DrawAreaBase::is_caret_on_selection( const CARET_POSITION& caret_pos 
 //
 // 範囲選択範囲にcaret_posが含まれていて、かつ条件(IDや数字など)を満たしていたらURLとして範囲選択文字を返す
 //
-#include <iostream>
 std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos )
 {
     std::string url;
