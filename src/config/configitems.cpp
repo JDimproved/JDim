@@ -64,10 +64,12 @@ const bool ConfigItems::load()
 {
     std::string path_conf = CACHE::path_conf();
 
-    // 新設定ファイルが無かったら旧ファイルから読み込む
-    if( CACHE::file_exists( path_conf ) != CACHE::EXIST_FILE ){
+    // 新設定ファイルが無く、かつキャッシュディレクトリが存在していたら旧ファイルから設定を引き継ぐ
+    if( CACHE::file_exists( path_conf ) != CACHE::EXIST_FILE
+        && CACHE::file_exists( CACHE::path_root() ) == CACHE::EXIST_DIR
+        && CACHE::file_exists( CACHE::path_conf_old() ) == CACHE::EXIST_FILE ){
 
-        if( CACHE::file_exists( CACHE::path_conf_old() ) == CACHE::EXIST_FILE ) path_conf = CACHE::path_conf_old();
+            path_conf = CACHE::path_conf_old();
     }
 
     JDLIB::ConfLoader cf( path_conf, std::string() );
