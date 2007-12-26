@@ -59,7 +59,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
 #if GTKMMVER <= 240
     if( need_mginfo ) m_statbar.pack_start( m_mginfo );
 #else
-    m_label_stat.set_size_request( 0, 0 );
+    m_label_stat.set_size_request( 0, -1 );
     m_label_stat.set_alignment( Gtk::ALIGN_LEFT );
     m_label_stat.set_selectable( true );
 
