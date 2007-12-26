@@ -2292,7 +2292,13 @@ void BBSListViewBase::set_expanded_row( const Gtk::TreeModel::Children& children
 //
 void BBSListViewBase::tree2xml( const std::string& root_name )
 {
-    if( ! m_ready_tree || m_treestore->children().empty() ) return;
+    if( ! m_ready_tree ) return;
+
+    if( m_treestore->children().empty() )
+    {
+        m_document.clear();
+        return;
+    }
 
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::tree2xml\n";
