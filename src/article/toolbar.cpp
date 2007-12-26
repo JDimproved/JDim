@@ -140,7 +140,7 @@ void ArticleToolBar::set_broken()
     m_status = STATUS_BROKEN;
 
     m_label_ebox.set_visible_window( true );
-    m_label.modify_text( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
+    m_label.modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
     m_label_ebox.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "red" ) );
     m_label_ebox.modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( "red" ) );
 }
@@ -151,7 +151,7 @@ void ArticleToolBar::set_old()
     m_status = STATUS_OLD;
 
     m_label_ebox.set_visible_window( true );
-    m_label.modify_text( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
+    m_label.modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
     m_label_ebox.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "blue" ) );
     m_label_ebox.modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( "blue" ) );
 }
