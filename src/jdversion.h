@@ -11,13 +11,13 @@
 #endif
 
 // svn 版の時は JDVERSION_SVN をdefineする
-//#define JDVERSION_SVN
+#define JDVERSION_SVN
 
-#define MAJORVERSION 1
-#define MINORVERSION 9
-#define MICROVERSION 8
-#define JDDATE    "071228"
-#define JDTAG     ""
+#define MAJORVERSION 2
+#define MINORVERSION 0
+#define MICROVERSION 0
+#define JDDATE    "080101"
+#define JDTAG     "beta"
 
 //---------------------------------
 
@@ -45,7 +45,7 @@
 #endif // JDVERSION_SVN
 //--------------------------------
 
-#define JDCOPYRIGHT "(c) 2006-2007 JD project"
+#define JDCOPYRIGHT "(c) 2006-2008 JD project"
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 #define JDHELP CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/"
