@@ -1012,6 +1012,9 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 bool BBSListViewBase::slot_key_press( GdkEventKey* event )
 {
+    // セルの文字を編集中なら何もしない
+    if( m_ren_text->property_editable() ) return true;
+
     int key = get_control().key_press( event );
 
     // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
@@ -1035,7 +1038,10 @@ bool BBSListViewBase::slot_key_release( GdkEventKey* event )
 
     std::cout << "BBSListViewBase::slot_key_release key = " << event->keyval << " ctrl = " << ctrl << " shift = " << shift << std::endl;
 #endif
-    
+
+    // セルの文字を編集中なら何もしない
+    if( m_ren_text->property_editable() ) return true;
+
     // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
     // 一番上のスレが開くので、open_row() は slot_key_release() で処理する
     int key = get_control().key_press( event );
@@ -1185,12 +1191,12 @@ void BBSListViewBase::slot_rename()
     std::cout << "BBSListViewBase::slot_rename\n";
 #endif
 
-    m_ren_text->property_editable() = true;     // edit可
+    // edit可 slot_ren_text_on_edited() で false にする
+    m_ren_text->property_editable() = true;
     m_treeview.set_cursor( m_path_selected, *m_treeview.get_column( COL_NAME ), true );
 
     // メニューが消えるとfocus_viewが呼ばれて名前変更モードが終了するのでfocus_viewをキャンセルする
     m_cancel_focus = true;
-    m_ren_text->property_editable() = false;
 }
 
 
@@ -1506,6 +1512,8 @@ void BBSListViewBase::slot_ren_text_on_edited( const Glib::ustring& path, const 
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( Gtk::TreePath( path ) );
     if( row ) row[ m_columns.m_col_name ] = text;
+
+    m_ren_text->property_editable() = false;
 }
 
 
