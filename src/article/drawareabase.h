@@ -135,6 +135,7 @@ namespace ARTICLE
         bool m_r_drugging; // 右ドラッグ中
         std::string m_link_current; // 現在マウスポインタの下にあるリンクの文字列
         LAYOUT* m_layout_current; // 現在マウスポインタの下にあるlayoutノード(下が空白ならNULL)
+        Gdk::CursorType m_cursor_type; // カーソルの形状
 
         // 入力コントローラ
         CONTROL::Control m_control;
