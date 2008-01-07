@@ -1191,7 +1191,7 @@ void BBSListViewBase::slot_rename()
     std::cout << "BBSListViewBase::slot_rename\n";
 #endif
 
-    // edit可 slot_ren_text_on_edited() で false にする
+    // edit可 slot_ren_text_on_edited() と slot_ren_text_on_canceled で false にする
     m_ren_text->property_editable() = true;
     m_treeview.set_cursor( m_path_selected, *m_treeview.get_column( COL_NAME ), true );
 
@@ -1510,6 +1510,10 @@ void BBSListViewBase::slot_row_col( const Gtk::TreeModel::iterator&, const Gtk::
 //
 void BBSListViewBase::slot_ren_text_on_edited( const Glib::ustring& path, const Glib::ustring& text )
 {
+#ifdef _DEBUG    
+    std::cout << "BBSListViewBase::slot_ren_text_on_edited\n";
+#endif
+
     Gtk::TreeModel::Row row = m_treeview.get_row( Gtk::TreePath( path ) );
     if( row ) row[ m_columns.m_col_name ] = text;
 
@@ -1517,8 +1521,17 @@ void BBSListViewBase::slot_ren_text_on_edited( const Glib::ustring& path, const 
 }
 
 
+//
+// 名前をキャンセルしたときにCellRendererTextから呼ばれるslot
+//
+void BBSListViewBase::slot_ren_text_on_canceled()
+{
+#ifdef _DEBUG    
+    std::cout << "BBSListViewBase::slot_ren_text_on_canceld\n";
+#endif
 
-
+    m_ren_text->property_editable() = false;
+}
 
 
 //
@@ -1654,6 +1667,7 @@ Gtk::TreeViewColumn* BBSListViewBase::create_column()
 
     m_ren_text = Gtk::manage( new Gtk::CellRendererText() );
     m_ren_text->signal_edited().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_ren_text_on_edited ) );
+    m_ren_text->signal_editing_canceled().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_ren_text_on_canceled ) );
     m_ren_text->property_underline() = Pango::UNDERLINE_SINGLE;
 
     // 行間スペース

@@ -137,7 +137,7 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
         cmd_out = MISC::replace_str( cmd_out, "$TEXTE", MISC::charset_url_encode_split( text, "MS932" ) );
     }
     if( cmd_out.find( "$TEXT" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXT",  MISC::charset_url_encode_split( text, "" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXT",  text );
     }
 
 #ifdef _DEBUG

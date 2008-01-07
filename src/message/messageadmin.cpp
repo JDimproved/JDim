@@ -252,7 +252,7 @@ bool MessageAdmin::delete_message( SKELETON::View * view )
                              "編集中のメッセージを閉じる前に内容を保存しますか？\n\n保存ボタンを押すとメッセージを保存できます。",
                              false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE );
 
-    mdiag.add_button( "保存せずに閉じる(_W)", Gtk::RESPONSE_NO );
+    mdiag.add_button( "保存せずに閉じる(_Q)", Gtk::RESPONSE_NO );
     mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
     mdiag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_YES );
     mdiag.set_default_response( Gtk::RESPONSE_YES );

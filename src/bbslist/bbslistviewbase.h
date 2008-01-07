@@ -170,6 +170,7 @@ namespace BBSLIST
         void slot_row_exp( const Gtk::TreeModel::iterator& it, const Gtk::TreeModel::Path& path );
         void slot_row_col( const Gtk::TreeModel::iterator& it, const Gtk::TreeModel::Path& path );        
         void slot_ren_text_on_edited( const Glib::ustring& path, const Glib::ustring& text );
+        void slot_ren_text_on_canceled();
         void slot_checkupdate_selected_rows();
         void slot_checkupdate_open_selected_rows();
 
