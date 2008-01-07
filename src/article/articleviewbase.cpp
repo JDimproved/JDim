@@ -1847,7 +1847,9 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
                     status_url = tmp;
                     break;
 
-                default : status_url = url;
+                default:
+
+                    status_url = url;
             }
 
             // 改行はスペースに変えておく
