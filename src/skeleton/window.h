@@ -31,6 +31,8 @@ namespace SKELETON
         SKELETON::JDVBox* m_vbox_view;
 
         // ステータスバー
+        std::string m_status;
+
 #if GTKMMVER <= 240
         Gtk::Statusbar m_statbar;
 #else
@@ -62,6 +64,9 @@ namespace SKELETON
         void pack_remove_end( bool unpack, Widget& child, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
 
         void set_status( const std::string& stat );
+        void set_status_temporary( const std::string& stat );
+        void restore_status();
+        std::string get_status(){ return m_status; }
         void set_mginfo( const std::string& mginfo );
 
         // メインウィンドウに対して transient 設定

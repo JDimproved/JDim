@@ -8,6 +8,7 @@ libjdlib_a_SOURCES = \
 	miscx.cpp \
 	miscgtk.cpp \
 	jdthread.cpp \
+	misccharcode.cpp \
         heap.cpp \
 	jdiconv.cpp \
 	loader.cpp \
@@ -25,6 +26,7 @@ noinst_HEADERS = \
 	miscx.h \
 	miscgtk.h \
 	jdthread.h \
+	misccharcode.h \
 	constptr.h \
 	refptr_lock.h \
 	heap.h \

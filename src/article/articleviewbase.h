@@ -62,6 +62,9 @@ namespace ARTICLE
         // 抽出ビューで荒らし報告用のURLを表示する
         bool m_show_url4report;
 
+        // URLをステータスバーに表示しているかどうか
+        bool m_url_show_status;
+
     public:
 
         ArticleViewBase( const std::string& url );

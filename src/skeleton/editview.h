@@ -91,7 +91,7 @@ namespace SKELETON
         void slot_buffer_changed();
 
       private:
-
+void set_line_marker();
         void cursor_up_down( bool up );
 
         bool slot_select_aamenu( GdkEventButton* event );

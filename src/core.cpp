@@ -2841,6 +2841,14 @@ void Core::set_command( const COMMAND_ARGS& command )
         m_win_main.set_status( command.arg1 );
     }
 
+    else if( command.command  == "set_status_temporary" ){
+        m_win_main.set_status_temporary( command.arg1 );
+    }
+
+    else if( command.command  == "restore_status" ){
+        m_win_main.restore_status();
+    }
+
     else if( command.command  == "set_info" ){
         m_win_main.set_mginfo( command.arg1 );
     }

@@ -61,7 +61,7 @@ namespace SESSION
     const bool is_quitting();
     void set_quitting( bool quit );
 
-    const std::string& get_distribution();
+    const std::string& get_distribution_name();
 
     const int get_wm();
 

@@ -273,11 +273,41 @@ void JDWindow::pack_remove_end( bool unpack, Widget& child, Gtk::PackOptions opt
 // ステータスバー表示
 void JDWindow::set_status( const std::string& stat )
 {
+    if( stat == m_status ) return;
+
+    m_status = stat;
+
 #if GTKMMVER <= 240
     m_statbar.push( stat );
 #else
     m_label_stat.set_text( stat );
     m_tooltip.set_tip( m_label_stat_ebox, stat );
+#endif
+}
+
+
+// 一時的にステータスバーの表示を変える( マウスオーバーでのURL表示用 )
+//
+// 恒久的に変えてしまうと、マウススオ-バー中に ArticleViewBase では
+// ないクラスから表示を変更された場合に本来の表示に戻せなくなる。
+void JDWindow::set_status_temporary( const std::string& stat )
+{
+    if( stat == m_status ) return;
+
+#if GTKMMVER <= 240
+    m_statbar.push( stat );
+#else
+    m_label_stat.set_text( stat );
+#endif
+}
+
+// 一時的に変えたステータスバーの表示を戻す
+void JDWindow::restore_status()
+{
+#if GTKMMVER <= 240
+    m_statbar.push( m_status );
+#else
+    m_label_stat.set_text( m_status );
 #endif
 }
 

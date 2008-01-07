@@ -81,6 +81,14 @@ AC_SUBST(GTHREAD_CFLAGS)
 AC_SUBST(GTHREAD_LIBS)
 
 dnl 
+dnl uname
+dnl
+
+echo "use uname"
+AC_CHECK_HEADERS([sys/utsname.h])
+
+
+dnl 
 dnl crypt
 dnl
 

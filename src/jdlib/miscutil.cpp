@@ -445,6 +445,28 @@ std::list< std::string > MISC::replace_str_list( std::list< std::string >& list_
 }
 
 
+// str_in に含まれる改行文字を replace に置き換え
+std::string MISC::replace_newlines_to_str( const std::string& str_in, const std::string& replace )
+{
+    if( str_in.empty() || replace.empty() ) return str_in;
+
+    std::string str_out;
+
+    size_t pos = 0, found = 0;
+    while( ( found = str_in.find_first_of( "\r\n", pos ) ) != std::string::npos )
+    {
+        str_out.append( str_in.substr( pos, ( found - pos ) ) + replace );
+
+        pos = found + 1;
+
+        if( str_in[ found ] == '\r' && str_in[ found + 1 ] == '\n' ) ++pos;
+    }
+
+    str_out.append( str_in.substr( pos ) );
+
+    return str_out;
+}
+
 
 // " を \" に置き換え
 std::string MISC::replace_quot( const std::string& str )
@@ -570,6 +592,41 @@ std::string MISC::intlisttostr( std::list< int >& list_num )
     }
 
     return comment.str();
+}
+
+
+
+//
+// 16進数表記文字をバイナリに変換する( "E38182" -> 0xE38182 )
+//
+// 戻り値: 変換に成功した chr_in のバイト数
+//
+size_t MISC::chrtobin( const char* chr_in, char* chr_out )
+{
+    if( ! chr_in ) return 0;
+
+    const size_t chr_in_length = strlen( chr_in );
+
+    size_t a, b;
+    for( a = 0, b = a; a < chr_in_length; ++a )
+    {
+        unsigned char chr = chr_in[a];
+
+        chr_out[b] <<= 4;
+
+        // 0(0x30)〜9(0x39)
+        if( ( chr - 0x30 ) < 0x0A ) chr_out[b] |= chr - 0x30;
+        // A(0x41)〜F(0x46)
+        else if( ( chr - 0x41 ) < 0x06 ) chr_out[b] |= chr - 0x37;
+        // a(0x61)〜f(0x66)
+        else if( ( chr - 0x61 ) < 0x06 ) chr_out[b] |= chr - 0x57;
+        // その他
+        else break;
+
+        if( a % 2 != 0 ) ++b;
+    }
+
+    return a;
 }
 
 
@@ -802,6 +859,52 @@ bool MISC::is_url_char( const char* str_in, const bool loose_url )
                          || *str_in == '|' ) )
     ) return true;
     else return false;
+}
+
+
+
+//
+// URLデコード
+//
+std::string MISC::url_decode( const std::string& url )
+{
+    if( url.empty() ) return std::string();
+
+    const size_t url_length = url.length();
+
+    char decoded[ url_length + 1 ];
+    memset( decoded, 0, sizeof( decoded ) );
+
+    unsigned int a, b;
+    for( a = 0, b = a; a < url_length; ++a, ++b )
+    {
+        if( url[a] == '%' )
+        {
+            char src[3];
+            memset( src, 0, 3 );
+            memcpy( src, &url[ a + 1 ], 2 );
+
+            char tmp[3];
+            memset( tmp, 0, 3 );
+
+            if( chrtobin( src, tmp ) == 2 )
+            {
+                decoded[b] = *tmp;
+                a += 2;
+            }
+            else decoded[b] = url[a];
+        }
+        else if( url[a] == '+' )
+        {
+            decoded[b] = ' ';
+        }
+        else
+        {
+            decoded[b] = url[a];
+        }
+    }
+
+    return std::string( decoded );
 }
 
 

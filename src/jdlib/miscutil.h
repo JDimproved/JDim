@@ -77,6 +77,9 @@ namespace MISC
     // list_inから str1 を str2 に置き換えてリストを返す
     std::list< std::string > replace_str_list( std::list< std::string >& list_in, const std::string& str1, const std::string& str2 );
 
+    // str_in に含まれる改行文字を replace に置き換え
+    std::string replace_newlines_to_str( const std::string& str_in, const std::string& replace );
+
     // " を \" に置き換え
     std::string replace_quot( const std::string& str );
 
@@ -95,6 +98,9 @@ namespace MISC
     // listで指定した数字を文字に変換
     std::string intlisttostr( std::list< int >& list_num );
 
+    // 16進数表記文字をバイナリに変換する
+    size_t chrtobin( const char* chr_in, char* chr_out );
+
     // strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
     std::string cut_str( const std::string& str, unsigned int maxsize );
 
@@ -109,6 +115,9 @@ namespace MISC
 
     // URLとして扱う文字かどうか判別する
     bool is_url_char( const char* str_in, const bool loose_url );
+
+    // URLデコード
+    std::string url_decode( const std::string& url );
 
     // urlエンコード
     std::string url_encode( const char* str, size_t n );

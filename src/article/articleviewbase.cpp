@@ -14,6 +14,7 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
 #include "jdlib/miscx.h"
+#include "jdlib/misccharcode.h"
 
 #include "dbtree/articlebase.h"
 #include "dbtree/interface.h"
@@ -58,7 +59,8 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
       m_popup_shown( false ),
       m_enable_menuslot( true ),
       m_current_bm( 0 ),
-      m_show_url4report( false )
+      m_show_url4report( false ),
+      m_url_show_status( false )
 {
 #ifdef _DEBUG    
     std::cout << "ArticleViewBase::ArticleViewBase : " << get_url() << std::endl;
@@ -554,7 +556,7 @@ bool ArticleViewBase::set_command( const std::string& command, const std::string
     else if( command == "append_html" ) append_html( arg );
     else if( command == "clear_screen" )
     {
-    	if( m_drawarea ) m_drawarea->clear_screen();
+        if( m_drawarea ) m_drawarea->clear_screen();
     }
     else if( command == "goto_num" ) goto_num( atoi( arg.c_str() ) );
     else if( command == "delete_popup" ) delete_popup();
@@ -1489,6 +1491,13 @@ bool ArticleViewBase::slot_leave_notify( GdkEventCrossing* event )
 
     focus_out();
 
+    // ステータスバーの表示を戻す
+    if( m_url_show_status )
+    {
+        CORE::core_set_command( "restore_status", m_url_article );
+        m_url_show_status = false;
+    }
+
     return false;
 }
 
@@ -1801,6 +1810,60 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
     }
 
     if( view_popup ) show_popup( view_popup, margin_popup );
+
+    // リンクとして扱うURLをステータスバーに表示する
+    int len;
+    if( MISC::is_url_scheme( url.c_str(), len ) != MISC::SCHEME_NONE )
+    {
+        std::string status_url;
+
+        // デコードが必要な物
+        if( url.find( "%" ) != std::string::npos )
+        {
+            std::string tmp = MISC::url_decode( url );
+
+            const int char_code = MISC::judge_char_code( tmp );
+
+            switch( char_code )
+            {
+                case MISC::CHARCODE_EUC_JP:
+
+                    status_url = MISC::Iconv( tmp, "EUC-JP", "UTF-8" );
+                    break;
+
+                case MISC::CHARCODE_JIS:
+
+                    status_url = MISC::Iconv( tmp, "ISO-2022-JP", "UTF-8" );
+                    break;
+
+                case MISC::CHARCODE_SJIS:
+
+                    status_url = MISC::Iconv( tmp, "MS932", "UTF-8" );
+                    break;
+
+                case MISC::CHARCODE_ASCII:
+                case MISC::CHARCODE_UTF:
+
+                    status_url = tmp;
+                    break;
+
+                default : status_url = url;
+            }
+
+            // 改行はスペースに変えておく
+            status_url = MISC::replace_newlines_to_str( status_url, " " );
+        }
+        // デコードの必要がない物
+        else
+        {
+            status_url = url;
+        }
+
+        // 一時的にステータスバーにURLを表示( 長くても全部表示しちゃう？ )
+        CORE::core_set_command( "set_status_temporary", m_url_article, status_url );
+
+        m_url_show_status = true;
+    }
 }
 
 
@@ -1813,6 +1876,13 @@ void ArticleViewBase::slot_leave_url()
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_leave_url\n";
 #endif
+
+    if( m_url_show_status )
+    {
+        // ステータスバーの表示を戻す
+        CORE::core_set_command( "restore_status", m_url_article );
+        m_url_show_status = false;
+    }
 
     hide_popup();
 }
