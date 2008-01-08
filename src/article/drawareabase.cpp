@@ -339,10 +339,7 @@ void DrawAreaBase::focus_out()
     // realize していない
     if( !m_gc ) return;
 
-    if( m_cursor_type != Gdk::ARROW ){
-        m_window->set_cursor();
-        m_cursor_type = Gdk::ARROW;
-    }
+    change_cursor( Gdk::ARROW );
 
     m_key_press = false;
     if( m_scrollinfo.mode != SCROLL_AUTO ) m_scrollinfo.reset();
@@ -2330,7 +2327,14 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
     }
 
     // 再描画
-    if( draw_backscreen( redraw_all ) ) draw_drawarea();
+    if( draw_backscreen( redraw_all ) ){
+        draw_drawarea();
+
+        // カーソル形状の更新
+        CARET_POSITION caret_pos;
+        m_layout_current = set_caret( caret_pos, m_x_pointer , m_y_pointer + get_vscr_val() );
+        change_cursor( get_cursor_type() );
+    }
 }
 
 
@@ -3506,10 +3510,8 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
             
         m_scrollinfo.reset();
         m_scrollinfo.just_finished = true;
-        if( m_cursor_type != Gdk::ARROW ){
-            m_window->set_cursor();
-            m_cursor_type = Gdk::ARROW;
-        }
+
+        change_cursor( Gdk::ARROW );
     }
     else {
 
@@ -3540,6 +3542,8 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 
             if ( ! ( m_layout_current && m_layout_current->link ) ){ // リンク上で無いなら                
 
+                change_cursor( Gdk::DOUBLE_ARROW );
+
                 m_scrollinfo.reset();
                 m_scrollinfo.mode = SCROLL_AUTO;
                 m_scrollinfo.show_marker = true;
@@ -3547,10 +3551,6 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
                 m_scrollinfo.enable_down = true;                
                 m_scrollinfo.x = ( int ) event->x;
                 m_scrollinfo.y = ( int ) event->y;
-                if( m_cursor_type != Gdk::DOUBLE_ARROW ){
-                    m_window->set_cursor( Gdk::Cursor( Gdk::DOUBLE_ARROW ) );
-                    m_cursor_type = Gdk::DOUBLE_ARROW;
-                }
             }
         }
 
@@ -3655,15 +3655,11 @@ bool DrawAreaBase::motion_mouse()
     m_layout_current = set_caret( caret_pos, m_x_pointer , m_y_pointer + pos );
 
     int res_num = 0;
-    Gdk::CursorType cursor_type = Gdk::ARROW;
     std::string link_current;
     if( m_layout_current ){
 
         // 現在のポインタの下にあるレス番号取得
         res_num = m_layout_current->res_number;
-
-        // テキストの上ではカーソルを I に変える
-        if( m_layout_current->text && ! m_layout_current->link ) cursor_type = Gdk::XTERM;
 
         // 現在のポインタの下にあるリンクの文字列を更新
         // IDや数字だったらポップアップ表示する
@@ -3671,7 +3667,6 @@ bool DrawAreaBase::motion_mouse()
         // リンクの上にポインタがある
         if( m_layout_current->link ){
             link_current =  m_layout_current->link;
-            cursor_type = Gdk::HAND2;
         }
 
         // IDや数字などの範囲選択の上にポインタがある
@@ -3753,16 +3748,47 @@ bool DrawAreaBase::motion_mouse()
         }
     }
 
-    // カーソル変更
-    if( m_cursor_type != Gdk::DOUBLE_ARROW // オートスクロール中
-        && m_cursor_type != cursor_type ){
-        m_cursor_type = cursor_type;
-        if( m_cursor_type == Gdk::ARROW ) m_window->set_cursor();
-        else m_window->set_cursor( Gdk::Cursor( m_cursor_type ) );
-    }
+    change_cursor( get_cursor_type() );
 
     return true;
 }
+
+
+
+//
+// 現在のポインターの下のノードからカーソルのタイプを決定する
+//
+const Gdk::CursorType DrawAreaBase::get_cursor_type()
+{
+    Gdk::CursorType cursor_type = Gdk::ARROW;
+    if( m_layout_current ){
+
+        // テキストの上ではカーソルを I に変える
+        if( m_layout_current->text && ! m_layout_current->link ) cursor_type = Gdk::XTERM;
+
+        // リンクの上にポインタがある
+        if( m_layout_current->link ) cursor_type = Gdk::HAND2;
+    }
+
+    return cursor_type;
+}
+
+
+//
+// カーソルの形状の変更
+//
+void DrawAreaBase::change_cursor( const Gdk::CursorType type )
+{
+    //オートスクロール中
+    if( m_scrollinfo.mode == SCROLL_AUTO ) return;
+
+    if( m_cursor_type != type ){
+        m_cursor_type = type;
+        if( m_cursor_type == Gdk::ARROW ) m_window->set_cursor();
+        else m_window->set_cursor( Gdk::Cursor( m_cursor_type ) );
+    }
+}
+
 
 
 //

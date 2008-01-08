@@ -324,6 +324,12 @@ namespace ARTICLE
         // マウスが動いた時の処理
         bool motion_mouse();
 
+        // 現在のポインターの下のノードからカーソルのタイプを決定する
+        const Gdk::CursorType get_cursor_type();
+
+        // カーソルの形状の変更
+        void change_cursor( const Gdk::CursorType type );
+
         // スロット
         void slot_change_adjust();
         bool slot_expose_event( GdkEventExpose* event );
