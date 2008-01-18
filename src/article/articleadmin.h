@@ -10,6 +10,7 @@
 
 #include <list>
 #include <string>
+#include <set>
 
 #define ARTICLE_SIGN "_ARTICLE_"
 #define BOARD_SIGN "_BOARD_"
@@ -28,6 +29,9 @@ namespace ARTICLE
 {
     class ArticleAdmin : public SKELETON::Admin
     {
+        // 再取得中のスレのアドレス
+        std::set< std::string > m_urls_reloading;
+
       public:
         ArticleAdmin( const std::string& url );
         ~ArticleAdmin();
@@ -39,8 +43,12 @@ namespace ARTICLE
 
         virtual void restore();
         virtual void switch_admin();
+        virtual void update_finish( const std::string& url );
 
       private:
+
+        bool is_reloading( const std::string& url, const bool erase );
+
         void delete_popup();
         void delete_all_popups();
 

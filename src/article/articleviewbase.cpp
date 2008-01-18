@@ -718,7 +718,7 @@ void ArticleViewBase::delete_open_view()
         if( mdiag.run() != Gtk::RESPONSE_YES ) return;
     }
 
-    CORE::core_set_command( "delete_article", m_url_article, "reopen", MISC::itostr( drawarea()->get_seen_current() ) );
+    ARTICLE::get_admin()->set_command( "delete_article", m_url_article, "reopen", MISC::itostr( drawarea()->get_seen_current() ) );
 }
 
 
