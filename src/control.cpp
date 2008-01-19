@@ -288,6 +288,7 @@ int Control::MG_end( GdkEventButton* event )
 void Control::MG_wheel_reset()
 {
     mg_wheel_done = false;
+    m_wheel_scroll_time = 0;
 }
 
 
@@ -312,6 +313,12 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
     int control = CONTROL::None;
 
     guint direction = event->direction;
+
+    // あまり速く動かした場合はキャンセル
+    const int time_cancel = 15; // msec
+    const int time_tmp = event->time - m_wheel_scroll_time;
+    if( m_wheel_scroll_time && time_tmp < time_cancel ) return control;
+    m_wheel_scroll_time = event->time;
 
     // 押しているボタンは event から取れないので
     // get_pointer()から取る

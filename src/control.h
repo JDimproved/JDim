@@ -25,6 +25,7 @@ namespace CONTROL
         int m_mg_y;
         int m_mg_value;
         std::string m_mg_direction;
+        guint32 m_wheel_scroll_time; // 前回ホイールを回した時刻
 
       public:
 
