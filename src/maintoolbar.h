@@ -11,6 +11,8 @@
 #include <gtkmm.h>
 
 #include "skeleton/toolbar.h"
+#include "skeleton/imgbutton.h"
+#include "skeleton/imgtogglebutton.h"
 
 namespace CORE
 {

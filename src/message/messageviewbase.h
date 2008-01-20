@@ -99,7 +99,6 @@ namespace MESSAGE
         void focus_writebutton();
 
         void slot_write_clicked();
-        void slot_close_clicked();
         void slot_draft_open();
         void slot_undo_clicked();
         void slot_not_close_clicked();

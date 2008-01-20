@@ -44,6 +44,7 @@ using namespace BOARD;
 BoardAdmin::BoardAdmin( const std::string& url )
     : SKELETON::Admin( url )
 {
+    set_use_viewhistory( true );
     get_notebook()->set_dragable( true );
     get_notebook()->set_fixtab( false );
     if( ! SESSION::get_show_board_tab() ) get_notebook()->set_show_tabs( false );
@@ -72,7 +73,7 @@ void BoardAdmin::restore()
     bool online = SESSION::is_online();
     SESSION::set_online( false );
 
-    std::list< std::string > list_url = SESSION::board_URLs();
+    std::list< std::string >& list_url = SESSION::get_board_URLs();
     std::list< std::string >::iterator it_url = list_url.begin();
 
     std::list< bool > list_locked = SESSION::get_board_locked();
@@ -80,29 +81,33 @@ void BoardAdmin::restore()
 
     for( ; it_url != list_url.end(); ++it_url ){
 
-        COMMAND_ARGS command_arg;
-        command_arg.command = "open_view";
-
         // タブのロック状態
-        std::string lock;
+        bool lock = false;
         if( it_locked != list_locked.end() ){
-            if( (*it_locked ) ) lock = "lock";
+            if( (*it_locked ) ) lock = true;
             ++it_locked;
         }
 
-        if( !( *it_url ).empty() ){
-
-            command_arg.url = ( *it_url );
-            command_arg.arg1 = "true";
-            command_arg.arg2 = "false";
-            command_arg.arg3 = lock;
-
-            open_view( command_arg );
-        }
+        COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
+        if( ! command_arg.url.empty() ) open_view( command_arg );
     }
 
     SESSION::set_online( online );
     set_command( "set_page", std::string(), MISC::itostr( SESSION::board_page() ) );
+}
+
+
+COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab, const bool lock )
+{
+    COMMAND_ARGS command_arg;
+
+    command_arg.command = "open_view";
+    command_arg.url = url;
+    if( tab ) command_arg.arg1 = "true";  // タブで開く
+    command_arg.arg2 = "false";           // 既に開いているかチェック
+    if( lock ) command_arg.arg3 = "lock";
+
+    return command_arg;
 }
 
 

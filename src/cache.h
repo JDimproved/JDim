@@ -67,6 +67,9 @@ namespace CACHE
     std::string path_xml_history_close();
     std::string path_xml_history_close_old();
 
+    // View履歴
+    std::string path_xml_history_view();
+
     // 板移転情報
     std::string path_movetable();
 

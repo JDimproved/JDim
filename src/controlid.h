@@ -42,6 +42,9 @@ namespace CONTROL
 
         PreBookMark,
         NextBookMark,
+
+        PrevView,
+        NextView,
         
         ToggleArticle,
 

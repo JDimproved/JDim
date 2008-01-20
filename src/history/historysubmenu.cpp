@@ -23,7 +23,7 @@
 #include <sstream>
 #include <list>
 
-using namespace CORE;
+using namespace HISTORY;
 
 #define HIST_NONAME "--------------"
 
@@ -51,7 +51,7 @@ HistorySubMenu::HistorySubMenu( const std::string& path_load_xml, const std::str
         item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_active ), i ) );
         item->signal_button_press_event().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_button_press ), i ) );
 
-        CORE::HIST_ITEM* histitem = new CORE::HIST_ITEM;
+        HIST_ITEM* histitem = new HIST_ITEM;
         histitem->type = TYPE_UNKNOWN;
         m_histlist.push_back( histitem );
     }
@@ -95,7 +95,7 @@ HistorySubMenu::~HistorySubMenu()
     // XML保存
     CACHE::save_rawdata( m_path_save_xml, list2xml() );
 
-    std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
+    std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
     for(; it != m_histlist.end(); ++it ) delete ( *it );
 }
 
@@ -103,7 +103,7 @@ HistorySubMenu::~HistorySubMenu()
 // 履歴のクリア
 void HistorySubMenu::clear()
 {
-    std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
+    std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
     for(; it != m_histlist.end(); ++it ){
         (*it)->url = std::string();
         (*it)->name = std::string();
@@ -118,13 +118,13 @@ void HistorySubMenu::clear()
 
 
 // 上から num 版目の HIST_ITEM 取得
-CORE::HIST_ITEM* HistorySubMenu::get_item( int num )
+HISTORY::HIST_ITEM* HistorySubMenu::get_item( int num )
 {
-    CORE::HIST_ITEM* item = NULL;
+    HIST_ITEM* item = NULL;
 
     if( m_histlist.size() > ( size_t ) num ){
 
-        std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
+        std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
         for( int i = 0; i < num && it != m_histlist.end() ; ++it, ++i );
         if( it != m_histlist.end() ) item = *it;
     }
@@ -142,8 +142,8 @@ void HistorySubMenu::append_item( const std::string& url, const std::string& nam
               << " type = " << type << std::endl;
 #endif   
 
-    std::list< CORE::HIST_ITEM* >::iterator it;
-    CORE::HIST_ITEM* item = NULL;
+    std::list< HIST_ITEM* >::iterator it;
+    HIST_ITEM* item = NULL;
 
     if( ! m_histlist.size() ) return;
 
@@ -194,10 +194,10 @@ void HistorySubMenu::update()
     std::cout << "HistorySubMenu::update\n";
 #endif
 
-    std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
+    std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
     for(; it != m_histlist.end(); ++it ){
 
-        CORE::HIST_ITEM* item = (*it);
+        HIST_ITEM* item = (*it);
         assert( item );
 
         if( item->type == TYPE_THREAD ) item->url = DBTREE::url_dat( item->url );
@@ -227,7 +227,7 @@ void HistorySubMenu::xml2list( const std::string& xml )
     std::cout << " 子ノード数=" << document.childNodes().size() << std::endl;
 #endif
 
-    std::list< CORE::HIST_ITEM* >::iterator it_hist = m_histlist.begin();
+    std::list< HIST_ITEM* >::iterator it_hist = m_histlist.begin();
     std::list< XML::Dom* >::iterator it = domlist.begin();
     while( it != domlist.end() && it_hist != m_histlist.end() )
     {
@@ -263,7 +263,7 @@ std::string HistorySubMenu::list2xml()
     // ルート要素を追加
     XML::Dom* root = document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME ) );
 
-    std::list< CORE::HIST_ITEM* >::iterator it = m_histlist.begin();
+    std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
     while( it != m_histlist.end() )
     {
         const Glib::ustring name = ( *it )->name;
@@ -297,7 +297,7 @@ std::string HistorySubMenu::list2xml()
 // 履歴を開く
 void HistorySubMenu::open_history( int i )
 {
-    CORE::HIST_ITEM* item = get_item( i );
+    HIST_ITEM* item = get_item( i );
     if( ! item ) return;
 
     std::string& url = item->url;
@@ -350,7 +350,7 @@ void HistorySubMenu::set_menulabel()
     std::cout << "HistorySubMenu::set_menulabel\n";
 #endif
 
-    std::list< CORE::HIST_ITEM* >::iterator it_hist = m_histlist.begin();
+    std::list< HIST_ITEM* >::iterator it_hist = m_histlist.begin();
     std::list< Gtk::MenuItem* >::iterator it_item = m_itemlist.begin();
     for(; it_hist != m_histlist.end(); ++it_hist, ++it_item ){
 
@@ -393,7 +393,7 @@ void HistorySubMenu::slot_remove_history()
     std::cout << "HistorySubMenu::slot_remove_history no = " << m_number_menuitem << std::endl;
 #endif 
 
-    CORE::HIST_ITEM* item = get_item( m_number_menuitem );
+    HIST_ITEM* item = get_item( m_number_menuitem );
     if( ! item ) return;
 
     m_histlist.remove( item );
@@ -417,7 +417,7 @@ void HistorySubMenu::slot_show_property()
     std::cout << "HistorySubMenu::slot_show_property no = " << m_number_menuitem << std::endl;
 #endif
 
-    CORE::HIST_ITEM* item = get_item( m_number_menuitem );
+    HIST_ITEM* item = get_item( m_number_menuitem );
     if( ! item ) return;
 
     std::string& url = item->url;

@@ -8,12 +8,18 @@
 
 #include <gtkmm.h>
 
-#include "imgbutton.h"
 
 namespace SKELETON
 {
+    class Admin;
+    class ImgButton;
+    class BackForwardButton;
+
     class ToolBar : public Gtk::VBox
     {
+        SKELETON::Admin* m_admin;
+        std::string m_url;
+
         // ツールバー表示状態
         bool m_toolbar_shown;
 
@@ -21,13 +27,16 @@ namespace SKELETON
         Gtk::ScrolledWindow m_scrwin;
         Gtk::HBox m_buttonbar;
 
-        // 閉じるボタン
-        SKELETON::ImgButton m_button_close;
+        SKELETON::ImgButton* m_button_close;
+        SKELETON::BackForwardButton* m_button_back;
+        SKELETON::BackForwardButton* m_button_forward;
 
       public:
 
-        ToolBar();
+        ToolBar( Admin* admin );
         virtual ~ToolBar(){}
+
+        void set_url( const std::string& url );
 
         bool is_empty();
 
@@ -49,21 +58,27 @@ namespace SKELETON
       protected:
 
         // ボタンのパッキング
-        virtual void pack_buttons()=0;
+        virtual void pack_buttons() = 0;
         void unpack_buttons();
 
         Gtk::HBox& get_buttonbar(){ return m_buttonbar; }
-        Gtk::Button& get_close_button(){ return m_button_close; }
+
+        Gtk::Button* get_button_close();
+        Gtk::Button* get_button_back();
+        Gtk::Button* get_button_forward();
+
         void pack_separator();
         void set_tooltip( Gtk::Widget& widget, const std::string& tip ){ m_tooltip.set_tip( widget, tip ); }
 
       private:
 
-        // vboxがrealizeしたときに呼び出される
-        virtual void slot_vbox_realize(){}
+        void slot_clicked_close();
 
-        // テーマが変わったときなど、vboxの背景色が変わったときに呼び出される
-        virtual void slot_vbox_style_changed( Glib::RefPtr< Gtk::Style > style ){}
+        void slot_clicked_back();
+        void slot_selected_back( const int i );
+
+        void slot_clicked_forward();
+        void slot_selected_forward( const int i );
     };
 }
 

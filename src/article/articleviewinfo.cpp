@@ -22,7 +22,7 @@ ArticleViewInfo::ArticleViewInfo( const std::string& url )
     struct timeval tv;
     struct timezone tz;
     gettimeofday( &tv, &tz );
-    set_url( url_article() + MISC::timevaltostr( tv ) + ARTICLE_SIGN + "_PREV_" );
+    set_url( url_article() + MISC::timevaltostr( tv ) + ARTICLE_SIGN + "_PREV_", false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewInfo::ArticleViewInfo " << get_url() << std::endl;

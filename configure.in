@@ -211,6 +211,19 @@ esac
 
 
 dnl
+dnl enable gprof
+dnl
+
+use_gprof=no
+
+AC_ARG_ENABLE(gprof,[ --enable-gprof  (enable gprof)],
+       [ if test "$enable_gprof" = "yes"; then
+               echo "use gprof"
+               CXXFLAGS="$CXXFLAGS -pg"
+               use_gprof=yes
+       fi ])
+
+dnl
 dnl checking migemo
 dnl
 AC_ARG_WITH(migemo,[ --with-migemo    (enable migemo search)],
@@ -230,21 +243,25 @@ AC_ARG_WITH(migemodict,[ --with-migemodict    (specifiy the path of migemo dicti
 dnl
 dnl checking core2duo
 dnl
+if test "$use_gprof" == "no" ;then
 AC_ARG_WITH(core2duo,[ --with-core2duo    (use core2duo)],
        [ if test "$withval" != "no" ;then
                echo "use core2duo"
 	       CXXFLAGS="$CXXFLAGS -march=pentium-m -msse3 -pipe -fomit-frame-pointer"
        fi ])
+fi
 
 
 dnl
 dnl checking athlon64
 dnl
+if test "$use_gprof" == "no" ;then
 AC_ARG_WITH(athlon64,[ --with-athlon64    (use athlon64)],
        [ if test "$withval" != "no" ;then
                echo "use athlon64"
 	       CXXFLAGS="$CXXFLAGS -march=athlon64 -pipe"
        fi ])
+fi
 
 
 dnl
@@ -257,4 +274,4 @@ AC_ARG_WITH(pangolayout,[ --with-pangolayout    (use pangolayout)],
        fi ])
 
 
-AC_OUTPUT(Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/config/Makefile src/icons/Makefile src/xml/Makefile )
+AC_OUTPUT(Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/history/Makefile src/config/Makefile src/icons/Makefile src/xml/Makefile )

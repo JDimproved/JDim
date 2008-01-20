@@ -25,6 +25,8 @@
 
 #include "config/globalconf.h"
 
+#include "history/historymanager.h"
+
 #include "global.h"
 #include "httpcode.h"
 #include "command.h"
@@ -165,7 +167,6 @@ void ArticleViewBase::pack_widget()
 {
     // ツールバーの設定
     set_toolbar( Gtk::manage( new ArticleToolBar() ) );
-    get_articletoolbar()->get_close_button().signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::close_view ) );
     get_articletoolbar()->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_reload ) );
     get_articletoolbar()->m_button_write.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_write ) );
     get_articletoolbar()->m_button_delete.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_delete ) );        
@@ -223,9 +224,8 @@ void ArticleViewBase::setup_action()
     // 検索
     action_group()->add( Gtk::Action::create( "Search_Menu", "検索(_F)" ) );
     action_group()->add( Gtk::Action::create( "SearchWeb", CONFIG::get_menu_search_web()+"(_W)" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_web ) );
-    action_group()->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索(_C)" ) );
-    action_group()->add( Gtk::Action::create( "SearchCacheLocal", "この板のログのみを検索(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
-    action_group()->add( Gtk::Action::create( "SearchCacheAll", "キャッシュ内の全ログを検索(_A)") );
+    action_group()->add( Gtk::Action::create( "SearchCacheLocal", "ログ検索 (対象: 板)(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
+    action_group()->add( Gtk::Action::create( "SearchCacheAll", "ログ検索 (対象: 全ログ)(_A)") );
     action_group()->add( Gtk::Action::create( "ExecSearchCacheAll", "検索する(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cacheall ) );
     action_group()->add( Gtk::Action::create( "SearchTitle", CONFIG::get_menu_search_title() + "(_T)" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
 
@@ -272,6 +272,10 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "PreBookMark", "PreBookMark"), sigc::mem_fun( *this, &ArticleViewBase::slot_pre_bm ) );
     action_group()->add( Gtk::Action::create( "NextBookMark", "NextBookMark"), sigc::mem_fun( *this, &ArticleViewBase::slot_next_bm ) );
     action_group()->add( Gtk::Action::create( "Jump", "ジャンプ(_J)"), sigc::mem_fun( *this, &ArticleViewBase::slot_jump ) );
+    action_group()->add( Gtk::Action::create( "PrevView", "PrevView"),
+                         sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::back_viewhistory ), 1 ) );
+    action_group()->add( Gtk::Action::create( "NextView", "NextView"),
+                         sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::forward_viewhistory ), 1 ) );
 
     // 画像系
     action_group()->add( Gtk::Action::create( "Cancel_Mosaic", "モザイク解除(_C)"), sigc::mem_fun( *this, &ArticleViewBase::slot_cancel_mosaic ) );
@@ -392,9 +396,13 @@ void ArticleViewBase::setup_action()
     "</menu>"
 
     "<menu action='Move_Menu'>"
+    "<menuitem action='PrevView'/>"
+    "<menuitem action='NextView'/>"
+    "<separator/>"
     "<menuitem action='Home'/>"
     "<menuitem action='End'/>"
     "<menuitem action='GotoNew'/>"
+    "<separator/>"
     "<menuitem action='PreBookMark'/>"
     "<menuitem action='NextBookMark'/>"
     "</menu>"
@@ -416,15 +424,11 @@ void ArticleViewBase::setup_action()
     "<menu action='Search_Menu'>"
 
     "<menuitem action='SearchWeb'/>"
-    "<menuitem action='SearchTitle' />"
-
     "<separator/>"
-
-    "<menu action='SearchCache_Menu'>"
+    "<menuitem action='SearchTitle' />"
     "<menuitem action='SearchCacheLocal'/>"
     "<menu action='SearchCacheAll'>"
     "<menuitem action='ExecSearchCacheAll'/>"
-    "</menu>"
     "</menu>"
 
     "</menu>"
@@ -853,6 +857,15 @@ void ArticleViewBase::operate_view( const int& control )
             ARTICLE::get_admin()->set_command( "tab_right" );
             break;
 
+            // 戻る、進む
+        case CONTROL::PrevView:
+            back_viewhistory( 1 );
+            break;
+
+        case CONTROL::NextView:
+            forward_viewhistory( 1 );
+            break;
+
         // ポップアップメニュー表示
         case CONTROL::ShowPopupMenu:
             show_popupmenu( "", true );
@@ -1120,6 +1133,24 @@ void ArticleViewBase::slot_preferences_image()
     delete pref;
 }
 
+
+
+//
+// 戻る
+//
+void ArticleViewBase::back_viewhistory( const int count )
+{
+    ARTICLE::get_admin()->set_command( "back_viewhistory", get_url(), MISC::itostr( count ) );
+}
+
+
+//
+// 進む
+//
+void ArticleViewBase::forward_viewhistory( const int count )
+{
+    ARTICLE::get_admin()->set_command( "forward_viewhistory", get_url(), MISC::itostr( count ) );
+}
 
 
 
@@ -2428,6 +2459,19 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     act = action_group()->get_action( "GotoNew" );
     if( act ){
         if( m_article->get_number_new() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+
+    // 進む、戻る
+    act = action_group()->get_action( "PrevView" );
+    if( act ){
+        if( HISTORY::get_history_manager()->can_back_viewhistory( get_url(), 1 ) ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+
+    act = action_group()->get_action( "NextView" );
+    if( act ){
+        if( HISTORY::get_history_manager()->can_forward_viewhistory( get_url(), 1 ) ) act->set_sensitive( true );
         else act->set_sensitive( false );
     }
 

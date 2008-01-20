@@ -93,6 +93,8 @@ namespace ARTICLE
         virtual void goto_num( int num );
         virtual void toggle_toolbar();
         virtual void show_preference();
+        virtual void back_viewhistory( const int count );
+        virtual void forward_viewhistory( const int count );
 
         // 記事削除 & 再オープン
         void delete_open_view();

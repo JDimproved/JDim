@@ -225,7 +225,7 @@ namespace SESSION
     // 前回閉じたときに開いていたスレ一覧のページ番号とURL
     int board_page();
     void set_board_page( int page );
-    const std::list< std::string >& board_URLs();
+    std::list< std::string >& get_board_URLs();
     void set_board_URLs( const std::list< std::string >& urls );
 
     // スレ一覧のロック状態
@@ -235,7 +235,7 @@ namespace SESSION
     // 前回閉じたときに開いていたスレタブのページ番号とURL
     int article_page();
     void set_article_page( int page );
-    const std::list< std::string >& get_article_URLs();
+    std::list< std::string >& get_article_URLs();
     void set_article_URLs( const std::list< std::string >& urls );
 
     // スレタブのロック状態

@@ -97,22 +97,15 @@ void ImageAdmin::restore()
 
     for( ; it_url != list_url.end(); ++it_url ){
 
-        COMMAND_ARGS command_arg;
-        command_arg.command = "open_view";
-
         // タブのロック状態
-        std::string lock;
+        bool lock = false;
         if( it_locked != list_locked.end() ){
-            if( (*it_locked ) ) lock = "lock";
+            if( (*it_locked ) ) lock = true;
             ++it_locked;
         }
 
-        if( !(*it_url).empty() ){
-            command_arg.url = (*it_url);
-            command_arg.arg3 = lock;
-
-            open_view( command_arg );
-        }
+        COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
+        if( ! command_arg.url.empty() ) open_view( command_arg );        
     }
 
     SKELETON::View* view = get_nth_icon( SESSION::image_page() );
@@ -121,6 +114,18 @@ void ImageAdmin::restore()
         switch_admin();
     }
 }
+
+
+COMMAND_ARGS ImageAdmin::url_to_openarg( const std::string& url, const bool tab, const bool lock )
+{
+    COMMAND_ARGS command_arg;
+    command_arg.command = "open_view";
+    command_arg.url = url;
+    if( lock ) command_arg.arg3 = "lock";
+
+    return command_arg;
+}
+
 
 
 void ImageAdmin::switch_admin()

@@ -58,6 +58,8 @@ namespace IMAGE
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();
+        virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock );
+
         virtual void switch_admin();
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void tab_left();
@@ -83,6 +85,10 @@ namespace IMAGE
         virtual const bool is_locked( const int page );
         virtual void lock( const int page );
         virtual void unlock( const int page );
+
+        // タブの D&D 処理は SKELETON::Admin とは違うロジックでおこなう
+        virtual void slot_drag_begin( int page ){}
+        virtual void slot_drag_end(){}
 
       private:
 

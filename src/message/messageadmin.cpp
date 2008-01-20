@@ -234,6 +234,7 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
 
     get_notebook()->show_all();
     switch_admin();
+    view->update_toolbar_url();
     view->show();
     view->show_view();
     set_current_page( get_notebook()->page_num( *view ) );

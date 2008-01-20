@@ -10,7 +10,7 @@
 #include <gtkmm.h>
 #include <string>
 
-namespace CORE
+namespace HISTORY
 {
     struct HIST_ITEM
     {
@@ -24,7 +24,7 @@ namespace CORE
         std::string m_path_load_xml;
         std::string m_path_save_xml;
         std::list< Gtk::MenuItem* > m_itemlist;
-        std::list< CORE::HIST_ITEM* > m_histlist;
+        std::list< HIST_ITEM* > m_histlist;
 
         // ポップアップメニュー
         Gtk::Menu m_popupmenu;
@@ -45,7 +45,7 @@ namespace CORE
       private:
 
         // 上から num 版目の HIST_ITEM 取得
-        CORE::HIST_ITEM* get_item( int num );
+        HIST_ITEM* get_item( int num );
 
         void xml2list( const std::string& xml );
         std::string list2xml();

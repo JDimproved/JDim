@@ -304,7 +304,6 @@ void MessageViewBase::pack_widget()
     get_messagetoolbar()->m_button_not_close.set_active( ! SESSION::get_close_mes() );
 
     get_messagetoolbar()->m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
-    get_messagetoolbar()->get_close_button().signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_close_clicked ) );
     get_messagetoolbar()->m_button_open.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_draft_open ) );
     get_messagetoolbar()->m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_undo_clicked ) );
     get_messagetoolbar()->m_button_not_close.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_not_close_clicked ) );
@@ -312,8 +311,10 @@ void MessageViewBase::pack_widget()
     
     get_messagetoolbar()->show_toolbar();
 
-    if( SESSION::get_close_mes() ) get_messagetoolbar()->get_close_button().set_sensitive( true );
-    else get_messagetoolbar()->get_close_button().set_sensitive( false );
+    if( get_messagetoolbar()->get_button_close() ){
+        if( SESSION::get_close_mes() ) get_messagetoolbar()->get_button_close()->set_sensitive( true );
+        else get_messagetoolbar()->get_button_close()->set_sensitive( false );
+    }
 
     // 書き込みビュー
     m_label_name.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
@@ -422,7 +423,13 @@ void MessageViewBase::operate_view( const int& control )
             
             // 書き込まずに閉じる
         case CONTROL::CancelWrite:
+        {
+            // 閉じないボタンを押していてもダイアログを表示しない
+            bool tmp_close = SESSION::get_close_mes();
+            SESSION::set_close_mes( true );
             close_view();
+            SESSION::set_close_mes( tmp_close );
+        }
             break;
 
             // 書き込み実行
@@ -523,19 +530,6 @@ void MessageViewBase::slot_draft_open()
 
 
 //
-// closeボタンを押した
-//
-void MessageViewBase::slot_close_clicked()
-{
-    if( !SESSION::get_close_mes() ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "「ビューを閉じない」ボタンが押されています。" );
-        mdiag.run();
-    }
-    else close_view();
-}
-
-
-//
 // undoボタンを押した
 //
 void MessageViewBase::slot_undo_clicked()
@@ -554,8 +548,10 @@ void MessageViewBase::slot_not_close_clicked()
 
     SESSION::set_close_mes( ! SESSION::get_close_mes() );
 
-    if( SESSION::get_close_mes() ) get_messagetoolbar()->get_close_button().set_sensitive( true );
-    else get_messagetoolbar()->get_close_button().set_sensitive( false );
+    if( get_messagetoolbar()->get_button_close() ){
+        if( SESSION::get_close_mes() ) get_messagetoolbar()->get_button_close()->set_sensitive( true );
+        else get_messagetoolbar()->get_button_close()->set_sensitive( false );
+    }
 }
 
 
@@ -634,9 +630,14 @@ void MessageViewBase::close_view()
     std::cout << "MessageViewBase::close_view\n";
 #endif
 
+    if( ! SESSION::get_close_mes() ){
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "「ビューを閉じない」ボタンが押されています。" );
+        mdiag.run();
+        return;
+    }
+
     MESSAGE::get_admin()->set_command( "close_currentview" );
 }
-
 
 
 //
@@ -718,7 +719,11 @@ void MessageViewBase::post_fin()
         save_postlog();
         m_text_message.set_text( std::string() );
 
+        // 閉じないボタンを押していてもダイアログを表示しない
+        bool tmp_close = SESSION::get_close_mes();
+        SESSION::set_close_mes( true );
         close_view();
+        SESSION::set_close_mes( tmp_close );
 
         reload();
     }

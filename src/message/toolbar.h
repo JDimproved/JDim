@@ -8,7 +8,9 @@
 #include <gtkmm.h>
 
 #include "skeleton/toolbar.h"
+#include "skeleton/imgbutton.h"
 #include "skeleton/label_entry.h"
+#include "skeleton/imgtogglebutton.h"
 
 namespace MESSAGE
 {

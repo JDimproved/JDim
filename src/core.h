@@ -55,9 +55,6 @@ namespace CORE
 {
     class MainToolBar;
     class DND_Manager;
-    class HistoryMenuThread;
-    class HistoryMenuBoard;
-    class HistoryMenuClose;
 
     class Core : public SKELETON::Dispatchable
     {
@@ -93,9 +90,6 @@ namespace CORE
 
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
-        HistoryMenuThread* m_histmenu_thread;
-        HistoryMenuBoard* m_histmenu_board;
-        HistoryMenuClose* m_histmenu_close;
         bool m_enable_menuslot;
 
         // 初期設定中

@@ -24,9 +24,13 @@ namespace BOARD
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();
+        virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock );
+
         virtual void switch_admin();
 
       private:
+
+        // タブの D&D 処理
         virtual void slot_drag_begin( int page );
         virtual void slot_drag_end();
     };

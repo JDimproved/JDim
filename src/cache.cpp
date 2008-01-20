@@ -179,6 +179,13 @@ std::string CACHE::path_xml_history_close_old()
 }
 
 
+// View履歴
+std::string CACHE::path_xml_history_view()
+{
+    return CACHE::path_root() +  "hist_view.xml";
+}
+
+
 // 板移転情報
 std::string CACHE::path_movetable()
 {

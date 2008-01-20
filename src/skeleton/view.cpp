@@ -8,6 +8,8 @@
 
 #include "jdlib/miscutil.h"
 
+#include "history/historymanager.h"
+
 #include "global.h"
 #include "session.h"
 #include "command.h"
@@ -35,22 +37,36 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
 
 
 //
+// URL 変更
+//
+// update_history == true の時は 履歴も更新
+//
+void View::set_url( const std::string& url_new, const bool update_history )
+{
+    // View履歴のURLも更新しておく
+    if( update_history && ! m_url.empty() && ! url_new.empty() && m_url != url_new ){
+        HISTORY::get_history_manager()->replace_url_viewhistory( m_url, url_new );
+    }
+
+    m_url = url_new;
+}
+
+
+//
 // host の更新
 //
 // 移転があったときなどにadminから呼ばれる
 //
 void View::update_host( const std::string& host )
 {
-#ifdef _DEBUG
-    std::string old_url = m_url;
-#endif
-
-    m_url = host + m_url.substr( MISC::get_hostname( m_url ).length() );
+    std::string url_new = host + m_url.substr( MISC::get_hostname( m_url ).length() );
 
 #ifdef _DEBUG
-    if( ! old_url.empty() ) std::cout << "View::update_host from "  << old_url
-                                     << " to " << m_url << std::endl;
+    std::cout << "View::update_host from "  << m_url
+              << " to " << url_new << std::endl;
 #endif
+
+    set_url( url_new, true );
 }
 
 
@@ -169,6 +185,13 @@ void View::update_toolbar()
 {
     if( ! m_toolbar ) return;
     m_toolbar->update();
+}
+
+
+// ツールバーURL更新
+void View::update_toolbar_url()
+{
+    get_toolbar()->set_url( get_url() );
 }
 
 

@@ -127,7 +127,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
 
     set_toolbar( Gtk::manage( new BoardToolBar() ) );
 
-    get_boardtoolbar()->get_close_button().signal_clicked().connect( sigc::mem_fun( *this, &BoardView::close_view ) );
     get_boardtoolbar()->m_entry_search.signal_changed().connect( sigc::mem_fun( *this, &BoardView::slot_changed_search ) );
     get_boardtoolbar()->m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BoardView::slot_active_search ) );
     get_boardtoolbar()->m_button_reload.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::reload ) );
@@ -1128,6 +1127,15 @@ void BoardView::operate_view( const int& control )
             BOARD::get_admin()->set_command( "tab_right" );
             break;
 
+            // 戻る、進む
+        case CONTROL::PrevView:
+            back_viewhistory( 1 );
+            break;
+
+        case CONTROL::NextView:
+            forward_viewhistory( 1 );
+            break;
+
         case CONTROL::Quit:
             close_view();
             break;
@@ -2102,6 +2110,25 @@ void BoardView::slot_preferences_article()
     pref->run();
     delete pref;
 }
+
+
+//
+// 戻る
+//
+void BoardView::back_viewhistory( const int count )
+{
+    BOARD::get_admin()->set_command( "back_viewhistory", get_url(), MISC::itostr( count ) );
+}
+
+
+//
+// 進む
+//
+void BoardView::forward_viewhistory( const int count )
+{
+    BOARD::get_admin()->set_command( "forward_viewhistory", get_url(), MISC::itostr( count ) );
+}
+
 
 
 //

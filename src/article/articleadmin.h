@@ -24,6 +24,7 @@
 #define ORMODE_SIGN      "_OR_"
 #define CENTER_SIGN  "_CENTER_"
 #define TIME_SIGN    "_TIME_"
+#define TITLE_SIGN   "_TITLE_"
 
 namespace ARTICLE
 {
@@ -42,6 +43,8 @@ namespace ARTICLE
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();
+        virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock );
+
         virtual void switch_admin();
         virtual void update_finish( const std::string& url );
 
@@ -52,6 +55,7 @@ namespace ARTICLE
         void delete_popup();
         void delete_all_popups();
 
+        // タブの D&D 処理
         virtual void slot_drag_begin( int page );
         virtual void slot_drag_end();
     };

@@ -379,7 +379,6 @@ void ArticleViewMain::relayout()
 
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // レス抽出ビュー
@@ -401,7 +400,7 @@ ArticleViewRes::ArticleViewRes( const std::string& url,
     if( !m_str_center.empty() ) url_tmp += m_str_center;
     else url_tmp += "0";
     url_tmp += TIME_SIGN + MISC::timevaltostr( tv );
-    set_url( url_tmp );
+    set_url( url_tmp, false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewRes::ArticleViewRes " << get_url() << std::endl;
@@ -469,7 +468,7 @@ ArticleViewName::ArticleViewName( const std::string& url, const std::string& nam
     gettimeofday( &tv, &tz );
 
     // viewのURL更新
-    set_url( url_article() + ARTICLE_SIGN + NAME_SIGN + m_str_name + TIME_SIGN + MISC::timevaltostr( tv ) );
+    set_url( url_article() + ARTICLE_SIGN + NAME_SIGN + m_str_name + TIME_SIGN + MISC::timevaltostr( tv ), false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewName::ArticleViewName " << get_url() << std::endl;
@@ -540,7 +539,7 @@ ArticleViewID::ArticleViewID( const std::string& url, const std::string& id )
     gettimeofday( &tv, &tz );
 
     // viewのURL更新
-    set_url( url_article() + ARTICLE_SIGN + ID_SIGN + m_str_id + TIME_SIGN + MISC::timevaltostr( tv ) );
+    set_url( url_article() + ARTICLE_SIGN + ID_SIGN + m_str_id + TIME_SIGN + MISC::timevaltostr( tv ), false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewID::ArticleViewID " << get_url() << std::endl;
@@ -608,7 +607,7 @@ ArticleViewBM::ArticleViewBM( const std::string& url )
     struct timezone tz;
     gettimeofday( &tv, &tz );
 
-    set_url( url_article() + ARTICLE_SIGN + BOOKMK_SIGN + TIME_SIGN + MISC::timevaltostr( tv ) );
+    set_url( url_article() + ARTICLE_SIGN + BOOKMK_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBM::ArticleViewBM " << get_url() << std::endl;
@@ -677,7 +676,7 @@ ArticleViewURL::ArticleViewURL( const std::string& url )
     gettimeofday( &tv, &tz );
 
     // viewのURL更新
-    set_url( url_article() + ARTICLE_SIGN + URL_SIGN + TIME_SIGN + MISC::timevaltostr( tv ) );
+    set_url( url_article() + ARTICLE_SIGN + URL_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewURL::ArticleViewURL " << get_url() << std::endl;
@@ -743,7 +742,7 @@ ArticleViewRefer::ArticleViewRefer( const std::string& url, const std::string& n
     struct timezone tz;
     gettimeofday( &tv, &tz );
 
-    set_url( url_article() + ARTICLE_SIGN + REFER_SIGN + m_str_num + TIME_SIGN + MISC::timevaltostr( tv ) );
+    set_url( url_article() + ARTICLE_SIGN + REFER_SIGN + m_str_num + TIME_SIGN + MISC::timevaltostr( tv ), false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewRefer::ArticleViewRefer " << get_url() << std::endl;
@@ -815,7 +814,7 @@ ArticleViewDrawout::ArticleViewDrawout( const std::string& url, const std::strin
     if( mode_or ) url_tmp += "1";
     else url_tmp += "0";
     url_tmp += TIME_SIGN + MISC::timevaltostr( tv );
-    set_url( url_tmp );
+    set_url( url_tmp, false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewDrawout::ArticleViewDrawout " << get_url() << std::endl;
@@ -882,21 +881,17 @@ void ArticleViewDrawout::relayout()
 // ログやスレタイ検索抽出ビュー
 
 ArticleViewSearch::ArticleViewSearch( const std::string& url_board,
-                                      const std::string& query, int searchmode, bool mode_or )
+                                      const std::string& query, const int searchmode, const bool exec_search, const bool mode_or )
     : ArticleViewBase( url_board ), m_searchtoolbar( NULL )
-    , m_url_board( url_board ), m_searchmode( searchmode ), m_mode_or( mode_or ), 
-      m_loading( false )
+    , m_url_board( url_board ), m_query( query ), m_searchmode( searchmode ), m_mode_or( mode_or ), 
+      m_loading( false ), m_search_executed( false )
 {
     struct timeval tv;
     struct timezone tz;
     gettimeofday( &tv, &tz );
+    m_time_str = MISC::timevaltostr( tv );
 
-    //viewのURL更新
-    std::string url_tmp = m_url_board + BOARD_SIGN + KEYWORD_SIGN + "query" + ORMODE_SIGN;
-    if( mode_or ) url_tmp += "1";
-    else url_tmp += "0";
-    url_tmp += TIME_SIGN + MISC::timevaltostr( tv );
-    set_url( url_tmp );
+    update_url_query( false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewSearch::ArticleViewSearch " << get_url() << std::endl;
@@ -911,7 +906,7 @@ ArticleViewSearch::ArticleViewSearch( const std::string& url_board,
     if( m_searchmode == SEARCHMODE_TITLE ) ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), "スレタイ検索" );
     else ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), "ログ検索" );
 
-    reload();
+    if( exec_search ) reload();
 }
 
 
@@ -928,6 +923,27 @@ ArticleViewSearch::~ArticleViewSearch()
 
 
 //
+//viewのURL更新
+//
+// queryが変化したときにurlを更新しないと再起動したときのrestoreで
+// 古いqueryのままになる
+//
+// update_history == true の場合はView履歴も更新する
+//
+void ArticleViewSearch::update_url_query( const bool update_history )
+{
+    std::string url_tmp = m_url_board;
+    if( m_searchmode == SEARCHMODE_TITLE ) url_tmp += TITLE_SIGN;
+    else url_tmp += BOARD_SIGN;
+    url_tmp += KEYWORD_SIGN + m_query + ORMODE_SIGN;
+    if( m_mode_or ) url_tmp += "1";
+    else url_tmp += "0";
+    url_tmp += TIME_SIGN + m_time_str;
+    set_url( url_tmp, update_history );
+}
+
+
+//
 // ウィジットのパッキング
 //
 // ArticleViewBase::pack_widget()をオーパロードして検索ツールバーをパック
@@ -936,7 +952,6 @@ void ArticleViewSearch::pack_widget()
 {
     // ツールバーの設定
     set_toolbar( m_searchtoolbar = Gtk::manage( new SearchToolBar() ) );
-    m_searchtoolbar->get_close_button().signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearch::close_view ) );
     m_searchtoolbar->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearch::reload ) );
     m_searchtoolbar->m_button_stop.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewSearch::stop ) );
 
@@ -987,6 +1002,7 @@ void ArticleViewSearch::show_view()
             ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
         }
     }
+    else if( ! m_search_executed ) append_html( "検索語を入れて再読み込みボタンを押してください。" );
 }
 
 
@@ -999,7 +1015,7 @@ void ArticleViewSearch::relayout()
     std::cout << "ArticleViewSearch::relayout\n";
 #endif
 
-    std::string query = m_searchtoolbar->m_entry_search.get_text();
+    m_query = m_searchtoolbar->m_entry_search.get_text();
 
     drawarea()->clear_screen();
     drawarea()->clear_highlight();
@@ -1011,7 +1027,10 @@ void ArticleViewSearch::relayout()
                                                 + MISC::get_hostname( CONFIG::get_url_search_title() ) + "<br>";
     else comment <<  "検索対象：" << DBTREE::board_name( m_url_board ) << "<br>";
 
-    comment << query << " " << m_list_searchdata.size() << " 件<br><br>";
+    if( m_search_executed ) comment << m_query << " " << m_list_searchdata.size() << " 件<br>";
+    else comment << "<br><br>検索語を入れて再読み込みボタンを押してください。";
+
+    comment << "<br>";
 
     if( ! m_list_searchdata.empty() ){
 
@@ -1028,7 +1047,7 @@ void ArticleViewSearch::relayout()
 
             // queryの抽出表示
             if( m_searchmode == SEARCHMODE_ALLLOG || m_searchmode == SEARCHMODE_LOG )
-                comment << "<br><a href=\"" << PROTO_OR << (*it).url_readcgi + KEYWORD_SIGN + query << "\">" << "抽出表示する" << "</a>";
+                comment << "<br><a href=\"" << PROTO_OR << (*it).url_readcgi + KEYWORD_SIGN + m_query << "\">" << "抽出表示する" << "</a>";
 
             comment << "<br><br>";
         }
@@ -1069,10 +1088,12 @@ void ArticleViewSearch::reload()
         return;
     }
 
-    std::string query = m_searchtoolbar->m_entry_search.get_text();
+    m_query = m_searchtoolbar->m_entry_search.get_text();
 
     // 検索が終わると ArticleViewSearch::slot_search_fin() が呼ばれる
-    if( ! query.empty() ){
+    if( ! m_query.empty() ){
+
+        update_url_query( true );
 
         if( m_searchmode == SEARCHMODE_TITLE ){
 
@@ -1082,10 +1103,11 @@ void ArticleViewSearch::reload()
                 return;
             }
 
-            CORE::get_search_manager()->search_title( get_url(), query );
+            CORE::get_search_manager()->search_title( get_url(), m_query );
         }
-        else CORE::get_search_manager()->search( get_url(), m_url_board, query, m_mode_or, ( m_searchmode == SEARCHMODE_ALLLOG ) );
+        else CORE::get_search_manager()->search( get_url(), m_url_board, m_query, m_mode_or, ( m_searchmode == SEARCHMODE_ALLLOG ) );
         
+        m_search_executed = true;
         show_view();
         focus_view();
     }

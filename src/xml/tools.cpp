@@ -47,6 +47,10 @@ std::string XML::get_name( const int type_id )
         case TYPE_AA: // AA
             name = "aa";
             break;
+
+        case TYPE_HISTITEM: // HISTORY::ViewHistoryItem
+            name = "histitem";
+            break;
     }
 
     return name;
@@ -91,6 +95,10 @@ int XML::get_type( const std::string& node_name )
     else if( node_name == "aa" )
     {
         type = TYPE_AA;
+    }
+    else if( node_name == "histitem" )
+    {
+        type = TYPE_HISTITEM;
     }
 
     return type;

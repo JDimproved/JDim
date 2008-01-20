@@ -16,7 +16,7 @@ using namespace CORE;
 
 
 MainToolBar::MainToolBar() :
-    SKELETON::ToolBar(),
+    SKELETON::ToolBar( NULL ),
       m_button_go( Gtk::Stock::JUMP_TO ),
 
       m_button_bbslist( ICON::DIR ),

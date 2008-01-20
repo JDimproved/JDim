@@ -96,6 +96,8 @@ namespace BOARD
         virtual void scroll_right();
         virtual void toggle_toolbar();
         virtual void show_preference();
+        virtual void back_viewhistory( const int count );
+        virtual void forward_viewhistory( const int count );
 
         void row_up();
         void row_down();

@@ -58,19 +58,29 @@ BBSListAdmin::~BBSListAdmin()
 void BBSListAdmin::restore()
 {
     COMMAND_ARGS command_arg;
-    command_arg.command = "open_view";
-    command_arg.arg1 = "true";
 
     // bbslist
-    command_arg.url = URL_BBSLISTVIEW;
+    command_arg = url_to_openarg( URL_BBSLISTVIEW, true, false );
     open_view( command_arg );
 
     // favorite
-    command_arg.url = URL_FAVORITEVIEW;
+    command_arg = url_to_openarg( URL_FAVORITEVIEW, true, false );
     open_view( command_arg );
 
     set_command( "set_page", std::string(), MISC::itostr( SESSION::bbslist_page() ) );
     set_command( "hide_tabs" );
+}
+
+
+COMMAND_ARGS BBSListAdmin::url_to_openarg( const std::string& url, const bool tab, const bool lock )
+{
+    COMMAND_ARGS command_arg;
+
+    command_arg.command = "open_view";
+    command_arg.url = url;
+    if( tab ) command_arg.arg1 = "true";  // タブで開く
+
+    return command_arg;
 }
 
 

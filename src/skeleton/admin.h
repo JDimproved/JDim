@@ -42,6 +42,10 @@ namespace SKELETON
         std::vector< Gtk::MenuItem* > m_vec_movemenu_items;
         std::vector< bool > m_vec_movemenu_append;
 
+        // view履歴使用
+        bool m_use_viewhistory;
+        std::string m_last_closed_url;
+
     public:
 
         Admin( const std::string& url );
@@ -96,6 +100,14 @@ namespace SKELETON
         // コマンドがセットされているか
         const bool has_commands() const { return ( m_list_command.size() ); }
 
+
+        // Viewの直接操作
+        // 主に ToolBar から用いられる
+        bool operate_view( const std::string& command,
+                          const std::string& url = std::string(),
+                          const std::string& arg = std::string()
+            );
+
         // 現在表示してるページ番号およびURL
         // 表示ページを指定したいときは "set_page" コマンドを使う
         virtual int get_current_page();
@@ -105,6 +117,8 @@ namespace SKELETON
         virtual void shutdown();
 
     protected:
+
+        void set_use_viewhistory( const bool use ){ m_use_viewhistory = use; }
 
         JDWindow* get_jdwin(){ return m_win; }
         void set_jdwin( JDWindow* win ){ m_win = win; }
@@ -137,11 +151,17 @@ namespace SKELETON
         virtual void exec_command();
 
         // 派生クラス固有のコマンドを実行
-        virtual void command_local( const COMMAND_ARGS& command ){}
+        virtual void command_local( const COMMAND_ARGS& command ) = 0;
 
-        virtual void restore(){} // 起動時に前回の状態を回復
+        // 起動時に前回の状態を回復
+        virtual void restore() = 0;
+
+        // url から Viewを開くための COMMAND_ARGS を取得する
+        // restore() などで使用する
+        virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ) = 0; 
+
         virtual void open_view( const COMMAND_ARGS& command );
-        virtual void switch_admin(){} // CORE::core_set_command( "switch_*" )　を送る
+        virtual void switch_admin() = 0;  // CORE::core_set_command( "switch_*" )　を送る
         virtual void switch_view( const std::string& url );
         virtual void tab_left();
         virtual void tab_right();
@@ -178,10 +198,10 @@ namespace SKELETON
         // オートリロードのモード設定
         virtual bool set_autoreload_mode( const std::string& url, int mode, int sec );
 
-        // D&D
+        // D&D 処理
         // 派生クラス別にD&Dの処理を行う
-        virtual void slot_drag_begin( int page ){}
-        virtual void slot_drag_end(){}
+        virtual void slot_drag_begin( int page ) = 0;
+        virtual void slot_drag_end() = 0;
 
         void open_list( const std::string& str_list );
         virtual COMMAND_ARGS get_open_list_args( const std::string& url ){ return COMMAND_ARGS(); }
@@ -242,6 +262,20 @@ namespace SKELETON
 
         // プロパティ表示
         void show_preference();
+
+        // View履歴戻る / 進む
+        bool back_viewhistory( const std::string& url, const int count );
+        void back_clicked_viewhistory( const int count );
+
+        bool forward_viewhistory( const std::string& url, const int count );
+        void forward_clicked_viewhistory( const int count );
+
+        // View履歴削除
+        void clear_viewhistory();
+
+      private:
+
+        bool back_forward_viewhistory( const std::string& url, const bool back, const int count );
     };
 }
 

@@ -74,6 +74,9 @@ void KeyConfig::load_conf()
     SETMOTION( "PreBookMark", "Ctrl+F2" );
     SETMOTION( "NextBookMark", "F2" );
 
+    SETMOTION( "PrevView", "Alt+Left" );
+    SETMOTION( "NextView", "Alt+Right" );
+
     SETMOTION( "ToggleArticle", "Alt+x" );
 
     SETMOTION( "ShowPopupMenu", "Shift+F10 Ctrl+m" );

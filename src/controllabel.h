@@ -33,6 +33,9 @@ namespace CONTROL
         { "PreBookMark", "前のプックマークヘ移動" },
         { "NextBookMark", "次のプックマークヘ移動" },
 
+        { "PrevView", ITEM_NAME_PREVVIEW },
+        { "NextView", ITEM_NAME_NEXTVIEW },
+
         { "ToggleArticle", "スレ一覧とスレビュー切替" },
 
         { "ShowPopupMenu", "メニュー表示" },

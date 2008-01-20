@@ -186,6 +186,8 @@ std::vector< int > parse_items( const std::string& items_str )
         if( *it == ITEM_NAME_FAVORITE ) items.push_back( ITEM_FAVORITE );
         if( *it == ITEM_NAME_DELETE ) items.push_back( ITEM_DELETE );
         if( *it == ITEM_NAME_QUIT ) items.push_back( ITEM_QUIT );
+        if( *it == ITEM_NAME_PREVVIEW ) items.push_back( ITEM_PREVVIEW );
+        if( *it == ITEM_NAME_NEXTVIEW ) items.push_back( ITEM_NEXTVIEW );
 
         if( *it == ITEM_NAME_NEWARTICLE ) items.push_back( ITEM_NEWARTICLE );
         if( *it == ITEM_NAME_SEARCHBOX ) items.push_back( ITEM_SEARCHBOX );
@@ -905,7 +907,7 @@ void SESSION::set_bbslist_page( int page ){ win_bbslist_page = page; }
 // 前回閉じたときに開いていたboardのページ番号とURL
 int SESSION::board_page(){ return win_board_page; }
 void SESSION::set_board_page( int page ){ win_board_page = page; }
-const std::list< std::string >& SESSION::board_URLs(){ return board_urls; }
+std::list< std::string >& SESSION::get_board_URLs(){ return board_urls; }
 void SESSION::set_board_URLs( const std::list< std::string >& urls ){ board_urls = urls; }
 
 // スレ一覧のロック状態
@@ -915,7 +917,7 @@ void SESSION::set_board_locked( const std::list< bool >& locked ){ board_locked 
 // 前回閉じたときに開いていたスレタブのページ番号とURL
 int SESSION::article_page(){ return win_article_page; }
 void SESSION::set_article_page( int page ){ win_article_page = page; }
-const std::list< std::string >& SESSION::get_article_URLs(){ return article_urls; }
+std::list< std::string >& SESSION::get_article_URLs(){ return article_urls; }
 void SESSION::set_article_URLs( const std::list< std::string >& urls ){ article_urls = urls; }
 
 // スレタブのロック状態

@@ -92,7 +92,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     get_bbslisttoolbar()->m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_push_up_search ) );
     get_bbslisttoolbar()->m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_push_down_search ) );
     get_bbslisttoolbar()->m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_entry_operate ) );
-    get_bbslisttoolbar()->get_close_button().signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::close_view ) );
     get_bbslisttoolbar()->m_combo.signal_changed().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_combo_changed ) );
 
     if( SESSION::get_show_bbslist_toolbar() ) get_bbslisttoolbar()->show_toolbar();
@@ -1347,6 +1346,12 @@ void BBSListViewBase::slot_check_update_dir()
 {
     if( m_path_selected.empty() ) return;
 
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
+
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::slot_check_check_update_dir path = " << m_path_selected.to_string() << std::endl;
 #endif
@@ -1358,6 +1363,12 @@ void BBSListViewBase::slot_check_update_dir()
 // 全更新チェックして開く
 void BBSListViewBase::slot_check_update_open_dir()
 {
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
+
     if( m_path_selected.empty() ) return;
 
 #ifdef _DEBUG

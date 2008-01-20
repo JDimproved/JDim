@@ -9,13 +9,13 @@
 
 #include <gtkmm.h>
 
-namespace CORE
+namespace HISTORY
 {
     class HistorySubMenu;
 
     class HistoryMenuBase : public Gtk::MenuItem
     {
-        CORE::HistorySubMenu* m_submenu;
+        HistorySubMenu* m_submenu;
 
       public:
 
@@ -30,7 +30,7 @@ namespace CORE
 
       protected:
 
-        void setup( CORE::HistorySubMenu* submenu );
+        void setup( HistorySubMenu* submenu );
 
       private:
 
@@ -41,7 +41,7 @@ namespace CORE
 
 
     // スレ履歴
-    class HistoryMenuThread : public CORE::HistoryMenuBase
+    class HistoryMenuThread : public HistoryMenuBase
     {
       public:
         HistoryMenuThread();
@@ -49,7 +49,7 @@ namespace CORE
 
 
     // 板履歴
-    class HistoryMenuBoard : public CORE::HistoryMenuBase
+    class HistoryMenuBoard : public HistoryMenuBase
     {
       public:
         HistoryMenuBoard();
@@ -57,7 +57,7 @@ namespace CORE
 
 
     // 最近閉じたスレ履歴
-    class HistoryMenuClose : public CORE::HistoryMenuBase
+    class HistoryMenuClose : public HistoryMenuBase
     {
       public:
         HistoryMenuClose();

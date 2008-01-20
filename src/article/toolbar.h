@@ -77,8 +77,8 @@ namespace ARTICLE
 
       private:
 
-        // vboxがrealizeした
-        virtual void slot_vbox_realize();
+        // realizeした
+        void slot_realize();
     };
 
 

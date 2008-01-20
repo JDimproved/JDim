@@ -23,6 +23,8 @@ namespace BBSLIST
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();
+        virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock );
+
         virtual void switch_admin();
 
         // bbslistはクローズしない
@@ -30,6 +32,10 @@ namespace BBSLIST
         virtual void close_all_view( const std::string& url ){}
 
         virtual void toggle_icon( const std::string& url );
+
+        // タブの D&D 処理をしない
+        virtual void slot_drag_begin( int page ){}
+        virtual void slot_drag_end(){}
 
         // タブメニュー表示キャンセル
         virtual void slot_tab_menu( int page, int x, int y ){}

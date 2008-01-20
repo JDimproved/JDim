@@ -1,9 +1,9 @@
 // ライセンス: GPL2
 
-// 画像つきボタン
+// 画像つきドグルボタン
 
-#ifndef _IMGBUTTON_H
-#define _IMGBUTTON_H
+#ifndef _IMGTOGGLEBUTTON_H
+#define _IMGTOGGLEBUTTON_H
 
 #include <gtkmm.h>
 #include <string>
@@ -12,7 +12,7 @@
 
 namespace SKELETON
 {
-    class ImgButton : public Gtk::Button
+    class ImgToggleButton : public Gtk::ToggleButton
     {
         Gtk::Image* m_img;
         Gtk::Label m_label;
@@ -35,15 +35,15 @@ namespace SKELETON
 
       public:
 
-        ImgButton( const int id, const std::string label = std::string() ){
+        ImgToggleButton( const int id, const std::string label = std::string() ){
 
             m_img = Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) );
             set( label );
         }
 
-        ImgButton( const Gtk::StockID& stock_id,
-                  const std::string label = std::string(),
-                  const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU ){
+        ImgToggleButton( const Gtk::StockID& stock_id,
+                         const std::string label = std::string(),
+                         const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU ){
 
             m_img = Gtk::manage( new Gtk::Image( stock_id, icon_size ) );
             set( label );

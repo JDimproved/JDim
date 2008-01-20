@@ -50,6 +50,9 @@ enum{
 #define ITEM_NAME_FAVORITE  "お気に入りに追加"
 #define ITEM_NAME_DELETE    "削除"
 #define ITEM_NAME_QUIT      "閉じる"
+#define ITEM_NAME_PREVVIEW  "前へ戻る"
+#define ITEM_NAME_NEXTVIEW  "次へ進む"
+
 
 #define ITEM_NAME_NEWARTICLE   "新スレ作成"
 #define ITEM_NAME_SEARCHBOX    "検索ボックス"
@@ -92,6 +95,8 @@ enum
     ITEM_FAVORITE,
     ITEM_DELETE,
     ITEM_QUIT,
+    ITEM_PREVVIEW,
+    ITEM_NEXTVIEW,
 
     ITEM_NEWARTICLE,
     ITEM_SEARCHBOX,
@@ -185,6 +190,7 @@ enum
     TYPE_COMMENT,
     TYPE_LINK,
     TYPE_AA,
+    TYPE_HISTITEM,
 
     TYPE_UNKNOWN
 };

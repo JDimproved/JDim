@@ -26,6 +26,13 @@ namespace MESSAGE
 
         bool delete_message( SKELETON::View * view );
 
+        // 復元をしない
+        virtual void restore(){}
+        virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ){
+            COMMAND_ARGS ret;
+            return ret;
+        }
+
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void switch_admin();
         virtual void tab_left();
@@ -33,6 +40,10 @@ namespace MESSAGE
         virtual void close_view( const std::string& url );
         virtual void open_window();
         virtual void close_window();
+
+        // タブの D&D 処理をしない
+        virtual void slot_drag_begin( int page ){}
+        virtual void slot_drag_end(){}
     };
     
     MESSAGE::MessageAdmin* get_admin();

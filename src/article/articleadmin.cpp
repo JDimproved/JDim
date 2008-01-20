@@ -47,6 +47,7 @@ using namespace ARTICLE;
 ArticleAdmin::ArticleAdmin( const std::string& url )
     : SKELETON::Admin( url )
 {
+    set_use_viewhistory( true );
     ARTICLE::init_font();
 
     get_notebook()->set_dragable( true );
@@ -77,12 +78,10 @@ void ArticleAdmin::restore()
     std::cout << "ArticleAdmin::restore\n";
 #endif
 
-    JDLIB::Regex regex;
-
     bool online = SESSION::is_online();
     SESSION::set_online( false );
 
-    std::list< std::string > list_url = SESSION::get_article_URLs();
+    std::list< std::string >& list_url = SESSION::get_article_URLs();
     std::list< std::string >::iterator it_url = list_url.begin();
 
     std::list< bool > list_locked = SESSION::get_article_locked();
@@ -90,136 +89,168 @@ void ArticleAdmin::restore()
 
     for( ; it_url != list_url.end(); ++it_url ){
 
-        std::string url = (*it_url);
-        COMMAND_ARGS command_arg;
-        command_arg.command = "open_view";
-        command_arg.url = std::string();
-
         // タブのロック状態
-        std::string lock;
+        bool lock = false;
         if( it_locked != list_locked.end() ){
-            if( (*it_locked ) ) lock = "lock";
+            if( (*it_locked ) ) lock = true;
             ++it_locked;
         }
 
-        // レス抽出
-        if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + RES_SIGN + "(.*)"
-                        + CENTER_SIGN + "(.*)" + TIME_SIGN, url )){
-
-            command_arg.url = regex.str( 1 );
-            command_arg.arg1 = "true"; // タブで開く
-            command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = lock;
-
-            command_arg.arg4 = "RES";
-            command_arg.arg5 = regex.str( 2 );
-            if( regex.str( 3 ) != "0" ) command_arg.arg6 = regex.str( 3 );
-        }
-
-        // 名前抽出
-        else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + NAME_SIGN + "(.*)" + TIME_SIGN, url )){
-
-            command_arg.url = regex.str( 1 );
-            command_arg.arg1 = "true"; // タブで開く
-            command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = lock;
-
-            command_arg.arg4 = "NAME";
-            command_arg.arg5 = regex.str( 2 );
-        }
-
-        // ID抽出
-        else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + ID_SIGN + "(.*)" + TIME_SIGN, url )){
-
-            command_arg.url = regex.str( 1 );
-            command_arg.arg1 = "true"; // タブで開く
-            command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = lock;
-
-            command_arg.arg4 = "ID";
-            command_arg.arg5 = regex.str( 2 );
-        }
-
-        // ブックマーク抽出
-        else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + BOOKMK_SIGN, url )){
-
-            command_arg.url = regex.str( 1 );
-            command_arg.arg1 = "true"; // タブで開く
-            command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = lock;
-
-            command_arg.arg4 = "BM";
-        }
-
-        // URL抽出
-        else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + URL_SIGN, url )){
-
-            command_arg.url = regex.str( 1 );
-            command_arg.arg1 = "true"; // タブで開く
-            command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = lock;
-
-            command_arg.arg4 = "URL";
-        }
-
-        // 参照
-        else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + REFER_SIGN + "(.*)" + TIME_SIGN, url )){
-
-            command_arg.url = regex.str( 1 );
-            command_arg.arg1 = "true"; // タブで開く
-            command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = lock;
-
-            command_arg.arg4 = "REF";
-            command_arg.arg5 = regex.str( 2 );
-        }
-
-        // キーワード
-        else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + KEYWORD_SIGN + "(.*)"
-                             + ORMODE_SIGN + "(.*)" + TIME_SIGN, url )){
-
-            command_arg.url = regex.str( 1 );
-            command_arg.arg1 = "true"; // タブで開く
-            command_arg.arg2 = "true"; // 既に開いているかチェック無し
-            command_arg.arg3 = lock;
-
-            if( regex.str( 3 ) == "1" ) command_arg.arg4 = "KEYWORD_OR";
-            else command_arg.arg4 = "KEYWORD";
-            command_arg.arg5 = regex.str( 2 );
-        }
-
-        // キャッシュ検索は重いので復元しない
-        else if( regex.exec( std::string( "(.*)" ) + BOARD_SIGN + KEYWORD_SIGN + "(.*)"
-                             + ORMODE_SIGN + "(.*)" + TIME_SIGN, url )){
-        }
-
-        // MAIN
-        else if( !url.empty() ){
-            command_arg.url = url;
-            command_arg.arg1 = "true";   // タブで開く
-            command_arg.arg2 = "false";  // 既に開いているかチェック
-            command_arg.arg3 = lock;
-
-            command_arg.arg4 = "MAIN";
-        }
-
-#ifdef _DEBUG
-        std::cout << command_arg.url << std::endl
-                  << command_arg.arg1 << std::endl
-                  << command_arg.arg2 << std::endl
-                  << command_arg.arg3 << std::endl
-                  << command_arg.arg4 << std::endl
-                  << command_arg.arg5 << std::endl;
-#endif
-
+        COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
         if( ! command_arg.url.empty() ) open_view( command_arg );
     }
-
-
 
     SESSION::set_online( online );
     set_command( "set_page", std::string(), MISC::itostr( SESSION::article_page() ) );
 }
+
+
+COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool tab, const bool lock )
+{
+    JDLIB::Regex regex;
+
+    COMMAND_ARGS command_arg;
+    command_arg.command = "open_view";
+    command_arg.url = std::string();
+
+    // レス抽出
+    if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + RES_SIGN + "(.*)"
+                    + CENTER_SIGN + "(.*)" + TIME_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "RES";
+        command_arg.arg5 = regex.str( 2 );
+        if( regex.str( 3 ) != "0" ) command_arg.arg6 = regex.str( 3 );
+    }
+
+    // 名前抽出
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + NAME_SIGN + "(.*)" + TIME_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "NAME";
+        command_arg.arg5 = regex.str( 2 );
+    }
+
+    // ID抽出
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + ID_SIGN + "(.*)" + TIME_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "ID";
+        command_arg.arg5 = regex.str( 2 );
+    }
+
+    // ブックマーク抽出
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + BOOKMK_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "BM";
+    }
+
+    // URL抽出
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + URL_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "URL";
+    }
+
+    // 参照
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + REFER_SIGN + "(.*)" + TIME_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "REF";
+        command_arg.arg5 = regex.str( 2 );
+    }
+
+    // キーワード
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + KEYWORD_SIGN + "(.*)"
+                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        if( regex.str( 3 ) == "1" ) command_arg.arg4 = "KEYWORD_OR";
+        else command_arg.arg4 = "KEYWORD";
+        command_arg.arg5 = regex.str( 2 );
+    }
+
+    // キャッシュのログ検索
+    else if( regex.exec( std::string( "(.*)" ) + BOARD_SIGN + KEYWORD_SIGN + "(.*)"
+                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        if( command_arg.url == "allboard" ) command_arg.arg4 = "SEARCHALLLOG";
+        else command_arg.arg4 = "SEARCHLOG";
+        command_arg.arg5 = regex.str( 2 ); // query
+        command_arg.arg6 = "noexec"; // Viewを開いた直後に検索を実行しない
+    }
+
+    // スレタイ検索
+    else if( regex.exec( std::string( "(.*)" ) + TITLE_SIGN + KEYWORD_SIGN + "(.*)"
+                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "SEARCHTITLE";
+        command_arg.arg5 = regex.str( 2 ); // query
+        command_arg.arg6 = "noexec";  // Viewを開いた直後に検索を実行しない
+    }
+
+
+    // MAIN
+    else if( !url.empty() ){
+        command_arg.url = url;
+        if( tab ) command_arg.arg1 = "true";   // タブで開く
+        command_arg.arg2 = "false";  // 既に開いているかチェック
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "MAIN";
+    }
+
+#ifdef _DEBUG
+    std::cout << command_arg.url << std::endl
+              << command_arg.arg1 << std::endl
+              << command_arg.arg2 << std::endl
+              << command_arg.arg3 << std::endl
+              << command_arg.arg4 << std::endl
+              << command_arg.arg5 << std::endl;
+#endif
+
+    return command_arg;
+}
+
 
 
 void ArticleAdmin::switch_admin()
@@ -386,18 +417,21 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
     else if( command.arg4 == "SEARCHLOG" ){
         type = CORE::VIEW_ARTICLESEARCHLOG;
         view_args.arg1 = command.arg5;  // query
+        view_args.arg2 = command.arg6;  // exec
     }
 
     // 全キャッシュログ検索
     else if( command.arg4 == "SEARCHALLLOG" ){
         type = CORE::VIEW_ARTICLESEARCHALLLOG;
         view_args.arg1 = command.arg5;  // query
+        view_args.arg2 = command.arg6;  // exec
     }
 
-    // タイトル検索
+    // スレタイ検索
     else if( command.arg4 == "SEARCHTITLE" ){
         type = CORE::VIEW_ARTICLESEARCHTITLE;
         view_args.arg1 = command.arg5;  // query
+        view_args.arg2 = command.arg6;  // exec
     }
 
     else return NULL;

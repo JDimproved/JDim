@@ -64,6 +64,10 @@ namespace SKELETON
         bool m_locked;
 
         // ツールバー
+        //
+        // 派生クラスで　toolbar を作成する時は必ず Gtk::manage() を使って
+        // void set_toolbar()でアドレスをセットして使うこと
+        //
         ToolBar *m_toolbar;
 
       protected:
@@ -133,7 +137,7 @@ namespace SKELETON
         virtual ~View(){}
 
         virtual const std::string& get_url(){ return m_url; }
-        void set_url( const std::string& url ){ m_url = url; }
+        void set_url( const std::string& url_new, const bool update_history );
         void update_host( const std::string& host );
 
         // ロック/アンロック
@@ -145,6 +149,9 @@ namespace SKELETON
 
         // ツールバーボタン表示更新
         void update_toolbar();
+
+        // ツールバーURL更新
+        void update_toolbar_url();
 
         // view 上にマウスポインタがあれば true
         bool is_mouse_on_view();
@@ -225,6 +232,8 @@ namespace SKELETON
         virtual void scroll_right(){}
         virtual void toggle_toolbar(){}
         virtual void show_preference(){}
+        virtual void back_viewhistory( const int count ){}
+        virtual void forward_viewhistory( const int count ){}
     };
 }
 

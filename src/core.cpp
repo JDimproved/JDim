@@ -18,7 +18,6 @@
 #include "dispatchmanager.h"
 #include "cssmanager.h"
 #include "updatemanager.h"
-#include "historymenu.h"
 #include "login2ch.h"
 #include "loginbe.h"
 #include "prefdiagfactory.h"
@@ -28,6 +27,8 @@
 #include "fontid.h"
 #include "jdversion.h"
 #include "setupwizard.h"
+
+#include "history/historymanager.h"
 
 #include "skeleton/msgdiag.h"
 #include "skeleton/aboutdiag.h"
@@ -193,6 +194,11 @@ Core::~Core()
     ARTICLE::delete_admin();
     IMAGE::delete_admin();
     MESSAGE::delete_admin();
+
+    // 履歴マネージャ削除
+    // 内部で SESSION::get_*_URLs() を使用しているので
+    // ARTICLEやBOARDなどの管理クラスを削除した後で削除すること
+    HISTORY::delete_history_manager();
 
     // cssマネージャ削除
     CORE::delete_css_manager();
@@ -707,15 +713,14 @@ void Core::run( bool init )
     Gtk::Menu* submenu = Gtk::manage( new Gtk::Menu() );
     menuitem->set_submenu( *submenu );
 
-    m_histmenu_board = Gtk::manage( new HistoryMenuBoard() );  // 板履歴
-    submenu->append( *m_histmenu_board );
+    // 板履歴
+    submenu->append( *HISTORY::get_history_manager()->get_menu_board() );
     
-    m_histmenu_thread = Gtk::manage( new HistoryMenuThread() ); // スレ履歴
-    submenu->append( *m_histmenu_thread );
+    // スレ履歴
+    submenu->append( *HISTORY::get_history_manager()->get_menu_thread() );
 
-    m_histmenu_close = Gtk::manage( new HistoryMenuClose() ); // 最近閉じたスレ履歴
-    submenu->append( *m_histmenu_close );
-
+    // 最近閉じたスレ履歴
+    submenu->append( *HISTORY::get_history_manager()->get_menu_close() );
 
     // メニューにショートカットキーやマウスジェスチャを表示
     Gtk::Menu_Helpers::MenuList& items = m_menubar->items();
@@ -1209,17 +1214,19 @@ void Core::slot_clear_privacy()
 
 void Core::slot_clear_board()
 {
-    if( m_histmenu_board ) m_histmenu_board->slot_clear();
+    HISTORY::get_history_manager()->clear_board();
+    BOARD::get_admin()->set_command( "clear_viewhistory" );
 }
 
 void Core::slot_clear_thread()
 {
-    if( m_histmenu_thread ) m_histmenu_thread->slot_clear();
+    HISTORY::get_history_manager()->clear_thread();
+    ARTICLE::get_admin()->set_command( "clear_viewhistory" );
 }
 
 void Core::slot_clear_close()
 {
-    if( m_histmenu_close ) m_histmenu_close->slot_clear();
+    HISTORY::get_history_manager()->clear_close();
 }
 
 void Core::slot_clear_search()
@@ -2388,7 +2395,8 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            "SEARCHLOG", // ログ検索
 
-                                           command.arg1 // query
+                                           command.arg1, // query
+                                           "exec" // Viewを開いた直後に検索開始
             );
 
         return;
@@ -2406,7 +2414,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
         
         ARTICLE::get_admin()->set_command( "open_view",
-                                           "dummy",
+                                           "allboard",
 
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
@@ -2415,7 +2423,8 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            "SEARCHALLLOG", // 全ログ検索
 
-                                           command.arg1 // query
+                                           command.arg1, // query
+                                           "exec" // Viewを開いた直後に検索開始
             );
 
         return;
@@ -2434,7 +2443,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
-                                           "dummy",
+                                           "title",
 
                                            // 以下 COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
@@ -2443,7 +2452,8 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            "SEARCHTITLE", // モード
 
-                                           command.arg1 // query
+                                           command.arg1, // query
+                                           "exec" // Viewを開いた直後に検索開始
             );
 
         return;
@@ -2608,10 +2618,22 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
     else if( command.command  == "check_update_root" ){
 
+        if( ! SESSION::is_online() ){
+            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+            mdiag.run();
+            return;
+        }
+
         BBSLIST::get_admin()->set_command( "check_update_root", URL_FAVORITEVIEW );
         return;
     }
     else if( command.command  == "check_update_open_root" ){
+
+        if( ! SESSION::is_online() ){
+            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+            mdiag.run();
+            return;
+        }
 
         BBSLIST::get_admin()->set_command( "check_update_open_root", URL_FAVORITEVIEW );
         return;
@@ -2933,9 +2955,9 @@ void Core::exec_command()
     else if( command.command  == "set_history_close" ) set_history_close( command.url );
 
     else if( command.command  == "update_history" ){
-        if( m_histmenu_thread ) m_histmenu_thread->update();
-        if( m_histmenu_board ) m_histmenu_board->update();
-        if( m_histmenu_close ) m_histmenu_close->update();
+        HISTORY::get_history_manager()->update_thread();
+        HISTORY::get_history_manager()->update_board();
+        HISTORY::get_history_manager()->update_close();
     }
 
 
@@ -3942,18 +3964,18 @@ void Core::open_by_browser( const std::string& url )
 // history セット
 void Core::set_history_article( const std::string& url )
 {
-    if( m_histmenu_thread ) m_histmenu_thread->append( url, DBTREE::article_subject( url ), TYPE_THREAD );
+    HISTORY::get_history_manager()->append_thread( url, DBTREE::article_subject( url ), TYPE_THREAD );
 }
 
 
 void Core::set_history_board( const std::string& url )
 {
-    if( m_histmenu_board ) m_histmenu_board->append( url, DBTREE::board_name( url ), TYPE_BOARD );
+    HISTORY::get_history_manager()->append_board( url, DBTREE::board_name( url ), TYPE_BOARD );
 }
 
 void Core::set_history_close( const std::string& url )
 {
-    if( m_histmenu_close ) m_histmenu_close->append( url, DBTREE::article_subject( url ), TYPE_THREAD );
+    HISTORY::get_history_manager()->append_close( url, DBTREE::article_subject( url ), TYPE_THREAD );
 }
 
 

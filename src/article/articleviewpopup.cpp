@@ -24,7 +24,7 @@ ArticleViewPopup::ArticleViewPopup( const std::string& url, bool show_abone )
     struct timeval tv;
     struct timezone tz;
     gettimeofday( &tv, &tz );
-    set_url( url_article() + MISC::timevaltostr( tv ) + "_POPUP_" );
+    set_url( url_article() + MISC::timevaltostr( tv ) + "_POPUP_", false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewPopup::ArticleViewPupup " << get_url() << " show_abone " << m_show_abone << std::endl;

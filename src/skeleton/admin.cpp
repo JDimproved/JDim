@@ -7,11 +7,15 @@
 #include "window.h"
 #include "view.h"
 #include "dragnote.h"
+#include "msgdiag.h"
 
 #include "dbtree/interface.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
+
+#include "history/historymanager.h"
+#include "history/viewhistoryitem.h"
 
 #include "command.h"
 #include "session.h"
@@ -34,7 +38,8 @@ Admin::Admin( const std::string& url )
     : m_url( url ),
       m_win( NULL ),
       m_notebook( NULL ),
-      m_focus( false )
+      m_focus( false ),
+      m_use_viewhistory( false )
 {
     m_notebook = new DragableNoteBook();
 
@@ -119,6 +124,12 @@ void Admin::setup_menu( const bool enable_checkupdate )
 
     m_action_group->add( Gtk::Action::create( "Preference", "プロパティ(_P)..."), sigc::mem_fun( *this, &Admin::show_preference ) );
 
+    // 戻る、進む
+    m_action_group->add( Gtk::Action::create( "PrevView", "PrevView"),
+                         sigc::bind< int >( sigc::mem_fun( *this, &Admin::back_clicked_viewhistory ), 1 ) );
+    m_action_group->add( Gtk::Action::create( "NextView", "NextView"),
+                         sigc::bind< int >( sigc::mem_fun( *this, &Admin::forward_clicked_viewhistory ), 1 ) );
+
     m_ui_manager = Gtk::UIManager::create();    
     m_ui_manager->insert_action_group( m_action_group );
 
@@ -191,14 +202,29 @@ void Admin::setup_menu( const bool enable_checkupdate )
 
     m_move_menu = Gtk::manage( new Gtk::Menu() );
 
+    // 進む、戻る
+    Glib::RefPtr< Gtk::Action > act;
+    act = m_action_group->get_action( "PrevView" );
+    act->set_accel_group( m_ui_manager->get_accel_group() );
+    item = Gtk::manage( act->create_menu_item() );
+    m_move_menu->append( *item );
+
+    act = m_action_group->get_action( "NextView" );
+    act->set_accel_group( m_ui_manager->get_accel_group() );
+    item = Gtk::manage( act->create_menu_item() );
+    m_move_menu->append( *item );
+
+    m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
+
     // 先頭、最後に移動
-    item = Gtk::manage( new Gtk::MenuItem( "先頭に移動(_H)", true ) );
+    item = Gtk::manage( new Gtk::MenuItem( "先頭のタブに移動(_H)", true ) );
     m_move_menu->append( *item );
     item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_head ) );
 
-    item = Gtk::manage( new Gtk::MenuItem( "最後に移動(_T)", true ) );
+    item = Gtk::manage( new Gtk::MenuItem( "最後のタブに移動(_T)", true ) );
     m_move_menu->append( *item );
     item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_tail ) );
+
     m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
 
     item  = Gtk::manage( new Gtk::MenuItem( "移動" ) );
@@ -603,8 +629,44 @@ void Admin::exec_command()
         if( view ) view->show_preference();
     }
 
+    // View履歴:戻る
+    else if( command.command == "back_viewhistory" ){
+        back_viewhistory( command.url, atoi( command.arg1.c_str() ) );
+    }
+
+    // View履歴:進む
+    else if( command.command == "forward_viewhistory" ){
+        forward_viewhistory( command.url, atoi( command.arg1.c_str() ) );
+    }
+
+    // View履歴削除
+    else if( command.command == "clear_viewhistory" ){
+        clear_viewhistory();
+    }
+
     // 個別のコマンド処理
     else command_local( command );
+}
+
+
+//
+// Viewの直接操作
+// 主に ToolBar から用いられる
+//
+bool Admin::operate_view( const std::string& command, const std::string& url, const std::string& arg )
+{
+    SKELETON::View* view = get_current_view();
+    if( ! view || view->get_url() != url ) view = get_view( url );
+    if( ! view ) return false;
+
+    if( command == "close_view" ) view->close_view();
+    else if( command == "back_viewhistory" ) view->back_viewhistory( atoi( arg.c_str() ) );
+    else if( command == "forward_viewhistory" ) view->forward_viewhistory( atoi( arg.c_str() ) );
+
+    // 基本操作以外は固有のコマンドを実行
+    else return view->set_command( command, arg );
+
+    return true;
 }
 
 
@@ -738,9 +800,9 @@ void Admin::open_view( const COMMAND_ARGS& command )
     view = create_view( command );
     if( !view ) return;
 
-
     int page = m_notebook->get_current_page();
-    bool open_tab = (  page == -1 || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left"
+    bool open_tab = (  page == -1
+                       || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left"
                        || command.arg3 == "auto" // オートモードの時もタブで開く
                        || is_locked( page )
         );
@@ -759,6 +821,17 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
         // 最後に表示
         else m_notebook->append_page( command.url, *view );
+
+        if( m_use_viewhistory ){
+
+            if( m_last_closed_url.empty() ) HISTORY::get_history_manager()->create_viewhistory( view->get_url() );
+
+            // 直前に閉じたViewの履歴を次に開いたViewに引き継ぐ
+            else{
+                HISTORY::get_history_manager()->append_viewhistory( m_last_closed_url, view->get_url() );    
+                m_last_closed_url = std::string();
+            }
+        }
     }
 
     // 開いてるviewを消してその場所に表示
@@ -766,14 +839,22 @@ void Admin::open_view( const COMMAND_ARGS& command )
 #ifdef _DEBUG
         std::cout << "replace page\n";
 #endif
+        // タブ入れ替え
         m_notebook->insert_page( command.url, *view, page );
 
         m_notebook->remove_page( page + 1 );
 
-        if( current_view ) delete current_view;
+        if( current_view ){
+
+            std::string url_current = current_view->get_url();
+            delete current_view;
+
+            if( m_use_viewhistory ) HISTORY::get_history_manager()->append_viewhistory( url_current, view->get_url() );    
+        }
     }
 
     m_notebook->show_all();
+    view->update_toolbar_url();
     view->show();
     view->show_view();
 
@@ -963,6 +1044,13 @@ void Admin::close_view( SKELETON::View* view )
     }
 
     m_notebook->remove_page( page );
+
+    if( m_use_viewhistory ){
+
+        // 直前に閉じたViewの履歴を次に開いたViewに引き継ぐ
+        if( ! m_last_closed_url.empty() ) HISTORY::get_history_manager()->delete_viewhistory( m_last_closed_url );
+        m_last_closed_url = view->get_url();
+    }
 
     delete view;
 
@@ -1222,7 +1310,15 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label )
 #endif
 
     SKELETON::View* view = get_view( url );
-    if( view ) m_notebook->set_tab_fulltext( str_label, m_notebook->page_num( *view ) );
+    if( view ){
+
+        m_notebook->set_tab_fulltext( str_label, m_notebook->page_num( *view ) );
+
+        // View履歴のタイトルも更新
+        if( m_use_viewhistory ){
+            HISTORY::get_history_manager()->replace_current_title_viewhistory( view->get_url(), str_label );
+        }
+    }
 }
 
 
@@ -1543,6 +1639,8 @@ void Admin::slot_tab_menu( int page, int x, int y )
     Glib::RefPtr< Gtk::Action > act;
     m_clicked_page = -1; // メニューのactive状態を変えたときにslot関数が呼び出されるのをキャンセル
 
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+
     // ロック
     act = m_action_group->get_action( "LockTab" );
     if( page >= 0 && act ){
@@ -1562,6 +1660,20 @@ void Admin::slot_tab_menu( int page, int x, int y )
     if( act ){
         if( is_locked( page ) ) act->set_sensitive( false );
         else act->set_sensitive( true );
+    }
+
+    // 進む、戻る
+    if( view ){
+        act = m_action_group->get_action( "PrevView" );
+        if( act ){
+            if( HISTORY::get_history_manager()->can_back_viewhistory( view->get_url(), 1 ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+        }
+        act = m_action_group->get_action( "NextView" );
+        if( act ){
+            if( HISTORY::get_history_manager()->can_forward_viewhistory( view->get_url(), 1 ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+        }
     }
 
     m_clicked_page = page;
@@ -1908,4 +2020,158 @@ void Admin::show_preference()
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) view->show_preference();
+}
+
+//
+// View履歴:戻る
+//
+bool Admin::back_viewhistory( const std::string& url, const int count )
+{
+    return back_forward_viewhistory( url, true, count );
+}
+
+
+void Admin::back_clicked_viewhistory( const int count )
+{
+    if( m_clicked_page < 0 ) return;
+
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    if( ! view ) return;
+    
+    m_notebook->set_current_page( m_clicked_page );
+    back_forward_viewhistory( view->get_url(), true, count );
+}
+
+
+//
+// View履歴進む
+//
+bool Admin::forward_viewhistory( const std::string& url, const int count )
+{
+    return back_forward_viewhistory( url, false, count );
+}
+
+
+void Admin::forward_clicked_viewhistory( const int count )
+{
+    if( m_clicked_page < 0 ) return;
+
+    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    if( ! view ) return;
+
+    m_notebook->set_current_page( m_clicked_page );
+    back_forward_viewhistory( view->get_url(), false, count );
+}
+
+
+//
+// 戻る、進む
+//
+bool Admin::back_forward_viewhistory( const std::string& url, const bool back, const int count )
+{
+    if( ! m_use_viewhistory ) return false;
+
+#ifdef _DEBUG
+    std::cout << "Admin::back_forward_viewhistory back = " << back
+              << "count = " << count << " tab = " << url << std::endl;
+#endif
+
+    SKELETON::View* view = get_view( url );
+    if( view ){
+
+        if( view->is_locked() ) return false;
+
+        const HISTORY::ViewHistoryItem* historyitem;
+
+        if( back ) historyitem = HISTORY::get_history_manager()->back_viewhistory( url, count, false );
+        else historyitem = HISTORY::get_history_manager()->forward_viewhistory( url, count, false );
+
+        if( historyitem && ! historyitem->url.empty() ){
+#ifdef _DEBUG
+            std::cout << "open : " << historyitem->url << std::endl;
+#endif
+
+            // 既にタブで開いている場合
+            if( get_view( historyitem->url) ){
+
+                // 次のviewを開けるかチェック
+                bool enable_next = false;
+                if( back ) enable_next = HISTORY::get_history_manager()->can_back_viewhistory( url, count +1 );
+                else enable_next = HISTORY::get_history_manager()->can_forward_viewhistory( url, count +1 );
+
+                SKELETON::MsgDiag mdiag( get_win(), historyitem->title + "\n\nは既にタブで開いています",
+                                         false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+                mdiag.add_button( "タブを開く(_T)", Gtk::RESPONSE_YES );
+                if( enable_next ) mdiag.add_button( "次を開く(_N)", Gtk::RESPONSE_NO );
+                mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+
+                int ret = mdiag.run();
+                mdiag.hide();
+
+                switch( ret ){
+
+                    case Gtk::RESPONSE_YES:
+                        switch_view( historyitem->url );
+                        return false;
+
+                    case Gtk::RESPONSE_NO:
+                        return back_forward_viewhistory( url, back, count + 1 );
+
+                    default:
+                        break;
+                }
+
+                return false;
+            }
+
+            // openview() 中の append_viewhistory() を実行しないで
+            // ここで View履歴の現在位置を変更
+            m_use_viewhistory = false;
+            if( back ) HISTORY::get_history_manager()->back_viewhistory( url, count, true );
+            else HISTORY::get_history_manager()->forward_viewhistory( url, count, true );
+
+            COMMAND_ARGS command_arg = url_to_openarg( historyitem->url, false, false );
+            open_view( command_arg );
+
+            // 検索ビューなど、back/forwardしたときに view のurlが変わることがあるので置き換える
+            SKELETON::View* current_view = get_current_view();
+            if( current_view && current_view->get_url() != historyitem->url ){
+                HISTORY::get_history_manager()->replace_current_url_viewhistory( historyitem->url, current_view->get_url() );
+            }
+
+            m_use_viewhistory = true;
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+//
+// View履歴削除
+//
+void Admin::clear_viewhistory()
+{
+    if( ! m_use_viewhistory ) return;
+
+    std::list< SKELETON::View* > list_view = get_list_view();
+    std::list< SKELETON::View* >::iterator it = list_view.begin();
+    for( ; it != list_view.end(); ++it ){
+        SKELETON::View* view = ( *it );
+        if( view ){
+            HISTORY::get_history_manager()->delete_viewhistory( (*it)->get_url() );
+            HISTORY::get_history_manager()->create_viewhistory( (*it)->get_url() );
+
+            int page = m_notebook->page_num( *(*it) );
+            std::string str_label = m_notebook->get_tab_fulltext( page );
+            HISTORY::get_history_manager()->replace_current_title_viewhistory( (*it)->get_url(), str_label );
+        }
+    }
+
+    if( ! m_last_closed_url.empty() ) HISTORY::get_history_manager()->delete_viewhistory( m_last_closed_url );
+    m_last_closed_url = std::string();
+
+    update_toolbar();
 }
