@@ -6,7 +6,6 @@
 
 #include "bbslistviewbase.h"
 #include "bbslistadmin.h"
-#include "toolbar.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -43,7 +42,6 @@
 #include "session.h"
 
 #include <sstream>
-//#include <gtk/gtkversion.h> // GTK_CHECK_VERSION
 
 
 #ifndef MAX
@@ -86,17 +84,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
 
-    // ツールバーの設定
-    set_toolbar( Gtk::manage( new BBSListToolBar() ) );
-    get_bbslisttoolbar()->m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_active_search ) );
-    get_bbslisttoolbar()->m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_push_up_search ) );
-    get_bbslisttoolbar()->m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_push_down_search ) );
-    get_bbslisttoolbar()->m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_entry_operate ) );
-    get_bbslisttoolbar()->m_combo.signal_changed().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_combo_changed ) );
-
-    if( SESSION::get_show_bbslist_toolbar() ) get_bbslisttoolbar()->show_toolbar();
-
-    pack_start( *get_bbslisttoolbar(), Gtk::PACK_SHRINK );    
     pack_start( m_scrwin );
     show_all_children();    
 
@@ -369,9 +356,9 @@ BBSListViewBase::~BBSListViewBase()
 }
 
 
-BBSListToolBar* BBSListViewBase::get_bbslisttoolbar()
+SKELETON::Admin* BBSListViewBase::get_admin()
 {
-    return dynamic_cast< BBSListToolBar* >( get_toolbar() );
+    return BBSLIST::get_admin();
 }
 
 
@@ -502,14 +489,9 @@ void BBSListViewBase::focus_view()
 
     m_treeview.grab_focus();
 
-    if( get_bbslisttoolbar() ){
-
-        if( get_url() == URL_BBSLISTVIEW && get_bbslisttoolbar()->get_combo()  != COMBO_BBSLIST )
-            get_bbslisttoolbar()->set_combo( COMBO_BBSLIST );
-
-        else if( get_url() == URL_FAVORITEVIEW && get_bbslisttoolbar()->get_combo() != COMBO_FAVORITE )
-            get_bbslisttoolbar()->set_combo( COMBO_FAVORITE );
-    }
+    // コンボボックス切り替え
+    if( get_url() == URL_BBSLISTVIEW ) BBSLIST::get_admin()->set_command( "switch_combo_bbslist" );
+    else if( get_url() == URL_FAVORITEVIEW ) BBSLIST::get_admin()->set_command( "switch_combo_favorite" );
 }
 
 
@@ -530,6 +512,10 @@ void BBSListViewBase::focus_out()
 //
 void BBSListViewBase::close_view()
 {
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::close_view\n";
+#endif 
+
     CORE::core_set_command( "toggle_sidebar" );
 }
 
@@ -682,27 +668,21 @@ void  BBSListViewBase::operate_view( const int& control )
 
         // 検索
         case CONTROL::Search:
-
-            if( get_bbslisttoolbar() ){
-                m_search_invert = false;
-                get_bbslisttoolbar()->m_entry_search.grab_focus();
-            }
+            m_search_invert = false;
+            BBSLIST::get_admin()->set_command( "focus_toolbar_search" );
             break;
 
         case CONTROL::SearchInvert:
-
-            if( get_bbslisttoolbar() ){
-                m_search_invert = true;
-                get_bbslisttoolbar()->m_entry_search.grab_focus();
-            }
+            m_search_invert = true;
+            BBSLIST::get_admin()->set_command( "focus_toolbar_search" );
             break;
 
         case CONTROL::SearchNext:
-            slot_push_down_search();
+            down_search();
             break;
     
         case CONTROL::SearchPrev:
-            slot_push_up_search();
+            up_search();
             break;
 
             // サイドバー表示/非表示
@@ -836,18 +816,6 @@ void BBSListViewBase::page_down()
 {
     m_treeview.page_down();
 } 
-
-
-//
-// ツールバー表示切り替え
-//
-void BBSListViewBase::toggle_toolbar()
-{
-    if( ! get_bbslisttoolbar() ) return;
-
-    if( SESSION::get_show_bbslist_toolbar() ) get_bbslisttoolbar()->show_toolbar();
-    else get_bbslisttoolbar()->hide_toolbar();
-}
 
 
 //
@@ -2588,18 +2556,14 @@ void BBSListViewBase::toggle_icon( const std::string& url )
 //
 // m_search_invert = true なら前方検索
 //
-void BBSListViewBase::slot_active_search()
+void BBSListViewBase::exec_search()
 {
-    if( ! get_bbslisttoolbar() ) return;
-
-    if( get_bbslisttoolbar()->m_entry_search.completion() ) return;
-
     JDLIB::Regex regex_name;
     JDLIB::Regex regex_url;
 
     CORE::core_set_command( "set_info", "", "" );
 
-    std::string query = get_bbslisttoolbar()->m_entry_search.get_text();
+    std::string query = get_search_query();
     if( query.empty() ){
         focus_view();
         return;
@@ -2621,7 +2585,7 @@ void BBSListViewBase::slot_active_search()
     Gtk::TreePath path_start = path;
 
 #ifdef _DEBUG
-    std::cout << "BBSListViewBase::slot_active_search() path = " << path.to_string() << " query = " << query << std::endl;
+    std::cout << "BBSListViewBase::exec_search() path = " << path.to_string() << " query = " << query << std::endl;
 #endif
 	
     regex_name.compile( query, true, true, true );
@@ -2680,54 +2644,31 @@ void BBSListViewBase::slot_active_search()
 
 
 // 前検索
-void BBSListViewBase::slot_push_up_search()
+void BBSListViewBase::up_search()
 {
     m_search_invert = true;
-    slot_active_search();
+    exec_search();
 }
 
 
 
 // 後検索
-void BBSListViewBase::slot_push_down_search()
+void BBSListViewBase::down_search()
 {
     m_search_invert = false;
-    slot_active_search();
+    exec_search();
 }
 
 
 //
 // 検索entryの操作
 //
-void BBSListViewBase::slot_entry_operate( int controlid )
+void BBSListViewBase::operate_search( const std::string& controlid )
 {
-    if( controlid == CONTROL::Cancel ) focus_view();
+    int id = atoi( controlid.c_str() );
+
+    if( id == CONTROL::Cancel ) focus_view();
 }
-
-
-
-// ラベルのコンボボックスの表示が変わった
-void BBSListViewBase::slot_combo_changed()
-{
-    if( ! get_bbslisttoolbar() ) return;
-
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::slot_combo_changed url = " << get_url()
-              << " combo = " << get_bbslisttoolbar()->get_combo() << std::endl;
-#endif
-
-    switch( get_bbslisttoolbar()->get_combo() ){
-
-        case COMBO_BBSLIST:
-            if( get_url() != URL_BBSLISTVIEW ) CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
-            break;
-
-        case COMBO_FAVORITE:
-            if( get_url() != URL_FAVORITEVIEW ) CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW );
-            break;
-    }
-}
-
 
 
 //

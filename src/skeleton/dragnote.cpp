@@ -1,11 +1,13 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
-//#difine _DEBUG_RESIZE_TAB
+//#define _DEBUG_RESIZE_TAB
 #include "jddebug.h"
 
 #include "dragnote.h"
 #include "tablabel.h"
+#include "toolbar.h"
+#include "view.h"
 
 #include "icons/iconmanager.h"
 
@@ -16,9 +18,8 @@
 
 using namespace SKELETON;
 
-
 DragableNoteBook::DragableNoteBook()
-    : SKELETON::JDNotebook()
+    : Gtk::VBox()
     , m_page( -1 )
     , m_drag( 0 )
     , m_dragable( false )
@@ -26,8 +27,37 @@ DragableNoteBook::DragableNoteBook()
 {
     m_layout_tab = create_pango_layout( "" );
 
-    m_pre_width = get_width();
+    set_spacing( 0 );
+
+    // ツールバーの表示領域
+    m_notebook_toolbar.set_border_width( 0 );
+    m_notebook_toolbar.set_show_border( false );
+    m_notebook_toolbar.set_show_tabs( false );
+
+    // Viewの表示領域
+    m_notebook_view.set_border_width( 0 );
+    m_notebook_view.set_show_border( false );
+    m_notebook_view.set_show_tabs( false );
+
+    m_notebook_tab.signal_switch_page().connect( sigc::mem_fun( *this, &DragableNoteBook::slot_switch_page_tab ) );
+    m_notebook_tab.sig_button_press().connect( sigc::mem_fun( *this, &DragableNoteBook::slot_button_press_event ) );
+    m_notebook_tab.sig_button_release().connect( sigc::mem_fun( *this, &DragableNoteBook::slot_button_release_event ) );
+
+    m_pre_width = m_notebook_tab.get_width();
+
+    pack_start( m_notebook_tab, Gtk::PACK_SHRINK );
+    pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
+    pack_start( m_notebook_view );
+    m_show_tabs = true;
+
+    show_all_children();
 }
+
+
+
+DragableNoteBook::~DragableNoteBook()
+{}
+
 
 
 //
@@ -40,7 +70,7 @@ void DragableNoteBook::clock_in()
     // Gtk::NoteBook は configure_event()をキャッチ出来ないので
     // 応急処置としてタイマーの中でサイズが変更したか調べて
     // 変わっていたらタブ幅を調整する
-    if( ! m_fixtab && m_pre_width != get_width() ) adjust_tabwidth();
+    if( ! m_fixtab && m_pre_width != m_notebook_tab.get_width() ) adjust_tabwidth();
 }
 
 
@@ -53,23 +83,100 @@ void DragableNoteBook::focus_out()
 }
 
 
+
+const bool DragableNoteBook::get_show_tabs()
+{
+    return m_show_tabs;
+}
+
+
+void DragableNoteBook::set_show_tabs( bool show_tabs )
+{
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::set_show_tabs show_tabs = " << show_tabs << std::endl;
+#endif
+
+    if( m_show_tabs ){
+
+        remove( m_notebook_tab );
+
+        m_show_tabs = false;
+    }
+    else{
+
+        remove( m_notebook_toolbar );
+        remove( m_notebook_view );
+
+        pack_start( m_notebook_tab, Gtk::PACK_SHRINK );
+        pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
+        pack_start( m_notebook_view );
+
+        m_show_tabs = true;
+    }
+}
+
+
+void DragableNoteBook::set_scrollable( bool scrollable )
+{
+    m_notebook_tab.set_scrollable( scrollable );
+}
+
+
+const int DragableNoteBook::get_n_pages()
+{
+    return m_notebook_view.get_n_pages();
+}
+
+
+Gtk::Widget* DragableNoteBook::get_nth_page( int page_num )
+{
+    return m_notebook_view.get_nth_page( page_num );
+}
+
+
+const int DragableNoteBook::page_num( const Gtk::Widget& child )
+{
+    return m_notebook_view.page_num( child );
+}
+
+
+const int DragableNoteBook::get_current_page()
+{
+    return m_notebook_view.get_current_page();
+}
+
+
+void DragableNoteBook::set_current_page( int page_num )
+{
+    if( get_current_page() == page_num ) return;
+
+    m_notebook_tab.set_current_page( page_num );
+    m_notebook_view.set_current_page( page_num );
+
+    SKELETON::View* view = dynamic_cast< View* >( get_nth_page( page_num ) );
+    set_current_toolbar( view->get_id_toolbar(), view );
+}
+
+
 //
 // ページのappendとinsert
 //
-// ついでにタブも作成する
-//
 int DragableNoteBook::append_page( const std::string& url, Gtk::Widget& child )
 {
+    m_notebook_view.append_page( child );
+
     SKELETON::TabLabel* tablabel = create_tablabel( url );
-    return Gtk::Notebook::append_page( child , *tablabel );
+    return m_notebook_tab.append_tab( *tablabel );
 }
+
 
 int DragableNoteBook::insert_page( const std::string& url, Gtk::Widget& child, int page )
 {
-    SKELETON::TabLabel* tablabel = create_tablabel( url );
-    return Gtk::Notebook::insert_page( child , *tablabel, page );
-}
+    m_notebook_view.insert_page( child, page );
 
+    SKELETON::TabLabel* tablabel = create_tablabel( url );
+    return m_notebook_tab.insert_tab( *tablabel, page );
+}
 
 
 //
@@ -90,6 +197,10 @@ const std::string DragableNoteBook::get_tab_fulltext( int page )
 //
 void DragableNoteBook::set_tab_fulltext( const std::string& str, int page )
 {
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::set_tab_fulltext page = " << page << " " << str << std::endl;
+#endif
+
     SKELETON::TabLabel* tablabel = get_tablabel( page );
     if( tablabel ){
         tablabel->set_fulltext( str );
@@ -103,15 +214,140 @@ void DragableNoteBook::set_tab_fulltext( const std::string& str, int page )
 //
 // ページ取り除き
 //
-// ついでにタブも削除する
-//
 void DragableNoteBook::remove_page( int page )
 {
     SKELETON::TabLabel* tablabel = get_tablabel( page );
-    Gtk::Notebook::remove_page( page );
+
+    m_notebook_tab.remove_tab( page );
+    m_notebook_view.remove_page( page );
+
     if( tablabel ) delete tablabel;
+
     m_tooltip.hide_tooltip();
     adjust_tabwidth();
+}
+
+
+//
+// ツールバー取得
+//
+SKELETON::ToolBar* DragableNoteBook::get_toolbar( int page )
+{
+    return dynamic_cast< SKELETON::ToolBar* >( m_notebook_toolbar.get_nth_page( page ) );
+}
+
+
+//
+// ツールバー表示
+//
+void DragableNoteBook::show_toolbar()
+{
+    if( m_notebook_toolbar.get_n_pages() ) m_notebook_toolbar.show();
+}
+
+
+//
+// ツールバー非表示
+//
+void DragableNoteBook::hide_toolbar()
+{
+    if( m_notebook_toolbar.get_n_pages() ) m_notebook_toolbar.hide();
+}
+
+
+//
+// ツールバーセット
+//
+void DragableNoteBook::append_toolbar( Gtk::Widget& toolbar )
+{
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::append_toolbar\n";
+#endif
+
+    m_notebook_toolbar.append_page( toolbar );
+}
+
+
+//
+// ツールバー切り替え
+//
+void DragableNoteBook::set_current_toolbar( int page_num, SKELETON::View* view )
+{
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::set_current_toolbar page = " << page_num << " / " << m_notebook_toolbar.get_n_pages() << std::endl
+              << "url = " << view->get_url() << std::endl;
+#endif
+
+    if( m_notebook_toolbar.get_n_pages() <= page_num ) return;
+
+    m_notebook_toolbar.set_current_page( page_num );
+
+    SKELETON::ToolBar* toolbar = get_toolbar( page_num );
+    if( toolbar ) toolbar->set_view( view );
+}
+
+
+const int DragableNoteBook::get_current_toolbar()
+{
+    return m_notebook_toolbar.get_current_page();
+}
+
+
+//
+// ツールバー内の検索ボックスにフォーカスを移す
+//
+void DragableNoteBook::focus_toolbar_search()
+{
+    SKELETON::ToolBar* toolbar = get_toolbar( m_notebook_toolbar.get_current_page() );
+    if( toolbar ) toolbar->focus_entry_search();
+}
+
+
+//
+// ツールバーURL更新
+//
+void DragableNoteBook::update_toolbar_url( std::string& url_old, std::string& url_new )
+{
+    for( int i = 0; i < m_notebook_toolbar.get_n_pages(); ++i ){
+        SKELETON::ToolBar* toolbar = get_toolbar( i );
+        if( toolbar && toolbar->get_url() == url_old ) toolbar->set_url( url_new );
+    }
+}
+
+
+//
+// ツールバーラベル表示更新
+//
+void DragableNoteBook::update_toolbar_label( SKELETON::View* view )
+{
+    for( int i = 0; i < m_notebook_toolbar.get_n_pages(); ++i ){
+        SKELETON::ToolBar* toolbar = get_toolbar( i );
+        if( toolbar ) toolbar->update_label( view );
+    }
+}
+
+
+//
+// ツールバー閉じるボタン表示更新
+//
+void DragableNoteBook::update_toolbar_close_button( SKELETON::View* view )
+{
+    for( int i = 0; i < m_notebook_toolbar.get_n_pages(); ++i ){
+        SKELETON::ToolBar* toolbar = get_toolbar( i );
+        if( toolbar ) toolbar->update_close_button( view );
+    }
+}
+
+
+//
+// ツールバーボタン表示更新
+//
+void DragableNoteBook::update_toolbar_button()
+{
+    for( int i = 0; i < m_notebook_toolbar.get_n_pages(); ++i ){
+        SKELETON::ToolBar* toolbar = get_toolbar( i );
+        if( toolbar ) toolbar->update_button();
+    } 
 }
 
 
@@ -151,7 +387,7 @@ SKELETON::TabLabel* DragableNoteBook::create_tablabel( const std::string& url )
 // タブ取得
 SKELETON::TabLabel* DragableNoteBook::get_tablabel( int page )
 {
-    return dynamic_cast< SKELETON::TabLabel* >( get_tab_label( *get_nth_page( page ) ) );
+    return dynamic_cast< SKELETON::TabLabel* >( m_notebook_tab.get_tab_label( *m_notebook_tab.get_nth_page( page ) ) );
 }
 
 
@@ -220,7 +456,7 @@ bool DragableNoteBook::adjust_tabwidth()
     std::vector< int > vec_width; // 変更後のタブ幅
     vec_width.resize( pages );
 
-    int width_notebook = get_width();
+    int width_notebook = m_notebook_tab.get_width();
     m_pre_width = width_notebook;
     width_notebook -= mrg_notebook;
 
@@ -303,9 +539,21 @@ bool DragableNoteBook::adjust_tabwidth()
 
 
 //
-// ボタン押した
+// notebook_tabのタブが切り替わったときに呼ばれるslot
 //
-bool DragableNoteBook::on_button_press_event( GdkEventButton* event )
+void DragableNoteBook::slot_switch_page_tab( GtkNotebookPage* bookpage, guint page )
+{
+    // view も切り替える
+    m_notebook_view.set_current_page( page );
+
+    m_sig_switch_page.emit( bookpage, page );
+}
+
+
+//
+// notebook_tab の上でボタンを押した
+//
+bool DragableNoteBook::slot_button_press_event( GdkEventButton* event )
 {
     // ボタンを押した時点でのページ番号を記録しておく
     m_page = get_page_under_mouse();
@@ -322,17 +570,22 @@ bool DragableNoteBook::on_button_press_event( GdkEventButton* event )
               << " dblclick = " << m_dblclick << std::endl;
 #endif
 
-    // ページはon_button_release_eventの中で自前で切り替える
-    if( m_page >= 0 && m_page < get_n_pages() ) return true;
+    if( m_page >= 0 && m_page < get_n_pages() ){
 
-    return Gtk::Notebook::on_button_press_event( event );
+        // ページ切替え
+        if( m_control.button_alloted( event, CONTROL::ClickButton ) ) m_sig_tab_click.emit( m_page );
+
+        return true;
+    }
+
+    return false;
 }
 
 
 //
-// ボタン離した
+// notebook_tab の上でボタンを離した
 //
-bool DragableNoteBook::on_button_release_event( GdkEventButton* event )
+bool DragableNoteBook::slot_button_release_event( GdkEventButton* event )
 {
     int x = (int)event->x_root;
     int y = (int)event->y_root;
@@ -342,30 +595,21 @@ bool DragableNoteBook::on_button_release_event( GdkEventButton* event )
     std::cout << "x = " << (int)event->x_root << " y = " << (int)event->y_root << std::endl;
 #endif
 
-    // ページ切り替え
-
-    if( !m_drag // D&D中は切替えない
-
-        // なぜかviewをクリックしても呼ばれるので m_page の値で on_button_press_event が呼ばれたかチェック
-        && m_page >= 0 && m_page < get_n_pages()
-
-        ){
+    if( ! m_drag && m_page >= 0 && m_page < get_n_pages() ){
 
         // ダブルクリックの処理のため一時的にtypeを切替える
         GdkEventType type_copy = event->type;
         if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
 
-        // ページ切替え
-        if( m_control.button_alloted( event, CONTROL::ClickButton ) ) m_sig_tab_click.emit( m_page );
-
         // タブを閉じる
         else if( get_page_under_mouse() == m_page && m_control.button_alloted( event, CONTROL::CloseTabButton ) ){
             m_sig_tab_close.emit( m_page );
 
-            // タブにページが残ってなかったらそのままreturnしないと落ちる
+            // タブにページが残ってなかったらtrueをreturnしないと落ちる
+            // TabNotebook::on_button_release_event() も参照せよ
             if( get_n_pages() == 0 ){
                 m_page = -1;
-                return false;
+                return true;
             }
         }
 
@@ -379,7 +623,7 @@ bool DragableNoteBook::on_button_release_event( GdkEventButton* event )
         event->type = type_copy;
     }
 
-    return Gtk::Notebook::on_button_release_event( event );
+    return false;
 }
 
 
@@ -449,7 +693,8 @@ void DragableNoteBook::slot_drag_drop()
 
         // ドラッグ前とページが変わっていたら入れ替え
         if( m_page != -1 && page != -1 && m_page != page ){
-            reorder_child( *get_nth_page( m_page ), page );
+            m_notebook_tab.reorder_child( *m_notebook_tab.get_nth_page( m_page ), page );
+            m_notebook_view.reorder_child( *m_notebook_view.get_nth_page( m_page ), page );
             m_page = -1;
         }
     }

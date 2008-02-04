@@ -30,6 +30,7 @@ ArticleItemPref::ArticleItemPref( Gtk::Window* parent, const std::string& url )
     append_default_pair( ITEM_NAME_QUIT, STOCK_ICON( Gtk::Stock::CLOSE ) );
     append_default_pair( ITEM_NAME_PREVVIEW, STOCK_ICON( Gtk::Stock::GO_BACK ), false );
     append_default_pair( ITEM_NAME_NEXTVIEW, STOCK_ICON( Gtk::Stock::GO_FORWARD ), false );
+    append_default_pair( ITEM_NAME_LOCK, STOCK_ICON( Gtk::Stock::NO ), false );
     append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
 
     // 文字列を元に行を追加
@@ -45,6 +46,6 @@ ArticleItemPref::ArticleItemPref( Gtk::Window* parent, const std::string& url )
 void ArticleItemPref::slot_ok_clicked()
 {
     SESSION::set_items_article_toolbar_str( get_items() );
-    CORE::core_set_command( "update_article_toolbar" );
+    CORE::core_set_command( "update_article_toolbar_button" );
 }
 

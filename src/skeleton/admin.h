@@ -100,14 +100,6 @@ namespace SKELETON
         // コマンドがセットされているか
         const bool has_commands() const { return ( m_list_command.size() ); }
 
-
-        // Viewの直接操作
-        // 主に ToolBar から用いられる
-        bool operate_view( const std::string& command,
-                          const std::string& url = std::string(),
-                          const std::string& arg = std::string()
-            );
-
         // 現在表示してるページ番号およびURL
         // 表示ページを指定したいときは "set_page" コマンドを使う
         virtual int get_current_page();
@@ -190,8 +182,6 @@ namespace SKELETON
         virtual void relayout_all();
         virtual void open_window(){}
         virtual void close_window(){}
-        virtual void toggle_toolbar();
-        virtual void update_toolbar();
         virtual void toggle_tab();
         virtual void toggle_icon( const std::string& url );
 
@@ -210,6 +200,15 @@ namespace SKELETON
         std::list< View* > get_list_view( const std::string& url );
         std::list< View* > get_list_view();
         virtual View* get_current_view();
+
+        // ツールバー
+        virtual void show_toolbar(){}
+        virtual void toggle_toolbar(){}
+        void focus_toolbar_search();
+        void update_toolbar_label();
+        void update_toolbar_button();
+        virtual void open_searchbar(){}
+        virtual void close_searchbar(){}
 
         // タブの更新チェック
         void check_update_all_tabs( const int from_page );

@@ -62,16 +62,3 @@ DrawAreaBase* ArticleViewPopup::create_drawarea()
 {
     return Gtk::manage( new ARTICLE::DrawAreaPopup( url_article(), m_show_abone ) );
 }
-
-
-
-//
-// ウィジットのパッキング
-//
-// ArticleViewBase::pack_widget()をオーパロードしてツールバーをパックしない
-//
-void ArticleViewPopup::pack_widget()
-{
-    pack_start( *drawarea() );
-    show_all_children();
-}

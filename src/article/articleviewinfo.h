@@ -33,7 +33,6 @@ namespace ARTICLE
         virtual void slot_on_url( std::string url, int res_number ){}
 
         virtual DrawAreaBase* create_drawarea();
-        virtual void pack_widget();
     };
 }
 

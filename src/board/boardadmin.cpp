@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "boardadmin.h"
+#include "toolbar.h"
 
 #include "dbtree/interface.h"
 
@@ -42,7 +43,7 @@ void BOARD::delete_admin()
 using namespace BOARD;
 
 BoardAdmin::BoardAdmin( const std::string& url )
-    : SKELETON::Admin( url )
+    : SKELETON::Admin( url ) , m_toolbar( NULL )
 {
     set_use_viewhistory( true );
     get_notebook()->set_dragable( true );
@@ -58,6 +59,8 @@ BoardAdmin::~BoardAdmin()
 #ifdef _DEBUG    
     std::cout << "BoardAdmin::~BoardAdmin\n";
 #endif
+
+    if( m_toolbar ) delete m_toolbar;
 
     // 開いているURLを保存
     SESSION::set_board_URLs( get_URLs() );
@@ -129,6 +132,34 @@ COMMAND_ARGS BoardAdmin::get_open_list_args( const std::string& url )
     return command_arg;
 }
 
+
+//
+// ツールバー表示
+//
+void BoardAdmin::show_toolbar()
+{
+    // まだ作成されていない場合は作成する
+    if( ! m_toolbar ){
+        m_toolbar = new BoardToolBar();
+        get_notebook()->append_toolbar( *m_toolbar );
+
+        if( SESSION::get_show_board_toolbar() ) m_toolbar->show_toolbar();
+    }
+
+    get_notebook()->show_toolbar();
+}
+
+
+//
+// ツールバー表示切り替え
+//
+void BoardAdmin::toggle_toolbar()
+{
+    if( ! m_toolbar ) return;
+
+    if( SESSION::get_show_board_toolbar() ) m_toolbar->show_toolbar();
+    else m_toolbar->hide_toolbar();
+}
 
 
 SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )

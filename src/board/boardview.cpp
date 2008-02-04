@@ -5,7 +5,6 @@
 
 #include "boardadmin.h"
 #include "boardview.h"
-#include "toolbar.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -125,22 +124,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
 
-    set_toolbar( Gtk::manage( new BoardToolBar() ) );
-
-    get_boardtoolbar()->m_entry_search.signal_changed().connect( sigc::mem_fun( *this, &BoardView::slot_changed_search ) );
-    get_boardtoolbar()->m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &BoardView::slot_active_search ) );
-    get_boardtoolbar()->m_button_reload.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::reload ) );
-    get_boardtoolbar()->m_button_stop.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::stop ) );
-    get_boardtoolbar()->m_button_new_article.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_new_article ) );
-    get_boardtoolbar()->m_button_delete.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_delete ) );
-    get_boardtoolbar()->m_button_favorite.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_favorite ) );
-    get_boardtoolbar()->m_button_up_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_up_search ) );
-    get_boardtoolbar()->m_button_down_search.signal_clicked().connect( sigc::mem_fun( *this, &BoardView::slot_push_down_search ) );
-    get_boardtoolbar()->m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &BoardView::slot_entry_operate ) );
-
-    if( SESSION::get_show_board_toolbar() ) get_boardtoolbar()->show_toolbar();
-
-    pack_start( *get_boardtoolbar(), Gtk::PACK_SHRINK );    
     pack_start( m_scrwin );
     show_all_children();    
 
@@ -206,7 +189,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動(_T)" ), sigc::mem_fun( *this, &BoardView::goto_top ) );
     action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動(_M)" ), sigc::mem_fun( *this, &BoardView::goto_bottom ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
-    action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する(_D)" ), sigc::mem_fun( *this, &BoardView::delete_view ) );
+    action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する(_D)" ), sigc::mem_fun( *this, &BoardView::slot_delete_logs ) );
     action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)" ), sigc::mem_fun( *this, &BoardView::open_selected_rows ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_C)" ), sigc::mem_fun( *this, &BoardView::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー(_U)" ), sigc::mem_fun( *this, &BoardView::slot_copy_title_url ) );
@@ -306,6 +289,12 @@ BoardView::~BoardView()
 #endif
     DBTREE::board_save_info( get_url() );
     save_column_width();
+}
+
+
+SKELETON::Admin* BoardView::get_admin()
+{
+    return BOARD::get_admin();
 }
 
 
@@ -577,7 +566,7 @@ void BoardView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::i
     Gtk::TreePath path = m_liststore->get_path( row );
 
 #ifdef _DEBUG
-    std::cout << "BoardView::slot_cell_data path = " << path.to_string() << std::endl;
+//    std::cout << "BoardView::slot_cell_data path = " << path.to_string() << std::endl;
 #endif
 
     // ハイライト色
@@ -1032,7 +1021,7 @@ void BoardView::close_view()
 //
 // 選択した行のログをまとめて削除
 //
-void BoardView::delete_view()
+void BoardView::slot_delete_logs()
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
@@ -1149,7 +1138,7 @@ void BoardView::operate_view( const int& control )
             break;
 
         case CONTROL::NewArticle:
-            slot_new_article();
+            write();
             break;
 
         case CONTROL::Delete:
@@ -1157,7 +1146,7 @@ void BoardView::operate_view( const int& control )
             SKELETON::MsgDiag mdiag( NULL, "選択した行のログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             mdiag.set_default_response( Gtk::RESPONSE_YES );
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
-            delete_view();
+            slot_delete_logs();
             break;
         }
 
@@ -1168,25 +1157,21 @@ void BoardView::operate_view( const int& control )
 
         // 検索
         case CONTROL::Search:
-            if( get_boardtoolbar() ){
-                m_search_invert = false;
-                get_boardtoolbar()->m_entry_search.grab_focus();
-            }
+            m_search_invert = false;
+            BOARD::get_admin()->set_command( "focus_toolbar_search" );
             break;
 
         case CONTROL::SearchInvert:
-            if( get_boardtoolbar() ){
-                m_search_invert = true;
-                get_boardtoolbar()->m_entry_search.grab_focus();
-            }
+            m_search_invert = true;
+            BOARD::get_admin()->set_command( "focus_toolbar_search" );
             break;
 
         case CONTROL::SearchNext:
-            slot_push_down_search();
+            down_search();
             break;
     
         case CONTROL::SearchPrev:
-            slot_push_up_search();
+            up_search();
             break;
 
             // サイドバー表示/非表示
@@ -1273,19 +1258,6 @@ void BoardView::scroll_right()
 }
 
 
-
-//
-// ツールバー表示切り替え
-//
-void BoardView::toggle_toolbar()
-{
-    if( ! get_boardtoolbar() ) return;
-
-    if( SESSION::get_show_board_toolbar() ) get_boardtoolbar()->show_toolbar();
-    else get_boardtoolbar()->hide_toolbar();
-}
-
-
 //
 // 上へ移動
 //
@@ -1321,12 +1293,6 @@ void BoardView::page_down()
     m_treeview.page_down();
 } 
    
-
-BoardToolBar* BoardView::get_boardtoolbar()
-{
-    return dynamic_cast< BoardToolBar* >( get_toolbar() );
-}
-
 
 //
 // ポップアップメニュー取得
@@ -1782,7 +1748,7 @@ void BoardView::slot_favorite_board()
 //
 // 新スレをたてる
 //
-void BoardView::slot_new_article()
+void BoardView::write()
 {
     CORE::core_set_command( "create_new_thread", get_url() );
 }
@@ -1791,7 +1757,7 @@ void BoardView::slot_new_article()
 //
 // ツールバーの削除ボタン
 //
-void BoardView::slot_push_delete()
+void BoardView::delete_view()
 {
     show_popupmenu( "popup_menu_delete", false );
 }
@@ -1800,7 +1766,7 @@ void BoardView::slot_push_delete()
 //
 // ツールバーのお気に入りボタン
 //
-void BoardView::slot_push_favorite()
+void BoardView::set_favorite()
 {
     show_popupmenu( "popup_menu_favorite", false );
 }
@@ -1922,12 +1888,10 @@ std::string BoardView::path2daturl( const Gtk::TreePath& path )
 //
 bool BoardView::drawout()
 {
-    if( ! get_boardtoolbar() ) return false;
-
     int hit = 0;
     bool reset = false;
 
-    std::string query = get_boardtoolbar()->m_entry_search.get_text();
+    std::string query = get_search_query();
 
     // 空の時はリセット
     if( query.empty() ) reset = true;
@@ -1977,8 +1941,14 @@ bool BoardView::drawout()
 //
 // 検索ボックスの文字列が変わった
 //
-void BoardView::slot_changed_search()
+void BoardView::set_search_query( const std::string& query )
 {
+    SKELETON::View::set_search_query( query );
+
+#ifdef _DEBUG
+    std::cout << "BoardView::set_search_query query = " << get_search_query() << std::endl;
+#endif
+
     if( CONFIG::get_inc_search_board() ){
         drawout();
         m_pre_query = std::string();
@@ -1987,14 +1957,11 @@ void BoardView::slot_changed_search()
 
 
 //
-// 検索移動
+// 検索実行
 //
-void BoardView::slot_active_search()
+void BoardView::exec_search()
 {
-    if( ! get_boardtoolbar() ) return;
-    if( get_boardtoolbar()->m_entry_search.completion() ) return;
-
-    std::string query = get_boardtoolbar()->m_entry_search.get_text();
+    std::string query = get_search_query();
     if( m_pre_query != query ){
         drawout();
         focus_view();
@@ -2050,40 +2017,31 @@ void BoardView::slot_active_search()
 
 
 // 前検索
-void BoardView::slot_push_up_search()
+void BoardView::up_search()
 {
     m_search_invert = true;
-    slot_active_search();
+    exec_search();
 }
 
 
 
 // 後検索
-void BoardView::slot_push_down_search()
+void BoardView::down_search()
 {
     m_search_invert = false;
-    slot_active_search();
-}
-
-
-// キャッシュ内のログ検索
-void BoardView::search_cache()
-{
-    if( ! get_boardtoolbar() ) return;
-    if( get_boardtoolbar()->m_entry_search.completion() ) return;
-
-    std::string query = get_boardtoolbar()->m_entry_search.get_text();
-    CORE::core_set_command( "open_article_searchlog", get_url() , query );
+    exec_search();
 }
 
 
 //
 // 検索entryの操作
 //
-void BoardView::slot_entry_operate( int controlid )
+void BoardView::operate_search( const std::string& controlid )
 {
-    if( controlid == CONTROL::Cancel ) focus_view();
-    else if( controlid == CONTROL::SearchCache ) search_cache();
+    int id = atoi( controlid.c_str() );
+
+    if( id == CONTROL::Cancel ) focus_view();
+    else if( id == CONTROL::SearchCache ) CORE::core_set_command( "open_article_searchlog", get_url() , get_search_query() );
 }
 
 

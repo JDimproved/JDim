@@ -45,7 +45,7 @@ MainItemPref::MainItemPref( Gtk::Window* parent, const std::string& url )
 void MainItemPref::slot_ok_clicked()
 {
     SESSION::set_items_main_toolbar_str( get_items() );
-    CORE::core_set_command( "update_main_toolbar" );
+    CORE::core_set_command( "update_main_toolbar_button" );
 }
 
 

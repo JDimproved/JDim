@@ -9,9 +9,11 @@
 #include "board/boardview.h"
 
 #include "article/articleview.h"
+#include "article/articleviewsearch.h"
 #include "article/articleviewpreview.h"
 #include "article/articleviewinfo.h"
 #include "article/articleviewpopup.h"
+#include "article/articleviewetc.h"
 
 #include "image/imageview.h"
 #include "image/imageviewicon.h"

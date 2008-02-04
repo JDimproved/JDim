@@ -25,7 +25,7 @@ MsgItemPref::MsgItemPref( Gtk::Window* parent, const std::string& url )
     append_default_pair( ITEM_NAME_NAME, ICON::get_icon( ICON::TRANSPARENT ) );
     append_default_pair( ITEM_NAME_UNDO, STOCK_ICON( Gtk::Stock::UNDO ) );
     append_default_pair( ITEM_NAME_INSERTTEXT, STOCK_ICON( Gtk::Stock::OPEN ) );
-    append_default_pair( ITEM_NAME_NOTCLOSE, STOCK_ICON( Gtk::Stock::CANCEL ) );
+    append_default_pair( ITEM_NAME_LOCK_MESSAGE, STOCK_ICON( Gtk::Stock::NO ) );
     append_default_pair( ITEM_NAME_QUIT, STOCK_ICON( Gtk::Stock::CLOSE ) );
     append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
 
@@ -40,7 +40,7 @@ MsgItemPref::MsgItemPref( Gtk::Window* parent, const std::string& url )
 void MsgItemPref::slot_ok_clicked()
 {
     SESSION::set_items_msg_toolbar_str( get_items() );
-    CORE::core_set_command( "update_message_toolbar" );
+    CORE::core_set_command( "update_message_toolbar_button" );
 }
 
 

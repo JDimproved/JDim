@@ -7,9 +7,9 @@
 #include "messageadmin.h"
 #include "messageviewbase.h"
 #include "post.h"
-#include "toolbar.h"
 
 #include "skeleton/msgdiag.h"
+#include "skeleton/label_entry.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
@@ -20,10 +20,7 @@
 
 #include "config/globalconf.h"
 
-#include "icons/iconmanager.h"
-
 #include "httpcode.h"
-#include "command.h"
 #include "viewfactory.h"
 #include "controlutil.h"
 #include "controlid.h"
@@ -60,7 +57,6 @@ MessageViewBase::MessageViewBase( const std::string& url )
     : SKELETON::View( url ),
       m_post( 0 ),
       m_preview( 0 ),
-      m_enable_menuslot( true ),
       m_enable_focus( true ),
       m_counter( 0 )
 {
@@ -80,6 +76,9 @@ MessageViewBase::MessageViewBase( const std::string& url )
     if( ! m_lng_iconv ) m_lng_iconv = MAX_STR_ICONV;
 
     m_str_iconv = ( char* ) malloc( m_lng_iconv + 1024 );
+
+    if( SESSION::get_close_mes() ) unlock();
+    else lock();
 }
 
 
@@ -87,7 +86,8 @@ MessageViewBase::MessageViewBase( const std::string& url )
 MessageViewBase::~MessageViewBase()
 {
 #ifdef _DEBUG
-    std::cout << "MessageViewBase::~MessageViewBase " << get_url() << std::endl;
+    std::cout << "MessageViewBase::~MessageViewBase " << get_url() << std::endl
+              << "lock = " << is_locked() << std::endl;
 #endif
 
     if( m_preview ) delete m_preview;
@@ -101,19 +101,14 @@ MessageViewBase::~MessageViewBase()
 
     if( m_str_iconv ) free( m_str_iconv );
     m_str_iconv = NULL;
+
+    SESSION::set_close_mes( ! is_locked() );
 }
 
 
-MessageToolBar* MessageViewBase::get_messagetoolbar()
+SKELETON::Admin* MessageViewBase::get_admin()
 {
-    return dynamic_cast< MessageToolBar* >( get_toolbar() );
-}
-
-
-SKELETON::LabelEntry* MessageViewBase::get_entry_subject()
-{
-    if( ! get_messagetoolbar() ) return NULL;
-    return &get_messagetoolbar()->m_entry_subject;
+    return MESSAGE::get_admin();
 }
 
 
@@ -201,10 +196,12 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
         return m_post->is_loading();
     }
 
-    else if( command == "exec_Write" ) slot_write_clicked();
+    else if( command == "toggle_preview" ) toggle_preview();
+    else if( command == "undo_text" ) m_text_message.undo();
+    else if( command == "insert_draft" ) insert_draft();
+
     else if( command == "tab_left" ) tab_left();
     else if( command == "tab_right" ) tab_right();
-    else if( command == "focus_write" ) focus_writebutton();
 
     // メッセージをクリア
     else if( command == "clear_message" ){
@@ -298,24 +295,6 @@ void MessageViewBase::save_name()
 //
 void MessageViewBase::pack_widget()
 {
-    // ツールバー
-    set_toolbar( Gtk::manage( new MessageToolBar( " [ " + DBTREE::board_name( get_url() ) + " ]  " ) ) );
-    get_messagetoolbar()->m_entry_subject.set_text( DBTREE::article_subject( get_url() ) );
-    get_messagetoolbar()->m_button_not_close.set_active( ! SESSION::get_close_mes() );
-
-    get_messagetoolbar()->m_button_write.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_write_clicked ) );
-    get_messagetoolbar()->m_button_open.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_draft_open ) );
-    get_messagetoolbar()->m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_undo_clicked ) );
-    get_messagetoolbar()->m_button_not_close.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_not_close_clicked ) );
-    get_messagetoolbar()->m_button_preview.signal_clicked().connect( sigc::mem_fun( *this, &MessageViewBase::slot_preview_clicked ) );
-    
-    get_messagetoolbar()->show_toolbar();
-
-    if( get_messagetoolbar()->get_button_close() ){
-        if( SESSION::get_close_mes() ) get_messagetoolbar()->get_button_close()->set_sensitive( true );
-        else get_messagetoolbar()->get_button_close()->set_sensitive( false );
-    }
-
     // 書き込みビュー
     m_label_name.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
     m_label_mail.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
@@ -377,7 +356,6 @@ void MessageViewBase::pack_widget()
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &MessageViewBase::slot_switch_page ) );
     m_notebook.set_current_page( PAGE_MESSAGE );
 
-    pack_start( *get_messagetoolbar(), Gtk::PACK_SHRINK );
     pack_start( m_notebook );
 
     // フォントセット
@@ -404,7 +382,7 @@ void MessageViewBase::redraw_view()
 void MessageViewBase::focus_view()
 {
 #ifdef _DEBUG
-    std::cout << "MessageViewBase::focus_view page = " << m_notebook.get_current_page() << std::endl;
+//    std::cout << "MessageViewBase::focus_view page = " << m_notebook.get_current_page() << std::endl;
 #endif
 
     if( m_notebook.get_current_page() == PAGE_MESSAGE ) m_text_message.focus_view();
@@ -423,18 +401,12 @@ void MessageViewBase::operate_view( const int& control )
             
             // 書き込まずに閉じる
         case CONTROL::CancelWrite:
-        {
-            // 閉じないボタンを押していてもダイアログを表示しない
-            bool tmp_close = SESSION::get_close_mes();
-            SESSION::set_close_mes( true );
             close_view();
-            SESSION::set_close_mes( tmp_close );
-        }
             break;
 
             // 書き込み実行
         case CONTROL::ExecWrite:
-            MESSAGE::get_admin()->set_command( "exec_Write" );
+            MESSAGE::get_admin()->set_command( "toolbar_write", get_url() );
             break;
 
         case CONTROL::TabLeft:
@@ -447,7 +419,7 @@ void MessageViewBase::operate_view( const int& control )
 
             // 書き込みボタンにフォーカスを移す
         case CONTROL::FocusWrite:
-            focus_writebutton();
+            MESSAGE::get_admin()->set_command( "focus_writebutton" );
             break;
     }
 }
@@ -455,10 +427,14 @@ void MessageViewBase::operate_view( const int& control )
 
 
 //
-// 書き込むボタン押した
+// 書き込み実行
 //
-void MessageViewBase::slot_write_clicked()
+void MessageViewBase::write()
 {
+#ifdef _DEBUG
+    std::cout << "MessageViewBase::write\n";
+#endif
+
     time_t left = DBTREE::board_write_leftsec( get_url() );
     if( left ){
         SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "書き込み規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう暫くお待ち下さい。規制秒数が短くなった場合は板のプロパティからリセットできます。" );
@@ -507,14 +483,14 @@ void MessageViewBase::slot_write_clicked()
         }
     }
 
-    write();
+    write_impl();
 }
 
 
 //
-// ファイル挿入
+// 下書きファイル挿入
 //
-void MessageViewBase::slot_draft_open()
+void MessageViewBase::insert_draft()
 {
     std::string open_path = CACHE::open_load_diag( MESSAGE::get_admin()->get_win(), SESSION::get_dir_draft(), CACHE::FILE_TYPE_TEXT );
 
@@ -530,40 +506,12 @@ void MessageViewBase::slot_draft_open()
 
 
 //
-// undoボタンを押した
+// プレビュー切り替え
 //
-void MessageViewBase::slot_undo_clicked()
+void MessageViewBase::toggle_preview()
 {
-    m_text_message.undo();
-}
-
-
-//
-// ビューを閉じないボタンを押した
-//
-void MessageViewBase::slot_not_close_clicked()
-{
-    if( ! m_enable_menuslot ) return;
-    if( ! get_messagetoolbar() ) return;
-
-    SESSION::set_close_mes( ! SESSION::get_close_mes() );
-
-    if( get_messagetoolbar()->get_button_close() ){
-        if( SESSION::get_close_mes() ) get_messagetoolbar()->get_button_close()->set_sensitive( true );
-        else get_messagetoolbar()->get_button_close()->set_sensitive( false );
-    }
-}
-
-
-//
-// プレビューボタンを押した
-//
-void MessageViewBase::slot_preview_clicked()
-{
-    if( ! m_enable_menuslot ) return;
-
 #ifdef _DEBUG
-    std::cout << "MessageViewBase::slot_preview_clicked page = " << m_notebook.get_current_page() << std::endl;
+    std::cout << "MessageViewBase::toggle_preview page = " << m_notebook.get_current_page() << std::endl;
 #endif
 
     if( m_notebook.get_current_page() == PAGE_MESSAGE ) tab_right();
@@ -630,12 +578,6 @@ void MessageViewBase::close_view()
     std::cout << "MessageViewBase::close_view\n";
 #endif
 
-    if( ! SESSION::get_close_mes() ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "「ビューを閉じない」ボタンが押されています。" );
-        mdiag.run();
-        return;
-    }
-
     MESSAGE::get_admin()->set_command( "close_currentview" );
 }
 
@@ -674,17 +616,6 @@ void MessageViewBase::tab_right()
 }
 
 
-
-//
-// 書き込みボタンをフォーカス
-//
-void MessageViewBase::focus_writebutton()
-{
-    if( ! get_messagetoolbar() ) return;
-    get_messagetoolbar()->m_button_write.grab_focus();
-}
-
-
 //
 // 書き込み
 //
@@ -719,11 +650,7 @@ void MessageViewBase::post_fin()
         save_postlog();
         m_text_message.set_text( std::string() );
 
-        // 閉じないボタンを押していてもダイアログを表示しない
-        bool tmp_close = SESSION::get_close_mes();
-        SESSION::set_close_mes( true );
         close_view();
-        SESSION::set_close_mes( tmp_close );
 
         reload();
     }
@@ -755,16 +682,14 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
     std::cout << "MessageViewBase::slot_switch_page : " << get_url() << " page = " << page << std::endl;
 #endif
 
-    // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
-    m_enable_menuslot = false;
-
     // プレビュー表示
-    if( get_messagetoolbar() && m_preview && page == PAGE_PREVIEW ){
+    if( m_preview && page == PAGE_PREVIEW ){
 
-        // 各ボタンの状態更新
-        get_messagetoolbar()->m_button_undo.set_sensitive( false );
-        get_messagetoolbar()->m_button_open.set_sensitive( false );
-        get_messagetoolbar()->m_button_preview.set_active( true );
+        // ツールバー切り替え
+        std::string label = " [ プレビュー ] - ";
+        if( MESSAGE::get_admin()->get_entry_subject() ) label += MESSAGE::get_admin()->get_entry_subject()->get_text();
+        set_label( label );
+        MESSAGE::get_admin()->set_command( "switch_toolbar_preview" );
 
         // URLを除外してエスケープ
         std::string msg = MISC::html_escape( m_text_message.get_text(), false );
@@ -811,20 +736,16 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
     }
 
     // メッセージビュー
-    else if( get_messagetoolbar() && page == PAGE_MESSAGE ){
+    else if( page == PAGE_MESSAGE ){
 
-        // 各ボタンの状態更新
-        get_messagetoolbar()->m_button_undo.set_sensitive( true );
-        get_messagetoolbar()->m_button_open.set_sensitive( true );
-        get_messagetoolbar()->m_button_preview.set_active( false );
+        // ツールバー切り替え
+        MESSAGE::get_admin()->set_command( "switch_toolbar_message" );
     }
 
     if( m_enable_focus ){
         MESSAGE::get_admin()->set_command( "switch_admin" );
         MESSAGE::get_admin()->set_command( "focus_current_view" );
     }
-
-    m_enable_menuslot = true;
 }
 
 
@@ -866,7 +787,7 @@ void MessageViewBase::save_postlog()
     if( ! CONFIG::get_save_postlog() ) return;
 
     std::string subject;
-    if( get_entry_subject() ) subject = get_entry_subject()->get_text();
+    if( MESSAGE::get_admin()->get_entry_subject() ) subject = MESSAGE::get_admin()->get_entry_subject()->get_text();
     std::string msg = get_text_message().get_text();
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();

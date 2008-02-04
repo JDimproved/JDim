@@ -46,14 +46,3 @@ DrawAreaBase* ArticleViewInfo::create_drawarea()
 {
     return Gtk::manage( new ARTICLE::DrawAreaInfo( url_article() ) );
 }
-
-//
-// ウィジットのパッキング
-//
-// ArticleViewBase::pack_widget()をオーパロードしてツールバーをパックしない
-//
-void ArticleViewInfo::pack_widget()
-{
-    pack_start( *drawarea() );
-}
-

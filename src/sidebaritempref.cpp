@@ -36,7 +36,7 @@ SidebarItemPref::SidebarItemPref( Gtk::Window* parent, const std::string& url )
 void SidebarItemPref::slot_ok_clicked()
 {
     SESSION::set_items_sidebar_str( get_items() );
-    CORE::core_set_command( "update_bbslist_toolbar" );
+    CORE::core_set_command( "update_bbslist_toolbar_button" );
 }
 
 

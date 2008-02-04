@@ -12,8 +12,9 @@ using namespace SKELETON;
 LabelEntry::LabelEntry( const bool editable, const std::string& label, const std::string& text )
     : m_editable( editable )
 {
-    m_label.set_text_with_mnemonic( label );
+    set_label( label );
     m_label.set_mnemonic_widget ( m_entry );
+    pack_start( m_label, Gtk::PACK_SHRINK );
 
     m_info.set_size_request( 0, 0 );
     m_info.set_alignment( Gtk::ALIGN_LEFT );
@@ -26,22 +27,21 @@ LabelEntry::LabelEntry( const bool editable, const std::string& label, const std
 
 void LabelEntry::setup()
 {
-    pack_start( m_label, Gtk::PACK_SHRINK );
-
     if( m_editable ) pack_start( m_entry );
     else pack_start( m_info );
 
-    show_all();
+    show_all_children();
 }
 
 
 void LabelEntry::set_editable( const bool editable )
 {
+    if( m_editable == editable ) return;
+
 #ifdef _DEBUG
     std::cout << "LabelEntry::set_editable editable = " << editable << std::endl;
 #endif
 
-    remove( m_label );
     if( m_editable ) remove( m_entry );
     else remove( m_info );
 
@@ -53,6 +53,12 @@ void LabelEntry::set_editable( const bool editable )
 void LabelEntry::set_visibility( bool visibility )
 {
     if( m_editable ) m_entry.set_visibility( visibility );
+}
+
+
+void LabelEntry::set_label( const std::string& label )
+{
+    m_label.set_text_with_mnemonic( label );
 }
 
 

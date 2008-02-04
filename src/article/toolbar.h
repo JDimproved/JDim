@@ -8,45 +8,17 @@
 #ifndef _ARTICLE_TOOLBAR_H
 #define _ARTICLE_TOOLBAR_H
 
-#include <gtkmm.h>
-
 #include "skeleton/toolbar.h"
-#include "skeleton/compentry.h"
+#include "skeleton/imgbutton.h"
 
 namespace ARTICLE
 {
     class ArticleToolBar : public SKELETON::ToolBar
     {
-        int m_status;
+        std::string m_url_article;
 
-        friend class ArticleViewBase;
-        friend class ArticleViewMain;
-        friend class ArticleViewRes;
-        friend class ArticleViewName;
-        friend class ArticleViewID;
-        friend class ArticleViewBM;
-        friend class ArticleViewRefer;
-        friend class ArticleViewURL;
-        friend class ArticleViewDrawout;
+        Gtk::Button* m_button_board;
 
-        // ラベル、ボタンバー
-        Gtk::EventBox m_label_ebox;
-        Gtk::Label m_label;
-        Gtk::Button m_button_board;
-        SKELETON::ImgButton m_button_favorite;
-        SKELETON::ImgButton m_button_write;
-        SKELETON::ImgButton m_button_delete;
-        SKELETON::ImgButton m_button_reload;
-        SKELETON::ImgButton m_button_stop;
-        SKELETON::ImgButton m_button_open_search;
-
-        // 検索バー
-        Gtk::HBox m_searchbar;
-        bool m_searchbar_shown;
-        SKELETON::SearchEntry m_entry_search;
-        SKELETON::ImgButton m_button_close_search;
-        SKELETON::ImgButton m_button_up_search;
-        SKELETON::ImgButton m_button_down_search;
         SKELETON::ImgButton m_button_drawout_and;
         SKELETON::ImgButton m_button_drawout_or;
         SKELETON::ImgButton m_button_clear_hl;
@@ -56,51 +28,19 @@ namespace ARTICLE
         ArticleToolBar(); 
         virtual ~ArticleToolBar(){}
 
-        // 検索バー表示
-        void show_searchbar();
-
-        // 検索バーを消す
-        void hide_searchbar();
-
-        void set_label( const std::string& label );
-        const std::string get_label(){ return m_label.get_text(); }
-
-        // スレが壊れている
-        void set_broken();
-
-        // DAT落ち
-        void set_old();
+        // タブが切り替わった時に呼び出される( Viewの情報を取得する )
+        virtual void set_view( SKELETON::View * view );
 
       protected:
 
         virtual void pack_buttons();
 
-      private:
+        // ボタンを押したときのslot関数
+        void slot_open_board();
 
-        // realizeした
-        void slot_realize();
-    };
-
-
-    ////////////////////////////////////////////
-
-
-    class SearchToolBar : public SKELETON::ToolBar
-    {
-        friend class ArticleViewSearch;
-
-        SKELETON::SearchEntry m_entry_search;
-        SKELETON::ImgButton m_button_reload;
-        SKELETON::ImgButton m_button_stop;
-
-      public:
-
-        SearchToolBar();
-        virtual ~SearchToolBar(){}
-
-      protected:
-
-        virtual void pack_buttons();
+        void slot_drawout_and();
+        void slot_drawout_or();
+        void slot_clear_highlight();
     };
 }
 

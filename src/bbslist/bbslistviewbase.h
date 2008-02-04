@@ -17,11 +17,14 @@
 
 #include <gtkmm.h>
 
+namespace SKELETON
+{
+    class Admin;
+};
+
 
 namespace BBSLIST
 {
-    class BBSListToolBar;
-
     class BBSListViewBase : public SKELETON::View
     {
       private:
@@ -66,12 +69,14 @@ namespace BBSLIST
 
       protected:
 
+        // Viewが所属するAdminクラス
+        virtual SKELETON::Admin* get_admin();
+
         // DOM共有オブジェクト
         XML::Document m_document;
 
         Glib::RefPtr< Gtk::TreeStore >& get_treestore() { return m_treestore; }
         SKELETON::JDTreeView& get_treeview() { return  m_treeview; }
-        BBSListToolBar* get_bbslisttoolbar();
         const bool& get_ready_tree() const{ return m_ready_tree; }
         void set_expand_collapse( bool set ){ m_expand_collapse = set; }
 
@@ -126,7 +131,12 @@ namespace BBSLIST
         virtual void operate_view( const int& control );
         virtual void goto_top();
         virtual void goto_bottom();
-        virtual void toggle_toolbar();
+
+        // 検索
+        virtual void exec_search();
+        virtual void up_search();
+        virtual void down_search();
+        virtual void operate_search( const std::string& controlid );
 
         // selectdialogで使う
         Gtk::TreePath get_current_path() { return m_treeview.get_current_path(); }
@@ -202,14 +212,6 @@ namespace BBSLIST
 
         void draw_underline( const Gtk::TreePath& path, bool draw );
         void show_status();
-
-        // 検索
-        void slot_active_search();
-        void slot_push_down_search();
-        void slot_push_up_search();
-        void slot_entry_operate( int controlid );
-
-        void slot_combo_changed();
 
         void set_info_to_sharedbuffer( Gtk::TreePath& path );
 

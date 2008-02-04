@@ -6,7 +6,7 @@
 #include "toolbar.h"
 #include "boardadmin.h"
 
-#include "icons/iconmanager.h"
+#include "skeleton/compentry.h"
 
 #include "controlutil.h"
 #include "controlid.h"
@@ -17,16 +17,10 @@ using namespace BOARD;
 
 
 BoardToolBar::BoardToolBar() :
-    SKELETON::ToolBar( BOARD::get_admin() ),
-      m_button_reload( Gtk::Stock::REFRESH ),
-      m_button_delete( Gtk::Stock::DELETE ),
-      m_button_stop( Gtk::Stock::STOP ),
-      m_button_favorite( Gtk::Stock::COPY ),
-      m_button_up_search( Gtk::Stock::GO_UP ),
-      m_button_down_search( Gtk::Stock::GO_DOWN ),
-      m_button_new_article( ICON::WRITE )
+    SKELETON::ToolBar( BOARD::get_admin() )
 {
     pack_buttons();
+    get_entry_search()->add_mode( CONTROL::MODE_BOARD );
 }
 
 // ボタンのパッキング
@@ -39,44 +33,38 @@ void BoardToolBar::pack_buttons()
         switch( item ){
 
             case ITEM_NEWARTICLE:
-                get_buttonbar().pack_start( m_button_new_article, Gtk::PACK_SHRINK );
-                set_tooltip( m_button_new_article, CONTROL::get_label_motion( CONTROL::NewArticle ) );
+                get_buttonbar().pack_start( *get_button_write(), Gtk::PACK_SHRINK );
+                set_tooltip( *get_button_write(), CONTROL::get_label_motion( CONTROL::NewArticle ) );
                 break;
 
             case ITEM_SEARCHBOX:
-                get_buttonbar().pack_start( m_entry_search, Gtk::PACK_EXPAND_WIDGET );
-                m_entry_search.add_mode( CONTROL::MODE_BOARD );
+                get_buttonbar().pack_start( *get_entry_search(), Gtk::PACK_EXPAND_WIDGET );
                 break;
 
             case ITEM_SEARCH_NEXT:
-                get_buttonbar().pack_start( m_button_down_search, Gtk::PACK_SHRINK );
-                set_tooltip( m_button_down_search, CONTROL::get_label_motion( CONTROL::SearchNext ) );
+                get_buttonbar().pack_start( *get_button_down_search(), Gtk::PACK_SHRINK );
                 break;
 
             case ITEM_SEARCH_PREV:
-                get_buttonbar().pack_start( m_button_up_search, Gtk::PACK_SHRINK );
-                set_tooltip( m_button_up_search, CONTROL::get_label_motion( CONTROL::SearchPrev ) );
+                get_buttonbar().pack_start( *get_button_up_search(), Gtk::PACK_SHRINK );
                 break;
 
             case ITEM_RELOAD:
-                get_buttonbar().pack_start( m_button_reload, Gtk::PACK_SHRINK );
-                set_tooltip( m_button_reload, CONTROL::get_label_motion( CONTROL::Reload ) );
+                get_buttonbar().pack_start( *get_button_reload(), Gtk::PACK_SHRINK );
                 break;
 
             case ITEM_STOPLOADING:
-                get_buttonbar().pack_start( m_button_stop, Gtk::PACK_SHRINK );
-                set_tooltip( m_button_stop, CONTROL::get_label_motion( CONTROL::StopLoading ) );
+                get_buttonbar().pack_start( *get_button_stop(), Gtk::PACK_SHRINK );
                 break;
 
             case ITEM_FAVORITE:
-                get_buttonbar().pack_start( m_button_favorite, Gtk::PACK_SHRINK );
-                set_tooltip( m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite )
+                get_buttonbar().pack_start( *get_button_favorite(), Gtk::PACK_SHRINK );
+                set_tooltip( *get_button_favorite(), CONTROL::get_label_motion( CONTROL::AppendFavorite )
                              + "\n\nスレ一覧のタブか選択したスレをお気に入りに直接Ｄ＆Ｄしても登録可能" );
                 break;
 
             case ITEM_DELETE:
-                get_buttonbar().pack_start( m_button_delete, Gtk::PACK_SHRINK );
-                set_tooltip( m_button_delete, CONTROL::get_label_motion( CONTROL::Delete ) );
+                get_buttonbar().pack_start( *get_button_delete(), Gtk::PACK_SHRINK );
                 break;
 
             case ITEM_QUIT:
@@ -89,6 +77,10 @@ void BoardToolBar::pack_buttons()
 
             case ITEM_NEXTVIEW:
                 get_buttonbar().pack_start( *get_button_forward(), Gtk::PACK_SHRINK );
+                break;
+
+            case ITEM_LOCK:
+                get_buttonbar().pack_start( *get_button_lock(), Gtk::PACK_SHRINK );
                 break;
 
             case ITEM_SEPARATOR:

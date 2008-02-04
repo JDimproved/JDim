@@ -15,6 +15,7 @@
 
 namespace SKELETON
 {
+    class Admin;
     class PopupWin;
 }
 
@@ -26,12 +27,14 @@ namespace DBTREE
 namespace ARTICLE
 {
     class DrawAreaBase;
-    class ArticleToolBar;
 
     class ArticleViewBase : public SKELETON::View
     {
         // viewに表示するdatファイルのURL ( SKELETON::View::m_url はview自身のURLなのに注意すること )
         std::string m_url_article; 
+
+        // ツールバーの板ボタンに表示する文字列
+        std::string m_label_board; 
 
         // 高速化のため直接アクセス
         JDLIB::RefPtr_Lock< DBTREE::ArticleBase > m_article; 
@@ -51,7 +54,7 @@ namespace ARTICLE
 
         // 検索用
         bool m_search_invert; // 逆方向検索モード
-        std::string m_query;  // 前回の検索で使ったクエリー
+        std::string m_pre_query;  // 前回の検索で使ったクエリー
 
         // ポップアップメニュー表示のときにactivate_act_before_popupmenu()で使う変数
         bool m_enable_menuslot;
@@ -72,6 +75,7 @@ namespace ARTICLE
 
         const std::string& url_article() const { return m_url_article; }
         virtual const std::string url_for_copy();
+        const std::string& get_label_board(){ return m_label_board; }
 
         // SKELETON::View の関数のオーバロード
         virtual const int width_client();
@@ -80,6 +84,8 @@ namespace ARTICLE
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
 
         virtual void clock_in();
+
+        virtual void write();
         virtual void reload();
         virtual void stop();
         virtual void redraw_view();
@@ -87,22 +93,33 @@ namespace ARTICLE
         virtual void focus_out();
         virtual void close_view();
         virtual void delete_view();
+        virtual void set_favorite();
         virtual void operate_view( const int& control );
         virtual void goto_top();
         virtual void goto_bottom();
         virtual void goto_num( int num );
-        virtual void toggle_toolbar();
         virtual void show_preference();
+
+        // 進む、戻る
         virtual void back_viewhistory( const int count );
         virtual void forward_viewhistory( const int count );
+ 
+        // 検索
+        virtual void exec_search();
+        virtual void up_search();
+        virtual void down_search();
+        virtual void operate_search( const std::string& controlid );
+        void clear_highlight();  // ハイライト解除
 
         // 記事削除 & 再オープン
         void delete_open_view();
 
     protected:
 
+        // Viewが所属するAdminクラス
+        virtual SKELETON::Admin* get_admin();
+
         DrawAreaBase* drawarea();
-        ArticleToolBar* get_articletoolbar();
         JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article();
 
         // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
@@ -159,26 +176,17 @@ namespace ARTICLE
         // リストで指定したレスを表示(連結情報付き)
         void append_res( std::list< int >& list_resnum, std::list< bool >& list_joint );
 
-        // ツールバーのボタンを押したときのスロット
-        void slot_push_close_search();
-        void slot_push_reload();
-        virtual void slot_push_write();
-        void slot_push_delete();
-        void slot_push_open_board();
+        // 画像プロパティ表示
         void slot_preferences_image();
-        void slot_push_open_search();
-        void slot_push_up_search();
-        void slot_push_down_search();
-        void slot_push_drawout_and();
-        void slot_push_drawout_or();
-        void slot_push_claar_hl();
 
     private:
 
         virtual DrawAreaBase* create_drawarea();        
 
-        virtual void pack_widget();
         void setup_action();
+
+        void exec_reload();
+        void exec_delete();
 
         // 荒らし報告用のURLリストをHTML形式で取得
         std::string get_html_url4report( std::list< int >& list_resnum );
@@ -223,7 +231,6 @@ namespace ARTICLE
         void slot_search_title();
         void slot_usrcmd( int num );
         void slot_copy_res( bool ref );
-        void slot_favorite();
         virtual void slot_drawout_res();
         virtual void slot_drawout_around();
         virtual void slot_drawout_tmp();
@@ -260,10 +267,8 @@ namespace ARTICLE
         void slot_saveimage();
         void slot_abone_img();
 
-        // 検索
-        virtual void open_searchbar( bool invert );
-        virtual void slot_active_search();
-        virtual void slot_entry_operate( int controlid );
+        // 検索バーを開く
+        void open_searchbar( bool invert );
     };
 
 }

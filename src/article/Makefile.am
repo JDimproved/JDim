@@ -11,14 +11,17 @@ libarticle_a_SOURCES = \
 \
 	articleviewbase.cpp \
 	articleview.cpp \
+	articleviewsearch.cpp \
 	articleviewpreview.cpp \
 	articleviewinfo.cpp \
 	articleviewpopup.cpp \
+	articleviewetc.cpp \
 \
 	layouttree.cpp \
 	font.cpp \
 	preference.cpp \
-	toolbar.cpp
+	toolbar.cpp \
+	toolbarsearch.cpp
 
 noinst_HEADERS = \
 	articleadmin.h \
@@ -31,16 +34,19 @@ noinst_HEADERS = \
 \
 	articleviewbase.h \
 	articleview.h \
+	articleviewsearch.h \
 	articleviewpreview.h \
 	articleviewinfo.h \
 	articleviewpopup.h \
+	articleviewetc.h \
 \
 	layouttree.h \
 	font.h \
 	preference.h \
 	caret.h \
 	scrollinfo.h \
-	toolbar.h 
+	toolbar.h \
+	toolbarsearch.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

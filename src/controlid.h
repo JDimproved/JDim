@@ -71,6 +71,7 @@ namespace CONTROL
         SelectAll,
         AppendFavorite,
         Property,
+        Lock,
     
         Search,
         CloseSearchBar,
@@ -193,7 +194,7 @@ namespace CONTROL
         CancelWrite,
         ExecWrite,
         InsertText,
-        NotClose,
+        LockMessage,
         Preview,
 
         FocusWrite,

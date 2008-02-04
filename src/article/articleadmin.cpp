@@ -5,6 +5,8 @@
 
 #include "articleadmin.h"
 #include "font.h"
+#include "toolbar.h"
+#include "toolbarsearch.h"
 
 #include "dbtree/interface.h"
 
@@ -45,7 +47,7 @@ void ARTICLE::delete_admin()
 using namespace ARTICLE;
 
 ArticleAdmin::ArticleAdmin( const std::string& url )
-    : SKELETON::Admin( url )
+    : SKELETON::Admin( url ), m_toolbar( NULL ), m_search_toolbar( NULL )
 {
     set_use_viewhistory( true );
     ARTICLE::init_font();
@@ -63,6 +65,9 @@ ArticleAdmin::~ArticleAdmin()
 #ifdef _DEBUG    
     std::cout << "ArticleAdmin::~ArticleAdmin\n";
 #endif
+
+    if( m_toolbar ) delete m_toolbar;
+    if( m_search_toolbar ) delete m_search_toolbar;
 
     SESSION::set_article_URLs( get_URLs() );
     SESSION::set_article_locked( get_locked() );
@@ -452,6 +457,77 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
 
 
 //
+// ツールバー表示
+//
+void ArticleAdmin::show_toolbar()
+{
+    // まだ作成されていない場合は作成する
+    if( ! m_toolbar ){
+
+        // 通常のツールバー( TOOLBAR_ARTICLE )
+        m_toolbar = new ArticleToolBar();
+        get_notebook()->append_toolbar( *m_toolbar );
+
+        // ログ検索などのツールバー( TOOLBAR_SEARCH )
+        m_search_toolbar = new SearchToolBar();
+        get_notebook()->append_toolbar( *m_search_toolbar );
+
+        if( SESSION::get_show_article_toolbar() ){
+            m_toolbar->show_toolbar();
+            m_search_toolbar->show_toolbar();
+        }
+    }
+
+    get_notebook()->show_toolbar();
+}
+
+
+//
+// ツールバー表示切り替え
+//
+void ArticleAdmin::toggle_toolbar()
+{
+    if( ! m_toolbar ) return;
+
+    if( SESSION::get_show_article_toolbar() ){
+        m_toolbar->show_toolbar();
+        m_search_toolbar->show_toolbar();
+    }
+    else{
+        m_toolbar->hide_toolbar();
+        m_search_toolbar->hide_toolbar();
+    }
+}
+
+
+//
+// 検索バー表示
+//
+void ArticleAdmin::open_searchbar()
+{
+    SKELETON::View* view = get_current_view();
+    if( view && m_toolbar ){
+        m_toolbar->open_searchbar();
+        if( view->get_id_toolbar() == TOOLBAR_ARTICLE ) m_toolbar->focus_entry_search();
+    }
+    if( view && m_search_toolbar ){
+        m_search_toolbar->open_searchbar();
+        if( view->get_id_toolbar() == TOOLBAR_SEARCH ) m_search_toolbar->focus_entry_search();
+    }
+}
+
+
+//
+// 検索バー非表示
+//
+void ArticleAdmin::close_searchbar()
+{
+    if( m_toolbar ) m_toolbar->close_searchbar();
+    if( m_search_toolbar ) m_search_toolbar->close_searchbar();
+}
+
+
+//
 // ローカルなコマンド
 //
 void ArticleAdmin::command_local( const COMMAND_ARGS& command )
@@ -488,9 +564,13 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
 
     // フォント初期化
     else if( command.command == "init_font" ) ARTICLE::init_font();
+
+    // ハイライト解除
+    else if( command.command == "clear_highlight" ){
+        SKELETON::View* view = get_view( command.url );
+        if( view ) view->set_command( "clear_highlight" );
+    }
 }
-
-
 
 
 

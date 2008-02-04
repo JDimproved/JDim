@@ -12,14 +12,24 @@
 
 namespace BBSLIST
 {
+    class BBSListToolBar;
+
     class BBSListAdmin : public SKELETON::Admin
     {
+        BBSListToolBar* m_toolbar;
+
       public:
         BBSListAdmin( const std::string& url );
         ~BBSListAdmin();
 
       protected:
+
         SKELETON::View* create_view( const COMMAND_ARGS& command );
+
+        // ツールバー
+        virtual void show_toolbar();
+        virtual void toggle_toolbar();
+
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();

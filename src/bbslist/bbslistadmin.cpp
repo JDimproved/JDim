@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "bbslistadmin.h"
+#include "toolbar.h"
 
 #include "skeleton/view.h"
 #include "skeleton/dragnote.h"
@@ -36,7 +37,7 @@ void BBSLIST::delete_admin()
 using namespace BBSLIST;
 
 BBSListAdmin::BBSListAdmin( const std::string& url )
-    : SKELETON::Admin( url )
+    : SKELETON::Admin( url ), m_toolbar( NULL )
 {
     get_notebook()->set_dragable( false );
     get_notebook()->set_fixtab( true );
@@ -48,6 +49,9 @@ BBSListAdmin::~BBSListAdmin()
 #ifdef _DEBUG    
     std::cout << "BBSListAdmin::~BBSListAdmin\n";
 #endif
+
+    if( m_toolbar ) delete m_toolbar;
+
     // bbslistのページの位置保存
     SESSION::set_bbslist_page( get_current_page() );
 }
@@ -90,6 +94,38 @@ void BBSListAdmin::switch_admin()
 }
 
 
+//
+// ツールバー表示
+//
+void BBSListAdmin::show_toolbar()
+{
+    // まだ作成されていない場合は作成する
+    if( ! m_toolbar ){
+        m_toolbar = new BBSListToolBar();
+        get_notebook()->append_toolbar( *m_toolbar );
+
+        if( SESSION::get_show_bbslist_toolbar() ) m_toolbar->show_toolbar();
+
+        if( SESSION::bbslist_page() == 0 ) m_toolbar->set_combo( COMBO_BBSLIST );
+        else m_toolbar->set_combo( COMBO_FAVORITE );
+    }
+
+    get_notebook()->show_toolbar();
+}
+
+
+//
+// ツールバー表示切り替え
+//
+void BBSListAdmin::toggle_toolbar()
+{
+    if( ! m_toolbar ) return;
+
+    if( SESSION::get_show_bbslist_toolbar() ) m_toolbar->show_toolbar();
+    else m_toolbar->hide_toolbar();
+}
+
+
 SKELETON::View* BBSListAdmin::create_view( const COMMAND_ARGS& command )
 {
     int type = CORE::VIEW_BBSLISTVIEW;
@@ -110,20 +146,26 @@ SKELETON::View* BBSListAdmin::create_view( const COMMAND_ARGS& command )
 //
 void BBSListAdmin::command_local( const COMMAND_ARGS& command )
 {
-    SKELETON::View* view = get_view( command.url );
-    if( view ){
+    // コンボボックス切り替え
+    if( m_toolbar && command.command == "switch_combo_bbslist" ) m_toolbar->set_combo( COMBO_BBSLIST );
+    else if( m_toolbar && command.command == "switch_combo_favorite" ) m_toolbar->set_combo( COMBO_FAVORITE );
+    else{
 
-        // アイテム追加
-        // append_favorite を呼ぶ前に共有バッファにコピーデータをセットしておくこと
-        if( command.command  == "append_item" ) view->set_command( "append_item" );
+        SKELETON::View* view = get_view( command.url );
+        if( view ){
 
-        // お気に入りルート更新チェック
-        else if( command.command  == "check_update_root" ) view->set_command( "check_update_root" );
-        else if( command.command == "check_update_open_root" ) view->set_command( "check_update_open_root" );
-        else if( command.command == "cancel_check_update" ) view->set_command( "cancel_check_update" );
+            // アイテム追加
+            // append_favorite を呼ぶ前に共有バッファにコピーデータをセットしておくこと
+            if( command.command  == "append_item" ) view->set_command( "append_item" );
 
-        // XML保存
-        else if( command.command  == "save_xml" ) view->set_command( "save_xml" );
+            // お気に入りルート更新チェック
+            else if( command.command  == "check_update_root" ) view->set_command( "check_update_root" );
+            else if( command.command == "check_update_open_root" ) view->set_command( "check_update_open_root" );
+            else if( command.command == "cancel_check_update" ) view->set_command( "cancel_check_update" );
+
+            // XML保存
+            else if( command.command  == "save_xml" ) view->set_command( "save_xml" );
+        }
     }
 }
 

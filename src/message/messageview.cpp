@@ -27,8 +27,12 @@ using namespace MESSAGE;
     setup_view();
     set_message( msg );
 
-    // タイトルセット
+    // メインウィンドウのタイトルに表示する文字
     set_title( "[ 書き込み ] " + DBTREE::article_subject( get_url() ) );
+
+    // ツールバーにスレ名を表示
+    SKELETON::LabelEntry* label = MESSAGE::get_admin()->get_entry_subject();
+    if( label ) label->set_text( DBTREE::article_subject( get_url() ) );
 }
 
 
@@ -79,7 +83,7 @@ std::string MessageViewMain::create_message()
 //
 // 書き込みが終わったら MessageViewBase::post_fin()が呼ばれる
 //
-void MessageViewMain::write()
+void MessageViewMain::write_impl()
 {
     std::string msg = create_message();
     if( msg.empty() ) return;
@@ -104,13 +108,14 @@ void MessageViewMain::reload()
 
     set_message( msg );
 
-    if( get_entry_subject() ){
-        get_entry_subject()->set_editable( true );
-        get_entry_subject()->set_text( std::string() );
-        get_entry_subject()->grab_focus();
+    // スレタイトルを編集可能にする
+    SKELETON::LabelEntry* label = MESSAGE::get_admin()->get_entry_subject();
+    if( label ){
+        label->set_editable( true );
+        label->set_text( std::string() );
     }
 
-    // タイトルセット
+    // メインウィンドウのタイトルに表示する文字
     set_title( "[ 新スレ作成 ] " + DBTREE::article_subject( get_url() ) );
 }
 
@@ -123,7 +128,8 @@ void MessageViewMain::reload()
 std::string MessageViewNew::create_message()
 {
     std::string subject;
-    if( get_entry_subject() ) subject = get_entry_subject()->get_text();
+    SKELETON::LabelEntry* label = MESSAGE::get_admin()->get_entry_subject();
+    if( label ) subject = label->get_text();
     std::string msg = get_text_message().get_text();
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();
@@ -151,7 +157,7 @@ std::string MessageViewNew::create_message()
 //
 // 書き込みが終わったら MessageViewBase::post_fin()が呼ばれる
 //
-void MessageViewNew::write()
+void MessageViewNew::write_impl()
 {
     std::string msg = create_message();
     if( msg.empty() ) return;

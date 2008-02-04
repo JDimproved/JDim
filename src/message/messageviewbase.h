@@ -16,6 +16,7 @@ namespace JDLIB
 
 namespace SKELETON
 {
+    class Admin;
     class LabelEntry;
 }
 
@@ -23,7 +24,6 @@ namespace SKELETON
 namespace MESSAGE
 {
     class Post;
-    class MessageToolBar;
 
     class MessageViewBase : public SKELETON::View
     {
@@ -41,7 +41,6 @@ namespace MESSAGE
         Gtk::CheckButton m_check_fixname;
         Gtk::CheckButton m_check_fixmail;
 
-        bool m_enable_menuslot;
         bool m_enable_focus;
 
         SKELETON::NameEntry m_entry_name;
@@ -73,6 +72,7 @@ namespace MESSAGE
 
         // SKELETON::View の関数のオーバロード
         virtual void clock_in();
+        virtual void write();
         virtual void reload(){}
         virtual void relayout();
         virtual void close_view();
@@ -91,18 +91,18 @@ namespace MESSAGE
         // 書き込みログ保存
         void save_postlog();
 
-        virtual void write() = 0;
+        // 実際の書き込み処理を行う関数(子クラス別に実装)
+        virtual void write_impl() = 0;  
+
+        // プレビュー切り替え
+        void toggle_preview();
 
         void tab_left();
         void tab_right();
 
-        void focus_writebutton();
+        // 下書きファイル挿入
+        void insert_draft();
 
-        void slot_write_clicked();
-        void slot_draft_open();
-        void slot_undo_clicked();
-        void slot_not_close_clicked();
-        void slot_preview_clicked();
         bool slot_key_press( GdkEventKey* event );
         bool slot_button_press( GdkEventButton* event );
         void slot_switch_page( GtkNotebookPage*, guint page );
@@ -113,12 +113,12 @@ namespace MESSAGE
 
       protected:
 
+        // Viewが所属するAdminクラス
+        virtual SKELETON::Admin* get_admin();
+
         void set_message( const std::string& msg ){ m_text_message.set_text( msg ); }
         Glib::ustring get_message(){ return m_text_message.get_text(); }
 
-        MessageToolBar* get_messagetoolbar();
-
-        SKELETON::LabelEntry* get_entry_subject();
         SKELETON::CompletionEntry& get_entry_name(){ return m_entry_name; }
         SKELETON::CompletionEntry& get_entry_mail(){ return m_entry_mail; }
         SKELETON::EditView& get_text_message() { return m_text_message; }

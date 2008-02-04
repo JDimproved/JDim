@@ -61,6 +61,12 @@ ImageViewBase::~ImageViewBase()
 }
 
 
+SKELETON::Admin* ImageViewBase::get_admin()
+{
+    return IMAGE::get_admin();
+}
+
+
 //
 // 共通セットアップ
 //

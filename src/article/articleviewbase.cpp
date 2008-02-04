@@ -5,9 +5,7 @@
 
 #include "articleadmin.h"
 #include "articleviewbase.h"
-#include "articleview.h"
 #include "drawareamain.h"
-#include "toolbar.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -39,6 +37,8 @@
 #include "controlutil.h"
 #include "controlid.h"
 
+#include "icons/iconmanager.h"
+
 #include <sstream>
 
 #ifndef MAX
@@ -68,11 +68,16 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
     std::cout << "ArticleViewBase::ArticleViewBase : " << get_url() << std::endl;
 #endif
 
+    set_id_toolbar( TOOLBAR_ARTICLE );
+
     // マウスジェスチャ可能
     set_enable_mg( true );
 
     // コントロールモード設定
     get_control().add_mode( CONTROL::MODE_ARTICLE );
+
+    // 板名セット
+    m_label_board = "[ " + DBTREE::board_name( m_url_article ) + " ]";
 }
 
 
@@ -87,6 +92,11 @@ ArticleViewBase::~ArticleViewBase()
     delete_popup();
 }
 
+
+SKELETON::Admin* ArticleViewBase::get_admin()
+{
+    return ARTICLE::get_admin();
+}
 
 
 //
@@ -111,12 +121,6 @@ DrawAreaBase* ArticleViewBase::drawarea()
 {
     assert( m_drawarea );
     return m_drawarea;
-}
-
-
-ArticleToolBar* ArticleViewBase::get_articletoolbar()
-{
-    return dynamic_cast< ArticleToolBar* >( get_toolbar() );
 }
 
 
@@ -153,45 +157,11 @@ void ArticleViewBase::setup_view()
     m_drawarea->sig_on_url().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_on_url ) );
     m_drawarea->sig_leave_url().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_leave_url ) );
 
-    pack_widget();
+    pack_start( *m_drawarea, Gtk::PACK_EXPAND_WIDGET );
     setup_action();
 
     show_all_children();    
 }
-
-
-//
-// ツールバーやスクロールバーのパッキング
-//
-void ArticleViewBase::pack_widget()
-{
-    // ツールバーの設定
-    set_toolbar( Gtk::manage( new ArticleToolBar() ) );
-    get_articletoolbar()->m_button_reload.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_reload ) );
-    get_articletoolbar()->m_button_write.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_write ) );
-    get_articletoolbar()->m_button_delete.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_delete ) );        
-    get_articletoolbar()->m_button_board.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_open_board ) );
-    get_articletoolbar()->m_button_favorite.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_favorite ) );
-    get_articletoolbar()->m_button_stop.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::stop ) );
-    get_articletoolbar()->m_button_open_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_open_search ) );
-
-    // 検索バー
-    get_articletoolbar()->m_entry_search.signal_activate().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_active_search ) );
-    get_articletoolbar()->m_entry_search.signal_operate().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_entry_operate ) );
-    get_articletoolbar()->m_button_close_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_close_search ) );
-    get_articletoolbar()->m_button_up_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_up_search ) );
-    get_articletoolbar()->m_button_down_search.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_down_search ) );
-    get_articletoolbar()->m_button_drawout_and.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_drawout_and ) );
-    get_articletoolbar()->m_button_drawout_or.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_drawout_or ) );
-    get_articletoolbar()->m_button_clear_hl.signal_clicked().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_push_claar_hl ) );
-
-    if( SESSION::get_show_article_toolbar() ) get_articletoolbar()->show_toolbar();
-
-    pack_start( *get_articletoolbar(), Gtk::PACK_SHRINK );
-    pack_start( *m_drawarea, Gtk::PACK_EXPAND_WIDGET );
-}
-
-
 
 
 //
@@ -214,9 +184,9 @@ void ArticleViewBase::setup_action()
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), false ) );
     action_group()->add( Gtk::Action::create( "CopyResRef", "引用コピー(_F)"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), true ) );
-    action_group()->add( Gtk::Action::create( "Delete", "削除"), sigc::mem_fun( *this, &ArticleViewBase::delete_view ) );
+    action_group()->add( Gtk::Action::create( "Delete", "削除"), sigc::mem_fun( *this, &ArticleViewBase::exec_delete ) );
     action_group()->add( Gtk::Action::create( "DeleteOpen", "スレ情報を消さずにスレ再取得(_R)"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
-    action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する(_F)"), sigc::mem_fun( *this, &ArticleViewBase::slot_favorite ) );
+    action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する(_F)"), sigc::mem_fun( *this, &ArticleViewBase::set_favorite ) );
     action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ(_T)..."), sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
     action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存(_S)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
@@ -426,6 +396,7 @@ void ArticleViewBase::setup_action()
     "<menuitem action='SearchWeb'/>"
     "<separator/>"
     "<menuitem action='SearchTitle' />"
+    "<separator/>"
     "<menuitem action='SearchCacheLocal'/>"
     "<menu action='SearchCacheAll'>"
     "<menuitem action='ExecSearchCacheAll'/>"
@@ -564,6 +535,7 @@ bool ArticleViewBase::set_command( const std::string& command, const std::string
     }
     else if( command == "goto_num" ) goto_num( atoi( arg.c_str() ) );
     else if( command == "delete_popup" ) delete_popup();
+    else if( command == "clear_highlight" ) clear_highlight();
 
     return true;
 }
@@ -592,11 +564,20 @@ void ArticleViewBase::clock_in()
 }
 
 
-
 //
-// 再読み込み
+// 再読み込みボタンを押した
 //
 void ArticleViewBase::reload()
+{
+    if( CONFIG::get_reload_allthreads() ) ARTICLE::get_admin()->set_command( "reload_all_tabs" );
+    else exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+void ArticleViewBase::exec_reload()
 {
     // オフライン
     if( ! SESSION::is_online() ){
@@ -696,9 +677,18 @@ void ArticleViewBase::close_view()
 
 
 //
-// 記事削除
+// 削除ボタンを押した
 //
 void ArticleViewBase::delete_view()
+{
+    show_popupmenu( "popup_menu_delete", false );
+}
+
+
+//
+// 削除実行
+//
+void ArticleViewBase::exec_delete()
 {
     CORE::core_set_command( "delete_article", m_url_article );
     ARTICLE::get_admin()->set_command( "switch_admin" );
@@ -772,7 +762,7 @@ void ArticleViewBase::operate_view( const int& control )
             
         // リロード
         case CONTROL::Reload:
-            slot_push_reload();
+            exec_reload();
             break;
 
             // コピー
@@ -795,11 +785,11 @@ void ArticleViewBase::operate_view( const int& control )
             break;
 
         case CONTROL::SearchNext:
-            slot_push_down_search();
+            down_search();
             break;
 
         case CONTROL::SearchPrev:
-            slot_push_up_search();
+            up_search();
             break;
 
             // 閉じる
@@ -809,7 +799,7 @@ void ArticleViewBase::operate_view( const int& control )
 
             // 書き込み
         case CONTROL::WriteMessage:
-            slot_push_write();
+            write();
             break;
 
             // 削除
@@ -829,7 +819,7 @@ void ArticleViewBase::operate_view( const int& control )
 #endif
             mdiag.set_default_response( Gtk::RESPONSE_YES );
             int ret = mdiag.run();
-            if( ret == Gtk::RESPONSE_YES ) delete_view();
+            if( ret == Gtk::RESPONSE_YES ) exec_delete();
             else if( ret == Gtk::RESPONSE_YES + 100 ) delete_open_view();
             break;
         }
@@ -933,18 +923,6 @@ void ArticleViewBase::goto_num( int num )
 
 
 //
-// ツールバー表示切り替え
-//
-void ArticleViewBase::toggle_toolbar()
-{
-    if( ! get_articletoolbar() ) return;
-
-    if( SESSION::get_show_article_toolbar() ) get_articletoolbar()->show_toolbar();
-    else get_articletoolbar()->hide_toolbar();
-}
-
-
-//
 // 新着に移動
 //
 void ArticleViewBase::goto_new()
@@ -960,47 +938,18 @@ void ArticleViewBase::goto_new()
 //
 void ArticleViewBase::open_searchbar( bool invert )
 {
-    if( ! get_articletoolbar() ) return;
-
-    get_articletoolbar()->show_searchbar(); 
+    ARTICLE::get_admin()->set_command( "open_searchbar", get_url() );
     m_search_invert = invert;
-    get_articletoolbar()->m_entry_search.grab_focus(); 
-}
-
-
-
-//
-// 検索バーを開くボタンを押した
-//
-void ArticleViewBase::slot_push_open_search()
-{
-    if( ! get_articletoolbar() ) return;
-
-    if( ! get_articletoolbar()->m_searchbar_shown ) open_searchbar( false );
-    else slot_push_close_search();
-}
-
-
-
-//
-// 検索バーを隠すボタンを押した
-//
-void ArticleViewBase::slot_push_close_search()
-{
-    if( ! get_articletoolbar() ) return;
-
-    get_articletoolbar()->hide_searchbar();
-    m_drawarea->focus_view();
 }
 
 
 //
 // 前を検索
 //
-void ArticleViewBase::slot_push_up_search()
+void ArticleViewBase::up_search()
 {
     m_search_invert = true;
-    slot_active_search();
+    exec_search();
     redraw_view();
 }
 
@@ -1009,99 +958,34 @@ void ArticleViewBase::slot_push_up_search()
 //
 // 次を検索
 //
-void ArticleViewBase::slot_push_down_search()
+void ArticleViewBase::down_search()
 {
     m_search_invert = false;
-    slot_active_search();
+    exec_search();
     redraw_view();
-}
-
-
-
-//
-// 別のタブを開いてキーワード抽出 (AND)
-//
-void ArticleViewBase::slot_push_drawout_and()
-{
-    if( ! get_articletoolbar() ) return;
-    if( get_articletoolbar()->m_entry_search.completion() ) return;
-
-    std::string query = get_articletoolbar()->m_entry_search.get_text();
-    if( query.empty() ) return;
-
-    CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "false" );
-}
-
-
-//
-// 別のタブを開いてキーワード抽出 (OR)
-//
-void ArticleViewBase::slot_push_drawout_or()
-{
-    if( ! get_articletoolbar() ) return;
-    if( get_articletoolbar()->m_entry_search.completion() ) return;
-
-    std::string query = get_articletoolbar()->m_entry_search.get_text();
-    if( query.empty() ) return;
-
-    CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "true" );
 }
 
 
 //
 // ハイライト解除
 //
-void ArticleViewBase::slot_push_claar_hl()
+void ArticleViewBase::clear_highlight()
 {
     assert( m_drawarea );
-    if( m_query.empty() ) return;
+    if( m_pre_query.empty() ) return;
 
-    m_query = std::string();
+    m_pre_query = std::string();
     m_drawarea->clear_highlight();
-}
-
-
-//
-// リロードボタン
-//
-void ArticleViewBase::slot_push_reload()
-{
-    if( CONFIG::get_reload_allthreads() ) ARTICLE::get_admin()->set_command( "reload_all_tabs" );
-    else reload();
 }
 
 
 //
 // メッセージ書き込みボタン
 //
-void ArticleViewBase::slot_push_write()
+void ArticleViewBase::write()
 {
     CORE::core_set_command( "open_message" ,m_url_article, std::string() );
 }
-
-
-
-//
-// 削除ボタン
-//
-void ArticleViewBase::slot_push_delete()
-{
-    show_popupmenu( "popup_menu_delete", false );
-}
-
-
-//
-// 板を開くボタン
-//
-void ArticleViewBase::slot_push_open_board()
-{
-    CORE::core_set_command( "open_board", DBTREE::url_subject( m_url_article ), "true",
-                            "auto" // オートモードで開く
-        );
-}
-
-
-
 
 
 //
@@ -2928,7 +2812,7 @@ void ArticleViewBase::slot_copy_res( bool ref )
 //
 // お気に入り登録
 //
-void ArticleViewBase::slot_favorite()
+void ArticleViewBase::set_favorite()
 {
     CORE::DATA_INFO info;
     info.type = TYPE_THREAD;
@@ -3252,14 +3136,11 @@ void ArticleViewBase::slot_abone_img()
 //
 // 検索entryでenterを押した
 //
-void ArticleViewBase::slot_active_search()
+void ArticleViewBase::exec_search()
 {
-    if( ! get_articletoolbar() ) return;
-    if( get_articletoolbar()->m_entry_search.completion() ) return;
-
-    std::string query = get_articletoolbar()->m_entry_search.get_text();
+    std::string query = get_search_query();
     if( query.empty() ){
-        slot_push_claar_hl();
+        clear_highlight();
         focus_view();
         CORE::core_set_command( "set_info", "", "" );
         return;
@@ -3268,8 +3149,8 @@ void ArticleViewBase::slot_active_search()
     std::list< std::string > list_query;
     list_query = MISC::split_line( query );
 
-    if( m_query != query ){
-        m_query = query;
+    if( m_pre_query != query ){
+        m_pre_query = query;
         m_drawarea->set_jump_history();
         m_drawarea->search( list_query, m_search_invert );
     }
@@ -3277,7 +3158,7 @@ void ArticleViewBase::slot_active_search()
     int hit = m_drawarea->search_move( m_search_invert );
 
     if( ! hit ){
-        slot_push_claar_hl();
+        clear_highlight();
         CORE::core_set_command( "set_info", "", "検索結果： ヒット無し" );
     }
     else{
@@ -3291,8 +3172,17 @@ void ArticleViewBase::slot_active_search()
 //
 // 検索entryの操作
 //
-void ArticleViewBase::slot_entry_operate( int controlid )
+void ArticleViewBase::operate_search( const std::string& controlid )
 {
-    if( controlid == CONTROL::Cancel ) focus_view();
-    else if( controlid == CONTROL::DrawOutAnd ) slot_push_drawout_and();
+    int id = atoi( controlid.c_str() );
+
+    if( id == CONTROL::Cancel ) focus_view();
+
+    // AND 抽出
+    else if( id == CONTROL::DrawOutAnd ){
+        std::string query = get_search_query();
+        if( query.empty() ) return;
+
+        CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "false" );
+    }
 }

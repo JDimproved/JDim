@@ -188,6 +188,7 @@ std::vector< int > parse_items( const std::string& items_str )
         if( *it == ITEM_NAME_QUIT ) items.push_back( ITEM_QUIT );
         if( *it == ITEM_NAME_PREVVIEW ) items.push_back( ITEM_PREVVIEW );
         if( *it == ITEM_NAME_NEXTVIEW ) items.push_back( ITEM_NEXTVIEW );
+        if( *it == ITEM_NAME_LOCK ) items.push_back( ITEM_LOCK );
 
         if( *it == ITEM_NAME_NEWARTICLE ) items.push_back( ITEM_NEWARTICLE );
         if( *it == ITEM_NAME_SEARCHBOX ) items.push_back( ITEM_SEARCHBOX );
@@ -195,7 +196,7 @@ std::vector< int > parse_items( const std::string& items_str )
         if( *it == ITEM_NAME_SEARCH_PREV ) items.push_back( ITEM_SEARCH_PREV );
 
         if( *it == ITEM_NAME_INSERTTEXT ) items.push_back( ITEM_INSERTTEXT );
-        if( *it == ITEM_NAME_NOTCLOSE ) items.push_back( ITEM_NOTCLOSE );
+        if( *it == ITEM_NAME_LOCK_MESSAGE ) items.push_back( ITEM_LOCK_MESSAGE );
         if( *it == ITEM_NAME_PREVIEW ) items.push_back( ITEM_PREVIEW );
         if( *it == ITEM_NAME_UNDO ) items.push_back( ITEM_UNDO );
     }
@@ -496,7 +497,7 @@ void SESSION::init_session()
                                  ITEM_NAME_NAME + std::string ( " " ) +
                                  ITEM_NAME_UNDO + std::string ( " " ) +
                                  ITEM_NAME_INSERTTEXT + std::string ( " " ) +
-                                 ITEM_NAME_NOTCLOSE + std::string ( " " ) +
+                                 ITEM_NAME_LOCK_MESSAGE + std::string ( " " ) +
                                  ITEM_NAME_QUIT + std::string ( " " ) );
 
     items_msg_toolbar =  parse_items( items_msg_toolbar_str );

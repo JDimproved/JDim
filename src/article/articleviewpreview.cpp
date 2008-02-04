@@ -24,6 +24,8 @@ using namespace ARTICLE;
 ArticleViewPreview::ArticleViewPreview( const std::string& url )
     : ArticleViewBase( url )
 {
+    m_url_messageview = url;
+
     struct timeval tv;
     struct timezone tz;
     gettimeofday( &tv, &tz );
@@ -52,18 +54,6 @@ ArticleViewPreview::~ArticleViewPreview()
 }
 
 
-
-//
-// ウィジットのパッキング
-//
-// ArticleViewBase::pack_widget()をオーパロードしてツールバーをパックしない
-//
-void ArticleViewPreview::pack_widget()
-{
-    pack_start( *drawarea() );
-}
-
-
 //
 // viewの操作
 //
@@ -79,7 +69,7 @@ void ArticleViewPreview::operate_view( const int& control )
 
             // 書き込み実行
         case CONTROL::ExecWrite:
-            MESSAGE::get_admin()->set_command( "exec_Write" );
+            MESSAGE::get_admin()->set_command( "toolbar_write", m_url_messageview );
             break;
 
         case CONTROL::TabLeft:
@@ -91,7 +81,7 @@ void ArticleViewPreview::operate_view( const int& control )
         break;
 
         case CONTROL::FocusWrite:
-            MESSAGE::get_admin()->set_command( "focus_write" );
+            MESSAGE::get_admin()->set_command( "focus_writebutton" );
         break;
 
         default:

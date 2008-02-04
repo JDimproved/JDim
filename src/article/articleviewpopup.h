@@ -26,7 +26,6 @@ namespace ARTICLE
         const bool show_abone() const { return m_show_abone; }
 
       private:
-        virtual void pack_widget();
         virtual DrawAreaBase* create_drawarea();
     };
 

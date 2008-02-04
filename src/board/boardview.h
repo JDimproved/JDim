@@ -12,6 +12,11 @@
 
 #include <gtkmm.h>
 
+namespace SKELETON
+{
+    class Admin;
+}
+
 namespace DBTREE
 {
     class ArticleBase;
@@ -19,8 +24,6 @@ namespace DBTREE
 
 namespace BOARD
 {
-    class BoardToolBar;
-
     class BoardView : public SKELETON::View
     {
         SKELETON::JDTreeView m_treeview;
@@ -77,6 +80,8 @@ namespace BOARD
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
 
         virtual void clock_in();
+
+        virtual void write();
         virtual void reload();
         virtual void stop();
         virtual void show_view();
@@ -87,6 +92,7 @@ namespace BOARD
         virtual void focus_out();
         virtual void close_view();
         virtual void delete_view();
+        virtual void set_favorite();
         virtual void update_item( const std::string& id_dat );
         virtual void operate_view( const int& control );
         virtual void goto_top();
@@ -94,10 +100,18 @@ namespace BOARD
         virtual void goto_num( int num );
         virtual void scroll_left();
         virtual void scroll_right();
-        virtual void toggle_toolbar();
         virtual void show_preference();
+
+        // 進む、戻る
         virtual void back_viewhistory( const int count );
         virtual void forward_viewhistory( const int count );
+
+        // 検索
+        virtual void exec_search();
+        virtual void up_search();
+        virtual void down_search();
+        virtual void operate_search( const std::string& controlid );
+        virtual void set_search_query( const std::string& query );
 
         void row_up();
         void row_down();
@@ -106,7 +120,9 @@ namespace BOARD
 
       protected:
 
-        BoardToolBar* get_boardtoolbar();
+        // Viewが所属するAdminクラス
+        virtual SKELETON::Admin* get_admin();
+
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
     private:
@@ -137,9 +153,6 @@ namespace BOARD
         void slot_open_tab();
         void slot_favorite_thread();
         void slot_favorite_board();
-        void slot_new_article();
-        void slot_push_delete();
-        void slot_push_favorite();
         void slot_copy_url();
         void slot_copy_title_url();
         void slot_select_all();
@@ -147,6 +160,7 @@ namespace BOARD
         void slot_preferences_article();
         void slot_save_dat();
         void slot_abone_thread();
+        void slot_delete_logs();
 
         bool open_row( Gtk::TreePath& path, bool tab );
         void open_selected_rows();
@@ -154,14 +168,6 @@ namespace BOARD
 
         // 検索
         bool drawout();
-        void slot_changed_search();
-        void slot_active_search();
-        void slot_push_down_search();
-        void slot_push_up_search();
-        void slot_entry_operate( int controlid );
-
-        // キャッシュ内のログ検索
-        void search_cache();
 
         // d&d
         void slot_drag_begin();

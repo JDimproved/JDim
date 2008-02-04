@@ -5,6 +5,7 @@
 
 #include "messageadmin.h"
 #include "messagewin.h"
+#include "toolbar.h"
 
 #include "skeleton/view.h"
 #include "skeleton/msgdiag.h"
@@ -36,7 +37,7 @@ using namespace MESSAGE;
 
 
 MessageAdmin::MessageAdmin( const std::string& url )
-    : SKELETON::Admin( url )
+    : SKELETON::Admin( url ), m_toolbar( NULL ), m_toolbar_preview( NULL )
 {
     get_notebook()->set_show_tabs( false );
 }
@@ -47,6 +48,18 @@ MessageAdmin::~MessageAdmin()
 #ifdef _DEBUG
     std::cout << "MessageAdmin::~MessageAdmin\n";
 #endif 
+
+    if( m_toolbar ) delete m_toolbar;
+    if( m_toolbar_preview ) delete m_toolbar_preview;
+}
+
+
+
+SKELETON::LabelEntry* MessageAdmin::get_entry_subject()
+{
+    if( m_toolbar ) return m_toolbar->get_entry_subject();
+
+    return NULL;
 }
 
 
@@ -61,13 +74,30 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
 
     SKELETON::View *view = get_current_view();
 
-    // 書き込み実行
-    if( command.command == "exec_Write" ){
+    // 書き込みボタンにフォーカスを移す
+    if( command.command == "focus_writebutton" ){
+        if( get_notebook()->get_current_toolbar() == TOOLBAR_MESSAGE ) m_toolbar->focus_writebutton();
+        else m_toolbar_preview->focus_writebutton();
+    }
+    // プレビュー切り替え
+    else if( command.command == "toggle_preview" ){
         if( view ) view->set_command( command.command );
     }
-    // 書き込みボタンにフォーカスを移す
-    else if( command.command == "focus_write" ){
+    // undo
+    else if( command.command == "undo_text" ){
         if( view ) view->set_command( command.command );
+    }
+    // 下書き挿入
+    else if( command.command == "insert_draft" ){
+        if( view ) view->set_command( command.command );
+    }
+    // 通常のツールバーに表示切り替え
+    else if( command.command == "switch_toolbar_message" ){
+        if( view ) get_notebook()->set_current_toolbar( TOOLBAR_MESSAGE, view );
+    }
+    // プレビューツールバーに表示切り替え
+    else if( command.command == "switch_toolbar_preview" ){
+        if( view ) get_notebook()->set_current_toolbar( TOOLBAR_PREVIEW, view );
     }
 }
 
@@ -94,7 +124,7 @@ void MessageAdmin::close_view( const std::string& url )
         if( ! delete_message( view ) ) return;
     }
 
-    if( ! SESSION::get_close_mes() ) view->set_command( "clear_message" );
+    if( view->is_locked() ) view->set_command( "clear_message" );
     else{
         Admin::close_view( url );
         if( empty() ) close_window();
@@ -171,9 +201,9 @@ void MessageAdmin::tab_right()
 //
 void MessageAdmin::open_view( const COMMAND_ARGS& command )
 {
-    std::string url = command.url;
-    std::string msg = command.arg1;
-    bool new_thread = ( command.arg2 == "new" );
+    const std::string url = command.url;
+    const std::string msg = command.arg1;
+    const bool new_thread = ( command.arg2 == "new" );
 
 #ifdef _DEBUG
     std::cout << "MessageAdmin::open_view " << url << std::endl;
@@ -225,8 +255,13 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
         url_msg = DBTREE::url_datbase( url ) + "0000000000" + DBTREE::board_ext( url );
     }
 
-    SKELETON::View *view = CORE::ViewFactory( type, url_msg, args );
+    // ツールバー表示
+    show_toolbar();
 
+    // ツールバーに板名を表示
+    if( get_entry_subject() ) get_entry_subject()->set_label( " [ " + DBTREE::board_name( url ) + " ] " );
+
+    SKELETON::View *view = CORE::ViewFactory( type, url_msg, args );
     get_notebook()->append_page( url_msg, *view );
 
     // ウィンドウ表示
@@ -234,12 +269,47 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
 
     get_notebook()->show_all();
     switch_admin();
-    view->update_toolbar_url();
     view->show();
     view->show_view();
+
+    get_notebook()->set_current_toolbar( view->get_id_toolbar(), view );
+
     set_current_page( get_notebook()->page_num( *view ) );
     focus_current_view();
 }
+
+
+//
+// ツールバー表示
+//
+void MessageAdmin::show_toolbar()
+{
+    // 作成済みの場合はdeleteしておく
+    if( m_toolbar ){
+
+        delete m_toolbar;
+        m_toolbar = NULL;
+
+        delete m_toolbar_preview;
+        m_toolbar_preview = NULL;
+    }
+
+    if( ! m_toolbar ){
+
+        // 通常のツールバー( TOOLBAR_MESSAGE )
+        m_toolbar = new MessageToolBar();
+        get_notebook()->append_toolbar( *m_toolbar );
+        m_toolbar->show_toolbar();
+
+        // プレビュー用のツールバー( TOOLBAR_PREVIEW )
+        m_toolbar_preview = new MessageToolBarPreview();
+        get_notebook()->append_toolbar( *m_toolbar_preview );
+        m_toolbar_preview->show_toolbar();
+    }
+
+    get_notebook()->show_toolbar();
+}
+
 
 
 //

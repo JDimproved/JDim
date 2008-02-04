@@ -9,16 +9,39 @@
 
 #include "skeleton/admin.h"
 
+namespace SKELETON
+{
+    class LabelEntry;
+}
+
+
 namespace MESSAGE
 {
+    enum
+    {
+        TOOLBAR_MESSAGE = 0,
+        TOOLBAR_PREVIEW = 1
+    };
+
+    class MessageToolBar;
+    class MessageToolBarPreview;
+
     class MessageAdmin : public SKELETON::Admin
     {
+        MessageToolBar* m_toolbar;
+        MessageToolBarPreview* m_toolbar_preview;
+
       public:
 
         MessageAdmin( const std::string& url );
         virtual ~MessageAdmin();
 
+        SKELETON::LabelEntry* get_entry_subject();
+
       protected:
+
+        // ツールバー
+        virtual void show_toolbar();
 
         virtual void command_local( const COMMAND_ARGS& command );
 

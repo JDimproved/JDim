@@ -11,6 +11,7 @@ libskeleton_a_SOURCES = \
 	view.cpp \
 	editview.cpp \
 	dragnote.cpp \
+	tabnote.cpp \
 	tablabel.cpp \
 	imgmenubutton.cpp \
 	backforwardbutton.cpp \
@@ -43,6 +44,7 @@ noinst_HEADERS = \
 	view.h \
 	editview.h \
 	dragnote.h \
+	tabnote.h \
 	tablabel.h \
 	imgbutton.h \
 	imgtogglebutton.h \

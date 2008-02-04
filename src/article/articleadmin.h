@@ -28,8 +28,20 @@
 
 namespace ARTICLE
 {
+    class ArticleToolBar;
+    class SearchToolBar;
+
+    enum
+    {
+        TOOLBAR_ARTICLE = 0,
+        TOOLBAR_SEARCH = 1
+    };
+
     class ArticleAdmin : public SKELETON::Admin
     {
+        ArticleToolBar* m_toolbar;
+        SearchToolBar* m_search_toolbar;
+
         // 再取得中のスレのアドレス
         std::set< std::string > m_urls_reloading;
 
@@ -39,7 +51,14 @@ namespace ARTICLE
 
       protected:
         virtual COMMAND_ARGS get_open_list_args( const std::string& url );
-        SKELETON::View* create_view( const COMMAND_ARGS& command );
+        virtual SKELETON::View* create_view( const COMMAND_ARGS& command );
+
+        // ツールバー
+        virtual void show_toolbar();
+        virtual void toggle_toolbar();
+        virtual void open_searchbar();
+        virtual void close_searchbar();
+
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();

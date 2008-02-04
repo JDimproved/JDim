@@ -16,6 +16,12 @@
 
 #include <list>
 
+
+namespace SKELETON
+{
+    class Admin;
+}
+
 namespace DBIMG
 {
     class Img;
@@ -44,6 +50,9 @@ namespace IMAGE
         bool m_enable_menuslot;
 
       protected:
+
+        // Viewが所属するAdminクラス
+        virtual SKELETON::Admin* get_admin();
 
         JDLIB::ConstPtr< DBIMG::Img >& get_img(){ return  m_img;}
 

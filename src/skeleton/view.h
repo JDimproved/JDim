@@ -10,7 +10,7 @@
 
 namespace SKELETON
 {
-    class ToolBar;
+    class Admin;
 
     // 自分がポップアップviewの時に(ポップアップウィンドウ( SKELETON::PopupWin ) 経由で)
     // 親widgetにhideを依頼するシグナル。PopupWin::PopupWin()でPopupWin::slot_hide_popup()にコネクトされる。
@@ -38,6 +38,9 @@ namespace SKELETON
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
 
+        // ツールバーに表示する文字列
+        std::string m_label;
+
         // メインウィンドウのタイトルに表示する文字
         std::string m_title;
 
@@ -63,14 +66,16 @@ namespace SKELETON
         // ロック状態
         bool m_locked;
 
-        // ツールバー
-        //
-        // 派生クラスで　toolbar を作成する時は必ず Gtk::manage() を使って
-        // void set_toolbar()でアドレスをセットして使うこと
-        //
-        ToolBar *m_toolbar;
+        // ツールバーのID
+        int m_id_toolbar;
+
+        // 検索文字列
+        std::string m_search_query;
 
       protected:
+
+        // Viewが所属するAdminクラス
+        virtual Admin* get_admin() = 0;
 
         // UI
         Glib::RefPtr< Gtk::ActionGroup >& action_group(){ return m_action_group; }
@@ -79,10 +84,13 @@ namespace SKELETON
         // コントローラ
         CONTROL::Control& get_control(){ return m_control; }
 
-        // タイトル
+        // ツールバーに表示するラベル
+        void set_label( const std::string& label ){ m_label = label; }
+
+        // メインウィンドウのタイトルに表示する文字列
         void set_title( const std::string& title ){ m_title = title; }
 
-        // ステータス
+        // メインウィンドウのステータスバーに表示する文字
         void set_status( const std::string& status ){ m_status = status; }
 
         // マウスジェスチャ
@@ -124,10 +132,6 @@ namespace SKELETON
         //  ポップアップメニュー取得
         virtual Gtk::Menu* get_popupmenu( const std::string& url ){ return NULL; }
 
-        // ツールバー
-        ToolBar* get_toolbar(){ return m_toolbar; }
-        void set_toolbar( ToolBar* toolbar ){ m_toolbar = toolbar; }
-
     public:
 
         SIG_HIDE_POPUP sig_hide_popup(){ return m_sig_hide_popup; }
@@ -140,18 +144,21 @@ namespace SKELETON
         void set_url( const std::string& url_new, const bool update_history );
         void update_host( const std::string& host );
 
+        // 検索文字列
+        const std::string& get_search_query(){ return m_search_query; }
+
+        // ツールバーのID
+        // タブの切り替えのときに Admin から参照される
+        // コンストラクタであらかじめ指定しておくこと
+        void set_id_toolbar( const int id ) { m_id_toolbar = id; }
+        const int get_id_toolbar() const { return m_id_toolbar; }
+
         // ロック/アンロック
         const bool is_lockable() const { return m_lockable; }
         void set_lockable( const bool lockable ){ m_lockable = lockable; }
         const bool is_locked() const { return m_locked; }
-        virtual void lock();
-        virtual void unlock();
-
-        // ツールバーボタン表示更新
-        void update_toolbar();
-
-        // ツールバーURL更新
-        void update_toolbar_url();
+        virtual void lock(){ m_locked = true; }
+        virtual void unlock(){ m_locked = false; }
 
         // view 上にマウスポインタがあれば true
         bool is_mouse_on_view();
@@ -161,6 +168,9 @@ namespace SKELETON
 
         // コピー用のURL
         virtual const std::string url_for_copy(){ return m_url; }
+
+        // ツールバーのラベルに表示する文字列
+        const std::string& get_label(){ return m_label; }
 
         // メインウィンドウのタイトルバーに表示する文字列
         virtual const std::string& get_title(){ return m_title; }
@@ -210,6 +220,7 @@ namespace SKELETON
         virtual void clock_in(){};
         virtual void clock_in_always();
 
+        virtual void write(){}
         virtual void reload(){}
         virtual void stop(){}
         virtual void show_view(){}
@@ -221,6 +232,7 @@ namespace SKELETON
         virtual void focus_out(){ m_control.MG_reset(); }
         virtual void close_view(){}
         virtual void delete_view(){}
+        virtual void set_favorite(){}
         virtual void update_item( const std::string& ){}
         virtual void operate_view( const int& ){}
         virtual void goto_top(){}
@@ -230,10 +242,18 @@ namespace SKELETON
         virtual void scroll_down(){}
         virtual void scroll_left(){}
         virtual void scroll_right(){}
-        virtual void toggle_toolbar(){}
         virtual void show_preference(){}
+
+        // 進む、戻る
         virtual void back_viewhistory( const int count ){}
         virtual void forward_viewhistory( const int count ){}
+
+        // 検索
+        virtual void exec_search(){}
+        virtual void up_search(){}
+        virtual void down_search(){}
+        virtual void operate_search( const std::string& controlid ){}
+        virtual void set_search_query( const std::string& query ){ m_search_query = query; }
     };
 }
 

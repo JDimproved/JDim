@@ -604,13 +604,13 @@ void Core::run( bool init )
     // ツール
         "<menu action='Menu_Tool'>"
 
+        "<menuitem action='SearchTitle'/>"    
+        "<separator/>"
+
         "<menu action='SearchCache_Menu'>"
         "<menuitem action='SearchCacheBoard'/>"    
         "<menuitem action='SearchCache'/>"    
         "</menu>"
-        "<separator/>"
-
-        "<menuitem action='SearchTitle'/>"    
         "<separator/>"
 
         "<menu action='CheckUpdate_Menu'>"
@@ -2516,9 +2516,9 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     // ツールバーボタン更新
-    else if( command.command  == "update_article_toolbar" ){
+    else if( command.command  == "update_article_toolbar_button" ){
 
-        ARTICLE::get_admin()->set_command( "update_toolbar" );
+        ARTICLE::get_admin()->set_command( "update_toolbar_button" );
         return;
     }
 
@@ -2568,9 +2568,9 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
    
     // ツールバーボタン更新
-    else if( command.command  == "update_board_toolbar" ){
+    else if( command.command  == "update_board_toolbar_button" ){
 
-        BOARD::get_admin()->set_command( "update_toolbar" );
+        BOARD::get_admin()->set_command( "update_toolbar_button" );
         return;
     }
 
@@ -2655,9 +2655,9 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     // ツールバーボタン更新
-    else if( command.command  == "update_bbslist_toolbar" ){
+    else if( command.command  == "update_bbslist_toolbar_button" ){
 
-        BBSLIST::get_admin()->set_command( "update_toolbar" );
+        BBSLIST::get_admin()->set_command( "update_toolbar_button" );
         return;
     }
 
@@ -2726,9 +2726,9 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     // ツールバーボタン更新
-    else if( command.command  == "update_message_toolbar" ){
+    else if( command.command  == "update_message_toolbar_button" ){
 
-        MESSAGE::get_admin()->set_command( "update_toolbar" );
+        MESSAGE::get_admin()->set_command( "update_toolbar_button" );
         return;
     }
 
@@ -2942,9 +2942,9 @@ void Core::exec_command()
         ARTICLE::get_admin()->set_command( "adjust_tabwidth" );
     }
 
-    // ツールバー更新
-    else if( command.command == "update_main_toolbar" ){
-        m_toolbar->update();
+    // メインツールバーのボタン表示更新
+    else if( command.command == "update_main_toolbar_button" ){
+        m_toolbar->update_button();
     }
 
     // history 登録

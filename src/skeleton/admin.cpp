@@ -510,9 +510,12 @@ void Admin::exec_command()
     else if( command.command == "update_finish" ){
         update_finish( command.url );
     }
+
+    // 全ロック解除
     else if( command.command == "unlock_views" ){
         unlock_all_view( command.url );
     }
+
     else if( command.command == "close_view" ){
         if( command.arg1 == "closeall" ) close_all_view( command.url );
         else close_view( command.url );
@@ -594,14 +597,39 @@ void Admin::exec_command()
         return;
     }
 
+    // ツールバーの検索ボックスをフォーカス
+    else if( command.command == "focus_toolbar_search" ){
+        focus_toolbar_search();
+    }
+
     // ツールバー表示切り替え
     else if( command.command == "toggle_toolbar" ){
         toggle_toolbar();
     }
 
+    // ツールバーのアドレスを更新
+    else if( command.command == "update_toolbar_url" ){
+        m_notebook->update_toolbar_url( command.url, command.arg1 );
+    }
+
+    // ツールバーのラベルを更新
+    else if( command.command == "update_toolbar_label" ){
+        update_toolbar_label();
+    }
+
     // ツールバーボタン表示更新
-    else if( command.command == "update_toolbar" ){
-        update_toolbar();
+    else if( command.command == "update_toolbar_button" ){
+        update_toolbar_button();
+    }
+
+    // 検索バー表示
+    else if( command.command == "open_searchbar" ){
+        open_searchbar();
+    }
+
+    // 検索バー非表示
+    else if( command.command == "close_searchbar" ){
+        close_searchbar();
     }
 
     // タブ表示切り替え
@@ -644,31 +672,34 @@ void Admin::exec_command()
         clear_viewhistory();
     }
 
-    // 個別のコマンド処理
-    else command_local( command );
+    else{
+
+        // ツールバー関係
+        SKELETON::View* view = get_view( command.url );
+
+        if( view && command.command == "toolbar_exec_search" ) view->exec_search();
+        else if( view && command.command == "toolbar_operate_search" ) view->operate_search( command.arg1 );
+        else if( view && command.command == "toolbar_set_search_query" ) view->set_search_query( command.arg1 );
+        if( view && command.command == "toolbar_up_search" ) view->up_search();
+        if( view && command.command == "toolbar_down_search" ) view->down_search();
+
+        else if( view && command.command == "toolbar_write" ) view->write();
+        else if( view && command.command == "toolbar_reload" ) view->reload();
+        else if( view && command.command == "toolbar_stop" ) view->stop();
+        else if( view && command.command == "toolbar_close_view" ) view->close_view();
+        else if( view && command.command == "toolbar_delete_view" ) view->delete_view();
+        else if( view && command.command == "toolbar_set_favorite" ) view->set_favorite();
+
+        // ロック/アンロック
+        else if( view && command.command == "toolbar_lock_view" ){
+            if( view->is_locked() ) unlock( get_current_page() );
+            else lock( get_current_page() );
+        }
+
+        // 子クラス別のコマンド処理
+        else command_local( command );
+    }
 }
-
-
-//
-// Viewの直接操作
-// 主に ToolBar から用いられる
-//
-bool Admin::operate_view( const std::string& command, const std::string& url, const std::string& arg )
-{
-    SKELETON::View* view = get_current_view();
-    if( ! view || view->get_url() != url ) view = get_view( url );
-    if( ! view ) return false;
-
-    if( command == "close_view" ) view->close_view();
-    else if( command == "back_viewhistory" ) view->back_viewhistory( atoi( arg.c_str() ) );
-    else if( command == "forward_viewhistory" ) view->forward_viewhistory( atoi( arg.c_str() ) );
-
-    // 基本操作以外は固有のコマンドを実行
-    else return view->set_command( command, arg );
-
-    return true;
-}
-
 
 
 // リストで与えられたページをタブで連続して開く
@@ -807,6 +838,9 @@ void Admin::open_view( const COMMAND_ARGS& command )
                        || is_locked( page )
         );
 
+    // ツールバー表示
+    if( page == -1 ) show_toolbar();
+
     // タブで表示
     if( open_tab ){
 
@@ -854,9 +888,11 @@ void Admin::open_view( const COMMAND_ARGS& command )
     }
 
     m_notebook->show_all();
-    view->update_toolbar_url();
     view->show();
     view->show_view();
+
+    // ツールバーの情報更新
+    m_notebook->set_current_toolbar( view->get_id_toolbar(), view );
 
     if( ! ( command.arg3 == "noswitch" ) ){
         switch_admin();
@@ -867,6 +903,33 @@ void Admin::open_view( const COMMAND_ARGS& command )
     if( command.arg3 == "lock" ) lock( m_notebook->page_num( *view ) );
 }
 
+
+//
+// ツールバーの検索ボックスをフォーカス
+//
+void Admin::focus_toolbar_search()
+{
+    m_notebook->focus_toolbar_search();
+}
+
+
+//
+// ツールバーのラベル表示更新
+//
+void Admin::update_toolbar_label()
+{
+    SKELETON::View* view = get_current_view();
+    if( view ) m_notebook->update_toolbar_label( view );
+}
+
+
+//
+// ツールバーのボタン表示更新
+//
+void Admin::update_toolbar_button()
+{
+    m_notebook->update_toolbar_button();
+}
 
 
 //
@@ -1063,6 +1126,9 @@ void Admin::close_view( SKELETON::View* view )
 #ifdef _DEBUG
         std::cout << "empty\n";
 #endif
+
+        m_notebook->hide_toolbar();
+
         CORE::core_set_command( "empty_page", m_url );
     }
 }
@@ -1084,7 +1150,10 @@ void Admin::unlock_all_view( const std::string& url )
     for( ; it != list_view.end(); ++it ){
 
         SKELETON::View* view = ( *it );
-        if( view && view->is_locked() ) view->unlock();
+        if( view && view->is_locked() ){
+            view->unlock();
+            m_notebook->update_toolbar_close_button( view );
+        }
     }
 }
 
@@ -1337,33 +1406,6 @@ void Admin::relayout_all()
 }
 
 
-//
-// ツールバー表示切り替え
-//
-void Admin::toggle_toolbar()
-{
-    std::list< SKELETON::View* > list_view = get_list_view();
-    std::list< SKELETON::View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-        SKELETON::View* view = ( *it );
-        if( view ) view->toggle_toolbar();
-    }
-}
-
-
-//
-// ツールバーボタン表示更新
-//
-void Admin::update_toolbar()
-{
-    std::list< SKELETON::View* > list_view = get_list_view();
-    std::list< SKELETON::View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-        SKELETON::View* view = ( *it );
-        if( view ) view->update_toolbar();
-    }
-}
-
 
 //
 // タブ表示切り替え
@@ -1446,6 +1488,9 @@ bool Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
 //
 View* Admin::get_view( const std::string& url )
 {
+    SKELETON::View* view = get_current_view();
+    if( view && view->get_url() == url ) return view;
+
     int pages = m_notebook->get_n_pages();
     if( pages ){
 
@@ -1564,14 +1609,17 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
     std::cout << "Admin::slot_switch_page : " << m_url << " page = " << page << std::endl;
 #endif
 
-    // タブのアイコンを通常に戻して再描画
     SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ){
 #ifdef _DEBUG
         std::cout << "url = " << view->get_url() << std::endl;
 #endif
-        toggle_icon( view->get_url() );
 
+        // ツールバー表示切り替え
+        m_notebook->set_current_toolbar( view->get_id_toolbar(), view );
+
+        // タブのアイコンを通常に戻して再描画
+        toggle_icon( view->get_url() );
         view->redraw_view();
         if( m_focus ){
             update_status( view, false );
@@ -2006,13 +2054,19 @@ const bool Admin::is_locked( const int page )
 void Admin::lock( const int page )
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
-    if( view ) return view->lock();
+    if( view ){
+        view->lock();
+        m_notebook->update_toolbar_close_button( view );
+    }
 }
 
 void Admin::unlock( const int page )
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
-    if( view ) return view->unlock();
+    if( view ){
+        view->unlock();
+        m_notebook->update_toolbar_close_button( view );
+    }
 }
 
 // プロパティ表示
@@ -2173,5 +2227,5 @@ void Admin::clear_viewhistory()
     if( ! m_last_closed_url.empty() ) HISTORY::get_history_manager()->delete_viewhistory( m_last_closed_url );
     m_last_closed_url = std::string();
 
-    update_toolbar();
+    update_toolbar_button();
 }

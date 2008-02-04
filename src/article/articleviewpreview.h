@@ -12,6 +12,8 @@ namespace ARTICLE
 {
     class ArticleViewPreview : public ArticleViewBase
     {
+        std::string m_url_messageview;
+
       public:
         ArticleViewPreview( const std::string& url );
         ~ArticleViewPreview();
@@ -19,7 +21,6 @@ namespace ARTICLE
         virtual void operate_view( const int& control );
 
       private:
-        virtual void pack_widget();
 
         virtual bool slot_button_press( std::string url, int res_number, GdkEventButton* event );
 

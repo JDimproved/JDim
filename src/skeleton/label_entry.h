@@ -27,6 +27,8 @@ namespace SKELETON
         void set_editable( const bool editable );
         void set_visibility( const bool visibility );
 
+        void set_label( const std::string& label );
+
         void set_text( const std::string& text );
         const Glib::ustring get_text();
 

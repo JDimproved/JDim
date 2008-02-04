@@ -27,7 +27,9 @@ BBSListViewMain::BBSListViewMain( const std::string& url,
 {
     set_expand_collapse( true );
 
+/*
     if( get_bbslisttoolbar() ) get_bbslisttoolbar()->set_combo( COMBO_BBSLIST );
+*/
 }
 
 

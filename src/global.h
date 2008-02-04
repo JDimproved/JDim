@@ -52,7 +52,7 @@ enum{
 #define ITEM_NAME_QUIT      "閉じる"
 #define ITEM_NAME_PREVVIEW  "前へ戻る"
 #define ITEM_NAME_NEXTVIEW  "次へ進む"
-
+#define ITEM_NAME_LOCK      "タブをロックする"
 
 #define ITEM_NAME_NEWARTICLE   "新スレ作成"
 #define ITEM_NAME_SEARCHBOX    "検索ボックス"
@@ -60,7 +60,7 @@ enum{
 #define ITEM_NAME_SEARCH_PREV  "前検索"
 
 #define ITEM_NAME_INSERTTEXT  "テキストファイル挿入"
-#define ITEM_NAME_NOTCLOSE    "書き込み後に閉じない"
+#define ITEM_NAME_LOCK_MESSAGE "書き込み後に閉じない"
 #define ITEM_NAME_PREVIEW     "プレビュー表示"
 #define ITEM_NAME_UNDO        "元に戻す(Undo)"
 
@@ -97,6 +97,7 @@ enum
     ITEM_QUIT,
     ITEM_PREVVIEW,
     ITEM_NEXTVIEW,
+    ITEM_LOCK,
 
     ITEM_NEWARTICLE,
     ITEM_SEARCHBOX,
@@ -104,7 +105,7 @@ enum
     ITEM_SEARCH_PREV,
 
     ITEM_INSERTTEXT,
-    ITEM_NOTCLOSE,
+    ITEM_LOCK_MESSAGE,
     ITEM_PREVIEW,
 
     ITEM_UNDO,

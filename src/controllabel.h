@@ -60,6 +60,7 @@ namespace CONTROL
         { "SelectAll", "全て選択" },
         { "AppendFavorite", ITEM_NAME_FAVORITE },
         { "Property", "プロパティ..." },
+        { "Lock", ITEM_NAME_LOCK },
 
         { "Search", ITEM_NAME_SEARCH },
         { "CloseSearchBar", "検索バーを閉じる" },
@@ -188,7 +189,7 @@ namespace CONTROL
         { "CancelWrite", ITEM_NAME_QUIT },
         { "ExecWrite", ITEM_NAME_WRITEMSG },
         { "InsertText", ITEM_NAME_INSERTTEXT  },
-        { "NotClose", ITEM_NAME_NOTCLOSE },
+        { "LockMessage", ITEM_NAME_LOCK_MESSAGE },
         { "Preview", ITEM_NAME_PREVIEW },
 
         { "FocusWrite", "書き込みボタンにフォーカスを移す" },

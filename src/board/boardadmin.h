@@ -12,15 +12,25 @@
 
 namespace BOARD
 {
+    class BoardToolBar;
+
     class BoardAdmin : public SKELETON::Admin
     {
+        BoardToolBar* m_toolbar;
+
       public:
         BoardAdmin( const std::string& url );
         ~BoardAdmin();
 
       protected:
+
         virtual COMMAND_ARGS get_open_list_args( const std::string& url );
-        SKELETON::View* create_view( const COMMAND_ARGS& command );
+        virtual SKELETON::View* create_view( const COMMAND_ARGS& command );
+
+        // ツールバー
+        virtual void show_toolbar();
+        virtual void toggle_toolbar();
+
         virtual void command_local( const COMMAND_ARGS& command );
 
         virtual void restore();

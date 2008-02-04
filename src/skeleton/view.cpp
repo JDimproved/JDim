@@ -3,8 +3,8 @@
 //#define _DEBUG
 #include "jddebug.h"
 
+#include "admin.h"
 #include "view.h"
-#include "toolbar.h"
 
 #include "jdlib/miscutil.h"
 
@@ -32,7 +32,7 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
       m_keyjump_num( 0 ),
       m_lockable( true ),
       m_locked( false ),
-      m_toolbar( NULL )
+      m_id_toolbar( 0 )
 {}
 
 
@@ -43,9 +43,13 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
 //
 void View::set_url( const std::string& url_new, const bool update_history )
 {
-    // View履歴のURLも更新しておく
     if( update_history && ! m_url.empty() && ! url_new.empty() && m_url != url_new ){
+
+        // View履歴のURLを更新
         HISTORY::get_history_manager()->replace_url_viewhistory( m_url, url_new );
+
+        // ツールバーのURLを更新
+        get_admin()->set_command( "update_toolbar_url", m_url, url_new );
     }
 
     m_url = url_new;
@@ -159,40 +163,6 @@ void View::release_keyjump_key( int key )
     }
 }
 
-
-//
-// タブのロック
-//
-void View::lock()
-{
-    m_locked = true;
-    if( m_toolbar ) m_toolbar->lock();
-}
-
-
-//
-// タブのアンロック
-//
-void View::unlock()
-{
-    m_locked = false;
-    if( m_toolbar ) m_toolbar->unlock();
-}
-
-
-// ツールバーボタン表示更新
-void View::update_toolbar()
-{
-    if( ! m_toolbar ) return;
-    m_toolbar->update();
-}
-
-
-// ツールバーURL更新
-void View::update_toolbar_url()
-{
-    get_toolbar()->set_url( get_url() );
-}
 
 
 // view 上にマウスポインタがあれば true
