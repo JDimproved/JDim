@@ -38,6 +38,9 @@ namespace SKELETON
         // ときがあるので自前でemitする
         virtual bool on_button_press_event( GdkEventButton* event );
         virtual bool on_button_release_event( GdkEventButton* event );
+
+        // on_drag_motion をキャンセルしないとDnD中にタブが勝手に切り替わる( gtknotebook.c をハック )
+        virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time);
     };
 
 }

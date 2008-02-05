@@ -112,3 +112,13 @@ bool TabNotebook::on_button_release_event( GdkEventButton* event )
 
     return Gtk::Notebook::on_button_release_event( event );
 }
+
+
+// on_drag_motion をキャンセルしないとDnD中にタブが勝手に切り替わる( gtknotebook.c をハック )
+bool TabNotebook::on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time)
+{
+#ifdef _DEBUG
+    std::cout << "Gtk::Notebook::on_drag_motion\n";
+#endif
+    return true;
+}
