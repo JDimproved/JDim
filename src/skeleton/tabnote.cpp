@@ -15,7 +15,6 @@ TabNotebook::TabNotebook()
 {
     set_border_width( 0 );
     set_show_border( false );
-    property_can_focus() = false;
 
     // 下側の境界線を消す
     Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
@@ -85,7 +84,15 @@ void TabNotebook::remove_tab( int page )
 // ときがあるので自前でemitする
 bool TabNotebook::on_button_press_event( GdkEventButton* event )
 {
+#ifdef _DEBUG
+    std::cout << "TabNotebook::on_button_press_event\n";
+#endif
+
     if( m_sig_button_press.emit( event ) ) return true;
+
+#ifdef _DEBUG
+    std::cout << "Gtk::Notebook::on_button_press_event\n";
+#endif
 
     return Gtk::Notebook::on_button_press_event( event );
 }
@@ -93,7 +100,15 @@ bool TabNotebook::on_button_press_event( GdkEventButton* event )
 
 bool TabNotebook::on_button_release_event( GdkEventButton* event )
 {
+#ifdef _DEBUG
+    std::cout << "TabNotebook::on_button_release_event\n";
+#endif
+
     if( m_sig_button_release.emit( event ) ) return true;
+
+#ifdef _DEBUG
+    std::cout << "Gtk::Notebook::on_button_release_event\n";
+#endif
 
     return Gtk::Notebook::on_button_release_event( event );
 }
