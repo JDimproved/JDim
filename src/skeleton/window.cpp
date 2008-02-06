@@ -62,6 +62,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     m_label_stat.set_size_request( 0, -1 );
     m_label_stat.set_alignment( Gtk::ALIGN_LEFT );
     m_label_stat.set_selectable( true );
+    m_label_stat.set_single_line_mode( true );
 
     m_label_stat_ebox.add( m_label_stat );
     m_label_stat_ebox.set_visible_window( false );
