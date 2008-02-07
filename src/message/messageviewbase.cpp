@@ -29,6 +29,7 @@
 #include "session.h"
 #include "colorid.h"
 #include "global.h"
+#include "compmanager.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -89,6 +90,12 @@ MessageViewBase::~MessageViewBase()
     std::cout << "MessageViewBase::~MessageViewBase " << get_url() << std::endl
               << "lock = " << is_locked() << std::endl;
 #endif
+
+    // 名前、メール履歴保存
+    std::string name = m_entry_name.get_text();
+    std::string mail = m_entry_mail.get_text();
+    CORE::get_completion_manager()->set_query( CORE::COMP_NAME, name );
+    CORE::get_completion_manager()->set_query( CORE::COMP_MAIL, mail );
 
     if( m_preview ) delete m_preview;
     m_preview = NULL;
@@ -625,6 +632,12 @@ void MessageViewBase::post_msg( const std::string& msg, bool new_article )
     m_post = new Post( this, get_url(),  msg, new_article );
     m_post->sig_fin().connect( sigc::mem_fun( *this, &MessageViewBase::post_fin ) );
     m_post->post_msg();
+
+    // 名前、メール履歴保存
+    std::string name = m_entry_name.get_text();
+    std::string mail = m_entry_mail.get_text();
+    CORE::get_completion_manager()->set_query( CORE::COMP_NAME, name );
+    CORE::get_completion_manager()->set_query( CORE::COMP_MAIL, mail );
 }
 
 

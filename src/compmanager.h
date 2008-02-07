@@ -34,16 +34,16 @@ namespace CORE
         Completion_Manager();
         virtual ~Completion_Manager();
 
-        COMPLIST get_list( int mode, std::string& query );
-        void set_query( int mode, std::string& query );
+        COMPLIST get_list( const int mode, const std::string& query );
+        void set_query( const int mode, const std::string& query );
 
-        void clear( int mode );
+        void clear( const int mode );
 
       private:
 
         // 情報ファイル読み書き
-        void load_info( int mode );
-        void save_info( int mode );
+        void load_info( const int mode );
+        void save_info( const int mode );
     };
 
     ///////////////////////////////////////

@@ -72,11 +72,7 @@ bool CompletionEntry::completion()
 
 Glib::ustring CompletionEntry::get_text()
 {
-    // 補完リスト更新
-    std::string query = m_entry.get_text();
-    if( ! query.empty() ) CORE::get_completion_manager()->set_query( m_mode, query );
-
-    return query;
+    return m_entry.get_text();
 }
 
 

@@ -2545,7 +2545,6 @@ void ArticleViewBase::slot_drawout_selection_str()
 
     if( query.empty() ) return;
 
-    CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, query );
     CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "false" );
 }
 
@@ -3151,6 +3150,7 @@ void ArticleViewBase::exec_search()
 
     if( m_pre_query != query ){
         m_pre_query = query;
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, query );
         m_drawarea->set_jump_history();
         m_drawarea->search( list_query, m_search_invert );
     }

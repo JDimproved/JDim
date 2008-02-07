@@ -28,6 +28,7 @@
 #include "controlutil.h"
 #include "colorid.h"
 #include "fontid.h"
+#include "compmanager.h"
 
 #include "icons/iconmanager.h"
 
@@ -1966,6 +1967,7 @@ void BoardView::exec_search()
         drawout();
         focus_view();
         m_pre_query = query;
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, query );
         return;
     }
 

@@ -53,7 +53,7 @@ Completion_Manager::~Completion_Manager()
 }
 
 
-COMPLIST Completion_Manager::get_list( int mode, std::string& query )
+COMPLIST Completion_Manager::get_list( const int mode, const std::string& query )
 {
     COMPLIST complist;
 
@@ -84,9 +84,9 @@ COMPLIST Completion_Manager::get_list( int mode, std::string& query )
 }
 
 
-void Completion_Manager::set_query( int mode, std::string& query )
+void Completion_Manager::set_query( const int mode, const std::string& query )
 {
-    if( mode < COMP_SIZE ){
+    if( ! query.empty() && mode < COMP_SIZE ){
 
 #ifdef _DEBUG
         std::cout << "Completion_Manager::set_query mode = " << mode << " query = " << query << std::endl;
@@ -102,7 +102,7 @@ void Completion_Manager::set_query( int mode, std::string& query )
 }
 
 
-void Completion_Manager::clear( int mode )
+void Completion_Manager::clear( const int mode )
 {
     if( mode < COMP_SIZE ){
         m_lists[ mode ]->clear();
@@ -114,7 +114,7 @@ void Completion_Manager::clear( int mode )
 
 
 // 情報ファイル読み書き
-void Completion_Manager::load_info( int mode )
+void Completion_Manager::load_info( const int mode )
 {
     std::string path = CACHE::path_completion( mode );
     std::string info;
@@ -133,7 +133,7 @@ void Completion_Manager::load_info( int mode )
 }
 
 
-void Completion_Manager::save_info( int mode )
+void Completion_Manager::save_info( const int mode )
 {
     std::string info;
     COMPLIST* complist = m_lists[ mode ];

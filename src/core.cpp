@@ -2236,6 +2236,9 @@ void Core::set_command( const COMMAND_ARGS& command )
         std::string mode_str = "KEYWORD";
         if( command.arg2 == "true" ) mode_str = "KEYWORD_OR";  // OR 抽出
         
+        // 検索履歴更新
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, command.arg1 );
+       
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
@@ -2385,6 +2388,9 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
+        // 検索履歴更新
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, command.arg1 );
+
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
@@ -2413,6 +2419,9 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
         
+        // 検索履歴更新
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, command.arg1 );
+
         ARTICLE::get_admin()->set_command( "open_view",
                                            "allboard",
 
