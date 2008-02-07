@@ -195,7 +195,7 @@ AC_ARG_WITH(openssl,[ --with-openssl    (use openssl)],
 case "${use_gnutls}" in 
  yes)
    echo "use gnutls"
-   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.0] )
+   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2] )
    AC_DEFINE(USE_GNUTLS, , "use gnutls")
    AC_SUBST(GNUTLS_CFLAGS)
    AC_SUBST(GNUTLS_LIBS)

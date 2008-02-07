@@ -146,6 +146,7 @@ PageFont::PageFont() : Gtk::VBox(),
 void PageFont::slot_font_res()
 {
     CONFIG::set_fontname( FONT_MAIN, m_font_res.get_font_name() );
+    CONFIG::set_fontname( FONT_MESSAGE, m_font_res.get_font_name() );
 }
 
 void PageFont::slot_font_popup()

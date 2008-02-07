@@ -113,7 +113,7 @@ void restore_bkup()
     if( bkup_main || bkup_favor ){
 
         Gtk::MessageDialog* mdiag
-        = new Gtk::MessageDialog( "前回の起動時に正しくJDが終了されませんでした。\n\n板リストとお気に入りをバックアップファイルから復元しますか？\nキャンセルを押すとバックアップファイルを削除します。",
+        = new Gtk::MessageDialog( "前回の起動時に正しくJDが終了されませんでした。\n\n板リストとお気に入りをバックアップファイルから復元しますか？\nいいえを押すとバックアップファイルを削除します。",
                                   false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         int ret = mdiag->run();
         delete mdiag;
