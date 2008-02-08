@@ -185,7 +185,7 @@ namespace ARTICLE
 
         void setup_action();
 
-        void exec_reload();
+        virtual void exec_reload();
         void exec_delete();
 
         // 荒らし報告用のURLリストをHTML形式で取得

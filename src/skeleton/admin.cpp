@@ -1422,6 +1422,10 @@ void Admin::toggle_tab()
 //
 void Admin::toggle_icon( const std::string& url )
 {
+#ifdef _DEBUG
+    std::cout << "Admin::toggle_icon url = " << url << std::endl;
+#endif
+
     SKELETON::View* view = get_view( url );
     if( view ){
 
@@ -1447,6 +1451,9 @@ void Admin::toggle_icon( const std::string& url )
         // 古い
         else if( view->is_old() ) iconname = "old";
 
+#ifdef _DEBUG
+        std::cout << "name = " << iconname << std::cout;
+#endif
         int id = view->get_icon( iconname );
         get_notebook()->set_tabicon( iconname, get_notebook()->page_num( *view ), id );
     }

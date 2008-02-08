@@ -31,13 +31,15 @@ namespace ARTICLE
         virtual const bool is_old();
         virtual const bool is_broken();
 
-        virtual void reload();
         virtual void show_view();
         virtual void update_view();
         virtual void update_finish();
         virtual void relayout();
 
       private:
+
+        virtual void exec_reload();
+
         void show_instruct_diag();
     };
 }

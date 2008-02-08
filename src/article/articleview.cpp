@@ -115,9 +115,9 @@ const bool ArticleViewMain::is_broken()
 }
 
 //
-// 再読み込み
+// 再読み込み実行
 //
-void ArticleViewMain::reload()
+void ArticleViewMain::exec_reload()
 {
     // オフライン
     if( ! SESSION::is_online() ){
