@@ -6,6 +6,7 @@
 #define _MISCTIME_H
 
 #include <string>
+#include <sys/time.h>
 
 namespace MISC
 {

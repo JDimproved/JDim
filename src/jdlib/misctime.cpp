@@ -6,9 +6,9 @@
 #include "misctime.h"
 
 #include <sstream>
+#include <cstring>
 #include <time.h>
 #include <sys/time.h>
-
 
 //
 // gettimeofday()の秒を文字列で取得

@@ -33,6 +33,7 @@
 
 #include <sstream>
 #include <sys/time.h>
+#include <cstring>
 
 
 using namespace MESSAGE;

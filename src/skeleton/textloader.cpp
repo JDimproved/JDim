@@ -13,6 +13,8 @@
 #include "session.h"
 #include "cache.h"
 
+#include <cstring>
+
 enum
 {
     SIZE_OF_RAWDATA = 1024 * 1024

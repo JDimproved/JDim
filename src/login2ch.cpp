@@ -16,6 +16,8 @@
 #include "jdlib/loaderdata.h"
 #include "jdlib/miscmsg.h"
 
+#include <cstring>
+
 enum
 {
     SIZE_OF_RAWDATA = 64 * 1024

@@ -34,6 +34,7 @@
 
 #include <math.h>
 #include <sstream>
+#include <cstring>
 
 using namespace ARTICLE;
 

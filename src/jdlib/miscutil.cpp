@@ -11,6 +11,8 @@
 #include "dbtree/spchar_decoder.h"
 
 #include <sstream>
+#include <cstring>
+#include <cstdlib>
 
 
 //

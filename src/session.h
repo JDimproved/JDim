@@ -8,6 +8,7 @@
 
 #include <list>
 #include <vector>
+#include <string>
 
 namespace SESSION
 {

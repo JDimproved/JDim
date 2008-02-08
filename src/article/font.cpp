@@ -10,6 +10,9 @@
 #include "fontid.h"
 #include "config/globalconf.h"
 
+#include <cstdlib>
+#include <cstring>
+
 
 struct WIDTH_DATA
 {

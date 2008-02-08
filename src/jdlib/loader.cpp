@@ -14,6 +14,7 @@
 #include "httpcode.h"
 
 #include <sstream>
+#include <cstring>
 
 #include <errno.h>
 #include <fcntl.h>

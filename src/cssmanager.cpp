@@ -13,6 +13,8 @@
 #include "colorid.h"
 #include "cache.h"
 
+#include <cstring>
+
 enum
 {
     SIZE_OF_HEAP = 16 * 1024

@@ -40,6 +40,7 @@
 #include "icons/iconmanager.h"
 
 #include <sstream>
+#include <cstring>
 
 #ifndef MAX
 #define MAX( a, b ) ( a > b ? a : b )

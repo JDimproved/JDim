@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 #include <string>
+#include <cstring>
 
 migemo *migemo_object;
 

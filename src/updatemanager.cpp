@@ -12,6 +12,8 @@
 #include "command.h"
 #include "global.h"
 
+#include <algorithm>
+
 CORE::CheckUpdate_Manager* instance_checkupdate_manager = NULL;
 
 

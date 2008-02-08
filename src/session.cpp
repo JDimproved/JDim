@@ -18,6 +18,7 @@
 #include "article/articleadmin.h"
 
 #include <sstream>
+#include <cstring>
 
 #ifdef HAVE_SYS_UTSNAME_H
 #include <sys/utsname.h> // uname()

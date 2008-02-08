@@ -11,6 +11,8 @@
 #include "miscmsg.h"
 
 #include <errno.h>
+#include <cstring>
+#include <cstdlib>
 
 using namespace JDLIB;
 

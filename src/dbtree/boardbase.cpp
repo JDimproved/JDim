@@ -26,6 +26,7 @@
 #include "session.h"
 
 #include <sstream>
+#include <cstring>
 
 enum
 {

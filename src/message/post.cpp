@@ -20,6 +20,8 @@
 
 #include "httpcode.h"
 
+#include <cstring>
+
 
 using namespace MESSAGE;
 

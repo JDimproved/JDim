@@ -7,6 +7,7 @@
 #include "miscmsg.h"
 
 #include <limits.h>
+#include <cstring>
 
 using namespace JDLIB;
 

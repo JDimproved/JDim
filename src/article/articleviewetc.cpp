@@ -16,6 +16,7 @@
 #include "global.h"
 
 #include <sys/time.h>
+#include <cstring>
 
 using namespace ARTICLE;
 

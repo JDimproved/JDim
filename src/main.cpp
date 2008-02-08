@@ -16,6 +16,7 @@
 #include <string>
 #include <sys/time.h>
 #include <errno.h>
+#include <cstring>
 
 #ifdef USE_GNOMEUI
 #include <gnome.h>

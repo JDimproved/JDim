@@ -13,6 +13,8 @@
 
 #include "jdlib/heap.h"
 
+#include <cstring>
+
 namespace JDLIB
 {
     class LOADERDATA;

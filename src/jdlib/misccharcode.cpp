@@ -5,6 +5,8 @@
 
 #include "misccharcode.h"
 
+#include <cstring>
+
 
 // チェックする最大バイト数
 #define CHECK_LIMIT 1024

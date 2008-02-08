@@ -5,6 +5,9 @@
 
 #include "heap.h"
 
+#include <cstdlib>
+#include <cstring>
+
 using namespace JDLIB;
 
 HEAP::HEAP( long blocksize )

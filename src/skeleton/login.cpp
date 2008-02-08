@@ -10,6 +10,7 @@
 #include "jdlib/confloader.h"
 
 #include <sstream>
+#include <cstring>
 #include <sys/types.h> // chmod
 #include <sys/stat.h>
 
