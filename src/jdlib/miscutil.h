@@ -111,7 +111,7 @@ namespace MISC
     std::string html_unescape( const std::string& str );
 
     // URL中のスキームを判別する
-    int is_url_scheme( const char* str_in, int& len );
+    int is_url_scheme( const char* str_in, int* length = NULL );
 
     // URLとして扱う文字かどうか判別する
     bool is_url_char( const char* str_in, const bool loose_url );

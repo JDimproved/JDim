@@ -1917,7 +1917,7 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
 
     // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
     int delim_pos = 0;
-    int linktype = MISC::is_url_scheme( str_in, delim_pos );
+    int linktype = MISC::is_url_scheme( str_in, &delim_pos );
 
     if( linktype == MISC::SCHEME_NONE ) return false;
 

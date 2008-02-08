@@ -1727,8 +1727,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
     if( view_popup ) show_popup( view_popup, margin_popup );
 
     // リンクとして扱うURLをステータスバーに表示する
-    int len;
-    if( MISC::is_url_scheme( url.c_str(), len ) != MISC::SCHEME_NONE )
+    if( MISC::is_url_scheme( url.c_str() ) != MISC::SCHEME_NONE )
     {
         std::string status_url;
 

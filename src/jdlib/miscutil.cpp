@@ -681,7 +681,7 @@ std::string MISC::html_escape( const std::string& str, const bool include_url )
 
             // URLスキームが含まれているか判別
             int len = 0;
-            if( ! is_url ) scheme = is_url_scheme( str.c_str() + pos, len );
+            if( ! is_url ) scheme = is_url_scheme( str.c_str() + pos, &len );
 
             // URLスキームが含まれていた場合は文字数分進めてループに戻る
             if( len > 0 )
@@ -764,10 +764,10 @@ std::string MISC::html_unescape( const std::string& str )
 // 戻り値 : スキームタイプ
 // len    : "http://"等の文字数
 //
-int MISC::is_url_scheme( const char* str_in, int& len )
+int MISC::is_url_scheme( const char* str_in, int* length )
 {
     int scheme = SCHEME_NONE;
-    len = 0;
+    int len = 0;
 
     // 候補になり得ない場合は以降の処理はしない
     if( *str_in != 'h' && *str_in != 'f' && *str_in != 't' ) return scheme;
@@ -803,7 +803,11 @@ int MISC::is_url_scheme( const char* str_in, int& len )
 
     // 各スキーム後に続く共通の"://"
     if( *( str_in + len ) == ':' && *( str_in + len + 1 ) == '/'
-        && *( str_in + len + 2 ) == '/' ) len += 3;
+        && *( str_in + len + 2 ) == '/' )
+    {
+        len += 3;
+        if( length ) *length = len;
+    }
     else scheme = SCHEME_NONE;
 
     return scheme;
