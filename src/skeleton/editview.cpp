@@ -181,26 +181,6 @@ void EditTextView::backsp_char()
 }
 
 
-void EditTextView::set_line_marker()
-{
-    Glib::RefPtr< Gtk::TextBuffer > buffer = get_buffer();
-    Glib::RefPtr< Gdk::Pixbuf > pixbuf = Gtk::Widget::render_icon( Gtk::Stock::INFO, Gtk::ICON_SIZE_MENU );
-
-    Gtk::TextIter it = buffer->begin();
-    while( it != buffer->end() )
-    {
-        //if( it.get_pixbuf() ) buffer->erase( it, it );
-        if( it.ends_line() )
-        {
-            buffer->insert_pixbuf( it, pixbuf );
-            break;;
-        }
-
-        ++it;
-    }
-}
-
-
 //
 // バッファの文字列が変化したときに UNDO バッファを変更する
 //
