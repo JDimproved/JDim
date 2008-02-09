@@ -1249,9 +1249,6 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng, int color_
 {
     bool digitlink = true;
     const bool bold = true;
-    int pos_trip_begin = 0;
-    int pos_trip_end = 0;
-    int i;
     const bool defaultname = ( strncmp( m_default_noname.data(), str, lng ) == 0 );
 
     header->headinfo->block[ BLOCK_NAMELINK ] = create_block_node();
@@ -1265,59 +1262,78 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng, int color_
 
     NODE* node = header->headinfo->block[ BLOCK_NAME ] = create_block_node();
 
-    // トリップなど</b>〜<b>が含まれている場合。</b>〜<b>の中の数字はリンクにしない
-    for( i = 0; i < lng; ++i ) if( str[ i ] == '<' && ( str[ i+2 ] == 'b' || str[ i+2 ] == 'B' ) ) break;
-    if( i != lng ){
-
-        pos_trip_begin = i;
-        pos_trip_end = lng -1;
-        for( i = pos_trip_begin + 4; i < lng; ++i ){
-                if( str[ i ] == '<' && ( str[ i+1 ] == 'b' || str[ i+1 ] == 'B' ) ){
-                pos_trip_end = i + 2;
-                break;
-            }
-        }
-
-#ifdef _DEBUG        
-        char tmp_str[256];
-        memset( tmp_str, 0, 256);
-        memcpy(tmp_str, str, lng);
-
-        std::cout << "NodeTreeBase::parseName trip = " << tmp_str
-                  << " begin = " << pos_trip_begin << " end = " << pos_trip_end << std::endl;
-#endif
-        // トリップの前(名前部分)
-        parse_html( str, pos_trip_begin, color_name, digitlink, bold );
-
-        // あとは数字が入ってもリンクしない
-        digitlink = false;
-
-        // トリップ
-        parse_html( str + pos_trip_begin, pos_trip_end - pos_trip_begin + 1, COLOR_CHAR_NAME_B, digitlink, bold );
-
-        // トリップの後
-        if( pos_trip_end < lng-1 )
-            parse_html( str + pos_trip_end + 1, lng - pos_trip_end - 1, color_name, digitlink, bold );
-    }
-
     // デフォルト名無しと同じときはアンカーを作らない
-    else if( defaultname ){
+    if( defaultname ){
         digitlink = false;
         parse_html( str, lng, color_name, digitlink, bold );
     }
+    else{
 
-    // 通常の場合は先頭に数字があったらアンカーにする
-    else parse_html( str, lng, color_name, digitlink, bold );
+        int pos = 0;
+        int i;
+
+        while( pos < lng ){
+
+            // トリップなど</b>〜<b>の中の文字列は色を変えて数字をリンクにしない
+            for( i = pos; i < lng; ++i ){
+                if( str[ i ] == '<'
+                    && str[ i+1 ] == '/'
+                    && ( str[ i+2 ] == 'b' || str[ i+2 ] == 'B' )
+                    && str[ i+3 ] == '>' ) break;
+            }
+
+            // </b>の前までパース
+            if( i != pos ){
+                digitlink = true;
+                parse_html( str + pos, i - pos, color_name, digitlink, bold );
+            }
+            if( i >= lng ) break;
+            pos = i + 4; // 4 = strlen( "</b>" );
+
+            // <b>の位置を探す
+            int pos_end = lng;
+            for( i = pos; i < lng; ++i ){
+                if( str[ i ] == '<'
+                    && ( str[ i+1 ] == 'b' || str[ i+1 ] == 'B' )
+                    && str[ i+2 ] == '>' ){
+                    pos_end = i;
+                    break;
+                }
+            }
+
+#ifdef _DEBUG        
+            char tmp_str[256];
+            memset( tmp_str, 0, 256);
+            memcpy( tmp_str, str + pos, pos_end - pos );
+
+            std::cout << "NodeTreeBase::parseName trip = " << tmp_str
+                      << " begin = " << pos << " end = " << pos_end << std::endl;
+#endif
+
+            // </b><b>の中をパース
+            digitlink = false; // 数字が入ってもリンクしない
+            parse_html( str + pos, pos_end - pos, COLOR_CHAR_NAME_B, digitlink, bold );
+
+            pos = pos_end + 3; // 3 = strlen( "<b>" );
+        }
+    }
 
     // plainな名前取得
-    std::string str_tmp;
-    node = node->next_node;
-    while( node ){
-        if( node->text ) str_tmp += node->text;
-        node = node->next_node;
+    // 名前あぼーんや名前抽出などで使用する
+    if( defaultname ){
+        header->headinfo->name = ( char* )m_heap.heap_alloc( lng +2 );
+        memcpy( header->headinfo->name, str, lng );
     }
-    header->headinfo->name = ( char* )m_heap.heap_alloc( str_tmp.length() +2 );
-    memcpy( header->headinfo->name, str_tmp.c_str(), str_tmp.length() );
+    else{
+        std::string str_tmp;
+        node = node->next_node;
+        while( node ){
+            if( node->text ) str_tmp += node->text;
+            node = node->next_node;
+        }
+        header->headinfo->name = ( char* )m_heap.heap_alloc( str_tmp.length() +2 );
+        memcpy( header->headinfo->name, str_tmp.c_str(), str_tmp.length() );
+    }
 }
 
 

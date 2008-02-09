@@ -116,10 +116,10 @@ namespace SKELETON
         std::string get_items();
 
         // 表示項目に指定した項目を追加
-        Gtk::TreeRow append_shown( const std::string& name, const bool select = false, const bool cursor = false );
+        Gtk::TreeRow append_shown( const std::string& name, const bool set_cursor );
 
         // 非表示項目に指定した項目を追加
-        Gtk::TreeRow append_hidden( const std::string& name, const bool select = false, const bool cursor = false );
+        Gtk::TreeRow append_hidden( const std::string& name, const bool set_cursor );
 
         // 非表示項目から指定した項目を削除
         void erase_hidden( const std::string& name );

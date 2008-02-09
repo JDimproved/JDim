@@ -256,10 +256,10 @@ void SelectItemPref::append_rows( const std::string& str )
         // 2つ以上セパレータを追加しない
         if( (*def_it).name == ITEM_NAME_SEPARATOR )
         {
-            if( ! found_separator ) append_hidden( (*def_it).name );
+            if( ! found_separator ) append_hidden( (*def_it).name, false );
             found_separator = true;
         }
-        else append_hidden( (*def_it).name );
+        else append_hidden( (*def_it).name, false );
 
         ++def_it;
     }
@@ -271,7 +271,7 @@ void SelectItemPref::append_rows( const std::string& str )
     std::list< std::string >::iterator it = items.begin();
     while( it != items.end() )
     {
-        append_shown( *it );
+        append_shown( *it, false );
         erase_hidden( *it );
         ++it;
     }
@@ -301,7 +301,7 @@ std::string SelectItemPref::get_items()
 //
 // 表示項目に指定した項目を追加
 //
-Gtk::TreeRow SelectItemPref::append_shown( const std::string& name, const bool select, const bool cursor )
+Gtk::TreeRow SelectItemPref::append_shown( const std::string& name, const bool set_cursor )
 {
     Gtk::TreeModel::Row row = *( m_store_shown->append() );
 
@@ -310,8 +310,10 @@ Gtk::TreeRow SelectItemPref::append_shown( const std::string& name, const bool s
     if( icon ) row[ m_columns_shown.m_column_icon ] = icon;
     row[ m_columns_shown.m_column_text ] = name;
 
-    if( select ) m_tree_shown.get_selection()->select( row );
-    if( cursor ) m_tree_shown.set_cursor( m_store_hidden->get_path( row ) );
+    if( set_cursor ){
+        m_tree_shown.get_selection()->select( row );
+        m_tree_shown.set_cursor( m_store_shown->get_path( row ) );
+    }
 
     return row;
 }
@@ -320,7 +322,7 @@ Gtk::TreeRow SelectItemPref::append_shown( const std::string& name, const bool s
 //
 // 非表示項目に指定した項目を追加
 //
-Gtk::TreeRow SelectItemPref::append_hidden( const std::string& name, const bool select, const bool cursor )
+Gtk::TreeRow SelectItemPref::append_hidden( const std::string& name, const bool set_cursor )
 {
     Gtk::TreeModel::Row row = *( m_store_hidden->append() );
 
@@ -329,8 +331,10 @@ Gtk::TreeRow SelectItemPref::append_hidden( const std::string& name, const bool 
     if( icon ) row[ m_columns_hidden.m_column_icon ] = icon;
     row[ m_columns_hidden.m_column_text ] = name;
 
-    if( select ) m_tree_hidden.get_selection()->select( row );
-    if( cursor ) m_tree_hidden.set_cursor( m_store_hidden->get_path( row ) );
+    if( set_cursor ){
+        m_tree_hidden.get_selection()->select( row );
+        m_tree_hidden.set_cursor( m_store_hidden->get_path( row ) );
+    }
 
     return row;
 }
@@ -577,7 +581,8 @@ void SelectItemPref::slot_bottom()
 void SelectItemPref::slot_delete()
 {
     std::list< Gtk::TreePath > selection_path = m_tree_shown.get_selection()->get_selected_rows();
-    // 空の場合はフォーカスだけ移して出る
+
+    // 選択したアイテムが無い場合はフォーカスだけ移して出る
     if( selection_path.empty() )
     {
         set_focus( m_tree_hidden );
@@ -585,7 +590,7 @@ void SelectItemPref::slot_delete()
     }
 
     std::list< Gtk::TreeRow > erase_rows;
-    bool cursor = true;
+    bool set_cursor = true;  // 一番上の選択項目にカーソルをセット
 
     std::list< Gtk::TreePath >::iterator it = selection_path.begin();
     while( it != selection_path.end() )
@@ -598,11 +603,10 @@ void SelectItemPref::slot_delete()
             Glib::ustring name = row[ m_columns_shown.m_column_text ];
 
             // 非表示項目に追加
-            // 一番上の選択項目にカーソルを付ける
             if( name != ITEM_NAME_SEPARATOR )
             {
-                append_hidden( name, true, cursor );
-                cursor = false;
+                append_hidden( name, set_cursor );
+                set_cursor = false;
             }
 
             // 表示項目から削除するリストに追加
@@ -632,7 +636,8 @@ void SelectItemPref::slot_delete()
 void SelectItemPref::slot_add()
 {
     std::list< Gtk::TreePath > selection_path = m_tree_hidden.get_selection()->get_selected_rows();
-    // 空の場合はフォーカスだけ移して出る
+
+    // 選択したアイテムが無い場合はフォーカスだけ移して出る
     if( selection_path.empty() )
     {
         set_focus( m_tree_shown );
@@ -640,8 +645,9 @@ void SelectItemPref::slot_add()
     }
 
     std::list< Gtk::TreeRow > erase_rows;
-    bool cursor = true;
+    bool set_cursor = true; // 一番上の選択項目にカーソルをセット
 
+    // 選択したアイテムを追加
     std::list< Gtk::TreePath >::iterator it = selection_path.begin();
     while( it != selection_path.end() )
     {
@@ -652,9 +658,8 @@ void SelectItemPref::slot_add()
             Glib::ustring name = row[ m_columns_hidden.m_column_text ];
 
             // 表示項目に追加
-            // 一番上の選択項目にカーソルを付ける
-            append_shown( name, true, cursor );
-            cursor = false;
+            append_shown( name, set_cursor );
+            set_cursor = false;
 
             // 非表示項目から削除するリストに追加
             if( name != ITEM_NAME_SEPARATOR ) erase_rows.push_back( row );
