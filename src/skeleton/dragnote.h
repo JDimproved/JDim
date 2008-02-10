@@ -18,6 +18,7 @@ namespace SKELETON
     class View;
     class ToolBar;
     class TabLabel;
+    class IconPopup;
 
     typedef sigc::signal< void, GtkNotebookPage*, int > SIG_SWITCH_PAGE;
     typedef sigc::signal< void, int > SIG_TAB_CLICK;
@@ -47,9 +48,6 @@ namespace SKELETON
 
         bool m_show_tabs;
 
-        // タブ幅計算用layout
-        Glib::RefPtr< Pango::Layout > m_layout_tab;
-
         int m_page;
         bool m_drag;
         bool m_dblclick;
@@ -60,9 +58,8 @@ namespace SKELETON
         Tooltip m_tooltip;
 
         bool m_dragable;
-        bool m_fixtab;
 
-        int m_pre_width;
+        SKELETON::IconPopup* m_down_arrow;
 
       public:
 
@@ -81,7 +78,7 @@ namespace SKELETON
         void clock_in();
         void focus_out();
 
-        const bool get_show_tabs();
+        const bool get_show_tabs() const{ return m_show_tabs; }
         void set_show_tabs( bool show_tabs );
         void set_scrollable( bool scrollable );
         const int get_n_pages();
@@ -116,8 +113,8 @@ namespace SKELETON
         // ドラッグ可/不可切り替え(デフォルト false );
         void set_dragable( bool dragable ){ m_dragable = dragable; }
 
-        // タブの幅を固定するか(デフォルト false );
-        void set_fixtab( bool fix ){ m_fixtab = fix; }
+        // タブの幅を固定するか
+        void set_fixtab( bool fix );
 
         // タブ幅調整
         bool adjust_tabwidth();
@@ -129,13 +126,6 @@ namespace SKELETON
 
         // タブ作成
         SKELETON::TabLabel* create_tablabel( const std::string& url );
-
-        // タブ取得
-        TabLabel* get_tablabel( int page );
-        TabLabel* get_tablabel( const std::string& url );
-
-        // マウスの下にあるタブの番号
-        int get_page_under_mouse();
 
         // notebook_tabのタブが切り替わったときに呼び出されるslot
         void slot_switch_page_tab( GtkNotebookPage*, guint page );
@@ -154,7 +144,7 @@ namespace SKELETON
         void slot_leave_event();
 
         void slot_drag_begin();
-        void slot_drag_drop();
+        void slot_drag_motion( const int page, const int tab_x, const int tab_y, const int tab_width );
         void slot_drag_end();
     };
 }

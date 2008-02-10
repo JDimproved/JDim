@@ -12,7 +12,7 @@
 using namespace SKELETON;
 
 TabLabel::TabLabel( const std::string& url )
-    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_locked( false ), m_image( NULL ), m_image_width( 0 ), m_under_mouse( false )
+    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_image( NULL ), m_image_width( 0 )
 {
 #ifdef _DEBUG
     std::cout << "TabLabel::TabLabel " << m_url << std::endl;
@@ -21,7 +21,6 @@ TabLabel::TabLabel( const std::string& url )
     // 背景透過
     set_visible_window( false );
 
-    add_events( Gdk::ENTER_NOTIFY_MASK );
     add_events( Gdk::POINTER_MOTION_MASK );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
 
@@ -39,15 +38,6 @@ TabLabel::~TabLabel()
 #endif
 
     if( m_image ) delete m_image;
-}
-
-
-// タブとラベルの間のすき間のサイズ
-// 取得方法が分からないのでとりあえずマジックナンバーを返しておく
-const int TabLabel::get_margin()
-{
-    const int mrg_tab = 12;
-    return mrg_tab;
 }
 
 
@@ -96,7 +86,7 @@ void TabLabel::set_dragable( bool dragable, int button )
         std::list< Gtk::TargetEntry > targets;
         targets.push_back( Gtk::TargetEntry( "text/plain", Gtk::TARGET_SAME_APP, 0 ) );
 
-        // ドラッグ側
+        // ドラッグ開始側にする
         switch( button ){
 
             case 1: drag_source_set( targets, Gdk::BUTTON1_MASK ); break;
@@ -105,30 +95,11 @@ void TabLabel::set_dragable( bool dragable, int button )
 
             default: return;
         }
-
-        // ドロップ側
-        drag_dest_set( targets );
     }
     else{
         drag_source_unset();
         drag_dest_unset();
     }
-}
-
-
-
-//
-// マウスが入った
-//
-bool TabLabel::on_enter_notify_event( GdkEventCrossing* event )
-{
-#ifdef _DEBUG
-    std::cout << "TabLabel::enter " << m_fulltext << std::endl;
-#endif
-
-    m_under_mouse = true;
-
-    return Gtk::EventBox::on_enter_notify_event( event );
 }
 
 
@@ -149,10 +120,8 @@ bool TabLabel::on_motion_notify_event( GdkEventMotion* event )
 bool TabLabel::on_leave_notify_event( GdkEventCrossing* event )
 {
 #ifdef _DEBUG
-    std::cout << "TabLabel::leave " << m_fulltext << std::endl;
+    std::cout << "TabLabel::leave\n";
 #endif
-
-    m_under_mouse = false;
 
     m_sig_tab_leave_event.emit();
 
@@ -169,28 +138,9 @@ void TabLabel::on_drag_begin( const Glib::RefPtr< Gdk::DragContext >& context )
     std::cout << "TabLabel::on_drag_begin " << m_fulltext << std::endl;
 #endif
 
-    m_under_mouse = false;
-
     m_sig_tab_drag_begin.emit();
 
     return Gtk::EventBox::on_drag_begin( context );
-}
-
-
-//
-// ドロップされた
-//
-bool TabLabel::on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time )
-{
-#ifdef _DEBUG
-    std::cout << "TabLabel::on_drag_drop " << m_fulltext << std::endl;;
-#endif
-
-    m_under_mouse = true;
-
-    m_sig_tab_drag_drop.emit();
-
-    return Gtk::EventBox::on_drag_drop( context, x, y, time );
 }
 
 

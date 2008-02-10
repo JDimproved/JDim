@@ -53,6 +53,7 @@ noinst_HEADERS = \
 	spinbutton.h \
 	popupwinbase.h \
 	popupwin.h \
+	iconpopup.h \
 	tooltip.h \
 	entry.h \
 	compentry.h \
