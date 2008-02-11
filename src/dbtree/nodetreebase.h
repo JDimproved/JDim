@@ -83,7 +83,7 @@ namespace DBTREE
 
         // ロード用変数
         char* m_buffer_lines;
-        int m_byte_buffer_lines_left;
+        size_t m_byte_buffer_lines_left;
         char* m_parsed_text;
         bool m_check_update; // HEADによる更新チェックのみ
         
