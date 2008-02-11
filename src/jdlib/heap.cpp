@@ -20,7 +20,7 @@ HEAP::HEAP( long blocksize )
 HEAP::~HEAP()
 {
 #ifdef _DEBUG        
-    std::cout << "HEAP::~HEAP : size " << m_size / 1024 << "k\n";
+    std::cout << "HEAP::~HEAP : size " << m_total_size / 1024 << " k\n";
 #endif
 
     clear();
@@ -29,6 +29,10 @@ HEAP::~HEAP()
 
 void HEAP::clear()
 {
+#ifdef _DEBUG        
+    std::cout << "HEAP::clear : size " << m_total_size << " b\n";
+#endif
+
     m_total_size = 0;
     m_used = 0;
     
@@ -40,12 +44,15 @@ void HEAP::clear()
 }
 
 
-
 unsigned char* HEAP::heap_alloc( long n )
 {
     assert( n > 0 && n <= m_max );
 
     if( m_used == 0 || m_used + n > m_max ){
+
+#ifdef _DEBUG
+        std::cout << "HEAP::heap_alloc malloc " << m_max << std::endl;
+#endif
         m_heap_list.push_back( ( unsigned char* )malloc( m_max ) );
         memset( m_heap_list.back(), 0, m_max );
         m_used = 0;
