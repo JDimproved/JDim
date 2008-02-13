@@ -30,6 +30,16 @@
 using namespace DBTREE;
 
 
+// 情報ファイルのパスをセット
+// デストラクタの中でCACHE::path_article_ext_info()などを呼ぶとabortするので
+// メンバ変数としてパスを取得しておく
+#define SET_INFOPATH() \
+do{ \
+m_path_article_info = CACHE::path_article_info( m_url, m_id ); \
+m_path_article_ext_info = CACHE::path_article_ext_info( m_url, m_id ); \
+} while( false )
+
+
 // 情報ファイルから値を読み込み
 // JDLIB::ConfLoader では遅いので別に作成。オプションの順番に注意すること
 #define GET_INFOVALUE(target,targetname) \
@@ -320,10 +330,7 @@ void ArticleBase::update_datbase( const std::string& datbase )
     m_url = datbase + m_id;
 
     // info ファイルのパスも更新
-    if( ! m_path_article_info.empty() ){
-        m_path_article_info = CACHE::path_article_info( m_url, m_id );  // info
-        m_path_article_ext_info = CACHE::path_article_ext_info( m_url, m_id ); // 拡張info
-    }
+    if( ! m_path_article_info.empty() ) SET_INFOPATH();
 
 #ifdef _DEBUG
     if( !old_url.empty() ) std::cout << "ArticleBase::update_datbase from "  << old_url
@@ -765,7 +772,7 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
     if( ! m_nodetree ){
 
 #ifdef _DEBUG
-    std::cout << "ArticleBase::get_nodetree create " << m_url << std::endl;
+        std::cout << "ArticleBase::get_nodetree create " << m_url << std::endl;
 #endif
     
         m_nodetree = create_nodetree();
@@ -1010,6 +1017,9 @@ void ArticleBase::slot_load_finished()
             m_save_info = true;
             m_enable_load = false;
 
+            // 情報ファイルのパスをセット
+            if( m_path_article_info.empty() ) SET_INFOPATH();
+
             show_updateicon( false );
         }
     }
@@ -1176,24 +1186,21 @@ bool ArticleBase::save_dat( const std::string& path_to )
 //
 void ArticleBase::read_info()
 {
-    // 情報ファイルのパス
-    // デストラクタの中でCACHE::path_article_ext_info()などを呼ぶとabortするので
-    // パスを取得しておく
-    if(  m_path_article_info.empty() ){
-        m_path_article_info = CACHE::path_article_info( m_url, m_id );  // info
-        m_path_article_ext_info = CACHE::path_article_ext_info( m_url, m_id ); // 拡張info
-    }
-
+    if( m_read_info ) return; // 一度読んだら2度読みしない
     if( empty() ) return;
     if( ! m_cached ) return;  // キャッシュがないなら読まない
-    if( m_read_info ) return; // 一度読んだら2度読みしない
-    m_read_info = true;
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::read_info :  url = " << m_url << std::endl;
 #endif
 
-    if( CACHE::file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ){
+    m_read_info = true;
+
+    // 情報ファイルのパスをセット
+    if( m_path_article_info.empty() ) SET_INFOPATH();
+
+    int ret = CACHE::file_exists( m_path_article_ext_info );
+    if( ret == CACHE::EXIST_FILE ){
 
         std::string str_info, str_tmp;
         std::list< std::string > list_tmp;
@@ -1343,6 +1350,8 @@ void ArticleBase::read_info()
 #ifdef _DEBUG
         std::cout << "ArticleBase::read_info : update info " << m_url << std::endl;
         std::cout << "load = " << m_number_load << " subject = " << m_subject << std::endl;
+        std::cout << "ret = " << ret << std::endl;
+        std::cout << "path = " << m_path_article_ext_info << std::endl;
 #endif
 
         CORE::core_set_command( "set_status","", "スレ情報更新中・・・しばらくお待ち下さい" );
@@ -1354,6 +1363,7 @@ void ArticleBase::read_info()
         if( !m_number_load ){
             m_number_load = 1;
             m_status |= STATUS_BROKEN;
+            MISC::MSG( "updating failed" );
         }
         
         m_number_before_load = m_number_load;
@@ -1426,6 +1436,12 @@ void ArticleBase::save_info( bool force )
     m_save_info = false;
 
     if( m_path_article_ext_info.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleBase::save_info force = " << force << std::endl;
+    std::cout << "path_article_info = " << m_path_article_info << std::endl;
+    std::cout << "path_article_ext_info = " << m_path_article_ext_info << std::endl;
+#endif
 
     // 書き込み時間
     std::ostringstream ss_write;

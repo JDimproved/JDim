@@ -570,7 +570,7 @@ const std::string BoardBase::url_subbbscgibase()
 //
 // 無ければNULLクラスを返す
 //
-ArticleBase* BoardBase::get_article( const std::string id )
+ArticleBase* BoardBase::get_article( const std::string& id )
 {
     if( id.empty() ) return get_article_null();
 
@@ -597,7 +597,7 @@ ArticleBase* BoardBase::get_article( const std::string id )
 // ポインタがあった場合は情報ファイルを読み込む
 // さらにデータベースにArticleBaseクラスが登録されてない場合はクラスを作成して登録する
 //
-ArticleBase* BoardBase::get_article_create( const std::string id )
+ArticleBase* BoardBase::get_article_create( const std::string& id )
 {
 #ifdef _DEBUG
     std::cout << "BoardBase::get_article_create id = " << id << std::endl;
@@ -605,6 +605,8 @@ ArticleBase* BoardBase::get_article_create( const std::string id )
 
     ArticleBase* art = get_article( id );
 
+    // get_article() の中で append_all_article_in_cache() を
+    // 呼び出しているので、スレがキャッシュ内にある場合は !art->empty() になるのに注意
     if( ! art->empty() ){
 
 #ifdef _DEBUG
@@ -640,7 +642,7 @@ ArticleBase* BoardBase::get_article_create( const std::string id )
 //
 // さらにデータベースにArticleBaseクラスが登録されてない場合はクラスを作成して登録する
 //
-ArticleBase* BoardBase::get_article_fromURL( const std::string url )
+ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 {
     if( empty() ) return get_article_null();
 
@@ -676,7 +678,12 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string url )
 
     if( id.empty() ) return m_get_article;
 
+    // get_article_create() 経由で ArticleBase::read_info() から get_article_fromURL()が
+    // 再帰呼び出しされることもあるので m_get_article_url を空にしておく
+    m_get_article_url = std::string(); 
+
     m_get_article = get_article_create( id );
+    m_get_article_url = url;
     return m_get_article;
 }
 

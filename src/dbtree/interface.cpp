@@ -596,16 +596,14 @@ const bool DBTREE::article_is_cached( const std::string& url )
 // 拡張子付き
 const std::string DBTREE::article_id( const std::string& url )
 {
-    std::string id =  DBTREE::get_article( url )->get_id();
-    return id;
+    return DBTREE::get_article( url )->get_id();
 }
 
 
 // idから拡張子を取ったもの
 const std::string DBTREE::article_key( const std::string& url )
 {
-    std::string key = DBTREE::get_article( url )->get_key();
-    return key;
+    return DBTREE::get_article( url )->get_key();
 }
 
 

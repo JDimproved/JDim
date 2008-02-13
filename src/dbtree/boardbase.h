@@ -303,9 +303,9 @@ namespace DBTREE
 
         // article クラスのポインタ取得
         // それぞれの違いはソースのコメントを参照
-        ArticleBase* get_article( const std::string id );
-        ArticleBase* get_article_create( const std::string id );
-        ArticleBase* get_article_fromURL( const std::string url );
+        ArticleBase* get_article( const std::string& id );
+        ArticleBase* get_article_create( const std::string& id );
+        ArticleBase* get_article_fromURL( const std::string& url );
 
         void download_subject();
 

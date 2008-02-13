@@ -1066,7 +1066,10 @@ void NodeTreeBase::receive_finish()
     if( ! m_check_update ){
 
         // Requested Range Not Satisfiable
-        if( get_code() == HTTP_RANGE_ERR ) m_broken = true;
+        if( get_code() == HTTP_RANGE_ERR ){
+            m_broken = true;
+            MISC::ERRMSG( "Requested Range Not Satisfiable" );
+        }
 
         // データがロードされなかったらキャッシュを消す
         if( get_res_number() == 0 ){
