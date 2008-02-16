@@ -9,8 +9,10 @@
 
 #include <gtkmm.h>
 
-#include "jdlib/constptr.h"
+#include "skeleton/dispatchable.h"
 
+#include "jdlib/constptr.h"
+#include "jdlib/jdthread.h"
 
 namespace DBIMG
 {
@@ -20,10 +22,11 @@ namespace DBIMG
 
 namespace IMAGE
 {
-    class ImageAreaBase : public Gtk::Image
+    class ImageAreaBase : public Gtk::Image, public SKELETON::Dispatchable
     {
         std::string m_url;
         JDLIB::ConstPtr< DBIMG::Img > m_img;
+        Glib::RefPtr< Gdk::PixbufLoader > m_imgloader;
 
         std::string m_errmsg; // エラーメッセージ
 
@@ -31,6 +34,33 @@ namespace IMAGE
 
         int m_width;
         int m_height;
+
+        // スレッド用変数
+        JDLIB::Thread m_thread;
+        bool m_stop;
+
+      public:
+
+        ImageAreaBase( const std::string& url );
+        virtual ~ImageAreaBase();
+
+        void stop();
+        void wait();
+
+        const std::string& get_url() const{ return m_url;}
+        const std::string& get_errmsg() const{ return m_errmsg;}        
+
+        const bool is_ready() const { return m_ready; }
+        const bool is_loading(){ return m_thread.is_running(); }
+
+        const int get_width() const { return m_width; }
+        const int get_height() const { return m_height; }
+
+        virtual void show_image() = 0;
+
+        void set_fit_in_win( bool fit );
+
+        virtual void load_image_thread();
 
       protected:
 
@@ -41,22 +71,16 @@ namespace IMAGE
         void set_width( const int width );
         void set_height( const int height );
 
-        void set_image();
+        void load_image();
+
+        bool create_imgloader( bool pixbufonly, std::string& errmsg );
+        Glib::RefPtr< Gdk::PixbufLoader > get_imgloader(){ return m_imgloader; }
+
+      private:
+
+        virtual void callback_dispatch();
+        virtual void set_image();
         void set_mosaic( Glib::RefPtr< Gdk::Pixbuf > pixbuf );
-
-      public:
-
-        ImageAreaBase( const std::string& url );
-        virtual ~ImageAreaBase();
-
-        const std::string& get_url() const{ return m_url;}
-        const std::string& get_errmsg() const{ return m_errmsg;}        
-        const bool is_ready() const { return m_ready; }
-        const int get_width() const { return m_width; }
-        const int get_height() const { return m_height; }
-
-        virtual void show_image() = 0;
-        void set_fit_in_win( bool fit );
     };
 }
 

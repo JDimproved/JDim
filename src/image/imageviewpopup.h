@@ -21,8 +21,11 @@ namespace IMAGE
       public:
 
         ImageViewPopup( const std::string& url );
+        virtual ~ImageViewPopup();
 
         virtual void clock_in();
+
+        virtual void stop();
         virtual void show_view();
 
       private:

@@ -7,11 +7,7 @@
 #ifndef _IMAGEAREAICON_H
 #define _IMAGEAREAICON_H
 
-#include "skeleton/dispatchable.h"
-
 #include "imageareabase.h"
-
-#include "jdlib/jdthread.h"
 
 namespace IMAGE
 {
@@ -23,11 +19,8 @@ namespace IMAGE
     };
 
 
-    class ImageAreaIcon : public ImageAreaBase, public SKELETON::Dispatchable
+    class ImageAreaIcon : public ImageAreaBase
     {
-        JDLIB::Thread m_thread;
-        bool m_stop;
-
         bool m_shown;
         int m_imagetype; // dispatch()前に表示する画像を入れる
 
@@ -42,18 +35,17 @@ namespace IMAGE
         virtual ~ImageAreaIcon();
 
         virtual void show_image();
-        void show_image_thread();
+
+        virtual void load_image_thread();
 
       private:
 
         const int width_indicator();
         const int height_indicator();
 
-        void stop();
-        void wait();
         void show_indicator( bool loading );
-        virtual void callback_dispatch();
-        void set_image();
+
+        virtual void set_image();
     };
 }
 

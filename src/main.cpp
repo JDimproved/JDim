@@ -1,6 +1,7 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
+//#define _DEBUG_MEM_PROFILE
 #include "jddebug.h"
 
 #include "config/globalconf.h"
@@ -360,6 +361,10 @@ int main( int argc, char **argv )
         exit( 1 );
     }
 
+#ifdef _DEBUG_MEM_PROFILE
+    g_mem_set_vtable( glib_mem_profiler_table );
+    atexit( g_mem_profile );
+#else
     GMemVTable vtable;
     vtable = *glib_mem_profiler_table;
     vtable.malloc = malloc;
@@ -369,6 +374,7 @@ int main( int argc, char **argv )
     vtable.try_malloc = malloc;
     vtable.try_realloc = realloc;
     g_mem_set_vtable( &vtable );
+#endif
 
     Gtk::Main m( &argc, &argv );
 

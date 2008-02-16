@@ -77,7 +77,7 @@ void ImageViewIcon::clock_in()
     View::clock_in();
 
     // ロード終了
-    if( get_imagearea() && loading() && ! get_img()->is_loading() ){
+    if( get_imagearea() && is_loading() && ! get_img()->is_loading() ){
 
         set_loading( false );
 
@@ -114,7 +114,7 @@ void ImageViewIcon::focus_out()
 //
 void ImageViewIcon::show_view()
 {
-    if( loading() ) return;
+    if( is_loading() ) return;
 
 #ifdef _DEBUG
     std::cout << "ImageViewIcon::show_view url = " << get_url() << std::endl;
@@ -131,6 +131,7 @@ void ImageViewIcon::show_view()
     else{
 
         set_imagearea( Gtk::manage( new ImageAreaIcon( get_url() ) ) );
+        get_imagearea()->show_image();
         show_all_children();
     }
 }

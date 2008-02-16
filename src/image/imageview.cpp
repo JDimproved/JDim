@@ -84,7 +84,7 @@ void ImageViewMain::clock_in()
     }
 
     // ロード中
-    if( loading() ){
+    if( is_loading() ){
 
         // 読み込みサイズの表示更新
         if( get_img()->is_loading() ) show_status();
@@ -104,7 +104,7 @@ void ImageViewMain::clock_in()
 
         // バックグラウンドで開いた時やロード直後に画像を表示すると重くなるので
         // ビューがアクティブになった(クロック入力が来た) 時点で画面を表示する
-        if( ! get_imagearea()->is_ready() ) {
+        if( ! get_imagearea()->is_ready() && ! get_imagearea()->is_loading() ) {
 
             m_pre_width = get_width();
             m_pre_height = get_height();
@@ -214,7 +214,7 @@ void ImageViewMain::remove_label()
 //
 void ImageViewMain::show_view()
 {
-    if( loading() ) return;
+    if( is_loading() ) return;
 
 #ifdef _DEBUG
     std::cout << "ImageViewMain::show_view url = " << get_url() << std::endl;
@@ -281,7 +281,7 @@ void ImageViewMain::show_view()
 //
 void ImageViewMain::show_status()
 {
-    if( ! loading() ){
+    if( ! is_loading() ){
 
         // 画像が表示されていたら画像情報
         if( get_imagearea() ){
@@ -376,7 +376,7 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
         get_control().get_eventbutton( CONTROL::ScrollImageButton, event_button );
 
 #ifdef _DEBUG
-        std::cout << "state = " << event->state << " / " << GDK_BUTTON1_MASK << " button = " << event_button.button << std::endl;
+//        std::cout << "state = " << event->state << " / " << GDK_BUTTON1_MASK << " button = " << event_button.button << std::endl;
 #endif
 
         if( ( ( event->state & GDK_BUTTON1_MASK ) && event_button.button == 1 )
@@ -391,7 +391,7 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
             gdouble dy = event->y_root - m_y_motion;
 
 #ifdef _DEBUG
-            std::cout << "dx = " << dx << " dy = " << dy << std::endl;
+//            std::cout << "dx = " << dx << " dy = " << dy << std::endl;
 #endif
 
             m_x_motion = event->x_root;

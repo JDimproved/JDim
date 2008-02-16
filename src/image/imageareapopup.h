@@ -14,7 +14,9 @@ namespace IMAGE
     class ImageAreaPopup : public ImageAreaBase
     {
       public:
+
         ImageAreaPopup( const std::string& url );
+        virtual ~ImageAreaPopup();
         
         virtual void show_image();
     };

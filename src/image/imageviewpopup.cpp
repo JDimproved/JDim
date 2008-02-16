@@ -20,6 +20,10 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
     , m_label( NULL )
     , m_length_prev( 0 )
 {
+#ifdef _DEBUG
+    std::cout << "ImageViewPopup::ImageViewPopup url = " << get_url() << std::endl;
+#endif    
+
     int border_width = 1;
     int margin = 0;
     std::string border_color = "black";
@@ -56,6 +60,12 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
 }
 
 
+ImageViewPopup::~ImageViewPopup()
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewPopup::~ImageViewPopup url = " << get_url() << std::endl;
+#endif    
+}
 
 
 //
@@ -66,7 +76,7 @@ void ImageViewPopup::clock_in()
     View::clock_in();
 
     // ロード中
-    if( loading() ){
+    if( is_loading() ){
 
         // 読み込みサイズの表示更新
         if( get_img()->is_loading() ) update_label();
@@ -91,6 +101,21 @@ void ImageViewPopup::clock_in()
     }
 }
 
+
+//
+// 画像表示停止
+//
+void ImageViewPopup::stop()
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewPopup::stop url = " << get_url() << std::endl;
+#endif
+
+    if( get_imagearea() ){
+        get_imagearea()->stop();
+        get_imagearea()->wait();
+    }
+}
 
 
 //
@@ -128,42 +153,50 @@ void ImageViewPopup::remove_label()
 //
 void ImageViewPopup::show_view()
 {
-    if( loading() ) return;
+    if( is_loading() ) return;
     if( get_imagearea() ) return;  // 画像を既に表示している
 
 #ifdef _DEBUG
     std::cout << "ImageViewPopup::show_view url = " << get_url() << std::endl;
 #endif    
 
-    // 読み込み中        
+    // サーバから読み込み中        
     if( get_img()->is_loading() ){
+
         set_loading( true );
         m_length_prev = 0;
+
+        // ラベルに経過表示
+        set_label( "読み込み中" );
     }
-    else set_loading( false );
 
-    // 読み込み中でなくてキャッシュがあったら画像貼り付け
-    if( ! loading() && get_img()->is_cached() ){
+    // 画像張り付け
+    // サーバから画像をロード中の時はclock_in()経由でもう一度 show_view()が呼び出される
+    else{
 
-        ImageAreaBase* imagearea = new ImageAreaPopup( get_url() );
-        imagearea->show_image();
+        // キャッシュがあったら画像貼り付け
+        if( get_img()->is_cached() ){
 
-        if( imagearea->get_errmsg().empty() ){
-            remove_label();
-            set_imagearea( imagearea );
+            ImageAreaBase* imagearea = Gtk::manage( new ImageAreaPopup( get_url() ) );
+            imagearea->show_image();
+            if( imagearea->get_errmsg().empty() ){
+                remove_label();
+                set_imagearea( imagearea );
+            }
+
+            // エラー表示
+            else{
+                set_label( "" );
+                m_label->set_text( imagearea->get_errmsg() );
+            }
         }
 
-        // 画像よみこみエラー
-        else set_label( imagearea->get_errmsg() );
-    }
-
-    // 画像を貼ってないならラベルを貼る
-    else if( ! get_imagearea() ){
-
-        set_label( "please wait" );
-
-        // エラー表示
-        if( ! loading() && ! get_img()->is_cached() ) m_label->set_text( get_img()->get_str_code( ) );
+        // キャッシュが無い
+        else{
+            set_label( "" );
+            if( get_img()->get_str_code( ).empty() ) m_label->set_text( "キャッシュが存在しません" );
+            else m_label->set_text( get_img()->get_str_code( ) );
+        }
     }
 
     // マージンやボーダーの分を幅と高さに加える

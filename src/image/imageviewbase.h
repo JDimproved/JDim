@@ -60,7 +60,7 @@ namespace IMAGE
         void set_imagearea( ImageAreaBase* imagearea );
         void remove_imagearea();
 
-        const bool loading() const{ return m_loading; }
+        const bool is_loading() const{ return m_loading; }
         void set_loading( bool loading ){ m_loading = loading; }
         Gtk::EventBox& get_event(){ return  m_event; }
 

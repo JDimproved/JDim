@@ -22,10 +22,15 @@ ImageAreaPopup::ImageAreaPopup( const std::string& url )
 #ifdef _DEBUG    
     std::cout << "ImageAreaPopup::ImageAreaPopup url = " << url << std::endl;
 #endif 
-
-    show_image();
 }
 
+
+ImageAreaPopup::~ImageAreaPopup()
+{
+#ifdef _DEBUG    
+    std::cout << "ImageAreaPopup::~ImageAreaPopup url = " << get_url() << std::endl;
+#endif 
+}
 
 
 //
@@ -36,6 +41,9 @@ void ImageAreaPopup::show_image()
 #ifdef _DEBUG
     std::cout << "ImageAreaPopup::show_image url = " << get_url() << std::endl;
 #endif    
+
+    if( is_loading() ) return;
+    if( is_ready() ) return;
 
     if( ! get_img()->is_cached() ) return;
 
@@ -62,5 +70,5 @@ void ImageAreaPopup::show_image()
         set_height( h_org );
     }
 
-    set_image();
+    load_image();
 }

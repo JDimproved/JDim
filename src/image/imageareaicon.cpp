@@ -17,37 +17,6 @@
 #include "httpcode.h"
 #include "colorid.h"
 
-
-//
-// スレッドのランチャ
-//
-// icon_launcherの引数で直接 ImageAreaIcon のポインタを渡すと
-// スレッドが起動する前に ImageAreaIcon が delete されると落ちるのでリストを使う
-
-Glib::StaticMutex icon_launcher_mutex = GLIBMM_STATIC_MUTEX_INIT;
-
-void* icon_launcher( void* dat )
-{
-    Glib::Mutex::Lock lock( icon_launcher_mutex);
-
-#ifdef _DEBUG
-    std::cout << "start icon_launcher\n";
-#endif
-
-    IMAGE::ImageAreaIcon* icon = ( IMAGE::ImageAreaIcon* )( dat );
-    icon->show_image_thread();
-
-#ifdef _DEBUG
-    std::cout << "end\n";
-#endif
-
-    return 0;
-}
-
-
-
-//////////////////////////////////
-
 using namespace IMAGE;
 
 ImageAreaIcon::ImageAreaIcon( const std::string& url )
@@ -60,8 +29,6 @@ ImageAreaIcon::ImageAreaIcon( const std::string& url )
 
     set_width( ICON_SIZE );
     set_height( ICON_SIZE );
-
-    show_image();
 }
 
 
@@ -71,32 +38,6 @@ ImageAreaIcon::~ImageAreaIcon()
 #ifdef _DEBUG    
     std::cout << "ImageAreaIcon::~ImageAreaIcon url = " << get_url() << std::endl;
 #endif 
-
-    // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
-    set_dispatchable( false );
-
-    stop();
-    wait();
-}
-
-
-void ImageAreaIcon::stop()
-{
-#ifdef _DEBUG    
-    std::cout << "ImageAreaIcon::stop\n";
-#endif 
-
-    m_stop = true;
-}
-
-
-void ImageAreaIcon::wait()
-{
-#ifdef _DEBUG    
-    std::cout << "ImageAreaIcon::wait\n";
-#endif 
-
-    m_thread.join();
 }
 
 
@@ -112,7 +53,7 @@ void ImageAreaIcon::show_image()
     std::cout << "ImageAreaIcon::show_image url = " << get_url() << std::endl;
 #endif 
 
-    if( m_thread.is_running() )  return;
+    if( is_loading() )  return;
 
     // 既に画像が表示されている
     if( m_shown && get_img()->is_cached() ) return;
@@ -146,10 +87,7 @@ void ImageAreaIcon::show_image()
         set_width( (int)( w_org * scale ) );
         set_height( (int)( h_org * scale ) );
 
-        m_stop = false;
-        if( ! m_thread.create( icon_launcher, ( void* ) this, JDLIB::NODETACH ) ) {
-            MISC::ERRMSG( "ImageAreaIcon::show_image : could not start thread" );
-        }
+        load_image();
     }
 }
 
@@ -157,24 +95,27 @@ void ImageAreaIcon::show_image()
 //
 // 表示スレッド
 //
-void ImageAreaIcon::show_image_thread()
+void ImageAreaIcon::load_image_thread()
 {
 #ifdef _DEBUG
-    std::cout << "ImageAreaIcon::show_image_thread url = " << get_url() << std::endl;
+    std::cout << "ImageAreaIcon::load_image_thread url = " << get_url() << std::endl;
 #endif
 
-    std::string errmsg;
     bool pixbufonly = true;
     if( get_img()->get_type() == DBIMG::T_BMP ) pixbufonly = false; // BMP の場合 pixbufonly = true にすると真っ黒になる
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( get_img()->get_cache_path(), m_stop, pixbufonly, errmsg );
-    if( loader && loader->get_pixbuf() ) m_pixbuf_icon = loader->get_pixbuf()->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );;
+
+
+    std::string errmsg;
+    if( create_imgloader( pixbufonly, errmsg ) ){
+
+        if( get_imgloader()->get_pixbuf() ) m_pixbuf_icon = get_imgloader()->get_pixbuf()->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
+    }
 
     if( m_pixbuf_icon ){
         m_imagetype = IMAGE_SHOW_ICON;
         m_shown = true;
     }
     else{
-
         set_errmsg( errmsg );
         MISC::ERRMSG( get_errmsg() );
 
@@ -183,11 +124,11 @@ void ImageAreaIcon::show_image_thread()
 
     // 表示
     // スレッドの中でset_image()すると固まるときがあるのでディスパッチャ経由で
-    // allback_dispatch() -> set_image() と呼び出す
+    // callback_dispatch() -> set_image() の順に呼び出す
     dispatch();
 
 #ifdef _DEBUG
-    std::cout << "ImageAreaIcon::show_image_thread finished\n";
+    std::cout << "ImageAreaIcon::load_image_thread finished\n";
 #endif    
 }
 
@@ -237,18 +178,6 @@ void ImageAreaIcon::show_indicator( bool loading )
 
     m_imagetype = IMAGE_SHOW_INDICATOR;
 }
-
-
-
-//
-// ディスパッチャのコールバック関数
-//
-void ImageAreaIcon::callback_dispatch()
-{
-    set_image();
-    wait();
-}
-
 
 
 //

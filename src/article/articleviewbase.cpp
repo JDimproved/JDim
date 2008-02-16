@@ -2196,6 +2196,7 @@ void ArticleViewBase::hide_popup( bool force )
     }
 
     m_popup_win->hide();
+    if( m_popup_win->view() ) m_popup_win->view()->stop();
     m_popup_shown = false;
 }
 

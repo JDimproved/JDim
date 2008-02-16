@@ -21,10 +21,15 @@ ImageAreaMain::ImageAreaMain( const std::string& url )
 #ifdef _DEBUG    
     std::cout << "ImageAreaMain::ImageAreaMain url = " << url << std::endl;
 #endif 
-
-    show_image();
 }
 
+
+ImageAreaMain::~ImageAreaMain()
+{
+#ifdef _DEBUG    
+    std::cout << "ImageAreaMain::~ImageAreaMain url = " << get_url() << std::endl;
+#endif 
+}
 
 
 //
@@ -35,6 +40,8 @@ void ImageAreaMain::show_image()
 #ifdef _DEBUG
     std::cout << "ImageAreaMain::show_image url = " << get_url() << std::endl;
 #endif    
+
+    if( is_loading() )  return;
 
     set_errmsg( std::string() );
     int width_max = 0;
@@ -84,8 +91,8 @@ void ImageAreaMain::show_image()
         set_height( (int)( h_org * scale ) );
     }
 
-    set_image();
-
     //データベースのサイズ情報更新
     get_img()->set_size( get_width() * 100 / get_img()->get_width() );
+
+    load_image();
 }

@@ -14,7 +14,9 @@ namespace IMAGE
     class ImageAreaMain : public ImageAreaBase
     {
       public:
+
         ImageAreaMain( const std::string& url );
+        virtual ~ImageAreaMain();
 
         virtual void show_image();
     };
