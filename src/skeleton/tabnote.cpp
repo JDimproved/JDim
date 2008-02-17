@@ -13,6 +13,35 @@
 
 #include <gtk/gtk.h>
 
+
+//////////////////////////////////////////
+
+// gtknotebook.c( Revision 19311, 2008-01-06 ) より引用
+
+struct _GtkNotebookPage
+{
+  GtkWidget *child;
+  GtkWidget *tab_label;
+  GtkWidget *menu_label;
+  GtkWidget *last_focus_child;	/* Last descendant of the page that had focus */
+
+  guint default_menu : 1;	/* If true, we create the menu label ourself */
+  guint default_tab  : 1;	/* If true, we create the tab label ourself */
+  guint expand       : 1;
+  guint fill         : 1;
+  guint pack         : 1;
+  guint reorderable  : 1;
+  guint detachable   : 1;
+
+  GtkRequisition requisition;
+  GtkAllocation allocation;
+
+  gulong mnemonic_activate_signal;
+  gulong notify_visible_handler;
+};
+
+//////////////////////////////////////////
+
 using namespace SKELETON;
 
 
@@ -50,18 +79,17 @@ TabNotebook::TabNotebook()
     // 下側の境界線を消す
     Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
     Glib::RefPtr< Gtk::Style > st = get_style();
-    int ythick = rcst->get_ythickness();
-    if( ythick <= 0 ) ythick = st->get_ythickness();
+    m_ythickness = rcst->get_ythickness();
+    if( m_ythickness <= 0 ) m_ythickness = st->get_ythickness();
 
 #ifdef _DEBUG
-    std::cout << "TabNotebook::TabNotebook ythick = " << ythick << std::endl;
+    std::cout << "TabNotebook::TabNotebook ythick = " << m_ythickness << std::endl;
 #endif
 
-    if( ythick > 1 ){
-        --ythick;
-        rcst->set_ythickness( 1 );
+    if( m_ythickness > 0 ){
+        rcst->set_ythickness( 0 );
         modify_style( rcst );
-        property_tab_vborder() = property_tab_vborder() + ythick;
+        property_tab_vborder() = property_tab_vborder() + m_ythickness;
     }
 
     m_tab_mrg = rcst->get_xthickness();
@@ -306,12 +334,14 @@ bool TabNotebook::adjust_tabwidth()
     m_pre_width = get_width();
     const int width_notebook = m_pre_width - mrg_notebook;
 
-    const int avg_width_tab = width_notebook / MAX( 3, pages );  // タブ幅の平均値
+    const int avg_width_tab = (int)( (double)width_notebook / MAX( 3, pages+0.5 ) );  // タブ幅の平均値
 
 #ifdef _DEBUG_RESIZE_TAB
     std::cout << "TabNotebook::adjust_tabwidth\n"
               << "width_notebook = " << width_notebook << " page = " << pages << std::endl
-              << "avg_width_tab = " << avg_width_tab << std::endl;
+              << "avg_width_tab = " << avg_width_tab
+              << " tab_mrg = " << m_tab_mrg
+              << std::endl;
 #endif
 
     // 一端、全てのタブの幅を平均値以下に縮める
@@ -380,6 +410,65 @@ bool TabNotebook::adjust_tabwidth()
     }
 
     return true;
+}
+
+
+
+//
+// 描画イベント
+//
+// テーマによっては枠が変になる時があるので自前で描画する
+//
+bool TabNotebook::on_expose_event( GdkEventExpose* event )
+{
+    bool ret = Notebook::on_expose_event( event );
+    if( get_n_pages() == 0 ) return ret;
+
+    const Glib::RefPtr<Gdk::Window> win = get_window();
+    const Gdk::Rectangle rect( &(event->area) );
+    const int bw = get_border_width();
+    const int x = get_allocation().get_x() + bw;
+    const int y = get_allocation().get_y();
+    const int w = get_allocation().get_width() - 2*bw;
+    const int h = get_allocation().get_height() - 2*bw;
+
+    // 現在のタブの座標を取得
+    GtkNotebook *notebook = Glib::unwrap( this );
+    if( ! notebook->cur_page ) return ret;
+
+    const int gap_x = notebook->cur_page->allocation.x - x - bw;
+    const int gap_width = notebook->cur_page->allocation.width;
+
+#ifdef _DEBUG
+    std::cout << "TabNotebook::on_expose_event\n"
+              << "x = " << x
+              << " y = " << y
+              << " w = " << w
+              << " h = " << h
+              << " bw = " << bw
+              << " yt = " << m_ythickness
+              << " gx = " << gap_x
+              << " gw = " << gap_width
+              << std::endl;
+#endif
+
+    // 現在のタブの位置をのぞいて枠を描画する
+    get_style()->paint_box_gap( win,
+                                Gtk::STATE_NORMAL,
+                                Gtk::SHADOW_OUT,
+                                rect,
+                                *this,
+                                "notebook",
+                                x,
+                                y +h -m_ythickness,
+                                w,
+                                m_ythickness + 16, // 少し大きめに描画して下枠の描画を防ぐ
+                                Gtk::POS_TOP,
+                                gap_x,
+                                gap_width
+        );
+
+    return ret;
 }
 
 

@@ -40,6 +40,7 @@ namespace SKELETON
         int m_pre_width;
         bool m_fixtab;
         int m_tab_mrg;
+        int m_ythickness;
 
       public:
 
@@ -84,6 +85,8 @@ namespace SKELETON
         void calc_tabsize();
 
       protected:
+
+        virtual bool on_expose_event( GdkEventExpose* event );
 
         // signal_button_press_event と signal_button_release_event は emit されない
         // ときがあるので自前でemitする
