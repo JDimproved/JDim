@@ -158,7 +158,7 @@ namespace CONTROL
         { "", "" },
 
         { "CancelMosaic", "モザイク解除" },
-        { "ZoomFitImage", "画面に画像サイズを会わせる" },
+        { "ZoomFitImage", "画面に画像サイズを合わせる" },
         { "ZoomInImage", "ズームイン" },
         { "ZoomOutImage", "ズームアウト" },
         { "OrgSizeImage", "元の画像サイズ" },

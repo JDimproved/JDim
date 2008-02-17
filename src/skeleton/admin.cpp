@@ -102,10 +102,10 @@ void Admin::setup_menu( const bool enable_checkupdate )
     m_action_group = Gtk::ActionGroup::create();
     m_action_group->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &Admin::slot_close_tab ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする(_L)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする(_K)", std::string(), false ),
                          sigc::mem_fun( *this, &Admin::slot_lock ) );
 
-    m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる(_M)" ) );
+    m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる(_L)" ) );
     m_action_group->add( Gtk::Action::create( "CloseOther", "他のタブ(_O)" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseLeft", "左←のタブ(_L)" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseRight", "右→のタブ(_R)" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
@@ -1760,7 +1760,7 @@ void Admin::slot_tab_menu( int page, int x, int y )
 
         // コメント更新
         Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_vec_movemenu_items[ MAX_TABS ]->get_child() );
-        if( label ) label->set_text( "移動 [ タブ数 " + MISC::itostr( pages ) +" ]" );
+        if( label ) label->set_text_with_mnemonic( "移動 [ タブ数 " + MISC::itostr( pages ) +" ](_M)" );
 
         m_move_menu->show_all();
 

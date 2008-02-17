@@ -97,7 +97,7 @@ void ImageViewBase::setup_common()
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "CancelMosaic", "CancelMosaic"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_cancel_mosaic ) );
-    action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
+    action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_G)"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::Action::create( "LoadStop", "StopLoading" ), sigc::mem_fun( *this, &ImageViewBase::stop ) );
     action_group()->add( Gtk::Action::create( "Reload", "強制再読み込み(_E)"), sigc::mem_fun( *this, &ImageViewBase::slot_reload_force ) );
@@ -119,7 +119,8 @@ void ImageViewBase::setup_common()
     for( unsigned int i = 0; i < sizeof( size )/sizeof( unsigned int ) ; ++i ){
         int tmp_size = size[ i ];
         std::string str_size = MISC::itostr( tmp_size );
-        std::string str_shortcut = "(_" + MISC::itostr( i ) + ")";
+        //ショートカットは、1から始まる
+        std::string str_shortcut = "(_" + MISC::itostr( i+1 ) + ")";
         Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "Size" + str_size, str_size + "%" + str_shortcut );
         action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ImageViewBase::slot_resize_image ), tmp_size ) );
     }
@@ -142,13 +143,13 @@ void ImageViewBase::setup_common()
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)"),
                          sigc::mem_fun( *this, &ImageViewBase::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "OpenRef", "参照元のレスを開く(_O)"), sigc::mem_fun( *this, &ImageViewBase::slot_open_ref ) );
-    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_C)"), sigc::mem_fun( *this, &ImageViewBase::slot_copy_url ) );
+    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_U)"), sigc::mem_fun( *this, &ImageViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "Save", "Save"), sigc::mem_fun( *this, &ImageViewBase::slot_save ) );
     action_group()->add( Gtk::Action::create( "SaveAll", "全ての画像を保存(_A)..."), sigc::mem_fun( *this, &ImageViewBase::slot_save_all ) );
 
     action_group()->add( Gtk::Action::create( "DeleteMenu", "Delete" ) );    
     action_group()->add( Gtk::Action::create( "DeleteImage", "削除する(_D)"), sigc::mem_fun( *this, &ImageViewBase::delete_view ) );
-    action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する(_R)", std::string(), false ),
+    action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する(_H)", std::string(), false ),
                          sigc::mem_fun( *this, &ImageViewBase::slot_toggle_protectimage ) );
 
     action_group()->add( Gtk::Action::create( "AboneImage", "画像をあぼ〜んする(_B)"), sigc::mem_fun( *this, &ImageViewBase::slot_abone_img ) );

@@ -24,6 +24,8 @@ namespace CONTROL
 
     // IDからラベルと操作の両方を取得
     const std::string get_label_motion( int id );
+
+    const std::string get_label_with_mnemonic( int id );
 }
 
 #endif

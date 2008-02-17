@@ -165,7 +165,7 @@ Gtk::Menu* ImageViewIcon::get_popupmenu( const std::string& url )
         Gtk::Menu_Helpers::MenuList::iterator it_item =  menu->items().begin();
 
         Gtk::Label* label = dynamic_cast< Gtk::Label* >( (*it_item).get_child() );
-        if( label ) label->set_text( "移動 [ タブ数 " + MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) + " ]" );
+        if( label ) label->set_text_with_mnemonic( "移動 [ タブ数 " + MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) + " ](_M)" );
     }
 
     return menu;
