@@ -523,6 +523,8 @@ void DragableNoteBook::slot_drag_begin()
 //
 void DragableNoteBook::slot_drag_motion( const int page, const int tab_x, const int tab_y, const int tab_width )
 {
+    if( !m_drag ) return;
+
 #ifdef _DEBUG
     std::cout << "DragableNoteBook::slot_drag_motion page = " << page
               << " tab_x = " << tab_x << " tab_y = " << tab_y << " tab_w " << tab_width << std::endl;
@@ -570,6 +572,7 @@ void DragableNoteBook::slot_drag_end()
             std::cout << "reorder_chiled " << m_page << " -> " << page << std::endl;
 #endif
             m_notebook_tab.reorder_child( m_page, page );
+            m_notebook_tab.queue_draw();
             m_notebook_view.reorder_child( *m_notebook_view.get_nth_page( m_page ), page );
             m_page = -1;
         }
