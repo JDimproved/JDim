@@ -194,6 +194,8 @@ void ImageAreaBase::set_image()
     std::cout << "ImageAreaBase::set_image\n";
 #endif
 
+    clear();
+
     int w_org = get_img()->get_width();
     int h_org = get_img()->get_height();
 

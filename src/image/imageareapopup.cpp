@@ -51,8 +51,6 @@ void ImageAreaPopup::show_image()
     int width_max = CONFIG::get_imgpopup_width();
     int height_max = CONFIG::get_imgpopup_height();
 
-    clear();
-
     // 縮小比率を計算
     double scale;
     int w_org = get_img()->get_width();

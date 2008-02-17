@@ -63,8 +63,6 @@ void ImageAreaMain::show_image()
     bool zoom_to_fit = get_img()->is_zoom_to_fit();
     int size = get_img()->get_size();
 
-    clear();
-
     // スケール調整
     double scale = 1;
     int w_org = get_img()->get_width();
