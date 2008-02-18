@@ -713,7 +713,7 @@ void ArticleViewBase::delete_open_view()
         if( mdiag.run() != Gtk::RESPONSE_YES ) return;
     }
 
-    ARTICLE::get_admin()->set_command( "delete_article", m_url_article, "reopen", MISC::itostr( drawarea()->get_seen_current() ) );
+    CORE::core_set_command( "delete_article", m_url_article, "reopen", MISC::itostr( drawarea()->get_seen_current() ) );
 }
 
 
@@ -918,6 +918,13 @@ void ArticleViewBase::goto_bottom()
 void ArticleViewBase::goto_num( int num )
 {
     assert( m_drawarea );
+
+    if( m_drawarea->get_seen_current() == num ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::goto_num num = " << num << std::endl;
+#endif
+
     m_drawarea->set_jump_history();
     m_drawarea->goto_num( num );
 }

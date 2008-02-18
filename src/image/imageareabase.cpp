@@ -227,6 +227,7 @@ void ImageAreaBase::set_mosaic( Glib::RefPtr< Gdk::Pixbuf > pixbuf )
     if( get_width() / size_mosaic < 16 ) size_mosaic = MAX( 1, get_width() / 16 );
 
     Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
-    pixbuf2 = pixbuf->scale_simple( get_width() / size_mosaic, get_height() / size_mosaic, Gdk::INTERP_NEAREST );
+    pixbuf2 = pixbuf->scale_simple( MAX( 1, get_width() / size_mosaic ),
+                                    MAX( 1, get_height() / size_mosaic ), Gdk::INTERP_NEAREST );
     set( pixbuf2->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST ) );
 }

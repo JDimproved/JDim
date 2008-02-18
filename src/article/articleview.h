@@ -16,6 +16,8 @@ namespace ARTICLE
         // ジャンプ予約, goto_num() のコメント参照
         int m_gotonum_reserve; 
 
+        int m_gotonum_seen; // 前回見ていた場所へのジャンプ用
+
         bool m_show_instdialog;
 
       public:

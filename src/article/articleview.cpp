@@ -31,7 +31,7 @@ using namespace ARTICLE;
 // メインビュー
 
 ArticleViewMain::ArticleViewMain( const std::string& url )
-    :  ArticleViewBase( url ), m_gotonum_reserve( 0 )
+    :  ArticleViewBase( url ), m_gotonum_reserve( 0 ), m_gotonum_seen( 0 )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::ArticleViewMain " << get_url() << " url_article = " << url_article() << std::endl;
@@ -70,13 +70,24 @@ ArticleViewMain::~ArticleViewMain()
 //
 void ArticleViewMain::goto_num( int num )
 {
-    if( get_article()->get_number_load() < num  && is_loading() ){
+#ifdef _DEBUG
+    std::cout << "ArticleViewMain::goto_num num = " << num << " seen = " << m_gotonum_seen << " res = " << m_gotonum_reserve << std::endl;
+#endif
 
-        m_gotonum_reserve = num;
+    m_gotonum_seen = 0; // m_gotonum_reserve を優先させる
+    m_gotonum_reserve = num;
+
+    if( get_article()->get_number_load() < num  && is_loading() ){
+#ifdef _DEBUG
+        std::cout << "reserve\n";
+#endif
         return;
     }
 
-    m_gotonum_reserve = 0;
+#ifdef _DEBUG
+    std::cout << "jump\n";
+#endif
+
     ArticleViewBase::goto_num( num );
 }
 
@@ -143,6 +154,7 @@ void ArticleViewMain::exec_reload()
 void ArticleViewMain::show_view()
 {
     m_gotonum_reserve = 0;
+    m_gotonum_seen = 0;
     m_show_instdialog = false;
 
 #ifdef _DEBUG
@@ -179,8 +191,8 @@ void ArticleViewMain::show_view()
 
         drawarea()->append_res( from_num, to_num );
 
-        // 以前見ていたところにジャンプ
-        drawarea()->goto_num( get_article()->get_number_seen() );
+        // update_finish()を呼び出したときに以前見ていたところにジャンプ
+        m_gotonum_seen = get_article()->get_number_seen();
     }
 
     // セパレータを最後に移動
@@ -312,10 +324,33 @@ void ArticleViewMain::update_finish()
     // 全体再描画
     drawarea()->redraw_view();
 
-    if( CONFIG::get_jump_after_reload() ) goto_bottom();
-    else if( number_new && CONFIG::get_jump_new_after_reload() && ! drawarea()->is_separator_on_screen() ) goto_new();
-    else if( m_gotonum_reserve ) goto_num( m_gotonum_reserve );
-    m_gotonum_reserve = 0;
+    // 前回見ていた所にジャンプ
+    if( m_gotonum_seen && get_article()->get_number_load() >= m_gotonum_seen ){
+#ifdef _DEBUG
+        std::cout << "goto_seen\n";
+#endif
+        ArticleViewBase::goto_num( m_gotonum_seen );
+        m_gotonum_seen = 0;
+    }
+
+    // ロード中に goto_num() が明示的に呼び出された場合はgoto_num()を呼びつづける
+    if( m_gotonum_reserve ) goto_num( m_gotonum_reserve );
+
+    // ロード後に末尾ジャンプ
+    else if( CONFIG::get_jump_after_reload() && number_new ){
+#ifdef _DEBUG
+        std::cout << "jump_after_reload\n";
+#endif
+        goto_bottom();
+    }
+
+    // ロード後に新着へジャンプ
+    else if( CONFIG::get_jump_new_after_reload() && number_new && ! drawarea()->is_separator_on_screen() ){
+#ifdef _DEBUG
+        std::cout << "jump_new_after_reload\n";
+#endif
+        goto_new();
+    }
 
     if( m_show_instdialog ) show_instruct_diag();
 }

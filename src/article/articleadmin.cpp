@@ -264,29 +264,6 @@ void ArticleAdmin::switch_admin()
 }
 
 
-void ArticleAdmin::update_finish( const std::string& url )
-{
-    // 再読み込み中のviewの場合は jump_after_reload と set_jump_new_after_reload
-    // を一時的に無効にしないと元々開いていたレスにジャンプしない
-    bool jump_bottom = false;
-    bool jump_new = false;
-    bool reloading = is_reloading( url, true );
-    if( reloading ){
-        jump_bottom = CONFIG::get_jump_after_reload();
-        jump_new = CONFIG::get_jump_new_after_reload();
-        CONFIG::set_jump_after_reload( false );
-        CONFIG::set_jump_new_after_reload( false );
-    }
-
-    Admin::update_finish( url );
-
-    if( reloading ){
-        CONFIG::set_jump_after_reload( jump_bottom );
-        CONFIG::set_jump_new_after_reload( jump_new );
-    }
-}
-
-
 //
 // リストで与えられたページをタブで連続して開くとき(Admin::open_list())の引数セット
 //
@@ -299,28 +276,6 @@ COMMAND_ARGS ArticleAdmin::get_open_list_args( const std::string& url )
 
     return command_arg;
 }
-
-
-//
-// 再読み込み中か
-//
-bool ArticleAdmin::is_reloading( const std::string& url, const bool erase )
-{
-    if( m_urls_reloading.size() ){
-        std::set< std::string >::iterator it = m_urls_reloading.find( url );
-        if( it != m_urls_reloading.end() ){
-#ifdef _DEBUG
-            std::cout << "ArticleAdmin::is_reloading loading size = " << m_urls_reloading.size() << std::endl;
-#endif
-            if( erase ) m_urls_reloading.erase( it );
-
-            return true;
-        }
-    }
-
-    return false;
-}
-
 
 
 //
@@ -551,15 +506,6 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
             SKELETON::View* view = ( *it );
             if( view ) view->relayout();
         }
-    }
-
-    // スレ再読み込み
-    else if( command.command == "delete_article" ){
-
-        // 再読み込みリストに追加
-        // update_finish()が呼び出されたらリストから削除
-        m_urls_reloading.insert( command.url );
-        CORE::core_set_command( "delete_article", command.url, command.arg1, command.arg2 );
     }
 
     // フォント初期化

@@ -419,6 +419,8 @@ bool TabNotebook::adjust_tabwidth()
 //
 // テーマによっては枠が変になる時があるので自前で描画する
 //
+// gtknotebook.c( Revision 19311, 2008-01-06 ) からのハック。環境やバージョンによっては問題が出るかもしれないので注意
+//
 bool TabNotebook::on_expose_event( GdkEventExpose* event )
 {
     bool ret = Notebook::on_expose_event( event );
@@ -433,7 +435,7 @@ bool TabNotebook::on_expose_event( GdkEventExpose* event )
     const int h = get_allocation().get_height() - 2*bw;
 
     // 現在のタブの座標を取得
-    GtkNotebook *notebook = Glib::unwrap( this );
+    GtkNotebook *notebook = gobj();
     if( ! notebook->cur_page ) return ret;
 
     const int gap_x = notebook->cur_page->allocation.x - x - bw;

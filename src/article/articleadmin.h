@@ -42,9 +42,6 @@ namespace ARTICLE
         ArticleToolBar* m_toolbar;
         SearchToolBar* m_search_toolbar;
 
-        // 再取得中のスレのアドレス
-        std::set< std::string > m_urls_reloading;
-
       public:
         ArticleAdmin( const std::string& url );
         ~ArticleAdmin();
@@ -65,11 +62,8 @@ namespace ARTICLE
         virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock );
 
         virtual void switch_admin();
-        virtual void update_finish( const std::string& url );
 
       private:
-
-        bool is_reloading( const std::string& url, const bool erase );
 
         void delete_popup();
         void delete_all_popups();
