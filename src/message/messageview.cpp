@@ -47,16 +47,19 @@ MessageViewMain::~MessageViewMain()
 //
 std::string MessageViewMain::create_message()
 {
-    std::string msg = get_text_message().get_text();
-    std::string name = get_entry_name().get_text();
-    std::string mail = get_entry_mail().get_text();
+    const std::string msg = get_text_message().get_text();
+    const std::string name = get_entry_name().get_text();
+    const std::string mail = get_entry_mail().get_text();
 
     if( msg.empty() ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "本文が空白です" ); mdiag.run();
+        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "本文が空白です" );
+        mdiag.run();
         return std::string();
     }
 
+    // 誤爆を警告
     if( SESSION::get_article_current_url().find( get_url() ) == std::string::npos ){
+
         SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
                                  "スレビューで開いているスレと異なるスレに書き込もうとしています\n\n誤爆する可能性がありますが書き込みますか？",
                                  false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE );
@@ -67,9 +70,9 @@ std::string MessageViewMain::create_message()
         mdiag.add_button( "スレを開く", Gtk::RESPONSE_YES + 100 );
 
         int ret = mdiag.run();
-        if( ret == Gtk::RESPONSE_NO ) return std::string();
-        else if( ret == Gtk::RESPONSE_YES + 100 ){
-            CORE::core_set_command( "open_article", get_url(), "true", "" );
+        if( ret != Gtk::RESPONSE_YES ){
+
+            if( ret == Gtk::RESPONSE_YES + 100 ) CORE::core_set_command( "open_article", get_url(), "true", "" );
             return std::string();
         }
     }
