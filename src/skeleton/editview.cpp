@@ -16,7 +16,7 @@
 #include "config/globalconf.h"
 
 #include <sstream>
-
+#include "gtk/gtktextview.h"
 
 using namespace SKELETON;
 
@@ -307,11 +307,47 @@ bool EditTextView::on_button_press_event( GdkEventButton* event )
 //
 bool EditTextView::on_key_press_event( GdkEventKey* event )
 {
+#ifdef _DEBUG    
+    std::cout << "EditTextView::on_key_press_event key = " << event->keyval << std::endl;
+#endif
+
     bool cancel_event = false;
     m_delete_pushed = false;
     if( event->keyval == GDK_Delete ) m_delete_pushed = true;
 
-    switch( m_control.key_press( event ) ){
+    const int controlid = m_control.key_press( event );
+
+    switch( controlid ){
+
+        case CONTROL::ExecWrite:
+        case CONTROL::CancelWrite:
+        case CONTROL::FocusWrite:
+        case CONTROL::TabLeft:
+        case CONTROL::TabRight:
+        case CONTROL::HomeEdit:
+        case CONTROL::EndEdit:
+        case CONTROL::UpEdit:
+        case CONTROL::DownEdit:
+        case CONTROL::RightEdit:
+        case CONTROL::LeftEdit:
+        case CONTROL::DeleteEdit:
+        case CONTROL::BackspEdit:
+        case CONTROL::UndoEdit:
+        case CONTROL::InputAA:
+        {
+            GtkTextView *entry = gobj();
+            if( gtk_im_context_filter_keypress( entry->im_context, event ) )
+            {
+#ifdef _DEBUG    
+                std::cout << "gtk_im_context_filter_keypress\n";
+#endif
+                entry->need_im_reset = TRUE;
+                return true;
+            }
+        }
+    }
+
+    switch( controlid ){
 
         // MessageViewでショートカットで書き込むと文字が挿入されてしまうので
         // キャンセルする
@@ -347,6 +383,10 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
 
 bool EditTextView::on_key_release_event( GdkEventKey* event )
 {
+#ifdef _DEBUG    
+    std::cout << "EditTextView::on_key_release_event key = " << event->keyval << std::endl;
+#endif
+
     bool cancel_event = false;
 
     switch( m_control.key_press( event ) ){
