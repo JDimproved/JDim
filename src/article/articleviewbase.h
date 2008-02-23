@@ -179,6 +179,9 @@ namespace ARTICLE
         // 画像プロパティ表示
         void slot_preferences_image();
 
+        void slot_copy_selection_str();
+        void slot_select_all();
+
     private:
 
         virtual DrawAreaBase* create_drawarea();        
@@ -222,8 +225,6 @@ namespace ARTICLE
         void slot_copy_current_url();
         void slot_copy_name();
         void slot_copy_id();
-        void slot_copy_selection_str();
-        void slot_select_all();
         void slot_drawout_selection_str();
         void slot_search_cacheall();
         void slot_search_cachelocal();

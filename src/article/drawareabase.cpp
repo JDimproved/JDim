@@ -42,7 +42,6 @@ enum
 {
     AUTOSCR_CIRCLE = 24, // オートスクロールの時のサークルの大きさ
 
-    BIG_WIDTH = 100000,
     BIG_HEIGHT = 100000,
 
     LAYOUT_MIN_HEIGHT = 2, // viewの高さがこの値よりも小さい時はリサイズしていないと考える
@@ -632,11 +631,11 @@ bool DrawAreaBase::exec_layout()
 //
 // 先頭ノードから順に全ノードの座標を計算する(描画はしない)
 //
-// nowrap = true なら wrap なしで計算
+// use_scrwidth = true なら画面サイズをdrawareaの横幅として強制的にレイアウトする
 // offset_y は y 座標の上オフセット行数
 // right_mrg は右マージン量(ピクセル)
 //
-bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
+bool DrawAreaBase::exec_layout_impl( const bool use_scrwidth, const int offset_y, const int right_mrg )
 {
     // 起動中とシャットダウン中は処理しない
     if( SESSION::is_booting() ) return false;
@@ -647,18 +646,18 @@ bool DrawAreaBase::exec_layout_impl( bool nowrap, int offset_y, int right_mrg )
     if( ! m_layout_tree->top_header() ) return false;
     
     // drawareaのウィンドウサイズ
-    // nowrap = true の時は十分大きい横幅で計算して wrap させない
-    const int width_view = nowrap ? BIG_WIDTH : m_view.get_width();
+    // use_scrwidth = true の時は画面サイズを横幅にして計算
+    const int width_view = use_scrwidth ? m_view.get_screen()->get_width() : m_view.get_width();
     const int height_view = m_view.get_height();
 
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::exec_layout_impl : url = " << m_url << std::endl
-              << "nowrap = " << nowrap << " width_view = " << width_view << " height_view  = " << height_view << std::endl
+              << "use_scrwidth = " << use_scrwidth << " width_view = " << width_view << " height_view  = " << height_view << std::endl
               << "m_width_client = " << m_width_client << " m_height_client = " << m_height_client << std::endl;
 #endif
 
     //表示はされてるがまだリサイズしてない状況
-    if( ! nowrap && height_view < LAYOUT_MIN_HEIGHT ){
+    if( ! use_scrwidth && height_view < LAYOUT_MIN_HEIGHT ){
 #ifdef _DEBUG
         std::cout << "drawarea is not resized yet.\n";
 #endif        
@@ -1453,6 +1452,11 @@ bool DrawAreaBase::draw_backscreen( bool redraw_all )
 
     // 再レイアウト & 再描画
     if( relayout ){
+
+#ifdef _DEBUG
+        std::cout << "DrawAreaBase::draw_backscreen : exec_layout\n";
+#endif    
+
         if( exec_layout() ) redraw_view();
     }
 

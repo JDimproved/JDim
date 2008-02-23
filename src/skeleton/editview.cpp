@@ -335,13 +335,13 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::UndoEdit:
         case CONTROL::InputAA:
         {
-            GtkTextView *entry = gobj();
-            if( gtk_im_context_filter_keypress( entry->im_context, event ) )
+            GtkTextView *textview = gobj();
+            if( gtk_im_context_filter_keypress( textview->im_context, event ) )
             {
 #ifdef _DEBUG    
                 std::cout << "gtk_im_context_filter_keypress\n";
 #endif
-                entry->need_im_reset = TRUE;
+                textview->need_im_reset = TRUE;
                 return true;
             }
         }

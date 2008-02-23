@@ -40,6 +40,7 @@ ArticleViewPreview::ArticleViewPreview( const std::string& url )
     // コントロールモード設定
     get_control().clear_mode();
     get_control().add_mode( CONTROL::MODE_MESSAGE );
+    get_control().add_mode( CONTROL::MODE_ARTICLE );
 }
 
 
@@ -59,8 +60,23 @@ ArticleViewPreview::~ArticleViewPreview()
 //
 void ArticleViewPreview::operate_view( const int& control )
 {
+    if( control == CONTROL::None ) return;
+
+    // スクロール系操作
+    if( drawarea()->set_scroll( control ) ) return;
+
     switch( control ){
-            
+
+            // コピー
+        case CONTROL::Copy:
+            slot_copy_selection_str();
+            break;
+
+            // 全て選択
+        case CONTROL::SelectAll:
+            slot_select_all();
+            break;
+
         // 閉じる
         case CONTROL::Quit:
         case CONTROL::CancelWrite:
@@ -83,10 +99,6 @@ void ArticleViewPreview::operate_view( const int& control )
         case CONTROL::FocusWrite:
             MESSAGE::get_admin()->set_command( "focus_writebutton" );
         break;
-
-        default:
-            ArticleViewBase::operate_view( control );
-            break;
     }
 }
 

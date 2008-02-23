@@ -68,11 +68,14 @@ void AAMenu::create_menuitem( Glib::RefPtr< Gtk::ActionGroup > actiongroup, Gtk:
     std::string shortcut = CORE::get_aamanager()->id2shortcut( id );
     if( ! shortcut.empty() ) aa_label = "[" + shortcut + "] " + aa_label;
 
+    std::string actname = "aa" + MISC::itostr( id );
+    if( actiongroup->get_action( actname ) ) return; // 登録済み
+
 #ifdef _DEBUG
-    std::cout << "label = " << aa_label << std::endl;
+    std::cout << actname << " label = " << aa_label << std::endl;
 #endif
 
-    Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "aa" + MISC::itostr( id ), aa_label.substr( 0, maxchar ) );
+    Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( actname, aa_label.substr( 0, maxchar ) );
     action->set_accel_group( m_parent.get_accel_group() );
 
     Gtk::MenuItem* item = Gtk::manage( action->create_menu_item() );

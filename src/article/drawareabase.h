@@ -256,7 +256,7 @@ namespace ARTICLE
 
         // レイアウト処理
         virtual bool exec_layout();
-        bool exec_layout_impl( bool nowrap, int offset_y, int right_mrg );
+        bool exec_layout_impl( const bool use_scrwidth, const int offset_y, const int right_mrg );
 
         // バックスクリーンをDrawAreaにコピー
         bool draw_drawarea( int x = 0, int y = 0, int width = 0, int height = 0 );
