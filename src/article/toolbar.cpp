@@ -84,7 +84,6 @@ void ArticleToolBar::pack_buttons()
                 if( ! m_button_board ){
                     m_button_board = Gtk::manage( new Gtk::Button() );
                     m_button_board->set_focus_on_click( false );
-                    m_button_board->set_relief( Gtk::RELIEF_NONE );
                     set_tooltip( *m_button_board, CONTROL::get_label_motion( CONTROL::OpenParentBoard ) );
                     m_button_board->signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_open_board ) );
                 }
@@ -92,7 +91,7 @@ void ArticleToolBar::pack_buttons()
                 break;
 
             case ITEM_NAME:
-                get_buttonbar().pack_start( *get_label(), Gtk::PACK_EXPAND_WIDGET, 2 );
+                get_buttonbar().pack_start( *get_label(), Gtk::PACK_EXPAND_WIDGET, 4 );
                 break;
 
             case ITEM_SEARCH:

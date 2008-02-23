@@ -78,7 +78,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
     get_control().add_mode( CONTROL::MODE_ARTICLE );
 
     // 板名セット
-    m_label_board = "[ " + DBTREE::board_name( m_url_article ) + " ]";
+    m_label_board = " " + DBTREE::board_name( m_url_article ) + " ";
 }
 
 
