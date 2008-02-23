@@ -172,7 +172,7 @@ void ArticleViewBase::setup_action()
 {
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
-    action_group()->add( Gtk::Action::create( "BookMark", "ブックマーク設定/解除(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
+    action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)"), sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_U)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_current_url ) );
     action_group()->add( Gtk::Action::create( "CopyNAME", "名前コピー(_N)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_name ) );
@@ -206,7 +206,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DrawoutRes", "レス抽出(_R)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_res ) );
     action_group()->add( Gtk::Action::create( "DrawoutNAME", "名前抽出(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_name ) );
     action_group()->add( Gtk::Action::create( "DrawoutID", "ID抽出(_I)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_id ) );
-    action_group()->add( Gtk::Action::create( "DrawoutBM", "ブックマーク抽出(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_bm ) );
+    action_group()->add( Gtk::Action::create( "DrawoutBM", "しおり抽出(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_bm ) );
     action_group()->add( Gtk::Action::create( "DrawoutURL", "URL抽出(_U)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_url ) );
     action_group()->add( Gtk::Action::create( "DrawoutRefer", "参照抽出(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_refer ) );
     action_group()->add( Gtk::Action::create( "DrawoutAround", "周辺抽出(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_around ) );
@@ -1256,7 +1256,7 @@ void ArticleViewBase::show_bm()
     std::list< int > list_resnum = m_article->get_res_bm();
 
     if( ! list_resnum.empty() ) append_res( list_resnum );
-    else append_html( "ブックマークはセットされていません" );
+    else append_html( "しおりはセットされていません" );
 }
 
 

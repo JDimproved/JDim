@@ -262,7 +262,7 @@ void ArticleViewBM::show_view()
     show_bm();
 
     // ラベル更新
-    set_label( " [ ブックマーク ] - " + DBTREE::article_subject( url_article() ));
+    set_label( " [ しおり ] - " + DBTREE::article_subject( url_article() ));
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );

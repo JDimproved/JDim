@@ -1094,7 +1094,7 @@ void ArticleBase::delete_cache( const bool cache_only )
     if( empty() ) return;
 
     if( ! cache_only && m_bookmarked_thread ){
-        SKELETON::MsgDiag mdiag( NULL, "「" + get_subject() + "」はブックマークされています。\n\nスレを削除しますか？"
+        SKELETON::MsgDiag mdiag( NULL, "「" + get_subject() + "」にはしおりが付けられています。\n\nスレを削除しますか？\n\nしおりを解除するにはスレの上で右クリックしてしおり解除を選択してください。"
                                   ,false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         mdiag.set_default_response( Gtk::RESPONSE_YES );
         if( mdiag.run() == Gtk::RESPONSE_NO ) return;

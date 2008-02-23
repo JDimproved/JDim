@@ -178,11 +178,11 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // ポップアップメニューの設定
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
-    action_group()->add( Gtk::Action::create( "BookMark", "ブックマーク設定/解除(_B)" ),
+    action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)" ),
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_AUTO ) );
-    action_group()->add( Gtk::Action::create( "SetBookMark", "ブックマーク設定(_S)" ),  // 未使用
+    action_group()->add( Gtk::Action::create( "SetBookMark", "しおりを設定(_S)" ),  // 未使用
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_SET ) );
-    action_group()->add( Gtk::Action::create( "UnsetBookMark", "ブックマーク解除(_U)" ),    // 未使用
+    action_group()->add( Gtk::Action::create( "UnsetBookMark", "しおりを解除(_U)" ),    // 未使用
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_UNSET ) );
     action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く(_T)" ), sigc::mem_fun( *this, &BoardView::slot_open_tab ) );
     action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加(_F)..." ), sigc::mem_fun( *this, &BoardView::slot_favorite_thread ) );
