@@ -64,6 +64,7 @@ TabNotebook::TabNotebook()
 
     set_border_width( 0 );
     set_show_border( false );
+    set_size_request( 1, -1 ); // これが無いと最大化を解除したときにウィンドウが勝手にリサイズする
 
     add_events( Gdk::POINTER_MOTION_MASK );
     add_events( Gdk::LEAVE_NOTIFY_MASK );

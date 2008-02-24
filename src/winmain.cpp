@@ -244,9 +244,6 @@ bool WinMain::on_window_state_event( GdkEventWindowState* event )
     // キャンセル ( WinMain::on_delete_even() の説明を参照せよ )
     if( m_cancel_state_event ) return Gtk::Window::on_window_state_event( event );
 
-    // タブ幅調整
-    CORE::core_set_command( "adjust_tabwidth" );
-
     return SKELETON::JDWindow::on_window_state_event( event );
 }
 
@@ -258,7 +255,7 @@ bool WinMain::on_configure_event( GdkEventConfigure* event )
     if( m_cancel_state_event ) std::cout << "cancel\n";
 #endif     
 
-    // キャンセル ( WinMain::on_delete_even() の説明を参照せよ )
+    // キャンセル ( WinMain::on_delete_event() の説明を参照せよ )
     if( m_cancel_state_event ) return Gtk::Window::on_configure_event( event );
 
     return SKELETON::JDWindow::on_configure_event( event );
