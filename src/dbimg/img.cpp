@@ -512,8 +512,6 @@ void Img::receive_finish()
 // 埋め込み画像のサイズを計算
 void Img::set_embedded_size()
 {
-    if( is_loading() ) return;
-    if( ! is_cached() ) return;
     if( ! m_width || ! m_height ) return;
 
     // 縮小比率を計算してサイズ取得
@@ -524,6 +522,10 @@ void Img::set_embedded_size()
 
     m_width_emb = (int)( m_width * scale );
     m_height_emb = (int)( m_height * scale );
+
+#ifdef _DEBUG
+    std::cout << "Img::set_embedded_size w = " << m_width_emb << " h = " << m_height_emb << std::endl;
+#endif
 }
 
 
