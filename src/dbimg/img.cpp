@@ -34,6 +34,9 @@
 
 enum
 {
+    MAX_WIDTH_EMB = 100, // 埋め込み画像の最大横幅(ピクセル)
+    MAX_HEIGHT_EMB = 100, // 埋め込み画像の最大横幅(ピクセル)
+
     MAX_REDIRECT = 5  // 最大リダイレクト回数
 };
 
@@ -106,6 +109,8 @@ void Img::clear()
     m_type = T_UNKNOWN;
     m_width = 0;
     m_height = 0;
+    m_width_emb = 0;
+    m_height_emb = 0;
     m_abone = false;
 }
 
@@ -412,6 +417,7 @@ void Img::receive_finish()
 
         MISC::get_img_size( get_cache_path(), m_width, m_height );
         if( ! m_width || ! m_height ) m_type = T_NOSIZE;
+        else set_embedded_size();
     }
 
 
@@ -503,6 +509,22 @@ void Img::receive_finish()
 }
 
 
+// 埋め込み画像のサイズを計算
+void Img::set_embedded_size()
+{
+    if( is_loading() ) return;
+    if( ! is_cached() ) return;
+    if( ! m_width || ! m_height ) return;
+
+    // 縮小比率を計算してサイズ取得
+    double scale;
+    double scale_w = ( double ) MAX_WIDTH_EMB / m_width;
+    double scale_h = ( double ) MAX_HEIGHT_EMB / m_height;
+    scale = MIN( scale_w, scale_h );
+
+    m_width_emb = (int)( m_width * scale );
+    m_height_emb = (int)( m_height * scale );
+}
 
 
 //
@@ -613,6 +635,7 @@ void Img::read_info()
             if( total_length() ) save_info();
         }
         set_current_length( total_length() );
+        set_embedded_size();
     }
 
 #ifdef _DEBUG

@@ -631,11 +631,11 @@ bool DrawAreaBase::exec_layout()
 //
 // 先頭ノードから順に全ノードの座標を計算する(描画はしない)
 //
-// use_scrwidth = true なら画面サイズをdrawareaの横幅として強制的にレイアウトする
+// init_popupwin = true ならポップアップウィンドウの初期サイズ計算を行う(画面サイズをdrawareaの横幅として強制的にレイアウトする)
 // offset_y は y 座標の上オフセット行数
 // right_mrg は右マージン量(ピクセル)
 //
-bool DrawAreaBase::exec_layout_impl( const bool use_scrwidth, const int offset_y, const int right_mrg )
+bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_y, const int right_mrg )
 {
     // 起動中とシャットダウン中は処理しない
     if( SESSION::is_booting() ) return false;
@@ -646,18 +646,18 @@ bool DrawAreaBase::exec_layout_impl( const bool use_scrwidth, const int offset_y
     if( ! m_layout_tree->top_header() ) return false;
     
     // drawareaのウィンドウサイズ
-    // use_scrwidth = true の時は画面サイズを横幅にして計算
-    const int width_view = use_scrwidth ? m_view.get_screen()->get_width() : m_view.get_width();
+    // init_popupwin = true の時は画面サイズを横幅にして計算
+    const int width_view = init_popupwin ? m_view.get_screen()->get_width() : m_view.get_width();
     const int height_view = m_view.get_height();
 
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::exec_layout_impl : url = " << m_url << std::endl
-              << "use_scrwidth = " << use_scrwidth << " width_view = " << width_view << " height_view  = " << height_view << std::endl
+              << "init_popupwin = " << init_popupwin << " width_view = " << width_view << " height_view  = " << height_view << std::endl
               << "m_width_client = " << m_width_client << " m_height_client = " << m_height_client << std::endl;
 #endif
 
     //表示はされてるがまだリサイズしてない状況
-    if( ! use_scrwidth && height_view < LAYOUT_MIN_HEIGHT ){
+    if( ! init_popupwin && height_view < LAYOUT_MIN_HEIGHT ){
 #ifdef _DEBUG
         std::cout << "drawarea is not resized yet.\n";
 #endif        
@@ -772,7 +772,7 @@ bool DrawAreaBase::exec_layout_impl( const bool use_scrwidth, const int offset_y
 
                     // レイアウトして次のノードの左上座標を計算
                     // x,y, br_size が参照なので更新された値が戻る
-                    layout_one_img_node( layout, x, y, br_size, m_width_client );
+                    layout_one_img_node( layout, x, y, br_size, m_width_client, init_popupwin );
 
                     break;
 
@@ -1079,8 +1079,9 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
 // x,y (参照)  : ノードの初期座標(左上)を渡して、次のノードの左上座標が入って返る
 // br_size : 現在行での改行量
 // width_view : 描画領域の幅
+// init_popupwin : ポップアップウィンドウの初期サイズ計算をおこなう
 //
-void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_size, const int width_view )
+void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_size, const int width_view, const bool init_popupwin )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::layout_one_img_node link = " << layout->link << std::endl;
@@ -1101,10 +1102,16 @@ void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_
     rect->height = iconsize;
 
     // 既に表示済みの場合
-    if( layout->eimg && layout->eimg->get_width() ){
-        rect->width = layout->eimg->get_width();
-        rect->height = layout->eimg->get_height();
+    DBIMG::Img* img = node->linkinfo->img;
+    if( !img && init_popupwin ) img = node->linkinfo->img = DBIMG::get_img( layout->link );
+    if( img ){
+        rect->width = img->get_width_emb();
+        rect->height = img->get_height_emb();
     }
+
+#ifdef _DEBUG
+    std::cout << "x = " << rect->x << " y = " << rect->y << " w = " << rect->width << " h = " << rect->height << std::endl;
+#endif
 
     // wrap 処理用の閾値計算
     // x が border よりも右に来たら wrap する

@@ -256,7 +256,7 @@ namespace ARTICLE
 
         // レイアウト処理
         virtual bool exec_layout();
-        bool exec_layout_impl( const bool use_scrwidth, const int offset_y, const int right_mrg );
+        bool exec_layout_impl( const bool init_popupwin, const int offset_y, const int right_mrg );
 
         // バックスクリーンをDrawAreaにコピー
         bool draw_drawarea( int x = 0, int y = 0, int width = 0, int height = 0 );
@@ -281,7 +281,7 @@ namespace ARTICLE
         void set_align_line( LAYOUT* div, LAYOUT* layout_from, LAYOUT* layout_to, RECTANGLE* rect_from, RECTANGLE* rect_to,
                              int width_line, int align );
         void layout_one_text_node( LAYOUT* node, int& node_x, int& node_y, int& br_size, const int width_view );
-        void layout_one_img_node( LAYOUT* node, int& node_x, int& node_y, int& brsize, const int width_view );
+        void layout_one_img_node( LAYOUT* node, int& node_x, int& node_y, int& brsize, const int width_view, const bool init_popupwin );
 
         // 文字の幅などの情報
         int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );

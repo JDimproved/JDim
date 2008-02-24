@@ -23,8 +23,15 @@ namespace DBIMG
         int m_count_redirect; // リダイレクト回数
 
         int m_type; // 画像タイプ
+
+        // 幅、高さ
         int m_width;
         int m_height;
+
+        // 埋め込み画像の幅、高さ
+        int m_width_emb;
+        int m_height_emb;
+
         bool m_mosaic; // モザイクかける
         bool m_zoom_to_fit; // windowにサイズをあわせる
         int m_size; // 画像の大きさ(パーセントで)
@@ -51,6 +58,10 @@ namespace DBIMG
         // 高さ、幅
         const int get_width() const { return m_width; }
         const int get_height() const { return m_height; }
+
+        // スレ埋め込み画像の高さ、幅
+        const int get_width_emb() const { return m_width_emb; }
+        const int get_height_emb() const { return m_height_emb; }
 
         const bool is_cached();
 
@@ -85,6 +96,9 @@ namespace DBIMG
 
         virtual void receive_data( const char* data, size_t size );
         virtual void receive_finish();
+
+        // 埋め込み画像のサイズを計算
+        void set_embedded_size();
 
         void read_info();
         void save_info();

@@ -46,13 +46,13 @@ bool DrawAreaPopup::exec_layout()
 {
     // まだクライアント領域のサイズが未取得のときは画面サイズを横幅として計算する
     // (親ウィンドウにクライアントのサイズを知らせるため)
-    const bool use_scrwidth = ( width_client() == 0 || height_client() == 0 );
+    const bool init_popupwin = ( width_client() == 0 || height_client() == 0 );
 
 #ifdef _DEBUG
     std::cout << "DrawAreaPopup::exec_layout() " << get_url() << " use_scrwidth = " << use_scrwidth << std::endl;
 #endif
 
-    bool ret = exec_layout_impl( use_scrwidth, POPUP_OFFSET_Y, POPUP_RIGHT_MRG );
+    bool ret = exec_layout_impl( init_popupwin, POPUP_OFFSET_Y, POPUP_RIGHT_MRG );
     if( ret ) draw_backscreen( true );
 
     return ret;

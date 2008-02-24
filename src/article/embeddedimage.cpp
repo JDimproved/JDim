@@ -55,9 +55,7 @@ using namespace ARTICLE;
 
 EmbeddedImage::EmbeddedImage( const std::string& url )
     : m_url( url ),
-      m_img ( DBIMG::get_img( m_url ) ),
-      m_width( 0 ),
-      m_height( 0 )
+      m_img ( DBIMG::get_img( m_url ) )
 {}
 
 EmbeddedImage::~EmbeddedImage()
@@ -102,24 +100,13 @@ void EmbeddedImage::show()
 
     if( m_thread.is_running() ) return;
 
-    const int max_width = 100;
-    const int max_height = 100;
-    m_width = 0;
-    m_height = 0;
-
     // 画像読み込み
     if( ! m_img->is_cached() ) return;
 
-    // 縮小比率を計算してサイズ取得
-    double scale;
-    double scale_w = ( double ) max_width / m_img->get_width();
-    double scale_h = ( double ) max_height / m_img->get_height();
-    scale = MIN( scale_w, scale_h );
+    const int width = m_img->get_width_emb();
+    const int height = m_img->get_height_emb();
 
-    m_width = (int)( m_img->get_width() * scale );
-    m_height = (int)( m_img->get_height() * scale );
-
-    if( ! m_width || ! m_height ) return;
+    if( ! width || ! height ) return;
 
     // スレッド起動して縮小
     m_stop = false;
@@ -136,11 +123,15 @@ void EmbeddedImage::resize_thread()
     std::cout << "EmbeddedImage::resize_thread url = " << m_url << std::endl;
 #endif
 
+    const int width = m_img->get_width_emb();
+    const int height = m_img->get_height_emb();
+
     std::string errmsg;
     bool pixbufonly = true;
+
     if( m_img->get_type() == DBIMG::T_BMP ) pixbufonly = false; // BMP の場合 pixbufonly = true にすると真っ黒になる
     Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), m_stop, pixbufonly, errmsg );
-    if( loader && loader->get_pixbuf() ) m_pixbuf = loader->get_pixbuf()->scale_simple( m_width, m_height, Gdk::INTERP_NEAREST );
+    if( loader && loader->get_pixbuf() ) m_pixbuf = loader->get_pixbuf()->scale_simple( width, height, Gdk::INTERP_NEAREST );
 
     // メインスレッドにリサイズが終わったことを知らせて
     // メインスレッドがpthread_join()を呼び出す

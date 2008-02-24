@@ -28,8 +28,6 @@ namespace ARTICLE
         JDLIB::Thread m_thread;
 
         bool m_stop;
-        int m_width;
-        int m_height;
 
       public:
 
@@ -37,9 +35,6 @@ namespace ARTICLE
         ~EmbeddedImage();
 
         Glib::RefPtr< Gdk::Pixbuf > get_pixbuf(){ return m_pixbuf; }
-
-        const int get_width() const { return m_width; }
-        const int get_height() const { return m_height; }
 
         void show();
         void resize_thread();
