@@ -1104,7 +1104,7 @@ void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_
     // 既に表示済みの場合
     DBIMG::Img* img = node->linkinfo->img;
     if( !img && init_popupwin ) img = node->linkinfo->img = DBIMG::get_img( layout->link );
-    if( img ){
+    if( img && img->is_cached() ){
         rect->width = img->get_width_emb();
         rect->height = img->get_height_emb();
     }
