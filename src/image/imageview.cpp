@@ -77,6 +77,9 @@ void ImageViewMain::clock_in()
 {
     View::clock_in();
 
+    const int width_view = get_width();
+    const int height_view = get_height();
+
     // viewがアクティブになった(クロック入力が来た)ときにステータス表示
     if( m_show_status ){
         m_show_status = false;
@@ -99,15 +102,16 @@ void ImageViewMain::clock_in()
         }
     }
 
-    // ロード中でない
-    else if( get_imagearea() ){
+    // ロード中でなく、viewが表示されている
+    else if( get_imagearea() && ! get_imagearea()->is_loading()
+             && width_view > 1 && height_view > 1 ){
 
         // バックグラウンドで開いた時やロード直後に画像を表示すると重くなるので
         // ビューがアクティブになった(クロック入力が来た) 時点で画面を表示する
-        if( ! get_imagearea()->is_ready() && ! get_imagearea()->is_loading() ) {
+        if( ! get_imagearea()->is_ready() ){
 
-            m_pre_width = get_width();
-            m_pre_height = get_height();
+            m_pre_width = width_view;
+            m_pre_height = height_view;
             m_redraw_count = 10000;
 
             get_imagearea()->show_image();
@@ -126,18 +130,18 @@ void ImageViewMain::clock_in()
         }
 
         // サイズが変わって、かつ zoom to fit モードの場合再描画
-        else if( get_img()->is_cached()
+        else if( get_imagearea()->is_ready()
+                 && get_img()->is_cached()
                  && get_img()->is_zoom_to_fit()
-                 && get_width() > 1 && get_height() > 1
-                 && ( m_pre_width != get_width() || m_pre_height != get_height() )
+                 && ( m_pre_width != width_view || m_pre_height != height_view )
             ){
 
             // 毎回再描画していると遅いのでカウンタを付ける
             ++m_redraw_count;
             if( m_redraw_count >= ( IMGWIN_REDRAWTIME / TIMER_TIMEOUT ) ) {
 
-                m_pre_width = get_width();
-                m_pre_height = get_height();
+                m_pre_width = width_view;
+                m_pre_height = height_view;
                 m_redraw_count = 0;
 
 #ifdef _DEBUG
