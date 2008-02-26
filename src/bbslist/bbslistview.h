@@ -21,6 +21,7 @@ namespace BBSLIST
         virtual ~BBSListViewMain();
 
         virtual void show_view();
+        virtual void delete_view(){}
         virtual void update_view();
 
       protected:

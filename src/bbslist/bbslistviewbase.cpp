@@ -522,6 +522,18 @@ void BBSListViewBase::close_view()
 
 
 //
+// delete
+//
+void BBSListViewBase::delete_view()
+{
+    SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
+    delete_selected_rows();
+}
+
+
+//
 // 内容更新
 //
 // URLを新しいアドレスに変更するだけ
@@ -650,12 +662,8 @@ void  BBSListViewBase::operate_view( const int& control )
             break;
             
         case CONTROL::Delete:
-        {
-            SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
             delete_view();
             break;
-        }
 
         // ポップアップメニュー表示
         case CONTROL::ShowPopupMenu:

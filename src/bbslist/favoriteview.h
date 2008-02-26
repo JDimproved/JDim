@@ -18,7 +18,6 @@ namespace BBSLIST
         virtual ~FavoriteListView();
 
         virtual void show_view();
-        virtual void delete_view(){ delete_selected_rows(); }
 
       protected:
 

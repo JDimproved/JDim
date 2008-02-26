@@ -575,12 +575,19 @@ bool JDWindow::on_window_state_event( GdkEventWindowState* event )
 bool JDWindow::on_configure_event( GdkEventConfigure* event )
 {
     const int mrg = 16;
+    const int width_new = event->width;
+    const int height_new = event->height;
     int min_height = 0;
     if( m_scrwin ) min_height = m_vbox.get_height() - m_scrwin->get_height() + mrg;
 
 #ifdef _DEBUG
     std::cout << "JDWindow::on_configure_event\n"
-              << " w = " << get_width() << " h = " << get_height() << " min_height = " << min_height << "\n------->\n";
+              << "mode = " << m_mode
+              << " w = " << width_new << " h = " << height_new
+              << " border = " << border << " title = " << title_height 
+              << " rx = " << rect.get_x() << " ry = " << rect.get_y() 
+              << " rw = " << rect.get_width() << " rh = " << rect.get_height() 
+              << " min_height = " << min_height << "\n------->\n";
 #endif
 
     if( ! m_boot ){
@@ -600,9 +607,11 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
             }
 
             // サイズ変更
-            if( ( ! m_fold_when_focusout || m_mode == JDWIN_FOLD ) && get_height() > min_height ){
-                set_width_win( get_width() );
-                set_height_win( get_height() );
+            if( ( ! m_fold_when_focusout || m_mode == JDWIN_NORMAL || m_mode == JDWIN_FOLD )
+                && height_new > min_height
+                ) {
+                set_width_win( width_new );
+                set_height_win( height_new );
             }
         }
     }

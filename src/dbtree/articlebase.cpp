@@ -1010,7 +1010,6 @@ void ArticleBase::slot_load_finished()
             if( gettimeofday( &tv, &tz ) == 0 ) m_access_time = tv;
 
             if( m_number < m_number_load ) m_number = m_number_load;
-            m_number_seen = m_number_load;
 
             m_cached = true;
             m_read_info = true;

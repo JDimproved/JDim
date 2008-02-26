@@ -18,8 +18,6 @@ namespace BBSLIST
         SelectListView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
         virtual ~SelectListView(){}
 
-        virtual void delete_view(){ delete_selected_rows(); }
-
       private:
         virtual const bool open_row( Gtk::TreePath& path, const bool tab );
         virtual void switch_rightview(){} // boardに移動しないようにキャンセル
