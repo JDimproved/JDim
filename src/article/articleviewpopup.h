@@ -21,6 +21,8 @@ namespace ARTICLE
         ArticleViewPopup( const std::string& url, bool show_abone );
         ~ArticleViewPopup();
 
+        virtual void stop(){}
+
       protected:
         void show_instruct_popup();
         const bool show_abone() const { return m_show_abone; }
