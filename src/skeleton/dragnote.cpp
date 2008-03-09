@@ -138,12 +138,13 @@ const int DragableNoteBook::get_current_page()
 void DragableNoteBook::set_current_page( int page_num )
 {
     if( get_current_page() == page_num ) return;
+    if( page_num >= get_n_pages() ) page_num = get_n_pages()-1;
 
     m_notebook_tab.set_current_page( page_num );
     m_notebook_view.set_current_page( page_num );
 
     SKELETON::View* view = dynamic_cast< View* >( get_nth_page( page_num ) );
-    set_current_toolbar( view->get_id_toolbar(), view );
+    if( view ) set_current_toolbar( view->get_id_toolbar(), view );
 }
 
 

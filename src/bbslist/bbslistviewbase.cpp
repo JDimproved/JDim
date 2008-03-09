@@ -6,6 +6,7 @@
 
 #include "bbslistviewbase.h"
 #include "bbslistadmin.h"
+#include "addetcdialog.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -66,6 +67,22 @@ if( ! m_path_selected.empty() && url.empty() ) url = "dummy_url"; \
 show_popupmenu( url, slot ); \
 }while(0)
 
+
+#define POPUPMENU_BOARD1 \
+    "<menuitem action='OpenTab'/>" \
+    "<menuitem action='OpenBrowser'/>" \
+    "<separator/>" \
+    "<menuitem action='CopyURL'/>" \
+    "<menuitem action='CopyTitleURL'/>" \
+    "<separator/>" \
+    "<menuitem action='AppendFavorite'/>" \
+    "<separator/>"
+
+#define POPUPMENU_BOARD2 \
+    "<menuitem action='SearchCacheBoard'/>" \
+    "<separator/>" \
+    "<menuitem action='PreferenceBoard'/>" \
+    "</popup>" \
 
 
 using namespace BBSLIST;
@@ -145,9 +162,12 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "AppendFavorite", "お気に入りに追加(_F)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_append_favorite ) );
     action_group()->add( Gtk::Action::create( "NewDir", "新規ディレクトリ(_N)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newdir ) );
     action_group()->add( Gtk::Action::create( "NewCom", "コメント挿入(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newcomment ) );
+    action_group()->add( Gtk::Action::create( "NewEtc", "外部板追加(_E)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_newetcboard ) );
+    action_group()->add( Gtk::Action::create( "MoveEtc", "編集(_E)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_moveetcboard ) );
     action_group()->add( Gtk::Action::create( "Rename", "名前変更(_R)"), sigc::mem_fun( *this, &BBSListViewBase::slot_rename ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );    
-    action_group()->add( Gtk::Action::create( "Delete", "お気に入りから削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view ) );
+    action_group()->add( Gtk::Action::create( "Delete", "お気に入りから削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
+    action_group()->add( Gtk::Action::create( "Delete_etc", "外部板を削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
     action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)"), sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
 
     action_group()->add( Gtk::Action::create( "CheckUpdateRows", "更新チェックのみ(_H)"), sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_selected_rows ) );
@@ -180,35 +200,44 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
     "<ui>"
 
-    // 通常
+    // 板一覧 + 板
     "<popup name='popup_menu'>"
-    "<menuitem action='OpenTab'/>"
-    "<menuitem action='OpenBrowser'/>"
-    "<separator/>"
-    "<menuitem action='CopyURL'/>"
-    "<menuitem action='CopyTitleURL'/>"
-    "<separator/>"
-    "<menuitem action='AppendFavorite'/>"
-    "<separator/>"
-    "<menuitem action='SearchCacheBoard'/>"
-    "<separator/>"
-    "<menuitem action='PreferenceBoard'/>"
-    "</popup>"
+    POPUPMENU_BOARD1
+    POPUPMENU_BOARD2
 
+    // 板一覧 + 外部板
+    "<popup name='popup_menu_etc'>"
+    POPUPMENU_BOARD1
+    "<menuitem action='MoveEtc'/>"
+    "<separator/>"
+    "<menu action='Delete_Menu'>"
+    "<menuitem action='Delete_etc'/>"
+    "</menu>"
+    "<separator/>"
+    POPUPMENU_BOARD2
 
-    // 通常 + 複数
+    // 板一覧 + 複数選択
     "<popup name='popup_menu_mul'>"
     "<menuitem action='OpenRows'/>"
     "<separator/>"
     "<menuitem action='AppendFavorite'/>"
     "</popup>"
 
-
-
-    // 通常ディレクトリメニュー
+    // 板一覧 + ディレクトリ
     "<popup name='popup_menu_dir'>"
     "<menuitem action='SelectDir'/>"
     "</popup>"
+
+    // 板一覧 + 外部板ディレクトリ
+    "<popup name='popup_menu_etcdir'>"
+    "<menuitem action='SelectDir'/>"
+    "<separator/>"
+    "<menuitem action='NewEtc'/>"
+    "</popup>"
+
+
+    /////////////////////////////////////////
+
 
     // お気に入り
     "<popup name='popup_menu_favorite'>"
@@ -233,7 +262,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='PreferenceImage'/>"
     "</popup>"
 
-    // お気に入り+複数選択
+    // お気に入り + 複数選択
     "<popup name='popup_menu_favorite_mul'>"
     "<menuitem action='OpenRows'/>"
     "<separator/>"
@@ -250,14 +279,12 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "</menu>"
     "</popup>"
 
-
-    // お気に入り+何もないところをクリック
+    // お気に入り + 何もないところをクリック
     "<popup name='popup_menu_favorite_space'>"
     "<menuitem action='NewDir'/>"
     "</popup>"
 
-
-    // お気に入りディレクトリメニュー
+    // お気に入り + ディレクトリ
     "<popup name='popup_menu_favorite_dir'>"
     "<menu action='CheckUpdate_Menu'>"
     "<menuitem action='CheckUpdateDir'/>"
@@ -278,7 +305,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "</menu>"
     "</popup>"
 
-    // お気に入りコメントメニュー
+    // お気に入り + コメント
     "<popup name='popup_menu_favorite_com'>"
     "<menuitem action='Rename'/>"
     "<menuitem action='NewDir'/>"
@@ -289,7 +316,11 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "</menu>"
     "</popup>"
 
-    // 選択
+
+    //////////////////////////////////////
+
+
+    // 選択(selectlistview)
     "<popup name='popup_menu_select'>"
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitleURL'/>"
@@ -314,31 +345,34 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     ui_manager()->add_ui_from_string( str_ui );
 
     // ポップアップメニューにキーアクセレータを表示
-    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
+    Gtk::Menu* popupmenu = id2popupmenu(  "/popup_menu" );
     CONTROL::set_menu_motion( popupmenu );
 
-    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_mul" ) );
+    popupmenu = id2popupmenu(  "/popup_menu_etc" );
     CONTROL::set_menu_motion( popupmenu );
 
-    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_dir" ) );
+    popupmenu = id2popupmenu(  "/popup_menu_mul" );
     CONTROL::set_menu_motion( popupmenu );
 
-    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite" ) );
+    popupmenu = id2popupmenu(  "/popup_menu_dir" );
     CONTROL::set_menu_motion( popupmenu );
 
-    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_mul" ) );
+    popupmenu = id2popupmenu(  "/popup_menu_favorite" );
     CONTROL::set_menu_motion( popupmenu );
 
-    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_space" ) );
+    popupmenu = id2popupmenu(  "/popup_menu_favorite_mul" );
     CONTROL::set_menu_motion( popupmenu );
 
-    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_dir" ) );
+    popupmenu = id2popupmenu(  "/popup_menu_favorite_space" );
     CONTROL::set_menu_motion( popupmenu );
 
-    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_com" ) );
+    popupmenu = id2popupmenu(  "/popup_menu_favorite_dir" );
     CONTROL::set_menu_motion( popupmenu );
 
-    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_select" ) );
+    popupmenu = id2popupmenu(  "/popup_menu_favorite_com" );
+    CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = id2popupmenu(  "/popup_menu_select" );
     CONTROL::set_menu_motion( popupmenu );
 
     // マウスジェスチャ可
@@ -521,16 +555,26 @@ void BBSListViewBase::close_view()
 }
 
 
+
 //
-// delete
+// 削除
+//
+// BBSListViewBaseの場合は選択行の削除
 //
 void BBSListViewBase::delete_view()
 {
     SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
+    delete_view_impl();
+}
+
+// BBSListViewBaseの場合は選択行の削除
+void BBSListViewBase::delete_view_impl()
+{
     delete_selected_rows();
 }
+
 
 
 //
@@ -766,6 +810,13 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
             if( act_opentab ) act_opentab->set_sensitive( false );
             break;
     }
+}
+
+
+// idからポップアップメニュー取得
+Gtk::Menu* BBSListViewBase::id2popupmenu( const std::string& id )
+{
+    return dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( id ) );
 }
 
 
@@ -1157,6 +1208,162 @@ void BBSListViewBase::slot_newcomment()
 
 
 //
+// メニューで外部板追加を選択
+//
+void BBSListViewBase::slot_newetcboard()
+{
+    add_newetcboard( false, "", "", "", "" );
+}
+
+
+//
+// メニューで外部板編集を選択
+//
+void BBSListViewBase::slot_moveetcboard()
+{
+    add_newetcboard( true, "", "", "", "" );
+}
+
+
+// 外部板追加
+void BBSListViewBase::add_newetcboard( const bool move, const std::string& _url, const std::string& _name, const std::string& _id, const std::string& _passwd )
+{
+    if( m_path_selected.empty() ) return;
+
+    std::string url_old;
+    std::string name_old;
+
+    std::string url = _url;
+    std::string name = _name;
+    std::string id = _id;
+    std::string passwd = _passwd;
+    std::string basicauth;
+
+#ifdef _DEBUG
+        std::cout << "BBSListViewBase::add_newetcboard\n"
+                  << "move = " << move << std::endl;
+#endif
+
+    if( move ){
+        url_old = path2url( m_path_selected );
+        name_old = path2name( m_path_selected );
+
+#ifdef _DEBUG
+        std::cout << "url_old = " << url_old << std::endl
+                  << "name_old = " << name_old << std::endl
+                  << "board_name = " << DBTREE::board_name( url_old ) << std::endl;
+#endif
+
+        if( DBTREE::board_name( url_old ) != name_old ) return;
+
+        if( url.empty() ) url = url_old;
+        if( name.empty() ) name = name_old;
+
+        basicauth = DBTREE::board_basicauth( url_old );
+        size_t i = basicauth.find( ":" );
+
+        if( id.empty() && i != std::string::npos ){
+
+            id = basicauth.substr( 0, i );
+            passwd = basicauth.substr( i+1 );
+        }
+
+#ifdef _DEBUG
+        std::cout << "basicauth = " << basicauth << " i = " << i << " id = " << id
+                  << "passwd = " << passwd << std::endl;
+#endif
+    }
+
+    BBSLIST::AddEtcDialog diag( move, url, name, id, passwd );
+    if( diag.run() == Gtk::RESPONSE_OK ){
+
+        diag.hide();
+
+        std::string url_org = MISC::remove_space( diag.get_url() );
+        name = MISC::remove_space( diag.get_name() );
+        url = url_org;
+        id = MISC::remove_space( diag.get_id() );
+        passwd = MISC::remove_space( diag.get_passwd() );
+        if( ! id.empty() && ! passwd.empty() ) basicauth = id + ":" + passwd; 
+
+        if( name.empty() || url.empty() ){
+            SKELETON::MsgDiag mdiag( NULL, "板名またはアドレスが空白です", false, Gtk::MESSAGE_ERROR );
+            mdiag.run();
+            mdiag.hide();
+            add_newetcboard( move, url_org, name, id, passwd );
+            return;
+        }
+
+        // .htmlを取り除く
+        JDLIB::Regex regex;
+        if( regex.exec( "(.*)/[^/]+\\.html?$" , url ) ) url = regex.str( 1 );
+
+        // url の最後に/を付ける
+        if( url.rfind( "/" ) +1 != url.length() ) url += "/";
+
+        // boardid 取得
+        if( ! regex.exec( "(http://.*)/([^/]*)/$" , url ) ){
+            SKELETON::MsgDiag mdiag( NULL, "アドレスが不正な形式になっています", false, Gtk::MESSAGE_ERROR );
+            mdiag.run();
+            mdiag.hide();
+            add_newetcboard( move, url_org, name, id, passwd );
+            return;
+        }
+        std::string boardid = regex.str( 2 );
+
+
+#ifdef _DEBUG
+        std::cout << "url_old = " << url_old << std::endl
+                  << "name_old = " << name_old << std::endl
+                  << "url = " << url << std::endl
+                  << "name = " << name << std::endl
+                  << "basicauth = " << basicauth << std::endl
+                  << "boardid = " << boardid << std::endl;
+#endif
+
+        // 既に登録されているか確認
+        if( ! move && ! DBTREE::board_name( url ).empty() ){
+            SKELETON::MsgDiag mdiag( NULL, name + "\n" + url + "\n\nは既に登録されています", false, Gtk::MESSAGE_ERROR );
+            mdiag.run();
+            mdiag.hide();
+            add_newetcboard( move, url_org, name,  id, passwd );
+            return;
+        }
+
+        // データベースに登録してツリーに表示
+        if( ! move && DBTREE::add_etc( url, name, basicauth, boardid ) ){
+
+            Gtk::TreeModel::Path path = append_row( url, name, TYPE_BOARD, m_path_selected, true );
+            m_path_selected = path;
+
+            // etc.txt保存
+            DBTREE::save_etc();
+        }
+
+        // 編集
+        else if( move && DBTREE::move_etc( url_old, url, name_old, name, basicauth, boardid ) ){
+
+            Gtk::TreeModel::Row row = m_treeview.get_row( m_path_selected );
+            if( row ){
+                row[ m_columns.m_col_url ] = url;
+                row[ m_columns.m_col_name ] = name;
+            }
+        }
+
+        else{
+
+            SKELETON::MsgDiag mdiag( NULL, "外部板の登録に失敗しました。アドレスを確認してください", false, Gtk::MESSAGE_ERROR );
+            mdiag.run();
+            mdiag.hide();
+            add_newetcboard( move, url_org, name, id, passwd );
+            return;
+        }
+    }
+}
+
+
+
+//
 // 名前変更
 //
 void BBSListViewBase::slot_rename()
@@ -1499,7 +1706,9 @@ void BBSListViewBase::slot_row_col( const Gtk::TreeModel::iterator&, const Gtk::
 void BBSListViewBase::slot_ren_text_on_edited( const Glib::ustring& path, const Glib::ustring& text )
 {
 #ifdef _DEBUG    
-    std::cout << "BBSListViewBase::slot_ren_text_on_edited\n";
+    std::cout << "BBSListViewBase::slot_ren_text_on_edited\n"
+              << "path = " << path << std::endl
+              << "text = " << text << std::endl;
 #endif
 
     Gtk::TreeModel::Row row = m_treeview.get_row( Gtk::TreePath( path ) );
@@ -1824,6 +2033,16 @@ void BBSListViewBase::slot_checkupdate_open_selected_rows()
 //
 // path -> url 変換
 //
+
+Glib::ustring BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
+{
+    Gtk::TreeModel::Row row = m_treeview.get_row( path );
+    if( !row ) return Glib::ustring();
+    Glib::ustring url =  row[ m_columns.m_col_url ];
+    return url;
+}
+
+// 移転をチェックするバージョン
 Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
@@ -1931,6 +2150,40 @@ bool BBSListViewBase::is_dir( const Gtk::TreePath& path )
     return is_dir( it );
 }
 
+
+
+//
+// 外部板のディレクトリか
+//
+bool BBSListViewBase::is_etcdir( Gtk::TreePath path )
+{
+    std::string name = path2name( path );
+
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase:is_etcdir path = " << path.to_string() << " name = " << name << std::endl;
+#endif
+
+    if( name == SUBDIR_ETCLIST ) return true;
+
+    return false;
+}
+
+
+//
+// 外部板か
+//
+bool BBSListViewBase::is_etcboard( Gtk::TreeModel::iterator& it )
+{
+    Gtk::TreePath path = get_treestore()->get_path( *it );
+    return is_etcboard( path );
+}
+
+
+bool BBSListViewBase::is_etcboard( Gtk::TreePath path )
+{
+    path.up();
+    return is_etcdir( path );
+}
 
 
 

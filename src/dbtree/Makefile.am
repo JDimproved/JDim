@@ -31,6 +31,7 @@ noinst_HEADERS = \
 	interface.h \
 	spchar_decoder.h \
 	spchar_tbl.h \
+	etcboardinfo.h \
 	root.h \
 \
 	boardbase.h \

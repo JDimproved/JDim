@@ -101,6 +101,7 @@ namespace BOARD
         virtual void scroll_left();
         virtual void scroll_right();
         virtual void show_preference();
+        virtual void update_boardname();
 
         // 進む、戻る
         virtual void back_viewhistory( const int count );

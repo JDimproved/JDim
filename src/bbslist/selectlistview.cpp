@@ -26,18 +26,18 @@ SelectListView::SelectListView( const std::string& url, const std::string& arg1,
 Gtk::Menu* SelectListView::get_popupmenu( const std::string& url )
 {
     Gtk::Menu* popupmenu;
-    if( url.empty() ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_space" ) );
+    if( url.empty() ) popupmenu = id2popupmenu(  "/popup_menu_favorite_space" );
     else{
         std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
         if( list_it.size() == 1 ){
 
             int type = path2type( *( get_treeview().get_selection()->get_selected_rows().begin() ) );
 
-            if( type == TYPE_DIR ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_dir" ) );
-            else if( type == TYPE_COMMENT ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_com" ) );
-            else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_select" ) );
+            if( type == TYPE_DIR ) popupmenu = id2popupmenu(  "/popup_menu_favorite_dir" );
+            else if( type == TYPE_COMMENT ) popupmenu = id2popupmenu(  "/popup_menu_favorite_com" );
+            else popupmenu = id2popupmenu(  "/popup_menu_select" );
         }
-        else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_mul" ) );
+        else popupmenu = id2popupmenu(  "/popup_menu_favorite_mul" );
     }
 
     return popupmenu;

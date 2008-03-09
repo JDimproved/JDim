@@ -8,20 +8,19 @@
 #ifndef _ROOT_H
 #define _ROOT_H
 
+#include "etcboardinfo.h"
+
 #include "skeleton/loadable.h"
 #include "xml/document.h"
 
 #include <string>
 #include <list>
 
-
 namespace DBTREE
 {
     class BoardBase;
 
-    // 鯖移転テーブル
-    //
-    // テーブルを更新するタイミングは下のふたつ
+    // サーバ移転テーブル
     //
     // (1) bbsmenuを読み込んで移転していた場合( Root::set_board() )
     //
@@ -31,11 +30,17 @@ namespace DBTREE
     //
     // 参照した古いホストの移動先を現在のホストに設定する。キャッシュは移動しない
     //
+    // (3) ある板のsubject.txtを読み込んだときにHTTP_REDIRECTが戻ってきて
+    //     BoardBase::start_checkking_if_board_moved()により移転が確認されたとき
+    // 
+    // 現在のホストを新ホストに移動する。キャッシュも移動する
+    //
     struct MOVETABLE
     {
         std::string old_root;
         std::string new_root;
-        std::string path_board;
+        std::string old_path_board;
+        std::string new_path_board;
     };
 
     
@@ -52,7 +57,7 @@ namespace DBTREE
         XML::Document m_document;
         char* m_rawdata;
         size_t m_lng_rawdata;
-        std::map< std::string, std::string > m_xml_etc; // 外部板のXML
+        std::list< DBTREE::ETCBOARDINFO > m_etcboards; // 外部板情報
         std::string m_move_info;
 
         // NULL board クラス
@@ -68,10 +73,29 @@ namespace DBTREE
         Root();
         ~Root();
 
-        // 板一覧、外部板一覧のxml
+        // 板一覧のxml
         const std::string& xml_bbsmenu() const { return m_xml_bbsmenu; }
         const XML::Document& xml_document() const { return m_document; }
-        const std::map< std::string, std::string >& xml_etc() const { return m_xml_etc; }
+
+        // 板移転
+        bool move_board( const std::string& url_old, const std::string& url_new, const bool etc );
+
+        // 外部板情報取得
+        const std::list< DBTREE::ETCBOARDINFO >& get_etcboards() const { return m_etcboards; }
+
+        // 外部板追加
+        bool add_etc( const std::string& url, const std::string& name, const std::string& basicauth, const std::string& id );
+
+        // 外部板更新
+        bool move_etc( const std::string& url_old, const std::string& url_new,
+                       const std::string& name_old, const std::string& name_new,
+                       const std::string& basicauth, const std::string& boardid );
+
+        // 外部板削除
+        bool remove_etc( const std::string& url, const std::string& name );
+
+        // 外部板情報保存
+        void save_etc();
 
         // Board クラスのポインタ取得
         BoardBase* get_board( const std::string& url, int count = 0 );
@@ -85,12 +109,16 @@ namespace DBTREE
         // 配下の全boardbaseクラスに、全articlebaseクラスのあぼーん状態の更新をさせる
         void update_abone_all_article();
 
-        // 直接データベースに板を追加/アップデート        
-        void update_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
-
         // 板が移転したかチェックする
         // 移転した時は移転後のURLを返す
-        const std::string is_board_moved( const std::string& url );
+        const std::string is_board_moved( const std::string& url ); // 簡易版
+
+        const std::string is_board_moved( const std::string& url,
+                                          std::string& old_root,
+                                          std::string& old_path_board,
+                                          std::string& new_root,
+                                          std::string& new_path_board
+            );
 
         // 全板の情報ファイル読み込み
         void read_boardinfo_all();
@@ -107,15 +135,31 @@ namespace DBTREE
         void bbsmenu2xml( const std::string& menu );
 
         // XML に含まれる板情報を取り出してデータベースを更新
-        void update_boards();
+        void analyze_board_xml();
 
-        void load_cache();
+        // 板のタイプを判定
+        int get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc );
+
+        // 板のタイプに合わせて板情報をセット
         bool set_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
+
+        // 板移転処理
+        bool exec_move_board( BoardBase* board,
+                              const std::string old_root,
+                              const std::string old_path_board,
+                              const std::string new_root,
+                              const std::string new_path_board
+            );
+
+        // 板をデータベースから削除
+        bool remove_board( const std::string& url );
+
         int is_moved( const std::string& root,
                        const std::string& path_board,
                        const std::string& name,
                        BoardBase** board_old );
 
+        void load_cache();
         void load_etc();
         void load_movetable();
         void save_movetable();

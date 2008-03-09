@@ -132,6 +132,9 @@ BoardBase* Root::get_board( const std::string& url, int count )
         if( board->equal( url ) ){
             board->read_info(); // 板情報の取得( 詳しくはBoardBase::read_info()をみること )
             m_get_board = board;
+#ifdef _SHOW_GETBOARD
+            std::cout << "found\n";
+#endif
             return board;
         }
     }
@@ -140,7 +143,11 @@ BoardBase* Root::get_board( const std::string& url, int count )
     // 移転した時はrootを付け変えて再帰呼び出し
     if( count < max_count ){
         std::string new_url = is_board_moved( url );
-        if( ! new_url.empty() ) return get_board( new_url, count + 1 );
+        if( ! new_url.empty() ){
+            BoardBase* board = get_board( new_url, count + 1 );
+            m_get_board_url = url;
+            return board;
+        }
     }
 
     // 2ch型の場合、板パスを見てもし一致したら新ホストに移転したと判断して移転テーブルを更新する
@@ -160,12 +167,13 @@ BoardBase* Root::get_board( const std::string& url, int count )
                     MOVETABLE movetable;
                     movetable.old_root = MISC::get_hostname( url );
                     movetable.new_root = board->get_root();
-                    movetable.path_board = board->get_path_board();
+                    movetable.old_path_board = board->get_path_board();
+                    movetable.new_path_board = movetable.old_path_board;
                     m_movetable.push_back( movetable );
 
                     std::ostringstream ss;
                     ss << board->get_name() << std::endl
-                       << "旧 URL = " << movetable.old_root + board->get_path_board() << "/" << std::endl
+                       << "旧 URL = " << movetable.old_root + movetable.old_path_board << "/" << std::endl
                        << "新 URL  = " << board->url_boardbase() << std::endl;
                     MISC::MSG( ss.str() );
 
@@ -177,10 +185,12 @@ BoardBase* Root::get_board( const std::string& url, int count )
                     std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
                     for( ; it_move != m_movetable.end(); ++it_move ){
 
-                        if( is_2ch( ( *it_move ).old_root ) && url.find( ( *it_move ).path_board + "/" ) != std::string::npos ){
+                        if( is_2ch( ( *it_move ).old_root ) && url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos ){
 
                             ( *it_move ).new_root = board->get_root();
-                            str += ( *it_move ).old_root + board->get_path_board() + "/ -> " + board->url_boardbase() + "\n";
+                            ( *it_move ).new_path_board = board->get_path_board();
+
+                            str += ( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + board->url_boardbase() + "\n";
                         }
                     }
 
@@ -200,12 +210,11 @@ BoardBase* Root::get_board( const std::string& url, int count )
         if( count < max_count && url[ url.length() -1 ] != '/' ) return get_board( url + "/" , count + 1 );
     }
 
-    // それでも見つからなかったらNULLクラスを返す
-    
 #ifdef _DEBUG            
     std::cout << "Root::get_board: not found\nreturn Board_Null\n";
 #endif
     
+    // それでも見つからなかったらNULLクラスを返す
     return m_board_null;
 }
 
@@ -234,7 +243,7 @@ void Root::load_cache()
         m_document.init( m_xml_bbsmenu );
 
         // Domノードの内容からDBに板を登録
-        update_boards();
+        analyze_board_xml();
     }
 }
 
@@ -289,7 +298,7 @@ void Root::receive_finish()
     if( m_document.hasChildNodes() )
     {
         // データベース更新
-        update_boards();
+        analyze_board_xml();
 
         // bbslistview更新
         CORE::core_set_command( "update_bbslist" );
@@ -384,10 +393,10 @@ void Root::bbsmenu2xml( const std::string& menu )
 //
 // XML に含まれる板情報を取り出してデータベースを更新
 //
-void Root::update_boards()
+void Root::analyze_board_xml()
 {
 #ifdef _DEBUG
-    std::cout << "Root::update_boards\n";
+    std::cout << "Root::analyze_board_xml\n";
     std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
 #endif
 
@@ -421,25 +430,64 @@ void Root::update_boards()
 
 
 //
-// 直接データベースに板を追加/アップデート
+// 板のタイプを判定
 //
-void Root::update_board( const std::string& url, const std::string& name, const std::string& basicauth, bool etc )
+int Root::get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc )
 {
-#ifdef _DEBUG
-    std::cout << "Root::update_board " << url << " " << name << std::endl;
-#endif
+    JDLIB::Regex regex;
+    int type = TYPE_BOARD_UNKNOWN;
 
-    m_move_info = std::string();
-    set_board( url, name, basicauth, etc );
+    // 2ch
+    if( ! etc && is_2ch( url ) ){
 
-    // 移転があった
-    if( ! m_move_info.empty() ) save_movetable();
+        if( regex.exec( "(http://[^/]*)/([^/]*)/$" , url ) ){
+            root = regex.str( 1 );
+            path_board = "/" + regex.str( 2 );
+
+            type = TYPE_BOARD_2CH;
+        }
+    }
+
+    // JBBS
+    else if( is_JBBS( url ) ){
+
+        if( regex.exec( "(http://[^/]*)/(.*)/(index2?\\.html?)?$" , url ) ){
+            root = "http://jbbs.livedoor.jp";
+            path_board = "/" + regex.str( 2 );
+
+            type = TYPE_BOARD_JBBS;
+        }
+    }
+
+    // まち
+    else if( is_machi( url ) ){
+
+        if( regex.exec( "(http://[^/]*)/([^/]*)/(index2?\\.html?)?$" , url ) ){
+            root = regex.str( 1 );
+            path_board = "/" + regex.str( 2 );
+
+            type = TYPE_BOARD_MACHI;
+        }
+    }
+
+    // その他は互換型
+    else{
+
+        if( regex.exec( "(http://.*)/([^/]*)/([^\\.]+\\.html?)?$" , url ) ){
+            root = regex.str( 1 );
+            path_board = "/" + regex.str( 2 );
+
+            type = TYPE_BOARD_2CH_COMPATI;
+        }
+    }
+
+    return type;
 }
 
 
 //
 // 板のタイプに合わせて板情報をセット
-// ついでに移転の判定もする
+// ついでに移転の自動判定と移転処理もおこなう
 //
 // etc == true なら etc.txtに登録された外部板を意味する
 //
@@ -449,52 +497,12 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     std::cout << "Root::set_board " << url << " " << name << std::endl;
 #endif
 
-    JDLIB::Regex regex;
     std::string root;
     std::string path_board;
 
-    // 板のタイプを判定
-    int type;
-
-    // 2ch
-    if( !etc && is_2ch( url ) ){
-
-        if( ! regex.exec( "(http://[^/]*)/([^/]*)/$" , url ) ) return false;
-        root = regex.str( 1 );
-        path_board = "/" + regex.str( 2 );
-
-        type = TYPE_BOARD_2CH;
-    }
-
-    // JBBS
-    else if( is_JBBS( url ) ){
-
-        if( ! regex.exec( "(http://[^/]*)/(.*)/(index2?\\.html?)?$" , url ) ) return false;
-        root = "http://jbbs.livedoor.jp";
-        path_board = "/" + regex.str( 2 );
-
-        type = TYPE_BOARD_JBBS;
-    }
-
-    // まち
-    else if( is_machi( url ) ){
-
-        if( ! regex.exec( "(http://[^/]*)/([^/]*)/(index2?\\.html?)?$" , url ) ) return false;
-        root = regex.str( 1 );
-        path_board = "/" + regex.str( 2 );
-
-        type = TYPE_BOARD_MACHI;
-    }
-
-    // その他は互換型
-    else{
-
-        if( ! regex.exec( "(http://.*)/([^/]*)/([^\\.]+\\.html?)?$" , url ) ) return false;
-        root = regex.str( 1 );
-        path_board = "/" + regex.str( 2 );
-
-        type = TYPE_BOARD_2CH_COMPATI;
-    }
+    // タイプ判定
+    int type = get_board_type( url, root, path_board, etc );
+    if( type == TYPE_BOARD_UNKNOWN ) return false;
 
     // 移転チェック
     BoardBase* board = NULL;
@@ -507,69 +515,199 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 
     // 新板登録
     if( stat == BOARD_NEW ){
+
         board = DBTREE::BoardFactory( type, root, path_board, name, basicauth );
         if( board ) m_list_board.push_back( board );
+
     }
 
     // 移転処理
-    else if( stat == BOARD_MOVED && board ){
+    else if( stat == BOARD_MOVED ){
 
-        std::string old_root = board->get_root();
-        std::string old_path_board = board->get_path_board();
-        std::string old_url = board->url_boardbase();
-        std::string old_path = CACHE::path_board_root( old_url );
-
-        // DB更新
-        board->update_root( root ); 
-
-        std::string new_url = board->url_boardbase();
-        std::string new_path = CACHE::path_board_root( new_url );
-
-        std::ostringstream ss;
-        ss << board->get_name() << std::endl
-           << " 旧 URL = " << old_url << std::endl
-           << " 新 URL = " << new_url << std::endl;
-        MISC::MSG( ss.str() );
-
-        // もしキャッシュが存在したら移動して移転テーブル更新
-        if( CACHE::file_exists( old_path ) == CACHE::EXIST_DIR ){
-
-            // キャッシュがある場合はダイアログに表示
-            m_move_info += ss.str() + "\n";
-
-            // 移動先に同名のファイルかフォルダ何かあったらリネームしてバックアップをとっておく
-            if( CACHE::file_exists( new_path ) != CACHE::EXIST_ERROR ){
-
-                std::string path_tmp = new_path.substr( 0, new_path.length() - 1 ) + "_bk/";
-                if( rename( new_path.c_str(), path_tmp.c_str() ) == 0 ) MISC::MSG( "rename : " +  new_path + " -> " + path_tmp );
-                else MISC::ERRMSG( "can't rename " + new_path + " to " + path_tmp );
-            }
-
-            // キャッシュ移動
-            if( CACHE::mkdir_parent_of_board( new_url ) ){
-
-                if( rename( old_path.c_str(), new_path.c_str() ) == 0 ) MISC::MSG( "cache was moved : " +  old_path + " -> " + new_path );
-                else MISC::ERRMSG( "can't move cache from " + old_path + " to " + new_path );
-            }
-
-            // 板移転テーブルを更新
-            MOVETABLE movetable;
-            movetable.old_root = old_root;
-            movetable.new_root = root;
-            movetable.path_board = board->get_path_board();
-            m_movetable.push_back( movetable );
-
-            // coreに知らせてviewなども更新
-            CORE::core_set_command( "update_host", old_root, root );
-
-#ifdef _DEBUG
-            std::cout << "movetable was updated.\n";
-#endif
-        }
+        exec_move_board( board,
+                         board->get_root(),
+                         board->get_path_board(),
+                         root,
+                         path_board );
     }
 
     return true;
 }
+
+
+
+//
+// (明示的に)板移転
+//
+bool Root::move_board( const std::string& url_old, const std::string& url_new, const bool etc )
+{
+    if( url_old == url_new ) return false;
+
+#ifdef _DEBUG
+    std::cout << "Root::move_board " << url_old << " -> " << url_new << std::endl;
+#endif
+
+    m_move_info = std::string();
+
+    std::string root;
+    std::string path_board;
+
+    BoardBase * board = get_board( url_old );
+    if( ! board ) return false;
+
+    // タイプ判定
+    int type = get_board_type( url_new, root, path_board, etc );
+    if( type == TYPE_BOARD_UNKNOWN ) return false;
+
+    exec_move_board( board,
+                     board->get_root(),
+                     board->get_path_board(),
+                     root,
+                     path_board );
+
+    // キャッシュを移動した
+    if( ! m_move_info.empty() ) save_movetable();
+
+    return true;
+}
+
+
+
+
+//
+// 板移転処理実行
+//
+bool Root::exec_move_board( BoardBase* board,
+                       const std::string old_root,
+                       const std::string old_path_board,
+                       const std::string new_root,
+                       const std::string new_path_board
+    ){
+
+    if( ! board ) return false;
+
+#ifdef _SHOW_BOARD
+    std::cout << "Root::exec_move_board\n";
+    std::cout << old_root << old_path_board << " -> " << new_root <<  new_path_board << std::endl;
+#endif
+
+    const std::string old_url = board->url_boardbase();
+    std::string old_path = CACHE::path_board_root( old_url );
+
+    // DB更新
+    board->update_url( new_root, new_path_board ); 
+
+    std::string new_url = board->url_boardbase();
+    std::string new_path = CACHE::path_board_root( new_url );
+
+    std::ostringstream ss;
+    ss << board->get_name() << std::endl
+       << " 旧 URL = " << old_url << std::endl
+       << " 新 URL = " << new_url << std::endl;
+    MISC::MSG( ss.str() );
+
+    m_get_board_url = std::string();
+    m_get_board = NULL;
+
+    // もしキャッシュが存在したら移動して移転テーブル更新
+    if( CACHE::file_exists( old_path ) == CACHE::EXIST_DIR ){
+
+        // キャッシュがある場合はダイアログに表示
+        m_move_info += ss.str() + "\n";
+
+        // 移動先に同名のファイルかフォルダ何かあったらリネームしてバックアップをとっておく
+        if( CACHE::file_exists( new_path ) != CACHE::EXIST_ERROR ){
+
+            std::string path_tmp = new_path.substr( 0, new_path.length() - 1 ) + "_bk/";
+            if( rename( new_path.c_str(), path_tmp.c_str() ) == 0 ) MISC::MSG( "rename : " +  new_path + " -> " + path_tmp );
+            else MISC::ERRMSG( "can't rename " + new_path + " to " + path_tmp );
+        }
+
+        // キャッシュ移動
+        if( CACHE::mkdir_parent_of_board( new_url ) ){
+
+            if( rename( old_path.c_str(), new_path.c_str() ) == 0 ) MISC::MSG( "cache was moved : " +  old_path + " -> " + new_path );
+            else MISC::ERRMSG( "can't move cache from " + old_path + " to " + new_path );
+        }
+
+#ifdef _DEBUG
+        std::cout << "movetable was updated.\n"
+                  << "old_root = " << old_root << std::endl
+                  << "new_root = " << new_root << std::endl
+                  << "old_path_board = " << old_path_board << std::endl
+                  << "new_path_board = " << new_path_board << std::endl;
+#endif
+
+        // new_root, new_path_board, old_root, old_path が過去に登録済みなら消す(循環防止)
+        std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
+        for( ; it_move != m_movetable.end(); ++it_move ){
+
+            if(
+                ( ( *it_move ).old_root == new_root
+                  && ( *it_move ).old_path_board == new_path_board )
+
+                ||
+
+                ( ( *it_move ).old_root == old_root
+                  && ( *it_move ).old_path_board == old_path_board )
+
+                ){
+
+                m_movetable.erase( it_move );
+                it_move = m_movetable.begin();
+#ifdef _DEBUG
+                std::cout << "erase\n";
+#endif
+            }
+        }
+
+        // 板移転テーブルを更新
+        MOVETABLE movetable;
+        movetable.old_root = old_root;
+        movetable.old_path_board = old_path_board;
+        movetable.new_root = new_root;
+        movetable.new_path_board = new_path_board;
+        m_movetable.push_back( movetable );
+
+        // この板に関連する表示中のviewのURLを更新
+        CORE::core_set_command( "update_url", old_url, new_url );
+    }
+
+    return true;
+}
+
+
+//
+// 板をデータベースから削除
+//
+bool Root::remove_board( const std::string& url )
+{
+#ifdef _SHOW_BOARD
+    std::cout << "Root::remove_board " << url << std::endl;
+#endif
+
+    BoardBase * board = get_board( url );
+    if( ! board ) return false;
+
+#ifdef _SHOW_BOARD
+    std::cout << "found\n"
+              << "root = " << board->get_root() << std::endl
+              << "path = " << board->get_path_board() << std::endl
+              << "name = " << board->get_name() << std::endl;
+#endif
+
+    m_list_board.remove( board );
+    delete board;
+
+    m_get_board_url = std::string();
+    m_get_board = NULL;
+
+    // この板に関連するビューをすべて閉じる
+    CORE::core_set_command( "close_board", url );
+
+    return true;
+}
+
 
 
 //
@@ -612,13 +750,13 @@ int Root::is_moved( const std::string& root,
 
 
 //
-// 外部板読み込み
+// etc.txtから外部板情報を読み込み
 //
-// etc.txt(Navi2ch互換) を読み込んで外部板登録してペア( 名前, URL )に変換
+// etc.txt(Navi2ch互換) を読み込んで外部板情報( etcboardinfo.h )作成およびデータベース登録
 //
 void Root::load_etc()
 {
-    m_xml_etc.clear();
+    m_etcboards.clear();
 
     JDLIB::Regex regex;
     std::string file_etctxt = CACHE::path_etcboard();
@@ -632,40 +770,195 @@ void Root::load_etc()
         std::list< std::string >::iterator it;
         for( it = list_etc.begin(); it != list_etc.end(); ++it ){
 
+            DBTREE::ETCBOARDINFO info;
+
             // 名前
-            std::string name;
-            name = *( it++ );
+            info.name = *( it++ );
             if( it == list_etc.end() ) break;
 
             // url
-            std::string url;
-            url = *( it++ );
+            info.url = *( it++ );
             if( it == list_etc.end() ) break;
 
             // basic認証
-            std::string basicauth;
-            if( regex.exec( "http://([^/]+:[^/]+@)(.+)$" , url ) )
+            if( regex.exec( "http://([^/]+:[^/]+@)(.+)$" , info.url ) )
             {
-                basicauth = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
-                url = "http://" + regex.str( 2 );
+                info.basicauth = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+                info.url = "http://" + regex.str( 2 );
             }
 
+            // board id
+            info.boardid = *( it );
+            if( it == list_etc.end() ) break;
+
 #ifdef _DEBUG
-            std::cout << "etc board : " << url << " " << name << std::endl;
-            std::cout << "id:passwd = " << basicauth << std::endl;
+            std::cout << "etc board : name = " << info.name << std::endl
+                      << "url = " << info.url << std::endl
+                      << "id:passwd = " <<info. basicauth << std::endl
+                      << "boardid = " << info.boardid << std::endl << std::endl;
 #endif
 
             // DBに登録
-            if( set_board( url, name, basicauth, true ) )
+            if( set_board( info.url, info.name, info.basicauth, true ) )
             {
-                m_xml_etc.insert( make_pair( name, url ) );
+#ifdef _DEBUG
+                std::cout << "added.";
+#endif
+                m_etcboards.push_back( info );
             }
+            else MISC::ERRMSG( "failed to add " + info.name );
         }
     }
 
 #ifdef _DEBUG
-    std::cout << "外部板数：" << m_xml_etc.size() << std::endl;
+    std::cout << "number of etc boards：" << m_etcboards.size() << std::endl;
 #endif
+}
+
+
+//
+// 外部板追加
+//
+bool Root::add_etc( const std::string& url, const std::string& name, const std::string& basicauth, const std::string& boardid )
+{
+#ifdef _DEBUG
+    std::cout << "Root::add_etc url = " << url << " name = " << name
+              << " auth = " << basicauth << std::endl;
+#endif 
+
+    DBTREE::ETCBOARDINFO info;
+    info.url = url;
+    info.name = name;
+    info.basicauth = basicauth;
+    info.boardid = boardid;
+
+    if( set_board( info.url, info.name, info.basicauth, true ) )
+    {
+
+#ifdef _DEBUG
+        std::cout << "set ok\n";
+#endif
+        m_etcboards.push_front( info );
+        return true;
+    }
+    else MISC::ERRMSG( "failed to add " + info.name );
+
+    return false;
+}
+
+
+// 外部板更新
+bool Root::move_etc( const std::string& url_old, const std::string& url_new,
+                     const std::string& name_old, const std::string& name_new,
+                     const std::string& basicauth, const std::string& boardid )
+{
+    BoardBase * board = get_board( url_old );
+    if( ! board ) return false;
+
+    std::list< DBTREE::ETCBOARDINFO >::iterator it = m_etcboards.begin();
+    for( ; it != m_etcboards.end(); ++it ){
+        if( (*it).url == url_old && (*it).name == name_old ) break;
+    }
+    if( it == m_etcboards.end() ) return false;
+
+#ifdef _DEBUG
+    std::cout << "Root::move_etc " << url_old << " -> " << url_new << std::endl
+              << name_old << " -> " << name_new << std::endl
+              << board->get_basicauth() << " -> " << basicauth << std::endl;
+#endif 
+
+    // 移転処理
+    if( url_old != url_new ){
+        (*it).url = url_new;
+        move_board( url_old, url_new, true );
+    }
+
+    // 名前変更
+    (*it).name = name_new;
+    board->update_name( name_new );
+
+    // BASIC認証変更
+    (*it).basicauth = basicauth;
+    board->set_basicauth( basicauth );
+
+    // ID更新
+    (*it).boardid = boardid;
+
+    save_etc();
+
+    return true;
+}
+
+
+//
+// 外部板削除
+//
+bool Root::remove_etc( const std::string& url, const std::string& name )
+{
+#ifdef _DEBUG
+    std::cout << "Root::remove_etc url = " << url << " name = " << name << std::endl;
+#endif 
+
+    if( m_etcboards.empty() ) return false;
+
+    std::list< DBTREE::ETCBOARDINFO >::iterator it = m_etcboards.begin();
+    for( ; it != m_etcboards.end(); ++it ){
+
+        if( (*it).url == url && (*it).name == name ){
+#ifdef _DEBUG
+            std::cout << "found\n";
+#endif 
+
+            remove_board( url );
+            m_etcboards.erase( it );
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+//
+// 外部板保存
+//
+// 外部板情報から etc.txt(Navi2ch互換)作成
+//
+void Root::save_etc()
+{
+    if( m_etcboards.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "Root::save_etc\n";
+#endif 
+
+    std::string etcboard;
+
+    std::list< DBTREE::ETCBOARDINFO >::iterator it = m_etcboards.begin();
+    for( ; it != m_etcboards.end(); ++it ){
+
+        etcboard += (*it).name + "\n";
+        if( (*it).basicauth.empty() ) etcboard += (*it).url + "\n";
+        else{
+
+            size_t i = (*it).url.find( "://" );
+            if( i != std::string::npos ){
+                etcboard += (*it).url.substr( 0, i+3 ) + (*it).basicauth + "@" + (*it).url.substr( i+3 ) + "\n";
+            }
+            else etcboard += (*it).url + "\n";
+
+        }
+        etcboard += (*it).boardid + "\n"; 
+    }
+
+    std::string file_etctxt = CACHE::path_etcboard();
+    if( ! CACHE::save_rawdata( file_etctxt, etcboard ) ){
+        MISC::ERRMSG( "failed to save " + file_etctxt );
+    }
+
+#ifdef _DEBUG
+    std::cout << etcboard << std::endl;
+#endif 
 }
 
 
@@ -688,14 +981,17 @@ void Root::load_movetable()
 
             std::list< std::string > lines = MISC::split_line( *it );
 
-            if( lines.size() == 3 ){
+            if( lines.size() == 3 // 旧形式
+                || lines.size() == 4 ){
 
                 std::list< std::string >::iterator it2 = lines.begin();
 
                 MOVETABLE movetable;
                 movetable.old_root = *(it2++);
                 movetable.new_root = *(it2++);
-                movetable.path_board = *(it2++);
+                movetable.old_path_board = *(it2++);
+                if( lines.size() == 4 ) movetable.new_path_board = *(it2++);
+                else movetable.new_path_board = movetable.old_path_board;
                 m_movetable.push_back( movetable );
             }
         }
@@ -705,8 +1001,8 @@ void Root::load_movetable()
     std::cout << "MOVETABLE : \n";
     std::list< MOVETABLE >::iterator it_move;
     for( it_move = m_movetable.begin(); it_move != m_movetable.end(); ++it_move )
-        std::cout << ( *it_move ).old_root << ( *it_move ).path_board
-                  << " -> " << ( *it_move ).new_root <<  ( *it_move ).path_board << std::endl;
+        std::cout << ( *it_move ).old_root << ( *it_move ).old_path_board
+                  << " -> " << ( *it_move ).new_root <<  ( *it_move ).new_path_board << std::endl;
 #endif
 
 
@@ -719,15 +1015,34 @@ void Root::load_movetable()
 //
 // 移転した時は移転後のURLを返す
 //
-const std::string Root::is_board_moved( const std::string& url )
+const std::string Root::is_board_moved( const std::string& url ) // 簡易版
+{
+    std::string old_root;
+    std::string old_path_board;
+    std::string new_root;
+    std::string new_path_board;
+    return is_board_moved( url, old_root, old_path_board, new_root, new_path_board );
+}
+
+const std::string Root::is_board_moved( const std::string& url,
+                                        std::string& old_root,
+                                        std::string& old_path_board,
+                                        std::string& new_root,
+                                        std::string& new_path_board
+    )
 {
     std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
     for( ; it_move != m_movetable.end(); ++it_move ){
 
         if( url.find( ( *it_move ).old_root ) == 0
-            && url.find( ( *it_move ).path_board + "/" ) != std::string::npos ){
+            && url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos ){
 
-            std::string new_url = ( *it_move ).new_root + ( *it_move ).path_board + "/";
+            std::string new_url = ( *it_move ).new_root + ( *it_move ).new_path_board + "/";
+
+            old_root = ( *it_move ).old_root;
+            old_path_board = ( *it_move ).old_path_board;
+            new_root = ( *it_move ).new_root;
+            new_path_board = ( *it_move ).new_path_board;
 
 #ifdef _DEBUG            
             std::cout << url << " is moved to " << new_url << std::endl;
@@ -786,7 +1101,14 @@ void Root::save_movetable()
     for( it_move = m_movetable.begin(); it_move != m_movetable.end(); ++it_move ){
 
         movetable <<( *it_move ).old_root << " "
-                  << ( *it_move ).new_root << " " << ( *it_move ).path_board << std::endl;
+                  << ( *it_move ).new_root << " "
+                  << ( *it_move ).old_path_board;
+
+        // 新形式
+        if( ! ( *it_move ).new_path_board.empty()
+            && ( *it_move ).old_path_board != ( *it_move ).new_path_board ) movetable << " " << ( *it_move ).new_path_board;
+
+        movetable << std::endl;
     }
 
 #ifdef _DEBUG

@@ -78,7 +78,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
     get_control().add_mode( CONTROL::MODE_ARTICLE );
 
     // 板名セット
-    m_label_board = " " + DBTREE::board_name( m_url_article ) + " ";
+    update_boardname();
 }
 
 
@@ -1025,6 +1025,21 @@ void ArticleViewBase::slot_preferences_image()
     delete pref;
 }
 
+
+//
+// 板名更新
+//
+void ArticleViewBase::update_boardname()
+{
+    m_label_board = " " + DBTREE::board_name( m_url_article ) + " ";
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::update_boardname url = " << m_url_article << std::endl
+              << get_url() << std::endl
+              << m_article->get_url() << std::endl
+              << "label = " << m_label_board << std::endl;
+#endif
+}
 
 
 //

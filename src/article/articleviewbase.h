@@ -99,6 +99,7 @@ namespace ARTICLE
         virtual void goto_bottom();
         virtual void goto_num( int num );
         virtual void show_preference();
+        virtual void update_boardname();
 
         // 進む、戻る
         virtual void back_viewhistory( const int count );

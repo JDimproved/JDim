@@ -19,6 +19,7 @@ namespace BBSLIST
         virtual ~SelectListView(){}
 
       private:
+
         virtual const bool open_row( Gtk::TreePath& path, const bool tab );
         virtual void switch_rightview(){} // boardに移動しないようにキャンセル
         virtual Gtk::Menu* get_popupmenu( const std::string& url );

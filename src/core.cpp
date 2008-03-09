@@ -2562,6 +2562,22 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+
+    // 板を閉じる
+    // その板に所属するスレも閉じる
+    else if( command.command == "close_board" ){
+
+        std::string datbase = DBTREE::url_datbase( command.url );
+
+        ARTICLE::get_admin()->set_command_immediately( "close_view", datbase,
+                                                       "closeall" // datbase を含む全てのビューを閉じる
+            );
+
+        BOARD::get_admin()->set_command_immediately( "close_view", command.url,
+                                                     "closeall" // command.url を含む全てのビューを閉じる
+            );
+    }
+
     else if( command.command  == "update_board" ){
 
         BOARD::get_admin()->set_command( "update_view", command.url );
@@ -2836,13 +2852,27 @@ void Core::set_command( const COMMAND_ARGS& command )
     ///////////////////////////////
 
     // 移転があった
-    else if( command.command == "update_host" ){
+    else if( command.command == "update_url" ){
 
-        ARTICLE::get_admin()->set_command( "update_host", command.url, command.arg1 );
-        BOARD::get_admin()->set_command( "update_host", command.url, command.arg1 );
-        BBSLIST::get_admin()->set_command( "update_host", command.url, command.arg1 );
-        IMAGE::get_admin()->set_command( "update_host", command.url, command.arg1 );
-        MESSAGE::get_admin()->set_command( "update_host", command.url, command.arg1 );
+        ARTICLE::get_admin()->set_command( "update_url", command.url, command.arg1 );
+        BOARD::get_admin()->set_command( "update_url", command.url, command.arg1 );
+        BBSLIST::get_admin()->set_command( "update_url", command.url, command.arg1 );
+        IMAGE::get_admin()->set_command( "update_url", command.url, command.arg1 );
+        MESSAGE::get_admin()->set_command( "update_url", command.url, command.arg1 );
+
+        return;
+    }
+
+    ///////////////////////////////
+
+    // 板名変更
+    else if( command.command == "update_boardname" ){
+
+        ARTICLE::get_admin()->set_command( "update_boardname", command.url );
+        BOARD::get_admin()->set_command( "update_boardname", command.url );
+        BBSLIST::get_admin()->set_command( "update_boardname", command.url );
+        IMAGE::get_admin()->set_command( "update_boardname", command.url );
+        MESSAGE::get_admin()->set_command( "update_boardname", command.url );
 
         return;
     }

@@ -102,7 +102,7 @@ void ArticleAdmin::restore()
         }
 
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
-        if( ! command_arg.url.empty() ) open_view( command_arg );
+        if( ! command_arg.url.empty() && ! DBTREE::article_subject( command_arg.url ).empty() ) open_view( command_arg );
     }
 
     SESSION::set_online( online );

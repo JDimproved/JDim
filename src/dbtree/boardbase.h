@@ -207,8 +207,8 @@ namespace DBTREE
         // url がこの板のものかどうか
         virtual bool equal( const std::string& url );
 
-        // 移転などで板のルートを変更する
-        void update_root( const std::string& root );
+        // 移転などで板のルートやパスを変更する
+        void update_url( const std::string& root, const std::string& path_board );
 
         const std::string& get_root() const{ return m_root; }
         const std::string& get_path_board() const { return m_path_board; }
@@ -216,6 +216,7 @@ namespace DBTREE
         const std::string& get_id() const { return m_id; }
         const std::string& get_charset() const { return m_charset; }
         const std::string& get_name() const { return m_name; }
+        void update_name( const std::string& name );
         const std::string& get_subjecttxt() const { return m_subjecttxt; }
 
         // ダウンロード、書き込み時のエージェント名やプロキシ

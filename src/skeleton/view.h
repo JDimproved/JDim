@@ -74,6 +74,8 @@ namespace SKELETON
 
       protected:
 
+        void set_url( const std::string& url_new, const bool update_history );
+
         // Viewが所属するAdminクラス
         virtual Admin* get_admin() = 0;
 
@@ -141,8 +143,9 @@ namespace SKELETON
         virtual ~View(){}
 
         virtual const std::string& get_url(){ return m_url; }
-        void set_url( const std::string& url_new, const bool update_history );
-        void update_host( const std::string& host );
+
+        // 移転があったときなどにadminから呼び出される
+        void update_url( const std::string& url_old, const std::string& url_new );
 
         // 検索文字列
         const std::string& get_search_query(){ return m_search_query; }
@@ -243,6 +246,7 @@ namespace SKELETON
         virtual void scroll_left(){}
         virtual void scroll_right(){}
         virtual void show_preference(){}
+        virtual void update_boardname(){}
 
         // 進む、戻る
         virtual void back_viewhistory( const int count ){}

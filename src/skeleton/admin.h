@@ -116,9 +116,6 @@ namespace SKELETON
         void set_jdwin( JDWindow* win ){ m_win = win; }
         void delete_jdwin();
 
-        // 移転などでviewのホスト名を更新
-        void update_host( const std::string& oldhost, const std::string& newhost );
-
         // URLやステータスを更新
         void update_status( View* view, const bool force );
 
@@ -275,6 +272,12 @@ namespace SKELETON
       private:
 
         bool back_forward_viewhistory( const std::string& url, const bool back, const int count );
+
+        // 移転などでviewのurlを更新
+        void update_url( const std::string& url_old, const std::string& url_new );
+
+        // urlを含むviewの板名を更新
+        void update_boardname( const std::string& url );
     };
 }
 

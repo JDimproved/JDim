@@ -23,6 +23,9 @@ namespace SKELETON
 };
 
 
+#define SUBDIR_ETCLIST "外部板"
+
+
 namespace BBSLIST
 {
     class BBSListViewBase : public SKELETON::View
@@ -89,6 +92,13 @@ namespace BBSLIST
         void tree2xml( const std::string& root_name );
         void xml2tree( const std::string& root_name, const std::string& xml = std::string() );
 
+        // 外部板のディレクトリか
+        bool is_etcdir( Gtk::TreePath path );
+
+        // 外部板か
+        bool is_etcboard( Gtk::TreeModel::iterator& it );
+        bool is_etcboard( Gtk::TreePath path );
+
         // 移転があったときに行に含まれるURLを変更する
         void update_urls();
 
@@ -97,8 +107,16 @@ namespace BBSLIST
 
         // path からその行のタイプを取得
         int path2type( const Gtk::TreePath& path );
+
         // row からタイプを取得
         int row2type( const Gtk::TreeModel::Row& row );
+
+        // path からその行の名前を取得
+        Glib::ustring path2name( const Gtk::TreePath& path );
+
+        // path からその行のURLを取得
+        Glib::ustring path2rawurl( const Gtk::TreePath& path );
+        Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
 
         // お気に入りにアイテム追加
         // あらかじめ共有バッファに追加するデータをセットしておくこと
@@ -109,6 +127,9 @@ namespace BBSLIST
 
         // remove_dir != empty()の時はその名前のディレクトリを削除する
         void save_xml_impl( const std::string& file, const std::string& root, const std::string& remove_dir );
+
+        // idからポップアップメニュー取得
+        Gtk::Menu* id2popupmenu( const std::string& id );
 
       public:
 
@@ -143,6 +164,7 @@ namespace BBSLIST
         Gtk::TreePath get_current_path() { return m_treeview.get_current_path(); }
         void copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store );
 
+
       private:
 
         void row_up();
@@ -166,6 +188,8 @@ namespace BBSLIST
         void slot_append_favorite();
         void slot_newdir();
         void slot_newcomment();
+        void slot_newetcboard();
+        void slot_moveetcboard();
         void slot_rename();
         void slot_copy_url();
         void slot_copy_title_url();
@@ -185,6 +209,11 @@ namespace BBSLIST
         void slot_checkupdate_selected_rows();
         void slot_checkupdate_open_selected_rows();
 
+        virtual void delete_view_impl();
+
+        // 外部板追加/編集
+        void add_newetcboard( const bool move, const std::string& _url, const std::string& _name, const std::string& _id, const std::string& _passwd );
+
         // D&D 関係
         void slot_drag_begin();
         void slot_drag_motion( Gtk::TreeModel::Path path );
@@ -198,9 +227,7 @@ namespace BBSLIST
         virtual void switch_rightview();
         void open_selected_rows();
         void checkupdate_selected_rows();
-        Glib::ustring path2url( const Gtk::TreePath& path );
         Glib::ustring row2url( const Gtk::TreeModel::Row& row );
-        Glib::ustring path2name( const Gtk::TreePath& path );
         bool is_dir( Gtk::TreeModel::iterator& it );
         bool is_dir( const Gtk::TreePath& path );
 

@@ -459,8 +459,13 @@ void Admin::exec_command()
     }
 
     // 移転などでホストの更新
-    else if( command.command == "update_host" ){
-        update_host( command.url, command.arg1 );
+    else if( command.command == "update_url" ){
+        update_url( command.url, command.arg1 );
+    }
+
+    // 板名更新
+    else if( command.command == "update_boardname" ){
+        update_boardname( command.url );
     }
 
     // viewを開く
@@ -746,12 +751,12 @@ void Admin::open_list( const std::string& str_list )
 
 
 //
-// 移転などでviewのホスト名を更新
+// 移転などでviewのurlを更新
 //
-void Admin::update_host( const std::string& oldhost, const std::string& newhost )
+void Admin::update_url( const std::string& url_old, const std::string& url_new )
 {
 #ifdef _DEBUG
-    std::cout << "Admin::update_host " << oldhost << " -> " << newhost << std::endl;
+    std::cout << "Admin::update_url " << url_old << " -> " << url_new << std::endl;
 #endif
 
     int pages = m_notebook->get_n_pages();
@@ -759,8 +764,32 @@ void Admin::update_host( const std::string& oldhost, const std::string& newhost 
 
         for( int i = 0; i < pages; ++i ){
             SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
-            if( view && view->get_url().find( oldhost ) == 0 ) view->update_host( newhost );
+            if( view && view->get_url().find( url_old ) == 0 ) view->update_url( url_old, url_new );
         }
+    }
+}
+
+
+//
+// urlを含むviewの板名を更新
+//
+void Admin::update_boardname( const std::string& url )
+{
+#ifdef _DEBUG
+    std::cout << "Admin::update_boardname url = " << url << std::endl;
+#endif
+
+    int pages = m_notebook->get_n_pages();
+    if( pages ){
+
+        for( int i = 0; i < pages; ++i ){
+            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+            if( view && view->get_url().find( url ) == 0 ) view->update_boardname();
+        }
+
+        // ツールバーの表示更新
+        SKELETON::View* view = get_current_view();
+        if( view ) m_notebook->set_current_toolbar( view->get_id_toolbar(), view );
     }
 }
 

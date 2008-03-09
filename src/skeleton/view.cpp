@@ -57,20 +57,22 @@ void View::set_url( const std::string& url_new, const bool update_history )
 
 
 //
-// host の更新
+// url 更新
 //
-// 移転があったときなどにadminから呼ばれる
+// 移転があったときなどにadminから呼び出される
 //
-void View::update_host( const std::string& host )
+void View::update_url( const std::string& url_old, const std::string& url_new )
 {
-    std::string url_new = host + m_url.substr( MISC::get_hostname( m_url ).length() );
+    if( m_url.find( url_old ) != 0 ) return;
+
+    std::string url = url_new + m_url.substr( url_old.length() );
 
 #ifdef _DEBUG
-    std::cout << "View::update_host from "  << m_url
-              << " to " << url_new << std::endl;
+    std::cout << "View::update_url\n";
+    std::cout << m_url << " -> " << url << std::endl;
 #endif
 
-    set_url( url_new, true );
+    set_url( url, true );
 }
 
 

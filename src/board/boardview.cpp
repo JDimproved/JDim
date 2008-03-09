@@ -858,12 +858,7 @@ void BoardView::show_view()
         return;
     }
 
-    // タイトル表示
-    set_title( DBTREE::board_name( get_url() ) );
-    BOARD::get_admin()->set_command( "set_title", get_url(), get_title() );
-
-    // タブに名前をセット
-    BOARD::get_admin()->set_command( "set_tablabel", get_url(), DBTREE::board_name( get_url() ) );
+    update_boardname();
 
 #if GTKMMVER >= 280
     m_treeview.unset_model();
@@ -2069,6 +2064,20 @@ void BoardView::slot_preferences_article()
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, url );
     pref->run();
     delete pref;
+}
+
+
+//
+// 板名更新
+//
+void BoardView::update_boardname()
+{
+    // タイトル表示
+    set_title( DBTREE::board_name( get_url() ) );
+    BOARD::get_admin()->set_command( "set_title", get_url(), get_title() );
+
+    // タブに名前をセット
+    BOARD::get_admin()->set_command( "set_tablabel", get_url(), DBTREE::board_name( get_url() ) );
 }
 
 

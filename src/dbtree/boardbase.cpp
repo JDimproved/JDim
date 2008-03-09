@@ -3,7 +3,6 @@
 //#define _DEBUG
 #include "jddebug.h"
 
-#include "root.h"
 #include "boardbase.h"
 #include "articlebase.h"
 #include "interface.h"
@@ -105,6 +104,21 @@ bool BoardBase::equal( const std::string& url )
         && url.find( get_path_board() + "/" ) != std::string::npos ) return true;
 
     return false;
+}
+
+
+//
+// 名前を変更
+//
+void BoardBase::update_name( const std::string& name )
+{
+    if( m_name != name ){
+
+        m_name = name;
+
+       // 表示中のviewの板名表示更新
+        CORE::core_set_command( "update_boardname", url_boardbase() );
+    }
 }
 
 
@@ -302,11 +316,18 @@ void BoardBase::read_info()
 
 
 //
-// 移転などで板のルートを変更する
+// 移転などで板のルートやパスを変更する
 //
-void BoardBase::update_root( const std::string& root )
+void BoardBase::update_url( const std::string& root, const std::string& path_board )
 {
+#ifdef _DEBUG
+    std::cout << "BoardBase::update_url\n"
+              << m_root << " -> " << root << std::endl
+              << m_path_board << " -> " << path_board << std::endl;
+#endif
+
     m_root = root;
+    m_path_board = path_board;
 
     // 配下の ArticleBase にも知らせてあげる
     std::list< ArticleBase* >::iterator it;
@@ -332,7 +353,7 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
     std::string id; // スレッドのID
 
 #ifdef _DEBUG
-    std::cout << "BoardBase::::url_dat : url = " << url << std::endl;
+    std::cout << "BoardBase::url_dat : url = " << url << std::endl;
 #endif
     
     num_from = num_to = 0;
@@ -381,7 +402,30 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
     }
 
     // どちらでもない(スレのURLでない)場合
-    else return std::string();
+    else{
+
+        // 移転した場合はurlを置換してからもう一度試す
+        std::string old_root;
+        std::string old_path_board;
+        std::string new_root;
+        std::string new_path_board;
+        std::string new_url = DBTREE::is_board_moved( url, old_root, old_path_board, new_root, new_path_board );
+        if( ! new_url.empty() ){
+
+            std::string url_tmp = MISC::replace_str( url, old_root, new_root );
+            url_tmp = MISC::replace_str( url_tmp, old_path_board + "/", new_path_board + "/" );
+
+#ifdef _DEBUG
+            std::cout << "moved -> " << url_tmp << std::endl;
+#endif
+            return url_dat( url_tmp, num_from, num_to );
+        }
+
+#ifdef _DEBUG
+        std::cout << "not found\n";
+#endif
+        return std::string();
+    }        
 
 #ifdef _DEBUG
     std::cout << "BoardBase::url_dat result : " << url << " ->\n";
@@ -389,6 +433,7 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
 #endif
 
     // もしurl(スレッドのURL)が移転前の旧URLのものだったら対応するarticlebaseクラスに旧ホスト名を教えてあげる
+    // ( offlaw による dat落ちスレの読み込み時に使用する )
     if( m_root.find( MISC::get_hostname( url ) ) != 0 ){
 #ifdef _DEBUG
         std::cout << "org_host : " << MISC::get_hostname( url ) << std::endl;
@@ -500,7 +545,7 @@ const std::string BoardBase::url_datbase()
 //
 // dat ファイルのURLのパスを返す
 //
-// (例) "/hogeboreadcgipath(ard/dat/"  (最初と最後に '/' がつく)
+// (例) "/hogeboard/dat/"  (最初と最後に '/' がつく)
 //
 const std::string BoardBase::url_datpath()
 {
@@ -656,10 +701,12 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 #endif
 
     // urlをdat型に変換してからID取得
-    // 変換できないなら板がDBに登録されてないってことなので NULL クラスを返す
     int num_from, num_to;
     std::string urldat = url_dat( url, num_from, num_to );
+
+    // 板がDBに登録されてないので NULL クラスを返す
     if( urldat.empty() ){
+
 #ifdef _DEBUG
         std::cout << "could not convert url to daturl\nreturn Article_Null\n";
 #endif
@@ -805,7 +852,7 @@ void BoardBase::receive_finish()
                 mdiag.set_default_response( Gtk::RESPONSE_YES );
                 if( mdiag.run() == Gtk::RESPONSE_YES ){
 
-                    DBTREE::update_board( new_url, get_name() );
+                    DBTREE::move_board( url_boardbase(), new_url );
                     CORE::core_set_command( "open_board", url_subject() );
                 }
             }

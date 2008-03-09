@@ -135,15 +135,26 @@ const std::string DBTREE::url_subbbscgi_new( const std::string& url )
 }
 
 
+// 簡易版
 const std::string  DBTREE::is_board_moved( const std::string& url )
 {
     return get_root()->is_board_moved( url );
 }
 
-
-void DBTREE::update_board( const std::string& url, const std::string& name, const std::string& basicauth, bool etc )
+const std::string  DBTREE::is_board_moved( const std::string& url,
+                                        std::string& old_root,
+                                        std::string& old_path_board,
+                                        std::string& new_root,
+                                        std::string& new_path_board
+    )
 {
-    get_root()->update_board( url, name, basicauth, etc );
+    return get_root()->is_board_moved( url, old_root, old_path_board, new_root, new_path_board );
+}
+
+
+void DBTREE::move_board( const std::string& url_old, const std::string& url_new )
+{
+    get_root()->move_board( url_old, url_new, false );
 }
 
 
@@ -153,9 +164,37 @@ const XML::Document& DBTREE::get_xml_document()
 }
 
 
-const std::map< std::string, std::string >& DBTREE::get_xml_etc()
+const std::list< DBTREE::ETCBOARDINFO >& DBTREE::get_etcboards()
 {
-    return get_root()->xml_etc();
+    return get_root()->get_etcboards();
+}
+
+
+bool DBTREE::add_etc( const std::string& url, const std::string& name, const std::string& basicauth, const std::string& id )
+{
+    return get_root()->add_etc( url, name, basicauth, id );
+}
+
+
+bool DBTREE::move_etc( const std::string& url_old, const std::string& url_new,
+               const std::string& name_old, const std::string& name_new,
+               const std::string& basicauth, const std::string& boardid )
+{
+    return get_root()->move_etc( url_old, url_new,
+                                 name_old, name_new,
+                                 basicauth, boardid );
+}
+
+
+bool DBTREE::remove_etc( const std::string& url, const std::string& name )
+{
+    return get_root()->remove_etc( url, name );
+}
+
+
+void DBTREE::save_etc()
+{
+    get_root()->save_etc();
 }
 
 

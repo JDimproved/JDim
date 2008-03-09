@@ -7,10 +7,12 @@
 #ifndef _INTERFACE_H
 #define _INTERFACE_H
 
+#include "etcboardinfo.h"
+
 #include <string>
 #include <list>
 #include <vector>
-#include <map>
+
 
 namespace XML
 {
@@ -58,12 +60,25 @@ namespace DBTREE
     // 移転した時は移転後のURLを返す
     const std::string is_board_moved( const std::string& url );
 
-    // 板を登録/移転などでアップデート
-    void update_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
+    const std::string is_board_moved( const std::string& url,
+                                        std::string& old_root,
+                                        std::string& old_path_board,
+                                        std::string& new_root,
+                                        std::string& new_path_board
+        );
+
+    // 板移転
+    void move_board( const std::string& url_old, const std::string& url_new );
 
     // bbslist系
     const XML::Document& get_xml_document();
-    const std::map< std::string, std::string >& get_xml_etc();
+    const std::list< DBTREE::ETCBOARDINFO >& get_etcboards();
+    bool add_etc( const std::string& url, const std::string& name, const std::string& basicauth, const std::string& id );
+    bool move_etc( const std::string& url_old, const std::string& url_new,
+                   const std::string& name_old, const std::string& name_new,
+                   const std::string& basicauth, const std::string& boardid );
+    bool remove_etc( const std::string& url, const std::string& name );
+    void save_etc();
     void download_bbsmenu();
     
     // board 系
