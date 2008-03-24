@@ -1524,13 +1524,20 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 
                 while( pos < pos_end && *pos != '=' ) ++pos;
                 ++pos;
-                if( *pos == '"' || *pos == ' ' ) ++pos;
+
+                if( *pos == ' ' ) ++pos;
                 if( pos >= pos_end ) continue;
+
+                bool dbq = false;
+                if( *pos == '"' ){
+                    dbq = true;
+                    ++pos;
+                }
 
                 const char* pos_link_start = pos;
                 int lng_link = 0;
 
-                while( pos < pos_end && ( *pos != '"' && *pos != ' ' && *pos != '>' ) ){ ++pos; ++lng_link; }
+                while( pos < pos_end && ( ( ( dbq && *pos != '"' ) || ( !dbq && *pos != ' ' ) ) && *pos != '>' ) ){ ++pos; ++lng_link; }
                 if( pos >= pos_end ) continue;
 
                 while( pos < pos_end && *pos != '>' ) ++pos;
