@@ -31,6 +31,7 @@ namespace SKELETON
             }
 
             set_focus_on_click( false );
+            set_relief( Gtk:: RELIEF_NONE );
         }
 
       public:
