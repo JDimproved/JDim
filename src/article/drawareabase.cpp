@@ -2135,7 +2135,7 @@ bool DrawAreaBase::set_scroll( const int& control )
 
             // 下
             case CONTROL::DownFast:
-                if( enable_down ) dy  = SCROLLSPEED_FAST;
+                if( enable_down ) dy  = SCROLLSPEED_FAST - SCROLLSPEED_SLOW;
                 break;
 
             case CONTROL::DownMid:
@@ -2152,7 +2152,7 @@ bool DrawAreaBase::set_scroll( const int& control )
 
                 // 上
             case CONTROL::UpFast:
-                if( enable_up ) dy = - SCROLLSPEED_FAST;
+                if( enable_up ) dy = - ( SCROLLSPEED_FAST - SCROLLSPEED_SLOW );
                 break;
 
             case CONTROL::UpMid:
