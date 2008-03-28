@@ -13,6 +13,7 @@
 
 #include <fcntl.h>
 #include <errno.h>
+#include <cstring>
 
 using namespace CORE;
 
@@ -72,7 +73,7 @@ void IOMonitor::init()
         while( ( m_fifo_fd = open( m_fifo_file.c_str(), O_WRONLY | O_NONBLOCK ) ) == -1 )
         {
             // ノンブロックなので、これらのフラグが立っていたら戻す
-            if( errno & ( EAGAIN | EINTR ) != 0 ) continue;
+            if( ( errno & ( EAGAIN | EINTR ) ) != 0 ) continue;
 
             // 反対側が既にオープンされていない( 異常終了などでメインプロセスがない )
             if( errno == ENXIO )
@@ -102,7 +103,7 @@ void IOMonitor::init()
         while( ( m_fifo_fd = open( m_fifo_file.c_str(), O_RDWR | O_NONBLOCK ) ) == -1 )
         {
             // ノンブロックなので、これらのフラグが立っていたら戻す
-            if( errno & ( EAGAIN | EINTR ) != 0 ) continue;
+            if( ( errno & ( EAGAIN | EINTR ) ) != 0 ) continue;
 
             // エラーなのでFIFOを消す
             if( unlink( m_fifo_file.c_str() ) < 0 )
