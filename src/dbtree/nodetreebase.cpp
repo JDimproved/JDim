@@ -1106,7 +1106,6 @@ void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
     for( size_t i = 0; i < size; ++i ){
         if( rawlines[ i ] == '\0' ){
             MISC::ERRMSG( "EOF was inserted in the middle of the raw data" );
-            m_broken = true;
             rawlines[ i ] = ' ';
         } 
     }
