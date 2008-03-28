@@ -8,6 +8,8 @@
 
 #include "winmain.h"
 #include "cache.h"
+#include "jdversion.h"
+#include "iomonitor.h"
 
 #include "jdlib/miscmsg.h"
 #include "jdlib/miscutil.h"
@@ -18,6 +20,9 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <cstring>
+#include <sstream>
+#include <iostream>
+#include <getopt.h>
 
 #ifdef USE_GNOMEUI
 #include <gnome.h>
@@ -36,63 +41,6 @@ struct XSMPDATA
 #endif
 
 WinMain* Win_Main = NULL;
-
-//
-// ロック
-//
-// 下のいずれかの値が戻る
-//
-
-enum
-{
-    LOCK_OK = 0,  // ロックした
-    LOCK_ALIVE,   // 他のJDが起動している
-    LOCK_EXIST    // ロックファイルはあるがJDは起動していない
-};
-
-int lock_jd()
-{
-    pid_t pid = getpid();
-    char str_pid[ 256 ];
-    std::string path = CACHE::path_lock();
-
-    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ){
-
-        CACHE::load_rawdata( path, str_pid, 256 );
-        pid = atoi( str_pid );
-
-#ifdef _DEBUG
-        std::cout << "lock file exits pid = " << pid << std::endl;
-#endif
-
-        int killret = kill( pid, 0 );
-        if( killret == 0 ||  errno == EPERM ){
-
-#ifdef _DEBUG
-            std::cout << "other jd is alive\n";
-#endif
-            return LOCK_ALIVE;
-
-        }
-
-        return LOCK_EXIST;
-    }
-
-    snprintf( str_pid, 256, "%d", pid );
-    CACHE::save_rawdata( path, str_pid, strlen( str_pid ) );
-
-    return LOCK_OK;
-}
-
-
-// ロック解除
-void unlock_jd()
-{
-    std::string path = CACHE::path_lock();
-
-    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
-}
-
 
 
 // バックアップ復元
@@ -159,7 +107,6 @@ void sig_handler( int sig )
         std::cout << "sig_handler sig = " << sig << std::endl;
 #endif
         if( Win_Main ) Win_Main->shutdown();
-        unlock_jd();
     }
 
     exit(0);
@@ -207,7 +154,6 @@ void xsmp_session_save_yourself( SmcConn smc_connect,
         std::cout << "session_save_yourself\n";
 #endif
         if( Win_Main ) Win_Main->save_session();
-        unlock_jd();
     }
 
     SmcSaveYourselfDone( smc_connect, TRUE ) ;
@@ -333,11 +279,91 @@ void xsmp_session_end( XSMPDATA* xsmpdata )
 
 #endif
 
-
 ////////////////////////////////////////////////////////////
+
+void usage( const int status )
+{
+    // -h, --help で表示するメッセージ
+    std::stringstream help_message;
+    help_message <<
+    "Usage: jd [option] [<url>]\n"
+    "\n"
+    "-h, --help\n"
+    "        Display this information\n"
+    //"-t <url>, --tab=<url>\n"
+    //"        URL open of BBS etc by Tab\n"
+    "-V, --version\n"
+    "        Display version of this program\n";
+
+    std::cout << help_message.str() << std::endl;
+
+    exit( status );
+}
+
 
 int main( int argc, char **argv )
 {
+    /*--- 引数処理 --------------------------------------------------*/
+
+    // "現在のタブ/新規タブ"など引数によって開き方を変えたい場合は、--tab=<url>
+    // など新しいオプションを追加する
+    // --help, --tab=<url>, --version
+    const struct option options[] =
+    {
+        { "help", 0, 0, 'h' },
+        //{ "tab", 1, 0, 't' },
+        { "version", 0, 0, 'V' },
+        { 0, 0, 0, 0 }
+    };
+
+    char* url = NULL;
+
+    // -h, -t <url>, -V
+    int opt = 0;
+    while( ( opt = getopt_long( argc, argv, "ht:V", options, NULL ) ) != -1 )
+    {
+        switch( opt )
+        {
+            case 'h':
+                usage( 0 );
+                break;
+
+            //case 't':
+                //url = optarg;
+                //break;
+
+            case 'V':
+                std::cout << "JD " << JDVERSIONSTR << ", " << JDCOPYRIGHT << std::endl;
+                break;
+
+            default:
+                usage( 2 );
+        }
+    }
+
+    if( ! url )
+    {
+        // 引数がURLのみの場合
+        if( argc > optind )
+        {
+            url = argv[ optind ];
+        }
+        // URLを含まない引数だけの場合は終了
+        else if( optind > 1 ) return 0;
+    }
+    /*---------------------------------------------------------------*/
+
+    /*--- IOMonitor -------------------------------------------------*/
+    CORE::IOMonitor iomonitor;
+
+    // 引数にURLがあればFIFOに書き込む
+    if( url ) iomonitor.send_command( url );
+
+    // メインプロセスでなければ終了
+    if( ! iomonitor.is_main_process() ) return 0;
+    /*---------------------------------------------------------------*/
+
+
     // SIGINT、SIGQUITのハンドラ設定
     struct sigaction sigact;
     sigset_t blockset;
@@ -427,33 +453,6 @@ int main( int argc, char **argv )
         CACHE::mkdir_root();
     }
 
-    // ロック
-    int lock = lock_jd();
-    if( lock == LOCK_ALIVE ){
-
-        Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDは既に起動しています。起動しますか？",
-                                                            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-        int ret = mdiag->run();
-        delete mdiag;
-        if( ret != Gtk::RESPONSE_YES ) return 0;
-
-        unlock_jd();
-        lock_jd();
-    }
-    else if( lock == LOCK_EXIST ){ 
-
-        Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "前回起動時にJDが異常終了しました。\n\nロックファイルを削除して起動しますか？",
-                                                            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-
-        mdiag->set_default_response( Gtk::RESPONSE_YES );
-        int ret = mdiag->run();
-        delete mdiag;
-        if( ret != Gtk::RESPONSE_YES ) return 0;
-
-        unlock_jd();
-        lock_jd();
-    }
-
     // バックアップファイル復元
     restore_bkup();
 
@@ -471,9 +470,6 @@ int main( int argc, char **argv )
 #endif
 
     JDLIB::deinit_ssl();
-
-    // ロック解除
-    unlock_jd();
 
     return 0;
 }

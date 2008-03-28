@@ -51,7 +51,8 @@ jd_SOURCES = \
 	articleitempref.cpp \
 	msgitempref.cpp \
 	sidebaritempref.cpp \
-	fontcolorpref.cpp
+	fontcolorpref.cpp \
+	iomonitor.cpp
 
 
 noinst_HEADERS = \
@@ -102,7 +103,8 @@ noinst_HEADERS = \
 	articleitempref.h \
 	msgitempref.h \
 	sidebaritempref.h \
-	fontcolorpref.h
+	fontcolorpref.h \
+	iomonitor.h
 
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@
