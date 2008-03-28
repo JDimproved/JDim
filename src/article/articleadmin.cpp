@@ -102,7 +102,7 @@ void ArticleAdmin::restore()
         }
 
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
-        if( ! command_arg.url.empty() && ! DBTREE::article_subject( command_arg.url ).empty() ) open_view( command_arg );
+        if( ! command_arg.url.empty() ) open_view( command_arg );
     }
 
     SESSION::set_online( online );
@@ -117,6 +117,11 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     COMMAND_ARGS command_arg;
     command_arg.command = "open_view";
     command_arg.url = std::string();
+
+#ifdef _DEBUG
+    std::cout << "ArticleAdmin::url_to_openarg url = " << url << std::endl;
+#endif    
+
 
     // レス抽出
     if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + RES_SIGN + "(.*)"
@@ -250,7 +255,8 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
               << command_arg.arg2 << std::endl
               << command_arg.arg3 << std::endl
               << command_arg.arg4 << std::endl
-              << command_arg.arg5 << std::endl;
+              << command_arg.arg5 << std::endl
+              << command_arg.arg6 << std::endl << std::endl;
 #endif
 
     return command_arg;
