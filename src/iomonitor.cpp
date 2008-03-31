@@ -38,13 +38,13 @@ IOMonitor::IOMonitor()
 /*-------------------------------------------------------------------*/
 IOMonitor::~IOMonitor()
 {
+    if( m_iochannel ) m_iochannel->close(); // close( m_fifo_fd );
+
     // メインプロセスの終了時にFIFOを消去する
     if( m_main_process && unlink( m_fifo_file.c_str() ) < 0 )
     {
         MISC::ERRMSG( "IOMonitor::~IOMonitor(): fifo unlink failed." );
     }
-
-    if( m_iochannel ) m_iochannel->close(); // close( m_fifo_fd )
 }
 
 
@@ -67,16 +67,15 @@ void IOMonitor::init()
         if( errno != EEXIST )
         {
             MISC::ERRMSG( "IOMonitor::init(): fifo create failed." );
+
+            return;
         }
 
         // FIFOを書き込み専用モードでオープン( ノンブロック )
-        while( ( m_fifo_fd = open( m_fifo_file.c_str(), O_WRONLY | O_NONBLOCK ) ) == -1 )
+        if( ( m_fifo_fd = open( m_fifo_file.c_str(), O_WRONLY | O_NONBLOCK ) ) == -1 )
         {
-            // ノンブロックなので、これらのフラグが立っていたら戻す
-            if( ( errno & ( EAGAIN | EINTR ) ) != 0 ) continue;
-
             // 反対側が既にオープンされていない( 異常終了などでメインプロセスがない )
-            if( errno == ENXIO )
+            if( ( errno & ENXIO ) != 0 )
             {
                 // 残っているFIFOを消す
                 if( unlink( m_fifo_file.c_str() ) < 0 )
@@ -100,11 +99,8 @@ void IOMonitor::init()
     else
     {
         // FIFOを読み込み専用モードでオープン( ノンブロック )
-        while( ( m_fifo_fd = open( m_fifo_file.c_str(), O_RDWR | O_NONBLOCK ) ) == -1 )
+        if( ( m_fifo_fd = open( m_fifo_file.c_str(), O_RDWR | O_NONBLOCK ) ) == -1 )
         {
-            // ノンブロックなので、これらのフラグが立っていたら戻す
-            if( ( errno & ( EAGAIN | EINTR ) ) != 0 ) continue;
-
             // エラーなのでFIFOを消す
             if( unlink( m_fifo_file.c_str() ) < 0 )
             {
