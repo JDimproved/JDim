@@ -53,6 +53,10 @@ ToolBar::ToolBar( Admin* admin )
     m_scrwin.add( m_buttonbar );
     m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
 
+    // ツールバーの枠を消す
+    Gtk::Viewport* vport = dynamic_cast< Gtk::Viewport* >( m_scrwin.get_child() );
+    if( vport ) vport->set_shadow_type( Gtk::SHADOW_NONE);
+
     set_size_request( 8 );
 }
 

@@ -236,7 +236,8 @@ void Core::slot_realize()
 
 void Core::slot_style_changed( Glib::RefPtr< Gtk::Style > )
 {
-    m_notebook.set_style( m_vbox_article.get_style() );
+    m_notebook_sidebar.set_style( m_vbox_article.get_style() );
+    m_notebook_right.set_style( m_vbox_article.get_style() );
 }
 
 
@@ -742,14 +743,16 @@ void Core::run( bool init )
     // サイドバー
     m_sidebar = BBSLIST::get_admin()->get_widget();
     assert( m_sidebar );
+    m_notebook_sidebar.set_show_tabs( false );
+    m_notebook_sidebar.append_remove_page( false, *m_sidebar, "サイドバー" );
 
     // その他設定とwidgetのパッキング
-    m_notebook.set_show_tabs( false );
+    m_notebook_right.set_show_tabs( false );
     m_hpaned.get_ctrl().set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
 
     pack_widget( false );
 
-    m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
+    m_sigc_switch_page = m_notebook_right.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
     m_hpaned.get_ctrl().sig_pane_modechanged().connect( sigc::mem_fun( *this, &Core::slot_show_hide_leftpane ) );
 
     m_win_main.signal_focus_out_event().connect( sigc::mem_fun(*this, &Core::slot_focus_out_event ) );
@@ -829,14 +832,14 @@ void Core::pack_widget( bool unpack )
         m_vpaned_message.get_ctrl().add_remove1( unpack, *ARTICLE::get_admin()->get_widget() );
         m_vpaned_message.get_ctrl().add_remove2( unpack, *MESSAGE::get_admin()->get_widget() );
 
-        m_notebook.append_remove_page( unpack, m_vpaned_message, "スレッド" );
+        m_notebook_right.append_remove_page( unpack, m_vpaned_message, "スレッド" );
     }
     else{
 
         // 書き込みウィンドウ表示
         MESSAGE::get_admin()->set_command_immediately( "open_window" );
 
-        m_notebook.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
+        m_notebook_right.append_remove_page( unpack, *ARTICLE::get_admin()->get_widget(), "スレッド" );
     }
 
     if( SESSION::get_embedded_img() ){ // 埋め込みimage
@@ -844,7 +847,7 @@ void Core::pack_widget( bool unpack )
         // 画像ウィンドウを閉じる
         IMAGE::get_admin()->set_command_immediately( "close_window" );
 
-        m_notebook.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
+        m_notebook_right.append_remove_page( unpack, *IMAGE::get_admin()->get_widget(), "画像" );
     }
     else{
 
@@ -858,20 +861,20 @@ void Core::pack_widget( bool unpack )
     // 2ペーン
     if( mode_pane == SESSION::MODE_2PANE ){ 
 
-        m_notebook.append_remove_page( unpack, *BOARD::get_admin()->get_widget(), "スレ一覧" );
+        m_notebook_right.append_remove_page( unpack, *BOARD::get_admin()->get_widget(), "スレ一覧" );
 
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT )
             m_vbox_article.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
-        m_vbox_article.pack_remove_start( unpack, m_notebook );
+        m_vbox_article.pack_remove_start( unpack, m_notebook_right );
 
-        m_hpaned.get_ctrl().add_remove1( unpack, *m_sidebar );
+        m_hpaned.get_ctrl().add_remove1( unpack, m_notebook_sidebar );
         m_hpaned.get_ctrl().add_remove2( unpack, m_vbox_article );
     }
 
     // 3ペーン
     else if( is_3pane() ){
 
-        m_vbox_article.pack_remove_start( unpack, m_notebook );
+        m_vbox_article.pack_remove_start( unpack, m_notebook_right );
 
         get_rpctrl()->add_remove1( unpack, *BOARD::get_admin()->get_widget() );
         get_rpctrl()->add_remove2( unpack, m_vbox_article );
@@ -881,11 +884,11 @@ void Core::pack_widget( bool unpack )
             m_vbox_toolbar.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
             m_vbox_toolbar.pack_remove_start( unpack, *get_rpane() );
 
-            m_hpaned.get_ctrl().add_remove1( unpack, *m_sidebar );
+            m_hpaned.get_ctrl().add_remove1( unpack, m_notebook_sidebar );
             m_hpaned.get_ctrl().add_remove2( unpack, m_vbox_toolbar );
         }
         else{
-            m_hpaned.get_ctrl().add_remove1( unpack, *m_sidebar );
+            m_hpaned.get_ctrl().add_remove1( unpack, m_notebook_sidebar );
             m_hpaned.get_ctrl().add_remove2( unpack, *get_rpane() );
         }
     }
@@ -3347,7 +3350,7 @@ void Core::slot_switch_page( GtkNotebookPage*, guint )
 int Core::get_right_current_page()
 {
     int mode = SESSION::get_mode_pane();
-    int page = m_notebook.get_current_page();
+    int page = m_notebook_right.get_current_page();
 
     if( mode == SESSION::MODE_2PANE ){
 
@@ -3374,7 +3377,7 @@ void Core::set_right_current_page( int page )
     }
     else if( page == PAGE_BOARD ) return; // 2pane以外ではboardはnotebookに含まれない
 
-    m_notebook.set_current_page( page );
+    m_notebook_right.set_current_page( page );
     SESSION::set_notebook_main_page( get_right_current_page() );
 }
 
