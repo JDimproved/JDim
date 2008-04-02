@@ -129,7 +129,6 @@ static int save_yourself_gnome( GnomeClient *client,
 {
 
     if( Win_Main ) Win_Main->save_session();
-    unlock_jd();
 
     return TRUE;
 }
