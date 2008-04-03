@@ -236,7 +236,9 @@ void Core::slot_realize()
 
 void Core::slot_style_changed( Glib::RefPtr< Gtk::Style > )
 {
-    m_notebook_sidebar.set_style( m_vbox_article.get_style() );
+    m_frame_sidebar.set_style( m_vbox_article.get_style() );
+    m_frame_right.set_style( m_vbox_article.get_style() );
+    m_frame_middle.set_style( m_vbox_article.get_style() );
     m_notebook_right.set_style( m_vbox_article.get_style() );
 }
 
@@ -743,12 +745,21 @@ void Core::run( bool init )
     // サイドバー
     m_sidebar = BBSLIST::get_admin()->get_widget();
     assert( m_sidebar );
-    m_notebook_sidebar.set_show_tabs( false );
-    m_notebook_sidebar.append_remove_page( false, *m_sidebar, "サイドバー" );
+    m_frame_sidebar.set_border_width( 1 );
+    m_frame_sidebar.add( *m_sidebar );
 
     // その他設定とwidgetのパッキング
     m_notebook_right.set_show_tabs( false );
+    m_notebook_right.set_show_border( false );
+    m_notebook_right.get_style()->set_xthickness( 10 );
+
+    m_frame_right.set_border_width( 1 );
+    m_frame_right.add( m_notebook_right );
+
+    m_frame_middle.set_border_width( 1 );
+
     m_hpaned.get_ctrl().set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
+    m_hpaned.get_ctrl().add_remove1( false, m_frame_sidebar );
 
     pack_widget( false );
 
@@ -785,7 +796,7 @@ bool Core::is_all_admin_empty()
 
 
 //
-// 右側ペーンコントロール取得
+// 右側ペーン取得
 //
 Gtk::Paned* Core::get_rpane()
 {
@@ -797,7 +808,7 @@ Gtk::Paned* Core::get_rpane()
 
 
 //
-// 右側ペーン取得
+// 右側ペーンコントロール取得
 //
 SKELETON::PaneControl* Core::get_rpctrl()
 {
@@ -865,18 +876,21 @@ void Core::pack_widget( bool unpack )
 
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT )
             m_vbox_article.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
-        m_vbox_article.pack_remove_start( unpack, m_notebook_right );
 
-        m_hpaned.get_ctrl().add_remove1( unpack, m_notebook_sidebar );
+        m_vbox_article.pack_remove_start( unpack, m_frame_right );
+
         m_hpaned.get_ctrl().add_remove2( unpack, m_vbox_article );
     }
 
     // 3ペーン
     else if( is_3pane() ){
 
-        m_vbox_article.pack_remove_start( unpack, m_notebook_right );
+        m_vbox_article.pack_remove_start( unpack, m_frame_right );
 
-        get_rpctrl()->add_remove1( unpack, *BOARD::get_admin()->get_widget() );
+        if( unpack ) m_frame_middle.remove();
+        else m_frame_middle.add( *BOARD::get_admin()->get_widget() );
+
+        get_rpctrl()->add_remove1( unpack, m_frame_middle );
         get_rpctrl()->add_remove2( unpack, m_vbox_article );
 
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){
@@ -884,13 +898,9 @@ void Core::pack_widget( bool unpack )
             m_vbox_toolbar.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
             m_vbox_toolbar.pack_remove_start( unpack, *get_rpane() );
 
-            m_hpaned.get_ctrl().add_remove1( unpack, m_notebook_sidebar );
             m_hpaned.get_ctrl().add_remove2( unpack, m_vbox_toolbar );
         }
-        else{
-            m_hpaned.get_ctrl().add_remove1( unpack, m_notebook_sidebar );
-            m_hpaned.get_ctrl().add_remove2( unpack, *get_rpane() );
-        }
+        else m_hpaned.get_ctrl().add_remove2( unpack, *get_rpane() );
     }
 
     // メインwindowのパッキング

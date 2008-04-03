@@ -49,9 +49,9 @@ ToolBar::ToolBar( Admin* admin )
       m_button_back( NULL ),
       m_button_forward( NULL )
 {
-    m_buttonbar.set_border_width( 1 );
     m_scrwin.add( m_buttonbar );
     m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+    m_scrwin.set_border_width( 1 );
 
     // ツールバーの枠を消す
     Gtk::Viewport* vport = dynamic_cast< Gtk::Viewport* >( m_scrwin.get_child() );

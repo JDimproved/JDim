@@ -67,7 +67,7 @@ namespace CORE
 
         // サイドバー
         Gtk::Widget* m_sidebar;
-        SKELETON::JDNotebook m_notebook_sidebar;  // サイドバーの枠表示用(notebookとしては使わない)
+        Gtk::Frame m_frame_sidebar;  // 枠表示用
 
         // (縦/横) 3ペーンモード時の右側ペーン
         SKELETON::JDVPaned m_vpaned_r; 
@@ -77,6 +77,8 @@ namespace CORE
         SKELETON::JDVBox m_vbox_article;
         SKELETON::JDVBox m_vbox_toolbar;
         SKELETON::JDNotebook m_notebook_right;
+        Gtk::Frame m_frame_right;  // 枠表示用
+        Gtk::Frame m_frame_middle;  // 枠表示用
         bool m_imagetab_shown;
         SKELETON::JDVPaned m_vpaned_message; // 埋め込み書き込みビュー用
 
