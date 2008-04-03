@@ -34,8 +34,62 @@ ViewHistory::~ViewHistory()
 }
 
 
+void ViewHistory::set_top( const int top )
+{
+    if( m_items.size() < MAX_LOCAL_HISTORY && top > m_history_top ) return;
+
+    m_history_top = top;
+
+#ifdef _DEBUG
+    std::cout << "ViewHistory::set_top" << std::endl
+              << "size = " << m_items.size() << std::endl
+              << "top = " << m_history_top << std::endl
+              << "cur = " << m_history_current << std::endl
+              << "end = " << m_history_end << std::endl;
+#endif
+}
+
+
+void ViewHistory::set_cur( const int cur )
+{
+    if( m_items.size() < MAX_LOCAL_HISTORY && cur > m_history_top ) m_history_current = m_history_top;
+    else  m_history_current = cur;
+
+#ifdef _DEBUG
+    std::cout << "ViewHistory::set_cur" << std::endl
+              << "size = " << m_items.size() << std::endl
+              << "top = " << m_history_top << std::endl
+              << "cur = " << m_history_current << std::endl
+              << "end = " << m_history_end << std::endl;
+#endif
+}
+
+
+void ViewHistory::set_end( const int end )
+{
+    m_history_end = end;
+
+#ifdef _DEBUG
+    std::cout << "ViewHistory::set_end" << std::endl
+              << "size = " << m_items.size() << std::endl
+              << "top = " << m_history_top << std::endl
+              << "cur = " << m_history_current << std::endl
+              << "end = " << m_history_end << std::endl;
+#endif
+}
+
+
 const std::string& ViewHistory::get_current_url()
 {
+#ifdef _DEBUG
+    std::cout << "ViewHistory::get_current_url" << std::endl
+              << "size = " << m_items.size() << std::endl
+              << "top = " << m_history_top << std::endl
+              << "cur = " << m_history_current << std::endl
+              << "end = " << m_history_end << std::endl;
+    assert( m_items[ m_history_current ] != NULL );
+#endif
+
     return m_items[ m_history_current ]->url;
 }
 
@@ -54,7 +108,11 @@ void ViewHistory::replace_current_url( const std::string& url )
 #ifdef _DEBUG
     std::cout << "ViewHistory::replace_current_url\n"
               << "old = " << m_items[ m_history_current ]->url << std::endl
-              << "new = " << url << std::endl;
+              << "new = " << url << std::endl
+              << "size = " << m_items.size() << std::endl
+              << "top = " << m_history_top << std::endl
+              << "cur = " << m_history_current << std::endl
+              << "end = " << m_history_end << std::endl;
 #endif
 
     m_items[ m_history_current ]->url = url;
@@ -65,7 +123,11 @@ void ViewHistory::replace_url( const std::string& url_old, const std::string& ur
 #ifdef _DEBUG
     std::cout << "ViewHistory::replace_url\n"
               << "old = " << url_old << std::endl
-              << "new = " << url_new << std::endl;
+              << "new = " << url_new << std::endl
+              << "size = " << m_items.size() << std::endl
+              << "top = " << m_history_top << std::endl
+              << "cur = " << m_history_current << std::endl
+              << "end = " << m_history_end << std::endl;
 #endif
 
     int size = m_items.size();
@@ -88,7 +150,11 @@ void ViewHistory::replace_current_title( const std::string& title )
 #ifdef _DEBUG
     std::cout << "ViewHistory::replace_current_title\n"
               << "old = " << m_items[ m_history_current ]->title << std::endl
-              << "new = " << title << std::endl;
+              << "new = " << title << std::endl
+              << "size = " << m_items.size() << std::endl
+              << "top = " << m_history_top << std::endl
+              << "cur = " << m_history_current << std::endl
+              << "end = " << m_history_end << std::endl;
 #endif
 
     m_items[ m_history_current ]->title = title;
@@ -174,7 +240,7 @@ const bool ViewHistory::can_forward( const int count )
 void ViewHistory::append( const std::string& url )
 {
 #ifdef _DEBUG
-    std::cout << "ViewhHstory::append : " << url << std::endl;
+    std::cout << "-------------\nViewhHstory::append : " << url << std::endl;
 #endif
 
     // 一番最初の呼び出し

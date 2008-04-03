@@ -33,9 +33,9 @@ namespace HISTORY
         const int get_cur() const { return m_history_current; }
         const int get_end() const { return m_history_end; }
 
-        void set_top( const int top ){ m_history_top = top; }
-        void set_cur( const int cur ){ m_history_current = cur; }
-        void set_end( const int end ){ m_history_end = end; }
+        void set_top( const int top );
+        void set_cur( const int cur );
+        void set_end( const int end );
 
         const std::string& get_current_url();
         const std::string& get_current_title();
