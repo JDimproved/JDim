@@ -103,7 +103,7 @@ void Root::clear()
 //
 // count は無限再帰呼び出し禁止用
 //
-BoardBase* Root::get_board( const std::string& url, int count )
+BoardBase* Root::get_board( const std::string& url, const int count )
 {
 #ifdef _SHOW_GETBOARD
     std::cout << "Root::get_board : count = " << count << " url = " << url << std::endl;
@@ -122,7 +122,11 @@ BoardBase* Root::get_board( const std::string& url, int count )
     m_get_board = NULL;
 
     // 先頭が http:// でなかったら足して再帰呼び出し
-    if( count < max_count && url.find( "http://" ) != 0 ) return get_board( "http://" + url , count + 1 );
+    if( count < max_count && url.find( "http://" ) != 0 ){
+        BoardBase* board = get_board( "http://" + url , count + 1 );
+        m_get_board_url = url;
+        return board;
+    }
 
     // サーチ
     std::list< BoardBase* >::iterator it;
@@ -130,8 +134,10 @@ BoardBase* Root::get_board( const std::string& url, int count )
 
         BoardBase* board = *( it );
         if( board->equal( url ) ){
+
             board->read_info(); // 板情報の取得( 詳しくはBoardBase::read_info()をみること )
             m_get_board = board;
+
 #ifdef _SHOW_GETBOARD
             std::cout << "found\n";
 #endif
@@ -139,31 +145,29 @@ BoardBase* Root::get_board( const std::string& url, int count )
         }
     }
 
+    // 見つからなかった
 
-    // 移転した時はrootを付け変えて再帰呼び出し
     if( count < max_count ){
+
+        // 移転した時はrootを付け変えて再帰呼び出し
         std::string new_url = is_board_moved( url );
         if( ! new_url.empty() ){
             BoardBase* board = get_board( new_url, count + 1 );
             m_get_board_url = url;
             return board;
         }
-    }
 
-    // 2ch型の場合、板パスを見てもし一致したら新ホストに移転したと判断して移転テーブルを更新する
-    if( is_2ch( url ) ){
+        // 2ch型の場合、板パスを見てもし一致したら新ホストに移転したと判断して移転テーブルを更新する
+        if( is_2ch( url ) ){
 
-        std::list< BoardBase* >::iterator it;
-        for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
+            std::list< BoardBase* >::iterator it;
+            for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
 
-            BoardBase* board = *( it );
+                BoardBase* board = *( it );
 
-            if( is_2ch( board->get_root() ) && url.find( board->get_path_board() + "/" ) != std::string::npos ){
+                if( is_2ch( board->get_root() ) && url.find( board->get_path_board() + "/" ) != std::string::npos ){
 
-                // 板移転テーブルを更新
-
-                if( count < max_count ){ 
-
+                    // 板移転テーブルを更新
                     MOVETABLE movetable;
                     movetable.old_root = MISC::get_hostname( url );
                     movetable.new_root = board->get_root();
@@ -177,41 +181,26 @@ BoardBase* Root::get_board( const std::string& url, int count )
                        << "新 URL  = " << board->url_boardbase() << std::endl;
                     MISC::MSG( ss.str() );
 
+                    //移転テーブル保存
+                    save_movetable();
+
+                    BoardBase* board = get_board( url, count + 1 );
+                    m_get_board_url = url;
+                    return board;
                 }
-                else{ // 移転テーブルが循環している場合
-
-                    std::string str = "移転テーブルが破損していたので修復しました\n";
-
-                    std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
-                    for( ; it_move != m_movetable.end(); ++it_move ){
-
-                        if( is_2ch( ( *it_move ).old_root ) && url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos ){
-
-                            ( *it_move ).new_root = board->get_root();
-                            ( *it_move ).new_path_board = board->get_path_board();
-
-                            str += ( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + board->url_boardbase() + "\n";
-                        }
-                    }
-
-                    MISC::MSG( str );
-                }
-
-                //移転テーブル保存
-                save_movetable();
-
-                board->read_info();
-                m_get_board = board;
-                return board;
             }
         }
 
         // 最後が "/" で終わってなかったら足して再帰呼び出し
-        if( count < max_count && url[ url.length() -1 ] != '/' ) return get_board( url + "/" , count + 1 );
+        if( url[ url.length() -1 ] != '/' ){
+            BoardBase* board = get_board( url + "/" , count + 1 );
+            m_get_board_url = url;
+            return board;
+        }
     }
 
 #ifdef _DEBUG            
-    std::cout << "Root::get_board: not found\nreturn Board_Null\n";
+    std::cout << "Root::get_board: not found\n";
 #endif
     
     // それでも見つからなかったらNULLクラスを返す
@@ -1024,13 +1013,77 @@ const std::string Root::is_board_moved( const std::string& url ) // 簡易版
     return is_board_moved( url, old_root, old_path_board, new_root, new_path_board );
 }
 
+
 const std::string Root::is_board_moved( const std::string& url,
                                         std::string& old_root,
                                         std::string& old_path_board,
                                         std::string& new_root,
-                                        std::string& new_path_board
+                                        std::string& new_path_board,
+                                        const int count
     )
 {
+    const int max_count = 50;
+
+#ifdef _DEBUG            
+    if( count ) std::cout << "Root::is_board_moved count = " << count << " url = " << url << std::endl;
+#endif
+
+    // 移転テーブルが循環している場合 2ch 型ならテーブルを修復する
+    if( count > max_count ){
+
+        if( is_2ch( url ) ){
+
+            std::list< BoardBase* >::iterator it;
+            for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
+
+                BoardBase* board = *( it );
+
+                if( is_2ch( board->get_root() ) && url.find( board->get_path_board() + "/" ) != std::string::npos ){
+
+                    std::string str = "移転テーブルが破損していたので修復しました\n";
+
+                    std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
+                    for( ; it_move != m_movetable.end(); ++it_move ){
+
+                        if( is_2ch( ( *it_move ).old_root ) &&
+                            url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos &&
+                            ( ( *it_move ).new_root != board->get_root() || ( *it_move ).new_path_board != board->get_path_board() )
+                            ){
+
+                            ( *it_move ).new_root = board->get_root();
+                            ( *it_move ).new_path_board = board->get_path_board();
+
+                            // url -> url の形となった場合は消す
+                            if( ( *it_move ).old_root == ( *it_move ).new_root &&
+                                ( *it_move ).old_path_board == ( *it_move ).new_path_board ){
+
+                                str += "削除: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + board->url_boardbase() + "\n";
+
+                                m_movetable.erase( it_move );
+                                it_move = m_movetable.begin();
+
+                                continue;
+                            }
+
+                            str += "更新: " + ( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + board->url_boardbase() + "\n";
+                        }
+                    }
+
+                    MISC::MSG( str );
+
+                    //移転テーブル保存
+                    save_movetable();
+
+                    // 改めてもう一度実行
+                    return is_board_moved( url, old_root, old_path_board, new_root, new_path_board, 0 ); 
+                }
+            }
+        }
+
+        return std::string();
+    }
+
+    // 移転テーブルを検索
     std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
     for( ; it_move != m_movetable.end(); ++it_move ){
 
@@ -1047,9 +1100,11 @@ const std::string Root::is_board_moved( const std::string& url,
 #ifdef _DEBUG            
             std::cout << url << " is moved to " << new_url << std::endl;
 #endif
-            return new_url;
+            return is_board_moved( new_url, old_root, old_path_board, new_root, new_path_board, count +1 ); // 連鎖的に検索
         }
     }
+
+    if( count ) return url; // 再起呼び出しの場合
 
     return std::string();
 }

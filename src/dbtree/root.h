@@ -98,7 +98,7 @@ namespace DBTREE
         void save_etc();
 
         // Board クラスのポインタ取得
-        BoardBase* get_board( const std::string& url, int count = 0 );
+        BoardBase* get_board( const std::string& url, const int count = 0 );
 
         // bbsmenuのダウンロード
         void download_bbsmenu();
@@ -117,7 +117,8 @@ namespace DBTREE
                                           std::string& old_root,
                                           std::string& old_path_board,
                                           std::string& new_root,
-                                          std::string& new_path_board
+                                          std::string& new_path_board,
+                                          const int count = 0
             );
 
         // 全板の情報ファイル読み込み
