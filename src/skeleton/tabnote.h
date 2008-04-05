@@ -105,8 +105,6 @@ namespace SKELETON
     class ToolBarNotebook : public Gtk::Notebook
     {
         bool m_show_tab_notebook;
-        int m_xthickness;
-        int m_ythickness;
 
       public:
         ToolBarNotebook();
@@ -120,9 +118,6 @@ namespace SKELETON
 
     class ViewNotebook : public Gtk::Notebook
     {
-        int m_xthickness;
-        int m_ythickness;
-
       public:
         ViewNotebook();
 

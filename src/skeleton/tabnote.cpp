@@ -590,23 +590,9 @@ ToolBarNotebook::ToolBarNotebook()
     : Gtk::Notebook(),
       m_show_tab_notebook( true )
 {
-    Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
-    Glib::RefPtr< Gtk::Style > st = get_style();
-
-    m_xthickness = rcst->get_xthickness();
-    if( m_xthickness <= 0 ) m_xthickness = st->get_xthickness();
-
-    m_ythickness = rcst->get_ythickness();
-    if( m_ythickness <= 0 ) m_ythickness = st->get_ythickness();
-
-#ifdef _DEBUG
-    std::cout << "ToolBarNotebook::ToolBarNotebook xthick = " << m_xthickness
-              << " ythick = " << m_ythickness << std::endl;
-#endif
-
-    set_show_border( false ); // 自前で枠を書く
-    set_border_width( m_xthickness ); // 枠の幅の分を空けておく
+    set_show_border( true );
     set_show_tabs( false );
+    set_border_width( 0 );
 }
 
 
@@ -630,10 +616,10 @@ bool ToolBarNotebook::on_expose_event( GdkEventExpose* event )
     const Gdk::Rectangle rect( &(event->area) );
     const int bw = get_border_width();
     const int mrg = bw + 8;
-    int x = get_allocation().get_x() + bw - m_xthickness;
-    int y = get_allocation().get_y() + bw - m_ythickness;
-    int w = get_allocation().get_width() - 2 * bw + 2 * m_xthickness;
-    int h = get_allocation().get_height() - 2 * bw + 2 * m_ythickness + 2 * mrg;
+    int x = get_allocation().get_x() + bw;
+    int y = get_allocation().get_y() + bw;
+    int w = get_allocation().get_width() - 2 * bw;
+    int h = get_allocation().get_height() - 2 * bw + 2 * mrg;
 
     if( m_show_tab_notebook ) y -= mrg; // タブを表示している時は枠の上側を非表示にする
 
@@ -662,7 +648,13 @@ bool ToolBarNotebook::on_expose_event( GdkEventExpose* event )
                                 0
         );
 
-    return Notebook::on_expose_event( event );
+    // 枠は自前で書いたので gtk_notebook_expose では枠を描画させない
+    GtkNotebook *notebook = gobj();
+    notebook->show_border = false;
+    bool ret = Notebook::on_expose_event( event );
+    notebook->show_border = true;
+
+    return ret;
 }
 
 
@@ -672,23 +664,9 @@ bool ToolBarNotebook::on_expose_event( GdkEventExpose* event )
 ViewNotebook::ViewNotebook()
     : Gtk::Notebook()
 {
-    Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
-    Glib::RefPtr< Gtk::Style > st = get_style();
-
-    m_xthickness = rcst->get_xthickness();
-    if( m_xthickness <= 0 ) m_xthickness = st->get_xthickness();
-
-    m_ythickness = rcst->get_ythickness();
-    if( m_ythickness <= 0 ) m_ythickness = st->get_ythickness();
-
-#ifdef _DEBUG
-    std::cout << "ViewNotebook::ViewNotebook xthick = " << m_xthickness
-              << " ythick = " << m_ythickness << std::endl;
-#endif
-
-    set_show_border( false ); // 自前で枠を書く
-    set_border_width( m_xthickness ); // 枠の幅の分を空けておく
+    set_show_border( true );
     set_show_tabs( false );
+    set_border_width( 0 );
 }
 
 
@@ -705,10 +683,10 @@ bool ViewNotebook::on_expose_event( GdkEventExpose* event )
     const Gdk::Rectangle rect( &(event->area) );
     const int bw = get_border_width();
     const int mrg = bw + 8;
-    const int x = get_allocation().get_x() + bw - m_xthickness;
-    const int y = get_allocation().get_y() + bw - m_ythickness - mrg;
-    const int w = get_allocation().get_width() - 2 * bw + 2 * m_xthickness;
-    const int h = get_allocation().get_height() - 2 * bw + 2 * m_ythickness + mrg;
+    const int x = get_allocation().get_x() + bw;
+    const int y = get_allocation().get_y() + bw - mrg;
+    const int w = get_allocation().get_width() - 2 * bw;
+    const int h = get_allocation().get_height() - 2 * bw + mrg;
 
 #ifdef _DEBUG
     std::cout << "ViewNotebook::on_expose_event\n"
@@ -735,5 +713,11 @@ bool ViewNotebook::on_expose_event( GdkEventExpose* event )
                                 0
         );
 
-    return Notebook::on_expose_event( event );
+    // 枠は自前で書いたので gtk_notebook_expose では枠を描画させない
+    GtkNotebook *notebook = gobj();
+    notebook->show_border = false;
+    bool ret = Notebook::on_expose_event( event );
+    notebook->show_border = true;
+
+    return ret;
 }
