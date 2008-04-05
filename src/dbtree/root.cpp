@@ -1036,8 +1036,8 @@ const std::string Root::is_board_moved( const std::string& url,
             std::list< BoardBase* >::iterator it;
             for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
 
+                // 板の最新のrootとpathを取得する
                 BoardBase* board = *( it );
-
                 if( is_2ch( board->get_root() ) && url.find( board->get_path_board() + "/" ) != std::string::npos ){
 
                     std::string str = "移転テーブルが破損していたので修復しました\n";
@@ -1046,10 +1046,10 @@ const std::string Root::is_board_moved( const std::string& url,
                     for( ; it_move != m_movetable.end(); ++it_move ){
 
                         if( is_2ch( ( *it_move ).old_root ) &&
-                            url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos &&
-                            ( ( *it_move ).new_root != board->get_root() || ( *it_move ).new_path_board != board->get_path_board() )
+                            url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos
                             ){
 
+                            // 最新のrootとpathに変更する
                             ( *it_move ).new_root = board->get_root();
                             ( *it_move ).new_path_board = board->get_path_board();
 
