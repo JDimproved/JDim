@@ -236,9 +236,6 @@ void Core::slot_realize()
 
 void Core::slot_style_changed( Glib::RefPtr< Gtk::Style > )
 {
-    m_frame_sidebar.set_style( m_vbox_article.get_style() );
-    m_frame_right.set_style( m_vbox_article.get_style() );
-    m_frame_middle.set_style( m_vbox_article.get_style() );
     m_notebook_right.set_style( m_vbox_article.get_style() );
 }
 
@@ -745,21 +742,14 @@ void Core::run( bool init )
     // サイドバー
     m_sidebar = BBSLIST::get_admin()->get_widget();
     assert( m_sidebar );
-    m_frame_sidebar.set_border_width( 1 );
-    m_frame_sidebar.add( *m_sidebar );
 
     // その他設定とwidgetのパッキング
     m_notebook_right.set_show_tabs( false );
     m_notebook_right.set_show_border( false );
     m_notebook_right.get_style()->set_xthickness( 10 );
 
-    m_frame_right.set_border_width( 1 );
-    m_frame_right.add( m_notebook_right );
-
-    m_frame_middle.set_border_width( 1 );
-
     m_hpaned.get_ctrl().set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
-    m_hpaned.get_ctrl().add_remove1( false, m_frame_sidebar );
+    m_hpaned.get_ctrl().add_remove1( false, *m_sidebar );
 
     pack_widget( false );
 
@@ -877,7 +867,7 @@ void Core::pack_widget( bool unpack )
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT )
             m_vbox_article.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
 
-        m_vbox_article.pack_remove_start( unpack, m_frame_right );
+        m_vbox_article.pack_remove_start( unpack, m_notebook_right );
 
         m_hpaned.get_ctrl().add_remove2( unpack, m_vbox_article );
     }
@@ -885,12 +875,9 @@ void Core::pack_widget( bool unpack )
     // 3ペーン
     else if( is_3pane() ){
 
-        m_vbox_article.pack_remove_start( unpack, m_frame_right );
+        m_vbox_article.pack_remove_start( unpack, m_notebook_right );
 
-        if( unpack ) m_frame_middle.remove();
-        else m_frame_middle.add( *BOARD::get_admin()->get_widget() );
-
-        get_rpctrl()->add_remove1( unpack, m_frame_middle );
+        get_rpctrl()->add_remove1( unpack, *BOARD::get_admin()->get_widget() );
         get_rpctrl()->add_remove2( unpack, m_vbox_article );
 
         if( SESSION::toolbar_pos() == SESSION::TOOLBAR_RIGHT ){

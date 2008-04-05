@@ -99,6 +99,36 @@ namespace SKELETON
         virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time);
     };
 
+
+    ///////////////////////////////////////////////////////////////
+
+    class ToolBarNotebook : public Gtk::Notebook
+    {
+        bool m_show_tab_notebook;
+        int m_xthickness;
+        int m_ythickness;
+
+      public:
+        ToolBarNotebook();
+        void set_show_tab_notebook( const bool show );
+
+      protected:
+        virtual bool on_expose_event( GdkEventExpose* event );
+    };
+
+    ///////////////////////////////////////////////////////////////
+
+    class ViewNotebook : public Gtk::Notebook
+    {
+        int m_xthickness;
+        int m_ythickness;
+
+      public:
+        ViewNotebook();
+
+      protected:
+        virtual bool on_expose_event( GdkEventExpose* event );
+    };
 }
 
 #endif

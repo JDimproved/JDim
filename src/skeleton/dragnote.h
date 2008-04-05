@@ -43,8 +43,8 @@ namespace SKELETON
         SIG_DRAG_END m_sig_drag_end;
 
         TabNotebook m_notebook_tab;
-        Gtk::Notebook m_notebook_toolbar;
-        Gtk::Notebook m_notebook_view;
+        ToolBarNotebook m_notebook_toolbar;
+        ViewNotebook m_notebook_view;
 
         bool m_show_tabs;
 

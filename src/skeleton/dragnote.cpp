@@ -24,16 +24,6 @@ DragableNoteBook::DragableNoteBook()
 {
     set_spacing( 0 );
 
-    // ツールバーの表示領域
-    m_notebook_toolbar.set_border_width( 0 );
-    m_notebook_toolbar.set_show_border( false );
-    m_notebook_toolbar.set_show_tabs( false );
-
-    // Viewの表示領域
-    m_notebook_view.set_border_width( 0 );
-    m_notebook_view.set_show_border( false );
-    m_notebook_view.set_show_tabs( false );
-
     m_notebook_tab.signal_switch_page().connect( sigc::mem_fun( *this, &DragableNoteBook::slot_switch_page_tab ) );
     m_notebook_tab.sig_button_press().connect( sigc::mem_fun( *this, &DragableNoteBook::slot_button_press_event ) );
     m_notebook_tab.sig_button_release().connect( sigc::mem_fun( *this, &DragableNoteBook::slot_button_release_event ) );
@@ -102,6 +92,8 @@ void DragableNoteBook::set_show_tabs( bool show_tabs )
 
         m_show_tabs = true;
     }
+
+    m_notebook_toolbar.set_show_tab_notebook( m_show_tabs );
 }
 
 
