@@ -26,7 +26,7 @@ BBSListToolBar::BBSListToolBar() :
     m_combo.append_text( "お気に入り" );
     m_combo.signal_changed().connect( sigc::mem_fun( *this, &BBSListToolBar::slot_combo_changed ) );
 
-    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
+    pack_start( m_hbox_label, Gtk::PACK_SHRINK, 2 );
 
     pack_buttons();
     get_entry_search()->add_mode( CONTROL::MODE_BBSLIST );

@@ -593,6 +593,9 @@ ToolBarNotebook::ToolBarNotebook()
     set_show_border( true );
     set_show_tabs( false );
     set_border_width( 0 );
+
+    Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
+    rcst->set_ythickness( 0 );
 }
 
 
@@ -615,11 +618,11 @@ bool ToolBarNotebook::on_expose_event( GdkEventExpose* event )
     const Glib::RefPtr<Gdk::Window> win = get_window();
     const Gdk::Rectangle rect( &(event->area) );
     const int bw = get_border_width();
-    const int mrg = bw + 8;
-    int x = get_allocation().get_x() + bw;
+    const int mrg = bw + 16;
+    const int x = get_allocation().get_x() + bw;
     int y = get_allocation().get_y() + bw;
-    int w = get_allocation().get_width() - 2 * bw;
-    int h = get_allocation().get_height() - 2 * bw + 2 * mrg;
+    const int w = get_allocation().get_width() - 2 * bw;
+    const int h = get_allocation().get_height() - 2 * bw + 2 * mrg;
 
     if( m_show_tab_notebook ) y -= mrg; // タブを表示している時は枠の上側を非表示にする
 
@@ -682,7 +685,7 @@ bool ViewNotebook::on_expose_event( GdkEventExpose* event )
     const Glib::RefPtr<Gdk::Window> win = get_window();
     const Gdk::Rectangle rect( &(event->area) );
     const int bw = get_border_width();
-    const int mrg = bw + 8;
+    const int mrg = bw + 16;
     const int x = get_allocation().get_x() + bw;
     const int y = get_allocation().get_y() + bw - mrg;
     const int w = get_allocation().get_width() - 2 * bw;
