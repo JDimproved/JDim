@@ -62,7 +62,7 @@ TabNotebook::TabNotebook()
 {
     m_layout_tab = create_pango_layout( "" );
 
-    set_border_width( 0 );
+    set_border_width( 4 );
     set_show_border( false );
     set_size_request( 1, -1 ); // これが無いと最大化を解除したときにウィンドウが勝手にリサイズする
 
@@ -424,22 +424,24 @@ bool TabNotebook::adjust_tabwidth()
 //
 bool TabNotebook::on_expose_event( GdkEventExpose* event )
 {
+    const int mrg = 16;
+
     bool ret = Notebook::on_expose_event( event );
     if( get_n_pages() == 0 ) return ret;
 
     const Glib::RefPtr<Gdk::Window> win = get_window();
     const Gdk::Rectangle rect( &(event->area) );
     const int bw = get_border_width();
-    const int x = get_allocation().get_x() + bw;
-    const int y = get_allocation().get_y();
-    const int w = get_allocation().get_width() - 2*bw;
+    const int x = get_allocation().get_x() -mrg/2; 
+    const int y = get_allocation().get_y() + bw;
+    const int w = get_allocation().get_width() + mrg; // 枠の横幅を大きめにして左右枠の描画を防ぐ
     const int h = get_allocation().get_height() - 2*bw;
 
     // 現在のタブの座標を取得
     GtkNotebook *notebook = gobj();
     if( ! notebook->cur_page ) return ret;
 
-    const int gap_x = notebook->cur_page->allocation.x - x - bw;
+    const int gap_x = notebook->cur_page->allocation.x - x;
     const int gap_width = notebook->cur_page->allocation.width;
 
 #ifdef _DEBUG
@@ -465,7 +467,7 @@ bool TabNotebook::on_expose_event( GdkEventExpose* event )
                                 x,
                                 y +h -m_ythickness,
                                 w,
-                                m_ythickness + 16, // 少し大きめに描画して下枠の描画を防ぐ
+                                m_ythickness + mrg, // 少し大きめに描画して下枠の描画を防ぐ
                                 Gtk::POS_TOP,
                                 gap_x,
                                 gap_width
