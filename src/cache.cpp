@@ -53,13 +53,6 @@ std::string CACHE::path_session()
 }
 
 
-// ディストリ判別用ファイル
-std::string CACHE::path_issue_net()
-{
-    return "/etc/issue.net";
-}
-
-
 // ロックファイル
 std::string CACHE::path_lock()
 {

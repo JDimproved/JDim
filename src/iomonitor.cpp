@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <cstring>
+#include <sys/stat.h>
 
 using namespace CORE;
 
@@ -41,10 +42,7 @@ IOMonitor::~IOMonitor()
     if( m_iochannel ) m_iochannel->close(); // close( m_fifo_fd );
 
     // メインプロセスの終了時にFIFOを消去する
-    if( m_main_process && unlink( m_fifo_file.c_str() ) < 0 )
-    {
-        MISC::ERRMSG( "IOMonitor::~IOMonitor(): fifo unlink failed." );
-    }
+    if( m_main_process ) delete_fifo();
 }
 
 
@@ -53,6 +51,22 @@ IOMonitor::~IOMonitor()
 /*-------------------------------------------------------------------*/
 void IOMonitor::init()
 {
+    // 既にFIFOと同名のファイルが存在する
+    if( access( m_fifo_file.c_str(), F_OK ) == 0 )
+    {
+        struct stat statbuf;
+        if( stat( m_fifo_file.c_str(), &statbuf ) == 0 )
+        {
+            // 同名のファイルがFIFOでなければ削除する
+            if( ( statbuf.st_mode & S_IFMT ) != S_IFIFO ) delete_fifo();
+        }
+        else
+        {
+            MISC::ERRMSG( "IOMonitor::init(): fifo get stat failed." );
+            return;
+        }
+    }
+
     // FIFOを作成
     int mkfifo_status = -1;
 
@@ -78,10 +92,7 @@ void IOMonitor::init()
             if( ( errno & ENXIO ) != 0 )
             {
                 // 残っているFIFOを消す
-                if( unlink( m_fifo_file.c_str() ) < 0 )
-                {
-                    MISC::ERRMSG( "IOMonitor::init(): fifo unlink failed." );
-                }
+                delete_fifo();
 
                 // 最初からやり直す
                 goto do_makefifo;
@@ -102,10 +113,8 @@ void IOMonitor::init()
         if( ( m_fifo_fd = open( m_fifo_file.c_str(), O_RDWR | O_NONBLOCK ) ) == -1 )
         {
             // エラーなのでFIFOを消す
-            if( unlink( m_fifo_file.c_str() ) < 0 )
-            {
-                MISC::ERRMSG( "IOMonitor::init(): fifo unlink failed." );
-            }
+            delete_fifo();
+
 #ifdef _DEBUG
             std::cerr << "IOMonitor::init(): " << strerror( errno );
 #endif // _DEBUG
@@ -117,6 +126,18 @@ void IOMonitor::init()
         // Glib::IOChannel
         Glib::signal_io().connect( sigc::mem_fun( this, &IOMonitor::slot_ioin ), m_fifo_fd, Glib::IO_IN );
         m_iochannel = Glib::IOChannel::create_from_fd( m_fifo_fd );
+    }
+}
+
+
+/*-------------------------------------------------------------------*/
+// FIFOを削除する
+/*-------------------------------------------------------------------*/
+void IOMonitor::delete_fifo()
+{
+    if( unlink( m_fifo_file.c_str() ) < 0 )
+    {
+        MISC::ERRMSG( "IOMonitor::init(): fifo unlink failed." );
     }
 }
 

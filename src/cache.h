@@ -27,9 +27,6 @@ namespace CACHE
     // セッション情報ファイル
     std::string path_session();
 
-    // ディストリ判別用ファイル
-    std::string path_issue_net();
-
     // ロックファイル
     std::string path_lock();
 

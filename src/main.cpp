@@ -291,6 +291,8 @@ void usage( const int status )
     "        Display this information\n"
     //"-t <url>, --tab=<url>\n"
     //"        URL open of BBS etc by Tab\n"
+    "-m, --multi\n"
+    "        Does not terminate even if it is a subprocess\n"
     "-V, --version\n"
     "        Display version of this program\n";
 
@@ -306,20 +308,22 @@ int main( int argc, char **argv )
 
     // "現在のタブ/新規タブ"など引数によって開き方を変えたい場合は、--tab=<url>
     // など新しいオプションを追加する
-    // --help, --tab=<url>, --version
+    // --help, --tab=<url>, --multi, --version
     const struct option options[] =
     {
         { "help", 0, 0, 'h' },
         //{ "tab", 1, 0, 't' },
+        { "multi", 0, 0, 'm' },
         { "version", 0, 0, 'V' },
         { 0, 0, 0, 0 }
     };
 
     char* url = NULL;
+    bool multi_mode = false;
 
-    // -h, -t <url>, -V
+    // -h, -t <url>, -m, -V
     int opt = 0;
-    while( ( opt = getopt_long( argc, argv, "ht:V", options, NULL ) ) != -1 )
+    while( ( opt = getopt_long( argc, argv, "ht:mV", options, NULL ) ) != -1 )
     {
         switch( opt )
         {
@@ -330,6 +334,10 @@ int main( int argc, char **argv )
             //case 't':
                 //url = optarg;
                 //break;
+
+            case 'm':
+                multi_mode = true;
+                break;
 
             case 'V':
                 std::cout << "JD " << JDVERSIONSTR << ", " << JDCOPYRIGHT << std::endl;
@@ -347,21 +355,10 @@ int main( int argc, char **argv )
         {
             url = argv[ optind ];
         }
-        // URLを含まない引数だけの場合は終了
-        else if( optind > 1 ) return 0;
+        // マルチモードでなく、URLを含まない引数だけの場合は終了
+        else if( optind > 1 && ! multi_mode ) return 0;
     }
     /*---------------------------------------------------------------*/
-
-    /*--- IOMonitor -------------------------------------------------*/
-    CORE::IOMonitor iomonitor;
-
-    // 引数にURLがあればFIFOに書き込む
-    if( url ) iomonitor.send_command( url );
-
-    // メインプロセスでなければ終了
-    if( ! iomonitor.is_main_process() ) return 0;
-    /*---------------------------------------------------------------*/
-
 
     // SIGINT、SIGQUITのハンドラ設定
     struct sigaction sigact;
@@ -451,6 +448,29 @@ int main( int argc, char **argv )
         // 初回起動時にルートを作る
         CACHE::mkdir_root();
     }
+
+    /*--- IOMonitor -------------------------------------------------*/
+    CORE::IOMonitor iomonitor;
+
+    // 引数にURLがある
+    if( url )
+    {
+        // FIFOに書き込む
+        iomonitor.send_command( url );
+
+        // マルチモードでなく、メインプロセスでもない場合は終了
+        if( ! multi_mode && ! iomonitor.is_main_process() ) return 0;
+    }
+    // マルチモードでなく、メインプロセスでもない場合は問い合わせる
+    else if( ! multi_mode && ! iomonitor.is_main_process() )
+    {
+        Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDは既に起動しています。起動しますか？",
+                                                            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+        int ret = mdiag->run();
+        delete mdiag;
+        if( ret != Gtk::RESPONSE_YES ) return 0;
+    }
+    /*---------------------------------------------------------------*/
 
     // バックアップファイル復元
     restore_bkup();

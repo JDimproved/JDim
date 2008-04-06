@@ -358,10 +358,11 @@ std::string get_distribution_name_from_environment()
     }
 
     // アーキテクチャがx86でない場合
-    if( machine && strlen( machine ) == 4
-        && ! ( machine[0] == 'i'
+    if( machine &&
+        ( strlen( machine ) != 4
+          || ! ( machine[0] == 'i'
                && machine[1] >= '3' && machine[1] <= '6'
-               && machine[2] == '8' && machine[3] == '6' ) )
+               && machine[2] == '8' && machine[3] == '6' ) ) )
     {
         dist_name.append( " (" + std::string( machine ) + ")" );
     }

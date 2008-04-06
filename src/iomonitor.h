@@ -29,6 +29,9 @@ namespace CORE
         // 初期化
         void init();
 
+        // FIFOを削除する
+        void delete_fifo();
+
         // FIFOに書き込まれたら呼び出される
         bool slot_ioin( Glib::IOCondition io_condition );
 
