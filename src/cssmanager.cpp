@@ -385,10 +385,10 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
 #ifdef _DEBUG
             std::cout << "border-" << mode << "-width size = " << size << " type = " << type << std::endl;
 #endif
-            if( mode == "left" ) if( type == SIZETYPE_EM ) css.border_left_width_em = size; else css.border_left_width_px = (int)size;
-            else if( mode == "right" ) if( type == SIZETYPE_EM ) css.border_right_width_em = size; else css.border_right_width_px = (int)size;
-            else if( mode == "top" ) if( type == SIZETYPE_EM ) css.border_top_width_em = size; else css.border_top_width_px = (int)size;
-            else if( mode == "bottom" ) if( type == SIZETYPE_EM ) css.border_bottom_width_em = size; else css.border_bottom_width_px = (int)size;
+            if( mode == "left" ){ if( type == SIZETYPE_EM ) css.border_left_width_em = size; else css.border_left_width_px = (int)size; }
+            else if( mode == "right" ){ if( type == SIZETYPE_EM ) css.border_right_width_em = size; else css.border_right_width_px = (int)size; }
+            else if( mode == "top" ){ if( type == SIZETYPE_EM ) css.border_top_width_em = size; else css.border_top_width_px = (int)size; }
+            else if( mode == "bottom" ){ if( type == SIZETYPE_EM ) css.border_bottom_width_em = size; else css.border_bottom_width_px = (int)size; }
         }
         // color
         else if( key == "color" )
@@ -439,10 +439,10 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
             std::cout << "margin-" << mode << " size = " << size << " type = " << type << std::endl;
 #endif
 
-            if( mode == "left" ) if( type == SIZETYPE_EM ) css.mrg_left_em = size; else css.mrg_left_px = (int)size;
-            else if( mode == "right" ) if( type == SIZETYPE_EM ) css.mrg_right_em = size; else css.mrg_right_px = (int)size;
-            else if( mode == "top" ) if( type == SIZETYPE_EM ) css.mrg_top_em = size; else css.mrg_top_px = (int)size;
-            else if( mode == "bottom" ) if( type == SIZETYPE_EM ) css.mrg_bottom_em = size; else css.mrg_bottom_px = (int)size;
+            if( mode == "left" ){ if( type == SIZETYPE_EM ) css.mrg_left_em = size; else css.mrg_left_px = (int)size; }
+            else if( mode == "right" ){ if( type == SIZETYPE_EM ) css.mrg_right_em = size; else css.mrg_right_px = (int)size; }
+            else if( mode == "top" ){ if( type == SIZETYPE_EM ) css.mrg_top_em = size; else css.mrg_top_px = (int)size; }
+            else if( mode == "bottom" ){ if( type == SIZETYPE_EM ) css.mrg_bottom_em = size; else css.mrg_bottom_px = (int)size; }
         }            
         // padding
         else if( key == "padding" )
@@ -481,10 +481,10 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
 #ifdef _DEBUG
             std::cout << "padding-" << mode << " size = " << size << " type = " << type << std::endl;
 #endif
-            if( mode == "left" ) if( type == SIZETYPE_EM ) css.padding_left_em = size; else css.padding_left_px = (int)size;
-            else if( mode == "right" ) if( type == SIZETYPE_EM ) css.padding_right_em = size; else css.padding_right_px = (int)size;
-            else if( mode == "top" ) if( type == SIZETYPE_EM ) css.padding_top_em = size; else css.padding_top_px = (int)size;
-            else if( mode == "bottom" ) if( type == SIZETYPE_EM ) css.padding_bottom_em = size; else css.padding_bottom_px = (int)size;
+            if( mode == "left" ){ if( type == SIZETYPE_EM ) css.padding_left_em = size; else css.padding_left_px = (int)size; }
+            else if( mode == "right" ){ if( type == SIZETYPE_EM ) css.padding_right_em = size; else css.padding_right_px = (int)size; }
+            else if( mode == "top" ){ if( type == SIZETYPE_EM ) css.padding_top_em = size; else css.padding_top_px = (int)size; }
+            else if( mode == "bottom" ){ if( type == SIZETYPE_EM ) css.padding_bottom_em = size; else css.padding_bottom_px = (int)size; }
         }
         // text-align
         else if( key == "text-align" )
