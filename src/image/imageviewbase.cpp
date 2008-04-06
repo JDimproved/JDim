@@ -169,6 +169,9 @@ void ImageViewBase::setup_common()
     "<menuitem action='ShowLargeImg'/>"
     "<separator/>"
 
+    "<menuitem action='Quit'/>"
+    "<separator/>"
+
     "<menu action='Size_Menu'>"
     "<menuitem action='Size25'/>"
     "<menuitem action='Size50'/>"
