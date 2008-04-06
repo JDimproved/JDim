@@ -235,8 +235,6 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
         else if( str_key == "Menu" ) motion = GDK_Menu;
 
         else if( str_key == "Plus" ) motion = '+';
-
-        else if( str_key == "Menu" ) motion = GDK_Menu;
         else motion = str_key[ 0 ];
 
         // 大文字やshiftが必要な文字の時はshiftも有効にする
