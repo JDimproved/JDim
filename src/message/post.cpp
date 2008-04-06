@@ -306,12 +306,16 @@ void Post::receive_finish()
         // 書き込み確認表示
         if( ! CONFIG::get_always_write_ok() ){
 
+            const int mrg = 8;
+
             std::string diagmsg = MISC::replace_str( msg, "<br>", "\n" );
 
             SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
                                      diagmsg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, false );
+            Gtk::HBox hbox;
             Gtk::CheckButton ckbt( "次回から表示しない(_D)", true );
-            mdiag.get_vbox()->pack_start( ckbt, Gtk::PACK_SHRINK );
+            hbox.pack_start( ckbt, Gtk::PACK_SHRINK, mrg );
+            mdiag.get_vbox()->pack_start( hbox, Gtk::PACK_SHRINK );
             mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
 
             // OKボタンをデフォルトにする
