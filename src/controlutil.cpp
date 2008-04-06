@@ -105,14 +105,12 @@ const std::string CONTROL::get_label_with_mnemonic( int id )
     {
         switch ( id )
         {
-            case 19:    //名前を付けて保存...
-                label.erase( pos, 3 );
-                label += "(_S)...";
+            case CONTROL::Save:         //名前を付けて保存...
+                label.replace( pos, strlen( "..." ), "(_S)..." );
                 break;
-
-            case 26:    //プロパティ...
-                label.erase( pos, 3 );
-                label += "(_P)...";
+	
+            case CONTROL::Property:     //プロパティ...
+                label.replace( pos, strlen( "..." ), "(_P)..." );
                 break;
         }
     }
@@ -121,59 +119,67 @@ const std::string CONTROL::get_label_with_mnemonic( int id )
         switch ( id )
         {
             case CONTROL::PreBookMark:  //前のブックマークへ移動
-                label += "(_P)";
+                label += "(_R)";
                 break;
 
             case CONTROL::NextBookMark: //次のブックマークへ移動
                 label += "(_X)";
                 break;
 
-            case CONTROL::Home: //先頭へ移動
-                label += "(_H)";
-                break;
-
-            case CONTROL::End:  //最後へ移動
-                label += "(_E)";
-                break;
-
-            case CONTROL::Quit:    //閉じる
-                label += "(_C)";
-                break;
-
-            case CONTROL::Delete:    //削除
-                label += "(_D)";
-                break;
-
-            case CONTROL::Reload:    //再読み込み
-                label += "(_R)";
-                break;
-
-            case CONTROL::StopLoading:    //読み込み中止
-                label += "(_T)";
-                break;
-
-            case CONTROL::Copy: //コピー
-                label += "(_C)";
-                break;
-
-            case CONTROL::AppendFavorite:    //お気に入りに追加
-                label += "(_A)";
-                break;
-
-            case CONTROL::Search:    //検索
-                label += "(_S)";
-                break;
-
-            case CONTROL::SearchNext:    //次検索
-                label += "(_N)";
-                break;
-
-            case CONTROL::SearchPrev:    //前検索
+            case CONTROL::PrevView:     //前へ戻る
                 label += "(_P)";
                 break;
 
-            case CONTROL::GotoNew:  //新着へ移動
+            case CONTROL::NextView:     //次へ進む
                 label += "(_N)";
+                break;
+
+            case CONTROL::Home:         //先頭へ移動
+                label += "(_H)";
+                break;
+
+            case CONTROL::End:          //最後へ移動
+                label += "(_E)";
+                break;
+
+            case CONTROL::Quit:         //閉じる
+                label += "(_C)";
+                break;
+
+            case CONTROL::Delete:       //削除
+                label += "(_D)";
+                break;
+
+            case CONTROL::Reload:       //再読み込み
+                label += "(_R)";
+                break;
+
+            case CONTROL::StopLoading:  //読み込み中止
+                label += "(_T)";
+                break;
+
+            case CONTROL::Copy:         //コピー
+                label += "(_C)";
+                break;
+
+            case CONTROL::AppendFavorite:   //お気に入りに追加
+                label += "(_A)";
+                break;
+
+            case CONTROL::Search:       //検索
+                label += "(_S)";
+                break;
+
+            case CONTROL::SearchNext:   //次検索
+                label += "(_N)";
+                break;
+
+            case CONTROL::SearchPrev:   //前検索
+                label += "(_P)";
+                break;
+
+            case CONTROL::GotoNew:      //新着へ移動
+                label += "(_W)";
                 break;
 
             case CONTROL::CancelMosaic: //モザイク解除
