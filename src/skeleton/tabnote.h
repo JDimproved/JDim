@@ -10,6 +10,7 @@
 
 namespace SKELETON
 {
+    class DragableNoteBook;
     class TabLabel;
 
     // タブのクリック
@@ -34,13 +35,14 @@ namespace SKELETON
 
         SIG_TAB_DRAG_MOTION m_sig_tab_drag_motion;
 
+        DragableNoteBook* m_parent;
+
         // タブ幅計算用layout
         Glib::RefPtr< Pango::Layout > m_layout_tab;
 
         int m_pre_width;
         bool m_fixtab;
         int m_tab_mrg;
-        int m_ythickness;
 
       public:
 
@@ -52,7 +54,7 @@ namespace SKELETON
 
         SIG_TAB_DRAG_MOTION sig_tab_drag_motion(){ return m_sig_tab_drag_motion; }
 
-        TabNotebook();
+        TabNotebook( DragableNoteBook* parent );
 
         void clock_in();
 
@@ -79,6 +81,9 @@ namespace SKELETON
         // マウスがタブの右側にある場合はページ数の値を返す
         const int get_page_under_mouse();
 
+        // タブのgap位置を取得 ( 描画用 )
+        void get_gap( int& x, int& width );
+
       private:
 
         // 各タブのサイズと座標を取得
@@ -104,10 +109,12 @@ namespace SKELETON
 
     class ToolBarNotebook : public Gtk::Notebook
     {
+        DragableNoteBook* m_parent;
+
         bool m_show_tab_notebook;
 
       public:
-        ToolBarNotebook();
+        ToolBarNotebook( DragableNoteBook* parent );
         void set_show_tab_notebook( const bool show );
 
       protected:
@@ -118,8 +125,10 @@ namespace SKELETON
 
     class ViewNotebook : public Gtk::Notebook
     {
+        DragableNoteBook* m_parent;
+
       public:
-        ViewNotebook();
+        ViewNotebook( DragableNoteBook* parent );
 
       protected:
         virtual bool on_expose_event( GdkEventExpose* event );

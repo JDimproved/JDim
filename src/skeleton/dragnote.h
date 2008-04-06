@@ -30,6 +30,15 @@ namespace SKELETON
     typedef sigc::signal< void, int > SIG_DRAG_BEGIN;
     typedef sigc::signal< void > SIG_DRAG_END;
 
+    struct Heights_NoteBook
+    {
+        int height_tab;
+        int height_toolbar;
+        int height_view;
+
+        int gap_x;
+        int gap_width;
+    };
 
     class DragableNoteBook : public Gtk::VBox
     {
@@ -42,9 +51,10 @@ namespace SKELETON
         SIG_DRAG_BEGIN m_sig_drag_begin;
         SIG_DRAG_END m_sig_drag_end;
 
-        TabNotebook m_notebook_tab;
-        ToolBarNotebook m_notebook_toolbar;
-        ViewNotebook m_notebook_view;
+        // DragableNoteBook は 下の3つのノートブックから出来ている
+        TabNotebook m_notebook_tab;  // タブ
+        ToolBarNotebook m_notebook_toolbar; // ツールバー
+        ViewNotebook m_notebook_view; // ビュー
 
         bool m_show_tabs;
 
@@ -77,6 +87,9 @@ namespace SKELETON
 
         void clock_in();
         void focus_out();
+
+        // m_notebook_tab, m_notebook_toolbar, m_notebook_view　の高さを取得 ( 枠の描画用 )
+        const Heights_NoteBook get_heights_notebook();
 
         const bool get_show_tabs() const{ return m_show_tabs; }
         void set_show_tabs( bool show_tabs );

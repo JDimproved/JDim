@@ -17,6 +17,9 @@ using namespace SKELETON;
 
 DragableNoteBook::DragableNoteBook()
     : Gtk::VBox()
+    , m_notebook_tab( this )
+    , m_notebook_toolbar( this )
+    , m_notebook_view( this )
     , m_page( -1 )
     , m_drag( 0 )
     , m_dragable( false )
@@ -66,6 +69,31 @@ void DragableNoteBook::clock_in()
 void DragableNoteBook::focus_out()
 {
     m_tooltip.hide_tooltip();
+}
+
+
+//
+// m_notebook_tab, m_notebook_toolbar, m_notebook_view　の高さを取得 ( 枠の描画用 )
+//
+const Heights_NoteBook DragableNoteBook::get_heights_notebook()
+{
+    Heights_NoteBook heights;
+
+    heights.height_tab = m_notebook_tab.get_allocation().get_height();
+    heights.height_toolbar = m_notebook_toolbar.get_allocation().get_height();
+    heights.height_view = m_notebook_view.get_allocation().get_height();
+    m_notebook_tab.get_gap( heights.gap_x, heights.gap_width );
+
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::get_heights_notebook "
+              << "tab = " << heights.height_tab
+              << " toolbar = " << heights.height_toolbar
+              << " view = " << heights.height_view
+              << " gap_x = " << heights.gap_x
+              << " gap_width = " << heights.gap_width << std::endl;
+#endif
+
+    return heights;
 }
 
 
@@ -377,6 +405,9 @@ void DragableNoteBook::slot_switch_page_tab( GtkNotebookPage* bookpage, guint pa
 {
     // view も切り替える
     m_notebook_view.set_current_page( page );
+
+    // ツールバー(枠) 再描画
+    m_notebook_toolbar.queue_draw();
 
     m_sig_switch_page.emit( bookpage, page );
 }
