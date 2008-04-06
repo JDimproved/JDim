@@ -10,6 +10,7 @@
 #include "config/keyconfig.h"
 #include "config/mouseconfig.h"
 
+#include <cstring>
 
 // メニューにショートカットキーやマウスジェスチャを表示
 void CONTROL::set_menu_motion( Gtk::Menu* menu )
