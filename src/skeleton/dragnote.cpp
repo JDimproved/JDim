@@ -73,27 +73,32 @@ void DragableNoteBook::focus_out()
 
 
 //
-// m_notebook_tab, m_notebook_toolbar, m_notebook_view　の高さを取得 ( 枠の描画用 )
+// DragableNoteBook を構成している各Notebookの高さ
+// 及びタブの高さと位置を取得 ( 枠の描画用 )
 //
-const Heights_NoteBook DragableNoteBook::get_heights_notebook()
+const Alloc_NoteBook DragableNoteBook::get_alloc_notebook()
 {
-    Heights_NoteBook heights;
+    Alloc_NoteBook alloc;
 
-    heights.height_tab = m_notebook_tab.get_allocation().get_height();
-    heights.height_toolbar = m_notebook_toolbar.get_allocation().get_height();
-    heights.height_view = m_notebook_view.get_allocation().get_height();
-    m_notebook_tab.get_gap( heights.gap_x, heights.gap_width );
+    alloc.height_tabbar = m_notebook_tab.get_allocation().get_height();
+    alloc.height_toolbar = m_notebook_toolbar.get_allocation().get_height();
+    alloc.height_view = m_notebook_view.get_allocation().get_height();
+
+    m_notebook_tab.get_alloc_tab( alloc.x_tab, alloc.width_tab, alloc.height_tab );
 
 #ifdef _DEBUG
-    std::cout << "DragableNoteBook::get_heights_notebook "
-              << "tab = " << heights.height_tab
-              << " toolbar = " << heights.height_toolbar
-              << " view = " << heights.height_view
-              << " gap_x = " << heights.gap_x
-              << " gap_width = " << heights.gap_width << std::endl;
+    std::cout << "DragableNoteBook::get_alloc_notebook "
+              << "tab = " << alloc.height_tab
+              << " tabbar = " << alloc.height_tabbar
+              << " toolbar = " << alloc.height_toolbar
+              << " view = " << alloc.height_view
+              << " x_tab = " << alloc.x_tab
+              << " width_tab = " << alloc.width_tab
+              << " height_tab = " << alloc.height_tab
+              << std::endl;
 #endif
 
-    return heights;
+    return alloc;
 }
 
 
@@ -120,8 +125,6 @@ void DragableNoteBook::set_show_tabs( bool show_tabs )
 
         m_show_tabs = true;
     }
-
-    m_notebook_toolbar.set_show_tab_notebook( m_show_tabs );
 }
 
 
@@ -254,6 +257,8 @@ void DragableNoteBook::hide_toolbar()
 
 //
 // ツールバーセット
+//
+// 各Adminクラスの virtual void show_toolbar() でセットされる
 //
 void DragableNoteBook::append_toolbar( Gtk::Widget& toolbar )
 {

@@ -30,14 +30,17 @@ namespace SKELETON
     typedef sigc::signal< void, int > SIG_DRAG_BEGIN;
     typedef sigc::signal< void > SIG_DRAG_END;
 
-    struct Heights_NoteBook
+    // DragableNoteBook を構成している各Notebookの高さ
+    // 及びタブの高さや位置の情報
+    struct Alloc_NoteBook
     {
-        int height_tab;
+        int height_tabbar;
         int height_toolbar;
         int height_view;
 
-        int gap_x;
-        int gap_width;
+        int x_tab;
+        int height_tab;
+        int width_tab;
     };
 
     class DragableNoteBook : public Gtk::VBox
@@ -88,8 +91,9 @@ namespace SKELETON
         void clock_in();
         void focus_out();
 
-        // m_notebook_tab, m_notebook_toolbar, m_notebook_view　の高さを取得 ( 枠の描画用 )
-        const Heights_NoteBook get_heights_notebook();
+        // DragableNoteBook を構成している各Notebookの高さ
+        // 及びタブの高さと位置を取得 ( 枠の描画用 )
+        const Alloc_NoteBook get_alloc_notebook();
 
         const bool get_show_tabs() const{ return m_show_tabs; }
         void set_show_tabs( bool show_tabs );

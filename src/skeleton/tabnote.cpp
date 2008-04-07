@@ -80,21 +80,18 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
 
     Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
     Glib::RefPtr< Gtk::Style > st = get_style();
-    int ythickness = rcst->get_ythickness();
-    if( ythickness <= 0 ) ythickness = st->get_ythickness();
-
-#ifdef _DEBUG
-    std::cout << "TabNotebook::TabNotebook ythick = " << ythickness << std::endl;
-#endif
-
-    if( ythickness > 0 ){
-        rcst->set_ythickness( 0 );
-        modify_style( rcst );
-        property_tab_vborder() = property_tab_vborder() + ythickness * 2;
-    }
 
     m_tab_mrg = rcst->get_xthickness();
     if( m_tab_mrg <= 0 ) m_tab_mrg = st->get_xthickness();
+
+    m_ythickness = rcst->get_ythickness();
+    if( m_ythickness <= 0 ) m_ythickness = st->get_ythickness();
+
+    if( m_ythickness > 0 ){
+        rcst->set_ythickness( 0 );
+        modify_style( rcst );
+        property_tab_vborder() = property_tab_vborder() + m_ythickness*2;
+    }
 
     m_pre_width = get_width();
 }
@@ -410,15 +407,21 @@ bool TabNotebook::adjust_tabwidth()
         }
     }
 
+    // 枠の再描画
+    m_parent->queue_draw();
+
     return true;
 }
 
 
-// タブのgap位置を取得 ( 描画用 )
-void TabNotebook::get_gap( int& x, int& width )
+//
+// タブの高さ、幅、位置を取得 ( 描画用 )
+//
+void TabNotebook::get_alloc_tab( int& x, int& width, int& height )
 {
     x = 0;
     width = 0;
+    height = 0;
 
     GtkNotebook *notebook = gobj();
     if( notebook && notebook->cur_page ){
@@ -428,6 +431,10 @@ void TabNotebook::get_gap( int& x, int& width )
 
         x = notebook->cur_page->allocation.x - xx;
         width = notebook->cur_page->allocation.width;
+
+        // タブの高さを m_ythickness  分低くする
+        // TabNotebook::on_expose_event() を参照
+        height = notebook->cur_page->allocation.height - m_ythickness; 
     }
 }
 
@@ -442,21 +449,38 @@ bool TabNotebook::on_expose_event( GdkEventExpose* event )
 {
     GtkNotebook *notebook = gobj();
     GtkWidget *widget = GTK_WIDGET( notebook );
-    const Heights_NoteBook heights = m_parent->get_heights_notebook();
+    const Alloc_NoteBook alloc = m_parent->get_alloc_notebook();
     if( ! notebook || ! notebook->cur_page ) return Notebook::on_expose_event( event );
 
+    const int offset = alloc.height_tabbar - alloc.height_tab;
+    const int height_widget = widget->allocation.height;
+
 #ifdef _DEBUG
-    std::cout << "TabNotebook::on_expose_event\n";
+    std::cout << "TabNotebook::on_expose_event"
+              << " offset = " << offset
+              << " height = " << height_widget << std::endl;
 #endif
 
-    // 一時的にページ高さをごまかして描画する
-    const int height_page = notebook->cur_page->allocation.height;
-    const int height_widget = widget->allocation.height;
-    widget->allocation.height = heights.height_tab + heights.height_toolbar + heights.height_view;
-    notebook->cur_page->allocation.height = heights.height_toolbar + heights.height_view;
-    bool ret = Notebook::on_expose_event( event );
+    // 一時的にタブとページ高さをごまかして描画する
+    widget->allocation.height = alloc.height_tab + offset + alloc.height_toolbar + alloc.height_view;
+    GList * children = notebook->children;
+    widget->style->ythickness = m_ythickness;
+    while( children ){
+        GtkNotebookPage* page = ( GtkNotebookPage* ) children->data;
+        children = children->next;
+        page->allocation.height -= m_ythickness;
+    }
+
+    bool ret = Notebook::on_expose_event( event ); // 描画は gtk 側に任せる
+
+    children = notebook->children;
+    while( children ){
+        GtkNotebookPage* page = ( GtkNotebookPage* ) children->data;
+        children = children->next;
+        page->allocation.height += m_ythickness;
+    }
+    widget->style->ythickness = 0;
     widget->allocation.height = height_widget;
-    notebook->cur_page->allocation.height = height_page;
 
     return ret;
 }
@@ -571,19 +595,15 @@ bool TabNotebook::on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context,
 
 ToolBarNotebook::ToolBarNotebook( DragableNoteBook* parent )
     : Gtk::Notebook(),
-      m_parent( parent ),
-      m_show_tab_notebook( true )
+      m_parent( parent )
 {
     set_show_border( true );
     set_show_tabs( false );
     set_border_width( 0 );
-}
 
-
-// タブを表示しない場合は枠の上側も描画する
-void ToolBarNotebook::set_show_tab_notebook( const bool show )
-{
-    m_show_tab_notebook = show;
+    Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
+    rcst->set_ythickness( 0 );
+    modify_style( rcst );
 }
 
 
@@ -598,16 +618,20 @@ bool ToolBarNotebook::on_expose_event( GdkEventExpose* event )
 {
     const Glib::RefPtr<Gdk::Window> win = get_window();
     const Gdk::Rectangle rect( &(event->area) );
-    const Heights_NoteBook heights = m_parent->get_heights_notebook();
+    const Alloc_NoteBook alloc = m_parent->get_alloc_notebook();
+
+    const bool show_tab = m_parent->get_show_tabs();
+    const int offset = ( show_tab ? alloc.height_tabbar - alloc.height_tab : 0 );
 
     const int x = get_allocation().get_x();
-    const int y = get_allocation().get_y();
+    const int y = get_allocation().get_y() - offset;
     const int w = get_allocation().get_width();
-    const int h = heights.height_toolbar + heights.height_view;
+    const int h = offset + alloc.height_toolbar + alloc.height_view;
                                               
 #ifdef _DEBUG
-    std::cout << "ToolBarNotebook::on_expose_event\n"
-              << "x = " << x
+    std::cout << "ToolBarNotebook::on_expose_event"
+              << " offset = " << offset 
+              << " x = " << x
               << " y = " << y
               << " w = " << w
               << " h = " << h
@@ -616,7 +640,24 @@ bool ToolBarNotebook::on_expose_event( GdkEventExpose* event )
 
     if( h > 0 ){
 
-        get_style()->paint_box_gap( win,
+        if( show_tab ){
+            get_style()->paint_box_gap( win,
+                                        Gtk::STATE_NORMAL,
+                                        Gtk::SHADOW_OUT,
+                                        rect,
+                                        *this,
+                                        "notebook",
+                                        x,
+                                        y,
+                                        w,
+                                        h,
+                                        Gtk::POS_TOP,
+                                        alloc.x_tab,
+                                        alloc.width_tab
+                );
+        }
+        else{
+            get_style()->paint_box( win,
                                     Gtk::STATE_NORMAL,
                                     Gtk::SHADOW_OUT,
                                     rect,
@@ -625,12 +666,9 @@ bool ToolBarNotebook::on_expose_event( GdkEventExpose* event )
                                     x,
                                     y,
                                     w,
-                                    h,
-                                    Gtk::POS_TOP,
-                                    heights.gap_x,
-                                    heights.gap_width
-            );
-
+                                    h
+                );
+        }
     }
 
     // 枠は自前で書いたので gtk_notebook_expose では枠を描画させない
@@ -667,16 +705,20 @@ bool ViewNotebook::on_expose_event( GdkEventExpose* event )
 {
     const Glib::RefPtr<Gdk::Window> win = get_window();
     const Gdk::Rectangle rect( &(event->area) );
-    const Heights_NoteBook heights = m_parent->get_heights_notebook();
+    const Alloc_NoteBook alloc = m_parent->get_alloc_notebook();
+
+    const bool show_tab = m_parent->get_show_tabs();
+    const int offset = ( show_tab ? alloc.height_tabbar - alloc.height_tab : 0 );
 
     const int x = get_allocation().get_x();
-    const int y = get_allocation().get_y() - heights.height_toolbar;
+    const int y = get_allocation().get_y() - alloc.height_toolbar - offset;
     const int w = get_allocation().get_width();
-    const int h = heights.height_toolbar + heights.height_view;
+    const int h = offset + alloc.height_toolbar + alloc.height_view;
                                               
 #ifdef _DEBUG
-    std::cout << "ToolBarNotebook::on_expose_event\n"
-              << "x = " << x
+    std::cout << "ViewNotebook::on_expose_event"
+              << " offset = " << offset 
+              << " x = " << x
               << " y = " << y
               << " w = " << w
               << " h = " << h
@@ -685,7 +727,24 @@ bool ViewNotebook::on_expose_event( GdkEventExpose* event )
 
     if( h > 0 ){
 
-        get_style()->paint_box_gap( win,
+        if( show_tab ){
+            get_style()->paint_box_gap( win,
+                                        Gtk::STATE_NORMAL,
+                                        Gtk::SHADOW_OUT,
+                                        rect,
+                                        *this,
+                                        "notebook",
+                                        x,
+                                        y,
+                                        w,
+                                        h,
+                                        Gtk::POS_TOP,
+                                        alloc.x_tab,
+                                        alloc.width_tab
+                );
+        }
+        else{
+            get_style()->paint_box( win,
                                     Gtk::STATE_NORMAL,
                                     Gtk::SHADOW_OUT,
                                     rect,
@@ -694,12 +753,9 @@ bool ViewNotebook::on_expose_event( GdkEventExpose* event )
                                     x,
                                     y,
                                     w,
-                                    h,
-                                    Gtk::POS_TOP,
-                                    heights.gap_x,
-                                    heights.gap_width
-            );
-
+                                    h
+                );
+        }
     }
 
     // 枠は自前で書いたので gtk_notebook_expose では枠を描画させない

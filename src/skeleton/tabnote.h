@@ -43,6 +43,7 @@ namespace SKELETON
         int m_pre_width;
         bool m_fixtab;
         int m_tab_mrg;
+        int m_ythickness;
 
       public:
 
@@ -81,8 +82,8 @@ namespace SKELETON
         // マウスがタブの右側にある場合はページ数の値を返す
         const int get_page_under_mouse();
 
-        // タブのgap位置を取得 ( 描画用 )
-        void get_gap( int& x, int& width );
+        // タブの高さ、幅、位置を取得 ( 描画用 )
+        void get_alloc_tab( int& x, int& width, int& height );
 
       private:
 
@@ -111,11 +112,8 @@ namespace SKELETON
     {
         DragableNoteBook* m_parent;
 
-        bool m_show_tab_notebook;
-
       public:
         ToolBarNotebook( DragableNoteBook* parent );
-        void set_show_tab_notebook( const bool show );
 
       protected:
         virtual bool on_expose_event( GdkEventExpose* event );
