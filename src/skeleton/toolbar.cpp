@@ -49,6 +49,7 @@ ToolBar::ToolBar( Admin* admin )
       m_button_back( NULL ),
       m_button_forward( NULL )
 {
+/*
     m_scrwin.add( m_buttonbar );
     m_scrwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
     m_scrwin.set_border_width( 0 );
@@ -57,11 +58,9 @@ ToolBar::ToolBar( Admin* admin )
     // ツールバーの枠を消す
     Gtk::Viewport* vport = dynamic_cast< Gtk::Viewport* >( m_scrwin.get_child() );
     if( vport ) vport->set_shadow_type( Gtk::SHADOW_NONE);
-
-/*
+*/
     m_buttonbar.set_border_width( 0 );
     m_buttonbar.set_size_request( 1, -1 );
-*/
 
     set_size_request( 8 );
 }
@@ -107,8 +106,8 @@ void ToolBar::show_toolbar()
 
         if( m_searchbar && m_searchbar_shown ) remove( *m_searchbar );
 
-        pack_start( m_scrwin, Gtk::PACK_SHRINK );
-/*        pack_start( m_buttonbar, Gtk::PACK_SHRINK ); */
+/*        pack_start( m_scrwin, Gtk::PACK_SHRINK ); */
+        pack_start( m_buttonbar, Gtk::PACK_SHRINK );
         if( m_searchbar && m_searchbar_shown ) pack_start( *m_searchbar, Gtk::PACK_SHRINK );
 
         show_all_children();
@@ -121,8 +120,8 @@ void ToolBar::show_toolbar()
 void ToolBar::hide_toolbar()
 {
     if( m_toolbar_shown ){
-        remove( m_scrwin ); 
-/*        remove( m_buttonbar ); */
+/*        remove( m_scrwin );  */
+        remove( m_buttonbar );
         show_all_children();
         m_toolbar_shown = false;
     }
