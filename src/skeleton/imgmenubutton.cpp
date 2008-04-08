@@ -24,12 +24,10 @@ ImgMenuButton::ImgMenuButton( const Gtk::StockID& stock_id,
 
     Gtk::HBox *hbox = Gtk::manage( new Gtk::HBox() );
     Gtk::Image* img = Gtk::manage( new Gtk::Image( stock_id, icon_size ) );
-    Gtk::VSeparator* sep = Gtk::manage( new Gtk::VSeparator() );
     m_arrow = Gtk::manage( new Gtk::Arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ) );
 
     hbox->set_spacing( 2 );
     hbox->pack_start( *img, Gtk::PACK_SHRINK );
-    hbox->pack_start( *sep, Gtk::PACK_SHRINK );
     hbox->pack_start( *m_arrow, Gtk::PACK_SHRINK );
 
     add_events( Gdk::ENTER_NOTIFY_MASK );

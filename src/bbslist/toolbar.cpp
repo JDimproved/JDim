@@ -8,7 +8,6 @@
 
 #include "skeleton/compentry.h"
 
-#include "command.h"
 #include "controlid.h"
 #include "session.h"
 #include "global.h"
@@ -17,16 +16,19 @@ using namespace BBSLIST;
 
 
 BBSListToolBar::BBSListToolBar() :
-    SKELETON::ToolBar( BBSLIST::get_admin() ), m_enable_slot( true )
+    SKELETON::ToolBar( BBSLIST::get_admin() )
 {
-    m_hbox_label.pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 2 );
+    // TODO : class arrowbutton を作る
+    Gtk::Arrow* arrow =  Gtk::manage( new Gtk::Arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ) );
+    m_button_toggle.add( *arrow );
+    m_button_toggle.set_focus_on_click( false );
+    m_button_toggle.set_relief( Gtk:: RELIEF_NONE );
+    set_tooltip( m_button_toggle, "板一覧とお気に入りの切り替え(未実装)" );
+
+    m_hbox_label.pack_start( *get_label(), Gtk::PACK_EXPAND_WIDGET, 4 );
+    m_hbox_label.pack_start( m_button_toggle, Gtk::PACK_SHRINK );
     m_hbox_label.pack_start( *get_button_close(), Gtk::PACK_SHRINK );
-
-    m_combo.append_text( "板一覧" );
-    m_combo.append_text( "お気に入り" );
-    m_combo.signal_changed().connect( sigc::mem_fun( *this, &BBSListToolBar::slot_combo_changed ) );
-
-    pack_start( m_hbox_label, Gtk::PACK_SHRINK, 2 );
+    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
 
     pack_buttons();
     get_entry_search()->add_mode( CONTROL::MODE_BBSLIST );
@@ -65,39 +67,3 @@ void BBSListToolBar::pack_buttons()
 
     show_all_children();
 }
-
-
-void BBSListToolBar::set_combo( int page )
-{
-#ifdef _DEBUG
-    std::cout << "BBSListToolBar::set_combo page = " << page << std::endl;
-#endif
-
-    m_enable_slot = false;
-    m_combo.set_active( page );
-    m_enable_slot = true;
-}
-
-
-// ラベルのコンボボックスの表示が変わった
-void BBSListToolBar::slot_combo_changed()
-{
-    if( ! m_enable_slot ) return;
-
-#ifdef _DEBUG
-    std::cout << "BBSListToolBar::slot_combo_changed url = " << get_url() << std::endl
-              << "combo = " << m_combo.get_active_row_number() << std::endl;
-#endif
-
-    switch( m_combo.get_active_row_number() ){
-
-        case COMBO_BBSLIST:
-            if( get_url() != URL_BBSLISTVIEW ) CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
-            break;
-
-        case COMBO_FAVORITE:
-            if( get_url() != URL_FAVORITEVIEW ) CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW );
-            break;
-    }
-}
-

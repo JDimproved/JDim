@@ -284,6 +284,7 @@ void DragableNoteBook::set_current_toolbar( int page_num, SKELETON::View* view )
 
     m_notebook_toolbar.set_current_page( page_num );
 
+    // ツールバーのラベルなどの情報を更新
     SKELETON::ToolBar* toolbar = get_toolbar( page_num );
     if( toolbar ) toolbar->set_view( view );
 }

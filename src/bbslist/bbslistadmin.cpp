@@ -105,9 +105,6 @@ void BBSListAdmin::show_toolbar()
         get_notebook()->append_toolbar( *m_toolbar );
 
         if( SESSION::get_show_bbslist_toolbar() ) m_toolbar->show_toolbar();
-
-        if( SESSION::bbslist_page() == 0 ) m_toolbar->set_combo( COMBO_BBSLIST );
-        else m_toolbar->set_combo( COMBO_FAVORITE );
     }
 
     get_notebook()->show_toolbar();
@@ -146,26 +143,20 @@ SKELETON::View* BBSListAdmin::create_view( const COMMAND_ARGS& command )
 //
 void BBSListAdmin::command_local( const COMMAND_ARGS& command )
 {
-    // コンボボックス切り替え
-    if( m_toolbar && command.command == "switch_combo_bbslist" ) m_toolbar->set_combo( COMBO_BBSLIST );
-    else if( m_toolbar && command.command == "switch_combo_favorite" ) m_toolbar->set_combo( COMBO_FAVORITE );
-    else{
+    SKELETON::View* view = get_view( command.url );
+    if( view ){
 
-        SKELETON::View* view = get_view( command.url );
-        if( view ){
+        // アイテム追加
+        // append_favorite を呼ぶ前に共有バッファにコピーデータをセットしておくこと
+        if( command.command  == "append_item" ) view->set_command( "append_item" );
 
-            // アイテム追加
-            // append_favorite を呼ぶ前に共有バッファにコピーデータをセットしておくこと
-            if( command.command  == "append_item" ) view->set_command( "append_item" );
+        // お気に入りルート更新チェック
+        else if( command.command  == "check_update_root" ) view->set_command( "check_update_root" );
+        else if( command.command == "check_update_open_root" ) view->set_command( "check_update_open_root" );
+        else if( command.command == "cancel_check_update" ) view->set_command( "cancel_check_update" );
 
-            // お気に入りルート更新チェック
-            else if( command.command  == "check_update_root" ) view->set_command( "check_update_root" );
-            else if( command.command == "check_update_open_root" ) view->set_command( "check_update_open_root" );
-            else if( command.command == "cancel_check_update" ) view->set_command( "cancel_check_update" );
-
-            // XML保存
-            else if( command.command  == "save_xml" ) view->set_command( "save_xml" );
-        }
+        // XML保存
+        else if( command.command  == "save_xml" ) view->set_command( "save_xml" );
     }
 }
 

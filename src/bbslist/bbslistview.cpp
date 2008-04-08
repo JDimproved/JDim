@@ -26,6 +26,8 @@ BBSListViewMain::BBSListViewMain( const std::string& url,
                                   const std::string& arg1, const std::string& arg2 )
     : BBSListViewBase( url, arg1, arg2 )
 {
+    set_label( "板一覧" );
+
     set_expand_collapse( true );
 }
 

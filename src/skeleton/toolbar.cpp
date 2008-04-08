@@ -58,6 +58,11 @@ ToolBar::ToolBar( Admin* admin )
     Gtk::Viewport* vport = dynamic_cast< Gtk::Viewport* >( m_scrwin.get_child() );
     if( vport ) vport->set_shadow_type( Gtk::SHADOW_NONE);
 
+/*
+    m_buttonbar.set_border_width( 0 );
+    m_buttonbar.set_size_request( 1, -1 );
+*/
+
     set_size_request( 8 );
 }
 
@@ -71,7 +76,7 @@ void ToolBar::set_url( const std::string& url )
 }
 
 
-// タブが切り替わった時に呼び出される( Viewの情報を取得する )
+// タブが切り替わった時にDragableNoteBook::set_current_toolbar()から呼び出される( Viewの情報を取得する )
 void ToolBar::set_view( SKELETON::View* view )
 {
     if( ! view ) return;
@@ -103,6 +108,7 @@ void ToolBar::show_toolbar()
         if( m_searchbar && m_searchbar_shown ) remove( *m_searchbar );
 
         pack_start( m_scrwin, Gtk::PACK_SHRINK );
+/*        pack_start( m_buttonbar, Gtk::PACK_SHRINK ); */
         if( m_searchbar && m_searchbar_shown ) pack_start( *m_searchbar, Gtk::PACK_SHRINK );
 
         show_all_children();
@@ -115,7 +121,8 @@ void ToolBar::show_toolbar()
 void ToolBar::hide_toolbar()
 {
     if( m_toolbar_shown ){
-        remove( m_scrwin );
+        remove( m_scrwin ); 
+/*        remove( m_buttonbar ); */
         show_all_children();
         m_toolbar_shown = false;
     }

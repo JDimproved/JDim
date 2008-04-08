@@ -523,10 +523,6 @@ void BBSListViewBase::focus_view()
 #endif 
 
     m_treeview.grab_focus();
-
-    // コンボボックス切り替え
-    if( get_url() == URL_BBSLISTVIEW ) BBSLIST::get_admin()->set_command( "switch_combo_bbslist" );
-    else if( get_url() == URL_FAVORITEVIEW ) BBSLIST::get_admin()->set_command( "switch_combo_favorite" );
 }
 
 

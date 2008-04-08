@@ -51,7 +51,7 @@ ArticleToolBar::ArticleToolBar() :
 }
         
 
-// タブが切り替わった時に呼び出される( Viewの情報を取得する )
+// タブが切り替わった時にDragableNoteBook::set_current_toolbar()から呼び出される( Viewの情報を取得する )
 void ArticleToolBar::set_view( SKELETON::View * view )
 {
     SKELETON::ToolBar::set_view( view );

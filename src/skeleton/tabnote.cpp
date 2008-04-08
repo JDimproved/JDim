@@ -602,7 +602,7 @@ ToolBarNotebook::ToolBarNotebook( DragableNoteBook* parent )
     set_border_width( 0 );
 
     Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
-    rcst->set_ythickness( 0 );
+    rcst->set_ythickness( 1 );
     modify_style( rcst );
 }
 
