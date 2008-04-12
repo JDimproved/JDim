@@ -213,7 +213,21 @@ Gtk::Menu* BBSListViewMain::get_popupmenu( const std::string& url )
             else popupmenu = id2popupmenu(  "/popup_menu" );
         }
     }
-    else popupmenu = id2popupmenu(  "/popup_menu_mul" );
+    else{
+
+        bool have_etc = true;
+
+        std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
+        for( ; it != list_it.end(); ++it ){
+            if( ! is_etcboard( *it ) ){
+                have_etc = false;
+                break;
+            }
+        }
+
+        if( have_etc ) popupmenu = id2popupmenu(  "/popup_menu_mul_etc" );
+        else popupmenu = id2popupmenu(  "/popup_menu_mul" );
+    }
 
     return popupmenu;
 }

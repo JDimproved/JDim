@@ -223,6 +223,19 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='AppendFavorite'/>"
     "</popup>"
 
+    // 板一覧 + 複数選択 + 外部板含む
+    "<popup name='popup_menu_mul_etc'>"
+    "<menuitem action='OpenRows'/>"
+    "<separator/>"
+    "<menuitem action='AppendFavorite'/>"
+
+    "<separator/>"
+    "<menu action='Delete_Menu'>"
+    "<menuitem action='Delete_etc'/>"
+    "</menu>"
+
+    "</popup>"
+
     // 板一覧 + ディレクトリ
     "<popup name='popup_menu_dir'>"
     "<menuitem action='SelectDir'/>"
@@ -352,6 +365,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     CONTROL::set_menu_motion( popupmenu );
 
     popupmenu = id2popupmenu(  "/popup_menu_mul" );
+    CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = id2popupmenu(  "/popup_menu_mul_etc" );
     CONTROL::set_menu_motion( popupmenu );
 
     popupmenu = id2popupmenu(  "/popup_menu_dir" );
