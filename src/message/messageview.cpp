@@ -47,7 +47,7 @@ MessageViewMain::~MessageViewMain()
 //
 std::string MessageViewMain::create_message()
 {
-    const std::string msg = get_text_message().get_text();
+    const Glib::ustring msg = get_text_message().get_text();
     const std::string name = get_entry_name().get_text();
     const std::string mail = get_entry_mail().get_text();
 
@@ -55,6 +55,40 @@ std::string MessageViewMain::create_message()
         SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "本文が空白です" );
         mdiag.run();
         return std::string();
+    }
+    else
+    {
+        // 終端スペース/改行チェック
+        const size_t end_pos = msg.find_last_not_of( "　 \n" );
+        const size_t msg_length = msg.length();
+
+        // 最後がスペース/改行である
+        if( end_pos != msg_length - 1 )
+        {
+            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+                                     "メッセージがスペースまたは改行で終わっています。\n\n"
+                                     "このまま書き込みますか？ (または、改行等を削除)",
+                                     false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE );
+
+            mdiag.set_title( "確認" );
+            mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+            mdiag.add_button( Gtk::Stock::REMOVE, Gtk::RESPONSE_DELETE_EVENT );
+            mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+
+            switch( mdiag.run() )
+            {
+                // スペース/改行を取り除いた物に置き換える(書き込まない)
+                case Gtk::RESPONSE_DELETE_EVENT:
+
+                    get_text_message().set_text( msg.substr( 0, end_pos + 1 ) );
+                    return std::string();
+
+                // キャンセル
+                case Gtk::RESPONSE_CANCEL:
+
+                    return std::string();
+            }
+        }
     }
 
     // 誤爆を警告
