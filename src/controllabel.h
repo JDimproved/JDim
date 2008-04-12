@@ -30,8 +30,8 @@ namespace CONTROL
         { "TabRight", "右のタブに移動" },
         { "TabLeft", "左のタブに移動" },
 
-        { "PreBookMark", "前のプックマークヘ移動" },
-        { "NextBookMark", "次のプックマークヘ移動" },
+        { "PreBookMark", "前のしおりヘ移動" },
+        { "NextBookMark", "次のしおりヘ移動" },
 
         { "PrevView", ITEM_NAME_PREVVIEW },
         { "NextView", ITEM_NAME_NEXTVIEW },
