@@ -915,7 +915,7 @@ bool Root::remove_etc( const std::string& url, const std::string& name )
 //
 void Root::save_etc()
 {
-    if( m_etcboards.empty() ) return;
+    // m_etcboards が空でも実行する
 
 #ifdef _DEBUG
     std::cout << "Root::save_etc\n";
