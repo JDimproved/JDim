@@ -29,7 +29,6 @@ namespace SKELETON
         bool m_toolbar_shown;
 
         Gtk::Tooltips m_tooltip;
-        Gtk::ScrolledWindow m_scrwin;
         Gtk::HBox m_buttonbar;
 
         // ラベル

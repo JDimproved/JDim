@@ -76,6 +76,10 @@ void PaneControl::update_position()
         }
 
         if( newpos ) m_paned.set_position( newpos );
+
+#ifdef _DEBUG
+        std::cout << "newpos = " << newpos << " pos = " << m_paned.get_position() << std::endl;
+#endif
     }
 }
 
@@ -136,7 +140,11 @@ void PaneControl::set_mode( int mode )
 void PaneControl::add_remove1( bool unpack, Gtk::Widget& child )
 {
     if( unpack ) m_paned.remove( child );
-    else m_paned.add1( child );
+
+    // paned.ccg Revision 2 , Tue Jan 21 13:41:59 2003 UTC をハック
+    // pack1 を SHRINK、pack2 を EXPAND にしないとリサイズしたときに
+    // 仕切りがバタつく
+    else m_paned.pack1( child, Gtk::SHRINK );
 }
 
 
@@ -144,7 +152,7 @@ void PaneControl::add_remove1( bool unpack, Gtk::Widget& child )
 void PaneControl::add_remove2( bool unpack, Gtk::Widget& child )
 {
     if( unpack ) m_paned.remove( child );
-    else m_paned.add2( child );
+    else m_paned.pack2( child, Gtk::EXPAND );
 }
 
 
