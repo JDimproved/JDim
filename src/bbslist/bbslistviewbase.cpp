@@ -1917,9 +1917,10 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
             CORE::core_set_command( "open_board", DBTREE::url_subject( url ), str_tab, "" );
             break;
 
+        case TYPE_THREAD_OLD:
+            toggle_icon( url ); // break;しない
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
-        case TYPE_THREAD_OLD:
             CORE::core_set_command( "open_article", DBTREE::url_dat( url ), str_tab, "" );
             break;
 
