@@ -13,21 +13,35 @@ using namespace SKELETON;
 
 enum
 {
-    HIST_MAX_LNG = 50 // 履歴に表示する文字数(半角)
+    MENU_MAX_LNG = 50 // メニューに表示する文字数(半角)
 };
 
 
 ImgMenuButton::ImgMenuButton( const Gtk::StockID& stock_id,
                               const Gtk::BuiltinIconSize icon_size )
-    : m_popupmenu( NULL ), m_on_arrow( false )
 {
+    m_img = Gtk::manage( new Gtk::Image( stock_id, icon_size ) );
+    setup();
+}
+
+
+ImgMenuButton::ImgMenuButton()
+    : m_img( NULL )
+{
+    setup();
+}
+
+
+void ImgMenuButton::setup()
+{
+    m_popupmenu =  NULL;
+    m_on_arrow = false;
 
     Gtk::HBox *hbox = Gtk::manage( new Gtk::HBox() );
-    Gtk::Image* img = Gtk::manage( new Gtk::Image( stock_id, icon_size ) );
     m_arrow = Gtk::manage( new Gtk::Arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ) );
 
     hbox->set_spacing( 2 );
-    hbox->pack_start( *img, Gtk::PACK_SHRINK );
+    if( m_img ) hbox->pack_start( *m_img, Gtk::PACK_SHRINK );
     hbox->pack_start( *m_arrow, Gtk::PACK_SHRINK );
 
     add_events( Gdk::ENTER_NOTIFY_MASK );
@@ -56,6 +70,7 @@ ImgMenuButton::ImgMenuButton( const Gtk::StockID& stock_id,
 }
 
 
+// virtual
 ImgMenuButton::~ImgMenuButton()
 {
     if( m_popupmenu ) delete m_popupmenu;
@@ -65,7 +80,7 @@ ImgMenuButton::~ImgMenuButton()
 //
 // メニュー項目追加
 //
-void ImgMenuButton::AppendMenu( std::vector< std::string >& items )
+void ImgMenuButton::append_menu( std::vector< std::string >& items )
 {
     // 古いメニューからメニュー項目を取り除いてdelete
     if( m_popupmenu ){
@@ -82,7 +97,7 @@ void ImgMenuButton::AppendMenu( std::vector< std::string >& items )
     const int size = MIN( items.size(), MAX_MENU_SIZE );
     for( int i = 0 ; i < size; ++i ){
         Gtk::MenuItem* item = m_menuitems[ i ];
-        dynamic_cast< Gtk::Label* >( item->get_child() )->set_text( MISC::cut_str( items[ i ], HIST_MAX_LNG ) );
+        dynamic_cast< Gtk::Label* >( item->get_child() )->set_text( MISC::cut_str( items[ i ], MENU_MAX_LNG ) );
         m_popupmenu->append( *item );
     }
 }
@@ -91,6 +106,7 @@ void ImgMenuButton::AppendMenu( std::vector< std::string >& items )
 //
 // ポップアップメニュー表示
 //
+// virtual
 void ImgMenuButton::show_popupmenu()
 {
     if( ! m_popupmenu ) return;
@@ -178,6 +194,11 @@ bool ImgMenuButton::slot_motion( GdkEventMotion* event )
 //
 void ImgMenuButton::check_on_arrow( int ex )
 {
+    if( ! m_img ){
+        m_on_arrow = true;
+        return;
+    }
+
     Gdk::Rectangle rect = m_arrow->get_allocation();
     int x = rect.get_x();
     rect = get_allocation();

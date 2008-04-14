@@ -26,6 +26,7 @@ namespace SKELETON
 
         Gtk::Menu* m_popupmenu;
         std::vector< Gtk::MenuItem* > m_menuitems;
+        Gtk::Image* m_img;
         Gtk::Arrow* m_arrow;
 
         bool m_on_arrow;
@@ -34,6 +35,8 @@ namespace SKELETON
 
       ImgMenuButton( const Gtk::StockID& stock_id,
                      const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
+      ImgMenuButton();
+
       virtual ~ImgMenuButton();
 
       SIG_BUTTON_CLICKED signal_button_clicked(){ return m_sig_clicked; }
@@ -42,7 +45,7 @@ namespace SKELETON
       SIG_SELECTED signal_selected(){ return m_sig_selected; }
 
       // メニュー項目追加
-      void AppendMenu( std::vector< std::string >& items );
+      void append_menu( std::vector< std::string >& items );
 
       protected:
 
@@ -50,6 +53,8 @@ namespace SKELETON
       virtual void show_popupmenu();
 
       private:
+
+      void setup();
 
       void slot_menu_selected( int i );
 

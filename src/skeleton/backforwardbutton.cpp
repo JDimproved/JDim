@@ -36,8 +36,10 @@ void BackForwardButton::set_url( const std::string& url )
 }
 
 
-
+//
 // ポップアップメニュー表示
+//
+// virtual
 void BackForwardButton::show_popupmenu()
 {
 #ifdef _DEBUG
@@ -59,6 +61,6 @@ void BackForwardButton::show_popupmenu()
         for( ; it != histitems.end(); ++it ) items.push_back( (*it)->title );
     }
 
-    AppendMenu( items );
+    append_menu( items );
     SKELETON::ImgMenuButton::show_popupmenu();
 }

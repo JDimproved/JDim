@@ -8,6 +8,7 @@
 
 #include "skeleton/compentry.h"
 
+#include "command.h"
 #include "controlid.h"
 #include "session.h"
 #include "global.h"
@@ -18,12 +19,13 @@ using namespace BBSLIST;
 BBSListToolBar::BBSListToolBar() :
     SKELETON::ToolBar( BBSLIST::get_admin() )
 {
-    // TODO : class arrowbutton を作る
-    Gtk::Arrow* arrow =  Gtk::manage( new Gtk::Arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ) );
-    m_button_toggle.add( *arrow );
-    m_button_toggle.set_focus_on_click( false );
-    m_button_toggle.set_relief( Gtk:: RELIEF_NONE );
-    set_tooltip( m_button_toggle, "板一覧とお気に入りの切り替え(未実装)" );
+    set_tooltip( m_button_toggle, "板一覧とお気に入りの切り替え" );
+
+    std::vector< std::string > menu;
+    menu.push_back( "板一覧" );
+    menu.push_back( "お気に入り" );
+    m_button_toggle.append_menu( menu );
+    m_button_toggle.signal_selected().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_toggle ) );
 
     m_hbox_label.pack_start( *get_label(), Gtk::PACK_EXPAND_WIDGET, 4 );
     m_hbox_label.pack_start( m_button_toggle, Gtk::PACK_SHRINK );
@@ -38,6 +40,7 @@ BBSListToolBar::BBSListToolBar() :
 //
 // ボタンのパッキング
 //
+// virtual
 void BBSListToolBar::pack_buttons()
 {
     int num = 0;
@@ -66,4 +69,23 @@ void BBSListToolBar::pack_buttons()
     }
 
     show_all_children();
+}
+
+
+void BBSListToolBar::slot_toggle( int i )
+{
+#ifdef _DEBUG 	 
+     std::cout << "BBSListToolBar::slot_toggle = " << get_url() << " i = " << i << std::endl;
+#endif 	 
+  	 
+     switch( i ){
+  	 
+         case 0:
+             if( get_url() != URL_BBSLISTVIEW ) CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW ); 	 
+             break; 	 
+  	 
+         case 1:
+             if( get_url() != URL_FAVORITEVIEW ) CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW ); 	 
+             break; 	 
+     }
 }

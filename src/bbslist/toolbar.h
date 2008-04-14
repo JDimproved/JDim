@@ -8,6 +8,7 @@
 #include <gtkmm.h>
 
 #include "skeleton/toolbar.h"
+#include "skeleton/imgmenubutton.h"
 
 namespace BBSLIST
 {
@@ -15,8 +16,7 @@ namespace BBSLIST
     {
         // ラベルバー
         Gtk::HBox m_hbox_label;
-
-        Gtk::Button m_button_toggle;
+        SKELETON::ImgMenuButton m_button_toggle;
 
       public:
 
@@ -26,6 +26,10 @@ namespace BBSLIST
       protected:
 
         virtual void pack_buttons();
+
+      private:
+
+        void slot_toggle( int i );
     };
 }
 
