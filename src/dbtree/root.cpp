@@ -160,24 +160,22 @@ BoardBase* Root::get_board( const std::string& url, const int count )
         // 2ch型の場合、板パスを見てもし一致したら新ホストに移転したと判断して移転テーブルを更新する
         if( is_2ch( url ) ){
 
+            // 全ての板をサーチして移転先の板を探す
             std::list< BoardBase* >::iterator it;
             for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
 
                 BoardBase* board = *( it );
 
+                // 板パスを見て一致したら移転したと見なす
+                // TODO : 板パスが同じ板が2つ以上あるときどうするか？
                 if( is_2ch( board->get_root() ) && url.find( board->get_path_board() + "/" ) != std::string::npos ){
 
                     // 板移転テーブルを更新
-                    MOVETABLE movetable;
-                    movetable.old_root = MISC::get_hostname( url );
-                    movetable.new_root = board->get_root();
-                    movetable.old_path_board = board->get_path_board();
-                    movetable.new_path_board = movetable.old_path_board;
-                    m_movetable.push_back( movetable );
-
+                    push_movetable( MISC::get_hostname( url ), board->get_path_board(), board->get_root(), board->get_path_board() );
+                    
                     std::ostringstream ss;
                     ss << board->get_name() << std::endl
-                       << "旧 URL = " << movetable.old_root + movetable.old_path_board << "/" << std::endl
+                       << "旧 URL = " << MISC::get_hostname( url ) + board->get_path_board() << "/" << std::endl
                        << "新 URL  = " << board->url_boardbase() << std::endl;
                     MISC::MSG( ss.str() );
 
@@ -266,6 +264,7 @@ void Root::download_bbsmenu()
 //
 // bbsmenu 受信中
 //
+// virtual
 void Root::receive_data( const char* data, size_t size )
 {
     memcpy( m_rawdata + m_lng_rawdata , data, size );
@@ -276,6 +275,7 @@ void Root::receive_data( const char* data, size_t size )
 //
 // bbsmenu 受信完了
 //
+// virtual
 void Root::receive_finish()
 {
     // 文字コードを変換してXML作成
@@ -626,37 +626,7 @@ bool Root::exec_move_board( BoardBase* board,
                   << "old_path_board = " << old_path_board << std::endl
                   << "new_path_board = " << new_path_board << std::endl;
 #endif
-
-        // new_root, new_path_board, old_root, old_path が過去に登録済みなら消す(循環防止)
-        std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
-        for( ; it_move != m_movetable.end(); ++it_move ){
-
-            if(
-                ( ( *it_move ).old_root == new_root
-                  && ( *it_move ).old_path_board == new_path_board )
-
-                ||
-
-                ( ( *it_move ).old_root == old_root
-                  && ( *it_move ).old_path_board == old_path_board )
-
-                ){
-
-                m_movetable.erase( it_move );
-                it_move = m_movetable.begin();
-#ifdef _DEBUG
-                std::cout << "erase\n";
-#endif
-            }
-        }
-
-        // 板移転テーブルを更新
-        MOVETABLE movetable;
-        movetable.old_root = old_root;
-        movetable.old_path_board = old_path_board;
-        movetable.new_root = new_root;
-        movetable.new_path_board = new_path_board;
-        m_movetable.push_back( movetable );
+        push_movetable( old_root, old_path_board, new_root, new_path_board );
 
         // この板に関連する表示中のviewのURLを更新
         CORE::core_set_command( "update_url", old_url, new_url );
@@ -664,6 +634,79 @@ bool Root::exec_move_board( BoardBase* board,
 
     return true;
 }
+
+
+//
+// 板移転テーブルを更新
+//
+void Root::push_movetable( const std::string old_root,
+                           const std::string old_path_board,
+                           const std::string new_root,
+                           const std::string new_path_board
+    )
+{
+#ifdef _DEBUG
+    std::cout << "Root::push_movetable : " << old_root << old_path_board << " -> " << new_root << new_path_board << std::endl;
+#endif            
+
+    std::string str;
+
+    // new_root, new_path_board, old_root, old_path が過去に登録済みなら
+    // 消す、または修正する(パフォーマンス向上、循環防止)
+    std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
+    for( ; it_move != m_movetable.end(); ){
+
+#ifdef _DEBUG
+        std::cout << ( *it_move ).old_root << ( *it_move ).old_path_board << "/ -> " << ( *it_move ).new_root << std::endl;
+#endif            
+
+        if(
+            ( ( *it_move ).old_root == new_root
+              && ( *it_move ).old_path_board == new_path_board )
+
+            ||
+
+            ( ( *it_move ).old_root == old_root
+              && ( *it_move ).old_path_board == old_path_board )
+
+            ){
+
+            str += "削除: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + ( *it_move ).new_root + "\n";
+
+            m_movetable.erase( it_move );
+            it_move = m_movetable.begin();
+            continue;
+        }
+        else if(
+            ( *it_move ).new_root == old_root
+            && ( *it_move ).new_path_board == old_path_board ){
+
+            MOVETABLE movetable = *it_move;
+            movetable.new_root = new_root;
+            movetable.new_path_board = new_path_board;
+
+            str += "更新: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + ( *it_move ).new_root
+            + " => " + movetable.old_root + movetable.old_path_board + "/ -> " + movetable.new_root + "\n";
+
+            m_movetable.erase( it_move );
+            m_movetable.push_back( movetable );
+            it_move = m_movetable.begin();
+            continue;
+        }
+
+        ++it_move;
+    }
+
+    if( ! str.empty() ) MISC::MSG( "\n" + str );
+
+    MOVETABLE movetable;
+    movetable.old_root = old_root;
+    movetable.old_path_board = old_path_board;
+    movetable.new_root = new_root;
+    movetable.new_path_board = new_path_board;
+    m_movetable.push_back( movetable );
+}
+
 
 
 //
@@ -1038,12 +1081,15 @@ const std::string Root::is_board_moved( const std::string& url,
 
                 // 板の最新のrootとpathを取得する
                 BoardBase* board = *( it );
+
+                // 板パスを見て一致したら移転したと見なす
+                // TODO : 板パスが同じ板が2つ以上あるときどうするか？
                 if( is_2ch( board->get_root() ) && url.find( board->get_path_board() + "/" ) != std::string::npos ){
 
                     std::string str = "移転テーブルが破損していたので修復しました\n";
 
                     std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
-                    for( ; it_move != m_movetable.end(); ++it_move ){
+                    for( ; it_move != m_movetable.end(); ){
 
                         if( is_2ch( ( *it_move ).old_root ) &&
                             url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos
@@ -1067,6 +1113,8 @@ const std::string Root::is_board_moved( const std::string& url,
 
                             str += "更新: " + ( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + board->url_boardbase() + "\n";
                         }
+
+                        ++it_move;
                     }
 
                     MISC::MSG( str );

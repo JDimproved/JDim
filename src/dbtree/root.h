@@ -152,6 +152,13 @@ namespace DBTREE
                               const std::string new_path_board
             );
 
+        // 板移転テーブルに追加
+        void push_movetable( const std::string old_root,
+                             const std::string old_path_board,
+                             const std::string new_root,
+                             const std::string new_path_board
+            );
+
         // 板をデータベースから削除
         bool remove_board( const std::string& url );
 
