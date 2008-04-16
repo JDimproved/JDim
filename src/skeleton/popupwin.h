@@ -43,23 +43,20 @@ namespace SKELETON
             Gdk::Display::get_default()->get_pointer( x_mouse, y_mouse,  mod );
 
             // クライアントのサイズを取得
-            int width_client = m_view->width_client();
-            int height_client = m_view->height_client();
+            const int width_client = m_view->width_client();
+            const int height_client = m_view->height_client();
 
-            int width_desktop = m_parent->get_screen()->get_width();
-            int height_desktop = m_parent->get_screen()->get_height();
-  
-            // x 座標 と幅
+            const int width_desktop = m_parent->get_screen()->get_width();
+            const int height_desktop = m_parent->get_screen()->get_height();
+
+            // 幅(m_parentの幅を超えないように制限する)
+            const int width_parent = m_parent->get_width();
+            const int width_popup = width_client < width_parent ? width_client : width_parent;
+
+            // x 座標
             int x_popup;
-            int width_popup;
-            if( x_mouse + width_client <= width_desktop ) {
-                x_popup = x_mouse;
-                width_popup = width_client;
-            }
-            else {
-                x_popup = MAX( 0, width_desktop - width_client );
-                width_popup = width_desktop - x_popup;
-            }
+            if( x_mouse + width_popup <= width_desktop ) x_popup = x_mouse;
+            else x_popup = MAX( 0, width_desktop - width_popup );
 
             // y 座標と高さ
             int y_popup;  
