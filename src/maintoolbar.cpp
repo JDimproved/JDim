@@ -7,6 +7,8 @@
 
 #include "config/globalconf.h"
 
+#include "icons/iconmanager.h"
+
 #include "controlutil.h"
 #include "controlid.h"
 #include "session.h"

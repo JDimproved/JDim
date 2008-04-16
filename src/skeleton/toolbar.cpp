@@ -13,6 +13,8 @@
 
 #include "jdlib/miscutil.h"
 
+#include "icons/iconmanager.h"
+
 #include "controlutil.h"
 #include "controlid.h"
 

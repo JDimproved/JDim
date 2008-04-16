@@ -13,6 +13,8 @@ libskeleton_a_SOURCES = \
 	dragnote.cpp \
 	tabnote.cpp \
 	tablabel.cpp \
+	imgbutton.cpp \
+	imgtogglebutton.cpp \
 	imgmenubutton.cpp \
 	backforwardbutton.cpp \
 	tooltip.cpp \

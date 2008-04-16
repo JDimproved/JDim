@@ -51,6 +51,8 @@
 #include "image/imageadmin.h"
 #include "message/messageadmin.h"
 
+#include "icons/iconmanager.h"
+
 #include <sstream>
 
 using namespace CORE;
