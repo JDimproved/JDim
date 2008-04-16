@@ -7,6 +7,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "config/globalconf.h"
+
 using namespace SKELETON;
 
 ImgButton::ImgButton( const int id, const std::string label )
@@ -37,5 +39,5 @@ void ImgButton::set( const std::string& label )
     }
 
     set_focus_on_click( false );
-    set_relief( Gtk:: RELIEF_NONE );
+    if( CONFIG::get_flat_button() ) set_relief( Gtk:: RELIEF_NONE );
 }

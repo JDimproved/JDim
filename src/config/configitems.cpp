@@ -443,6 +443,9 @@ const bool ConfigItems::load()
     // タブにアイコンを表示するか
     show_tab_icon = cf.get_option( "show_tab_icon", CONF_SHOW_TAB_ICON );
 
+    // ボタンをフラットにするか
+    flat_button = cf.get_option( "flat_button", CONF_FLAT_BUTTON );
+
     std::list< std::string > list_tmp;
     std::list< std::string >::iterator it_tmp;
     std::string str_tmp;
@@ -656,6 +659,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "tab_min_str", tab_min_str );
 
     cf.update( "show_tab_icon", show_tab_icon );
+
+    cf.update( "flat_button", flat_button );
 
     // スレあぼーん情報
     std::string str_abone_word_thread = MISC::listtostr( list_abone_word_thread );

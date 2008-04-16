@@ -11,6 +11,8 @@
 
 #include "dbtree/interface.h"
 
+#include "config/globalconf.h"
+
 #include "command.h"
 #include "controlutil.h"
 #include "controlid.h"
@@ -84,7 +86,7 @@ void ArticleToolBar::pack_buttons()
                 if( ! m_button_board ){
                     m_button_board = Gtk::manage( new Gtk::Button() );
                     m_button_board->set_focus_on_click( false );
-                    m_button_board->set_relief( Gtk::RELIEF_NONE );
+                    if( CONFIG::get_flat_button() ) m_button_board->set_relief( Gtk::RELIEF_NONE );
                     set_tooltip( *m_button_board, CONTROL::get_label_motion( CONTROL::OpenParentBoard ) );
                     m_button_board->signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_open_board ) );
                 }

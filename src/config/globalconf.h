@@ -295,6 +295,9 @@ namespace CONFIG
     // タブにアイコンを表示するか
     const bool get_show_tab_icon();
 
+    // ボタンをフラットにするか
+    const bool get_flat_button();
+
     // boardviewでのスレの全体あぼーん
     std::list< std::string >& get_list_abone_word_thread(); // ワード
     std::list< std::string >& get_list_abone_regex_thread(); // 正規表現

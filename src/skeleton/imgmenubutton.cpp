@@ -7,6 +7,8 @@
 
 #include "jdlib/miscutil.h"
 
+#include "config/globalconf.h"
+
 #include "command.h"
 
 using namespace SKELETON;
@@ -66,7 +68,7 @@ void ImgMenuButton::setup()
     }
 
     set_focus_on_click( false );
-    set_relief( Gtk:: RELIEF_NONE );
+    if( CONFIG::get_flat_button() ) set_relief( Gtk:: RELIEF_NONE );
 }
 
 

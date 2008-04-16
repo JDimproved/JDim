@@ -278,6 +278,8 @@ const int CONFIG::get_tab_min_str(){ return get_confitem()->tab_min_str; }
 
 const bool CONFIG::get_show_tab_icon(){ return get_confitem()->show_tab_icon; }
 
+const bool CONFIG::get_flat_button(){ return get_confitem()->flat_button; }
+
 std::list< std::string >& CONFIG::get_list_abone_word_thread(){ return get_confitem()->list_abone_word_thread; }
 std::list< std::string >& CONFIG::get_list_abone_regex_thread(){ return get_confitem()->list_abone_regex_thread; }
 

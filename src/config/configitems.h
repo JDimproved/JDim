@@ -255,6 +255,9 @@ namespace CONFIG
         // タブにアイコンを表示するか
         bool show_tab_icon;
 
+        // ボタンをフラットにするか
+        bool flat_button;
+
         // スレ あぼーん word
         std::list< std::string > list_abone_word_thread;
 
