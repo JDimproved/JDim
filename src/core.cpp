@@ -298,6 +298,10 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "メニューバー表示(_S)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_menubar ) );
 
+    // ボタンのrelief切り替え
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleFlatButton", "ボタンをフラット表示(_F)", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::toggle_flat_button ) );
+
     // ツールバー
     m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー表示(_T)" ) );
     m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メイン(_M)" ) );
@@ -544,7 +548,10 @@ void Core::run( bool init )
 
         "<menu action='View_Menu'>"
 
+        "<menu action='General_Menu'>"
         "<menuitem action='ShowMenuBar'/>"
+        "<menuitem action='ToggleFlatButton'/>"
+        "</menu>"
         "<separator/>"
 
         "<menu action='Tab_Menu'>"
@@ -1027,6 +1034,14 @@ void Core::slot_activate_menubar()
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
         if( SESSION::show_menubar() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // ボタンのrelief切り替え
+    act = m_action_group->get_action( "ToggleFlatButton" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( CONFIG::get_flat_button() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1793,6 +1808,30 @@ void Core::toggle_menubar()
         mdiag.run();
     }
 }
+
+
+//
+// ボタンのreliefの切り替え
+//
+void Core::toggle_flat_button()
+{
+    if( SESSION::is_booting() ) return;
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::toggle_flat_button\n";
+#endif
+
+    CONFIG::set_flat_button( ! CONFIG::get_flat_button() );
+
+    ARTICLE::get_admin()->set_command( "update_toolbar_button" );
+    BOARD::get_admin()->set_command( "update_toolbar_button" );
+    BBSLIST::get_admin()->set_command( "update_toolbar_button" );
+    IMAGE::get_admin()->set_command( "update_toolbar_button" );
+    MESSAGE::get_admin()->set_command( "update_toolbar_button" );
+    m_toolbar->update_button();
+}
+
 
 
 //

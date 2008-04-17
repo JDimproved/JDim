@@ -7,8 +7,6 @@
 
 #include "icons/iconmanager.h"
 
-#include "config/globalconf.h"
-
 using namespace SKELETON;
 
 ImgToggleButton::ImgToggleButton( const int id, const std::string label )
@@ -40,5 +38,4 @@ void ImgToggleButton::set( const std::string& label )
     }
 
     set_focus_on_click( false );
-    if( CONFIG::get_flat_button() ) set_relief( Gtk:: RELIEF_NONE );
 }

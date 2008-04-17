@@ -45,6 +45,7 @@ MainToolBar::MainToolBar() :
 }
 
 // ボタンのパッキング
+// virtual
 void MainToolBar::pack_buttons()
 {
     int num = 0;
@@ -64,5 +65,6 @@ void MainToolBar::pack_buttons()
         ++num;
     }
 
+    set_relief();
     show_all_children();
 }    

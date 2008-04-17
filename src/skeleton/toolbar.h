@@ -98,6 +98,10 @@ namespace SKELETON
         virtual void pack_buttons() = 0;
         void unpack_buttons();
 
+        // ボタンのrelief指定
+        void set_relief();
+
+
         Gtk::HBox& get_buttonbar(){ return m_buttonbar; }
 
         // ラベル

@@ -15,6 +15,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "config/globalconf.h"
+
 #include "controlutil.h"
 #include "controlid.h"
 
@@ -65,6 +67,7 @@ void ToolBar::set_url( const std::string& url )
 
 
 // タブが切り替わった時にDragableNoteBook::set_current_toolbar()から呼び出される( Viewの情報を取得する )
+// virtual
 void ToolBar::set_view( SKELETON::View* view )
 {
     if( ! view ) return;
@@ -173,6 +176,55 @@ void ToolBar::unpack_buttons()
     for( ; it != lists.end(); ++it ){
         m_buttonbar.remove( *(*it) );
         if( dynamic_cast< Gtk::VSeparator* >( *it ) ) delete *it;
+    }
+}
+
+
+// ボタンのrelief指定
+void ToolBar::set_relief()
+{
+    // メインツールバー
+    std::list< Gtk::Widget* > lists = m_buttonbar.get_children();
+    std::list< Gtk::Widget* >::iterator it = lists.begin();
+    for( ; it != lists.end(); ++it ){
+        Gtk::Button* button = dynamic_cast< Gtk::Button* >( *it );
+        if( button ){
+            if( CONFIG::get_flat_button() ) button->set_relief( Gtk:: RELIEF_NONE );
+            else button->set_relief( Gtk:: RELIEF_NORMAL );
+        }
+    }
+
+    // 検索バー
+    if( m_searchbar ){
+
+        std::list< Gtk::Widget* > lists = m_searchbar->get_children();
+        std::list< Gtk::Widget* >::iterator it = lists.begin();
+        for( ; it != lists.end(); ++it ){
+            Gtk::Button* button = dynamic_cast< Gtk::Button* >( *it );
+            if( button ){
+                if( CONFIG::get_flat_button() ) button->set_relief( Gtk:: RELIEF_NONE );
+                else button->set_relief( Gtk:: RELIEF_NORMAL );
+            }
+        }
+    }
+
+    // その他のBOX
+    std::list< Gtk::Widget* > lists_box = get_children();
+    std::list< Gtk::Widget* >::iterator it_box = lists_box.begin();
+    for( ; it_box != lists_box.end(); ++it_box ){
+
+        Gtk::Box* box = dynamic_cast< Gtk::Box* >( *it_box );
+        if( ! box ) continue;
+
+        std::list< Gtk::Widget* > lists = box->get_children();
+        std::list< Gtk::Widget* >::iterator it = lists.begin();
+        for( ; it != lists.end(); ++it ){
+            Gtk::Button* button = dynamic_cast< Gtk::Button* >( *it );
+            if( button ){
+                if( CONFIG::get_flat_button() ) button->set_relief( Gtk:: RELIEF_NONE );
+                else button->set_relief( Gtk:: RELIEF_NORMAL );
+            }
+        }
     }
 }
 

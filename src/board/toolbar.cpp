@@ -24,6 +24,7 @@ BoardToolBar::BoardToolBar() :
 }
 
 // ボタンのパッキング
+// virtual
 void BoardToolBar::pack_buttons()
 {
     int num = 0;
@@ -90,5 +91,6 @@ void BoardToolBar::pack_buttons()
         ++num;
     }
 
+    set_relief();
     show_all_children();
 }    

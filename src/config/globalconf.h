@@ -297,6 +297,7 @@ namespace CONFIG
 
     // ボタンをフラットにするか
     const bool get_flat_button();
+    void set_flat_button( const bool set );
 
     // boardviewでのスレの全体あぼーん
     std::list< std::string >& get_list_abone_word_thread(); // ワード

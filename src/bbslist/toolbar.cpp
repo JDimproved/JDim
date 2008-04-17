@@ -68,6 +68,7 @@ void BBSListToolBar::pack_buttons()
         ++num;
     }
 
+    set_relief();
     show_all_children();
 }
 

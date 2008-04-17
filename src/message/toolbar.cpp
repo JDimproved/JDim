@@ -78,6 +78,7 @@ MessageToolBar::MessageToolBar() :
 
 
 // ボタンのパッキング
+// virtual
 void MessageToolBar::pack_buttons()
 {
 #ifdef _DEBUG
@@ -133,6 +134,7 @@ void MessageToolBar::pack_buttons()
         ++num;
     }
 
+    set_relief();
     show_all_children();
 }    
 
@@ -165,6 +167,7 @@ MessageToolBarPreview::MessageToolBarPreview() :
 
 
 // ボタンのパッキング
+// virtual
 void MessageToolBarPreview::pack_buttons()
 {
 #ifdef _DEBUG
@@ -199,5 +202,6 @@ void MessageToolBarPreview::pack_buttons()
         ++num;
     }
 
+    set_relief();
     show_all_children();
 }    
