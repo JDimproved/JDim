@@ -56,7 +56,7 @@ std::string MessageViewMain::create_message()
         mdiag.run();
         return std::string();
     }
-    else
+/*    else
     {
         // 終端スペース/改行チェック
         const size_t end_pos = msg.find_last_not_of( "　 \n" );
@@ -90,7 +90,7 @@ std::string MessageViewMain::create_message()
             }
         }
     }
-
+*/
     // 誤爆を警告
     if( SESSION::get_article_current_url().find( get_url() ) == std::string::npos ){
 
