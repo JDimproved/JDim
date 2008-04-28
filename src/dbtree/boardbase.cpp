@@ -404,12 +404,19 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
     // どちらでもない(スレのURLでない)場合
     else{
 
+        // 外部板の移転の場合は path_board も変わるときがあるので
         // 移転した場合はurlを置換してからもう一度試す
         std::string old_root;
         std::string old_path_board;
         std::string new_root;
         std::string new_path_board;
         std::string new_url = DBTREE::is_board_moved( url, old_root, old_path_board, new_root, new_path_board );
+
+#ifdef _DEBUG
+        std::cout << "old_root = " << old_root << " new_root = " << new_root << std::endl;
+        std::cout << "old_path_board = " << old_path_board << " new_path_board = " << new_path_board << std::endl;
+#endif
+
         if( ! new_url.empty() ){
 
             std::string url_tmp = MISC::replace_str( url, old_root, new_root );

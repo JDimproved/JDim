@@ -1068,7 +1068,7 @@ const std::string Root::is_board_moved( const std::string& url,
     const int max_count = 50;
 
 #ifdef _DEBUG            
-    if( count ) std::cout << "Root::is_board_moved count = " << count << " url = " << url << std::endl;
+    std::cout << "Root::is_board_moved count = " << count << " url = " << url << std::endl;
 #endif
 
     // 移転テーブルが循環している場合 2ch 型ならテーブルを修復する
@@ -1148,7 +1148,15 @@ const std::string Root::is_board_moved( const std::string& url,
 #ifdef _DEBUG            
             std::cout << url << " is moved to " << new_url << std::endl;
 #endif
-            return is_board_moved( new_url, old_root, old_path_board, new_root, new_path_board, count +1 ); // 連鎖的に検索
+
+            // 連鎖的に検索
+            std::string ret_url = is_board_moved( new_url, old_root, old_path_board, new_root, new_path_board, count +1 ); 
+
+            // old_root と old_path_board が書き換わっているので戻しておく
+            old_root = ( *it_move ).old_root;
+            old_path_board = ( *it_move ).old_path_board;
+
+            return ret_url;
         }
     }
 
