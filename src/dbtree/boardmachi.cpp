@@ -19,7 +19,7 @@ using namespace DBTREE;
 
 enum
 {
-    DEFAULT_NUMBER_MAX_MACHI = 300 // 規定の最大レス数
+    DEFAULT_NUMBER_MAX_MACHI = 1000 // 規定の最大レス数
 };
 
 
