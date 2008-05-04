@@ -3,7 +3,7 @@
 //#define _DEBUG
 #include "jddebug.h"
 
-#include "imgmenubutton.h"
+#include "menubutton.h"
 
 #include "jdlib/miscutil.h"
 
@@ -17,39 +17,49 @@ enum
 };
 
 
-ImgMenuButton::ImgMenuButton( const Gtk::StockID& stock_id,
+MenuButton::MenuButton( Gtk::Widget& label )
+    : m_label( NULL )
+{
+    setup( &label );
+}
+
+
+MenuButton::MenuButton( const Gtk::StockID& stock_id,
                               const Gtk::BuiltinIconSize icon_size )
+    : m_label( NULL )
 {
-    m_img = Gtk::manage( new Gtk::Image( stock_id, icon_size ) );
-    setup();
+    setup( Gtk::manage( new Gtk::Image( stock_id, icon_size ) ), Gtk::PACK_SHRINK );
 }
 
 
-ImgMenuButton::ImgMenuButton()
-    : m_img( NULL )
+MenuButton::MenuButton()
+    : m_label( NULL )
 {
-    setup();
+    setup( NULL );
 }
 
 
-void ImgMenuButton::setup()
+void MenuButton::setup( Gtk::Widget* label, Gtk::PackOptions options, guint padding )
 {
+    m_label = label;
     m_popupmenu =  NULL;
     m_on_arrow = false;
+    m_enable_sig_clicked = true;
 
     Gtk::HBox *hbox = Gtk::manage( new Gtk::HBox() );
     m_arrow = Gtk::manage( new Gtk::Arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ) );
 
     hbox->set_spacing( 2 );
-    if( m_img ) hbox->pack_start( *m_img, Gtk::PACK_SHRINK );
+    if( m_label ) hbox->pack_start( *m_label, options, padding );
     hbox->pack_start( *m_arrow, Gtk::PACK_SHRINK );
 
     add_events( Gdk::ENTER_NOTIFY_MASK );
     add_events( Gdk::POINTER_MOTION_MASK );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
-    signal_enter_notify_event().connect( sigc::mem_fun( *this, &ImgMenuButton::slot_enter ) );
-    signal_leave_notify_event().connect( sigc::mem_fun( *this, &ImgMenuButton::slot_leave ) );
-    signal_motion_notify_event().connect(  sigc::mem_fun( *this, &ImgMenuButton::slot_motion ) );
+    add_events( Gdk::SCROLL_MASK );
+    signal_enter_notify_event().connect( sigc::mem_fun( *this, &MenuButton::slot_enter ) );
+    signal_leave_notify_event().connect( sigc::mem_fun( *this, &MenuButton::slot_leave ) );
+    signal_motion_notify_event().connect(  sigc::mem_fun( *this, &MenuButton::slot_motion ) );
 
     add( *hbox );
     show_all_children();
@@ -61,7 +71,7 @@ void ImgMenuButton::setup()
         Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "menu" + MISC::itostr( i ), "dummy" );
         action->set_accel_group( agroup );
         Gtk::MenuItem* item = Gtk::manage( action->create_menu_item() );
-        actiongroup->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ImgMenuButton::slot_menu_selected ), i ) );
+        actiongroup->add( action, sigc::bind< int >( sigc::mem_fun( *this, &MenuButton::slot_menu_selected ), i ) );
         m_menuitems.push_back( item );
     }
 
@@ -70,7 +80,7 @@ void ImgMenuButton::setup()
 
 
 // virtual
-ImgMenuButton::~ImgMenuButton()
+MenuButton::~MenuButton()
 {
     if( m_popupmenu ) delete m_popupmenu;
 }
@@ -79,7 +89,7 @@ ImgMenuButton::~ImgMenuButton()
 //
 // メニュー項目追加
 //
-void ImgMenuButton::append_menu( std::vector< std::string >& items )
+void MenuButton::append_menu( std::vector< std::string >& items )
 {
     // 古いメニューからメニュー項目を取り除いてdelete
     if( m_popupmenu ){
@@ -106,11 +116,11 @@ void ImgMenuButton::append_menu( std::vector< std::string >& items )
 // ポップアップメニュー表示
 //
 // virtual
-void ImgMenuButton::show_popupmenu()
+void MenuButton::show_popupmenu()
 {
     if( ! m_popupmenu ) return;
 
-    m_popupmenu->popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &ImgMenuButton::slot_popup_pos ) ),
+    m_popupmenu->popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &MenuButton::slot_popup_pos ) ),
                         0, gtk_get_current_event_time() );
 }
 
@@ -118,10 +128,10 @@ void ImgMenuButton::show_popupmenu()
 //
 // メニューが選ばれた
 //
-void ImgMenuButton::slot_menu_selected( int i )
+void MenuButton::slot_menu_selected( int i )
 {
 #ifdef _DEBUG
-    std::cout << "ImgMenuButton::slot_menu_selected i = " << i << std::endl;
+    std::cout << "MenuButton::slot_menu_selected i = " << i << std::endl;
 #endif
 
     m_sig_selected.emit( i );
@@ -131,13 +141,13 @@ void ImgMenuButton::slot_menu_selected( int i )
 //
 // ボタンがクリックされたらクリックした位置で処理を変える
 //
-void ImgMenuButton::on_clicked()
+void MenuButton::on_clicked()
 {
 #ifdef _DEBUG
-    std::cout << "ImgMenuButton::on_clicked\n";
+    std::cout << "MenuButton::on_clicked\n";
 #endif
 
-    if( m_on_arrow ) show_popupmenu();
+    if( ! m_enable_sig_clicked || m_on_arrow ) show_popupmenu();
     else m_sig_clicked.emit();
 }
 
@@ -145,21 +155,24 @@ void ImgMenuButton::on_clicked()
 //
 // ポップアップメニューの位置決め
 //
-void ImgMenuButton::slot_popup_pos( int& x, int& y, bool& push_in )
+void MenuButton::slot_popup_pos( int& x, int& y, bool& push_in )
 {
+    const int mrg = 16;
+
+    get_pointer( x, y );
     int ox, oy;
     get_window()->get_origin( ox, oy );
     Gdk::Rectangle rect = get_allocation();
-    x = ox + rect.get_x();
+    x += ox + rect.get_x() - mrg;
     y = oy + rect.get_y() + rect.get_height();
     push_in = false;
 }
 
 
-bool ImgMenuButton::slot_enter( GdkEventCrossing* event )
+bool MenuButton::slot_enter( GdkEventCrossing* event )
 {
 #ifdef _DEBUG
-    std::cout << "ImgMenuButton::slot_enter\n";
+    std::cout << "MenuButton::slot_enter\n";
 #endif
 
     check_on_arrow( (int)event->x );
@@ -168,10 +181,10 @@ bool ImgMenuButton::slot_enter( GdkEventCrossing* event )
 }
 
 
-bool ImgMenuButton::slot_leave( GdkEventCrossing* event )
+bool MenuButton::slot_leave( GdkEventCrossing* event )
 {
 #ifdef _DEBUG
-    std::cout << "ImgMenuButton::slot_leave\n";
+    std::cout << "MenuButton::slot_leave\n";
 #endif
 
     m_on_arrow = false;
@@ -180,7 +193,7 @@ bool ImgMenuButton::slot_leave( GdkEventCrossing* event )
 }
 
 
-bool ImgMenuButton::slot_motion( GdkEventMotion* event )
+bool MenuButton::slot_motion( GdkEventMotion* event )
 {
     check_on_arrow( (int)event->x );
 
@@ -191,9 +204,9 @@ bool ImgMenuButton::slot_motion( GdkEventMotion* event )
 //
 // ポインタが矢印の下にあるかチェック
 //
-void ImgMenuButton::check_on_arrow( int ex )
+void MenuButton::check_on_arrow( int ex )
 {
-    if( ! m_img ){
+    if( ! m_label ){
         m_on_arrow = true;
         return;
     }
@@ -207,7 +220,7 @@ void ImgMenuButton::check_on_arrow( int ex )
     else m_on_arrow = false;
 
 #ifdef _DEBUG
-    std::cout << "ImgMenuButton::check_on_arrow x = " << ex << " / " << x 
+    std::cout << "MenuButton::check_on_arrow x = " << ex << " / " << x 
               << " on = " << m_on_arrow << std::endl;
 #endif
 }

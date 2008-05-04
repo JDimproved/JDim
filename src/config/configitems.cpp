@@ -361,6 +361,15 @@ const bool ConfigItems::load()
     // スレビューでリロード後に新着までスクロール
     jump_new_after_reload = cf.get_option( "jump_new_after_reload", CONF_JUMP_NEW_AFTER_RELOAD );
 
+    // 実況モード
+    live_mode = cf.get_option( "live_mode", LIVE_SCRMODE_VARIABLE );
+
+    // 実況速度
+    live_speed = cf.get_option( "live_speed", CONF_LIVE_SPEED );
+
+    // 実況のスクロールモードを切り替えるしきい値
+    live_threshold = cf.get_option( "live_threshold", CONF_LIVE_THRESHOLD );
+
     // 板一覧でカテゴリを常にひとつだけ開く
     open_one_category = cf.get_option( "open_one_category", CONF_OPEN_ONE_CATEGORY );
 
@@ -624,6 +633,11 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "key_scroll_size", key_scroll_size );
     cf.update( "jump_after_reload", jump_after_reload );
     cf.update( "jump_new_after_reload", jump_new_after_reload );
+
+    cf.update( "live_mode", live_mode );
+    cf.update( "live_speed", live_speed );
+    cf.update( "live_threshold", live_threshold );
+
     cf.update( "open_one_category", open_one_category );
     cf.update( "always_write_ok", always_write_ok );
     cf.update( "save_postlog", save_postlog );

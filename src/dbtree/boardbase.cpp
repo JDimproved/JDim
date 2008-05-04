@@ -42,6 +42,7 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_path_board( path_board )
     , m_name( name )
     , m_samba_sec( 0 )
+    , m_live_sec( 0 )
     , m_number_max_res( 0 )
     , m_rawdata( 0 )
     , m_read_info( 0 )
@@ -1487,6 +1488,9 @@ void BoardBase::read_board_info()
     // samba24
     m_samba_sec = cf.get_option( "samba_sec", 0 );
 
+    // 実況の秒数
+    m_live_sec = cf.get_option( "live_sec", 0 );
+
 #ifdef _DEBUG
     std::cout << "modified = " << date_modified() << std::endl;
 #endif
@@ -1562,6 +1566,7 @@ void BoardBase::save_jdboard_info()
          << "write_name = " << m_write_name << std::endl
          << "write_mail = " << m_write_mail << std::endl
          << "samba_sec = " << m_samba_sec << std::endl
+         << "live_sec = " << m_live_sec << std::endl
     ;
 
     CACHE::save_rawdata( path_info, sstr.str() );

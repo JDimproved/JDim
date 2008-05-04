@@ -206,6 +206,18 @@ namespace CONFIG
     const bool get_jump_new_after_reload();
     void set_jump_new_after_reload( bool set );
 
+    // 実況モード
+    const int get_live_mode();
+    void set_live_mode( const int mode );
+
+    // 実況速度
+    const int get_live_speed();
+    void set_live_speed( const int speed );
+
+    // 実況のスクロールモードを切り替えるしきい値
+    const int get_live_threshold();
+    void set_live_threshode( const int th );
+
     // 板一覧でカテゴリを常にひとつだけ開く
     const bool get_open_one_category();
 

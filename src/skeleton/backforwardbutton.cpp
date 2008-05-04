@@ -11,7 +11,7 @@
 using namespace SKELETON;
 
 BackForwardButton::BackForwardButton( const std::string& url, const bool back )
-    : SKELETON::ImgMenuButton( back ? Gtk::Stock::GO_BACK : Gtk::Stock::GO_FORWARD ),
+    : SKELETON::MenuButton( back ? Gtk::Stock::GO_BACK : Gtk::Stock::GO_FORWARD ),
       m_url( url ),
       m_back( back )
 {}
@@ -62,5 +62,5 @@ void BackForwardButton::show_popupmenu()
     }
 
     append_menu( items );
-    SKELETON::ImgMenuButton::show_popupmenu();
+    SKELETON::MenuButton::show_popupmenu();
 }

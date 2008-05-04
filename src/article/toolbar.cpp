@@ -8,8 +8,7 @@
 #include "articleviewbase.h"
 
 #include "skeleton/compentry.h"
-
-#include "dbtree/interface.h"
+#include "skeleton/imgtoggletoolbutton.h"
 
 #include "command.h"
 #include "controlutil.h"
@@ -22,32 +21,33 @@ using namespace ARTICLE;
 
 ArticleToolBar::ArticleToolBar() :
     SKELETON::ToolBar( ARTICLE::get_admin() ),
-    m_button_board( NULL ),
+    m_enable_slot( true ),
 
     m_button_drawout_and( Gtk::Stock::CUT ),
     m_button_drawout_or( Gtk::Stock::ADD ),
-    m_button_clear_hl( Gtk::Stock::CLEAR )
+    m_button_clear_hl( Gtk::Stock::CLEAR ),
+
+    m_button_live_play_stop( NULL )
 {
     // 検索バー
     set_tooltip( m_button_drawout_and, CONTROL::get_label_motion( CONTROL::DrawOutAnd ) );
     set_tooltip( m_button_drawout_or, CONTROL::get_label_motion( CONTROL::DrawOutOr ) );
     set_tooltip( m_button_clear_hl, CONTROL::get_label_motion( CONTROL::HiLightOff ) );
 
-    get_searchbar()->pack_start( *get_entry_search(), Gtk::PACK_EXPAND_WIDGET );
-    get_searchbar()->pack_end( *get_button_close_searchbar(), Gtk::PACK_SHRINK );
-    get_searchbar()->pack_end( m_button_clear_hl, Gtk::PACK_SHRINK );
-    get_searchbar()->pack_end( m_button_drawout_or, Gtk::PACK_SHRINK );
-    get_searchbar()->pack_end( m_button_drawout_and, Gtk::PACK_SHRINK );
-    get_searchbar()->pack_end( *get_button_up_search(), Gtk::PACK_SHRINK );
-    get_searchbar()->pack_end( *get_button_down_search(), Gtk::PACK_SHRINK );
-
-    get_entry_search()->add_mode( CONTROL::MODE_COMMON );
+    get_searchbar()->append( *get_entry_search() );
+    get_searchbar()->append( *get_button_down_search() );
+    get_searchbar()->append( *get_button_up_search() );
+    get_searchbar()->append( m_button_drawout_and );
+    get_searchbar()->append( m_button_drawout_or );
+    get_searchbar()->append( m_button_clear_hl );
+    get_searchbar()->append( *get_button_close_searchbar() );
 
     m_button_clear_hl.signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_clear_highlight ) );
     m_button_drawout_or.signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_drawout_or ) );
     m_button_drawout_and.signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_drawout_and ) );
 
     pack_buttons();
+    add_search_mode( CONTROL::MODE_COMMON );
 }
         
 
@@ -59,12 +59,25 @@ void ArticleToolBar::set_view( SKELETON::View * view )
 {
     SKELETON::ToolBar::set_view( view );
 
+    m_enable_slot = false;
+
     // ArticleViewBase固有の情報をコピー
     ArticleViewBase* articleview = dynamic_cast< ArticleViewBase* >( view );
     if( articleview ){
+
         m_url_article = articleview->url_article();
-        if( m_button_board ) m_button_board->set_label( articleview->get_label_board() );
+
+        if( m_button_live_play_stop ){
+            bool sensitive = true;
+            if( ! articleview->get_enable_live() ) sensitive = false;
+            m_button_live_play_stop->set_sensitive( sensitive );
+
+            if( articleview->get_live() ) m_button_live_play_stop->set_active( true );
+            else m_button_live_play_stop->set_active( false );
+        }
     }
+
+    m_enable_slot = true;
 }
 
 
@@ -81,59 +94,68 @@ void ArticleToolBar::pack_buttons()
         switch( item ){
 
             case ITEM_WRITEMSG:
-                get_buttonbar().pack_start( *get_button_write(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_write() );
                 break;
 
             case ITEM_OPENBOARD:
-                if( ! m_button_board ){
-                    m_button_board = Gtk::manage( new Gtk::Button() );
-                    m_button_board->set_focus_on_click( false );
-                    set_tooltip( *m_button_board, CONTROL::get_label_motion( CONTROL::OpenParentBoard ) );
-                    m_button_board->signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_open_board ) );
-                }
-                get_buttonbar().pack_start( *m_button_board, Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_board() );
                 break;
 
             case ITEM_NAME:
-                get_buttonbar().pack_start( *get_label(), Gtk::PACK_EXPAND_WIDGET, 4 );
+                pack_transparent_separator();
+                get_buttonbar().append( *get_label() );
+                pack_transparent_separator();
                 break;
 
             case ITEM_SEARCH:
-                get_buttonbar().pack_start( *get_button_open_searchbar(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_open_searchbar() );
                 break;
 
             case ITEM_RELOAD:
-                get_buttonbar().pack_start( *get_button_reload(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_reload() );
                 break;
 
             case ITEM_STOPLOADING:
-                get_buttonbar().pack_start( *get_button_stop(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_stop() );
                 break;
 
             case ITEM_FAVORITE:
-                get_buttonbar().pack_start( *get_button_favorite(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_favorite() );
                 set_tooltip( *get_button_favorite(), CONTROL::get_label_motion( CONTROL::AppendFavorite )
                              + "...\n\nスレのタブをお気に入りに直接Ｄ＆Ｄしても登録可能" );
+
                 break;
 
             case ITEM_DELETE:
-                get_buttonbar().pack_start( *get_button_delete(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_delete() );
+
                 break;
 
             case ITEM_QUIT:
-                get_buttonbar().pack_start( *get_button_close(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_close() );
                 break;
 
             case ITEM_PREVVIEW:
-                get_buttonbar().pack_start( *get_button_back(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_back() );
                 break;
 
             case ITEM_NEXTVIEW:
-                get_buttonbar().pack_start( *get_button_forward(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_forward() );
                 break;
 
             case ITEM_LOCK:
-                get_buttonbar().pack_start( *get_button_lock(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_lock() );
+                break;
+
+            case ITEM_LIVE:
+                if( ! m_button_live_play_stop ){
+                    m_button_live_play_stop = Gtk::manage( new SKELETON::ImgToggleToolButton( Gtk::Stock::MEDIA_PLAY ) );
+                    set_tooltip( *m_button_live_play_stop, CONTROL::get_label_motion( CONTROL::LiveStartStop ) );
+                    m_button_live_play_stop->set_label( CONTROL::get_label( CONTROL::LiveStartStop ) );
+                    m_button_live_play_stop->signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_live_play_stop ) );
+                }
+                get_buttonbar().append( *m_button_live_play_stop );
+
                 break;
 
             case ITEM_SEPARATOR:
@@ -153,7 +175,9 @@ void ArticleToolBar::pack_buttons()
 //
 void ArticleToolBar::slot_drawout_and()
 {
-    std::string query = get_entry_search()->get_text();
+    if( ! m_enable_slot ) return;    
+
+    std::string query = get_search_text();
     if( query.empty() ) return;
 
     CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "false" );
@@ -165,7 +189,9 @@ void ArticleToolBar::slot_drawout_and()
 //
 void ArticleToolBar::slot_drawout_or()
 {
-    std::string query = get_entry_search()->get_text();
+    if( ! m_enable_slot ) return;    
+
+    std::string query = get_search_text();
     if( query.empty() ) return;
 
     CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "true" );
@@ -177,16 +203,18 @@ void ArticleToolBar::slot_drawout_or()
 //
 void ArticleToolBar::slot_clear_highlight()
 {
+    if( ! m_enable_slot ) return;    
+
     ARTICLE::get_admin()->set_command( "clear_highlight", get_url() );
 }
 
 
 //
-// 板を開くボタン
+// 実況開始/停止
 //
-void ArticleToolBar::slot_open_board()
+void ArticleToolBar::slot_live_play_stop()
 {
-    CORE::core_set_command( "open_board", DBTREE::url_subject( m_url_article ), "true",
-                            "auto" // オートモードで開く
-        );
+    if( ! m_enable_slot ) return;    
+
+    ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );
 }

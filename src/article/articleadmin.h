@@ -65,6 +65,8 @@ namespace ARTICLE
 
       private:
 
+        bool clock_in_smooth_scroll( int timer_number );
+
         void delete_popup();
         void delete_all_popups();
 

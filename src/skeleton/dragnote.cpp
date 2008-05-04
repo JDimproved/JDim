@@ -319,30 +319,6 @@ void DragableNoteBook::update_toolbar_url( std::string& url_old, std::string& ur
 
 
 //
-// ツールバーラベル表示更新
-//
-void DragableNoteBook::update_toolbar_label( SKELETON::View* view )
-{
-    for( int i = 0; i < m_notebook_toolbar.get_n_pages(); ++i ){
-        SKELETON::ToolBar* toolbar = get_toolbar( i );
-        if( toolbar ) toolbar->update_label( view );
-    }
-}
-
-
-//
-// ツールバー閉じるボタン表示更新
-//
-void DragableNoteBook::update_toolbar_close_button( SKELETON::View* view )
-{
-    for( int i = 0; i < m_notebook_toolbar.get_n_pages(); ++i ){
-        SKELETON::ToolBar* toolbar = get_toolbar( i );
-        if( toolbar ) toolbar->update_close_button( view );
-    }
-}
-
-
-//
 // ツールバーボタン表示更新
 //
 void DragableNoteBook::update_toolbar_button()

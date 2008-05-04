@@ -27,6 +27,10 @@ MainToolBar::MainToolBar() :
       m_button_thread( ICON::THREAD ),
       m_button_image( ICON::IMAGE )
 {
+    m_entry_url.set_size_request( 0 );
+    m_tool_url.add( m_entry_url );
+    m_tool_url.set_expand( true );
+
     set_tooltip( m_button_go, ITEM_NAME_GO );
 
     set_tooltip( m_button_bbslist, std::string( ITEM_NAME_BBSLISTVIEW )
@@ -53,14 +57,38 @@ void MainToolBar::pack_buttons()
         int item = SESSION::get_item_main_toolbar( num );
         if( item == ITEM_END ) break;
         switch( item ){
-            case ITEM_BBSLISTVIEW: get_buttonbar().pack_start( m_button_bbslist, Gtk::PACK_SHRINK ); break;
-            case ITEM_FAVORITEVIEW: get_buttonbar().pack_start( m_button_favorite, Gtk::PACK_SHRINK ); break;
-            case ITEM_BOARDVIEW: get_buttonbar().pack_start( m_button_board, Gtk::PACK_SHRINK ); break;
-            case ITEM_ARTICLEVIEW: get_buttonbar().pack_start( m_button_thread, Gtk::PACK_SHRINK ); break;
-            case ITEM_IMAGEVIEW: if( CONFIG::get_use_image_view() ) get_buttonbar().pack_start( m_button_image, Gtk::PACK_SHRINK ); break;
-            case ITEM_URL: get_buttonbar().pack_start( m_entry_url ); break;
-            case ITEM_GO: get_buttonbar().pack_start( m_button_go, Gtk::PACK_SHRINK ); break;
-            case ITEM_SEPARATOR: pack_separator(); break;
+
+            case ITEM_BBSLISTVIEW:
+                get_buttonbar().append( m_button_bbslist );
+                break;
+
+            case ITEM_FAVORITEVIEW:
+                get_buttonbar().append( m_button_favorite );
+                break;
+
+            case ITEM_BOARDVIEW:
+                get_buttonbar().append( m_button_board );
+                break;
+
+            case ITEM_ARTICLEVIEW:
+                get_buttonbar().append( m_button_thread );
+                break;
+
+            case ITEM_IMAGEVIEW:
+                if( CONFIG::get_use_image_view() ) get_buttonbar().append( m_button_image );
+                break;
+
+            case ITEM_URL:
+                get_buttonbar().append( m_tool_url );
+                break;
+
+            case ITEM_GO:
+                get_buttonbar().append( m_button_go );
+                break;
+
+            case ITEM_SEPARATOR:
+                pack_separator();
+                break;
         }
         ++num;
     }

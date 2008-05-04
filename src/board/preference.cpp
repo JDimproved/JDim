@@ -8,6 +8,8 @@
 #include "dbtree/interface.h"
 #include "dbtree/boardbase.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "jdlib/miscutil.h"
 
 #include "cache.h"
@@ -26,6 +28,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
 
       m_frame_cookie( "クッキー＆Hana" ),
       m_button_cookie( "削除" ) ,
+
+      m_check_live( "実況する" ),
 
       m_proxy_frame( "読み込み用" ),
       m_proxy_frame_w( "書き込み用" ),
@@ -89,6 +93,27 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
 
     m_frame_cookie.add( m_hbox_cookie );
 
+    // 実況
+    const int live_sec = DBTREE::board_get_live_sec( get_url() );
+    m_label_live.set_text( "実況時の更新間隔(秒)：" );
+
+    m_spin_live.set_range( MIN_LIVE_RELOAD_SEC, 1200 );
+    m_spin_live.set_increments( 1, 1 );
+    m_spin_live.set_value( MAX( live_sec, MIN_LIVE_RELOAD_SEC ) );
+    if( live_sec ){
+        m_check_live.set_active( true );
+        m_spin_live.set_sensitive( true );
+    }
+    else{
+        m_check_live.set_active( false );
+        m_spin_live.set_sensitive( false );
+    }
+    m_check_live.signal_toggled().connect( sigc::mem_fun(*this, &Preferences::slot_check_live ) );
+
+    m_hbox_live.set_spacing( 4 );
+    m_hbox_live.pack_start( m_label_live, Gtk::PACK_SHRINK );
+    m_hbox_live.pack_start( m_spin_live, Gtk::PACK_SHRINK );
+    m_hbox_live.pack_start( m_check_live, Gtk::PACK_SHRINK );
 
     // 一般ページのパッキング
     m_label_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
@@ -116,6 +141,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox.pack_start( m_label_line, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_byte, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_entry_max_res, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_hbox_live, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_samba, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_write, Gtk::PACK_SHRINK );
@@ -273,6 +299,17 @@ void Preferences::slot_delete_cookie()
 }
 
 
+void Preferences::slot_check_live()
+{
+    if( m_check_live.get_active() ){
+        m_spin_live.set_sensitive( true );
+        SKELETON::MsgDiag mdiag( NULL, "実況を許された板以外では実況しないようにして下さい。\n\n実況状態のまま閉じたスレはJD終了時に削除されます。詳しくはマニュアルの実況の項目を参照して下さい。",
+                                 false, Gtk::MESSAGE_WARNING );
+        mdiag.run();
+    }
+    else m_spin_live.set_sensitive( false );
+}
+
 
 void Preferences::slot_switch_page( GtkNotebookPage*, guint page )
 {
@@ -326,6 +363,12 @@ void Preferences::slot_ok_clicked()
     std::string tmpmail = m_entry_writemail.get_text();
     if( tmpmail.empty() ) tmpmail = JD_MAIL_BLANK; // 空白の場合 JD_MAIL_BLANK をセットする
     DBTREE::board_set_write_mail( get_url(), tmpmail );
+
+    // 実況間隔
+    int live_sec = 0;
+    if( m_check_live.get_active() ) live_sec = m_spin_live.get_value_as_int();
+    DBTREE::board_set_live_sec( get_url(), live_sec );
+    CORE::core_set_command( "redraw_article_toolbar" );
 
     DBTREE::board_save_info( get_url() );
 }

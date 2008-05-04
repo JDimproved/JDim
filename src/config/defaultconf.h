@@ -43,6 +43,8 @@ namespace CONFIG
         CONF_KEY_SCROLL_SIZE = 2,   // スレビューのスクロール量(キー上下)
         CONF_JUMP_AFTER_RELOAD = 0, // スレビューでリロード後に一番下までスクロール
         CONF_JUMP_NEW_AFTER_RELOAD = 0, // スレビューでリロード後に新着までスクロール
+        CONF_LIVE_SPEED = 2,        // 実況速度
+        CONF_LIVE_THRESHOLD = 10,   // 実況のスクロールモードを切り替えるしきい値
         CONF_OPEN_ONE_CATEGORY = 0, // 板一覧でカテゴリを常にひとつだけ開く
         CONF_ALWAYS_WRITE_OK = 0,   // 書き込み時に書き込み確認ダイアログを出さない
         CONF_SAVE_POSTLOG = 0,      //書き込みログを保存

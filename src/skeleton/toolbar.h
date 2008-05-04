@@ -6,15 +6,16 @@
 #ifndef _TOOLBAR_H
 #define _TOOLBAR_H
 
-#include <gtkmm.h>
+#include "jdtoolbar.h"
 
+#include <gtkmm.h>
 
 namespace SKELETON
 {
     class Admin;
     class View;
-    class ImgButton;
-    class ImgToggleButton;
+    class ImgToolButton;
+    class ImgToggleToolButton;
     class BackForwardButton;
     class SearchEntry;
 
@@ -29,32 +30,46 @@ namespace SKELETON
         bool m_toolbar_shown;
 
         Gtk::Tooltips m_tooltip;
-        Gtk::HBox m_buttonbar;
+
+        // メインツールバー
+        SKELETON::JDToolbar m_buttonbar;
 
         // ラベル
+        Gtk::ToolItem* m_tool_label;
         Gtk::EventBox* m_ebox_label;
         Gtk::Label* m_label;
 
         // 検索関係
-        Gtk::HBox* m_searchbar; // 検索バー
+        Gtk::Toolbar* m_searchbar; // 検索バー
         bool m_searchbar_shown;
-        SKELETON::ImgButton *m_button_open_searchbar;
-        SKELETON::ImgButton *m_button_close_searchbar;
+        SKELETON::ImgToolButton *m_button_open_searchbar;
+        SKELETON::ImgToolButton *m_button_close_searchbar;
+        SKELETON::ImgToolButton *m_button_up_search;
+        SKELETON::ImgToolButton *m_button_down_search;
 
+        Gtk::ToolItem* m_tool_search;
         SKELETON::SearchEntry* m_entry_search;
-        SKELETON::ImgButton *m_button_up_search;
-        SKELETON::ImgButton *m_button_down_search;
+
+        // 板を開く
+        // Gtk::ToolButtonを使うとボタンの枠が表示されないことがあるので
+        // Gtk::ToolItemにGtk::Buttonをaddする
+        Gtk::ToolItem* m_tool_board;
+        Gtk::Button* m_button_board;
 
         // その他ボタン
-        SKELETON::ImgButton* m_button_write;
-        SKELETON::ImgButton* m_button_reload;
-        SKELETON::ImgButton* m_button_stop;
-        SKELETON::ImgButton* m_button_close;
-        SKELETON::ImgButton* m_button_delete;
-        SKELETON::ImgButton* m_button_favorite;
-        SKELETON::ImgToggleButton* m_button_lock;
+        SKELETON::ImgToolButton* m_button_write;
+        SKELETON::ImgToolButton* m_button_reload;
+        SKELETON::ImgToolButton* m_button_stop;
+        SKELETON::ImgToolButton* m_button_close;
+        SKELETON::ImgToolButton* m_button_delete;
+        SKELETON::ImgToolButton* m_button_favorite;
+        SKELETON::ImgToggleToolButton* m_button_lock;
 
+        // 進む、戻るボタン
+        Gtk::ToolItem* m_tool_back;
         SKELETON::BackForwardButton* m_button_back;
+
+        Gtk::ToolItem* m_tool_forward;
         SKELETON::BackForwardButton* m_button_forward;
 
       public:
@@ -65,7 +80,7 @@ namespace SKELETON
         void set_url( const std::string& url );
         const std::string& get_url() { return m_url; }
 
-        // タブが切り替わった時に呼び出される( Viewの情報を取得する )
+        // タブが切り替わった時にDragableNoteBookから呼び出される( Viewの情報を取得する )
         virtual void set_view( SKELETON::View * view );
 
         bool is_empty();
@@ -83,12 +98,6 @@ namespace SKELETON
         // 検索entryをフォーカス
         void focus_entry_search();
 
-        // ラベル表示更新
-        void update_label( SKELETON::View* view );
-
-        // 閉じるボタンの表示更新
-        void update_close_button( SKELETON::View* view );
-
         // ボタン表示更新
         void update_button();
 
@@ -102,33 +111,39 @@ namespace SKELETON
         void set_relief();
 
 
-        Gtk::HBox& get_buttonbar(){ return m_buttonbar; }
+        Gtk::Toolbar& get_buttonbar(){ return m_buttonbar; }
 
         // ラベル
-        Gtk::EventBox* get_label();
+        Gtk::ToolItem* get_label();
 
         // 検索関係
-        Gtk::HBox* get_searchbar();
-        SKELETON::ImgButton* get_button_open_searchbar();
-        SKELETON::ImgButton* get_button_close_searchbar();
+        Gtk::Toolbar* get_searchbar();
+        Gtk::ToolButton* get_button_open_searchbar();
+        Gtk::ToolButton* get_button_close_searchbar();
 
-        SKELETON::SearchEntry* get_entry_search();
-        Gtk::Button* get_button_up_search();
-        Gtk::Button* get_button_down_search();
+        Gtk::ToolItem* get_entry_search();
+        void add_search_mode( const int mode );
+        const std::string get_search_text();
+        Gtk::ToolButton* get_button_up_search();
+        Gtk::ToolButton* get_button_down_search();
+
+        // 板を開く
+        Gtk::ToolItem* get_button_board();
 
         // その他ボタン
-        Gtk::Button* get_button_write();
-        Gtk::Button* get_button_reload();
-        Gtk::Button* get_button_stop();
-        Gtk::Button* get_button_close();
-        Gtk::Button* get_button_delete();
-        Gtk::Button* get_button_favorite();
-        Gtk::ToggleButton* get_button_lock();
+        Gtk::ToolButton* get_button_write();
+        Gtk::ToolButton* get_button_reload();
+        Gtk::ToolButton* get_button_stop();
+        Gtk::ToolButton* get_button_close();
+        Gtk::ToolButton* get_button_delete();
+        Gtk::ToolButton* get_button_favorite();
+        Gtk::ToggleToolButton* get_button_lock();
 
-        Gtk::Button* get_button_back();
-        Gtk::Button* get_button_forward();
+        Gtk::ToolItem* get_button_back();
+        Gtk::ToolItem* get_button_forward();
 
         void pack_separator();
+        void pack_transparent_separator();
         void set_tooltip( Gtk::Widget& widget, const std::string& tip ){ m_tooltip.set_tip( widget, tip ); }
 
       private:
@@ -145,6 +160,9 @@ namespace SKELETON
         void slot_operate_search( int controlid );
         void slot_clicked_up_search();
         void slot_clicked_down_search();
+
+        // 板を開く
+        void slot_open_board();
 
         // その他ボタン
         void slot_clicked_write();

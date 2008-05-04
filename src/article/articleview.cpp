@@ -28,6 +28,13 @@
 using namespace ARTICLE;
 
 
+enum
+{
+    LIVE_SEC_PLUS = 5, // 実況で更新失敗/成功ごとに増減する更新間隔(秒)
+    LIVE_MAX_RELOAD = 5  // 実況でこの回数連続でリロードに失敗したら実況停止
+};
+
+
 // メインビュー
 
 ArticleViewMain::ArticleViewMain( const std::string& url )
@@ -40,6 +47,14 @@ ArticleViewMain::ArticleViewMain( const std::string& url )
     // オートリロード可
     set_enable_autoreload( true );
 
+    // 実況可能
+    set_enable_live( true );
+
+    // 実況したままスレを閉じたらJD終了後にスレを削除する
+    // キャンセルするにはもう一度スレを開いて実況しないで閉じる
+    // ArticleViewBase::set_command()も参照
+    SESSION::remove_delete_list( url_article() );
+
     setup_view();
 }
 
@@ -50,7 +65,7 @@ ArticleViewMain::~ArticleViewMain()
 #ifdef _DEBUG    
     std::cout << "ArticleViewMain::~ArticleViewMain : " << get_url() << " url_article = " << url_article() << std::endl;
 #endif
-    int seen = drawarea()->get_seen_current();
+    const int seen = drawarea()->get_seen_current();
         
 #ifdef _DEBUG    
     std::cout << "set seen to " << seen << std::endl;
@@ -60,6 +75,18 @@ ArticleViewMain::~ArticleViewMain()
 
     // 閉じたタブ履歴更新
     CORE::core_set_command( "set_history_close", url_article() );
+
+    if( get_live() ) live_stop();
+}
+
+
+// virtual
+void ArticleViewMain::clock_in()
+{
+    ArticleViewBase::clock_in();
+
+    // 実況モードでリロード
+    if( get_live() && ! is_loading() && inc_autoreload_counter() ) exec_reload();
 }
 
 
@@ -128,12 +155,20 @@ const bool ArticleViewMain::is_broken()
 //
 // 再読み込み実行
 //
+// virtual
 void ArticleViewMain::exec_reload()
 {
+#ifdef _DEBUG
+    std::cout << "ArticleViewMain::exec_reload\n";
+#endif
+
     // オフライン
     if( ! SESSION::is_online() ){
         SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
         mdiag.run();
+
+        if( get_live() ) ARTICLE::get_admin()->set_command( "live_stop", get_url() );
+
         return;
     }
 
@@ -207,10 +242,15 @@ void ArticleViewMain::show_view()
         CONFIG::set_jump_after_reload( false );
         CONFIG::set_jump_new_after_reload( false );
 
+        // 一時的に実況モード解除
+        const bool live = get_live();
+        set_live( false );
+
         update_finish();
 
         CONFIG::set_jump_after_reload( jump_bottom );
         CONFIG::set_jump_new_after_reload( jump_new );
+        set_live( live );
     }
     else{
 
@@ -235,7 +275,7 @@ void ArticleViewMain::show_view()
     if( is_loading() ){
 
         set_status( "loading..." );
-        ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
+        ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status(), ( get_live() ? "force" : "" ) );
 
         // タブのアイコン状態を更新
         ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
@@ -282,7 +322,7 @@ void ArticleViewMain::update_finish()
     else if( is_old() ) str_tablabel = "[ DAT落ち ]  ";
 
     if( get_label().empty() || ! str_tablabel.empty() ) set_label( str_tablabel + DBTREE::article_subject( url_article() ) );
-    ARTICLE::get_admin()->set_command( "update_toolbar_label" );
+    ARTICLE::get_admin()->set_command( "redraw_toolbar" );
 
     // タブのラベルセット
     std::string str_label = DBTREE::article_subject( url_article() );
@@ -299,7 +339,7 @@ void ArticleViewMain::update_finish()
 #endif
 
     // 新着セパレータを消す
-    int number_new = DBTREE::article_number_new( url_article() );
+    const int number_new = DBTREE::article_number_new( url_article() );
     if( ! number_new ) drawarea()->hide_separator_new();
 
     // ステータス表示
@@ -315,7 +355,7 @@ void ArticleViewMain::update_finish()
            << str_stat;
 
     set_status( ss_tmp.str() );
-    ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
+    ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status(), ( get_live() ? "force" : "" ) );
 
     // タイトルセット
     set_title( DBTREE::article_subject( url_article() ) );
@@ -350,6 +390,37 @@ void ArticleViewMain::update_finish()
         std::cout << "jump_new_after_reload\n";
 #endif
         goto_new();
+    }
+
+    // 実況モードで新着がない場合はリロード間隔を空ける
+    if( get_live() ){
+
+        const int live_sec = DBTREE::board_get_live_sec( get_url() );
+
+        // 新着無し
+        if( ! number_new ){
+
+            set_autoreload_sec( get_autoreload_sec() + LIVE_SEC_PLUS );
+
+            // 何回かリロードに失敗したら実況モード停止
+            if( get_autoreload_sec() >= live_sec + LIVE_MAX_RELOAD * LIVE_SEC_PLUS ){
+                ARTICLE::get_admin()->set_command( "live_stop", get_url() );
+            }
+
+            // DAT 落ちしていたら停止
+            if( is_old() ) ARTICLE::get_admin()->set_command( "live_stop", get_url() );
+        }
+
+        // 新着あり
+        else{
+
+            set_autoreload_sec( MAX( live_sec, get_autoreload_sec() - LIVE_SEC_PLUS ) );
+
+            // messageビューが出ているときはフォーカスを移す
+            CORE::core_set_command( "switch_message" );
+        }
+
+        drawarea()->update_live_speed( get_autoreload_sec() );
     }
 
     if( m_show_instdialog ) show_instruct_diag();
@@ -400,4 +471,57 @@ void ArticleViewMain::relayout()
     if( num_reserve ) drawarea()->goto_num( num_reserve );
     else if( seen ) drawarea()->goto_num( seen );
     drawarea()->redraw_view();
+}
+
+
+
+//
+// 実況開始
+//
+// virtual
+void ArticleViewMain::live_start()
+{
+    if( get_live() ) return;
+
+    // オフライン
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewMain::live_start\n";
+#endif
+
+    const int live_sec = DBTREE::board_get_live_sec( get_url() );
+
+    set_live( true );
+    ARTICLE::get_admin()->set_command_immediately( "start_autoreload", get_url(), "on", MISC::itostr( live_sec ) );
+    set_autoreload_counter( live_sec * 1000/TIMER_TIMEOUT );
+    drawarea()->live_start();
+    drawarea()->update_live_speed( live_sec );
+
+    goto_bottom();
+}
+
+
+//
+// 実況停止
+//
+// virtual
+void ArticleViewMain::live_stop()
+{
+    if( ! get_live() ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewMain::live_stop\n";
+#endif
+
+    set_live( false );
+    ARTICLE::get_admin()->set_command_immediately( "stop_autoreload", get_url() );
+    drawarea()->live_stop();
+
+    set_status( "実況停止" );
+    ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status(), "force" );
 }

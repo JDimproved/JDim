@@ -1,9 +1,9 @@
 // ライセンス: GPL2
 
-// 画像つきメニュー付きボタン
+// メニュー付きボタン
 
-#ifndef _IMGMENUBUTTON_H
-#define _IMGMENUBUTTON_H
+#ifndef _MENUBUTTON_H
+#define _MENUBUTTON_H
 
 #include <gtkmm.h>
 #include <string>
@@ -16,7 +16,7 @@ enum
 
 namespace SKELETON
 {
-    class ImgMenuButton : public Gtk::Button
+    class MenuButton : public Gtk::Button
     {
         typedef sigc::signal< void > SIG_BUTTON_CLICKED;
         typedef sigc::signal< void, const int > SIG_SELECTED;
@@ -26,18 +26,22 @@ namespace SKELETON
 
         Gtk::Menu* m_popupmenu;
         std::vector< Gtk::MenuItem* > m_menuitems;
-        Gtk::Image* m_img;
+        Gtk::Widget* m_label;
         Gtk::Arrow* m_arrow;
 
         bool m_on_arrow;
+        bool m_enable_sig_clicked;
 
       public:
 
-      ImgMenuButton( const Gtk::StockID& stock_id,
+      MenuButton( Gtk::Widget& label );
+      MenuButton( const Gtk::StockID& stock_id,
                      const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
-      ImgMenuButton();
+      MenuButton();
 
-      virtual ~ImgMenuButton();
+      virtual ~MenuButton();
+
+      Gtk::Arrow* get_arrow(){ return m_arrow; }
 
       SIG_BUTTON_CLICKED signal_button_clicked(){ return m_sig_clicked; }
 
@@ -47,6 +51,10 @@ namespace SKELETON
       // メニュー項目追加
       void append_menu( std::vector< std::string >& items );
 
+      // 矢印ボタン以外をクリックしたときにSIG_BUTTON_CLICKEDをemitする
+      // false の時はボタンのどこを押してもメニューを表示する
+      void set_enable_sig_clicked( const bool enable ){ m_enable_sig_clicked = enable; }
+
       protected:
 
       // ポップアップメニュー表示
@@ -54,7 +62,7 @@ namespace SKELETON
 
       private:
 
-      void setup();
+      void setup( Gtk::Widget* label, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
 
       void slot_menu_selected( int i );
 

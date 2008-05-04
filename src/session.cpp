@@ -19,6 +19,7 @@
 
 #include <sstream>
 #include <cstring>
+#include <vector>
 
 #ifdef HAVE_SYS_UTSNAME_H
 #include <sys/utsname.h> // uname()
@@ -147,6 +148,9 @@ std::string dir_draft;
 
 bool popupmenu_shown;
 
+std::vector< std::string > delete_list;
+
+std::vector< std::string > live_urls;
 
 
 /////////////////////////////////////
@@ -190,6 +194,7 @@ std::vector< int > parse_items( const std::string& items_str )
         if( *it == ITEM_NAME_PREVVIEW ) items.push_back( ITEM_PREVVIEW );
         if( *it == ITEM_NAME_NEXTVIEW ) items.push_back( ITEM_NEXTVIEW );
         if( *it == ITEM_NAME_LOCK ) items.push_back( ITEM_LOCK );
+        if( *it == ITEM_NAME_LIVE ) items.push_back( ITEM_LIVE );
 
         if( *it == ITEM_NAME_NEWARTICLE ) items.push_back( ITEM_NEWARTICLE );
         if( *it == ITEM_NAME_SEARCHBOX ) items.push_back( ITEM_SEARCHBOX );
@@ -1065,4 +1070,83 @@ void SESSION::set_dir_draft( const std::string& dir ){ dir_draft = dir; }
 // ポップアップメニュー表示中
 const bool SESSION::is_popupmenu_shown(){ return popupmenu_shown; }
 void SESSION::set_popupmenu_shown( bool shown ){ popupmenu_shown = shown; }
+
+
+// JD終了時に削除するスレのリスト
+// 実況などしたスレは削除する。 Core::~Core()を参照
+std::vector< std::string >& SESSION::get_delete_list()
+{
+    return delete_list;
+}
+
+
+void SESSION::append_delete_list( const std::string& url )
+{
+    std::vector< std::string >::iterator it = delete_list.begin();
+    for( ; it != delete_list.end(); ++it ){
+        if( ( *it ) == url ) return;
+    }
+
+    delete_list.push_back( url );
+
+#ifdef _DEBUG
+    std::cout << "SESSION::append_delete_list urls == " << delete_list.size() << " url = " << url << std::endl;
+#endif
+}
+
+
+void SESSION::remove_delete_list( const std::string& url )
+{
+    if( delete_list.empty() ) return;
+
+    std::vector< std::string >::iterator it = delete_list.begin();
+    for( ; it != delete_list.end(); ++it ) if( ( *it ) == url ){ delete_list.erase( it ); break; }
+
+#ifdef _DEBUG
+    std::cout << "SESSION::remove_delete_list urls == " << delete_list.size() << " url = " << url << std::endl;
+#endif
+}
+
+
+// 実況実行中のスレか
+const bool SESSION::is_live( const std::string& url )
+{
+#ifdef _DEBUG
+    std::cout << "SESSION::is_live live_urls == " << live_urls.size() << " url = " << url << std::endl;
+#endif
+
+    if( live_urls.empty() ) return false;
+
+    std::vector< std::string >::iterator it = live_urls.begin();
+    for( ; it != live_urls.end(); ++it ){
+#ifdef _DEBUG
+        std::cout << (*it) << std::endl;
+#endif
+        if( ( *it ) == url ) return true;
+    }
+
+    return false;
+}
+
+
+void SESSION::append_live( const std::string& url )
+{
+    if( ! is_live( url ) ) live_urls.push_back( url );
+
+#ifdef _DEBUG
+    std::cout << "SESSION::append_live live_urls == " << live_urls.size() << " url = " << url << std::endl;
+#endif
+}
+
+void SESSION::remove_live( const std::string& url )
+{
+    if( live_urls.empty() ) return;
+
+    std::vector< std::string >::iterator it = live_urls.begin();
+    for( ; it != live_urls.end(); ++it ) if( ( *it ) == url ){ live_urls.erase( it ); break; }
+
+#ifdef _DEBUG
+    std::cout << "SESSION::remove_live live_urls == " << live_urls.size() << " url = " << url << std::endl;
+#endif
+}
 

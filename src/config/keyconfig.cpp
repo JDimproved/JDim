@@ -128,6 +128,7 @@ void KeyConfig::load_conf()
 
     SETMOTION( "GotoNew", "F4" );
     SETMOTION( "WriteMessage", "w Alt+w" );
+    SETMOTION( "LiveStartStop", "F6" );
 
     // IMAGE
     SETMOTION( "CancelMosaic", "c" );

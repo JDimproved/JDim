@@ -427,6 +427,7 @@ ArticleViewDrawout::ArticleViewDrawout( const std::string& url, const std::strin
     gettimeofday( &tv, &tz );
 
     set_search_query( query );
+    set_pre_query( query );
 
     //viewのURL更新
     std::string url_tmp = url_article() + ARTICLE_SIGN + KEYWORD_SIGN + query + ORMODE_SIGN;

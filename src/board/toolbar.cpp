@@ -20,7 +20,7 @@ BoardToolBar::BoardToolBar() :
     SKELETON::ToolBar( BOARD::get_admin() )
 {
     pack_buttons();
-    get_entry_search()->add_mode( CONTROL::MODE_BOARD );
+    add_search_mode( CONTROL::MODE_BOARD );
 }
 
 // ボタンのパッキング
@@ -34,54 +34,54 @@ void BoardToolBar::pack_buttons()
         switch( item ){
 
             case ITEM_NEWARTICLE:
-                get_buttonbar().pack_start( *get_button_write(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_write() );
                 set_tooltip( *get_button_write(), CONTROL::get_label_motion( CONTROL::NewArticle ) );
                 break;
 
             case ITEM_SEARCHBOX:
-                get_buttonbar().pack_start( *get_entry_search(), Gtk::PACK_EXPAND_WIDGET );
+                get_buttonbar().append( *get_entry_search() );
                 break;
 
             case ITEM_SEARCH_NEXT:
-                get_buttonbar().pack_start( *get_button_down_search(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_down_search() );
                 break;
 
             case ITEM_SEARCH_PREV:
-                get_buttonbar().pack_start( *get_button_up_search(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_up_search() );
                 break;
 
             case ITEM_RELOAD:
-                get_buttonbar().pack_start( *get_button_reload(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_reload() );
                 break;
 
             case ITEM_STOPLOADING:
-                get_buttonbar().pack_start( *get_button_stop(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_stop() );
                 break;
 
             case ITEM_FAVORITE:
-                get_buttonbar().pack_start( *get_button_favorite(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_favorite() );
                 set_tooltip( *get_button_favorite(), CONTROL::get_label_motion( CONTROL::AppendFavorite )
                              + "\n\nスレ一覧のタブか選択したスレをお気に入りに直接Ｄ＆Ｄしても登録可能" );
                 break;
 
             case ITEM_DELETE:
-                get_buttonbar().pack_start( *get_button_delete(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_delete() );
                 break;
 
             case ITEM_QUIT:
-                get_buttonbar().pack_start( *get_button_close(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_close() );
                 break;
 
             case ITEM_PREVVIEW:
-                get_buttonbar().pack_start( *get_button_back(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_back() );
                 break;
 
             case ITEM_NEXTVIEW:
-                get_buttonbar().pack_start( *get_button_forward(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_forward() );
                 break;
 
             case ITEM_LOCK:
-                get_buttonbar().pack_start( *get_button_lock(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_lock() );
                 break;
 
             case ITEM_SEPARATOR:

@@ -68,6 +68,12 @@ namespace BOARD
         Gtk::VBox m_vbox_cookie;
         Gtk::Button m_button_cookie;
 
+        // 実況の更新間隔
+        Gtk::HBox m_hbox_live;
+        Gtk::Label m_label_live;
+        Gtk::CheckButton m_check_live;
+        SKELETON::SpinButton m_spin_live;
+
         // プロキシ
         Gtk::VBox m_vbox_proxy;
         Gtk::Label m_label_proxy;
@@ -123,6 +129,7 @@ namespace BOARD
       private:
         void slot_clear_samba();
         void slot_delete_cookie();
+        void slot_check_live();
         void slot_switch_page( GtkNotebookPage*, guint page );
         virtual void slot_ok_clicked();
         virtual bool slot_timeout( int timer_number );

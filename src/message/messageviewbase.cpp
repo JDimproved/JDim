@@ -193,16 +193,23 @@ void MessageViewBase::init_color()
 
 
 //
+// ロード中
+//
+// virtual
+const bool MessageViewBase::is_loading()
+{
+    if( ! m_post ) return false;
+
+    return m_post->is_loading();
+}
+
+
+//
 // コマンド
 //
 bool MessageViewBase::set_command( const std::string& command, const std::string& arg )
 {
     if( command == "empty" ) return get_message().empty();
-
-    else if( command == "loading" ){
-        if( !m_post ) return false;
-        return m_post->is_loading();
-    }
 
     else if( command == "toggle_preview" ) toggle_preview();
     else if( command == "undo_text" ) m_text_message.undo();
@@ -340,14 +347,25 @@ void MessageViewBase::pack_widget()
     }
     else m_entry_mail.set_text( "sage" );
 
-    m_hbox_name_mail.pack_start( m_label_name, Gtk::PACK_SHRINK );
-    m_hbox_name_mail.pack_start( m_check_fixname, Gtk::PACK_SHRINK );
-    m_hbox_name_mail.pack_start( m_entry_name );
-    m_hbox_name_mail.pack_start( m_label_mail, Gtk::PACK_SHRINK );
-    m_hbox_name_mail.pack_start( m_check_fixmail, Gtk::PACK_SHRINK );
-    m_hbox_name_mail.pack_start( m_entry_mail );
+    m_tool_name.add( m_label_name );
+    m_tool_mail.add( m_label_mail );
+    m_tool_fixname.add( m_check_fixname );
+    m_tool_fixmail.add( m_check_fixmail );
+    m_tool_entry_name.add( m_entry_name );
+    m_tool_entry_mail.add( m_entry_mail );
+    m_tool_entry_name.set_expand( true );
+    m_tool_entry_mail.set_expand( true );
 
-    m_msgview.pack_start( m_hbox_name_mail, Gtk::PACK_SHRINK );    
+    m_toolbar_name_mail.set_icon_size( Gtk::ICON_SIZE_MENU );
+    m_toolbar_name_mail.set_toolbar_style( Gtk::TOOLBAR_ICONS );
+    m_toolbar_name_mail.append( m_tool_name );
+    m_toolbar_name_mail.append( m_tool_fixname );
+    m_toolbar_name_mail.append( m_tool_entry_name );
+    m_toolbar_name_mail.append( m_tool_mail );
+    m_toolbar_name_mail.append( m_tool_fixmail );
+    m_toolbar_name_mail.append( m_tool_entry_mail );
+
+    m_msgview.pack_start( m_toolbar_name_mail, Gtk::PACK_SHRINK );    
     m_msgview.pack_start( m_text_message );
 
     m_text_message.set_accepts_tab( false );
@@ -359,12 +377,14 @@ void MessageViewBase::pack_widget()
     m_preview = CORE::ViewFactory( CORE::VIEW_ARTICLEPREVIEW, get_url() );
 
     m_notebook.set_show_tabs( false );
+    m_notebook.set_show_border( false );
     m_notebook.append_page( m_msgview, "メッセージ" );
     m_notebook.append_page( *m_preview, "プレビュー" );
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &MessageViewBase::slot_switch_page ) );
     m_notebook.set_current_page( PAGE_MESSAGE );
 
     pack_start( m_notebook );
+    set_size_request( 1, 1 );
 
     // フォントセット
     init_font( CONFIG::get_fontname( FONT_MESSAGE ) );
@@ -666,7 +686,7 @@ void MessageViewBase::post_fin()
 
         close_view();
 
-        reload();
+        if( ! SESSION::is_live( get_url() ) ) reload();
     }
 
     // タイムアウト
@@ -700,10 +720,10 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
     if( m_preview && page == PAGE_PREVIEW ){
 
         // ツールバー切り替え
-        std::string label = " [ プレビュー ] - ";
-        if( MESSAGE::get_admin()->get_entry_subject() ) label += MESSAGE::get_admin()->get_entry_subject()->get_text();
-        set_label( label );
         MESSAGE::get_admin()->set_command( "switch_toolbar_preview" );
+
+        std::string new_subject = MESSAGE::get_admin()->get_new_subject();
+        if( ! new_subject.empty() ) set_label( new_subject );
 
         // URLを除外してエスケープ
         std::string msg = MISC::html_escape( m_text_message.get_text(), false );
@@ -800,8 +820,8 @@ void MessageViewBase::save_postlog()
 {
     if( ! CONFIG::get_save_postlog() ) return;
 
-    std::string subject;
-    if( MESSAGE::get_admin()->get_entry_subject() ) subject = MESSAGE::get_admin()->get_entry_subject()->get_text();
+    std::string subject = MESSAGE::get_admin()->get_new_subject();
+    if( subject.empty() ) subject = DBTREE::article_subject( get_url() );
     std::string msg = get_text_message().get_text();
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();

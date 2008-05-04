@@ -91,7 +91,7 @@ void ArticleViewSearch::update_url_query( const bool update_history )
     else label = "ログ検索";
     if( ! get_search_query().empty() ) label += " ： " + get_search_query();
     set_label( label );
-    if( update_history ) ARTICLE::get_admin()->set_command( "update_toolbar_label" );
+    if( update_history ) ARTICLE::get_admin()->set_command( "redraw_toolbar" );
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );

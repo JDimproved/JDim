@@ -301,8 +301,8 @@ namespace DBTREE
         const bool is_bookmarked_thread() const { return m_bookmarked_thread; }
 
         // 「レス」のブックマーク
-        int get_num_bookmark();
-        bool is_bookmarked( int number );
+        const int get_num_bookmark();
+        const bool is_bookmarked( int number );
         void set_bookmark( int number, bool set );
 
         // 情報ファイル読み込み

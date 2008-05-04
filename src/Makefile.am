@@ -104,6 +104,7 @@ noinst_HEADERS = \
 	msgitempref.h \
 	sidebaritempref.h \
 	fontcolorpref.h \
+	livepref.h \
 	iomonitor.h
 
 

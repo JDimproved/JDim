@@ -9,6 +9,8 @@
 #include "globalabonepref.h"
 #include "globalabonethreadpref.h"
 #include "fontcolorpref.h"
+#include "livepref.h"
+
 #include "mainitempref.h"
 #include "sidebaritempref.h"
 #include "boarditempref.h"
@@ -45,6 +47,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
 
         case PREFDIAG_FONTCOLOR:
             return new CORE::FontColorPref( parent, url );
+
+        case PREFDIAG_LIVE:
+            return new CORE::LivePref( parent, url );
 
         case PREFDIAG_MAINITEM:
             return new CORE::MainItemPref( parent, url );            

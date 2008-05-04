@@ -173,6 +173,15 @@ namespace CONFIG
         // スレビューでリロード後に新着までスクロール
         bool jump_new_after_reload;
 
+        // 実況モード
+        int live_mode;
+
+        // 実況速度
+        int live_speed;
+
+        // 実況のスクロールモードを切り替えるしきい値
+        int live_threshold;
+
         // 板一覧でカテゴリを常にひとつだけ開く
         bool open_one_category;
 

@@ -132,6 +132,8 @@ namespace CONTROL
         { "OpenParentBoard", ITEM_NAME_OPENBOARD },
         { "WriteMessage", ITEM_NAME_WRITEMSG },
 
+        { "LiveStartStop", ITEM_NAME_LIVE },
+
         { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },
         { "BmResButton", "ブックマーク" },

@@ -139,6 +139,8 @@ namespace DBTREE
     time_t board_write_leftsec( const std::string& url );
     const int board_get_number_max_res( const std::string& url );
     void board_set_number_max_res( const std::string& url, const int number );
+    const time_t board_get_live_sec( const std::string& url );
+    void board_set_live_sec( const std::string& url, time_t sec );
 
     // 全板の情報ファイル読み込み
     void read_boardinfo_all();
@@ -312,6 +314,7 @@ namespace DBTREE
     void set_bookmarked_thread( const std::string& url, bool bookmarked );
 
     // レスのブックマーク
+    const int get_num_bookmark( const std::string& url );
     const bool is_bookmarked( const std::string& url, int number );
     void set_bookmark( const std::string& url, int number, bool set );
 }

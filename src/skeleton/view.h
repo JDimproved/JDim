@@ -109,6 +109,14 @@ namespace SKELETON
         // オートリロードのカウンタをリセット
         void reset_autoreload_counter(); 
 
+        // オートリロード間隔設定
+        const int get_autoreload_sec() const{ return m_autoreload_sec; }
+        void set_autoreload_sec( const int sec ){ m_autoreload_sec = sec; }
+
+        // オートリロード用のカウンタ
+        const int get_autoreload_counter() const{ return m_autoreload_counter; }
+        void set_autoreload_counter( const int counter ) { m_autoreload_counter = counter; }
+
         // 数字入力ジャンプカウンタのインクリメント
         // 指定秒数を越えたら true を返す
         bool inc_keyjump_counter();

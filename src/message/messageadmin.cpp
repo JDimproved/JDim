@@ -55,17 +55,24 @@ MessageAdmin::~MessageAdmin()
 
 
 
-SKELETON::LabelEntry* MessageAdmin::get_entry_subject()
+void MessageAdmin::show_entry_new_subject( bool show )
 {
-    if( m_toolbar ) return m_toolbar->get_entry_subject();
+    if( m_toolbar ) m_toolbar->show_entry_new_subject( show );
+}
 
-    return NULL;
+
+std::string MessageAdmin::get_new_subject()
+{
+    if( m_toolbar ) return m_toolbar->get_new_subject();
+
+    return std::string();
 }
 
 
 //
 // ローカルコマンド実行
 //
+// virtual
 void MessageAdmin::command_local( const COMMAND_ARGS& command )
 {
 #ifdef _DEBUG
@@ -105,6 +112,7 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
 //
 // 閉じる
 //
+// virtual
 void MessageAdmin::close_view( const std::string& url )
 {
 #ifdef _DEBUG
@@ -114,7 +122,7 @@ void MessageAdmin::close_view( const std::string& url )
     SKELETON::View *view = get_current_view();
     if( ! view ) return;
 
-    if( view->set_command( "loading" ) ){
+    if( view->is_loading() ){
         SKELETON::MsgDiag mdiag( get_win(), "書き込み中です" );
         mdiag.run();
         return;
@@ -135,6 +143,7 @@ void MessageAdmin::close_view( const std::string& url )
 //
 // ウィンドウ開く
 //
+// virtual
 void MessageAdmin::open_window()
 {
     SKELETON::JDWindow* win = get_jdwin();
@@ -160,6 +169,7 @@ void MessageAdmin::open_window()
 //
 // ウィンドウ閉じる
 //
+// virtual
 void MessageAdmin::close_window()
 {
     if( get_jdwin() ){
@@ -173,12 +183,14 @@ void MessageAdmin::close_window()
 }
 
 
+// virtual
 void MessageAdmin::switch_admin()
 {
     if( ! has_focus() ) CORE::core_set_command( "switch_message" );
 }
 
 
+// virtual
 void MessageAdmin::tab_left()
 {
     SKELETON::View *view = get_current_view();
@@ -186,6 +198,7 @@ void MessageAdmin::tab_left()
 }
 
 
+// virtual
 void MessageAdmin::tab_right()
 {
     SKELETON::View *view = get_current_view();
@@ -199,6 +212,7 @@ void MessageAdmin::tab_right()
 //
 // command.arg2 == "new" なら新スレ
 //
+// virtual
 void MessageAdmin::open_view( const COMMAND_ARGS& command )
 {
     const std::string url = command.url;
@@ -212,7 +226,7 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
     SKELETON::View *current_view = get_current_view();
     if( current_view ){
 
-        if( current_view->set_command( "loading" ) ){
+        if( current_view->is_loading() ){
             SKELETON::MsgDiag mdiag( get_win(), "書き込み中です" );
             mdiag.run();
             return;
@@ -258,9 +272,6 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
     // ツールバー表示
     show_toolbar();
 
-    // ツールバーに板名を表示
-    if( get_entry_subject() ) get_entry_subject()->set_label( " [ " + DBTREE::board_name( url ) + " ] " );
-
     SKELETON::View *view = CORE::ViewFactory( type, url_msg, args );
     get_notebook()->append_page( url_msg, *view );
 
@@ -279,29 +290,34 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
 }
 
 
+
+//
+// ステータス表示
+//
+// virtual
+void MessageAdmin::set_status( const std::string& url, const std::string& stat, const bool force )
+{
+    // 埋め込みビューで、実況中の場合はステータス表示しない
+    if( SESSION::get_embedded_mes() && SESSION::is_live( url ) ) return;
+
+    SKELETON::Admin::set_status( url, stat, force );
+}
+
+
 //
 // ツールバー表示
 //
+// virtual
 void MessageAdmin::show_toolbar()
 {
-    // 作成済みの場合はdeleteしておく
-    if( m_toolbar ){
-
-        delete m_toolbar;
-        m_toolbar = NULL;
-
-        delete m_toolbar_preview;
-        m_toolbar_preview = NULL;
-    }
-
     if( ! m_toolbar ){
 
-        // 通常のツールバー( TOOLBAR_MESSAGE )
+        // 通常のツールバー
         m_toolbar = new MessageToolBar();
         get_notebook()->append_toolbar( *m_toolbar );
         m_toolbar->show_toolbar();
 
-        // プレビュー用のツールバー( TOOLBAR_PREVIEW )
+        // プレビュー用のツールバー
         m_toolbar_preview = new MessageToolBarPreview();
         get_notebook()->append_toolbar( *m_toolbar_preview );
         m_toolbar_preview->show_toolbar();

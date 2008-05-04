@@ -530,6 +530,16 @@ void DBTREE::board_set_number_max_res( const std::string& url, const int number 
     DBTREE::get_board( url )->set_number_max_res( number );
 }
 
+const time_t DBTREE::board_get_live_sec( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_live_sec();
+}
+
+void DBTREE::board_set_live_sec( const std::string& url, time_t sec )
+{
+    DBTREE::get_board( url )->set_live_sec( sec );
+}
+
 
 /////////////////////////////////////////////////
 
@@ -1011,6 +1021,12 @@ const bool DBTREE::is_bookmarked_thread( const std::string& url )
 void DBTREE::set_bookmarked_thread( const std::string& url, bool bookmarked )
 {
     DBTREE::get_article( url )->set_bookmarked_thread( bookmarked );
+}
+
+
+const int DBTREE::get_num_bookmark( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_num_bookmark();
 }
 
 const bool DBTREE::is_bookmarked( const std::string& url, int number )

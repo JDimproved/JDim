@@ -153,6 +153,23 @@ Core::~Core()
 
     SESSION::set_quitting( true );
 
+    // 削除リストに登録されているスレを削除
+    std::vector< std::string >& dellist =  SESSION::get_delete_list();
+    if( dellist.size() ){
+        std::vector< std::string >::iterator it = dellist.begin();
+        for( ; it != dellist.end(); ++it ){
+
+            // しおりが付いている場合は削除しない
+            if( ! DBTREE::is_bookmarked_thread( *it ) && ! DBTREE::get_num_bookmark( *it ) ){
+                DBTREE::delete_article( *it, false );
+                ARTICLE::get_admin()->set_command_immediately( "unlock_views", *it );
+                ARTICLE::get_admin()->set_command_immediately( "close_view", *it, 
+                                                               "closeall" // command.url を含む全てのビューを閉じる
+                    );
+            }
+        }
+    }
+
     // 設定保存
     // セッション情報は WinMain::~WinMain() で保存する
     CONFIG::save_conf();
@@ -458,9 +475,11 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュの消去(_D)..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
 
+    // 実況
+    m_action_group->add( Gtk::Action::create( "LivePref", "実況設定(_L)..." ), sigc::mem_fun( *this, &Core::slot_setup_live ) );
+
     // プライバシー
-    m_action_group->add( Gtk::Action::create( "Privacy_Menu", "プライバシー(_P)" ) );
-    m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "プライバシー情報の消去(_D)..." ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
+    m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "プライバシー情報の消去(_P)..." ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
 
 
     //////////////////////////////////////////////////////
@@ -691,10 +710,12 @@ void Core::run( bool init )
 
         "<separator/>"
 
+    // 実況
+        "<menuitem action='LivePref'/>"    
+        "<separator/>"
+
     // プライバシー
-        "<menu action='Privacy_Menu'>"
         "<menuitem action='ClearAllPrivacy'/>"
-        "</menu>"
 
         "</menu>"                         
 
@@ -714,6 +735,7 @@ void Core::run( bool init )
     m_ui_manager->add_ui_from_string( str_ui );
     m_menubar = dynamic_cast< Gtk::MenuBar* >( m_ui_manager->get_widget("/menu_bar") );
     assert( m_menubar );
+    m_menubar->set_size_request( 0 );
 
     // 履歴メニュー追加
     Gtk::MenuItem* menuitem = Gtk::manage( new Gtk::MenuItem( "履歴(_S)", true ) );
@@ -1462,6 +1484,15 @@ void Core::slot_toggle_abone_transp_chain()
     // あぼーん情報更新
     DBTREE::update_abone_all_article();
     CORE::core_set_command( "relayout_all_article" );
+}
+
+
+// 実況設定
+void Core::slot_setup_live()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_LIVE, "" );
+    pref->run();
+    delete pref;
 }
 
 
@@ -2562,6 +2593,13 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "toggle_article_icon" ){
 
         ARTICLE::get_admin()->set_command( "toggle_icon", command.url );
+        return;
+    }
+
+    // ツールバー表示更新
+    else if( command.command  == "redraw_article_toolbar" ){
+
+        ARTICLE::get_admin()->set_command( "redraw_toolbar" );
         return;
     }
 

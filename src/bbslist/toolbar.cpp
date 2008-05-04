@@ -7,6 +7,7 @@
 #include "bbslistadmin.h"
 
 #include "skeleton/compentry.h"
+#include "skeleton/view.h"
 
 #include "command.h"
 #include "controlid.h"
@@ -17,23 +18,31 @@ using namespace BBSLIST;
 
 
 BBSListToolBar::BBSListToolBar() :
-    SKELETON::ToolBar( BBSLIST::get_admin() )
+    SKELETON::ToolBar( BBSLIST::get_admin() ),
+    m_button_toggle( m_label )
 {
-    set_tooltip( m_button_toggle, "板一覧とお気に入りの切り替え" );
+    if( m_button_toggle.get_arrow() ) set_tooltip( *m_button_toggle.get_arrow(),
+                                                   "板一覧とお気に入りの切り替え\n\nマウスホイール回転でも切り替え可能" );
 
+    m_label.set_alignment( Gtk::ALIGN_LEFT );
     std::vector< std::string > menu;
     menu.push_back( "板一覧" );
     menu.push_back( "お気に入り" );
     m_button_toggle.append_menu( menu );
     m_button_toggle.signal_selected().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_toggle ) );
+    m_button_toggle.signal_scroll_event().connect(  sigc::mem_fun( *this, &BBSListToolBar::slot_scroll_event ));
+    m_button_toggle.set_enable_sig_clicked( false );
+    m_tool_toggle.set_expand( true );
+    m_tool_toggle.add( m_button_toggle );
 
-    m_hbox_label.pack_start( *get_label(), Gtk::PACK_EXPAND_WIDGET, 4 );
-    m_hbox_label.pack_start( m_button_toggle, Gtk::PACK_SHRINK );
-    m_hbox_label.pack_start( *get_button_close(), Gtk::PACK_SHRINK );
-    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
+    m_tool_label.set_icon_size( Gtk::ICON_SIZE_MENU );
+    m_tool_label.set_toolbar_style( Gtk::TOOLBAR_ICONS );
+    m_tool_label.append( m_tool_toggle );
+    m_tool_label.append( *get_button_close() );
+    pack_start( m_tool_label, Gtk::PACK_SHRINK );
 
     pack_buttons();
-    get_entry_search()->add_mode( CONTROL::MODE_BBSLIST );
+    add_search_mode( CONTROL::MODE_BBSLIST );
 }
 
 
@@ -50,15 +59,15 @@ void BBSListToolBar::pack_buttons()
         switch( item ){
 
             case ITEM_SEARCHBOX:
-                get_buttonbar().pack_start( *get_entry_search(), Gtk::PACK_EXPAND_WIDGET, 2 );
+                get_buttonbar().append( *get_entry_search() );
                 break;
 
             case ITEM_SEARCH_NEXT:
-                get_buttonbar().pack_start( *get_button_down_search(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_down_search() );
                 break;
 
             case ITEM_SEARCH_PREV:
-                get_buttonbar().pack_start( *get_button_up_search(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_up_search() );
                 break;
 
             case ITEM_SEPARATOR:
@@ -70,6 +79,17 @@ void BBSListToolBar::pack_buttons()
 
     set_relief();
     show_all_children();
+}
+
+
+
+// タブが切り替わった時にDragableNoteBook::set_current_toolbar()から呼び出される( Viewの情報を取得する )
+// virtual
+void BBSListToolBar::set_view( SKELETON::View* view )
+{
+    ToolBar::set_view( view );
+
+    if( view )  m_label.set_text( view->get_label() );
 }
 
 
@@ -89,4 +109,19 @@ void BBSListToolBar::slot_toggle( int i )
              if( get_url() != URL_FAVORITEVIEW ) CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW ); 	 
              break; 	 
      }
+}
+
+
+bool BBSListToolBar::slot_scroll_event( GdkEventScroll* event )
+{
+    guint direction = event->direction;
+
+#ifdef _DEBUG
+    std::cout << "BBSListToolBar::slot_scroll_event dir = " << direction << std::endl;
+#endif
+
+    if( direction == GDK_SCROLL_UP ) slot_toggle( 0 );
+    if( direction == GDK_SCROLL_DOWN ) slot_toggle( 1 );
+
+    return true;
 }

@@ -7,6 +7,7 @@
 #include "skeleton/editview.h"
 #include "skeleton/imgbutton.h"
 #include "skeleton/compentry.h"
+#include "skeleton/jdtoolbar.h"
 
 namespace JDLIB
 {
@@ -34,18 +35,26 @@ namespace MESSAGE
         Gtk::Notebook m_notebook;
         SKELETON::View* m_preview;
         Gtk::VBox m_msgview;
-        
-        Gtk::HBox m_hbox_name_mail;
+
+        SKELETON::JDToolbar m_toolbar_name_mail;
+
+        Gtk::ToolItem m_tool_name;
+        Gtk::ToolItem m_tool_mail;
+        Gtk::ToolItem m_tool_fixname;
+        Gtk::ToolItem m_tool_fixmail;
+        Gtk::ToolItem m_tool_entry_name;
+        Gtk::ToolItem m_tool_entry_mail;
+
         Gtk::Label m_label_name;
         Gtk::Label m_label_mail;
         Gtk::CheckButton m_check_fixname;
         Gtk::CheckButton m_check_fixmail;
-
-        bool m_enable_focus;
-
         SKELETON::NameEntry m_entry_name;
         SKELETON::MailEntry m_entry_mail;
+
         SKELETON::EditView m_text_message;
+
+        bool m_enable_focus;
 
         // 文字数計算用
         JDLIB::Iconv* m_iconv;
@@ -69,6 +78,9 @@ namespace MESSAGE
 
         // コマンド
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
+
+        // ロード中
+        virtual const bool is_loading();
 
         // SKELETON::View の関数のオーバロード
         virtual void clock_in();

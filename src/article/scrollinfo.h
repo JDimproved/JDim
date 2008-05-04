@@ -27,17 +27,24 @@ namespace ARTICLE
         int dy; // スクロール量
         int res; // レス番号
         
-        // 以下はオートスクロールモード用の変数
-
+        // オートスクロールモード(マウスの中ボタン押し)用の変数
         int x; // 中心のx座標
         int y; // 中心のy座標
         bool show_marker;  // true ならマーカを出す
         bool enable_up;    // true なら上方向にスクロール可
         bool enable_down;  // true なら下方向にスクロール可
-
         bool just_finished; // true ならオートスクロールが丁度終わったところ( slot_button_release_drawarea() で使う )
 
-        SCROLLINFO(){ reset(); }
+        // 実況モード用変数
+        bool live;
+        double live_speed;
+        int live_counter;
+
+        SCROLLINFO()
+        : live( false )
+        {
+            reset();
+        }
 
         void reset()
         {

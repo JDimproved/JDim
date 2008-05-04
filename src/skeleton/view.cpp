@@ -80,8 +80,8 @@ void View::update_url( const std::string& url_old, const std::string& url_new )
 // clock_in_always()はviewの種類に依らず常に呼び出されるので重い処理を含めてはいけない
 void View::clock_in_always()
 {
-    // オートリロード
-    if( inc_autoreload_counter() ) reload();
+    // タブ単位でのオートリロードモード
+    if( m_autoreload_mode == AUTORELOAD_ONCE && inc_autoreload_counter() ) reload();
 
     // キーボード数字入力ジャンプ
     if( inc_keyjump_counter() ){
@@ -112,6 +112,7 @@ bool View::inc_autoreload_counter()
 void View::set_autoreload_mode( int mode, int sec )
 {
     if( ! m_enable_autoreload ) return;
+    if( m_autoreload_mode != AUTORELOAD_NOT && mode != AUTORELOAD_NOT ) return;
 
     m_autoreload_mode = mode;
     m_autoreload_sec = sec;
@@ -123,6 +124,8 @@ void View::set_autoreload_mode( int mode, int sec )
 void View::reset_autoreload_counter()
 {
     m_autoreload_counter = 0;
+
+    // オートリロードのモードがAUTORELOAD_ONCEの時はオートリロード停止
     if( m_autoreload_mode == AUTORELOAD_ONCE ) m_autoreload_mode = AUTORELOAD_NOT;
 }
 

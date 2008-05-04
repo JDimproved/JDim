@@ -203,6 +203,13 @@ void CONFIG::set_jump_after_reload( bool set ){ get_confitem()->jump_after_reloa
 const bool CONFIG::get_jump_new_after_reload(){ return get_confitem()->jump_new_after_reload; }
 void CONFIG::set_jump_new_after_reload( bool set ){ get_confitem()->jump_new_after_reload = set; }
 
+const int CONFIG::get_live_mode(){ return get_confitem()->live_mode; }
+void CONFIG::set_live_mode( const int mode ) { get_confitem()->live_mode = mode; }
+const int CONFIG::get_live_speed(){ return get_confitem()->live_speed; }
+void CONFIG::set_live_speed( const int speed ){ get_confitem()->live_speed = speed; }
+const int CONFIG::get_live_threshold(){ return get_confitem()->live_threshold; }
+void CONFIG::set_live_threshode( const int th ){ get_confitem()->live_threshold = th; }
+
 const bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; }
 const bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }
 void CONFIG::set_always_write_ok( bool write_ok ){ get_confitem()->always_write_ok = write_ok; }

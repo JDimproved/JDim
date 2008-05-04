@@ -63,7 +63,9 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
       m_enable_menuslot( true ),
       m_current_bm( 0 ),
       m_show_url4report( false ),
-      m_url_show_status( false )
+      m_url_show_status( false ),
+      m_enable_live( false ),
+      m_live( false )
 {
 #ifdef _DEBUG    
     std::cout << "ArticleViewBase::ArticleViewBase : " << get_url() << std::endl;
@@ -538,6 +540,37 @@ bool ArticleViewBase::set_command( const std::string& command, const std::string
     else if( command == "delete_popup" ) delete_popup();
     else if( command == "clear_highlight" ) clear_highlight();
 
+    // 実況手動切り替え
+    else if( command == "live_start_stop" ){
+
+        if( ! get_enable_live() ){
+
+            if( m_enable_live && ! DBTREE::board_get_live_sec( m_url_article ) ){
+                SKELETON::MsgDiag mdiag( NULL, "実況を行うには板のプロパティで更新間隔を設定して下さい。" );
+                mdiag.run();
+            }
+
+            return true;
+        }
+
+        if( get_live() ){
+            live_stop();
+
+            // 実況したスレは終了時に削除する
+            SESSION::remove_delete_list( m_url_article );
+        }
+        else{
+            live_start();
+
+            // 手動で停止した場合は終了時の削除をキャンセルする
+            SESSION::append_delete_list( m_url_article );
+        }
+    }
+
+    // dat落ちや更新が無い場合は実況停止
+    // 終了時にスレを削除する
+    else if( command == "live_stop" && get_enable_live() ) live_stop();
+
     return true;
 }
 
@@ -547,6 +580,7 @@ bool ArticleViewBase::set_command( const std::string& command, const std::string
 //
 // クロックタイマーの本体はコアが持っていて、定期的にadminがアクティブなviewにクロック入力を渡す
 //
+// virtual
 void ArticleViewBase::clock_in()
 {
     assert( m_drawarea );
@@ -560,8 +594,26 @@ void ArticleViewBase::clock_in()
     }
 
     m_drawarea->clock_in();
+}
 
-    return;
+
+//
+// スムーススクロール用クロック入力
+//
+// タイマー本体はArticleAdminが持っている
+//
+void ArticleViewBase::clock_in_smooth_scroll()
+{
+    assert( m_drawarea );
+
+    // ポップアップが出てたらそっちにクロックを回す
+    if( is_popup_shown() && m_popup_win->view() ){
+        ArticleViewBase* view = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
+        if( view ) view->clock_in_smooth_scroll();
+        return;
+    }
+
+    m_drawarea->clock_in_smooth_scroll();
 }
 
 
@@ -578,6 +630,7 @@ void ArticleViewBase::reload()
 //
 // 再読み込み実行
 //
+// virtual
 void ArticleViewBase::exec_reload()
 {
     // オフライン
@@ -714,6 +767,13 @@ void ArticleViewBase::delete_open_view()
     }
 
     CORE::core_set_command( "delete_article", m_url_article, "reopen", MISC::itostr( drawarea()->get_seen_current() ) );
+}
+
+
+// 実況可能か
+const bool ArticleViewBase::get_enable_live()
+{
+    return ( m_enable_live && DBTREE::board_get_live_sec( m_url_article ) );
 }
 
 
@@ -886,6 +946,11 @@ void ArticleViewBase::operate_view( const int& control )
         case CONTROL::ShowMenuBar:
             CORE::core_set_command( "toggle_menubar" );
             break;
+
+            // 実況モード切り替え
+        case CONTROL::LiveStartStop:
+            ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );
+            break;
     }
 }
 
@@ -980,9 +1045,9 @@ void ArticleViewBase::down_search()
 void ArticleViewBase::clear_highlight()
 {
     assert( m_drawarea );
-    if( m_pre_query.empty() ) return;
+    if( get_pre_query().empty() ) return;
 
-    m_pre_query = std::string();
+    set_pre_query( std::string() );
     m_drawarea->clear_highlight();
 }
 
@@ -1023,22 +1088,6 @@ void ArticleViewBase::slot_preferences_image()
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_IMAGE, url );
     pref->run();
     delete pref;
-}
-
-
-//
-// 板名更新
-//
-void ArticleViewBase::update_boardname()
-{
-    m_label_board = " " + DBTREE::board_name( m_url_article ) + " ";
-
-#ifdef _DEBUG
-    std::cout << "ArticleViewBase::update_boardname url = " << m_url_article << std::endl
-              << get_url() << std::endl
-              << m_article->get_url() << std::endl
-              << "label = " << m_label_board << std::endl;
-#endif
 }
 
 
@@ -1487,14 +1536,19 @@ bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkE
 
             // マウスジェスチャ
             if( mg != CONTROL::None && enable_mg() ) operate_view( mg );
-                
-            else if( ! click_url( url, res_number, event ) ){
 
-                if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
-                    show_popupmenu( url, false );
-                }
-                else operate_view( get_control().button_press( event ) );
-            }
+            // リンクをクリック
+            else if( click_url( url, res_number, event ) );
+
+            // コンテキストメニュー表示
+            else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ) show_popupmenu( url, false );
+
+            // 実況中の場合は停止
+            else if( get_control().button_alloted( event, CONTROL::ClickButton ) && get_live() )
+                ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );
+
+            // その他
+            else operate_view( get_control().button_press( event ) );
         }
     }
 
@@ -3171,8 +3225,8 @@ void ArticleViewBase::exec_search()
     std::list< std::string > list_query;
     list_query = MISC::split_line( query );
 
-    if( m_pre_query != query ){
-        m_pre_query = query;
+    if( get_pre_query() != query ){
+        set_pre_query( query );
         CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, query );
         m_drawarea->set_jump_history();
         m_drawarea->search( list_query, m_search_invert );
@@ -3208,4 +3262,17 @@ void ArticleViewBase::operate_search( const std::string& controlid )
 
         CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "false" );
     }
+}
+
+
+//
+// 実況モードのセット
+//
+void ArticleViewBase::set_live( const bool live )
+{
+    if( ! m_enable_live ) return;
+
+    m_live = live;
+    if( m_live ) SESSION::append_live( m_url_article );
+    else SESSION::remove_live( m_url_article );
 }

@@ -9,6 +9,7 @@
 enum{
 
     TIMER_TIMEOUT = 50, // msec  内部クロックの周期
+    TIMER_TIMEOUT_SMOOTH_SCROLL = 33, // msec  スレビューのスムーススクロール描画用クロック周期
 
     MAX_RESNUMBER = 11000, // 最大表示可能レス数
 
@@ -53,6 +54,7 @@ enum{
 #define ITEM_NAME_PREVVIEW  "前へ戻る"
 #define ITEM_NAME_NEXTVIEW  "次へ進む"
 #define ITEM_NAME_LOCK      "タブをロックする"
+#define ITEM_NAME_LIVE      "実況"
 
 #define ITEM_NAME_NEWARTICLE   "新スレ作成"
 #define ITEM_NAME_SEARCHBOX    "検索ボックス"
@@ -98,6 +100,7 @@ enum
     ITEM_PREVVIEW,
     ITEM_NEXTVIEW,
     ITEM_LOCK,
+    ITEM_LIVE,
 
     ITEM_NEWARTICLE,
     ITEM_SEARCHBOX,
@@ -136,8 +139,17 @@ enum
 enum
 {
     AUTORELOAD_MINSEC = 10, // オートリロードの最小秒数
+    MIN_LIVE_RELOAD_SEC = AUTORELOAD_MINSEC, // 実況時の最小リロード間隔
 
     CHECKUPDATE_MINSEC = 300 // 更新チェックの最小秒数
+};
+
+
+// 実況スクロールモード
+enum
+{
+    LIVE_SCRMODE_VARIABLE = 0,
+    LIVE_SCRMODE_STEADY
 };
 
 

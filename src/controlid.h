@@ -140,6 +140,8 @@ namespace CONTROL
         OpenParentBoard,
         WriteMessage,
 
+        LiveStartStop,
+
         PopupWarpButton, // 以下、マウスボタン専用の設定
         ReferResButton, 
         BmResButton,

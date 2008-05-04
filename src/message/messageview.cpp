@@ -27,12 +27,14 @@ using namespace MESSAGE;
     setup_view();
     set_message( msg );
 
+    // ツールバーのスレタイトルを編集不可にする
+    MESSAGE::get_admin()->show_entry_new_subject( false );
+
     // メインウィンドウのタイトルに表示する文字
     set_title( "[ 書き込み ] " + DBTREE::article_subject( get_url() ) );
 
     // ツールバーにスレ名を表示
-    SKELETON::LabelEntry* label = MESSAGE::get_admin()->get_entry_subject();
-    if( label ) label->set_text( DBTREE::article_subject( get_url() ) );
+    set_label( DBTREE::article_subject( get_url() ) );
 }
 
 
@@ -145,12 +147,8 @@ void MessageViewMain::reload()
 
     set_message( msg );
 
-    // スレタイトルを編集可能にする
-    SKELETON::LabelEntry* label = MESSAGE::get_admin()->get_entry_subject();
-    if( label ){
-        label->set_editable( true );
-        label->set_text( std::string() );
-    }
+    // ツールバーのスレタイトルを編集可能にする
+    MESSAGE::get_admin()->show_entry_new_subject( true );
 
     // メインウィンドウのタイトルに表示する文字
     set_title( "[ 新スレ作成 ] " + DBTREE::article_subject( get_url() ) );
@@ -164,9 +162,7 @@ void MessageViewMain::reload()
 //
 std::string MessageViewNew::create_message()
 {
-    std::string subject;
-    SKELETON::LabelEntry* label = MESSAGE::get_admin()->get_entry_subject();
-    if( label ) subject = label->get_text();
+    std::string subject = MESSAGE::get_admin()->get_new_subject();
     std::string msg = get_text_message().get_text();
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();

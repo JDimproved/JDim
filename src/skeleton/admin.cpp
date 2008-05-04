@@ -571,7 +571,9 @@ void Admin::exec_command()
     // ステータス表示
     // アクティブなviewから依頼が来たらコアに渡す
     else if( command.command == "set_status" ){
-        set_status( command.url, command.arg1, false );
+
+        bool force = ( command.arg2 == "force" );
+        set_status( command.url, command.arg1, force );
     }
 
     // マウスジェスチャ
@@ -618,8 +620,8 @@ void Admin::exec_command()
     }
 
     // ツールバーのラベルを更新
-    else if( command.command == "update_toolbar_label" ){
-        update_toolbar_label();
+    else if( command.command == "redraw_toolbar" ){
+        redraw_toolbar();
     }
 
     // ツールバーボタン表示更新
@@ -675,6 +677,22 @@ void Admin::exec_command()
     // View履歴削除
     else if( command.command == "clear_viewhistory" ){
         clear_viewhistory();
+    }
+
+    // オートリロード開始
+    else if( command.command == "start_autoreload" ){
+
+        int mode = AUTORELOAD_ON;
+        if( command.arg1 == "once" ) mode = AUTORELOAD_ONCE;
+        int sec = atoi( command.arg2.c_str() );
+
+        set_autoreload_mode( command.url, mode, sec );
+    }
+
+    // オートリロード停止
+    else if( command.command == "stop_autoreload" ){
+
+        set_autoreload_mode( command.url, AUTORELOAD_NOT, 0 );
     }
 
     else{
@@ -787,9 +805,7 @@ void Admin::update_boardname( const std::string& url )
             if( view && view->get_url().find( url ) == 0 ) view->update_boardname();
         }
 
-        // ツールバーの表示更新
-        SKELETON::View* view = get_current_view();
-        if( view ) m_notebook->set_current_toolbar( view->get_id_toolbar(), view );
+        redraw_toolbar();
     }
 }
 
@@ -943,12 +959,12 @@ void Admin::focus_toolbar_search()
 
 
 //
-// ツールバーのラベル表示更新
+// ツールバー表示更新
 //
-void Admin::update_toolbar_label()
+void Admin::redraw_toolbar()
 {
     SKELETON::View* view = get_current_view();
-    if( view ) m_notebook->update_toolbar_label( view );
+    if( view ) m_notebook->set_current_toolbar( view->get_id_toolbar(), view );
 }
 
 
@@ -1181,7 +1197,7 @@ void Admin::unlock_all_view( const std::string& url )
         SKELETON::View* view = ( *it );
         if( view && view->is_locked() ){
             view->unlock();
-            m_notebook->update_toolbar_close_button( view );
+            redraw_toolbar();
         }
     }
 }
@@ -1303,6 +1319,7 @@ void Admin::set_url( const std::string& url, const std::string& url_show, const 
 //
 // ステータス表示
 //
+// virtual
 void Admin::set_status( const std::string& url, const std::string& stat, const bool force )
 {
     if( m_win ) m_win->set_status( stat );
@@ -2092,7 +2109,7 @@ void Admin::lock( const int page )
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ){
         view->lock();
-        m_notebook->update_toolbar_close_button( view );
+        redraw_toolbar();
     }
 }
 
@@ -2101,7 +2118,7 @@ void Admin::unlock( const int page )
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ){
         view->unlock();
-        m_notebook->update_toolbar_close_button( view );
+        redraw_toolbar();
     }
 }
 

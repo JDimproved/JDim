@@ -35,7 +35,8 @@ namespace SKELETON
         virtual ~JDEntry(){}
 
         // CONTROL::Control のモード設定( controlid.h 参照 )
-        void add_mode( int mode ){ m_control.add_mode( mode ); }
+        // キー入力をフックして JDEntry::on_key_release_event() で SIG_OPERATE をemitする
+        void add_mode( const int mode ){ m_control.add_mode( mode ); }
 
       protected:
 

@@ -9,12 +9,6 @@
 
 #include "skeleton/admin.h"
 
-namespace SKELETON
-{
-    class LabelEntry;
-}
-
-
 namespace MESSAGE
 {
     enum
@@ -36,9 +30,12 @@ namespace MESSAGE
         MessageAdmin( const std::string& url );
         virtual ~MessageAdmin();
 
-        SKELETON::LabelEntry* get_entry_subject();
+        void show_entry_new_subject( bool show );
+        std::string get_new_subject();
 
       protected:
+
+        virtual void set_status( const std::string& url, const std::string& stat, const bool force );
 
         // ツールバー
         virtual void show_toolbar();

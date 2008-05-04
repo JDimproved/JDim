@@ -14,8 +14,10 @@ libskeleton_a_SOURCES = \
 	tabnote.cpp \
 	tablabel.cpp \
 	imgbutton.cpp \
+	imgtoolbutton.cpp \
 	imgtogglebutton.cpp \
-	imgmenubutton.cpp \
+	imgtoggletoolbutton.cpp \
+	menubutton.cpp \
 	backforwardbutton.cpp \
 	tooltip.cpp \
 	entry.cpp \
@@ -31,6 +33,7 @@ libskeleton_a_SOURCES = \
 	vpaned.cpp \
 	notebook.cpp \
 	vbox.cpp \
+	jdtoolbar.cpp \
 	toolbar.cpp \
 	textloader.cpp
 
@@ -49,8 +52,10 @@ noinst_HEADERS = \
 	tabnote.h \
 	tablabel.h \
 	imgbutton.h \
+	imgtoolbutton.h \
 	imgtogglebutton.h \
-	imgmenubutton.h \
+	imgtoggletoolbutton.h \
+	menubutton.h \
 	backforwardbutton.h \
 	spinbutton.h \
 	popupwinbase.h \
@@ -71,6 +76,7 @@ noinst_HEADERS = \
 	vpaned.h \
 	notebook.h \
 	vbox.h \
+	jdtoolbar.h \
 	toolbar.h \
 	textloader.h
 

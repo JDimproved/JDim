@@ -45,6 +45,8 @@ CompletionEntry::CompletionEntry( int mode )
     m_scr_win.set_size_request( 1, 1 );
 
     m_popup_win.add( m_scr_win );
+
+    set_size_request( 0 );
 }
 
 

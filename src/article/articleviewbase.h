@@ -68,6 +68,12 @@ namespace ARTICLE
         // URLをステータスバーに表示しているかどうか
         bool m_url_show_status;
 
+        // 実況モードが可能か
+        bool m_enable_live;
+
+        // ライブモードか
+        bool m_live;
+
     public:
 
         ArticleViewBase( const std::string& url );
@@ -84,6 +90,7 @@ namespace ARTICLE
         virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
 
         virtual void clock_in();
+        void clock_in_smooth_scroll();
 
         virtual void write();
         virtual void reload();
@@ -99,7 +106,6 @@ namespace ARTICLE
         virtual void goto_bottom();
         virtual void goto_num( int num );
         virtual void show_preference();
-        virtual void update_boardname();
 
         // 進む、戻る
         virtual void back_viewhistory( const int count );
@@ -114,6 +120,12 @@ namespace ARTICLE
 
         // 記事削除 & 再オープン
         void delete_open_view();
+
+        // 実況モードが可能か
+        const bool get_enable_live();
+
+        // 実況モードか
+        const bool get_live() const { return m_live; }
 
     protected:
 
@@ -160,6 +172,10 @@ namespace ARTICLE
         // num 番のレスを参照してるレスを抽出して表示
         void show_refer( int num );
 
+        // 前回の検索で使ったクエリー
+        void set_pre_query( const std::string& query ){  m_pre_query = query; }
+        const std::string& get_pre_query() const{ return m_pre_query; }
+
         // キーワードで抽出して表示
         // mode_or = true の時は or 検索
         // show_option = true の時は URL 表示などのオプションが表示される
@@ -182,6 +198,12 @@ namespace ARTICLE
 
         void slot_copy_selection_str();
         void slot_select_all();
+
+        // 実況用
+        void set_enable_live( const bool enable ){ m_enable_live = enable; }
+        void set_live( const bool live );
+        virtual void live_start(){}
+        virtual void live_stop(){}
 
     private:
 

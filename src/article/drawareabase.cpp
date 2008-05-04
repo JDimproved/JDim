@@ -318,7 +318,16 @@ void DrawAreaBase::init_font()
 //
 void DrawAreaBase::clock_in()
 {
-    exec_scroll( false );
+    if( m_scrollinfo.mode != SCROLL_AUTO && ! m_scrollinfo.live ) exec_scroll( false );
+}
+
+
+//
+// スムーススクロール用クロック入力
+//
+void DrawAreaBase::clock_in_smooth_scroll()
+{
+    if( m_scrollinfo.mode == SCROLL_AUTO || m_scrollinfo.live ) exec_scroll( false );
 }
 
 
@@ -443,7 +452,7 @@ void DrawAreaBase::append_res( int from_num, int to_num )
     // スクロールバーが一番下にある(つまり新着スレがappendされた)場合は少しだけスクロールする
     bool scroll = false;
     const int pos = get_vscr_val();
-    if( ! m_layout_tree->get_separator_new() && pos && pos == get_vscr_maxval() ){
+    if( ! m_layout_tree->get_separator_new() && pos && pos == get_vscr_maxval() && ! m_scrollinfo.live ){
 
 #ifdef _DEBUG
         std::cout << "on bottom pos = " << pos << std::endl;
@@ -665,7 +674,8 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
     }
 
     // 新着セパレータの挿入
-    m_layout_tree->move_separator();
+    // 実況時は新着セパレータを表示しない(スクロールがガタガタするから)
+    if( ! m_scrollinfo.live ) m_layout_tree->move_separator();
 
     m_width_client = 0;
     m_height_client = 0;
@@ -2255,11 +2265,12 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
 {
     if( ! m_layout_tree ) return;
     if( ! m_vscrbar ) return;
-    if( m_scrollinfo.mode == SCROLL_NOT ) return;
+    if( m_scrollinfo.mode == SCROLL_NOT && ! m_scrollinfo.live ) return;
 
     // 移動後のスクロール位置を計算
     int y = 0;
     Gtk::Adjustment* adjust = m_vscrbar->get_adjustment();
+
     switch( m_scrollinfo.mode ){
 
         case SCROLL_TO_NUM: // 指定したレス番号にジャンプ
@@ -2326,7 +2337,43 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
             }
         }
         break;
-    
+
+        default:
+
+            // 実況モード
+            if( m_scrollinfo.live ){
+
+                // 通常スクロール
+                if( m_scrollinfo.live_speed < CONFIG::get_live_threshold() ){
+
+                    const int mode = CONFIG::get_live_mode();
+                    if( mode == LIVE_SCRMODE_VARIABLE ) y = ( int ) ( adjust->get_value() + m_scrollinfo.live_speed );
+                    else if( mode == LIVE_SCRMODE_STEADY ) y = ( int ) ( adjust->get_value() + CONFIG::get_live_speed() );
+                }
+
+                // 行単位スクロール
+                else{
+
+                    const int step_move = 4;
+                    const int step_stop = 10;
+                    const double step = ( m_scrollinfo.live_speed * ( step_move + step_stop ) ) / step_move;
+
+                    ++m_scrollinfo.live_counter;
+
+                    // スクロール中
+                    if( m_scrollinfo.live_counter <= step_move ){
+                        y = ( int ) ( adjust->get_value() + step );
+                    }
+
+                    // 停止中
+                    else{
+                        if( m_scrollinfo.live_counter == step_move + step_stop ) m_scrollinfo.live_counter = 0;
+                        return;
+                    }
+                }
+            }
+
+            break;
     }
 
     y = (int)MAX( 0, MIN( adjust->get_upper() - adjust->get_page_size() , y ) );
@@ -2699,6 +2746,47 @@ void DrawAreaBase::clear_highlight()
     m_multi_selection.clear();
     redraw_view();
 }    
+
+
+//
+// 実況開始
+//
+void DrawAreaBase::live_start()
+{
+    m_scrollinfo.live = true;
+}
+
+
+//
+// 実況停止
+//
+void DrawAreaBase::live_stop()
+{
+    m_scrollinfo.reset();
+    m_scrollinfo.live = false;
+}
+
+
+//
+// 実況時のスクロール速度更新
+//
+// sec : 更新間隔(秒)
+//
+#include <iostream>
+void DrawAreaBase::update_live_speed( const int sec )
+{
+    if( ! m_scrollinfo.live ) return;
+    if( sec <= 0 ) return;
+
+    double speed = ( get_vscr_maxval() - get_vscr_val() ) / ( sec * 1000/TIMER_TIMEOUT_SMOOTH_SCROLL );
+    m_scrollinfo.live_speed = MAX( CONFIG::get_live_speed(), speed );
+    m_scrollinfo.live_counter = 0;
+
+//#ifdef _DEBUG
+    std::cout << "DrawAreaBase::update_live_speed sec = " << sec
+              << " speed = " << m_scrollinfo.live_speed << std::endl;
+//#endif
+}
 
 
 //

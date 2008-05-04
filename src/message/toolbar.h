@@ -8,14 +8,14 @@
 #include <gtkmm.h>
 
 #include "skeleton/toolbar.h"
-#include "skeleton/imgbutton.h"
+#include "skeleton/imgtoolbutton.h"
 #include "skeleton/label_entry.h"
 
 namespace MESSAGE
 {
     class MessageToolBarBase : public SKELETON::ToolBar
     {
-        SKELETON::ImgButton* m_button_preview;
+        SKELETON::ImgToolButton* m_button_preview;
 
       public:
 
@@ -27,7 +27,7 @@ namespace MESSAGE
 
       protected:
 
-        SKELETON::ImgButton* get_button_preview();
+        SKELETON::ImgToolButton* get_button_preview();
 
       private:
 
@@ -39,17 +39,22 @@ namespace MESSAGE
     // 通常
     class MessageToolBar : public MessageToolBarBase
     {
-        SKELETON::ImgButton m_button_insert_draft;
-        SKELETON::ImgButton m_button_undo;
+        SKELETON::ImgToolButton m_button_insert_draft;
+        SKELETON::ImgToolButton m_button_undo;
 
-        SKELETON::LabelEntry m_entry_subject;
+        // false ならスレ名ラベル、trueなら新規レス名entry表示
+        bool m_show_entry_new_subject;
+
+        Gtk::ToolItem* m_tool_new_subject;
+        Gtk::Entry* m_entry_new_subject;
 
       public:
 
         MessageToolBar();
         virtual ~MessageToolBar(){}
 
-        SKELETON::LabelEntry* get_entry_subject(){ return &m_entry_subject; }
+        void show_entry_new_subject( bool show );
+        std::string get_new_subject();
 
       protected:
 

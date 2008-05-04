@@ -22,6 +22,7 @@ MsgItemPref::MsgItemPref( Gtk::Window* parent, const std::string& url )
     // デフォルトの項目を設定( 無効にする場合には最後に false を付ける )
     append_default_pair( ITEM_NAME_PREVIEW, ICON::get_icon( ICON::THREAD ) );
     append_default_pair( ITEM_NAME_WRITEMSG, ICON::get_icon( ICON::WRITE ) );
+    append_default_pair( ITEM_NAME_OPENBOARD, ICON::get_icon( ICON::TRANSPARENT ) );
     append_default_pair( ITEM_NAME_NAME, ICON::get_icon( ICON::TRANSPARENT ) );
     append_default_pair( ITEM_NAME_UNDO, STOCK_ICON( Gtk::Stock::UNDO ) );
     append_default_pair( ITEM_NAME_INSERTTEXT, STOCK_ICON( Gtk::Stock::OPEN ) );

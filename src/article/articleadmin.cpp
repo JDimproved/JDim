@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "articleadmin.h"
+#include "articleviewbase.h"
 #include "font.h"
 #include "toolbar.h"
 #include "toolbarsearch.h"
@@ -57,6 +58,12 @@ ArticleAdmin::ArticleAdmin( const std::string& url )
     if( ! SESSION::get_show_article_tab() ) get_notebook()->set_show_tabs( false );
 
     setup_menu( true );
+
+    // スムーススクロール用タイマセット
+    // オートスクロール時など、スムースにスクロールをするため描画用タイマーを
+    // メインタイマと別にする。DrawAreaBase::clock_in_smooth_scroll() も参照すること
+    sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &ArticleAdmin::clock_in_smooth_scroll ), 0 );
+    sigc::connection conn = Glib::signal_timeout().connect( slot_timeout, TIMER_TIMEOUT_SMOOTH_SCROLL );
 }
 
 
@@ -73,6 +80,16 @@ ArticleAdmin::~ArticleAdmin()
     SESSION::set_article_locked( get_locked() );
     SESSION::set_article_page( get_current_page() );
     ARTICLE::init_font();
+}
+
+
+bool ArticleAdmin::clock_in_smooth_scroll( int timer_number )
+{
+    // アクティブなビューにクロックを送る
+    ArticleViewBase* view = dynamic_cast< ArticleViewBase* >(  get_current_view() );
+    if( view ) view->clock_in_smooth_scroll();
+
+    return true;
 }
 
 
@@ -521,6 +538,30 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
     else if( command.command == "clear_highlight" ){
         SKELETON::View* view = get_view( command.url );
         if( view ) view->set_command( "clear_highlight" );
+    }
+
+    // 実況開始/停止
+    else if( command.command == "live_start_stop" ){
+        SKELETON::View* view = get_view( command.url );
+        if( view ){
+
+            view->set_command( "live_start_stop" );
+
+            // ツールバー表示更新
+            get_notebook()->set_current_toolbar( view->get_id_toolbar(), view );
+        }
+    }
+
+    // 実況停止
+    else if( command.command == "live_stop" ){
+        SKELETON::View* view = get_view( command.url );
+        if( view ){
+
+            view->set_command( "live_stop" );
+
+            // ツールバー表示更新
+            get_notebook()->set_current_toolbar( view->get_id_toolbar(), view );
+        }
     }
 }
 

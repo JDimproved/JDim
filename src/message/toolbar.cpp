@@ -23,7 +23,7 @@ MessageToolBarBase::MessageToolBarBase() :
 {}
 
 
-SKELETON::ImgButton* MessageToolBarBase::get_button_preview()
+SKELETON::ImgToolButton* MessageToolBarBase::get_button_preview()
 {
 #ifdef _DEBUG
     std::cout << "MessageToolBarBase::get_button_preview\n";
@@ -31,7 +31,7 @@ SKELETON::ImgButton* MessageToolBarBase::get_button_preview()
 
     if( ! m_button_preview ){
 
-        m_button_preview = Gtk::manage( new SKELETON::ImgButton( ICON::THREAD ) );
+        m_button_preview = Gtk::manage( new SKELETON::ImgToolButton( ICON::THREAD ) );
         m_button_preview->signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBarBase::slot_toggle_preview ) );
     }
 
@@ -68,12 +68,31 @@ MessageToolBar::MessageToolBar() :
     MessageToolBarBase(),
     m_button_insert_draft( Gtk::Stock::OPEN ),
     m_button_undo( Gtk::Stock::UNDO ),
-    m_entry_subject( false, "", "" )
+    m_show_entry_new_subject( false ),
+    m_tool_new_subject( NULL ),
+    m_entry_new_subject( NULL )
 {
     m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_undo_clicked ) );
     m_button_insert_draft.signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_insert_draft_clicked ) );
 
     pack_buttons();
+}
+
+
+// 新規スレ名entry表示切り替え
+void MessageToolBar::show_entry_new_subject( bool show )
+{
+    if( m_show_entry_new_subject == show ) return;
+    m_show_entry_new_subject = show;
+    update_button();
+}
+
+
+std::string MessageToolBar::get_new_subject()
+{
+    if( m_show_entry_new_subject && m_entry_new_subject ) return m_entry_new_subject->get_text();
+
+    return std::string();
 }
 
 
@@ -92,38 +111,64 @@ void MessageToolBar::pack_buttons()
         switch( item ){
 
             case ITEM_PREVIEW:
-                get_buttonbar().pack_start( *get_button_preview(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_preview() );
                 set_tooltip( *get_button_preview(), CONTROL::get_label_motion( CONTROL::Preview )
                              + "\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
                              + CONTROL::get_label_motion( CONTROL::TabRight ) + "\n\n"+ CONTROL::get_label_motion( CONTROL::TabLeft ) );
                 break;
 
             case ITEM_WRITEMSG:
-                get_buttonbar().pack_start( *get_button_write(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_write() );
                 set_tooltip( *get_button_write(), CONTROL::get_label_motion( CONTROL::ExecWrite ) + "\n\nTabキーで書き込みボタンにフォーカスを移すことも可能" );
                 break;
 
+            case ITEM_OPENBOARD:
+                get_buttonbar().append( *get_button_board() );
+                break;
+
             case ITEM_NAME:
-                get_buttonbar().pack_start( m_entry_subject, Gtk::PACK_EXPAND_WIDGET, 2 );
+                pack_transparent_separator();
+
+                // スレ名ラベルを表示
+                if( ! m_show_entry_new_subject ) get_buttonbar().append( *get_label() );
+
+                // 新規スレ名入力entry表示
+                else{
+
+                    if( ! m_tool_new_subject ){
+
+                        m_tool_new_subject = Gtk::manage( new Gtk::ToolItem );
+                        m_entry_new_subject = Gtk::manage( new Gtk::Entry );
+
+                        m_entry_new_subject->set_size_request( 0 );
+
+                        m_tool_new_subject->add( *m_entry_new_subject );
+                        m_tool_new_subject->set_expand( true );
+                    }
+
+                    get_buttonbar().append( *m_tool_new_subject );
+                }
+                pack_transparent_separator();
                 break;
 
             case ITEM_UNDO:
-                get_buttonbar().pack_start( m_button_undo, Gtk::PACK_SHRINK );
+                get_buttonbar().append( m_button_undo );
                 set_tooltip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
                 break;
 
             case ITEM_INSERTTEXT:
-                get_buttonbar().pack_start( m_button_insert_draft, Gtk::PACK_SHRINK );
+                get_buttonbar().append( m_button_insert_draft );
                 set_tooltip( m_button_insert_draft, CONTROL::get_label_motion( CONTROL::InsertText ) );
                 break;
 
             case ITEM_LOCK_MESSAGE:
-                get_buttonbar().pack_start( *get_button_lock(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_lock() );
                 set_tooltip( *get_button_lock(), CONTROL::get_label_motion( CONTROL::LockMessage ) );
+                get_button_lock()->set_label( CONTROL::get_label( CONTROL::LockMessage ) );
                 break;
 
             case ITEM_QUIT:
-                get_buttonbar().pack_start( *get_button_close(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_close() );
                 set_tooltip( *get_button_close(), CONTROL::get_label_motion( CONTROL::CancelWrite ) );
                 break;
 
@@ -181,21 +226,27 @@ void MessageToolBarPreview::pack_buttons()
         switch( item ){
 
             case ITEM_PREVIEW:
-                get_buttonbar().pack_start( *get_button_preview(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_preview() );
                 set_tooltip( *get_button_preview(), "プレビューを閉じる" );
                 break;
 
+            case ITEM_OPENBOARD:
+                get_buttonbar().append( *get_button_board() );
+                break;
+
             case ITEM_NAME:
-                get_buttonbar().pack_start( *get_label(), Gtk::PACK_EXPAND_WIDGET, 2 );
+                pack_transparent_separator();
+                get_buttonbar().append( *get_label() );
+                pack_transparent_separator();
                 break;
 
             case ITEM_WRITEMSG:
-                get_buttonbar().pack_start( *get_button_write(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_write() );
                 set_tooltip( *get_button_write(), CONTROL::get_label_motion( CONTROL::ExecWrite ) + "\n\nTabキーで書き込みボタンにフォーカスを移すことも可能" );
                 break;
 
             case ITEM_QUIT:
-                get_buttonbar().pack_start( *get_button_close(), Gtk::PACK_SHRINK );
+                get_buttonbar().append( *get_button_close() );
                 set_tooltip( *get_button_close(), CONTROL::get_label_motion( CONTROL::CancelWrite ) );
                 break;
         }

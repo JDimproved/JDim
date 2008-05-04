@@ -8,20 +8,27 @@
 #include <gtkmm.h>
 
 #include "skeleton/toolbar.h"
-#include "skeleton/imgmenubutton.h"
+#include "skeleton/jdtoolbar.h"
+#include "skeleton/menubutton.h"
 
 namespace BBSLIST
 {
     class BBSListToolBar : public SKELETON::ToolBar
     {
         // ラベルバー
-        Gtk::HBox m_hbox_label;
-        SKELETON::ImgMenuButton m_button_toggle;
+        SKELETON::JDToolbar m_tool_label;
+
+        Gtk::ToolItem m_tool_toggle;
+        Gtk::Label m_label;
+        SKELETON::MenuButton m_button_toggle;
 
       public:
 
         BBSListToolBar();
         virtual ~BBSListToolBar(){}
+
+        // タブが切り替わった時にDragableNoteBookから呼び出される( Viewの情報を取得する )
+        virtual void set_view( SKELETON::View * view );
 
       protected:
 
@@ -30,6 +37,7 @@ namespace BBSLIST
       private:
 
         void slot_toggle( int i );
+        bool slot_scroll_event( GdkEventScroll* event );
     };
 }
 

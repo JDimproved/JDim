@@ -9,7 +9,12 @@
 #define _ARTICLE_TOOLBAR_H
 
 #include "skeleton/toolbar.h"
-#include "skeleton/imgbutton.h"
+#include "skeleton/imgtoolbutton.h"
+
+namespace SKELETON
+{
+    class ImgToggleToolButton;
+}
 
 namespace ARTICLE
 {
@@ -17,11 +22,14 @@ namespace ARTICLE
     {
         std::string m_url_article;
 
-        Gtk::Button* m_button_board;
+        bool m_enable_slot;
 
-        SKELETON::ImgButton m_button_drawout_and;
-        SKELETON::ImgButton m_button_drawout_or;
-        SKELETON::ImgButton m_button_clear_hl;
+        SKELETON::ImgToolButton m_button_drawout_and;
+        SKELETON::ImgToolButton m_button_drawout_or;
+        SKELETON::ImgToolButton m_button_clear_hl;
+
+        // 実況
+        SKELETON::ImgToggleToolButton* m_button_live_play_stop;
 
       public:
 
@@ -41,6 +49,8 @@ namespace ARTICLE
         void slot_drawout_and();
         void slot_drawout_or();
         void slot_clear_highlight();
+
+        void slot_live_play_stop();
     };
 }
 

@@ -35,6 +35,8 @@ namespace CORE
       : m_label_sid_2ch( false, "SID： ", LOGIN::get_login2ch()->get_sessionid() ),
         entry_id( true, "ID(_I)： " ), entry_passwd( true, "パスワード(_P)： " )
         {
+            const int mrg = 8;
+
             m_vbox.set_border_width( BOXSPACING );
 
             entry_id.set_border_width( BOXSPACING );
@@ -48,7 +50,7 @@ namespace CORE
             m_vbox.pack_start( m_label_sid_2ch );
 
             set_label( "2chログイン用" );
-            set_border_width( 8 );
+            set_border_width( mrg );
             add( m_vbox );
         }
     };

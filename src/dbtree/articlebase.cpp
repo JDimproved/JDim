@@ -715,7 +715,7 @@ void ArticleBase::set_abone_chain( bool set )
 //
 // ブックマークの数
 //
-int ArticleBase::get_num_bookmark()
+const int ArticleBase::get_num_bookmark()
 {
     if( ! m_vec_bookmark.size() ) return 0;
 
@@ -728,7 +728,7 @@ int ArticleBase::get_num_bookmark()
 //
 // ブックマークされているか
 //
-bool ArticleBase::is_bookmarked( int number )
+const bool ArticleBase::is_bookmarked( int number )
 {
     if( number <= 0 || number > m_number_load ) return false;
 
@@ -1084,11 +1084,12 @@ void ArticleBase::show_updateicon( const bool update )
 //
 // キャッシュ削除
 //
+#include <iostream>
 void ArticleBase::delete_cache( const bool cache_only )
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
     std::cout << "ArticleBase::delete_cache  url = " << m_url << std::endl;
-#endif
+//#endif
 
     if( empty() ) return;
 

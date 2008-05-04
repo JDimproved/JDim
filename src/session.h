@@ -343,6 +343,17 @@ namespace SESSION
     // ポップアップメニュー表示中
     const bool is_popupmenu_shown();
     void set_popupmenu_shown( bool shown );
+
+    // JD終了時に削除するスレのリスト
+    std::vector< std::string >& get_delete_list();
+    void append_delete_list( const std::string& url );
+    void remove_delete_list( const std::string& url );
+
+    // 実況実行中のスレ
+    const bool is_live( const std::string& url );
+    void append_live( const std::string& url );
+    void remove_live( const std::string& url );
 }
+
 
 #endif

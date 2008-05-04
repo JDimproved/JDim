@@ -24,6 +24,8 @@ namespace ARTICLE
         ArticleViewMain( const std::string& url );
         ~ArticleViewMain();
 
+        virtual void clock_in();
+
         virtual void goto_num( int num );
 
         // SKELETON::View の関数のオーバロード
@@ -37,6 +39,12 @@ namespace ARTICLE
         virtual void update_view();
         virtual void update_finish();
         virtual void relayout();
+
+      protected:
+
+        // 実況
+        virtual void live_start();
+        virtual void live_stop();
 
       private:
 

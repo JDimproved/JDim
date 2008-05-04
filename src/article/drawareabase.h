@@ -163,6 +163,7 @@ namespace ARTICLE
         const int& height_client() const { return m_height_client; }
 
         void clock_in();
+        void clock_in_smooth_scroll();
         void focus_view();
         void focus_out();
 
@@ -237,6 +238,11 @@ namespace ARTICLE
         int search( std::list< std::string >& list_query, bool reverse );
         int search_move( bool reverse );
         void clear_highlight();
+
+        // 実況モード
+        void live_start();
+        void live_stop();
+        void update_live_speed( const int sec );
 
       protected:
 

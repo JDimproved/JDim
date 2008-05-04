@@ -5,11 +5,11 @@
 #ifndef _BACKFORWARDBUTTON_H
 #define _BACKFORWARDBUTTON_H
 
-#include "imgmenubutton.h"
+#include "menubutton.h"
 
 namespace SKELETON
 {
-    class BackForwardButton : public SKELETON::ImgMenuButton
+    class BackForwardButton : public SKELETON::MenuButton
     {
         std::string m_url;
         bool m_back;

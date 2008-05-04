@@ -171,6 +171,7 @@ namespace CORE
         void slot_setup_abone();
         void slot_setup_abone_thread();
         void slot_toggle_abone_transp_chain();
+        void slot_setup_live();
 
         void slot_show_bbs();
         void slot_show_old2ch();

@@ -123,6 +123,9 @@ namespace DBTREE
         // samba(秒)
         time_t m_samba_sec;
 
+        // 実況時の更新間隔(秒)
+        time_t m_live_sec;
+
         // 最大レス数
         int m_number_max_res;
 
@@ -384,6 +387,10 @@ namespace DBTREE
         const time_t get_samba_sec() const { return m_samba_sec; } // samba(秒)
         void set_samba_sec( time_t sec ){ m_samba_sec = sec; }
         time_t get_write_leftsec(); // 書き込み可能までの残り秒
+
+        // 実況の秒数
+        const time_t get_live_sec() const{ return m_live_sec; }
+        void set_live_sec( time_t sec ){ m_live_sec = sec; }
 
         // 最大レス数
         const int get_number_max_res() const{ return m_number_max_res; }

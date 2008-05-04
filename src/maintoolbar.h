@@ -11,8 +11,8 @@
 #include <gtkmm.h>
 
 #include "skeleton/toolbar.h"
-#include "skeleton/imgbutton.h"
-#include "skeleton/imgtogglebutton.h"
+#include "skeleton/imgtoolbutton.h"
+#include "skeleton/imgtoggletoolbutton.h"
 
 namespace CORE
 {
@@ -20,16 +20,15 @@ namespace CORE
     {
         friend class Core;
 
+        Gtk::ToolItem m_tool_url;
         Gtk::Entry m_entry_url;
-        SKELETON::ImgButton m_button_go;
+        SKELETON::ImgToolButton m_button_go;
 
-        SKELETON::ImgToggleButton m_button_bbslist;
-        SKELETON::ImgToggleButton m_button_favorite;
-        SKELETON::ImgToggleButton m_button_board;
-        SKELETON::ImgToggleButton m_button_thread;
-        SKELETON::ImgToggleButton m_button_image;
-
-        Gtk::VSeparator m_vspr;
+        SKELETON::ImgToggleToolButton m_button_bbslist;
+        SKELETON::ImgToggleToolButton m_button_favorite;
+        SKELETON::ImgToggleToolButton m_button_board;
+        SKELETON::ImgToggleToolButton m_button_thread;
+        SKELETON::ImgToggleToolButton m_button_image;
 
       public:
 

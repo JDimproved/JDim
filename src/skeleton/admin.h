@@ -202,7 +202,7 @@ namespace SKELETON
         virtual void show_toolbar(){}
         virtual void toggle_toolbar(){}
         void focus_toolbar_search();
-        void update_toolbar_label();
+        void redraw_toolbar();
         void update_toolbar_button();
         virtual void open_searchbar(){}
         virtual void close_searchbar(){}

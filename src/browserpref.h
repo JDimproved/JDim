@@ -40,6 +40,8 @@ namespace CORE
         : SKELETON::PrefDiag( parent, url ),
         m_label_notice( "コンボボックスの中から使用するWebブラウザを選択して下さい\nリンククリック時に %LINK をURLに置換します" )
         {
+            const int mrg = 8;
+
             int i = 0;
             for(;;){
                 std::string label = CORE::get_browser_label( i++ );
@@ -51,17 +53,17 @@ namespace CORE
             m_combo.signal_changed().connect( sigc::mem_fun(*this, &BrowserPref::slot_changed ) );
 
             m_entry_browser.set_text( CONFIG::get_command_openurl() );
-            m_hbox.set_spacing( 8 );
-            m_hbox.set_border_width( 8 );
+            m_hbox.set_spacing( mrg );
+            m_hbox.set_border_width( mrg );
             m_hbox.add( m_entry_browser );
             m_frame.set_label( "ブラウザ起動コマンド" );
             m_frame.add( m_hbox );
             m_label_notice.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
 
             get_vbox()->set_spacing( 0 );
-            get_vbox()->pack_start( m_label_notice, Gtk::PACK_EXPAND_WIDGET, 8 );
+            get_vbox()->pack_start( m_label_notice, Gtk::PACK_EXPAND_WIDGET, mrg );
             get_vbox()->pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 0 );
-            get_vbox()->pack_start( m_frame, Gtk::PACK_EXPAND_WIDGET, 8 );
+            get_vbox()->pack_start( m_frame, Gtk::PACK_EXPAND_WIDGET, mrg );
 
             set_title( "Webブラウザ設定" );
             show_all_children();
