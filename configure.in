@@ -65,12 +65,15 @@ GNOMEUI_LIBS=""
 dnl
 dnl パッケージのチェック
 dnl
+PKG_CHECK_MODULES(GTKMM,[gtkmm-2.4 >= 2.12.0], [ echo "gtkmm >= 2.12.0" ; GTKMMVER=2120 ], [ 
+
 PKG_CHECK_MODULES(GTKMM,[gtkmm-2.4 >= 2.8.0], [ echo "gtkmm >= 2.8.0" ; GTKMMVER=280 ], [ 
 
    PKG_CHECK_MODULES(GTKMM,[gtkmm-2.4 >= 2.6.0], [ echo "gtkmm >= 2.6.0" ; GTKMMVER=260 ], [ 
   
      PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.4.0], [ echo "gtkmm >= 2.4.0"; GTKMMVER=240   ] ) 
    ] ) 
+] )
 ] )
 PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.0] )
 CXXFLAGS="$CXXFLAGS -DGTKMMVER=$GTKMMVER"

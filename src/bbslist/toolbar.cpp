@@ -35,7 +35,9 @@ BBSListToolBar::BBSListToolBar() :
     m_tool_toggle.set_expand( true );
     m_tool_toggle.add( m_button_toggle );
 
+#if GTKMMVER >= 2120
     m_tool_label.set_icon_size( Gtk::ICON_SIZE_MENU );
+#endif
     m_tool_label.set_toolbar_style( Gtk::TOOLBAR_ICONS );
     m_tool_label.append( m_tool_toggle );
     m_tool_label.append( *get_button_close() );

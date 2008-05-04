@@ -65,7 +65,9 @@ ToolBar::ToolBar( Admin* admin )
       m_button_forward( NULL )
 {
     m_buttonbar.set_border_width( 0 );
+#if GTKMMVER >= 2120
     m_buttonbar.set_icon_size( Gtk::ICON_SIZE_MENU );
+#endif
     m_buttonbar.set_toolbar_style( Gtk::TOOLBAR_ICONS );
 }
 
@@ -300,7 +302,9 @@ Gtk::Toolbar* ToolBar::get_searchbar()
 {
     if( ! m_searchbar ){
         m_searchbar = Gtk::manage( new SKELETON::JDToolbar() );
+#if GTKMMVER >= 2120
         m_searchbar->set_icon_size( Gtk::ICON_SIZE_MENU );
+#endif
         m_searchbar->set_toolbar_style( Gtk::TOOLBAR_ICONS );
     }
 
