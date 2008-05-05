@@ -1084,12 +1084,11 @@ void ArticleBase::show_updateicon( const bool update )
 //
 // キャッシュ削除
 //
-#include <iostream>
 void ArticleBase::delete_cache( const bool cache_only )
 {
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "ArticleBase::delete_cache  url = " << m_url << std::endl;
-//#endif
+#endif
 
     if( empty() ) return;
 

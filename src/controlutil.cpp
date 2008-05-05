@@ -183,6 +183,10 @@ const std::string CONTROL::get_label_with_mnemonic( int id )
                 label += "(_W)";
                 break;
 
+            case CONTROL::LiveStartStop:  // 実況
+                label += "(_L)";
+                break;
+
             case CONTROL::CancelMosaic: //モザイク解除
                 label += "(_M)";
                 break;

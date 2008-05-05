@@ -192,6 +192,7 @@ namespace CORE
         void slot_search_cache_board();
         void slot_search_cache();
         void slot_search_title();
+        void slot_live_start_stop();
         void slot_show_hide_leftpane( int mode );
         void slot_toggle_toolbarpos( int pos );
         void slot_toggle_toolbarbbslist();

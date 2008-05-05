@@ -974,6 +974,7 @@ void Admin::redraw_toolbar()
 void Admin::update_toolbar_button()
 {
     m_notebook->update_toolbar_button();
+    redraw_toolbar();
 }
 
 

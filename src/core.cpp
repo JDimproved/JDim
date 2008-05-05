@@ -485,7 +485,8 @@ void Core::run( bool init )
     //////////////////////////////////////////////////////
 
     // ツール
-    m_action_group->add( Gtk::Action::create( "Menu_Tool", "ツール(_T)" ) );    
+    m_action_group->add( Gtk::Action::create( "Menu_Tool", "ツール(_T)" ) );
+    m_action_group->add( Gtk::Action::create( "LiveStartStop", "LiveStartStop"), sigc::mem_fun( *this, &Core::slot_live_start_stop ) );
     m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索(_C)" ) );
     m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "表示中の板のログを検索(_B)"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索(_A)"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
@@ -633,6 +634,9 @@ void Core::run( bool init )
         "<menu action='Menu_Tool'>"
 
         "<menuitem action='SearchTitle'/>"    
+        "<separator/>"
+
+        "<menuitem action='LiveStartStop'/>"    
         "<separator/>"
 
         "<menu action='SearchCache_Menu'>"
@@ -1184,6 +1188,11 @@ void Core::slot_activate_menubar()
     // 画像のプロパティ
     act = m_action_group->get_action( "ImagePref" );
     if( ! IMAGE::get_admin()->empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
+    // 実況
+    act = m_action_group->get_action( "LiveStartStop" );
+    if( ! ARTICLE::get_admin()->empty() ) act->set_sensitive( true );
     else act->set_sensitive( false );
 
     m_enable_menuslot = true;
@@ -1891,6 +1900,17 @@ void Core::slot_search_title()
 {
     CORE::core_set_command( "open_article_searchtitle" );
 }
+
+
+//
+// 実況
+//
+void Core::slot_live_start_stop()
+{
+    std::string url = ARTICLE::get_admin()->get_current_url();
+    ARTICLE::get_admin()->set_command( "live_start_stop", url );
+}
+
 
 
 //

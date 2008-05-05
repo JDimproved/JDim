@@ -15,7 +15,7 @@
 
 #define MAJORVERSION 2
 #define MINORVERSION 0
-#define MICROVERSION 1
+#define MICROVERSION 0
 #define JDDATE    "080???"
 #define JDTAG     "beta"
 

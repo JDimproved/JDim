@@ -54,7 +54,7 @@ enum{
 #define ITEM_NAME_PREVVIEW  "前へ戻る"
 #define ITEM_NAME_NEXTVIEW  "次へ進む"
 #define ITEM_NAME_LOCK      "タブをロックする"
-#define ITEM_NAME_LIVE      "実況"
+#define ITEM_NAME_LIVE      "実況開始／停止"
 
 #define ITEM_NAME_NEWARTICLE   "新スレ作成"
 #define ITEM_NAME_SEARCHBOX    "検索ボックス"
