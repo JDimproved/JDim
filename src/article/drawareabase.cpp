@@ -2772,7 +2772,6 @@ void DrawAreaBase::live_stop()
 //
 // sec : 更新間隔(秒)
 //
-#include <iostream>
 void DrawAreaBase::update_live_speed( const int sec )
 {
     if( ! m_scrollinfo.live ) return;
@@ -2782,10 +2781,10 @@ void DrawAreaBase::update_live_speed( const int sec )
     m_scrollinfo.live_speed = MAX( CONFIG::get_live_speed(), speed );
     m_scrollinfo.live_counter = 0;
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "DrawAreaBase::update_live_speed sec = " << sec
               << " speed = " << m_scrollinfo.live_speed << std::endl;
-//#endif
+#endif
 }
 
 

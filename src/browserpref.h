@@ -17,6 +17,7 @@ namespace CORE
 {
     class BrowserPref : public SKELETON::PrefDiag
     {
+        Gtk::VBox m_vbox;
         Gtk::Label m_label_notice;
         Gtk::ComboBoxText m_combo;
         Gtk::Frame m_frame;
@@ -60,10 +61,13 @@ namespace CORE
             m_frame.add( m_hbox );
             m_label_notice.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
 
+            m_vbox.set_border_width( mrg );
+            m_vbox.pack_start( m_label_notice, Gtk::PACK_EXPAND_WIDGET, mrg );
+            m_vbox.pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 0 );
+            m_vbox.pack_start( m_frame, Gtk::PACK_EXPAND_WIDGET, mrg );
+
             get_vbox()->set_spacing( 0 );
-            get_vbox()->pack_start( m_label_notice, Gtk::PACK_EXPAND_WIDGET, mrg );
-            get_vbox()->pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 0 );
-            get_vbox()->pack_start( m_frame, Gtk::PACK_EXPAND_WIDGET, mrg );
+            get_vbox()->pack_start( m_vbox );
 
             set_title( "Webブラウザ設定" );
             show_all_children();
