@@ -21,8 +21,7 @@ BBSListToolBar::BBSListToolBar() :
     SKELETON::ToolBar( BBSLIST::get_admin() ),
     m_button_toggle( m_label )
 {
-    if( m_button_toggle.get_arrow() ) set_tooltip( *m_button_toggle.get_arrow(),
-                                                   "板一覧とお気に入りの切り替え\n\nマウスホイール回転でも切り替え可能" );
+    m_button_toggle.set_tooltip_arrow( "板一覧とお気に入りの切り替え\n\nマウスホイール回転でも切り替え可能" );
 
     m_label.set_alignment( Gtk::ALIGN_LEFT );
     std::vector< std::string > menu;

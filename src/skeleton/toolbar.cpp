@@ -223,6 +223,19 @@ void ToolBar::pack_transparent_separator()
 
 
 //
+// ツールチップ
+//
+void ToolBar::set_tooltip( Gtk::ToolItem& toolitem, const std::string& tip )
+{
+#if GTKMMVER < 2120
+    toolitem.set_tooltip( m_tooltip, tip );
+#else
+    toolitem.set_tooltip_text( tip );
+#endif
+}
+
+
+//
 // ラベル
 //
 Gtk::ToolItem* ToolBar::get_label()
@@ -260,7 +273,7 @@ void ToolBar::set_label( const std::string& label )
     }
 
     m_label->set_text( label );
-    set_tooltip( *m_ebox_label, label );
+    if( m_tool_label ) set_tooltip( *m_tool_label, label );
 }
 
 
@@ -541,12 +554,12 @@ Gtk::ToolItem* ToolBar::get_button_board()
 {
     if( ! m_tool_board ){
         m_button_board = Gtk::manage( new Gtk::Button );
-        set_tooltip( *m_button_board, CONTROL::get_label_motion( CONTROL::OpenParentBoard ) );
 
         m_button_board->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_open_board ) );
 
         m_tool_board = Gtk::manage( new Gtk::ToolItem );
         m_tool_board->add( *m_button_board );
+        set_tooltip( *m_tool_board, CONTROL::get_label_motion( CONTROL::OpenParentBoard ) );
     }
 
     return m_tool_board;
@@ -746,12 +759,12 @@ Gtk::ToolItem* ToolBar::get_button_back()
 
         m_tool_back = Gtk::manage( new Gtk::ToolItem );
         m_button_back = Gtk::manage( new SKELETON::BackForwardButton( m_url, true ) );
-        set_tooltip( *m_button_back, CONTROL::get_label_motion( CONTROL::PrevView ) );
 
         m_button_back->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_back ) );
         m_button_back->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_back ) );
 
         m_tool_back->add( *m_button_back );
+        set_tooltip( *m_tool_back, CONTROL::get_label_motion( CONTROL::PrevView ) );
     }
 
     return m_tool_back;
@@ -793,12 +806,12 @@ Gtk::ToolItem* ToolBar::get_button_forward()
 
         m_tool_forward = Gtk::manage( new Gtk::ToolItem );
         m_button_forward = Gtk::manage( new SKELETON::BackForwardButton( m_url, false ) );
-        set_tooltip( *m_button_forward, CONTROL::get_label_motion( CONTROL::NextView ) );
 
         m_button_forward->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_forward ) );
         m_button_forward->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_forward ) );
 
         m_tool_forward->add( *m_button_forward );
+        set_tooltip( *m_tool_forward, CONTROL::get_label_motion( CONTROL::NextView ) );
     }
 
     return m_tool_forward;

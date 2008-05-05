@@ -27,6 +27,8 @@ namespace SKELETON
         Gtk::Menu* m_popupmenu;
         std::vector< Gtk::MenuItem* > m_menuitems;
         Gtk::Widget* m_label;
+
+        Gtk::Tooltips m_tooltip_arrow;
         Gtk::Arrow* m_arrow;
 
         bool m_on_arrow;
@@ -41,7 +43,7 @@ namespace SKELETON
 
       virtual ~MenuButton();
 
-      Gtk::Arrow* get_arrow(){ return m_arrow; }
+      void set_tooltip_arrow( const std::string& tooltip );
 
       SIG_BUTTON_CLICKED signal_button_clicked(){ return m_sig_clicked; }
 

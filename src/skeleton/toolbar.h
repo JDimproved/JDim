@@ -29,7 +29,9 @@ namespace SKELETON
         // ツールバー表示状態
         bool m_toolbar_shown;
 
+#if GTKMMVER < 2120
         Gtk::Tooltips m_tooltip;
+#endif
 
         // メインツールバー
         SKELETON::JDToolbar m_buttonbar;
@@ -144,7 +146,7 @@ namespace SKELETON
 
         void pack_separator();
         void pack_transparent_separator();
-        void set_tooltip( Gtk::Widget& widget, const std::string& tip ){ m_tooltip.set_tip( widget, tip ); }
+        void set_tooltip( Gtk::ToolItem& toolitem, const std::string& tip );
 
       private:
 

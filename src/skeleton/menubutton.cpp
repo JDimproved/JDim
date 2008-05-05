@@ -86,6 +86,17 @@ MenuButton::~MenuButton()
 }
 
 
+void MenuButton::set_tooltip_arrow( const std::string& tooltip )
+{
+#if GTKMMVER < 2120
+    // gtkmm-2.12.0より前のバージョンはボタンの中のWidgetにツールチップを設定できない
+    m_tooltip_arrow.set_tip( *this, tooltip );
+#else
+    if( m_arrow ) m_tooltip_arrow.set_tip( *m_arrow, tooltip );
+#endif
+}
+
+
 //
 // メニュー項目追加
 //
