@@ -8,6 +8,7 @@
 #include "view.h"
 #include "imgtoolbutton.h"
 #include "imgtoggletoolbutton.h"
+#include "menubutton.h"
 #include "backforwardbutton.h"
 #include "compentry.h"
 
@@ -49,6 +50,7 @@ ToolBar::ToolBar( Admin* admin )
       m_entry_search( NULL ),
 
       m_tool_board( NULL ),
+      m_label_board( NULL ),
       m_button_board( NULL ),
 
       m_button_write( NULL ),
@@ -108,7 +110,7 @@ void ToolBar::set_view( SKELETON::View* view )
 
     if( m_entry_search ) m_entry_search->set_text( view->get_search_query() );
 
-    if( m_button_board ) m_button_board->set_label( DBTREE::board_name( get_url() ) );
+    if( m_label_board ) m_label_board->set_text( DBTREE::board_name( get_url() ) );
 
     m_enable_slot = true;
 }
@@ -553,10 +555,18 @@ void ToolBar::slot_clicked_down_search()
 Gtk::ToolItem* ToolBar::get_button_board()
 {
     if( ! m_tool_board ){
-        m_button_board = Gtk::manage( new Gtk::Button );
 
-        m_button_board->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_open_board ) );
+        m_label_board = Gtk::manage( new Gtk::Label );
+        m_label_board->set_alignment( Gtk::ALIGN_LEFT );
 
+        m_button_board = Gtk::manage( new SKELETON::MenuButton( *m_label_board ) );
+
+        std::vector< std::string > menu;
+        menu.push_back( "開く" );
+        menu.push_back( "再読み込みして開く" );
+        m_button_board->append_menu( menu );
+        m_button_board->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_menu_board ) );
+        m_button_board->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_open_board ) );
         m_tool_board = Gtk::manage( new Gtk::ToolItem );
         m_tool_board->add( *m_button_board );
         set_tooltip( *m_tool_board, CONTROL::get_label_motion( CONTROL::OpenParentBoard ) );
@@ -573,6 +583,15 @@ void ToolBar::slot_open_board()
     CORE::core_set_command( "open_board", DBTREE::url_subject( get_url() ), "true",
                             "auto" // オートモードで開く
         );
+}
+
+
+void ToolBar::slot_menu_board( int i )
+{
+    if( ! m_enable_slot ) return;
+
+    if( i == 0 ) slot_open_board();
+    else if( i == 1 ) CORE::core_set_command( "open_board", DBTREE::url_subject( get_url() ), "true" );
 }
 
 

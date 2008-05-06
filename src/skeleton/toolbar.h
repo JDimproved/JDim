@@ -16,6 +16,7 @@ namespace SKELETON
     class View;
     class ImgToolButton;
     class ImgToggleToolButton;
+    class MenuButton;
     class BackForwardButton;
     class SearchEntry;
 
@@ -56,7 +57,8 @@ namespace SKELETON
         // Gtk::ToolButtonを使うとボタンの枠が表示されないことがあるので
         // Gtk::ToolItemにGtk::Buttonをaddする
         Gtk::ToolItem* m_tool_board;
-        Gtk::Button* m_button_board;
+        Gtk::Label* m_label_board;
+        SKELETON::MenuButton* m_button_board;
 
         // その他ボタン
         SKELETON::ImgToolButton* m_button_write;
@@ -165,6 +167,7 @@ namespace SKELETON
 
         // 板を開く
         void slot_open_board();
+        void slot_menu_board( int i );
 
         // その他ボタン
         void slot_clicked_write();

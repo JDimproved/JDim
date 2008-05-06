@@ -41,6 +41,8 @@ MenuButton::MenuButton()
 
 void MenuButton::setup( Gtk::Widget* label, Gtk::PackOptions options, guint padding )
 {
+    const int space = 4;
+
     m_label = label;
     m_popupmenu =  NULL;
     m_on_arrow = false;
@@ -49,7 +51,7 @@ void MenuButton::setup( Gtk::Widget* label, Gtk::PackOptions options, guint padd
     Gtk::HBox *hbox = Gtk::manage( new Gtk::HBox() );
     m_arrow = Gtk::manage( new Gtk::Arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ) );
 
-    hbox->set_spacing( 2 );
+    hbox->set_spacing( space );
     if( m_label ) hbox->pack_start( *m_label, options, padding );
     hbox->pack_start( *m_arrow, Gtk::PACK_SHRINK );
 
