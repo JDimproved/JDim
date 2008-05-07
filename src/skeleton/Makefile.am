@@ -18,6 +18,7 @@ libskeleton_a_SOURCES = \
 	imgtogglebutton.cpp \
 	imgtoggletoolbutton.cpp \
 	menubutton.cpp \
+	toolmenubutton.cpp \
 	backforwardbutton.cpp \
 	tooltip.cpp \
 	entry.cpp \
@@ -56,6 +57,7 @@ noinst_HEADERS = \
 	imgtogglebutton.h \
 	imgtoggletoolbutton.h \
 	menubutton.h \
+	toolmenubutton.h \
 	backforwardbutton.h \
 	spinbutton.h \
 	popupwinbase.h \

@@ -17,29 +17,24 @@ enum
 };
 
 
-MenuButton::MenuButton( Gtk::Widget& label )
-    : m_label( NULL )
+MenuButton::MenuButton( const bool show_arrow, Gtk::Widget& label )
+    : m_label( NULL ), m_arrow( NULL )
 {
-    setup( &label );
+    setup( show_arrow, &label );
 }
 
 
-MenuButton::MenuButton( const Gtk::StockID& stock_id,
-                              const Gtk::BuiltinIconSize icon_size )
-    : m_label( NULL )
+MenuButton::MenuButton( const bool show_arrow,
+                        const Gtk::StockID& stock_id,
+                        const Gtk::BuiltinIconSize icon_size
+    )
+    : m_label( NULL ), m_arrow( NULL )
 {
-    setup( Gtk::manage( new Gtk::Image( stock_id, icon_size ) ), Gtk::PACK_SHRINK );
+    setup( show_arrow, Gtk::manage( new Gtk::Image( stock_id, icon_size ) ), Gtk::PACK_SHRINK );
 }
 
 
-MenuButton::MenuButton()
-    : m_label( NULL )
-{
-    setup( NULL );
-}
-
-
-void MenuButton::setup( Gtk::Widget* label, Gtk::PackOptions options, guint padding )
+void MenuButton::setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOptions options, guint padding )
 {
     const int space = 4;
 
@@ -49,11 +44,15 @@ void MenuButton::setup( Gtk::Widget* label, Gtk::PackOptions options, guint padd
     m_enable_sig_clicked = true;
 
     Gtk::HBox *hbox = Gtk::manage( new Gtk::HBox() );
-    m_arrow = Gtk::manage( new Gtk::Arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ) );
 
     hbox->set_spacing( space );
     if( m_label ) hbox->pack_start( *m_label, options, padding );
-    hbox->pack_start( *m_arrow, Gtk::PACK_SHRINK );
+
+    if( show_arrow ){
+        m_arrow = Gtk::manage( new Gtk::Arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ) );
+        hbox->pack_start( *m_arrow, Gtk::PACK_SHRINK );
+    }
+    else m_enable_sig_clicked = false;
 
     add_events( Gdk::ENTER_NOTIFY_MASK );
     add_events( Gdk::POINTER_MOTION_MASK );
@@ -219,6 +218,11 @@ bool MenuButton::slot_motion( GdkEventMotion* event )
 //
 void MenuButton::check_on_arrow( int ex )
 {
+    if( ! m_arrow ){
+        m_on_arrow = false;
+        return;
+    }
+
     if( ! m_label ){
         m_on_arrow = true;
         return;

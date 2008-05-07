@@ -19,7 +19,8 @@ using namespace BBSLIST;
 
 BBSListToolBar::BBSListToolBar() :
     SKELETON::ToolBar( BBSLIST::get_admin() ),
-    m_button_toggle( m_label )
+    m_button_toggle( true, m_label ),
+    m_tool_toggle( m_button_toggle, "板一覧とお気に入りの切り替え", true )
 {
     m_button_toggle.set_tooltip_arrow( "板一覧とお気に入りの切り替え\n\nマウスホイール回転でも切り替え可能" );
 
@@ -31,8 +32,6 @@ BBSListToolBar::BBSListToolBar() :
     m_button_toggle.signal_selected().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_toggle ) );
     m_button_toggle.signal_scroll_event().connect(  sigc::mem_fun( *this, &BBSListToolBar::slot_scroll_event ));
     m_button_toggle.set_enable_sig_clicked( false );
-    m_tool_toggle.set_expand( true );
-    m_tool_toggle.add( m_button_toggle );
 
 #if GTKMMVER >= 2120
     m_tool_label.set_icon_size( Gtk::ICON_SIZE_MENU );

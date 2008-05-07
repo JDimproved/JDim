@@ -9,6 +9,7 @@
 #include "imgtoolbutton.h"
 #include "imgtoggletoolbutton.h"
 #include "menubutton.h"
+#include "toolmenubutton.h"
 #include "backforwardbutton.h"
 #include "compentry.h"
 
@@ -551,7 +552,7 @@ void ToolBar::slot_clicked_down_search()
 }
 
 
-// 板を開く
+// 板を開くボタン
 Gtk::ToolItem* ToolBar::get_button_board()
 {
     if( ! m_tool_board ){
@@ -559,7 +560,7 @@ Gtk::ToolItem* ToolBar::get_button_board()
         m_label_board = Gtk::manage( new Gtk::Label );
         m_label_board->set_alignment( Gtk::ALIGN_LEFT );
 
-        m_button_board = Gtk::manage( new SKELETON::MenuButton( *m_label_board ) );
+        m_button_board = Gtk::manage( new SKELETON::MenuButton( true, *m_label_board ) );
 
         std::vector< std::string > menu;
         menu.push_back( "開く" );
@@ -776,13 +777,12 @@ Gtk::ToolItem* ToolBar::get_button_back()
 {
     if( ! m_tool_back ){
 
-        m_tool_back = Gtk::manage( new Gtk::ToolItem );
         m_button_back = Gtk::manage( new SKELETON::BackForwardButton( m_url, true ) );
-
+        m_tool_back = Gtk::manage( new SKELETON::ToolMenuButton( *m_button_back, "back", false ) );
+ 
         m_button_back->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_back ) );
         m_button_back->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_back ) );
 
-        m_tool_back->add( *m_button_back );
         set_tooltip( *m_tool_back, CONTROL::get_label_motion( CONTROL::PrevView ) );
     }
 
@@ -823,13 +823,12 @@ Gtk::ToolItem* ToolBar::get_button_forward()
 {
     if( ! m_tool_forward ){
 
-        m_tool_forward = Gtk::manage( new Gtk::ToolItem );
         m_button_forward = Gtk::manage( new SKELETON::BackForwardButton( m_url, false ) );
+        m_tool_forward = Gtk::manage( new SKELETON::ToolMenuButton( *m_button_forward, "forward", false ) );
 
         m_button_forward->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_forward ) );
         m_button_forward->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_forward ) );
 
-        m_tool_forward->add( *m_button_forward );
         set_tooltip( *m_tool_forward, CONTROL::get_label_motion( CONTROL::NextView ) );
     }
 

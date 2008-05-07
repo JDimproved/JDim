@@ -36,12 +36,15 @@ namespace SKELETON
 
       public:
 
-      MenuButton( Gtk::Widget& label );
-      MenuButton( const Gtk::StockID& stock_id,
-                     const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
-      MenuButton();
+        MenuButton( const bool show_arrow, Gtk::Widget& label );
+
+        MenuButton( const bool show_arrow ,
+                    const Gtk::StockID& stock_id,
+                    const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
 
       virtual ~MenuButton();
+
+      Gtk::Widget* get_label_widget(){ return m_label; }
 
       void set_tooltip_arrow( const std::string& tooltip );
 
@@ -57,6 +60,8 @@ namespace SKELETON
       // false の時はボタンのどこを押してもメニューを表示する
       void set_enable_sig_clicked( const bool enable ){ m_enable_sig_clicked = enable; }
 
+      void on_clicked();
+
       protected:
 
       // ポップアップメニュー表示
@@ -64,11 +69,10 @@ namespace SKELETON
 
       private:
 
-      void setup( Gtk::Widget* label, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
+      void setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
 
       void slot_menu_selected( int i );
 
-      void on_clicked();
       void slot_popup_pos( int& x, int& y, bool& push_in );
 
       bool slot_enter( GdkEventCrossing* event );
