@@ -94,7 +94,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
       m_jump_y( -1 ),
       m_dnd_counter( 0 ),
       m_search_invert( 0 ),
-      m_cancel_focus( 0 ),
       m_expand_collapse( 0 ),
       m_cancel_expand( false ),
       m_expanding( 0 )
@@ -528,11 +527,8 @@ void BBSListViewBase::relayout()
 //
 void BBSListViewBase::focus_view()
 {
-    // 一回キャンセル
-    if( m_cancel_focus ){
-        m_cancel_focus = false;
-        return;
-    }
+    // セルの文字を編集中なら何もしない
+    if( m_ren_text->property_editable() ) return;
 
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::focus_view url = " << get_url() << std::endl;
@@ -1389,9 +1385,6 @@ void BBSListViewBase::slot_rename()
     // edit可 slot_ren_text_on_edited() と slot_ren_text_on_canceled で false にする
     m_ren_text->property_editable() = true;
     m_treeview.set_cursor( m_path_selected, *m_treeview.get_column( COL_NAME ), true );
-
-    // メニューが消えるとfocus_viewが呼ばれて名前変更モードが終了するのでfocus_viewをキャンセルする
-    m_cancel_focus = true;
 }
 
 

@@ -60,11 +60,6 @@ namespace BBSLIST
         bool m_search_invert;
         std::string m_pre_query;
 
-        // fucus_viewを一回キャンセルする
-        // ポップアップメニューが消えたときにfocus_viewが呼び出されるが
-        // 名前の変更など都合の悪いときはキャンセルする
-        bool m_cancel_focus;
-
         // あるフォルダを開いたときに他のフォルダを閉じる
         bool m_expand_collapse;
         bool m_cancel_expand; // signal_row_expanded() をキャンセルする
