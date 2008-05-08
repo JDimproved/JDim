@@ -95,6 +95,11 @@ std::string MessageToolBar::get_new_subject()
     return std::string();
 }
 
+void MessageToolBar::clear_new_subject()
+{
+    if( m_entry_new_subject ) m_entry_new_subject->set_text( "" );
+}
+
 
 // ボタンのパッキング
 // virtual

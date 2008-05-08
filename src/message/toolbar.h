@@ -55,6 +55,7 @@ namespace MESSAGE
 
         void show_entry_new_subject( bool show );
         std::string get_new_subject();
+        void clear_new_subject();
 
       protected:
 

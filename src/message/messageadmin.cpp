@@ -132,6 +132,8 @@ void MessageAdmin::close_view( const std::string& url )
         if( ! delete_message( view ) ) return;
     }
 
+    if( m_toolbar ) m_toolbar->clear_new_subject();
+
     if( view->is_locked() ) view->set_command( "clear_message" );
     else{
         Admin::close_view( url );
@@ -250,6 +252,8 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
         int page = get_notebook()->get_current_page();
         get_notebook()->remove_page( page );
         delete current_view;
+
+        if( m_toolbar ) m_toolbar->clear_new_subject();
     }
 
     std::string url_msg;
