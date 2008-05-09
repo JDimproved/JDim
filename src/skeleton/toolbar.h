@@ -16,7 +16,8 @@ namespace SKELETON
     class View;
     class ImgToolButton;
     class ImgToggleToolButton;
-    class MenuButton;
+    class ToolMenuButton;
+    class ToolBackForwardButton;
     class BackForwardButton;
     class SearchEntry;
 
@@ -54,11 +55,8 @@ namespace SKELETON
         SKELETON::SearchEntry* m_entry_search;
 
         // 板を開く
-        // Gtk::ToolButtonを使うとボタンの枠が表示されないことがあるので
-        // Gtk::ToolItemにGtk::Buttonをaddする
-        Gtk::ToolItem* m_tool_board;
         Gtk::Label* m_label_board;
-        SKELETON::MenuButton* m_button_board;
+        SKELETON::ToolMenuButton* m_button_board;
 
         // その他ボタン
         SKELETON::ImgToolButton* m_button_write;
@@ -70,11 +68,8 @@ namespace SKELETON
         SKELETON::ImgToggleToolButton* m_button_lock;
 
         // 進む、戻るボタン
-        Gtk::ToolItem* m_tool_back;
-        SKELETON::BackForwardButton* m_button_back;
-
-        Gtk::ToolItem* m_tool_forward;
-        SKELETON::BackForwardButton* m_button_forward;
+        SKELETON::ToolBackForwardButton* m_button_back;
+        SKELETON::ToolBackForwardButton* m_button_forward;
 
       public:
 
@@ -122,26 +117,26 @@ namespace SKELETON
 
         // 検索関係
         Gtk::Toolbar* get_searchbar();
-        Gtk::ToolButton* get_button_open_searchbar();
-        Gtk::ToolButton* get_button_close_searchbar();
+        Gtk::ToolItem* get_button_open_searchbar();
+        Gtk::ToolItem* get_button_close_searchbar();
 
         Gtk::ToolItem* get_entry_search();
         void add_search_mode( const int mode );
         const std::string get_search_text();
-        Gtk::ToolButton* get_button_up_search();
-        Gtk::ToolButton* get_button_down_search();
+        Gtk::ToolItem* get_button_up_search();
+        Gtk::ToolItem* get_button_down_search();
 
         // 板を開く
         Gtk::ToolItem* get_button_board();
 
         // その他ボタン
-        Gtk::ToolButton* get_button_write();
-        Gtk::ToolButton* get_button_reload();
-        Gtk::ToolButton* get_button_stop();
-        Gtk::ToolButton* get_button_close();
-        Gtk::ToolButton* get_button_delete();
-        Gtk::ToolButton* get_button_favorite();
-        Gtk::ToggleToolButton* get_button_lock();
+        Gtk::ToolItem* get_button_write();
+        Gtk::ToolItem* get_button_reload();
+        Gtk::ToolItem* get_button_stop();
+        Gtk::ToolItem* get_button_close();
+        Gtk::ToolItem* get_button_delete();
+        Gtk::ToolItem* get_button_favorite();
+        Gtk::ToolItem* get_button_lock();
 
         Gtk::ToolItem* get_button_back();
         Gtk::ToolItem* get_button_forward();

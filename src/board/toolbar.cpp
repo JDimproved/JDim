@@ -6,8 +6,6 @@
 #include "toolbar.h"
 #include "boardadmin.h"
 
-#include "skeleton/compentry.h"
-
 #include "controlutil.h"
 #include "controlid.h"
 #include "session.h"

@@ -50,7 +50,6 @@ ToolBar::ToolBar( Admin* admin )
       m_tool_search( NULL ),
       m_entry_search( NULL ),
 
-      m_tool_board( NULL ),
       m_label_board( NULL ),
       m_button_board( NULL ),
 
@@ -62,9 +61,7 @@ ToolBar::ToolBar( Admin* admin )
       m_button_favorite( NULL ),
       m_button_lock( NULL ),
 
-      m_tool_back( NULL ),
       m_button_back( NULL ),
-      m_tool_forward( NULL ),
       m_button_forward( NULL )
 {
     m_buttonbar.set_border_width( 0 );
@@ -79,8 +76,8 @@ void ToolBar::set_url( const std::string& url )
 {
     m_url = url;
 
-    if( m_button_back ) m_button_back->set_url( m_url );
-    if( m_button_forward ) m_button_forward->set_url( m_url );
+    if( m_button_back ) m_button_back->get_backforward_button()->set_url( m_url );
+    if( m_button_forward ) m_button_forward->get_backforward_button()->set_url( m_url );
 }
 
 
@@ -368,7 +365,7 @@ void ToolBar::close_searchbar()
 //
 // 検索バーを開く/閉じるボタン
 //
-Gtk::ToolButton* ToolBar::get_button_open_searchbar()
+Gtk::ToolItem* ToolBar::get_button_open_searchbar()
 {
     if( ! m_button_open_searchbar ){
         m_button_open_searchbar = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::FIND ) );
@@ -381,7 +378,7 @@ Gtk::ToolButton* ToolBar::get_button_open_searchbar()
     return m_button_open_searchbar;
 }
 
-Gtk::ToolButton* ToolBar::get_button_close_searchbar()
+Gtk::ToolItem* ToolBar::get_button_close_searchbar()
 {
     if( ! m_button_close_searchbar ){
         m_button_close_searchbar = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::UNDO ) );
@@ -497,7 +494,7 @@ void ToolBar::focus_entry_search()
 //
 // 上検索
 //
-Gtk::ToolButton* ToolBar::get_button_up_search()
+Gtk::ToolItem* ToolBar::get_button_up_search()
 {
     if( ! m_button_up_search ){
         m_button_up_search = Gtk::manage( new ImgToolButton( Gtk::Stock::GO_UP ) );
@@ -526,7 +523,7 @@ void ToolBar::slot_clicked_up_search()
 //
 // 下検索
 //
-Gtk::ToolButton* ToolBar::get_button_down_search()
+Gtk::ToolItem* ToolBar::get_button_down_search()
 {
     if( ! m_button_down_search ){
         m_button_down_search = Gtk::manage( new ImgToolButton( Gtk::Stock::GO_DOWN ) );
@@ -555,25 +552,24 @@ void ToolBar::slot_clicked_down_search()
 // 板を開くボタン
 Gtk::ToolItem* ToolBar::get_button_board()
 {
-    if( ! m_tool_board ){
+    if( ! m_button_board ){
 
         m_label_board = Gtk::manage( new Gtk::Label );
         m_label_board->set_alignment( Gtk::ALIGN_LEFT );
 
-        m_button_board = Gtk::manage( new SKELETON::MenuButton( true, *m_label_board ) );
+        m_button_board = Gtk::manage( new SKELETON::ToolMenuButton( CONTROL::get_label( CONTROL::OpenParentBoard ), false, true, *m_label_board ) );
 
         std::vector< std::string > menu;
         menu.push_back( "開く" );
         menu.push_back( "再読み込みして開く" );
-        m_button_board->append_menu( menu );
-        m_button_board->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_menu_board ) );
-        m_button_board->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_open_board ) );
-        m_tool_board = Gtk::manage( new Gtk::ToolItem );
-        m_tool_board->add( *m_button_board );
-        set_tooltip( *m_tool_board, CONTROL::get_label_motion( CONTROL::OpenParentBoard ) );
+        m_button_board->get_button()->append_menu( menu );
+        m_button_board->get_button()->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_menu_board ) );
+        m_button_board->get_button()->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_open_board ) );
+
+        set_tooltip( *m_button_board, CONTROL::get_label_motion( CONTROL::OpenParentBoard ) );
     }
 
-    return m_tool_board;
+    return m_button_board;
 }
 
 
@@ -599,7 +595,7 @@ void ToolBar::slot_menu_board( int i )
 //
 // 書き込みボタン
 //
-Gtk::ToolButton* ToolBar::get_button_write()
+Gtk::ToolItem* ToolBar::get_button_write()
 {
     if( ! m_button_write ){
         m_button_write = Gtk::manage( new ImgToolButton( ICON::WRITE ) );
@@ -628,7 +624,7 @@ void ToolBar::slot_clicked_write()
 //
 // 再読み込みボタン
 //
-Gtk::ToolButton* ToolBar::get_button_reload()
+Gtk::ToolItem* ToolBar::get_button_reload()
 {
     if( ! m_button_reload ){
         m_button_reload = Gtk::manage( new ImgToolButton( Gtk::Stock::REFRESH ) );
@@ -657,7 +653,7 @@ void ToolBar::slot_clicked_reload()
 //
 // 読み込み停止ボタン
 //
-Gtk::ToolButton* ToolBar::get_button_stop()
+Gtk::ToolItem* ToolBar::get_button_stop()
 {
     if( ! m_button_stop ){
         m_button_stop = Gtk::manage( new ImgToolButton( Gtk::Stock::STOP ) );
@@ -686,7 +682,7 @@ void ToolBar::slot_clicked_stop()
 //
 // 閉じるボタン
 //
-Gtk::ToolButton* ToolBar::get_button_close()
+Gtk::ToolItem* ToolBar::get_button_close()
 {
     if( ! m_button_close ){
         m_button_close = Gtk::manage( new ImgToolButton( Gtk::Stock::CLOSE ) );
@@ -715,7 +711,7 @@ void ToolBar::slot_clicked_close()
 //
 // 削除ボタン
 //
-Gtk::ToolButton* ToolBar::get_button_delete()
+Gtk::ToolItem* ToolBar::get_button_delete()
 {
     if( ! m_button_delete ){
         m_button_delete = Gtk::manage( new ImgToolButton( Gtk::Stock::DELETE ) );
@@ -744,7 +740,7 @@ void ToolBar::slot_clicked_delete()
 //
 // お気に入りボタン
 //
-Gtk::ToolButton* ToolBar::get_button_favorite()
+Gtk::ToolItem* ToolBar::get_button_favorite()
 {
     if( ! m_button_favorite ){
         m_button_favorite = Gtk::manage( new ImgToolButton( Gtk::Stock::COPY ) );
@@ -775,18 +771,16 @@ void ToolBar::slot_clicked_favorite()
 //
 Gtk::ToolItem* ToolBar::get_button_back()
 {
-    if( ! m_tool_back ){
+    if( ! m_button_back ){
 
-        m_button_back = Gtk::manage( new SKELETON::BackForwardButton( m_url, true ) );
-        m_tool_back = Gtk::manage( new SKELETON::ToolMenuButton( *m_button_back, "back", false ) );
- 
-        m_button_back->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_back ) );
-        m_button_back->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_back ) );
+        m_button_back = Gtk::manage( new SKELETON::ToolBackForwardButton( "back", false, m_url, true ) );
+        m_button_back->get_button()->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_back ) );
+        m_button_back->get_button()->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_back ) );
 
-        set_tooltip( *m_tool_back, CONTROL::get_label_motion( CONTROL::PrevView ) );
+        set_tooltip( *m_button_back, CONTROL::get_label_motion( CONTROL::PrevView ) );
     }
 
-    return m_tool_back;
+    return m_button_back;
 }
 
 
@@ -821,18 +815,15 @@ void ToolBar::slot_selected_back( const int i )
 //
 Gtk::ToolItem* ToolBar::get_button_forward()
 {
-    if( ! m_tool_forward ){
+    if( ! m_button_forward ){
 
-        m_button_forward = Gtk::manage( new SKELETON::BackForwardButton( m_url, false ) );
-        m_tool_forward = Gtk::manage( new SKELETON::ToolMenuButton( *m_button_forward, "forward", false ) );
-
-        m_button_forward->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_forward ) );
-        m_button_forward->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_forward ) );
-
-        set_tooltip( *m_tool_forward, CONTROL::get_label_motion( CONTROL::NextView ) );
+        m_button_forward = Gtk::manage( new SKELETON::ToolBackForwardButton( "forward", false, m_url, false ) );
+        m_button_forward->get_button()->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_forward ) );
+        m_button_forward->get_button()->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_forward ) );
+        set_tooltip( *m_button_forward, CONTROL::get_label_motion( CONTROL::NextView ) );
     }
 
-    return m_tool_forward;
+    return m_button_forward;
 }
 
 
@@ -865,7 +856,7 @@ void ToolBar::slot_selected_forward( const int i )
 //
 // ロックボタン
 //
-Gtk::ToggleToolButton* ToolBar::get_button_lock()
+Gtk::ToolItem* ToolBar::get_button_lock()
 {
     if( ! m_button_lock ){
         m_button_lock = Gtk::manage( new SKELETON::ImgToggleToolButton( Gtk::Stock::NO ) );

@@ -6,8 +6,8 @@
 #include "toolbar.h"
 #include "bbslistadmin.h"
 
-#include "skeleton/compentry.h"
 #include "skeleton/view.h"
+#include "skeleton/menubutton.h"
 
 #include "command.h"
 #include "controlid.h"
@@ -19,25 +19,24 @@ using namespace BBSLIST;
 
 BBSListToolBar::BBSListToolBar() :
     SKELETON::ToolBar( BBSLIST::get_admin() ),
-    m_button_toggle( true, m_label ),
-    m_tool_toggle( m_button_toggle, "板一覧とお気に入りの切り替え", true )
+    m_button_toggle( "板一覧とお気に入りの切り替え", true, true, m_label )
 {
-    m_button_toggle.set_tooltip_arrow( "板一覧とお気に入りの切り替え\n\nマウスホイール回転でも切り替え可能" );
+    m_button_toggle.get_button()->set_tooltip_arrow( "板一覧とお気に入りの切り替え\n\nマウスホイール回転でも切り替え可能" );
 
     m_label.set_alignment( Gtk::ALIGN_LEFT );
     std::vector< std::string > menu;
     menu.push_back( "板一覧" );
     menu.push_back( "お気に入り" );
-    m_button_toggle.append_menu( menu );
-    m_button_toggle.signal_selected().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_toggle ) );
-    m_button_toggle.signal_scroll_event().connect(  sigc::mem_fun( *this, &BBSListToolBar::slot_scroll_event ));
-    m_button_toggle.set_enable_sig_clicked( false );
+    m_button_toggle.get_button()->append_menu( menu );
+    m_button_toggle.get_button()->signal_selected().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_toggle ) );
+    m_button_toggle.get_button()->signal_scroll_event().connect(  sigc::mem_fun( *this, &BBSListToolBar::slot_scroll_event ));
+    m_button_toggle.get_button()->set_enable_sig_clicked( false );
 
 #if GTKMMVER >= 2120
     m_tool_label.set_icon_size( Gtk::ICON_SIZE_MENU );
 #endif
     m_tool_label.set_toolbar_style( Gtk::TOOLBAR_ICONS );
-    m_tool_label.append( m_tool_toggle );
+    m_tool_label.append( m_button_toggle );
     m_tool_label.append( *get_button_close() );
     pack_start( m_tool_label, Gtk::PACK_SHRINK );
 

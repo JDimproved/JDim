@@ -169,7 +169,9 @@ void MessageToolBar::pack_buttons()
             case ITEM_LOCK_MESSAGE:
                 get_buttonbar().append( *get_button_lock() );
                 set_tooltip( *get_button_lock(), CONTROL::get_label_motion( CONTROL::LockMessage ) );
-                get_button_lock()->set_label( CONTROL::get_label( CONTROL::LockMessage ) );
+                Gtk::ToolButton* toolbt;
+                toolbt = dynamic_cast< Gtk::ToolButton* >( get_button_lock() );
+                if( toolbt ) toolbt->set_label( CONTROL::get_label( CONTROL::LockMessage ) );
                 break;
 
             case ITEM_QUIT:

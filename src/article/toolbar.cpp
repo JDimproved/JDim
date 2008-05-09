@@ -7,7 +7,6 @@
 #include "articleadmin.h"
 #include "articleviewbase.h"
 
-#include "skeleton/compentry.h"
 #include "skeleton/imgtoggletoolbutton.h"
 
 #include "command.h"

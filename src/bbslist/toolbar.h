@@ -9,7 +9,6 @@
 
 #include "skeleton/toolbar.h"
 #include "skeleton/jdtoolbar.h"
-#include "skeleton/menubutton.h"
 #include "skeleton/toolmenubutton.h"
 
 namespace BBSLIST
@@ -20,8 +19,7 @@ namespace BBSLIST
         SKELETON::JDToolbar m_tool_label;
 
         Gtk::Label m_label;
-        SKELETON::MenuButton m_button_toggle;
-        SKELETON::ToolMenuButton m_tool_toggle;
+        SKELETON::ToolMenuButton m_button_toggle;
 
       public:
 
