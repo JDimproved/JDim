@@ -40,6 +40,12 @@ struct XSMPDATA
 };
 #endif
 
+enum
+{
+    MAX_SAFE_ARGC = 4,   // 引数の数の制限値
+    MAX_SAFE_ARGV = 1024 // 各引数の文字列の制限値
+};
+
 WinMain* Win_Main = NULL;
 
 
@@ -306,6 +312,24 @@ int main( int argc, char **argv )
 {
     /*--- 引数処理 --------------------------------------------------*/
 
+    // 引数の数を制限
+    if( argc > MAX_SAFE_ARGC )
+    {
+        MISC::ERRMSG( "main(): Too many arguments." );
+        exit( EXIT_FAILURE );
+    }
+
+    // 各引数の文字数を制限
+    int i;
+    for( i = 0; i < argc; ++i )
+    {
+        if( strlen( argv[ i ] ) > MAX_SAFE_ARGV )
+        {
+            MISC::ERRMSG( "main(): Too many the strings in argument." );
+            exit( EXIT_FAILURE );
+        }
+    }
+
     // "現在のタブ/新規タブ"など引数によって開き方を変えたい場合は、--tab=<url>
     // など新しいオプションを追加する
     // --help, --tab=<url>, --multi, --version
@@ -328,7 +352,7 @@ int main( int argc, char **argv )
         switch( opt )
         {
             case 'h':
-                usage( 0 );
+                usage( EXIT_SUCCESS );
                 break;
 
             //case 't':
@@ -344,7 +368,7 @@ int main( int argc, char **argv )
                 break;
 
             default:
-                usage( 2 );
+                usage( EXIT_FAILURE );
         }
     }
 

@@ -129,6 +129,7 @@ namespace CACHE
     {
         EXIST_FILE = 0,  // ファイル
         EXIST_DIR,       // ディレクトリ
+        EXIST_FIFO,      // FIFO
         EXIST,           // 存在しない or 何か存在してる
         EXIST_ERROR      // エラー
     };

@@ -164,6 +164,9 @@ namespace MISC
 
     // SVNリビジョンとして表示する文字列を返す
     std::string get_svn_revision( const char* rev = NULL );
+
+    // 文字数を限定して環境変数の値を返す
+    std::string getenv_limited( const char *name, const size_t size = 1 );
 }
 
 

@@ -1276,3 +1276,18 @@ std::string MISC::get_svn_revision( const char* rev )
     return svn_revision;
 }
 
+
+//
+// 文字数を限定して環境変数の値を返す
+//
+std::string MISC::getenv_limited( const char *name, const size_t size )
+{
+    if( ! name || ! getenv( name ) ) return std::string();
+
+    char env[ size + 1 ];
+    env[ size ] = '\0';
+
+    strncpy( env, getenv( name ), size );
+
+    return std::string( env );
+}

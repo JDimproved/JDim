@@ -547,18 +547,17 @@ void SESSION::init_session()
     // WM 判定
     // TODO: 環境変数で判定できない場合の判定方法を考える
     win_manager = WM_UNKNON;
-    std::string str_wm;
+    const std::string str_wm = MISC::getenv_limited( "DESKTOP_SESSION", 5 );
 
-    if( getenv( "DESKTOP_SESSION" ) ) str_wm = getenv( "DESKTOP_SESSION" );
     if( str_wm.find( "xfce" ) != std::string::npos ) win_manager = WM_XFCE;
     else if( str_wm.find( "gnome" ) != std::string::npos ) win_manager = WM_GNOME;
     else if( str_wm.find( "kde" ) != std::string::npos ) win_manager = WM_KDE;
 
     if( win_manager == WM_UNKNON ){
-        if( getenv( "GNOME_DESKTOP_SESSION_ID" ) ) win_manager = WM_GNOME;
+        if( ! MISC::getenv_limited( "GNOME_DESKTOP_SESSION_ID" ).empty() ) win_manager = WM_GNOME;
         else{
 
-            if( getenv( "KDE_FULL_SESSION" ) ) str_wm = getenv( "KDE_FULL_SESSION" );
+            const std::string str_wm = MISC::getenv_limited( "KDE_FULL_SESSION", 4 );
             if( str_wm == "true" ) win_manager = WM_KDE;
         }
     }

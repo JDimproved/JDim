@@ -51,20 +51,13 @@ IOMonitor::~IOMonitor()
 /*-------------------------------------------------------------------*/
 void IOMonitor::init()
 {
-    // 既にFIFOと同名のファイルが存在する
-    if( access( m_fifo_file.c_str(), F_OK ) == 0 )
+    // 既にFIFOと同名のファイルが存在するか確認
+    const int status = CACHE::file_exists( m_fifo_file );
+
+    // 同名のファイルがFIFOでなければ削除する
+    if( status != CACHE::EXIST_ERROR && status != CACHE::EXIST_FIFO )
     {
-        struct stat statbuf;
-        if( stat( m_fifo_file.c_str(), &statbuf ) == 0 )
-        {
-            // 同名のファイルがFIFOでなければ削除する
-            if( ( statbuf.st_mode & S_IFMT ) != S_IFIFO ) delete_fifo();
-        }
-        else
-        {
-            MISC::ERRMSG( "IOMonitor::init(): fifo get stat failed." );
-            return;
-        }
+        delete_fifo();
     }
 
     // FIFOを作成

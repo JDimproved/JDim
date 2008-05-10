@@ -26,6 +26,10 @@
 
 #include <fcntl.h>
 
+enum
+{
+    MAX_SAFE_PATH = 1024
+};
 
 std::string root_path;
 
@@ -40,7 +44,7 @@ std::string CACHE::path_conf()
 // 旧設定ファイル
 std::string CACHE::path_conf_old()
 {
-    std::string home = getenv( "HOME" );
+    std::string home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
 
     return home + "/.jdrc";
 }
@@ -72,13 +76,13 @@ std::string CACHE::path_root()
 {
     if( root_path.empty() ){
 
-        if( getenv( "JD_CACHE" ) ) root_path = getenv( "JD_CACHE" );
-        else root_path = "~/.jd/";
+        const std::string jd_cache = MISC::getenv_limited( "JD_CACHE", MAX_SAFE_PATH );
+        root_path = jd_cache.empty() ? "~/.jd/" : jd_cache;
 
         if( root_path[ root_path.length() -1 ] != '/' ) root_path = root_path + "/";
 
         if( root_path[ 0 ] == '~' ){
-            std::string home = getenv( "HOME" );
+            std::string home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
             root_path.replace( 0, 1, home );
         }
     }
@@ -664,6 +668,7 @@ const int CACHE::file_exists( const std::string& path )
 
     if( S_ISREG( buf_stat.st_mode ) ) return EXIST_FILE;
     if( S_ISDIR( buf_stat.st_mode ) ) return EXIST_DIR;
+    if( S_ISFIFO( buf_stat.st_mode ) ) return EXIST_FIFO;
 
     return EXIST;
 }
@@ -704,7 +709,7 @@ bool CACHE::jdmkdir( const std::string& path )
     
     if( path.find( "~/" ) == 0 ){
 
-        std::string homedir = getenv( "HOME" );
+        std::string homedir = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
         if( homedir.empty() ) return false;
 
         target = homedir + path.substr( 2 );
@@ -868,7 +873,7 @@ void CACHE::add_filter_to_diag( Gtk::FileChooserDialog& diag, const int type )
 std::string CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type )
 {
     std::string dir = MISC::get_dir( open_path );
-    if( dir.empty() ) dir = getenv( "HOME" );
+    if( dir.empty() ) dir = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
 
     SKELETON::FileDiag diag( parent, "ファイルを開く", Gtk::FILE_CHOOSER_ACTION_OPEN );
 
@@ -904,8 +909,8 @@ std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& dir, 
     SKELETON::FileDiag diag( parent, "保存先選択", Gtk::FILE_CHOOSER_ACTION_SAVE );
     if( dir.empty() )
     {
-        const char* home = getenv( "HOME" );
-        if( home ) diag.set_current_folder( home );
+        const std::string home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
+        if( ! home.empty() ) diag.set_current_folder( home );
     }
     else
     {

@@ -526,8 +526,7 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
     std::string other;
 
     // $LANG が ja_JP.UTF-8 でない場合は"その他"に追加する。
-    std::string lang;
-    if( getenv( "LANG" ) ) lang = std::string( getenv( "LANG" ) );
+    const std::string lang = MISC::getenv_limited( "LANG", 11 );
     if( lang.empty() ) other.append( "LANG 未定義" );
     else if( lang != "ja_JP.utf8" && lang != "ja_JP.UTF-8" ) other.append( "LANG = " + lang );
 
