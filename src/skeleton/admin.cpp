@@ -2232,22 +2232,32 @@ bool Admin::back_forward_viewhistory( const std::string& url, const bool back, c
                 return false;
             }
 
-            // openview() 中の append_viewhistory() を実行しないで
-            // ここで View履歴の現在位置を変更
-            m_use_viewhistory = false;
-            if( back ) HISTORY::get_history_manager()->back_viewhistory( url, count, true );
-            else HISTORY::get_history_manager()->forward_viewhistory( url, count, true );
+            // 検索ビューなど、back/forwardしたときに view のurlが変わることがあるので
+            // view履歴内のURLを置き換える必要がある。そこで Admin::open_view() 中の
+            // append_viewhistory() を実行しないでここで View履歴の現在位置を変更する
+            // Admin::Open_view()も参照すること
+            const bool use_history = get_use_viewhistory();
+            set_use_viewhistory( false );
+
+            if( use_history ){
+                if( back ) HISTORY::get_history_manager()->back_viewhistory( url, count, true );
+                else HISTORY::get_history_manager()->forward_viewhistory( url, count, true );
+            }
 
             COMMAND_ARGS command_arg = url_to_openarg( historyitem->url, false, false );
             open_view( command_arg );
 
-            // 検索ビューなど、back/forwardしたときに view のurlが変わることがあるので置き換える
-            SKELETON::View* current_view = get_current_view();
-            if( current_view && current_view->get_url() != historyitem->url ){
-                HISTORY::get_history_manager()->replace_current_url_viewhistory( historyitem->url, current_view->get_url() );
-            }
+            // URLが変わっていたらview履歴内のURLも更新
+            if( use_history ){
 
-            m_use_viewhistory = true;
+                SKELETON::View* current_view = get_current_view();
+                if( current_view && current_view->get_url() != historyitem->url ){
+                    HISTORY::get_history_manager()->replace_current_url_viewhistory( historyitem->url, current_view->get_url() );
+                    redraw_toolbar();
+                }
+
+                set_use_viewhistory( true );
+            }
 
             return true;
         }

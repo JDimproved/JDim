@@ -111,6 +111,7 @@ namespace SKELETON
     protected:
 
         void set_use_viewhistory( const bool use ){ m_use_viewhistory = use; }
+        const bool get_use_viewhistory() const { return m_use_viewhistory; }
 
         JDWindow* get_jdwin(){ return m_win; }
         void set_jdwin( JDWindow* win ){ m_win = win; }

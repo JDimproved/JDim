@@ -19,6 +19,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "history/historymanager.h"
+
 #include "global.h"
 #include "viewfactory.h"
 #include "dndmanager.h"
@@ -118,8 +120,27 @@ void ArticleAdmin::restore()
             ++it_locked;
         }
 
+        // 検索ビューなど、復元したときに view のurlが変わることがあるので
+        // view履歴内のURLを置き換える必要がある。そこで Admin::open_view() 中の
+        // create_viewhistory()やappend_viewhistory()を実行しないで、ここで View履歴内のURLを更新する
+        // Admin::Open_view()も参照すること
+        const bool use_history = get_use_viewhistory();
+        set_use_viewhistory( false );
+
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
         if( ! command_arg.url.empty() ) open_view( command_arg );
+
+        if( use_history ){
+
+            // URLが変わっていたらview履歴内のURLを更新
+            SKELETON::View* current_view = get_current_view();
+            if( current_view && current_view->get_url() != *it_url ){
+                HISTORY::get_history_manager()->replace_current_url_viewhistory( *it_url, current_view->get_url() );
+                redraw_toolbar();
+            }
+
+            set_use_viewhistory( true );
+        }
     }
 
     SESSION::set_online( online );
