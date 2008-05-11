@@ -7,6 +7,9 @@
 #define _DRAGNOTE_H
 
 #include "tabnote.h"
+#include "toolbarnote.h"
+#include "viewnote.h"
+
 #include "tooltip.h"
 
 #include "control.h"

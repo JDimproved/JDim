@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 //
-// タブ用の Notebook
+// DragableNoteBookを構成するタブ表示用の Notebook
 //
 
 #ifndef _TABNOTE_H
@@ -103,33 +103,6 @@ namespace SKELETON
         virtual bool on_leave_notify_event( GdkEventCrossing* event );
 
         virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time);
-    };
-
-
-    ///////////////////////////////////////////////////////////////
-
-    class ToolBarNotebook : public Gtk::Notebook
-    {
-        DragableNoteBook* m_parent;
-
-      public:
-        ToolBarNotebook( DragableNoteBook* parent );
-
-      protected:
-        virtual bool on_expose_event( GdkEventExpose* event );
-    };
-
-    ///////////////////////////////////////////////////////////////
-
-    class ViewNotebook : public Gtk::Notebook
-    {
-        DragableNoteBook* m_parent;
-
-      public:
-        ViewNotebook( DragableNoteBook* parent );
-
-      protected:
-        virtual bool on_expose_event( GdkEventExpose* event );
     };
 }
 
