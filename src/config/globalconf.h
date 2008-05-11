@@ -45,6 +45,9 @@ namespace CONFIG
     // ツリービューの行間スペース
     const int get_tree_ypad();
 
+    // 各ビューと枠との間の余白
+    const int get_view_margin();
+
     // フォント
     const std::string& get_fontname( int id );
     void set_fontname( int id, const std::string& fontname );

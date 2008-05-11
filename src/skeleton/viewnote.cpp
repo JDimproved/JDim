@@ -6,6 +6,8 @@
 #include "dragnote.h"
 #include "viewnote.h"
 
+#include "config/globalconf.h"
+
 #include <gtk/gtk.h>
 
 using namespace SKELETON;
@@ -17,7 +19,7 @@ ViewNotebook::ViewNotebook( DragableNoteBook* parent )
 {
     set_show_border( true );
     set_show_tabs( false );
-    set_border_width( 0 );
+    set_border_width( CONFIG::get_view_margin() );
 }
 
 

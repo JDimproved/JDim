@@ -337,6 +337,9 @@ const bool ConfigItems::load()
     // ツリービューの行間スペース
     tree_ypad = cf.get_option( "tree_ypad", CONF_TREE_YPAD );
 
+    // 各ビューと枠との間の余白
+    view_margin = cf.get_option( "view_margin", CONF_VIEW_MARGIN );
+
     // スレ一覧で古いスレも表示
     show_oldarticle = cf.get_option( "show_oldarticle", CONF_SHOW_OLDARTICLE );
 
@@ -623,6 +626,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
 
     cf.update( "tree_ypad", tree_ypad );
+
+    cf.update( "view_margin", view_margin );
 
     cf.update( "show_oldarticle", show_oldarticle );
     cf.update( "newthread_hour", newthread_hour );

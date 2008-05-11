@@ -87,6 +87,7 @@ const bool CONFIG::get_use_tree_gtkrc(){ return get_confitem()->use_tree_gtkrc; 
 
 const int CONFIG::get_tree_ypad(){ return get_confitem()->tree_ypad; }
 
+const int CONFIG::get_view_margin(){ return get_confitem()->view_margin; }
 
 // フォント
 const std::string& CONFIG::get_fontname( int id )

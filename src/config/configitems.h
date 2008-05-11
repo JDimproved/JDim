@@ -149,6 +149,9 @@ namespace CONFIG
         // ツリービューの行間スペース
         int tree_ypad;
 
+        // 各ビューと枠との間の余白
+        int view_margin;
+
         // スレ一覧で古いスレも表示
         bool show_oldarticle;
 
