@@ -192,14 +192,17 @@ namespace CONFIG
     // スレ一覧でインクリメント検索をする
     const bool get_inc_search_board();
 
-    // ツリービューのスクロール量(行数)
+    // ツリービューのスクロール量(マウスホイール上下・行数)
     const int get_tree_scroll_size();
 
-    // スレビューのスクロール量
+    // スレビューのスクロール量(マウスホイール上下・行数)
     const int get_scroll_size();
 
-    // スレビューのスクロール量(キー上下)
+    // スレビューのスクロール量(キー上下・行数)
     const int get_key_scroll_size();
+
+    // スレビューの高速スクロール量(キー上下・ ページ高 - 行高 * key_fastscroll_size )
+    const int get_key_fastscroll_size();
 
     // スレビューでリロード後に一番下までスクロール
     const bool get_jump_after_reload();

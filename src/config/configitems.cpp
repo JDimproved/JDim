@@ -358,6 +358,9 @@ const bool ConfigItems::load()
     // スレビューのスクロール量(キー上下)
     key_scroll_size = cf.get_option( "key_scroll_size", CONF_KEY_SCROLL_SIZE );
 
+    // スレビューの高速スクロール量(キー上下・ ページ高 - 行高 * key_fastscroll_size )
+    key_fastscroll_size = cf.get_option( "key_fastscroll_size", CONF_KEY_FASTSCROLL_SIZE );
+
     // スレビューでリロード後に一番下までスクロール
     jump_after_reload = cf.get_option( "jump_after_reload", CONF_JUMP_AFTER_RELOAD );
 
@@ -636,6 +639,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "tree_scroll_size", tree_scroll_size );
     cf.update( "scroll_size", scroll_size );
     cf.update( "key_scroll_size", key_scroll_size );
+    cf.update( "key_fastscroll_size", key_fastscroll_size );
     cf.update( "jump_after_reload", jump_after_reload );
     cf.update( "jump_new_after_reload", jump_new_after_reload );
 

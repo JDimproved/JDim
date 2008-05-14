@@ -42,6 +42,7 @@ namespace CONFIG
         CONF_TREE_SCROLL_SIZE = 4,  // ツリービューのスクロール量(行数)
         CONF_SCROLL_SIZE = 3,       // スレビューのスクロール量
         CONF_KEY_SCROLL_SIZE = 2,   // スレビューのスクロール量(キー上下)
+        CONF_KEY_FASTSCROLL_SIZE = 2,  // スレビューの高速スクロール量(キー上下・ ページ高 - 行高 * key_fastscroll_size )
         CONF_JUMP_AFTER_RELOAD = 0, // スレビューでリロード後に一番下までスクロール
         CONF_JUMP_NEW_AFTER_RELOAD = 0, // スレビューでリロード後に新着までスクロール
         CONF_LIVE_SPEED = 2,        // 実況速度

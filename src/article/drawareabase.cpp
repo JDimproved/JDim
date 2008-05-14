@@ -53,7 +53,10 @@ enum
 };
 
 
-#define SCROLLSPEED_FAST ( m_vscrbar ? m_vscrbar->get_adjustment()->get_page_size() : 0 )
+#define SCROLLSPEED_FAST ( m_vscrbar ? \
+                           m_vscrbar->get_adjustment()->get_page_size() \
+                           - m_vscrbar->get_adjustment()->get_step_increment()*CONFIG::get_key_fastscroll_size() \
+                           : 0 )
 #define SCROLLSPEED_MID  ( m_vscrbar ? m_vscrbar->get_adjustment()->get_page_size()/2 : 0 )
 #define SCROLLSPEED_SLOW ( m_vscrbar ? m_vscrbar->get_adjustment()->get_step_increment()*CONFIG::get_key_scroll_size() : 0 )
 
@@ -2145,7 +2148,7 @@ bool DrawAreaBase::set_scroll( const int& control )
 
             // 下
             case CONTROL::DownFast:
-                if( enable_down ) dy  = SCROLLSPEED_FAST - SCROLLSPEED_SLOW;
+                if( enable_down ) dy  = SCROLLSPEED_FAST;
                 break;
 
             case CONTROL::DownMid:
@@ -2162,7 +2165,7 @@ bool DrawAreaBase::set_scroll( const int& control )
 
                 // 上
             case CONTROL::UpFast:
-                if( enable_up ) dy = - ( SCROLLSPEED_FAST - SCROLLSPEED_SLOW );
+                if( enable_up ) dy = - SCROLLSPEED_FAST;
                 break;
 
             case CONTROL::UpMid:
