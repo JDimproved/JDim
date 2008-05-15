@@ -1234,7 +1234,8 @@ void BBSListViewBase::slot_moveetcboard()
 
 
 // 外部板追加
-void BBSListViewBase::add_newetcboard( const bool move, const std::string& _url, const std::string& _name, const std::string& _id, const std::string& _passwd )
+void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モード
+                                       const std::string& _url, const std::string& _name, const std::string& _id, const std::string& _passwd )
 {
     if( m_path_selected.empty() ) return;
 
@@ -1302,12 +1303,18 @@ void BBSListViewBase::add_newetcboard( const bool move, const std::string& _url,
             return;
         }
 
+        // http が無ければ付ける
+        if( url.find( "http://" ) != 0 ) url = "http://" + url;
+
         // .htmlを取り除く
         JDLIB::Regex regex;
         if( regex.exec( "(.*)/[^/]+\\.html?$" , url ) ) url = regex.str( 1 );
 
+        // 末尾の / を取り除く
+        while( url.rfind( "/" ) == url.length() -1 ) url = url.substr( 0, url.length() -1 );
+
         // url の最後に/を付ける
-        if( url.rfind( "/" ) +1 != url.length() ) url += "/";
+        url += "/";
 
         // boardid 取得
         if( ! regex.exec( "(http://.*)/([^/]*)/$" , url ) ){
@@ -1317,16 +1324,27 @@ void BBSListViewBase::add_newetcboard( const bool move, const std::string& _url,
             add_newetcboard( move, url_org, name, id, passwd );
             return;
         }
-        std::string boardid = regex.str( 2 );
-
 
 #ifdef _DEBUG
         std::cout << "url_old = " << url_old << std::endl
                   << "name_old = " << name_old << std::endl
                   << "url = " << url << std::endl
                   << "name = " << name << std::endl
-                  << "basicauth = " << basicauth << std::endl
-                  << "boardid = " << boardid << std::endl;
+                  << "basicauth = " << basicauth << std::endl;
+#endif
+
+        std::string boardid = regex.str( 2 );
+
+        if( boardid.empty() ){
+            SKELETON::MsgDiag mdiag( NULL, "板IDを取得出来ません", false, Gtk::MESSAGE_ERROR );
+            mdiag.run();
+            mdiag.hide();
+            add_newetcboard( move, url_org, name, id, passwd );
+            return;
+        }
+
+#ifdef _DEBUG
+        std::cout << "boardid = " << boardid << std::endl;
 #endif
 
         // 既に登録されているか確認
