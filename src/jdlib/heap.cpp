@@ -14,13 +14,17 @@ HEAP::HEAP( long blocksize )
     : m_max( blocksize ),
       m_used( 0 ),
       m_total_size( 0 )
-{}
+{
+#ifdef _DEBUG        
+    std::cout << "HEAP::HEAP : max = " << m_max << std::endl;
+#endif
+}
 
 
 HEAP::~HEAP()
 {
 #ifdef _DEBUG        
-    std::cout << "HEAP::~HEAP : size " << m_total_size / 1024 << " k\n";
+    std::cout << "HEAP::~HEAP : size " << m_total_size << " max =" << m_max << std::endl;
 #endif
 
     clear();
@@ -30,7 +34,7 @@ HEAP::~HEAP()
 void HEAP::clear()
 {
 #ifdef _DEBUG        
-    std::cout << "HEAP::clear : size " << m_total_size << " b\n";
+    std::cout << "HEAP::crear max = " << m_max <<  " total = " << m_total_size << std::endl;
 #endif
 
     m_total_size = 0;
@@ -50,12 +54,13 @@ unsigned char* HEAP::heap_alloc( long n )
 
     if( m_used == 0 || m_used + n > m_max ){
 
-#ifdef _DEBUG
-        std::cout << "HEAP::heap_alloc malloc " << m_max << std::endl;
-#endif
         m_heap_list.push_back( ( unsigned char* )malloc( m_max ) );
         memset( m_heap_list.back(), 0, m_max );
         m_used = 0;
+
+#ifdef _DEBUG
+        std::cout << "HEAP::heap_alloc malloc max = " << m_max <<  " total = " << m_total_size + n + 4 << std::endl;
+#endif
     }
 
     unsigned char* heap = m_heap_list.back() + m_used;

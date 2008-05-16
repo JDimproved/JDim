@@ -728,14 +728,15 @@ bool Root::remove_board( const std::string& url )
               << "name = " << board->get_name() << std::endl;
 #endif
 
+    // この板に関連するビューを全て閉じる
+    // delete board する前に全て閉じないとセグフォの原因となるので注意
+    CORE::core_set_command( "close_board", url );
+
     m_list_board.remove( board );
     delete board;
 
     m_get_board_url = std::string();
     m_get_board = NULL;
-
-    // この板に関連するビューをすべて閉じる
-    CORE::core_set_command( "close_board", url );
 
     return true;
 }
