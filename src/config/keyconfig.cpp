@@ -133,8 +133,8 @@ void KeyConfig::load_conf()
     // IMAGE
     SETMOTION( "CancelMosaic", "c" );
     SETMOTION( "ZoomFitImage", "x" );
-    SETMOTION( "ZoomInImage", "Plus" );
-    SETMOTION( "ZoomOutImage", "-" );
+    SETMOTION( "ZoomInImage", "Plus KP_Add" );
+    SETMOTION( "ZoomOutImage", "- KP_Subtract" );
     SETMOTION( "OrgSizeImage", "z" );
 
     SETMOTION( "ScrollUpImage", "K k Shift+Up Up" );
@@ -236,6 +236,8 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
         else if( str_key == "Menu" ) motion = GDK_Menu;
 
         else if( str_key == "Plus" ) motion = '+';
+        else if( str_key == "KP_Add" ) motion = GDK_KP_Add;
+        else if( str_key == "KP_Subtract" ) motion = GDK_KP_Subtract;
         else motion = str_key[ 0 ];
 
         // 大文字やshiftが必要な文字の時はshiftも有効にする
