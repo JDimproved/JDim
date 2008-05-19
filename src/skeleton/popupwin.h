@@ -13,6 +13,8 @@
 #include "popupwinbase.h"
 #include "view.h"
 
+#include "article/articleadmin.h"
+
 
 namespace SKELETON
 {
@@ -49,9 +51,9 @@ namespace SKELETON
             const int width_desktop = m_parent->get_screen()->get_width();
             const int height_desktop = m_parent->get_screen()->get_height();
 
-            // 幅(m_parentの幅を超えないように制限する)
-            const int width_parent = m_parent->get_width();
-            const int width_popup = width_client < width_parent ? width_client : width_parent;
+            // 幅(基本のViewの幅を超えないように制限する)
+            const int width_baseview = ARTICLE::get_admin()->get_widget()->get_width();
+            const int width_popup = width_client < width_baseview ? width_client : width_baseview;
 
             // x 座標
             int x_popup;
