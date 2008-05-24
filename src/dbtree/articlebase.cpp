@@ -228,6 +228,8 @@ std::list< int > ArticleBase::get_res_id_name( const std::string& id_name )
 // list_jointは出力で true のスレは前のスレに連結される (例) "3+4" なら 4が3に連結
 std::list< int > ArticleBase::get_res_str_num( const std::string& str_num, std::list< bool >& list_joint )
 {
+    if( empty() ){ std::list< int > tmp; return tmp; }
+
     return get_nodetree()->get_res_str_num( str_num, list_joint );
 }
 
