@@ -1340,7 +1340,7 @@ void ArticleViewBase::show_res_with_url()
     std::list< int > list_resnum = m_article->get_res_with_url();
 
     if( ! list_resnum.empty() ) append_res( list_resnum );
-    else append_html( "リンクを含むスレはありません" );
+    else append_html( "リンクを含むレスはありません" );
 }
 
 

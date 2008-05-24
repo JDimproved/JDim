@@ -261,6 +261,8 @@ std::list< int > ArticleBase::get_res_reference( int number )
 //
 std::list< int > ArticleBase::get_res_with_url()
 {
+    if( empty() ){ std::list< int > tmp; return tmp; }
+
     return get_nodetree()->get_res_with_url();
 }
 
@@ -272,6 +274,8 @@ std::list< int > ArticleBase::get_res_with_url()
 //
 std::list< int > ArticleBase::get_res_query( const std::string& query, bool mode_or )
 {
+    if( empty() ){ std::list< int > tmp; return tmp; }
+
     return get_nodetree()->get_res_query( query, mode_or );
 }
 
