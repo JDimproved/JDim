@@ -30,6 +30,8 @@ namespace SOUND
 
     class SOUND_Manager
     {
+        std::vector< bool > m_playable;
+
         Play_Sound m_playsound;
 
       public:
@@ -38,6 +40,10 @@ namespace SOUND
         virtual ~SOUND_Manager();
 
         void play( const int sound );
+
+      private:
+
+        std::string get_file( const int sound );
     };
 
 #else

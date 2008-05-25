@@ -49,6 +49,20 @@ SOUND_Manager::SOUND_Manager()
 #ifdef _DEBUG
     std::cout << "SOUND_Manager::SOUND_Manager\n";
 #endif
+
+    for( int i = 0; i < NUM_SOUNDS; ++i ){
+
+        std::string path_sound = get_file( i );
+        bool exist = false;
+
+        if( CACHE::file_exists( path_sound ) == CACHE::EXIST_FILE ) exist = true;
+
+#ifdef _DEBUG
+        std::cout << path_sound << " " << exist << std::endl;
+#endif        
+
+        m_playable.push_back( exist );
+    }
 }
 
 
@@ -64,10 +78,19 @@ SOUND_Manager::~SOUND_Manager()
 
 void SOUND_Manager::play( const int sound )
 {
+    if( ! m_playable[ sound ] ) return;
+
 #ifdef _DEBUG
     std::cout << "SOUND_Manager::play sound = " << sound << std::endl;
 #endif
 
+    std::string path_sound = get_file( sound );
+    if( ! path_sound.empty() ) m_playsound.play( path_sound );
+}
+
+
+std::string SOUND_Manager::get_file( const int sound )
+{
     std::string path_sound = CACHE::path_sound_root();
 
     switch( sound ){
@@ -77,11 +100,12 @@ void SOUND_Manager::play( const int sound )
         case SOUND_NEW: path_sound += "new.wav"; break;
         case SOUND_ERR: path_sound += "err.wav"; break;
 
-        default: return;
+        default: return std::string();
     }
 
-    m_playsound.play( path_sound );
+    return path_sound;
 }
+
 
 
 #endif
