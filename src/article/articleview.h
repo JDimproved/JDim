@@ -20,6 +20,8 @@ namespace ARTICLE
 
         bool m_show_instdialog;
 
+        bool m_playsound;
+
       public:
         ArticleViewMain( const std::string& url );
         ~ArticleViewMain();

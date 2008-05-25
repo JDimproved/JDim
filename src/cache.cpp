@@ -349,6 +349,14 @@ std::string CACHE::path_completion( int mode )
 }
 
 
+//
+// サウンドファイルのルートパス
+//
+std::string CACHE::path_sound_root()
+{
+    return CACHE::path_root() + "sound/";
+}
+
 
 //
 // 画像キャッシュファイルの名前

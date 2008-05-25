@@ -16,6 +16,8 @@
 
 #include "config/globalconf.h"
 
+#include "sound/soundmanager.h"
+
 #include "command.h"
 #include "global.h"
 #include "httpcode.h"
@@ -38,7 +40,7 @@ enum
 // メインビュー
 
 ArticleViewMain::ArticleViewMain( const std::string& url )
-    :  ArticleViewBase( url ), m_gotonum_reserve( 0 ), m_gotonum_seen( 0 )
+    :  ArticleViewBase( url ), m_gotonum_reserve( 0 ), m_gotonum_seen( 0 ), m_playsound( false )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::ArticleViewMain " << get_url() << " url_article = " << url_article() << std::endl;
@@ -191,9 +193,10 @@ void ArticleViewMain::show_view()
     m_gotonum_reserve = 0;
     m_gotonum_seen = 0;
     m_show_instdialog = false;
+    m_playsound = false;
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::show_view\n";
+    std::cout << "ArticleViewMain::show_view\n";
 #endif
 
     if( get_url().empty() ){
@@ -236,6 +239,10 @@ void ArticleViewMain::show_view()
     // update_finish() を呼んでキャッシュの分を描画
     if( call_update_finish ){
 
+#ifdef _DEBUG
+        std::cout << "call_update_finish\n";
+#endif
+
         // update_finish()後に一番最後や新着にジャンプしないように設定を一時的に解除する
         const bool jump_bottom = CONFIG::get_jump_after_reload();
         const bool jump_new = CONFIG::get_jump_new_after_reload();
@@ -269,6 +276,7 @@ void ArticleViewMain::show_view()
     }
 
     clear_highlight();
+    if( ! get_live() && SESSION::is_online() ) m_playsound = true;
 
     // 差分 download 開始
     get_article()->download_dat( false );
@@ -289,12 +297,25 @@ void ArticleViewMain::show_view()
 //
 void ArticleViewMain::update_view()
 {
-    int num_from = drawarea()->max_number() + 1;
-    int num_to = get_article()->get_number_load();
+    const int code = DBTREE::article_code( url_article() );
+    const int num_from = drawarea()->max_number() + 1;
+    const int num_to = get_article()->get_number_load();
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewMain::update_view : from " << num_from << " to " << num_to << std::endl;
+    std::cout << "ArticleViewMain::update_view : from " << num_from << " to " << num_to
+              << " code = " << code << std::endl;
 #endif
+
+    // 音を鳴らす
+    if( m_playsound && code != HTTP_INIT ){
+
+        m_playsound = false;
+
+        if( code == HTTP_OK ) SOUND::play( SOUND::SOUND_NEW );
+        else if( code == HTTP_PARTIAL_CONTENT ) SOUND::play( SOUND::SOUND_RES );
+        else if( code == HTTP_NOT_MODIFIED ) SOUND::play( SOUND::SOUND_NO );
+        else SOUND::play( SOUND::SOUND_ERR );
+    }
 
     if( num_from > num_to ) return;
 
@@ -334,18 +355,19 @@ void ArticleViewMain::update_finish()
 
 
 #ifdef _DEBUG
-    int code = DBTREE::article_code( url_article() );
+    const int code = DBTREE::article_code( url_article() );
     std::cout << "ArticleViewMain::update_finish " << str_label << " code = " << code << std::endl;;
 #endif
 
     // 新着セパレータを消す
+    const int number_load = DBTREE::article_number_load( url_article() );
     const int number_new = DBTREE::article_number_new( url_article() );
     if( ! number_new ) drawarea()->hide_separator_new();
 
     // ステータス表示
     std::ostringstream ss_tmp;
     ss_tmp << DBTREE::article_str_code( url_article() )
-           << " [ 全 " << DBTREE::article_number_load( url_article() )
+           << " [ 全 " << number_load
            << " / 新着 " << number_new;
 
     if( DBTREE::article_write_time( url_article() ) ) ss_tmp << " / 最終書込 " << DBTREE::article_write_date( url_article() );
@@ -365,7 +387,7 @@ void ArticleViewMain::update_finish()
     drawarea()->redraw_view();
 
     // 前回見ていた所にジャンプ
-    if( m_gotonum_seen && get_article()->get_number_load() >= m_gotonum_seen ){
+    if( m_gotonum_seen && number_load >= m_gotonum_seen ){
 #ifdef _DEBUG
         std::cout << "goto_seen\n";
 #endif

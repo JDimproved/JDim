@@ -1,8 +1,8 @@
-SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton history config icons xml
+SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton history config icons sound xml
 
 bin_PROGRAMS = jd
 
-jd_LDADD = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ \
+jd_LDADD = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@\
 	./dbtree/libdbtree.a \
 	./dbimg/libdbimg.a \
 	./bbslist/libbbslist.a \
@@ -15,6 +15,7 @@ jd_LDADD = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOM
 	./config/libconfig.a \
 	./jdlib/libjdlib.a  \
 	./icons/libicon.a \
+	./sound/libsound.a \
 	./xml/libxml.a
 
 jd_SOURCES = \

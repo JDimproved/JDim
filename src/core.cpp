@@ -53,6 +53,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "sound/soundmanager.h"
+
 #include <sstream>
 
 using namespace CORE;
@@ -231,6 +233,9 @@ Core::~Core()
     // データベース削除
     DBTREE::delete_root();
     DBIMG::delete_root();
+
+    // サウンドマネージャ削除
+    SOUND::delete_sound_manager();
 
     // ディスパッチマネージャ削除
     CORE::delete_dispatchmanager();

@@ -120,6 +120,9 @@ namespace CACHE
     // 検索や名前などの補完情報
     std::string path_completion( int mode );
 
+    // サウンドファイルのルートパス
+    std::string path_sound_root();
+
     /////////////////////////////////////////////////
     //
     // ユーティリティ関数

@@ -17,6 +17,8 @@
 
 #include "config/globalconf.h"
 
+#include "sound/soundmanager.h"
+
 #include "command.h"
 #include "session.h"
 #include "dndmanager.h"
@@ -921,12 +923,20 @@ void BoardView::relayout()
 //
 void BoardView::update_view()
 {
-#ifdef _DEBUG
-    std::cout << "BoardView::update_view " << get_url() << std::endl;
-#endif    
-
+    const int code = DBTREE::board_code( get_url() );
     m_updated = false;
     m_loading = false;
+
+#ifdef _DEBUG
+    std::cout << "BoardView::update_view " << get_url()
+              << " code = " << code << std::endl;
+#endif    
+
+    // 音を鳴らす
+    if( SESSION::is_online() && code != HTTP_INIT ){
+        if( code == HTTP_OK ) SOUND::play( SOUND::SOUND_RES );
+        else SOUND::play( SOUND::SOUND_NO );
+    }
 
     // 画面消去
 #if GTKMMVER >= 280

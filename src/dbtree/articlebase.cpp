@@ -62,6 +62,7 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_key( std::string() ),
       m_since_time( 0 ),
       m_since_date( std::string() ),
+      m_code( HTTP_INIT ),
       m_str_code( std::string() ),
       m_status( STATUS_UNKNOWN ),
       m_subject( std::string() ),
@@ -1116,6 +1117,9 @@ void ArticleBase::delete_cache( const bool cache_only )
 
         memset( &m_write_time, 0, sizeof( struct timeval ) );
         m_write_time_date.clear();
+
+        m_code =  HTTP_INIT;
+        m_str_code =  std::string();
 
         m_write_name.clear();
         m_write_mail.clear();
