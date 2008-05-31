@@ -139,6 +139,10 @@ void NodeTreeBase::update_url( const std::string& url )
 //
 void NodeTreeBase::clear()
 {
+#ifdef _DEBUG    
+    std::cout << "NodeTreeBase::clear : " << m_url << std::endl;
+#endif
+
     if( m_buffer_lines ) free( m_buffer_lines );
     m_buffer_lines = NULL;
     m_byte_buffer_lines_left = 0;

@@ -21,7 +21,21 @@ Loadable::Loadable()
 
 Loadable::~Loadable()
 {
-    // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
+    terminate_load(); // 一応デストラクタ内部でも実行しておく
+}
+
+
+// ロード強制停止
+void Loadable::terminate_load()
+{
+#ifdef _DEBUG
+    std::cout << "Loadable::terminate_load\n";
+#endif
+
+    // loadableを delete する前に terminate_load() を呼び出さないと
+    // スレッド実行中にメモリなどが初期化されてしまうため落ちる時がある
+    // デストラクタ内から terminate_load() しても落ちる時があるので
+    // デストラクタの外から呼び出すこと
     set_dispatchable( false );
 
     delete_loader();

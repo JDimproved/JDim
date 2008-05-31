@@ -10,6 +10,8 @@
 // ロード中はreceive_data()がコールバックされてデータが送られる
 // ロードが終わると receive_finish() がコールバックされる
 //
+// ・ delete する前に terminate_load() を明示的に呼び出すこと(terminate_load()のコメントを参照)
+//
 // 詳しい流れは次の通り
 /*
 
@@ -115,6 +117,13 @@ namespace SKELETON
         // ロード停止
         void stop_load();
 
+        // ロード強制停止
+        // loadableを delete する前に terminate_load() を呼び出さないと
+        // スレッド実行中にメモリなどが初期化されてしまうため落ちる時がある
+        // デストラクタ内から terminate_load() しても落ちる時があるので
+        // デストラクタの外から呼び出すこと
+        void terminate_load();
+        
       private:
 
         virtual void receive_data( const char* , size_t ){};

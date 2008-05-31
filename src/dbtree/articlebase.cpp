@@ -815,6 +815,7 @@ void ArticleBase::unlock_impl()
     std::cout << "ArticleBase::unlock_impl  url = " << m_url << std::endl;
 #endif
 
+    m_nodetree->terminate_load(); // deleteする前にスレッド停止
     m_nodetree.clear();
 
     // スレ情報保存
