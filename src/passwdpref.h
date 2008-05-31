@@ -32,7 +32,7 @@ namespace CORE
         SKELETON::LabelEntry entry_passwd;
 
       PasswdFrame2ch()
-      : m_label_sid_2ch( false, "SID： ", LOGIN::get_login2ch()->get_sessionid() ),
+      : m_label_sid_2ch( false, "SID： ", CORE::get_login2ch()->get_sessionid() ),
         entry_id( true, "ID(_I)： " ), entry_passwd( true, "パスワード(_P)： " )
         {
             const int mrg = 8;
@@ -96,12 +96,12 @@ namespace CORE
         virtual void slot_ok_clicked(){
 
             // 2ch
-            LOGIN::get_login2ch()->set_username( MISC::remove_space( m_frame_2ch.entry_id.get_text() ) );
-            LOGIN::get_login2ch()->set_passwd( MISC::remove_space( m_frame_2ch.entry_passwd.get_text() ) );
+            CORE::get_login2ch()->set_username( MISC::remove_space( m_frame_2ch.entry_id.get_text() ) );
+            CORE::get_login2ch()->set_passwd( MISC::remove_space( m_frame_2ch.entry_passwd.get_text() ) );
 
             // BE
-            LOGIN::get_loginbe()->set_username( MISC::remove_space( m_frame_be.entry_id.get_text() ) );
-            LOGIN::get_loginbe()->set_passwd( MISC::remove_space( m_frame_be.entry_passwd.get_text() ) );
+            CORE::get_loginbe()->set_username( MISC::remove_space( m_frame_be.entry_id.get_text() ) );
+            CORE::get_loginbe()->set_passwd( MISC::remove_space( m_frame_be.entry_passwd.get_text() ) );
         }
 
       public:
@@ -111,12 +111,12 @@ namespace CORE
         , m_frame_2ch(), m_frame_be()
         {
             // 2chログイン用
-            m_frame_2ch.entry_id.set_text( LOGIN::get_login2ch()->get_username() );
-            m_frame_2ch.entry_passwd.set_text( LOGIN::get_login2ch()->get_passwd() );
+            m_frame_2ch.entry_id.set_text( CORE::get_login2ch()->get_username() );
+            m_frame_2ch.entry_passwd.set_text( CORE::get_login2ch()->get_passwd() );
 
             // beログイン用
-            m_frame_be.entry_id.set_text( LOGIN::get_loginbe()->get_username() );
-            m_frame_be.entry_passwd.set_text( LOGIN::get_loginbe()->get_passwd() );
+            m_frame_be.entry_id.set_text( CORE::get_loginbe()->get_username() );
+            m_frame_be.entry_passwd.set_text( CORE::get_loginbe()->get_passwd() );
 
             get_vbox()->set_spacing( BOXSPACING );
             get_vbox()->pack_start( m_frame_2ch );

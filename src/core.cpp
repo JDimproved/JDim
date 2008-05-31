@@ -118,10 +118,10 @@ Core::Core( WinMain& win_main )
     DBIMG::create_root();
 
     // 2chログインマネージャ作成
-    LOGIN::get_login2ch();
+    CORE::get_login2ch();
 
     // BEログインマネージャ作成
-    LOGIN::get_loginbe();
+    CORE::get_loginbe();
 
     // 各管理クラス作成
     BBSLIST::get_admin();
@@ -225,10 +225,10 @@ Core::~Core()
     CORE::delete_css_manager();
 
     // 2chログインマネージャ削除
-    LOGIN::delete_login2ch();
+    CORE::delete_login2ch();
 
     // BEログインマネージャ削除
-    LOGIN::delete_loginbe();
+    CORE::delete_loginbe();
 
     // データベース削除
     DBTREE::delete_root();
@@ -1027,8 +1027,8 @@ void Core::set_maintitle()
     if( m_title.empty() ) title = "JD - " + JDVERSIONSTR;
     else title = "JD - " + m_title;
 
-    if( LOGIN::get_login2ch()->login_now() ) title +=" [ ● ]";
-    if( LOGIN::get_loginbe()->login_now() ) title +=" [ BE ]";
+    if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
+    if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
     if( ! SESSION::is_online() ) title += " [ オフライン ]";
     m_win_main.set_title( title );
 }
@@ -1127,7 +1127,7 @@ void Core::slot_activate_menubar()
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
     if( tact ){
 
-        if( LOGIN::get_login2ch()->login_now() ) tact->set_active( true );
+        if( CORE::get_login2ch()->login_now() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1136,7 +1136,7 @@ void Core::slot_activate_menubar()
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
     if( tact ){
 
-        if( LOGIN::get_loginbe()->login_now() ) tact->set_active( true );
+        if( CORE::get_loginbe()->login_now() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1799,13 +1799,13 @@ void Core::slot_toggle_login2ch()
 #endif
 
     // ログイン中ならログアウト
-    if( LOGIN::get_login2ch()->login_now() ){
-        LOGIN::get_login2ch()->logout();
+    if( CORE::get_login2ch()->login_now() ){
+        CORE::get_login2ch()->logout();
         set_maintitle();
     }
 
     // ログオフ中ならログイン開始
-    else LOGIN::get_login2ch()->start_login();
+    else CORE::get_login2ch()->start_login();
 }
 
 
@@ -1821,10 +1821,10 @@ void Core::slot_toggle_loginbe()
 #endif
 
     // ログイン中ならログアウト
-    if( LOGIN::get_loginbe()->login_now() ) LOGIN::get_loginbe()->logout();
+    if( CORE::get_loginbe()->login_now() ) CORE::get_loginbe()->logout();
 
     // ログオフ中ならログイン開始
-    else LOGIN::get_loginbe()->start_login();
+    else CORE::get_loginbe()->start_login();
 
     set_maintitle();
 }

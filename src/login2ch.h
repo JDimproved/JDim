@@ -11,7 +11,7 @@
 
 #include "skeleton/login.h"
 
-namespace LOGIN
+namespace CORE
 {
     class Login2ch : public SKELETON::Login
     {

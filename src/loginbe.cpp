@@ -9,18 +9,18 @@
 
 #include "skeleton/msgdiag.h"
 
-LOGIN::LoginBe* instance_loginbe = NULL;
+CORE::LoginBe* instance_loginbe = NULL;
 
-LOGIN::LoginBe* LOGIN::get_loginbe()
+CORE::LoginBe* CORE::get_loginbe()
 {
-    if( ! instance_loginbe ) instance_loginbe = new LOGIN::LoginBe();
+    if( ! instance_loginbe ) instance_loginbe = new CORE::LoginBe();
     assert( instance_loginbe );
 
     return instance_loginbe;
 }
 
 
-void LOGIN::delete_loginbe()
+void CORE::delete_loginbe()
 {
     if( instance_loginbe ){
         instance_loginbe->terminate_load();
@@ -30,7 +30,7 @@ void LOGIN::delete_loginbe()
 }
 
 
-using namespace LOGIN;
+using namespace CORE;
 
 
 LoginBe::LoginBe()

@@ -886,7 +886,7 @@ void ArticleBase::download_dat( const bool check_update )
     if( SESSION::is_online() && tv.tv_sec ) m_check_update_time = tv;
 
     // DAT落ちしていてログイン中で無い時はロードしない
-    if( ( m_status & STATUS_OLD ) && ! LOGIN::get_login2ch()->login_now() ){
+    if( ( m_status & STATUS_OLD ) && ! CORE::get_login2ch()->login_now() ){
         CORE::core_set_command( "toggle_favorite_icon", m_url );
         return;
     }

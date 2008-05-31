@@ -105,9 +105,9 @@ const std::string Board2ch::cookie_for_write()
     std::string cookie = Board2chCompati::cookie_for_write();
 
     // BE ログイン中
-    if( LOGIN::get_loginbe()->login_now() ){
+    if( CORE::get_loginbe()->login_now() ){
         if( ! cookie.empty() ) cookie += "; ";
-        cookie += "DMDM=" + LOGIN::get_loginbe()->get_username() + "; MDMD=" + LOGIN::get_loginbe()->get_passwd();
+        cookie += "DMDM=" + CORE::get_loginbe()->get_username() + "; MDMD=" + CORE::get_loginbe()->get_passwd();
     }
 
 #ifdef _DEBUG
@@ -136,8 +136,8 @@ const std::string Board2ch::create_newarticle_message( const std::string& subjec
 
     // 2chログイン中
     // sidを送る
-    if( LOGIN::get_login2ch()->login_now() ){
-        std::string sid = LOGIN::get_login2ch()->get_sessionid();
+    if( CORE::get_login2ch()->login_now() ){
+        std::string sid = CORE::get_login2ch()->get_sessionid();
         ss_post << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
     }
 

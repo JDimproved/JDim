@@ -62,7 +62,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         ss << regex.str( 1 ) << "/test/offlaw.cgi" << regex.str( 2 ) << regex.str( 3 )
            << "/?raw=." << get_lng_dat();
 
-        std::string sid = LOGIN::get_login2ch()->get_sessionid();
+        std::string sid = CORE::get_login2ch()->get_sessionid();
         ss << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
 
         // レジュームは無し
@@ -112,7 +112,7 @@ void NodeTree2ch::receive_finish()
 #endif
 
     // 更新チェックではなく、オンライン、ログインしている、かつdat落ちの場合はofflaw.cgi経由で旧URLで再取得
-    if( ! is_checking_update() && LOGIN::get_login2ch()->login_now() && SESSION::is_online() && ! m_use_offlaw
+    if( ! is_checking_update() && CORE::get_login2ch()->login_now() && SESSION::is_online() && ! m_use_offlaw
         && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_NOT_FOUND )
         ){
 #ifdef _DEBUG    

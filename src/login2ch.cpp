@@ -23,18 +23,18 @@ enum
     SIZE_OF_RAWDATA = 64 * 1024
 };
 
-LOGIN::Login2ch* instance_login2ch = NULL;
+CORE::Login2ch* instance_login2ch = NULL;
 
-LOGIN::Login2ch* LOGIN::get_login2ch()
+CORE::Login2ch* CORE::get_login2ch()
 {
-    if( ! instance_login2ch ) instance_login2ch = new LOGIN::Login2ch();
+    if( ! instance_login2ch ) instance_login2ch = new CORE::Login2ch();
     assert( instance_login2ch );
 
     return instance_login2ch;
 }
 
 
-void LOGIN::delete_login2ch()
+void CORE::delete_login2ch()
 {
     if( instance_login2ch ){
         instance_login2ch->terminate_load();
@@ -44,7 +44,7 @@ void LOGIN::delete_login2ch()
 }
 
 
-using namespace LOGIN;
+using namespace CORE;
 
 
 Login2ch::Login2ch()
