@@ -36,7 +36,10 @@ LOGIN::Login2ch* LOGIN::get_login2ch()
 
 void LOGIN::delete_login2ch()
 {
-    if( instance_login2ch ) delete instance_login2ch;
+    if( instance_login2ch ){
+        instance_login2ch->terminate_load();
+        delete instance_login2ch;
+    }
     instance_login2ch = NULL;
 }
 

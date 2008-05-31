@@ -24,7 +24,10 @@ void DBTREE::create_root()
 
 void DBTREE::delete_root()
 {
-    if( instance_dbtree_root ) delete instance_dbtree_root;
+    if( instance_dbtree_root ){
+        instance_dbtree_root->terminate_load();
+        delete instance_dbtree_root;
+    }
 }
 
 

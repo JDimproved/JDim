@@ -32,7 +32,10 @@ ImgRoot::ImgRoot()
 ImgRoot::~ImgRoot()
 {
     std::map< std::string, Img* >::iterator it;
-    for( it = m_map_img.begin(); it != m_map_img.end(); ++it ) delete ( *it ).second;  
+    for( it = m_map_img.begin(); it != m_map_img.end(); ++it ){
+        ( *it ).second->terminate_load();
+        delete ( *it ).second;
+    }
 }
 
 

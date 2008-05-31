@@ -101,7 +101,10 @@ MessageViewBase::~MessageViewBase()
     if( m_preview ) delete m_preview;
     m_preview = NULL;
 
-    if( m_post ) delete m_post;
+    if( m_post ){
+        m_post->terminate_load();
+        delete m_post;
+    }
     m_post = NULL;
 
     if( m_iconv ) delete m_iconv;
@@ -651,7 +654,10 @@ void MessageViewBase::tab_right()
 //
 void MessageViewBase::post_msg( const std::string& msg, bool new_article )
 {
-    if( m_post ) delete m_post;
+    if( m_post ){
+        m_post->terminate_load();
+        delete m_post;
+    }
     m_post = new Post( this, get_url(),  msg, new_article );
     m_post->sig_fin().connect( sigc::mem_fun( *this, &MessageViewBase::post_fin ) );
     m_post->post_msg();

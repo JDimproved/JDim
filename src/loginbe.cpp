@@ -22,7 +22,10 @@ LOGIN::LoginBe* LOGIN::get_loginbe()
 
 void LOGIN::delete_loginbe()
 {
-    if( instance_loginbe ) delete instance_loginbe;
+    if( instance_loginbe ){
+        instance_loginbe->terminate_load();
+        delete instance_loginbe;
+    }
     instance_loginbe = NULL;
 }
 

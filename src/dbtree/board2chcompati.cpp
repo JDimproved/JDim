@@ -54,10 +54,16 @@ Board2chCompati::Board2chCompati( const std::string& root, const std::string& pa
 
 Board2chCompati::~Board2chCompati()
 {
-    if( m_settingloader ) delete m_settingloader;
+    if( m_settingloader ){
+        m_settingloader->terminate_load();
+        delete m_settingloader;
+    }
     m_settingloader = NULL;
 
-    if( m_ruleloader ) delete m_ruleloader;
+    if( m_ruleloader ){
+        m_ruleloader->terminate_load();
+        delete m_ruleloader;
+    }
     m_ruleloader = NULL;
 }
 

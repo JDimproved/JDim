@@ -84,7 +84,10 @@ Root::~Root()
     clear();
 
     std::list< BoardBase* >::iterator it;
-    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ) delete *( it );
+    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
+        ( *it )->terminate_load();
+        delete ( *it );
+    }
 
     if( m_board_null ) delete m_board_null;
 }
