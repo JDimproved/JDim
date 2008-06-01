@@ -2794,6 +2794,9 @@ void DrawAreaBase::update_live_speed( const int sec )
 //
 // ポインタがRECTANGLEの上にあるか判定
 //
+// int& pos, int& width_line, int& char_width, int& byte_char
+// はそれぞれポインタの下の文字の位置(バイト)とその文字までの長さ(ピクセル)、文字の幅(ピクセル)、バイト
+//
 bool DrawAreaBase::is_pointer_on_rect( const RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
                                        const int x, const int y,
                                        int& pos, int& width_line, int& char_width, int& byte_char )
@@ -3025,6 +3028,50 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 //
 // 戻り値 : 成功すると true
 //
+
+// 区切り文字
+bool is_separate_char( const int ucs2 )
+{
+    if( ucs2 == ' '
+
+        || ucs2 == '.'
+        || ucs2 == ','
+
+        || ucs2 == '('
+        || ucs2 == ')'
+
+        || ucs2 == '='
+
+        // 全角空白
+        || ucs2 == 0x3000
+
+        // 。、
+        || ucs2 == 0x3001
+        || ucs2 == 0x3002
+
+        // ．，
+        || ucs2 == 0xff0c
+        || ucs2 == 0xff0e
+
+        // 全角()
+        || ucs2 == 0xff08
+        || ucs2 == 0xff09
+
+        // 全角 =
+        || ucs2 == 0xff1d
+
+        // 「」
+        || ucs2 == 0x300c
+        || ucs2 == 0xff0d
+        || ucs2 == 0x300e
+        || ucs2 == 0xff0f
+
+        ) return true;
+
+    return false;
+}
+
+
 bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,  int x, int y )
 {
     if( ! m_layout_tree ) return false;
@@ -3070,7 +3117,21 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                     continue;
                 }
 
-                bool mode_ascii = ( *( ( unsigned char* )( layout->text + pos ) ) < 128 );
+
+                int byte_char_pointer;
+                const int ucs2_pointer = MISC::utf8toucs2( layout->text + pos, byte_char_pointer );
+                const int ucs2mode_pointer = MISC::get_ucs2mode( ucs2_pointer );
+#ifdef _DEBUG
+                std::cout << "ucs2 = " << std::hex << ucs2_pointer << std::dec
+                          << " mode = " << ucs2mode_pointer << " pos = " << pos << std::endl;
+#endif
+
+                // 区切り文字をダブルクリックした
+                if( is_separate_char( ucs2_pointer ) ){
+                    caret_left.set( layout, pos );
+                    caret_right.set( layout, pos + byte_char_pointer );
+                    return true;
+                }
 
                 // 左位置を求める
                 int pos_left = 0;
@@ -3078,18 +3139,22 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 while( pos_tmp < pos ){
 
                     int byte_char;
-                    MISC::utf8toucs2( layout->text + pos_tmp, byte_char );
+                    const int ucs2 = MISC::utf8toucs2( layout->text + pos_tmp, byte_char );
+                    const int ucs2mode = MISC::get_ucs2mode( ucs2 );
 
-                    unsigned char code = *( ( unsigned char* )( layout->text + pos_tmp ) );
-                    unsigned char code_next = *( ( unsigned char* )( layout->text + pos_tmp + byte_char ) );
+                    int byte_char_next;
+                    const int ucs2_next = MISC::utf8toucs2( layout->text + pos_tmp + byte_char, byte_char_next );
+                    const int ucs2mode_next = MISC::get_ucs2mode( ucs2_next );
 
-                    if( code_next == '\0'
-                        || code == ' '
-                        || code == ','
-                        || code == '('
-                        || code == ')'
-                        || ( mode_ascii && code >= 128 && code_next < 128 )
-                        || ( ! mode_ascii && code < 128 && code_next >= 128 ) ) pos_left = pos_tmp + byte_char;
+                    // 区切り文字が来たら左位置を移動する
+                    if( ucs2_next == '\0'
+
+                        || is_separate_char( ucs2 )
+
+                        // 文字種が変わった
+                        || ( ucs2mode != ucs2mode_pointer && ucs2mode_next == ucs2mode_pointer )
+
+                        ) pos_left = pos_tmp + byte_char;
 
                     pos_tmp += byte_char;
                 }
@@ -3099,26 +3164,26 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 while( pos_right < layout->lng_text ){
 
                     int byte_char;
-                    MISC::utf8toucs2( layout->text + pos_right, byte_char );
+                    const int ucs2 = MISC::utf8toucs2( layout->text + pos_right, byte_char );
+                    const int ucs2mode = MISC::get_ucs2mode( ucs2 );
 
-                    unsigned char code = *( ( unsigned char* )( layout->text + pos_right ) );
-                    unsigned char code_next = *( ( unsigned char* )( layout->text + pos_right + byte_char ) );
+                    int byte_char_next;
+                    const int ucs2_next = MISC::utf8toucs2( layout->text + pos_right + byte_char, byte_char_next );
+                    const int ucs2mode_next = MISC::get_ucs2mode( ucs2_next );
 
-                    if( code == ' '
-                        || code == ','
-                        || code == '('
-                        || code == ')' ) break;
+                    // 区切り文字が来たらbreak
+                    if( is_separate_char( ucs2 ) ) break;
 
                     pos_right += byte_char;
 
-                    if( code_next == '\0'
-                        || ( mode_ascii && code < 128 && code_next >= 128 )
-                        || ( ! mode_ascii && code >= 128 && code_next < 128 ) ) break;
+                    // 文字種が変わった
+                    if( ucs2_next == '\0'
+                        || ( ucs2mode == ucs2mode_pointer && ucs2mode_next != ucs2mode_pointer )
+                        ) break;
                 }
 
 #ifdef _DEBUG
-                std::cout << "mode_ascii = " << mode_ascii << " pos = " << pos
-                          << " pos_left = " << pos_left << " pos_right = " << pos_right << std::endl;
+                std::cout << "pos_left = " << pos_left << " pos_right = " << pos_right << std::endl;
 #endif
 
                 // キャレット設定
