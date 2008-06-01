@@ -84,6 +84,7 @@ namespace CONTROL
 
         ClickButton, // 以下、マウスボタン専用の設定
         DblClickButton,
+        TrpClickButton,
         CloseTabButton,
         ReloadTabButton,
         AutoScrollButton,

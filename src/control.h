@@ -32,29 +32,29 @@ namespace CONTROL
         Control();
 
         // コントロールモード設定
-        void add_mode( int mode );
+        void add_mode( const int mode );
         void clear_mode();
 
         // キー入力
         // 戻り値はコントロールID
-        int key_press( GdkEventKey* event );
+        const int key_press( const GdkEventKey* event );
 
         // マウスボタン
-        int button_press( GdkEventButton* event ); // 戻り値はコントロールID
-        bool button_alloted( GdkEventButton* event, int id );  // eventがidに割り当てられていたらtrue
-        bool get_eventbutton( int id, GdkEventButton& event ); // ID からevent取得
+        const int button_press( const GdkEventButton* event ); // 戻り値はコントロールID
+        const bool button_alloted( const GdkEventButton* event, const int id );  // eventがidに割り当てられていたらtrue
+        const bool get_eventbutton( const int id, GdkEventButton& event ); // ID からevent取得
 
         // マウスジェスチャ
         void MG_reset();
-        bool MG_start( GdkEventButton* event );
-        bool MG_motion( GdkEventMotion* event );
-        int MG_end( GdkEventButton* event );  // 戻り値はコントロールID
+        const bool MG_start( const GdkEventButton* event );
+        const bool MG_motion( const GdkEventMotion* event );
+        const int MG_end( const GdkEventButton* event );  // 戻り値はコントロールID
 
         // ホイールマウスジェスチャ
         void MG_wheel_reset();
-        bool MG_wheel_start( GdkEventButton* event );
-        int MG_wheel_scroll( GdkEventScroll* event );  // 戻り値はコントロールID
-        bool MG_wheel_end( GdkEventButton* event ); // ジェスチャを実行したらtrueを返す
+        const bool MG_wheel_start( const GdkEventButton* event );
+        const int MG_wheel_scroll( const GdkEventScroll* event );  // 戻り値はコントロールID
+        const bool MG_wheel_end( const GdkEventButton* event ); // ジェスチャを実行したらtrueを返す
     };
 }
 

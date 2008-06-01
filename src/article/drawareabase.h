@@ -318,7 +318,7 @@ namespace ARTICLE
                                  const int x, const int y,
                                  int& pos, int& width_line, int& char_width, int& byte_char );
         LAYOUT* set_caret( CARET_POSITION& caret_pos, int x, int y );
-        bool set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,  int x, int y );
+        const bool set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,  const int x, const int y, const bool triple );
 
         // 範囲選択関係
         bool set_selection( CARET_POSITION& caret_left, CARET_POSITION& caret_right, const bool redraw = true );

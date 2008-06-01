@@ -95,31 +95,31 @@ void MouseConfig::set_one_motion( const std::string& name, const std::string& st
 {
     if( name.empty() || str_motion.empty() ) return;
 
-    int id = CONTROL::get_id( name );
+    const int id = CONTROL::get_id( name );
     if( id == CONTROL::None ) return;
 
-    int mode = get_mode( id );
+    const int mode = get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
 
-    bool ctrl = false;
-    bool shift = false;
-    bool alt = false;
-    guint motion = atoi( str_motion.c_str() );
+    const bool ctrl = false;
+    const bool shift = false;
+    const bool alt = false;
+    const guint motion = atoi( str_motion.c_str() );
     if( !motion ) return;
+    const bool dblclick = false;
+    const bool trpclick = false;
+    bool save = true;
 
-    int id_check = check_conflict( mode, motion, ctrl, shift, alt, false );
+    int id_check = check_conflict( mode, motion, ctrl, shift, alt, dblclick, trpclick );
     if( id_check != CONTROL::None ){
         MISC::ERRMSG( "mouse config : ID " + str_motion + " は既に使われています。" );
         return;
     }
 
-    bool dblclick = false;
-    bool save = true;
-
     // "CancelMosaic"は設定ファイルに保存しない
     if( name == "CancelMosaic" ) save = false;
 
-    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, save );
+    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, trpclick, save );
     vec_items().push_back( item );
 }
 

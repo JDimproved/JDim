@@ -28,17 +28,19 @@ namespace CONFIG
         virtual ~MouseKeyConf();
 
         // 操作からID取得
-        int get_id( const int& mode,
-                    const guint& motion, const bool& ctrl, const bool& shift, const bool& alt, const bool& dblclick );
+        const int get_id( const int mode,
+                    const guint motion, const bool ctrl, const bool shift, const bool alt,
+                    const bool dblclick, const bool trpclick );
 
         // ID から操作を取得
         // (注意) リストの一番上にあるものを出力
-        bool get_motion( const int& id,
-                         guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick );
+        const bool get_motion( const int id,
+                         guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick, bool& trpclick );
 
         // ID が割り当てられているかチェック
-        bool alloted( const int& id,
-                      const guint& motion, const bool& ctrl, const bool& shift, const bool& alt, const bool& dblclick );
+        const bool alloted( const int id,
+                      const guint motion, const bool ctrl, const bool shift, const bool alt,
+                      const bool dblclick, const bool trpclick );
 
         // 操作文字列取得
         virtual const std::string get_str_motion( int id );
@@ -51,18 +53,19 @@ namespace CONFIG
         void save_conf( const std::string& savefile );
 
         // モーションが重複していないかチェック
-        int check_conflict( const int& mode,
-                            const guint& motion, const bool& ctrl, const bool& shift, const bool& alt, const bool& dblclick );
+        const int check_conflict( const int mode,
+                            const guint motion, const bool ctrl, const bool shift, const bool alt,
+                            const bool dblclick, const bool trpclick );
 
         // IDからモードを取得
-        int get_mode( const int& id );
+        const int get_mode( const int& id );
 
         // モーションセット
         void set_motion( const std::string& name, const std::string& str_motion );
         virtual void set_one_motion( const std::string& name, const std::string& str_motion ){}
 
         // 指定したIDのアイテムを全て削除
-        bool remove_items( int id );
+        const bool remove_items( int id );
     };
 }
 

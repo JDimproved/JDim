@@ -66,19 +66,20 @@ void MouseKeyConf::save_conf( const std::string& savefile )
 
 
 // 操作からID取得
-int MouseKeyConf::get_id( const int& mode,
-                          const guint& motion, const bool& ctrl, const bool& shift, const bool& alt, const bool& dblclick )
+const int MouseKeyConf::get_id( const int mode,
+                          const guint motion, const bool ctrl, const bool shift, const bool alt,
+                          const bool dblclick, const bool trpclick )
 {
     int id = CONTROL::None;;
     std::vector< MouseKeyItem* >::iterator it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
 
-        id = (*it)->is_activated( mode, motion, ctrl, shift, alt, dblclick );
+        id = (*it)->is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );
         if( id != CONTROL::None ) break;
     }
 
     // 共通モードにして再帰呼び出し
-    if( id == CONTROL::None && mode != CONTROL::MODE_COMMON ) return get_id( CONTROL::MODE_COMMON, motion, ctrl, shift, alt, dblclick );
+    if( id == CONTROL::None && mode != CONTROL::MODE_COMMON ) return get_id( CONTROL::MODE_COMMON, motion, ctrl, shift, alt, dblclick, trpclick );
 
 #ifdef _DEBUG
     std::cout << "MouseKeyConf::get_id mode = " << mode << " id = " << id << " motion = " << motion << std::endl;
@@ -90,7 +91,7 @@ int MouseKeyConf::get_id( const int& mode,
 
 // ID から操作を取得
 // (注意) リストの一番上にあるものを出力
-bool MouseKeyConf::get_motion( const int& id, guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick )
+const bool MouseKeyConf::get_motion( const int id, guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick, bool& trpclick )
 {
     std::vector< MouseKeyItem* >::iterator it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
@@ -101,6 +102,7 @@ bool MouseKeyConf::get_motion( const int& id, guint& motion, bool& ctrl, bool& s
             shift = (*it)->get_shift();
             alt = (*it)->get_alt();
             dblclick = (*it)->get_dblclick();
+            trpclick = (*it)->get_trpclick();
             return true;
         }
     }
@@ -112,12 +114,13 @@ bool MouseKeyConf::get_motion( const int& id, guint& motion, bool& ctrl, bool& s
 
 
 // ID が割り当てられているかチェック
-bool MouseKeyConf::alloted( const int& id,
-                            const guint& motion, const bool& ctrl, const bool& shift, const bool& alt, const bool& dblclick )
+const bool MouseKeyConf::alloted( const int id,
+                            const guint motion, const bool ctrl, const bool shift, const bool alt,
+                            const bool dblclick, const bool trpclick )
 {
     std::vector< MouseKeyItem* >::iterator it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
-        if( (*it)->equal( motion, ctrl, shift, alt, dblclick ) == id ) return true;
+        if( (*it)->equal( motion, ctrl, shift, alt, dblclick, trpclick ) == id ) return true;
     }
 
     return false;
@@ -126,14 +129,15 @@ bool MouseKeyConf::alloted( const int& id,
 
 
 // モーションが重複していないかチェック
-int MouseKeyConf::check_conflict( const int& mode,
-                                  const guint& motion, const bool& ctrl, const bool& shift, const bool& alt, const bool& dblclick )
+const int MouseKeyConf::check_conflict( const int mode,
+                                  const guint motion, const bool ctrl, const bool shift, const bool alt,
+                                  const bool dblclick, const bool trpclick )
 {
     int id = CONTROL::None;;
     std::vector< MouseKeyItem* >::iterator it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
 
-        id = (*it)->is_activated( mode, motion, ctrl, shift, alt, dblclick );
+        id = (*it)->is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );
         if( id != CONTROL::None ) break;
     }
 
@@ -144,7 +148,7 @@ int MouseKeyConf::check_conflict( const int& mode,
 
 
 // IDからモードを取得
-int MouseKeyConf::get_mode( const int& id )
+const int MouseKeyConf::get_mode( const int& id )
 {
     if( id < CONTROL::COMMONMOTION_END ) return CONTROL::MODE_COMMON;
     if( id < CONTROL::BBSLISTMOTION_END ) return CONTROL::MODE_BBSLIST;
@@ -188,7 +192,7 @@ void MouseKeyConf::set_motion( const std::string& name, const std::string& str_m
 
 // 指定したIDのアイテムを全て削除
 // 削除したら true を返す
-bool MouseKeyConf::remove_items( int id )
+const bool MouseKeyConf::remove_items( int id )
 {
     bool ret = false;
 

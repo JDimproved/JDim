@@ -3062,9 +3062,9 @@ bool is_separate_char( const int ucs2 )
 
         // 「」
         || ucs2 == 0x300c
-        || ucs2 == 0xff0d
+        || ucs2 == 0x300d
         || ucs2 == 0x300e
-        || ucs2 == 0xff0f
+        || ucs2 == 0x300f
 
         ) return true;
 
@@ -3072,7 +3072,8 @@ bool is_separate_char( const int ucs2 )
 }
 
 
-bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,  int x, int y )
+const bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right
+                                      ,const int x, const int y, const bool triple )
 {
     if( ! m_layout_tree ) return false;
 
@@ -3117,6 +3118,12 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                     continue;
                 }
 
+                // トリプルクリック
+                if( triple ){
+                    caret_left.set( layout, 0 );
+                    caret_right.set( layout, layout->lng_text );
+                    return true;
+                }
 
                 int byte_char_pointer;
                 const int ucs2_pointer = MISC::utf8toucs2( layout->text + pos, byte_char_pointer );
@@ -3721,11 +3728,13 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
             }
         }
 
-        // ダブルクリックしたら範囲選択
-        else if( m_control.button_alloted( event, CONTROL::DblClickButton ) ){
+        // ダブル、トリプルクリックしたら範囲選択
+        else if( m_control.button_alloted( event, CONTROL::DblClickButton )
+                 || m_control.button_alloted( event, CONTROL::TrpClickButton ) ){
 
+            const bool triple = m_control.button_alloted( event, CONTROL::TrpClickButton );
             CARET_POSITION caret_left, caret_right;
-            if( set_carets_dclick( caret_left, caret_right, x, y ) ) set_selection( caret_left, caret_right );
+            if( set_carets_dclick( caret_left, caret_right, x, y, triple ) ) set_selection( caret_left, caret_right );
         }
     }
 

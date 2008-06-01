@@ -73,6 +73,7 @@ namespace CONTROL
 
         { "ClickButton", "クリック" },
         { "DblClickButton", "ダブルクリック" },
+        { "TrpClickButton", "トリプルクリック" },
         { "CloseTabButton", "タブを閉じる" },
         { "ReloadTabButton", "タブを再読み込み" },
         { "AutoScrollButton", "オートスクロール" },

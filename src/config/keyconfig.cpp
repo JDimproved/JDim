@@ -178,20 +178,23 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
     std::cout << "motion = " << str_motion << std::endl;
 #endif
 
-    int id = CONTROL::get_id( name );
+    const int id = CONTROL::get_id( name );
     if( id == CONTROL::None ) return;
 
 #ifdef _DEBUG
     std::cout << "id = " << id << std::endl;
 #endif
 
-    int mode = get_mode( id );
+    const int mode = get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
 
-    guint motion;
+    guint motion = 0;
     bool ctrl = false;
     bool shift = false;
     bool alt = false;
+    const bool dblclick = false;
+    const bool trpclick = false;
+    const bool save = true;
 
     JDLIB::Regex regex;
     if( regex.exec( "(Ctrl)?(\\+?Shift)?(\\+?Alt)?\\+?(.*)", str_motion, 0, true ) ){
@@ -243,8 +246,8 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
         // 大文字やshiftが必要な文字の時はshiftも有効にする
         if( motion >= 'A' && motion <= 'Z' ) shift = true;
         if( motion == '?' || motion == '<' || motion == '>' || motion == '+' ) shift = true;
-
-        int id_check = check_conflict( mode, motion, ctrl, shift, alt, false );
+       
+        int id_check = check_conflict( mode, motion, ctrl, shift, alt, dblclick, trpclick );
         if( id_check != CONTROL::None ){
             MISC::ERRMSG( "key config : " + str_motion + " is already used." );
             return;
@@ -255,10 +258,7 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
     std::cout << "motion = " << motion << std::endl;
 #endif
 
-    bool dblclick = false;
-    bool save = true;
-
-    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, save );
+    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, trpclick, save );
     vec_items().push_back( item );
 }
 

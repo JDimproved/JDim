@@ -30,7 +30,7 @@ Control::Control()
 
 
 
-void Control::add_mode( int mode )
+void Control::add_mode( const int mode )
 {
     m_mode.push_back( mode );;
 }
@@ -48,12 +48,14 @@ void Control::clear_mode()
 
 
 // 戻り値はコントロールID
-int Control::key_press( GdkEventKey* event )
+const int Control::key_press( const GdkEventKey* event )
 {
-    guint key = event->keyval;
-    bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
-    bool shift = ( event->state ) & GDK_SHIFT_MASK;
-    bool alt = ( event->state ) & GDK_MOD1_MASK;
+    const guint key = event->keyval;
+    const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
+    const bool shift = ( event->state ) & GDK_SHIFT_MASK;
+    const bool alt = ( event->state ) & GDK_MOD1_MASK;
+    const bool dblclick = false;
+    const bool trpclick = false;
 
 #ifdef _DEBUG
     std::cout << "Control::key_press key = " << std::hex << key;
@@ -66,7 +68,7 @@ int Control::key_press( GdkEventKey* event )
     int control = CONTROL::None;
     std::vector< int >::iterator it = m_mode.begin();
     for( ; it != m_mode.end(); ++it ){
-        control = CONFIG::get_keyconfig()->get_id( *it, key, ctrl, shift, alt, false );
+        control = CONFIG::get_keyconfig()->get_id( *it, key, ctrl, shift, alt, dblclick, trpclick );
         if( control != CONTROL::None ) break;
     }
 
@@ -81,48 +83,53 @@ int Control::key_press( GdkEventKey* event )
 
 
 // 戻り値はコントロールID
-int Control::button_press( GdkEventButton* event )
+const int Control::button_press( const GdkEventButton* event )
 {
-    guint button = event->button;
-    bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
-    bool shift = ( event->state ) & GDK_SHIFT_MASK;
-    bool alt = ( event->state ) & GDK_MOD1_MASK;
-    bool dblclick = ( event->type == GDK_2BUTTON_PRESS );
+    const guint button = event->button;
+    const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
+    const bool shift = ( event->state ) & GDK_SHIFT_MASK;
+    const bool alt = ( event->state ) & GDK_MOD1_MASK;
+    const bool dblclick = ( event->type == GDK_2BUTTON_PRESS );
+    const bool trpclick = ( event->type == GDK_3BUTTON_PRESS );
 
     int control = CONTROL::None;
     std::vector< int >::iterator it = m_mode.begin();
     for( ; it != m_mode.end(); ++it ){
-        control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick );
+        control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
         if( control != CONTROL::None ) break;
     }
 
     return control;
 }
 
-// eventがidに割り当てられていたらtrue
-bool Control::button_alloted( GdkEventButton* event, int id )
-{
-    guint button = event->button;
-    bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
-    bool shift = ( event->state ) & GDK_SHIFT_MASK;
-    bool alt = ( event->state ) & GDK_MOD1_MASK;
-    bool dblclick = ( event->type == GDK_2BUTTON_PRESS );
 
-    return CONFIG::get_buttonconfig()->alloted( id, button, ctrl, shift, alt, dblclick );
+// eventがidに割り当てられていたらtrue
+const bool Control::button_alloted( const GdkEventButton* event, const int id )
+{
+    const guint button = event->button;
+    const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
+    const bool shift = ( event->state ) & GDK_SHIFT_MASK;
+    const bool alt = ( event->state ) & GDK_MOD1_MASK;
+    const bool dblclick = ( event->type == GDK_2BUTTON_PRESS );
+    const bool trpclick = ( event->type == GDK_3BUTTON_PRESS );
+
+    return CONFIG::get_buttonconfig()->alloted( id, button, ctrl, shift, alt, dblclick, trpclick );
 }
 
 
 // ID からevent取得
-bool Control::get_eventbutton( int id, GdkEventButton& event )
+const bool Control::get_eventbutton( const int id, GdkEventButton& event )
 {
     guint button;
     bool ctrl;
     bool shift;
     bool alt;
     bool dblclick;
+    bool trpclick;
 
-    if( CONFIG::get_buttonconfig()->get_motion( id, button, ctrl, shift, alt, dblclick ) ){
+    if( CONFIG::get_buttonconfig()->get_motion( id, button, ctrl, shift, alt, dblclick, trpclick ) ){
         if( dblclick ) event.type = GDK_2BUTTON_PRESS;
+        if( trpclick ) event.type = GDK_3BUTTON_PRESS;
         event.button = button;
         event.state = ( GDK_CONTROL_MASK & ctrl ) | ( GDK_SHIFT_MASK & shift ) | ( GDK_MOD1_MASK & alt );
         return true;
@@ -151,7 +158,7 @@ void Control::MG_reset()
 
 
 
-bool Control::MG_start( GdkEventButton* event )
+const bool Control::MG_start( const GdkEventButton* event )
 {
     MG_reset();
 
@@ -170,7 +177,7 @@ bool Control::MG_start( GdkEventButton* event )
 
 
 
-bool Control::MG_motion( GdkEventMotion* event )
+const bool Control::MG_motion( const GdkEventMotion* event )
 {
     if( ! m_mg ) return false;
     if( m_mg_lng >= MAX_MG_LNG ) return false;
@@ -180,15 +187,15 @@ bool Control::MG_motion( GdkEventMotion* event )
         CORE::core_set_command( "set_mginfo", "", "" );
     }
 
-    int x = ( int ) event->x;
-    int y = ( int ) event->y;
+    const int x = ( int ) event->x;
+    const int y = ( int ) event->y;
 
-    int dx = x - m_mg_x;
-    int dy = y - m_mg_y;
+    const int dx = x - m_mg_x;
+    const int dy = y - m_mg_y;
 
     int direction = 0;
     std::string str_direction;
-    int radius = CONFIG::get_mouse_radius();
+    const int radius = CONFIG::get_mouse_radius();
 
     if( dx < 0 && -dx > radius ){
         direction = 4;
@@ -225,10 +232,16 @@ bool Control::MG_motion( GdkEventMotion* event )
             ++m_mg_lng;
             m_mg_direction += str_direction;
 
+            const bool ctrl = false;
+            const bool shift = false;
+            const bool alt = false;
+            const bool dblclick = false;
+            const bool trpclick = false;
+
             int control = CONTROL::None;
             std::vector< int >::iterator it = m_mode.begin();
             for( ; it != m_mode.end(); ++it ){
-                control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, false, false, false, false );
+                control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
                 if( control != CONTROL::None ) break;
             }
 
@@ -246,7 +259,7 @@ bool Control::MG_motion( GdkEventMotion* event )
 
 
 // 戻り値はコントロールID
-int Control::MG_end( GdkEventButton* event )
+const int Control::MG_end( const GdkEventButton* event )
 {
     if( ! m_mg ) return None;
 
@@ -254,10 +267,16 @@ int Control::MG_end( GdkEventButton* event )
     std::cout << "Control::MG_end val = " << m_mg_value << std::endl;
 #endif
 
+    const bool ctrl = false;
+    const bool shift = false;
+    const bool alt = false;
+    const bool dblclick = false;
+    const bool trpclick = false;
+
     int control = CONTROL::None;
     std::vector< int >::iterator it = m_mode.begin();
     for( ; it != m_mode.end(); ++it ){
-        control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, false, false, false, false );
+        control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
         if( control != CONTROL::None ) break;
     }
 
@@ -293,7 +312,7 @@ void Control::MG_wheel_reset()
 
 
 // ホイールマウスジェスチャ開始
-bool Control::MG_wheel_start( GdkEventButton* event )
+const bool Control::MG_wheel_start( const GdkEventButton* event )
 {
     MG_wheel_reset();
 
@@ -308,11 +327,11 @@ bool Control::MG_wheel_start( GdkEventButton* event )
 
 
 // ホイールマウスジェスチャ。 戻り値はコントロールID
-int Control::MG_wheel_scroll( GdkEventScroll* event )
+const int Control::MG_wheel_scroll( const GdkEventScroll* event )
 {
     int control = CONTROL::None;
 
-    guint direction = event->direction;
+    const guint direction = event->direction;
 
     // あまり速く動かした場合はキャンセル
     const int time_cancel = 15; // msec
@@ -335,16 +354,18 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
         case 3: button = Gdk::BUTTON3_MASK; break;
     }
 
-    bool ctrl = false;
-    bool shift = false;
-    bool alt = false;
+    const bool ctrl = false;
+    const bool shift = false;
+    const bool alt = false;
+    const bool dblclick = false;
+    const bool trpclick = false;
 
     if( direction == GDK_SCROLL_LEFT ){
         button = 6;
 
         std::vector< int >::iterator it = m_mode.begin();
         for( ; it != m_mode.end(); ++it ){
-            control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, false );
+            control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
             if( control != CONTROL::None ) break;
         }
     }
@@ -354,7 +375,7 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
 
         std::vector< int >::iterator it = m_mode.begin();
         for( ; it != m_mode.end(); ++it ){
-            control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, false );
+            control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
             if( control != CONTROL::None ) break;
         }
     }
@@ -378,13 +399,13 @@ int Control::MG_wheel_scroll( GdkEventScroll* event )
 
 // ホイールマウスジェスチャ終了
 // もしジェスチャが実行されたら true が戻る
-bool Control::MG_wheel_end( GdkEventButton* event )
+const bool Control::MG_wheel_end( const GdkEventButton* event )
 {
 #ifdef _DEBUG
     std::cout << "Control::MG_wheel_end\n";
 #endif
 
-    bool ret = mg_wheel_done;
+    const bool ret = mg_wheel_done;
     MG_wheel_reset();
 
     return ret;

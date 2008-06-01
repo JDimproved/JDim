@@ -58,6 +58,7 @@ void ButtonConfig::load_conf()
     // デフォルト動作
     SETMOTION( "ClickButton", "Left" );
     SETMOTION( "DblClickButton", "DblLeft" );
+    SETMOTION( "TrpClickButton", "TrpLeft" );
     SETMOTION( "CloseTabButton", "Mid" );
     SETMOTION( "ReloadTabButton", "DblLeft" );
     SETMOTION( "AutoScrollButton", "Mid" );
@@ -123,21 +124,23 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
     std::cout << "motion = " << str_motion << std::endl;
 #endif
 
-    int id = CONTROL::get_id( name );
+    const int id = CONTROL::get_id( name );
     if( id == CONTROL::None ) return;
 
 #ifdef _DEBUG
     std::cout << "id = " << id << std::endl;
 #endif
 
-    int mode = get_mode( id );
+    const int mode = get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
 
     bool ctrl = false;
     bool shift = false;
     bool alt = false;
     bool dblclick = false;
+    bool trpclick = false;
     guint motion = 0;
+    const bool save = true;
 
     JDLIB::Regex regex;
     if( regex.exec( "(Ctrl)?(\\+?Shift)?(\\+?Alt)?\\+?(.*)", str_motion, 0, true ) ){
@@ -158,18 +161,20 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
         if( str_button == "DblLeft" ){ motion = 1; dblclick = true; }
         if( str_button == "DblMid" ) { motion = 2; dblclick = true; }
         if( str_button == "DblRight" ) { motion = 3; dblclick = true; }
+        if( str_button == "TrpLeft" ){ motion = 1; trpclick = true; }
+        if( str_button == "TrpMid" ) { motion = 2; trpclick = true; }
+        if( str_button == "TrpRight" ) { motion = 3; trpclick = true; }
     }
 
 #ifdef _DEBUG
-    std::cout << "motion = " << motion << " dblclick = " << dblclick << std::endl;
+    std::cout << "motion = " << motion << " dblclick = " << dblclick
+              << " trpclick = " << trpclick << std::endl << std::endl;
 #endif
 
     // ひとつのボタンに複数の機能が割り当てられているので重複チェックはしない
 
-    bool save = true;
-
     // データベース登録
-    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, save );
+    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, trpclick, save );
     vec_items().push_back( item );
 }
 
