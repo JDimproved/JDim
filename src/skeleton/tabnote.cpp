@@ -314,6 +314,8 @@ void TabNotebook::calc_tabsize()
 //
 // タブ幅調整
 //
+#define LABEL_WIDTH ( ulabel.substr( 0,  vec_width[ i ] ) + ( vec_width[ i ] < vec_width_org[ i ] ? "..." : "" ) )
+
 bool TabNotebook::adjust_tabwidth()
 {
     // 起動中とシャットダウン中は処理しない
@@ -330,7 +332,9 @@ bool TabNotebook::adjust_tabwidth()
     if( ! tab ) return false;
     m_layout_tab->set_font_description( tab->get_label_font_description() );
 
+    std::vector< int > vec_width_org; // 変更前のタブの文字数
     std::vector< int > vec_width; // 変更後のタブの文字数
+    vec_width_org.resize( pages );
     vec_width.resize( pages );
 
     m_pre_width = get_width();
@@ -353,11 +357,11 @@ bool TabNotebook::adjust_tabwidth()
         if( tab ){
 
             Glib::ustring ulabel( tab->get_fulltext() );
-            vec_width[ i ] = ulabel.length();
+            vec_width_org[ i ] = vec_width[ i ] = ulabel.length();
 
             while( vec_width[ i ] > CONFIG::get_tab_min_str() ){
 
-                m_layout_tab->set_text( ulabel.substr( 0,  vec_width[ i ] ) );
+                m_layout_tab->set_text( LABEL_WIDTH );
                 int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + m_tab_mrg *2;
 
 #ifdef _DEBUG_RESIZE_TAB
@@ -380,16 +384,14 @@ bool TabNotebook::adjust_tabwidth()
         if( tab ){
 
             Glib::ustring ulabel( tab->get_fulltext() );
-            int lng_max = ulabel.length();
-            if( ! lng_max ) continue;
 
             for(;;){
 
-                if( vec_width[ i ] >= lng_max ) break;
+                if( vec_width[ i ] >= vec_width_org[ i ] ) break;
 
                 ++vec_width[ i ];
 
-                m_layout_tab->set_text( ulabel.substr( 0,  vec_width[ i ] ) );
+                m_layout_tab->set_text( LABEL_WIDTH );
                 int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + m_tab_mrg *2;
 
 #ifdef _DEBUG_RESIZE_TAB
@@ -404,7 +406,7 @@ bool TabNotebook::adjust_tabwidth()
                 }
             }
 
-            m_layout_tab->set_text( ulabel.substr( 0,  vec_width[ i ] ) );
+            m_layout_tab->set_text( LABEL_WIDTH );
             width_total += ( m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + m_tab_mrg *2 );
 
             tab->resize_tab( vec_width[ i ] );

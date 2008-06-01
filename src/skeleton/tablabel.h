@@ -81,7 +81,7 @@ namespace SKELETON
         const int get_id_icon() const { return m_id_icon; }
 
         // タブの文字列の文字数をlngにセット
-        void resize_tab( int lng );
+        void resize_tab( const unsigned int lng );
 
       private:
 
