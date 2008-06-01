@@ -1074,7 +1074,7 @@ int MISC::utf8toucs2( const char* utfstr, int& byte )
     int ucs2 = 0;
     byte = 0;
 
-    if( utfstr[ 0 ] == '\0' ) return ucs2;
+    if( utfstr[ 0 ] == '\0' ) return '\0';
     
     if( ( ( unsigned char ) utfstr[ 0 ] & 0x80 ) == 0 ){ // ascii
         byte = 1;
@@ -1147,6 +1147,18 @@ int MISC::ucs2toutf8( int ucs2, char* utfstr )
     return byte;
 }
 
+
+//
+// ucs2 の種類
+//
+int MISC::get_ucs2mode( const int ucs2 )
+{
+    if( ucs2 >= 0x0000 && ucs2 <= 0x007f ) return UCS2MODE_BASIC_LATIN;
+    if( ucs2 >= 0x3040 && ucs2 <= 0x309f ) return UCS2MODE_HIRA;
+    if( ucs2 >= 0x30a0 && ucs2 <= 0x30ff ) return UCS2MODE_KATA;
+
+    return UCS2MODE_OTHER;
+}
 
 
 //

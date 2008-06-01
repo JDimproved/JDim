@@ -22,6 +22,16 @@ namespace MISC
 		SCHEME_TP
 	};
 
+     // get_ucs2mode()の戻り値
+     enum
+     {
+         UCS2MODE_BASIC_LATIN = 0,
+         UCS2MODE_HIRA,
+         UCS2MODE_KATA,
+
+         UCS2MODE_OTHER
+     };
+
     // str を "\n" ごとに区切ってlistにして出力
     std::list< std::string > get_lines( const std::string& str );
 
@@ -139,6 +149,9 @@ namespace MISC
 
     // utf-8 -> ucs2 変換
     int utf8toucs2( const char* utfstr, int& byte );
+
+    // ucs2 の種類
+    int get_ucs2mode( const int ucs2 );
 
     // ucs2 -> utf8 変換
     int ucs2toutf8( int ucs2, char* utfstr );
