@@ -303,18 +303,37 @@ void ArticleViewMain::update_view()
 
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::update_view : from " << num_from << " to " << num_to
-              << " code = " << code << std::endl;
+              << " play = " << m_playsound << " code = " << code << std::endl;
 #endif
 
     // 音を鳴らす
-    if( m_playsound && code != HTTP_INIT ){
+    if( m_playsound ){
 
-        m_playsound = false;
+        if( num_to >= num_from ){ 
 
-        if( code == HTTP_OK ) SOUND::play( SOUND::SOUND_NEW );
-        else if( code == HTTP_PARTIAL_CONTENT ) SOUND::play( SOUND::SOUND_RES );
-        else if( code == HTTP_NOT_MODIFIED ) SOUND::play( SOUND::SOUND_NO );
-        else SOUND::play( SOUND::SOUND_ERR );
+            // 新着
+            if( num_from == 1 ) SOUND::play( SOUND::SOUND_NEW );
+
+            // 更新
+            else SOUND::play( SOUND::SOUND_RES );
+
+            m_playsound = false;
+        }
+
+        else{
+
+            // 更新無し
+            if( code == HTTP_NOT_MODIFIED ){
+                SOUND::play( SOUND::SOUND_NO );
+                m_playsound = false;
+            }
+
+            // エラー
+            else if( code != HTTP_INIT ){
+                SOUND::play( SOUND::SOUND_ERR );
+                m_playsound = false;
+            }
+        }
     }
 
     if( num_from > num_to ) return;

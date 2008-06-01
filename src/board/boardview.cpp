@@ -935,7 +935,8 @@ void BoardView::update_view()
     // 音を鳴らす
     if( SESSION::is_online() && code != HTTP_INIT ){
         if( code == HTTP_OK ) SOUND::play( SOUND::SOUND_RES );
-        else SOUND::play( SOUND::SOUND_NO );
+        else if( code == HTTP_NOT_MODIFIED ) SOUND::play( SOUND::SOUND_NO );
+        else SOUND::play( SOUND::SOUND_ERR );
     }
 
     // 画面消去
