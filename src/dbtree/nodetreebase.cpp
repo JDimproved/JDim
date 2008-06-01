@@ -617,10 +617,10 @@ std::list< int > NodeTreeBase::get_res_name( const std::string& name )
 
 
 //
-// number番のレスの時刻
+// number番のレスの時刻を文字列で取得
 // 内部で regex　を使っているので遅い
 //
-const std::string NodeTreeBase::get_time( int number )
+const std::string NodeTreeBase::get_time_str( int number )
 {
     std::string res_str = get_res_str( number );
     if( res_str.empty() ) return std::string();
@@ -628,7 +628,7 @@ const std::string NodeTreeBase::get_time( int number )
     std::string time_str;
     JDLIB::Regex regex;
 
-    if( regex.exec( " 名前：.+]：([0-9]*/[0-9]*/[0-9]*[^ ]* [0-9]*:[0-9]*[^ ]*).*$", res_str ) ){
+    if( regex.exec( " 名前：.+]： +([0-9]*/[0-9]*/[0-9]*[^ ]* [0-9]*:[0-9]*[^ ]*).*$", res_str ) ){
         time_str = regex.str( 1 );
     }
 

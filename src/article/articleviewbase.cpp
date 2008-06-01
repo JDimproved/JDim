@@ -1197,7 +1197,7 @@ std::string ArticleViewBase::get_html_url4report( std::list< int >& list_resnum 
     for( ; it != list_resnum.end(); ++it ){
 
         int num = (*it);
-        std::string time_str = m_article->get_time( num );
+        std::string time_str = m_article->get_time_str( num );
         std::string id_str = m_article->get_id_name( num );
 
         html += url_for_copy() + MISC::itostr( num );

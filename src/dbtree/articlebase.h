@@ -145,9 +145,9 @@ namespace DBTREE
         // 指定した発言者の名前のレス番号をリストにして取得
         std::list< int > get_res_name( const std::string& name );
 
-        // number番のレスの時刻
+        // number番のレスの時刻を文字列で取得
         // 内部で regex　を使っているので遅い
-        const std::string get_time( int number );
+        const std::string get_time_str( int number );
 
         // number番のレスの発言者ID( スレIDではなくて名前の横のID )
         const std::string get_id_name( int number );

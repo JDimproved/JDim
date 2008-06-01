@@ -183,12 +183,12 @@ std::list< int > ArticleBase::get_res_name( const std::string& name )
 
 
 //
-// number番のレスの時刻
+// number番のレスの時刻を文字列で取得
 // 内部で regex　を使っているので遅い
 //
-const std::string ArticleBase::get_time( int number )
+const std::string ArticleBase::get_time_str( int number )
 {
-    return get_nodetree()->get_time( number );
+    return get_nodetree()->get_time_str( number );
 }
 
 
