@@ -71,9 +71,10 @@ BoardAdmin::~BoardAdmin()
 
 
 // 前回開いていたURLを復元
-void BoardAdmin::restore()
+void BoardAdmin::restore( const bool only_locked )
 {
-    bool online = SESSION::is_online();
+    int set_page_num = 0;
+    const bool online = SESSION::is_online();
     SESSION::set_online( false );
 
     std::list< std::string >& list_url = SESSION::get_board_URLs();
@@ -82,7 +83,7 @@ void BoardAdmin::restore()
     std::list< bool > list_locked = SESSION::get_board_locked();
     std::list< bool >::iterator it_locked = list_locked.begin();
 
-    for( ; it_url != list_url.end(); ++it_url ){
+    for( int page = 0; it_url != list_url.end(); ++it_url, ++page ){
 
         // タブのロック状態
         bool lock = false;
@@ -91,12 +92,17 @@ void BoardAdmin::restore()
             ++it_locked;
         }
 
+        // ロックされているものだけ表示
+        if( only_locked && ! lock ) continue;
+
+        if( page == SESSION::board_page() ) set_page_num = get_tab_nums();
+
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
         if( ! command_arg.url.empty() ) open_view( command_arg );
     }
 
     SESSION::set_online( online );
-    set_command( "set_page", std::string(), MISC::itostr( SESSION::board_page() ) );
+    if( get_tab_nums() ) set_command( "set_page", std::string(), MISC::itostr( set_page_num ) );
 }
 
 

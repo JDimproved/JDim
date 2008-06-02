@@ -59,7 +59,7 @@ BBSListAdmin::~BBSListAdmin()
 
 
 // 前回開いていたURLを復元
-void BBSListAdmin::restore()
+void BBSListAdmin::restore( const bool only_locked )
 {
     COMMAND_ARGS command_arg;
 

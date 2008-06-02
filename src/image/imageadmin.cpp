@@ -83,11 +83,13 @@ ImageAdmin::~ImageAdmin()
 
 
 // 前回開いていたURLを復元
-void ImageAdmin::restore()
+void ImageAdmin::restore( const bool only_locked )
 {
 #ifdef _DEBUG
     std::cout << "ImageAdmin::restore\n";
 #endif
+
+    int set_page_num = 0;
 
     std::list< std::string > list_url = SESSION::image_URLs();
     std::list< std::string >::iterator it_url= list_url.begin();
@@ -95,7 +97,7 @@ void ImageAdmin::restore()
     std::list< bool > list_locked = SESSION::get_image_locked();
     std::list< bool >::iterator it_locked = list_locked.begin();
 
-    for( ; it_url != list_url.end(); ++it_url ){
+    for( int page = 0; it_url != list_url.end(); ++it_url, ++page ){
 
         // タブのロック状態
         bool lock = false;
@@ -104,11 +106,16 @@ void ImageAdmin::restore()
             ++it_locked;
         }
 
+        // ロックされているものだけ表示
+        if( only_locked && ! lock ) continue;
+
+        if( page == SESSION::image_page() ) set_page_num = get_tab_nums();
+
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
         if( ! command_arg.url.empty() ) open_view( command_arg );        
     }
 
-    SKELETON::View* view = get_nth_icon( SESSION::image_page() );
+    SKELETON::View* view = get_nth_icon( set_page_num );
     if( view ){
         switch_img( view->get_url() );
         switch_admin();

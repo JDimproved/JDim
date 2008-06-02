@@ -144,7 +144,7 @@ namespace SKELETON
         virtual void command_local( const COMMAND_ARGS& command ) = 0;
 
         // 起動時に前回の状態を回復
-        virtual void restore() = 0;
+        virtual void restore( const bool only_locked ) = 0;
 
         // url から Viewを開くための COMMAND_ARGS を取得する
         // restore() などで使用する

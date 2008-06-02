@@ -33,7 +33,7 @@ namespace BOARD
 
         virtual void command_local( const COMMAND_ARGS& command );
 
-        virtual void restore();
+        virtual void restore( const bool only_locked );
         virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock );
 
         virtual void switch_admin();

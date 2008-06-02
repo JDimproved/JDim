@@ -96,13 +96,14 @@ bool ArticleAdmin::clock_in_smooth_scroll( int timer_number )
 
 
 // 前回開いていたURLを復元
-void ArticleAdmin::restore()
+void ArticleAdmin::restore( const bool only_locked )
 {
 #ifdef _DEBUG
     std::cout << "ArticleAdmin::restore\n";
 #endif
 
-    bool online = SESSION::is_online();
+    int set_page_num = 0;
+    const bool online = SESSION::is_online();
     SESSION::set_online( false );
 
     std::list< std::string >& list_url = SESSION::get_article_URLs();
@@ -111,7 +112,7 @@ void ArticleAdmin::restore()
     std::list< bool > list_locked = SESSION::get_article_locked();
     std::list< bool >::iterator it_locked = list_locked.begin();
 
-    for( ; it_url != list_url.end(); ++it_url ){
+    for( int page = 0; it_url != list_url.end(); ++it_url, ++page ){
 
         // タブのロック状態
         bool lock = false;
@@ -119,6 +120,11 @@ void ArticleAdmin::restore()
             if( (*it_locked ) ) lock = true;
             ++it_locked;
         }
+
+        // ロックされているものだけ表示
+        if( only_locked && ! lock ) continue;
+
+        if( page == SESSION::article_page() ) set_page_num = get_tab_nums();
 
         // 検索ビューなど、復元したときに view のurlが変わることがあるので
         // view履歴内のURLを置き換える必要がある。そこで Admin::open_view() 中の
@@ -144,7 +150,7 @@ void ArticleAdmin::restore()
     }
 
     SESSION::set_online( online );
-    set_command( "set_page", std::string(), MISC::itostr( SESSION::article_page() ) );
+    if( get_tab_nums() ) set_command( "set_page", std::string(), MISC::itostr( set_page_num ) );
 }
 
 

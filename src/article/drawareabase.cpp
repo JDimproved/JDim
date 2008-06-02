@@ -3698,7 +3698,7 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
                 set_selection( caret_pos );
             }
             else{
-                // ドラッグ開始
+                // 範囲選択解除、及びドラッグ開始
                 m_drugging = true;
                 m_selection.select = false;
                 m_selection.str.clear();

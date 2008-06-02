@@ -455,7 +455,7 @@ void Admin::exec_command()
 
     // 前回終了時の状態を回復
     if( command.command == "restore" ){
-        restore();
+        restore( ( command.arg1 == "only_locked" ) );
     }
 
     // 移転などでホストの更新

@@ -413,8 +413,8 @@ void Core::run( bool init )
 
     m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "前回開いていた各ビューを起動時に復元する(_R)", std::string(),
                                                     ( CONFIG::get_restore_board()
-                                                      & CONFIG::get_restore_board()
-                                                      & CONFIG::get_restore_board() ) ),
+                                                      & CONFIG::get_restore_article()
+                                                      & CONFIG::get_restore_image() ) ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_views ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "ToggleFoldMessage", "非アクティブ時に書き込みビューを折りたたむ(_C)", std::string(),
@@ -3067,14 +3067,16 @@ void Core::exec_command()
         // 板一覧がロードされてない時はここでロードされる
         BBSLIST::get_admin()->set_command( "restore" );
 
-        // その他は設定されていたらリストア
-        if( CONFIG::get_restore_board() ) BOARD::get_admin()->set_command( "restore" );
-        if( CONFIG::get_restore_article() ) ARTICLE::get_admin()->set_command( "restore" );
-        if( CONFIG::get_restore_image() && SESSION::image_URLs().size() ){
+        // 残りは CONFIG::get_restore_* で全てリストアするかロックされているタブだけリストアするか決定
+        BOARD::get_admin()->set_command( "restore", "", ( CONFIG::get_restore_board() ? "" : "only_locked" ) );
+        ARTICLE::get_admin()->set_command( "restore", "", ( CONFIG::get_restore_article() ? "" : "only_locked" ) );
+
+        if( SESSION::image_URLs().size() &&
+            ( CONFIG::get_restore_image() || SESSION::get_image_locked().size() ) ){
 
             show_imagetab();
 
-            IMAGE::get_admin()->set_command( "restore" );
+            IMAGE::get_admin()->set_command( "restore", "", ( CONFIG::get_restore_image() ? "" : "only_locked" ) );
         }
     }
 

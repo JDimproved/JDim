@@ -47,7 +47,7 @@ namespace MESSAGE
         bool delete_message( SKELETON::View * view );
 
         // 復元をしない
-        virtual void restore(){}
+        virtual void restore( const bool only_locked ){}
         virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ){
             COMMAND_ARGS ret;
             return ret;
