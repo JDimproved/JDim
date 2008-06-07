@@ -107,10 +107,10 @@ const bool ConfigItems::load()
     // レスを参照するときに前に付ける文字
     ref_prefix = cf.get_option( "ref_prefix", CONF_REF_PREFIX );
 
-    // 参照文字( CONF_REF_PREFIX ) の後のスペースの数
+    // 参照文字( ref_prefix ) の後のスペースの数
     // JDLIB::ConfLoader の中で MISC::remove_space() が呼ばれて空白が消えるので別設定とした
     ref_prefix_space = cf.get_option( "ref_prefix_space", CONF_REF_PREFIX_SPACE );
-    for( int i = 0; i < ref_prefix_space; ++i ) ref_prefix += " ";
+    for( int i = 0; i < ref_prefix_space; ++i ) ref_prefix_space_str += " ";
 
     // キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
     path_cacheroot = cf.get_option( "path_cacheroot", CONF_PATH_CACHEROOT );
@@ -131,10 +131,10 @@ const bool ConfigItems::load()
     proxy_port_for_data = cf.get_option( "proxy_port_for_data", CONF_PROXY_PORT_FOR_DATA );
 
     // 2ch にアクセスするときのエージェント名
-    agent_for2ch = cf.get_option( "agent_for2ch", AGENT_FOR2CH );
+    agent_for2ch = cf.get_option( "agent_for2ch", CONF_AGENT_FOR2CH );
 
     // 2ch外にアクセスするときのエージェント名
-    agent_for_data = cf.get_option( "agent_for_data", AGENT_FOR_DATA );
+    agent_for_data = cf.get_option( "agent_for_data", CONF_AGENT_FOR_DATA );
 
     // 2ch にログインするときのX-2ch-UA
     x_2ch_ua = cf.get_option( "x_2ch_ua", CONF_X_2CH_UA );
@@ -198,16 +198,16 @@ const bool ConfigItems::load()
     max_img_pixel = cf.get_option( "max_img_pixel", CONF_MAX_IMG_PIXEL );
 
     // JD ホームページのアドレス
-    url_jdhp = cf.get_option( "url_jdhp", CONF_JDHP );
+    url_jdhp = cf.get_option( "url_jdhp", CONF_URL_JDHP );
 
     // 2chの認証サーバ
     url_login2ch = cf.get_option( "url_login2ch", CONF_LOGIN2CH );
 
     // bbsmenu.htmlのURL
-    url_bbsmenu = cf.get_option( "url_bbsmenu", CONF_BBSMENU );
+    url_bbsmenu = cf.get_option( "url_bbsmenu", CONF_URL_BBSMENU );
 
     // bbsmenu.html内にあるリンクは全て板とみなす
-    use_link_as_board = cf.get_option( "use_link_as_board", CONF_LINK_AS_BOARD );
+    use_link_as_board = cf.get_option( "use_link_as_board", CONF_USE_LINK_AS_BOARD );
 
     // スレタイ検索用メニュータイトルアドレス
     menu_search_title = cf.get_option( "menu_search_title", CONF_MENU_SEARCH_TITLE );

@@ -23,6 +23,8 @@
 #include "article/preference.h"
 #include "image/preference.h"
 
+#include "config/aboutconfig.h"
+
 SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const std::string& url )
 {
     switch( type )
@@ -81,6 +83,8 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
         case PREFDIAG_IMAGE:
             return new IMAGE::Preferences( parent, url );
 
+        case PREFDIAG_ABOUTCONFIG:
+            return new CONFIG::AboutConfig( parent );
 
         default:
             return NULL;

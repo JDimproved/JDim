@@ -100,7 +100,8 @@ void CONFIG::set_fontname( int id, const std::string& fontname )
     get_confitem()->fontname[ id ] = fontname;
 }
 
-const std::string&  CONFIG::get_ref_prefix(){ return get_confitem()->ref_prefix; }
+const std::string CONFIG::get_ref_prefix(){ return get_confitem()->ref_prefix + get_confitem()->ref_prefix_space_str; }
+const int CONFIG::ref_prefix_space(){ return get_confitem()->ref_prefix_space; }
 
 const std::string& CONFIG::get_url_jdhp() { return get_confitem()->url_jdhp; }
 

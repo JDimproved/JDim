@@ -30,6 +30,7 @@ namespace CONFIG
 
         // ref_prefix の後のスペースの数
         int ref_prefix_space;
+        std::string ref_prefix_space_str;
 
         // キャッシュのルートディレクトリ
         // 旧バージョンとの互換のため残しているだけで使用していない

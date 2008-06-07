@@ -176,6 +176,7 @@ namespace CORE
         void slot_show_bbs();
         void slot_show_old2ch();
         void slot_show_manual();
+        void slot_aboutconfig();
         void slot_show_about();
         void slot_quit();
         void slot_reload_list();
@@ -239,6 +240,8 @@ namespace CORE
 
         bool slot_focus_out_event( GdkEventFocus* ev );
         bool slot_focus_in_event( GdkEventFocus* ev );
+
+        // URL entryでenterを押した
         void slot_active_url();
 
         // あるadminがemptyになったので他のadminにスイッチ

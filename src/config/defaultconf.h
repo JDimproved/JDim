@@ -87,7 +87,7 @@ namespace CONFIG
         CONF_DEL_IMGABONE_DAY = 20, // 画像あぼーん削除の日数
         CONF_MAX_IMG_SIZE = 16,     // ダウンロードする画像の最大サイズ(Mbyte)
         CONF_MAX_IMG_PIXEL = 20,     // 画像の最大サイズ(Mピクセル)
-        CONF_LINK_AS_BOARD = 0,     // bbsmenu.html内にあるリンクは全て板とみなす
+        CONF_USE_LINK_AS_BOARD = 0,     // bbsmenu.html内にあるリンクは全て板とみなす
         CONF_ABONE_NUMBER_THREAD = 0, // スレあぼーん( レス数 )
         CONF_ABONE_HOUR_THREAD = 0,   // スレあぼーん( スレ立てからの経過時間 )
         CONF_ABONE_TRANSPARENT = 0, // デフォルトで透明あぼーんをする
@@ -106,22 +106,22 @@ namespace CONFIG
 #define CONF_PATH_CACHEROOT "~/.jd/"
 
 // 2ch にアクセスするときのエージェント名
-#define AGENT_FOR2CH "Monazilla/1.00 JD"
+#define CONF_AGENT_FOR2CH "Monazilla/1.00 JD"
 
 // 2ch外にアクセスするときのエージェント名
-#define AGENT_FOR_DATA "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11"
+#define CONF_AGENT_FOR_DATA "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11"
 
 // 2ch にログインするときのX-2ch-UA
 #define CONF_X_2CH_UA "Navigator for 2ch 1.7.5"
 
 // JD ホームページのアドレス
-#define CONF_JDHP "http://jd4linux.sourceforge.jp/"
+#define CONF_URL_JDHP "http://jd4linux.sourceforge.jp/"
 
 // 2chの認証サーバ
 #define CONF_LOGIN2CH "https://2chv.tora3.net/futen.cgi"
 
 // bbsmenu.htmlのURL
-#define CONF_BBSMENU "http://menu.2ch.net/bbsmenu.html"
+#define CONF_URL_BBSMENU "http://menu.2ch.net/bbsmenu.html"
 
 // スレタイ検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (find2ch)"

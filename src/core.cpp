@@ -1663,6 +1663,17 @@ void Core::slot_show_manual()
 
 
 //
+// about:config
+//
+void Core::slot_aboutconfig()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ABOUTCONFIG, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
 // about
 //
 void Core::slot_show_about()
@@ -3524,7 +3535,11 @@ bool Core::slot_focus_in_event( GdkEventFocus* )
 void Core::slot_active_url()
 {
     std::string url = m_toolbar->m_entry_url.get_text();
-    if( !url.empty() ) CORE::core_set_command( "open_url", url );
+    if( !url.empty() ){
+
+        if( url == "about:config" ) slot_aboutconfig();
+        else CORE::core_set_command( "open_url", url );
+    }
 }
 
 

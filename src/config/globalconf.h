@@ -53,7 +53,10 @@ namespace CONFIG
     void set_fontname( int id, const std::string& fontname );
 
     // レスを参照するときに前に付ける文字
-    const std::string& get_ref_prefix();
+    const std::string get_ref_prefix();
+
+    // 参照文字( ref_prefix ) の後のスペースの数
+    const int ref_prefix_space();
 
     // JD ホームページのアドレス
     const std::string& get_url_jdhp();
