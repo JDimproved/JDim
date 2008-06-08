@@ -70,7 +70,7 @@ namespace SKELETON
 
         void set_dragable( bool dragable, int button );
 
-        const int get_image_width() const { return m_image_width; }
+        const int get_margin() const { return m_image_width; }
 
         // カットしていない全体の文字列
         const std::string& get_fulltext() const { return m_fulltext; }

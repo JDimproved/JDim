@@ -85,8 +85,8 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
     Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
     Glib::RefPtr< Gtk::Style > st = get_style();
 
-    m_tab_mrg = rcst->get_xthickness();
-    if( m_tab_mrg <= 0 ) m_tab_mrg = st->get_xthickness();
+    m_tab_mrg = rcst->get_xthickness() * 2;
+    if( m_tab_mrg <= 0 ) m_tab_mrg = st->get_xthickness() * 2;
 
     m_ythickness = rcst->get_ythickness();
     if( m_ythickness <= 0 ) m_ythickness = st->get_ythickness();
@@ -108,7 +108,14 @@ void TabNotebook::clock_in()
     // Gtk::NoteBook は configure_event()をキャッチ出来ないので
     // 応急処置としてタイマーの中でサイズが変更したか調べて
     // 変わっていたらタブ幅を調整する
-    if( ! m_fixtab && m_pre_width != get_width() ) adjust_tabwidth();
+    if( ! m_fixtab && get_n_pages() && m_pre_width != get_width()
+        && ! SESSION::is_booting() 
+        && ! SESSION::is_quitting()
+        ){
+
+        calc_tabsize();
+        adjust_tabwidth();
+    }
 }
 
 
@@ -266,14 +273,12 @@ void TabNotebook::calc_tabsize()
     std::cout << "TabNotebook::calc_tabsize\n";
 #endif
 
-    Gdk::Rectangle rect = get_allocation();
-    int pre_x = rect.get_x();
+    GtkNotebook *notebook = gobj();
+    GList * children = notebook->children;
 
-    bool first_tab = true;
-    m_tab_mrg = 0;
-    const int pages = get_n_pages();
-    for( int i = 0; i < pages; ++i ){
+    for( int i = 0; children ; ++i, children = children->next ){
 
+        GtkNotebookPage* page = ( GtkNotebookPage* ) children->data;
         SKELETON::TabLabel* tab = get_tablabel( i );
         if( tab ){
 
@@ -282,21 +287,15 @@ void TabNotebook::calc_tabsize()
             int tab_w = -1;
             int tab_h = -1;
 
-            if( tab->is_mapped() ){
+            if( tab->is_mapped() && page ){
 
-                rect = tab->get_allocation();
-                tab_x = rect.get_x();
-                tab_y = rect.get_y();
-                tab_w = rect.get_width();
-                tab_h = rect.get_height();
+                tab_x = page->allocation.x;
+                tab_y = page->allocation.y;
+                tab_w = page->allocation.width;
+                tab_h = page->allocation.height;
 
-                if( ! first_tab ) m_tab_mrg = tab_x - pre_x;
-                else m_tab_mrg = 0; // 最初のタブはマージン計算をしない
-                first_tab = false;
-
-                pre_x = tab_x + tab_w;
-                tab_x -= m_tab_mrg;
-                tab_w += m_tab_mrg * 2;
+                Gdk::Rectangle rect = tab->get_allocation();
+                m_tab_mrg = tab_w - rect.get_width();
             }
 
 #ifdef _DEBUG
@@ -362,7 +361,7 @@ bool TabNotebook::adjust_tabwidth()
             while( vec_width[ i ] > CONFIG::get_tab_min_str() ){
 
                 m_layout_tab->set_text( LABEL_WIDTH );
-                int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + m_tab_mrg *2;
+                int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_margin() + m_tab_mrg;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "s " << i << " " << width << " / " << avg_width_tab
@@ -392,7 +391,7 @@ bool TabNotebook::adjust_tabwidth()
                 ++vec_width[ i ];
 
                 m_layout_tab->set_text( LABEL_WIDTH );
-                int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + m_tab_mrg *2;
+                int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_margin() + m_tab_mrg;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "w " << i << " " << width << " / " << avg_width_tab
@@ -407,7 +406,7 @@ bool TabNotebook::adjust_tabwidth()
             }
 
             m_layout_tab->set_text( LABEL_WIDTH );
-            width_total += ( m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_image_width() + m_tab_mrg *2 );
+            width_total += ( m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_margin() + m_tab_mrg );
 
             tab->resize_tab( vec_width[ i ] );
         }
