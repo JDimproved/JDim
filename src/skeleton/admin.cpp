@@ -1499,7 +1499,7 @@ void Admin::toggle_icon( const std::string& url )
         else if( view->is_old() ) iconname = "old";
 
 #ifdef _DEBUG
-        std::cout << "name = " << iconname << std::cout;
+        std::cout << "name = " << iconname << std::endl;
 #endif
         int id = view->get_icon( iconname );
         get_notebook()->set_tabicon( iconname, get_notebook()->page_num( *view ), id );

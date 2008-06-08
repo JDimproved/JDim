@@ -281,7 +281,9 @@ void ArticleViewMain::show_view()
     // 差分 download 開始
     get_article()->download_dat( false );
     if( is_loading() ){
-
+#ifdef _DEBUG
+        std::cout << "loading start\n";
+#endif
         set_status( "loading..." );
         ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status(), ( get_live() ? "force" : "" ) );
 

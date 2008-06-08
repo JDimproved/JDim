@@ -887,7 +887,14 @@ void ArticleBase::download_dat( const bool check_update )
 
     // DAT落ちしていてログイン中で無い時はロードしない
     if( ( m_status & STATUS_OLD ) && ! CORE::get_login2ch()->login_now() ){
+#ifdef _DEBUG
+        std::cout << "old !\n";
+#endif       
         CORE::core_set_command( "toggle_favorite_icon", m_url );
+
+        // update_article_finish コマンドを送らないとキャッシュが無くて
+        // dat落ちしているスレのタブが空白になる
+        CORE::core_set_command( "update_article_finish", m_url );
         return;
     }
 
@@ -1063,7 +1070,7 @@ void ArticleBase::slot_load_finished()
 void ArticleBase::show_updateicon( const bool update )
 {
 #ifdef _DEBUG
-    std::cout << "ArticleBase::show_updateicon update = " << update << " status = " << m_status << std::endl;
+    std::cout << "ArticleBase::show_updateicon url = " << m_url << " update = " << update << " status = " << m_status << std::endl;
 #endif
 
     struct timeval tv;
