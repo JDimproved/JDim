@@ -166,6 +166,9 @@ namespace ARTICLE
         // ブックマークを抽出して表示
         void show_bm();
 
+        // 書き込みを抽出して表示
+        void show_wrote();
+
         // URLを含むレスを抽出して表示
         void show_res_with_url();
 
@@ -255,14 +258,15 @@ namespace ARTICLE
         void slot_search_title();
         void slot_usrcmd( int num );
         void slot_copy_res( bool ref );
-        virtual void slot_drawout_res();
-        virtual void slot_drawout_around();
-        virtual void slot_drawout_tmp();
-        virtual void slot_drawout_name();
-        virtual void slot_drawout_id();
-        virtual void slot_drawout_bm();
-        virtual void slot_drawout_refer();
-        virtual void slot_drawout_url();
+        void slot_drawout_res();
+        void slot_drawout_around();
+        void slot_drawout_tmp();
+        void slot_drawout_name();
+        void slot_drawout_id();
+        void slot_drawout_bm();
+        void slot_drawout_wrote();
+        void slot_drawout_refer();
+        void slot_drawout_url();
         void slot_abone_res();
         void slot_abone_id();
         void slot_abone_name();

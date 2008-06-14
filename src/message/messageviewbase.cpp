@@ -7,6 +7,7 @@
 #include "messageadmin.h"
 #include "messageviewbase.h"
 #include "post.h"
+#include "logmanager.h"
 
 #include "skeleton/msgdiag.h"
 #include "skeleton/label_entry.h"
@@ -826,30 +827,11 @@ void MessageViewBase::show_status()
 // 書き込みログ保存
 void MessageViewBase::save_postlog()
 {
-    if( ! CONFIG::get_save_postlog() ) return;
-
     std::string subject = MESSAGE::get_admin()->get_new_subject();
     if( subject.empty() ) subject = DBTREE::article_subject( get_url() );
     std::string msg = get_text_message().get_text();
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();
 
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-    std::string date = MISC::timettostr( tv.tv_sec );
-
-    std::stringstream ss;
-    ss << "---------------" << std::endl
-       << get_url() << std::endl
-       << "[ " << DBTREE::board_name( get_url() ) << " ] " << subject << std::endl
-       << "名前：" << name << " [" << mail << "]：" << date << std::endl
-       << msg << std::endl;
-
-#ifdef _DEBUG
-    std::cout << ss.str() << std::endl;
-#endif 
-
-
-    CACHE::save_rawdata( CACHE::path_postlog(), ss.str(), true );
+    MESSAGE::get_log_manager()->save( get_url(), subject, msg, name, mail );
 }

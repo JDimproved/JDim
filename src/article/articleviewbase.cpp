@@ -209,6 +209,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DrawoutNAME", "名前抽出(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_name ) );
     action_group()->add( Gtk::Action::create( "DrawoutID", "ID抽出(_I)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_id ) );
     action_group()->add( Gtk::Action::create( "DrawoutBM", "しおり抽出(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_bm ) );
+    action_group()->add( Gtk::Action::create( "DrawoutWrote", "書き込み抽出(_W)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_wrote ) );
     action_group()->add( Gtk::Action::create( "DrawoutURL", "URL抽出(_U)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_url ) );
     action_group()->add( Gtk::Action::create( "DrawoutRefer", "参照抽出(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_refer ) );
     action_group()->add( Gtk::Action::create( "DrawoutAround", "周辺抽出(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_around ) );
@@ -364,6 +365,7 @@ void ArticleViewBase::setup_action()
     "<menu action='Drawout_Menu'>"
     "<menuitem action='DrawoutWord'/>"
     "<menuitem action='DrawoutBM'/>"
+    "<menuitem action='DrawoutWrote'/>"
     "<menuitem action='DrawoutURL'/>"
     "<menuitem action='DrawoutTmp'/>"
     "</menu>"
@@ -1324,6 +1326,22 @@ void ArticleViewBase::show_bm()
 }
 
 
+//
+// 書き込みを抽出して表示
+//
+void ArticleViewBase::show_wrote()
+{
+    assert( m_article );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::show_wrote " << std::endl;
+#endif
+    
+    std::list< int > list_resnum = m_article->get_res_wrote();
+
+    if( ! list_resnum.empty() ) append_res( list_resnum );
+    else append_html( "このスレでは書き込みしていません" );
+}
 
 
 //
@@ -2416,6 +2434,13 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( false );
     }
 
+    // 書き込みしていない
+    act = action_group()->get_action( "DrawoutWrote" );
+    if( act ){
+        if( m_article->get_num_wrote() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+
     // 新着移動
     act = action_group()->get_action( "GotoNew" );
     if( act ){
@@ -2976,6 +3001,14 @@ void ArticleViewBase::slot_drawout_bm()
     CORE::core_set_command( "open_article_bm" ,m_url_article );
 }
 
+
+//
+// 別のタブを開いて自分の書き込みを抽出
+//
+void ArticleViewBase::slot_drawout_wrote()
+{
+    CORE::core_set_command( "open_article_wrote" ,m_url_article );
+}
 
 
 //

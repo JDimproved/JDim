@@ -53,6 +53,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "message/logmanager.h"
+
 #include "sound/soundmanager.h"
 
 #include <sstream>
@@ -236,6 +238,9 @@ Core::~Core()
 
     // サウンドマネージャ削除
     SOUND::delete_sound_manager();
+
+    // 書き込みログマネージャ削除
+    MESSAGE::delete_log_manager();
 
     // ディスパッチマネージャ削除
     CORE::delete_dispatchmanager();
@@ -2443,6 +2448,24 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            "", // 開き方のモード ( Admin::open_view 参照 )
 
                                            "BM" //　ブックマーク抽出モード
+            );
+        return;
+    }
+
+    // 自分の書き込みレスを抽出
+    else if( command.command  == "open_article_wrote" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+
+        ARTICLE::get_admin()->set_command( "open_view",
+                                           command.url, 
+
+                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           "left", // タブで開く
+                                           "true", // url 開いてるかチェックしない
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
+
+                                           "WROTE" // 書き込み抽出モード
             );
         return;
     }

@@ -81,11 +81,16 @@ namespace DBTREE
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
 
+        // 自分が書き込んだレスの番号
+        std::vector< int > m_vec_wrote_nums;
+
         // ロード用変数
         char* m_buffer_lines;
         size_t m_byte_buffer_lines_left;
         char* m_parsed_text;
+        char* m_buffer_write; // 書き込みチェック用バッファ
         bool m_check_update; // HEADによる更新チェックのみ
+        bool m_check_write; // 自分の書き込みかチェックする
         
         // キャッシュ保存用ファイルハンドラ
         FILE *m_fout;
@@ -188,6 +193,7 @@ namespace DBTREE
         NODE* append_dat( const std::string& dat );
 
         // ロード開始
+        // check_update : HEADによる更新チェックのみ
         void download_dat( const bool check_update );
 
         // あぼーんしているか
@@ -203,6 +209,8 @@ namespace DBTREE
         // 発言数や参照数も更新する
         void update_abone_all();
 
+        // 自分が書き込んだレスの番号
+        const std::vector< int >& get_vec_wrote_nums(){ return m_vec_wrote_nums; }
 
       protected:
 
@@ -250,6 +258,7 @@ namespace DBTREE
         void parseMail( NODE* header, const char* str, int lng );
         void parse_date_id( NODE* header, const char* str, int lng );
         void parse_html( const char* str, int lng, int color_text, bool digitlink = false, bool bold = false, bool ahref = false );
+        void parse_write( const char* str, int lng );
         void parseBr( );
 
         bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );

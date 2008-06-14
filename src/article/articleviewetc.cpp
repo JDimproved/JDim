@@ -286,6 +286,70 @@ void ArticleViewBM::relayout()
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// 書き込み抽出ビュー
+
+ArticleViewWrote::ArticleViewWrote( const std::string& url )
+    : ArticleViewBase( url )
+{
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday( &tv, &tz );
+
+    set_url( url_article() + ARTICLE_SIGN + WROTE_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), false );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewWrote::ArticleViewWrote " << get_url() << std::endl;
+#endif
+
+    setup_view();
+}
+
+
+
+ArticleViewWrote::~ArticleViewWrote()
+{
+
+#ifdef _DEBUG    
+    std::cout << "ArticleViewWrote::~ArticleViewWrote : " << get_url() << std::endl;
+#endif
+}
+
+
+
+//
+// 抽出表示
+//
+void ArticleViewWrote::show_view()
+{
+    show_wrote();
+
+    // ラベル更新
+    set_label( " [ 書き込み ] - " + DBTREE::article_subject( url_article() ));
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+}
+
+
+
+//
+// 画面を消してレイアウトやりなおし & 再描画
+//
+void ArticleViewWrote::relayout()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewWrote::relayout\n";
+#endif
+
+    drawarea()->clear_screen();
+    show_wrote();
+    drawarea()->redraw_view();
+}
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

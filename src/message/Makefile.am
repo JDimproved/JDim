@@ -6,7 +6,8 @@ libmessage_a_SOURCES = \
 	messageviewbase.cpp \
 	messageview.cpp \
 	post.cpp \
-	toolbar.cpp
+	toolbar.cpp \
+	logmanager.cpp
 
 noinst_HEADERS = \
 	messageadmin.h \
@@ -14,7 +15,8 @@ noinst_HEADERS = \
 	messageviewbase.h \
 	messageview.h \
 	post.h \
-	toolbar.h
+	toolbar.h \
+	logmanager.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

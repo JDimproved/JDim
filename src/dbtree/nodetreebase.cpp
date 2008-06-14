@@ -14,6 +14,8 @@
 
 #include "dbimg/imginterface.h"
 
+#include "message/logmanager.h"
+
 #include "config/globalconf.h"
 
 #include "global.h"
@@ -62,9 +64,11 @@ NodeTreeBase::NodeTreeBase( const std::string url, const std::string& modified )
       m_resume ( 0 ),
       m_broken( 0 ),
       m_heap( SIZE_OF_HEAP ),
-      m_buffer_lines( 0 ),
-      m_parsed_text( 0 ),
+      m_buffer_lines( NULL ),
+      m_parsed_text( NULL ),
+      m_buffer_write( NULL ),
       m_check_update( false ),
+      m_check_write( false ),
       m_fout ( 0 )
 {
     set_date_modified( modified );
@@ -149,6 +153,9 @@ void NodeTreeBase::clear()
 
     if( m_parsed_text ) free( m_parsed_text );
     m_parsed_text = NULL;
+
+    if( m_buffer_write ) free( m_buffer_write );
+    m_buffer_write = NULL;
     
     if( m_fout ) fclose( m_fout );
     m_fout = NULL;
@@ -892,6 +899,7 @@ void NodeTreeBase::load_cache()
             const char* data = str.data();
             size_t size = 0;
             m_check_update = false;
+            m_check_write = false;
             init_loading();
             const size_t str_length = str.length();
             while( size < str_length ){
@@ -908,8 +916,6 @@ void NodeTreeBase::load_cache()
 //
 // ロード実行前に呼ぶ初期化関数
 //
-// charcode は入力データの文字コード( empty()ならコード変換しない)
-//
 void NodeTreeBase::init_loading()
 {
     clear();
@@ -917,6 +923,9 @@ void NodeTreeBase::init_loading()
     // 一時バッファ作成
     if( ! m_buffer_lines ) m_buffer_lines = ( char* ) malloc( MAXSISE_OF_LINES ); 
     if( ! m_parsed_text ) m_parsed_text = ( char* ) malloc( MAXSISE_OF_LINES );
+    if( m_check_write && ! m_buffer_write ) m_buffer_write = ( char* ) malloc( MAXSISE_OF_LINES ); 
+
+    m_vec_wrote_nums.clear();
 }
 
 
@@ -924,16 +933,22 @@ void NodeTreeBase::init_loading()
 //
 // ロード開始
 //
+// check_update : HEADによる更新チェックのみ
+//
 void NodeTreeBase::download_dat( const bool check_update )
 {
-#ifdef _DEBUG    
-    std::cout << "NodeTreeBase::download_dat : " << m_url << " lng = " << m_lng_dat << std::endl
-              << "modified = " << date_modified() << " check_update = " << check_update << std::endl;
-#endif
-
     if( is_loading() ) return;
 
     m_check_update = check_update;
+    m_check_write = false;
+    if( ! m_check_update ) m_check_write = MESSAGE::get_log_manager()->has_items( m_url );
+
+#ifdef _DEBUG    
+    std::cout << "NodeTreeBase::download_dat : " << m_url << " lng = " << m_lng_dat << std::endl
+              << "modified = " << date_modified() << " check_update = " << check_update
+              << " check_write = " << m_check_write << std::endl;
+#endif
+
 
     // オフライン
     if( ! SESSION::is_online() ){
@@ -1085,6 +1100,14 @@ void NodeTreeBase::receive_finish()
 
         // その他、何かエラーがあったらmodifiedをクリアしておく
         if( !get_ext_err().empty() ) set_date_modified( std::string() );
+
+        // 書き込みチェック終了
+        if( m_check_write
+            && ( get_code() == HTTP_OK
+                 || get_code() == HTTP_PARTIAL_CONTENT
+                 || get_code() == HTTP_NOT_MODIFIED
+                )
+            ) MESSAGE::get_log_manager()->remove_items( m_url );
     }
 
 #ifdef _DEBUG
@@ -1241,6 +1264,19 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 
 #ifdef _DEBUG
         std::cout << "subject = " << m_subject << std::endl;
+#endif
+    }
+
+    // 自分の書き込みかチェック
+    if( m_check_write ){
+
+        parse_write( section[ 3 ], section_lng[ 3 ] );
+
+        bool hit = MESSAGE::get_log_manager()->check_write_fast( m_url, m_buffer_write );
+        if( hit ) m_vec_wrote_nums.push_back( header->id_header );
+
+#ifdef _DEBUG
+        std::cout << "check_write id = " << header->id_header << " hit = " << hit << std::endl;
 #endif
     }
 
@@ -1777,6 +1813,61 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
     createTextNodeN( m_parsed_text, lng_text, color_text, bold );
 }
 
+
+//
+// 書き込みログ比較用文字列作成
+//
+void NodeTreeBase::parse_write( const char* str, int lng )
+{
+    if( ! m_buffer_write ) return;
+
+    const char* pos = str;
+    const char* pos_end = str + lng;
+
+    char* pos_write = m_buffer_write;
+    
+    for( ; pos < pos_end; ++pos ){
+
+        // タグ
+        if( *pos == '<' ){ 
+
+            // <br>
+            if( ( *( pos + 1 ) == 'b' || *( pos + 1 ) == 'B' )
+                && ( *( pos + 2 ) == 'r' || *( pos + 2 ) == 'R' )
+                ){
+                *(pos_write++) = '\n';
+                pos += 3;
+            }
+
+            // その他のタグは無視
+            else while( pos < pos_end && *pos != '>' ) ++pos;
+
+            continue;
+        }
+
+        // gt
+        else if( *pos == '&' && ( *( pos + 1 ) == 'g' && *( pos + 2 ) == 't' && *( pos + 3 ) == ';' ) ){
+
+            *(pos_write++) = '>';
+            pos += 3;
+
+            continue;
+        }
+
+        // lt
+        else if( *pos == '&' && ( *( pos + 1 ) == 'l' && *( pos + 2 ) == 't' && *( pos + 3 ) == ';' ) ){
+
+            *(pos_write++) = '<';
+            pos += 3;
+
+            continue;
+        }
+
+        *(pos_write++) = *pos;
+    }
+
+    *pos_write = '\0';
+}
 
 
 //

@@ -86,6 +86,25 @@ namespace ARTICLE
     /////////////////////////////////////////////////////////////////////////
 
 
+    // 書き込み抽出ビュー
+    class ArticleViewWrote : public ArticleViewBase
+    {
+        std::string m_str_id;
+
+      public:
+        ArticleViewWrote( const std::string& url );
+        ~ArticleViewWrote();
+
+        // SKELETON::View の関数のオーバロード
+        virtual void show_view();
+        virtual void relayout();
+    };
+
+
+
+    /////////////////////////////////////////////////////////////////////////
+
+
     // URL抽出ビュー
     class ArticleViewURL : public ArticleViewBase
     {
