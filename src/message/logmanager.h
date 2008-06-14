@@ -8,6 +8,7 @@
 #define _LOGMANAGER_H
 
 #include <list>
+#include <string>
 
 namespace MESSAGE
 {

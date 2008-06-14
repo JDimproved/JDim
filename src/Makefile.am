@@ -2,7 +2,7 @@ SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton histor
 
 bin_PROGRAMS = jd
 
-jd_LDADD = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@\
+jd_LDADD = \
 	./dbtree/libdbtree.a \
 	./dbimg/libdbimg.a \
 	./bbslist/libbbslist.a \
@@ -16,7 +16,8 @@ jd_LDADD = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOM
 	./jdlib/libjdlib.a  \
 	./icons/libicon.a \
 	./sound/libsound.a \
-	./xml/libxml.a
+	./xml/libxml.a \
+	@LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@
 
 jd_SOURCES = \
 	main.cpp \
