@@ -12,6 +12,7 @@
 #include <list>
 #include <string>
 #include <sys/time.h>
+#include <cstring>
 
 enum
 {
