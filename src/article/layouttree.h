@@ -86,10 +86,6 @@ namespace ARTICLE
         // コメントノードやプレビュー表示時に使うローカルなノードツリー
         DBTREE::NodeTreeBase* m_local_nodetree; 
 
-        // 改行レイアウトノードなどで使うダミーのテキストバッファ
-        // 詳しくは create_layout_br() の説明を見よ
-        char m_dummy_str;
-
         LAYOUT* m_root_header;
         LAYOUT* m_last_header;
         LAYOUT* m_last_layout;
@@ -157,6 +153,7 @@ namespace ARTICLE
         LAYOUT* create_layout_link( const char* text, const char* link, const unsigned char* color_text, bool bold );
         LAYOUT* create_layout_idnum( const char* text, const unsigned char* color_text, bool bold );
         LAYOUT* create_layout_br();
+        LAYOUT* create_layout_hr();
         LAYOUT* create_layout_sp( const int type );
         LAYOUT* create_layout_div( const int id );
         LAYOUT* create_layout_img( const char* link );

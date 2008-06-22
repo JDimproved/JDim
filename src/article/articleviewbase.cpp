@@ -25,6 +25,8 @@
 
 #include "history/historymanager.h"
 
+#include "message/logmanager.h"
+
 #include "global.h"
 #include "httpcode.h"
 #include "command.h"
@@ -1269,10 +1271,11 @@ void ArticleViewBase::show_name( const std::string& name, bool show_option )
         if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
 
-        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br>";
+        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br><hr>";
     }
 
     append_html( comment.str() );
+
     if( ! list_resnum.empty() ) append_res( list_resnum );
 }
 
@@ -1299,10 +1302,11 @@ void ArticleViewBase::show_id( const std::string& id_name, bool show_option )
         if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
 
-        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br>";
+        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br><hr>";
     }
       
     append_html( comment.str() );
+
     if( ! list_resnum.empty() ) append_res( list_resnum );
 }
 
@@ -1341,6 +1345,38 @@ void ArticleViewBase::show_wrote()
 
     if( ! list_resnum.empty() ) append_res( list_resnum );
     else append_html( "このスレでは書き込みしていません" );
+}
+
+
+//
+// 書き込みログを表示
+//
+void ArticleViewBase::show_postlog( const int num )
+{
+    const int maxno = MESSAGE::get_log_manager()->get_max_num_of_log() + 1;
+
+    std::string html_header;
+    for( int i = 1; i <= maxno; ++i ){
+
+        int no;
+        if( i == 1 ) no = 0;
+        else no = maxno - ( i -1 );
+
+        if( no == num ) html_header += MISC::itostr( i ) + " ";
+        else html_header += std::string( "<a href=\"" ) + PROTO_POSTLOG + MISC::itostr( no ) + "\">" + MISC::itostr( i ) + "</a> ";
+    }
+    html_header += "<br>";
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::show_postlog " << num << " / " << maxno << std::endl
+              << html_header << std::endl;
+#endif
+
+    std::string html = MESSAGE::get_log_manager()->get_postlog( num );
+    if( html.empty() ) html = "書き込みログがありません";
+    else html = html_header + html;
+
+    append_html( html );
 }
 
 
@@ -1408,7 +1444,7 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or, 
         if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
 
-        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br>";
+        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br><hr>";
     }
 
     append_html( comment.str() );
@@ -2004,12 +2040,17 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     else if( url.find( PROTO_URL4REPORT ) == 0 ){
 
         hide_popup();
+        m_show_url4report = true;
+        relayout();
+    }
 
-        if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
+    /////////////////////////////////////////////////////////////////
+    // 書き込みログ表示クリック
+    else if( url.find( PROTO_POSTLOG ) == 0 ){
 
-            m_show_url4report = true;
-            relayout();
-        }
+        hide_popup();
+
+        CORE::core_set_command( "open_article_postlog" ,"", url.substr( strlen( PROTO_POSTLOG ) ) );
     }
 
     /////////////////////////////////////////////////////////////////
@@ -2326,6 +2367,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
     if( popup_article && popup_article->is_mouse_on_view() ) return;
     hide_popup();
+
     Glib::RefPtr< Gtk::Action > act, act2;
     act = action_group()->get_action( "CopyURL" );
     act2 = action_group()->get_action( "OpenBrowser" );
@@ -2356,6 +2398,45 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else m_url_tmp = url;
     }
 
+    // 検索ビューや書き込みログ表示などの場合
+    const bool nourl = DBTREE::url_readcgi( m_url_article, 0, 0 ).empty();
+
+    act = action_group()->get_action( "Drawout_Menu" );
+    if( act ){
+        if( nourl ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
+    act = action_group()->get_action( "SearchCacheLocal" );
+    if( act ){
+        if( nourl ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
+    act = action_group()->get_action( "SearchCacheAll" );
+    if( act ){
+        if( nourl ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
+    act = action_group()->get_action( "QuoteRes" );
+    if( act ){
+        if( nourl ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
+    act = action_group()->get_action( "SaveDat" );
+    if( act ){
+        if( nourl ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
+    act = action_group()->get_action( "Preference" );
+    if( act ){
+        if( nourl ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
 
     // 範囲選択されてない
     const unsigned int max_selection_str = 1024;
@@ -2364,7 +2445,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     std::string str_select = m_drawarea->str_selection();
     act = action_group()->get_action( "QuoteSelectionRes" );
     if( act ){
-        if( str_select.empty() || str_select.length() > max_selection_str_quote ) act->set_sensitive( false );
+        if( nourl || str_select.empty() || str_select.length() > max_selection_str_quote ) act->set_sensitive( false );
         else act->set_sensitive( true );
     }
 
@@ -2382,7 +2463,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
     act = action_group()->get_action( "AboneWord_Menu" );
     if( act ){
-        if( str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
+        if( nourl || str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
         else act->set_sensitive( true );
     }
 

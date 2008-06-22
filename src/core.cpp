@@ -426,7 +426,7 @@ void Core::run( bool init )
                                                     CONFIG::get_fold_message() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_fold_message ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存する(暫定仕様)(_A)", std::string(), CONFIG::get_save_postlog() ),
+    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存する(_A)", std::string(), CONFIG::get_save_postlog() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
 
 
@@ -507,6 +507,7 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_check_update_open_root ) );
     m_action_group->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
                          sigc::mem_fun( *this, &Core::slot_cancel_check_update ) );
+    m_action_group->add( Gtk::Action::create( "ShowPostlog", "書き込みログの表示(_P)" ), sigc::mem_fun( *this, &Core::slot_show_postlog ) );
 
     //////////////////////////////////////////////////////
 
@@ -661,6 +662,10 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='CancelCheckUpdate'/>"
         "</menu>"
+
+        "<separator/>"
+        "<menuitem action='ShowPostlog'/>"
+
         "</menu>"
 
     // 設定
@@ -1924,6 +1929,15 @@ void Core::slot_search_title()
 
 
 //
+// 書き込みログ
+//
+void Core::slot_show_postlog()
+{
+    CORE::core_set_command( "open_article_postlog" );
+}
+
+
+//
 // 実況
 //
 void Core::slot_live_start_stop()
@@ -2594,6 +2608,26 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            command.arg1, // query
                                            "exec" // Viewを開いた直後に検索開始
+            );
+
+        return;
+    }
+
+    // 書き込みログ表示
+    else if( command.command  == "open_article_postlog" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+
+        ARTICLE::get_admin()->set_command( "open_view",
+                                           "postlog",
+
+                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           "left", // タブで開く
+                                           "true", // url 開いてるかチェックしない
+                                           "", // 開き方のモード ( Admin::open_view 参照 )
+
+                                           "POSTLOG", // モード
+                                           command.arg1 // ログ番号
             );
 
         return;

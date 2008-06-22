@@ -266,11 +266,11 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
     }
 
     // 新スレ
-    // スレッドの id は 0000000000.(各板別の拡張子) とする。
+    // スレッドの id は ID_OF_NEWTHREAD.(各板別の拡張子) とする。
     else{
         type = CORE::VIEW_NEWTHREAD;
         args.arg1 = msg;
-        url_msg = DBTREE::url_datbase( url ) + "0000000000" + DBTREE::board_ext( url );
+        url_msg = DBTREE::url_datbase( url ) + ID_OF_NEWTHREAD + DBTREE::board_ext( url );
     }
 
     // ツールバー表示

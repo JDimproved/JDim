@@ -791,12 +791,25 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
 
                     //////////////////////////////////////////
 
+                case DBTREE::NODE_HR: // 水平線
+
+                    if( ! layout->rect ) layout->rect = m_layout_tree->create_rect();
+                    layout->rect->x = 0;
+                    layout->rect->y = y + br_size;
+                    layout->rect->width = width_view;
+                    layout->rect->height = 1;
+
+                    y += 1;
+
+                    // フォールスルー
+
+                    //////////////////////////////////////////
+
                 case DBTREE::NODE_BR: // 改行
 
                     x = 0;
                     if( layout->div ) x = layout->div->rect->x + layout->div->css->padding_left;
                     y += br_size;
-
                     break;
 
                     //////////////////////////////////////////
@@ -1111,15 +1124,15 @@ void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_
     if( ! rect ) rect = layout->rect = m_layout_tree->create_rect();
     rect->x = x;
     rect->y = y;
-    rect->width = iconsize;
-    rect->height = iconsize;
+    rect->width = iconsize + 2; // +2 は枠の分
+    rect->height = iconsize + 2; // +2 は枠の分
 
     // 既に表示済みの場合
     DBIMG::Img* img = node->linkinfo->img;
     if( !img && init_popupwin ) img = node->linkinfo->img = DBIMG::get_img( layout->link );
     if( img && img->is_cached() ){
-        rect->width = img->get_width_emb();
-        rect->height = img->get_height_emb();
+        rect->width = img->get_width_emb() + 2; // +2 は枠の分
+        rect->height = img->get_height_emb() + 2; // +2 は枠の分
     }
 
 #ifdef _DEBUG
@@ -1352,16 +1365,16 @@ bool DrawAreaBase::is_wrapped( const int x, const int border, const char* str )
 //
 // redraw_all = true なら全画面を描画、falseならスクロールした分だけ
 //
-bool DrawAreaBase::draw_backscreen( bool redraw_all )
+bool DrawAreaBase::draw_backscreen( const bool redraw_all )
 {
     if( ! m_gc ) return false;
     if( ! m_backscreen ) return false;
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
 
-    int width_view = m_view.get_width();
-    int height_view = m_view.get_height();
-    int pos_y = get_vscr_val();
+    const int width_view = m_view.get_width();
+    const int height_view = m_view.get_height();
+    const int pos_y = get_vscr_val();
 
     // 移動量、再描画範囲の上限、下限
     int dy = 0;
@@ -1639,12 +1652,25 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 
             // 画像ノード
         case DBTREE::NODE_IMG:
-            if( draw_one_img_node( layout, pos_y ) ) relayout = true;
+            if( draw_one_img_node( layout, pos_y, upper, lower ) ) relayout = true;
             break;
 
 
             //////////////////////////////////////////
 
+            // 水平線ノード
+        case DBTREE::NODE_HR:
+            if( layout->rect ){
+                const int x = layout->rect->x;
+                const int y = layout->rect->y - pos_y;
+                const int color_text = get_colorid_text();
+                m_gc->set_foreground( m_color[ color_text ] );
+                m_backscreen->draw_line( m_gc, x, y, x + layout->rect->width, y );
+            }
+            break;
+
+
+            //////////////////////////////////////////
 
             // ノードが増えたらここに追加していくこと
 
@@ -1751,8 +1777,8 @@ void DrawAreaBase::draw_frame()
 //
 void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, const int pos_y )
 {
-    int id_header = layout->id_header;
-    int id = layout->id ;
+    const int id_header = layout->id_header;
+    const int id = layout->id ;
     
     int id_header_from = 0;
     int id_from = 0;
@@ -1852,7 +1878,7 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, con
 //
 // 戻り値 : true なら描画後に再レイアウトを実行する
 //
-bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y )
+bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, const int upper, const int lower )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::draw_one_img_node link = " << layout->link << std::endl;
@@ -1862,10 +1888,10 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y )
 
     if( ! layout->link ) return relayout;
 
-    RECTANGLE* rect = layout->rect;
+    const RECTANGLE* rect = layout->rect;
     if( ! rect ) return relayout;
 
-    DBTREE::NODE* node = layout->node;
+    const DBTREE::NODE* node = layout->node;
     if( ! node ) return relayout;
 
     DBIMG::Img* img = node->linkinfo->img;
@@ -1875,7 +1901,7 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y )
     }
 
     int color = COLOR_IMG_ERR;
-    int code = img->get_code();
+    const int code = img->get_code();
 
     if( img->is_loading() ) color = COLOR_IMG_LOADING;
 
@@ -1922,6 +1948,10 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y )
             Glib::RefPtr< Gdk::Pixbuf > pixbuf = layout->eimg->get_pixbuf();
             if( pixbuf ){
 
+                const int s_top = MAX( 0, upper - ( rect->y + 1 ) );
+                const int s_bottom = MIN( pixbuf->get_height(), lower - ( rect->y + 1 ) );
+                const int height = s_bottom - s_top;
+
                 // モザイク
                 if( img->get_mosaic() ){
 
@@ -1934,15 +1964,15 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y )
                         Gdk::INTERP_NEAREST );
 
                     m_backscreen->draw_pixbuf( m_gc, pixbuf2->scale_simple( pixbuf->get_width(), pixbuf->get_height(), Gdk::INTERP_NEAREST ),
-                                               0, 0, rect->x, rect->y - pos_y,
-                                               pixbuf->get_width(), pixbuf->get_height(), Gdk::RGB_DITHER_NONE, 0, 0 );
+                                               0, s_top, rect->x + 1, ( rect->y + 1 ) - pos_y + s_top,
+                                               pixbuf->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
                 }
 
                 // 通常
                 else{
                     m_backscreen->draw_pixbuf( m_gc, pixbuf,
-                                               0, 0, rect->x, rect->y - pos_y,
-                                               pixbuf->get_width(), pixbuf->get_height(), Gdk::RGB_DITHER_NONE, 0, 0 );
+                                               0, s_top, rect->x + 1, ( rect->y + 1 ) - pos_y + s_top,
+                                               pixbuf->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
                 }
 
 
@@ -1953,14 +1983,16 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y )
     }
 
     // 枠の描画
+    // !! draw_rectangle()の filled を false にすると、1 pixel 幅と高さが大きくなるのに注意 !!
     m_gc->set_foreground( m_color[ color ] );
-    m_backscreen->draw_rectangle( m_gc, false, rect->x -1, rect->y -1  - pos_y, rect->width +2, rect->height +2 );
+    m_backscreen->draw_rectangle( m_gc, false, rect->x , rect->y  - pos_y, rect->width -1, rect->height -1 );
 
+    // 右上のアイコン
     if( code != HTTP_OK ){
-        int x_tmp = rect->x + rect->width / 10;
-        int y_tmp = rect->y + rect->height / 10;
-        int width_tmp = rect->width / 4;
-        int height_tmp = rect->width / 4;
+        const int x_tmp = rect->x + rect->width / 10 + 1;
+        const int y_tmp = rect->y + rect->height / 10 + 1;
+        const int width_tmp = rect->width / 4;
+        const int height_tmp = rect->width / 4;
         m_backscreen->draw_rectangle( m_gc, true, x_tmp, y_tmp - pos_y, width_tmp, height_tmp );
     }
 
@@ -1991,6 +2023,7 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
     while( rect ){
 
         int x = rect->x;
+        const int y = rect->y - pos_y;
         int width_line = rect->width;
         int pos_start = rect->pos_start;
         int n_byte = rect->n_byte;
@@ -2000,7 +2033,8 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
         if( byte_to
             && ! ( byte_from <= pos_start && pos_start + n_byte <= byte_to ) ){
 
-            if( pos_start > byte_to || pos_start + n_byte < byte_from ) width_line = 0;
+            if( pos_start > byte_to || pos_start + n_byte < byte_from ) width_line = 0; // 指定範囲外は描画しない
+
             else{
 
                 // この文字列の全角/半角モードの初期値を決定
@@ -2034,16 +2068,16 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
 
         if( width_line ){
 
-            int xx = x;
+            const int xx = x;
 
 #ifdef USE_PANGOLAYOUT  // Pango::Layout を使って文字を描画
 
             m_pango_layout->set_text( Glib::ustring( node->text + pos_start, n_ustr ) );
-            m_backscreen->draw_layout( m_gc,x, rect->y - pos_y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
+            m_backscreen->draw_layout( m_gc,x, y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
 
             if( node->bold ){
                 m_gc->set_foreground( m_color[ color ] );
-                m_backscreen->draw_layout( m_gc, x+1, rect->y - pos_y, m_pango_layout );
+                m_backscreen->draw_layout( m_gc, x+1, y, m_pango_layout );
             }
             
 #else // Pango::GlyphString を使って文字を描画
@@ -2051,7 +2085,7 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
             assert( m_context );
 
             m_gc->set_foreground( m_color[ color_back ] );
-            m_backscreen->draw_rectangle( m_gc, true, x, rect->y - pos_y, width_line, m_font_height );
+            m_backscreen->draw_rectangle( m_gc, true, x, y, width_line, m_font_height );
 
             m_gc->set_foreground( m_color[ color ] );
 
@@ -2067,20 +2101,21 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
                 Pango::Rectangle pango_rect = grl.get_logical_extents(  item.get_analysis().get_font() );
                 int width = PANGO_PIXELS( pango_rect.get_width() );
 
-                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x, rect->y - pos_y + m_font_ascent, grl );
-                if( node->bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x +1, rect->y - pos_y + m_font_ascent, grl );
+                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x, y + m_font_ascent, grl );
+                if( node->bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x +1, y + m_font_ascent, grl );
                 x += width;
             }
 
-            // 実際のラインの長さと近似値を合わせる ( 応急処置 )
-            if( ! byte_to && abs( x - rect->x - rect->width ) > 2 ) rect->width = x - rect->x;
+            // 実際のラインの長さ(x - rect->x)とlayout_one_text_node()で計算した
+            // 近似値(rect->width)を一致させる ( 応急処置 )
+            if( ! byte_to && abs( ( x - rect->x ) - rect->width ) > 2 ) rect->width = x - rect->x;
 #endif
 
             // リンクの時は下線を引く
             if( node->link && CONFIG::get_draw_underline() ){
 
                 m_gc->set_foreground( m_color[ color ] );
-                m_backscreen->draw_line( m_gc, xx, rect->y - pos_y + m_underline_pos, xx + width_line, rect->y - pos_y + m_underline_pos );
+                m_backscreen->draw_line( m_gc, xx, y + m_underline_pos, xx + width_line, y + m_underline_pos );
             }
         }
 

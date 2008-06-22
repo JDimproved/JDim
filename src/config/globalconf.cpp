@@ -216,8 +216,11 @@ void CONFIG::set_live_threshode( const int th ){ get_confitem()->live_threshold 
 const bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; }
 const bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }
 void CONFIG::set_always_write_ok( bool write_ok ){ get_confitem()->always_write_ok = write_ok; }
+
 const bool CONFIG::get_save_postlog(){ return get_confitem()->save_postlog; }
 void CONFIG::set_save_postlog( bool save ){ get_confitem()->save_postlog = save; }
+const size_t CONFIG::get_maxsize_postlog(){ return get_confitem()->maxsize_postlog; }
+
 const bool CONFIG::get_hide_writing_dialog(){ return get_confitem()->hide_writing_dialog; }
 const bool CONFIG::get_fold_message(){ return get_confitem()->fold_message; }
 void CONFIG::set_fold_message( bool fold ){ get_confitem()->fold_message = fold; }

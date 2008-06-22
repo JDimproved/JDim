@@ -733,6 +733,17 @@ NODE* NodeTreeBase::createBrNode()
 
 
 //
+// 水平線ノード作成
+//
+NODE* NodeTreeBase::createHrNode()
+{
+    NODE* tmpnode = createNode();
+    tmpnode->type = NODE_HR;
+    return tmpnode;
+}
+
+
+//
 // スペースノード
 //
 NODE* NodeTreeBase::createSpNode( const int& type )
@@ -941,7 +952,7 @@ void NodeTreeBase::download_dat( const bool check_update )
 
     m_check_update = check_update;
     m_check_write = false;
-    if( ! m_check_update ) m_check_write = MESSAGE::get_log_manager()->has_items( m_url );
+    if( ! m_check_update ) m_check_write = MESSAGE::get_log_manager()->has_items( m_url, ! get_res_number() );
 
 #ifdef _DEBUG    
     std::cout << "NodeTreeBase::download_dat : " << m_url << " lng = " << m_lng_dat << std::endl
@@ -1270,14 +1281,23 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     // 自分の書き込みかチェック
     if( m_check_write ){
 
-        parse_write( section[ 3 ], section_lng[ 3 ] );
+        // 簡易チェック
+        // 最初の lng_check 文字だけ見る
+        const bool newthread = ( header->id_header == 1 );
+        const int lng_check = MIN( section_lng[ 3 ], 32 );
+        parse_write( section[ 3 ], section_lng[ 3 ], lng_check );
+        if( MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write, lng_check ) ){
 
-        bool hit = MESSAGE::get_log_manager()->check_write_fast( m_url, m_buffer_write );
-        if( hit ) m_vec_wrote_nums.push_back( header->id_header );
+            // 全ての文字列で一致しているかチェック
+            parse_write( section[ 3 ], section_lng[ 3 ], 0 );
+
+            const bool hit = MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write, 0 );
+            if( hit ) m_vec_wrote_nums.push_back( header->id_header );
 
 #ifdef _DEBUG
-        std::cout << "check_write id = " << header->id_header << " hit = " << hit << std::endl;
+            std::cout << "check_write id = " << header->id_header << " hit = " << hit << std::endl;
 #endif
+        }
     }
 
     return pos;
@@ -1657,6 +1677,19 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 lng_text += n_out;
             }
 
+            // 水平線 <HR>
+            else if( ( *( pos + 1 ) == 'h' || *( pos + 1 ) == 'H' )
+                     && ( *( pos + 2 ) == 'r' || *( pos + 2 ) == 'R' ) ){
+
+                // フラッシュ
+                createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+
+                // 水平線ノード作成
+                createHrNode();
+
+                pos += 4;
+            }
+
             // その他のタグは無視。タグを取り除いて中身だけを見る
             else {
 
@@ -1817,7 +1850,9 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 //
 // 書き込みログ比較用文字列作成
 //
-void NodeTreeBase::parse_write( const char* str, int lng )
+// max_lng_write > 0 のときは m_buffer_write の文字数が max_lng_write 以上になったら停止
+//
+void NodeTreeBase::parse_write( const char* str, const int lng, const int max_lng_write )
 {
     if( ! m_buffer_write ) return;
 
@@ -1825,8 +1860,13 @@ void NodeTreeBase::parse_write( const char* str, int lng )
     const char* pos_end = str + lng;
 
     char* pos_write = m_buffer_write;
+
+    // 行頭の空白は全て除く
+    while( *pos == ' ' ) ++pos;
     
-    for( ; pos < pos_end; ++pos ){
+    for( ; pos < pos_end
+         && ( max_lng_write == 0 || (int)( pos_write - m_buffer_write ) < max_lng_write )
+         ; ++pos ){
 
         // タグ
         if( *pos == '<' ){ 

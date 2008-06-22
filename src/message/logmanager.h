@@ -23,15 +23,22 @@ namespace MESSAGE
         Log_Manager();
         virtual ~Log_Manager();
 
-        const bool has_items( const std::string& url );
+        const bool has_items( const std::string& url, const bool newthread );
         void remove_items( const std::string& url );
 
-        // messageが自分の書き込んだものかチェックする ( 高速版 )
-        const bool check_write_fast( const std::string& url, const std::string& msg );
+        // messageが自分の書き込んだものかチェックする
+        // newthread == true の時は新スレの>>1のチェック
+        // headsize > 0 の時は先頭の headsize 文字だけを比較
+        const bool check_write( const std::string& url, const bool newthread, const char* msg, const size_t headsize );
 
-        void save( const std::string& url,
+        void save( const std::string& url, const bool newthread,
                    const std::string& subject,  const std::string& msg, const std::string& name, const std::string& mail );
 
+        //　書き込みログ取得
+        const std::string get_postlog( const int num );
+
+        // postlog-* の最大数
+        const int get_max_num_of_log();
     };
 
     ///////////////////////////////////////

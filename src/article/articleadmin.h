@@ -22,6 +22,7 @@
 #define URL_SIGN     "_URL_"
 #define REFER_SIGN   "_REF_"
 #define KEYWORD_SIGN "_KW_"
+#define POSTLOG_SIGN "_POST_"
 #define ORMODE_SIGN      "_OR_"
 #define CENTER_SIGN  "_CENTER_"
 #define TIME_SIGN    "_TIME_"
@@ -30,17 +31,20 @@
 namespace ARTICLE
 {
     class ArticleToolBar;
+    class ArticleToolBarSimple;
     class SearchToolBar;
 
     enum
     {
         TOOLBAR_ARTICLE = 0,
-        TOOLBAR_SEARCH = 1
+        TOOLBAR_SIMPLE = 1,
+        TOOLBAR_SEARCH = 2
     };
 
     class ArticleAdmin : public SKELETON::Admin
     {
         ArticleToolBar* m_toolbar;
+        ArticleToolBarSimple* m_toolbarsimple;
         SearchToolBar* m_search_toolbar;
 
       public:

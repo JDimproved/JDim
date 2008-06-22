@@ -64,8 +64,6 @@ LayoutTree::LayoutTree( const std::string& url, bool show_abone )
     m_article = DBTREE::get_article( m_url );
     assert( m_article );
 
-    m_dummy_str = '\0';
-
     clear();
 }
 
@@ -204,11 +202,18 @@ LAYOUT* LayoutTree::create_layout_br()
     LAYOUT* tmplayout = create_layout( DBTREE::NODE_BR );
     m_last_layout->next_layout = tmplayout;
     m_last_layout = tmplayout;
+    return tmplayout;
+}
 
-    // DrawAreaBase::set_caret() において layout->text != NULL の場合
-    // キャレット移動の計算がうまくいかないのでダミーのテキストバッファをセットする
-    tmplayout->text = &m_dummy_str;
 
+//
+// 水平線ノード作成
+//
+LAYOUT* LayoutTree::create_layout_hr()
+{
+    LAYOUT* tmplayout = create_layout( DBTREE::NODE_HR );
+    m_last_layout->next_layout = tmplayout;
+    m_last_layout = tmplayout;
     return tmplayout;
 }
 
@@ -385,6 +390,10 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
 
             case DBTREE::NODE_BR:
                 tmplayout = create_layout_br();
+                break;
+
+            case DBTREE::NODE_HR:
+                tmplayout = create_layout_hr();
                 break;
             
             case DBTREE::NODE_ZWSP: // 幅0スペース

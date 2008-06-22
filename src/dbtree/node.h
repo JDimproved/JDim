@@ -25,6 +25,7 @@ namespace DBTREE
         NODE_LINK,  // リンク
         NODE_IDNUM, // 発言回数(IDの出現数)
         NODE_BR,    // 改行
+        NODE_HR,    // 水平線
         NODE_DIV,   // div
         NODE_IMG,   // img
 

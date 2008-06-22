@@ -162,6 +162,7 @@ enum
 #define PROTO_ABONE "abone://"
 #define PROTO_OR "or://"
 #define PROTO_BROKEN "bloken://"
+#define PROTO_POSTLOG "postlog://"
 
 
 // 仮想 URL

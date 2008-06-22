@@ -385,6 +385,9 @@ const bool ConfigItems::load()
     // 書き込みログを保存
     save_postlog = cf.get_option( "save_postlog", CONF_SAVE_POSTLOG );
 
+    // 書き込みログの最大サイズ
+    maxsize_postlog = cf.get_option( "maxsize_postlog", CONF_MAXSIZE_POSTLOG );
+
     // 「書き込み中」のダイアログを表示しない
     hide_writing_dialog = cf.get_option( "hide_writing_dialog", CONF_HIDE_WRITING_DIALOG );
 
@@ -650,6 +653,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "open_one_category", open_one_category );
     cf.update( "always_write_ok", always_write_ok );
     cf.update( "save_postlog", save_postlog );
+    cf.update( "maxsize_postlog", maxsize_postlog );
     cf.update( "hide_writing_dialog", hide_writing_dialog );
     cf.update( "fold_message", fold_message );
     cf.update( "margin_popup", margin_popup );

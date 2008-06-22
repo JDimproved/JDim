@@ -332,11 +332,20 @@ std::string CACHE::path_img_abone_root()
 
 
 //
+// ログのルートパス
+//
+std::string CACHE::path_logroot()
+{
+    return CACHE::path_root() + "log/";
+}
+
+
+//
 // 書き込みログ
 //
 std::string CACHE::path_postlog()
 {
-    return CACHE::path_root() +  "post.log";
+    return path_logroot() + "postlog";
 }
 
 
@@ -594,6 +603,20 @@ bool CACHE::mkdir_boardroot( const std::string& url )
 }
 
 
+//
+// ログのルートディレクトリをmkdir
+//
+bool CACHE::mkdir_logroot()
+{
+    // root
+    std::string path_logroot = CACHE::path_logroot();
+    if( ! CACHE::jdmkdir( path_logroot ) ){
+        MISC::ERRMSG( "can't create " + path_logroot );
+        return false;
+    }
+
+    return true;
+}
 
 
 size_t CACHE::load_rawdata( const std::string& path, std::string& str )
@@ -610,7 +633,7 @@ size_t CACHE::load_rawdata( const std::string& path, std::string& str )
 }
 
 
-size_t CACHE::load_rawdata( const std::string& path, char* data, size_t n )
+size_t CACHE::load_rawdata( const std::string& path, char* data, const size_t n )
 {
     size_t count = 0;
     std::ifstream fin;
@@ -624,14 +647,14 @@ size_t CACHE::load_rawdata( const std::string& path, char* data, size_t n )
 }
 
 
-size_t CACHE::save_rawdata( const std::string& path, const std::string& str, bool append )
+size_t CACHE::save_rawdata( const std::string& path, const std::string& str, const bool append )
 {
     return save_rawdata( path, str.c_str(), str.length(), append );
 }
 
 
 
-size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n, bool append )
+size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n, const bool append )
 {
     size_t count = 0;
     size_t byte = 0;

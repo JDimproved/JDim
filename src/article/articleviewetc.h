@@ -153,6 +153,23 @@ namespace ARTICLE
         virtual void show_view();
         virtual void relayout();
     };
+
+    /////////////////////////////////////////////////////////////////////////
+
+
+    // 書き込みログ表示ビュー
+    class ArticleViewPostlog : public ArticleViewBase
+    {
+        int m_num;
+
+      public:
+        ArticleViewPostlog( const std::string& url, const int num );
+        ~ArticleViewPostlog();
+
+        // SKELETON::View の関数のオーバロード
+        virtual void show_view();
+        virtual void relayout();
+    };
 }
 
 

@@ -50,7 +50,7 @@ void ARTICLE::delete_admin()
 using namespace ARTICLE;
 
 ArticleAdmin::ArticleAdmin( const std::string& url )
-    : SKELETON::Admin( url ), m_toolbar( NULL ), m_search_toolbar( NULL )
+    : SKELETON::Admin( url ), m_toolbar( NULL ), m_toolbarsimple( NULL ), m_search_toolbar( NULL )
 {
     set_use_viewhistory( true );
     ARTICLE::init_font();
@@ -76,6 +76,7 @@ ArticleAdmin::~ArticleAdmin()
 #endif
 
     if( m_toolbar ) delete m_toolbar;
+    if( m_toolbarsimple ) delete m_toolbarsimple;
     if( m_search_toolbar ) delete m_search_toolbar;
 
     SESSION::set_article_URLs( get_URLs() );
@@ -293,6 +294,17 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
         command_arg.arg6 = "noexec";  // Viewを開いた直後に検索を実行しない
     }
 
+    // 書き込みログ表示
+    else if( regex.exec( std::string( "(.*)" ) + POSTLOG_SIGN + "(.*)" + TIME_SIGN, url ) ){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "POSTLOG";
+        command_arg.arg5 = regex.str( 2 ); // ログ番号
+    }
 
     // MAIN
     else if( !url.empty() ){
@@ -460,6 +472,12 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
         view_args.arg2 = command.arg6;  // exec
     }
 
+    // 書き込みログ表示
+    else if( command.arg4 == "POSTLOG" ){
+        type = CORE::VIEW_ARTICLEPOSTLOG;
+        view_args.arg1 = command.arg5;  // ログ番号
+    }
+
     else return NULL;
 
     SKELETON::View* view = CORE::ViewFactory( type, command.url, view_args );
@@ -489,12 +507,17 @@ void ArticleAdmin::show_toolbar()
         m_toolbar = new ArticleToolBar();
         get_notebook()->append_toolbar( *m_toolbar );
 
+        // 簡易版ツールバー( TOOLBAR_SIMPLE )
+        m_toolbarsimple = new ArticleToolBarSimple();
+        get_notebook()->append_toolbar( *m_toolbarsimple );
+
         // ログ検索などのツールバー( TOOLBAR_SEARCH )
         m_search_toolbar = new SearchToolBar();
         get_notebook()->append_toolbar( *m_search_toolbar );
 
         if( SESSION::get_show_article_toolbar() ){
             m_toolbar->show_toolbar();
+            m_toolbarsimple->show_toolbar();
             m_search_toolbar->show_toolbar();
         }
     }
@@ -512,10 +535,12 @@ void ArticleAdmin::toggle_toolbar()
 
     if( SESSION::get_show_article_toolbar() ){
         m_toolbar->show_toolbar();
+        m_toolbarsimple->show_toolbar();
         m_search_toolbar->show_toolbar();
     }
     else{
         m_toolbar->hide_toolbar();
+        m_toolbarsimple->hide_toolbar();
         m_search_toolbar->hide_toolbar();
     }
 }
@@ -527,11 +552,17 @@ void ArticleAdmin::toggle_toolbar()
 void ArticleAdmin::open_searchbar()
 {
     SKELETON::View* view = get_current_view();
-    if( view && m_toolbar ){
+    if( ! view ) return;
+
+    if( m_toolbar ){
         m_toolbar->open_searchbar();
         if( view->get_id_toolbar() == TOOLBAR_ARTICLE ) m_toolbar->focus_entry_search();
     }
-    if( view && m_search_toolbar ){
+    if( m_toolbarsimple ){
+        m_toolbarsimple->open_searchbar();
+        if( view->get_id_toolbar() == TOOLBAR_SIMPLE ) m_toolbarsimple->focus_entry_search();
+    }
+    if( m_search_toolbar ){
         m_search_toolbar->open_searchbar();
         if( view->get_id_toolbar() == TOOLBAR_SEARCH ) m_search_toolbar->focus_entry_search();
     }
@@ -544,6 +575,7 @@ void ArticleAdmin::open_searchbar()
 void ArticleAdmin::close_searchbar()
 {
     if( m_toolbar ) m_toolbar->close_searchbar();
+    if( m_toolbarsimple ) m_toolbarsimple->close_searchbar();
     if( m_search_toolbar ) m_search_toolbar->close_searchbar();
 }
 

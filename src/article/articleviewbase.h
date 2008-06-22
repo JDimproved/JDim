@@ -169,6 +169,9 @@ namespace ARTICLE
         // 書き込みを抽出して表示
         void show_wrote();
 
+        // 書き込みログを表示
+        void show_postlog( const int num );
+
         // URLを含むレスを抽出して表示
         void show_res_with_url();
 

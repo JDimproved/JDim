@@ -238,6 +238,9 @@ namespace CONFIG
     const bool get_save_postlog();
     void set_save_postlog( bool save );
 
+    // 書き込みログの最大サイズ
+    const size_t get_maxsize_postlog();
+
     // 書き込み中のダイアログを表示しない
     const bool get_hide_writing_dialog();
 

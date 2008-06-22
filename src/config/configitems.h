@@ -198,6 +198,9 @@ namespace CONFIG
         // 書き込みログを保存
         bool save_postlog;
 
+        // 書き込みログの最大サイズ
+        int maxsize_postlog;
+
         // 「書き込み中」のダイアログを表示しない
         bool hide_writing_dialog;
 

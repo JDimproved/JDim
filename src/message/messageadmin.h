@@ -11,6 +11,9 @@
 
 namespace MESSAGE
 {
+
+#define ID_OF_NEWTHREAD "0000000000"
+
     enum
     {
         TOOLBAR_MESSAGE = 0,

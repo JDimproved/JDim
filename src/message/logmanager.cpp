@@ -1,10 +1,11 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "logmanager.h"
 #include "logitem.h"
+#include "messageadmin.h"
 
 #include "config/globalconf.h"
 
@@ -16,9 +17,10 @@
 #include "cache.h"
 #include "session.h"
 
-#include <sstream>
 #include <sys/time.h>
 #include <cstring>
+#include <sys/types.h> // chmod
+#include <sys/stat.h>
 
 
 enum
@@ -69,6 +71,7 @@ Log_Manager::~Log_Manager()
     for( ; it != m_logitems.end(); ++it ){
 #ifdef _DEBUG
         std::cout << "url = " << (*it)->url << std::endl;
+        std::cout << "newthread = " << (*it)->newthread << std::endl;
         std::cout << "subject = " << (*it)->subject << std::endl;
         std::cout << "msg = " << (*it)->msg << std::endl;
 #endif
@@ -78,12 +81,29 @@ Log_Manager::~Log_Manager()
 
 
 
-const bool Log_Manager::has_items( const std::string& url )
+const bool Log_Manager::has_items( const std::string& url, const bool newthread )
 {
+#ifdef _DEBUG
+    std::cout << "Log_Manager::has_items url = " << url << " newthread " << newthread << std::endl;
+#endif
+
     if( ! m_logitems.size() ) return false;
 
     std::list< LogItem* >::iterator it = m_logitems.begin();
-    for( ; it != m_logitems.end(); ++it ) if( (*it)->url == url ) return true;
+    for( ; it != m_logitems.end(); ++it ){
+
+#ifdef _DEBUG
+        std::cout << (*it)->url << std::endl;
+#endif
+        if( newthread != (*it)->newthread ) continue;
+
+        if( (*it)->url == url ) return true;
+        if( (*it)->newthread && url.find( (*it)->url ) == 0 ) return true;
+    }
+
+#ifdef _DEBUG
+        std::cout << "not found" << std::endl;
+#endif
 
     return false;
 }
@@ -105,7 +125,9 @@ void Log_Manager::remove_items( const std::string& url )
     std::list< LogItem* >::iterator it = m_logitems.begin();
     for( ; it != m_logitems.end(); ++it ){
 
-        if( (*it)->url == url ){
+        if( (*it)->url == url
+            || ( (*it)->newthread && url.find( (*it)->url ) == 0 )
+            ){
 
             const time_t elapsed = tv.tv_sec - (*it)->time_write;
 
@@ -132,27 +154,67 @@ void Log_Manager::remove_items( const std::string& url )
 }
 
 
-
-// messageが自分の書き込んだものかチェックする ( 高速版 )
-const bool Log_Manager::check_write_fast( const std::string& url, const std::string& msg )
+//
+// messageが自分の書き込んだものかチェックする
+//
+// newthread == true の時は新スレの>>1のチェック
+//
+// headsize > 0 の時は先頭の headsize 文字だけを比較
+//
+const bool Log_Manager::check_write( const std::string& url, const bool newthread, const char* msg, const size_t headsize )
 {
     if( ! m_logitems.size() ) return false;
 
 #ifdef _DEBUG
-    std::cout << "Log_Manager::check_write_fast url = " << url << std::endl;
+    std::cout << "Log_Manager::check_write url = " << url << " newthread = " << newthread << " headsize = " << headsize << std::endl;
 #endif
 
     std::list< LogItem* >::iterator it = m_logitems.begin();
     for( ; it != m_logitems.end(); ++it ){
 
-        if( (*it)->url != url ) continue;
+        if( (*it)->newthread != newthread ) continue;
 
+        if( ! (*it)->newthread && (*it)->url != url ) continue;
+        if( (*it)->newthread && url.find( (*it)->url ) != 0 ) continue;
+
+        // 先頭のheadsize文字だけチェック (空白除く)
+        // ヒットしてもremove は true にしない
+        if( headsize ){
+
+            bool flag = true;
+            size_t i = 0, i2 = 0;
+            while( (*it)->head[ i ] != '\0' && i2 < headsize ){
+
+                while( (*it)->head[ i ] == ' ' ) ++i;
+                while( msg[ i2 ] == ' ' ) ++i2;
+#ifdef _DEBUG
+                std::cout << (int)( (*it)->head[ i ] ) << " - " << (int)( msg[ i2 ] ) << std::endl;
+#endif
+                if( (*it)->head[ i ] != msg[ i2 ] ){
+                    flag = false;
+                    break;
+                }
+                ++i;
+                ++i2;
+            }
+            if( ! flag ) continue;
+
+#ifdef _DEBUG
+            std::cout << "!! hit (head) !!\n";
+#endif
+            return true;
+        }
+
+
+        // 全文でチェック
+        
         // MISC::replace_str( ..., "\n", " \n" ) しているのは MISC::get_lines 実行時に
         // 改行のみの行を削除しないようにするため
         std::list< std::string > msg_lines = MISC::get_lines( MISC::replace_str( MISC::remove_spaces( msg ), "\n", " \n" ) );
 
 #ifdef _DEBUG
         std::cout << "lines = " << msg_lines.size() << " : " << (*it)->msg_lines.size() << std::endl;
+        std::cout << "newthread = " << newthread << " : " << (*it)->newthread << std::endl;
 #endif
 
         if( msg_lines.size() != (*it)->msg_lines.size() ) continue;
@@ -182,18 +244,21 @@ const bool Log_Manager::check_write_fast( const std::string& url, const std::str
 
 
 
-void Log_Manager::save( const std::string& url,
+void Log_Manager::save( const std::string& url, const bool newthread,
                         const std::string& subject,  const std::string& msg, const std::string& name, const std::string& mail )
 {
     struct timeval tv;
     struct timezone tz;
     gettimeofday( &tv, &tz );
 
-    m_logitems.push_back( new LogItem( url, subject, MISC::remove_spaces( msg ), tv.tv_sec ) );
+    std::string logurl = url;
+    if( newthread && logurl.find( ID_OF_NEWTHREAD ) != std::string::npos ) logurl = logurl.substr( 0, logurl.find( ID_OF_NEWTHREAD ) );
+    m_logitems.push_back( new LogItem( logurl, newthread, subject, msg, tv.tv_sec ) );
 
 #ifdef _DEBUG
     std::cout << "Log_Manager::save\n";
-    std::cout << "url = " << url << std::endl;
+    std::cout << "url = " << logurl << std::endl;
+    std::cout << "newthread = " << newthread << std::endl;
     std::cout << "subject = " << subject << std::endl;
     std::cout << "msg = " << msg << std::endl;
 #endif
@@ -203,18 +268,100 @@ void Log_Manager::save( const std::string& url,
     // 実況中の時は保存しない
     if( SESSION::is_live( url ) ) return;
 
-    const std::string date = MISC::timettostr( tv.tv_sec );
+    if( ! CACHE::mkdir_logroot() ) return;
 
-    std::stringstream ss;
-    ss << "---------------" << std::endl
-       << url << std::endl
-       << "[ " << DBTREE::board_name( url ) << " ] " << subject << std::endl
-       << "名前：" << name << " [" << mail << "]：" << date << std::endl
-       << msg << std::endl;
+    // 保存メッセージ作成
+    const std::string date = MISC::timettostr( tv.tv_sec );
+    const bool include_url = false; // URLを除外して msg をエスケープ
+
+    std::string html = "<hr><br>" + DBTREE::url_readcgi( url, 0, 0 ) + "<br>"
+    + "[ " + MISC::html_escape( DBTREE::board_name( url ) ) + " ] "
+    + MISC::html_escape( subject ) + "<br>"
+    + "名前：" + MISC::html_escape( name ) + " [" + MISC::html_escape( mail ) + "]：" + date + "<br>"
+    + MISC::html_escape( msg, include_url ) + "<br><br>";
+
+    html = MISC::replace_str( html, "\n", "<br>" );
+    html += "\n";
+
+    // 保存先決定
+    // もし保存先ファイルの容量が大きい場合は mv する
+    const std::string path = CACHE::path_postlog();
+    const size_t filesize = CACHE::get_filesize( path );
 
 #ifdef _DEBUG
-    std::cout << ss.str() << std::endl;
-#endif 
+    std::cout << path << std::endl;
+    std::cout << "size = " << filesize << std::endl;
+#endif
 
-    CACHE::save_rawdata( CACHE::path_postlog(), ss.str(), true );
+    if( filesize > CONFIG::get_maxsize_postlog() ){
+
+        const int maxno = get_max_num_of_log() + 1;
+        const std::string newpath = path + "-" + MISC::itostr( maxno );
+        CACHE::jdmv( path, newpath );
+
+#ifdef _DEBUG
+        std::cout << "mv to " << newpath << std::endl;
+#endif
+    }
+
+
+    // 保存
+#ifdef _DEBUG
+    std::cout << html << std::endl;
+#endif 
+    const bool append = true;
+    CACHE::save_rawdata( path, html, append );
+    chmod( path.c_str(), S_IWUSR | S_IRUSR );
+}
+
+
+
+//
+//　書き込みログ取得
+//
+const std::string Log_Manager::get_postlog( const int num )
+{
+    std::string path = CACHE::path_postlog();
+
+    if( num ) path += "-" + MISC::itostr( num );
+
+    std::string html;
+    CACHE::load_rawdata( path, html );
+    return html;
+}
+
+
+//
+// postlog-* の最大数
+//
+const int Log_Manager::get_max_num_of_log()
+{
+#ifdef _DEBUG
+    std::cout << "Log_Manager::get_max_num_of_log\n";
+#endif
+
+    std::list< std::string > filelist = CACHE::get_filelist( CACHE::path_logroot() );
+    if( ! filelist.size() ) return 0;
+
+    const std::string path = CACHE::path_postlog() + "-";
+
+    int maxno = 0;
+    std::list< std::string >::iterator it = filelist.begin();
+    for( ; it != filelist.end(); ++it ){
+
+        const std::string target = CACHE::path_logroot() + (*it);
+#ifdef _DEBUG
+        std::cout << target << std::endl;
+#endif
+        if( target.find( path ) == 0 ){
+
+            const int tmpno = atoi( target.substr( path.length() ).c_str() );
+            if( tmpno > maxno ) maxno = tmpno;
+#ifdef _DEBUG
+            std::cout << "no = " << tmpno << " max = " << maxno << std::endl;
+#endif
+        }
+    }
+
+    return maxno;
 }

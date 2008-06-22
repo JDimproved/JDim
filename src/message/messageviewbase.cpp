@@ -735,7 +735,8 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         if( ! new_subject.empty() ) set_label( new_subject );
 
         // URLを除外してエスケープ
-        std::string msg = MISC::html_escape( m_text_message.get_text(), false );
+        const bool include_url = false;
+        std::string msg = MISC::html_escape( m_text_message.get_text(), include_url );
         msg = MISC::replace_str( msg, "\n", " <br> " );
         
         std::stringstream ss;
@@ -827,11 +828,13 @@ void MessageViewBase::show_status()
 // 書き込みログ保存
 void MessageViewBase::save_postlog()
 {
+    bool newthread = false;;
     std::string subject = MESSAGE::get_admin()->get_new_subject();
     if( subject.empty() ) subject = DBTREE::article_subject( get_url() );
+    else newthread = true;
     std::string msg = get_text_message().get_text();
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();
 
-    MESSAGE::get_log_manager()->save( get_url(), subject, msg, name, mail );
+    MESSAGE::get_log_manager()->save( get_url(), newthread, subject, msg, name, mail );
 }

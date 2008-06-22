@@ -83,6 +83,9 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
         case VIEW_ARTICLESEARCHTITLE:
             return new ARTICLE::ArticleViewSearch( url, args.arg1, ARTICLE::SEARCHMODE_TITLE, ( args.arg2 == "exec" ), (args.arg3 == "OR" ) );
 
+        case VIEW_ARTICLEPOSTLOG:
+            return new ARTICLE::ArticleViewPostlog( url, atoi( args.arg1.c_str() ) );
+
             /////////////////
 
         case VIEW_ARTICLEPOPUPHTML:

@@ -552,3 +552,70 @@ void ArticleViewDrawout::relayout()
     drawarea()->redraw_view();
 }
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// 書き込みログ表示ビュー
+
+ArticleViewPostlog::ArticleViewPostlog( const std::string& url, const int num )
+    : ArticleViewBase( url ), m_num( num )
+{
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday( &tv, &tz );
+
+    // viewのURL更新
+    set_url( url + POSTLOG_SIGN + MISC::itostr( m_num ) + TIME_SIGN + MISC::timevaltostr( tv ), false );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewPostlog::ArticleViewPostlog " << get_url()
+              << " num = " << m_num << std::endl;
+#endif
+
+    set_id_toolbar( TOOLBAR_SIMPLE );
+
+    setup_view();
+}
+
+
+
+ArticleViewPostlog::~ArticleViewPostlog()
+{
+
+#ifdef _DEBUG    
+    std::cout << "ArticleViewPostlog::~ArticleViewPostlog : " << get_url() << std::endl;
+#endif
+}
+
+
+//
+// 抽出表示
+//
+void ArticleViewPostlog::show_view()
+{
+    show_postlog( m_num );
+
+    // ラベル更新
+    set_label( " [ 書き込みログ ] " );
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+}
+
+
+
+//
+// 画面を消してレイアウトやりなおし & 再描画
+//
+void ArticleViewPostlog::relayout()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewPostlog::relayout\n";
+#endif
+
+    drawarea()->clear_screen();
+    show_postlog( m_num );
+    drawarea()->redraw_view();
+}
+

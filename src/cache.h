@@ -114,8 +114,9 @@ namespace CACHE
     // html
     std::string path_reshtml();
 
-    // 書き込みログ
-    std::string path_postlog();
+    // ログ
+    std::string path_logroot();
+    std::string path_postlog(); // 書き込みログ
 
     // 検索や名前などの補完情報
     std::string path_completion( int mode );
@@ -151,12 +152,13 @@ namespace CACHE
     bool mkdir_imgroot_favorite();
     bool mkdir_parent_of_board( const std::string& url );
     bool mkdir_boardroot( const std::string& url );
+    bool mkdir_logroot();
 
     // 生データ読み書き
     size_t load_rawdata( const std::string& path, std::string& str );
-    size_t load_rawdata( const std::string& path, char* data, size_t n );    
-    size_t save_rawdata( const std::string& path, const std::string& str, bool append = false );
-    size_t save_rawdata( const std::string& path, const char* data, size_t n, bool append = false );
+    size_t load_rawdata( const std::string& path, char* data, const size_t n );    
+    size_t save_rawdata( const std::string& path, const std::string& str, const bool append = false );
+    size_t save_rawdata( const std::string& path, const char* data, const size_t n, const bool append = false );
 
     // ファイル情報
     const int file_exists( const std::string& path );

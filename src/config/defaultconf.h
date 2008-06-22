@@ -50,6 +50,7 @@ namespace CONFIG
         CONF_OPEN_ONE_CATEGORY = 0, // 板一覧でカテゴリを常にひとつだけ開く
         CONF_ALWAYS_WRITE_OK = 0,   // 書き込み時に書き込み確認ダイアログを出さない
         CONF_SAVE_POSTLOG = 0,      //書き込みログを保存
+        CONF_MAXSIZE_POSTLOG = ( 256 * 1024 ), // 書き込みログの最大サイズ
         CONF_HIDE_WRITING_DIALOG = 0, // 「書き込み中」のダイアログを表示しない
         CONF_FOLD_MESSAGE = 0,      // 非アクティブ時に書き込みビューを折りたたむ
         CONF_MARGIN_POPUP = 30,     // レスアンカーとポップアップの間のマージン
