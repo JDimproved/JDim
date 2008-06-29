@@ -23,11 +23,14 @@ namespace ICON
 
         BKMARK_UPDATE,
         BKMARK,
+        BKMARK_THREAD,
+
         UPDATE,
         NEWTHREAD,
         CHECK,
         DOWN,
         WRITE,
+        POST,
         LOADING,
         LOADING_STOP,
 

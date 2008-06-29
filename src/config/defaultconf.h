@@ -76,6 +76,7 @@ namespace CONFIG
         CONF_RELOAD_ALLTHREAD = 0,  // スレビューで再読み込みボタンを押したときに全タブを更新する
         CONF_TAB_MIN_STR = 4, // タブに表示する文字列の最小値
         CONF_SHOW_TAB_ICON = 1, // タブにアイコンを表示するか
+        CONF_SHOW_POST_MARK = 1, // スレビューに書き込みマークを表示するか
         CONF_FLAT_BUTTON = 1,    // ボタンをフラットにするか
         CONF_IMGPOPUP_WIDTH = 320,  // 画像ポップアップ幅
         CONF_IMGPOPUP_HEIGHT = 240, // 画像ポップアップ高さ
@@ -143,7 +144,6 @@ namespace CONFIG
 #define CONF_COLOR_CHAR_AGE "#fde800000000"    // ageの時のメール欄の文字色
 #define CONF_COLOR_CHAR_SELECTION "#ffffffffffff"  // 選択範囲の文字色
 #define CONF_COLOR_CHAR_HIGHLIGHT str_color[ COLOR_CHAR ] // ハイライトの文字色
-#define CONF_COLOR_CHAR_BOOKMARK str_color[ COLOR_CHAR_AGE ] // ブックマークの文字色
 #define CONF_COLOR_CHAR_LINK "#00000000ffff" //リンク(通常)の文字色
 #define CONF_COLOR_CHAR_LINK_LOW "#ffff0000ffff" // リンク(複数)の文字色
 #define CONF_COLOR_CHAR_LINK_HIGH str_color[ COLOR_CHAR_AGE ] // リンク(多数)の文字色
@@ -171,6 +171,7 @@ namespace CONFIG
 #define CONF_COLOR_MARKER str_color[ COLOR_CHAR ] // オートスクロールマーカー色    
 
 #define CONF_COLOR_CHAR_BBS   str_color[ COLOR_CHAR ] // 板一覧の文字
+#define CONF_COLOR_CHAR_BBS_COMENT  str_color[ COLOR_CHAR ] // 板一覧のコメント
 #define CONF_COLOR_CHAR_BOARD str_color[ COLOR_CHAR ] // スレ一覧の文字
 
 #define CONF_COLOR_BACK_BBS   str_color[ COLOR_BACK ] // 板一覧の背景色

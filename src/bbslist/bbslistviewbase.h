@@ -162,6 +162,8 @@ namespace BBSLIST
 
       private:
 
+        void set_fgcolor_of_comment( const Gtk::TreeModel::Children& children );
+
         void row_up();
         void row_down();
         void page_up();

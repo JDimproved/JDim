@@ -218,14 +218,14 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // 書き込み抽出
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + WROTE_SIGN, url )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + POST_SIGN, url )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
         command_arg.arg2 = "true"; // 既に開いているかチェック無し
         if( lock ) command_arg.arg3 = "lock";
 
-        command_arg.arg4 = "WROTE";
+        command_arg.arg4 = "POST";
     }
 
     // URL抽出
@@ -436,8 +436,8 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
     }
 
     // 書き込み抽出ビュー
-    else if( command.arg4 == "WROTE" ){
-        type = CORE::VIEW_ARTICLEWROTE;
+    else if( command.arg4 == "POST" ){
+        type = CORE::VIEW_ARTICLEPOST;
     }
 
     // URL抽出ビュー

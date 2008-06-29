@@ -244,9 +244,6 @@ const bool ConfigItems::load()
     // ハイライトの文字色
     str_color[ COLOR_CHAR_HIGHLIGHT ] = cf.get_option( "cl_char_highlight", CONF_COLOR_CHAR_HIGHLIGHT );
 
-    // ブックマークの文字色
-    str_color[ COLOR_CHAR_BOOKMARK ] = cf.get_option( "cl_char_bookmark", CONF_COLOR_CHAR_BOOKMARK );
-
     // リンク(通常)の文字色
     str_color[ COLOR_CHAR_LINK ] = cf.get_option( "cl_char_link", CONF_COLOR_CHAR_LINK );
 
@@ -312,6 +309,9 @@ const bool ConfigItems::load()
 
     // 板一覧の文字
     str_color[ COLOR_CHAR_BBS ] = cf.get_option( "cl_chr_bbs", CONF_COLOR_CHAR_BBS );
+
+    // 板一覧のコメント
+    str_color[ COLOR_CHAR_BBS_COMMENT ] = cf.get_option( "cl_chr_bbs_com", CONF_COLOR_CHAR_BBS_COMENT );
 
     // スレ一覧の文字
     str_color[ COLOR_CHAR_BOARD ] = cf.get_option( "cl_chr_board", CONF_COLOR_CHAR_BOARD );
@@ -461,6 +461,9 @@ const bool ConfigItems::load()
     // タブにアイコンを表示するか
     show_tab_icon = cf.get_option( "show_tab_icon", CONF_SHOW_TAB_ICON );
 
+    // スレビューに書き込みマークを表示するか
+    show_post_mark = cf.get_option( "show_post_mark", CONF_SHOW_POST_MARK );
+
     // ボタンをフラットにするか
     flat_button = cf.get_option( "flat_button", CONF_FLAT_BUTTON );
 
@@ -602,7 +605,6 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_char_age", str_color[ COLOR_CHAR_AGE ] );
     cf.update( "cl_char_selection", str_color[ COLOR_CHAR_SELECTION ] );
     cf.update( "cl_char_highlight", str_color[ COLOR_CHAR_HIGHLIGHT ] );
-    cf.update( "cl_char_bookmark", str_color[ COLOR_CHAR_BOOKMARK ] );
     cf.update( "cl_char_link", str_color[ COLOR_CHAR_LINK ] );
     cf.update( "cl_char_link_low", str_color[ COLOR_CHAR_LINK_LOW ] );
     cf.update( "cl_char_link_high", str_color[ COLOR_CHAR_LINK_HIGH ] );
@@ -623,6 +625,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_frame", str_color[ COLOR_FRAME ] );
     cf.update( "cl_marker", str_color[ COLOR_MARKER ] );
     cf.update( "cl_chr_bbs", str_color[ COLOR_CHAR_BBS ] );
+    cf.update( "cl_chr_bbs_com", str_color[ COLOR_CHAR_BBS_COMMENT ] );
     cf.update( "cl_chr_board", str_color[ COLOR_CHAR_BOARD ] );
     cf.update( "cl_back_bbs", str_color[ COLOR_BACK_BBS ] );
     cf.update( "cl_back_bbs_even", str_color[ COLOR_BACK_BBS_EVEN ] );
@@ -686,6 +689,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "tab_min_str", tab_min_str );
 
     cf.update( "show_tab_icon", show_tab_icon );
+    cf.update( "show_post_mark", show_post_mark );
 
     cf.update( "flat_button", flat_button );
 

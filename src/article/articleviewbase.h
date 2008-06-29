@@ -167,7 +167,7 @@ namespace ARTICLE
         void show_bm();
 
         // 書き込みを抽出して表示
-        void show_wrote();
+        void show_post();
 
         // 書き込みログを表示
         void show_postlog( const int num );
@@ -267,7 +267,7 @@ namespace ARTICLE
         void slot_drawout_name();
         void slot_drawout_id();
         void slot_drawout_bm();
-        void slot_drawout_wrote();
+        void slot_drawout_post();
         void slot_drawout_refer();
         void slot_drawout_url();
         void slot_abone_res();

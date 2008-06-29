@@ -249,11 +249,11 @@ std::list< int > ArticleBase::get_res_bm()
 
 
 // 書き込みしたレス番号をリストにして取得
-std::list< int > ArticleBase::get_res_wrote()
+std::list< int > ArticleBase::get_res_posted()
 {
     std::list< int > list_resnum;          
     for( int i = 1; i <= m_number_load ; ++i ){
-        if( is_wrote( i ) ) list_resnum.push_back( i );
+        if( is_posted( i ) ) list_resnum.push_back( i );
     }
 
     // あぼーんしていてもリストから取り除かない
@@ -492,12 +492,12 @@ const time_t ArticleBase::get_write_pass()
 //
 // 書き込み数
 //
-const int ArticleBase::get_num_wrote()
+const int ArticleBase::get_num_posted()
 {
-    if( ! m_vec_wrote.size() ) return 0;
+    if( ! m_vec_posted.size() ) return 0;
 
     int ret = 0;
-    for( int i = 1; i < MAX_RESNUMBER; ++i ) if( is_wrote( i ) ) ++ret;
+    for( int i = 1; i < MAX_RESNUMBER; ++i ) if( is_posted( i ) ) ++ret;
     return ret;
 }
 
@@ -792,16 +792,16 @@ void ArticleBase::set_bookmark( const int number, const bool set )
 //
 // 自分が書き込んだレスか
 //
-const bool ArticleBase::is_wrote( const int number )
+const bool ArticleBase::is_posted( const int number )
 {
     if( number <= 0 || number > m_number_load ) return false;
 
     // まだnodetreeが作られてなくて情報が得られてないのでnodetreeを作って情報取得
-    if( ! m_vec_wrote.size() ) get_nodetree();
+    if( ! m_vec_posted.size() ) get_nodetree();
 
-    if( ! m_vec_wrote.size() ) return false;
+    if( ! m_vec_posted.size() ) return false;
 
-    return ( m_vec_wrote[ number ] );
+    return ( m_vec_posted[ number ] );
 }
 
 
@@ -1051,16 +1051,16 @@ void ArticleBase::slot_load_finished()
     m_number_before_load = m_number_load;
     m_ext_err = m_nodetree->get_ext_err();
 
-    const int wrote_nums = m_nodetree->get_vec_wrote_nums().size();
-    if( wrote_nums ){
-        if( ! m_vec_wrote.size() ) m_vec_wrote.resize( MAX_RESNUMBER );
-        for( int i = 0; i < wrote_nums; ++i ){
+    const int posted_nums = m_nodetree->get_vec_posted_nums().size();
+    if( posted_nums ){
+        if( ! m_vec_posted.size() ) m_vec_posted.resize( MAX_RESNUMBER );
+        for( int i = 0; i < posted_nums; ++i ){
 
-            const int resnum = m_nodetree->get_vec_wrote_nums()[ i ];
+            const int resnum = m_nodetree->get_vec_posted_nums()[ i ];
 #ifdef _DEBUG
-            std::cout << "wrote " << resnum << std::endl;
+            std::cout << "posted " << resnum << std::endl;
 #endif
-            m_vec_wrote[ resnum  ] = true;
+            m_vec_posted[ resnum  ] = true;
         }
     }
 
@@ -1189,7 +1189,7 @@ void ArticleBase::delete_cache( const bool cache_only )
         m_write_fixmail = false;
 
         m_vec_bookmark.clear();
-        m_vec_wrote.clear();
+        m_vec_posted.clear();
         m_list_abone_id.clear();
         m_list_abone_name.clear();
         m_list_abone_word.clear();
@@ -1415,17 +1415,17 @@ void ArticleBase::read_info()
         if( ! str_tmp.empty() ) m_bookmarked_thread = atoi( str_tmp.c_str() );
 
         // 書き込みしたレス番号
-        GET_INFOVALUE( str_tmp, "wrote = " );
+        GET_INFOVALUE( str_tmp, "posted = " );
         if( ! str_tmp.empty() ){
 
-            if( ! m_vec_wrote.size() ) m_vec_wrote.resize( MAX_RESNUMBER );
+            if( ! m_vec_posted.size() ) m_vec_posted.resize( MAX_RESNUMBER );
 
             list_tmp = MISC::split_line( str_tmp );
             it_tmp = list_tmp.begin();
             for( ; it_tmp != list_tmp.end(); ++it_tmp ){
                 int number = atoi( (*it_tmp).c_str() );
-                if( !(*it_tmp).empty() ) m_vec_wrote[ number ] = true;
-                else m_vec_wrote[ number ] = false;
+                if( !(*it_tmp).empty() ) m_vec_posted[ number ] = true;
+                else m_vec_posted[ number ] = false;
             }
         }
     }
@@ -1503,9 +1503,9 @@ void ArticleBase::read_info()
         std::cout << std::endl;
     }
 
-    if( m_vec_wrote.size() ){
-        std::cout << "wrote =";
-        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_wrote[ i ] ) std::cout << " " << i;
+    if( m_vec_posted.size() ){
+        std::cout << "posted =";
+        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_posted[ i ] ) std::cout << " " << i;
         std::cout << std::endl;
     }
 #endif
@@ -1558,9 +1558,9 @@ void ArticleBase::save_info( bool force )
     }
 
     // 書き込み
-    std::ostringstream ss_wrote;
-    if( m_vec_wrote.size() ){
-        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_wrote[ i ] ) ss_wrote << " " << i;
+    std::ostringstream ss_posted;
+    if( m_vec_posted.size() ){
+        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_posted[ i ] ) ss_posted << " " << i;
     }
 
     std::ostringstream sstr;
@@ -1585,7 +1585,7 @@ void ArticleBase::save_info( bool force )
          << "abonechain = " << m_abone_chain << std::endl
          << "aboneres = " << ss_abone_res.str() << std::endl
          << "bkmark_thread = " << m_bookmarked_thread << std::endl
-         << "wrote = " << ss_wrote.str() << std::endl
+         << "posted = " << ss_posted.str() << std::endl
     ;
 
 #ifdef _DEBUG

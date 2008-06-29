@@ -81,7 +81,7 @@ namespace DBTREE
         std::vector< char > m_vec_bookmark; // ブックマーク判定キャッシュ
 
         // 自分が書き込んだレスか
-        std::vector< char > m_vec_wrote;
+        std::vector< char > m_vec_posted;
 
         // HDDにキャッシュされているか
         bool m_cached;
@@ -174,7 +174,7 @@ namespace DBTREE
         std::list< int > get_res_bm();
 
         // 書き込みしたレス番号をリストにして取得
-        std::list< int > get_res_wrote();
+        std::list< int > get_res_posted();
 
         // number番のレスを参照しているレス番号をリストにして取得
         std::list< int > get_res_reference( int number );
@@ -223,8 +223,8 @@ namespace DBTREE
         const time_t get_write_pass(); // 経過時間(秒)
 
         // 書き込みしたレス番号
-        const int get_num_wrote();  // 書き込み数
-        const bool is_wrote( const int number );
+        const int get_num_posted();  // 書き込み数
+        const bool is_posted( const int number );
 
         // スレ立て時刻
         const time_t& get_since_time() const { return m_since_time; };

@@ -82,7 +82,7 @@ namespace DBTREE
         bool m_abone_chain; // 連鎖あぼーん
 
         // 自分が書き込んだレスの番号
-        std::vector< int > m_vec_wrote_nums;
+        std::vector< int > m_vec_posted_nums;
 
         // ロード用変数
         char* m_buffer_lines;
@@ -210,7 +210,7 @@ namespace DBTREE
         void update_abone_all();
 
         // 自分が書き込んだレスの番号
-        const std::vector< int >& get_vec_wrote_nums(){ return m_vec_wrote_nums; }
+        const std::vector< int >& get_vec_posted_nums(){ return m_vec_posted_nums; }
 
       protected:
 

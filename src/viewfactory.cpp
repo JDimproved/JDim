@@ -56,8 +56,8 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
         case VIEW_ARTICLEBM:
             return new ARTICLE::ArticleViewBM( url );
 
-        case VIEW_ARTICLEWROTE:
-            return new ARTICLE::ArticleViewWrote( url );
+        case VIEW_ARTICLEPOST:
+            return new ARTICLE::ArticleViewPost( url );
 
         case VIEW_ARTICLEURL:
             return new ARTICLE::ArticleViewURL( url );

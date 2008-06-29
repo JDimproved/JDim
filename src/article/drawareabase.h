@@ -143,6 +143,12 @@ namespace ARTICLE
         // 埋め込み画像のポインタ
         std::list< EmbeddedImage* > m_eimgs;
 
+        // ブックマークアイコン
+        Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_bkmk;
+
+        // 書き込みマークアイコン
+        Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_post;
+
       public:
 
         SIG_BUTTON_PRESS sig_button_press(){ return m_sig_button_press; }

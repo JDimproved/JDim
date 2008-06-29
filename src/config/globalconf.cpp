@@ -290,6 +290,8 @@ const bool CONFIG::get_reload_allthreads(){ return get_confitem()->reload_allthr
 const int CONFIG::get_tab_min_str(){ return get_confitem()->tab_min_str; }
 
 const bool CONFIG::get_show_tab_icon(){ return get_confitem()->show_tab_icon; }
+const bool CONFIG::get_show_post_mark(){ return get_confitem()->show_post_mark; }
+void CONFIG::set_show_post_mark( const bool show ){ get_confitem()->show_post_mark = show; }
 
 const bool CONFIG::get_flat_button(){ return get_confitem()->flat_button; }
 void CONFIG::set_flat_button( const bool set ){ get_confitem()->flat_button = set; }

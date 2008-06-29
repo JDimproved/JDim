@@ -189,6 +189,7 @@ namespace CORE
         void slot_toggle_loginbe();
         void toggle_menubar();
         void toggle_flat_button();
+        void toggle_post_mark();
         void toggle_sidebar();
         void slot_search_cache_board();
         void slot_search_cache();

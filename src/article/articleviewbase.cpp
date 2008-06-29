@@ -211,7 +211,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DrawoutNAME", "名前抽出(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_name ) );
     action_group()->add( Gtk::Action::create( "DrawoutID", "ID抽出(_I)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_id ) );
     action_group()->add( Gtk::Action::create( "DrawoutBM", "しおり抽出(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_bm ) );
-    action_group()->add( Gtk::Action::create( "DrawoutWrote", "書き込み抽出(_W)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_wrote ) );
+    action_group()->add( Gtk::Action::create( "DrawoutPost", "書き込み抽出(_W)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_post ) );
     action_group()->add( Gtk::Action::create( "DrawoutURL", "URL抽出(_U)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_url ) );
     action_group()->add( Gtk::Action::create( "DrawoutRefer", "参照抽出(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_refer ) );
     action_group()->add( Gtk::Action::create( "DrawoutAround", "周辺抽出(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_around ) );
@@ -367,7 +367,7 @@ void ArticleViewBase::setup_action()
     "<menu action='Drawout_Menu'>"
     "<menuitem action='DrawoutWord'/>"
     "<menuitem action='DrawoutBM'/>"
-    "<menuitem action='DrawoutWrote'/>"
+    "<menuitem action='DrawoutPost'/>"
     "<menuitem action='DrawoutURL'/>"
     "<menuitem action='DrawoutTmp'/>"
     "</menu>"
@@ -1333,15 +1333,15 @@ void ArticleViewBase::show_bm()
 //
 // 書き込みを抽出して表示
 //
-void ArticleViewBase::show_wrote()
+void ArticleViewBase::show_post()
 {
     assert( m_article );
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::show_wrote " << std::endl;
+    std::cout << "ArticleViewBase::show_post " << std::endl;
 #endif
     
-    std::list< int > list_resnum = m_article->get_res_wrote();
+    std::list< int > list_resnum = m_article->get_res_posted();
 
     if( ! list_resnum.empty() ) append_res( list_resnum );
     else append_html( "このスレでは書き込みしていません" );
@@ -2516,9 +2516,9 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     }
 
     // 書き込みしていない
-    act = action_group()->get_action( "DrawoutWrote" );
+    act = action_group()->get_action( "DrawoutPost" );
     if( act ){
-        if( m_article->get_num_wrote() ) act->set_sensitive( true );
+        if( m_article->get_num_posted() ) act->set_sensitive( true );
         else act->set_sensitive( false );
     }
 
@@ -3086,9 +3086,9 @@ void ArticleViewBase::slot_drawout_bm()
 //
 // 別のタブを開いて自分の書き込みを抽出
 //
-void ArticleViewBase::slot_drawout_wrote()
+void ArticleViewBase::slot_drawout_post()
 {
-    CORE::core_set_command( "open_article_wrote" ,m_url_article );
+    CORE::core_set_command( "open_article_post" ,m_url_article );
 }
 
 

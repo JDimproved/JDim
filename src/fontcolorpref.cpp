@@ -38,7 +38,6 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "文字: メール欄(非sage)", COLOR_CHAR_AGE, "sage でないメール欄の文字色" );
     set_color_settings( "文字: 選択範囲", COLOR_CHAR_SELECTION, "選択範囲の文字色" );
     set_color_settings( "文字: ハイライト", COLOR_CHAR_HIGHLIGHT, "検索結果などのハイライトの文字色" );
-    set_color_settings( "文字: しおり", COLOR_CHAR_BOOKMARK, "レスのしおりの文字色" );
     set_color_settings( "文字: リンク(通常)", COLOR_CHAR_LINK, "通常のリンクや参照されていないレス番号、複数発言したIDの文字色" );
     set_color_settings( "文字: リンク(参照)", COLOR_CHAR_LINK_LOW, "他のレスから参照されたレス番号の文字色" );
     set_color_settings( "文字: リンク(多数)", COLOR_CHAR_LINK_HIGH, "参照された数が多いレス番号や多く発言したIDの文字色" );
@@ -49,6 +48,7 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( "文字: 画像(ロード中)", COLOR_IMG_LOADING, "画像として扱うリンクのうち、ロード中の物の文字色" );
     set_color_settings( "文字: 画像(エラー)", COLOR_IMG_ERR, "画像として扱うリンクのうち、エラーになっている物の文字色" );
     set_color_settings( "文字: 板一覧／お気に入り", COLOR_CHAR_BBS, "板一覧／お気に入りの文字色" );
+    set_color_settings( "文字: 板一覧のコメント", COLOR_CHAR_BBS_COMMENT, "板一覧のコメントの文字色" );
     set_color_settings( "文字: スレ一覧", COLOR_CHAR_BOARD, "スレ一覧の文字色" );
     set_color_settings( "特殊: 新着しおり", COLOR_SEPARATOR_NEW, "新着しおりの色" );
     set_color_settings( "特殊: ポップアップフレーム", COLOR_FRAME, "ポップアップのフレーム色" );

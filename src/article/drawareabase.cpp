@@ -23,6 +23,8 @@
 
 #include "config/globalconf.h"
 
+#include "icons/iconmanager.h"
+
 #include "global.h"
 #include "httpcode.h"
 #include "controlid.h"
@@ -698,7 +700,8 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
         CORE::get_css_manager()->set_size( header->css, m_font_height );
 
         // ヘッダブロックの位置をセット
-        x = m_css_body.padding_left + header->css->mrg_left;
+        if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_icon( ICON::BKMARK_THREAD );
+        x = MAX( 1 + m_pixbuf_bkmk->get_width() + 1, m_css_body.padding_left + header->css->mrg_left );
         y += header->css->mrg_top;
 
         if( ! header->rect ) header->rect = m_layout_tree->create_rect();
@@ -1636,13 +1639,47 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 
             draw_div( layout, pos_y, upper, lower );
 
-            // ブックマークのマーク描画
-            if( layout->res_number && m_article->is_bookmarked( layout->res_number ) ){
+            if( layout->res_number ){
 
-                int y = layout->rect->y - pos_y;
+                int y = layout->rect->y + layout->css->padding_top;
+                int height_bkmk = 0;
 
-                m_pango_layout->set_text( ">" );
-                m_backscreen->draw_layout( m_gc, 0, y, m_pango_layout, m_color[ COLOR_CHAR_BOOKMARK ], m_color[ get_colorid_back() ] );
+                // ブックマークのマーク描画
+                if( m_article->is_bookmarked( layout->res_number ) ){
+
+                    if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_icon( ICON::BKMARK_THREAD );
+                    height_bkmk = m_pixbuf_bkmk->get_height();
+
+                    y += ( m_font_height - height_bkmk ) / 2;
+
+                    const int s_top = MAX( 0, upper - y );
+                    const int s_bottom = MIN( height_bkmk, lower - y );
+                    const int height = s_bottom - s_top;
+
+                    if( height > 0 ) m_backscreen->draw_pixbuf( m_gc, m_pixbuf_bkmk,
+                                                                0, s_top, 1, y - pos_y + s_top,
+                                                                m_pixbuf_bkmk->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
+                }
+
+                // 書き込みのマーク表示
+                if( CONFIG::get_show_post_mark() && m_article->is_posted( layout->res_number ) ){
+
+                    if( ! m_pixbuf_post ) m_pixbuf_post = ICON::get_icon( ICON::POST );
+                    int height_post = m_pixbuf_post->get_height();
+
+                    if( height_bkmk ) y += height_bkmk;
+                    else y += ( m_font_height - height_post ) / 2;
+
+                    const int s_top = MAX( 0, upper - y );
+                    const int s_bottom = MIN( height_post, lower - y );
+                    const int height = s_bottom - s_top;
+
+                    if( height > 0 ) m_backscreen->draw_pixbuf( m_gc, m_pixbuf_post,
+                                                                0, s_top, 1, y - pos_y + s_top,
+                                                                m_pixbuf_post->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
+                }
+
+
             }
 
             break;

@@ -298,6 +298,7 @@ void Log_Manager::save( const std::string& url, const bool newthread,
         const int maxno = get_max_num_of_log() + 1;
         const std::string newpath = path + "-" + MISC::itostr( maxno );
         CACHE::jdmv( path, newpath );
+        chmod( newpath.c_str(), S_IWUSR | S_IRUSR );
 
 #ifdef _DEBUG
         std::cout << "mv to " << newpath << std::endl;

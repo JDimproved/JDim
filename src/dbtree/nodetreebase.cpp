@@ -936,7 +936,7 @@ void NodeTreeBase::init_loading()
     if( ! m_parsed_text ) m_parsed_text = ( char* ) malloc( MAXSISE_OF_LINES );
     if( m_check_write && ! m_buffer_write ) m_buffer_write = ( char* ) malloc( MAXSISE_OF_LINES ); 
 
-    m_vec_wrote_nums.clear();
+    m_vec_posted_nums.clear();
 }
 
 
@@ -1292,7 +1292,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
             parse_write( section[ 3 ], section_lng[ 3 ], 0 );
 
             const bool hit = MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write, 0 );
-            if( hit ) m_vec_wrote_nums.push_back( header->id_header );
+            if( hit ) m_vec_posted_nums.push_back( header->id_header );
 
 #ifdef _DEBUG
             std::cout << "check_write id = " << header->id_header << " hit = " << hit << std::endl;

@@ -16,7 +16,6 @@ enum
     COLOR_CHAR_AGE,         // 非sageのメール欄
     COLOR_CHAR_SELECTION,   // 選択範囲の文字
     COLOR_CHAR_HIGHLIGHT,   // ハイライトの文字
-    COLOR_CHAR_BOOKMARK,    // ブックマーク
     COLOR_CHAR_LINK,        // リンク
     COLOR_CHAR_LINK_LOW,    // レス番号やIDなどの複数現れたリンク
     COLOR_CHAR_LINK_HIGH,   // レス番号やIDなどの多数現れたリンク
@@ -48,6 +47,7 @@ enum
     // その他の色
 
     COLOR_CHAR_BBS, // 板一覧の文字
+    COLOR_CHAR_BBS_COMMENT, // 板一覧のコメント
     COLOR_CHAR_BOARD, // スレ一覧の文字
 
     COLOR_BACK_BBS,         // 板一覧の背景

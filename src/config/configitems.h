@@ -274,6 +274,9 @@ namespace CONFIG
         // タブにアイコンを表示するか
         bool show_tab_icon;
 
+        // スレビューに書き込みマークを表示するか
+        bool show_post_mark;
+
         // ボタンをフラットにするか
         bool flat_button;
 

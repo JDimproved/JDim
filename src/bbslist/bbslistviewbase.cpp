@@ -511,6 +511,21 @@ void BBSListViewBase::clock_in()
 
 
 
+//
+// コメント色変更( 再帰用 )
+//
+void BBSListViewBase::set_fgcolor_of_comment( const Gtk::TreeModel::Children& children )
+{
+    Gtk::TreeModel::iterator it = children.begin();
+    for( ; it != children.end(); ++it ){
+        Gtk::TreeModel::Row row = *it;
+
+        const int type = row2type( row );
+        if( type == TYPE_COMMENT ) row[ m_columns.m_fgcolor ] = Gdk::Color( CONFIG::get_color( COLOR_CHAR_BBS_COMMENT ) );
+        else if( type == TYPE_DIR ) set_fgcolor_of_comment( row.children() );
+    }
+}
+
 
 //
 // 再描画
@@ -519,6 +534,8 @@ void BBSListViewBase::relayout()
 {
     m_treeview.init_color( COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN );
     m_treeview.init_font( CONFIG::get_fontname( FONT_BBS ) );
+
+    set_fgcolor_of_comment( m_treestore->children() );
 }
 
 
@@ -1402,7 +1419,7 @@ void BBSListViewBase::slot_rename()
 
     // edit可 slot_ren_text_on_edited() と slot_ren_text_on_canceled で false にする
     m_ren_text->property_editable() = true;
-    m_treeview.set_cursor( m_path_selected, *m_treeview.get_column( COL_NAME ), true );
+    m_treeview.set_cursor( m_path_selected, *m_treeview.get_column( 0 ), true );
 }
 
 
@@ -1896,6 +1913,7 @@ Gtk::TreeViewColumn* BBSListViewBase::create_column()
     col->pack_start( *m_ren_text, true );
     col->add_attribute( *m_ren_text, "text", COL_NAME );
     col->add_attribute( *m_ren_text, "underline", COL_UNDERLINE );
+    col->add_attribute( *m_ren_text, "foreground_gdk", COL_FGCOLOR );
     col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
 
     col->set_cell_data_func( *col->get_first_cell_renderer(), sigc::mem_fun( m_treeview, &SKELETON::JDTreeView::slot_cell_data ) );    

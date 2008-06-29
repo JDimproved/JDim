@@ -318,18 +318,18 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "Show_FAVORITE", "お気に入り(_F)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
 
-    // 外観
     m_action_group->add( Gtk::Action::create( "View_Menu", "詳細設定(_D)" ) );
 
-    // メニューバー
+    // 一般
     m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "メニューバー表示(_S)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_menubar ) );
-
-    // ボタンのrelief切り替え
     m_action_group->add( Gtk::ToggleAction::create( "ToggleFlatButton", "ボタンをフラット表示(_F)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_flat_button ) );
+    m_action_group->add( Gtk::ToggleAction::create( "TogglePostMark", "自分が書き込んだレスにマークをつける(_W)",
+                                                    std::string(), CONFIG::get_show_post_mark() ),
+                         sigc::mem_fun( *this, &Core::toggle_post_mark ) );
 
-    // ツールバー
+    // ツールバー表示
     m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー表示(_T)" ) );
     m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メイン(_M)" ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する(_U)", std::string(), false ),
@@ -344,7 +344,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "スレビュー(_A)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbararticle ) );
 
-    // タブ
+    // タブ表示
     m_action_group->add( Gtk::Action::create( "Tab_Menu", "タブ表示(_B)" ) );
     m_action_group->add( Gtk::ToggleAction::create( "TabBoard", "スレ一覧(_B)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabboard ) );
@@ -367,7 +367,7 @@ void Core::run( bool init )
     m_action_group->add( raction1, sigc::mem_fun( *this, &Core::slot_toggle_3pane ) );
     m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
 
-    // 埋め込みmessage
+    // 書き込みビュー
     Gtk::RadioButtonGroup radiogroup_msg;
     m_action_group->add( Gtk::Action::create( "ShowMsgView_Menu", "書き込みビュー(_M)" ) );
     Glib::RefPtr< Gtk::RadioAction > raction_msg0 = Gtk::RadioAction::create( radiogroup_msg, "UseWinMsg", "ウィンドウ表示する(_W)" );
@@ -582,6 +582,7 @@ void Core::run( bool init )
         "<menu action='General_Menu'>"
         "<menuitem action='ShowMenuBar'/>"
         "<menuitem action='ToggleFlatButton'/>"
+        "<menuitem action='TogglePostMark'/>"
         "</menu>"
         "<separator/>"
 
@@ -1404,6 +1405,7 @@ void Core::slot_changecolor_char_tree()
 {
     if( open_color_diag( "板／スレ一覧文字色", COLOR_CHAR_BBS ) ){
 
+        CONFIG::set_color( COLOR_CHAR_BBS_COMMENT, CONFIG::get_color( COLOR_CHAR_BBS ) );
         CONFIG::set_color( COLOR_CHAR_BOARD, CONFIG::get_color( COLOR_CHAR_BBS ) );
 
         BBSLIST::get_admin()->set_command( "relayout_all" );
@@ -1899,6 +1901,18 @@ void Core::toggle_flat_button()
 }
 
 
+//
+// 書き込みマーク表示切り替え
+//
+void Core::toggle_post_mark()
+{
+    if( SESSION::is_booting() ) return;
+    if( ! m_enable_menuslot ) return;
+
+    CONFIG::set_show_post_mark( ! CONFIG::get_show_post_mark() );
+
+    ARTICLE::get_admin()->set_command( "relayout_all" );
+}
 
 //
 // 現在開いている板のキャッシュ内のログ検索
@@ -2467,7 +2481,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     // 自分の書き込みレスを抽出
-    else if( command.command  == "open_article_wrote" ) { 
+    else if( command.command  == "open_article_post" ) { 
 
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
@@ -2479,7 +2493,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
 
-                                           "WROTE" // 書き込み抽出モード
+                                           "POST" // 書き込み抽出モード
             );
         return;
     }

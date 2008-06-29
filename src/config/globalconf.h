@@ -319,6 +319,10 @@ namespace CONFIG
     // タブにアイコンを表示するか
     const bool get_show_tab_icon();
 
+    // スレビューに書き込みマークを表示するか
+    const bool get_show_post_mark();
+    void set_show_post_mark( const bool show );
+
     // ボタンをフラットにするか
     const bool get_flat_button();
     void set_flat_button( const bool set );
