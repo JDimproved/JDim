@@ -655,6 +655,8 @@ void MessageViewBase::tab_right()
 //
 void MessageViewBase::post_msg( const std::string& msg, bool new_article )
 {
+    push_logitem();
+
     if( m_post ){
         m_post->terminate_load();
         delete m_post;
@@ -824,17 +826,31 @@ void MessageViewBase::show_status()
 }
 
 
+//
+// 自分の書き込みの判定用データの保存
+//
+// 実況中など post_fin() がコールされる前に自分のスレが表示されてしまう時があるので
+//  m_post->post_msg() する前に情報を保存しておく
+//
+void MessageViewBase::push_logitem()
+{
+    const bool newthread = ! ( MESSAGE::get_admin()->get_new_subject().empty() );
+    const std::string msg = get_text_message().get_text();
 
+    MESSAGE::get_log_manager()->push_logitem( get_url(), newthread, msg );
+}
+
+
+//
 // 書き込みログ保存
+//
 void MessageViewBase::save_postlog()
 {
-    bool newthread = false;;
     std::string subject = MESSAGE::get_admin()->get_new_subject();
     if( subject.empty() ) subject = DBTREE::article_subject( get_url() );
-    else newthread = true;
-    std::string msg = get_text_message().get_text();
-    std::string name = get_entry_name().get_text();
-    std::string mail = get_entry_mail().get_text();
+    const std::string msg = get_text_message().get_text();
+    const std::string name = get_entry_name().get_text();
+    const std::string mail = get_entry_mail().get_text();
 
-    MESSAGE::get_log_manager()->save( get_url(), newthread, subject, msg, name, mail );
+    MESSAGE::get_log_manager()->save( get_url(), subject, msg, name, mail );
 }

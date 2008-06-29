@@ -72,7 +72,6 @@ Log_Manager::~Log_Manager()
 #ifdef _DEBUG
         std::cout << "url = " << (*it)->url << std::endl;
         std::cout << "newthread = " << (*it)->newthread << std::endl;
-        std::cout << "subject = " << (*it)->subject << std::endl;
         std::cout << "msg = " << (*it)->msg << std::endl;
 #endif
         delete *it;
@@ -243,9 +242,10 @@ const bool Log_Manager::check_write( const std::string& url, const bool newthrea
 }
 
 
-
-void Log_Manager::save( const std::string& url, const bool newthread,
-                        const std::string& subject,  const std::string& msg, const std::string& name, const std::string& mail )
+//
+// 自分の書き込みの判定用データの保存
+//
+void Log_Manager::push_logitem( const std::string& url, const bool newthread,  const std::string& msg )
 {
     struct timeval tv;
     struct timezone tz;
@@ -253,12 +253,26 @@ void Log_Manager::save( const std::string& url, const bool newthread,
 
     std::string logurl = url;
     if( newthread && logurl.find( ID_OF_NEWTHREAD ) != std::string::npos ) logurl = logurl.substr( 0, logurl.find( ID_OF_NEWTHREAD ) );
-    m_logitems.push_back( new LogItem( logurl, newthread, subject, msg, tv.tv_sec ) );
+    m_logitems.push_back( new LogItem( logurl, newthread, msg, tv.tv_sec ) );
 
 #ifdef _DEBUG
-    std::cout << "Log_Manager::save\n";
+    std::cout << "Log_Manager::push_logitem\n";
     std::cout << "url = " << logurl << std::endl;
     std::cout << "newthread = " << newthread << std::endl;
+    std::cout << "msg = " << msg << std::endl;
+#endif
+}
+
+
+//
+// ログの保存
+//
+void Log_Manager::save( const std::string& url,
+                        const std::string& subject,  const std::string& msg, const std::string& name, const std::string& mail )
+{
+#ifdef _DEBUG
+    std::cout << "Log_Manager::save\n";
+    std::cout << "url = " << url << std::endl;
     std::cout << "subject = " << subject << std::endl;
     std::cout << "msg = " << msg << std::endl;
 #endif
@@ -269,6 +283,10 @@ void Log_Manager::save( const std::string& url, const bool newthread,
     if( SESSION::is_live( url ) ) return;
 
     if( ! CACHE::mkdir_logroot() ) return;
+
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday( &tv, &tz );
 
     // 保存メッセージ作成
     const std::string date = MISC::timettostr( tv.tv_sec );

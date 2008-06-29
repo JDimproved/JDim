@@ -31,7 +31,11 @@ namespace MESSAGE
         // headsize > 0 の時は先頭の headsize 文字だけを比較
         const bool check_write( const std::string& url, const bool newthread, const char* msg, const size_t headsize );
 
-        void save( const std::string& url, const bool newthread,
+        // 自分の書き込みの判定用データの保存
+        void push_logitem( const std::string& url, const bool newthread, const std::string& msg );
+
+        // ログの保存
+        void save( const std::string& url,
                    const std::string& subject,  const std::string& msg, const std::string& name, const std::string& mail );
 
         //　書き込みログ取得

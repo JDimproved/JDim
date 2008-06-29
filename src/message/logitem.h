@@ -27,15 +27,14 @@ namespace MESSAGE
 
         const std::string url;
         const bool newthread;
-        const std::string subject;
         const std::string msg;
         const time_t time_write;
         std::list< std::string > msg_lines;
         char head[ LOGITEM_SIZE_HEAD ];
         bool remove;
 
-        LogItem( const std::string& _url, const bool _newthread, const std::string& _subject, const std::string& _msg, const time_t _time_write )
-        : url( _url ), newthread( _newthread ), subject( _subject ), msg( _msg ), time_write( _time_write ), remove( false )
+        LogItem( const std::string& _url, const bool _newthread, const std::string& _msg, const time_t _time_write )
+        : url( _url ), newthread( _newthread ), msg( _msg ), time_write( _time_write ), remove( false )
         {
             // MISC::replace_str( ..., "\n", " \n" ) しているのは MISC::get_lines 実行時に
             // 改行のみの行を削除しないようにするため
