@@ -31,6 +31,7 @@ namespace ICON
         DOWN,
         WRITE,
         POST,
+        POST_REFER,
         LOADING,
         LOADING_STOP,
 

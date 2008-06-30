@@ -1641,14 +1641,14 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 
             if( layout->res_number ){
 
-                int y = layout->rect->y + layout->css->padding_top;
-                int height_bkmk = 0;
+                const int y_org = layout->rect->y + layout->css->padding_top;
+                int y = y_org;
 
                 // ブックマークのマーク描画
                 if( m_article->is_bookmarked( layout->res_number ) ){
 
                     if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_icon( ICON::BKMARK_THREAD );
-                    height_bkmk = m_pixbuf_bkmk->get_height();
+                    const int height_bkmk = m_pixbuf_bkmk->get_height();
 
                     y += ( m_font_height - height_bkmk ) / 2;
 
@@ -1659,26 +1659,47 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
                     if( height > 0 ) m_backscreen->draw_pixbuf( m_gc, m_pixbuf_bkmk,
                                                                 0, s_top, 1, y - pos_y + s_top,
                                                                 m_pixbuf_bkmk->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
+                    y += height_bkmk;
                 }
 
-                // 書き込みのマーク表示
-                if( CONFIG::get_show_post_mark() && m_article->is_posted( layout->res_number ) ){
+                if( CONFIG::get_show_post_mark() ){
 
-                    if( ! m_pixbuf_post ) m_pixbuf_post = ICON::get_icon( ICON::POST );
-                    int height_post = m_pixbuf_post->get_height();
+                    // 書き込みのマーク表示
+                    if( m_article->is_posted( layout->res_number ) ){
 
-                    if( height_bkmk ) y += height_bkmk;
-                    else y += ( m_font_height - height_post ) / 2;
+                        if( ! m_pixbuf_post ) m_pixbuf_post = ICON::get_icon( ICON::POST );
+                        const int height_post = m_pixbuf_post->get_height();
 
-                    const int s_top = MAX( 0, upper - y );
-                    const int s_bottom = MIN( height_post, lower - y );
-                    const int height = s_bottom - s_top;
+                        if( y == y_org ) y += ( m_font_height - height_post ) / 2;
 
-                    if( height > 0 ) m_backscreen->draw_pixbuf( m_gc, m_pixbuf_post,
-                                                                0, s_top, 1, y - pos_y + s_top,
-                                                                m_pixbuf_post->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
+                        const int s_top = MAX( 0, upper - y );
+                        const int s_bottom = MIN( height_post, lower - y );
+                        const int height = s_bottom - s_top;
+
+                        if( height > 0 ) m_backscreen->draw_pixbuf( m_gc, m_pixbuf_post,
+                                                                    0, s_top, 1, y - pos_y + s_top,
+                                                                    m_pixbuf_post->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
+                        y += height_post;
+                    }
+
+                    // 自分の書き込みに対するレスのマーク表示
+                    if( m_article->is_refer_posted( layout->res_number ) ){
+
+                        if( ! m_pixbuf_refer_post ) m_pixbuf_refer_post = ICON::get_icon( ICON::POST_REFER );
+                        const int height_refer_post = m_pixbuf_refer_post->get_height();
+
+                        if( y == y_org ) y += ( m_font_height - height_refer_post ) / 2;
+
+                        const int s_top = MAX( 0, upper - y );
+                        const int s_bottom = MIN( height_refer_post, lower - y );
+                        const int height = s_bottom - s_top;
+
+                        if( height > 0 ) m_backscreen->draw_pixbuf( m_gc, m_pixbuf_refer_post,
+                                                                    0, s_top, 1, y - pos_y + s_top,
+                                                                    m_pixbuf_refer_post->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
+                        y += height_refer_post;
+                    }
                 }
-
 
             }
 

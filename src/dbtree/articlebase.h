@@ -226,6 +226,9 @@ namespace DBTREE
         const int get_num_posted();  // 書き込み数
         const bool is_posted( const int number );
 
+        // 自分の書き込みにレスしたか
+        const bool is_refer_posted( const int number );
+
         // スレ立て時刻
         const time_t& get_since_time() const { return m_since_time; };
         const std::string& get_since_date() const { return m_since_date; }

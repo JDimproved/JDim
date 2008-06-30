@@ -935,8 +935,6 @@ void NodeTreeBase::init_loading()
     if( ! m_buffer_lines ) m_buffer_lines = ( char* ) malloc( MAXSISE_OF_LINES ); 
     if( ! m_parsed_text ) m_parsed_text = ( char* ) malloc( MAXSISE_OF_LINES );
     if( m_check_write && ! m_buffer_write ) m_buffer_write = ( char* ) malloc( MAXSISE_OF_LINES ); 
-
-    m_vec_posted_nums.clear();
 }
 
 
@@ -1292,7 +1290,10 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
             parse_write( section[ 3 ], section_lng[ 3 ], 0 );
 
             const bool hit = MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write, 0 );
-            if( hit ) m_vec_posted_nums.push_back( header->id_header );
+            if( hit ){
+                if( ! m_vec_posted.size() ) m_vec_posted.resize( MAX_RESNUMBER );
+                m_vec_posted[ header->id_header ] = true;
+            }
 
 #ifdef _DEBUG
             std::cout << "check_write id = " << header->id_header << " hit = " << hit << std::endl;
@@ -2203,8 +2204,8 @@ void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id,
                                     std::list< std::string >& list_abone_name,
                                     std::list< std::string >& list_abone_word,
                                     std::list< std::string >& list_abone_regex,
-                                    std::vector< char >& vec_abone_res,
-                                    bool& abone_transparent, bool& abone_chain )
+                                    const std::vector< char >& vec_abone_res,
+                                    const bool abone_transparent, const bool abone_chain )
 {
     m_list_abone_id = list_abone_id;
     m_list_abone_name = list_abone_name;
@@ -2608,6 +2609,8 @@ void NodeTreeBase::check_reference( int number )
     bool checked[ number ];
     memset( checked, 0, sizeof( bool ) * number );
 
+    const bool posted = m_vec_posted.size();
+
     for( int block = 0; block < BLOCK_NUM; ++block ){
 
         NODE* node = head->headinfo->block[ block ];
@@ -2648,6 +2651,16 @@ void NodeTreeBase::check_reference( int number )
                                 ){
 
                                 checked[ i ] = true;
+
+                                // 自分の書き込みに対するレス
+                                if( posted && m_vec_posted[ i ] ){
+                                    if( ! m_vec_refer_posted.size() ) m_vec_refer_posted.resize( MAX_RESNUMBER );
+                                    m_vec_refer_posted[ number ] = true;
+
+#ifdef _DEBUG
+                                    std::cout << "ref " << i << " " << number << std::endl;
+#endif
+                                }
 
                                 // 参照数を更新して色を変更
                                 ++( tmphead->headinfo->num_reference );
@@ -2801,4 +2814,15 @@ bool NodeTreeBase::remove_imenu( char* str_link )
 	}
 
     return false;
+}
+
+
+// 自分の書き込みにレスしたか
+#include <iostream>
+const bool NodeTreeBase::is_refer_posted( const int number )
+{
+    if( ! m_vec_refer_posted.size() ) return false;
+    if( m_vec_refer_posted.size() <= ( size_t )number ) return false;
+
+    return m_vec_refer_posted[ number ];
 }

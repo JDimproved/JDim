@@ -805,6 +805,12 @@ const bool ArticleBase::is_posted( const int number )
 }
 
 
+// 自分の書き込みにレスしたか
+const bool ArticleBase::is_refer_posted( const int number )
+{
+    return get_nodetree()->is_refer_posted( number );
+}
+
 
 //
 // NodeTree作成
@@ -829,6 +835,9 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
         // あぼーん情報のコピー
         m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_vec_abone_res,
                                      m_abone_transparent, m_abone_chain );
+
+        // 書き込み情報のコピー
+        m_nodetree->copy_post_info( m_vec_posted );
 
         m_nodetree->sig_updated().connect( sigc::mem_fun( *this, &ArticleBase::slot_node_updated ) );
         m_nodetree->sig_finished().connect( sigc::mem_fun( *this, &ArticleBase::slot_load_finished ) );
@@ -1048,21 +1057,25 @@ void ArticleBase::slot_load_finished()
     m_date_modified = m_nodetree->date_modified();
     if( m_number_before_load < m_number_load ) m_number_new = m_number_load - m_number_before_load;
     else m_number_new = 0;
-    m_number_before_load = m_number_load;
-    m_ext_err = m_nodetree->get_ext_err();
 
-    const int posted_nums = m_nodetree->get_vec_posted_nums().size();
-    if( posted_nums ){
+    // 書き込み情報
+    if( m_number_new && m_nodetree->get_vec_posted().size() ){
+
         if( ! m_vec_posted.size() ) m_vec_posted.resize( MAX_RESNUMBER );
-        for( int i = 0; i < posted_nums; ++i ){
 
-            const int resnum = m_nodetree->get_vec_posted_nums()[ i ];
+        for( int i = m_number_before_load +1; i <= m_number_load; ++i ){
+
+            if( m_nodetree->get_vec_posted()[ i ] ) m_vec_posted[ i ] = true;
+            else m_vec_posted[ i ] = false;
+
 #ifdef _DEBUG
-            std::cout << "posted " << resnum << std::endl;
+            if( m_vec_posted[ i ] ) std::cout << "posted no = " << i << std::endl;
 #endif
-            m_vec_posted[ resnum  ] = true;
         }
     }
+
+    m_number_before_load = m_number_load;
+    m_ext_err = m_nodetree->get_ext_err();
 
     // スレの数が0ならスレ情報はセーブしない
     if( ! m_number_load ) m_cached = false;

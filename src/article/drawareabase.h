@@ -149,6 +149,9 @@ namespace ARTICLE
         // 書き込みマークアイコン
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_post;
 
+        // 自分の書き込みに対するレスマークアイコン
+        Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_refer_post;
+
       public:
 
         SIG_BUTTON_PRESS sig_button_press(){ return m_sig_button_press; }

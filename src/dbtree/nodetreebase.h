@@ -81,8 +81,11 @@ namespace DBTREE
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
 
-        // 自分が書き込んだレスの番号
-        std::vector< int > m_vec_posted_nums;
+        // 自分が書き込んだレスか
+        std::vector< char > m_vec_posted;
+
+        // 自分の書き込みにレスしているか
+        std::vector< char > m_vec_refer_posted;
 
         // ロード用変数
         char* m_buffer_lines;
@@ -202,15 +205,19 @@ namespace DBTREE
         // あぼーん情報を親クラスのarticlebaseからコピーする
         void copy_abone_info( std::list< std::string >& list_abone_id, std::list< std::string >& list_abone_name,
                               std::list< std::string >& list_abone_word, std::list< std::string >& list_abone_regex,
-                              std::vector< char >& vec_abone_res,
-                              bool& abone_transparent, bool& abone_chain );
+                              const std::vector< char >& vec_abone_res,
+                              const bool abone_transparent, const bool abone_chain );
 
         // 全レスのあぼーん状態の更新
         // 発言数や参照数も更新する
         void update_abone_all();
 
-        // 自分が書き込んだレスの番号
-        const std::vector< int >& get_vec_posted_nums(){ return m_vec_posted_nums; }
+        // 自分が書き込んだレスか
+        void copy_post_info( const std::vector< char >& vec_posted ){ m_vec_posted = vec_posted; }
+        const std::vector< char >& get_vec_posted(){ return m_vec_posted; }
+
+        // 自分の書き込みにレスしたか
+        const bool is_refer_posted( const int number );
 
       protected:
 
