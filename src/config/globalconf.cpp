@@ -83,6 +83,8 @@ void CONFIG::set_color( int id, const std::string& color )
     get_confitem()->str_color[ id ] = color;
 }
 
+void CONFIG::reset_colors(){ get_confitem()->reset_colors(); }
+
 const bool CONFIG::get_use_tree_gtkrc(){ return get_confitem()->use_tree_gtkrc; }
 
 const int CONFIG::get_tree_ypad(){ return get_confitem()->tree_ypad; }

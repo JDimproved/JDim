@@ -10,6 +10,12 @@
 #include <list>
 #include <vector>
 
+namespace JDLIB
+{
+    class ConfLoader;
+}
+
+
 namespace CONFIG
 {
     class ConfigItems
@@ -325,9 +331,14 @@ namespace CONFIG
         // 保存
         void save();
 
+        // 色のリセット
+        void reset_colors();
+
       private:
 
         void save_impl( const std::string& path );
+
+        void set_colors( JDLIB::ConfLoader& cf );
     };
     
 }

@@ -79,6 +79,9 @@ const bool ConfigItems::load()
               << "conffile = " << path_conf << " empty = " << cf.empty() << std::endl;
 #endif
 
+    // 色
+    set_colors( cf );
+
     // 前回開いたviewを復元するか
     restore_board = cf.get_option( "restore_board", CONF_RESTORE_BOARD );
     restore_article = cf.get_option( "restore_article", CONF_RESTORE_ARTICLE );
@@ -219,117 +222,6 @@ const bool ConfigItems::load()
     // web検索用メニュータイトルアドレス
     menu_search_web = cf.get_option( "menu_search_web", CONF_MENU_SEARCH_WEB );
     url_search_web = cf.get_option( "url_search_web", CONF_URL_SEARCH_WEB );
-
-    /////////
-    // 色
-
-    // 文字色
-    str_color[ COLOR_CHAR ] = cf.get_option( "cl_char", CONF_COLOR_CHAR );
-
-    // 名前欄の文字色
-    str_color[ COLOR_CHAR_NAME ] = cf.get_option( "cl_char_name", CONF_COLOR_CHAR_NAME );
-
-    // トリップ等の名前欄の文字色
-    str_color[ COLOR_CHAR_NAME_B ] = cf.get_option( "cl_char_name_b", CONF_COLOR_CHAR_NAME_B );
-
-    // 名前無し時の名前欄の文字色
-    str_color[ COLOR_CHAR_NAME_NOMAIL ] = cf.get_option( "cl_char_name_nomail", CONF_COLOR_CHAR_NAME_NOMAIL );
-
-    // ageの時のメール欄の文字色
-    str_color[ COLOR_CHAR_AGE ] = cf.get_option( "cl_char_age", CONF_COLOR_CHAR_AGE );
-
-    // 選択範囲の文字色
-    str_color[ COLOR_CHAR_SELECTION ] = cf.get_option( "cl_char_selection", CONF_COLOR_CHAR_SELECTION );
-
-    // ハイライトの文字色
-    str_color[ COLOR_CHAR_HIGHLIGHT ] = cf.get_option( "cl_char_highlight", CONF_COLOR_CHAR_HIGHLIGHT );
-
-    // リンク(通常)の文字色
-    str_color[ COLOR_CHAR_LINK ] = cf.get_option( "cl_char_link", CONF_COLOR_CHAR_LINK );
-
-    // リンク(複数)の文字色
-    str_color[ COLOR_CHAR_LINK_LOW ] = cf.get_option( "cl_char_link_low", CONF_COLOR_CHAR_LINK_LOW );
-
-    // リンク(多数)の文字色
-    str_color[ COLOR_CHAR_LINK_HIGH ] = cf.get_option( "cl_char_link_high", CONF_COLOR_CHAR_LINK_HIGH );
-
-    // メッセージビューの文字色
-    str_color[ COLOR_CHAR_MESSAGE ] = cf.get_option( "cl_char_message", CONF_COLOR_CHAR_MESSAGE );
-
-    // メッセージビュー(選択範囲)の文字色
-    str_color[ COLOR_CHAR_MESSAGE_SELECTION ] = cf.get_option( "cl_char_message_selection", CONF_COLOR_CHAR_MESSAGE_SELECTION );
-
-    // Gtk::Entryのデフォルトの文字色
-    str_color[ COLOR_CHAR_ENTRY_DEFAULT ] = MISC::get_entry_color_text();
-
-    // 画像(キャッシュ無)の色
-    str_color[ COLOR_IMG_NOCACHE ] = cf.get_option( "cl_img_nocache", CONF_COLOR_IMG_NOCACHE );
-
-    // 画像(キャッシュ有)の色
-    str_color[ COLOR_IMG_CACHED ] = cf.get_option( "cl_img_cached", CONF_COLOR_IMG_CACHED );
-
-    // 画像(ロード中)の色
-    str_color[ COLOR_IMG_LOADING ] = cf.get_option( "cl_img_loading", CONF_COLOR_IMG_LOADING );
-
-    // 画像(エラー)の色
-    str_color[ COLOR_IMG_ERR ] = cf.get_option( "cl_img_err", CONF_COLOR_IMG_ERR );
-
-    // スレ背景色
-    str_color[ COLOR_BACK ] = cf.get_option( "cl_back", CONF_COLOR_BACK );
-
-    // ポップアップの背景色
-    str_color[ COLOR_BACK_POPUP ] = cf.get_option( "cl_back_popup", CONF_COLOR_BACK_POPUP );
-
-    // 選択範囲の背景色
-    str_color[ COLOR_BACK_SELECTION ] = cf.get_option( "cl_back_selection", CONF_COLOR_BACK_SELECTION );
-
-    // ハイライトの背景色
-    str_color[ COLOR_BACK_HIGHLIGHT ] = cf.get_option( "cl_back_highlight", CONF_COLOR_HL );
-
-    // ハイライトの背景色(ツリー用)
-    str_color[ COLOR_BACK_HIGHLIGHT_TREE ] = cf.get_option( "cl_back_highlight_tree", CONF_COLOR_HL_TREE );
-
-    // メッセージビューの背景色
-    str_color[ COLOR_BACK_MESSAGE ] = cf.get_option( "cl_back_message", CONF_COLOR_BACK_MESSAGE );
-
-    // メッセージビューの選択色
-    str_color[ COLOR_BACK_MESSAGE_SELECTION ] = cf.get_option( "cl_back_message_selection", CONF_COLOR_BACK_MESSAGE_SELECTION );
-
-    // Gtk::Entryのデフォルトの背景色
-    str_color[ COLOR_BACK_ENTRY_DEFAULT ] = MISC::get_entry_color_base();
-
-    // 新着セパレータ
-    str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", CONF_COLOR_SEPARATOR_NEW );
-
-    // ポップアップフレーム色
-    str_color[ COLOR_FRAME ] = cf.get_option( "cl_frame", CONF_COLOR_FRAME );
-
-    // オートスクロールマーカー色
-    str_color[ COLOR_MARKER ] = cf.get_option( "cl_marker", CONF_COLOR_MARKER );
-
-    // 板一覧の文字
-    str_color[ COLOR_CHAR_BBS ] = cf.get_option( "cl_chr_bbs", CONF_COLOR_CHAR_BBS );
-
-    // 板一覧のコメント
-    str_color[ COLOR_CHAR_BBS_COMMENT ] = cf.get_option( "cl_chr_bbs_com", CONF_COLOR_CHAR_BBS_COMENT );
-
-    // スレ一覧の文字
-    str_color[ COLOR_CHAR_BOARD ] = cf.get_option( "cl_chr_board", CONF_COLOR_CHAR_BOARD );
-
-    // 板一覧の背景色
-    str_color[ COLOR_BACK_BBS ] = cf.get_option( "cl_back_bbs", CONF_COLOR_BACK_BBS );
-
-    // 板一覧の背景色(偶数行)
-    str_color[ COLOR_BACK_BBS_EVEN ] = cf.get_option( "cl_back_bbs_even", CONF_COLOR_BACK_BBS_EVEN );
-
-    // スレ一覧の背景色
-    str_color[ COLOR_BACK_BOARD ] = cf.get_option( "cl_back_board", CONF_COLOR_BACK_BOARD );
-
-    // スレ一覧の背景色(偶数行)
-    str_color[ COLOR_BACK_BOARD_EVEN ] = cf.get_option( "cl_back_board_even", CONF_COLOR_BACK_BOARD_EVEN );
-
-    /////////////////////////
-
 
     // ツリービューでgtkrcの設定を使用するか
     use_tree_gtkrc = cf.get_option( "use_tree_gtkrc", CONF_USE_TREE_GTKRC );
@@ -722,4 +614,127 @@ void ConfigItems::save_impl( const std::string& path )
 #endif
 
     cf.save();
+}
+
+
+//
+// 色のセット
+//
+void ConfigItems::set_colors( JDLIB::ConfLoader& cf )
+{
+    // 文字色
+    str_color[ COLOR_CHAR ] = cf.get_option( "cl_char", CONF_COLOR_CHAR );
+
+    // 名前欄の文字色
+    str_color[ COLOR_CHAR_NAME ] = cf.get_option( "cl_char_name", CONF_COLOR_CHAR_NAME );
+
+    // トリップ等の名前欄の文字色
+    str_color[ COLOR_CHAR_NAME_B ] = cf.get_option( "cl_char_name_b", CONF_COLOR_CHAR_NAME_B );
+
+    // 名前無し時の名前欄の文字色
+    str_color[ COLOR_CHAR_NAME_NOMAIL ] = cf.get_option( "cl_char_name_nomail", CONF_COLOR_CHAR_NAME_NOMAIL );
+
+    // ageの時のメール欄の文字色
+    str_color[ COLOR_CHAR_AGE ] = cf.get_option( "cl_char_age", CONF_COLOR_CHAR_AGE );
+
+    // 選択範囲の文字色
+    str_color[ COLOR_CHAR_SELECTION ] = cf.get_option( "cl_char_selection", CONF_COLOR_CHAR_SELECTION );
+
+    // ハイライトの文字色
+    str_color[ COLOR_CHAR_HIGHLIGHT ] = cf.get_option( "cl_char_highlight", CONF_COLOR_CHAR_HIGHLIGHT );
+
+    // リンク(通常)の文字色
+    str_color[ COLOR_CHAR_LINK ] = cf.get_option( "cl_char_link", CONF_COLOR_CHAR_LINK );
+
+    // リンク(複数)の文字色
+    str_color[ COLOR_CHAR_LINK_LOW ] = cf.get_option( "cl_char_link_low", CONF_COLOR_CHAR_LINK_LOW );
+
+    // リンク(多数)の文字色
+    str_color[ COLOR_CHAR_LINK_HIGH ] = cf.get_option( "cl_char_link_high", CONF_COLOR_CHAR_LINK_HIGH );
+
+    // メッセージビューの文字色
+    str_color[ COLOR_CHAR_MESSAGE ] = cf.get_option( "cl_char_message", CONF_COLOR_CHAR_MESSAGE );
+
+    // メッセージビュー(選択範囲)の文字色
+    str_color[ COLOR_CHAR_MESSAGE_SELECTION ] = cf.get_option( "cl_char_message_selection", CONF_COLOR_CHAR_MESSAGE_SELECTION );
+
+    // Gtk::Entryのデフォルトの文字色
+    str_color[ COLOR_CHAR_ENTRY_DEFAULT ] = MISC::get_entry_color_text();
+
+    // 画像(キャッシュ無)の色
+    str_color[ COLOR_IMG_NOCACHE ] = cf.get_option( "cl_img_nocache", CONF_COLOR_IMG_NOCACHE );
+
+    // 画像(キャッシュ有)の色
+    str_color[ COLOR_IMG_CACHED ] = cf.get_option( "cl_img_cached", CONF_COLOR_IMG_CACHED );
+
+    // 画像(ロード中)の色
+    str_color[ COLOR_IMG_LOADING ] = cf.get_option( "cl_img_loading", CONF_COLOR_IMG_LOADING );
+
+    // 画像(エラー)の色
+    str_color[ COLOR_IMG_ERR ] = cf.get_option( "cl_img_err", CONF_COLOR_IMG_ERR );
+
+    // スレ背景色
+    str_color[ COLOR_BACK ] = cf.get_option( "cl_back", CONF_COLOR_BACK );
+
+    // ポップアップの背景色
+    str_color[ COLOR_BACK_POPUP ] = cf.get_option( "cl_back_popup", CONF_COLOR_BACK_POPUP );
+
+    // 選択範囲の背景色
+    str_color[ COLOR_BACK_SELECTION ] = cf.get_option( "cl_back_selection", CONF_COLOR_BACK_SELECTION );
+
+    // ハイライトの背景色
+    str_color[ COLOR_BACK_HIGHLIGHT ] = cf.get_option( "cl_back_highlight", CONF_COLOR_HL );
+
+    // ハイライトの背景色(ツリー用)
+    str_color[ COLOR_BACK_HIGHLIGHT_TREE ] = cf.get_option( "cl_back_highlight_tree", CONF_COLOR_HL_TREE );
+
+    // メッセージビューの背景色
+    str_color[ COLOR_BACK_MESSAGE ] = cf.get_option( "cl_back_message", CONF_COLOR_BACK_MESSAGE );
+
+    // メッセージビューの選択色
+    str_color[ COLOR_BACK_MESSAGE_SELECTION ] = cf.get_option( "cl_back_message_selection", CONF_COLOR_BACK_MESSAGE_SELECTION );
+
+    // Gtk::Entryのデフォルトの背景色
+    str_color[ COLOR_BACK_ENTRY_DEFAULT ] = MISC::get_entry_color_base();
+
+    // 新着セパレータ
+    str_color[ COLOR_SEPARATOR_NEW ] = cf.get_option( "cl_sepa_new", CONF_COLOR_SEPARATOR_NEW );
+
+    // ポップアップフレーム色
+    str_color[ COLOR_FRAME ] = cf.get_option( "cl_frame", CONF_COLOR_FRAME );
+
+    // オートスクロールマーカー色
+    str_color[ COLOR_MARKER ] = cf.get_option( "cl_marker", CONF_COLOR_MARKER );
+
+    // 板一覧の文字
+    str_color[ COLOR_CHAR_BBS ] = cf.get_option( "cl_chr_bbs", CONF_COLOR_CHAR_BBS );
+
+    // 板一覧のコメント
+    str_color[ COLOR_CHAR_BBS_COMMENT ] = cf.get_option( "cl_chr_bbs_com", CONF_COLOR_CHAR_BBS_COMENT );
+
+    // スレ一覧の文字
+    str_color[ COLOR_CHAR_BOARD ] = cf.get_option( "cl_chr_board", CONF_COLOR_CHAR_BOARD );
+
+    // 板一覧の背景色
+    str_color[ COLOR_BACK_BBS ] = cf.get_option( "cl_back_bbs", CONF_COLOR_BACK_BBS );
+
+    // 板一覧の背景色(偶数行)
+    str_color[ COLOR_BACK_BBS_EVEN ] = cf.get_option( "cl_back_bbs_even", CONF_COLOR_BACK_BBS_EVEN );
+
+    // スレ一覧の背景色
+    str_color[ COLOR_BACK_BOARD ] = cf.get_option( "cl_back_board", CONF_COLOR_BACK_BOARD );
+
+    // スレ一覧の背景色(偶数行)
+    str_color[ COLOR_BACK_BOARD_EVEN ] = cf.get_option( "cl_back_board_even", CONF_COLOR_BACK_BOARD_EVEN );
+}
+
+
+//
+// 色のリセット
+//
+void ConfigItems::reset_colors()
+{
+    // dummyのConfLoaderをset_colors()に渡してデフォルト値をセットする
+    JDLIB::ConfLoader cf( "", "dummy = dummy" );
+    set_colors( cf );
 }

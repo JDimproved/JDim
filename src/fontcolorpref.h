@@ -44,6 +44,7 @@ namespace CORE
         Gtk::EventBox m_event_color;
         Gtk::ComboBoxText m_combo_color;
         Gtk::ColorButton m_colorbutton;
+        Gtk::Button m_reset_colorbutton;
         Gtk::HBox m_hbox_color;
         Gtk::VBox m_vbox_color;
         Gtk::Frame m_frame_color;
@@ -68,6 +69,7 @@ namespace CORE
         void set_color_settings( const std::string& name, const int colorid, const std::string& tooltip );
         void slot_combo_color_changed();
         void slot_colorbutton_on_set();
+        void slot_reset_color();
 
         // OK,cancel が押された
         virtual void slot_ok_clicked();

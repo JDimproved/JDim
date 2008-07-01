@@ -19,7 +19,8 @@
 using namespace CORE;
 
 FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::PrefDiag( parent, url )
+    : SKELETON::PrefDiag( parent, url ),
+      m_reset_colorbutton( "全てリセット(_R)", true )
 {
     CONFIG::bkup_conf();
 
@@ -153,6 +154,7 @@ void FontColorPref::pack_widget()
     m_hbox_color.set_border_width( mrg );
     m_hbox_color.pack_start( m_event_color, Gtk::PACK_SHRINK );
     m_hbox_color.pack_start( m_colorbutton, Gtk::PACK_SHRINK, mrg );
+    m_hbox_color.pack_start( m_reset_colorbutton, Gtk::PACK_SHRINK, mrg );
 
     m_vbox_color.pack_start( m_hbox_color, Gtk::PACK_EXPAND_WIDGET, mrg );
 
@@ -163,6 +165,7 @@ void FontColorPref::pack_widget()
 
     m_combo_color.signal_changed().connect( sigc::mem_fun( *this, &FontColorPref::slot_combo_color_changed ) );
     m_colorbutton.signal_color_set().connect( sigc::mem_fun( *this, &FontColorPref::slot_colorbutton_on_set ) );
+    m_reset_colorbutton.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_color ) );
 
     // 全体
     get_vbox()->set_spacing( mrg );
@@ -301,3 +304,12 @@ void FontColorPref::slot_colorbutton_on_set()
     CONFIG::set_color( m_color_tbl[ num ] , result );
 }
 
+
+//
+// 色のリセット
+//
+void FontColorPref::slot_reset_color()
+{
+    CONFIG::reset_colors();
+    slot_combo_color_changed();
+}

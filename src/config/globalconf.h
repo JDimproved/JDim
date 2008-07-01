@@ -38,6 +38,7 @@ namespace CONFIG
     // 色 ( # + 12桁の16進数 の形式 )
     const std::string& get_color( int id );
     void set_color( int id, const std::string& color );
+    void reset_colors();
 
     // ツリービューでgtkrcの設定を使用するか
     const bool get_use_tree_gtkrc();
