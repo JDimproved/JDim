@@ -2818,7 +2818,6 @@ bool NodeTreeBase::remove_imenu( char* str_link )
 
 
 // 自分の書き込みにレスしたか
-#include <iostream>
 const bool NodeTreeBase::is_refer_posted( const int number )
 {
     if( ! m_vec_refer_posted.size() ) return false;
