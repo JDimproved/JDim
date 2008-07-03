@@ -3367,7 +3367,10 @@ void ArticleViewBase::operate_search( const std::string& controlid )
 {
     int id = atoi( controlid.c_str() );
 
-    if( id == CONTROL::Cancel ) focus_view();
+    if( id == CONTROL::Cancel ){
+        focus_view();
+        ARTICLE::get_admin()->set_command( "close_searchbar" );
+    }
 
     // AND 抽出
     else if( id == CONTROL::DrawOutAnd ){
