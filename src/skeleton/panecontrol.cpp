@@ -62,10 +62,17 @@ void PaneControl::update_position()
 
     int pos = m_paned.get_position();
 
+    // PAGE1を最大化
     if( m_mode == PANE_MAX_PAGE1 ) m_paned.set_position( get_size() );
+
+    // PAGE2を最大化
     else if( m_mode == PANE_MAX_PAGE2 && pos > 0 ) m_paned.set_position( 0 );
+
+    // 通常状態
     else if( m_mode == PANE_NORMAL ){
 
+        // ウィンドウをリサイズしたときの処理
+        // m_fixmode の値によりPAGE1とPAGE2のどちらのサイズを固定するか判断する
         int newpos = 0;
 
         if( m_fixmode == PANE_FIXSIZE_PAGE1 && pos != m_pos ){
@@ -192,7 +199,6 @@ void PaneControl::button_release_event( GdkEventButton* event )
 
     // 仕切りをドラッグした場合
     else if( m_clicked && m_drag ){
-        m_mode = PANE_NORMAL;
 
         if( m_fixmode == PANE_FIXSIZE_PAGE1 ) m_pos = m_paned.get_position();
         else if( m_fixmode == PANE_FIXSIZE_PAGE2 ) m_pos = get_size() - m_paned.get_position();
@@ -200,6 +206,8 @@ void PaneControl::button_release_event( GdkEventButton* event )
 #ifdef _DEBUG
         std::cout << "new pos = " << m_pos << std::endl;
 #endif
+
+        set_mode( PANE_NORMAL );
     }
 
     m_clicked = false;

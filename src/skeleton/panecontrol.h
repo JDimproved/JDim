@@ -10,27 +10,27 @@
 
 namespace SKELETON
 {
-    // コンストラクタで指定
+    // コンストラクタで指定する m_fixmode の値
     enum
     {
-        PANE_FIXSIZE_PAGE1, // リサイズ時にPAGE1のサイズを固定する
-        PANE_FIXSIZE_PAGE2  // リサイズ時にPAGE2のサイズを固定する
+        PANE_FIXSIZE_PAGE1, // ウィンドウリサイズ時にPAGE1のサイズを固定する
+        PANE_FIXSIZE_PAGE2  // ウィンドウリサイズ時にPAGE2のサイズを固定する
     };
 
-    // set_mode()で指定
+    // set_mode()で指定する m_mode の値
     enum
     {
-        PANE_NORMAL = 0,
-        PANE_MAX_PAGE1, // PAGE1 最大化
-        PANE_MAX_PAGE2  // PAGE2 最大化
+        PANE_NORMAL = 0, // どちらのページも折り畳んでいない通常状態
+        PANE_MAX_PAGE1, // PAGE1 最大化中
+        PANE_MAX_PAGE2  // PAGE2 最大化中
     };
 
-    // set_click_fold()で指定
+    // set_click_fold()で指定する m_click_fold の値
     enum
     {
-        PANE_CLICK_NORMAL,       // セパレータクリックで折り畳まない
-        PANE_CLICK_FOLD_PAGE1,   // セパレータクリックでPAGE1を折り畳む
-        PANE_CLICK_FOLD_PAGE2    // セパレータクリックでPAGE2を折り畳む
+        PANE_CLICK_NORMAL,       // セパレータをクリックしても折り畳まない
+        PANE_CLICK_FOLD_PAGE1,   // セパレータをクリックするとPAGE1を折り畳む
+        PANE_CLICK_FOLD_PAGE2    // セパレータをクリックするとPAGE2を折り畳む
     };
 
     // ペーン表示が切り替えられた
