@@ -8,14 +8,22 @@
 #include <gtkmm.h>
 
 #include "skeleton/toolbar.h"
-#include "skeleton/imgtoolbutton.h"
 #include "skeleton/label_entry.h"
+
+namespace SKELETON
+{
+    class ImgToggleToolButton;
+    class ImgToolButton;
+}
+
 
 namespace MESSAGE
 {
     class MessageToolBarBase : public SKELETON::ToolBar
     {
-        SKELETON::ImgToolButton* m_button_preview;
+        bool m_enable_slot;
+
+        SKELETON::ImgToggleToolButton* m_button_preview;
 
       public:
 
@@ -25,9 +33,12 @@ namespace MESSAGE
         // 書き込みボタンをフォーカス
         void focus_writebutton();
 
+        // previewボタンのトグル
+        void set_active_previewbutton( const bool active );
+
       protected:
 
-        SKELETON::ImgToolButton* get_button_preview();
+        SKELETON::ImgToggleToolButton* get_button_preview();
 
       private:
 
@@ -39,8 +50,8 @@ namespace MESSAGE
     // 通常
     class MessageToolBar : public MessageToolBarBase
     {
-        SKELETON::ImgToolButton m_button_insert_draft;
-        SKELETON::ImgToolButton m_button_undo;
+        SKELETON::ImgToolButton* m_button_insert_draft;
+        SKELETON::ImgToolButton* m_button_undo;
 
         // false ならスレ名ラベル、trueなら新規レス名entry表示
         bool m_show_entry_new_subject;

@@ -100,11 +100,17 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
     }
     // 通常のツールバーに表示切り替え
     else if( command.command == "switch_toolbar_message" ){
-        if( view ) get_notebook()->set_current_toolbar( TOOLBAR_MESSAGE, view );
+        if( view ){
+            get_notebook()->set_current_toolbar( TOOLBAR_MESSAGE, view );
+            m_toolbar->set_active_previewbutton( false );
+        }
     }
     // プレビューツールバーに表示切り替え
     else if( command.command == "switch_toolbar_preview" ){
-        if( view ) get_notebook()->set_current_toolbar( TOOLBAR_PREVIEW, view );
+        if( view ){
+            get_notebook()->set_current_toolbar( TOOLBAR_PREVIEW, view );
+            m_toolbar_preview->set_active_previewbutton( true );
+        }
     }
 }
 

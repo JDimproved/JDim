@@ -6,6 +6,9 @@
 #include "toolbar.h"
 #include "messageadmin.h"
 
+#include "skeleton/imgtoolbutton.h"
+#include "skeleton/imgtoggletoolbutton.h"
+
 #include "icons/iconmanager.h"
 
 #include "controlutil.h"
@@ -19,11 +22,12 @@ using namespace MESSAGE;
 
 MessageToolBarBase::MessageToolBarBase() :
     SKELETON::ToolBar( MESSAGE::get_admin() ),
+    m_enable_slot( true ),
     m_button_preview( NULL )
 {}
 
 
-SKELETON::ImgToolButton* MessageToolBarBase::get_button_preview()
+SKELETON::ImgToggleToolButton* MessageToolBarBase::get_button_preview()
 {
 #ifdef _DEBUG
     std::cout << "MessageToolBarBase::get_button_preview\n";
@@ -31,7 +35,7 @@ SKELETON::ImgToolButton* MessageToolBarBase::get_button_preview()
 
     if( ! m_button_preview ){
 
-        m_button_preview = Gtk::manage( new SKELETON::ImgToolButton( ICON::THREAD ) );
+        m_button_preview = Gtk::manage( new SKELETON::ImgToggleToolButton( ICON::THREAD ) );
         m_button_preview->signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBarBase::slot_toggle_preview ) );
     }
 
@@ -42,6 +46,8 @@ SKELETON::ImgToolButton* MessageToolBarBase::get_button_preview()
 // プレビュー切り替え
 void MessageToolBarBase::slot_toggle_preview()
 {
+    if( ! m_enable_slot ) return;
+
 #ifdef _DEBUG
     std::cout << "MessageToolBarBase::slot_toggle_preview\n";
 #endif
@@ -59,6 +65,16 @@ void MessageToolBarBase::focus_writebutton()
 }
 
 
+// previewボタンのトグル
+void MessageToolBarBase::set_active_previewbutton( const bool active )
+{
+    m_enable_slot = false;
+    m_button_preview->set_active( active );
+    m_enable_slot = true;
+}
+
+
+
 //////////////////////////////////
 
 
@@ -66,15 +82,12 @@ void MessageToolBarBase::focus_writebutton()
 
 MessageToolBar::MessageToolBar() :
     MessageToolBarBase(),
-    m_button_insert_draft( Gtk::Stock::OPEN ),
-    m_button_undo( Gtk::Stock::UNDO ),
+    m_button_insert_draft( NULL ),
+    m_button_undo( NULL ),
     m_show_entry_new_subject( false ),
     m_tool_new_subject( NULL ),
     m_entry_new_subject( NULL )
 {
-    m_button_undo.signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_undo_clicked ) );
-    m_button_insert_draft.signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_insert_draft_clicked ) );
-
     pack_buttons();
 }
 
@@ -157,13 +170,27 @@ void MessageToolBar::pack_buttons()
                 break;
 
             case ITEM_UNDO:
-                get_buttonbar().append( m_button_undo );
-                set_tooltip( m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
+
+                if( ! m_button_undo ){
+                    m_button_undo = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::UNDO ) );
+                    m_button_undo->signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_undo_clicked ) );
+                }
+
+                get_buttonbar().append( *m_button_undo );
+                set_tooltip( *m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
+
                 break;
 
             case ITEM_INSERTTEXT:
-                get_buttonbar().append( m_button_insert_draft );
-                set_tooltip( m_button_insert_draft, CONTROL::get_label_motion( CONTROL::InsertText ) );
+
+                if( ! m_button_insert_draft ){
+                    m_button_insert_draft = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::OPEN ) );
+                    m_button_insert_draft->signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_insert_draft_clicked ) );
+                }
+
+                get_buttonbar().append( *m_button_insert_draft );
+                set_tooltip( *m_button_insert_draft, CONTROL::get_label_motion( CONTROL::InsertText ) );
+
                 break;
 
             case ITEM_LOCK_MESSAGE:
