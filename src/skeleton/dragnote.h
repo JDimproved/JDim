@@ -63,6 +63,7 @@ namespace SKELETON
         ViewNotebook m_notebook_view; // ビュー
 
         bool m_show_tabs;
+        bool m_show_toolbar;
 
         int m_page;
         bool m_drag;

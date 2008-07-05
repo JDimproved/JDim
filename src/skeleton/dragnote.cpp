@@ -40,6 +40,7 @@ DragableNoteBook::DragableNoteBook()
     pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
     pack_start( m_notebook_view );
     m_show_tabs = true;
+    m_show_toolbar = true;
 
     show_all_children();
 }
@@ -238,20 +239,43 @@ SKELETON::ToolBar* DragableNoteBook::get_toolbar( int page )
 
 
 //
-// ツールバー表示
+// ツールバー全体を表示
 //
 void DragableNoteBook::show_toolbar()
 {
-    if( m_notebook_toolbar.get_n_pages() ) m_notebook_toolbar.show();
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::show_toolbar\n";
+#endif
+
+    if( ! m_show_toolbar && m_notebook_toolbar.get_n_pages() ){
+
+        remove( m_notebook_view );
+
+        pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
+        pack_start( m_notebook_view );
+
+        m_show_toolbar = true;
+    }
 }
 
 
 //
-// ツールバー非表示
+// ツールバー全体を非表示
+//
+// ToolBar::hide_toolbar() は検索ツールバーは表示したまま
 //
 void DragableNoteBook::hide_toolbar()
 {
-    if( m_notebook_toolbar.get_n_pages() ) m_notebook_toolbar.hide();
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::hide_toolbar\n";
+#endif
+
+    if( m_show_toolbar && m_notebook_toolbar.get_n_pages() ){
+
+        remove( m_notebook_toolbar );
+
+        m_show_toolbar = false;
+    }
 }
 
 
