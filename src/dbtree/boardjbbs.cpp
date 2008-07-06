@@ -110,7 +110,7 @@ const std::string BoardJBBS::create_newarticle_message( const std::string& subje
             << "&MESSAGE=" << MISC::charset_url_encode( msg, get_charset() )
             << "&DIR="     << dir
             << "&BBS="     << bbs
-            << "&TIME="    << time_modified();
+            << "&TIME="    << get_time_modified();
 
 #ifdef _DEBUG
     std::cout << "BoardJBBS::create_newarticle_message " << ss_post.str() << std::endl;

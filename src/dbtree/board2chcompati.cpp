@@ -183,7 +183,7 @@ const std::string Board2chCompati::create_newarticle_message( const std::string&
     ss_post.clear();
     ss_post << "bbs="      << get_id()
             << "&subject=" << MISC::charset_url_encode( subject, get_charset() )
-            << "&time="    << time_modified()
+            << "&time="    << get_time_modified()
             << "&submit="  << MISC::charset_url_encode( "新規スレッド作成", get_charset() )
             << "&FROM="    << MISC::charset_url_encode( name, get_charset() )
             << "&mail="    << MISC::charset_url_encode( mail, get_charset() )

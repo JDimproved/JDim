@@ -71,7 +71,7 @@ void RuleLoader::create_loaderdata( JDLIB::LOADERDATA& data )
         data.port_proxy = DBTREE::get_proxy_port( m_url_boadbase );
         data.size_buf = CONFIG::get_loader_bufsize();
         data.timeout = CONFIG::get_loader_timeout();
-        if( ! date_modified().empty() ) data.modified = date_modified();
+        if( ! get_date_modified().empty() ) data.modified = get_date_modified();
     }
 }
 
@@ -79,5 +79,5 @@ void RuleLoader::create_loaderdata( JDLIB::LOADERDATA& data )
 // ロード後に呼び出される
 void RuleLoader::parse_data()
 {
-    DBTREE::board_set_modified_localrule( m_url_boadbase, date_modified() );
+    DBTREE::board_set_modified_localrule( m_url_boadbase, get_date_modified() );
 }

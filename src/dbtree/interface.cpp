@@ -218,10 +218,22 @@ const std::string DBTREE::board_id( const std::string& url )
     return DBTREE::get_board( url )->get_id();
 }
 
-// 更新時間
+// 更新時間( time_t )
 const time_t DBTREE::board_time_modified( const std::string& url )
 {
-    return DBTREE::get_board( url )->time_modified();
+    return DBTREE::get_board( url )->get_time_modified();
+}
+
+// 板の更新時間( 文字列 )
+const std::string DBTREE::board_date_modified( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_date_modified();
+}
+
+// 板の更新時間( 文字列 )をセット
+void DBTREE::board_set_date_modified( const std::string& url, const std::string& date )
+{
+    DBTREE::get_board( url )->set_date_modified( date );
 }
 
 const std::string& DBTREE::board_get_modified_localrule( const std::string& url )
@@ -671,7 +683,7 @@ const std::string DBTREE::article_since_date( const std::string& url )
 }
 
 
-// スレの更新時間( size_t )
+// スレの更新時間( time_t )
 const time_t DBTREE::article_time_modified( const std::string& url )
 {
     return DBTREE::get_article( url )->get_time_modified();

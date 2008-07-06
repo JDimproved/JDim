@@ -330,6 +330,11 @@ void BoardBase::update_url( const std::string& root, const std::string& path_boa
     m_root = root;
     m_path_board = path_board;
 
+    // modified 時刻をリセット
+    // 自動移転処理後に bbsmenu.html を読み込んだときに、bbsmenu.html の
+    // アドレスが古いと二度と自動移転処理しなくなる
+    set_date_modified( std::string() );
+
     // 配下の ArticleBase にも知らせてあげる
     std::list< ArticleBase* >::iterator it;
     for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->update_datbase( url_datbase() );
@@ -801,7 +806,7 @@ void BoardBase::create_loaderdata( JDLIB::LOADERDATA& data )
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
     data.basicauth = get_basicauth();
-    data.modified = date_modified();
+    data.modified = get_date_modified();
 }
 
 
@@ -861,12 +866,14 @@ void BoardBase::receive_finish()
                 if( mdiag.run() == Gtk::RESPONSE_YES ){
 
                     DBTREE::move_board( url_boardbase(), new_url );
+
+                    // 再読み込み
                     CORE::core_set_command( "open_board", url_subject() );
                 }
             }
         }
         else{
-            SKELETON::MsgDiag mdiag( NULL, "移転しました\n\n板リストを更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            SKELETON::MsgDiag mdiag( NULL, "移転しました\n\n板一覧を更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             mdiag.set_default_response( Gtk::RESPONSE_YES );
             if( mdiag.run() == Gtk::RESPONSE_YES ) CORE::core_set_command( "reload_bbsmenu" );
         }
@@ -1536,7 +1543,7 @@ void BoardBase::save_jdboard_info()
     std::string str_abone_regex_thread = MISC::listtostr( m_list_abone_regex_thread );
     
     std::ostringstream sstr;
-    sstr << "modified = " << date_modified() << std::endl
+    sstr << "modified = " << get_date_modified() << std::endl
          << "modified_localrule = " << m_modified_localrule << std::endl
          << "modified_setting = " << m_modified_setting << std::endl
          << "view_sort_column = " << m_view_sort_column << std::endl
@@ -1638,7 +1645,7 @@ void BoardBase::save_board_info()
     // time だけ更新する(他の情報は使わない)
     std::string bookmark = "nil";
     std::string hide = "nil";
-    std::string time = "(time . \"" + date_modified() + "\")";
+    std::string time = "(time . \"" + get_date_modified() + "\")";
     std::string logo = "nil";
 
     // board.info 読み込み

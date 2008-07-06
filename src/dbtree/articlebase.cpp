@@ -1054,7 +1054,7 @@ void ArticleBase::slot_load_finished()
     // nodetreeから情報取得
     m_str_code = m_nodetree->get_str_code();
     std::string m_old_modified = m_date_modified;
-    m_date_modified = m_nodetree->date_modified();
+    m_date_modified = m_nodetree->get_date_modified();
     if( m_number_before_load < m_number_load ) m_number_new = m_number_load - m_number_before_load;
     else m_number_new = 0;
 

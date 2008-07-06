@@ -108,7 +108,7 @@ void NodeTreeJBBS::create_loaderdata( JDLIB::LOADERDATA& data )
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
 
-    if( ! date_modified().empty() ) data.modified = date_modified();
+    if( ! get_date_modified().empty() ) data.modified = get_date_modified();
 
 #ifdef _DEBUG    
     std::cout << "NodeTreeJBBS::create_loader : " << data.url << std::endl;

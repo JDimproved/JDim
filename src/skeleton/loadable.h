@@ -98,8 +98,8 @@ namespace SKELETON
         void set_current_length( int length ){ m_current_length = length; }
 
         // 更新時刻関係
-        time_t time_modified();
-        const std::string& date_modified() const { return m_date_modified; }
+        const time_t get_time_modified();
+        const std::string& get_date_modified() const { return m_date_modified; }
         void set_date_modified( const std::string& date ){ m_date_modified = date; }
 
         // ローダーからコールバックされてコードなどを取得してから

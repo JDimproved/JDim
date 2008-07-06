@@ -84,7 +84,9 @@ namespace DBTREE
     // board 系
     const std::string board_path( const std::string& url );
     const std::string board_id( const std::string& url );
-    const time_t board_time_modified( const std::string& url );
+    const time_t board_time_modified( const std::string& url ); // 板の更新時間( time_t )
+    const std::string board_date_modified( const std::string& url ); // 板の更新時間( 文字列 )
+    void board_set_date_modified( const std::string& url, const std::string& date ); // 板の更新時間( 文字列 )をセット
     const std::string& board_get_modified_localrule( const std::string& url );
     void board_set_modified_localrule( const std::string& url, const std::string& modified );
     const std::string& board_get_modified_setting( const std::string& url );
@@ -156,7 +158,7 @@ namespace DBTREE
     const std::string article_key( const std::string& url ); // idから拡張子を取ったもの。書き込み用
     const time_t article_since_time( const std::string& url );
     const std::string article_since_date( const std::string& url );
-    const time_t article_time_modified( const std::string& url ); // 更新時間( size_t )
+    const time_t article_time_modified( const std::string& url ); // スレの更新時間( time_t )
     const std::string article_date_modified( const std::string& url ); // スレの更新時間( 文字列 )
     const int article_hour( const std::string& url );
     const time_t article_write_time( const std::string& url );

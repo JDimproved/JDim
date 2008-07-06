@@ -68,11 +68,17 @@ const bool Loadable::is_loading()
 //
 // 更新時刻
 //
-time_t Loadable::time_modified()
+const time_t Loadable::get_time_modified()
 {
     time_t time_out;
     time_out = MISC::datetotime( m_date_modified );
     if( time_out == 0 ) time_out = time( NULL ) - 600;
+
+#ifdef _DEBUG
+    std::cout << "Loadable::get_time_modified " << m_date_modified << std::endl
+              << " -> " << time_out << std::endl;
+#endif
+
     return time_out; 
 }
 

@@ -11,6 +11,7 @@
 #include "skeleton/msgdiag.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/misctime.h"
 
 #include "cache.h"
 #include "command.h"
@@ -43,6 +44,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
       m_label_line( false, "1レスの最大改行数：" ),
       m_label_byte( false, "1レスの最大バイト数：" ),
       m_entry_max_res( false, "最大レス数：" ),
+      m_label_modified( false, "最終更新日時 ：" ),
+      m_button_clearmodified( "日時クリア" ),
       m_label_samba( false, "書き込み規制秒数 (Samba24) ：" ),
       m_button_clearsamba( "秒数クリア" ),
       m_localrule( NULL )
@@ -123,12 +126,19 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     if( ! max_res ) m_entry_max_res.set_text( "未設定 " );
     else m_entry_max_res.set_text( MISC::itostr( max_res ) );
 
-    int samba_sec = DBTREE::board_samba_sec( get_url() );
+    if( DBTREE::board_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
+    else m_label_modified.set_text( MISC::timettostr( DBTREE::board_time_modified( get_url() ) ) );
+
+    m_button_clearmodified.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_modified ) );
+    m_hbox_modified.pack_start( m_label_modified );
+    m_hbox_modified.pack_start( m_button_clearmodified, Gtk::PACK_SHRINK );    
+
+    const int samba_sec = DBTREE::board_samba_sec( get_url() );
     if( ! samba_sec ) m_label_samba.set_text( "未取得" );
     else m_label_samba.set_text( MISC::itostr( samba_sec ) );
 
     m_button_clearsamba.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_samba ) );
-    m_hbox_samba.pack_start( m_label_samba, Gtk::PACK_SHRINK );
+    m_hbox_samba.pack_start( m_label_samba );
     m_hbox_samba.pack_start( m_button_clearsamba, Gtk::PACK_SHRINK );    
 
     m_vbox.set_border_width( 16 );
@@ -141,6 +151,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox.pack_start( m_label_line, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_byte, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_entry_max_res, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_live, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_samba, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
@@ -283,10 +294,22 @@ Preferences::~Preferences()
 }
 
 
+void Preferences::slot_clear_modified()
+{
+    DBTREE::board_set_date_modified( get_url(), "" );
+
+    if( DBTREE::board_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
+    else m_label_modified.set_text( MISC::timettostr( DBTREE::board_time_modified( get_url() ) ) );
+}
+
+
 void Preferences::slot_clear_samba()
 {
     DBTREE::board_set_samba_sec( get_url(), 0 );
-    m_label_samba.set_text( MISC::itostr( DBTREE::board_samba_sec( get_url() ) ) );
+
+    const int samba_sec = DBTREE::board_samba_sec( get_url() );
+    if( ! samba_sec ) m_label_samba.set_text( "未取得" );
+    else m_label_samba.set_text( MISC::itostr( samba_sec ) );
 }
 
 

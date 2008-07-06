@@ -152,5 +152,5 @@ void NodeTree2chCompati::create_loaderdata( JDLIB::LOADERDATA& data )
     data.timeout = CONFIG::get_loader_timeout();
     data.basicauth = DBTREE::board_basicauth( get_url() );
 
-    if( ! date_modified().empty() ) data.modified = date_modified();
+    if( ! get_date_modified().empty() ) data.modified = get_date_modified();
 }

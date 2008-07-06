@@ -91,6 +91,10 @@ namespace BOARD
 
         SKELETON::LabelEntry m_entry_max_res;
 
+        Gtk::HBox m_hbox_modified;
+        SKELETON::LabelEntry m_label_modified;
+        Gtk::Button m_button_clearmodified;
+
         Gtk::HBox m_hbox_samba;
         SKELETON::LabelEntry m_label_samba;
         Gtk::Button m_button_clearsamba;
@@ -127,6 +131,7 @@ namespace BOARD
         virtual ~Preferences();
 
       private:
+        void slot_clear_modified();
         void slot_clear_samba();
         void slot_delete_cookie();
         void slot_check_live();

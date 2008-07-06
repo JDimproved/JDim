@@ -141,7 +141,7 @@ const std::string Board2ch::create_newarticle_message( const std::string& subjec
         ss_post << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
     }
 
-    ss_post << "&time="    << time_modified()
+    ss_post << "&time="    << get_time_modified()
             << "&submit="  << MISC::charset_url_encode( "新規スレッド作成", get_charset() )
             << "&FROM="    << MISC::charset_url_encode( name, get_charset() )
             << "&mail="    << MISC::charset_url_encode( mail, get_charset() )

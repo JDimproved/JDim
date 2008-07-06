@@ -73,7 +73,7 @@ void SettingLoader::create_loaderdata( JDLIB::LOADERDATA& data )
         data.port_proxy = DBTREE::get_proxy_port( m_url_boadbase );
         data.size_buf = CONFIG::get_loader_bufsize();
         data.timeout = CONFIG::get_loader_timeout();
-        if( ! date_modified().empty() ) data.modified = date_modified();
+        if( ! get_date_modified().empty() ) data.modified = get_date_modified();
     }
 }
 
@@ -87,7 +87,7 @@ void SettingLoader::parse_data()
     m_line_number = cf.get_option( "BBS_LINE_NUMBER", 0 );
     m_message_count = cf.get_option( "BBS_MESSAGE_COUNT", 0 );
 
-    DBTREE::board_set_modified_setting( m_url_boadbase, date_modified() );
+    DBTREE::board_set_modified_setting( m_url_boadbase, get_date_modified() );
 
 #ifdef _DEBUG
     std::cout << "SettingLoader::parse url = " << get_url() << std::endl
