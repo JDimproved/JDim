@@ -20,6 +20,11 @@
 
 using namespace SKELETON;
 
+enum
+{
+    MIN_AAMENU_LINES = 12
+};
+
 
 EditTextView::EditTextView() :
     Gtk::TextView(),
@@ -608,11 +613,18 @@ void EditTextView::show_aalist_popup()
 //
 void EditTextView::slot_popup_aamenu_pos( int& x, int& y, bool& push_in )
 {
-    Gdk::Rectangle rect = get_cursor_root_origin();
+    push_in = false;
+
+    const Gdk::Rectangle rect = get_cursor_root_origin();
+    const int line_height = rect.get_height();
+    const int sh = get_screen()->get_height();
+    const int min_height = MIN( CORE::get_aamanager()->get_size(), MIN_AAMENU_LINES ) * line_height;
 
     x = rect.get_x();
-    y = rect.get_y() + rect.get_height();
-    push_in = false;
+    y = rect.get_y() + line_height;
+
+    // 最低でも MIN_AAMENU_LINES 行よりも表示領域が高くなるようにする
+    if( y + min_height > sh ) y = sh - min_height;
 }
 
 
