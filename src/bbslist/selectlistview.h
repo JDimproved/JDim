@@ -11,12 +11,22 @@
 
 namespace BBSLIST
 {
+    // 親の SelectListDialog に送るクローズ信号
+    typedef sigc::signal< void > SIG_CLOSE_DIALOG;
+
     class SelectListView : public BBSListViewBase
     {
+        SIG_CLOSE_DIALOG m_sig_close_dialog;
+
       public:
 
         SelectListView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
         virtual ~SelectListView(){}
+
+        SIG_CLOSE_DIALOG sig_close_dialog() { return m_sig_close_dialog; }
+
+        virtual void close_view();
+        virtual void operate_view( const int& control );
 
       private:
 

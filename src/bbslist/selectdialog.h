@@ -11,12 +11,12 @@
 
 namespace BBSLIST
 {
-    class BBSListViewBase;
+    class SelectListView;
     
     // ダイアログ
     class SelectListDialog : public Gtk::Dialog
     {
-        BBSListViewBase* m_selectview;
+        SelectListView* m_selectview;
 
       public:
 
@@ -26,6 +26,10 @@ namespace BBSLIST
         Gtk::TreePath get_path();
 
         virtual int run();
+
+      private:
+
+        void slot_close_dialog();
     };
 };
 

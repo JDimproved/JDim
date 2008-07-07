@@ -7,6 +7,7 @@
 #include "toolbar.h"
 
 #include "global.h"
+#include "controlid.h"
 
 using namespace BBSLIST;
 
@@ -15,6 +16,25 @@ SelectListView::SelectListView( const std::string& url, const std::string& arg1,
 {
     // D&D可
     get_treeview().set_reorderable_view( true );
+}
+
+
+void SelectListView::close_view()
+{
+#ifdef _DEBUG
+    std::cout << "SelectListView::close_view\n";
+#endif
+
+    // ダイアログを閉じる
+    m_sig_close_dialog.emit();
+}
+
+
+void  SelectListView::operate_view( const int& control )
+{
+    // ESCでダイアログを閉じる
+    if( control == CONTROL::Cancel ) close_view();
+    else BBSListViewBase::operate_view( control );
 }
 
 

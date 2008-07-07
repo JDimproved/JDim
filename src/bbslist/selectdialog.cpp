@@ -1,7 +1,7 @@
 // ライセンス: GPL2
 
 #include "selectdialog.h"
-#include "bbslistviewbase.h"
+#include "selectlistview.h"
 
 #include "viewfactory.h"
 
@@ -12,12 +12,14 @@ using namespace BBSLIST;
 
 
 SelectListDialog::SelectListDialog( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& store )
+    : m_selectview( NULL )
 {
-    m_selectview = dynamic_cast< BBSListViewBase* > ( CORE::ViewFactory( CORE::VIEW_SELECTLIST, url ) );
+    m_selectview = dynamic_cast< SelectListView* > ( CORE::ViewFactory( CORE::VIEW_SELECTLIST, url ) );
     if( m_selectview ){
         m_selectview->copy_treestore( store );
         get_vbox()->pack_start( *m_selectview );
         m_selectview->focus_view();
+        m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &SelectListDialog::slot_close_dialog ) );
     }
 
     add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
@@ -62,4 +64,10 @@ int SelectListDialog::run()
 #endif
 
     return ret;
+}
+
+
+void SelectListDialog::slot_close_dialog()
+{
+    hide();
 }
