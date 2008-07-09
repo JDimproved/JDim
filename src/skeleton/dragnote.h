@@ -140,6 +140,8 @@ namespace SKELETON
 
       private:
 
+        virtual bool on_expose_event( GdkEventExpose* event );
+
         // ツールバー取得
         SKELETON::ToolBar* get_toolbar( int page );
 

@@ -74,6 +74,18 @@ void DragableNoteBook::focus_out()
 
 
 //
+// テーマによっては m_notebook_toolbar が m_notebook_view に上書きされて
+// 消えてしまうのでもう一度 m_notebook_toolbar を描画する
+//
+bool DragableNoteBook::on_expose_event( GdkEventExpose* event )
+{
+    bool ret =  Gtk::VBox::on_expose_event( event );
+    propagate_expose( m_notebook_toolbar, event );
+    return ret;
+}
+
+
+//
 // DragableNoteBook を構成している各Notebookの高さ
 // 及びタブの高さと位置を取得 ( 枠の描画用 )
 //
