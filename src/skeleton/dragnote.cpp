@@ -80,7 +80,8 @@ void DragableNoteBook::focus_out()
 bool DragableNoteBook::on_expose_event( GdkEventExpose* event )
 {
     bool ret =  Gtk::VBox::on_expose_event( event );
-    propagate_expose( m_notebook_toolbar, event );
+
+    if( m_notebook_toolbar.get_parent() == this ) propagate_expose( m_notebook_toolbar, event );
     return ret;
 }
 
