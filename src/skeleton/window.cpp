@@ -110,7 +110,7 @@ void JDWindow::init_win()
 
         set_skip_taskbar_hint( true );
         resize( get_width_win(), 1 );
-        move( get_x_win(), get_y_win() );
+        move_win( get_x_win(), get_y_win() );
         focus_out();
 
         property_window_position().set_value( Gtk::WIN_POS_NONE );
@@ -122,7 +122,7 @@ void JDWindow::init_win()
     // 通常のウィンドウ
     else{
         resize( get_width_win(), get_height_win() );
-        move( get_x_win(), get_y_win() );
+        move_win( get_x_win(), get_y_win() );
         if( is_maximized_win() ) maximize_win();
         property_window_position().set_value( Gtk::WIN_POS_NONE );
         set_shown_win( true );
@@ -235,6 +235,62 @@ void JDWindow::maximize_win()
 {
     set_maximized_win( true );
     maximize();
+}
+
+
+//
+// ウィンドウ移動
+// 
+void JDWindow::move_win( const int x, const int y )
+{
+#ifdef _DEBUG
+    std::cout << "JDWindow::move_win "
+              << "x = " << x << " y = " << y << std::endl;
+#endif
+
+    move( x, y );
+    set_x_win( x );
+    set_y_win( y );
+
+    // compiz 環境などでは move() で指定した座標がズレるので補正する
+    m_win_moved = true;
+}
+
+
+//
+// ウィンドウ座標取得
+//
+void JDWindow::set_win_pos()
+{
+    if( ! get_window() ) return;
+
+    int x,y;
+    get_window()->get_root_origin( x, y );
+
+#ifdef _DEBUG
+    std::cout << "JDWindow::set_win_pos "
+              << "x = " << x << " y = " << y << std::endl;
+#endif
+
+    // compiz 環境などでは move() で指定した座標がズレるので補正する
+    if( m_win_moved ){
+
+        if( x != get_x_win() && y != get_y_win() ){
+
+            move( get_x_win() - ( x - get_x_win() ), get_y_win() - ( y - get_y_win() ) );
+            x = get_x_win();
+            y = get_y_win();
+
+#ifdef _DEBUG
+            std::cout << "moved x = " << x << " y = " << y << std::endl;
+#endif
+        }
+
+        m_win_moved = false;
+    }
+
+    set_x_win( x );
+    set_y_win( y );
 }
 
 
@@ -387,7 +443,7 @@ void JDWindow::focus_in()
         if( ! is_maximized_win() && get_window() ){
             int x, y;
             get_window()->get_root_origin( x, y );
-            if( x != get_x_win() || y != get_y_win() ) move( get_x_win(), get_y_win() );
+            if( x != get_x_win() || y != get_y_win() ) move_win( get_x_win(), get_y_win() );
         }
 
 
@@ -504,12 +560,7 @@ bool JDWindow::on_delete_event( GdkEventAny* event )
         else{
 
             // hideする前に座標保存
-            if( ! is_maximized_win() && ! is_iconified_win() && get_window() ){
-                int x, y;
-                get_window()->get_root_origin( x, y );
-                set_x_win( x );
-                set_y_win( y );
-            }
+            if( ! is_maximized_win() && ! is_iconified_win() && get_window() ) set_win_pos();
 
             hide();
             m_mode = JDWIN_HIDE;
@@ -584,9 +635,6 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
     std::cout << "JDWindow::on_configure_event\n"
               << "mode = " << m_mode
               << " w = " << width_new << " h = " << height_new
-              << " border = " << border << " title = " << title_height 
-              << " rx = " << rect.get_x() << " ry = " << rect.get_y() 
-              << " rw = " << rect.get_width() << " rh = " << rect.get_height() 
               << " min_height = " << min_height << "\n------->\n";
 #endif
 
@@ -599,12 +647,7 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
         // 最大、最小化しているときは除く
         else if( ! is_maximized_win() && ! is_iconified_win() ){
 
-            if( get_window() ){
-                int x,y;
-                get_window()->get_root_origin( x, y );
-                set_x_win( x );
-                set_y_win( y );
-            }
+            set_win_pos();
 
             // サイズ変更
             if( ( ! m_fold_when_focusout || m_mode == JDWIN_NORMAL || m_mode == JDWIN_FOLD )

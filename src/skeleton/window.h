@@ -15,6 +15,8 @@ namespace SKELETON
 {
     class JDWindow : public Gtk::Window
     {
+        bool m_win_moved;
+
         // フォーカスアウト時の折りたたみ処理で用いるメンバ変数
         bool m_fold_when_focusout; // フォーカスアウトしたときにウィンドウを畳むか
         bool m_boot;
@@ -121,6 +123,9 @@ namespace SKELETON
         void maximize_win();
 
         bool slot_idle();
+
+        void move_win( const int x, const int y );
+        void set_win_pos();
     };
 }
 
