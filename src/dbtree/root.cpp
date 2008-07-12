@@ -26,6 +26,8 @@
 
 #include <sstream>
 #include <cstring>
+#include <sys/types.h> // chmod
+#include <sys/stat.h>
 
 enum
 {
@@ -991,6 +993,9 @@ void Root::save_etc()
     if( ! CACHE::save_rawdata( file_etctxt, etcboard ) ){
         MISC::ERRMSG( "failed to save " + file_etctxt );
     }
+
+    // BASIC認証のパスワード対策
+    else chmod( file_etctxt.c_str(), S_IWUSR | S_IRUSR );
 
 #ifdef _DEBUG
     std::cout << etcboard << std::endl;
