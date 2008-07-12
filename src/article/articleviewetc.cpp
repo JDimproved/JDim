@@ -601,6 +601,8 @@ void ArticleViewPostlog::show_view()
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+
+    goto_bottom();
 }
 
 
@@ -617,5 +619,6 @@ void ArticleViewPostlog::relayout()
     drawarea()->clear_screen();
     show_postlog( m_num );
     drawarea()->redraw_view();
+    goto_bottom();
 }
 

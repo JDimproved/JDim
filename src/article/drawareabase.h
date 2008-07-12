@@ -125,6 +125,7 @@ namespace ARTICLE
         SCROLLINFO m_scrollinfo;
         guint32 m_wheel_scroll_time; // 前回ホイールを回した時刻
         int m_goto_num_reserve; // 初期化時のジャンプ予約(レス番号)
+        bool m_goto_bottom_reserve; // 初期化時のジャンプ予約(底)
         int m_pre_pos_y; // ひとつ前のスクロールバーの位置。スクロールした時の差分量計算に使用する
         std::vector< int > m_jump_history;  // ジャンプ履歴
 

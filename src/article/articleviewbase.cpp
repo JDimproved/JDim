@@ -1365,7 +1365,6 @@ void ArticleViewBase::show_postlog( const int num )
         if( no == num ) html_header += MISC::itostr( i ) + " ";
         else html_header += std::string( "<a href=\"" ) + PROTO_POSTLOG + MISC::itostr( no ) + "\">" + MISC::itostr( i ) + "</a> ";
     }
-    html_header += "<br>";
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::show_postlog " << num << " / " << maxno << std::endl
@@ -1374,7 +1373,7 @@ void ArticleViewBase::show_postlog( const int num )
 
     std::string html = MESSAGE::get_log_manager()->get_postlog( num );
     if( html.empty() ) html = "書き込みログがありません";
-    else html = html_header + html;
+    else html = html_header + "<br>" + html + "<hr><br>" + html_header;
 
     append_html( html );
 }

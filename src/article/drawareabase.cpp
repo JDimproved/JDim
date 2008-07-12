@@ -201,6 +201,7 @@ void DrawAreaBase::clear()
     m_pre_pos_y = 0;
     m_key_press = false;
     m_goto_num_reserve = 0;
+    m_goto_bottom_reserve = false;
     m_wheel_scroll_time = 0;
     m_caret_pos = CARET_POSITION();
     m_caret_pos_pre = CARET_POSITION();
@@ -911,6 +912,7 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
 
     // 予約されているならジャンプ予約を実行
     if( m_goto_num_reserve ) goto_num( m_goto_num_reserve );
+    if( m_goto_bottom_reserve ) goto_bottom();
 
     return true;
 }
@@ -2636,7 +2638,23 @@ void DrawAreaBase::goto_new()
 
 void DrawAreaBase::goto_bottom()
 {
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::goto_bottom\n";
+#endif
+
     if( m_vscrbar ){
+
+        // まだ初期化中の場合はジャンプの予約をしておいて、初期化が終わったら時点でもう一回呼び出し
+        if( ! m_backscreen ){
+
+            m_goto_bottom_reserve = true;
+
+#ifdef _DEBUG
+            std::cout << "goto_bottom : reserve\n";
+#endif
+            return;
+        }
+        m_goto_bottom_reserve = false;
 
         m_jump_history.push_back( get_seen_current() );
 
