@@ -32,6 +32,7 @@ JDTreeView::JDTreeView( const std::string& fontname, const int colorid_text, con
     : JDTreeViewBase(),
       m_reorderable( false ),
       m_drag( false ),
+      m_use_bg_even( false ),
       m_popup_win( NULL )
 {
 #ifdef _DEBUG

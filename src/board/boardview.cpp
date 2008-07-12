@@ -572,7 +572,7 @@ void BoardView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::i
 //    std::cout << "BoardView::slot_cell_data path = " << path.to_string() << std::endl;
 #endif
 
-    // ハイライト色
+    // ハイライト色 ( 抽出状態 )
     if( row[ m_columns.m_col_drawbg ] ){
         cell->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
         cell->property_cell_background_set() = true;
