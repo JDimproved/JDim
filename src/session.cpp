@@ -241,6 +241,10 @@ void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls, const st
 // ファイル等からディストリ名を取得
 std::string get_distribution_name_from_environment()
 {
+#ifdef _DEBUG
+    std::cout << "SESSION::get_distribution_name_from_environment\n";
+#endif
+
     std::string tmp;
     std::string text_data;
 
@@ -541,9 +545,6 @@ void SESSION::init_session()
 
     popupmenu_shown = false;
 
-    // ディストリ名をセット
-    distribution_name = get_distribution_name_from_environment();
-
     // WM 判定
     // TODO: 環境変数で判定できない場合の判定方法を考える
     win_manager = WM_UNKNON;
@@ -760,7 +761,11 @@ const bool SESSION::is_quitting(){ return quitting; }
 void SESSION::set_quitting( bool quit ){ quitting = quit; }
 
 // ディストリ名取得
-const std::string& SESSION::get_distribution_name(){ return distribution_name; }
+const std::string& SESSION::get_distribution_name()
+{
+    if( distribution_name.empty() ) distribution_name = get_distribution_name_from_environment();
+    return distribution_name;
+}
 
 // WM 判定
 const int SESSION::get_wm(){ return win_manager; }
