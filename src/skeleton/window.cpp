@@ -46,7 +46,7 @@ using namespace SKELETON;
 JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
       m_fold_when_focusout( fold_when_focusout ),
-      m_boot( fold_when_focusout ),
+      m_boot( true ),
       m_enable_fold( m_fold_when_focusout ),
       m_transient( false ),
       m_mode( JDWIN_INIT ),
@@ -126,6 +126,8 @@ void JDWindow::init_win()
         if( is_maximized_win() ) maximize_win();
         property_window_position().set_value( Gtk::WIN_POS_NONE );
         set_shown_win( true );
+
+        Glib::signal_idle().connect( sigc::mem_fun( *this, &JDWindow::slot_idle ) );
     }
 }
 
@@ -133,20 +135,24 @@ void JDWindow::init_win()
 bool JDWindow::slot_idle()
 {
     // ブート完了
-    if( m_fold_when_focusout && m_boot ){
+    if( m_boot ){
 
 #ifdef _DEBUG
         std::cout << "----------------\nJDWinow::slot_idle boot end mode = " << m_mode << std::endl;
 #endif
         m_boot = false;
+        move_win( get_x_win(), get_y_win() );
 
-        // 遅延させて clock_in()の中でフォーカスをメインウィンドウに戻す
-        if( m_mode == JDWIN_FOLD ){
-            m_mode = JDWIN_UNGRAB;
-            m_counter = 0;
+        if( m_fold_when_focusout ){
+
+            // 遅延させて clock_in()の中でフォーカスをメインウィンドウに戻す
+            if( m_mode == JDWIN_FOLD ){
+                m_mode = JDWIN_UNGRAB;
+                m_counter = 0;
+            }
+
+            CORE::core_set_command( "window_boot_fin" );
         }
-
-        CORE::core_set_command( "window_boot_fin" );
     }
 
     return false;
@@ -254,6 +260,8 @@ void JDWindow::move_win( const int x, const int y )
 
     // compiz 環境などでは move() で指定した座標がズレるので補正する
     m_win_moved = true;
+    m_delta_x = 0;
+    m_delta_y = 0;
 }
 
 
@@ -269,24 +277,39 @@ void JDWindow::set_win_pos()
 
 #ifdef _DEBUG
     std::cout << "JDWindow::set_win_pos "
-              << "x = " << x << " y = " << y << std::endl;
+              << "x = " << x << " / " << get_x_win() << ", y = " << y << " / " << get_y_win() << std::endl;
 #endif
 
     // compiz 環境などでは move() で指定した座標がズレるので補正する
     if( m_win_moved ){
 
-        if( x != get_x_win() && y != get_y_win() ){
+        if( x != get_x_win() || y != get_y_win() ){
 
-            move( get_x_win() - ( x - get_x_win() ), get_y_win() - ( y - get_y_win() ) );
-            x = get_x_win();
-            y = get_y_win();
+            // 補正に失敗した場合は座標を再セット
+            if( m_delta_x || m_delta_y ) move_win( get_x_win(), get_y_win() );
+            else{
+
+                const int delta_x = x - get_x_win();
+                const int delta_y = y - get_y_win();
+
+                if( delta_x < 0 || delta_y < 0 ) move_win( get_x_win(), get_y_win() );
+                else{
+
+                    m_delta_x = delta_x;
+                    m_delta_y = delta_y;
+
+                    move( get_x_win() - m_delta_x, get_y_win() - m_delta_y );
 
 #ifdef _DEBUG
-            std::cout << "moved x = " << x << " y = " << y << std::endl;
+                    std::cout << "!!! moved x = " << get_x_win() << " y = " << get_y_win() << " dx = " << m_delta_x << " dy = " << m_delta_y << std::endl;
 #endif
-        }
+                    }
+            }
 
-        m_win_moved = false;
+            x = get_x_win();
+            y = get_y_win();
+        }
+        else m_win_moved = false;
     }
 
     set_x_win( x );
@@ -631,14 +654,16 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
     int min_height = 0;
     if( m_scrwin ) min_height = m_vbox.get_height() - m_scrwin->get_height() + mrg;
 
-#ifdef _DEBUG
-    std::cout << "JDWindow::on_configure_event\n"
-              << "mode = " << m_mode
-              << " w = " << width_new << " h = " << height_new
-              << " min_height = " << min_height << "\n------->\n";
-#endif
-
     if( ! m_boot ){
+
+#ifdef _DEBUG
+    std::cout << "JDWindow::on_configure_event"
+              << " boot = " << m_boot
+              << " mode = " << m_mode
+              << " x = " << event->x << " y = " << event->y
+              << " w = " << width_new << " h = " << height_new
+              << " min_height = " << min_height << std::endl;
+#endif
 
         // 最大 -> 通常に戻る時はリサイズをキャンセル
         if( m_mode == JDWIN_UNMAX ) m_mode = JDWIN_NORMAL;
@@ -657,15 +682,15 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
                 set_height_win( height_new );
             }
         }
-    }
 
 #ifdef _DEBUG
-    std::cout << " mode = " << m_mode << " show = " << is_shown_win() << std::endl
+    std::cout << "configure fin --> mode = " << m_mode << " show = " << is_shown_win() 
               << " maximized = " << is_maximized_win()
               << " iconified = " << is_iconified_win()
               << " x = " << get_x_win() << " y = " << get_y_win()
               << " w = " << get_width_win() << " height = " << get_height_win() << std::endl;
 #endif     
+    }
 
     return Gtk::Window::on_configure_event( event );
 }

@@ -16,6 +16,8 @@ namespace SKELETON
     class JDWindow : public Gtk::Window
     {
         bool m_win_moved;
+        int m_delta_x;
+        int m_delta_y;
 
         // フォーカスアウト時の折りたたみ処理で用いるメンバ変数
         bool m_fold_when_focusout; // フォーカスアウトしたときにウィンドウを畳むか
