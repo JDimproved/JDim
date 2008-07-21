@@ -5,6 +5,8 @@
 
 #include "window.h"
 
+#include "config/globalconf.h"
+
 #include "global.h"
 #include "session.h"
 #include "dndmanager.h"
@@ -45,6 +47,7 @@ using namespace SKELETON;
 // メッセージウィンドウでは m_mginfo が不要なので need_mginfo = false になる
 JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
+      m_win_moved( false ),
       m_fold_when_focusout( fold_when_focusout ),
       m_boot( true ),
       m_enable_fold( m_fold_when_focusout ),
@@ -249,6 +252,8 @@ void JDWindow::maximize_win()
 // 
 void JDWindow::move_win( const int x, const int y )
 {
+    if( ! CONFIG::get_manage_winpos() ) return;
+
 #ifdef _DEBUG
     std::cout << "JDWindow::move_win "
               << "x = " << x << " y = " << y << std::endl;

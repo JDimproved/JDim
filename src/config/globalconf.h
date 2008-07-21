@@ -29,11 +29,15 @@ namespace CONFIG
     
     // 前回開いたviewを復元するか
     const bool get_restore_board();
-    void set_restore_board( bool restore );
+    void set_restore_board( const bool restore );
     const bool get_restore_article();
-    void set_restore_article( bool restore );
+    void set_restore_article( const bool restore );
     const bool get_restore_image();
-    void set_restore_image( bool restore );
+    void set_restore_image( const bool restore );
+
+    // 自前でウィンドウ配置を管理する
+    const bool get_manage_winpos();
+    void set_manage_winpos( const bool manage );
 
     // 色 ( # + 12桁の16進数 の形式 )
     const std::string& get_color( int id );

@@ -65,11 +65,14 @@ void CONFIG::restore_conf()
 
 
 const bool CONFIG::get_restore_board(){ return get_confitem()->restore_board; }
-void CONFIG::set_restore_board( bool restore ){ get_confitem()->restore_board = restore; }
+void CONFIG::set_restore_board( const bool restore ){ get_confitem()->restore_board = restore; }
 const bool CONFIG::get_restore_article(){ return get_confitem()->restore_article; }
-void CONFIG::set_restore_article( bool restore ){ get_confitem()->restore_article = restore; }
+void CONFIG::set_restore_article( const bool restore ){ get_confitem()->restore_article = restore; }
 const bool CONFIG::get_restore_image(){ return get_confitem()->restore_image; }
-void CONFIG::set_restore_image( bool restore ){ get_confitem()->restore_image = restore; }
+void CONFIG::set_restore_image( const bool restore ){ get_confitem()->restore_image = restore; }
+
+const bool CONFIG::get_manage_winpos(){ return get_confitem()->manage_winpos; }
+void CONFIG::set_manage_winpos( const bool manage ){ get_confitem()->manage_winpos = manage; }
 
 
 // 色

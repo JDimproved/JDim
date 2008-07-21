@@ -28,6 +28,9 @@ namespace CONFIG
         bool restore_article;
         bool restore_image;
 
+        // 自前でウィンドウ配置を管理する
+        bool manage_winpos;
+
         // フォント
         std::vector< std::string > fontname;
 

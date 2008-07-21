@@ -16,6 +16,7 @@ namespace CONFIG
         CONF_RESTORE_BOARD = 0,     // スレ一覧を復元
         CONF_RESTORE_ARTICLE = 0,   // スレを復元
         CONF_RESTORE_IMAGE = 0,     // 画像を復元
+        CONF_MANAGE_WINPOS = 1,    // 自前でウィンドウ配置を管理する
         CONF_REF_PREFIX_SPACE = 1, // 参照文字( CONF_REF_PREFIX ) の後のスペースの数
         CONF_USE_PROXY_FOR2CH = 0, // 2ch 読み込み用プロクシを使用するか
         CONF_PROXY_PORT_FOR2CH = 8080, // 2ch 読み込み用プロクシポート番号

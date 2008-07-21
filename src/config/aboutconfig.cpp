@@ -184,6 +184,7 @@ void AboutConfig::append_rows()
     append_row( "起動時に開いていたスレ一覧を復元する", get_confitem()->restore_board, CONF_RESTORE_BOARD );
     append_row( "起動時に開いていたスレを復元する", get_confitem()->restore_article, CONF_RESTORE_ARTICLE );
     append_row( "起動時に開いていた画像を復元する", get_confitem()->restore_image, CONF_RESTORE_IMAGE );
+    append_row( "自前でウィンドウ配置を管理する", get_confitem()->manage_winpos, CONF_MANAGE_WINPOS );
 #ifdef HAVE_MIGEMO_H
     append_row( "migomoの辞書ファイルの場所(migemo使用時のみ)", get_confitem()->migemodict_path, CONF_MIGEMO_PATH );
 #endif

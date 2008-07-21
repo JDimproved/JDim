@@ -87,6 +87,9 @@ const bool ConfigItems::load()
     restore_article = cf.get_option( "restore_article", CONF_RESTORE_ARTICLE );
     restore_image = cf.get_option( "restore_image", CONF_RESTORE_IMAGE );
 
+    // 自前でウィンドウ配置を管理する
+    manage_winpos = cf.get_option( "manage_winpos", CONF_MANAGE_WINPOS );
+
     std::string defaultfont = get_default_font();
 
     // フォント
@@ -424,6 +427,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "restore_board", restore_board );
     cf.update( "restore_article", restore_article );
     cf.update( "restore_image", restore_image );
+    cf.update( "manage_winpos", manage_winpos );
     cf.update( "url_jdhp", url_jdhp );
     cf.update( "url_login2ch", url_login2ch );
     cf.update( "url_bbsmenu", url_bbsmenu );
