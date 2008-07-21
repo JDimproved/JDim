@@ -59,14 +59,14 @@ void KeyConfig::load_conf()
     JDLIB::ConfLoader cf( CACHE::path_keyconf(), std::string() );
 
     // 共通設定
-    SETMOTION( "Up", "k Up" );
-    SETMOTION( "Down", "j Down" );
+    SETMOTION( "Up", "k Up KP_Up" );
+    SETMOTION( "Down", "j Down KP_Down" );
 
-    SETMOTION( "PageUp", "Page_Up" );
-    SETMOTION( "PageDown", "Page_Down" );    
+    SETMOTION( "PageUp", "Page_Up KP_Prior" );
+    SETMOTION( "PageDown", "Page_Down KP_Next" );    
 
-    SETMOTION( "Right", "l Right" );
-    SETMOTION( "Left", "h Left" );
+    SETMOTION( "Right", "l Right KP_Right" );
+    SETMOTION( "Left", "h Left KP_left" );
 
     SETMOTION( "TabRight", "Ctrl+Page_Down Ctrl+Tab Ctrl+Left_Tab Ctrl+l Ctrl+Right" );
     SETMOTION( "TabLeft", "Ctrl+Page_Up Ctrl+Shift+Tab Ctrl+Shift+Left_Tab Ctrl+h Ctrl+Left" );
@@ -84,20 +84,20 @@ void KeyConfig::load_conf()
     SETMOTION( "ShowMenuBar", "F8" );
     SETMOTION( "ShowSideBar", "F9" );
 
-    SETMOTION( "Home", "Home g <" );
-    SETMOTION( "End", "End G >" );
+    SETMOTION( "Home", "Home g < KP_Home" );
+    SETMOTION( "End", "End G > KP_End" );
 
     SETMOTION( "Back", "BackSpace" );
 
     SETMOTION( "Quit", "Ctrl+w q" );
     SETMOTION( "Save", "Ctrl+s" );
-    SETMOTION( "Delete", "Delete" );
+    SETMOTION( "Delete", "Delete KP_Delete" );
     SETMOTION( "Reload", "F5 s" );
     SETMOTION( "StopLoading", "Escape" ); // = CONTROL::Cancel
     SETMOTION( "Copy", "Ctrl+c" );
     SETMOTION( "SelectAll", "Ctrl+a" );
 
-    SETMOTION( "Search", "Ctrl+f /" );
+    SETMOTION( "Search", "Ctrl+f / KP_Divide" );
     SETMOTION( "SearchInvert", "?" );
     SETMOTION( "SearchNext", "Enter F3 Ctrl+g n" );
     SETMOTION( "SearchPrev", "Shift+Enter Ctrl+F3 Ctrl+G N" );
@@ -118,10 +118,10 @@ void KeyConfig::load_conf()
 
     // ARTICLE
     SETMOTION( "UpMid", "u" );
-    SETMOTION( "UpFast", "b Page_Up" );
+    SETMOTION( "UpFast", "b Page_Up KP_Prior" );
 
     SETMOTION( "DownMid", "d" );
-    SETMOTION( "DownFast", "Page_Down Space" );
+    SETMOTION( "DownFast", "Page_Down Space KP_Next" );
 
     SETMOTION( "PrevRes", "p" );
     SETMOTION( "NextRes", "n" );
@@ -239,8 +239,25 @@ void KeyConfig::set_one_motion( const std::string& name, const std::string& str_
         else if( str_key == "Menu" ) motion = GDK_Menu;
 
         else if( str_key == "Plus" ) motion = '+';
-        else if( str_key == "KP_Add" ) motion = GDK_KP_Add;
-        else if( str_key == "KP_Subtract" ) motion = GDK_KP_Subtract;
+
+        // テンキー
+        else if( str_key == "KP_Divide" ) motion = GDK_KP_Divide;     // "/"
+        else if( str_key == "KP_Multiply" ) motion = GDK_KP_Multiply; // "*"
+        else if( str_key == "KP_Subtract" ) motion = GDK_KP_Subtract; // "-"
+        else if( str_key == "KP_Home" ) motion = GDK_KP_Home;         // "Home(7)"
+        else if( str_key == "KP_Up" ) motion = GDK_KP_Up;             // "↑(8)"
+        else if( str_key == "KP_Prior" ) motion = GDK_KP_Prior;       // "Pg UP(9)"
+        else if( str_key == "KP_Add" ) motion = GDK_KP_Add;           // "+"
+        else if( str_key == "KP_Left" ) motion = GDK_KP_Left;         // "←(4)"
+        //else if( str_key == "KP_Begin" ) motion = GDK_KP_Begin;       // "(5)"
+        else if( str_key == "KP_Right" ) motion = GDK_KP_Right;       // "→(6)"
+        else if( str_key == "KP_End" ) motion = GDK_KP_End;           // "End(1)"
+        else if( str_key == "KP_Down" ) motion = GDK_KP_Down;         // "↓(2)"
+        else if( str_key == "KP_Next" ) motion = GDK_KP_Next;         // "Pg Dn(3)"
+        else if( str_key == "KP_Enter" ) motion = GDK_KP_Enter;       // "Enter"
+        else if( str_key == "KP_Insert" ) motion = GDK_KP_Insert;     // "Ins(0)"
+        else if( str_key == "KP_Delete" ) motion = GDK_KP_Delete;     // "Del(.)"
+
         else motion = str_key[ 0 ];
 
         // 大文字やshiftが必要な文字の時はshiftも有効にする
