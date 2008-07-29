@@ -7,7 +7,9 @@ libskeleton_a_SOURCES = \
 	dispatchable.cpp \
 	loadable.cpp \
 	treeviewbase.cpp \
-	treeview.cpp \
+	dragtreeview.cpp \
+	edittreeview.cpp \
+	editcolumns.cpp \
 	view.cpp \
 	editview.cpp \
 	dragnote.cpp \
@@ -48,7 +50,9 @@ noinst_HEADERS = \
 	loadable.h \
 	lockable.h \
 	treeviewbase.h \
-	treeview.h \
+	dragtreeview.h \
+	edittreeview.h \
+	editcolumns.h \
 	view.h \
 	editview.h \
 	dragnote.h \

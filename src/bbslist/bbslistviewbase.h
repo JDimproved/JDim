@@ -8,9 +8,8 @@
 #define _BBSLISTVIEWBASE_H
 
 #include "skeleton/view.h"
-#include "skeleton/treeview.h"
+#include "skeleton/edittreeview.h"
 
-#include "jdlib/constptr.h"
 #include "xml/document.h"
 
 #include "columns.h"
@@ -33,14 +32,13 @@ namespace BBSLIST
       private:
 
         Glib::RefPtr< Gtk::TreeStore > m_treestore;
-        SKELETON::JDTreeView m_treeview;
+        SKELETON::EditTreeView m_treeview;
 
         bool m_ready_tree; // ツリーがセットされているならtrue
 
         BBSLIST::TreeColumns m_columns;
 
         Gtk::ScrolledWindow m_scrwin;
-        JDLIB::ConstPtr< Gtk::CellRendererText > m_ren_text;
 
         // ダブルクリック状態
         bool m_dblclick;
@@ -51,10 +49,6 @@ namespace BBSLIST
         // クロック入力されたときにtreeview のスクロールバーを指定した位置に移動する
         // clock_in()の説明を参照
         int m_jump_y;
-
-        // D&D 用
-        int m_dnd_counter;
-        Gtk::TreePath m_drag_path_uline;;
 
         // サーチで使う変数
         bool m_search_invert;
@@ -70,18 +64,20 @@ namespace BBSLIST
         // Viewが所属するAdminクラス
         virtual SKELETON::Admin* get_admin();
 
+        // treeviewのD&Dによる編集を可能にする
+        void set_editable( const bool editable );
+
         // DOM共有オブジェクト
         XML::Document m_document;
 
         Glib::RefPtr< Gtk::TreeStore >& get_treestore() { return m_treestore; }
-        SKELETON::JDTreeView& get_treeview() { return  m_treeview; }
+        SKELETON::EditTreeView& get_treeview() { return  m_treeview; }
         const bool& get_ready_tree() const{ return m_ready_tree; }
         void set_expand_collapse( bool set ){ m_expand_collapse = set; }
 
         virtual void activate_act_before_popupmenu( const std::string& url );
 
         void append_from_buffer( Gtk::TreeModel::Path path, bool after, bool scroll );
-        void delete_selected_rows();
 
         // tree <-> XML( DOM )変換
         void tree2xml( const std::string& root_name );
@@ -169,7 +165,6 @@ namespace BBSLIST
         void page_up();
         void page_down();
         void expand_all_dir( Gtk::TreeModel::Path path );
-        void select_all_dir( Gtk::TreeModel::Path path );
         void check_update_dir( Gtk::TreeModel::Path path );
         void check_update_root( const Gtk::TreeModel::Children& children );
         void check_update_root( const bool tab_open = false );
@@ -201,8 +196,6 @@ namespace BBSLIST
         void slot_preferences_image();
         void slot_row_exp( const Gtk::TreeModel::iterator& it, const Gtk::TreeModel::Path& path );
         void slot_row_col( const Gtk::TreeModel::iterator& it, const Gtk::TreeModel::Path& path );        
-        void slot_ren_text_on_edited( const Glib::ustring& path, const Glib::ustring& text );
-        void slot_ren_text_on_canceled();
         void slot_checkupdate_selected_rows();
         void slot_checkupdate_open_selected_rows();
 
@@ -213,35 +206,18 @@ namespace BBSLIST
 
         // D&D 関係
         void slot_drag_begin();
-        void slot_drag_motion( Gtk::TreeModel::Path path );
-        void slot_drag_drop( Gtk::TreeModel::Path path );
+        void slot_drag_drop( Gtk::TreeModel::Path path, const bool after );
         void slot_drag_end();
-        void slot_receive_dnd_begin();
-        void slot_receive_dnd_end();
 
-        Gtk::TreeViewColumn* create_column();
         virtual const bool open_row( Gtk::TreePath& path, const bool tab );
         virtual void switch_rightview();
         void open_selected_rows();
         void checkupdate_selected_rows();
         Glib::ustring row2url( const Gtk::TreeModel::Row& row );
-        bool is_dir( Gtk::TreeModel::iterator& it );
-        bool is_dir( const Gtk::TreePath& path );
 
-        Gtk::TreeModel::Path append_row( const std::string& url, const std::string& name, int type,
-                                         Gtk::TreeModel::Path path_dest = Gtk::TreeModel::Path()
-                                         , bool subdir = true, bool after = true );
-
-        bool copy_row( Gtk::TreeModel::iterator& src, Gtk::TreeModel::iterator& dest, bool subdir, bool after = true );
-        void move_selected_row( const Gtk::TreePath& path, bool after );
-
-        void draw_underline( const Gtk::TreePath& path, bool draw );
         void show_status();
 
         void set_info_to_sharedbuffer( Gtk::TreePath& path );
-
-        // 全てのツリーに m_columns.m_expand の値をセットする
-        void set_expanded_row( const Gtk::TreeModel::Children& children );
     };
 };
 

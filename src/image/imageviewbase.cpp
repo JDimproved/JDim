@@ -21,6 +21,7 @@
 #include "command.h"
 #include "sharedbuffer.h"
 #include "global.h"
+#include "type.h"
 #include "controlutil.h"
 #include "controlid.h"
 #include "prefdiagfactory.h"

@@ -24,7 +24,8 @@ namespace XML
         Document( const std::string& str, const bool html = false );
 
         // Gtk::TreeStore を元にノードツリーを作る場合
-        Document( Glib::RefPtr< Gtk::TreeStore > treestore, const std::string& root_name );
+        // ただし列は SKELETON::EditColumns を継承したものであること
+        Document( Glib::RefPtr< Gtk::TreeStore > treestore, SKELETON::EditColumns& columns, const std::string& root_name );
 
         // 何も無い状態からノードツリーを作る場合
         Document();
@@ -37,10 +38,13 @@ namespace XML
         // 初期化
         void init( const std::string& str );
         void init( Glib::RefPtr< Gtk::TreeStore > treestore,
+                   SKELETON::EditColumns& columns,
                     const std::string& root_name );
 
         // Gtk::TreeStore をセットする
-        void set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand );
+        // ただし列は SKELETON::EditColumns を継承したものであること
+        void set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, SKELETON::EditColumns& columns,
+                            const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand );
 
         // ルート要素を取得する
         Dom* get_root_element( const std::string& node_name = std::string() );

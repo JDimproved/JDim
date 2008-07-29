@@ -73,7 +73,6 @@ namespace CONFIG
         CONF_NUM_ID_LOW = 2,        // 発言数で色を変える回数 (低)
         CONF_LOOSE_URL = 1,         // datのパース時にURL判定を甘くする(^なども含める)
         CONF_HIDE_USRCMD = 0, // ユーザーコマンドで選択できない項目を非表示にする
-        CONF_MAX_SHOW_USRCMD = 3, // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
         CONF_RELOAD_ALLTHREAD = 0,  // スレビューで再読み込みボタンを押したときに全タブを更新する
         CONF_TAB_MIN_STR = 4, // タブに表示する文字列の最小値
         CONF_SHOW_TAB_ICON = 1, // タブにアイコンを表示するか

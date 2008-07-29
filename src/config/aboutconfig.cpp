@@ -152,8 +152,6 @@ void AboutConfig::append_rows()
     append_row( "スレビューのリンクの下線を表示する", get_confitem()->draw_underline, CONF_DRAW_UNDERLINE );
     append_row( "レスを引用コピーするときに前に付ける引用文字", get_confitem()->ref_prefix, CONF_REF_PREFIX );
     append_row( "引用文字の後のスペース数", get_confitem()->ref_prefix_space, CONF_REF_PREFIX_SPACE );
-    append_row( "選択不可のユーザコマンドを非表示にする(gtkmm26以上)", get_confitem()->hide_usrcmd, CONF_HIDE_USRCMD );
-    append_row( "ユーザコマンド数が指定した数以上の時はサブメニュー表示にする", get_confitem()->max_show_usrcmd, CONF_MAX_SHOW_USRCMD );
     append_row( "RFC規定外の文字(^など)もURL判定に用いる", get_confitem()->loose_url, CONF_LOOSE_URL );
     append_row( "スレビューで再読み込みボタンを押したときに全タブを更新する", get_confitem()->reload_allthreads, CONF_RELOAD_ALLTHREAD );
     append_row( "発言(同一ID)数をカウントする", get_confitem()->check_id, CONF_CHECK_ID );

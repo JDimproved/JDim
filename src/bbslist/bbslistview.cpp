@@ -12,7 +12,7 @@
 #include "dbtree/interface.h"
 
 #include "cache.h"
-#include "global.h"
+#include "type.h"
 #include "command.h"
 
 using namespace BBSLIST;
@@ -172,7 +172,7 @@ void BBSListViewMain::delete_view_impl()
         }
     }
 
-    delete_selected_rows();
+    get_treeview().delete_selected_rows();
 
     // etc.txt保存
     DBTREE::save_etc();

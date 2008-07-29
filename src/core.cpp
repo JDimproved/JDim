@@ -10,6 +10,7 @@
 #include "winmain.h"
 #include "session.h"
 #include "global.h"
+#include "type.h"
 #include "dndmanager.h"
 #include "usrcmdmanager.h"
 #include "compmanager.h"
@@ -412,6 +413,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "ArticlePref", "表示中のスレのプロパティ(_T)..." ), sigc::mem_fun( *this, &Core::slot_article_pref ) );
     m_action_group->add( Gtk::Action::create( "ImagePref", "表示中の画像のプロパティ(_I)..." ), sigc::mem_fun( *this, &Core::slot_image_pref ) );
 
+    m_action_group->add( Gtk::Action::create( "UsrCmdPref", "ユーザコマンドの編集(_U)..." ), sigc::mem_fun( *this, &Core::slot_usrcmd_pref ) );
+
     m_action_group->add( Gtk::Action::create( "General_Menu", "一般(_G)" ) );
     m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示する(_S)", std::string(), CONFIG::get_show_oldarticle() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
@@ -732,6 +735,10 @@ void Core::run( bool init )
 
     // 実況
         "<menuitem action='LivePref'/>"    
+        "<separator/>"
+
+    // ユーザコマンド
+        "<menuitem action='UsrCmdPref'/>"
         "<separator/>"
 
     // プライバシー
@@ -1632,6 +1639,17 @@ void Core::slot_article_pref()
 void Core::slot_image_pref()
 {
     IMAGE::get_admin()->set_command( "show_current_preferences" );
+}
+
+
+//
+// ユーザコマンドの編集
+//
+void Core::slot_usrcmd_pref()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_USRCMD, "" );
+    pref->run();
+    delete pref;
 }
 
 
@@ -2714,6 +2732,13 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "update_article_toolbar_button" ){
 
         ARTICLE::get_admin()->set_command( "update_toolbar_button" );
+        return;
+    }
+
+    // ポップアップメニュー再作成
+    else if( command.command  == "reset_article_popupmenu" ){
+
+        ARTICLE::get_admin()->set_command( "reset_popupmenu" );
         return;
     }
 

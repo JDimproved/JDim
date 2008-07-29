@@ -6,7 +6,7 @@
 #include "selectlistview.h"
 #include "toolbar.h"
 
-#include "global.h"
+#include "type.h"
 #include "controlid.h"
 
 using namespace BBSLIST;
@@ -14,8 +14,8 @@ using namespace BBSLIST;
 SelectListView::SelectListView( const std::string& url, const std::string& arg1, const std::string& arg2)
     : BBSListViewBase( url, arg1, arg2 )
 {
-    // D&D可
-    get_treeview().set_reorderable_view( true );
+    // D&Dで編集可能
+    set_editable( true );
 }
 
 

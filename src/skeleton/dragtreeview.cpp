@@ -3,7 +3,7 @@
 //#define _DEBUG
 #include "jddebug.h"
 
-#include "treeview.h"
+#include "dragtreeview.h"
 #include "view.h"
 #include "popupwin.h"
 
@@ -14,6 +14,7 @@
 #include "controlid.h"
 #include "command.h"
 #include "colorid.h"
+
 
 #ifndef MAX
 #define MAX( a, b ) ( a > b ? a : b )
@@ -28,40 +29,58 @@
 using namespace SKELETON;
 
 
-JDTreeView::JDTreeView( const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
+DragTreeView::DragTreeView( const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
     : JDTreeViewBase(),
-      m_reorderable( false ),
-      m_drag( false ),
+      m_dragging( false ),
       m_use_bg_even( false ),
       m_popup_win( NULL )
 {
 #ifdef _DEBUG
-    std::cout << "JDTreeView::JDTreeView\n";
+    std::cout << "DragTreeView::DragTreeView\n";
 #endif
 
     set_enable_search( false );
     set_rules_hint( CONFIG::get_use_tree_gtkrc() );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
 
-    init_color( colorid_text, colorid_bg, colorid_bg_even );
-    init_font( fontname );
+    if( use_usr_fontcolor ){
+        init_color( colorid_text, colorid_bg, colorid_bg_even );
+        init_font( fontname );
+    }
 
     get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
-    get_selection()->signal_changed().connect( sigc::mem_fun( *this, &JDTreeView::slot_selection_changed ) );
+    get_selection()->signal_changed().connect( sigc::mem_fun( *this, &DragTreeView::slot_selection_changed ) );
+
+    // D&D 設定
+    std::list< Gtk::TargetEntry > targets;
+    targets.push_back( Gtk::TargetEntry( "text/plain", Gtk::TARGET_SAME_APP, 0 ) );
+
+    // ドラッグ開始ボタン設定
+    Gdk::ModifierType type = Gdk::BUTTON1_MASK;  
+    GdkEventButton event;
+    m_control.get_eventbutton( CONTROL::DragStartButton, event );
+    switch( event.button ){
+        case 1: type = Gdk::BUTTON1_MASK; break;
+        case 2: type = Gdk::BUTTON2_MASK; break;
+        case 3: type = Gdk::BUTTON3_MASK; break;
+        case 4: type = Gdk::BUTTON4_MASK; break;
+        case 5: type = Gdk::BUTTON5_MASK; break;
+    }
+
+    drag_source_set( targets, type );
 }
 
 
-JDTreeView::~JDTreeView()
+DragTreeView::~DragTreeView()
 {
     delete_popup();
 }
 
 
-
 //
 // 色初期化
 //
-void JDTreeView::init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even )
+void DragTreeView::init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even )
 {
     if( CONFIG::get_use_tree_gtkrc() ) return;
 
@@ -75,14 +94,13 @@ void JDTreeView::init_color( const int colorid_text, const int colorid_bg, const
 
     m_use_bg_even = ! ( CONFIG::get_color( colorid_bg ) == CONFIG::get_color( colorid_bg_even ) );
     m_color_bg_even.set( CONFIG::get_color( colorid_bg_even ) );
-
 }
 
 
 //
 // フォント初期化
 //
-void JDTreeView::init_font( const std::string& fontname )
+void DragTreeView::init_font( const std::string& fontname )
 {
     Pango::FontDescription pfd( fontname );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
@@ -93,54 +111,18 @@ void JDTreeView::init_font( const std::string& fontname )
 
 
 //
-// D&D可にする
-//
-void JDTreeView::set_reorderable_view( bool reorderable )
-{
-    if( reorderable ){
-
-        m_reorderable = true;
-        std::list< Gtk::TargetEntry > targets;
-        targets.push_back( Gtk::TargetEntry( "text/plain", Gtk::TARGET_SAME_APP, 0 ) );
-
-        // ドラッグ開始ボタン設定
-        Gdk::ModifierType type = Gdk::BUTTON1_MASK;
-        GdkEventButton event;
-        m_control.get_eventbutton( CONTROL::DragStartButton, event );
-        switch( event.button ){
-            case 1: type = Gdk::BUTTON1_MASK; break;
-            case 2: type = Gdk::BUTTON2_MASK; break;
-            case 3: type = Gdk::BUTTON3_MASK; break;
-            case 4: type = Gdk::BUTTON4_MASK; break;
-            case 5: type = Gdk::BUTTON5_MASK; break;
-        }
-
-        drag_source_set( targets, type );
-        drag_dest_set( targets );
-    }
-    else{
-        m_reorderable = false;
-        drag_source_unset();
-        drag_dest_unset();
-    }
-}
-
-
-
-//
 // クロック入力
 //
-void JDTreeView::clock_in()
+void DragTreeView::clock_in()
 {
     m_tooltip.clock_in();
 }
 
 
-
 //
 // ツールチップに文字をセット
 //
-void JDTreeView::set_str_tooltip( const std::string& text )
+void DragTreeView::set_str_tooltip( const std::string& text )
 {
     m_tooltip.set_text( text );
 }
@@ -149,7 +131,7 @@ void JDTreeView::set_str_tooltip( const std::string& text )
 //
 // ツールチップ最小幅設定
 //
-void JDTreeView::set_tooltip_min_width( const int& min_width )
+void DragTreeView::set_tooltip_min_width( const int& min_width )
 {
     m_tooltip.set_min_width( min_width);
 }
@@ -158,7 +140,7 @@ void JDTreeView::set_tooltip_min_width( const int& min_width )
 //
 // ツールチップを表示
 //
-void JDTreeView::show_tooltip()
+void DragTreeView::show_tooltip()
 {
     m_tooltip.show_tooltip();
 }
@@ -167,7 +149,7 @@ void JDTreeView::show_tooltip()
 //
 // ツールチップ隠す
 //
-void JDTreeView::hide_tooltip()
+void DragTreeView::hide_tooltip()
 {
     m_tooltip.hide_tooltip();
 }
@@ -176,7 +158,7 @@ void JDTreeView::hide_tooltip()
 //
 // ポップアップウィンドウ表示
 //
-void JDTreeView::show_popup( const std::string& url, View* view )
+void DragTreeView::show_popup( const std::string& url, View* view )
 {
     const int mrg = 10;
 
@@ -191,7 +173,7 @@ void JDTreeView::show_popup( const std::string& url, View* view )
 //
 // ポップアップウィンドウ削除
 //
-void JDTreeView::delete_popup()
+void DragTreeView::delete_popup()
 {
     if( m_popup_win ){
         delete m_popup_win;
@@ -204,10 +186,10 @@ void JDTreeView::delete_popup()
 //
 // マウスボタンを押した
 //
-bool JDTreeView::on_button_press_event( GdkEventButton* event )
+bool DragTreeView::on_button_press_event( GdkEventButton* event )
 {
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
-    m_drag = false;
+    m_dragging = false;
     m_selection_canceled = false;
     sig_button_press().emit( event );
 
@@ -245,13 +227,13 @@ bool JDTreeView::on_button_press_event( GdkEventButton* event )
 //
 // マウスボタンを離した
 //
-bool JDTreeView::on_button_release_event( GdkEventButton* event )
+bool DragTreeView::on_button_release_event( GdkEventButton* event )
 {
     bool emit_sig = false; // true なら m_sig_button_release をemitする
 
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
 
-    if( !m_drag // ドラッグ状態でない
+    if( ! m_dragging // ドラッグ中ではない
         && !m_selection_canceled // on_button_press_event()で選択状態を解除していない
         && !( event->state & GDK_CONTROL_MASK )
         && !( event->state & GDK_SHIFT_MASK ) // ctrl/shift + クリックで複数行選択操作をしてない場合
@@ -294,15 +276,14 @@ bool JDTreeView::on_button_release_event( GdkEventButton* event )
 //
 // このtreeがソースで無い時は呼ばれないのに注意
 //
-void JDTreeView::on_drag_begin( const Glib::RefPtr< Gdk::DragContext >& context )
+void DragTreeView::on_drag_begin( const Glib::RefPtr< Gdk::DragContext >& context )
 {
-    Gtk::TreeModel::Path path = get_path_under_mouse();
-
 #ifdef _DEBUG
-    std::cout << "JDTreeView::on_drag_begin path = " << path.to_string() << std::endl;
+    Gtk::TreeModel::Path path = get_path_under_mouse();
+    std::cout << "DragTreeView::on_drag_begin path = " << path.to_string() << std::endl;
 #endif
 
-    m_drag = true;
+    m_dragging = true;
     m_sig_drag_begin.emit();
 
     return Gtk::TreeView::on_drag_begin( context );
@@ -312,19 +293,8 @@ void JDTreeView::on_drag_begin( const Glib::RefPtr< Gdk::DragContext >& context 
 //
 // D&D中にマウスを動かした
 //
-// 他のwidgetがソースの時も呼ばれるのに注意
-// またドラッグ中は on_motion_notify_event() は呼ばれない
-//
-bool JDTreeView::on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time )
+bool DragTreeView::on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time )
 {
-
-    Gtk::TreeModel::Path path = get_path_under_mouse();
-#ifdef _DEBUG
-    std::cout << "JDTreeView::on_drag_motion x = " << x << " y = " << y << " path = " << path.to_string() << std::endl;
-#endif
-
-    m_sig_drag_motion.emit( path );
-
     return Gtk::TreeView::on_drag_motion( context, x, y, time );
 }
 
@@ -334,18 +304,8 @@ bool JDTreeView::on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, 
 //
 // 他のwidgetがソースの時も呼ばれるのに注意
 //
-bool JDTreeView::on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time )
+bool DragTreeView::on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time )
 {
-#ifdef _DEBUG
-    std::cout << "JDTreeView::on_drag_drop\n";
-#endif
-
-    Gtk::TreeModel::Path path = get_path_under_mouse();
-#ifdef _DEBUG
-    std::cout << "dest x = " << x << " y = " << y << " path = " << path.to_string() << std::endl;
-#endif    
-    m_sig_drag_drop.emit( path );
-
     return Gtk::TreeView::on_drag_drop( context, x, y, time );
 }
 
@@ -353,34 +313,33 @@ bool JDTreeView::on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, in
 //
 // D&D 終了
 //
-// このtreeがソースで無い時は呼ばれないのに注意
+// このtreeがソースでない時は呼び出されない
 //
-void JDTreeView::on_drag_end( const Glib::RefPtr< Gdk::DragContext >& context )
+void DragTreeView::on_drag_end( const Glib::RefPtr< Gdk::DragContext >& context )
 {
 #ifdef _DEBUG
-    std::cout << "JDTreeView::on_drag_end\n";
+    std::cout << "DragTreeView::on_drag_end\n";
 #endif
 
-    m_drag = false;
+    m_dragging = false;
     m_sig_drag_end.emit();
 
     return Gtk::TreeView::on_drag_end( context );
 }
 
 
-
 //
 // マウスを動かした
 //
-bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
+bool DragTreeView::on_motion_notify_event( GdkEventMotion* event )
 {
 #ifdef _DEBUG
-//    std::cout << "JDTreeView::on_motion_notify_event x = " << event->x << " y = " << event->y << std::endl;
+//    std::cout << "DragTreeView::on_motion_notify_event x = " << event->x << " y = " << event->y << std::endl;
 #endif
 
     // drag_source_set() でセットしたボタン以外でドラッグして範囲選択
     // m_path_dragstart が empty で無いときに実行
-    // JDTreeView::on_button_press_event() も参照せよ
+    // DragTreeView::on_button_press_event() も参照せよ
     Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
     if( ! m_path_dragstart.empty() && !path.empty() && path != m_path_dragpre ){
         get_selection()->unselect_all();
@@ -396,7 +355,7 @@ bool JDTreeView::on_motion_notify_event( GdkEventMotion* event )
 
 
 // マウスのwheelを回した
-bool JDTreeView::on_scroll_event( GdkEventScroll* event )
+bool DragTreeView::on_scroll_event( GdkEventScroll* event )
 {
     sig_scroll_event().emit( event );
 
@@ -408,7 +367,7 @@ bool JDTreeView::on_scroll_event( GdkEventScroll* event )
 //
 // マウスホイールの処理
 //
-void JDTreeView::wheelscroll( GdkEventScroll* event )
+void DragTreeView::wheelscroll( GdkEventScroll* event )
 {
     Gtk::Adjustment *adj = get_vadjustment();
     double val = adj->get_value();
@@ -420,7 +379,7 @@ void JDTreeView::wheelscroll( GdkEventScroll* event )
     adj->set_value( val );
 
 #ifdef _DEBUG
-    std::cout << "JDTreeView::on_scroll_event\n";
+    std::cout << "DragTreeView::on_scroll_event\n";
 
     std::cout << "scr_inc = " << scr_inc << std::endl;
     std::cout << "lower = " << adj->get_lower() << std::endl;
@@ -433,7 +392,7 @@ void JDTreeView::wheelscroll( GdkEventScroll* event )
 }
 
 
-bool JDTreeView::on_leave_notify_event( GdkEventCrossing* event )
+bool DragTreeView::on_leave_notify_event( GdkEventCrossing* event )
 {
     m_tooltip.hide_tooltip();
     delete_popup();
@@ -444,7 +403,7 @@ bool JDTreeView::on_leave_notify_event( GdkEventCrossing* event )
 //
 // 範囲選択更新
 //
-void JDTreeView::slot_selection_changed()
+void DragTreeView::slot_selection_changed()
 {
     int size = get_selection()->get_selected_rows().size();
 
@@ -458,7 +417,7 @@ void JDTreeView::slot_selection_changed()
 //
 // 実際の描画の際に cellrenderer のプロパティをセットするスロット関数
 //
-void JDTreeView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
+void DragTreeView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
 {
     if( ! m_use_bg_even ){
         cell->property_cell_background_set() = false;
@@ -470,7 +429,7 @@ void JDTreeView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::
     std::string path_str = path.to_string();
 
 #ifdef _DEBUG
-    std::cout << "JDTreeView::slot_cell_data path = " << path_str << std::endl;
+    std::cout << "DragTreeView::slot_cell_data path = " << path_str << std::endl;
 #endif
 
     bool even = false;
@@ -497,3 +456,4 @@ void JDTreeView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::
 
     else cell->property_cell_background_set() = false;
 }
+

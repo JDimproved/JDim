@@ -24,10 +24,10 @@ Document::Document( const std::string& str, const bool html )
 
 
 // Gtk::TreeStore を元にノードツリーを作る場合
-Document::Document( Glib::RefPtr< Gtk::TreeStore > treestore, const std::string& root_name )
+Document::Document( Glib::RefPtr< Gtk::TreeStore > treestore, SKELETON::EditColumns& columns, const std::string& root_name )
     : Dom( NODE_TYPE_DOCUMENT, "#document" )
 {
-    init( treestore, root_name );
+    init( treestore, columns, root_name );
 }
 
 
@@ -58,7 +58,7 @@ void Document::init( const std::string& str )
     if( ! str.empty() ) parse( remove_comments( str ) );
 }
 
-void Document::init( Glib::RefPtr< Gtk::TreeStore > treestore, const std::string& root_name )
+void Document::init( Glib::RefPtr< Gtk::TreeStore > treestore, SKELETON::EditColumns& columns, const std::string& root_name )
 {
     clear();
 
@@ -66,7 +66,7 @@ void Document::init( Glib::RefPtr< Gtk::TreeStore > treestore, const std::string
     Dom* root = appendChild( NODE_TYPE_ELEMENT, root_name );
 
     // ルート以下に追加
-    root->parse( treestore->children() );
+    root->parse( treestore->children(), columns );
 }
 
 
@@ -93,7 +93,8 @@ std::string Document::remove_comments( const std::string& str )
 //
 // list_path_expand = 後で Gtk::TreeView::expand_row() をするためのリスト
 //
-void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand )
+void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, SKELETON::EditColumns& columns,
+                              const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand )
 {
     treestore->clear();
 
@@ -103,8 +104,8 @@ void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, const s
         Dom* root = get_root_element( root_name );
 
         // ルート要素の有無で処理を分ける( 旧様式=無, 新様式=有 )
-        if( root ) root->append_treestore( treestore, list_path_expand );
-        else append_treestore( treestore, list_path_expand );
+        if( root ) root->append_treestore( treestore, columns, list_path_expand );
+        else append_treestore( treestore, columns, list_path_expand );
     }
 }
 

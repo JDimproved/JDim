@@ -18,7 +18,7 @@
 
 #include "skeleton/editviewdialog.h"
 
-#include "global.h"
+#include "type.h"
 #include "command.h"
 #include "config/globalconf.h"
 #include "cache.h"

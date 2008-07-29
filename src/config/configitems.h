@@ -271,9 +271,6 @@ namespace CONFIG
         // ユーザーコマンドで選択できない項目を非表示にする
         bool hide_usrcmd;
 
-        // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
-        int max_show_usrcmd;
-
         // スレビューで再読み込みボタンを押したときに全タブを更新する
         bool reload_allthreads;
 

@@ -24,6 +24,7 @@
 #include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "global.h"
+#include "type.h"
 #include "controlid.h"
 #include "prefdiagfactory.h"
 #include "httpcode.h"
@@ -107,7 +108,7 @@ m_treeview.append_column( *col ); \
 
 BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
-      m_treeview( CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
+      m_treeview( true, CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
       m_col_mark( NULL ),
       m_col_id( NULL ),
       m_col_subject( NULL ),
@@ -172,7 +173,6 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_treeview.sig_scroll_event().connect( sigc::mem_fun(*this, &BoardView::slot_scroll_event ) );
 
     // D&D設定
-    m_treeview.set_reorderable_view( true );
     m_treeview.sig_drag_begin().connect( sigc::mem_fun(*this, &BoardView::slot_drag_begin ) );
     m_treeview.sig_drag_end().connect( sigc::mem_fun(*this, &BoardView::slot_drag_end ) );
 

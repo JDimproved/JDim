@@ -13,6 +13,12 @@
 
 #include "domlist.h"
 
+namespace SKELETON
+{
+    class EditColumns;
+}
+
+
 namespace XML
 {
     // ノードタイプ( m_nodeType )
@@ -64,14 +70,16 @@ namespace XML
 
         // パースして子ノードを追加
         void parse( const std::string& str );
-        void parse( const Gtk::TreeModel::Children& children );
+        void parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns& columns );
 
         // プロパティをセットするアクセッサ
         void parentNode( Dom* parent );
         void copy_childNodes( const Dom& dom ); // dom の子ノードをコピーする
 
         // ノードを分解して Gtk::TreeStore へ Gtk::TreeModel::Row を追加
+        // ただし列は SKELETON::EditColumns を継承したものであること
         void append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
+                               SKELETON::EditColumns& columns,
                                 std::list< Gtk::TreePath >& list_path_expand,
                                 const Gtk::TreeModel::Row& parnet = Gtk::TreeModel::Row() );
 

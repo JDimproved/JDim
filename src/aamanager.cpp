@@ -12,7 +12,7 @@
 #include "config/globalconf.h"
 
 #include "cache.h"
-#include "global.h"
+#include "type.h"
 
 CORE::AAManager* instance_aamanager = NULL;
 

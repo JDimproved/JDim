@@ -6,7 +6,7 @@
 #define _BOARDVIEW_H
 
 #include "skeleton/view.h"
-#include "skeleton/treeview.h"
+#include "skeleton/dragtreeview.h"
 
 #include "columns.h"
 
@@ -26,7 +26,7 @@ namespace BOARD
 {
     class BoardView : public SKELETON::View
     {
-        SKELETON::JDTreeView m_treeview;
+        SKELETON::DragTreeView m_treeview;
         BOARD::TreeColumns m_columns;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
         Gtk::ScrolledWindow m_scrwin;

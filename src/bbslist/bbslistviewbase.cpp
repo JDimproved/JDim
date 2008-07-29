@@ -30,6 +30,7 @@
 #include "cache.h"
 #include "command.h"
 #include "global.h"
+#include "type.h"
 #include "httpcode.h"
 #include "controlutil.h"
 #include "controlid.h"
@@ -44,16 +45,6 @@
 #include "compmanager.h"
 
 #include <sstream>
-
-
-#ifndef MAX
-#define MAX( a, b ) ( a > b ? a : b )
-#endif
-
-
-#ifndef MIN
-#define MIN( a, b ) ( a < b ? a : b )
-#endif
 
 
 // row -> path
@@ -89,10 +80,9 @@ using namespace BBSLIST;
 
 BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
-      m_treeview( CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN ),
+      m_treeview( m_columns, true, CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN ),
       m_ready_tree( false ),
       m_jump_y( -1 ),
-      m_dnd_counter( 0 ),
       m_search_invert( 0 ),
       m_expand_collapse( 0 ),
       m_cancel_expand( false ),
@@ -108,8 +98,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
 #if GTKMMVER <= 260
     // gtkmm26以下にはunset_model()が無いのでここでset_model()しておく
-    m_treeview.set_model( m_treestore );
-    m_treeview.set_headers_visible( false );
+    // それ以上は m_treeview.xml2tree() でセットする
+    m_treeview.set_treestore( m_treestore );
 #endif
 
     // Gtk::TreeStoreでset_fixed_height_mode()を使うとexpandしたときに
@@ -127,7 +117,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 #endif
 */
     // 列の登録
-    m_treeview.append_column( *create_column() );
+    m_treeview.create_column( CONFIG::get_tree_ypad() );
     m_treeview.set_column_for_height( 0 );
 
     // treeviewのシグナルにコネクト
@@ -140,16 +130,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_treeview.sig_key_press().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_key_press ) );
     m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_key_release ) );
     m_treeview.sig_scroll_event().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_scroll_event ) );
-
-
-    m_treeview.sig_drag_begin().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_begin ) );
-    m_treeview.sig_drag_motion().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_motion ) );
-    m_treeview.sig_drag_drop().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_drop ) );
-    m_treeview.sig_drag_end().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_end ) );
-
-    // D&Dマネージャのシグナルをコネクト
-    CORE::get_dnd_manager()->sig_dnd_begin().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_receive_dnd_begin ) );
-    CORE::get_dnd_manager()->sig_dnd_end().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_receive_dnd_end ) );
 
     ///////////////////
     
@@ -413,6 +393,21 @@ SKELETON::Admin* BBSListViewBase::get_admin()
 
 
 //
+// treeviewのD&Dによる編集を可能にする
+//
+void BBSListViewBase::set_editable( const bool editable )
+{
+    get_treeview().set_editable_view( editable );
+
+    if( editable ){
+        m_treeview.sig_drag_begin().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_begin ) );
+        m_treeview.sig_drag_drop().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_drop ) );
+        m_treeview.sig_drag_end().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_end ) );
+    }
+}
+
+
+//
 // コマンド
 //
 bool BBSListViewBase::set_command( const std::string& command, const std::string& arg )
@@ -469,44 +464,6 @@ void BBSListViewBase::clock_in()
             m_jump_y = -1;
         }
     }
-
-    // D&D 中に画面の上か下の方にある場合はスクロールさせる
-    if( m_treeview.reorderable() ){
-
-        ++m_dnd_counter;
-        if( m_dnd_counter >= 250 / TIMER_TIMEOUT ){
-
-            m_dnd_counter = 0;
-
-            if( CORE::DND_Now_dnd() ){
-
-                Gtk::TreeModel::Path path = m_treeview.get_path_under_mouse();
-                Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
-
-                if( m_treeview.get_row( path ) && adjust ){
-
-                    int height = m_treeview.get_height();
-                    int step = (int)adjust->get_step_increment() / 2;
-                    int val = -1;
-                    int x,y;
-                    m_treeview.get_pointer( x, y );
-
-                    if( y < step * 2 ){
-                        val = MAX( 0, (int)adjust->get_value() - step );
-                    }
-                    else if( y > height - step * 2 ){
-                        val = MIN( (int)adjust->get_value() + step, (int)( adjust->get_upper() - adjust->get_page_size() ) );
-                    }
-
-                    if( val != -1 ){
-                        adjust->set_value( val );
-                        path = m_treeview.get_path_under_mouse();
-                        slot_drag_motion( path );
-                    }
-                }
-            }
-        }
-    }
 }
 
 
@@ -544,8 +501,8 @@ void BBSListViewBase::relayout()
 //
 void BBSListViewBase::focus_view()
 {
-    // セルの文字を編集中なら何もしない
-    if( m_ren_text->property_editable() ) return;
+    // 行の名前を編集中なら何もしない
+    if( m_treeview.is_renaming_row() ) return;
 
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::focus_view url = " << get_url() << std::endl;
@@ -597,7 +554,7 @@ void BBSListViewBase::delete_view()
 // BBSListViewBaseの場合は選択行の削除
 void BBSListViewBase::delete_view_impl()
 {
-    delete_selected_rows();
+    m_treeview.delete_selected_rows();
 }
 
 
@@ -912,8 +869,7 @@ void BBSListViewBase::copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store )
     std::cout << "BBSListViewBase::copy_treestore\n";
 #endif
     m_treestore = store;
-    m_treeview.set_model( m_treestore );
-    m_treeview.set_headers_visible( false );
+    m_treeview.set_treestore( m_treestore );
 
     if( m_treestore->children().begin() ){
 
@@ -1017,8 +973,8 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
         const int mrg = 16; // アイコンの横幅。計算するのが面倒だったのでとりあえず
         
         Gtk::TreeModel::Row row = m_treeview.get_row( path );
-        Glib::ustring subject = row[ m_columns.m_col_name ];
-        Glib::ustring url = row[ m_columns.m_col_url ];
+        Glib::ustring subject = row[ m_columns.m_name ];
+        Glib::ustring url = row[ m_columns.m_url ];
         int type = row[ m_columns.m_type ];
 
         // 画像ポップアップ
@@ -1064,8 +1020,8 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 bool BBSListViewBase::slot_key_press( GdkEventKey* event )
 {
-    // セルの文字を編集中なら何もしない
-    if( m_ren_text->property_editable() ) return true;
+    // 行の名前を編集中なら何もしない
+    if( m_treeview.is_renaming_row() ) return false;
 
     int key = get_control().key_press( event );
 
@@ -1091,8 +1047,8 @@ bool BBSListViewBase::slot_key_release( GdkEventKey* event )
     std::cout << "BBSListViewBase::slot_key_release key = " << event->keyval << " ctrl = " << ctrl << " shift = " << shift << std::endl;
 #endif
 
-    // セルの文字を編集中なら何もしない
-    if( m_ren_text->property_editable() ) return true;
+    // 行の名前を編集中なら何もしない
+    if( m_treeview.is_renaming_row() ) return false;
 
     // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
     // 一番上のスレが開くので、open_row() は slot_key_release() で処理する
@@ -1160,7 +1116,7 @@ void BBSListViewBase::set_info_to_sharedbuffer( Gtk::TreePath& path )
 
 
 //
-// 列をお気に入りに追加
+// 選択行をお気に入りに追加
 //
 void BBSListViewBase::slot_append_favorite()
 {
@@ -1178,7 +1134,7 @@ void BBSListViewBase::slot_append_favorite()
 
             // サブディレクトリの場合は中身もコピー
             // とりあえず再帰なしで一階層のみ
-            if( is_dir( path ) ){
+            if( m_treeview.is_dir( path ) ){
 
                 set_info_to_sharedbuffer( path );
                 path.down();
@@ -1206,15 +1162,8 @@ void BBSListViewBase::slot_append_favorite()
 //
 void BBSListViewBase::slot_newdir()
 {
-    // これは m_path_selected が空でも実行する
-
-    Gtk::TreeModel::Path path = append_row( std::string(), "新規ディレクトリ", TYPE_DIR, m_path_selected, true );
-    m_treeview.set_cursor( path );
-    show_status();
-    m_path_selected = path;
-    slot_rename();
+    m_path_selected = m_treeview.create_newdir( m_path_selected );
 }
-
 
 
 //
@@ -1222,14 +1171,8 @@ void BBSListViewBase::slot_newdir()
 //
 void BBSListViewBase::slot_newcomment()
 {
-    if( m_path_selected.empty() ) return;
-
-    Gtk::TreeModel::Path path = append_row( std::string(), "コメント", TYPE_COMMENT, m_path_selected, true );
-    m_treeview.set_cursor( path );
-    m_path_selected = path;
-    slot_rename();
+    m_path_selected = m_treeview.create_newcomment( m_path_selected );
 }
-
 
 
 //
@@ -1376,7 +1319,9 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         // データベースに登録してツリーに表示
         if( ! move && DBTREE::add_etc( url, name, basicauth, boardid ) ){
 
-            Gtk::TreeModel::Path path = append_row( url, name, TYPE_BOARD, m_path_selected, true );
+            const bool subdir = true;
+            const bool after = true;
+            Gtk::TreeModel::Path path = m_treeview.append_row( url, name, std::string(), TYPE_BOARD, m_path_selected, subdir, after );
             m_path_selected = path;
 
             // etc.txt保存
@@ -1388,8 +1333,8 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
 
             Gtk::TreeModel::Row row = m_treeview.get_row( m_path_selected );
             if( row ){
-                row[ m_columns.m_col_url ] = url;
-                row[ m_columns.m_col_name ] = name;
+                row[ m_columns.m_url ] = url;
+                row[ m_columns.m_name ] = name;
             }
         }
 
@@ -1411,15 +1356,11 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
 //
 void BBSListViewBase::slot_rename()
 {
-    if( m_path_selected.empty() ) return;
-
 #ifdef _DEBUG    
     std::cout << "BBSListViewBase::slot_rename\n";
 #endif
 
-    // edit可 slot_ren_text_on_edited() と slot_ren_text_on_canceled で false にする
-    m_ren_text->property_editable() = true;
-    m_treeview.set_cursor( m_path_selected, *m_treeview.get_column( 0 ), true );
+    m_treeview.rename_row( m_path_selected );
 }
 
 
@@ -1456,7 +1397,7 @@ void BBSListViewBase::slot_copy_title_url()
 //
 void BBSListViewBase::expand_all_dir( Gtk::TreeModel::Path path )
 {
-    if( is_dir( path ) ){
+    if( m_treeview.is_dir( path ) ){
 
         if( ! m_treeview.row_expanded( path ) ){
             m_cancel_expand = true; // slot_row_exp()の呼び出しをキャンセル
@@ -1473,25 +1414,6 @@ void BBSListViewBase::expand_all_dir( Gtk::TreeModel::Path path )
 }
 
 
-//
-// ディレクトリ内を全選択
-//
-void BBSListViewBase::select_all_dir( Gtk::TreeModel::Path path )
-{
-    if( is_dir( path ) ){
-
-        m_treeview.get_selection()->select( path );
-        path.down();
-
-        while( m_treeview.get_row( path ) ){
-
-            m_treeview.get_selection()->select( path );
-            select_all_dir( path );
-            path.next();
-        }
-    }
-}
-
 
 //
 // ディレクトリ内を全選択(メニューから呼び出す)
@@ -1502,7 +1424,7 @@ void BBSListViewBase::slot_select_all_dir()
 {
     if( m_path_selected.empty() ) return;
 
-    select_all_dir( m_path_selected );
+    m_treeview.select_all_dir( m_path_selected );
 }
 
 
@@ -1524,7 +1446,7 @@ void BBSListViewBase::slot_select_all()
     m_treeview.scroll_to_row( m_treestore->get_path( *it ), 0 );
     for( ; it != child.end() ; ++it ){
         m_treeview.get_selection()->select( *it );
-        select_all_dir( m_treestore->get_path( *it ) );
+        m_treeview.select_all_dir( m_treestore->get_path( *it ) );
     }
 }
 
@@ -1543,7 +1465,7 @@ void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path )
     std::cout << "BBSListViewBase::check_update_dir path = " << path.to_string() << std::endl;
 #endif
 
-    if( is_dir( path ) ){
+    if( m_treeview.is_dir( path ) ){
 
         path.down();
 
@@ -1739,38 +1661,6 @@ void BBSListViewBase::slot_row_col( const Gtk::TreeModel::iterator&, const Gtk::
 }
 
 
-
-//
-// 名前を変更したときにCellRendererTextから呼ばれるslot
-//
-void BBSListViewBase::slot_ren_text_on_edited( const Glib::ustring& path, const Glib::ustring& text )
-{
-#ifdef _DEBUG    
-    std::cout << "BBSListViewBase::slot_ren_text_on_edited\n"
-              << "path = " << path << std::endl
-              << "text = " << text << std::endl;
-#endif
-
-    Gtk::TreeModel::Row row = m_treeview.get_row( Gtk::TreePath( path ) );
-    if( row ) row[ m_columns.m_col_name ] = text;
-
-    m_ren_text->property_editable() = false;
-}
-
-
-//
-// 名前をキャンセルしたときにCellRendererTextから呼ばれるslot
-//
-void BBSListViewBase::slot_ren_text_on_canceled()
-{
-#ifdef _DEBUG    
-    std::cout << "BBSListViewBase::slot_ren_text_on_canceld\n";
-#endif
-
-    m_ren_text->property_editable() = false;
-}
-
-
 //
 // このビューからD&Dを開始したときにtreeviewから呼ばれる
 //
@@ -1785,69 +1675,13 @@ void BBSListViewBase::slot_drag_begin()
 
 
 //
-// D&Dマネージャから D&D 開始シグナルを受けた時に呼ばれる
-//
-void BBSListViewBase::slot_receive_dnd_begin()
-{}
-
-
-
-//
-// D&D中にtreeviewから呼ばれる
-//
-void BBSListViewBase::slot_drag_motion( Gtk::TreeModel::Path path )
-{
-    if( !m_treeview.get_row( path ) ) return;
-    
-    draw_underline( m_drag_path_uline, false );
-
-    // 移動先に下線を引く
-    int cell_x, cell_y, cell_w, cell_h;
-    m_treeview.get_cell_xy_wh( cell_x, cell_y, cell_w, cell_h );
-
-    // 真ん中より上の場合
-    if( cell_y < cell_h / 2 ){
-
-        Gtk::TreeModel::Path path_tmp = m_treeview.prev_path( path );
-        if( m_treeview.get_row( path_tmp ) ) path = path_tmp;
-
-        if( ! is_dir( path ) ) draw_underline( path, true );
-
-    }
-    else draw_underline( path, true );
-
-    m_drag_path_uline = path;
-
-#ifdef _DEBUG    
-    std::cout << "BBSListViewBase::slot_drag_motion = " << path.to_string() << std::endl;
-#endif
-}
-
-
-
-//
 // D&Dでドロップされたときにtreeviewから呼ばれる
 //
-void BBSListViewBase::slot_drag_drop( Gtk::TreeModel::Path path )
+void BBSListViewBase::slot_drag_drop( Gtk::TreeModel::Path path, const bool after )
 {
 #ifdef _DEBUG    
     std::cout << "BBSListViewBase::slot_drag_drop\n";
 #endif
-
-    bool after = true;
-    draw_underline( m_drag_path_uline, false );
-
-    // セル内の座標を見て真ん中より上だったら上に挿入
-    if( m_treeview.get_row( path ) ){
-
-        int cell_x, cell_y, cell_w, cell_h;
-        m_treeview.get_cell_xy_wh( cell_x, cell_y, cell_w, cell_h );
-        if( cell_y < cell_h / 2 ) after = false;
-
-#ifdef _DEBUG    
-        std::cout << "cell height = " << cell_h << " cell_y = " << cell_y << std::endl;
-#endif
-    }
 
     std::string url_from = CORE::DND_Url_from();
 
@@ -1855,11 +1689,8 @@ void BBSListViewBase::slot_drag_drop( Gtk::TreeModel::Path path )
     std::cout << "path = " << path.to_string() << " after = " << after << " from " << url_from << std::endl;
 #endif
 
-    // 同じビュー内でディレクトリの移動
-    if( url_from == get_url() ) move_selected_row( path, after );
-
-    // 他のビューからD&Dされた
-    else append_from_buffer( path, after, false );
+    // 他のビューからドロップされた
+    if( url_from != get_url() ) append_from_buffer( path, after, false );
 }
 
 
@@ -1872,57 +1703,9 @@ void BBSListViewBase::slot_drag_end()
 #ifdef _DEBUG    
     std::cout << "BBSListViewBase::slot_drag_end\n";
 #endif
+
     CORE::DND_End();
-
-    draw_underline( m_drag_path_uline, false );
 }
-
-
-
-//
-// D&Dマネージャから D&D 終了シグナルを受けたときに呼ばれる
-//
-void BBSListViewBase::slot_receive_dnd_end()
-{
-    if( !m_treeview.reorderable() ) return;
-
-    draw_underline( m_drag_path_uline, false );
-}
-
-
-
-
-//
-// 列の作成
-//
-// Gtk::mange　してるのでdeleteしなくてもよい
-//
-Gtk::TreeViewColumn* BBSListViewBase::create_column()
-{
-    Gtk::TreeViewColumn* col = Gtk::manage( new Gtk::TreeViewColumn( "name" ) );
-    col->pack_start( m_columns.m_col_image, Gtk::PACK_SHRINK );
-
-    m_ren_text = Gtk::manage( new Gtk::CellRendererText() );
-    m_ren_text->signal_edited().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_ren_text_on_edited ) );
-    m_ren_text->signal_editing_canceled().connect( sigc::mem_fun( *this, &BBSListViewBase::slot_ren_text_on_canceled ) );
-    m_ren_text->property_underline() = Pango::UNDERLINE_SINGLE;
-
-    // 行間スペース
-    m_ren_text->property_ypad() = CONFIG::get_tree_ypad();
-
-    col->pack_start( *m_ren_text, true );
-    col->add_attribute( *m_ren_text, "text", COL_NAME );
-    col->add_attribute( *m_ren_text, "underline", COL_UNDERLINE );
-    col->add_attribute( *m_ren_text, "foreground_gdk", COL_FGCOLOR );
-    col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
-
-    col->set_cell_data_func( *col->get_first_cell_renderer(), sigc::mem_fun( m_treeview, &SKELETON::JDTreeView::slot_cell_data ) );    
-    col->set_cell_data_func( *m_ren_text, sigc::mem_fun( m_treeview, &SKELETON::JDTreeView::slot_cell_data ) );    
-
-    return col;
-}
-
-
 
 
 //
@@ -2080,7 +1863,7 @@ Glib::ustring BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return Glib::ustring();
-    Glib::ustring url =  row[ m_columns.m_col_url ];
+    Glib::ustring url =  row[ m_columns.m_url ];
     return url;
 }
 
@@ -2090,7 +1873,7 @@ Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return Glib::ustring();
 
-    Glib::ustring url =  row[ m_columns.m_col_url ];
+    Glib::ustring url =  row[ m_columns.m_url ];
     if( url.empty() ) return url;
 
     // 移転があったら url を最新のものに変換しておく
@@ -2119,7 +1902,7 @@ Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
 {
     if( ! row ) return Glib::ustring();
 
-    Glib::ustring url =  row[ m_columns.m_col_url ];
+    Glib::ustring url =  row[ m_columns.m_url ];
     if( url.empty() ) return url;
 
     // 移転があったら url を最新のものに変換しておく
@@ -2149,7 +1932,7 @@ Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return Glib::ustring();
-    return row[ m_columns.m_col_name ];
+    return row[ m_columns.m_name ];
 }
 
 
@@ -2173,25 +1956,6 @@ int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
     if( ! row ) return TYPE_UNKNOWN;
     return row[ m_columns.m_type ];
 }
-
-
-
-//
-// ディレクトリかどうかの判定
-//
-bool BBSListViewBase::is_dir( Gtk::TreeModel::iterator& it )
-{
-    Gtk::TreeModel::Row row = ( *it );
-    if( row[ m_columns.m_type ] == TYPE_DIR ) return true;
-    return false;
-}
-
-bool BBSListViewBase::is_dir( const Gtk::TreePath& path )
-{
-    Gtk::TreeModel::iterator it = m_treestore->get_iter( path );
-    return is_dir( it );
-}
-
 
 
 //
@@ -2227,211 +1991,6 @@ bool BBSListViewBase::is_etcboard( Gtk::TreePath path )
     return is_etcdir( path );
 }
 
-
-
-//
-// 行追加
-//
-// after = false ならpath_dest の前に追加する( デフォルト after = true )
-// path_dest がNULLなら一番最後に作る
-// path_dest がディレクトリであり、かつ subdir = true なら path_dest の下に追加。
-// path_dest がディレクトリでない、または subdir = falseなら path_dest の後に追加
-// 戻り値は追加した行のpath
-//
-Gtk::TreeModel::Path BBSListViewBase::append_row( const std::string& url, const std::string& name, int type,
-                                                  Gtk::TreeModel::Path path_dest, bool subdir, bool after  )
-{
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::append_row " << url << " " << name << std::endl;
-#endif    
-    Gtk::TreeModel::Row row_new;
-
-    // 一番下に追加
-    if( ! m_treeview.get_row( path_dest ) ) row_new = *( m_treestore->append() );
-    else{
-
-        Gtk::TreeModel::Row row_dest = m_treeview.get_row( path_dest );
-        if( row_dest )
-        {
-            // path_destがディレクトリなら下に追加してディレクトリを開く
-            if( subdir && after && row_dest[ m_columns.m_type ] == TYPE_DIR ){
-                row_new = *( m_treestore->prepend( row_dest.children() ) );
-                m_treeview.expand_row( path_dest, false );
-            }
-
-            // destの下に追加
-            else if( after ) row_new = *( m_treestore->insert_after( row_dest ) );
-
-            // destの前に追加
-            else row_new = *( m_treestore->insert( row_dest ) );
-        }
-    }
-    m_columns.setup_row( row_new, url, name, type );
-    return GET_PATH( row_new );
-}
-
-
-//
-// 行の再帰コピー
-//
-// subdir = true　かつdestがディレクトリならサブディレクトリをその下に作ってそこにコピーする。false ならdestの後にコピー
-// after = false の場合はdestの前に挿入する
-// dest が NULL なら一番下にappend
-//
-// 成功したら dest にコピーした行のiteratorが入る
-//
-bool BBSListViewBase::copy_row( Gtk::TreeModel::iterator& src, Gtk::TreeModel::iterator& dest, bool subdir, bool after )
-{
-    if( !src ) return false;
-    if( dest && src == dest ) return false;
-
-    Gtk::TreeModel::iterator it_new;
-    bool src_is_dir = false, dest_is_dir = false;
-
-    Gtk::TreeModel::Row row_src = ( *src );
-    Gtk::TreeModel::Row row_dest = ( *dest );
-
-    Glib::ustring url = row_src[ m_columns.m_col_url ];
-    Glib::ustring name = row_src[ m_columns.m_col_name ];
-    int type = row_src[ m_columns.m_type ];
-
-    if( type == TYPE_DIR ) src_is_dir = true;
-    if( row_dest && row_dest[ m_columns.m_type ] == TYPE_DIR ) dest_is_dir = true;
-
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::copy_row " << name << std::endl;
-    if( src_is_dir ) std::cout << "src is directory\n";
-    if( dest_is_dir ) std::cout << "dest is directory\n";
-#endif    
-
-    // destがNULLなら一番下に追加
-    if( ! dest  ) it_new = m_treestore->append();
-
-    // destの下にサブディレクトリ作成
-    else if( subdir && after && dest_is_dir ){
-        it_new = m_treestore->prepend( row_dest.children() );
-    }
-
-    // destの後に追加
-    else if( after ) it_new = m_treestore->insert_after( dest );
-
-    // destの前に追加
-    else it_new = m_treestore->insert( dest );
-
-    Gtk::TreeModel::Row row_tmp = *( it_new );
-    m_columns.setup_row( row_tmp, url, name, type );
-
-    // srcがdirならサブディレクトリ内の行も再帰的にコピー
-    if( src_is_dir ){
-        Gtk::TreeModel::iterator it_tmp = it_new;
-        Gtk::TreeModel::iterator it_child = row_src.children().begin();
-        bool subdir_tmp = true;
-        for( ; it_child != row_src.children().end(); ++it_child ){
-            copy_row( it_child, it_tmp, subdir_tmp );
-            subdir_tmp = false;
-        }
-    }
-
-    dest = it_new;
-    return true;
-}
-
-
-
-//
-// 選択した行をpathの所にまとめて移動
-//
-// after = true なら path の後に移動。falseなら前
-//
-void BBSListViewBase::move_selected_row( const Gtk::TreePath& path, bool after )
-{
-    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::vector< bool > vec_cancel;
-    vec_cancel.resize( list_it.size() );
-    std::fill( vec_cancel.begin(), vec_cancel.end(), false );
-
-    // 移動できるかチェック
-    std::list< Gtk::TreeModel::iterator >::iterator it_src = list_it.begin();
-    for( int i = 0 ; it_src != list_it.end(); ++i, ++it_src ){
-
-        if( vec_cancel[ i ] ) continue;
-
-        Gtk::TreeModel::Path path_src = GET_PATH( ( *it_src ) );
-
-        // 移動先と送り側が同じならキャンセル
-        if( path_src.to_string() == path.to_string() ) return;
-
-        // 移動先がサブディレクトリに含まれないかチェック
-        if( is_dir( ( *it_src ) ) ){
-            if( path.to_string().find( path_src.to_string() ) != Glib::ustring::npos ){
-                SKELETON::MsgDiag mdiag( NULL, "移動先は送り側のディレクトリのサブディレクトリです", false, Gtk::MESSAGE_ERROR );
-                mdiag.run();
-                return;
-            }
-        }
-
-        // path_srcのサブディレクトリ内の行も範囲選択内に含まれていたらその行の移動をキャンセル
-        std::list< Gtk::TreeModel::iterator >::iterator it_tmp = it_src;
-        ++it_tmp;
-        for( int i2 = 1 ; it_tmp != list_it.end(); ++i2, ++it_tmp ){
-
-            Gtk::TreeModel::Path path_tmp = GET_PATH( ( *it_tmp ) );
-            if( path_tmp.to_string().find( path_src.to_string() ) != Glib::ustring::npos ){
-                vec_cancel[ i + i2 ] = true;
-            }
-        }
-    }
-
-    // 移動開始
-
-    std::list< Gtk::TreeModel::Row > list_destrow;
-
-    Gtk::TreeModel::iterator it_dest = m_treestore->get_iter( path );
-    Gtk::TreeModel::iterator it_dest_bkup = it_dest;
-    bool after_bkup = after;
-    bool subdir = after;
-    it_src = list_it.begin();
-    for( int i = 0 ; it_src != list_it.end(); ++i, ++it_src ){
-
-        if( vec_cancel[ i ] ) continue;
-
-        // コピーして削除
-        if( copy_row( ( *it_src ), it_dest, subdir, after ) ) m_treestore->erase( ( *it_src ) );
-        subdir = false;
-        after = true;
-        list_destrow.push_back( *it_dest );
-    }
-
-    // 移動先がディレクトリなら開く
-    if( is_dir( it_dest_bkup ) && after_bkup ) m_treeview.expand_row( GET_PATH( *it_dest_bkup ), false );
-
-    // 範囲選択
-    m_treeview.get_selection()->unselect_all();
-    std::list< Gtk::TreeModel::Row >::iterator it_destrow = list_destrow.begin();
-    for( ; it_destrow != list_destrow.end(); ++it_destrow ){
-
-        Gtk::TreeModel::Row row_tmp = ( *it_destrow );
-        m_treeview.get_selection()->select( row_tmp );
-
-        if( row_tmp[ m_columns.m_type ] == TYPE_DIR ){
-            m_treeview.expand_row( GET_PATH( row_tmp ), false );
-            select_all_dir( GET_PATH( row_tmp ) );
-        }
-    }
-}
-
-
-
-//
-// 下線を引く
-//
-void BBSListViewBase::draw_underline( const Gtk::TreePath& path, bool draw )
-{
-    Gtk::TreeModel::Row row = m_treeview.get_row( path );
-    if( !row ) return;
-
-    row[ m_columns.m_underline ] = draw;
-}
 
 
 //
@@ -2491,7 +2050,7 @@ void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after,
                 DBTREE::set_bookmarked_thread( info.url, true );
             }
 
-            path = append_row( info.url, info.name, type, path, subdir, after );
+            path = m_treeview.append_row( info.url, info.name, std::string(), type, path, subdir, after );
             if( m_treeview.get_row( path ) ){
                 if( ! m_treeview.get_row( path_top ) ){
                     path_top = path;
@@ -2518,79 +2077,6 @@ void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after,
 }
 
 
-
-//
-// 選択した行をまとめて削除
-//
-void BBSListViewBase::delete_selected_rows()
-{
-    // iterator 取得
-    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-
-    if( ! list_it.size() ) return;
-
-    // ディレクトリが無いか確認
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-    for( ; it != list_it.end(); ++it ){
-
-        if( is_dir( (*it ) ) ){
-            SKELETON::MsgDiag mdiag( NULL, "ディレクトリを削除するとディレクトリ内の行も全て削除されます。削除しますか？",
-                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
-            break;
-        }
-    }
-
-    // カーソルを一番最後の行の次の行に移動する
-    it = list_it.end();
-    --it;
-
-    // ディレクトリを閉じないとそのディレクトリの先頭の列が next になり、ディレクトリが削除されるため
-    // キーボードフォーカスが外れる
-    if( is_dir( *it ) ) m_treeview.collapse_row( GET_PATH( *it ) ); 
-    Gtk::TreePath next = m_treeview.next_path( GET_PATH( *it ), true );
-
-    // もしnextが存在しなかったら全ての行を削除してから一番下に移動
-    bool gotobottom = ( ! m_treeview.get_row( next ) );
-    if( ! gotobottom ) m_treeview.set_cursor( next );
-
-#ifdef _DEBUG
-    std::cout << " BBSListViewBase::delete_selected_rows : ";
-    std::cout << GET_PATH( *it ).to_string() << " -> " << next.to_string() << std::endl;
-#endif
-
-    // まとめて削除
-    // ディレクトリ内の行を同時に選択している場合があるので後から消す
-    it = list_it.end();
-    while( it != list_it.begin() ) m_treestore->erase( ( *(--it) ) );
-
-    if( gotobottom ) m_treeview.goto_bottom();
-}
-
-
-
-//
-// 全てのツリーに m_columns.m_expand の値をセットする( tree2xml()で使用 )
-//
-void BBSListViewBase::set_expanded_row( const Gtk::TreeModel::Children& children )
-{
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() )
-    {
-        Gtk::TreePath path = m_treestore->get_path( *it );
-
-        // ツリーが開いているか
-        if( m_treeview.row_expanded( path ) ) (*it)[ m_columns.m_expand ] = true;
-        else (*it)[ m_columns.m_expand ] = false;
-
-        // 再帰
-        if( ! (*it)->children().empty() ) set_expanded_row( (*it)->children() );
-
-        ++it;
-    }
-}
-
-
 //
 // tree -> XML 変換
 //
@@ -2599,26 +2085,11 @@ void BBSListViewBase::tree2xml( const std::string& root_name )
 {
     if( ! m_ready_tree ) return;
 
-    if( m_treestore->children().empty() )
-    {
-        m_document.clear();
-        return;
-    }
-
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::tree2xml\n";
 #endif
 
-    // 全てのツリーに row[ m_columns.expand ] の値をセットする
-    set_expanded_row( m_treestore->children() );
-
-    // m_treestore からノードツリーを作成
-    m_document.init( m_treestore, root_name );
-
-#ifdef _DEBUG
-    std::cout << " ルートノード名=" << root_name;
-    std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
-#endif
+    m_treeview.tree2xml( m_document, root_name );
 
     // 座標
     int y = 0;
@@ -2637,8 +2108,10 @@ void BBSListViewBase::tree2xml( const std::string& root_name )
 
     // ルート要素に属性( path, y )の値を設定
     XML::Dom* root = m_document.get_root_element( root_name );
-    root->setAttribute( "y", y );
-    root->setAttribute( "path", path );
+    if( root ){
+        root->setAttribute( "y", y );
+        root->setAttribute( "path", path );
+    }
 }
 
 
@@ -2652,11 +2125,7 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
 #endif
 
     m_ready_tree = false;
-    m_treestore->clear();
-
-#if GTKMMVER >= 280
-    m_treeview.unset_model();
-#endif
+    m_jump_y = 0;
 
     // 新規に文字列からDOMノードツリーを作成する場合
     if( ! xml.empty() ) m_document.init( xml );
@@ -2666,28 +2135,11 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
     std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
 #endif
 
-    // 開いてるツリーの格納用
-    std::list< Gtk::TreePath > list_path_expand;
-
-    // Domノードから Gtk::TreeStore をセット
-    m_document.set_treestore( m_treestore, root_name, list_path_expand );
-
-#if GTKMMVER >= 280
-    m_treeview.set_model( m_treestore );
-    m_treeview.set_headers_visible( false );
-#endif
-
-    // ディレクトリオープン
-    std::list< Gtk::TreePath >::iterator it_path = list_path_expand.begin();
-    while( it_path != list_path_expand.end() )
-    {
-        m_treeview.expand_parents( *it_path );
-        m_treeview.expand_row( *it_path, false );
-        ++it_path;
-    }
+    m_treeview.xml2tree( m_document, m_treestore, root_name );
 
     // ルート要素を取り出す
     XML::Dom* root = m_document.get_root_element( root_name );
+    if( root ){
 
 	// ルート要素から属性( path, y )の値を取得
 	std::string focused_path = root->getAttribute( "path" );
@@ -2710,6 +2162,7 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
 
 	// この段階ではまだスクロールバーが表示されてない時があるのでclock_in()で移動する
 	m_jump_y = y;
+    }
 
     m_ready_tree = true;
 }
@@ -2736,7 +2189,7 @@ void BBSListViewBase::update_urls()
 
         if( ( row = m_treeview.get_row( path ) ) ){
 
-            Glib::ustring url = row[ m_columns.m_col_url ];
+            Glib::ustring url = row[ m_columns.m_url ];
             int type = row[ m_columns.m_type ];
             std::string url_new;
 
@@ -2753,7 +2206,7 @@ void BBSListViewBase::update_urls()
 #ifdef _DEBUG
                         std::cout << url << " -> " << url_new << std::endl;
 #endif
-                        row[ m_columns.m_col_url ] = url_new;
+                        row[ m_columns.m_url ] = url_new;
                     }
                     path.next();
                     break;
@@ -2768,7 +2221,7 @@ void BBSListViewBase::update_urls()
 #ifdef _DEBUG
                         std::cout << url << " -> " << url_new << std::endl;
 #endif
-                        row[ m_columns.m_col_url ] = url_new;
+                        row[ m_columns.m_url ] = url_new;
                     }
                     path.next();
                     break;
@@ -2819,7 +2272,7 @@ void BBSListViewBase::toggle_icon( const std::string& url )
 
         if( ( row = m_treeview.get_row( path ) ) ){
 
-            Glib::ustring url_row = row[ m_columns.m_col_url ];
+            Glib::ustring url_row = row[ m_columns.m_url ];
 
             switch( row[ m_columns.m_type ] ){
 
@@ -2832,7 +2285,7 @@ void BBSListViewBase::toggle_icon( const std::string& url )
                 case TYPE_THREAD_OLD:
                     if( urldat == url_row || urlcgi == url_row ){
                         row[ m_columns.m_type ] = type;
-                        row[ m_columns.m_col_image ] = XML::get_icon( type );
+                        row[ m_columns.m_image ] = XML::get_icon( type );
                     }
 
                 default:

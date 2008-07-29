@@ -288,7 +288,7 @@ const int CONFIG::get_num_id_low(){ return get_confitem()->num_id_low; }
 const bool CONFIG::get_loose_url(){ return get_confitem()->loose_url; }
 
 const bool CONFIG::get_hide_usrcmd(){ return get_confitem()->hide_usrcmd; }
-const int CONFIG::get_max_show_usrcmd(){ return get_confitem()->max_show_usrcmd; }
+void CONFIG::set_hide_usrcmd( bool hide ){ get_confitem()->hide_usrcmd = hide; }
 
 const bool CONFIG::get_reload_allthreads(){ return get_confitem()->reload_allthreads; }
 

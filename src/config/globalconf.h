@@ -311,9 +311,7 @@ namespace CONFIG
 
     // ユーザーコマンドで選択できない項目を非表示にする
     const bool get_hide_usrcmd();
-
-    // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
-    const int get_max_show_usrcmd();
+    void set_hide_usrcmd( bool hide );
 
     // スレビューで再読み込みボタンを押したときに全タブを更新する
     const bool get_reload_allthreads();

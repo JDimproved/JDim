@@ -51,6 +51,7 @@ namespace CACHE
 
     // ユーザーコマンド設定ファイル
     std::string path_usrcmd();
+    std::string path_usrcmd_old();
 
     // スレ履歴
     std::string path_xml_history();

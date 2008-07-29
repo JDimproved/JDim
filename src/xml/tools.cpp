@@ -3,7 +3,7 @@
 #include "tools.h"
 
 #include "icons/iconmanager.h"
-#include "global.h"
+#include "type.h"
 
 
 //
@@ -50,6 +50,14 @@ std::string XML::get_name( const int type_id )
 
         case TYPE_HISTITEM: // HISTORY::ViewHistoryItem
             name = "histitem";
+            break;
+
+        case TYPE_USRCMD:
+            name = "usrcmd";
+            break;
+
+        case TYPE_SEPARATOR:
+            name = "separator";
             break;
     }
 
@@ -100,6 +108,14 @@ int XML::get_type( const std::string& node_name )
     {
         type = TYPE_HISTITEM;
     }
+    else if( node_name == "usrcmd" )
+    {
+        type = TYPE_USRCMD;
+    }
+    else if( node_name == "separator" )
+    {
+        type = TYPE_SEPARATOR;
+    }
 
     return type;
 }
@@ -140,6 +156,10 @@ Glib::RefPtr< Gdk::Pixbuf > XML::get_icon( const int type_id )
 
         case TYPE_LINK:
             icon = ICON::get_icon( ICON::LINK );
+            break;
+
+        case TYPE_USRCMD:
+            icon = ICON::get_icon( ICON::THREAD );
             break;
     }
 

@@ -22,6 +22,7 @@
 #include "history/historymanager.h"
 
 #include "global.h"
+#include "type.h"
 #include "viewfactory.h"
 #include "dndmanager.h"
 #include "sharedbuffer.h"
@@ -593,6 +594,17 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
     // ポップアップ消去
     else if( command.command == "delete_popup" ) delete_popup();
     else if( command.command == "delete_all_popups" ) delete_all_popups();
+
+    // ポップアップメニューの再作成
+    else if( command.command == "reset_popupmenu" ){
+
+        std::list< SKELETON::View* > list_view = get_list_view();
+        std::list< SKELETON::View* >::iterator it = list_view.begin();
+        for( ; it != list_view.end(); ++it ){
+            SKELETON::View* view = ( *it );
+            if( view ) view->set_command( "reset_popupmenu" );
+        }
+    }
 
     // command.url を含むビューを全て再レイアウト
     else if( command.command == "relayout_views" ){

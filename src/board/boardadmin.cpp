@@ -16,6 +16,7 @@
 #include "jdlib/miscutil.h"
 
 #include "global.h"
+#include "type.h"
 #include "viewfactory.h"
 #include "dndmanager.h"
 #include "sharedbuffer.h"

@@ -1,10 +1,13 @@
 // ライセンス: GPL2
 //
-// treeviewクラス
+// ドラッグ開始可能なtreeviewクラス ( ドロップは受け付けない )
+//
+// フォント変更、偶数、奇数行別に色分けも可能。コンストラクタの use_usr_fontcolor を trueにしてフォントや色を指定する
+// 複数行選択、ツールチップ、ポップアップの表示も可能
 //
 
-#ifndef _TREEVIEW_H
-#define _TREEVIEW_H
+#ifndef _DRAGTREEVIEW_H
+#define _DRAGTREEVIEW_H
 
 #include "treeviewbase.h"
 
@@ -13,28 +16,24 @@
 #include "control.h"
 
 #include <gtkmm.h>
-#include <string>
 
 namespace SKELETON
 {
     class View;
     class PopupWin;
 
-    class JDTreeView : public JDTreeViewBase
+    class DragTreeView : public JDTreeViewBase
     {
         typedef sigc::signal< void > SIG_DRAG_BEGIN;
-        typedef sigc::signal< void, Gtk::TreeModel::Path > SIG_DRAG_MOTION;
-        typedef sigc::signal< void, Gtk::TreeModel::Path > SIG_DRAG_DROP;
         typedef sigc::signal< void > SIG_DRAG_END;
 
         SIG_DRAG_BEGIN m_sig_drag_begin;
-        SIG_DRAG_MOTION m_sig_drag_motion;
-        SIG_DRAG_DROP m_sig_drag_drop;
         SIG_DRAG_END m_sig_drag_end;
 
-        bool m_reorderable;
-        bool m_drag;
-        bool m_selection_canceled;
+        bool m_dragging;  // ドラッグ中
+
+        // 範囲選択に使用
+        bool m_selection_canceled; // 範囲選択を解除したときにsig_button_release()を発行しないようにする
         Gtk::TreeModel::Path m_path_dragstart;
         Gtk::TreeModel::Path m_path_dragpre;
 
@@ -56,16 +55,13 @@ namespace SKELETON
       public:
 
         SIG_DRAG_BEGIN sig_drag_begin() { return m_sig_drag_begin; }
-        SIG_DRAG_MOTION sig_drag_motion() { return m_sig_drag_motion; }
-        SIG_DRAG_DROP sig_drag_drop() { return m_sig_drag_drop; }
         SIG_DRAG_END sig_drag_end() { return m_sig_drag_end; }
 
-        JDTreeView( const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even );
-        virtual ~JDTreeView();
+        // use_usr_fontcolor が true の時はフォントや色を指定する
+        DragTreeView( const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even );
+        virtual ~DragTreeView();
 
-       
-        const bool reorderable() const { return m_reorderable; }
-        void clock_in();
+        virtual void clock_in();
 
         // 色初期化
         void init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even );
@@ -73,9 +69,6 @@ namespace SKELETON
         // フォント初期化
         void init_font( const std::string& fontname );
         
-        // D&D可で並び替え可
-        void set_reorderable_view( bool reorderable );
-
         // ツールチップ表示
         // set_tooltip_min_width()で指定した幅よりもツールチップが広い場合は表示
         void set_str_tooltip( const std::string& str );
@@ -95,6 +88,8 @@ namespace SKELETON
         void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
 
       protected:
+
+        const bool is_dragging() const { return m_dragging; }
 
         // drag_source_set() でセットしたボタンでドラッグした時に呼び出される順番は
         //
@@ -120,6 +115,7 @@ namespace SKELETON
         virtual bool on_leave_notify_event( GdkEventCrossing* event );
 
       private:
+
         void slot_selection_changed();
    };
 }

@@ -344,9 +344,6 @@ const bool ConfigItems::load()
     // ユーザーコマンドで選択できない項目を非表示にする
     hide_usrcmd = cf.get_option( "hide_usrcmd", CONF_HIDE_USRCMD );
 
-    // 指定した数よりもユーザーコマンドが多い場合はサブメニュー化する
-    max_show_usrcmd = cf.get_option( "max_show_usrcmd", CONF_MAX_SHOW_USRCMD );
-
     // スレビューで再読み込みボタンを押したときに全タブを更新する
     reload_allthreads = cf.get_option( "reload_allthreads", CONF_RELOAD_ALLTHREAD );
 
@@ -579,7 +576,6 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "loose_url", loose_url );
 
     cf.update( "hide_usrcmd", hide_usrcmd );
-    cf.update( "max_show_usrcmd", max_show_usrcmd );
     cf.update( "reload_allthreads", reload_allthreads );
 
     cf.update( "tab_min_str", tab_min_str );

@@ -6,7 +6,7 @@
 #include "boardjbbs.h"
 #include "boardmachi.h"
 
-#include "global.h"
+#include "type.h"
 
 DBTREE::BoardBase* DBTREE::BoardFactory( int type, const std::string& root, const std::string& path_board, const std::string& name,
                                          const std::string& basicauth )

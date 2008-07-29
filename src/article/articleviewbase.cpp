@@ -27,7 +27,11 @@
 
 #include "message/logmanager.h"
 
+#include "xml/document.h"
+#include "xml/tools.h"
+
 #include "global.h"
+#include "type.h"
 #include "httpcode.h"
 #include "command.h"
 #include "session.h"
@@ -172,9 +176,15 @@ void ArticleViewBase::setup_view()
 //
 // アクション初期化
 //
+#include <iostream>
 void ArticleViewBase::setup_action()
 {
+//#ifdef _DEBUG    
+    std::cout << "ArticleViewBase::setup_action\n";
+//#endif
+
     // アクショングループを作ってUIマネージャに登録
+    action_group().clear();
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)"), sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
@@ -266,16 +276,9 @@ void ArticleViewBase::setup_action()
                          sigc::mem_fun( *this, &ArticleViewBase::slot_abone_img ) );
 
     // ユーザコマンド
-    const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
-    for( int i = 0; i < usrcmd_size; ++i ){
-        std::string cmdname = "usrcmd" + MISC::itostr( i );
-        std::string cmdlabel = CORE::get_usrcmd_manager()->get_label( i );
-        Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( cmdname, cmdlabel );
-        action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::slot_usrcmd ), i ) );
-    }
-    bool submenu_usrcmd = CONFIG::get_max_show_usrcmd() <= usrcmd_size;
-    if( submenu_usrcmd ) action_group()->add( Gtk::Action::create( "Usrcmd_Menu", "ユーザコマンド(_U)" ) );
+    const std::string usrcmd_ui = create_usrcmd_menu();
 
+    ui_manager().clear();
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
 
@@ -418,9 +421,7 @@ void ArticleViewBase::setup_action()
     "<menuitem action='OpenBrowser'/>";
 
     // ユーザコマンド
-    if( submenu_usrcmd ) str_ui += "<menu action='Usrcmd_Menu'>";
-    for( int i = 0; i < usrcmd_size; ++i ) str_ui += "<menuitem action='usrcmd" + MISC::itostr( i ) + std::string( "'/>" );
-    if( submenu_usrcmd ) str_ui += "</menu>";
+    str_ui += usrcmd_ui;
 
     Glib::ustring str_ui2 = 
 
@@ -445,9 +446,7 @@ void ArticleViewBase::setup_action()
     "<menuitem action='OpenBrowser'/>";
 
     // ユーザコマンド
-    if( submenu_usrcmd ) str_ui2 += "<menu action='Usrcmd_Menu'>";
-    for( int i = 0; i < usrcmd_size; ++i ) str_ui2 += "<menuitem action='usrcmd" + MISC::itostr( i ) + std::string( "'/>" );
-    if( submenu_usrcmd ) str_ui2 += "</menu>";
+    str_ui2 += usrcmd_ui;
 
     Glib::ustring str_ui3 = 
     "<separator/>"
@@ -476,6 +475,83 @@ void ArticleViewBase::setup_action()
     CONTROL::set_menu_motion( popupmenu );
 }
 
+
+//
+// ユーザコマンドの登録とメニュー作成
+//
+const std::string ArticleViewBase::create_usrcmd_menu()
+{
+    std::string menu;
+    int dirno = 0;
+    int cmdno = 0;
+
+    menu = create_usrcmd_menu( & CORE::get_usrcmd_manager()->xml_document(), dirno, cmdno );
+
+//#ifdef _DEBUG
+    std::cout << menu << std::endl;
+//#endif
+
+    return menu;
+}
+
+// ユーザコマンドの登録とメニュー作成(再帰用)
+const std::string ArticleViewBase::create_usrcmd_menu( XML::Dom* dom, int& dirno, int& cmdno )
+{
+    std::string menu;
+    if( ! dom ) return menu;
+
+    XML::DomList domlist = dom->childNodes();
+    std::list< XML::Dom* >::iterator it = domlist.begin();
+    while( it != domlist.end() )
+    {
+        if( (*it)->nodeType() == XML::NODE_TYPE_ELEMENT )    
+        {
+//#ifdef _DEBUG
+            std::cout << "name = " << (*it)->nodeName() << std::endl;
+//#endif
+            const int type = XML::get_type( (*it)->nodeName() );
+
+            if( type == TYPE_DIR ){
+
+                const std::string name = (*it)->getAttribute( "name" );
+//#ifdef _DEBUG
+                std::cout << "[" << dirno << "] " << name << std::endl;
+//#endif                    
+                const std::string dirname = "usrcmd_dir" + MISC::itostr( dirno );
+                action_group()->add( Gtk::Action::create( dirname, name ) );
+                ++dirno;
+
+                menu += "<menu action='" + dirname + "'>";
+                menu += create_usrcmd_menu( *it, dirno, cmdno );
+                menu += "</menu>";
+            }
+
+            else if( type == TYPE_SEPARATOR ){
+
+                menu += "<separator/>";
+            }
+
+            else if( type == TYPE_USRCMD ){
+
+                    const std::string name = (*it)->getAttribute( "name" );
+//#ifdef _DEBUG
+                    std::cout << "[" << cmdno << "] " << name << std::endl;
+//#endif                    
+                    const std::string cmdname = "usrcmd" + MISC::itostr( cmdno );
+                    Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( cmdname, name );
+                    action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::slot_usrcmd ), cmdno ) );
+                    ++cmdno;
+
+                    menu += "<menuitem action='" + cmdname + "'/>";
+            }
+
+            else if( (*it)->hasChildNodes() ) menu += create_usrcmd_menu( *it, dirno, cmdno );
+        }
+        ++it;
+    }
+
+    return menu;
+}
 
 
 //
@@ -543,6 +619,8 @@ bool ArticleViewBase::set_command( const std::string& command, const std::string
     else if( command == "goto_num" ) goto_num( atoi( arg.c_str() ) );
     else if( command == "delete_popup" ) delete_popup();
     else if( command == "clear_highlight" ) clear_highlight();
+
+    else if( command == "reset_popupmenu" ) setup_action();
 
     // 実況手動切り替え
     else if( command == "live_start_stop" ){

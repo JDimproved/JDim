@@ -1,19 +1,21 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "usrcmdmanager.h"
 #include "command.h"
 #include "cache.h"
+#include "type.h"
+
+#include "xml/tools.h"
 
 #include "jdlib/miscutil.h"
 
-#include <gtkmm.h>
 #include "dbtree/interface.h"
 
-CORE::Usrcmd_Manager* instance_usrcmd_manager = NULL;
 
+CORE::Usrcmd_Manager* instance_usrcmd_manager = NULL;
 
 CORE::Usrcmd_Manager* CORE::get_usrcmd_manager()
 {
@@ -36,37 +38,100 @@ using namespace CORE;
 
 Usrcmd_Manager::Usrcmd_Manager()
 {
-    // 設定ファイル(usrcmd.txt)からユーザーコマンドを読み込み
-    std::string file_usrcmd = CACHE::path_usrcmd();
+    std::string xml;
+    if( CACHE::load_rawdata( CACHE::path_usrcmd(), xml ) ) m_document.init( xml );
+    else txt2xml();
+
+    analyze_xml();
+}
+
+
+//
+// 旧式の設定ファイル(テキスト形式)をxmlに変換する
+//
+void Usrcmd_Manager::txt2xml()
+{
+    m_document.clear();
+
+    // 旧設定ファイルからユーザーコマンドを読み込み
+    const std::string file_usrcmd = CACHE::path_usrcmd_old();
     std::string usrcmd;
-    std::string label;
-    std::string cmd;
+
     if( CACHE::load_rawdata( file_usrcmd, usrcmd ) ){
+
+        XML::Dom* root = m_document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME_USRCMD ) );
+        XML::Dom* subdir = root;
 
         std::list< std::string > list_usrcmd = MISC::get_lines( usrcmd );
         list_usrcmd = MISC::remove_commentline_from_list( list_usrcmd );
         list_usrcmd = MISC::remove_space_from_list( list_usrcmd );
         list_usrcmd = MISC::remove_nullline_from_list( list_usrcmd );
+
+        // ユーザコマンドが 3つ以上 (廃止した max_show_usrcmd 設定の初期値 )より
+        // 大きい場合はサブディレクトリ化する
+        if( list_usrcmd.size() >= 3 * 2 ){
+            subdir = root->appendChild( XML::NODE_TYPE_ELEMENT, XML::get_name( TYPE_DIR ) );
+            subdir->setAttribute( "name", "ユーザコマンド" );
+            subdir->setAttribute( "open", "y" );
+        }
+
         std::list< std::string >::iterator it;
         for( it = list_usrcmd.begin(); it != list_usrcmd.end(); ++it ){
 
-            label = *( it++ );
+            const std::string name = *( it++ );
             if( it == list_usrcmd.end() ) break;
-            cmd = *it;
-            set_cmd( label, cmd );
-        }
-    }
+            const std::string cmd = *it;
 
-    m_size = m_list_label.size();
+            XML::Dom* usrcmd = subdir->appendChild( XML::NODE_TYPE_ELEMENT, XML::get_name( TYPE_USRCMD ) );
+            usrcmd->setAttribute( "name", name );
+            usrcmd->setAttribute( "data", cmd );
+        }
+
+#ifdef _DEBUG
+        std::cout << "Usrcmd_Manager::txt2xml\n";
+        std::cout << "nodes = " << m_document.childNodes().size() << std::endl;
+        std::cout << m_document.get_xml() << std::endl;
+#endif
+        save_xml();
+    }
 }
 
 
-
-void Usrcmd_Manager::set_cmd( const std::string& label, const std::string& cmd )
+//
+// XML に含まれるコマンド情報を取り出してデータベースを更新
+//
+void Usrcmd_Manager::analyze_xml()
 {
-    std::string label2 = MISC::remove_space( label );
-    m_list_label.push_back( label2 );
+#ifdef _DEBUG
+    std::cout << "Usrcmd_Manager::analyze_xml\n";
+#endif
 
+    m_list_cmd.clear();
+    m_list_openbrowser.clear();
+
+    XML::DomList usrcmds = m_document.getElementsByTagName( XML::get_name( TYPE_USRCMD ) );
+
+    std::list< XML::Dom* >::iterator it = usrcmds.begin();
+    while( it != usrcmds.end() )
+    {
+        const std::string cmd = (*it)->getAttribute( "data" );
+
+#ifdef _DEBUG
+        const std::string name = (*it)->getAttribute( "name" );
+        std::cout << (*it)->nodeName() << " " <<  name << " " << cmd << std::endl;
+#endif
+
+        set_cmd( cmd );
+
+        ++it;
+    }
+
+    m_size = m_list_cmd.size();
+}
+
+
+void Usrcmd_Manager::set_cmd( const std::string& cmd )
+{
     std::string cmd2 = MISC::remove_space( cmd );
 
     if( cmd2.find( "$VIEW" ) == 0 ){
@@ -79,12 +144,25 @@ void Usrcmd_Manager::set_cmd( const std::string& label, const std::string& cmd )
     m_list_cmd.push_back( cmd2 );
 
 #ifdef _DEBUG
-    std::cout << "Usrcmd_Manager::set_cmd\n";
-    std::cout << "label " << label2 << std::endl;
-    std::cout << "cmd " << cmd2 << std::endl;
+    std::cout << "Usrcmd_Manager::set_cmd ";
+    std::cout << "[" << m_list_cmd.size()-1 << "] " << cmd2 << std::endl;
 #endif
 }
 
+
+
+//
+// XML 保存
+//
+void Usrcmd_Manager::save_xml()
+{
+#ifdef _DEBUG
+    std::cout << "Usrcmd_Manager::save_xml\n";
+    std::cout << m_document.get_xml() << std::endl;
+#endif
+
+    CACHE::save_rawdata( CACHE::path_usrcmd(), m_document.get_xml() );
+}
 
 
 //
@@ -178,18 +256,4 @@ bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::
     }
     
     return true;
-}
-
-
-const std::string Usrcmd_Manager::get_label( int num )
-{
-    if( num >= m_size ) return std::string();
-
-    std::string label = m_list_label[ num ];
-
-#ifdef _DEBUG
-    std::cout << "Usrcmd_Manager::get_label  = " << label << std::endl;
-#endif
-
-    return label;
 }

@@ -14,7 +14,7 @@
 #include "xml/tools.h"
 
 #include "cache.h"
-#include "global.h"
+#include "type.h"
 #include "session.h"
 
 #include <set>

@@ -4,7 +4,7 @@
 #include "jddebug.h"
 
 #include "historysubmenu.h"
-#include "global.h"
+#include "type.h"
 #include "command.h"
 #include "cache.h"
 #include "prefdiagfactory.h"

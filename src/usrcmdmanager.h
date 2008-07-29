@@ -7,22 +7,32 @@
 #ifndef _USRCMDMANAGER_H
 #define _USRCMDMANAGER_H
 
+#include "xml/document.h"
+
 #include <string>
 #include <vector>
+
+#define ROOT_NODE_NAME_USRCMD "usrcmdlist"
 
 namespace CORE
 {
     class Usrcmd_Manager
     {
+        XML::Document m_document;
+
         int m_size;
 
-        std::vector< std::string > m_list_label;
         std::vector< std::string > m_list_cmd;
         std::vector< bool > m_list_openbrowser;
 
     public:
+
         Usrcmd_Manager();
         virtual ~Usrcmd_Manager(){}
+
+        XML::Document& xml_document() { return m_document; }
+        void analyze_xml();
+        void save_xml();
 
         const int get_size() const { return m_size; }
 
@@ -35,11 +45,12 @@ namespace CORE
         std::string replace_cmd( const std::string& cmd, const std::string& url, const std::string& link, const std::string& text );
 
         bool is_sensitive( int num, const std::string& link, const std::string& selection );
-        const std::string get_label( int num );
 
       private:
 
-        void set_cmd( const std::string& label, const std::string& cmd );
+        void txt2xml();
+
+        void set_cmd( const std::string& cmd );
     };
 
     ///////////////////////////////////////

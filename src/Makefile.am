@@ -54,6 +54,8 @@ jd_SOURCES = \
 	msgitempref.cpp \
 	sidebaritempref.cpp \
 	fontcolorpref.cpp \
+	linkfilterpref.cpp \
+	usrcmdpref.cpp \
 	iomonitor.cpp
 
 
@@ -106,6 +108,8 @@ noinst_HEADERS = \
 	msgitempref.h \
 	sidebaritempref.h \
 	fontcolorpref.h \
+	linkfilterpref.h \
+	usrcmdpref.h \
 	livepref.h \
 	iomonitor.h
 

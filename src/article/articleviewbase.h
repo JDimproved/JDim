@@ -24,6 +24,11 @@ namespace DBTREE
     class ArticleBase;
 }
 
+namespace XML
+{
+    class Dom;
+}
+
 namespace ARTICLE
 {
     class DrawAreaBase;
@@ -216,6 +221,8 @@ namespace ARTICLE
         virtual DrawAreaBase* create_drawarea();        
 
         void setup_action();
+        const std::string create_usrcmd_menu();
+        const std::string create_usrcmd_menu( XML::Dom* dom, int& dirno, int& cmdno );
 
         virtual void exec_reload();
         void exec_delete();

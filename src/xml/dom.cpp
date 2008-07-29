@@ -6,10 +6,10 @@
 #include "dom.h"
 
 #include "jdlib/miscutil.h"
-#include "global.h"
+#include "type.h"
 #include "tools.h"
 
-#include "bbslist/columns.h"
+#include "skeleton/editcolumns.h"
 
 #include <sstream>
 
@@ -432,11 +432,11 @@ std::string Dom::get_xml( const int n )
 //
 // Gtk::TreeModel::Children からノードツリーを生成
 //
-void Dom::parse( const Gtk::TreeModel::Children& children )
+// ただし列は SKELETON::EditColumns を継承したものであること
+//
+void Dom::parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns& columns )
 {
     if( ! this || children.empty() ) return;
-
-    BBSLIST::TreeColumns columns;
 
     // Gtk::TreeModel::Children を走査
     Gtk::TreeModel::iterator it = children.begin();
@@ -444,10 +444,11 @@ void Dom::parse( const Gtk::TreeModel::Children& children )
     {
         Gtk::TreeModel::Row row = *it;
 
-        // 各値を取得( bbslist/columns.h を参照 )
+        // 各値を取得( skeleton/editcolumns.h を参照 )
         const int type = row[ columns.m_type ];
-        const Glib::ustring url = row[ columns.m_col_url ];
-        const Glib::ustring name = row[ columns.m_col_name ];
+        const Glib::ustring url = row[ columns.m_url ];
+        const Glib::ustring data = row[ columns.m_data ];
+        const Glib::ustring name = row[ columns.m_name ];
         const bool expand = row[ columns.m_expand ];
 
         if( type != TYPE_UNKNOWN )
@@ -461,9 +462,10 @@ void Dom::parse( const Gtk::TreeModel::Children& children )
                 if( type == TYPE_DIR && expand ) node->setAttribute( "open", "y" );
                 if( ! name.empty() ) node->setAttribute( "name", name );
                 if( ! url.empty() ) node->setAttribute( "url", url );
+                if( ! data.empty() ) node->setAttribute( "data", data );
 
                 // 再帰
-                if( ! row.children().empty() ) node->parse( row.children() );
+                if( ! row.children().empty() ) node->parse( row.children(), columns );
             }
         }
 
@@ -475,15 +477,16 @@ void Dom::parse( const Gtk::TreeModel::Children& children )
 //
 // ノードを分解して Gtk::TreeStore へ Gtk::TreeModel::Row を追加
 //
+// ただし列は SKELETON::EditColumns を継承したものであること
+//
 // list_path_expand は開いてるツリーを格納するための参照渡し
 //
 void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
+                            SKELETON::EditColumns& columns,
                              std::list< Gtk::TreePath >& list_path_expand,
                              const Gtk::TreeModel::Row& parent )
 {
     if( ! this ) return;
-
-    BBSLIST::TreeColumns columns;
 
     // ノードの子要素を走査
     std::list< Dom* >::iterator it = m_childNodes.begin();
@@ -504,14 +507,14 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                 else row = *( treestore->append() );
 
                 // 各値をセット
-                columns.setup_row( row, (*it)->getAttribute( "url" ), (*it)->getAttribute( "name" ), type );
+                columns.setup_row( row, (*it)->getAttribute( "url" ), (*it)->getAttribute( "name" ), (*it)->getAttribute( "data" ), type );
 
                 // 開いているツリーを追加
                 if( type == TYPE_DIR
                  && (*it)->getAttribute( "open" ) == "y" ) list_path_expand.push_back( treestore->get_path( row ) );
 
                 // 再帰
-                if( (*it)->hasChildNodes() ) (*it)->append_treestore( treestore, list_path_expand, row );
+                if( (*it)->hasChildNodes() ) (*it)->append_treestore( treestore, columns, list_path_expand, row );
             }
         }
 
@@ -596,8 +599,7 @@ DomList Dom::getElementsByTagName( const std::string& name )
 
             // 再帰
             DomList sub_nodes = (*it)->getElementsByTagName( name );
-
-            domlist.merge( sub_nodes );
+            domlist.splice( domlist.end(), sub_nodes );
         }
         ++it;
     }

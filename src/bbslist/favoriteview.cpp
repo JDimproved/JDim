@@ -7,7 +7,7 @@
 #include "toolbar.h"
 
 #include "cache.h"
-#include "global.h"
+#include "type.h"
 
 // ルート要素名( bookmark.xml )
 #define ROOT_NODE_NAME "favorite"
@@ -21,8 +21,8 @@ FavoriteListView::FavoriteListView( const std::string& url,
 {
     set_label( "お気に入り" );
 
-    // D&D可
-    get_treeview().set_reorderable_view( true );
+    // D&Dで編集可能
+    set_editable( true );
 }
  
 
