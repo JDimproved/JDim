@@ -671,8 +671,6 @@ void EditTreeView::move_selected_row( const Gtk::TreePath& path, bool after )
 const Gtk::TreeModel::Path EditTreeView::append_row( const std::string& url, const std::string& name, const Glib::ustring data, const int type,
                                                    const Gtk::TreeModel::Path path_dest, const bool subdir, const bool after  )
 {
-    if( ! m_editable ) return Gtk::TreeModel::Path();
-
     Glib::RefPtr< Gtk::TreeStore > treestore = Glib::RefPtr< Gtk::TreeStore >::cast_dynamic( get_model() );
     if( ! treestore ) return Gtk::TreeModel::Path();
 
