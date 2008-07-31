@@ -108,7 +108,6 @@ void Root::clear()
 //
 // count は無限再帰呼び出し禁止用
 //
-#include <iostream>
 BoardBase* Root::get_board( const std::string& url, const int count )
 {
 #ifdef _SHOW_GETBOARD
@@ -203,9 +202,9 @@ BoardBase* Root::get_board( const std::string& url, const int count )
         }
     }
 
-//#ifdef _DEBUG            
-    std::cout << "Root::get_board: not found !!!! url = " << url << std::endl;;
-//#endif
+#ifdef _DEBUG            
+    std::cout << "Root::get_board: not found url = " << url << std::endl;;
+#endif
     
     // それでも見つからなかったらNULLクラスを返す
     return m_board_null;

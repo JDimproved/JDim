@@ -704,7 +704,7 @@ ArticleBase* BoardBase::get_article_create( const std::string& id )
 ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 {
     if( empty() ){
-        std::cout << "get_article NULL 1\n";
+        std::cout << "get_article NULL 1 url = " << url << std::endl;
         return get_article_null();
     }
 
@@ -727,7 +727,7 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 //#ifdef _DEBUG
         std::cout << "could not convert url to daturl\nreturn Article_Null\n";
 //#endif
-        std::cout << "get_article NULL 2\n";
+        std::cout << "get_article NULL 2 url = " << url << std::endl;
         return m_get_article;
     }
 
@@ -743,7 +743,7 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 
     if( id.empty() ){
         std::cout << "return Article_Null\n";
-        std::cout << "get_article NULL 3\n";
+        std::cout << "get_article NULL 3 url = " << url << std::endl;
         return m_get_article;
     }
 
