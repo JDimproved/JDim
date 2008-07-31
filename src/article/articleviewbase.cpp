@@ -176,12 +176,11 @@ void ArticleViewBase::setup_view()
 //
 // アクション初期化
 //
-#include <iostream>
 void ArticleViewBase::setup_action()
 {
-//#ifdef _DEBUG    
+#ifdef _DEBUG    
     std::cout << "ArticleViewBase::setup_action\n";
-//#endif
+#endif
 
     // アクショングループを作ってUIマネージャに登録
     action_group().clear();
@@ -487,9 +486,9 @@ const std::string ArticleViewBase::create_usrcmd_menu()
 
     menu = create_usrcmd_menu( & CORE::get_usrcmd_manager()->xml_document(), dirno, cmdno );
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << menu << std::endl;
-//#endif
+#endif
 
     return menu;
 }
@@ -506,17 +505,17 @@ const std::string ArticleViewBase::create_usrcmd_menu( XML::Dom* dom, int& dirno
     {
         if( (*it)->nodeType() == XML::NODE_TYPE_ELEMENT )    
         {
-//#ifdef _DEBUG
+#ifdef _DEBUG
             std::cout << "name = " << (*it)->nodeName() << std::endl;
-//#endif
+#endif
             const int type = XML::get_type( (*it)->nodeName() );
 
             if( type == TYPE_DIR ){
 
                 const std::string name = (*it)->getAttribute( "name" );
-//#ifdef _DEBUG
+#ifdef _DEBUG
                 std::cout << "[" << dirno << "] " << name << std::endl;
-//#endif                    
+#endif                    
                 const std::string dirname = "usrcmd_dir" + MISC::itostr( dirno );
                 action_group()->add( Gtk::Action::create( dirname, name ) );
                 ++dirno;
@@ -534,9 +533,9 @@ const std::string ArticleViewBase::create_usrcmd_menu( XML::Dom* dom, int& dirno
             else if( type == TYPE_USRCMD ){
 
                     const std::string name = (*it)->getAttribute( "name" );
-//#ifdef _DEBUG
+#ifdef _DEBUG
                     std::cout << "[" << cmdno << "] " << name << std::endl;
-//#endif                    
+#endif                    
                     const std::string cmdname = "usrcmd" + MISC::itostr( cmdno );
                     Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( cmdname, name );
                     action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::slot_usrcmd ), cmdno ) );
@@ -1772,6 +1771,7 @@ bool ArticleViewBase::slot_scroll_event( GdkEventScroll* event )
 //
 // drawareaのsig_on_url()シグナルとつなぐ
 //
+#include <iostream>
 void ArticleViewBase::slot_on_url( std::string url, int res_number )
 {
 
@@ -1906,10 +1906,11 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         std::string url_dat = DBTREE::url_dat( url, num_from, num_to );
         std::string url_subject = DBTREE::url_subject( url );
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
+        std::cout << "ArticleViewBase::slot_on_url " << url << std::endl;
         std::cout << "url_dat = " << url_dat << std::endl;
         std::cout << "url_subject = " << url_subject << std::endl;
-#endif
+//#endif
 
         // 他スレ
         if( ! url_dat.empty() ){
@@ -1919,7 +1920,11 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
             args.arg2 = "true"; // 板名、スレ名表示
             args.arg3 = "false"; // あぼーんしたレスの内容は非表示(あぼーんと表示)
 
+            std::cout << "popup start\n";
+
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, url_dat, args );
+
+            std::cout << "popup done\n";
         }
 
         // 板

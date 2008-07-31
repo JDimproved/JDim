@@ -108,6 +108,7 @@ void Root::clear()
 //
 // count は無限再帰呼び出し禁止用
 //
+#include <iostream>
 BoardBase* Root::get_board( const std::string& url, const int count )
 {
 #ifdef _SHOW_GETBOARD
@@ -202,9 +203,9 @@ BoardBase* Root::get_board( const std::string& url, const int count )
         }
     }
 
-#ifdef _DEBUG            
-    std::cout << "Root::get_board: not found\n";
-#endif
+//#ifdef _DEBUG            
+    std::cout << "Root::get_board: not found !!!! url = " << url << std::endl;;
+//#endif
     
     // それでも見つからなかったらNULLクラスを返す
     return m_board_null;
@@ -533,13 +534,14 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 //
 // (明示的に)板移転
 //
+#include <iostream>
 bool Root::move_board( const std::string& url_old, const std::string& url_new, const bool etc )
 {
     if( url_old == url_new ) return false;
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
     std::cout << "Root::move_board " << url_old << " -> " << url_new << std::endl;
-#endif
+//#endif
 
     m_move_info = std::string();
 
@@ -580,10 +582,10 @@ bool Root::exec_move_board( BoardBase* board,
 
     if( ! board ) return false;
 
-#ifdef _SHOW_BOARD
+//#ifdef _SHOW_BOARD
     std::cout << "Root::exec_move_board\n";
     std::cout << old_root << old_path_board << " -> " << new_root <<  new_path_board << std::endl;
-#endif
+//#endif
 
     const std::string old_url = board->url_boardbase();
     std::string old_path = CACHE::path_board_root( old_url );
@@ -624,13 +626,13 @@ bool Root::exec_move_board( BoardBase* board,
             else MISC::ERRMSG( "can't move cache from " + old_path + " to " + new_path );
         }
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
         std::cout << "movetable was updated.\n"
                   << "old_root = " << old_root << std::endl
                   << "new_root = " << new_root << std::endl
                   << "old_path_board = " << old_path_board << std::endl
                   << "new_path_board = " << new_path_board << std::endl;
-#endif
+//#endif
         push_movetable( old_root, old_path_board, new_root, new_path_board );
 
         // この板に関連する表示中のviewのURLを更新
@@ -650,9 +652,9 @@ void Root::push_movetable( const std::string old_root,
                            const std::string new_path_board
     )
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
     std::cout << "Root::push_movetable : " << old_root << old_path_board << " -> " << new_root << new_path_board << std::endl;
-#endif            
+//#endif            
 
     std::string str;
 
@@ -661,9 +663,9 @@ void Root::push_movetable( const std::string old_root,
     std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
     for( ; it_move != m_movetable.end(); ){
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
         std::cout << ( *it_move ).old_root << ( *it_move ).old_path_board << "/ -> " << ( *it_move ).new_root << std::endl;
-#endif            
+//#endif            
 
         if(
             ( ( *it_move ).old_root == new_root
