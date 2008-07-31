@@ -144,6 +144,7 @@ DrawAreaBase* ArticleViewBase::create_drawarea()
 //
 // 各派生ビューで初期設定が済んだ後に呼ばれる
 // 
+#include <iostream>
 void ArticleViewBase::setup_view()
 {
 #ifdef _DEBUG    
@@ -151,6 +152,13 @@ void ArticleViewBase::setup_view()
 #endif
     
     m_article = DBTREE::get_article( m_url_article );
+
+    if( ! m_article ){
+        std::cout << "ArticleViewBase::setup_view article is NULL url = " << m_url_article << std::endl;;
+        SKELETON::MsgDiag mdiag( NULL, "m_article が NULL です\nJDスレで報告してください URL = " + m_url_article );
+        mdiag.run();
+    }
+
     m_drawarea = create_drawarea();
     assert( m_article );
     assert( m_drawarea );
