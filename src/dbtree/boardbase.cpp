@@ -700,9 +700,13 @@ ArticleBase* BoardBase::get_article_create( const std::string& id )
 //
 // さらにデータベースにArticleBaseクラスが登録されてない場合はクラスを作成して登録する
 //
+#include <iostream>
 ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 {
-    if( empty() ) return get_article_null();
+    if( empty() ){
+        std::cout << "get_article NULL 1\n";
+        return get_article_null();
+    }
 
     // キャッシュ
     if( url == m_get_article_url ) return m_get_article;
@@ -720,9 +724,10 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
     // 板がDBに登録されてないので NULL クラスを返す
     if( urldat.empty() ){
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
         std::cout << "could not convert url to daturl\nreturn Article_Null\n";
-#endif
+//#endif
+        std::cout << "get_article NULL 2\n";
         return m_get_article;
     }
 
@@ -736,7 +741,11 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
     if( id.empty() ) std::cout << "return Article_Null\n";
 #endif
 
-    if( id.empty() ) return m_get_article;
+    if( id.empty() ){
+        std::cout << "return Article_Null\n";
+        std::cout << "get_article NULL 3\n";
+        return m_get_article;
+    }
 
     // get_article_create() 経由で ArticleBase::read_info() から get_article_fromURL()が
     // 再帰呼び出しされることもあるので m_get_article_url を空にしておく
