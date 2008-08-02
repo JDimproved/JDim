@@ -183,6 +183,7 @@ void Loadable::callback_dispatch()
     // ローダを削除する前に情報保存
     m_code = get_loader_code();
     if( ! get_loader_str_code().empty() ) m_str_code = get_loader_str_code();
+    if( ! get_loader_contenttype().empty() ) m_contenttype = get_loader_contenttype();
     if( ! get_loader_modified().empty() ) m_date_modified = get_loader_modified();
     if( ! get_loader_cookies().empty() ) m_cookies = get_loader_cookies();
     if( ! get_loader_location().empty() ) m_location = get_loader_location();
@@ -196,6 +197,7 @@ void Loadable::callback_dispatch()
 #ifdef _DEBUG
     std::cout << "code = " << m_code << std::endl;
     std::cout << "str_code = " << m_str_code << std::endl;
+    std::cout << "contenttype = " << m_contenttype << std::endl;
     std::cout << "modified = " << m_date_modified << std::endl;
     std::cout << "location = " << m_location << std::endl;
     std::cout << "total_length = " << m_total_length << std::endl;
@@ -222,6 +224,14 @@ const std::string Loadable::get_loader_str_code()
     if( ! m_loader ) return std::string();
 
     return m_loader->data().str_code;
+}
+
+
+const std::string Loadable::get_loader_contenttype()
+{
+    if( ! m_loader ) return std::string();
+
+    return m_loader->data().contenttype;
 }
 
 

@@ -65,6 +65,7 @@ namespace SKELETON
         // ローダからコピーしたデータ
         int m_code;
         std::string m_str_code;
+        std::string m_contenttype;
         std::string m_date_modified;
         std::list< std::string > m_cookies;
         std::string m_location;
@@ -87,6 +88,8 @@ namespace SKELETON
 
         const std::string& get_str_code() const { return m_str_code; }
         void set_str_code( const std::string& str_code ){ m_str_code = str_code; }
+
+        const std::string& get_contenttype() const { return m_contenttype; }
 
         std::list< std::string >& cookies() { return m_cookies; }
         const std::string& location() const { return m_location; }
@@ -134,6 +137,7 @@ namespace SKELETON
 
         const int get_loader_code();
         const std::string get_loader_str_code();
+        const std::string get_loader_contenttype();
         const std::string get_loader_modified();
         const std::list< std::string > get_loader_cookies();
         const std::string get_loader_location();

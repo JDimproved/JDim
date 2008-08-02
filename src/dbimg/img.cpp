@@ -350,6 +350,7 @@ void Img::receive_data( const char* data, size_t size )
             stop_load();
 
 #ifdef _DEBUG
+            std::cout << "no image : size = " << size << std::endl;
             std::cout << data << std::endl;
 #endif
         }
@@ -376,7 +377,9 @@ void Img::receive_finish()
 {
 #ifdef _DEBUG
     std::cout << "Img::receive_finish code = " << get_code() << std::endl
+              << "strcode = " << get_str_code() << std::endl
               << "total byte = " << total_length() << std::endl
+              << "contenttype = " << get_contenttype() << std::endl
               << "cookies : " << std::endl;
 
     if( cookies().size() ){
@@ -401,6 +404,10 @@ void Img::receive_finish()
         if( url_tmp.find( "404" ) != std::string::npos && url_tmp.find( ".htm" ) != std::string::npos ) m_type = T_NOT_FOUND;
 
         else if( ! location().empty() && m_count_redirect < MAX_REDIRECT ){
+
+#ifdef _DEBUG
+            std::cout << "exec redirect\n";
+#endif
             ++m_count_redirect;
             m_url_alt = location();
             download_img( m_refurl );
@@ -426,7 +433,7 @@ void Img::receive_finish()
 
     if( m_type == T_NOIMG ){
         set_code( HTTP_ERR );
-        set_str_code( "画像ファイルではありません" );
+        set_str_code( "画像ファイルではありません (" + get_contenttype() + ")" );
         set_current_length( 0 );
     }
 
