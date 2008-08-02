@@ -491,7 +491,12 @@ bool DragableNoteBook::slot_button_release_event( GdkEventButton* event )
 
             // タブにページが残ってなかったらtrueをreturnしないと落ちる
             // TabNotebook::on_button_release_event() も参照せよ
-            if( get_n_pages() == 0 ){
+            //
+            // (注意) なぜか m_notebook_tab.get_n_pages() < m_notebook_view.get_n_pages() の時があって
+            // 以前の様に
+            // if( get_n_pages() == 0 )
+            // という条件では m_notebook_tab.get_n_pages() = 0 でも get_n_pages() != 0 になって落ちることがある
+            if( m_notebook_tab.get_n_pages() == 0 ){
                 m_page = -1;
                 return true;
             }

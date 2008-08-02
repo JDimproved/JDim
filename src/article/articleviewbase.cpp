@@ -1771,7 +1771,6 @@ bool ArticleViewBase::slot_scroll_event( GdkEventScroll* event )
 //
 // drawareaのsig_on_url()シグナルとつなぐ
 //
-#include <iostream>
 void ArticleViewBase::slot_on_url( std::string url, int res_number )
 {
 
@@ -1906,25 +1905,19 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         std::string url_dat = DBTREE::url_dat( url, num_from, num_to );
         std::string url_subject = DBTREE::url_subject( url );
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
         std::cout << "ArticleViewBase::slot_on_url " << url << std::endl;
         std::cout << "url_dat = " << url_dat << std::endl;
         std::cout << "url_subject = " << url_subject << std::endl;
-//#endif
+#endif
 
         // 他スレ
         if( ! url_dat.empty() ){
             if( num_from == 0 ) args.arg1 = "1"; // 最低でも1レス目は表示
             else args.arg1 = MISC::get_filename( url );
-
             args.arg2 = "true"; // 板名、スレ名表示
             args.arg3 = "false"; // あぼーんしたレスの内容は非表示(あぼーんと表示)
-
-            std::cout << "popup start\n";
-
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, url_dat, args );
-
-            std::cout << "popup done\n";
         }
 
         // 板
