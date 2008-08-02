@@ -78,7 +78,7 @@ namespace DBTREE
         const XML::Document& xml_document() const { return m_document; }
 
         // 板移転
-        bool move_board( const std::string& url_old, const std::string& url_new, const bool etc );
+        const bool move_board( const std::string& url_old, const std::string& url_new, const bool etc );
 
         // 外部板情報取得
         const std::list< DBTREE::ETCBOARDINFO >& get_etcboards() const { return m_etcboards; }

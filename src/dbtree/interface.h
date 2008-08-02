@@ -68,7 +68,7 @@ namespace DBTREE
         );
 
     // 板移転
-    void move_board( const std::string& url_old, const std::string& url_new );
+    const bool move_board( const std::string& url_old, const std::string& url_new );
 
     // bbslist系
     const XML::Document& get_xml_document();

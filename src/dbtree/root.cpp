@@ -17,6 +17,7 @@
 #include "jdlib/loaderdata.h"
 
 #include "skeleton/editviewdialog.h"
+#include "skeleton/msgdiag.h"
 
 #include "type.h"
 #include "command.h"
@@ -518,11 +519,11 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     // 移転処理
     else if( stat == BOARD_MOVED ){
 
-        exec_move_board( board,
-                         board->get_root(),
-                         board->get_path_board(),
-                         root,
-                         path_board );
+        if( ! exec_move_board( board,
+                             board->get_root(),
+                             board->get_path_board(),
+                             root,
+                             path_board ) ) return false;
     }
 
     return true;
@@ -533,14 +534,13 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 //
 // (明示的に)板移転
 //
-#include <iostream>
-bool Root::move_board( const std::string& url_old, const std::string& url_new, const bool etc )
+const bool Root::move_board( const std::string& url_old, const std::string& url_new, const bool etc )
 {
     if( url_old == url_new ) return false;
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "Root::move_board " << url_old << " -> " << url_new << std::endl;
-//#endif
+#endif
 
     m_move_info = std::string();
 
@@ -554,11 +554,12 @@ bool Root::move_board( const std::string& url_old, const std::string& url_new, c
     int type = get_board_type( url_new, root, path_board, etc );
     if( type == TYPE_BOARD_UNKNOWN ) return false;
 
-    exec_move_board( board,
-                     board->get_root(),
-                     board->get_path_board(),
-                     root,
-                     path_board );
+    if( ! exec_move_board( board,
+                           board->get_root(),
+                           board->get_path_board(),
+                           root,
+                           path_board
+            ) ) return false;
 
     // キャッシュを移動した
     if( ! m_move_info.empty() ) save_movetable();
@@ -581,10 +582,20 @@ bool Root::exec_move_board( BoardBase* board,
 
     if( ! board ) return false;
 
-//#ifdef _SHOW_BOARD
+#ifdef _SHOW_BOARD
     std::cout << "Root::exec_move_board\n";
     std::cout << old_root << old_path_board << " -> " << new_root <<  new_path_board << std::endl;
-//#endif
+#endif
+
+    if( old_root == new_root && old_path_board == new_path_board ){
+
+        std::string errmsg = "移転元のアドレスと移転先のアドレスが同じです\n\n"
+        + old_root + old_path_board + " → " + new_root +  new_path_board;
+
+        SKELETON::MsgDiag mdiag( NULL, errmsg, false, Gtk::MESSAGE_ERROR );
+        mdiag.run();
+        return false;
+    }
 
     const std::string old_url = board->url_boardbase();
     std::string old_path = CACHE::path_board_root( old_url );
@@ -625,13 +636,13 @@ bool Root::exec_move_board( BoardBase* board,
             else MISC::ERRMSG( "can't move cache from " + old_path + " to " + new_path );
         }
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
         std::cout << "movetable was updated.\n"
                   << "old_root = " << old_root << std::endl
                   << "new_root = " << new_root << std::endl
                   << "old_path_board = " << old_path_board << std::endl
                   << "new_path_board = " << new_path_board << std::endl;
-//#endif
+#endif
         push_movetable( old_root, old_path_board, new_root, new_path_board );
 
         // この板に関連する表示中のviewのURLを更新
@@ -651,9 +662,19 @@ void Root::push_movetable( const std::string old_root,
                            const std::string new_path_board
     )
 {
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "Root::push_movetable : " << old_root << old_path_board << " -> " << new_root << new_path_board << std::endl;
-//#endif            
+#endif            
+
+    if( old_root == new_root && old_path_board == new_path_board ){
+
+        std::string errmsg = "移転元のアドレスと移転先のアドレスが同じです (Root::push_movetable)\n\n"
+        + old_root + old_path_board + " → " + new_root +  new_path_board;
+
+        SKELETON::MsgDiag mdiag( NULL, errmsg, false, Gtk::MESSAGE_ERROR );
+        mdiag.run();
+        return;
+    }
 
     std::string str;
 
@@ -662,9 +683,10 @@ void Root::push_movetable( const std::string old_root,
     std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
     for( ; it_move != m_movetable.end(); ){
 
-//#ifdef _DEBUG
-        std::cout << ( *it_move ).old_root << ( *it_move ).old_path_board << "/ -> " << ( *it_move ).new_root << std::endl;
-//#endif            
+#ifdef _DEBUG
+        std::cout << "size = " << m_movetable.size() << " "
+                  << ( *it_move ).old_root << ( *it_move ).old_path_board << "/ -> " << ( *it_move ).new_root << std::endl;
+#endif            
 
         if(
             ( ( *it_move ).old_root == new_root
@@ -677,13 +699,23 @@ void Root::push_movetable( const std::string old_root,
 
             ){
 
-            str += "削除: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + ( *it_move ).new_root + "\n";
+            const std::string str_tmp = "削除: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + ( *it_move ).new_root + "\n";
+#ifdef _DEBUG
+            std::cout << str_tmp << std::endl;
+#endif
+            str += str_tmp;
 
             m_movetable.erase( it_move );
             it_move = m_movetable.begin();
             continue;
         }
+
+        // 移転先を最新にする
+        //
+        // (注意) old_root == new_root かつ old_path_board == new_path_board のとき
+        // erase した内容と push_back した内容が同じになるので無限ループに落ちる
         else if(
+
             ( *it_move ).new_root == old_root
             && ( *it_move ).new_path_board == old_path_board ){
 
@@ -691,8 +723,12 @@ void Root::push_movetable( const std::string old_root,
             movetable.new_root = new_root;
             movetable.new_path_board = new_path_board;
 
-            str += "更新: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + ( *it_move ).new_root
+            const std::string str_tmp = "更新: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + ( *it_move ).new_root
             + " => " + movetable.old_root + movetable.old_path_board + "/ -> " + movetable.new_root + "\n";
+#ifdef _DEBUG
+            std::cout << str_tmp << std::endl;
+#endif
+            str += str_tmp;
 
             m_movetable.erase( it_move );
             m_movetable.push_back( movetable );
@@ -1148,23 +1184,35 @@ const std::string Root::is_board_moved( const std::string& url,
         if( url.find( ( *it_move ).old_root ) == 0
             && url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos ){
 
-            std::string new_url = ( *it_move ).new_root + ( *it_move ).new_path_board + "/";
+            const std::string new_url = ( *it_move ).new_root + ( *it_move ).new_path_board + "/";
 
             old_root = ( *it_move ).old_root;
             old_path_board = ( *it_move ).old_path_board;
             new_root = ( *it_move ).new_root;
             new_path_board = ( *it_move ).new_path_board;
 
+            const std::string old_root_bkup = old_root;
+            const std::string old_path_board_bkup = old_path_board;
+
 #ifdef _DEBUG            
-            std::cout << url << " is moved to " << new_url << std::endl;
+            std::cout << "count = " << count << " : " << url << " is moved to " << new_url << std::endl;
 #endif
 
             // 連鎖的に検索
             std::string ret_url = is_board_moved( new_url, old_root, old_path_board, new_root, new_path_board, count +1 ); 
 
             // old_root と old_path_board が書き換わっているので戻しておく
-            old_root = ( *it_move ).old_root;
-            old_path_board = ( *it_move ).old_path_board;
+            //
+            // (注意) もし再帰呼び出ししたis_board_moved() の中で m_movetable.erase を実行すると
+            // it_move は無効になるので、以前の様に
+            // old_root = ( *it_move ).old_root;
+            // old_path_board = ( *it_move ).old_path_board;
+            // と it_move を使ってold_rootなどに代入するとメモリを破壊してセグフォになる時がある
+            // (イテレータのメモリが残っていればセグフォにならないので完全に運まかせ)
+            // 次にJDを起動したときは再帰呼び出ししたis_board_moved() の中の save_movetable()で
+            // 移転テーブルは更新済みで落ちないのでタチが悪い
+            old_root = old_root_bkup;
+            old_path_board = old_path_board_bkup;
 
             return ret_url;
         }
