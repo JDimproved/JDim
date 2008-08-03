@@ -2966,6 +2966,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
     if( ! header ) return NULL;
 
     // まだレイアウト計算していない
+    if( ! header->rect ) return NULL;
     if( header->next_header && ! header->next_header->rect ) return NULL;
 
     while( header ){
