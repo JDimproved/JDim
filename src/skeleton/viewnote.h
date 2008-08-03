@@ -20,6 +20,8 @@ namespace SKELETON
 
         ViewNotebook( DragableNoteBook* parent );
 
+        void redraw_scrollbar();
+
       protected:
 
         virtual bool on_expose_event( GdkEventExpose* event );

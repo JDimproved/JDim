@@ -904,6 +904,18 @@ void BoardView::redraw_view()
 }
 
 
+//
+// スクロールバー再描画
+//
+void BoardView::redraw_scrollbar()
+{
+#ifdef _DEBUG
+    std::cout << "BoardView::redraw_scrollbar\n";
+#endif
+
+    m_scrwin.queue_draw();
+}
+
 
 //
 // 色、フォントの更新

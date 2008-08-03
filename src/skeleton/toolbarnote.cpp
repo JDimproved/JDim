@@ -48,6 +48,10 @@ bool ToolBarNotebook::on_expose_event( GdkEventExpose* event )
                                               
 #ifdef _DEBUG
     std::cout << "ToolBarNotebook::on_expose_event"
+              << " x_area = " << event->area.x
+              << " y_area = " << event->area.y
+              << " w_area = " << event->area.width
+              << " h_area = " << event->area.height
               << " offset = " << offset 
               << " x = " << x
               << " y = " << y

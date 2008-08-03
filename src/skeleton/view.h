@@ -236,6 +236,7 @@ namespace SKELETON
         virtual void stop(){}
         virtual void show_view(){}
         virtual void redraw_view(){}
+        virtual void redraw_scrollbar(){}
         virtual void relayout(){}
         virtual void update_view(){}
         virtual void update_finish(){}        

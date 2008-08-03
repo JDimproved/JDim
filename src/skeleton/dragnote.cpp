@@ -74,14 +74,51 @@ void DragableNoteBook::focus_out()
 
 
 //
-// テーマによっては m_notebook_toolbar が m_notebook_view に上書きされて
+// Auroraなどテーマによっては m_notebook_toolbar が m_notebook_view に上書きされて
 // 消えてしまうのでもう一度 m_notebook_toolbar を描画する
 //
 bool DragableNoteBook::on_expose_event( GdkEventExpose* event )
 {
-    bool ret =  Gtk::VBox::on_expose_event( event );
+    const bool ret =  Gtk::VBox::on_expose_event( event );
 
-    if( m_notebook_toolbar.get_parent() == this ) propagate_expose( m_notebook_toolbar, event );
+    if( m_notebook_toolbar.get_parent() == this ){
+
+        const int min_toolbar_height = 4;
+        const Alloc_NoteBook alloc = get_alloc_notebook();
+        const int y_start = get_show_tabs() ? alloc.y_tabbar + alloc.height_tabbar : alloc.y_toolbar;
+        const int y_end = y_start + alloc.height_toolbar;
+
+        if( alloc.height_toolbar > min_toolbar_height  // ツールバーの中身が表示されている
+            && y_start <= event->area.y + event->area.height && y_end >= event->area.y ){
+
+            GdkEventExpose event_toolbar = *event;
+            if( event_toolbar.area.y < y_start ){
+                event_toolbar.area.height -= ( y_start - event_toolbar.area.y );
+                event_toolbar.area.y = y_start;
+            }
+            if( event_toolbar.area.y + event_toolbar.area.height > y_end ) event_toolbar.area.height = y_end - event_toolbar.area.y;
+
+#ifdef _DEBUG
+            std::cout << "DragableNoteBook::on_expose_event"
+                      << " y_s = " << y_start
+                      << " y_e = " << y_end
+                      << " x = " << event->area.x
+                      << " y = " << event->area.y
+                      << " w = " << event->area.width
+                      << " h = " << event->area.height
+                      << "\n-> x_t = " << event_toolbar.area.x
+                      << " y_t = " << event_toolbar.area.y
+                      << " w_t = " << event_toolbar.area.width
+                      << " h_t = " << event_toolbar.area.height
+                      << std::endl;
+#endif        
+            propagate_expose( m_notebook_toolbar, &event_toolbar );
+
+            // (注意) Auroraなどテーマによってはクリップ領域( event->area )を無視するものがあり
+            // ビューのスクロールバーが消えてしまう時があるので明示的に再描画する
+            m_notebook_view.redraw_scrollbar();
+        }
+    }
     return ret;
 }
 
@@ -93,22 +130,26 @@ bool DragableNoteBook::on_expose_event( GdkEventExpose* event )
 const Alloc_NoteBook DragableNoteBook::get_alloc_notebook()
 {
     Alloc_NoteBook alloc;
-
+    alloc.y_tabbar = m_notebook_tab.get_allocation().get_y();
     alloc.height_tabbar = m_notebook_tab.get_allocation().get_height();
+
+    alloc.y_toolbar = m_notebook_toolbar.get_allocation().get_y();
     alloc.height_toolbar = m_notebook_toolbar.get_allocation().get_height();
+
     alloc.height_view = m_notebook_view.get_allocation().get_height();
 
     m_notebook_tab.get_alloc_tab( alloc.x_tab, alloc.width_tab, alloc.height_tab );
 
 #ifdef _DEBUG
-    std::cout << "DragableNoteBook::get_alloc_notebook "
-              << "tab = " << alloc.height_tab
-              << " tabbar = " << alloc.height_tabbar
-              << " toolbar = " << alloc.height_toolbar
-              << " view = " << alloc.height_view
+    std::cout << "DragableNoteBook::get_alloc_notebook"
+              << " y_tabbar = " << alloc.y_tabbar
+              << " h_tabbar = " << alloc.height_tabbar
+              << " y_toolbar = " << alloc.y_toolbar
+              << " h_toolbar = " << alloc.height_toolbar
+              << " h_view = " << alloc.height_view
               << " x_tab = " << alloc.x_tab
-              << " width_tab = " << alloc.width_tab
-              << " height_tab = " << alloc.height_tab
+              << " w_tab = " << alloc.width_tab
+              << " h_tab = " << alloc.height_tab
               << std::endl;
 #endif
 
@@ -254,6 +295,8 @@ SKELETON::ToolBar* DragableNoteBook::get_toolbar( int page )
 //
 // ツールバー全体を表示
 //
+// タブにビューが表示されたら admin から呼び出される
+//
 void DragableNoteBook::show_toolbar()
 {
 #ifdef _DEBUG
@@ -275,7 +318,8 @@ void DragableNoteBook::show_toolbar()
 //
 // ツールバー全体を非表示
 //
-// ToolBar::hide_toolbar() は検索ツールバーは表示したまま
+// タブに全てのビューが無くなったら admin から呼び出される
+// ToolBar::hide_toolbar() の方は検索ツールバーは表示したまま
 //
 void DragableNoteBook::hide_toolbar()
 {

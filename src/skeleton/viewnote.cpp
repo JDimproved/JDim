@@ -5,6 +5,7 @@
 
 #include "dragnote.h"
 #include "viewnote.h"
+#include "view.h"
 
 #include "config/globalconf.h"
 
@@ -94,4 +95,21 @@ bool ViewNotebook::on_expose_event( GdkEventExpose* event )
     notebook->show_border = true;
 
     return ret;
+}
+
+
+//
+// スクロールバー再描画
+//
+// テーマによってはビューのスクロールバーが消えるときがあるので明示的に再描画する
+// DragableNoteBook::on_expose_event()を参照せよ
+//
+void ViewNotebook::redraw_scrollbar()
+{
+    int page = get_current_page();
+    if( page == -1 ) return;
+    SKELETON::View* view =  dynamic_cast< View* >( get_nth_page( page ) );
+    if( ! view ) return;
+
+    view->redraw_scrollbar();
 }
