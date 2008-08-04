@@ -168,6 +168,7 @@ namespace CORE
         void slot_article_pref();
         void slot_image_pref();
         void slot_usrcmd_pref();
+        void slot_filter_pref();
         void slot_setup_browser();
         void slot_setup_abone();
         void slot_setup_abone_thread();

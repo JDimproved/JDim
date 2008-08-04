@@ -12,25 +12,25 @@ namespace CORE
     class LinkFilterDiag : public SKELETON::PrefDiag
     {
         Gtk::VBox m_vbox;
-        Gtk::Entry m_entry_link;
+        Gtk::Entry m_entry_url;
         Gtk::Entry m_entry_cmd;
-        Gtk::Label m_label_link;
+        Gtk::Label m_label_url;
         Gtk::Label m_label_cmd;
 
       public:
 
-        LinkFilterDiag( Gtk::Window* parent, const Glib::ustring& link, const Glib::ustring& cmd )
+        LinkFilterDiag( Gtk::Window* parent, const std::string& url, const std::string& cmd )
         : SKELETON::PrefDiag( parent, "" ),
-        m_label_link( "アドレス" ),
+        m_label_url( "アドレス" ),
         m_label_cmd( "実行するコマンド" )
         {
             resize( 640, 1 );
 
-            m_entry_link.set_text( link );
+            m_entry_url.set_text( url );
             m_entry_cmd.set_text( cmd );
 
-            m_vbox.pack_start( m_label_link, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_entry_link, Gtk::PACK_SHRINK );
+            m_vbox.pack_start( m_label_url, Gtk::PACK_SHRINK );
+            m_vbox.pack_start( m_entry_url, Gtk::PACK_SHRINK );
             m_vbox.pack_start( m_label_cmd, Gtk::PACK_SHRINK );
             m_vbox.pack_start( m_entry_cmd, Gtk::PACK_SHRINK );
 
@@ -41,7 +41,7 @@ namespace CORE
             show_all_children();
         }
 
-        const Glib::ustring get_link() { return m_entry_link.get_text(); }
+        const Glib::ustring get_url() { return m_entry_url.get_text(); }
         const Glib::ustring get_cmd() { return m_entry_cmd.get_text(); }
     };
 
@@ -50,12 +50,12 @@ namespace CORE
     {
       public:
 
-        Gtk::TreeModelColumn< Glib::ustring >  m_col_link;
-        Gtk::TreeModelColumn< Glib::ustring >  m_col_cmd;
+        Gtk::TreeModelColumn< std::string >  m_col_url;
+        Gtk::TreeModelColumn< std::string >  m_col_cmd;
 
         TreeColumn()
         {
-            add( m_col_link );
+            add( m_col_url );
             add( m_col_cmd );
         }
     };
@@ -85,12 +85,25 @@ namespace CORE
       private:
 
         void append_rows();
-        void append_row( const std::string& link, const std::string& cmd );
+        void append_row( const std::string& url, const std::string& cmd );
+
+        const Gtk::TreeModel::iterator get_selected_row();
+        const Gtk::TreeModel::iterator get_top_row();
+        const Gtk::TreeModel::iterator get_bottom_row();
+
+        void select_row( const Gtk::TreeModel::iterator& row );
 
         // OK押した
         virtual void slot_ok_clicked();
 
         void slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column );
+
+        void slot_top();
+        void slot_up();
+        void slot_down();
+        void slot_bottom();
+        void slot_delete();
+        void slot_add();
     };
 }
 

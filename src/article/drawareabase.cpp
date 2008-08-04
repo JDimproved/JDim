@@ -3437,6 +3437,7 @@ bool DrawAreaBase::set_selection_str()
 {
     assert( m_layout_tree );
 
+    if( ! m_selection.str.empty() ) m_selection.str_pre = m_selection.str;
     m_selection.str.clear();
     if( !m_selection.select ) return false;
     
@@ -3813,6 +3814,7 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
                 // 範囲選択解除、及びドラッグ開始
                 m_drugging = true;
                 m_selection.select = false;
+                if( ! m_selection.str.empty() ) m_selection.str_pre = m_selection.str;
                 m_selection.str.clear();
                 m_caret_pos_pre = m_caret_pos;
                 m_caret_pos = caret_pos;

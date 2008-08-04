@@ -56,6 +56,10 @@ std::string XML::get_name( const int type_id )
             name = "usrcmd";
             break;
 
+        case TYPE_LINKFILTER:
+            name = "linkfilter";
+            break;
+
         case TYPE_SEPARATOR:
             name = "separator";
             break;
@@ -111,6 +115,10 @@ int XML::get_type( const std::string& node_name )
     else if( node_name == "usrcmd" )
     {
         type = TYPE_USRCMD;
+    }
+    else if( node_name == "linkfilter" )
+    {
+        type = TYPE_LINKFILTER;
     }
     else if( node_name == "separator" )
     {

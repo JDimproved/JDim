@@ -4,6 +4,9 @@
 #include "jddebug.h"
 
 #include "linkfilterpref.h"
+#include "linkfiltermanager.h"
+
+#include "skeleton/msgdiag.h"
 
 using namespace CORE;
 
@@ -16,13 +19,26 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
       m_button_delete( Gtk::Stock::DELETE ),
       m_button_add( Gtk::Stock::ADD )
 {
+    m_button_top.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_top ) );
+    m_button_up.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_up ) );
+    m_button_down.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_down ) );
+    m_button_bottom.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_bottom ) );
+    m_button_delete.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_delete ) );
+    m_button_add.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_add ) );
+
     m_liststore = Gtk::ListStore::create( m_columns );
     m_treeview.set_model( m_liststore );
     m_treeview.set_size_request( 640, 400 );
     m_treeview.signal_row_activated().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_row_activated ) );
 
-    Gtk::TreeViewColumn* column = Gtk::manage( new Gtk::TreeViewColumn( "アドレス", m_columns.m_col_link ) );
-    column->set_fixed_width( 480 );
+    Gtk::TreeViewColumn* column = Gtk::manage( new Gtk::TreeViewColumn( "アドレス", m_columns.m_col_url ) );
+    column->set_fixed_width( 240 );
+    column->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
+    column->set_resizable( true );
+    m_treeview.append_column( *column );
+
+    column = Gtk::manage( new Gtk::TreeViewColumn( "コマンド", m_columns.m_col_cmd ) );
+    column->set_fixed_width( 240 );
     column->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
     column->set_resizable( true );
     m_treeview.append_column( *column );
@@ -46,6 +62,7 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     get_vbox()->pack_start( m_hbox );
 
     show_all_children();
+    set_title( "リンクフィルタ設定" );
 
     append_rows();
 }
@@ -53,23 +70,100 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
 
 void LinkFilterPref::append_rows()
 {
-    append_row( "abc", "123" );
-    append_row( "def", "456" );
+    std::vector< LinkFilterItem >& list_item = CORE::get_linkfilter_manager()->get_list();
+    const int size = list_item.size();
+    if( ! size ) return;
+    for( int i = 0; i < size; ++i ) append_row( list_item[ i ].url, list_item[ i ].cmd );
+
+    select_row( get_top_row() );
 }
 
 
-void LinkFilterPref::append_row( const std::string& link, const std::string& cmd )
+void LinkFilterPref::append_row( const std::string& url, const std::string& cmd )
 {
     Gtk::TreeModel::Row row;
     row = *( m_liststore->append() );
+    if( row ){
+        row[ m_columns.m_col_url ] = url;
+        row[ m_columns.m_col_cmd ] = cmd;
 
-    row[ m_columns.m_col_link ] = link;
-    row[ m_columns.m_col_cmd ] = cmd;
+        select_row( row );
+    }
 }
 
 
+const Gtk::TreeModel::iterator LinkFilterPref::get_selected_row()
+{
+    Gtk::TreeModel::iterator row;
+
+    std::list< Gtk::TreeModel::Path > paths = m_treeview.get_selection()->get_selected_rows();
+    if( ! paths.size() ) return row;
+
+    row = *( m_liststore->get_iter( *paths.begin() ) );
+    return row;
+}
+
+
+const Gtk::TreeModel::iterator LinkFilterPref::get_top_row()
+{
+    Gtk::TreeModel::iterator row;
+
+    Gtk::TreeModel::Children children = m_liststore->children();
+    if( children.empty() ) return row;
+
+    row = children.begin();
+    return row;
+}
+
+
+const Gtk::TreeModel::iterator LinkFilterPref::get_bottom_row()
+{
+    Gtk::TreeModel::iterator row;
+
+    Gtk::TreeModel::Children children = m_liststore->children();
+    if( children.empty() ) return row;
+
+    row = --children.end();
+    return row;
+}
+
+
+void LinkFilterPref::select_row( const Gtk::TreeModel::iterator& row )
+{
+    const Gtk::TreePath path( row );
+    m_treeview.get_selection()->select( path );
+}
+
+
+//
+// OK ボタンを押した
+//
 void LinkFilterPref::slot_ok_clicked()
 {
+#ifdef _DEBUG
+    std::cout << "LinkFilterPref::slot_ok_clicked\n";
+#endif
+
+    std::vector< LinkFilterItem >& list_item = CORE::get_linkfilter_manager()->get_list();
+    list_item.clear();
+
+    const Gtk::TreeModel::Children children = m_liststore->children();
+    Gtk::TreeModel::iterator it = children.begin();
+    while( it != children.end() ){
+        Gtk::TreeModel::Row row = ( *it );
+        if( row ){
+            LinkFilterItem item;
+            item.url = row[ m_columns.m_col_url ];
+            item.cmd = row[ m_columns.m_col_cmd ];
+            list_item.push_back( item );
+#ifdef _DEBUG
+            std::cout << item.url << " " << item.cmd << std::endl;
+#endif
+        }
+        ++it;
+    }
+
+    if( list_item.size() ) CORE::get_linkfilter_manager()->save_xml();
 }
 
 
@@ -82,9 +176,109 @@ void LinkFilterPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::
     Gtk::TreeModel::Row row = *( m_liststore->get_iter( path ) );
     if( ! row ) return;
 
-    LinkFilterDiag diag( this, row[ m_columns.m_col_link ], row[ m_columns.m_col_cmd ] );
+    LinkFilterDiag diag( this, row[ m_columns.m_col_url ], row[ m_columns.m_col_cmd ] );
     if( diag.run() == Gtk::RESPONSE_OK ){
-        row[ m_columns.m_col_link ] = diag.get_link();
+        row[ m_columns.m_col_url ] = diag.get_url();
         row[ m_columns.m_col_cmd ] = diag.get_cmd();
     }
+}
+
+
+//
+// 一番上へ移動
+//
+void LinkFilterPref::slot_top()
+{
+    Gtk::TreeModel::iterator row = get_selected_row();
+    Gtk::TreeModel::iterator row_top = get_top_row();
+
+    if( row && row != row_top )  m_liststore->move( row, row_top );
+}
+
+
+//
+// 上へ移動
+//
+void LinkFilterPref::slot_up()
+{
+    Gtk::TreeModel::iterator row = get_selected_row();
+    Gtk::TreeModel::iterator row_top = get_top_row();
+
+    if( row && row != row_top ){
+
+        Gtk::TreePath path_dst( row );
+        if( path_dst.prev() ){
+
+            Gtk::TreeModel::iterator row_dst = m_liststore->get_iter( path_dst );
+            m_liststore->iter_swap( row, row_dst );
+        }
+    }
+}
+
+
+//
+// 下へ移動
+//
+void LinkFilterPref::slot_down()
+{
+    Gtk::TreeModel::iterator row = get_selected_row();
+    Gtk::TreeModel::iterator row_bottom = get_bottom_row();
+
+    if( row && row != row_bottom ){
+
+        Gtk::TreePath path_dst( row );
+        path_dst.next();
+        Gtk::TreeModel::iterator row_dst = m_liststore->get_iter( path_dst );
+        if( row_dst ) m_liststore->iter_swap( row, row_dst );
+    }
+}
+
+
+
+//
+// 一番下へ移動
+//
+void LinkFilterPref::slot_bottom()
+{
+    Gtk::TreeModel::iterator row = get_selected_row();
+    Gtk::TreeModel::iterator row_bottom = get_bottom_row();
+
+    if( row && row != row_bottom ){
+        m_liststore->move( row, m_liststore->children().end() );
+    }
+}
+
+
+//
+// 削除ボタン
+//
+void LinkFilterPref::slot_delete()
+{
+    Gtk::TreeModel::iterator row = get_selected_row();
+    if( ! row ) return;
+
+    SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
+    Gtk::TreePath path_next( row );
+    path_next.next();
+    Gtk::TreeModel::iterator row_next = m_liststore->get_iter( path_next );
+
+    m_liststore->erase( row );
+
+    if( row_next ) select_row( row_next );
+    else{
+        Gtk::TreeModel::iterator row_bottom = get_bottom_row();
+        if( row_bottom ) select_row( row_bottom );
+    }
+}
+
+
+//
+// 追加ボタン
+//
+void LinkFilterPref::slot_add()
+{
+    LinkFilterDiag diag( this, "", "" );
+    if( diag.run() == Gtk::RESPONSE_OK ) append_row( diag.get_url(), diag.get_cmd() );
 }

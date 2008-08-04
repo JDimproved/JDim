@@ -39,6 +39,7 @@
 #include "sharedbuffer.h"
 #include "prefdiagfactory.h"
 #include "usrcmdmanager.h"
+#include "linkfiltermanager.h"
 #include "compmanager.h"
 #include "controlutil.h"
 #include "controlid.h"
@@ -2219,7 +2220,13 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             CORE::core_set_command( "open_article_keyword" ,url_dat, query, "true" );
         }
     }
-  
+
+    /////////////////////////////////////////////////////////////////
+    // リンクフィルタ
+    else if( control.button_alloted( event, CONTROL::ClickButton )
+             && CORE::get_linkfilter_manager()->exec( m_url_article, url, m_drawarea->str_pre_selection() ) ){}
+
+
     /////////////////////////////////////////////////////////////////
     // 画像クリック
     else if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && ( CONFIG::get_use_image_view() || CONFIG::get_use_inline_image() ) ){

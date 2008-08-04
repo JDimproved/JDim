@@ -53,6 +53,9 @@ namespace CACHE
     std::string path_usrcmd();
     std::string path_usrcmd_old();
 
+    // リンクフィルタ
+    std::string path_linkfilter();
+
     // スレ履歴
     std::string path_xml_history();
     std::string path_xml_history_old();

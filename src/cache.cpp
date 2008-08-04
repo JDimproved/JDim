@@ -144,6 +144,12 @@ std::string CACHE::path_usrcmd_old()
 }
 
 
+// リンクフィルタ設定ファイル
+std::string CACHE::path_linkfilter()
+{
+    return CACHE::path_root() +  "linkfilter.xml";
+}
+
 
 // 履歴
 std::string CACHE::path_xml_history()

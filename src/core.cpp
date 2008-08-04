@@ -13,6 +13,7 @@
 #include "type.h"
 #include "dndmanager.h"
 #include "usrcmdmanager.h"
+#include "linkfiltermanager.h"
 #include "compmanager.h"
 #include "searchmanager.h"
 #include "aamanager.h"
@@ -139,6 +140,9 @@ Core::Core( WinMain& win_main )
     // ユーザコマンドマネージャ作成
     CORE::get_usrcmd_manager();
 
+    // リンクフィルタマネージャ作成
+    CORE::get_linkfilter_manager();
+
     // ログ検索マネージャ作成
     CORE::get_search_manager();
 
@@ -191,6 +195,9 @@ Core::~Core()
 
     // ユーザコマンドマネージャ削除
     CORE::delete_usrcmd_manager();
+
+    // リンクフィルタマネージャ削除
+    CORE::delete_linkfilter_manager();
 
     // 補完マネージャ削除
     CORE::delete_completion_manager();
@@ -409,11 +416,10 @@ void Core::run( bool init )
     // 設定
     m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
 
+    m_action_group->add( Gtk::Action::create( "Property_Menu", "プロパティ(_P)" ) );
     m_action_group->add( Gtk::Action::create( "BoardPref", "表示中の板のプロパティ(_B)..." ), sigc::mem_fun( *this, &Core::slot_board_pref ) );
     m_action_group->add( Gtk::Action::create( "ArticlePref", "表示中のスレのプロパティ(_T)..." ), sigc::mem_fun( *this, &Core::slot_article_pref ) );
     m_action_group->add( Gtk::Action::create( "ImagePref", "表示中の画像のプロパティ(_I)..." ), sigc::mem_fun( *this, &Core::slot_image_pref ) );
-
-    m_action_group->add( Gtk::Action::create( "UsrCmdPref", "ユーザコマンドの編集(_U)..." ), sigc::mem_fun( *this, &Core::slot_usrcmd_pref ) );
 
     m_action_group->add( Gtk::Action::create( "General_Menu", "一般(_G)" ) );
     m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示する(_S)", std::string(), CONFIG::get_show_oldarticle() ),
@@ -488,8 +494,12 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
     m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュの消去(_D)..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
 
-    // 実況
+
+    // その他
+    m_action_group->add( Gtk::Action::create( "Etc_Menu", "その他(_O)" ) );    
     m_action_group->add( Gtk::Action::create( "LivePref", "実況設定(_L)..." ), sigc::mem_fun( *this, &Core::slot_setup_live ) );
+    m_action_group->add( Gtk::Action::create( "UsrCmdPref", "ユーザコマンドの編集(_U)..." ), sigc::mem_fun( *this, &Core::slot_usrcmd_pref ) );
+    m_action_group->add( Gtk::Action::create( "FilterPref", "リンクフィルタの編集(_F)..." ), sigc::mem_fun( *this, &Core::slot_filter_pref ) );
 
     // プライバシー
     m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "プライバシー情報の消去(_P)..." ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
@@ -675,9 +685,11 @@ void Core::run( bool init )
     // 設定
         "<menu action='Menu_Config'>"
 
+        "<menu action='Property_Menu'>"
         "<menuitem action='BoardPref'/>"
         "<menuitem action='ArticlePref'/>"
         "<menuitem action='ImagePref'/>"
+        "</menu>"
 
         "<separator/>"
 
@@ -733,12 +745,13 @@ void Core::run( bool init )
 
         "<separator/>"
 
-    // 実況
+    // その他
+        "<menu action='Etc_Menu'>"
         "<menuitem action='LivePref'/>"    
-        "<separator/>"
-
-    // ユーザコマンド
         "<menuitem action='UsrCmdPref'/>"
+        "<menuitem action='FilterPref'/>"
+        "</menu>"
+
         "<separator/>"
 
     // プライバシー
@@ -1651,6 +1664,18 @@ void Core::slot_usrcmd_pref()
     pref->run();
     delete pref;
 }
+
+
+//
+// リンクフィルタの編集
+//
+void Core::slot_filter_pref()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_LINKFILTER, "" );
+    pref->run();
+    delete pref;
+}
+
 
 
 //

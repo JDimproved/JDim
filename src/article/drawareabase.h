@@ -41,7 +41,8 @@ namespace ARTICLE
         bool select;
         CARET_POSITION caret_from;
         CARET_POSITION caret_to;
-        std::string str;
+        std::string str;      // 現在の選択文字列
+        std::string str_pre;  // 一つ前の選択文字列
     };
 
 
@@ -194,6 +195,7 @@ namespace ARTICLE
 
         // 範囲選択中の文字列
         const std::string str_selection(); 
+        const std::string& str_pre_selection() const { return m_selection.str_pre; }  // 一つ前の選択文字列
 
         // 範囲選択を開始したレス番号
         const int get_selection_resnum_from();

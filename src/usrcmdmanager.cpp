@@ -107,7 +107,6 @@ void Usrcmd_Manager::analyze_xml()
 #endif
 
     m_list_cmd.clear();
-    m_list_openbrowser.clear();
 
     XML::DomList usrcmds = m_document.getElementsByTagName( XML::get_name( TYPE_USRCMD ) );
 
@@ -133,14 +132,6 @@ void Usrcmd_Manager::analyze_xml()
 void Usrcmd_Manager::set_cmd( const std::string& cmd )
 {
     std::string cmd2 = MISC::remove_space( cmd );
-
-    if( cmd2.find( "$VIEW" ) == 0 ){
-        cmd2 = cmd2.substr( 5 );
-        cmd2 = MISC::remove_space( cmd2 );
-        m_list_openbrowser.push_back( true );
-    }
-    else m_list_openbrowser.push_back( false );
-
     m_list_cmd.push_back( cmd2 );
 
 #ifdef _DEBUG
@@ -174,6 +165,13 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
 
     std::string cmd = m_list_cmd[ num ];
 
+    bool use_browser = false;
+    if( cmd.find( "$VIEW" ) == 0 ){
+        use_browser = true;
+        cmd = cmd.substr( 5 );
+        cmd = MISC::remove_space( cmd );
+    }
+
     cmd = replace_cmd( cmd, url, link, selection );
        
 #ifdef _DEBUG
@@ -183,7 +181,7 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
     std::cout << "exec " << cmd << std::endl;
 #endif
 
-    if( m_list_openbrowser[ num ] ) CORE::core_set_command( "open_url_browser", cmd );
+    if( use_browser ) CORE::core_set_command( "open_url_browser", cmd );
     else Glib::spawn_command_line_async( cmd );
 }
 

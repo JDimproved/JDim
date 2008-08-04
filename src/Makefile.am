@@ -29,6 +29,7 @@ jd_SOURCES = \
 	sharedbuffer.cpp \
 	dndmanager.cpp \
 	usrcmdmanager.cpp \
+	linkfiltermanager.cpp \
 	compmanager.cpp \
 	searchmanager.cpp \
 	searchloader.cpp \
@@ -54,8 +55,8 @@ jd_SOURCES = \
 	msgitempref.cpp \
 	sidebaritempref.cpp \
 	fontcolorpref.cpp \
-	linkfilterpref.cpp \
 	usrcmdpref.cpp \
+	linkfilterpref.cpp \
 	iomonitor.cpp
 
 
@@ -72,6 +73,7 @@ noinst_HEADERS = \
 	sharedbuffer.h \
 	dndmanager.h \
 	usrcmdmanager.h \
+	linkfiltermanager.h \
 	compmanager.h \
 	searchmanager.h \
 	searchloader.h \
@@ -108,8 +110,8 @@ noinst_HEADERS = \
 	msgitempref.h \
 	sidebaritempref.h \
 	fontcolorpref.h \
-	linkfilterpref.h \
 	usrcmdpref.h \
+	linkfilterpref.h \
 	livepref.h \
 	iomonitor.h
 

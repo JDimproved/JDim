@@ -23,7 +23,6 @@ namespace CORE
         int m_size;
 
         std::vector< std::string > m_list_cmd;
-        std::vector< bool > m_list_openbrowser;
 
     public:
 
