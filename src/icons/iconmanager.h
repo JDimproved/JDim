@@ -27,6 +27,7 @@ namespace ICON
 
         UPDATE,
         NEWTHREAD,
+        NEWTHREAD_HOUR,
         CHECK,
         DOWN,
         WRITE,

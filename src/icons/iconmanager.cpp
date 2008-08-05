@@ -16,6 +16,7 @@
 
 #include "update.h"
 #include "newthread.h"
+#include "newthread_hour.h"
 #include "check.h"
 #include "down.h"
 #include "write.h"
@@ -82,6 +83,7 @@ ICON_Manager::ICON_Manager()
 
     m_list_icons[ ICON::UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_update ), icon_update );
     m_list_icons[ ICON::NEWTHREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_newthread ), icon_newthread );
+    m_list_icons[ ICON::NEWTHREAD_HOUR ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_newthread_hour ), icon_newthread_hour );
     m_list_icons[ ICON::CHECK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_check ), icon_check );
     m_list_icons[ ICON::DOWN ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_down ), icon_down );
     m_list_icons[ ICON::WRITE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_write ), icon_write );

@@ -91,6 +91,8 @@ namespace BOARD
 
         SKELETON::LabelEntry m_entry_max_res;
 
+        SKELETON::LabelEntry m_label_last_access;
+
         Gtk::HBox m_hbox_modified;
         SKELETON::LabelEntry m_label_modified;
         Gtk::Button m_button_clearmodified;

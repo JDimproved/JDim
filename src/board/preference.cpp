@@ -44,6 +44,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
       m_label_line( false, "1レスの最大改行数：" ),
       m_label_byte( false, "1レスの最大バイト数：" ),
       m_entry_max_res( false, "最大レス数：" ),
+      m_label_last_access( false, "最終アクセス日時 ：" ),
       m_label_modified( false, "最終更新日時 ：" ),
       m_button_clearmodified( "日時クリア" ),
       m_label_samba( false, "書き込み規制秒数 (Samba24) ：" ),
@@ -126,6 +127,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     if( ! max_res ) m_entry_max_res.set_text( "未設定 " );
     else m_entry_max_res.set_text( MISC::itostr( max_res ) );
 
+    const time_t last_access = DBTREE::board_last_access_time( get_url() );
+    if( last_access ) m_label_last_access.set_text( MISC::timettostr( last_access ) );
+
     if( DBTREE::board_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
     else m_label_modified.set_text( MISC::timettostr( DBTREE::board_time_modified( get_url() ) ) );
 
@@ -151,6 +155,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox.pack_start( m_label_line, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_byte, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_entry_max_res, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_label_last_access, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_live, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_samba, Gtk::PACK_SHRINK );

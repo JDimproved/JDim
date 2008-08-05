@@ -63,7 +63,8 @@ enum{
     COL_MARKVAL_OLD = -2,        // dat 落ち
     COL_MARKVAL_FINISHED = -1,   // キャッシュあり、新着無し、規定スレ数を越えている
     COL_MARKVAL_NORMAL = 0,      // 通常状態
-    COL_MARKVAL_NEWTHREAD,       // 新スレ
+    COL_MARKVAL_NEWTHREAD_HOUR,  // 新スレ( CONFIG::get_newthread_hour 時間以内 )
+    COL_MARKVAL_NEWTHREAD,       // 前回の板一覧読み込み時から新しく出来たスレ
     COL_MARKVAL_CACHED,          // キャッシュあり、新着無し
     COL_MARKVAL_UPDATED,         // キャッシュあり、新着有り
     COL_MARKVAL_BKMARKED,        // ブックマークされている、新着無し
@@ -77,7 +78,7 @@ enum
     SORTMODE_DESCEND,
 
     SORTMODE_MARK1, // 通常
-    SORTMODE_MARK2, // 新着を一番上に
+    SORTMODE_MARK2, // 新着をキャッシュの上に。後は通常
     SORTMODE_MARK3  // 反転
 };
 
@@ -681,7 +682,7 @@ int BoardView::compare_col( int col, int sortmode, Gtk::TreeModel::Row& row_a, G
             num_a = row_a[ m_columns.m_col_mark_val ];
             num_b = row_b[ m_columns.m_col_mark_val ];
 
-            if( sortmode == SORTMODE_MARK2 ){ // 新着を一番上に
+            if( sortmode == SORTMODE_MARK2 ){ // 新着をキャッシュの上に
 
                 if( num_a == COL_MARKVAL_NEWTHREAD
                     && ( num_b != COL_MARKVAL_NEWTHREAD && num_b != COL_MARKVAL_BKMARKED_UPDATED && num_b != COL_MARKVAL_BKMARKED ) ){
@@ -867,6 +868,7 @@ void BoardView::show_view()
 #endif
     m_liststore->clear();
     m_pre_query = std::string();
+    m_last_access_time = DBTREE::board_last_access_time( get_url() );
     m_loading = true;
     
     // download 開始
@@ -1462,9 +1464,14 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
         art->show_updateicon( false );
     }
     // キャッシュ無し、新着
-    else if( art->get_hour() < CONFIG::get_newthread_hour() ){
+    else if( art->get_since_time() > m_last_access_time ){
         mark_val = COL_MARKVAL_NEWTHREAD;
         row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::NEWTHREAD );
+    }
+    // キャッシュ無し、新着( CONFIG::get_newthread_hour() 時間以内 )
+    else if( art->get_hour() < CONFIG::get_newthread_hour() ){
+        mark_val = COL_MARKVAL_NEWTHREAD_HOUR;
+        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::NEWTHREAD_HOUR );
     }
     //キャッシュ無し
     else{

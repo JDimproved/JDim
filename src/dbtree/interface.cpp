@@ -555,6 +555,11 @@ void DBTREE::board_set_live_sec( const std::string& url, time_t sec )
     DBTREE::get_board( url )->set_live_sec( sec );
 }
 
+const time_t DBTREE::board_last_access_time( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_last_access_time();
+}
+
 
 /////////////////////////////////////////////////
 

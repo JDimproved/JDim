@@ -43,6 +43,7 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_name( name )
     , m_samba_sec( 0 )
     , m_live_sec( 0 )
+    , m_last_access_time( 0 )
     , m_number_max_res( 0 )
     , m_rawdata( 0 )
     , m_read_info( 0 )
@@ -1006,8 +1007,20 @@ void BoardBase::receive_finish()
             }
         }
 
+        // オンライン、かつcodeが200か304なら最終アクセス時刻を更新
+        if( SESSION::is_online() && ( get_code() == HTTP_OK || get_code() == HTTP_NOT_MODIFIED ) ){
+
+            m_last_access_time = time( NULL );
+
+#ifdef _DEBUG
+            std::cout << "access time " << m_last_access_time << std::endl;
+#endif
+        }
+
         // オンライン、かつcodeが200なら情報を保存して subject.txt をキャッシュに保存
         if( SESSION::is_online() && get_code() == HTTP_OK ){
+
+            m_last_access_time = time( NULL );
 
 #ifdef _DEBUG
             std::cout << "save info and subject.txt\n";
@@ -1498,6 +1511,9 @@ void BoardBase::read_board_info()
     // 実況の秒数
     m_live_sec = cf.get_option( "live_sec", 0 );
 
+    // 最終アクセス時刻
+    m_last_access_time = cf.get_option( "last_access_time", 0 );
+
 #ifdef _DEBUG
     std::cout << "modified = " << date_modified() << std::endl;
 #endif
@@ -1574,6 +1590,7 @@ void BoardBase::save_jdboard_info()
          << "write_mail = " << m_write_mail << std::endl
          << "samba_sec = " << m_samba_sec << std::endl
          << "live_sec = " << m_live_sec << std::endl
+         << "last_access_time = " << m_last_access_time << std::endl
     ;
 
     CACHE::save_rawdata( path_info, sstr.str() );

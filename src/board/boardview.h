@@ -67,6 +67,9 @@ namespace BOARD
         // ロード中
         bool m_loading;
 
+        // ロード前の最終アクセス時刻 ( 新着判定用 )
+        time_t m_last_access_time;
+
     public:
         BoardView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
         ~BoardView();

@@ -126,6 +126,9 @@ namespace DBTREE
         // 実況時の更新間隔(秒)
         time_t m_live_sec;
 
+        // 最終アクセス時刻
+        time_t m_last_access_time;
+
         // 最大レス数
         int m_number_max_res;
 
@@ -391,6 +394,9 @@ namespace DBTREE
         // 実況の秒数
         const time_t get_live_sec() const{ return m_live_sec; }
         void set_live_sec( time_t sec ){ m_live_sec = sec; }
+
+        // 最終アクセス時刻
+        const time_t get_last_access_time() const{ return m_last_access_time; }
 
         // 最大レス数
         const int get_number_max_res() const{ return m_number_max_res; }
