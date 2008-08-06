@@ -227,9 +227,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     // スレッドあぼーん
 
     // スレ数、時間
-    m_label_abone_thread.set_text( "以下の数字が0の時は、設定メニューの全体あぼ〜ん設定で指定した数字が用いられます。\n\n" );
+    m_label_abone_thread.set_text( "以下の数字が0の時は、設定メニューの全体あぼ〜ん設定で指定した数字が用いられます。\nまたキャッシュにログがあるスレはあぼ〜んされません。\n\n" );
 
-    m_label_number.set_text( "スレ以上のレスをあぼ〜ん" );
+    m_label_number.set_text( "レス以上のスレをあぼ〜ん" );
     m_spin_number.set_range( 0, 1001 );
     m_spin_number.set_increments( 1, 1 );
     m_spin_number.set_value( DBTREE::get_abone_number_thread( get_url() ) );
@@ -238,7 +238,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_hbox_number.pack_start( m_spin_number, Gtk::PACK_SHRINK );
     m_hbox_number.pack_start( m_label_number, Gtk::PACK_SHRINK );
 
-    m_label_hour.set_text( "時間以上スレ立てから経過したレスをあぼ〜ん" );
+    m_label_hour.set_text( "時間以上スレ立てから経過したスレをあぼ〜ん" );
     m_spin_hour.set_range( 0, 1000 );
     m_spin_hour.set_increments( 1, 1 );
     m_spin_hour.set_value( DBTREE::get_abone_hour_thread( get_url() ) );

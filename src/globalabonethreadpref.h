@@ -25,6 +25,7 @@ namespace CORE
         Gtk::Label m_label_warning;
 
         Gtk::VBox m_vbox_abone_thread;
+        Gtk::Label m_label_abone_thread;
 
         Gtk::HBox m_hbox_number;
         Gtk::Label m_label_number;
@@ -65,7 +66,9 @@ namespace CORE
             std::list< std::string >::iterator it;
 
             // スレ数、時間
-            m_label_number.set_text( "スレ以上のレスをあぼ〜ん ( 0: 未設定 )" );
+            m_label_abone_thread.set_text( "以下の数字が0の時は未設定になります。\nまたキャッシュにログがあるスレはあぼ〜んされません。\n\n" );
+
+            m_label_number.set_text( "レス以上のスレをあぼ〜ん" );
             m_spin_number.set_range( 0, 1001 );
             m_spin_number.set_increments( 1, 1 );
             m_spin_number.set_value( CONFIG::get_abone_number_thread() );
@@ -74,7 +77,7 @@ namespace CORE
             m_hbox_number.pack_start( m_spin_number, Gtk::PACK_SHRINK );
             m_hbox_number.pack_start( m_label_number, Gtk::PACK_SHRINK );
 
-            m_label_hour.set_text( "時間以上スレ立てから経過したレスをあぼ〜ん ( 0: 未設定 )" );
+            m_label_hour.set_text( "時間以上スレ立てから経過したスレをあぼ〜ん" );
             m_spin_hour.set_range( 0, 1000 );
             m_spin_hour.set_increments( 1, 1 );
             m_spin_hour.set_value( CONFIG::get_abone_hour_thread() );
@@ -85,6 +88,7 @@ namespace CORE
 
             m_vbox_abone_thread.set_border_width( 16 );
             m_vbox_abone_thread.set_spacing( 8 );
+            m_vbox_abone_thread.pack_start( m_label_abone_thread, Gtk::PACK_SHRINK );
             m_vbox_abone_thread.pack_start( m_hbox_number, Gtk::PACK_SHRINK );
             m_vbox_abone_thread.pack_start( m_hbox_hour, Gtk::PACK_SHRINK );
 
