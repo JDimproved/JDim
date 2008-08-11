@@ -701,6 +701,11 @@ const std::string DBTREE::article_date_modified( const std::string& url )
     return DBTREE::get_article( url )->get_date_modified();
 }
 
+// スレの更新時間( 文字列 )をセット
+void DBTREE::article_set_date_modified( const std::string& url, const std::string& date )
+{
+    DBTREE::get_article( url )->set_date_modified( date );
+}
 
 const int  DBTREE::article_hour( const std::string& url )
 {

@@ -11,6 +11,8 @@
 
 #include "dbtree/interface.h"
 
+#include "config/globalconf.h"
+
 #include "cache.h"
 #include "type.h"
 #include "command.h"
@@ -28,7 +30,7 @@ BBSListViewMain::BBSListViewMain( const std::string& url,
 {
     set_label( "板一覧" );
 
-    set_expand_collapse( true );
+    set_open_only_onedir( CONFIG::get_open_one_category() );
 }
 
 

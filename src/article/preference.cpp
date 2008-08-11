@@ -28,6 +28,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     ,m_check_chainabone( "連鎖あぼ〜ん" )
     ,m_label_since( false, "スレ立て日時 : ", DBTREE::article_since_date( get_url() ) )
     ,m_label_modified( false, "最終更新日時 : ", std::string() )
+    ,m_button_clearmodified( "日時クリア" )
     ,m_label_write( false, "最終書き込み日時 : ", std::string() )
 {
     // 一般
@@ -37,9 +38,16 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
 
         m_label_cache.set_text( CACHE::path_dat( get_url() ) );
         m_label_size.set_text( MISC::itostr( size )  + " / " + MISC::itostr( size/1024 ) );
-        m_label_modified.set_text( MISC::timettostr( DBTREE::article_time_modified( get_url() ) ) );
+
+        if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
+        else m_label_modified.set_text( MISC::timettostr( DBTREE::article_time_modified( get_url() ) ) );
+
         if( DBTREE::article_write_time( get_url() ) ) m_label_write.set_text( DBTREE::article_write_date( get_url() ) );
     }
+
+    m_button_clearmodified.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_modified ) );
+    m_hbox_modified.pack_start( m_label_modified );
+    m_hbox_modified.pack_start( m_button_clearmodified, Gtk::PACK_SHRINK );    
 
     m_vbox_info.set_border_width( 16 );
     m_vbox_info.set_spacing( 8 );
@@ -50,7 +58,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox_info.pack_start( m_label_size, Gtk::PACK_SHRINK );
 
     m_vbox_info.pack_start( m_label_since, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_label_modified, Gtk::PACK_SHRINK );
+    m_vbox_info.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_write, Gtk::PACK_SHRINK );
 
     // あぼーん設定
@@ -198,4 +206,13 @@ void Preferences::slot_ok_clicked()
 
     // viewの再レイアウト
     CORE::core_set_command( "relayout_article", get_url() );
+}
+
+
+void Preferences::slot_clear_modified()
+{
+    DBTREE::article_set_date_modified( get_url(), "" );
+
+    if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
+    else m_label_modified.set_text( MISC::timettostr( DBTREE::article_time_modified( get_url() ) ) );
 }

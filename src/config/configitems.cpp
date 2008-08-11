@@ -274,6 +274,9 @@ const bool ConfigItems::load()
     // 板一覧でカテゴリを常にひとつだけ開く
     open_one_category = cf.get_option( "open_one_category", CONF_OPEN_ONE_CATEGORY );
 
+    // お気に入りでカテゴリを常にひとつだけ開く
+    open_one_favorite = cf.get_option( "open_one_favorite", CONF_OPEN_ONE_FAVORITE );
+
     // 書き込み時に書き込み確認ダイアログを出さない
     always_write_ok = cf.get_option( "always_write_ok", CONF_ALWAYS_WRITE_OK );
 
@@ -547,6 +550,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "live_threshold", live_threshold );
 
     cf.update( "open_one_category", open_one_category );
+    cf.update( "open_one_favorite", open_one_favorite );
     cf.update( "always_write_ok", always_write_ok );
     cf.update( "save_postlog", save_postlog );
     cf.update( "maxsize_postlog", maxsize_postlog );

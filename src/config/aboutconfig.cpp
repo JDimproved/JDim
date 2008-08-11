@@ -129,6 +129,7 @@ void AboutConfig::append_rows()
     // 板一覧、スレ一覧
     append_row( "ツリービューでマウスホイールを回したときのスクロール量(行数)", get_confitem()->tree_scroll_size, CONF_TREE_SCROLL_SIZE );
     append_row( "板一覧でカテゴリを常にひとつだけ開く", get_confitem()->open_one_category, CONF_OPEN_ONE_CATEGORY );
+    append_row( "お気に入りでカテゴリを常にひとつだけ開く", get_confitem()->open_one_favorite, CONF_OPEN_ONE_FAVORITE );
     append_row( "指定した値(時間)よりも後に立てられたスレを新着とみなす", get_confitem()->newthread_hour, CONF_NEWTHREAD_HOUR );
     append_row( "ツリービューの背景色設定にgtkrcを用いる", get_confitem()->use_tree_gtkrc, CONF_USE_TREE_GTKRC );
     append_row( "ツリービューの行間スペース", get_confitem()->tree_ypad, CONF_TREE_YPAD );

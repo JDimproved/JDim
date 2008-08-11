@@ -219,6 +219,7 @@ const int CONFIG::get_live_threshold(){ return get_confitem()->live_threshold; }
 void CONFIG::set_live_threshode( const int th ){ get_confitem()->live_threshold = th; }
 
 const bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; }
+const bool CONFIG::get_open_one_favorite(){ return get_confitem()->open_one_favorite; }
 const bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }
 void CONFIG::set_always_write_ok( bool write_ok ){ get_confitem()->always_write_ok = write_ok; }
 

@@ -3060,8 +3060,8 @@ void ArticleViewBase::slot_copy_res( bool ref )
     std::cout << "ArticleViewBase::copy_res number = " << m_str_num << std::endl;
 #endif    
 
-    std::string tmpstr;
-    if( ref ) tmpstr = CONFIG::get_ref_prefix();
+    std::string tmpstr = m_url_tmp + "\n";
+    if( ref ) tmpstr += CONFIG::get_ref_prefix();
     std::string board_name = DBTREE::board_name( m_url_article );
     if( ! board_name.empty() ) tmpstr += "[ " + board_name + " ] ";
     tmpstr += DBTREE::article_subject( m_url_article ) + "\n\n";

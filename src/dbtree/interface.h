@@ -162,6 +162,7 @@ namespace DBTREE
     const std::string article_since_date( const std::string& url );
     const time_t article_time_modified( const std::string& url ); // スレの更新時間( time_t )
     const std::string article_date_modified( const std::string& url ); // スレの更新時間( 文字列 )
+    void article_set_date_modified( const std::string& url, const std::string& date ); // スレの更新時間( 文字列 )をセット
     const int article_hour( const std::string& url );
     const time_t article_write_time( const std::string& url );
     const std::string article_write_date( const std::string& url );

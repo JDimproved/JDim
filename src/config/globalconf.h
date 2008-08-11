@@ -235,6 +235,9 @@ namespace CONFIG
     // 板一覧でカテゴリを常にひとつだけ開く
     const bool get_open_one_category();
 
+    // お気に入りでカテゴリを常にひとつだけ開く
+    const bool get_open_one_favorite();
+
     // 書き込み時に書き込み確認ダイアログを出すかどうか
     const bool get_always_write_ok();
     void set_always_write_ok( bool write_ok );

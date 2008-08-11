@@ -35,6 +35,9 @@ WinMain::WinMain( bool init )
 
     setlocale( LC_ALL, "ja_JP.UTF-8" );
 
+    // (注意) LC_TIMEが"C"でないと環境によってはstrptime()が失敗する
+    setlocale(LC_TIME, "C"); 
+
     // GLIBのスレッドシステム初期化
     if( !Glib::thread_supported() ) Glib::thread_init();
     assert( Glib::thread_supported() );

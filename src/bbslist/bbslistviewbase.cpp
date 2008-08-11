@@ -84,7 +84,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
       m_ready_tree( false ),
       m_jump_y( -1 ),
       m_search_invert( 0 ),
-      m_expand_collapse( 0 ),
+      m_open_only_onedir( false ),
       m_cancel_expand( false ),
       m_expanding( 0 )
 {
@@ -1633,11 +1633,12 @@ void BBSListViewBase::slot_preferences_image()
 void BBSListViewBase::slot_row_exp( const Gtk::TreeModel::iterator&, const Gtk::TreeModel::Path& path )
 {
     if( m_cancel_expand ) return;
+    if( m_expanding ) return;
 
     // 他のフォルダを全て閉じる
-    if( CONFIG::get_open_one_category() && m_expand_collapse ){
-
-        if( m_expanding ) return;
+    if( m_open_only_onedir
+        && path.get_depth() == 1  // 子フォルダの時は閉じない
+        ){
         m_expanding = true;
         m_treeview.collapse_all();
         m_treeview.expand_row( path, false );

@@ -6,6 +6,8 @@
 #include "favoriteview.h"
 #include "toolbar.h"
 
+#include "config/globalconf.h"
+
 #include "cache.h"
 #include "type.h"
 
@@ -23,6 +25,8 @@ FavoriteListView::FavoriteListView( const std::string& url,
 
     // D&Dで編集可能
     set_editable( true );
+
+    set_open_only_onedir( CONFIG::get_open_one_favorite() );
 }
  
 

@@ -201,6 +201,9 @@ namespace CONFIG
         // 板一覧でカテゴリを常にひとつだけ開く
         bool open_one_category;
 
+        // お気に入りでカテゴリを常にひとつだけ開く
+        bool open_one_favorite;
+
         // 書き込み時に書き込み確認ダイアログを出さない
         bool always_write_ok;
 

@@ -37,7 +37,11 @@ namespace ARTICLE
         Gtk::CheckButton m_check_chainabone;
 
         SKELETON::LabelEntry m_label_since;
+
+        Gtk::HBox m_hbox_modified;
         SKELETON::LabelEntry m_label_modified;
+        Gtk::Button m_button_clearmodified;
+
         SKELETON::LabelEntry m_label_write;
 
       public:
@@ -47,6 +51,7 @@ namespace ARTICLE
 
       private:
         virtual void slot_ok_clicked();
+        void slot_clear_modified();
     };
 }
 

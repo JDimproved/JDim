@@ -236,6 +236,7 @@ namespace DBTREE
         // 更新時間
         time_t get_time_modified();
         const std::string& get_date_modified() { return m_date_modified; }
+        void set_date_modified( const std::string& date ){ m_date_modified = date; }
 
         // スレが立ってからの経過時間( 時間 )
         const int get_hour();

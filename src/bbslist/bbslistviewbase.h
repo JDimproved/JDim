@@ -54,8 +54,7 @@ namespace BBSLIST
         bool m_search_invert;
         std::string m_pre_query;
 
-        // あるフォルダを開いたときに他のフォルダを閉じる
-        bool m_expand_collapse;
+        bool m_open_only_onedir; // あるフォルダを開いたときに他のフォルダを閉じる
         bool m_cancel_expand; // signal_row_expanded() をキャンセルする
         bool m_expanding; // 行を開いている最中にtrueにしてsignal_row_collapsed()をキャンセルする
 
@@ -73,7 +72,7 @@ namespace BBSLIST
         Glib::RefPtr< Gtk::TreeStore >& get_treestore() { return m_treestore; }
         SKELETON::EditTreeView& get_treeview() { return  m_treeview; }
         const bool& get_ready_tree() const{ return m_ready_tree; }
-        void set_expand_collapse( bool set ){ m_expand_collapse = set; }
+        void set_open_only_onedir( const bool set ){ m_open_only_onedir = set; }
 
         virtual void activate_act_before_popupmenu( const std::string& url );
 
