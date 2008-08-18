@@ -78,8 +78,6 @@ MessageViewBase::MessageViewBase( const std::string& url )
     m_lng_iconv = m_max_str * 3;
     if( ! m_lng_iconv ) m_lng_iconv = MAX_STR_ICONV;
 
-    m_str_iconv = ( char* ) malloc( m_lng_iconv + 1024 );
-
     if( SESSION::get_close_mes() ) unlock();
     else lock();
 }
@@ -110,9 +108,6 @@ MessageViewBase::~MessageViewBase()
 
     if( m_iconv ) delete m_iconv;
     m_iconv = NULL;
-
-    if( m_str_iconv ) free( m_str_iconv );
-    m_str_iconv = NULL;
 
     SESSION::set_close_mes( ! is_locked() );
 }
@@ -802,19 +797,34 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 void MessageViewBase::show_status()
 {
     std::stringstream ss;
-    int byte_out;
-
-    if( ( int ) m_text_message.get_text().size() > m_lng_iconv ) m_lng_str_enc = m_max_str;
-    else{
-        strcpy( m_str_iconv,  m_text_message.get_text().substr( 0, m_lng_iconv - 64 ).c_str() );
-        std::string str_enc = m_iconv->convert( m_str_iconv, strlen( m_str_iconv ), byte_out );
-        m_lng_str_enc = str_enc.length();
-    }
 
     ss << " [ 行数 " << m_text_message.get_buffer()->get_line_count();
     if( m_max_line ) ss << "/ " << m_max_line;
 
-    ss << "   /  文字数 " << m_lng_str_enc;
+    const std::string message = m_text_message.get_text();
+
+    ss << "   /  文字数 ";
+
+    if( ( int ) message.size() > m_lng_iconv )
+    {
+        ss << "過多";
+    }
+    else
+    {
+        int byte_out;
+        const char* msgc = message.c_str();
+        std::string str_enc = m_iconv->convert( (char*)msgc, strlen( msgc ), byte_out );
+         m_lng_str_enc = str_enc.length();
+
+         // 特殊文字の文字数を計算
+         m_lng_str_enc += MISC::count_chr( str_enc, '\n' ) * 5; // " <br> " = 6バイト
+         m_lng_str_enc += MISC::count_chr( str_enc, '"' ) * 5; // &quot; = 6バイト
+         m_lng_str_enc += MISC::count_chr( str_enc, '<' ) * 3; // &lt; = 4バイト
+         m_lng_str_enc += MISC::count_chr( str_enc, '>' ) * 3; // &gt; = 4バイト
+
+        ss << m_lng_str_enc;
+    }
+
     if( m_max_str ) ss << "/ " << m_max_str;
 
     if( DBTREE::article_write_time( get_url() ) ) ss << "  /  最終書込 " << DBTREE::article_write_date( get_url() );

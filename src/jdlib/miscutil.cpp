@@ -500,6 +500,15 @@ int MISC::count_str( const std::string& str, const std::string& str2  )
 }
 
 
+// str 中に含まれている chr の 数を返す
+const int MISC::count_chr( const std::string& str, const char chr )
+{
+    int count = 0;
+    const int size = str.size();
+    for( int i = 0; i < size; ++i ) if( str.c_str()[i] == chr ) ++count;
+    return count;
+}
+
 
 //
 // 文字列(utf-8も) -> 整数変換
