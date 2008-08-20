@@ -78,9 +78,6 @@ const int MouseKeyConf::get_id( const int mode,
         if( id != CONTROL::None ) break;
     }
 
-    // 共通モードにして再帰呼び出し
-    if( id == CONTROL::None && mode != CONTROL::MODE_COMMON ) return get_id( CONTROL::MODE_COMMON, motion, ctrl, shift, alt, dblclick, trpclick );
-
 #ifdef _DEBUG
     std::cout << "MouseKeyConf::get_id mode = " << mode << " id = " << id << " motion = " << motion << std::endl;
 #endif

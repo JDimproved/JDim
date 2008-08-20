@@ -71,6 +71,7 @@ const int Control::key_press( const GdkEventKey* event )
         control = CONFIG::get_keyconfig()->get_id( *it, key, ctrl, shift, alt, dblclick, trpclick );
         if( control != CONTROL::None ) break;
     }
+    if( control == CONTROL::None ) control = CONFIG::get_keyconfig()->get_id( CONTROL::MODE_COMMON, key, ctrl, shift, alt, dblclick, trpclick );
 
     return control;
 }
@@ -98,6 +99,7 @@ const int Control::button_press( const GdkEventButton* event )
         control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
         if( control != CONTROL::None ) break;
     }
+    if( control == CONTROL::None ) control = CONFIG::get_buttonconfig()->get_id( CONTROL::MODE_COMMON, button, ctrl, shift, alt, dblclick, trpclick );
 
     return control;
 }
@@ -244,6 +246,7 @@ const bool Control::MG_motion( const GdkEventMotion* event )
                 control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
                 if( control != CONTROL::None ) break;
             }
+            if( control == CONTROL::None ) control = CONFIG::get_mouseconfig()->get_id( CONTROL::MODE_COMMON, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
 
             CORE::core_set_command( "set_mginfo", "", m_mg_direction + CONTROL::get_label( control ) );
         }
@@ -279,6 +282,7 @@ const int Control::MG_end( const GdkEventButton* event )
         control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
         if( control != CONTROL::None ) break;
     }
+    if( control == CONTROL::None ) control = CONFIG::get_mouseconfig()->get_id( CONTROL::MODE_COMMON, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
 
     std::string str_command = CONTROL::get_label( control );
 
@@ -368,6 +372,7 @@ const int Control::MG_wheel_scroll( const GdkEventScroll* event )
             control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
             if( control != CONTROL::None ) break;
         }
+        if( control == CONTROL::None ) control = CONFIG::get_buttonconfig()->get_id( CONTROL::MODE_COMMON, button, ctrl, shift, alt, dblclick, trpclick );
     }
 
     else if( direction == GDK_SCROLL_RIGHT ){
@@ -378,6 +383,7 @@ const int Control::MG_wheel_scroll( const GdkEventScroll* event )
             control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
             if( control != CONTROL::None ) break;
         }
+        if( control == CONTROL::None ) control = CONFIG::get_buttonconfig()->get_id( CONTROL::MODE_COMMON, button, ctrl, shift, alt, dblclick, trpclick );
     }
 
     else if( ( mask & button ) && direction == GDK_SCROLL_UP ) control = CONTROL::TabLeft;
