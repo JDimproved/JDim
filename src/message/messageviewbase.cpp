@@ -234,25 +234,7 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
     // メッセージを追加
     else if( command == "add_message" )
     {
-        std::string caution;
-
-        // 追加する文字列が制限値を超えていないかチェック
-        if( m_max_str && int( arg.length() ) > m_max_str ) caution.append( "文字数" );
-        if( m_max_line && MISC::count_str( arg, "\n" ) > m_max_line )
-        {
-            if( ! caution.empty() ) caution.append( "及び" );
-            caution.append( "改行数" );
-        }
-
-        if( ! caution.empty() )
-        {
-            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
-                                     caution.append( "がスレッドの制限値を超えています。\n\n追加しますか？" ),
-                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            if( mdiag.run() != Gtk::RESPONSE_YES ) return false;
-        }
-
-        m_text_message.insert_str( arg, true );
+        if( ! arg.empty() ) m_text_message.insert_str( arg, true );
     }
 
     // メッセージ保存
