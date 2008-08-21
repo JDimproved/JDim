@@ -60,6 +60,8 @@ MessageViewBase::MessageViewBase( const std::string& url )
     : SKELETON::View( url ),
       m_post( 0 ),
       m_preview( 0 ),
+      m_entry_name( CORE::COMP_NAME ),
+      m_entry_mail( CORE::COMP_MAIL ),
       m_enable_focus( true ),
       m_counter( 0 )
 {

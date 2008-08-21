@@ -3423,7 +3423,7 @@ void ArticleViewBase::exec_search()
 
     if( get_pre_query() != query ){
         set_pre_query( query );
-        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, query );
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, query );
         m_drawarea->set_jump_history();
         m_drawarea->search( list_query, m_search_invert );
     }

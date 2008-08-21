@@ -9,6 +9,7 @@
 #include "controlutil.h"
 #include "controlid.h"
 #include "session.h"
+#include "compmanager.h"
 #include "global.h"
 
 using namespace BOARD;
@@ -37,7 +38,7 @@ void BoardToolBar::pack_buttons()
                 break;
 
             case ITEM_SEARCHBOX:
-                get_buttonbar().append( *get_entry_search() );
+                get_buttonbar().append( *get_entry_search( CORE::COMP_SEARCH_BOARD ) );
                 break;
 
             case ITEM_SEARCH_NEXT:

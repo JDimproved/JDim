@@ -2338,7 +2338,7 @@ void BBSListViewBase::exec_search()
         if( !m_search_invert ) path = m_treeview.prev_path( path, false );
         else path = m_treeview.next_path( path, false );
         m_pre_query = query;
-        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, query );
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_BBSLIST, query );
     } 
 
     Gtk::TreePath path_start = path;

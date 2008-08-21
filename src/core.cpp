@@ -1315,7 +1315,9 @@ void Core::slot_clear_close()
 
 void Core::slot_clear_search()
 {
-    get_completion_manager()->clear( CORE::COMP_SEARCH );
+    get_completion_manager()->clear( CORE::COMP_SEARCH_ARTICLE );
+    get_completion_manager()->clear( CORE::COMP_SEARCH_BBSLIST );
+    get_completion_manager()->clear( CORE::COMP_SEARCH_BOARD );
 }
 
 void Core::slot_clear_name()
@@ -2421,7 +2423,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         if( command.arg2 == "true" ) mode_str = "KEYWORD_OR";  // OR 抽出
         
         // 検索履歴更新
-        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, command.arg1 );
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, command.arg1 );
        
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -2591,7 +2593,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         // 検索履歴更新
-        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, command.arg1 );
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, command.arg1 );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
@@ -2622,7 +2624,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
         
         // 検索履歴更新
-        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, command.arg1 );
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, command.arg1 );
 
         ARTICLE::get_admin()->set_command( "open_view",
                                            "allboard",

@@ -16,9 +16,11 @@ namespace CORE
 
     enum
     {
-        COMP_SEARCH = 0,
+        COMP_SEARCH_ARTICLE = 0,
         COMP_NAME,
         COMP_MAIL,
+        COMP_SEARCH_BBSLIST,
+        COMP_SEARCH_BOARD,
 
         COMP_SIZE
     };

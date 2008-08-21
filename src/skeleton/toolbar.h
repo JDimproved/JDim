@@ -19,7 +19,7 @@ namespace SKELETON
     class ToolMenuButton;
     class ToolBackForwardButton;
     class BackForwardButton;
-    class SearchEntry;
+    class CompletionEntry;
 
     class ToolBar : public Gtk::VBox
     {
@@ -52,7 +52,7 @@ namespace SKELETON
         SKELETON::ImgToolButton *m_button_down_search;
 
         Gtk::ToolItem* m_tool_search;
-        SKELETON::SearchEntry* m_entry_search;
+        SKELETON::CompletionEntry* m_entry_search;
 
         // 板を開く
         Gtk::Label* m_label_board;
@@ -120,8 +120,12 @@ namespace SKELETON
         Gtk::ToolItem* get_button_open_searchbar();
         Gtk::ToolItem* get_button_close_searchbar();
 
-        Gtk::ToolItem* get_entry_search();
+        // mode は補完モード ( compmanager.h 参照 )
+        Gtk::ToolItem* get_entry_search( const int mode );
+
+        // CompletionEntry の入力コントローラのモード設定
         void add_search_mode( const int mode );
+
         const std::string get_search_text();
         Gtk::ToolItem* get_button_up_search();
         Gtk::ToolItem* get_button_down_search();

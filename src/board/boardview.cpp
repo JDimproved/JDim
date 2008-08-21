@@ -1992,7 +1992,7 @@ void BoardView::exec_search()
         drawout();
         focus_view();
         m_pre_query = query;
-        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH, query );
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_BOARD, query );
         return;
     }
 

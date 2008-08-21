@@ -42,10 +42,16 @@ namespace SKELETON
 
       public:
 
+        // mode は補完モード ( compmanager.h 参照 )
+        CompletionEntry( const int mode );
+        virtual ~CompletionEntry();
+
         SIG_OPERATE signal_operate(){ return m_sig_operate; }
         SIG_ACTIVATE signal_activate(){ return m_sig_activate; }
         SIG_CHANGED signal_changed(){ return m_sig_changed; }
 
+        // m_entry の入力コントローラのモード設定
+        // 補完モード(m_mode)とは異なる
         void add_mode( int mode ){ m_entry.add_mode( mode ); }
 
         // 補完実行
@@ -56,10 +62,6 @@ namespace SKELETON
         void grab_focus();
 
         void modify_font( Pango::FontDescription& pfd ){ m_entry.modify_font( pfd ); }
-
-      protected:
-        CompletionEntry( int mode );
-        virtual ~CompletionEntry();
 
       private:
 
@@ -92,29 +94,6 @@ namespace SKELETON
 
         // ポップアップクリック
         bool slot_treeview_button_release( GdkEventButton* );
-    };
-
-
-    // 検索用
-    class SearchEntry : public CompletionEntry
-    {
-      public:
-        SearchEntry();
-    };
-
-
-    // 書き込み名前
-    class NameEntry : public CompletionEntry
-    {
-      public:
-        NameEntry();
-    };
-
-    // 書き込みメール
-    class MailEntry : public CompletionEntry
-    {
-      public:
-        MailEntry();
     };
 }
 

@@ -49,8 +49,8 @@ namespace MESSAGE
         Gtk::Label m_label_mail;
         Gtk::CheckButton m_check_fixname;
         Gtk::CheckButton m_check_fixmail;
-        SKELETON::NameEntry m_entry_name;
-        SKELETON::MailEntry m_entry_mail;
+        SKELETON::CompletionEntry m_entry_name;
+        SKELETON::CompletionEntry m_entry_mail;
 
         SKELETON::EditView m_text_message;
 

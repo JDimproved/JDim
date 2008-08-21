@@ -16,7 +16,7 @@ enum
 };
 
 
-CompletionEntry::CompletionEntry( int mode )
+CompletionEntry::CompletionEntry( const int mode )
     : m_mode( mode ),
       m_enable_changed( true ),
       m_focused( false ),
@@ -272,15 +272,3 @@ bool CompletionEntry::slot_treeview_button_release( GdkEventButton* )
 
     return true;
 }
-
-
-//////////////////////////////////////////
-
-// 検索用
-SearchEntry::SearchEntry() : CompletionEntry( CORE::COMP_SEARCH ){}
-
-// 名前用
-NameEntry::NameEntry() : CompletionEntry( CORE::COMP_NAME ){}
-
-// メール用
-MailEntry::MailEntry() : CompletionEntry( CORE::COMP_MAIL ){}

@@ -410,12 +410,12 @@ void ToolBar::slot_toggle_searchbar()
 //
 // 検索 entry
 //
-Gtk::ToolItem* ToolBar::get_entry_search()
+Gtk::ToolItem* ToolBar::get_entry_search( const int mode )
 {
     if( ! m_tool_search ){
 
         m_tool_search = Gtk::manage( new Gtk::ToolItem );
-        m_entry_search = Gtk::manage( new SearchEntry() );
+        m_entry_search = Gtk::manage( new CompletionEntry( mode ) );
 
         m_entry_search->signal_changed().connect( sigc::mem_fun( *this, &ToolBar::slot_changed_search ) );
         m_entry_search->signal_activate().connect( sigc::mem_fun( *this, &ToolBar::slot_active_search ) );
