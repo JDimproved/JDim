@@ -362,6 +362,8 @@ void CONFIG::set_abone_chain( bool set ){ get_confitem()->abone_chain = set; }
 
 const bool CONFIG::get_expand_sidebar(){ return get_confitem()->expand_sidebar; }
 
+const bool CONFIG::get_expand_rpane(){ return get_confitem()->expand_rpane; }
+
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }
 #endif

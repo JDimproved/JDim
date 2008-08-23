@@ -399,6 +399,9 @@ const bool ConfigItems::load()
     // 右ペーンが空の時にサイドバーを閉じるか
     expand_sidebar = cf.get_option( "expand_sidebar", CONF_EXPAND_SIDEBAR );
 
+    // 3ペーン時にスレ一覧やスレビューを最大化する
+    expand_rpane = cf.get_option( "expand_rpane", CONF_EXPAND_RPANE );
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     migemodict_path = cf.get_option( "migemodict_path", CONF_MIGEMO_PATH );
@@ -612,6 +615,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "abone_chain", abone_chain );
 
     cf.update( "expand_sidebar", expand_sidebar );
+    cf.update( "expand_rpane", expand_rpane );
 
 #ifdef HAVE_MIGEMO_H
     cf.update( "migemodict_path", migemodict_path );

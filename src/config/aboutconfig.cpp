@@ -134,6 +134,7 @@ void AboutConfig::append_rows()
     append_row( "ツリービューの背景色設定にgtkrcを用いる", get_confitem()->use_tree_gtkrc, CONF_USE_TREE_GTKRC );
     append_row( "ツリービューの行間スペース", get_confitem()->tree_ypad, CONF_TREE_YPAD );
     append_row( "右ペーンが空の時にサイドバーを最大化する", get_confitem()->expand_sidebar, CONF_EXPAND_SIDEBAR );
+    append_row( "3ペーン時にスレ一覧やスレビューを最大化する", get_confitem()->expand_rpane, CONF_EXPAND_RPANE );
     append_row( "スレ一覧でインクリメント検索をする", get_confitem()->inc_search_board, CONF_INC_SEARCH_BOARD );
 
     // スレビュー

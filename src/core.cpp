@@ -3916,7 +3916,7 @@ void Core::toggle_maximize_rightpane()
         else if( emp_article && ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_MAX_PAGE2 );
     }
 
-    if( is_3pane() ){
+    if( is_3pane() && CONFIG::get_expand_rpane() ){
 
         // スレ一覧を最大化
         if( ! emp_board && emp_article && emp_img && emp_mes ) get_rpctrl()->set_mode( SKELETON::PANE_MAX_PAGE1 );

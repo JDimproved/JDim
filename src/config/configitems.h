@@ -317,6 +317,9 @@ namespace CONFIG
         // 右ペーンが空の時にサイドバーを閉じるか
         bool expand_sidebar;
 
+        // 3ペーン時にスレ一覧やスレビューを最大化するか
+        bool expand_rpane;
+
 #ifdef HAVE_MIGEMO_H
         // migemo-dictの場所
         std::string migemodict_path;

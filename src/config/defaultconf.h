@@ -95,7 +95,8 @@ namespace CONFIG
         CONF_ABONE_HOUR_THREAD = 0,   // スレあぼーん( スレ立てからの経過時間 )
         CONF_ABONE_TRANSPARENT = 0, // デフォルトで透明あぼーんをする
         CONF_ABONE_CHAIN = 0,       // デフォルトで連鎖あぼーんをする
-        CONF_EXPAND_SIDEBAR = 0       // 右ペーンが空の時にサイドバーを閉じる
+        CONF_EXPAND_SIDEBAR = 0,      // 右ペーンが空の時にサイドバーを閉じる
+        CONF_EXPAND_RPANE = 1         // 3ペーン時にスレ一覧やスレビューを最大化する
     };
 
 #define CONF_FONTSIZE_THREAD "12"
