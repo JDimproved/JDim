@@ -97,7 +97,6 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     show_all_children();
 
     set_title( "ユーザコマンド設定" );
-    m_control.add_mode( CONTROL::MODE_COMMON );
 }
 
 

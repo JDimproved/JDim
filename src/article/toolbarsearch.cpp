@@ -22,7 +22,6 @@ SearchToolBar::SearchToolBar() :
     get_searchbar()->append( *get_button_close_searchbar() );
 
     pack_buttons();
-    add_search_mode( CONTROL::MODE_COMMON );
 }
 
 
