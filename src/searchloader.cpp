@@ -39,7 +39,7 @@ SearchLoader::~SearchLoader()
 
 const std::string SearchLoader::get_url()
 {
-    std::string url = get_usrcmd_manager()->replace_cmd( CONFIG::get_url_search_title(), "", "", m_query );
+    std::string url = get_usrcmd_manager()->replace_cmd( CONFIG::get_url_search_title(), "", "", m_query, 0 );
 
 #ifdef _DEBUG
     std::cout << "SearchLoader::get_url url = " << url << std::endl;

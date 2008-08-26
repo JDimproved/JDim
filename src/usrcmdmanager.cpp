@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "usrcmdmanager.h"
@@ -159,11 +159,16 @@ void Usrcmd_Manager::save_xml()
 //
 // 実行
 //
-void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& link, const std::string& selection )
+void Usrcmd_Manager::exec( const int comnum, // コマンド番号
+                           const std::string& url,
+                           const std::string& link,
+                           const std::string& selection, // 選択文字
+                           const int number // レス番号
+    )
 {
-    if( num >= m_size ) return;
+    if( comnum >= m_size ) return;
 
-    std::string cmd = m_list_cmd[ num ];
+    std::string cmd = m_list_cmd[ comnum ];
 
     bool use_browser = false;
     if( cmd.find( "$VIEW" ) == 0 ){
@@ -172,12 +177,13 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
         cmd = MISC::remove_space( cmd );
     }
 
-    cmd = replace_cmd( cmd, url, link, selection );
+    cmd = replace_cmd( cmd, url, link, selection, number );
        
 #ifdef _DEBUG
     std::cout << "Usrcmd_Manager::url = " << url << std::endl;
     std::cout << "link = " << link << std::endl;
     std::cout << "selection = " << selection << std::endl;
+    std::cout << "number = " << number << std::endl;
     std::cout << "exec " << cmd << std::endl;
 #endif
 
@@ -187,10 +193,14 @@ void Usrcmd_Manager::exec( int num, const std::string& url, const std::string& l
 
 
 // コマンド置換
-// cmdの$URLをurl, $LINKをlink, $TEXT*をtextで置き換えて出力
+// cmdの$URLをurl, $LINKをlink, $TEXT*をtext, $NUMBERをnumberで置き換えて出力
 // text は UTF-8 であること
 std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
-                                         const std::string& url, const std::string& link, const std::string& text )
+                                         const std::string& url,
+                                         const std::string& link,
+                                         const std::string& text,
+                                         const int number                                         
+    )
 {
     std::string cmd_out = cmd;
 
@@ -199,6 +209,7 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
     cmd_out = MISC::replace_str( cmd_out, "$LOGPATH", CACHE::path_root() );
     cmd_out = MISC::replace_str( cmd_out, "$LOCALDAT", CACHE::path_dat( url ) );
     cmd_out = MISC::replace_str( cmd_out, "$LINK", link );
+    cmd_out = MISC::replace_str( cmd_out, "$NUMBER", MISC::itostr( number ) );
 
     // ホスト名(http://含む)
     cmd_out = MISC::replace_str( cmd_out, "$SERVERL", MISC::get_hostname( link ) );

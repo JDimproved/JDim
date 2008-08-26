@@ -36,12 +36,22 @@ namespace CORE
         const int get_size() const { return m_size; }
 
         // 実行
-        void exec( int num, const std::string& url, const std::string& link, const std::string& selection );
+        void exec( const int comnum, // コマンド番号
+                   const std::string& url,
+                   const std::string& link,
+                   const std::string& selection, // 選択文字
+                   const int number // レス番号
+            );
 
         // コマンド置換
-        // cmdの$URLをurl, $LINKをlink, $TEXT*をtextで置き換えて出力
+        // cmdの$URLをurl, $LINKをlink, $TEXT*をtext, $NUMBERをnumberで置き換えて出力
         // text は UTF-8 であること
-        std::string replace_cmd( const std::string& cmd, const std::string& url, const std::string& link, const std::string& text );
+        std::string replace_cmd( const std::string& cmd,
+                                 const std::string& url,
+                                 const std::string& link,
+                                 const std::string& text,
+                                 const int number
+            );
 
         bool is_sensitive( int num, const std::string& link, const std::string& selection );
 

@@ -3319,7 +3319,8 @@ void Core::exec_command()
         CORE::get_usrcmd_manager()->exec( atoi( command.arg1.c_str() ), // コマンド番号
                                           command.url, // URL
                                           command.arg2, // Link
-                                          command.arg3 // 選択文字
+                                          command.arg3, // 選択文字
+                                          atoi( command.arg4.c_str() )  // レス番号
             );
     }
 

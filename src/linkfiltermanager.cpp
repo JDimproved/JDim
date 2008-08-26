@@ -156,7 +156,7 @@ const bool Linkfilter_Manager::exec( const std::string& url, const std::string& 
             cmd = MISC::remove_space( cmd );
         }
 
-        cmd = CORE::get_usrcmd_manager()->replace_cmd( cmd, url, link, selection );
+        cmd = CORE::get_usrcmd_manager()->replace_cmd( cmd, url, link, selection, 0 );
 
 #ifdef _DEBUG
         std::cout << "exec " << cmd << std::endl;

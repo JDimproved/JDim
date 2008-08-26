@@ -2569,7 +2569,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
                 else act->set_visible( false );
             }
             else{
-                if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_sensitive( true );
+               if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_sensitive( true );
                 else act->set_sensitive( false );
             }
 #else
@@ -2864,7 +2864,7 @@ void ArticleViewBase::slot_search_web()
 
     if( query.empty() ) return;
 
-    std::string url = CORE::get_usrcmd_manager()->replace_cmd( CONFIG::get_url_search_web(), "", "", query );
+    std::string url = CORE::get_usrcmd_manager()->replace_cmd( CONFIG::get_url_search_web(), "", "", query, 0 );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_search_web query = " << query << std::endl;
@@ -2899,7 +2899,7 @@ void ArticleViewBase::slot_search_title()
 //
 void ArticleViewBase::slot_usrcmd( int num )
 {
-    CORE::core_set_command( "exec_usr_cmd" ,m_url_article, MISC::itostr( num ), m_url_tmp, m_drawarea->str_selection() );
+    CORE::core_set_command( "exec_usr_cmd" ,m_url_article, MISC::itostr( num ), m_url_tmp, m_drawarea->str_selection(), "" );
 }
 
 
