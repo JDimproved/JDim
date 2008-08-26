@@ -1139,6 +1139,8 @@ void ArticleViewBase::clear_highlight()
 //
 void ArticleViewBase::write()
 {
+    if( write_p2( 0 ) ) return;
+
     CORE::core_set_command( "open_message" ,m_url_article, std::string() );
 }
 
@@ -2946,6 +2948,7 @@ void ArticleViewBase::slot_open_browser()
 void ArticleViewBase::slot_write_res()
 {
     if( m_str_num.empty() ) return;
+    if( write_p2( atoi( m_str_num.c_str() ) ) ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_write_res number = " << m_str_num << std::endl;
@@ -2964,6 +2967,7 @@ void ArticleViewBase::slot_quote_res()
 {
     assert( m_article );
     if( m_str_num.empty() ) return;
+    if( write_p2( atoi( m_str_num.c_str() ) ) ) return;
     
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_quote_res number = " << m_str_num << std::endl;
@@ -2981,10 +2985,11 @@ void ArticleViewBase::slot_quote_selection_res()
 {
     assert( m_article );
 
-    int num_from = m_drawarea->get_selection_resnum_from();
+    const int num_from = m_drawarea->get_selection_resnum_from();
     if( ! num_from ) return;
+    if( write_p2( num_from ) ) return;
 
-    int num_to = m_drawarea->get_selection_resnum_to();
+    const int num_to = m_drawarea->get_selection_resnum_to();
 
     std::string str_num = MISC::itostr( num_from );
     if( num_from < num_to ) str_num += "-" + MISC::itostr( num_to );
@@ -3474,4 +3479,32 @@ void ArticleViewBase::set_live( const bool live )
     m_live = live;
     if( m_live ) SESSION::append_live( m_url_article );
     else SESSION::remove_live( m_url_article );
+}
+
+
+//
+// p2経由で書き込み(p2ログインを実装するまでの暫定仕様)
+//
+#include <iostream>
+const bool ArticleViewBase::write_p2( const int number )
+{
+    if( m_url_article.find( ".2ch.net" ) == std::string::npos ) return false;
+    if( ! SESSION::loginp2() ) return false;
+
+    std::string url;
+
+    if( ! number ) url = CORE::get_usrcmd_manager()->replace_cmd( "http://p2.2ch.net/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME",
+                                                                  m_url_article, "", "", 0 );
+
+    else url = CORE::get_usrcmd_manager()->replace_cmd( "http://p2.2ch.net/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME&popup=1&inyou=2&resnum=$NUMBER",
+                                                        m_url_article, "", "", number );
+
+//#ifdef _DEBUG
+    std::cout << "ArticleViewBase::write_p2\n"
+              << "url = " << url << std::endl;
+//#endif
+
+    CORE::core_set_command( "open_url_browser", url );
+
+    return true;
 }

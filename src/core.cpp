@@ -301,6 +301,8 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
     m_action_group->add( Gtk::ToggleAction::create( "LoginBe", "BEにログイン(_B)", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_loginbe ) );
+    m_action_group->add( Gtk::ToggleAction::create( "LoginP2", "p2経由で書き込み(_P)", std::string(), false ),
+                        sigc::mem_fun( *this, &Core::slot_toggle_loginp2 ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
     m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存(_S)"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
@@ -563,6 +565,7 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='Login2ch'/>"
         "<menuitem action='LoginBe'/>"
+        "<menuitem action='LoginP2'/>"
         "<separator/>"
         "<menuitem action='SaveFavorite'/>"
         "<separator/>"
@@ -1060,6 +1063,7 @@ void Core::set_maintitle()
 
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
     if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
+    if( SESSION::loginp2() ) title +=" [ p2 ]";
     if( ! SESSION::is_online() ) title += " [ オフライン ]";
     m_win_main.set_title( title );
 }
@@ -1168,6 +1172,15 @@ void Core::slot_activate_menubar()
     if( tact ){
 
         if( CORE::get_loginbe()->login_now() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // P2ログイン
+    act = m_action_group->get_action( "LoginP2" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
+    if( tact ){
+
+        if( SESSION::loginp2() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1893,6 +1906,23 @@ void Core::slot_toggle_loginbe()
 
     // ログオフ中ならログイン開始
     else CORE::get_loginbe()->start_login();
+
+    set_maintitle();
+}
+
+
+//
+// p2にログイン
+//
+void Core::slot_toggle_loginp2()
+{
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::slot_toggle_p2\n";
+#endif
+
+    SESSION::set_loginp2( ! SESSION::loginp2() );
 
     set_maintitle();
 }

@@ -74,11 +74,15 @@ namespace SESSION
 
     // 2chログイン中
     const bool login2ch();
-    void set_login2ch( bool login );
+    void set_login2ch( const bool login );
 
     // BEログイン中
     const bool loginbe();
-    void set_loginbe( bool login );
+    void set_loginbe( const bool login );
+
+    // P2ログイン中
+    const bool loginp2();
+    void set_loginp2( const bool login );
 
     // サイドバー表示中
     const bool show_sidebar();

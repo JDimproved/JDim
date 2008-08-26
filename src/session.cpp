@@ -32,6 +32,7 @@ int mode_pane;
 bool mode_online;
 bool mode_login2ch;
 bool mode_loginbe;
+bool mode_loginp2;
 
 std::string distribution_name;
 
@@ -403,6 +404,9 @@ void SESSION::init_session()
     // beログイン
     mode_loginbe = cf.get_option( "mode_loginbe", false );
 
+    // p2ログイン
+    mode_loginp2 = cf.get_option( "mode_loginp2", false );
+
     // paneのモード
     mode_pane = cf.get_option( "mode_pane", 0 );
 
@@ -673,6 +677,7 @@ void SESSION::save_session()
         << "mode_online = " << mode_online << std::endl
         << "mode_login2ch = " << mode_login2ch << std::endl
         << "mode_loginbe = " << mode_loginbe << std::endl
+        << "mode_loginp2 = " << mode_loginp2 << std::endl
         << "x = " << x_win_main << std::endl
         << "y = " << y_win_main << std::endl
         << "width = " << width_win_main << std::endl
@@ -777,10 +782,13 @@ const bool SESSION::is_online(){ return mode_online; }
 void SESSION::set_online( bool mode ){ mode_online = mode; }
 
 const bool SESSION::login2ch(){ return mode_login2ch; }
-void SESSION::set_login2ch( bool login ){ mode_login2ch = login; }
+void SESSION::set_login2ch( const bool login ){ mode_login2ch = login; }
 
 const bool SESSION::loginbe(){ return mode_loginbe; }
-void SESSION::set_loginbe( bool login ){ mode_loginbe = login; }
+void SESSION::set_loginbe( const bool login ){ mode_loginbe = login; }
+
+const bool SESSION::loginp2(){ return mode_loginp2; }
+void SESSION::set_loginp2( const bool login ){ mode_loginp2 = login; }
 
 const bool SESSION::show_sidebar(){ return win_show_sidebar; }
 
