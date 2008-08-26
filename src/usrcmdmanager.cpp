@@ -196,12 +196,25 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
 
     cmd_out = MISC::replace_str( cmd_out, "$URL", DBTREE::url_readcgi( url, 0, 0 ) );
     cmd_out = MISC::replace_str( cmd_out, "$DATURL", DBTREE::url_dat( url ) );
+    cmd_out = MISC::replace_str( cmd_out, "$LOGPATH", CACHE::path_root() );
     cmd_out = MISC::replace_str( cmd_out, "$LOCALDAT", CACHE::path_dat( url ) );
     cmd_out = MISC::replace_str( cmd_out, "$LINK", link );
+
+    // ホスト名(http://含む)
     cmd_out = MISC::replace_str( cmd_out, "$SERVERL", MISC::get_hostname( link ) );
     cmd_out = MISC::replace_str( cmd_out, "$SERVER", MISC::get_hostname( url ) );
+
+    // ホスト名(http://含まない)
     cmd_out = MISC::replace_str( cmd_out, "$HOSTNAMEL", MISC::get_hostname( link, false ) );
     cmd_out = MISC::replace_str( cmd_out, "$HOSTNAME", MISC::get_hostname( url, false ) );
+    cmd_out = MISC::replace_str( cmd_out, "$HOSTL", MISC::get_hostname( link, false ) );
+    cmd_out = MISC::replace_str( cmd_out, "$HOST", MISC::get_hostname( url, false ) );
+
+    cmd_out = MISC::replace_str( cmd_out, "$BBSNAME", DBTREE::board_id( url ) );
+    cmd_out = MISC::replace_str( cmd_out, "$DATNAME", DBTREE::article_key( url ) );
+
+    cmd_out = MISC::replace_str( cmd_out, "$TITLE", DBTREE::article_subject( url ) );
+    cmd_out = MISC::replace_str( cmd_out, "$BOARDNAME", DBTREE::board_name( url ) );
 
     if( cmd_out.find( "$TEXTU" ) != std::string::npos ){
         cmd_out = MISC::replace_str( cmd_out, "$TEXTU", MISC::charset_url_encode_split( text, "UTF-8" ) );
