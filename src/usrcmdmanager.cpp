@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "usrcmdmanager.h"
@@ -14,6 +14,7 @@
 
 #include "dbtree/interface.h"
 
+#include "dbimg/imginterface.h"
 
 CORE::Usrcmd_Manager* instance_usrcmd_manager = NULL;
 
@@ -211,6 +212,10 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
     cmd_out = MISC::replace_str( cmd_out, "$LINK", link );
     cmd_out = MISC::replace_str( cmd_out, "$NUMBER", MISC::itostr( number ) );
 
+    if( cmd_out.find( "$CACHEDIMG" ) != std::string::npos ){
+        cmd_out = MISC::replace_str( cmd_out, "$CACHEDIMG", DBIMG::get_cache_path( link ) );
+    }
+
     // ホスト名(http://含む)
     cmd_out = MISC::replace_str( cmd_out, "$SERVERL", MISC::get_hostname( link ) );
     cmd_out = MISC::replace_str( cmd_out, "$SERVER", MISC::get_hostname( url ) );
@@ -264,6 +269,7 @@ bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::
     if( cmd.find( "$LINK" ) != std::string::npos
         || cmd.find( "$SERVERL" ) != std::string::npos
         || cmd.find( "$HOSTNAMEL" ) != std::string::npos
+        || cmd.find( "$HOSTL" ) != std::string::npos
         ){
         if( link.empty() ) return false;
     }
@@ -275,6 +281,13 @@ bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::
         ){
 
         if( selection.empty() || selection.length() > max_selection_str ) return false;
+    }
+
+    if( cmd.find( "$CACHEDIMG" ) != std::string::npos ){
+
+        if( link.empty() ) return false;
+        if( DBIMG::get_type_ext( link ) == DBIMG::T_UNKNOWN ) return false;
+        if( ! DBIMG::is_cached( link ) ) return false;
     }
     
     return true;

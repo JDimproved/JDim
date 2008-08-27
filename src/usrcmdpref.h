@@ -26,7 +26,7 @@ namespace CORE
         UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Glib::ustring& cmd )
         : SKELETON::PrefDiag( parent, "" ),
         m_label_name( "コマンド名" ),
-        m_label_cmd( "コマンド" )
+        m_label_cmd( "実行するコマンド" )
         {
             resize( 640, 1 );
 
