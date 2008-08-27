@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "linkfiltermanager.h"
@@ -141,29 +141,16 @@ const bool Linkfilter_Manager::exec( const std::string& url, const std::string& 
     for( ; it != m_list_cmd.end(); ++it ){
 
         const std::string query = ( *it ).url;
-        std::string cmd = ( *it ).cmd;
+        const std::string cmd = ( *it ).cmd;
+
 #ifdef _DEBUG
         std::cout << "query = " << query << std::endl
                   << "cmd = " << cmd << std::endl;
 #endif
         if( ! regex.exec( query, link ) ) continue;
 
-        // queryと一致
-        bool use_browser = false;
-        if( cmd.find( "$VIEW" ) == 0 ){
-            use_browser = true;
-            cmd = cmd.substr( 5 );
-            cmd = MISC::remove_space( cmd );
-        }
-
-        cmd = CORE::get_usrcmd_manager()->replace_cmd( cmd, url, link, selection, 0 );
-
-#ifdef _DEBUG
-        std::cout << "exec " << cmd << std::endl;
-#endif
-
-        if( use_browser ) CORE::core_set_command( "open_url_browser", cmd );
-        else Glib::spawn_command_line_async( cmd );
+        // queryと一致したら実行
+        CORE::get_usrcmd_manager()->exec( cmd, url, link, selection, 0 );
 
         return true;
     }

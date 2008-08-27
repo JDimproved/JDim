@@ -1,12 +1,14 @@
 // ライセンス: GPL2
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "usrcmdmanager.h"
 #include "command.h"
 #include "cache.h"
 #include "type.h"
+
+#include "skeleton/msgdiag.h"
 
 #include "xml/tools.h"
 
@@ -169,7 +171,31 @@ void Usrcmd_Manager::exec( const int comnum, // コマンド番号
 {
     if( comnum >= m_size ) return;
 
-    std::string cmd = m_list_cmd[ comnum ];
+    exec( m_list_cmd[ comnum ],
+          url,
+          link,
+          selection,
+          number );
+}
+
+void Usrcmd_Manager::exec( const std::string command, // コマンド
+                           const std::string& url,
+                           const std::string& link,
+                           const std::string& selection, // 選択文字
+                           const int number // レス番号
+    )
+{
+
+#ifdef _DEBUG
+    std::cout << "Usrcmd_Manager::exec\n"
+              << "command = " << command << std::endl
+              << "url = " << url << std::endl
+              << "link = " << link << std::endl
+              << "selection = " << selection << std::endl
+              << "number = " << number << std::endl;
+#endif
+
+    std::string cmd = command;
 
     bool use_browser = false;
     if( cmd.find( "$VIEW" ) == 0 ){
@@ -178,17 +204,24 @@ void Usrcmd_Manager::exec( const int comnum, // コマンド番号
         cmd = MISC::remove_space( cmd );
     }
 
+    bool show_dialog = false;
+    if( cmd.find( "$DIALOG" ) == 0 ){
+        show_dialog = true;
+        cmd = cmd.substr( 7 );
+        cmd = MISC::remove_space( cmd );
+    }
+
     cmd = replace_cmd( cmd, url, link, selection, number );
        
 #ifdef _DEBUG
-    std::cout << "Usrcmd_Manager::url = " << url << std::endl;
-    std::cout << "link = " << link << std::endl;
-    std::cout << "selection = " << selection << std::endl;
-    std::cout << "number = " << number << std::endl;
     std::cout << "exec " << cmd << std::endl;
 #endif
 
     if( use_browser ) CORE::core_set_command( "open_url_browser", cmd );
+    else if( show_dialog ){
+        SKELETON::MsgDiag mdiag( NULL, cmd );
+        mdiag.run();
+    }
     else Glib::spawn_command_line_async( cmd );
 }
 

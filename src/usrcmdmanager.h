@@ -43,6 +43,14 @@ namespace CORE
                    const int number // レス番号
             );
 
+        void exec( const std::string command, // コマンド
+                   const std::string& url,
+                   const std::string& link,
+                   const std::string& selection, // 選択文字
+                   const int number // レス番号
+            );
+
+
         // コマンド置換
         // cmdの$URLをurl, $LINKをlink, $TEXT*をtext, $NUMBERをnumberで置き換えて出力
         // text は UTF-8 であること
