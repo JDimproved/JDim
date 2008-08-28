@@ -284,6 +284,9 @@ time_t BoardBase::get_write_leftsec()
     if( ! m_samba_sec ) return 0;
     if( ! get_write_pass() ) return 0;
 
+    // ログイン中は書き込み規制無し
+    if( SESSION::login2ch() ) return 0;
+
     return MAX( 0, m_samba_sec + mrg - get_write_pass() );
 }
 
