@@ -1105,7 +1105,7 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     // 削除
     act = action_group()->get_action( "DeleteMenu" );
     if( act ){
-        if( ( m_img->is_cached() || m_img->get_type() == DBIMG::T_LARGE ) && ! m_img->is_protected() ) act->set_sensitive( true );
+        if(  m_img->get_code() != HTTP_INIT && ! m_img->is_protected() ) act->set_sensitive( true );
         else act->set_sensitive( false );
     }
 

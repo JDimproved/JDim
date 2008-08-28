@@ -2681,8 +2681,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         act = action_group()->get_action( "DeleteImage_Menu" );
         if( act ){
 
-            if( ( DBIMG::is_cached( url ) || DBIMG::get_type_real( url ) == DBIMG::T_LARGE )
-                && ! DBIMG::is_protected( url ) ) act->set_sensitive( true );
+            if( DBIMG::get_code( url ) != HTTP_INIT && ! DBIMG::is_protected( url ) ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
 

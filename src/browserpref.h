@@ -39,7 +39,7 @@ namespace CORE
 
         BrowserPref( Gtk::Window* parent, const std::string& url )
         : SKELETON::PrefDiag( parent, url ),
-        m_label_notice( "使用するWebブラウザを選択して下さい。通常は「標準ブラウザ」で問題ありません\nリンククリック時に %LINK をURLに置換します" )
+        m_label_notice( "使用するWebブラウザを選択して下さい\nリンククリック時に %LINK をURLに置換します" )
         {
             const int mrg = 8;
 
