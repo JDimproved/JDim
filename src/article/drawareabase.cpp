@@ -3741,7 +3741,8 @@ bool DrawAreaBase::slot_leave_notify_event( GdkEventCrossing* event )
     std::cout << "DrawAreaBase::slot_leave_notify_event\n";
 #endif
 
-    m_sig_leave_notify.emit( event );
+    // 右ドラッグ中はシグナルを発行しない
+    if( ! m_r_drugging ) m_sig_leave_notify.emit( event );
 
     return false;
 }
@@ -4013,6 +4014,7 @@ bool DrawAreaBase::motion_mouse()
     }
 
     // 右ドラッグしていないとき
+    // 右ドラッグ中はリンクへの出入りを監視しない
     else if( ! m_r_drugging ){
            
         if( link_changed ){

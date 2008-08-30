@@ -1651,7 +1651,7 @@ bool ArticleViewBase::slot_button_press( std::string url, int res_number, GdkEve
 bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkEventButton* event )
 {
     /// マウスジェスチャ
-    int mg = get_control().MG_end( event );
+    const int mg = get_control().MG_end( event );
 
     // ホイールマウスジェスチャ
     // 実行された場合は何もしない 
@@ -1668,7 +1668,10 @@ bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkE
         if( ! is_mouse_on_popup() ){
 
             // マウスジェスチャ
-            if( mg != CONTROL::None && enable_mg() ) operate_view( mg );
+            if( mg != CONTROL::None && enable_mg() ){
+                hide_popup();
+                operate_view( mg );
+            }
 
             // リンクをクリック
             else if( click_url( url, res_number, event ) );
@@ -3491,7 +3494,6 @@ void ArticleViewBase::set_live( const bool live )
 //
 // p2経由で書き込み(p2ログインを実装するまでの暫定仕様)
 //
-#include <iostream>
 const bool ArticleViewBase::write_p2( const int number )
 {
     if( m_url_article.find( ".2ch.net" ) == std::string::npos ) return false;
@@ -3505,10 +3507,10 @@ const bool ArticleViewBase::write_p2( const int number )
     else url = CORE::get_usrcmd_manager()->replace_cmd( "http://p2.2ch.net/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME&popup=1&inyou=2&resnum=$NUMBER",
                                                         m_url_article, "", "", number );
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "ArticleViewBase::write_p2\n"
               << "url = " << url << std::endl;
-//#endif
+#endif
 
     CORE::core_set_command( "open_url_browser", url );
 
