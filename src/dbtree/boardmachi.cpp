@@ -9,6 +9,7 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 #include "jdlib/loaderdata.h"
+#include "jdlib/jdregex.h"
 
 #include "global.h"
 
@@ -26,12 +27,9 @@ enum
 BoardMachi::BoardMachi( const std::string& root, const std::string& path_board, const std::string& name )
     : BoardBase( root, path_board, name )
 {
-    // dat のURLは特殊なので url_datpath()をオーバロードする
+    // dat のURLは特殊なので url_datpath()をオーバライドする
     set_path_dat( "" );
-
-    // readcgi(read.pl) のURLは特殊なので url_readcgibaseをオーバロードする
-    set_path_readcgi( "" );
-
+    set_path_readcgi( "/bbs/read.cgi" );
     set_path_bbscgi( "/bbs/write.cgi" );
     set_path_subbbscgi( "/bbs/write.cgi" );
     set_subjecttxt( "subject.txt" );
@@ -101,49 +99,64 @@ ArticleBase* BoardMachi::append_article( const std::string& id, bool cached )
 
 
 //
-// スレの url を read.cgi型のurlに変換
+// スレの url を dat型のurlに変換して出力
 //
-// url がスレッドのURLで無い時はempty()が返る
-// num_from と num_to が 0 で無い時はスレ番号を付ける
+// (例) "http://hoge.machi.to/bbs/read.pl?BBS=board&KEY=12345&START=12&END=15"" のとき
+// 戻り値 : "http://hoge.machi.to/bbs/read.pl?BBS=board&KEY=12345", num_from = 12, num_to = 15, num_str = 12-15
 //
-// (例) "http://hoge.machi.to/bbs/read.pl?BBS=board&KEY=12345",  num_from = 12, num_to = 15 のとき
-//
-// 戻り値 : "http://hoge.machi.to/bbs/read.pl?BBS=board&KEY=12345&START=12&END=15"
-//
-const std::string BoardMachi::url_readcgi( const std::string& url, int num_from, int num_to )
+const std::string BoardMachi::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
 {
     if( empty() ) return std::string();
 
-#ifdef _DEBUG
-    std::cout << "BoardMachi::url_readcgi : " << url  << " from " << num_from << " to " << num_to << std::endl;
-#endif
-
-    ArticleBase* article = get_article_fromURL( url );
-    if( !article ) return std::string();
-
-    std::string readcgi = url_readcgibase() + article->get_key();
+    // read.cgi 型の判定
+    const std::string urldat = BoardBase::url_dat( url, num_from, num_to, num_str );
+    if( ! urldat.empty() ) return urldat;
 
 #ifdef _DEBUG
-    std::cout << "BoardMachi::url_readcgi : to " << readcgi << std::endl;
+    std::cout << "BoardMachi::url_dat : url = " << url << std::endl;
+#endif
+    
+    JDLIB::Regex regex;
+    std::string id; // スレッドのID
+
+    num_from = num_to = 0;
+
+    // dat 型
+    // LAST, START, END を考慮する
+    const std::string datpath = MISC::replace_str( url_datpath(), "?", "\\?" );
+    const std::string query_dat = "^ *(http://.+" + datpath  + ")([1234567890]+" + get_ext() + ")(&LAST=[1234567890]+)?(&START=([1234567890])+)?(&END=([1234567890])+)? *$";
+
+#ifdef _DEBUG
+    std::cout << "query_dat = " << query_dat << std::endl;
 #endif
 
-    if( num_from > 0 || num_to > 0 ){
+    if( regex.exec( query_dat , url ) ){
+        id = regex.str( 2 );
 
-        std::ostringstream ss;
-        ss << readcgi;
-        if( num_from > 0 ) ss << "&START="<< num_from << "&END=";
-        if( num_to > num_from ) ss << num_to;
-        else ss << num_from;
+        if( ! regex.str( 5 ).empty() ){
+            num_from = atoi( regex.str( 5 ).c_str() );
+            num_str = MISC::itostr( num_from );
+        }
+        if( ! regex.str( 7 ).empty() ){
+            num_to = atoi( regex.str( 7 ).c_str() );
+            num_str += "-" + MISC::itostr( num_to );
+        }
 
-        return ss.str();
+#ifdef _DEBUG
+        std::cout << "id = " << id << std::endl
+                  << "start = " << num_from << std::endl
+                  << "end = " << num_to << std::endl
+                  << "num = " << num_str << std::endl;
+#endif
     }
+    else return std::string();
 
-    return readcgi;
+    return url_datbase() + id;
 }
 
 
 //
-// pread.pl のURLのパスを返す
+// read.pl のURLのパスを返す
 //
 // (例) "/bbs/read.pl?BBS=board&KEY=" (最初に '/' がつく)
 //
@@ -153,15 +166,6 @@ const std::string BoardMachi::url_datpath()
 
     return "/bbs/read.pl?BBS=" + get_id() + "&KEY=";
 }
-
-//
-// まちBBSはdat型とreadcgi型のURLが同じ
-//
-const std::string BoardMachi::url_readcgipath()
-{
-    return url_datpath();
-}
-
 
 
 const std::string BoardMachi::create_newarticle_message( const std::string& subject,

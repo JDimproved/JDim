@@ -41,7 +41,7 @@ namespace DBTREE
     const std::string url_datbase( const std::string& url );
 
     // dat型のurlに変換
-    const std::string url_dat( const std::string& url, int& num_from, int& num_to ); 
+    const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ); 
 
     // dat型のurlに変換(簡易版)
     const std::string url_dat( const std::string& url ); 

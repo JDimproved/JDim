@@ -910,10 +910,11 @@ void ImageViewBase::slot_open_ref()
 {
     if( ! m_enable_menuslot ) return;
 
-    std::string refurl = m_img->get_refurl();
+    const std::string refurl = m_img->get_refurl();
 
     int center, from, to;
-    std::string url = DBTREE::url_dat( refurl, center, to );
+    std::string num_str;
+    const std::string url = DBTREE::url_dat( refurl, center, to, num_str );
     if( url.empty() ) return;
 
     const int range = 10;

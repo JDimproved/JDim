@@ -264,15 +264,15 @@ namespace DBTREE
         // url がスレッドのURLで無い時はempty()が返る
         // もしurlが移転前の旧ホストのものだったら対応するarticlebaseクラスに旧ホスト名を知らせる
         // (例) url =  "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345/12-15"のとき、
-        // "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15
-        const std::string url_dat( const std::string& url, int& num_from, int& num_to ); 
+        // "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15, num_str = 12-15
+        virtual const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ); 
 
         // スレの url を read.cgi型のurlに変換
         // url がスレッドのURLで無い時はempty()が返る
         // num_from と num_to が 0 で無い時はスレ番号を付ける
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15 のとき
         // "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345/12-15"
-        virtual const std::string url_readcgi( const std::string& url, int num_from, int num_to );
+        const std::string url_readcgi( const std::string& url, int num_from, int num_to );
 
         // subject.txt の URLを取得
         // (例) "http://www.hoge2ch.net/hogeboard/subject.txt"
@@ -300,7 +300,7 @@ namespace DBTREE
 
         // read.cgi のURLのパスを返す
         // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345" なら "/test/read.cgi/hogeboard/"
-        virtual const std::string url_readcgipath();
+        const std::string url_readcgipath();
 
         // bbscgi のURLのベースアドレス
         const std::string url_bbscgibase();

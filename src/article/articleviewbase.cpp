@@ -1905,19 +1905,26 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
 
         // dat 又は板の場合
         int num_from, num_to;
-        std::string url_dat = DBTREE::url_dat( url, num_from, num_to );
-        std::string url_subject = DBTREE::url_subject( url );
+        std::string num_str;
+        
+        const std::string url_dat = DBTREE::url_dat( url, num_from, num_to, num_str );
+        const std::string url_subject = DBTREE::url_subject( url );
 
 #ifdef _DEBUG
         std::cout << "ArticleViewBase::slot_on_url " << url << std::endl;
         std::cout << "url_dat = " << url_dat << std::endl;
         std::cout << "url_subject = " << url_subject << std::endl;
+        std::cout << "num_from = " << num_from << std::endl;
+        std::cout << "num_to = " << num_to << std::endl;
+        std::cout << "num = " << num_str << std::endl;
 #endif
 
         // 他スレ
         if( ! url_dat.empty() ){
             if( num_from == 0 ) args.arg1 = "1"; // 最低でも1レス目は表示
-            else args.arg1 = MISC::get_filename( url );
+            else if( num_str.empty() ) args.arg1 = "1";
+            else args.arg1 = num_str;
+
             args.arg2 = "true"; // 板名、スレ名表示
             args.arg3 = "false"; // あぼーんしたレスの内容は非表示(あぼーんと表示)
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPRES, url_dat, args );

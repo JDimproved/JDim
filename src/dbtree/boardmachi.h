@@ -20,9 +20,12 @@ namespace DBTREE
         // url がこの板のものかどうか
         virtual bool equal( const std::string& url );
 
-        virtual const std::string url_readcgi( const std::string& url, int num_from, int num_to );
+        // スレの url を dat型のurlに変換して出力
+        // (例) "http://hoge.machi.to/bbs/read.pl?BBS=board&KEY=12345&START=12&END=15"" のとき
+        // 戻り値 : "http://hoge.machi.to/bbs/read.pl?BBS=board&KEY=12345", num_from = 12, num_to = 15, num_str = 12-15
+        virtual const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str );
+
         virtual const std::string url_datpath();
-        virtual const std::string url_readcgipath();        
 
         // 新スレ作成用のメッセージ変換
         virtual const std::string create_newarticle_message( const std::string& subject,

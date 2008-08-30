@@ -3372,8 +3372,9 @@ void Core::exec_command()
         }
 
         int num_from, num_to;
-        std::string url_dat = DBTREE::url_dat( command.url, num_from, num_to );
-        std::string url_subject = DBTREE::url_subject( command.url );
+        std::string num_str;
+        const std::string url_dat = DBTREE::url_dat( command.url, num_from, num_to, num_str );
+        const std::string url_subject = DBTREE::url_subject( command.url );
        
         // datの場合ビューで開く
         if( ! url_dat.empty() ){

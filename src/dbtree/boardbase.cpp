@@ -355,7 +355,7 @@ void BoardBase::update_url( const std::string& root, const std::string& path_boa
 //
 // 戻り値 : "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15
 //
-const std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_to )
+const std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
 {
     if( empty() ) return std::string();
 
@@ -369,12 +369,12 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
     num_from = num_to = 0;
 
     // dat 型
-    std::string datpath = MISC::replace_str( url_datpath(), "?", "\\?" );
-    std::string query_dat = "^ *(http://.+" + datpath  + ")([1234567890]+" + get_ext() + ") *$";
+    const std::string datpath = MISC::replace_str( url_datpath(), "?", "\\?" );
+    const std::string query_dat = "^ *(http://.+" + datpath  + ")([1234567890]+" + get_ext() + ") *$";
 
     // read.cgi型
-    std::string cgipath = MISC::replace_str( url_readcgipath(), "?", "\\?" );
-    std::string query_cgi = "^ *(http://.+" + cgipath + ")([1234567890]+)/?r?(l50)?([1234567890]+)?(-)?([1234567890]+)?.*$";
+    const std::string cgipath = MISC::replace_str( url_readcgipath(), "?", "\\?" );
+    const std::string query_cgi = "^ *(http://.+" + cgipath + ")([1234567890]+)/?r?(l50)?([1234567890]+)?(-)?([1234567890]+)?.*$";
 
 #ifdef _DEBUG
     std::cout << "query_dat = " << query_dat << std::endl;
@@ -409,6 +409,7 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
         else if( num_to != 0 ) num_from = 1;
 
         num_to = MAX( num_from, num_to );
+        num_str = MISC::get_filename( url );
     }
 
     // どちらでもない(スレのURLでない)場合
@@ -435,7 +436,7 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
 #ifdef _DEBUG
             std::cout << "moved -> " << url_tmp << std::endl;
 #endif
-            return url_dat( url_tmp, num_from, num_to );
+            return url_dat( url_tmp, num_from, num_to, num_str );
         }
 
 #ifdef _DEBUG
@@ -446,7 +447,8 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
 
 #ifdef _DEBUG
     std::cout << "BoardBase::url_dat result : " << url << " ->\n";
-    std::cout << "datbase = " << url_datbase() << " id = " << id << " from " << num_from << " to " << num_to << std::endl;
+    std::cout << "datbase = " << url_datbase() << " id = " << id << " from " << num_from << " to " << num_to
+              << " num = " << num_str << std::endl;
 #endif
 
     // もしurl(スレッドのURL)が移転前の旧URLのものだったら対応するarticlebaseクラスに旧ホスト名を教えてあげる
@@ -719,7 +721,8 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 
     // urlをdat型に変換してからID取得
     int num_from, num_to;
-    std::string urldat = url_dat( url, num_from, num_to );
+    std::string num_str;
+    const std::string urldat = url_dat( url, num_from, num_to, num_str );
 
     // 板がDBに登録されてないので NULL クラスを返す
     if( urldat.empty() ){
@@ -1518,7 +1521,7 @@ void BoardBase::read_board_info()
     m_last_access_time = cf.get_option( "last_access_time", 0 );
 
 #ifdef _DEBUG
-    std::cout << "modified = " << date_modified() << std::endl;
+    std::cout << "modified = " << get_date_modified() << std::endl;
 #endif
 }
 

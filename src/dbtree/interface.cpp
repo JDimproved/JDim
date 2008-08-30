@@ -85,9 +85,9 @@ const std::string DBTREE::url_datbase( const std::string& url )
 
 
 // urlをdat型のurlに変換
-const std::string DBTREE::url_dat( const std::string& url, int& num_from, int& num_to )
+const std::string DBTREE::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
 {
-    return DBTREE::get_board( url )->url_dat( url, num_from, num_to );
+    return DBTREE::get_board( url )->url_dat( url, num_from, num_to, num_str );
 }
 
 
@@ -95,7 +95,8 @@ const std::string DBTREE::url_dat( const std::string& url, int& num_from, int& n
 const std::string DBTREE::url_dat( const std::string& url )
 {
     int num_from, num_to;
-    return url_dat( url, num_from, num_to );
+    std::string num_str;
+    return url_dat( url, num_from, num_to, num_str );
 }
 
 

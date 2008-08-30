@@ -28,9 +28,10 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
 {
     // 一般
     int num_from, num_to;
-    std::string refurl = DBIMG::get_refurl( get_url() );
-    std::string daturl = DBTREE::url_dat( refurl, num_from, num_to );
-    std::string readcgi = DBTREE::url_readcgi( daturl, num_from, 0 );
+    std::string num_str;
+    const std::string refurl = DBIMG::get_refurl( get_url() );
+    const std::string daturl = DBTREE::url_dat( refurl, num_from, num_to, num_str );
+    const std::string readcgi = DBTREE::url_readcgi( daturl, num_from, 0 );
 
     m_label_ref.set_text( DBTREE::article_subject( daturl ) );
     m_label_url_ref.set_text( readcgi );
@@ -101,7 +102,8 @@ void Preferences::slot_open_ref()
     std::string refurl = DBIMG::get_refurl( get_url() );
 
     int center, from, to;
-    std::string url = DBTREE::url_dat( refurl, center, to );
+    std::string num_str;
+    const std::string url = DBTREE::url_dat( refurl, center, to, num_str );
     if( url.empty() ) return;
 
     const int range = 10;
