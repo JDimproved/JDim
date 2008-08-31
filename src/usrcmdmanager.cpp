@@ -9,6 +9,7 @@
 #include "type.h"
 
 #include "skeleton/msgdiag.h"
+#include "skeleton/prefdiag.h"
 
 #include "xml/tools.h"
 
@@ -34,6 +35,34 @@ void CORE::delete_usrcmd_manager()
     if( instance_usrcmd_manager ) delete instance_usrcmd_manager;
     instance_usrcmd_manager = NULL;
 }
+
+///////////////////////////////////////////////
+
+class ReplaceTextDiag : public SKELETON::PrefDiag
+{
+    Gtk::VBox m_vbox;
+    Gtk::Entry m_entry;
+    Gtk::Label m_label;
+
+public:
+
+    ReplaceTextDiag( Gtk::Window* parent, const std::string& title )
+        : SKELETON::PrefDiag( parent, "" ), m_label( title + "を置き換えるテキストを入力してください。" )
+    {
+        resize( 640, 1 );
+
+        m_vbox.pack_start( m_label, Gtk::PACK_SHRINK );
+        m_vbox.pack_start( m_entry, Gtk::PACK_SHRINK );
+
+        get_vbox()->set_spacing( 8 );
+        get_vbox()->pack_start( m_vbox );
+
+        set_title( "テキスト入力" );
+        show_all_children();
+    }
+
+    const Glib::ustring get_text() { return m_entry.get_text(); }
+};
 
 ///////////////////////////////////////////////
 
@@ -217,12 +246,28 @@ void Usrcmd_Manager::exec( const std::string command, // コマンド
     std::cout << "exec " << cmd << std::endl;
 #endif
 
+    if( cmd.empty() ) return;
+
     if( use_browser ) CORE::core_set_command( "open_url_browser", cmd );
     else if( show_dialog ){
         SKELETON::MsgDiag mdiag( NULL, cmd );
         mdiag.run();
     }
     else Glib::spawn_command_line_async( cmd );
+}
+
+
+//
+// 文字列置換用テキストダイアログ表示
+//
+const bool Usrcmd_Manager::show_replacetextdiag( std::string& texti, const std::string& title )
+{
+    if( ! texti.empty() ) return true;
+
+    ReplaceTextDiag textdiag( NULL, title );
+    if( textdiag.run() != Gtk::RESPONSE_OK ) return false;
+    texti = textdiag.get_text();
+    return true;
 }
 
 
@@ -265,17 +310,54 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
     cmd_out = MISC::replace_str( cmd_out, "$TITLE", DBTREE::article_subject( url ) );
     cmd_out = MISC::replace_str( cmd_out, "$BOARDNAME", DBTREE::board_name( url ) );
 
+    std::string texti = text;
+
+    if( cmd_out.find( "$TEXTIU" ) != std::string::npos ){
+        if( ! show_replacetextdiag( texti, "$TEXTIU" ) ) return std::string();
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTIU", MISC::charset_url_encode_split( texti, "UTF-8" ) );
+    }
     if( cmd_out.find( "$TEXTU" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTU", MISC::charset_url_encode_split( text, "UTF-8" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTU", MISC::charset_url_encode_split( texti, "UTF-8" ) );
+    }
+    if( cmd_out.find( "$TEXTIX" ) != std::string::npos ){
+        if( ! show_replacetextdiag( texti, "$TEXTIX" ) ) return std::string();
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTIX", MISC::charset_url_encode_split( texti, "EUC-JP" ) );
     }
     if( cmd_out.find( "$TEXTX" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTX", MISC::charset_url_encode_split( text, "EUC-JP" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTX", MISC::charset_url_encode_split( texti, "EUC-JP" ) );
+    }
+    if( cmd_out.find( "$TEXTIE" ) != std::string::npos ){
+        if( ! show_replacetextdiag( texti, "$TEXTIE" ) ) return std::string();
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTIE", MISC::charset_url_encode_split( texti, "MS932" ) );
     }
     if( cmd_out.find( "$TEXTE" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTE", MISC::charset_url_encode_split( text, "MS932" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTE", MISC::charset_url_encode_split( texti, "MS932" ) );
+    }
+    if( cmd_out.find( "$TEXTI" ) != std::string::npos ){
+        if( ! show_replacetextdiag( texti, "$TEXTI" ) ) return std::string();
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTI",  texti );
     }
     if( cmd_out.find( "$TEXT" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXT",  text );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXT",  texti );
+    }
+
+    std::string input;
+
+    if( cmd_out.find( "$INPUTU" ) != std::string::npos ){
+        if( ! show_replacetextdiag( input, "$INPUTU" ) ) return std::string();
+        cmd_out = MISC::replace_str( cmd_out, "$INPUTU", MISC::charset_url_encode_split( input, "UTF-8" ) );
+    }
+    if( cmd_out.find( "$INPUTX" ) != std::string::npos ){
+        if( ! show_replacetextdiag( input, "$INPUTX" ) ) return std::string();
+        cmd_out = MISC::replace_str( cmd_out, "$INPUTX", MISC::charset_url_encode_split( input, "EUC-JP" ) );
+    }
+    if( cmd_out.find( "$INPUTE" ) != std::string::npos ){
+        if( ! show_replacetextdiag( input, "$INPUTE" ) ) return std::string();
+        cmd_out = MISC::replace_str( cmd_out, "$INPUTE", MISC::charset_url_encode_split( input, "MS932" ) );
+    }
+    if( cmd_out.find( "$INPUT" ) != std::string::npos ){
+        if( ! show_replacetextdiag( input, "$INPUT" ) ) return std::string();
+        cmd_out = MISC::replace_str( cmd_out, "$INPUT",  input );
     }
 
 #ifdef _DEBUG
@@ -307,11 +389,7 @@ bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::
         if( link.empty() ) return false;
     }
 
-    if( cmd.find( "$TEXT" ) != std::string::npos
-        || cmd.find( "$TEXTU" ) != std::string::npos
-        || cmd.find( "$TEXTX" ) != std::string::npos
-        || cmd.find( "$TEXTE" ) != std::string::npos
-        ){
+    if( cmd.find( "$TEXT" ) != std::string::npos && cmd.find( "$TEXTI" ) == std::string::npos ){
 
         if( selection.empty() || selection.length() > max_selection_str ) return false;
     }

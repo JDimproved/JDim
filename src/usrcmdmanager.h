@@ -67,6 +67,7 @@ namespace CORE
 
         void txt2xml();
 
+        const bool show_replacetextdiag( std::string& texti, const std::string& title );
         void set_cmd( const std::string& cmd );
     };
 
