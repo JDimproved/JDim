@@ -6,6 +6,9 @@
 #define _LINKFILTERPREF_H
 
 #include "skeleton/prefdiag.h"
+#include "skeleton/treeviewbase.h"
+
+#include "control.h"
 
 namespace CORE
 {
@@ -63,10 +66,13 @@ namespace CORE
 
     class LinkFilterPref : public SKELETON::PrefDiag
     {
-        Gtk::TreeView m_treeview;
+        SKELETON::JDTreeViewBase m_treeview;
+        CONTROL::Control m_control;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
         TreeColumn m_columns;
         Gtk::ScrolledWindow m_scrollwin;
+
+        Gtk::Label m_label;
 
         Gtk::Button m_button_top;
         Gtk::Button m_button_up;
@@ -97,6 +103,7 @@ namespace CORE
         virtual void slot_ok_clicked();
 
         void slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column );
+        bool slot_key_release( GdkEventKey* event );
 
         void slot_top();
         void slot_up();

@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "linkfilterpref.h"
@@ -8,10 +8,13 @@
 
 #include "skeleton/msgdiag.h"
 
+#include "controlid.h"
+
 using namespace CORE;
 
 LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::PrefDiag( parent, url ),
+      m_label( "追加ボタンを押すとフィルタ設定を追加出来ます。編集するにはダブルクリックします。" ),
       m_button_top( Gtk::Stock::GOTO_TOP ),
       m_button_up( Gtk::Stock::GO_UP ),
       m_button_down( Gtk::Stock::GO_DOWN ),
@@ -30,6 +33,7 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     m_treeview.set_model( m_liststore );
     m_treeview.set_size_request( 640, 400 );
     m_treeview.signal_row_activated().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_row_activated ) );
+    m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &LinkFilterPref::slot_key_release ) );
 
     Gtk::TreeViewColumn* column = Gtk::manage( new Gtk::TreeViewColumn( "アドレス", m_columns.m_col_url ) );
     column->set_fixed_width( 240 );
@@ -59,6 +63,7 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     m_hbox.pack_start( m_vbuttonbox, Gtk::PACK_SHRINK );
 
     get_vbox()->set_spacing( 8 );
+    get_vbox()->pack_start( m_label );
     get_vbox()->pack_start( m_hbox );
 
     show_all_children();
@@ -181,6 +186,20 @@ void LinkFilterPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::
         row[ m_columns.m_col_url ] = diag.get_url();
         row[ m_columns.m_col_cmd ] = diag.get_cmd();
     }
+}
+
+
+bool LinkFilterPref::slot_key_release( GdkEventKey* event )
+{
+    const int id = m_control.key_press( event );
+
+#ifdef _DEBUG
+    std::cout << "LinkFilterPref::slot_key_release id = " << id << std::endl;
+#endif
+
+    if( id == CONTROL::Delete ) slot_delete();
+
+    return true;
 }
 
 
