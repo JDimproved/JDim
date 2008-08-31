@@ -449,7 +449,9 @@ void MessageViewBase::write()
 #endif
 
     time_t left = DBTREE::board_write_leftsec( get_url() );
-    if( left ){
+    if( left
+        && ! SESSION::loginbe() // BEログイン中はダイアログを表示しない
+        ){
         SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "書き込み規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう暫くお待ち下さい。規制秒数が短くなった場合は板のプロパティからリセットできます。" );
         mdiag.run();
         return;
