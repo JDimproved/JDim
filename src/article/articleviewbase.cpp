@@ -3496,16 +3496,13 @@ void ArticleViewBase::set_live( const bool live )
 //
 const bool ArticleViewBase::write_p2( const int number )
 {
-    if( m_url_article.find( ".2ch.net" ) == std::string::npos ) return false;
     if( ! SESSION::loginp2() ) return false;
+    if( m_url_article.find( ".2ch.net" ) == std::string::npos ) return false;
 
     std::string url;
 
-    if( ! number ) url = CORE::get_usrcmd_manager()->replace_cmd( "http://p2.2ch.net/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME",
-                                                                  m_url_article, "", "", 0 );
-
-    else url = CORE::get_usrcmd_manager()->replace_cmd( "http://p2.2ch.net/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME&popup=1&inyou=2&resnum=$NUMBER",
-                                                        m_url_article, "", "", number );
+    if( ! number ) url = CORE::get_usrcmd_manager()->replace_cmd( CONFIG::get_url_writep2(), m_url_article, "", "", 0 );
+    else url = CORE::get_usrcmd_manager()->replace_cmd( CONFIG::get_url_resp2(), m_url_article, "", "", number );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::write_p2\n"

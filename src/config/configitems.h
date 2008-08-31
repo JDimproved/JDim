@@ -150,6 +150,10 @@ namespace CONFIG
         std::string menu_search_web;
         std::string url_search_web;
 
+        // p2 書き込み用アドレス
+        std::string url_writep2;
+        std::string url_resp2;
+
         // 色
         std::vector< std::string > str_color;
 

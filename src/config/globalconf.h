@@ -86,6 +86,10 @@ namespace CONFIG
     const std::string& get_menu_search_web();
     const std::string& get_url_search_web();
 
+    // p2 書き込み用アドレス
+    const std::string& get_url_writep2();
+    const std::string& get_url_resp2();
+
     // 2ch にアクセスするときのエージェント名
     const std::string& get_agent_for2ch();
 

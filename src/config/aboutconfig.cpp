@@ -169,6 +169,8 @@ void AboutConfig::append_rows()
     append_row( "書き込み中ダイアログを表示しない", get_confitem()->hide_writing_dialog, CONF_HIDE_WRITING_DIALOG );
     append_row( "アスキーアートメニューの履歴の保持数", get_confitem()->aahistory_size, CONF_AAHISTORY );
     append_row( "書き込みログの最大サイズ(バイト)", get_confitem()->maxsize_postlog, CONF_MAXSIZE_POSTLOG );
+    append_row( "p2書き込み用アドレス", get_confitem()->url_writep2, CONF_URL_WRITEP2 );
+    append_row( "p2返信用アドレス", get_confitem()->url_resp2, CONF_URL_RESP2 );
 
     // 画像
     append_row( "画像ポップアップの幅(ピクセル)", get_confitem()->imgpopup_width, CONF_IMGPOPUP_WIDTH );
