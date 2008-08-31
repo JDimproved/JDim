@@ -61,7 +61,8 @@ namespace CORE
                                  const int number
             );
 
-        bool is_sensitive( int num, const std::string& link, const std::string& selection );
+        const bool is_sensitive( int num, const std::string& link, const std::string& selection );
+        const bool is_hide( int num, const std::string& url );
 
       private:
 

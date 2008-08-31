@@ -14,6 +14,7 @@
 #include "xml/tools.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/jdregex.h"
 
 #include "dbtree/interface.h"
 
@@ -207,6 +208,7 @@ void Usrcmd_Manager::exec( const int comnum, // コマンド番号
           number );
 }
 
+
 void Usrcmd_Manager::exec( const std::string command, // コマンド
                            const std::string& url,
                            const std::string& link,
@@ -214,17 +216,29 @@ void Usrcmd_Manager::exec( const std::string command, // コマンド
                            const int number // レス番号
     )
 {
+    std::string cmd = command;
+
+    if( cmd.find( "$ONLY" ) != std::string::npos ){
+
+        std::list< std::string > lines = MISC::split_line( cmd );
+        if( lines.size() >= 2 ){
+
+            std::list< std::string >::iterator it = lines.begin();
+            ++it; ++it;
+            cmd = *it;
+            ++it;
+            for( ; it != lines.end(); ++it ) cmd += " " + ( *it );
+        }
+    }
 
 #ifdef _DEBUG
     std::cout << "Usrcmd_Manager::exec\n"
-              << "command = " << command << std::endl
+              << "command = " << cmd << std::endl
               << "url = " << url << std::endl
               << "link = " << link << std::endl
               << "selection = " << selection << std::endl
               << "number = " << number << std::endl;
 #endif
-
-    std::string cmd = command;
 
     bool use_browser = false;
     if( cmd.find( "$VIEW" ) == 0 ){
@@ -373,13 +387,13 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
 //
 // メニューをアクティブにするか
 //
-bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::string& selection )
+const bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::string& selection )
 {
     const unsigned int max_selection_str = 1024;
 
     if( num >= m_size ) return false;
 
-    std::string cmd = m_list_cmd[ num ];
+    const std::string cmd = m_list_cmd[ num ];
 
     if( cmd.find( "$LINK" ) != std::string::npos
         || cmd.find( "$SERVERL" ) != std::string::npos
@@ -402,4 +416,38 @@ bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::
     }
     
     return true;
+}
+
+
+//
+// メニューを隠すか
+//
+const bool Usrcmd_Manager::is_hide( int num, const std::string& url )
+{
+    if( num >= m_size ) return false;
+
+    const std::string cmd = m_list_cmd[ num ];
+
+#ifdef _DEBUG
+    std::cout << "Usrcmd_manager::is_hide cmd = " << cmd << std::endl
+              << "url = " << url << std::endl;
+#endif
+
+    if( cmd.find( "$ONLY" ) != std::string::npos ){
+
+        std::list< std::string > lines = MISC::split_line( cmd );
+        if( lines.size() >= 2 ){
+
+            JDLIB::Regex regex;
+            std::list< std::string >::iterator it = lines.begin();
+            ++it;
+            const std::string query = *it;
+#ifdef _DEBUG
+            std::cout << "query = " << query << std::endl;
+#endif
+            if( ! regex.exec( query, url ) ) return true;
+        }
+    }
+
+    return false;
 }
