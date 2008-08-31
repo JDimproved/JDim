@@ -52,6 +52,8 @@ namespace CORE
 
     class UsrCmdPref : public SKELETON::PrefDiag
     {
+        Gtk::Label m_label;
+
         SKELETON::EditTreeView m_treeview;
         SKELETON::EditColumns m_columns;
         Glib::RefPtr< Gtk::TreeStore > m_treestore;

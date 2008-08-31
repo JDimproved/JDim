@@ -18,6 +18,7 @@ using namespace CORE;
 
 UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::PrefDiag( parent, url ),
+      m_label( "コンテキストメニューからコマンドの追加と削除が出来ます。編集するにはダブルクリックします。" ),
       m_treeview( m_columns ),
       m_ckbt_hide_usrcmd( "選択不可のユーザコマンドを非表示にする", true )
 {
@@ -42,6 +43,7 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     m_scrollwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
 
     get_vbox()->set_spacing( 8 );
+    get_vbox()->pack_start( m_label );
     get_vbox()->pack_start( m_scrollwin );
 
 #if GTKMMVER >= 260
