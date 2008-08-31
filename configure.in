@@ -37,8 +37,14 @@ case "${host_os}" in
    echo "os = freebsd"
    AC_DEFINE(ICONV_CONST, const , "iconv_const")
    ;;
+ solaris*)
+   echo "os = solaris"
+   AC_DEFINE(ICONV_CONST, const , "iconv_const")
+   AC_DEFINE(NO_MSG_NOSIGNAL, , "no MSG_NOSIGNAL")
+   AC_DEFINE(NO_TIMEGM, , "no timegm")
+   ;;
  *)
-   echo "os = ???"
+   echo "os = ???(${host_os})"
    ;;
 esac
 
@@ -98,6 +104,24 @@ dnl
 echo "use crypt"
 AC_CHECK_HEADERS([crypt.h])
 AC_CHECK_LIB(crypt,crypt)
+
+
+dnl
+dnl zlib
+dnl
+
+echo "use zlib"
+AC_CHECK_HEADERS([zlib.h])
+AC_CHECK_LIB(z,inflate)
+
+dnl
+dnl socket
+dnl
+
+echo "use socket"
+AC_CHECK_HEADERS([socket.h])
+AC_CHECK_LIB(socket,socket)
+
 
 dnl
 dnl セッション管理

@@ -80,3 +80,29 @@ std::string MISC::timettostr( time_t time_from )
 
     return str_ret;
 }
+
+
+#ifdef NO_TIMEGM
+//
+// timegm
+//
+// Solarisの場合はtimegmが存在しないため、代替コードを宣言する(by kohju)
+// 原典：linux の man timegm
+//
+time_t timegm (struct tm *tm)
+{
+    time_t ret;
+    char *tz;
+
+    tz = getenv("TZ");
+    setenv("TZ", "", 1);
+    tzset();
+    ret = mktime(tm);
+    if (tz)
+ 	setenv("TZ", tz, 1);
+    else
+ 	unsetenv("TZ");
+    tzset();
+    return ret;
+}
+#endif

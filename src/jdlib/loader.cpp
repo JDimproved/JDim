@@ -4,6 +4,10 @@
 //#define _DEBUG_CHUNKED
 #include "jddebug.h"
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "loader.h"
 #include "miscmsg.h"
 #include "miscutil.h"
@@ -468,7 +472,14 @@ void Loader::run_main()
             }
 
             // SEND 又は POST
+#ifndef NO_MSG_NOSIGNAL
             ssize_t tmpsize = send( soc, msg_send.data(), send_size , MSG_NOSIGNAL );
+#else
+            // SolarisにはMSG_NOSIGNALが無いのでSIGPIPEをIGNOREする
+            signal( SIGPIPE , SIG_IGN ); /* シグナルを無視する */
+            ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
+            signal(SIGPIPE,SIG_DFL); /* 念のため戻す */
+#endif            
             if( tmpsize == 0
                 || ( tmpsize < 0 && !( errno == EWOULDBLOCK || errno == EINTR ) ) ){
 
