@@ -34,8 +34,10 @@ std::string get_default_font()
 {
     std::set< std::string > set_fonts = MISC::get_font_families();
 
+    // 上の方が優先順位が高い
     IS_DEFAULT_FONT( "IPA モナー Pゴシック" );
     IS_DEFAULT_FONT( "IPAMonaPGothic" );
+    IS_DEFAULT_FONT( "Mona-VLGothic" );
     IS_DEFAULT_FONT( "Mona" );
     IS_DEFAULT_FONT( "VL Pゴシック" );
     IS_DEFAULT_FONT( "VL PGothic" );
