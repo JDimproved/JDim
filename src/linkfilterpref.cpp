@@ -168,7 +168,7 @@ void LinkFilterPref::slot_ok_clicked()
         ++it;
     }
 
-    if( list_item.size() ) CORE::get_linkfilter_manager()->save_xml();
+    CORE::get_linkfilter_manager()->save_xml();
 }
 
 

@@ -90,8 +90,6 @@ void Linkfilter_Manager::xml2list( const std::string& xml )
 //
 void Linkfilter_Manager::save_xml()
 {
-    if( ! m_list_cmd.size() ) return;
-
     XML::Document document;
     XML::Dom* root = document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME_LINKFILTER ) );
     if( ! root ) return;
