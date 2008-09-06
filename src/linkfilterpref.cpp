@@ -8,9 +8,53 @@
 
 #include "skeleton/msgdiag.h"
 
+#include "config/globalconf.h"
+
+#include "jdlib/miscutil.h"
+
 #include "controlid.h"
+#include "command.h"
+#include "jdversion.h"
 
 using namespace CORE;
+
+LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, const std::string& cmd )
+    : SKELETON::PrefDiag( parent, "" ),
+      m_label_url( "アドレス", Gtk::ALIGN_LEFT ),
+      m_label_cmd( "実行するコマンド", Gtk::ALIGN_LEFT ),
+      m_button_manual( "オンラインマニュアルの置換文字一覧を表示" )
+{
+    resize( 640, 1 );
+
+    m_entry_url.set_text( url );
+    m_entry_cmd.set_text( cmd );
+
+    m_button_manual.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterDiag::slot_show_manual ) );
+
+    m_vbox.set_spacing( 8 );
+    m_vbox.pack_start( m_label_url, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_entry_url, Gtk::PACK_SHRINK );
+
+    m_hbox_cmd.pack_start( m_label_cmd, Gtk::PACK_SHRINK );
+    m_hbox_cmd.pack_end( m_button_manual, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_hbox_cmd, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_entry_cmd, Gtk::PACK_SHRINK );
+
+    get_vbox()->set_spacing( 8 );
+    get_vbox()->pack_start( m_vbox );
+
+    set_title( "フィルタ設定" );
+    show_all_children();
+}
+
+void LinkFilterDiag::slot_show_manual()
+{
+    CORE::core_set_command( "open_url_browser", JDHELPCMD );
+}
+
+
+///////////////////////////////////////////////
+
 
 LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::PrefDiag( parent, url ),

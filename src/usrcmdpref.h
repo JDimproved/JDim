@@ -19,34 +19,19 @@ namespace CORE
         Gtk::Entry m_entry_name;
         Gtk::Entry m_entry_cmd;
         Gtk::Label m_label_name;
+        Gtk::HBox m_hbox_cmd;
         Gtk::Label m_label_cmd;
+        Gtk::Button m_button_manual;
 
       public:
 
-        UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Glib::ustring& cmd )
-        : SKELETON::PrefDiag( parent, "" ),
-        m_label_name( "コマンド名" ),
-        m_label_cmd( "実行するコマンド" )
-        {
-            resize( 640, 1 );
-
-            m_entry_name.set_text( name );
-            m_entry_cmd.set_text( cmd );
-
-            m_vbox.pack_start( m_label_name, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_entry_name, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_label_cmd, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_entry_cmd, Gtk::PACK_SHRINK );
-
-            get_vbox()->set_spacing( 8 );
-            get_vbox()->pack_start( m_vbox );
-
-            set_title( "ユーザコマンド設定" );
-            show_all_children();
-        }
+        UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Glib::ustring& cmd );
 
         const Glib::ustring get_name() { return m_entry_name.get_text(); }
         const Glib::ustring get_cmd() { return m_entry_cmd.get_text(); }
+
+      private:
+        void slot_show_manual();
     };
 
 

@@ -9,16 +9,58 @@
 #include "type.h"
 #include "controlid.h"
 #include "controlutil.h"
+#include "jdversion.h"
 
 #include "skeleton/msgdiag.h"
 
 #include "config/globalconf.h"
 
+#include "jdlib/miscutil.h"
+
 using namespace CORE;
+
+
+UsrCmdDiag::UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Glib::ustring& cmd )
+    : SKELETON::PrefDiag( parent, "" ),
+      m_label_name( "コマンド名", Gtk::ALIGN_LEFT ),
+      m_label_cmd( "実行するコマンド", Gtk::ALIGN_LEFT ),
+      m_button_manual( "オンラインマニュアルの置換文字一覧を表示" )
+{
+    resize( 640, 1 );
+
+    m_entry_name.set_text( name );
+    m_entry_cmd.set_text( cmd );
+
+    m_button_manual.signal_clicked().connect( sigc::mem_fun( *this, &UsrCmdDiag::slot_show_manual ) );
+
+    m_vbox.set_spacing( 8 );
+    m_vbox.pack_start( m_label_name, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_entry_name, Gtk::PACK_SHRINK );
+
+    m_hbox_cmd.pack_start( m_label_cmd, Gtk::PACK_SHRINK );
+    m_hbox_cmd.pack_end( m_button_manual, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_hbox_cmd, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_entry_cmd, Gtk::PACK_SHRINK );
+
+    get_vbox()->set_spacing( 8 );
+    get_vbox()->pack_start( m_vbox );
+
+    set_title( "ユーザコマンド設定" );
+    show_all_children();
+}
+
+
+void UsrCmdDiag::slot_show_manual()
+{
+    CORE::core_set_command( "open_url_browser", JDHELPCMD );
+}
+
+///////////////////////////////////////////
+
 
 UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::PrefDiag( parent, url ),
-      m_label( "コンテキストメニューからコマンドの追加と削除が出来ます。編集するにはダブルクリックします。" ),
+      m_label( "右クリックしてコンテキストメニューからコマンドの追加と削除が出来ます。編集するにはダブルクリックします。" ),
       m_treeview( m_columns ),
       m_ckbt_hide_usrcmd( "選択不可のユーザコマンドを非表示にする", true )
 {

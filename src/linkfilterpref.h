@@ -18,34 +18,19 @@ namespace CORE
         Gtk::Entry m_entry_url;
         Gtk::Entry m_entry_cmd;
         Gtk::Label m_label_url;
+        Gtk::HBox m_hbox_cmd;
         Gtk::Label m_label_cmd;
+        Gtk::Button m_button_manual;
 
       public:
 
-        LinkFilterDiag( Gtk::Window* parent, const std::string& url, const std::string& cmd )
-        : SKELETON::PrefDiag( parent, "" ),
-        m_label_url( "アドレス" ),
-        m_label_cmd( "実行するコマンド" )
-        {
-            resize( 640, 1 );
-
-            m_entry_url.set_text( url );
-            m_entry_cmd.set_text( cmd );
-
-            m_vbox.pack_start( m_label_url, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_entry_url, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_label_cmd, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_entry_cmd, Gtk::PACK_SHRINK );
-
-            get_vbox()->set_spacing( 8 );
-            get_vbox()->pack_start( m_vbox );
-
-            set_title( "フィルタ設定" );
-            show_all_children();
-        }
+        LinkFilterDiag( Gtk::Window* parent, const std::string& url, const std::string& cmd );
 
         const Glib::ustring get_url() { return m_entry_url.get_text(); }
         const Glib::ustring get_cmd() { return m_entry_cmd.get_text(); }
+
+      private:
+        void slot_show_manual();
     };
 
 

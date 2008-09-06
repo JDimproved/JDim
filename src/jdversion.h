@@ -49,6 +49,7 @@
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 #define JDHELP CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/"
+#define JDHELPCMD CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/usrcmd.html"
 
 #define GTKMM_VERSION ( MISC::itostr( GTKMM_MAJOR_VERSION ) + "." + MISC::itostr( GTKMM_MINOR_VERSION ) + "." + MISC::itostr( GTKMM_MICRO_VERSION ) )
 #define GLIBMM_VERSION ( MISC::itostr( GLIBMM_MAJOR_VERSION ) + "." + MISC::itostr( GLIBMM_MINOR_VERSION ) + "." + MISC::itostr( GLIBMM_MICRO_VERSION ) )
