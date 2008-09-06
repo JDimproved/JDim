@@ -92,6 +92,33 @@ namespace CORE
 /////////////////////////////////////////////
 
 
+    class PagePane : public Gtk::VBox
+    {
+        Gtk::HBox m_hbox_label;
+        Gtk::Image m_icon;
+        Gtk::Label m_label;
+
+        Gtk::RadioButtonGroup m_radiogroup;
+        Gtk::RadioButton m_2pane;
+        Gtk::RadioButton m_3pane;
+        Gtk::RadioButton m_v3pane;
+
+        Gtk::Label m_label_inst;
+
+      public:
+
+        PagePane();
+
+      private:
+
+        void slot_2pane();
+        void slot_3pane();
+        void slot_v3pane();
+    };
+
+
+/////////////////////////////////////////////
+
     class PageEnd : public Gtk::VBox
     {
         Gtk::HBox m_hbox_label;
@@ -118,6 +145,7 @@ namespace CORE
         PageStart  m_page_start;
         PageNet  m_page_network;
         PageFont m_page_font;
+        PagePane m_page_pane;
         PageEnd  m_page_end;
 
         Gtk::Button* m_fin;
