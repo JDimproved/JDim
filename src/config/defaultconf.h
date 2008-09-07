@@ -40,6 +40,7 @@ namespace CONFIG
         CONF_SHOW_OLDARTICLE = 0,   // スレ一覧で古いスレも表示
         CONF_NEWTHREAD_HOUR = 24,   // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
         CONF_INC_SEARCH_BOARD = 0,  // スレ一覧でインクリメント検索をする
+        CONF_SHOW_DELDIAG = 1 ,     // スレ一覧でdeleteを押したときに確認ダイアログを表示する
         CONF_TREE_SCROLL_SIZE = 4,  // ツリービューのスクロール量(行数)
         CONF_SCROLL_SIZE = 3,       // スレビューのスクロール量
         CONF_KEY_SCROLL_SIZE = 2,   // スレビューのスクロール量(キー上下)
@@ -91,6 +92,7 @@ namespace CONFIG
         CONF_MAX_IMG_SIZE = 16,     // ダウンロードする画像の最大サイズ(Mbyte)
         CONF_MAX_IMG_PIXEL = 20,     // 画像の最大サイズ(Mピクセル)
         CONF_USE_LINK_AS_BOARD = 0,     // bbsmenu.html内にあるリンクは全て板とみなす
+        CONF_SHOW_MOVEDIAG = 1,    // 板移転時に確認ダイアログを表示する
         CONF_ABONE_NUMBER_THREAD = 0, // スレあぼーん( レス数 )
         CONF_ABONE_HOUR_THREAD = 0,   // スレあぼーん( スレ立てからの経過時間 )
         CONF_ABONE_TRANSPARENT = 0, // デフォルトで透明あぼーんをする

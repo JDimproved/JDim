@@ -139,6 +139,9 @@ namespace CONFIG
         // bbsmenu.htmlの内にあるリンクは全て板とみなす
         bool use_link_as_board;
 
+        // 板移転時に確認ダイアログを表示する
+        bool show_movediag;
+
         // スレタイ検索用メニュータイトルアドレス
         std::string menu_search_title;
         std::string url_search_title;
@@ -174,6 +177,9 @@ namespace CONFIG
 
         // スレ一覧でインクリメント検索をする
         bool inc_search_board;
+
+        // スレ一覧でdeleteを押したときに確認ダイアログを表示する
+        bool show_deldiag;
 
         // ツリービューのスクロール量(マウスホイール上下・行数)
         int tree_scroll_size;

@@ -865,12 +865,24 @@ void BoardBase::receive_finish()
             std::string query = ".*window.location.href=\"([^\"]*)\".*";
             if( regex.exec( query, m_rawdata ) ){
 
-                std::string new_url = regex.str( 1 );
-                std::string msg = "「" + get_name() + "」は\n\n" + new_url + " に移転しました。\n\nデータベースを更新しますか？";
+                const std::string new_url = regex.str( 1 );
+                int ret = Gtk::RESPONSE_YES;
 
-                SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-                mdiag.set_default_response( Gtk::RESPONSE_YES );
-                if( mdiag.run() == Gtk::RESPONSE_YES ){
+                if( CONFIG::get_show_movediag() ){
+
+                    const std::string msg = "「" + get_name() + "」は\n\n" + new_url + " に移転しました。\n\nデータベースを更新しますか？";
+
+                    SKELETON::MsgCheckDiag mdiag( NULL,
+                                                  msg,
+                                                  "今後表示しない(常に更新)(_D)",
+                                                  Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+
+                    mdiag.set_title( "更新確認" );
+                    ret = mdiag.run();
+                    if( ret == Gtk::RESPONSE_YES && mdiag.get_chkbutton().get_active() ) CONFIG::set_show_movediag( false );
+                }
+
+                if( ret == Gtk::RESPONSE_YES ){
 
                     if( DBTREE::move_board( url_boardbase(), new_url ) ){
                         // 再読み込み

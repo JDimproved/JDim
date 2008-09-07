@@ -115,6 +115,9 @@ const std::string& CONFIG::get_url_bbsmenu() { return get_confitem()->url_bbsmen
 
 const bool CONFIG::use_link_as_board(){ return get_confitem()->use_link_as_board; }
 
+const bool CONFIG::get_show_movediag(){ return get_confitem()->show_movediag; }
+void CONFIG::set_show_movediag( const bool show ){ get_confitem()->show_movediag = show; }
+
 const std::string& CONFIG::get_menu_search_title(){ return get_confitem()->menu_search_title; }
 const std::string& CONFIG::get_url_search_title(){ return get_confitem()->url_search_title; }
 const std::string& CONFIG::get_regex_search_title(){ return get_confitem()->regex_search_title; }
@@ -203,6 +206,9 @@ void CONFIG::set_show_oldarticle( bool showarticle ){ get_confitem()->show_oldar
 const int CONFIG::get_newthread_hour(){ return get_confitem()->newthread_hour; }
 
 const bool CONFIG::get_inc_search_board(){ return get_confitem()->inc_search_board; }
+
+const bool CONFIG::get_show_deldiag(){ return get_confitem()->show_deldiag; }
+void CONFIG::set_show_deldiag( const bool show ){ get_confitem()->show_deldiag = show; }
 
 const int CONFIG::get_tree_scroll_size(){ return get_confitem()->tree_scroll_size; }
 const int CONFIG::get_scroll_size(){ return get_confitem()->scroll_size; }

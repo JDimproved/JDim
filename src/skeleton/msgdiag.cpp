@@ -90,3 +90,47 @@ void MsgDiag::hide()
 
     Gtk::MessageDialog::hide();
 }
+
+
+
+/////////////////////////////////////
+
+
+MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
+                            const Glib::ustring& message,
+                            const Glib::ustring& message_check,
+                            Gtk::MessageType type, Gtk::ButtonsType buttons )
+    : SKELETON::MsgDiag( parent, message, false, type, Gtk::BUTTONS_NONE, false )
+    , m_chkbutton( message_check, true )
+{
+    const int mrg = 16;
+                
+    Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox );
+    hbox->pack_start( m_chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
+    get_vbox()->pack_start( *hbox, Gtk::PACK_SHRINK );
+
+    Gtk::Button* okbutton = NULL;
+
+    if( buttons == Gtk::BUTTONS_OK ){
+        okbutton = Gtk::manage( new Gtk::Button( Gtk::Stock::OK ) );
+        add_action_widget( *okbutton, Gtk::RESPONSE_OK );
+    }
+    else if( buttons == Gtk::BUTTONS_OK_CANCEL ){
+        add_button( Gtk::Stock::NO, Gtk::RESPONSE_CANCEL );
+        okbutton = Gtk::manage( new Gtk::Button( Gtk::Stock::OK ) );
+        add_action_widget( *okbutton, Gtk::RESPONSE_OK );
+    }
+    else if( buttons == Gtk::BUTTONS_YES_NO ){
+        add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+        okbutton = Gtk::manage( new Gtk::Button( Gtk::Stock::YES ) );
+        add_action_widget( *okbutton, Gtk::RESPONSE_YES );
+    }
+
+    if( okbutton ){
+        okbutton->set_flags( Gtk::CAN_DEFAULT );
+        okbutton->grab_default();
+        okbutton->grab_focus();
+    }
+
+    show_all_children();
+}

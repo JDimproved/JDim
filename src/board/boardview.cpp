@@ -1164,9 +1164,19 @@ void BoardView::operate_view( const int& control )
 
         case CONTROL::Delete:
         {
-            SKELETON::MsgDiag mdiag( NULL, "選択した行のログを削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            mdiag.set_default_response( Gtk::RESPONSE_YES );
-            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
+            if( CONFIG::get_show_deldiag() ){
+
+                SKELETON::MsgCheckDiag mdiag( NULL,
+                                              "選択した行のログを削除しますか？",
+                                              "今後表示しない(常に削除)(_D)",
+                                              Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+                mdiag.set_title( "削除確認" );
+                const int ret = mdiag.run();
+                if( ret != Gtk::RESPONSE_YES ) return;
+                if( mdiag.get_chkbutton().get_active() ) CONFIG::set_show_deldiag( false );
+            }
+
             slot_delete_logs();
             break;
         }

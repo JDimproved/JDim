@@ -35,6 +35,25 @@ namespace SKELETON
         void show();
         void hide();
     };
+
+
+    /////////////////////////////////////
+
+    // チェックボタン付き
+    class MsgCheckDiag : public SKELETON::MsgDiag
+    {
+        Gtk::CheckButton m_chkbutton;
+
+    public:
+
+        MsgCheckDiag( Gtk::Window* parent,
+                      const Glib::ustring& message,
+                      const Glib::ustring& message_check,
+                      Gtk::MessageType type = Gtk::MESSAGE_INFO,
+                      Gtk::ButtonsType buttons = Gtk::BUTTONS_OK );
+
+        Gtk::CheckButton& get_chkbutton(){ return m_chkbutton; }
+    };
 }
 
 #endif

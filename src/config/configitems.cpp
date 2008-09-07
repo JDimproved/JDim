@@ -217,6 +217,9 @@ const bool ConfigItems::load()
     // bbsmenu.html内にあるリンクは全て板とみなす
     use_link_as_board = cf.get_option( "use_link_as_board", CONF_USE_LINK_AS_BOARD );
 
+    // 板移転時に確認ダイアログを表示する
+    show_movediag = cf.get_option( "show_movediag", CONF_SHOW_MOVEDIAG );
+
     // スレタイ検索用メニュータイトルアドレス
     menu_search_title = cf.get_option( "menu_search_title", CONF_MENU_SEARCH_TITLE );
     url_search_title = cf.get_option( "url_search_title", CONF_URL_SEARCH_TITLE );
@@ -249,6 +252,9 @@ const bool ConfigItems::load()
 
     // スレ一覧でインクリメント検索をする
     inc_search_board = cf.get_option( "inc_search_board", CONF_INC_SEARCH_BOARD );
+
+    // スレ一覧でdeleteを押したときに確認ダイアログを表示する
+    show_deldiag = cf.get_option( "show_deldiag", CONF_SHOW_DELDIAG );
 
     // ツリービューのスクロール量(行数)
     tree_scroll_size = cf.get_option( "tree_scroll_size", CONF_TREE_SCROLL_SIZE );
@@ -441,6 +447,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "url_login2ch", url_login2ch );
     cf.update( "url_bbsmenu", url_bbsmenu );
     cf.update( "use_link_as_board", use_link_as_board );
+    cf.update( "show_movediag", show_movediag );
     cf.update( "menu_search_title", menu_search_title );
     cf.update( "url_search_title", url_search_title );
     cf.update( "regex_search_title", regex_search_title );
@@ -548,6 +555,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "show_oldarticle", show_oldarticle );
     cf.update( "newthread_hour", newthread_hour );
     cf.update( "inc_search_board", inc_search_board );
+    cf.update( "show_deldiag", show_deldiag );
 
     cf.update( "tree_scroll_size", tree_scroll_size );
     cf.update( "scroll_size", scroll_size );

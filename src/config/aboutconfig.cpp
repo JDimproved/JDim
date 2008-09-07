@@ -116,7 +116,8 @@ void AboutConfig::append_rows()
     // ネットワーク
     append_row(	"JD ホームページのアドレス", get_confitem()->url_jdhp, CONF_URL_JDHP );
     append_row(	"板一覧を取得するサーバ", get_confitem()->url_bbsmenu, CONF_URL_BBSMENU );
-    append_row( "bbsmenu.html内にあるリンクは全て板とみなす", get_confitem()->use_link_as_board, CONF_USE_LINK_AS_BOARD );
+    append_row( "板一覧内にあるリンクは全て板とみなす", get_confitem()->use_link_as_board, CONF_USE_LINK_AS_BOARD );
+    append_row( "板移転時に確認ダイアログを表示する", get_confitem()->show_movediag, CONF_SHOW_MOVEDIAG );
     append_row( "2chにアクセスするときのエージェント名", get_confitem()->agent_for2ch, CONF_AGENT_FOR2CH );
     append_row( "2ch以外のサーバにアクセスするときのエージェント名", get_confitem()->agent_for_data, CONF_AGENT_FOR_DATA );
     append_row( "ログイン認証サーバにアクセスするときのエージェント名", get_confitem()->x_2ch_ua, CONF_X_2CH_UA );
@@ -136,6 +137,7 @@ void AboutConfig::append_rows()
     append_row( "右ペーンが空の時にサイドバーを最大化する", get_confitem()->expand_sidebar, CONF_EXPAND_SIDEBAR );
     append_row( "3ペーン時にスレ一覧やスレビューを最大化する", get_confitem()->expand_rpane, CONF_EXPAND_RPANE );
     append_row( "スレ一覧でインクリメント検索をする", get_confitem()->inc_search_board, CONF_INC_SEARCH_BOARD );
+    append_row( "スレ一覧でdeleteを押したときに確認ダイアログを表示", get_confitem()->show_deldiag, CONF_SHOW_DELDIAG );
 
     // スレビュー
     append_row( "スレビューでマウスホイールを回したときのスクロール速度", get_confitem()->scroll_size, CONF_SCROLL_SIZE );

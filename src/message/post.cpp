@@ -306,38 +306,23 @@ void Post::receive_finish()
         // 書き込み確認表示
         if( ! CONFIG::get_always_write_ok() ){
 
-            const int mrg = 8;
-
             std::string diagmsg = MISC::replace_str( msg, "<br>", "\n" );
 
-            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
-                                     diagmsg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, false );
-            Gtk::HBox hbox;
-            Gtk::CheckButton ckbt( "次回から表示しない(_D)", true );
-            hbox.pack_start( ckbt, Gtk::PACK_SHRINK, mrg );
-            mdiag.get_vbox()->pack_start( hbox, Gtk::PACK_SHRINK );
-            mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+            SKELETON::MsgCheckDiag mdiag( MESSAGE::get_admin()->get_win(),
+                                          diagmsg,
+                                          "今後表示しない(常にOK)(_D)",
+                                          Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
 
-            // OKボタンをデフォルトにする
-            Gtk::Button okbt( Gtk::Stock::OK );
-            mdiag.add_action_widget( okbt, Gtk::RESPONSE_OK );
-            okbt.set_flags( Gtk::CAN_DEFAULT );
-            okbt.grab_default();
-            okbt.grab_focus();
-
-            mdiag.show_all_children();
-
-            int ret = mdiag.run();
-            bool ckbt_active = ckbt.get_active();
+            mdiag.set_title( "書き込み確認" );
+            const int ret = mdiag.run();
             mdiag.hide();
-
             if( ret != Gtk::RESPONSE_OK ){
 
                 set_code( HTTP_CANCEL );
                 emit_sigfin();
                 return;
             }
-            CONFIG::set_always_write_ok( ckbt_active );
+            if( mdiag.get_chkbutton().get_active() ) CONFIG::set_always_write_ok( true );
         }
 
         set_cookies_and_hana( SKELETON::Loadable::cookies(), hana );
