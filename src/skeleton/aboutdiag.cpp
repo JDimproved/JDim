@@ -22,8 +22,10 @@ AboutDiag::AboutDiag( const Glib::ustring& title )
     set_transient_for( *CORE::get_mainwindow() );
     set_resizable( false );
 
-    add_button( Gtk::Stock::CLOSE, Gtk::RESPONSE_CLOSE )
-    ->signal_clicked().connect( sigc::mem_fun( *this, &AboutDiag::slot_close_clicked ) );
+    Gtk::Button* button = add_button( Gtk::Stock::CLOSE, Gtk::RESPONSE_CLOSE );
+    button->signal_clicked().connect( sigc::mem_fun( *this, &AboutDiag::slot_close_clicked ) );
+
+    set_default_response( Gtk::RESPONSE_CLOSE );
 }
 
 
