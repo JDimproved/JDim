@@ -267,6 +267,17 @@ AC_ARG_WITH(migemodict,[ --with-migemodict    (specifiy the path of migemo dicti
                AC_DEFINE_UNQUOTED(MIGEMODICT, "$withval" , "migemodict")
        fi ])
 
+
+dnl
+dnl checking xdg-open
+dnl
+AC_ARG_WITH(xdgopen,[ --with-xdgopen    (use xdg-open as default browser)],
+       [ if test "$withval" ;then
+               echo "use xdg-open"
+               AC_DEFINE(XDGOPEN, , "use xdg-open")
+       fi ])
+
+
 dnl
 dnl checking alsa
 dnl

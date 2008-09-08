@@ -30,7 +30,6 @@ namespace CONFIG
         CONF_LOADER_TIMEOUT_IMG = 30,  // 画像ローダのタイムアウト値
         CONF_LOADER_TIMEOUT_CHECKUPDATE = 10,  // 更新チェックのタイムアウト値
         CONF_USE_IPV6 = 1,          // ipv6使用
-        CONF_BROWSER_NO = 2,        // browsers.h のラベル番号
         CONF_REFPOPUP_BY_MO = 0,    // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
         CONF_NAMEPOPUP_BY_MO = 0,   // 名前の上にマウスオーバーしたときにポップアップ表示する
         CONF_IDPOPUP_BY_MO = 0,     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
@@ -100,6 +99,19 @@ namespace CONFIG
         CONF_EXPAND_SIDEBAR = 0,      // 右ペーンが空の時にサイドバーを閉じる
         CONF_EXPAND_RPANE = 1         // 3ペーン時にスレ一覧やスレビューを最大化する
     };
+
+// browsers.cpp のデフォルトのラベル番号
+// configure で --with-xdg-open を指定すると xdg-open をデフォルトにする
+// browsers.cpp のブラウザの順番に気をつけること
+#ifdef XDGOPEN
+    enum{
+        CONF_BROWSER_NO = 1  // xdg-open をデフォルトにする
+    };
+#else
+    enum{
+        CONF_BROWSER_NO = 2  // firefox をデフォルトにする
+    };
+#endif        
 
 #define CONF_FONTSIZE_THREAD "12"
 #define CONF_FONTSIZE_POPUP  "10"
