@@ -50,7 +50,7 @@ configureオプション
 
     migemoがUTF-8の辞書でインストールされている必要がある。
 
-  --with-[core2duo|athlon64]
+  --with-[core2duo|athlon64|atom]
 
     CPUに合わせた最適化
 
@@ -63,6 +63,10 @@ configureオプション
   --with-alsa
 
     ALSAによる効果音再生機能を有効にする。詳しくは"http://jd4linux.sourceforge.jp/manual/"の項を参照すること。
+
+  --with-xdgopen
+
+    デフォルトブラウザとしてxdg-openを使用する。
 
   --enable-gprof
 
