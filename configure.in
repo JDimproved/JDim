@@ -315,6 +315,18 @@ fi
 
 
 dnl
+dnl checking atom
+dnl
+if test "$use_gprof" == "no" ;then
+AC_ARG_WITH(atom,[ --with-atom    (use atom)],
+       [ if test "$withval" != "no" ;then
+               echo "use atom"
+	       CXXFLAGS="$CXXFLAGS -march=prescott -pipe -fomit-frame-pointer"
+       fi ])
+fi
+
+
+dnl
 dnl checking pangolayout
 dnl
 AC_ARG_WITH(pangolayout,[ --with-pangolayout    (use pangolayout)],
