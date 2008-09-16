@@ -306,9 +306,9 @@ void DBTREE::board_set_keyword_for_write( const std::string& url, const std::str
 }
 
 
-void DBTREE::board_analyze_keyword_for_write( const std::string& url, const std::string& str )
+void DBTREE::board_analyze_keyword_for_write( const std::string& url, const std::string& html )
 {
-    DBTREE::get_board( url )->analyze_keyword_for_write( str );
+    DBTREE::get_board( url )->analyze_keyword_for_write( html );
 }
 
 

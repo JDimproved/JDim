@@ -121,7 +121,7 @@ const std::string Board2ch::cookie_for_write()
 
 // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
 // 確認画面のhtmlから解析する      
-void Board2ch::analyze_keyword_for_write( const std::string& str )
+void Board2ch::analyze_keyword_for_write( const std::string& html )
 {
     std::string keyword;
 
@@ -135,9 +135,9 @@ void Board2ch::analyze_keyword_for_write( const std::string& str )
     for(;;){
 
         // <input type=hidden> のタグを解析して name と value を取得
-        if( ! regex.exec( "<input +type=hidden +name=([^ ]*) +value=([^>]*)>", str, offset, true, false ) ) break;
+        if( ! regex.exec( "<input +type=hidden +name=([^ ]*) +value=([^>]*)>", html, offset, true, false ) ) break;
 
-        offset = str.find( regex.str( 0 ) );
+        offset = html.find( regex.str( 0 ) );
 
         std::string name = MISC::remove_space( regex.str( 1 ) );
         if( name[ 0 ] == '\"' ) name = MISC::cut_str( name, "\"", "\"" );

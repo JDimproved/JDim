@@ -260,7 +260,7 @@ namespace DBTREE
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
         // 確認画面のhtmlから解析する      
-        virtual void analyze_keyword_for_write( const std::string& str ){}
+        virtual void analyze_keyword_for_write( const std::string& html ){}
 
         // basic認証
         const std::string& get_basicauth() const { return m_basicauth; }
