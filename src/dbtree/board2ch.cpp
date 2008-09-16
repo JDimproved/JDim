@@ -164,8 +164,8 @@ void Board2ch::analyze_keyword_for_write( const std::string& str )
             || lowname == "key" ) continue;
 
         // キーワード取得
-        keyword = name + "=" + value;
-        break;
+        if( ! keyword.empty() ) keyword += "&";
+        keyword += name + "=" + value;
     }
 
 #ifdef _DEBUG
