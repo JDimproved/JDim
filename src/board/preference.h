@@ -61,7 +61,7 @@ namespace BOARD
         SKELETON::LabelEntry m_entry_writemail;
         Gtk::CheckButton m_check_noname; // 名無し書き込みチェック
 
-        // クッキー & hana
+        // クッキー と キーワード表示
         Gtk::Frame m_frame_cookie;
         Gtk::HBox m_hbox_cookie;
         SKELETON::EditView m_edit_cookies;

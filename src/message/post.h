@@ -52,13 +52,12 @@ namespace MESSAGE
         void post_msg();
 
       private:
+
         void clear();
         void emit_sigfin();
 
         virtual void receive_data( const char* data, size_t size );
         virtual void receive_finish();
-
-        void set_cookies_and_hana( const std::list< std::string >& cookies, const std::string& hana );
     };
     
 }

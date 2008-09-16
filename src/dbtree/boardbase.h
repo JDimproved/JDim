@@ -147,8 +147,9 @@ namespace DBTREE
         // クッキー, 書き込み時に必要
         std::list< std::string > m_list_cookies_for_write;
 
-        // hana, 2ch書き込み時に必要
-        std::string m_hana_for_write;   
+        // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )
+        // 書き込み時のメッセージに付加する
+        std::string m_keyword_for_write;   
 
         // basic 認証用の「ユーザID:パスワード」の組
         std::string m_basicauth;
@@ -252,9 +253,14 @@ namespace DBTREE
         const std::list< std::string >& list_cookies_for_write() { return m_list_cookies_for_write; }
         void set_list_cookies_for_write( const std::list< std::string >& list_cookies ){ m_list_cookies_for_write = list_cookies; }
 
-        // hana
-        const std::string& hana_for_write() { return m_hana_for_write; }
-        void set_hana_for_write( const std::string& hana ){ m_hana_for_write = hana; }
+        // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )
+        // 書き込み時のメッセージに付加する
+        const std::string& get_keyword_for_write() const { return m_keyword_for_write; }
+        void set_keyword_for_write( const std::string& keyword ){ m_keyword_for_write = keyword; }
+
+        // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
+        // 確認画面のhtmlから解析する      
+        virtual void analyze_keyword_for_write( const std::string& str ){}
 
         // basic認証
         const std::string& get_basicauth() const { return m_basicauth; }

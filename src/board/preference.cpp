@@ -27,7 +27,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
       m_entry_writemail( true, "メール：" ),
       m_check_noname( "名前欄が空白の時は書き込まない" ),
 
-      m_frame_cookie( "クッキー＆Hana" ),
+      m_frame_cookie( "クッキーと書き込みキーワード" ),
       m_button_cookie( "削除" ) ,
 
       m_check_live( "実況する" ),
@@ -73,20 +73,20 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_frame_write.add( m_vbox_write );
 
 
-    // cookie と hana の設定
-    std::string str_cookies_hana;
+    // cookie と 書き込みキーワード の設定
+    std::string str_cookies;
     std::list< std::string > list_cookies = DBTREE::board_list_cookies_for_write( get_url() );
-    if( list_cookies.empty() ) str_cookies_hana = "cookie: 未取得\n";
+    if( list_cookies.empty() ) str_cookies = "cookie: 未取得\n";
     else{
         std::list< std::string >::iterator it = list_cookies.begin();
         for( ; it != list_cookies.end(); ++it )
-            str_cookies_hana += "cookie: " + MISC::Iconv( (*it), DBTREE::board_charset( get_url() ), "UTF-8" ) + "\n";
+            str_cookies += "cookie: " + MISC::Iconv( (*it), DBTREE::board_charset( get_url() ), "UTF-8" ) + "\n";
     }
 
-    std::string hana = DBTREE::board_hana_for_write( get_url() );
-    if( ! hana.empty() ) str_cookies_hana += "\nhana: " + hana + "\n";
+    const std::string keyword = DBTREE::board_keyword_for_write( get_url() );
+    if( ! keyword.empty() ) str_cookies += "\nkeyword: " + keyword + "\n";
 
-    m_edit_cookies.set_text( str_cookies_hana );
+    m_edit_cookies.set_text( str_cookies );
 
     m_hbox_cookie.set_border_width( 8 );
     m_hbox_cookie.set_spacing( 8 );
@@ -321,7 +321,7 @@ void Preferences::slot_clear_samba()
 void Preferences::slot_delete_cookie()
 {
     DBTREE::board_set_list_cookies_for_write( get_url(), std::list< std::string >() );
-    DBTREE::board_set_hana_for_write( get_url(), std::string() );
+    DBTREE::board_set_keyword_for_write( get_url(), std::string() );
 
     m_edit_cookies.set_text( "未取得" );
 }

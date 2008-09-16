@@ -200,7 +200,6 @@ void Post::receive_finish()
     std::string title;
     std::string tag_2ch;
     std::string msg;
-    std::string hana;
     std::string conf;
 
     bool ret;
@@ -262,10 +261,6 @@ void Post::receive_finish()
 
     msg = MISC::remove_space( regex.str( 1 ) );
 
-    // 2ch の hana 値
-    regex.exec( ".*<input +type=hidden +name=\"?(hana|kiri|suka)\"? +value=\"?([^\"]*)\"?.*", str, 0, false, false );
-    hana = "&" + MISC::remove_space( regex.str( 1 ) ) + "=" + MISC::remove_space( regex.str( 2 ) );
-
 #ifdef _DEBUG
     std::cout << "TITLE: [" << title << "]\n";
     std::cout << "2ch_X: [" << tag_2ch << "]\n";
@@ -277,7 +272,6 @@ void Post::receive_finish()
     std::list< std::string >::iterator it = list_cookies.begin();
     for( ; it != list_cookies.end(); ++it ) std::cout << "cookie : [" << (*it) << "]\n";
 
-    std::cout << "hana: [" << hana << "]\n";
     std::cout << "location: [" << location() << "]\n";
 #endif
 
@@ -325,7 +319,16 @@ void Post::receive_finish()
             if( mdiag.get_chkbutton().get_active() ) CONFIG::set_always_write_ok( true );
         }
 
-        set_cookies_and_hana( SKELETON::Loadable::cookies(), hana );
+        // 書き込み用キーワード( hana=mogera や suka=pontan など )をセット
+        DBTREE::board_analyze_keyword_for_write( m_url, str );
+
+        // 現在のメッセージにキーワードが付加されていない時は付け加える
+        const std::string keyword = DBTREE::board_keyword_for_write( m_url );
+        if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
+
+        // クッキーのセット
+        if( ! SKELETON::Loadable::cookies().empty() )
+            DBTREE::board_set_list_cookies_for_write( m_url, SKELETON::Loadable::cookies() );
 
         ++m_count; // 永久ループ防止
         post_msg();
@@ -337,7 +340,16 @@ void Post::receive_finish()
     else if( m_count < 1 // 永久ループ防止
              && ! m_subbbs && conf.find( "書き込み確認" ) != std::string::npos ){
 
-        set_cookies_and_hana( SKELETON::Loadable::cookies(), hana );
+        // 書き込み用キーワード( hana=mogera や suka=pontan など )をセット
+        DBTREE::board_analyze_keyword_for_write( m_url, str );
+
+        // 現在のメッセージにキーワードが付加されていない時は付け加える
+        const std::string keyword = DBTREE::board_keyword_for_write( m_url );
+        if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
+
+        // クッキーのセット
+        if( ! SKELETON::Loadable::cookies().empty() )
+            DBTREE::board_set_list_cookies_for_write( m_url, SKELETON::Loadable::cookies() );
 
         // subbbs.cgi にポスト先を変更してもう一回ポスト
         m_subbbs = true;
@@ -361,21 +373,3 @@ void Post::receive_finish()
         return;
     }
 }
-
-
-
-//
-// データベースにクッキーとhanaを登録
-//
-void Post::set_cookies_and_hana( const std::list< std::string >& cookies, const std::string& hana )
-{
-    if( ! cookies.empty() ) DBTREE::board_set_list_cookies_for_write( m_url, cookies );
-
-    if( ! hana.empty() ){
-        DBTREE::board_set_hana_for_write( m_url, hana );
-
-        // 手抜き。後で直すこと
-        if( m_msg.find( "hana=" ) == std::string::npos ) m_msg += "&hana=" + hana;
-    }
-}
-

@@ -39,9 +39,9 @@ const std::string Article2ch::create_write_message( const std::string& name, con
     ss_post << "bbs="      << DBTREE::board_id( get_url() )
             << "&key="     << get_key();
 
-    // hana
-    std::string hana = DBTREE::board_hana_for_write( get_url() );
-    if( ! hana.empty() ) ss_post << hana;
+    // キーワード( hana=mogera や suka=pontan など )
+    const std::string keyword = DBTREE::board_keyword_for_write( get_url() );
+    if( ! keyword.empty() ) ss_post << "&" << keyword;
 
     // ログイン中
     if( CORE::get_login2ch()->login_now() ){

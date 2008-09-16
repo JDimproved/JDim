@@ -10,6 +10,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
+#include "jdlib/jdregex.h"
 
 #include "login2ch.h"
 #include "loginbe.h"
@@ -99,7 +100,7 @@ const int Board2ch::get_proxy_port_w()
 const std::string Board2ch::cookie_for_write()
 {
 #ifdef _DEBUG
-    std::cout << "Board2chCompati::cookie_for_write\n";
+    std::cout << "Board2ch::cookie_for_write\n";
 #endif
 
     std::string cookie = Board2chCompati::cookie_for_write();
@@ -118,6 +119,64 @@ const std::string Board2ch::cookie_for_write()
 }
 
 
+// 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
+// 確認画面のhtmlから解析する      
+void Board2ch::analyze_keyword_for_write( const std::string& str )
+{
+    std::string keyword;
+
+#ifdef _DEBUG
+    std::cout << "Board2ch::analyze_keyword_for_write\n";
+#endif
+
+    JDLIB::Regex regex;
+    size_t offset = 0;
+
+    for(;;){
+
+        // <input type=hidden> のタグを解析して name と value を取得
+        if( ! regex.exec( "<input +type=hidden +name=([^ ]*) +value=([^>]*)>", str, offset, true, false ) ) break;
+
+        offset = str.find( regex.str( 0 ) );
+
+        std::string name = MISC::remove_space( regex.str( 1 ) );
+        if( name[ 0 ] == '\"' ) name = MISC::cut_str( name, "\"", "\"" );
+
+        std::string value = MISC::remove_space( regex.str( 2 ) );
+        if( value[ 0 ] == '\"' ) value = MISC::cut_str( value, "\"", "\"" );
+
+#ifdef _DEBUG
+        std::cout << "offset = " << offset << " "
+                  << regex.str( 0 ) << std::endl
+                  << "name = " << name << " value = " << value << std::endl;
+#endif
+        ++offset;
+
+        // 除外する name の判定
+        // 2ch の仕様が変わったら項目を追加すること
+        const std::string lowname = MISC::tolower_str( name );
+        if( lowname == "subject"
+            || lowname == "from"
+            || lowname == "mail"
+            || lowname == "message"
+            || lowname == "bbs"
+            || lowname == "time"
+            || lowname == "key" ) continue;
+
+        // キーワード取得
+        keyword = name + "=" + value;
+        break;
+    }
+
+#ifdef _DEBUG
+    std::cout << "keyword = " << keyword << std::endl;
+#endif
+
+    set_keyword_for_write( keyword );
+}
+
+
+
 // 新スレ作成時の書き込みメッセージ作成
 const std::string Board2ch::create_newarticle_message( const std::string& subject,
                                                        const std::string& name, const std::string& mail, const std::string& msg )
@@ -130,9 +189,9 @@ const std::string Board2ch::create_newarticle_message( const std::string& subjec
     ss_post << "bbs="      << get_id()
             << "&subject=" << MISC::charset_url_encode( subject, get_charset() );
 
-    // 2chのhana値
-    std::string hana = hana_for_write();
-    if( ! hana.empty() ) ss_post << "&hana=" << hana;
+    // キーワード( hana=mogera や suka=pontan など )
+    const std::string keyword = get_keyword_for_write();
+    if( ! keyword.empty() ) ss_post << "&" << keyword;
 
     // 2chログイン中
     // sidを送る

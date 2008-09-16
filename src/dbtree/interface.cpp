@@ -294,15 +294,21 @@ void DBTREE::board_set_list_cookies_for_write( const std::string& url, const std
 }
 
 
-const std::string DBTREE::board_hana_for_write( const std::string& url )
+const std::string DBTREE::board_keyword_for_write( const std::string& url )
 {
-    return DBTREE::get_board( url )->hana_for_write();
+    return DBTREE::get_board( url )->get_keyword_for_write();
 }
 
 
-void DBTREE::board_set_hana_for_write( const std::string& url, const std::string& hana )
+void DBTREE::board_set_keyword_for_write( const std::string& url, const std::string& keyword )
 {
-    DBTREE::get_board( url )->set_hana_for_write( hana );
+    DBTREE::get_board( url )->set_keyword_for_write( keyword );
+}
+
+
+void DBTREE::board_analyze_keyword_for_write( const std::string& url, const std::string& str )
+{
+    DBTREE::get_board( url )->analyze_keyword_for_write( str );
 }
 
 
