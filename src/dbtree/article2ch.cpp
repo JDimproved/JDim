@@ -41,7 +41,7 @@ const std::string Article2ch::create_write_message( const std::string& name, con
 
     // hana
     std::string hana = DBTREE::board_hana_for_write( get_url() );
-    if( ! hana.empty() ) ss_post << "&hana=" << hana;
+    if( ! hana.empty() ) ss_post << hana;
 
     // ログイン中
     if( CORE::get_login2ch()->login_now() ){

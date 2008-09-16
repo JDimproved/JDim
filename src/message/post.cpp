@@ -263,8 +263,8 @@ void Post::receive_finish()
     msg = MISC::remove_space( regex.str( 1 ) );
 
     // 2ch の hana 値
-    regex.exec( ".*<input +type=hidden +name=\"?hana\"? +value=\"?([^\"]*)\"?.*", str, 0, false, false );
-    hana = MISC::remove_space( regex.str( 1 ) );
+    regex.exec( ".*<input +type=hidden +name=\"?(hana|kiri|suka)\"? +value=\"?([^\"]*)\"?.*", str, 0, false, false );
+    hana = "&" + MISC::remove_space( regex.str( 1 ) ) + "=" + MISC::remove_space( regex.str( 2 ) );
 
 #ifdef _DEBUG
     std::cout << "TITLE: [" << title << "]\n";
