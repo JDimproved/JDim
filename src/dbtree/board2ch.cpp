@@ -165,7 +165,7 @@ void Board2ch::analyze_keyword_for_write( const std::string& html )
 
         // キーワード取得
         if( ! keyword.empty() ) keyword += "&";
-        keyword += name + "=" + value;
+        keyword += MISC::charset_url_encode( name, get_charset() ) + "=" + MISC::charset_url_encode( value, get_charset() );
     }
 
 #ifdef _DEBUG
