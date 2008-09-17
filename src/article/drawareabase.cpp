@@ -798,9 +798,9 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
                 case DBTREE::NODE_HR: // 水平線
 
                     if( ! layout->rect ) layout->rect = m_layout_tree->create_rect();
-                    layout->rect->x = 0;
+                    layout->rect->x = current_div ? current_div->rect->x : 0;
                     layout->rect->y = y + br_size;
-                    layout->rect->width = width_view;
+                    layout->rect->width = current_div ? current_div->rect->width : width_view;
                     layout->rect->height = 1;
 
                     y += 1;
