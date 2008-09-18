@@ -1725,7 +1725,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
                 const int y = layout->rect->y - pos_y;
                 const int color_text = get_colorid_text();
                 m_gc->set_foreground( m_color[ color_text ] );
-                m_backscreen->draw_line( m_gc, x, y, x + layout->rect->width, y );
+                m_backscreen->draw_line( m_gc, x, y, x + layout->rect->width - 1, y );
             }
             break;
 
