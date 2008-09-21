@@ -97,6 +97,9 @@ namespace SKELETON
         // 検索entryをフォーカス
         void focus_entry_search();
 
+        // 書き込みボタンをフォーカス
+        void focus_button_write();
+
         // ボタン表示更新
         void update_button();
 
@@ -155,6 +158,11 @@ namespace SKELETON
         void set_label( const std::string& label );
         void set_broken(); // viewが壊れている
         void set_old(); // viewが古い
+
+        // 書き込みボタン関係
+        void drawframe_button_write( const bool draw );
+        bool slot_focusout_write_button( GdkEventFocus* event );
+
 
         // 検索関係
         void slot_toggle_searchbar();

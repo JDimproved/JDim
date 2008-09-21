@@ -97,7 +97,7 @@ void ArticleViewPreview::operate_view( const int& control )
         break;
 
         case CONTROL::FocusWrite:
-            MESSAGE::get_admin()->set_command( "focus_writebutton" );
+            MESSAGE::get_admin()->set_command( "focus_button_write" );
         break;
     }
 }

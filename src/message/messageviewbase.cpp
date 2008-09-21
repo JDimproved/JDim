@@ -432,7 +432,7 @@ void MessageViewBase::operate_view( const int& control )
 
             // 書き込みボタンにフォーカスを移す
         case CONTROL::FocusWrite:
-            MESSAGE::get_admin()->set_command( "focus_writebutton" );
+            MESSAGE::get_admin()->set_command( "focus_button_write" );
             break;
     }
 }

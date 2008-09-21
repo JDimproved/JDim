@@ -56,15 +56,6 @@ void MessageToolBarBase::slot_toggle_preview()
 }
 
 
-//
-// 書き込みボタンをフォーカス
-//
-void MessageToolBarBase::focus_writebutton()
-{
-    get_button_write()->grab_focus();
-}
-
-
 // previewボタンのトグル
 void MessageToolBarBase::set_active_previewbutton( const bool active )
 {

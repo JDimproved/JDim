@@ -82,9 +82,9 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
     SKELETON::View *view = get_current_view();
 
     // 書き込みボタンにフォーカスを移す
-    if( command.command == "focus_writebutton" ){
-        if( get_notebook()->get_current_toolbar() == TOOLBAR_MESSAGE ) m_toolbar->focus_writebutton();
-        else m_toolbar_preview->focus_writebutton();
+    if( command.command == "focus_button_write" ){
+        if( get_notebook()->get_current_toolbar() == TOOLBAR_MESSAGE ) m_toolbar->focus_button_write();
+        else m_toolbar_preview->focus_button_write();
     }
     // プレビュー切り替え
     else if( command.command == "toggle_preview" ){

@@ -30,9 +30,6 @@ namespace MESSAGE
         MessageToolBarBase();
         virtual ~MessageToolBarBase(){}
 
-        // 書き込みボタンをフォーカス
-        void focus_writebutton();
-
         // previewボタンのトグル
         void set_active_previewbutton( const bool active );
 

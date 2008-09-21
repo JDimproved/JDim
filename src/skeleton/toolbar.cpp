@@ -603,6 +603,7 @@ Gtk::ToolItem* ToolBar::get_button_write()
         set_tooltip( *m_button_write, CONTROL::get_label_motion( CONTROL::WriteMessage ) );
 
         m_button_write->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_write ) );
+        m_button_write->get_child()->signal_focus_out_event().connect( sigc::mem_fun(*this, &ToolBar::slot_focusout_write_button ) );
     }
 
     return m_button_write;
@@ -619,6 +620,44 @@ void ToolBar::slot_clicked_write()
 #endif
 
     m_admin->set_command( "toolbar_write", m_url );
+}
+
+
+// 書き込みボタンをフォーカス
+void ToolBar::focus_button_write()
+{
+    get_button_write()->get_child()->grab_focus();
+    drawframe_button_write( true );
+}
+
+
+// 書き込みボタンの廻りに枠を描く
+void ToolBar::drawframe_button_write( const bool draw )
+{
+    if( CONFIG::get_flat_button() ){
+
+        // relief が Gtk:: RELIEF_NONE のときにボタンに枠を描画
+        // gtk+-2.12.9/gtk/gtkbutton.c の gtk_button_enter_notify()
+        // とgtk_button_leave_notify() をハック
+        Gtk::Button* button = dynamic_cast< Gtk::Button* >( get_button_write()->get_child() );
+        if( button ){
+            GtkButton* gtkbutton = button->gobj();
+            gtkbutton->in_button = draw;
+            if( draw ) gtk_button_enter( gtkbutton );
+            else gtk_button_leave( gtkbutton );
+        }
+    }
+}
+
+
+bool ToolBar::slot_focusout_write_button( GdkEventFocus* event )
+{
+#ifdef _DEBUG
+    std::cout << "ToolBar::slot_focusout_write_button\n";
+#endif
+
+    drawframe_button_write( false );
+    return true;
 }
 
 
