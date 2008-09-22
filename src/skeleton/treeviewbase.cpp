@@ -331,8 +331,7 @@ int JDTreeViewBase::get_row_height()
 //
 bool JDTreeViewBase::on_key_press_event( GdkEventKey* event )
 {
-    m_sig_key_press.emit( event );
-    return true;
+    return m_sig_key_press.emit( event );
 }
 
 

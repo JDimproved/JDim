@@ -30,11 +30,15 @@ void SelectListView::close_view()
 }
 
 
-void  SelectListView::operate_view( const int& control )
+const bool SelectListView::operate_view( const int control )
 {
     // ESCでダイアログを閉じる
-    if( control == CONTROL::Cancel ) close_view();
-    else BBSListViewBase::operate_view( control );
+    if( control == CONTROL::Cancel ){
+        close_view();
+        return true;
+    }
+
+    return BBSListViewBase::operate_view( control );
 }
 
 

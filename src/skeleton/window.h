@@ -15,6 +15,7 @@ namespace SKELETON
 {
     class JDWindow : public Gtk::Window
     {
+        GtkWindow *m_gtkwindow;
         bool m_win_moved;
 
         // フォーカスアウト時の折りたたみ処理で用いるメンバ変数
@@ -116,6 +117,7 @@ namespace SKELETON
         virtual bool on_delete_event( GdkEventAny* event );
         virtual bool on_window_state_event( GdkEventWindowState* event );
         virtual bool on_configure_event( GdkEventConfigure* event );
+        virtual bool on_key_press_event( GdkEventKey* event );
 
       private:
 

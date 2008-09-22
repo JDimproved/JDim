@@ -154,7 +154,7 @@ void View::reset_keyjump_counter()
 
 
 // 数字入力ジャンプ用に sig_key_press() から呼び出す
-void View::release_keyjump_key( int key )
+const bool View::release_keyjump_key( int key )
 {
     // キーパッド対応
     if( key >= GDK_KP_0 && key <= GDK_KP_9 ) key = key - GDK_KP_0 + GDK_0;
@@ -165,7 +165,10 @@ void View::release_keyjump_key( int key )
         m_keyjump_num += key - '0';
 
         CORE::core_set_command( "set_info", "", MISC::itostr( m_keyjump_num ) );
+        return true;
     }
+
+    return false;
 }
 
 

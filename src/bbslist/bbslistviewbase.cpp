@@ -573,7 +573,7 @@ void BBSListViewBase::update_item( const std::string& )
 //
 // viewの操作
 //
-void  BBSListViewBase::operate_view( const int& control )
+const bool BBSListViewBase::operate_view( const int control )
 {
     Gtk::TreePath path = m_treeview.get_current_path();
     Gtk::TreeModel::Row row;
@@ -742,7 +742,12 @@ void  BBSListViewBase::operate_view( const int& control )
         case CONTROL::StopLoading:
             CORE::core_set_command( "cancel_check_update" );
             break;
+
+        default:
+            return false;
     }
+
+    return true;
 }
 
 
@@ -1023,15 +1028,16 @@ bool BBSListViewBase::slot_key_press( GdkEventKey* event )
     // 行の名前を編集中なら何もしない
     if( m_treeview.is_renaming_row() ) return false;
 
-    int key = get_control().key_press( event );
+    const int key = get_control().key_press( event );
 
     // キー入力でboardを開くとkey_pressイベントがboadviewに送られて
     // 一番上のスレが開くので、open_row() は slot_key_release() で処理する
     if( key == CONTROL::OpenBoard ) return true;
     if( key == CONTROL::OpenBoardTab ) return true;
 
-    operate_view( key );
-    return true;
+    if( operate_view( key ) ) return true;
+
+    return false;
 }
 
 

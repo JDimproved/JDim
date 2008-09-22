@@ -359,7 +359,7 @@ namespace ARTICLE
         bool slot_button_release_event( GdkEventButton* event );
         bool slot_motion_notify_event( GdkEventMotion* event );
 
-        bool slot_key_press_event( GdkEventKey* event );
+        const bool slot_key_press_event( GdkEventKey* event );
         bool slot_key_release_event( GdkEventKey* event );
     };
 }

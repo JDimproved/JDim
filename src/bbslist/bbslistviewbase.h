@@ -140,7 +140,7 @@ namespace BBSLIST
         virtual void close_view();
         virtual void delete_view();
         virtual void update_item( const std::string& );
-        virtual void operate_view( const int& control );
+        virtual const bool operate_view( const int control );
         virtual void goto_top();
         virtual void goto_bottom();
 

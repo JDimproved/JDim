@@ -1062,12 +1062,12 @@ void BoardView::slot_delete_logs()
 //
 // viewの操作
 //
-void BoardView::operate_view( const int& control )
+const bool BoardView::operate_view( const int control )
 {
     bool open_tab = false;
 
     Gtk::TreePath path = m_treeview.get_current_path();;
-    if( path.empty() ) return;
+    if( path.empty() ) return false;
 
     switch( control ){
 
@@ -1173,7 +1173,7 @@ void BoardView::operate_view( const int& control )
                                               Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
                 mdiag.set_title( "削除確認" );
                 const int ret = mdiag.run();
-                if( ret != Gtk::RESPONSE_YES ) return;
+                if( ret != Gtk::RESPONSE_YES ) return true;
                 if( mdiag.get_chkbutton().get_active() ) CONFIG::set_show_deldiag( false );
             }
 
@@ -1214,7 +1214,12 @@ void BoardView::operate_view( const int& control )
         case CONTROL::ShowMenuBar:
             CORE::core_set_command( "toggle_menubar" );
             break;
+
+        default:
+            return false;
     }
+
+    return true;
 }
 
 
@@ -1645,11 +1650,11 @@ bool BoardView::slot_key_press( GdkEventKey* event )
         if( m_pressed_key == CONTROL::OpenArticle ) return true;
         if( m_pressed_key == CONTROL::OpenArticleTab ) return true;
 
-        operate_view( m_pressed_key );
+        if( operate_view( m_pressed_key ) ) return true;
     }
-    else release_keyjump_key( event->keyval );
+    else if( release_keyjump_key( event->keyval ) ) return true;
 
-    return true;
+    return false;
 }
 
 

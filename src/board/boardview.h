@@ -98,7 +98,7 @@ namespace BOARD
         virtual void delete_view();
         virtual void set_favorite();
         virtual void update_item( const std::string& id_dat );
-        virtual void operate_view( const int& control );
+        virtual const bool operate_view( const int control );
         virtual void goto_top();
         virtual void goto_bottom();
         virtual void goto_num( int num );

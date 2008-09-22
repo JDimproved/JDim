@@ -276,7 +276,7 @@ void AAMenu::slot_aainput_menu_clicked( Gtk::MenuItem* item )
     m_activeitem = item;
 
 #ifdef _DEBUG
-    std::cout << "AAMenu::on_key_press_event id = " << id << std::endl;
+    std::cout << "AAMenu::slot_aainput_menu_clicked id = " << id << std::endl;
     std::cout << CORE::get_aamanager()->get_aa( id ) << std::endl;
 #endif
 

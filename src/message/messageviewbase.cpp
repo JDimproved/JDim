@@ -406,9 +406,9 @@ void MessageViewBase::focus_view()
 //
 // viewの操作
 //
-void MessageViewBase::operate_view( const int& control )
+const bool MessageViewBase::operate_view( const int control )
 {
-    if( control == CONTROL::None ) return;
+    if( control == CONTROL::None ) return false;
 
     switch( control ){
             
@@ -434,7 +434,12 @@ void MessageViewBase::operate_view( const int& control )
         case CONTROL::FocusWrite:
             MESSAGE::get_admin()->set_command( "focus_button_write" );
             break;
+
+        default:
+            return false;
     }
+
+    return true;
 }
 
 
@@ -552,9 +557,7 @@ bool MessageViewBase::slot_key_press( GdkEventKey* event )
               << " alt = " << alt << std::endl;
 #endif
 
-    operate_view( SKELETON::View::get_control().key_press( event ) );
-
-    return true;
+    return operate_view( SKELETON::View::get_control().key_press( event ) );
 }
 
 

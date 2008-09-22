@@ -89,7 +89,7 @@ namespace MESSAGE
         virtual void close_view();
         virtual void redraw_view();
         virtual void focus_view();
-        virtual void operate_view( const int& control );
+        virtual const bool operate_view( const int control );
 
       private:
 

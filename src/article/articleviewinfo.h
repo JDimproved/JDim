@@ -17,7 +17,7 @@ namespace ARTICLE
         ~ArticleViewInfo();
 
         // viewの操作をキャンセル
-        virtual void operate_view( const int& control ){}
+        virtual const bool operate_view( const int control ){ return false; }
 
       protected:
 

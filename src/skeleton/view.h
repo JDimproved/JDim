@@ -125,7 +125,7 @@ namespace SKELETON
         void reset_keyjump_counter(); 
 
         // 数字入力ジャンプ用に sig_key_press() から呼び出す
-        void release_keyjump_key( int key );
+        const bool release_keyjump_key( int key );
 
         // ポップアップメニュー表示
         void show_popupmenu( const std::string& url, bool use_slot = false );
@@ -246,7 +246,7 @@ namespace SKELETON
         virtual void delete_view(){}
         virtual void set_favorite(){}
         virtual void update_item( const std::string& ){}
-        virtual void operate_view( const int& ){}
+        virtual const bool operate_view( const int ) = 0;
         virtual void goto_top(){}
         virtual void goto_bottom(){}
         virtual void goto_num( int num ){}

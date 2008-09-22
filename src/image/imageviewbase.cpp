@@ -470,7 +470,7 @@ void ImageViewBase::delete_view()
 //
 // viewの操作
 //
-void ImageViewBase::operate_view( const int& control )
+const bool ImageViewBase::operate_view( const int control )
 {
 #ifdef _DEBUG
     std::cout << "ImageViewBase::operate_view control = " << control << std::endl;
@@ -577,7 +577,12 @@ void ImageViewBase::operate_view( const int& control )
         case CONTROL::ShowMenuBar:
             CORE::core_set_command( "toggle_menubar" );
             break;
+
+        default:
+            return false;
     }
+
+    return true;
 }
                                                     
 
@@ -593,9 +598,7 @@ bool ImageViewBase::slot_key_press( GdkEventKey* event )
     std::cout << "ImageViewBase::slot_key_press url = " << get_url() << std::endl;
 #endif
 
-    operate_view( get_control().key_press( event ) );
-
-    return true;
+    return operate_view( get_control().key_press( event ) );
 }
 
 

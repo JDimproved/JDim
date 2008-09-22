@@ -80,7 +80,7 @@ namespace IMAGE
         virtual void redraw_view();
         virtual void close_view();
         virtual void delete_view();
-        virtual void operate_view( const int& control );
+        virtual const bool operate_view( const int control );
         virtual void show_preference();
 
       protected:

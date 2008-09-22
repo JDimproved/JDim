@@ -4086,7 +4086,7 @@ void DrawAreaBase::change_cursor( const Gdk::CursorType type )
 //
 // キーを押した
 //
-bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
+const bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::slot_key_press_event\n";
@@ -4095,7 +4095,7 @@ bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
     //オートスクロール中なら無視
     if( m_scrollinfo.mode == SCROLL_AUTO ) return true;
 
-    m_sig_key_press.emit( event );
+    const bool ret = m_sig_key_press.emit( event );
 
     // 修飾キーを押したときは m_key_press をtrueにしない
     // そうしないと Shift + ○ をスクロールに割り当てたときに
@@ -4106,7 +4106,7 @@ bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
     bool alt = ( event->keyval == GDK_Alt_L || event->keyval == GDK_Alt_R );
     if( ! ctrl && ! eisu && ! shift && ! alt ) m_key_press = true;
 
-    return true;
+    return ret;
 }
 
 

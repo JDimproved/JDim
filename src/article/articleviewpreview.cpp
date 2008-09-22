@@ -58,12 +58,12 @@ ArticleViewPreview::~ArticleViewPreview()
 //
 // viewの操作
 //
-void ArticleViewPreview::operate_view( const int& control )
+const bool ArticleViewPreview::operate_view( const int control )
 {
-    if( control == CONTROL::None ) return;
+    if( control == CONTROL::None ) return false;
 
     // スクロール系操作
-    if( drawarea()->set_scroll( control ) ) return;
+    if( drawarea()->set_scroll( control ) ) return true;
 
     switch( control ){
 
@@ -99,7 +99,12 @@ void ArticleViewPreview::operate_view( const int& control )
         case CONTROL::FocusWrite:
             MESSAGE::get_admin()->set_command( "focus_button_write" );
         break;
+
+        default:
+            return false;
     }
+
+    return true;
 }
 
 

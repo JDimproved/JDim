@@ -18,7 +18,7 @@ namespace ARTICLE
         ArticleViewPreview( const std::string& url );
         ~ArticleViewPreview();
 
-        virtual void operate_view( const int& control );
+        virtual const bool operate_view( const int control );
 
       private:
 

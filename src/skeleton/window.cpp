@@ -12,6 +12,7 @@
 #include "dndmanager.h"
 #include "command.h"
 
+#include <gtk/gtkwindow.h>
 
 enum
 {
@@ -47,6 +48,7 @@ using namespace SKELETON;
 // メッセージウィンドウでは m_mginfo が不要なので need_mginfo = false になる
 JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
+      m_gtkwindow( NULL ),
       m_win_moved( false ),
       m_fold_when_focusout( fold_when_focusout ),
       m_boot( true ),
@@ -80,6 +82,8 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     m_statbar.show_all_children();
 
     add( m_vbox );
+
+    m_gtkwindow = dynamic_cast< GtkWindow* >( gobj() );
 }
 
 
@@ -689,4 +693,25 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
     }
 
     return Gtk::Window::on_configure_event( event );
+}
+
+
+bool JDWindow::on_key_press_event( GdkEventKey* event )
+{
+    // uimなど、漢字変換モードの途中でctrl+qを押すとキーアクセレータが
+    // 優先されてJDが終了する問題があった。
+    //
+    // gedit-window.c の gedit_window_key_press_event を見ると
+    // gtk_window_propagate_key_event() を実行した後でキーアクセレータ
+    // の処理をするようにしていたのでJDもそうした。
+    if( m_gtkwindow ){
+
+        if( gtk_window_propagate_key_event( m_gtkwindow, event ) ) return true;
+
+#ifdef _DEBUG
+        std::cout << "JDWindow::on_key_press_event key = " << event->keyval << std::endl;
+#endif
+    }
+
+    return Gtk::Window::on_key_press_event( event );
 }

@@ -887,14 +887,14 @@ void ArticleViewBase::warp_pointer_to_popup()
 //
 // viewの操作
 //
-void ArticleViewBase::operate_view( const int& control )
+const bool ArticleViewBase::operate_view( const int control )
 {
     assert( m_drawarea );
 
-    if( control == CONTROL::None ) return;
+    if( control == CONTROL::None ) return false;;
 
     // スクロール系操作
-    if( m_drawarea->set_scroll( control ) ) return;
+    if( m_drawarea->set_scroll( control ) ) return true;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::operate_view control = " << control << std::endl;
@@ -1033,7 +1033,12 @@ void ArticleViewBase::operate_view( const int& control )
         case CONTROL::LiveStartStop:
             ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );
             break;
+
+        default:
+            return false;
     }
+
+    return true;
 }
 
 
@@ -1709,7 +1714,7 @@ bool ArticleViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 // drawareaのキープレスイベント
 //
-bool ArticleViewBase::slot_key_press( GdkEventKey* event )
+const bool ArticleViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_key_press\n";
@@ -1722,10 +1727,12 @@ bool ArticleViewBase::slot_key_press( GdkEventKey* event )
 
     int key = get_control().key_press( event );
 
-    if( key != CONTROL::None ) operate_view( key );
-    else release_keyjump_key( event->keyval );
+    if( key != CONTROL::None ){
+        if( operate_view( key ) ) return true;
+    }
+    else if( release_keyjump_key( event->keyval ) ) return true;
 
-    return true;
+    return false;
 }
 
 
