@@ -327,6 +327,31 @@ fi
 
 
 dnl
+dnl checking ppc7400
+dnl
+if test "$use_gprof" == "no" ;then
+AC_ARG_WITH(ppc7400,[ --with-ppc7400    (use PowerPC7400)],
+       [ if test "$withval" != "no" ;then
+               echo "use ppc7400"
+	       CXXFLAGS="$CXXFLAGS -mcpu=7400 -pipe -maltivec -mabi=altivec"
+       fi ])
+fi
+
+
+dnl
+dnl checking ppc7450
+dnl
+if test "$use_gprof" == "no" ;then
+AC_ARG_WITH(ppc7450,[ --with-ppc7450    (use PowerPC7450)],
+       [ if test "$withval" != "no" ;then
+               echo "use ppc7450"
+	       CXXFLAGS="$CXXFLAGS -mcpu=7450 -pipe -maltivec -mabi=altivec"
+       fi ])
+fi
+
+
+
+dnl
 dnl checking pangolayout
 dnl
 AC_ARG_WITH(pangolayout,[ --with-pangolayout    (use pangolayout)],
