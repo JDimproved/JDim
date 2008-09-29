@@ -231,7 +231,7 @@ namespace ARTICLE
         void redraw_view();  
 
         // スクロール方向指定
-        bool set_scroll( const int& control );
+        const bool set_scroll( const int control );
 
         // マウスホイールの処理
         void wheelscroll( GdkEventScroll* event );

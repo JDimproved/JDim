@@ -2225,17 +2225,39 @@ int DrawAreaBase::set_num_id( LAYOUT* layout )
 //
 // 実際にスクロールして描画を実行するのは exec_scroll()
 //
-bool DrawAreaBase::set_scroll( const int& control )
+const bool DrawAreaBase::set_scroll( const int control )
 {
+    // スクロール系の操作でないときは関数を抜ける
+    switch( control ){
+
+        case CONTROL::DownFast:
+        case CONTROL::DownMid:
+        case CONTROL::Down:
+        case CONTROL::NextRes:
+        case CONTROL::UpFast:
+        case CONTROL::UpMid:
+        case CONTROL::Up:
+        case CONTROL::PrevRes:
+        case CONTROL::Home:
+        case CONTROL::End:
+        case CONTROL::GotoNew:
+        case CONTROL::Back:
+            break;
+
+        default:
+            return false;
+    }
+
     if( !m_vscrbar ){
         m_scrollinfo.reset();
-        return false;
+        return true;
     }
+
     double dy = 0;
 
-    int y = get_vscr_val();
-    bool enable_down = ( y < get_vscr_maxval() );
-    bool enable_up = ( y > 0 );
+    const int y = get_vscr_val();
+    const bool enable_down = ( y < get_vscr_maxval() );
+    const bool enable_up = ( y > 0 );
 
     if( m_scrollinfo.mode == SCROLL_NOT ){
 
@@ -2308,12 +2330,10 @@ bool DrawAreaBase::set_scroll( const int& control )
                 m_scrollinfo.mode = SCROLL_NORMAL;
                 exec_scroll( false );
             }
-
-            return true;
         }
     }
 
-    return false;
+    return true;
 }
 
 
