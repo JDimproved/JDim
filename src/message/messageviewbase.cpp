@@ -21,10 +21,11 @@
 
 #include "config/globalconf.h"
 
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "httpcode.h"
 #include "viewfactory.h"
-#include "controlutil.h"
-#include "controlid.h"
 #include "fontid.h"
 #include "cache.h"
 #include "session.h"

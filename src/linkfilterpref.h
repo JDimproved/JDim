@@ -8,7 +8,7 @@
 #include "skeleton/prefdiag.h"
 #include "skeleton/treeviewbase.h"
 
-#include "control.h"
+#include "control/control.h"
 
 namespace CORE
 {

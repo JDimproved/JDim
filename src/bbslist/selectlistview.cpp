@@ -6,8 +6,9 @@
 #include "selectlistview.h"
 #include "toolbar.h"
 
+#include "control/controlid.h"
+
 #include "type.h"
-#include "controlid.h"
 
 using namespace BBSLIST;
 

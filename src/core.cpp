@@ -23,12 +23,16 @@
 #include "login2ch.h"
 #include "loginbe.h"
 #include "prefdiagfactory.h"
-#include "controlutil.h"
-#include "controlid.h"
 #include "colorid.h"
 #include "fontid.h"
 #include "jdversion.h"
 #include "setupwizard.h"
+
+#include "control/controlutil.h"
+#include "control/controlid.h"
+#include "control/keyconfig.h"
+#include "control/mouseconfig.h"
+#include "control/buttonconfig.h"
 
 #include "history/historymanager.h"
 
@@ -36,9 +40,6 @@
 #include "skeleton/aboutdiag.h"
 
 #include "config/globalconf.h"
-#include "config/keyconfig.h"
-#include "config/mouseconfig.h"
-#include "config/buttonconfig.h"
 #include "config/defaultconf.h"
 
 #include "jdlib/miscutil.h"
@@ -127,6 +128,9 @@ Core::Core( WinMain& win_main )
     // BEログインマネージャ作成
     CORE::get_loginbe();
 
+    // マウス、キー設定読み込み
+    CONTROL::load_conf();
+
     // 各管理クラス作成
     BBSLIST::get_admin();
     BOARD::get_admin();
@@ -211,10 +215,11 @@ Core::~Core()
     // 更新チェックマネージャ削除
     CORE::delete_checkupdate_manager();
 
-    // マウス、キーコンフィグ削除
-    CONFIG::delete_keyconfig();
-    CONFIG::delete_mouseconfig();
-    CONFIG::delete_buttonconfig();
+    // マウス、キーコンフィグ保存
+    CONTROL::save_conf();
+    CONTROL::delete_keyconfig();
+    CONTROL::delete_mouseconfig();
+    CONTROL::delete_buttonconfig();
 
     // ビューを削除する前にswitch_pageをdisconnectしておかないとエラーが出る
     if( m_sigc_switch_page.connected() ) m_sigc_switch_page.disconnect(); 
@@ -444,21 +449,23 @@ void Core::run( bool init )
     // マウス／キーボード
     m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード(_M)" ) );
 
-    bool toggled = CONFIG::get_buttonconfig()->is_toggled_tab_button() && CONFIG::get_keyconfig()->is_toggled_tab_key();
+    bool toggled = CONTROL::get_buttonconfig()->is_toggled_tab_button() && CONTROL::get_keyconfig()->is_toggled_tab_key();
     m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "スレ一覧／スレビューを開く時に常に新しいタブで開く(_T)", std::string(), toggled ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "スレビューでアンカーをクリックして多重ポップアップモードに移行する(_W)", std::string(),
-                                                    CONFIG::get_buttonconfig()->is_popup_warpmode() ),
+                                                    CONTROL::get_buttonconfig()->is_popup_warpmode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "ShortMarginPopup", "スレビューでカーソルを移動して多重ポップアップモードに移行する(_M)", std::string(),
                                                     ( CONFIG::get_margin_popup() != CONFIG::CONF_MARGIN_POPUP ) ),
                          sigc::mem_fun( *this, &Core::slot_shortmargin_popup ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューをEmacs風のキーバインドにする(_E)", std::string(),
-                                                    CONFIG::get_keyconfig()->is_emacs_mode() ),
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューのショートカットキーをEmacs風にする(_E)", std::string(),
+                                                    CONTROL::get_keyconfig()->is_emacs_mode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
+
+    m_action_group->add( Gtk::Action::create( "KeyPref", "ショートカットキー設定(_R)..." ), sigc::mem_fun( *this, &Core::slot_setup_key ) );
 
     // フォントと色
     m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色(_F)" ) );
@@ -711,6 +718,8 @@ void Core::run( bool init )
         "<menuitem action='ShortMarginPopup'/>"
         "<separator/>"
         "<menuitem action='ToggleEmacsMode'/>"
+        "<separator/>"
+        "<menuitem action='KeyPref'/>"
         "</menu>"
 
     "<separator/>";
@@ -1040,6 +1049,7 @@ void Core::shutdown()
 {
     // 設定保存
     CONFIG::save_conf();
+    CONTROL::save_conf();
 
     ARTICLE::get_admin()->shutdown();
     BOARD::get_admin()->shutdown();
@@ -1243,6 +1253,14 @@ void Core::slot_activate_menubar()
     act = m_action_group->get_action( "LiveStartStop" );
     if( ! ARTICLE::get_admin()->empty() ) act->set_sensitive( true );
     else act->set_sensitive( false );
+
+    // emacsモード
+    act = m_action_group->get_action( "ToggleEmacsMode" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( CONTROL::get_keyconfig()->is_emacs_mode() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
 
     m_enable_menuslot = true;
 }
@@ -1494,6 +1512,17 @@ bool Core::open_color_diag( std::string title, int id )
 void Core::slot_setup_fontcolor()
 {
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_FONTCOLOR, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// キーボード詳細設定
+//
+void Core::slot_setup_key()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_KEY, "" );
     pref->run();
     delete pref;
 }
@@ -1947,7 +1976,7 @@ void Core::toggle_menubar()
     restore_focus( true, false );
 
     if( ! SESSION::show_menubar() ){
-        SKELETON::MsgDiag mdiag( NULL, "メニューバーを再表示するには\n\n" + CONTROL::get_motion( CONTROL::ShowMenuBar ) + "\n\nを押してください" );
+        SKELETON::MsgDiag mdiag( NULL, "メニューバーを再表示するには\n\n" + CONTROL::get_str_motions( CONTROL::ShowMenuBar ) + "\n\nを押してください" );
         mdiag.run();
     }
 }
@@ -2323,10 +2352,10 @@ void Core::slot_toggle_oldarticle()
 //
 void Core::slot_toggle_tabbutton()
 {
-    bool toggled = CONFIG::get_buttonconfig()->is_toggled_tab_button() && CONFIG::get_keyconfig()->is_toggled_tab_key();
+    bool toggled = CONTROL::get_buttonconfig()->is_toggled_tab_button() && CONTROL::get_keyconfig()->is_toggled_tab_key();
 
-    CONFIG::get_buttonconfig()->toggle_tab_button( !toggled );
-    CONFIG::get_keyconfig()->toggle_tab_key( !toggled );
+    CONTROL::get_buttonconfig()->toggle_tab_button( !toggled );
+    CONTROL::get_keyconfig()->toggle_tab_key( !toggled );
 }
 
 
@@ -2335,7 +2364,7 @@ void Core::slot_toggle_tabbutton()
 //
 void Core::slot_toggle_popupwarpmode()
 {
-    CONFIG::get_buttonconfig()->toggle_popup_warpmode();
+    CONTROL::get_buttonconfig()->toggle_popup_warpmode();
 }
 
 
@@ -2355,7 +2384,8 @@ void Core::slot_shortmargin_popup()
 // editview を emacs風のキーバインドにする
 void Core::slot_toggle_emacsmode()
 {
-    CONFIG::get_keyconfig()->toggle_emacs_mode();
+    if( ! m_enable_menuslot ) return;
+    CONTROL::get_keyconfig()->toggle_emacs_mode();
 }
 
 

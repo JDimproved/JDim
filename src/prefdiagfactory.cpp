@@ -25,6 +25,8 @@
 #include "article/preference.h"
 #include "image/preference.h"
 
+#include "control/keypref.h"
+
 #include "config/aboutconfig.h"
 
 SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const std::string& url )
@@ -90,6 +92,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
 
         case PREFDIAG_IMAGE:
             return new IMAGE::Preferences( parent, url );
+
+        case PREFDIAG_KEY:
+            return new CONTROL::KeyPref( parent, url );
 
         case PREFDIAG_ABOUTCONFIG:
             return new CONFIG::AboutConfig( parent );

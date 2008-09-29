@@ -5,27 +5,26 @@
 
 #include "mouseconfig.h"
 #include "mousekeyitem.h"
-
-#include "cache.h"
 #include "controlutil.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 #include "jdlib/confloader.h"
 
+#include "cache.h"
 
-CONFIG::MouseConfig* instance_mouseconfig = NULL;
+CONTROL::MouseConfig* instance_mouseconfig = NULL;
 
 
-CONFIG::MouseConfig* CONFIG::get_mouseconfig()
+CONTROL::MouseConfig* CONTROL::get_mouseconfig()
 {
-    if( ! instance_mouseconfig ) instance_mouseconfig = new CONFIG::MouseConfig();
+    if( ! instance_mouseconfig ) instance_mouseconfig = new CONTROL::MouseConfig();
 
     return instance_mouseconfig;
 }
 
 
-void CONFIG::delete_mouseconfig()
+void CONTROL::delete_mouseconfig()
 {
     if( instance_mouseconfig ) delete instance_mouseconfig;
     instance_mouseconfig = NULL;
@@ -34,21 +33,17 @@ void CONFIG::delete_mouseconfig()
 
 //////////////////////////////////////////////////////////
 
-using namespace CONFIG;
+using namespace CONTROL;
 
 
 MouseConfig::MouseConfig()
     : MouseKeyConf()
-{
-    load_conf();
-}
+{}
 
 
 
 MouseConfig::~MouseConfig()
-{
-    save_conf( CACHE::path_mouseconf() );
-}
+{}
 
 
 //
@@ -56,7 +51,7 @@ MouseConfig::~MouseConfig()
 //
 void MouseConfig::load_conf()
 {
-    std::string str_motion;
+    std::string str_motions;
     JDLIB::ConfLoader cf( CACHE::path_mouseconf(), std::string() );
 
     // 共通
@@ -82,24 +77,23 @@ void MouseConfig::load_conf()
 
     // IMAGE
     SETMOTION( "CancelMosaicButton", "28" );
-
-    // この行を入れないと画像ビューのコンテキストメニューにマウスジェスチャが表示されない
-    // ただし設定ファイルには保存しない。MouseConfig::set_one_motion()も参照すること
-    set_motion( "CancelMosaic", str_motion ); 
 }
 
 
 
 // ひとつの操作をデータベースに登録
-void MouseConfig::set_one_motion( const std::string& name, const std::string& str_motion )
+void MouseConfig::set_one_motion_impl( const int id, const int mode, const std::string& name, const std::string& str_motion )
 {
     if( name.empty() || str_motion.empty() ) return;
 
-    const int id = CONTROL::get_id( name );
-    if( id == CONTROL::None ) return;
+#ifdef _DEBUG
+    std::cout << "MouseConfig::set_one_motion_impl " << name << std::endl;
+    std::cout << "motion = " << str_motion << std::endl;
+#endif
 
-    const int mode = get_mode( id );
-    if( mode == CONTROL::MODE_ERROR ) return;
+#ifdef _DEBUG
+    std::cout << CONTROL::get_label( id  ) << std::endl;
+#endif
 
     const bool ctrl = false;
     const bool shift = false;
@@ -108,7 +102,6 @@ void MouseConfig::set_one_motion( const std::string& name, const std::string& st
     if( !motion ) return;
     const bool dblclick = false;
     const bool trpclick = false;
-    bool save = true;
 
     int id_check = check_conflict( mode, motion, ctrl, shift, alt, dblclick, trpclick );
     if( id_check != CONTROL::None ){
@@ -116,22 +109,23 @@ void MouseConfig::set_one_motion( const std::string& name, const std::string& st
         return;
     }
 
-    // "CancelMosaic"は設定ファイルに保存しない
-    if( name == "CancelMosaic" ) save = false;
-
-    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, trpclick, save );
-    vec_items().push_back( item );
+    vec_items().push_back( MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, trpclick ) );
 }
 
 
 // 操作文字列取得
-const std::string MouseConfig::get_str_motion( int id )
+const std::string MouseConfig::get_str_motions( const int id_ )
 {
-    std::string str_motion = MouseKeyConf::get_str_motion( id );
-    str_motion = MISC::replace_str( str_motion, "8", "↑" );
-    str_motion = MISC::replace_str( str_motion, "6", "→" );
-    str_motion = MISC::replace_str( str_motion, "4", "←" );
-    str_motion = MISC::replace_str( str_motion, "2", "↓" );
+    int id = id_;
 
-    return str_motion;
+    // (注) この行が無いと画像ビューのコンテキストメニューにマウスジェスチャが表示されない
+    if( id == CONTROL::CancelMosaic ) id = CONTROL::CancelMosaicButton;
+
+    std::string motions = MouseKeyConf::get_str_motions( id );
+    motions = MISC::replace_str( motions, "8", "↑" );
+    motions = MISC::replace_str( motions, "6", "→" );
+    motions = MISC::replace_str( motions, "4", "←" );
+    motions = MISC::replace_str( motions, "2", "↓" );
+
+    return motions;
 }

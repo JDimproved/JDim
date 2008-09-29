@@ -8,8 +8,9 @@
 
 #include "skeleton/compentry.h"
 
-#include "controlutil.h"
-#include "controlid.h"
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "compmanager.h"
 
 using namespace ARTICLE;
@@ -30,8 +31,8 @@ SearchToolBar::SearchToolBar() :
 //
 void SearchToolBar::pack_buttons()
 {
-    set_tooltip( *get_button_stop(), "検索中止 " + CONTROL::get_motion( CONTROL::StopLoading ) );
-    set_tooltip( *get_button_reload(), "再検索 " + CONTROL::get_motion( CONTROL::Reload ) );
+    set_tooltip( *get_button_stop(), "検索中止 " + CONTROL::get_str_motions( CONTROL::StopLoading ) );
+    set_tooltip( *get_button_reload(), "再検索 " + CONTROL::get_str_motions( CONTROL::Reload ) );
 
     pack_transparent_separator();
     get_buttonbar().append( *get_label() );

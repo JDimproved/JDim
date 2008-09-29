@@ -11,10 +11,10 @@
 
 #include "jdlib/miscutil.h"
 
-#include "controlid.h"
+#include "control/controlid.h"
+
 #include "command.h"
 #include "colorid.h"
-
 
 #ifndef MAX
 #define MAX( a, b ) ( a > b ? a : b )

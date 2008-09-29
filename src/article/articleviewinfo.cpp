@@ -9,7 +9,7 @@
 
 #include "jdlib/misctime.h"
 
-#include "controlid.h"
+#include "control/controlid.h"
 
 #include <sys/time.h>
 

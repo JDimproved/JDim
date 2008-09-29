@@ -19,16 +19,17 @@
 
 #include "sound/soundmanager.h"
 
+#include "control/controlid.h"
+#include "control/controlutil.h"
+
 #include "command.h"
 #include "session.h"
 #include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "global.h"
 #include "type.h"
-#include "controlid.h"
 #include "prefdiagfactory.h"
 #include "httpcode.h"
-#include "controlutil.h"
 #include "colorid.h"
 #include "fontid.h"
 #include "compmanager.h"

@@ -19,7 +19,7 @@
 
 #include "mousekeyconf.h"
 
-namespace CONFIG
+namespace CONTROL
 {
     class MouseConfig : public MouseKeyConf
     {
@@ -28,13 +28,15 @@ namespace CONFIG
         MouseConfig();
         virtual ~MouseConfig();
 
+        virtual void load_conf();
+
         // 操作文字列取得
-        virtual const std::string get_str_motion( int id );
+        virtual const std::string get_str_motions( const int id );
 
       private:
 
-        void load_conf();
-        virtual void set_one_motion( const std::string& name, const std::string& str_motion );
+        // ひとつの操作をデータベースに登録
+        virtual void set_one_motion_impl( const int id, const int mode, const std::string& name, const std::string& str_motion );
     };
 
     MouseConfig* get_mouseconfig();

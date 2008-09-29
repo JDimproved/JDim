@@ -9,8 +9,9 @@
 #include "skeleton/view.h"
 #include "skeleton/menubutton.h"
 
+#include "control/controlid.h"
+
 #include "command.h"
-#include "controlid.h"
 #include "session.h"
 #include "compmanager.h"
 #include "global.h"

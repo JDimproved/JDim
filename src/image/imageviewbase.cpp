@@ -17,13 +17,14 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
 
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "cache.h"
 #include "command.h"
 #include "sharedbuffer.h"
 #include "global.h"
 #include "type.h"
-#include "controlutil.h"
-#include "controlid.h"
 #include "prefdiagfactory.h"
 #include "httpcode.h"
 #include "session.h"

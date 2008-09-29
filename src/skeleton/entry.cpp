@@ -5,9 +5,9 @@
 
 #include "entry.h"
 
-#include "controlid.h"
+#include "control/controlid.h"
 
-#include "gtk/gtkentry.h"
+#include <gtk/gtkentry.h>
 
 using namespace SKELETON;
 

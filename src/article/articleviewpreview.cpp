@@ -13,7 +13,8 @@
 
 #include "jdlib/misctime.h"
 
-#include "controlid.h"
+#include "control/controlid.h"
+
 #include "command.h"
 
 #include <sys/time.h>

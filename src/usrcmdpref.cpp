@@ -7,9 +7,10 @@
 #include "usrcmdmanager.h"
 #include "command.h"
 #include "type.h"
-#include "controlid.h"
-#include "controlutil.h"
 #include "jdversion.h"
+
+#include "control/controlid.h"
+#include "control/controlutil.h"
 
 #include "skeleton/msgdiag.h"
 

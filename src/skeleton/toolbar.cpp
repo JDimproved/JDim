@@ -21,9 +21,10 @@
 
 #include "config/globalconf.h"
 
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "command.h"
-#include "controlutil.h"
-#include "controlid.h"
 
 #include <gtk/gtk.h>  // gtk_separator_tool_item_set_draw
 #include <gtk/gtkbutton.h>
@@ -371,7 +372,7 @@ Gtk::ToolItem* ToolBar::get_button_open_searchbar()
     if( ! m_button_open_searchbar ){
         m_button_open_searchbar = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::FIND ) );
 
-        std::string tooltip = "検索バーを開く  " + CONTROL::get_motion( CONTROL::Search );
+        std::string tooltip = "検索バーを開く  " + CONTROL::get_str_motions( CONTROL::Search );
         set_tooltip( *m_button_open_searchbar, tooltip );
         m_button_open_searchbar->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_toggle_searchbar ) );
     }
@@ -383,7 +384,7 @@ Gtk::ToolItem* ToolBar::get_button_close_searchbar()
 {
     if( ! m_button_close_searchbar ){
         m_button_close_searchbar = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::UNDO ) );
-        set_tooltip( *m_button_close_searchbar, CONTROL::get_label_motion( CONTROL::CloseSearchBar ) );
+        set_tooltip( *m_button_close_searchbar, CONTROL::get_label_motions( CONTROL::CloseSearchBar ) );
         m_button_close_searchbar->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_toggle_searchbar ) );
     }
 
@@ -499,7 +500,7 @@ Gtk::ToolItem* ToolBar::get_button_up_search()
 {
     if( ! m_button_up_search ){
         m_button_up_search = Gtk::manage( new ImgToolButton( Gtk::Stock::GO_UP ) );
-        set_tooltip( *m_button_up_search, CONTROL::get_label_motion( CONTROL::SearchPrev ) );
+        set_tooltip( *m_button_up_search, CONTROL::get_label_motions( CONTROL::SearchPrev ) );
 
         m_button_up_search->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_up_search ) );
     }
@@ -528,7 +529,7 @@ Gtk::ToolItem* ToolBar::get_button_down_search()
 {
     if( ! m_button_down_search ){
         m_button_down_search = Gtk::manage( new ImgToolButton( Gtk::Stock::GO_DOWN ) );
-        set_tooltip( *m_button_down_search, CONTROL::get_label_motion( CONTROL::SearchNext ) );
+        set_tooltip( *m_button_down_search, CONTROL::get_label_motions( CONTROL::SearchNext ) );
 
         m_button_down_search->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_down_search ) );
     }
@@ -567,7 +568,7 @@ Gtk::ToolItem* ToolBar::get_button_board()
         m_button_board->get_button()->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_menu_board ) );
         m_button_board->get_button()->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_open_board ) );
 
-        set_tooltip( *m_button_board, CONTROL::get_label_motion( CONTROL::OpenParentBoard ) );
+        set_tooltip( *m_button_board, CONTROL::get_label_motions( CONTROL::OpenParentBoard ) );
     }
 
     return m_button_board;
@@ -600,7 +601,7 @@ Gtk::ToolItem* ToolBar::get_button_write()
 {
     if( ! m_button_write ){
         m_button_write = Gtk::manage( new ImgToolButton( ICON::WRITE ) );
-        set_tooltip( *m_button_write, CONTROL::get_label_motion( CONTROL::WriteMessage ) );
+        set_tooltip( *m_button_write, CONTROL::get_label_motions( CONTROL::WriteMessage ) );
 
         m_button_write->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_write ) );
         m_button_write->get_child()->signal_focus_out_event().connect( sigc::mem_fun(*this, &ToolBar::slot_focusout_write_button ) );
@@ -668,7 +669,7 @@ Gtk::ToolItem* ToolBar::get_button_reload()
 {
     if( ! m_button_reload ){
         m_button_reload = Gtk::manage( new ImgToolButton( Gtk::Stock::REFRESH ) );
-        set_tooltip( *m_button_reload, CONTROL::get_label_motion( CONTROL::Reload ) );
+        set_tooltip( *m_button_reload, CONTROL::get_label_motions( CONTROL::Reload ) );
 
         m_button_reload->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_reload ) );
     }
@@ -697,7 +698,7 @@ Gtk::ToolItem* ToolBar::get_button_stop()
 {
     if( ! m_button_stop ){
         m_button_stop = Gtk::manage( new ImgToolButton( Gtk::Stock::STOP ) );
-        set_tooltip( *m_button_stop, CONTROL::get_label_motion( CONTROL::StopLoading ) );
+        set_tooltip( *m_button_stop, CONTROL::get_label_motions( CONTROL::StopLoading ) );
 
         m_button_stop->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_stop ) );
     }
@@ -726,7 +727,7 @@ Gtk::ToolItem* ToolBar::get_button_close()
 {
     if( ! m_button_close ){
         m_button_close = Gtk::manage( new ImgToolButton( Gtk::Stock::CLOSE ) );
-        set_tooltip( *m_button_close, CONTROL::get_label_motion( CONTROL::Quit ) );
+        set_tooltip( *m_button_close, CONTROL::get_label_motions( CONTROL::Quit ) );
 
         m_button_close->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_close ) );
     }
@@ -767,7 +768,7 @@ Gtk::ToolItem* ToolBar::get_button_delete()
 {
     if( ! m_button_delete ){
         m_button_delete = Gtk::manage( new ImgToolButton( Gtk::Stock::DELETE ) );
-        set_tooltip( *m_button_delete, CONTROL::get_label_motion( CONTROL::Delete ) );
+        set_tooltip( *m_button_delete, CONTROL::get_label_motions( CONTROL::Delete ) );
 
         m_button_delete->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_delete ) );
     }
@@ -796,7 +797,7 @@ Gtk::ToolItem* ToolBar::get_button_favorite()
 {
     if( ! m_button_favorite ){
         m_button_favorite = Gtk::manage( new ImgToolButton( Gtk::Stock::COPY ) );
-        set_tooltip( *m_button_favorite, CONTROL::get_label_motion( CONTROL::AppendFavorite ) );
+        set_tooltip( *m_button_favorite, CONTROL::get_label_motions( CONTROL::AppendFavorite ) );
 
         m_button_favorite->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_favorite ) );
     }
@@ -829,7 +830,7 @@ Gtk::ToolItem* ToolBar::get_button_back()
         m_button_back->get_button()->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_back ) );
         m_button_back->get_button()->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_back ) );
 
-        set_tooltip( *m_button_back, CONTROL::get_label_motion( CONTROL::PrevView ) );
+        set_tooltip( *m_button_back, CONTROL::get_label_motions( CONTROL::PrevView ) );
     }
 
     return m_button_back;
@@ -872,7 +873,7 @@ Gtk::ToolItem* ToolBar::get_button_forward()
         m_button_forward = Gtk::manage( new SKELETON::ToolBackForwardButton( "forward", false, m_url, false ) );
         m_button_forward->get_button()->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_forward ) );
         m_button_forward->get_button()->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_forward ) );
-        set_tooltip( *m_button_forward, CONTROL::get_label_motion( CONTROL::NextView ) );
+        set_tooltip( *m_button_forward, CONTROL::get_label_motions( CONTROL::NextView ) );
     }
 
     return m_button_forward;
@@ -912,7 +913,7 @@ Gtk::ToolItem* ToolBar::get_button_lock()
 {
     if( ! m_button_lock ){
         m_button_lock = Gtk::manage( new SKELETON::ImgToggleToolButton( Gtk::Stock::NO ) );
-        set_tooltip( *m_button_lock, CONTROL::get_label_motion( CONTROL::Lock ) );
+        set_tooltip( *m_button_lock, CONTROL::get_label_motions( CONTROL::Lock ) );
         m_button_lock->set_label( CONTROL::get_label( CONTROL::Lock ) );
         m_button_lock->signal_clicked().connect( sigc::mem_fun( *this, &ToolBar::slot_lock_clicked ) );
     }

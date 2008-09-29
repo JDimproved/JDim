@@ -1,4 +1,4 @@
-SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton history config icons sound xml
+SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton history config icons sound xml control
 
 bin_PROGRAMS = jd
 
@@ -17,6 +17,7 @@ jd_LDADD = \
 	./icons/libicon.a \
 	./sound/libsound.a \
 	./xml/libxml.a \
+	./control/libcontrol.a \
 	@LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@
 
 jd_SOURCES = \
@@ -37,8 +38,6 @@ jd_SOURCES = \
 	dispatchmanager.cpp \
 	cssmanager.cpp \
 	updatemanager.cpp \
-	control.cpp \
-	controlutil.cpp \
 	browsers.cpp \
 	setupwizard.cpp \
 \
@@ -83,10 +82,6 @@ noinst_HEADERS = \
 	updatemanager.h \
 	colorid.h \
 	fontid.h \
-	controlid.h \
-	controllabel.h \
-	control.h \
-	controlutil.h \
 	command_args.h \
 	browsers.h \
 	setupwizard.h \

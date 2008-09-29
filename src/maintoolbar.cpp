@@ -9,8 +9,9 @@
 
 #include "icons/iconmanager.h"
 
-#include "controlutil.h"
-#include "controlid.h"
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "session.h"
 #include "global.h"
 
@@ -34,16 +35,16 @@ MainToolBar::MainToolBar() :
     set_tooltip( m_button_go, ITEM_NAME_GO );
 
     set_tooltip( m_button_bbslist, std::string( ITEM_NAME_BBSLISTVIEW )
-                 + "\n\nお気に入りに切替え " + CONTROL::get_motion( CONTROL::TabRight ) );
+                 + "\n\nお気に入りに切替え " + CONTROL::get_str_motions( CONTROL::TabRight ) );
     set_tooltip( m_button_favorite, std::string( ITEM_NAME_FAVORITEVIEW )
-                 + "\n\n板一覧に切替え " + CONTROL::get_motion( CONTROL::TabLeft ) );
+                 + "\n\n板一覧に切替え " + CONTROL::get_str_motions( CONTROL::TabLeft ) );
     set_tooltip( m_button_board, std::string( ITEM_NAME_BOARDVIEW )
-                 + "\n\n" + CONTROL::get_label_motion( CONTROL::ToggleArticle ) );
+                 + "\n\n" + CONTROL::get_label_motions( CONTROL::ToggleArticle ) );
     set_tooltip( m_button_thread, std::string( ITEM_NAME_ARTICLEVIEW )
-                 + "\n\n" + CONTROL::get_label_motion( CONTROL::ToggleArticle ) );
+                 + "\n\n" + CONTROL::get_label_motions( CONTROL::ToggleArticle ) );
     set_tooltip( m_button_image, std::string( ITEM_NAME_IMAGEVIEW )
                  + "\n\nスレビューに切替 "
-                 + CONTROL::get_motion( CONTROL::ToggleArticle ) + " , " + CONTROL::get_motion( CONTROL::Left ) );
+                 + CONTROL::get_str_motions( CONTROL::ToggleArticle ) + " , " + CONTROL::get_str_motions( CONTROL::Left ) );
         
     pack_buttons();
 }

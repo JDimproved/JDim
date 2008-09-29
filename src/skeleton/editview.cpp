@@ -6,8 +6,9 @@
 #include "editview.h"
 #include "aamenu.h"
 
-#include "controlid.h"
-#include "controlutil.h"
+#include "control/controlid.h"
+#include "control/controlutil.h"
+
 #include "aamanager.h"
 #include "session.h"
 #include "jdversion.h"
@@ -463,10 +464,7 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
     // AA入力メニュー追加
     if( CORE::get_aamanager()->get_size() ){
 
-        std::string label = CONTROL::get_label( CONTROL::InputAA );
-        std::string motion = CONTROL::get_motion( CONTROL::InputAA );
-
-        menuitem = Gtk::manage( new Gtk::MenuItem( label + "  " + motion ) );
+        menuitem = Gtk::manage( new Gtk::MenuItem( CONTROL::get_label_motions( CONTROL::InputAA ) ) );
         menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_select_aamenu ) );
         menu->prepend( *menuitem );
     }

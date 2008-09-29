@@ -6,6 +6,7 @@
 #define _CONTROLLABEL_H
 
 #include "controlid.h"
+
 #include "global.h"
 
 enum
@@ -13,6 +14,13 @@ enum
     MAX_CONTROL_LABEL = 64
 };
 
+
+//
+// control_label[ id ][ 0 ] を操作名 ( 例えば "Up" )
+// control_label[ id ][ 1 ] をラベル ( 例えば "上移動" )
+//
+// と呼ぶことにする
+//
 namespace CONTROL
 {
     char control_label[][ 2 ][ MAX_CONTROL_LABEL ]={
@@ -108,8 +116,8 @@ namespace CONTROL
         { "NewArticle", ITEM_NAME_NEWARTICLE },
         { "SearchCache", "ログ検索" },
 
-        { "ScrollLeftBoard", "" }, // 左スクロール
-        { "ScrollRightBoard", "" },// 右スクロール
+        { "ScrollLeftBoard", "左スクロール" },
+        { "ScrollRightBoard", "右スクロール" },
 
         { "OpenArticleButton", "スレを開く" },
         { "OpenArticleTabButton", "タブでスレを開く" },
@@ -166,10 +174,10 @@ namespace CONTROL
         { "ZoomOutImage", "ズームアウト" },
         { "OrgSizeImage", "元の画像サイズ" },
 
-        { "ScrollUpImage", "" }, // 上スクロール
-        { "ScrollDownImage", "" },// 下スクロール
-        { "ScrollLeftImage", "" }, // 左スクロール
-        { "ScrollRightImage", "" },// 右スクロール
+        { "ScrollUpImage", "上スクロール" },
+        { "ScrollDownImage", "下スクロール" },
+        { "ScrollLeftImage", "左スクロール" },
+        { "ScrollRightImage", "右スクロール" },
 
         { "CloseImageTabButton", "タブを閉じる" },
 
@@ -212,7 +220,7 @@ namespace CONTROL
         { "LeftEdit", "カーソルを左へ移動" },
 
         { "DeleteEdit", "一文字削除" },
-        { "BackspEdit", "バックスペース" },
+        { "BackspEdit", "BackSpace" },
         { "UndoEdit", ITEM_NAME_UNDO },
 
         { "InputAA", "アスキーアート入力" },

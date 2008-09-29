@@ -8,7 +8,7 @@
 
 #include "mousekeyconf.h"
 
-namespace CONFIG
+namespace CONTROL
 {
     class KeyConfig : public MouseKeyConf
     {
@@ -17,8 +17,7 @@ namespace CONFIG
         KeyConfig();
         virtual ~KeyConfig();
 
-        // 操作文字列取得
-        virtual const std::string get_str_motion( int id );
+        virtual void load_conf();
 
         // editviewの操作をemacs風にする
         const bool is_emacs_mode();
@@ -29,12 +28,9 @@ namespace CONFIG
 
       private:
 
-        void load_conf();
-        virtual void set_one_motion( const std::string& name, const std::string& str_motion );
+        // ひとつの操作をデータベースに登録
+        virtual void set_one_motion_impl( const int id, const int mode, const std::string& name, const std::string& str_motion );
     };
-
-    KeyConfig* get_keyconfig();
-    void delete_keyconfig();
 }
 
 

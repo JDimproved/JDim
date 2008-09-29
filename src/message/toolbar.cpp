@@ -11,8 +11,9 @@
 
 #include "icons/iconmanager.h"
 
-#include "controlutil.h"
-#include "controlid.h"
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "session.h"
 #include "global.h"
 
@@ -121,14 +122,14 @@ void MessageToolBar::pack_buttons()
 
             case ITEM_PREVIEW:
                 get_buttonbar().append( *get_button_preview() );
-                set_tooltip( *get_button_preview(), CONTROL::get_label_motion( CONTROL::Preview )
+                set_tooltip( *get_button_preview(), CONTROL::get_label_motions( CONTROL::Preview )
                              + "\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
-                             + CONTROL::get_label_motion( CONTROL::TabRight ) + "\n\n"+ CONTROL::get_label_motion( CONTROL::TabLeft ) );
+                             + CONTROL::get_label_motions( CONTROL::TabRight ) + "\n\n"+ CONTROL::get_label_motions( CONTROL::TabLeft ) );
                 break;
 
             case ITEM_WRITEMSG:
                 get_buttonbar().append( *get_button_write() );
-                set_tooltip( *get_button_write(), CONTROL::get_label_motion( CONTROL::ExecWrite ) + "\n\nTabキーで書き込みボタンにフォーカスを移すことも可能" );
+                set_tooltip( *get_button_write(), CONTROL::get_label_motions( CONTROL::ExecWrite ) + "\n\nTabキーで書き込みボタンにフォーカスを移すことも可能" );
                 break;
 
             case ITEM_OPENBOARD:
@@ -168,7 +169,7 @@ void MessageToolBar::pack_buttons()
                 }
 
                 get_buttonbar().append( *m_button_undo );
-                set_tooltip( *m_button_undo, CONTROL::get_label_motion( CONTROL::UndoEdit ) );
+                set_tooltip( *m_button_undo, CONTROL::get_label_motions( CONTROL::UndoEdit ) );
 
                 break;
 
@@ -180,13 +181,13 @@ void MessageToolBar::pack_buttons()
                 }
 
                 get_buttonbar().append( *m_button_insert_draft );
-                set_tooltip( *m_button_insert_draft, CONTROL::get_label_motion( CONTROL::InsertText ) );
+                set_tooltip( *m_button_insert_draft, CONTROL::get_label_motions( CONTROL::InsertText ) );
 
                 break;
 
             case ITEM_LOCK_MESSAGE:
                 get_buttonbar().append( *get_button_lock() );
-                set_tooltip( *get_button_lock(), CONTROL::get_label_motion( CONTROL::LockMessage ) );
+                set_tooltip( *get_button_lock(), CONTROL::get_label_motions( CONTROL::LockMessage ) );
                 Gtk::ToolButton* toolbt;
                 toolbt = dynamic_cast< Gtk::ToolButton* >( get_button_lock() );
                 if( toolbt ) toolbt->set_label( CONTROL::get_label( CONTROL::LockMessage ) );
@@ -194,7 +195,7 @@ void MessageToolBar::pack_buttons()
 
             case ITEM_QUIT:
                 get_buttonbar().append( *get_button_close() );
-                set_tooltip( *get_button_close(), CONTROL::get_label_motion( CONTROL::CancelWrite ) );
+                set_tooltip( *get_button_close(), CONTROL::get_label_motions( CONTROL::CancelWrite ) );
                 break;
 
             case ITEM_SEPARATOR:
@@ -267,12 +268,12 @@ void MessageToolBarPreview::pack_buttons()
 
             case ITEM_WRITEMSG:
                 get_buttonbar().append( *get_button_write() );
-                set_tooltip( *get_button_write(), CONTROL::get_label_motion( CONTROL::ExecWrite ) + "\n\nTabキーで書き込みボタンにフォーカスを移すことも可能" );
+                set_tooltip( *get_button_write(), CONTROL::get_label_motions( CONTROL::ExecWrite ) + "\n\nTabキーで書き込みボタンにフォーカスを移すことも可能" );
                 break;
 
             case ITEM_QUIT:
                 get_buttonbar().append( *get_button_close() );
-                set_tooltip( *get_button_close(), CONTROL::get_label_motion( CONTROL::CancelWrite ) );
+                set_tooltip( *get_button_close(), CONTROL::get_label_motions( CONTROL::CancelWrite ) );
                 break;
         }
         ++num;

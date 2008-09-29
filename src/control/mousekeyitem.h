@@ -8,7 +8,10 @@
 
 #include "controlid.h"
 
-namespace CONFIG
+#include <gtkmm.h>
+#include <string>
+
+namespace CONTROL
 {
     class MouseKeyItem
     {
@@ -23,13 +26,11 @@ namespace CONFIG
         bool m_alt;
         bool m_dblclick;
         bool m_trpclick;
-        bool m_save; // 設定ファイルに保存するか
 
     public:
 
         MouseKeyItem( const guint id, const int mode, const std::string& name, const std::string& str_motion,
-                      const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick, const bool trpclick,
-                      const bool save )
+                      const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick, const bool trpclick )
         : m_id( id ),
         m_mode( mode ),
         m_name( name ),
@@ -39,8 +40,7 @@ namespace CONFIG
         m_shift( shift ),
         m_alt( alt ),
         m_dblclick( dblclick ),
-        m_trpclick( trpclick ),
-        m_save( save )
+        m_trpclick( trpclick )
         {}
 
         const int get_id() const { return m_id; }
@@ -53,7 +53,13 @@ namespace CONFIG
         const bool get_alt() const { return m_alt; }
         const bool get_dblclick() const { return m_dblclick; }
         const bool get_trpclick() const { return m_trpclick; }
-        const bool get_save() const { return m_save; }
+
+        // モード無視
+        const int equal( const std::string& str_motion )
+        {
+            if( str_motion == m_str_motion ) return m_id;
+            return CONTROL::None;
+        }
 
         // モード無視
         const int equal( const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick, const bool trpclick )
@@ -62,8 +68,14 @@ namespace CONFIG
             return CONTROL::None;
         }
 
-        const int is_activated( const int& mode,
-                          const guint& motion, const bool& ctrl, const bool& shift, const bool& alt, const bool& dblclick, const bool& trpclick )
+        const int is_activated( const int mode, const std::string& str_motion )
+        {
+            if( mode == m_mode ) return equal( str_motion );
+            return CONTROL::None;
+        }
+
+        const int is_activated( const int mode,
+                          const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick, const bool trpclick )
         {
             if( mode == m_mode ) return equal( motion, ctrl, shift, alt, dblclick, trpclick );
             return CONTROL::None;

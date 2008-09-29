@@ -9,9 +9,10 @@
 
 #include "skeleton/imgtoggletoolbutton.h"
 
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "command.h"
-#include "controlutil.h"
-#include "controlid.h"
 #include "session.h"
 #include "compmanager.h"
 #include "global.h"
@@ -30,9 +31,9 @@ ArticleToolBar::ArticleToolBar() :
     m_button_live_play_stop( NULL )
 {
     // 検索バー
-    set_tooltip( m_button_drawout_and, CONTROL::get_label_motion( CONTROL::DrawOutAnd ) );
-    set_tooltip( m_button_drawout_or, CONTROL::get_label_motion( CONTROL::DrawOutOr ) );
-    set_tooltip( m_button_clear_hl, CONTROL::get_label_motion( CONTROL::HiLightOff ) );
+    set_tooltip( m_button_drawout_and, CONTROL::get_label_motions( CONTROL::DrawOutAnd ) );
+    set_tooltip( m_button_drawout_or, CONTROL::get_label_motions( CONTROL::DrawOutOr ) );
+    set_tooltip( m_button_clear_hl, CONTROL::get_label_motions( CONTROL::HiLightOff ) );
 
     get_searchbar()->append( *get_entry_search( CORE::COMP_SEARCH_ARTICLE ) );
     get_searchbar()->append( *get_button_down_search() );
@@ -120,7 +121,7 @@ void ArticleToolBar::pack_buttons()
 
             case ITEM_FAVORITE:
                 get_buttonbar().append( *get_button_favorite() );
-                set_tooltip( *get_button_favorite(), CONTROL::get_label_motion( CONTROL::AppendFavorite )
+                set_tooltip( *get_button_favorite(), CONTROL::get_label_motions( CONTROL::AppendFavorite )
                              + "...\n\nスレのタブをお気に入りに直接Ｄ＆Ｄしても登録可能" );
 
                 break;
@@ -149,7 +150,7 @@ void ArticleToolBar::pack_buttons()
             case ITEM_LIVE:
                 if( ! m_button_live_play_stop ){
                     m_button_live_play_stop = Gtk::manage( new SKELETON::ImgToggleToolButton( Gtk::Stock::MEDIA_PLAY ) );
-                    set_tooltip( *m_button_live_play_stop, CONTROL::get_label_motion( CONTROL::LiveStartStop ) );
+                    set_tooltip( *m_button_live_play_stop, CONTROL::get_label_motions( CONTROL::LiveStartStop ) );
                     m_button_live_play_stop->set_label( CONTROL::get_label( CONTROL::LiveStartStop ) );
                     m_button_live_play_stop->signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_live_play_stop ) );
                 }

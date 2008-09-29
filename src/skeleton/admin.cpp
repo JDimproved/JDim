@@ -17,11 +17,12 @@
 #include "history/historymanager.h"
 #include "history/viewhistoryitem.h"
 
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "command.h"
 #include "session.h"
 #include "global.h"
-#include "controlutil.h"
-#include "controlid.h"
 #include "updatemanager.h"
 
 

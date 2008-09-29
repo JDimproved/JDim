@@ -5,25 +5,25 @@
 
 #include "buttonconfig.h"
 #include "mousekeyitem.h"
-
-#include "cache.h"
 #include "controlutil.h"
 
 #include "jdlib/confloader.h"
 #include "jdlib/jdregex.h"
 
-CONFIG::ButtonConfig* instance_buttonconfig = NULL;
+#include "cache.h"
+
+CONTROL::ButtonConfig* instance_buttonconfig = NULL;
 
 
-CONFIG::ButtonConfig* CONFIG::get_buttonconfig()
+CONTROL::ButtonConfig* CONTROL::get_buttonconfig()
 {
-    if( ! instance_buttonconfig ) instance_buttonconfig = new CONFIG::ButtonConfig();
+    if( ! instance_buttonconfig ) instance_buttonconfig = new CONTROL::ButtonConfig();
 
     return instance_buttonconfig;
 }
 
 
-void CONFIG::delete_buttonconfig()
+void CONTROL::delete_buttonconfig()
 {
     if( instance_buttonconfig ) delete instance_buttonconfig;
     instance_buttonconfig = NULL;
@@ -31,20 +31,16 @@ void CONFIG::delete_buttonconfig()
 
 //////////////////////////////////////////////////////////
 
-using namespace CONFIG;
+using namespace CONTROL;
 
 
 ButtonConfig::ButtonConfig()
     : MouseKeyConf()
-{
-    load_conf();
-}
+{}
 
 
 ButtonConfig::~ButtonConfig()
-{
-    save_conf( CACHE::path_buttonconf() );
-}
+{}
 
 
 //
@@ -52,7 +48,7 @@ ButtonConfig::~ButtonConfig()
 //
 void ButtonConfig::load_conf()
 {
-    std::string str_motion;
+    std::string str_motions;
     JDLIB::ConfLoader cf( CACHE::path_buttonconf(), std::string() );
 
     // デフォルト動作
@@ -115,24 +111,18 @@ void ButtonConfig::load_conf()
 
 
 // ひとつの操作をデータベースに登録
-void ButtonConfig::set_one_motion( const std::string& name, const std::string& str_motion )
+void ButtonConfig::set_one_motion_impl( const int id, const int mode, const std::string& name, const std::string& str_motion )
 {
     if( name.empty() ) return;
 
 #ifdef _DEBUG
-    std::cout << "ButtonConfig::set_motion " << name << std::endl;
+    std::cout << "ButtonConfig::set_one_motion_impl " << name << std::endl;
     std::cout << "motion = " << str_motion << std::endl;
 #endif
 
-    const int id = CONTROL::get_id( name );
-    if( id == CONTROL::None ) return;
-
 #ifdef _DEBUG
-    std::cout << "id = " << id << std::endl;
+    std::cout << CONTROL::get_label( id  ) << std::endl;
 #endif
-
-    const int mode = get_mode( id );
-    if( mode == CONTROL::MODE_ERROR ) return;
 
     bool ctrl = false;
     bool shift = false;
@@ -140,7 +130,6 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
     bool dblclick = false;
     bool trpclick = false;
     guint motion = 0;
-    const bool save = true;
 
     JDLIB::Regex regex;
     if( regex.exec( "(Ctrl)?(\\+?Shift)?(\\+?Alt)?\\+?(.*)", str_motion, 0, true ) ){
@@ -165,6 +154,7 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
         if( str_button == "TrpMid" ) { motion = 2; trpclick = true; }
         if( str_button == "TrpRight" ) { motion = 3; trpclick = true; }
     }
+    else return;
 
 #ifdef _DEBUG
     std::cout << "motion = " << motion << " dblclick = " << dblclick
@@ -174,8 +164,7 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
     // ひとつのボタンに複数の機能が割り当てられているので重複チェックはしない
 
     // データベース登録
-    MouseKeyItem* item = new MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, trpclick, save );
-    vec_items().push_back( item );
+    vec_items().push_back( MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, trpclick ) );
 }
 
 
@@ -183,7 +172,7 @@ void ButtonConfig::set_one_motion( const std::string& name, const std::string& s
 // タブで開くボタンを入れ替えているか
 const bool ButtonConfig::is_toggled_tab_button()
 {
-    return ( get_str_motion( CONTROL::OpenArticleTabButton ).find( "Left" ) != std::string::npos );
+    return ( get_str_motions( CONTROL::OpenArticleTabButton ).find( "Left" ) != std::string::npos );
 }
 
 
@@ -191,10 +180,10 @@ const bool ButtonConfig::is_toggled_tab_button()
 // toggle == true なら左ボタンをタブで開くボタンにする
 void ButtonConfig::toggle_tab_button( const bool toggle )
 {
-    remove_items( CONTROL::OpenBoardButton );
-    remove_items( CONTROL::OpenBoardTabButton );
-    remove_items( CONTROL::OpenArticleButton );
-    remove_items( CONTROL::OpenArticleTabButton );
+    remove_motions( CONTROL::OpenBoardButton );
+    remove_motions( CONTROL::OpenBoardTabButton );
+    remove_motions( CONTROL::OpenArticleButton );
+    remove_motions( CONTROL::OpenArticleTabButton );
 
     if( toggle ){
 
@@ -217,7 +206,7 @@ void ButtonConfig::toggle_tab_button( const bool toggle )
 // ポップアップ表示の時にクリックでワープするか
 const bool ButtonConfig::is_popup_warpmode()
 {
-    return ( get_str_motion( CONTROL::PopupWarpButton).find( "Left" ) != std::string::npos );
+    return ( get_str_motions( CONTROL::PopupWarpButton).find( "Left" ) != std::string::npos );
 }
 
 
@@ -226,7 +215,7 @@ void ButtonConfig::toggle_popup_warpmode()
 {
     bool warp = is_popup_warpmode();
 
-    remove_items( CONTROL::PopupWarpButton );
+    remove_motions( CONTROL::PopupWarpButton );
 
     if( warp ) set_one_motion( "PopupWarpButton", "" );
     else set_one_motion( "PopupWarpButton", "Left" );

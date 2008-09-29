@@ -40,6 +40,7 @@ namespace CORE
         PREFDIAG_ARTICLE,
         PREFDIAG_IMAGE,
 
+        PREFDIAG_KEY,
         PREFDIAG_ABOUTCONFIG,
 
         PREFDIAG_NONE

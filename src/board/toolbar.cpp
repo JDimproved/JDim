@@ -6,8 +6,9 @@
 #include "toolbar.h"
 #include "boardadmin.h"
 
-#include "controlutil.h"
-#include "controlid.h"
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "session.h"
 #include "compmanager.h"
 #include "global.h"
@@ -34,7 +35,7 @@ void BoardToolBar::pack_buttons()
 
             case ITEM_NEWARTICLE:
                 get_buttonbar().append( *get_button_write() );
-                set_tooltip( *get_button_write(), CONTROL::get_label_motion( CONTROL::NewArticle ) );
+                set_tooltip( *get_button_write(), CONTROL::get_label_motions( CONTROL::NewArticle ) );
                 break;
 
             case ITEM_SEARCHBOX:
@@ -59,7 +60,7 @@ void BoardToolBar::pack_buttons()
 
             case ITEM_FAVORITE:
                 get_buttonbar().append( *get_button_favorite() );
-                set_tooltip( *get_button_favorite(), CONTROL::get_label_motion( CONTROL::AppendFavorite )
+                set_tooltip( *get_button_favorite(), CONTROL::get_label_motions( CONTROL::AppendFavorite )
                              + "\n\nスレ一覧のタブか選択したスレをお気に入りに直接Ｄ＆Ｄしても登録可能" );
                 break;
 

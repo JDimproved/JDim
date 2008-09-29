@@ -30,6 +30,9 @@
 #include "xml/document.h"
 #include "xml/tools.h"
 
+#include "control/controlutil.h"
+#include "control/controlid.h"
+
 #include "global.h"
 #include "type.h"
 #include "httpcode.h"
@@ -41,8 +44,6 @@
 #include "usrcmdmanager.h"
 #include "linkfiltermanager.h"
 #include "compmanager.h"
-#include "controlutil.h"
-#include "controlid.h"
 
 #include "icons/iconmanager.h"
 

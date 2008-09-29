@@ -13,9 +13,10 @@
 
 #include "config/globalconf.h"
 
+#include "control/controlid.h"
+
 #include "command.h"
 #include "httpcode.h"
-#include "controlid.h"
 #include "session.h"
 #include "global.h"
 

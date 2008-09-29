@@ -155,6 +155,7 @@ namespace CORE
         bool open_color_diag( std::string title, int id );
         
         void slot_setup_fontcolor();
+        void slot_setup_key();
         void slot_setup_proxy();
         void slot_setup_passwd();
         void slot_toggle_ipv6();

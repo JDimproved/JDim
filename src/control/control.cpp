@@ -6,14 +6,14 @@
 #include "control.h"
 #include "controlid.h"
 #include "controlutil.h"
-#include "command.h"
-#include "global.h"
+#include "keyconfig.h"
+#include "mouseconfig.h"
+#include "buttonconfig.h"
 
 #include "config/globalconf.h"
-#include "config/keyconfig.h"
-#include "config/mouseconfig.h"
-#include "config/buttonconfig.h"
 
+#include "command.h"
+#include "global.h"
 
 using namespace CONTROL;
 
@@ -63,10 +63,14 @@ const int Control::key_press( const GdkEventKey* event )
 {
     const guint key = event->keyval;
     const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
-    const bool shift = ( event->state ) & GDK_SHIFT_MASK;
+    bool shift = ( event->state ) & GDK_SHIFT_MASK;
     const bool alt = ( event->state ) & GDK_MOD1_MASK;
     const bool dblclick = false;
     const bool trpclick = false;
+
+    // keyがアスキー文字の場合は shift を無視する
+    // KeyConfig::set_one_motion()も参照せよ
+    if( CONTROL::is_ascii( key ) ) shift = false;
 
 #ifdef _DEBUG
     std::cout << "Control::key_press key = " << std::hex << key;
@@ -79,7 +83,7 @@ const int Control::key_press( const GdkEventKey* event )
     int control = CONTROL::None;
     std::vector< int >::iterator it = m_mode.begin();
     for( ; it != m_mode.end(); ++it ){
-        control = CONFIG::get_keyconfig()->get_id( *it, key, ctrl, shift, alt, dblclick, trpclick );
+        control = CONTROL::get_keyconfig()->get_id( *it, key, ctrl, shift, alt, dblclick, trpclick );
         if( control != CONTROL::None ) break;
     }
 
@@ -106,7 +110,7 @@ const int Control::button_press( const GdkEventButton* event )
     int control = CONTROL::None;
     std::vector< int >::iterator it = m_mode.begin();
     for( ; it != m_mode.end(); ++it ){
-        control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
+        control = CONTROL::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
         if( control != CONTROL::None ) break;
     }
 
@@ -124,7 +128,7 @@ const bool Control::button_alloted( const GdkEventButton* event, const int id )
     const bool dblclick = ( event->type == GDK_2BUTTON_PRESS );
     const bool trpclick = ( event->type == GDK_3BUTTON_PRESS );
 
-    return CONFIG::get_buttonconfig()->alloted( id, button, ctrl, shift, alt, dblclick, trpclick );
+    return CONTROL::get_buttonconfig()->alloted( id, button, ctrl, shift, alt, dblclick, trpclick );
 }
 
 
@@ -138,7 +142,7 @@ const bool Control::get_eventbutton( const int id, GdkEventButton& event )
     bool dblclick;
     bool trpclick;
 
-    if( CONFIG::get_buttonconfig()->get_motion( id, button, ctrl, shift, alt, dblclick, trpclick ) ){
+    if( CONTROL::get_buttonconfig()->get_motion( id, button, ctrl, shift, alt, dblclick, trpclick ) ){
         if( dblclick ) event.type = GDK_2BUTTON_PRESS;
         if( trpclick ) event.type = GDK_3BUTTON_PRESS;
         event.button = button;
@@ -252,7 +256,7 @@ const bool Control::MG_motion( const GdkEventMotion* event )
             int control = CONTROL::None;
             std::vector< int >::iterator it = m_mode.begin();
             for( ; it != m_mode.end(); ++it ){
-                control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
+                control = CONTROL::get_mouseconfig()->get_id( *it, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
                 if( control != CONTROL::None ) break;
             }
 
@@ -287,7 +291,7 @@ const int Control::MG_end( const GdkEventButton* event )
     int control = CONTROL::None;
     std::vector< int >::iterator it = m_mode.begin();
     for( ; it != m_mode.end(); ++it ){
-        control = CONFIG::get_mouseconfig()->get_id( *it, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
+        control = CONTROL::get_mouseconfig()->get_id( *it, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
         if( control != CONTROL::None ) break;
     }
 
@@ -376,7 +380,7 @@ const int Control::MG_wheel_scroll( const GdkEventScroll* event )
 
         std::vector< int >::iterator it = m_mode.begin();
         for( ; it != m_mode.end(); ++it ){
-            control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
+            control = CONTROL::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
             if( control != CONTROL::None ) break;
         }
     }
@@ -386,7 +390,7 @@ const int Control::MG_wheel_scroll( const GdkEventScroll* event )
 
         std::vector< int >::iterator it = m_mode.begin();
         for( ; it != m_mode.end(); ++it ){
-            control = CONFIG::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
+            control = CONTROL::get_buttonconfig()->get_id( *it, button, ctrl, shift, alt, dblclick, trpclick );
             if( control != CONTROL::None ) break;
         }
     }

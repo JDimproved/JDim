@@ -6,7 +6,7 @@
 #ifndef _ENTRY_H
 #define _ENTRY_H
 
-#include "control.h"
+#include "control/control.h"
 
 #include <gtkmm.h>
 

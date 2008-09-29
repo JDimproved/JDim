@@ -12,7 +12,8 @@
 
 #include "jdlib/miscutil.h"
 
-#include "controlid.h"
+#include "control/controlid.h"
+
 #include "command.h"
 #include "jdversion.h"
 

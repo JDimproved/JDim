@@ -5,7 +5,7 @@
 
 #include <gtkmm.h>
 
-#include "control.h"
+#include "control/control.h"
 
 namespace SKELETON
 {

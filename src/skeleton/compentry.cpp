@@ -5,7 +5,8 @@
 
 #include "compentry.h"
 
-#include "controlid.h"
+#include "control/controlid.h"
+
 #include "compmanager.h"
 
 using namespace SKELETON;

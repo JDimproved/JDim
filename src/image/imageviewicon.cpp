@@ -11,12 +11,13 @@
 
 #include "jdlib/miscutil.h"
 
+#include "control/controlid.h"
+
 #include "type.h"
 #include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "cache.h"
 #include "command.h"
-#include "controlid.h"
 
 
 // 枠を描く

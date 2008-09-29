@@ -10,8 +10,9 @@
 
 #include "jdlib/refptr_lock.h"
 
+#include "control/control.h"
+
 #include "colorid.h"
-#include "control.h"
 #include "cssmanager.h"
 
 #include <gtkmm.h>

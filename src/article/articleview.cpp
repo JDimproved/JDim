@@ -18,11 +18,12 @@
 
 #include "sound/soundmanager.h"
 
+#include "control/controlid.h"
+
 #include "command.h"
 #include "global.h"
 #include "httpcode.h"
 #include "session.h"
-#include "controlid.h"
 
 #include <sstream>
 

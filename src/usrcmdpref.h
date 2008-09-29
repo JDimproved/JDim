@@ -9,7 +9,7 @@
 #include "skeleton/edittreeview.h"
 #include "skeleton/editcolumns.h"
 
-#include "control.h"
+#include "control/control.h"
 
 namespace CORE
 {

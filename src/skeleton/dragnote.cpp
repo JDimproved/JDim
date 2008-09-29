@@ -11,7 +11,7 @@
 
 #include "icons/iconmanager.h"
 
-#include "controlid.h"
+#include "control/controlid.h"
 
 using namespace SKELETON;
 

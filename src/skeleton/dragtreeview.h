@@ -13,7 +13,7 @@
 
 #include "tooltip.h"
 
-#include "control.h"
+#include "control/control.h"
 
 #include <gtkmm.h>
 

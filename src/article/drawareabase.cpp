@@ -25,9 +25,10 @@
 
 #include "icons/iconmanager.h"
 
+#include "control/controlid.h"
+
 #include "global.h"
 #include "httpcode.h"
-#include "controlid.h"
 #include "colorid.h"
 #include "fontid.h"
 #include "cache.h"
