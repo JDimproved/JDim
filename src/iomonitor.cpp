@@ -177,8 +177,6 @@ bool IOMonitor::slot_ioin( Glib::IOCondition io_condition )
     }
 
     Glib::ustring buffer;
-
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
     Glib::IOStatus io_status;
 
     // 最大で COMMAND_MAX_LENGTH まで読み出す
@@ -188,19 +186,6 @@ bool IOMonitor::slot_ioin( Glib::IOCondition io_condition )
     {
         MISC::ERRMSG( "IOMonitor::slot_ioin(): read error." );
     }
-
-#else
-    // GLIBMM_EXCEPTIONS_ENABLED が未定義の環境では未テストなので
-    // 問題があるかも知れない
-    std::auto_ptr< Glib::Error > ex;
-    m_iochannel->read( buffer, COMMAND_MAX_LENGTH, ex );
-
-    if( ex.get() )
-    {
-        MISC::ERRMSG( std::string( "IOMonitor::slot_ioin(): read_error. " ) + ex->what() );
-    }
-
-#endif // GLIBMM_EXCEPTIONS_ENABLED
 
 #ifdef _DEBUG
     std::cout << "入力文字: " << buffer << std::endl;

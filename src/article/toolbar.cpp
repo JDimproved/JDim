@@ -12,6 +12,10 @@
 #include "control/controlutil.h"
 #include "control/controlid.h"
 
+#if GTKMMVER <= 240
+#include "icons/iconmanager.h"
+#endif
+
 #include "command.h"
 #include "session.h"
 #include "compmanager.h"
@@ -149,7 +153,11 @@ void ArticleToolBar::pack_buttons()
 
             case ITEM_LIVE:
                 if( ! m_button_live_play_stop ){
+#if GTKMMVER <= 240
+                    m_button_live_play_stop = Gtk::manage( new SKELETON::ImgToggleToolButton( ICON::PLAY ) );
+#else
                     m_button_live_play_stop = Gtk::manage( new SKELETON::ImgToggleToolButton( Gtk::Stock::MEDIA_PLAY ) );
+#endif
                     set_tooltip( *m_button_live_play_stop, CONTROL::get_label_motions( CONTROL::LiveStartStop ) );
                     m_button_live_play_stop->set_label( CONTROL::get_label( CONTROL::LiveStartStop ) );
                     m_button_live_play_stop->signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_live_play_stop ) );

@@ -31,7 +31,11 @@ ArticleItemPref::ArticleItemPref( Gtk::Window* parent, const std::string& url )
     append_default_pair( ITEM_NAME_PREVVIEW, STOCK_ICON( Gtk::Stock::GO_BACK ), false );
     append_default_pair( ITEM_NAME_NEXTVIEW, STOCK_ICON( Gtk::Stock::GO_FORWARD ), false );
     append_default_pair( ITEM_NAME_LOCK, STOCK_ICON( Gtk::Stock::NO ), false );
+#if GTKMMVER <= 240
+    append_default_pair( ITEM_NAME_LIVE, ICON::get_icon( ICON::PLAY ), false );
+#else
     append_default_pair( ITEM_NAME_LIVE, STOCK_ICON( Gtk::Stock::MEDIA_PLAY ), false );
+#endif
     append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
 
     // 文字列を元に行を追加

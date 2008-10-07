@@ -37,6 +37,10 @@
 #include "image.h"
 #include "link.h"
 
+#if GTKMMVER <= 240
+#include "play.h"
+#endif
+
 
 ICON::ICON_Manager* instance_icon_manager = NULL;
 
@@ -103,6 +107,10 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::THREAD_OLD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread_old ), icon_thread_old );
     m_list_icons[ ICON::IMAGE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_image ), icon_image );
     m_list_icons[ ICON::LINK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_link ), icon_link );
+
+#if GTKMMVER <= 240
+    m_list_icons[ ICON::PLAY ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_play ), icon_play );
+#endif
 
     m_list_icons[ ICON::TRANSPARENT ] = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, true, 8, 1, 1 );
     m_list_icons[ ICON::TRANSPARENT ]->fill( 0 );
