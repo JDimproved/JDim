@@ -15,7 +15,10 @@ namespace SKELETON
 {
     class JDWindow : public Gtk::Window
     {
+        GtkWidget* m_gtkwidget;
         GtkWindow *m_gtkwindow;
+        gpointer m_grand_parent_class;
+
         bool m_win_moved;
 
         // フォーカスアウト時の折りたたみ処理で用いるメンバ変数

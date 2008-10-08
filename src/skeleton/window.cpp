@@ -48,7 +48,9 @@ using namespace SKELETON;
 // メッセージウィンドウでは m_mginfo が不要なので need_mginfo = false になる
 JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
+      m_gtkwidget( NULL ),
       m_gtkwindow( NULL ),
+      m_grand_parent_class( NULL ),
       m_win_moved( false ),
       m_fold_when_focusout( fold_when_focusout ),
       m_boot( true ),
@@ -83,7 +85,10 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
 
     add( m_vbox );
 
-    m_gtkwindow = dynamic_cast< GtkWindow* >( gobj() );
+    m_gtkwidget = GTK_WIDGET( gobj() );
+    m_gtkwindow = GTK_WINDOW( gobj() );
+    gpointer parent_class = g_type_class_peek_parent( G_OBJECT_GET_CLASS( gobj() ) );
+    m_grand_parent_class = g_type_class_peek_parent( parent_class );
 }
 
 
@@ -696,22 +701,22 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
 }
 
 
+// uimなど、漢字変換モードの途中でctrl+qを押すとキーアクセレータが
+// 優先されてJDが終了する問題があった。
+//
+// gedit-window.c の gedit_window_key_press_event を見ると
+// gtk_window_propagate_key_event() を実行した後でキーアクセレータ
+// の処理をするようにしていたのでJDもそうした。
 bool JDWindow::on_key_press_event( GdkEventKey* event )
 {
-    // uimなど、漢字変換モードの途中でctrl+qを押すとキーアクセレータが
-    // 優先されてJDが終了する問題があった。
-    //
-    // gedit-window.c の gedit_window_key_press_event を見ると
-    // gtk_window_propagate_key_event() を実行した後でキーアクセレータ
-    // の処理をするようにしていたのでJDもそうした。
-    if( m_gtkwindow ){
+    if( gtk_window_propagate_key_event( m_gtkwindow, event ) ) return true;
 
-        if( gtk_window_propagate_key_event( m_gtkwindow, event ) ) return true;
+    if( gtk_window_activate_key( m_gtkwindow, event ) ) return true;
 
 #ifdef _DEBUG
-        std::cout << "JDWindow::on_key_press_event key = " << event->keyval << std::endl;
+    std::cout << "JDWindow::on_key_press_event key = " << event->keyval << std::endl;
+    std::cout << m_grand_parent_class << " - " << m_gtkwidget << std::endl;
 #endif
-    }
 
-    return Gtk::Window::on_key_press_event( event );
+    return GTK_WIDGET_CLASS( m_grand_parent_class )->key_press_event( m_gtkwidget, event );
 }
