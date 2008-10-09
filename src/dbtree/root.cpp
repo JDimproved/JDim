@@ -54,6 +54,7 @@ Root::Root()
     : SKELETON::Loadable()
     , m_rawdata ( 0 )
     , m_lng_rawdata( 0 )
+    , m_analyzing_board_xml( false )
     , m_board_null( 0 )
     , m_get_board( NULL )
 {
@@ -396,6 +397,8 @@ void Root::analyze_board_xml()
 #endif
 
     m_move_info = std::string();
+    m_analyzing_board_xml = true;
+    m_analyzed_path_board.clear();
 
     XML::DomList boards = m_document.getElementsByTagName( "board" );
 
@@ -421,6 +424,9 @@ void Root::analyze_board_xml()
         //移転テーブル保存
         save_movetable();
     }
+
+    m_analyzing_board_xml = false;
+    m_analyzed_path_board.clear();
 }
 
 
@@ -501,7 +507,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 
     // 移転チェック
     BoardBase* board = NULL;
-    int stat = is_moved( root, path_board, name, &board );
+    const int stat = is_moved( root, path_board, name, &board );
 
 #ifdef _SHOW_BOARD
     std::cout << "root = " << root << " path_board = " << path_board
@@ -512,18 +518,59 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     if( stat == BOARD_NEW ){
 
         board = DBTREE::BoardFactory( type, root, path_board, name, basicauth );
-        if( board ) m_list_board.push_back( board );
-
+        if( board ){
+            m_list_board.push_back( board );
+            if( m_analyzing_board_xml ) m_analyzed_path_board.insert( path_board );
+        }
     }
 
     // 移転処理
     else if( stat == BOARD_MOVED ){
 
-        if( ! exec_move_board( board,
-                             board->get_root(),
-                             board->get_path_board(),
-                             root,
-                             path_board ) ) return false;
+        // XML解析中に、
+        // <board name="ニュース実況+" url="http://anchorage.2ch.net/liveplus/" />
+        // <board name="ニュース実況+" url="http://gimpo.2ch.net/liveplus/" />
+        // のように同じ板で異なるアドレスが現れた場合は、移転処理をせずにキャッシュが存在する方のアドレスを残す
+        if( m_analyzing_board_xml && m_analyzed_path_board.find( path_board ) != m_analyzed_path_board.end() ){
+
+            std::string tmp_msg = "Root::set_board : The XML file is broken !\n";
+            tmp_msg += url + " has already been registerd as " + board->url_boardbase();
+            MISC::ERRMSG( tmp_msg );
+
+            const std::string path1 = CACHE::path_board_root_fast( board->url_boardbase() );
+            const std::string path2 = CACHE::path_board_root_fast( url );
+
+#ifdef _DEBUG
+            std::cout << "path1 = " << path1 << std::endl
+                      << "path2 = " << path2 << std::endl;
+#endif
+            // キャッシュが存在する方を正しいアドレスとする
+            if( CACHE::file_exists( path1 ) == CACHE::EXIST_DIR ){
+#ifdef _DEBUG
+                std::cout << "path1 exists\n";
+#endif
+                // 既に登録済みなので何もしない
+            }
+            else if( CACHE::file_exists( path2 ) == CACHE::EXIST_DIR ){
+#ifdef _DEBUG
+                std::cout << "path2 exists\n";
+#endif
+                // url の方を登録する
+                board->update_url( root, path_board ); 
+            }
+        }
+
+        // 移転処理実行
+        else{
+
+            if( ! exec_move_board( board,
+                                   board->get_root(),
+                                   board->get_path_board(),
+                                   root,
+                                   path_board ) ) return false;
+
+            if( m_analyzing_board_xml ) m_analyzed_path_board.insert( path_board );
+        }
     }
 
     return true;

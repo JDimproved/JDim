@@ -15,6 +15,7 @@
 
 #include <string>
 #include <list>
+#include <set>
 
 namespace DBTREE
 {
@@ -58,7 +59,11 @@ namespace DBTREE
         char* m_rawdata;
         size_t m_lng_rawdata;
         std::list< DBTREE::ETCBOARDINFO > m_etcboards; // 外部板情報
-        std::string m_move_info;
+
+        // 移転処理用変数
+        bool m_analyzing_board_xml;  // XML 解析中
+        std::set< std::string > m_analyzed_path_board; // XML 解析中に処理済みの板のpath
+        std::string m_move_info;  // 移転したときにダイアログに表示する移転済み板の一覧
 
         // NULL board クラス
         BoardBase* m_board_null;
