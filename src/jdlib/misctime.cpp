@@ -3,6 +3,10 @@
 //#define _DEBUG
 #include "jddebug.h"
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "misctime.h"
 
 #include <sstream>
@@ -49,7 +53,11 @@ time_t MISC::datetotime( const std::string& date )
     memset( &tm_out, 0, sizeof( struct tm ) );
     if( strptime( date.c_str(), "%a, %d %b %Y %T %Z", &tm_out ) == NULL ) return 0;
 
+#ifdef USE_MKTIME
+    time_t t_ret = mktime( &tm_out );
+#else
     time_t t_ret = timegm( &tm_out );
+#endif
 
 #ifdef _DEBUG
     std::cout << "MISC::datetotime " << date << " -> " << t_ret << std::endl;
