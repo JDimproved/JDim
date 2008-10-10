@@ -144,7 +144,7 @@ void AboutConfig::append_rows()
     append_row( "スレビューで上下キーを押したときのスクロール速度", get_confitem()->key_scroll_size, CONF_KEY_SCROLL_SIZE );
     append_row( "スレビューでpageup、pagedownキーを押したときのスクロール速度", get_confitem()->key_fastscroll_size, CONF_KEY_FASTSCROLL_SIZE );
     append_row( "リロード後に末尾に自動的に移動する", get_confitem()->jump_after_reload, CONF_JUMP_AFTER_RELOAD );
-    append_row( "リロード後に新着スレに自動的に移動する", get_confitem()->jump_new_after_reload, CONF_JUMP_NEW_AFTER_RELOAD );
+    append_row( "リロード後に新着レスに自動的に移動する", get_confitem()->jump_new_after_reload, CONF_JUMP_NEW_AFTER_RELOAD );
     append_row( "ポップアップとカーソルの間のマージン(ピクセル)", get_confitem()->margin_popup, CONF_MARGIN_POPUP );
     append_row( "画像ポップアップとカーソルの間のマージン(ピクセル)", get_confitem()->margin_imgpopup, CONF_MARGIN_IMGPOPUP );
     append_row( "多重ポップアップの説明を表示する", get_confitem()->instruct_popup, CONF_INSTRUCT_POPUP );    
