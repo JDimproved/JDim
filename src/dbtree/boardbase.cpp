@@ -1694,10 +1694,11 @@ void BoardBase::save_board_info()
 
         std::list< std::string > lists = MISC::get_elisp_lists( str_info );
         std::list< std::string >::iterator it = lists.begin();
-        bookmark = *( it++ );
-        hide = *( it++ );
-        ++it;
-        logo = *( it++ );
+        for( ; it != lists.end(); ++it ){
+            if( ( *it ).find( "bookmark" ) != std::string::npos ) bookmark = *it;
+            if( ( *it ).find( "hide" ) != std::string::npos ) hide = *it;
+            if( ( *it ).find( "logo" ) != std::string::npos ) logo = *it;
+        }
     }
 
     std::string str_out = "(" + bookmark + " " + hide + " " + time + " " + logo + ")";
