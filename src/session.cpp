@@ -216,6 +216,9 @@ std::vector< int > parse_items( const std::string& items_str )
 void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls, const std::string& id_locked,
                      std::list< std::string >& list_urls , std::list< bool >& list_locked )
 {
+    list_urls.clear();
+    list_locked.clear();
+
     std::string str_tmp;
     std::list< std::string > list_tmp;
     std::list< std::string >::iterator it_tmp;
@@ -226,6 +229,8 @@ void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls, const st
         it_tmp = list_tmp.begin();
         for( ; it_tmp != list_tmp.end(); ++it_tmp ) if( !(*it_tmp).empty() ) list_urls.push_back( (*it_tmp));
     }
+
+    if( ! list_urls.size() ) return;
 
     str_tmp = cf.get_option( id_locked, "");
     if( ! str_tmp.empty() ){

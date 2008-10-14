@@ -3265,8 +3265,18 @@ void Core::exec_command()
         BOARD::get_admin()->set_command( "restore", "", ( CONFIG::get_restore_board() ? "" : "only_locked" ) );
         ARTICLE::get_admin()->set_command( "restore", "", ( CONFIG::get_restore_article() ? "" : "only_locked" ) );
 
+        // ロックされている画像があるか調べる
+        bool img_locked = false;
+        if( ! CONFIG::get_restore_image() ){
+            std::list< bool > list_locked = SESSION::get_image_locked();
+            std::list< bool >::iterator it_locked = list_locked.begin();
+            for( ; it_locked != list_locked.end(); ++it_locked ){
+                if( ( *it_locked ) ){ img_locked = true; break; }
+            }
+        }
+
         if( SESSION::image_URLs().size() &&
-            ( CONFIG::get_restore_image() || SESSION::get_image_locked().size() ) ){
+            ( CONFIG::get_restore_image() || img_locked ) ){
 
             show_imagetab();
 
@@ -3526,7 +3536,7 @@ void Core::exec_command_after_boot()
 // force : true の時は強制的に回復(処理が重い)
 // present : フォーカス回復後にメインウィンドウをpresentする
 //
-void Core::restore_focus( bool force, bool present )
+void Core::restore_focus( const bool force, const bool present )
 {
     int admin = SESSION::focused_admin();
 
@@ -3654,6 +3664,7 @@ int Core::get_right_current_page()
     if( mode == SESSION::MODE_2PANE ){
 
         // 2paneで画像ビューをウィンドウ表示している場合
+        // 1 ページ目はIMAGEではなくてBOARDになる
         if( ! SESSION::get_embedded_img() && page == 1 ) page = PAGE_BOARD;
     }
 
@@ -3664,6 +3675,26 @@ int Core::get_right_current_page()
 // 右ペーンのnotebookのページをセット
 void Core::set_right_current_page( int page )
 {
+    // page が empty でないか調べる
+    if( page == PAGE_ARTICLE && ARTICLE::get_admin()->empty() ){
+
+        if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && ! BOARD::get_admin()->empty() ) page = PAGE_BOARD;
+        else if( ! IMAGE::get_admin()->empty() ) page = PAGE_IMAGE;
+        else return;
+    }
+    if( page == PAGE_BOARD && BOARD::get_admin()->empty() ){
+
+        if( ! ARTICLE::get_admin()->empty() ) page = PAGE_ARTICLE;
+        else if( ! IMAGE::get_admin()->empty() ) page = PAGE_IMAGE;
+        else return;
+    }
+    if( page == PAGE_IMAGE && IMAGE::get_admin()->empty() ){
+
+        if( ! ARTICLE::get_admin()->empty() ) page = PAGE_ARTICLE;
+        else if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && ! BOARD::get_admin()->empty() ) page = PAGE_BOARD;
+        else return;
+    }
+
     if( get_right_current_page() == page ) return;
 
     // 画像ビューをウィンドウ表示している場合
@@ -3672,6 +3703,7 @@ void Core::set_right_current_page( int page )
     if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
 
         // 2paneで画像ビューをウィンドウ表示している場合
+        // 1 ページ目はIMAGEではなくてBOARDになる
         if( ! SESSION::get_embedded_img() && page == PAGE_BOARD ) page = 1;
     }
     else if( page == PAGE_BOARD ) return; // 2pane以外ではboardはnotebookに含まれない

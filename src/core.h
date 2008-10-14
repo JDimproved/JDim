@@ -230,7 +230,7 @@ namespace CORE
         void exec_command_after_boot();
 
         // フォーカス回復
-        void restore_focus( bool force, bool present );
+        void restore_focus( const bool force, const bool present );
 
         // メインタイマー
         bool slot_timeout( int timer_number );
