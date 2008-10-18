@@ -190,6 +190,9 @@ const bool ConfigItems::load()
     // 画像にモザイクをかける
     use_mosaic = cf.get_option( "use_mosaic", CONF_USE_MOSAIC );
 
+    // モザイクの大きさ
+    mosaic_size = cf.get_option( "mosaic_size", CONF_MOSAIC_SIZE );
+
     // 画像をデフォルトでウィンドウサイズに合わせる
     zoom_to_fit = cf.get_option( "zoom_to_fit", CONF_ZOOM_TO_FIT );
 
@@ -506,6 +509,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_image_view", use_image_view );
     cf.update( "use_inline_image", use_inline_image );
     cf.update( "use_mosaic", use_mosaic );
+    cf.update( "mosaic_size", mosaic_size );
     cf.update( "zoom_to_fit", zoom_to_fit );
     cf.update( "del_img_day", del_img_day );
     cf.update( "del_imgabone_day", del_imgabone_day );

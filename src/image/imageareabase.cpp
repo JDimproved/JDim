@@ -11,6 +11,7 @@
 #include "dbimg/imginterface.h"
 #include "dbimg/img.h"
 
+#include "config/globalconf.h"
 
 //
 // スレッドのランチャ
@@ -223,11 +224,31 @@ void ImageAreaBase::set_image()
 //
 void ImageAreaBase::set_mosaic( Glib::RefPtr< Gdk::Pixbuf > pixbuf )
 {
-    int size_mosaic = 20;  // モザイク画像は 1/size_mosaic にしてもとのサイズに直す
-    if( get_width() / size_mosaic < 16 ) size_mosaic = MAX( 1, get_width() / 16 );
+    // 一旦横幅を size ピクセルまで縮めてから元のサイズに戻す
+    const int size = MAX( 1, CONFIG::get_mosaic_size() );
+
+    int width = get_width();
+    int height = get_height();
+
+    if( width <= size );
+    else{
+
+        if( width > height ){
+
+            const int dev = MAX( 1, width / size );
+            height = height / dev;
+            width = size;
+        }
+        else{
+
+            const int dev = MAX( 1, height / size );
+            height = size;
+            width = width / dev;
+        }
+    };
 
     Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
-    pixbuf2 = pixbuf->scale_simple( MAX( 1, get_width() / size_mosaic ),
-                                    MAX( 1, get_height() / size_mosaic ), Gdk::INTERP_NEAREST );
+    pixbuf2 = pixbuf->scale_simple( MAX( 1, width ),
+                                    MAX( 1, height ), Gdk::INTERP_NEAREST );
     set( pixbuf2->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST ) );
 }

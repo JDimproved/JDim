@@ -112,6 +112,9 @@ namespace CONFIG
         // 画像にモザイクかける
         bool use_mosaic;
 
+        // モザイクの大きさ
+        int mosaic_size;
+
         // 画像をデフォルトでウィンドウサイズに合わせる
         bool zoom_to_fit;
 

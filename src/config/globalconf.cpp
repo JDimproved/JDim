@@ -191,6 +191,7 @@ void CONFIG::set_use_inline_image( bool inline_img ){ get_confitem()->use_inline
 
 const bool CONFIG::get_use_mosaic(){ return get_confitem()->use_mosaic; }
 void CONFIG::set_use_mosaic( bool mosaic ) { get_confitem()->use_mosaic = mosaic; }
+const int CONFIG::get_mosaic_size(){ return get_confitem()->mosaic_size; }
 const bool CONFIG::get_zoom_to_fit(){ return get_confitem()->zoom_to_fit; }
 void CONFIG::set_zoom_to_fit( bool fit ){ get_confitem()->zoom_to_fit = fit; }
 const int CONFIG::get_del_img_day(){ return get_confitem()->del_img_day; }

@@ -85,6 +85,7 @@ namespace CONFIG
         CONF_USE_IMAGE_VIEW = 1,    // 画像ビューを使用する
         CONF_INLINE_IMG = 0,        // インライン画像を表示する
         CONF_USE_MOSAIC = 1,        // 画像にモザイクをかける
+        CONF_MOSAIC_SIZE = 60,        // モザイクの大きさ
         CONF_ZOOM_TO_FIT = 1,       // 画像をデフォルトでウィンドウサイズに合わせる
         CONF_DEL_IMG_DAY = 20,      // 画像キャッシュ削除の日数
         CONF_DEL_IMGABONE_DAY = 20, // 画像あぼーん削除の日数

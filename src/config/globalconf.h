@@ -180,6 +180,9 @@ namespace CONFIG
     const bool get_use_mosaic();
     void set_use_mosaic( bool mosaic );
 
+    // モザイクの大きさ
+    const int get_mosaic_size();
+
     // 画像をデフォルトでウィンドウサイズに合わせる
     const bool get_zoom_to_fit();
     void set_zoom_to_fit( bool fit );
