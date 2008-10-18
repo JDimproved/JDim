@@ -75,6 +75,7 @@ namespace CONFIG
         void append_row( const std::string& name, std::string& value, const std::string& defaultval );
         void append_row( const std::string& name, int& value, const int defaultval );
         void append_row( const std::string& name, bool& value, const bool defaultval );
+        void append_row( const std::string& comment );
 
         void set_value( Gtk::TreeModel::Row& row, const std::string& value );
         void set_value( Gtk::TreeModel::Row& row, const int& value );
