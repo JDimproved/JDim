@@ -181,6 +181,7 @@ namespace DBTREE
         bool is_2ch( const std::string& url );
         bool is_JBBS( const std::string& url );
         bool is_machi( const std::string& url );
+        bool is_vip2ch( const std::string& url );
     };
 }
 

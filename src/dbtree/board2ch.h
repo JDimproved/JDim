@@ -29,10 +29,6 @@ namespace DBTREE
         // 書き込み用クッキー
         virtual const std::string cookie_for_write();
 
-        // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
-        // 確認画面のhtmlから解析する      
-        virtual void analyze_keyword_for_write( const std::string& html );
-
         // 新スレ作成用のメッセージ変換
         virtual const std::string create_newarticle_message( const std::string& subject,
                                                              const std::string& name, const std::string& mail, const std::string& msg );

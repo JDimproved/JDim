@@ -171,6 +171,63 @@ const std::string Board2chCompati::cookie_for_write()
 }
 
 
+// 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
+// 確認画面のhtmlから解析する      
+void Board2chCompati::analyze_keyword_for_write( const std::string& html )
+{
+    std::string keyword;
+
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::analyze_keyword_for_write\n";
+    std::cout << html << std::endl << "--------------------\n";
+#endif
+
+    JDLIB::Regex regex;
+    size_t offset = 0;
+
+    for(;;){
+
+        // <input type=hidden> のタグを解析して name と value を取得
+        if( ! regex.exec( "<input +type=hidden +name=([^ ]*) +value=([^>]*)>", html, offset, true, false ) ) break;
+
+        offset = html.find( regex.str( 0 ) );
+
+        std::string name = MISC::remove_space( regex.str( 1 ) );
+        if( name[ 0 ] == '\"' ) name = MISC::cut_str( name, "\"", "\"" );
+
+        std::string value = MISC::remove_space( regex.str( 2 ) );
+        if( value[ 0 ] == '\"' ) value = MISC::cut_str( value, "\"", "\"" );
+
+#ifdef _DEBUG
+        std::cout << "offset = " << offset << " "
+                  << regex.str( 0 ) << std::endl
+                  << "name = " << name << " value = " << value << std::endl;
+#endif
+        ++offset;
+
+        // 除外する name の判定
+        // 2ch の仕様が変わったら項目を追加すること
+        const std::string lowname = MISC::tolower_str( name );
+        if( lowname == "subject"
+            || lowname == "from"
+            || lowname == "mail"
+            || lowname == "message"
+            || lowname == "bbs"
+            || lowname == "time"
+            || lowname == "key" ) continue;
+
+        // キーワード取得
+        if( ! keyword.empty() ) keyword += "&";
+        keyword += MISC::charset_url_encode( name, get_charset() ) + "=" + MISC::charset_url_encode( value, get_charset() );
+    }
+
+#ifdef _DEBUG
+    std::cout << "keyword = " << keyword << std::endl;
+#endif
+
+    set_keyword_for_write( keyword );
+}
+
 
 // 新スレ作成時の書き込みメッセージ作成
 const std::string Board2chCompati::create_newarticle_message( const std::string& subject,

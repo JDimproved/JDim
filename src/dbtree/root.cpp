@@ -368,7 +368,9 @@ void Root::bbsmenu2xml( const std::string& menu )
             if( CONFIG::use_link_as_board() ) element_name = "board";
             else if( ( regex.exec( "^http://.*/.*/$", url ) && is_2ch( url ) )
                      || is_machi( url )
-                     || is_JBBS( url ) ) element_name = "board";
+                     || is_JBBS( url )
+                     || is_vip2ch( url )
+                ) element_name = "board";
             else element_name = "link";
 
             XML::Dom* board = subdir->appendChild( XML::NODE_TYPE_ELEMENT, element_name );
@@ -468,6 +470,17 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
             path_board = "/" + regex.str( 2 );
 
             type = TYPE_BOARD_MACHI;
+        }
+    }
+
+    // vipサービス
+    else if( is_vip2ch( url ) ){
+
+        if( regex.exec( "(http://[^/]*)/([^/]*)/$" , url ) ){
+            root = regex.str( 1 );
+            path_board = "/" + regex.str( 2 );
+
+            type = TYPE_BOARD_2CH_COMPATI;
         }
     }
 
@@ -1382,6 +1395,19 @@ bool Root::is_machi( const std::string& url )
     std::string hostname = MISC::get_hostname( url );
 
     if( hostname.find( ".machi.to" ) != std::string::npos ) return true;
+
+    return false;
+}
+
+
+//
+// vipサービスのURLか
+//
+bool Root::is_vip2ch( const std::string& url )
+{
+    std::string hostname = MISC::get_hostname( url );
+
+    if( hostname.find( ".vip2ch.com" ) != std::string::npos ) return true;
 
     return false;
 }
