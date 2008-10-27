@@ -10,17 +10,13 @@
 
 namespace CONTROL
 {
-    class KeyConfig;
-
-    KeyConfig* get_keyconfig();
-    void delete_keyconfig();
-
-    // 設定の一時的なバックアップと復元
-    void bkup_keyconfig();
-    void restore_keyconfig();
-
     void load_conf();
     void save_conf();
+    void delete_conf();
+
+
+    ///////////////////////
+
 
     // keysymはアスキー文字か
     const bool is_ascii( const guint keysym );
@@ -32,6 +28,10 @@ namespace CONTROL
     // 例えば id == CONTROL::Up の時は CONTROL::COMMONMOTION を返す
     const int get_mode( const int id );
 
+    // 操作モードIDからモード名取得
+    // 例えば mode == CONTROL::MODE_COMMON の時は "共通" を返す
+    const std::string get_mode_label( const int mode );
+    
     // キー名からkeysymを取得
     // 例えば keyname == "Space" の時は GDK_space を返す
     const guint get_keysym( const std::string& keyname );
@@ -56,6 +56,20 @@ namespace CONTROL
     // 例えば id == CONTROL::Save の時は "名前を付けて保存(_S)..." を返す
     const std::string get_label_with_mnemonic( const int id );
 
+    // IDからキーボードとマウスジェスチャの両方を取得
+    const std::string get_str_motions( const int id );
+
+    // IDからラベルと操作の両方を取得
+    const std::string get_label_motions( const int id );
+
+
+    ///////////////////////
+
+
+    // キーボード設定の一時的なバックアップと復元
+    void bkup_keyconfig();
+    void restore_keyconfig();
+
     // IDからキーボード操作を取得
     const std::string get_str_keymotions( const int id );
 
@@ -68,20 +82,74 @@ namespace CONTROL
     // 指定したIDのキーボード操作を全て削除
     const bool remove_keymotions( const int id );
 
-    // IDからマウス操作を取得
+    // キーボード操作が重複していないか
+    const std::vector< int > check_key_conflict( const int mode, const std::string& str_motion );
+
+    // editviewの操作をemacs風にする
+    const bool is_emacs_mode();
+    void toggle_emacs_mode();
+
+    // 「タブで開く」キーを入れ替える
+    const bool is_toggled_tab_key();
+    void toggle_tab_key( const bool toggle ); 
+
+
+    ///////////////////////
+
+
+    // マウスジェスチャ設定の一時的なバックアップと復元
+    void bkup_mouseconfig();
+    void restore_mouseconfig();
+
+    // IDからマウスジェスチャを取得
     const std::string get_str_mousemotions( const int id );
 
-    // IDからキーボードとマウス操作の両方を取得
-    const std::string get_str_motions( const int id );
+    // IDからデフォルトマウスジェスチャを取得
+    const std::string get_default_mousemotions( const int id );
 
-    // IDからラベルと操作の両方を取得
-    const std::string get_label_motions( const int id );
+    // スペースで区切られた複数のマウスジェスチャをデータベースに登録
+    void set_mousemotions( const std::string& name, const std::string& str_motions );
 
-    // キーボード操作が重複していないか
-    const int check_key_conflict( const int mode, const std::string& str_motion );
-    const int check_key_conflict( const int mode,
-                                  const guint keysym, const bool ctrl, const bool shift, const bool alt );
+    // 指定したIDのマウスジェスチャを全て削除
+    const bool remove_mousemotions( const int id );
 
+    // マウスジェスチャが重複していないか
+    const std::vector< int > check_mouse_conflict( const int mode, const std::string& str_motion );
+
+
+    ///////////////////////
+
+
+    // ボタン設定の一時的なバックアップと復元
+    void bkup_buttonconfig();
+    void restore_buttonconfig();
+
+    // IDからボタン設定を取得
+    const std::string get_str_buttonmotions( const int id );
+
+    // IDからデフォルトボタン設定を取得
+    const std::string get_default_buttonmotions( const int id );
+
+    // スペースで区切られた複数のボタン設定をデータベースに登録
+    void set_buttonmotions( const std::string& name, const std::string& str_motions );
+
+    // 指定したIDのボタン設定を全て削除
+    const bool remove_buttonmotions( const int id );
+
+    // ボタンが重複していないか
+    const std::vector< int > check_button_conflict( const int mode, const std::string& str_motion );
+
+
+    ///////////////////////
+
+
+    // タブで開くボタンを入れ替える
+    const bool is_toggled_tab_button(); 
+    void toggle_tab_button( const bool toggle );
+
+    // ポップアップ表示の時にクリックでワープ
+    const bool is_popup_warpmode(); 
+    void toggle_popup_warpmode();
 }
 
 #endif

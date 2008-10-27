@@ -4,12 +4,16 @@
 #include "jddebug.h"
 
 #include "controlutil.h"
+#include "get_config.h"
 #include "controlid.h"
 #include "controllabel.h"
 #include "keysyms.h"
+
 #include "keyconfig.h"
 #include "mouseconfig.h"
 #include "buttonconfig.h"
+
+#include "jdlib/miscutil.h"
 
 #include "cache.h"
 
@@ -18,6 +22,18 @@
 
 CONTROL::KeyConfig* instance_keyconfig = NULL;
 CONTROL::KeyConfig* instance_keyconfig_bkup = NULL;
+
+
+CONTROL::MouseConfig* instance_mouseconfig = NULL;
+CONTROL::MouseConfig* instance_mouseconfig_bkup = NULL;
+
+
+CONTROL::ButtonConfig* instance_buttonconfig = NULL;
+CONTROL::ButtonConfig* instance_buttonconfig_bkup = NULL;
+
+
+//////////////////////////////////////////////////////////
+
 
 CONTROL::KeyConfig* CONTROL::get_keyconfig()
 {
@@ -37,16 +53,39 @@ void CONTROL::delete_keyconfig()
 }
 
 
-void CONTROL::bkup_keyconfig()
+CONTROL::MouseConfig* CONTROL::get_mouseconfig()
 {
-    if( ! instance_keyconfig_bkup ) instance_keyconfig_bkup = new CONTROL::KeyConfig();
-    *instance_keyconfig_bkup = * instance_keyconfig;
+    if( ! instance_mouseconfig ) instance_mouseconfig = new CONTROL::MouseConfig();
+
+    return instance_mouseconfig;
 }
 
-void CONTROL::restore_keyconfig()
+
+void CONTROL::delete_mouseconfig()
 {
-    if( ! instance_keyconfig_bkup ) return;
-    *instance_keyconfig = * instance_keyconfig_bkup;
+    if( instance_mouseconfig ) delete instance_mouseconfig;
+    instance_mouseconfig = NULL;
+
+    if( instance_mouseconfig_bkup ) delete instance_mouseconfig_bkup;
+    instance_mouseconfig_bkup = NULL;
+}
+
+
+CONTROL::ButtonConfig* CONTROL::get_buttonconfig()
+{
+    if( ! instance_buttonconfig ) instance_buttonconfig = new CONTROL::ButtonConfig();
+
+    return instance_buttonconfig;
+}
+
+
+void CONTROL::delete_buttonconfig()
+{
+    if( instance_buttonconfig ) delete instance_buttonconfig;
+    instance_buttonconfig = NULL;
+
+    if( instance_buttonconfig_bkup ) delete instance_buttonconfig_bkup;
+    instance_buttonconfig_bkup = NULL;
 }
 
 
@@ -64,6 +103,17 @@ void CONTROL::save_conf()
     CONTROL::get_mouseconfig()->save_conf( CACHE::path_mouseconf() );
     CONTROL::get_buttonconfig()->save_conf( CACHE::path_buttonconf() );
 }
+
+
+void CONTROL::delete_conf()
+{
+    CONTROL::delete_keyconfig();
+    CONTROL::delete_mouseconfig();
+    CONTROL::delete_buttonconfig();
+}
+
+
+/////////////////////////////////////////////////////////
 
 
 // keysymはアスキー文字か
@@ -128,6 +178,16 @@ const int CONTROL::get_mode( const int id )
     if( id < CONTROL::EDITMOTION_END ) return CONTROL::MODE_EDIT;
 
     return CONTROL::MODE_ERROR;
+}
+
+
+// 操作モードIDからモード名取得
+// 例えば mode == CONTROL::MODE_COMMON の時は "共通" を返す
+const std::string CONTROL::get_mode_label( const int mode )
+{
+    if( mode < CONTROL::MODE_START || mode > MODE_END ) return std::string();
+
+    return CONTROL::mode_label[ mode ];
 }
 
 
@@ -226,65 +286,6 @@ const std::string CONTROL::get_label( const int id )
 
     return CONTROL::control_label[ id ][ 1 ];
 }
-
-
-// IDからキーボード操作を取得
-const std::string CONTROL::get_str_keymotions( const int id )
-{
-    return CONTROL::get_keyconfig()->get_str_motions( id );
-}
-
-
-// IDからデフォルトキーボード操作を取得
-const std::string CONTROL::get_default_keymotions( const int id )
-{
-    return CONTROL::get_keyconfig()->get_default_motions( id );
-}
-
-
-// スペースで区切られた複数のキーボード操作をデータベースに登録
-void CONTROL::set_keymotions( const std::string& name, const std::string& str_motions )
-{
-    CONTROL::get_keyconfig()->set_motions( name, str_motions );
-}
-
-
-// 指定したIDのキーボード操作を全て削除
-const bool CONTROL::remove_keymotions( const int id )
-{
-    return CONTROL::get_keyconfig()->remove_motions( id );
-}
-
-
-// IDからマウス操作を取得
-const std::string CONTROL::get_str_mousemotions( const int id )
-{
-    return CONTROL::get_mouseconfig()->get_str_motions( id );
-}
-
-
-// IDからキーボードとマウス操作の両方を取得
-const std::string CONTROL::get_str_motions( const int id )
-{
-    std::string str_motion = get_str_keymotions( id );
-    std::string mouse_motion = get_str_mousemotions( id );
-    if( ! mouse_motion.empty() ){
-        if( !str_motion.empty() ) str_motion += " ";
-        str_motion += "( " + mouse_motion + " )";
-    }
-
-    return str_motion;
-}
-
-
-
-// IDからラベルと操作の両方を取得
-const std::string CONTROL::get_label_motions( const int id )
-{
-    std::string motion = CONTROL::get_str_motions( id );
-    return CONTROL::get_label( id ) + ( motion.empty() ? "" :  "  " ) + motion;
-}
-
 
 
 // IDからショートカットを付けたラベルを取得
@@ -406,14 +407,261 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
 }
 
 
+// IDからキーボードとマウスジェスチャの両方を取得
+const std::string CONTROL::get_str_motions( const int id )
+{
+    std::string str_motion = get_str_keymotions( id );
+    std::string mouse_motion = get_str_mousemotions( id );
+    if( ! mouse_motion.empty() ){
+        if( !str_motion.empty() ) str_motion += " ";
+        str_motion += "( " + mouse_motion + " )";
+    }
+
+    return str_motion;
+}
+
+
+// IDからラベルと操作の両方を取得
+const std::string CONTROL::get_label_motions( const int id )
+{
+    std::string motion = CONTROL::get_str_motions( id );
+    return CONTROL::get_label( id ) + ( motion.empty() ? "" :  "  " ) + motion;
+}
+
+
+/////////////////////////////////////////////////////////
+
+
+
+// キーボード設定の一時的なバックアップと復元
+void CONTROL::bkup_keyconfig()
+{
+    if( ! instance_keyconfig_bkup ) instance_keyconfig_bkup = new CONTROL::KeyConfig();
+    *instance_keyconfig_bkup = * instance_keyconfig;
+}
+
+
+void CONTROL::restore_keyconfig()
+{
+    if( ! instance_keyconfig_bkup ) return;
+    *instance_keyconfig = * instance_keyconfig_bkup;
+}
+
+
+// IDからキーボード操作を取得
+const std::string CONTROL::get_str_keymotions( const int id )
+{
+    return CONTROL::get_keyconfig()->get_str_motions( id );
+}
+
+
+// IDからデフォルトキーボード操作を取得
+const std::string CONTROL::get_default_keymotions( const int id )
+{
+    return CONTROL::get_keyconfig()->get_default_motions( id );
+}
+
+
+// スペースで区切られた複数のキーボード操作をデータベースに登録
+void CONTROL::set_keymotions( const std::string& name, const std::string& str_motions )
+{
+    CONTROL::get_keyconfig()->set_motions( name, str_motions );
+}
+
+
+// 指定したIDのキーボード操作を全て削除
+const bool CONTROL::remove_keymotions( const int id )
+{
+    return CONTROL::get_keyconfig()->remove_motions( id );
+}
+
+
 // キーボード操作が重複していないか
-const int CONTROL::check_key_conflict( const int mode, const std::string& str_motion )
+const std::vector< int > CONTROL::check_key_conflict( const int mode, const std::string& str_motion )
 {
     return CONTROL::get_keyconfig()->check_conflict( mode, str_motion );
 }
 
-const int CONTROL::check_key_conflict( const int mode,
-                                       const guint keysym, const bool ctrl, const bool shift, const bool alt )
+
+// editviewの操作をemacs風にする
+const bool CONTROL::is_emacs_mode()
 {
-    return CONTROL::get_keyconfig()->check_conflict( mode, keysym, ctrl, shift, alt, false, false );
+    return CONTROL::get_keyconfig()->is_emacs_mode();
+}
+
+
+void CONTROL::toggle_emacs_mode()
+{
+    CONTROL::get_keyconfig()->toggle_emacs_mode();
+}
+
+
+// 「タブで開く」キーを入れ替える
+const bool CONTROL::is_toggled_tab_key()
+{
+    return CONTROL::get_keyconfig()->is_toggled_tab_key();
+}
+
+
+void CONTROL::toggle_tab_key( const bool toggle )
+{
+    CONTROL::get_keyconfig()->toggle_tab_key( toggle );
+}
+
+
+/////////////////////////////////////////////////////////
+
+
+const std::string convert_mouse_motions( std::string motions )
+{
+    motions = MISC::replace_str( motions, "8", "↑" );
+    motions = MISC::replace_str( motions, "6", "→" );
+    motions = MISC::replace_str( motions, "4", "←" );
+    motions = MISC::replace_str( motions, "2", "↓" );
+
+    return motions;
+}
+
+
+const std::string convert_mouse_motions_reverse( std::string motions )
+{
+    motions = MISC::replace_str( motions, "↑", "8" );
+    motions = MISC::replace_str( motions, "→", "6" );
+    motions = MISC::replace_str( motions, "←", "4" );
+    motions = MISC::replace_str( motions, "↓", "2" );
+
+    return motions;
+}
+
+
+// マウスジェスチャ設定の一時的なバックアップと復元
+void CONTROL::bkup_mouseconfig()
+{
+    if( ! instance_mouseconfig_bkup ) instance_mouseconfig_bkup = new CONTROL::MouseConfig();
+    *instance_mouseconfig_bkup = * instance_mouseconfig;
+}
+
+
+void CONTROL::restore_mouseconfig()
+{
+    if( ! instance_mouseconfig_bkup ) return;
+    *instance_mouseconfig = * instance_mouseconfig_bkup;
+}
+
+
+// IDからマウスジェスチャを取得
+const std::string CONTROL::get_str_mousemotions( const int id )
+{
+    return convert_mouse_motions( CONTROL::get_mouseconfig()->get_str_motions( id ) );
+}
+
+
+// IDからデフォルトマウスジェスチャを取得
+const std::string CONTROL::get_default_mousemotions( const int id )
+{
+    return convert_mouse_motions( CONTROL::get_mouseconfig()->get_default_motions( id ) );
+}
+
+
+// スペースで区切られた複数のマウスジェスチャをデータベースに登録
+void CONTROL::set_mousemotions( const std::string& name, const std::string& str_motions )
+{
+    const std::string motions = convert_mouse_motions_reverse( str_motions );    
+    CONTROL::get_mouseconfig()->set_motions( name, motions );
+}
+
+
+// 指定したIDのマウスジェスチャを全て削除
+const bool CONTROL::remove_mousemotions( const int id )
+{
+    return CONTROL::get_mouseconfig()->remove_motions( id );
+}
+
+
+// マウスジェスチャが重複していないか
+const std::vector< int > CONTROL::check_mouse_conflict( const int mode, const std::string& str_motion )
+{
+    const std::string motion = convert_mouse_motions_reverse( str_motion );
+    return CONTROL::get_mouseconfig()->check_conflict( mode, motion );
+}
+
+
+/////////////////////////////////////////////////////////
+
+
+// ボタン設定の一時的なバックアップと復元
+void CONTROL::bkup_buttonconfig()
+{
+    if( ! instance_buttonconfig_bkup ) instance_buttonconfig_bkup = new CONTROL::ButtonConfig();
+    *instance_buttonconfig_bkup = * instance_buttonconfig;
+}
+
+
+void CONTROL::restore_buttonconfig()
+{
+    if( ! instance_buttonconfig_bkup ) return;
+    *instance_buttonconfig = * instance_buttonconfig_bkup;
+}
+
+
+// IDからボタン設定を取得
+const std::string CONTROL::get_str_buttonmotions( const int id )
+{
+    return CONTROL::get_buttonconfig()->get_str_motions( id );
+}
+
+
+// IDからデフォルトボタン設定を取得
+const std::string CONTROL::get_default_buttonmotions( const int id )
+{
+    return CONTROL::get_buttonconfig()->get_default_motions( id );
+}
+
+
+// スペースで区切られた複数のボタン設定をデータベースに登録
+void CONTROL::set_buttonmotions( const std::string& name, const std::string& str_motions )
+{
+    CONTROL::get_buttonconfig()->set_motions( name, str_motions );
+}
+
+// 指定したIDのボタン設定を全て削除
+const bool CONTROL::remove_buttonmotions( const int id )
+{
+    return CONTROL::get_buttonconfig()->remove_motions( id );
+}
+
+
+    // ボタンが重複していないか
+const std::vector< int > CONTROL::check_button_conflict( const int mode, const std::string& str_motion )
+{
+    return CONTROL::get_buttonconfig()->check_conflict( mode, str_motion );
+}
+
+
+/////////////////////////////////////////////////////////
+
+
+// タブで開くボタンを入れ替える
+const bool CONTROL::is_toggled_tab_button()
+{
+    return CONTROL::get_buttonconfig()->is_toggled_tab_button();
+}
+
+
+void CONTROL::toggle_tab_button( const bool toggle )
+{
+    CONTROL::get_buttonconfig()->toggle_tab_button( toggle );
+}
+
+
+// ポップアップ表示の時にクリックでワープ
+const bool CONTROL::is_popup_warpmode()
+{
+    return CONTROL::get_buttonconfig()->is_popup_warpmode();
+}
+
+
+void CONTROL::toggle_popup_warpmode()
+{
+    CONTROL::get_buttonconfig()->toggle_popup_warpmode();
 }

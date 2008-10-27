@@ -26,6 +26,8 @@
 #include "image/preference.h"
 
 #include "control/keypref.h"
+#include "control/mousepref.h"
+#include "control/buttonpref.h"
 
 #include "config/aboutconfig.h"
 
@@ -95,6 +97,12 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
 
         case PREFDIAG_KEY:
             return new CONTROL::KeyPref( parent, url );
+
+        case PREFDIAG_MOUSE:
+            return new CONTROL::MousePref( parent, url );
+
+        case PREFDIAG_BUTTON:
+            return new CONTROL::ButtonPref( parent, url );
 
         case PREFDIAG_ABOUTCONFIG:
             return new CONFIG::AboutConfig( parent );

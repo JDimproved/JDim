@@ -6,6 +6,7 @@
 #include "control.h"
 #include "controlid.h"
 #include "controlutil.h"
+#include "get_config.h"
 #include "keyconfig.h"
 #include "mouseconfig.h"
 #include "buttonconfig.h"
@@ -23,6 +24,7 @@ bool mg_wheel_done;
 
 
 Control::Control()
+    : m_send_mg_info( true )
 {
     MG_reset();
     MG_wheel_reset();
@@ -172,7 +174,6 @@ void Control::MG_reset()
 }
 
 
-
 const bool Control::MG_start( const GdkEventButton* event )
 {
     MG_reset();
@@ -198,8 +199,7 @@ const bool Control::MG_motion( const GdkEventMotion* event )
     if( m_mg_lng >= MAX_MG_LNG ) return false;
 
     if( m_mg_direction.empty() ){
-        m_mg_direction = "■";
-        CORE::core_set_command( "set_mginfo", "", "" );
+        if( m_send_mg_info ) CORE::core_set_command( "set_mginfo", "", "■" );
     }
 
     const int x = ( int ) event->x;
@@ -260,7 +260,7 @@ const bool Control::MG_motion( const GdkEventMotion* event )
                 if( control != CONTROL::None ) break;
             }
 
-            CORE::core_set_command( "set_mginfo", "", m_mg_direction + CONTROL::get_label( control ) );
+            if( m_send_mg_info ) CORE::core_set_command( "set_mginfo", "", "■" + m_mg_direction + CONTROL::get_label( control ) );
         }
     }
 
@@ -305,7 +305,7 @@ const int Control::MG_end( const GdkEventButton* event )
         }
 
         m_mg_direction += " " + str_command;
-        CORE::core_set_command( "set_mginfo", "", m_mg_direction );
+        if( m_send_mg_info ) CORE::core_set_command( "set_mginfo", "", "■" + m_mg_direction );
     }
 
     MG_reset();
@@ -404,7 +404,7 @@ const int Control::MG_wheel_scroll( const GdkEventScroll* event )
 #endif
 
     if( control != CONTROL::None ){
-        CORE::core_set_command( "set_mginfo", "", CONTROL::get_label( control ) );
+        if( m_send_mg_info ) CORE::core_set_command( "set_mginfo", "", CONTROL::get_label( control ) );
         mg_wheel_done = true;
     }
 

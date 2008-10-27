@@ -13,6 +13,8 @@
 namespace CONTROL
 {
 
+// ショートカットキー
+
 #define KEYCONF_Up  "k Up KP_Up"
 #define KEYCONF_Down  "j Down KP_Down"
 
@@ -88,7 +90,7 @@ namespace CONTROL
 // IMAGE
 #define KEYCONF_CancelMosaic  "c"
 #define KEYCONF_ZoomFitImage  "x"
-#define KEYCONF_ZoomInImage  "+ KP_Add"
+#define KEYCONF_ZoomInImage  "+ KP_Add"  // (注意) ver.2.0.2 以前は + は Plus だった
 #define KEYCONF_ZoomOutImage  "- KP_Subtract"
 #define KEYCONF_OrgSizeImage  "z"
 
@@ -117,6 +119,105 @@ namespace CONTROL
 #define KEYCONF_UndoEdit  "Ctrl+/ Ctrl+z"
 
 #define KEYCONF_InputAA  "Alt+a"
+
+
+//////////////////////////////////
+
+// マウスジェスチャ
+
+//      8
+//      ↑
+//  4 ←  → 6
+//      ↓
+//      2 
+//
+// ( 例 ) ↑→↓← = 8624
+
+// 共通
+#define MOUSECONF_Right "6"
+#define MOUSECONF_Left "4"
+#define MOUSECONF_TabRight "86"
+#define MOUSECONF_TabLeft "84"
+#define MOUSECONF_ToggleArticle "2"
+#define MOUSECONF_Home "68"
+#define MOUSECONF_End "62"
+#define MOUSECONF_Quit "26"
+#define MOUSECONF_Reload "82"
+#define MOUSECONF_StopLoading "8"
+#define MOUSECONF_NewArticle "24"
+#define MOUSECONF_WriteMessage "24"
+
+// 全お気に入り更新チェック
+#define MOUSECONF_CheckUpdateRoot "48"
+#define MOUSECONF_CheckUpdateOpenRoot "42"
+
+// ARTICLE
+#define MOUSECONF_GotoNew "626"
+
+// IMAGE
+#define MOUSECONF_CancelMosaicButton "28"
+
+
+//////////////////////////////////
+
+// ボタン割り当て
+
+// 共通
+#define BUTTONCONF_ClickButton "Left"
+#define BUTTONCONF_DblClickButton "DblLeft"
+#define BUTTONCONF_TrpClickButton "TrpLeft"
+#define BUTTONCONF_CloseTabButton "Mid"
+#define BUTTONCONF_ReloadTabButton "DblLeft"
+#define BUTTONCONF_AutoScrollButton "Mid"
+#define BUTTONCONF_GestureButton "Right"
+#define BUTTONCONF_PopupmenuButton "Right"
+#define BUTTONCONF_DragStartButton "Left"
+#define BUTTONCONF_TreeRowSelectionButton "Mid"
+#define BUTTONCONF_Reload "Button4"
+#define BUTTONCONF_ToggleArticle "Button5"
+
+#define BUTTONCONF_Right ""
+#define BUTTONCONF_Left ""
+
+// BBSLIST用ボタン設定
+#define BUTTONCONF_OpenBoardButton "Left"
+#define BUTTONCONF_OpenBoardTabButton "Mid"
+
+// BOARD用ボタン設定
+#define BUTTONCONF_OpenArticleButton "Left"
+#define BUTTONCONF_OpenArticleTabButton "Mid"
+
+#define BUTTONCONF_ScrollRightBoard "Tilt_Right"
+#define BUTTONCONF_ScrollLeftBoard "Tilt_Left"
+
+// ARTICLE用ボタン設定
+#define BUTTONCONF_PopupWarpButton ""
+
+#define BUTTONCONF_ReferResButton "Right"
+#define BUTTONCONF_BmResButton "Mid"
+#define BUTTONCONF_PopupmenuResButton "Left"
+
+#define BUTTONCONF_DrawoutAncButton "Mid"
+#define BUTTONCONF_PopupmenuAncButton "Left Right"
+
+#define BUTTONCONF_PopupIDButton "Right"
+#define BUTTONCONF_DrawoutIDButton "Mid"
+#define BUTTONCONF_PopupmenuIDButton "Left"
+
+#define BUTTONCONF_OpenImageButton "Left"
+#define BUTTONCONF_OpenBackImageButton "Mid Ctrl+Left"
+#define BUTTONCONF_PopupmenuImageButton "Right"
+
+#define BUTTONCONF_OpenBeButton "Left Mid"
+#define BUTTONCONF_PopupmenuBeButton "Right"
+
+// IMAGE ICON用ボタン設定
+#define BUTTONCONF_CloseImageTabButton "Mid"
+
+// IMAGE用ボタン設定
+#define BUTTONCONF_CloseImageButton "Mid"
+#define BUTTONCONF_ScrollImageButton "Left"
+#define BUTTONCONF_CancelMosaicButton ""
 
 }
 

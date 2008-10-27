@@ -1539,7 +1539,7 @@ bool BoardView::slot_button_press( GdkEventButton* event )
 bool BoardView::slot_button_release( GdkEventButton* event )
 {
     /// マウスジェスチャ
-    int mg = get_control().MG_end( event );
+    const int mg = get_control().MG_end( event );
 
     // ホイールマウスジェスチャ
     // 実行された場合は何もしない 
@@ -1550,8 +1550,8 @@ bool BoardView::slot_button_release( GdkEventButton* event )
         return true;
     }
 
-    int x = (int)event->x;
-    int y = (int)event->y;
+    const int x = (int)event->x;
+    const int y = (int)event->y;
     Gtk::TreeModel::Path path;
     Gtk::TreeViewColumn* column;
     int cell_x;
@@ -1613,8 +1613,8 @@ bool BoardView::slot_motion_notify( GdkEventMotion* event )
     /// マウスジェスチャ
     get_control().MG_motion( event );
 
-    int x = (int)event->x;
-    int y = (int)event->y;
+    const int x = (int)event->x;
+    const int y = (int)event->y;
     Gtk::TreeModel::Path path;
     Gtk::TreeView::Column* column;
     int cell_x;

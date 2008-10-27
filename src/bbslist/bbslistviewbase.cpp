@@ -26,8 +26,6 @@
 
 #include "control/controlutil.h"
 #include "control/controlid.h"
-#include "control/buttonconfig.h"
-#include "control/keyconfig.h"
 
 #include "selectdialog.h"
 #include "cache.h"
@@ -620,7 +618,7 @@ const bool BBSListViewBase::operate_view( const int control )
             if( ! m_path_selected.empty() ){
                 open_tab = true;
                 // pathがディレクトリでタブで開くボタンを入れ替えている時はディレクトリ開閉にする
-                if( path2type( path ) == TYPE_DIR && CONTROL::get_buttonconfig()->is_toggled_tab_button() ) open_tab = false;
+                if( path2type( path ) == TYPE_DIR && CONTROL::is_toggled_tab_button() ) open_tab = false;
                 open_row( path, open_tab );
             }
             break;
@@ -629,7 +627,7 @@ const bool BBSListViewBase::operate_view( const int control )
             if( ! m_path_selected.empty() ){
                 open_tab = false;
                 // pathがディレクトリでタブで開くボタンを入れ替えている時は更新チェックにする
-                if( path2type( path ) == TYPE_DIR && CONTROL::get_buttonconfig()->is_toggled_tab_button() ) open_tab = true;
+                if( path2type( path ) == TYPE_DIR && CONTROL::is_toggled_tab_button() ) open_tab = true;
                 open_row( path, open_tab );
             }
             break;
@@ -637,14 +635,14 @@ const bool BBSListViewBase::operate_view( const int control )
         case CONTROL::OpenBoardTab:
             open_tab = true;
             // pathがディレクトリでタブで開くキーを入れ替えている時はディレクトリ開閉にする
-            if( path2type( path ) == TYPE_DIR && CONTROL::get_keyconfig()->is_toggled_tab_key() ) open_tab = false;
+            if( path2type( path ) == TYPE_DIR && CONTROL::is_toggled_tab_key() ) open_tab = false;
             open_row( path, open_tab );
             break;
 
         case CONTROL::OpenBoard:
             open_tab = false;
             // pathがディレクトリでタブで開くキーを入れ替えている時は更新チェックにする
-            if( path2type( path ) == TYPE_DIR && CONTROL::get_keyconfig()->is_toggled_tab_key() ) open_tab = true;
+            if( path2type( path ) == TYPE_DIR && CONTROL::is_toggled_tab_key() ) open_tab = true;
             open_row( path, open_tab );
             break;
 

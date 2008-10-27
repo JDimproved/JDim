@@ -25,15 +25,11 @@ namespace CONTROL
         const bool is_popup_warpmode(); // ポップアップ表示の時にクリックでワープするか
         void toggle_popup_warpmode(); // ポップアップ表示の時にクリックでワープする
 
-
       private:
 
         // ひとつの操作をデータベースに登録
         virtual void set_one_motion_impl( const int id, const int mode, const std::string& name, const std::string& str_motion );
     };
-
-    ButtonConfig* get_buttonconfig();
-    void delete_buttonconfig();
 }
 
 #endif

@@ -4,32 +4,13 @@
 #include "jddebug.h"
 
 #include "buttonconfig.h"
-#include "mousekeyitem.h"
-#include "controlutil.h"
+#include "defaultconf.h"
 
 #include "jdlib/confloader.h"
 #include "jdlib/jdregex.h"
 
 #include "cache.h"
 
-CONTROL::ButtonConfig* instance_buttonconfig = NULL;
-
-
-CONTROL::ButtonConfig* CONTROL::get_buttonconfig()
-{
-    if( ! instance_buttonconfig ) instance_buttonconfig = new CONTROL::ButtonConfig();
-
-    return instance_buttonconfig;
-}
-
-
-void CONTROL::delete_buttonconfig()
-{
-    if( instance_buttonconfig ) delete instance_buttonconfig;
-    instance_buttonconfig = NULL;
-}
-
-//////////////////////////////////////////////////////////
 
 using namespace CONTROL;
 
@@ -52,61 +33,61 @@ void ButtonConfig::load_conf()
     JDLIB::ConfLoader cf( CACHE::path_buttonconf(), std::string() );
 
     // デフォルト動作
-    SETMOTION( "ClickButton", "Left" );
-    SETMOTION( "DblClickButton", "DblLeft" );
-    SETMOTION( "TrpClickButton", "TrpLeft" );
-    SETMOTION( "CloseTabButton", "Mid" );
-    SETMOTION( "ReloadTabButton", "DblLeft" );
-    SETMOTION( "AutoScrollButton", "Mid" );
-    SETMOTION( "GestureButton", "Right" );
-    SETMOTION( "PopupmenuButton", "Right" );
-    SETMOTION( "DragStartButton", "Left" );
-    SETMOTION( "TreeRowSelectionButton", "Mid" );
-    SETMOTION( "Reload", "Button4" );
-    SETMOTION( "ToggleArticle", "Button5" );
+    SETMOTION( "ClickButton", BUTTONCONF_ClickButton );
+    SETMOTION( "DblClickButton", BUTTONCONF_DblClickButton );
+    SETMOTION( "TrpClickButton", BUTTONCONF_TrpClickButton );
+    SETMOTION( "CloseTabButton", BUTTONCONF_CloseTabButton );
+    SETMOTION( "ReloadTabButton", BUTTONCONF_ReloadTabButton );
+    SETMOTION( "AutoScrollButton", BUTTONCONF_AutoScrollButton );
+    SETMOTION( "GestureButton", BUTTONCONF_GestureButton );
+    SETMOTION( "PopupmenuButton", BUTTONCONF_PopupmenuButton );
+    SETMOTION( "DragStartButton", BUTTONCONF_DragStartButton );
+    SETMOTION( "TreeRowSelectionButton", BUTTONCONF_TreeRowSelectionButton );
+    SETMOTION( "Reload", BUTTONCONF_Reload );
+    SETMOTION( "ToggleArticle", BUTTONCONF_ToggleArticle );
 
-    SETMOTION( "Right", "" );
-    SETMOTION( "Left", "" );
+    SETMOTION( "Right", BUTTONCONF_Right );
+    SETMOTION( "Left", BUTTONCONF_Left );
 
     // BBSLIST用ボタン設定
-    SETMOTION( "OpenBoardButton", "Left" );
-    SETMOTION( "OpenBoardTabButton", "Mid" );
+    SETMOTION( "OpenBoardButton", BUTTONCONF_OpenBoardButton );
+    SETMOTION( "OpenBoardTabButton", BUTTONCONF_OpenBoardTabButton );
 
     // BOARD用ボタン設定
-    SETMOTION( "OpenArticleButton", "Left" );
-    SETMOTION( "OpenArticleTabButton", "Mid" );
+    SETMOTION( "OpenArticleButton", BUTTONCONF_OpenArticleButton );
+    SETMOTION( "OpenArticleTabButton", BUTTONCONF_OpenArticleTabButton );
 
-    SETMOTION( "ScrollRightBoard", "Tilt_Right" );
-    SETMOTION( "ScrollLeftBoard", "Tilt_Left" );
+    SETMOTION( "ScrollRightBoard", BUTTONCONF_ScrollRightBoard );
+    SETMOTION( "ScrollLeftBoard", BUTTONCONF_ScrollLeftBoard );
 
     // ARTICLE用ボタン設定
-    SETMOTION( "PopupWarpButton", "" );
+    SETMOTION( "PopupWarpButton", BUTTONCONF_PopupWarpButton );
 
-    SETMOTION( "ReferResButton", "Right" );
-    SETMOTION( "BmResButton", "Mid" );
-    SETMOTION( "PopupmenuResButton", "Left" );
+    SETMOTION( "ReferResButton", BUTTONCONF_ReferResButton );
+    SETMOTION( "BmResButton", BUTTONCONF_BmResButton );
+    SETMOTION( "PopupmenuResButton", BUTTONCONF_PopupmenuResButton );
 
-    SETMOTION( "DrawoutAncButton", "Mid" );
-    SETMOTION( "PopupmenuAncButton", "Left Right" );
+    SETMOTION( "DrawoutAncButton", BUTTONCONF_DrawoutAncButton );
+    SETMOTION( "PopupmenuAncButton", BUTTONCONF_PopupmenuAncButton );
 
-    SETMOTION( "PopupIDButton", "Right" );
-    SETMOTION( "DrawoutIDButton", "Mid" );
-    SETMOTION( "PopupmenuIDButton", "Left" );
+    SETMOTION( "PopupIDButton", BUTTONCONF_PopupIDButton );
+    SETMOTION( "DrawoutIDButton", BUTTONCONF_DrawoutIDButton );
+    SETMOTION( "PopupmenuIDButton", BUTTONCONF_PopupmenuIDButton );
 
-    SETMOTION( "OpenImageButton", "Left" );
-    SETMOTION( "OpenBackImageButton", "Mid Ctrl+Left" );
-    SETMOTION( "PopupmenuImageButton", "Right" );
+    SETMOTION( "OpenImageButton", BUTTONCONF_OpenImageButton );
+    SETMOTION( "OpenBackImageButton", BUTTONCONF_OpenBackImageButton );
+    SETMOTION( "PopupmenuImageButton", BUTTONCONF_PopupmenuImageButton );
 
-    SETMOTION( "OpenBeButton", "Left Mid" );
-    SETMOTION( "PopupmenuBeButton", "Right" );
+    SETMOTION( "OpenBeButton", BUTTONCONF_OpenBeButton );
+    SETMOTION( "PopupmenuBeButton", BUTTONCONF_PopupmenuBeButton );
 
     // IMAGE ICON用ボタン設定
-    SETMOTION( "CloseImageTabButton", "Mid" );
+    SETMOTION( "CloseImageTabButton", BUTTONCONF_CloseImageTabButton );
 
     // IMAGE用ボタン設定
-    SETMOTION( "CloseImageButton", "Mid" );
-    SETMOTION( "ScrollImageButton", "Left" );
-    SETMOTION( "CancelMosaicButton", "" );
+    SETMOTION( "CloseImageButton", BUTTONCONF_CloseImageButton );
+    SETMOTION( "ScrollImageButton", BUTTONCONF_ScrollImageButton );
+    SETMOTION( "CancelMosaicButton", BUTTONCONF_CancelMosaicButton );
 }
 
 
@@ -160,8 +141,6 @@ void ButtonConfig::set_one_motion_impl( const int id, const int mode, const std:
     std::cout << "motion = " << motion << " dblclick = " << dblclick
               << " trpclick = " << trpclick << std::endl << std::endl;
 #endif
-
-    // ひとつのボタンに複数の機能が割り当てられているので重複チェックはしない
 
     // データベース登録
     vec_items().push_back( MouseKeyItem( id, mode, name, str_motion, motion, ctrl, shift, alt, dblclick, trpclick ) );

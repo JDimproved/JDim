@@ -20,6 +20,7 @@ namespace CONTROL
 
         // マウスジェスチャ用変数
         bool m_mg; // true ならマウスジェスチャのモードになっている
+        bool m_send_mg_info; // core にマウスジェスチャを送るか
         int m_mg_lng;
         int m_mg_x;
         int m_mg_y;
@@ -46,6 +47,9 @@ namespace CONTROL
 
         // マウスジェスチャ
         void MG_reset();
+        const bool is_mg_mode() const { return m_mg; }
+        void set_send_mg_info( const bool send ){ m_send_mg_info = send; }
+        const std::string& get_mg_direction() const{ return m_mg_direction; }
         const bool MG_start( const GdkEventButton* event );
         const bool MG_motion( const GdkEventMotion* event );
         const int MG_end( const GdkEventButton* event );  // 戻り値はコントロールID

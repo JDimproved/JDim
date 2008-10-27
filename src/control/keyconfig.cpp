@@ -5,12 +5,10 @@
 #include "jddebug.h"
 
 #include "keyconfig.h"
-#include "mousekeyitem.h"
 #include "controlutil.h"
 #include "defaultconf.h"
 
 #include "jdlib/miscutil.h"
-#include "jdlib/miscmsg.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/confloader.h"
 
@@ -21,6 +19,7 @@ using namespace CONTROL;
 
 
 KeyConfig::KeyConfig()
+    : MouseKeyConf()
 {}
 
 

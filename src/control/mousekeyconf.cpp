@@ -122,32 +122,18 @@ const bool MouseKeyConf::alloted( const int id,
 
 
 // 同じモード内でモーションが重複していないかチェック
-const int MouseKeyConf::check_conflict( const int mode, const std::string& str_motion )
+const std::vector< int >  MouseKeyConf::check_conflict( const int mode, const std::string& str_motion )
 {
-    int id = CONTROL::None;;
+    std::vector< int > vec_ids;
+
     std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
 
-        id = (*it).is_activated( mode, str_motion );
-        if( id != CONTROL::None ) break;
+        const int id = (*it).is_activated( mode, str_motion );
+        if( id != CONTROL::None ) vec_ids.push_back( id );
     }
 
-    return id;
-}
-
-const int MouseKeyConf::check_conflict( const int mode,
-                                  const guint motion, const bool ctrl, const bool shift, const bool alt,
-                                  const bool dblclick, const bool trpclick )
-{
-    int id = CONTROL::None;;
-    std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
-
-        id = (*it).is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );
-        if( id != CONTROL::None ) break;
-    }
-
-    return id;
+    return vec_ids;
 }
 
 

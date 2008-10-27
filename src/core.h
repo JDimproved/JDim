@@ -156,6 +156,8 @@ namespace CORE
         
         void slot_setup_fontcolor();
         void slot_setup_key();
+        void slot_setup_mouse();
+        void slot_setup_button();
         void slot_setup_proxy();
         void slot_setup_passwd();
         void slot_toggle_ipv6();

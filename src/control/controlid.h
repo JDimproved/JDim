@@ -8,9 +8,14 @@
 namespace CONTROL
 {
     // コントロールモード
+    //
+    // 項目を増やしたら controllabel.h も修正すること
+    //
     enum
     {
-        MODE_COMMON,
+        MODE_START = 0,
+
+        MODE_COMMON = MODE_START,
         MODE_BBSLIST,
         MODE_BOARD,
         MODE_ARTICLE,
@@ -19,12 +24,15 @@ namespace CONTROL
         MODE_MESSAGE,
         MODE_EDIT,
 
+        MODE_END = MODE_EDIT,
+
         MODE_ERROR
     };
 
+
     // 動作
     //
-    // 綱目を増やしたら controllabel.h も修正すること
+    // 項目を増やしたら controllabel.h も修正すること
     //
     enum
     {

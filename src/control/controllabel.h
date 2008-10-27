@@ -15,14 +15,30 @@ enum
 };
 
 
+namespace CONTROL
+{
+
+//
+// モード名
+//
+    char mode_label[][ MAX_CONTROL_LABEL ] ={
+        "共通",
+        "板一覧／お気に入り",
+        "スレ一覧",
+        "スレビュー",
+        "画像ビュー",
+        "画像ビュー",
+        "書き込みビュー",
+        "編集"
+    };
+
+
 //
 // control_label[ id ][ 0 ] を操作名 ( 例えば "Up" )
 // control_label[ id ][ 1 ] をラベル ( 例えば "上移動" )
 //
 // と呼ぶことにする
 //
-namespace CONTROL
-{
     char control_label[][ 2 ][ MAX_CONTROL_LABEL ]={
 
         // 共通

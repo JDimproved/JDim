@@ -4,7 +4,7 @@ libcontrol_a_SOURCES = \
 	control.cpp \
 	controlutil.cpp \
 	mousekeyconf.cpp keyconfig.cpp mouseconfig.cpp buttonconfig.cpp \
-	keypref.cpp
+	mousekeypref.cpp keypref.cpp mousepref.cpp buttonpref.cpp
 
 noinst_HEADERS = \
 	controlid.h \
@@ -13,7 +13,7 @@ noinst_HEADERS = \
 	control.h \
 	controlutil.h \
 	mousekeyconf.h mousekeyitem.h keyconfig.h mouseconfig.h buttonconfig.h \
-	keypref.h \
+	mousekeypref.h keypref.h mousepref.h buttonpref.h \
 	defaultconf.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@

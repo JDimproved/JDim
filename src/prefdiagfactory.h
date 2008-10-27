@@ -41,6 +41,9 @@ namespace CORE
         PREFDIAG_IMAGE,
 
         PREFDIAG_KEY,
+        PREFDIAG_MOUSE,
+        PREFDIAG_BUTTON,
+
         PREFDIAG_ABOUTCONFIG,
 
         PREFDIAG_NONE

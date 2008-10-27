@@ -30,9 +30,6 @@
 
 #include "control/controlutil.h"
 #include "control/controlid.h"
-#include "control/keyconfig.h"
-#include "control/mouseconfig.h"
-#include "control/buttonconfig.h"
 
 #include "history/historymanager.h"
 
@@ -217,9 +214,7 @@ Core::~Core()
 
     // マウス、キーコンフィグ保存
     CONTROL::save_conf();
-    CONTROL::delete_keyconfig();
-    CONTROL::delete_mouseconfig();
-    CONTROL::delete_buttonconfig();
+    CONTROL::delete_conf();
 
     // ビューを削除する前にswitch_pageをdisconnectしておかないとエラーが出る
     if( m_sigc_switch_page.connected() ) m_sigc_switch_page.disconnect(); 
@@ -449,12 +444,12 @@ void Core::run( bool init )
     // マウス／キーボード
     m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード(_M)" ) );
 
-    bool toggled = CONTROL::get_buttonconfig()->is_toggled_tab_button() && CONTROL::get_keyconfig()->is_toggled_tab_key();
+    bool toggled = CONTROL::is_toggled_tab_button() && CONTROL::is_toggled_tab_key();
     m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "スレ一覧／スレビューを開く時に常に新しいタブで開く(_T)", std::string(), toggled ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "スレビューでアンカーをクリックして多重ポップアップモードに移行する(_W)", std::string(),
-                                                    CONTROL::get_buttonconfig()->is_popup_warpmode() ),
+                                                    CONTROL::is_popup_warpmode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "ShortMarginPopup", "スレビューでカーソルを移動して多重ポップアップモードに移行する(_M)", std::string(),
@@ -462,10 +457,12 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_shortmargin_popup ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "ToggleEmacsMode", "書き込みビューのショートカットキーをEmacs風にする(_E)", std::string(),
-                                                    CONTROL::get_keyconfig()->is_emacs_mode() ),
+                                                    CONTROL::is_emacs_mode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
 
+    m_action_group->add( Gtk::Action::create( "MousePref", "マウスジェスチャ設定(_G)..." ), sigc::mem_fun( *this, &Core::slot_setup_mouse ) );
     m_action_group->add( Gtk::Action::create( "KeyPref", "ショートカットキー設定(_R)..." ), sigc::mem_fun( *this, &Core::slot_setup_key ) );
+    m_action_group->add( Gtk::Action::create( "ButtonPref", "マウスボタン設定(_B)..." ), sigc::mem_fun( *this, &Core::slot_setup_button ) );
 
     // フォントと色
     m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色(_F)" ) );
@@ -720,6 +717,8 @@ void Core::run( bool init )
         "<menuitem action='ToggleEmacsMode'/>"
         "<separator/>"
         "<menuitem action='KeyPref'/>"
+        "<menuitem action='MousePref'/>"
+        "<menuitem action='ButtonPref'/>"
         "</menu>"
 
     "<separator/>";
@@ -1258,7 +1257,7 @@ void Core::slot_activate_menubar()
     act = m_action_group->get_action( "ToggleEmacsMode" );
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
-        if( CONTROL::get_keyconfig()->is_emacs_mode() ) tact->set_active( true );
+        if( CONTROL::is_emacs_mode() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1523,6 +1522,28 @@ void Core::slot_setup_fontcolor()
 void Core::slot_setup_key()
 {
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_KEY, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// マウスジェスチャ詳細設定
+//
+void Core::slot_setup_mouse()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_MOUSE, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// マウスボタン詳細設定
+//
+void Core::slot_setup_button()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BUTTON, "" );
     pref->run();
     delete pref;
 }
@@ -2352,10 +2373,10 @@ void Core::slot_toggle_oldarticle()
 //
 void Core::slot_toggle_tabbutton()
 {
-    bool toggled = CONTROL::get_buttonconfig()->is_toggled_tab_button() && CONTROL::get_keyconfig()->is_toggled_tab_key();
+    bool toggled = CONTROL::is_toggled_tab_button() && CONTROL::is_toggled_tab_key();
 
-    CONTROL::get_buttonconfig()->toggle_tab_button( !toggled );
-    CONTROL::get_keyconfig()->toggle_tab_key( !toggled );
+    CONTROL::toggle_tab_button( !toggled );
+    CONTROL::toggle_tab_key( !toggled );
 }
 
 
@@ -2364,7 +2385,7 @@ void Core::slot_toggle_tabbutton()
 //
 void Core::slot_toggle_popupwarpmode()
 {
-    CONTROL::get_buttonconfig()->toggle_popup_warpmode();
+    CONTROL::toggle_popup_warpmode();
 }
 
 
@@ -2385,7 +2406,7 @@ void Core::slot_shortmargin_popup()
 void Core::slot_toggle_emacsmode()
 {
     if( ! m_enable_menuslot ) return;
-    CONTROL::get_keyconfig()->toggle_emacs_mode();
+    CONTROL::toggle_emacs_mode();
 }
 
 
