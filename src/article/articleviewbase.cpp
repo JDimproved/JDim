@@ -2251,6 +2251,13 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     // 画像クリック
     else if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && ( CONFIG::get_use_image_view() || CONFIG::get_use_inline_image() ) ){
 
+        // ssspの場合は PROTO_SSSP が前に付いている
+        bool sssp = false;
+        if( url.find( PROTO_SSSP ) == 0 ){
+            url = url.substr( strlen( PROTO_SSSP ) );
+            sssp = true;
+        }
+
         hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuImageButton ) ){
@@ -2277,12 +2284,17 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             bool top = true;
             bool load = false;
 
+            bool open_imageview = true;
+
             // バックで開く
             if( control.button_alloted( event, CONTROL::OpenBackImageButton ) ) top = false;
         
             // キャッシュに無かったらロード
             if( ! DBIMG::is_cached( url ) ){
-                DBIMG::download_img( url, DBTREE::url_readcgi( m_url_article, res_number, 0 ) );
+
+                // sssp の時はモザイクをかけない
+                const bool nomosaic = sssp;
+                DBIMG::download_img( url, DBTREE::url_readcgi( m_url_article, res_number, 0 ), nomosaic );
 
                 // ポップアップ表示してダウンロードサイズを表示
                 hide_popup();
@@ -2291,11 +2303,17 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
                 show_popup( view_popup, margin_popup );
                 top = false;
                 load = true;
+
+                // sssp の時は画像ビューを開かない
+                if( sssp ) open_imageview = false;
             }
 
             if( CONFIG::get_use_image_view() ){
-                CORE::core_set_command( "open_image", url );
-                if( top ) CORE::core_set_command( "switch_image" );
+
+                if( open_imageview ){
+                    CORE::core_set_command( "open_image", url );
+                    if( top ) CORE::core_set_command( "switch_image" );
+                }
             }
             else if( ! load && control.button_alloted( event, CONTROL::ClickButton ) ) CORE::core_set_command( "open_url", url );
 

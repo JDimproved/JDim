@@ -187,6 +187,9 @@ const bool ConfigItems::load()
     // インライン画像を表示する
     use_inline_image = cf.get_option( "use_inline_image", CONF_INLINE_IMG );
 
+    // ssspアイコン表示
+    show_ssspicon = cf.get_option( "show_ssspicon", CONF_SHOW_SSSPICON );
+
     // 画像にモザイクをかける
     use_mosaic = cf.get_option( "use_mosaic", CONF_USE_MOSAIC );
 
@@ -508,6 +511,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_image_popup", use_image_popup );
     cf.update( "use_image_view", use_image_view );
     cf.update( "use_inline_image", use_inline_image );
+    cf.update( "show_ssspicon", show_ssspicon );
     cf.update( "use_mosaic", use_mosaic );
     cf.update( "mosaic_size", mosaic_size );
     cf.update( "zoom_to_fit", zoom_to_fit );

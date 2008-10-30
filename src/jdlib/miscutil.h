@@ -19,7 +19,8 @@ namespace MISC
 		SCHEME_HTTP,
 		SCHEME_FTP,
 		SCHEME_TTP,
-		SCHEME_TP
+		SCHEME_TP,
+                SCHEME_SSSP
 	};
 
      // get_ucs2mode()の戻り値

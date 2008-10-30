@@ -49,8 +49,8 @@ enum
 
     LAYOUT_MIN_HEIGHT = 2, // viewの高さがこの値よりも小さい時はリサイズしていないと考える
 
-    EIMG_ICONSIZE = 25,  // 埋め込み画像のアイコンサイズ
-    EIMG_MRG = 10,       // 埋め込み画像のアイコンの間隔
+    EIMG_ICONSIZE = 32,  // 埋め込み画像のアイコンサイズ
+    EIMG_MRG = 8,       // 埋め込み画像のアイコンの間隔
 
     SPACE_TAB =  4 // 水平タブをどれだけ空けるか ( フォントの高さ * SPACE_TAB )
 };
@@ -791,6 +791,17 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
                     // レイアウトして次のノードの左上座標を計算
                     // x,y, br_size が参照なので更新された値が戻る
                     layout_one_img_node( layout, x, y, br_size, m_width_client, init_popupwin );
+
+                    break;
+
+                    //////////////////////////////////////////
+
+                case DBTREE::NODE_SSSP: // sssp アイコン
+
+                    // 縦方向にセンタリングする
+                    y += EIMG_MRG/2;
+                    layout_one_img_node( layout, x, y, br_size, m_width_client, init_popupwin );
+                    y -= EIMG_MRG/2;
 
                     break;
 
@@ -1713,6 +1724,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 
             // 画像ノード
         case DBTREE::NODE_IMG:
+        case DBTREE::NODE_SSSP:
             if( draw_one_img_node( layout, pos_y, upper, lower ) ) relayout = true;
             break;
 
@@ -3114,7 +3126,8 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 
                 // 次のノードが画像ノード場合
                 // 現在のノードの右端にキャレットをセットして画像ノードを返す
-                if( layout_next && layout_next->type == DBTREE::NODE_IMG
+                if( layout_next
+                    && ( layout_next->type == DBTREE::NODE_IMG || layout_next->type == DBTREE::NODE_SSSP )
                     && ( layout_next->rect->x <= x && x <= layout_next->rect->x + layout_next->rect->width )
                     && ( layout_next->rect->y <= y && y <= layout_next->rect->y + layout_next->rect->height ) ){
 
@@ -3899,7 +3912,12 @@ bool DrawAreaBase::slot_button_release_event( GdkEventButton* event )
     std::string url;
     int res_num = 0;
 
-    if( m_layout_current && m_layout_current->link ) url = m_layout_current->link;
+    if( m_layout_current && m_layout_current->link ){
+        url = m_layout_current->link;
+
+        // ssspの場合は PROTO_SSSP を前に付ける
+        if( m_layout_current->type == DBTREE::NODE_SSSP ) url = std::string( PROTO_SSSP ) + url;
+    }
     if( m_layout_current ) res_num = m_layout_current->res_number;
 
     if( event->type == GDK_BUTTON_RELEASE ){

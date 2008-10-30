@@ -400,6 +400,8 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ShowSsspIcon", "BEアイコンを表示する(_B)", std::string(), CONFIG::get_show_ssspicon() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_show_ssspicon ) );
 
     // リスト表示項目設定
     m_action_group->add( Gtk::Action::create( "ListItem_Menu", "リスト項目設定(_L)" ) );
@@ -649,6 +651,7 @@ void Core::run( bool init )
 
     "<menuitem action='UseImgPopup'/>"    
     "<menuitem action='UseInlineImg'/>"    
+    "<menuitem action='ShowSsspIcon'/>"    
     "</menu>"
 
     "<separator/>"
@@ -1302,9 +1305,17 @@ void Core::slot_toggle_use_imgpopup()
 void Core::slot_toggle_use_inlineimg()
 {
     CONFIG::set_use_inline_image( ! CONFIG::get_use_inline_image() );
+    ARTICLE::get_admin()->set_command( "relayout_all" );
+}
 
-    SKELETON::MsgDiag mdiag( NULL, "次に開いたスレビューから有効になります" );
-    mdiag.run();
+
+//
+// ssspアイコン on/off
+//
+void Core::slot_toggle_show_ssspicon()
+{
+    CONFIG::set_show_sssp_icon( ! CONFIG::get_show_ssspicon() );
+    ARTICLE::get_admin()->set_command( "relayout_all" );
 }
 
 
@@ -3019,7 +3030,10 @@ void Core::set_command( const COMMAND_ARGS& command )
         show_imagetab();
 
         // キャッシュに無かったらロード
-        if( ! DBIMG::is_cached( command.url ) ) DBIMG::download_img( command.url, std::string() );
+        if( ! DBIMG::is_cached( command.url ) ){
+            const bool nomosaic = false;
+            DBIMG::download_img( command.url, std::string(), nomosaic );
+        }
 
         IMAGE::get_admin()->set_command( "open_view", command.url );
         return;
@@ -3462,7 +3476,10 @@ void Core::exec_command()
                 }
                 else{
                     // キャッシュに無かったらロード
-                    if( ! DBIMG::is_cached( command.url ) ) DBIMG::download_img( command.url, std::string() );
+                    if( ! DBIMG::is_cached( command.url ) ){
+                        const bool nomosaic = false;
+                        DBIMG::download_img( command.url, std::string(), nomosaic );
+                    }
 
                     CORE::core_set_command( "open_image", command.url );
                     CORE::core_set_command( "switch_image" );

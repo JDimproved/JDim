@@ -157,7 +157,10 @@ const std::string Img::get_cache_path()
 //
 // receive_data()　と receive_finish() がコールバックされる
 //
-void Img::download_img( const std::string refurl )
+// refurl : 参照元のスレのアドレス
+// nomosaic : trueの時はモザイク解除
+//
+void Img::download_img( const std::string& refurl, const bool nomosaic )
 {
     // ダウンロード初回(リダイレクトでは無い)
     if( ! m_count_redirect ) m_url_alt = std::string();
@@ -185,6 +188,7 @@ void Img::download_img( const std::string refurl )
 
     clear();
     m_refurl = refurl;
+    if( nomosaic ) m_mosaic = false;
                
     JDLIB::LOADERDATA data;
 
@@ -410,7 +414,7 @@ void Img::receive_finish()
 #endif
             ++m_count_redirect;
             m_url_alt = location();
-            download_img( m_refurl );
+            download_img( m_refurl, false );
             return;
         }
         else m_type = T_NODATA;
@@ -526,9 +530,14 @@ void Img::set_embedded_size()
     double scale_w = ( double ) MAX_WIDTH_EMB / m_width;
     double scale_h = ( double ) MAX_HEIGHT_EMB / m_height;
     scale = MIN( scale_w, scale_h );
-
-    m_width_emb = (int)( m_width * scale );
-    m_height_emb = (int)( m_height * scale );
+    if( scale < 1.0 ){
+        m_width_emb = (int)( m_width * scale );
+        m_height_emb = (int)( m_height * scale );
+    }
+    else{
+        m_width_emb = m_width;
+        m_height_emb = m_height;
+    }
 
 #ifdef _DEBUG
     std::cout << "Img::set_embedded_size w = " << m_width_emb << " h = " << m_height_emb << std::endl;

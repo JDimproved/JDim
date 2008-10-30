@@ -35,6 +35,9 @@ namespace DBTREE
         // 水平タブ(0x09)
         NODE_HTAB,
 
+        // sssp アイコン
+        NODE_SSSP,  
+
         NODE_NONE
     };
 

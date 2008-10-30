@@ -36,7 +36,7 @@ namespace DBIMG
         bool m_zoom_to_fit; // windowにサイズをあわせる
         int m_size; // 画像の大きさ(パーセントで)
         bool m_protect; // true ならキャッシュを保護する( delete_cache()で削除しない )
-        std::string m_refurl; // 参照元URL
+        std::string m_refurl; // 参照元のスレのURL
         bool m_abone; // あぼーんされている
 
         // 保存用ファイルハンドラ
@@ -89,7 +89,12 @@ namespace DBIMG
         // 拡張子が偽装されているか
         const bool is_fake(); 
 
-        void download_img( const std::string refurl );
+        // ロード開始
+        // receive_data()　と receive_finish() がコールバックされる
+        // refurl : 参照元のスレのアドレス
+        // nomosaic : trueの時はモザイク解除
+        void download_img( const std::string& refurl, const bool nomosaic );
+
         const bool save( Gtk::Window* parent, const std::string& path_to );
         
       private:

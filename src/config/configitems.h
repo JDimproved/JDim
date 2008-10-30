@@ -109,6 +109,9 @@ namespace CONFIG
         // インライン画像を表示する
         bool use_inline_image;
 
+        // ssspアイコン表示
+        bool show_ssspicon;
+
         // 画像にモザイクかける
         bool use_mosaic;
 

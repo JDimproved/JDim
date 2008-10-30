@@ -154,9 +154,10 @@ namespace ARTICLE
         LAYOUT* create_layout_idnum( const char* text, const unsigned char* color_text, bool bold );
         LAYOUT* create_layout_br();
         LAYOUT* create_layout_hr();
-        LAYOUT* create_layout_sp( const int type );
+        LAYOUT* create_layout_hspace( const int type );
         LAYOUT* create_layout_div( const int id );
         LAYOUT* create_layout_img( const char* link );
+        LAYOUT* create_layout_sssp( const char* link );
 
         LAYOUT* get_header_of_res( int number );
 

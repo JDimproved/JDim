@@ -166,34 +166,38 @@ namespace CONFIG
 
     // 画像ポップアップを使用する
     const bool get_use_image_popup();
-    void set_use_image_popup( bool use );
+    void set_use_image_popup( const bool use );
 
     // 画像ビューを使用する
     const bool get_use_image_view();
-    void set_use_image_view( bool image_view );
+    void set_use_image_view( const bool image_view );
 
     // インライン画像表示をする
     const bool get_use_inline_image();
-    void set_use_inline_image( bool inline_img );
+    void set_use_inline_image( const bool inline_img );
+
+    // ssspアイコン表示
+    const bool get_show_ssspicon();
+    void set_show_sssp_icon( const bool show );
 
     // 画像にモザイクかける
     const bool get_use_mosaic();
-    void set_use_mosaic( bool mosaic );
+    void set_use_mosaic( const bool mosaic );
 
     // モザイクの大きさ
     const int get_mosaic_size();
 
     // 画像をデフォルトでウィンドウサイズに合わせる
     const bool get_zoom_to_fit();
-    void set_zoom_to_fit( bool fit );
+    void set_zoom_to_fit( const bool fit );
 
     // 画像キャッシュ削除の日数
     const int get_del_img_day();
-    void set_del_img_day( int day );
+    void set_del_img_day( const int day );
 
     // 画像あぼーん削除の日数
     const int get_del_imgabone_day();
-    void set_del_imgabone_day( int day );
+    void set_del_imgabone_day( const int day );
 
     // ダウンロードする画像の最大ファイルサイズ(Mbyte)
     const int get_max_img_size();

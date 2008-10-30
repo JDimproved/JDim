@@ -219,9 +219,9 @@ LAYOUT* LayoutTree::create_layout_hr()
 
 
 //
-// スペースノード作成
+// 水平スペースノード作成
 //
-LAYOUT* LayoutTree::create_layout_sp( const int type )
+LAYOUT* LayoutTree::create_layout_hspace( const int type )
 {
     LAYOUT* tmplayout = create_layout( type );
     m_last_layout->next_layout = tmplayout;
@@ -253,12 +253,24 @@ LAYOUT* LayoutTree::create_layout_div( const int id )
 //
 LAYOUT* LayoutTree::create_layout_img( const char* link )
 {
-    LAYOUT* img = create_layout( DBTREE::NODE_IMG );
-    m_last_layout->next_layout = img;
-    m_last_layout = img;
-    img->link = link;
+    LAYOUT* tmplayout = create_layout( DBTREE::NODE_IMG );
+    m_last_layout->next_layout = tmplayout;
+    m_last_layout = tmplayout;
+    tmplayout->link = link;
 
-    return img;
+    return tmplayout;
+}
+
+
+//
+// sssp ノード作成
+//
+LAYOUT* LayoutTree::create_layout_sssp( const char* link )
+{
+    LAYOUT* tmplayout = create_layout_img( link );
+    tmplayout->type = DBTREE::NODE_SSSP;
+
+    return tmplayout;
 }
 
 
@@ -383,6 +395,19 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
 
                 break;
 
+            case DBTREE::NODE_SSSP:
+
+                if( CONFIG::get_show_ssspicon() ){
+                    tmplayout = create_layout_sssp( tmpnode->linkinfo->link );
+                    tmplayout->link = tmpnode->linkinfo->link;
+                }
+                else{
+                    // 次が改行ノードの時は飛ばす
+                    if( tmpnode->next_node && tmpnode->next_node->type == DBTREE::NODE_BR )
+                        tmpnode = tmpnode->next_node;
+                }
+
+                break;
 
             case DBTREE::NODE_IDNUM:
                 tmplayout = create_layout_idnum( tmpnode->text, &tmpnode->color_text, tmpnode->bold );
@@ -397,11 +422,11 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
                 break;
             
             case DBTREE::NODE_ZWSP: // 幅0スペース
-                tmplayout = create_layout_sp( tmpnode->type );
+                tmplayout = create_layout_hspace( tmpnode->type );
                 break;
 
             case DBTREE::NODE_HTAB: // 水平タブ
-                tmplayout = create_layout_sp( tmpnode->type );
+                tmplayout = create_layout_hspace( tmpnode->type );
                 break;
         }
 

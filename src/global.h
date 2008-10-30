@@ -163,6 +163,7 @@ enum
 #define PROTO_OR "or://"
 #define PROTO_BROKEN "bloken://"
 #define PROTO_POSTLOG "postlog://"
+#define PROTO_SSSP "sssp://"
 
 
 // 仮想 URL

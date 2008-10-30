@@ -181,23 +181,26 @@ const int CONFIG::get_imgpopup_width(){ return get_confitem()->imgpopup_width; }
 const int CONFIG::get_imgpopup_height(){ return get_confitem()->imgpopup_height; }
 
 const bool CONFIG::get_use_image_popup(){ return get_confitem()->use_image_popup; }
-void CONFIG::set_use_image_popup( bool use ){ get_confitem()->use_image_popup = use; }
+void CONFIG::set_use_image_popup( const bool use ){ get_confitem()->use_image_popup = use; }
 
 const bool CONFIG::get_use_image_view(){ return get_confitem()->use_image_view; }
-void CONFIG::set_use_image_view( bool image_view ){ get_confitem()->use_image_view = image_view; }
+void CONFIG::set_use_image_view( const bool image_view ){ get_confitem()->use_image_view = image_view; }
 
 const bool CONFIG::get_use_inline_image(){ return get_confitem()->use_inline_image; }
-void CONFIG::set_use_inline_image( bool inline_img ){ get_confitem()->use_inline_image = inline_img; }
+void CONFIG::set_use_inline_image( const bool inline_img ){ get_confitem()->use_inline_image = inline_img; }
+
+const bool CONFIG::get_show_ssspicon(){ return get_confitem()->show_ssspicon; }
+void CONFIG::set_show_sssp_icon( const bool show ){ get_confitem()->show_ssspicon = show; }
 
 const bool CONFIG::get_use_mosaic(){ return get_confitem()->use_mosaic; }
-void CONFIG::set_use_mosaic( bool mosaic ) { get_confitem()->use_mosaic = mosaic; }
+void CONFIG::set_use_mosaic( const bool mosaic ) { get_confitem()->use_mosaic = mosaic; }
 const int CONFIG::get_mosaic_size(){ return get_confitem()->mosaic_size; }
 const bool CONFIG::get_zoom_to_fit(){ return get_confitem()->zoom_to_fit; }
-void CONFIG::set_zoom_to_fit( bool fit ){ get_confitem()->zoom_to_fit = fit; }
+void CONFIG::set_zoom_to_fit( const bool fit ){ get_confitem()->zoom_to_fit = fit; }
 const int CONFIG::get_del_img_day(){ return get_confitem()->del_img_day; }
-void CONFIG::set_del_img_day( int day ){ get_confitem()->del_img_day = day; }
+void CONFIG::set_del_img_day( const int day ){ get_confitem()->del_img_day = day; }
 const int CONFIG::get_del_imgabone_day(){ return get_confitem()->del_imgabone_day; }
-void CONFIG::set_del_imgabone_day( int day ){ get_confitem()->del_imgabone_day = day; }
+void CONFIG::set_del_imgabone_day( const int day ){ get_confitem()->del_imgabone_day = day; }
 const int CONFIG::get_max_img_size(){ return get_confitem()->max_img_size; }
 const int CONFIG::get_max_img_pixel(){ return get_confitem()->max_img_pixel; }
 

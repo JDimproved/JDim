@@ -55,7 +55,12 @@ namespace DBIMG
 
     DBIMG::Img* get_img( const std::string& url );
     const std::string get_cache_path( const std::string& url );
-    void download_img( const std::string& url, const std::string& refurl );
+
+    // ロード開始
+    // refurl : 参照元のスレのアドレス
+    // nomosaic : trueの時はモザイク解除
+    void download_img( const std::string& url, const std::string& refurl, const bool nomosaic );
+
     void stop_load( const std::string& url );
     const bool save( const std::string& url, Gtk::Window* parent, const std::string& path_to );
     void delete_cache( const std::string& url );

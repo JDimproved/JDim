@@ -343,7 +343,8 @@ void ImageViewBase::reload()
 #endif
 
     std::string refurl = m_img->get_refurl();
-    m_img->download_img( refurl );
+    const bool nomosaic = false;
+    m_img->download_img( refurl, nomosaic );
 }
 
 

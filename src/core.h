@@ -135,6 +135,7 @@ namespace CORE
         void slot_toggle_use_mosaic();
         void slot_toggle_use_imgpopup();
         void slot_toggle_use_inlineimg();
+        void slot_toggle_show_ssspicon();
         void slot_delete_all_images();
 
         void slot_clear_privacy();

@@ -243,34 +243,39 @@ namespace DBTREE
 
       private:
 
-        NODE* createNode();
-        NODE* create_header_node();
-        NODE* create_block_node();
-        NODE* createIDNumNode();
-        NODE* createBrNode();
-        NODE* createHrNode();
-        NODE* createSpNode( const int& type );
-        NODE* createHTabNode();
-        NODE* create_linknode( const char* text, int n, const char* link, int n_link, int color_text, bool bold );
-        NODE* create_ancnode( const char* text, int n, const char* link, int n_link, int color_text, bool bold,
-                              ANCINFO* ancinfo, int lng_ancinfo );
-        NODE* create_imgnode( const char* text, int n, const char* link, int n_link, int color_text, bool bold );
-        NODE* createTextNode( const char* text, int color_text, bool bold = false );
-        NODE* createTextNodeN( const char* text, int n, int color_text, bool bold = false );
+        NODE* create_node();
+        NODE* create_node_header();
+        NODE* create_node_block();
+        NODE* create_node_idnum();
+        NODE* create_node_br();
+        NODE* create_node_hr();
+        NODE* create_node_space( const int type );
+        NODE* create_node_htab();
+        NODE* create_node_link( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold );
+        NODE* create_node_anc( const char* text, const int n, const char* link, const int n_link,
+                               const int color_text, const bool bold,
+                               const ANCINFO* ancinfo, const int lng_ancinfo );
+        NODE* create_node_sssp( const char* link, const int n_link );
+        NODE* create_node_img( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold );
+        NODE* create_node_text( const char* text, const int color_text, const bool bold = false );
+        NODE* create_node_ntext( const char* text, const int n, const int color_text, const bool bold = false );
 
         // 以下、構文解析用関数
         void add_raw_lines( char* rawines, size_t size );
         const char* add_one_dat_line( const char* datline );
 
-        void parseName( NODE* header, const char* str, int lng, int color_name );
-        void parseMail( NODE* header, const char* str, int lng );
-        void parse_date_id( NODE* header, const char* str, int lng );
-        void parse_html( const char* str, int lng, int color_text, bool digitlink = false, bool bold = false, bool ahref = false );
+        void parse_name( NODE* header, const char* str, const int lng, const int color_name );
+        void parse_mail( NODE* header, const char* str, const int lng );
+        void parse_date_id( NODE* header, const char* str, const int lng );
+        void parse_html( const char* str, const int lng, const int color_text,
+                         bool digitlink = false, const bool bold = false, const bool ahref = false );
+
+        // 書き込みログ比較用文字列作成
+        // m_buffer_write に作成した文字列をセットする
         void parse_write( const char* str, const int lng, const int max_lng_write );
-        void parseBr( );
 
         bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
-        bool check_link( const char* str_in, int lng_in, int& n_in, char* str_link, int lng_link );
+        const int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link );
 
         // あぼーんのクリア
         void clear_abone();

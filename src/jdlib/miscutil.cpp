@@ -781,7 +781,7 @@ int MISC::is_url_scheme( const char* str_in, int* length )
     int len = 0;
 
     // 候補になり得ない場合は以降の処理はしない
-    if( *str_in != 'h' && *str_in != 'f' && *str_in != 't' ) return scheme;
+    if( *str_in != 'h' && *str_in != 'f' && *str_in != 't' && *str_in != 's' ) return scheme;
 
     // http https
     if( *str_in == 'h' && *( str_in + 1 ) == 't'
@@ -810,6 +810,12 @@ int MISC::is_url_scheme( const char* str_in, int* length )
         scheme = SCHEME_TP;
         len = 2;
         if( *( str_in + len ) == 's' ) ++len;
+    }
+    // sssp
+    else if( *str_in == 's' && *( str_in + 1 ) == 's' && *( str_in + 2 ) == 's' && *( str_in + 3 ) == 'p' )
+    {
+        scheme = SCHEME_SSSP;
+        len = 4;
     }
 
     // 各スキーム後に続く共通の"://"

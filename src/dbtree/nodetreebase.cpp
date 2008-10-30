@@ -80,7 +80,7 @@ NodeTreeBase::NodeTreeBase( const std::string url, const std::string& modified )
 
     // ルートヘッダ作成。中は空。
     m_id_header = -1; // ルートヘッダIDが 0 になるように -1
-    NODE* tmpnode = create_header_node(); 
+    NODE* tmpnode = create_node_header(); 
     m_vec_header[ m_id_header ] = tmpnode;
 
     m_default_noname = DBTREE::default_noname( m_url );
@@ -660,7 +660,7 @@ const std::string NodeTreeBase::get_id_name( int number )
 //
 // 基本ノード作成
 //
-NODE* NodeTreeBase::createNode()
+NODE* NodeTreeBase::create_node()
 {
     NODE* tmpnode = ( NODE* ) m_heap.heap_alloc( sizeof( NODE ) );
 
@@ -675,12 +675,12 @@ NODE* NodeTreeBase::createNode()
 //
 // ヘッダノード作成
 //
-NODE* NodeTreeBase::create_header_node()
+NODE* NodeTreeBase::create_node_header()
 {
     ++m_id_header;
     m_node_previous = NULL;
 
-    NODE* tmpnode = createNode();
+    NODE* tmpnode = create_node();
     tmpnode->type =  NODE_HEADER;
 
     // ヘッダ情報
@@ -696,11 +696,11 @@ NODE* NodeTreeBase::create_header_node()
 //
 // 名前や本文などのブロックの先頭に置く
 //
-NODE* NodeTreeBase::create_block_node()
+NODE* NodeTreeBase::create_node_block()
 {
     m_node_previous = NULL;
 
-    NODE* tmpnode = createNode();
+    NODE* tmpnode = create_node();
     tmpnode->type =  NODE_BLOCK;
     
     return tmpnode;
@@ -710,11 +710,11 @@ NODE* NodeTreeBase::create_block_node()
 //
 // 発言回数(IDの出現数)ノード
 //
-NODE* NodeTreeBase::createIDNumNode()
+NODE* NodeTreeBase::create_node_idnum()
 {
     const char* dummy = " (10000)";
 
-    NODE* tmpnode = createTextNode( dummy, COLOR_CHAR );
+    NODE* tmpnode = create_node_text( dummy, COLOR_CHAR );
     tmpnode->type = NODE_IDNUM;
     tmpnode->text[ 0 ] = '\0'; // メモリだけ確保して文字を消す
     return tmpnode;
@@ -724,9 +724,9 @@ NODE* NodeTreeBase::createIDNumNode()
 //
 // 改行ノード作成
 //
-NODE* NodeTreeBase::createBrNode()
+NODE* NodeTreeBase::create_node_br()
 {
-    NODE* tmpnode = createNode();
+    NODE* tmpnode = create_node();
     tmpnode->type = NODE_BR;
     return tmpnode;
 }
@@ -735,9 +735,9 @@ NODE* NodeTreeBase::createBrNode()
 //
 // 水平線ノード作成
 //
-NODE* NodeTreeBase::createHrNode()
+NODE* NodeTreeBase::create_node_hr()
 {
-    NODE* tmpnode = createNode();
+    NODE* tmpnode = create_node();
     tmpnode->type = NODE_HR;
     return tmpnode;
 }
@@ -746,9 +746,9 @@ NODE* NodeTreeBase::createHrNode()
 //
 // スペースノード
 //
-NODE* NodeTreeBase::createSpNode( const int& type )
+NODE* NodeTreeBase::create_node_space( const int type )
 {
-    NODE* tmpnode = createNode();
+    NODE* tmpnode = create_node();
     tmpnode->type = type;
     return tmpnode;
 }
@@ -757,9 +757,9 @@ NODE* NodeTreeBase::createSpNode( const int& type )
 //
 // 水平タブノード
 //
-NODE* NodeTreeBase::createHTabNode()
+NODE* NodeTreeBase::create_node_htab()
 {
-    NODE* tmpnode = createNode();
+    NODE* tmpnode = create_node();
     tmpnode->type = NODE_HTAB;
     return tmpnode;
 }
@@ -770,9 +770,9 @@ NODE* NodeTreeBase::createHTabNode()
 //
 // bold : 太字か
 //
-NODE* NodeTreeBase::create_linknode( const char* text, int n, const char* link, int n_link, int color_text, bool bold )
+NODE* NodeTreeBase::create_node_link( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold )
 {
-    NODE* tmpnode = createTextNodeN( text, n, color_text, bold );
+    NODE* tmpnode = create_node_ntext( text, n, color_text, bold );
     if( tmpnode ){
         tmpnode->type = NODE_LINK;
         
@@ -790,10 +790,11 @@ NODE* NodeTreeBase::create_linknode( const char* text, int n, const char* link, 
 //
 // アンカーノード作成
 //
-NODE* NodeTreeBase::create_ancnode( const char* text, int n, const char* link, int n_link, int color_text,  bool bold,
-                                    ANCINFO* ancinfo, int lng_ancinfo )
+NODE* NodeTreeBase::create_node_anc( const char* text, const int n, const char* link, const int n_link,
+                                     const int color_text,  const bool bold,
+                                     const ANCINFO* ancinfo, const int lng_ancinfo )
 {
-    NODE* tmpnode = create_linknode( text, n, link, n_link, color_text, bold );
+    NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold );
     if( tmpnode ){
 
         tmpnode->linkinfo->ancinfo = ( ANCINFO* )m_heap.heap_alloc( sizeof( ANCINFO ) * ( lng_ancinfo + 1 ) );
@@ -805,11 +806,30 @@ NODE* NodeTreeBase::create_ancnode( const char* text, int n, const char* link, i
 
 
 //
+// SSSPノード
+//
+NODE* NodeTreeBase::create_node_sssp( const char* link, const int n_link )
+{
+    NODE* tmpnode = create_node();
+    tmpnode->type = NODE_SSSP;
+
+    // リンク情報セット
+    tmpnode->linkinfo = ( LINKINFO* )m_heap.heap_alloc( sizeof( LINKINFO ) );
+    tmpnode->linkinfo->link = ( char* )m_heap.heap_alloc( n_link +4 );
+    memcpy( tmpnode->linkinfo->link, link, n_link );
+    tmpnode->linkinfo->link[ n_link ] = '\0';
+    tmpnode->linkinfo->image = true;
+
+    return tmpnode;
+}
+
+
+//
 // 画像ノード作成
 //
-NODE* NodeTreeBase::create_imgnode( const char* text, int n, const char* link, int n_link, int color_text,  bool bold )
+NODE* NodeTreeBase::create_node_img( const char* text, const int n, const char* link, const int n_link, const int color_text,  const bool bold )
 {
-    NODE* tmpnode = create_linknode( text, n, link, n_link, color_text, bold );
+    NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold );
     if( tmpnode ) tmpnode->linkinfo->image = true;
     
     return tmpnode;
@@ -819,9 +839,9 @@ NODE* NodeTreeBase::create_imgnode( const char* text, int n, const char* link, i
 //
 // テキストノード作成
 //
-NODE* NodeTreeBase::createTextNode( const char* text, int color_text, bool bold )
+NODE* NodeTreeBase::create_node_text( const char* text, const int color_text, const bool bold )
 {
-    return createTextNodeN( text, strlen( text ), color_text, bold );
+    return create_node_ntext( text, strlen( text ), color_text, bold );
 }
 
 
@@ -829,11 +849,11 @@ NODE* NodeTreeBase::createTextNode( const char* text, int color_text, bool bold 
 //
 // テキストノード作成( サイズ指定 )
 //
-NODE* NodeTreeBase::createTextNodeN( const char* text, int n, int color_text, bool bold )
+NODE* NodeTreeBase::create_node_ntext( const char* text, const int n, const int color_text, const bool bold )
 {
     if( n <= 0 ) return NULL;
     
-    NODE* tmpnode = createNode();
+    NODE* tmpnode = create_node();
 
     if( tmpnode ){
         tmpnode->type = NODE_TEXT;
@@ -862,11 +882,11 @@ NODE* NodeTreeBase::append_html( const std::string& html )
     std::cout << "NodeTreeBase::append_html url = " << m_url << " html = " << html << std::endl;
 #endif
 
-    NODE* header = create_header_node();
+    NODE* header = create_node_header();
     m_vec_header[ m_id_header ] = header;
 
     init_loading();
-    header->headinfo->block[ BLOCK_MES ] = create_block_node();
+    header->headinfo->block[ BLOCK_MES ] = create_node_block();
     parse_html( html.c_str(), html.length(), COLOR_CHAR, false, false, true );
     clear();
 
@@ -1205,7 +1225,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     if( *pos == '\0' || *pos == '\n' ) return datline;
 
     int i;
-    NODE* header = create_header_node();
+    NODE* header = create_node_header();
     m_vec_header[ m_id_header ] =  header;
 
     // レス番号
@@ -1213,8 +1233,8 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     snprintf( tmpstr, LNG_RES, "%d", header->id_header );
     snprintf( tmplink, LNG_RES,"%s%d", PROTO_RES, header->id_header );    
 
-    header->headinfo->block[ BLOCK_NUMBER ] = create_block_node();
-    create_linknode( tmpstr, strlen( tmpstr ) , tmplink, strlen( tmplink ), COLOR_CHAR_LINK, true );
+    header->headinfo->block[ BLOCK_NUMBER ] = create_node_block();
+    create_node_link( tmpstr, strlen( tmpstr ) , tmplink, strlen( tmplink ), COLOR_CHAR_LINK, true );
 
     const char* section[ SECTION_NUM ];
     int section_lng[ SECTION_NUM ];
@@ -1240,14 +1260,14 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 #endif
 
         m_broken = true;
-        header->headinfo->block[ BLOCK_NAME ] = create_block_node();
+        header->headinfo->block[ BLOCK_NAME ] = create_node_block();
 
-        createTextNode( " 壊れています", COLOR_CHAR );
+        create_node_text( " 壊れています", COLOR_CHAR );
 
-        header->headinfo->block[ BLOCK_MES ] = create_block_node();
+        header->headinfo->block[ BLOCK_MES ] = create_node_block();
         const char str_broken[] = "ここ";
-        create_linknode( str_broken, strlen( str_broken ) , PROTO_BROKEN, strlen( PROTO_BROKEN ), COLOR_CHAR_LINK, false );
-        createTextNode( "をクリックしてスレを再取得して下さい。", COLOR_CHAR );
+        create_node_link( str_broken, strlen( str_broken ) , PROTO_BROKEN, strlen( PROTO_BROKEN ), COLOR_CHAR_LINK, false );
+        create_node_text( "をクリックしてスレを再取得して下さい。", COLOR_CHAR );
         
         return pos;
     }
@@ -1255,16 +1275,16 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     // 名前
     int color_name = COLOR_CHAR_NAME;
     if( ! section_lng[ 1 ] ) color_name = COLOR_CHAR_NAME_NOMAIL;
-    parseName( header, section[ 0 ], section_lng[ 0 ], color_name );
+    parse_name( header, section[ 0 ], section_lng[ 0 ], color_name );
     
     // メール
-    parseMail( header, section[ 1 ], section_lng[ 1 ] );
+    parse_mail( header, section[ 1 ], section_lng[ 1 ] );
 
     // 日付とID
     parse_date_id( header, section[ 2 ], section_lng[ 2 ] );
 
     // 本文
-    header->headinfo->block[ BLOCK_MES ] = create_block_node();
+    header->headinfo->block[ BLOCK_MES ] = create_node_block();
     parse_html( section[ 3 ], section_lng[ 3 ], COLOR_CHAR );
 
     // サブジェクト
@@ -1308,22 +1328,22 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 //
 // 名前
 //
-void NodeTreeBase::parseName( NODE* header, const char* str, int lng, int color_name )
+void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, const int color_name )
 {
     bool digitlink = true;
     const bool bold = true;
     const bool defaultname = ( strncmp( m_default_noname.data(), str, lng ) == 0 );
 
-    header->headinfo->block[ BLOCK_NAMELINK ] = create_block_node();
+    header->headinfo->block[ BLOCK_NAMELINK ] = create_node_block();
 
     // デフォルトの名前で無いときはリンクにする
-    if( defaultname ) createTextNode( "名前", COLOR_CHAR );
+    if( defaultname ) create_node_text( "名前", COLOR_CHAR );
     else{
         const char namestr[] = "名前";
-        create_linknode( namestr, strlen( namestr ) , PROTO_NAME, strlen( PROTO_NAME ), COLOR_CHAR, false );
+        create_node_link( namestr, strlen( namestr ) , PROTO_NAME, strlen( PROTO_NAME ), COLOR_CHAR, false );
     }
 
-    NODE* node = header->headinfo->block[ BLOCK_NAME ] = create_block_node();
+    NODE* node = header->headinfo->block[ BLOCK_NAME ] = create_node_block();
 
     // デフォルト名無しと同じときはアンカーを作らない
     if( defaultname ){
@@ -1403,7 +1423,7 @@ void NodeTreeBase::parseName( NODE* header, const char* str, int lng, int color_
 //
 // メール
 //
-void NodeTreeBase::parseMail( NODE* header, const char* str, int lng )
+void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
 {
     // sage 以外の時は色を変える
     int color = COLOR_CHAR;
@@ -1411,19 +1431,19 @@ void NodeTreeBase::parseMail( NODE* header, const char* str, int lng )
     while( str[ i ] != 's' && i < lng ) ++i;
     if( str[ i ] != 's' || str[ i+1 ] != 'a' || str[ i+2 ] != 'g' || str[ i+3 ] != 'e' ) color = COLOR_CHAR_AGE;
 
-    header->headinfo->block[ BLOCK_MAIL ] = create_block_node();
-    createTextNode( "[", color );
+    header->headinfo->block[ BLOCK_MAIL ] = create_node_block();
+    create_node_text( "[", color );
     parse_html( str, lng, color, true );
 
-    if( color == COLOR_CHAR ) createTextNode( "]", color );
-    else createTextNode( "]", color );
+    if( color == COLOR_CHAR ) create_node_text( "]", color );
+    else create_node_text( "]", color );
 }
 
 
 //
 // 日付とID、及びBE、株、その他
 //
-void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
+void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
 {
     int start = 0;
     int lng_text = 0;
@@ -1432,7 +1452,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
     int lng_id_tmp;
     char tmpid[ LNG_ID ];
 
-    header->headinfo->block[ BLOCK_DATE ] = create_block_node();
+    header->headinfo->block[ BLOCK_DATE ] = create_node_block();
 
     for(;;){
 
@@ -1451,7 +1471,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             // フラッシュ
             if( lng_text ){
                 if( *( str + start + lng_text - 1 ) == ' ' ) --lng_text;
-                createTextNodeN( str + start, lng_text, COLOR_CHAR );
+                create_node_ntext( str + start, lng_text, COLOR_CHAR );
             }
 
             // id 取得
@@ -1464,12 +1484,12 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             memcpy( tmplink + sizeof( PROTO_ID ) - 1, tmpid, lng_id_tmp + 1 );
             
             // リンク作成
-            header->headinfo->block[ BLOCK_ID_NAME ] = create_block_node();
-            create_linknode( "ID:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
-            createTextNodeN( tmpid, lng_id_tmp, COLOR_CHAR);
+            header->headinfo->block[ BLOCK_ID_NAME ] = create_node_block();
+            create_node_link( "ID:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
+            create_node_ntext( tmpid, lng_id_tmp, COLOR_CHAR);
 
             // 発言回数ノード作成
-            createIDNumNode();
+            create_node_idnum();
 
             // 次のブロックへ移動
             start = start_block + lng_block;
@@ -1482,7 +1502,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             const int strlen_of_BE = 3; // = strlen( "BE:" );
 
             // フラッシュ
-            if( lng_text ) createTextNodeN( str + start, lng_text, COLOR_CHAR );
+            if( lng_text ) create_node_ntext( str + start, lng_text, COLOR_CHAR );
 
             // id 取得
             int lng_header = 0;
@@ -1497,8 +1517,8 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
             memcpy( tmplink + sizeof( PROTO_BE ) -1, tmpid, lng_id_tmp + 1 );
 
             // リンク作成
-            create_linknode( "?", 1, tmplink, strlen( tmplink ), COLOR_CHAR, false );
-            createTextNodeN( str + start_block + lng_header, lng_block - lng_header, COLOR_CHAR);
+            create_node_link( "?", 1, tmplink, strlen( tmplink ), COLOR_CHAR, false );
+            create_node_ntext( str + start_block + lng_header, lng_block - lng_header, COLOR_CHAR);
 
             // 次のブロックへ移動
             start = start_block + lng_block;
@@ -1511,7 +1531,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
                  && str[ start_block + 2 ] == ' ' ){
 
             // フラッシュ
-            if( lng_text ) createTextNodeN( str + start, lng_text, COLOR_CHAR );
+            if( lng_text ) create_node_ntext( str + start, lng_text, COLOR_CHAR );
 
             // </a>までブロックの長さを伸ばす
             while( start_block + lng_block < lng
@@ -1531,14 +1551,14 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
     }
 
     // フラッシュ
-    if( lng_text ) createTextNodeN( str + start, lng_text, COLOR_CHAR );
+    if( lng_text ) create_node_ntext( str + start, lng_text, COLOR_CHAR );
 }
 
 
 //
 // HTMLパーサ
 //
-// digitlink : true の時は先頭に数字が現れたらアンカーにする( parseName() などで使う )
+// digitlink : true の時は先頭に数字が現れたらアンカーにする( parse_name() などで使う )
 //             false なら数字の前に >> がついてるときだけアンカーにする
 //
 // bold : ボールド標示
@@ -1552,7 +1572,8 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, int lng )
 // Thanks to 「パッチ投稿スレ」の28氏
 // http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/28
 //
-void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool digitlink, bool bold, bool ahref )
+void NodeTreeBase::parse_html( const char* str, const int lng, const int color_text,
+                               bool digitlink, const bool bold, const bool ahref )
 {
     const char* pos = str;
     const char* pos_end = str + lng;
@@ -1580,7 +1601,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                      ( *( pos + 1 ) == 'a' || *( pos + 1 ) == 'A' ) && *( pos + 2 ) == ' ' ){
 
                 // フラッシュ
-                createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+                create_node_ntext( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
                 while( pos < pos_end && *pos != '=' ) ++pos;
                 ++pos;
@@ -1615,7 +1636,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 ++pos;
 
                 if( lng_link && lng_str ){
-                    create_linknode( pos_str_start, lng_str , pos_link_start, lng_link, COLOR_CHAR_LINK, false );
+                    create_node_link( pos_str_start, lng_str , pos_link_start, lng_link, COLOR_CHAR_LINK, false );
                 }
             }
 
@@ -1683,10 +1704,10 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                      && ( *( pos + 2 ) == 'r' || *( pos + 2 ) == 'R' ) ){
 
                 // フラッシュ
-                createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+                create_node_ntext( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
                 // 水平線ノード作成
-                createHrNode();
+                create_node_hr();
 
                 pos += 4;
             }
@@ -1695,7 +1716,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
             else {
 
                 // フラッシュ
-                createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+                create_node_ntext( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
                 
                 while( pos < pos_end && *pos != '>' ) ++pos;
                 ++pos;
@@ -1706,10 +1727,10 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 
                 // フラッシュ
                 if( *( pos - 1 ) == ' ' ) --lng_text; // 改行前の空白を取り除く
-                createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+                create_node_ntext( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
                 // 改行ノード作成
-                createBrNode();
+                create_node_br();
 
                 // 改行直後と行頭の空白は全て除く
                 while( *pos != '>' ) ++pos; ++pos;
@@ -1737,7 +1758,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
         if( check_anchor( mode , pos, n_in, tmpstr + lng_str, tmplink + lng_link, LNG_LINK - lng_link, ancinfo + lng_anc ) ){
 
             // フラッシュしてからアンカーノードをつくる
-            createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+            create_node_ntext( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
             memcpy( tmplink, PROTO_ANCHORE, strlen( PROTO_ANCHORE ) );
             lng_str += strlen( tmpstr ) - lng_str;
@@ -1756,7 +1777,7 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
                 pos += n_in; 
             }
 
-            create_ancnode( tmpstr, lng_str, tmplink, lng_link, COLOR_CHAR_LINK, bold, ancinfo, lng_anc );
+            create_node_anc( tmpstr, lng_str, tmplink, lng_link, COLOR_CHAR_LINK, bold, ancinfo, lng_anc );
 
             // forのところで++されるので--しておく
             --pos;
@@ -1771,22 +1792,26 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 
         ///////////////////////
         // リンク(http)のチェック
-        if( check_link( pos, (int)( pos_end - pos ), n_in, tmplink, LNG_LINK ) ){
+        const int linktype = check_link( pos, (int)( pos_end - pos ), n_in, tmplink, LNG_LINK );
+        if( linktype != MISC::SCHEME_NONE ){
 
             // フラッシュしてからリンクノードつくる
-            createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+            create_node_ntext( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
             while( remove_imenu( tmplink ) );
 
             lng_link = strlen( tmplink );
 
+            // ssspアイコン
+            if( linktype == MISC::SCHEME_SSSP ) create_node_sssp( tmplink, lng_link );
+
             // 画像リンク
-            if( DBIMG::get_type_ext( tmplink, lng_link ) != DBIMG::T_UNKNOWN ){
-                create_imgnode( pos, n_in, tmplink , lng_link, COLOR_IMG_NOCACHE, bold );
+            else if( DBIMG::get_type_ext( tmplink, lng_link ) != DBIMG::T_UNKNOWN ){
+                create_node_img( pos, n_in, tmplink , lng_link, COLOR_IMG_NOCACHE, bold );
             }
 
             // 一般リンク
-            else create_linknode( pos, n_in, tmplink , lng_link, COLOR_CHAR_LINK, bold );
+            else create_node_link( pos, n_in, tmplink , lng_link, COLOR_CHAR_LINK, bold );
 
             pos += n_in;
 
@@ -1806,9 +1831,9 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
 
                 // 文字以外の空白ノードならフラッシュして空白ノード追加
                 if( ret_decode != NODE_TEXT ){
-                    createTextNodeN( m_parsed_text, lng_text, color_text, bold );
+                    create_node_ntext( m_parsed_text, lng_text, color_text, bold );
                     lng_text = 0;
-                    createSpNode( ret_decode );
+                    create_node_space( ret_decode );
                 }
                 else lng_text += n_out;
 
@@ -1825,8 +1850,8 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
         if( *pos == 0x09 ){
 
             // フラッシュしてからタブノードをつくる
-            createTextNodeN( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
-            createHTabNode();
+            create_node_ntext( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+            create_node_htab();
             continue;
         }
 
@@ -1844,12 +1869,14 @@ void NodeTreeBase::parse_html( const char* str, int lng, int color_text, bool di
         m_parsed_text[ lng_text++ ] = *pos;
     }
 
-    createTextNodeN( m_parsed_text, lng_text, color_text, bold );
+    create_node_ntext( m_parsed_text, lng_text, color_text, bold );
 }
 
 
 //
 // 書き込みログ比較用文字列作成
+//
+// m_buffer_write に作成した文字列をセットする
 //
 // max_lng_write > 0 のときは m_buffer_write の文字数が max_lng_write 以上になったら停止
 //
@@ -1857,6 +1884,7 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
 {
     if( ! m_buffer_write ) return;
 
+    bool head = true;
     const char* pos = str;
     const char* pos_end = str + lng;
 
@@ -1904,6 +1932,16 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
             continue;
         }
 
+        // 先頭のsssp
+        else if( head && *pos == 's' && ( *( pos + 1 ) == 's' && *( pos + 2 ) == 's' && *( pos + 3 ) == 'p' ) ){
+
+            // 次のタグ(改行)が来るまで進める
+            while( pos < pos_end && *pos != '>' ) ++pos;
+            
+            continue;
+        }
+
+        head = false;
         *(pos_write++) = *pos;
     }
 
@@ -2067,20 +2105,20 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
 // n_in : str_in から何バイト読み取ったか
 // str_link : リンクの文字列
 //
-// 戻り値 : リンクが現れれば true
+// 戻り値 : リンクのタイプ(例えばSCHEME_HTTPなど)
 //
 // 注意 : MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
 //
-bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* str_link, int lng_link )
+const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link )
 {
-    // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
-    const bool loose_url = CONFIG::get_loose_url();
-
     // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
     int delim_pos = 0;
-    int linktype = MISC::is_url_scheme( str_in, &delim_pos );
+    const int linktype = MISC::is_url_scheme( str_in, &delim_pos );
 
-    if( linktype == MISC::SCHEME_NONE ) return false;
+    if( linktype == MISC::SCHEME_NONE ) return MISC::SCHEME_NONE;
+
+    // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
+    const bool loose_url = CONFIG::get_loose_url();
 
     // リンクの長さを取得
     n_in = delim_pos;
@@ -2131,7 +2169,7 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
         || *( str_in + n_in -1 ) == ']' ) --n_in;
 
     // URLとして短かすぎる場合は除外する( 最短ドメイン名の例 "1.cc" )
-    if( n_in - delim_pos < 4 ) return false;
+    if( n_in - delim_pos < 4 ) return MISC::SCHEME_NONE;
 
     int offset = 0;
     if( linktype == MISC::SCHEME_TTP || linktype == MISC::SCHEME_TP ){ // ttp://, tp:// の場合、リンクの先頭にhを補完
@@ -2145,7 +2183,7 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
         }
     }
 
-    if( n_in + offset > lng_link ) return false;
+    if( n_in + offset > lng_link ) return MISC::SCHEME_NONE;
 
     if( ! url_encode ){
         memcpy( str_link + offset, str_in, n_in );
@@ -2171,7 +2209,14 @@ bool NodeTreeBase::check_link( const char* str_in, int lng_in, int& n_in, char* 
         *pos = '\0';
     }
 
-    return true;
+    // sssp -> http
+    if( linktype == MISC::SCHEME_SSSP ){
+        str_link[ 0 ] = 'h';
+        str_link[ 1 ] = 't';
+        str_link[ 2 ] = 't';
+    }        
+
+    return linktype;
 }
 
 
