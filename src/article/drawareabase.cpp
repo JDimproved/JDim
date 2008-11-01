@@ -790,7 +790,7 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
 
                     // レイアウトして次のノードの左上座標を計算
                     // x,y, br_size が参照なので更新された値が戻る
-                    layout_one_img_node( layout, x, y, br_size, m_width_client, init_popupwin );
+                    layout_one_img_node( layout, x, y, br_size, m_width_client, init_popupwin, EIMG_MRG );
 
                     break;
 
@@ -798,10 +798,14 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
 
                 case DBTREE::NODE_SSSP: // sssp アイコン
 
-                    // 縦方向にセンタリングする
-                    y += EIMG_MRG/2;
-                    layout_one_img_node( layout, x, y, br_size, m_width_client, init_popupwin );
-                    y -= EIMG_MRG/2;
+                    y += EIMG_MRG;
+                    layout_one_img_node( layout, x, y, br_size, m_width_client, init_popupwin, 0 );
+
+                    if( layout->rect->height > m_br_size ){
+
+                        br_size = m_br_size;
+                        y += layout->rect->height - br_size;
+                    }
 
                     break;
 
@@ -1123,15 +1127,13 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
 // br_size : 現在行での改行量
 // width_view : 描画領域の幅
 // init_popupwin : ポップアップウィンドウの初期サイズ計算をおこなう
+// mrg_bottom : 下マージン
 //
-void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_size, const int width_view, const bool init_popupwin )
+void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_size, const int width_view, const bool init_popupwin, const int mrg_bottom )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::layout_one_img_node link = " << layout->link << std::endl;
 #endif
-
-    const int iconsize = EIMG_ICONSIZE;
-    const int mrg = EIMG_MRG;
 
     DBTREE::NODE* node = layout->node;
     if( ! node ) return;
@@ -1141,8 +1143,8 @@ void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_
     if( ! rect ) rect = layout->rect = m_layout_tree->create_rect();
     rect->x = x;
     rect->y = y;
-    rect->width = iconsize + 2; // +2 は枠の分
-    rect->height = iconsize + 2; // +2 は枠の分
+    rect->width = EIMG_ICONSIZE + 2; // +2 は枠の分
+    rect->height = EIMG_ICONSIZE + 2; // +2 は枠の分
 
     // 既に表示済みの場合
     DBIMG::Img* img = node->linkinfo->img;
@@ -1164,7 +1166,7 @@ void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_
     else border = width_view;
 
     // wrap
-    if( x + ( rect->width + mrg ) >= border ){
+    if( x + ( rect->width + EIMG_MRG ) >= border ){
 
         x = 0;
         if( div ) x = div->rect->x + div->css->padding_left;
@@ -1175,8 +1177,8 @@ void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_
         rect->y = y;
     }
 
-    x += rect->width + mrg;
-    if( br_size < rect->height + mrg ) br_size = rect->height + mrg;
+    x += rect->width + mrg_bottom;
+    if( br_size < rect->height + mrg_bottom ) br_size = rect->height + mrg_bottom;
 }
 
 

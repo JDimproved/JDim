@@ -267,8 +267,15 @@ namespace DBTREE
         void parse_name( NODE* header, const char* str, const int lng, const int color_name );
         void parse_mail( NODE* header, const char* str, const int lng );
         void parse_date_id( NODE* header, const char* str, const int lng );
+
+        // HTMLパーサ
+        // digitlink : true の時は先頭に数字が現れたらアンカーにする( parse_name() などで使う )
+        //             false なら数字の前に >> がついてるときだけアンカーにする
+        // bold : ボールド表示
+        // ahref : <a href=～></a> からリンクノードを作成する
+        // enable_sssp : true の時はssspアイコンを有効にする( ssspは 1 スレ 1 つだけアイコン表示)
         void parse_html( const char* str, const int lng, const int color_text,
-                         bool digitlink = false, const bool bold = false, const bool ahref = false );
+                         bool digitlink, const bool bold, const bool ahref, const bool sssp );
 
         // 書き込みログ比較用文字列作成
         // m_buffer_write に作成した文字列をセットする
