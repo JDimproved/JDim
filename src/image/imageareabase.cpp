@@ -197,8 +197,8 @@ void ImageAreaBase::set_image()
 
     clear();
 
-    int w_org = get_img()->get_width();
-    int h_org = get_img()->get_height();
+    const int w_org = get_img()->get_width();
+    const int h_org = get_img()->get_height();
 
     if( m_imgloader && m_imgloader->get_pixbuf() ){
 
@@ -224,31 +224,13 @@ void ImageAreaBase::set_image()
 //
 void ImageAreaBase::set_mosaic( Glib::RefPtr< Gdk::Pixbuf > pixbuf )
 {
-    // 一旦横幅を size ピクセルまで縮めてから元のサイズに戻す
-    const int size = MAX( 1, CONFIG::get_mosaic_size() );
+    const int moswidth = get_img()->get_width_mosaic();
+    const int mosheight = get_img()->get_height_mosaic();
 
-    int width = get_width();
-    int height = get_height();
+    if( moswidth && mosheight ){
 
-    if( width <= size );
-    else{
-
-        if( width > height ){
-
-            const int dev = MAX( 1, width / size );
-            height = height / dev;
-            width = size;
-        }
-        else{
-
-            const int dev = MAX( 1, height / size );
-            height = size;
-            width = width / dev;
-        }
-    };
-
-    Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
-    pixbuf2 = pixbuf->scale_simple( MAX( 1, width ),
-                                    MAX( 1, height ), Gdk::INTERP_NEAREST );
-    set( pixbuf2->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST ) );
+        Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
+        pixbuf2 = pixbuf->scale_simple( moswidth, mosheight, Gdk::INTERP_NEAREST );
+        set( pixbuf2->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST ) );
+    }
 }

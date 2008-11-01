@@ -116,6 +116,8 @@ namespace CONFIG
         bool use_mosaic;
 
         // モザイクの大きさ
+        // 画像を一度mosaic_sizeまで縮めてから表示する
+        // 画像のサイズがmosaic_sizeより小さい場合はモザイクをかけない
         int mosaic_size;
 
         // 画像をデフォルトでウィンドウサイズに合わせる

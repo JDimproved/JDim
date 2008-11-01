@@ -1953,7 +1953,7 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, con
 //
 // 戻り値 : true なら描画後に再レイアウトを実行する
 //
-bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, const int upper, const int lower )
+const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, const int upper, const int lower )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::draw_one_img_node link = " << layout->link << std::endl;
@@ -2008,7 +2008,7 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, const int
 
             layout->eimg = new EmbeddedImage( layout->link );
 
-            // EmbeddedImageのアドレスを記憶しておいてDrawAreaBa::clear()でdeleteする
+            // EmbeddedImageのアドレスを記憶しておいてDrawAreaBase::clear()でdeleteする
             m_eimgs.push_back( layout->eimg );
 
             layout->eimg->show();
@@ -2030,17 +2030,18 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, const int
                 // モザイク
                 if( img->get_mosaic() ){
 
-                    const int size_mosaic = 5;
+                    const int moswidth = img->get_width_mosaic();
+                    const int mosheight = img->get_height_mosaic();
 
-                    Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
-                    pixbuf2 = pixbuf->scale_simple(
-                        MAX( 1, pixbuf->get_width() / size_mosaic ),
-                        MAX( 1, pixbuf->get_height() / size_mosaic ),
-                        Gdk::INTERP_NEAREST );
+                    if( moswidth && mosheight ){
 
-                    m_backscreen->draw_pixbuf( m_gc, pixbuf2->scale_simple( pixbuf->get_width(), pixbuf->get_height(), Gdk::INTERP_NEAREST ),
-                                               0, s_top, rect->x + 1, ( rect->y + 1 ) - pos_y + s_top,
-                                               pixbuf->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
+                        Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
+                        pixbuf2 = pixbuf->scale_simple( moswidth, mosheight, Gdk::INTERP_NEAREST );
+                        m_backscreen->draw_pixbuf( m_gc,
+                                                   pixbuf2->scale_simple( pixbuf->get_width(), pixbuf->get_height(), Gdk::INTERP_NEAREST ),
+                                                   0, s_top, rect->x + 1, ( rect->y + 1 ) - pos_y + s_top,
+                                                   pixbuf->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
+                    }
                 }
 
                 // 通常

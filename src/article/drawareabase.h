@@ -313,7 +313,7 @@ namespace ARTICLE
         void draw_one_text_node( LAYOUT* layout, const int width_win, const int pos_y );
         void draw_string( LAYOUT* node, const int pos_y, const int width_view,
                           const int color, const int color_back, const int byte_from, const int byte_to );
-        bool draw_one_img_node( LAYOUT* layout, const int pos_y, const int upper, const int lower );
+        const bool draw_one_img_node( LAYOUT* layout, const int pos_y, const int upper, const int lower );
 
         // drawarea がリサイズ実行
         void configure_impl();

@@ -32,6 +32,10 @@ namespace DBIMG
         int m_width_emb;
         int m_height_emb;
 
+        // モザイク処理時に縮小するサイズ
+        int m_width_mosaic;
+        int m_height_mosaic;
+
         bool m_mosaic; // モザイクかける
         bool m_zoom_to_fit; // windowにサイズをあわせる
         int m_size; // 画像の大きさ(パーセントで)
@@ -60,8 +64,12 @@ namespace DBIMG
         const int get_height() const { return m_height; }
 
         // スレ埋め込み画像の高さ、幅
-        const int get_width_emb() const { return m_width_emb; }
-        const int get_height_emb() const { return m_height_emb; }
+        const int get_width_emb();
+        const int get_height_emb();
+
+        // モザイク処理時に縮小するサイズ
+        const int get_width_mosaic();
+        const int get_height_mosaic();
 
         const bool is_cached();
 
@@ -104,6 +112,9 @@ namespace DBIMG
 
         // 埋め込み画像のサイズを計算
         void set_embedded_size();
+
+        // モザイク処理時に縮小するサイズを経産
+        void set_mosaic_size();
 
         void read_info();
         void save_info();

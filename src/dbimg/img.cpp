@@ -111,9 +111,42 @@ void Img::clear()
     m_height = 0;
     m_width_emb = 0;
     m_height_emb = 0;
+    m_width_mosaic = 0;
+    m_height_mosaic = 0;
     m_abone = false;
 }
 
+
+// スレ埋め込み画像の高さ、幅
+const int Img::get_width_emb()
+{
+    if( ! m_width_emb ) set_embedded_size();
+
+    return m_width_emb;
+}
+
+const int Img::get_height_emb()
+{
+    if( ! m_height_emb ) set_embedded_size();
+
+    return m_height_emb;
+}
+
+
+// モザイク処理時に縮小するサイズ
+const int Img::get_width_mosaic()
+{
+    if( ! m_width_mosaic ) set_mosaic_size();
+
+    return m_width_mosaic;
+}
+
+const int Img::get_height_mosaic()
+{
+    if( ! m_height_mosaic ) set_mosaic_size();
+
+    return m_height_mosaic;
+}
 
 
 const bool Img::is_cached()
@@ -428,7 +461,6 @@ void Img::receive_finish()
 
         MISC::get_img_size( get_cache_path(), m_width, m_height );
         if( ! m_width || ! m_height ) m_type = T_NOSIZE;
-        else set_embedded_size();
     }
 
 
@@ -508,6 +540,14 @@ void Img::receive_finish()
               << "refurl = " << m_refurl << std::endl;
 #endif
 
+    // 画像が小さい場合はモザイクを解除
+    if( m_width && m_height ){
+
+        const int minsize = MAX( 1, CONFIG::get_mosaic_size() );
+        if( m_width >= m_height && m_width < minsize ) m_mosaic = false;
+        else if( m_width < m_height && m_height < minsize ) m_mosaic = false;
+    }
+
     // 拡張子が偽装されている時はモザイク表示にする
     if( is_fake() ) m_mosaic = true;
 
@@ -542,6 +582,34 @@ void Img::set_embedded_size()
 #ifdef _DEBUG
     std::cout << "Img::set_embedded_size w = " << m_width_emb << " h = " << m_height_emb << std::endl;
 #endif
+}
+
+
+// モザイク処理時に縮小するサイズを経産
+void Img::set_mosaic_size()
+{
+    if( ! m_width || ! m_height ) return;
+
+    // 一旦元画像の横幅を mossize ピクセルまで縮めてから描画サイズに戻す
+    const int mossize = MAX( 1, CONFIG::get_mosaic_size() );
+    int moswidth = m_width;
+    int mosheight = m_height;
+
+    if( moswidth >= mosheight ){
+
+        const int dev = MAX( 1, moswidth / mossize );
+        mosheight /= dev;
+        moswidth = mossize;
+    }
+    else{
+
+        const int dev = MAX( 1, mosheight / mossize );
+        mosheight = mossize;
+        moswidth /= dev;
+    }
+
+    m_width_mosaic = MAX( 1, moswidth );
+    m_height_mosaic = MAX( 1, mosheight );
 }
 
 
@@ -653,7 +721,6 @@ void Img::read_info()
             if( total_length() ) save_info();
         }
         set_current_length( total_length() );
-        set_embedded_size();
     }
 
 #ifdef _DEBUG

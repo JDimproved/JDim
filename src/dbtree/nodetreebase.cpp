@@ -1589,7 +1589,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
 // ahref : <a href=～></a> からリンクノードを作成する
 // (例) parse_html( "<a href=\"hoge.com\">hoge</a>", 27, COLOR_CHAR, false, false, true );
 //
-// enable_sssp : true の時はssspアイコンを有効にする( ssspは 1 スレ 1 つだけアイコン表示)
+// enable_sssp : true の時はssspアイコンを有効にする( ssspは 1 レス 1 つだけアイコン表示)
 //
 // (パッチ)
 //

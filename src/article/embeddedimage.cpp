@@ -23,6 +23,9 @@ int redraw_counter = 0; // 0 になったとき再描画する
 void* eimg_launcher( void* dat )
 {
     ++redraw_counter;
+
+    // 遅いCPUの場合は同時に画像をリサイズしようとすると固まった様になるので
+    // mutexをかけて同時にリサイズしないようにする
     Glib::Mutex::Lock lock( eimg_launcher_mutex );
 
 #ifdef _DEBUG
