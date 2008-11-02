@@ -1643,14 +1643,30 @@ void ArticleBase::save_navi2ch_info()
 
         std::list< std::string > lists = MISC::get_elisp_lists( str_info );
         std::list< std::string >::iterator it = lists.begin();
-        ++it;
-        name = *( it++ );
-        ++it;
-        hide = *( it++ );
-        important = *( it++ );
-        unfilter = *( it++ );
-        mail = *( it++ );
-        kako = *( it++ );        
+
+        do{
+            ++it;
+            if( it == lists.end() ) break;
+            name = *( it++ );
+
+            if( it == lists.end() ) break;
+            ++it;
+            if( it == lists.end() ) break;
+            hide = *( it++ );
+
+            if( it == lists.end() ) break;
+            important = *( it++ );
+
+            if( it == lists.end() ) break;
+            unfilter = *( it++ );
+
+            if( it == lists.end() ) break;
+            mail = *( it++ );
+
+            if( it == lists.end() ) break;
+            kako = *( it++ );
+
+        } while(0);
     }
 
     std::ostringstream sstr;
