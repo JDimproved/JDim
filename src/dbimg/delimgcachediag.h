@@ -9,11 +9,13 @@
 
 #include "jdlib/jdthread.h"
 
+#include "skeleton/dispatchable.h"
+
 #include <gtkmm.h>
 
 namespace DBIMG
 {
-    class DelImgCacheDiag : public Gtk::Dialog
+    class DelImgCacheDiag : public Gtk::Dialog, SKELETON::Dispatchable
     {
         Gtk::Label m_label;
        
@@ -36,6 +38,7 @@ namespace DBIMG
 
       private:
 
+        virtual void callback_dispatch();
         void wait();
         void slot_cancel_clicked();
         time_t get_days( const std::string& path );

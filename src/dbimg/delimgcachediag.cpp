@@ -148,6 +148,18 @@ void DelImgCacheDiag::main_thread()
     std::cout << "DelImgCacheDiag::main_thread end\n";
 #endif
 
+    // アクセシビリティをonにした時に別スレッドでhide()すると
+    // フリーズするので、dispatchしてメインスレッドでhide()する
+    dispatch();
+}
+
+
+void DelImgCacheDiag::callback_dispatch()
+{
+#ifdef _DEBUG
+    std::cout << "DelImgCacheDiag::callback_dispatch\n";
+#endif
+
     hide();
 }
 
