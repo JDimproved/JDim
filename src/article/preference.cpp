@@ -9,6 +9,8 @@
 
 #include "config/globalconf.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "cache.h"
 #include "command.h"
 
@@ -30,6 +32,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     ,m_label_modified( false, "最終更新日時 : ", std::string() )
     ,m_button_clearmodified( "日時クリア" )
     ,m_label_write( false, "最終書き込み日時 : ", std::string() )
+    ,m_button_clear_post_info( "書き込み履歴クリア" )
 {
     // 一般
     if( DBTREE::article_is_cached( get_url() ) ){
@@ -49,6 +52,10 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_hbox_modified.pack_start( m_label_modified );
     m_hbox_modified.pack_start( m_button_clearmodified, Gtk::PACK_SHRINK );    
 
+    m_button_clear_post_info.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_post_info ) );
+    m_hbox_write.pack_start( m_label_write );
+    m_hbox_write.pack_start( m_button_clear_post_info, Gtk::PACK_SHRINK );    
+
     m_vbox_info.set_border_width( 16 );
     m_vbox_info.set_spacing( 8 );
     m_vbox_info.pack_start( m_label_name, Gtk::PACK_SHRINK );
@@ -59,7 +66,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
 
     m_vbox_info.pack_start( m_label_since, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_label_write, Gtk::PACK_SHRINK );
+    m_vbox_info.pack_start( m_hbox_write, Gtk::PACK_SHRINK );
 
     // あぼーん設定
 
@@ -215,4 +222,20 @@ void Preferences::slot_clear_modified()
 
     if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
     else m_label_modified.set_text( MISC::timettostr( DBTREE::article_time_modified( get_url() ) ) );
+}
+
+
+void Preferences::slot_clear_post_info()
+{
+    if( m_label_write.get_text().empty() ) return;
+
+    SKELETON::MsgDiag mdiag( NULL, "書き込み履歴を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
+    DBTREE::article_clear_post_info( get_url() );
+    m_label_write.set_text( "" );
+    CORE::core_set_command( "redraw_article" );
+
+    // BoardViewの行を更新
+    CORE::core_set_command( "update_board_item", DBTREE::url_subject( get_url() ), DBTREE::article_id( get_url() ) );
 }

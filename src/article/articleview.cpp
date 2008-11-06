@@ -352,13 +352,6 @@ void ArticleViewMain::update_view()
 //
 void ArticleViewMain::update_finish()
 {
-    std::string str_stat;
-    if( is_old() ) str_stat = "[ DAT落ち 又は 移転しました ] ";
-    if( is_check_update() ) str_stat += "[ 更新可能です ] ";
-    if( is_broken() ) str_stat += "[ 壊れています ] ";
-
-    if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += "[ " + DBTREE::article_ext_err( url_article() ) + " ] ";
-
     // スレラベルセット
     std::string str_tablabel;
     if( is_broken() ) str_tablabel = "[ 壊れています ]  ";
@@ -386,19 +379,8 @@ void ArticleViewMain::update_finish()
     const int number_new = DBTREE::article_number_new( url_article() );
     if( ! number_new ) drawarea()->hide_separator_new();
 
-    // ステータス表示
-    std::ostringstream ss_tmp;
-    ss_tmp << DBTREE::article_str_code( url_article() )
-           << " [ 全 " << number_load
-           << " / 新着 " << number_new;
-
-    if( DBTREE::article_write_time( url_article() ) ) ss_tmp << " / 最終書込 " << DBTREE::article_write_date( url_article() );
-
-    ss_tmp << " / 速度 " << DBTREE::article_get_speed( url_article() )
-           << " / " << DBTREE::article_lng_dat( url_article() )/1024 << " k ] "
-           << str_stat;
-
-    set_status( ss_tmp.str() );
+    // ステータス更新 (実況中はフォーカスされてなくても表示)
+    create_status_message();
     ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status(), ( get_live() ? "force" : "" ) );
 
     // タイトルセット
@@ -472,6 +454,36 @@ void ArticleViewMain::update_finish()
 
 
 //
+// ステータスに表示する文字列作成
+//
+void ArticleViewMain::create_status_message()
+{
+    const int number_load = DBTREE::article_number_load( url_article() );
+    const int number_new = DBTREE::article_number_new( url_article() );
+
+    std::ostringstream ss_tmp;
+    ss_tmp << DBTREE::article_str_code( url_article() )
+           << " [ 全 " << number_load
+           << " / 新着 " << number_new;
+
+    if( DBTREE::article_write_time( url_article() ) ) ss_tmp << " / 最終書込 " << DBTREE::article_write_date( url_article() );
+
+    std::string str_stat;
+    if( is_old() ) str_stat = "[ DAT落ち 又は 移転しました ] ";
+    if( is_check_update() ) str_stat += "[ 更新可能です ] ";
+    if( is_broken() ) str_stat += "[ 壊れています ] ";
+
+    if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += "[ " + DBTREE::article_ext_err( url_article() ) + " ] ";
+
+    ss_tmp << " / 速度 " << DBTREE::article_get_speed( url_article() )
+           << " / " << DBTREE::article_lng_dat( url_article() )/1024 << " k ] "
+           << str_stat;
+
+    set_status( ss_tmp.str() );
+}
+
+
+//
 // 板一覧との切り替え方法説明ダイアログ表示
 //
 void ArticleViewMain::show_instruct_diag()
@@ -495,7 +507,7 @@ void ArticleViewMain::show_instruct_diag()
 void ArticleViewMain::relayout()
 {
 #ifdef _DEBUG
-    std::cout << "ArticleViewMain::relayout\n";
+    std::cout << "ArticleViewMain::relayout " << DBTREE::article_subject( url_article() ) << std::endl;;
 #endif
 
     hide_popup( true );
@@ -510,6 +522,10 @@ void ArticleViewMain::relayout()
     if( num_reserve ) drawarea()->goto_num( num_reserve );
     else if( seen ) drawarea()->goto_num( seen );
     drawarea()->redraw_view();
+
+    // ステータス更新
+    create_status_message();
+    ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
 
 

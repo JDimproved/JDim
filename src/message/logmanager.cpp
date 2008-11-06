@@ -384,3 +384,21 @@ const int Log_Manager::get_max_num_of_log()
 
     return maxno;
 }
+
+
+
+//
+// ログ削除
+//
+void Log_Manager::delete_postlog()
+{
+    const int maxno = get_max_num_of_log();
+
+    for( int num = 0; num <= maxno; ++num ){
+
+        std::string path = CACHE::path_postlog();
+        if( num ) path += "-" + MISC::itostr( num );
+
+        unlink( path.c_str() );
+    }
+}

@@ -43,6 +43,9 @@ namespace MESSAGE
 
         // postlog-* の最大数
         const int get_max_num_of_log();
+
+        // ログ削除
+        void delete_postlog();
     };
 
     ///////////////////////////////////////

@@ -145,6 +145,8 @@ namespace CORE
         void slot_clear_search();
         void slot_clear_name();
         void slot_clear_mail();
+        void slot_clear_write_log();
+        void slot_clear_post_log();
 
         void slot_changefont_main();
         void slot_changefont_popup();

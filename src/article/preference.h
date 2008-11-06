@@ -38,11 +38,15 @@ namespace ARTICLE
 
         SKELETON::LabelEntry m_label_since;
 
+        // 最終更新日時
         Gtk::HBox m_hbox_modified;
         SKELETON::LabelEntry m_label_modified;
         Gtk::Button m_button_clearmodified;
 
+        // 書き込み日時
+        Gtk::HBox m_hbox_write;
         SKELETON::LabelEntry m_label_write;
+        Gtk::Button m_button_clear_post_info;
 
       public:
 
@@ -52,6 +56,7 @@ namespace ARTICLE
       private:
         virtual void slot_ok_clicked();
         void slot_clear_modified();
+        void slot_clear_post_info();
     };
 }
 

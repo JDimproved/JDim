@@ -812,6 +812,32 @@ const bool ArticleBase::is_refer_posted( const int number )
 }
 
 
+// 書き込み履歴のリセット
+void ArticleBase::clear_post_info()
+{
+    if( empty() ) return;
+    if( ! m_cached ) return;
+
+    read_info();
+    if( m_vec_posted.size() || m_write_time.tv_sec || m_write_time.tv_usec ){
+
+#ifdef _DEBUG
+        std::cout << "ArticleBase::clear_post_info size = " << m_vec_posted.size()
+                  << " time = " << m_write_time_date
+                  << " subject = " << m_subject << std::endl;
+#endif
+        m_vec_posted.clear();
+        memset( &m_write_time, 0, sizeof( struct timeval ) );
+        m_write_time_date = std::string();
+
+        // nodetreeが作られている時はnodetreeもリセット
+        if( m_nodetree ) m_nodetree->clear_post_info();
+
+        save_info( true );
+    }
+}
+
+
 //
 // NodeTree作成
 //

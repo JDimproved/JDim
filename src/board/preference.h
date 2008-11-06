@@ -56,10 +56,12 @@ namespace BOARD
         // 書き込み時のデフォルト名とメール
         Gtk::Frame m_frame_write;
         Gtk::VBox m_vbox_write;
-        Gtk::HBox m_hbox_write;
+        Gtk::HBox m_hbox_write1;
+        Gtk::HBox m_hbox_write2;
         SKELETON::LabelEntry m_entry_writename;
         SKELETON::LabelEntry m_entry_writemail;
         Gtk::CheckButton m_check_noname; // 名無し書き込みチェック
+        Gtk::Button m_button_clear_post_info;
 
         // クッキー と キーワード表示
         Gtk::Frame m_frame_cookie;
@@ -86,9 +88,10 @@ namespace BOARD
         SKELETON::LabelEntry m_label_cache;
 
         SKELETON::LabelEntry m_label_noname;
-        SKELETON::LabelEntry m_label_line;
-        SKELETON::LabelEntry m_label_byte;
 
+        Gtk::HBox m_hbox_max;
+        SKELETON::LabelEntry m_label_max_line;
+        SKELETON::LabelEntry m_label_max_byte;
         SKELETON::LabelEntry m_entry_max_res;
 
         SKELETON::LabelEntry m_label_last_access;
@@ -135,6 +138,7 @@ namespace BOARD
       private:
         void slot_clear_modified();
         void slot_clear_samba();
+        void slot_clear_post_info();
         void slot_delete_cookie();
         void slot_check_live();
         void slot_switch_page( GtkNotebookPage*, guint page );

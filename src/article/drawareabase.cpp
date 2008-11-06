@@ -45,7 +45,7 @@ enum
 {
     AUTOSCR_CIRCLE = 24, // オートスクロールの時のサークルの大きさ
 
-    BIG_HEIGHT = 100000,
+    BIG_HEIGHT = 100000000,
 
     LAYOUT_MIN_HEIGHT = 2, // viewの高さがこの値よりも小さい時はリサイズしていないと考える
 

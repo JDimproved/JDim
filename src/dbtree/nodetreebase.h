@@ -219,6 +219,9 @@ namespace DBTREE
         // 自分の書き込みにレスしたか
         const bool is_refer_posted( const int number );
 
+        // 書き込み履歴のリセット
+        void clear_post_info();
+
       protected:
 
         virtual void clear();

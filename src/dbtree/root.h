@@ -132,6 +132,9 @@ namespace DBTREE
         // 全ログ検索
         std::list< std::string > search_cache( const std::string& query, bool mode_or, bool& stop );
 
+        // 全てのスレの書き込み履歴削除
+        void clear_all_post_info();
+
       private:
 
         // bbsmenuのダウンロード用関数

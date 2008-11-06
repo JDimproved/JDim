@@ -52,6 +52,9 @@ namespace ARTICLE
 
         virtual void exec_reload();
 
+        // ステータスに表示する文字列作成
+        void create_status_message();
+
         void show_instruct_diag();
     };
 }

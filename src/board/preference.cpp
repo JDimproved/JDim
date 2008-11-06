@@ -26,6 +26,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
       m_entry_writename( true, "名前：" ),
       m_entry_writemail( true, "メール：" ),
       m_check_noname( "名前欄が空白の時は書き込まない" ),
+      m_button_clear_post_info( "この板にある全スレの書き込み履歴クリア" ),
 
       m_frame_cookie( "クッキーと書き込みキーワード" ),
       m_button_cookie( "削除" ) ,
@@ -41,8 +42,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
 
 
       m_label_noname( false, "デフォルト名無し：", DBTREE::default_noname( get_url() ) ),
-      m_label_line( false, "1レスの最大改行数：" ),
-      m_label_byte( false, "1レスの最大バイト数：" ),
+      m_label_max_line( false, "1レスの最大改行数：" ),
+      m_label_max_byte( false, "1レスの最大バイト数：" ),
       m_entry_max_res( false, "最大レス数：" ),
       m_label_last_access( false, "最終アクセス日時 ：" ),
       m_label_modified( false, "最終更新日時 ：" ),
@@ -61,14 +62,19 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     // JD_MAIL_BLANK の場合空白をセットする
     else if( m_entry_writemail.get_text() == JD_MAIL_BLANK ) m_entry_writemail.set_text( std::string() );
 
-    m_hbox_write.set_spacing( 8 );
-    m_hbox_write.pack_start( m_entry_writename );
-    m_hbox_write.pack_start( m_entry_writemail );
+    m_button_clear_post_info.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_post_info ) );
+    m_hbox_write1.set_spacing( 8 );
+    m_hbox_write1.pack_start( m_check_noname );
+    m_hbox_write1.pack_start( m_button_clear_post_info );
+
+    m_hbox_write2.set_spacing( 8 );
+    m_hbox_write2.pack_start( m_entry_writename );
+    m_hbox_write2.pack_end( m_entry_writemail, Gtk::PACK_SHRINK );
 
     m_vbox_write.set_border_width( 8 );
     m_vbox_write.set_spacing( 8 );
-    m_vbox_write.pack_start( m_check_noname, Gtk::PACK_SHRINK );
-    m_vbox_write.pack_start( m_hbox_write, Gtk::PACK_SHRINK );
+    m_vbox_write.pack_start( m_hbox_write1, Gtk::PACK_SHRINK );
+    m_vbox_write.pack_start( m_hbox_write2, Gtk::PACK_SHRINK );
 
     m_frame_write.add( m_vbox_write );
 
@@ -120,12 +126,16 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_hbox_live.pack_start( m_check_live, Gtk::PACK_SHRINK );
 
     // 一般ページのパッキング
-    m_label_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
-    m_label_byte.set_text( MISC::itostr( DBTREE::message_count( get_url() ) ) );
+    m_label_max_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
+    m_label_max_byte.set_text( MISC::itostr( DBTREE::message_count( get_url() ) ) );
 
     int max_res = DBTREE::board_get_number_max_res( get_url() );
     if( ! max_res ) m_entry_max_res.set_text( "未設定 " );
     else m_entry_max_res.set_text( MISC::itostr( max_res ) );
+
+    m_hbox_max.pack_start( m_label_max_line );
+    m_hbox_max.pack_start( m_label_max_byte );
+    m_hbox_max.pack_start( m_entry_max_res );
 
     const time_t last_access = DBTREE::board_last_access_time( get_url() );
     if( last_access ) m_label_last_access.set_text( MISC::timettostr( last_access ) );
@@ -152,9 +162,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox.pack_start( m_label_cache, Gtk::PACK_SHRINK );
 
     m_vbox.pack_start( m_label_noname, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_label_line, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_label_byte, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_entry_max_res, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_hbox_max, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_label_last_access, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_live, Gtk::PACK_SHRINK );
@@ -315,6 +323,20 @@ void Preferences::slot_clear_samba()
     const int samba_sec = DBTREE::board_samba_sec( get_url() );
     if( ! samba_sec ) m_label_samba.set_text( "未取得" );
     else m_label_samba.set_text( MISC::itostr( samba_sec ) );
+}
+
+
+void Preferences::slot_clear_post_info()
+{
+    SKELETON::MsgDiag mdiag( NULL, "この板にある全てのスレの書き込み履歴を削除しますか？\n\nスレ数によっては時間がかかります。",
+                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
+    DBTREE::board_clear_all_post_info( get_url() );
+
+    // スレ一覧とスレビューの表示更新
+    CORE::core_set_command( "update_board", DBTREE::url_subject( get_url() ) );
+    CORE::core_set_command( "redraw_article" );
 }
 
 

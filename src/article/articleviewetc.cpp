@@ -557,7 +557,6 @@ void ArticleViewDrawout::relayout()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // 書き込みログ表示ビュー
-
 ArticleViewPostlog::ArticleViewPostlog( const std::string& url, const int num )
     : ArticleViewBase( url ), m_num( num )
 {

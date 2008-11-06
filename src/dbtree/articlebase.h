@@ -59,7 +59,7 @@ namespace DBTREE
         struct timeval m_access_time;  // ユーザが最後にロードした時間
         struct timeval m_check_update_time;  // 最終更新チェック時間
         struct timeval m_write_time;   // 最終書き込み時間
-        std::string m_write_time_date; // 書き込み月日( string型 )
+        std::string m_write_time_date; // 最終書き込み月日( string型 )
         std::string m_write_name;      // 書き込み時の名前
         std::string m_write_mail;      // 書き込み時のメアド
         bool m_write_fixname;          // 書き込み時名前固定
@@ -222,12 +222,17 @@ namespace DBTREE
         const std::string& get_write_date() const { return m_write_time_date; } // string型
         const time_t get_write_pass(); // 経過時間(秒)
 
-        // 書き込みしたレス番号
-        const int get_num_posted();  // 書き込み数
+        // 書き込み数
+        const int get_num_posted();
+
+        // 自分の書き込みか
         const bool is_posted( const int number );
 
         // 自分の書き込みにレスしたか
         const bool is_refer_posted( const int number );
+
+        // 書き込み履歴のリセット
+        void clear_post_info();
 
         // スレ立て時刻
         const time_t& get_since_time() const { return m_since_time; };

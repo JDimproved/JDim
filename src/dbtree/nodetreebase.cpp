@@ -2898,3 +2898,11 @@ const bool NodeTreeBase::is_refer_posted( const int number )
 
     return m_vec_refer_posted[ number ];
 }
+
+
+// 書き込み履歴のリセット
+void NodeTreeBase::clear_post_info()
+{
+    m_vec_posted.clear();
+    m_vec_refer_posted.clear();
+}

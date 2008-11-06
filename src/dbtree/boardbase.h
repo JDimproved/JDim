@@ -397,6 +397,9 @@ namespace DBTREE
         void set_samba_sec( time_t sec ){ m_samba_sec = sec; }
         time_t get_write_leftsec(); // 書き込み可能までの残り秒
 
+        // 全書き込み履歴クリア
+        void clear_all_post_info();
+
         // 実況の秒数
         const time_t get_live_sec() const{ return m_live_sec; }
         void set_live_sec( time_t sec ){ m_live_sec = sec; }
