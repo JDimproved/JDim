@@ -23,6 +23,7 @@ SidebarItemPref::SidebarItemPref( Gtk::Window* parent, const std::string& url )
     append_default_pair( ITEM_NAME_SEARCHBOX, ICON::get_icon( ICON::TRANSPARENT ) );
     append_default_pair( ITEM_NAME_SEARCH_NEXT, STOCK_ICON( Gtk::Stock::GO_DOWN ) );
     append_default_pair( ITEM_NAME_SEARCH_PREV, STOCK_ICON( Gtk::Stock::GO_UP ) );
+    append_default_pair( ITEM_NAME_CHECK_UPDATE_ROOT, STOCK_ICON( Gtk::Stock::REFRESH ) );
     append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
 
     // 文字列を元に列を追加

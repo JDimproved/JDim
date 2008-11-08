@@ -190,6 +190,7 @@ std::vector< int > parse_items( const std::string& items_str )
         if( *it == ITEM_NAME_RELOAD ) items.push_back( ITEM_RELOAD );
         if( *it == ITEM_NAME_STOPLOADING ) items.push_back( ITEM_STOPLOADING );
         if( *it == ITEM_NAME_FAVORITE ) items.push_back( ITEM_FAVORITE );
+        if( *it == ITEM_NAME_CHECK_UPDATE_ROOT ) items.push_back( ITEM_CHECK_UPDATE_ROOT );
         if( *it == ITEM_NAME_DELETE ) items.push_back( ITEM_DELETE );
         if( *it == ITEM_NAME_QUIT ) items.push_back( ITEM_QUIT );
         if( *it == ITEM_NAME_PREVVIEW ) items.push_back( ITEM_PREVVIEW );

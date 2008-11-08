@@ -760,8 +760,10 @@ void Core::run( bool init )
     // プライバシー
         "<menu action='Privacy_Menu'>"
         "<menuitem action='ClearAllPrivacy'/>"
+        "<separator/>"
         "<menuitem action='ClearPostLog'/>"
         "<menuitem action='ClearPostHist'/>"
+        "<separator/>"
         "<menuitem action='DeleteImages'/>"
         "</menu>"
 

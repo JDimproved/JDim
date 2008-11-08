@@ -8,7 +8,9 @@
 
 #include "skeleton/view.h"
 #include "skeleton/menubutton.h"
+#include "skeleton/imgtoolbutton.h"
 
+#include "control/controlutil.h"
 #include "control/controlid.h"
 
 #include "command.h"
@@ -21,7 +23,8 @@ using namespace BBSLIST;
 
 BBSListToolBar::BBSListToolBar() :
     SKELETON::ToolBar( BBSLIST::get_admin() ),
-    m_button_toggle( "板一覧とお気に入りの切り替え", true, true, m_label )
+    m_button_toggle( "板一覧とお気に入りの切り替え", true, true, m_label ),
+    m_button_check_update_root( NULL )
 {
     m_button_toggle.get_button()->set_tooltip_arrow( "板一覧とお気に入りの切り替え\n\nマウスホイール回転でも切り替え可能" );
 
@@ -61,6 +64,15 @@ void BBSListToolBar::pack_buttons()
 
             case ITEM_SEARCHBOX:
                 get_buttonbar().append( *get_entry_search( CORE::COMP_SEARCH_BBSLIST ) );
+                break;
+
+            case ITEM_CHECK_UPDATE_ROOT:
+                if( ! m_button_check_update_root ){
+                    m_button_check_update_root = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::REFRESH ) );
+                    m_button_check_update_root->signal_clicked().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_check_update_root ) );
+                    set_tooltip( *m_button_check_update_root, CONTROL::get_label_motions( CONTROL::CheckUpdateRoot ) );
+                }
+                get_buttonbar().append( *m_button_check_update_root );
                 break;
 
             case ITEM_SEARCH_NEXT:
@@ -125,4 +137,10 @@ bool BBSListToolBar::slot_scroll_event( GdkEventScroll* event )
     if( direction == GDK_SCROLL_DOWN ) slot_toggle( 1 );
 
     return true;
+}
+
+
+void BBSListToolBar::slot_check_update_root()
+{
+    CORE::core_set_command( "check_update_root", "" );
 }

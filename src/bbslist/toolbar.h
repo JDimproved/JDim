@@ -21,6 +21,8 @@ namespace BBSLIST
         Gtk::Label m_label;
         SKELETON::ToolMenuButton m_button_toggle;
 
+        SKELETON::ImgToolButton* m_button_check_update_root;
+
       public:
 
         BBSListToolBar();
@@ -37,6 +39,7 @@ namespace BBSLIST
 
         void slot_toggle( int i );
         bool slot_scroll_event( GdkEventScroll* event );
+        void slot_check_update_root();
     };
 }
 
