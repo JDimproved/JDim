@@ -747,12 +747,6 @@ const std::string DBTREE::article_write_date( const std::string& url )
     return DBTREE::get_article( url )->get_write_date();
 }
 
-// 経過時間(秒
-const time_t DBTREE::article_write_pass( const std::string& url )
-{
-    return DBTREE::get_article( url )->get_write_pass();
-}
-
 
 const int DBTREE::article_status( const std::string& url )
 {

@@ -262,11 +262,15 @@ namespace CONFIG
     void set_always_write_ok( bool write_ok );
 
     // 書き込みログを保存
-    const bool get_save_postlog();
-    void set_save_postlog( bool save );
+    const bool get_save_post_log();
+    void set_save_post_log( bool save );
 
     // 書き込みログの最大サイズ
-    const size_t get_maxsize_postlog();
+    const size_t get_maxsize_post_log();
+
+    // 書き込み履歴を保存
+    const bool get_save_post_history();
+    void set_save_post_history( bool save );
 
     // 書き込み中のダイアログを表示しない
     const bool get_hide_writing_dialog();

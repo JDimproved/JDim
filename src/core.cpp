@@ -425,6 +425,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "ArticlePref", "表示中のスレのプロパティ(_T)..." ), sigc::mem_fun( *this, &Core::slot_article_pref ) );
     m_action_group->add( Gtk::Action::create( "ImagePref", "表示中の画像のプロパティ(_I)..." ), sigc::mem_fun( *this, &Core::slot_image_pref ) );
 
+    // 一般
     m_action_group->add( Gtk::Action::create( "General_Menu", "一般(_G)" ) );
     m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示する(_S)", std::string(), CONFIG::get_show_oldarticle() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
@@ -439,9 +440,13 @@ void Core::run( bool init )
                                                     CONFIG::get_fold_message() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_fold_message ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存する(_A)", std::string(), CONFIG::get_save_postlog() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_save_postlog ) );
+    m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存する(_A)", std::string(), CONFIG::get_save_post_log() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_save_post_log ) );
+    m_action_group->add( Gtk::ToggleAction::create( "SavePostHist", "書き込み履歴(鉛筆マーク)を保存する(_P)", std::string(), CONFIG::get_save_post_history() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_save_post_history ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける(_M)", std::string(), CONFIG::get_use_mosaic() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
 
     // マウス／キーボード
     m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード(_M)" ) );
@@ -462,9 +467,9 @@ void Core::run( bool init )
                                                     CONTROL::is_emacs_mode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_emacsmode ) );
 
-    m_action_group->add( Gtk::Action::create( "MousePref", "マウスジェスチャ設定(_G)..." ), sigc::mem_fun( *this, &Core::slot_setup_mouse ) );
-    m_action_group->add( Gtk::Action::create( "KeyPref", "ショートカットキー設定(_R)..." ), sigc::mem_fun( *this, &Core::slot_setup_key ) );
-    m_action_group->add( Gtk::Action::create( "ButtonPref", "マウスボタン設定(_B)..." ), sigc::mem_fun( *this, &Core::slot_setup_button ) );
+    m_action_group->add( Gtk::Action::create( "MousePref", "マウスジェスチャ詳細設定(_G)..." ), sigc::mem_fun( *this, &Core::slot_setup_mouse ) );
+    m_action_group->add( Gtk::Action::create( "KeyPref", "ショートカットキー詳細設定(_R)..." ), sigc::mem_fun( *this, &Core::slot_setup_key ) );
+    m_action_group->add( Gtk::Action::create( "ButtonPref", "マウスボタン詳細設定(_B)..." ), sigc::mem_fun( *this, &Core::slot_setup_button ) );
 
     // フォントと色
     m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色(_F)" ) );
@@ -496,13 +501,6 @@ void Core::run( bool init )
                                                     ( CONFIG::get_abone_transparent() && CONFIG::get_abone_chain() ) ),
                                                     sigc::mem_fun( *this, &Core::slot_toggle_abone_transp_chain ) );
 
-    // 画像
-    m_action_group->add( Gtk::Action::create( "Image_Menu", "画像(_E)" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける(_M)", std::string(), CONFIG::get_use_mosaic() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
-    m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュの消去(_D)..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
-
-
     // その他
     m_action_group->add( Gtk::Action::create( "Etc_Menu", "その他(_O)" ) );    
     m_action_group->add( Gtk::Action::create( "LivePref", "実況設定(_L)..." ), sigc::mem_fun( *this, &Core::slot_setup_live ) );
@@ -510,7 +508,11 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "FilterPref", "リンクフィルタの編集(_F)..." ), sigc::mem_fun( *this, &Core::slot_filter_pref ) );
 
     // プライバシー
-    m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "プライバシー情報の消去(_I)..." ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
+    m_action_group->add( Gtk::Action::create( "Privacy_Menu", "プライバシー(_R)" ) );    
+    m_action_group->add( Gtk::Action::create( "ClearAllPrivacy", "各履歴等の消去(_I)..." ), sigc::mem_fun( *this, &Core::slot_clear_privacy ) );
+    m_action_group->add( Gtk::Action::create( "ClearPostLog", "書き込みログの消去(_P)" ), sigc::mem_fun( *this, &Core::slot_clear_post_log ) );
+    m_action_group->add( Gtk::Action::create( "ClearPostHist", "書き込み履歴(鉛筆マーク)の消去(_H)" ), sigc::mem_fun( *this, &Core::slot_clear_post_history ) );
+    m_action_group->add( Gtk::Action::create( "DeleteImages", "画像キャッシュの消去(_D)..." ), sigc::mem_fun( *this, &Core::slot_delete_all_images ) ); 
 
 
     //////////////////////////////////////////////////////
@@ -707,7 +709,11 @@ void Core::run( bool init )
         "<menuitem action='OldArticle'/>"
         "<menuitem action='RestoreViews'/>"
         "<menuitem action='ToggleFoldMessage'/>"
+        "<separator/>"
         "<menuitem action='SavePostLog'/>"
+        "<menuitem action='SavePostHist'/>"
+        "<separator/>"
+        "<menuitem action='UseMosaic'/>"    
         "</menu>"
 
         "<separator/>"
@@ -751,9 +757,11 @@ void Core::run( bool init )
 
         "<separator/>"
 
-        "<menu action='Image_Menu'>"
-        "<menuitem action='UseMosaic'/>"    
-        "<separator/>"
+    // プライバシー
+        "<menu action='Privacy_Menu'>"
+        "<menuitem action='ClearAllPrivacy'/>"
+        "<menuitem action='ClearPostLog'/>"
+        "<menuitem action='ClearPostHist'/>"
         "<menuitem action='DeleteImages'/>"
         "</menu>"
 
@@ -765,11 +773,6 @@ void Core::run( bool init )
         "<menuitem action='UsrCmdPref'/>"
         "<menuitem action='FilterPref'/>"
         "</menu>"
-
-        "<separator/>"
-
-    // プライバシー
-        "<menuitem action='ClearAllPrivacy'/>"
 
         "</menu>"                         
 
@@ -1272,9 +1275,18 @@ void Core::slot_activate_menubar()
 //
 // 書き込みログを保存
 //
-void Core::slot_toggle_save_postlog()
+void Core::slot_toggle_save_post_log()
 {
-    CONFIG::set_save_postlog( ! CONFIG::get_save_postlog() );
+    CONFIG::set_save_post_log( ! CONFIG::get_save_post_log() );
+}
+
+
+//
+// 書き込み履歴を保存
+//
+void Core::slot_toggle_save_post_history()
+{
+    CONFIG::set_save_post_history( ! CONFIG::get_save_post_history() );
 }
 
 
@@ -1374,6 +1386,10 @@ void Core::slot_clear_mail()
 // 書き込みログのクリア
 void Core::slot_clear_post_log()
 {
+    SKELETON::MsgDiag mdiag( NULL, "書き込みログを削除しますか？",
+                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
     MESSAGE::get_log_manager()->clear_post_log();
 
     // ログ表示を閉じる
@@ -1384,6 +1400,10 @@ void Core::slot_clear_post_log()
 // 全スレの書き込み履歴(鉛筆マーク)のクリア
 void Core::slot_clear_post_history()
 {
+    SKELETON::MsgDiag mdiag( NULL, "全スレの書き込み履歴を削除します。\n\nある板、または特定のスレの履歴を削除するには板またはスレのプロパティから行って下さい。\n\nまた全スレの書き込み履歴の削除には時間がかかります。\n\n全スレの書き込み履歴の削除を実行しますか？",
+                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
     DBTREE::clear_all_post_history();
 
     // ビューの表示更新
@@ -3379,10 +3399,6 @@ void Core::exec_command()
     else if( command.command  == "clear_name" ) slot_clear_name();
 
     else if( command.command  == "clear_mail" ) slot_clear_mail();
-
-    else if( command.command  == "clear_post_log" ) slot_clear_post_log();
-
-    else if( command.command  == "clear_post_history" ) slot_clear_post_history();
 
     // ビューの切替え
     else if( command.command  == "switch_article" ) switch_article( present );

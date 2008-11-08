@@ -25,11 +25,6 @@ namespace CORE
         Gtk::HBox m_hbox_selectall;
         Gtk::Button m_bt_selectall;
 
-        Gtk::HSeparator m_hsepa;
-        Gtk::CheckButton m_bt_clear_post_log;
-        Gtk::CheckButton m_bt_clear_post_history;
-
-
         void slot_selectall()
         {
             m_bt_board.set_active( true );
@@ -43,27 +38,12 @@ namespace CORE
         // OK押した
         virtual void slot_ok_clicked()
         {
-            if( m_bt_clear_post_log.get_active() ){
-                SKELETON::MsgDiag mdiag( NULL, "本当に書き込みログを削除しますか？",
-                                         false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-                if( mdiag.run() != Gtk::RESPONSE_YES ) m_bt_clear_post_log.set_active( false );
-            }
-
-
-            if( m_bt_clear_post_history.get_active() ){
-                SKELETON::MsgDiag mdiag( NULL, "書き込み履歴の削除は時間がかかります。\n\n書き込み履歴の削除を実行しますか？",
-                                         false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-                if( mdiag.run() != Gtk::RESPONSE_YES ) m_bt_clear_post_history.set_active( false );
-            }
-
             if( m_bt_board.get_active() ) CORE::core_set_command( "clear_board" );
             if( m_bt_thread.get_active() ) CORE::core_set_command( "clear_thread" );
             if( m_bt_close.get_active() ) CORE::core_set_command( "clear_closed_thread" );
             if( m_bt_search.get_active() ) CORE::core_set_command( "clear_search" );
             if( m_bt_name.get_active() ) CORE::core_set_command( "clear_name" );
             if( m_bt_mail.get_active() ) CORE::core_set_command( "clear_mail" );
-            if( m_bt_clear_post_log.get_active() ) CORE::core_set_command( "clear_post_log" );
-            if( m_bt_clear_post_history.get_active() ) CORE::core_set_command( "clear_post_history" );
         }
 
       public:
@@ -72,14 +52,11 @@ namespace CORE
         : SKELETON::PrefDiag( parent, url ),
         m_bt_board( "板履歴(_B)", true ),
         m_bt_thread( "スレ履歴(_T)", true ),
-        m_bt_close( "最近閉じたスレ(_R)", true ),
+        m_bt_close( "最近閉じたスレの履歴(_R)", true ),
         m_bt_search( "検索履歴(_F)", true ),
         m_bt_name( "書き込みビューの名前履歴(_N)", true ),
         m_bt_mail( "書き込みビューのメール履歴(_E)", true ),
-        m_bt_selectall( "以上の項目を全て選択(_A)", true ),
-
-        m_bt_clear_post_log( "書き込みログ(_W)", true ),
-        m_bt_clear_post_history( "全スレの書き込み履歴(鉛筆マーク)(_P)", true )
+        m_bt_selectall( "全て選択(_A)", true )
         {
             m_vbox.set_spacing( 8 );
             m_vbox.set_border_width( 8 );
@@ -96,10 +73,6 @@ namespace CORE
 
             get_vbox()->set_spacing( 8 );
             get_vbox()->pack_start( m_vbox, Gtk::PACK_SHRINK );
-
-            m_vbox.pack_start( m_hsepa );
-            m_vbox.pack_start( m_bt_clear_post_log );
-            m_vbox.pack_start( m_bt_clear_post_history );
 
             set_title( "プライバシー情報の消去" );
             show_all_children();

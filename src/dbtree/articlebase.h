@@ -220,7 +220,6 @@ namespace DBTREE
         // 最終書き込み時間
         const time_t& get_write_time() const { return m_write_time.tv_sec; } // 秒
         const std::string& get_write_date() const { return m_write_time_date; } // string型
-        const time_t get_write_pass(); // 経過時間(秒)
 
         // 書き込み数
         const int get_num_posted();

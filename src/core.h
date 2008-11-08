@@ -131,7 +131,8 @@ namespace CORE
 
         void slot_activate_menubar();
 
-        void slot_toggle_save_postlog();
+        void slot_toggle_save_post_log();
+        void slot_toggle_save_post_history();
         void slot_toggle_use_mosaic();
         void slot_toggle_use_imgpopup();
         void slot_toggle_use_inlineimg();

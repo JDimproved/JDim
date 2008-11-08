@@ -173,7 +173,6 @@ namespace DBTREE
     const int article_hour( const std::string& url );
     const time_t article_write_time( const std::string& url );
     const std::string article_write_date( const std::string& url );
-    const time_t article_write_pass( const std::string& url );
     const int article_status( const std::string& url );
     void article_reset_status( const std::string& url );
     const int article_code( const std::string& url );

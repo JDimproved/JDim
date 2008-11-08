@@ -247,6 +247,8 @@ const bool Log_Manager::check_write( const std::string& url, const bool newthrea
 //
 void Log_Manager::push_logitem( const std::string& url, const bool newthread,  const std::string& msg )
 {
+    if( ! CONFIG::get_save_post_history() ) return;
+
     struct timeval tv;
     struct timezone tz;
     gettimeofday( &tv, &tz );
@@ -277,7 +279,7 @@ void Log_Manager::save( const std::string& url,
     std::cout << "msg = " << msg << std::endl;
 #endif
 
-    if( ! CONFIG::get_save_postlog() ) return;
+    if( ! CONFIG::get_save_post_log() ) return;
 
     // 実況中の時は保存しない
     if( SESSION::is_live( url ) ) return;
@@ -311,7 +313,7 @@ void Log_Manager::save( const std::string& url,
     std::cout << "size = " << filesize << std::endl;
 #endif
 
-    if( filesize > CONFIG::get_maxsize_postlog() ){
+    if( filesize > CONFIG::get_maxsize_post_log() ){
 
         const int maxno = get_max_num_of_log() + 1;
         const std::string newpath = path + "-" + MISC::itostr( maxno );
