@@ -142,7 +142,7 @@ namespace DBTREE
     time_t board_write_leftsec( const std::string& url );
 
     // 各板に属する全スレの書き込み履歴のリセット
-    void board_clear_all_post_info( const std::string& url );
+    void board_clear_all_post_history( const std::string& url );
 
     const int board_get_number_max_res( const std::string& url );
     void board_set_number_max_res( const std::string& url, const int number );
@@ -151,7 +151,7 @@ namespace DBTREE
     const time_t board_last_access_time( const std::string& url );
 
     // 全スレの書き込み履歴のリセット
-    void clear_all_post_info();
+    void clear_all_post_history();
 
     // 全板の情報ファイル読み込み
     void read_boardinfo_all();
@@ -191,7 +191,7 @@ namespace DBTREE
     const int article_get_speed( const std::string& url );
 
     // 書き込み履歴のリセット
-    void article_clear_post_info( const std::string& url );
+    void article_clear_post_history( const std::string& url );
 
     // キャッシュ削除
     // cache_only == true の時はキャッシュだけ削除してスレ情報は消さない

@@ -398,7 +398,7 @@ namespace DBTREE
         time_t get_write_leftsec(); // 書き込み可能までの残り秒
 
         // 全書き込み履歴クリア
-        void clear_all_post_info();
+        void clear_all_post_history();
 
         // 実況の秒数
         const time_t get_live_sec() const{ return m_live_sec; }

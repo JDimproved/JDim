@@ -813,7 +813,7 @@ const bool ArticleBase::is_refer_posted( const int number )
 
 
 // 書き込み履歴のリセット
-void ArticleBase::clear_post_info()
+void ArticleBase::clear_post_history()
 {
     if( empty() ) return;
     if( ! m_cached ) return;
@@ -822,7 +822,7 @@ void ArticleBase::clear_post_info()
     if( m_vec_posted.size() || m_write_time.tv_sec || m_write_time.tv_usec ){
 
 #ifdef _DEBUG
-        std::cout << "ArticleBase::clear_post_info size = " << m_vec_posted.size()
+        std::cout << "ArticleBase::clear_post_history size = " << m_vec_posted.size()
                   << " time = " << m_write_time_date
                   << " subject = " << m_subject << std::endl;
 #endif
@@ -831,7 +831,7 @@ void ArticleBase::clear_post_info()
         m_write_time_date = std::string();
 
         // nodetreeが作られている時はnodetreeもリセット
-        if( m_nodetree ) m_nodetree->clear_post_info();
+        if( m_nodetree ) m_nodetree->clear_post_history();
 
         save_info( true );
     }

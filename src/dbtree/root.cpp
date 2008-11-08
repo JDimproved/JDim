@@ -1315,11 +1315,11 @@ std::list< std::string > Root::search_cache( const std::string& query, bool mode
 
 
 // 全てのスレの書き込み履歴削除
-void Root::clear_all_post_info()
+void Root::clear_all_post_history()
 {
     std::list< BoardBase* >::iterator it;
     for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
-        ( *it )->clear_all_post_info();
+        ( *it )->clear_all_post_history();
     }
 }
 

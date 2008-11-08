@@ -498,9 +498,9 @@ void DBTREE::board_set_write_mail( const std::string& url, const std::string& ma
 
 
 // 全スレの書き込み履歴のリセット
-void DBTREE::clear_all_post_info()
+void DBTREE::clear_all_post_history()
 {
-    DBTREE::get_root()->clear_all_post_info();
+    DBTREE::get_root()->clear_all_post_history();
 }
 
 
@@ -551,9 +551,9 @@ time_t DBTREE::board_write_leftsec( const std::string& url )
 
 
 // 板に属する全スレの書き込み履歴のリセット
-void DBTREE::board_clear_all_post_info( const std::string& url )
+void DBTREE::board_clear_all_post_history( const std::string& url )
 {
-    DBTREE::get_board( url )->clear_all_post_info();
+    DBTREE::get_board( url )->clear_all_post_history();
 }
 
 
@@ -836,9 +836,9 @@ const int DBTREE::article_get_speed( const std::string& url )
 
 
 // 書き込み履歴のリセット
-void DBTREE::article_clear_post_info( const std::string& url )
+void DBTREE::article_clear_post_history( const std::string& url )
 {
-    DBTREE::get_article( url )->clear_post_info();
+    DBTREE::get_article( url )->clear_post_history();
 }
 
 

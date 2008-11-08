@@ -458,6 +458,10 @@ void ArticleViewMain::update_finish()
 //
 void ArticleViewMain::create_status_message()
 {
+#ifdef _DEBUG
+    std::cout << "ArticleViewMain::create_status_message\n";
+#endif
+
     const int number_load = DBTREE::article_number_load( url_article() );
     const int number_new = DBTREE::article_number_new( url_article() );
 

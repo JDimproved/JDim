@@ -1372,19 +1372,21 @@ void Core::slot_clear_mail()
 }
 
 // 書き込みログのクリア
-void Core::slot_clear_write_log()
+void Core::slot_clear_post_log()
 {
-    MESSAGE::get_log_manager()->delete_postlog();
+    MESSAGE::get_log_manager()->clear_post_log();
 
     // ログ表示を閉じる
     ARTICLE::get_admin()->set_command( "close_view", "postlog" + std::string( POSTLOG_SIGN ), "closeall"  );
 }
 
-// 全スレの書き込み履歴(鉛筆マーク)のクリア
-void Core::slot_clear_post_log()
-{
-    DBTREE::clear_all_post_info();
 
+// 全スレの書き込み履歴(鉛筆マーク)のクリア
+void Core::slot_clear_post_history()
+{
+    DBTREE::clear_all_post_history();
+
+    // ビューの表示更新
     CORE::core_set_command( "redraw_article" );
 
     std::list< std::string > list_urls = BOARD::get_admin()->get_URLs();
@@ -3378,9 +3380,9 @@ void Core::exec_command()
 
     else if( command.command  == "clear_mail" ) slot_clear_mail();
 
-    else if( command.command  == "clear_write_log" ) slot_clear_write_log();
-
     else if( command.command  == "clear_post_log" ) slot_clear_post_log();
+
+    else if( command.command  == "clear_post_history" ) slot_clear_post_history();
 
     // ビューの切替え
     else if( command.command  == "switch_article" ) switch_article( present );

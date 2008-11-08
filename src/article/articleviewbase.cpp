@@ -1457,7 +1457,7 @@ void ArticleViewBase::show_postlog( const int num )
               << html_header << std::endl;
 #endif
 
-    std::string html = MESSAGE::get_log_manager()->get_postlog( num );
+    std::string html = MESSAGE::get_log_manager()->get_post_log( num );
     if( html.empty() ) html = "書き込みログがありません";
     else html = html_header + "<br>" + html + "<hr><br>" + html_header;
 

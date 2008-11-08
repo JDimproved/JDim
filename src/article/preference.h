@@ -46,7 +46,7 @@ namespace ARTICLE
         // 書き込み日時
         Gtk::HBox m_hbox_write;
         SKELETON::LabelEntry m_label_write;
-        Gtk::Button m_button_clear_post_info;
+        Gtk::Button m_bt_clear_post_history;
 
       public:
 
@@ -56,7 +56,7 @@ namespace ARTICLE
       private:
         virtual void slot_ok_clicked();
         void slot_clear_modified();
-        void slot_clear_post_info();
+        void slot_clear_post_history();
     };
 }
 

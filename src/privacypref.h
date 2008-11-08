@@ -26,8 +26,8 @@ namespace CORE
         Gtk::Button m_bt_selectall;
 
         Gtk::HSeparator m_hsepa;
-        Gtk::CheckButton m_bt_clear_write_log;
         Gtk::CheckButton m_bt_clear_post_log;
+        Gtk::CheckButton m_bt_clear_post_history;
 
 
         void slot_selectall()
@@ -43,17 +43,17 @@ namespace CORE
         // OK押した
         virtual void slot_ok_clicked()
         {
-            if( m_bt_clear_write_log.get_active() ){
+            if( m_bt_clear_post_log.get_active() ){
                 SKELETON::MsgDiag mdiag( NULL, "本当に書き込みログを削除しますか？",
                                          false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-                if( mdiag.run() != Gtk::RESPONSE_YES ) m_bt_clear_write_log.set_active( false );
+                if( mdiag.run() != Gtk::RESPONSE_YES ) m_bt_clear_post_log.set_active( false );
             }
 
 
-            if( m_bt_clear_post_log.get_active() ){
+            if( m_bt_clear_post_history.get_active() ){
                 SKELETON::MsgDiag mdiag( NULL, "書き込み履歴の削除は時間がかかります。\n\n書き込み履歴の削除を実行しますか？",
                                          false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-                if( mdiag.run() != Gtk::RESPONSE_YES ) m_bt_clear_post_log.set_active( false );
+                if( mdiag.run() != Gtk::RESPONSE_YES ) m_bt_clear_post_history.set_active( false );
             }
 
             if( m_bt_board.get_active() ) CORE::core_set_command( "clear_board" );
@@ -62,8 +62,8 @@ namespace CORE
             if( m_bt_search.get_active() ) CORE::core_set_command( "clear_search" );
             if( m_bt_name.get_active() ) CORE::core_set_command( "clear_name" );
             if( m_bt_mail.get_active() ) CORE::core_set_command( "clear_mail" );
-            if( m_bt_clear_write_log.get_active() ) CORE::core_set_command( "clear_write_log" );
             if( m_bt_clear_post_log.get_active() ) CORE::core_set_command( "clear_post_log" );
+            if( m_bt_clear_post_history.get_active() ) CORE::core_set_command( "clear_post_history" );
         }
 
       public:
@@ -78,8 +78,8 @@ namespace CORE
         m_bt_mail( "書き込みビューのメール履歴(_E)", true ),
         m_bt_selectall( "以上の項目を全て選択(_A)", true ),
 
-        m_bt_clear_write_log( "書き込みログ(_W)", true ),
-        m_bt_clear_post_log( "全スレの書き込み履歴(鉛筆マーク)(_P)", true )
+        m_bt_clear_post_log( "書き込みログ(_W)", true ),
+        m_bt_clear_post_history( "全スレの書き込み履歴(鉛筆マーク)(_P)", true )
         {
             m_vbox.set_spacing( 8 );
             m_vbox.set_border_width( 8 );
@@ -98,8 +98,8 @@ namespace CORE
             get_vbox()->pack_start( m_vbox, Gtk::PACK_SHRINK );
 
             m_vbox.pack_start( m_hsepa );
-            m_vbox.pack_start( m_bt_clear_write_log );
             m_vbox.pack_start( m_bt_clear_post_log );
+            m_vbox.pack_start( m_bt_clear_post_history );
 
             set_title( "プライバシー情報の消去" );
             show_all_children();

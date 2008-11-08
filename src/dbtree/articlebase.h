@@ -232,7 +232,7 @@ namespace DBTREE
         const bool is_refer_posted( const int number );
 
         // 書き込み履歴のリセット
-        void clear_post_info();
+        void clear_post_history();
 
         // スレ立て時刻
         const time_t& get_since_time() const { return m_since_time; };

@@ -26,7 +26,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
       m_entry_writename( true, "名前：" ),
       m_entry_writemail( true, "メール：" ),
       m_check_noname( "名前欄が空白の時は書き込まない" ),
-      m_button_clear_post_info( "この板にある全スレの書き込み履歴クリア" ),
+      m_bt_clear_post_history( "この板にある全スレの書き込み履歴クリア" ),
 
       m_frame_cookie( "クッキーと書き込みキーワード" ),
       m_button_cookie( "削除" ) ,
@@ -62,10 +62,10 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     // JD_MAIL_BLANK の場合空白をセットする
     else if( m_entry_writemail.get_text() == JD_MAIL_BLANK ) m_entry_writemail.set_text( std::string() );
 
-    m_button_clear_post_info.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_post_info ) );
+    m_bt_clear_post_history.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_post_history ) );
     m_hbox_write1.set_spacing( 8 );
     m_hbox_write1.pack_start( m_check_noname );
-    m_hbox_write1.pack_start( m_button_clear_post_info );
+    m_hbox_write1.pack_start( m_bt_clear_post_history );
 
     m_hbox_write2.set_spacing( 8 );
     m_hbox_write2.pack_start( m_entry_writename );
@@ -326,13 +326,13 @@ void Preferences::slot_clear_samba()
 }
 
 
-void Preferences::slot_clear_post_info()
+void Preferences::slot_clear_post_history()
 {
     SKELETON::MsgDiag mdiag( NULL, "この板にある全てのスレの書き込み履歴を削除しますか？\n\nスレ数によっては時間がかかります。",
                              false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
-    DBTREE::board_clear_all_post_info( get_url() );
+    DBTREE::board_clear_all_post_history( get_url() );
 
     // スレ一覧とスレビューの表示更新
     CORE::core_set_command( "update_board", DBTREE::url_subject( get_url() ) );

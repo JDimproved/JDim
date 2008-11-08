@@ -338,7 +338,7 @@ void Log_Manager::save( const std::string& url,
 //
 //　書き込みログ取得
 //
-const std::string Log_Manager::get_postlog( const int num )
+const std::string Log_Manager::get_post_log( const int num )
 {
     std::string path = CACHE::path_postlog();
 
@@ -351,7 +351,7 @@ const std::string Log_Manager::get_postlog( const int num )
 
 
 //
-// postlog-* の最大数
+// ログファイル( log/postlog-* ) の最大数
 //
 const int Log_Manager::get_max_num_of_log()
 {
@@ -390,7 +390,7 @@ const int Log_Manager::get_max_num_of_log()
 //
 // ログ削除
 //
-void Log_Manager::delete_postlog()
+void Log_Manager::clear_post_log()
 {
     const int maxno = get_max_num_of_log();
 

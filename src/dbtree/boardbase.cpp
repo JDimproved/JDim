@@ -294,14 +294,14 @@ time_t BoardBase::get_write_leftsec()
 //
 // 全書き込み履歴クリア
 //
-void BoardBase::clear_all_post_info()
+void BoardBase::clear_all_post_history()
 {
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
     if( m_list_article.size() == 0 ) return;
 
     std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->clear_post_info();
+    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->clear_post_history();
 }
 
 

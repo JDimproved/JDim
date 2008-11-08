@@ -32,7 +32,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     ,m_label_modified( false, "最終更新日時 : ", std::string() )
     ,m_button_clearmodified( "日時クリア" )
     ,m_label_write( false, "最終書き込み日時 : ", std::string() )
-    ,m_button_clear_post_info( "書き込み履歴クリア" )
+    ,m_bt_clear_post_history( "書き込み履歴クリア" )
 {
     // 一般
     if( DBTREE::article_is_cached( get_url() ) ){
@@ -52,9 +52,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_hbox_modified.pack_start( m_label_modified );
     m_hbox_modified.pack_start( m_button_clearmodified, Gtk::PACK_SHRINK );    
 
-    m_button_clear_post_info.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_post_info ) );
+    m_bt_clear_post_history.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_post_history ) );
     m_hbox_write.pack_start( m_label_write );
-    m_hbox_write.pack_start( m_button_clear_post_info, Gtk::PACK_SHRINK );    
+    m_hbox_write.pack_start( m_bt_clear_post_history, Gtk::PACK_SHRINK );    
 
     m_vbox_info.set_border_width( 16 );
     m_vbox_info.set_spacing( 8 );
@@ -225,14 +225,14 @@ void Preferences::slot_clear_modified()
 }
 
 
-void Preferences::slot_clear_post_info()
+void Preferences::slot_clear_post_history()
 {
     if( m_label_write.get_text().empty() ) return;
 
     SKELETON::MsgDiag mdiag( NULL, "書き込み履歴を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
-    DBTREE::article_clear_post_info( get_url() );
+    DBTREE::article_clear_post_history( get_url() );
     m_label_write.set_text( "" );
     CORE::core_set_command( "redraw_article" );
 
