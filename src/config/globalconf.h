@@ -56,6 +56,7 @@ namespace CONFIG
     // フォント
     const std::string& get_fontname( int id );
     void set_fontname( int id, const std::string& fontname );
+    void reset_fonts();
 
     // レスを参照するときに前に付ける文字
     const std::string get_ref_prefix();

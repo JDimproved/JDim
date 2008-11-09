@@ -358,6 +358,9 @@ namespace CONFIG
         // 保存
         void save();
 
+        // フォントのリセット
+        void reset_fonts();
+
         // 色のリセット
         void reset_colors();
 
@@ -365,6 +368,7 @@ namespace CONFIG
 
         void save_impl( const std::string& path );
 
+        void set_fonts( JDLIB::ConfLoader& cf );
         void set_colors( JDLIB::ConfLoader& cf );
     };
     

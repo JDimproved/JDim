@@ -92,25 +92,8 @@ const bool ConfigItems::load()
     // 自前でウィンドウ配置を管理する
     manage_winpos = cf.get_option( "manage_winpos", CONF_MANAGE_WINPOS );
 
-    std::string defaultfont = get_default_font();
-
     // フォント
-    fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", defaultfont + " " + std::string( CONF_FONTSIZE_THREAD ) );
-
-    // ポップアップのフォント
-    fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", defaultfont + " " + std::string( CONF_FONTSIZE_POPUP ) );
-
-    // スレ一覧のフォント
-    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", defaultfont + " " + std::string( CONF_FONTSIZE_TREE ) );
-
-    // 板一覧のフォント
-    fontname[ FONT_BOARD ] = cf.get_option( "fontname_board", fontname[ FONT_BBS ] );
-
-    // 書き込みウィンドウのフォント
-    fontname[ FONT_MESSAGE ] = cf.get_option( "fontname_message", fontname[ FONT_MAIN ] );
-
-    // Gtk::Entryのデフォルトフォント
-    fontname[ FONT_ENTRY_DEFAULT ] = MISC::get_entry_font();
+    set_fonts( cf );
 
     // レスを参照するときに前に付ける文字
     ref_prefix = cf.get_option( "ref_prefix", CONF_REF_PREFIX );
@@ -654,6 +637,44 @@ void ConfigItems::save_impl( const std::string& path )
 
 
 //
+// フォントのセット
+//
+void ConfigItems::set_fonts( JDLIB::ConfLoader& cf )
+{
+    const std::string defaultfont = get_default_font();
+
+    // フォント
+    fontname[ FONT_MAIN ] = cf.get_option( "fontname_main", defaultfont + " " + std::string( CONF_FONTSIZE_THREAD ) );
+
+    // ポップアップのフォント
+    fontname[ FONT_POPUP ] = cf.get_option( "fontname_popup", defaultfont + " " + std::string( CONF_FONTSIZE_POPUP ) );
+
+    // スレ一覧のフォント
+    fontname[ FONT_BBS ] = cf.get_option( "fontname_bbs", defaultfont + " " + std::string( CONF_FONTSIZE_TREE ) );
+
+    // 板一覧のフォント
+    fontname[ FONT_BOARD ] = cf.get_option( "fontname_board", fontname[ FONT_BBS ] );
+
+    // 書き込みウィンドウのフォント
+    fontname[ FONT_MESSAGE ] = cf.get_option( "fontname_message", fontname[ FONT_MAIN ] );
+
+    // Gtk::Entryのデフォルトフォント
+    fontname[ FONT_ENTRY_DEFAULT ] = MISC::get_entry_font();
+}
+
+
+//
+// フォントのリセット
+//
+void ConfigItems::reset_fonts()
+{
+    // dummyのConfLoaderをset_fonts()に渡してデフォルト値をセットする
+    JDLIB::ConfLoader cf( "", "dummy = dummy" );
+    set_fonts( cf );
+}
+
+
+//
 // 色のセット
 //
 void ConfigItems::set_colors( JDLIB::ConfLoader& cf )
@@ -719,10 +740,10 @@ void ConfigItems::set_colors( JDLIB::ConfLoader& cf )
     str_color[ COLOR_BACK_SELECTION ] = cf.get_option( "cl_back_selection", CONF_COLOR_BACK_SELECTION );
 
     // ハイライトの背景色
-    str_color[ COLOR_BACK_HIGHLIGHT ] = cf.get_option( "cl_back_highlight", CONF_COLOR_HL );
+    str_color[ COLOR_BACK_HIGHLIGHT ] = cf.get_option( "cl_back_highlight", CONF_COLOR_BACK_HIGHLIGHT );
 
     // ハイライトの背景色(ツリー用)
-    str_color[ COLOR_BACK_HIGHLIGHT_TREE ] = cf.get_option( "cl_back_highlight_tree", CONF_COLOR_HL_TREE );
+    str_color[ COLOR_BACK_HIGHLIGHT_TREE ] = cf.get_option( "cl_back_highlight_tree", CONF_COLOR_BACK_HIGHLIGHT_TREE );
 
     // メッセージビューの背景色
     str_color[ COLOR_BACK_MESSAGE ] = cf.get_option( "cl_back_message", CONF_COLOR_BACK_MESSAGE );
@@ -746,7 +767,7 @@ void ConfigItems::set_colors( JDLIB::ConfLoader& cf )
     str_color[ COLOR_CHAR_BBS ] = cf.get_option( "cl_chr_bbs", CONF_COLOR_CHAR_BBS );
 
     // 板一覧のコメント
-    str_color[ COLOR_CHAR_BBS_COMMENT ] = cf.get_option( "cl_chr_bbs_com", CONF_COLOR_CHAR_BBS_COMENT );
+    str_color[ COLOR_CHAR_BBS_COMMENT ] = cf.get_option( "cl_chr_bbs_com", CONF_COLOR_CHAR_BBS_COMMENT );
 
     // スレ一覧の文字
     str_color[ COLOR_CHAR_BOARD ] = cf.get_option( "cl_chr_board", CONF_COLOR_CHAR_BOARD );

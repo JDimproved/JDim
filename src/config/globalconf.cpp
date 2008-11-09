@@ -105,6 +105,9 @@ void CONFIG::set_fontname( int id, const std::string& fontname )
     get_confitem()->fontname[ id ] = fontname;
 }
 
+void CONFIG::reset_fonts(){ get_confitem()->reset_fonts(); }
+
+
 const std::string CONFIG::get_ref_prefix(){ return get_confitem()->ref_prefix + get_confitem()->ref_prefix_space_str; }
 const int CONFIG::ref_prefix_space(){ return get_confitem()->ref_prefix_space; }
 

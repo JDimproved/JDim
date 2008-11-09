@@ -5,6 +5,8 @@
 
 enum
 {
+    COLOR_NONE = 0,
+
     // スレビューで使用する色
     
     COLOR_FOR_THREAD = 0,

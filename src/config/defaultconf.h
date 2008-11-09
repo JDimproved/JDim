@@ -167,41 +167,41 @@ namespace CONFIG
 #define CONF_COLOR_CHAR_NAME_NOMAIL "#000064640000"   //メール無し時の名前欄の文字色
 #define CONF_COLOR_CHAR_AGE "#fde800000000"    // ageの時のメール欄の文字色
 #define CONF_COLOR_CHAR_SELECTION "#ffffffffffff"  // 選択範囲の文字色
-#define CONF_COLOR_CHAR_HIGHLIGHT str_color[ COLOR_CHAR ] // ハイライトの文字色
+#define CONF_COLOR_CHAR_HIGHLIGHT CONF_COLOR_CHAR  // ハイライトの文字色
 #define CONF_COLOR_CHAR_LINK "#00000000ffff" //リンク(通常)の文字色
 #define CONF_COLOR_CHAR_LINK_LOW "#ffff0000ffff" // リンク(複数)の文字色
-#define CONF_COLOR_CHAR_LINK_HIGH str_color[ COLOR_CHAR_AGE ] // リンク(多数)の文字色
-#define CONF_COLOR_CHAR_MESSAGE str_color[ COLOR_CHAR ] // メッセージビューの文字色
-#define CONF_COLOR_CHAR_MESSAGE_SELECTION str_color[ COLOR_CHAR_SELECTION ] // メッセージビュー(選択範囲)の文字色
+#define CONF_COLOR_CHAR_LINK_HIGH CONF_COLOR_CHAR_AGE  // リンク(多数)の文字色
+#define CONF_COLOR_CHAR_MESSAGE CONF_COLOR_CHAR  // メッセージビューの文字色
+#define CONF_COLOR_CHAR_MESSAGE_SELECTION CONF_COLOR_CHAR_SELECTION  // メッセージビュー(選択範囲)の文字色
 
 #define CONF_COLOR_IMG_NOCACHE "#a5a52a2a2a2a" // 画像(キャッシュ無)の色
 #define CONF_COLOR_IMG_CACHED  "#00008b8b8b8b" // 画像(キャッシュ有)の色
 #define CONF_COLOR_IMG_LOADING "#ffff8c8c0000"  // 画像(ロード中)の色
-#define CONF_COLOR_IMG_ERR str_color[ COLOR_CHAR_AGE ] // 画像(エラー)の色
+#define CONF_COLOR_IMG_ERR CONF_COLOR_CHAR_AGE  // 画像(エラー)の色
 
 #define CONF_COLOR_BACK           "#fde8fde8f618" // スレ背景色
-#define CONF_COLOR_BACK_POPUP     str_color[ COLOR_BACK ] // ポップアップ背景色
-#define CONF_COLOR_BACK_SELECTION str_color[ COLOR_CHAR_LINK ] // 選択範囲の背景色
+#define CONF_COLOR_BACK_POPUP     CONF_COLOR_BACK  // ポップアップ背景色
+#define CONF_COLOR_BACK_SELECTION CONF_COLOR_CHAR_LINK  // 選択範囲の背景色
 
-#define CONF_COLOR_HL      "#ffffffff0000"  // ハイライト色
-#define CONF_COLOR_HL_TREE str_color[ COLOR_BACK_HIGHLIGHT ] // ツリーのハイライト色
+#define CONF_COLOR_BACK_HIGHLIGHT      "#ffffffff0000"  // ハイライト色
+#define CONF_COLOR_BACK_HIGHLIGHT_TREE CONF_COLOR_BACK_HIGHLIGHT  // ツリーのハイライト色
 
-#define CONF_COLOR_BACK_MESSAGE str_color[ COLOR_BACK ] // メッセージビューの背景色
-#define CONF_COLOR_BACK_MESSAGE_SELECTION str_color[ COLOR_BACK_SELECTION ] // メッセージビューの選択色
+#define CONF_COLOR_BACK_MESSAGE CONF_COLOR_BACK  // メッセージビューの背景色
+#define CONF_COLOR_BACK_MESSAGE_SELECTION CONF_COLOR_BACK_SELECTION  // メッセージビューの選択色
 
 #define CONF_COLOR_SEPARATOR_NEW "#7d007d007d00" // セパレータ
 
-#define CONF_COLOR_FRAME str_color[ COLOR_CHAR ] // ポップアップフレーム色
-#define CONF_COLOR_MARKER str_color[ COLOR_CHAR ] // オートスクロールマーカー色    
+#define CONF_COLOR_FRAME CONF_COLOR_CHAR  // ポップアップフレーム色
+#define CONF_COLOR_MARKER CONF_COLOR_CHAR  // オートスクロールマーカー色    
 
-#define CONF_COLOR_CHAR_BBS   str_color[ COLOR_CHAR ] // 板一覧の文字
-#define CONF_COLOR_CHAR_BBS_COMENT  str_color[ COLOR_CHAR ] // 板一覧のコメント
-#define CONF_COLOR_CHAR_BOARD str_color[ COLOR_CHAR ] // スレ一覧の文字
+#define CONF_COLOR_CHAR_BBS   CONF_COLOR_CHAR  // 板一覧の文字
+#define CONF_COLOR_CHAR_BBS_COMMENT  CONF_COLOR_CHAR  // 板一覧のコメント
+#define CONF_COLOR_CHAR_BOARD CONF_COLOR_CHAR  // スレ一覧の文字
 
-#define CONF_COLOR_BACK_BBS   str_color[ COLOR_BACK ] // 板一覧の背景色
-#define CONF_COLOR_BACK_BBS_EVEN str_color[ COLOR_BACK_BBS ] // 板一覧の背景色(偶数行)
-#define CONF_COLOR_BACK_BOARD str_color[ COLOR_BACK ] // スレ一覧の背景色
-#define CONF_COLOR_BACK_BOARD_EVEN str_color[ COLOR_BACK_BOARD ] // スレ一覧の背景色(偶数行)
+#define CONF_COLOR_BACK_BBS   CONF_COLOR_BACK  // 板一覧の背景色
+#define CONF_COLOR_BACK_BBS_EVEN CONF_COLOR_BACK_BBS  // 板一覧の背景色(偶数行)
+#define CONF_COLOR_BACK_BOARD CONF_COLOR_BACK  // スレ一覧の背景色
+#define CONF_COLOR_BACK_BOARD_EVEN CONF_COLOR_BACK_BOARD  // スレ一覧の背景色(偶数行)
 
 // migemo-dictの場所
 #ifdef MIGEMODICT
