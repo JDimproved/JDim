@@ -1,82 +1,88 @@
-[ make、実行方法 ]
+[ make、実行方法について ]
 
-動作環境
+* 動作環境
 
-  gtkmm24-2.4.8 以上必須
-  zlib-1.2 以上必須
-  gnutls-1.2 以上必須
-  kernel2.6以上推奨
-  gtkmm2.8以上推奨 ( 2.6より低いとレイアウトが一部崩れる、2.8より低いとスレ一覧表示が遅い )
-  UTF-8環境推奨 ( EUC環境では LANG="ja_JP.UTF-8" を指定する必要がある )
+  必須環境
 
-makeに必要なツール、ライブラリ
+  ・gtkmm-2.4.8 以上
+  ・zlib-1.2 以上
+  ・gnutls-1.2 以上
 
-  autoconf
-  automake
-  libtool
-  make
-  gcc
-  gcc-c++
-  gtkmm24-devel
-  zlib-devel
-  gnutls-devel
+  推奨環境
 
-make 方法( rpmbuild の場合 )
+  ・Linux Kernel 2.6以上
+  ・gtkmm-2.8以上 ( 2.6より低いとレイアウトが一部崩れる、2.8より低いとスレ一覧表示が遅い )
+  ・UTF-8環境 ( EUC環境では LANG="ja_JP.UTF-8" を指定する必要がある )
 
-  rpmbuild -tb 〜.tgz でrpmファイルが出来るのであとは rpm -Uvh 〜.rpm
-  ライブラリが足りないといわれたら yum install 〜-devel
-  起動はメニューから起動するか、端末で jd と打ち込んでエンターを押す。
+* makeに必要なツール、ライブラリ
 
-make 方法( configure + make の場合 )
+  必須
 
-  autoreconf -i ( 又は ./autogen.sh )
-  ./configure
-  make
-  (お好みで) strip src/jd
+  ・autoconf
+  ・automake
+  ・g++
+  ・gnutls
+  ・gtkmm
+  ・libtool
+  ・make
+  ・zlib
 
-configureオプション
+  オプション
 
-  --with-sessionlib=[xsmp|gnomeui|no]
+  ・alsa-lib (--with-alsa)
+  ・libgnoeui (--with-sessionlib=gnomeui)
+  ・openssl (--with-openssl)
 
-    GNOMEUIを使ってセッション管理をするには"gnomeui"を、セッション管理を無効にするには"no"を選択。デフォルトでは XSMPを使用する。
+  ディストリビューション別の解説は"ディストリビューション別インストール方法[http://sourceforge.jp/projects/jd4linux/wiki/%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95]"(wiki) を参照。
 
-  --with-pangolayout
+* make 方法( rpmbuild の場合 )
 
-    描画にPangoLayoutを使う。デフォルトでは PangoGlyphString を使用する。
+   1. rpmbuild -tb 〜.tgz でrpmファイルが出来るのであとは rpm -Uvh 〜.rpm
+   2. ライブラリが足りないといわれたら yum install 〜-devel
+   3. 起動はメニューから起動するか、端末で jd と打ち込んでエンターを押す。
 
-  --with-migemo
+* make 方法( configure + make の場合 )
 
-    migemoによる検索が有効になる。
+   1. autoreconf -i ( 又は ./autogen.sh )
+   2. ./configure
+   3. make
+   4. (お好みで) strip src/jd
 
-    migemoがUTF-8の辞書でインストールされている必要がある。
+* configureオプション
 
-  --with-[core2duo|athlon64|atom]
+    --with-sessionlib=[xsmp|gnomeui|no]
 
-    CPUに合わせた最適化
+      GNOMEUIを使ってセッション管理をするには「gnomeui」を、セッション管理を無効にするには「no」を選択。デフォルトでは XSMPを使用する。
 
-  --with-openssl
+    --with-pangolayout
 
-    GNU TLSではなく OpenSSLを使用する。
+      描画にPangoLayoutを使う。デフォルトでは PangoGlyphString を使用する。
 
-    ライセンス上バイナリ配布が出来なくなることに注意すること。
+    --with-migemo
 
-  --with-alsa
+      migemoによる検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
 
-    ALSAによる効果音再生機能を有効にする。詳しくは"http://jd4linux.sourceforge.jp/manual/"の項を参照すること。
+    --with-[core2duo|athlon64|atom|ppc74x0]
 
-  --with-xdgopen
+      CPUに合わせた最適化
 
-    デフォルトブラウザとしてxdg-openを使用する。
+    --with-openssl
 
-  --enable-gprof
+      GNU TLSではなく OpenSSLを使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。
 
-    gprofによるプロファイリングを行う。コンパイルオプションに -pg が付き、JDを実行すると gmon.out が出来るのでgprof./jdgmon.out で解析できる。
+    --with-alsa
 
-    CPUの最適化は効かなくなるので注意する。
+      ALSAによる効果音再生機能を有効にする。詳しくは"http://jd4linux.sourceforge.jp/manual/"の項を参照すること。
 
-メモ
+    --with-xdgopen
 
-  ディストリ別の解説は"ディストリビューション別インストール方法[http://sourceforge.jp/projects/jd4linux/wiki/%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95]" (wiki) を参照。
+      デフォルトブラウザとしてxdg-openを使用する。
+
+    --enable-gprof
+
+      gprofによるプロファイリングを行う。コンパイルオプションに -pg が付き、JDを実行すると gmon.out が出来るのでgprof./jdgmon.out で解析できる。CPUの最適化は効かなくなるので注意する。
+
+* メモ
 
   最近のディストリビューションの場合は autogen.sh よりも autoreconf -i の方を推奨。
 

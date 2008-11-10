@@ -4,33 +4,33 @@
 "http://sourceforge.jp/projects/jd4linux/wiki/FrontPage"を参照してください。
 
 
-概要
+* 概要
 
-  JDはGTK+2(gtkmm2)を使用した"２ちゃんねる[http://www.2ch.net/]"型マルチスレッドBBSを閲覧するためのブラウザです。
+  JDはGTK+2(gtkmm)を使用した"２ちゃんねる[http://www.2ch.net/]"型マルチスレッドBBSを閲覧するためのブラウザです。
 
-著作権
+* 著作権
 
-  ©2006-2008 "JD project[http://sourceforge.jp/projects/jd4linux/]"
+  ©2006-2008"JD Project[http://sourceforge.jp/projects/jd4linux/]"
 
-  パッチやファイルを取り込んだ場合、それらのコピーライトは「JD project」に統一します。
+  パッチやファイルを取り込んだ場合、それらのコピーライトは「JD Project」に統一します。
 
-ライセンス
+* ライセンス
 
   "GNU General Public License, version 2[http://sourceforge.jp/projects/opensource/wiki/licenses%2FGNU_General_Public_License]"
 
   将来的にライセンスをGPL3に変更するかもしれません。GPL3以降へのライセンス変更に関してはプロジェクトリーダーに一任させて頂きます。
 
-連絡先
+* 連絡先
 
   バグ報告その他は"Linux板@２ちゃんねる[http://www.2ch.net/linux/]"のJDスレ、またはJDのヘルプメニューから行くことが出来るサポート掲示板にて行ってください。
 
-動作プラットフォーム
+* 動作プラットフォーム
 
   LinuxなどのUnixライクなOS(FreeBSD,Nexenta,MacOSXでも動作報告例があります)。
 
   Windowsでも環境が整えば動くかも知れませんが今のところ報告例がありません。
 
-使用方法
+* 使用方法
 
   $ jd [option] [<url>]
 
@@ -38,15 +38,15 @@
 
   オプション
 
-  -h, --help
+    -h, --help
 
-    ヘルプを表示
+      ヘルプを表示
 
-  -m, --multi
+    -m, --multi
 
-    サブプロセスでも終了しない
+      サブプロセスでも終了しない
 
-  -V, --version
+    -V, --version
 
-    バージョンを表示
+      バージョンを表示
 
