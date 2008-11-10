@@ -153,6 +153,8 @@ std::vector< std::string > delete_list;
 
 std::vector< std::string > live_urls;
 
+int img_fit_mode;
+
 
 /////////////////////////////////////
 
@@ -555,6 +557,8 @@ void SESSION::init_session()
 
     popupmenu_shown = false;
 
+    img_fit_mode = cf.get_option( "img_fit_mode", IMG_FIT_NORMAL );
+
     // WM 判定
     // TODO: 環境変数で判定できない場合の判定方法を考える
     win_manager = WM_UNKNON;
@@ -753,7 +757,9 @@ void SESSION::save_session()
 
         << "img_dir_dat_save = " << img_dir_dat_save << std::endl
         << "img_dir_img_save = " << img_dir_img_save << std::endl
-        << "dir_draft = " << dir_draft << std::endl;
+        << "dir_draft = " << dir_draft << std::endl
+
+        << "img_fit_mode = " << img_fit_mode << std::endl;
 
     CACHE::save_rawdata( CACHE::path_session(), oss.str() );
 
@@ -1168,3 +1174,16 @@ void SESSION::remove_live( const std::string& url )
 #endif
 }
 
+
+// 画像のfitモード
+const int SESSION::get_img_fit_mode()
+{
+    return img_fit_mode;
+}
+
+
+void SESSION::toggle_img_fit_mode()
+{
+    if( img_fit_mode == IMG_FIT_NORMAL ) img_fit_mode = IMG_FIT_WIDTH;
+    else img_fit_mode = IMG_FIT_NORMAL;
+}

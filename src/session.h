@@ -51,6 +51,13 @@ namespace SESSION
         WM_UNKNON
     };
 
+    // 画像のfitモード
+    enum
+    {
+        IMG_FIT_NORMAL = 0,  // 縦と横で小さい方をウィンドウに合わせる
+        IMG_FIT_WIDTH        // 常に横をウィンドウに合わせる
+    };
+
     void init_session();
     void save_session();
 
@@ -357,6 +364,10 @@ namespace SESSION
     const bool is_live( const std::string& url );
     void append_live( const std::string& url );
     void remove_live( const std::string& url );
+
+    // 画像のfitモード
+    const int get_img_fit_mode();
+    void toggle_img_fit_mode();
 }
 
 

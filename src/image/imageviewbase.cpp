@@ -798,6 +798,7 @@ void ImageViewBase::slot_show_large_img()
 //
 void ImageViewBase::slot_fit_win()
 {
+    if( m_img->is_zoom_to_fit() ) SESSION::toggle_img_fit_mode();
     m_img->set_zoom_to_fit( true );
     CORE::core_set_command( "redraw", get_url() );
 }

@@ -7,6 +7,7 @@
 
 #include "dbimg/img.h"
 
+#include "session.h"
 
 #ifndef MIN
 #define MIN( a, b ) ( a < b ? a : b )
@@ -74,7 +75,9 @@ void ImageAreaMain::show_image()
     if( zoom_to_fit && w_org && h_org ){
         double scale_w = ( double ) width_max / w_org;
         double scale_h = ( double ) height_max / h_org;
-        scale = MIN( scale_w, scale_h );
+
+        if( SESSION::get_img_fit_mode() == SESSION::IMG_FIT_NORMAL ) scale = MIN( scale_w, scale_h );
+        else scale = scale_w;
 
         if( scale < 1 ){
             set_width( (int)( w_org * scale ) );
