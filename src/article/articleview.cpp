@@ -411,7 +411,7 @@ void ArticleViewMain::update_finish()
     }
 
     // ロード後に新着へジャンプ
-    else if( CONFIG::get_jump_new_after_reload() && number_new && ! drawarea()->is_separator_on_screen() ){
+    else if( CONFIG::get_jump_new_after_reload() && number_new ){
 #ifdef _DEBUG
         std::cout << "jump_new_after_reload\n";
 #endif
