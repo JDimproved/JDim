@@ -5,6 +5,7 @@
 #ifndef _CACHE_H
 #define _CACHE_H
 
+#include <stdint.h>
 #include <string>
 #include <list>
 

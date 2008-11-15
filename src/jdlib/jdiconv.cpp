@@ -12,6 +12,7 @@
 
 #include <errno.h>
 #include <cstring>
+#include <cstdio>
 #include <cstdlib>
 
 using namespace JDLIB;

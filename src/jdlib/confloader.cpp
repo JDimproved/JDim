@@ -7,6 +7,7 @@
 #include "miscutil.h"
 #include "cache.h"
 
+#include <cstdio>
 #include <cstdlib>
 
 using namespace JDLIB;

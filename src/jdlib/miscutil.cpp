@@ -12,6 +12,7 @@
 
 #include <sstream>
 #include <cstring>
+#include <cstdio>
 #include <cstdlib>
 
 

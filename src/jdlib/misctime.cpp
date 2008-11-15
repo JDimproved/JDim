@@ -10,6 +10,7 @@
 #include "misctime.h"
 
 #include <sstream>
+#include <cstdio>
 #include <cstring>
 #include <time.h>
 #include <sys/time.h>
