@@ -1057,6 +1057,10 @@ void ArticleBase::slot_load_finished()
         m_code = old_code;
         m_nodetree->set_date_modified( m_date_modified );
 
+#ifdef _DEBUG
+        std::cout << "check_update done\n";
+#endif
+
         // 次のスレを更新チェック
         CORE::get_checkupdate_manager()->pop_front();
 
@@ -1144,7 +1148,7 @@ void ArticleBase::slot_load_finished()
 //
 // 更新アイコン表示
 //
-// updated == true の時に表示。falseなら戻す
+// update == true の時に表示。falseなら戻す
 //
 void ArticleBase::show_updateicon( const bool update )
 {

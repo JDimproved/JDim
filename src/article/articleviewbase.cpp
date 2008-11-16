@@ -597,6 +597,10 @@ const int ArticleViewBase::get_icon( const std::string& iconname )
     if( iconname == "update" ) id = ICON::THREAD_UPDATE;  // 更新チェックしで更新があった場合
     if( iconname == "updated" ) id = ICON::THREAD_UPDATED;
 
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::get_icon : " << iconname << " url = " << get_url() << std::endl;
+#endif
+
     return id;
 }
 

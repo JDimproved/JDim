@@ -1485,16 +1485,16 @@ void Admin::toggle_icon( const std::string& url )
         // オートリロードモードでロード待ち
         else if( view->get_autoreload_mode() != AUTORELOAD_NOT ) iconname = "loading_stop";
 
-        // 更新あり   
+        // 更新可能
+        else if( view->is_check_update() ) iconname = "update";
+
+        // 更新済み
         else if( view->is_updated() ){
 
             // タブがアクティブの時は通常アイコンを表示
             if( get_notebook()->page_num( *view ) == get_notebook()->get_current_page() ) iconname = "default";
             else iconname = "updated";
         }
-
-        // 更新チェック済み
-        else if( view->is_check_update() ) iconname = "update";
 
         // 古い
         else if( view->is_old() ) iconname = "old";
