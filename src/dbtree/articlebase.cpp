@@ -819,6 +819,11 @@ void ArticleBase::clear_post_history()
         // nodetreeが作られている時はnodetreeもリセット
         if( m_nodetree ) m_nodetree->clear_post_history();
 
+        m_write_name = std::string();
+        m_write_mail = std::string();
+        m_write_fixname = false;
+        m_write_fixmail = false;
+
         save_info( true );
     }
 }
