@@ -670,10 +670,10 @@ void Core::run( bool init )
     // ツール
         "<menu action='Menu_Tool'>"
 
-        "<menuitem action='SearchTitle'/>"    
+        "<menuitem action='LiveStartStop'/>"    
         "<separator/>"
 
-        "<menuitem action='LiveStartStop'/>"    
+        "<menuitem action='SearchTitle'/>"    
         "<separator/>"
 
         "<menu action='SearchCache_Menu'>"
