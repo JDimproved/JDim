@@ -62,7 +62,7 @@
 
       migemoによる検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
 
-    --with-[core2duo|athlon64|atom|ppc74x0]
+    --with-[core2duo|athlon64|atom|ppc7400|ppc7450]
 
       CPUに合わせた最適化
 
