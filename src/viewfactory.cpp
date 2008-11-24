@@ -21,23 +21,26 @@
 
 #include "message/messageview.h"
 
-SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY_ARGS args )
+SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY_ARGS view_args )
 {
     switch( type )
     {
         case VIEW_BBSLISTVIEW:
-            return new BBSLIST::BBSListViewMain( url, args.arg1, args.arg2 );
+            return new BBSLIST::BBSListViewMain( url, view_args.arg1, view_args.arg2 );
 
         case VIEW_FAVORITELIST:
-            return new BBSLIST::FavoriteListView( url, args.arg1, args.arg2 );
+            return new BBSLIST::FavoriteListView( url, view_args.arg1, view_args.arg2 );
 
         case VIEW_SELECTLIST:
-            return new BBSLIST::SelectListView( url, args.arg1, args.arg2 );
+            return new BBSLIST::SelectListView( url, view_args.arg1, view_args.arg2 );
 
             //////////////////
 
         case VIEW_BOARDVIEW:
-            return new BOARD::BoardView( url, args.arg1, args.arg2 );
+            return new BOARD::BoardView( url );
+
+        case VIEW_BOARDNEXT:
+            return new BOARD::BoardViewNext( url, view_args.arg1 );
 
             /////////////////
 
@@ -45,13 +48,13 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
             return new ARTICLE::ArticleViewMain( url );
 
         case VIEW_ARTICLERES:
-            return new ARTICLE::ArticleViewRes( url,  args.arg1, ( args.arg2 == "true" ), args.arg3 );
+            return new ARTICLE::ArticleViewRes( url,  view_args.arg1, ( view_args.arg2 == "true" ), view_args.arg3 );
 
         case VIEW_ARTICLENAME:
-            return new ARTICLE::ArticleViewName( url, args.arg1 );
+            return new ARTICLE::ArticleViewName( url, view_args.arg1 );
 
         case VIEW_ARTICLEID:
-            return new ARTICLE::ArticleViewID( url, args.arg1 );
+            return new ARTICLE::ArticleViewID( url, view_args.arg1 );
 
         case VIEW_ARTICLEBM:
             return new ARTICLE::ArticleViewBM( url );
@@ -63,10 +66,10 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
             return new ARTICLE::ArticleViewURL( url );
 
         case VIEW_ARTICLEREFER:
-            return new ARTICLE::ArticleViewRefer( url, args.arg1 );
+            return new ARTICLE::ArticleViewRefer( url, view_args.arg1 );
 
         case VIEW_ARTICLEDRAWOUT:
-            return new ARTICLE::ArticleViewDrawout( url, args.arg1, ( args.arg2 == "OR" ) );
+            return new ARTICLE::ArticleViewDrawout( url, view_args.arg1, ( view_args.arg2 == "OR" ) );
 
         case VIEW_ARTICLEPREVIEW:
             return new ARTICLE::ArticleViewPreview( url );
@@ -75,36 +78,36 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
             return new ARTICLE::ArticleViewInfo( url );
 
         case VIEW_ARTICLESEARCHLOG:
-            return new ARTICLE::ArticleViewSearch( url, args.arg1, ARTICLE::SEARCHMODE_LOG , ( args.arg2 == "exec" ), ( args.arg3 == "OR" ) );
+            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, ARTICLE::SEARCHMODE_LOG , ( view_args.arg2 == "exec" ), ( view_args.arg3 == "OR" ) );
 
         case VIEW_ARTICLESEARCHALLLOG:
-            return new ARTICLE::ArticleViewSearch( url, args.arg1, ARTICLE::SEARCHMODE_ALLLOG, ( args.arg2 == "exec" ), (args.arg3 == "OR" ) );
+            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, ARTICLE::SEARCHMODE_ALLLOG, ( view_args.arg2 == "exec" ), (view_args.arg3 == "OR" ) );
 
         case VIEW_ARTICLESEARCHTITLE:
-            return new ARTICLE::ArticleViewSearch( url, args.arg1, ARTICLE::SEARCHMODE_TITLE, ( args.arg2 == "exec" ), (args.arg3 == "OR" ) );
+            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, ARTICLE::SEARCHMODE_TITLE, ( view_args.arg2 == "exec" ), (view_args.arg3 == "OR" ) );
 
         case VIEW_ARTICLEPOSTLOG:
-            return new ARTICLE::ArticleViewPostlog( url, atoi( args.arg1.c_str() ) );
+            return new ARTICLE::ArticleViewPostlog( url, atoi( view_args.arg1.c_str() ) );
 
             /////////////////
 
         case VIEW_ARTICLEPOPUPHTML:
-            return new ARTICLE::ArticleViewPopupHTML( url, args.arg1 );
+            return new ARTICLE::ArticleViewPopupHTML( url, view_args.arg1 );
 
         case VIEW_ARTICLEPOPUPRES:
-            return new ARTICLE::ArticleViewPopupRes( url, args.arg1, ( args.arg2 == "true" ), ( args.arg3 == "true" ) );
+            return new ARTICLE::ArticleViewPopupRes( url, view_args.arg1, ( view_args.arg2 == "true" ), ( view_args.arg3 == "true" ) );
 
         case VIEW_ARTICLEPOPUPNAME:
-            return new ARTICLE::ArticleViewPopupName( url, args.arg1 );
+            return new ARTICLE::ArticleViewPopupName( url, view_args.arg1 );
 
         case VIEW_ARTICLEPOPUPID:
-            return new ARTICLE::ArticleViewPopupID( url, args.arg1 );
+            return new ARTICLE::ArticleViewPopupID( url, view_args.arg1 );
 
         case VIEW_ARTICLEPOPUPREFER:
-            return new ARTICLE::ArticleViewPopupRefer( url, args.arg1 );
+            return new ARTICLE::ArticleViewPopupRefer( url, view_args.arg1 );
 
         case VIEW_ARTICLEPOPUPDRAWOUT:
-            return new ARTICLE::ArticleViewPopupDrawout( url, args.arg1, ( args.arg2 == "OR" ) );
+            return new ARTICLE::ArticleViewPopupDrawout( url, view_args.arg1, ( view_args.arg2 == "OR" ) );
 
             /////////////////
 
@@ -120,10 +123,10 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
             /////////////////
 
         case VIEW_MESSAGE:
-            return new MESSAGE::MessageViewMain( url, args.arg1 );
+            return new MESSAGE::MessageViewMain( url, view_args.arg1 );
 
         case VIEW_NEWTHREAD:
-            return new MESSAGE::MessageViewNew( url, args.arg1 );
+            return new MESSAGE::MessageViewNew( url, view_args.arg1 );
 
         default:
             return NULL;

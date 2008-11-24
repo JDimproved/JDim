@@ -24,8 +24,11 @@ namespace DBTREE
 
 namespace BOARD
 {
-    class BoardView : public SKELETON::View
+    class BoardViewBase : public SKELETON::View
     {
+        // viewに表示するboardのURL ( SKELETON::View::m_url はview自身のURLなのに注意すること )
+        std::string m_url_board;
+
         SKELETON::DragTreeView m_treeview;
         BOARD::TreeColumns m_columns;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
@@ -71,33 +74,34 @@ namespace BOARD
         time_t m_last_access_time;
 
     public:
-        BoardView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
-        ~BoardView();
+        BoardViewBase( const std::string& url );
+        virtual ~BoardViewBase();
 
+        const std::string& get_url_board() const { return m_url_board; }
         virtual const std::string url_for_copy();
 
         // SKELETON::View の関数のオーバロード
         virtual const int get_icon( const std::string& iconname );
         virtual const bool is_updated();
         virtual const bool is_loading(){ return m_loading; }
-        virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
+        virtual const bool set_command( const std::string& command,
+                                        const std::string& arg1 = std::string(),
+                                        const std::string& arg2 = std::string()
+            );
 
         virtual void clock_in();
 
         virtual void write();
-        virtual void reload();
         virtual void stop();
         virtual void show_view();
-        virtual void redraw_view();
         virtual void redraw_scrollbar();
         virtual void relayout();
-        virtual void update_view();
         virtual void focus_view();
         virtual void focus_out();
         virtual void close_view();
         virtual void delete_view();
         virtual void set_favorite();
-        virtual void update_item( const std::string& id_dat );
+        virtual void update_item( const std::string& url, const std::string& id );
         virtual const bool operate_view( const int control );
         virtual void goto_top();
         virtual void goto_bottom();
@@ -105,7 +109,6 @@ namespace BOARD
         virtual void scroll_left();
         virtual void scroll_right();
         virtual void show_preference();
-        virtual void update_boardname();
 
         // 進む、戻る
         virtual void back_viewhistory( const int count );
@@ -130,30 +133,44 @@ namespace BOARD
 
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
+        void update_view_impl( std::list< DBTREE::ArticleBase* >& list_subject );
+
+        // ソート状態回復
+        void restore_sort();
+
     private:
+
+        // 次スレ移行処理に使用
+        // BOARD::BoardViewNext を参照
+        virtual const std::string get_url_pre_article(){ return std::string(); }
 
         void update_columns();
 
-        int get_title_id( int col );
-        void save_column_width();
+        const int get_title_id( const int col );
+
+        // ソート列やソートモードの保存
+        virtual void save_sort_columns();
+
+        // 列の幅の保存
+        virtual void save_column_width();
 
         void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
 
         // ソート用
         void exec_sort();
-        void slot_col_clicked( int col );
+        void slot_col_clicked( const int col );
 
-        int compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        int compare_col( int col, int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        int slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
+        const int compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
+        const int compare_col( const int col, const int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
+        const int slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
 
         // UI
-        bool slot_button_press( GdkEventButton* event );
-        bool slot_button_release( GdkEventButton* event );
-        bool slot_motion_notify( GdkEventMotion* event );
-        bool slot_key_press( GdkEventKey* event );
-        bool slot_key_release( GdkEventKey* event );
-        bool slot_scroll_event( GdkEventScroll* event );
+        const bool slot_button_press( GdkEventButton* event );
+        const bool slot_button_release( GdkEventButton* event );
+        const bool slot_motion_notify( GdkEventMotion* event );
+        const bool slot_key_press( GdkEventKey* event );
+        const bool slot_key_release( GdkEventKey* event );
+        const bool slot_scroll_event( GdkEventScroll* event );
         void slot_bookmark( int bookmark );
         void slot_open_tab();
         void slot_favorite_thread();
@@ -167,25 +184,66 @@ namespace BOARD
         void slot_abone_thread();
         void slot_delete_logs();
 
-        bool open_row( Gtk::TreePath& path, bool tab );
+        const bool open_row( Gtk::TreePath& path, const bool tab );
         void open_selected_rows();
-        std::string path2daturl( const Gtk::TreePath& path );
+        const std::string path2daturl( const Gtk::TreePath& path );
 
         // 検索
-        bool drawout();
+        const bool drawout();
 
         // d&d
         void slot_drag_begin();
         void slot_drag_end();
         
-        void update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row& row, int& id );
-        std::string get_subject_from_path( Gtk::TreePath& path );
+        void update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row& row );
+        const std::string get_subject_from_path( Gtk::TreePath& path );
+
         template < typename ColumnType >
-        std::string get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeModelColumn< ColumnType >& column );
+        const std::string get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeModelColumn< ColumnType >& column );
 
         void set_article_to_buffer();
         void set_board_to_buffer();
     };
+
+
+
+    class BoardView : public BOARD::BoardViewBase
+    {
+      public:
+
+        BoardView( const std::string& url );
+        virtual ~BoardView();
+
+        virtual void reload();
+        virtual void update_view();
+        virtual void update_boardname();
+    };
+
+
+    class BoardViewNext : public BOARD::BoardViewBase
+    {
+        std::string m_url_pre_article;
+
+      public:
+
+        BoardViewNext( const std::string& url, const std::string& url_pre_article );
+        virtual ~BoardViewNext();
+
+        virtual void reload();
+        virtual void update_view();
+        virtual void update_boardname();
+
+      private:
+
+        virtual const std::string get_url_pre_article(){ return m_url_pre_article; }
+
+        // ソート列やソートモードの保存
+        virtual void save_sort_columns(){} // 保存しない
+
+        // 列幅の保存
+        virtual void save_column_width(){} // 保存しない
+    };
+
 };
 
 

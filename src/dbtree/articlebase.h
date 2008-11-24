@@ -35,6 +35,7 @@ namespace DBTREE
         JDLIB::ConstPtr< NodeTreeBase > m_nodetree;
 
         std::string m_url;           // dat ファイルのURL
+        std::string m_datbase;       // ベースアドレス
         std::string m_id;            // ID ( .datなどの拡張子付き  (例) 1234567.dat )
         std::string m_key;           // ID から拡張子を取った物
         std::string m_date_modified; // サーバのデータが更新された時間
@@ -94,6 +95,11 @@ namespace DBTREE
 
         // キャッシュがあって、かつ新着の読み込みが可能
         bool m_enable_load;
+
+        // 前スレのアドレス
+        // スレが未取得で、この変数がemptyで無いとき download_dat()を呼び出すと
+        // ロード終了時に次スレ移行チェックと前スレの情報のコピーをする
+        std::string m_url_pre_article;
 
       protected:
         void set_key( const std::string& key ){ m_key = key; }
@@ -302,9 +308,9 @@ namespace DBTREE
 
         // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
         void reset_abone( std::list< std::string >& ids, std::list< std::string >& names
-                          ,std::list< std::string >& words, std::list< std::string >& regexs
-                          ,std::vector< char >& vec_abone_res
-                          ,bool transparent, bool chain );
+                          ,std::list< std::string >& words,  std::list< std::string >& regexs
+                          ,const std::vector< char >& vec_abone_res
+                          ,const bool transparent, const bool chain );
 
         // あぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう)
         void add_abone_id( const std::string& id );
@@ -333,7 +339,20 @@ namespace DBTREE
         // スレッドのロード開始
         const bool is_loading();
         void stop_load();
+
+        // スレッドのロード開始
+        // DAT落ちの場合はロードしないので、強制的にリロードしたいときは reset_status() で
+        // ステータスをリセットしてからロードする
+        // check_update : true の時はHEADによる更新チェックをおこなう
         void download_dat( const bool check_update );
+
+        // 前スレのアドレスを指定
+        // 前スレのアドレスをセットしてからdownload_dat()を呼び出すと
+        // ロード終了時( slot_load_finished() )に次スレ移行チェックをする
+        void set_url_pre_article( const std::string& url_pre_article );
+
+        // url_src で示されるスレの情報をコピー
+        void copy_article_info( const std::string& url_src );
 
         // 更新アイコン表示
         void show_updateicon( const bool update );

@@ -159,6 +159,8 @@ namespace CONTROL
 
         { "LiveStartStop", ITEM_NAME_LIVE },
 
+        { "SearchNextArticle", "次スレ検索" },
+
         { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },
         { "BmResButton", "ブックマーク" },

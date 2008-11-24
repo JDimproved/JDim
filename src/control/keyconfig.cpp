@@ -111,6 +111,8 @@ void KeyConfig::load_conf()
 
     SETKEYMOTION( "LiveStartStop", KEYCONF_LiveStartStop );
 
+    SETKEYMOTION( "SearchNextArticle", KEYCONF_SearchNextArticle );
+
     // IMAGE
     SETKEYMOTION( "CancelMosaic", KEYCONF_CancelMosaic );
     SETKEYMOTION( "ZoomFitImage", KEYCONF_ZoomFitImage );

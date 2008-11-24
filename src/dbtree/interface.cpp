@@ -341,9 +341,14 @@ void DBTREE::board_save_info( const std::string& url )
 }
 
 
-void DBTREE::board_download_subject( const std::string& url )
+void DBTREE::board_download_subject( const std::string& url, const std::string& url_update_view )
 {
-    DBTREE::get_board( url )->download_subject();
+    DBTREE::get_board( url )->download_subject( url_update_view );
+}
+
+const bool DBTREE::board_is_loading( const std::string& url )
+{
+    return DBTREE::get_board( url )->is_loading();
 }
 
 void DBTREE::board_stop_load( const std::string& url )
@@ -816,6 +821,15 @@ void DBTREE::article_download_dat( const std::string& url, const bool check_upda
     DBTREE::get_article( url )->download_dat( check_update );
 }
 
+void DBTREE::article_set_url_pre_article( const std::string& url, const std::string& url_pre_article )
+{
+    DBTREE::get_article( url )->set_url_pre_article( url_pre_article );
+}
+
+void DBTREE::article_copy_article_info( const std::string& url, const std::string& url_src )
+{
+    DBTREE::get_article( url )->copy_article_info( url_src );
+}
 
 void DBTREE::article_stop_load( const std::string& url )
 {

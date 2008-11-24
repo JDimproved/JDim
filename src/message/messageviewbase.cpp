@@ -209,7 +209,7 @@ const bool MessageViewBase::is_loading()
 //
 // コマンド
 //
-bool MessageViewBase::set_command( const std::string& command, const std::string& arg )
+const bool MessageViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "empty" ) return get_message().empty();
 
@@ -235,7 +235,7 @@ bool MessageViewBase::set_command( const std::string& command, const std::string
     // メッセージを追加
     else if( command == "add_message" )
     {
-        if( ! arg.empty() ) m_text_message.insert_str( arg, true );
+        if( ! arg1.empty() ) m_text_message.insert_str( arg1, true );
     }
 
     // メッセージ保存
@@ -306,21 +306,22 @@ void MessageViewBase::pack_widget()
     m_tooltip.set_tip( m_check_fixname, "チェックすると名前欄を保存して固定にする" );
     m_tooltip.set_tip( m_check_fixmail, "チェックするとメール欄を保存して固定にする" );
 
-    // 名前
-    
+    // スレ別の名前
     if( DBTREE::write_fixname( get_url() ) ){
         m_check_fixname.set_active();
         m_entry_name.set_text( DBTREE::write_name( get_url() ) );
     }
+    // スレ別の名前が設定されていなかったら板別の名前
     else if( ! DBTREE::board_get_write_name( get_url() ).empty() ){
         m_entry_name.set_text( DBTREE::board_get_write_name( get_url() ) );
     }
 
-    // メール
+    // スレ別のメール
     if( DBTREE::write_fixmail( get_url() ) ){
         m_check_fixmail.set_active();
         m_entry_mail.set_text( DBTREE::write_mail( get_url() ) );
     }
+    // スレ別の名前が設定されていなかったら板別のメール
     else if( ! DBTREE::board_get_write_mail( get_url() ).empty() ){
 
         std::string tmpmail = DBTREE::board_get_write_mail( get_url() );
@@ -329,6 +330,7 @@ void MessageViewBase::pack_widget()
         if( tmpmail == JD_MAIL_BLANK ) m_entry_mail.set_text( std::string() );
         else m_entry_mail.set_text( tmpmail );
     }
+    // デフォルトはsage
     else m_entry_mail.set_text( "sage" );
 
     m_tool_name.add( m_label_name );

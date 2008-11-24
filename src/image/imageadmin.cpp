@@ -803,6 +803,9 @@ SKELETON::View* ImageAdmin::get_current_icon()
 //
 SKELETON::View* ImageAdmin::get_view( const std::string& url )
 {
+    SKELETON::View* view = get_current_view();
+    if( view && view->get_url() == url ) return view;
+
     std::list< SKELETON::View* >::iterator it_view;
     for( it_view = m_list_view.begin(); it_view != m_list_view.end(); ++it_view ){
         if( ( *it_view )->get_url() == url ) return ( *it_view );

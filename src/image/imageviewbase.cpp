@@ -324,7 +324,7 @@ void ImageViewBase::remove_imagearea()
 //
 // コマンド
 //
-bool ImageViewBase::set_command( const std::string& command, const std::string& arg )
+const bool ImageViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "switch_icon" ) switch_icon();
 

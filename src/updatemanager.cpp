@@ -150,7 +150,8 @@ void CheckUpdate_Manager::pop_front()
 
         // 更新チェックが終わったらローダからCheckUpdate_Manager::pop_front()が
         // コールバックされる
-        DBTREE::article_download_dat( url, true );
+        const bool check_update = true;
+        DBTREE::article_download_dat( url, check_update );
 
         if( ! DBTREE::article_is_loading( url ) ){
             pop_front();

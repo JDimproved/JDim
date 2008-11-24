@@ -14,6 +14,7 @@
 #include "icons/iconmanager.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/jdregex.h"
 
 #include "global.h"
 #include "type.h"
@@ -109,13 +110,35 @@ void BoardAdmin::restore( const bool only_locked )
 
 COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab, const bool lock )
 {
-    COMMAND_ARGS command_arg;
+    JDLIB::Regex regex;
 
+    COMMAND_ARGS command_arg;
     command_arg.command = "open_view";
-    command_arg.url = url;
+    command_arg.url = std::string();
     if( tab ) command_arg.arg1 = "true";  // タブで開く
     command_arg.arg2 = "false";           // 既に開いているかチェック
-    if( lock ) command_arg.arg3 = "lock";
+    if( lock ) command_arg.arg3 = "lock"; // 開き方のモード ( Admin::open_view 参照 )
+
+#ifdef _DEBUG
+    std::cout << "BoardAdmin::url_to_openarg url = " << url << std::endl;
+#endif    
+
+    // 次スレ検索
+    if( regex.exec( std::string( "(.*)" ) + NEXT_SIGN + ARTICLE_SIGN + "(.*)" + TIME_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+
+        command_arg.arg4 = "NEXT";
+        command_arg.arg5 = regex.str( 2 );
+    }
+
+    // スレビュー
+    else{
+
+        command_arg.url = url;
+
+        command_arg.arg4 = "MAIN";
+    }
 
     return command_arg;
 }
@@ -130,7 +153,7 @@ void BoardAdmin::switch_admin()
 //
 // リストで与えられたページをタブで連続して開くとき(Admin::open_list())の引数セット
 //
-COMMAND_ARGS BoardAdmin::get_open_list_args( const std::string& url )
+COMMAND_ARGS BoardAdmin::get_open_list_args( const std::string& url, const COMMAND_ARGS& command_list )
 {
     COMMAND_ARGS command_arg;
 
@@ -171,11 +194,22 @@ void BoardAdmin::toggle_toolbar()
 
 SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
 {
+    int type = CORE::VIEW_NONE; 
     CORE::VIEWFACTORY_ARGS view_args;
-    view_args.arg1 = command.arg4;
-    view_args.arg2 = command.arg5;    
 
-    SKELETON::View* view = CORE::ViewFactory( CORE::VIEW_BOARDVIEW, command.url, view_args );
+    // メインビュー
+    if( command.arg4 == "MAIN" ){
+        type = CORE::VIEW_BOARDVIEW;
+    }
+    else if( command.arg4 == "NEXT" ){
+        type = CORE::VIEW_BOARDNEXT;
+        view_args.arg1 = command.arg5;
+    }
+    else return NULL;
+
+    SKELETON::View* view = CORE::ViewFactory( type, command.url, view_args );
+    assert( view != NULL );
+
     return view;
 }
 

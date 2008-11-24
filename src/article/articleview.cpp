@@ -289,7 +289,8 @@ void ArticleViewMain::show_view()
     if( ! get_live() && SESSION::is_online() ) m_playsound = true;
 
     // 差分 download 開始
-    get_article()->download_dat( false );
+    const bool check_update = false;
+    get_article()->download_dat( check_update );
     if( is_loading() ){
 #ifdef _DEBUG
         std::cout << "loading start\n";

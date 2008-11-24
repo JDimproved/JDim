@@ -24,6 +24,7 @@ namespace CORE
         VIEW_SELECTLIST,
 
         VIEW_BOARDVIEW,
+        VIEW_BOARDNEXT,
 
         VIEW_ARTICLEVIEW,
         VIEW_ARTICLERES,
@@ -66,7 +67,7 @@ namespace CORE
         std::string arg4;
     };
     
-    SKELETON::View* ViewFactory( int type, const std::string& url, VIEWFACTORY_ARGS args = VIEWFACTORY_ARGS() );
+    SKELETON::View* ViewFactory( int type, const std::string& url, VIEWFACTORY_ARGS view_args = VIEWFACTORY_ARGS() );
 }
 
 #endif

@@ -99,9 +99,12 @@ void CompletionEntry::grab_focus()
 }
 
 
+//
 // ポップアップ表示
 //
-void CompletionEntry::show_popup( bool show_all )
+// show_all == true なら候補を全て表示する
+//
+void CompletionEntry::show_popup( const bool show_all )
 {
     const int mrg = 2;
 
@@ -112,6 +115,7 @@ void CompletionEntry::show_popup( bool show_all )
     }
 
     if( show_all ) query = std::string();
+
     CORE::COMPLIST complist = CORE::get_completion_manager()->get_list( m_mode, query );
     if( ! complist.size() ) hide_popup();
 
@@ -126,13 +130,15 @@ void CompletionEntry::show_popup( bool show_all )
         }
     }
 
-    int size = m_liststore->children().size();
+    const int size = m_liststore->children().size();
     if( ! size ){
         hide_popup();
         return;
     }
 
-    int cell_h = m_treeview.get_row_height() + mrg;
+    // 座標と大きさを計算してポップアップ表示
+
+    const int cell_h = m_treeview.get_row_height() + mrg;
 
     int x, y;
     get_window()->get_origin( x, y );

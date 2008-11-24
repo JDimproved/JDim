@@ -53,6 +53,8 @@ void MouseConfig::load_conf()
 
     // ARTICLE
     SETMOTION( "GotoNew", MOUSECONF_GotoNew );
+    SETMOTION( "SearchNextArticle", MOUSECONF_SearchNextArticle );
+    SETMOTION( "LiveStartStop", MOUSECONF_LiveStartStop );
 
     // IMAGE
     SETMOTION( "CancelMosaicButton", MOUSECONF_CancelMosaicButton );

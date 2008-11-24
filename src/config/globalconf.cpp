@@ -384,6 +384,14 @@ const bool CONFIG::get_expand_sidebar(){ return get_confitem()->expand_sidebar; 
 
 const bool CONFIG::get_expand_rpane(){ return get_confitem()->expand_rpane; }
 
+
+// 次スレ検索の類似度のしきい値
+const int CONFIG::get_threshold_next(){ return get_confitem()->threshold_next; }
+
+// 次スレを開いたときにお気に入りのアドレスと名前を自動更新
+const bool CONFIG::get_replace_favorite_next(){ return get_confitem()->replace_favorite_next; }
+
+
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }
 #endif

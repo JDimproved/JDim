@@ -230,6 +230,25 @@ void BoardBase::clear()
 }
 
 
+//
+// m_url_update_views に登録されている view に update_board コマンドを送る
+//
+void BoardBase::send_update_board()
+{
+#ifdef _DEBUG
+    std::cout << "BoardBase::send_update_board\n";
+#endif
+
+    std::list< std::string >::iterator it = m_url_update_views.begin();
+    for( ; it != m_url_update_views.end(); ++it ){
+#ifdef _DEBUG
+        std::cout << "update : " << *it << std::endl;
+#endif 
+        CORE::core_set_command( "update_board", *it );
+    }
+    m_url_update_views.clear();
+}
+
 
 //
 // 新しくArticleBaseクラスを追加してそのポインタを返す
@@ -772,11 +791,19 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 //
 // subject.txt ダウンロード
 //
-void BoardBase::download_subject()
+// url_update_view : CORE::core_set_command( "update_board" ) を送信するビューのアドレス
+//
+void BoardBase::download_subject( const std::string& url_update_view )
 {
 #ifdef _DEBUG
-    std::cout << "BoardBase::download_subject " << url_subject() << std::endl;
+    std::cout << "BoardBase::download_subject " << url_subject() << std::endl
+              << "url_update_view = " << url_update_view << std::endl;
 #endif
+
+    // ダウンロード中に他のビューから再びダウンロード依頼が来たら
+    // ダウンロード終了時にまとめてビューにupdateコマンドを送る
+    m_url_update_views.push_back( url_update_view );
+    if( m_url_update_views.size() >= 2 ) return;
 
     if( empty() ) return;
     if( is_loading() ) return;
@@ -791,7 +818,7 @@ void BoardBase::download_subject()
 
         set_str_code( "" );
 
-        // ディスパッチャ経由でreceive_finish()を呼ぶ
+        // ディスパッチャ経由で receive_finish() を呼び出す
         finish();
         return;
     }
@@ -807,7 +834,7 @@ void BoardBase::download_subject()
     JDLIB::LOADERDATA data;    
     create_loaderdata( data );
     if( ! start_load( data ) ){
-        CORE::core_set_command( "update_board", url_subject() );
+        send_update_board();
         clear();
     }
 }
@@ -867,7 +894,7 @@ void BoardBase::receive_finish()
 #endif
         m_rawdata[ m_lng_rawdata ] = '\0';
         set_date_modified( std::string() );
-        CORE::core_set_command( "update_board", url_subject() );
+        send_update_board();
 
         if( get_code() == HTTP_OK && std::string( m_rawdata ).find( "window.location.href" ) != std::string::npos ){
 
@@ -928,7 +955,7 @@ void BoardBase::receive_finish()
 
             if( start_checkking_if_board_moved() ) return;
 
-            CORE::core_set_command( "update_board", url_subject() );
+            send_update_board();
             clear();
             return;
         }
@@ -966,7 +993,7 @@ void BoardBase::receive_finish()
             if( start_checkking_if_board_moved() ) return;
         }
 
-        CORE::core_set_command( "update_board", url_subject() );
+        send_update_board();
         clear();
         return;
     }
@@ -1090,7 +1117,7 @@ void BoardBase::receive_finish()
     }
 
     // コアにデータベース更新を知らせる
-    CORE::core_set_command( "update_board", url_subject() );
+    send_update_board();
 
     delete libiconv;
     clear();
@@ -1285,7 +1312,7 @@ void BoardBase::update_abone_thread()
     bool online = SESSION::is_online();
     SESSION::set_online( false );
 
-    download_subject();
+    download_subject( url_subject() );
 
     SESSION::set_online( online );
 }

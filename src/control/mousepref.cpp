@@ -87,6 +87,8 @@ MousePref::MousePref( Gtk::Window* parent, const std::string& url )
     append_comment_row( "■ "+ CONTROL::get_mode_label( CONTROL::MODE_ARTICLE ) );
     append_row( CONTROL::GotoNew );
     append_row( CONTROL::WriteMessage );
+    append_row( CONTROL::SearchNextArticle );
+    append_row( CONTROL::LiveStartStop );
 
     append_comment_row( "" );
     append_comment_row( "■ "+ CONTROL::get_mode_label( CONTROL::MODE_IMAGEVIEW ) );

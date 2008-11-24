@@ -33,6 +33,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     ,m_button_clearmodified( "日時クリア" )
     ,m_label_write( false, "最終書き込み日時 : ", std::string() )
     ,m_bt_clear_post_history( "書き込み履歴クリア" )
+    ,m_label_write_name( false, "名前 : ", std::string() )
+    ,m_label_write_mail( false, "メール : ", std::string() )
 {
     // 一般
     if( DBTREE::article_is_cached( get_url() ) ){
@@ -67,6 +69,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox_info.pack_start( m_label_since, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_hbox_write, Gtk::PACK_SHRINK );
+
+    if( DBTREE::write_fixname( get_url() ) ) m_label_write_name.set_text( DBTREE::write_name( get_url() ) );
+    if( DBTREE::write_fixmail( get_url() ) ) m_label_write_mail.set_text( DBTREE::write_mail( get_url() ) );
+    m_vbox_info.pack_start( m_label_write_name, Gtk::PACK_SHRINK );
+    m_vbox_info.pack_start( m_label_write_mail, Gtk::PACK_SHRINK );
 
     // あぼーん設定
 

@@ -341,7 +341,7 @@ void ArticleAdmin::switch_admin()
 //
 // リストで与えられたページをタブで連続して開くとき(Admin::open_list())の引数セット
 //
-COMMAND_ARGS ArticleAdmin::get_open_list_args( const std::string& url )
+COMMAND_ARGS ArticleAdmin::get_open_list_args( const std::string& url, const COMMAND_ARGS& command_list )
 {
     COMMAND_ARGS command_arg;
     command_arg.arg4 = "MAIN";

@@ -155,6 +155,9 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
         else if( command.command == "check_update_open_root" ) view->set_command( "check_update_open_root" );
         else if( command.command == "cancel_check_update" ) view->set_command( "cancel_check_update" );
 
+        // お気に入りのスレの url と 名前を変更
+        else if( command.command == "replace_thread" ) view->set_command( "replace_thread", command.arg1, command.arg2 );
+
         // XML保存
         else if( command.command  == "save_xml" ) view->set_command( "save_xml" );
     }
@@ -162,11 +165,10 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
 
 
 //
-// アイコン表示切り替え
+// (お気に入りの)アイコン表示切り替え
 //
 void BBSListAdmin::toggle_icon( const std::string& url )
 {
-    // お気に入り
     SKELETON::View* view = get_view( URL_FAVORITEVIEW );
     if( view ) view->set_command( "toggle_icon", url );
 }

@@ -48,6 +48,10 @@ namespace ARTICLE
         SKELETON::LabelEntry m_label_write;
         Gtk::Button m_bt_clear_post_history;
 
+        // 名前とメール
+        SKELETON::LabelEntry m_label_write_name;
+        SKELETON::LabelEntry m_label_write_mail;
+
       public:
 
         Preferences( Gtk::Window* parent, const std::string& url );

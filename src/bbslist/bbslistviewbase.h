@@ -95,6 +95,9 @@ namespace BBSLIST
         // アイコン表示の切り替え
         void toggle_icon( const std::string& url );
 
+        // スレの url と 名前を変更
+        void replace_thread( const std::string& url, const std::string& url_new );
+
         // path からその行のタイプを取得
         int path2type( const Gtk::TreePath& path );
 
@@ -129,7 +132,10 @@ namespace BBSLIST
         // SKELETON::View の関数のオーバロード
         virtual const std::string url_for_copy(){ return std::string(); }
 
-        virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
+        virtual const bool set_command( const std::string& command,
+                                        const std::string& arg1 = std::string(),
+                                        const std::string& arg2 = std::string()
+            );
 
         virtual void shutdown();
 
@@ -139,7 +145,7 @@ namespace BBSLIST
         virtual void focus_out();
         virtual void close_view();
         virtual void delete_view();
-        virtual void update_item( const std::string& );
+        virtual void update_item( const std::string& url, const std::string& id );
         virtual const bool operate_view( const int control );
         virtual void goto_top();
         virtual void goto_bottom();

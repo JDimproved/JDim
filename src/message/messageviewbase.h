@@ -76,7 +76,10 @@ namespace MESSAGE
         virtual const std::string url_for_copy();
 
         // コマンド
-        virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
+        virtual const bool set_command( const std::string& command,
+                                        const std::string& arg1 = std::string(),
+                                        const std::string& arg2 = std::string()
+            );
 
         // ロード中
         virtual const bool is_loading();

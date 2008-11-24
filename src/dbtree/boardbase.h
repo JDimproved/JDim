@@ -132,6 +132,8 @@ namespace DBTREE
         // 最大レス数
         int m_number_max_res;
 
+        // ダウンロード用変数
+        std::list< std::string > m_url_update_views; // CORE::core_set_command( "update_board" ) を送信するビューのアドレス
         char* m_rawdata;
         int m_lng_rawdata;
 
@@ -320,7 +322,9 @@ namespace DBTREE
         ArticleBase* get_article_create( const std::string& id );
         ArticleBase* get_article_fromURL( const std::string& url );
 
-        void download_subject();
+        // subject.txt ダウンロード
+        // url_update_view : CORE::core_set_command( "update_board" ) を送信するビューのアドレス
+        void download_subject( const std::string& url_update_view );
 
         // 新スレ作成用のメッセージ変換
         virtual const std::string create_newarticle_message( const std::string& subject,
@@ -423,6 +427,9 @@ namespace DBTREE
       private:
 
         void clear();
+
+        // m_url_update_views に登録されている view に update_board コマンドを送る
+        void send_update_board();
 
         // キャッシュのファイル名が正しいかどうか
         virtual bool is_valid( const std::string& filename ){ return false; }

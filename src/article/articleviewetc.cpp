@@ -38,7 +38,9 @@ ArticleViewRes::ArticleViewRes( const std::string& url,
     if( !m_str_center.empty() ) url_tmp += m_str_center;
     else url_tmp += "0";
     url_tmp += TIME_SIGN + MISC::timevaltostr( tv );
-    set_url( url_tmp, false );
+
+    const bool update_history = false;
+    set_url( url_tmp, update_history );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewRes::ArticleViewRes " << get_url() << std::endl;
@@ -103,7 +105,8 @@ ArticleViewName::ArticleViewName( const std::string& url, const std::string& nam
     gettimeofday( &tv, &tz );
 
     // viewのURL更新
-    set_url( url_article() + ARTICLE_SIGN + NAME_SIGN + m_str_name + TIME_SIGN + MISC::timevaltostr( tv ), false );
+    const bool update_history = false;
+    set_url( url_article() + ARTICLE_SIGN + NAME_SIGN + m_str_name + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewName::ArticleViewName " << get_url() << std::endl;
@@ -169,7 +172,8 @@ ArticleViewID::ArticleViewID( const std::string& url, const std::string& id )
     gettimeofday( &tv, &tz );
 
     // viewのURL更新
-    set_url( url_article() + ARTICLE_SIGN + ID_SIGN + m_str_id + TIME_SIGN + MISC::timevaltostr( tv ), false );
+    const bool update_history = false;
+    set_url( url_article() + ARTICLE_SIGN + ID_SIGN + m_str_id + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewID::ArticleViewID " << get_url() << std::endl;
@@ -233,7 +237,9 @@ ArticleViewBM::ArticleViewBM( const std::string& url )
     struct timezone tz;
     gettimeofday( &tv, &tz );
 
-    set_url( url_article() + ARTICLE_SIGN + BOOKMK_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), false );
+    // viewのURL更新
+    const bool update_history = false;
+    set_url( url_article() + ARTICLE_SIGN + BOOKMK_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBM::ArticleViewBM " << get_url() << std::endl;
@@ -297,7 +303,9 @@ ArticleViewPost::ArticleViewPost( const std::string& url )
     struct timezone tz;
     gettimeofday( &tv, &tz );
 
-    set_url( url_article() + ARTICLE_SIGN + POST_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), false );
+    // viewのURL更新
+    const bool update_history = false;
+    set_url( url_article() + ARTICLE_SIGN + POST_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewPost::ArticleViewPost " << get_url() << std::endl;
@@ -363,7 +371,8 @@ ArticleViewURL::ArticleViewURL( const std::string& url )
     gettimeofday( &tv, &tz );
 
     // viewのURL更新
-    set_url( url_article() + ARTICLE_SIGN + URL_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), false );
+    const bool update_history = false;
+    set_url( url_article() + ARTICLE_SIGN + URL_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewURL::ArticleViewURL " << get_url() << std::endl;
@@ -426,7 +435,9 @@ ArticleViewRefer::ArticleViewRefer( const std::string& url, const std::string& n
     struct timezone tz;
     gettimeofday( &tv, &tz );
 
-    set_url( url_article() + ARTICLE_SIGN + REFER_SIGN + m_str_num + TIME_SIGN + MISC::timevaltostr( tv ), false );
+    // viewのURL更新
+    const bool update_history = false;
+    set_url( url_article() + ARTICLE_SIGN + REFER_SIGN + m_str_num + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewRefer::ArticleViewRefer " << get_url() << std::endl;
@@ -498,7 +509,9 @@ ArticleViewDrawout::ArticleViewDrawout( const std::string& url, const std::strin
     if( mode_or ) url_tmp += "1";
     else url_tmp += "0";
     url_tmp += TIME_SIGN + MISC::timevaltostr( tv );
-    set_url( url_tmp, false );
+
+    const bool update_history = false;
+    set_url( url_tmp, update_history );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewDrawout::ArticleViewDrawout " << get_url() << std::endl;
@@ -565,7 +578,8 @@ ArticleViewPostlog::ArticleViewPostlog( const std::string& url, const int num )
     gettimeofday( &tv, &tz );
 
     // viewのURL更新
-    set_url( url + POSTLOG_SIGN + MISC::itostr( m_num ) + TIME_SIGN + MISC::timevaltostr( tv ), false );
+    const bool update_history = false;
+    set_url( url + POSTLOG_SIGN + MISC::itostr( m_num ) + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewPostlog::ArticleViewPostlog " << get_url()

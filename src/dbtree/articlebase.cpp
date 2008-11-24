@@ -347,6 +347,7 @@ void ArticleBase::update_datbase( const std::string& datbase )
 #endif
 
     // URL 更新
+    m_datbase = datbase;
     m_url = datbase + m_id;
 
     // info ファイルのパスも更新
@@ -570,9 +571,9 @@ void ArticleBase::update_abone()
 // あぼーん状態のリセット(情報セットと状態更新)
 //
 void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names
-                               ,std::list< std::string >& words, std::list< std::string >& regexs
-                               ,std::vector< char >& vec_abone_res
-                               ,bool transparent, bool chain )
+                               ,std::list< std::string >& words,  std::list< std::string >& regexs
+                               ,const std::vector< char >& vec_abone_res
+                               ,const bool transparent, const bool chain )
 {
     if( empty() ) return;
 
@@ -928,7 +929,9 @@ void ArticleBase::download_dat( const bool check_update )
     if( empty() ) return;
 
 #ifdef _DEBUG
-    std::cout << "ArticleBase::download_dat " << m_url << " status = " << m_status << " checkupdate = " << check_update << std::endl;
+    std::cout << "ArticleBase::download_dat " << m_url << " status = " << m_status
+              << " checkupdate = " << check_update << std::endl
+              << "url_pre_article = " << m_url_pre_article << std::endl;
 #endif
 
     struct timeval tv;
@@ -972,6 +975,53 @@ void ArticleBase::download_dat( const bool check_update )
 }
 
 
+//
+// 前スレのアドレスの指定
+//
+// 前スレのアドレスをセットしてからdownload_dat()を呼び出すと
+// ロード終了時( slot_load_finished() )に次スレ移行チェックをする
+//
+void ArticleBase::set_url_pre_article( const std::string& url_pre_article )
+{
+    m_url_pre_article = url_pre_article;
+
+    if( ! m_url_pre_article.empty() ){
+
+        // 既読スレや板違いのスレに対しては移行チェックはしない
+        if( m_number_load
+            || m_datbase != DBTREE::url_datbase( m_url_pre_article )
+            || get_since_time() < DBTREE::article_since_time( m_url_pre_article )
+            ) m_url_pre_article = std::string();
+    }
+}
+
+
+//
+// url_src で示されるスレの情報をコピー
+//
+void ArticleBase::copy_article_info( const std::string& url_src )
+{
+    if( url_src.empty() ) return;
+    if( ! DBTREE::article_is_cached( url_src ) ) return;
+
+    // 名前、メール
+    m_write_fixname = DBTREE::write_fixname( url_src );
+    m_write_name = DBTREE::write_name( url_src );
+
+    m_write_fixmail = DBTREE::write_fixmail( url_src );
+    m_write_mail = DBTREE::write_mail( url_src );
+
+    // あぼーん関係
+    std::list< std::string > ids;
+    std::list< std::string > names = DBTREE::get_abone_list_name( url_src );
+    std::list< std::string > words = DBTREE::get_abone_list_word( url_src );
+    std::list< std::string > regexs = DBTREE::get_abone_list_regex( url_src );
+    std::vector< char > vec_abone_res;
+    const bool transparent = DBTREE::get_abone_transparent( url_src );
+    const bool chain = DBTREE::get_abone_chain( url_src );
+
+    reset_abone( ids, names ,words, regexs, vec_abone_res, transparent, chain );
+}
 
 
 //
@@ -1095,6 +1145,41 @@ void ArticleBase::slot_load_finished()
         }
     }
 
+    // 次スレチェック
+    bool relayout = false;
+    if( m_number_load && ! m_url_pre_article.empty() && ! m_subject.empty() ){
+
+        const std::string pre_subject = DBTREE::article_subject( m_url_pre_article );
+        if( ! pre_subject.empty() ){
+
+            const int MAXSTR = 256;
+            std::vector< std::vector< int > > dist( MAXSTR, std::vector< int >( MAXSTR ) );
+            const int leven = ( int )( MISC::leven( dist, pre_subject, m_subject ) * 10 + .5 );
+
+#ifdef _DEBUG
+            std::cout << "pre_subject = " << pre_subject << std::endl
+                      << "subject = " << m_subject << std::endl
+                      << "leven = " << leven << std::endl;
+#endif
+            // このスレは m_url_pre_article の次スレとみなして情報をコピーする
+            if( leven <= CONFIG::get_threshold_next() ){
+
+#ifdef _DEBUG
+                std::cout << "hit!\n";
+#endif
+                copy_article_info( m_url_pre_article );
+
+                if( CONFIG::get_replace_favorite_next() ){
+                    CORE::core_set_command( "replace_favorite_thread", "", m_url_pre_article, m_url );
+                }
+                relayout = true;
+            }
+
+        }
+
+        m_url_pre_article = std::string();
+    }
+
     m_number_before_load = m_number_load;
     m_ext_err = m_nodetree->get_ext_err();
 
@@ -1146,6 +1231,9 @@ void ArticleBase::slot_load_finished()
     // articleビューに終了を知らせる
     CORE::core_set_command( "update_article", m_url );
     CORE::core_set_command( "update_article_finish", m_url );
+
+    // あぼーん情報が前スレよりコピーされたので再レイアウト指定
+    if( relayout ) CORE::core_set_command( "relayout_article", m_url );
 }
 
 

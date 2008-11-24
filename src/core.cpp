@@ -2517,7 +2517,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url,
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            command.arg1, // "true"ならtabで開く
                                            "false", // url 開いてるかチェックする
                                            command.arg2, // 開き方のモード ( Admin::open_view 参照 )
@@ -2543,7 +2543,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_list",
                                            std::string(),
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() におけるCOMMAND_ARGS::arg1, arg2,....
                                            command.arg1 // datファイルのURLを空白で区切って指定
             );
 
@@ -2564,7 +2564,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() におけるCOMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2584,7 +2584,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() におけるCOMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2610,7 +2610,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2631,7 +2631,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2651,7 +2651,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2669,7 +2669,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2687,7 +2687,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2705,7 +2705,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2734,7 +2734,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            command.url, 
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2765,7 +2765,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            "allboard",
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2794,7 +2794,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            "title",
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2816,7 +2816,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "open_view",
                                            "postlog",
 
-                                           // 以下 COMMAND_ARGS::arg1, arg2,....
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            "left", // タブで開く
                                            "true", // url 開いてるかチェックしない
                                            "", // 開き方のモード ( Admin::open_view 参照 )
@@ -2836,6 +2836,8 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     // datが更新が終わったときにローダから呼ばれる
+    // "update_article" はdatロード時などの更新中でも呼び出されるが
+    // "update_article_finish" は最後に一度だけ呼び出される
     else if( command.command  == "update_article_finish" ){ 
 
         ARTICLE::get_admin()->set_command( "update_finish", command.url );
@@ -2855,6 +2857,11 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "unlock_views", command.url );
         ARTICLE::get_admin()->set_command( "close_view", command.url,
                                            "closeall" // command.url を含む全てのビューを閉じる
+            );
+
+        BOARD::get_admin()->set_command( "unlock_views", command.url );
+        BOARD::get_admin()->set_command( "close_view", command.url,
+                                         "closeall" // command.url を含む全てのビューを閉じる
             );
 
         // ポップアップも削除して対象となるarticlebaseのロックを解除 (注) ポップアップは遅延してdeleteされる
@@ -2908,28 +2915,57 @@ void Core::set_command( const COMMAND_ARGS& command )
     ////////////////////////////
     // board系のコマンド
 
+    // メインビュー
     else if( command.command  == "open_board" ){
 
         BOARD::get_admin()->set_command( "open_view",
                                          command.url,
 
+                                         // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                          command.arg1,  // "true" ならtabで開く
                                          "false", // url 開いてるかチェック
-                                         command.arg2 // 開き方のモード ( Admin::open_view 参照 )
+                                         command.arg2, // 開き方のモード ( Admin::open_view 参照 )
+
+                                         "MAIN" // モード
             );
 
+        // 履歴更新
         set_history_board( command.url );
+        return;
+    }
+
+    // 次スレ検索
+    else if( command.command  == "open_board_next" ){
+
+        // タブだらけになってしまうので実況中の場合はタブで開かない
+        const bool live = SESSION::is_live( command.arg1 );
+        std::string tabmode = "left";
+        if( live ) tabmode = "";
+
+        BOARD::get_admin()->set_command( "open_view",
+                                         command.url,
+
+                                         // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
+                                         tabmode, // タブで開くか
+                                         "true", // url 開いてるかチェックしない
+                                         "", // 開き方のモード ( Admin::open_view 参照 )
+
+                                         "NEXT", // モード
+                                     
+                                         command.arg1 // スレのアドレス
+            );
+
         return;
     }
 
     // 複数開く
     // 
-    if( command.command  == "open_board_list" ) {
+    else if( command.command  == "open_board_list" ) {
 
         BOARD::get_admin()->set_command( "open_list",
                                          std::string(),
 
-                                         // 以下 COMMAND_ARGS::arg1, arg2,....
+                                         // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                          command.arg1 // datファイルのURLを空白で区切って指定
             );
 
@@ -3050,6 +3086,16 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "toggle_favorite_icon" ){
 
         BBSLIST::get_admin()->set_command( "toggle_icon", command.url );
+        return;
+    }
+
+    // お気に入りのスレの url と 名前を変更
+    else if( command.command  == "replace_favorite_thread" ){
+
+        BBSLIST::get_admin()->set_command( "replace_thread", URL_FAVORITEVIEW,
+                                           command.arg1,  // 旧スレのURL
+                                           command.arg2   // 新スレのURL
+            );
         return;
     }
 

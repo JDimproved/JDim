@@ -100,7 +100,9 @@ namespace CONFIG
         CONF_ABONE_TRANSPARENT = 0, // デフォルトで透明あぼーんをする
         CONF_ABONE_CHAIN = 0,       // デフォルトで連鎖あぼーんをする
         CONF_EXPAND_SIDEBAR = 0,      // 右ペーンが空の時にサイドバーを閉じる
-        CONF_EXPAND_RPANE = 1         // 3ペーン時にスレ一覧やスレビューを最大化する
+        CONF_EXPAND_RPANE = 1,        // 3ペーン時にスレ一覧やスレビューを最大化する
+        CONF_THRESHOLD_NEXT = 6,   // 次スレ検索の類似度のしきい値
+        CONF_REPLACE_FAVORITE_NEXT = 0  // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
     };
 
 // browsers.cpp のデフォルトのラベル番号

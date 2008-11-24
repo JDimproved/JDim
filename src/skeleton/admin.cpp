@@ -477,7 +477,7 @@ void Admin::exec_command()
     // arg1 にはdatファイルを空白で区切って指定する
     //
     else if( command.command == "open_list" ){
-        open_list( command.arg1 );
+        open_list( command );
     }
     else if( command.command == "switch_view" ){
         switch_view( command.url );
@@ -731,19 +731,21 @@ void Admin::exec_command()
 // 連続してリロードかけるとサーバに負担をかけるので、オフラインで開いて
 // タイミングをずらしながらリロードする
 //
-void Admin::open_list( const std::string& str_list )
+void Admin::open_list( const COMMAND_ARGS& command_list )
 {
+    const std::string& str_list = command_list.arg1;
+
     std::list< std::string > list_url = MISC::split_line( str_list );
     if( list_url.empty() ) return;
 
     int waittime = 0;
-    bool online = SESSION::is_online();
+    const bool online = SESSION::is_online();
 
     std::list< std::string >::iterator it = list_url.begin();
     for( ; it != list_url.end(); ++it, waittime += AUTORELOAD_MINSEC ){
 
         // 各admin別の引数をセット
-        COMMAND_ARGS command_arg = get_open_list_args( ( *it ) );
+        COMMAND_ARGS command_arg = get_open_list_args( ( *it ), command_list );
 
         // 共通の引数をセット
         command_arg.command = "open_view";
@@ -1263,13 +1265,21 @@ void Admin::update_item( const std::string& url,  const std::string& id )
     std::cout << "Admin::update_item : " << url << " " << id << std::endl;
 #endif
 
-    SKELETON::View* view = get_view( url );
-    if( view ) view->update_item( id );
+    std::list< SKELETON::View* > list_view = get_list_view();
+    std::list< SKELETON::View* >::iterator it = list_view.begin();
+    for( ; it != list_view.end(); ++it ){
+        SKELETON::View* view = ( *it );
+        if( view ) view->update_item( url, id );
+    }
+
 }
 
 
 //
 // ビューに更新終了を知らせる
+//
+// update_view はデータロード時などの更新途中でも呼び出されるが
+// update_finish は最後に一度だけ呼び出される
 //
 void Admin::update_finish( const std::string& url )
 {

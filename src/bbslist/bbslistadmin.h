@@ -41,6 +41,7 @@ namespace BBSLIST
         virtual void close_view( const std::string& url ){}
         virtual void close_all_view( const std::string& url ){}
 
+        // (お気に入りの)アイコン表示切り替え
         virtual void toggle_icon( const std::string& url );
 
         // タブの D&D 処理をしない

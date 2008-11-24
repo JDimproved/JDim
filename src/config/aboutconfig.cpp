@@ -134,7 +134,6 @@ void AboutConfig::append_rows()
     append_row( "ツリービューの背景色設定にgtkrcを用いる", get_confitem()->use_tree_gtkrc, CONF_USE_TREE_GTKRC );
     append_row( "ツリービューの行間スペース", get_confitem()->tree_ypad, CONF_TREE_YPAD );
 
-
     // 板一覧、お気に入り
     append_row( "" );
     append_row( "■ 板一覧、お気に入り" );
@@ -151,6 +150,12 @@ void AboutConfig::append_rows()
     append_row( "deleteを押したときに確認ダイアログを表示", get_confitem()->show_deldiag, CONF_SHOW_DELDIAG );
     append_row( "指定した値(時間)よりも後に立てられたスレを新着とみなす", get_confitem()->newthread_hour, CONF_NEWTHREAD_HOUR );
     append_row( "3ペーン時にスレ一覧やスレビューを最大化する", get_confitem()->expand_rpane, CONF_EXPAND_RPANE );
+
+    // 次スレ検索
+    append_row( "" );
+    append_row( "■ 次スレ検索" );
+    append_row( "類似度判定のしきい値(大きいほど判定が甘くなる、最大10)", get_confitem()->threshold_next, CONF_THRESHOLD_NEXT );
+    append_row( "移行時にお気に入りのアドレスと名前を自動更新する", get_confitem()->replace_favorite_next, CONF_REPLACE_FAVORITE_NEXT );
 
     // スレビュー
     append_row( "" );

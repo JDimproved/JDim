@@ -10,6 +10,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
+#include "jdlib/misctime.h"
 #include "jdlib/jdregex.h"
 
 #include "dbtree/interface.h"
@@ -108,8 +109,9 @@ m_treeview.append_column( *col ); \
 }while(0)
 
 
-BoardView::BoardView( const std::string& url,const std::string& arg1, const std::string& arg2 )
+BoardViewBase::BoardViewBase( const std::string& url )
     : SKELETON::View( url ),
+      m_url_board( url ),
       m_treeview( true, CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
       m_col_mark( NULL ),
       m_col_id( NULL ),
@@ -148,7 +150,7 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     m_treeview.set_fixed_height_mode( true );
 
 #ifdef _DEBUG
-    std::cout << "BoardView::BoardView : m_treeview.set_fixed_height_mode\n";
+    std::cout << "BoardViewBase::BoardViewBase : m_treeview.set_fixed_height_mode\n";
 #endif
 
 #endif
@@ -157,52 +159,52 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     update_columns();
 
     // ソート関数セット
-    m_liststore->set_sort_func( COL_MARK, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );    
-    m_liststore->set_sort_func( COL_ID, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
-    m_liststore->set_sort_func( COL_SUBJECT, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
-    m_liststore->set_sort_func( COL_RES, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
-    m_liststore->set_sort_func( COL_STR_LOAD, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
-    m_liststore->set_sort_func( COL_STR_NEW, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
-    m_liststore->set_sort_func( COL_SINCE, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
-    m_liststore->set_sort_func( COL_WRITE, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
-    m_liststore->set_sort_func( COL_SPEED, sigc::mem_fun( *this, &BoardView::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_MARK, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );    
+    m_liststore->set_sort_func( COL_ID, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_SUBJECT, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_RES, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_STR_LOAD, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_STR_NEW, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_SINCE, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_WRITE, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_SPEED, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     
-    m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BoardView::slot_button_press ) );
-    m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BoardView::slot_button_release ) );
-    m_treeview.sig_motion_notify().connect( sigc::mem_fun(*this, &BoardView::slot_motion_notify ) );
-    m_treeview.sig_key_press().connect( sigc::mem_fun(*this, &BoardView::slot_key_press ) );
-    m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &BoardView::slot_key_release ) );
-    m_treeview.sig_scroll_event().connect( sigc::mem_fun(*this, &BoardView::slot_scroll_event ) );
+    m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BoardViewBase::slot_button_press ) );
+    m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BoardViewBase::slot_button_release ) );
+    m_treeview.sig_motion_notify().connect( sigc::mem_fun(*this, &BoardViewBase::slot_motion_notify ) );
+    m_treeview.sig_key_press().connect( sigc::mem_fun(*this, &BoardViewBase::slot_key_press ) );
+    m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &BoardViewBase::slot_key_release ) );
+    m_treeview.sig_scroll_event().connect( sigc::mem_fun(*this, &BoardViewBase::slot_scroll_event ) );
 
     // D&D設定
-    m_treeview.sig_drag_begin().connect( sigc::mem_fun(*this, &BoardView::slot_drag_begin ) );
-    m_treeview.sig_drag_end().connect( sigc::mem_fun(*this, &BoardView::slot_drag_end ) );
+    m_treeview.sig_drag_begin().connect( sigc::mem_fun(*this, &BoardViewBase::slot_drag_begin ) );
+    m_treeview.sig_drag_end().connect( sigc::mem_fun(*this, &BoardViewBase::slot_drag_end ) );
 
 
     // ポップアップメニューの設定
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)" ),
-                         sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_AUTO ) );
+                         sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_AUTO ) );
     action_group()->add( Gtk::Action::create( "SetBookMark", "しおりを設定(_S)" ),  // 未使用
-                         sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_SET ) );
+                         sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_SET ) );
     action_group()->add( Gtk::Action::create( "UnsetBookMark", "しおりを解除(_U)" ),    // 未使用
-                         sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_bookmark ), BOOKMARK_UNSET ) );
-    action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く(_T)" ), sigc::mem_fun( *this, &BoardView::slot_open_tab ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加(_F)..." ), sigc::mem_fun( *this, &BoardView::slot_favorite_thread ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに登録(_A)" ), sigc::mem_fun( *this, &BoardView::slot_favorite_board ) );
-    action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動(_T)" ), sigc::mem_fun( *this, &BoardView::goto_top ) );
-    action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動(_M)" ), sigc::mem_fun( *this, &BoardView::goto_bottom ) );
+                         sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_UNSET ) );
+    action_group()->add( Gtk::Action::create( "OpenTab", "OpenArticleTab" ), sigc::mem_fun( *this, &BoardViewBase::slot_open_tab ) );
+    action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加(_F)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_thread ) );
+    action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに登録(_A)" ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_board ) );
+    action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動(_T)" ), sigc::mem_fun( *this, &BoardViewBase::goto_top ) );
+    action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動(_M)" ), sigc::mem_fun( *this, &BoardViewBase::goto_bottom ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
-    action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する(_D)" ), sigc::mem_fun( *this, &BoardView::slot_delete_logs ) );
-    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)" ), sigc::mem_fun( *this, &BoardView::open_selected_rows ) );
-    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_C)" ), sigc::mem_fun( *this, &BoardView::slot_copy_url ) );
-    action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー(_U)" ), sigc::mem_fun( *this, &BoardView::slot_copy_title_url ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)" ), sigc::mem_fun( *this, &BoardView::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "AboneThread", "スレをあぼ〜んする(_N)" ), sigc::mem_fun( *this, &BoardView::slot_abone_thread ) );
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ(_I)..." ), sigc::mem_fun( *this, &BoardView::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ(_P)..." ), sigc::mem_fun( *this, &BoardView::show_preference ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存(_S)..." ), sigc::mem_fun( *this, &BoardView::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する(_D)" ), sigc::mem_fun( *this, &BoardViewBase::slot_delete_logs ) );
+    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)" ), sigc::mem_fun( *this, &BoardViewBase::open_selected_rows ) );
+    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_C)" ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_url ) );
+    action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー(_U)" ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_title_url ) );
+    action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)" ), sigc::mem_fun( *this, &BoardViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "AboneThread", "スレをあぼ〜んする(_N)" ), sigc::mem_fun( *this, &BoardViewBase::slot_abone_thread ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ(_I)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_preferences_article ) );
+    action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ(_P)..." ), sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存(_S)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_save_dat ) );
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
@@ -279,32 +281,29 @@ BoardView::BoardView( const std::string& url,const std::string& arg1, const std:
     // マウスジェスチォ可能
     set_enable_mg( true );
 
-    // オートリロード可
-    set_enable_autoreload( true );
-
     // コントロールモード設定
     get_control().add_mode( CONTROL::MODE_BOARD );
 }
 
 
-BoardView::~BoardView()
+BoardViewBase::~BoardViewBase()
 {
 #ifdef _DEBUG    
-    std::cout << "BoardView::~BoardView : " << get_url() << std::endl;
+    std::cout << "BoardViewBase::~BoardViewBase : " << get_url() << std::endl;
 #endif
-    DBTREE::board_save_info( get_url() );
+    DBTREE::board_save_info( get_url_board() );
     save_column_width();
 }
 
 
-SKELETON::Admin* BoardView::get_admin()
+SKELETON::Admin* BoardViewBase::get_admin()
 {
     return BOARD::get_admin();
 }
 
 
 // アイコンのID取得
-const int BoardView::get_icon( const std::string& iconname )
+const int BoardViewBase::get_icon( const std::string& iconname )
 {
     int id = ICON::NONE;
 
@@ -318,9 +317,9 @@ const int BoardView::get_icon( const std::string& iconname )
 
 
 // 更新した
-const bool BoardView::is_updated()
+const bool BoardViewBase::is_updated()
 {
-    int code = DBTREE::board_code( get_url() );
+    const int code = DBTREE::board_code( get_url_board() );
     return ( ( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) && m_updated );
 }
 
@@ -328,9 +327,9 @@ const bool BoardView::is_updated()
 //
 // コピー用URL(メインウィンドウのURLバーなどに表示する)
 //
-const std::string BoardView::url_for_copy()
+const std::string BoardViewBase::url_for_copy()
 {
-    return DBTREE::url_boardbase( get_url() );
+    return DBTREE::url_boardbase( get_url_board() );
 }
 
 
@@ -338,13 +337,13 @@ const std::string BoardView::url_for_copy()
 //
 // 列項目の更新
 //
-void BoardView::update_columns()
+void BoardViewBase::update_columns()
 {
     m_treeview.remove_all_columns();
 
     int num = 0;
     for(;;){
-        int item = SESSION::get_item_board( num );
+        const int item = SESSION::get_item_board( num );
         if( item == ITEM_END ) break;
         switch( item ){
             case ITEM_MARK: APPEND_COLUMN( m_col_mark, ITEM_NAME_MARK, m_columns.m_col_mark ); break;
@@ -363,7 +362,7 @@ void BoardView::update_columns()
     // サイズを調整しつつソートの設定
     for( guint i = 0; i < COL_VISIBLE_END; i++ ){
         
-        int id = get_title_id( i );
+        const int id = get_title_id( i );
         if( id < 0 ) continue;
 
         Gtk::TreeView::Column* column = m_treeview.get_column( i );
@@ -418,7 +417,7 @@ void BoardView::update_columns()
         column->set_clickable( true );        
 
         // ヘッダをクリックしたときに呼ぶslot
-        column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardView::slot_col_clicked ), id ) );
+        column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_col_clicked ), id ) );
 
         // ヘッダの位置
         switch( id ){
@@ -442,7 +441,7 @@ void BoardView::update_columns()
         Gtk::CellRenderer *cell = column->get_first_cell_renderer();
 
         // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
-        if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &BoardView::slot_cell_data ) );
+        if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &BoardViewBase::slot_cell_data ) );
 
         Gtk::CellRendererText* rentext = dynamic_cast< Gtk::CellRendererText* >( cell );
         if( rentext ){
@@ -476,12 +475,12 @@ void BoardView::update_columns()
 //
 // 失敗の時は-1を変えす
 //
-int BoardView::get_title_id( int col )
+const int BoardViewBase::get_title_id( const int col )
 {
     Gtk::TreeView::Column* column = m_treeview.get_column( col );
     if( ! column ) return -1;
 
-    std::string title = column->get_title();
+    const std::string title = column->get_title();
     int id = -1;
 
     if( title == ITEM_NAME_MARK ) id = COL_MARK;
@@ -500,9 +499,25 @@ int BoardView::get_title_id( int col )
 
 
 //
-// 列の幅の大きさを取得してセッションデータベース更新
+// ソート列やソートモードの保存
 //
-void BoardView::save_column_width()
+void BoardViewBase::save_sort_columns()
+{
+#ifdef _DEBUG
+    std::cout << "BoardViewBase::save_sort_columns : url = " << get_url() << std::endl;
+#endif
+
+    DBTREE::board_set_view_sort_column( get_url_board(), m_col );
+    DBTREE::board_set_view_sort_mode( get_url_board(), m_sortmode );
+    DBTREE::board_set_view_sort_pre_column( get_url_board(), m_previous_col );
+    DBTREE::board_set_view_sort_pre_mode( get_url_board(), m_previous_sortmode );
+}
+
+
+//
+// 列の幅の保存
+//
+void BoardViewBase::save_column_width()
 {
 #ifdef _DEBUG
     std::cout << "save_column_width " << get_url() << std::endl;
@@ -510,7 +525,7 @@ void BoardView::save_column_width()
 
     for( guint i = 0; i < COL_VISIBLE_END; i++ ){
         
-        int id = get_title_id( i );
+        const int id = get_title_id( i );
         if( id < 0 ) continue;
 
         Gtk::TreeView::Column* column = m_treeview.get_column( i );
@@ -565,13 +580,13 @@ void BoardView::save_column_width()
 //
 // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
 //
-void BoardView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
+void BoardViewBase::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
 {
     Gtk::TreeModel::Row row = *it;
     Gtk::TreePath path = m_liststore->get_path( row );
 
 #ifdef _DEBUG
-//    std::cout << "BoardView::slot_cell_data path = " << path.to_string() << std::endl;
+//    std::cout << "BoardViewBase::slot_cell_data path = " << path.to_string() << std::endl;
 #endif
 
     // ハイライト色 ( 抽出状態 )
@@ -588,10 +603,10 @@ void BoardView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::i
 //
 // ソート実行
 //
-void BoardView::exec_sort()
+void BoardViewBase::exec_sort()
 {
 #ifdef _DEBUG
-    std::cout << "BoardView::exec_sort\n";
+    std::cout << "BoardViewBase::exec_sort url = " << get_url() << std::endl;
 #endif
 
     if( m_col < 0 || m_col >= COL_VISIBLE_END ){
@@ -605,12 +620,33 @@ void BoardView::exec_sort()
 
 
 //
+// ソート状態回復
+//
+void BoardViewBase::restore_sort()
+{
+    m_search_invert = false;
+
+    m_col = DBTREE::board_view_sort_column( get_url_board() );
+    m_sortmode = DBTREE::board_view_sort_mode( get_url_board() );
+
+    m_previous_col = DBTREE::board_view_sort_pre_column( get_url_board() );
+    m_previous_sortmode = DBTREE::board_view_sort_pre_mode( get_url_board() );
+
+    Gtk::TreeModel::Children child = m_liststore->children();
+    if( child.size() ){
+        exec_sort();
+        goto_top();
+    }
+}
+
+
+//
 // ヘッダをクリックしたときのslot関数
 //
-void BoardView::slot_col_clicked( int col )
+void BoardViewBase::slot_col_clicked( const int col )
 {
 #ifdef _DEBUG
-    std::cout << "BoardView::slot_col_clicked col = " << col << std::endl;
+    std::cout << "BoardViewBase::slot_col_clicked col = " << col << std::endl;
 #endif
 
     if( m_col != col ){ // 前回クリックした列と違う列をクリックした
@@ -636,11 +672,7 @@ void BoardView::slot_col_clicked( int col )
         if( m_sortmode == SORTMODE_DESCEND || m_sortmode == SORTMODE_ASCEND ) m_sortmode = SORTMODE_MARK1;
     }
 
-    DBTREE::board_set_view_sort_column( get_url(), m_col );
-    DBTREE::board_set_view_sort_mode( get_url(), m_sortmode );
-    DBTREE::board_set_view_sort_pre_column( get_url(), m_previous_col );
-    DBTREE::board_set_view_sort_pre_mode( get_url(), m_previous_sortmode );
-
+    save_sort_columns();
     exec_sort();
     focus_view();
 }
@@ -651,10 +683,10 @@ void BoardView::slot_col_clicked( int col )
 //
 // row_a が上か　row_b　が上かを返す。同じ状態なら 0
 //
-int BoardView::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
+const int BoardViewBase::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
 {
-    bool draw_a = row_a[ m_columns.m_col_drawbg ];
-    bool draw_b = row_b[ m_columns.m_col_drawbg ];
+    const bool draw_a = row_a[ m_columns.m_col_drawbg ];
+    const bool draw_b = row_b[ m_columns.m_col_drawbg ];
 
     if( draw_a && ! draw_b ) return COL_A_UP;
     else if( draw_b && ! draw_a ) return COL_B_UP;
@@ -668,7 +700,7 @@ int BoardView::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& 
 //
 // row_a が上か　row_b　が上かを返す。同じなら 0
 //
-int BoardView::compare_col( int col, int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
+const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
 {
     int num_a = 0, num_b = 0;
     int ret = 0;
@@ -771,7 +803,7 @@ int BoardView::compare_col( int col, int sortmode, Gtk::TreeModel::Row& row_a, G
 //
 // ソート関数
 //
-int BoardView::slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+const int BoardViewBase::slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
 {
     Gtk::TreeModel::Row row_a = *( a );
     Gtk::TreeModel::Row row_b = *( b );
@@ -794,7 +826,7 @@ int BoardView::slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::T
 //
 // コマンド
 //
-bool BoardView::set_command( const std::string& command, const std::string& arg )
+const bool BoardViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "update_columns" ) update_columns();
 
@@ -805,7 +837,7 @@ bool BoardView::set_command( const std::string& command, const std::string& arg 
 //
 // クロック入力
 //
-void BoardView::clock_in()
+void BoardViewBase::clock_in()
 {
     View::clock_in();
 
@@ -813,35 +845,12 @@ void BoardView::clock_in()
 }
 
 
-
-//
-// リロード
-//
-void BoardView::reload()
-{
-    // オフライン
-    if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
-        mdiag.run();
-        return;
-    }
-
-    // オートリロードのカウンタを0にする
-    View::reset_autoreload_counter();
-
-    show_view();
-
-    // 板履歴更新
-    CORE::core_set_command( "set_history_board", get_url() );
-}
-
-
 //
 // ロード停止
 //
-void BoardView::stop()
+void BoardViewBase::stop()
 {
-    DBTREE::board_stop_load( get_url() );
+    DBTREE::board_stop_load( get_url_board() );
 }
 
 
@@ -849,14 +858,14 @@ void BoardView::stop()
 //
 // ビュー表示
 //
-void BoardView::show_view()
+void BoardViewBase::show_view()
 {
 #ifdef _DEBUG
-    std::cout << "BoardView::show_view " << get_url() << std::endl;
+    std::cout << "BoardViewBase::show_view " << get_url() << std::endl;
 #endif
 
     // DBに登録されてない
-    if( get_url().empty() ){
+    if( get_url_board().empty() ){
         set_status( "invalid URL" );
         BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
         return;
@@ -869,12 +878,12 @@ void BoardView::show_view()
 #endif
     m_liststore->clear();
     m_pre_query = std::string();
-    m_last_access_time = DBTREE::board_last_access_time( get_url() );
+    m_last_access_time = DBTREE::board_last_access_time( get_url_board() );
     m_loading = true;
     
     // download 開始
     // 終わったら update_view() が呼ばれる
-    DBTREE::board_download_subject( get_url() );
+    DBTREE::board_download_subject( get_url_board(), get_url() );
     set_status( "loading..." );
     BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
 
@@ -883,37 +892,13 @@ void BoardView::show_view()
 }
 
 
-
-//
-// 再描画(画面初期化)
-//
-void BoardView::redraw_view()
-{
-#ifdef _DEBUG
-    std::cout << "BoardView::redraw_view" << get_url() << std::endl;
-#endif  
-
-	    m_search_invert = false;
-
-    // ソート状態回復
-    m_col = DBTREE::board_view_sort_column( get_url() );
-    m_sortmode = DBTREE::board_view_sort_mode( get_url() );
-
-    m_previous_col = DBTREE::board_view_sort_pre_column( get_url() );
-    m_previous_sortmode = DBTREE::board_view_sort_pre_mode( get_url() );
-
-    exec_sort();
-    goto_top();
-}
-
-
 //
 // スクロールバー再描画
 //
-void BoardView::redraw_scrollbar()
+void BoardViewBase::redraw_scrollbar()
 {
 #ifdef _DEBUG
-    std::cout << "BoardView::redraw_scrollbar\n";
+    std::cout << "BoardViewBase::redraw_scrollbar\n";
 #endif
 
     m_scrwin.queue_draw();
@@ -923,7 +908,7 @@ void BoardView::redraw_scrollbar()
 //
 // 色、フォントの更新
 //
-void BoardView::relayout()
+void BoardViewBase::relayout()
 {
     m_treeview.init_color( COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN );
     m_treeview.init_font( CONFIG::get_fontname( FONT_BOARD ) );
@@ -934,34 +919,22 @@ void BoardView::relayout()
 //
 // view更新
 //
-// subject.txtのロードが終わったら呼ばれる
-//
-void BoardView::update_view()
+void BoardViewBase::update_view_impl( std::list< DBTREE::ArticleBase* >& list_subject )
 {
-    const int code = DBTREE::board_code( get_url() );
     m_updated = false;
     m_loading = false;
 
 #ifdef _DEBUG
-    std::cout << "BoardView::update_view " << get_url()
+    const int code = DBTREE::board_code( get_url_board() );
+    std::cout << "BoardViewBase::update_view_impl " << get_url()
               << " code = " << code << std::endl;
 #endif    
-
-    // 音を鳴らす
-    if( SESSION::is_online() && code != HTTP_INIT ){
-        if( code == HTTP_OK ) SOUND::play( SOUND::SOUND_RES );
-        else if( code == HTTP_NOT_MODIFIED ) SOUND::play( SOUND::SOUND_NO );
-        else SOUND::play( SOUND::SOUND_ERR );
-    }
 
     // 画面消去
 #if GTKMMVER >= 280
     m_treeview.unset_model();
 #endif
     m_liststore->clear();
-
-    // 高速化のためデータベースに直接アクセス
-    std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url() );
 
     // 自動ソート抑制
     UNSORTED_COLUMN();
@@ -988,7 +961,7 @@ void BoardView::update_view()
 
             row[ m_columns.m_col_drawbg ] = false;
 
-            update_row_common( art, row, id );
+            update_row_common( art, row );
 
             // 更新があるかチェック
             if( art->get_number_load() && art->get_number() > art->get_number_load() ) m_updated = true;
@@ -997,12 +970,13 @@ void BoardView::update_view()
 #if GTKMMVER >= 280
         m_treeview.set_model( m_liststore );
 #endif
-        redraw_view();
+
+        restore_sort();
     }
 
     // ステータスバー更新
     std::ostringstream ss_tmp;
-    ss_tmp << DBTREE::board_str_code( get_url() ) << " [ 全 " << ( id -1 ) << " ] ";
+    ss_tmp << DBTREE::board_str_code( get_url_board() ) << " [ 全 " << ( id -1 ) << " ] ";
     set_status( ss_tmp.str() );
     BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
 
@@ -1011,17 +985,17 @@ void BoardView::update_view()
 }
 
 
-void BoardView::focus_view()
+void BoardViewBase::focus_view()
 {
 #ifdef _DEBUG
-    std::cout << "BoardView::focus_view\n";
+    std::cout << "BoardViewBase::focus_view\n";
 #endif
 
     m_treeview.grab_focus();
 }
 
 
-void BoardView::focus_out()
+void BoardViewBase::focus_out()
 {
     SKELETON::View::focus_out();
 
@@ -1034,7 +1008,7 @@ void BoardView::focus_out()
 //
 // 閉じる
 //
-void BoardView::close_view()
+void BoardViewBase::close_view()
 {
     BOARD::get_admin()->set_command( "close_currentview" );
 }
@@ -1043,13 +1017,13 @@ void BoardView::close_view()
 //
 // 選択した行のログをまとめて削除
 //
-void BoardView::slot_delete_logs()
+void BoardViewBase::slot_delete_logs()
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
     for( ; it != list_it.end(); ++it ){
         Gtk::TreeModel::Row row = *( *it );
-        std::string url = DBTREE::url_datbase( get_url() ) + row[ m_columns.m_col_id_dat ];
+        const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
 #ifdef _DEBUG
         std::cout << url << std::endl;
 #endif
@@ -1063,12 +1037,11 @@ void BoardView::slot_delete_logs()
 //
 // viewの操作
 //
-const bool BoardView::operate_view( const int control )
+const bool BoardViewBase::operate_view( const int control )
 {
     bool open_tab = false;
 
     Gtk::TreePath path = m_treeview.get_current_path();;
-    if( path.empty() ) return false;
 
     switch( control ){
 
@@ -1105,7 +1078,7 @@ const bool BoardView::operate_view( const int control )
         case CONTROL::OpenArticleTab:
             open_tab = true;
         case CONTROL::OpenArticle:
-            open_row( path, open_tab );
+            if( ! path.empty() ) open_row( path, open_tab );
             break;
 
             // Listに戻る
@@ -1229,7 +1202,7 @@ const bool BoardView::operate_view( const int control )
 //
 // 先頭に戻る
 //
-void BoardView::goto_top()
+void BoardViewBase::goto_top()
 {
     m_treeview.goto_top();
 }
@@ -1238,7 +1211,7 @@ void BoardView::goto_top()
 //
 // 一番最後へ
 //
-void BoardView::goto_bottom()
+void BoardViewBase::goto_bottom()
 {
     m_treeview.goto_bottom();
 }
@@ -1248,7 +1221,7 @@ void BoardView::goto_bottom()
 //
 // 指定したIDのスレに移動
 //
-void BoardView::goto_num( int num )
+void BoardViewBase::goto_num( const int num )
 {
     if( ! num ) return;
 
@@ -1275,7 +1248,7 @@ void BoardView::goto_num( int num )
 //
 // 左スクロール
 //
-void BoardView::scroll_left()
+void BoardViewBase::scroll_left()
 {
     Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
     if( !hadjust ) return;
@@ -1286,7 +1259,7 @@ void BoardView::scroll_left()
 //
 // 右スクロール
 //
-void BoardView::scroll_right()
+void BoardViewBase::scroll_right()
 {
     Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
     if( !hadjust ) return;
@@ -1298,7 +1271,7 @@ void BoardView::scroll_right()
 //
 // 上へ移動
 //
-void BoardView::row_up()
+void BoardViewBase::row_up()
 {
     m_treeview.row_up();
 }    
@@ -1307,7 +1280,7 @@ void BoardView::row_up()
 //
 // 下へ移動
 //
-void BoardView::row_down()
+void BoardViewBase::row_down()
 {
     m_treeview.row_down();
 } 
@@ -1316,7 +1289,7 @@ void BoardView::row_down()
 //
 // page up
 //
-void BoardView::page_up()
+void BoardViewBase::page_up()
 {
     m_treeview.page_up();
 }    
@@ -1325,7 +1298,7 @@ void BoardView::page_up()
 //
 // page down
 //
-void BoardView::page_down()
+void BoardViewBase::page_down()
 {
     m_treeview.page_down();
 } 
@@ -1336,7 +1309,7 @@ void BoardView::page_down()
 //
 // SKELETON::View::show_popupmenu() を参照すること
 //
-Gtk::Menu* BoardView::get_popupmenu( const std::string& url )
+Gtk::Menu* BoardViewBase::get_popupmenu( const std::string& url )
 {
     Gtk::Menu* popupmenu = NULL;
 
@@ -1370,11 +1343,13 @@ Gtk::Menu* BoardView::get_popupmenu( const std::string& url )
 //
 // 特定の行だけの更新
 //
-void BoardView::update_item( const std::string& id_dat )
+void BoardViewBase::update_item( const std::string& url, const std::string& id_dat )
 {
+    if( get_url().find( url ) != 0 ) return;
+
 #ifdef _DEBUG
-    std::cout << "BoardView::update_item " << id_dat << std::endl;
-#endif    
+    std::cout << "BoardViewBase::update_item " << get_url() << " id = " << id_dat << std::endl;
+#endif
 
     Gtk::TreeModel::Children child = m_liststore->children();
     Gtk::TreeModel::Children::iterator it;
@@ -1383,15 +1358,16 @@ void BoardView::update_item( const std::string& id_dat )
     UNSORTED_COLUMN();
     
     for( it = child.begin() ; it != child.end() ; ++it ){
+
         Gtk::TreeModel::Row row = *( it );
         
         // 対象の行なら内容更新
         if( row[ m_columns.m_col_id_dat ] == id_dat ){
 
-            std::string url = DBTREE::url_datbase( get_url() ) + row[ m_columns.m_col_id_dat ];
+            const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
             DBTREE::ArticleBase* art = DBTREE::get_article( url );
-            int id = row[ m_columns.m_col_id ];
-            update_row_common( art, row, id );
+
+            update_row_common( art, row );
         }
     }
 }
@@ -1401,7 +1377,7 @@ void BoardView::update_item( const std::string& id_dat )
 //
 // update_view() と update_item() で共通に更新する列
 //
-void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row& row, int& id )
+void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row& row )
 {
     if( art->empty() ) return;
 
@@ -1513,7 +1489,7 @@ void BoardView::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row
 //
 // マウスボタン押した
 //
-bool BoardView::slot_button_press( GdkEventButton* event )
+const bool BoardViewBase::slot_button_press( GdkEventButton* event )
 {
     // マウスジェスチャ
     get_control().MG_start( event );
@@ -1536,7 +1512,7 @@ bool BoardView::slot_button_press( GdkEventButton* event )
 //
 // マウスボタン離した
 //
-bool BoardView::slot_button_release( GdkEventButton* event )
+const bool BoardViewBase::slot_button_release( GdkEventButton* event )
 {
     /// マウスジェスチャ
     const int mg = get_control().MG_end( event );
@@ -1563,7 +1539,7 @@ bool BoardView::slot_button_release( GdkEventButton* event )
         m_path_selected = path;
 
 #ifdef _DEBUG        
-        std::cout << "BoardView::slot_button_press : path = " << path.to_string()
+        std::cout << "BoardViewBase::slot_button_press : path = " << path.to_string()
                   << " x = " << x << " y = " << y
                   << " cellheight = " << m_treeview.get_row_height() 
                   << " cell_x = " << cell_x << " cell_y = " << cell_y << std::endl;
@@ -1608,7 +1584,7 @@ bool BoardView::slot_button_release( GdkEventButton* event )
 //
 // マウス動かした
 //
-bool BoardView::slot_motion_notify( GdkEventMotion* event )
+const bool BoardViewBase::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
     get_control().MG_motion( event );
@@ -1639,7 +1615,7 @@ bool BoardView::slot_motion_notify( GdkEventMotion* event )
 //
 // キー入力
 //
-bool BoardView::slot_key_press( GdkEventKey* event )
+const bool BoardViewBase::slot_key_press( GdkEventKey* event )
 {
     m_pressed_key = get_control().key_press( event );
 
@@ -1662,9 +1638,9 @@ bool BoardView::slot_key_press( GdkEventKey* event )
 //
 // キーリリースイベント
 //
-bool BoardView::slot_key_release( GdkEventKey* event )
+const bool BoardViewBase::slot_key_release( GdkEventKey* event )
 {
-    int key = get_control().key_press( event );
+    const int key = get_control().key_press( event );
 
     // 押したキーと違うときは処理しない
     if( key == m_pressed_key ){
@@ -1684,10 +1660,10 @@ bool BoardView::slot_key_release( GdkEventKey* event )
 //
 // マウスホイールイベント
 //
-bool BoardView::slot_scroll_event( GdkEventScroll* event )
+const bool BoardViewBase::slot_scroll_event( GdkEventScroll* event )
 {
     // ホイールマウスジェスチャ
-    int control = get_control().MG_wheel_scroll( event );
+    const int control = get_control().MG_wheel_scroll( event );
     if( enable_mg() && control != CONTROL::None ){
         operate_view( control );
         return true;
@@ -1702,10 +1678,10 @@ bool BoardView::slot_scroll_event( GdkEventScroll* event )
 //
 // このビューからD&Dを開始したときにtreeviewから呼ばれる
 //
-void BoardView::slot_drag_begin()
+void BoardViewBase::slot_drag_begin()
 {
 #ifdef _DEBUG    
-    std::cout << "BoardView::slot_drag_begin\n";
+    std::cout << "BoardViewBase::slot_drag_begin\n";
 #endif
 
     CORE::DND_Begin( get_url() );
@@ -1717,10 +1693,10 @@ void BoardView::slot_drag_begin()
 //
 // このビューからD&Dを開始した後にD&Dを終了するとtreeviewから呼ばれる
 //
-void BoardView::slot_drag_end()
+void BoardViewBase::slot_drag_end()
 {
 #ifdef _DEBUG    
-    std::cout << "BoardView::slot_drag_end\n";
+    std::cout << "BoardViewBase::slot_drag_end\n";
 #endif
 
     CORE::DND_End();
@@ -1731,20 +1707,20 @@ void BoardView::slot_drag_end()
 //
 // ブックマーク設定、解除
 //
-void BoardView::slot_bookmark( int bookmark )
+void BoardViewBase::slot_bookmark( const int bookmark )
 {
-    std::string datbase = DBTREE::url_datbase( get_url() );
+    const std::string datbase = DBTREE::url_datbase( get_url_board() );
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
     for( ; it != list_it.end(); ++it ){
         Gtk::TreeModel::Row row = *( *it );
-        std::string url = datbase + row[ m_columns.m_col_id_dat ];
+        const std::string url = datbase + row[ m_columns.m_col_id_dat ];
         DBTREE::ArticleBase* art = DBTREE::get_article( url );
         if( art ){
             bool set = bookmark;
             if( bookmark == BOOKMARK_AUTO ) set = ! art->is_bookmarked_thread();
 #ifdef _DEBUG
-            std::cout << "BoardView::slot_bookmark url = " << url << " set = " << set << std::endl;
+            std::cout << "BoardViewBase::slot_bookmark url = " << url << " set = " << set << std::endl;
 #endif
             art->set_bookmarked_thread( set );
         }
@@ -1755,7 +1731,7 @@ void BoardView::slot_bookmark( int bookmark )
 //
 // popupmenu でタブで開くを選択
 //
-void BoardView::slot_open_tab()
+void BoardViewBase::slot_open_tab()
 {
     if( ! m_path_selected.empty() ) open_row( m_path_selected, true );
 }
@@ -1766,7 +1742,7 @@ void BoardView::slot_open_tab()
 //
 // ポップアップメニューのslot
 //
-void BoardView::slot_favorite_thread()
+void BoardViewBase::slot_favorite_thread()
 {
     // 共有バッファにデータをセットしてから append_favorite コマンド実行
     set_article_to_buffer();
@@ -1779,7 +1755,7 @@ void BoardView::slot_favorite_thread()
 //
 // 板をお気に入りに追加
 //
-void BoardView::slot_favorite_board()
+void BoardViewBase::slot_favorite_board()
 {
     // 共有バッファにデータをセットしてから append_favorite コマンド実行
     set_board_to_buffer();
@@ -1790,16 +1766,16 @@ void BoardView::slot_favorite_board()
 //
 // 新スレをたてる
 //
-void BoardView::write()
+void BoardViewBase::write()
 {
-    CORE::core_set_command( "create_new_thread", get_url() );
+    CORE::core_set_command( "create_new_thread", get_url_board() );
 }
 
 
 //
 // ツールバーの削除ボタン
 //
-void BoardView::delete_view()
+void BoardViewBase::delete_view()
 {
     show_popupmenu( "popup_menu_delete", false );
 }
@@ -1808,7 +1784,7 @@ void BoardView::delete_view()
 //
 // ツールバーのお気に入りボタン
 //
-void BoardView::set_favorite()
+void BoardViewBase::set_favorite()
 {
     show_popupmenu( "popup_menu_favorite", false );
 }
@@ -1817,23 +1793,23 @@ void BoardView::set_favorite()
 //
 // スレのURLをコピー
 //
-void BoardView::slot_copy_url()
+void BoardViewBase::slot_copy_url()
 {
     if( m_path_selected.empty() ) return;
 
-    std::string url = DBTREE::url_readcgi( path2daturl( m_path_selected ), 0, 0 );
+    const std::string url = DBTREE::url_readcgi( path2daturl( m_path_selected ), 0, 0 );
     MISC::CopyClipboard( url );
 }
 
 
 // スレの名前とURLをコピー
 //
-void BoardView::slot_copy_title_url()
+void BoardViewBase::slot_copy_title_url()
 {
     if( m_path_selected.empty() ) return;
 
-    std::string url = DBTREE::url_readcgi( path2daturl( m_path_selected ), 0, 0 );
-    std::string name = DBTREE::article_subject( url );
+    const std::string url = DBTREE::url_readcgi( path2daturl( m_path_selected ), 0, 0 );
+    const std::string name = DBTREE::article_subject( url );
     std::stringstream ss;
     ss << name << std::endl
        << url << std::endl;
@@ -1845,7 +1821,7 @@ void BoardView::slot_copy_title_url()
 //
 // 全選択
 //
-void BoardView::slot_select_all()
+void BoardViewBase::slot_select_all()
 {
     SKELETON::MsgDiag mdiag( NULL, "全ての行を選択しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     mdiag.set_default_response( Gtk::RESPONSE_NO );
@@ -1860,9 +1836,9 @@ void BoardView::slot_select_all()
 //
 // ポップアップメニューでブラウザで開くを選択
 //
-void BoardView::slot_open_browser()
+void BoardViewBase::slot_open_browser()
 {
-    std::string url = DBTREE::url_readcgi( path2daturl( m_path_selected ), 0, 0 );
+    const std::string url = DBTREE::url_readcgi( path2daturl( m_path_selected ), 0, 0 );
     CORE::core_set_command( "open_url_browser", url );
 }
 
@@ -1871,20 +1847,24 @@ void BoardView::slot_open_browser()
 //
 // 記事を開く 
 //
-bool BoardView::open_row( Gtk::TreePath& path, bool tab )
+const bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab )
 {
     std::string str_tab = "false";
     if( tab ) str_tab = "true";
 
-    std::string url_target = path2daturl( path );
+    const std::string url_target = path2daturl( path );
 
 #ifdef _DEBUG
-    std::cout << "BoardView::open_row " << url_target << std::endl;
+    std::cout << "BoardViewBase::open_row " << url_target << std::endl;
 #endif
 
     if( url_target.empty() ) return false;
 
-    CORE::core_set_command( "open_article", url_target , str_tab, "" );
+    // datロード終了時に次スレ移行チェックを行う
+    DBTREE::article_set_url_pre_article( url_target, get_url_pre_article() );
+
+    const std::string mode = std::string();
+    CORE::core_set_command( "open_article", url_target, str_tab, mode );
     return true;
 }
 
@@ -1893,17 +1873,20 @@ bool BoardView::open_row( Gtk::TreePath& path, bool tab )
 //
 // 選択した行をまとめて開く
 //
-void BoardView::open_selected_rows()
+void BoardViewBase::open_selected_rows()
 {
     std::string list_url;
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
     for( ; it != list_it.end(); ++it ){
         Gtk::TreeModel::Row row = *( *it );
-        std::string url = DBTREE::url_datbase( get_url() ) + row[ m_columns.m_col_id_dat ];
+        const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
 
         if( !list_url.empty() ) list_url += " ";
         list_url += url;
+
+        // datロード終了時に次スレ移行チェックを行う
+        DBTREE::article_set_url_pre_article( url, get_url_pre_article() );
     }
 
     CORE::core_set_command( "open_article_list", std::string(), list_url );
@@ -1913,12 +1896,12 @@ void BoardView::open_selected_rows()
 //
 // path -> スレッドの(dat型)URL変換
 // 
-std::string BoardView::path2daturl( const Gtk::TreePath& path )
+const std::string BoardViewBase::path2daturl( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return std::string();
 
-    std::string url = DBTREE::url_datbase( get_url() ) + row[ m_columns.m_col_id_dat ];
+    const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
     return url;
 }
 
@@ -1928,18 +1911,18 @@ std::string BoardView::path2daturl( const Gtk::TreePath& path )
 //
 // 抽出
 //
-bool BoardView::drawout()
+const bool BoardViewBase::drawout()
 {
     int hit = 0;
     bool reset = false;
 
-    std::string query = get_search_query();
+    const std::string query = get_search_query();
 
     // 空の時はリセット
     if( query.empty() ) reset = true;
 
 #ifdef _DEBUG
-    std::cout << "BoardView::drawout query = " <<  query << std::endl;
+    std::cout << "BoardViewBase::drawout query = " <<  query << std::endl;
 #endif
 
     // 自動ソート抑制
@@ -1954,7 +1937,7 @@ bool BoardView::drawout()
     for( ; it != child.end() ; ++it ){
 
         Gtk::TreeModel::Row row = *( it );
-        Glib::ustring subject = row[ m_columns.m_col_subject ];
+        const Glib::ustring subject = row[ m_columns.m_col_subject ];
 
         if( reset ) row[ m_columns.m_col_drawbg ] = false;
         else if( regex.exec( subject, 0 ) ){
@@ -1969,7 +1952,7 @@ bool BoardView::drawout()
         else row[ m_columns.m_col_drawbg ] = false;
     }
 
-    redraw_view();
+    restore_sort();
 
     if( reset ) CORE::core_set_command( "set_info", "", "" );
     else if( ! hit ) CORE::core_set_command( "set_info", "", "検索結果： ヒット無し" );
@@ -1983,12 +1966,12 @@ bool BoardView::drawout()
 //
 // 検索ボックスの文字列が変わった
 //
-void BoardView::set_search_query( const std::string& query )
+void BoardViewBase::set_search_query( const std::string& query )
 {
     SKELETON::View::set_search_query( query );
 
 #ifdef _DEBUG
-    std::cout << "BoardView::set_search_query query = " << get_search_query() << std::endl;
+    std::cout << "BoardViewBase::set_search_query query = " << get_search_query() << std::endl;
 #endif
 
     if( CONFIG::get_inc_search_board() ){
@@ -2001,9 +1984,9 @@ void BoardView::set_search_query( const std::string& query )
 //
 // 検索実行
 //
-void BoardView::exec_search()
+void BoardViewBase::exec_search()
 {
-    std::string query = get_search_query();
+    const std::string query = get_search_query();
     if( m_pre_query != query ){
         drawout();
         focus_view();
@@ -2025,7 +2008,7 @@ void BoardView::exec_search()
     JDLIB::Regex regex; 
 
 #ifdef _DEBUG
-    std::cout << "BoardView::search start = " << path_start.to_string() << " query = " <<  query << std::endl;
+    std::cout << "BoardViewBase::search start = " << path_start.to_string() << " query = " <<  query << std::endl;
 #endif
     
     for(;;){
@@ -2060,7 +2043,7 @@ void BoardView::exec_search()
 
 
 // 前検索
-void BoardView::up_search()
+void BoardViewBase::up_search()
 {
     m_search_invert = true;
     exec_search();
@@ -2069,7 +2052,7 @@ void BoardView::up_search()
 
 
 // 後検索
-void BoardView::down_search()
+void BoardViewBase::down_search()
 {
     m_search_invert = false;
     exec_search();
@@ -2079,21 +2062,21 @@ void BoardView::down_search()
 //
 // 検索entryの操作
 //
-void BoardView::operate_search( const std::string& controlid )
+void BoardViewBase::operate_search( const std::string& controlid )
 {
-    int id = atoi( controlid.c_str() );
+    const int id = atoi( controlid.c_str() );
 
     if( id == CONTROL::Cancel ) focus_view();
-    else if( id == CONTROL::SearchCache ) CORE::core_set_command( "open_article_searchlog", get_url() , get_search_query() );
+    else if( id == CONTROL::SearchCache ) CORE::core_set_command( "open_article_searchlog", get_url_board() , get_search_query() );
 }
 
 
 //
 // 板プロパティ表示
 //
-void BoardView::show_preference()
+void BoardViewBase::show_preference()
 {
-    SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, get_url() );
+    SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, get_url_board() );
     pref->run();
     delete pref;
 }
@@ -2102,10 +2085,10 @@ void BoardView::show_preference()
 //
 // スレプロパティ表示
 //
-void BoardView::slot_preferences_article()
+void BoardViewBase::slot_preferences_article()
 {
     if( m_path_selected.empty() ) return;
-    std::string url = path2daturl( m_path_selected );
+    const std::string url = path2daturl( m_path_selected );
 
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, url );
     pref->run();
@@ -2114,23 +2097,9 @@ void BoardView::slot_preferences_article()
 
 
 //
-// 板名更新
-//
-void BoardView::update_boardname()
-{
-    // タイトル表示
-    set_title( DBTREE::board_name( get_url() ) );
-    BOARD::get_admin()->set_command( "set_title", get_url(), get_title() );
-
-    // タブに名前をセット
-    BOARD::get_admin()->set_command( "set_tablabel", get_url(), DBTREE::board_name( get_url() ) );
-}
-
-
-//
 // 戻る
 //
-void BoardView::back_viewhistory( const int count )
+void BoardViewBase::back_viewhistory( const int count )
 {
     BOARD::get_admin()->set_command( "back_viewhistory", get_url(), MISC::itostr( count ) );
 }
@@ -2139,7 +2108,7 @@ void BoardView::back_viewhistory( const int count )
 //
 // 進む
 //
-void BoardView::forward_viewhistory( const int count )
+void BoardViewBase::forward_viewhistory( const int count )
 {
     BOARD::get_admin()->set_command( "forward_viewhistory", get_url(), MISC::itostr( count ) );
 }
@@ -2149,10 +2118,10 @@ void BoardView::forward_viewhistory( const int count )
 //
 // datを保存
 //
-void BoardView::slot_save_dat()
+void BoardViewBase::slot_save_dat()
 {
     if( m_path_selected.empty() ) return;
-    std::string url = path2daturl( m_path_selected );
+    const std::string url = path2daturl( m_path_selected );
 
     DBTREE::article_save_dat( url, std::string() );
 }
@@ -2161,13 +2130,13 @@ void BoardView::slot_save_dat()
 //
 // 選択したスレをあぼーん
 //
-void BoardView::slot_abone_thread()
+void BoardViewBase::slot_abone_thread()
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
     if( ! list_it.size() ) return;
 
-    std::list< std::string > threads = DBTREE::get_abone_list_thread( get_url() );
+    std::list< std::string > threads = DBTREE::get_abone_list_thread( get_url_board() );
 
     for( ; it != list_it.end(); ++it ){
         Gtk::TreeModel::Row row = *( *it );
@@ -2177,11 +2146,11 @@ void BoardView::slot_abone_thread()
 
     // あぼーん情報更新
     // 板の再描画も行われる
-    std::list< std::string > words = DBTREE::get_abone_list_word_thread( get_url() );
-    std::list< std::string > regexs = DBTREE::get_abone_list_regex_thread( get_url() );
-    const int number = DBTREE::get_abone_number_thread( get_url() );
-    const int hour = DBTREE::get_abone_hour_thread( get_url() );
-    DBTREE::reset_abone_thread( get_url(), threads, words, regexs, number, hour );
+    std::list< std::string > words = DBTREE::get_abone_list_word_thread( get_url_board() );
+    std::list< std::string > regexs = DBTREE::get_abone_list_regex_thread( get_url_board() );
+    const int number = DBTREE::get_abone_number_thread( get_url_board() );
+    const int hour = DBTREE::get_abone_hour_thread( get_url_board() );
+    DBTREE::reset_abone_thread( get_url_board(), threads, words, regexs, number, hour );
 }
 
 
@@ -2190,12 +2159,12 @@ void BoardView::slot_abone_thread()
 // path と column からそのセルの内容を取得
 //
 template < typename ColumnType >
-std::string BoardView::get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeModelColumn< ColumnType >& column )
+const std::string BoardViewBase::get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeModelColumn< ColumnType >& column )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return std::string();
 
-    Glib::ustring name = row[ column ];
+    const Glib::ustring name = row[ column ];
     return name;
 }
 
@@ -2204,7 +2173,7 @@ std::string BoardView::get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeMod
 //
 // 共有バッファに選択中の行を登録する
 //
-void BoardView::set_article_to_buffer()
+void BoardViewBase::set_article_to_buffer()
 {
     CORE::SBUF_clear_info();
 
@@ -2214,11 +2183,11 @@ void BoardView::set_article_to_buffer()
         for( ; it != list_it.end(); ++it ){
 
             Gtk::TreeModel::Row row = *( *it );
-            Glib::ustring name = row[ m_columns.m_col_subject ];
+            const Glib::ustring name = row[ m_columns.m_col_subject ];
 
             CORE::DATA_INFO info;
             info.type = TYPE_THREAD;
-            info.url = DBTREE::url_datbase( get_url() ) + row[ m_columns.m_col_id_dat ];
+            info.url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
             info.name = name.raw();
 
             CORE::SBUF_append( info );
@@ -2234,13 +2203,268 @@ void BoardView::set_article_to_buffer()
 //
 // 共有バッファに板を登録する
 //
-void BoardView::set_board_to_buffer()
+void BoardViewBase::set_board_to_buffer()
 {
     CORE::DATA_INFO info;
     info.type = TYPE_BOARD;
     info.url = get_url();
-    info.name = DBTREE::board_name( get_url() );
+    info.name = DBTREE::board_name( get_url_board() );
 
     CORE::SBUF_clear_info();
     CORE::SBUF_append( info );
+}
+
+
+
+
+////////////////////////////
+
+
+
+BoardView::BoardView( const std::string& url )
+    : BoardViewBase( url )
+{
+#ifdef _DEBUG
+    std::cout << "BoardView::BoardView : url = " << get_url() << std::endl;
+#endif
+
+    // オートリロード可
+    set_enable_autoreload( true );
+}
+
+
+BoardView::~BoardView()
+{
+#ifdef _DEBUG
+    std::cout << "BoardView::~BoardView : url = " << get_url() << std::endl;
+#endif
+}
+
+
+//
+// リロード
+//
+void BoardView::reload()
+{
+    // オフライン
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
+
+    // オートリロードのカウンタを0にする
+    View::reset_autoreload_counter();
+
+    show_view();
+
+    // 板履歴更新
+    CORE::core_set_command( "set_history_board", get_url_board() );
+}
+
+
+
+//
+// view更新
+//
+// subject.txtのロードが終わったら呼ばれる
+//
+void BoardView::update_view()
+{
+    const int code = DBTREE::board_code( get_url_board() );
+
+#ifdef _DEBUG
+    std::cout << "BoardView::update_view " << get_url()
+              << " code = " << code << std::endl;
+#endif    
+
+    // 音を鳴らす
+    if( SESSION::is_online() && code != HTTP_INIT ){
+        if( code == HTTP_OK ) SOUND::play( SOUND::SOUND_RES );
+        else if( code == HTTP_NOT_MODIFIED ) SOUND::play( SOUND::SOUND_NO );
+        else SOUND::play( SOUND::SOUND_ERR );
+    }
+
+    // 高速化のためデータベースに直接アクセス
+    std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
+    update_view_impl( list_subject );
+}
+
+
+//
+// 板名更新
+//
+void BoardView::update_boardname()
+{
+    // ウィンドウタイトル表示
+    set_title( DBTREE::board_name( get_url_board() ) );
+    BOARD::get_admin()->set_command( "set_title", get_url(), get_title() );
+
+    // タブに名前をセット
+    BOARD::get_admin()->set_command( "set_tablabel", get_url(), DBTREE::board_name( get_url_board() ) );
+}
+
+
+
+////////////////////////////
+
+
+typedef struct {
+    DBTREE::ArticleBase* article;
+    int leven;
+    time_t since;
+} NEXT_ITEM;
+
+
+BoardViewNext::BoardViewNext( const std::string& url, const std::string& url_pre_article )
+    : BoardViewBase( url ),
+      m_url_pre_article( url_pre_article )
+{
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday( &tv, &tz );
+
+    // viewのURL更新
+    const bool update_history = false;
+    set_url( get_url_board() + NEXT_SIGN + ARTICLE_SIGN + m_url_pre_article + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
+
+#ifdef _DEBUG
+    std::cout << "BoardViewNext::BoardViewNext : url = " << get_url() << std::endl;
+#endif
+
+    // オートリロード不可
+    set_enable_autoreload( false );
+}
+
+
+BoardViewNext::~BoardViewNext()
+{
+#ifdef _DEBUG
+    std::cout << "BoardViewNext::~BoardViewNext : url = " << get_url() << std::endl;
+#endif
+}
+
+
+//
+// リロード
+//
+void BoardViewNext::reload()
+{
+    // オフライン
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
+
+    show_view();
+}
+
+
+//
+// view更新
+//
+// subject.txtのロードが終わったら呼ばれる
+//
+void BoardViewNext::update_view()
+{
+    const int MAXSTR = 256;
+    std::vector< std::vector< int > > dist( MAXSTR, std::vector< int >( MAXSTR ) );
+    const Glib::ustring subject_src = DBTREE::article_subject( m_url_pre_article );
+    const time_t since_src = DBTREE::article_since_time( m_url_pre_article );
+
+#ifdef _DEBUG
+    const int code = DBTREE::board_code( get_url_board() );
+    std::cout << "BoardViewNext::update_view " << get_url()
+              << " code = " << code << " " << subject_src << std::endl
+              << "since_src = " << since_src << std::endl;
+#endif    
+
+    // 高速化のためデータベースに直接アクセス
+    std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
+
+    std::list< NEXT_ITEM > next_items;
+    std::list< DBTREE::ArticleBase* >::iterator it = list_subject.begin();
+    for( ; it != list_subject.end(); ++it ){
+
+        NEXT_ITEM item;
+
+        // 読み込み済みのスレは除外
+        item.article = ( *it );
+        if( item.article->get_number_load() ) continue;
+
+        item.since = item.article->get_since_time();
+
+        const Glib::ustring subject = item.article->get_subject();
+        item.leven = ( int )( MISC::leven( dist, subject_src, subject ) * 10 + .5 );
+        if( item.leven <= CONFIG::get_threshold_next() ){
+
+#ifdef _DEBUG
+            std::cout << item.leven << " , " << item.since << " | " << subject << std::endl;
+#endif
+
+            std::list< NEXT_ITEM >::iterator it_next_items = next_items.begin();
+            for( ; it_next_items != next_items.end(); ++it_next_items ){
+
+                // next が src よりも以前に立てられて、item が src よりも後に立てられた
+                // 時は item を前に挿入する
+                if( ( *it_next_items ).since < since_src && item.since > since_src ){
+
+                    next_items.insert( it_next_items, item );
+                    break;
+                }
+                else if(  ( ( *it_next_items ).since > since_src && item.since > since_src ) 
+                          || ( ( *it_next_items ).since < since_src && item.since < since_src ) ){ 
+
+                    // leven -> since の優先度で挿入
+                    if( ( *it_next_items ).leven > item.leven ){
+
+                        next_items.insert( it_next_items, item );
+                        break;
+                    }
+                    else if( ( *it_next_items ).leven == item.leven ){
+
+                        if( ( *it_next_items ).since > item.since ){
+
+                            next_items.insert( it_next_items, item );
+                            break;
+                        }
+                    }
+                }
+
+            }
+            if( it_next_items == next_items.end() ) next_items.push_back( item );
+        }
+    }
+
+    std::list< DBTREE::ArticleBase* >list_nexts;
+    std::list< NEXT_ITEM >::iterator it_next_items = next_items.begin();
+    for( ; it_next_items != next_items.end(); ++it_next_items ) list_nexts.push_back( ( *it_next_items ).article );
+
+    // 一時的にIDでソートに切り替える
+    const int col = DBTREE::board_view_sort_column( get_url_board() );
+    const int sortmode = DBTREE::board_view_sort_mode( get_url_board() );
+    DBTREE::board_set_view_sort_column( get_url_board(), COL_ID );
+    DBTREE::board_set_view_sort_mode( get_url_board(), SORTMODE_ASCEND );
+
+    update_view_impl( list_nexts );
+
+    DBTREE::board_set_view_sort_column( get_url_board(), col );
+    DBTREE::board_set_view_sort_mode( get_url_board(), sortmode );
+}
+
+
+//
+// 板名更新
+//
+void BoardViewNext::update_boardname()
+{
+    const std::string title = "[ 次スレ検索 ] - " + DBTREE::article_subject( m_url_pre_article );
+
+    // ウィンドウタイトル表示
+    set_title( title );
+    BOARD::get_admin()->set_command( "set_title", get_url(), get_title() );
+
+    // タブに名前をセット
+    BOARD::get_admin()->set_command( "set_tablabel", get_url(), title );
 }

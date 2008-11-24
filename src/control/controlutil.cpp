@@ -373,12 +373,20 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
                 label += "(_P)";
                 break;
 
+            case CONTROL::OpenArticleTab: // タブでスレを開く
+                label += "(_T)";
+                break;
+
             case CONTROL::GotoNew:      //新着へ移動
                 label += "(_W)";
                 break;
 
             case CONTROL::LiveStartStop:  // 実況
                 label += "(_L)";
+                break;
+
+            case CONTROL::SearchNextArticle: // 次スレ検索
+                label += "(_N)";
                 break;
 
             case CONTROL::CancelMosaic: //モザイク解除

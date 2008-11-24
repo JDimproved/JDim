@@ -406,6 +406,12 @@ const bool ConfigItems::load()
     // 3ペーン時にスレ一覧やスレビューを最大化する
     expand_rpane = cf.get_option( "expand_rpane", CONF_EXPAND_RPANE );
 
+    // 次スレ検索の類似度のしきい値
+    threshold_next = cf.get_option( "threshold_next", CONF_THRESHOLD_NEXT );
+
+    // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
+    replace_favorite_next = cf.get_option( "replace_favorite_next", CONF_REPLACE_FAVORITE_NEXT );
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     migemodict_path = cf.get_option( "migemodict_path", CONF_MIGEMO_PATH );
@@ -627,6 +633,9 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "expand_sidebar", expand_sidebar );
     cf.update( "expand_rpane", expand_rpane );
+
+    cf.update( "threshold_next", threshold_next );
+    cf.update( "replace_favorite_next", replace_favorite_next );
 
 #ifdef HAVE_MIGEMO_H
     cf.update( "migemodict_path", migemodict_path );

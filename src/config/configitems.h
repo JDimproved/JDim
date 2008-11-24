@@ -341,6 +341,12 @@ namespace CONFIG
         // 3ペーン時にスレ一覧やスレビューを最大化するか
         bool expand_rpane;
 
+        // 次スレ検索の類似度のしきい値
+        int threshold_next;
+
+        // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
+        bool replace_favorite_next;
+
 #ifdef HAVE_MIGEMO_H
         // migemo-dictの場所
         std::string migemodict_path;

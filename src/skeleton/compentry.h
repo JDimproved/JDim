@@ -66,7 +66,8 @@ namespace SKELETON
       private:
 
         // ポップアップ表示
-        void show_popup( bool show_all );
+        // show_all == true なら候補を全て表示する
+        void show_popup( const bool show_all );
 
         // ポップアップ閉じる
         void hide_popup();

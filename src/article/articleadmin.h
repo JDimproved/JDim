@@ -52,7 +52,7 @@ namespace ARTICLE
         ~ArticleAdmin();
 
       protected:
-        virtual COMMAND_ARGS get_open_list_args( const std::string& url );
+        virtual COMMAND_ARGS get_open_list_args( const std::string& url, const COMMAND_ARGS& command_list );
         virtual SKELETON::View* create_view( const COMMAND_ARGS& command );
 
         // ツールバー

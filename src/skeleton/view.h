@@ -175,7 +175,10 @@ namespace SKELETON
         bool is_mouse_on_view();
 
         // 各view個別のコマンド
-        virtual bool set_command( const std::string& command, const std::string& arg = std::string() ){ return true; }
+        virtual const bool set_command( const std::string& command,
+                                        const std::string& arg1 = std::string(),
+                                        const std::string& arg2 = std::string()
+            ){ return true; }
 
         // コピー用のURL
         virtual const std::string url_for_copy(){ return m_url; }
@@ -245,7 +248,7 @@ namespace SKELETON
         virtual void close_view(){}
         virtual void delete_view(){}
         virtual void set_favorite(){}
-        virtual void update_item( const std::string& ){}
+        virtual void update_item( const std::string& url, const std::string& id ){}
         virtual const bool operate_view( const int ) = 0;
         virtual void goto_top(){}
         virtual void goto_bottom(){}

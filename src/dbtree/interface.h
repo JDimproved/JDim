@@ -105,7 +105,8 @@ namespace DBTREE
     const int board_code( const std::string& url );
     const std::string board_str_code( const std::string& url );
     void board_save_info( const std::string& url );
-    void board_download_subject( const std::string& url );
+    void board_download_subject( const std::string& url, const std::string& url_update_view );
+    const bool board_is_loading( const std::string& url );
     void board_stop_load( const std::string& url );
     std::list< DBTREE::ArticleBase* >& board_list_subject( const std::string& url );
     const int board_view_sort_column( const std::string& url );
@@ -186,6 +187,8 @@ namespace DBTREE
     const int article_number_new( const std::string& url );    
     const bool article_is_loading( const std::string& url );
     void article_download_dat( const std::string& url, const bool check_update );
+    void article_set_url_pre_article( const std::string& url, const std::string& url_pre_article );
+    void article_copy_article_info( const std::string& url, const std::string& url_src );
     void article_stop_load( const std::string& url );
     const int article_get_speed( const std::string& url );
 

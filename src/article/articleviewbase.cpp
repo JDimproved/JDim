@@ -205,10 +205,10 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する(_F)"), sigc::mem_fun( *this, &ArticleViewBase::set_favorite ) );
     action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ(_T)..."), sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存(_S)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
 
     // 検索
     action_group()->add( Gtk::Action::create( "Search_Menu", "検索(_F)" ) );
+    action_group()->add( Gtk::Action::create( "SearchNextArticle", "SearchNextArticle"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_next ) );
     action_group()->add( Gtk::Action::create( "SearchWeb", CONFIG::get_menu_search_web()+"(_W)" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_web ) );
     action_group()->add( Gtk::Action::create( "SearchCacheLocal", "ログ検索 (対象: 板)(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
     action_group()->add( Gtk::Action::create( "SearchCacheAll", "ログ検索 (対象: 全ログ)(_A)") );
@@ -275,6 +275,11 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "SaveImage", "名前を付けて保存(_S)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_saveimage ) );
     action_group()->add( Gtk::ToggleAction::create( "AboneImage", "画像をあぼ〜んする(_A)", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_abone_img ) );
+
+    // その他
+    action_group()->add( Gtk::Action::create( "Etc_Menu", "その他(_O)" ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存(_S)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "CopyInfo", "スレ情報のコピー(_C)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_article_info ) );
 
     // ユーザコマンド
     const std::string usrcmd_ui = create_usrcmd_menu();
@@ -388,6 +393,21 @@ void ArticleViewBase::setup_action()
     "<menuitem action='NextBookMark'/>"
     "</menu>"
 
+    "<menu action='Search_Menu'>"
+
+    "<menuitem action='SearchWeb'/>"
+    "<separator/>"
+    "<menuitem action='SearchNextArticle' />"
+    "<separator/>"
+    "<menuitem action='SearchTitle' />"
+    "<separator/>"
+    "<menuitem action='SearchCacheLocal'/>"
+    "<menu action='SearchCacheAll'>"
+    "<menuitem action='ExecSearchCacheAll'/>"
+    "</menu>"
+
+    "</menu>"
+
     "<menu action='AboneWord_Menu'>"
 
     "<menuitem action='AboneWord'/>"
@@ -398,19 +418,6 @@ void ArticleViewBase::setup_action()
 
     "<menu action='GlobalAboneWord'>"
     "<menuitem action='SetGlobalAboneWord'/>"
-    "</menu>"
-
-    "</menu>"
-
-    "<menu action='Search_Menu'>"
-
-    "<menuitem action='SearchWeb'/>"
-    "<separator/>"
-    "<menuitem action='SearchTitle' />"
-    "<separator/>"
-    "<menuitem action='SearchCacheLocal'/>"
-    "<menu action='SearchCacheAll'>"
-    "<menuitem action='ExecSearchCacheAll'/>"
     "</menu>"
 
     "</menu>"
@@ -431,7 +438,11 @@ void ArticleViewBase::setup_action()
     "<menuitem action='Copy'/>"
 
     "<separator/>"
+
+    "<menu action='Etc_Menu'>"
     "<menuitem action='SaveDat'/>"
+    "<menuitem action='CopyInfo'/>"
+    "</menu>"
 
     "<separator/>"
 
@@ -608,20 +619,20 @@ const int ArticleViewBase::get_icon( const std::string& iconname )
 //
 // コマンド
 //
-bool ArticleViewBase::set_command( const std::string& command, const std::string& arg )
+const bool ArticleViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::set_command " << get_url() << std::endl
               << "command = " << command << std::endl;
 #endif
 
-    if( command == "append_dat" ) append_dat( arg, -1 );
-    else if( command == "append_html" ) append_html( arg );
+    if( command == "append_dat" ) append_dat( arg1, -1 );
+    else if( command == "append_html" ) append_html( arg1 );
     else if( command == "clear_screen" )
     {
         if( m_drawarea ) m_drawarea->clear_screen();
     }
-    else if( command == "goto_num" ) goto_num( atoi( arg.c_str() ) );
+    else if( command == "goto_num" ) goto_num( atoi( arg1.c_str() ) );
     else if( command == "delete_popup" ) delete_popup();
     else if( command == "clear_highlight" ) clear_highlight();
 
@@ -1039,6 +1050,11 @@ const bool ArticleViewBase::operate_view( const int control )
             ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );
             break;
 
+            // 次スレ検索
+        case CONTROL::SearchNextArticle:
+            slot_search_next();
+            break;
+
         default:
             return false;
     }
@@ -1277,6 +1293,24 @@ void ArticleViewBase::slot_jump()
 void ArticleViewBase::slot_save_dat()
 {
     m_article->save_dat( std::string() );
+}
+
+
+//
+// スレ情報コピー
+//
+void ArticleViewBase::slot_copy_article_info()
+{
+    if( m_url_tmp.empty() ) return;
+    if( ! DBTREE::article_is_cached( m_url_tmp ) ) return;
+
+    m_article->copy_article_info( m_url_tmp );
+    if( CONFIG::get_replace_favorite_next() ){
+        CORE::core_set_command( "replace_favorite_thread", "", m_url_tmp, m_url_article );
+    }
+
+    // 再レイアウト
+    ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
 }
 
 
@@ -2342,6 +2376,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         hide_popup();
 
+        // tmp_urlが他スレのアドレスなら、datロード終了時に次スレ移行チェックを行う
+        DBTREE::article_set_url_pre_article( tmp_url, m_url_article );
+
         CORE::core_set_command( "open_url", tmp_url );
     }
 
@@ -2594,7 +2631,26 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
-    act = action_group()->get_action( "Search_Menu" );
+    // 検索関係
+    act = action_group()->get_action( "SearchWeb" );
+    if( act ){
+        if( str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
+    act = action_group()->get_action( "SearchCacheLocal" );
+    if( act ){
+        if( str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
+    act = action_group()->get_action( "SearchCacheAll" );
+    if( act ){
+        if( str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
+    act = action_group()->get_action( "SearchTitle" );
     if( act ){
         if( str_select.empty() || str_select.length() > max_selection_str ) act->set_sensitive( false );
         else act->set_sensitive( true );
@@ -2691,7 +2747,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
 
     // 画像
-    if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){ 
+    if( ! url.empty() && DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){ 
 
         // モザイク
         act = action_group()->get_action( "Cancel_Mosaic" );
@@ -2760,6 +2816,14 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
                 else tact->set_active( false );
             }
         }
+    }
+
+    // スレ情報コピー
+    act = action_group()->get_action( "CopyInfo" );
+    if( act ){
+
+        if( ! url.empty() && ! DBTREE::url_dat( url ).empty() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
     }
 
     m_enable_menuslot = true;
@@ -2898,6 +2962,14 @@ void ArticleViewBase::slot_search_cachelocal()
     CORE::core_set_command( "open_article_searchlog", url , query );
 }
 
+
+//
+// 次スレ検索
+//
+void ArticleViewBase::slot_search_next()
+{
+    CORE::core_set_command( "open_board_next", DBTREE::url_subject( m_url_article ) , m_url_article );
+}
 
 
 //

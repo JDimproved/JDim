@@ -409,11 +409,12 @@ void BBSListViewBase::set_editable( const bool editable )
 //
 // コマンド
 //
-bool BBSListViewBase::set_command( const std::string& command, const std::string& arg )
+const bool BBSListViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "append_item" ) append_item();
     else if( command == "save_xml" ) save_xml( false );
-    else if( command == "toggle_icon" ) toggle_icon( arg );
+    else if( command == "toggle_icon" ) toggle_icon( arg1 );
+    else if( command == "replace_thread" ) replace_thread( arg1, arg2 );
 
     else if( command == "check_update_root" ) check_update_root( false );
     else if( command == "check_update_open_root" ) check_update_root( true );
@@ -563,9 +564,13 @@ void BBSListViewBase::delete_view_impl()
 //
 // URLを新しいアドレスに変更するだけ
 //
-void BBSListViewBase::update_item( const std::string& )
+void BBSListViewBase::update_item( const std::string& url, const std::string& id )
 {
-    update_urls();
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::update_item " << url << " / " << get_url() << std::endl;
+#endif
+
+    if( url == get_url() ) update_urls();
 }
 
 
@@ -2181,7 +2186,6 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
 void BBSListViewBase::update_urls()
 {
     if( ! m_ready_tree ) return;
-
     if( m_treestore->children().empty() ) return; 
    
 #ifdef _DEBUG
@@ -2195,8 +2199,8 @@ void BBSListViewBase::update_urls()
 
         if( ( row = m_treeview.get_row( path ) ) ){
 
-            Glib::ustring url = row[ m_columns.m_url ];
-            int type = row[ m_columns.m_type ];
+            const Glib::ustring url = row[ m_columns.m_url ];
+            const int type = row[ m_columns.m_type ];
             std::string url_new;
 
             switch( type ){
@@ -2262,11 +2266,11 @@ void BBSListViewBase::toggle_icon( const std::string& url )
     Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
     Gtk::TreeModel::Row row;
 
-    std::string urldat = DBTREE::url_dat( url );
-    std::string urlcgi = DBTREE::url_readcgi( url, 0, 0 );
+    const std::string urldat = DBTREE::url_dat( url );
+    const std::string urlcgi = DBTREE::url_readcgi( url, 0, 0 );
 
     int type = TYPE_THREAD;
-    int status = DBTREE::article_status( url );
+    const int status = DBTREE::article_status( url );
     if( status & STATUS_OLD ) type = TYPE_THREAD_OLD;
     if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
     
@@ -2278,7 +2282,7 @@ void BBSListViewBase::toggle_icon( const std::string& url )
 
         if( ( row = m_treeview.get_row( path ) ) ){
 
-            Glib::ustring url_row = row[ m_columns.m_url ];
+            const Glib::ustring url_row = row[ m_columns.m_url ];
 
             switch( row[ m_columns.m_type ] ){
 
@@ -2312,6 +2316,81 @@ void BBSListViewBase::toggle_icon( const std::string& url )
     }
 }
 
+
+//
+// スレの url と 名前を変更
+//
+void BBSListViewBase::replace_thread( const std::string& url, const std::string& url_new )
+{
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::replace_thread url = " << url
+              << " url_new = " << url_new << std::endl;
+#endif
+
+    if( ! m_ready_tree ) return;
+    if( m_treestore->children().empty() ) return; 
+
+    const std::string urldat_new = DBTREE::url_dat( url_new );
+    if( urldat_new.empty() ) return;
+
+    const std::string name_new = DBTREE::article_subject( urldat_new );
+    if( name_new.empty() ) return;
+   
+    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
+    Gtk::TreeModel::Row row;
+
+    const std::string urldat = DBTREE::url_dat( url );
+    const std::string urlcgi = DBTREE::url_readcgi( url, 0, 0 );
+
+    int type = TYPE_THREAD;
+    const int status = DBTREE::article_status( urldat_new );
+    if( status & STATUS_OLD ) type = TYPE_THREAD_OLD;
+    if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
+
+#ifdef _DEBUG
+    std::cout << " name = " << name_new
+              << " type = " << type << std::endl;
+#endif
+
+    while( 1 ){
+
+        if( ( row = m_treeview.get_row( path ) ) ){
+
+            const Glib::ustring url_row = row[ m_columns.m_url ];
+
+            switch( row[ m_columns.m_type ] ){
+
+                case TYPE_DIR: // サブディレクトリ
+                    path.down();
+                    break;
+
+                case TYPE_THREAD:
+                case TYPE_THREAD_UPDATE:
+                case TYPE_THREAD_OLD:
+                    if( urldat == url_row || urlcgi == url_row ){
+                        row[ m_columns.m_url ] = urldat_new;
+                        row[ m_columns.m_name ] = name_new;
+                        row[ m_columns.m_type ] = type;
+                        row[ m_columns.m_image ] = XML::get_icon( type );
+                    }
+
+                default:
+                    path.next();
+                    break;
+            }
+        }
+
+        // サブディレクトリ内ならupする
+        else{
+
+            if( path.get_depth() >= 2 ){
+                path.up();
+                path.next();
+            }
+            else break;
+        }
+    }
+}
 
 
 //

@@ -92,7 +92,10 @@ namespace ARTICLE
         virtual const int width_client();
         virtual const int height_client();
         virtual const int get_icon( const std::string& iconname );
-        virtual bool set_command( const std::string& command, const std::string& arg = std::string() );
+        virtual const bool set_command( const std::string& command,
+                                        const std::string& arg1 = std::string(),
+                                        const std::string& arg2 = std::string()
+            );
 
         virtual void clock_in();
         void clock_in_smooth_scroll();
@@ -264,6 +267,7 @@ namespace ARTICLE
         void slot_drawout_selection_str();
         void slot_search_cacheall();
         void slot_search_cachelocal();
+        void slot_search_next();
         void slot_search_web();
         void slot_search_title();
         void slot_usrcmd( int num );
@@ -291,6 +295,7 @@ namespace ARTICLE
         void slot_next_bm();
         void slot_jump();
         void slot_save_dat();
+        void slot_copy_article_info();
 
         // リンクの処理
         virtual void slot_on_url( std::string url, int res_number );

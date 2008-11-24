@@ -151,6 +151,8 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::GotoNew );
     append_row( CONTROL::WriteMessage );
 
+    append_row( CONTROL::SearchNextArticle );
+
     append_row( CONTROL::LiveStartStop );
 
     append_comment_row( "" );
