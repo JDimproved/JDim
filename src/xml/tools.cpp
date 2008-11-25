@@ -24,8 +24,11 @@ std::string XML::get_name( const int type_id )
             break;
             
         case TYPE_THREAD: // スレ
-        case TYPE_THREAD_UPDATE: // 更新可能スレ
             name = "thread";
+            break;
+
+        case TYPE_THREAD_UPDATE: // 更新可能スレ
+            name = "thread_update";
             break;
 
         case TYPE_THREAD_OLD: // dat落ちスレ
@@ -99,6 +102,10 @@ int XML::get_type( const std::string& node_name )
     else if( node_name == "thread" )
     {
         type = TYPE_THREAD;
+    }
+    else if( node_name == "thread_update" )
+    {
+        type = TYPE_THREAD_UPDATE;
     }
     else if( node_name == "thread_old" )
     {

@@ -79,8 +79,7 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_bookmarked_thread( false ),
       m_cached( cached ),
       m_read_info( 0 ),
-      m_save_info( 0 ),
-      m_enable_load( false )
+      m_save_info( 0 )
 {
 #ifdef _DEBUG
     std::cout << "ArticleBase::ArticleBase : " << m_id << std::endl;
@@ -426,22 +425,26 @@ void ArticleBase::set_subject( const std::string& subject )
 }
 
 
-void ArticleBase::set_number( int number )
+void ArticleBase::set_number( const int number )
 {
     if( number && number > m_number ){
+
         m_number = number;
-        if( m_number_load < m_number ) m_enable_load = true;
+
+        // キャッシュがあって更新可能になった場合は
+        // スレの場合はお気に入りとスレタブのアイコンを更新
+        if( is_cached() && m_number_load < m_number ) show_updateicon( true );
     }
 }
 
 
-void ArticleBase::set_number_load( int number_load )
+void ArticleBase::set_number_load( const int number_load )
 {
     if( number_load && number_load != m_number_load ) m_number_load = number_load;
 }
 
 
-void ArticleBase::set_number_seen( int number_seen )
+void ArticleBase::set_number_seen( const int number_seen )
 {
     if( number_seen && number_seen != m_number_seen ){
         m_number_seen = number_seen;
@@ -499,6 +502,15 @@ void ArticleBase::set_bookmarked_thread( bool bookmarked )
 
     // BoardViewの行を更新
     CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
+}
+
+
+//
+// キャッシュがあって、かつ新着の読み込みが可能
+//
+const bool ArticleBase::enable_load()
+{
+    return ( is_cached() && ( m_status & STATUS_UPDATE ) );
 }
 
 
@@ -803,7 +815,7 @@ const bool ArticleBase::is_refer_posted( const int number )
 void ArticleBase::clear_post_history()
 {
     if( empty() ) return;
-    if( ! m_cached ) return;
+    if( ! is_cached() ) return;
 
     read_info();
     if( m_vec_posted.size() || m_write_time.tv_sec || m_write_time.tv_usec ){
@@ -941,6 +953,15 @@ void ArticleBase::download_dat( const bool check_update )
     if( check_update ){
 
         if( ! SESSION::is_online() ) return;
+
+        // 既に更新状態の時はチェックしない
+        if( enable_load() ){
+
+            // 次のスレを更新チェック
+            CORE::get_checkupdate_manager()->pop_front();
+
+            return;
+        }
 
         // 一度更新チェックしたらしばらくは再チェックできないようにする
         time_t passed = 0;
@@ -1102,10 +1123,12 @@ void ArticleBase::slot_load_finished()
         std::cout << "check_update code = " << m_code << std::endl;
 #endif
 
-        // スレタブとお気に入りのアイコンを更新
+        // スレタブとお気に入りとスレ一覧のアイコンを更新
         if( m_code == HTTP_OK || m_code == HTTP_PARTIAL_CONTENT ){
 
             show_updateicon( true );
+
+            CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
         }
 
         // code と modified を戻しておく
@@ -1193,21 +1216,20 @@ void ArticleBase::slot_load_finished()
             || m_date_modified != m_old_modified // ときどき modified が誤って返るときがあるので最新の値を保存しておく
             ){
 
+            m_cached = true;
+            m_read_info = true;
+            m_save_info = true;
+
             struct timeval tv;
             struct timezone tz;
             if( gettimeofday( &tv, &tz ) == 0 ) m_access_time = tv;
 
             if( m_number < m_number_load ) m_number = m_number_load;
 
-            m_cached = true;
-            m_read_info = true;
-            m_save_info = true;
-            m_enable_load = false;
+            show_updateicon( false );
 
             // 情報ファイルのパスをセット
             if( m_path_article_info.empty() ) SET_INFOPATH();
-
-            show_updateicon( false );
         }
     }
 
@@ -1246,7 +1268,8 @@ void ArticleBase::slot_load_finished()
 void ArticleBase::show_updateicon( const bool update )
 {
 #ifdef _DEBUG
-    std::cout << "ArticleBase::show_updateicon url = " << m_url << " update = " << update << " status = " << m_status << std::endl;
+    std::cout << "ArticleBase::show_updateicon url = " << m_url
+              << " update = " << update << " status = " << ( m_status & STATUS_UPDATE ) << std::endl;
 #endif
 
     struct timeval tv;
@@ -1259,6 +1282,10 @@ void ArticleBase::show_updateicon( const bool update )
             m_status |= STATUS_UPDATE;
             CORE::core_set_command( "toggle_article_icon", m_url);
             CORE::core_set_command( "toggle_favorite_icon", m_url );
+#ifdef _DEBUG
+            std::cout << "toggle_icon on\n";
+#endif
+            m_save_info = true;
         }
     }
     else{
@@ -1267,6 +1294,10 @@ void ArticleBase::show_updateicon( const bool update )
         if( m_status & STATUS_UPDATE ){
             m_status &= ~STATUS_UPDATE;
             CORE::core_set_command( "toggle_favorite_icon", m_url );
+#ifdef _DEBUG
+            std::cout << "toggle_icon off\n";
+#endif
+            m_save_info = true;
         }
     }
 }
@@ -1321,7 +1352,6 @@ void ArticleBase::delete_cache( const bool cache_only )
         m_abone_chain = false;
         m_read_info = false;
         m_save_info = false;
-        m_enable_load = false;
         m_bookmarked_thread = false;
     
         // info
@@ -1382,7 +1412,7 @@ void ArticleBase::read_info()
 {
     if( m_read_info ) return; // 一度読んだら2度読みしない
     if( empty() ) return;
-    if( ! m_cached ) return;  // キャッシュがないなら読まない
+    if( ! is_cached() ) return;  // キャッシュがないなら読まない
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::read_info :  url = " << m_url << std::endl;
@@ -1472,7 +1502,6 @@ void ArticleBase::read_info()
         m_status = STATUS_UNKNOWN;
         GET_INFOVALUE( str_tmp, "status = " );
         if( ! str_tmp.empty() ) m_status = atoi( str_tmp.c_str() );
-        m_status &= ~STATUS_UPDATE; // 更新可能状態解除
 
         // あぼーん ID
         GET_INFOVALUE( str_tmp, "aboneid = " );
@@ -1637,15 +1666,15 @@ void ArticleBase::read_info()
 //
 // infoファイル書き込み
 //
-// キャッシュがある( m_cached = true )　かつ
+// キャッシュがある( is_cached() == true )　かつ
 // m_save_info = true の時に保存。save_info()を呼ぶ前にm_save_infoをセットすること。
 //
 // キャッシュがあって、force = true の時は強制書き込み
 //
-void ArticleBase::save_info( bool force )
+void ArticleBase::save_info( const bool force )
 {
     if( empty() ) return;
-    if( ! m_cached ) return;
+    if( ! is_cached() ) return;
     if( ! force && ! m_save_info ) return;
     m_save_info = false;
 
@@ -1731,7 +1760,7 @@ void ArticleBase::save_info( bool force )
 void ArticleBase::save_navi2ch_info()
 {
     if( empty() ) return;
-    if( ! m_cached ) return;
+    if( ! is_cached() ) return;
     if( m_path_article_info.empty() ) return;
 
     std::string name = "nil";

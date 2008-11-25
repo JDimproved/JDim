@@ -1400,64 +1400,59 @@ void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel:
     // マーク
 
     int mark_val;
+    int icon;
 
     // ブックマーク & 新着あり
     if( art->is_bookmarked_thread() && art->enable_load() ){
         mark_val = COL_MARKVAL_BKMARKED_UPDATED;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::BKMARK_UPDATE );
-        art->show_updateicon( true );
+        icon = ICON::BKMARK_UPDATE;
     }
 
     // ブックマーク
     else if( art->is_bookmarked_thread() ){
         mark_val = COL_MARKVAL_BKMARKED;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::BKMARK );
-        art->show_updateicon( false );
+        icon = ICON::BKMARK;
     }
 
     // dat落ち
     else if( art->get_status() & STATUS_OLD ){
         mark_val = COL_MARKVAL_OLD;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::DOWN );
-        art->show_updateicon( false );
+        icon = ICON::DOWN;
     }
 
     // キャッシュはあるが規定のレス数を越えていて全てのレスが既読
     else if( art->is_finished() ){
         mark_val = COL_MARKVAL_FINISHED;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::CHECK );
-        art->show_updateicon( false );
+        icon = ICON::CHECK;
     }
 
     // 新着あり
-    else if( art->is_cached() && art->enable_load() ){
+    else if( art->enable_load() ){
         mark_val = COL_MARKVAL_UPDATED;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::UPDATE );
-        art->show_updateicon( true );
+        icon = ICON::UPDATE;
     }
     // キャッシュあり、新着無し
     else if( art->is_cached() ){
         mark_val = COL_MARKVAL_CACHED;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::CHECK );
-        art->show_updateicon( false );
+        icon = ICON::CHECK;
     }
     // キャッシュ無し、新着
     else if( art->get_since_time() > m_last_access_time ){
         mark_val = COL_MARKVAL_NEWTHREAD;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::NEWTHREAD );
+        icon = ICON::NEWTHREAD;
     }
     // キャッシュ無し、新着( CONFIG::get_newthread_hour() 時間以内 )
     else if( art->get_hour() < CONFIG::get_newthread_hour() ){
         mark_val = COL_MARKVAL_NEWTHREAD_HOUR;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::NEWTHREAD_HOUR );
+        icon = ICON::NEWTHREAD_HOUR;
     }
     //キャッシュ無し
     else{
         mark_val = COL_MARKVAL_NORMAL;
-        row[ m_columns.m_col_mark ] = ICON::get_icon( ICON::TRANSPARENT );
+        icon = ICON::TRANSPARENT;
     }
     row[ m_columns.m_col_mark_val ] = mark_val;
-
+    row[ m_columns.m_col_mark ] = ICON::get_icon( icon );
 
     // 書き込み時間
     if( art->get_write_time() ){

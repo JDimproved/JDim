@@ -93,9 +93,6 @@ namespace DBTREE
         // true ならunlock_impl()がコールバックされたときに情報保存
         bool m_save_info;
 
-        // キャッシュがあって、かつ新着の読み込みが可能
-        bool m_enable_load;
-
         // 前スレのアドレス
         // スレが未取得で、この変数がemptyで無いとき download_dat()を呼び出すと
         // ロード終了時に次スレ移行チェックと前スレの情報のコピーをする
@@ -134,7 +131,7 @@ namespace DBTREE
         const int get_number_seen() const{  return m_number_seen; }
         const int get_number_max() const { return m_number_max; }
 
-        void set_number_max( int number ){ if( number > 0 ) m_number_max = number; }
+        void set_number_max( const int number ){ if( number > 0 ) m_number_max = number; }
 
         // スレ速度
         const int get_speed();
@@ -264,9 +261,9 @@ namespace DBTREE
         void reset_status();
         
         void set_subject( const std::string& subject );
-        void set_number( int number );
-        void set_number_load( int number_load );
-        void set_number_seen( int number_seen );
+        void set_number( const int number );
+        void set_number_load( const int number_load );
+        void set_number_seen( const int number_seen );
         void update_writetime();
 
         // キャッシュ削除
@@ -283,7 +280,7 @@ namespace DBTREE
         const bool is_cache_read() const { return ( m_nodetree ); }
 
         // キャッシュがあって、かつ新着の読み込みが可能
-        const bool enable_load() const { return m_enable_load; }
+        const bool enable_load();
 
         // キャッシュはあるが規定のレス数を越えていて、かつ全てのレスが既読
         const bool is_finished();
@@ -334,7 +331,7 @@ namespace DBTREE
 
         // 情報ファイル書き込み
         // キャッシュがあって、force = true の時は強制書き込み
-        void save_info( bool force );
+        void save_info( const bool force );
 
         // スレッドのロード開始
         const bool is_loading();
@@ -354,9 +351,6 @@ namespace DBTREE
         // url_src で示されるスレの情報をコピー
         void copy_article_info( const std::string& url_src );
 
-        // 更新アイコン表示
-        void show_updateicon( const bool update );
-
       private:
 
         // NodeTree作成
@@ -368,6 +362,9 @@ namespace DBTREE
         void slot_node_updated();
         void slot_load_finished();
         virtual void unlock_impl();
+
+        // 更新アイコン表示
+        void show_updateicon( const bool update );
 
         // navi2ch互換情報ファイル書き込み
         void save_navi2ch_info();
