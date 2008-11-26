@@ -63,6 +63,9 @@ namespace SKELETON
 
         virtual void clock_in();
 
+        // ドラッグ中
+        const bool is_dragging() const { return m_dragging; }
+
         // 色初期化
         void init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even );
 
@@ -88,8 +91,6 @@ namespace SKELETON
         void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
 
       protected:
-
-        const bool is_dragging() const { return m_dragging; }
 
         // drag_source_set() でセットしたボタンでドラッグした時に呼び出される順番は
         //

@@ -39,6 +39,9 @@ namespace SKELETON
         int m_dnd_counter;
         Gtk::TreePath m_drag_path_uline;
 
+        // 更新された
+        bool m_updated;
+
       public:
 
         SIG_DRAG_DROP sig_drag_drop() { return m_sig_drag_drop; }
@@ -51,6 +54,9 @@ namespace SKELETON
         virtual ~EditTreeView();
 
         virtual void clock_in();
+
+        const bool is_updated() const { return m_updated; };
+        void set_updated( const bool set ){ m_updated = set; }
 
         // treestoreのセット
         void set_treestore( const Glib::RefPtr< Gtk::TreeStore >& treestore );

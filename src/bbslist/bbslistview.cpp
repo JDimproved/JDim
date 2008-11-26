@@ -46,7 +46,7 @@ BBSListViewMain::~BBSListViewMain()
 
 
 // xml保存
-void BBSListViewMain::save_xml( bool backup )
+void BBSListViewMain::save_xml( const bool backup )
 {
     std::string file = CACHE::path_xml_listmain();
     if( backup ) file = CACHE::path_xml_listmain_bkup();

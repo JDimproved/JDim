@@ -25,6 +25,8 @@ namespace BBSLIST
 
         SIG_CLOSE_DIALOG sig_close_dialog() { return m_sig_close_dialog; }
 
+        virtual void save_xml( const bool backup ){}
+
         virtual void close_view();
         virtual const bool operate_view( const int control );
 

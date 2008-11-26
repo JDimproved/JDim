@@ -30,7 +30,8 @@ using namespace SKELETON;
 EditTreeView::EditTreeView( EditColumns& columns,
                         const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
     : DragTreeView( use_usr_fontcolor, fontname, colorid_text, colorid_bg, colorid_bg_even ),
-      m_columns( columns )
+      m_columns( columns ),
+      m_updated( false )
 {
     setup();
 }
@@ -656,6 +657,8 @@ void EditTreeView::move_selected_row( const Gtk::TreePath& path, bool after )
             select_all_dir( treestore->get_path( row_tmp ) );
         }
     }
+
+    m_updated = true;
 }
 
 
@@ -703,6 +706,8 @@ const Gtk::TreeModel::Path EditTreeView::append_row( const std::string& url, con
 
     m_columns.setup_row( row_new, url, name, data, type );
 
+    m_updated = true;
+
     return treestore->get_path( row_new );
 }
 
@@ -744,7 +749,7 @@ void EditTreeView::delete_selected_rows()
     if( ! gotobottom ) set_cursor( next );
 
 #ifdef _DEBUG
-    std::cout << " EditTreeView::delete_selected_rows : ";
+    std::cout << "EditTreeView::delete_selected_rows : ";
     std::cout << treestore->get_path( *it ).to_string() << " -> " << next.to_string() << std::endl;
 #endif
 
@@ -752,6 +757,8 @@ void EditTreeView::delete_selected_rows()
     // ディレクトリ内の行を同時に選択している場合があるので後から消す
     it = list_it.end();
     while( it != list_it.begin() ) treestore->erase( ( *(--it) ) );
+
+    m_updated = true;
 
     if( gotobottom ) goto_bottom();
 }

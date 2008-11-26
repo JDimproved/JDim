@@ -41,7 +41,7 @@ FavoriteListView::~FavoriteListView()
 
 
 // xml保存
-void FavoriteListView::save_xml( bool backup )
+void FavoriteListView::save_xml( const bool backup )
 {
     std::string file = CACHE::path_xml_favorite();
     if( backup ) file = CACHE::path_xml_favorite_bkup();

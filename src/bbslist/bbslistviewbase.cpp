@@ -1701,7 +1701,10 @@ void BBSListViewBase::slot_drag_drop( Gtk::TreeModel::Path path, const bool afte
 #endif
 
     // 他のビューからドロップされた
-    if( url_from != get_url() ) append_from_buffer( path, after, false );
+    if( url_from != get_url() ){
+        append_from_buffer( path, after, false );
+        BBSLIST::get_admin()->set_command( "switch_admin" );
+    }
 }
 
 
@@ -1773,6 +1776,12 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 #ifdef _DEBUG    
     std::cout << "BBSListViewBase::open_row : path = " << path.to_string() << " tab = " << tab << std::endl;
 #endif        
+
+    // treeviewが編集されていたらxml保存
+    if( type != TYPE_DIR && m_treeview.is_updated() ){
+        save_xml( false );
+        m_treeview.set_updated( false );
+    }
 
     return true;
 }
@@ -2372,6 +2381,9 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                         row[ m_columns.m_name ] = name_new;
                         row[ m_columns.m_type ] = type;
                         row[ m_columns.m_image ] = XML::get_icon( type );
+
+                        // フォーカスアウト時にxmlを保存
+                        m_treeview.set_updated( true ); 
                     }
 
                 default:
