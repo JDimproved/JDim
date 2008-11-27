@@ -244,7 +244,7 @@ namespace SKELETON
         virtual void update_view(){}
         virtual void update_finish(){}        
         virtual void focus_view(){}
-        virtual void focus_out(){ m_control.MG_reset(); }
+        virtual void focus_out(){}
         virtual void close_view(){}
         virtual void delete_view(){}
         virtual void set_favorite(){}
