@@ -506,6 +506,8 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "LivePref", "実況設定(_L)..." ), sigc::mem_fun( *this, &Core::slot_setup_live ) );
     m_action_group->add( Gtk::Action::create( "UsrCmdPref", "ユーザコマンドの編集(_U)..." ), sigc::mem_fun( *this, &Core::slot_usrcmd_pref ) );
     m_action_group->add( Gtk::Action::create( "FilterPref", "リンクフィルタの編集(_F)..." ), sigc::mem_fun( *this, &Core::slot_filter_pref ) );
+    m_action_group->add( Gtk::Action::create( "AboutConfig", "about:config(_A)..." ), sigc::mem_fun( *this, &Core::slot_aboutconfig ) );
+
 
     // プライバシー
     m_action_group->add( Gtk::Action::create( "Privacy_Menu", "プライバシー(_R)" ) );    
@@ -774,6 +776,7 @@ void Core::run( bool init )
         "<menuitem action='LivePref'/>"    
         "<menuitem action='UsrCmdPref'/>"
         "<menuitem action='FilterPref'/>"
+        "<menuitem action='AboutConfig'/>"
         "</menu>"
 
         "</menu>"                         
