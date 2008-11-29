@@ -776,6 +776,7 @@ void Core::run( bool init )
         "<menuitem action='LivePref'/>"    
         "<menuitem action='UsrCmdPref'/>"
         "<menuitem action='FilterPref'/>"
+        "<separator/>"
         "<menuitem action='AboutConfig'/>"
         "</menu>"
 

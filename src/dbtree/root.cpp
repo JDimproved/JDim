@@ -257,10 +257,11 @@ void Root::download_bbsmenu()
 
     JDLIB::LOADERDATA data;
     data.url = CONFIG::get_url_bbsmenu();
-    data.agent = CONFIG::get_agent_for2ch(); 
-    if( CONFIG::get_use_proxy_for2ch() ) data.host_proxy = CONFIG::get_proxy_for2ch();
+    data.agent = CONFIG::get_agent_for_data(); 
+    if( CONFIG::get_use_proxy_for_data() ) data.host_proxy = CONFIG::get_proxy_for_data();
     else data.host_proxy = std::string();
-    data.port_proxy = CONFIG::get_proxy_port_for2ch();
+    data.port_proxy = CONFIG::get_proxy_port_for_data();
+    data.basicauth_proxy = CONFIG::get_proxy_basicauth_for_data();
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
 
