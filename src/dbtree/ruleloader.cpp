@@ -69,6 +69,7 @@ void RuleLoader::create_loaderdata( JDLIB::LOADERDATA& data )
         data.agent = DBTREE::get_agent( m_url_boadbase );
         data.host_proxy = DBTREE::get_proxy_host( m_url_boadbase );
         data.port_proxy = DBTREE::get_proxy_port( m_url_boadbase );
+        data.basicauth_proxy = DBTREE::get_proxy_basicauth( m_url_boadbase );
         data.size_buf = CONFIG::get_loader_bufsize();
         data.timeout = CONFIG::get_loader_timeout();
         if( ! get_date_modified().empty() ) data.modified = get_date_modified();

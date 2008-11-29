@@ -49,16 +49,19 @@ namespace CONFIG
         bool use_proxy_for2ch;
         std::string proxy_for2ch;
         int proxy_port_for2ch;
+        std::string proxy_basicauth_for2ch;
 
         // 書き込み用プロクシとポート番号
         bool use_proxy_for2ch_w;
         std::string proxy_for2ch_w;
         int proxy_port_for2ch_w;
+        std::string proxy_basicauth_for2ch_w;
 
         // 2chの外にアクセスするときのプロクシとポート番号
         bool use_proxy_for_data;
         std::string proxy_for_data;
         int proxy_port_for_data;
+        std::string proxy_basicauth_for_data;
 
         // 2ch にアクセスするときのエージェント名
         std::string agent_for2ch;
@@ -369,6 +372,11 @@ namespace CONFIG
 
         // 色のリセット
         void reset_colors();
+
+        // プロクシ設定
+        void set_proxy_for2ch( const std::string& proxy );
+        void set_proxy_for2ch_w( const std::string& proxy );
+        void set_proxy_for_data( const std::string& proxy );
 
       private:
 

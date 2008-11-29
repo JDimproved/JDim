@@ -122,12 +122,14 @@ namespace DBTREE
     const int board_get_mode_local_proxy( const std::string& url );
     const std::string& board_get_local_proxy( const std::string& url );
     const int board_get_local_proxy_port( const std::string& url );
+    const std::string& board_get_local_proxy_basicauth( const std::string& url );
     void board_set_mode_local_proxy( const std::string& url, int mode );
     void board_set_local_proxy( const std::string& url, const std::string& proxy );
     void board_set_local_proxy_port( const std::string& url, int port );
     const int board_get_mode_local_proxy_w( const std::string& url );
     const std::string& board_get_local_proxy_w( const std::string& url );
     const int board_get_local_proxy_port_w( const std::string& url );
+    const std::string& board_get_local_proxy_basicauth_w( const std::string& url );
     void board_set_mode_local_proxy_w( const std::string& url, int mode );
     void board_set_local_proxy_w( const std::string& url, const std::string& proxy );
     void board_set_local_proxy_port_w( const std::string& url, int port );
@@ -205,13 +207,18 @@ namespace DBTREE
     void article_update_writetime( const std::string& url );
     size_t article_lng_dat( const std::string& url );
 
-    // agent, プロキシ
-
+    // ユーザーエージェント
     const std::string& get_agent( const std::string& url );
-    const std::string get_proxy_host( const std::string& url ); // 読み込み用
+
+    // 読み込み用プロキシ
+    const std::string get_proxy_host( const std::string& url );
     const int get_proxy_port( const std::string& url );
-    const std::string get_proxy_host_w( const std::string& url ); // 書き込み用
+    const std::string get_proxy_basicauth( const std::string& url );
+
+    // 書き込み用プロキシ
+    const std::string get_proxy_host_w( const std::string& url ); 
     const int get_proxy_port_w( const std::string& url );
+    const std::string get_proxy_basicauth_w( const std::string& url );
 
     // ローカルルール
     const std::string localrule( const std::string& url );

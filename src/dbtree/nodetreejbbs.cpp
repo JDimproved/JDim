@@ -105,6 +105,7 @@ void NodeTreeJBBS::create_loaderdata( JDLIB::LOADERDATA& data )
     data.agent = DBTREE::get_agent( get_url() );
     data.host_proxy = DBTREE::get_proxy_host( get_url() );
     data.port_proxy = DBTREE::get_proxy_port( get_url() );
+    data.basicauth_proxy = DBTREE::get_proxy_basicauth( get_url() );
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
 

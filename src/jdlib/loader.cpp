@@ -190,6 +190,7 @@ void Loader::wait()
 // cookie_for_write
 // host_proxy ( != empty ならproxy使用 )
 // port_proxy ( == 0 なら 8080 )
+// basicauth_proxy
 // size_buf ( バッファサイズ, k 単位で指定。 == 0 ならデフォルトサイズ(LNG_BUF_MIN)使用)
 // timeout ( タイムアウト秒。==0 ならデフォルト( TIMEOUT )使用  )
 // basicauth
@@ -294,6 +295,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     m_data.host_proxy = data_in.host_proxy;
     m_data.port_proxy = data_in.port_proxy;
     if( m_data.port_proxy == 0 ) m_data.port_proxy = 8080;
+    m_data.basicauth_proxy = data_in.basicauth_proxy;
     m_data.timeout = MAX( TIMEOUT_MIN, data_in.timeout );
     m_data.ex_field = data_in.ex_field;
     m_data.basicauth = data_in.basicauth;
@@ -311,6 +313,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     std::cout << "cookie: " << m_data.cookie_for_write << std::endl;
     std::cout << "proxy: " << m_data.host_proxy << std::endl;
     std::cout << "port of proxy: " << m_data.port_proxy << std::endl;
+    std::cout << "proxy basicauth : " << m_data.basicauth_proxy << std::endl;
     std::cout << "buffer size: " << m_lng_buf / 1024 << " kb" << std::endl;
     std::cout << "timeout : " << m_data.timeout << " sec" << std::endl;
     std::cout << "ex_field : " << m_data.ex_field << std::endl;
@@ -754,6 +757,9 @@ std::string Loader::create_msg_send()
 
     // basic認証
     if( ! m_data.basicauth.empty() ) msg << "Authorization: Basic " << MISC::base64( m_data.basicauth ) << "\r\n";
+
+    // proxy basic認証
+    if( use_proxy && ! m_data.basicauth_proxy.empty() ) msg << "Proxy-Authorization: Basic " << MISC::base64( m_data.basicauth_proxy ) << "\r\n";
 
     if( ! m_data.cookie_for_write.empty() ) msg << "Cookie: " << m_data.cookie_for_write << "\r\n";
 

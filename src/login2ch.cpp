@@ -115,6 +115,7 @@ void Login2ch::start_login()
     data.ex_field = "X-2ch-UA: " + CONFIG::get_x_2ch_ua() + "\r\n";
     if( CONFIG::get_use_proxy_for_data() ) data.host_proxy = CONFIG::get_proxy_for_data();
     data.port_proxy = CONFIG::get_proxy_port_for_data();
+    data.basicauth_proxy = CONFIG::get_proxy_basicauth_for_data();
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
 

@@ -38,6 +38,7 @@ void LOADERDATA::init()
 
     host_proxy.clear();
     port_proxy = 0;
+    basicauth_proxy.clear();
 
     agent.clear();
     referer.clear();

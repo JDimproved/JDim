@@ -124,17 +124,17 @@ void BoardBase::update_name( const std::string& name )
 }
 
 
-// user agent
+// ユーザエージェント
 const std::string& BoardBase::get_agent()
 {
     return CONFIG::get_agent_for_data();
 }
 
 
-// プロキシ
+// 読み込み用プロキシ
 const std::string BoardBase::get_proxy_host()
 {
-    int mode = get_mode_local_proxy();
+    const int mode = get_mode_local_proxy();
 
     if( mode == DBTREE::PROXY_GLOBAL ){
 
@@ -147,7 +147,7 @@ const std::string BoardBase::get_proxy_host()
 
 const int BoardBase::get_proxy_port()
 {
-    int mode = get_mode_local_proxy();
+    const int mode = get_mode_local_proxy();
 
     if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_port_for_data();
     else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_port();
@@ -155,12 +155,23 @@ const int BoardBase::get_proxy_port()
     return 0;
 }
 
+const std::string BoardBase::get_proxy_basicauth()
+{
+    const int mode = get_mode_local_proxy();
+
+    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_basicauth_for_data();
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_basicauth();
+
+    return std::string();
+}
+
+
 // 書き込み用プロキシ
 const std::string BoardBase::get_proxy_host_w()
 {
-    int mode = get_mode_local_proxy_w();
+    const int mode = get_mode_local_proxy_w();
 
-    if( mode == DBTREE::PROXY_GLOBAL ) return get_proxy_host();
+    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_for_data();
     else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_w();
 
     return std::string();
@@ -168,12 +179,23 @@ const std::string BoardBase::get_proxy_host_w()
 
 const int BoardBase::get_proxy_port_w()
 {
-    int mode = get_mode_local_proxy_w();
+    const int mode = get_mode_local_proxy_w();
 
-    if( mode == DBTREE::PROXY_GLOBAL ) return get_proxy_port();
+    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_port_for_data();
     else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_port_w();
 
     return 0;
+}
+
+
+const std::string BoardBase::get_proxy_basicauth_w()
+{
+    const int mode = get_mode_local_proxy();
+
+    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_basicauth_for_data();
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_basicauth_w();
+
+    return std::string();
 }
 
 
@@ -850,6 +872,7 @@ void BoardBase::create_loaderdata( JDLIB::LOADERDATA& data )
     data.agent = get_agent();
     data.host_proxy = get_proxy_host();
     data.port_proxy = get_proxy_port();
+    data.basicauth_proxy = get_proxy_basicauth();
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
     data.basicauth = get_basicauth();
@@ -1141,6 +1164,7 @@ bool BoardBase::start_checkking_if_board_moved()
     if( CONFIG::get_use_proxy_for_data() ) data.host_proxy = CONFIG::get_proxy_for_data();
     else data.host_proxy = std::string();
     data.port_proxy = CONFIG::get_proxy_port_for_data();
+    data.basicauth_proxy = CONFIG::get_proxy_basicauth_for_data();
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout_img();
 
@@ -1414,6 +1438,44 @@ void BoardBase::reset_abone_thread( std::list< std::string >& threads,
 
 
 //
+// 読み込み用ローカルプロキシ設定
+//
+void BoardBase::set_local_proxy( const std::string& proxy )
+{
+    m_local_proxy = proxy;
+    m_local_proxy_basicauth = std::string();
+    if( proxy.empty() ) return;
+
+    // basic認証
+    JDLIB::Regex regex;
+    if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy ) )
+    {
+        m_local_proxy_basicauth = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        m_local_proxy = regex.str( 2 );
+    }
+}
+
+
+//
+// 書き込み用ローカルプロキシ設定
+//
+void BoardBase::set_local_proxy_w( const std::string& proxy )
+{
+    m_local_proxy_w = proxy;
+    m_local_proxy_basicauth_w = std::string();
+    if( proxy.empty() ) return;
+
+    // basic認証
+    JDLIB::Regex regex;
+    if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy ) )
+    {
+        m_local_proxy_basicauth_w = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        m_local_proxy_w = regex.str( 2 );
+    }
+}
+
+
+//
 // キャッシュ内のログ検索
 //
 // datファイルのURL(read.cgi型)を返す
@@ -1552,11 +1614,13 @@ void BoardBase::read_board_info()
 
     // ローカルプロキシ
     m_mode_local_proxy = cf.get_option( "mode_local_proxy", 0 );
-    m_local_proxy = cf.get_option( "local_proxy", "" );
+    str_tmp = cf.get_option( "local_proxy", "" );
+    set_local_proxy( str_tmp );
     m_local_proxy_port = cf.get_option( "local_proxy_port", 8080 );
  
     m_mode_local_proxy_w = cf.get_option( "mode_local_proxy_w", 0 );
-    m_local_proxy_w = cf.get_option( "local_proxy_w", "" );
+    str_tmp = cf.get_option( "local_proxy_w", "" );
+    set_local_proxy_w( str_tmp );
     m_local_proxy_port_w = cf.get_option( "local_proxy_port_w", 8080 );
 
     // 書き込み時のデフォルトの名前とメアド
@@ -1615,6 +1679,15 @@ void BoardBase::save_jdboard_info()
     std::string str_abone_thread = MISC::listtostr( m_list_abone_thread );
     std::string str_abone_word_thread = MISC::listtostr( m_list_abone_word_thread );
     std::string str_abone_regex_thread = MISC::listtostr( m_list_abone_regex_thread );
+
+    // ローカルプロキシ
+    std::string local_proxy;
+    if( m_local_proxy_basicauth.empty() ) local_proxy = m_local_proxy;
+    else local_proxy = m_local_proxy_basicauth + "@" + m_local_proxy;
+
+    std::string local_proxy_w;
+    if( m_local_proxy_basicauth_w.empty() ) local_proxy_w = m_local_proxy_w;
+    else local_proxy_w = m_local_proxy_basicauth_w + "@" + m_local_proxy_w;
     
     std::ostringstream sstr;
     sstr << "modified = " << get_date_modified() << std::endl
@@ -1639,10 +1712,10 @@ void BoardBase::save_jdboard_info()
          << "abonehourthread = " << m_abone_hour_thread << std::endl
          << "mode_local_proxy = " << m_mode_local_proxy << std::endl
 
-         << "local_proxy = " << m_local_proxy << std::endl
+         << "local_proxy = " << local_proxy << std::endl
          << "local_proxy_port = " << m_local_proxy_port << std::endl
          << "mode_local_proxy_w = " << m_mode_local_proxy_w << std::endl
-         << "local_proxy_w = " << m_local_proxy_w << std::endl
+         << "local_proxy_w = " << local_proxy_w << std::endl
          << "local_proxy_port_w = " << m_local_proxy_port_w << std::endl
          << "write_name = " << m_write_name << std::endl
          << "write_mail = " << m_write_mail << std::endl

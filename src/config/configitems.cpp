@@ -13,6 +13,7 @@
 #include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
+#include "jdlib/jdregex.h"
 
 #include "colorid.h"
 #include "fontid.h"
@@ -81,6 +82,8 @@ const bool ConfigItems::load()
               << "conffile = " << path_conf << " empty = " << cf.empty() << std::endl;
 #endif
 
+    std::string str_tmp;
+
     // 色
     set_colors( cf );
 
@@ -108,17 +111,20 @@ const bool ConfigItems::load()
 
     // 読み込み用プロクシとポート番号
     use_proxy_for2ch = cf.get_option( "use_proxy_for2ch", CONF_USE_PROXY_FOR2CH );
-    proxy_for2ch = cf.get_option( "proxy_for2ch", "" );
+    str_tmp = cf.get_option( "proxy_for2ch", "" );
+    set_proxy_for2ch( str_tmp );
     proxy_port_for2ch = cf.get_option( "proxy_port_for2ch", CONF_PROXY_PORT_FOR2CH );
 
     // 書き込み用プロクシとポート番号
     use_proxy_for2ch_w = cf.get_option( "use_proxy_for2ch_w", CONF_USE_PROXY_FOR2CH_W );
-    proxy_for2ch_w = cf.get_option( "proxy_for2ch_w", "" );
+    str_tmp = cf.get_option( "proxy_for2ch_w", "" );
+    set_proxy_for2ch_w( str_tmp );
     proxy_port_for2ch_w = cf.get_option( "proxy_port_for2ch_w", CONF_PROXY_PORT_FOR2CH_W );
 
     // 2chの外にアクセスするときのプロクシとポート番号
     use_proxy_for_data = cf.get_option( "use_proxy_for_data", CONF_USE_PROXY_FOR_DATA );
-    proxy_for_data = cf.get_option( "proxy_for_data", "" );
+    str_tmp = cf.get_option( "proxy_for_data", "" );
+    set_proxy_for_data( str_tmp );
     proxy_port_for_data = cf.get_option( "proxy_port_for_data", CONF_PROXY_PORT_FOR_DATA );
 
     // 2ch にアクセスするときのエージェント名
@@ -368,7 +374,6 @@ const bool ConfigItems::load()
 
     std::list< std::string > list_tmp;
     std::list< std::string >::iterator it_tmp;
-    std::string str_tmp;
 
     // スレ あぼーん word
     str_tmp = cf.get_option( "abonewordthread", "" );
@@ -467,18 +472,25 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "agent_for2ch", agent_for2ch );
 
+    std::string tmp_proxy;
+    if( proxy_basicauth_for2ch.empty() ) tmp_proxy = proxy_for2ch;
+    else tmp_proxy = proxy_basicauth_for2ch + "@" + proxy_for2ch;
     cf.update( "use_proxy_for2ch", use_proxy_for2ch );
-    cf.update( "proxy_for2ch", proxy_for2ch );
+    cf.update( "proxy_for2ch", tmp_proxy );
     cf.update( "proxy_port_for2ch", proxy_port_for2ch );
 
+    if( proxy_basicauth_for2ch_w.empty() ) tmp_proxy = proxy_for2ch_w;
+    else tmp_proxy = proxy_basicauth_for2ch_w + "@" + proxy_for2ch_w;
     cf.update( "use_proxy_for2ch_w", use_proxy_for2ch_w );
-    cf.update( "proxy_for2ch_w", proxy_for2ch_w );
+    cf.update( "proxy_for2ch_w", tmp_proxy );
     cf.update( "proxy_port_for2ch_w", proxy_port_for2ch_w );
 
     cf.update( "agent_for_data", agent_for_data );
 
+    if( proxy_basicauth_for_data.empty() ) tmp_proxy = proxy_for_data;
+    else tmp_proxy = proxy_basicauth_for_data + "@" + proxy_for_data;
     cf.update( "use_proxy_for_data", use_proxy_for_data );
-    cf.update( "proxy_for_data", proxy_for_data );
+    cf.update( "proxy_for_data", tmp_proxy );
     cf.update( "proxy_port_for_data", proxy_port_for_data );
 
     cf.update( "x_2ch_ua", x_2ch_ua );
@@ -803,4 +815,53 @@ void ConfigItems::reset_colors()
     // dummyのConfLoaderをset_colors()に渡してデフォルト値をセットする
     JDLIB::ConfLoader cf( "", "dummy = dummy" );
     set_colors( cf );
+}
+
+
+//
+// プロクシ設定
+//
+void ConfigItems::set_proxy_for2ch( const std::string& proxy )
+{
+    proxy_for2ch = proxy;
+    proxy_basicauth_for2ch = std::string();
+    if( proxy.empty() ) return;
+
+    // basic認証
+    JDLIB::Regex regex;
+    if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy ) )
+    {
+        proxy_basicauth_for2ch = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        proxy_for2ch = regex.str( 2 );
+    }
+}
+
+void ConfigItems::set_proxy_for2ch_w( const std::string& proxy )
+{
+    proxy_for2ch_w = proxy;
+    proxy_basicauth_for2ch_w = std::string();
+    if( proxy.empty() ) return;
+
+    // basic認証
+    JDLIB::Regex regex;
+    if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy ) )
+    {
+        proxy_basicauth_for2ch_w = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        proxy_for2ch_w = regex.str( 2 );
+    }
+}
+
+void ConfigItems::set_proxy_for_data( const std::string& proxy )
+{
+    proxy_for_data = proxy;
+    proxy_basicauth_for_data = std::string();
+    if( proxy.empty() ) return;
+
+    // basic認証
+    JDLIB::Regex regex;
+    if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy ) )
+    {
+        proxy_basicauth_for_data = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        proxy_for_data = regex.str( 2 );
+    }
 }

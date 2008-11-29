@@ -123,6 +123,7 @@ void Post::post_msg()
     data.str_post = m_msg;
     data.host_proxy = DBTREE::get_proxy_host_w( m_url );
     data.port_proxy = DBTREE::get_proxy_port_w( m_url );
+    data.basicauth_proxy = DBTREE::get_proxy_basicauth_w( m_url );
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout_post();
     data.cookie_for_write = DBTREE::board_cookie_for_write( m_url );

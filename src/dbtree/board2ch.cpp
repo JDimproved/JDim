@@ -41,18 +41,17 @@ Board2ch::~Board2ch()
 {}
 
 
+// ユーザエージェント
 const std::string& Board2ch::get_agent()
 {
     return CONFIG::get_agent_for2ch();
 }
 
 
-//
-// ホスト別プロクシ
-//
+// 読み込み用プロキシ
 const std::string Board2ch::get_proxy_host()
 {
-    int mode = get_mode_local_proxy();
+    const int mode = get_mode_local_proxy();
 
     if( mode == DBTREE::PROXY_GLOBAL ){
 
@@ -65,7 +64,7 @@ const std::string Board2ch::get_proxy_host()
 
 const int Board2ch::get_proxy_port()
 {
-    int mode = get_mode_local_proxy();
+    const int mode = get_mode_local_proxy();
 
     if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_port_for2ch();
     else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_port();
@@ -73,9 +72,21 @@ const int Board2ch::get_proxy_port()
     return 0;
 }
 
+const std::string Board2ch::get_proxy_basicauth()
+{
+    const int mode = get_mode_local_proxy();
+
+    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_basicauth_for2ch();
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_basicauth();
+
+    return std::string();
+}
+
+
+// 書き込み用プロキシ
 const std::string Board2ch::get_proxy_host_w()
 {
-    int mode = get_mode_local_proxy_w();
+    const int mode = get_mode_local_proxy_w();
 
     if( mode == DBTREE::PROXY_GLOBAL ){
         if( CONFIG::get_use_proxy_for2ch_w() ) return CONFIG::get_proxy_for2ch_w();
@@ -87,12 +98,23 @@ const std::string Board2ch::get_proxy_host_w()
 
 const int Board2ch::get_proxy_port_w()
 {
-    int mode = get_mode_local_proxy_w();
+    const int mode = get_mode_local_proxy_w();
 
     if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_port_for2ch_w();
     else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_port_w();
 
     return 0;
+}
+
+
+const std::string Board2ch::get_proxy_basicauth_w()
+{
+    const int mode = get_mode_local_proxy_w();
+
+    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_basicauth_for2ch_w();
+    else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_basicauth_w();
+
+    return std::string();
 }
 
 

@@ -35,6 +35,7 @@ namespace JDLIB
         
         std::string host_proxy;
         long port_proxy;
+        std::string basicauth_proxy; // proxy 認証
 
         std::string agent;
         std::string referer;

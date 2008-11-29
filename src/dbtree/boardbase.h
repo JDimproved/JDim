@@ -104,14 +104,17 @@ namespace DBTREE
         int m_abone_number_thread; // レスの数
         int m_abone_hour_thread; // スレ立てからの経過時間
 
-        // ローカルプロキシ設定
+        // 読み込み用ローカルプロキシ設定
         int m_mode_local_proxy;
         std::string m_local_proxy;
         int m_local_proxy_port;
+        std::string m_local_proxy_basicauth; // basic 認証用の「ユーザID:パスワード」の組
 
+        // 書き込み用ローカルプロキシ設定
         int m_mode_local_proxy_w;
         std::string m_local_proxy_w;
         int m_local_proxy_port_w;
+        std::string m_local_proxy_basicauth_w; // basic 認証用の「ユーザID:パスワード」の組
 
         // 書き込み時のデフォルトの名前とメアド
         std::string m_write_name;      
@@ -228,12 +231,18 @@ namespace DBTREE
         void update_name( const std::string& name );
         const std::string& get_subjecttxt() const { return m_subjecttxt; }
 
-        // ダウンロード、書き込み時のエージェント名やプロキシ
+        // ダウンロード、書き込み時のエージェント名
         virtual const std::string& get_agent();
+
+        // ダウンロード時のプロキシ
         virtual const std::string get_proxy_host();
         virtual const int get_proxy_port();
+        virtual const std::string get_proxy_basicauth();
+
+        // 書き込み時のプロキシ
         virtual const std::string get_proxy_host_w();
         virtual const int get_proxy_port_w();
+        virtual const std::string get_proxy_basicauth_w();
 
         // ローカルルール
         virtual const std::string localrule();
@@ -375,15 +384,19 @@ namespace DBTREE
         const int get_mode_local_proxy() const { return m_mode_local_proxy; }
         const std::string& get_local_proxy() const { return m_local_proxy; }
         const int get_local_proxy_port() const { return m_local_proxy_port; }
+        const std::string& get_local_proxy_basicauth() const { return m_local_proxy_basicauth; }
+
         void set_mode_local_proxy( int mode ){ m_mode_local_proxy = mode; }
-        void set_local_proxy( const std::string& proxy ){ m_local_proxy = proxy; }
+        void set_local_proxy( const std::string& proxy );
         void set_local_proxy_port( int port ){ m_local_proxy_port = port; }
 
         const int get_mode_local_proxy_w() const { return m_mode_local_proxy_w; }
         const std::string& get_local_proxy_w() const { return m_local_proxy_w; }
         const int get_local_proxy_port_w() const { return m_local_proxy_port_w; }
+        const std::string& get_local_proxy_basicauth_w() const { return m_local_proxy_basicauth_w; }
+
         void set_mode_local_proxy_w( int mode ){ m_mode_local_proxy_w = mode; }
-        void set_local_proxy_w( const std::string& proxy ){ m_local_proxy_w = proxy; }
+        void set_local_proxy_w( const std::string& proxy );
         void set_local_proxy_port_w( int port ){ m_local_proxy_port_w = port; }
 
         // 書き込み時のデフォルトの名前とメアド

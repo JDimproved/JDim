@@ -174,6 +174,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_localrule = CORE::ViewFactory( CORE::VIEW_ARTICLEINFO, get_url() );
 
     // プロキシ
+    std::string host;
     m_vbox_proxy.set_border_width( 16 );
     m_vbox_proxy.set_spacing( 8 );
 
@@ -184,7 +185,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         case DBTREE::PROXY_DISABLE: m_proxy_frame.rd_disable.set_active(); break;
         case DBTREE::PROXY_LOCAL: m_proxy_frame.rd_local.set_active(); break;
     }
-    m_proxy_frame.entry_host.set_text( DBTREE::board_get_local_proxy( get_url() ) );
+    if( DBTREE::board_get_local_proxy_basicauth( get_url() ).empty() ) host = DBTREE::board_get_local_proxy( get_url() );
+    else host = DBTREE::board_get_local_proxy_basicauth( get_url() ) + "@" + DBTREE::board_get_local_proxy( get_url() );
+    m_proxy_frame.entry_host.set_text( host );
     m_proxy_frame.entry_port.set_text( MISC::itostr( DBTREE::board_get_local_proxy_port( get_url() ) ) );
 
     switch( DBTREE::board_get_mode_local_proxy_w( get_url() ) ){
@@ -192,7 +195,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         case DBTREE::PROXY_DISABLE: m_proxy_frame_w.rd_disable.set_active(); break;
         case DBTREE::PROXY_LOCAL: m_proxy_frame_w.rd_local.set_active(); break;
     }
-    m_proxy_frame_w.entry_host.set_text( DBTREE::board_get_local_proxy_w( get_url() ) );
+    if( DBTREE::board_get_local_proxy_basicauth_w( get_url() ).empty() ) host = DBTREE::board_get_local_proxy_w( get_url() );
+    else host = DBTREE::board_get_local_proxy_basicauth_w( get_url() ) + "@" + DBTREE::board_get_local_proxy_w( get_url() );
+    m_proxy_frame_w.entry_host.set_text( host );
     m_proxy_frame_w.entry_port.set_text( MISC::itostr( DBTREE::board_get_local_proxy_port_w( get_url() ) ) );
 
     m_vbox_proxy.pack_start( m_label_proxy, Gtk::PACK_SHRINK );

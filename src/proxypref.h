@@ -45,6 +45,8 @@ namespace CORE
 
     class ProxyPref : public SKELETON::PrefDiag
     {
+        Gtk::Label m_label;
+
         // 2ch読み込み用
         ProxyFrame m_frame_2ch;
 
@@ -80,29 +82,39 @@ namespace CORE
 
         ProxyPref( Gtk::Window* parent, const std::string& url )
         : SKELETON::PrefDiag( parent, url ),
+        m_label( "認証を行う場合はホスト名を「ユーザID:パスワード@ホスト名」としてください。" ),
         m_frame_2ch( "2ch読み込み用", "使用する(_U)", "ホスト名(_H)： ", "ポート番号(_P)： " ), 
         m_frame_2ch_w( "2ch書き込み用", "使用する(_S)", "ホスト名(_N)： ", "ポート番号(_R)： " ),
         m_frame_data( "その他のサーバ用(外部板、画像など)", "使用する(_E)", "ホスト名(_A)： ", "ポート番号(_T)： " )
         {
+            std::string host;
+
             // 2ch用
             if( CONFIG::get_use_proxy_for2ch() ) m_frame_2ch.ckbt.set_active( true );
             else m_frame_2ch.ckbt.set_active( false );
-            m_frame_2ch.entry_host.set_text( CONFIG::get_proxy_for2ch() );
+            if( CONFIG::get_proxy_basicauth_for2ch().empty() ) host = CONFIG::get_proxy_for2ch();
+            else host = CONFIG::get_proxy_basicauth_for2ch() + "@" + CONFIG::get_proxy_for2ch();
+            m_frame_2ch.entry_host.set_text( host );
             m_frame_2ch.entry_port.set_text( MISC::itostr( CONFIG::get_proxy_port_for2ch() ) );
 
             // 2ch書き込み用
             if( CONFIG::get_use_proxy_for2ch_w() ) m_frame_2ch_w.ckbt.set_active( true );
             else m_frame_2ch_w.ckbt.set_active( false );
-            m_frame_2ch_w.entry_host.set_text( CONFIG::get_proxy_for2ch_w() );
+            if( CONFIG::get_proxy_basicauth_for2ch_w().empty() ) host = CONFIG::get_proxy_for2ch_w();
+            else host = CONFIG::get_proxy_basicauth_for2ch_w() + "@" + CONFIG::get_proxy_for2ch_w();
+            m_frame_2ch_w.entry_host.set_text( host );
             m_frame_2ch_w.entry_port.set_text( MISC::itostr( CONFIG::get_proxy_port_for2ch_w() ) );
 
             // 一般用
             if( CONFIG::get_use_proxy_for_data() ) m_frame_data.ckbt.set_active( true );
             else m_frame_data.ckbt.set_active( false );
-            m_frame_data.entry_host.set_text( CONFIG::get_proxy_for_data() );
+            if( CONFIG::get_proxy_basicauth_for_data().empty() ) host = CONFIG::get_proxy_for_data();
+            else host = CONFIG::get_proxy_basicauth_for_data() + "@" + CONFIG::get_proxy_for_data();
+            m_frame_data.entry_host.set_text( host );
             m_frame_data.entry_port.set_text( MISC::itostr( CONFIG::get_proxy_port_for_data() ) );
 
             get_vbox()->set_spacing( 4 );
+            get_vbox()->pack_start( m_label );
             get_vbox()->pack_start( m_frame_2ch );
             get_vbox()->pack_start( m_frame_2ch_w );
             get_vbox()->pack_start( m_frame_data );

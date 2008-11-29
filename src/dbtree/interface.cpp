@@ -436,6 +436,11 @@ const int DBTREE::board_get_local_proxy_port( const std::string& url )
     return DBTREE::get_board( url )->get_local_proxy_port();
 }
 
+const std::string& DBTREE::board_get_local_proxy_basicauth( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_local_proxy_basicauth();
+}
+
 void DBTREE::board_set_mode_local_proxy( const std::string& url, int mode )
 {
     DBTREE::get_board( url )->set_mode_local_proxy( mode );
@@ -459,6 +464,11 @@ const int DBTREE::board_get_mode_local_proxy_w( const std::string& url )
 const std::string& DBTREE::board_get_local_proxy_w( const std::string& url )
 {
     return DBTREE::get_board( url )->get_local_proxy_w();
+}
+
+const std::string& DBTREE::board_get_local_proxy_basicauth_w( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_local_proxy_basicauth_w();
 }
 
 const int DBTREE::board_get_local_proxy_port_w( const std::string& url )
@@ -865,6 +875,11 @@ const int DBTREE::get_proxy_port( const std::string& url )
     return DBTREE::get_board( url )->get_proxy_port();
 }
 
+const std::string DBTREE::get_proxy_basicauth( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_proxy_basicauth();
+}
+
 const std::string DBTREE::get_proxy_host_w( const std::string& url )
 {
     return DBTREE::get_board( url )->get_proxy_host_w();
@@ -873,6 +888,11 @@ const std::string DBTREE::get_proxy_host_w( const std::string& url )
 const int DBTREE::get_proxy_port_w( const std::string& url )
 {
     return DBTREE::get_board( url )->get_proxy_port_w();
+}
+
+const std::string DBTREE::get_proxy_basicauth_w( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_proxy_basicauth_w();
 }
 
 

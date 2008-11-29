@@ -101,23 +101,25 @@ namespace CONFIG
     // 2ch にログインするときのX-2ch-UA
     const std::string& get_x_2ch_ua();
 
-    // 読み込み用プロクシとポート番号
+    // 2ch 読み込み用プロクシとポート番号
     const bool get_use_proxy_for2ch();
     const std::string& get_proxy_for2ch();
     const int get_proxy_port_for2ch();
+    const std::string& get_proxy_basicauth_for2ch();
 
-    void set_use_proxy_for2ch( bool set );
+    void set_use_proxy_for2ch( const bool set );
     void set_proxy_for2ch( const std::string& proxy );
-    void set_proxy_port_for2ch( int port );
+    void set_proxy_port_for2ch( const int port );
 
-    // 書き込み用プロクシとポート番号
+    // 2ch 書き込み用プロクシとポート番号
     const bool get_use_proxy_for2ch_w();
     const std::string& get_proxy_for2ch_w();
     const int get_proxy_port_for2ch_w();
+    const std::string& get_proxy_basicauth_for2ch_w();
 
-    void set_use_proxy_for2ch_w( bool set );
+    void set_use_proxy_for2ch_w( const bool set );
     void set_proxy_for2ch_w( const std::string& proxy );
-    void set_proxy_port_for2ch_w( int port );
+    void set_proxy_port_for2ch_w( const int port );
 
     // 2ch外にアクセスするときのエージェント名
     const std::string& get_agent_for_data();
@@ -126,10 +128,11 @@ namespace CONFIG
     const bool get_use_proxy_for_data();
     const std::string& get_proxy_for_data();
     const int get_proxy_port_for_data();
+    const std::string& get_proxy_basicauth_for_data();
 
-    void set_use_proxy_for_data( bool set );
+    void set_use_proxy_for_data( const bool set );
     void set_proxy_for_data( const std::string& proxy );
-    void set_proxy_port_for_data( int port );
+    void set_proxy_port_for_data( const int port );
 
     // ローダのバッファサイズ
     const int get_loader_bufsize();
