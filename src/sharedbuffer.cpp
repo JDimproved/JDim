@@ -23,7 +23,7 @@ void CORE::SBUF_append( const DATA_INFO& info )
 }
 
 
-const std::list< CORE::DATA_INFO >& CORE::SBUF_infolist()
+std::list< CORE::DATA_INFO >& CORE::SBUF_infolist()
 {
     return shared_infolist;
 }

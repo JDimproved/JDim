@@ -30,7 +30,7 @@ namespace CORE
     int SBUF_size();
     void SBUF_clear_info();
     void SBUF_append( const DATA_INFO& info );
-    const std::list< DATA_INFO >& SBUF_infolist();
+    std::list< DATA_INFO >& SBUF_infolist();
 }
 
 #endif

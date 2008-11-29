@@ -177,7 +177,7 @@ BoardViewBase::BoardViewBase( const std::string& url )
     action_group()->add( Gtk::Action::create( "UnsetBookMark", "しおりを解除(_U)" ),    // 未使用
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_UNSET ) );
     action_group()->add( Gtk::Action::create( "OpenTab", "OpenArticleTab" ), sigc::mem_fun( *this, &BoardViewBase::slot_open_tab ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加(_F)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_thread ) );
+    action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに登録(_F)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_thread ) );
     action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに登録(_A)" ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_board ) );
     action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動(_T)" ), sigc::mem_fun( *this, &BoardViewBase::goto_top ) );
     action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動(_M)" ), sigc::mem_fun( *this, &BoardViewBase::goto_bottom ) );
@@ -1060,6 +1060,20 @@ const bool BoardViewBase::operate_view( const int control )
             slot_select_all();
             break;
     
+            // お気に入りに追加
+        case CONTROL::AppendFavorite:
+        {
+            SKELETON::MsgDiag mdiag( NULL, "板と選択中のスレのどちらを登録しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+
+            mdiag.add_button( "板を登録", Gtk::RESPONSE_NO );
+            mdiag.add_button( "スレを登録", Gtk::RESPONSE_YES );
+            mdiag.set_default_response( Gtk::RESPONSE_YES );
+            int ret = mdiag.run();
+            if( ret == Gtk::RESPONSE_YES ) slot_favorite_thread();
+            else slot_favorite_board();
+        }
+        break;
+
             // スレを開く
         case CONTROL::OpenArticleTab:
             open_tab = true;

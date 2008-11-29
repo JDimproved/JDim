@@ -82,7 +82,7 @@ namespace CONTROL
         { "StopLoading", ITEM_NAME_STOPLOADING },
         { "Copy", "コピー" },
         { "SelectAll", "全て選択" },
-        { "AppendFavorite", ITEM_NAME_FAVORITE },
+        { "AppendFavorite", ITEM_NAME_FAVORITE "..." },
         { "Property", "プロパティ..." },
         { "Lock", ITEM_NAME_LOCK },
 

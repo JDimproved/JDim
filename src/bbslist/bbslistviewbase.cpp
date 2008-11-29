@@ -2030,27 +2030,30 @@ void BBSListViewBase::show_status()
 // after = false ならpathの前に追加
 // scroll = true なら追加した行にスクロールする
 //
-void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after, bool scroll )
+#include <iostream>
+void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, const bool _after, const bool scroll )
 {
     Gtk::TreeModel::Path path_top = Gtk::TreeModel::Path();
 
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::append_from_buffer\n";
-#endif
+//#ifdef _DEBUG
+    std::cout << "BBSListViewBase::append_from_buffer path = " << path_top.to_string()
+              << " after = " << _after << " scroll = " << scroll << std::endl;
+//#endif
 
     m_treeview.get_selection()->unselect_all();
 
+    bool after = _after;
     bool subdir = true;
     std::list< CORE::DATA_INFO > infolist = CORE::SBUF_infolist();
     std::list< CORE::DATA_INFO >::iterator it = infolist.begin();
     for( ; it != infolist.end() ; ++it ){
 
         CORE::DATA_INFO& info = ( *it );
-#ifdef _DEBUG    
+//#ifdef _DEBUG    
         std::cout << "append name = " << info.name << std::endl;
         std::cout << "url " << info.url << std::endl;
         std::cout << "type " << info.type << std::endl;
-#endif
+//#endif
 
         if( info.type != TYPE_DIR_END ){
 
@@ -2062,9 +2065,9 @@ void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, bool after,
                 if( DBTREE::article_status( info.url ) & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
                 if( DBTREE::article_status( info.url ) & STATUS_OLD ) type = TYPE_THREAD_OLD;
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
                 std::cout << "-> type =  " << type << std::endl;
-#endif
+//#endif
 
                 // ブックマークセット
                 DBTREE::set_bookmarked_thread( info.url, true );
@@ -2382,7 +2385,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                         row[ m_columns.m_type ] = type;
                         row[ m_columns.m_image ] = XML::get_icon( type );
 
-                        // フォーカスアウト時にxmlを保存
+                        // 行を開いた時にxmlを保存
                         m_treeview.set_updated( true ); 
                     }
 
@@ -2537,7 +2540,10 @@ void BBSListViewBase::append_item()
     
     SelectListDialog diag( get_url(), get_treestore() );
     if( diag.run() != Gtk::RESPONSE_OK ) return;
-    append_from_buffer( diag.get_path(), true, true );
+
+    Gtk::TreePath path = diag.get_path();
+    m_treeview.expand_parents( path );
+    append_from_buffer( path, true, true );
 }
 
 

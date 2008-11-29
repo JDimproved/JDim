@@ -12,12 +12,12 @@
 using namespace BBSLIST;
 
 
-AddEtcDialog::AddEtcDialog( const bool move, const std::string& _url, const std::string& _name, const std::string& _id, const std::string& _passwd )
-    : Gtk::Dialog(),
-      m_entry_name( true, "板名(_N)：", _name ),
-      m_entry_url( true, "アドレス(_U)：", _url ),
-      m_entry_id( true, "ID(_I)：", _id ),
-      m_entry_pw( true, "パスワード(_P)：", _passwd )
+AddEtcDialog::AddEtcDialog( const bool move, const std::string& url, const std::string& name, const std::string& id, const std::string& passwd )
+    : SKELETON::PrefDiag( NULL, url, true ),
+      m_entry_name( true, "板名(_N)：", name ),
+      m_entry_url( true, "アドレス(_U)：", url ),
+      m_entry_id( true, "ID(_I)：", id ),
+      m_entry_pw( true, "パスワード(_P)：", passwd )
 {
     resize( 600, 1 );
 
@@ -33,43 +33,12 @@ AddEtcDialog::AddEtcDialog( const bool move, const std::string& _url, const std:
     get_vbox()->pack_start( m_entry_url );
     get_vbox()->pack_start( m_frame );
 
-    add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-
     if( move ){
-        add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
         set_title( "外部板編集" );
     }
     else{
-        add_button( Gtk::Stock::ADD, Gtk::RESPONSE_OK );
         set_title( "外部板追加" );
     }
 
     show_all_children();
-}
-
-
-AddEtcDialog::~AddEtcDialog()
-{}
-
-
-
-int AddEtcDialog::run()
-{
-#ifdef _DEBUG
-    std::cout << "AddEtcDialog::run start\n";
-#endif
-
-    SESSION::set_dialog_shown( true );
-    CORE::core_set_command( "dialog_shown" );
-
-    int ret = Gtk::Dialog::run();
-
-    SESSION::set_dialog_shown( false );
-    CORE::core_set_command( "dialog_hidden" );
-
-#ifdef _DEBUG
-    std::cout << "AddEtcDialog::run fin\n";
-#endif
-
-    return ret;
 }

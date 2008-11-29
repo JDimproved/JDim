@@ -76,7 +76,7 @@ namespace BBSLIST
 
         virtual void activate_act_before_popupmenu( const std::string& url );
 
-        void append_from_buffer( Gtk::TreeModel::Path path, bool after, bool scroll );
+        void append_from_buffer( Gtk::TreeModel::Path path, const bool after, const bool scroll );
 
         // tree <-> XML( DOM )変換
         void tree2xml( const std::string& root_name );

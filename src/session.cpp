@@ -155,6 +155,7 @@ std::vector< std::string > live_urls;
 
 int img_fit_mode;
 
+std::string dir_select_favorite;
 
 /////////////////////////////////////
 
@@ -559,6 +560,8 @@ void SESSION::init_session()
 
     img_fit_mode = cf.get_option( "img_fit_mode", IMG_FIT_NORMAL );
 
+    dir_select_favorite = cf.get_option( "dir_select_favorite", "" );
+
     // WM 判定
     // TODO: 環境変数で判定できない場合の判定方法を考える
     win_manager = WM_UNKNON;
@@ -759,7 +762,9 @@ void SESSION::save_session()
         << "img_dir_img_save = " << img_dir_img_save << std::endl
         << "dir_draft = " << dir_draft << std::endl
 
-        << "img_fit_mode = " << img_fit_mode << std::endl;
+        << "img_fit_mode = " << img_fit_mode << std::endl
+
+        << "dir_select_favorite = " << dir_select_favorite << std::endl;
 
     CACHE::save_rawdata( CACHE::path_session(), oss.str() );
 
@@ -1186,4 +1191,16 @@ void SESSION::toggle_img_fit_mode()
 {
     if( img_fit_mode == IMG_FIT_NORMAL ) img_fit_mode = IMG_FIT_WIDTH;
     else img_fit_mode = IMG_FIT_NORMAL;
+}
+
+
+// お気に入り挿入ダイアログで最後に保存したディレクトリ名
+const std::string& SESSION::get_dir_select_favorite()
+{
+    return dir_select_favorite;
+}
+
+void SESSION::set_dir_select_favorite( const std::string& dir )
+{
+    dir_select_favorite = dir;
 }

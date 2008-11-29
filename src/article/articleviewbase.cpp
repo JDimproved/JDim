@@ -933,6 +933,11 @@ const bool ArticleViewBase::operate_view( const int control )
         case CONTROL::SelectAll:
             slot_select_all();
             break;
+
+            // お気に入りに追加
+        case CONTROL::AppendFavorite:
+            set_favorite();
+            break;
         
             // 検索
         case CONTROL::Search:

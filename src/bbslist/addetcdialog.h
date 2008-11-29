@@ -6,11 +6,12 @@
 #ifndef _ADDETCDIALOG_H
 #define _ADDETCDIALOG_H
 
+#include "skeleton/prefdiag.h"
 #include "skeleton/label_entry.h"
 
 namespace BBSLIST
 {
-    class AddEtcDialog : public Gtk::Dialog
+    class AddEtcDialog : public SKELETON::PrefDiag
     {
         SKELETON::LabelEntry m_entry_name;
         SKELETON::LabelEntry m_entry_url;
@@ -22,15 +23,12 @@ namespace BBSLIST
 
       public:
 
-        AddEtcDialog( const bool move, const std::string& _url, const std::string& _name, const std::string& _id, const std::string& _passwd );
-        virtual ~AddEtcDialog();
+        AddEtcDialog( const bool move, const std::string& url, const std::string& _name, const std::string& _id, const std::string& _passwd );
 
         const std::string get_name(){ return m_entry_name.get_text(); }
         const std::string get_url(){ return m_entry_url.get_text(); }
         const std::string get_id(){ return m_entry_id.get_text(); }
         const std::string get_passwd(){ return m_entry_pw.get_text(); }
-
-        virtual int run();
     };   
 
 }

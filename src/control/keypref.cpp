@@ -99,6 +99,7 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::StopLoading );
     append_row( CONTROL::Copy );
     append_row( CONTROL::SelectAll );
+    append_row( CONTROL::AppendFavorite );
 
     append_row( CONTROL::Search );
     append_row( CONTROL::SearchInvert );

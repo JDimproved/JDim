@@ -13,16 +13,20 @@ namespace SKELETON
     {
         std::string m_url;
 
+        Gtk::Button* m_bt_ok;
         Gtk::Button m_bt_apply;
 
       public:
 
         // parent == NULL のときはメインウィンドウをparentにする
-        PrefDiag( Gtk::Window* parent, const std::string& url, bool add_cancel = true, bool add_apply = false );
+        PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_cancel = true, const bool add_apply = false );
 
         virtual ~PrefDiag(){}
 
         const std::string& get_url() const { return m_url; }
+
+        // okボタンをフォーカス
+        void grab_ok();
 
         virtual int run();
 

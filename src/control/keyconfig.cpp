@@ -76,6 +76,7 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "StopLoading",  KEYCONF_StopLoading ); // = CONTROL::Cancel
     SETKEYMOTION( "Copy", KEYCONF_Copy );
     SETKEYMOTION( "SelectAll", KEYCONF_SelectAll );
+    SETKEYMOTION( "AppendFavorite", KEYCONF_AppendFavorite );
 
     SETKEYMOTION( "Search", KEYCONF_Search );
     SETKEYMOTION( "SearchInvert", KEYCONF_SearchInvert );

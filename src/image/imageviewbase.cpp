@@ -103,7 +103,7 @@ void ImageViewBase::setup_common()
                          sigc::mem_fun( *this, &ImageViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::Action::create( "LoadStop", "StopLoading" ), sigc::mem_fun( *this, &ImageViewBase::stop ) );
     action_group()->add( Gtk::Action::create( "Reload", "強制再読み込み(_E)"), sigc::mem_fun( *this, &ImageViewBase::slot_reload_force ) );
-    action_group()->add( Gtk::Action::create( "AppendFavorite", "お気に入りに追加(_F)..."), sigc::mem_fun( *this, &ImageViewBase::slot_favorite ) );
+    action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &ImageViewBase::slot_favorite ) );
 
     action_group()->add( Gtk::Action::create( "ZoomFitImage", "ZoomFitImage" ),
                          sigc::mem_fun( *this, &ImageViewBase::slot_fit_win ) );
@@ -578,6 +578,11 @@ const bool ImageViewBase::operate_view( const int control )
             // メニューバー表示/非表示
         case CONTROL::ShowMenuBar:
             CORE::core_set_command( "toggle_menubar" );
+            break;
+
+            // お気に入りに追加
+        case CONTROL::AppendFavorite:
+            slot_favorite();
             break;
 
         default:

@@ -11,8 +11,8 @@
 
 using namespace SKELETON;
 
-PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, bool add_cancel, bool add_apply )
-    : Gtk::Dialog(), m_url( url ), m_bt_apply( Gtk::Stock::APPLY )
+PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_cancel, const bool add_apply )
+    : Gtk::Dialog(), m_url( url ), m_bt_ok( NULL ), m_bt_apply( Gtk::Stock::APPLY )
 {
     if( add_apply ){
         m_bt_apply.signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_apply_clicked ) );
@@ -25,11 +25,24 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, bool add_cancel
         ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_cancel_clicked ) );
     }
 
-    add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK )
-    ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_ok_clicked ) );
+    m_bt_ok = add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+    m_bt_ok->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_ok_clicked ) );
 
     if( parent ) set_transient_for( *parent );
     else set_transient_for( *CORE::get_mainwindow() );
+}
+
+
+//
+// okボタンをフォーカス
+//
+void PrefDiag::grab_ok()
+{
+    if( ! m_bt_ok ) return;
+
+    m_bt_ok->set_flags( Gtk::CAN_DEFAULT );
+    m_bt_ok->grab_default();
+    m_bt_ok->grab_focus();
 }
 
 

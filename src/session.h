@@ -368,6 +368,10 @@ namespace SESSION
     // 画像のfitモード
     const int get_img_fit_mode();
     void toggle_img_fit_mode();
+
+    // お気に入り挿入ダイアログで最後に保存したディレクトリ名
+    const std::string& get_dir_select_favorite();
+    void set_dir_select_favorite( const std::string& dir );
 }
 
 

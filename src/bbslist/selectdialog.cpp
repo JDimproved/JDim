@@ -1,32 +1,92 @@
 // ライセンス: GPL2
 
+//#define _DEBUG
+#include "jddebug.h"
+
 #include "selectdialog.h"
 #include "selectlistview.h"
+#include "columns.h"
 
 #include "viewfactory.h"
 
 #include "command.h"
 #include "session.h"
+#include "type.h"
+#include "sharedbuffer.h"
 
 using namespace BBSLIST;
 
 
-SelectListDialog::SelectListDialog( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& store )
-    : m_selectview( NULL )
+enum
 {
-    m_selectview = dynamic_cast< SelectListView* > ( CORE::ViewFactory( CORE::VIEW_SELECTLIST, url ) );
-    if( m_selectview ){
-        m_selectview->copy_treestore( store );
-        get_vbox()->pack_start( *m_selectview );
-        m_selectview->focus_view();
-        m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &SelectListDialog::slot_close_dialog ) );
+    SELECTDIAG_WIDTH = 600,
+    SELECTDIAG_TREEHEIGHT = 300
+};
+
+
+
+SelectListDialog::SelectListDialog( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore )
+    : SKELETON::PrefDiag( NULL, url, true ),
+      m_treestore( treestore ),
+      m_label_name( CORE::SBUF_size() == 1, "名前 ：" ),
+      m_label_dirs( "ディレクトリ ：" ),
+      m_bt_show_tree( "詳細" ),
+      m_selectview( NULL )
+{
+    const int mrg = 8;
+
+    if( CORE::SBUF_size() ) m_label_name.set_text(  ( *CORE::SBUF_infolist().begin() ).name );
+
+    m_hbox_dirs.set_spacing( mrg );
+    m_hbox_dirs.pack_start( m_label_dirs, Gtk::PACK_SHRINK );
+    m_hbox_dirs.pack_start( m_combo_dirs, Gtk::PACK_EXPAND_WIDGET );
+    m_hbox_dirs.pack_start( m_bt_show_tree, Gtk::PACK_SHRINK );
+
+    m_combo_dirs.append_text( "お気に入りの最後に追加" );
+    m_vec_path.push_back( Gtk::TreePath() );
+
+    // コンボボックスにディレクトリをセット
+    int active_row = 0;
+    BBSLIST::TreeColumns columns;
+    Gtk::TreeModel::Children child = m_treestore->children();
+    Gtk::TreeModel::Children::iterator it = child.begin();
+    for( ; it != child.end() ; ++it ){
+
+        Gtk::TreeModel::Row row = ( *it );
+        const int type = row[ columns.m_type ];
+        if( type == TYPE_DIR ){
+
+            const Glib::ustring name = row[ columns.m_name ];
+            m_combo_dirs.append_text( name );
+            if( ! active_row && name == SESSION::get_dir_select_favorite() ) active_row = m_vec_path.size();
+
+            Gtk::TreePath path;
+            if( row.children().size() ){
+
+                Gtk::TreeModel::Children::iterator it_sub = row.children().begin();
+                it_sub = row.children().end();
+                --it_sub;
+                path = m_treestore->get_path( *it_sub );
+            }
+            else path = m_treestore->get_path( row );
+
+            m_vec_path.push_back( path );
+
+#ifdef _DEBUG
+            std::cout << row[ columns.m_name ] << " path = " << path.to_string() << std::endl;
+#endif 
+        }
     }
+    m_combo_dirs.set_active( active_row );
 
-    add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-    add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+    get_vbox()->pack_start( m_label_name, Gtk::PACK_SHRINK );
+    get_vbox()->pack_start( m_hbox_dirs, Gtk::PACK_SHRINK );
+    m_bt_show_tree.signal_clicked().connect( sigc::mem_fun( this, &SelectListDialog::slot_show_tree ) );
 
-    set_title( "挿入先選択" );
-    resize( 600, 400 );
+    set_title( "お気に入り追加先選択" );
+    resize( SELECTDIAG_WIDTH, 1 );
+
+    grab_ok();
     show_all_children();
 }
 
@@ -37,37 +97,60 @@ SelectListDialog::~SelectListDialog()
 }
 
 
-Gtk::TreePath SelectListDialog::get_path()
+//
+// OKを押した
+//
+void SelectListDialog::slot_ok_clicked()
 {
-    if( m_selectview ) return m_selectview->get_current_path();
-
-    return Gtk::TreePath();
+    if( ! m_selectview ) SESSION::set_dir_select_favorite( m_combo_dirs.get_active_text() );
+    if( CORE::SBUF_size() == 1 ) ( *CORE::SBUF_infolist().begin() ).name = m_label_name.get_text();
 }
 
 
-int SelectListDialog::run()
+Gtk::TreePath SelectListDialog::get_path()
 {
-#ifdef _DEBUG
-    std::cout << "SelectListDialog::run start\n";
-#endif
-
-    SESSION::set_dialog_shown( true );
-    CORE::core_set_command( "dialog_shown" );
-
-    int ret = Gtk::Dialog::run();
-
-    SESSION::set_dialog_shown( false );
-    CORE::core_set_command( "dialog_hidden" );
+    Gtk::TreePath path;
+    if( m_selectview ) path = m_selectview->get_current_path();
+    else path = m_vec_path[ m_combo_dirs.get_active_row_number() ];
 
 #ifdef _DEBUG
-    std::cout << "SelectListDialog::run fin\n";
+    std::cout << "SelectListDialog::get_path path = " << path.to_string() << std::endl;
 #endif
 
-    return ret;
+    return path;
 }
 
 
 void SelectListDialog::slot_close_dialog()
 {
     hide();
+}
+
+
+void SelectListDialog::slot_show_tree()
+{
+#ifdef _DEBUG
+    std::cout << "SelectListDialog::slot_show_tree\n";
+#endif
+
+    if( m_bt_show_tree.get_active() ){
+
+        if( ! m_selectview ) m_selectview = dynamic_cast< SelectListView* > ( Gtk::manage( CORE::ViewFactory( CORE::VIEW_SELECTLIST, get_url() ) ) );
+        if( m_selectview ){
+            m_selectview->copy_treestore( m_treestore );
+            m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &SelectListDialog::slot_close_dialog ) );
+
+            get_vbox()->pack_start(* m_selectview );
+            m_selectview->set_size_request( -1, SELECTDIAG_TREEHEIGHT );
+            m_selectview->focus_view();
+            show_all_children();
+        }
+
+    }
+    else if( m_selectview ){
+        get_vbox()->remove( *m_selectview );
+        resize( get_width(), 1 );
+        delete m_selectview;
+        m_selectview = NULL;
+    }
 }

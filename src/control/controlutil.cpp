@@ -307,6 +307,10 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
             case CONTROL::Property:     //プロパティ...
                 label.replace( pos, strlen( "..." ), "(_P)..." );
                 break;
+
+            case CONTROL::AppendFavorite:   //お気に入りに追加..
+                label.replace( pos, strlen( "..." ), "(_F)..." );
+                break;
         }
     }
     else
@@ -355,10 +359,6 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
 
             case CONTROL::Copy:         //コピー
                 label += "(_C)";
-                break;
-
-            case CONTROL::AppendFavorite:   //お気に入りに追加
-                label += "(_A)";
                 break;
 
             case CONTROL::Search:       //検索
