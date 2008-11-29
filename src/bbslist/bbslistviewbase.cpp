@@ -2030,15 +2030,14 @@ void BBSListViewBase::show_status()
 // after = false ならpathの前に追加
 // scroll = true なら追加した行にスクロールする
 //
-#include <iostream>
 void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, const bool _after, const bool scroll )
 {
     Gtk::TreeModel::Path path_top = Gtk::TreeModel::Path();
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "BBSListViewBase::append_from_buffer path = " << path_top.to_string()
               << " after = " << _after << " scroll = " << scroll << std::endl;
-//#endif
+#endif
 
     m_treeview.get_selection()->unselect_all();
 
@@ -2049,11 +2048,11 @@ void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, const bool 
     for( ; it != infolist.end() ; ++it ){
 
         CORE::DATA_INFO& info = ( *it );
-//#ifdef _DEBUG    
+#ifdef _DEBUG    
         std::cout << "append name = " << info.name << std::endl;
         std::cout << "url " << info.url << std::endl;
         std::cout << "type " << info.type << std::endl;
-//#endif
+#endif
 
         if( info.type != TYPE_DIR_END ){
 
@@ -2065,9 +2064,9 @@ void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, const bool 
                 if( DBTREE::article_status( info.url ) & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
                 if( DBTREE::article_status( info.url ) & STATUS_OLD ) type = TYPE_THREAD_OLD;
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
                 std::cout << "-> type =  " << type << std::endl;
-//#endif
+#endif
 
                 // ブックマークセット
                 DBTREE::set_bookmarked_thread( info.url, true );

@@ -1413,8 +1413,8 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
         // 上にスクロールした
         if( dy > 0 ){
 
-            // キーを押しっぱなしの時は描画を省略する
-            if( m_key_press ) dy = MIN( dy, (int)SCROLLSPEED_SLOW );
+            // スクロールロックの時は描画を省略する
+            if( m_scrollinfo.mode == SCROLL_LOCKED ) dy = MIN( dy, (int)SCROLLSPEED_SLOW );
 
             if( dy < height_view ){
                 upper += ( height_view - dy );
@@ -1427,8 +1427,8 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
         // 下にスクロールした
         else if( dy < 0 ){
 
-            // キーを押しっぱなしの時は描画を省略する
-            if( m_key_press ) dy = MAX( dy, (int)-SCROLLSPEED_SLOW );
+            // スクロールロックの時は描画を省略する
+            if( m_scrollinfo.mode == SCROLL_LOCKED ) dy = MAX( dy, (int)-SCROLLSPEED_SLOW );
 
             if( -dy < height_view ){
                 lower = upper - dy;
@@ -4133,6 +4133,10 @@ const bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::slot_key_press_event\n";
 #endif
+
+    // ダイアログなどを開いてslot_key_release_event()が呼び出されないときが
+    // あるので m_key_press をリセットしておく
+    m_key_press = false;
 
     //オートスクロール中なら無視
     if( m_scrollinfo.mode == SCROLL_AUTO ) return true;
