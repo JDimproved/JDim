@@ -720,6 +720,8 @@ void ArticleViewBase::clock_in_smooth_scroll()
 //
 void ArticleViewBase::reload()
 {
+    if( m_article->empty() ) return;
+
     if( CONFIG::get_reload_allthreads() ) ARTICLE::get_admin()->set_command( "reload_all_tabs" );
     else exec_reload();
 }
@@ -731,6 +733,8 @@ void ArticleViewBase::reload()
 // virtual
 void ArticleViewBase::exec_reload()
 {
+    if( m_article->empty() ) return;
+
     // オフライン
     if( ! SESSION::is_online() ){
         SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
@@ -969,6 +973,8 @@ const bool ArticleViewBase::operate_view( const int control )
             // 削除
         case CONTROL::Delete:
         {
+            if( m_article->empty() ) break;
+
             SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？\n\n「スレ再取得」を押すと\nあぼ〜んなどのスレ情報を削除せずにスレを再取得します。",
                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
@@ -1052,7 +1058,7 @@ const bool ArticleViewBase::operate_view( const int control )
 
             // 実況モード切り替え
         case CONTROL::LiveStartStop:
-            ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );
+            if( ! m_article->empty() ) ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );
             break;
 
             // 次スレ検索
@@ -1170,6 +1176,7 @@ void ArticleViewBase::clear_highlight()
 //
 void ArticleViewBase::write()
 {
+    if( m_article->empty() ) return;
     if( write_p2( 0 ) ) return;
 
     CORE::core_set_command( "open_message" ,m_url_article, std::string() );
@@ -2588,6 +2595,12 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
+    act = action_group()->get_action( "SearchNextArticle" );
+    if( act ){
+        if( nourl ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     act = action_group()->get_action( "QuoteRes" );
     if( act ){
         if( nourl ) act->set_sensitive( false );
@@ -2973,6 +2986,8 @@ void ArticleViewBase::slot_search_cachelocal()
 //
 void ArticleViewBase::slot_search_next()
 {
+    if( m_article->empty() ) return;
+
     CORE::core_set_command( "open_board_next", DBTREE::url_subject( m_url_article ) , m_url_article );
 }
 
@@ -3068,6 +3083,7 @@ void ArticleViewBase::slot_open_browser()
 //
 void ArticleViewBase::slot_write_res()
 {
+    if( m_article->empty() ) return;
     if( m_str_num.empty() ) return;
     if( write_p2( atoi( m_str_num.c_str() ) ) ) return;
 
@@ -3204,6 +3220,8 @@ void ArticleViewBase::slot_copy_res( bool ref )
 //
 void ArticleViewBase::set_favorite()
 {
+    if( m_article->empty() ) return;
+
     CORE::DATA_INFO info;
     info.type = TYPE_THREAD;
     info.url = m_url_article;;
