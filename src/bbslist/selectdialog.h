@@ -46,21 +46,6 @@ namespace BBSLIST
 
         void slot_show_tree();
     };
-
-
-    ////////////////////////////////////
-
-    // お気に入り編集ダイアログ
-
-    class EditListDialog : public SKELETON::PrefDiag
-    {
-        Gtk::Label m_label;
-
-      public:
-
-        EditListDialog( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore );
-    };
-
 };
 
 

@@ -6,6 +6,8 @@
 
 #include "bbslistviewbase.h"
 #include "bbslistadmin.h"
+#include "selectdialog.h"
+#include "editlistwin.h"
 #include "addetcdialog.h"
 
 #include "skeleton/msgdiag.h"
@@ -27,7 +29,6 @@
 #include "control/controlutil.h"
 #include "control/controlid.h"
 
-#include "selectdialog.h"
 #include "cache.h"
 #include "command.h"
 #include "global.h"
@@ -102,7 +103,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
       m_search_invert( 0 ),
       m_open_only_onedir( false ),
       m_cancel_expand( false ),
-      m_expanding( 0 )
+      m_expanding( 0 ),
+      m_editlistwin( NULL )
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
@@ -370,6 +372,9 @@ BBSListViewBase::~BBSListViewBase()
 #ifdef _DEBUG    
     std::cout << "BBSListViewBase::~BBSListViewBase : " << get_url() << std::endl;
 #endif
+
+    if( m_editlistwin ) delete m_editlistwin;
+    m_editlistwin = NULL;
 }
 
 
@@ -2536,12 +2541,33 @@ void BBSListViewBase::append_item()
 
 
 //
-// ツリーの編集ダイアログを開く
+// ツリーの編集ウィンドウを開く
 //
 void BBSListViewBase::edit_tree()
 {
-    EditListDialog diag( get_url(), get_treestore() );
-    diag.run();
+    if( m_editlistwin ) delete m_editlistwin;
+
+    get_treeview().set_editable_view( false );
+
+    m_editlistwin = new EditListWin( get_url(), get_treestore() );
+    m_editlistwin->signal_hide().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_hide_editlistwin ) );
+    m_editlistwin->show();
+}
+
+
+//
+// ツリーの編集ウィンドウが閉じた
+//
+void BBSListViewBase::slot_hide_editlistwin()
+{
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::slot_hide_editlistwin\n";
+#endif
+
+    get_treeview().set_editable_view( true );
+
+    if( m_editlistwin ) delete m_editlistwin;
+    m_editlistwin = NULL;
 }
 
 

@@ -27,10 +27,10 @@ namespace SKELETON
 
 namespace BBSLIST
 {
+    class EditListWin;
+
     class BBSListViewBase : public SKELETON::View
     {
-      private:
-
         Glib::RefPtr< Gtk::TreeStore > m_treestore;
         SKELETON::EditTreeView m_treeview;
 
@@ -57,6 +57,8 @@ namespace BBSLIST
         bool m_open_only_onedir; // あるフォルダを開いたときに他のフォルダを閉じる
         bool m_cancel_expand; // signal_row_expanded() をキャンセルする
         bool m_expanding; // 行を開いている最中にtrueにしてsignal_row_collapsed()をキャンセルする
+
+        EditListWin* m_editlistwin;
 
       protected:
 
@@ -115,7 +117,7 @@ namespace BBSLIST
         // あらかじめ共有バッファに追加するデータをセットしておくこと
         void append_item();
 
-        // ツリーの編集ダイアログを開く
+        // ツリーの編集ウィンドウを開く
         void edit_tree();
 
         // xml保存
@@ -226,6 +228,9 @@ namespace BBSLIST
         void show_status();
 
         void set_info_to_sharedbuffer( Gtk::TreePath& path );
+
+        // ツリーの編集ウィンドウが閉じた
+        void slot_hide_editlistwin();
     };
 };
 

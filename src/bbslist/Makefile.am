@@ -7,6 +7,7 @@ libbbslist_a_SOURCES = \
 	favoriteview.cpp \
 	selectlistview.cpp \
 	selectdialog.cpp \
+	editlistwin.cpp \
 	addetcdialog.cpp \
 	columns.cpp \
 	toolbar.cpp
@@ -18,7 +19,8 @@ noinst_HEADERS = \
 	favoriteview.h \
 	selectlistview.h \
 	selectdialog.h \
-	addetcdialog.cpp \
+	editlistwin.h \
+	addetcdialog.h \
 	columns.h \
 	toolbar.h
 
