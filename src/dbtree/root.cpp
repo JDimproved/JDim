@@ -23,6 +23,7 @@
 #include "command.h"
 #include "config/globalconf.h"
 #include "cache.h"
+#include "httpcode.h"
 #include "jdversion.h"
 
 #include <sstream>
@@ -286,6 +287,18 @@ void Root::receive_data( const char* data, size_t size )
 // virtual
 void Root::receive_finish()
 {
+    if( get_code() != HTTP_OK ){
+
+        std::string msg = get_str_code() + "\n\n板一覧の読み込みに失敗しました。\n\nプロキシ設定や板一覧を取得するサーバのアドレスを確認して、ファイルメニューから板一覧の再読み込みをして下さい。\n板一覧取得サーバのアドレスはabout:configで確認出来ます。";
+        SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_ERROR );
+        mdiag.run();
+        MISC::ERRMSG( "bbsmenu load failed : " + get_str_code() );
+
+        CORE::core_set_command( "update_bbslist" );
+
+        return;
+    }
+
     // 文字コードを変換してXML作成
     JDLIB::Iconv* libiconv = new JDLIB::Iconv( "MS932", "UTF-8" );
     int byte_out;
