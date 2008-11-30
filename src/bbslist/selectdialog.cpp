@@ -121,12 +121,6 @@ Gtk::TreePath SelectListDialog::get_path()
 }
 
 
-void SelectListDialog::slot_close_dialog()
-{
-    hide();
-}
-
-
 void SelectListDialog::slot_show_tree()
 {
 #ifdef _DEBUG
@@ -138,7 +132,7 @@ void SelectListDialog::slot_show_tree()
         if( ! m_selectview ) m_selectview = dynamic_cast< SelectListView* > ( Gtk::manage( CORE::ViewFactory( CORE::VIEW_SELECTLIST, get_url() ) ) );
         if( m_selectview ){
             m_selectview->copy_treestore( m_treestore );
-            m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &SelectListDialog::slot_close_dialog ) );
+            m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &SelectListDialog::hide ) );
 
             get_vbox()->pack_start(* m_selectview );
             m_selectview->set_size_request( -1, SELECTDIAG_TREEHEIGHT );
@@ -153,4 +147,38 @@ void SelectListDialog::slot_show_tree()
         delete m_selectview;
         m_selectview = NULL;
     }
+}
+
+
+//////////////////////////////////////////////////////////
+
+// お気に入り編集ダイアログ
+
+enum
+{
+    EDITDIAG_WIDTH = 800,
+    EDITDIAG_HEIGHT = 500
+};
+
+EditListDialog::EditListDialog( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore )
+    : SKELETON::PrefDiag( NULL, url, false ),
+      m_label( "マウスの中ボタンドラッグで行の複数選択が可能です。" )
+
+{
+    get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
+
+    SelectListView* selectview = dynamic_cast< SelectListView* > ( Gtk::manage( CORE::ViewFactory( CORE::VIEW_SELECTLIST, get_url() ) ) );
+    if( selectview ){
+
+        selectview->copy_treestore( treestore );
+        selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &EditListDialog::hide ) );
+
+        get_vbox()->pack_start( *selectview );
+        selectview->focus_view();
+    }
+
+    set_title( "お気に入りの編集" );
+    resize( EDITDIAG_WIDTH, EDITDIAG_HEIGHT );
+
+    show_all_children();
 }

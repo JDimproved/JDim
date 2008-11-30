@@ -111,9 +111,12 @@ namespace BBSLIST
         Glib::ustring path2rawurl( const Gtk::TreePath& path );
         Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
 
-        // お気に入りにアイテム追加
+        // ツリーにアイテム追加
         // あらかじめ共有バッファに追加するデータをセットしておくこと
         void append_item();
+
+        // ツリーの編集ダイアログを開く
+        void edit_tree();
 
         // xml保存
         virtual void save_xml( const bool backup ) = 0;

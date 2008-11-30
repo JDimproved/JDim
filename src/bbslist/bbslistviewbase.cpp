@@ -74,6 +74,23 @@ show_popupmenu( url, slot ); \
     "<menuitem action='PreferenceBoard'/>" \
     "</popup>" \
 
+#define POPUPMENU_SELECT \
+    "<menuitem action='CopyURL'/>" \
+    "<menuitem action='CopyTitleURL'/>" \
+    "<separator/>" \
+    "<menuitem action='Rename'/>" \
+    "<menuitem action='NewDir'/>" \
+    "<menuitem action='NewCom'/>" \
+    "<separator/>" \
+    "<menu action='Delete_Menu'>" \
+    "<menuitem action='Delete'/>" \
+    "</menu>" \
+    "<separator/>" \
+    "<menuitem action='SearchCacheBoard'/>" \
+    "<separator/>" \
+    "<menuitem action='PreferenceArticle'/>" \
+    "<menuitem action='PreferenceBoard'/>" \
+    "<menuitem action='PreferenceImage'/>"
 
 using namespace BBSLIST;
 
@@ -235,22 +252,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='OpenTab'/>"
     "<menuitem action='OpenBrowser'/>"
     "<separator/>"
-    "<menuitem action='CopyURL'/>"
-    "<menuitem action='CopyTitleURL'/>"
-    "<separator/>"
-    "<menuitem action='Rename'/>"
-    "<menuitem action='NewDir'/>"
-    "<menuitem action='NewCom'/>"
-    "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
-    "<separator/>"
-    "<menuitem action='SearchCacheBoard'/>"
-    "<separator/>"
-    "<menuitem action='PreferenceArticle'/>"
-    "<menuitem action='PreferenceBoard'/>"
-    "<menuitem action='PreferenceImage'/>"
+    POPUPMENU_SELECT
     "</popup>"
 
     // お気に入り + 複数選択
@@ -314,22 +316,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
     // 選択(selectlistview)
     "<popup name='popup_menu_select'>"
-    "<menuitem action='CopyURL'/>"
-    "<menuitem action='CopyTitleURL'/>"
-    "<separator/>"
-    "<menuitem action='Rename'/>"
-    "<menuitem action='NewDir'/>"
-    "<menuitem action='NewCom'/>"
-    "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
-    "<separator/>"
-    "<menuitem action='SearchCacheBoard'/>"
-    "<separator/>"
-    "<menuitem action='PreferenceArticle'/>"
-    "<menuitem action='PreferenceBoard'/>"
-    "<menuitem action='PreferenceImage'/>"
+    POPUPMENU_SELECT
     "</popup>"
 
     "</ui>";
@@ -413,6 +400,7 @@ void BBSListViewBase::set_editable( const bool editable )
 const bool BBSListViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "append_item" ) append_item();
+    else if( command == "edit_tree" ) edit_tree();
     else if( command == "save_xml" ) save_xml( false );
     else if( command == "toggle_icon" ) toggle_icon( arg1 );
     else if( command == "replace_thread" ) replace_thread( arg1, arg2 );
@@ -2544,6 +2532,16 @@ void BBSListViewBase::append_item()
     Gtk::TreePath path = diag.get_path();
     m_treeview.expand_parents( path );
     append_from_buffer( path, true, true );
+}
+
+
+//
+// ツリーの編集ダイアログを開く
+//
+void BBSListViewBase::edit_tree()
+{
+    EditListDialog diag( get_url(), get_treestore() );
+    diag.run();
 }
 
 

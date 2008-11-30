@@ -190,6 +190,7 @@ namespace CORE
         void slot_quit();
         void slot_reload_list();
         void slot_check_update_root();
+        void slot_edit_favorite();
         void slot_check_update_open_root();
         void slot_cancel_check_update();
         void slot_save_favorite();

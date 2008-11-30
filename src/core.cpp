@@ -521,17 +521,23 @@ void Core::run( bool init )
 
     // ツール
     m_action_group->add( Gtk::Action::create( "Menu_Tool", "ツール(_T)" ) );
+
     m_action_group->add( Gtk::Action::create( "LiveStartStop", "LiveStartStop"), sigc::mem_fun( *this, &Core::slot_live_start_stop ) );
+
     m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索(_C)" ) );
     m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "表示中の板のログを検索(_B)"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索(_A)"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_action_group->add( Gtk::Action::create( "SearchTitle", CONFIG::get_menu_search_title()+"(_T)" ), sigc::mem_fun( *this, &Core::slot_search_title ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "全お気に入り更新チェック(_U)" ) );
+
+    m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "お気に入りの更新チェック(_U)" ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ(_R)"), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く(_T)"),
                          sigc::mem_fun( *this, &Core::slot_check_update_open_root ) );
     m_action_group->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
                          sigc::mem_fun( *this, &Core::slot_cancel_check_update ) );
+
+    m_action_group->add( Gtk::Action::create( "EditFavorite", "お気に入りの編集(_E)"), sigc::mem_fun( *this, &Core::slot_edit_favorite ) );
+
     m_action_group->add( Gtk::Action::create( "ShowPostlog", "書き込みログの表示(_P)" ), sigc::mem_fun( *this, &Core::slot_show_postlog ) );
 
     //////////////////////////////////////////////////////
@@ -690,6 +696,7 @@ void Core::run( bool init )
         "<separator/>"
         "<menuitem action='CancelCheckUpdate'/>"
         "</menu>"
+        "<menuitem action='EditFavorite'/>"
 
         "<separator/>"
         "<menuitem action='ShowPostlog'/>"
@@ -1950,6 +1957,14 @@ void Core::slot_cancel_check_update()
 }
 
 
+//
+// お気に入りの編集
+//
+void Core::slot_edit_favorite()
+{
+    CORE::core_set_command( "edit_favorite","" );
+}
+
 
 //
 // お気に入り保存
@@ -3080,6 +3095,11 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "cancel_update" ){
 
         BBSLIST::get_admin()->set_command( "cancel_update", URL_FAVORITEVIEW );
+        return;
+    }
+    else if( command.command  == "edit_favorite" ){
+
+        BBSLIST::get_admin()->set_command( "edit_tree", URL_FAVORITEVIEW );
         return;
     }
     else if( command.command  == "save_favorite" ){
