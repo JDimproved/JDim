@@ -274,8 +274,6 @@ const Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
 const Gtk::TreePath EditTreeView::create_newcomment( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Path path_new;
-    if( path.empty() ) return path_new;
-
     const bool subdir = true;
     const bool after = true;
     path_new = append_row( std::string(), "コメント", std::string(), TYPE_COMMENT, path, subdir, after );

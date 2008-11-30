@@ -273,6 +273,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     // お気に入り + 何もないところをクリック
     "<popup name='popup_menu_favorite_space'>"
     "<menuitem action='NewDir'/>"
+    "<menuitem action='NewCom'/>"
     "</popup>"
 
     // お気に入り + ディレクトリ
