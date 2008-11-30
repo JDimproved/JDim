@@ -82,7 +82,7 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_save_info( 0 )
 {
 #ifdef _DEBUG
-    std::cout << "ArticleBase::ArticleBase : " << m_id << std::endl;
+//    std::cout << "ArticleBase::ArticleBase : " << m_id << std::endl;
 #endif
 
     memset( &m_access_time, 0, sizeof( struct timeval ) );
@@ -102,7 +102,7 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
 ArticleBase::~ArticleBase()
 {
 #ifdef _DEBUG
-    std::cout << "ArticleBase::~ArticleBase : " << m_id << std::endl;
+//    std::cout << "ArticleBase::~ArticleBase : " << m_id << std::endl;
 #endif
 
     // 参照ロックが外れていない
@@ -433,7 +433,7 @@ void ArticleBase::set_number( const int number )
 
         // キャッシュがあって更新可能になった場合は
         // スレの場合はお気に入りとスレタブのアイコンを更新
-        if( is_cached() && m_number_load < m_number ) show_updateicon( true );
+        if( is_cached() && !( m_status & STATUS_UPDATE ) && m_number_load < m_number ) show_updateicon( true );
     }
 }
 
@@ -1278,27 +1278,26 @@ void ArticleBase::show_updateicon( const bool update )
 
     if( update ){
 
-        if( ! ( m_status & STATUS_UPDATE ) ){
-            m_status |= STATUS_UPDATE;
-            CORE::core_set_command( "toggle_article_icon", m_url);
-            CORE::core_set_command( "toggle_favorite_icon", m_url );
 #ifdef _DEBUG
-            std::cout << "toggle_icon on\n";
+        std::cout << "toggle_icon on\n";
 #endif
-            m_save_info = true;
-        }
+        m_status |= STATUS_UPDATE;
+        m_save_info = true;
+
+        CORE::core_set_command( "toggle_article_icon", m_url);
+        CORE::core_set_command( "toggle_favorite_icon", m_url );
     }
     else{
 
-        // お気に入りのアイコン表示を戻す。スレタブのアイコンの方はArticleViewが戻す
-        if( m_status & STATUS_UPDATE ){
-            m_status &= ~STATUS_UPDATE;
-            CORE::core_set_command( "toggle_favorite_icon", m_url );
 #ifdef _DEBUG
-            std::cout << "toggle_icon off\n";
+        std::cout << "toggle_icon off\n";
 #endif
-            m_save_info = true;
-        }
+
+        m_status &= ~STATUS_UPDATE;
+        m_save_info = true;
+
+        // お気に入りのアイコン表示を戻す。スレタブのアイコンの方はArticleViewが戻す
+        CORE::core_set_command( "toggle_favorite_icon", m_url );
     }
 }
 
@@ -1684,6 +1683,7 @@ void ArticleBase::save_info( const bool force )
     std::cout << "ArticleBase::save_info force = " << force << std::endl;
     std::cout << "path_article_info = " << m_path_article_info << std::endl;
     std::cout << "path_article_ext_info = " << m_path_article_ext_info << std::endl;
+    std::cout << "subject = " << m_subject << std::endl;
 #endif
 
     // 書き込み時間

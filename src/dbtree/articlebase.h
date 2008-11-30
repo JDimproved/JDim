@@ -364,6 +364,7 @@ namespace DBTREE
         virtual void unlock_impl();
 
         // 更新アイコン表示
+        // update == true の時に表示。falseなら戻す
         void show_updateicon( const bool update );
 
         // navi2ch互換情報ファイル書き込み
