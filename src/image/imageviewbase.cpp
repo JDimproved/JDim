@@ -1017,9 +1017,12 @@ void ImageViewBase::set_image_to_buffer()
     info.type = TYPE_IMAGE;
     info.url = get_url();
     info.name = get_url();
+    info.data = std::string();
+    info.path = Gtk::TreePath( "0" ).to_string();
 
-    CORE::SBUF_clear_info();
-    CORE::SBUF_append( info );
+    CORE::DATA_INFO_LIST list_info;
+    list_info.push_back( info );
+    CORE::SBUF_set_list( list_info );
 }
 
 

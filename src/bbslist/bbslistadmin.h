@@ -45,8 +45,7 @@ namespace BBSLIST
         virtual void toggle_icon( const std::string& url );
 
         // タブの D&D 処理をしない
-        virtual void slot_drag_begin( int page ){}
-        virtual void slot_drag_end(){}
+        virtual void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ){}
 
         // タブメニュー表示キャンセル
         virtual void slot_tab_menu( int page, int x, int y ){}

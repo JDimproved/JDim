@@ -183,6 +183,8 @@ namespace BOARD
         const bool slot_key_press( GdkEventKey* event );
         const bool slot_key_release( GdkEventKey* event );
         const bool slot_scroll_event( GdkEventScroll* event );
+        void slot_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
+                                 Gtk::SelectionData& selection_data, guint info, guint time );
         void slot_bookmark( int bookmark );
         void slot_open_tab();
         void slot_favorite_thread();
@@ -203,10 +205,6 @@ namespace BOARD
         // 検索
         const bool drawout();
 
-        // d&d
-        void slot_drag_begin();
-        void slot_drag_end();
-        
         void update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row& row );
         const std::string get_subject_from_path( Gtk::TreePath& path );
 

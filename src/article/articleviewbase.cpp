@@ -3226,9 +3226,12 @@ void ArticleViewBase::set_favorite()
     info.type = TYPE_THREAD;
     info.url = m_url_article;;
     info.name = DBTREE::article_subject( m_url_article );
+    info.data = std::string();
+    info.path = Gtk::TreePath( "0" ).to_string();
 
-    CORE::SBUF_clear_info();
-    CORE::SBUF_append( info );
+    CORE::DATA_INFO_LIST list_info;
+    list_info.push_back( info );
+    CORE::SBUF_set_list( list_info );
 
     CORE::core_set_command( "append_favorite", URL_FAVORITEVIEW );
 }

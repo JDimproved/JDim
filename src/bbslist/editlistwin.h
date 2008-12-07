@@ -11,11 +11,12 @@
 
 namespace BBSLIST
 {
-    // public SKELETON::PrefDiag を継承すると最大化ボタンが表示されないことと、
-    // メインループに戻らなくなり dispatchmanagerが動かないため画像ポップアップが
-    // 表示されなくなる
+    class SelectListView;
+
     class EditListWin : public Gtk::Window  
     {
+        SelectListView* m_selectview;
+
         Gtk::VBox m_vbox;
         Gtk::Label m_label;
 
@@ -25,6 +26,8 @@ namespace BBSLIST
       public:
 
         EditListWin( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore );
+
+        void clock_in();
 
       private:
 

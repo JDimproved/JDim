@@ -508,7 +508,7 @@ void JDWindow::focus_out()
 
         // ポップアップメニューを表示しているかD&D中はfocus_outしない
         if( SESSION::is_popupmenu_shown() ) return;
-        if( CORE::get_dnd_manager()->now_dnd() ) return;
+        if( CORE::DND_Now_dnd() ) return;
 
         // 最大化している時は通常状態に戻しておかないと表示されなくなる
         if( is_maximized_win() ) unmaximize();

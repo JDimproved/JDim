@@ -44,9 +44,8 @@ namespace BOARD
 
       private:
 
-        // タブの D&D 処理
-        virtual void slot_drag_begin( int page );
-        virtual void slot_drag_end();
+        // タブをお気に入りにドロップした時にお気に入りがデータ送信を要求してきた
+        virtual void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page );
     };
     
     BoardAdmin* get_admin();

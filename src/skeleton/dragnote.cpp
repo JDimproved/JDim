@@ -13,6 +13,8 @@
 
 #include "control/controlid.h"
 
+#include "dndmanager.h"
+
 using namespace SKELETON;
 
 DragableNoteBook::DragableNoteBook()
@@ -21,7 +23,7 @@ DragableNoteBook::DragableNoteBook()
     , m_notebook_toolbar( this )
     , m_notebook_view( this )
     , m_page( -1 )
-    , m_drag( 0 )
+    , m_dragging_tab( false )
     , m_dragable( false )
     , m_down_arrow( NULL )
 {
@@ -437,6 +439,7 @@ SKELETON::TabLabel* DragableNoteBook::create_tablabel( const std::string& url )
     tablabel->sig_tab_leave_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_leave_event ) );
 
     tablabel->sig_tab_drag_begin().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_drag_begin ) );
+    tablabel->sig_tab_drag_data_get().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_drag_data_get ) );
     tablabel->sig_tab_drag_end().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_drag_end ) );
     
     return tablabel;
@@ -483,7 +486,7 @@ bool DragableNoteBook::slot_button_press_event( GdkEventButton* event )
 {
     // ボタンを押した時点でのページ番号を記録しておく
     m_page = m_notebook_tab.get_page_under_mouse();
-    m_drag = false;
+    m_dragging_tab = false;
 
     // ダブルクリック
     // button_release_eventでは event->type に必ず GDK_BUTTON_RELEASE が入る
@@ -523,7 +526,7 @@ bool DragableNoteBook::slot_button_release_event( GdkEventButton* event )
     std::cout << "x = " << (int)event->x_root << " y = " << (int)event->y_root << std::endl;
 #endif
 
-    if( ! m_drag && m_page >= 0 && m_page < get_n_pages() ){
+    if( ! m_dragging_tab && m_page >= 0 && m_page < get_n_pages() ){
 
         // ダブルクリックの処理のため一時的にtypeを切替える
         GdkEventType type_copy = event->type;
@@ -599,24 +602,23 @@ void DragableNoteBook::slot_leave_event()
 //
 void DragableNoteBook::slot_drag_begin()
 {
-
 #ifdef _DEBUG
     std::cout << "DragableNoteBook::slot_drag_begin page = " << m_page << std::endl;
 #endif
 
-    m_drag = true;
+    CORE::DND_Begin();
 
-    m_sig_drag_begin.emit( m_page );
+    m_dragging_tab = true;
 }
 
 
 //
 // タブをドラッグ中
 //
+// 矢印アイコンをタブの上に表示する
+//
 void DragableNoteBook::slot_drag_motion( const int page, const int tab_x, const int tab_y, const int tab_width )
 {
-    if( !m_drag ) return;
-
 #ifdef _DEBUG
     std::cout << "DragableNoteBook::slot_drag_motion page = " << page
               << " tab_x = " << tab_x << " tab_y = " << tab_y << " tab_w " << tab_width << std::endl;
@@ -644,15 +646,20 @@ void DragableNoteBook::slot_drag_motion( const int page, const int tab_x, const 
 
 
 //
-// タブのドラッグを終了
+// D&Dで受信側がデータ送信を要求してきた
 //
-void DragableNoteBook::slot_drag_end()
+void DragableNoteBook::slot_drag_data_get( Gtk::SelectionData& selection_data )
 {
 #ifdef _DEBUG
-    std::cout << "DragableNoteBook::slot_drag_end\n";
+    std::cout << "DragableNoteBook::slot_drag_data_get target = " << selection_data.get_target()
+              << " page = " << m_page << std::endl;
 #endif
 
-    if( m_drag ){
+    // お気に入りがデータ送信を要求してきた
+    if( selection_data.get_target() == DNDTARGET_FAVORITE ) m_sig_drag_data_get.emit( selection_data, m_page );
+
+    // タブの入れ替え処理
+    else if( selection_data.get_target() == DNDTARGET_TAB ){
 
         int page = m_notebook_tab.get_page_under_mouse();
         if( page >= m_notebook_tab.get_n_pages() ) page = m_notebook_tab.get_n_pages()-1;
@@ -671,8 +678,19 @@ void DragableNoteBook::slot_drag_end()
 
         if( m_down_arrow ) m_down_arrow->hide();
     }
+}
 
-    m_sig_drag_end.emit();
 
-    m_drag = false;
+//
+// タブのドラッグを終了
+//
+void DragableNoteBook::slot_drag_end()
+{
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::slot_drag_end\n";
+#endif
+
+    m_dragging_tab = false;
+
+    CORE::DND_End();
 }

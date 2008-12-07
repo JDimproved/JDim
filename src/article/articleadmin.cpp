@@ -24,12 +24,11 @@
 #include "global.h"
 #include "type.h"
 #include "viewfactory.h"
-#include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "session.h"
 #include "command.h"
 #include "config/globalconf.h"
-
+#include "dndmanager.h"
 
 ARTICLE::ArticleAdmin *instance_articleadmin = NULL;
 
@@ -653,47 +652,36 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
 }
 
 
-
 //
-// タブのD&Dを開始
+// タブをお気に入りにドロップした時にお気に入りがデータ送信を要求してきた
 //
-void ArticleAdmin::slot_drag_begin( int page )
+void ArticleAdmin::slot_drag_data_get( Gtk::SelectionData& selection_data, const int page )
 {
+#ifdef _DEBUG    
+    std::cout << "ArticleAdmin::slot_drag_data_get page = " << page  << std::endl;
+#endif
+
     SKELETON::View* view = ( SKELETON::View* )get_notebook()->get_nth_page( page );
-    if( !view ) return;
+    if( ! view ) return;
 
-    std::string url = view->get_url();
+    const std::string url = view->get_url();
     
-    CORE::DND_Begin( get_url() );
-
     CORE::DATA_INFO info;
     info.type = TYPE_THREAD;
     info.url = DBTREE::url_readcgi( url, 0, 0 );
     info.name = DBTREE::article_subject( info.url );
+    info.data = std::string();
+    info.path = Gtk::TreePath( "0" ).to_string();
 
-    CORE::SBUF_clear_info();
     if( info.url.empty() ) return;
 
 #ifdef _DEBUG    
-    std::cout << "ArticleAdmin::slot_drag_begin " << url  << std::endl;
     std::cout << "name = " << info.name << std::endl;
-    std::cout << "url ~ " << info.url << std::endl;
-    std::cout << "type  =" << info.type << std::endl;
 #endif
 
-    CORE::SBUF_append( info );
-}
+    CORE::DATA_INFO_LIST list_info;
+    list_info.push_back( info );
+    CORE::SBUF_set_list( list_info );
 
-
-
-//
-// タブのD&D終了
-//
-void ArticleAdmin::slot_drag_end()
-{
-#ifdef _DEBUG    
-    std::cout << "ArticleAdmin::slot_drag_end\n";
-#endif
-
-    CORE::DND_End();
+    selection_data.set( DNDTARGET_FAVORITE, get_url() );
 }

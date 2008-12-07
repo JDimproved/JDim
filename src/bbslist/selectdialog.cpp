@@ -35,18 +35,27 @@ SelectListDialog::SelectListDialog( const std::string& url, Glib::RefPtr< Gtk::T
 {
     const int mrg = 8;
 
-    if( CORE::SBUF_size() ) m_label_name.set_text(  ( *CORE::SBUF_infolist().begin() ).name );
+    if( CORE::SBUF_size() ) m_label_name.set_text(  ( *CORE::SBUF_list_info().begin() ).name );
 
     m_hbox_dirs.set_spacing( mrg );
     m_hbox_dirs.pack_start( m_label_dirs, Gtk::PACK_SHRINK );
     m_hbox_dirs.pack_start( m_combo_dirs, Gtk::PACK_EXPAND_WIDGET );
     m_hbox_dirs.pack_start( m_bt_show_tree, Gtk::PACK_SHRINK );
 
-    m_combo_dirs.append_text( "お気に入りの最後に追加" );
-    m_vec_path.push_back( Gtk::TreePath() );
-
     // コンボボックスにディレクトリをセット
     int active_row = 0;
+    Glib::ustring name;
+
+    name = "お気に入りの先頭に追加";
+    m_combo_dirs.append_text( name );
+    if( ! active_row && name == SESSION::get_dir_select_favorite() ) active_row = m_vec_path.size();
+    m_vec_path.push_back( "-1" );
+
+    name = "お気に入りの最後に追加";
+    m_combo_dirs.append_text( name );
+    if( ! active_row && name == SESSION::get_dir_select_favorite() ) active_row = m_vec_path.size();
+    m_vec_path.push_back( "" );
+
     BBSLIST::TreeColumns columns;
     Gtk::TreeModel::Children child = m_treestore->children();
     Gtk::TreeModel::Children::iterator it = child.begin();
@@ -56,27 +65,23 @@ SelectListDialog::SelectListDialog( const std::string& url, Glib::RefPtr< Gtk::T
         const int type = row[ columns.m_type ];
         if( type == TYPE_DIR ){
 
-            const Glib::ustring name = row[ columns.m_name ];
+            name = row[ columns.m_name ];
             m_combo_dirs.append_text( name );
             if( ! active_row && name == SESSION::get_dir_select_favorite() ) active_row = m_vec_path.size();
 
-            Gtk::TreePath path;
-            if( row.children().size() ){
+            Gtk::TreePath path = m_treestore->get_path( row );
 
-                Gtk::TreeModel::Children::iterator it_sub = row.children().begin();
-                it_sub = row.children().end();
-                --it_sub;
-                path = m_treestore->get_path( *it_sub );
-            }
-            else path = m_treestore->get_path( row );
-
-            m_vec_path.push_back( path );
+            m_vec_path.push_back( path.to_string() );
 
 #ifdef _DEBUG
             std::cout << row[ columns.m_name ] << " path = " << path.to_string() << std::endl;
 #endif 
         }
     }
+
+#ifdef _DEBUG
+    std::cout << "active_row = " << active_row << std::endl;
+#endif 
     m_combo_dirs.set_active( active_row );
 
     get_vbox()->pack_start( m_label_name, Gtk::PACK_SHRINK );
@@ -103,18 +108,18 @@ SelectListDialog::~SelectListDialog()
 void SelectListDialog::slot_ok_clicked()
 {
     if( ! m_selectview ) SESSION::set_dir_select_favorite( m_combo_dirs.get_active_text() );
-    if( CORE::SBUF_size() == 1 ) ( *CORE::SBUF_infolist().begin() ).name = m_label_name.get_text();
+    if( CORE::SBUF_size() == 1 ) ( *CORE::SBUF_list_info().begin() ).name = m_label_name.get_text();
 }
 
 
-Gtk::TreePath SelectListDialog::get_path()
+const std::string SelectListDialog::get_path()
 {
-    Gtk::TreePath path;
-    if( m_selectview ) path = m_selectview->get_current_path();
+    std::string path;
+    if( m_selectview ) path = m_selectview->get_current_path().to_string();
     else path = m_vec_path[ m_combo_dirs.get_active_row_number() ];
 
 #ifdef _DEBUG
-    std::cout << "SelectListDialog::get_path path = " << path.to_string() << std::endl;
+    std::cout << "SelectListDialog::get_path path = " << path << std::endl;
 #endif
 
     return path;
@@ -148,3 +153,11 @@ void SelectListDialog::slot_show_tree()
         m_selectview = NULL;
     }
 }
+
+
+bool SelectListDialog::slot_timeout( int timer_number )
+{
+    if( m_selectview ) m_selectview->clock_in();
+    return true;
+}
+

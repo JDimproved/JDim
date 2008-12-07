@@ -29,9 +29,7 @@ namespace SKELETON
     typedef sigc::signal< void, int > SIG_TAB_RELOAD;
     typedef sigc::signal< void, int, int , int > SIG_TAB_MENU;
 
-    // D&D
-    typedef sigc::signal< void, int > SIG_DRAG_BEGIN;
-    typedef sigc::signal< void > SIG_DRAG_END;
+    typedef sigc::signal< void, Gtk::SelectionData&, const int > SIG_DRAG_DATA_GET;
 
     // DragableNoteBook を構成している各Notebookの高さ
     // 及びタブの高さや位置の情報
@@ -58,8 +56,7 @@ namespace SKELETON
         SIG_TAB_RELOAD m_sig_tab_reload;
         SIG_TAB_MENU  m_sig_tab_menu;
 
-        SIG_DRAG_BEGIN m_sig_drag_begin;
-        SIG_DRAG_END m_sig_drag_end;
+        SIG_DRAG_DATA_GET m_sig_drag_data_get;
 
         // DragableNoteBook は 下の3つのノートブックから出来ている
         TabNotebook m_notebook_tab;  // タブ
@@ -70,7 +67,10 @@ namespace SKELETON
         bool m_show_toolbar;
 
         int m_page;
-        bool m_drag;
+
+        // タブをドラッグ中
+        bool m_dragging_tab;
+
         bool m_dblclick;
 
         // 入力コントローラ
@@ -90,8 +90,7 @@ namespace SKELETON
         SIG_TAB_RELOAD sig_tab_reload(){ return m_sig_tab_reload; }
         SIG_TAB_MENU sig_tab_menu() { return m_sig_tab_menu; }
 
-        SIG_DRAG_BEGIN sig_drag_begin() { return m_sig_drag_begin; }
-        SIG_DRAG_END sig_drag_end() { return m_sig_drag_end; }
+        SIG_DRAG_DATA_GET sig_drag_data_get() { return m_sig_drag_data_get; }
 
         DragableNoteBook();
         virtual ~DragableNoteBook();
@@ -170,6 +169,7 @@ namespace SKELETON
 
         void slot_drag_begin();
         void slot_drag_motion( const int page, const int tab_x, const int tab_y, const int tab_width );
+        void slot_drag_data_get( Gtk::SelectionData& selection_data );
         void slot_drag_end();
     };
 }

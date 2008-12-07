@@ -34,7 +34,6 @@
 #include "global.h"
 #include "type.h"
 #include "httpcode.h"
-#include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "viewfactory.h"
 #include "prefdiagfactory.h"
@@ -43,6 +42,7 @@
 #include "updatemanager.h"
 #include "session.h"
 #include "compmanager.h"
+#include "dndmanager.h"
 
 #include <sstream>
 
@@ -97,7 +97,7 @@ using namespace BBSLIST;
 
 BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
-      m_treeview( m_columns, true, CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN ),
+      m_treeview( url, DNDTARGET_FAVORITE, m_columns, true, CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN ),
       m_ready_tree( false ),
       m_jump_y( -1 ),
       m_search_invert( 0 ),
@@ -148,6 +148,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_treeview.sig_key_press().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_key_press ) );
     m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_key_release ) );
     m_treeview.sig_scroll_event().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_scroll_event ) );
+    m_treeview.sig_dropped_from_other().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_dropped_from_other ) );
 
     ///////////////////
     
@@ -390,12 +391,6 @@ SKELETON::Admin* BBSListViewBase::get_admin()
 void BBSListViewBase::set_editable( const bool editable )
 {
     get_treeview().set_editable_view( editable );
-
-    if( editable ){
-        m_treeview.sig_drag_begin().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_begin ) );
-        m_treeview.sig_drag_drop().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_drop ) );
-        m_treeview.sig_drag_end().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_drag_end ) );
-    }
 }
 
 
@@ -439,6 +434,7 @@ void BBSListViewBase::clock_in()
     View::clock_in();
 
     m_treeview.clock_in();
+    if( m_editlistwin ) m_editlistwin->clock_in();
 
     // スクロールバー移動
     // 初期化直後など、まだスクロールバーが表示されてない時があるので表示されるまでジャンプしない
@@ -1081,6 +1077,32 @@ bool BBSListViewBase::slot_scroll_event( GdkEventScroll* event )
 
 
 //
+// 他のwidgetからドロップされた
+//
+void BBSListViewBase::slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_info )
+{
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase:slot_dropped_from_other\n";
+#endif    
+
+    CORE::DATA_INFO_LIST::const_iterator it = list_info.begin();
+    for( ; it != list_info.end() ; ++it ){
+
+        const CORE::DATA_INFO& info = ( *it );
+        const int type = info.type;
+
+        // ブックマークセット
+        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
+
+            DBTREE::set_bookmarked_thread( info.url, true );
+        }
+
+        else if( type == TYPE_IMAGE ) DBIMG::set_protect( info.url, true );
+    }
+}
+
+
+//
 // popupmenu でタブで開くを選択
 //
 void BBSListViewBase::slot_open_tab()
@@ -1103,59 +1125,17 @@ void BBSListViewBase::slot_open_browser()
 }
 
 
-
-// 共通バッファに path をセット
-void BBSListViewBase::set_info_to_sharedbuffer( Gtk::TreePath& path )
-{
-    CORE::DATA_INFO info;
-    info.type = path2type( path );
-    info.url = path2url( path );
-    info.name = path2name( path );
-    CORE::SBUF_append( info );
-#ifdef _DEBUG    
-    std::cout << "append " << info.name << std::endl;
-#endif
-}
-
-
-
 //
 // 選択行をお気に入りに追加
 //
 void BBSListViewBase::slot_append_favorite()
 {
-    // 共有バッファにデータ登録
-    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    if( list_it.size() ){
+    CORE::DATA_INFO_LIST list_info;
+    m_treeview.get_info_in_selection( list_info );
 
-        CORE::SBUF_clear_info();
+    if( list_info.size() ){
 
-        std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-        for( ; it != list_it.end(); ++it ){
-
-            Gtk::TreeModel::Row row = *( *it );
-            Gtk::TreePath path = GET_PATH( row );
-
-            // サブディレクトリの場合は中身もコピー
-            // とりあえず再帰なしで一階層のみ
-            if( m_treeview.is_dir( path ) ){
-
-                set_info_to_sharedbuffer( path );
-                path.down();
-
-                while( m_treeview.get_row( path ) ){
-
-                    set_info_to_sharedbuffer( path );
-                    path.next();
-                }
-
-                CORE::DATA_INFO info;
-                info.type = TYPE_DIR_END;
-                CORE::SBUF_append( info );
-            }
-            else set_info_to_sharedbuffer( path );
-        }
-
+        CORE::SBUF_set_list( list_info );
         CORE::core_set_command( "append_favorite", URL_FAVORITEVIEW );
     }
 }
@@ -1323,10 +1303,19 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         // データベースに登録してツリーに表示
         if( ! move && DBTREE::add_etc( url, name, basicauth, boardid ) ){
 
-            const bool subdir = true;
-            const bool after = true;
-            Gtk::TreeModel::Path path = m_treeview.append_row( url, name, std::string(), TYPE_BOARD, m_path_selected, subdir, after );
-            m_path_selected = path;
+            CORE::DATA_INFO_LIST list_info;
+            CORE::DATA_INFO info;
+            info.type = TYPE_BOARD;
+            info.url = url;
+            info.name = name;
+            info.data = std::string();
+            info.path = m_path_selected.to_string();
+            list_info.push_back( info );
+
+            const bool before = false;
+            const bool scroll = false;
+            m_treeview.append_info( list_info, m_path_selected, before, scroll );
+            m_path_selected = m_treeview.get_current_path();
 
             // etc.txt保存
             DBTREE::save_etc();
@@ -1667,56 +1656,6 @@ void BBSListViewBase::slot_row_col( const Gtk::TreeModel::iterator&, const Gtk::
 
 
 //
-// このビューからD&Dを開始したときにtreeviewから呼ばれる
-//
-void BBSListViewBase::slot_drag_begin()
-{
-#ifdef _DEBUG    
-    std::cout << "BBSListViewBase::slot_drag_begin\n";
-#endif
-
-    CORE::DND_Begin( get_url() );
-}
-
-
-//
-// D&Dでドロップされたときにtreeviewから呼ばれる
-//
-void BBSListViewBase::slot_drag_drop( Gtk::TreeModel::Path path, const bool after )
-{
-#ifdef _DEBUG    
-    std::cout << "BBSListViewBase::slot_drag_drop\n";
-#endif
-
-    std::string url_from = CORE::DND_Url_from();
-
-#ifdef _DEBUG
-    std::cout << "path = " << path.to_string() << " after = " << after << " from " << url_from << std::endl;
-#endif
-
-    // 他のビューからドロップされた
-    if( url_from != get_url() ){
-        append_from_buffer( path, after, false );
-        BBSLIST::get_admin()->set_command( "switch_admin" );
-    }
-}
-
-
-
-//
-// このビューからD&Dを開始した後にD&Dを終了するとtreeviewから呼ばれる
-//
-void BBSListViewBase::slot_drag_end()
-{
-#ifdef _DEBUG    
-    std::cout << "BBSListViewBase::slot_drag_end\n";
-#endif
-
-    CORE::DND_End();
-}
-
-
-//
 // 選択した行を開く 
 //
 const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
@@ -2014,82 +1953,6 @@ void BBSListViewBase::show_status()
 {
     set_status( path2url( m_treeview.get_current_path() ) );
     BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
-}
-
-
-
-//
-// 共有バッファからデータを取り出して pathの所に追加
-//
-// after = false ならpathの前に追加
-// scroll = true なら追加した行にスクロールする
-//
-void BBSListViewBase::append_from_buffer( Gtk::TreeModel::Path path, const bool _after, const bool scroll )
-{
-    Gtk::TreeModel::Path path_top = Gtk::TreeModel::Path();
-
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::append_from_buffer path = " << path_top.to_string()
-              << " after = " << _after << " scroll = " << scroll << std::endl;
-#endif
-
-    m_treeview.get_selection()->unselect_all();
-
-    bool after = _after;
-    bool subdir = true;
-    std::list< CORE::DATA_INFO > infolist = CORE::SBUF_infolist();
-    std::list< CORE::DATA_INFO >::iterator it = infolist.begin();
-    for( ; it != infolist.end() ; ++it ){
-
-        CORE::DATA_INFO& info = ( *it );
-#ifdef _DEBUG    
-        std::cout << "append name = " << info.name << std::endl;
-        std::cout << "url " << info.url << std::endl;
-        std::cout << "type " << info.type << std::endl;
-#endif
-
-        if( info.type != TYPE_DIR_END ){
-
-            int type = info.type;
-
-            // スレの時はdat落ちしているか更新しているか確認
-            if( type == TYPE_THREAD ){
-
-                if( DBTREE::article_status( info.url ) & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
-                if( DBTREE::article_status( info.url ) & STATUS_OLD ) type = TYPE_THREAD_OLD;
-
-#ifdef _DEBUG
-                std::cout << "-> type =  " << type << std::endl;
-#endif
-
-                // ブックマークセット
-                DBTREE::set_bookmarked_thread( info.url, true );
-            }
-
-            path = m_treeview.append_row( info.url, info.name, std::string(), type, path, subdir, after );
-            if( m_treeview.get_row( path ) ){
-                if( ! m_treeview.get_row( path_top ) ){
-                    path_top = path;
-                    m_treeview.set_cursor( path_top );
-                }
-                m_treeview.get_selection()->select( path );
-                after = true;
-            }
-        }
-
-        if( info.type == TYPE_DIR ) subdir = true;
-        else{
-
-            subdir = false;
-            if( info.type == TYPE_DIR_END ) path.up();
-            else if( info.type == TYPE_IMAGE ) DBIMG::set_protect( info.url, true );
-        }
-    }
-
-    // 追加した行にスクロール
-    if( scroll && m_treeview.get_row( path_top ) ){
-        m_treeview.scroll_to_row( path_top, 0.1 );
-    }
 }
 
 
@@ -2523,20 +2386,41 @@ void BBSListViewBase::operate_search( const std::string& controlid )
 
 
 //
-// お気に入りにアイテム追加
+// 挿入先ダイアログを表示してアイテム追加
 //
 // あらかじめ共有バッファにデータを入れておくこと
 //
 void BBSListViewBase::append_item()
 {
     if( CORE::SBUF_size() == 0 ) return;
-    
+
+    // 挿入先ダイアログ内で編集を行うとバッファがクリアされてしまうので
+    // バックアップを取っておく
+    const CORE::DATA_INFO_LIST list_info_bkup = CORE::SBUF_list_info();
+
+    // 挿入先ダイアログ表示
     SelectListDialog diag( get_url(), get_treestore() );
     if( diag.run() != Gtk::RESPONSE_OK ) return;
 
-    Gtk::TreePath path = diag.get_path();
-    m_treeview.expand_parents( path );
-    append_from_buffer( path, true, true );
+    bool before = false;
+    Gtk::TreePath path;
+    const bool scroll = true;
+
+    const std::string path_str = diag.get_path();
+
+    // 先頭
+    if( path_str == "-1" ){
+        path = Gtk::TreePath( "0" );
+        before = true;
+    }
+    // 最後
+    else if( path_str.empty() ) path = Gtk::TreePath();
+
+    else path = Gtk::TreePath( path_str );
+
+    const CORE::DATA_INFO_LIST list_info = m_treeview.append_info( list_info_bkup, path, before, scroll );
+    CORE::SBUF_clear_info();
+    slot_dropped_from_other( list_info );
 }
 
 
@@ -2545,13 +2429,14 @@ void BBSListViewBase::append_item()
 //
 void BBSListViewBase::edit_tree()
 {
-    if( m_editlistwin ) delete m_editlistwin;
+    if( m_editlistwin ) m_editlistwin->present();
 
-    get_treeview().set_editable_view( false );
+    else{
 
-    m_editlistwin = new EditListWin( get_url(), get_treestore() );
-    m_editlistwin->signal_hide().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_hide_editlistwin ) );
-    m_editlistwin->show();
+        m_editlistwin = new EditListWin( get_url(), get_treestore() );
+        m_editlistwin->signal_hide().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_hide_editlistwin ) );
+        m_editlistwin->show();
+    }
 }
 
 
@@ -2563,8 +2448,6 @@ void BBSListViewBase::slot_hide_editlistwin()
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::slot_hide_editlistwin\n";
 #endif
-
-    get_treeview().set_editable_view( true );
 
     if( m_editlistwin ) delete m_editlistwin;
     m_editlistwin = NULL;

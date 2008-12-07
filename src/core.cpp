@@ -1357,7 +1357,7 @@ void Core::slot_delete_all_images()
 // プライバシー情報のクリア
 void Core::slot_clear_privacy()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PRIVARY, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PRIVACY, URL_PRIVACY );
     pref->run();
     delete pref;
 }
@@ -1791,7 +1791,7 @@ void Core::slot_image_pref()
 //
 void Core::slot_usrcmd_pref()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_USRCMD, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_USRCMD, URL_USRCMD );
     pref->run();
     delete pref;
 }
@@ -1802,7 +1802,7 @@ void Core::slot_usrcmd_pref()
 //
 void Core::slot_filter_pref()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_LINKFILTER, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_LINKFILTER, URL_LINKFILTER );
     pref->run();
     delete pref;
 }
@@ -1814,7 +1814,7 @@ void Core::slot_filter_pref()
 //
 void Core::slot_setup_browser()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BROWSER, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BROWSER, URL_BROWSER );
     pref->run();
     delete pref;
 }
@@ -1853,7 +1853,7 @@ void Core::slot_show_manual()
 //
 void Core::slot_aboutconfig()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ABOUTCONFIG, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ABOUTCONFIG, URL_ABOUTCONFIG );
     pref->run();
     delete pref;
 }

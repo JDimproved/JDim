@@ -65,8 +65,7 @@ namespace MESSAGE
         virtual void close_window();
 
         // タブの D&D 処理をしない
-        virtual void slot_drag_begin( int page ){}
-        virtual void slot_drag_end(){}
+        virtual void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ){}
     };
     
     MESSAGE::MessageAdmin* get_admin();

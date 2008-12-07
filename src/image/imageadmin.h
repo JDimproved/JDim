@@ -87,8 +87,7 @@ namespace IMAGE
         virtual void unlock( const int page );
 
         // タブの D&D 処理は SKELETON::Admin とは違うロジックでおこなう
-        virtual void slot_drag_begin( int page ){}
-        virtual void slot_drag_end(){}
+        virtual void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ){}
 
       private:
 

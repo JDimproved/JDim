@@ -53,8 +53,7 @@ Admin::Admin( const std::string& url )
     m_notebook->sig_tab_menu().connect( sigc::mem_fun( *this, &Admin::slot_tab_menu ) );
 
     // D&D
-    m_notebook->sig_drag_begin().connect( sigc::mem_fun(*this, &Admin::slot_drag_begin ) );
-    m_notebook->sig_drag_end().connect( sigc::mem_fun(*this, &Admin::slot_drag_end ) );
+    m_notebook->sig_drag_data_get().connect( sigc::mem_fun(*this, &Admin::slot_drag_data_get ) );
 
     m_list_command.clear();
 }

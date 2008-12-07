@@ -14,6 +14,7 @@ namespace SKELETON
 
     // D&D
     typedef sigc::signal< void > SIG_TAB_DRAG_BEGIN;
+    typedef sigc::signal< void, Gtk::SelectionData& > SIG_TAB_DRAG_DATA_GET;
     typedef sigc::signal< void > SIG_TAB_DRAG_END;
 
     class TabLabel : public Gtk::EventBox
@@ -22,6 +23,7 @@ namespace SKELETON
         SIG_TAB_LEAVE_EVENT m_sig_tab_leave_event;
 
         SIG_TAB_DRAG_BEGIN m_sig_tab_drag_begin;
+        SIG_TAB_DRAG_DATA_GET m_sig_tab_drag_data_get;
         SIG_TAB_DRAG_END m_sig_tab_drag_end;
 
         int m_x;
@@ -51,6 +53,7 @@ namespace SKELETON
         SIG_TAB_LEAVE_EVENT sig_tab_leave_event(){ return m_sig_tab_leave_event; }
 
         SIG_TAB_DRAG_BEGIN sig_tab_drag_begin() { return m_sig_tab_drag_begin; }
+        SIG_TAB_DRAG_DATA_GET sig_tab_drag_data_get() { return m_sig_tab_drag_data_get; }
         SIG_TAB_DRAG_END sig_tab_drag_end() { return m_sig_tab_drag_end; }
 
         const int get_tab_x() const { return m_x; }
@@ -89,6 +92,8 @@ namespace SKELETON
         virtual bool on_leave_notify_event( GdkEventCrossing* event );
 
         virtual void on_drag_begin( const Glib::RefPtr< Gdk::DragContext>& context );
+        virtual void on_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
+                                       Gtk::SelectionData& selection_data, guint info, guint time );
         virtual void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context );
     }; 
 }

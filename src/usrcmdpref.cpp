@@ -8,6 +8,7 @@
 #include "command.h"
 #include "type.h"
 #include "jdversion.h"
+#include "dndmanager.h"
 
 #include "control/controlid.h"
 #include "control/controlutil.h"
@@ -62,7 +63,7 @@ void UsrCmdDiag::slot_show_manual()
 UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::PrefDiag( parent, url ),
       m_label( "右クリックしてコンテキストメニューからコマンドの追加と削除が出来ます。編集するにはダブルクリックします。" ),
-      m_treeview( m_columns ),
+      m_treeview( url, DNDTARGET_USRCMD, m_columns ),
       m_ckbt_hide_usrcmd( "選択不可のユーザコマンドを非表示にする", true )
 {
     m_treestore = Gtk::TreeStore::create( m_columns );
@@ -281,10 +282,19 @@ void UsrCmdPref::slot_newcmd()
 
         if( diag.get_name().empty() || diag.get_cmd().empty() ) return;
 
+        CORE::DATA_INFO_LIST list_info;
+        CORE::DATA_INFO info;
+        info.type = TYPE_USRCMD;
+        info.url = std::string();
+        info.name = diag.get_name();
+        info.data = diag.get_cmd();
+        info.path = m_path_selected.to_string();
+        list_info.push_back( info );
+
         const bool subdir = true;
-        const bool after = true;
-        m_path_selected = m_treeview.append_row( std::string(), diag.get_name(), diag.get_cmd(), TYPE_USRCMD, m_path_selected, subdir, after );
-        m_treeview.set_cursor( m_path_selected );
+        const bool scroll = false;
+        m_treeview.append_info( list_info, m_path_selected, subdir, scroll );
+        m_path_selected = m_treeview.get_current_path();
     }
 }
 
@@ -299,10 +309,19 @@ void UsrCmdPref::slot_newdir()
 // 区切り作成
 void UsrCmdPref::slot_newsepa()
 {
+    CORE::DATA_INFO_LIST list_info;
+    CORE::DATA_INFO info;
+    info.type = TYPE_SEPARATOR;
+    info.url = std::string();
+    info.name = "--- 区切り ---";
+    info.data = std::string();
+    info.path = m_path_selected.to_string();
+    list_info.push_back( info );
+
     const bool subdir = true;
-    const bool after = true;
-    m_path_selected = m_treeview.append_row( std::string(), "--- 区切り ---", std::string(), TYPE_SEPARATOR, m_path_selected, subdir, after );
-    m_treeview.set_cursor( m_path_selected );
+    const bool scroll = false;
+    m_treeview.append_info( list_info, m_path_selected, subdir, scroll );
+    m_path_selected = m_treeview.get_current_path();
 }
 
 

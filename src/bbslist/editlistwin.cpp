@@ -7,7 +7,6 @@
 #include "selectlistview.h"
 
 #include "viewfactory.h"
-#include "command.h"
 
 using namespace BBSLIST;
 
@@ -25,13 +24,13 @@ EditListWin::EditListWin( const std::string& url, Glib::RefPtr< Gtk::TreeStore >
 {
     m_vbox.pack_start( m_label, Gtk::PACK_SHRINK );
 
-    SelectListView* selectview = dynamic_cast< SelectListView* > ( Gtk::manage( CORE::ViewFactory( CORE::VIEW_SELECTLIST, url ) ) );
-    if( selectview ){
+    m_selectview = dynamic_cast< SelectListView* > ( Gtk::manage( CORE::ViewFactory( CORE::VIEW_SELECTLIST, url ) ) );
+    if( m_selectview ){
 
-        selectview->copy_treestore( treestore );
-        selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &EditListWin::hide ) );
+        m_selectview->copy_treestore( treestore );
+        m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &EditListWin::hide ) );
 
-        m_vbox.pack_start( *selectview );
+        m_vbox.pack_start( *m_selectview );
     }
 
     m_bt_close.signal_clicked().connect( sigc::mem_fun( this, &EditListWin::slot_close ) );
@@ -41,9 +40,14 @@ EditListWin::EditListWin( const std::string& url, Glib::RefPtr< Gtk::TreeStore >
     add( m_vbox );
     set_title( "お気に入りの編集" );
     resize( EDITWIN_WIDTH, EDITWIN_HEIGHT );
-    set_transient_for( *CORE::get_mainwindow() );
 
     show_all_children();
+}
+
+
+void EditListWin::clock_in()
+{
+    if( m_selectview ) m_selectview->clock_in();
 }
 
 

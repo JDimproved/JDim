@@ -10,39 +10,32 @@
 #include <gtkmm.h>
 #include <string>
 
+// ターゲット
+
+#define DNDTARGET_FAVORITE "dnd/favorite"
+#define DNDTARGET_TAB "dnd/tab"
+#define DNDTARGET_IMAGETAB "dnd/imagetab"
+#define DNDTARGET_USRCMD "dnd/usrcmd"
+
 namespace CORE
 {
     class DND_Manager
     {
-        // D&D 開始と終了時にシグナルを出す
-        typedef sigc::signal< void > SIG_DND_BEGIN;
-        typedef sigc::signal< void > SIG_DND_END;
-
-        SIG_DND_END m_sig_dnd_begin;
-        SIG_DND_END m_sig_dnd_end;
-
-        // 開始したwidgetのurl
-        std::string m_url_from;
-
         // true ならd&d中
         bool m_dnd;
 
       public:
 
-        DND_Manager();
-        virtual ~DND_Manager();
-
-        SIG_DND_END sig_dnd_begin(){ return m_sig_dnd_begin; }
-        SIG_DND_END sig_dnd_end(){ return m_sig_dnd_end; }
+        DND_Manager(){}
+        virtual ~DND_Manager(){}
 
         const bool now_dnd() const{ return m_dnd; }
-        const std::string& url_from() const { return m_url_from; }
 
         // DnD 開始
-        void begin( const std::string& url_from );
+        void begin(){ m_dnd = true; }
 
         // DnD終了
-        void end();
+        void end(){ m_dnd = false; }
     };
 
     ///////////////////////////////////////
@@ -51,11 +44,9 @@ namespace CORE
     DND_Manager* get_dnd_manager();
     void delete_dnd_manager();
 
-    void DND_Begin( const std::string& url_from );
+    void DND_Begin();
     void DND_End();
-
     const bool DND_Now_dnd();
-    const std::string DND_Url_from();
 }
 
 

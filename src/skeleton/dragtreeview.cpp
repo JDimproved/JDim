@@ -15,6 +15,7 @@
 
 #include "command.h"
 #include "colorid.h"
+#include "dndmanager.h"
 
 #ifndef MAX
 #define MAX( a, b ) ( a > b ? a : b )
@@ -29,8 +30,11 @@
 using namespace SKELETON;
 
 
-DragTreeView::DragTreeView( const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
+DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget,
+    const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
     : JDTreeViewBase(),
+      m_url( url ),
+      m_dndtarget( dndtarget ),
       m_dragging( false ),
       m_use_bg_even( false ),
       m_popup_win( NULL )
@@ -53,7 +57,7 @@ DragTreeView::DragTreeView( const bool use_usr_fontcolor, const std::string& fon
 
     // D&D 設定
     std::list< Gtk::TargetEntry > targets;
-    targets.push_back( Gtk::TargetEntry( "text/plain", Gtk::TARGET_SAME_APP, 0 ) );
+    targets.push_back( Gtk::TargetEntry( get_dndtarget(), Gtk::TARGET_SAME_APP, 0 ) );
 
     // ドラッグ開始ボタン設定
     Gdk::ModifierType type = Gdk::BUTTON1_MASK;  
@@ -284,29 +288,9 @@ void DragTreeView::on_drag_begin( const Glib::RefPtr< Gdk::DragContext >& contex
 #endif
 
     m_dragging = true;
-    m_sig_drag_begin.emit();
+    CORE::DND_Begin();
 
     return Gtk::TreeView::on_drag_begin( context );
-}
-
-
-//
-// D&D中にマウスを動かした
-//
-bool DragTreeView::on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time )
-{
-    return Gtk::TreeView::on_drag_motion( context, x, y, time );
-}
-
-
-//
-// D&Dでドロップされた
-//
-// 他のwidgetがソースの時も呼ばれるのに注意
-//
-bool DragTreeView::on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time )
-{
-    return Gtk::TreeView::on_drag_drop( context, x, y, time );
 }
 
 
@@ -322,9 +306,9 @@ void DragTreeView::on_drag_end( const Glib::RefPtr< Gdk::DragContext >& context 
 #endif
 
     m_dragging = false;
-    m_sig_drag_end.emit();
+    CORE::DND_End();
 
-    return Gtk::TreeView::on_drag_end( context );
+    Gtk::TreeView::on_drag_end( context );
 }
 
 

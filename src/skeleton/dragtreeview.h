@@ -24,11 +24,8 @@ namespace SKELETON
 
     class DragTreeView : public JDTreeViewBase
     {
-        typedef sigc::signal< void > SIG_DRAG_BEGIN;
-        typedef sigc::signal< void > SIG_DRAG_END;
-
-        SIG_DRAG_BEGIN m_sig_drag_begin;
-        SIG_DRAG_END m_sig_drag_end;
+        std::string m_url;
+        std::string m_dndtarget;
 
         bool m_dragging;  // ドラッグ中
 
@@ -54,17 +51,14 @@ namespace SKELETON
 
       public:
 
-        SIG_DRAG_BEGIN sig_drag_begin() { return m_sig_drag_begin; }
-        SIG_DRAG_END sig_drag_end() { return m_sig_drag_end; }
-
         // use_usr_fontcolor が true の時はフォントや色を指定する
-        DragTreeView( const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even );
+        DragTreeView( const std::string& url, const std::string& dndtarget,
+                      const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even );
         virtual ~DragTreeView();
 
         virtual void clock_in();
 
-        // ドラッグ中
-        const bool is_dragging() const { return m_dragging; }
+        const std::string& get_dndtarget() const { return m_dndtarget; }
 
         // 色初期化
         void init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even );
@@ -105,10 +99,8 @@ namespace SKELETON
         // ではなくて普通に on_motion_notify_event() が呼ばれるのに注意
         //
         virtual bool on_button_press_event( GdkEventButton* event );
-        virtual void on_drag_begin( const Glib::RefPtr< Gdk::DragContext>& context );
-        virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time );
         virtual bool on_button_release_event( GdkEventButton* event );
-        virtual bool on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time );
+        virtual void on_drag_begin( const Glib::RefPtr< Gdk::DragContext>& context );
         virtual void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context );
 
         virtual bool on_motion_notify_event( GdkEventMotion* event );

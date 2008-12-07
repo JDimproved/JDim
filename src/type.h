@@ -3,6 +3,9 @@
 #ifndef _TYPE_H
 #define _TYPE_H
 
+#include <string>
+#include <list>
+
 enum 
 {
     // 板のタイプ
@@ -30,5 +33,20 @@ enum
 
     TYPE_UNKNOWN
 };
+
+
+namespace CORE
+{
+    struct DATA_INFO
+    {
+        int type; 
+        std::string url;
+        std::string name;
+        std::string path; // treeview の path
+        std::string data;
+    };
+
+    typedef std::list< CORE::DATA_INFO > DATA_INFO_LIST;
+}
 
 #endif

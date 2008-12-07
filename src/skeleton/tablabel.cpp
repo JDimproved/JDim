@@ -9,6 +9,8 @@
 
 #include "config/globalconf.h"
 
+#include "dndmanager.h"
+
 using namespace SKELETON;
 
 TabLabel::TabLabel( const std::string& url )
@@ -86,7 +88,8 @@ void TabLabel::set_dragable( bool dragable, int button )
     if( dragable ){
 
         std::list< Gtk::TargetEntry > targets;
-        targets.push_back( Gtk::TargetEntry( "text/plain", Gtk::TARGET_SAME_APP, 0 ) );
+        targets.push_back( Gtk::TargetEntry( DNDTARGET_FAVORITE, Gtk::TARGET_SAME_APP, 0 ) );
+        targets.push_back( Gtk::TargetEntry( DNDTARGET_TAB, Gtk::TARGET_SAME_APP, 0 ) );
 
         // ドラッグ開始側にする
         switch( button ){
@@ -110,9 +113,11 @@ void TabLabel::set_dragable( bool dragable, int button )
 //
 bool TabLabel::on_motion_notify_event( GdkEventMotion* event )
 {
+    const bool ret = Gtk::EventBox::on_motion_notify_event( event );
+
     m_sig_tab_motion_event.emit();
 
-    return Gtk::EventBox::on_motion_notify_event( event );
+    return ret;
 }
 
 
@@ -125,9 +130,11 @@ bool TabLabel::on_leave_notify_event( GdkEventCrossing* event )
     std::cout << "TabLabel::leave\n";
 #endif
 
+    const bool ret = Gtk::EventBox::on_leave_notify_event( event );
+
     m_sig_tab_leave_event.emit();
 
-    return Gtk::EventBox::on_leave_notify_event( event );
+    return ret;
 }
 
 
@@ -142,7 +149,24 @@ void TabLabel::on_drag_begin( const Glib::RefPtr< Gdk::DragContext >& context )
 
     m_sig_tab_drag_begin.emit();
 
-    return Gtk::EventBox::on_drag_begin( context );
+    Gtk::EventBox::on_drag_begin( context );
+}
+
+
+//
+// D&Dで受信側がデータ送信を要求してきた
+//
+void TabLabel::on_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
+                                 Gtk::SelectionData& selection_data, guint info, guint time )
+{
+#ifdef _DEBUG
+    std::cout << "TabLabel::on_drag_data_get target = " << selection_data.get_target()
+              << " " << m_fulltext << std::endl;;
+#endif
+
+    Gtk::EventBox::on_drag_data_get( context, selection_data, info, time );
+
+    m_sig_tab_drag_data_get( selection_data );
 }
 
 
@@ -155,7 +179,7 @@ void TabLabel::on_drag_end( const Glib::RefPtr< Gdk::DragContext >& context )
     std::cout << "TabLabel::on_drag_end " << m_fulltext << std::endl;;
 #endif
 
-    m_sig_tab_drag_end.emit();
-
     Gtk::EventBox::on_drag_end( context );
+
+    m_sig_tab_drag_end.emit();
 }

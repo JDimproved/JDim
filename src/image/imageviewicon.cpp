@@ -47,13 +47,15 @@ ImageViewIcon::ImageViewIcon( const std::string& url )
 
     // D&D可能にする
     std::list< Gtk::TargetEntry > targets;
-    targets.push_back( Gtk::TargetEntry( "text/plain", Gtk::TARGET_SAME_APP, 0 ) );
-    get_event().drag_source_set( targets, Gdk::BUTTON1_MASK );
+    targets.push_back( Gtk::TargetEntry( DNDTARGET_IMAGETAB, Gtk::TARGET_SAME_APP, 0 ) );
     get_event().drag_dest_set( targets );
 
+    targets.push_back( Gtk::TargetEntry( DNDTARGET_FAVORITE, Gtk::TARGET_SAME_APP, 0 ) );
+    get_event().drag_source_set( targets, Gdk::BUTTON1_MASK );
+
     get_event().signal_drag_begin().connect( sigc::mem_fun( *this, &ImageViewIcon::slot_drag_begin ) );
-    get_event().signal_drag_motion().connect( sigc::mem_fun( *this, &ImageViewIcon::slot_drag_motion ) );
-    get_event().signal_drag_drop().connect( sigc::mem_fun( *this, &ImageViewIcon::slot_drag_drop ) );
+    get_event().signal_drag_data_get().connect( sigc::mem_fun( *this, &ImageViewIcon::slot_drag_data_get ) );
+    get_event().signal_drag_data_received().connect( sigc::mem_fun( *this, &ImageViewIcon::slot_drag_data_received ) );
     get_event().signal_drag_end().connect( sigc::mem_fun( *this, &ImageViewIcon::slot_drag_end ) );
 }
 
@@ -201,49 +203,42 @@ void ImageViewIcon::slot_drag_begin( const Glib::RefPtr<Gdk::DragContext>& conte
     std::cout << "ImageViewIcon::slot_drag_begin url = " << get_url() << std::endl;
 #endif
 
-    CORE::DND_Begin( get_url() );
+    CORE::DND_Begin();
+}
+
+
+
+//
+// D&Dで受信側がデータ送信を要求してきた
+//
+void ImageViewIcon::slot_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
+                                        Gtk::SelectionData& selection_data, guint info, guint time )
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewIcon::on_drag_data_get target = " << selection_data.get_target()
+              << " url = " << get_url() << std::endl;;
+#endif
+
     set_image_to_buffer();
+    selection_data.set( selection_data.get_target(), get_url() );
 }
 
 
-
 //
-// D&D中
+// 他の画像アイコンからドロップされた
 //
-bool ImageViewIcon::slot_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time ) 
+void ImageViewIcon::slot_drag_data_received( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y,
+                                             const Gtk::SelectionData& selection_data, guint info, guint time )
 {
+    const std::string url_from = selection_data.get_data_as_string();
+
 #ifdef _DEBUG    
-    std::cout << "ImageViewIcon::slot_drag_motion url = " << get_url() << std::endl;
+    std::cout << "ImageViewIcon::slot_drag_data_received target = " << selection_data.get_target()
+              << " url = " << get_url() << " url_from = " << url_from << std::endl;    
 #endif
 
-    return true;
+    IMAGE::get_admin()->set_command( "reorder", get_url(), url_from, get_url() );
 }
-
-
-
-//
-// ドロップされた
-bool ImageViewIcon::slot_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time )
-{
-#ifdef _DEBUG    
-    std::cout << "ImageViewIcon::slot_on_drag_drop url = " << get_url() << std::endl;
-#endif
-
-    // 他のアイコンからドロップされた場合は入れ換え
-    std::list< CORE::DATA_INFO > infolist = CORE::SBUF_infolist();
-    std::list< CORE::DATA_INFO >::iterator it = infolist.begin();
-    CORE::DATA_INFO& info = ( *it );
-    if( info.type == TYPE_IMAGE ){
-
-#ifdef _DEBUG    
-        std::cout << "url_from = " << info.url << std::endl;
-#endif
-        IMAGE::get_admin()->set_command( "reorder", get_url(), info.url, get_url() );
-    }
-
-    return true;
-}
-
 
 
 //

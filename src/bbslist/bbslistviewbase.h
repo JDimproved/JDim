@@ -78,8 +78,6 @@ namespace BBSLIST
 
         virtual void activate_act_before_popupmenu( const std::string& url );
 
-        void append_from_buffer( Gtk::TreeModel::Path path, const bool after, const bool scroll );
-
         // tree <-> XML( DOM )変換
         void tree2xml( const std::string& root_name );
         void xml2tree( const std::string& root_name, const std::string& xml = std::string() );
@@ -113,7 +111,7 @@ namespace BBSLIST
         Glib::ustring path2rawurl( const Gtk::TreePath& path );
         Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
 
-        // ツリーにアイテム追加
+        // 挿入先ダイアログを表示してアイテム追加
         // あらかじめ共有バッファに追加するデータをセットしておくこと
         void append_item();
 
@@ -185,6 +183,8 @@ namespace BBSLIST
         bool slot_key_press( GdkEventKey* event );
         bool slot_key_release( GdkEventKey* event );
         bool slot_scroll_event( GdkEventScroll* event );
+        void slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_info );
+
         void slot_open_tab();
         void slot_open_browser();
         void slot_append_favorite();
@@ -215,9 +215,7 @@ namespace BBSLIST
         void add_newetcboard( const bool move, const std::string& _url, const std::string& _name, const std::string& _id, const std::string& _passwd );
 
         // D&D 関係
-        void slot_drag_begin();
         void slot_drag_drop( Gtk::TreeModel::Path path, const bool after );
-        void slot_drag_end();
 
         virtual const bool open_row( Gtk::TreePath& path, const bool tab );
         virtual void switch_rightview();
@@ -226,8 +224,6 @@ namespace BBSLIST
         Glib::ustring row2url( const Gtk::TreeModel::Row& row );
 
         void show_status();
-
-        void set_info_to_sharedbuffer( Gtk::TreePath& path );
 
         // ツリーの編集ウィンドウが閉じた
         void slot_hide_editlistwin();

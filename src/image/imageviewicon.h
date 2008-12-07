@@ -34,8 +34,10 @@ namespace IMAGE
         virtual void switch_icon();
 
         void slot_drag_begin( const Glib::RefPtr<Gdk::DragContext>& context );
-        bool slot_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time );
-        bool slot_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time );
+        void slot_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
+                                 Gtk::SelectionData& selection_data, guint info, guint time );
+        void slot_drag_data_received( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y,
+                                      const Gtk::SelectionData& selection_data, guint info, guint time );
         void slot_drag_end( const Glib::RefPtr< Gdk::DragContext >& context );
     };
 }

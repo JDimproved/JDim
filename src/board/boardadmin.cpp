@@ -19,10 +19,10 @@
 #include "global.h"
 #include "type.h"
 #include "viewfactory.h"
-#include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "session.h"
 #include "command.h"
+#include "dndmanager.h"
 
 BOARD::BoardAdmin *instance_boardadmin = NULL;
 
@@ -233,40 +233,35 @@ void BoardAdmin::command_local( const COMMAND_ARGS& command )
 
 
 //
-// タブのD&Dを開始
+// タブをお気に入りにドロップした時にお気に入りがデータ送信を要求してきた
 //
-void BoardAdmin::slot_drag_begin( int page )
+void BoardAdmin::slot_drag_data_get( Gtk::SelectionData& selection_data, const int page )
 {
+#ifdef _DEBUG    
+    std::cout << "BoardAdmin::slot_drag_data_get page = " << page  << std::endl;
+#endif
+
     SKELETON::View* view = ( SKELETON::View* )get_notebook()->get_nth_page( page );
-    if( !view ) return;
+    if( ! view ) return;
 
-    std::string url = view->get_url();
+    const std::string url = view->get_url();
     
-    CORE::DND_Begin( get_url() );
-
     CORE::DATA_INFO info;
     info.type = TYPE_BOARD;
     info.url = DBTREE::url_boardbase( url );
     info.name = DBTREE::board_name( info.url );
+    info.data = std::string();
+    info.path = Gtk::TreePath( "0" ).to_string();
+
+    if( info.url.empty() ) return;
 
 #ifdef _DEBUG    
-    std::cout << "BoardAdmin::slot_drag_begin " << info.name  << std::endl;
+    std::cout << "name = " << info.name << std::endl;
 #endif
 
-    CORE::SBUF_clear_info();
-    CORE::SBUF_append( info );
-}
+    CORE::DATA_INFO_LIST list_info;
+    list_info.push_back( info );
+    CORE::SBUF_set_list( list_info );
 
-
-
-//
-// タブのD&D終了
-//
-void BoardAdmin::slot_drag_end()
-{
-#ifdef _DEBUG    
-    std::cout << "BoardAdmin::slot_drag_end\n";
-#endif
-
-    CORE::DND_End();
+    selection_data.set( DNDTARGET_FAVORITE, get_url() );
 }

@@ -19,7 +19,7 @@ namespace BBSLIST
     class SelectListDialog : public SKELETON::PrefDiag
     {
         Glib::RefPtr< Gtk::TreeStore >& m_treestore;
-        std::vector< Gtk::TreePath > m_vec_path;
+        std::vector< std::string > m_vec_path;
 
         SKELETON::LabelEntry m_label_name;
 
@@ -36,7 +36,7 @@ namespace BBSLIST
         SelectListDialog( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore );
         virtual ~SelectListDialog();
 
-        Gtk::TreePath get_path();
+        const std::string get_path();
 
       protected:
 
@@ -45,6 +45,7 @@ namespace BBSLIST
       private:
 
         void slot_show_tree();
+        virtual bool slot_timeout( int timer_number );
     };
 };
 

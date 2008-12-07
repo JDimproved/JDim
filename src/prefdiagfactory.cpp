@@ -38,7 +38,7 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
         case PREFDIAG_PASSWD:
             return new CORE::PasswdPref( parent, url );
 
-        case PREFDIAG_PRIVARY:
+        case PREFDIAG_PRIVACY:
             return new CORE::PrivacyPref( parent, url );
 
         case PREFDIAG_BROWSER:

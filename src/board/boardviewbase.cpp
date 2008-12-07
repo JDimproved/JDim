@@ -22,7 +22,6 @@
 
 #include "command.h"
 #include "session.h"
-#include "dndmanager.h"
 #include "sharedbuffer.h"
 #include "global.h"
 #include "type.h"
@@ -31,6 +30,7 @@
 #include "colorid.h"
 #include "fontid.h"
 #include "compmanager.h"
+#include "dndmanager.h"
 
 #include "icons/iconmanager.h"
 
@@ -98,7 +98,7 @@ m_treeview.append_column( *col ); \
 BoardViewBase::BoardViewBase( const std::string& url )
     : SKELETON::View( url ),
       m_url_board( url ),
-      m_treeview( true, CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
+      m_treeview( url, DNDTARGET_FAVORITE, true, CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
       m_col_mark( NULL ),
       m_col_id( NULL ),
       m_col_subject( NULL ),
@@ -161,11 +161,8 @@ BoardViewBase::BoardViewBase( const std::string& url )
     m_treeview.sig_key_press().connect( sigc::mem_fun(*this, &BoardViewBase::slot_key_press ) );
     m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &BoardViewBase::slot_key_release ) );
     m_treeview.sig_scroll_event().connect( sigc::mem_fun(*this, &BoardViewBase::slot_scroll_event ) );
-
-    // D&D設定
-    m_treeview.sig_drag_begin().connect( sigc::mem_fun(*this, &BoardViewBase::slot_drag_begin ) );
-    m_treeview.sig_drag_end().connect( sigc::mem_fun(*this, &BoardViewBase::slot_drag_end ) );
-
+    m_treeview.signal_drag_data_get().connect( sigc::mem_fun(*this, &BoardViewBase::slot_drag_data_get ) );
+    
 
     // ポップアップメニューの設定
     // アクショングループを作ってUIマネージャに登録
@@ -177,8 +174,8 @@ BoardViewBase::BoardViewBase( const std::string& url )
     action_group()->add( Gtk::Action::create( "UnsetBookMark", "しおりを解除(_U)" ),    // 未使用
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_UNSET ) );
     action_group()->add( Gtk::Action::create( "OpenTab", "OpenArticleTab" ), sigc::mem_fun( *this, &BoardViewBase::slot_open_tab ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに登録(_F)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_thread ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに登録(_A)" ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_board ) );
+    action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加(_F)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_thread ) );
+    action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに追加(_A)" ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_board ) );
     action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動(_T)" ), sigc::mem_fun( *this, &BoardViewBase::goto_top ) );
     action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動(_M)" ), sigc::mem_fun( *this, &BoardViewBase::goto_bottom ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
@@ -1669,34 +1666,19 @@ const bool BoardViewBase::slot_scroll_event( GdkEventScroll* event )
 }
 
 
-
 //
-// このビューからD&Dを開始したときにtreeviewから呼ばれる
+// D&Dで受信側がデータ送信を要求してきた
 //
-void BoardViewBase::slot_drag_begin()
+void BoardViewBase::slot_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
+                                        Gtk::SelectionData& selection_data, guint info, guint time )
 {
-#ifdef _DEBUG    
-    std::cout << "BoardViewBase::slot_drag_begin\n";
+#ifdef _DEBUG
+    std::cout << "BoardViewBase::slot_drag_data_get\n";
 #endif
 
-    CORE::DND_Begin( get_url() );
     set_article_to_buffer();
+    selection_data.set( m_treeview.get_dndtarget(), get_url_board() );
 }
-
-
-
-//
-// このビューからD&Dを開始した後にD&Dを終了するとtreeviewから呼ばれる
-//
-void BoardViewBase::slot_drag_end()
-{
-#ifdef _DEBUG    
-    std::cout << "BoardViewBase::slot_drag_end\n";
-#endif
-
-    CORE::DND_End();
-}
-
 
 
 //
@@ -2170,10 +2152,11 @@ const std::string BoardViewBase::get_name_of_cell( Gtk::TreePath& path, const Gt
 //
 void BoardViewBase::set_article_to_buffer()
 {
-    CORE::SBUF_clear_info();
-
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     if( list_it.size() ){
+
+        CORE::DATA_INFO_LIST list_info;
+        Gtk::TreePath path( "0" );
         std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
         for( ; it != list_it.end(); ++it ){
 
@@ -2184,12 +2167,18 @@ void BoardViewBase::set_article_to_buffer()
             info.type = TYPE_THREAD;
             info.url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
             info.name = name.raw();
+            info.data = std::string();
+            info.path = path.to_string();
 
-            CORE::SBUF_append( info );
+            list_info.push_back( info );
+
 #ifdef _DEBUG    
             std::cout << "append " << info.name << std::endl;
 #endif
+            path.next();
         }
+
+        CORE::SBUF_set_list( list_info );
     }
 }
 
@@ -2200,11 +2189,15 @@ void BoardViewBase::set_article_to_buffer()
 //
 void BoardViewBase::set_board_to_buffer()
 {
+    CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
     info.type = TYPE_BOARD;
     info.url = get_url();
     info.name = DBTREE::board_name( get_url_board() );
+    info.data = std::string();
+    info.path = Gtk::TreePath( "0" ).to_string();
 
-    CORE::SBUF_clear_info();
-    CORE::SBUF_append( info );
+    list_info.push_back( info );
+
+    CORE::SBUF_set_list( list_info );
 }

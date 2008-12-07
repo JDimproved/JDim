@@ -1281,8 +1281,9 @@ void ArticleBase::show_updateicon( const bool update )
 #ifdef _DEBUG
         std::cout << "toggle_icon on\n";
 #endif
+
+        if( ! ( m_status & STATUS_UPDATE ) ) m_save_info = true;
         m_status |= STATUS_UPDATE;
-        m_save_info = true;
 
         CORE::core_set_command( "toggle_article_icon", m_url);
         CORE::core_set_command( "toggle_favorite_icon", m_url );
@@ -1293,8 +1294,8 @@ void ArticleBase::show_updateicon( const bool update )
         std::cout << "toggle_icon off\n";
 #endif
 
+        if( m_status & STATUS_UPDATE ) m_save_info = true;
         m_status &= ~STATUS_UPDATE;
-        m_save_info = true;
 
         // お気に入りのアイコン表示を戻す。スレタブのアイコンの方はArticleViewが戻す
         CORE::core_set_command( "toggle_favorite_icon", m_url );

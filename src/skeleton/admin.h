@@ -186,10 +186,8 @@ namespace SKELETON
         // オートリロードのモード設定
         virtual bool set_autoreload_mode( const std::string& url, int mode, int sec );
 
-        // D&D 処理
-        // 派生クラス別にD&Dの処理を行う
-        virtual void slot_drag_begin( int page ) = 0;
-        virtual void slot_drag_end() = 0;
+        // タブをお気に入りにドロップした時にお気に入りがデータ送信を要求してきた
+        virtual void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ) = 0;
 
         void open_list( const COMMAND_ARGS& command_list );
         virtual COMMAND_ARGS get_open_list_args( const std::string& url, const COMMAND_ARGS& command_list ){ return COMMAND_ARGS(); }

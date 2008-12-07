@@ -17,7 +17,7 @@ namespace CORE
     enum
     {
         PREFDIAG_PASSWD,
-        PREFDIAG_PRIVARY,
+        PREFDIAG_PRIVACY,
         PREFDIAG_BROWSER,
         PREFDIAG_LINKFILTER,
         PREFDIAG_USRCMD,
