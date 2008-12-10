@@ -61,7 +61,7 @@ namespace CORE
 
       private:
 
-        virtual bool slot_timeout( int timer_number );
+        virtual void timeout();
 
         // OK押した
         virtual void slot_ok_clicked();

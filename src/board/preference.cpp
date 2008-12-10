@@ -429,8 +429,7 @@ void Preferences::slot_ok_clicked()
 }
 
 
-bool Preferences::slot_timeout( int timer_number )
+void Preferences::timeout()
 {
     if( m_localrule ) m_localrule->clock_in();    
-    return true;
 }

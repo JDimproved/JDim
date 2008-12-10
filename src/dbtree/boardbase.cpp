@@ -171,7 +171,10 @@ const std::string BoardBase::get_proxy_host_w()
 {
     const int mode = get_mode_local_proxy_w();
 
-    if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_for_data();
+    if( mode == DBTREE::PROXY_GLOBAL ){
+
+        if( CONFIG::get_use_proxy_for_data() ) return CONFIG::get_proxy_for_data();
+    }
     else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_w();
 
     return std::string();
@@ -190,7 +193,7 @@ const int BoardBase::get_proxy_port_w()
 
 const std::string BoardBase::get_proxy_basicauth_w()
 {
-    const int mode = get_mode_local_proxy();
+    const int mode = get_mode_local_proxy_w();
 
     if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_basicauth_for_data();
     else if( mode == DBTREE::PROXY_LOCAL ) return get_local_proxy_basicauth_w();
@@ -819,7 +822,10 @@ void BoardBase::download_subject( const std::string& url_update_view )
 {
 #ifdef _DEBUG
     std::cout << "BoardBase::download_subject " << url_subject() << std::endl
-              << "url_update_view = " << url_update_view << std::endl;
+              << "url_update_view = " << url_update_view << std::endl
+              << "empty = " << empty() << std::endl
+              << "loading = " << is_loading() << std::endl
+              << "views = " << m_url_update_views.size() << std::endl;
 #endif
 
     // ダウンロード中に他のビューから再びダウンロード依頼が来たら
@@ -1328,6 +1334,10 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
 //
 void BoardBase::update_abone_thread()
 {
+#ifdef _DEBUG
+    std::cout << "BoardBase::update_abone_thread\n";
+#endif
+
     // Root::update_abone_all_board() であぼーん状態を全更新するときなど
     // まだスレ一覧にスレを表示していないBoardBaseクラスは更新しない
     if( ! m_list_subject_created ) return;
@@ -1416,7 +1426,7 @@ void BoardBase::reset_abone_thread( std::list< std::string >& threads,
     if( empty() ) return;
 
 #ifdef _DEBUG
-    std::cout << "BoardBase::reset_abone\n";
+    std::cout << "BoardBase::reset_abone_thread\n";
 #endif
 
     // 前後の空白と空白行を除く

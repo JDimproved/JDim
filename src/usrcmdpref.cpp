@@ -146,10 +146,9 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
 }
 
 
-bool UsrCmdPref::slot_timeout( int timer_number )
+void UsrCmdPref::timeout()
 {
     m_treeview.clock_in();
-    return true;
 }
 
 

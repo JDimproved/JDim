@@ -15,9 +15,6 @@ using namespace SKELETON;
 PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_cancel, const bool add_apply )
     : Gtk::Dialog(), m_url( url ), m_bt_ok( NULL ), m_bt_apply( Gtk::Stock::APPLY )
 {
-    // ディスパッチ管理をダイアログ用に切り替える
-    CORE::enable_dialog_dispmanager();
-
     if( add_apply ){
         m_bt_apply.signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_apply_clicked ) );
         get_action_area()->pack_start( m_bt_apply );
@@ -40,9 +37,6 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_
 PrefDiag::~PrefDiag()
 {
     m_conn_timer.disconnect();
-
-    // ディスパッチ管理をメインルーチン用に切り替える
-    CORE::disable_dialog_dispmanager();
 }
 
 
@@ -74,4 +68,17 @@ int PrefDiag::run(){
     CORE::core_set_command( "dialog_hidden" );
 
     return ret;
+}
+
+
+// タイマーのslot関数
+bool PrefDiag::slot_timeout( int timer_number )
+{
+    // メインループが停止していて dispatcher が働かないため
+    // タイマーから強制的に実行させる
+    CORE::get_dispmanager()->slot_dispatch();
+
+    timeout();
+
+    return true;
 }

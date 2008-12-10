@@ -155,9 +155,8 @@ void SelectListDialog::slot_show_tree()
 }
 
 
-bool SelectListDialog::slot_timeout( int timer_number )
+void SelectListDialog::timeout()
 {
     if( m_selectview ) m_selectview->clock_in();
-    return true;
 }
 

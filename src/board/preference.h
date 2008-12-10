@@ -143,7 +143,7 @@ namespace BOARD
         void slot_check_live();
         void slot_switch_page( GtkNotebookPage*, guint page );
         virtual void slot_ok_clicked();
-        virtual bool slot_timeout( int timer_number );
+        virtual void timeout();
     };
 
 }

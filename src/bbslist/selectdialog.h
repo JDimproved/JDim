@@ -45,7 +45,7 @@ namespace BBSLIST
       private:
 
         void slot_show_tree();
-        virtual bool slot_timeout( int timer_number );
+        virtual void timeout();
     };
 };
 

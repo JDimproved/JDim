@@ -16,7 +16,7 @@
 
 namespace CORE
 {
-    class DispatchManagerBase;
+    class DispatchManager;
 }
 
 namespace SKELETON
@@ -25,7 +25,7 @@ namespace SKELETON
     {
         Glib::Mutex m_mutex;
 
-        friend class CORE::DispatchManagerBase;
+        friend class CORE::DispatchManager;
         bool m_dispatchable;
 
       public:

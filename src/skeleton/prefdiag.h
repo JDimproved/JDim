@@ -41,8 +41,10 @@ namespace SKELETON
       private:
 
         // タイマーのslot関数
-        // コードが繁雑になるのでcoreとは別にする
-        virtual bool slot_timeout( int timer_number ){ return true; }
+        bool slot_timeout( int timer_number );
+
+        // 各設定ダイアログ別のタイムアウト処理 ( slot_timeout()から呼び出される )
+        virtual void timeout(){}
     };
 }
 

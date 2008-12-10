@@ -141,7 +141,7 @@ Loader::~Loader()
     std::cout << "Loader::~Loader : url = " << m_data.url << std::endl;
 #endif
 
-    assert( ! m_loading );
+//    assert( ! m_loading );
 }
 
 
