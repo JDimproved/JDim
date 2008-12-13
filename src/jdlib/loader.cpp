@@ -350,6 +350,7 @@ void* Loader::launcher( void* dat )
 //
 // 実際の処理部
 //
+#include <iostream>
 void Loader::run_main()
 {
     // エラーメッセージ
@@ -563,10 +564,29 @@ void Loader::run_main()
             }
 
             if( tmpsize == 0 ) break;
-            if( tmpsize > 0 ) read_size += tmpsize;
+            if( tmpsize > 0 ){
+
+                read_size += tmpsize;
+
+                // ヘッダ取得
+                if( receiving_header ){
+
+                    const int ret = receive_header( m_buf, read_size );
+                    if( ret == HTTP_ERR ){
+
+                        m_data.code = HTTP_ERR;
+                        errmsg = "invalid header : " + m_data.url;
+                        goto EXIT_LOADING;
+                    }
+                    else if( ret == HTTP_OK ) receiving_header = false;
+                }
+
+                if( m_data.length && m_data.length <= m_data.length_current + read_size ) break;
+            }
+
         }
 
-        m_buf[ read_size + 1 ] = '\0';
+        m_buf[ read_size ] = '\0';
 
         // 停止指定
         if( m_stop ) break;
@@ -574,27 +594,22 @@ void Loader::run_main()
         // サーバ側がcloseした
         if( read_size == 0 ){
 
-            // ヘッダを取得する前にcloseした
+            // ヘッダを取得する前にcloseしたらエラー
             if( receiving_header && m_data.size_data == 0 ){
                 m_data.code = HTTP_ERR;         
                 errmsg = "no data";
                 goto EXIT_LOADING;
             }
 
+            // コード304等の場合は終了
             break;
         }
 
-        // ヘッダ取得
+        // ヘッダ取得失敗
         if( receiving_header ){
-
-            if( ! receive_header( m_buf, read_size ) ){
-
-                m_data.code = HTTP_ERR;
-                errmsg = "invalid header : " + m_data.url;
-                goto EXIT_LOADING;
-            }
-            receiving_header = false;
-            if( ! read_size ) continue;
+            m_data.code = HTTP_ERR;         
+            errmsg = "no http header";
+            goto EXIT_LOADING;
         }
 
         m_data.length_current += read_size;
@@ -627,6 +642,8 @@ void Loader::run_main()
             errmsg = "unzip() failed : " + m_data.url;
             goto EXIT_LOADING;
         }
+
+        if( m_data.length && m_data.length <= m_data.length_current ) break;
         
     } while( !m_stop );
 
@@ -684,12 +701,12 @@ EXIT_LOADING:
     // Loadable::finish()をコールバックして終わり
     if( m_loadable ) m_loadable->finish();
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
     std::cout << "Loader::run_main : finish loading : " << m_data.url << std::endl;;
-    std::cout << "read size : " << m_data.length_current << std::endl;;    
+    std::cout << "read size : " << m_data.length_current << " / " << m_data.length << std::endl;;    
     std::cout << "data size : " << m_data.size_data << std::endl;;
     std::cout << "code : " << m_data.code << std::endl << std::endl;
-#endif    
+//#endif    
 
     m_loading = false;
 }
@@ -797,7 +814,7 @@ std::string Loader::create_msg_send()
 //
 // サーバから送られてきた生データからヘッダ取得
 //
-// 処理を簡単にするためにヘッダはバッファ内にすべてあると仮定(バッファ超えたらエラー)
+// 戻り値 : 成功 HTTP_OK、失敗 HTTP_ERR、未処理 HTTP_INIT
 //
 // 入力
 // buf : 生データ
@@ -807,34 +824,33 @@ std::string Loader::create_msg_send()
 // buf : ヘッダが取り除かれたデータ
 // readsize: 出力データサイズ
 //
-bool Loader::receive_header( char* buf, size_t& read_size )
+const int Loader::receive_header( char* buf, size_t& read_size )
 {
+//#ifdef _DEBUG
+    std::cout << "Loader::receive_header : read_size = " << read_size << std::endl;
+//#endif
+
     buf[ read_size ] = '\0';
     m_data.str_header = buf;
-
     size_t lng_header = m_data.str_header.find( "\r\n\r\n" );
-    if( lng_header == std::string::npos ) lng_header = m_data.str_header.find( "\n\n" );
-    if( lng_header == std::string::npos ){
-        MISC::ERRMSG( "could not find HTML header" );
-#ifdef _DEBUG
-        std::cout << "Loader::receive_header : read_size = " << read_size << std::endl;
-        std::cout << m_data.str_header << std::endl;
-#endif
-        return false;
+    if( lng_header != std::string::npos ) lng_header += 4;
+    else{
+
+        lng_header = m_data.str_header.find( "\n\n" );
+        if( lng_header != std::string::npos ) lng_header +=2;
+        else return HTTP_INIT;
     }
         
-    lng_header += 2;
     m_data.str_header.resize( lng_header ); 
 
-#ifdef _DEBUG    
-    std::cout << "\nheader : " << lng_header << " byte\n";
+//#ifdef _DEBUG    
+    std::cout << "header : size = " << lng_header << " byte\n";
     std::cout << m_data.str_header << std::endl;
-#endif
+//#endif
 
-    if( ! analyze_header() ) return false;
+    if( ! analyze_header() ) return HTTP_ERR;
                 
     // 残りのデータを前に移動
-    lng_header += 2;
     read_size -= lng_header;
     if( read_size ){
 
@@ -842,7 +858,7 @@ bool Loader::receive_header( char* buf, size_t& read_size )
         buf[ read_size ] = '\0';
     }
 
-    return true;
+    return HTTP_OK;
 }
 
 
@@ -1338,11 +1354,12 @@ bool Loader::wait_recv_send( int fd, bool recv )
             MISC::ERRMSG( "select failed" );
             break;
         }
+
         if( errno != EINTR && FD_ISSET( fd, &fdset ) ) return true;
         if( m_stop ) break;
         if( ++count >= m_data.timeout ) break;
 #ifdef _DEBUG
-        std::cout << "Loader::wait_recv_send ret = " << ret << " timeout = " << count << std::endl;
+        std::cout << "Loader::wait_recv_send ret = " << ret << " errno = " << errno << " timeout = " << count << std::endl;
 #endif
     }
     

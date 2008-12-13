@@ -92,7 +92,7 @@ namespace JDLIB
         bool wait_recv_send( int fd, bool recv );
 
         // ヘッダ用
-        bool receive_header( char* buf, size_t& read_size );
+        const int receive_header( char* buf, size_t& read_size );
         bool analyze_header();
         std::string analyze_header_option( const std::string& option );
         std::list< std::string > analyze_header_option_list( const std::string& option );
