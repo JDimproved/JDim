@@ -185,10 +185,6 @@ namespace MISC
 
     // 文字数を限定して環境変数の値を返す
     std::string getenv_limited( const char *name, const size_t size = 1 );
-
-    // str1 と str2 間のレーベンシュタイン距離
-    const double leven( std::vector< std::vector< int > >& dist,
-                        const Glib::ustring& str1, const Glib::ustring& str2 );
 }
 
 

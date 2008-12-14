@@ -350,7 +350,6 @@ void* Loader::launcher( void* dat )
 //
 // 実際の処理部
 //
-#include <iostream>
 void Loader::run_main()
 {
     // エラーメッセージ
@@ -701,12 +700,12 @@ EXIT_LOADING:
     // Loadable::finish()をコールバックして終わり
     if( m_loadable ) m_loadable->finish();
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "Loader::run_main : finish loading : " << m_data.url << std::endl;;
     std::cout << "read size : " << m_data.length_current << " / " << m_data.length << std::endl;;    
     std::cout << "data size : " << m_data.size_data << std::endl;;
     std::cout << "code : " << m_data.code << std::endl << std::endl;
-//#endif    
+#endif    
 
     m_loading = false;
 }
@@ -826,9 +825,9 @@ std::string Loader::create_msg_send()
 //
 const int Loader::receive_header( char* buf, size_t& read_size )
 {
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "Loader::receive_header : read_size = " << read_size << std::endl;
-//#endif
+#endif
 
     buf[ read_size ] = '\0';
     m_data.str_header = buf;
@@ -843,10 +842,10 @@ const int Loader::receive_header( char* buf, size_t& read_size )
         
     m_data.str_header.resize( lng_header ); 
 
-//#ifdef _DEBUG    
+#ifdef _DEBUG    
     std::cout << "header : size = " << lng_header << " byte\n";
     std::cout << m_data.str_header << std::endl;
-//#endif
+#endif
 
     if( ! analyze_header() ) return HTTP_ERR;
                 

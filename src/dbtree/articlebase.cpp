@@ -13,6 +13,7 @@
 #include "jdlib/misctime.h"
 #include "jdlib/miscmsg.h"
 #include "jdlib/jdregex.h"
+#include "jdlib/tfidf.h"
 
 #include "config/globalconf.h"
 
@@ -1002,8 +1003,13 @@ void ArticleBase::download_dat( const bool check_update )
 // 前スレのアドレスをセットしてからdownload_dat()を呼び出すと
 // ロード終了時( slot_load_finished() )に次スレ移行チェックをする
 //
+#include <iostream>
 void ArticleBase::set_url_pre_article( const std::string& url_pre_article )
 {
+//#ifdef _DEBUG
+    std::cout << "ArticleBase::set_url_pre_article url = " << url_pre_article << std::endl;
+//#endif
+
     m_url_pre_article = url_pre_article;
 
     if( ! m_url_pre_article.empty() ){
@@ -1013,6 +1019,21 @@ void ArticleBase::set_url_pre_article( const std::string& url_pre_article )
             || m_datbase != DBTREE::url_datbase( m_url_pre_article )
             || get_since_time() < DBTREE::article_since_time( m_url_pre_article )
             ) m_url_pre_article = std::string();
+    }
+
+    // TFIDFによる類似度判定のためオフラインに切り替えてからキャッシュにあるsubject.txtを読み込む
+    if( ! m_url_pre_article.empty() && ! DBTREE::board_list_subject( m_url ).size() ){
+
+//#ifdef _DEBUG
+        std::cout << "load subjects\n";
+//#endif
+
+        const bool online = SESSION::is_online();
+        SESSION::set_online( false );
+
+        DBTREE::board_download_subject( m_url, std::string() );
+
+        SESSION::set_online( online );
     }
 }
 
@@ -1175,23 +1196,42 @@ void ArticleBase::slot_load_finished()
         const std::string pre_subject = DBTREE::article_subject( m_url_pre_article );
         if( ! pre_subject.empty() ){
 
-            const int MAXSTR = 256;
-            std::vector< std::vector< int > > dist( MAXSTR, std::vector< int >( MAXSTR ) );
-            const int leven = ( int )( MISC::leven( dist, pre_subject, m_subject ) * 10 + .5 );
+            const std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( m_url );
+            if( ! list_subject.size() ) return;
 
-#ifdef _DEBUG
+            // 単語ベクトル作成
+            MISC::VEC_WORDS vec_words;
+            MISC::tfidf_create_vec_words( vec_words, pre_subject );
+
+            // IDFベクトル計算
+            MISC::VEC_IDF vec_idf;
+            MISC::tfidf_create_vec_idf_from_board( vec_idf, pre_subject, list_subject, vec_words );
+
+            // TFIDFベクトル計算
+            MISC::VEC_TFIDF vec_tfidf_src;
+            MISC::VEC_TFIDF vec_tfidf;
+            vec_tfidf_src.resize( vec_words.size() );
+            vec_tfidf.resize( vec_words.size() );
+            MISC::tfidf_calc_vec_tfifd( vec_tfidf_src, pre_subject, vec_idf, vec_words );
+            MISC::tfidf_calc_vec_tfifd( vec_tfidf, m_subject, vec_idf, vec_words );
+
+            // 類似度計算
+            const int value = ( int )( MISC::tfidf_cos_similarity( vec_tfidf_src, vec_tfidf ) * 10 + .5 );
+
+//#ifdef _DEBUG
             std::cout << "pre_subject = " << pre_subject << std::endl
                       << "subject = " << m_subject << std::endl
-                      << "leven = " << leven << std::endl;
-#endif
+                      << "value = " << value << std::endl;
+//#endif
             // このスレは m_url_pre_article の次スレとみなして情報をコピーする
-            if( leven <= CONFIG::get_threshold_next() ){
+            if( value >= CONFIG::get_threshold_next() ){
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
                 std::cout << "hit!\n";
-#endif
+//#endif
                 copy_article_info( m_url_pre_article );
 
+                // お気に入りのアドレスと名前を自動更新
                 if( CONFIG::get_replace_favorite_next() ){
                     CORE::core_set_command( "replace_favorite_thread", "", m_url_pre_article, m_url );
                 }

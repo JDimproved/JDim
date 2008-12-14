@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "boardadmin.h"
@@ -13,6 +13,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
+#include "jdlib/tfidf.h"
 
 #include "sound/soundmanager.h"
 
@@ -121,13 +122,6 @@ void BoardView::update_boardname()
 //
 
 
-typedef struct {
-    DBTREE::ArticleBase* article;
-    int leven;
-    time_t since;
-} NEXT_ITEM;
-
-
 BoardViewNext::BoardViewNext( const std::string& url, const std::string& url_pre_article )
     : BoardViewBase( url ),
       m_url_pre_article( url_pre_article )
@@ -180,74 +174,9 @@ void BoardViewNext::reload()
 //
 void BoardViewNext::update_view()
 {
-    const int MAXSTR = 256;
-    std::vector< std::vector< int > > dist( MAXSTR, std::vector< int >( MAXSTR ) );
-    const Glib::ustring subject_src = DBTREE::article_subject( m_url_pre_article );
-    const time_t since_src = DBTREE::article_since_time( m_url_pre_article );
-
-#ifdef _DEBUG
-    const int code = DBTREE::board_code( get_url_board() );
-    std::cout << "BoardViewNext::update_view " << get_url()
-              << " code = " << code << " " << subject_src << std::endl
-              << "since_src = " << since_src << std::endl;
-#endif    
-
-    // 高速化のためデータベースに直接アクセス
-    std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
-
     std::list< NEXT_ITEM > next_items;
-    std::list< DBTREE::ArticleBase* >::iterator it = list_subject.begin();
-    for( ; it != list_subject.end(); ++it ){
 
-        NEXT_ITEM item;
-
-        // 読み込み済みのスレは除外
-        item.article = ( *it );
-        if( item.article->get_number_load() ) continue;
-
-        item.since = item.article->get_since_time();
-
-        const Glib::ustring subject = item.article->get_subject();
-        item.leven = ( int )( MISC::leven( dist, subject_src, subject ) * 10 + .5 );
-        if( item.leven <= CONFIG::get_threshold_next() ){
-
-#ifdef _DEBUG
-            std::cout << item.leven << " , " << item.since << " | " << subject << std::endl;
-#endif
-
-            std::list< NEXT_ITEM >::iterator it_next_items = next_items.begin();
-            for( ; it_next_items != next_items.end(); ++it_next_items ){
-
-                // next が src よりも以前に立てられて、item が src よりも後に立てられた
-                // 時は item を前に挿入する
-                if( ( *it_next_items ).since < since_src && item.since > since_src ){
-
-                    next_items.insert( it_next_items, item );
-                    break;
-                }
-                else if(  ( ( *it_next_items ).since > since_src && item.since > since_src ) 
-                          || ( ( *it_next_items ).since < since_src && item.since < since_src ) ){ 
-
-                    // leven -> since の優先度で挿入
-                    if( ( *it_next_items ).leven > item.leven ){
-
-                        next_items.insert( it_next_items, item );
-                        break;
-                    }
-                    else if( ( *it_next_items ).leven == item.leven ){
-
-                        if( ( *it_next_items ).since > item.since ){
-
-                            next_items.insert( it_next_items, item );
-                            break;
-                        }
-                    }
-                }
-
-            }
-            if( it_next_items == next_items.end() ) next_items.push_back( item );
-        }
-    }
+    update_by_tfidf( next_items );
 
     std::list< DBTREE::ArticleBase* >list_nexts;
     std::list< NEXT_ITEM >::iterator it_next_items = next_items.begin();
@@ -263,6 +192,97 @@ void BoardViewNext::update_view()
 
     DBTREE::board_set_view_sort_column( get_url_board(), col );
     DBTREE::board_set_view_sort_mode( get_url_board(), sortmode );
+}
+
+
+//
+// TFIDFで次スレ検索
+//
+void BoardViewNext::update_by_tfidf( std::list< NEXT_ITEM >& next_items )
+{
+    const Glib::ustring subject_src = DBTREE::article_subject( m_url_pre_article );
+    const time_t since_src = DBTREE::article_since_time( m_url_pre_article );
+
+#ifdef _DEBUG
+    const int code = DBTREE::board_code( get_url_board() );
+    std::cout << "BoardViewNext::update_by_tfidf " << get_url()
+              << " code = " << code << " " << subject_src << std::endl
+              << "since_src = " << since_src << std::endl;
+#endif    
+
+    // 高速化のためデータベースに直接アクセス
+    const std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
+    if( ! list_subject.size() ) return;
+
+    // 単語ベクトル作成
+    MISC::VEC_WORDS vec_words;
+    MISC::tfidf_create_vec_words( vec_words, subject_src );
+
+    // IDFベクトル計算
+    MISC::VEC_IDF vec_idf;
+    MISC::tfidf_create_vec_idf_from_board( vec_idf, subject_src, list_subject, vec_words );
+
+    // subject_src の TFIDFベクトル計算
+    MISC::VEC_TFIDF vec_tfidf_src;
+    MISC::VEC_TFIDF vec_tfidf;
+    vec_tfidf_src.resize( vec_words.size() );
+    vec_tfidf.resize( vec_words.size() );
+    MISC::tfidf_calc_vec_tfifd( vec_tfidf_src, subject_src, vec_idf, vec_words );
+
+    // 類似度検索
+    std::list< DBTREE::ArticleBase* >::const_iterator it = list_subject.begin();
+    for( ; it != list_subject.end(); ++it ){
+
+        NEXT_ITEM item;
+
+        // 読み込み済みのスレは除外
+        item.article = ( *it );
+        if( item.article->get_number_load() ) continue;
+
+        item.since = item.article->get_since_time();
+
+        const Glib::ustring subject = item.article->get_subject();
+        MISC::tfidf_calc_vec_tfifd( vec_tfidf, subject, vec_idf, vec_words );
+        item.value = ( int )( MISC::tfidf_cos_similarity( vec_tfidf_src, vec_tfidf ) * 10 + .5 );
+        if( item.value >= CONFIG::get_threshold_next() ){
+
+#ifdef _DEBUG
+            std::cout << item.value << " , " << item.since << " | " << subject << std::endl;
+#endif
+
+            std::list< NEXT_ITEM >::iterator it_next_items = next_items.begin();
+            for( ; it_next_items != next_items.end(); ++it_next_items ){
+
+                // next が src よりも以前に立てられて、item が src よりも後に立てられた
+                // 時は item を前に挿入する
+                if( ( *it_next_items ).since < since_src && item.since > since_src ){
+
+                    next_items.insert( it_next_items, item );
+                    break;
+                }
+                else if(  ( ( *it_next_items ).since > since_src && item.since > since_src ) 
+                          || ( ( *it_next_items ).since < since_src && item.since < since_src ) ){ 
+
+                    // value -> since の優先度で挿入
+                    if( ( *it_next_items ).value < item.value ){
+
+                        next_items.insert( it_next_items, item );
+                        break;
+                    }
+                    else if( ( *it_next_items ).value == item.value ){
+
+                        if( ( *it_next_items ).since > item.since ){
+
+                            next_items.insert( it_next_items, item );
+                            break;
+                        }
+                    }
+                }
+
+            }
+            if( it_next_items == next_items.end() ) next_items.push_back( item );
+        }
+    }
 }
 
 

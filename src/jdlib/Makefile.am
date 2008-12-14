@@ -16,7 +16,8 @@ libjdlib_a_SOURCES = \
 	loaderdata.cpp \
 	confloader.cpp \
 	jdregex.cpp \
-	jdmigemo.cpp
+	jdmigemo.cpp \
+	tfidf.cpp
 
 noinst_HEADERS = \
 	miscutil.h \
@@ -36,7 +37,8 @@ noinst_HEADERS = \
 	loaderdata.h \
 	confloader.h \
 	jdregex.h \
-	jdmigemo.h
+	jdmigemo.h \
+	tfidf.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

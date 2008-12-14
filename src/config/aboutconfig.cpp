@@ -154,7 +154,7 @@ void AboutConfig::append_rows()
     // 次スレ検索
     append_row( "" );
     append_row( "■ 次スレ検索" );
-    append_row( "類似度判定のしきい値(大きいほど判定が甘くなる、最大10)", get_confitem()->threshold_next, CONF_THRESHOLD_NEXT );
+    append_row( "類似度判定のしきい値(小さいほど判定が甘くなる、最大10)", get_confitem()->threshold_next, CONF_THRESHOLD_NEXT );
     append_row( "移行時にお気に入りのアドレスと名前を自動更新する", get_confitem()->replace_favorite_next, CONF_REPLACE_FAVORITE_NEXT );
 
     // スレビュー

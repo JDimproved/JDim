@@ -25,6 +25,16 @@ namespace BOARD
 
 
     // 次スレ検索ビュー
+
+    typedef struct
+    {
+
+        DBTREE::ArticleBase* article;
+        int value;
+        time_t since;
+
+    } NEXT_ITEM;
+
     class BoardViewNext : public BOARD::BoardViewBase
     {
         std::string m_url_pre_article;
@@ -39,6 +49,9 @@ namespace BOARD
         virtual void update_boardname();
 
       private:
+
+        // TFIDFで次スレ検索
+        void update_by_tfidf( std::list< NEXT_ITEM >& next_items );
 
         virtual const std::string get_url_pre_article(){ return m_url_pre_article; }
 
