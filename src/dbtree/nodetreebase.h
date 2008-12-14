@@ -29,6 +29,11 @@ namespace DBTREE
         LINK_NUM
     };
 
+    enum
+    {
+        RESUME_CHKSIZE = 64
+    };
+
     //ノードツリーのベースクラス
     class NodeTreeBase : public SKELETON::Loadable
     {
@@ -43,8 +48,15 @@ namespace DBTREE
         // コード変換前の生データのサイズ ( byte )
         size_t m_lng_dat; 
 
-        // true ならレジューム読み込み
-        bool m_resume;
+        // レジュームのモード
+        int m_resume;
+
+        // レジューム時のチェック用
+        // 生データの先頭から RESUME_CHKSIZE バイト分を入れる
+        char m_resume_head[ RESUME_CHKSIZE ];
+
+        // レジューム中にスキップした生データサイズ
+        size_t m_resume_lng;
 
         // 現在処理中のヘッダ番号( つまりロード中でないなら総レス数になる )
         int m_id_header; 
@@ -106,8 +118,8 @@ namespace DBTREE
 
       protected:
 
-        void set_resume( bool resume ) { m_resume = resume; }
-        void set_broken( bool broken ) { m_broken = broken; }
+        void set_resume( const bool resume );
+        void set_broken( const bool broken ) { m_broken = broken; }
         const int id_header() const { return m_id_header; }
         void set_ext_err( const std::string& ext_err ){ m_ext_err = ext_err; }
 

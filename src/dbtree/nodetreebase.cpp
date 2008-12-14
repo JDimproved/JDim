@@ -54,6 +54,17 @@ enum
 };
 
 
+// レジュームのモード
+enum
+{
+    RESUME_NO = 0,  // レジューム無し
+    RESUME_MODE1,   // 通常のレジューム
+    RESUME_MODE2,   // サーバが range を無視してデータを送ってきた
+    RESUME_MODE3,   // サーバが range を無視してデータを送ってきた時にデータをスキップ中
+    RESUME_FAILED   // レジューム失敗
+};
+
+
 using namespace DBTREE;
 
 
@@ -61,7 +72,7 @@ NodeTreeBase::NodeTreeBase( const std::string url, const std::string& modified )
     : SKELETON::Loadable(),
       m_url( url ),
       m_lng_dat( 0 ),
-      m_resume ( 0 ),
+      m_resume ( RESUME_NO ),
       m_broken( 0 ),
       m_heap( SIZE_OF_HEAP ),
       m_buffer_lines( NULL ),
@@ -922,14 +933,15 @@ NODE* NodeTreeBase::append_dat( const std::string& dat )
 //
 // キャッシュからスレッドをロード
 //
+#include <iostream>
 void NodeTreeBase::load_cache()
 {
     std::string path_cache = CACHE::path_dat( m_url );
     if( CACHE::file_exists( path_cache ) == CACHE::EXIST_FILE ){
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
         std::cout << "NodeTreeBase::load_cache from " << path_cache << std::endl;
-#endif
+//#endif
         std::string str;
         if( CACHE::load_rawdata( path_cache, str ) ){
 
@@ -937,6 +949,7 @@ void NodeTreeBase::load_cache()
             size_t size = 0;
             m_check_update = false;
             m_check_write = false;
+            set_resume( false );
             init_loading();
             const size_t str_length = str.length();
             while( size < str_length ){
@@ -945,6 +958,12 @@ void NodeTreeBase::load_cache()
                 size += size_tmp;
             }
             receive_finish();
+
+            // レジューム時のチェック用に生データの先頭から RESUME_CHKSIZE バイト分をコピーしておく
+            // 詳しくは NodeTreeBase::receive_data() を参照せよ
+            const size_t length_chk = MIN( RESUME_CHKSIZE, str_length );
+            memcpy( m_resume_head, data, length_chk );
+            m_resume_head[ length_chk ] = '\0';
         }
     }
 }
@@ -964,6 +983,19 @@ void NodeTreeBase::init_loading()
 }
 
 
+//
+// レジュームのモードをセットする
+//
+void NodeTreeBase::set_resume( const bool resume )
+{
+//#ifdef _DEBUG
+    std::cout << "NodeTreeBase::set_resume resume = " << resume << std::endl;
+//#endif
+
+    if( resume ) m_resume = RESUME_MODE1;
+    else m_resume = RESUME_NO;
+}
+
 
 //
 // ロード開始
@@ -978,11 +1010,11 @@ void NodeTreeBase::download_dat( const bool check_update )
     m_check_write = false;
     if( ! m_check_update ) m_check_write = MESSAGE::get_log_manager()->has_items( m_url, ! get_res_number() );
 
-#ifdef _DEBUG    
+//#ifdef _DEBUG    
     std::cout << "NodeTreeBase::download_dat : " << m_url << " lng = " << m_lng_dat << std::endl
-              << "modified = " << date_modified() << " check_update = " << check_update
+              << "modified = " << get_date_modified() << " check_update = " << check_update
               << " check_write = " << m_check_write << std::endl;
-#endif
+//#endif
 
 
     // オフライン
@@ -1053,31 +1085,48 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
     if( is_loading()
         && ( get_code() != HTTP_OK && get_code() != HTTP_PARTIAL_CONTENT ) ){
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
         std::cout << "NodeTreeBase::receive_data : code = " << get_code() << std::endl;
-#endif
+//#endif
 
         return;
     }
 
     if( m_check_update ) return;
 
-    // レジューム処理
-    // レジュームした時に先頭が '\n' かチェック
-    // '\n'で無ければあぼーんがあったということ
-    if( m_resume ){
+    // 通常のレジューム処理
+    if( m_resume == RESUME_MODE1 ){
 
-        if( data[ 0 ] != '\n' ){
-            m_broken = true;
-            MISC::ERRMSG( "failed to resume" );
-        }
-        else{
+//#ifdef _DEBUG
+        std::cout << "resume mode = " << m_resume << " -> ";
+//#endif
+
+        // レジュームした時に先頭が '\n' ならレジューム成功
+        if( data[ 0 ] == '\n' ){
+
             ++data;
             --size;
+            m_resume = RESUME_NO;
         }
 
-        m_resume = false;
+        // サーバが range を無視してデータを送ってきた
+        // 続きは add_raw_lines() を参照
+        else if( get_code() == HTTP_OK ) m_resume = RESUME_MODE2;
+
+        // あぼーんが起きた?
+        else{
+
+            m_broken = true;
+            MISC::ERRMSG( "failed to resume" );
+            m_resume = RESUME_NO;
+        }
+
+//#ifdef _DEBUG
+        std::cout << m_resume << std::endl;
+//#endif
     }
+
+    if( m_resume == RESUME_FAILED ) return;
 
     if( !size ) return;
     
@@ -1145,11 +1194,11 @@ void NodeTreeBase::receive_finish()
             ) MESSAGE::get_log_manager()->remove_items( m_url );
     }
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
     std::cout << "NodeTreeBase::receive_finish lng = " << m_lng_dat
               << " code = " << get_code() << " " << get_str_code()
-              << " modified = " << date_modified() << std::endl;
-#endif    
+              << " modified = " << get_date_modified() << std::endl;
+//#endif    
     
     // 親 article クラスにシグナルを打ってツリー構造が変わったことを教える
     m_sig_finished.emit();
@@ -1175,14 +1224,63 @@ void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
     // 保存前にrawデータを加工
     rawlines = process_raw_lines( rawlines );
 
-    // キャッシュに保存
     size_t lng = strlen( rawlines );
-    if( !lng ) return;
+    if( ! lng ) return;
+
+    // サーバが range を無視してデータを送ってきたときのレジューム処理
+    if( m_resume == RESUME_MODE2 ){
+
+//#ifdef _DEBUG
+        std::cout << "NodeTreeBase::add_raw_lines : resume\n";
+//#endif
+
+        // 先頭からdatを送ってきたかチェック
+        const size_t length_chk = MIN( lng, MIN( RESUME_CHKSIZE, strlen( m_resume_head ) ) );
+        if( strncmp( rawlines, m_resume_head, length_chk ) == 0 ){
+            m_resume = RESUME_MODE3;
+            m_resume_lng = 0;
+        }
+
+        // 全く違うデータを送ってきた
+        else{
+
+            m_broken = true;
+            MISC::ERRMSG( "failed to resume" );
+            m_resume = RESUME_FAILED;
+            return;
+        }
+    }
+
+    // レジューム処理でデータをスキップ中
+    if( m_resume == RESUME_MODE3 ){
+
+//#ifdef _DEBUG
+        std::cout << "NodeTreeBase::add_raw_lines : resume skip resume_lng = " << m_resume_lng
+                  << " lng = " << lng << " / lng_dat = " << m_lng_dat << std::endl;
+//#endif
+
+        m_resume_lng += lng;
+        if( m_resume_lng <= m_lng_dat ) return;
+
+        // 越えた分をカットしてレジューム処理終了
+        rawlines += ( lng  - ( m_resume_lng - m_lng_dat ) );
+        lng = ( m_resume_lng - m_lng_dat );
+        m_resume = RESUME_NO;
+
+//#ifdef _DEBUG
+        std::cout << "resume finished : lng = " << lng << std::endl;
+//#endif
+    }
+
+    if( ! lng ) return;
+
     m_lng_dat += lng;
+
+    // キャッシュに保存
     if( m_fout ){
-#ifdef _DEBUG
+//#ifdef _DEBUG
         std::cout << "NodeTreeBase::add_raw_lines save " << lng << " bytes\n";
-#endif       
+//#endif       
         if( fwrite( rawlines, 1, lng, m_fout ) < lng ){
             MISC::ERRMSG( "write failed in NodeTreeBase::add_raw_lines\n" );
         }
