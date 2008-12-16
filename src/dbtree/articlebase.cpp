@@ -1003,12 +1003,11 @@ void ArticleBase::download_dat( const bool check_update )
 // 前スレのアドレスをセットしてからdownload_dat()を呼び出すと
 // ロード終了時( slot_load_finished() )に次スレ移行チェックをする
 //
-#include <iostream>
 void ArticleBase::set_url_pre_article( const std::string& url_pre_article )
 {
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "ArticleBase::set_url_pre_article url = " << url_pre_article << std::endl;
-//#endif
+#endif
 
     m_url_pre_article = url_pre_article;
 
@@ -1024,9 +1023,9 @@ void ArticleBase::set_url_pre_article( const std::string& url_pre_article )
     // TFIDFによる類似度判定のためオフラインに切り替えてからキャッシュにあるsubject.txtを読み込む
     if( ! m_url_pre_article.empty() && ! DBTREE::board_list_subject( m_url ).size() ){
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
         std::cout << "load subjects\n";
-//#endif
+#endif
 
         const bool online = SESSION::is_online();
         SESSION::set_online( false );
@@ -1218,17 +1217,17 @@ void ArticleBase::slot_load_finished()
             // 類似度計算
             const int value = ( int )( MISC::tfidf_cos_similarity( vec_tfidf_src, vec_tfidf ) * 10 + .5 );
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
             std::cout << "pre_subject = " << pre_subject << std::endl
                       << "subject = " << m_subject << std::endl
                       << "value = " << value << std::endl;
-//#endif
+#endif
             // このスレは m_url_pre_article の次スレとみなして情報をコピーする
             if( value >= CONFIG::get_threshold_next() ){
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
                 std::cout << "hit!\n";
-//#endif
+#endif
                 copy_article_info( m_url_pre_article );
 
                 // お気に入りのアドレスと名前を自動更新

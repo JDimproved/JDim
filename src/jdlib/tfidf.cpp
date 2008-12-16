@@ -158,13 +158,12 @@ const double MISC::tfidf_cos_similarity( const VEC_TFIDF& vec_tfidf1, const VEC_
 //
 // スレ一覧からIDF 計算
 //
-#include <iostream>
 void MISC::tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
                                             const Glib::ustring& subject_src, const std::list< DBTREE::ArticleBase* >& list_subject, const VEC_WORDS& vec_words )
 {
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "MISC::tfidf_create_vec_idf_from_board\n";
-//#endif
+#endif
 
     if( subject_src.empty() || ! list_subject.size() || ! vec_words.size() ) return;
 
@@ -187,14 +186,14 @@ void MISC::tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
     }
     for( int i = 0; i < (int)vec_words.size(); ++i ){
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
         std::cout << vec_words[ i ].raw() << " hit = " << (int)vec_idf[ i ] << " / " << D;
-//#endif
+#endif
 
         vec_idf[ i ] = log( D / vec_idf[ i ] );
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
         std::cout << " idf = " << vec_idf[ i ] << std::endl;
-//#endif
+#endif
     }
 }
