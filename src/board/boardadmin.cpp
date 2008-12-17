@@ -156,6 +156,7 @@ void BoardAdmin::switch_admin()
 COMMAND_ARGS BoardAdmin::get_open_list_args( const std::string& url, const COMMAND_ARGS& command_list )
 {
     COMMAND_ARGS command_arg;
+    command_arg.arg4 = "MAIN";
 
     CORE::core_set_command( "set_history_board", url );
 

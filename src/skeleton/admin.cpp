@@ -732,6 +732,10 @@ void Admin::exec_command()
 //
 void Admin::open_list( const COMMAND_ARGS& command_list )
 {
+#ifdef _DEBUG
+    std::cout << "Admin::open_list " << m_url << std::endl;
+#endif
+
     const std::string& str_list = command_list.arg1;
 
     std::list< std::string > list_url = MISC::split_line( str_list );
@@ -752,6 +756,10 @@ void Admin::open_list( const COMMAND_ARGS& command_list )
         command_arg.arg1 = "true";   // タブで開く
         command_arg.arg2 = "false";  // 既に開いているかチェック
         command_arg.arg3 = "noswitch";  // タブを切り替えない
+
+#ifdef _DEBUG
+        std::cout << "url = " << command_arg.url << std::endl;
+#endif
 
         open_view( command_arg );
 
