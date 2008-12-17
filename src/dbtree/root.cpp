@@ -24,7 +24,7 @@
 #include "config/globalconf.h"
 #include "cache.h"
 #include "httpcode.h"
-#include "jdversion.h"
+#include "environment.h"
 
 #include <sstream>
 #include <cstring>
@@ -67,10 +67,10 @@ Root::Root()
     load_etc();
 
     // JDのサポートBBS登録
-    set_board( JDBBS, "JDサポートBBS" );
+    set_board( ENVIRONMENT::get_jdbbs(), "JDサポートBBS" );
 
     // 2chのスレの過去ログ
-    set_board( JD2CHLOG, "2chスレ過去ログ" );
+    set_board( ENVIRONMENT::get_jd2chlog(), "2chスレ過去ログ" );
 
     m_board_null = new DBTREE::BoardBase( "", "", "" );
 }

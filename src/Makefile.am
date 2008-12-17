@@ -56,7 +56,8 @@ jd_SOURCES = \
 	fontcolorpref.cpp \
 	usrcmdpref.cpp \
 	linkfilterpref.cpp \
-	iomonitor.cpp
+	iomonitor.cpp \
+	environment.cpp
 
 
 noinst_HEADERS = \
@@ -108,7 +109,8 @@ noinst_HEADERS = \
 	usrcmdpref.h \
 	linkfilterpref.h \
 	livepref.h \
-	iomonitor.h
+	iomonitor.h \
+	environment.h
 
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@

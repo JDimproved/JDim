@@ -23,6 +23,7 @@ AC_DEFINE(HAVE_BUILDINFO_H, 1, Define to 1 if you have the 'buildinfo.h' header 
 AC_PATH_PROG(SVN, svn)
 AC_PATH_PROG(SVNVERSION, svnversion)
 AC_PATH_PROG(DIFF, diff)
+AC_SUBST(ac_configure_args)
 
 dnl
 dnl OSを判定してOS別の設定

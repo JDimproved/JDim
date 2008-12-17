@@ -5,8 +5,12 @@
 
 #include "aboutdiag.h"
 
+#include "config/globalconf.h"
 #include "command.h"
+#include "environment.h"
 #include "session.h"
+
+#include "icons/iconmanager.h"
 
 using namespace SKELETON;
 
@@ -26,6 +30,14 @@ AboutDiag::AboutDiag( const Glib::ustring& title )
     button->signal_clicked().connect( sigc::mem_fun( *this, &AboutDiag::slot_close_clicked ) );
 
     set_default_response( Gtk::RESPONSE_CLOSE );
+
+    set_logo( ICON::get_icon( ICON::JD96 ) );
+    set_version( ENVIRONMENT::get_jdversion() );
+    set_comments( ENVIRONMENT::get_jdcomments() );
+    set_website( CONFIG::get_url_jdhp() );
+    set_copyright( ENVIRONMENT::get_jdcopyright() );
+    set_license( ENVIRONMENT::get_jdlicense() );
+    set_environment_list();
 }
 
 
@@ -96,8 +108,12 @@ void AboutDiag::init()
     if( ! get_license().empty() )
     {
         m_label_tab_license.set_label( "ライセンス" );
-        m_notebook.append_page( m_scrollwindow, m_label_tab_license );
+        m_notebook.append_page( m_scrollwindow_license, m_label_tab_license );
     }
+
+    // 動作環境タブの追加
+    m_label_tab_environment.set_label( "動作環境" );
+    m_notebook.append_page( m_scrollwindow_environment, m_label_tab_environment );
 
     get_vbox()->pack_start( m_notebook, Gtk::PACK_EXPAND_WIDGET, MARGIN );
 
@@ -226,12 +242,59 @@ void AboutDiag::set_license( const Glib::ustring& license )
     m_textview_license.set_cursor_visible( false );
     m_textview_license.set_accepts_tab( false );
     m_textview_license.set_wrap_mode( Gtk::WRAP_WORD_CHAR );
-    m_scrollwindow.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
-    m_scrollwindow.add( m_textview_license );
+    m_scrollwindow_license.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
+    m_scrollwindow_license.add( m_textview_license );
 }
 
 Glib::ustring AboutDiag::get_license()
 {
     return m_textview_license.get_buffer()->get_text();
+}
+
+
+//
+// 動作環境一覧
+//
+void AboutDiag::set_environment_list()
+{
+    Gtk::TreeModelColumn< Glib::ustring > column_name;
+    Gtk::TreeModelColumn< Glib::ustring > column_value;
+    Gtk::TreeModel::ColumnRecord record;
+    Glib::RefPtr< Gtk::ListStore > liststore;
+
+    record.add( column_name );
+    record.add( column_value );
+    liststore = Gtk::ListStore::create( record );
+    m_treeview_environment.set_model( liststore );
+    Gtk::TreeModel::Row row;
+
+    m_treeview_environment.append_column( "項目", column_name );
+    m_treeview_environment.append_column( "内容", column_value );
+
+    row = *( liststore->append() );
+    row[ column_name ] = "JDのバージョン";
+    row[ column_value ] = ENVIRONMENT::get_jdversion();
+
+    row = *( liststore->append() );
+    row[ column_name ] = "ディストリビューション";
+    row[ column_value ] = ENVIRONMENT::get_distname();
+
+    row = *( liststore->append() );
+    row[ column_name ] = "デスクトップ環境等";
+    row[ column_value ] = ENVIRONMENT::get_wm_str();
+
+    row = *( liststore->append() );
+    row[ column_name ] = "gtkmmのバージョン";
+    row[ column_value ] = ENVIRONMENT::get_gtkmm_version();
+
+    row = *( liststore->append() );
+    row[ column_name ] = "glibmmのバージョン";
+    row[ column_value ] = ENVIRONMENT::get_glibmm_version();
+
+    row = *( liststore->append() );
+    row[ column_name ] = "configureオプション";
+    row[ column_value ] = ENVIRONMENT::get_configure_args();
+
+    m_scrollwindow_environment.add( m_treeview_environment );
 }
 

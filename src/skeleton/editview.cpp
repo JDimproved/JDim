@@ -10,13 +10,12 @@
 #include "control/controlutil.h"
 
 #include "aamanager.h"
+#include "environment.h"
 #include "session.h"
-#include "jdversion.h"
 
 #include "jdlib/miscutil.h"
 #include "config/globalconf.h"
 
-#include <sstream>
 #include "gtk/gtktextview.h"
 
 using namespace SKELETON;
@@ -508,44 +507,9 @@ bool EditTextView::slot_quote_clipboard( GdkEventButton* event )
 //
 bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
 {
-    std::stringstream jd_info;
+    std::string jdinfo = ENVIRONMENT::get_jdinfo();
 
-    // バージョンを取得
-    const std::string version = JDVERSIONSTR;
-
-    // ディストリビューション名を取得
-    const std::string distribution = SESSION::get_distribution_name();
-
-    // デスクトップ環境を取得( 環境変数から判別可能の場合 )
-    std::string desktop_environment;
-    switch( SESSION::get_wm() )
-    {
-        case SESSION::WM_GNOME : desktop_environment = "GNOME"; break;
-        case SESSION::WM_XFCE  : desktop_environment = "XFCE";  break;
-        case SESSION::WM_KDE   : desktop_environment = "KDE";   break;
-    }
-
-    // その他
-    std::string other;
-
-    // $LANG が ja_JP.UTF-8 でない場合は"その他"に追加する。
-    const std::string lang = MISC::getenv_limited( "LANG", 11 );
-    if( lang.empty() ) other.append( "LANG 未定義" );
-    else if( lang != "ja_JP.utf8" && lang != "ja_JP.UTF-8" ) other.append( "LANG = " + lang );
-
-    jd_info <<
-    "[バージョン] " << version << "\n" <<
-//#ifdef REPOSITORY_URL
-//    "[リポジトリ ] " << REPOSITORY_URL << "\n" <<
-//#endif
-    "[ディストリ ] " << distribution << "\n" <<
-    "[パッケージ] " << "バイナリ/ソース( <配布元> )" << "\n" <<
-    "[ DE／WM ] " << desktop_environment << "\n" <<
-    "[gtkmm-2.4] " << GTKMM_VERSION << "\n" <<
-    "[glibmm-2.4] " << GLIBMM_VERSION << "\n" <<
-    "[ そ の 他 ] " << other << "\n";
-
-    insert_str( jd_info.str(), false );
+    insert_str( jdinfo, false );
 
     return true;
 }

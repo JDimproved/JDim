@@ -24,34 +24,35 @@
 #define JDVERSION ( MAJORVERSION * 100 + MINORVERSION * 10 + MICROVERSION )
 #define JDVERSION_FULL ( JDVERSION * 1000000 + atoi( JDDATE ) )
 
-//--------------------------------
-#ifdef JDVERSION_SVN // SVN版
+//---------------------------------
 
-#ifdef SVN_REPOSITORY // リポジトリ
-#define REPOSITORY_URL SVN_REPOSITORY
-#endif // SVN_REPOSITORY
-
-#ifdef SVN_REVISION
-#define JDVERSIONSTR MISC::get_svn_revision( SVN_REVISION )
-#else
-#define JDVERSIONSTR MISC::get_svn_revision()
-#endif // SVN_REVISION
-
-#else  // JDVERSION_SVN
-
-// 通常版のバージョン
-#define JDVERSIONSTR std::string( MISC::itostr( MAJORVERSION ) + "." + MISC::itostr( MINORVERSION ) + "." + MISC::itostr( MICROVERSION ) + "-" + std::string( JDTAG ) + std::string( JDDATE ) )
-
-#endif // JDVERSION_SVN
-//--------------------------------
-
+#define JDCOMMENT "JD は gtkmm/GTK+2 を用いた2chブラウザです。"
 #define JDCOPYRIGHT "(c) 2006-2008 JD project"
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 #define JDHELP CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/"
 #define JDHELPCMD CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/usrcmd.html"
 
-#define GTKMM_VERSION ( MISC::itostr( GTKMM_MAJOR_VERSION ) + "." + MISC::itostr( GTKMM_MINOR_VERSION ) + "." + MISC::itostr( GTKMM_MICRO_VERSION ) )
-#define GLIBMM_VERSION ( MISC::itostr( GLIBMM_MAJOR_VERSION ) + "." + MISC::itostr( GLIBMM_MINOR_VERSION ) + "." + MISC::itostr( GLIBMM_MICRO_VERSION ) )
+// [ ライセンス表記 ]
+//
+// 以下の文章は和訳を元にバージョン及び住所を訂正した物です。
+// http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+// http://www.opensource.jp/gpl/gpl.ja.html#SEC4 (和訳)
+#define JDLICENSE JDCOMMENT "\n" \
+    "\n" \
+    JDCOPYRIGHT "\n" \
+    "\n" \
+    "このプログラムはフリーソフトウェアです。あなたはこれを、フリーソフトウェ" \
+    "ア財団によって発行された GNU 一般公衆利用許諾契約書(バージョン2)の定める" \
+    "条件の下で再頒布または改変することができます。\n" \
+    "\n" \
+    "このプログラムは有用であることを願って頒布されますが、*全くの無保証* " \
+    "です。商業可能性の保証や特定の目的への適合性は、言外に示されたものも含" \
+    "め全く存在しません。詳しくはGNU 一般公衆利用許諾契約書をご覧ください。\n" \
+    "\n" \
+    "あなたはこのプログラムと共に、GNU 一般公衆利用許諾契約書の複製物を一部" \
+    "受け取ったはずです。もし受け取っていなければ、フリーソフトウェア財団ま" \
+    "で請求してください(宛先は the Free Software Foundation, Inc., 51 " \
+    "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA)。\n"
 
 #endif

@@ -25,7 +25,7 @@
 #include "prefdiagfactory.h"
 #include "colorid.h"
 #include "fontid.h"
-#include "jdversion.h"
+#include "environment.h"
 #include "setupwizard.h"
 
 #include "control/controlutil.h"
@@ -51,13 +51,10 @@
 #include "image/imageadmin.h"
 #include "message/messageadmin.h"
 
-#include "icons/iconmanager.h"
-
 #include "message/logmanager.h"
 
 #include "sound/soundmanager.h"
 
-#include <sstream>
 
 using namespace CORE;
 
@@ -1086,7 +1083,7 @@ void Core::set_maintitle()
 
     std::string title;
 
-    if( m_title.empty() ) title = "JD - " + JDVERSIONSTR;
+    if( m_title.empty() ) title = "JD - " + ENVIRONMENT::get_jdversion();
     else title = "JD - " + m_title;
 
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
@@ -1826,7 +1823,7 @@ void Core::slot_setup_browser()
 //
 void Core::slot_show_bbs()
 {
-    CORE::core_set_command( "open_board" , DBTREE::url_subject( JDBBS ), "true" );
+    CORE::core_set_command( "open_board" , DBTREE::url_subject( ENVIRONMENT::get_jdbbs() ), "true" );
 }
 
 
@@ -1835,7 +1832,7 @@ void Core::slot_show_bbs()
 //
 void Core::slot_show_old2ch()
 {
-    CORE::core_set_command( "open_board" , DBTREE::url_subject( JD2CHLOG ), "true" );
+    CORE::core_set_command( "open_board" , DBTREE::url_subject( ENVIRONMENT::get_jd2chlog() ), "true" );
 }
 
 
@@ -1844,7 +1841,7 @@ void Core::slot_show_old2ch()
 //
 void Core::slot_show_manual()
 {
-    open_by_browser( JDHELP );
+    open_by_browser( ENVIRONMENT::get_jdhelp() );
 }
 
 
@@ -1864,41 +1861,7 @@ void Core::slot_aboutconfig()
 //
 void Core::slot_show_about()
 {
-    std::string version = JDVERSIONSTR;
-    std::stringstream license;
-    const Glib::ustring comments = "JDはLinux用 2ch ブラウザです";
-    const Glib::ustring copyright = JDCOPYRIGHT;
-
-    // [ ライセンス表記 ]
-    //
-    // 以下の文章は和訳を元にバージョン及び住所を訂正した物です。
-    // http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
-    // http://www.opensource.jp/gpl/gpl.ja.html#SEC4 (和訳)
-    license <<
-    "JD は GNOME 上で動作する 2ch ブラウザです。\n"
-    "\n" <<
-    JDCOPYRIGHT << "\n"
-    "\n"
-    "このプログラムはフリーソフトウェアです。あなたはこれを、フリーソフトウェ"
-    "ア財団によって発行された GNU 一般公衆利用許諾契約書(バージョン2)の定める"
-    "条件の下で再頒布または改変することができます。\n"
-    "\n"
-    "このプログラムは有用であることを願って頒布されますが、*全くの無保証* "
-    "です。商業可能性の保証や特定の目的への適合性は、言外に示されたものも含"
-    "め全く存在しません。詳しくはGNU 一般公衆利用許諾契約書をご覧ください。\n"
-    "\n"
-    "あなたはこのプログラムと共に、GNU 一般公衆利用許諾契約書の複製物を一部"
-    "受け取ったはずです。もし受け取っていなければ、フリーソフトウェア財団ま"
-    "で請求してください(宛先は the Free Software Foundation, Inc., 51 "
-    "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA)。\n";
-
     SKELETON::AboutDiag about( "JDについて" );
-    about.set_logo( ICON::get_icon( ICON::JD96 ) );
-    about.set_version( version );
-    about.set_comments( comments );
-    about.set_website( CONFIG::get_url_jdhp() );
-    about.set_copyright( copyright );
-    about.set_license( license.str() );
     about.run();
 }
     

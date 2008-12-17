@@ -8,7 +8,7 @@
 
 #include "winmain.h"
 #include "cache.h"
-#include "jdversion.h"
+#include "environment.h"
 #include "iomonitor.h"
 
 #include "jdlib/miscmsg.h"
@@ -364,7 +364,7 @@ int main( int argc, char **argv )
                 break;
 
             case 'V':
-                std::cout << "JD " << JDVERSIONSTR << ", " << JDCOPYRIGHT << std::endl;
+                std::cout << "JD " << ENVIRONMENT::get_jdversion() << ", " << ENVIRONMENT::get_jdcopyright() << std::endl;
                 break;
 
             default:

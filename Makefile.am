@@ -8,13 +8,14 @@ icon_DATA = jd.png
 
 EXTRA_DIST = AUTHORS TODO README configure 
 
-BUILDINFO_HEADER = buildinfo.h
+jd_BUILDINFO_HEADER = buildinfo.h
+jd_CONFIGURE_ARGS = @ac_configure_args@
 
-all: $(BUILDINFO_HEADER)
+all: $(jd_BUILDINFO_HEADER)
 
-.PHONY: $(BUILDINFO_HEADER)
+.PHONY: $(jd_BUILDINFO_HEADER)
 
-$(BUILDINFO_HEADER):
+$(jd_BUILDINFO_HEADER):
 	@-rm -f $@.new
 
 	@echo '/* This file is generated from Makefile by make. */' >> $@.new
@@ -29,14 +30,19 @@ $(BUILDINFO_HEADER):
 	    CC_INFO=$(CC); \
 	    CC_VERSION=`LANG=C $(CC) -dumpversion 2>/dev/null`; \
 	    test -n "$${CC_VERSION}" && CC_INFO="$(CC)($${CC_VERSION})"; \
-	    echo "#define CC_INFO \"$${CC_INFO}\"" >> $@.new;\
+	    echo "#define CC_INFO \"$${CC_INFO}\"" >> $@.new; \
 	fi
 	@if test -n "$(CXX)"; \
 	then \
 	    CXX_INFO=$(CXX); \
 	    CXX_VERSION=`LANG=C $(CXX) -dumpversion 2>/dev/null`; \
 	    test -n "$${CXX_VERSION}" && CXX_INFO="$(CXX)($${CXX_VERSION})"; \
-	    echo "#define CXX_INFO \"$${CXX_INFO}\"" >> $@.new;\
+	    echo "#define CXX_INFO \"$${CXX_INFO}\"" >> $@.new; \
+	fi
+
+	@if test -n "$(jd_CONFIGURE_ARGS)"; \
+	then \
+	    echo "#define CONFIGURE_ARGS \"$(jd_CONFIGURE_ARGS)\"" >> $@.new; \
 	fi
 
 	@echo '' >> $@.new

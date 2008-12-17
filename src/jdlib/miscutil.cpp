@@ -1280,36 +1280,6 @@ std::string MISC::get_dir( const std::string& path )
 
 
 //
-// SVNリビジョンとして表示する文字列を返す
-//
-std::string MISC::get_svn_revision( const char* rev )
-{
-    std::string svn_revision = "svn." + std::string( __DATE__ ) + "-" + std::string( __TIME__ );
-
-    if( ! rev ) return svn_revision;
-
-    // "2000:2002MS"など[0-9:MS]の形式かどうか
-    bool valid = true;
-    unsigned int n;
-    const size_t rev_length = strlen( rev );
-    for( n = 0; n < rev_length; ++n )
-    {
-        if( (unsigned char)( rev[n] - 0x30 ) > 0x0A
-            && rev[n] != 'M'
-            && rev[n] != 'S' )
-        {
-            valid = false;
-            break;
-        }
-    }
-
-    if( valid ) svn_revision = std::string( "SVN Rev." ) + std::string( rev );
-
-    return svn_revision;
-}
-
-
-//
 // 文字数を限定して環境変数の値を返す
 //
 std::string MISC::getenv_limited( const char *name, const size_t size )

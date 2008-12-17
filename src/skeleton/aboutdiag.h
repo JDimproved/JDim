@@ -27,8 +27,14 @@ namespace SKELETON
 
         // ライセンスタブ
         Gtk::Label m_label_tab_license;
-        Gtk::ScrolledWindow m_scrollwindow;
+        Gtk::ScrolledWindow m_scrollwindow_license;
         Gtk::TextView m_textview_license;
+
+        // 動作環境タブ
+        Gtk::Label m_label_tab_environment;
+        Gtk::ScrolledWindow m_scrollwindow_environment;
+        Gtk::TreeView m_treeview_environment;
+        void set_environment_list();
 
         Glib::ustring m_website_url;
 

@@ -180,9 +180,6 @@ namespace MISC
     // path からファイル名を除いてディレクトリだけ取り出す
     std::string get_dir( const std::string& path );
 
-    // SVNリビジョンとして表示する文字列を返す
-    std::string get_svn_revision( const char* rev = NULL );
-
     // 文字数を限定して環境変数の値を返す
     std::string getenv_limited( const char *name, const size_t size = 1 );
 }
