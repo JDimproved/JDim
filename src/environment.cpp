@@ -76,7 +76,7 @@ std::string ENVIRONMENT::get_jdversion()
 #ifdef SVN_REVISION
     jd_version << get_svn_revision( SVN_REVISION );
 #else
-    jd_version << get_svn_revision();
+    jd_version << get_svn_revision( NULL );
 #endif // SVN_REVISION
 
 #else
