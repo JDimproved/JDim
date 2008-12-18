@@ -5,12 +5,13 @@
 
 #include "aboutdiag.h"
 
-#include "config/globalconf.h"
 #include "command.h"
 #include "environment.h"
 #include "session.h"
 
+#include "config/globalconf.h"
 #include "icons/iconmanager.h"
+#include "jdlib/miscgtk.h"
 
 using namespace SKELETON;
 
@@ -21,7 +22,8 @@ enum
 
 
 AboutDiag::AboutDiag( const Glib::ustring& title )
-    : Gtk::Dialog( title )
+    : Gtk::Dialog( title ),
+      m_button_copy_environment( "クリップボードへコピー" )
 {
     set_transient_for( *CORE::get_mainwindow() );
     set_resizable( false );
@@ -113,7 +115,16 @@ void AboutDiag::init()
 
     // 動作環境タブの追加
     m_label_tab_environment.set_label( "動作環境" );
-    m_notebook.append_page( m_scrollwindow_environment, m_label_tab_environment );
+    m_notebook.append_page( m_vbox_environment, m_label_tab_environment );
+
+    // 動作環境一覧
+    m_vbox_environment.pack_start( m_scrollwindow_environment, Gtk::PACK_EXPAND_WIDGET );
+
+    // クリップボードへコピーのボタン
+    m_button_copy_environment.signal_clicked().connect( sigc::mem_fun( *this, &AboutDiag::slot_copy_environment ) );
+    m_hbuttonbox_environment.set_layout( Gtk::BUTTONBOX_END );
+    m_hbuttonbox_environment.pack_start( m_button_copy_environment, Gtk::PACK_SHRINK );
+    m_vbox_environment.pack_start( m_hbuttonbox_environment, Gtk::PACK_SHRINK );
 
     get_vbox()->pack_start( m_notebook, Gtk::PACK_EXPAND_WIDGET, MARGIN );
 
@@ -296,5 +307,16 @@ void AboutDiag::set_environment_list()
     row[ column_value ] = ENVIRONMENT::get_configure_args();
 
     m_scrollwindow_environment.add( m_treeview_environment );
+}
+
+
+//
+// 動作環境をクリップボードにコピー
+//
+void AboutDiag::slot_copy_environment()
+{
+    std::string jdinfo = ENVIRONMENT::get_jdinfo();
+
+    if( ! jdinfo.empty() ) MISC::CopyClipboard( jdinfo );
 }
 

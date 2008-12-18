@@ -33,7 +33,7 @@ std::string ENVIRONMENT::get_configure_args(){ return std::string( CONFIGURE_ARG
 //
 // SVNリビジョンとして表示する文字列を返す
 //
-std::string get_svn_revision( const char* rev )
+std::string get_svn_revision( const char* rev = NULL )
 {
     std::string svn_revision = "SVN:";
 
