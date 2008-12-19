@@ -31,10 +31,10 @@ namespace SKELETON
         Gtk::TextView m_textview_license;
 
         // 動作環境タブ
+        Gtk::Label m_label_tab_environment;
         Gtk::VBox m_vbox_environment;
         Gtk::HButtonBox m_hbuttonbox_environment;
 		Gtk::Button m_button_copy_environment;
-        Gtk::Label m_label_tab_environment;
         Gtk::ScrolledWindow m_scrollwindow_environment;
         Gtk::TreeView m_treeview_environment;
         void set_environment_list();
