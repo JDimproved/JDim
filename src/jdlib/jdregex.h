@@ -5,7 +5,17 @@
 
 #include <string>
 #include <vector>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef USE_ONIG
+#include <onigposix.h>
+#else
 #include <regex.h>
+#endif	/** USE_ONIG **/
+
 
 namespace JDLIB
 {

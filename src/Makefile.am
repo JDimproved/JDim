@@ -18,7 +18,7 @@ jd_LDADD = \
 	./sound/libsound.a \
 	./xml/libxml.a \
 	./control/libcontrol.a \
-	@LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@
+	@LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @ONIG_LIBS@
 
 jd_SOURCES = \
 	main.cpp \

@@ -5,18 +5,9 @@
 
 #include "jdregex.h"
 
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifdef HAVE_MIGEMO_H
 #include "jdmigemo.h"
 #endif
-
-
-
-#include <regex.h>
 
 enum
 {
@@ -89,6 +80,8 @@ bool Regex::compile( const std::string reg, bool icase, bool newline, bool use_m
 bool Regex::exec( const std::string& target, unsigned int offset )
 {
     regmatch_t pmatch[ REGEX_MAX_NMATCH ];
+
+    memset(pmatch, 0, sizeof(pmatch));
 
     if ( ! m_compiled ) return false;
 	
