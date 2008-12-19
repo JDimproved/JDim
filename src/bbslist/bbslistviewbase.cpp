@@ -1314,7 +1314,8 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
 
             const bool before = false;
             const bool scroll = false;
-            m_treeview.append_info( list_info, m_path_selected, before, scroll );
+            const bool force = true;  // 強制的に追加
+            m_treeview.append_info( list_info, m_path_selected, before, scroll, force );
             m_path_selected = m_treeview.get_current_path();
 
             // etc.txt保存

@@ -693,6 +693,8 @@ void EditTreeView::select_all_dir( Gtk::TreePath path_dir )
 //
 // scroll = true なら追加した行にスクロールする
 //
+// force = true なら m_editable が false でも追加
+//
 // (1) path_dest が empty なら一番最後
 //
 // (2) before = true なら path_dest の前
@@ -702,11 +704,13 @@ void EditTreeView::select_all_dir( Gtk::TreePath path_dir )
 // (4) そうでなければ path_dest の後
 //
 CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list_info,
-                                const Gtk::TreePath& path_dest, const bool before, const bool scroll )
+                                                const Gtk::TreePath& path_dest, const bool before, const bool scroll,
+                                                const bool force
+    )
 {
     CORE::DATA_INFO_LIST list_info_src;
 
-    if( ! m_editable ) return list_info_src;
+    if( ! force && ! m_editable ) return list_info_src;
     if( ! list_info.size() ) return list_info_src;
 
 #ifdef _DEBUG
@@ -736,9 +740,11 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
 //
 // 選択した行をまとめて削除
 //
-void EditTreeView::delete_selected_rows()
+// force = true なら m_editable が false でも追加
+//
+void EditTreeView::delete_selected_rows( const bool force )
 {
-    if( ! m_editable ) return;
+    if( ! force && ! m_editable ) return;
 
     std::list< Gtk::TreeModel::iterator > list_selected = get_selected_iterators();
     if( ! list_selected.size() ) return;

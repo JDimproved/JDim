@@ -117,16 +117,19 @@ namespace SKELETON
         // list_info を path_dest 以下に追加
         // list_info の各path にあらかじめ値をセットしておくこと
         // scroll = true なら追加した行にスクロールする
+        // force = true なら m_editable が false でも追加
         // (1) path_dest が empty なら一番最後
         // (2) before = true なら path_dest の前
         // (3) path_destがディレクトリなら path_dest の下
         // (4) そうでなければ path_dest の後
         CORE::DATA_INFO_LIST append_info( const CORE::DATA_INFO_LIST& list_info,
-                                                  const Gtk::TreePath& path_dest, const bool before, const bool scroll );
-
+                                          const Gtk::TreePath& path_dest, const bool before, const bool scroll,
+                                          const bool force = false
+            );
 
         // 選択した行をまとめて削除
-        void delete_selected_rows();
+        // force = true なら m_editable が false でも追加
+        void delete_selected_rows( const bool force = false );
 
         // アンドゥ
         void undo();

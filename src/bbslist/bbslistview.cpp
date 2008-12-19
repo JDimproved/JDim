@@ -174,7 +174,8 @@ void BBSListViewMain::delete_view_impl()
         }
     }
 
-    get_treeview().delete_selected_rows();
+    const bool force = true; // 強制的に削除
+    get_treeview().delete_selected_rows( force );
 
     // etc.txt保存
     DBTREE::save_etc();
