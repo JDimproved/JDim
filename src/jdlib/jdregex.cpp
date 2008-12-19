@@ -9,6 +9,8 @@
 #include "jdmigemo.h"
 #endif
 
+#include <cstring>
+
 enum
 {
     REGEX_MAX_NMATCH = 32

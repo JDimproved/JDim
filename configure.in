@@ -305,6 +305,10 @@ AC_ARG_WITH(oniguruma,[ --with-oniguruma    (enable oniguruma)],
                echo "use oniguruma"
                AC_CHECK_HEADER([onigposix.h], ,[AC_MSG_ERROR([onigposix.h not found])])
                AC_CHECK_LIB([onig],[regexec], ,[AC_MSG_ERROR([libonig.a not found])])
+               AC_CHECK_PROG(ONIG_CONFIG, onig-config, onig-config)
+               if test "x${ONIG_CONFIG}" == "x" ; then
+                 AC_MSG_ERROR([onig-config not found])
+               fi
                ONIG_CFLAGS=`onig-config --cflags`
                ONIG_LIBS=`onig-config --libs`
                AC_DEFINE(USE_ONIG, , "use oniguruma")

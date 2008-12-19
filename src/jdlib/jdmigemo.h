@@ -12,7 +12,7 @@
 #ifdef HAVE_MIGEMO_H
 
 #include <migemo.h>
-#include <regex.h>
+#include "jdregex.h"
 
 #ifdef __cplusplus
 extern "C" {
