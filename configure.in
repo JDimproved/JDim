@@ -311,12 +311,15 @@ AC_ARG_WITH(oniguruma,[ --with-oniguruma    (enable oniguruma)],
                ONIG_LIBS=`onig-config --libs`
                CPPFLAGS_ORIGINAL="${CPPFLAGS}"
                CPPFLAGS="${CPPFLAGS} ${ONIG_CFLAGS}"
+               LDFLAGS_ORIGINAL="${LDFLAGS}"
+               LDFLAGS="${LDFLAGS} ${ONIG_LIBS}"
                AC_CHECK_HEADER([onigposix.h], ,[AC_MSG_ERROR([onigposix.h not found])])
                AC_CHECK_LIB([onig],[regexec], ,[AC_MSG_ERROR([libonig.a not found])])
                AC_DEFINE(USE_ONIG, , "use oniguruma")
                AC_SUBST(ONIG_CFLAGS)
                AC_SUBST(ONIG_LIBS)
                CPPFLAGS="${CPPFLAGS_ORIGINAL}"
+               LDFLAGS="${LDFLAGS_ORIGINAL}"
        fi ])
 
 
