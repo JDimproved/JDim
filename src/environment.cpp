@@ -27,7 +27,14 @@ std::string ENVIRONMENT::get_jd2chlog(){ return std::string( JD2CHLOG ); }
 std::string ENVIRONMENT::get_jdhelp(){ return std::string( JDHELP ); }
 std::string ENVIRONMENT::get_jdhelpcmd(){ return std::string( JDHELPCMD ); }
 std::string ENVIRONMENT::get_jdlicense(){ return std::string( JDLICENSE ); }
-std::string ENVIRONMENT::get_configure_args(){ return std::string( CONFIGURE_ARGS ); }
+std::string ENVIRONMENT::get_configure_args()
+{
+#ifdef CONFIGURE_ARGS
+	return std::string( CONFIGURE_ARGS );
+#else
+    return std::string();
+#endif
+}
 
 
 //
@@ -347,8 +354,8 @@ std::string ENVIRONMENT::get_jdinfo()
     "[ディストリ ] " << distribution << "\n" <<
     "[パッケージ] " << "バイナリ/ソース( <配布元> )" << "\n" <<
     "[ DE／WM ] " << desktop << "\n" <<
-    "[  gtkmm   ] " << get_gtkmm_version() << "\n" <<
-    "[  glibmm   ] " << get_glibmm_version()<< "\n" <<
+    "[　gtkmm 　] " << get_gtkmm_version() << "\n" <<
+    "[　glibmm 　] " << get_glibmm_version()<< "\n" <<
 #ifdef CONFIGURE_ARGS
     "[configure ] " << get_configure_args() << "\n" <<
 #endif
