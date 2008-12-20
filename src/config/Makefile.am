@@ -7,5 +7,5 @@ libconfig_a_SOURCES = \
 noinst_HEADERS = \
 	configitems.h globalconf.h defaultconf.h aboutconfig.h aboutconfigdiag.h
 
-AM_CXXFLAGS = @GTKMM_CFLAGS@
+AM_CXXFLAGS = @GTKMM_CFLAGS@ @ONIG_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src
