@@ -129,11 +129,20 @@ BoardBase* Root::get_board( const std::string& url, const int count )
     m_get_board_url = url;
     m_get_board = NULL;
 
-    // 先頭が http:// でなかったら足して再帰呼び出し
-    if( count < max_count && url.find( "http://" ) != 0 ){
-        BoardBase* board = get_board( "http://" + url , count + 1 );
-        m_get_board_url = url;
-        return board;
+    if( count == 0 ){
+
+        size_t pos = url.rfind( "http://" );
+
+        // ユーザープロフィールアドレス( http://be.2ch.net/test/p.php?u=d:http://〜 )の様に
+        // 先頭以外に http:// が入っている場合は失敗
+        if( pos != std::string::npos && pos != 0 ) return m_board_null;
+
+        // http:// が含まれていなかったら先頭に追加して再帰呼び出し
+        else if( pos == std::string::npos ){
+            BoardBase* board = get_board( "http://" + url , count + 1 );
+            m_get_board_url = url;
+            return board;
+        }
     }
 
     // サーチ
