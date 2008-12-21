@@ -127,9 +127,13 @@ namespace SKELETON
                                           const bool force = false
             );
 
+        // pathをまとめて削除
+        // force = true なら m_editable が false でも追加
+        void delete_path( std::list< Gtk::TreePath >& list_path, const bool force );
+
         // 選択した行をまとめて削除
         // force = true なら m_editable が false でも追加
-        void delete_selected_rows( const bool force = false );
+        void delete_selected_rows( const bool force );
 
         // アンドゥ
         void undo();
@@ -198,7 +202,8 @@ namespace SKELETON
 
         // list_info に示した行を削除
         // list_info の各要素の path にあらかじめ値をセットしておくこと
-        void delete_rows( const CORE::DATA_INFO_LIST& list_info );
+        // 削除した後、path_select にカーソルを移動する(emptyの場合は移動しない)
+        void delete_rows( const CORE::DATA_INFO_LIST& list_info, const Gtk::TreePath& path_select );
 
         // list_infoに示した行を選択
         void select_info( const CORE::DATA_INFO_LIST& list_info );

@@ -3028,6 +3028,11 @@ void Core::set_command( const COMMAND_ARGS& command )
         BBSLIST::get_admin()->set_command( "append_item", URL_FAVORITEVIEW );
         return;
     }
+    else if( command.command  == "remove_favorite" ){
+
+        BBSLIST::get_admin()->set_command( "remove_item", URL_FAVORITEVIEW, command.url );
+        return;
+    }
     else if( command.command  == "update_favorite_item" ){
 
         BBSLIST::get_admin()->set_command( "update_item", URL_FAVORITEVIEW );

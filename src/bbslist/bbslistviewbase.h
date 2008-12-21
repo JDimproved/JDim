@@ -115,6 +115,9 @@ namespace BBSLIST
         // あらかじめ共有バッファに追加するデータをセットしておくこと
         void append_item();
 
+        // アイテム削除
+        void remove_item( const std::string& url );
+
         // ツリーの編集ウィンドウを開く
         void edit_tree();
 

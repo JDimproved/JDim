@@ -1351,6 +1351,8 @@ void ArticleBase::show_updateicon( const bool update )
 //
 // キャッシュ削除
 //
+// cache_only == true の時はキャッシュだけ削除してスレ情報は消さない
+//
 void ArticleBase::delete_cache( const bool cache_only )
 {
 #ifdef _DEBUG
@@ -1399,15 +1401,17 @@ void ArticleBase::delete_cache( const bool cache_only )
         m_save_info = false;
         m_bookmarked_thread = false;
     
-        // info
+        // info 削除
         if( CACHE::file_exists( m_path_article_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_info.c_str() );
 
-        // 拡張info
+        // 拡張info 削除
         if( CACHE::file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_ext_info.c_str() );
 
+        // お気に入りから削除
+        CORE::core_set_command( "remove_favorite", m_url );
     }
 
-    // キャッシュ
+    // キャッシュ削除
     std::string path_dat = CACHE::path_dat( m_url );
     if( CACHE::file_exists( path_dat ) == CACHE::EXIST_FILE ) unlink( path_dat.c_str() );
 

@@ -400,6 +400,7 @@ void BBSListViewBase::set_editable( const bool editable )
 const bool BBSListViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "append_item" ) append_item();
+    else if( command == "remove_item" ) remove_item( arg1 );
     else if( command == "edit_tree" ) edit_tree();
     else if( command == "save_xml" ) save_xml( false );
     else if( command == "toggle_icon" ) toggle_icon( arg1 );
@@ -544,7 +545,8 @@ void BBSListViewBase::delete_view()
 // BBSListViewBaseの場合は選択行の削除
 void BBSListViewBase::delete_view_impl()
 {
-    m_treeview.delete_selected_rows();
+    const bool force = false;
+    m_treeview.delete_selected_rows( force );
 }
 
 
@@ -2422,6 +2424,67 @@ void BBSListViewBase::append_item()
     const CORE::DATA_INFO_LIST list_info = m_treeview.append_info( list_info_bkup, path, before, scroll );
     CORE::SBUF_clear_info();
     slot_dropped_from_other( list_info );
+}
+
+
+//
+// アイテム削除
+//
+void BBSListViewBase::remove_item( const std::string& url )
+{
+    const std::string url_target = DBTREE::url_dat( url );
+    if( url_target.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::remove_item url = " << url_target << std::endl;
+#endif
+
+    CORE::DATA_INFO_LIST list_info;
+    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
+    Gtk::TreeModel::Row row;
+    std::list< Gtk::TreePath > list_path;
+
+    while( 1 ){
+
+        if( ( row = m_treeview.get_row( path ) ) ){
+
+            const Glib::ustring url = row[ m_columns.m_url ];
+            const int type = row[ m_columns.m_type ];
+            std::string url_new;
+
+            switch( type ){
+
+                case TYPE_DIR: // サブディレクトリ
+                    path.down();
+                    break;
+
+                case TYPE_THREAD: // スレ
+                case TYPE_THREAD_UPDATE:
+                case TYPE_THREAD_OLD:
+                    url_new = DBTREE::url_dat( url );
+                    if( url_new == url_target ) list_path.push_back( path );
+                    path.next();
+                    break;
+
+                default:
+                    path.next();
+                    break;
+            }
+        }
+
+        // サブディレクトリ内ならupする
+        else{
+
+            if( path.get_depth() >= 2 ){
+                path.up();
+                path.next();
+            }
+            else break;
+        }
+    }
+
+    const bool force = false;
+    m_treeview.delete_path( list_path, force );
 }
 
 

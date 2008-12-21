@@ -541,7 +541,7 @@ void EditTreeView::on_drag_data_delete( const Glib::RefPtr<Gdk::DragContext>& co
     if( m_editable ){
 
         CORE::DATA_INFO_LIST list_info = CORE::SBUF_list_info();
-        delete_rows( list_info );
+        delete_rows( list_info, Gtk::TreePath() );
     }
 }
 
@@ -738,6 +738,47 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
 
 
 //
+// pathをまとめて削除
+//
+// force = true なら m_editable が false でも追加
+//
+void EditTreeView::delete_path( std::list< Gtk::TreePath >& list_path, const bool force )
+{
+    if( ! list_path.size() ) return;
+    if( ! force && ! m_editable ) return;
+
+#ifdef _DEBUG
+    std::cout << "EditTreeView::delete_path\n";
+#endif
+
+    // 削除範囲に現在のカーソルがある時はカーソルの位置を変更する
+    bool selected = false;
+    const Gtk::TreePath path_selected = get_current_path();
+
+    CORE::DATA_INFO_LIST list_info;
+    std::list< Gtk::TreePath >::iterator it = list_path.begin();
+    for( ; it != list_path.end(); ++it ){
+
+        if( path_selected == ( *it ) ) selected = true;
+
+#ifdef _DEBUG
+        std::cout << "path = " << ( *it ).to_string() << std::endl;
+#endif
+
+        CORE::DATA_INFO info;
+        path2info( info, *it );
+        list_info.push_back( info );
+    }
+
+    // カーソルを最後の行の次の行に移動するため、あらかじめ削除範囲の最後の行に移動しておく
+    Gtk::TreePath next = path_selected;
+    if( selected ) next = next_path( Gtk::TreePath( ( list_info.back() ).path ), true );
+
+    delete_rows( list_info, next );
+}
+
+
+//
 // 選択した行をまとめて削除
 //
 // force = true なら m_editable が false でも追加
@@ -773,13 +814,7 @@ void EditTreeView::delete_selected_rows( const bool force )
     // カーソルを最後の行の次の行に移動するため、あらかじめ削除範囲の最後の行に移動しておく
     const Gtk::TreePath next = next_path( Gtk::TreePath( ( list_info.back() ).path ), true );
 
-    // もしnext_pathが存在しなかったら削除してから一番下に移動
-    const bool gotobottom = ( ! get_row( next ) );
-    if( ! gotobottom ) set_cursor( next );
-
-    delete_rows( list_info );
-
-    if( gotobottom ) goto_bottom();
+    delete_rows( list_info, next );
 }
 
 
@@ -1087,16 +1122,28 @@ void EditTreeView::append_rows( const CORE::DATA_INFO_LIST& list_info )
 //
 // list_info の各要素の path にあらかじめ値をセットしておくこと
 //
-void EditTreeView::delete_rows( const CORE::DATA_INFO_LIST& list_info )
+// 削除した後、path_select にカーソルを移動する(emptyの場合は移動しない)
+//
+void EditTreeView::delete_rows( const CORE::DATA_INFO_LIST& list_info, const Gtk::TreePath& path_select )
 {
 #ifdef _DEBUG
-    std::cout << "EditTreeView::delete_rows\n";
+    std::cout << "EditTreeView::delete_rows";
+    if( ! path_select.empty() ) std::cout << " path_select = " << path_select.to_string();
+    std::cout << std::endl;
 #endif
 
     if( ! list_info.size() ) return;
 
     Glib::RefPtr< Gtk::TreeStore > treestore = Glib::RefPtr< Gtk::TreeStore >::cast_dynamic( get_model() );
     if( ! treestore ) return;
+
+    // あらかじめ path_select にカーソルを移動しておく
+    // もし path_select が存在しなかったら削除してから一番下に移動
+    bool gotobottom = false;
+    if( ! path_select.empty() ){
+        gotobottom = ( ! get_row( path_select ) );
+        if( ! gotobottom ) set_cursor( path_select );
+    }
 
     m_list_info_undo = list_info;
 
@@ -1123,6 +1170,8 @@ void EditTreeView::delete_rows( const CORE::DATA_INFO_LIST& list_info )
     } while( it != list_info.begin() );
 
     m_updated = true;
+
+    if( gotobottom ) goto_bottom();
 }
 
 

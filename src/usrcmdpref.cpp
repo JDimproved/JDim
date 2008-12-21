@@ -337,7 +337,8 @@ void UsrCmdPref::delete_row()
 
 void UsrCmdPref::slot_delete()
 {
-    m_treeview.delete_selected_rows();
+    const bool force = false;
+    m_treeview.delete_selected_rows( force );
 }
 
 
