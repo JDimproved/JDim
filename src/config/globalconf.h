@@ -401,6 +401,8 @@ namespace CONFIG
     // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
     const bool get_replace_favorite_next();
 
+    // スレをお気に入りに追加したときにしおりをセットする
+    const bool get_bookmark_drop();
 
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所

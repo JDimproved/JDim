@@ -1094,7 +1094,7 @@ void BBSListViewBase::slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_
         // ブックマークセット
         if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
 
-            DBTREE::set_bookmarked_thread( info.url, true );
+            if( CONFIG::get_bookmark_drop() ) DBTREE::set_bookmarked_thread( info.url, true );
         }
 
         else if( type == TYPE_IMAGE ) DBIMG::set_protect( info.url, true );

@@ -394,6 +394,9 @@ const int CONFIG::get_threshold_next(){ return get_confitem()->threshold_next; }
 // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
 const bool CONFIG::get_replace_favorite_next(){ return get_confitem()->replace_favorite_next; }
 
+// スレをお気に入りに追加したときにしおりをセットする
+const bool CONFIG::get_bookmark_drop(){ return get_confitem()->bookmark_drop; }
+
 
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }

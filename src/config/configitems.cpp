@@ -417,6 +417,9 @@ const bool ConfigItems::load()
     // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
     replace_favorite_next = cf.get_option( "replace_favorite_next", CONF_REPLACE_FAVORITE_NEXT );
 
+    // スレをお気に入りに追加したときにしおりをセットする
+    bookmark_drop = cf.get_option( "bookmark_drop", CONF_BOOKMARK_DROP );
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     migemodict_path = cf.get_option( "migemodict_path", CONF_MIGEMO_PATH );
@@ -648,6 +651,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "threshold_next", threshold_next );
     cf.update( "replace_favorite_next", replace_favorite_next );
+    cf.update( "bookmark_drop", bookmark_drop );
 
 #ifdef HAVE_MIGEMO_H
     cf.update( "migemodict_path", migemodict_path );
