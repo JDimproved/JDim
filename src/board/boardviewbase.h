@@ -152,8 +152,8 @@ namespace BOARD
 
     private:
 
-        // 次スレ移行処理に使用
-        // BOARD::BoardViewNext を参照
+        // 次スレ移行処理に使用する前スレのアドレス
+        // BOARD::BoardViewNext と BoardViewBase::open_row()を参照せよ
         virtual const std::string get_url_pre_article(){ return std::string(); }
 
         void update_columns();

@@ -335,7 +335,7 @@ namespace DBTREE
 
     // スレのブックマーク
     const bool is_bookmarked_thread( const std::string& url );
-    void set_bookmarked_thread( const std::string& url, bool bookmarked );
+    void set_bookmarked_thread( const std::string& url, const bool bookmarked );
 
     // レスのブックマーク
     const int get_num_bookmark( const std::string& url );

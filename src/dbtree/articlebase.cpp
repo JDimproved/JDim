@@ -496,7 +496,7 @@ const int ArticleBase::get_num_posted()
 //
 // スレ自体のスレ一覧でのブックマーク
 //
-void ArticleBase::set_bookmarked_thread( bool bookmarked )
+void ArticleBase::set_bookmarked_thread( const bool bookmarked )
 {
     m_bookmarked_thread = bookmarked;
     save_info( true );
@@ -1234,6 +1234,12 @@ void ArticleBase::slot_load_finished()
                 if( CONFIG::get_replace_favorite_next() ){
                     CORE::core_set_command( "replace_favorite_thread", "", m_url_pre_article, m_url );
                 }
+
+                // 前スレにしおりがセットされていたらしおりをつける
+                if( DBTREE::is_bookmarked_thread( m_url_pre_article ) ){
+                    set_bookmarked_thread( true );
+                }
+
                 relayout = true;
             }
 

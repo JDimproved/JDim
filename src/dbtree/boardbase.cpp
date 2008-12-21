@@ -977,7 +977,12 @@ void BoardBase::receive_finish()
 
         m_lng_rawdata = 0;
 
-        // リダイレクトの場合は移転確認
+        //
+        // リダイレクト(302)の場合は移転確認
+        //
+        // ちなみにdatの読み込みでリダイレクト(302)が返ってきたときは、移転かdat落ちか判断出来ないので注意
+        // NodeTree2ch::receive_finish()も参照せよ
+        //
         if( get_code() == HTTP_REDIRECT ){
 
             set_date_modified( std::string() );
@@ -1156,7 +1161,11 @@ void BoardBase::receive_finish()
 //
 // url_boardbase をロードして移転したかどうか解析開始
 //
-// 移転した場合は window.location.href が含まれるテキストがサーバから送られてくる
+// 移転するとコード200で
+//
+// <script language="javascript">window.location.href="http://hoge.2ch.net/hoge/"</script>
+//
+// の様なHTML本文が送られて来るので移転先が分かる
 //
 bool BoardBase::start_checkking_if_board_moved()
 {

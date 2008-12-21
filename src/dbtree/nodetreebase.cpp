@@ -105,7 +105,7 @@ NodeTreeBase::NodeTreeBase( const std::string url, const std::string& modified )
     m_num_id[ LINK_LOW ] = CONFIG::get_num_id_low();
 
 #ifdef _DEBUG
-    std::cout << "NodeTreeBase::NodeTreeBase url = " << m_url << " modified = " << date_modified()
+    std::cout << "NodeTreeBase::NodeTreeBase url = " << m_url << " modified = " << get_date_modified()
               << " noname = " << m_default_noname << std::endl;
 #endif
 }
@@ -1086,8 +1086,8 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
 
 #ifdef _DEBUG
         std::cout << "NodeTreeBase::receive_data : code = " << get_code() << std::endl;
+        std::cout << data << std::endl;
 #endif
-
         return;
     }
 

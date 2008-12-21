@@ -318,7 +318,7 @@ namespace DBTREE
         void set_abone_chain( bool set ); // 連鎖
 
         // 「スレ」のブックマーク
-        void set_bookmarked_thread( bool bookmarked );
+        void set_bookmarked_thread( const bool bookmarked );
         const bool is_bookmarked_thread() const { return m_bookmarked_thread; }
 
         // 「レス」のブックマーク

@@ -53,6 +53,8 @@ namespace BOARD
         // TFIDFで次スレ検索
         void update_by_tfidf( std::list< NEXT_ITEM >& next_items );
 
+        // 次スレ移行処理に使用する前スレのアドレス
+        // 次スレ移行処理に使用する。BoardViewBase::open_row()を参照せよ
         virtual const std::string get_url_pre_article(){ return m_url_pre_article; }
 
         // ソート列やソートモードの保存

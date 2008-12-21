@@ -1101,7 +1101,7 @@ const bool DBTREE::is_bookmarked_thread( const std::string& url )
     return DBTREE::get_article( url )->is_bookmarked_thread();
 }
 
-void DBTREE::set_bookmarked_thread( const std::string& url, bool bookmarked )
+void DBTREE::set_bookmarked_thread( const std::string& url, const bool bookmarked )
 {
     DBTREE::get_article( url )->set_bookmarked_thread( bookmarked );
 }
