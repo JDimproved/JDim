@@ -54,6 +54,7 @@ std::string get_default_font()
 
 
 ConfigItems::ConfigItems()
+    : m_loaded( false )
 {
     str_color.resize( COLOR_NUM );
     fontname.resize( FONT_NUM );
@@ -425,6 +426,8 @@ const bool ConfigItems::load()
     migemodict_path = cf.get_option( "migemodict_path", CONF_MIGEMO_PATH );
 #endif
 
+    m_loaded = true;
+
     return ! cf.empty();
 }
 
@@ -439,6 +442,8 @@ void ConfigItems::save()
 
 void ConfigItems::save_impl( const std::string& path )
 {
+    if( ! m_loaded ) return;
+
 #ifdef _DEBUG
     std::cout << "ConfigItems::save_impl path = " << path << std::endl;
 #endif

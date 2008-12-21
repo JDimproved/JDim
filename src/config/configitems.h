@@ -20,6 +20,8 @@ namespace CONFIG
 {
     class ConfigItems
     {
+        // 設定をロード済み
+        bool m_loaded;
 
     public:
 
