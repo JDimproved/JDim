@@ -304,29 +304,25 @@ AC_ARG_WITH(oniguruma,[ --with-oniguruma    (enable oniguruma)],
        [ if test "$withval" != "no" ;then
                echo "use oniguruma"
                AC_CHECK_PROG(ONIG_CONFIG, onig-config, onig-config)
-               if test "x${ONIG_CONFIG}" == "x" ; then
+               if test "x${ONIG_CONFIG}" = "x" ; then
                  AC_MSG_ERROR([onig-config not found])
                fi
                ONIG_CFLAGS=`onig-config --cflags`
-               ONIG_LIBS=`onig-config --libs`
-               CPPFLAGS_ORIGINAL="${CPPFLAGS}"
                CPPFLAGS="${CPPFLAGS} ${ONIG_CFLAGS}"
+               ONIG_LIBS=`onig-config --libs`
                LDFLAGS_ORIGINAL="${LDFLAGS}"
                LDFLAGS="${LDFLAGS} ${ONIG_LIBS}"
                AC_CHECK_HEADER([onigposix.h], ,[AC_MSG_ERROR([onigposix.h not found])])
                AC_CHECK_LIB([onig],[regexec], ,[AC_MSG_ERROR([libonig.a not found])])
                AC_DEFINE(USE_ONIG, , "use oniguruma")
-               AC_SUBST(ONIG_CFLAGS)
                AC_SUBST(ONIG_LIBS)
-               CPPFLAGS="${CPPFLAGS_ORIGINAL}"
                LDFLAGS="${LDFLAGS_ORIGINAL}"
        fi ])
 
 
 dnl
 dnl checking core2duo
-dnl
-if test "$use_gprof" == "no" ;then
+if test "$use_gprof" = "no" ;then
 AC_ARG_WITH(core2duo,[ --with-core2duo    (use core2duo)],
        [ if test "$withval" != "no" ;then
                echo "use core2duo"
@@ -338,7 +334,7 @@ fi
 dnl
 dnl checking athlon64
 dnl
-if test "$use_gprof" == "no" ;then
+if test "$use_gprof" = "no" ;then
 AC_ARG_WITH(athlon64,[ --with-athlon64    (use athlon64)],
        [ if test "$withval" != "no" ;then
                echo "use athlon64"
@@ -350,7 +346,7 @@ fi
 dnl
 dnl checking atom
 dnl
-if test "$use_gprof" == "no" ;then
+if test "$use_gprof" = "no" ;then
 AC_ARG_WITH(atom,[ --with-atom    (use atom)],
        [ if test "$withval" != "no" ;then
                echo "use atom"
@@ -362,7 +358,7 @@ fi
 dnl
 dnl checking ppc7400
 dnl
-if test "$use_gprof" == "no" ;then
+if test "$use_gprof" = "no" ;then
 AC_ARG_WITH(ppc7400,[ --with-ppc7400    (use PowerPC7400)],
        [ if test "$withval" != "no" ;then
                echo "use ppc7400"
@@ -374,7 +370,7 @@ fi
 dnl
 dnl checking ppc7450
 dnl
-if test "$use_gprof" == "no" ;then
+if test "$use_gprof" = "no" ;then
 AC_ARG_WITH(ppc7450,[ --with-ppc7450    (use PowerPC7450)],
        [ if test "$withval" != "no" ;then
                echo "use ppc7450"

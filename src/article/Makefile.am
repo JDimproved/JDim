@@ -48,5 +48,5 @@ noinst_HEADERS = \
 	toolbar.h \
 	toolbarsearch.h
 
-AM_CXXFLAGS = @GTKMM_CFLAGS@ @ONIG_CFLAGS@
+AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src
