@@ -284,6 +284,18 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
         m_data.port = 443;
     }
 
+    // プロキシ
+    m_data.host_proxy = data_in.host_proxy;
+    if( ! m_data.host_proxy.empty() ){
+        const bool protocol = false;
+        m_data.host_proxy = MISC::get_hostname( m_data.host_proxy , protocol );
+    }
+    if( ! m_data.host_proxy.empty() ){
+        m_data.port_proxy = data_in.port_proxy;
+        if( m_data.port_proxy == 0 ) m_data.port_proxy = 8080;
+        m_data.basicauth_proxy = data_in.basicauth_proxy;
+    }
+
     // その他
     m_data.head = data_in.head;
     m_data.str_post = data_in.str_post;
@@ -292,10 +304,6 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     m_data.agent = data_in.agent;
     m_data.referer = data_in.referer;
     m_data.cookie_for_write = data_in.cookie_for_write;
-    m_data.host_proxy = data_in.host_proxy;
-    m_data.port_proxy = data_in.port_proxy;
-    if( m_data.port_proxy == 0 ) m_data.port_proxy = 8080;
-    m_data.basicauth_proxy = data_in.basicauth_proxy;
     m_data.timeout = MAX( TIMEOUT_MIN, data_in.timeout );
     m_data.ex_field = data_in.ex_field;
     m_data.basicauth = data_in.basicauth;
@@ -373,12 +381,21 @@ void Loader::run_main()
 #endif
 
     // addrinfo 取得
-    if( m_data.host_proxy.empty() ) m_addrinfo = get_addrinfo( m_data.host, m_data.port );
-    else m_addrinfo = get_addrinfo( m_data.host_proxy, m_data.port_proxy );
-    if( ! m_addrinfo ){
-        m_data.code = HTTP_ERR;
-        errmsg = "getaddrinfo failed : " + m_data.url;
-        goto EXIT_LOADING;
+    if( m_data.host_proxy.empty() ){
+        m_addrinfo = get_addrinfo( m_data.host, m_data.port );
+        if( ! m_addrinfo ){
+            m_data.code = HTTP_ERR;
+            errmsg = "getaddrinfo failed : " + m_data.url;
+            goto EXIT_LOADING;
+        }
+    }
+    else{
+        m_addrinfo = get_addrinfo( m_data.host_proxy, m_data.port_proxy );
+        if( ! m_addrinfo ){
+            m_data.code = HTTP_ERR;
+            errmsg = "getaddrinfo failed : " + m_data.host_proxy;
+            goto EXIT_LOADING;
+        }
     }
 
     // ソケット作成
