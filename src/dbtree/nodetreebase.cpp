@@ -2266,6 +2266,13 @@ const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n
                    && *( str_in + n_in + 4 ) == 't'
                    && *( str_in + n_in + 5 ) == ';'
                  ) || (
+                   // nbsp;
+                   *( str_in + n_in + 1 ) == 'n'
+                   && *( str_in + n_in + 2 ) == 'b'
+                   && *( str_in + n_in + 3 ) == 's'
+                   && *( str_in + n_in + 4 ) == 'p'
+                   && *( str_in + n_in + 5 ) == ';'
+                 ) || (
                    // lt;
                    *( str_in + n_in + 1 ) == 'l'
                    && *( str_in + n_in + 2 ) == 't'
