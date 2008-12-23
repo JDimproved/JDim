@@ -87,9 +87,9 @@ std::string ENVIRONMENT::get_jdversion()
 #endif // SVN_REVISION
 
 #else
-    jd_version << MAJOR_VERSION << "."
-                << MINOR_VERSION << "."
-                << MICRO_VERSION << "-"
+    jd_version << MAJORVERSION << "."
+                << MINORVERSION << "."
+                << MICROVERSION << "-"
 			    << JDTAG << JDDATE;
 #endif // JDVERSION_SVN
 
