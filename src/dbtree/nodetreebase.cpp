@@ -80,6 +80,7 @@ NodeTreeBase::NodeTreeBase( const std::string url, const std::string& modified )
       m_buffer_write( NULL ),
       m_check_update( false ),
       m_check_write( false ),
+      m_loading_newthread( false ),
       m_fout ( 0 )
 {
     set_date_modified( modified );
@@ -948,6 +949,7 @@ void NodeTreeBase::load_cache()
             size_t size = 0;
             m_check_update = false;
             m_check_write = false;
+            m_loading_newthread = false;
             set_resume( false );
             init_loading();
             const size_t str_length = str.length();
@@ -978,7 +980,6 @@ void NodeTreeBase::init_loading()
     // 一時バッファ作成
     if( ! m_buffer_lines ) m_buffer_lines = ( char* ) malloc( MAXSISE_OF_LINES ); 
     if( ! m_parsed_text ) m_parsed_text = ( char* ) malloc( MAXSISE_OF_LINES );
-    if( m_check_write && ! m_buffer_write ) m_buffer_write = ( char* ) malloc( MAXSISE_OF_LINES ); 
 }
 
 
@@ -1006,13 +1007,13 @@ void NodeTreeBase::download_dat( const bool check_update )
     if( is_loading() ) return;
 
     m_check_update = check_update;
-    m_check_write = false;
-    if( ! m_check_update ) m_check_write = MESSAGE::get_log_manager()->has_items( m_url, ! get_res_number() );
+    m_check_write = ! m_check_update;
+    m_loading_newthread = ( ! get_res_number() );
 
 #ifdef _DEBUG    
     std::cout << "NodeTreeBase::download_dat : " << m_url << " lng = " << m_lng_dat << std::endl
               << "modified = " << get_date_modified() << " check_update = " << check_update
-              << " check_write = " << m_check_write << std::endl;
+              << " newthread = " << m_loading_newthread << std::endl;
 #endif
 
 
@@ -1185,7 +1186,7 @@ void NodeTreeBase::receive_finish()
         if( !get_ext_err().empty() ) set_date_modified( std::string() );
 
         // 書き込みチェック終了
-        if( m_check_write
+        if( m_check_write && MESSAGE::get_log_manager()->size()
             && ( get_code() == HTTP_OK
                  || get_code() == HTTP_PARTIAL_CONTENT
                  || get_code() == HTTP_NOT_MODIFIED
@@ -1203,6 +1204,9 @@ void NodeTreeBase::receive_finish()
     m_sig_finished.emit();
 
     clear();
+    m_check_update = false;
+    m_check_write = false;
+    m_loading_newthread = false;
 }
 
 
@@ -1405,7 +1409,9 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     }
 
     // 自分の書き込みかチェック
-    if( m_check_write ){
+    if( m_check_write && MESSAGE::get_log_manager()->has_items( m_url, m_loading_newthread ) ){
+
+        if( ! m_buffer_write ) m_buffer_write = ( char* ) malloc( MAXSISE_OF_LINES ); 
 
         // 簡易チェック
         // 最初の lng_check 文字だけ見る
@@ -2008,6 +2014,10 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 void NodeTreeBase::parse_write( const char* str, const int lng, const int max_lng_write )
 {
     if( ! m_buffer_write ) return;
+
+#ifdef _DEBUG
+    std::cout << "NodeTreeBase::parse_write lng = " << lng << " max = " << max_lng_write << std::endl;
+#endif
 
     bool head = true;
     const char* pos = str;

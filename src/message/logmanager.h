@@ -23,6 +23,7 @@ namespace MESSAGE
         Log_Manager();
         virtual ~Log_Manager();
 
+        const int size() const { return m_logitems.size(); }
         const bool has_items( const std::string& url, const bool newthread );
         void remove_items( const std::string& url );
 

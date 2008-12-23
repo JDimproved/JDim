@@ -25,7 +25,7 @@
 
 enum
 {
-    WRITE_TIMEOUT = 120  // 書き込んでからこの秒数を過ぎても書き込んだレスを判定できなかったらロストとする
+    WRITE_TIMEOUT = 180  // 書き込んでからこの秒数を過ぎても書き込んだレスを判定できなかったらロストとする
 };
 
 
@@ -82,22 +82,32 @@ Log_Manager::~Log_Manager()
 
 const bool Log_Manager::has_items( const std::string& url, const bool newthread )
 {
+    if( ! m_logitems.size() ) return false;
+
 #ifdef _DEBUG
     std::cout << "Log_Manager::has_items url = " << url << " newthread " << newthread << std::endl;
 #endif
-
-    if( ! m_logitems.size() ) return false;
 
     std::list< LogItem* >::iterator it = m_logitems.begin();
     for( ; it != m_logitems.end(); ++it ){
 
 #ifdef _DEBUG
-        std::cout << (*it)->url << std::endl;
+        std::cout << "checking : " << (*it)->url << std::endl;
 #endif
         if( newthread != (*it)->newthread ) continue;
 
-        if( (*it)->url == url ) return true;
-        if( (*it)->newthread && url.find( (*it)->url ) == 0 ) return true;
+        if( (*it)->url == url ){
+#ifdef _DEBUG
+            std::cout << "found\n";
+#endif
+            return true;
+        }
+        if( (*it)->newthread && url.find( (*it)->url ) == 0 ){
+#ifdef _DEBUG
+            std::cout << "found\n";
+#endif
+            return true;
+        }
     }
 
 #ifdef _DEBUG
@@ -176,19 +186,24 @@ const bool Log_Manager::check_write( const std::string& url, const bool newthrea
         if( ! (*it)->newthread && (*it)->url != url ) continue;
         if( (*it)->newthread && url.find( (*it)->url ) != 0 ) continue;
 
-        // 先頭のheadsize文字だけチェック (空白除く)
-        // ヒットしてもremove は true にしない
+        // 先頭のheadsize文字だけ簡易チェックする
+        // ヒットしても(*it)->remove を true にしない
         if( headsize ){
 
             bool flag = true;
             size_t i = 0, i2 = 0;
             while( (*it)->head[ i ] != '\0' && i2 < headsize ){
 
+                // 空白は除く
                 while( (*it)->head[ i ] == ' ' ) ++i;
                 while( msg[ i2 ] == ' ' ) ++i2;
 #ifdef _DEBUG
                 std::cout << (int)( (*it)->head[ i ] ) << " - " << (int)( msg[ i2 ] ) << std::endl;
 #endif
+                // もしバッファの最後が空白で終わっていたら成功と見なす
+                if( i && i2
+                    && ( (*it)->head[ i ] == '\0' || msg[ i2 ] == '\0' ) ) break;
+
                 if( (*it)->head[ i ] != msg[ i2 ] ){
                     flag = false;
                     break;

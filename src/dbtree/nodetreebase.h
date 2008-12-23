@@ -106,6 +106,7 @@ namespace DBTREE
         char* m_buffer_write; // 書き込みチェック用バッファ
         bool m_check_update; // HEADによる更新チェックのみ
         bool m_check_write; // 自分の書き込みかチェックする
+        bool m_loading_newthread; // 新スレ読み込み中
         
         // キャッシュ保存用ファイルハンドラ
         FILE *m_fout;
