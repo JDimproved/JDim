@@ -286,7 +286,9 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
 
     // プロキシ
     m_data.host_proxy = data_in.host_proxy;
-    if( ! m_data.host_proxy.empty() ){
+
+    // 先頭に *tp:// が付いていたら取り除く
+    if( ! m_data.host_proxy.empty() && m_data.host_proxy.find( "tp://" ) != std::string::npos ){
         const bool protocol = false;
         m_data.host_proxy = MISC::get_hostname( m_data.host_proxy , protocol );
     }
