@@ -26,7 +26,7 @@ namespace CORE
 
       public:
 
-        DND_Manager(){}
+        DND_Manager():m_dnd( false ){}
         virtual ~DND_Manager(){}
 
         const bool now_dnd() const{ return m_dnd; }

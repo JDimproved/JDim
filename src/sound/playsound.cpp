@@ -193,7 +193,7 @@ void Play_Sound::play_wavfile()
 
     if( handle ) snd_pcm_close( handle );
     if( fin ) fclose( fin );
-    if( buffer ) delete buffer;
+    if( buffer ) delete[] buffer;
 
 #ifdef _DEBUG
     std::cout << "fin\n";
