@@ -176,7 +176,7 @@ void ArticleViewMain::exec_reload()
 
     // オフライン
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
 
         if( get_live() ) ARTICLE::get_admin()->set_command( "live_stop", get_url() );
@@ -502,7 +502,7 @@ void ArticleViewMain::create_status_message()
 //
 void ArticleViewMain::show_instruct_diag()
 {
-    SKELETON::MsgCheckDiag mdiag( NULL, 
+    SKELETON::MsgCheckDiag mdiag( get_parent_win(), 
                                   "スレビューからスレ一覧表示に戻る方法として\n\n(1) マウスジェスチャを使う\n(マウス右ボタンを押しながら左または下にドラッグして右ボタンを離す)\n\n(2) マウスの5ボタンを押す\n\n(3) Alt+x か h か ← を押す\n\n(4) ツールバーのスレ一覧アイコンを押す\n\n(5) 表示メニューからスレ一覧を選ぶ\n\nなどがあります。詳しくはオンラインマニュアルを参照してください。"
                                   , "今後表示しない(_D)"
         );
@@ -554,7 +554,7 @@ void ArticleViewMain::live_start()
 
     // オフライン
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
         return;
     }

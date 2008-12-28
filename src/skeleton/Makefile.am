@@ -40,7 +40,8 @@ libskeleton_a_SOURCES = \
 	vbox.cpp \
 	jdtoolbar.cpp \
 	toolbar.cpp \
-	textloader.cpp
+	textloader.cpp \
+	undobuffer.cpp
 
 noinst_HEADERS = \
 	window.h \
@@ -88,7 +89,8 @@ noinst_HEADERS = \
 	vbox.h \
 	jdtoolbar.h \
 	toolbar.h \
-	textloader.h
+	textloader.h \
+	undobuffer.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

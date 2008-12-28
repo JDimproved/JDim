@@ -24,6 +24,7 @@ enum
 
 View::View( const std::string& url, const std::string& arg1 ,const std::string& arg2 )
     : m_url( url ),
+      m_parent_win( NULL ),
       m_status( std::string() ),
       m_enable_mg( false ),
       m_enable_autoreload( false ),

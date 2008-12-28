@@ -213,7 +213,7 @@ void ArticleViewSearch::slot_search_fin()
 void ArticleViewSearch::reload()
 {
     if( CORE::get_search_manager()->is_searching() ){
-        SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "他の検索スレッドが実行中です" );
         mdiag.run();
         return;
     }
@@ -226,7 +226,7 @@ void ArticleViewSearch::reload()
         if( m_searchmode == SEARCHMODE_TITLE ){
 
             if( ! SESSION::is_online() ){
-                SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+                SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
                 mdiag.run();
                 return;
             }

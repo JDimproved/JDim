@@ -26,6 +26,7 @@ namespace SKELETON
         SIG_RESIZE_POPUP m_sig_resize_popup;
 
         std::string m_url;
+        Gtk::Window* m_parent_win;
 
         // クライアント領域の幅、高さ
         int m_width_client;
@@ -151,6 +152,9 @@ namespace SKELETON
         virtual ~View(){}
 
         virtual const std::string& get_url(){ return m_url; }
+
+        virtual void set_parent_win( Gtk::Window* parent_win ){ m_parent_win = parent_win; }
+        virtual Gtk::Window* get_parent_win(){ return m_parent_win; }
 
         // 移転があったときなどにadminから呼び出される
         void update_url( const std::string& url_old, const std::string& url_new );

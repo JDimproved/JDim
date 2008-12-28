@@ -52,7 +52,7 @@ namespace SKELETON
 
         // m_entry の入力コントローラのモード設定
         // 補完モード(m_mode)とは異なる
-        void add_mode( int mode ){ m_entry.add_mode( mode ); }
+        void add_control_mode( int mode ){ m_entry.add_mode( mode ); }
 
         // 補完実行
         bool completion();

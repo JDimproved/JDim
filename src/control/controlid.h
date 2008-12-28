@@ -69,6 +69,9 @@ namespace CONTROL
 
         Back,
 
+        Undo,
+        Redo,
+
         Quit,
         Save,
         Delete,

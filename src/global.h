@@ -65,7 +65,9 @@ enum{
 #define ITEM_NAME_INSERTTEXT  "テキストファイル挿入"
 #define ITEM_NAME_LOCK_MESSAGE "書き込み後に閉じない"
 #define ITEM_NAME_PREVIEW     "プレビュー表示"
+
 #define ITEM_NAME_UNDO        "元に戻す(Undo)"
+#define ITEM_NAME_REDO        "やり直し(Redo)"
 
 
 // SESSION::get_item_*() の戻り値
@@ -114,6 +116,7 @@ enum
     ITEM_PREVIEW,
 
     ITEM_UNDO,
+    ITEM_REDO,
 
     ITEM_END
 };

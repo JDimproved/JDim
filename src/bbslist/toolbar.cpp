@@ -46,7 +46,7 @@ BBSListToolBar::BBSListToolBar() :
     pack_start( m_tool_label, Gtk::PACK_SHRINK );
 
     pack_buttons();
-    add_search_mode( CONTROL::MODE_BBSLIST );
+    add_search_control_mode( CONTROL::MODE_BBSLIST );
 }
 
 
@@ -63,7 +63,7 @@ void BBSListToolBar::pack_buttons()
         switch( item ){
 
             case ITEM_SEARCHBOX:
-                get_buttonbar().append( *get_entry_search( CORE::COMP_SEARCH_BBSLIST ) );
+                get_buttonbar().append( *get_tool_search( CORE::COMP_SEARCH_BBSLIST ) );
                 break;
 
             case ITEM_CHECK_UPDATE_ROOT:
@@ -143,4 +143,35 @@ bool BBSListToolBar::slot_scroll_event( GdkEventScroll* event )
 void BBSListToolBar::slot_check_update_root()
 {
     CORE::core_set_command( "check_update_root", "" );
+}
+
+
+
+////////////////////////////////////////
+
+
+EditListToolBar::EditListToolBar() :
+    SKELETON::ToolBar( NULL )
+{
+    pack_buttons();
+}
+
+
+//
+// ボタンのパッキング
+//
+// virtual
+void EditListToolBar::pack_buttons()
+{
+    get_buttonbar().append( *get_tool_search( CORE::COMP_SEARCH_BBSLIST ) );
+    get_buttonbar().append( *get_button_down_search() );
+    get_buttonbar().append( *get_button_up_search() );
+    add_search_control_mode( CONTROL::MODE_BBSLIST );
+
+    get_buttonbar().append( *get_button_undo() );
+    get_buttonbar().append( *get_button_redo() );
+    get_buttonbar().append( *get_button_close() );
+
+    set_relief();
+    show_all_children();
 }

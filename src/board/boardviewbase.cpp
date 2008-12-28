@@ -1060,7 +1060,7 @@ const bool BoardViewBase::operate_view( const int control )
             // お気に入りに追加
         case CONTROL::AppendFavorite:
         {
-            SKELETON::MsgDiag mdiag( NULL, "板と選択中のスレのどちらを登録しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "板と選択中のスレのどちらを登録しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
 
             mdiag.add_button( "板を登録", Gtk::RESPONSE_NO );
             mdiag.add_button( "スレを登録", Gtk::RESPONSE_YES );
@@ -1138,7 +1138,7 @@ const bool BoardViewBase::operate_view( const int control )
 
             if( CONFIG::get_show_deldiag() ){
 
-                SKELETON::MsgCheckDiag mdiag( NULL,
+                SKELETON::MsgCheckDiag mdiag( get_parent_win(),
                                               "選択した行のログを削除しますか？",
                                               "今後表示しない(常に削除)(_D)",
                                               Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
@@ -1800,7 +1800,7 @@ void BoardViewBase::slot_copy_title_url()
 //
 void BoardViewBase::slot_select_all()
 {
-    SKELETON::MsgDiag mdiag( NULL, "全ての行を選択しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    SKELETON::MsgDiag mdiag( get_parent_win(), "全ての行を選択しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     mdiag.set_default_response( Gtk::RESPONSE_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
@@ -2053,7 +2053,7 @@ void BoardViewBase::operate_search( const std::string& controlid )
 //
 void BoardViewBase::show_preference()
 {
-    SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, get_url_board() );
+    SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, get_url_board() );
     pref->run();
     delete pref;
 }
@@ -2067,7 +2067,7 @@ void BoardViewBase::slot_preferences_article()
     if( m_path_selected.empty() ) return;
     const std::string url = path2daturl( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, url );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, url );
     pref->run();
     delete pref;
 }

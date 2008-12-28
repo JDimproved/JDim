@@ -54,7 +54,7 @@ std::string MessageViewMain::create_message()
     const std::string mail = get_entry_mail().get_text();
 
     if( msg.empty() ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "本文が空白です" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "本文が空白です" );
         mdiag.run();
         return std::string();
     }
@@ -67,7 +67,7 @@ std::string MessageViewMain::create_message()
         // 最後がスペース/改行である
         if( end_pos != msg_length - 1 )
         {
-            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+            SKELETON::MsgDiag mdiag( get_parent_win(),
                                      "メッセージがスペースまたは改行で終わっています。\n\n"
                                      "このまま書き込みますか？ (または、改行等を削除)",
                                      false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE );
@@ -96,7 +96,7 @@ std::string MessageViewMain::create_message()
     // 誤爆を警告
     if( SESSION::get_article_current_url().find( get_url() ) == std::string::npos ){
 
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+        SKELETON::MsgDiag mdiag( get_parent_win(),
                                  "スレビューで開いているスレと異なるスレに書き込もうとしています\n\n誤爆する可能性がありますが書き込みますか？",
                                  false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE );
 
@@ -168,16 +168,16 @@ std::string MessageViewNew::create_message()
     std::string mail = get_entry_mail().get_text();
 
     if( subject.empty() ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "スレタイトルが空白です" ); mdiag.run();
+        SKELETON::MsgDiag mdiag( get_parent_win(), "スレタイトルが空白です" ); mdiag.run();
         return std::string();
     }
 
     if( msg.empty() ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "本文が空白です" ); mdiag.run();
+        SKELETON::MsgDiag mdiag( get_parent_win(), "本文が空白です" ); mdiag.run();
         return std::string();
     }
     
-    SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+    SKELETON::MsgDiag mdiag( get_parent_win(),
                              "新スレを作成しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() == Gtk::RESPONSE_YES ) return DBTREE::create_newarticle_message( get_url(), subject, name, mail, msg );
 

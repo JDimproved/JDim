@@ -136,6 +136,7 @@ void SelectListDialog::slot_show_tree()
 
         if( ! m_selectview ) m_selectview = dynamic_cast< SelectListView* > ( Gtk::manage( CORE::ViewFactory( CORE::VIEW_SELECTLIST, get_url() ) ) );
         if( m_selectview ){
+            m_selectview->set_parent_win( this );
             m_selectview->copy_treestore( m_treestore );
             m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &SelectListDialog::hide ) );
 

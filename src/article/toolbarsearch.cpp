@@ -19,7 +19,7 @@ SearchToolBar::SearchToolBar() :
     SKELETON::ToolBar( ARTICLE::get_admin() )
 {
     // 検索バー    
-    get_searchbar()->append( *get_entry_search( CORE::COMP_SEARCH_ARTICLE ) );
+    get_searchbar()->append( *get_tool_search( CORE::COMP_SEARCH_ARTICLE ) );
     get_searchbar()->append( *get_button_close_searchbar() );
 
     pack_buttons();

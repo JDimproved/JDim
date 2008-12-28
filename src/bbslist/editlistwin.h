@@ -11,6 +11,7 @@
 
 namespace BBSLIST
 {
+    class EditListToolBar;
     class SelectListView;
 
     class EditListWin : public Gtk::Window  
@@ -20,18 +21,30 @@ namespace BBSLIST
         Gtk::VBox m_vbox;
         Gtk::Label m_label;
 
-        Gtk::HBox m_hbox;
-        Gtk::Button m_bt_close;
+        EditListToolBar* m_toolbar;
 
       public:
 
         EditListWin( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore );
 
         void clock_in();
+        void append_item();
 
       private:
 
+        // 閉じる
         void slot_close();
+
+        // 検索関係
+        void slot_focus_entry_search();
+        void slot_changed_search();
+        void slot_active_search();
+        void slot_operate_search( const int controlid );
+        void slot_up_search();
+        void slot_down_search();
+        void slot_undo();
+        void slot_redo();
+        void slot_undo_buffer_changed();
     };
 };
 

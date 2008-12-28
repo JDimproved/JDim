@@ -301,6 +301,8 @@ void JDTreeViewBase::expand_parents( const Gtk::TreePath& path )
     for( int level = 1; level < path.get_depth(); ++level ){
                     
         Gtk::TreeModel::Row row_tmp = get_row( path );
+        if( ! row_tmp ) return;
+
         for( int i = 0; i < path.get_depth() - level; ++i ){
             if( row_tmp.parent() ) row_tmp = *( row_tmp.parent() );
         }

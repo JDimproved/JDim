@@ -70,6 +70,15 @@ SKELETON::Admin* ImageViewBase::get_admin()
 
 
 //
+// 親ウィンドウを取得
+//
+Gtk::Window* ImageViewBase::get_parent_win()
+{
+    return IMAGE::get_admin()->get_win();
+}
+
+
+//
 // 共通セットアップ
 //
 void ImageViewBase::setup_common()
@@ -449,7 +458,7 @@ void ImageViewBase::slot_close_all_views()
 //
 void ImageViewBase::show_preference()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( IMAGE::get_admin()->get_win(), CORE::PREFDIAG_IMAGE, get_url() );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, get_url() );
 
     IMAGE::get_admin()->set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
     pref->run();
@@ -557,14 +566,14 @@ const bool ImageViewBase::operate_view( const int control )
 
             if( !m_img->is_protected() ){
 
-                SKELETON::MsgDiag mdiag( IMAGE::get_admin()->get_win(),
+                SKELETON::MsgDiag mdiag( get_parent_win(),
                                          "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
                 mdiag.set_default_response( Gtk::RESPONSE_NO );
                 if( mdiag.run() == Gtk::RESPONSE_YES ) delete_view();
             }
             else{
 
-                SKELETON::MsgDiag mdiag( IMAGE::get_admin()->get_win(), "キャッシュ保護されています" );
+                SKELETON::MsgDiag mdiag( get_parent_win(), "キャッシュ保護されています" );
                 mdiag.run();
             }
 
@@ -742,7 +751,7 @@ void ImageViewBase::slot_reload_force()
     if( ! m_enable_menuslot ) return;
 
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
         return;
     }
@@ -776,7 +785,7 @@ void ImageViewBase::slot_cancel_mosaic()
         }
         type += "です。";
 
-        SKELETON::MsgDiag mdiag( IMAGE::get_admin()->get_win(),
+        SKELETON::MsgDiag mdiag( get_parent_win(),
                                  "拡張子が偽装されています。" + type + "\n\nモザイクを解除しますか？",
                                  false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 

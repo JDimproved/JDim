@@ -56,7 +56,7 @@ void BoardView::reload()
 {
     // オフライン
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
         return;
     }
@@ -158,7 +158,7 @@ void BoardViewNext::reload()
 {
     // オフライン
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
         return;
     }

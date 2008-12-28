@@ -71,13 +71,19 @@ namespace IMAGE
 
         const bool is_under_mouse() const { return m_under_mouse; }
 
+        //
+        // SKELETON::View の関数のオーバロード
+        //
+
+        // 親ウィンドウを取得
+        virtual Gtk::Window* get_parent_win();
+
         // コマンド
         virtual const bool set_command( const std::string& command,
                                         const std::string& arg1 = std::string(),
                                         const std::string& arg2 = std::string()
             );
 
-        // SKELETON::View の関数のオーバロード
         virtual void reload();
         virtual void stop();
         virtual void redraw_view();

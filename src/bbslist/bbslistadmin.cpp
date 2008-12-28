@@ -8,6 +8,7 @@
 
 #include "skeleton/view.h"
 #include "skeleton/dragnote.h"
+#include "skeleton/undobuffer.h"
 
 #include "jdlib/miscutil.h"
 
@@ -15,6 +16,28 @@
 #include "viewfactory.h"
 #include "session.h"
 #include "command.h"
+
+
+// お気に入りの共通UNDOバッファ
+SKELETON::UNDO_BUFFER *instance_undo_buffer_favorite = NULL;
+
+SKELETON::UNDO_BUFFER* BBSLIST::get_undo_buffer_favorite()
+{
+    if( ! instance_undo_buffer_favorite ) instance_undo_buffer_favorite = new SKELETON::UNDO_BUFFER();
+    assert( instance_undo_buffer_favorite );
+
+    return instance_undo_buffer_favorite;
+}
+
+void BBSLIST::delete_undo_buffer_favorite()
+{
+    if( instance_undo_buffer_favorite ) delete instance_undo_buffer_favorite;
+    instance_undo_buffer_favorite = NULL;
+}
+
+
+//////////////////////////////////////////////
+
 
 BBSLIST::BBSListAdmin *instance_bbslistadmin = NULL;
 
@@ -34,6 +57,9 @@ void BBSLIST::delete_admin()
 }
 
 
+//////////////////////////////////////////////
+
+
 using namespace BBSLIST;
 
 BBSListAdmin::BBSListAdmin( const std::string& url )
@@ -51,6 +77,7 @@ BBSListAdmin::~BBSListAdmin()
 #endif
 
     if( m_toolbar ) delete m_toolbar;
+    BBSLIST::delete_undo_buffer_favorite();
 
     // bbslistのページの位置保存
     SESSION::set_bbslist_page( get_current_page() );

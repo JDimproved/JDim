@@ -5,7 +5,6 @@
 
 #include "bbslistview.h"
 #include "bbslistadmin.h"
-#include "toolbar.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -137,13 +136,13 @@ void BBSListViewMain::delete_view()
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
     for( ; it != list_it.end(); ++it ){
         if( ! is_etcboard( *it ) ){
-            SKELETON::MsgDiag mdiag( NULL, "通常の板は削除出来ません", false, Gtk::MESSAGE_ERROR );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "通常の板は削除出来ません", false, Gtk::MESSAGE_ERROR );
             mdiag.run();
             return;
         }
     }
 
-    SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    SKELETON::MsgDiag mdiag( get_parent_win(), "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
     delete_view_impl();

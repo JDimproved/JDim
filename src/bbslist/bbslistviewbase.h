@@ -68,6 +68,8 @@ namespace BBSLIST
         // treeviewのD&Dによる編集を可能にする
         void set_editable( const bool editable );
 
+        void set_search_invert( const bool invert ){ m_search_invert = invert; }
+
         // DOM共有オブジェクト
         XML::Document m_document;
 
@@ -111,10 +113,6 @@ namespace BBSLIST
         Glib::ustring path2rawurl( const Gtk::TreePath& path );
         Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
 
-        // 挿入先ダイアログを表示してアイテム追加
-        // あらかじめ共有バッファに追加するデータをセットしておくこと
-        void append_item();
-
         // アイテム削除
         void remove_item( const std::string& url );
 
@@ -135,7 +133,13 @@ namespace BBSLIST
         BBSListViewBase( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
         virtual ~BBSListViewBase();
 
+        //
         // SKELETON::View の関数のオーバロード
+        //
+
+        // 親ウィンドウをセット
+        virtual void set_parent_win( Gtk::Window* parent_win );
+
         virtual const std::string url_for_copy(){ return std::string(); }
 
         virtual const bool set_command( const std::string& command,
@@ -162,10 +166,17 @@ namespace BBSLIST
         virtual void down_search();
         virtual void operate_search( const std::string& controlid );
 
+        // 挿入先ダイアログを表示してアイテム追加
+        // あらかじめ共有バッファに追加するデータをセットしておくこと
+        void append_item();
+
         // selectdialogで使う
         Gtk::TreePath get_current_path() { return m_treeview.get_current_path(); }
         void copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store );
 
+        // undo, redo
+        void undo();
+        void redo();
 
       private:
 

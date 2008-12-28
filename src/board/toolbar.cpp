@@ -20,7 +20,7 @@ BoardToolBar::BoardToolBar() :
     SKELETON::ToolBar( BOARD::get_admin() )
 {
     pack_buttons();
-    add_search_mode( CONTROL::MODE_BOARD );
+    add_search_control_mode( CONTROL::MODE_BOARD );
 }
 
 // ボタンのパッキング
@@ -39,7 +39,7 @@ void BoardToolBar::pack_buttons()
                 break;
 
             case ITEM_SEARCHBOX:
-                get_buttonbar().append( *get_entry_search( CORE::COMP_SEARCH_BOARD ) );
+                get_buttonbar().append( *get_tool_search( CORE::COMP_SEARCH_BOARD ) );
                 break;
 
             case ITEM_SEARCH_NEXT:

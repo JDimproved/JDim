@@ -61,6 +61,8 @@ ToolBar::ToolBar( Admin* admin )
       m_button_close( NULL ),
       m_button_delete( NULL ),
       m_button_favorite( NULL ),
+      m_button_undo( NULL ),
+      m_button_redo( NULL ),
       m_button_lock( NULL ),
 
       m_button_back( NULL ),
@@ -411,7 +413,7 @@ void ToolBar::slot_toggle_searchbar()
 //
 // 検索 entry
 //
-Gtk::ToolItem* ToolBar::get_entry_search( const int mode )
+Gtk::ToolItem* ToolBar::get_tool_search( const int mode )
 {
     if( ! m_tool_search ){
 
@@ -430,9 +432,15 @@ Gtk::ToolItem* ToolBar::get_entry_search( const int mode )
 }
 
 
-void ToolBar::add_search_mode( const int mode )
+SKELETON::CompletionEntry* ToolBar::get_entry_search()
 {
-    if( m_entry_search ) m_entry_search->add_mode( mode );
+    return m_entry_search;
+}
+
+
+void ToolBar::add_search_control_mode( const int mode )
+{
+    if( m_entry_search ) m_entry_search->add_control_mode( mode );
 }
 
 
@@ -472,7 +480,7 @@ void ToolBar::slot_active_search()
 }
 
 
-void ToolBar::slot_operate_search( int controlid )
+void ToolBar::slot_operate_search( const int controlid )
 {
     if( ! m_enable_slot ) return;
     if( m_url.empty() || ! m_admin ) return;
@@ -496,7 +504,7 @@ void ToolBar::focus_entry_search()
 //
 // 上検索
 //
-Gtk::ToolItem* ToolBar::get_button_up_search()
+Gtk::ToolButton* ToolBar::get_button_up_search()
 {
     if( ! m_button_up_search ){
         m_button_up_search = Gtk::manage( new ImgToolButton( Gtk::Stock::GO_UP ) );
@@ -525,7 +533,7 @@ void ToolBar::slot_clicked_up_search()
 //
 // 下検索
 //
-Gtk::ToolItem* ToolBar::get_button_down_search()
+Gtk::ToolButton* ToolBar::get_button_down_search()
 {
     if( ! m_button_down_search ){
         m_button_down_search = Gtk::manage( new ImgToolButton( Gtk::Stock::GO_DOWN ) );
@@ -723,7 +731,7 @@ void ToolBar::slot_clicked_stop()
 //
 // 閉じるボタン
 //
-Gtk::ToolItem* ToolBar::get_button_close()
+Gtk::ToolButton* ToolBar::get_button_close()
 {
     if( ! m_button_close ){
         m_button_close = Gtk::manage( new ImgToolButton( Gtk::Stock::CLOSE ) );
@@ -816,6 +824,36 @@ void ToolBar::slot_clicked_favorite()
 #endif
 
     m_admin->set_command( "toolbar_set_favorite", m_url );
+}
+
+
+//
+// UNDO ボタン
+//
+Gtk::ToolButton* ToolBar::get_button_undo()
+{
+    if( ! m_button_undo ){
+        m_button_undo = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::UNDO ) );
+        m_button_undo->set_sensitive( false );
+        set_tooltip( *m_button_undo, CONTROL::get_label_motions( CONTROL::Undo ) );
+    }
+
+    return m_button_undo;
+}
+
+
+//
+// REDO ボタン
+//
+Gtk::ToolButton* ToolBar::get_button_redo()
+{
+    if( ! m_button_redo ){
+        m_button_redo = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::REDO ) );
+        m_button_redo->set_sensitive( false );
+        set_tooltip( *m_button_redo, CONTROL::get_label_motions( CONTROL::Redo ) );
+    }
+
+    return m_button_redo;
 }
 
 

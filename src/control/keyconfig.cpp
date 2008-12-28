@@ -69,6 +69,9 @@ void KeyConfig::load_conf()
 
     SETKEYMOTION( "Back", KEYCONF_Back );
 
+    SETKEYMOTION( "Undo", KEYCONF_Undo );
+    SETKEYMOTION( "Redo", KEYCONF_Redo );
+
     SETKEYMOTION( "Quit", KEYCONF_Quit );
     SETKEYMOTION( "Save", KEYCONF_Save );
     SETKEYMOTION( "Delete", KEYCONF_Delete );

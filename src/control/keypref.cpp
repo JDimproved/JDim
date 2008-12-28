@@ -92,6 +92,9 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
 
     append_row( CONTROL::Back );
 
+    append_row( CONTROL::Undo );
+    append_row( CONTROL::Redo );
+
     append_row( CONTROL::Quit );
     append_row( CONTROL::Save );
     append_row( CONTROL::Delete );

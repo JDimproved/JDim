@@ -10,6 +10,11 @@
 
 #include <string>
 
+namespace SKELETON
+{
+    class UNDO_BUFFER;
+}
+
 namespace BBSLIST
 {
     class BBSListToolBar;
@@ -53,6 +58,9 @@ namespace BBSLIST
     
     BBSLIST::BBSListAdmin* get_admin();
     void delete_admin();
+
+    SKELETON::UNDO_BUFFER* get_undo_buffer_favorite();
+    void delete_undo_buffer_favorite();
 }
 
 #endif

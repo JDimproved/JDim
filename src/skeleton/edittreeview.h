@@ -29,18 +29,23 @@ namespace SKELETON
     typedef sigc::signal< void, const CORE::DATA_INFO_LIST& > SIG_DROPPED_FROM_OTHER;
 
     class EditColumns;
+    class UNDO_BUFFER;
 
     class EditTreeView : public DragTreeView
     {
         SIG_DROPPED_FROM_OTHER m_sig_dropped_from_other;
 
         std::string m_url;
+        Gtk::Window* m_parent_win;
 
         EditColumns& m_columns;
         JDLIB::ConstPtr< Gtk::CellRendererText > m_ren_text;
 
         // 編集可能
         bool m_editable;  
+
+        // UNDO 用のバッファ
+        UNDO_BUFFER* m_undo_buffer;
 
         // D&D用変数
         Gtk::TreePath m_drag_path_uline; // D&D時に下線を引いている行
@@ -54,15 +59,13 @@ namespace SKELETON
         // 詳しくは EditTreeView::clock_in() を参照
         int m_pre_adjust_upper;
         Gtk::TreePath m_jump_path;
+        int m_jump_count;
 
         // 更新された
         bool m_updated;
 
         // ドラッグがこのツリー上で行われている
         bool m_dragging_on_tree;
-
-        // UNDO用バッファ
-        CORE::DATA_INFO_LIST m_list_info_undo;
 
       public:
 
@@ -77,6 +80,11 @@ namespace SKELETON
         virtual void clock_in();
 
         SIG_DROPPED_FROM_OTHER sig_dropped_from_other(){ return m_sig_dropped_from_other; }
+
+        void set_parent_win( Gtk::Window* parent_win ){ m_parent_win = parent_win; }
+        Gtk::Window* get_parent_win(){ return m_parent_win; }
+
+        void set_undo_buffer( UNDO_BUFFER* undo_buffer ){ m_undo_buffer = undo_buffer; }
 
         const bool is_updated() const { return m_updated; };
         void set_updated( const bool set ){ m_updated = set; }
@@ -115,16 +123,19 @@ namespace SKELETON
         const bool is_renaming_row(){ return m_ren_text->property_editable(); }
 
         // list_info を path_dest 以下に追加
+        //
         // list_info の各path にあらかじめ値をセットしておくこと
         // scroll = true なら追加した行にスクロールする
         // force = true なら m_editable が false でも追加
+        // cancel_undo_commit = true なら undo バッファをコミットしない
+        //
         // (1) path_dest が empty なら一番最後
         // (2) before = true なら path_dest の前
         // (3) path_destがディレクトリなら path_dest の下
         // (4) そうでなければ path_dest の後
         CORE::DATA_INFO_LIST append_info( const CORE::DATA_INFO_LIST& list_info,
                                           const Gtk::TreePath& path_dest, const bool before, const bool scroll,
-                                          const bool force = false
+                                          const bool force = false, const bool cancel_undo_commit = false
             );
 
         // pathをまとめて削除
@@ -135,11 +146,12 @@ namespace SKELETON
         // force = true なら m_editable が false でも追加
         void delete_selected_rows( const bool force );
 
-        // アンドゥ
         void undo();
+        void redo();
 
         // 選択行をlist_infoにセットする
-        void get_info_in_selection( CORE::DATA_INFO_LIST& list_info );
+        // dir : true の時はディレクトリが選択されているときはディレクトリ内の行もlist_infoに再帰的にセットする
+        void get_info_in_selection( CORE::DATA_INFO_LIST& list_info, const bool dir );
 
       protected:
 
@@ -154,6 +166,9 @@ namespace SKELETON
         virtual void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context );
 
       private:
+
+        // path にスクロール
+        void set_scroll( const Gtk::TreePath& path );
 
         // set_model()をprivate化して使用不可にする。代わりにset_treestore()を使用すること
         void set_model( const Glib::RefPtr< Gtk::TreeModel >& model ){ Gtk::TreeView::set_model( model ); }
@@ -196,8 +211,12 @@ namespace SKELETON
         const Gtk::TreePath append_one_row( const std::string& url, const std::string& name, int type, const std::string& data,
                                             const Gtk::TreePath& path_dest,const bool before, const bool subdir );
 
+        // list_info に示した行の親を再起的にexpandする
+        // list_info の各要素の path にあらかじめ値をセットしておくこと
+        void expand_rows( const CORE::DATA_INFO_LIST& list_info );
+
         // list_info に示した行を追加
-        // list_info の各様の path にあらかじめ値をセットしておくこと
+        // list_info の各要素の path にあらかじめ値をセットしておくこと
         void append_rows( const CORE::DATA_INFO_LIST& list_info );
 
         // list_info に示した行を削除

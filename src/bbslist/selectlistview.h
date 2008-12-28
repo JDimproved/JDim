@@ -11,12 +11,14 @@
 
 namespace BBSLIST
 {
-    // 親の SelectListDialog に送るクローズ信号
+    // 親の SelectListDialog や EditListWin に送る信号
     typedef sigc::signal< void > SIG_CLOSE_DIALOG;
+    typedef sigc::signal< void > SIG_FOCUS_ENTRY_SEARCH;
 
     class SelectListView : public BBSListViewBase
     {
         SIG_CLOSE_DIALOG m_sig_close_dialog;
+        SIG_FOCUS_ENTRY_SEARCH m_sig_focus_entry_search;
 
       public:
 
@@ -24,6 +26,7 @@ namespace BBSLIST
         virtual ~SelectListView(){}
 
         SIG_CLOSE_DIALOG sig_close_dialog() { return m_sig_close_dialog; }
+        SIG_FOCUS_ENTRY_SEARCH sig_focus_entry_search() { return m_sig_focus_entry_search; }
 
         virtual void save_xml( const bool backup ){}
 

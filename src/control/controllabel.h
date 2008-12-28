@@ -75,6 +75,9 @@ namespace CONTROL
 
         { "Back", "戻る" },
 
+        { "Undo", ITEM_NAME_UNDO },
+        { "Redo", ITEM_NAME_REDO },
+
         { "Quit", ITEM_NAME_QUIT },
         { "Save", "名前を付けて保存..." },
         { "Delete", ITEM_NAME_DELETE },

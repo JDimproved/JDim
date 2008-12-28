@@ -33,13 +33,23 @@ void SelectListView::close_view()
 
 const bool SelectListView::operate_view( const int control )
 {
+    bool ret = true;
+
     // ESCでダイアログを閉じる
     if( control == CONTROL::Cancel ){
         close_view();
-        return true;
     }
+    else if( control == CONTROL::Search ){
+        set_search_invert( false );
+        m_sig_focus_entry_search.emit();
+    }
+    else if( control == CONTROL::SearchInvert ){
+        set_search_invert( true );
+        m_sig_focus_entry_search.emit();
+    }
+    else ret = BBSListViewBase::operate_view( control );
 
-    return BBSListViewBase::operate_view( control );
+    return ret;
 }
 
 

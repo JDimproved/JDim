@@ -123,6 +123,15 @@ SKELETON::Admin* MessageViewBase::get_admin()
 
 
 //
+// 親ウィンドウを取得
+//
+Gtk::Window* MessageViewBase::get_parent_win()
+{
+    return MESSAGE::get_admin()->get_win();
+}
+
+
+//
 // コピー用URL( readcgi型 )
 //
 // メインウィンドウのURLバーなどに表示する)
@@ -131,7 +140,6 @@ const std::string MessageViewBase::url_for_copy()
 {
     return DBTREE::url_readcgi( get_url(), 0, 0 );
 }
-
 
 
 void MessageViewBase::clock_in()
@@ -252,7 +260,7 @@ const bool MessageViewBase::set_command( const std::string& command, const std::
                 SESSION::set_dir_draft( MISC::get_dir( save_to ) );
 
                 if( CACHE::save_rawdata( save_to, get_message() ) != get_message().raw().length() ){
-                    SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+                    SKELETON::MsgDiag mdiag( get_parent_win(),
                                              "保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。" );
                     mdiag.run();
                 }
@@ -460,13 +468,13 @@ void MessageViewBase::write()
     if( left
         && ! SESSION::loginbe() // BEログイン中はダイアログを表示しない
         ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "書き込み規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう暫くお待ち下さい。規制秒数が短くなった場合は板のプロパティからリセットできます。" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "書き込み規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう暫くお待ち下さい。規制秒数が短くなった場合は板のプロパティからリセットできます。" );
         mdiag.run();
         return;
     }
 
     if( m_post && m_post->is_loading() ){
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "書き込み中です" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "書き込み中です" );
         mdiag.run();
         return;
     }
@@ -479,7 +487,7 @@ void MessageViewBase::write()
 
         std::string name = get_entry_name().get_text();
         if( name.empty() ){
-            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "名前欄が空白です。fusianasan 書き込みになる可能性があります。" );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "名前欄が空白です。fusianasan 書き込みになる可能性があります。" );
             mdiag.run();
             return;
         }
@@ -490,7 +498,7 @@ void MessageViewBase::write()
     if( m_max_line ){
 
         if( m_text_message.get_buffer()->get_line_count() > m_max_line ){
-            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "行数が多すぎます。" );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "行数が多すぎます。" );
             mdiag.run();
             return;
         }
@@ -500,7 +508,7 @@ void MessageViewBase::write()
     if( m_max_str ){
 
         if( m_lng_str_enc > m_max_str ){
-            SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(), "文字数が多すぎます。" );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "文字数が多すぎます。" );
             mdiag.run();
             return;
         }
@@ -690,7 +698,7 @@ void MessageViewBase::post_fin()
     // タイムアウト
     else if( code == HTTP_TIMEOUT ){
 
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+        SKELETON::MsgDiag mdiag( get_parent_win(),
                                  "タイムアウトしました\n\n書き込み自体は成功している可能性があります。\nメッセージのバックアップをとってからスレを再読み込みして下さい。" );
         mdiag.run();
     }
@@ -698,7 +706,7 @@ void MessageViewBase::post_fin()
     // 失敗
     else if( code != HTTP_CANCEL ){
 
-        SKELETON::MsgDiag mdiag( MESSAGE::get_admin()->get_win(),
+        SKELETON::MsgDiag mdiag( get_parent_win(),
                                  "書き込みに失敗しました\n\n" + m_post->errmsg(), false, Gtk::MESSAGE_ERROR  );
         mdiag.run();
     }

@@ -209,7 +209,9 @@ std::vector< int > parse_items( const std::string& items_str )
         if( *it == ITEM_NAME_INSERTTEXT ) items.push_back( ITEM_INSERTTEXT );
         if( *it == ITEM_NAME_LOCK_MESSAGE ) items.push_back( ITEM_LOCK_MESSAGE );
         if( *it == ITEM_NAME_PREVIEW ) items.push_back( ITEM_PREVIEW );
+
         if( *it == ITEM_NAME_UNDO ) items.push_back( ITEM_UNDO );
+        if( *it == ITEM_NAME_REDO ) items.push_back( ITEM_REDO );
     }
     items.push_back( ITEM_END );
 

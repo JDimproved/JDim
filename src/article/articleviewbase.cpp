@@ -644,7 +644,7 @@ const bool ArticleViewBase::set_command( const std::string& command, const std::
         if( ! get_enable_live() ){
 
             if( m_enable_live && ! DBTREE::board_get_live_sec( m_url_article ) ){
-                SKELETON::MsgDiag mdiag( NULL, "実況を行うには板のプロパティで更新間隔を設定して下さい。" );
+                SKELETON::MsgDiag mdiag( get_parent_win(), "実況を行うには板のプロパティで更新間隔を設定して下さい。" );
                 mdiag.run();
             }
 
@@ -737,7 +737,7 @@ void ArticleViewBase::exec_reload()
 
     // オフライン
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
         return;
     }
@@ -823,7 +823,7 @@ void ArticleViewBase::focus_out()
 void ArticleViewBase::close_view()
 {
     if( m_article->is_loading() ){
-        SKELETON::MsgDiag mdiag( NULL, "読み込み中です" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "読み込み中です" );
         mdiag.run();
         return;
     }
@@ -857,13 +857,13 @@ void ArticleViewBase::exec_delete()
 void ArticleViewBase::delete_open_view()
 {
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
         return;
     }
 
     if( DBTREE::article_status( m_url_article ) & STATUS_OLD ){
-        SKELETON::MsgDiag mdiag( NULL, "DAT落ちしています。\n\nログが消える恐れがあります。実行しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "DAT落ちしています。\n\nログが消える恐れがあります。実行しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         mdiag.set_default_response( Gtk::RESPONSE_NO );
         if( mdiag.run() != Gtk::RESPONSE_YES ) return;
     }
@@ -975,7 +975,7 @@ const bool ArticleViewBase::operate_view( const int control )
         {
             if( m_article->empty() ) break;
 
-            SKELETON::MsgDiag mdiag( NULL, "ログを削除しますか？\n\n「スレ再取得」を押すと\nあぼ〜んなどのスレ情報を削除せずにスレを再取得します。",
+            SKELETON::MsgDiag mdiag( get_parent_win(), "ログを削除しますか？\n\n「スレ再取得」を押すと\nあぼ〜んなどのスレ情報を削除せずにスレを再取得します。",
                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
             mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
@@ -1192,7 +1192,7 @@ void ArticleViewBase::show_preference()
     std::cout << "ArticleViewBase::show_preference\n";
 #endif
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, m_url_article );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, m_url_article );
     pref->run();
     delete pref;
 }
@@ -1207,7 +1207,7 @@ void ArticleViewBase::slot_preferences_image()
     if( m_url_tmp.empty() ) return;
     std::string url = m_url_tmp;
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_IMAGE, url );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, url );
     pref->run();
     delete pref;
 }
@@ -2318,17 +2318,17 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
 
         else if( ! DBIMG::is_cached( url ) && ! SESSION::is_online() ){
-            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
             mdiag.run();
         }
 
         else if( DBIMG::get_abone( url )){
-            SKELETON::MsgDiag mdiag( NULL, "あぼ〜んされています" );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています" );
             mdiag.run();
         }
 
         else if( DBIMG::get_type_real( url ) == DBIMG::T_LARGE ){
-            SKELETON::MsgDiag mdiag( NULL, "画像サイズが大きすぎます。\n\n表示するにはリンクの上でコンテキストメニューを開いて\n「サイズが大きい画像を表示」をクリックしてください。" );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "画像サイズが大きすぎます。\n\n表示するにはリンクの上でコンテキストメニューを開いて\n「サイズが大きい画像を表示」をクリックしてください。" );
             mdiag.run();
         }
 
@@ -3488,7 +3488,7 @@ void ArticleViewBase::slot_cancel_mosaic()
 
     if( DBIMG::is_fake( m_url_tmp ) ){
 
-        SKELETON::MsgDiag mdiag( NULL,
+        SKELETON::MsgDiag mdiag( get_parent_win(),
                                  "拡張子が偽装されています。モザイクを解除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
         mdiag.set_default_response( Gtk::RESPONSE_NO );

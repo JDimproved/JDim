@@ -116,6 +116,7 @@ namespace SKELETON
         void remove_page( int page );
 
         // ツールバー関係
+        // 各Adminクラスの virtual void show_toolbar()でツールバーを作成してappend_toolbar()で登録する
         void show_toolbar();
         void hide_toolbar();
         void append_toolbar( Gtk::Widget& toolbar );

@@ -65,6 +65,8 @@ namespace SKELETON
         SKELETON::ImgToolButton* m_button_close;
         SKELETON::ImgToolButton* m_button_delete;
         SKELETON::ImgToolButton* m_button_favorite;
+        SKELETON::ImgToolButton* m_button_undo;
+        SKELETON::ImgToolButton* m_button_redo;
         SKELETON::ImgToggleToolButton* m_button_lock;
 
         // 進む、戻るボタン
@@ -124,14 +126,15 @@ namespace SKELETON
         Gtk::ToolItem* get_button_close_searchbar();
 
         // mode は補完モード ( compmanager.h 参照 )
-        Gtk::ToolItem* get_entry_search( const int mode );
+        Gtk::ToolItem* get_tool_search( const int mode );
+        SKELETON::CompletionEntry* get_entry_search();
 
         // CompletionEntry の入力コントローラのモード設定
-        void add_search_mode( const int mode );
+        void add_search_control_mode( const int mode );
 
         const std::string get_search_text();
-        Gtk::ToolItem* get_button_up_search();
-        Gtk::ToolItem* get_button_down_search();
+        Gtk::ToolButton* get_button_up_search();
+        Gtk::ToolButton* get_button_down_search();
 
         // 板を開く
         Gtk::ToolItem* get_button_board();
@@ -140,9 +143,11 @@ namespace SKELETON
         Gtk::ToolItem* get_button_write();
         Gtk::ToolItem* get_button_reload();
         Gtk::ToolItem* get_button_stop();
-        Gtk::ToolItem* get_button_close();
+        Gtk::ToolButton* get_button_close();
         Gtk::ToolItem* get_button_delete();
         Gtk::ToolItem* get_button_favorite();
+        Gtk::ToolButton* get_button_undo();
+        Gtk::ToolButton* get_button_redo();
         Gtk::ToolItem* get_button_lock();
 
         Gtk::ToolItem* get_button_back();
@@ -168,7 +173,7 @@ namespace SKELETON
         void slot_toggle_searchbar();
         void slot_changed_search();
         void slot_active_search();
-        void slot_operate_search( int controlid );
+        void slot_operate_search( const int controlid );
         void slot_clicked_up_search();
         void slot_clicked_down_search();
 

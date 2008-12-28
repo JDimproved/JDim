@@ -39,7 +39,7 @@ ArticleToolBar::ArticleToolBar() :
     set_tooltip( m_button_drawout_or, CONTROL::get_label_motions( CONTROL::DrawOutOr ) );
     set_tooltip( m_button_clear_hl, CONTROL::get_label_motions( CONTROL::HiLightOff ) );
 
-    get_searchbar()->append( *get_entry_search( CORE::COMP_SEARCH_ARTICLE ) );
+    get_searchbar()->append( *get_tool_search( CORE::COMP_SEARCH_ARTICLE ) );
     get_searchbar()->append( *get_button_down_search() );
     get_searchbar()->append( *get_button_up_search() );
     get_searchbar()->append( m_button_drawout_and );
@@ -237,7 +237,7 @@ ArticleToolBarSimple::ArticleToolBarSimple() :
     SKELETON::ToolBar( ARTICLE::get_admin() )
 {
     // 検索バー    
-    get_searchbar()->append( *get_entry_search( CORE::COMP_SEARCH_ARTICLE ) );
+    get_searchbar()->append( *get_tool_search( CORE::COMP_SEARCH_ARTICLE ) );
     get_searchbar()->append( *get_button_down_search() );
     get_searchbar()->append( *get_button_up_search() );
     get_searchbar()->append( *get_button_close_searchbar() );

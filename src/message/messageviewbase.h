@@ -72,6 +72,13 @@ namespace MESSAGE
         MessageViewBase( const std::string& url );
         virtual ~MessageViewBase();
 
+        //
+        // SKELETON::View の関数のオーバロード
+        //
+
+        // 親ウィンドウを取得
+        virtual Gtk::Window* get_parent_win();
+
         // コピー用のURL
         virtual const std::string url_for_copy();
 
@@ -84,7 +91,6 @@ namespace MESSAGE
         // ロード中
         virtual const bool is_loading();
 
-        // SKELETON::View の関数のオーバロード
         virtual void clock_in();
         virtual void write();
         virtual void reload(){}

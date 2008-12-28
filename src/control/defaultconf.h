@@ -45,6 +45,9 @@ namespace CONTROL
 
 #define KEYCONF_Back  "BackSpace"
 
+#define KEYCONF_Undo  "Ctrl+/ Ctrl+z"
+#define KEYCONF_Redo  "Ctrl+Z"
+
 #define KEYCONF_Quit  "Ctrl+w q"
 #define KEYCONF_Save  "Ctrl+s"
 #define KEYCONF_Delete  "Delete KP_Delete"

@@ -100,7 +100,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
       m_treeview( url, DNDTARGET_FAVORITE, m_columns, true, CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN ),
       m_ready_tree( false ),
       m_jump_y( -1 ),
-      m_search_invert( 0 ),
+      m_search_invert( false ),
       m_open_only_onedir( false ),
       m_cancel_expand( false ),
       m_expanding( 0 ),
@@ -134,6 +134,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
 #endif
 */
+    // 共有UNDOバッファをセット
+    m_treeview.set_undo_buffer( BBSLIST::get_undo_buffer_favorite() );
+
     // 列の登録
     m_treeview.create_column( CONFIG::get_tree_ypad() );
     m_treeview.set_column_for_height( 0 );
@@ -395,6 +398,16 @@ void BBSListViewBase::set_editable( const bool editable )
 
 
 //
+// 親ウィンドウをセット
+//
+void BBSListViewBase::set_parent_win( Gtk::Window* parent_win )
+{
+    SKELETON::View::set_parent_win( parent_win );
+    get_treeview().set_parent_win( parent_win );
+}
+
+
+//
 // コマンド
 //
 const bool BBSListViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
@@ -536,7 +549,7 @@ void BBSListViewBase::close_view()
 //
 void BBSListViewBase::delete_view()
 {
-    SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    SKELETON::MsgDiag mdiag( get_parent_win(), "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
     delete_view_impl();
@@ -699,12 +712,12 @@ const bool BBSListViewBase::operate_view( const int control )
 
         // 検索
         case CONTROL::Search:
-            m_search_invert = false;
+            set_search_invert( false );
             BBSLIST::get_admin()->set_command( "focus_toolbar_search" );
             break;
 
         case CONTROL::SearchInvert:
-            m_search_invert = true;
+            set_search_invert( true );
             BBSLIST::get_admin()->set_command( "focus_toolbar_search" );
             break;
 
@@ -737,6 +750,14 @@ const bool BBSListViewBase::operate_view( const int control )
 
         case CONTROL::StopLoading:
             CORE::core_set_command( "cancel_check_update" );
+            break;
+
+        case CONTROL::Undo:
+            undo();
+            break;
+
+        case CONTROL::Redo:
+            redo();
             break;
 
         default:
@@ -903,7 +924,8 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
     m_dblclick = false;
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
-    BBSLIST::get_admin()->set_command( "switch_admin" );
+    // 親ウィンドウがメインウィンドウならフォーカスを移す
+    if( ! get_parent_win() ) BBSLIST::get_admin()->set_command( "switch_admin" );
 
     return true;
 }
@@ -1133,7 +1155,8 @@ void BBSListViewBase::slot_open_browser()
 void BBSListViewBase::slot_append_favorite()
 {
     CORE::DATA_INFO_LIST list_info;
-    m_treeview.get_info_in_selection( list_info );
+    const bool dir = true;
+    m_treeview.get_info_in_selection( list_info, dir );
 
     if( list_info.size() ){
 
@@ -1242,7 +1265,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         if( ! id.empty() && ! passwd.empty() ) basicauth = id + ":" + passwd; 
 
         if( name.empty() || url.empty() ){
-            SKELETON::MsgDiag mdiag( NULL, "板名またはアドレスが空白です", false, Gtk::MESSAGE_ERROR );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "板名またはアドレスが空白です", false, Gtk::MESSAGE_ERROR );
             mdiag.run();
             mdiag.hide();
             add_newetcboard( move, url_org, name, id, passwd );
@@ -1264,7 +1287,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
 
         // boardid 取得
         if( ! regex.exec( "(http://.*)/([^/]*)/$" , url ) ){
-            SKELETON::MsgDiag mdiag( NULL, "アドレスが不正な形式になっています", false, Gtk::MESSAGE_ERROR );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "アドレスが不正な形式になっています", false, Gtk::MESSAGE_ERROR );
             mdiag.run();
             mdiag.hide();
             add_newetcboard( move, url_org, name, id, passwd );
@@ -1282,7 +1305,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         std::string boardid = regex.str( 2 );
 
         if( boardid.empty() ){
-            SKELETON::MsgDiag mdiag( NULL, "板IDを取得出来ません", false, Gtk::MESSAGE_ERROR );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "板IDを取得出来ません", false, Gtk::MESSAGE_ERROR );
             mdiag.run();
             mdiag.hide();
             add_newetcboard( move, url_org, name, id, passwd );
@@ -1295,7 +1318,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
 
         // 既に登録されているか確認
         if( ! move && ! DBTREE::board_name( url ).empty() ){
-            SKELETON::MsgDiag mdiag( NULL, name + "\n" + url + "\n\nは既に登録されています", false, Gtk::MESSAGE_ERROR );
+            SKELETON::MsgDiag mdiag( get_parent_win(), name + "\n" + url + "\n\nは既に登録されています", false, Gtk::MESSAGE_ERROR );
             mdiag.run();
             mdiag.hide();
             add_newetcboard( move, url_org, name,  id, passwd );
@@ -1336,7 +1359,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
 
         else{
 
-            SKELETON::MsgDiag mdiag( NULL, "外部板の登録に失敗しました。アドレスを確認してください", false, Gtk::MESSAGE_ERROR );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "外部板の登録に失敗しました。アドレスを確認してください", false, Gtk::MESSAGE_ERROR );
             mdiag.run();
             mdiag.hide();
             add_newetcboard( move, url_org, name, id, passwd );
@@ -1430,7 +1453,7 @@ void BBSListViewBase::slot_select_all_dir()
 //
 void BBSListViewBase::slot_select_all()
 {
-    SKELETON::MsgDiag mdiag( NULL, "全ての行を選択しますか？\n\n(注意) ディレクトリは全て展開されます。", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    SKELETON::MsgDiag mdiag( get_parent_win(), "全ての行を選択しますか？\n\n(注意) ディレクトリは全て展開されます。", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     mdiag.set_default_response( Gtk::RESPONSE_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
@@ -1489,7 +1512,7 @@ void BBSListViewBase::slot_check_update_dir()
     if( m_path_selected.empty() ) return;
 
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
         return;
     }
@@ -1506,7 +1529,7 @@ void BBSListViewBase::slot_check_update_dir()
 void BBSListViewBase::slot_check_update_open_dir()
 {
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
         return;
     }
@@ -1587,7 +1610,7 @@ void BBSListViewBase::slot_preferences_board()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, DBTREE::url_subject( url ) );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, DBTREE::url_subject( url ) );
     pref->run();
     delete pref;
 }
@@ -1602,7 +1625,7 @@ void BBSListViewBase::slot_preferences_article()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, DBTREE::url_dat( url ) );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, DBTREE::url_dat( url ) );
     pref->run();
     delete pref;
 }
@@ -1616,7 +1639,7 @@ void BBSListViewBase::slot_preferences_image()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_IMAGE, url );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, url );
     pref->run();
     delete pref;
 }
@@ -1689,7 +1712,7 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
         case TYPE_IMAGE:
 
             if( DBIMG::get_abone( url )){
-                SKELETON::MsgDiag mdiag( NULL, "あぼ〜んされています" );
+                SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています" );
                 mdiag.run();
             }
             else{
@@ -2363,7 +2386,7 @@ void BBSListViewBase::exec_search()
 // 前検索
 void BBSListViewBase::up_search()
 {
-    m_search_invert = true;
+    set_search_invert( true );
     exec_search();
 }
 
@@ -2372,7 +2395,7 @@ void BBSListViewBase::up_search()
 // 後検索
 void BBSListViewBase::down_search()
 {
-    m_search_invert = false;
+    set_search_invert( false );
     exec_search();
 }
 
@@ -2395,6 +2418,11 @@ void BBSListViewBase::operate_search( const std::string& controlid )
 //
 void BBSListViewBase::append_item()
 {
+    if( m_editlistwin ){
+        m_editlistwin->append_item();
+        return;
+    }
+
     if( CORE::SBUF_size() == 0 ) return;
 
     // 挿入先ダイアログ内で編集を行うとバッファがクリアされてしまうので
@@ -2557,3 +2585,14 @@ void BBSListViewBase::save_xml_impl( const std::string& file, const std::string&
     CACHE::save_rawdata( file, m_document.get_xml() );
 }
 
+
+// undo, redo
+void BBSListViewBase::undo()
+{
+    m_treeview.undo();
+}
+
+void BBSListViewBase::redo()
+{
+    m_treeview.redo();
+}

@@ -41,6 +41,27 @@ namespace BBSLIST
         bool slot_scroll_event( GdkEventScroll* event );
         void slot_check_update_root();
     };
+
+
+    ///////////////////////////////////////
+
+    // 編集ウィンドウのツールバー
+    class EditListToolBar : public SKELETON::ToolBar
+    {
+        // ボタン等のシグナルに直接コネクトする
+        friend class EditListWin;
+
+      public:
+
+        EditListToolBar();
+        virtual ~EditListToolBar(){}
+
+      protected:
+
+        virtual void pack_buttons();
+    };
+
+
 }
 
 
