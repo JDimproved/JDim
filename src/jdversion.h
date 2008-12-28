@@ -11,13 +11,13 @@
 #endif
 
 // svn 版の時は JDVERSION_SVN をdefineする
-//#define JDVERSION_SVN
+#define JDVERSION_SVN
 
 #define MAJORVERSION 2
-#define MINORVERSION 1
+#define MINORVERSION 2
 #define MICROVERSION 0
 #define JDDATE    "081228"
-#define JDTAG     ""
+#define JDTAG     "beta"
 
 //---------------------------------
 
@@ -27,7 +27,7 @@
 //---------------------------------
 
 #define JDCOMMENT "JD は gtkmm/GTK+2 を用いた2chブラウザです。"
-#define JDCOPYRIGHT "(c) 2006-2008 JD project"
+#define JDCOPYRIGHT "(c) 2006-2009 JD project"
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 #define JDHELP CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/"
