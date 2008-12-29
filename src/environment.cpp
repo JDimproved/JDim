@@ -27,13 +27,36 @@ std::string ENVIRONMENT::get_jd2chlog(){ return std::string( JD2CHLOG ); }
 std::string ENVIRONMENT::get_jdhelp(){ return std::string( JDHELP ); }
 std::string ENVIRONMENT::get_jdhelpcmd(){ return std::string( JDHELPCMD ); }
 std::string ENVIRONMENT::get_jdlicense(){ return std::string( JDLICENSE ); }
+
+
+//
+// CONFIGURE_ARGSを返す(適当に改行して整形する)
+//
 std::string ENVIRONMENT::get_configure_args()
 {
+    std::string configure_args;
+
 #ifdef CONFIGURE_ARGS
-	return std::string( CONFIGURE_ARGS );
-#else
-    return std::string();
+	configure_args = CONFIGURE_ARGS;
+
+    size_t found_pos = 0, start_pos = 0, count = 0;
+
+    // "'--with-alsa' 'CFLAGS=-O2 -Wall'" などの "' '" を数える
+    while( ( found_pos = configure_args.find( "' '", start_pos ) ) != std::string::npos )
+    {
+        count++;
+
+        // n項目単位で改行に変える
+        if( ( count % 2 ) == 0 )
+		{
+			configure_args.replace( found_pos, 3, "'\n'" );
+		}
+
+        start_pos = found_pos + 3;
+    }
 #endif
+
+    return configure_args;
 }
 
 
