@@ -1038,8 +1038,13 @@ void EditTreeView::replace_infopath( CORE::DATA_INFO_LIST& list_info,
     Gtk::TreePath path = path_dest;
 
     if( path.empty() ){
-        path = get_model()->get_path( *( get_model()->children().rbegin() ) );
-        path.next();
+        Gtk::TreeModel::Children children = get_model()->children();
+
+        if( ! children.empty() )
+        {
+            path = get_model()->get_path( *( children.rbegin() ) );
+            path.next();
+        }
     }
 
     else if( before );
