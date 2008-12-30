@@ -30,29 +30,34 @@ std::string ENVIRONMENT::get_jdlicense(){ return std::string( JDLICENSE ); }
 
 
 //
-// CONFIGURE_ARGSを返す(適当に改行して整形する)
+// CONFIGURE_ARGSを返す
 //
-std::string ENVIRONMENT::get_configure_args()
+// unit: 改行して整形するための項目数(デフォルト = 0 整形しない)
+//
+std::string ENVIRONMENT::get_configure_args( const unsigned int unit )
 {
     std::string configure_args;
 
 #ifdef CONFIGURE_ARGS
-	configure_args = CONFIGURE_ARGS;
+    configure_args = CONFIGURE_ARGS;
 
-    size_t found_pos = 0, start_pos = 0, count = 0;
-
-    // "'--with-alsa' 'CFLAGS=-O2 -Wall'" などの "' '" を数える
-    while( ( found_pos = configure_args.find( "' '", start_pos ) ) != std::string::npos )
+    if( unit > 0 )
     {
-        count++;
+        size_t found_pos = 0, start_pos = 0, count = 0;
 
-        // n項目単位で改行に変える
-        if( ( count % 2 ) == 0 )
-		{
-			configure_args.replace( found_pos, 3, "'\n'" );
-		}
+        // "'--with-alsa' 'CFLAGS=-O2 -Wall'" などの "' '" を数える
+        while( ( found_pos = configure_args.find( "' '", start_pos ) ) != std::string::npos )
+        {
+            count++;
 
-        start_pos = found_pos + 3;
+            // n項目単位で改行に変える
+            if( ( count % unit ) == 0 )
+            {
+                configure_args.replace( found_pos, 3, "'\n'" );
+            }
+
+            start_pos = found_pos + 3;
+        }
     }
 #endif
 
@@ -67,28 +72,30 @@ std::string get_svn_revision( const char* rev = NULL )
 {
     std::string svn_revision = "SVN:";
 
-    if( ! rev )
+    if( rev )
     {
-	    svn_revision.append( std::string( __DATE__ ) + "-" + std::string( __TIME__ ) );
-        return svn_revision;
-    }
-
-    // "2000:2002MS"など[0-9:MS]の形式かどうか
-    bool valid = true;
-    unsigned int n;
-    const size_t rev_length = strlen( rev );
-    for( n = 0; n < rev_length; ++n )
-    {
-        if( (unsigned char)( rev[n] - 0x30 ) > 0x0A
-            && rev[n] != 'M'
-            && rev[n] != 'S' )
+        // "2000:2002MS"など[0-9:MS]の形式かどうか
+        bool valid = true;
+        unsigned int n;
+        const size_t rev_length = strlen( rev );
+        for( n = 0; n < rev_length; ++n )
         {
-            valid = false;
-            break;
+            if( (unsigned char)( rev[n] - 0x30 ) > 0x0A
+                && rev[n] != 'M'
+                && rev[n] != 'S' )
+            {
+                valid = false;
+                break;
+            }
         }
+
+        if( valid ) svn_revision.append( std::string( "Rev." ) + std::string( rev ) );
     }
 
-    if( valid ) svn_revision.append( std::string( "Rev." ) + std::string( rev ) );
+    if( svn_revision.compare( "SVN:" ) == 0 )
+    {
+        svn_revision.append( std::string( __DATE__ ) + "-" + std::string( __TIME__ ) );
+    }
 
     return svn_revision;
 }
@@ -113,7 +120,7 @@ std::string ENVIRONMENT::get_jdversion()
     jd_version << MAJORVERSION << "."
                 << MINORVERSION << "."
                 << MICROVERSION << "-"
-			    << JDTAG << JDDATE;
+                << JDTAG << JDDATE;
 #endif // JDVERSION_SVN
 
     return jd_version.str();
@@ -306,7 +313,7 @@ std::string ENVIRONMENT::get_wm_str()
 {
     std::string desktop;
 
-	switch( get_wm() )
+    switch( get_wm() )
     {
         case WM_GNOME : desktop = "GNOME"; break;
         case WM_XFCE  : desktop = "XFCE";  break;
@@ -380,7 +387,7 @@ std::string ENVIRONMENT::get_jdinfo()
     "[　gtkmm 　] " << get_gtkmm_version() << "\n" <<
     "[　glibmm 　] " << get_glibmm_version()<< "\n" <<
 #ifdef CONFIGURE_ARGS
-    "[configure ] " << get_configure_args() << "\n" <<
+    "[configure ] " << get_configure_args( 2 ) << "\n" <<
 #endif
     "[ そ の 他 ] " << other << "\n";
 

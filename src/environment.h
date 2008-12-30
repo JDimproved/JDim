@@ -23,7 +23,7 @@ namespace ENVIRONMENT
 	std::string get_jdhelp();
 	std::string get_jdhelpcmd();
     std::string get_jdlicense();
-    std::string get_configure_args();
+    std::string get_configure_args( const unsigned int unit = 0 );
 
     std::string get_jdversion();
     std::string get_distname();
