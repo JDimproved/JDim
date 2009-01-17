@@ -1037,11 +1037,13 @@ void EditTreeView::replace_infopath( CORE::DATA_INFO_LIST& list_info,
 
     Gtk::TreePath path = path_dest;
 
+    // path の初期値を求める
     if( path.empty() ){
+
         Gtk::TreeModel::Children children = get_model()->children();
 
-        if( ! children.empty() )
-        {
+        if( children.empty() ) path = Gtk::TreePath( "0" );
+        else{
             path = get_model()->get_path( *( children.rbegin() ) );
             path.next();
         }
@@ -1053,18 +1055,20 @@ void EditTreeView::replace_infopath( CORE::DATA_INFO_LIST& list_info,
 
     else path.next();
 
-    // info.pathの構造と合わせて path を変更していく
+    // list_infoの先頭に path をセット
     CORE::DATA_INFO_LIST::iterator it = list_info.begin();
     Gtk::TreePath path_prev( ( *it ).path );
     ( *it ).path = path.to_string();
 
+    const size_t max_pathsize_org = path_prev.size();
     const size_t max_pathsize = path.size();
 
 #ifdef _DEBUG
     std::cout << "EditTreeView::replace_infopath\n"
-              << "max_pathsize = " << max_pathsize << std::endl
+              << "max_pathsize_org = " << max_pathsize_org
+              << " max_pathsize = " << max_pathsize << std::endl
               << "path_prev = " << path_prev.to_string()
-              << " path = " << ( *it ).path
+              << " -> " << ( *it ).path
               << " type = " << ( *it ).type
               << " name = " << ( *it ).name << std::endl;
 #endif
@@ -1072,8 +1076,11 @@ void EditTreeView::replace_infopath( CORE::DATA_INFO_LIST& list_info,
     for( ++it; it != list_info.end() ; ++it ){
 
         CORE::DATA_INFO& info = ( *it );
+
+        // list_infoの構造と合わせて path を更新していく
         do{
 
+            // 次
             Gtk::TreePath path_tmp = path_prev;
             path_tmp.next();
             if( path_tmp.to_string() == info.path ){
@@ -1081,6 +1088,7 @@ void EditTreeView::replace_infopath( CORE::DATA_INFO_LIST& list_info,
                 break;
             }
 
+            // ディレクトリ下がる
             path_tmp = path_prev;
             path_tmp.down();
             if( path_tmp.to_string() == info.path ){
@@ -1088,20 +1096,29 @@ void EditTreeView::replace_infopath( CORE::DATA_INFO_LIST& list_info,
                 break;
             }
 
-            if( path.size() > max_pathsize ){
+            // ディレクトリ上がる
+            bool reset = true;
+            int count_up = 0;
+            path_tmp = path_prev;
+            while( path_tmp.size() != max_pathsize_org ){
 
-                path_tmp = path_prev;
+                ++count_up;
                 path_tmp.up();
                 path_tmp.next();
                 if( path_tmp.to_string() == info.path ){
-                    path.up();
+
+                    while( count_up-- ) path.up();
                     path.next();
+                    reset = false;
                     break;
                 }
             }
 
-            while( path.size() != max_pathsize ) path.up();
-            path.next();
+            // どれにも該当しない場合には一番上のレベルまで戻る
+            if( reset ){
+                while( path.size() != max_pathsize ) path.up();
+                path.next();
+            }
 
         } while(0);
 
