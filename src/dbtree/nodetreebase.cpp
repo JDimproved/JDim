@@ -2067,6 +2067,15 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
             continue;
         }
 
+        // quot
+        else if( *pos == '&' && ( *( pos + 1 ) == 'q' && *( pos + 2 ) == 'u' && *( pos + 3 ) == 'o' && *( pos + 4 ) == 't' && *( pos + 5 ) == ';' ) ){
+
+            *(pos_write++) = '"';
+            pos += 5;
+
+            continue;
+        }
+
         // 先頭のsssp
         else if( head && *pos == 's' && ( *( pos + 1 ) == 's' && *( pos + 2 ) == 's' && *( pos + 3 ) == 'p' ) ){
 
