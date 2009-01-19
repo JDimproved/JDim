@@ -3630,7 +3630,7 @@ void ArticleViewBase::set_live( const bool live )
 const bool ArticleViewBase::write_p2( const int number )
 {
     if( ! SESSION::loginp2() ) return false;
-    if( m_url_article.find( ".2ch.net" ) == std::string::npos ) return false;
+    if( m_url_article.find( ".2ch.net" ) == std::string::npos && m_url_article.find( ".bbspink.com" ) == std::string::npos ) return false;
 
     std::string url;
 
