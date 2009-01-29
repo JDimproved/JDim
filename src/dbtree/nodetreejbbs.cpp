@@ -27,7 +27,7 @@ byte += lng_sec[ num ]; \
 using namespace DBTREE;
 
 
-NodeTreeJBBS::NodeTreeJBBS( const std::string url, const std::string& date_modified )
+NodeTreeJBBS::NodeTreeJBBS( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
     , m_iconv( 0 )
     , m_decoded_lines( 0 )

@@ -1195,33 +1195,53 @@ void ArticleBase::slot_load_finished()
         const std::string pre_subject = DBTREE::article_subject( m_url_pre_article );
         if( ! pre_subject.empty() ){
 
+#ifdef _DEBUG
+            std::cout << "check next\n";
+#endif
+            int value = 0;
+
             const std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( m_url );
-            if( ! list_subject.size() ) return;
 
-            // 単語ベクトル作成
-            MISC::VEC_WORDS vec_words;
-            MISC::tfidf_create_vec_words( vec_words, pre_subject );
+            // subjectがキャッシュにある場合は TFIDF を使って類似度チェック
+            if( list_subject.size() ){
+#ifdef _DEBUG
+                std::cout << "use tfidf\n";
+#endif
+                // 単語ベクトル作成
+                MISC::VEC_WORDS vec_words;
+                MISC::tfidf_create_vec_words( vec_words, pre_subject );
 
-            // IDFベクトル計算
-            MISC::VEC_IDF vec_idf;
-            MISC::tfidf_create_vec_idf_from_board( vec_idf, pre_subject, list_subject, vec_words );
+                // IDFベクトル計算
+                MISC::VEC_IDF vec_idf;
+                MISC::tfidf_create_vec_idf_from_board( vec_idf, pre_subject, list_subject, vec_words );
 
-            // TFIDFベクトル計算
-            MISC::VEC_TFIDF vec_tfidf_src;
-            MISC::VEC_TFIDF vec_tfidf;
-            vec_tfidf_src.resize( vec_words.size() );
-            vec_tfidf.resize( vec_words.size() );
-            MISC::tfidf_calc_vec_tfifd( vec_tfidf_src, pre_subject, vec_idf, vec_words );
-            MISC::tfidf_calc_vec_tfifd( vec_tfidf, m_subject, vec_idf, vec_words );
+                // TFIDFベクトル計算
+                MISC::VEC_TFIDF vec_tfidf_src;
+                MISC::VEC_TFIDF vec_tfidf;
+                vec_tfidf_src.resize( vec_words.size() );
+                vec_tfidf.resize( vec_words.size() );
+                MISC::tfidf_calc_vec_tfifd( vec_tfidf_src, pre_subject, vec_idf, vec_words );
+                MISC::tfidf_calc_vec_tfifd( vec_tfidf, m_subject, vec_idf, vec_words );
 
-            // 類似度計算
-            const int value = ( int )( MISC::tfidf_cos_similarity( vec_tfidf_src, vec_tfidf ) * 10 + .5 );
+                value = ( int )( MISC::tfidf_cos_similarity( vec_tfidf_src, vec_tfidf ) * 10 + .5 );
+            }
+
+            // subject がキャッシュに無い場合はレーベンシュタイン距離を使って類似度チェック
+            else{
+#ifdef _DEBUG
+                std::cout << "use leven\n";
+#endif
+                const int MAXSTR = 256;
+                std::vector< std::vector< int > > dist( MAXSTR, std::vector< int >( MAXSTR ) );
+                value = 10 - ( int )( MISC::leven( dist, pre_subject, m_subject ) * 10 + .5 );
+            }
 
 #ifdef _DEBUG
             std::cout << "pre_subject = " << pre_subject << std::endl
                       << "subject = " << m_subject << std::endl
                       << "value = " << value << std::endl;
 #endif
+
             // このスレは m_url_pre_article の次スレとみなして情報をコピーする
             if( value >= CONFIG::get_threshold_next() ){
 
@@ -1242,7 +1262,9 @@ void ArticleBase::slot_load_finished()
 
                 relayout = true;
             }
-
+#ifdef _DEBUG
+            else std::cout << "not hit\n";
+#endif
         }
 
         m_url_pre_article = std::string();

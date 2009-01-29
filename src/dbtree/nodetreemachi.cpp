@@ -22,7 +22,7 @@
 using namespace DBTREE;
 
 
-NodeTreeMachi::NodeTreeMachi( const std::string url, const std::string& date_modified )
+NodeTreeMachi::NodeTreeMachi( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
     , m_regex( 0 )
     , m_iconv( 0 )

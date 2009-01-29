@@ -39,6 +39,12 @@ namespace MISC
     // スレ一覧からIDF 計算
     void tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
                                           const Glib::ustring& subject_src, const std::list< DBTREE::ArticleBase* >& list_subject, const VEC_WORDS& vec_words );
+
+
+    // str1 と str2 間のレーベンシュタイン距離
+    // スレ一覧を使用できない場合に使う
+    const double leven( std::vector< std::vector< int > >& dist,
+                        const Glib::ustring& str1, const Glib::ustring& str2 );
 }
 
 #endif

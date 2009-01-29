@@ -22,7 +22,7 @@ namespace DBTREE
 
       public:
 
-        NodeTree2chCompati( const std::string url, const std::string& date_modified );
+        NodeTree2chCompati( const std::string& url, const std::string& date_modified );
         virtual ~NodeTree2chCompati();
 
       protected:

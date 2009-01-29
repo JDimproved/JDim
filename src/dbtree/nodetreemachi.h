@@ -29,7 +29,7 @@ namespace DBTREE
 
       public:
 
-        NodeTreeMachi( const std::string url, const std::string& date_modified );
+        NodeTreeMachi( const std::string& url, const std::string& date_modified );
         ~NodeTreeMachi();
 
       protected:

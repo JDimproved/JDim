@@ -126,7 +126,7 @@ namespace DBTREE
 
       public:
 
-        NodeTreeBase( const std::string url, const std::string& date_modified );
+        NodeTreeBase( const std::string& url, const std::string& date_modified );
         virtual ~NodeTreeBase();
 
         bool empty();
@@ -338,6 +338,20 @@ namespace DBTREE
 
         // http://ime.nu/ などをリンクから削除
         bool remove_imenu( char* str_link );
+    };
+
+
+
+    /////////////////////////////////////////////////////////
+
+
+    // ARTICLE::LayoutTree::append_html() で使用するダミークラス
+
+    class NodeTreeDummy : public NodeTreeBase
+    {
+      public:
+        NodeTreeDummy( const std::string& url, const std::string& date_modified );
+        virtual ~NodeTreeDummy();
     };
 }
 

@@ -485,7 +485,7 @@ void LayoutTree::append_html( const std::string& html )
     std::cout << "LayoutTree::append_html url = " << m_url << " html = " << html << std::endl;
 #endif    
 
-    if( ! m_local_nodetree ) m_local_nodetree = new DBTREE::NodeTreeBase( m_url, std::string() );
+    if( ! m_local_nodetree ) m_local_nodetree = new DBTREE::NodeTreeDummy( m_url, std::string() );
     DBTREE::NODE* node_header = m_local_nodetree->append_html( html );
 
     LAYOUT* header = create_layout_header();
