@@ -839,10 +839,10 @@ void BoardBase::download_subject( const std::string& url_update_view )
     clear();
     m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
     m_read_url_boardbase = false;
-    m_load_rule_setting = false;
+    m_is_online = SESSION::is_online();
 
     // オフライン
-    if( ! SESSION::is_online() ){
+    if( ! m_is_online  ){
 
         set_str_code( "" );
 
@@ -852,8 +852,6 @@ void BoardBase::download_subject( const std::string& url_update_view )
     }
 
     // オンライン
-
-    m_load_rule_setting = true;
 
     // subject.txtのキャッシュが無かったら modified をリセット
     std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
@@ -902,7 +900,7 @@ void BoardBase::receive_data( const char* data, size_t size )
 void BoardBase::receive_finish()
 {
     // 別スレッドでローカルルールとSETTING.TXT のダウンロード開始
-    if( m_load_rule_setting ) download_rule_setting();
+    if( m_is_online ) download_rule_setting();
 
     m_list_subject.clear();
 
@@ -998,10 +996,10 @@ void BoardBase::receive_finish()
         read_from_cache = true;
     }
 
-    // ローダがエラーを返した or not modified or offline ならキャッシュからデータをロード
+    // ローダがエラーを返した 又は not modified 又はオフラインならキャッシュからデータをロード
     if( get_code() == HTTP_ERR
         || get_code() == HTTP_NOT_MODIFIED
-        || ! SESSION::is_online() ) read_from_cache = true;
+        || ! m_is_online ) read_from_cache = true;
 
     // キャッシュから読み込み
     if( read_from_cache ){
@@ -1023,7 +1021,7 @@ void BoardBase::receive_finish()
         set_date_modified( std::string() );
 
         // 移転した可能性があるので url_boardbase をロードして解析
-        if( SESSION::is_online() && get_code() == HTTP_OK ){
+        if( m_is_online && get_code() == HTTP_OK ){
             if( start_checkking_if_board_moved() ) return;
         }
 
@@ -1040,15 +1038,17 @@ void BoardBase::receive_finish()
 
     //////////////////////////////
     // データベース更新
-    // subject.txtを解析して現行スレだけリスト(m_list_subject)に加える
+    // subject.txtを解析して現行スレだけsubjectリスト(m_list_subject)に加える
+
+    std::list< ArticleBase* >::iterator it;
 
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
 
     // 一度全てのarticleをdat落ち状態にして subject.txt に
     // 含まれているものだけ parse_subject()の中で通常状態にする
-    std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+    // オフラインの場合は状態を変えない
+    if( m_is_online ) for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
 
         int status = ( *it )->get_status();
         status &= ~STATUS_NORMAL;
@@ -1066,7 +1066,7 @@ void BoardBase::receive_finish()
         std::cout << "list_subject was updated\n";
 #endif
 
-        // DAT落ちなどでsubject.txtに無いスレもリストに加える
+        // DAT落ちなどでsubject.txtに無いスレもsubjectリストに加える
         // サブジェクトやロード数などの情報が無いのでスレのinfoファイルから
         // 取得する必要がある
         if( CONFIG::get_show_oldarticle() ){
@@ -1084,7 +1084,7 @@ void BoardBase::receive_finish()
 #endif                
                     ( *it )->read_info();
 
-                    // read_info()で状態が変わる時があるのでDAT落ちにしてからリスト(m_list_subject)に加える
+                    // ↑のread_info()で状態が変わる時があるのでDAT落ちに戻してからsubjectリスト(m_list_subject)に加える
                     int status = ( *it )->get_status();
 
                     if( status & STATUS_NORMAL ){
@@ -1100,7 +1100,7 @@ void BoardBase::receive_finish()
         }
 
         // オンライン、かつcodeが200か304なら最終アクセス時刻を更新
-        if( SESSION::is_online() && ( get_code() == HTTP_OK || get_code() == HTTP_NOT_MODIFIED ) ){
+        if( m_is_online && ( get_code() == HTTP_OK || get_code() == HTTP_NOT_MODIFIED ) ){
 
             m_last_access_time = time( NULL );
 
@@ -1110,7 +1110,7 @@ void BoardBase::receive_finish()
         }
 
         // オンライン、かつcodeが200なら情報を保存して subject.txt をキャッシュに保存
-        if( SESSION::is_online() && get_code() == HTTP_OK ){
+        if( m_is_online && get_code() == HTTP_OK ){
 
             m_last_access_time = time( NULL );
 
@@ -1352,7 +1352,7 @@ void BoardBase::update_abone_thread()
     if( ! m_list_subject_created ) return;
 
     // オフラインに切り替えてからキャッシュにあるsubject.txtを再読み込みする
-    bool online = SESSION::is_online();
+    const bool online = SESSION::is_online();
     SESSION::set_online( false );
 
     download_subject( url_subject() );

@@ -49,8 +49,8 @@ namespace DBTREE
         // setting.txtの modified 時刻
         std::string m_modified_setting;
 
-        // subjectダウンロード後にローカルルールとsetting.txtをロードする
-        bool m_load_rule_setting;
+        // subjectダウンロード指示時(BoardBase::download_subject)にオンラインだったか
+        bool m_is_online;
 
         // ビュワーでソートをする列番号、ソード順
         int m_view_sort_column;

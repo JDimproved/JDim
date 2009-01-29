@@ -1098,6 +1098,7 @@ void ArticleBase::slot_node_updated()
 // ロード終了後に nodetree から呼ばれる slot
 // nodetree から情報を取得する
 //
+#include <iostream>
 void ArticleBase::slot_load_finished()
 {
     assert( m_nodetree );
@@ -1204,9 +1205,9 @@ void ArticleBase::slot_load_finished()
 
             // subjectがキャッシュにある場合は TFIDF を使って類似度チェック
             if( list_subject.size() ){
-#ifdef _DEBUG
+//#ifdef _DEBUG
                 std::cout << "use tfidf\n";
-#endif
+//#endif
                 // 単語ベクトル作成
                 MISC::VEC_WORDS vec_words;
                 MISC::tfidf_create_vec_words( vec_words, pre_subject );
@@ -1228,26 +1229,26 @@ void ArticleBase::slot_load_finished()
 
             // subject がキャッシュに無い場合はレーベンシュタイン距離を使って類似度チェック
             else{
-#ifdef _DEBUG
+//#ifdef _DEBUG
                 std::cout << "use leven\n";
-#endif
+//#endif
                 const int MAXSTR = 256;
                 std::vector< std::vector< int > > dist( MAXSTR, std::vector< int >( MAXSTR ) );
                 value = 10 - ( int )( MISC::leven( dist, pre_subject, m_subject ) * 10 + .5 );
             }
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
             std::cout << "pre_subject = " << pre_subject << std::endl
                       << "subject = " << m_subject << std::endl
                       << "value = " << value << std::endl;
-#endif
+//#endif
 
             // このスレは m_url_pre_article の次スレとみなして情報をコピーする
             if( value >= CONFIG::get_threshold_next() ){
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
                 std::cout << "hit!\n";
-#endif
+//#endif
                 copy_article_info( m_url_pre_article );
 
                 // お気に入りのアドレスと名前を自動更新
@@ -1262,9 +1263,9 @@ void ArticleBase::slot_load_finished()
 
                 relayout = true;
             }
-#ifdef _DEBUG
+//#ifdef _DEBUG
             else std::cout << "not hit\n";
-#endif
+//#endif
         }
 
         m_url_pre_article = std::string();
