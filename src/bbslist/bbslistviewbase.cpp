@@ -2214,12 +2214,13 @@ void BBSListViewBase::toggle_icon( const std::string& url )
 //
 // スレの url と 名前を変更
 //
+#include <iostream>
 void BBSListViewBase::replace_thread( const std::string& url, const std::string& url_new )
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
     std::cout << "BBSListViewBase::replace_thread url = " << url
               << " url_new = " << url_new << std::endl;
-#endif
+//#endif
 
     if( ! m_ready_tree ) return;
     if( m_treestore->children().empty() ) return; 
@@ -2235,16 +2236,18 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 
     const std::string urldat = DBTREE::url_dat( url );
     const std::string urlcgi = DBTREE::url_readcgi( url, 0, 0 );
+    const std::string name_old = DBTREE::article_subject( urldat );
 
     int type = TYPE_THREAD;
     const int status = DBTREE::article_status( urldat_new );
     if( status & STATUS_OLD ) type = TYPE_THREAD_OLD;
     if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
 
-#ifdef _DEBUG
-    std::cout << " name = " << name_new
-              << " type = " << type << std::endl;
-#endif
+//#ifdef _DEBUG
+    std::cout << "name_new = " << name_new << std::endl
+              << "name_old = " << name_old << std::endl
+              << "type = " << type << std::endl;
+//#endif
 
     while( 1 ){
 
@@ -2261,9 +2264,24 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                 case TYPE_THREAD:
                 case TYPE_THREAD_UPDATE:
                 case TYPE_THREAD_OLD:
+
                     if( urldat == url_row || urlcgi == url_row ){
+
                         row[ m_columns.m_url ] = urldat_new;
-                        row[ m_columns.m_name ] = name_new;
+
+                        // 名前が古いものであったら更新
+                        // 変更されていたらそのまま
+                        Glib::ustring name_row = row[ m_columns.m_name ];
+//#ifdef _DEBUG
+                        std::cout << "name_row = " << name_row << std::endl;
+//$endif 
+                        if( name_row == name_old ){
+//#ifdef _DEBUG
+                            std::cout << "replace name\n";
+//$endif 
+                            row[ m_columns.m_name ] = name_new;
+                        }
+
                         row[ m_columns.m_type ] = type;
                         row[ m_columns.m_image ] = XML::get_icon( type );
 
