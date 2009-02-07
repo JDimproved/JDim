@@ -48,7 +48,7 @@ namespace IMAGE
         virtual int get_tab_nums();
 
         // 含まれているページのURLのリスト取得
-        virtual std::list< std::string > get_URLs();
+        virtual const std::list< std::string > get_URLs();
 
         // 現在表示してるページ番号
         virtual int get_current_page();

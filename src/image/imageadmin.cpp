@@ -164,7 +164,7 @@ int ImageAdmin::get_tab_nums()
 //
 // 含まれているページのURLのリスト取得
 //
-std::list< std::string > ImageAdmin::get_URLs()
+const std::list< std::string > ImageAdmin::get_URLs()
 {
     std::list< std::string > urls;
     Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();

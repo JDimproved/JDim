@@ -312,11 +312,11 @@ int Admin::get_tab_nums()
 //
 // 含まれているページのURLのリスト取得
 //
-std::list<std::string> Admin::get_URLs()
+const std::list<std::string> Admin::get_URLs()
 {
     std::list<std::string> urls;
     
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
@@ -837,7 +837,7 @@ void Admin::update_status( View* view, const bool force )
 //
 // ビューを開く
 //
-// command.arg1: "true" なら新しいtabを開く, "right" ならアクティブなtabの右に、"left"なら左に開く
+// command.arg1: "true" なら新しいtabを開く, "right" ならアクティブなtabの右に、"left"なら左に開く。数字ならその場所にタブで開く
 // command.arg2: "true" なら既にurlを開いているかチェックしない
 // command.arg3: モード
 //   arg3 == "auto"なら表示されていればリロードせずに切替え、されていなければ新しいタブで開いてロード(スレ番号ジャンプなどで使用)
@@ -888,7 +888,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
     int page = m_notebook->get_current_page();
     bool open_tab = (  page == -1
-                       || command.arg1 == "true" || command.arg1 == "right" || command.arg1 == "left"
+                       || ! command.arg1.empty()
                        || command.arg3 == "auto" // オートモードの時もタブで開く
                        || is_locked( page )
         );
@@ -899,14 +899,23 @@ void Admin::open_view( const COMMAND_ARGS& command )
     // タブで表示
     if( open_tab ){
 
-#ifdef _DEBUG
-        std::cout << "append page\n";
-#endif
+        int openpage = -1;
+
         // 現在のページの右に表示
-        if( page != -1 && command.arg1 == "right" ) m_notebook->insert_page( command.url, *view, page+1 );
+        if( command.arg1 == "right" ) openpage = page +1;
 
         // 現在のページの左に表示
-        else if( page != -1 && command.arg1 == "left" ) m_notebook->insert_page( command.url, *view, page );
+        else if( command.arg1 == "left" ) openpage = page;
+
+        else if( command.arg1 == "true" ) openpage = -1;
+
+        // 指定した場所に表示
+        else openpage = atoi( command.arg1.c_str() );
+
+#ifdef _DEBUG
+        std::cout << "append page = " << openpage << std::endl;
+#endif
+        if( page != -1 ) m_notebook->insert_page( command.url, *view, openpage );
 
         // 最後に表示
         else m_notebook->append_page( command.url, *view );
@@ -2118,6 +2127,14 @@ const bool Admin::is_lockable( const int page )
 const bool Admin::is_locked( const int page )
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+    if( view ) return view->is_locked();
+
+    return false;
+}
+
+const bool Admin::is_locked( const std::string& url )
+{
+    SKELETON::View* view = get_view( url );
     if( view ) return view->is_locked();
 
     return false;

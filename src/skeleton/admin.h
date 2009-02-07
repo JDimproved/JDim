@@ -68,7 +68,7 @@ namespace SKELETON
         virtual int get_tab_nums();
 
         // 含まれているページのURLのリスト取得
-        virtual std::list< std::string > get_URLs();
+        virtual const std::list< std::string > get_URLs();
 
         // Core からのクロック入力。
         // Coreでタイマーをひとつ動かして全体の同期を取るようにしているので
@@ -104,6 +104,9 @@ namespace SKELETON
         // 表示ページを指定したいときは "set_page" コマンドを使う
         virtual int get_current_page();
         std::string get_current_url();
+
+        // urlで指定されるタブがロックされているか
+        const bool is_locked( const std::string& url );
 
         // SIGHUPを受け取ったときの処理
         virtual void shutdown();

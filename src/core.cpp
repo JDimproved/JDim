@@ -2829,8 +2829,27 @@ void Core::set_command( const COMMAND_ARGS& command )
     // articleの削除
     //
     // command.arg1 == "reopen" のときはキャッシュだけ再読み込み
+    // command.arg2 再読み込み後にジャンプするレス番号
     //
     else if( command.command == "delete_article" ){
+
+        bool locked = FALSE;
+        int num_open = 0;
+        if( command.arg1 == "reopen" ){
+
+            locked = ARTICLE::get_admin()->is_locked( command.url );
+
+            // タブを開く位置を取得
+            const std::list<std::string> list_urls = ARTICLE::get_admin()->get_URLs();
+            std::list< std::string >::const_iterator it = list_urls.begin();
+            for( ; it != list_urls.end(); ++it ){
+
+                if( *it == command.url ) break;
+                if( ( *it ).find( command.url ) != std::string::npos ) continue;
+
+                ++num_open;
+            }
+        }
 
         DBTREE::delete_article( command.url, ( command.arg1 == "reopen" ) );
 
@@ -2851,7 +2870,20 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "delete_all_popups" );  
 
         // もう一度開く
-        if( command.arg1 == "reopen" ) core_set_command( "open_article", command.url , "true", "",  command.arg2 );
+        if( command.arg1 == "reopen" ){
+
+            const std::string str_num_open = MISC::itostr( num_open );
+            const std::string mode = ( locked ? "lock" : "" );
+            const std::string str_num_jump = command.arg2;
+
+#ifdef _DEBUG
+            std::cout << "reopen tab = " << str_num_open
+                      << " mode = " << mode
+                      << " jump = " << str_num_jump << std::endl;
+#endif
+
+            core_set_command( "open_article", command.url , str_num_open, mode, str_num_jump );
+        }
 
         return;
     }
