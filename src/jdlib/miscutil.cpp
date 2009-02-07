@@ -19,7 +19,7 @@
 //
 // str を "\n" ごとに区切ってlistにして出力
 //
-std::list< std::string > MISC::get_lines( const std::string& str ){
+const std::list< std::string > MISC::get_lines( const std::string& str ){
         
     std::list< std::string > lines;
     size_t i = 0, i2 = 0, r = 0;
@@ -43,7 +43,7 @@ std::list< std::string > MISC::get_lines( const std::string& str ){
 //
 // emacs lisp のリスト型を要素ごとにlistにして出力
 //
-std::list< std::string > MISC::get_elisp_lists( const std::string& str )
+const std::list< std::string > MISC::get_elisp_lists( const std::string& str )
 {
 #ifdef _DEBUG
     std::cout << "MISC::get_elisp_lists\n";
@@ -108,7 +108,7 @@ std::list< std::string > MISC::get_elisp_lists( const std::string& str )
 //
 // strを空白または "" 単位で区切って list で出力
 //
-std::list< std::string > MISC::split_line( const std::string& str )
+const std::list< std::string > MISC::split_line( const std::string& str )
 {
     std::string str_space = "　";
     size_t lng_space = str_space.length();
@@ -175,7 +175,7 @@ std::list< std::string > MISC::split_line( const std::string& str )
 
 
 // strを delimで区切って list で出力
-std::list< std::string > MISC::StringTokenizer( const std::string& str, char delim )
+const std::list< std::string > MISC::StringTokenizer( const std::string& str, const char delim )
 {
     std::list< std::string > list_str;
 
@@ -197,10 +197,10 @@ std::list< std::string > MISC::StringTokenizer( const std::string& str, char del
 //
 // list_inから空白行を除いてリストを返す
 //
-std::list< std::string > MISC::remove_nullline_from_list( std::list< std::string >& list_in )
+const std::list< std::string > MISC::remove_nullline_from_list( const std::list< std::string >& list_in )
 {
     std::list< std::string > list_ret;
-    std::list< std::string >::iterator it;    
+    std::list< std::string >::const_iterator it;    
     for( it = list_in.begin(); it != list_in.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
         if( ! tmp_str.empty() ) list_ret.push_back( *it );
@@ -213,10 +213,10 @@ std::list< std::string > MISC::remove_nullline_from_list( std::list< std::string
 //
 // list_inの各行から前後の空白を除いてリストを返す
 //
-std::list< std::string > MISC::remove_space_from_list( std::list< std::string >& list_in )
+const std::list< std::string > MISC::remove_space_from_list( const std::list< std::string >& list_in )
 {
     std::list< std::string > list_ret;
-    std::list< std::string >::iterator it;    
+    std::list< std::string >::const_iterator it;    
     for( it = list_in.begin(); it != list_in.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
         list_ret.push_back( tmp_str );
@@ -229,12 +229,12 @@ std::list< std::string > MISC::remove_space_from_list( std::list< std::string >&
 //
 // list_inからコメント行(#)を除いてリストを返す
 //
-std::list< std::string > MISC::remove_commentline_from_list( std::list< std::string >& list_in )
+const std::list< std::string > MISC::remove_commentline_from_list( const std::list< std::string >& list_in )
 {
     const char commentchr = '#';
 
     std::list< std::string > list_ret;
-    std::list< std::string >::iterator it;    
+    std::list< std::string >::const_iterator it;    
     for( it = list_in.begin(); it != list_in.end(); ++it ){
         std::string tmp_str = MISC::remove_space( (*it) );
         if( tmp_str.c_str()[ 0 ] != commentchr ) list_ret.push_back( *it );
@@ -252,7 +252,7 @@ std::list< std::string > MISC::remove_commentline_from_list( std::list< std::str
 //
 // (例)  "aaa" "bbb" "\"ccc\""  → aaa と bbb と "ccc"
 //
-std::list< std::string > MISC::strtolist( std::string& str_in )
+const std::list< std::string > MISC::strtolist( const std::string& str_in )
 {
     std::list< std::string > list_tmp;
     std::list< std::string > list_ret;
@@ -275,10 +275,10 @@ std::list< std::string > MISC::strtolist( std::string& str_in )
 //
 // (例)  "aaa" "bbb" "\"ccc\""
 //
-std::string MISC::listtostr( std::list< std::string >& list_in )
+const std::string MISC::listtostr( const std::list< std::string >& list_in )
 {
     std::string str_out;
-    std::list< std::string >::iterator it = list_in.begin();
+    std::list< std::string >::const_iterator it = list_in.begin();
     for( ; it != list_in.end(); ++it ){
         if( ! ( *it ).empty() ) str_out += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
     }
@@ -291,7 +291,7 @@ std::string MISC::listtostr( std::list< std::string >& list_in )
 //
 // strの前後の空白削除
 //
-std::string MISC::remove_space( const std::string& str )
+const std::string MISC::remove_space( const std::string& str )
 {
     std::string str_space = "　";
     size_t lng_space = str_space.length();
@@ -339,7 +339,7 @@ std::string MISC::remove_space( const std::string& str )
 //
 // str前後の改行、タブ、スペースを削除
 //
-std::string MISC::remove_spaces( const std::string& str )
+const std::string MISC::remove_spaces( const std::string& str )
 {
     if( str.empty() ) return std::string();
 
@@ -367,7 +367,7 @@ std::string MISC::remove_spaces( const std::string& str )
 //
 // str1からstr2で示された文字列を除く
 //
-std::string MISC::remove_str( const std::string& str1, const std::string& str2 )
+const std::string MISC::remove_str( const std::string& str1, const std::string& str2 )
 {
     return MISC::replace_str( str1, str2, "" );
 }
@@ -376,7 +376,7 @@ std::string MISC::remove_str( const std::string& str1, const std::string& str2 )
 //
 // start 〜 end の範囲をstrから取り除く ( /* コメント */ など )
 //
-std::string MISC::remove_str( const std::string& str, const std::string& start, const std::string& end )
+const std::string MISC::remove_str( const std::string& str, const std::string& start, const std::string& end )
 {
     std::string str_out = str;
 
@@ -398,7 +398,7 @@ std::string MISC::remove_str( const std::string& str, const std::string& start, 
 //
 // 正規表現を使ってstr1からqueryで示された文字列を除く
 //
-std::string MISC::remove_str_regex( const std::string& str1, const std::string& query )
+const std::string MISC::remove_str_regex( const std::string& str1, const std::string& query )
 {
     JDLIB::Regex regex;
     if( ! regex.exec( query, str1 ) ) return std::string();
@@ -409,7 +409,7 @@ std::string MISC::remove_str_regex( const std::string& str1, const std::string& 
 //
 // str1, str2 に囲まれた文字列を切り出す
 //
-std::string MISC::cut_str( const std::string& str, const std::string& str1, const std::string& str2 )
+const std::string MISC::cut_str( const std::string& str, const std::string& str1, const std::string& str2 )
 {
     size_t i = str.find( str1 );
     if( i == std::string::npos ) return std::string();
@@ -421,8 +421,10 @@ std::string MISC::cut_str( const std::string& str, const std::string& str1, cons
 }
 
 
+//
 // str1 を str2 に置き換え
-std::string MISC::replace_str( const std::string& str, const std::string& str1, const std::string& str2 )
+//
+const std::string MISC::replace_str( const std::string& str, const std::string& str1, const std::string& str2 )
 {
     std::string str_out;
     size_t i, pos = 0;
@@ -437,19 +439,23 @@ std::string MISC::replace_str( const std::string& str, const std::string& str1, 
 }
 
 
+//
 // list_inから str1 を str2 に置き換えてリストを返す
-std::list< std::string > MISC::replace_str_list( std::list< std::string >& list_in,
+//
+const std::list< std::string > MISC::replace_str_list( const std::list< std::string >& list_in,
                                                  const std::string& str1, const std::string& str2 )
 {
     std::list< std::string > list_out;
-    std::list< std::string >::iterator it = list_in.begin();
+    std::list< std::string >::const_iterator it = list_in.begin();
     for( ; it != list_in.end(); ++it ) list_out.push_back( replace_str( *it, str1, str2 ) );
     return list_out;
 }
 
 
+//
 // str_in に含まれる改行文字を replace に置き換え
-std::string MISC::replace_newlines_to_str( const std::string& str_in, const std::string& replace )
+//
+const std::string MISC::replace_newlines_to_str( const std::string& str_in, const std::string& replace )
 {
     if( str_in.empty() || replace.empty() ) return str_in;
 
@@ -471,22 +477,28 @@ std::string MISC::replace_newlines_to_str( const std::string& str_in, const std:
 }
 
 
+//
 // " を \" に置き換え
-std::string MISC::replace_quot( const std::string& str )
+//
+const std::string MISC::replace_quot( const std::string& str )
 {
     return MISC::replace_str( str, "\"", "\\\"" );
 }
 
 
+//
 // \" を " に置き換え
-std::string MISC::recover_quot( const std::string& str )
+//
+const std::string MISC::recover_quot( const std::string& str )
 {
     return MISC::replace_str( str, "\\\"", "\"" );
 }
 
 
+//
 // str 中に含まれている str2 の 数を返す
-int MISC::count_str( const std::string& str, const std::string& str2  )
+//
+const int MISC::count_str( const std::string& str, const std::string& str2  )
 {
     int count = 0;
     size_t found, pos = 0;
@@ -501,7 +513,9 @@ int MISC::count_str( const std::string& str, const std::string& str2  )
 }
 
 
+//
 // str 中に含まれている chr の 数を返す
+//
 const int MISC::count_chr( const std::string& str, const char chr )
 {
     int count = 0;
@@ -525,7 +539,7 @@ const int MISC::count_chr( const std::string& str, const char chr )
 //
 // 戻り値: 数値
 //
-int MISC::str_to_uint( const char* str, unsigned int& dig, unsigned int& n )
+const int MISC::str_to_uint( const char* str, unsigned int& dig, unsigned int& n )
 {
     int out = 0;
     dig = 0;
@@ -561,9 +575,10 @@ int MISC::str_to_uint( const char* str, unsigned int& dig, unsigned int& n )
 }
 
 
-
+//
 // 数字　-> 文字変換
-std::string MISC::itostr( int n )
+//
+const std::string MISC::itostr( const int n )
 {
     std::ostringstream ss;
     ss << n;
@@ -572,13 +587,14 @@ std::string MISC::itostr( int n )
 }
 
 
-
+//
 // listで指定した数字を文字に変換
-std::string MISC::intlisttostr( std::list< int >& list_num )
+//
+const std::string MISC::intlisttostr( const std::list< int >& list_num )
 {
     std::ostringstream comment;
 
-    std::list < int >::iterator it = list_num.begin();
+    std::list < int >::const_iterator it = list_num.begin();
 
     bool comma = false;
     int num_from = *it;
@@ -609,11 +625,12 @@ std::string MISC::intlisttostr( std::list< int >& list_num )
 
 
 //
-// 16進数表記文字をバイナリに変換する( "E38182" -> 0xE38182 )
+// 16進数表記文字をバイナリに変換する( 例 "E38182" -> 0xE38182 )
 //
+// 出力 : char_out 
 // 戻り値: 変換に成功した chr_in のバイト数
 //
-size_t MISC::chrtobin( const char* chr_in, char* chr_out )
+const size_t MISC::chrtobin( const char* chr_in, char* chr_out )
 {
     if( ! chr_in ) return 0;
 
@@ -642,9 +659,10 @@ size_t MISC::chrtobin( const char* chr_in, char* chr_out )
 }
 
 
-
+//
 // strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
-std::string MISC::cut_str( const std::string& str, unsigned int maxsize )
+//
+const std::string MISC::cut_str( const std::string& str, const unsigned int maxsize )
 {
     std::string outstr = str;
     unsigned int pos, lng_str;
@@ -671,7 +689,7 @@ std::string MISC::cut_str( const std::string& str, unsigned int maxsize )
 //
 // include_url : URL中でもエスケープする( デフォルト = true )
 //
-std::string MISC::html_escape( const std::string& str, const bool include_url )
+const std::string MISC::html_escape( const std::string& str, const bool include_url )
 {
     if( str.empty() ) return str;
 
@@ -736,7 +754,7 @@ std::string MISC::html_escape( const std::string& str, const bool include_url )
 //
 // HTMLアンエスケープ
 //
-std::string MISC::html_unescape( const std::string& str )
+const std::string MISC::html_unescape( const std::string& str )
 {
     if( str.empty() ) return str;
     if( str.find( "&" ) == std::string::npos ) return str;
@@ -774,9 +792,9 @@ std::string MISC::html_unescape( const std::string& str )
 // URL中のスキームを判別する
 //
 // 戻り値 : スキームタイプ
-// len    : "http://"等の文字数
+// length    : "http://"等の文字数
 //
-int MISC::is_url_scheme( const char* str_in, int* length )
+const int MISC::is_url_scheme( const char* str_in, int* length )
 {
     int scheme = SCHEME_NONE;
     int len = 0;
@@ -845,7 +863,7 @@ int MISC::is_url_scheme( const char* str_in, int* length )
 // "RFC 3986" : http://www.ietf.org/rfc/rfc3986.txt
 // "RFC 2396" : http://www.ietf.org/rfc/rfc2396.txt
 //
-bool MISC::is_url_char( const char* str_in, const bool loose_url )
+const bool MISC::is_url_char( const char* str_in, const bool loose_url )
 {
     if(
         // 出現頻度が高いと思われる順にチェック
@@ -892,7 +910,7 @@ bool MISC::is_url_char( const char* str_in, const bool loose_url )
 //
 // URLデコード
 //
-std::string MISC::url_decode( const std::string& url )
+const std::string MISC::url_decode( const std::string& url )
 {
     if( url.empty() ) return std::string();
 
@@ -937,7 +955,7 @@ std::string MISC::url_decode( const std::string& url )
 //
 // url エンコード
 //
-std::string MISC::url_encode( const char* str, size_t n )
+const std::string MISC::url_encode( const char* str, const size_t n )
 {
     if( str[ n ] != '\0' ){
         ERRMSG( "url_encode : invalid input." );
@@ -981,7 +999,7 @@ std::string MISC::url_encode( const char* str, size_t n )
 //
 // str は UTF-8 であること
 //
-std::string MISC::charset_url_encode( const std::string& str, const std::string& charset )
+const std::string MISC::charset_url_encode( const std::string& str, const std::string& charset )
 {
     if( charset.empty() || charset == "UTF-8" ) return MISC::url_encode( str.c_str(), str.length() );
 
@@ -997,7 +1015,7 @@ std::string MISC::charset_url_encode( const std::string& str, const std::string&
 //
 // ただし半角スペースのところを+に置き換えて区切る
 //
-std::string MISC::charset_url_encode_split( const std::string& str, const std::string& charset )
+const std::string MISC::charset_url_encode_split( const std::string& str, const std::string& charset )
 {
     std::list< std::string > list_str = MISC::split_line( str );
     std::list< std::string >::iterator it = list_str.begin();
@@ -1015,7 +1033,7 @@ std::string MISC::charset_url_encode_split( const std::string& str, const std::s
 //
 // BASE64
 //
-std::string MISC::base64( const std::string& str )
+const std::string MISC::base64( const std::string& str )
 {
     char table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -1061,7 +1079,7 @@ std::string MISC::base64( const std::string& str )
 //
 // 遅いので連続的な処理が必要な時は使わないこと
 //
-std::string MISC::Iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to )
+const std::string MISC::Iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to )
 {
     if( coding_from == coding_to ) return str;
 
@@ -1084,12 +1102,13 @@ std::string MISC::Iconv( const std::string& str, const std::string& coding_from,
 //
 // utf-8 -> ucs2 変換
 //
-// utfstr : 入力文字 (UTF-8)
-// byte   : 長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 を入れて返す
+// 入力 : utfstr 入力文字 (UTF-8)
+//
+// 出力 :  byte  長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 を入れて返す
 //
 // 戻り値 : ucs2
 //
-int MISC::utf8toucs2( const char* utfstr, int& byte )
+const int MISC::utf8toucs2( const char* utfstr, int& byte )
 {
     int ucs2 = 0;
     byte = 0;
@@ -1131,9 +1150,11 @@ int MISC::utf8toucs2( const char* utfstr, int& byte )
 //
 // ucs2 -> utf8 変換
 //
+// 出力 : utfstr 変換後の文字
+//
 // 戻り値 : バイト数
 //
-int MISC::ucs2toutf8( int ucs2, char* utfstr )
+const int MISC::ucs2toutf8( const int ucs2,  char* utfstr )
 {
     int byte = 0;
 
@@ -1171,7 +1192,7 @@ int MISC::ucs2toutf8( int ucs2, char* utfstr )
 //
 // ucs2 の種類
 //
-int MISC::get_ucs2mode( const int ucs2 )
+const int MISC::get_ucs2mode( const int ucs2 )
 {
     if( ucs2 >= 0x0000 && ucs2 <= 0x007f ) return UCS2MODE_BASIC_LATIN;
     if( ucs2 >= 0x3040 && ucs2 <= 0x309f ) return UCS2MODE_HIRA;
@@ -1184,7 +1205,7 @@ int MISC::get_ucs2mode( const int ucs2 )
 //
 // str を大文字化
 //
-std::string MISC::toupper_str( const std::string& str )
+const std::string MISC::toupper_str( const std::string& str )
 {
     std::string str_out;
     const size_t str_length = str.length();
@@ -1198,10 +1219,10 @@ std::string MISC::toupper_str( const std::string& str )
 //
 // list 内のアイテムを全部大文字化
 //
-std::list< std::string > MISC::toupper_list( std::list< std::string >& list_str )
+const std::list< std::string > MISC::toupper_list( const std::list< std::string >& list_str )
 {
     std::list< std::string > list_out;
-    std::list< std::string >::iterator it = list_str.begin();
+    std::list< std::string >::const_iterator it = list_str.begin();
     for( ; it != list_str.end() ; ++it ) list_out.push_back( MISC::toupper_str( *it ) );
 
     return list_out;
@@ -1212,7 +1233,7 @@ std::list< std::string > MISC::toupper_list( std::list< std::string >& list_str 
 //
 // str を小文字化
 //
-std::string MISC::tolower_str( const std::string& str )
+const std::string MISC::tolower_str( const std::string& str )
 {
     std::string str_out;
     const size_t str_length = str.length();
@@ -1229,7 +1250,7 @@ std::string MISC::tolower_str( const std::string& str )
 //
 // protocol = false のときはプロトコルを除く
 //
-std::string MISC::get_hostname( const std::string& path, bool protocol )
+const std::string MISC::get_hostname( const std::string& path, bool protocol )
 {
     int lng = 0;
     if( path.find( "http://" ) == 0 ) lng = strlen( "http://" );
@@ -1252,7 +1273,7 @@ std::string MISC::get_hostname( const std::string& path, bool protocol )
 //
 // path からファイル名だけ取り出す
 //
-std::string MISC::get_filename( const std::string& path )
+const std::string MISC::get_filename( const std::string& path )
 {
     if( path.empty() ) return std::string();
 
@@ -1267,7 +1288,7 @@ std::string MISC::get_filename( const std::string& path )
 //
 // path からファイル名を除いてディレクトリだけ取り出す
 //
-std::string MISC::get_dir( const std::string& path )
+const std::string MISC::get_dir( const std::string& path )
 {
     if( path.empty() ) return std::string();
 
@@ -1282,7 +1303,7 @@ std::string MISC::get_dir( const std::string& path )
 //
 // 文字数を限定して環境変数の値を返す
 //
-std::string MISC::getenv_limited( const char *name, const size_t size )
+const std::string MISC::getenv_limited( const char *name, const size_t size )
 {
     if( ! name || ! getenv( name ) ) return std::string();
 
