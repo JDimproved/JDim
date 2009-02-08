@@ -952,8 +952,10 @@ void BoardBase::receive_finish()
                 if( ret == Gtk::RESPONSE_YES ){
 
                     if( DBTREE::move_board( url_boardbase(), new_url ) ){
+
                         // 再読み込み
-                        CORE::core_set_command( "open_board", url_subject() );
+                        const std::string str_tab = "false";
+                        CORE::core_set_command( "open_board", url_subject(), str_tab );
                     }
                 }
             }

@@ -2872,7 +2872,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         // もう一度開く
         if( command.arg1 == "reopen" ){
 
-            const std::string str_num_open = MISC::itostr( num_open );
+            const std::string str_num_open = "page" + MISC::itostr( num_open );
             const std::string mode = ( locked ? "lock" : "" );
             const std::string str_num_jump = command.arg2;
 
@@ -2953,14 +2953,14 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         // タブだらけになってしまうので実況中の場合はタブで開かない
         const bool live = SESSION::is_live( command.arg1 );
-        std::string tabmode = "left";
-        if( live ) tabmode = "";
+        std::string str_tab = "left";
+        if( live ) str_tab = "false";
 
         BOARD::get_admin()->set_command( "open_view",
                                          command.url,
 
                                          // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
-                                         tabmode, // タブで開くか
+                                         str_tab, // タブで開くか
                                          "true", // url 開いてるかチェックしない
                                          "", // 開き方のモード ( Admin::open_view 参照 )
 

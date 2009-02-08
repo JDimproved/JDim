@@ -837,20 +837,36 @@ void Admin::update_status( View* view, const bool force )
 //
 // ビューを開く
 //
-// command.arg1: "true" なら新しいtabを開く, "right" ならアクティブなtabの右に、"left"なら左に開く。数字ならその場所にタブで開く
+// command.arg1: 開く位置
+//
+// "false" ならアクティブなタブを置き換える
+// "true" なら一番右側に新しいタブを開く
+// "right" ならアクティブなタブの右に開く
+// "left" ならアクティブな左に開く
+// "page数字" なら指定した位置にタブで開く
+//
 // command.arg2: "true" なら既にurlを開いているかチェックしない
+//
 // command.arg3: モード
-//   arg3 == "auto"なら表示されていればリロードせずに切替え、されていなければ新しいタブで開いてロード(スレ番号ジャンプなどで使用)
-//   arg3 == "noswitch"ならタブを切り替えない(連続して開くときに使用)
-//   arg3 == "lock" なら開いてロックする
+//
+// "auto"なら表示されていればリロードせずに切替える
+// されていなければarg1で指定した場所に新しいタブで開いてロード
+// スレ番号ジャンプなどで使用する
+//
+// "noswitch"ならタブを切り替えない(連続して開くときに使用)
+// "lock" なら開いてからロックする
 //
 // その他のargは各ビュー別の設定
 //
 void Admin::open_view( const COMMAND_ARGS& command )
 {
 #ifdef _DEBUG
-    std::cout << "Admin::open_view : " << command.url << std::endl;
+    std::cout << "Admin::open_view : " << command.url << std::endl
+              << "arg1 = " << command.arg1 << std::endl
+              << "arg2 = " << command.arg2 << std::endl 
+              << "arg3 = " << command.arg3 << std::endl;   
 #endif
+
     SKELETON::View* view;
     SKELETON::View* current_view = get_current_view();
 
@@ -858,9 +874,11 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
     // urlを既に開いていたら表示してリロード
     if( ! ( command.arg2 == "true" ) ){
+
         view = get_view( command.url );
         if( view ){
 
+            // タブの切り替え
             if( ! ( command.arg3 == "noswitch" ) ){
             
                 int page = m_notebook->page_num( *view );
@@ -886,11 +904,11 @@ void Admin::open_view( const COMMAND_ARGS& command )
     view = create_view( command );
     if( !view ) return;
 
-    int page = m_notebook->get_current_page();
-    bool open_tab = (  page == -1
-                       || ! command.arg1.empty()
-                       || command.arg3 == "auto" // オートモードの時もタブで開く
-                       || is_locked( page )
+    const int page = m_notebook->get_current_page();
+    const bool open_tab = (  page == -1
+                             || ( ! command.arg1.empty() && command.arg1 != "false" )
+                             || command.arg3 == "auto" // オートモードの時もタブで開く
+                             || is_locked( page )
         );
 
     // ツールバー表示
@@ -907,14 +925,17 @@ void Admin::open_view( const COMMAND_ARGS& command )
         // 現在のページの左に表示
         else if( command.arg1 == "left" ) openpage = page;
 
-        else if( command.arg1 == "true" ) openpage = -1;
+        // 指定した位置に表示
+        else if( command.arg1.find( "page" ) == 0 ) openpage = atoi( command.arg1.c_str() + 4 );
 
-        // 指定した場所に表示
-        else openpage = atoi( command.arg1.c_str() );
+        // ロックされていたら右に表示
+        else if( command.arg1 != "true" && page != -1 && is_locked( page ) ) openpage = page +1;
 
 #ifdef _DEBUG
         std::cout << "append page = " << openpage << std::endl;
 #endif
+
+
         if( page != -1 ) m_notebook->insert_page( command.url, *view, openpage );
 
         // 最後に表示
@@ -934,6 +955,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
     // 開いてるviewを消してその場所に表示
     else{
+
 #ifdef _DEBUG
         std::cout << "replace page\n";
 #endif
@@ -958,6 +980,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
     // ツールバーの情報更新
     m_notebook->set_current_toolbar( view->get_id_toolbar(), view );
 
+    // タブの切り替え
     if( ! ( command.arg3 == "noswitch" ) ){
         switch_admin();
         set_current_page( m_notebook->page_num( *view ) );

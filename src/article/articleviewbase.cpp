@@ -1295,7 +1295,9 @@ void ArticleViewBase::slot_next_bm()
 //
 void ArticleViewBase::slot_jump()
 {
-    CORE::core_set_command( "open_article", m_url_article , "true", "auto", m_str_num );
+    const std::string str_tab = "true";
+    const std::string str_mode = "auto";
+    CORE::core_set_command( "open_article", m_url_article , str_tab, str_mode, m_str_num );
 }
 
 

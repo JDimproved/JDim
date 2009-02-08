@@ -1691,6 +1691,8 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
     std::string str_tab = "false";
     if( tab ) str_tab = "true";
 
+    const std::string str_mode = "";
+
     Glib::ustring url = path2url( path );
     int type = path2type( path );
 
@@ -1699,14 +1701,14 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
     switch( type ){
 
         case TYPE_BOARD:
-            CORE::core_set_command( "open_board", DBTREE::url_subject( url ), str_tab, "" );
+            CORE::core_set_command( "open_board", DBTREE::url_subject( url ), str_tab, str_mode );
             break;
 
         case TYPE_THREAD_OLD:
             toggle_icon( url ); // break;しない
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
-            CORE::core_set_command( "open_article", DBTREE::url_dat( url ), str_tab, "" );
+            CORE::core_set_command( "open_article", DBTREE::url_dat( url ), str_tab, str_mode );
             break;
 
         case TYPE_IMAGE:
