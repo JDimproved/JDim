@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "edittreeview.h"
@@ -161,7 +161,9 @@ void EditTreeView::clock_in()
 #ifdef _DEBUG
             std::cout << "scroll to " << m_jump_path.to_string() << std::endl;
 #endif
-            scroll_to_row( m_jump_path, 0.5 );
+
+            Gtk::TreeRow row = get_row( Gtk::TreePath( m_jump_path ) );
+            if( row ) scroll_to_row( m_jump_path, 0.5 );
 
             m_pre_adjust_upper = 0;
             m_jump_path = Gtk::TreePath();

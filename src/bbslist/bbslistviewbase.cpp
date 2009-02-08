@@ -2216,13 +2216,12 @@ void BBSListViewBase::toggle_icon( const std::string& url )
 //
 // スレの url と 名前を変更
 //
-#include <iostream>
 void BBSListViewBase::replace_thread( const std::string& url, const std::string& url_new )
 {
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "BBSListViewBase::replace_thread url = " << url
               << " url_new = " << url_new << std::endl;
-//#endif
+#endif
 
     if( ! m_ready_tree ) return;
     if( m_treestore->children().empty() ) return; 
@@ -2245,11 +2244,11 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
     if( status & STATUS_OLD ) type = TYPE_THREAD_OLD;
     if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "name_new = " << name_new << std::endl
               << "name_old = " << name_old << std::endl
               << "type = " << type << std::endl;
-//#endif
+#endif
 
     while( 1 ){
 
@@ -2274,13 +2273,13 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                         // 名前が古いものであったら更新
                         // 変更されていたらそのまま
                         Glib::ustring name_row = row[ m_columns.m_name ];
-//#ifdef _DEBUG
+#ifdef _DEBUG
                         std::cout << "name_row = " << name_row << std::endl;
-//$endif 
+#endif 
                         if( name_row == name_old ){
-//#ifdef _DEBUG
+#ifdef _DEBUG
                             std::cout << "replace name\n";
-//$endif 
+#endif 
                             row[ m_columns.m_name ] = name_new;
                         }
 
