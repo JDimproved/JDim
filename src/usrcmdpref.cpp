@@ -287,7 +287,8 @@ void UsrCmdPref::slot_newcmd()
         info.url = std::string();
         info.name = diag.get_name();
         info.data = diag.get_cmd();
-        info.path = m_path_selected.to_string();
+        if( m_path_selected.empty() ) info.path = Gtk::TreePath( "0" ).to_string();
+        else info.path = m_path_selected.to_string();
         list_info.push_back( info );
 
         const bool subdir = true;
@@ -314,7 +315,8 @@ void UsrCmdPref::slot_newsepa()
     info.url = std::string();
     info.name = "--- 区切り ---";
     info.data = std::string();
-    info.path = m_path_selected.to_string();
+    if( m_path_selected.empty() ) info.path = Gtk::TreePath( "0" ).to_string();
+    else info.path = m_path_selected.to_string();
     list_info.push_back( info );
 
     const bool subdir = true;
