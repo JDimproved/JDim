@@ -113,12 +113,15 @@ bool DragableNoteBook::on_expose_event( GdkEventExpose* event )
                       << " w_t = " << event_toolbar.area.width
                       << " h_t = " << event_toolbar.area.height
                       << std::endl;
-#endif        
-            propagate_expose( m_notebook_toolbar, &event_toolbar );
+#endif
+            if( event_toolbar.area.height ){
+ 
+                propagate_expose( m_notebook_toolbar, &event_toolbar );
 
-            // (注意) Auroraなどテーマによってはクリップ領域( event->area )を無視するものがあり
-            // ビューのスクロールバーが消えてしまう時があるので明示的に再描画する
-            m_notebook_view.redraw_scrollbar();
+                // (注意) Auroraなどテーマによってはクリップ領域( event->area )を無視するものがあり
+                // ビューのスクロールバーが消えてしまう時があるので明示的に再描画する
+                m_notebook_view.redraw_scrollbar();
+            }
         }
     }
     return ret;
