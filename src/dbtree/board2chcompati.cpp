@@ -366,7 +366,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
 
         memcpy( str_tmp, str_subject, lng_subject );
         str_tmp[ lng_subject ] = '\0';
-        std::string subject = MISC::remove_space( str_tmp );
+        std::string subject = str_tmp;
         subject = MISC::replace_str( subject, "&lt;", "<" );
         subject = MISC::replace_str( subject, "&gt;", ">" );
         
