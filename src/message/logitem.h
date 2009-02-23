@@ -66,6 +66,9 @@ namespace MESSAGE
                 }
             }
 
+            // 水平タブを空白に置き換える
+            msg = MISC::replace_str( msg, "\t", " " );
+
             // MISC::replace_str( ..., "\n", " \n" ) しているのは MISC::get_lines 実行時に
             // 改行のみの行を削除しないようにするため
             msg_lines = MISC::get_lines( MISC::replace_str( MISC::remove_spaces( msg ), "\n", " \n" ) );

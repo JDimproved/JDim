@@ -206,6 +206,9 @@ const bool Log_Manager::check_write( const std::string& url, const bool newthrea
 
                 if( (*it)->head[ i ] != msg[ i2 ] ){
                     flag = false;
+#ifdef _DEBUG
+                    std::cout << "!! failed (head) !!\n";
+#endif
                     break;
                 }
                 ++i;

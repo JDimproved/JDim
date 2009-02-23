@@ -2085,6 +2085,15 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
             continue;
         }
 
+        // 水平タブ
+        else if( *pos == '\t' ){
+
+            // 空白に置き換える
+            *(pos_write++) = ' ';
+
+            continue;
+        }
+
         head = false;
         *(pos_write++) = *pos;
     }
