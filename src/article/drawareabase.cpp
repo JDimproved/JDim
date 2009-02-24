@@ -251,7 +251,7 @@ void DrawAreaBase::create_scrbar()
 //
 void DrawAreaBase::init_color()
 {
-    std::vector< std::string >& colors = CORE::get_css_manager()->get_colors();
+    const std::vector< std::string >& colors = CORE::get_css_manager()->get_colors();
     const int usrcolor = colors.size();
     m_color.resize( END_COLOR_FOR_THREAD + usrcolor );
 
@@ -264,7 +264,7 @@ void DrawAreaBase::init_color()
         colormap->alloc_color( m_color[ i ] );
     }
 
-    std::vector< std::string >::iterator it = colors.begin();
+    std::vector< std::string >::const_iterator it = colors.begin();
     for( ; it != colors.end(); ++it, ++i ){
         m_color[ i ] = Gdk::Color( ( *it ) );
         colormap->alloc_color( m_color[ i ] );

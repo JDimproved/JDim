@@ -28,7 +28,7 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
     int margin = 0;
     std::string border_color = "black";
     std::string bg_color = CONFIG::get_color( COLOR_BACK );
-    int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
+    const int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
     if( classid >= 0 ){
         CORE::CSS_PROPERTY css = CORE::get_css_manager()->get_property( classid );
         border_width = css.border_left_width_px;
@@ -52,7 +52,7 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
     m_event_frame.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( border_color ) );
 
     // 背景色
-    Gdk::Color color_bg( bg_color );
+    const Gdk::Color color_bg( bg_color );
     m_event_margin.modify_bg( Gtk::STATE_NORMAL, color_bg );
     get_event().modify_bg( Gtk::STATE_NORMAL, color_bg );
 
@@ -128,6 +128,16 @@ void ImageViewPopup::set_label( const std::string& status )
         assert( m_label );
         get_event().add( *m_label );
         m_label->set_text( status );
+
+        std::string text_color = CONFIG::get_color( COLOR_CHAR );
+        const int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
+        if( classid >= 0 ){
+            CORE::CSS_PROPERTY css = CORE::get_css_manager()->get_property( classid );
+            if( css.color >= 0 ) text_color = CORE::get_css_manager()->get_color( css.color );
+        }
+        const Gdk::Color color_text( text_color );
+        m_label->modify_fg( Gtk::STATE_NORMAL, color_text );
+
         m_label->show();
     }
 }
@@ -200,7 +210,7 @@ void ImageViewPopup::show_view()
     }
 
     // マージンやボーダーの分を幅と高さに加える
-    int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
+    const int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
     if( classid >= 0 ){
 
         CORE::CSS_PROPERTY css = CORE::get_css_manager()->get_property( classid );
