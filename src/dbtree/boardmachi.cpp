@@ -101,8 +101,8 @@ ArticleBase* BoardMachi::append_article( const std::string& id, bool cached )
 //
 // スレの url を dat型のurlに変換して出力
 //
-// (例) "http://hoge.machi.to/bbs/read.pl?BBS=board&KEY=12345&START=12&END=15"" のとき
-// 戻り値 : "http://hoge.machi.to/bbs/read.pl?BBS=board&KEY=12345", num_from = 12, num_to = 15, num_str = 12-15
+// (例) "http://hoge.machi.to/bbs/read.cgi?BBS=board&KEY=12345&START=12&END=15"" のとき
+// 戻り値 : "http://hoge.machi.to/bbs/read.cgi?BBS=board&KEY=12345", num_from = 12, num_to = 15, num_str = 12-15
 //
 const std::string BoardMachi::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
 {
@@ -156,15 +156,15 @@ const std::string BoardMachi::url_dat( const std::string& url, int& num_from, in
 
 
 //
-// read.pl のURLのパスを返す
+// read.cgi のURLのパスを返す
 //
-// (例) "/bbs/read.pl?BBS=board&KEY=" (最初に '/' がつく)
+// (例) "/bbs/read.cgi?BBS=board&KEY=" (最初に '/' がつく)
 //
 const std::string BoardMachi::url_datpath()
 {
     if( empty() ) return std::string();
 
-    return "/bbs/read.pl?BBS=" + get_id() + "&KEY=";
+    return "/bbs/read.cgi?BBS=" + get_id() + "&KEY=";
 }
 
 
