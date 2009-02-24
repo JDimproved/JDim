@@ -42,15 +42,6 @@ namespace SESSION
         TOOLBAR_NO
     };
 
-    // WM
-    enum
-    {
-        WM_GNOME = 0,
-        WM_XFCE,
-        WM_KDE,
-        WM_UNKNON
-    };
-
     // 画像のfitモード
     enum
     {
@@ -68,10 +59,6 @@ namespace SESSION
     // 終了中
     const bool is_quitting();
     void set_quitting( bool quit );
-
-    const std::string& get_distribution_name();
-
-    const int get_wm();
 
     const int get_mode_pane();
     void set_mode_pane( int mode );

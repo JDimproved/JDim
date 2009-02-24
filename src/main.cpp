@@ -476,23 +476,36 @@ int main( int argc, char **argv )
     /*--- IOMonitor -------------------------------------------------*/
     CORE::IOMonitor iomonitor;
 
-    // 引数にURLがある
-    if( url )
+    // FIFOの状態をチェックする
+    if( iomonitor.get_fifo_stat() == CORE::FIFO_OK )
     {
-        // FIFOに書き込む
-        iomonitor.send_command( url );
+        // 引数にURLがある
+        if( url )
+        {
+            // FIFOに書き込む
+            iomonitor.send_command( url );
 
-        // マルチモードでなく、メインプロセスでもない場合は終了
-        if( ! multi_mode && ! iomonitor.is_main_process() ) return 0;
+            // マルチモードでなく、メインプロセスでもない場合は終了
+            if( ! multi_mode && ! iomonitor.is_main_process() ) return 0;
+        }
+        // マルチモードでなく、メインプロセスでもない場合は問い合わせる
+        else if( ! multi_mode && ! iomonitor.is_main_process() )
+        {
+            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDは既に起動しています。起動しますか？",
+                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            int ret = mdiag->run();
+            delete mdiag;
+            if( ret != Gtk::RESPONSE_YES ) return 0;
+        }
     }
-    // マルチモードでなく、メインプロセスでもない場合は問い合わせる
-    else if( ! multi_mode && ! iomonitor.is_main_process() )
+    // FIFOに問題がある
+    else
     {
-        Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDは既に起動しています。起動しますか？",
+        Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( CACHE::path_lock() + "の作成またはオープンに問題があります。起動しますか？",
                                                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         int ret = mdiag->run();
         delete mdiag;
-        if( ret != Gtk::RESPONSE_YES ) return 0;
+        if( ret != Gtk::RESPONSE_YES ) return 1;
     }
     /*---------------------------------------------------------------*/
 

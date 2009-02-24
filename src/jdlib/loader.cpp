@@ -303,6 +303,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     m_data.str_post = data_in.str_post;
     m_data.modified = data_in.modified;
     m_data.byte_readfrom = data_in.byte_readfrom;    
+    m_data.contenttype = data_in.contenttype;
     m_data.agent = data_in.agent;
     m_data.referer = data_in.referer;
     m_data.cookie_for_write = data_in.cookie_for_write;
@@ -318,6 +319,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     std::cout << "port: " << m_data.port << std::endl;
     std::cout << "modified: " << m_data.modified << std::endl;
     std::cout << "byte_readfrom: " << m_data.byte_readfrom << std::endl;
+    std::cout << "contenttype: " << m_data.contenttype << std::endl;
     std::cout << "agent: " << m_data.agent << std::endl;
     std::cout << "referer: " << m_data.referer << std::endl;
     std::cout << "cookie: " << m_data.cookie_for_write << std::endl;
@@ -787,6 +789,7 @@ std::string Loader::create_msg_send()
     }
 
     msg << "Host: " << m_data.host << "\r\n";
+    msg << "Content-Type: " << m_data.contenttype << "\r\n";
     if( ! m_data.agent.empty() ) msg << "User-Agent: " << m_data.agent << "\r\n";
     if( ! m_data.referer.empty() ) msg << "Referer: " << m_data.referer << "\r\n";
 

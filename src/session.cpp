@@ -7,23 +7,13 @@
 #include "cache.h"
 #include "global.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
 
 #include "bbslist/bbslistadmin.h"
 #include "article/articleadmin.h"
 
-#include <sstream>
-#include <cstring>
 #include <vector>
-
-#ifdef HAVE_SYS_UTSNAME_H
-#include <sys/utsname.h> // uname()
-#endif
 
 bool booting = true;
 bool quitting = false;
@@ -33,10 +23,6 @@ bool mode_online;
 bool mode_login2ch;
 bool mode_loginbe;
 bool mode_loginp2;
-
-std::string distribution_name;
-
-int win_manager;
 
 int win_hpane_main_pos;
 int win_vpane_main_pos;
@@ -250,153 +236,6 @@ void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls, const st
 }
 
 
-// ファイル等からディストリ名を取得
-std::string get_distribution_name_from_environment()
-{
-#ifdef _DEBUG
-    std::cout << "SESSION::get_distribution_name_from_environment\n";
-#endif
-
-    std::string tmp;
-    std::string text_data;
-
-    // LSB系 ( Ubuntu ..etc )
-    if( CACHE::load_rawdata( "/etc/lsb-release", text_data ) )
-    {
-        std::list< std::string > lines = MISC::get_lines( text_data );
-        std::list< std::string >::reverse_iterator it = lines.rbegin();
-        while( it != lines.rend() )
-        {
-            std::string lsb_name, lsb_data;
-
-            size_t e;
-            if( ( e = (*it).find( "=" ) ) != std::string::npos )
-            {
-                lsb_name = MISC::remove_spaces( (*it).substr( 0, e ) );
-                lsb_data = MISC::remove_spaces( (*it).substr( e + 1 ) );
-            }
-
-            // 「DISTRIB_DESCRIPTION="Ubuntu 7.10"」などから「Ubuntu 7.10」を取得
-            if( lsb_name == "DISTRIB_DESCRIPTION" && ! lsb_data.empty() )
-            {
-                tmp = MISC::cut_str( lsb_data, "\"", "\"" );
-                break;
-            }
-
-            ++it;
-        }
-    }
-    // KNOPPIX (LSB？)
-    else if( CACHE::load_rawdata( "/etc/knoppix-version", text_data ) )
-    {
-        tmp = "KNOPPIX ";
-        tmp.append( text_data );
-    }
-    // Debian
-    else if( CACHE::load_rawdata( "/etc/debian_version", text_data ) )
-    {
-        tmp = "Debian GNU/Linux ";
-        tmp.append( text_data );
-    }
-    // Solaris系
-    else if( CACHE::load_rawdata( "/etc/release", text_data ) )
-    {
-        std::list< std::string > lines = MISC::get_lines( text_data );
-        std::list< std::string >::iterator it = lines.begin();
-        while( it != lines.end() )
-        {
-            // 名前が含まれている行を取得
-            if( (*it).find( "BeleniX" ) != std::string::npos
-                || (*it).find( "Nexenta" ) != std::string::npos
-                || (*it).find( "SchilliX" ) != std::string::npos
-                || (*it).find( "Solaris" ) != std::string::npos )
-            {
-                tmp = *it;
-                break;
-            }
-
-            ++it;
-        }
-    }
-    // ファイルの中身がそのままディストリ名として扱える物
-    else
-    {
-        // ディストリ名が書かれているファイル
-        std::string dist_files[] =
-        {
-            "/etc/arch-release",
-            "/etc/fedora-release",
-            "/etc/gentoo-release",
-            "/etc/lfs-release",
-            "/etc/mandriva-release",
-            "/etc/momonga-release",
-            "/usr/lib/setup/plamo-version",
-            "/etc/puppyversion",
-            "/etc/redhat-release", // Redhat, CentOS, WhiteBox, PCLinuxOS
-            "/etc/sabayon-release",
-            "/etc/slackware-version",
-            "/etc/SuSE-release",
-            "/etc/turbolinux-release",
-            "/etc/vine-release",
-            "/etc/zenwalk-version"
-        };
-
-        unsigned int i;
-        for( i = 0; i < sizeof( dist_files ) / sizeof( std::string ); ++i )
-        {
-            if( CACHE::load_rawdata( dist_files[i], text_data ) )
-            {
-                tmp = text_data;
-                break;
-            }
-        }
-    }
-
-    // 文字列両端のスペースなどを削除する
-    std::string dist_name = MISC::remove_spaces( tmp );
-
-    // 取得した文字が異常に長い場合は空にする
-    if( dist_name.length() > 50 ) dist_name.clear();
-
-#ifdef HAVE_SYS_UTSNAME_H
-
-    char *sysname = 0, *release = 0, *machine = 0;
-
-    // システムコール uname() 準拠：SVr4, POSIX.1-2001.
-    struct utsname* uts;
-    uts = (struct utsname*)malloc( sizeof( struct utsname ) );
-    if( uname( uts ) != -1 )
-    {
-        sysname = uts->sysname;
-        release = uts->release;
-        machine = uts->machine;
-    }
-
-    // FreeBSD等やディストリ名が取得できなかった場合は"$ uname -rs"と同じ様式
-    if( dist_name.empty() && sysname && release )
-    {
-        dist_name = std::string( sysname ) + " " + std::string( release );
-    }
-
-    // アーキテクチャがx86でない場合
-    if( machine &&
-        ( strlen( machine ) != 4
-          || ! ( machine[0] == 'i'
-               && machine[1] >= '3' && machine[1] <= '6'
-               && machine[2] == '8' && machine[3] == '6' ) ) )
-    {
-        dist_name.append( " (" + std::string( machine ) + ")" );
-    }
-
-    free( uts );
-    uts = NULL;
-
-#endif
-
-    return dist_name;
-}
-
-
 // セッション情報読み込み
 void SESSION::init_session()
 {
@@ -563,24 +402,6 @@ void SESSION::init_session()
     img_fit_mode = cf.get_option( "img_fit_mode", IMG_FIT_NORMAL );
 
     dir_select_favorite = cf.get_option( "dir_select_favorite", "" );
-
-    // WM 判定
-    // TODO: 環境変数で判定できない場合の判定方法を考える
-    win_manager = WM_UNKNON;
-    const std::string str_wm = MISC::getenv_limited( "DESKTOP_SESSION", 5 );
-
-    if( str_wm.find( "xfce" ) != std::string::npos ) win_manager = WM_XFCE;
-    else if( str_wm.find( "gnome" ) != std::string::npos ) win_manager = WM_GNOME;
-    else if( str_wm.find( "kde" ) != std::string::npos ) win_manager = WM_KDE;
-
-    if( win_manager == WM_UNKNON ){
-        if( ! MISC::getenv_limited( "GNOME_DESKTOP_SESSION_ID" ).empty() ) win_manager = WM_GNOME;
-        else{
-
-            const std::string str_wm = MISC::getenv_limited( "KDE_FULL_SESSION", 4 );
-            if( str_wm == "true" ) win_manager = WM_KDE;
-        }
-    }
 
 #ifdef _DEBUG
     std::cout << "x=" << x_win_main << std::endl
@@ -783,16 +604,6 @@ void SESSION::set_booting( bool boot ){ booting = boot; }
 // 終了中
 const bool SESSION::is_quitting(){ return quitting; }
 void SESSION::set_quitting( bool quit ){ quitting = quit; }
-
-// ディストリ名取得
-const std::string& SESSION::get_distribution_name()
-{
-    if( distribution_name.empty() ) distribution_name = get_distribution_name_from_environment();
-    return distribution_name;
-}
-
-// WM 判定
-const int SESSION::get_wm(){ return win_manager; }
 
 const int SESSION::get_mode_pane() { return mode_pane; }
 void SESSION::set_mode_pane( int mode ){ mode_pane = mode; }

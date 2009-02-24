@@ -7,6 +7,7 @@
 
 #include "config/globalconf.h"
 
+#include "environment.h"
 #include "global.h"
 #include "session.h"
 #include "dndmanager.h"
@@ -222,7 +223,7 @@ void JDWindow::clock_in()
         // メインウィンドウと画像ウィンドウが同時にフォーカスアウトしたら
         // 一時的に transient 指定を外す。メインウィンドウがフォーカスインしたときに
         // Admin::focus_out() で transient 指定を戻す
-        if( SESSION::get_wm() == SESSION::WM_GNOME
+        if( ENVIRONMENT::get_wm() == ENVIRONMENT::WM_GNOME
             && ! SESSION::is_iconified_win_main() // メインウィンドウが最小化しているときに transient を外すとウィンドウが表示されなくなる
             && ! SESSION::is_focus_win_main() && ! is_focus_win() ){
 
@@ -443,7 +444,7 @@ void JDWindow::set_enable_fold( bool enable )
         // XFCE 環境の場合はここでpresent()しておかないとフォーカスが外れる
         if( m_mode == JDWIN_NORMAL && m_enable_fold ){
 
-            if( SESSION::get_wm() == SESSION::WM_KDE ) switch_admin();
+            if( ENVIRONMENT::get_wm() == ENVIRONMENT::WM_KDE ) switch_admin();
             else present();
         }
     }

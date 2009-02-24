@@ -177,6 +177,11 @@ std::string ENVIRONMENT::get_distname()
         tmp = "Debian GNU/Linux ";
         tmp.append( text_data );
     }
+    // Arch Linux (2009/02/23現在"/etc/arch-release"は空)
+    else if( CACHE::file_exists( "/etc/arch-release" ) == CACHE::EXIST_FILE )
+    {
+        tmp = "Arch Linux";
+    }
     // Solaris系
     else if( CACHE::load_rawdata( "/etc/release", text_data ) )
     {
@@ -203,7 +208,6 @@ std::string ENVIRONMENT::get_distname()
         // ディストリ名が書かれているファイル
         std::string dist_files[] =
         {
-            "/etc/arch-release",   // ← 実は空なので無意味
             "/etc/fedora-release",
             "/etc/gentoo-release",
             "/etc/lfs-release",

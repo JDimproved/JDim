@@ -28,6 +28,7 @@ IOMonitor::IOMonitor()
   : m_fifo_fd( -1 ),
     m_fifo_file( CACHE::path_lock() ),
     m_iochannel( NULL ),
+    m_fifo_stat( FIFO_OK ),
     m_main_process( false )
 {
     init();
@@ -70,33 +71,38 @@ void IOMonitor::init()
     // FIFO作成でエラーになった( 基本的に既にメインプロセスがある )
     if( mkfifo_status != 0 )
     {
-        // FIFOが存在しない
-        if( errno != EEXIST )
+        // FIFOが存在する
+        if( errno == EEXIST )
+        {
+            // FIFOを書き込み専用モードでオープン( ノンブロック )
+            if( ( m_fifo_fd = open( m_fifo_file.c_str(), O_WRONLY | O_NONBLOCK ) ) == -1 )
+            {
+                // 反対側が既にオープンされていない( 異常終了などでメインプロセスがない )
+                if( ( errno & ENXIO ) != 0 )
+                {
+                    // 残っているFIFOを消す
+                    delete_fifo();
+
+                    // 最初からやり直す
+                    goto do_makefifo;
+                }
+                // その他のエラー
+                else
+                {
+#ifdef _DEBUG
+                    std::cerr << "IOMonitor::init(): " << strerror( errno ) << std::endl;
+#endif
+
+                    m_fifo_stat = FIFO_OPEN_ERROR;
+                }
+            }
+        }
+        // 何らかの問題で作成出来なかった
+        else
         {
             MISC::ERRMSG( "IOMonitor::init(): fifo create failed." );
 
-            return;
-        }
-
-        // FIFOを書き込み専用モードでオープン( ノンブロック )
-        if( ( m_fifo_fd = open( m_fifo_file.c_str(), O_WRONLY | O_NONBLOCK ) ) == -1 )
-        {
-            // 反対側が既にオープンされていない( 異常終了などでメインプロセスがない )
-            if( ( errno & ENXIO ) != 0 )
-            {
-                // 残っているFIFOを消す
-                delete_fifo();
-
-                // 最初からやり直す
-                goto do_makefifo;
-            }
-            // その他のエラー
-            else
-            {
-#ifdef _DEBUG
-                std::cerr << "IOMonitor::init(): " << strerror( errno ) << std::endl;
-#endif
-            }
+            m_fifo_stat = FIFO_CREATE_ERROR;
         }
     }
     // メインプロセス
@@ -111,6 +117,10 @@ void IOMonitor::init()
 #ifdef _DEBUG
             std::cerr << "IOMonitor::init(): " << strerror( errno );
 #endif // _DEBUG
+
+            m_fifo_stat = FIFO_OPEN_ERROR;
+
+            return;
         }
 
         // メインプロセスである
@@ -128,10 +138,14 @@ void IOMonitor::init()
 /*-------------------------------------------------------------------*/
 void IOMonitor::delete_fifo()
 {
-    if( unlink( m_fifo_file.c_str() ) < 0 )
+    int del_stat = 0;
+
+    if( ( del_stat = unlink( m_fifo_file.c_str() ) ) < 0 )
     {
         MISC::ERRMSG( "IOMonitor::init(): fifo unlink failed." );
     }
+
+    g_assert( del_stat >= 0 );
 }
 
 

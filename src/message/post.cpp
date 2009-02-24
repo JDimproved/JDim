@@ -118,6 +118,11 @@ void Post::post_msg()
         else data.url = DBTREE::url_subbbscgi_new( m_url ); // 2回目の投稿先
     }
 
+    // Content-Type (2009/02/18に報告された"したらば"に書き込めない問題で追加)
+    // http://www.asahi-net.or.jp/~sd5a-ucd/rec-html401j/interact/forms.html#h-17.13.4.1
+    // http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1
+    data.contenttype = "application/x-www-form-urlencoded";
+
     data.agent = DBTREE::get_agent( m_url );
     data.referer = DBTREE::url_boardbase( m_url );
     data.str_post = m_msg;
@@ -132,6 +137,7 @@ void Post::post_msg()
 #ifdef _DEBUG
     std::cout << "Post::post_msg : " << std::endl
               << "url = " << data.url << std::endl
+              << "contenttype = " << data.contenttype << std::endl
               << "agent = " << data.agent << std::endl
               << "referer = " << data.referer << std::endl
               << "cookie = " << data.cookie_for_write << std::endl
