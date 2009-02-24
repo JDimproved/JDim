@@ -789,7 +789,7 @@ std::string Loader::create_msg_send()
     }
 
     msg << "Host: " << m_data.host << "\r\n";
-    msg << "Content-Type: " << m_data.contenttype << "\r\n";
+    if( ! m_data.contenttype.empty() ) msg << "Content-Type: " << m_data.contenttype << "\r\n";
     if( ! m_data.agent.empty() ) msg << "User-Agent: " << m_data.agent << "\r\n";
     if( ! m_data.referer.empty() ) msg << "Referer: " << m_data.referer << "\r\n";
 

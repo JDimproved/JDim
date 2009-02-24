@@ -630,7 +630,7 @@ void DragableNoteBook::slot_drag_motion( const int page, const int tab_x, const 
     if( page < 0 || page == m_page ){
         if( m_down_arrow ) m_down_arrow->hide();
     }
-    else{
+    else if( m_dragging_tab ){
 
         if( ! m_down_arrow ) m_down_arrow = new SKELETON::IconPopup( ICON::DOWN );
         m_down_arrow->show();
@@ -694,6 +694,8 @@ void DragableNoteBook::slot_drag_end()
 #endif
 
     m_dragging_tab = false;
+
+    if( m_down_arrow ) m_down_arrow->hide();
 
     CORE::DND_End();
 }
