@@ -13,6 +13,8 @@
 #include "control/controlutil.h"
 #include "control/controlid.h"
 
+#include "icons/iconmanager.h"
+
 #include "command.h"
 #include "session.h"
 #include "compmanager.h"
@@ -24,7 +26,8 @@ using namespace BBSLIST;
 BBSListToolBar::BBSListToolBar() :
     SKELETON::ToolBar( BBSLIST::get_admin() ),
     m_button_toggle( "板一覧とお気に入りの切り替え", true, true, m_label ),
-    m_button_check_update_root( NULL )
+    m_button_check_update_root( NULL ),
+    m_button_check_update_open_root( NULL )
 {
     m_button_toggle.get_button()->set_tooltip_arrow( "板一覧とお気に入りの切り替え\n\nマウスホイール回転でも切り替え可能" );
 
@@ -73,6 +76,15 @@ void BBSListToolBar::pack_buttons()
                     set_tooltip( *m_button_check_update_root, CONTROL::get_label_motions( CONTROL::CheckUpdateRoot ) );
                 }
                 get_buttonbar().append( *m_button_check_update_root );
+                break;
+
+            case ITEM_CHECK_UPDATE_OPEN_ROOT:
+                if( ! m_button_check_update_open_root ){
+                    m_button_check_update_open_root = Gtk::manage( new SKELETON::ImgToolButton( ICON::THREAD ) );
+                    m_button_check_update_open_root->signal_clicked().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_check_update_open_root ) );
+                    set_tooltip( *m_button_check_update_open_root, CONTROL::get_label_motions( CONTROL::CheckUpdateOpenRoot ) );
+                }
+                get_buttonbar().append( *m_button_check_update_open_root );
                 break;
 
             case ITEM_SEARCH_NEXT:
@@ -143,6 +155,12 @@ bool BBSListToolBar::slot_scroll_event( GdkEventScroll* event )
 void BBSListToolBar::slot_check_update_root()
 {
     CORE::core_set_command( "check_update_root", "" );
+}
+
+
+void BBSListToolBar::slot_check_update_open_root()
+{
+    CORE::core_set_command( "check_update_open_root", "" );
 }
 
 

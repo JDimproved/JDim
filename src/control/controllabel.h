@@ -122,7 +122,7 @@ namespace CONTROL
         { "OpenBoardTabButton", "タブで板を開く" },
 
         { "CheckUpdateRoot", ITEM_NAME_CHECK_UPDATE_ROOT },
-        { "CheckUpdateOpenRoot", "更新されたスレをタブで開く" },
+        { "CheckUpdateOpenRoot", ITEM_NAME_CHECK_UPDATE_OPEN_ROOT },
 
         { "", "" },
 

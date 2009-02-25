@@ -109,7 +109,7 @@ void SelectItemPref::pack_widgets()
 
     // 全体のパッキング
     m_scroll_shown.add( m_tree_shown );
-    m_scroll_shown.set_size_request( 200, 300 );
+    m_scroll_shown.set_size_request( 250, 300 );
     m_scroll_shown.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS );
 
     m_hbox.pack_start( m_scroll_shown, Gtk::PACK_EXPAND_WIDGET );
@@ -129,7 +129,7 @@ void SelectItemPref::pack_widgets()
     m_hbox.pack_start( m_vbox, Gtk::PACK_SHRINK, 4 );
 
     m_scroll_hidden.add( m_tree_hidden );
-    m_scroll_hidden.set_size_request( 200, 300 );
+    m_scroll_hidden.set_size_request( 250, 300 );
     m_scroll_hidden.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS );
 
     m_hbox.pack_start( m_scroll_hidden, Gtk::PACK_EXPAND_WIDGET );

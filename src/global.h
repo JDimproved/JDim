@@ -50,6 +50,7 @@ enum{
 #define ITEM_NAME_STOPLOADING "読み込み中止"
 #define ITEM_NAME_FAVORITE  "お気に入りに追加"
 #define ITEM_NAME_CHECK_UPDATE_ROOT "お気に入り更新チェック"
+#define ITEM_NAME_CHECK_UPDATE_OPEN_ROOT "お気に入り更新チェックしてタブで開く"
 #define ITEM_NAME_DELETE    "削除"
 #define ITEM_NAME_QUIT      "閉じる"
 #define ITEM_NAME_PREVVIEW  "前へ戻る"
@@ -99,6 +100,7 @@ enum
     ITEM_STOPLOADING,
     ITEM_FAVORITE,
     ITEM_CHECK_UPDATE_ROOT,
+    ITEM_CHECK_UPDATE_OPEN_ROOT,
     ITEM_DELETE,
     ITEM_QUIT,
     ITEM_PREVVIEW,

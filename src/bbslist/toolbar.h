@@ -22,6 +22,7 @@ namespace BBSLIST
         SKELETON::ToolMenuButton m_button_toggle;
 
         SKELETON::ImgToolButton* m_button_check_update_root;
+        SKELETON::ImgToolButton* m_button_check_update_open_root;
 
       public:
 
@@ -40,6 +41,7 @@ namespace BBSLIST
         void slot_toggle( int i );
         bool slot_scroll_event( GdkEventScroll* event );
         void slot_check_update_root();
+        void slot_check_update_open_root();
     };
 
 
