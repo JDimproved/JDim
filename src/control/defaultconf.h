@@ -94,6 +94,8 @@ namespace CONTROL
 #define KEYCONF_SearchNextArticle "Ctrl+Space"
 #define KEYCONF_SearchWeb "Ctrl+k"
 #define KEYCONF_SearchTitle "Ctrl+t"
+#define KEYCONF_SearchCacheLocal "Ctrl+Enter"
+#define KEYCONF_SearchCacheAll ""
 
 // IMAGE
 #define KEYCONF_CancelMosaic  "c"

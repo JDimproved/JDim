@@ -157,6 +157,8 @@ namespace CONTROL
         SearchNextArticle,
         SearchWeb,
         SearchTitle,
+        SearchCacheLocal,
+        SearchCacheAll,
 
         PopupWarpButton, // 以下、マウスボタン専用の設定
         ReferResButton, 

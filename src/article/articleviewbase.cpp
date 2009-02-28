@@ -210,8 +210,8 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Search_Menu", "検索(_F)" ) );
     action_group()->add( Gtk::Action::create( "SearchNextArticle", "SearchNextArticle"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_next ) );
     action_group()->add( Gtk::Action::create( "SearchWeb", "SearchWeb" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_web ) );
-    action_group()->add( Gtk::Action::create( "SearchCacheLocal", "ログ検索 (対象: 板)(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
-    action_group()->add( Gtk::Action::create( "SearchCacheAll", "ログ検索 (対象: 全ログ)(_A)") );
+    action_group()->add( Gtk::Action::create( "SearchCacheLocal", "SearchCacheLocal" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
+    action_group()->add( Gtk::Action::create( "SearchCacheAll", "SearchCacheAll") );
     action_group()->add( Gtk::Action::create( "ExecSearchCacheAll", "検索する(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cacheall ) );
     action_group()->add( Gtk::Action::create( "SearchTitle", "SearchTitle" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
 
@@ -1074,6 +1074,16 @@ const bool ArticleViewBase::operate_view( const int control )
             // スレタイ検索
         case CONTROL::SearchTitle:
             slot_search_title();
+            break;
+
+            // ログ検索(板内)
+        case CONTROL::SearchCacheLocal:
+            slot_search_cachelocal();
+            break;
+
+            // ログ検索(全て)
+        case CONTROL::SearchCacheAll:
+            slot_search_cacheall();
             break;
 
         default:
@@ -2981,8 +2991,6 @@ void ArticleViewBase::slot_search_cachelocal()
     query = MISC::replace_str( query, "\n", "" );
 
     std::string url = DBTREE::url_subject( m_url_article );
-
-    if( query.empty() ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_search_cachelocal " << url << std::endl

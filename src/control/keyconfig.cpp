@@ -118,6 +118,8 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "SearchNextArticle", KEYCONF_SearchNextArticle );
     SETKEYMOTION( "SearchWeb", KEYCONF_SearchWeb );
     SETKEYMOTION( "SearchTitle", KEYCONF_SearchTitle );
+    SETKEYMOTION( "SearchCacheLocal", KEYCONF_SearchCacheLocal );
+    SETKEYMOTION( "SearchCacheAll", KEYCONF_SearchCacheAll );
 
     // IMAGE
     SETKEYMOTION( "CancelMosaic", KEYCONF_CancelMosaic );

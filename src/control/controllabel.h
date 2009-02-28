@@ -165,6 +165,8 @@ namespace CONTROL
         { "SearchNextArticle", "次スレ検索" },
         { "SearchWeb", "" },  //  CONTROL::get_keyconfig() で名前をセットする
         { "SearchTitle", "" }, //  CONTROL::get_keyconfig() で名前をセットする
+        { "SearchCacheLocal", "ログ検索(対象: 板)" },
+        { "SearchCacheAll", "ログ検索(対象: 全ログ)" },
 
         { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },

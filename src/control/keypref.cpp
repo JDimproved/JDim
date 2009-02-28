@@ -158,6 +158,8 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::SearchNextArticle );
     append_row( CONTROL::SearchWeb );
     append_row( CONTROL::SearchTitle );
+    append_row( CONTROL::SearchCacheLocal );
+    append_row( CONTROL::SearchCacheAll );
 
     append_row( CONTROL::LiveStartStop );
 

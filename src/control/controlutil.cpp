@@ -406,6 +406,14 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
                 label += "(_T)";
                 break;
 
+            case CONTROL::SearchCacheLocal: // ログ検索(対象: 板)
+                label += "(_L)";
+                break;
+
+            case CONTROL::SearchCacheAll: // ログ検索(対象: 全て)
+                label += "(_A)";
+                break;
+
             case CONTROL::CancelMosaic: //モザイク解除
                 label += "(_M)";
                 break;
