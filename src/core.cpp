@@ -524,7 +524,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索(_C)" ) );
     m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "表示中の板のログを検索(_B)"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索(_A)"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
-    m_action_group->add( Gtk::Action::create( "SearchTitle", CONFIG::get_menu_search_title()+"(_T)" ), sigc::mem_fun( *this, &Core::slot_search_title ) );
+    m_action_group->add( Gtk::Action::create( "SearchTitle", "SearchTitle" ), sigc::mem_fun( *this, &Core::slot_search_title ) );
 
     m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "お気に入りの更新チェック(_U)" ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ(_R)"), sigc::mem_fun( *this, &Core::slot_check_update_root ) );

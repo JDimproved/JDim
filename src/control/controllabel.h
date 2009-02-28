@@ -163,6 +163,8 @@ namespace CONTROL
         { "LiveStartStop", ITEM_NAME_LIVE },
 
         { "SearchNextArticle", "次スレ検索" },
+        { "SearchWeb", "" },  //  CONTROL::get_keyconfig() で名前をセットする
+        { "SearchTitle", "" }, //  CONTROL::get_keyconfig() で名前をセットする
 
         { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },

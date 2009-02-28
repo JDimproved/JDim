@@ -92,6 +92,8 @@ namespace CONTROL
 #define KEYCONF_LiveStartStop  "F6"
 
 #define KEYCONF_SearchNextArticle "Ctrl+Space"
+#define KEYCONF_SearchWeb "Ctrl+k"
+#define KEYCONF_SearchTitle "Ctrl+t"
 
 // IMAGE
 #define KEYCONF_CancelMosaic  "c"
@@ -160,6 +162,8 @@ namespace CONTROL
 // ARTICLE
 #define MOUSECONF_GotoNew "626"
 #define MOUSECONF_SearchNextArticle "28"
+#define MOUSECONF_SearchWeb ""
+#define MOUSECONF_SearchTitle ""
 #define MOUSECONF_LiveStartStop ""
 
 // IMAGE

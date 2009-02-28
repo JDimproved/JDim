@@ -54,6 +54,8 @@ void MouseConfig::load_conf()
     // ARTICLE
     SETMOTION( "GotoNew", MOUSECONF_GotoNew );
     SETMOTION( "SearchNextArticle", MOUSECONF_SearchNextArticle );
+    SETMOTION( "SearchWeb", MOUSECONF_SearchWeb );
+    SETMOTION( "SearchTitle", MOUSECONF_SearchTitle );
     SETMOTION( "LiveStartStop", MOUSECONF_LiveStartStop );
 
     // IMAGE

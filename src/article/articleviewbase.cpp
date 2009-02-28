@@ -209,11 +209,11 @@ void ArticleViewBase::setup_action()
     // 検索
     action_group()->add( Gtk::Action::create( "Search_Menu", "検索(_F)" ) );
     action_group()->add( Gtk::Action::create( "SearchNextArticle", "SearchNextArticle"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_next ) );
-    action_group()->add( Gtk::Action::create( "SearchWeb", CONFIG::get_menu_search_web()+"(_W)" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_web ) );
+    action_group()->add( Gtk::Action::create( "SearchWeb", "SearchWeb" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_web ) );
     action_group()->add( Gtk::Action::create( "SearchCacheLocal", "ログ検索 (対象: 板)(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
     action_group()->add( Gtk::Action::create( "SearchCacheAll", "ログ検索 (対象: 全ログ)(_A)") );
     action_group()->add( Gtk::Action::create( "ExecSearchCacheAll", "検索する(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cacheall ) );
-    action_group()->add( Gtk::Action::create( "SearchTitle", CONFIG::get_menu_search_title() + "(_T)" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
+    action_group()->add( Gtk::Action::create( "SearchTitle", "SearchTitle" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
 
     // 抽出系
     action_group()->add( Gtk::Action::create( "Drawout_Menu", "抽出(_E)" ) );
@@ -1064,6 +1064,16 @@ const bool ArticleViewBase::operate_view( const int control )
             // 次スレ検索
         case CONTROL::SearchNextArticle:
             slot_search_next();
+            break;
+
+            // Web検索
+        case CONTROL::SearchWeb:
+            slot_search_web();
+            break;
+
+            // スレタイ検索
+        case CONTROL::SearchTitle:
+            slot_search_title();
             break;
 
         default:
@@ -3022,8 +3032,6 @@ void ArticleViewBase::slot_search_title()
 {
     std::string query = m_drawarea->str_selection();
     query = MISC::replace_str( query, "\n", "" );
-
-    if( query.empty() ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_search_title query = " << query << std::endl;

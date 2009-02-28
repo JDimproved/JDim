@@ -515,9 +515,9 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
     m_hbox.pack_start( m_button_reset, Gtk::PACK_SHRINK );
 
     get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_label );
+    get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
     get_vbox()->pack_start( m_scrollwin );
-    get_vbox()->pack_start( m_hbox );
+    get_vbox()->pack_start( m_hbox, Gtk::PACK_SHRINK );
 
     show_all_children();
     set_title( target + "設定" );

@@ -15,6 +15,8 @@
 
 #include "jdlib/miscutil.h"
 
+#include "config/globalconf.h"
+
 #include "cache.h"
 
 #include <cstring>
@@ -37,7 +39,14 @@ CONTROL::ButtonConfig* instance_buttonconfig_bkup = NULL;
 
 CONTROL::KeyConfig* CONTROL::get_keyconfig()
 {
-    if( ! instance_keyconfig ) instance_keyconfig = new CONTROL::KeyConfig();
+    if( ! instance_keyconfig ){
+
+        instance_keyconfig = new CONTROL::KeyConfig();
+
+        // ラベルをセットしておく
+        strncpy( control_label[ CONTROL::SearchWeb ][ 1 ], CONFIG::get_menu_search_web().c_str(), MAX_CONTROL_LABEL );
+        strncpy( control_label[ CONTROL::SearchTitle ][ 1 ], CONFIG::get_menu_search_title().c_str(), MAX_CONTROL_LABEL );
+    }
 
     return instance_keyconfig;
 }
@@ -387,6 +396,14 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
 
             case CONTROL::SearchNextArticle: // 次スレ検索
                 label += "(_N)";
+                break;
+
+            case CONTROL::SearchWeb: // web検索
+                label += "(_W)";
+                break;
+
+            case CONTROL::SearchTitle: // スレタイ検索
+                label += "(_T)";
                 break;
 
             case CONTROL::CancelMosaic: //モザイク解除
