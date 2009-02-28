@@ -231,6 +231,7 @@ void AboutConfig::append_rows()
     append_row( "スレタイ検索用のメニュー項目名", get_confitem()->menu_search_title, CONF_MENU_SEARCH_TITLE );
     append_row( "スレタイ検索用のアドレス", get_confitem()->url_search_title, CONF_URL_SEARCH_TITLE );
     append_row( "スレタイ検索時にアドレスとスレタイを取得する正規表現", get_confitem()->regex_search_title, CONF_REGEX_SEARCH_TITLE );
+    append_row( "Ctrl+qでウィンドウを閉じない", get_confitem()->disable_close, CONF_DISABLE_CLOSE );
 }
 
 

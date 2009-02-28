@@ -355,6 +355,9 @@ namespace CONFIG
         // スレをお気に入りに追加したときにしおりをセットする
         bool bookmark_drop;
 
+        // Ctrl+qでウィンドウを閉じない
+        bool disable_close;
+
 #ifdef HAVE_MIGEMO_H
         // migemo-dictの場所
         std::string migemodict_path;

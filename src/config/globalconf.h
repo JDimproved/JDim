@@ -404,6 +404,9 @@ namespace CONFIG
     // スレをお気に入りに追加したときにしおりをセットする
     const bool get_bookmark_drop();
 
+    // Ctrl+qでウィンドウを閉じない
+    const bool get_disable_close();
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     const std::string& get_migemodict_path();

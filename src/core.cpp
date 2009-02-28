@@ -303,8 +303,11 @@ void Core::run( bool init )
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
     m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存(_S)"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
-    m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ),
-                         Gtk::AccelKey( "<Ctrl>Q" ), sigc::mem_fun(*this, &Core::slot_quit ) );
+
+    if( CONFIG::get_disable_close() ) m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ), sigc::mem_fun(*this, &Core::slot_quit ) );
+    else m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ),
+                              Gtk::AccelKey( "<Ctrl>Q" ), sigc::mem_fun(*this, &Core::slot_quit ) );
+
 
     //////////////////////////////////////////////////////
 

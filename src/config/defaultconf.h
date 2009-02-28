@@ -104,6 +104,7 @@ namespace CONFIG
         CONF_THRESHOLD_NEXT = 5,   // 次スレ検索の類似度のしきい値
         CONF_REPLACE_FAVORITE_NEXT = 1,  // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
         CONF_BOOKMARK_DROP = 0, // スレをお気に入りに追加したときにしおりをセットする
+        CONF_DISABLE_CLOSE = 0, // Ctrl+qでウィンドウを閉じない
     };
 
 // browsers.cpp のデフォルトのラベル番号

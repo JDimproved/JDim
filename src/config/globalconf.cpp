@@ -397,6 +397,9 @@ const bool CONFIG::get_replace_favorite_next(){ return get_confitem()->replace_f
 // スレをお気に入りに追加したときにしおりをセットする
 const bool CONFIG::get_bookmark_drop(){ return get_confitem()->bookmark_drop; }
 
+// Ctrl+qでウィンドウを閉じない
+const bool CONFIG::get_disable_close(){ return get_confitem()->disable_close; }
+
 
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }

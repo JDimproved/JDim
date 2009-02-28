@@ -421,6 +421,9 @@ const bool ConfigItems::load()
     // スレをお気に入りに追加したときにしおりをセットする
     bookmark_drop = cf.get_option( "bookmark_drop", CONF_BOOKMARK_DROP );
 
+    // Ctrl+qでウィンドウを閉じない
+    disable_close = cf.get_option( "disable_close", CONF_DISABLE_CLOSE );
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     migemodict_path = cf.get_option( "migemodict_path", CONF_MIGEMO_PATH );
@@ -657,6 +660,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "threshold_next", threshold_next );
     cf.update( "replace_favorite_next", replace_favorite_next );
     cf.update( "bookmark_drop", bookmark_drop );
+    cf.update( "disable_close", disable_close );
 
 #ifdef HAVE_MIGEMO_H
     cf.update( "migemodict_path", migemodict_path );
