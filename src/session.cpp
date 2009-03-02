@@ -13,7 +13,7 @@
 #include "bbslist/bbslistadmin.h"
 #include "article/articleadmin.h"
 
-#include <vector>
+#include <sstream>
 
 bool booting = true;
 bool quitting = false;
