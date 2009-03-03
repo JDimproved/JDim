@@ -112,6 +112,13 @@ const std::string BoardMachi::url_dat( const std::string& url, int& num_from, in
     const std::string urldat = BoardBase::url_dat( url, num_from, num_to, num_str );
     if( ! urldat.empty() ) return urldat;
 
+    // 旧形式(read.pl)型の場合
+    if( url.find( "read.pl" ) != std::string::npos ){
+
+        const std::string urldat = BoardBase::url_dat( MISC::replace_str( url, "read.pl", "read.cgi" ), num_from, num_to, num_str );
+        if( ! urldat.empty() ) return urldat;
+    }
+
 #ifdef _DEBUG
     std::cout << "BoardMachi::url_dat : url = " << url << std::endl;
 #endif
