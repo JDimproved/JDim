@@ -46,11 +46,11 @@ m_path_article_ext_info = CACHE::path_article_ext_info( m_url, m_id ); \
 #define GET_INFOVALUE(target,targetname) \
 do { \
 target = std::string(); \
-option = targetname; \
+const int n = strlen( targetname ); \
 it2 = it; \
-while( it2 != lines.end() && ( *it2 ).find( option ) != 0 ) ++it2; \
+while( it2 != lines.end() && ( *it2 ).c_str()[ 0 ] != targetname[ 0 ] && strncmp( ( *it2 ).c_str(), targetname, n ) != 0 ) ++it2; \
 if( it2 != lines.end() ){ \
-    target = ( *it2 ).substr( option.length() ); \
+    target = ( *it2 ).substr( n ); \
     it = ++it2; \
 } } while( false )
 
@@ -75,8 +75,9 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_number_max( MAX_RESNUMBER ),
       m_write_fixname( 0 ),
       m_write_fixmail( 0 ),
-      m_abone_transparent( 0 ),
-      m_abone_chain( 0 ),
+      m_abone_transparent( false ),
+      m_abone_chain( false ),
+      m_abone_age( false ),
       m_bookmarked_thread( false ),
       m_cached( cached ),
       m_read_info( 0 ),
@@ -573,7 +574,7 @@ void ArticleBase::update_abone()
     if( ! m_nodetree ) return;
 
     get_nodetree()->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_vec_abone_res,
-                                     m_abone_transparent, m_abone_chain );
+                                     m_abone_transparent, m_abone_chain, m_abone_age );
 
     get_nodetree()->update_abone_all();
 }
@@ -583,10 +584,12 @@ void ArticleBase::update_abone()
 //
 // あぼーん状態のリセット(情報セットと状態更新)
 //
-void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names
-                               ,std::list< std::string >& words,  std::list< std::string >& regexs
-                               ,const std::vector< char >& vec_abone_res
-                               ,const bool transparent, const bool chain )
+void ArticleBase::reset_abone( const std::list< std::string >& ids,
+                               const std::list< std::string >& names,
+                               const std::list< std::string >& words,
+                               const std::list< std::string >& regexs,
+                               const std::vector< char >& vec_abone_res,
+                               const bool transparent, const bool chain, const bool age )
 {
     if( empty() ) return;
 
@@ -620,6 +623,7 @@ void ArticleBase::reset_abone( std::list< std::string >& ids, std::list< std::st
     
     m_abone_transparent = transparent;
     m_abone_chain = chain;
+    m_abone_age = age;
 
     update_abone();
 
@@ -717,7 +721,7 @@ void ArticleBase::set_abone_res( const int number, const bool set )
 //
 // 透明あぼーん更新
 //
-void ArticleBase::set_abone_transparent( bool set )
+void ArticleBase::set_abone_transparent( const bool set )
 {
     if( empty() ) return;
 
@@ -732,7 +736,7 @@ void ArticleBase::set_abone_transparent( bool set )
 //
 // 連鎖あぼーん更新
 //
-void ArticleBase::set_abone_chain( bool set )
+void ArticleBase::set_abone_chain( const bool set )
 {
     if( empty() ) return;
 
@@ -743,6 +747,20 @@ void ArticleBase::set_abone_chain( bool set )
     m_save_info = true;
 } 
 
+
+//
+// ageあぼーん更新
+//
+void ArticleBase::set_abone_age( const bool set )
+{
+    if( empty() ) return;
+
+    m_abone_age = set;
+
+    update_abone();
+
+    m_save_info = true;
+} 
 
 
 //
@@ -865,7 +883,7 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
 
         // あぼーん情報のコピー
         m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_vec_abone_res,
-                                     m_abone_transparent, m_abone_chain );
+                                     m_abone_transparent, m_abone_chain, m_abone_age );
 
         // 書き込み情報のコピー
         m_nodetree->copy_post_info( m_vec_posted );
@@ -1060,8 +1078,9 @@ void ArticleBase::copy_article_info( const std::string& url_src )
     std::vector< char > vec_abone_res;
     const bool transparent = DBTREE::get_abone_transparent( url_src );
     const bool chain = DBTREE::get_abone_chain( url_src );
+    const bool age = DBTREE::get_abone_age( url_src );
 
-    reset_abone( ids, names ,words, regexs, vec_abone_res, transparent, chain );
+    reset_abone( ids, names ,words, regexs, vec_abone_res, transparent, chain, age );
 }
 
 
@@ -1419,6 +1438,7 @@ void ArticleBase::delete_cache( const bool cache_only )
         m_vec_abone_res.clear();
         m_abone_transparent = false;
         m_abone_chain = false;
+        m_abone_age = false;
         m_read_info = false;
         m_save_info = false;
         m_bookmarked_thread = false;
@@ -1504,7 +1524,6 @@ void ArticleBase::read_info()
 
         std::list< std::string > lines = MISC::get_lines( str_info );
         std::list < std::string >::iterator it = lines.begin(), it2;
-        std::string option; // GET_INFOVALUE　で使用
 
         // subject
         GET_INFOVALUE( m_subject, "subject = " );
@@ -1650,6 +1669,11 @@ void ArticleBase::read_info()
                 else m_vec_posted[ number ] = false;
             }
         }
+
+        // ageあぼーん
+        m_abone_age = false;
+        GET_INFOVALUE( str_tmp, "aboneage = " );
+        if( ! str_tmp.empty() ) m_abone_age = atoi( str_tmp.c_str() );
     }
 
     // キャッシュはあるけど情報ファイルが無い場合
@@ -1809,6 +1833,7 @@ void ArticleBase::save_info( const bool force )
          << "aboneres = " << ss_abone_res.str() << std::endl
          << "bkmark_thread = " << m_bookmarked_thread << std::endl
          << "posted = " << ss_posted.str() << std::endl
+         << "aboneage = " << m_abone_age << std::endl
     ;
 
 #ifdef _DEBUG

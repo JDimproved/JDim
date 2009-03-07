@@ -1040,12 +1040,15 @@ std::vector< char > DBTREE::get_abone_vec_res( const std::string& url )
 }
 
 
-void DBTREE::reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names
-                          , std::list< std::string >& words, std::list< std::string >& regexs
-                          , std::vector< char >& vec_abone_res
-                          , bool transparent, bool chain)
+void DBTREE::reset_abone( const std::string& url,
+                          const std::list< std::string >& ids,
+                          const std::list< std::string >& names,
+                          const std::list< std::string >& words,
+                          const std::list< std::string >& regexs,
+                          const std::vector< char >& vec_abone_res,
+                          const bool transparent, const bool chain, const bool age )
 {
-    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs, vec_abone_res, transparent, chain );
+    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs, vec_abone_res, transparent, chain, age );
 }
 
 
@@ -1072,27 +1075,42 @@ void DBTREE::add_abone_word( const std::string& url, const std::string& word )
 }
 
 
+// 透明あぼーん
 const bool DBTREE::get_abone_transparent( const std::string& url )
 {
     return DBTREE::get_article( url )->get_abone_transparent();
 }
 
 
-void DBTREE::set_abone_transparent( const std::string& url, bool set )
+void DBTREE::set_abone_transparent( const std::string& url, const bool set )
 {
     DBTREE::get_article( url )->set_abone_transparent( set );
 }
 
 
+// 連鎖あぼーん
 const bool DBTREE::get_abone_chain( const std::string& url )
 {
     return DBTREE::get_article( url )->get_abone_chain();
 }
 
 
-void DBTREE::set_abone_chain( const std::string& url, bool set )
+void DBTREE::set_abone_chain( const std::string& url, const bool set )
 {
     DBTREE::get_article( url )->set_abone_chain( set );
+}
+
+
+// ageあぼーん
+const bool DBTREE::get_abone_age( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_abone_age();
+}
+
+
+void DBTREE::set_abone_age( const std::string& url, const bool set )
+{
+    DBTREE::get_article( url )->set_abone_age( set );
 }
 
 
@@ -1112,13 +1130,13 @@ const int DBTREE::get_num_bookmark( const std::string& url )
     return DBTREE::get_article( url )->get_num_bookmark();
 }
 
-const bool DBTREE::is_bookmarked( const std::string& url, int number )
+const bool DBTREE::is_bookmarked( const std::string& url, const int number )
 {
     return DBTREE::get_article( url )->is_bookmarked( number );
 }
 
 
-void DBTREE::set_bookmark( const std::string& url, int number, bool set )
+void DBTREE::set_bookmark( const std::string& url, const int number, const bool set )
 {
     DBTREE::get_article( url )->set_bookmark( number, set );
 }

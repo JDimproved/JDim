@@ -74,6 +74,7 @@ namespace DBTREE
         std::vector< char > m_vec_abone_res; // レスあぼーん情報
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
+        bool m_abone_age; // age ているレスをあぼーん
 
         // 「スレ」がスレ一覧でブックマークされているか
         bool m_bookmarked_thread;          
@@ -294,8 +295,12 @@ namespace DBTREE
 
         // 透明
         const bool get_abone_transparent();
+
         // 連鎖
         const bool get_abone_chain();
+
+        // ageあぼーん
+        const bool get_abone_age() const { return m_abone_age; }
 
         // number番のレスがあぼーんされているか
         const bool get_abone( int number );
@@ -304,18 +309,21 @@ namespace DBTREE
         void update_abone();
 
         // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
-        void reset_abone( std::list< std::string >& ids, std::list< std::string >& names
-                          ,std::list< std::string >& words,  std::list< std::string >& regexs
-                          ,const std::vector< char >& vec_abone_res
-                          ,const bool transparent, const bool chain );
+        void reset_abone( const std::list< std::string >& ids,
+                          const std::list< std::string >& names,
+                          const std::list< std::string >& words,
+                          const std::list< std::string >& regexs,
+                          const std::vector< char >& vec_abone_res,
+                          const bool transparent, const bool chain, const bool age );
 
         // あぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう)
         void add_abone_id( const std::string& id );
         void add_abone_name( const std::string& name );
         void add_abone_word( const std::string& word );
         void set_abone_res( const int number, const bool set );
-        void set_abone_transparent( bool set ); // 透明
-        void set_abone_chain( bool set ); // 連鎖
+        void set_abone_transparent( const bool set ); // 透明
+        void set_abone_chain( const bool set ); // 連鎖
+        void set_abone_age( const bool set ); // age
 
         // 「スレ」のブックマーク
         void set_bookmarked_thread( const bool bookmarked );

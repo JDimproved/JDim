@@ -1546,7 +1546,11 @@ void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
     int color = COLOR_CHAR;
     int i = 0;
     while( str[ i ] != 's' && i < lng ) ++i;
-    if( str[ i ] != 's' || str[ i+1 ] != 'a' || str[ i+2 ] != 'g' || str[ i+3 ] != 'e' ) color = COLOR_CHAR_AGE;
+    if( str[ i ] != 's' || str[ i+1 ] != 'a' || str[ i+2 ] != 'g' || str[ i+3 ] != 'e' ){
+        color = COLOR_CHAR_AGE;
+        header->headinfo->sage = FALSE;
+    }
+    else header->headinfo->sage = TRUE;
 
     header->headinfo->block[ BLOCK_MAIL ] = create_node_block();
     create_node_text( "[", color );
@@ -1557,8 +1561,7 @@ void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
     const bool sssp = false;
     parse_html( str, lng, color, digitlink, bold, ahref, sssp );
 
-    if( color == COLOR_CHAR ) create_node_text( "]", color );
-    else create_node_text( "]", color );
+    create_node_text( "]", color );
 }
 
 
@@ -2405,12 +2408,12 @@ void NodeTreeBase::clear_abone()
 
 
 // あぼーん情報を親クラスのarticlebaseからコピーする
-void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id,
-                                    std::list< std::string >& list_abone_name,
-                                    std::list< std::string >& list_abone_word,
-                                    std::list< std::string >& list_abone_regex,
+void NodeTreeBase::copy_abone_info( const std::list< std::string >& list_abone_id,
+                                    const std::list< std::string >& list_abone_name,
+                                    const std::list< std::string >& list_abone_word,
+                                    const std::list< std::string >& list_abone_regex,
                                     const std::vector< char >& vec_abone_res,
-                                    const bool abone_transparent, const bool abone_chain )
+                                    const bool abone_transparent, const bool abone_chain, const bool abone_age )
 {
     m_list_abone_id = list_abone_id;
     m_list_abone_name = list_abone_name;
@@ -2437,6 +2440,8 @@ void NodeTreeBase::copy_abone_info( std::list< std::string >& list_abone_id,
 
     if( CONFIG::get_abone_chain() ) m_abone_chain = true;
     else m_abone_chain = abone_chain;
+
+    m_abone_age = abone_age;
 }
 
 
@@ -2473,6 +2478,7 @@ void NodeTreeBase::update_abone( int from_number, int to_number )
         if( check_abone_res( i ) )  continue;
         if( check_abone_id( i ) )  continue;
         if( check_abone_name( i ) ) continue;
+        if( check_abone_mail( i ) ) continue;
         if( check_abone_word( i ) ) continue;
         if( check_abone_chain( i ) ) continue;
     }
@@ -2485,7 +2491,7 @@ void NodeTreeBase::update_abone( int from_number, int to_number )
 //
 // あぼーんの時はtrueを返す
 //
-bool NodeTreeBase::check_abone_res( int number )
+const bool NodeTreeBase::check_abone_res( const int number )
 {
     if( ! m_vec_abone_res.size() ) return false;
     if( ! m_vec_abone_res[ number ] ) return false;
@@ -2504,7 +2510,7 @@ bool NodeTreeBase::check_abone_res( int number )
 //
 // あぼーんの時はtrueを返す
 //
-bool NodeTreeBase::check_abone_id( int number )
+const bool NodeTreeBase::check_abone_id( const int number )
 {
     bool check_id = ! m_list_abone_id.empty();
     bool check_id_board = ! m_list_abone_id_board.empty();
@@ -2554,7 +2560,7 @@ bool NodeTreeBase::check_abone_id( int number )
 //
 // あぼーんの時はtrueを返す
 //
-bool NodeTreeBase::check_abone_name( int number )
+const bool NodeTreeBase::check_abone_name( int number )
 {
     bool check_name = ! m_list_abone_name.empty();
     bool check_name_board = ! m_list_abone_name_board.empty();
@@ -2608,13 +2614,35 @@ bool NodeTreeBase::check_abone_name( int number )
 }
 
 
+//
+// number番のあぼーん判定( mail )
+//
+// あぼーんの時はtrueを返す
+//
+const bool NodeTreeBase::check_abone_mail( const int number )
+{
+    if( ! m_abone_age ) return false;
+
+    NODE* head = res_header( number );
+    if( ! head ) return false;
+    if( ! head->headinfo ) return false;
+    if( head->headinfo->abone ) return true;
+
+    if( ! head->headinfo->sage ){
+        head->headinfo->abone = true;        
+        return true;
+    }
+
+    return false;
+}
+
 
 //
 // number番のあぼーん判定( word, regex  /  board word, board regex / global word, global regex )
 //
 // あぼーんの時はtrueを返す
 //
-bool NodeTreeBase::check_abone_word( int number )
+const bool NodeTreeBase::check_abone_word( const int number )
 {
     bool check_word = ! m_list_abone_word.empty();
     bool check_regex = ! m_list_abone_regex.empty();
@@ -2720,7 +2748,7 @@ bool NodeTreeBase::check_abone_word( int number )
 //
 // あぼーんしているレスにアンカーを張っているときはtrueを返す
 //
-bool NodeTreeBase::check_abone_chain( int number )
+const bool NodeTreeBase::check_abone_chain( const int number )
 {
     if( !m_abone_chain ) return false;
 

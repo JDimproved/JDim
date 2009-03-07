@@ -92,6 +92,7 @@ namespace DBTREE
         std::vector< char > m_vec_abone_res; // レスあぼーん情報
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
+        bool m_abone_age; // age ているレスはあぼーん
 
         // 自分が書き込んだレスか
         std::vector< char > m_vec_posted;
@@ -216,10 +217,12 @@ namespace DBTREE
         bool get_abone( int number );
 
         // あぼーん情報を親クラスのarticlebaseからコピーする
-        void copy_abone_info( std::list< std::string >& list_abone_id, std::list< std::string >& list_abone_name,
-                              std::list< std::string >& list_abone_word, std::list< std::string >& list_abone_regex,
+        void copy_abone_info( const std::list< std::string >& list_abone_id,
+                              const std::list< std::string >& list_abone_name,
+                              const std::list< std::string >& list_abone_word,
+                              const std::list< std::string >& list_abone_regex,
                               const std::vector< char >& vec_abone_res,
-                              const bool abone_transparent, const bool abone_chain );
+                              const bool abone_transparent, const bool abone_chain, const bool abone_age );
 
         // 全レスのあぼーん状態の更新
         // 発言数や参照数も更新する
@@ -307,11 +310,12 @@ namespace DBTREE
         void update_abone( int from_number, int to_number );
 
         // あぼーんチェック
-        bool check_abone_res( int number );
-        bool check_abone_id( int number );
-        bool check_abone_name( int number );
-        bool check_abone_word( int number );
-        bool check_abone_chain( int number );
+        const bool check_abone_res( const int number );
+        const bool check_abone_id( const int number );
+        const bool check_abone_name( const int number );
+        const bool check_abone_mail( const int number );
+        const bool check_abone_word( const int number );
+        const bool check_abone_chain( const int number );
 
 
         // 参照数(num_reference)と色のクリア

@@ -27,6 +27,8 @@ namespace DBTREE
 
         std::string m_tmp_buffer;
 
+        std::string m_subject_machi;
+
       public:
 
         NodeTreeMachi( const std::string& url, const std::string& date_modified );

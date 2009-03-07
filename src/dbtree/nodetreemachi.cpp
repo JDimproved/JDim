@@ -160,6 +160,20 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
                 }
                 else m_tmp_buffer = line;
             }
+
+            else if( ! id_header() && m_subject_machi.empty() ){
+
+                std::string reg_subject( "<title>([^<]*)</title>" );
+                if( m_regex->exec( reg_subject, line ) ){
+
+                    const std::string charset = DBTREE::board_charset( get_url() );
+                    m_subject_machi = MISC::Iconv( m_regex->str( 1 ), charset, "UTF-8" );
+#ifdef _DEBUG
+                    std::cout << m_subject_machi << std::endl;
+#endif
+                }
+            }
+
         }
         else{
 
@@ -250,8 +264,9 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
             buffer += "あぼ〜ん<><><> あぼ〜ん <><>\n";
             next++;
         }
-        
-        buffer += name + "<>" + mail + "<>" + date + "<> " + body + " <><>\n";
+
+        if( num == 1 ) buffer = name + "<>" + mail + "<>" + date + "<> " + body + " <>" + m_subject_machi + "<>\n";
+        else buffer += name + "<>" + mail + "<>" + date + "<> " + body + " <><>\n";
         next++;
     }
 

@@ -311,10 +311,13 @@ namespace DBTREE
     std::list< std::string > get_abone_list_regex( const std::string& url );
 
     // 全あぼーん情報の同時セットと更新
-    void reset_abone( const std::string& url, std::list< std::string >& ids, std::list< std::string >& names,
-                      std::list< std::string >& words, std::list< std::string >& regexs,
-                      std::vector< char >& vec_abone_res,
-                      bool transparent, bool chain);
+    void reset_abone( const std::string& url,
+                      const std::list< std::string >& ids,
+                      const std::list< std::string >& names,
+                      const std::list< std::string >& words,
+                      const std::list< std::string >& regexs,
+                      const std::vector< char >& vec_abone_res,
+                      const bool transparent, const bool chain, const bool age );
 
     // 個別のあぼーん情報のセットと更新
     void set_abone_res( const std::string& url, const int number, const bool set );
@@ -324,12 +327,15 @@ namespace DBTREE
 
     // 透明あぼーん
     const bool get_abone_transparent( const std::string& url );
-    void set_abone_transparent( const std::string& url, bool set );
+    void set_abone_transparent( const std::string& url, const bool set );
 
     // 連鎖あぼーん
     const bool get_abone_chain( const std::string& url );
-    void set_abone_chain( const std::string& url, bool set );
+    void set_abone_chain( const std::string& url, const bool set );
 
+    // ageあぼーん
+    const bool get_abone_age( const std::string& url );
+    void set_abone_age( const std::string& url, const bool set );
 
     //　ブックマーク関係
 
@@ -339,8 +345,8 @@ namespace DBTREE
 
     // レスのブックマーク
     const int get_num_bookmark( const std::string& url );
-    const bool is_bookmarked( const std::string& url, int number );
-    void set_bookmark( const std::string& url, int number, bool set );
+    const bool is_bookmarked( const std::string& url, const int number );
+    void set_bookmark( const std::string& url, const int number, const bool set );
 }
 
 #endif

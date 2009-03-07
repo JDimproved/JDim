@@ -36,6 +36,9 @@ namespace ARTICLE
         // 連鎖あぼーん
         Gtk::CheckButton m_check_chainabone;
 
+        // ageあぼーん
+        Gtk::CheckButton m_check_ageabone;
+
         SKELETON::LabelEntry m_label_since;
 
         // 最終更新日時
