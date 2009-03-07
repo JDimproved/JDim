@@ -11,7 +11,6 @@
 #include "jdlib/miscutil.h"
 
 #include <cstring>
-#include <sstream>
 
 #include "gtkmm.h"
 
@@ -32,33 +31,51 @@ std::string ENVIRONMENT::get_jdlicense(){ return std::string( JDLICENSE ); }
 //
 // CONFIGURE_ARGSを返す
 //
-// unit: 改行して整形するための項目数(デフォルト = 0 整形しない)
+// mode: 整形モード(デフォルト = CONFIGURE_OMITTED 省略したものを一行で)
 //
-std::string ENVIRONMENT::get_configure_args( const unsigned int unit )
+std::string ENVIRONMENT::get_configure_args( const int mode )
 {
     std::string configure_args;
 
 #ifdef CONFIGURE_ARGS
-    configure_args = CONFIGURE_ARGS;
 
-    if( unit > 0 )
+    const std::string args = CONFIGURE_ARGS;
+
+    // FULLはそのまま返す
+    if( mode == CONFIGURE_FULL ) return args;
+
+    size_t search_pos = 0, found_pos = 0;
+    const size_t end_quote_pos = args.rfind( "'" );
+
+    // 複数の項目
+    bool multi = false;
+
+    // 省略形として"--with-"や"--enable-"などを取り出す
+    while( ( found_pos = args.find( "'--with-", search_pos ) ) != std::string::npos ||
+            ( found_pos = args.find( "'--enable-", search_pos ) ) != std::string::npos )
     {
-        size_t found_pos = 0, start_pos = 0, count = 0;
+        size_t quote_pos = args.find( "'", found_pos + 1 );
 
-        // "'--with-alsa' 'CFLAGS=-O2 -Wall'" などの "' '" を数える
-        while( ( found_pos = configure_args.find( "' '", start_pos ) ) != std::string::npos )
+        if( quote_pos != std::string::npos && quote_pos != end_quote_pos)
         {
-            count++;
-
-            // n項目単位で改行に変える
-            if( ( count % unit ) == 0 )
+            // 項目が複数の場合は改行かスペースを付与
+            if( multi )
             {
-                configure_args.replace( found_pos, 3, "'\n'" );
+                if( mode == CONFIGURE_OMITTED_MULTILINE ) configure_args.append( "\n" );
+                else configure_args.append( " " );
             }
+            multi = true;
 
-            start_pos = found_pos + 3;
+            configure_args.append( args.substr( found_pos, ( quote_pos - found_pos ) + 1 ) );
+            search_pos = quote_pos + 1;
+        }
+        else
+        {
+            configure_args.append( args.substr( found_pos ) );
+            break;
         }
     }
+
 #endif
 
     return configure_args;
@@ -391,7 +408,7 @@ std::string ENVIRONMENT::get_jdinfo()
     "[　gtkmm 　] " << get_gtkmm_version() << "\n" <<
     "[　glibmm 　] " << get_glibmm_version()<< "\n" <<
 #ifdef CONFIGURE_ARGS
-    "[configure ] " << get_configure_args( 2 ) << "\n" <<
+    "[オプション ] " << get_configure_args( CONFIGURE_OMITTED_MULTILINE ) << "\n" <<
 #endif
     "[ そ の 他 ] " << other << "\n";
 

@@ -16,6 +16,14 @@ namespace ENVIRONMENT
         WM_UNKNOWN
     };
 
+    // configure_argsのモード
+    enum
+	{
+        CONFIGURE_OMITTED = 0,
+        CONFIGURE_OMITTED_MULTILINE,
+		CONFIGURE_FULL
+    };
+
     std::string get_jdcomments();
     std::string get_jdcopyright();
 	std::string get_jdbbs();
@@ -23,7 +31,7 @@ namespace ENVIRONMENT
 	std::string get_jdhelp();
 	std::string get_jdhelpcmd();
     std::string get_jdlicense();
-    std::string get_configure_args( const unsigned int unit = 0 );
+    std::string get_configure_args( const int mode = CONFIGURE_OMITTED );
 
     std::string get_jdversion();
     std::string get_distname();

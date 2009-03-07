@@ -363,8 +363,10 @@ int main( int argc, char **argv )
                 multi_mode = true;
                 break;
 
-            case 'V':
-                std::cout << "JD " << ENVIRONMENT::get_jdversion() << ", " << ENVIRONMENT::get_jdcopyright() << std::endl;
+            case 'V': // バージョンと完全なconfigureオプションを表示
+                std::cout << "JD " << ENVIRONMENT::get_jdversion() << ", " <<
+                ENVIRONMENT::get_jdcopyright() << "\n"
+                "configure: " << ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_FULL ) << std::endl;
                 break;
 
             default:

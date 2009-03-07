@@ -303,8 +303,8 @@ void AboutDiag::set_environment_list()
     row[ column_value ] = ENVIRONMENT::get_glibmm_version();
 
     row = *( liststore->append() );
-    row[ column_name ] = "configureオプション";
-    row[ column_value ] = ENVIRONMENT::get_configure_args();
+    row[ column_name ] = "主なオプション";
+    row[ column_value ] = ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_OMITTED );
 
     m_scrollwindow_environment.add( m_treeview_environment );
 }
