@@ -48,7 +48,7 @@ do { \
 target = std::string(); \
 const int n = strlen( targetname ); \
 it2 = it; \
-while( it2 != lines.end() && ( *it2 ).c_str()[ 0 ] != targetname[ 0 ] && strncmp( ( *it2 ).c_str(), targetname, n ) != 0 ) ++it2; \
+while( it2 != lines.end() && ( ( *it2 ).c_str()[ 0 ] != targetname[ 0 ] || strncmp( ( *it2 ).c_str(), targetname, n ) != 0 ) ) ++it2; \
 if( it2 != lines.end() ){ \
     target = ( *it2 ).substr( n ); \
     it = ++it2; \
