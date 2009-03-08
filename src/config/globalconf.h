@@ -374,20 +374,20 @@ namespace CONFIG
     void set_abone_hour_thread( const int hour );
 
     // articleviewでのレスの全体あぼーん
-    std::list< std::string >& get_list_abone_name(); // 名前
-    std::list< std::string >& get_list_abone_word(); // ワード
-    std::list< std::string >& get_list_abone_regex(); // 正規表現
+    const std::list< std::string >& get_list_abone_name(); // 名前
+    const std::list< std::string >& get_list_abone_word(); // ワード
+    const std::list< std::string >& get_list_abone_regex(); // 正規表現
 
-    void set_list_abone_name( std::list< std::string >& name );
-    void set_list_abone_word( std::list< std::string >& word );
-    void set_list_abone_regex( std::list< std::string >& regex );
+    void set_list_abone_name( const std::list< std::string >& name );
+    void set_list_abone_word( const std::list< std::string >& word );
+    void set_list_abone_regex( const std::list< std::string >& regex );
 
     // デフォルトで透明、連鎖あぼーんをするか
     const bool get_abone_transparent();
-    void set_abone_transparent( bool set );
+    void set_abone_transparent( const bool set );
 
     const bool get_abone_chain();
-    void set_abone_chain( bool set );
+    void set_abone_chain( const bool set );
 
     // 右ペーンが空の時にサイドバーを閉じるか
     const bool get_expand_sidebar();
@@ -406,6 +406,10 @@ namespace CONFIG
 
     // Ctrl+qでウィンドウを閉じない
     const bool get_disable_close();
+
+    // まちBBSの取得に offlaw.cgi を使用する
+    const bool get_use_machi_offlaw();
+    void set_use_machi_offlaw( const bool set );
 
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所

@@ -352,18 +352,18 @@ const int CONFIG::get_abone_hour_thread(){ return get_confitem()->abone_hour_thr
 void CONFIG::set_abone_hour_thread( const int hour ){ get_confitem()->abone_hour_thread = hour; }
 
 
-std::list< std::string >& CONFIG::get_list_abone_name(){ return get_confitem()->list_abone_name; }
-std::list< std::string >& CONFIG::get_list_abone_word(){ return get_confitem()->list_abone_word; }
-std::list< std::string >& CONFIG::get_list_abone_regex(){ return get_confitem()->list_abone_regex; }
+const std::list< std::string >& CONFIG::get_list_abone_name(){ return get_confitem()->list_abone_name; }
+const std::list< std::string >& CONFIG::get_list_abone_word(){ return get_confitem()->list_abone_word; }
+const std::list< std::string >& CONFIG::get_list_abone_regex(){ return get_confitem()->list_abone_regex; }
 
-void CONFIG::set_list_abone_name( std::list< std::string >& name )
+void CONFIG::set_list_abone_name( const std::list< std::string >& name )
 {
     // 前後の空白と空白行を除く
     get_confitem()->list_abone_name = MISC::remove_space_from_list( name );
     get_confitem()->list_abone_name = MISC::remove_nullline_from_list( get_confitem()->list_abone_name );
 }
 
-void CONFIG::set_list_abone_word( std::list< std::string >& word )
+void CONFIG::set_list_abone_word( const std::list< std::string >& word )
 {
     // 前後の空白と空白行を除く
     get_confitem()->list_abone_word = MISC::remove_space_from_list( word );
@@ -371,7 +371,7 @@ void CONFIG::set_list_abone_word( std::list< std::string >& word )
 }
 
 
-void CONFIG::set_list_abone_regex( std::list< std::string >& regex )
+void CONFIG::set_list_abone_regex( const std::list< std::string >& regex )
 {
     // 前後の空白と空白行を除く
     get_confitem()->list_abone_regex = MISC::remove_space_from_list( regex );
@@ -379,9 +379,9 @@ void CONFIG::set_list_abone_regex( std::list< std::string >& regex )
 }
 
 const bool CONFIG::get_abone_transparent(){ return get_confitem()->abone_transparent; }
-void CONFIG::set_abone_transparent( bool set ){ get_confitem()->abone_transparent = set; }
+void CONFIG::set_abone_transparent( const bool set ){ get_confitem()->abone_transparent = set; }
 const bool CONFIG::get_abone_chain(){ return get_confitem()->abone_chain; }
-void CONFIG::set_abone_chain( bool set ){ get_confitem()->abone_chain = set; }
+void CONFIG::set_abone_chain( const bool set ){ get_confitem()->abone_chain = set; }
 
 const bool CONFIG::get_expand_sidebar(){ return get_confitem()->expand_sidebar; }
 
@@ -399,6 +399,10 @@ const bool CONFIG::get_bookmark_drop(){ return get_confitem()->bookmark_drop; }
 
 // Ctrl+qでウィンドウを閉じない
 const bool CONFIG::get_disable_close(){ return get_confitem()->disable_close; }
+
+// まちBBSの取得に offlaw.cgi を使用する
+const bool CONFIG::get_use_machi_offlaw(){ return get_confitem()->use_machi_offlaw; }
+void CONFIG::set_use_machi_offlaw( const bool set ){ get_confitem()->use_machi_offlaw = set; }
 
 
 #ifdef HAVE_MIGEMO_H

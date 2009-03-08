@@ -448,6 +448,10 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける(_M)", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "UseMachiOfflaw", "まちBBSでoffraw.cgiを使用する(_O)", std::string(), CONFIG::get_use_machi_offlaw() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_use_machi_offlaw ) );
+
+
     // マウス／キーボード
     m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード(_M)" ) );
 
@@ -723,6 +727,8 @@ void Core::run( bool init )
         "<menuitem action='SavePostHist'/>"
         "<separator/>"
         "<menuitem action='UseMosaic'/>"    
+        "<separator/>"
+        "<menuitem action='UseMachiOfflaw'/>"    
         "</menu>"
 
         "<separator/>"
@@ -1351,6 +1357,21 @@ void Core::slot_delete_all_images()
 {
     DBIMG::delete_all_files();
     IMAGE::get_admin()->set_command( "close_uncached_views" );
+}
+
+
+//
+// まちBBSのofflawモードの切り替え
+//
+void Core::slot_toggle_use_machi_offlaw()
+{
+    CONFIG::set_use_machi_offlaw( ! CONFIG::get_use_machi_offlaw() );
+
+    if( CONFIG::get_use_machi_offlaw() ){
+
+        SKELETON::MsgDiag mdiag( NULL, "offlaw.cgiを使用すると以下の問題が生じるので注意して下さい。\n\n(1) リモートホストが表示されません\n\n(2) バージョン2.3.0以前のJDではofflaw.cgiで取得したログは読めません" );
+        mdiag.run();
+    }
 }
 
 

@@ -2469,7 +2469,7 @@ void NodeTreeBase::update_abone_all()
 //
 // from_number番から to_number 番までのレスのあぼーん状態を更新
 //
-void NodeTreeBase::update_abone( int from_number, int to_number )
+void NodeTreeBase::update_abone( const int from_number, const int to_number )
 {
     if( empty() ) return;
     if( to_number < from_number ) return;
@@ -2512,8 +2512,8 @@ const bool NodeTreeBase::check_abone_res( const int number )
 //
 const bool NodeTreeBase::check_abone_id( const int number )
 {
-    bool check_id = ! m_list_abone_id.empty();
-    bool check_id_board = ! m_list_abone_id_board.empty();
+    const bool check_id = ! m_list_abone_id.empty();
+    const bool check_id_board = ! m_list_abone_id_board.empty();
 
     if( !check_id && !check_id_board ) return false;
 
@@ -2523,7 +2523,7 @@ const bool NodeTreeBase::check_abone_id( const int number )
     if( head->headinfo->abone ) return true;
     if( ! head->headinfo->block[ BLOCK_ID_NAME ] ) return false;
 
-    int ln_protoid = strlen( PROTO_ID );
+    const int ln_protoid = strlen( PROTO_ID );
 
     // ローカルID
     if( check_id ){
@@ -2560,11 +2560,11 @@ const bool NodeTreeBase::check_abone_id( const int number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_name( int number )
+const bool NodeTreeBase::check_abone_name( const int number )
 {
-    bool check_name = ! m_list_abone_name.empty();
-    bool check_name_board = ! m_list_abone_name_board.empty();
-    bool check_name_global = ! CONFIG::get_list_abone_name().empty();
+    const bool check_name = ! m_list_abone_name.empty();
+    const bool check_name_board = ! m_list_abone_name_board.empty();
+    const bool check_name_global = ! CONFIG::get_list_abone_name().empty();
 
     if( !check_name && !check_name_board && !check_name_global ) return false;
 
@@ -2574,8 +2574,8 @@ const bool NodeTreeBase::check_abone_name( int number )
     if( head->headinfo->abone ) return true;
     if( ! head->headinfo->name ) return false;
 
-    std::list< std::string >::iterator it;
-    std::string name_str( head->headinfo->name );
+    std::list< std::string >::const_iterator it;
+    const std::string name_str( head->headinfo->name );
 
     // ローカル name
     if( check_name ){
@@ -2644,14 +2644,14 @@ const bool NodeTreeBase::check_abone_mail( const int number )
 //
 const bool NodeTreeBase::check_abone_word( const int number )
 {
-    bool check_word = ! m_list_abone_word.empty();
-    bool check_regex = ! m_list_abone_regex.empty();
+    const bool check_word = ! m_list_abone_word.empty();
+    const bool check_regex = ! m_list_abone_regex.empty();
 
-    bool check_word_board = ! m_list_abone_word_board.empty();
-    bool check_regex_board = ! m_list_abone_regex_board.empty();
+    const bool check_word_board = ! m_list_abone_word_board.empty();
+    const bool check_regex_board = ! m_list_abone_regex_board.empty();
 
-    bool check_word_global = ! m_list_abone_word_global.empty();
-    bool check_regex_global = ! m_list_abone_regex_global.empty();
+    const bool check_word_global = ! m_list_abone_word_global.empty();
+    const bool check_regex_global = ! m_list_abone_regex_global.empty();
 
     if( !check_word && !check_regex
         && !check_word_board && !check_regex_board
@@ -2662,7 +2662,7 @@ const bool NodeTreeBase::check_abone_word( const int number )
     if( ! head->headinfo ) return false;
     if( head->headinfo->abone ) return true;
 
-    std::string res_str = get_res_str( number );
+    const std::string res_str = get_res_str( number );
     JDLIB::Regex regex;
 
     // ローカル NG word

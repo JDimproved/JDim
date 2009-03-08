@@ -105,6 +105,7 @@ namespace CONFIG
         CONF_REPLACE_FAVORITE_NEXT = 1,  // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
         CONF_BOOKMARK_DROP = 0, // スレをお気に入りに追加したときにしおりをセットする
         CONF_DISABLE_CLOSE = 0, // Ctrl+qでウィンドウを閉じない
+        CONF_USE_MACHI_OFFLAW = 0, // まちBBSの取得に offlaw.cgi を使用する
     };
 
 // browsers.cpp のデフォルトのラベル番号

@@ -358,6 +358,9 @@ namespace CONFIG
         // Ctrl+qでウィンドウを閉じない
         bool disable_close;
 
+        // まちBBSの取得に offlaw.cgi を使用する
+        bool use_machi_offlaw;
+
 #ifdef HAVE_MIGEMO_H
         // migemo-dictの場所
         std::string migemodict_path;

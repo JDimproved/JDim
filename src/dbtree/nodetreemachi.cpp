@@ -104,13 +104,27 @@ void NodeTreeMachi::init_loading()
 //
 void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
 {
-    std::stringstream ss;
-    ss << get_url();
-
     // レジュームはしない代わりにスレを直接指定
     set_resume( false );
-    if( id_header() ) ss << "&START=" << id_header() + 1;
-    data.url = ss.str();
+
+    // offlaw 形式
+    if( CONFIG::get_use_machi_offlaw() ){
+
+        JDLIB::Regex regex;
+        if( regex.exec( "(http://[^/]*)/bbs/read.cgi\\?BBS=([^&]*)&KEY=([0-9]*)", get_url() ) ){
+
+            data.url = regex.str( 1 ) + std::string( "/bbs/offlaw.cgi/" ) + regex.str( 2 ) + std::string( "/" ) +  regex.str( 3 );
+            if( id_header() >= 1 ) data.url += "/" + MISC::itostr( id_header() +1 ) + "-";
+        }
+    }
+
+    // read.cgi 形式
+    else{
+
+        data.url = get_url();
+        if( id_header() ) data.url += "&START=" + MISC::itostr( id_header() + 1 );
+    }
+
     data.agent = DBTREE::get_agent( get_url() );
     data.host_proxy = DBTREE::get_proxy_host( get_url() );
     data.port_proxy = DBTREE::get_proxy_port( get_url() );
@@ -130,13 +144,15 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
 //
 // キャッシュに保存する前の前処理
 //
-// 余計なタグを取り除いて本文だけ取り出す
-//
 char* NodeTreeMachi::process_raw_lines( char* rawlines )
 {
+    // オフラインか offlaw 形式を使用する場合はそのまま返す
+    if( ! is_loading() || CONFIG::get_use_machi_offlaw() ) return rawlines;
+
     std::string buffer;
 
-    // 入力データを行ごとに分割して本文だけ取り出す
+    // オンラインでかつ read.cgi 形式の場合は
+    // 入力データを行ごとに分割して余計なタグを取り除いて本文だけ取り出す
     std::list< std::string > lines = MISC::get_lines( rawlines );
     std::list< std::string >::iterator it;
     for( it = lines.begin(); it != lines.end(); ++it ){
@@ -161,6 +177,7 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
                 else m_tmp_buffer = line;
             }
 
+            // タイトル取得
             else if( ! id_header() && m_subject_machi.empty() ){
 
                 std::string reg_subject( "<title>([^<]*)</title>" );
@@ -169,7 +186,8 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
                     const std::string charset = DBTREE::board_charset( get_url() );
                     m_subject_machi = MISC::Iconv( m_regex->str( 1 ), charset, "UTF-8" );
 #ifdef _DEBUG
-                    std::cout << m_subject_machi << std::endl;
+                    std::cout << "NodeTreeMachi::process_raw_lines\n";
+                    std::cout << "subject = " << m_subject_machi << std::endl;
 #endif
                 }
             }
@@ -212,15 +230,12 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
 
     int next = id_header() + 1;
 
-    std::string reg( "<dt>([1-9][0-9]*) ?名前：(<a href=\"mailto:([^\"]*)\"><b>|<font[^>]*><b>) ?(<font[^>]*>)?([^<]*)(</font>)? ?</[bB]>.+ ?投稿日： ?([^<]*)( <font[^>]*>\\[ ?(.*) ?\\]</font>)?<br><dd> ?(.*) ?<br><br>$" );
-
     std::string buffer;
 
     // 文字コード変換
     int byte_lines;
     const char* str_lines = m_iconv->convert( rawlines, strlen( rawlines ), byte_lines );
 
-    // 入力データを行ごとに分割して本文だけ取り出す
     std::list< std::string > lines = MISC::get_lines( str_lines );
     std::list< std::string >::iterator it;
     for( it = lines.begin(); it != lines.end(); ++it ){
@@ -228,46 +243,71 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
         std::string line = MISC::remove_space( *it );
         if( line.empty() ) continue;
 
-        if( ! m_regex->exec( reg, line ) ){
+        int num = 0;
+        std::string name;
+        std::string mail;
+        std::string date;
+        std::string body;
+
+        // offlaw 形式
+        if( line.c_str()[ 0 ] != '<' ){
+
+            std::string reg( "(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)$");
+
+            if( ! m_regex->exec( reg, line ) ){
 #ifdef _DEBUG
-            std::cout << "失敗\n";
-            std::cout << line << std::endl;
+                std::cout << "失敗\n";
+                std::cout << line << std::endl;
 #endif
-            continue;
+                continue;
+            }
+
+            num = atoi( m_regex->str( 1 ).c_str() );
+            name = m_regex->str( 2 );
+            mail = m_regex->str( 3 );
+            date = m_regex->str( 4 );
+            body = m_regex->str( 5 );
+            if( num == 1 ) m_subject_machi = m_regex->str( 6 );
         }
 
+        // read.cgi 形式
+        else{
+
+            std::string reg( "<dt>([1-9][0-9]*) ?名前：(<a href=\"mailto:([^\"]*)\"><b>|<font[^>]*><b>) ?(<font[^>]*>)?([^<]*)(</font>)? ?</[bB]>.+ ?投稿日： ?([^<]*)( <font[^>]*>\\[ ?(.*) ?\\]</font>)?<br><dd> ?(.*) ?<br><br>$" );
+
+            if( ! m_regex->exec( reg, line ) ){
 #ifdef _DEBUG
-/*
-        std::cout << "1 " << m_regex->str( 1 ) << std::endl;
-        std::cout << "2 " << m_regex->str( 2 ) << std::endl;
-        std::cout << "3 " << m_regex->str( 3 ) << std::endl;
-        std::cout << "4 " << m_regex->str( 4 ) << std::endl;
-        std::cout << "5 " << m_regex->str( 5 ) << std::endl;
-        std::cout << "6 " << m_regex->str( 6 ) << std::endl;
-        std::cout << "7 " << m_regex->str( 7 ) << std::endl;
-        std::cout << "8 " << m_regex->str( 8 ) << std::endl;
-        std::cout << "9 " << m_regex->str( 9 ) << std::endl;
-        std::cout << "10 " << m_regex->str( 10 ) << std::endl;
-*/
+                std::cout << "失敗\n";
+                std::cout << line << std::endl;
 #endif
-        int num = atoi( m_regex->str( 1 ).c_str() );
-        std::string name = m_regex->str( 5 );
-        std::string mail = m_regex->str( 3 );
-        std::string date = m_regex->str( 7 );
-        if( !m_regex->str( 9 ).empty() ) date += " HOST:" + m_regex->str( 9 );
-        std::string body = m_regex->str( 10 );
+                continue;
+            }
+
+            num = atoi( m_regex->str( 1 ).c_str() );
+            name = m_regex->str( 5 );
+            mail = m_regex->str( 3 );
+            date = m_regex->str( 7 );
+            if( !m_regex->str( 9 ).empty() ) date += " HOST:" + m_regex->str( 9 );
+            body = m_regex->str( 10 );
+        }
 
         while( next < num ){
 #ifdef _DEBUG
             std::cout << "abone = " << num << std::endl;
 #endif
-            buffer += "あぼ〜ん<><><> あぼ〜ん <><>\n";
+            buffer += "あぼ〜ん<><>あぼ〜ん<> あぼ〜ん <><>\n";
             next++;
         }
 
-        if( num == 1 ) buffer = name + "<>" + mail + "<>" + date + "<> " + body + " <>" + m_subject_machi + "<>\n";
+        if( num == 1 ){
+#ifdef _DEBUG
+            std::cout << "subject = " << m_subject_machi << std::endl;
+#endif
+            buffer = name + "<>" + mail + "<>" + date + "<> " + body + " <>" + m_subject_machi + "<>\n";
+        }
         else buffer += name + "<>" + mail + "<>" + date + "<> " + body + " <><>\n";
-        next++;
+
+        ++next;
     }
 
     if( buffer.length() > BUF_SIZE_ICONV_OUT ){

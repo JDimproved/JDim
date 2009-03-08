@@ -424,6 +424,9 @@ const bool ConfigItems::load()
     // Ctrl+qでウィンドウを閉じない
     disable_close = cf.get_option( "disable_close", CONF_DISABLE_CLOSE );
 
+    // まちBBSの取得に offlaw.cgi を使用する
+    use_machi_offlaw = cf.get_option( "use_machi_offlaw", CONF_USE_MACHI_OFFLAW );
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     migemodict_path = cf.get_option( "migemodict_path", CONF_MIGEMO_PATH );
@@ -661,6 +664,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "replace_favorite_next", replace_favorite_next );
     cf.update( "bookmark_drop", bookmark_drop );
     cf.update( "disable_close", disable_close );
+    cf.update( "use_machi_offlaw", use_machi_offlaw );
 
 #ifdef HAVE_MIGEMO_H
     cf.update( "migemodict_path", migemodict_path );

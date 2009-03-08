@@ -307,7 +307,7 @@ namespace DBTREE
         void clear_abone();
 
         // from_number番から to_number 番までのレスのあぼーん状態を更新
-        void update_abone( int from_number, int to_number );
+        void update_abone( const int from_number, const int to_number );
 
         // あぼーんチェック
         const bool check_abone_res( const int number );

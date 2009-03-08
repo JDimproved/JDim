@@ -138,6 +138,7 @@ namespace CORE
         void slot_toggle_use_inlineimg();
         void slot_toggle_show_ssspicon();
         void slot_delete_all_images();
+        void slot_toggle_use_machi_offlaw();
 
         void slot_clear_privacy();
         void slot_clear_board();

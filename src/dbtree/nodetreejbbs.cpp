@@ -178,7 +178,7 @@ const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
 #ifdef _DEBUG
                     std::cout << "abone : number = "<< number << " : " << number_in << std::endl;
 #endif
-                    char broken_str[] = "あぼ〜ん<><>あぼ〜ん<>あぼ〜ん<>\n";
+                    char broken_str[] = "あぼ〜ん<><>あぼ〜ん<> あぼ〜ん <>\n";
                     int lng_broken = strlen( broken_str );
                     memcpy( m_decoded_lines + byte, broken_str, lng_broken );
                     byte += lng_broken;
