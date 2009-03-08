@@ -448,7 +448,7 @@ void Core::run( bool init )
     m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける(_M)", std::string(), CONFIG::get_use_mosaic() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "UseMachiOfflaw", "まちBBSでoffraw.cgiを使用する(_O)", std::string(), CONFIG::get_use_machi_offlaw() ),
+    m_action_group->add( Gtk::ToggleAction::create( "UseMachiOfflaw", "まちBBSでofflaw.cgiを使用する(_O)", std::string(), CONFIG::get_use_machi_offlaw() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_machi_offlaw ) );
 
 
