@@ -167,6 +167,11 @@ namespace CONFIG
     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
     const bool get_idpopup_by_mo();
 
+    // 画像のスムージングレベル(0-2, 2が最も高画質かつ低速)
+    const int get_imgemb_interp();
+    const int get_imgmain_interp();
+    const int get_imgpopup_interp();
+
     // 画像ポップアップサイズ
     const int get_imgpopup_width();
     const int get_imgpopup_height();

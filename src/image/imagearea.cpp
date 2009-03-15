@@ -7,6 +7,8 @@
 
 #include "dbimg/img.h"
 
+#include "config/globalconf.h"
+
 #include "session.h"
 
 #ifndef MIN
@@ -17,7 +19,7 @@ using namespace IMAGE;
 
 
 ImageAreaMain::ImageAreaMain( const std::string& url )
-    : ImageAreaBase( url )
+    : ImageAreaBase( url, CONFIG::get_imgmain_interp() )
 {
 #ifdef _DEBUG    
     std::cout << "ImageAreaMain::ImageAreaMain url = " << url << std::endl;

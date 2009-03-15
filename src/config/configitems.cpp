@@ -164,6 +164,11 @@ const bool ConfigItems::load()
     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
     idpopup_by_mo = cf.get_option( "idpopup_by_mo", CONF_IDPOPUP_BY_MO );
 
+    // 画像のスムージングレベル(0-2, 2が最も高画質かつ低速)
+    imgemb_interp = cf.get_option( "imgemb_interp", CONF_IMGEMB_INTERP );
+    imgmain_interp = cf.get_option( "imgmain_interp", CONF_IMGMAIN_INTERP );
+    imgpopup_interp = cf.get_option( "imgpopup_interp", CONF_IMGPOPUP_INTERP );
+
     // 画像ポップアップサイズ
     imgpopup_width = cf.get_option( "imgpopup_width", CONF_IMGPOPUP_WIDTH );
     imgpopup_height = cf.get_option( "imgpopup_height", CONF_IMGPOPUP_HEIGHT );
@@ -528,6 +533,9 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "namepopup_by_mo", namepopup_by_mo );
     cf.update( "idpopup_by_mo", idpopup_by_mo );
 
+    cf.update( "imgemb_interp", imgemb_interp );
+    cf.update( "imgmain_interp", imgmain_interp );
+    cf.update( "imgpopup_interp", imgpopup_interp );
     cf.update( "imgpopup_width", imgpopup_width );
     cf.update( "imgpopup_height", imgpopup_height );
     cf.update( "use_image_popup", use_image_popup );

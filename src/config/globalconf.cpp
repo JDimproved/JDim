@@ -185,6 +185,10 @@ const bool CONFIG::get_refpopup_by_mo(){ return get_confitem()->refpopup_by_mo; 
 const bool CONFIG::get_namepopup_by_mo(){ return get_confitem()->namepopup_by_mo; }
 const bool CONFIG::get_idpopup_by_mo(){ return get_confitem()->idpopup_by_mo; }
 
+const int CONFIG::get_imgemb_interp(){ return get_confitem()->imgemb_interp; }
+const int CONFIG::get_imgmain_interp(){ return get_confitem()->imgmain_interp; }
+const int CONFIG::get_imgpopup_interp(){ return get_confitem()->imgpopup_interp; }
+
 const int CONFIG::get_imgpopup_width(){ return get_confitem()->imgpopup_width; }
 const int CONFIG::get_imgpopup_height(){ return get_confitem()->imgpopup_height; }
 

@@ -80,6 +80,9 @@ namespace CONFIG
         CONF_SHOW_TAB_ICON = 1, // タブにアイコンを表示するか
         CONF_SHOW_POST_MARK = 1, // スレビューに書き込みマークを表示するか
         CONF_FLAT_BUTTON = 1,    // ボタンをフラットにするか
+        CONF_IMGEMB_INTERP = 0,   // 埋め込み画像のスムージングレベル(0-2, 2が最も高画質かつ低速)
+        CONF_IMGMAIN_INTERP = 0,   // 画像ビューのスムージングレベル(0-2, 2が最も高画質かつ低速)
+        CONF_IMGPOPUP_INTERP = 0,   // 画像ポップアップのスムージングレベル(0-2, 2が最も高画質かつ低速)
         CONF_IMGPOPUP_WIDTH = 320,  // 画像ポップアップ幅
         CONF_IMGPOPUP_HEIGHT = 240, // 画像ポップアップ高さ
         CONF_USE_IMAGE_POPUP = 1,    // 画像ポップアップを使用する

@@ -101,6 +101,11 @@ namespace CONFIG
         // IDの上にマウスオーバーしたときにIDをポップアップ表示する
         bool idpopup_by_mo;
 
+        // 画像のスムージングレベル(0-2, 2が最も高画質かつ低速)
+        int imgemb_interp;
+        int imgmain_interp;
+        int imgpopup_interp;
+
         // 画像ポップアップサイズ
         int imgpopup_width;
         int imgpopup_height;

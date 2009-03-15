@@ -43,14 +43,26 @@ void* imgarea_launcher( void* dat )
 using namespace IMAGE;
 
 
-ImageAreaBase::ImageAreaBase( const std::string& url )
+// interptype :
+// 0 -> INTERP_NEAREST
+// 1 -> INTERP_BILINEAR
+// 3 -> INTERP_HYPER
+ImageAreaBase::ImageAreaBase( const std::string& url, const int interptype )
     : m_url( url ),
       m_img ( DBIMG::get_img( m_url ) ),
       m_ready( false ),
       m_width( 0 ),
       m_height( 0 )
 {
+#ifdef _DEBUG
+    std::cout << "ImageAreaBase::ImageAreaBase url = " << m_url << " type = " << interptype << std::endl;
+#endif 
+
     assert( m_img );
+
+    m_interptype = Gdk::INTERP_NEAREST;
+    if( interptype == 1 ) m_interptype = Gdk::INTERP_BILINEAR;
+    else if( interptype >= 2 ) m_interptype = Gdk::INTERP_HYPER;
 
     set_alignment( Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER );
 }
@@ -208,7 +220,7 @@ void ImageAreaBase::set_image()
 
             // 拡大縮小
             if( w_org != get_width() || h_org != get_height() )
-                set( m_imgloader->get_pixbuf()->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST ) );
+                set( m_imgloader->get_pixbuf()->scale_simple( get_width(), get_height(), m_interptype ) );
 
             // 通常
             else set( m_imgloader->get_animation() );

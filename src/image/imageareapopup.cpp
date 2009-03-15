@@ -17,7 +17,7 @@
 using namespace IMAGE;
 
 ImageAreaPopup::ImageAreaPopup( const std::string& url )
-    : ImageAreaBase( url )
+    : ImageAreaBase( url, CONFIG::get_imgpopup_interp() )
 {
 #ifdef _DEBUG    
     std::cout << "ImageAreaPopup::ImageAreaPopup url = " << url << std::endl;

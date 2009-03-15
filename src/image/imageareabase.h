@@ -27,6 +27,7 @@ namespace IMAGE
         std::string m_url;
         JDLIB::ConstPtr< DBIMG::Img > m_img;
         Glib::RefPtr< Gdk::PixbufLoader > m_imgloader;
+        Gdk::InterpType m_interptype;
 
         std::string m_errmsg; // エラーメッセージ
 
@@ -41,7 +42,11 @@ namespace IMAGE
 
       public:
 
-        ImageAreaBase( const std::string& url );
+        // interptype :
+        // 0 -> INTERP_NEAREST
+        // 1 -> INTERP_BILINEAR
+        // 3 -> INTERP_HYPER
+        ImageAreaBase( const std::string& url, const int interptype );
         virtual ~ImageAreaBase();
 
         void stop();

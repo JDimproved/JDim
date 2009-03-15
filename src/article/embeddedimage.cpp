@@ -12,6 +12,8 @@
 #include "dbimg/imginterface.h"
 #include "dbimg/img.h"
 
+#include "config/globalconf.h"
+
 #include "message/messageadmin.h"
 
 //
@@ -134,7 +136,14 @@ void EmbeddedImage::resize_thread()
 
     if( m_img->get_type() == DBIMG::T_BMP ) pixbufonly = false; // BMP の場合 pixbufonly = true にすると真っ黒になる
     Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), m_stop, pixbufonly, errmsg );
-    if( loader && loader->get_pixbuf() ) m_pixbuf = loader->get_pixbuf()->scale_simple( width, height, Gdk::INTERP_NEAREST );
+    if( loader && loader->get_pixbuf() ){
+
+        Gdk::InterpType interptype = Gdk::INTERP_NEAREST;
+        if( CONFIG::get_imgemb_interp() == 1 ) interptype = Gdk::INTERP_BILINEAR;
+        else if( CONFIG::get_imgemb_interp() >= 2 ) interptype = Gdk::INTERP_HYPER;
+
+        m_pixbuf = loader->get_pixbuf()->scale_simple( width, height, interptype );
+    }
 
     // メインスレッドにリサイズが終わったことを知らせて
     // メインスレッドがpthread_join()を呼び出す
