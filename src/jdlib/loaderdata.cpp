@@ -57,3 +57,17 @@ void LOADERDATA::init()
     size_buf = 0;
     timeout = 0;
 }
+
+
+
+// 一般データのダウンロード用初期化
+void LOADERDATA::init_for_data()
+{
+    agent = CONFIG::get_agent_for_data();
+    if( CONFIG::get_use_proxy_for_data() ) host_proxy = CONFIG::get_proxy_for_data();
+    else host_proxy = std::string();
+    port_proxy = CONFIG::get_proxy_port_for_data();
+    basicauth_proxy = CONFIG::get_proxy_basicauth_for_data();
+    size_buf = CONFIG::get_loader_bufsize();
+    timeout = CONFIG::get_loader_timeout_data();
+}

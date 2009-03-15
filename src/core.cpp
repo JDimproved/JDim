@@ -22,6 +22,7 @@
 #include "updatemanager.h"
 #include "login2ch.h"
 #include "loginbe.h"
+#include "loginp2.h"
 #include "prefdiagfactory.h"
 #include "colorid.h"
 #include "fontid.h"
@@ -121,6 +122,9 @@ Core::Core( WinMain& win_main )
 
     // BEログインマネージャ作成
     CORE::get_loginbe();
+
+    // p2ログインマネージャ作成
+    CORE::get_loginp2();
 
     // マウス、キー設定読み込み
     CONTROL::load_conf();
@@ -237,6 +241,9 @@ Core::~Core()
     // BEログインマネージャ削除
     CORE::delete_loginbe();
 
+    // p2ログインマネージャ削除
+    CORE::delete_loginp2();
+
     // データベース削除
     DBTREE::delete_root();
     DBIMG::delete_root();
@@ -298,7 +305,7 @@ void Core::run( bool init )
                          sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
     m_action_group->add( Gtk::ToggleAction::create( "LoginBe", "BEにログイン(_B)", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_loginbe ) );
-    m_action_group->add( Gtk::ToggleAction::create( "LoginP2", "p2経由で書き込み(_P)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "LoginP2", "p2にログイン(_P)", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_loginp2 ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
@@ -1097,7 +1104,7 @@ void Core::set_maintitle()
 
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
     if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
-    if( SESSION::loginp2() ) title +=" [ p2 ]";
+    if( CORE::get_loginp2()->login_now() ) title +=" [ p2 ]";
     if( ! SESSION::is_online() ) title += " [ オフライン ]";
     m_win_main.set_title( title );
 }
@@ -1214,7 +1221,7 @@ void Core::slot_activate_menubar()
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
     if( tact ){
 
-        if( SESSION::loginp2() ) tact->set_active( true );
+        if( CORE::get_loginp2()->login_now() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -2030,12 +2037,17 @@ void Core::slot_toggle_loginp2()
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
-    std::cout << "Core::slot_toggle_p2\n";
+    std::cout << "Core::slot_toggle_loginp2\n";
 #endif
 
-    SESSION::set_loginp2( ! SESSION::loginp2() );
+    // ログイン中ならログアウト
+    if( CORE::get_loginp2()->login_now() ){
+        CORE::get_loginp2()->logout();
+        set_maintitle();
+    }
 
-    set_maintitle();
+    // ログオフ中ならログイン開始
+    else CORE::get_loginp2()->start_login();
 }
 
 
@@ -3522,6 +3534,9 @@ void Core::exec_command()
     // 2chへのログイン処理が完了した
     else if( command.command  == "login2ch_finished" ) set_maintitle();
 
+    // p2へのログイン処理が完了した
+    else if( command.command  == "loginp2_finished" ) set_maintitle();
+
     // あるadminのnotebookが空になった
     else if( command.command  == "empty_page" ) empty_page( command.url );
 
@@ -3692,6 +3707,9 @@ void Core::exec_command_after_boot()
 
     // BEログイン
     if( SESSION::loginbe() ) slot_toggle_loginbe();
+
+    // p2ログイン
+    if( SESSION::loginp2() ) slot_toggle_loginp2();
 
     // タイトル表示
     set_maintitle();

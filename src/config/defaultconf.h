@@ -143,8 +143,11 @@ namespace CONFIG
 // JD ホームページのアドレス
 #define CONF_URL_JDHP "http://jd4linux.sourceforge.jp/"
 
-// 2chの認証サーバ
+// 2chの認証サーバのアドレス
 #define CONF_LOGIN2CH "https://2chv.tora3.net/futen.cgi"
+
+// p2の認証サーバのアドレス
+#define CONF_LOGINP2 "http://p2.2ch.net/p2/"
 
 // bbsmenu.htmlのURL
 #define CONF_URL_BBSMENU "http://menu.2ch.net/bbsmenu.html"

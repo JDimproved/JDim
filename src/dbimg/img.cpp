@@ -224,17 +224,10 @@ void Img::download_img( const std::string& refurl, const bool nomosaic )
     if( nomosaic ) m_mosaic = false;
                
     JDLIB::LOADERDATA data;
+    data.init_for_data();
 
     if( ! m_url_alt.empty() ) data.url = m_url_alt;
     else data.url = m_url;
-
-    data.agent = CONFIG::get_agent_for_data();
-    if( CONFIG::get_use_proxy_for_data() ) data.host_proxy = CONFIG::get_proxy_for_data();
-    else data.host_proxy = std::string();
-    data.port_proxy = CONFIG::get_proxy_port_for_data();
-    data.basicauth_proxy = CONFIG::get_proxy_basicauth_for_data();
-    data.size_buf = CONFIG::get_loader_bufsize();
-    data.timeout = CONFIG::get_loader_timeout_img();
 
     if( !start_load( data ) ) receive_finish();
     else CORE::core_set_command( "redraw", m_url );

@@ -21,6 +21,12 @@ namespace DBTREE
         // 書き込みメッセージ変換
         virtual const std::string create_write_message( const std::string& name, const std::string& mail, const std::string& msg );
 
+        // bbscgi のURL
+        virtual const std::string url_bbscgi();
+        
+        // subbbscgi のURL
+        virtual const std::string url_subbbscgi();
+
       private:
         
         virtual NodeTreeBase* create_nodetree();

@@ -44,6 +44,7 @@ jd_SOURCES = \
 	session.cpp \
 	login2ch.cpp \
 	loginbe.cpp \
+	loginp2.cpp \
 \
 	viewfactory.cpp \
 \
@@ -90,6 +91,7 @@ noinst_HEADERS = \
 	session.h \
 	login2ch.h \
 	loginbe.h \
+	loginp2.h \
 \
 	viewfactory.h \
 \

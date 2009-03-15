@@ -143,8 +143,11 @@ namespace CONFIG
         // JD ホームページのアドレス
         std::string url_jdhp;
 
-        // 2chの認証サーバ
+        // 2chの認証サーバのアドレス
         std::string url_login2ch;
+
+        // p2の認証サーバのアドレス
+        std::string url_loginp2;
 
         // bbsmenu.htmlのURL
         std::string url_bbsmenu;

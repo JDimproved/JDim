@@ -993,6 +993,11 @@ const std::string MISC::url_encode( const char* str, const size_t n )
 }
 
 
+const std::string MISC::url_encode( const std::string& str )
+{
+    return url_encode( str.c_str(), str.length() );
+}
+
 
 //
 // 文字コード変換して url エンコード

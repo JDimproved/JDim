@@ -22,7 +22,8 @@ namespace SKELETON
         std::string m_username;
         std::string m_passwd;
 
-        std::string m_sessionid;
+        std::string m_sessionid; // セッションID
+        std::string m_csrfid; // CSRF のチェック用ID
 
       public:
 
@@ -41,7 +42,10 @@ namespace SKELETON
         void set_passwd( const std::string& passwd );
 
         const std::string& get_sessionid() const { return m_sessionid; }
-        void set_sessionid( const std::string& sessionid ){ m_sessionid = sessionid; }
+        void set_sessionid( const std::string& id ){ m_sessionid = id; }
+
+        const std::string& get_csrfid() const { return m_csrfid; }
+        void set_csrfid( const std::string& id ){ m_csrfid = id; }
 
         virtual void start_login()=0;
         virtual void logout()=0;

@@ -273,6 +273,9 @@ namespace DBTREE
         // 確認画面のhtmlから解析する      
         virtual void analyze_keyword_for_write( const std::string& html ){}
 
+        // 書き込み時のリファラ
+        virtual const std::string get_write_referer(){ return url_boardbase(); }
+
         // basic認証
         const std::string& get_basicauth() const { return m_basicauth; }
         void set_basicauth( const std::string& basicauth ){ m_basicauth = basicauth; }
@@ -347,7 +350,6 @@ namespace DBTREE
         
         // 新スレ作成用のsubbbscgi のURL
         virtual const std::string url_subbbscgi_new() { return std::string(); }
-
 
         // 配下の全articlebaseクラスのあぼーん状態の更新
         void update_abone_all_article();

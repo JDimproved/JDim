@@ -177,6 +177,7 @@ enum
 
 #define URL_LOGIN2CH "jdlogin://login2ch"
 #define URL_LOGINBE "jdlogin://loginbe"
+#define URL_LOGINP2 "jdlogin://loginp2"
 
 #define URL_BBSLISTADMIN "jdadmin://bbslist"
 #define URL_BBSLISTVIEW "jdview://bbslist"

@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "messageadmin.h"
@@ -42,6 +42,10 @@ Post::Post( Gtk::Widget* parent, const std::string& url, const std::string& msg,
       m_new_article( new_article ),
       m_writingdiag( 0 )
 {
+#ifdef _DEBUG
+    std::cout << "Post::Post " << m_url << std::endl;
+#endif
+
     clear();
 }
 
@@ -124,7 +128,7 @@ void Post::post_msg()
     data.contenttype = "application/x-www-form-urlencoded";
 
     data.agent = DBTREE::get_agent( m_url );
-    data.referer = DBTREE::url_boardbase( m_url );
+    data.referer = DBTREE::get_write_referer( m_url );
     data.str_post = m_msg;
     data.host_proxy = DBTREE::get_proxy_host_w( m_url );
     data.port_proxy = DBTREE::get_proxy_port_w( m_url );
@@ -200,7 +204,7 @@ void Post::receive_finish()
         return;
     }
 
-    // 以下、code == 200 or  302 で locationがセットされている(リダイレクト) の場合
+    // 以下、code == 200、 又は 302 かつ locationがセットされている(リダイレクト) の場合
 
     JDLIB::Regex regex;
 
@@ -219,15 +223,25 @@ void Post::receive_finish()
     regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", str, 0, false, false );
     tag_2ch = MISC::remove_space( regex.str( 1 ) );
 
-    // エラー
-    // 一番内側の<b>〜</b>を探す
+    // エラー内容を取得
+
+    // 一番内側の<b>〜</b>を探して取得
     m_errmsg = std::string();
     if( regex.exec( "([^>]|[^b]>)*<b>(([^>]|[^b]>)*)</b>.*", str, 0, true, false ) ){
+
         m_errmsg = regex.str( 2 );
     }
-    else
-        if( tag_2ch.find( "error" ) != std::string::npos ){
+
+    // 2ch タグで error が返った場合
+    else if( tag_2ch.find( "error" ) != std::string::npos ){
+
         if( regex.exec( "error +-->(.*)</body>", str, 0, true, false ) ) m_errmsg = regex.str( 1 );
+    }
+
+    // p2 型
+    else if( title.find( "error" ) != std::string::npos ){
+
+        if( regex.exec( "<h4>(.*)</h4>", str, 0, true, false ) ) m_errmsg = regex.str( 1 );
     }
 
     if( ! m_errmsg.empty() ){

@@ -255,6 +255,9 @@ namespace DBTREE
     const std::string create_newarticle_message( const std::string& url, const std::string& subject,
                                                  const std::string& name, const std::string& mail, const std::string& msg );
 
+    // 書き込み時のリファラ
+    const std::string get_write_referer( const std::string& url );
+
     // あぼーん関係
 
     // 板レベルのあぼーん

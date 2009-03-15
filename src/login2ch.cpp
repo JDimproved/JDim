@@ -103,21 +103,17 @@ void Login2ch::start_login()
         finish();
         return;
     }
-    if( get_username().empty() || get_passwd().empty() ){
+    if( CONFIG::get_url_login2ch().empty() || get_username().empty() || get_passwd().empty() ){
 
         finish();
         return;
     }
 
-    JDLIB::LOADERDATA data;    
+    JDLIB::LOADERDATA data;
+    data.init_for_data();
     data.url = CONFIG::get_url_login2ch();
     data.agent = "DOLIB/1.00";
     data.ex_field = "X-2ch-UA: " + CONFIG::get_x_2ch_ua() + "\r\n";
-    if( CONFIG::get_use_proxy_for_data() ) data.host_proxy = CONFIG::get_proxy_for_data();
-    data.port_proxy = CONFIG::get_proxy_port_for_data();
-    data.basicauth_proxy = CONFIG::get_proxy_basicauth_for_data();
-    data.size_buf = CONFIG::get_loader_bufsize();
-    data.timeout = CONFIG::get_loader_timeout();
 
     data.str_post = "ID=";
     data.str_post += get_username();
@@ -205,6 +201,10 @@ void Login2ch::receive_finish()
     }
     else if( get_username().empty() || get_passwd().empty() ){
         SKELETON::MsgDiag mdiag( NULL, "IDまたはパスワードが設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
+        mdiag.run();
+    }
+    else if( CONFIG::get_url_login2ch().empty() ){
+        SKELETON::MsgDiag mdiag( NULL, "認証サーバのURLが指定されていません。" );
         mdiag.run();
     }
     else if( show_err ){

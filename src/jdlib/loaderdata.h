@@ -57,6 +57,9 @@ namespace JDLIB
         LOADERDATA();
 
         void init();
+
+        // 一般データのダウンロード用初期化
+        void init_for_data();
     };
 }
 

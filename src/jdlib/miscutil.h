@@ -152,6 +152,7 @@ namespace MISC
 
     // urlエンコード
     const std::string url_encode( const char* str, const size_t n );
+    const std::string url_encode( const std::string& str );
 
     // 文字コードを変換して url エンコード
     // str は UTF-8 であること

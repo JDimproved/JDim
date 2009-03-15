@@ -91,7 +91,7 @@ namespace SKELETON
 
         const std::string& get_contenttype() const { return m_contenttype; }
 
-        std::list< std::string >& cookies() { return m_cookies; }
+        const std::list< std::string >& cookies() { return m_cookies; }
         const std::string& location() const { return m_location; }
 
         const size_t total_length() const { return m_total_length; }

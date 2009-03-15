@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "login.h"
@@ -70,6 +70,10 @@ void Login::read_info()
 
     m_username = cf.get_option( "username", "" );
     m_passwd = cf.get_option( "passwd", "" );
+
+#ifdef _DEBUG
+    std::cout << "user = " << m_username << " ,passwd = " << m_passwd << std::endl;
+#endif
 }
 
 

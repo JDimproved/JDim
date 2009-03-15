@@ -312,9 +312,6 @@ namespace ARTICLE
 
         // 検索バーを開く
         void open_searchbar( bool invert );
-
-        // p2経由で書き込み(p2ログインを実装するまでの暫定仕様)
-        const bool write_p2( const int number );
     };
 
 }

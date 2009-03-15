@@ -1197,7 +1197,6 @@ void ArticleViewBase::clear_highlight()
 void ArticleViewBase::write()
 {
     if( m_article->empty() ) return;
-    if( write_p2( 0 ) ) return;
 
     CORE::core_set_command( "open_message" ,m_url_article, std::string() );
 }
@@ -3103,7 +3102,6 @@ void ArticleViewBase::slot_write_res()
 {
     if( m_article->empty() ) return;
     if( m_str_num.empty() ) return;
-    if( write_p2( atoi( m_str_num.c_str() ) ) ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_write_res number = " << m_str_num << std::endl;
@@ -3122,7 +3120,6 @@ void ArticleViewBase::slot_quote_res()
 {
     assert( m_article );
     if( m_str_num.empty() ) return;
-    if( write_p2( atoi( m_str_num.c_str() ) ) ) return;
     
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_quote_res number = " << m_str_num << std::endl;
@@ -3142,7 +3139,6 @@ void ArticleViewBase::slot_quote_selection_res()
 
     const int num_from = m_drawarea->get_selection_resnum_from();
     if( ! num_from ) return;
-    if( write_p2( num_from ) ) return;
 
     const int num_to = m_drawarea->get_selection_resnum_to();
 
@@ -3641,26 +3637,3 @@ void ArticleViewBase::set_live( const bool live )
     else SESSION::remove_live( m_url_article );
 }
 
-
-//
-// p2経由で書き込み(p2ログインを実装するまでの暫定仕様)
-//
-const bool ArticleViewBase::write_p2( const int number )
-{
-    if( ! SESSION::loginp2() ) return false;
-    if( m_url_article.find( ".2ch.net" ) == std::string::npos && m_url_article.find( ".bbspink.com" ) == std::string::npos ) return false;
-
-    std::string url;
-
-    if( ! number ) url = CORE::get_usrcmd_manager()->replace_cmd( CONFIG::get_url_writep2(), m_url_article, "", "", 0 );
-    else url = CORE::get_usrcmd_manager()->replace_cmd( CONFIG::get_url_resp2(), m_url_article, "", "", number );
-
-#ifdef _DEBUG
-    std::cout << "ArticleViewBase::write_p2\n"
-              << "url = " << url << std::endl;
-#endif
-
-    CORE::core_set_command( "open_url_browser", url );
-
-    return true;
-}

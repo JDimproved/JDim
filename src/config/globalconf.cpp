@@ -114,6 +114,8 @@ const int CONFIG::ref_prefix_space(){ return get_confitem()->ref_prefix_space; }
 const std::string& CONFIG::get_url_jdhp() { return get_confitem()->url_jdhp; }
 
 const std::string& CONFIG::get_url_login2ch() { return get_confitem()->url_login2ch; }
+const std::string& CONFIG::get_url_loginp2() { return get_confitem()->url_loginp2; }
+
 const std::string& CONFIG::get_url_bbsmenu() { return get_confitem()->url_bbsmenu; }
 
 const bool CONFIG::use_link_as_board(){ return get_confitem()->use_link_as_board; }
@@ -167,7 +169,7 @@ void CONFIG::set_proxy_port_for_data( int port ){ get_confitem()->proxy_port_for
 const int CONFIG::get_loader_bufsize(){ return get_confitem()->loader_bufsize; }
 const int CONFIG::get_loader_timeout(){ return get_confitem()->loader_timeout; }
 const int CONFIG::get_loader_timeout_post(){ return get_confitem()->loader_timeout_post; }
-const int CONFIG::get_loader_timeout_img(){ return get_confitem()->loader_timeout_img; }
+const int CONFIG::get_loader_timeout_data(){ return get_confitem()->loader_timeout_img; } // 旧 get_loader_timeout_img() 関数
 const int CONFIG::get_loader_timeout_checkupdate(){ return get_confitem()->loader_timeout_checkupdate; }
 
 const bool CONFIG::get_use_ipv6(){ return get_confitem()->use_ipv6; }

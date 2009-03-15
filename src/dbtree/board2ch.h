@@ -34,9 +34,19 @@ namespace DBTREE
         // 書き込み用クッキー
         virtual const std::string cookie_for_write();
 
+        // 書き込み時のリファラ
+        virtual const std::string get_write_referer();
+
         // 新スレ作成用のメッセージ変換
         virtual const std::string create_newarticle_message( const std::string& subject,
                                                              const std::string& name, const std::string& mail, const std::string& msg );
+
+        // 新スレ作成用のbbscgi のURL
+        virtual const std::string url_bbscgi_new();
+        
+        // 新スレ作成用のsubbbscgi のURL
+        virtual const std::string url_subbbscgi_new();
+
 
       private:
 

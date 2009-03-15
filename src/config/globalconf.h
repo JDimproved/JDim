@@ -67,8 +67,11 @@ namespace CONFIG
     // JD ホームページのアドレス
     const std::string& get_url_jdhp();
 
-    // 2chの認証サーバ
+    // 2chの認証サーバのアドレス
     const std::string& get_url_login2ch();
+
+    // p2の認証サーバのアドレス
+    const std::string& get_url_loginp2();
 
     // bbsmenu.htmlのURL
     const std::string& get_url_bbsmenu();    
@@ -140,7 +143,7 @@ namespace CONFIG
     // ローダのタイムアウト値
     const int get_loader_timeout();
     const int get_loader_timeout_post();
-    const int get_loader_timeout_img();
+    const int get_loader_timeout_data();
     const int get_loader_timeout_checkupdate();
 
     // ipv6使用

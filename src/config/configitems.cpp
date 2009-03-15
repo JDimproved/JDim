@@ -204,8 +204,11 @@ const bool ConfigItems::load()
     // JD ホームページのアドレス
     url_jdhp = cf.get_option( "url_jdhp", CONF_URL_JDHP );
 
-    // 2chの認証サーバ
+    // 2chの認証サーバのアドレス
     url_login2ch = cf.get_option( "url_login2ch", CONF_LOGIN2CH );
+
+    // p2の認証サーバのアドレス
+    url_loginp2 = cf.get_option( "url_loginp2", CONF_LOGINP2 );
 
     // bbsmenu.htmlのURL
     url_bbsmenu = cf.get_option( "url_bbsmenu", CONF_URL_BBSMENU );
@@ -462,6 +465,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "manage_winpos", manage_winpos );
     cf.update( "url_jdhp", url_jdhp );
     cf.update( "url_login2ch", url_login2ch );
+    cf.update( "url_loginp2", url_loginp2 );
     cf.update( "url_bbsmenu", url_bbsmenu );
     cf.update( "use_link_as_board", use_link_as_board );
     cf.update( "show_movediag", show_movediag );
