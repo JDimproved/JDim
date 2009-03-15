@@ -25,6 +25,7 @@ namespace JDLIB
         std::vector< std::string > m_results;
         regex_t m_reg;
         bool m_compiled;
+        bool m_newline;
 
     public:
 
@@ -35,13 +36,13 @@ namespace JDLIB
         
         // icase : true なら大小無視
         // newline : true なら . に改行をマッチさせない
-        bool compile( const std::string reg
-                   , bool icase = false, bool newline = true, bool usemigemo = false );
-        bool exec( const std::string& target, unsigned int offset = 0 );
-        bool exec( const std::string reg, const std::string& target, unsigned int offset = 0
-                   , bool icase = false, bool newline = true, bool usemigemo = false );
-        const int pos( unsigned int num );
-        const std::string str( unsigned int num );
+        const bool compile( const std::string reg
+                   , const bool icase = false, const bool newline = true, const bool usemigemo = false );
+        const bool exec( const std::string& target, const unsigned int offset = 0 );
+        const bool exec( const std::string reg, const std::string& target, const unsigned int offset = 0
+                         , const bool icase = false, const bool newline = true, const bool usemigemo = false );
+        const int pos( const unsigned int num );
+        const std::string str( const unsigned int num );
     };
 }
 

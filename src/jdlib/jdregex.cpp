@@ -42,7 +42,7 @@ void Regex::dispose()
 
 // icase : true なら大小無視
 // newline : true なら . に改行をマッチさせない
-bool Regex::compile( const std::string reg, bool icase, bool newline, bool use_migemo )
+const bool Regex::compile( const std::string reg, const bool icase, const bool newline, const bool use_migemo )
 {
     dispose();
     
@@ -51,6 +51,8 @@ bool Regex::compile( const std::string reg, bool icase, bool newline, bool use_m
     int cflags = REG_EXTENDED;
     if( newline ) cflags |= REG_NEWLINE;
     if( icase ) cflags |= REG_ICASE;
+
+    m_newline = newline;
 
 #ifdef HAVE_MIGEMO_H
 
@@ -79,7 +81,7 @@ bool Regex::compile( const std::string reg, bool icase, bool newline, bool use_m
     return true;
 }
 
-bool Regex::exec( const std::string& target, unsigned int offset )
+const bool Regex::exec( const std::string& target, const unsigned int offset )
 {
     regmatch_t pmatch[ REGEX_MAX_NMATCH ];
 
@@ -92,6 +94,22 @@ bool Regex::exec( const std::string& target, unsigned int offset )
 
     m_pos.clear();
     m_results.clear();
+
+#ifdef USE_ONIG    
+
+    // 鬼車はnewlineを無視するようなので、文字列のコピーを取って
+    // 改行をスペースにしてから実行する
+    if( ! m_newline ){
+
+        std::string target_copy = target;
+        for( size_t i = 0; i < target.size(); ++i ) if( target_copy[ i ] == '\n' ) target_copy[ i ] = ' ';
+        if( regexec( &m_reg, target_copy.c_str() + offset, REGEX_MAX_NMATCH, pmatch, 0 ) != 0 ){
+            return false;
+        }
+    }
+    else
+
+#endif
 
     if( regexec( &m_reg, target.c_str() + offset, REGEX_MAX_NMATCH, pmatch, 0 ) != 0 ){
         return false;
@@ -113,7 +131,8 @@ bool Regex::exec( const std::string& target, unsigned int offset )
 
 // icase : true なら大小無視
 // newline : true なら . に改行をマッチさせない
-bool Regex::exec( const std::string reg, const std::string& target, unsigned int offset, bool icase, bool newline, bool use_migemo )
+const bool Regex::exec( const std::string reg, const std::string& target,
+                        const unsigned int offset, const bool icase, const bool newline, const bool use_migemo )
 {
     if ( ! compile(reg, icase, newline, use_migemo) ) return false;
 
@@ -128,7 +147,7 @@ bool Regex::exec( const std::string reg, const std::string& target, unsigned int
 }
 
 
-const std::string Regex::str( unsigned int num )
+const std::string Regex::str( const unsigned int num )
 {
     if( m_results.size() > num  ) return m_results[ num ];
 
@@ -136,7 +155,7 @@ const std::string Regex::str( unsigned int num )
 }
 
 
-const int Regex::pos( unsigned int num )
+const int Regex::pos( const unsigned int num )
 {
     if( m_results.size() > num ) return m_pos[ num ];
 
