@@ -523,10 +523,12 @@ void MessageViewBase::write()
 //
 void MessageViewBase::insert_draft()
 {
-    std::string open_path = CACHE::open_load_diag( MESSAGE::get_admin()->get_win(), SESSION::get_dir_draft(), CACHE::FILE_TYPE_TEXT );
+    const std::list< std::string > list_files = CACHE::open_load_diag( MESSAGE::get_admin()->get_win(),
+                                                                       SESSION::get_dir_draft(), CACHE::FILE_TYPE_TEXT, false );
 
-    if( ! open_path.empty() )
+    if( list_files.size() )
     {
+        const std::string open_path = *list_files.begin();
         std::string draft;
 
         SESSION::set_dir_draft( MISC::get_dir( open_path ) );

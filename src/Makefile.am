@@ -3,11 +3,11 @@ SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton histor
 bin_PROGRAMS = jd
 
 jd_LDADD = \
-	./dbtree/libdbtree.a \
 	./dbimg/libdbimg.a \
 	./bbslist/libbbslist.a \
 	./board/libboard.a \
 	./article/libarticle.a \
+	./dbtree/libdbtree.a \
 	./image/libimage.a \
 	./message/libmessage.a \
 	./skeleton/libskeleton.a \
@@ -24,6 +24,7 @@ jd_SOURCES = \
 	main.cpp \
 	winmain.cpp \
 	core.cpp \
+	menuslots.cpp \
 	maintoolbar.cpp \
 	cache.cpp \
 	command.cpp \

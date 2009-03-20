@@ -11,6 +11,7 @@
 #include "jdlib/miscutil.h"
 
 #include <cstring>
+#include <sstream>
 
 #include "gtkmm.h"
 

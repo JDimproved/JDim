@@ -45,6 +45,7 @@ namespace BOARD
         BOARD::TreeColumns m_columns;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
         Gtk::ScrolledWindow m_scrwin;
+        int m_id;
 
         // 列
         Gtk::TreeView::Column* m_col_mark;
@@ -85,7 +86,12 @@ namespace BOARD
         // ロード前の最終アクセス時刻 ( 新着判定用 )
         time_t m_last_access_time;
 
+        // ロード中に draw_bg_articles() を呼び出したときに使う一時変数
+        // draw_bg_articles() を参照せよ
+        std::list< std::string > m_list_draw_bg_articles;
+
     public:
+
         BoardViewBase( const std::string& url );
         virtual ~BoardViewBase();
 
@@ -140,6 +146,8 @@ namespace BOARD
 
       protected:
 
+        SKELETON::DragTreeView& get_treeview(){ return m_treeview; }
+
         // Viewが所属するAdminクラス
         virtual SKELETON::Admin* get_admin();
 
@@ -151,6 +159,9 @@ namespace BOARD
         void restore_sort();
 
     private:
+
+        // url から row を取得
+        Gtk::TreeModel::Row get_row_from_url( const std::string& url );
 
         // 次スレ移行処理に使用する前スレのアドレス
         // BOARD::BoardViewNext と BoardViewBase::open_row()を参照せよ
@@ -183,8 +194,7 @@ namespace BOARD
         const bool slot_key_press( GdkEventKey* event );
         const bool slot_key_release( GdkEventKey* event );
         const bool slot_scroll_event( GdkEventScroll* event );
-        void slot_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
-                                 Gtk::SelectionData& selection_data, guint info, guint time );
+
         void slot_bookmark( int bookmark );
         void slot_open_tab();
         void slot_favorite_thread();
@@ -198,12 +208,20 @@ namespace BOARD
         void slot_abone_thread();
         void slot_delete_logs();
 
+        // ドラッグアンドドロップ
+        void slot_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
+                                 Gtk::SelectionData& selection_data, guint info, guint time );
+        void slot_dropped_url_list( const std::list< std::string >& );
+
         const bool open_row( Gtk::TreePath& path, const bool tab );
         void open_selected_rows();
         const std::string path2daturl( const Gtk::TreePath& path );
 
         // 検索
         const bool drawout();
+
+        // 行を作って内容をセット
+        Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art );
 
         void update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row& row );
         const std::string get_subject_from_path( Gtk::TreePath& path );
@@ -213,6 +231,11 @@ namespace BOARD
 
         void set_article_to_buffer();
         void set_board_to_buffer();
+
+        // 指定したスレを強調して表示
+        // dat 落ち等で表示されていないスレも強制的に表示する
+        // 共有バッファに表示したいスレをセットしてから set_command 経由で呼び出す
+        void draw_bg_articles();
     };
 
 };

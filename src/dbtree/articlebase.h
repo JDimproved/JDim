@@ -113,6 +113,9 @@ namespace DBTREE
 
         const std::string& get_url() const { return m_url; }
 
+        // ID がこのスレのものかどうか
+        virtual const bool equal( const std::string& datbase, const std::string& id );
+
         // 移転があったときなどにdatファイルのベースアドレスを更新
         void update_datbase( const std::string& datbase );
 
@@ -269,13 +272,14 @@ namespace DBTREE
 
         // キャッシュ削除
         // cache_only == true の時はキャッシュだけ削除してスレ情報は消さない
-        void delete_cache( const bool cache_only );
+        virtual void delete_cache( const bool cache_only );
 
         // キャッシュ保存
         bool save_dat( const std::string& path_to );
 
         // HDDにキャッシュされているか
-        const bool is_cached() const { return m_cached; }  
+        const bool is_cached() const { return m_cached; }
+        void set_cached( const bool set ){ m_cached = set; }
 
         // キャッシュがarticlebaseに読み込まれている(nodetree!=NULL)か
         const bool is_cache_read() const { return ( m_nodetree ); }
@@ -339,7 +343,7 @@ namespace DBTREE
 
         // 情報ファイル書き込み
         // キャッシュがあって、force = true の時は強制書き込み
-        void save_info( const bool force );
+        virtual void save_info( const bool force );
 
         // スレッドのロード開始
         const bool is_loading();
@@ -349,7 +353,7 @@ namespace DBTREE
         // DAT落ちの場合はロードしないので、強制的にリロードしたいときは reset_status() で
         // ステータスをリセットしてからロードする
         // check_update : true の時はHEADによる更新チェックをおこなう
-        void download_dat( const bool check_update );
+        virtual void download_dat( const bool check_update );
 
         // 前スレのアドレスを指定
         // 前スレのアドレスをセットしてからdownload_dat()を呼び出すと

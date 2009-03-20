@@ -38,6 +38,9 @@ BoardView::BoardView( const std::string& url )
 
     // オートリロード可
     set_enable_autoreload( true );
+
+    // text/url-list  のドロップ可
+    get_treeview().set_enable_drop_uri_list();
 }
 
 

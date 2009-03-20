@@ -21,7 +21,7 @@ using namespace DBTREE;
 BoardJBBS::BoardJBBS( const std::string& root, const std::string& path_board, const std::string& name )
     : BoardBase( root, path_board, name )
 {
-    // dat のURLは特殊なので url_datpath()をオーバロードする
+    // dat のURLは特殊なので url_datpath()をオーバライドする
     set_path_dat( "" );
 
     set_path_readcgi( "/bbs/read.cgi" );
@@ -57,11 +57,11 @@ bool BoardJBBS::is_valid( const std::string& filename )
 //
 // cached : HDD にキャッシュがあるならtrue
 //
-ArticleBase* BoardJBBS::append_article( const std::string& id, bool cached )
+ArticleBase* BoardJBBS::append_article( const std::string& datbase, const std::string& id, const bool cached )
 {
     if( empty() ) return get_article_null();
 
-    ArticleBase* article = new DBTREE::ArticleJBBS( url_datbase(), id, cached );
+    ArticleBase* article = new DBTREE::ArticleJBBS( datbase, id, cached );
     if( article ){
         get_list_article().push_back( article );
 
@@ -155,6 +155,7 @@ void BoardJBBS::parse_subject( const char* str_subject_txt )
    
     const char* pos = str_subject_txt;
     char str_tmp[ 1024 ];
+    const std::string datbase = url_datbase();
 
     ArticleBase* article_first = NULL;
 
@@ -219,14 +220,14 @@ void BoardJBBS::parse_subject( const char* str_subject_txt )
 #endif
 
         // DBに登録されてるならarticle クラスの情報更新
-        ArticleBase* article = get_article( id );
+        ArticleBase* article = get_article( datbase, id );
 
         // DBにないなら新規に article クラスを追加
         //
         // なお BoardBase::receive_finish() のなかで append_all_article_in_cache() が既に呼び出されているため
         // DBに無いということはキャッシュにも無いということ。よって append_article()で  cached = false
 
-        if( article->empty() ) article = append_article( id, false );
+        if( article->empty() ) article = append_article( datbase, id, false );
 
         // スレ情報更新
         if( article ){

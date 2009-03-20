@@ -564,6 +564,11 @@ time_t DBTREE::board_write_leftsec( const std::string& url )
     return DBTREE::get_board( url )->get_write_leftsec();
 }
 
+// datファイルのインポート
+const std::string DBTREE::board_import_dat( const std::string& url, const std::string& filename )
+{
+    return DBTREE::get_board( url )->import_dat( filename );
+}
 
 // 板に属する全スレの書き込み履歴のリセット
 void DBTREE::board_clear_all_post_history( const std::string& url )

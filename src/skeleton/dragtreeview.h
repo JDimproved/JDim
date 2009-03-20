@@ -1,6 +1,8 @@
 // ライセンス: GPL2
 //
-// ドラッグ開始可能なtreeviewクラス ( ドロップは受け付けない )
+// ドラッグ開始可能なtreeviewクラス
+//
+// set_enable_drop_uri_list() で他のアプリから text/uri-list のドロップを受け付ける
 //
 // フォント変更、偶数、奇数行別に色分けも可能。コンストラクタの use_usr_fontcolor を trueにしてフォントや色を指定する
 // 複数行選択、ツールチップ、ポップアップの表示も可能
@@ -21,6 +23,8 @@ namespace SKELETON
 {
     class View;
     class PopupWin;
+
+    typedef sigc::signal< void, const std::list< std::string >& > SIG_DROPPED_URI_LIST;
 
     class DragTreeView : public JDTreeViewBase
     {
@@ -49,6 +53,9 @@ namespace SKELETON
         // 入力コントローラ
         CONTROL::Control m_control;
 
+        // text/uri-list をドロップされた
+        SIG_DROPPED_URI_LIST m_sig_dropped_url_list;
+
       public:
 
         // use_usr_fontcolor が true の時はフォントや色を指定する
@@ -58,7 +65,12 @@ namespace SKELETON
 
         virtual void clock_in();
 
+        SIG_DROPPED_URI_LIST sig_dropped_uri_list(){ return m_sig_dropped_url_list; }
         const std::string& get_dndtarget() const { return m_dndtarget; }
+
+        // 他のアプリからの text/url-list のドロップを有効にする
+        // ドロップされるとSIG_DROPPED_URI_LIST を発行する
+        void set_enable_drop_uri_list();
 
         // 色初期化
         void init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even );
@@ -102,6 +114,9 @@ namespace SKELETON
         virtual bool on_button_release_event( GdkEventButton* event );
         virtual void on_drag_begin( const Glib::RefPtr< Gdk::DragContext>& context );
         virtual void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context );
+
+        virtual void on_drag_data_received( const Glib::RefPtr< Gdk::DragContext >& context, int x, int y, 
+                                            const Gtk::SelectionData& selection, guint info, guint time );
 
         virtual bool on_motion_notify_event( GdkEventMotion* event );
         virtual bool on_scroll_event( GdkEventScroll* event );

@@ -3066,25 +3066,3 @@ void NodeTreeBase::clear_post_history()
     m_vec_posted.clear();
     m_vec_refer_posted.clear();
 }
-
-
-////////////////////////////////
-
-// ARTICLE::LayoutTree::append_html() で使用するダミークラス
-
-
-NodeTreeDummy::NodeTreeDummy( const std::string& url, const std::string& date_modified )
-    : NodeTreeBase( url, date_modified )
-{
-#ifdef _DEBUG    
-    std::cout << "NodeTreeDummy::NodeTreeDummy : " << get_url() << std::endl;
-#endif
-}
-
-
-NodeTreeDummy::~NodeTreeDummy()
-{
-#ifdef _DEBUG    
-    std::cout << "NodeTreeDummy::~NodeTreeDummy : " << get_url() << std::endl;
-#endif
-}

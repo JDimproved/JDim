@@ -82,6 +82,20 @@ DragTreeView::~DragTreeView()
 
 
 //
+// 他のアプリからの text/url-list のドロップを有効にする
+// ドロップされるとSIG_DROPPED_URI_LIST を発行する
+//
+void DragTreeView::set_enable_drop_uri_list()
+{
+    std::list< Gtk::TargetEntry > targets_drop;
+    targets_drop.push_back( Gtk::TargetEntry( "text/uri-list" ) );
+
+    // ドロップされると on_drag_data_received() が呼び出される
+    drag_dest_set( targets_drop, Gtk::DEST_DEFAULT_ALL, Gdk::ACTION_COPY );
+}
+
+
+//
 // 色初期化
 //
 void DragTreeView::init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even )
@@ -309,6 +323,29 @@ void DragTreeView::on_drag_end( const Glib::RefPtr< Gdk::DragContext >& context 
     CORE::DND_End();
 
     Gtk::TreeView::on_drag_end( context );
+}
+
+
+//
+// ドロップされた
+void DragTreeView::on_drag_data_received( const Glib::RefPtr< Gdk::DragContext >& context, int x, int y, 
+                                          const Gtk::SelectionData& selection, guint info, guint time )
+{
+#ifdef _DEBUG
+    std::cout << "DragTreeView::on_drag_data_received type = " << selection.get_data_type() << std::endl;
+#endif
+
+    if( selection.get_data_type() == "text/uri-list" ){
+
+#ifdef _DEBUG
+        std::cout << selection.get_data_as_string() << std::endl;
+#endif
+
+        std::list< std::string > uri_list = MISC::get_lines( MISC::url_decode( selection.get_data_as_string() ) );
+        m_sig_dropped_url_list.emit( uri_list );
+    }
+
+    context->drag_finish( true, false, time );
 }
 
 

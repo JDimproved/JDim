@@ -278,7 +278,7 @@ void BoardBase::send_update_board()
 //
 // 新しくArticleBaseクラスを追加してそのポインタを返す
 //
-ArticleBase* BoardBase::append_article( const std::string& id, bool cached )
+ArticleBase* BoardBase::append_article( const std::string& datbase, const std::string& id, const bool cached )
 {
     // ベースクラスでは何もしない
     return get_article_null();
@@ -397,8 +397,9 @@ void BoardBase::update_url( const std::string& root, const std::string& path_boa
     set_date_modified( std::string() );
 
     // 配下の ArticleBase にも知らせてあげる
+    const std::string datbase = url_datbase();
     std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->update_datbase( url_datbase() );
+    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->update_datbase( datbase );
 }
 
 
@@ -502,9 +503,11 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
         return std::string();
     }        
 
+    const std::string datbase = url_datbase();
+
 #ifdef _DEBUG
     std::cout << "BoardBase::url_dat result : " << url << " ->\n";
-    std::cout << "datbase = " << url_datbase() << " id = " << id << " from " << num_from << " to " << num_to
+    std::cout << "datbase = " << datbase << " id = " << id << " from " << num_from << " to " << num_to
               << " num = " << num_str << std::endl;
 #endif
 
@@ -514,10 +517,10 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
 #ifdef _DEBUG
         std::cout << "org_host : " << MISC::get_hostname( url ) << std::endl;
 #endif
-        get_article_create( id )->set_org_host( MISC::get_hostname( url ) );
+        get_article_create( datbase, id )->set_org_host( MISC::get_hostname( url ) );
     }
 
-    return url_datbase() + id;
+    return datbase + id;
 }
 
 
@@ -691,7 +694,7 @@ const std::string BoardBase::url_subbbscgibase()
 //
 // 無ければNULLクラスを返す
 //
-ArticleBase* BoardBase::get_article( const std::string& id )
+ArticleBase* BoardBase::get_article( const std::string& datbase, const std::string& id )
 {
     if( id.empty() ) return get_article_null();
 
@@ -704,7 +707,7 @@ ArticleBase* BoardBase::get_article( const std::string& id )
     for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
 
         ArticleBase* art = *( it );
-        if( art->get_id() == id ) return art;
+        if( art->equal( datbase, id ) ) return art;
     }
 
     return get_article_null();
@@ -718,39 +721,30 @@ ArticleBase* BoardBase::get_article( const std::string& id )
 // ポインタがあった場合は情報ファイルを読み込む
 // さらにデータベースにArticleBaseクラスが登録されてない場合はクラスを作成して登録する
 //
-ArticleBase* BoardBase::get_article_create( const std::string& id )
+ArticleBase* BoardBase::get_article_create( const std::string& datbase, const std::string& id )
 {
 #ifdef _DEBUG
     std::cout << "BoardBase::get_article_create id = " << id << std::endl;
 #endif
 
-    ArticleBase* art = get_article( id );
+    ArticleBase* art = get_article( datbase, id );
 
+    // データベースに無いので新規登録
     // get_article() の中で append_all_article_in_cache() を
-    // 呼び出しているので、スレがキャッシュ内にある場合は !art->empty() になるのに注意
-    if( ! art->empty() ){
-
-#ifdef _DEBUG
-        std::cout << "found id = " << art->get_id() << std::endl;
-#endif
-        // ポインタを返す前にスレッドの情報ファイルを読み込み
-        art->read_info();
-    }
-    else{
-
-        // データベースに無いので新規登録
-        //
-        // なおget_article()でキャッシュにある
-        // スレは全てDBに登録されているので DBに無いということはキャッシュにも無いということ。
-        // よって append_article()に  cached = false　をパラメータとして渡す
+    // 呼び出しているので、スレがキャッシュ内にない場合 art->empty() == TRUE になる
+    if( art->empty() ){
 
 #ifdef _DEBUG        
         std::cout << "BoardBase::get_article_create : append_article id =  " << id << std::endl;
 #endif
-        art = append_article( id,
+        art = append_article( datbase, id,
                               false // キャッシュ無し
             );
+
+        assert( art );
     }
+
+    if( art->is_cached() ) art->read_info();
 
     return art;
 }
@@ -776,37 +770,26 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
     std::cout << "BoardBase::get_article_fromURL url = " << url << std::endl;
 #endif
 
-    // urlをdat型に変換してからID取得
+    // dat型のURLにしてdatbaseとidを取得
     int num_from, num_to;
     std::string num_str;
     const std::string urldat = url_dat( url, num_from, num_to, num_str );
+    if( urldat.empty() ) return get_article_null();
 
-    // 板がDBに登録されてないので NULL クラスを返す
-    if( urldat.empty() ){
-
-#ifdef _DEBUG
-        std::cout << "could not convert url to daturl\nreturn Article_Null\n";
-#endif
-        return m_get_article;
-    }
-
-    // id を抜き出して article クラスのポインタ取得
-    std::string id = urldat.substr( url_datbase().length() );
+    const std::string datbase = MISC::get_dir( urldat );
+    const std::string id = urldat.substr( datbase.length() );
+    if( id.empty() ) return get_article_null();
 
 #ifdef _DEBUG
-    std::cout << "urldat = " << urldat << std::endl
-              << "url_datbase = " << url_datbase() << std::endl
+    std::cout << "datbase = " << datbase << std::endl
               << "id = " << id << std::endl;
-    if( id.empty() ) std::cout << "return Article_Null\n";
 #endif
-
-    if( id.empty() ) return m_get_article;
 
     // get_article_create() 経由で ArticleBase::read_info() から get_article_fromURL()が
     // 再帰呼び出しされることもあるので m_get_article_url を空にしておく
     m_get_article_url = std::string(); 
 
-    m_get_article = get_article_create( id );
+    m_get_article = get_article_create( datbase, id );
     m_get_article_url = url;
     return m_get_article;
 }
@@ -1226,6 +1209,8 @@ void BoardBase::append_all_article_in_cache()
     if( m_append_articles ) return;
     m_append_articles = true;
 
+    const std::string datbase = url_datbase();
+
 #ifdef _DEBUG
     std::cout << "BoardBase::append_all_article_in_cache\n";
 #endif
@@ -1242,7 +1227,7 @@ void BoardBase::append_all_article_in_cache()
         // キャッシュあり( cached = true ) 指定でDBに登録
         // キャッシュに無いスレはsubject.txtを読み込んだ時に
         // 派生クラスのparse_subject()で登録する。
-        append_article( ( *it ),
+        append_article( datbase, ( *it ),
                         true  // キャッシュあり
             );
     }
@@ -1560,6 +1545,40 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
 }
 
 
+// datファイルのインポート
+// 成功したらdat型のurlを返す
+#include <iostream>
+const std::string BoardBase::import_dat( const std::string& filename )
+{
+    if( empty() ) return std::string();
+    if( CACHE::file_exists( filename ) != CACHE::EXIST_FILE ) return std::string();
+
+    const std::string dir = MISC::get_dir( filename );
+    const std::string id = MISC::get_filename( filename );
+    if( id.empty() ) return FALSE;
+    if( ! is_valid( id ) ) return std::string();
+
+    const std::string file_to = CACHE::path_board_root_fast( url_boardbase() ) + id;
+
+//#ifdef _DEBUG
+    std::cout << "BoardBase::import_dat cp " << filename
+              << " " << file_to << std::endl;
+//#endif
+
+    const std::string datbase = url_datbase();
+    ArticleBase* art = get_article_create( datbase, id );
+    if( ! art->is_cached() ){
+
+        CACHE::jdcopy( filename, file_to );
+        if( CACHE::file_exists( file_to ) == CACHE::EXIST_FILE ){
+            art->set_cached( true );
+            art->read_info();
+        }
+        else std::string();
+    }
+
+    return art->get_url();
+}
 
 
 //

@@ -197,4 +197,6 @@ enum
 #define URL_ABOUTCONFIG "jdpref://aboutconfig"
 #define URL_PRIVACY "jdpref://privacy"
 
+#define URL_BOARD_LOCAL "file:///local"
+
 #endif

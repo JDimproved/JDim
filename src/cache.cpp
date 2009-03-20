@@ -292,6 +292,9 @@ std::string CACHE::path_article_ext_info( const std::string& url, const std::str
 
 std::string CACHE::path_dat( const std::string& url )
 {
+    // file:// の場合
+    if( url.c_str()[ 0 ] == 'f' && url.c_str()[ 1 ] == 'i' ) return url.substr( strlen( "file://" ) );
+
     return CACHE::path_board_root( url ) + DBTREE::article_id( url );
 }
 
@@ -910,15 +913,17 @@ void CACHE::add_filter_to_diag( Gtk::FileChooserDialog& diag, const int type )
 //
 // parent == NULL の時はメインウィンドウをparentにする
 // open_path はデフォルトの参照先
-// 戻り値は選択されたファイルのpath
+// multi == true なら複数選択可能
+// 戻り値は選択されたファイルのpathのリスト
 //
-std::string CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type )
+const std::list< std::string > CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type, const bool multi )
 {
     std::string dir = MISC::get_dir( open_path );
     if( dir.empty() ) dir = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
 
     SKELETON::FileDiag diag( parent, "ファイルを開く", Gtk::FILE_CHOOSER_ACTION_OPEN );
 
+    diag.set_select_multiple( multi );
     diag.set_current_folder( dir );
     add_filter_to_diag( diag, type );
 
@@ -926,10 +931,10 @@ std::string CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_
     {
         diag.hide();
 
-        return diag.get_filename();
+        return diag.get_filenames();
     }
 
-    return std::string();
+    return std::list< std::string >();
 }
 
 
@@ -1053,4 +1058,28 @@ int64_t CACHE::get_dirsize( const std::string& dir )
 #endif
 
     return total_size;
+}
+
+
+// 相対パスから絶対パスを取得してファイルが存在すれば絶対パスを返す
+// ファイルが存在しない場合は std::string() を返す
+const std::string CACHE::get_realpath( const std::string& path )
+{
+    std::string path_real;
+
+    char* ret = realpath( path.c_str(), NULL );
+    if( ret ){
+        path_real = ret;
+        free( ret );
+    }
+    else return std::string();
+
+    if( CACHE::file_exists( path_real ) == EXIST ) return std::string();
+
+#ifdef _DEBUG
+    std::cout << "CACHE::get_realpath path = " << path
+              << " real = " << path_real << std::endl;
+#endif
+
+    return path_real;
 }

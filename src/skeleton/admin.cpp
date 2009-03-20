@@ -32,6 +32,16 @@ enum
 };
 
 
+// open_view で使うモード
+enum
+{
+    OPEN_MODE_AUTO = 1,
+    OPEN_MODE_NOSWITCH = 2,
+    OPEN_MODE_LOCK = 4,
+    OPEN_MODE_OFFLINE = 8
+};
+
+
 using namespace SKELETON;
 
 
@@ -845,7 +855,7 @@ void Admin::update_status( View* view, const bool force )
 // "left" ならアクティブな左に開く
 // "page数字" なら指定した位置にタブで開く
 //
-// command.arg2: "true" なら既にurlを開いているかチェックしない
+// command.arg2: "true" なら既に command.url を開いているかチェックしない
 //
 // command.arg3: モード
 //
@@ -854,7 +864,11 @@ void Admin::update_status( View* view, const bool force )
 // スレ番号ジャンプなどで使用する
 //
 // "noswitch"ならタブを切り替えない(連続して開くときに使用)
+//
 // "lock" なら開いてからロックする
+//
+// "offline" なら オフラインで開く
+//
 //
 // その他のargは各ビュー別の設定
 //
@@ -870,16 +884,27 @@ void Admin::open_view( const COMMAND_ARGS& command )
     SKELETON::View* view;
     SKELETON::View* current_view = get_current_view();
 
+    const bool online = SESSION::is_online();
+    const bool nocheck_opened = ( command.arg2 == "true" );
+    bool mode = 0;
+    if( ! command.arg3.empty() ){
+
+        if( command.arg3.find( "auto" ) != std::string::npos ) mode |= OPEN_MODE_AUTO;
+        if( command.arg3.find( "noswitch" ) != std::string::npos ) mode |= OPEN_MODE_NOSWITCH;
+        if( command.arg3.find( "lock" ) != std::string::npos ) mode |= OPEN_MODE_LOCK;
+        if( command.arg3.find( "offline" ) != std::string::npos ) mode |= OPEN_MODE_OFFLINE;
+    }
+
     if( current_view ) current_view->focus_out();
 
     // urlを既に開いていたら表示してリロード
-    if( ! ( command.arg2 == "true" ) ){
+    if( ! nocheck_opened ){
 
         view = get_view( command.url );
         if( view ){
 
             // タブの切り替え
-            if( ! ( command.arg3 == "noswitch" ) ){
+            if( ! ( mode & OPEN_MODE_NOSWITCH ) ){
             
                 int page = m_notebook->page_num( *view );
 #ifdef _DEBUG
@@ -890,12 +915,16 @@ void Admin::open_view( const COMMAND_ARGS& command )
             }
 
             // オートモードは切り替えのみ
-            if( command.arg3 == "auto" ) return;
+            if( mode & OPEN_MODE_AUTO ) return;
 
             // ロック
-            if( command.arg3 == "lock" ) lock( m_notebook->page_num( *view ) );
+            if( mode & OPEN_MODE_LOCK ) lock( m_notebook->page_num( *view ) );
+
+            // オフラインで開く
+            if( mode & OPEN_MODE_OFFLINE ) SESSION::set_online( false );
 
             view->show_view();
+            SESSION::set_online( online );
 
             return;
         }
@@ -907,7 +936,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
     const int page = m_notebook->get_current_page();
     const bool open_tab = (  page == -1
                              || ( ! command.arg1.empty() && command.arg1 != "false" )
-                             || command.arg3 == "auto" // オートモードの時もタブで開く
+                             || ( mode & OPEN_MODE_AUTO ) // オートモードの時もタブで開く
                              || is_locked( page )
         );
 
@@ -975,19 +1004,24 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
     m_notebook->show_all();
     view->show();
+
+    // オフラインで開く
+    if( mode & OPEN_MODE_OFFLINE ) SESSION::set_online( false );
+
     view->show_view();
+    SESSION::set_online( online );
 
     // ツールバーの情報更新
     m_notebook->set_current_toolbar( view->get_id_toolbar(), view );
 
     // タブの切り替え
-    if( ! ( command.arg3 == "noswitch" ) ){
+    if( ! ( mode & OPEN_MODE_NOSWITCH ) ){
         switch_admin();
         set_current_page( m_notebook->page_num( *view ) );
     }
 
     // ロック
-    if( command.arg3 == "lock" ) lock( m_notebook->page_num( *view ) );
+    if( mode & OPEN_MODE_LOCK ) lock( m_notebook->page_num( *view ) );
 }
 
 

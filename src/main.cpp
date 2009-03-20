@@ -342,7 +342,7 @@ int main( int argc, char **argv )
         { 0, 0, 0, 0 }
     };
 
-    char* url = NULL;
+    std::string url;
     bool multi_mode = false;
 
     // -h, -t <url>, -m, -V
@@ -374,7 +374,7 @@ int main( int argc, char **argv )
         }
     }
 
-    if( ! url )
+    if( url.empty() )
     {
         // 引数がURLのみの場合
         if( argc > optind )
@@ -482,10 +482,14 @@ int main( int argc, char **argv )
     if( iomonitor.get_fifo_stat() == CORE::FIFO_OK )
     {
         // 引数にURLがある
-        if( url )
+        if( ! url.empty() )
         {
+            // ローカルファイルかどうかチェック
+            const std::string url_real = CACHE::get_realpath( url );
+            if( ! url_real.empty() ) url = url_real;
+
             // FIFOに書き込む
-            iomonitor.send_command( url );
+            iomonitor.send_command( url.c_str() );
 
             // マルチモードでなく、メインプロセスでもない場合は終了
             if( ! multi_mode && ! iomonitor.is_main_process() ) return 0;

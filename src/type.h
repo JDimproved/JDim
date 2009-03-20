@@ -11,6 +11,7 @@ enum
     // 板のタイプ
     TYPE_BOARD_2CH = 0,
     TYPE_BOARD_2CH_COMPATI,  // 2ch 互換
+    TYPE_BOARD_LOCAL,        // ローカルファイル
     TYPE_BOARD_JBBS,         // したらば
     TYPE_BOARD_MACHI,        // まち
     TYPE_BOARD_UNKNOWN,
@@ -30,6 +31,7 @@ enum
     TYPE_USRCMD,
     TYPE_LINKFILTER,
     TYPE_SEPARATOR,
+    TYPE_FILE,
 
     TYPE_UNKNOWN
 };

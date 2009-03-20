@@ -326,9 +326,9 @@ namespace SESSION
     void set_close_mes( bool set );
 
 
-    // 最後にdatを保存したディレクトリ
-    const std::string& dir_dat_save();
-    void set_dir_dat_save( const std::string& dir );
+    // 最後にdatを読み書きしたディレクトリ
+    const std::string& get_dir_dat();
+    void set_dir_dat( const std::string& dir );
 
     // 最後に画像を保存したディレクトリ
     const std::string& dir_img_save();

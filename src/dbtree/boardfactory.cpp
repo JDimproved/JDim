@@ -3,6 +3,7 @@
 #include "boardfactory.h"
 #include "board2ch.h"
 #include "board2chcompati.h"
+#include "boardlocal.h"
 #include "boardjbbs.h"
 #include "boardmachi.h"
 
@@ -16,6 +17,8 @@ DBTREE::BoardBase* DBTREE::BoardFactory( int type, const std::string& root, cons
         case TYPE_BOARD_2CH: return new DBTREE::Board2ch( root, path_board, name );
 
         case TYPE_BOARD_2CH_COMPATI: return new DBTREE::Board2chCompati( root, path_board, name, basicauth );
+
+        case TYPE_BOARD_LOCAL: return new DBTREE::BoardLocal( root, path_board, name );
 
         case TYPE_BOARD_JBBS:return  new DBTREE::BoardJBBS( root, path_board, name );
 

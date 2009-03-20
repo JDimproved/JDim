@@ -128,7 +128,7 @@ bool embedded_img;
 bool embedded_mes;
 bool close_mes;
 
-std::string img_dir_dat_save;
+std::string dir_dat;
 std::string img_dir_img_save;
 
 std::string dir_draft;
@@ -393,7 +393,7 @@ void SESSION::init_session()
     width_win_mes = cf.get_option( "width_win_mes", 600 );
     height_win_mes = cf.get_option( "height_win_mes", 400 );
 
-    img_dir_dat_save = cf.get_option( "img_dir_dat_save", "" );
+    dir_dat = cf.get_option( "dir_dat", "" );
     img_dir_img_save = cf.get_option( "img_dir_img_save", "" );
 
     dir_draft = cf.get_option( "dir_draft", "" );
@@ -582,7 +582,7 @@ void SESSION::save_session()
         << "width_win_mes = " << width_win_mes << std::endl
         << "height_win_mes = " << height_win_mes << std::endl
 
-        << "img_dir_dat_save = " << img_dir_dat_save << std::endl
+        << "dir_dat = " << dir_dat << std::endl
         << "img_dir_img_save = " << img_dir_img_save << std::endl
         << "dir_draft = " << dir_draft << std::endl
 
@@ -897,9 +897,9 @@ bool SESSION::get_close_mes(){ return close_mes; }
 void SESSION::set_close_mes( bool set ){ close_mes = set; }
 
 
-// 最後にdatを保存したディレクトリ
-const std::string& SESSION::dir_dat_save(){ return img_dir_dat_save; }
-void SESSION::set_dir_dat_save( const std::string& dir ){ img_dir_dat_save = dir; }
+// 最後にdatを読み書きしたディレクトリ
+const std::string& SESSION::get_dir_dat(){ return dir_dat; }
+void SESSION::set_dir_dat( const std::string& dir ){ dir_dat = dir; }
 
 // 最後に画像を保存したディレクトリ
 const std::string& SESSION::dir_img_save(){ return img_dir_img_save; }

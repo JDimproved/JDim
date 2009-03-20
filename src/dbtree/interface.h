@@ -144,6 +144,10 @@ namespace DBTREE
     void board_set_samba_sec( const std::string& url, time_t sec );
     time_t board_write_leftsec( const std::string& url );
 
+    // datファイルのインポート
+    // 成功したらdat型のurlを返す
+    const std::string board_import_dat( const std::string& url, const std::string& filename );
+
     // 各板に属する全スレの書き込み履歴のリセット
     void board_clear_all_post_history( const std::string& url );
 

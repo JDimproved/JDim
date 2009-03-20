@@ -121,6 +121,13 @@ const bool ArticleBase::empty()
 }
 
 
+// ID がこのスレのものかどうか
+const bool ArticleBase::equal( const std::string& datbase, const std::string& id )
+{
+    return ( id == m_id );
+}
+
+
 //
 // 移転する前のオリジナルのURL
 //
@@ -1411,7 +1418,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
     m_number_load = m_number_seen = m_number_before_load = 0;
     m_cached = false;
-    m_status = STATUS_UNKNOWN;
+    reset_status();
     m_date_modified.clear();
     memset( &m_access_time, 0, sizeof( struct timeval ) );
     memset( &m_check_update_time, 0, sizeof( struct timeval ) );
@@ -1476,7 +1483,7 @@ bool ArticleBase::save_dat( const std::string& path_to )
     if( is_loading() ) return false;
 
     std::string dir = MISC::get_dir( path_to );
-    if( dir.empty() ) dir = SESSION::dir_dat_save();
+    if( dir.empty() ) dir = SESSION::get_dir_dat();
 
     std::string name = MISC::get_filename( path_to );
     if( name.empty() ) name = MISC::get_filename( m_url );    
@@ -1484,7 +1491,7 @@ bool ArticleBase::save_dat( const std::string& path_to )
     std::string save_to = CACHE::copy_file( NULL, CACHE::path_dat( m_url ), dir + name, CACHE::FILE_TYPE_DAT );
 
     if( ! save_to.empty() ){
-        SESSION::set_dir_dat_save( MISC::get_dir( save_to ) );
+        SESSION::set_dir_dat( MISC::get_dir( save_to ) );
         return true;
     }
 
@@ -1589,7 +1596,7 @@ void ArticleBase::read_info()
         if( ! str_tmp.empty() ) m_write_fixmail = atoi( str_tmp.c_str() );
 
         // 状態
-        m_status = STATUS_UNKNOWN;
+        reset_status();
         GET_INFOVALUE( str_tmp, "status = " );
         if( ! str_tmp.empty() ) m_status = atoi( str_tmp.c_str() );
 
@@ -1690,6 +1697,7 @@ void ArticleBase::read_info()
         CORE::core_set_command( "set_status","", "スレ情報更新中・・・しばらくお待ち下さい" );
         MISC::MSG( "updating " + m_url );
 
+        reset_status();
         set_subject( get_nodetree()->get_subject() );
         m_number_load = get_nodetree()->get_res_number();
 

@@ -10,6 +10,7 @@ libdbtree_a_SOURCES = \
 	board2chcompati.cpp \
 	boardjbbs.cpp \
 	boardmachi.cpp \
+	boardlocal.cpp \
 \
 	settingloader.cpp \
 	ruleloader.cpp \
@@ -20,12 +21,15 @@ libdbtree_a_SOURCES = \
 	article2chcompati.cpp \
 	articlejbbs.cpp \
 	articlemachi.cpp \
+	articlelocal.cpp \
 \
 	nodetreebase.cpp \
 	nodetree2ch.cpp \
 	nodetree2chcompati.cpp \
 	nodetreejbbs.cpp \
-	nodetreemachi.cpp
+	nodetreemachi.cpp \
+	nodetreelocal.cpp \
+	nodetreedummy.cpp
 
 noinst_HEADERS = \
 	interface.h \
@@ -37,6 +41,7 @@ noinst_HEADERS = \
 	boardbase.h \
 	board2ch.h \
 	board2chcompati.h \
+	boardlocal.h \
 	boardjbbs.h \
 	boardmachi.h \
 \
@@ -47,6 +52,7 @@ noinst_HEADERS = \
 	articlebase.h \
 	article2ch.h \
 	article2chcompati.h \
+	articlelocal.h \
 	articlejbbs.h \
 	articlemachi.h \
 \
@@ -55,7 +61,9 @@ noinst_HEADERS = \
 	nodetree2ch.h \
 	nodetree2chcompati.h \
 	nodetreejbbs.h \
-	nodetreemachi.h
+	nodetreemachi.h \
+	nodetreelocal.h \
+	nodetreedummy.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

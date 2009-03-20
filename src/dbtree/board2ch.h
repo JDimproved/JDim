@@ -50,7 +50,7 @@ namespace DBTREE
 
       private:
 
-        virtual ArticleBase* append_article( const std::string& id, bool cached );
+        virtual ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached );
     };
 }
 

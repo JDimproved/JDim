@@ -278,7 +278,7 @@ void ArticleViewBase::setup_action()
 
     // その他
     action_group()->add( Gtk::Action::create( "Etc_Menu", "その他(_O)" ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", "datファイルを保存(_S)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", "datを保存(_S)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
     action_group()->add( Gtk::Action::create( "CopyInfo", "スレ情報のコピー(_C)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_article_info ) );
 
     // ユーザコマンド
@@ -1428,7 +1428,9 @@ void ArticleViewBase::show_name( const std::string& name, bool show_option )
         if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
 
-        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br><hr>";
+        comment << "<br><br>" << url_for_copy();
+        if( url_for_copy()[ url_for_copy().size() - 1 ] != '/' ) comment << "/";
+        comment << MISC::intlisttostr( list_resnum ) << "<br><hr>";
     }
 
     append_html( comment.str() );
@@ -1459,7 +1461,9 @@ void ArticleViewBase::show_id( const std::string& id_name, bool show_option )
         if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
 
-        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br><hr>";
+        comment << "<br><br>" << url_for_copy();
+        if( url_for_copy()[ url_for_copy().size() - 1 ] != '/' ) comment << "/";
+        comment << MISC::intlisttostr( list_resnum ) << "<br><hr>";
     }
       
     append_html( comment.str() );
@@ -1600,7 +1604,9 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or, 
         if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
 
-        comment << "<br><br>" << url_for_copy() << MISC::intlisttostr( list_resnum ) << "<br><hr>";
+        comment << "<br><br>" << url_for_copy();
+        if( url_for_copy()[ url_for_copy().size() - 1 ] != '/' ) comment << "/";
+        comment << MISC::intlisttostr( list_resnum ) << "<br><hr>";
     }
 
     append_html( comment.str() );

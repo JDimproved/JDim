@@ -252,11 +252,11 @@ const std::string Board2ch::url_subbbscgi_new()
 //
 // cached : HDD にキャッシュがあるならtrue
 //
-ArticleBase* Board2ch::append_article( const std::string& id, bool cached )
+ArticleBase* Board2ch::append_article( const std::string& datbase, const std::string& id, const bool cached )
 {
     if( empty() ) return get_article_null();
 
-    ArticleBase* article = new DBTREE::Article2ch( url_datbase(), id, cached );
+    ArticleBase* article = new DBTREE::Article2ch( datbase, id, cached );
     if( article ){
         get_list_article().push_back( article );
 

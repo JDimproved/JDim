@@ -81,11 +81,11 @@ bool BoardMachi::is_valid( const std::string& filename )
 //
 // cached : HDD にキャッシュがあるならtrue
 //
-ArticleBase* BoardMachi::append_article( const std::string& id, bool cached )
+ArticleBase* BoardMachi::append_article( const std::string& datbase, const std::string& id, const bool cached )
 {
     if( empty() ) return get_article_null();
 
-    ArticleBase* article = new DBTREE::ArticleMachi( url_datbase(), id, cached );
+    ArticleBase* article = new DBTREE::ArticleMachi( datbase, id, cached );
     if( article ){
         get_list_article().push_back( article );
 
@@ -216,6 +216,7 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
    
     const char* pos = str_subject_txt;
     char str_tmp[ 1024 ];
+    const std::string datbase = url_datbase();
 
     ArticleBase* article_first = NULL;
 
@@ -280,14 +281,14 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
 #endif
 
         // DBに登録されてるならarticle クラスの情報更新
-        ArticleBase* article = get_article( id );
+        ArticleBase* article = get_article( datbase, id );
 
         // DBにないなら新規に article クラスを追加
         //
         // なお BoardBase::receive_finish() のなかで append_all_article_in_cache() が既に呼び出されているため
         // DBに無いということはキャッシュにも無いということ。よって append_article()で  cached = false
 
-        if( article->empty() ) article = append_article( id, false );
+        if( article->empty() ) article = append_article( datbase, id, false );
 
         // スレ情報更新
         if( article ){

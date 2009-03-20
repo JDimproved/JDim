@@ -211,7 +211,7 @@ namespace DBTREE
 
         // ロード開始
         // check_update : HEADによる更新チェックのみ
-        void download_dat( const bool check_update );
+        virtual void download_dat( const bool check_update );
 
         // あぼーんしているか
         bool get_abone( int number );
@@ -342,20 +342,6 @@ namespace DBTREE
 
         // http://ime.nu/ などをリンクから削除
         bool remove_imenu( char* str_link );
-    };
-
-
-
-    /////////////////////////////////////////////////////////
-
-
-    // ARTICLE::LayoutTree::append_html() で使用するダミークラス
-
-    class NodeTreeDummy : public NodeTreeBase
-    {
-      public:
-        NodeTreeDummy( const std::string& url, const std::string& date_modified );
-        virtual ~NodeTreeDummy();
     };
 }
 

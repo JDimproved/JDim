@@ -182,7 +182,11 @@ namespace CACHE
     void add_filter_to_diag( Gtk::FileChooserDialog& diag, const int type );
 
     // ファイル選択ダイアログを表示する
-    std::string open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type );
+    // parent == NULL の時はメインウィンドウをparentにする
+    // open_path はデフォルトの参照先
+    // multi == true なら複数選択可能
+    // 戻り値は選択されたファイルのpathのリスト
+    const std::list< std::string > open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type, const bool multi );
 
     // 保存ファイル選択ダイアログを表示する
     std::string open_save_diag( Gtk::Window* parent, const std::string& dir, const std::string& name, const int type );
@@ -192,6 +196,10 @@ namespace CACHE
 
     // dir ディレクトリ内のレギュラーファイルの合計サイズを取得
     int64_t get_dirsize( const std::string& dir );
+
+    // 相対パスから絶対パスを取得してファイルが存在すれば絶対パスを返す
+    // ファイルが存在しない場合は std::string() を返す
+    const std::string get_realpath( const std::string& path );
 }
 
 #endif

@@ -169,8 +169,11 @@ namespace DBTREE
       protected:
 
         std::list< ArticleBase* >& get_list_article(){ return m_list_article; }
+        std::list< std::string >& get_url_update_views(){ return  m_url_update_views; }
 
         ArticleBase* get_article_null();
+        ArticleBase* get_article( const std::string& datbase, const std::string& id );
+        ArticleBase* get_article_create( const std::string& datbase, const std::string& id );
 
         void set_path_dat( const std::string& str ){ m_path_dat = str; }
         void set_path_readcgi( const std::string& str ){ m_path_readcgi = str; }
@@ -183,6 +186,9 @@ namespace DBTREE
 
         // articleがスレあぼーんされているか
         const bool is_abone_thread( ArticleBase* article );
+
+        // m_url_update_views に登録されている view に update_board コマンドを送る
+        void send_update_board();
 
       public:
 
@@ -292,7 +298,7 @@ namespace DBTREE
         // num_from と num_to が 0 で無い時はスレ番号を付ける
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15 のとき
         // "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345/12-15"
-        const std::string url_readcgi( const std::string& url, int num_from, int num_to );
+        virtual const std::string url_readcgi( const std::string& url, int num_from, int num_to );
 
         // subject.txt の URLを取得
         // (例) "http://www.hoge2ch.net/hogeboard/subject.txt"
@@ -323,20 +329,19 @@ namespace DBTREE
         const std::string url_readcgipath();
 
         // bbscgi のURLのベースアドレス
+        // (例) "http://www.hoge2ch.net/test/bbs.cgi/" ( 最後に '/' がつく )
         const std::string url_bbscgibase();
         
         // subbbscgi のURLのベースアドレス
+        // (例) "http://www.hoge2ch.net/test/subbbs.cgi/"  ( 最後に '/' がつく )
         const std::string url_subbbscgibase();
 
         // article クラスのポインタ取得
-        // それぞれの違いはソースのコメントを参照
-        ArticleBase* get_article( const std::string& id );
-        ArticleBase* get_article_create( const std::string& id );
         ArticleBase* get_article_fromURL( const std::string& url );
 
         // subject.txt ダウンロード
         // url_update_view : CORE::core_set_command( "update_board" ) を送信するビューのアドレス
-        void download_subject( const std::string& url_update_view );
+        virtual void download_subject( const std::string& url_update_view );
 
         // 新スレ作成用のメッセージ変換
         virtual const std::string create_newarticle_message( const std::string& subject,
@@ -431,20 +436,21 @@ namespace DBTREE
         void set_number_max_res( const int number ){ m_number_max_res = number; }
 
         // 板情報の取得
-        void read_info();
+        virtual void read_info();
 
         // 情報保存
-        void save_info();
+        virtual void save_info();
         
         // キャッシュ内のログ検索
-        std::list< std::string > search_cache( const std::string& query, bool mode_or, bool& stop );
+        virtual std::list< std::string > search_cache( const std::string& query, bool mode_or, bool& stop );
+
+        // datファイルのインポート
+        // 成功したらdat型のurlを返す
+        virtual const std::string import_dat( const std::string& filename );
 
       private:
 
         void clear();
-
-        // m_url_update_views に登録されている view に update_board コマンドを送る
-        void send_update_board();
 
         // キャッシュのファイル名が正しいかどうか
         virtual bool is_valid( const std::string& filename ){ return false; }
@@ -456,13 +462,13 @@ namespace DBTREE
         // url_boardbase をロードして移転したかどうか解析開始
         bool start_checkking_if_board_moved();
 
-        virtual ArticleBase* append_article( const std::string& id, bool cached );
+        virtual ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached );
         virtual void parse_subject( const char* str_subject_txt ){}
 
         std::list< std::string > get_filelist_in_cache();
 
         void read_board_info();
-        void append_all_article_in_cache();
+        virtual void append_all_article_in_cache();
 
         void save_summary();
         void save_board_info();

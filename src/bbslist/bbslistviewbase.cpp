@@ -72,6 +72,8 @@ show_popupmenu( url, slot ); \
 #define POPUPMENU_BOARD2 \
     "<menuitem action='SearchCacheBoard'/>" \
     "<separator/>" \
+    "<menuitem action='ImportDat'/>" \
+    "<separator/>" \
     "<menuitem action='PreferenceBoard'/>" \
     "</popup>" \
 
@@ -88,6 +90,8 @@ show_popupmenu( url, slot ); \
     "</menu>" \
     "<separator/>" \
     "<menuitem action='SearchCacheBoard'/>" \
+    "<separator/>" \
+    "<menuitem action='ImportDat'/>" \
     "<separator/>" \
     "<menuitem action='PreferenceArticle'/>" \
     "<menuitem action='PreferenceBoard'/>" \
@@ -187,6 +191,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
                          sigc::mem_fun( *this, &BBSListViewBase::slot_cancel_check_update ) );
 
     action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索(_S)"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
+    action_group()->add( Gtk::Action::create( "ImportDat", "datのインポート(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_import_dat ) );
 
     action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ(_P)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ(_B)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
@@ -776,14 +781,16 @@ const bool BBSListViewBase::operate_view( const int control )
 //
 void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
 {
-    Glib::RefPtr< Gtk::Action > act_search, act_board, act_article, act_image, act_opentab;
+    Glib::RefPtr< Gtk::Action > act_search, act_import, act_board, act_article, act_image, act_opentab;
     act_search = action_group()->get_action( "SearchCacheBoard" );
+    act_import = action_group()->get_action( "ImportDat" );
     act_board = action_group()->get_action( "PreferenceBoard" );
     act_article = action_group()->get_action( "PreferenceArticle" );
     act_image = action_group()->get_action( "PreferenceImage" );
     act_opentab = action_group()->get_action( "OpenTab" );
 
     if( act_search ) act_search->set_sensitive( false );
+    if( act_import ) act_import->set_sensitive( false );
     if( act_board ) act_board->set_sensitive( false );
     if( act_article ) act_article->set_sensitive( false );
     if( act_image ) act_image->set_sensitive( false );
@@ -794,6 +801,7 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
 
         case TYPE_BOARD:
             if( act_search ) act_search->set_sensitive( true );
+            if( act_import ) act_import->set_sensitive( true );
             if( act_board ) act_board->set_sensitive( true );
             break;
 
@@ -1599,6 +1607,18 @@ void BBSListViewBase::slot_search_cache_board()
     std::string url = path2url( m_path_selected );
 
     CORE::core_set_command( "open_article_searchlog", url );
+}
+
+
+//
+// datのインポート
+//
+void BBSListViewBase::slot_import_dat()
+{
+    if( m_path_selected.empty() ) return;
+    std::string url = path2url( m_path_selected );
+
+    CORE::core_set_command( "import_dat", url, "show_diag" );
 }
 
 

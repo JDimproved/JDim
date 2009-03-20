@@ -25,6 +25,7 @@
 #include "cache.h"
 #include "httpcode.h"
 #include "environment.h"
+#include "global.h"
 
 #include <sstream>
 #include <cstring>
@@ -71,6 +72,9 @@ Root::Root()
 
     // 2chのスレの過去ログ
     set_board( ENVIRONMENT::get_jd2chlog(), "2chスレ過去ログ" );
+
+    // ローカルファイル
+    set_board( URL_BOARD_LOCAL, "ローカルファイル" );
 
     m_board_null = new DBTREE::BoardBase( "", "", "" );
 }
@@ -138,7 +142,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
         if( pos != std::string::npos && pos != 0 ) return m_board_null;
 
         // http:// が含まれていなかったら先頭に追加して再帰呼び出し
-        else if( pos == std::string::npos ){
+        else if( pos == std::string::npos && ! is_local( url ) ){
             BoardBase* board = get_board( "http://" + url , count + 1 );
             m_get_board_url = url;
             return board;
@@ -499,6 +503,15 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
 
             type = TYPE_BOARD_2CH_COMPATI;
         }
+    }
+
+    // ローカルファイル
+    else if( is_local( url ) ){
+
+        root = URL_BOARD_LOCAL;
+        path_board = "/local";
+
+        type = TYPE_BOARD_LOCAL;
     }
 
     // その他は互換型
@@ -1387,9 +1400,9 @@ void Root::save_movetable()
 //
 // 2ch型のURLかどうか
 //
-bool Root::is_2ch( const std::string& url )
+const bool Root::is_2ch( const std::string& url )
 {
-    std::string hostname = MISC::get_hostname( url );
+    const std::string hostname = MISC::get_hostname( url );
 
     if( ( hostname.find( ".2ch.net" ) != std::string::npos && hostname.find( "info.2ch.net" ) == std::string::npos )
         || hostname.find( ".bbspink.com" ) != std::string::npos ) return true;
@@ -1402,9 +1415,9 @@ bool Root::is_2ch( const std::string& url )
 //
 // JBBS型のURLかどうか
 //
-bool Root::is_JBBS( const std::string& url )
+const bool Root::is_JBBS( const std::string& url )
 {
-    std::string hostname = MISC::get_hostname( url );
+    const std::string hostname = MISC::get_hostname( url );
 
     if( hostname.find( "jbbs.livedoor.jp" ) != std::string::npos
         || hostname.find( "jbbs.shitaraba.com" ) != std::string::npos ) return true;
@@ -1416,9 +1429,9 @@ bool Root::is_JBBS( const std::string& url )
 //
 // まち型のURLかどうか
 //
-bool Root::is_machi( const std::string& url )
+const bool Root::is_machi( const std::string& url )
 {
-    std::string hostname = MISC::get_hostname( url );
+    const std::string hostname = MISC::get_hostname( url );
 
     if( hostname.find( ".machi.to" ) != std::string::npos ) return true;
 
@@ -1429,11 +1442,22 @@ bool Root::is_machi( const std::string& url )
 //
 // vipサービスのURLか
 //
-bool Root::is_vip2ch( const std::string& url )
+const bool Root::is_vip2ch( const std::string& url )
 {
-    std::string hostname = MISC::get_hostname( url );
+    const std::string hostname = MISC::get_hostname( url );
 
     if( hostname.find( ".vip2ch.com" ) != std::string::npos ) return true;
+
+    return false;
+}
+
+
+//
+// ローカルファイルか
+//
+const bool Root::is_local( const std::string& url )
+{
+    if( url.find( "file://" ) != std::string::npos ) return true;
 
     return false;
 }

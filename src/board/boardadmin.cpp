@@ -230,6 +230,13 @@ void BoardAdmin::command_local( const COMMAND_ARGS& command )
             if( view ) view->set_command( "update_columns" );
         }
     }
+
+    // 指定したスレを強調して表示
+    else if( command.command == "draw_bg_articles" ){
+
+        SKELETON::View* view = get_view( command.url );
+        if( view ) view->set_command( "draw_bg_articles" );
+    }
 }
 
 

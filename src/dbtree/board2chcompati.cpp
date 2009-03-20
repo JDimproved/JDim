@@ -286,11 +286,11 @@ const std::string Board2chCompati::url_subbbscgi_new()
 //
 // cached : HDD にキャッシュがあるならtrue
 //
-ArticleBase* Board2chCompati::append_article( const std::string& id, bool cached )
+ArticleBase* Board2chCompati::append_article( const std::string& datbase, const std::string& id, const bool cached )
 {
     if( empty() ) return get_article_null();
 
-    ArticleBase* article = new DBTREE::Article2chCompati( url_datbase(), id, cached );
+    ArticleBase* article = new DBTREE::Article2chCompati( datbase, id, cached );
     if( article ){
         get_list_article().push_back( article );
 
@@ -316,6 +316,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
     const int max_subject = 512;
     const char* pos = str_subject_txt;
     char str_tmp[ max_subject ];
+    const std::string datbase = url_datbase();
 
     while( *pos != '\0' ){
         
@@ -378,13 +379,13 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
 #endif
 
         // DBに登録されてるならarticle クラスの情報更新
-        ArticleBase* article = get_article( id );
+        ArticleBase* article = get_article( datbase, id );
 
         // DBにないなら新規に article クラスをDBに登録
         //
         // なお BoardBase::receive_finish() のなかで append_all_article_in_cache() が既に呼び出されているため
         // DBに無いということはキャッシュに無いということ。よって append_article()の呼出に cached = false　を指定する
-        if( article->empty() ) article = append_article( id,
+        if( article->empty() ) article = append_article( datbase, id,
                                                          false // キャッシュ無し
             );
 
