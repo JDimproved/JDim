@@ -25,6 +25,7 @@
 #include <dirent.h>
 
 #include <fcntl.h>
+#include <cstring>
 
 enum
 {
