@@ -886,7 +886,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
     const bool online = SESSION::is_online();
     const bool nocheck_opened = ( command.arg2 == "true" );
-    bool mode = 0;
+    int mode = 0;
     if( ! command.arg3.empty() ){
 
         if( command.arg3.find( "auto" ) != std::string::npos ) mode |= OPEN_MODE_AUTO;

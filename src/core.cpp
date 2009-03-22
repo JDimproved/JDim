@@ -3651,7 +3651,7 @@ void Core::import_dat( const std::string& url_board, const std::list< std::strin
 
     if( list_info.size() ){
 
-        CORE::core_set_command( "open_board" , url_subject, "true" , "auto offline" );
+        CORE::core_set_command( "open_board" , url_subject, "true" , "auto" );
 
         CORE::SBUF_set_list( list_info );
         BOARD::get_admin()->set_command( "draw_bg_articles", url_subject );
