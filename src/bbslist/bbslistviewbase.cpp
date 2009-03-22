@@ -2257,7 +2257,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 
     const std::string urldat = DBTREE::url_dat( url );
     const std::string urlcgi = DBTREE::url_readcgi( url, 0, 0 );
-    const std::string name_old = DBTREE::article_subject( urldat );
+    const std::string name_old = MISC::remove_space( DBTREE::article_subject( urldat ) );
 
     int type = TYPE_THREAD;
     const int status = DBTREE::article_status( urldat_new );
@@ -2292,11 +2292,11 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 
                         // 名前が古いものであったら更新
                         // 変更されていたらそのまま
-                        Glib::ustring name_row = row[ m_columns.m_name ];
+                        const Glib::ustring name_row = row[ m_columns.m_name ];
 #ifdef _DEBUG
                         std::cout << "name_row = " << name_row << std::endl;
 #endif 
-                        if( name_row == name_old ){
+                        if( MISC::remove_space( name_row ) == name_old ){
 #ifdef _DEBUG
                             std::cout << "replace name\n";
 #endif 
