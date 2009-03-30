@@ -1277,7 +1277,7 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
     if( check_thread ){
         std::list< std::string >::iterator it = m_list_abone_thread.begin();
         for( ; it != m_list_abone_thread.end(); ++it ){
-            if( article->get_subject() == (*it) ) return true;
+            if( article->get_subject().find(*it) != std::string::npos ) return true;
         }
     }
 
