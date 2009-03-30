@@ -1,5 +1,8 @@
 // ライセンス: GPL2
 
+//#define _DEBUG
+#include "jddebug.h"
+
 #include "spchar_decoder.h"
 #include "spchar_tbl.h"
 #include "node.h"
@@ -26,32 +29,71 @@ bool check_spchar( const char* n_in, const char* spchar )
 //
 // ユニコード文字参照  &#数字;
 //
-// in_char[1] == "#" であること
+// in_char: 入力文字列、in_char[1] == "#" であること
+// n_in : 入力で使用した文字数が返る
+// out_char : 出力文字列
+// n_out : 出力した文字数が返る
 //
-int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out )
+// 戻り値 : node.h で定義したノード番号
+//
+const int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out )
 {
     int ret = DBTREE::NODE_TEXT;
     int lng = 0;
     char str_num[ 16 ];
+    int offset = 2;
 
     n_in = n_out = 0;
 
+    // offset == 2 なら 10 進数、3 なら16進数
+    if( in_char[ offset ] == 'x' || in_char[ offset ] == 'X' ) offset += 1;
+
     // 桁数取得(最大4桁)
-    if( in_char[ 2 ] == ';' ) return DBTREE::NODE_NONE;
-    else if( in_char[ 3 ] == ';' ) lng = 1;
-    else if( in_char[ 4 ] == ';' ) lng = 2;
-    else if( in_char[ 5 ] == ';' ) lng = 3;
-    else if( in_char[ 6 ] == ';' ) lng = 4;
-    else if( in_char[ 7 ] == ';' ) lng = 5;
+    if( in_char[ offset ] == ';' ) return DBTREE::NODE_NONE;
+    else if( in_char[ offset +1 ] == ';' ) lng = 1;
+    else if( in_char[ offset +2 ] == ';' ) lng = 2;
+    else if( in_char[ offset +3 ] == ';' ) lng = 3;
+    else if( in_char[ offset +4 ] == ';' ) lng = 4;
+    else if( in_char[ offset +5 ] == ';' ) lng = 5;
     else return DBTREE::NODE_NONE;
 
-    // 全て数字かどうかチェック
-    for( int i = 0; i < lng; ++i ) if( in_char[ 2 + i ] < '0' || in_char[ 2 + i ] > '9' ) return DBTREE::NODE_NONE;
+    // デコード可能かチェック
 
-    memcpy( str_num, in_char + 2, lng );
+    // 10 進数
+    if( offset == 2 ){
+
+        for( int i = 0; i < lng; ++i ){
+            if( in_char[ offset + i ] < '0' || in_char[ offset + i ] > '9' ) return DBTREE::NODE_NONE;
+        }
+    }
+
+    // 16 進数
+    else{
+
+        for( int i = 0; i < lng; ++i ){
+            if(
+                ! (
+                    ( in_char[ offset + i ] >= '0' && in_char[ offset + i ] <= '9' )
+                    || ( in_char[ offset + i ] >= 'a' && in_char[ offset + i ] <= 'f' )
+                    || ( in_char[ offset + i ] >= 'A' && in_char[ offset + i ] <= 'F' )
+                    )
+                ) return DBTREE::NODE_NONE;
+        }
+    }
+
+    memcpy( str_num, in_char + offset, lng );
     str_num[ lng ] = '\0';
 
-    int num = atoi( str_num );
+#ifdef _DEBUG
+    std::cout << "decode_char_number offset = " << offset
+              << " lng = " << lng
+              << " str = " << str_num << std::endl;
+#endif
+
+    int num = 0;
+
+    if( offset == 2 ) num = atoi( str_num );
+    else num = strtol( str_num, NULL, 16 );
 
     switch( num ){
 
@@ -69,7 +111,7 @@ int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_
             if( ! n_out ) return DBTREE::NODE_NONE;
     }
 
-    n_in = 3 + lng;
+    n_in = offset + lng + 1;
 
     return ret;
 }    
@@ -79,13 +121,13 @@ int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_
 // 文字参照のデコード
 //
 // in_char : 入力文字列, in_char[ 0 ] = '&' となっていること
+// n_in : 入力で使用した文字数が返る
 // out_char : 出力文字列
-// n_in : 入力で使用した文字数
-// n_out : 出力文字数
+// n_out : 出力した文字数が返る
 //
 // 戻り値 : node.h で定義したノード番号
 //
-int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out )
+const int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out )
 {
     int ret = DBTREE::NODE_TEXT;
     n_in = n_out = 0;

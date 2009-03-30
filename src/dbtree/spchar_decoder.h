@@ -10,7 +10,13 @@
 namespace DBTREE
 {
     // 文字参照のデコード
-    int decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out );
+    // in_char : 入力文字列, in_char[ 0 ] = '&' となっていること
+    // n_in : 入力で使用した文字数が返る
+    // out_char : 出力文字列
+    // n_out : 出力した文字数が返る
+    // 戻り値 : node.h で定義したノード番号
+
+    const int decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out );
 }
 
 #endif
