@@ -886,6 +886,7 @@ void BoardBase::receive_finish()
     if( m_is_online ) download_rule_setting();
 
     m_list_subject.clear();
+    m_list_abone_thread_tmp.clear();
 
     bool read_from_cache = false;
     std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
@@ -1094,7 +1095,7 @@ void BoardBase::receive_finish()
 #endif
         }
 
-        // オンライン、かつcodeが200なら情報を保存して subject.txt をキャッシュに保存
+        // オンライン、かつcodeが200なら情報を更新・保存して subject.txt をキャッシュに保存
         if( m_is_online && get_code() == HTTP_OK ){
 
             m_last_access_time = time( NULL );
@@ -1104,6 +1105,9 @@ void BoardBase::receive_finish()
             std::cout << "rename " << path_subject << " " << path_oldsubject << std::endl;
             std::cout << "save " << path_subject << std::endl;    
 #endif
+            // Dat落ちしたスレタイトルをあぼーんのリストから消去
+            // is_abone_thread()を参照せよ
+            if( ! m_list_abone_thread.empty() ) m_list_abone_thread = m_list_abone_thread_tmp;
 
             save_info();
 
@@ -1123,7 +1127,8 @@ void BoardBase::receive_finish()
         }
 
         m_list_subject_created = true;
-    }
+
+    } //  if( ! m_list_subject.empty() )
 
     // list_subject が更新されなかった
     else{
@@ -1277,7 +1282,12 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
     if( check_thread ){
         std::list< std::string >::iterator it = m_list_abone_thread.begin();
         for( ; it != m_list_abone_thread.end(); ++it ){
-            if( MISC::remove_space( article->get_subject() ) == MISC::remove_space(*it) ) return true;
+            if( MISC::remove_space( article->get_subject() ) == MISC::remove_space(*it) ){
+
+                // 対象スレがDat落ちした場合はあぼーんしなかったスレ名をリストから消去する
+                m_list_abone_thread_tmp.push_back( *it );
+                return true;
+            }
         }
     }
 

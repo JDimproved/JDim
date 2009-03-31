@@ -99,6 +99,7 @@ namespace DBTREE
 
         // ローカルスレあぼーん情報
         std::list< std::string > m_list_abone_thread; // あぼーんするスレのタイトル
+        std::list< std::string > m_list_abone_thread_tmp; // あぼーんするスレのタイトル( dat 落ち判定用、is_abone_thread()を参照せよ )
         std::list< std::string > m_list_abone_word_thread; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex_thread; // あぼーんする正規表現
         int m_abone_number_thread; // レスの数
