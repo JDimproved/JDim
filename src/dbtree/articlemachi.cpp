@@ -18,7 +18,7 @@ using namespace DBTREE;
 ArticleMachi::ArticleMachi( const std::string& datbase, const std::string& _id, bool cached )
     : ArticleBase( datbase, _id, cached )
 {
-    assert( !id().empty() );
+    assert( !get_id().empty() );
 
     // Machi の場合は拡張子が無いので key = id
     set_key( get_id() );
@@ -88,7 +88,7 @@ const std::string ArticleMachi::url_subbbscgi()
 NodeTreeBase* ArticleMachi::create_nodetree()
 {
 #ifdef _DEBUG
-    std::cout << "ArticleMachi::create_nodetree " << url() << std::endl;
+    std::cout << "ArticleMachi::create_nodetree " << get_url() << std::endl;
 #endif
 
     return new NodeTreeMachi( get_url(), get_date_modified() );

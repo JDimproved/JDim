@@ -776,7 +776,7 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
     const std::string urldat = url_dat( url, num_from, num_to, num_str );
     if( urldat.empty() ) return get_article_null();
 
-    const std::string datbase = MISC::get_dir( urldat );
+    const std::string datbase = url_datbase();
     const std::string id = urldat.substr( datbase.length() );
     if( id.empty() ) return get_article_null();
 
