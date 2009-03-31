@@ -1551,12 +1551,19 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
 const std::string BoardBase::import_dat( const std::string& filename )
 {
     if( empty() ) return std::string();
-    if( CACHE::file_exists( filename ) != CACHE::EXIST_FILE ) return std::string();
+    if( CACHE::file_exists( filename ) != CACHE::EXIST_FILE ){
+        SKELETON::MsgDiag mdiag( NULL, "datファイルが存在しません" );
+        mdiag.run();
+        return std::string();
+    }
 
     const std::string dir = MISC::get_dir( filename );
     const std::string id = MISC::get_filename( filename );
-    if( id.empty() ) return FALSE;
-    if( ! is_valid( id ) ) return std::string();
+    if( id.empty() || ! is_valid( id ) ){
+        SKELETON::MsgDiag mdiag( NULL, "ファイル名が正しくありません" );
+        mdiag.run();
+        return std::string();
+    }
 
     const std::string file_to = CACHE::path_board_root_fast( url_boardbase() ) + id;
 
@@ -1574,7 +1581,11 @@ const std::string BoardBase::import_dat( const std::string& filename )
             art->set_cached( true );
             art->read_info();
         }
-        else std::string();
+        else{
+            SKELETON::MsgDiag mdiag( NULL, "datファイルのコピーに失敗しました" );
+            mdiag.run();
+            return std::string();
+        }
     }
 
     return art->get_url();
