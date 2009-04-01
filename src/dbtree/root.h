@@ -108,10 +108,11 @@ namespace DBTREE
         // bbsmenuのダウンロード
         void download_bbsmenu();
 
-        // 配下の全boardbaseクラスのレスあぼーん状態を更新する
-        void update_abone_all_board();
+        // スレあぼーん情報を更新した時、全boardbaseクラスに対応するスレ一覧の表示を更新させる
+        // CONFIG::set_abone_number_thread() などでグローバル設定をした後などに呼び出す
+        void update_abone_thread();
 
-        // 配下の全boardbaseクラスに、全articlebaseクラスのあぼーん状態の更新をさせる
+        // 全boardbaseクラスに、それに属する全articlebaseクラスのあぼーん状態の更新をさせる
         void update_abone_all_article();
 
         // 板が移転したかチェックする

@@ -53,8 +53,8 @@ namespace CORE
             CONFIG::set_list_abone_word_thread( list_word );
             CONFIG::set_list_abone_regex_thread( list_regex );
 
-            // あぼーん情報更新
-            DBTREE::update_abone_all_board();  // 板の再描画も行われる
+            // スレ一覧再描画
+            DBTREE::update_abone_thread();
         }
 
       public:

@@ -264,43 +264,46 @@ namespace DBTREE
 
     // あぼーん関係
 
-    // 板レベルのあぼーん
+    // 板レベルでのあぼーん情報
     // グローバルなあぼーん情報は globalconf が管理
-    std::list< std::string > get_abone_list_id_board( const std::string& url );
-    std::list< std::string > get_abone_list_name_board( const std::string& url );
-    std::list< std::string > get_abone_list_word_board( const std::string& url );
-    std::list< std::string > get_abone_list_regex_board( const std::string& url );
+    const std::list< std::string >& get_abone_list_id_board( const std::string& url );
+    const std::list< std::string >& get_abone_list_name_board( const std::string& url );
+    const std::list< std::string >& get_abone_list_word_board( const std::string& url );
+    const std::list< std::string >& get_abone_list_regex_board( const std::string& url );
 
-    // 板レベルのあぼーん情報の同時セットと更新
+    // 板レベルでのあぼーん状態のリセット(情報セットとスレビューの表示更新を同時におこなう)
     void reset_abone_board( const std::string& url,
-                            std::list< std::string >& ids, std::list< std::string >& names,
-                            std::list< std::string >& words, std::list< std::string >& regexs );
+                            const std::list< std::string >& ids,
+                            const std::list< std::string >& names,
+                            const std::list< std::string >& words,
+                            const std::list< std::string >& regexs );
 
-    // 個別のあぼーん情報のセットと更新
+    // 板レベルでのあぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう。スレビューの表示更新も同時におこなう)
     void add_abone_id_board( const std::string& url, const std::string& id );
     void add_abone_name_board( const std::string& url, const std::string& name );
     void add_abone_word_board( const std::string& url, const std::string& word );
 
-    // 全boardbaseクラスのあぼーん状態の更新
-    // ビューの再描画も同時に行われる
-    void update_abone_all_board();
-
-    // 指定したboardbaseクラスのあぼーん状態の更新
-    // ビューの再描画も同時に行われる
-    void update_abone_board( const std::string& url );
-
-    // スレあぼーん
+    // スレあぼーん情報
     // グローバルなあぼーん情報は globalconf が管理
-    std::list< std::string > get_abone_list_thread( const std::string& url );
-    std::list< std::string > get_abone_list_word_thread( const std::string& url );
-    std::list< std::string > get_abone_list_regex_thread( const std::string& url );
-    std::vector< char > get_abone_vec_res( const std::string& url );
+    const std::list< std::string >& get_abone_list_thread( const std::string& url );
+    const std::list< std::string >& get_abone_list_word_thread( const std::string& url );
+    const std::list< std::string >& get_abone_list_regex_thread( const std::string& url );
+    const std::vector< char >& get_abone_vec_res( const std::string& url );
     const int get_abone_number_thread( const std::string& url );
     const int get_abone_hour_thread( const std::string& url );
 
-    // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
+    // subject.txtのロード後にdat落ちしたスレッドをスレあぼーんのリストから取り除く
+    void remove_old_abone_thread( const std::string& url );
+
+    // スレあぼーん情報を更新した時、全boardbaseクラスに対応するスレ一覧の表示を更新させる
+    // CONFIG::set_abone_number_thread() などでグローバル設定をした後などに呼び出す
+    void update_abone_thread();
+
+    // スレあぼーん状態のリセット(情報セットとスレ一覧の表示更新を同時におこなう)
     void reset_abone_thread( const std::string& url,
-                             std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs,
+                             const std::list< std::string >& threads,
+                             const std::list< std::string >& words,
+                             const std::list< std::string >& regexs,
                              const int number, const int hour );
 
     //
@@ -312,10 +315,10 @@ namespace DBTREE
 
     // レスあぼーん
     // グローバルなあぼーん情報は globalconf が管理
-    std::list< std::string > get_abone_list_id( const std::string& url );
-    std::list< std::string > get_abone_list_name( const std::string& url );
-    std::list< std::string > get_abone_list_word( const std::string& url );
-    std::list< std::string > get_abone_list_regex( const std::string& url );
+    const std::list< std::string >& get_abone_list_id( const std::string& url );
+    const std::list< std::string >& get_abone_list_name( const std::string& url );
+    const std::list< std::string >& get_abone_list_word( const std::string& url );
+    const std::list< std::string >& get_abone_list_regex( const std::string& url );
 
     // 全あぼーん情報の同時セットと更新
     void reset_abone( const std::string& url,

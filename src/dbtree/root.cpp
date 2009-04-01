@@ -1464,9 +1464,11 @@ const bool Root::is_local( const std::string& url )
 
 
 //
-// 配下の全boardbaseクラスのレスあぼーん状態を更新する
+// スレあぼーん情報を更新した時、全boardbaseクラスに対応するスレ一覧の表示を更新させる
 //
-void Root::update_abone_all_board()
+// CONFIG::set_abone_number_thread() などでグローバル設定をした後などに呼び出す
+//
+void Root::update_abone_thread()
 {
     std::list< BoardBase* >::iterator it = m_list_board.begin();
     for( ; it != m_list_board.end(); ++it ) ( *it )->update_abone_thread();
@@ -1475,7 +1477,7 @@ void Root::update_abone_all_board()
 
 
 //
-// 配下の全boardbaseクラスに、全articlebaseクラスのあぼーん状態の更新をさせる
+// 全boardbaseクラスに、それに属する全articlebaseクラスのあぼーん状態の更新をさせる
 //
 void Root::update_abone_all_article()
 {

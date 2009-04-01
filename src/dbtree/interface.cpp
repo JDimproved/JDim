@@ -605,74 +605,67 @@ const time_t DBTREE::board_last_access_time( const std::string& url )
 
 /////////////////////////////////////////////////
 
-std::list< std::string > DBTREE::get_abone_list_id_board( const std::string& url )
+
+const std::list< std::string >& DBTREE::get_abone_list_id_board( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_abone_list_id();
+    return DBTREE::get_board( url )->get_abone_list_id_board();
 }
 
-std::list< std::string > DBTREE::get_abone_list_name_board( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_name_board( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_abone_list_name();
+    return DBTREE::get_board( url )->get_abone_list_name_board();
 }
 
-std::list< std::string > DBTREE::get_abone_list_word_board( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_word_board( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_abone_list_word();
+    return DBTREE::get_board( url )->get_abone_list_word_board();
 }
 
-std::list< std::string > DBTREE::get_abone_list_regex_board( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_regex_board( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_abone_list_regex();
+    return DBTREE::get_board( url )->get_abone_list_regex_board();
 }
 
 void DBTREE::reset_abone_board( const std::string& url,
-                        std::list< std::string >& ids, std::list< std::string >& names,
-                        std::list< std::string >& words, std::list< std::string >& regexs )
+                                const std::list< std::string >& ids,
+                                const std::list< std::string >& names,
+                                const std::list< std::string >& words,
+                                const std::list< std::string >& regexs )
 {
-    DBTREE::get_board( url )->reset_abone( ids, names, words, regexs );
+    DBTREE::get_board( url )->reset_abone_board( ids, names, words, regexs );
 }
 
 
 void DBTREE::add_abone_id_board( const std::string& url, const std::string& id )
 {
-    DBTREE::get_board( url )->add_abone_id( id );
+    DBTREE::get_board( url )->add_abone_id_board( id );
 }
 
 void DBTREE::add_abone_name_board( const std::string& url, const std::string& name )
 {
-    DBTREE::get_board( url )->add_abone_name( name );
+    DBTREE::get_board( url )->add_abone_name_board( name );
 }
 
 void DBTREE::add_abone_word_board( const std::string& url, const std::string& word )
 {
-    DBTREE::get_board( url )->add_abone_word( word );
+    DBTREE::get_board( url )->add_abone_word_board( word );
 }
 
 
 /////////////////////////////////////////////////
 
 
-void DBTREE::update_abone_all_board()
-{
-    DBTREE::get_root()->update_abone_all_board();
-}
-
-void DBTREE::update_abone_board( const std::string& url )
-{
-    DBTREE::get_board( url )->update_abone_thread();
-}
-
-std::list< std::string > DBTREE::get_abone_list_thread( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_thread( const std::string& url )
 {
     return DBTREE::get_board( url )->get_abone_list_thread();
 }
 
-std::list< std::string > DBTREE::get_abone_list_word_thread( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_word_thread( const std::string& url )
 {
     return DBTREE::get_board( url )->get_abone_list_word_thread();
 }
 
-std::list< std::string > DBTREE::get_abone_list_regex_thread( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_regex_thread( const std::string& url )
 {
     return DBTREE::get_board( url )->get_abone_list_regex_thread();
 }
@@ -688,9 +681,22 @@ const int DBTREE::get_abone_hour_thread( const std::string& url )
 }
 
 
+void DBTREE::remove_old_abone_thread( const std::string& url )
+{
+    DBTREE::get_board( url )->remove_old_abone_thread();
+}
+
+void DBTREE::update_abone_thread()
+{
+    DBTREE::get_root()->update_abone_thread();
+}
+
 void DBTREE::reset_abone_thread( const std::string& url,
-                                 std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs,
-                                 const int number, const int hour )
+                                 const std::list< std::string >& threads,
+                                 const std::list< std::string >& words,
+                                 const std::list< std::string >& regexs,
+                                 const int number,
+                                 const int hour )
 {
     DBTREE::get_board( url )->reset_abone_thread( threads, words, regexs, number, hour );
 }
@@ -1023,29 +1029,29 @@ void DBTREE::update_abone_all_article()
 }
 
 
-std::list< std::string > DBTREE::get_abone_list_id( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_id( const std::string& url )
 {
     return DBTREE::get_article( url )->get_abone_list_id();
 }
 
 
-std::list< std::string > DBTREE::get_abone_list_name( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_name( const std::string& url )
 {
     return DBTREE::get_article( url )->get_abone_list_name();
 }
 
-std::list< std::string > DBTREE::get_abone_list_word( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_word( const std::string& url )
 {
     return DBTREE::get_article( url )->get_abone_list_word();
 }
 
-std::list< std::string > DBTREE::get_abone_list_regex( const std::string& url )
+const std::list< std::string >& DBTREE::get_abone_list_regex( const std::string& url )
 {
     return DBTREE::get_article( url )->get_abone_list_regex();
 }
 
 
-std::vector< char > DBTREE::get_abone_vec_res( const std::string& url )
+const std::vector< char >& DBTREE::get_abone_vec_res( const std::string& url )
 {
     return DBTREE::get_article( url )->get_abone_vec_res();
 }

@@ -886,7 +886,7 @@ void BoardBase::receive_finish()
     if( m_is_online ) download_rule_setting();
 
     m_list_subject.clear();
-    m_list_abone_thread_tmp.clear();
+    m_list_abone_thread_remove.clear();
 
     bool read_from_cache = false;
     std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
@@ -1105,9 +1105,6 @@ void BoardBase::receive_finish()
             std::cout << "rename " << path_subject << " " << path_oldsubject << std::endl;
             std::cout << "save " << path_subject << std::endl;    
 #endif
-            // Dat落ちしたスレタイトルをあぼーんのリストから消去
-            // is_abone_thread()を参照せよ
-            if( ! m_list_abone_thread.empty() ) m_list_abone_thread = m_list_abone_thread_tmp;
 
             save_info();
 
@@ -1285,7 +1282,8 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
             if( MISC::remove_space( article->get_subject() ) == MISC::remove_space(*it) ){
 
                 // 対象スレがDat落ちした場合はあぼーんしなかったスレ名をリストから消去する
-                m_list_abone_thread_tmp.push_back( *it );
+                // remove_old_abone_thread() も参照
+                m_list_abone_thread_remove.push_back( *it );
                 return true;
             }
         }
@@ -1328,9 +1326,36 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
 
 
 //
-// スレあぼーん状態の更新
+// subject.txtのロード後にdat落ちしたスレッドをスレあぼーんのリストから取り除く
 //
-// force = true なら強制更新
+// is_abone_thread() も参照せよ
+//
+#include <iostream>
+void BoardBase::remove_old_abone_thread()
+{
+    if( m_list_abone_thread.empty() ) return;
+    if( m_list_abone_thread.size() == m_list_abone_thread_remove.size() ) return;
+
+//#ifdef _DEBUG
+    std::cout << "BoardBase::remove_old_abone_thread\n";
+    std::list< std::string >::const_iterator it = m_list_abone_thread.begin();
+    for( ; it != m_list_abone_thread.end(); ++it ) std::cout << ( *it ) << std::endl;
+    std::cout << "->\n";
+    std::list< std::string >::const_iterator it2 = m_list_abone_thread_remove.begin();
+    for( ; it2 != m_list_abone_thread_remove.end(); ++it2 ) std::cout << ( *it2 ) << std::endl;
+//#endif
+
+    SKELETON::MsgDiag mdiag( NULL, "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？",
+                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    mdiag.set_default_response( Gtk::RESPONSE_YES );
+    if( mdiag.run() == Gtk::RESPONSE_YES ) m_list_abone_thread = m_list_abone_thread_remove;
+}
+
+
+//
+// スレあぼーん情報を更新した時に対応するスレ一覧の表示を更新する
+//
+// CONFIG::set_abone_number_thread() などでグローバル設定をした後などに呼び出す
 //
 void BoardBase::update_abone_thread()
 {
@@ -1338,7 +1363,6 @@ void BoardBase::update_abone_thread()
     std::cout << "BoardBase::update_abone_thread\n";
 #endif
 
-    // Root::update_abone_all_board() であぼーん状態を全更新するときなど
     // まだスレ一覧にスレを表示していないBoardBaseクラスは更新しない
     if( ! m_list_subject_created ) return;
 
@@ -1354,9 +1378,12 @@ void BoardBase::update_abone_thread()
 
 
 //
-// あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
+// 板レベルでのあぼーん状態のリセット(情報セットとスレビューの表示更新を同時におこなう)
 //
-void BoardBase::reset_abone( std::list< std::string >& ids, std::list< std::string >& names, std::list< std::string >& words, std::list< std::string >& regexs )
+void BoardBase::reset_abone_board( const std::list< std::string >& ids,
+                                   const std::list< std::string >& names,
+                                   const std::list< std::string >& words,
+                                   const std::list< std::string >& regexs )
 {
     if( empty() ) return;
 
@@ -1379,8 +1406,8 @@ void BoardBase::reset_abone( std::list< std::string >& ids, std::list< std::stri
 }
 
 
-// あぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう)
-void BoardBase::add_abone_id( const std::string& id )
+// 板レベルでのあぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう。スレビューの表示更新も同時におこなう)
+void BoardBase::add_abone_id_board( const std::string& id )
 {
     if( empty() ) return;
     if( id.empty() ) return;
@@ -1393,7 +1420,7 @@ void BoardBase::add_abone_id( const std::string& id )
     CORE::core_set_command( "relayout_all_article" );
 }
 
-void BoardBase::add_abone_name( const std::string& name )
+void BoardBase::add_abone_name_board( const std::string& name )
 {
     if( empty() ) return;
     if( name.empty() ) return;
@@ -1404,7 +1431,7 @@ void BoardBase::add_abone_name( const std::string& name )
     CORE::core_set_command( "relayout_all_article" );
 }
 
-void BoardBase::add_abone_word( const std::string& word )
+void BoardBase::add_abone_word_board( const std::string& word )
 {
     if( empty() ) return;
     if( word.empty() ) return;
@@ -1417,11 +1444,13 @@ void BoardBase::add_abone_word( const std::string& word )
 
 
 //
-// あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
+// スレあぼーん状態のリセット(情報セットとスレ一覧の表示更新を同時におこなう)
 //
-void BoardBase::reset_abone_thread( std::list< std::string >& threads,
-                                    std::list< std::string >& words, std::list< std::string >& regexs,
-                                    const int number, const int hour )
+void BoardBase::reset_abone_thread( const std::list< std::string >& threads,
+                                    const std::list< std::string >& words,
+                                    const std::list< std::string >& regexs,
+                                    const int number,
+                                    const int hour )
 {
     if( empty() ) return;
 

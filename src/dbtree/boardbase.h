@@ -99,7 +99,7 @@ namespace DBTREE
 
         // ローカルスレあぼーん情報
         std::list< std::string > m_list_abone_thread; // あぼーんするスレのタイトル
-        std::list< std::string > m_list_abone_thread_tmp; // あぼーんするスレのタイトル( dat 落ち判定用、is_abone_thread()を参照せよ )
+        std::list< std::string > m_list_abone_thread_remove; // あぼーんするスレのタイトル( dat 落ち判定用、remove_old_abone_thread()を参照せよ )
         std::list< std::string > m_list_abone_word_thread; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex_thread; // あぼーんする正規表現
         int m_abone_number_thread; // レスの数
@@ -360,33 +360,43 @@ namespace DBTREE
         // 配下の全articlebaseクラスのあぼーん状態の更新
         void update_abone_all_article();
 
-        // あぼーん情報
-        std::list< std::string > get_abone_list_id(){ return m_list_abone_id; }
-        std::list< std::string > get_abone_list_name(){ return m_list_abone_name; }
-        std::list< std::string > get_abone_list_word(){ return m_list_abone_word; }
-        std::list< std::string > get_abone_list_regex(){ return m_list_abone_regex; }
+        // 板レベルでのあぼーん情報
+        const std::list< std::string >& get_abone_list_id_board(){ return m_list_abone_id; }
+        const std::list< std::string >& get_abone_list_name_board(){ return m_list_abone_name; }
+        const std::list< std::string >& get_abone_list_word_board(){ return m_list_abone_word; }
+        const std::list< std::string >& get_abone_list_regex_board(){ return m_list_abone_regex; }
 
-        // あぼーん状態のリセット(情報セットと状態更新を同時におこなう)
-        void reset_abone( std::list< std::string >& ids, std::list< std::string >& names, std::list< std::string >& words, std::list< std::string >& regexs );
+        // 板レベルでのあぼーん状態のリセット(情報セットとスレビューの表示更新を同時におこなう)
+        void reset_abone_board( const std::list< std::string >& ids,
+                                const std::list< std::string >& names,
+                                const std::list< std::string >& words,
+                                const std::list< std::string >& regexs );
 
-        // あぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう)
-        void add_abone_id( const std::string& id );
-        void add_abone_name( const std::string& name );
-        void add_abone_word( const std::string& word );
+        // 板レベルでのあぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう。スレビューの表示更新も同時におこなう)
+        void add_abone_id_board( const std::string& id );
+        void add_abone_name_board( const std::string& name );
+        void add_abone_word_board( const std::string& word );
 
         // スレあぼーん情報
-        std::list< std::string > get_abone_list_thread(){ return m_list_abone_thread; }
-        std::list< std::string > get_abone_list_word_thread(){ return m_list_abone_word_thread; }
-        std::list< std::string > get_abone_list_regex_thread(){ return m_list_abone_regex_thread; }
+        const std::list< std::string >& get_abone_list_thread(){ return m_list_abone_thread; }
+        const std::list< std::string >& get_abone_list_word_thread(){ return m_list_abone_word_thread; }
+        const std::list< std::string >& get_abone_list_regex_thread(){ return m_list_abone_regex_thread; }
         const int get_abone_number_thread(){ return m_abone_number_thread; }
         const int get_abone_hour_thread(){ return m_abone_hour_thread; }
 
-        // スレあぼーん状態の更新
+        // subject.txtのロード後にdat落ちしたスレッドをスレあぼーんのリストから取り除く
+        void remove_old_abone_thread();
+
+        // スレあぼーん情報を更新した時に対応するスレ一覧の表示を更新する
+        // CONFIG::set_abone_number_thread() などでグローバル設定をした後などに呼び出す
         void update_abone_thread();
 
-        // スレあぼーん状態のリセット(情報セットと状態更新を同時におこなう)
-        void reset_abone_thread( std::list< std::string >& threads, std::list< std::string >& words, std::list< std::string >& regexs,
-                                 const int number, const int hour );
+        // スレあぼーん状態のリセット(情報セットとスレ一覧の表示更新を同時におこなう)
+        void reset_abone_thread( const std::list< std::string >& threads,
+                                 const std::list< std::string >& words,
+                                 const std::list< std::string >& regexs,
+                                 const int number,
+                                 const int hour );
 
         // ローカルプロキシ設定
         const int get_mode_local_proxy() const { return m_mode_local_proxy; }

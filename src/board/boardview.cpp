@@ -99,6 +99,9 @@ void BoardView::update_view()
     // 高速化のためデータベースに直接アクセス
     std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
     update_view_impl( list_subject );
+
+    // dat落ちしたスレッドをスレあぼーんのリストから取り除く
+    if( code == HTTP_OK ) DBTREE::remove_old_abone_thread( get_url_board() );
 }
 
 

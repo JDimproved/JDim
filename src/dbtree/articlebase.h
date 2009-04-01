@@ -291,11 +291,11 @@ namespace DBTREE
         const bool is_finished();
 
         // あぼーん情報
-        std::list< std::string > get_abone_list_id(){ return m_list_abone_id; }
-        std::list< std::string > get_abone_list_name(){ return m_list_abone_name; }
-        std::list< std::string > get_abone_list_word(){ return m_list_abone_word; }
-        std::list< std::string > get_abone_list_regex(){ return m_list_abone_regex; }
-        std::vector< char > get_abone_vec_res(){ return m_vec_abone_res; }
+        const std::list< std::string >& get_abone_list_id(){ return m_list_abone_id; }
+        const std::list< std::string >& get_abone_list_name(){ return m_list_abone_name; }
+        const std::list< std::string >& get_abone_list_word(){ return m_list_abone_word; }
+        const std::list< std::string >& get_abone_list_regex(){ return m_list_abone_regex; }
+        const std::vector< char >& get_abone_vec_res(){ return m_vec_abone_res; }
 
         // 透明
         const bool get_abone_transparent();
