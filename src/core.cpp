@@ -3536,6 +3536,8 @@ void Core::switch_rightview()
 // ブラウザで開く
 void Core::open_by_browser( const std::string& url )
 {
+    if( url.empty() ) return;
+
     std::string command_openurl = CONFIG::get_command_openurl();
     if( !command_openurl.empty() ){
 

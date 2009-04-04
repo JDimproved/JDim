@@ -37,7 +37,7 @@ enum
     SIZE_OF_RAWDATA = 2 * 1024 * 1024  //  bbsmenu.html の最大サイズ
 };
 
-// ルート要素名( list_main.xml )
+// ルート要素名( boards.xml )
 #define ROOT_NODE_NAME "boardlist"
 
 using namespace DBTREE;
@@ -387,8 +387,8 @@ void Root::bbsmenu2xml( const std::string& menu )
             // 板として扱うURLかどうかで要素名を変える
             std::string element_name;
             if( CONFIG::use_link_as_board() ) element_name = "board";
-            else if( ( regex.exec( "^http://.*/.*/$", url ) && is_2ch( url ) )
-                     || is_machi( url )
+            else if( ( regex.exec( "^http://.*/.*/$", url )
+			            && ( is_2ch( url ) || is_machi( url ) ) )
                      || is_JBBS( url )
                      || is_vip2ch( url )
                 ) element_name = "board";
