@@ -303,7 +303,7 @@ namespace ARTICLE
         void layout_one_img_node( LAYOUT* node, int& node_x, int& node_y, int& brsize, const int width_view, const bool init_popupwin, const int mrg_bottom );
 
         // 文字の幅などの情報
-        int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );
+        const int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );
         bool set_init_wide_mode( const char* str, const int pos_start, const int pos_to );
         bool is_wrapped( const int x, const int border, const char* str );
 

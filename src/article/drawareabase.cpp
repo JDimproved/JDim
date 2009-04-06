@@ -1218,21 +1218,23 @@ bool DrawAreaBase::set_init_wide_mode( const char* str, const int pos_start, con
 //
 // 一文字の幅を取得
 //
+// utfstr : 入力文字 (UTF-8)
+// byte   : 長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 or 4 を入れて返す
 // pre_char : 前の文字( 前の文字が全角なら = 0 )
 // wide_mode :  全角半角モード( アルファベット以外の文字ではモードにしたがって幅を変える )
-// mode : フォントのモード( スレビューのフォントかポップアップのフォントかなど)
+// mode : fontid.h で定義されているフォントのID
 //
-int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode )
+const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pre_char, bool& wide_mode, const int mode )
 {
     int width = 0;
     int width_wide = 0;
-    ARTICLE::get_width_of_char( str, byte, pre_char, width, width_wide, mode );
+    ARTICLE::get_width_of_char( utfstr, byte, pre_char, width, width_wide, mode );
 
     // キャッシュに無かったら幅を調べてキャッシュに登録
     if( ! width || ! width_wide ){
 
-        char tmpchar[ byte + 8 ];
-        memcpy( tmpchar, str, byte );
+        char tmpchar[ 64 ];
+        memcpy( tmpchar, utfstr, byte );
         tmpchar[ byte ] = '\0';
 
 #ifdef _DEBUG
@@ -1294,7 +1296,7 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_c
         if( width_wide <= 0 ){
 
             int byte_tmp;
-            unsigned int code = MISC::utf8toucs2( tmpchar, byte_tmp );
+            const unsigned int code = MISC::utf8toucs2( tmpchar, byte_tmp );
 
             std::stringstream ss_err;
             ss_err << "unknown font byte = " << byte_tmp << " code = " << code << " width = " << width;
@@ -1312,7 +1314,7 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_c
             width = width_wide = 0;
         }
 
-        ARTICLE::set_width_of_char( str, byte, pre_char, width, width_wide, mode );
+        ARTICLE::set_width_of_char( utfstr, byte, pre_char, width, width_wide, mode );
     }
 
     int ret = 0;
@@ -1334,10 +1336,10 @@ int DrawAreaBase::get_width_of_one_char( const char* str, int& byte, char& pre_c
         else{ 
 
             ret = width;
-            pre_char = str[ 0 ];
+            pre_char = utfstr[ 0 ];
 
             // アルファベットならモードを半角モードに変更
-            if( IS_ALPHABET( str[ 0 ] ) ) wide_mode = false;
+            if( IS_ALPHABET( utfstr[ 0 ] ) ) wide_mode = false;
 
             // アルファベット以外の文字では現在の全角/半角モードに
             // したがって幅を変える。モードは変更しない

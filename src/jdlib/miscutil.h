@@ -171,7 +171,7 @@ namespace MISC
 
     // utf-8 -> ucs2 変換
     // 入力 : utfstr 入力文字 (UTF-8)
-    // 出力 :  byte  長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 を入れて返す
+    // 出力 :  byte  長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 or 4 を入れて返す
     // 戻り値 : ucs2
     const int utf8toucs2( const char* utfstr, int& byte );
 

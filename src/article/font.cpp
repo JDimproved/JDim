@@ -58,12 +58,11 @@ void ARTICLE::init_font()
 // 文字の幅を返す関数
 //
 // utfstr : 入力文字 (UTF-8)
-// byte   : 長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 を入れて返す
+// byte   : 長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 or 4 を入れて返す
 // pre_char : ひとつ前の文字 ( 前の文字が全角の場合は 0 )
 // width  : 半角モードでの幅
 // width_wide : 全角モードでの幅
-// mode   : global.h で定義されてるフォントのID
-//
+// mode   : fontid.h で定義されているフォントのID
 // 
 void ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_char, int& width, int& width_wide, const int mode )
 {
@@ -76,8 +75,8 @@ void ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_c
         memset( width_of_char[ mode ], 0, sizeof( WIDTH_DATA ) * UCS2_MAX );
     }
 
-    int ucs2 = MISC::utf8toucs2( utfstr, byte );
-    if( byte ){
+    const int ucs2 = MISC::utf8toucs2( utfstr, byte );
+    if( byte && ucs2 < UCS2_MAX ){
 
         // 全角モードの幅
         width_wide = width_of_char[ mode ][ ucs2 ].width_wide;
@@ -108,8 +107,9 @@ void ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_c
 //
 void ARTICLE::set_width_of_char( const char* utfstr, int& byte, const char pre_char, const int width, const int width_wide, const int mode )
 {    
-    int ucs2 = MISC::utf8toucs2( utfstr, byte );
+    const int ucs2 = MISC::utf8toucs2( utfstr, byte );
     if( ! byte ) return;
+    if( ucs2 >= UCS2_MAX ) return;
 
     // 半角モードの幅を厳密に求める場合
     if( byte == 1 && CONFIG::get_strict_char_width() ){  
