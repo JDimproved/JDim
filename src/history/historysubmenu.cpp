@@ -73,7 +73,7 @@ HistorySubMenu::HistorySubMenu( const std::string& path_load_xml, const std::str
     item = Gtk::manage( new Gtk::SeparatorMenuItem() );
     m_popupmenu.append( *item );
 
-    item = Gtk::manage( new Gtk::MenuItem( "プロバティ" ) );
+    item = Gtk::manage( new Gtk::MenuItem( "プロパティ" ) );
     item->signal_activate().connect( sigc::mem_fun( *this, &HistorySubMenu::slot_show_property ) );
     m_popupmenu.append( *item );
 
@@ -409,7 +409,7 @@ void HistorySubMenu::slot_remove_history()
 }
 
 
-// プロバティ表示
+// プロパティ表示
 // これを呼ぶ前に m_number_menuitem に番号をセットしておく
 void HistorySubMenu::slot_show_property()
 {
