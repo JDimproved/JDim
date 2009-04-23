@@ -261,8 +261,7 @@ namespace DBTREE
 
         // DAT落ちかどうかなどの状態 ( global.hで定義 )
         const int get_status() const{ return m_status; }
-        void set_status( int status ){ m_status = status; }
-        void reset_status();
+        void set_status( const int status ){ m_status = status; }
         
         void set_subject( const std::string& subject );
         void set_number( const int number );
@@ -371,11 +370,13 @@ namespace DBTREE
 
         virtual NodeTreeBase* create_nodetree(){ return NULL; }
 
+        void reset_status();
+
         void slot_node_updated();
         void slot_load_finished();
         virtual void unlock_impl();
 
-        // 更新アイコン表示
+        // お気に入りのアイコンとスレビューのタブのアイコンに更新マークを表示
         // update == true の時に表示。falseなら戻す
         void show_updateicon( const bool update );
 

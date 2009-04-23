@@ -102,6 +102,7 @@ namespace DBTREE
     void board_analyze_keyword_for_write( const std::string& url, const std::string& html );
     const std::string board_basicauth( const std::string& url );
     const std::string board_ext( const std::string& url );
+    const int board_status( const std::string& url );
     const int board_code( const std::string& url );
     const std::string board_str_code( const std::string& url );
     void board_save_info( const std::string& url );
@@ -143,6 +144,7 @@ namespace DBTREE
     const time_t board_samba_sec( const std::string& url );
     void board_set_samba_sec( const std::string& url, time_t sec );
     time_t board_write_leftsec( const std::string& url );
+    void board_show_updateicon( const std::string& url, const bool update );
 
     // datファイルのインポート
     // 成功したらdat型のurlを返す
@@ -181,7 +183,6 @@ namespace DBTREE
     const time_t article_write_time( const std::string& url );
     const std::string article_write_date( const std::string& url );
     const int article_status( const std::string& url );
-    void article_reset_status( const std::string& url );
     const int article_code( const std::string& url );
     const std::string article_str_code( const std::string& url );
     const std::string article_ext_err( const std::string& url );

@@ -112,7 +112,6 @@ BoardViewBase::BoardViewBase( const std::string& url )
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
       m_previous_sortmode( false ),
-      m_updated( false ),
       m_loading( false )
 {
     m_scrwin.add( m_treeview );
@@ -274,7 +273,7 @@ BoardViewBase::~BoardViewBase()
 #ifdef _DEBUG    
     std::cout << "BoardViewBase::~BoardViewBase : " << get_url() << std::endl;
 #endif
-    DBTREE::board_save_info( get_url_board() );
+
     save_column_width();
 }
 
@@ -293,17 +292,14 @@ const int BoardViewBase::get_icon( const std::string& iconname )
     if( iconname == "default" ) id = ICON::BOARD;
     if( iconname == "loading" ) id = ICON::LOADING;
     if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
+    if( iconname == "update" ) id = ICON::BOARD_UPDATE;  // 更新チェックしで更新があった場合
     if( iconname == "updated" ) id = ICON::BOARD_UPDATED;
 
+#ifdef _DEBUG
+    std::cout << "BoardViewBase::get_icon : " << iconname << " url = " << get_url() << std::endl;
+#endif
+
     return id;
-}
-
-
-// 更新した
-const bool BoardViewBase::is_updated()
-{
-    const int code = DBTREE::board_code( get_url_board() );
-    return ( ( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) && m_updated );
 }
 
 
@@ -923,7 +919,6 @@ void BoardViewBase::relayout()
 //
 void BoardViewBase::update_view_impl( std::list< DBTREE::ArticleBase* >& list_subject )
 {
-    m_updated = false;
     m_loading = false;
 
 #ifdef _DEBUG
@@ -950,9 +945,6 @@ void BoardViewBase::update_view_impl( std::list< DBTREE::ArticleBase* >& list_su
             DBTREE::ArticleBase* art = *( it );
 
             prepend_row( art );
-
-            // 更新があるかチェック
-            if( art->get_number_load() && art->get_number() > art->get_number_load() ) m_updated = true;
         }
 
 #if GTKMMVER >= 280
@@ -2248,7 +2240,7 @@ void BoardViewBase::set_board_to_buffer()
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
     info.type = TYPE_BOARD;
-    info.url = get_url();
+    info.url = DBTREE::url_boardbase( get_url_board() );
     info.name = DBTREE::board_name( get_url_board() );
     info.data = std::string();
     info.path = Gtk::TreePath( "0" ).to_string();

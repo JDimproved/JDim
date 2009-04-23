@@ -18,6 +18,10 @@ namespace BOARD
         BoardView( const std::string& url );
         virtual ~BoardView();
 
+        // SKELETON::View の関数のオーバロード
+        virtual const bool is_updated();
+        virtual const bool is_check_update();
+
         virtual void reload();
         virtual void update_view();
         virtual void update_boardname();

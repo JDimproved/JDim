@@ -178,10 +178,10 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
         if( command.command  == "append_item" ) view->set_command( "append_item" );
 
         // アイテム削除
-        if( command.command  == "remove_item" ) view->set_command( "remove_item", command.arg1 );
+        else if( command.command  == "remove_item" ) view->set_command( "remove_item", command.arg1 );
 
         // ツリーの編集
-        if( command.command  == "edit_tree" ) view->set_command( "edit_tree" );
+        else if( command.command  == "edit_tree" ) view->set_command( "edit_tree" );
 
         // お気に入りルート更新チェック
         else if( command.command  == "check_update_root" ) view->set_command( "check_update_root" );
@@ -193,15 +193,11 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
 
         // XML保存
         else if( command.command  == "save_xml" ) view->set_command( "save_xml" );
+
+        // スレのアイコン表示を更新
+        else if( command.command  == "toggle_articleicon" ) view->set_command( "toggle_articleicon", command.arg1 );
+
+        // 板のアイコン表示を更新
+        else if( command.command  == "toggle_boardicon" ) view->set_command( "toggle_boardicon", command.arg1 );
     }
-}
-
-
-//
-// (お気に入りの)アイコン表示切り替え
-//
-void BBSListAdmin::toggle_icon( const std::string& url )
-{
-    SKELETON::View* view = get_view( URL_FAVORITEVIEW );
-    if( view ) view->set_command( "toggle_icon", url );
 }

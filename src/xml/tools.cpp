@@ -23,6 +23,10 @@ std::string XML::get_name( const int type_id )
             name = "board";
             break;
             
+        case TYPE_BOARD_UPDATE: // 更新可能板
+            name = "board_update";
+            break;
+
         case TYPE_THREAD: // スレ
             name = "thread";
             break;
@@ -82,6 +86,10 @@ int XML::get_type( const std::string& node_name )
     if( node_name == "board" )
     {
         type = TYPE_BOARD;
+    }
+    else if( node_name == "board_update" )
+    {
+        type = TYPE_BOARD_UPDATE;
     }
     else if( node_name == "comment" )
     {
@@ -151,6 +159,10 @@ Glib::RefPtr< Gdk::Pixbuf > XML::get_icon( const int type_id )
 
         case TYPE_BOARD:
             icon = ICON::get_icon( ICON::BOARD );
+            break;
+
+        case TYPE_BOARD_UPDATE:
+            icon = ICON::get_icon( ICON::BOARD_UPDATE );
             break;
 
         case TYPE_THREAD:

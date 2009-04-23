@@ -18,6 +18,7 @@ enum
 
     // その他一般的なデータタイプ
     TYPE_BOARD,
+    TYPE_BOARD_UPDATE,
     TYPE_THREAD,
     TYPE_THREAD_UPDATE,
     TYPE_THREAD_OLD,

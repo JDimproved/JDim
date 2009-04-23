@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "boardadmin.h"
@@ -22,6 +22,7 @@
 #include "session.h"
 #include "command.h"
 #include "httpcode.h"
+#include "global.h"
 
 using namespace BOARD;
 
@@ -49,6 +50,34 @@ BoardView::~BoardView()
 #ifdef _DEBUG
     std::cout << "BoardView::~BoardView : url = " << get_url() << std::endl;
 #endif
+
+    DBTREE::board_save_info( get_url_board() );
+}
+
+
+// 更新した
+const bool BoardView::is_updated()
+{
+    const int status = DBTREE::board_status( get_url_board() );
+
+#ifdef _DEBUG
+    std::cout << "BoardView::is_updated " << ( status & STATUS_UPDATED ) << std::endl;
+#endif
+
+    return ( status & STATUS_UPDATED );
+}
+
+
+// 更新チェックして更新可能か
+const bool BoardView::is_check_update()
+{
+    const int status = DBTREE::board_status( get_url_board() );
+
+#ifdef _DEBUG
+    std::cout << "BoardView::is_check_update " << ( status & STATUS_UPDATE ) << std::endl;
+#endif
+
+    return ( status & STATUS_UPDATE );
 }
 
 
@@ -143,9 +172,6 @@ BoardViewNext::BoardViewNext( const std::string& url, const std::string& url_pre
 #ifdef _DEBUG
     std::cout << "BoardViewNext::BoardViewNext : url = " << get_url() << std::endl;
 #endif
-
-    // オートリロード不可
-    set_enable_autoreload( false );
 }
 
 

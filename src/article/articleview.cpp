@@ -132,13 +132,12 @@ const bool ArticleViewMain::is_loading()
 // 更新した
 const bool ArticleViewMain::is_updated()
 {
-    int code = DBTREE::article_code( url_article() );
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewMain::is_updated " << code << " / " << ( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT ) << std::endl;
+    std::cout << "ArticleViewMain::is_updated " << url_article() << " " << ( get_article()->get_status() & STATUS_UPDATED ) << std::endl;
 #endif
 
-    return ( code == HTTP_OK || code == HTTP_PARTIAL_CONTENT );
+    return ( get_article()->get_status() & STATUS_UPDATED );
 }
 
 
@@ -146,7 +145,7 @@ const bool ArticleViewMain::is_updated()
 const bool ArticleViewMain::is_check_update()
 {
 #ifdef _DEBUG
-    std::cout << "ArticleViewMain::is_check_update " << ( get_article()->get_status() & STATUS_UPDATE ) << std::endl;
+    std::cout << "ArticleViewMain::is_check_update " << url_article() << " " << ( get_article()->get_status() & STATUS_UPDATE ) << std::endl;
 #endif
 
     return ( get_article()->get_status() & STATUS_UPDATE );

@@ -1265,7 +1265,13 @@ const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const 
     // 後ろに追加
     else row_new = *( treestore->insert_after( row_dest ) );
 
-    // スレの時は状態を最新にする
+    // スレ一覧の状態を最新にする
+    if( type == TYPE_BOARD ){
+
+        if( DBTREE::board_status( url ) & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
+    }
+
+    // スレ状態を最新にする
     if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
 
         if( DBTREE::article_status( url ) & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;

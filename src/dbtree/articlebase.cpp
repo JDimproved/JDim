@@ -441,7 +441,7 @@ void ArticleBase::set_number( const int number )
         m_number = number;
 
         // キャッシュがあって更新可能になった場合は
-        // スレの場合はお気に入りとスレタブのアイコンを更新
+        // お気に入りとスレビューのタブのアイコンに更新マークを表示
         if( is_cached() && !( m_status & STATUS_UPDATE ) && m_number_load < m_number ) show_updateicon( true );
     }
 }
@@ -1007,7 +1007,7 @@ void ArticleBase::download_dat( const bool check_update )
 #ifdef _DEBUG
         std::cout << "old !\n";
 #endif       
-        CORE::core_set_command( "toggle_favorite_icon", m_url );
+        CORE::core_set_command( "toggle_favorite_articleicon", m_url );
 
         // update_article_finish コマンドを送らないとキャッシュが無くて
         // dat落ちしているスレのタブが空白になる
@@ -1135,18 +1135,19 @@ void ArticleBase::slot_load_finished()
     slot_node_updated();
 
     // HTTPコード取得
-    int old_code = m_code;
+    const int old_code = m_code;
     m_code = m_nodetree->get_code();
+    m_status &= ~STATUS_UPDATED;
 
     // 状態更新
-    int old_status = m_status;
+    const int old_status = m_status;
     if( m_code != HTTP_ERR ){
 
         // DAT落ち
         if( m_code == HTTP_REDIRECT || m_code == HTTP_NOT_FOUND ){
             m_status &= ~STATUS_NORMAL;
             m_status |= STATUS_OLD;
-            CORE::core_set_command( "toggle_favorite_icon", m_url );
+            CORE::core_set_command( "toggle_favorite_articleicon", m_url );
         }
 
         // 既にDAT落ち状態では無いときは通常状態にする
@@ -1169,11 +1170,15 @@ void ArticleBase::slot_load_finished()
         std::cout << "check_update code = " << m_code << std::endl;
 #endif
 
-        // スレタブとお気に入りとスレ一覧のアイコンを更新
+        // スレタブとお気に入りとスレ一覧のアイコンに更新マークをつける
         if( m_code == HTTP_OK || m_code == HTTP_PARTIAL_CONTENT ){
 
             show_updateicon( true );
 
+            // 所属する板も更新可能状態にする
+            DBTREE::board_show_updateicon( m_url, true );
+
+            // スレ一覧の ! 行のアイコンも更新マークにする
             CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
         }
 
@@ -1319,6 +1324,7 @@ void ArticleBase::slot_load_finished()
 
             if( m_number < m_number_load ) m_number = m_number_load;
 
+            m_status |= STATUS_UPDATED;
             show_updateicon( false );
 
             // 情報ファイルのパスをセット
@@ -1354,7 +1360,7 @@ void ArticleBase::slot_load_finished()
 
 
 //
-// 更新アイコン表示
+// お気に入りのアイコンとスレビューのタブのアイコンに更新マークを表示
 //
 // update == true の時に表示。falseなら戻す
 //
@@ -1371,27 +1377,36 @@ void ArticleBase::show_updateicon( const bool update )
 
     if( update ){
 
+        if( ! ( m_status & STATUS_UPDATE ) ){
+
 #ifdef _DEBUG
-        std::cout << "toggle_icon on\n";
+            std::cout << "toggle_icon on\n";
 #endif
 
-        if( ! ( m_status & STATUS_UPDATE ) ) m_save_info = true;
-        m_status |= STATUS_UPDATE;
+            m_save_info = true;
+            m_status |= STATUS_UPDATE;
 
-        CORE::core_set_command( "toggle_article_icon", m_url);
-        CORE::core_set_command( "toggle_favorite_icon", m_url );
+            // スレビューのタブのアイコン表示を更新
+            CORE::core_set_command( "toggle_article_icon", m_url);
+
+            CORE::core_set_command( "toggle_favorite_articleicon", m_url );
+        }
     }
     else{
 
+        if( m_status & STATUS_UPDATE ){
+
 #ifdef _DEBUG
-        std::cout << "toggle_icon off\n";
+            std::cout << "toggle_icon off\n";
 #endif
 
-        if( m_status & STATUS_UPDATE ) m_save_info = true;
-        m_status &= ~STATUS_UPDATE;
+            m_save_info = true;
+            m_status &= ~STATUS_UPDATE;
 
-        // お気に入りのアイコン表示を戻す。スレタブのアイコンの方はArticleViewが戻す
-        CORE::core_set_command( "toggle_favorite_icon", m_url );
+            // お気に入りのアイコン表示を戻す
+            // スレビューのタブのアイコンはArticleViewがロード終了時に自動的に戻す
+            CORE::core_set_command( "toggle_favorite_articleicon", m_url );
+        }
     }
 }
 
@@ -1468,7 +1483,7 @@ void ArticleBase::delete_cache( const bool cache_only )
     CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
 
     // お気に入りのアイコン表示を戻す
-    CORE::core_set_command( "toggle_favorite_icon", m_url );
+    CORE::core_set_command( "toggle_favorite_articleicon", m_url );
 }
 
 

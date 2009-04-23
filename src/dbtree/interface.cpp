@@ -323,6 +323,13 @@ const std::string DBTREE::board_ext( const std::string& url )
     return DBTREE::get_board( url )->get_ext();
 }
 
+
+const int DBTREE::board_status( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_status();
+}
+
+
 const int DBTREE::board_code( const std::string& url )
 {
     return DBTREE::get_board( url )->get_code();
@@ -564,6 +571,11 @@ time_t DBTREE::board_write_leftsec( const std::string& url )
     return DBTREE::get_board( url )->get_write_leftsec();
 }
 
+void DBTREE::board_show_updateicon( const std::string& url, const bool update )
+{
+    DBTREE::get_board( url )->show_updateicon( update );
+}
+
 // datファイルのインポート
 const std::string DBTREE::board_import_dat( const std::string& url, const std::string& filename )
 {
@@ -777,12 +789,6 @@ const std::string DBTREE::article_write_date( const std::string& url )
 const int DBTREE::article_status( const std::string& url )
 {
     return DBTREE::get_article( url )->get_status();
-}
-
-
-void DBTREE::article_reset_status( const std::string& url )
-{
-    DBTREE::get_article( url )->reset_status();
 }
 
 

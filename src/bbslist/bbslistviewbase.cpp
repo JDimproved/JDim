@@ -421,7 +421,8 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
     else if( command == "remove_item" ) remove_item( arg1 );
     else if( command == "edit_tree" ) edit_tree();
     else if( command == "save_xml" ) save_xml( false );
-    else if( command == "toggle_icon" ) toggle_icon( arg1 );
+    else if( command == "toggle_articleicon" ) toggle_articleicon( arg1 );
+    else if( command == "toggle_boardicon" ) toggle_boardicon( arg1 );
     else if( command == "replace_thread" ) replace_thread( arg1, arg2 );
 
     else if( command == "check_update_root" ) check_update_root( false );
@@ -800,6 +801,7 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
     switch( type ){
 
         case TYPE_BOARD:
+        case TYPE_BOARD_UPDATE:
             if( act_search ) act_search->set_sensitive( true );
             if( act_import ) act_import->set_sensitive( true );
             if( act_board ) act_board->set_sensitive( true );
@@ -1484,7 +1486,7 @@ void BBSListViewBase::slot_select_all()
 //
 // 呼び出した後に CORE::get_checkupdate_manager()->run() を実行すること
 //
-void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path )
+void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path, const bool open )
 {
     if( path.empty() ) return;
 
@@ -1501,8 +1503,8 @@ void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path )
             int type = path2type( path );
             std::string url = path2url( path );
 
-            if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ) );
-            else if( type == TYPE_DIR ) check_update_dir( path );
+            if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
+            else if( type == TYPE_DIR ) check_update_dir( path, open );
 
             path.next();
         }
@@ -1529,8 +1531,8 @@ void BBSListViewBase::slot_check_update_dir()
     std::cout << "BBSListViewBase::slot_check_check_update_dir path = " << m_path_selected.to_string() << std::endl;
 #endif
 
-    check_update_dir( m_path_selected );
-    CORE::get_checkupdate_manager()->run( false );
+    check_update_dir( m_path_selected, false );
+    CORE::get_checkupdate_manager()->run();
 }
 
 // 全更新チェックして開く
@@ -1548,8 +1550,8 @@ void BBSListViewBase::slot_check_update_open_dir()
     std::cout << "BBSListViewBase::slot_check_check_update_open_dir path = " << m_path_selected.to_string() << std::endl;
 #endif
 
-    check_update_dir( m_path_selected );
-    CORE::get_checkupdate_manager()->run( true );
+    check_update_dir( m_path_selected, true );
+    CORE::get_checkupdate_manager()->run();
 }
 
 
@@ -1558,7 +1560,7 @@ void BBSListViewBase::slot_check_update_open_dir()
 //
 // 呼び出した後に CORE::get_checkupdate_manager()->run() を実行すること
 //
-void BBSListViewBase::check_update_root( const Gtk::TreeModel::Children& children )
+void BBSListViewBase::check_update_root( const Gtk::TreeModel::Children& children, const bool open )
 {
     Gtk::TreeModel::iterator it = children.begin();
     while( it != children.end() )
@@ -1568,8 +1570,8 @@ void BBSListViewBase::check_update_root( const Gtk::TreeModel::Children& childre
         const int type = row2type( row );
         const std::string url = row2url( row );
 
-        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ) );
-        else if( type == TYPE_DIR ) check_update_root( row.children() );
+        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
+        else if( type == TYPE_DIR ) check_update_root( row.children(), open );
 
         ++it;
     }
@@ -1581,11 +1583,11 @@ void BBSListViewBase::check_update_root( const Gtk::TreeModel::Children& childre
 //
 // tab_open はタブで開くか否か
 //
-void BBSListViewBase::check_update_root( const bool tab_open )
+void BBSListViewBase::check_update_root( const bool open )
 {
-    check_update_root( m_treestore->children() );
+    check_update_root( m_treestore->children(), open );
 
-    CORE::get_checkupdate_manager()->run( tab_open );
+    CORE::get_checkupdate_manager()->run();
 }
 
 
@@ -1721,11 +1723,12 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
     switch( type ){
 
         case TYPE_BOARD:
+        case TYPE_BOARD_UPDATE:
             CORE::core_set_command( "open_board", DBTREE::url_subject( url ), str_tab, str_mode );
             break;
 
         case TYPE_THREAD_OLD:
-            toggle_icon( url ); // break;しない
+            toggle_articleicon( url ); // break;しない
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
             CORE::core_set_command( "open_article", DBTREE::url_dat( url ), str_tab, str_mode );
@@ -1799,6 +1802,7 @@ void BBSListViewBase::open_selected_rows()
         switch( type ){
 
             case TYPE_BOARD:
+            case TYPE_BOARD_UPDATE:
                 url = DBTREE::url_subject( url );
                 if( !list_url_board.empty() ) list_url_board += " ";
                 list_url_board += url;
@@ -1825,7 +1829,7 @@ void BBSListViewBase::open_selected_rows()
 //
 // このあとで CORE::get_checkupdate_manager()->run() を実行すること
 //
-void BBSListViewBase::checkupdate_selected_rows()
+void BBSListViewBase::checkupdate_selected_rows( const bool open )
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
@@ -1837,22 +1841,22 @@ void BBSListViewBase::checkupdate_selected_rows()
         int type = path2type( path );
         std::string url = path2url( path );
 
-        if( type == TYPE_THREAD || TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ) );            
+        if( type == TYPE_THREAD || TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
     }
 }
 
 
 void BBSListViewBase::slot_checkupdate_selected_rows()
 {
-    checkupdate_selected_rows();
-    CORE::get_checkupdate_manager()->run( false );
+    checkupdate_selected_rows( false );
+    CORE::get_checkupdate_manager()->run();
 }
 
 
 void BBSListViewBase::slot_checkupdate_open_selected_rows()
 {
-    checkupdate_selected_rows();
-    CORE::get_checkupdate_manager()->run( true );
+    checkupdate_selected_rows( true );
+    CORE::get_checkupdate_manager()->run();
 }
 
 
@@ -1882,6 +1886,7 @@ Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
     switch( type ){
 
         case TYPE_BOARD:
+        case TYPE_BOARD_UPDATE:
             url = DBTREE::url_boardbase( url );
             break;
 
@@ -1911,6 +1916,7 @@ Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
     switch( type ){
 
         case TYPE_BOARD:
+        case TYPE_BOARD_UPDATE:
             url = DBTREE::url_boardbase( url );
             break;
 
@@ -2126,6 +2132,7 @@ void BBSListViewBase::update_urls()
                     break;
 
                 case TYPE_BOARD: // 板
+                case TYPE_BOARD_UPDATE:
                     url_new = DBTREE::is_board_moved( url );
                     if( ! url_new.empty() ){
                         url_new = DBTREE::url_boardbase( url );
@@ -2172,27 +2179,28 @@ void BBSListViewBase::update_urls()
 
 
 //
-// アイコン表示の切り替え
+// アイコン表示(スレ)の切り替え
 //
-void BBSListViewBase::toggle_icon( const std::string& url )
+#include <iostream>
+void BBSListViewBase::toggle_articleicon( const std::string& url )
 {
     if( ! m_ready_tree ) return;
     if( m_treestore->children().empty() ) return; 
    
-    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
-    Gtk::TreeModel::Row row;
-
-    const std::string urldat = DBTREE::url_dat( url );
-    const std::string urlcgi = DBTREE::url_readcgi( url, 0, 0 );
+    const std::string url_dat = DBTREE::url_dat( url );
+    const std::string url_cgi = DBTREE::url_readcgi( url, 0, 0 );
 
     int type = TYPE_THREAD;
     const int status = DBTREE::article_status( url );
     if( status & STATUS_OLD ) type = TYPE_THREAD_OLD;
     if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
     
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::toggle_icon url = " << url << " type = " << type << std::endl;
-#endif
+//#ifdef _DEBUG
+    std::cout << "BBSListViewBase::toggle_articleicon url = " << url_dat << " type = " << type << std::endl;
+//#endif
+
+    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
+    Gtk::TreeModel::Row row;
 
     while( 1 ){
 
@@ -2209,10 +2217,12 @@ void BBSListViewBase::toggle_icon( const std::string& url )
                 case TYPE_THREAD:
                 case TYPE_THREAD_UPDATE:
                 case TYPE_THREAD_OLD:
-                    if( urldat == url_row || urlcgi == url_row ){
+                    if( url_dat == url_row || url_cgi == url_row ){
                         row[ m_columns.m_type ] = type;
                         row[ m_columns.m_image ] = XML::get_icon( type );
                     }
+                    path.next();
+                    break;
 
                 default:
                     path.next();
@@ -2231,6 +2241,72 @@ void BBSListViewBase::toggle_icon( const std::string& url )
         }
     }
 }
+
+
+
+//
+// アイコン表示(板)の切り替え
+//
+void BBSListViewBase::toggle_boardicon( const std::string& url )
+{
+    if( ! m_ready_tree ) return;
+    if( m_treestore->children().empty() ) return; 
+   
+    const std::string url_datbase = DBTREE::url_datbase( url );
+    const std::string url_subject = DBTREE::url_subject( url );
+
+    int type = TYPE_BOARD;
+    const int status = DBTREE::board_status( url );
+    if( status & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
+    
+//#ifdef _DEBUG
+    std::cout << "BBSListViewBase::toggle_boardicon url = " << url_subject << " type = " << type << std::endl;
+//#endif
+
+    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
+    Gtk::TreeModel::Row row;
+
+    while( 1 ){
+
+        if( ( row = m_treeview.get_row( path ) ) ){
+
+            const Glib::ustring url_row = row[ m_columns.m_url ];
+
+            switch( row[ m_columns.m_type ] ){
+
+                case TYPE_DIR: // サブディレクトリ
+                    path.down();
+                    break;
+
+                case TYPE_BOARD:
+                case TYPE_BOARD_UPDATE:
+                    std::cout << url_subject << " / " << url_datbase << " / " << url_row << std::endl;
+                    if( url_subject == url_row || url_datbase == url_row ){
+                        std::cout << "hit\n";
+                        row[ m_columns.m_type ] = type;
+                        row[ m_columns.m_image ] = XML::get_icon( type );
+                    }
+                    path.next();
+                    break;
+
+                default:
+                    path.next();
+                    break;
+            }
+        }
+
+        // サブディレクトリ内ならupする
+        else{
+
+            if( path.get_depth() >= 2 ){
+                path.up();
+                path.next();
+            }
+            else break;
+        }
+    }
+}
+
 
 
 //

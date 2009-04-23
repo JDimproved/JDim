@@ -210,7 +210,7 @@ Gtk::Menu* BBSListViewMain::get_popupmenu( const std::string& url )
             if( is_etcdir( path ) ) popupmenu = id2popupmenu(  "/popup_menu_etcdir" );
             else popupmenu = id2popupmenu(  "/popup_menu_dir" );
         }
-        else if( type == TYPE_BOARD ){
+        else if( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ){
             if( is_etcboard( path ) ) popupmenu = id2popupmenu(  "/popup_menu_etc" );
             else popupmenu = id2popupmenu(  "/popup_menu" );
         }

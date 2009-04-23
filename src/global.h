@@ -124,14 +124,15 @@ enum
 };
 
 
-// スレッド状態( or を取る)
+// 板やスレッドの状態
 enum
 {
     STATUS_UNKNOWN = 0,  // 不明
     STATUS_NORMAL = 1,   // 通常
     STATUS_OLD = 2,      // DAT落ち or 板が移転した
     STATUS_BROKEN = 4,   // あぼーんなどで壊れている
-    STATUS_UPDATE = 8   // 更新可能
+    STATUS_UPDATE = 8,   // 更新可能
+    STATUS_UPDATED = 16,   // 更新済み
 };
 
 

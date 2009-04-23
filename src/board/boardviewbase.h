@@ -77,9 +77,6 @@ namespace BOARD
         // ポップアップメニュー用
         Gtk::TreeModel::Path m_path_selected;
 
-        // 更新された
-        bool m_updated;
-
         // ロード中
         bool m_loading;
 
@@ -100,7 +97,6 @@ namespace BOARD
 
         // SKELETON::View の関数のオーバロード
         virtual const int get_icon( const std::string& iconname );
-        virtual const bool is_updated();
         virtual const bool is_loading(){ return m_loading; }
         virtual const bool set_command( const std::string& command,
                                         const std::string& arg1 = std::string(),

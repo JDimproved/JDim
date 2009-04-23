@@ -94,8 +94,11 @@ namespace BBSLIST
         // 移転があったときに行に含まれるURLを変更する
         void update_urls();
 
-        // アイコン表示の切り替え
-        void toggle_icon( const std::string& url );
+        // アイコン表示(スレ)の切り替え
+        void toggle_articleicon( const std::string& url );
+
+        // アイコン表示(板)の切り替え
+        void toggle_boardicon( const std::string& url );
 
         // スレの url と 名前を変更
         void replace_thread( const std::string& url, const std::string& url_new );
@@ -187,9 +190,9 @@ namespace BBSLIST
         void page_up();
         void page_down();
         void expand_all_dir( Gtk::TreeModel::Path path );
-        void check_update_dir( Gtk::TreeModel::Path path );
-        void check_update_root( const Gtk::TreeModel::Children& children );
-        void check_update_root( const bool tab_open = false );
+        void check_update_dir( Gtk::TreeModel::Path path, const bool open );
+        void check_update_root( const Gtk::TreeModel::Children& children, const bool open );
+        void check_update_root( const bool open );
 
         bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );
@@ -235,7 +238,7 @@ namespace BBSLIST
         virtual const bool open_row( Gtk::TreePath& path, const bool tab );
         virtual void switch_rightview();
         void open_selected_rows();
-        void checkupdate_selected_rows();
+        void checkupdate_selected_rows( const bool open );
         Glib::ustring row2url( const Gtk::TreeModel::Row& row );
 
         void show_status();

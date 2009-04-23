@@ -1568,14 +1568,15 @@ void Admin::toggle_icon( const std::string& url )
         // オートリロードモードでロード待ち
         else if( view->get_autoreload_mode() != AUTORELOAD_NOT ) iconname = "loading_stop";
 
-        // 更新可能
+        // 更新チェックして更新可能 ( 更新はしていない )
         else if( view->is_check_update() ) iconname = "update";
 
-        // 更新済み
+        // 更新済み ( HTTP_OK 又は HTTP_PARTIAL_CONTENT )
         else if( view->is_updated() ){
 
             // タブがアクティブの時は通常アイコンを表示
             if( get_notebook()->page_num( *view ) == get_notebook()->get_current_page() ) iconname = "default";
+
             else iconname = "updated";
         }
 
@@ -2007,9 +2008,9 @@ void Admin::slot_close_all_tabs()
 //
 void Admin::slot_check_update_all_tabs()
 {
-    check_update_all_tabs( m_clicked_page );
+    check_update_all_tabs( m_clicked_page, false );
 
-    CORE::get_checkupdate_manager()->run( false );
+    CORE::get_checkupdate_manager()->run();
 }
 
 
@@ -2018,9 +2019,9 @@ void Admin::slot_check_update_all_tabs()
 //
 void Admin::slot_check_update_reload_all_tabs()
 {
-    check_update_all_tabs( m_clicked_page );
+    check_update_all_tabs( m_clicked_page, true );
 
-    CORE::get_checkupdate_manager()->run( true );
+    CORE::get_checkupdate_manager()->run();
 }
 
 
@@ -2029,7 +2030,7 @@ void Admin::slot_check_update_reload_all_tabs()
 //
 // この後で CORE::get_checkupdate_manager()->run() すること
 //
-void Admin::check_update_all_tabs( const int from_page )
+void Admin::check_update_all_tabs( const int from_page, const bool open )
 {
 #ifdef _DEBUG
     std::cout << "Admin::check_update_all_tabs from = " << from_page << std::endl;
@@ -2042,13 +2043,13 @@ void Admin::check_update_all_tabs( const int from_page )
     // クリックしたタブから右側
     for( int i = from_page ; i < pages; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
-        if( view && view->get_enable_autoreload() ) CORE::get_checkupdate_manager()->push_back( view->get_url() );
+        if( view && view->get_enable_autoreload() ) CORE::get_checkupdate_manager()->push_back( view->get_url(), open );
     }
 
     // クリックしたタブから左側
     for( int i = 0 ; i < from_page; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
-        if( view && view->get_enable_autoreload() ) CORE::get_checkupdate_manager()->push_back( view->get_url() );
+        if( view && view->get_enable_autoreload() ) CORE::get_checkupdate_manager()->push_back( view->get_url(), open );
     }
 }
 

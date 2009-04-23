@@ -604,9 +604,9 @@ const int ArticleViewBase::get_icon( const std::string& iconname )
     if( iconname == "default" ) id = ICON::THREAD;
     if( iconname == "loading" ) id = ICON::LOADING;
     if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
-    if( iconname == "old" ) id = ICON::THREAD_OLD;
     if( iconname == "update" ) id = ICON::THREAD_UPDATE;  // 更新チェックしで更新があった場合
     if( iconname == "updated" ) id = ICON::THREAD_UPDATED;
+    if( iconname == "old" ) id = ICON::THREAD_OLD;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::get_icon : " << iconname << " url = " << get_url() << std::endl;

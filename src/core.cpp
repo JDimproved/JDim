@@ -1921,7 +1921,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "init_font" );
     }
 
-    // タブアイコンのセット
+    // スレビューのタブのアイコン表示を更新
     else if( command.command  == "toggle_article_icon" ){
 
         ARTICLE::get_admin()->set_command( "toggle_icon", command.url );
@@ -2055,6 +2055,13 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    // スレ一覧のタブのアイコン表示を更新
+    else if( command.command  == "toggle_board_icon" ){
+
+        BOARD::get_admin()->set_command( "toggle_icon", command.url );
+        return;
+    }
+
     // 全boardviewの再レイアウト
     else if( command.command == "relayout_all_board" ){
         BOARD::get_admin()->set_command( "relayout_all" );
@@ -2168,9 +2175,18 @@ void Core::set_command( const COMMAND_ARGS& command )
         BBSLIST::get_admin()->set_command( "save_xml", URL_FAVORITEVIEW );
         return;
     }
-    else if( command.command  == "toggle_favorite_icon" ){
 
-        BBSLIST::get_admin()->set_command( "toggle_icon", command.url );
+    // お気に入りのアイコン表示を更新 ( スレ )
+    else if( command.command  == "toggle_favorite_articleicon" ){
+
+        BBSLIST::get_admin()->set_command( "toggle_articleicon", URL_FAVORITEVIEW, command.url );
+        return;
+    }
+
+    // お気に入りのアイコン表示を更新 ( 板 )
+    else if( command.command  == "toggle_favorite_boardicon" ){
+
+        BBSLIST::get_admin()->set_command( "toggle_boardicon", URL_FAVORITEVIEW, command.url );
         return;
     }
 

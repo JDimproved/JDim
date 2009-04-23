@@ -37,6 +37,7 @@ using namespace DBTREE;
 
 BoardBase::BoardBase( const std::string& root, const std::string& path_board, const std::string& name )
     : SKELETON::Loadable()
+    , m_status( STATUS_UNKNOWN )
     , m_list_subject_created( false )
     , m_root( root )
     , m_path_board( path_board )
@@ -1052,6 +1053,21 @@ void BoardBase::receive_finish()
         std::cout << "list_subject was updated\n";
 #endif
 
+        if( m_is_online ){
+
+            // 既読スレに更新があったかチェック
+            for( it = m_list_subject.begin(); it != m_list_subject.end(); ++it ){
+
+                if( ( *it )->is_cached() && ( *it )->get_number() > ( *it )->get_number_load() ){
+
+                    m_status |= STATUS_UPDATED;
+                    break;
+                }
+            }
+
+            show_updateicon( false );
+        }
+
         // DAT落ちなどでsubject.txtに無いスレもsubjectリストに加える
         // サブジェクトやロード数などの情報が無いのでスレのinfoファイルから
         // 取得する必要がある
@@ -1720,6 +1736,9 @@ void BoardBase::read_board_info()
     // 最終アクセス時刻
     m_last_access_time = cf.get_option( "last_access_time", 0 );
 
+    // ステータス
+    m_status = cf.get_option( "status", STATUS_UNKNOWN );
+
 #ifdef _DEBUG
     std::cout << "modified = " << get_date_modified() << std::endl;
 #endif
@@ -1806,6 +1825,7 @@ void BoardBase::save_jdboard_info()
          << "samba_sec = " << m_samba_sec << std::endl
          << "live_sec = " << m_live_sec << std::endl
          << "last_access_time = " << m_last_access_time << std::endl
+         << "status = " << m_status
     ;
 
     CACHE::save_rawdata( path_info, sstr.str() );
@@ -1906,3 +1926,53 @@ void BoardBase::save_board_info()
 
     CACHE::save_rawdata( path_info, str_out );
 }
+
+
+// 更新可能状態にしてお気に入りやスレ一覧のタブのアイコンに更新マークを表示
+// update == true の時に表示。falseなら戻す
+#include <iostream>
+void BoardBase::show_updateicon( const bool update )
+{
+//#ifdef _DEBUG
+    std::cout << "BoardBase::show_updateicon url = " << url_boardbase()
+              << " update = " << update << " status = " << ( m_status & STATUS_UPDATE ) << std::endl;
+//#endif
+
+    if( update ){
+
+        if( ! ( m_status & STATUS_UPDATE ) ){
+
+//#ifdef _DEBUG
+            std::cout << "toggle_icon on\n";
+//#endif
+
+            m_status |= STATUS_UPDATE;
+
+            // スレ一覧のタブのアイコン表示を更新
+            CORE::core_set_command( "toggle_board_icon", url_subject() );
+
+            // お気に入りのアイコン表示を戻す
+            CORE::core_set_command( "toggle_favorite_boardicon", url_datbase() );
+
+            save_info();
+        }
+    }
+    else{
+
+        if( m_status & STATUS_UPDATE ){
+
+//#ifdef _DEBUG
+            std::cout << "toggle_icon off\n";
+//#endif
+
+            m_status &= ~STATUS_UPDATE;
+
+            // お気に入りのアイコン表示を戻す
+            // スレ一覧のタブのアイコンはBoardViewがロード終了時に自動的に戻す
+            CORE::core_set_command( "toggle_favorite_boardicon", url_subject() );
+
+            save_info();
+        }
+    }
+}
+

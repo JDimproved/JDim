@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-//#define _DEBUG
+#define _DEBUG
 #include "jddebug.h"
 
 #include "updatemanager.h"
@@ -44,22 +44,25 @@ CheckUpdate_Manager::CheckUpdate_Manager()
 
 CheckUpdate_Manager::~CheckUpdate_Manager()
 {
-    assert( ! m_list_urls.size() );
+    assert( ! m_list_item.size() );
 }
 
 
-void CheckUpdate_Manager::run( bool open )
+void CheckUpdate_Manager::run()
 {
     if( m_running ) return;
 
+    m_total = m_list_item.size();
+    if( ! m_total ) return;
+
 #ifdef _DEBUG
-    std::cout << "CheckUpdate_Manager::run open = " << open << std::endl;
+    std::cout << "CheckUpdate_Manager::run total = " << m_total << std::endl;
 #endif
 
     m_running = true;
-    m_open = open;
-    m_total = m_list_urls.size();
-    m_list_urls_updated.clear();
+    m_list_open.clear();
+    m_url_checking = std::string();
+
     pop_front();
 }
 
@@ -68,59 +71,84 @@ void CheckUpdate_Manager::stop()
 {
     if( ! m_running ) return;
 
-    std::string url = m_list_urls_updated.back();
-    m_list_urls.clear();
+    m_list_item.clear();
 
 #ifdef _DEBUG
-    std::cout << "CheckUpdate_Manager::stop running = " << url << std::endl;
+    std::cout << "CheckUpdate_Manager::stop running = " << m_url_checking << std::endl;
 #endif
 
-    DBTREE::article_stop_load( url );
+    DBTREE::article_stop_load( m_url_checking );
 }
 
 
-void CheckUpdate_Manager::push_back( const std::string& url )
+//
+// 更新チェックするスレのグループをセットする
+//
+// リストの先頭にあるスレから更新チェックをしていき、もし更新されていたらグループに属する
+// 残りのスレの更新チェックをキャンセルする
+//
+// open : true なら更新しているスレをタブで開く
+//
+void CheckUpdate_Manager::push_back_group( const std::list< std::string >& urllist, const bool open )
+{
+    if( m_running ) return;
+    if( ! urllist.size() ) return;
+
+    CheckItem item;
+    item.urllist = urllist;
+    item.open = open;
+
+    m_list_item.push_back( item );
+
+#ifdef _DEBUG
+    std::cout << "CheckUpdate_Manager::push_back_group "<< " open = " << open << " size = " << m_list_item.size() << std::endl;
+    std::list< std::string >::const_iterator it = urllist.begin();
+    for( ; it != urllist.end(); ++it ) std::cout << ( *it ) << std::endl;
+#endif
+}
+
+
+// 簡易版
+void CheckUpdate_Manager::push_back( const std::string& url, const bool open )
 {
     if( m_running ) return;
 
-    if( std::find( m_list_urls.begin(), m_list_urls.end(), url ) == m_list_urls.end() ){
+    std::list< std::string > urllist;
+    urllist.push_back( url );
 
-        m_list_urls.push_back( url );
-
-#ifdef _DEBUG
-        std::cout << "CheckUpdate_Manager::push_back url = " << url << " size = " << m_list_urls.size() << std::endl;
-#endif
-    }
+    push_back_group( urllist, open );
 }
 
 
+// 次のスレをチェック
 void CheckUpdate_Manager::pop_front()
 {
     if( ! m_running ) return;
 
     // チェック完了
-    if( ! m_list_urls.size() ){
+    if( ! m_list_item.size() ){
+
         m_running = false;
 
 #ifdef _DEBUG
-        std::cout << "CheckUpdate_Manager::pop_front stop\n";
+        std::cout << "CheckUpdate_Manager::pop_front end\n";
 #endif
 
         // 更新したスレを開く
-        if( m_open ){
+        if( m_list_open.size() ){
 
-            std::string urls;
-            std::list< std::string >::iterator it = m_list_urls_updated.begin();
-            for( ; it != m_list_urls_updated.end(); ++it ){
+            std::string urls = std::string();
+            std::list< std::string >::const_iterator it = m_list_open.begin();
+            for( ; it != m_list_open.end(); ++it ){
 
                 if( DBTREE::article_status( *it ) & STATUS_UPDATE ){
                     if( ! urls.empty() ) urls += " ";
-                    urls += (*it);
+                    urls += ( *it );
                 }
             }
             
 #ifdef _DEBUG
-            std::cout << "urls = " << urls << std::endl;
+            std::cout << "open urls = " << urls << std::endl;
 #endif
 
             if( ! urls.empty() ) CORE::core_set_command( "open_article_list", std::string(), urls );
@@ -133,27 +161,58 @@ void CheckUpdate_Manager::pop_front()
     else{
 
         CORE::core_set_command( "set_info", "",
-                                "更新チェック中 (" + MISC::itostr( m_total - m_list_urls.size() ) + "/" + MISC::itostr( m_total ) +")" );
+                                "更新チェック中 (" + MISC::itostr( m_total - m_list_item.size() ) + "/" + MISC::itostr( m_total ) +")" );
 
-        std::string url = m_list_urls.front();
-        m_list_urls.pop_front();
-        m_list_urls_updated.push_back( url );
+        // チェックした結果、更新されていた
+        if( ! m_url_checking.empty() && DBTREE::article_status( m_url_checking ) & STATUS_UPDATE ){
 
-        if( DBTREE::article_is_loading( url ) ){
+            // グループの残りのスレのチェックをキャンセル
+            m_list_item.pop_front();
+            m_url_checking = std::string();
+            pop_front();
+            return;
+        }
+
+        // pop
+        CheckItem& item = m_list_item.front();
+
+        if( ! item.urllist.size() ){
+
+            // 次のグループへ
+            m_list_item.pop_front();
+            m_url_checking = std::string();
+            pop_front();
+            return;
+        }
+
+        m_url_checking = item.urllist.front();
+        item.urllist.pop_front();
+
+        if( DBTREE::article_is_loading( m_url_checking ) ){
+            m_url_checking = std::string();
+            pop_front();
+            return;
+        }
+
+        if( item.open ) m_list_open.push_back( m_url_checking );
+
+        if( DBTREE::article_status( m_url_checking ) & STATUS_UPDATE ){
+            m_url_checking = std::string();
             pop_front();
             return;
         }
 
 #ifdef _DEBUG
-        std::cout << "CheckUpdate_Manager::pop_front url = " << url << " size = " << m_list_urls.size() << std::endl;
+        std::cout << "CheckUpdate_Manager::pop_front download url = " << m_url_checking << " size = " << m_list_item.size() << std::endl;
 #endif
 
         // 更新チェックが終わったらローダからCheckUpdate_Manager::pop_front()が
         // コールバックされる
         const bool check_update = true;
-        DBTREE::article_download_dat( url, check_update );
+        DBTREE::article_download_dat( m_url_checking, check_update );
 
-        if( ! DBTREE::article_is_loading( url ) ){
+        if( ! DBTREE::article_is_loading( m_url_checking ) ){
+            m_url_checking = std::string();
             pop_front();
             return;
         }

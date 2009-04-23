@@ -40,6 +40,9 @@ namespace DBTREE
         // subject.txt と同じ順番で、ロードされるたびに更新される
         std::list< ArticleBase* > m_list_subject; 
 
+        // 状態 ( global.h で定義 )
+        int m_status;                
+
         // 一度でも m_list_subject が作られた(=subject.txtを開いた)らtrue
         bool m_list_subject_created;
 
@@ -196,6 +199,9 @@ namespace DBTREE
         BoardBase( const std::string& root, const std::string& path_board, const std::string& name );
         virtual ~BoardBase();
         bool empty();
+
+        // 状態 ( global.hで定義 )
+        const int get_status() const{ return m_status; }
 
         // boardviewに表示するスレッドのリストを取得
         std::list< ArticleBase* >& get_list_subject(){ return m_list_subject; }
@@ -458,6 +464,10 @@ namespace DBTREE
         // datファイルのインポート
         // 成功したらdat型のurlを返す
         virtual const std::string import_dat( const std::string& filename );
+
+        // 更新可能状態にしてお気に入りやスレ一覧のタブのアイコンに更新マークを表示
+        // update == true の時に表示。falseなら戻す
+        void show_updateicon( const bool update );
 
       private:
 
