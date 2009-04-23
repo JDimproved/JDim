@@ -3,6 +3,7 @@
 //#define _DEBUG
 //#define _SHOW_GETBOARD
 //#define _SHOW_BOARD
+//#define _TEST_CACHE
 #include "jddebug.h"
 
 #include "root.h"
@@ -31,6 +32,12 @@
 #include <cstring>
 #include <sys/types.h> // chmod
 #include <sys/stat.h>
+
+#ifdef _TEST_CACHE
+int cache_hit1 = 0;
+int cache_hit2 = 0;
+int cache_nohit = 0;
+#endif
 
 enum
 {
@@ -99,6 +106,14 @@ Root::~Root()
     }
 
     if( m_board_null ) delete m_board_null;
+
+#ifdef _TEST_CACHE
+    std::cout << "board cache\n"
+              << "hit1 = " << cache_hit1 << std::endl
+              << "hit2 = " << cache_hit2 << std::endl
+              << "nohit = " << cache_nohit << std::endl
+              << "(hit1+hit2)/total*100 = " << (double)(cache_hit1+cache_hit2)/(cache_hit1+cache_hit2+cache_nohit)*100. << std::endl;
+#endif    
 }
 
 
@@ -124,12 +139,28 @@ BoardBase* Root::get_board( const std::string& url, const int count )
     const int max_count = 50;
 
     // キャッシュ
-    if( url == m_get_board_url && m_get_board ){
-#ifdef _SHOW_GETBOARD
-        std::cout << "hit cache\n";
+    if( m_get_board ){
+
+        if( url == m_get_board_url ){
+#ifdef _TEST_CACHE
+            ++cache_hit1;
 #endif
-        return m_get_board;
+            return m_get_board;
+        }
+        else if( m_get_board->equal( url ) ){
+
+            m_get_board_url = url;
+
+#ifdef _TEST_CACHE
+            ++cache_hit2;
+#endif
+            return m_get_board;
+        }
     }
+#ifdef _TEST_CACHE
+    ++cache_nohit;
+#endif
+
     m_get_board_url = url;
     m_get_board = NULL;
 

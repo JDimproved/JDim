@@ -412,6 +412,9 @@ namespace CONFIG
     // スレをお気に入りに追加したときにしおりをセットする
     const bool get_bookmark_drop();
 
+    // お気に入りの更新チェック時に板の更新もチェックする
+    const bool get_check_update_board();
+
     // Ctrl+qでウィンドウを閉じない
     const bool get_disable_close();
 

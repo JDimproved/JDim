@@ -22,6 +22,7 @@ DragableNoteBook::DragableNoteBook()
     , m_notebook_tab( this )
     , m_notebook_toolbar( this )
     , m_notebook_view( this )
+    , m_bt_tabswitch( this )
     , m_page( -1 )
     , m_dragging_tab( false )
     , m_dragable( false )
@@ -38,7 +39,10 @@ DragableNoteBook::DragableNoteBook()
 
     m_notebook_tab.sig_tab_drag_motion().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_drag_motion ) );
 
-    pack_start( m_notebook_tab, Gtk::PACK_SHRINK );
+    m_hbox_tab.pack_start( m_notebook_tab );
+    m_hbox_tab.pack_start( m_bt_tabswitch, Gtk::PACK_SHRINK );
+
+    pack_start( m_hbox_tab, Gtk::PACK_SHRINK );
     pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
     pack_start( m_notebook_view );
     m_show_tabs = true;
@@ -83,7 +87,8 @@ bool DragableNoteBook::on_expose_event( GdkEventExpose* event )
 {
     const bool ret =  Gtk::VBox::on_expose_event( event );
 
-    if( m_notebook_toolbar.get_parent() == this ){
+    // ツールバー再描画
+   if( m_notebook_toolbar.get_parent() == this ){
 
         const int min_toolbar_height = 4;
         const Alloc_NoteBook alloc = get_alloc_notebook();
@@ -135,30 +140,86 @@ bool DragableNoteBook::on_expose_event( GdkEventExpose* event )
 const Alloc_NoteBook DragableNoteBook::get_alloc_notebook()
 {
     Alloc_NoteBook alloc;
+
+    m_notebook_tab.get_alloc_tab( alloc );
+
     alloc.y_tabbar = m_notebook_tab.get_allocation().get_y();
     alloc.height_tabbar = m_notebook_tab.get_allocation().get_height();
 
     alloc.y_toolbar = m_notebook_toolbar.get_allocation().get_y();
     alloc.height_toolbar = m_notebook_toolbar.get_allocation().get_height();
 
-    alloc.height_view = m_notebook_view.get_allocation().get_height();
-
-    m_notebook_tab.get_alloc_tab( alloc.x_tab, alloc.width_tab, alloc.height_tab );
+    const int offset_tabbar = ( get_show_tabs() ? alloc.height_tabbar - alloc.height_tab : 0 );
+    alloc.x_box = m_notebook_view.get_allocation().get_x();
+    alloc.y_box = m_notebook_view.get_allocation().get_y() - alloc.height_toolbar - offset_tabbar;
+    alloc.width_box =m_notebook_view.get_allocation().get_width();
+    alloc.height_box = offset_tabbar + alloc.height_toolbar + m_notebook_view.get_allocation().get_height();
 
 #ifdef _DEBUG
     std::cout << "DragableNoteBook::get_alloc_notebook"
+              << " x_tab = " << alloc.x_tab
+              << " w_tab = " << alloc.width_tab
+              << " h_tab = " << alloc.height_tab
               << " y_tabbar = " << alloc.y_tabbar
               << " h_tabbar = " << alloc.height_tabbar
               << " y_toolbar = " << alloc.y_toolbar
               << " h_toolbar = " << alloc.height_toolbar
-              << " h_view = " << alloc.height_view
-              << " x_tab = " << alloc.x_tab
-              << " w_tab = " << alloc.width_tab
-              << " h_tab = " << alloc.height_tab
+              << " x_box = " << alloc.x_box
+              << " y_box = " << alloc.y_box
+              << " w_box = " << alloc.width_box
+              << " h_box = " << alloc.height_box
               << std::endl;
 #endif
 
     return alloc;
+}
+
+
+//
+// 枠描画
+//
+// gtknotebook.c( Revision 19593, Sat Feb 16 04:09:15 2008 UTC ) からのハック。環境やバージョンによっては問題が出るかもしれないので注意
+//
+void DragableNoteBook::draw_box( Gtk::Widget* widget, GdkEventExpose* event )
+{
+    const Glib::RefPtr<Gdk::Window> win = widget->get_window();
+    const Gdk::Rectangle rect( &(event->area) );
+    const Alloc_NoteBook alloc = get_alloc_notebook();
+
+    if( alloc.height_box > 0 ){
+
+        if( get_show_tabs() ){
+
+            widget->get_style()->paint_box_gap( win,
+                                                Gtk::STATE_NORMAL,
+                                                Gtk::SHADOW_OUT,
+                                                rect,
+                                                *widget,
+                                                "notebook",
+                                                alloc.x_box,
+                                                alloc.y_box,
+                                                alloc.width_box,
+                                                alloc.height_box,
+                                                Gtk::POS_TOP,
+                                                alloc.x_tab,
+                                                alloc.width_tab
+                );
+        }
+        else{
+
+            widget->get_style()->paint_box( win,
+                                            Gtk::STATE_NORMAL,
+                                            Gtk::SHADOW_OUT,
+                                            rect,
+                                            *widget,
+                                            "notebook",
+                                            alloc.x_box,
+                                            alloc.y_box,
+                                            alloc.width_box,
+                                            alloc.height_box
+                );
+        }
+    }
 }
 
 
@@ -170,7 +231,7 @@ void DragableNoteBook::set_show_tabs( bool show_tabs )
 
     if( m_show_tabs ){
 
-        remove( m_notebook_tab );
+        remove( m_hbox_tab );
 
         m_show_tabs = false;
     }
@@ -179,7 +240,7 @@ void DragableNoteBook::set_show_tabs( bool show_tabs )
         remove( m_notebook_toolbar );
         remove( m_notebook_view );
 
-        pack_start( m_notebook_tab, Gtk::PACK_SHRINK );
+        pack_start( m_hbox_tab, Gtk::PACK_SHRINK );
         pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
         pack_start( m_notebook_view );
 

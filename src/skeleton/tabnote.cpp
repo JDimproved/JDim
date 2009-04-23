@@ -15,6 +15,7 @@
 
 #include <gtk/gtk.h>
 
+using namespace SKELETON;
 
 //////////////////////////////////////////
 //
@@ -22,6 +23,57 @@
 //
 // gtkのバージョンが上がったときに誤動作しないかどうか注意
 // 
+
+typedef enum
+{
+  DRAG_OPERATION_NONE,
+  DRAG_OPERATION_REORDER,
+  DRAG_OPERATION_DETACH
+} GtkNotebookDragOperation;
+
+typedef enum
+{
+  ARROW_NONE,
+  ARROW_LEFT_BEFORE,
+  ARROW_RIGHT_BEFORE,
+  ARROW_LEFT_AFTER,
+  ARROW_RIGHT_AFTER
+} GtkNotebookArrow;
+
+#define GTK_NOTEBOOK_PAGE(_glist_) ((GtkNotebookPage *)((GList *)(_glist_))->data)
+#define GTK_NOTEBOOK_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GTK_TYPE_NOTEBOOK, GtkNotebookPrivate))
+
+typedef struct _GtkNotebookPrivate GtkNotebookPrivate;
+
+struct _GtkNotebookPrivate
+{
+  gpointer group;
+  gint  mouse_x;
+  gint  mouse_y;
+  gint  pressed_button;
+  guint dnd_timer;
+  guint switch_tab_timer;
+
+  gint  drag_begin_x;
+  gint  drag_begin_y;
+
+  gint  drag_offset_x;
+  gint  drag_offset_y;
+
+  GtkWidget *dnd_window;
+  GtkTargetList *source_targets;
+  GtkNotebookDragOperation operation;
+  GdkWindow *drag_window;
+  gint drag_window_x;
+  gint drag_window_y;
+  GtkNotebookPage *detached_tab;
+
+  guint32 timestamp;
+
+  guint during_reorder : 1;
+  guint during_detach  : 1;
+  guint has_scrolled   : 1;
+};
 
 struct _GtkNotebookPage
 {
@@ -45,12 +97,225 @@ struct _GtkNotebookPage
   gulong notify_visible_handler;
 };
 
+
+//////////////////////////////////////////
+//
+// gtknotebook.c ( Revision 19311, 2008-01-06 ) を参考にして作成した描画関係の関数
+
+
+// 描画本体
+const bool TabNotebook::paint( GdkEventExpose* event )
+{
+    GtkNotebook *notebook = gobj();
+    if( ! notebook || ! notebook->cur_page || ! GTK_WIDGET_VISIBLE( notebook->cur_page->child ) ) return Notebook::on_expose_event( event );
+
+    GtkWidget *widget = GTK_WIDGET( notebook );
+    GdkRectangle *area = &event->area;
+    const Gdk::Rectangle rect( area );
+    const Glib::RefPtr< Gdk::Window > win = get_window();
+
+    widget->style->ythickness = m_ythickness;
+
+    if( ! notebook->first_tab ) notebook->first_tab = notebook->children;
+
+    GtkNotebookPage* page = NULL;
+    if( ! GTK_WIDGET_MAPPED( notebook->cur_page->tab_label ) ) page = GTK_NOTEBOOK_PAGE( notebook->first_tab );
+    else page = notebook->cur_page;
+
+    // ビュー領域の枠の描画
+    m_parent->draw_box( this, event );
+
+    // タブの描画
+    bool show_arrow = FALSE;
+    GList *children = notebook->children;
+    while( children ){
+
+        page = ( GtkNotebookPage* ) children->data;
+        children = children->next;
+
+        if( ! GTK_WIDGET_VISIBLE( page->child ) ) continue;
+
+        if( ! GTK_WIDGET_MAPPED( page->tab_label ) ) show_arrow = TRUE;
+
+        else draw_tab( notebook, page, area, rect, win );
+    }
+
+    //矢印マーク描画
+    if( show_arrow ){
+
+        draw_arrow( widget, notebook, rect, win, ARROW_LEFT_BEFORE );
+        draw_arrow( widget, notebook, rect, win, ARROW_RIGHT_AFTER );
+    }
+
+    // タブの中のwidgetの描画
+    children = notebook->children;
+    while( children ){
+
+        GtkNotebookPage* page = ( GtkNotebookPage* ) children->data;
+        children = children->next;
+
+        if( page->tab_label->window == event->window &&
+            GTK_WIDGET_DRAWABLE (page->tab_label))
+            gtk_container_propagate_expose( GTK_CONTAINER( notebook ),
+                                            page->tab_label, event );
+    }
+
+    widget->style->ythickness = 0;
+
+    return true;
+}
+
+
+// タブ描画
+void TabNotebook::draw_tab( const GtkNotebook *notebook,
+                            const GtkNotebookPage *page,
+                            GdkRectangle *area,
+                            const Gdk::Rectangle& rect,
+                            const Glib::RefPtr< Gdk::Window >& win
+
+    )
+{
+    GdkRectangle child_area;
+    GdkRectangle page_area;
+
+    page_area.x = page->allocation.x;
+    page_area.y = page->allocation.y;
+    page_area.width = page->allocation.width;
+    page_area.height = page->allocation.height - m_ythickness;
+
+    if( gdk_rectangle_intersect( &page_area, area, &child_area ) )
+    {
+        Gtk::StateType state_type;
+        if( notebook->cur_page == page ) state_type = Gtk::STATE_NORMAL;
+        else state_type = Gtk::STATE_ACTIVE;
+
+        get_style()->paint_extension( win,
+                                      state_type,
+                                      Gtk::SHADOW_OUT,
+                                      rect,
+                                      *this,
+                                      "tab",
+                                      page_area.x,
+                                      page_area.y,
+                                      page_area.width,
+                                      page_area.height,
+                                      Gtk::POS_BOTTOM
+            );
+    }
+}
+
+
+// 矢印(スクロール)マークの描画
+void TabNotebook::draw_arrow( GtkWidget *widget,
+                              const GtkNotebook *notebook,
+                              const Gdk::Rectangle& rect,
+                              const Glib::RefPtr< Gdk::Window >& win,
+                              const int nbarrow )
+{
+    Gtk::StateType state_type;
+    Gtk::ShadowType shadow_type;
+    Gtk::ArrowType arrow;
+    GdkRectangle arrow_rect;
+
+    const bool before = ( nbarrow == ARROW_LEFT_BEFORE ? true : false );
+
+    get_arrow_rect( widget, notebook, &arrow_rect, before );
+
+    if( notebook->in_child == nbarrow ){
+
+        if( notebook->click_child == nbarrow ) state_type = Gtk::STATE_ACTIVE;
+        else state_type = Gtk::STATE_PRELIGHT;
+    }
+    else state_type = get_state();
+
+    if( notebook->click_child == nbarrow ) shadow_type = Gtk::SHADOW_IN;
+    else shadow_type = Gtk::SHADOW_OUT;
+
+    const int page = get_current_page();
+    if( ( nbarrow == ARROW_LEFT_BEFORE && page == 0 )
+        || ( nbarrow == ARROW_RIGHT_AFTER && page == get_n_pages() -1  )
+        ){
+        shadow_type = Gtk::SHADOW_ETCHED_IN;
+        state_type = Gtk::STATE_INSENSITIVE;
+    }
+
+    if( nbarrow == ARROW_LEFT_BEFORE ) arrow = Gtk::ARROW_LEFT;
+    else arrow = Gtk::ARROW_RIGHT;
+ 
+    get_style()->paint_arrow( win,
+                              state_type,
+                              shadow_type, 
+                              rect,
+                              *this,
+                              "notebook",
+                              arrow,
+                              TRUE,
+                              arrow_rect.x,
+                              arrow_rect.y, 
+                              arrow_rect.width,
+                              arrow_rect.height
+        );
+}
+
+
+// 矢印マークの位置、幅、高さを取得
+// before : true ならタブの左側に表示される矢印
+void TabNotebook::get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle, const gboolean before )
+{
+    GdkRectangle event_window_pos;
+    if( get_event_window_position( widget, notebook, &event_window_pos ) ){
+
+        gtk_widget_style_get( widget,
+                              "scroll-arrow-hlength", &rectangle->width,
+                              "scroll-arrow-vlength", &rectangle->height,
+                              NULL );
+
+        if( before ) rectangle->x = event_window_pos.x;
+        else rectangle->x = event_window_pos.x + event_window_pos.width - rectangle->width;
+
+        rectangle->y = event_window_pos.y + ( event_window_pos.height - rectangle->height ) / 2;
+    }
+}
+
+
+// タブ描画領域の位置、幅、高さを取得
+const gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle )
+{
+    GtkNotebookPage* visible_page = NULL;
+    GList* children = notebook->children;
+    while( children ){
+
+        GtkNotebookPage* page = ( GtkNotebookPage* ) children->data;
+        children = children->next;
+        if( GTK_WIDGET_VISIBLE( page->child ) ){
+
+            visible_page = page;
+            break;
+	}
+    }
+
+    if( visible_page ){
+
+        const gint border_width = get_border_width();
+
+        rectangle->x = widget->allocation.x + border_width;
+        rectangle->y = widget->allocation.y + border_width;
+        rectangle->width = widget->allocation.width - 2 * border_width;
+        rectangle->height = visible_page->requisition.height;
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
+
 //////////////////////////////////////////
 
-using namespace SKELETON;
 
 
-// ダミーWidgetを作成してtabにappend (表示はされない )
+// ダミーWidgetを作成してtabにappend ( 表示はされない )
 class DummyWidget : public Gtk::Widget
 {
 public:
@@ -127,7 +392,7 @@ int TabNotebook::append_tab( Widget& tab )
 #endif
 
     // ダミーWidgetを作成してtabにappend (表示はされない )
-    // remve_tab()でdeleteする
+    // remove_tab()でdeleteする
     DummyWidget* dummypage = new DummyWidget();
 
     return append_page( *dummypage , tab );
@@ -141,7 +406,7 @@ int TabNotebook::insert_tab( Widget& tab, int page )
 #endif
 
     // ダミーWidgetを作成してtabにappend (表示はされない )
-    // remve_page()でdeleteする
+    // remove_tab()でdeleteする
     DummyWidget* dummypage = new DummyWidget();
 
     return insert_page( *dummypage, tab, page );
@@ -423,11 +688,11 @@ bool TabNotebook::adjust_tabwidth()
 //
 // タブの高さ、幅、位置を取得 ( 描画用 )
 //
-void TabNotebook::get_alloc_tab( int& x, int& width, int& height )
+void TabNotebook::get_alloc_tab( Alloc_NoteBook& alloc )
 {
-    x = 0;
-    width = 0;
-    height = 0;
+    alloc.x_tab = 0;
+    alloc.width_tab = 0;
+    alloc.height_tab = 0;
 
     GtkNotebook *notebook = gobj();
     if( notebook && notebook->cur_page ){
@@ -435,60 +700,22 @@ void TabNotebook::get_alloc_tab( int& x, int& width, int& height )
         const int bw = get_border_width();
         const int xx = get_allocation().get_x() + bw;
 
-        x = notebook->cur_page->allocation.x - xx;
-        width = notebook->cur_page->allocation.width;
+        alloc.x_tab = notebook->cur_page->allocation.x - xx;
+        alloc.width_tab = notebook->cur_page->allocation.width;
 
-        // タブの高さを m_ythickness  分低くする
-        // TabNotebook::on_expose_event() を参照
-        height = notebook->cur_page->allocation.height - m_ythickness; 
+        // タブの高さを m_ythickness 分低くする
+        // draw_tab() を参照
+        alloc.height_tab = notebook->cur_page->allocation.height - m_ythickness; 
     }
 }
-
 
 
 //
 // 描画イベント
 //
-// gtknotebook.c( Revision 19593, Sat Feb 16 04:09:15 2008 UTC ) からのハック。環境やバージョンによっては問題が出るかもしれないので注意
-//
 bool TabNotebook::on_expose_event( GdkEventExpose* event )
 {
-    GtkNotebook *notebook = gobj();
-    GtkWidget *widget = GTK_WIDGET( notebook );
-    const Alloc_NoteBook alloc = m_parent->get_alloc_notebook();
-    if( ! notebook || ! notebook->cur_page ) return Notebook::on_expose_event( event );
-
-    const int offset = alloc.height_tabbar - alloc.height_tab;
-    const int height_widget = widget->allocation.height;
-
-#ifdef _DEBUG
-    std::cout << "TabNotebook::on_expose_event"
-              << " offset = " << offset
-              << " height = " << height_widget << std::endl;
-#endif
-
-    // 一時的にタブとページ高さをごまかして描画する
-    widget->allocation.height = alloc.height_tab + offset + alloc.height_toolbar + alloc.height_view;
-    GList * children = notebook->children;
-    widget->style->ythickness = m_ythickness;
-    while( children ){
-        GtkNotebookPage* page = ( GtkNotebookPage* ) children->data;
-        children = children->next;
-        page->allocation.height -= m_ythickness;
-    }
-
-    bool ret = Notebook::on_expose_event( event ); // 描画は gtk 側に任せる
-
-    children = notebook->children;
-    while( children ){
-        GtkNotebookPage* page = ( GtkNotebookPage* ) children->data;
-        children = children->next;
-        page->allocation.height += m_ythickness;
-    }
-    widget->style->ythickness = 0;
-    widget->allocation.height = height_widget;
-
-    return ret;
+    return paint( event );
 }
 
 

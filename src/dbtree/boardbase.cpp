@@ -1,6 +1,7 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
+//#define _TEST_CACHE
 #include "jddebug.h"
 
 #include "boardbase.h"
@@ -27,6 +28,13 @@
 #include <sstream>
 #include <cstring>
 
+
+#ifdef _TEST_CACHE
+int cache_hit_art = 0;
+int cache_nohit_art = 0;
+#endif
+
+
 enum
 {
     SIZE_OF_RAWDATA = 2 * 1024 * 1024
@@ -49,6 +57,7 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_rawdata( 0 )
     , m_read_info( 0 )
     , m_append_articles( false )
+    , m_get_article( NULL )
     , m_article_null( 0 )
 {
     clear();
@@ -76,6 +85,15 @@ BoardBase::~BoardBase()
     for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) delete ( *it );
 
     if( m_article_null ) delete m_article_null;
+
+#ifdef _TEST_CACHE
+    if( m_list_article.size() ){
+        std::cout << "article cache\n"
+                  << "hit = " << cache_hit_art << std::endl
+                  << "nohit = " << cache_nohit_art << std::endl
+                  << "hit/total*100 = " << (double)(cache_hit_art)/(cache_hit_art+cache_nohit_art)*100. << std::endl;
+    }
+#endif    
 }
 
 
@@ -763,7 +781,14 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
     if( empty() ) return get_article_null();
 
     // キャッシュ
-    if( url == m_get_article_url ) return m_get_article;
+    if( url == m_get_article_url ){
+
+#ifdef _TEST_CACHE
+        ++cache_hit_art;
+#endif
+        return m_get_article;
+    }
+
     m_get_article_url = url;
     m_get_article = get_article_null();
 
@@ -775,15 +800,19 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
     int num_from, num_to;
     std::string num_str;
     const std::string urldat = url_dat( url, num_from, num_to, num_str );
-    if( urldat.empty() ) return get_article_null();
+    if( urldat.empty() ) return m_get_article;
 
     const std::string datbase = url_datbase();
     const std::string id = urldat.substr( datbase.length() );
-    if( id.empty() ) return get_article_null();
+    if( id.empty() ) return m_get_article;
 
 #ifdef _DEBUG
     std::cout << "datbase = " << datbase << std::endl
               << "id = " << id << std::endl;
+#endif
+
+#ifdef _TEST_CACHE
+    ++cache_nohit_art;
 #endif
 
     // get_article_create() 経由で ArticleBase::read_info() から get_article_fromURL()が
@@ -801,12 +830,14 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 // subject.txt ダウンロード
 //
 // url_update_view : CORE::core_set_command( "update_board" ) を送信するビューのアドレス
+// read_from_cache : まだスレ一覧を開いていないときにキャッシュのsubject.txtを読み込む
 //
-void BoardBase::download_subject( const std::string& url_update_view )
+void BoardBase::download_subject( const std::string& url_update_view, const bool read_from_cache )
 {
 #ifdef _DEBUG
     std::cout << "BoardBase::download_subject " << url_subject() << std::endl
               << "url_update_view = " << url_update_view << std::endl
+              << "read_from_cache = " << read_from_cache << std::endl
               << "empty = " << empty() << std::endl
               << "loading = " << is_loading() << std::endl
               << "views = " << m_url_update_views.size() << std::endl;
@@ -814,24 +845,28 @@ void BoardBase::download_subject( const std::string& url_update_view )
 
     // ダウンロード中に他のビューから再びダウンロード依頼が来たら
     // ダウンロード終了時にまとめてビューにupdateコマンドを送る
-    m_url_update_views.push_back( url_update_view );
+    if( ! url_update_view.empty() ) m_url_update_views.push_back( url_update_view );
     if( m_url_update_views.size() >= 2 ) return;
 
     if( empty() ) return;
     if( is_loading() ) return;
+    if( read_from_cache && m_list_subject_created ) return;
 
     clear();
     m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
     m_read_url_boardbase = false;
-    m_is_online = SESSION::is_online();
+
+    if( read_from_cache ) m_is_online = false;
+    else m_is_online = SESSION::is_online();
 
     // オフライン
     if( ! m_is_online  ){
 
         set_str_code( "" );
 
-        // ディスパッチャ経由で receive_finish() を呼び出す
-        finish();
+        if( read_from_cache ) receive_finish();
+        else finish(); // ディスパッチャ経由で receive_finish() を呼び出す
+
         return;
     }
 
@@ -888,6 +923,7 @@ void BoardBase::receive_finish()
 
     m_list_subject.clear();
     m_list_abone_thread_remove.clear();
+    m_status &= ~STATUS_UPDATED;
 
     bool read_from_cache = false;
     std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
@@ -1346,20 +1382,19 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
 //
 // is_abone_thread() も参照せよ
 //
-#include <iostream>
 void BoardBase::remove_old_abone_thread()
 {
     if( m_list_abone_thread.empty() ) return;
     if( m_list_abone_thread.size() == m_list_abone_thread_remove.size() ) return;
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "BoardBase::remove_old_abone_thread\n";
     std::list< std::string >::const_iterator it = m_list_abone_thread.begin();
     for( ; it != m_list_abone_thread.end(); ++it ) std::cout << ( *it ) << std::endl;
     std::cout << "->\n";
     std::list< std::string >::const_iterator it2 = m_list_abone_thread_remove.begin();
     for( ; it2 != m_list_abone_thread_remove.end(); ++it2 ) std::cout << ( *it2 ) << std::endl;
-//#endif
+#endif
 
     SKELETON::MsgDiag mdiag( NULL, "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？",
                              false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
@@ -1386,7 +1421,7 @@ void BoardBase::update_abone_thread()
     const bool online = SESSION::is_online();
     SESSION::set_online( false );
 
-    download_subject( url_subject() );
+    download_subject( url_subject(), false );
 
     SESSION::set_online( online );
 }
@@ -1602,7 +1637,6 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
 
 // datファイルのインポート
 // 成功したらdat型のurlを返す
-#include <iostream>
 const std::string BoardBase::import_dat( const std::string& filename )
 {
     if( empty() ) return std::string();
@@ -1622,10 +1656,10 @@ const std::string BoardBase::import_dat( const std::string& filename )
 
     const std::string file_to = CACHE::path_board_root_fast( url_boardbase() ) + id;
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "BoardBase::import_dat cp " << filename
               << " " << file_to << std::endl;
-//#endif
+#endif
 
     const std::string datbase = url_datbase();
     ArticleBase* art = get_article_create( datbase, id );
@@ -1930,28 +1964,27 @@ void BoardBase::save_board_info()
 
 // 更新可能状態にしてお気に入りやスレ一覧のタブのアイコンに更新マークを表示
 // update == true の時に表示。falseなら戻す
-#include <iostream>
 void BoardBase::show_updateicon( const bool update )
 {
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "BoardBase::show_updateicon url = " << url_boardbase()
               << " update = " << update << " status = " << ( m_status & STATUS_UPDATE ) << std::endl;
-//#endif
+#endif
 
     if( update ){
 
         if( ! ( m_status & STATUS_UPDATE ) ){
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
             std::cout << "toggle_icon on\n";
-//#endif
+#endif
 
             m_status |= STATUS_UPDATE;
 
             // スレ一覧のタブのアイコン表示を更新
             CORE::core_set_command( "toggle_board_icon", url_subject() );
 
-            // お気に入りのアイコン表示を戻す
+            // お気に入りのアイコン表示を更新
             CORE::core_set_command( "toggle_favorite_boardicon", url_datbase() );
 
             save_info();
@@ -1961,9 +1994,9 @@ void BoardBase::show_updateicon( const bool update )
 
         if( m_status & STATUS_UPDATE ){
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
             std::cout << "toggle_icon off\n";
-//#endif
+#endif
 
             m_status &= ~STATUS_UPDATE;
 
@@ -1976,3 +2009,61 @@ void BoardBase::show_updateicon( const bool update )
     }
 }
 
+
+// 板の更新チェック時に、更新チェックを行うスレのアドレスのリスト
+// キャッシュが存在し、かつdat落ちしていないで新着数が0のスレを速度の順でソートして返す
+const std::list< std::string > BoardBase::get_check_update_articles()
+{
+    std::list< std::string > list_url;
+
+    if( empty() ) return list_url;
+    if( is_loading() ) return list_url;
+    if( m_status & STATUS_UPDATE ) return list_url;
+    if( ! m_list_subject_created ) download_subject( std::string(), true );
+    if( ! m_list_subject_created ) return list_url;
+
+#ifdef _DEBUG
+    std::cout << "BoardBase::get_check_update_articles url = " << url_boardbase() << std::endl;
+#endif
+
+    std::list< int > list_speed;
+
+    std::list< ArticleBase* >::iterator it;
+    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+
+        if( ( *it )->is_cached()
+            && ( *it )->get_number()
+            && ! ( ( *it )->get_status() & STATUS_UPDATE )
+            && ! ( ( *it )->get_status() & STATUS_OLD )
+            && ( *it )->get_number() == ( *it )->get_number_load()
+            ){
+
+            const std::string& url = ( *it )->get_url();
+            const int speed = ( *it )->get_speed();
+
+#ifdef _DEBUG
+            std::cout << "added " << url
+                      << " number = " << ( *it )->get_number()
+                      << " load = " << ( *it )->get_number_load()
+                      << " speed = " << speed
+                      << " " << ( *it )->get_subject() << std::endl;
+#endif
+
+            // 挿入ソート
+            std::list< std::string >::iterator it_url = list_url.begin();
+            std::list< int >::iterator it_speed = list_speed.begin();
+            for( ; it_url != list_url.end(); ++it_url, ++it_speed ) if( ( *it_speed ) < speed ) break;
+            list_url.insert( it_url, url );
+            list_speed.insert( it_speed, speed );
+        }
+    }
+
+#ifdef _DEBUG
+    std::cout << "result of insert sorting\n";
+    std::list< std::string >::const_iterator it_url = list_url.begin();
+    std::list< int >::const_iterator it_speed = list_speed.begin();
+    for( ; it_url != list_url.end(); ++it_url, ++it_speed ) std::cout << ( *it_speed ) << " / " << ( *it_url ) << std::endl;
+#endif 
+
+    return list_url;
+}

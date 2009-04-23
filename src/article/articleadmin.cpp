@@ -59,7 +59,7 @@ ArticleAdmin::ArticleAdmin( const std::string& url )
     get_notebook()->set_fixtab( false );
     if( ! SESSION::get_show_article_tab() ) get_notebook()->set_show_tabs( false );
 
-    setup_menu( true );
+    setup_menu();
 
     // スムーススクロール用タイマセット
     // オートスクロール時など、スムースにスクロールをするため描画用タイマーを

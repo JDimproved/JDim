@@ -1504,6 +1504,8 @@ void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path, const bool op
             std::string url = path2url( path );
 
             if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
+            else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) )
+                CORE::get_checkupdate_manager()->push_back( DBTREE::url_subject( url ), open );
             else if( type == TYPE_DIR ) check_update_dir( path, open );
 
             path.next();
@@ -1571,6 +1573,8 @@ void BBSListViewBase::check_update_root( const Gtk::TreeModel::Children& childre
         const std::string url = row2url( row );
 
         if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
+        else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) )
+            CORE::get_checkupdate_manager()->push_back( DBTREE::url_subject( url ), open );
         else if( type == TYPE_DIR ) check_update_root( row.children(), open );
 
         ++it;
@@ -1841,7 +1845,9 @@ void BBSListViewBase::checkupdate_selected_rows( const bool open )
         int type = path2type( path );
         std::string url = path2url( path );
 
-        if( type == TYPE_THREAD || TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
+        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
+        else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) )
+            CORE::get_checkupdate_manager()->push_back( DBTREE::url_subject( url ), open );
     }
 }
 
@@ -2103,7 +2109,7 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
 
 
 //
-// 移転があったときに行に含まれるURlを変更する
+// 起動時や移転があったときなどに行に含まれるURlを変更する
 //
 void BBSListViewBase::update_urls()
 {
@@ -2181,7 +2187,6 @@ void BBSListViewBase::update_urls()
 //
 // アイコン表示(スレ)の切り替え
 //
-#include <iostream>
 void BBSListViewBase::toggle_articleicon( const std::string& url )
 {
     if( ! m_ready_tree ) return;
@@ -2195,9 +2200,9 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
     if( status & STATUS_OLD ) type = TYPE_THREAD_OLD;
     if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
     
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "BBSListViewBase::toggle_articleicon url = " << url_dat << " type = " << type << std::endl;
-//#endif
+#endif
 
     Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
     Gtk::TreeModel::Row row;
@@ -2218,6 +2223,9 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
                 case TYPE_THREAD_UPDATE:
                 case TYPE_THREAD_OLD:
                     if( url_dat == url_row || url_cgi == url_row ){
+#ifdef _DEBUG
+                        std::cout << "hit " << url_dat << " == " << url_row << std::endl;
+#endif
                         row[ m_columns.m_type ] = type;
                         row[ m_columns.m_image ] = XML::get_icon( type );
                     }
@@ -2250,18 +2258,17 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
 void BBSListViewBase::toggle_boardicon( const std::string& url )
 {
     if( ! m_ready_tree ) return;
-    if( m_treestore->children().empty() ) return; 
+    if( m_treestore->children().empty() ) return;
    
-    const std::string url_datbase = DBTREE::url_datbase( url );
     const std::string url_subject = DBTREE::url_subject( url );
 
     int type = TYPE_BOARD;
     const int status = DBTREE::board_status( url );
     if( status & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
     
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "BBSListViewBase::toggle_boardicon url = " << url_subject << " type = " << type << std::endl;
-//#endif
+#endif
 
     Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
     Gtk::TreeModel::Row row;
@@ -2280,9 +2287,11 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
 
                 case TYPE_BOARD:
                 case TYPE_BOARD_UPDATE:
-                    std::cout << url_subject << " / " << url_datbase << " / " << url_row << std::endl;
-                    if( url_subject == url_row || url_datbase == url_row ){
-                        std::cout << "hit\n";
+
+                    if( url_subject == DBTREE::url_subject( url_row ) ){
+#ifdef _DEBUG
+                        std::cout << "hit " << url_subject << " == " << url_row << std::endl;
+#endif
                         row[ m_columns.m_type ] = type;
                         row[ m_columns.m_image ] = XML::get_icon( type );
                     }

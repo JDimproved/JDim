@@ -348,7 +348,8 @@ namespace DBTREE
 
         // subject.txt ダウンロード
         // url_update_view : CORE::core_set_command( "update_board" ) を送信するビューのアドレス
-        virtual void download_subject( const std::string& url_update_view );
+        // read_from_cache : まだスレ一覧を開いていないときにキャッシュのsubject.txtを読み込む
+        virtual void download_subject( const std::string& url_update_view, const bool read_from_cache );
 
         // 新スレ作成用のメッセージ変換
         virtual const std::string create_newarticle_message( const std::string& subject,
@@ -468,6 +469,10 @@ namespace DBTREE
         // 更新可能状態にしてお気に入りやスレ一覧のタブのアイコンに更新マークを表示
         // update == true の時に表示。falseなら戻す
         void show_updateicon( const bool update );
+
+        // 板の更新チェック時に、更新チェックを行うスレのアドレスのリスト
+        // キャッシュが存在し、かつdat落ちしていないで新着数が0のスレを速度の順でソートして返す
+        const std::list< std::string > get_check_update_articles();
 
       private:
 

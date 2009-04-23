@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "boardadmin.h"
@@ -74,7 +74,7 @@ const bool BoardView::is_check_update()
     const int status = DBTREE::board_status( get_url_board() );
 
 #ifdef _DEBUG
-    std::cout << "BoardView::is_check_update " << ( status & STATUS_UPDATE ) << std::endl;
+    std::cout << "BoardView::is_check_update status = " << ( status & STATUS_UPDATE ) << std::endl;
 #endif
 
     return ( status & STATUS_UPDATE );

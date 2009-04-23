@@ -20,12 +20,10 @@ namespace CORE
     {
       public:
 
-        std::list< std::string > urllist;
-        bool open;
+        std::list< std::string > urllist; // 更新チェックするスレのアドレスのリスト
 
-      CheckItem():open( false ){ urllist.clear(); }
+        CheckItem(){ urllist.clear(); }
     };
-
 
     class CheckUpdate_Manager
     {
@@ -44,14 +42,8 @@ namespace CORE
         void run();
         void stop();
 
-
-        // 更新チェックするスレのグループをセットする
-        // リストの先頭にあるスレから更新チェックをしていき、もし更新されていたらグループに属する
-        // 残りのスレの更新チェックをキャンセルする
-        // open : true なら更新しているスレをタブで開く
-        void push_back_group( const std::list< std::string >& urllist, const bool open );
-
-        // 簡易版
+        // 更新チェックする板やスレをセットする
+        // open == true なら更新チェック終了時に url を開く( url が更新可能状態なら )
         void push_back( const std::string& url, const bool open );
 
         // 次のスレをチェック

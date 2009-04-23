@@ -1,7 +1,12 @@
 // ライセンス: GPL2
 //
 // タブをドラッグしてページを入れ替え可能なNoteBook
-
+//
+// DragableNoteBook は 下の3つの notebook から構成されている
+//
+// タブ : TabNotebook
+// ツールバー : ToolBarNotebook
+// ビュー : ViewNotebook
 
 #ifndef _DRAGNOTE_H
 #define _DRAGNOTE_H
@@ -9,6 +14,7 @@
 #include "tabnote.h"
 #include "toolbarnote.h"
 #include "viewnote.h"
+#include "tabswitchbutton.h"
 
 #include "tooltip.h"
 
@@ -35,17 +41,20 @@ namespace SKELETON
     // 及びタブの高さや位置の情報
     struct Alloc_NoteBook
     {
+        int x_tab;
+        int height_tab;
+        int width_tab;
+
         int y_tabbar;
         int height_tabbar;
 
         int y_toolbar;
         int height_toolbar;
 
-        int height_view;
-
-        int x_tab;
-        int height_tab;
-        int width_tab;
+        int x_box;
+        int y_box;
+        int width_box;
+        int height_box;
     };
 
     class DragableNoteBook : public Gtk::VBox
@@ -62,6 +71,9 @@ namespace SKELETON
         TabNotebook m_notebook_tab;  // タブ
         ToolBarNotebook m_notebook_toolbar; // ツールバー
         ViewNotebook m_notebook_view; // ビュー
+
+        Gtk::HBox m_hbox_tab;
+        TabSwitchButton m_bt_tabswitch; // タブの切り替えボタン
 
         bool m_show_tabs;
         bool m_show_toolbar;
@@ -98,9 +110,8 @@ namespace SKELETON
         void clock_in();
         void focus_out();
 
-        // DragableNoteBook を構成している各Notebookの高さ
-        // 及びタブの高さと位置を取得 ( 枠の描画用 )
-        const Alloc_NoteBook get_alloc_notebook();
+        // 枠描画
+        void draw_box( Gtk::Widget* widget, GdkEventExpose* event );
 
         const bool get_show_tabs() const{ return m_show_tabs; }
         void set_show_tabs( bool show_tabs );
@@ -142,9 +153,16 @@ namespace SKELETON
         // タブ幅調整
         bool adjust_tabwidth();
 
+        // タブ切り替えボタン
+        Gtk::Button& get_tabswitch_button(){ return m_bt_tabswitch.get_button(); }
+
       private:
 
         virtual bool on_expose_event( GdkEventExpose* event );
+
+        // DragableNoteBook を構成している各Notebookの高さ
+        // 及びタブの高さと位置を取得 ( 枠の描画用 )
+        const Alloc_NoteBook get_alloc_notebook();
 
         // ツールバー取得
         SKELETON::ToolBar* get_toolbar( int page );

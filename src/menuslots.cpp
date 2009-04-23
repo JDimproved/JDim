@@ -2,7 +2,7 @@
 
 // メインウィンドウのメニューのslot関数
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "core.h"

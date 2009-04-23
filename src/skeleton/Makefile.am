@@ -17,6 +17,8 @@ libskeleton_a_SOURCES = \
 	toolbarnote.cpp \
 	viewnote.cpp \
 	tablabel.cpp \
+	tabswitchbutton.cpp \
+	tabswitchmenu.cpp \
 	imgbutton.cpp \
 	imgtoolbutton.cpp \
 	imgtogglebutton.cpp \
@@ -61,6 +63,8 @@ noinst_HEADERS = \
 	toolbarnote.h \
 	viewnote.h \
 	tablabel.h \
+	tabswitchbutton.h \
+	tabswitchmenu.h \
 	imgbutton.h \
 	imgtoolbutton.h \
 	imgtogglebutton.h \

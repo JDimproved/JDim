@@ -8,6 +8,7 @@
 #include "view.h"
 #include "dragnote.h"
 #include "msgdiag.h"
+#include "tabswitchmenu.h"
 
 #include "dbtree/interface.h"
 
@@ -50,6 +51,7 @@ Admin::Admin( const std::string& url )
       m_win( NULL ),
       m_notebook( NULL ),
       m_focus( false ),
+      m_tabswitchmenu( NULL ),
       m_use_viewhistory( false )
 {
     m_notebook = new DragableNoteBook();
@@ -61,6 +63,8 @@ Admin::Admin( const std::string& url )
     m_notebook->sig_tab_close().connect( sigc::mem_fun( *this, &Admin::slot_tab_close ) );
     m_notebook->sig_tab_reload().connect( sigc::mem_fun( *this, &Admin::slot_tab_reload ) );
     m_notebook->sig_tab_menu().connect( sigc::mem_fun( *this, &Admin::slot_tab_menu ) );
+
+    m_notebook->get_tabswitch_button().signal_clicked().connect( sigc::mem_fun(*this, &Admin::slot_show_tabswitchmenu ) );
 
     // D&D
     m_notebook->sig_drag_data_get().connect( sigc::mem_fun(*this, &Admin::slot_drag_data_get ) );
@@ -100,13 +104,14 @@ Admin::~Admin()
     delete_jdwin();
 
     if( m_notebook ) delete m_notebook;
+    if( m_tabswitchmenu ) delete m_tabswitchmenu;
 }
 
 
 //
 // メニューのセットアップ
 //
-void Admin::setup_menu( const bool enable_checkupdate )
+void Admin::setup_menu()
 {
     // 右クリックメニュー
     m_action_group = Gtk::ActionGroup::create();
@@ -166,16 +171,10 @@ void Admin::setup_menu( const bool enable_checkupdate )
     "<separator/>"
 
     "<menu action='Reload_Tab_Menu'>"
-    "<menuitem action='ReloadAll'/>";
+    "<menuitem action='ReloadAll'/>"
 
-    if( enable_checkupdate ){
-
-        str_ui += 
-        "<menuitem action='CheckUpdateAll'/>"
-        "<menuitem action='CheckUpdateReloadAll'/>";
-    }
-
-    str_ui +=
+    "<menuitem action='CheckUpdateAll'/>"
+    "<menuitem action='CheckUpdateReloadAll'/>"
 
     "<separator/>"
     "<menuitem action='CancelReloadAll'/>"
@@ -1708,7 +1707,7 @@ View* Admin::get_current_view()
 //
 // 指定したページに表示切替え
 //
-void Admin::set_current_page( int page )
+void Admin::set_current_page( const int page )
 {
     m_notebook->set_current_page( page );
 }
@@ -1898,6 +1897,42 @@ void Admin::slot_tab_menu( int page, int x, int y )
 
         popupmenu->popup( 0, gtk_get_current_event_time() );
     }
+}
+
+
+// タブ切り替えメニュー表示
+void Admin::slot_show_tabswitchmenu()
+{
+#ifdef _DEBUG
+    std::cout << "Admin::slot_show_tabswitchmenu\n";
+#endif
+
+    if( m_tabswitchmenu ) delete m_tabswitchmenu;
+
+    m_tabswitchmenu = new  SKELETON::TabSwitchMenu( m_notebook, this );
+    m_tabswitchmenu->popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &Admin::slot_popup_pos ) ),
+                            0, gtk_get_current_event_time() );
+}
+
+
+// タブ切り替えメニューの位置決め
+void Admin::slot_popup_pos( int& x, int& y, bool& push_in )
+{
+    if( ! m_tabswitchmenu ) return;
+    if( ! m_notebook ) return;
+
+    const int mrg = 16;
+
+    m_notebook->get_tabswitch_button().get_pointer( x, y );
+
+    int ox, oy;
+    m_notebook->get_tabswitch_button().get_window()->get_origin( ox, oy );
+    const Gdk::Rectangle rect = m_notebook->get_tabswitch_button().get_allocation();
+
+    x += ox + rect.get_x() - mrg;
+    y = oy + rect.get_y() + rect.get_height();
+
+    push_in = false;
 }
 
 

@@ -13,6 +13,8 @@ namespace SKELETON
     class DragableNoteBook;
     class TabLabel;
 
+    struct Alloc_NoteBook;
+
     // タブのクリック
     typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_PRESS;
     typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_RELEASE;
@@ -83,9 +85,29 @@ namespace SKELETON
         const int get_page_under_mouse();
 
         // タブの高さ、幅、位置を取得 ( 描画用 )
-        void get_alloc_tab( int& x, int& width, int& height );
+        void get_alloc_tab( Alloc_NoteBook& alloc );
 
       private:
+
+        // gtknotebook.c ( Revision 19311, 2008-01-06 ) を参考にして作成した描画関係の関数
+        const bool paint( GdkEventExpose* event );
+
+        void draw_tab( const GtkNotebook *notebook,
+                       const GtkNotebookPage *page,
+                       GdkRectangle *area,
+                       const Gdk::Rectangle& rect,
+                       const Glib::RefPtr< Gdk::Window >& win
+            );
+
+        void draw_arrow( GtkWidget *widget,
+                         const GtkNotebook *notebook,
+                         const Gdk::Rectangle& rect,
+                         const Glib::RefPtr< Gdk::Window >& win,
+                         const int nbarrow );
+
+        void get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle, const gboolean before );
+        const gboolean get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle );
+
 
         // 各タブのサイズと座標を取得
         void calc_tabsize();

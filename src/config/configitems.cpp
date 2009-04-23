@@ -429,6 +429,9 @@ const bool ConfigItems::load()
     // スレをお気に入りに追加したときにしおりをセットする
     bookmark_drop = cf.get_option( "bookmark_drop", CONF_BOOKMARK_DROP );
 
+    // お気に入りの更新チェック時に板の更新もチェックする
+    check_update_board  = cf.get_option( "check_update_board", CONF_CHECK_UPDATE_BOARD );
+
     // Ctrl+qでウィンドウを閉じない
     disable_close = cf.get_option( "disable_close", CONF_DISABLE_CLOSE );
 
@@ -675,6 +678,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "threshold_next", threshold_next );
     cf.update( "replace_favorite_next", replace_favorite_next );
     cf.update( "bookmark_drop", bookmark_drop );
+    cf.update( "check_update_board", check_update_board );
     cf.update( "disable_close", disable_close );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
 

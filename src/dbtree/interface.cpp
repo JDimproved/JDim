@@ -350,7 +350,7 @@ void DBTREE::board_save_info( const std::string& url )
 
 void DBTREE::board_download_subject( const std::string& url, const std::string& url_update_view )
 {
-    DBTREE::get_board( url )->download_subject( url_update_view );
+    DBTREE::get_board( url )->download_subject( url_update_view, false );
 }
 
 const bool DBTREE::board_is_loading( const std::string& url )
@@ -574,6 +574,11 @@ time_t DBTREE::board_write_leftsec( const std::string& url )
 void DBTREE::board_show_updateicon( const std::string& url, const bool update )
 {
     DBTREE::get_board( url )->show_updateicon( update );
+}
+
+const std::list< std::string > DBTREE::board_get_check_update_articles( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_check_update_articles();
 }
 
 // datファイルのインポート

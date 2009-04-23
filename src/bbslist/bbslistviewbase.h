@@ -91,7 +91,7 @@ namespace BBSLIST
         bool is_etcboard( Gtk::TreeModel::iterator& it );
         bool is_etcboard( Gtk::TreePath path );
 
-        // 移転があったときに行に含まれるURLを変更する
+        // 起動時や移転があったときなどに行に含まれるURlを変更する
         void update_urls();
 
         // アイコン表示(スレ)の切り替え

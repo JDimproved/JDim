@@ -20,6 +20,7 @@ namespace SKELETON
     class JDWindow;
     class View;
     class DragableNoteBook;
+    class TabSwitchMenu;
 
     class Admin : public Dispatchable
     {
@@ -42,6 +43,9 @@ namespace SKELETON
         std::vector< Gtk::MenuItem* > m_vec_movemenu_items;
         std::vector< bool > m_vec_movemenu_append;
 
+        // タブ切り替えメニュー
+        TabSwitchMenu* m_tabswitchmenu;
+
         // view履歴使用
         bool m_use_viewhistory;
         std::string m_last_closed_url;
@@ -51,7 +55,7 @@ namespace SKELETON
         Admin( const std::string& url );
         virtual ~Admin();
 
-        void setup_menu( const bool enable_checkupdate );
+        void setup_menu();
 
         virtual bool empty();
         const std::string& get_url() const{ return m_url; }
@@ -110,6 +114,9 @@ namespace SKELETON
 
         // SIGHUPを受け取ったときの処理
         virtual void shutdown();
+
+        // 指定したページに表示切替え
+        virtual void set_current_page( const int page );
 
     protected:
 
@@ -216,9 +223,6 @@ namespace SKELETON
         void reload_all_tabs();
         void reload_all_tabs( const int from_page );
 
-        // 指定したページに表示切替え
-        virtual void set_current_page( int page );
-
         // notebookのタブが切り替わったときに呼ばれるslot
         void slot_switch_page( GtkNotebookPage*, guint page );
 
@@ -233,6 +237,12 @@ namespace SKELETON
 
         // タブメニュー表示
         virtual void slot_tab_menu( int page, int x, int y );
+
+        // タブ切り替えメニュー表示
+        void slot_show_tabswitchmenu();
+
+        // タブ切り替えメニューの位置決め
+        void slot_popup_pos( int& x, int& y, bool& push_in );
 
         // 右クリックメニュー
         virtual void slot_close_tab();

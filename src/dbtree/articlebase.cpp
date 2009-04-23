@@ -519,7 +519,7 @@ void ArticleBase::set_bookmarked_thread( const bool bookmarked )
 //
 const bool ArticleBase::enable_load()
 {
-    return ( is_cached() && ( m_status & STATUS_UPDATE ) );
+    return ( is_cached() && ( m_status & STATUS_UPDATE ) && ! ( m_status & STATUS_OLD ) );
 }
 
 
@@ -1175,10 +1175,10 @@ void ArticleBase::slot_load_finished()
 
             show_updateicon( true );
 
-            // 所属する板も更新可能状態にする
+            // このスレが所属する板を更新可能状態にしてお気に入りやスレ一覧のタブのアイコンに更新マークを表示
             DBTREE::board_show_updateicon( m_url, true );
 
-            // スレ一覧の ! 行のアイコンも更新マークにする
+            // スレ一覧の ! 行のアイコンを更新マークにする
             CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
         }
 
@@ -1189,6 +1189,9 @@ void ArticleBase::slot_load_finished()
 #ifdef _DEBUG
         std::cout << "check_update done\n";
 #endif
+
+        // 更新チェック時間を保存
+        save_info( true );
 
         // 次のスレを更新チェック
         CORE::get_checkupdate_manager()->pop_front();
@@ -1373,7 +1376,7 @@ void ArticleBase::show_updateicon( const bool update )
 
     struct timeval tv;
     struct timezone tz;
-    if( gettimeofday( &tv, &tz ) != 0 ) m_check_update_time = tv;
+    if( gettimeofday( &tv, &tz ) == 0 ) m_check_update_time = tv;
 
     if( update ){
 
@@ -1696,6 +1699,16 @@ void ArticleBase::read_info()
         m_abone_age = false;
         GET_INFOVALUE( str_tmp, "aboneage = " );
         if( ! str_tmp.empty() ) m_abone_age = atoi( str_tmp.c_str() );
+
+        // 最終更新チェック時間
+        GET_INFOVALUE( str_tmp, "checktime = " );
+        if( ! str_tmp.empty() ){
+            list_tmp = MISC::split_line( str_tmp );
+            if( list_tmp.size() == 2 ){
+                it_tmp = list_tmp.begin();
+                m_check_update_time.tv_sec = ( atoi( ( *(it_tmp++) ).c_str() ) << 16 ) + atoi( ( *(it_tmp++) ).c_str() );
+            }
+        }
     }
 
     // キャッシュはあるけど情報ファイルが無い場合
@@ -1807,7 +1820,11 @@ void ArticleBase::save_info( const bool force )
 
     // 書き込み時間
     std::ostringstream ss_write;
-    ss_write << ( m_write_time.tv_sec >> 16 ) << " " << ( m_write_time.tv_sec & 0xffff ) << " " << m_write_time.tv_usec;
+    if( m_write_time.tv_sec ) ss_write << ( m_write_time.tv_sec >> 16 ) << " " << ( m_write_time.tv_sec & 0xffff ) << " " << m_write_time.tv_usec;
+
+    // 更新チェック時間
+    std::ostringstream ss_check;
+    if( m_check_update_time.tv_sec ) ss_check << ( m_check_update_time.tv_sec >> 16 ) << " " << ( m_check_update_time.tv_sec & 0xffff );
 
     // あぼーん情報
     std::string str_abone_id = MISC::listtostr( m_list_abone_id );
@@ -1857,6 +1874,7 @@ void ArticleBase::save_info( const bool force )
          << "bkmark_thread = " << m_bookmarked_thread << std::endl
          << "posted = " << ss_posted.str() << std::endl
          << "aboneage = " << m_abone_age << std::endl
+         << "checktime = " << ss_check.str() << std::endl
     ;
 
 #ifdef _DEBUG

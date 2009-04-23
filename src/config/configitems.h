@@ -363,6 +363,9 @@ namespace CONFIG
         // スレをお気に入りに追加したときにしおりをセットする
         bool bookmark_drop;
 
+        // お気に入りの更新チェック時に板の更新もチェックする
+        bool check_update_board;
+
         // Ctrl+qでウィンドウを閉じない
         bool disable_close;
 

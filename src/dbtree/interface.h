@@ -144,7 +144,14 @@ namespace DBTREE
     const time_t board_samba_sec( const std::string& url );
     void board_set_samba_sec( const std::string& url, time_t sec );
     time_t board_write_leftsec( const std::string& url );
+
+    // 更新可能状態にしてお気に入りやスレ一覧のタブのアイコンに更新マークを表示
+    // update == true の時に表示。falseなら戻す
     void board_show_updateicon( const std::string& url, const bool update );
+
+    // 板の更新チェック時に、更新チェックを行うスレのアドレスのリスト
+    // キャッシュが存在し、かつdat落ちしていないで新着数が0のスレを速度の順でソートして返す
+    const std::list< std::string > board_get_check_update_articles( const std::string& url );
 
     // datファイルのインポート
     // 成功したらdat型のurlを返す
