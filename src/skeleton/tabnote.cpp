@@ -221,14 +221,14 @@ void TabNotebook::draw_arrow( GtkWidget *widget,
 
     get_arrow_rect( widget, notebook, &arrow_rect, before );
 
-    if( notebook->in_child == nbarrow ){
+    if( ( int ) notebook->in_child == nbarrow ){
 
-        if( notebook->click_child == nbarrow ) state_type = Gtk::STATE_ACTIVE;
+        if( ( int ) notebook->click_child == nbarrow ) state_type = Gtk::STATE_ACTIVE;
         else state_type = Gtk::STATE_PRELIGHT;
     }
     else state_type = get_state();
 
-    if( notebook->click_child == nbarrow ) shadow_type = Gtk::SHADOW_IN;
+    if( ( int ) notebook->click_child == nbarrow ) shadow_type = Gtk::SHADOW_IN;
     else shadow_type = Gtk::SHADOW_OUT;
 
     const int page = get_current_page();

@@ -31,6 +31,8 @@ ViewNotebook::ViewNotebook( DragableNoteBook* parent )
 //
 bool ViewNotebook::on_expose_event( GdkEventExpose* event )
 {
+    if( ! get_n_pages() ) return Notebook::on_expose_event( event );
+
     // 枠描画
     m_parent->draw_box( this, event );
 
