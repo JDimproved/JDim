@@ -299,6 +299,8 @@ int DragableNoteBook::append_page( const std::string& url, Gtk::Widget& child )
 {
     m_notebook_view.append_page( child );
 
+    m_bt_tabswitch.show_button();
+
     SKELETON::TabLabel* tablabel = create_tablabel( url );
     return m_notebook_tab.append_tab( *tablabel );
 }
@@ -307,6 +309,8 @@ int DragableNoteBook::append_page( const std::string& url, Gtk::Widget& child )
 int DragableNoteBook::insert_page( const std::string& url, Gtk::Widget& child, int page )
 {
     m_notebook_view.insert_page( child, page );
+
+    m_bt_tabswitch.show_button();
 
     SKELETON::TabLabel* tablabel = create_tablabel( url );
     return m_notebook_tab.insert_tab( *tablabel, page );
@@ -346,6 +350,8 @@ void DragableNoteBook::remove_page( int page )
     if( tablabel ) delete tablabel;
 
     m_tooltip.hide_tooltip();
+
+    if( ! get_n_pages() ) m_bt_tabswitch.hide_button();
 }
 
 

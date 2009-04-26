@@ -23,12 +23,16 @@ namespace SKELETON
         Gtk::Button m_button;
         Gtk::Arrow m_arrow;
 
+        bool m_shown;
+
       public:
 
         TabSwitchButton( DragableNoteBook* parent );
         virtual ~TabSwitchButton();
 
         Gtk::Button& get_button(){ return m_button; }
+        void show_button();
+        void hide_button();
 
       protected:
 
