@@ -7,6 +7,7 @@
 #include "bbslist/selectlistview.h"
 
 #include "board/boardview.h"
+#include "board/boardviewnext.h"
 
 #include "article/articleview.h"
 #include "article/articleviewsearch.h"
