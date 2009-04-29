@@ -3636,16 +3636,15 @@ void Core::hide_imagetab()
 //
 // 板にdatファイルをインポートする
 //
-#include <iostream>
 void Core::import_dat( const std::string& url_board, const std::list< std::string > list_files )
 {
     if( ! list_files.size() ) return;
 
     const std::string url_subject = DBTREE::url_subject( url_board );
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "Core::import_dat url = " << url_subject << std::endl;
-//#endif
+#endif
 
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
@@ -3656,9 +3655,9 @@ void Core::import_dat( const std::string& url_board, const std::list< std::strin
 
         const std::string& filename = ( *it );
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
         std::cout << filename << std::endl;
-//#endif
+#endif
 
         std::string url = DBTREE::board_import_dat( url_subject, filename );
         if( ! url.empty() ){
