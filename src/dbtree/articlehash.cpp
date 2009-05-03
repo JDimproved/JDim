@@ -13,7 +13,7 @@ using namespace DBTREE;
 
 enum
 {
-    HASH_TBLSIZE = 1000
+    HASH_TBLSIZE = 1024
 };
 
 
@@ -45,9 +45,14 @@ ArticleHash::~ArticleHash()
 
 const int ArticleHash::get_hash( const std::string& id )
 {
-    return atoi( id.c_str() ) % HASH_TBLSIZE;
-}
+    const size_t hash = atoi( id.c_str() ) & ( HASH_TBLSIZE -1 );
 
+#ifdef _DEBUG
+    std::cout << id << " -> " << hash << std::endl;
+#endif
+
+    return hash;
+}
 
 
 void ArticleHash::push( ArticleBase* article )
@@ -89,8 +94,6 @@ const ArticleHashIterator ArticleHash::begin()
 
 ArticleBase* ArticleHash::it_get()
 {
-//    std::cout << "ArticleHash::it_get hash = " << m_it_hash << " pos = " << m_it_pos << std::endl;
-
     if( m_it_hash >= m_table.size() ) return NULL;
 
     return m_table[ m_it_hash ][ m_it_pos ];
@@ -99,7 +102,9 @@ ArticleBase* ArticleHash::it_get()
 
 void ArticleHash::it_inc()
 {
-//    std::cout << "ArticleHash::it_inc hash = " << m_it_hash << " pos = " << m_it_pos;
+#ifdef _DEBUG
+    std::cout << "ArticleHash::it_inc hash = " << m_it_hash << " pos = " << m_it_pos;
+#endif
 
     ++m_it_size;
     if( m_it_size <= size() ){
@@ -112,7 +117,9 @@ void ArticleHash::it_inc()
         }
     }
 
-//    std::cout << " -> hash = " << m_it_hash << " pos = " << m_it_pos << " size = " << m_it_size << " / " << size() << std::endl;
+#ifdef _DEBUG
+    std::cout << " -> hash = " << m_it_hash << " pos = " << m_it_pos << " size = " << m_it_size << " / " << size() << std::endl;
+#endif
 }
 
 
