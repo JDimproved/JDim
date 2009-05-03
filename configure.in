@@ -321,63 +321,64 @@ AC_ARG_WITH(oniguruma,[ --with-oniguruma    (enable oniguruma)],
 
 
 dnl
-dnl checking core2duo
-if test "$use_gprof" = "no" ;then
-AC_ARG_WITH(core2duo,[ --with-core2duo    (use core2duo)],
-       [ if test "$withval" != "no" ;then
-               echo "use core2duo"
-	       CXXFLAGS="$CXXFLAGS -march=pentium-m -msse3 -pipe -fomit-frame-pointer"
-       fi ])
+dnl CPU別の最適化オプション
+dnl
+if test "$use_gprof" = "no"; then
+
+    dnl
+    dnl checking native (gcc >= 4.2 x86 & x86_64)
+    dnl
+	AC_ARG_WITH(native,[ --with-native    (use native)],
+        [ if test "$withval" != "no"; then
+            echo "use native"
+            CXXFLAGS="$CXXFLAGS -march=native"
+        fi ])
+
+    dnl
+    dnl checking core2duo
+    dnl
+    AC_ARG_WITH(core2duo,[ --with-core2duo    (use core2duo)],
+        [ if test "$withval" != "no"; then
+            echo "use core2duo"
+            CXXFLAGS="$CXXFLAGS -march=pentium-m -msse3"
+        fi ])
+
+    dnl
+    dnl checking athlon64
+    dnl
+    AC_ARG_WITH(athlon64,[ --with-athlon64    (use athlon64)],
+        [ if test "$withval" != "no"; then
+            echo "use athlon64"
+            CXXFLAGS="$CXXFLAGS -march=athlon64"
+        fi ])
+
+    dnl
+    dnl checking atom
+    dnl
+    AC_ARG_WITH(atom,[ --with-atom    (use atom)],
+        [ if test "$withval" != "no"; then
+            echo "use atom"
+            CXXFLAGS="$CXXFLAGS -march=prescott"
+        fi ])
+
+    dnl
+    dnl checking ppc7400
+    dnl
+    AC_ARG_WITH(ppc7400,[ --with-ppc7400    (use PowerPC7400)],
+        [ if test "$withval" != "no"; then
+            echo "use ppc7400"
+            CXXFLAGS="$CXXFLAGS -mcpu=7400 -maltivec -mabi=altivec"
+        fi ])
+
+    dnl
+    dnl checking ppc7450
+    dnl
+    AC_ARG_WITH(ppc7450,[ --with-ppc7450    (use PowerPC7450)],
+        [ if test "$withval" != "no"; then
+            echo "use ppc7450"
+            CXXFLAGS="$CXXFLAGS -mcpu=7450 -maltivec -mabi=altivec"
+        fi ])
 fi
-
-
-dnl
-dnl checking athlon64
-dnl
-if test "$use_gprof" = "no" ;then
-AC_ARG_WITH(athlon64,[ --with-athlon64    (use athlon64)],
-       [ if test "$withval" != "no" ;then
-               echo "use athlon64"
-	       CXXFLAGS="$CXXFLAGS -march=athlon64 -pipe"
-       fi ])
-fi
-
-
-dnl
-dnl checking atom
-dnl
-if test "$use_gprof" = "no" ;then
-AC_ARG_WITH(atom,[ --with-atom    (use atom)],
-       [ if test "$withval" != "no" ;then
-               echo "use atom"
-	       CXXFLAGS="$CXXFLAGS -march=prescott -pipe -fomit-frame-pointer"
-       fi ])
-fi
-
-
-dnl
-dnl checking ppc7400
-dnl
-if test "$use_gprof" = "no" ;then
-AC_ARG_WITH(ppc7400,[ --with-ppc7400    (use PowerPC7400)],
-       [ if test "$withval" != "no" ;then
-               echo "use ppc7400"
-	       CXXFLAGS="$CXXFLAGS -mcpu=7400 -pipe -maltivec -mabi=altivec"
-       fi ])
-fi
-
-
-dnl
-dnl checking ppc7450
-dnl
-if test "$use_gprof" = "no" ;then
-AC_ARG_WITH(ppc7450,[ --with-ppc7450    (use PowerPC7450)],
-       [ if test "$withval" != "no" ;then
-               echo "use ppc7450"
-	       CXXFLAGS="$CXXFLAGS -mcpu=7450 -pipe -maltivec -mabi=altivec"
-       fi ])
-fi
-
 
 
 dnl
