@@ -325,12 +325,12 @@ void MessageAdmin::show_toolbar()
         // 通常のツールバー
         m_toolbar = new MessageToolBar();
         get_notebook()->append_toolbar( *m_toolbar );
-        m_toolbar->show_toolbar();
+        m_toolbar->open_buttonbar();
 
         // プレビュー用のツールバー
         m_toolbar_preview = new MessageToolBarPreview();
         get_notebook()->append_toolbar( *m_toolbar_preview );
-        m_toolbar_preview->show_toolbar();
+        m_toolbar_preview->open_buttonbar();
     }
 
     get_notebook()->show_toolbar();

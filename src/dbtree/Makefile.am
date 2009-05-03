@@ -15,6 +15,7 @@ libdbtree_a_SOURCES = \
 	settingloader.cpp \
 	ruleloader.cpp \
 	boardfactory.cpp \
+	articlehash.cpp \
 \
 	articlebase.cpp \
 	article2ch.cpp \
@@ -48,6 +49,7 @@ noinst_HEADERS = \
 	settingloader.h \
 	ruleloader.h \
 	boardfactory.h \
+	articlehash.h \
 \
 	articlebase.h \
 	article2ch.h \

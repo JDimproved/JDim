@@ -516,9 +516,9 @@ void ArticleAdmin::show_toolbar()
         get_notebook()->append_toolbar( *m_search_toolbar );
 
         if( SESSION::get_show_article_toolbar() ){
-            m_toolbar->show_toolbar();
-            m_toolbarsimple->show_toolbar();
-            m_search_toolbar->show_toolbar();
+            m_toolbar->open_buttonbar();
+            m_toolbarsimple->open_buttonbar();
+            m_search_toolbar->open_buttonbar();
         }
     }
 
@@ -534,14 +534,31 @@ void ArticleAdmin::toggle_toolbar()
     if( ! m_toolbar ) return;
 
     if( SESSION::get_show_article_toolbar() ){
-        m_toolbar->show_toolbar();
-        m_toolbarsimple->show_toolbar();
-        m_search_toolbar->show_toolbar();
+
+        m_toolbar->open_buttonbar();
+        m_toolbarsimple->open_buttonbar();
+        m_search_toolbar->open_buttonbar();
+
+        switch( get_notebook()->get_current_toolbar() ){
+
+            case TOOLBAR_ARTICLE:
+                m_toolbar->show_toolbar();
+                break;
+
+            case TOOLBAR_SIMPLE:
+                m_toolbarsimple->show_toolbar();
+                break;
+
+            case TOOLBAR_SEARCH:
+                m_search_toolbar->show_toolbar();
+                break;
+        }
+
     }
     else{
-        m_toolbar->hide_toolbar();
-        m_toolbarsimple->hide_toolbar();
-        m_search_toolbar->hide_toolbar();
+        m_toolbar->close_buttonbar();
+        m_toolbarsimple->close_buttonbar();
+        m_search_toolbar->close_buttonbar();
     }
 }
 
@@ -551,20 +568,31 @@ void ArticleAdmin::toggle_toolbar()
 //
 void ArticleAdmin::open_searchbar()
 {
+    if( ! m_toolbar ) return;
+
     SKELETON::View* view = get_current_view();
     if( ! view ) return;
 
-    if( m_toolbar ){
-        m_toolbar->open_searchbar();
-        if( view->get_id_toolbar() == TOOLBAR_ARTICLE ) m_toolbar->focus_entry_search();
-    }
-    if( m_toolbarsimple ){
-        m_toolbarsimple->open_searchbar();
-        if( view->get_id_toolbar() == TOOLBAR_SIMPLE ) m_toolbarsimple->focus_entry_search();
-    }
-    if( m_search_toolbar ){
-        m_search_toolbar->open_searchbar();
-        if( view->get_id_toolbar() == TOOLBAR_SEARCH ) m_search_toolbar->focus_entry_search();
+    m_toolbar->open_searchbar();
+    m_toolbarsimple->open_searchbar();
+    m_search_toolbar->open_searchbar();
+
+    switch( get_notebook()->get_current_toolbar() ){
+
+        case TOOLBAR_ARTICLE:
+            m_toolbar->show_toolbar();
+            m_toolbar->focus_entry_search();
+            break;
+
+        case TOOLBAR_SIMPLE:
+            m_toolbarsimple->show_toolbar();
+            m_toolbarsimple->focus_entry_search();
+            break;
+
+        case TOOLBAR_SEARCH:
+            m_search_toolbar->show_toolbar();
+            m_search_toolbar->focus_entry_search();
+            break;
     }
 }
 
@@ -574,9 +602,11 @@ void ArticleAdmin::open_searchbar()
 //
 void ArticleAdmin::close_searchbar()
 {
-    if( m_toolbar ) m_toolbar->close_searchbar();
-    if( m_toolbarsimple ) m_toolbarsimple->close_searchbar();
-    if( m_search_toolbar ) m_search_toolbar->close_searchbar();
+    if( ! m_toolbar ) return;
+
+    m_toolbar->close_searchbar();
+    m_toolbarsimple->close_searchbar();
+    m_search_toolbar->close_searchbar();
 }
 
 

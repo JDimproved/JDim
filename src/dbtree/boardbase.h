@@ -29,12 +29,13 @@ namespace DBTREE
 
     class Root;
     class ArticleBase;
+    class ArticleHash;
 
     class BoardBase : public SKELETON::Loadable
     {
         // ArticleBaseクラス のキャッシュ
         // ArticleBaseクラスは一度作ったら~BoardBase()以外ではdeleteしないこと
-        std::list< ArticleBase* > m_list_article;
+        ArticleHash* m_hash_article;
 
         // subject.txt から作ったArticleBaseクラスのポインタのリスト
         // subject.txt と同じ順番で、ロードされるたびに更新される
@@ -172,7 +173,7 @@ namespace DBTREE
 
       protected:
 
-        std::list< ArticleBase* >& get_list_article(){ return m_list_article; }
+        ArticleHash* get_hash_article(){ return m_hash_article; }
         std::list< std::string >& get_url_update_views(){ return  m_url_update_views; }
 
         ArticleBase* get_article_null();

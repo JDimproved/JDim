@@ -28,15 +28,14 @@ namespace SKELETON
 
         bool m_enable_slot;
 
-        // ツールバー表示状態
-        bool m_toolbar_shown;
-
 #if GTKMMVER < 2120
         Gtk::Tooltips m_tooltip;
 #endif
 
-        // メインツールバー
+        // ボタンバー
         SKELETON::JDToolbar m_buttonbar;
+        bool m_buttonbar_shown;
+        bool m_buttonbar_packed;
 
         // ラベル
         Gtk::ToolItem* m_tool_label;
@@ -46,6 +45,7 @@ namespace SKELETON
         // 検索関係
         Gtk::Toolbar* m_searchbar; // 検索バー
         bool m_searchbar_shown;
+        bool m_searchbar_packed;
         SKELETON::ImgToolButton *m_button_open_searchbar;
         SKELETON::ImgToolButton *m_button_close_searchbar;
         SKELETON::ImgToolButton *m_button_up_search;
@@ -81,16 +81,17 @@ namespace SKELETON
         void set_url( const std::string& url );
         const std::string& get_url() { return m_url; }
 
+        const bool is_empty();
+
         // タブが切り替わった時にDragableNoteBookから呼び出される( Viewの情報を取得する )
         virtual void set_view( SKELETON::View * view );
 
-        bool is_empty();
-
-        // ツールバー表示
+        // タブが切り替わった時にDragableNoteBookから呼び出される( ツールバーを表示する )
         void show_toolbar();
 
-        // ツールバー非表示
-        void hide_toolbar();
+        // ボタンバー表示/非表示
+        void open_buttonbar();
+        void close_buttonbar();
 
         // 検索バー表示/非表示
         void open_searchbar();

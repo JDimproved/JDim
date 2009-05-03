@@ -6,6 +6,7 @@
 
 #include "boardbase.h"
 #include "articlebase.h"
+#include "articlehash.h"
 #include "interface.h"
 
 #include "skeleton/msgdiag.h"
@@ -65,6 +66,8 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
 
     memset( &m_write_time, 0, sizeof( struct timeval ) );
 
+    m_hash_article = new ArticleHash();
+
     // 板情報はクラスが作られた時点ではまだ読まない
     // BoardBase::read_info() の説明を見ること
 }
@@ -81,10 +84,12 @@ BoardBase::~BoardBase()
 
     clear();
 
-    std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) delete ( *it );
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ) delete ( *it );
 
     if( m_article_null ) delete m_article_null;
+
+    delete m_hash_article;
 
 #ifdef _TEST_CACHE
     if( m_list_article.size() ){
@@ -361,10 +366,10 @@ void BoardBase::clear_all_post_history()
 {
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
-    if( m_list_article.size() == 0 ) return;
+    if( m_hash_article->size() == 0 ) return;
 
-    std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->clear_post_history();
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ) ( *it )->clear_post_history();
 }
 
 
@@ -417,8 +422,8 @@ void BoardBase::update_url( const std::string& root, const std::string& path_boa
 
     // 配下の ArticleBase にも知らせてあげる
     const std::string datbase = url_datbase();
-    std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ) ( *it )->update_datbase( datbase );
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ) ( *it )->update_datbase( datbase );
 }
 
 
@@ -720,14 +725,8 @@ ArticleBase* BoardBase::get_article( const std::string& datbase, const std::stri
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
 
-    // 線形リストなので遅い
-    // TODO : ハッシュにする
-    std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
-
-        ArticleBase* art = *( it );
-        if( art->equal( datbase, id ) ) return art;
-    }
+    ArticleBase* art = m_hash_article->find( datbase, id );
+    if( art ) return art;
 
     return get_article_null();
 }
@@ -1063,20 +1062,22 @@ void BoardBase::receive_finish()
     // データベース更新
     // subject.txtを解析して現行スレだけsubjectリスト(m_list_subject)に加える
 
-    std::list< ArticleBase* >::iterator it;
-
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
 
     // 一度全てのarticleをdat落ち状態にして subject.txt に
     // 含まれているものだけ parse_subject()の中で通常状態にする
     // オフラインの場合は状態を変えない
-    if( m_is_online ) for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+    if( m_is_online ){
 
-        int status = ( *it )->get_status();
-        status &= ~STATUS_NORMAL;
-        status |= STATUS_OLD;
-        ( *it )->set_status( status );
+        ArticleHashIterator it = m_hash_article->begin();
+        for( ; it != m_hash_article->end(); ++it ){
+
+            int status = ( *it )->get_status();
+            status &= ~STATUS_NORMAL;
+            status |= STATUS_OLD;
+            ( *it )->set_status( status );
+        }
     }
 
     // subject.txtをパースしながらデータベース更新
@@ -1092,9 +1093,10 @@ void BoardBase::receive_finish()
         if( m_is_online ){
 
             // 既読スレに更新があったかチェック
-            for( it = m_list_subject.begin(); it != m_list_subject.end(); ++it ){
+            std::list< ArticleBase* >::iterator it_art;
+            for( it_art = m_list_subject.begin(); it_art != m_list_subject.end(); ++it_art ){
 
-                if( ( *it )->is_cached() && ( *it )->get_number() > ( *it )->get_number_load() ){
+                if( ( *it_art )->is_cached() && ( *it_art )->get_number() > ( *it_art )->get_number_load() ){
 
                     m_status |= STATUS_UPDATED;
                     break;
@@ -1109,7 +1111,8 @@ void BoardBase::receive_finish()
         // 取得する必要がある
         if( CONFIG::get_show_oldarticle() ){
 
-            for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+            ArticleHashIterator it = m_hash_article->begin();
+            for( ; it != m_hash_article->end(); ++it ){
 
                 if( ( *it )->is_cached()
                     && ( ( *it )->get_status() & STATUS_OLD )
@@ -1294,8 +1297,8 @@ void BoardBase::append_all_article_in_cache()
 //
 void BoardBase::update_abone_all_article()
 {
-    std::list< ArticleBase* >::iterator it = m_list_article.begin();
-    for( ; it != m_list_article.end(); ++it ) ( *it )->update_abone();
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ) ( *it )->update_abone();
 }
 
 
@@ -1585,15 +1588,15 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
 
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
-    if( m_list_article.size() == 0 ) return list_out;
+    if( m_hash_article->size() == 0 ) return list_out;
 
     std::string query_local = MISC::Iconv( query, "UTF-8", get_charset() );
     std::list< std::string > list_query = MISC::split_line( query_local );
 
     std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
 
-    std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ){
 
         ArticleBase* article = ( *it );
         if( ! article->is_cached() ) continue;
@@ -2028,8 +2031,8 @@ const std::list< std::string > BoardBase::get_check_update_articles()
 
     std::list< int > list_speed;
 
-    std::list< ArticleBase* >::iterator it;
-    for( it = m_list_article.begin(); it != m_list_article.end(); ++it ){
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ){
 
         if( ( *it )->is_cached()
             && ( *it )->get_number()

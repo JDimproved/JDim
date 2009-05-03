@@ -5,6 +5,7 @@
 
 #include "boardjbbs.h"
 #include "articlejbbs.h"
+#include "articlehash.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
@@ -63,7 +64,7 @@ ArticleBase* BoardJBBS::append_article( const std::string& datbase, const std::s
 
     ArticleBase* article = new DBTREE::ArticleJBBS( datbase, id, cached );
     if( article ){
-        get_list_article().push_back( article );
+        get_hash_article()->push( article );
 
         // 最大レス数セット
         article->set_number_max( get_number_max_res() );

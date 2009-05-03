@@ -5,6 +5,7 @@
 
 #include "boardmachi.h"
 #include "articlemachi.h"
+#include "articlehash.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
@@ -87,7 +88,7 @@ ArticleBase* BoardMachi::append_article( const std::string& datbase, const std::
 
     ArticleBase* article = new DBTREE::ArticleMachi( datbase, id, cached );
     if( article ){
-        get_list_article().push_back( article );
+        get_hash_article()->push( article );
 
         // 最大レス数セット
         article->set_number_max( get_number_max_res() );

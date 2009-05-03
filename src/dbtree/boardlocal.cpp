@@ -5,6 +5,7 @@
 
 #include "boardlocal.h"
 #include "articlelocal.h"
+#include "articlehash.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
@@ -82,7 +83,7 @@ ArticleBase* BoardLocal::append_article( const std::string& datbase, const std::
     ArticleBase* article = new DBTREE::ArticleLocal( datbase, id );
     if( article ){
 
-        get_list_article().push_back( article );
+        get_hash_article()->push( article );
 
         // subject にも追加する
         get_list_subject().push_back( article );

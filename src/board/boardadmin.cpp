@@ -174,7 +174,7 @@ void BoardAdmin::show_toolbar()
         m_toolbar = new BoardToolBar();
         get_notebook()->append_toolbar( *m_toolbar );
 
-        if( SESSION::get_show_board_toolbar() ) m_toolbar->show_toolbar();
+        if( SESSION::get_show_board_toolbar() ) m_toolbar->open_buttonbar();
     }
 
     get_notebook()->show_toolbar();
@@ -188,8 +188,11 @@ void BoardAdmin::toggle_toolbar()
 {
     if( ! m_toolbar ) return;
 
-    if( SESSION::get_show_board_toolbar() ) m_toolbar->show_toolbar();
-    else m_toolbar->hide_toolbar();
+    if( SESSION::get_show_board_toolbar() ){
+        m_toolbar->open_buttonbar();
+        m_toolbar->show_toolbar();
+    }
+    else m_toolbar->close_buttonbar();
 }
 
 

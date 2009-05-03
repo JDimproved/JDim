@@ -30,8 +30,9 @@ EditListWin::EditListWin( const std::string& url, Glib::RefPtr< Gtk::TreeStore >
 {
     // ツールバー
     m_toolbar = Gtk::manage( new EditListToolBar() );
-    m_toolbar->show_toolbar();
+    m_toolbar->open_buttonbar();
     m_vbox.pack_start( *m_toolbar, Gtk::PACK_SHRINK );
+    m_toolbar->show_toolbar();
 
     // Adminクラスが無いのでツールバーのボタン等のシグナルを直接つなぐ
     m_toolbar->get_button_close()->signal_clicked().connect( sigc::mem_fun( this, &EditListWin::slot_close ) );

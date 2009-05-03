@@ -391,7 +391,6 @@ void DragableNoteBook::show_toolbar()
 // ツールバー全体を非表示
 //
 // タブに全てのビューが無くなったら admin から呼び出される
-// ToolBar::hide_toolbar() の方は検索ツールバーは表示したまま
 //
 void DragableNoteBook::hide_toolbar()
 {
@@ -439,7 +438,10 @@ void DragableNoteBook::set_current_toolbar( int page_num, SKELETON::View* view )
 
     // ツールバーのラベルなどの情報を更新
     SKELETON::ToolBar* toolbar = get_toolbar( page_num );
-    if( toolbar ) toolbar->set_view( view );
+    if( toolbar ){
+        toolbar->set_view( view );
+        toolbar->show_toolbar();
+    }
 }
 
 

@@ -131,7 +131,7 @@ void BBSListAdmin::show_toolbar()
         m_toolbar = new BBSListToolBar();
         get_notebook()->append_toolbar( *m_toolbar );
 
-        if( SESSION::get_show_bbslist_toolbar() ) m_toolbar->show_toolbar();
+        if( SESSION::get_show_bbslist_toolbar() ) m_toolbar->open_buttonbar();
     }
 
     get_notebook()->show_toolbar();
@@ -145,8 +145,11 @@ void BBSListAdmin::toggle_toolbar()
 {
     if( ! m_toolbar ) return;
 
-    if( SESSION::get_show_bbslist_toolbar() ) m_toolbar->show_toolbar();
-    else m_toolbar->hide_toolbar();
+    if( SESSION::get_show_bbslist_toolbar() ){
+        m_toolbar->open_buttonbar();
+        m_toolbar->show_toolbar();
+    }
+    else m_toolbar->close_buttonbar();
 }
 
 

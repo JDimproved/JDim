@@ -36,7 +36,8 @@ using namespace SKELETON;
 ToolBar::ToolBar( Admin* admin )
     : m_admin( admin ),
       m_enable_slot( true ),
-      m_toolbar_shown( false ),
+      m_buttonbar_shown( false ),
+      m_buttonbar_packed( false ),
 
       m_tool_label( NULL ),
       m_ebox_label( NULL ),
@@ -44,6 +45,7 @@ ToolBar::ToolBar( Admin* admin )
 
       m_searchbar( NULL ),
       m_searchbar_shown( false ),
+      m_searchbar_packed( false ),
       m_button_open_searchbar( NULL ),
       m_button_close_searchbar( NULL ),
       m_button_up_search( NULL ),
@@ -85,7 +87,15 @@ void ToolBar::set_url( const std::string& url )
 }
 
 
+const bool ToolBar::is_empty()
+{
+    return ( ! m_buttonbar.get_children().size() );
+}
+
+
+//
 // タブが切り替わった時にDragableNoteBook::set_current_toolbar()から呼び出される( Viewの情報を取得する )
+//
 // virtual
 void ToolBar::set_view( SKELETON::View* view )
 {
@@ -118,37 +128,61 @@ void ToolBar::set_view( SKELETON::View* view )
 }
 
 
-bool ToolBar::is_empty()
-{
-    return ( ! m_buttonbar.get_children().size() );
-}
-
-
-// ツールバーを表示
+//
+// タブが切り替わった時にDragableNoteBookから呼び出される( ツールバーを表示する )
+//
+// gtk+-2.4 辺りの古い gtk では、スレビューなどツールバーの複数が複数ある場合に
+// 最初からボタンバーを pack するとボタンが押せなくなる症状があったので、実際に
+// ツールバーが表示されるまでpackしないようにした
+//
 void ToolBar::show_toolbar()
 {
-    if( ! m_toolbar_shown ){
+    // ボタンバーのpack
+    if( m_buttonbar_shown && ! m_buttonbar_packed ){
 
-        if( m_searchbar && m_searchbar_shown ) remove( *m_searchbar );
-
+        if( m_searchbar_packed ) remove( *m_searchbar );
         pack_start( m_buttonbar, Gtk::PACK_SHRINK );
-        if( m_searchbar && m_searchbar_shown ) pack_start( *m_searchbar, Gtk::PACK_SHRINK );
+        if( m_searchbar_packed ) pack_start( *m_searchbar, Gtk::PACK_SHRINK );
 
         show_all_children();
         set_relief();
-        m_toolbar_shown = true;
+
+        m_buttonbar_packed = true;
+    }
+
+    // 検索バーのpack
+    if( m_searchbar_shown && ! m_searchbar_packed ){
+
+        pack_start( *m_searchbar, Gtk::PACK_SHRINK );
+
+        show_all_children();
+        set_relief();
+
+        m_searchbar_packed = true;
     }
 }
 
 
-// ツールバーを隠す
-void ToolBar::hide_toolbar()
+// ボタンバー表示
+void ToolBar::open_buttonbar()
 {
-    if( m_toolbar_shown ){
+    // フラグだけ立てて実際に pack するのは show_toolbar() の中
+    // 何故そんな面倒な事をしているかは show_toolbar() の説明を参照
+    m_buttonbar_shown = true;
+}
+
+
+// ボタンバーを隠す
+void ToolBar::close_buttonbar()
+{
+    m_buttonbar_shown = false;
+
+    if( m_buttonbar_packed ){
 
         remove( m_buttonbar );
+
         show_all_children();
-        m_toolbar_shown = false;
+        m_buttonbar_packed = false;
     }
 }
 
@@ -159,8 +193,7 @@ void ToolBar::update_button()
     unpack_buttons();
     pack_buttons();
 
-    if( m_buttonbar.get_children().size() ) show_toolbar();
-    else hide_toolbar();
+    if( ! m_buttonbar_shown ) close_buttonbar();
 
     // 進む、戻るボタンのsensitive状態を更新する
     set_url( m_url );
@@ -338,12 +371,9 @@ void ToolBar::open_searchbar()
     std::cout << "ToolBar::open_searchbar\n";
 #endif
 
-    if( ! m_searchbar_shown ){
-        pack_start( *m_searchbar, Gtk::PACK_SHRINK );
-        show_all_children();
-        m_searchbar_shown = true;
-        set_relief();
-    }
+    // フラグだけ立てて実際に pack するのは show_toolbar() の中
+    // 何故そんな面倒な事をしているかは show_toolbar() の説明を参照
+    m_searchbar_shown = true;
 }
 
 
@@ -356,10 +386,15 @@ void ToolBar::close_searchbar()
     std::cout << "ToolBar::close_searchbar\n";
 #endif
 
-    if( m_searchbar_shown ){
+    m_searchbar_shown = false;
+
+    if( m_searchbar_packed ){
+
         remove( *m_searchbar );
+
         show_all_children();
-        m_searchbar_shown = false;
+        m_searchbar_packed = false;
+
         m_admin->set_command( "focus_current_view" );
     }
 }

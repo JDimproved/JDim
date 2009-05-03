@@ -1047,6 +1047,7 @@ void Core::create_toolbar()
     m_toolbar->m_entry_url.signal_activate().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
     m_toolbar->m_button_go.signal_clicked().connect( sigc::mem_fun( *this, &Core::slot_active_url ) );
 
+    m_toolbar->open_buttonbar();
     m_toolbar->show_toolbar();
 }
 
