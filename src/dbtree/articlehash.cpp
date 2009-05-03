@@ -6,6 +6,8 @@
 #include "articlehash.h"
 #include "articlebase.h"
 
+#include <stdlib.h> // atoi
+
 using namespace DBTREE;
 
 
