@@ -361,7 +361,7 @@ const int Control::MG_wheel_scroll( const GdkEventScroll* event )
     Gdk::Display::get_default()->get_pointer( x, y, mask );
 
     int button = 0;
-    GdkEventButton ev;
+    GdkEventButton ev = GdkEventButton();
     get_eventbutton( CONTROL::GestureButton, ev );
     switch( ev.button ){
         case 1: button = Gdk::BUTTON1_MASK; break;

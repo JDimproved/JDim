@@ -17,7 +17,7 @@ using namespace DBTREE;
 Article2chCompati::Article2chCompati( const std::string& datbase, const std::string& _id, bool cached )
     : ArticleBase( datbase, _id, cached )
 {
-    assert( ! id().empty() );
+    assert( ! get_id().empty() );
 
     // key (idから拡張子を除いたもの)を取得
     size_t i = get_id().rfind( "." ); // 拡張子は取り除く
