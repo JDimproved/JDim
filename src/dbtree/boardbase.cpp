@@ -79,7 +79,7 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
 BoardBase::~BoardBase()
 {
 #ifdef _DEBUG
-    if( m_list_article.size() ) std::cout << "BoardBase::~BoardBase : " << url_boardbase() << std::endl;
+    if( m_hash_article->size() ) std::cout << "BoardBase::~BoardBase : " << url_boardbase() << std::endl;
 #endif
 
     clear();
@@ -92,7 +92,7 @@ BoardBase::~BoardBase()
     delete m_hash_article;
 
 #ifdef _TEST_CACHE
-    if( m_list_article.size() ){
+    if( m_hash_article->size() ){
         std::cout << "article cache\n"
                   << "hit = " << cache_hit_art << std::endl
                   << "nohit = " << cache_nohit_art << std::endl
@@ -714,7 +714,7 @@ const std::string BoardBase::url_subbbscgibase()
 
 
 //
-// article のIDから　m_list_article　から　article のポインタを検索して返すだけ
+// article のID を渡してハッシュから article のポインタを検索して返すだけ
 //
 // 無ければNULLクラスを返す
 //
@@ -734,7 +734,7 @@ ArticleBase* BoardBase::get_article( const std::string& datbase, const std::stri
 
 
 //
-// articleの IDを渡して m_list_article　から article のポインタを検索して返す
+// articleの IDを渡して ハッシュから article のポインタを検索して返す
 //
 // ポインタがあった場合は情報ファイルを読み込む
 // さらにデータベースにArticleBaseクラスが登録されてない場合はクラスを作成して登録する
@@ -771,7 +771,7 @@ ArticleBase* BoardBase::get_article_create( const std::string& datbase, const st
 
 
 //
-// article の URL を渡して　m_list_article　から　article のポインタを検索して返す
+// article の URL を渡してハッシュから　article のポインタを検索して返す
 //
 // さらにデータベースにArticleBaseクラスが登録されてない場合はクラスを作成して登録する
 //

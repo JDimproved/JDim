@@ -11,6 +11,9 @@
 
 #include "cache.h"
 
+#ifdef _DEBUG
+#include "controlutil.h"
+#endif
 
 using namespace CONTROL;
 
