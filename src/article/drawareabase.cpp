@@ -1397,6 +1397,8 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
     const int height_view = m_view.get_height();
     const int pos_y = get_vscr_val();
 
+    if( height_view < LAYOUT_MIN_HEIGHT ) return false;
+
     // 移動量、再描画範囲の上限、下限
     int dy = 0;
     int upper = pos_y;
