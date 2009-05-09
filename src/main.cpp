@@ -299,6 +299,8 @@ void usage( const int status )
     //"        URL open of BBS etc by Tab\n"
     "-m, --multi\n"
     "        Does not terminate even if it is a subprocess\n"
+    "-s, --skip\n"
+    "        Skip the setup dialog\n"
     "-V, --version\n"
     "        Display version of this program\n";
 
@@ -338,16 +340,18 @@ int main( int argc, char **argv )
         { "help", 0, 0, 'h' },
         //{ "tab", 1, 0, 't' },
         { "multi", 0, 0, 'm' },
+        { "skip", 0, 0, 's' },
         { "version", 0, 0, 'V' },
         { 0, 0, 0, 0 }
     };
 
     std::string url;
     bool multi_mode = false;
+    bool skip_setupdiag = false;
 
     // -h, -t <url>, -m, -V
     int opt = 0;
-    while( ( opt = getopt_long( argc, argv, "ht:mV", options, NULL ) ) != -1 )
+    while( ( opt = getopt_long( argc, argv, "ht:msV", options, NULL ) ) != -1 )
     {
         switch( opt )
         {
@@ -361,6 +365,10 @@ int main( int argc, char **argv )
 
             case 'm':
                 multi_mode = true;
+                break;
+
+            case 's':
+                skip_setupdiag = true;
                 break;
 
             case 'V': // バージョンと完全なconfigureオプションを表示
@@ -381,8 +389,8 @@ int main( int argc, char **argv )
         {
             url = argv[ optind ];
         }
-        // マルチモードでなく、URLを含まない引数だけの場合は終了
-        else if( optind > 1 && ! multi_mode ) return 0;
+        // -m 、-s でなく、URLを含まない引数だけの場合は終了
+        else if( optind > 1 && ! ( multi_mode || skip_setupdiag ) ) return 0;
     }
     /*---------------------------------------------------------------*/
 
@@ -518,7 +526,7 @@ int main( int argc, char **argv )
     // バックアップファイル復元
     restore_bkup();
 
-    Win_Main = new WinMain( init );
+    Win_Main = new WinMain( init & ! skip_setupdiag );
     if( Win_Main ){
 
         m.run( *Win_Main );
