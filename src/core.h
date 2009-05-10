@@ -112,7 +112,8 @@ namespace CORE
         Gtk::Widget* get_toplevel();
 
         // init = true なら初回起動
-        void run( bool init );        
+        // skip_setupdiag = true なら初回起動時にセットアップダイアログ非表示
+        void run( const bool init, const bool skip_setupdiag );        
 
         void set_command( const COMMAND_ARGS& command );
 

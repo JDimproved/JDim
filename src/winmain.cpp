@@ -22,7 +22,7 @@
 #endif
 
 
-WinMain::WinMain( bool init )
+WinMain::WinMain( const bool init, const bool skip_setupdiag )
     : SKELETON::JDWindow( false ),
       m_core( NULL ),
       m_cancel_state_event( false )
@@ -69,7 +69,7 @@ WinMain::WinMain( bool init )
 
     // 後はcoreを作って任せる
     m_core = new class CORE::Core( *this );
-    m_core->run( init );
+    m_core->run( init, skip_setupdiag );
 }
 
 

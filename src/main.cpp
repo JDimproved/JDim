@@ -299,7 +299,7 @@ void usage( const int status )
     //"        URL open of BBS etc by Tab\n"
     "-m, --multi\n"
     "        Does not terminate even if it is a subprocess\n"
-    "-s, --skip\n"
+    "-s, --skip-setup\n"
     "        Skip the setup dialog\n"
     "-V, --version\n"
     "        Display version of this program\n";
@@ -340,7 +340,7 @@ int main( int argc, char **argv )
         { "help", 0, 0, 'h' },
         //{ "tab", 1, 0, 't' },
         { "multi", 0, 0, 'm' },
-        { "skip", 0, 0, 's' },
+        { "skip-setup", 0, 0, 's' },
         { "version", 0, 0, 'V' },
         { 0, 0, 0, 0 }
     };
@@ -526,7 +526,7 @@ int main( int argc, char **argv )
     // バックアップファイル復元
     restore_bkup();
 
-    Win_Main = new WinMain( init & ! skip_setupdiag );
+    Win_Main = new WinMain( init, skip_setupdiag );
     if( Win_Main ){
 
         m.run( *Win_Main );

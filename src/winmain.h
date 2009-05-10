@@ -20,7 +20,7 @@ class WinMain : public SKELETON::JDWindow
     
   public:
 
-    WinMain( bool init );
+    WinMain( const bool init, const bool skip_setupdiag );
     virtual ~WinMain();
 
     // 緊急シャットダウン

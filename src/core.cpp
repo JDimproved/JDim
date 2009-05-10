@@ -281,8 +281,9 @@ Gtk::Widget* Core::get_toplevel()
 // 実行
 //
 // init = true なら初回起動
+// skip_setupdiag = true なら初回起動時にセットアップダイアログ非表示
 //
-void Core::run( bool init )
+void Core::run( const bool init, const bool skip_setupdiag )
 {
     // メインメニューの設定
     m_action_group = Gtk::ActionGroup::create();
@@ -842,7 +843,7 @@ void Core::run( bool init )
     }
 
     // 初回起動時の設定
-    if( init ) first_setup();
+    if( init && ! skip_setupdiag ) first_setup();
 
     // ツールバー作成
     create_toolbar();
