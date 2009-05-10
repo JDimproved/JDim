@@ -74,6 +74,7 @@ namespace SKELETON
 
         Gtk::HBox m_hbox_tab;
         TabSwitchButton m_bt_tabswitch; // タブの切り替えボタン
+        Gtk::Tooltips m_tooltip_tabswitch;
 
         bool m_show_tabs;
         bool m_show_toolbar;
