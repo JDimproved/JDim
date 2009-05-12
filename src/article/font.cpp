@@ -55,7 +55,7 @@ void ARTICLE::init_font()
 
 
 //
-// 文字の幅を返す関数
+// 登録された文字の幅を返す関数
 //
 // utfstr : 入力文字 (UTF-8)
 // byte   : 長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 or 4 を入れて返す
@@ -63,14 +63,15 @@ void ARTICLE::init_font()
 // width  : 半角モードでの幅
 // width_wide : 全角モードでの幅
 // mode   : fontid.h で定義されているフォントのID
+// 戻り値 : 登録されていればtrue
 // 
-void ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_char, int& width, int& width_wide, const int mode )
+const bool ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_char, int& width, int& width_wide, const int mode )
 {
     byte = 0;
     width = 0;
     width_wide = 0;
 
-    if( width_of_char[ mode ]  == NULL ){
+    if( ! width_of_char[ mode ] ){
         width_of_char[ mode ] = ( WIDTH_DATA* ) malloc( sizeof( WIDTH_DATA ) * ( UCS2_MAX + 16 ) );
         memset( width_of_char[ mode ], 0, sizeof( WIDTH_DATA ) * UCS2_MAX );
     }
@@ -98,12 +99,22 @@ void ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_c
             if( pre_char_num < 128 ) width = width_of_char[ mode ][ ucs2 ].width[ pre_char_num ];
         }
     }
+
+    if( width && width_wide ) return true;
+    else if( width == -1 ){ // フォント幅の取得に失敗した場合
+        width = width_wide = 0;
+        return true;
+    }
+
+    return false;
 }
 
 
 
 //
-// 文字幅をセットする関数
+// 文字幅を登録する関数
+//
+// width == -1 はフォント幅の取得に失敗した場合
 //
 void ARTICLE::set_width_of_char( const char* utfstr, int& byte, const char pre_char, const int width, const int width_wide, const int mode )
 {    

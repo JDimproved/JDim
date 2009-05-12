@@ -1228,10 +1228,9 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
 {
     int width = 0;
     int width_wide = 0;
-    ARTICLE::get_width_of_char( utfstr, byte, pre_char, width, width_wide, mode );
 
     // キャッシュに無かったら幅を調べてキャッシュに登録
-    if( ! width || ! width_wide ){
+    if( ! ARTICLE::get_width_of_char( utfstr, byte, pre_char, width, width_wide, mode ) ){
 
         char tmpchar[ 64 ];
         memcpy( tmpchar, utfstr, byte );
@@ -1299,7 +1298,7 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
             const unsigned int code = MISC::utf8toucs2( tmpchar, byte_tmp );
 
             std::stringstream ss_err;
-            ss_err << "unknown font byte = " << byte_tmp << " code = " << code << " width = " << width;
+            ss_err << "unknown font byte = " << byte_tmp << " ucs2 = " << code << " width = " << width;
 
 #ifdef _DEBUG
             std::cout << "DrawAreaBase::get_width_of_one_char "
@@ -1311,10 +1310,10 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
 
             MISC::ERRMSG( ss_err.str() );
 
+            ARTICLE::set_width_of_char( utfstr, byte, pre_char, -1, -1, mode );
             width = width_wide = 0;
         }
-
-        ARTICLE::set_width_of_char( utfstr, byte, pre_char, width, width_wide, mode );
+        else ARTICLE::set_width_of_char( utfstr, byte, pre_char, width, width_wide, mode );
     }
 
     int ret = 0;
