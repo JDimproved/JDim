@@ -1567,6 +1567,9 @@ void Admin::toggle_icon( const std::string& url )
         // オートリロードモードでロード待ち
         else if( view->get_autoreload_mode() != AUTORELOAD_NOT ) iconname = "loading_stop";
 
+        // 古い
+        else if( view->is_old() ) iconname = "old";
+
         // 更新チェックして更新可能 ( 更新はしていない )
         else if( view->is_check_update() ) iconname = "update";
 
@@ -1578,9 +1581,6 @@ void Admin::toggle_icon( const std::string& url )
 
             else iconname = "updated";
         }
-
-        // 古い
-        else if( view->is_old() ) iconname = "old";
 
 #ifdef _DEBUG
         std::cout << "name = " << iconname << std::endl;

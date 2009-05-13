@@ -2198,7 +2198,7 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
     int type = TYPE_THREAD;
     const int status = DBTREE::article_status( url );
     if( status & STATUS_OLD ) type = TYPE_THREAD_OLD;
-    if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
+    else if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
     
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::toggle_articleicon url = " << url_dat << " type = " << type << std::endl;
