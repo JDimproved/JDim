@@ -575,7 +575,11 @@ bool DragableNoteBook::slot_button_press_event( GdkEventButton* event )
     if( m_page >= 0 && m_page < get_n_pages() ){
 
         // ページ切替え
-        if( m_control.button_alloted( event, CONTROL::ClickButton ) ) m_sig_tab_click.emit( m_page );
+        if( m_control.button_alloted( event, CONTROL::ClickButton ) ){
+
+            set_current_page( m_page );
+            m_sig_tab_click.emit( m_page );
+        }
 
         return true;
     }

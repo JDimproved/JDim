@@ -1772,20 +1772,20 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
 //
 // タブをクリック
 //
-void Admin::slot_tab_click( int page )
+void Admin::slot_tab_click( const int page )
 {
 #ifdef _DEBUG
     std::cout << "Admin::slot_tab_click " << page << std::endl;
 #endif
 
-    set_current_page( page );
+    if( ! m_focus ) switch_admin();
 }
 
 
 //
 // タブを閉じる
 //
-void Admin::slot_tab_close( int page )
+void Admin::slot_tab_close( const int page )
 {
 #ifdef _DEBUG
     std::cout << "Admin::slot_tab_close " << page << std::endl;
@@ -1800,7 +1800,7 @@ void Admin::slot_tab_close( int page )
 //
 // タブ再読み込み
 //
-void Admin::slot_tab_reload( int page )
+void Admin::slot_tab_reload( const int page )
 {
 #ifdef _DEBUG
     std::cout << "Admin::slot_tab_reload " << page << std::endl;

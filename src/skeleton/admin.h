@@ -116,7 +116,7 @@ namespace SKELETON
         virtual void shutdown();
 
         // 指定したページに表示切替え
-        virtual void set_current_page( const int page );
+        void set_current_page( const int page );
 
     protected:
 
@@ -227,13 +227,13 @@ namespace SKELETON
         void slot_switch_page( GtkNotebookPage*, guint page );
 
         // タブをクリック
-        virtual void slot_tab_click( int page );
+        void slot_tab_click( const int page );
 
         // タブを閉じる
-        virtual void slot_tab_close( int page );
+        void slot_tab_close( const int page );
 
         // タブ再読み込み
-        virtual void slot_tab_reload( int page );
+        void slot_tab_reload( const int page );
 
         // タブメニュー表示
         virtual void slot_tab_menu( int page, int x, int y );
