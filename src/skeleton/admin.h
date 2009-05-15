@@ -118,6 +118,9 @@ namespace SKELETON
         // 指定したページに表示切替え
         void set_current_page( const int page );
 
+        // フォーカスしてから指定したページに表示切替え
+        void set_current_page_focus( const int page );
+
     protected:
 
         void set_use_viewhistory( const bool use ){ m_use_viewhistory = use; }
@@ -166,7 +169,9 @@ namespace SKELETON
         virtual void tab_left();
         virtual void tab_right();
         virtual void tab_head();
+        void tab_head_focus();
         virtual void tab_tail();
+        void tab_tail_focus();
         virtual void redraw_view( const std::string& url );
         virtual void redraw_current_view();
         virtual void relayout_current_view();

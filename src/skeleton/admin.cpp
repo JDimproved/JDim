@@ -203,7 +203,7 @@ void Admin::setup_menu()
     // 移動サブメニュー作成と登録
     for( int i = 0; i < MAX_TABS; ++i ){
         item = Gtk::manage( new Gtk::MenuItem( "dummy" ) );
-        item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &Admin::set_current_page ), i ) );
+        item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &Admin::set_current_page_focus ), i ) );
 
         m_vec_movemenu_items.push_back( item );
         m_vec_movemenu_append.push_back( false );
@@ -228,11 +228,11 @@ void Admin::setup_menu()
     // 先頭、最後に移動
     item = Gtk::manage( new Gtk::MenuItem( "先頭のタブに移動(_H)", true ) );
     m_move_menu->append( *item );
-    item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_head ) );
+    item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_head_focus ) );
 
     item = Gtk::manage( new Gtk::MenuItem( "最後のタブに移動(_T)", true ) );
     m_move_menu->append( *item );
-    item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_tail ) );
+    item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_tail_focus ) );
 
     m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
 
@@ -1118,6 +1118,15 @@ void Admin::tab_head()
 }
 
 
+//
+// フォーカスしてタブ先頭移動
+//
+void Admin::tab_head_focus()
+{
+    switch_admin();
+    tab_head();
+}
+
 
 //
 // タブ最後に移動
@@ -1131,6 +1140,14 @@ void Admin::tab_tail()
 }
 
 
+//
+// タブ最後に移動
+//
+void Admin::tab_tail_focus()
+{
+    switch_admin();
+    tab_tail();
+}
 
 
 //
@@ -1713,6 +1730,15 @@ void Admin::set_current_page( const int page )
 }
 
 
+//
+// フォーカスしてから指定したページに表示切替え
+//
+void Admin::set_current_page_focus( const int page )
+{
+    switch_admin();
+    m_notebook->set_current_page( page );
+}
+
 
 //
 // 現在表示されているページ番号
@@ -2274,7 +2300,7 @@ void Admin::back_clicked_viewhistory( const int count )
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( ! view ) return;
     
-    m_notebook->set_current_page( m_clicked_page );
+    set_current_page( m_clicked_page );
     back_forward_viewhistory( view->get_url(), true, count );
 }
 
@@ -2295,7 +2321,7 @@ void Admin::forward_clicked_viewhistory( const int count )
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( ! view ) return;
 
-    m_notebook->set_current_page( m_clicked_page );
+    set_current_page( m_clicked_page );
     back_forward_viewhistory( view->get_url(), false, count );
 }
 

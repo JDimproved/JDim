@@ -27,7 +27,7 @@ TabSwitchMenu::TabSwitchMenu( DragableNoteBook* notebook, Admin* admin )
 
         const unsigned int maxsize = 50;
         Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( MISC::cut_str( name, maxsize ) ) );
-        item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *admin, &Admin::set_current_page ), i ) );
+        item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *admin, &Admin::set_current_page_focus ), i ) );
 
         append( *item );
     }
