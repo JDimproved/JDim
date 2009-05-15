@@ -23,6 +23,9 @@ namespace SKELETON
     typedef sigc::signal< void > SIG_TAB_MOTION_EVENT;
     typedef sigc::signal< void > SIG_TAB_LEAVE_EVENT;
 
+    // ホイール回転
+    typedef sigc::signal< bool, GdkEventScroll* > SIG_SCROLL_EVENT;
+
     // D&D
     typedef sigc::signal< void, const int, const int, const int, const int > SIG_TAB_DRAG_MOTION;
 
@@ -36,6 +39,8 @@ namespace SKELETON
         SIG_TAB_LEAVE_EVENT m_sig_tab_leave_event;
 
         SIG_TAB_DRAG_MOTION m_sig_tab_drag_motion;
+
+        SIG_SCROLL_EVENT m_sig_scroll_event;
 
         DragableNoteBook* m_parent;
 
@@ -56,6 +61,8 @@ namespace SKELETON
         SIG_TAB_LEAVE_EVENT sig_tab_leave_event(){ return m_sig_tab_leave_event; }
 
         SIG_TAB_DRAG_MOTION sig_tab_drag_motion(){ return m_sig_tab_drag_motion; }
+
+        SIG_SCROLL_EVENT sig_scroll_event(){ return m_sig_scroll_event; }
 
         TabNotebook( DragableNoteBook* parent );
 
@@ -123,6 +130,7 @@ namespace SKELETON
 
         virtual bool on_motion_notify_event( GdkEventMotion* event );
         virtual bool on_leave_notify_event( GdkEventCrossing* event );
+        virtual bool on_scroll_event( GdkEventScroll* event );
 
         virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time);
     };

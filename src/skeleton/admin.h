@@ -231,8 +231,11 @@ namespace SKELETON
         // notebookのタブが切り替わったときに呼ばれるslot
         void slot_switch_page( GtkNotebookPage*, guint page );
 
-        // タブをクリック
-        void slot_tab_click( const int page );
+        // タブをクリックした
+        void slot_tab_clicked( const int page );
+
+        // タブの上でホイールを回した
+        void slot_tab_scrolled( GdkEventScroll* event );
 
         // タブを閉じる
         void slot_tab_close( const int page );

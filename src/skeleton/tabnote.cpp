@@ -790,6 +790,21 @@ bool TabNotebook::on_leave_notify_event( GdkEventCrossing* event )
 
 
 //
+// マウスホイールを回した
+//
+bool TabNotebook::on_scroll_event( GdkEventScroll* event )
+{
+#ifdef _DEBUG
+    std::cout << "TabNotebook::scroll\n";
+#endif
+
+    m_sig_scroll_event.emit( event );
+
+    return Gtk::Notebook::on_scroll_event( event );
+}
+
+
+//
 // ドラッグ中にマウスを動かした
 //
 bool TabNotebook::on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time)

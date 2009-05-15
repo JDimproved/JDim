@@ -30,10 +30,11 @@ namespace SKELETON
     class IconPopup;
 
     typedef sigc::signal< void, GtkNotebookPage*, int > SIG_SWITCH_PAGE;
-    typedef sigc::signal< void, int > SIG_TAB_CLICK;
+    typedef sigc::signal< void, int > SIG_TAB_CLICKED;
     typedef sigc::signal< void, int > SIG_TAB_CLOSE;
     typedef sigc::signal< void, int > SIG_TAB_RELOAD;
     typedef sigc::signal< void, int, int , int > SIG_TAB_MENU;
+    typedef sigc::signal< void, GdkEventScroll* > SIG_TAB_SCROLLED;
 
     typedef sigc::signal< void, Gtk::SelectionData&, const int > SIG_DRAG_DATA_GET;
 
@@ -60,10 +61,11 @@ namespace SKELETON
     class DragableNoteBook : public Gtk::VBox
     {
         SIG_SWITCH_PAGE m_sig_switch_page;
-        SIG_TAB_CLICK m_sig_tab_click;
+        SIG_TAB_CLICKED m_sig_tab_clicked;
         SIG_TAB_CLOSE m_sig_tab_close;
         SIG_TAB_RELOAD m_sig_tab_reload;
         SIG_TAB_MENU  m_sig_tab_menu;
+        SIG_TAB_SCROLLED m_sig_tab_scrolled;
 
         SIG_DRAG_DATA_GET m_sig_drag_data_get;
 
@@ -98,10 +100,11 @@ namespace SKELETON
       public:
 
         SIG_SWITCH_PAGE signal_switch_page(){ return m_sig_switch_page; }
-        SIG_TAB_CLICK sig_tab_click() { return m_sig_tab_click; }
+        SIG_TAB_CLICKED sig_tab_clicked() { return m_sig_tab_clicked; }
         SIG_TAB_CLOSE sig_tab_close() { return m_sig_tab_close; }
         SIG_TAB_RELOAD sig_tab_reload(){ return m_sig_tab_reload; }
         SIG_TAB_MENU sig_tab_menu() { return m_sig_tab_menu; }
+        SIG_TAB_SCROLLED sig_tab_scrolled(){ return m_sig_tab_scrolled; }
 
         SIG_DRAG_DATA_GET sig_drag_data_get() { return m_sig_drag_data_get; }
 
@@ -177,6 +180,9 @@ namespace SKELETON
         // notebook_tab の上でボタンを押した/離した
         bool slot_button_press_event( GdkEventButton* event );
         bool slot_button_release_event( GdkEventButton* event );
+
+        // notebook_tab の上でホイールを回した
+        bool slot_scroll_event( GdkEventScroll* event );
 
       protected:
 

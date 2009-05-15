@@ -39,6 +39,8 @@ DragableNoteBook::DragableNoteBook()
 
     m_notebook_tab.sig_tab_drag_motion().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_drag_motion ) );
 
+    m_notebook_tab.sig_scroll_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_scroll_event ) );
+
     m_hbox_tab.pack_start( m_notebook_tab );
     m_hbox_tab.pack_start( m_bt_tabswitch, Gtk::PACK_SHRINK );
     m_tooltip_tabswitch.set_tip( m_bt_tabswitch, "タブの一覧表示" );
@@ -578,7 +580,7 @@ bool DragableNoteBook::slot_button_press_event( GdkEventButton* event )
         if( m_control.button_alloted( event, CONTROL::ClickButton ) ){
 
             set_current_page( m_page );
-            m_sig_tab_click.emit( m_page );
+            m_sig_tab_clicked.emit( m_page );
         }
 
         return true;
@@ -672,6 +674,18 @@ void DragableNoteBook::slot_leave_event()
 
     m_tooltip.hide_tooltip();
 }
+
+
+// notebook_tab の上でホイールを回した
+bool DragableNoteBook::slot_scroll_event( GdkEventScroll* event )
+{
+#ifdef _DEBUG
+    std::cout << "DragableNoteBook::slot_scroll_event\n";
+#endif
+
+    m_sig_tab_scrolled.emit( event );
+}
+
 
 
 //

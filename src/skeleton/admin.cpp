@@ -59,7 +59,8 @@ Admin::Admin( const std::string& url )
     m_notebook->signal_switch_page().connect( sigc::mem_fun( *this, &Admin::slot_switch_page ) );
     m_notebook->set_scrollable( true );
 
-    m_notebook->sig_tab_click().connect( sigc::mem_fun( *this, &Admin::slot_tab_click ) );
+    m_notebook->sig_tab_clicked().connect( sigc::mem_fun( *this, &Admin::slot_tab_clicked ) );
+    m_notebook->sig_tab_scrolled().connect( sigc::mem_fun( *this, &Admin::slot_tab_scrolled ) );
     m_notebook->sig_tab_close().connect( sigc::mem_fun( *this, &Admin::slot_tab_close ) );
     m_notebook->sig_tab_reload().connect( sigc::mem_fun( *this, &Admin::slot_tab_reload ) );
     m_notebook->sig_tab_menu().connect( sigc::mem_fun( *this, &Admin::slot_tab_menu ) );
@@ -1123,7 +1124,7 @@ void Admin::tab_head()
 //
 void Admin::tab_head_focus()
 {
-    switch_admin();
+    if( ! m_focus ) switch_admin();
     tab_head();
 }
 
@@ -1145,7 +1146,7 @@ void Admin::tab_tail()
 //
 void Admin::tab_tail_focus()
 {
-    switch_admin();
+    if( ! m_focus ) switch_admin();
     tab_tail();
 }
 
@@ -1735,7 +1736,7 @@ void Admin::set_current_page( const int page )
 //
 void Admin::set_current_page_focus( const int page )
 {
-    switch_admin();
+    if( ! m_focus ) switch_admin();
     m_notebook->set_current_page( page );
 }
 
@@ -1796,12 +1797,23 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
 
 
 //
-// タブをクリック
+// タブをクリックした
 //
-void Admin::slot_tab_click( const int page )
+void Admin::slot_tab_clicked( const int page )
 {
 #ifdef _DEBUG
-    std::cout << "Admin::slot_tab_click " << page << std::endl;
+    std::cout << "Admin::slot_tab_clicked " << page << std::endl;
+#endif
+
+    if( ! m_focus ) switch_admin();
+}
+
+
+// タブの上でホイールを回した
+void Admin::slot_tab_scrolled( GdkEventScroll* event )
+{
+#ifdef _DEBUG
+    std::cout << "Admin::slot_tab_scrolled\n";
 #endif
 
     if( ! m_focus ) switch_admin();
