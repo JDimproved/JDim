@@ -684,6 +684,8 @@ bool DragableNoteBook::slot_scroll_event( GdkEventScroll* event )
 #endif
 
     m_sig_tab_scrolled.emit( event );
+
+    return true;
 }
 
 
