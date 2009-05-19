@@ -132,7 +132,7 @@ void TextLoader::receive_finish()
 {
 #ifdef _DEBUG
     std::cout << "TextLoader::receive_finish code = " << get_str_code() << std::endl
-              << "lng = " << m_lng_rawdata << " modified = " << date_modified() << std::endl;
+              << "lng = " << m_lng_rawdata << " modified = " << get_date_modified() << std::endl;
 #endif
 
     // 初期化時やnot modifiedの時はキャッシュから読み込み

@@ -413,10 +413,10 @@ void Img::receive_finish()
               << "contenttype = " << get_contenttype() << std::endl
               << "cookies : " << std::endl;
 
-    if( cookies().size() ){
-        std::list< std::string >::iterator it = cookies().begin();
-        for( ; it != cookies().end() ; ++it ) std::cout << *it << std::endl;
-    }
+//    if( cookies().size() ){
+//        std::list< std::string >::iterator it = cookies().begin();
+//        for( ; it != cookies().end() ; ++it ) std::cout << *it << std::endl;
+//    }
 #endif
 
     if( m_fout ) fclose( m_fout );

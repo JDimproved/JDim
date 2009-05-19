@@ -429,7 +429,8 @@ void SESSION::init_session()
               << "image_page=" << win_image_page << std::endl;
 
     std::cout << "board_urls\n";
-    it_tmp = board_urls.begin();
+
+    std::list< std::string >::iterator it_tmp = board_urls.begin();
     for( ; it_tmp != board_urls.end(); ++it_tmp ) if( !(*it_tmp).empty() ) std::cout << (*it_tmp);
 
     std::cout << "article_urls\n";

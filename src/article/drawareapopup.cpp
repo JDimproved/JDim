@@ -49,7 +49,7 @@ bool DrawAreaPopup::exec_layout()
     const bool init_popupwin = ( width_client() == 0 || height_client() == 0 );
 
 #ifdef _DEBUG
-    std::cout << "DrawAreaPopup::exec_layout() " << get_url() << " use_scrwidth = " << use_scrwidth << std::endl;
+    std::cout << "DrawAreaPopup::exec_layout() " << get_url() << std::endl;
 #endif
 
     bool ret = exec_layout_impl( init_popupwin, POPUP_OFFSET_Y, POPUP_RIGHT_MRG );
