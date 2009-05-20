@@ -176,7 +176,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)"), sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
 
     action_group()->add( Gtk::Action::create( "CheckUpdateRows", "更新チェックのみ(_H)"), sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_selected_rows ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateOpenRows", "更新されたスレをタブで開く(_E)"),
+    action_group()->add( Gtk::Action::create( "CheckUpdateOpenRows", "更新された行をタブで開く(_E)"),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_open_selected_rows ) );
 
     action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_U)"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
@@ -185,7 +185,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
     action_group()->add( Gtk::Action::create( "CheckUpdate_Menu", "更新チェック(_M)" ) );
     action_group()->add( Gtk::Action::create( "CheckUpdateDir", "更新チェックのみ(_R)"), sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_dir ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateOpenDir", "更新されたスレをタブで開く(_A)"),
+    action_group()->add( Gtk::Action::create( "CheckUpdateOpenDir", "更新された行をタブで開く(_A)"),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_open_dir ) );
     action_group()->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_cancel_check_update ) );
