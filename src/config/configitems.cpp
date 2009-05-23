@@ -247,6 +247,7 @@ const bool ConfigItems::load()
 
     // 各ビューと枠との間の余白
     view_margin = cf.get_option( "view_margin", CONF_VIEW_MARGIN );
+    view_margin = MIN( CONF_VIEW_MARGIN_MAX, MAX( 0, CONF_VIEW_MARGIN ) );
 
     // スレ一覧で古いスレも表示
     show_oldarticle = cf.get_option( "show_oldarticle", CONF_SHOW_OLDARTICLE );
