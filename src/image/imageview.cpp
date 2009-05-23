@@ -283,7 +283,7 @@ void ImageViewMain::show_status()
             ss << get_img()->get_width() << " x " << get_img()->get_height();
             if( get_img()->get_width() )
                 ss << " (" << get_img()->get_size() << " %)";
-            ss << " " << get_img()->total_length()/1024 << " kb ";
+            ss << " " << get_img()->total_length()/1024 << " K ";
             if( get_img()->is_protected() ) ss << " キャッシュ保護されています";
 
             set_status( ss.str() );

@@ -22,7 +22,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     ,m_label_url_ref( false, "参照元レス：" )
     ,m_open_ref( "開く" )
     ,m_label_wh( false, "大きさ : ", std::string() )
-    ,m_label_size( false, "サイズ( byte / kb ) : ", std::string() )
+    ,m_label_size( false, "サイズ( byte / Kbyte ) : ", std::string() )
     ,m_label_type( false, "種類 : ", std::string() )
     ,m_check_protect( "キャッシュを保護する" )
 {

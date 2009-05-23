@@ -489,7 +489,7 @@ void ArticleViewMain::create_status_message()
     if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += "[ " + DBTREE::article_ext_err( url_article() ) + " ] ";
 
     ss_tmp << " / 速度 " << DBTREE::article_get_speed( url_article() )
-           << " / " << DBTREE::article_lng_dat( url_article() )/1024 << " k ] "
+           << " / " << DBTREE::article_lng_dat( url_article() )/1024 << " K ] "
            << str_stat;
 
     set_status( ss_tmp.str() );

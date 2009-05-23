@@ -326,7 +326,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     std::cout << "proxy: " << m_data.host_proxy << std::endl;
     std::cout << "port of proxy: " << m_data.port_proxy << std::endl;
     std::cout << "proxy basicauth : " << m_data.basicauth_proxy << std::endl;
-    std::cout << "buffer size: " << m_lng_buf / 1024 << " kb" << std::endl;
+    std::cout << "buffer size: " << m_lng_buf / 1024 << " Kb" << std::endl;
     std::cout << "timeout : " << m_data.timeout << " sec" << std::endl;
     std::cout << "ex_field : " << m_data.ex_field << std::endl;
     std::cout << "basicauth : " << m_data.basicauth << std::endl;
