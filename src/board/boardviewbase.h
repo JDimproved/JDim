@@ -87,6 +87,9 @@ namespace BOARD
         // draw_bg_articles() を参照せよ
         std::list< std::string > m_list_draw_bg_articles;
 
+        // ポップアップメニュー表示のときにactivate_act_before_popupmenu()で使う変数
+        bool m_enable_menuslot;
+
     public:
 
         BoardViewBase( const std::string& url );
@@ -147,6 +150,10 @@ namespace BOARD
         // Viewが所属するAdminクラス
         virtual SKELETON::Admin* get_admin();
 
+        // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
+        virtual void activate_act_before_popupmenu( const std::string& url );
+
+        // ポップアップメニュー取得
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
         void update_view_impl( std::list< DBTREE::ArticleBase* >& list_subject );

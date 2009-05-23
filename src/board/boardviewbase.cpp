@@ -112,7 +112,8 @@ BoardViewBase::BoardViewBase( const std::string& url )
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
       m_previous_sortmode( false ),
-      m_loading( false )
+      m_loading( false ),
+      m_enable_menuslot( true )
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
@@ -1300,6 +1301,39 @@ void BoardViewBase::page_down()
    
 
 //
+// ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
+//
+// SKELETON::View::show_popupmenu() を参照すること
+//
+void BoardViewBase::activate_act_before_popupmenu( const std::string& url )
+{
+    // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
+    m_enable_menuslot = false;
+
+    Glib::RefPtr< Gtk::Action > act;
+
+    std::string url_selected;
+    DBTREE::ArticleBase* art_selected = NULL;
+    if( ! m_path_selected.empty() ){
+        url_selected = path2daturl( m_path_selected );
+        art_selected = DBTREE::get_article( url_selected );
+    }
+
+    if( ! url_selected.empty() && art_selected ) {
+
+        // キャッシュが無い
+        act = action_group()->get_action( "SaveDat" );
+        if( act ){
+            if( art_selected->is_cached() ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+        }
+    }
+
+    m_enable_menuslot = true;
+}
+
+
+//
 // ポップアップメニュー取得
 //
 // SKELETON::View::show_popupmenu() を参照すること
@@ -2145,6 +2179,8 @@ void BoardViewBase::forward_viewhistory( const int count )
 //
 void BoardViewBase::slot_save_dat()
 {
+    if( ! m_enable_menuslot ) return;
+
     if( m_path_selected.empty() ) return;
     const std::string url = path2daturl( m_path_selected );
 
