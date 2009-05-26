@@ -94,6 +94,7 @@ namespace IMAGE
         void close_other_views( const std::string& url );
         void close_left_views( const std::string& url );
         void close_right_views( const std::string& url );
+        void close_error_views();
         void close_nocached_views();
         void reorder( const std::string& url_from, const std::string& url_to );
         void focus_out_all();

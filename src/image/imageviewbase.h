@@ -136,6 +136,7 @@ namespace IMAGE
         void slot_close_other_views();
         void slot_close_left_views();
         void slot_close_right_views();
+        void slot_close_error_views();
         void slot_close_all_views();
     };
 

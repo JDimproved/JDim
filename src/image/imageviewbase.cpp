@@ -146,6 +146,7 @@ void ImageViewBase::setup_common()
     action_group()->add( Gtk::Action::create( "CloseOther", "他の画像(_O)" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_other_views ) );
     action_group()->add( Gtk::Action::create( "CloseLeft", "左←の画像(_L)" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_left_views ) );
     action_group()->add( Gtk::Action::create( "CloseRight", "右→の画像(_R)" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_right_views ) );
+    action_group()->add( Gtk::Action::create( "CloseError", "読み込みエラーの画像(_E)" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_error_views ) );
     action_group()->add( Gtk::Action::create( "CloseAll", "全ての画像(_A)" ), sigc::mem_fun( *this, &ImageViewBase::slot_close_all_views ) );
 
     action_group()->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする(_K)", std::string(), false ),
@@ -251,6 +252,7 @@ void ImageViewBase::setup_common()
     "<menuitem action='CloseOther'/>"
     "<menuitem action='CloseLeft'/>"
     "<menuitem action='CloseRight'/>"
+    "<menuitem action='CloseError'/>"
     "</menu>"
     "<separator/>"
 
@@ -440,6 +442,15 @@ void ImageViewBase::slot_close_left_views()
 void ImageViewBase::slot_close_right_views()
 {
     IMAGE::get_admin()->set_command( "close_right_views", get_url() );
+}
+
+
+//
+// エラーの画像を閉じる
+//
+void ImageViewBase::slot_close_error_views()
+{
+    IMAGE::get_admin()->set_command( "close_error_views" );
 }
 
 

@@ -259,6 +259,8 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
 
     else if( command.command  == "close_right_views" ) close_right_views( command.url );
 
+    else if( command.command  == "close_error_views" ) close_error_views();
+
     else if( command.command  == "close_all_views" ) close_other_views( std::string() );
 
     // キャッシュに無いviewを削除
@@ -631,6 +633,23 @@ void ImageAdmin::close_nocached_views()
         if( view ){
             std::string url = view->get_url();
             if( ! DBIMG::is_cached( url ) && DBIMG::get_code( url ) == HTTP_INIT ) set_command( "close_view", url );
+        }
+    }
+}
+
+//
+// エラーになっている画像を閉じる
+//
+void ImageAdmin::close_error_views()
+{
+    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
+    for(; it !=  m_iconbox.children().end(); ++it ){
+        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+        if( view ){
+            std::string url = view->get_url();
+
+            //ロード中の画像は閉じない
+            if( ! DBIMG::is_loading ( url ) && DBIMG::get_code( url ) == HTTP_NOT_FOUND ) set_command( "close_view", url );
         }
     }
 }
