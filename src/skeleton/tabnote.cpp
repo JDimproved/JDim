@@ -114,7 +114,7 @@ const bool TabNotebook::paint( GdkEventExpose* event )
     const Gdk::Rectangle rect( area );
     const Glib::RefPtr< Gdk::Window > win = get_window();
 
-    widget->style->ythickness = m_ythickness;
+//    widget->style->ythickness = m_ythickness;
 
     if( ! notebook->first_tab ) notebook->first_tab = notebook->children;
 
@@ -137,7 +137,7 @@ const bool TabNotebook::paint( GdkEventExpose* event )
 
         if( ! GTK_WIDGET_MAPPED( page->tab_label ) ) show_arrow = TRUE;
 
-        else draw_tab( notebook, page, area, rect, win );
+        else if( page != notebook->cur_page ) draw_tab( notebook, page, area, rect, win );
     }
 
     //矢印マーク描画
@@ -146,6 +146,8 @@ const bool TabNotebook::paint( GdkEventExpose* event )
         draw_arrow( widget, notebook, rect, win, ARROW_LEFT_BEFORE );
         draw_arrow( widget, notebook, rect, win, ARROW_RIGHT_AFTER );
     }
+
+    draw_tab( notebook, notebook->cur_page, area, rect, win );
 
     // タブの中のwidgetの描画
     children = notebook->children;
@@ -160,7 +162,7 @@ const bool TabNotebook::paint( GdkEventExpose* event )
                                             page->tab_label, event );
     }
 
-    widget->style->ythickness = 0;
+//    widget->style->ythickness = 0;
 
     return true;
 }
@@ -177,6 +179,9 @@ void TabNotebook::draw_tab( const GtkNotebook *notebook,
 {
     GdkRectangle child_area;
     GdkRectangle page_area;
+
+    if( ! GTK_WIDGET_MAPPED( page->tab_label )
+        || page->allocation.width == 0 || page->allocation.height == 0 ) return;
 
     page_area.x = page->allocation.x;
     page_area.y = page->allocation.y;
@@ -359,6 +364,8 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
     m_tab_mrg = rcst->get_xthickness() * 2;
     if( m_tab_mrg <= 0 ) m_tab_mrg = st->get_xthickness() * 2;
 
+    m_ythickness = 0;
+/*
     m_ythickness = rcst->get_ythickness();
     if( m_ythickness <= 0 ) m_ythickness = st->get_ythickness();
 
@@ -367,6 +374,7 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
         modify_style( rcst );
         property_tab_vborder() = property_tab_vborder() + m_ythickness*2;
     }
+*/
 
     m_pre_width = get_width();
 }
