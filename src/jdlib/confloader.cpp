@@ -137,7 +137,7 @@ void ConfLoader::update( const std::string& name, const double value )
 //
 // string 型
 //
-// dflt はデフォルト値, デフォルト引数 maxlength = 1024
+// dflt はデフォルト値, デフォルト引数 maxlength = 0
 std::string ConfLoader::get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength )
 {
     if( name.empty() ) return std::string();
@@ -147,7 +147,8 @@ std::string ConfLoader::get_option_str( const std::string& name, const std::stri
     {
         if( (*it).name == name )
         {
-            if( (*it).value.length() > maxlength )
+            // maxlengthが設定されている場合は文字数制限をする
+            if( maxlength > 0 && (*it).value.length() > maxlength )
             {
                 m_broken = true;
 #ifdef _DEBUG
