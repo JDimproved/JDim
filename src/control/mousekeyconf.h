@@ -13,14 +13,14 @@
 #include <map>
 
 #define SETMOTION(name,default_motions) do{\
-str_motions = cf.get_option( name, default_motions ); \
+str_motions = cf.get_option_str( name, default_motions, 256 ); \
 set_motions( name, str_motions ); \
 set_default_motions( name, default_motions ); \
 }while(0)
 
 // ver.2.0.2 以前との互換性のため Plus を + に置き換える
 #define SETKEYMOTION(name,default_motions) do{\
-str_motions = cf.get_option( name, default_motions ); \
+str_motions = cf.get_option_str( name, default_motions, 256 ); \
 if( str_motions.find( "Plus" ) != std::string::npos ) str_motions = MISC::replace_str( str_motions, "Plus", "+" ); \
 set_motions( name, str_motions ); \
 set_default_motions( name, default_motions ); \

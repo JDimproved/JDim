@@ -1700,81 +1700,83 @@ void BoardBase::read_board_info()
 
     JDLIB::ConfLoader cf( path_info, std::string() );
 
-    std::string modified = cf.get_option( "modified", "" );
+    std::string modified = cf.get_option_str( "modified", "" );
     set_date_modified( modified );
 
-    m_modified_localrule = cf.get_option( "modified_localrule", "" );
-    m_modified_setting = cf.get_option( "modified_setting", "" );
+    m_modified_localrule = cf.get_option_str( "modified_localrule", std::string() );
+    m_modified_setting = cf.get_option_str( "modified_setting", std::string() );
 
-    m_view_sort_column = cf.get_option( "view_sort_column", -1 );
-    m_view_sort_mode = cf.get_option( "view_sort_mode", 0 );
-    m_view_sort_pre_column = cf.get_option( "view_sort_pre_column", -1 );
-    m_view_sort_pre_mode = cf.get_option( "view_sort_pre_mode", 0 );
+    m_view_sort_column = cf.get_option_int( "view_sort_column", -1, -2, 6 );
+    m_view_sort_mode = cf.get_option_int( "view_sort_mode", 0, 0, 4 );
+    m_view_sort_pre_column = cf.get_option_int( "view_sort_pre_column", -1, -2, 6 );
+    m_view_sort_pre_mode = cf.get_option_int( "view_sort_pre_mode", 0, 0, 4 );
 
-    m_check_noname = cf.get_option( "check_noname", false );
+    m_check_noname = cf.get_option_bool( "check_noname", false );
 
     std::string str_tmp;
 
     // あぼーん id は再起動ごとにリセット
-//    str_tmp = cf.get_option( "aboneid", "" );
+//    str_tmp = cf.get_option( "aboneid", std::string() );
 //    if( ! str_tmp.empty() ) m_list_abone_id = MISC::strtolist( str_tmp );
 
     // あぼーん name
-    str_tmp = cf.get_option( "abonename", "" );
+    str_tmp = cf.get_option_str( "abonename", "" );
     if( ! str_tmp.empty() ) m_list_abone_name = MISC::strtolist( str_tmp );
 
     // あぼーん word
-    str_tmp = cf.get_option( "aboneword", "" );
+    str_tmp = cf.get_option_str( "aboneword", "" );
     if( ! str_tmp.empty() ) m_list_abone_word = MISC::strtolist( str_tmp );
 
     // あぼーん regex
-    str_tmp = cf.get_option( "aboneregex", "" );
+    str_tmp = cf.get_option_str( "aboneregex", "" );
     if( ! str_tmp.empty() ) m_list_abone_regex = MISC::strtolist( str_tmp );
 
     // スレ あぼーん
-    str_tmp = cf.get_option( "abonethread", "" );
+    str_tmp = cf.get_option_str( "abonethread", "" );
     if( ! str_tmp.empty() ) m_list_abone_thread = MISC::strtolist( str_tmp );
 
     // スレ あぼーん word
-    str_tmp = cf.get_option( "abonewordthread", "" );
+    str_tmp = cf.get_option_str( "abonewordthread", "" );
     if( ! str_tmp.empty() ) m_list_abone_word_thread = MISC::strtolist( str_tmp );
 
     // スレ あぼーん regex
-    str_tmp = cf.get_option( "aboneregexthread", "" );
+    str_tmp = cf.get_option_str( "aboneregexthread", "" );
     if( ! str_tmp.empty() ) m_list_abone_regex_thread = MISC::strtolist( str_tmp );
 
     // レス数であぼーん
-    m_abone_number_thread = cf.get_option( "abonenumberthread", 0 );
+    // Preferences::Preferences() m_spin_number.set_range( 0, 1001 );
+    m_abone_number_thread = cf.get_option_int( "abonenumberthread", 0, 1001 );
 
     // スレ立てからの経過時間であぼーん
-    m_abone_hour_thread = cf.get_option( "abonehourthread", 0 );
+    // Preferences::Preferences() m_spin_hour.set_range( 0, 1000 );
+    m_abone_hour_thread = cf.get_option_int( "abonehourthread", 0, 0, 9999 );
 
     // ローカルプロキシ
-    m_mode_local_proxy = cf.get_option( "mode_local_proxy", 0 );
-    str_tmp = cf.get_option( "local_proxy", "" );
+    m_mode_local_proxy = cf.get_option_int( "mode_local_proxy", 0, 0, 2 );
+    str_tmp = cf.get_option_str( "local_proxy", "" );
     set_local_proxy( str_tmp );
-    m_local_proxy_port = cf.get_option( "local_proxy_port", 8080 );
+    m_local_proxy_port = cf.get_option_int( "local_proxy_port", 8080, 1, 65535 );
  
-    m_mode_local_proxy_w = cf.get_option( "mode_local_proxy_w", 0 );
-    str_tmp = cf.get_option( "local_proxy_w", "" );
+    m_mode_local_proxy_w = cf.get_option_int( "mode_local_proxy_w", 0, 0, 2 );
+    str_tmp = cf.get_option_str( "local_proxy_w", "" );
     set_local_proxy_w( str_tmp );
-    m_local_proxy_port_w = cf.get_option( "local_proxy_port_w", 8080 );
+    m_local_proxy_port_w = cf.get_option_int( "local_proxy_port_w", 8080, 1, 65535 );
 
     // 書き込み時のデフォルトの名前とメアド
-    m_write_name = cf.get_option( "write_name", "" );
-    m_write_mail = cf.get_option( "write_mail", "" );
+    m_write_name = cf.get_option_str( "write_name", "" );
+    m_write_mail = cf.get_option_str( "write_mail", "" );
 
     // samba24
-    m_samba_sec = cf.get_option( "samba_sec", 0 );
+    m_samba_sec = cf.get_option_int( "samba_sec", 0, 65535 );
 
     // 実況の秒数
-    m_live_sec = cf.get_option( "live_sec", 0 );
+    m_live_sec = cf.get_option_int( "live_sec", 0, 0, 65535 );
 
     // 最終アクセス時刻
-    m_last_access_time = cf.get_option( "last_access_time", 0 );
+    m_last_access_time = cf.get_option_int( "last_access_time", 0, 0, 2147483647 );
 
     // ステータス
-    m_status = cf.get_option( "status", STATUS_UNKNOWN );
+    m_status = cf.get_option_int( "status", STATUS_UNKNOWN, 0, 16 );
 
 #ifdef _DEBUG
     std::cout << "modified = " << get_date_modified() << std::endl;

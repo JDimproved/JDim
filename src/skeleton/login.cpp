@@ -68,8 +68,8 @@ void Login::read_info()
 
     JDLIB::ConfLoader cf( path, std::string() );
 
-    m_username = cf.get_option( "username", "" );
-    m_passwd = cf.get_option( "passwd", "" );
+    m_username = cf.get_option_str( "username", "" );
+    m_passwd = cf.get_option_str( "passwd", "" );
 
 #ifdef _DEBUG
     std::cout << "user = " << m_username << " ,passwd = " << m_passwd << std::endl;

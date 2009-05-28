@@ -384,7 +384,7 @@ namespace CONFIG
         virtual ~ConfigItems();
 
         // 設定読み込み
-        const bool load();
+        const bool load( const bool restore = false );
 
         // 保存
         void save();

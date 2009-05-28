@@ -216,7 +216,7 @@ void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls, const st
     std::list< std::string > list_tmp;
     std::list< std::string >::iterator it_tmp;
 
-    str_tmp = cf.get_option( id_urls, "");
+    str_tmp = cf.get_option_str( id_urls, "" );
     if( ! str_tmp.empty() ){
         list_tmp = MISC::split_line( str_tmp );
         it_tmp = list_tmp.begin();
@@ -225,7 +225,7 @@ void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls, const st
 
     if( ! list_urls.size() ) return;
 
-    str_tmp = cf.get_option( id_locked, "");
+    str_tmp = cf.get_option_str( id_locked, "" );
     if( ! str_tmp.empty() ){
         list_tmp = MISC::split_line( str_tmp );
         it_tmp = list_tmp.begin();
@@ -247,66 +247,66 @@ void SESSION::init_session()
     JDLIB::ConfLoader cf( CACHE::path_session(), std::string() );
 
     // オンライン
-    mode_online = cf.get_option( "mode_online", true );
+    mode_online = cf.get_option_bool( "mode_online", true );
 
     // 2chログイン
-    mode_login2ch = cf.get_option( "mode_login2ch", false );
+    mode_login2ch = cf.get_option_bool( "mode_login2ch", false );
 
     // beログイン
-    mode_loginbe = cf.get_option( "mode_loginbe", false );
+    mode_loginbe = cf.get_option_bool( "mode_loginbe", false );
 
     // p2ログイン
-    mode_loginp2 = cf.get_option( "mode_loginp2", false );
+    mode_loginp2 = cf.get_option_bool( "mode_loginp2", false );
 
     // paneのモード
-    mode_pane = cf.get_option( "mode_pane", 0 );
+    mode_pane = cf.get_option_int( "mode_pane", 0, 0, 2 );
 
-    x_win_main = cf.get_option( "x", 0 );
-    y_win_main = cf.get_option( "y", 0 );
-    width_win_main = cf.get_option( "width", 800 );
-    height_win_main = cf.get_option( "height", 600 );
-    maximized_win_main = cf.get_option( "maximized", false );
+    x_win_main = cf.get_option_int( "x", 0, 0, 4096 );
+    y_win_main = cf.get_option_int( "y", 0, 0, 4096 );
+    width_win_main = cf.get_option_int( "width", 800, 80, 4096 );
+    height_win_main = cf.get_option_int( "height", 600, 60, 4096 );
+    maximized_win_main = cf.get_option_bool( "maximized", false );
 
-    win_show_sidebar = cf.get_option( "show_sidebar", true );
+    win_show_sidebar = cf.get_option_bool( "show_sidebar", true );
 
-    win_show_menubar = cf.get_option( "show_menubar", true );
+    win_show_menubar = cf.get_option_bool( "show_menubar", true );
 
-    win_toolbar_pos = cf.get_option( "toolbar_pos", 0 );
+    win_toolbar_pos = cf.get_option_int( "toolbar_pos", 0, 0, 2 );
 
-    show_bbslist_toolbar = cf.get_option( "show_bbslist_toolbar", true );
-    show_board_toolbar = cf.get_option( "show_board_toolbar", true );
-    show_article_toolbar = cf.get_option( "show_article_toolbar", true );
+    show_bbslist_toolbar = cf.get_option_bool( "show_bbslist_toolbar", true );
+    show_board_toolbar = cf.get_option_bool( "show_board_toolbar", true );
+    show_article_toolbar = cf.get_option_bool( "show_article_toolbar", true );
 
-    show_board_tab = cf.get_option( "show_board_tab", true );
-    show_article_tab = cf.get_option( "show_article_tab", true );
+    show_board_tab = cf.get_option_bool( "show_board_tab", true );
+    show_article_tab = cf.get_option_bool( "show_article_tab", true );
 
-    win_focused_admin = cf.get_option( "focused_admin", FOCUS_NO );
-    win_focused_admin_sidebar = cf.get_option( "focused_admin_sidebar", FOCUS_NO );
+    win_focused_admin = cf.get_option_int( "focused_admin", FOCUS_NO, FOCUS_SIDEBAR, FOCUS_NO );
+    win_focused_admin_sidebar = cf.get_option_int( "focused_admin_sidebar", FOCUS_NO, FOCUS_SIDEBAR, FOCUS_NO );
 
-    win_hpane_main_pos = cf.get_option( "hpane_main_pos", 190 );
-    win_vpane_main_pos = cf.get_option( "vpane_main_pos", 200 );
-    win_hpane_main_r_pos = cf.get_option( "hpane_main_r_pos", 300 );
-    win_vpane_main_mes_pos = cf.get_option( "vpane_main_mes_pos", 400 );
+    win_hpane_main_pos = cf.get_option_int( "hpane_main_pos", 190, 0, 4096 );
+    win_vpane_main_pos = cf.get_option_int( "vpane_main_pos", 200, 0, 4096 );
+    win_hpane_main_r_pos = cf.get_option_int( "hpane_main_r_pos", 300, 0, 4096);
+    win_vpane_main_mes_pos = cf.get_option_int( "vpane_main_mes_pos", 400, 0, 4096 );
 
-    win_notebook_main_page = cf.get_option( "notebook_main_page", 0 );
+    win_notebook_main_page = cf.get_option_int( "notebook_main_page", 0, -16, 16 );
 
-    win_bbslist_page = cf.get_option( "bbslist_page", 0 );
-    win_board_page = cf.get_option( "board_page", 0 );
-    win_article_page = cf.get_option( "article_page", 0 );
-    win_image_page = cf.get_option( "image_page", 0 );
+    win_bbslist_page = cf.get_option_int( "bbslist_page", 0, -16, 16 );
+    win_board_page = cf.get_option_int( "board_page", 0, -16, 16 );
+    win_article_page = cf.get_option_int( "article_page", 0, -16, 16 );
+    win_image_page = cf.get_option_int( "image_page", 0, -16, 16 );
 
     read_list_urls( cf, "board_urls", "board_locked", board_urls, board_locked );
     read_list_urls( cf, "article_urls", "article_locked", article_urls, article_locked );
     read_list_urls( cf, "image_urls", "image_locked", image_urls, image_locked );
 
-    items_sidebar_str = cf.get_option( "items_sidebar",
+    items_sidebar_str = cf.get_option_str( "items_sidebar",
                                  ITEM_NAME_SEARCHBOX + std::string ( " " ) +
                                  ITEM_NAME_SEARCH_NEXT + std::string ( " " ) +
                                  ITEM_NAME_SEARCH_PREV + std::string ( " " ) );
 
     items_sidebar =  parse_items( items_sidebar_str );
 
-    items_main_toolbar_str = cf.get_option( "items_main_toolbar",
+    items_main_toolbar_str = cf.get_option_str( "items_main_toolbar",
                                  ITEM_NAME_BBSLISTVIEW + std::string ( " " ) +
                                  ITEM_NAME_FAVORITEVIEW + std::string ( " " ) +
                                  ITEM_NAME_BOARDVIEW + std::string ( " " ) +
@@ -318,7 +318,7 @@ void SESSION::init_session()
 
     items_main_toolbar =  parse_items( items_main_toolbar_str );
 
-    items_article_toolbar_str = cf.get_option( "items_article_toolbar",
+    items_article_toolbar_str = cf.get_option_str( "items_article_toolbar",
                                  ITEM_NAME_WRITEMSG + std::string ( " " ) +
                                  ITEM_NAME_OPENBOARD + std::string ( " " ) +
                                  ITEM_NAME_NAME + std::string ( " " ) +
@@ -331,7 +331,7 @@ void SESSION::init_session()
 
     items_article_toolbar =  parse_items( items_article_toolbar_str );
 
-    items_board_toolbar_str = cf.get_option( "items_board_toolbar",
+    items_board_toolbar_str = cf.get_option_str( "items_board_toolbar",
                                  ITEM_NAME_NEWARTICLE + std::string ( " " ) +
                                  ITEM_NAME_SEARCHBOX + std::string ( " " ) +
                                  ITEM_NAME_SEARCH_NEXT + std::string ( " " ) +
@@ -344,7 +344,7 @@ void SESSION::init_session()
 
     items_board_toolbar =  parse_items( items_board_toolbar_str );
 
-    items_board_str = cf.get_option( "items_board",
+    items_board_str = cf.get_option_str( "items_board",
                                  ITEM_NAME_MARK + std::string ( " " ) +
                                  ITEM_NAME_ID + std::string ( " " ) +
                                  ITEM_NAME_NAME + std::string ( " " ) +
@@ -357,7 +357,7 @@ void SESSION::init_session()
 
     items_board =  parse_items( items_board_str );
 
-    items_msg_toolbar_str = cf.get_option( "items_msg_toolbar",
+    items_msg_toolbar_str = cf.get_option_str( "items_msg_toolbar",
                                  ITEM_NAME_PREVIEW + std::string ( " " ) +
                                  ITEM_NAME_WRITEMSG+ std::string ( " " ) +
                                  ITEM_NAME_NAME + std::string ( " " ) +
@@ -368,41 +368,41 @@ void SESSION::init_session()
 
     items_msg_toolbar =  parse_items( items_msg_toolbar_str );
 
-    board_col_mark = cf.get_option( "col_mark", 30 );
-    board_col_id = cf.get_option( "col_id", 45 );
-    board_col_subject = cf.get_option(  "col_subject", 190 );
-    board_col_number = cf.get_option( "col_number", 45 );
-    board_col_load = cf.get_option( "col_load", 45 );
-    board_col_new = cf.get_option( "col_new", 45 );
-    board_col_since = cf.get_option( "col_since", 70 );
-    board_col_write = cf.get_option( "col_write", 70 );
-    board_col_speed = cf.get_option( "col_speed", 45 );
+    board_col_mark = cf.get_option_int( "col_mark", 30, 4, 1024 );
+    board_col_id = cf.get_option_int( "col_id", 45, 4, 1024 );
+    board_col_subject = cf.get_option_int( "col_subject", 190, 4, 1024 );
+    board_col_number = cf.get_option_int( "col_number", 45, 4, 1024 );
+    board_col_load = cf.get_option_int( "col_load", 45, 4, 1024 );
+    board_col_new = cf.get_option_int( "col_new", 45, 4, 1024 );
+    board_col_since = cf.get_option_int( "col_since", 70, 4, 1024 );
+    board_col_write = cf.get_option_int( "col_write", 70, 4, 1024 );
+    board_col_speed = cf.get_option_int( "col_speed", 45, 4, 1024 );
 
-    embedded_img = cf.get_option( "embedded_img", true );
+    embedded_img = cf.get_option_bool( "embedded_img", true );
 
-    x_win_img = cf.get_option( "x_win_img", 0 );
-    y_win_img = cf.get_option( "y_win_img", 0 );
-    width_win_img = cf.get_option( "width_win_img", 600 );
-    height_win_img = cf.get_option( "height_win_img", 400 );
+    x_win_img = cf.get_option_int( "x_win_img", 0, 0, 4096 );
+    y_win_img = cf.get_option_int( "y_win_img", 0, 0, 4096 );
+    width_win_img = cf.get_option_int( "width_win_img", 600, 60, 4096 );
+    height_win_img = cf.get_option_int( "height_win_img", 400, 40, 4096 );
 
-    embedded_mes = cf.get_option( "embedded_mes", false );
-    close_mes = cf.get_option( "close_mes", true );
+    embedded_mes = cf.get_option_bool( "embedded_mes", false );
+    close_mes = cf.get_option_bool( "close_mes", true );
 
-    x_win_mes = cf.get_option( "x_win_mes", 0 );
-    y_win_mes = cf.get_option( "y_win_mes", 0 );
-    width_win_mes = cf.get_option( "width_win_mes", 600 );
-    height_win_mes = cf.get_option( "height_win_mes", 400 );
+    x_win_mes = cf.get_option_int( "x_win_mes", 0, 0, 4096 );
+    y_win_mes = cf.get_option_int( "y_win_mes", 0, 0, 4096 );
+    width_win_mes = cf.get_option_int( "width_win_mes", 600, 60, 4096 );
+    height_win_mes = cf.get_option_int( "height_win_mes", 400, 40, 4096 );
 
-    dir_dat = cf.get_option( "dir_dat", "" );
-    img_dir_img_save = cf.get_option( "img_dir_img_save", "" );
+    dir_dat = cf.get_option_str( "dir_dat", "" );
+    img_dir_img_save = cf.get_option_str( "img_dir_img_save", "" );
 
-    dir_draft = cf.get_option( "dir_draft", "" );
+    dir_draft = cf.get_option_str( "dir_draft", "" );
 
     popupmenu_shown = false;
 
-    img_fit_mode = cf.get_option( "img_fit_mode", IMG_FIT_NORMAL );
+    img_fit_mode = cf.get_option_int( "img_fit_mode", IMG_FIT_NORMAL, 0, 1 );
 
-    dir_select_favorite = cf.get_option( "dir_select_favorite", "" );
+    dir_select_favorite = cf.get_option_str( "dir_select_favorite", "" );
 
 #ifdef _DEBUG
     std::cout << "x=" << x_win_main << std::endl

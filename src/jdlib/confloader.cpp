@@ -19,7 +19,8 @@ using namespace JDLIB;
 // もしstr_confがemptyの時はfileから読み込む
 //
 ConfLoader::ConfLoader( const std::string& file, std::string str_conf )
-    : m_file( file )
+    : m_file( file ),
+      m_broken( false )
 {
     if( str_conf.empty() ) CACHE::load_rawdata( m_file, str_conf );
 
@@ -104,6 +105,14 @@ void ConfLoader::update( const std::string& name, const std::string& value )
     m_data.push_back( data );
 }
 
+// 値を変更 (bool型)
+void ConfLoader::update( const std::string& name, const bool value )
+{
+    std::string str_value = value ? "1" : "0";
+
+    update( name, str_value );
+}
+
 // 値を変更 (int型)
 void ConfLoader::update( const std::string& name, const int value )
 {
@@ -128,48 +137,102 @@ void ConfLoader::update( const std::string& name, const double value )
 //
 // string 型
 //
-// dflt はデフォルト値
-//
-std::string ConfLoader::get_option( const std::string& name, std::string dflt )
+// dflt はデフォルト値, デフォルト引数 maxlength = 1024
+std::string ConfLoader::get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength )
 {
     if( name.empty() ) return std::string();
 
     std::list < ConfData >::iterator it = m_data.begin();
-    for( ; it != m_data.end(); ++it ){
-        if( (*it).name == name ) return (*it).value;
+    for( ; it != m_data.end(); ++it )
+    {
+        if( (*it).name == name )
+        {
+            if( (*it).value.length() > maxlength )
+            {
+                m_broken = true;
+#ifdef _DEBUG
+    std::cout << "ConfLoader::get_option_str: " << name << "=" << (*it).value << std::endl;
+#endif
+                break;
+            }
+
+            return (*it).value;
+        }
     }
 
     return dflt;
 }
 
+//
+// bool型
+//
+bool ConfLoader::get_option_bool( const std::string& name, const bool dflt )
+{
+    std::string val_str = get_option_str( name, std::string() );
 
+    if( val_str.empty() ) return dflt;
+
+    val_str = MISC::toupper_str( val_str );
+
+    if( val_str == "1" || val_str == "TRUE" || val_str == "T" ) return true;
+    if( val_str == "0" || val_str == "FALSE" || val_str == "F" ) return false;
+
+    m_broken = true;
+
+#ifdef _DEBUG
+    std::cout << "ConfLoader::get_option_bool: " << name << "=" << val_str << std::endl;
+#endif
+
+    return dflt;
+}
 
 //
 // int 型
 //
-int ConfLoader::get_option( const std::string& name, int dflt )
+// デフォルト引数 min = 0, max = 1
+//
+int ConfLoader::get_option_int( const std::string& name, const int dflt, const int min, const int max )
 {
-    std::string val = get_option( name, std::string() );
+    std::string val_str = get_option_str( name, std::string() );
 
-    if( val.empty() ) return dflt;
+    if( val_str.empty() ) return dflt;
 
-    val = MISC::toupper_str( val );
-    
-    if( val == "TRUE" || val == "T" || val == "true" || val == "t" ) return 1;
-    if( val == "FALSE" || val == "F" ||  val == "false"|| val == "f" ) return 0;
-    
-    return atoi( val.c_str() );
+    int val_int = atoi( val_str.c_str() );
+
+    if( val_int < min || val_int > max )
+    {
+        val_int = dflt;
+        m_broken = true;
+#ifdef _DEBUG
+    std::cout << "ConfLoader::get_option_int: " << name << "=" << val_int << std::endl;
+#endif
+    }
+
+    return val_int;
 }
 
 
 //
 // double 型
 //
-double ConfLoader::get_option( const std::string& name, double dflt )
+// デフォルト引数 min = 0, max = 1
+//
+double ConfLoader::get_option_double( const std::string& name, const double dflt, const double min, const double max )
 {
-    std::string val = get_option( name, std::string() );
+    std::string val_str = get_option_str( name, std::string() );
 
-    if( val.empty() ) return dflt;
+    if( val_str.empty() ) return dflt;
 
-    return atof( val.c_str() );
+    double val_double = atof( val_str.c_str() );
+
+    if( val_double < min || val_double > max )
+    {
+        val_double = dflt;
+        m_broken = true;
+#ifdef _DEBUG
+    std::cout << "ConfLoader::get_option_double: " << name << "=" << val_double << std::endl;
+#endif
+    }
+
+    return val_double;
 }

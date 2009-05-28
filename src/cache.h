@@ -23,6 +23,7 @@ namespace CACHE
 
     // 設定ファイル
     std::string path_conf();
+    std::string path_conf_bkup();
     std::string path_conf_old();  // 旧ファイル
 
     // セッション情報ファイル

@@ -41,6 +41,11 @@ std::string CACHE::path_conf()
     return CACHE::path_root() + "jd.conf";
 }
 
+std::string CACHE::path_conf_bkup()
+{
+    return CACHE::path_conf() + ".bkup";
+}
+
 
 // 旧設定ファイル
 std::string CACHE::path_conf_old()

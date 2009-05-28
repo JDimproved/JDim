@@ -85,10 +85,9 @@ void SettingLoader::parse_data()
 {
     JDLIB::ConfLoader cf( "", get_data() );
 
-    m_default_noname = cf.get_option( "BBS_NONAME_NAME", "No Name" );
-    m_line_number = cf.get_option( "BBS_LINE_NUMBER", 0 );
-    m_message_count = cf.get_option( "BBS_MESSAGE_COUNT", 0 );
-
+    m_default_noname = cf.get_option_str( "BBS_NONAME_NAME", "No Name" );
+    m_line_number = cf.get_option_int( "BBS_LINE_NUMBER", 0, 0, 256 );
+    m_message_count = cf.get_option_int( "BBS_MESSAGE_COUNT", 0, 0, 4096 );
     DBTREE::board_set_modified_setting( m_url_boadbase, get_date_modified() );
 
 #ifdef _DEBUG

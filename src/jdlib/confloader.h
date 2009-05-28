@@ -10,6 +10,7 @@
 #include <string>
 #include <list>
 
+#include "config/defaultconf.h"
 
 namespace JDLIB
 {
@@ -24,7 +25,8 @@ namespace JDLIB
     {
         std::string m_file;
         std::list< ConfData > m_data;
-        
+        bool m_broken;
+
     public:
 
         // file : 設定ファイル
@@ -33,6 +35,7 @@ namespace JDLIB
         ConfLoader( const std::string& file, std::string str_conf );
 
         const bool empty();
+        const bool is_broken(){ return m_broken; }
 
         // 保存
         void save();
@@ -40,13 +43,15 @@ namespace JDLIB
         // 値を変更
         // name が無い場合は綱目を追加
         void update( const std::string& name, const std::string& value );
+        void update( const std::string& name, const bool value );
         void update( const std::string& name, const int value );
         void update( const std::string& name, const double value );
 
         // 値取得
-        std::string get_option( const std::string& name, std::string dflt );
-        int get_option( const std::string& name, int dflt );
-        double get_option( const std::string& name, double dflt );
+        std::string get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength = 1024 );
+        bool get_option_bool( const std::string& name, const bool dflt );
+        int get_option_int( const std::string& name, const int dflt, const int min = 0, const int max = 1 );
+        double get_option_double( const std::string& name, const double dflt, const double min = 0, const double max = 1 );
     };
 }
 
