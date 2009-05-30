@@ -114,8 +114,6 @@ const bool TabNotebook::paint( GdkEventExpose* event )
     const Gdk::Rectangle rect( area );
     const Glib::RefPtr< Gdk::Window > win = get_window();
 
-//    widget->style->ythickness = m_ythickness;
-
     if( ! notebook->first_tab ) notebook->first_tab = notebook->children;
 
     GtkNotebookPage* page = NULL;
@@ -125,7 +123,8 @@ const bool TabNotebook::paint( GdkEventExpose* event )
     // ビュー領域の枠の描画
     m_parent->draw_box( this, event );
 
-    // タブの描画
+    // 現在のタブ以外のタブの描画
+    // 現在のタブは矢印マークを描いた後に描く
     bool show_arrow = FALSE;
     GList *children = notebook->children;
     while( children ){
@@ -162,8 +161,6 @@ const bool TabNotebook::paint( GdkEventExpose* event )
                                             page->tab_label, event );
     }
 
-//    widget->style->ythickness = 0;
-
     return true;
 }
 
@@ -186,7 +183,7 @@ void TabNotebook::draw_tab( const GtkNotebook *notebook,
     page_area.x = page->allocation.x;
     page_area.y = page->allocation.y;
     page_area.width = page->allocation.width;
-    page_area.height = page->allocation.height - m_ythickness;
+    page_area.height = page->allocation.height;
 
     if( gdk_rectangle_intersect( &page_area, area, &child_area ) )
     {
@@ -363,18 +360,6 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
 
     m_tab_mrg = rcst->get_xthickness() * 2;
     if( m_tab_mrg <= 0 ) m_tab_mrg = st->get_xthickness() * 2;
-
-    m_ythickness = 0;
-/*
-    m_ythickness = rcst->get_ythickness();
-    if( m_ythickness <= 0 ) m_ythickness = st->get_ythickness();
-
-    if( m_ythickness > 0 ){
-        rcst->set_ythickness( 0 );
-        modify_style( rcst );
-        property_tab_vborder() = property_tab_vborder() + m_ythickness*2;
-    }
-*/
 
     m_pre_width = get_width();
 }
@@ -715,10 +700,7 @@ void TabNotebook::get_alloc_tab( Alloc_NoteBook& alloc )
 
         alloc.x_tab = notebook->cur_page->allocation.x - xx;
         alloc.width_tab = notebook->cur_page->allocation.width;
-
-        // タブの高さを m_ythickness 分低くする
-        // draw_tab() を参照
-        alloc.height_tab = notebook->cur_page->allocation.height - m_ythickness; 
+        alloc.height_tab = notebook->cur_page->allocation.height;
     }
 }
 

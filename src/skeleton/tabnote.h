@@ -50,7 +50,6 @@ namespace SKELETON
         int m_pre_width;
         bool m_fixtab;
         int m_tab_mrg;
-        int m_ythickness;
 
       public:
 
