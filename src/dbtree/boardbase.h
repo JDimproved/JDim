@@ -22,9 +22,11 @@ namespace DBTREE
     // ローカルプロキシ設定
     enum
     {
-        PROXY_GLOBAL,  // 全体設定使用
+        PROXY_GLOBAL = 0,  // 全体設定使用
         PROXY_DISABLE, // 全体設定無効
-        PROXY_LOCAL    // ローカル設定使用
+        PROXY_LOCAL,     // ローカル設定使用
+
+        PROXY_NO
     };
 
     class Root;

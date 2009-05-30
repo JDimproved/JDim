@@ -243,10 +243,10 @@ void History_Manager::viewhistory2xml()
 
     // タブに表示されているViewのアドレスを取得
     std::set< std::string > taburls;
-    std::list< std::string >& article_urls = SESSION::get_article_URLs();
-    std::list< std::string >& board_urls = SESSION::get_board_URLs();
+    const std::list< std::string >& article_urls = SESSION::get_article_URLs();
+    const std::list< std::string >& board_urls = SESSION::get_board_URLs();
 
-    std::list< std::string >::iterator it_url = article_urls.begin();
+    std::list< std::string >::const_iterator it_url = article_urls.begin();
     for( ; it_url != article_urls.end(); ++it_url ){
 #ifdef _DEBUG
         std::cout << "insert " << *it_url << std::endl;

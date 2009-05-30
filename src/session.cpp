@@ -259,19 +259,19 @@ void SESSION::init_session()
     mode_loginp2 = cf.get_option_bool( "mode_loginp2", false );
 
     // paneのモード
-    mode_pane = cf.get_option_int( "mode_pane", 0, 0, 2 );
+    mode_pane = cf.get_option_int( "mode_pane", MODE_2PANE, 0, MODE_PANE_NUM -1 );
 
-    x_win_main = cf.get_option_int( "x", 0, 0, 4096 );
-    y_win_main = cf.get_option_int( "y", 0, 0, 4096 );
-    width_win_main = cf.get_option_int( "width", 800, 80, 4096 );
-    height_win_main = cf.get_option_int( "height", 600, 60, 4096 );
+    x_win_main = cf.get_option_int( "x", 0, 0, 8192 );
+    y_win_main = cf.get_option_int( "y", 0, 0, 8192 );
+    width_win_main = cf.get_option_int( "width", 800, 80, 8192 );
+    height_win_main = cf.get_option_int( "height", 600, 60, 8192 );
     maximized_win_main = cf.get_option_bool( "maximized", false );
 
     win_show_sidebar = cf.get_option_bool( "show_sidebar", true );
 
     win_show_menubar = cf.get_option_bool( "show_menubar", true );
 
-    win_toolbar_pos = cf.get_option_int( "toolbar_pos", 0, 0, 2 );
+    win_toolbar_pos = cf.get_option_int( "toolbar_pos", TOOLBAR_POS_NORMAL, 0, TOOLBAR_POS_NUM -1 );
 
     show_bbslist_toolbar = cf.get_option_bool( "show_bbslist_toolbar", true );
     show_board_toolbar = cf.get_option_bool( "show_board_toolbar", true );
@@ -280,21 +280,24 @@ void SESSION::init_session()
     show_board_tab = cf.get_option_bool( "show_board_tab", true );
     show_article_tab = cf.get_option_bool( "show_article_tab", true );
 
-    win_focused_admin = cf.get_option_int( "focused_admin", FOCUS_NO, FOCUS_SIDEBAR, FOCUS_NO );
-    win_focused_admin_sidebar = cf.get_option_int( "focused_admin_sidebar", FOCUS_NO, FOCUS_SIDEBAR, FOCUS_NO );
+    win_focused_admin = cf.get_option_int( "focused_admin", FOCUS_NOT, 0, FOCUS_NUM -1 );
+    win_focused_admin_sidebar = cf.get_option_int( "focused_admin_sidebar", FOCUS_NOT, 0, FOCUS_NUM -1 );
 
-    win_hpane_main_pos = cf.get_option_int( "hpane_main_pos", 190, 0, 4096 );
-    win_vpane_main_pos = cf.get_option_int( "vpane_main_pos", 200, 0, 4096 );
-    win_hpane_main_r_pos = cf.get_option_int( "hpane_main_r_pos", 300, 0, 4096);
-    win_vpane_main_mes_pos = cf.get_option_int( "vpane_main_mes_pos", 400, 0, 4096 );
+    win_hpane_main_pos = cf.get_option_int( "hpane_main_pos", 190, 0, 8192 );
+    win_vpane_main_pos = cf.get_option_int( "vpane_main_pos", 200, 0, 8192 );
+    win_hpane_main_r_pos = cf.get_option_int( "hpane_main_r_pos", 300, 0, 8192 );
+    win_vpane_main_mes_pos = cf.get_option_int( "vpane_main_mes_pos", 400, 0, 8192 );
 
-    win_notebook_main_page = cf.get_option_int( "notebook_main_page", 0, -16, 16 );
+    // メインnotebookのページ番号
+    win_notebook_main_page = cf.get_option_int( "notebook_main_page", PAGE_ARTICLE, 0, PAGE_NUM -1 );
 
-    win_bbslist_page = cf.get_option_int( "bbslist_page", 0, -16, 16 );
-    win_board_page = cf.get_option_int( "board_page", 0, -16, 16 );
-    win_article_page = cf.get_option_int( "article_page", 0, -16, 16 );
-    win_image_page = cf.get_option_int( "image_page", 0, -16, 16 );
+    // 各ビューの開いてるページ番号
+    win_bbslist_page = cf.get_option_int( "bbslist_page", 0, 0, 1024 );
+    win_board_page = cf.get_option_int( "board_page", 0, 0, 1024 );
+    win_article_page = cf.get_option_int( "article_page", 0, 0, 1024 );
+    win_image_page = cf.get_option_int( "image_page", 0, 0, 1024 );
 
+    // タブをロックしているページのアドレス
     read_list_urls( cf, "board_urls", "board_locked", board_urls, board_locked );
     read_list_urls( cf, "article_urls", "article_locked", article_urls, article_locked );
     read_list_urls( cf, "image_urls", "image_locked", image_urls, image_locked );
@@ -368,30 +371,33 @@ void SESSION::init_session()
 
     items_msg_toolbar =  parse_items( items_msg_toolbar_str );
 
-    board_col_mark = cf.get_option_int( "col_mark", 30, 4, 1024 );
-    board_col_id = cf.get_option_int( "col_id", 45, 4, 1024 );
-    board_col_subject = cf.get_option_int( "col_subject", 190, 4, 1024 );
-    board_col_number = cf.get_option_int( "col_number", 45, 4, 1024 );
-    board_col_load = cf.get_option_int( "col_load", 45, 4, 1024 );
-    board_col_new = cf.get_option_int( "col_new", 45, 4, 1024 );
-    board_col_since = cf.get_option_int( "col_since", 70, 4, 1024 );
-    board_col_write = cf.get_option_int( "col_write", 70, 4, 1024 );
-    board_col_speed = cf.get_option_int( "col_speed", 45, 4, 1024 );
+    // board ビューの列幅
+    board_col_mark = cf.get_option_int( "col_mark", 30, 4, 8192 );
+    board_col_id = cf.get_option_int( "col_id", 45, 4, 8192 );
+    board_col_subject = cf.get_option_int( "col_subject", 190, 4, 8192 );
+    board_col_number = cf.get_option_int( "col_number", 45, 4, 8192 );
+    board_col_load = cf.get_option_int( "col_load", 45, 4, 8192 );
+    board_col_new = cf.get_option_int( "col_new", 45, 4, 8192 );
+    board_col_since = cf.get_option_int( "col_since", 70, 4, 8192 );
+    board_col_write = cf.get_option_int( "col_write", 70, 4, 8192 );
+    board_col_speed = cf.get_option_int( "col_speed", 45, 4, 8192 );
 
     embedded_img = cf.get_option_bool( "embedded_img", true );
 
-    x_win_img = cf.get_option_int( "x_win_img", 0, 0, 4096 );
-    y_win_img = cf.get_option_int( "y_win_img", 0, 0, 4096 );
-    width_win_img = cf.get_option_int( "width_win_img", 600, 60, 4096 );
-    height_win_img = cf.get_option_int( "height_win_img", 400, 40, 4096 );
+    x_win_img = cf.get_option_int( "x_win_img", 0, 0, 8192 );
+    y_win_img = cf.get_option_int( "y_win_img", 0, 0, 8192 );
+    width_win_img = cf.get_option_int( "width_win_img", 600, 60, 8192 );
+    height_win_img = cf.get_option_int( "height_win_img", 400, 40, 8192 );
 
     embedded_mes = cf.get_option_bool( "embedded_mes", false );
+
+    // 書き込み後にmessageを閉じる
     close_mes = cf.get_option_bool( "close_mes", true );
 
-    x_win_mes = cf.get_option_int( "x_win_mes", 0, 0, 4096 );
-    y_win_mes = cf.get_option_int( "y_win_mes", 0, 0, 4096 );
-    width_win_mes = cf.get_option_int( "width_win_mes", 600, 60, 4096 );
-    height_win_mes = cf.get_option_int( "height_win_mes", 400, 40, 4096 );
+    x_win_mes = cf.get_option_int( "x_win_mes", 0, 0, 8192 );
+    y_win_mes = cf.get_option_int( "y_win_mes", 0, 0, 8192 );
+    width_win_mes = cf.get_option_int( "width_win_mes", 600, 60, 8192 );
+    height_win_mes = cf.get_option_int( "height_win_mes", 400, 40, 8192 );
 
     dir_dat = cf.get_option_str( "dir_dat", "" );
     img_dir_img_save = cf.get_option_str( "img_dir_img_save", "" );
@@ -400,7 +406,8 @@ void SESSION::init_session()
 
     popupmenu_shown = false;
 
-    img_fit_mode = cf.get_option_int( "img_fit_mode", IMG_FIT_NORMAL, 0, 1 );
+    // 画像のfitモード
+    img_fit_mode = cf.get_option_int( "img_fit_mode", IMG_FIT_NORMAL, 0, IMG_FIT_NUM -1 );
 
     dir_select_favorite = cf.get_option_str( "dir_select_favorite", "" );
 
@@ -601,17 +608,17 @@ void SESSION::save_session()
 
 // ブート中
 const bool SESSION::is_booting(){ return booting; }
-void SESSION::set_booting( bool boot ){ booting = boot; }
+void SESSION::set_booting( const bool boot ){ booting = boot; }
 
 // 終了中
 const bool SESSION::is_quitting(){ return quitting; }
-void SESSION::set_quitting( bool quit ){ quitting = quit; }
+void SESSION::set_quitting( const bool quit ){ quitting = quit; }
 
 const int SESSION::get_mode_pane() { return mode_pane; }
-void SESSION::set_mode_pane( int mode ){ mode_pane = mode; }
+void SESSION::set_mode_pane( const int mode ){ mode_pane = mode; }
 
 const bool SESSION::is_online(){ return mode_online; }
-void SESSION::set_online( bool mode ){ mode_online = mode; }
+void SESSION::set_online( const bool mode ){ mode_online = mode; }
 
 const bool SESSION::login2ch(){ return mode_login2ch; }
 void SESSION::set_login2ch( const bool login ){ mode_login2ch = login; }
@@ -625,141 +632,141 @@ void SESSION::set_loginp2( const bool login ){ mode_loginp2 = login; }
 const bool SESSION::show_sidebar(){ return win_show_sidebar; }
 
 const bool SESSION::show_menubar(){ return win_show_menubar; }
-void SESSION::set_show_menubar( bool show ){ win_show_menubar = show; }
+void SESSION::set_show_menubar( const bool show ){ win_show_menubar = show; }
 
 const int SESSION::toolbar_pos(){ return win_toolbar_pos; }
-void SESSION::set_toolbar_pos( int pos ){ win_toolbar_pos = pos; }
+void SESSION::set_toolbar_pos( const int pos ){ win_toolbar_pos = pos; }
 
 const bool SESSION::get_show_bbslist_toolbar(){ return show_bbslist_toolbar; }
-void SESSION::set_show_bbslist_toolbar( bool show ){ show_bbslist_toolbar = show; }
+void SESSION::set_show_bbslist_toolbar( const bool show ){ show_bbslist_toolbar = show; }
 
 const bool SESSION::get_show_board_toolbar(){ return show_board_toolbar; }
-void SESSION::set_show_board_toolbar( bool show ){ show_board_toolbar = show; }
+void SESSION::set_show_board_toolbar( const bool show ){ show_board_toolbar = show; }
 
 const bool SESSION::get_show_article_toolbar(){ return show_article_toolbar; }
-void SESSION::set_show_article_toolbar( bool show ){ show_article_toolbar = show; }
+void SESSION::set_show_article_toolbar( const bool show ){ show_article_toolbar = show; }
 
 const bool SESSION::get_show_board_tab(){ return show_board_tab; }
-void SESSION::set_show_board_tab( bool show ){ show_board_tab = show; }
+void SESSION::set_show_board_tab( const bool show ){ show_board_tab = show; }
 
 const bool SESSION::get_show_article_tab(){ return show_article_tab; }
-void SESSION::set_show_article_tab( bool show ){ show_article_tab = show; }
+void SESSION::set_show_article_tab( const bool show ){ show_article_tab = show; }
 
 const int SESSION::focused_admin(){ return win_focused_admin; }
-void SESSION::set_focused_admin( int admin ){ win_focused_admin = admin; }
-int SESSION::focused_admin_sidebar(){ return win_focused_admin_sidebar; }
-void SESSION::set_focused_admin_sidebar( int admin ){ win_focused_admin_sidebar = admin; }
+void SESSION::set_focused_admin( const int admin ){ win_focused_admin = admin; }
+const int SESSION::focused_admin_sidebar(){ return win_focused_admin_sidebar; }
+void SESSION::set_focused_admin_sidebar( const int admin ){ win_focused_admin_sidebar = admin; }
 
 
 // 各windowの座標
 const int SESSION::get_x_win_main(){ return x_win_main; }
 const int SESSION::get_y_win_main(){ return y_win_main; }
-void SESSION::set_x_win_main( int x ){ x_win_main = x; }
-void SESSION::set_y_win_main( int y ){ y_win_main = y; }
+void SESSION::set_x_win_main( const int x ){ x_win_main = x; }
+void SESSION::set_y_win_main( const int y ){ y_win_main = y; }
 
 const int SESSION::get_x_win_img(){ return x_win_img; }
 const int SESSION::get_y_win_img(){ return y_win_img; }
-void SESSION::set_x_win_img( int x ){ x_win_img = x; }
-void SESSION::set_y_win_img( int y ){ y_win_img = y; }
+void SESSION::set_x_win_img( const int x ){ x_win_img = x; }
+void SESSION::set_y_win_img( const int y ){ y_win_img = y; }
 
 const int SESSION::get_x_win_mes(){ return x_win_mes; }
 const int SESSION::get_y_win_mes(){ return y_win_mes; }
-void SESSION::set_x_win_mes( int x ){ x_win_mes = x; }
-void SESSION::set_y_win_mes( int y ){ y_win_mes = y; }
+void SESSION::set_x_win_mes( const int x ){ x_win_mes = x; }
+void SESSION::set_y_win_mes( const int y ){ y_win_mes = y; }
 
 
 // 各windowのサイズ
 const int SESSION::get_width_win_main(){ return width_win_main; }
 const int SESSION::get_height_win_main(){ return height_win_main; }
-void SESSION::set_width_win_main( int width ){ width_win_main = width; }
-void SESSION::set_height_win_main( int height ){ height_win_main = height; }
+void SESSION::set_width_win_main( const int width ){ width_win_main = width; }
+void SESSION::set_height_win_main( const int height ){ height_win_main = height; }
 
 const int SESSION::get_width_win_img(){ return width_win_img; }
 const int SESSION::get_height_win_img(){ return height_win_img; }
-void SESSION::set_width_win_img( int width ){ width_win_img = width; }
-void SESSION::set_height_win_img( int height ){ height_win_img = height; }
+void SESSION::set_width_win_img( const int width ){ width_win_img = width; }
+void SESSION::set_height_win_img( const int height ){ height_win_img = height; }
 
 const int SESSION::get_width_win_mes(){ return width_win_mes; }
 const int SESSION::get_height_win_mes(){ return height_win_mes; }
-void SESSION::set_width_win_mes( int width ){ width_win_mes = width; }
-void SESSION::set_height_win_mes( int height ){ height_win_mes = height; }
+void SESSION::set_width_win_mes( const int width ){ width_win_mes = width; }
+void SESSION::set_height_win_mes( const int height ){ height_win_mes = height; }
 
 
 // 各window がフォーカスされているか
 const bool SESSION::is_focus_win_main(){ return focus_win_main; }
-void SESSION::set_focus_win_main( bool set ){ focus_win_main = set; }
+void SESSION::set_focus_win_main( const bool set ){ focus_win_main = set; }
 
 const bool SESSION::is_focus_win_img(){ return focus_win_img; }
-void SESSION::set_focus_win_img( bool set ){ focus_win_img = set; }
+void SESSION::set_focus_win_img( const bool set ){ focus_win_img = set; }
 
 const bool SESSION::is_focus_win_mes(){ return focus_win_mes; }
-void SESSION::set_focus_win_mes( bool set ){ focus_win_mes = set; }
+void SESSION::set_focus_win_mes( const bool set ){ focus_win_mes = set; }
 
 
 // 各window が最大化されているか
 const bool SESSION::is_maximized_win_main(){ return maximized_win_main; }
-void SESSION::set_maximized_win_main( bool set ){ maximized_win_main = set; }
+void SESSION::set_maximized_win_main( const bool set ){ maximized_win_main = set; }
 
 const bool SESSION::is_maximized_win_img(){ return maximized_win_img; }
-void SESSION::set_maximized_win_img( bool set ){ maximized_win_img = set; }
+void SESSION::set_maximized_win_img( const bool set ){ maximized_win_img = set; }
 
 bool SESSION::is_maximized_win_mes(){ return maximized_win_mes; }
-void SESSION::set_maximized_win_mes( bool set ){ maximized_win_mes = set; }
+void SESSION::set_maximized_win_mes( const bool set ){ maximized_win_mes = set; }
 
 
 // 各window が最小化されているか
 const bool SESSION::is_iconified_win_main(){ return iconified_win_main; }
-void SESSION::set_iconified_win_main( bool set ){ iconified_win_main = set; }
+void SESSION::set_iconified_win_main( const bool set ){ iconified_win_main = set; }
 
 const bool SESSION::is_iconified_win_img(){ return iconified_win_img; }
-void SESSION::set_iconified_win_img( bool set ){ iconified_win_img = set; }
+void SESSION::set_iconified_win_img( const bool set ){ iconified_win_img = set; }
 
 const bool SESSION::is_iconified_win_mes(){ return iconified_win_mes; }
-void SESSION::set_iconified_win_mes( bool set ){ iconified_win_mes = set; }
+void SESSION::set_iconified_win_mes( const bool set ){ iconified_win_mes = set; }
 
 
 // 各window が画面に表示されているか
 const bool SESSION::is_shown_win_main(){ return shown_win_main; }
-void SESSION::set_shown_win_main( bool set ){ shown_win_main = set; }
+void SESSION::set_shown_win_main( const bool set ){ shown_win_main = set; }
 
 const bool SESSION::is_shown_win_img(){ return shown_win_img; }
-void SESSION::set_shown_win_img( bool set ){ shown_win_img = set; }
+void SESSION::set_shown_win_img( const bool set ){ shown_win_img = set; }
 
 const bool SESSION::is_shown_win_mes(){ return shown_win_mes; }
-void SESSION::set_shown_win_mes( bool set ){ shown_win_mes = set; }
+void SESSION::set_shown_win_mes( const bool set ){ shown_win_mes = set; }
 
 
 // ダイアログ表示中
 const bool SESSION::is_dialog_shown(){ return dialog_shown; }
-void SESSION::set_dialog_shown( bool set ){ dialog_shown = set; }
+void SESSION::set_dialog_shown( const bool set ){ dialog_shown = set; }
 
-void SESSION::set_show_sidebar( bool showurl ){ win_show_sidebar = showurl; }
+void SESSION::set_show_sidebar( const bool showurl ){ win_show_sidebar = showurl; }
 
 
 // メインウィンドウのペインの敷居の位置
-int SESSION::hpane_main_pos(){ return win_hpane_main_pos; }
-int SESSION::vpane_main_pos(){ return win_vpane_main_pos; }
-int SESSION::hpane_main_r_pos(){ return win_hpane_main_r_pos; }
-int SESSION::vpane_main_mes_pos(){ return win_vpane_main_mes_pos; }
+const int SESSION::hpane_main_pos(){ return win_hpane_main_pos; }
+const int SESSION::vpane_main_pos(){ return win_vpane_main_pos; }
+const int SESSION::hpane_main_r_pos(){ return win_hpane_main_r_pos; }
+const int SESSION::vpane_main_mes_pos(){ return win_vpane_main_mes_pos; }
 
-void SESSION::set_hpane_main_pos( int pos ){ win_hpane_main_pos = pos; }
-void SESSION::set_vpane_main_pos( int pos ){ win_vpane_main_pos = pos; }
-void SESSION::set_hpane_main_r_pos( int pos ){ win_hpane_main_r_pos = pos; }
-void SESSION::set_vpane_main_mes_pos( int pos ){ win_vpane_main_mes_pos = pos; }
+void SESSION::set_hpane_main_pos( const int pos ){ win_hpane_main_pos = pos; }
+void SESSION::set_vpane_main_pos( const int pos ){ win_vpane_main_pos = pos; }
+void SESSION::set_hpane_main_r_pos( const int pos ){ win_hpane_main_r_pos = pos; }
+void SESSION::set_vpane_main_mes_pos( const int pos ){ win_vpane_main_mes_pos = pos; }
 
 // メインnotebookのページ番号
-int SESSION::notebook_main_page(){ return win_notebook_main_page; }
-void SESSION::set_notebook_main_page( int page ){ win_notebook_main_page = page; }
+const int SESSION::notebook_main_page(){ return win_notebook_main_page; }
+void SESSION::set_notebook_main_page( const int page ){ win_notebook_main_page = page; }
 
 // bbslistの開いてるページ番号
-int SESSION::bbslist_page(){ return win_bbslist_page; }
-void SESSION::set_bbslist_page( int page ){ win_bbslist_page = page; }
+const int SESSION::bbslist_page(){ return win_bbslist_page; }
+void SESSION::set_bbslist_page( const int page ){ win_bbslist_page = page; }
 
 
 // 前回閉じたときに開いていたboardのページ番号とURL
-int SESSION::board_page(){ return win_board_page; }
-void SESSION::set_board_page( int page ){ win_board_page = page; }
-std::list< std::string >& SESSION::get_board_URLs(){ return board_urls; }
+const int SESSION::board_page(){ return win_board_page; }
+void SESSION::set_board_page( const int page ){ win_board_page = page; }
+const std::list< std::string >& SESSION::get_board_URLs(){ return board_urls; }
 void SESSION::set_board_URLs( const std::list< std::string >& urls ){ board_urls = urls; }
 
 // スレ一覧のロック状態
@@ -767,9 +774,9 @@ const std::list< bool >& SESSION::get_board_locked(){ return board_locked; }
 void SESSION::set_board_locked( const std::list< bool >& locked ){ board_locked = locked; }
 
 // 前回閉じたときに開いていたスレタブのページ番号とURL
-int SESSION::article_page(){ return win_article_page; }
-void SESSION::set_article_page( int page ){ win_article_page = page; }
-std::list< std::string >& SESSION::get_article_URLs(){ return article_urls; }
+const int SESSION::article_page(){ return win_article_page; }
+void SESSION::set_article_page( const int page ){ win_article_page = page; }
+const std::list< std::string >& SESSION::get_article_URLs(){ return article_urls; }
 void SESSION::set_article_URLs( const std::list< std::string >& urls ){ article_urls = urls; }
 
 // スレタブのロック状態
@@ -777,8 +784,8 @@ const std::list< bool >& SESSION::get_article_locked(){ return article_locked; }
 void SESSION::set_article_locked( const std::list< bool >& locked ){ article_locked = locked; }
 
 // 前回閉じたときに開いていたimageのページ番号とURL
-int SESSION::image_page(){ return win_image_page; }
-void SESSION::set_image_page( int page ){ win_image_page = page; }
+const int SESSION::image_page(){ return win_image_page; }
+void SESSION::set_image_page( const int page ){ win_image_page = page; }
 const std::list< std::string >& SESSION::image_URLs(){ return image_urls; }
 void SESSION::set_image_URLs( const std::list< std::string >& urls ){ image_urls = urls; }
 
@@ -842,15 +849,15 @@ const int SESSION::get_item_msg_toolbar( const int num ){ return items_msg_toolb
 
 
 // board ビューの列幅
-int SESSION::col_mark(){ return board_col_mark; }
-int SESSION::col_id(){ return board_col_id; }
-int SESSION::col_subject(){ return board_col_subject; }
-int SESSION::col_number(){ return board_col_number; }
-int SESSION::col_load(){ return board_col_load; }
-int SESSION::col_new(){ return board_col_new; }
-int SESSION::col_since(){ return board_col_since; }
-int SESSION::col_write(){ return board_col_write; }
-int SESSION::col_speed(){ return board_col_speed; }
+const int SESSION::col_mark(){ return board_col_mark; }
+const int SESSION::col_id(){ return board_col_id; }
+const int SESSION::col_subject(){ return board_col_subject; }
+const int SESSION::col_number(){ return board_col_number; }
+const int SESSION::col_load(){ return board_col_load; }
+const int SESSION::col_new(){ return board_col_new; }
+const int SESSION::col_since(){ return board_col_since; }
+const int SESSION::col_write(){ return board_col_write; }
+const int SESSION::col_speed(){ return board_col_speed; }
 
 
 // 現在開いている bbslist のページ
@@ -866,15 +873,15 @@ const std::string SESSION::get_bbslist_current_url()
 }
 
 
-void SESSION::set_col_mark( int width ){ board_col_mark = width; }
-void SESSION::set_col_id( int width ){ board_col_id = width; }
-void SESSION::set_col_subject( int width ){ board_col_subject = width; }
-void SESSION::set_col_number( int width ){ board_col_number = width; }
-void SESSION::set_col_load( int width ){ board_col_load = width; }
-void SESSION::set_col_new( int width ){ board_col_new = width; }
-void SESSION::set_col_since( int width ){ board_col_since = width; }
-void SESSION::set_col_write( int width ){ board_col_write = width; }
-void SESSION::set_col_speed( int width ){ board_col_speed = width; }
+void SESSION::set_col_mark( const int width ){ board_col_mark = width; }
+void SESSION::set_col_id( const int width ){ board_col_id = width; }
+void SESSION::set_col_subject( const int width ){ board_col_subject = width; }
+void SESSION::set_col_number( const int width ){ board_col_number = width; }
+void SESSION::set_col_load( const int width ){ board_col_load = width; }
+void SESSION::set_col_new( const int width ){ board_col_new = width; }
+void SESSION::set_col_since( const int width ){ board_col_since = width; }
+void SESSION::set_col_write( const int width ){ board_col_write = width; }
+void SESSION::set_col_speed( const int width ){ board_col_speed = width; }
 
 
 // 現在開いているarticle のurl
@@ -885,17 +892,17 @@ const std::string SESSION::get_article_current_url()
 
 
 // 埋め込みimage使用
-bool SESSION::get_embedded_img(){ return embedded_img; }
-void SESSION::set_embedded_img( bool set ){ embedded_img = set; }
+const bool SESSION::get_embedded_img(){ return embedded_img; }
+void SESSION::set_embedded_img( const bool set ){ embedded_img = set; }
 
 
 // 埋め込みmessageを使用
-bool SESSION::get_embedded_mes(){ return embedded_mes; }
-void SESSION::set_embedded_mes( bool set ){ embedded_mes = set; }
+const bool SESSION::get_embedded_mes(){ return embedded_mes; }
+void SESSION::set_embedded_mes( const bool set ){ embedded_mes = set; }
 
 // 書き込み後にmessageを閉じる
-bool SESSION::get_close_mes(){ return close_mes; }
-void SESSION::set_close_mes( bool set ){ close_mes = set; }
+const bool SESSION::get_close_mes(){ return close_mes; }
+void SESSION::set_close_mes( const bool set ){ close_mes = set; }
 
 
 // 最後にdatを読み書きしたディレクトリ
@@ -913,12 +920,12 @@ void SESSION::set_dir_draft( const std::string& dir ){ dir_draft = dir; }
 
 // ポップアップメニュー表示中
 const bool SESSION::is_popupmenu_shown(){ return popupmenu_shown; }
-void SESSION::set_popupmenu_shown( bool shown ){ popupmenu_shown = shown; }
+void SESSION::set_popupmenu_shown( const bool shown ){ popupmenu_shown = shown; }
 
 
 // JD終了時に削除するスレのリスト
 // 実況などしたスレは削除する。 Core::~Core()を参照
-std::vector< std::string >& SESSION::get_delete_list()
+const std::vector< std::string >& SESSION::get_delete_list()
 {
     return delete_list;
 }

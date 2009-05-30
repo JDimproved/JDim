@@ -48,10 +48,10 @@ namespace JDLIB
         void update( const std::string& name, const double value );
 
         // 値取得
-        std::string get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength = 0 );
-        bool get_option_bool( const std::string& name, const bool dflt );
-        int get_option_int( const std::string& name, const int dflt, const int min = 0, const int max = 1 );
-        double get_option_double( const std::string& name, const double dflt, const double min = 0, const double max = 1 );
+        const std::string get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength = 0 );
+        const bool get_option_bool( const std::string& name, const bool dflt );
+        const int get_option_int( const std::string& name, const int dflt, const int min = 0, const int max = 1 );
+        const double get_option_double( const std::string& name, const double dflt, const double min = 0, const double max = 1 );
     };
 }
 

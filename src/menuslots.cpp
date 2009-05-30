@@ -177,7 +177,7 @@ void Core::slot_toggle_toolbarpos( int pos )
     pack_widget( true );
 
     // 表示切り替え
-    if( SESSION::toolbar_pos() == pos ) pos = SESSION::TOOLBAR_NO;
+    if( SESSION::toolbar_pos() == pos ) pos = SESSION::TOOLBAR_POS_NOT;
     SESSION::set_toolbar_pos( pos );
 
     pack_widget( false );
@@ -350,8 +350,8 @@ void Core::slot_toggle_imgview( const int mode )
     else SESSION::set_embedded_img( false );
     pack_widget( false );
 
-    SESSION::set_focused_admin( SESSION::FOCUS_NO );
-    SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NO );
+    SESSION::set_focused_admin( SESSION::FOCUS_NOT );
+    SESSION::set_focused_admin_sidebar( SESSION::FOCUS_NOT );
     restore_focus( true, false );
 }
 

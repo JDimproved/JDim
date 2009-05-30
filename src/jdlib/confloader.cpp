@@ -138,7 +138,7 @@ void ConfLoader::update( const std::string& name, const double value )
 // string 型
 //
 // dflt はデフォルト値, デフォルト引数 maxlength = 0
-std::string ConfLoader::get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength )
+const std::string ConfLoader::get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength )
 {
     if( name.empty() ) return std::string();
 
@@ -167,7 +167,7 @@ std::string ConfLoader::get_option_str( const std::string& name, const std::stri
 //
 // bool型
 //
-bool ConfLoader::get_option_bool( const std::string& name, const bool dflt )
+const bool ConfLoader::get_option_bool( const std::string& name, const bool dflt )
 {
     std::string val_str = get_option_str( name, std::string() );
 
@@ -192,7 +192,7 @@ bool ConfLoader::get_option_bool( const std::string& name, const bool dflt )
 //
 // デフォルト引数 min = 0, max = 1
 //
-int ConfLoader::get_option_int( const std::string& name, const int dflt, const int min, const int max )
+const int ConfLoader::get_option_int( const std::string& name, const int dflt, const int min, const int max )
 {
     std::string val_str = get_option_str( name, std::string() );
 
@@ -218,7 +218,7 @@ int ConfLoader::get_option_int( const std::string& name, const int dflt, const i
 //
 // デフォルト引数 min = 0, max = 1
 //
-double ConfLoader::get_option_double( const std::string& name, const double dflt, const double min, const double max )
+const double ConfLoader::get_option_double( const std::string& name, const double dflt, const double min, const double max )
 {
     std::string val_str = get_option_str( name, std::string() );
 

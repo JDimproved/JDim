@@ -25,6 +25,7 @@
 #include "cache.h"
 #include "config/globalconf.h"
 #include "session.h"
+#include "boardcolumnsid.h"
 
 #include <sstream>
 #include <cstring>
@@ -1706,10 +1707,10 @@ void BoardBase::read_board_info()
     m_modified_localrule = cf.get_option_str( "modified_localrule", std::string() );
     m_modified_setting = cf.get_option_str( "modified_setting", std::string() );
 
-    m_view_sort_column = cf.get_option_int( "view_sort_column", -1, -2, 6 );
-    m_view_sort_mode = cf.get_option_int( "view_sort_mode", 0, 0, 4 );
-    m_view_sort_pre_column = cf.get_option_int( "view_sort_pre_column", -1, -2, 6 );
-    m_view_sort_pre_mode = cf.get_option_int( "view_sort_pre_mode", 0, 0, 4 );
+    m_view_sort_column = cf.get_option_int( "view_sort_column", -1, -1, COL_VISIBLE_END-1 );
+    m_view_sort_mode = cf.get_option_int( "view_sort_mode", SORTMODE_ASCEND, 0, SORTMODE_NUM -1 );
+    m_view_sort_pre_column = cf.get_option_int( "view_sort_pre_column", -1, -1, COL_VISIBLE_END-1 );
+    m_view_sort_pre_mode = cf.get_option_int( "view_sort_pre_mode", SORTMODE_ASCEND, 0, SORTMODE_NUM -1 );
 
     m_check_noname = cf.get_option_bool( "check_noname", false );
 
@@ -1744,20 +1745,20 @@ void BoardBase::read_board_info()
     if( ! str_tmp.empty() ) m_list_abone_regex_thread = MISC::strtolist( str_tmp );
 
     // レス数であぼーん
-    // Preferences::Preferences() m_spin_number.set_range( 0, 1001 );
+    // board::preferences.cpp :  m_spin_number.set_range( 0, 1001 );
     m_abone_number_thread = cf.get_option_int( "abonenumberthread", 0, 1001 );
 
     // スレ立てからの経過時間であぼーん
-    // Preferences::Preferences() m_spin_hour.set_range( 0, 1000 );
+    // board::preferences.cpp :  m_spin_hour.set_range( 0, 1000 );
     m_abone_hour_thread = cf.get_option_int( "abonehourthread", 0, 0, 9999 );
 
     // ローカルプロキシ
-    m_mode_local_proxy = cf.get_option_int( "mode_local_proxy", 0, 0, 2 );
+    m_mode_local_proxy = cf.get_option_int( "mode_local_proxy", PROXY_GLOBAL, 0, PROXY_NO -1 );
     str_tmp = cf.get_option_str( "local_proxy", "" );
     set_local_proxy( str_tmp );
     m_local_proxy_port = cf.get_option_int( "local_proxy_port", 8080, 1, 65535 );
  
-    m_mode_local_proxy_w = cf.get_option_int( "mode_local_proxy_w", 0, 0, 2 );
+    m_mode_local_proxy_w = cf.get_option_int( "mode_local_proxy_w", PROXY_GLOBAL, 0, PROXY_NO -1 );
     str_tmp = cf.get_option_str( "local_proxy_w", "" );
     set_local_proxy_w( str_tmp );
     m_local_proxy_port_w = cf.get_option_int( "local_proxy_port_w", 8080, 1, 65535 );
@@ -1776,7 +1777,7 @@ void BoardBase::read_board_info()
     m_last_access_time = cf.get_option_int( "last_access_time", 0, 0, 2147483647 );
 
     // ステータス
-    m_status = cf.get_option_int( "status", STATUS_UNKNOWN, 0, 16 );
+    m_status = cf.get_option_int( "status", STATUS_UNKNOWN, 0, 8192 );
 
 #ifdef _DEBUG
     std::cout << "modified = " << get_date_modified() << std::endl;

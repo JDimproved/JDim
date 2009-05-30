@@ -5,38 +5,12 @@
 #ifndef _BOARDCOLUMNS_H
 #define _BOARDCOLUMNS_H
 
+#include "boardcolumnsid.h"
+
 #include <gtkmm.h>
 
 namespace BOARD
 {
-    // 列ID
-    enum
-    {
-        COL_MARK = 0,
-        COL_ID,
-        COL_SUBJECT,
-        COL_RES,
-        COL_STR_LOAD,
-        COL_STR_NEW,
-        COL_SINCE,
-        COL_WRITE,
-        COL_SPEED,
-
-        COL_VISIBLE_END,
-            
-        // 以下は不可視
-        COL_MARK_VAL = COL_VISIBLE_END,
-        COL_DRAWBG,
-        COL_LOAD,
-        COL_NEW,
-        COL_SINCE_T,
-        COL_WRITE_T,
-        COL_ID_DAT,
-            
-        COL_NUM_COL
-    };
-
-
     // 列
     class TreeColumns : public Gtk::TreeModel::ColumnRecord
     {

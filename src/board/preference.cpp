@@ -252,7 +252,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_hbox_number.pack_start( m_label_number, Gtk::PACK_SHRINK );
 
     m_label_hour.set_text( "時間以上スレ立てから経過したスレをあぼ〜ん" );
-    m_spin_hour.set_range( 0, 1000 );
+    m_spin_hour.set_range( 0, 9999 );
     m_spin_hour.set_increments( 1, 1 );
     m_spin_hour.set_value( DBTREE::get_abone_hour_thread( get_url() ) );
             

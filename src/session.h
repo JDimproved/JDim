@@ -21,7 +21,9 @@ namespace SESSION
         FOCUS_ARTICLE,
         FOCUS_IMAGE,
         FOCUS_MESSAGE,
-        FOCUS_NO
+        FOCUS_NOT, // どこもフォーカスされていない
+
+        FOCUS_NUM
     };
 
     // ペーンモード
@@ -29,24 +31,38 @@ namespace SESSION
     {
         MODE_2PANE = 0,
         MODE_3PANE,
-        MODE_V3PANE
+        MODE_V3PANE,
+
+        MODE_PANE_NUM
     };
 
+    // メインウィンドウの右ペーンに表示中のnotebook
+    enum
+    {
+        PAGE_ARTICLE = 0,
+        PAGE_IMAGE,
+        PAGE_BOARD,
+
+        PAGE_NUM
+    };
 
     // ツールバーの位置
     enum
     {
-        TOOLBAR_NORMAL = 0,
-        TOOLBAR_RIGHT,
+        TOOLBAR_POS_NORMAL = 0, // メニューバーの下に表示
+        TOOLBAR_POS_RIGHT, // サイドバーの右に表示
+        TOOLBAR_POS_NOT, // 非表示
 
-        TOOLBAR_NO
+        TOOLBAR_POS_NUM
     };
 
     // 画像のfitモード
     enum
     {
         IMG_FIT_NORMAL = 0,  // 縦と横で小さい方をウィンドウに合わせる
-        IMG_FIT_WIDTH        // 常に横をウィンドウに合わせる
+        IMG_FIT_WIDTH,       // 常に横をウィンドウに合わせる
+
+        IMG_FIT_NUM
     };
 
     void init_session();
@@ -54,17 +70,17 @@ namespace SESSION
 
     // ブート中
     const bool is_booting();
-    void set_booting( bool boot );
+    void set_booting( const bool boot );
 
     // 終了中
     const bool is_quitting();
-    void set_quitting( bool quit );
+    void set_quitting( const bool quit );
 
     const int get_mode_pane();
-    void set_mode_pane( int mode );
+    void set_mode_pane( const int mode );
     
     const bool is_online();
-    void set_online( bool mode );
+    void set_online( const bool mode );
 
     // 2chログイン中
     const bool login2ch();
@@ -80,151 +96,151 @@ namespace SESSION
 
     // サイドバー表示中
     const bool show_sidebar();
-    void set_show_sidebar( bool showbar );
+    void set_show_sidebar( const bool showbar );
 
     // メニューバー
     const bool show_menubar();
-    void set_show_menubar( bool show );
+    void set_show_menubar( const bool show );
 
     // ツールバー位置
     const int toolbar_pos();
-    void set_toolbar_pos( int pos );
+    void set_toolbar_pos( const int pos );
 
     // 板一覧のツールバー表示
     const bool get_show_bbslist_toolbar();
-    void set_show_bbslist_toolbar( bool show );
+    void set_show_bbslist_toolbar( const bool show );
 
     // スレ一覧のツールバー表示
     const bool get_show_board_toolbar();
-    void set_show_board_toolbar( bool show );
+    void set_show_board_toolbar( const bool show );
 
     // スレビューのツールバー表示
     const bool get_show_article_toolbar();
-    void set_show_article_toolbar( bool show );
+    void set_show_article_toolbar( const bool show );
 
     // スレ一覧のタブ表示
     const bool get_show_board_tab();
-    void set_show_board_tab( bool show );
+    void set_show_board_tab( const bool show );
 
     // スレビューのタブ
     const bool get_show_article_tab();
-    void set_show_article_tab( bool show );
+    void set_show_article_tab( const bool show );
 
     // フォーカスされているadmin
     const int focused_admin();
-    void set_focused_admin( int admin );
+    void set_focused_admin( const int admin );
 
 
     // 各windowの座標
     const int get_x_win_main(); // メインウィンドウ
     const int get_y_win_main();
-    void set_x_win_main( int x );
-    void set_y_win_main( int y );
+    void set_x_win_main( const int x );
+    void set_y_win_main( const int y );
 
     const int get_x_win_img(); // 画像ウィンドウ
     const int get_y_win_img();
-    void set_x_win_img( int x );
-    void set_y_win_img( int y );
+    void set_x_win_img( const int x );
+    void set_y_win_img( const int y );
 
     const int get_x_win_mes(); // 書き込みウィンドウ
     const int get_y_win_mes();
-    void set_x_win_mes( int x );
-    void set_y_win_mes( int y );
+    void set_x_win_mes( const int x );
+    void set_y_win_mes( const int y );
 
 
     // 各windowのサイズ
     const int get_width_win_main(); // メインウィンドウ
     const int get_height_win_main();
-    void set_width_win_main( int width );
-    void set_height_win_main( int height );
+    void set_width_win_main( const int width );
+    void set_height_win_main( const int height );
 
     const int get_width_win_img(); // 画像ウィンドウ
     const int get_height_win_img();
-    void set_width_win_img( int width );
-    void set_height_win_img( int height );
+    void set_width_win_img( const int width );
+    void set_height_win_img( const int height );
 
     const int get_width_win_mes(); // 書き込みウィンドウ
     const int get_height_win_mes();
-    void set_width_win_mes( int width );
-    void set_height_win_mes( int height );
+    void set_width_win_mes( const int width );
+    void set_height_win_mes( const int height );
 
 
     // 各window がフォーカスされているか
     const bool is_focus_win_main(); // メインウィンドウ
-    void set_focus_win_main( bool set );
+    void set_focus_win_main( const bool set );
 
     const bool is_focus_win_img(); // 画像ウィンドウ
-    void set_focus_win_img( bool set );
+    void set_focus_win_img( const bool set );
 
     const bool is_focus_win_mes(); // 書き込みウィンドウ
-    void set_focus_win_mes( bool set );
+    void set_focus_win_mes( const bool set );
 
 
     // 各window が最大化されているか
     const bool is_maximized_win_main(); // メインウィンドウ
-    void set_maximized_win_main( bool maximized );
+    void set_maximized_win_main( const bool maximized );
 
     const bool is_maximized_win_img(); // 画像ウィンドウ
-    void set_maximized_win_img( bool set );
+    void set_maximized_win_img( const bool set );
 
     bool is_maximized_win_mes(); // 書き込みウィンドウ
-    void set_maximized_win_mes( bool maximized );
+    void set_maximized_win_mes( const bool maximized );
 
 
     // 各window が最小化されているか
     const bool is_iconified_win_main(); // メインウィンドウ
-    void set_iconified_win_main( bool set );
+    void set_iconified_win_main( const bool set );
 
     const bool is_iconified_win_img(); // 画像ウィンドウ
-    void set_iconified_win_img( bool set );
+    void set_iconified_win_img( const bool set );
 
     const bool is_iconified_win_mes(); // 書き込みウィンドウ
-    void set_iconified_win_mes( bool set );
+    void set_iconified_win_mes( const bool set );
 
 
     // 各window が画面に表示されているか
     const bool is_shown_win_main(); // メインウィンドウ
-    void set_shown_win_main( bool set );
+    void set_shown_win_main( const bool set );
 
     const bool is_shown_win_img(); // 画像ウィンドウ
-    void set_shown_win_img( bool set );
+    void set_shown_win_img( const bool set );
 
     const bool is_shown_win_mes(); // 書き込みウィンドウ
-    void set_shown_win_mes( bool set );
+    void set_shown_win_mes( const bool set );
 
 
 
     // ダイアログ表示中
     const bool is_dialog_shown();
-    void set_dialog_shown( bool set );
+    void set_dialog_shown( const bool set );
 
     // サイドバーを閉じる前にフォーカスされていたadmin
-    int focused_admin_sidebar();
-    void set_focused_admin_sidebar( int admin );
+    const int focused_admin_sidebar();
+    void set_focused_admin_sidebar( const int admin );
 
     /// メインウィンドウのペインの敷居の位置
-    int hpane_main_pos();
-    int vpane_main_pos();
-    int hpane_main_r_pos();
-    int vpane_main_mes_pos();
-    void set_hpane_main_pos( int pos );
-    void set_vpane_main_pos( int pos );
-    void set_hpane_main_r_pos( int pos );
-    void set_vpane_main_mes_pos( int pos );
+    const int hpane_main_pos();
+    const int vpane_main_pos();
+    const int hpane_main_r_pos();
+    const int vpane_main_mes_pos();
+    void set_hpane_main_pos( const int pos );
+    void set_vpane_main_pos( const int pos );
+    void set_hpane_main_r_pos( const int pos );
+    void set_vpane_main_mes_pos( const int pos );
 
     // 前回閉じたときに開いていたメインnotebookのページ番号
-    int notebook_main_page();
-    void set_notebook_main_page( int page );
+    const int notebook_main_page();
+    void set_notebook_main_page( const int page );
 
     // 前回閉じたときに開いていたbbslistの開いてるページ番号
-    int bbslist_page();
-    void set_bbslist_page( int page );
+    const int bbslist_page();
+    void set_bbslist_page( const int page );
 
 
     // 前回閉じたときに開いていたスレ一覧のページ番号とURL
-    int board_page();
-    void set_board_page( int page );
-    std::list< std::string >& get_board_URLs();
+    const int board_page();
+    void set_board_page( const int page );
+    const std::list< std::string >& get_board_URLs();
     void set_board_URLs( const std::list< std::string >& urls );
 
     // スレ一覧のロック状態
@@ -232,9 +248,9 @@ namespace SESSION
     void set_board_locked( const std::list< bool >& locked );
 
     // 前回閉じたときに開いていたスレタブのページ番号とURL
-    int article_page();
-    void set_article_page( int page );
-    std::list< std::string >& get_article_URLs();
+    const int article_page();
+    void set_article_page( const int page );
+    const std::list< std::string >& get_article_URLs();
     void set_article_URLs( const std::list< std::string >& urls );
 
     // スレタブのロック状態
@@ -242,8 +258,8 @@ namespace SESSION
     void set_article_locked( const std::list< bool >& locked );
 
     // 前回閉じたときに開いていたimageのページ番号とURL
-    int image_page();
-    void set_image_page( int page );
+    const int image_page();
+    void set_image_page( const int page );
     const std::list< std::string >& image_URLs();
     void set_image_URLs( const std::list< std::string >& urls );
 
@@ -288,24 +304,24 @@ namespace SESSION
     const int get_item_msg_toolbar( const int num );
 
     // スレ一覧の列幅
-    int col_mark();
-    int col_id();
-    int col_subject();
-    int col_number();
-    int col_load();
-    int col_new();
-    int col_since();
-    int col_write();
-    int col_speed();
-    void set_col_mark( int width );
-    void set_col_id( int width );
-    void set_col_subject( int width );
-    void set_col_number( int width );
-    void set_col_load( int width );
-    void set_col_new( int width );
-    void set_col_since( int width );
-    void set_col_write( int width );
-    void set_col_speed( int width );
+    const int col_mark();
+    const int col_id();
+    const int col_subject();
+    const int col_number();
+    const int col_load();
+    const int col_new();
+    const int col_since();
+    const int col_write();
+    const int col_speed();
+    void set_col_mark( const int width );
+    void set_col_id( const int width );
+    void set_col_subject( const int width );
+    void set_col_number( const int width );
+    void set_col_load( const int width );
+    void set_col_new( const int width );
+    void set_col_since( const int width );
+    void set_col_write( const int width );
+    void set_col_speed( const int width );
 
 
     // 現在開いているarticle のurl
@@ -313,17 +329,17 @@ namespace SESSION
 
 
     // 埋め込みimage使用
-    bool get_embedded_img();
-    void set_embedded_img( bool set );
+    const bool get_embedded_img();
+    void set_embedded_img( const bool set );
 
 
     // 埋め込みmessageを使用
-    bool get_embedded_mes();
-    void set_embedded_mes( bool set );
+    const bool get_embedded_mes();
+    void set_embedded_mes( const bool set );
 
     // 書き込み後にmessageを閉じる
-    bool get_close_mes();
-    void set_close_mes( bool set );
+    const bool get_close_mes();
+    void set_close_mes( const bool set );
 
 
     // 最後にdatを読み書きしたディレクトリ
@@ -340,10 +356,10 @@ namespace SESSION
 
     // ポップアップメニュー表示中
     const bool is_popupmenu_shown();
-    void set_popupmenu_shown( bool shown );
+    void set_popupmenu_shown( const bool shown );
 
     // JD終了時に削除するスレのリスト
-    std::vector< std::string >& get_delete_list();
+    const std::vector< std::string >& get_delete_list();
     void append_delete_list( const std::string& url );
     void remove_delete_list( const std::string& url );
 

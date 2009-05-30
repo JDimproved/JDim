@@ -25,17 +25,6 @@ namespace DBTREE
 namespace BOARD
 {
 
-    enum
-    {
-        SORTMODE_ASCEND = 0,
-        SORTMODE_DESCEND,
-
-        SORTMODE_MARK1, // 通常
-        SORTMODE_MARK2, // 新着をキャッシュの上に。後は通常
-        SORTMODE_MARK3  // 反転
-    };
-
-
     class BoardViewBase : public SKELETON::View
     {
         // viewに表示するboardのURL ( SKELETON::View::m_url はview自身のURLなのに注意すること )

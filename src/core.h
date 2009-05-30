@@ -192,11 +192,11 @@ namespace CORE
         void set_sensitive_view_button();
         void toggle_maximize_rightpane();
 
-        void switch_article( bool present );
-        void switch_board( bool present );
-        void switch_sidebar( const std::string& url, bool present );
-        void switch_image( bool present );
-        void switch_message( bool present );
+        void switch_article( const bool present );
+        void switch_board( const bool present );
+        void switch_sidebar( const std::string& url, const bool present );
+        void switch_image( const bool present );
+        void switch_message( const bool present );
 
         void toggle_article();
         void switch_leftview();

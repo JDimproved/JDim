@@ -107,11 +107,11 @@ void ArticleAdmin::restore( const bool only_locked )
     const bool online = SESSION::is_online();
     SESSION::set_online( false );
 
-    std::list< std::string >& list_url = SESSION::get_article_URLs();
-    std::list< std::string >::iterator it_url = list_url.begin();
+    const std::list< std::string >& list_url = SESSION::get_article_URLs();
+    std::list< std::string >::const_iterator it_url = list_url.begin();
 
-    std::list< bool > list_locked = SESSION::get_article_locked();
-    std::list< bool >::iterator it_locked = list_locked.begin();
+    const std::list< bool >& list_locked = SESSION::get_article_locked();
+    std::list< bool >::const_iterator it_locked = list_locked.begin();
 
     for( int page = 0; it_url != list_url.end(); ++it_url, ++page ){
 
