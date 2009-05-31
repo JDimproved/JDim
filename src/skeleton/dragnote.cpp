@@ -680,12 +680,24 @@ void DragableNoteBook::slot_leave_event()
 bool DragableNoteBook::slot_scroll_event( GdkEventScroll* event )
 {
 #ifdef _DEBUG
-    std::cout << "DragableNoteBook::slot_scroll_event\n";
+    std::cout << "DragableNoteBook::slot_scroll_event direction = " << event->direction << " page = " << get_current_page() << std::endl;
 #endif
+
+    bool ret = false;
+
+    // タブの循環
+    if( event->direction == GDK_SCROLL_UP && get_current_page() == 0 ){
+        set_current_page( get_n_pages() -1 );
+        ret = true;
+    }
+    else if( event->direction == GDK_SCROLL_DOWN && get_current_page() == get_n_pages() -1 ){
+        set_current_page( 0 );
+        ret = true;
+    }
 
     m_sig_tab_scrolled.emit( event );
 
-    return true;
+    return ret;
 }
 
 

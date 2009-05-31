@@ -788,7 +788,7 @@ bool TabNotebook::on_scroll_event( GdkEventScroll* event )
     std::cout << "TabNotebook::scroll\n";
 #endif
 
-    m_sig_scroll_event.emit( event );
+    if( m_sig_scroll_event.emit( event ) ) return true;
 
     return Gtk::Notebook::on_scroll_event( event );
 }
