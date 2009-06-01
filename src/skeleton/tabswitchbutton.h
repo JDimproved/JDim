@@ -20,6 +20,7 @@ namespace SKELETON
     {
         DragableNoteBook* m_parent;
 
+        Gtk::VBox m_vbox;
         Gtk::Button m_button;
         Gtk::Arrow m_arrow;
 
