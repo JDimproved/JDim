@@ -173,10 +173,13 @@ const bool ConfLoader::get_option_bool( const std::string& name, const bool dflt
 
     if( val_str.empty() ) return dflt;
 
+    if( val_str == "1" ) return true;
+    if( val_str == "0" ) return false;
+
     val_str = MISC::toupper_str( val_str );
 
-    if( val_str == "1" || val_str == "TRUE" || val_str == "T" ) return true;
-    if( val_str == "0" || val_str == "FALSE" || val_str == "F" ) return false;
+    if( val_str == "TRUE" || val_str == "T" ) return true;
+    if( val_str == "FALSE" || val_str == "F" ) return false;
 
     m_broken = true;
 
@@ -189,8 +192,6 @@ const bool ConfLoader::get_option_bool( const std::string& name, const bool dflt
 
 //
 // int 型
-//
-// デフォルト引数 min = 0, max = 1
 //
 const int ConfLoader::get_option_int( const std::string& name, const int dflt, const int min, const int max )
 {
@@ -215,8 +216,6 @@ const int ConfLoader::get_option_int( const std::string& name, const int dflt, c
 
 //
 // double 型
-//
-// デフォルト引数 min = 0, max = 1
 //
 const double ConfLoader::get_option_double( const std::string& name, const double dflt, const double min, const double max )
 {

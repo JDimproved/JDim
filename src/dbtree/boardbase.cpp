@@ -1745,20 +1745,18 @@ void BoardBase::read_board_info()
     if( ! str_tmp.empty() ) m_list_abone_regex_thread = MISC::strtolist( str_tmp );
 
     // レス数であぼーん
-    // board::preferences.cpp :  m_spin_number.set_range( 0, 1001 );
-    m_abone_number_thread = cf.get_option_int( "abonenumberthread", 0, 1001 );
+    m_abone_number_thread = cf.get_option_int( "abonenumberthread", 0, 0, 9999 );
 
     // スレ立てからの経過時間であぼーん
-    // board::preferences.cpp :  m_spin_hour.set_range( 0, 1000 );
     m_abone_hour_thread = cf.get_option_int( "abonehourthread", 0, 0, 9999 );
 
     // ローカルプロキシ
-    m_mode_local_proxy = cf.get_option_int( "mode_local_proxy", PROXY_GLOBAL, 0, PROXY_NO -1 );
+    m_mode_local_proxy = cf.get_option_int( "mode_local_proxy", PROXY_GLOBAL, 0, PROXY_NUM -1 );
     str_tmp = cf.get_option_str( "local_proxy", "" );
     set_local_proxy( str_tmp );
     m_local_proxy_port = cf.get_option_int( "local_proxy_port", 8080, 1, 65535 );
  
-    m_mode_local_proxy_w = cf.get_option_int( "mode_local_proxy_w", PROXY_GLOBAL, 0, PROXY_NO -1 );
+    m_mode_local_proxy_w = cf.get_option_int( "mode_local_proxy_w", PROXY_GLOBAL, 0, PROXY_NUM -1 );
     str_tmp = cf.get_option_str( "local_proxy_w", "" );
     set_local_proxy_w( str_tmp );
     m_local_proxy_port_w = cf.get_option_int( "local_proxy_port_w", 8080, 1, 65535 );
@@ -1768,7 +1766,7 @@ void BoardBase::read_board_info()
     m_write_mail = cf.get_option_str( "write_mail", "" );
 
     // samba24
-    m_samba_sec = cf.get_option_int( "samba_sec", 0, 65535 );
+    m_samba_sec = cf.get_option_int( "samba_sec", 0, 0, 65535 );
 
     // 実況の秒数
     m_live_sec = cf.get_option_int( "live_sec", 0, 0, 65535 );

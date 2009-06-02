@@ -243,7 +243,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_label_abone_thread.set_text( "以下の数字が0の時は、設定メニューの全体あぼ〜ん設定で指定した数字が用いられます。\nまたキャッシュにログがあるスレはあぼ〜んされません。\n\n" );
 
     m_label_number.set_text( "レス以上のスレをあぼ〜ん" );
-    m_spin_number.set_range( 0, 1001 );
+    m_spin_number.set_range( 0, 9999 );
     m_spin_number.set_increments( 1, 1 );
     m_spin_number.set_value( DBTREE::get_abone_number_thread( get_url() ) );
             

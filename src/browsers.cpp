@@ -19,15 +19,17 @@ namespace CORE
         { "opera 9.*",    "opera -remote \"openURL(%LINK,new-tab)\"" }
     };
 
-    std::string get_browser_label( int num ){
+    const std::string& get_browser_label( const int num ){
 
         if( num >= BROWSER_NUM ) return std::string();
         return browsers[ num ][ 0 ];
     }
 
-    std::string get_browser_name( int num ){
+    const std::string& get_browser_name( const int num ){
 
         if( num >= BROWSER_NUM ) return std::string();
         return browsers[ num ][ 1 ];
     }
+
+    const int get_browser_number(){ return BROWSER_NUM; }
 }

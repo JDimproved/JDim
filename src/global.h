@@ -156,8 +156,10 @@ enum
 // 実況スクロールモード
 enum
 {
-    LIVE_SCRMODE_VARIABLE = 0,
-    LIVE_SCRMODE_STEADY
+    LIVE_SCRMODE_VARIABLE = 0,  // 速度可変、速度がしきい値を越えると行単位でスクロール
+    LIVE_SCRMODE_STEADY, // 速度一定、遅れがしきい値を越えると行単位でスクロール
+
+    LIVE_SCRMODE_NUM
 };
 
 

@@ -9,9 +9,11 @@
 
 namespace CORE
 {
-    std::string get_browser_label( int num );
+    const std::string& get_browser_label( const int num );
 
-    std::string get_browser_name( int num );
+    const std::string& get_browser_name( const int num );
+
+    const int get_browser_number();
 }
 
 

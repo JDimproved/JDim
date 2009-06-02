@@ -26,7 +26,7 @@ namespace DBTREE
         PROXY_DISABLE, // 全体設定無効
         PROXY_LOCAL,     // ローカル設定使用
 
-        PROXY_NO
+        PROXY_NUM
     };
 
     class Root;

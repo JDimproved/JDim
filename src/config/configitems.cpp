@@ -100,12 +100,12 @@ const bool ConfigItems::load( const bool restore )
     set_colors( cf );
 
     // 前回開いたviewを復元するか
-    restore_board = cf.get_option_int( "restore_board", CONF_RESTORE_BOARD );
-    restore_article = cf.get_option_int( "restore_article", CONF_RESTORE_ARTICLE );
-    restore_image = cf.get_option_int( "restore_image", CONF_RESTORE_IMAGE );
+    restore_board = cf.get_option_bool( "restore_board", CONF_RESTORE_BOARD );
+    restore_article = cf.get_option_bool( "restore_article", CONF_RESTORE_ARTICLE );
+    restore_image = cf.get_option_bool( "restore_image", CONF_RESTORE_IMAGE );
 
     // 自前でウィンドウ配置を管理する
-    manage_winpos = cf.get_option_int( "manage_winpos", CONF_MANAGE_WINPOS );
+    manage_winpos = cf.get_option_bool( "manage_winpos", CONF_MANAGE_WINPOS );
 
     // フォント
     set_fonts( cf );
@@ -122,19 +122,19 @@ const bool ConfigItems::load( const bool restore )
     path_cacheroot = cf.get_option_str( "path_cacheroot", CONF_PATH_CACHEROOT );
 
     // 読み込み用プロクシとポート番号
-    use_proxy_for2ch = cf.get_option_int( "use_proxy_for2ch", CONF_USE_PROXY_FOR2CH );
+    use_proxy_for2ch = cf.get_option_bool( "use_proxy_for2ch", CONF_USE_PROXY_FOR2CH );
     str_tmp = cf.get_option_str( "proxy_for2ch", "" );
     set_proxy_for2ch( str_tmp );
     proxy_port_for2ch = cf.get_option_int( "proxy_port_for2ch", CONF_PROXY_PORT_FOR2CH, 1, 65535 );
 
     // 書き込み用プロクシとポート番号
-    use_proxy_for2ch_w = cf.get_option_int( "use_proxy_for2ch_w", CONF_USE_PROXY_FOR2CH_W );
+    use_proxy_for2ch_w = cf.get_option_bool( "use_proxy_for2ch_w", CONF_USE_PROXY_FOR2CH_W );
     str_tmp = cf.get_option_str( "proxy_for2ch_w", "" );
     set_proxy_for2ch_w( str_tmp );
     proxy_port_for2ch_w = cf.get_option_int( "proxy_port_for2ch_w", CONF_PROXY_PORT_FOR2CH_W, 1, 65535 );
 
     // 2chの外にアクセスするときのプロクシとポート番号
-    use_proxy_for_data = cf.get_option_int( "use_proxy_for_data", CONF_USE_PROXY_FOR_DATA );
+    use_proxy_for_data = cf.get_option_bool( "use_proxy_for_data", CONF_USE_PROXY_FOR_DATA );
     str_tmp = cf.get_option_str( "proxy_for_data", "" );
     set_proxy_for_data( str_tmp );
     proxy_port_for_data = cf.get_option_int( "proxy_port_for_data", CONF_PROXY_PORT_FOR_DATA, 1, 65535 );
@@ -149,31 +149,31 @@ const bool ConfigItems::load( const bool restore )
     x_2ch_ua = cf.get_option_str( "x_2ch_ua", CONF_X_2CH_UA );
 
     // ローダのバッファサイズ
-    loader_bufsize = cf.get_option_int( "loader_bufsize", CONF_LOADER_BUFSIZE, 32, 1024 );
+    loader_bufsize = cf.get_option_int( "loader_bufsize", CONF_LOADER_BUFSIZE, 8, 4096 );
 
     // ローダのタイムアウト値
-    loader_timeout = cf.get_option_int( "loader_timeout", CONF_LOADER_TIMEOUT, 1, 1024 );
-    loader_timeout_post = cf.get_option_int( "loader_timeout_post", CONF_LOADER_TIMEOUT_POST, 1, 1024 ); // ポスト
-    loader_timeout_img = cf.get_option_int( "loader_timeout_img", CONF_LOADER_TIMEOUT_IMG, 1, 1024 ); // 画像
-    loader_timeout_checkupdate = cf.get_option_int( "loader_timeout_checkupdate", CONF_LOADER_TIMEOUT_CHECKUPDATE, 1, 1024 ); // 更新チェック
+    loader_timeout = cf.get_option_int( "loader_timeout", CONF_LOADER_TIMEOUT, 1, 120 );
+    loader_timeout_post = cf.get_option_int( "loader_timeout_post", CONF_LOADER_TIMEOUT_POST, 1, 120  ); // ポスト
+    loader_timeout_img = cf.get_option_int( "loader_timeout_img", CONF_LOADER_TIMEOUT_IMG, 1, 120 ); // 画像
+    loader_timeout_checkupdate = cf.get_option_int( "loader_timeout_checkupdate", CONF_LOADER_TIMEOUT_CHECKUPDATE, 1, 120 ); // 更新チェック
 
     // ipv6使用
-    use_ipv6 = cf.get_option_int( "use_ipv6", CONF_USE_IPV6 );
+    use_ipv6 = cf.get_option_bool( "use_ipv6", CONF_USE_IPV6 );
 
     // ブラウザ設定ダイアログのコンボボックスの番号
-    browsercombo_id = cf.get_option_int( "browsercombo_id", CONF_BROWSER_NO, 0, 4 );
+    browsercombo_id = cf.get_option_int( "browsercombo_id", CONF_BROWSER_NO, 0, CORE::get_browser_number() -1 );
 
     // リンクをクリックしたときに実行するコマンド
     command_openurl = cf.get_option_str( "command_openurl", CORE::get_browser_name( CONF_BROWSER_NO ) );
 
     // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
-    refpopup_by_mo = cf.get_option_int( "refpopup_by_mo", CONF_REFPOPUP_BY_MO );
+    refpopup_by_mo = cf.get_option_bool( "refpopup_by_mo", CONF_REFPOPUP_BY_MO );
 
     // 名前の上にマウスオーバーしたときにポップアップ表示する
-    namepopup_by_mo = cf.get_option_int( "namepopup_by_mo", CONF_NAMEPOPUP_BY_MO );
+    namepopup_by_mo = cf.get_option_bool( "namepopup_by_mo", CONF_NAMEPOPUP_BY_MO );
 
     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
-    idpopup_by_mo = cf.get_option_int( "idpopup_by_mo", CONF_IDPOPUP_BY_MO );
+    idpopup_by_mo = cf.get_option_bool( "idpopup_by_mo", CONF_IDPOPUP_BY_MO );
 
     // 画像のスムージングレベル(0-2, 2が最も高画質かつ低速)
     imgemb_interp = cf.get_option_int( "imgemb_interp", CONF_IMGEMB_INTERP, 0, 2 );
@@ -181,29 +181,29 @@ const bool ConfigItems::load( const bool restore )
     imgpopup_interp = cf.get_option_int( "imgpopup_interp", CONF_IMGPOPUP_INTERP, 0, 2 );
 
     // 画像ポップアップサイズ
-    imgpopup_width = cf.get_option_int( "imgpopup_width", CONF_IMGPOPUP_WIDTH, 16, 4096 );
-    imgpopup_height = cf.get_option_int( "imgpopup_height", CONF_IMGPOPUP_HEIGHT, 16, 4096 );
+    imgpopup_width = cf.get_option_int( "imgpopup_width", CONF_IMGPOPUP_WIDTH, 16, 8192 );
+    imgpopup_height = cf.get_option_int( "imgpopup_height", CONF_IMGPOPUP_HEIGHT, 16, 8192 );
 
     // 画像ポップアップを使用する
-    use_image_popup = cf.get_option_int( "use_image_popup", CONF_USE_IMAGE_POPUP );
+    use_image_popup = cf.get_option_bool( "use_image_popup", CONF_USE_IMAGE_POPUP );
 
     // 画像ビューを使用する
-    use_image_view = cf.get_option_int( "use_image_view", CONF_USE_IMAGE_VIEW );
+    use_image_view = cf.get_option_bool( "use_image_view", CONF_USE_IMAGE_VIEW );
 
     // インライン画像を表示する
-    use_inline_image = cf.get_option_int( "use_inline_image", CONF_INLINE_IMG );
+    use_inline_image = cf.get_option_bool( "use_inline_image", CONF_INLINE_IMG );
 
     // ssspアイコン表示
-    show_ssspicon = cf.get_option_int( "show_ssspicon", CONF_SHOW_SSSPICON );
+    show_ssspicon = cf.get_option_bool( "show_ssspicon", CONF_SHOW_SSSPICON );
 
     // 画像にモザイクをかける
-    use_mosaic = cf.get_option_int( "use_mosaic", CONF_USE_MOSAIC );
+    use_mosaic = cf.get_option_bool( "use_mosaic", CONF_USE_MOSAIC );
 
     // モザイクの大きさ
     mosaic_size = cf.get_option_int( "mosaic_size", CONF_MOSAIC_SIZE, 1, 1024 );
 
     // 画像をデフォルトでウィンドウサイズに合わせる
-    zoom_to_fit = cf.get_option_int( "zoom_to_fit", CONF_ZOOM_TO_FIT );
+    zoom_to_fit = cf.get_option_bool( "zoom_to_fit", CONF_ZOOM_TO_FIT );
 
     // 画像キャッシュ削除の日数
     del_img_day = cf.get_option_int( "del_img_day", CONF_DEL_IMG_DAY, 1, 65535 );
@@ -230,10 +230,10 @@ const bool ConfigItems::load( const bool restore )
     url_bbsmenu = cf.get_option_str( "url_bbsmenu", CONF_URL_BBSMENU );
 
     // bbsmenu.html内にあるリンクは全て板とみなす
-    use_link_as_board = cf.get_option_int( "use_link_as_board", CONF_USE_LINK_AS_BOARD );
+    use_link_as_board = cf.get_option_bool( "use_link_as_board", CONF_USE_LINK_AS_BOARD );
 
     // 板移転時に確認ダイアログを表示する
-    show_movediag = cf.get_option_int( "show_movediag", CONF_SHOW_MOVEDIAG );
+    show_movediag = cf.get_option_bool( "show_movediag", CONF_SHOW_MOVEDIAG );
 
     // スレタイ検索用メニュータイトルアドレス
     menu_search_title = cf.get_option_str( "menu_search_title", CONF_MENU_SEARCH_TITLE );
@@ -251,26 +251,25 @@ const bool ConfigItems::load( const bool restore )
     url_search_web = cf.get_option_str( "url_search_web", CONF_URL_SEARCH_WEB );
 
     // ツリービューでgtkrcの設定を使用するか
-    use_tree_gtkrc = cf.get_option_int( "use_tree_gtkrc", CONF_USE_TREE_GTKRC );
+    use_tree_gtkrc = cf.get_option_bool( "use_tree_gtkrc", CONF_USE_TREE_GTKRC );
 
     // ツリービューの行間スペース
     tree_ypad = cf.get_option_int( "tree_ypad", CONF_TREE_YPAD, 0, 64 );
 
     // 各ビューと枠との間の余白
     view_margin = cf.get_option_int( "view_margin", CONF_VIEW_MARGIN, 0, 64 );
-    view_margin = MIN( CONF_VIEW_MARGIN_MAX, MAX( 0, CONF_VIEW_MARGIN ) );
 
     // スレ一覧で古いスレも表示
-    show_oldarticle = cf.get_option_int( "show_oldarticle", CONF_SHOW_OLDARTICLE );
+    show_oldarticle = cf.get_option_bool( "show_oldarticle", CONF_SHOW_OLDARTICLE );
 
     // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
     newthread_hour = cf.get_option_int( "newthread_hour", CONF_NEWTHREAD_HOUR, 1, 65535 );
 
     // スレ一覧でインクリメント検索をする
-    inc_search_board = cf.get_option_int( "inc_search_board", CONF_INC_SEARCH_BOARD );
+    inc_search_board = cf.get_option_bool( "inc_search_board", CONF_INC_SEARCH_BOARD );
 
     // スレ一覧でdeleteを押したときに確認ダイアログを表示する
-    show_deldiag = cf.get_option_int( "show_deldiag", CONF_SHOW_DELDIAG );
+    show_deldiag = cf.get_option_bool( "show_deldiag", CONF_SHOW_DELDIAG );
 
     // ツリービューのスクロール量(行数)
     tree_scroll_size = cf.get_option_int( "tree_scroll_size", CONF_TREE_SCROLL_SIZE, 1, 64 );
@@ -285,13 +284,13 @@ const bool ConfigItems::load( const bool restore )
     key_fastscroll_size = cf.get_option_int( "key_fastscroll_size", CONF_KEY_FASTSCROLL_SIZE, 1, 64 );
 
     // スレビューでリロード後に一番下までスクロール
-    jump_after_reload = cf.get_option_int( "jump_after_reload", CONF_JUMP_AFTER_RELOAD );
+    jump_after_reload = cf.get_option_bool( "jump_after_reload", CONF_JUMP_AFTER_RELOAD );
 
     // スレビューでリロード後に新着までスクロール
-    jump_new_after_reload = cf.get_option_int( "jump_new_after_reload", CONF_JUMP_NEW_AFTER_RELOAD );
+    jump_new_after_reload = cf.get_option_bool( "jump_new_after_reload", CONF_JUMP_NEW_AFTER_RELOAD );
 
     // 実況モード
-    live_mode = cf.get_option_int( "live_mode", LIVE_SCRMODE_VARIABLE );
+    live_mode = cf.get_option_int( "live_mode", LIVE_SCRMODE_VARIABLE, 0, LIVE_SCRMODE_NUM -1 );
 
     // 実況速度
     live_speed = cf.get_option_int( "live_speed", CONF_LIVE_SPEED, 1, 1024 );
@@ -300,28 +299,28 @@ const bool ConfigItems::load( const bool restore )
     live_threshold = cf.get_option_int( "live_threshold", CONF_LIVE_THRESHOLD, 1, 1024 );
 
     // 板一覧でカテゴリを常にひとつだけ開く
-    open_one_category = cf.get_option_int( "open_one_category", CONF_OPEN_ONE_CATEGORY );
+    open_one_category = cf.get_option_bool( "open_one_category", CONF_OPEN_ONE_CATEGORY );
 
     // お気に入りでカテゴリを常にひとつだけ開く
-    open_one_favorite = cf.get_option_int( "open_one_favorite", CONF_OPEN_ONE_FAVORITE );
+    open_one_favorite = cf.get_option_bool( "open_one_favorite", CONF_OPEN_ONE_FAVORITE );
 
     // 書き込み時に書き込み確認ダイアログを出さない
-    always_write_ok = cf.get_option_int( "always_write_ok", CONF_ALWAYS_WRITE_OK );
+    always_write_ok = cf.get_option_bool( "always_write_ok", CONF_ALWAYS_WRITE_OK );
 
     // 書き込みログを保存
-    save_postlog = cf.get_option_int( "save_postlog", CONF_SAVE_POSTLOG );
+    save_postlog = cf.get_option_bool( "save_postlog", CONF_SAVE_POSTLOG );
 
     // 書き込みログの最大サイズ
     maxsize_postlog = cf.get_option_int( "maxsize_postlog", CONF_MAXSIZE_POSTLOG, 1024, 1024 * 1024 );
 
     // 書き込み履歴を保存
-    save_posthist = cf.get_option_int( "save_posthist", CONF_SAVE_POSTHIST );
+    save_posthist = cf.get_option_bool( "save_posthist", CONF_SAVE_POSTHIST );
 
     // 「書き込み中」のダイアログを表示しない
-    hide_writing_dialog = cf.get_option_int( "hide_writing_dialog", CONF_HIDE_WRITING_DIALOG );
+    hide_writing_dialog = cf.get_option_bool( "hide_writing_dialog", CONF_HIDE_WRITING_DIALOG );
 
     // 非アクティブ時に書き込みビューを折りたたむ
-    fold_message = cf.get_option_int( "fold_message", CONF_FOLD_MESSAGE );
+    fold_message = cf.get_option_bool( "fold_message", CONF_FOLD_MESSAGE );
 
     // ポップアップとカーソルの間のマージン
     margin_popup = cf.get_option_int( "margin_popup", CONF_MARGIN_POPUP, 1, 1024 );
@@ -339,14 +338,14 @@ const bool ConfigItems::load( const bool restore )
     aahistory_size = cf.get_option_int( "aahistory_size", CONF_AAHISTORY, 0, 65535 );
 
     // 0以上なら多重ポップアップの説明を表示する
-    instruct_popup = cf.get_option_int( "instruct_popup", CONF_INSTRUCT_POPUP, 0, 1024 );
+    instruct_popup = cf.get_option_int( "instruct_popup", CONF_INSTRUCT_POPUP, 0, CONF_INSTRUCT_POPUP );
 
     // スレビューを開いたときにスレ一覧との切り替え方法を説明する
-    instruct_tglart = cf.get_option_int( "instruct_tglart", CONF_INSTRUCT_TGLART );
+    instruct_tglart = cf.get_option_bool( "instruct_tglart", CONF_INSTRUCT_TGLART );
     instruct_tglart_end = false;
 
     // 画像ビューを開いたときにスレビューとの切り替え方法を説明する
-    instruct_tglimg = cf.get_option_int( "instruct_tglimg", CONF_INSTRUCT_TGLIMG );
+    instruct_tglimg = cf.get_option_bool( "instruct_tglimg", CONF_INSTRUCT_TGLIMG );
     instruct_tglimg_end = false;
 
     // 下線位置
@@ -356,13 +355,13 @@ const bool ConfigItems::load( const bool restore )
     adjust_line_space = cf.get_option_double( "adjust_line_space", ( double )CONF_ADJUST_LINE_SPACE, ( double )0, ( double )64 );
 
     // リンク下線を表示
-    draw_underline = cf.get_option_int( "draw_underline", CONF_DRAW_UNDERLINE );
+    draw_underline = cf.get_option_bool( "draw_underline", CONF_DRAW_UNDERLINE );
 
     // スレビューで文字幅の近似を厳密にする
-    strict_char_width = cf.get_option_int( "strict_char_width", CONF_STRICT_CHAR_WIDTH );
+    strict_char_width = cf.get_option_bool( "strict_char_width", CONF_STRICT_CHAR_WIDTH );
 
     // スレビューで発言数(ID)をカウントする
-    check_id = cf.get_option_int( "check_id", CONF_CHECK_ID );
+    check_id = cf.get_option_bool( "check_id", CONF_CHECK_ID );
 
     // レス参照で色を変える回数
     num_reference_high = cf.get_option_int( "num_reference_high", CONF_NUM_REFERENCE_HIGH, 1, 256 );
@@ -373,25 +372,25 @@ const bool ConfigItems::load( const bool restore )
     num_id_low = cf.get_option_int( "num_id_low", CONF_NUM_ID_LOW, 1, 128 );
 
     // datのパース時にURL判定を甘くする(^なども含める)
-    loose_url = cf.get_option_int( "loose_url", CONF_LOOSE_URL );
+    loose_url = cf.get_option_bool( "loose_url", CONF_LOOSE_URL );
 
     // ユーザーコマンドで選択できない項目を非表示にする
-    hide_usrcmd = cf.get_option_int( "hide_usrcmd", CONF_HIDE_USRCMD );
+    hide_usrcmd = cf.get_option_bool( "hide_usrcmd", CONF_HIDE_USRCMD );
 
     // スレビューで再読み込みボタンを押したときに全タブを更新する
-    reload_allthreads = cf.get_option_int( "reload_allthreads", CONF_RELOAD_ALLTHREAD );
+    reload_allthreads = cf.get_option_bool( "reload_allthreads", CONF_RELOAD_ALLTHREAD );
 
     // タブに表示する文字列の最小値
     tab_min_str = cf.get_option_int( "tab_min_str", CONF_TAB_MIN_STR, 1, 256 );
 
     // タブにアイコンを表示するか
-    show_tab_icon = cf.get_option_int( "show_tab_icon", CONF_SHOW_TAB_ICON );
+    show_tab_icon = cf.get_option_bool( "show_tab_icon", CONF_SHOW_TAB_ICON );
 
     // スレビューに書き込みマークを表示するか
-    show_post_mark = cf.get_option_int( "show_post_mark", CONF_SHOW_POST_MARK );
+    show_post_mark = cf.get_option_bool( "show_post_mark", CONF_SHOW_POST_MARK );
 
     // ボタンをフラットにするか
-    flat_button = cf.get_option_int( "flat_button", CONF_FLAT_BUTTON );
+    flat_button = cf.get_option_bool( "flat_button", CONF_FLAT_BUTTON );
 
     std::list< std::string > list_tmp;
     std::list< std::string >::iterator it_tmp;
@@ -405,10 +404,10 @@ const bool ConfigItems::load( const bool restore )
     if( ! str_tmp.empty() ) list_abone_regex_thread = MISC::strtolist( str_tmp );
 
     // スレ あぼーん( レス数 )
-    abone_number_thread = cf.get_option_int( "abone_number_thread", CONF_ABONE_NUMBER_THREAD, 0, 1024 );
+    abone_number_thread = cf.get_option_int( "abone_number_thread", CONF_ABONE_NUMBER_THREAD, 0, 9999 );
 
     // スレ あぼーん( スレ立てからの経過時間 )
-    abone_hour_thread = cf.get_option_int( "abone_hour_thread", CONF_ABONE_HOUR_THREAD, 0, 65535 );
+    abone_hour_thread = cf.get_option_int( "abone_hour_thread", CONF_ABONE_HOUR_THREAD, 0, 9999 );
 
     // あぼーん name
     str_tmp = cf.get_option_str( "abonename", "" );
@@ -423,32 +422,32 @@ const bool ConfigItems::load( const bool restore )
     if( ! str_tmp.empty() ) list_abone_regex = MISC::strtolist( str_tmp );
 
     // デフォルトで透明、連鎖あぼーんをするか
-    abone_transparent = cf.get_option_int( "abone_transparent", CONF_ABONE_TRANSPARENT );
-    abone_chain = cf.get_option_int( "abone_chain", CONF_ABONE_CHAIN );
+    abone_transparent = cf.get_option_bool( "abone_transparent", CONF_ABONE_TRANSPARENT );
+    abone_chain = cf.get_option_bool( "abone_chain", CONF_ABONE_CHAIN );
 
     // 右ペーンが空の時にサイドバーを閉じるか
-    expand_sidebar = cf.get_option_int( "expand_sidebar", CONF_EXPAND_SIDEBAR );
+    expand_sidebar = cf.get_option_bool( "expand_sidebar", CONF_EXPAND_SIDEBAR );
 
     // 3ペーン時にスレ一覧やスレビューを最大化する
-    expand_rpane = cf.get_option_int( "expand_rpane", CONF_EXPAND_RPANE );
+    expand_rpane = cf.get_option_bool( "expand_rpane", CONF_EXPAND_RPANE );
 
     // 次スレ検索の類似度のしきい値
-    threshold_next = cf.get_option_int( "threshold_next", CONF_THRESHOLD_NEXT, 1, 256 );
+    threshold_next = cf.get_option_int( "threshold_next", CONF_THRESHOLD_NEXT, 1, 10 );
 
     // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
-    replace_favorite_next = cf.get_option_int( "replace_favorite_next", CONF_REPLACE_FAVORITE_NEXT );
+    replace_favorite_next = cf.get_option_bool( "replace_favorite_next", CONF_REPLACE_FAVORITE_NEXT );
 
     // スレをお気に入りに追加したときにしおりをセットする
-    bookmark_drop = cf.get_option_int( "bookmark_drop", CONF_BOOKMARK_DROP );
+    bookmark_drop = cf.get_option_bool( "bookmark_drop", CONF_BOOKMARK_DROP );
 
     // お気に入りの更新チェック時に板の更新もチェックする
-    check_update_board  = cf.get_option_int( "check_update_board", CONF_CHECK_UPDATE_BOARD );
+    check_update_board  = cf.get_option_bool( "check_update_board", CONF_CHECK_UPDATE_BOARD );
 
     // Ctrl+qでウィンドウを閉じない
-    disable_close = cf.get_option_int( "disable_close", CONF_DISABLE_CLOSE );
+    disable_close = cf.get_option_bool( "disable_close", CONF_DISABLE_CLOSE );
 
     // まちBBSの取得に offlaw.cgi を使用する
-    use_machi_offlaw = cf.get_option_int( "use_machi_offlaw", CONF_USE_MACHI_OFFLAW );
+    use_machi_offlaw = cf.get_option_bool( "use_machi_offlaw", CONF_USE_MACHI_OFFLAW );
 
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所

@@ -69,7 +69,7 @@ namespace CORE
             m_label_abone_thread.set_text( "以下の数字が0の時は未設定になります。\nまたキャッシュにログがあるスレはあぼ〜んされません。\n\n" );
 
             m_label_number.set_text( "レス以上のスレをあぼ〜ん" );
-            m_spin_number.set_range( 0, 1001 );
+            m_spin_number.set_range( 0, 9999 );
             m_spin_number.set_increments( 1, 1 );
             m_spin_number.set_value( CONFIG::get_abone_number_thread() );
             
@@ -78,7 +78,7 @@ namespace CORE
             m_hbox_number.pack_start( m_label_number, Gtk::PACK_SHRINK );
 
             m_label_hour.set_text( "時間以上スレ立てから経過したスレをあぼ〜ん" );
-            m_spin_hour.set_range( 0, 1000 );
+            m_spin_hour.set_range( 0, 9999 );
             m_spin_hour.set_increments( 1, 1 );
             m_spin_hour.set_value( CONFIG::get_abone_hour_thread() );
             
