@@ -26,70 +26,171 @@
 #include <sys/socket.h>
 #include <signal.h>
 
+#include <glibmm.h>
+
 enum
 {
-    MAX_LOADER = 6, // 最大スレッド数
-
+    MAX_LOADER = 10, // 最大スレッド数
+    MAX_LOADER_SAMEHOST = 2, // 同一ホストに対して実行できる最大スレッド数
     LNG_BUF_MIN = 16 * 1024, // 読み込みバッファの最小値 (byte)
-
     TIMEOUT_MIN = 10 // タイムアウトの最小値 (秒)
 };
 
 
 //
-// トークン処理
+// トークンとスレッド起動待ちキュー
 //
-// MAX_LOADER 個を越えるローダは作成できない 
+// 起動しているローダが MAX_LOADER 個を越えたらローダをスレッド待ちキューに入れる
 //
 
-int token_loader = 0;
-
-int JDLIB::token()
+namespace JDLIB
 {
-#ifdef _DEBUG
-    std::cout << "token : token = " << token_loader << std::endl;
-#endif    
+    const bool get_token( JDLIB::Loader* loader );
+    void return_token( JDLIB::Loader* loader );
 
-    return token_loader;
+    void push_loader_queue( JDLIB::Loader* loader );
+    const bool remove_loader_queue( JDLIB::Loader* loader );
+    void pop_loader_queue();
 }
+
+
+Glib::StaticMutex mutex_token = GLIBMM_STATIC_MUTEX_INIT;
+Glib::StaticMutex mutex_queue = GLIBMM_STATIC_MUTEX_INIT;
+std::list< JDLIB::Loader* > queue_loader; // スレッド起動待ちの Loader のキュー
+int token_loader = 0;
+std::vector< JDLIB::Loader* > vec_loader( MAX_LOADER );
+bool disable_pop = false;
+
 
 // トークン取得
-void JDLIB::get_token()
+const bool JDLIB::get_token( JDLIB::Loader* loader )
 {
+    Glib::Mutex::Lock lock( mutex_token );
+
 #ifdef _DEBUG
-    std::cout << "get_token : token = " << token_loader << std::endl;
-#endif    
+    std::cout << "JDLIB::get_token : url = " << loader->data().url << " token = " << token_loader << std::endl;
+#endif
+
+    if( token_loader >= MAX_LOADER ) return false;
+
+    int count = 0;
+    std::vector< JDLIB::Loader* >::iterator it = vec_loader.begin();
+    for( ; it != vec_loader.end(); ++it ) if( ( *it ) && ( *it )->data().host == loader->data().host ) ++count;
+#ifdef _DEBUG
+    std::cout << "count = " << count << std::endl;
+#endif
+    if( count >= MAX_LOADER_SAMEHOST ) return false;
+
+#ifdef _DEBUG
+    std::cout << "got token\n";
+#endif
+
     ++token_loader;
+
+    it = vec_loader.begin();
+    for( ; it != vec_loader.end(); ++it ) if( ! ( *it ) ){ ( *it ) = loader; break; }
+
+    return true;
 }
 
+
 //　トークン返す
-void JDLIB::return_token()
+void JDLIB::return_token( JDLIB::Loader* loader )
 {
+    Glib::Mutex::Lock lock( mutex_token );
+
     --token_loader;
     assert( token_loader >= 0 );
 
+    std::vector< JDLIB::Loader* >::iterator it = vec_loader.begin();
+    for( ; it != vec_loader.end(); ++it ) if( ( *it ) == loader ) ( *it ) = NULL;
+
 #ifdef _DEBUG
-    std::cout << "return_token : token = " << token_loader << std::endl;
+    std::cout << "JDLIB::return_token : url = " << loader->data().url << " token = " << token_loader << std::endl;
+#endif
+}
+
+
+// スレッド起動待ちキューに Loader を登録
+void JDLIB::push_loader_queue( JDLIB::Loader* loader )
+{
+    Glib::Mutex::Lock lock( mutex_queue );
+
+    if( ! loader ) return;
+
+    if( loader->get_low_priority() ) queue_loader.push_back( loader );
+    else{
+
+        std::list< JDLIB::Loader* >::iterator pos = queue_loader.begin();
+        for( ; pos != queue_loader.end(); ++pos ) if( ( *pos )->get_low_priority() ) break;
+        queue_loader.insert( pos, loader );
+    }
+
+#ifdef _DEBUG
+    std::cout << "JDLIB::push_loader_queue url = " << loader->data().url << " size = " << queue_loader.size() << std::endl;
 #endif    
 }
 
 
-//
-// loader作成関数
-//
-// 基本的にこれを使ってloaderを作成すること
-// loaderがたくさん動いてるときはNULLを返す
-//
-JDLIB::Loader* JDLIB::create_loader()
+// キューから Loader を取り除いたらtrueを返す
+const bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
 {
-    if( JDLIB::token() >= MAX_LOADER ){
-#ifdef _DEBUG
-        std::cout << "JDLIB::create_loader : could not create loader\n";
-#endif 
-        return NULL;
-    }
+    Glib::Mutex::Lock lock( mutex_queue );
 
-    return new JDLIB::Loader();
+    if( ! queue_loader.size() ) return false;
+    if( std::find( queue_loader.begin(), queue_loader.end(), loader ) == queue_loader.end() ) return false;
+
+    queue_loader.remove( loader );
+
+#ifdef _DEBUG
+    std::cout << "JDLIB::remove_loader_queue url = " << loader->data().url << " size = " << queue_loader.size() << std::endl;
+#endif    
+
+    return true;
+}
+
+
+// キューに登録されたスレッドを起動する
+void JDLIB::pop_loader_queue()
+{
+    Glib::Mutex::Lock lock( mutex_queue );
+
+    if( disable_pop ) return;
+    if( ! queue_loader.size() ) return;
+
+#ifdef _DEBUG
+    std::cout << "JDLIB::pop_loader_queue size = " << queue_loader.size() << std::endl;
+#endif    
+
+    std::list< JDLIB::Loader* >::iterator it = queue_loader.begin();
+    for( ; it != queue_loader.end(); ++it ) if( JDLIB::get_token( *it ) ) break;
+    if( it == queue_loader.end() ) return;
+
+    JDLIB::Loader* loader = *it;
+    queue_loader.remove( loader );
+
+#ifdef _DEBUG
+    std::cout << "pop " << loader->data().url << std::endl;
+#endif
+
+    loader->create_thread();
+}
+
+
+//
+// ローダの起動待ちキューにあるスレッドを実行しない
+// 
+// アプリ終了時にこの関数を呼び出さないとキューに登録されたスレッドが起動してしまうので注意
+//
+void JDLIB::disable_pop_loader_queue()
+{
+    Glib::Mutex::Lock lock( mutex_queue );
+
+#ifdef _DEBUG
+    std::cout << "JDLIB::disable_pop_loader_queue\n";
+#endif    
+
+    disable_pop = true;
 }
 
 
@@ -99,27 +200,36 @@ JDLIB::Loader* JDLIB::create_loader()
 void JDLIB::check_loader_alive()
 {
 #ifdef _DEBUG
-    std::cout << "JDLIB::check_loader_alive loader = " << token_loader << std::endl;
+    std::cout << "JDLIB::check_loader_alive loader = " << token_loader
+              << " queue = " << queue_loader.size() << std::endl;
 #endif    
 
     if( token_loader ){
         MISC::ERRMSG( "loaders are still moving." );
         assert( false );
     }
+
+    if( queue_loader.size() ){
+        MISC::ERRMSG( "queue of loaders are not empty." );
+        assert( false );
+    }
 }
-
-
-using namespace JDLIB;
 
 
 
 ///////////////////////////////////////////////////
 
+using namespace JDLIB;
 
 
-Loader::Loader()
+//
+// low_priority = true の時はスレッド起動待ち状態になった時に、起動順のプライオリティを下げる
+//
+Loader::Loader( const bool low_priority )
     : m_addrinfo( 0 ),
-      m_loading( 0 ),
+      m_stop( false ),
+      m_loading( false ),
+      m_low_priority( low_priority ),
       m_buf( 0 ),
       m_buf_zlib_in ( 0 ),
       m_buf_zlib_out ( 0 ),
@@ -135,11 +245,11 @@ Loader::Loader()
 
 Loader::~Loader()
 {
-    clear();
-
 #ifdef _DEBUG
     std::cout << "Loader::~Loader : url = " << m_data.url << std::endl;
 #endif
+
+    clear();
 
 //    assert( ! m_loading );
 }
@@ -147,6 +257,10 @@ Loader::~Loader()
 
 void Loader::clear()
 {
+#ifdef _DEBUG
+    std::cout << "Loader::clear\n";
+#endif
+
     stop();
     wait();
 
@@ -171,6 +285,27 @@ void Loader::clear()
 void Loader::wait()
 {
     m_thread.join();
+}
+
+
+void Loader::stop()
+{
+    if( ! m_loading ) return;
+
+#ifdef _DEBUG
+    std::cout << "Loader::stop : url = " << m_data.url << std::endl;
+#endif
+
+    m_stop = true;
+
+    // スレッド起動待ち状態の時は SKELETON::Loadable にメッセージを送る
+    if( JDLIB::remove_loader_queue( this ) ){
+
+        m_data.code = HTTP_TIMEOUT;
+        m_data.modified = std::string();
+        m_data.str_code = "stop loading";
+        finish_loading();
+    }
 }
 
 
@@ -211,6 +346,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     clear();
     m_loadable = cb;
     m_data.init();
+    m_stop = false;
     
     // バッファサイズ設定
     m_data.size_buf = data_in.size_buf;
@@ -333,18 +469,34 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     std::cout << "\n";
 #endif
 
-    // スレッドを起動して run_main() 実行
-    m_stop = false;
+    m_loading = true;
+
+    // トークンを取得出来なかったら、他のスレッドが終了した時に
+    // 改めて create_thread() を呼び出す
+    if( get_token( this ) ) create_thread();
+    else JDLIB::push_loader_queue( this );
+
+    return true;
+}
+
+
+//
+// スレッド起動
+//
+void Loader::create_thread()
+{
+#ifdef _DEBUG
+    std::cout << "Loader::create_thread :  url = " << m_data.url << std::endl;
+#endif
+
     if( ! m_thread.create( ( STARTFUNC ) launcher, ( void * ) this, JDLIB::NODETACH ) ){
 
         m_data.code = HTTP_ERR;
         m_data.str_code = "Loader::run : could not start thread";
         MISC::ERRMSG( m_data.str_code );
-        return false;
+        finish_loading();
+        return;
     }
-    m_loading = true;
-
-    return true;
 }
 
 
@@ -367,16 +519,13 @@ void Loader::run_main()
     // エラーメッセージ
     std::string errmsg;
 
-    // トークン取得
-    get_token();
-
     int soc = -1; // ソケットID
     bool use_proxy = ( ! m_data.host_proxy.empty() );
 
     JDLIB::JDSSL* ssl = NULL;
     
     // 送信メッセージ作成
-    std::string msg_send = create_msg_send();
+    const std::string msg_send = create_msg_send();
     
 #ifdef _DEBUG    
     std::cout << "Loader::run_main : start loading thread : " << m_data.url << std::endl;;
@@ -716,10 +865,9 @@ EXIT_LOADING:
     m_addrinfo = NULL;
 
     // トークン返す
-    return_token();
+    return_token( this );
 
-    // Loadable::finish()をコールバックして終わり
-    if( m_loadable ) m_loadable->finish();
+    finish_loading();
 
 #ifdef _DEBUG
     std::cout << "Loader::run_main : finish loading : " << m_data.url << std::endl;;
@@ -727,8 +875,6 @@ EXIT_LOADING:
     std::cout << "data size : " << m_data.size_data << std::endl;;
     std::cout << "code : " << m_data.code << std::endl << std::endl;
 #endif    
-
-    m_loading = false;
 }
 
 
@@ -736,7 +882,7 @@ EXIT_LOADING:
 //
 // addrinfo 取得
 //
-struct addrinfo* Loader::get_addrinfo( const std::string& hostname, int port )
+struct addrinfo* Loader::get_addrinfo( const std::string& hostname, const int port )
 {
     if( port < 0 || port > 65535 ) return NULL;
     if( hostname.empty() ) return NULL;
@@ -771,7 +917,7 @@ struct addrinfo* Loader::get_addrinfo( const std::string& hostname, int port )
 //
 // 送信メッセージ作成
 //
-std::string Loader::create_msg_send()
+const std::string Loader::create_msg_send()
 {
     bool post_msg = ( !m_data.str_post.empty() && !m_data.head );
     bool use_proxy = ( ! m_data.host_proxy.empty() );
@@ -1341,7 +1487,7 @@ bool Loader::unzip( char* buf, size_t& read_size )
 //
 // sent, recv待ち
 //
-bool Loader::wait_recv_send( int fd, bool recv )
+const bool Loader::wait_recv_send( const int fd, const bool recv )
 {
     if( !fd ) return true;
 
@@ -1385,4 +1531,22 @@ bool Loader::wait_recv_send( int fd, bool recv )
     }
     
     return false;
+}
+
+
+//
+// ローディング終了処理
+//
+void Loader::finish_loading()
+{
+#ifdef _DEBUG
+    std::cout << "Loader::finish_loading : url = " << m_data.url << std::endl;
+#endif
+
+    // SKELETON::Loadable に終了を知らせる
+    if( m_loadable ) m_loadable->finish();
+
+    m_loading = false;
+
+    JDLIB::pop_loader_queue();
 }

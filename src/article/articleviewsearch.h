@@ -23,9 +23,10 @@ namespace ARTICLE
 
     class ArticleViewSearch : public ArticleViewBase
     {
+        std::string m_url_title;
         std::string m_url_board;
         std::string m_time_str;
-        int m_searchmode;
+        int m_searchmode; // 上のenumで定義した検索モード
         bool m_mode_or;
         std::list< CORE::SEARCHDATA > m_list_searchdata;
         bool m_loading;
@@ -36,11 +37,15 @@ namespace ARTICLE
         // exec_search == true ならviewを開いてすぐに検索開始
         // mode_or == true なら OR 検索する
         ArticleViewSearch( const std::string& url_board, // searchmode == SEARCHMODE_LOG の場合はboardのurl
-                           const std::string& query, const int searchmode,
+                           const std::string& query,
+                           const int searchmode,  // 上のenumで定義した検索モード
                            const bool exec_search, const bool mode_or );
         ~ArticleViewSearch();
 
         // SKELETON::View の関数のオーバロード
+
+        virtual const std::string url_for_copy(); // コピーやURLバー表示用のURL
+
         virtual const bool is_loading(){ return m_loading; }
 
         virtual void focus_view();

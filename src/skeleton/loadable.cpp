@@ -13,7 +13,8 @@
 using namespace SKELETON;
 
 Loadable::Loadable()
-    : m_loader( 0 )
+    : m_loader( 0 ),
+      m_low_priority( false )
 {
     clear_load_data();
 }
@@ -106,15 +107,7 @@ bool Loadable::start_load( const JDLIB::LOADERDATA& data )
 #endif
 
     assert( m_loader == NULL );
-    m_loader = JDLIB::create_loader();
-
-    // 他にローダが沢山動いているとローダを作れない
-    if( ! m_loader ){
-        m_code = HTTP_ERR;
-        m_str_code = "ローダを作成できません";
-        delete_loader();
-        return false;
-    }
+    m_loader = new JDLIB::Loader( m_low_priority );
 
     // 情報初期化
     // m_date_modified, m_cookie は初期化しない

@@ -85,10 +85,11 @@ namespace ARTICLE
         virtual ~ArticleViewBase();
 
         const std::string& url_article() const { return m_url_article; }
-        virtual const std::string url_for_copy();
+
         const std::string& get_label_board(){ return m_label_board; }
 
         // SKELETON::View の関数のオーバロード
+        virtual const std::string url_for_copy(); // コピーやURLバー表示用のURL
         virtual const int width_client();
         virtual const int height_client();
         virtual const int get_icon( const std::string& iconname );

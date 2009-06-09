@@ -44,6 +44,9 @@ namespace JDLIB
         bool m_loading;
         JDLIB::Thread m_thread;
         SKELETON::Loadable* m_loadable;
+
+        // スレッド起動待ち状態になった時に、起動順のプライオリティを下げる
+        bool m_low_priority; 
         
         // 読み込みバッファ
         unsigned long m_lng_buf; 
@@ -71,7 +74,8 @@ namespace JDLIB
         
     public:
 
-        Loader();
+        // low_priority = true の時はスレッド起動待ち状態になった時に、起動順のプライオリティを下げる
+        Loader( const bool low_priority );
         ~Loader();
 
         const bool is_loading() const { return m_loading; }
@@ -79,7 +83,11 @@ namespace JDLIB
         
         bool run( SKELETON::Loadable* cb, const LOADERDATA& data_in );
         void wait();
-        void stop(){ m_stop = true; }
+        void stop();
+        
+        const bool get_low_priority() const { return m_low_priority; }
+
+        void create_thread();
 
     private:
 
@@ -87,9 +95,12 @@ namespace JDLIB
 
         void clear();
         void run_main();
-        struct addrinfo* get_addrinfo( const std::string& hostname, int port );
-        std::string create_msg_send();
-        bool wait_recv_send( int fd, bool recv );
+        struct addrinfo* get_addrinfo( const std::string& hostname, const int port );
+        const std::string create_msg_send();
+        const bool wait_recv_send( const int fd, const bool recv );
+
+        // ローディング終了処理
+        void finish_loading();
 
         // ヘッダ用
         const int receive_header( char* buf, size_t& read_size );
@@ -108,15 +119,9 @@ namespace JDLIB
 #endif        
     };
 
-
-    // ローダ作成関係
-
-    int token();
-    void get_token();
-    void return_token();
-
-    // loader作成関数
-    Loader* create_loader();
+    // ローダの起動待ちキューにあるスレッドを実行しない
+    // アプリ終了時にこの関数を呼び出さないとキューに登録されたスレッドが起動してしまうので注意
+    void disable_pop_loader_queue();
 
     // mainの最後でローダが動いていないかチェックする関数
     void check_loader_alive();

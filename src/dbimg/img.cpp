@@ -68,6 +68,8 @@ Img::Img( const std::string& url )
     std::cout << "Img::Img url = " << m_url <<  std::endl;
 #endif
 
+    set_priority_low();
+
     reset();
 }
 

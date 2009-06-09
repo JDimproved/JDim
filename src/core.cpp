@@ -40,6 +40,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
+#include "jdlib/loader.h"
 
 #include "dbtree/interface.h"
 #include "dbimg/imginterface.h"
@@ -146,6 +147,8 @@ Core::~Core()
     set_dispatchable( false );
 
     SESSION::set_quitting( true );
+
+    JDLIB::disable_pop_loader_queue();
 
     // 削除リストに登録されているスレを削除
     const std::vector< std::string >& dellist =  SESSION::get_delete_list();

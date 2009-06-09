@@ -113,7 +113,7 @@ SKELETON::Admin* ArticleViewBase::get_admin()
 //
 // コピー用URL( readcgi型 )
 //
-// メインウィンドウのURLバーなどに表示する)
+// メインウィンドウのURLバーなどの表示用にも使う
 //
 const std::string ArticleViewBase::url_for_copy()
 {

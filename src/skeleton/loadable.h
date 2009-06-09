@@ -62,6 +62,8 @@ namespace SKELETON
     {
         JDLIB::Loader* m_loader;
 
+        bool m_low_priority; 
+
         // ローダからコピーしたデータ
         int m_code;
         std::string m_str_code;
@@ -126,6 +128,9 @@ namespace SKELETON
         // デストラクタ内から terminate_load() しても落ちる時があるので
         // デストラクタの外から呼び出すこと
         void terminate_load();
+
+        // ローダがスレッド起動待ち状態になった時に、起動順のプライオリティを下げる
+        void set_priority_low(){ m_low_priority = true; }
         
       private:
 

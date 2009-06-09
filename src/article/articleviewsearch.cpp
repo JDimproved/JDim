@@ -20,6 +20,7 @@
 
 #include "global.h"
 #include "session.h"
+#include "usrcmdmanager.h"
 
 #include <sstream>
 #include <sys/time.h>
@@ -96,6 +97,19 @@ void ArticleViewSearch::update_url_query( const bool update_history )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+}
+
+
+//
+// コピー用URL( readcgi型 )
+//
+// メインウィンドウのURLバーなどの表示用にも使う
+//
+const std::string ArticleViewSearch::url_for_copy()
+{
+    if( m_searchmode == SEARCHMODE_TITLE ) return m_url_title;
+
+    return std::string();
 }
 
 
@@ -232,6 +246,7 @@ void ArticleViewSearch::reload()
             }
 
             CORE::get_search_manager()->search_title( get_url(), get_search_query() );
+            m_url_title = CORE::get_usrcmd_manager()->replace_cmd( CONFIG::get_url_search_title(), "", "", get_search_query(), 0 );
         }
         else CORE::get_search_manager()->search( get_url(), m_url_board, get_search_query(), m_mode_or, ( m_searchmode == SEARCHMODE_ALLLOG ) );
         
