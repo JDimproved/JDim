@@ -523,13 +523,13 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "LiveStartStop", "LiveStartStop"), sigc::mem_fun( *this, &Core::slot_live_start_stop ) );
 
     m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索(_C)" ) );
-    m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "表示中の板のログを検索(_B)"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
-    m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索(_A)"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
+    m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "SearchCacheLocal"), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
+    m_action_group->add( Gtk::Action::create( "SearchCache", "SearchCacheAll"), sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_action_group->add( Gtk::Action::create( "SearchTitle", "SearchTitle" ), sigc::mem_fun( *this, &Core::slot_search_title ) );
 
     m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "お気に入りの更新チェック(_U)" ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ(_R)"), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く(_T)"),
+    m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "CheckUpdateRoot" ), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "CheckUpdateOpenRoot" ),
                          sigc::mem_fun( *this, &Core::slot_check_update_open_root ) );
     m_action_group->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
                          sigc::mem_fun( *this, &Core::slot_cancel_check_update ) );

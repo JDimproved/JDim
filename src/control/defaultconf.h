@@ -24,6 +24,16 @@ namespace CONTROL
 #define KEYCONF_TabRight  "Ctrl+Page_Down Ctrl+Tab Ctrl+Left_Tab Ctrl+l Ctrl+Right"
 #define KEYCONF_TabLeft  "Ctrl+Page_Up Ctrl+Shift+Tab Ctrl+Shift+Left_Tab Ctrl+h Ctrl+Left"
 
+#define KEYCONF_TabNum1 "Alt+1"
+#define KEYCONF_TabNum2 "Alt+2"
+#define KEYCONF_TabNum3 "Alt+3"
+#define KEYCONF_TabNum4 "Alt+4"
+#define KEYCONF_TabNum5 "Alt+5"
+#define KEYCONF_TabNum6 "Alt+6"
+#define KEYCONF_TabNum7 "Alt+7"
+#define KEYCONF_TabNum8 "Alt+8"
+#define KEYCONF_TabNum9 "Alt+9"
+
 #define KEYCONF_PreBookMark  "Ctrl+F2"
 #define KEYCONF_NextBookMark  "F2"
 
@@ -62,6 +72,10 @@ namespace CONTROL
 #define KEYCONF_SearchNext  "Enter F3 Ctrl+g n"
 #define KEYCONF_SearchPrev  "Shift+Enter Ctrl+F3 Ctrl+G N"
 #define KEYCONF_DrawOutAnd  "Ctrl+Enter"
+
+// 全お気に入り更新チェック
+#define KEYCONF_CheckUpdateRoot ""
+#define KEYCONF_CheckUpdateOpenRoot ""
 
 // BBSLIST
 #define KEYCONF_OpenBoard  "Space"

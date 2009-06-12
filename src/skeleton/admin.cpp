@@ -497,6 +497,9 @@ void Admin::exec_command()
     else if( command.command == "tab_right" ){
         tab_right();
     }
+    else if( command.command == "tab_num" ){
+        tab_num( command.arg1 );
+    }
     else if( command.command == "tab_head" ){
         tab_head();
     }
@@ -1105,6 +1108,26 @@ void Admin::tab_right()
     set_current_page( ++page );
 }
 
+
+//
+// タブ位置(1-9)で移動
+//
+void Admin::tab_num( const std::string& str_num )
+{
+    if( str_num.empty() ) return;
+
+    const int num = strtol( str_num.c_str(), NULL, 10 );
+
+    // Firefoxの動作に合わせた
+    // 0 → 無視
+    // 8以下で存在する数より多い → 無視
+    // 9(存在しない) → 最後のタブ
+    if ( num < 1 || num > 9 ||
+         ( num < 9 && num > get_tab_nums() ) ) return;
+
+    // 9は存在しなくてもそのまま渡してしまう
+    set_current_page( num - 1 );
+}
 
 
 //

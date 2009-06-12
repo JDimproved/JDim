@@ -544,6 +544,44 @@ const bool ImageViewBase::operate_view( const int control )
             IMAGE::get_admin()->set_command( "tab_right" );
             break;
 
+        // タブ位置(1-9)で移動
+        case CONTROL::TabNum1:
+            IMAGE::get_admin()->set_command( "tab_num", "", "1" );
+            break;
+
+        case CONTROL::TabNum2:
+            IMAGE::get_admin()->set_command( "tab_num", "", "2" );
+            break;
+
+        case CONTROL::TabNum3:
+            IMAGE::get_admin()->set_command( "tab_num", "", "3" );
+            break;
+
+        case CONTROL::TabNum4:
+            IMAGE::get_admin()->set_command( "tab_num", "", "4" );
+            break;
+
+        case CONTROL::TabNum5:
+            IMAGE::get_admin()->set_command( "tab_num", "", "5" );
+            break;
+
+        case CONTROL::TabNum6:
+            IMAGE::get_admin()->set_command( "tab_num", "", "6" );
+            break;
+
+        case CONTROL::TabNum7:
+            IMAGE::get_admin()->set_command( "tab_num", "", "7" );
+            break;
+
+        case CONTROL::TabNum8:
+            IMAGE::get_admin()->set_command( "tab_num", "", "8" );
+            break;
+
+        case CONTROL::TabNum9:
+            IMAGE::get_admin()->set_command( "tab_num", "", "9" );
+            break;
+
+        // スクロール
         case CONTROL::ScrollUpImage:
             IMAGE::get_admin()->set_command( "scroll_up" );
             break;

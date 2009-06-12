@@ -48,6 +48,16 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "TabRight", KEYCONF_TabRight );
     SETKEYMOTION( "TabLeft", KEYCONF_TabLeft );
 
+    SETKEYMOTION( "TabNum1", KEYCONF_TabNum1 );
+    SETKEYMOTION( "TabNum2", KEYCONF_TabNum2 );
+    SETKEYMOTION( "TabNum3", KEYCONF_TabNum3 );
+    SETKEYMOTION( "TabNum4", KEYCONF_TabNum4 );
+    SETKEYMOTION( "TabNum5", KEYCONF_TabNum5 );
+    SETKEYMOTION( "TabNum6", KEYCONF_TabNum6 );
+    SETKEYMOTION( "TabNum7", KEYCONF_TabNum7 );
+    SETKEYMOTION( "TabNum8", KEYCONF_TabNum8 );
+    SETKEYMOTION( "TabNum9", KEYCONF_TabNum9 );
+
     SETKEYMOTION( "PreBookMark", KEYCONF_PreBookMark );
     SETKEYMOTION( "NextBookMark", KEYCONF_NextBookMark );
 
@@ -86,6 +96,10 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "SearchNext", KEYCONF_SearchNext );
     SETKEYMOTION( "SearchPrev", KEYCONF_SearchPrev );
     SETKEYMOTION( "DrawOutAnd", KEYCONF_DrawOutAnd );
+
+    // 全お気に入り更新チェック
+    SETKEYMOTION( "CheckUpdateRoot", KEYCONF_CheckUpdateRoot );
+    SETKEYMOTION( "CheckUpdateOpenRoot", KEYCONF_CheckUpdateOpenRoot );
 
     // BBSLIST
     SETKEYMOTION( "OpenBoard", KEYCONF_OpenBoard );

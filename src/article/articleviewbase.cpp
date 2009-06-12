@@ -1017,7 +1017,44 @@ const bool ArticleViewBase::operate_view( const int control )
             ARTICLE::get_admin()->set_command( "tab_right" );
             break;
 
-            // 戻る、進む
+        // タブ位置(1-9)で移動
+        case CONTROL::TabNum1:
+            ARTICLE::get_admin()->set_command( "tab_num", "", "1" );
+            break;
+
+        case CONTROL::TabNum2:
+            ARTICLE::get_admin()->set_command( "tab_num", "", "2" );
+            break;
+
+        case CONTROL::TabNum3:
+            ARTICLE::get_admin()->set_command( "tab_num", "", "3" );
+            break;
+
+        case CONTROL::TabNum4:
+            ARTICLE::get_admin()->set_command( "tab_num", "", "4" );
+            break;
+
+        case CONTROL::TabNum5:
+            ARTICLE::get_admin()->set_command( "tab_num", "", "5" );
+            break;
+
+        case CONTROL::TabNum6:
+            ARTICLE::get_admin()->set_command( "tab_num", "", "6" );
+            break;
+
+        case CONTROL::TabNum7:
+            ARTICLE::get_admin()->set_command( "tab_num", "", "7" );
+            break;
+
+        case CONTROL::TabNum8:
+            ARTICLE::get_admin()->set_command( "tab_num", "", "8" );
+            break;
+
+        case CONTROL::TabNum9:
+            ARTICLE::get_admin()->set_command( "tab_num", "", "9" );
+            break;
+
+        // 戻る、進む
         case CONTROL::PrevView:
             back_viewhistory( 1 );
             break;

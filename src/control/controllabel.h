@@ -54,6 +54,16 @@ namespace CONTROL
         { "TabRight", "右のタブに移動" },
         { "TabLeft", "左のタブに移動" },
 
+        { "TabNum1", "タブ1に移動" },
+        { "TabNum2", "タブ2に移動" },
+        { "TabNum3", "タブ3に移動" },
+        { "TabNum4", "タブ4に移動" },
+        { "TabNum5", "タブ5に移動" },
+        { "TabNum6", "タブ6に移動" },
+        { "TabNum7", "タブ7に移動" },
+        { "TabNum8", "タブ8に移動" },
+        { "TabNum9", "タブ9に移動" },
+
         { "PreBookMark", "前のしおりヘ移動" },
         { "NextBookMark", "次のしおりヘ移動" },
 

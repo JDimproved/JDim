@@ -685,7 +685,6 @@ const bool BBSListViewBase::operate_view( const int control )
             CORE::core_set_command( "toggle_article" );
             break;
 
-
         case CONTROL::TabLeft:
             BBSLIST::get_admin()->set_command( "tab_left" );
             break;
@@ -694,6 +693,44 @@ const bool BBSListViewBase::operate_view( const int control )
             BBSLIST::get_admin()->set_command( "tab_right" );
             break;
 
+        // タブ位置(1-9)で移動
+        case CONTROL::TabNum1:
+            BBSLIST::get_admin()->set_command( "tab_num", "", "1" );
+            break;
+
+        case CONTROL::TabNum2:
+            BBSLIST::get_admin()->set_command( "tab_num", "", "2" );
+            break;
+
+        case CONTROL::TabNum3:
+            BBSLIST::get_admin()->set_command( "tab_num", "", "3" );
+            break;
+
+        case CONTROL::TabNum4:
+            BBSLIST::get_admin()->set_command( "tab_num", "", "4" );
+            break;
+
+        case CONTROL::TabNum5:
+            BBSLIST::get_admin()->set_command( "tab_num", "", "5" );
+            break;
+
+        case CONTROL::TabNum6:
+            BBSLIST::get_admin()->set_command( "tab_num", "", "6" );
+            break;
+
+        case CONTROL::TabNum7:
+            BBSLIST::get_admin()->set_command( "tab_num", "", "7" );
+            break;
+
+        case CONTROL::TabNum8:
+            BBSLIST::get_admin()->set_command( "tab_num", "", "8" );
+            break;
+
+        case CONTROL::TabNum9:
+            BBSLIST::get_admin()->set_command( "tab_num", "", "9" );
+            break;
+
+        // 終了
         case CONTROL::Quit:
             close_view();
             break;

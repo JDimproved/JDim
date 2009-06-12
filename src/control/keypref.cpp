@@ -71,6 +71,16 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::TabRight );
     append_row( CONTROL::TabLeft );
 
+    append_row( CONTROL::TabNum1 );
+    append_row( CONTROL::TabNum2 );
+    append_row( CONTROL::TabNum3 );
+    append_row( CONTROL::TabNum4 );
+    append_row( CONTROL::TabNum5 );
+    append_row( CONTROL::TabNum6 );
+    append_row( CONTROL::TabNum7 );
+    append_row( CONTROL::TabNum8 );
+    append_row( CONTROL::TabNum9 );
+
     append_row( CONTROL::PreBookMark );
     append_row( CONTROL::NextBookMark );
 
@@ -109,6 +119,9 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::SearchNext );
     append_row( CONTROL::SearchPrev );
     append_row( CONTROL::DrawOutAnd );
+
+    append_row( CONTROL::CheckUpdateRoot );
+    append_row( CONTROL::CheckUpdateOpenRoot );
 
     append_comment_row( "" );
     append_comment_row( "■ " + CONTROL::get_mode_label( CONTROL::MODE_EDIT ) );

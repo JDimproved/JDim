@@ -168,6 +168,7 @@ namespace SKELETON
         virtual void switch_view( const std::string& url );
         virtual void tab_left();
         virtual void tab_right();
+        virtual void tab_num( const std::string& str_num );
         virtual void tab_head();
         void tab_head_focus();
         virtual void tab_tail();

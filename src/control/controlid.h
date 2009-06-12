@@ -48,6 +48,16 @@ namespace CONTROL
         TabRight,
         TabLeft,
 
+        TabNum1,
+        TabNum2,
+        TabNum3,
+        TabNum4,
+        TabNum5,
+        TabNum6,
+        TabNum7,
+        TabNum8,
+        TabNum9,
+
         PreBookMark,
         NextBookMark,
 
