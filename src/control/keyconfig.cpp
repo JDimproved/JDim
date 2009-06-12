@@ -97,10 +97,6 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "SearchPrev", KEYCONF_SearchPrev );
     SETKEYMOTION( "DrawOutAnd", KEYCONF_DrawOutAnd );
 
-    // 全お気に入り更新チェック
-    SETKEYMOTION( "CheckUpdateRoot", KEYCONF_CheckUpdateRoot );
-    SETKEYMOTION( "CheckUpdateOpenRoot", KEYCONF_CheckUpdateOpenRoot );
-
     // BBSLIST
     SETKEYMOTION( "OpenBoard", KEYCONF_OpenBoard );
     SETKEYMOTION( "OpenBoardTab", KEYCONF_OpenBoardTab );

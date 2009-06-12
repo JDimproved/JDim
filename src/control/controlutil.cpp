@@ -414,14 +414,6 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
                 label += "(_A)";
                 break;
 
-            case CONTROL::CheckUpdateRoot: // お気に入り更新チェック
-                label += "(_R)";
-                break;
-
-            case CONTROL::CheckUpdateOpenRoot: // お気に入り更新チェックしてタブで開く
-                label += "(_T)";
-                break;
-
             case CONTROL::CancelMosaic: //モザイク解除
                 label += "(_M)";
                 break;

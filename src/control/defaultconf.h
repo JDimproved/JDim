@@ -73,10 +73,6 @@ namespace CONTROL
 #define KEYCONF_SearchPrev  "Shift+Enter Ctrl+F3 Ctrl+G N"
 #define KEYCONF_DrawOutAnd  "Ctrl+Enter"
 
-// 全お気に入り更新チェック
-#define KEYCONF_CheckUpdateRoot ""
-#define KEYCONF_CheckUpdateOpenRoot ""
-
 // BBSLIST
 #define KEYCONF_OpenBoard  "Space"
 #define KEYCONF_OpenBoardTab  "Ctrl+Space"
