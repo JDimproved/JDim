@@ -18,7 +18,9 @@
 #ifdef HAVE_SYS_UTSNAME_H
 #include <sys/utsname.h> // uname()
 #endif
-
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 std::string ENVIRONMENT::get_jdcomments(){ return std::string( JDCOMMENT ); }
 std::string ENVIRONMENT::get_jdcopyright(){ return std::string( JDCOPYRIGHT ); }
@@ -157,6 +159,69 @@ std::string ENVIRONMENT::get_distname()
     std::string tmp;
     std::string text_data;
 
+#ifdef _WIN32
+    OSVERSIONINFOEX osvi;
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    if (GetVersionEx((OSVERSIONINFO *)&osvi) != 0)
+    {
+        std::ostringstream vstr;
+        vstr << "Windows";
+        switch (osvi.dwPlatformId)
+        {
+        case VER_PLATFORM_WIN32_NT:
+            switch (osvi.dwMajorVersion)
+            {
+            case 6:
+                switch (osvi.dwMinorVersion)
+                {
+                case 1: 
+                    if (osvi.wProductType == VER_NT_WORKSTATION)
+                        vstr << " 7";
+                    else
+                        vstr << " Server 2008 R2";
+                    break;
+                case 0:
+                    if (osvi.wProductType == VER_NT_WORKSTATION)
+                        vstr << " Vista";
+                    else
+                        vstr << " Server 2008";
+                    break;
+                }
+                break;
+            case 5:
+                switch (osvi.dwMinorVersion)
+                {
+                case 2: vstr << " Server 2003"; break;
+                case 1: vstr << " XP"; break;
+                case 0: vstr << " 2000"; break;
+                }
+                break;
+            case 4: vstr << " NT 4.0"; break;
+            }
+            if (osvi.dwMajorVersion > 4)
+            {
+                if (strlen(osvi.szCSDVersion) > 0)
+                {
+                    vstr << " " << osvi.szCSDVersion;
+                }
+                vstr << " (build " << osvi.dwBuildNumber << ")";
+            }
+            break;
+        case VER_PLATFORM_WIN32_WINDOWS:
+            if (osvi.dwMajorVersion == 4)
+            {
+                switch (osvi.dwMinorVersion)
+                {
+                case 90: vstr << " Me"; break;
+                case 10: vstr << " 98"; break;
+                case 0:  vstr << " 95"; break;
+                }
+            }
+            break;
+        }
+        tmp = vstr.str();
+    }
+#else
     // LSB系 ( Ubuntu ..etc )
     if( CACHE::load_rawdata( "/etc/lsb-release", text_data ) )
     {
@@ -252,6 +317,7 @@ std::string ENVIRONMENT::get_distname()
             }
         }
     }
+#endif // _WIN32
 
     // 文字列両端のスペースなどを削除する
     std::string dist_name = MISC::remove_spaces( tmp );
@@ -335,12 +401,20 @@ std::string ENVIRONMENT::get_wm_str()
 {
     std::string desktop;
 
+#ifdef _WIN32
+#ifdef __MINGW32__
+    return std::string( "build by mingw32" );
+#else
+    return std::string( "build with _WIN32" );
+#endif
+#else
     switch( get_wm() )
     {
         case WM_GNOME : desktop = "GNOME"; break;
         case WM_XFCE  : desktop = "XFCE";  break;
         case WM_KDE   : desktop = "KDE";   break;
     }
+#endif
 
     return desktop;
 }

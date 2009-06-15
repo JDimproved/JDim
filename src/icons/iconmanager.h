@@ -7,6 +7,13 @@
 #ifndef _ICONNAGER_H
 #define _ICONNAGER_H
 
+#ifdef _WIN32
+ #ifdef TRANSPARENT
+ // will be conflict to wingdi.h
+ #undef TRANSPARENT
+ #endif
+#endif
+
 #include <gtkmm.h>
 #include <vector>
 

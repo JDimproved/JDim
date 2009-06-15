@@ -13,15 +13,15 @@ namespace CORE
     class Core;
 }
 
-class WinMain : public SKELETON::JDWindow
+class JDWinMain : public SKELETON::JDWindow
 {
     CORE::Core* m_core;
     bool m_cancel_state_event;
     
   public:
 
-    WinMain( const bool init, const bool skip_setupdiag );
-    virtual ~WinMain();
+    JDWinMain( const bool init, const bool skip_setupdiag );
+    virtual ~JDWinMain();
 
     // 緊急シャットダウン
     void shutdown();

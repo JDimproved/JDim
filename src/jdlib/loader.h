@@ -16,7 +16,15 @@
 #include <list>
 #include <zlib.h>
 
+#ifdef _WIN32
+// set Windows XP or 2003 Server for addrinfo before include windows.h
+#define WINVER 0x0501
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <netdb.h>
+#endif
 
 // zlibが1.2よりバージョンが低いか判定する
 #ifndef ZLIB_VERNUM

@@ -11,6 +11,10 @@
 #include <string>
 #include <list>
 
+#ifdef _WIN32
+#include <sys/time.h>
+#endif
+
 namespace JDLIB
 {
     class LOADERDATA;

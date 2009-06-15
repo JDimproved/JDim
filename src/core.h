@@ -20,7 +20,7 @@
 
 #include "command_args.h"
 
-class WinMain;
+class JDWinMain;
 
 
 namespace BOARD
@@ -70,7 +70,7 @@ namespace CORE
         std::list< COMMAND_ARGS > m_list_command;
         sigc::connection m_sigc_switch_page;
 
-        WinMain& m_win_main;
+        JDWinMain& m_win_main;
 
         SKELETON::JDHPaned m_hpaned;
 
@@ -106,7 +106,7 @@ namespace CORE
 
     public:
 
-        Core( WinMain& win_main );
+        Core( JDWinMain& win_main );
         virtual ~Core();
 
         Gtk::Widget* get_toplevel();

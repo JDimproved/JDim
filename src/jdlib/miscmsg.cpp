@@ -8,6 +8,12 @@
 #include <iostream>
 #include <time.h>
 
+#ifdef _WIN32
+// not exist _r suffix functions in mingw time.h
+#define ctime_r( _clock, _buf ) \
+        ( strcpy( (_buf), ctime( (_clock) ) ),  \
+          (_buf) )
+#endif
 
 namespace MISC
 {

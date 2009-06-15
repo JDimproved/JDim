@@ -8,6 +8,7 @@
 
 #include <gtkmm.h>
 
+#ifndef _WIN32
 namespace CORE
 {
     enum
@@ -60,5 +61,6 @@ namespace CORE
         bool send_command( const char* command );
     };
 }
+#endif //_WIN32
 
 #endif

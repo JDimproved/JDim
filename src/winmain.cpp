@@ -22,13 +22,13 @@
 #endif
 
 
-WinMain::WinMain( const bool init, const bool skip_setupdiag )
+JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag )
     : SKELETON::JDWindow( false ),
       m_core( NULL ),
       m_cancel_state_event( false )
 {
 #ifdef _DEBUG
-    std::cout << "WinMain::WinMain init = " << init << std::endl
+    std::cout << "JDWinMain::JDWinMain init = " << init << std::endl
               << "x y w h = " << get_x_win() << " " << get_y_win()
               << " " << get_width_win() << " " << get_height_win() << std::endl;
 #endif
@@ -73,10 +73,10 @@ WinMain::WinMain( const bool init, const bool skip_setupdiag )
 }
 
 
-WinMain::~WinMain()
+JDWinMain::~JDWinMain()
 {
 #ifdef _DEBUG
-    std::cout << "WinMain::~WinMain window size : x = " << get_x_win() << " y = " << get_y_win()
+    std::cout << "JDWinMain::~JDWinMain window size : x = " << get_x_win() << " y = " << get_y_win()
               << " w = " << get_width_win() << " h = " << get_height_win() << " max = " << is_maximized_win() << std::endl;
 #endif
 
@@ -93,10 +93,10 @@ WinMain::~WinMain()
 
 
 // 緊急シャットダウン
-void WinMain::shutdown()
+void JDWinMain::shutdown()
 {
 #ifdef _DEBUG
-    std::cout << "WinMain::shutdown\n";
+    std::cout << "JDWinMain::shutdown\n";
 #endif
 
     if( m_core ) m_core->shutdown();
@@ -104,10 +104,10 @@ void WinMain::shutdown()
 
 
 // 通常のセッション保存
-void WinMain::save_session()
+void JDWinMain::save_session()
 {
 #ifdef _DEBUG
-    std::cout << "WinMain::save_session\n";
+    std::cout << "JDWinMain::save_session\n";
 #endif
 
     if( m_core ){
@@ -122,10 +122,10 @@ void WinMain::save_session()
 }
 
 
-void WinMain::hide()
+void JDWinMain::hide()
 {
 #ifdef _DEBUG
-    std::cout << "WinMain::hide\n";
+    std::cout << "JDWinMain::hide\n";
 #endif
 
     // GNOME環境の時に閉じるとウィンドウが最小化する時があるので
@@ -136,86 +136,86 @@ void WinMain::hide()
 }
 
 
-const int WinMain::get_x_win()
+const int JDWinMain::get_x_win()
 {
     return SESSION::get_x_win_main();
 }
 
-const int WinMain::get_y_win()
+const int JDWinMain::get_y_win()
 {
     return SESSION::get_y_win_main();
 }
 
-void WinMain::set_x_win( int x )
+void JDWinMain::set_x_win( int x )
 {
     SESSION::set_x_win_main( x );
 }
 
-void WinMain::set_y_win( int y )
+void JDWinMain::set_y_win( int y )
 {
     SESSION::set_y_win_main( y );
 }
 
-const int WinMain::get_width_win()
+const int JDWinMain::get_width_win()
 {
     return SESSION::get_width_win_main();
 }
 
-const int WinMain::get_height_win()
+const int JDWinMain::get_height_win()
 {
     return SESSION::get_height_win_main();
 }
 
-void WinMain::set_width_win( int width )
+void JDWinMain::set_width_win( int width )
 {
     SESSION::set_width_win_main( width );
 }
 
-void WinMain::set_height_win( int height )
+void JDWinMain::set_height_win( int height )
 {
     SESSION::set_height_win_main( height );
 }
 
-const bool WinMain::is_focus_win()
+const bool JDWinMain::is_focus_win()
 {
     return SESSION::is_focus_win_main();
 }
 
-void WinMain::set_focus_win( bool set )
+void JDWinMain::set_focus_win( bool set )
 {
     SESSION::set_focus_win_main( set );
 }
 
 
-const bool WinMain::is_maximized_win()
+const bool JDWinMain::is_maximized_win()
 {
     return SESSION::is_maximized_win_main();
 }
 
 
-void WinMain::set_maximized_win( bool set )
+void JDWinMain::set_maximized_win( bool set )
 {
     SESSION::set_maximized_win_main( set );
 }
 
 
-const bool WinMain::is_iconified_win()
+const bool JDWinMain::is_iconified_win()
 {
     return SESSION::is_iconified_win_main();
 }
 
-void WinMain::set_iconified_win( bool set )
+void JDWinMain::set_iconified_win( bool set )
 {
     SESSION::set_iconified_win_main( set );
 }
 
-const bool WinMain::is_shown_win()
+const bool JDWinMain::is_shown_win()
 {
     return SESSION::is_shown_win_main();
 }
 
 
-void WinMain::set_shown_win( bool set )
+void JDWinMain::set_shown_win( bool set )
 {
     SESSION::set_shown_win_main( set );
 }
@@ -223,10 +223,10 @@ void WinMain::set_shown_win( bool set )
 
 
 
-bool WinMain::on_delete_event( GdkEventAny* event )
+bool JDWinMain::on_delete_event( GdkEventAny* event )
 {
 #ifdef _DEBUG
-    std::cout << "WinMain::on_delete_event\n";
+    std::cout << "JDWinMain::on_delete_event\n";
 #endif
 
     // GNOME環境の時に閉じるとウィンドウが最小化する時があるので
@@ -237,28 +237,28 @@ bool WinMain::on_delete_event( GdkEventAny* event )
 
 
 // 最大、最小化
-bool WinMain::on_window_state_event( GdkEventWindowState* event )
+bool JDWinMain::on_window_state_event( GdkEventWindowState* event )
 {
 #ifdef _DEBUG
-    std::cout << "WinMain::on_window_state_event\n";
+    std::cout << "JDWinMain::on_window_state_event\n";
     if( m_cancel_state_event ) std::cout << "cancel\n";
 #endif     
 
-    // キャンセル ( WinMain::on_delete_even() の説明を参照せよ )
+    // キャンセル ( JDWinMain::on_delete_even() の説明を参照せよ )
     if( m_cancel_state_event ) return Gtk::Window::on_window_state_event( event );
 
     return SKELETON::JDWindow::on_window_state_event( event );
 }
 
 
-bool WinMain::on_configure_event( GdkEventConfigure* event )
+bool JDWinMain::on_configure_event( GdkEventConfigure* event )
 {
 #ifdef _DEBUG
-    std::cout << "WinMain::on_configure_event\n";
+    std::cout << "JDWinMain::on_configure_event\n";
     if( m_cancel_state_event ) std::cout << "cancel\n";
 #endif     
 
-    // キャンセル ( WinMain::on_delete_event() の説明を参照せよ )
+    // キャンセル ( JDWinMain::on_delete_event() の説明を参照せよ )
     if( m_cancel_state_event ) return Gtk::Window::on_configure_event( event );
 
     return SKELETON::JDWindow::on_configure_event( event );

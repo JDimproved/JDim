@@ -88,7 +88,22 @@ std::string CACHE::path_root()
         if( root_path[ root_path.length() -1 ] != '/' ) root_path = root_path + "/";
 
         if( root_path[ 0 ] == '~' ){
+#ifdef _WIN32
+            // windows default path of application data
+            std::string home = MISC::getenv_limited( "APPDATA", MAX_SAFE_PATH );
+            // call from msys terminal, or user manually defined
+            if (home.length() == 0)
+                home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
+            // using uesr profile folder in case of lost APPDATA
+            if (home.length() == 0)
+                home = MISC::getenv_limited( "HOMEPATH", MAX_SAFE_PATH );
+            // convert '\\' for recursive mkdir() function
+            for (int i=home.length()-1; i>=0; i--)
+                if (home[i] == '\\')
+                    home[i] = '/';
+#else
             std::string home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
+#endif
             root_path.replace( 0, 1, home );
         }
     }
@@ -679,8 +694,13 @@ size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n,
     size_t count = 0;
     size_t byte = 0;
     std::ofstream fout;
+#ifdef _WIN32
+    if( append ) fout.open( path.c_str(), std::ios::app | std::ios::ate | std::ios::binary );
+    else fout.open( path.c_str(), std::ios::binary );
+#else
     if( append ) fout.open( path.c_str(), std::ios::app );
     else fout.open( path.c_str() );
+#endif
     if( !fout.is_open() ){
         MISC::ERRMSG( "can't open " + path );
         return 0;
@@ -715,6 +735,16 @@ const int CACHE::file_exists( const std::string& path )
     struct stat buf_stat;
 
     if( path.empty() ) return EXIST_ERROR;
+#ifdef _WIN32
+    // on windows fail stat() directory path with ends '/'
+    // "c:/" = ok, "c:" = fail
+    // "c:/dir/" = fail, "c:/dir" = ok
+    if( path.length() > 3 && path[ path.length() - 1 ] == '/' ){
+        std::string dpath = path.substr( 0, path.length() - 1 );
+        if( stat( dpath.c_str(), &buf_stat ) != 0 ) return EXIST_ERROR;
+    }
+    else // continue out of #endif
+#endif
     if( stat( path.c_str(), &buf_stat ) != 0 ) return EXIST_ERROR;
 
     if( S_ISREG( buf_stat.st_mode ) ) return EXIST_FILE;
@@ -766,7 +796,12 @@ bool CACHE::jdmkdir( const std::string& path )
         target = homedir + path.substr( 2 );
     }
 
+#ifdef _WIN32
+    // on windows has case of start drive letter "c:/...", or UNC "//pcname/..."
+    if( target[ 0 ] != '/' && target[ 1 ] != ':' ) return false;
+#else
     if( target[ 0 ] != '/' ) return false;
+#endif
     if( target[ target.length() -1 ] != '/' ) target += "/";
 
 #ifdef _DEBUG
@@ -787,7 +822,11 @@ bool CACHE::jdmkdir( const std::string& path )
         
         if( CACHE::file_exists( currentdir ) == EXIST_DIR ) continue;
 
+#ifdef _WIN32
+        if( mkdir( currentdir.c_str() ) != 0 ){
+#else
         if( mkdir( currentdir.c_str(), 0755 ) != 0 ){
+#endif
             MISC::ERRMSG( "mkdir failed " + currentdir );
             return false;
         }
@@ -1073,7 +1112,11 @@ const std::string CACHE::get_realpath( const std::string& path )
 {
     std::string path_real;
 
+#ifdef _WIN32
+    char* ret = _fullpath( NULL, path.c_str(), MAX_PATH );
+#else
     char* ret = realpath( path.c_str(), NULL );
+#endif
     if( ret ){
         path_real = ret;
         free( ret );

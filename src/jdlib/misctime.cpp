@@ -15,6 +15,13 @@
 #include <time.h>
 #include <sys/time.h>
 
+#ifdef _WIN32
+// not exist _r suffix functions in mingw time.h
+#define localtime_r( _clock, _result ) \
+        ( *(_result) = *localtime( (_clock) ), \
+          (_result) )
+#endif
+
 //
 // gettimeofday()の秒を文字列で取得
 //
@@ -52,7 +59,27 @@ time_t MISC::datetotime( const std::string& date )
 
     struct tm tm_out;
     memset( &tm_out, 0, sizeof( struct tm ) );
+
+#ifdef _WIN32
+    {
+        char month[4];
+        char monthes[][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"  };
+        if (sscanf(date.c_str(), "%*3s, %2d %3s %4d %2d:%2d:%2d",
+            &tm_out.tm_mday, month, &tm_out.tm_year,
+            &tm_out.tm_hour, &tm_out.tm_min, &tm_out.tm_sec) == 6 ) return 0;
+        for (int i=0; i<12; i++)
+        {
+            if (strcasecmp(monthes[i], month) == 0)
+            {
+                tm_out.tm_mon = i;
+                break;
+            }
+        }
+    }
+#else
     if( strptime( date.c_str(), "%a, %d %b %Y %T %Z", &tm_out ) == NULL ) return 0;
+#endif
 
 #ifdef USE_MKTIME
     time_t t_ret = mktime( &tm_out );

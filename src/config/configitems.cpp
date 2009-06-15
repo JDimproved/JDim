@@ -37,6 +37,10 @@ std::string get_default_font()
     std::set< std::string > set_fonts = MISC::get_font_families();
 
     // 上の方が優先順位が高い
+#ifdef _WIN32
+    IS_DEFAULT_FONT( "MS PGothic" );
+    IS_DEFAULT_FONT( "MS UI Gothic" );
+#endif
     IS_DEFAULT_FONT( "IPA モナー Pゴシック" );
     IS_DEFAULT_FONT( "IPAMonaPGothic" );
     IS_DEFAULT_FONT( "Mona-VLGothic" );

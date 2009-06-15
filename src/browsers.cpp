@@ -13,10 +13,17 @@ namespace CORE
     char browsers[ BROWSER_NUM ][ 2 ][ MAX_TEXT ]={
 
         { "ユーザ設定", "" },
+#ifdef _WIN32
+        { "ie",    "C:/Program\\ Files/Internet\\ Explorer/iexplore.exe \"%LINK\"" },
+        { "firefox 1.5/2.0/3.0 以降", "C:/Program\\ Files/Mozilla\\ Firefox/firefox.exe \"%LINK\"" },
+        { "firefox 1.0*", "C:/Program\\ Files/Mozilla\\ Firefox/firefox.exe -remote \"openURL(%LINK,new-tab)\"" },
+        { "opera 9.*",    "C:/Program\\ Files/Opera/opera.exe \"%LINK\"" }
+#else
         { "標準ブラウザ(xdg-open)",    "xdg-open \"%LINK\"" },
         { "firefox 1.5/2.0/3.0 以降", "firefox \"%LINK\"" },
         { "firefox 1.0*", "firefox -remote \"openURL(%LINK,new-tab)\"" },
         { "opera 9.*",    "opera -remote \"openURL(%LINK,new-tab)\"" }
+#endif
     };
 
     const std::string get_browser_label( const int num ){

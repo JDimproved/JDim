@@ -225,7 +225,7 @@ bool MISC::ImgLoader::load( bool& stop, bool pixbufonly, bool sizeonly )
 
             m_loader = Gdk::PixbufLoader::create();
 
-#if GTKMMVER > 240
+#if GTKMMVER > 240 && !defined(_WIN32)
             if( sizeonly ) m_loader->signal_size_prepared().connect( sigc::mem_fun( *this, &ImgLoader::slot_size_prepared ) );
 #endif
 
@@ -242,7 +242,7 @@ bool MISC::ImgLoader::load( bool& stop, bool pixbufonly, bool sizeonly )
 #endif
                 if( feof( f ) ) break;
 
-#if GTKMMVER <= 240 // gdkのバージョンが古い場合はpixbufを取得してサイズを得る
+#if GTKMMVER <= 240 || defined(_WIN32) // gdkのバージョンが古い場合はpixbufを取得してサイズを得る
 
                 if( sizeonly && m_loader->get_pixbuf() ){
                     m_width = m_loader->get_pixbuf()->get_width();

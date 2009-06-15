@@ -2,6 +2,7 @@
 //
 // FIFOを使ったプロセス間通信を行うクラス
 //
+#ifndef _WIN32
 
 //#define _DEBUG
 #include "jddebug.h"
@@ -214,4 +215,5 @@ bool IOMonitor::slot_ioin( Glib::IOCondition io_condition )
 
     return true;
 }
+#endif // _WIN32
 

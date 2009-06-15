@@ -128,7 +128,12 @@ void ConfLoader::update( const std::string& name, const double value )
 {
     const int buflng = 256;
     char str_value[ buflng ];
+#ifdef _WIN32
+    // not support to 'l' flag, error occurred if using
+    snprintf( str_value, buflng, "%f", value );
+#else
     snprintf( str_value, buflng, "%lf", value );
+#endif
     update( name, std::string( str_value ) );
 }
 

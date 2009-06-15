@@ -14,6 +14,9 @@
 
 #include <unistd.h> // crypt
 
+#ifdef _WIN32
+#include <crypt.h>
+#endif
 
 //
 // key から salt を取得

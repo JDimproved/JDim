@@ -12,8 +12,10 @@
 using namespace JDLIB;
 
 
-Thread::Thread() : m_thread( 0 )
-{}
+Thread::Thread()
+{
+    JDTH_CLEAR( m_thread );
+}
 
 
 Thread::~Thread()
@@ -30,7 +32,7 @@ Thread::~Thread()
 // スレッド作成
 const bool Thread::create( STARTFUNC func , void* arg, const bool detach, const int stack_kbyte )
 {
-    if( m_thread ){
+    if( JDTH_ISRUNNING( m_thread ) ){
         MISC::ERRMSG( "Thread::create : thread is already running" );
         return false;
     }
@@ -58,7 +60,7 @@ const bool Thread::create( STARTFUNC func , void* arg, const bool detach, const 
             std::cout << "detach\n";
 #endif
             pthread_detach( m_thread );
-            m_thread = 0;
+            JDTH_CLEAR( m_thread );
         }
     }
 
@@ -72,14 +74,14 @@ const bool Thread::create( STARTFUNC func , void* arg, const bool detach, const 
 
 const bool Thread::join()
 {
-    if( ! m_thread ) return true;
+    if( ! JDTH_ISRUNNING( m_thread ) ) return true;
 
 #ifdef _DEBUG
     std::cout << "Thread:join thread = " << m_thread << std::endl;
 #endif
 
     int status = pthread_join( m_thread, NULL );
-    m_thread = 0;
+    JDTH_CLEAR( m_thread );
     if( status ){
         MISC::ERRMSG( std::string( "Thread::join : " ) + strerror( status ) );
         return false;

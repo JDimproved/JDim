@@ -45,6 +45,11 @@ case "${host_os}" in
    AC_DEFINE(NO_MSG_NOSIGNAL, , "no MSG_NOSIGNAL")
    AC_DEFINE(NO_TIMEGM, , "no timegm")
    ;;
+ mingw*)
+   echo "os = ${host_os}"
+   AC_DEFINE(ICONV_CONST, const , "iconv_const")
+   AC_DEFINE(USE_MKTIME, , "use mktime")
+   ;;
  *)
    echo "os = ???(${host_os})"
    ;;
@@ -91,13 +96,6 @@ AC_SUBST(GTKMM_LIBS)
 AC_SUBST(GTHREAD_CFLAGS)
 AC_SUBST(GTHREAD_LIBS)
 
-dnl 
-dnl uname
-dnl
-
-echo "use uname"
-AC_CHECK_HEADERS([sys/utsname.h])
-
 
 dnl 
 dnl crypt
@@ -116,13 +114,47 @@ echo "use zlib"
 AC_CHECK_HEADERS([zlib.h])
 AC_CHECK_LIB(z,inflate)
 
+
 dnl
-dnl socket
+dnl packages dependent on platform 
 dnl
 
-echo "use socket"
-AC_CHECK_HEADERS([socket.h])
-AC_CHECK_LIB(socket,socket)
+case "${host_os}" in 
+ mingw*)
+   dnl
+   dnl winsock2 using model of socket
+   dnl not available uname on windows
+   dnl
+   
+   echo "use winsock2"
+   AC_CHECK_HEADERS([winsock2.h])
+   AC_CHECK_LIB(ws2_32,_head_libws2_32_a)
+   
+   echo "use regex2"
+   AC_CHECK_HEADERS([regex.h])
+   AC_CHECK_LIB(regex,regexec)
+   
+   echo "use iconv"
+   AC_CHECK_HEADERS([iconv.h])
+   AC_CHECK_LIB(iconv,_head_libiconv_a)
+   
+   echo "use pthread2-win32"
+   AC_CHECK_HEADERS([pthread.h])
+   AC_CHECK_LIB(pthreadGCE2,pthread_create)
+   ;;
+ *)
+   dnl
+   dnl any other POSIX systems
+   dnl
+
+   echo "use uname"
+   AC_CHECK_HEADERS([sys/utsname.h])
+
+   echo "use socket"
+   AC_CHECK_HEADERS([socket.h])
+   AC_CHECK_LIB(socket,socket)
+   ;;
+esac
 
 
 dnl

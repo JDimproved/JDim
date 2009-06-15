@@ -40,13 +40,17 @@ struct XSMPDATA
 };
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 enum
 {
     MAX_SAFE_ARGC = 4,   // 引数の数の制限値
     MAX_SAFE_ARGV = 1024 // 各引数の文字列の制限値
 };
 
-WinMain* Win_Main = NULL;
+JDWinMain* Win_Main = NULL;
 
 
 // バックアップ復元
@@ -107,7 +111,11 @@ void restore_bkup()
 // SIGINTのハンドラ
 void sig_handler( int sig )
 {
+#ifdef _WIN32
+    if( sig == SIGINT ){
+#else
     if( sig == SIGHUP || sig == SIGINT || sig == SIGQUIT ){
+#endif
 
 #ifdef _DEBUG
         std::cout << "sig_handler sig = " << sig << std::endl;
@@ -394,6 +402,7 @@ int main( int argc, char **argv )
     }
     /*---------------------------------------------------------------*/
 
+#ifndef _WIN32
     // SIGINT、SIGQUITのハンドラ設定
     struct sigaction sigact;
     sigset_t blockset;
@@ -416,6 +425,7 @@ int main( int argc, char **argv )
         fprintf( stderr, "sigaction failed\n" );
         exit( 1 );
     }
+#endif
 
 #ifdef _DEBUG_MEM_PROFILE
     g_mem_set_vtable( glib_mem_profiler_table );
@@ -484,6 +494,7 @@ int main( int argc, char **argv )
     }
 
     /*--- IOMonitor -------------------------------------------------*/
+#ifndef _WIN32
     CORE::IOMonitor iomonitor;
 
     // FIFOの状態をチェックする
@@ -521,12 +532,35 @@ int main( int argc, char **argv )
         delete mdiag;
         if( ret != Gtk::RESPONSE_YES ) return 1;
     }
+#endif
+
+    /*---------------------------------------------------------------*/
+#ifdef _WIN32
+    // 多重起動の確認
+    HANDLE hJdLock = NULL;
+    hJdLock = CreateSemaphore(NULL, LONG_MAX, LONG_MAX, "JdForWindowsLockObject"); //2147483647
+    if( ! multi_mode )
+    {
+        if( GetLastError() == ERROR_ALREADY_EXISTS )
+        {
+            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDは既に起動しています。起動しますか？",
+                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            int ret = mdiag->run();
+            delete mdiag;
+            if( ret != Gtk::RESPONSE_YES )
+            {
+                CloseHandle( hJdLock );
+                return 0;
+            }
+        }
+    }
+#endif
     /*---------------------------------------------------------------*/
 
     // バックアップファイル復元
     restore_bkup();
 
-    Win_Main = new WinMain( init, skip_setupdiag );
+    Win_Main = new JDWinMain( init, skip_setupdiag );
     if( Win_Main ){
 
         m.run( *Win_Main );
@@ -537,6 +571,12 @@ int main( int argc, char **argv )
 
 #ifdef USE_XSMP
     xsmp_session_end( &xsmpdata );
+#endif
+#ifdef _WIN32
+    if( hJdLock != NULL )
+    {
+        CloseHandle( hJdLock );
+    }
 #endif
 
     JDLIB::deinit_ssl();

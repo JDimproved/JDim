@@ -40,5 +40,5 @@ noinst_HEADERS = \
 	jdmigemo.h \
 	tfidf.h
 
-AM_CXXFLAGS = @GTKMM_CFLAGS@
+AM_CXXFLAGS = @GTKMM_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src
