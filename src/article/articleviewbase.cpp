@@ -266,6 +266,7 @@ void ArticleViewBase::setup_action()
 
     // 画像系
     action_group()->add( Gtk::Action::create( "Cancel_Mosaic", "モザイク解除(_C)"), sigc::mem_fun( *this, &ArticleViewBase::slot_cancel_mosaic ) );
+    action_group()->add( Gtk::Action::create( "Show_Mosaic", "モザイクで開く(_M)"), sigc::mem_fun( *this, &ArticleViewBase::slot_show_image_with_mosaic ) );
     action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する(_P)", std::string(), false ),
@@ -453,6 +454,7 @@ void ArticleViewBase::setup_action()
     // 画像メニュー
     "<popup name='popup_menu_img'>"
     "<menuitem action='Cancel_Mosaic'/>"
+    "<menuitem action='Show_Mosaic'/>"
     "<menuitem action='ShowLargeImg'/>"
     "<separator/>"
     "<menuitem action='OpenBrowser'/>";
@@ -2163,12 +2165,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     // プレビュー画面など、レスが存在しないときはいくつかの機能を無効にする
     const bool res_exist = ( ! m_article->empty() && m_article->res_header( res_number ) );
 
-    // ssspの場合は PROTO_SSSP が前に付いている
-    bool sssp = false;
-    if( url.find( PROTO_SSSP ) == 0 ){
-        url = url.substr( strlen( PROTO_SSSP ) );
-        sssp = true;
-    }
+    // ssspの場合は PROTO_SSSP が前に付いているので取り除く
+    const bool sssp = ( url.find( PROTO_SSSP ) == 0 );
+    if( sssp ) url = url.substr( strlen( PROTO_SSSP ) );
 
     /////////////////////////////////////////////////////////////////
     // ID クリック
@@ -2378,6 +2377,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuImageButton ) ){
+            m_str_num = MISC::itostr( res_number );
             show_popupmenu( url, false );
         }
 
@@ -2398,43 +2398,26 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         else{
 
-            bool top = true;
-            bool load = false;
+            const bool open_imageview = ( ! sssp // sssp の時は画像ビューを開かない
+                                          && CONFIG::get_use_image_view()
+                                          && (
+                                              control.button_alloted( event, CONTROL::ClickButton )
+                                              || control.button_alloted( event, CONTROL::OpenBackImageButton )
+                                              )
+                );
 
-            bool open_imageview = true;
+            const bool open_browser = ( ! open_imageview
+                                          && control.button_alloted( event, CONTROL::ClickButton )
+                );
 
-            // バックで開く
-            if( control.button_alloted( event, CONTROL::OpenBackImageButton ) ) top = false;
+            const bool mosaic = ( CONFIG::get_use_mosaic()
+                                  && ! sssp // sssp の時はモザイクをかけない
+                );
+
+            // 画像ビューに切り替える
+            const bool switch_image = ( open_imageview && ! control.button_alloted( event, CONTROL::OpenBackImageButton ) );
         
-            // キャッシュに無かったらロード
-            if( ! DBIMG::is_cached( url ) ){
-
-                // sssp の時はモザイクをかけない
-                const bool nomosaic = sssp;
-                DBIMG::download_img( url, DBTREE::url_readcgi( m_url_article, res_number, 0 ), nomosaic );
-
-                // ポップアップ表示してダウンロードサイズを表示
-                hide_popup();
-                SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
-                const int margin_popup = CONFIG::get_margin_imgpopup();
-                show_popup( view_popup, margin_popup );
-                top = false;
-                load = true;
-
-                // sssp の時は画像ビューを開かない
-                if( sssp ) open_imageview = false;
-            }
-
-            if( CONFIG::get_use_image_view() ){
-
-                if( open_imageview ){
-                    CORE::core_set_command( "open_image", url );
-                    if( top ) CORE::core_set_command( "switch_image" );
-                }
-            }
-            else if( ! load && control.button_alloted( event, CONTROL::ClickButton ) ) CORE::core_set_command( "open_url", url );
-
-            redraw_view();
+            open_image( url, res_number, open_imageview, open_browser, mosaic, switch_image );
         }
     }
 
@@ -2465,6 +2448,46 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     return true;
 }
 
+
+//
+// 画像表示
+//
+void ArticleViewBase::open_image( const std::string& url, const int res_number,
+                                  const bool open_imageview, const bool open_browser, const bool mosaic, const bool switch_image )
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::open_image url = " << url << " num = " << res_number
+              << " open_view = " << open_imageview << " open_browser = " << open_browser << " mosaic = " << mosaic
+              << " switch_image = " << switch_image << std::endl;
+#endif
+
+    bool load = false;
+
+    // キャッシュに無かったらロード
+    if( ! DBIMG::is_cached( url ) ){
+
+        DBIMG::download_img( url, DBTREE::url_readcgi( m_url_article, res_number, 0 ), mosaic );
+
+        // ポップアップ表示してダウンロードサイズを表示
+        hide_popup();
+        SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
+        const int margin_popup = CONFIG::get_margin_imgpopup();
+        show_popup( view_popup, margin_popup );
+        load = true;
+    }
+
+    // 画像ビューを開く
+    if( open_imageview ){
+
+        CORE::core_set_command( "open_image", url );
+        if( ! load && switch_image ) CORE::core_set_command( "switch_image" );
+    }
+
+    // ブラウザで画像を開く
+    else if( ! load && open_browser ) CORE::core_set_command( "open_url", url );
+
+    redraw_view();
+}
 
 
 //
@@ -2599,6 +2622,10 @@ void ArticleViewBase::delete_popup()
 //
 void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 {
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::activate_act_before_popupmenu url = " << url << std::endl;
+#endif
+
     // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
     m_enable_menuslot = false;
 
@@ -2831,10 +2858,17 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     // 画像
     if( ! url.empty() && DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){ 
 
-        // モザイク
+        // モザイク解除
         act = action_group()->get_action( "Cancel_Mosaic" );
         if( act ){
             if( DBIMG::is_cached( url ) && DBIMG::get_mosaic( url ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+        }
+
+        // モザイクで開く
+        act = action_group()->get_action( "Show_Mosaic" );
+        if( act ){
+            if( ! DBIMG::is_cached( url ) ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
 
@@ -3554,6 +3588,29 @@ void ArticleViewBase::slot_cancel_mosaic()
 
     DBIMG::set_mosaic( m_url_tmp, false );
     CORE::core_set_command( "redraw", m_url_tmp );
+}
+
+
+//
+// 画像をモザイク付きでダウンロード及び表示
+//
+void ArticleViewBase::slot_show_image_with_mosaic()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_show_image_with_mosaic url = " << m_url_tmp << " num = " << m_str_num << std::endl;
+#endif    
+
+    if( DBIMG::is_cached( m_url_tmp ) ) return;
+
+    const int res_number = atoi( m_str_num.c_str() );
+    if( ! res_number ) return;
+
+    const bool open_imageview = CONFIG::get_use_image_view();
+    const bool open_browser = ! open_imageview;
+    const bool mosaic = true;
+    const bool switch_image = open_imageview;
+        
+    open_image( m_url_tmp, res_number, open_imageview, open_browser, mosaic, switch_image );
 }
 
 

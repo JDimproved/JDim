@@ -72,10 +72,10 @@ const std::string DBIMG::get_cache_path( const std::string& url )
 }
 
 
-void DBIMG::download_img( const std::string& url, const std::string& refurl, const bool nomosaic )
+void DBIMG::download_img( const std::string& url, const std::string& refurl, const bool mosaic )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
-    if( img ) img->download_img( refurl, nomosaic );
+    if( img ) img->download_img( refurl, mosaic );
 }
 
 

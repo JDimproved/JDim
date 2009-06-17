@@ -58,8 +58,8 @@ namespace DBIMG
 
     // ロード開始
     // refurl : 参照元のスレのアドレス
-    // nomosaic : trueの時はモザイク解除
-    void download_img( const std::string& url, const std::string& refurl, const bool nomosaic );
+    // mosaic : モザイク表示するか
+    void download_img( const std::string& url, const std::string& refurl, const bool mosaic );
 
     void stop_load( const std::string& url );
     const bool save( const std::string& url, Gtk::Window* parent, const std::string& path_to );

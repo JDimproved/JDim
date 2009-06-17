@@ -193,9 +193,9 @@ const std::string Img::get_cache_path()
 // receive_data()　と receive_finish() がコールバックされる
 //
 // refurl : 参照元のスレのアドレス
-// nomosaic : trueの時はモザイク解除
+// mosaic : モザイク表示するか
 //
-void Img::download_img( const std::string& refurl, const bool nomosaic )
+void Img::download_img( const std::string& refurl, const bool mosaic )
 {
     // ダウンロード初回(リダイレクトでは無い)
     if( ! m_count_redirect ) m_url_alt = std::string();
@@ -223,7 +223,7 @@ void Img::download_img( const std::string& refurl, const bool nomosaic )
 
     clear();
     m_refurl = refurl;
-    if( nomosaic ) m_mosaic = false;
+    m_mosaic = mosaic;
                
     JDLIB::LOADERDATA data;
     data.init_for_data();
@@ -266,7 +266,7 @@ const bool Img::save( Gtk::Window* parent, const std::string& path_to )
 //
 // モザイクon/off
 //
-void Img::set_mosaic( bool mosaic )
+void Img::set_mosaic( const bool mosaic )
 {
     if( ! is_cached() ) return;
 
@@ -443,7 +443,7 @@ void Img::receive_finish()
 #endif
             ++m_count_redirect;
             m_url_alt = location();
-            download_img( m_refurl, false );
+            download_img( m_refurl, m_mosaic );
             return;
         }
         else m_type = T_NODATA;

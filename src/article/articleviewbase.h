@@ -302,9 +302,12 @@ namespace ARTICLE
         virtual void slot_on_url( std::string url, int res_number );
         void slot_leave_url();
         bool click_url( std::string url, int res_number, GdkEventButton* event );
+        void open_image( const std::string& url, const int res_number,
+                         const bool open_imageview, const bool open_browser, const bool mosaic, const bool switch_image );
 
         // 画像ポップアップメニュー用
         void slot_cancel_mosaic();
+        void slot_show_image_with_mosaic();
         void slot_show_large_img();
         void slot_deleteimage();
         void slot_toggle_protectimage();

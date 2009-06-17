@@ -2220,8 +2220,8 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         // キャッシュに無かったらロード
         if( ! DBIMG::is_cached( command.url ) ){
-            const bool nomosaic = false;
-            DBIMG::download_img( command.url, std::string(), nomosaic );
+            const bool mosaic = CONFIG::get_use_mosaic();
+            DBIMG::download_img( command.url, std::string(), mosaic );
         }
 
         IMAGE::get_admin()->set_command( "open_view", command.url );
@@ -2674,8 +2674,8 @@ void Core::exec_command()
                 else{
                     // キャッシュに無かったらロード
                     if( ! DBIMG::is_cached( command.url ) ){
-                        const bool nomosaic = false;
-                        DBIMG::download_img( command.url, std::string(), nomosaic );
+                        const bool mosaic = CONFIG::get_use_mosaic();
+                        DBIMG::download_img( command.url, std::string(), mosaic );
                     }
 
                     CORE::core_set_command( "open_image", command.url );

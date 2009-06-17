@@ -77,7 +77,7 @@ namespace DBIMG
         void set_abone( bool abone );
 
         const bool get_mosaic() const { return m_mosaic; }
-        void set_mosaic( bool mosaic );
+        void set_mosaic( const bool mosaic );
 
         void show_large_img();
 
@@ -100,8 +100,8 @@ namespace DBIMG
         // ロード開始
         // receive_data()　と receive_finish() がコールバックされる
         // refurl : 参照元のスレのアドレス
-        // nomosaic : trueの時はモザイク解除
-        void download_img( const std::string& refurl, const bool nomosaic );
+        // mosaic : モザイク表示するか
+        void download_img( const std::string& refurl, const bool mosaic );
 
         const bool save( Gtk::Window* parent, const std::string& path_to );
         

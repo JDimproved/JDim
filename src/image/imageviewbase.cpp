@@ -354,8 +354,8 @@ void ImageViewBase::reload()
 #endif
 
     std::string refurl = m_img->get_refurl();
-    const bool nomosaic = false;
-    m_img->download_img( refurl, nomosaic );
+    const bool mosaic = m_img->get_mosaic();
+    m_img->download_img( refurl, mosaic );
 }
 
 
