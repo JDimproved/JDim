@@ -780,15 +780,16 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         // 名前 + トリップ
         if( ! m_entry_name.get_text().empty() ){
 
-            std::string name = MISC::html_escape( m_entry_name.get_text() );
+            const std::string name_field = m_entry_name.get_text();
+
+            const size_t trip_pos = name_field.find( "#", 0 );
+
+            const std::string name = MISC::html_escape( name_field.substr( 0, trip_pos ) );
 
             std::string trip;
-
-	    std::string::size_type i = name.find( "#" );
-            if( i != std::string::npos ){
-
-                trip = MISC::get_trip( name.substr( i+1 ), DBTREE::board_charset( get_url() ) );
-                name = name.substr( 0, i );
+            if( trip_pos != std::string::npos )
+            {
+                trip = MISC::get_trip( name_field.substr( trip_pos + 1 ), DBTREE::board_charset( get_url() ) );
             }
 
             ss << name;

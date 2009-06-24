@@ -1,87 +1,240 @@
 // ライセンス: GPL2
 
-//
-// Thanks to 「パッチ投稿」スレの9氏
-//
-// http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/9
-//
-
 //#define _DEBUG
 #include "jddebug.h"
 
 #include "misctrip.h"
 #include "miscutil.h"
 
+#include <sstream>
+#include <cstring>
+#include <ctype.h>
 #include <unistd.h> // crypt
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef USE_OPENSSL
+#include <openssl/sha.h>
+#else // defined USE_GNUTLS
+#include <gcrypt.h>
+#endif
 
 #ifdef _WIN32
 #include <crypt.h>
 #endif
 
+
+/*--------------------------------------------------------------------*/
+// ローカル関数の宣言
+
+// SHA1を計算
+const std::string create_sha1( const std::string& key );
+
+// トリップを計算(新方式)
+const std::string create_trip_newtype( const std::string& key );
+
+// トリップを計算(従来方式)
+const std::string create_trip_conventional( const std::string& key );
+/*--------------------------------------------------------------------*/
+
+
+
+/*--------------------------------------------------------------------*/
+// SHA1を計算
 //
-// key から salt を取得
+// param1: 元となる文字列
+// return: SHA1文字列
+/*--------------------------------------------------------------------*/
+const std::string create_sha1( const std::string& key )
+{
+    if( key.empty() ) return std::string();
+
+#ifdef USE_OPENSSL
+
+    const unsigned int digest_length = SHA_DIGEST_LENGTH;
+
+    unsigned char digest[ digest_length ];
+
+    // unsigned char *SHA1( const unsigned char *, size_t, unsigned char * );
+    SHA1( (const unsigned char *)key.c_str(), key.length(), digest );
+
+#else // defined USE_GNUTLS
+
+    const unsigned int digest_length = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
+
+    unsigned char digest[ digest_length ];
+
+    gcry_md_hash_buffer( GCRY_MD_SHA1, digest, key.c_str(), key.length() );
+
+#endif
+
+    std::stringstream sha1;
+
+    unsigned int i;
+    for( i = 0; i < digest_length; i++ )
+    {
+        sha1 << digest[i];
+    }
+
+#ifdef _DEBUG
+    std::cout << "SHA1: " << std::hex << sha1 << std::endl;
+#endif
+
+    return sha1.str();
+}
+
+
+/*--------------------------------------------------------------------*/
+// トリップを計算(新方式) 2009/06/19の仕様
+// param1: 元となる文字列
+// return: トリップ文字列
+/*--------------------------------------------------------------------*/
+const std::string create_trip_newtype( const std::string& key )
+{
+    if( key.empty() ) return std::string();
+
+    const size_t key_length = key.length();
+
+    // キーは1024文字以内に限定される
+    if( key_length > 1024 ) return std::string();
+
+    std::string trip = "???";
+
+    // "#"で始まる
+    if( key[0] == '#' )
+    {
+        // 全体が17〜19文字 ^#[0-9A-Fa-f]{16}[./0-9A-Za-z]{0,2}$
+        if( key_length > 16 && key_length < 20 )
+        {
+            // 16進数文字列部分
+            const std::string hex_part = key.substr( 1, 16 );
+
+            char key_binary[17] = { 0 };
+
+            // 16進数文字列を全てバイナリに変換出来た [0-9A-Za-z]{16}
+            if( MISC::chrtobin( hex_part.c_str(), key_binary ) == 16 )
+            {
+                char salt[5] = { 0 };
+
+                bool is_salt_suitable = true;
+
+                size_t n;
+
+                // salt 候補の17〜18文字目を検証
+                for( n = 17; key[n] && n < 19; ++n )
+                {
+                    // [./0-9A-Za-z]
+                    if( isalnum( key[n] ) != 0 || (unsigned char)( key[n] - 0x2e ) < 2 )
+                    {
+                        strncat( salt, &key[n], 1 );
+                    }
+                    else
+                    {
+                        is_salt_suitable = false;
+                        break;
+                    }
+                }
+
+                // salt が適切(空も含む)
+                if( is_salt_suitable == true )
+                {
+                    // salt に".."を足す
+                    strncat( salt, "..", 2 );
+
+                    // crypt (key は先頭8文字しか使われない)
+                    const char *crypted = crypt( key_binary, salt );
+
+                    // 末尾から10文字(cryptの戻り値はNULLでなければ必ず13文字)
+                    if( crypted ) trip = std::string( crypted + 3 );
+                    else trip.clear();
+                }
+            }
+        }
+    }
+    // "$"で始まる
+    else if( key[0] == '$' )
+    {
+        // 現在は"???"を返す
+    }
+    // SHA1パターン
+    else
+    {
+        const std::string sha1 = create_sha1( key );
+
+        if( ! sha1.empty() )
+        {
+            // BASE64エンコード
+            const std::string encoded = MISC::base64( sha1 );
+
+            // 先頭から12文字
+            trip = encoded.substr( 0, 12 );
+        }
+    }
+
+    return trip;
+}
+
+
+/*--------------------------------------------------------------------*/
+// トリップを計算(従来方式) 2003/11/15の仕様らしい
+// 新方式導入に伴い、特殊文字の置換が不要になったようだ
 //
-const std::string MISC::get_salt( const std::string& key )
+// param1: 元となる文字列
+// return: トリップ文字列
+/*--------------------------------------------------------------------*/
+const std::string create_trip_conventional( const std::string& key )
 {
     if( key.empty() ) return std::string();
 
     // key の2,3バイト目を salt として取り出す
     std::string salt = key.substr( 1, 2 );
 
-    // salt の末尾に "H." を足す
-    salt += "H.";
-
-    // その他の仕様に合わせて salt を変換
-    size_t i;
+    // 仕様に合わせて salt を変換
     const size_t salt_length = salt.length();
-    for( i = 0; i < salt_length; i++ )
+    size_t n;
+    for( n = 0; n < salt_length; n++ )
     {
         // 0x2e〜0x7aの範囲にないものは '.'(0x2e)
-        if( (unsigned char)( salt[i] - 0x2E ) > 0x4C )
+        if( (unsigned char)( salt[n] - 0x2E ) > 0x4C )
         {
-            salt[i] = 0x2e;
+            salt[n] = 0x2e;
         }
         // :;<=>?@ (0x3a〜0x40) は A〜G (0x41〜0x47)
-        else if( (unsigned char)( salt[i] - 0x3A ) < 0x07 )
+        else if( (unsigned char)( salt[n] - 0x3A ) < 0x07 )
         {
-            salt[i] += 7;
+            salt[n] += 7;
         }
         // [\]^_` (0x5b〜0x60) は a〜f (0x61〜0x66)
-        else if( (unsigned char)( salt[i] - 0x5B ) < 0x06 )
+        else if( (unsigned char)( salt[n] - 0x5B ) < 0x06 )
         {
-            salt[i] += 6;
+            salt[n] += 6;
         }
     }
 
-    return salt;
-}
+    // salt の末尾に"H."を足す
+    salt.append( "H." );
 
+    // crypt (key は先頭8文字しか使われない)
+    const char *crypted = crypt( key.c_str(), salt.c_str() );
 
-//
-// key と salt から trip を計算
-//
-const std::string MISC::create_trip( const std::string& key, const std::string& salt )
-{
-    if( key.empty() || salt.empty() ) return std::string();
+    std::string trip;
 
-    // crypt( key, salt )
-    const char *temp = crypt( key.c_str(), salt.c_str() );
-
-    const std::string crypted( temp );
-
-    // crypted(必ず13文字) から末尾10文字を trip として取り出す
-    // crypted.substr( crypted.length()-10, 10 );
-    const std::string trip = crypted.substr( 3, 10 );
+    // 末尾10(cryptの戻り値はNULLでなければ必ず13文字)
+    if( crypted ) trip = std::string( crypted + 3 );
 
     return trip;
 }
 
 
+/*--------------------------------------------------------------------*/
+// トリップを取得
 //
-// トリップ取得
-//
-// str は UTF-8 であること
-//
+// param1: 元となる文字列(最初の"#"を含まない。UTF-8 であること)
+// param2: 書き込む掲示板の文字コード
+// return: トリップ文字列
+/*--------------------------------------------------------------------*/
 const std::string MISC::get_trip( const std::string& str, const std::string& charset )
 {
     if( str.empty() ) return std::string();
@@ -89,16 +242,18 @@ const std::string MISC::get_trip( const std::string& str, const std::string& cha
     // str の文字コードを UTF-8 から charset に変更して key に代入する
     std::string key = MISC::Iconv( str, "UTF-8", charset );
 
-    // "<> をHTMLエスケープ
-    key = MISC::replace_str( key, "\"", "&quot;" );
-    key = MISC::replace_str( key, "<", "&lt;" );
-    key = MISC::replace_str( key, ">", "&gt;" );
+    std::string trip;
 
-    // key を元に salt を取得
-    const std::string salt = get_salt( key );
-
-    // trip を計算
-    const std::string trip = create_trip( key, salt );
+    // key が12文字以上の場合は新方式
+    if( key.length() > 11 )
+    {
+        trip = create_trip_newtype( key );
+    }
+    // 従来方式
+    else
+    {
+        trip = create_trip_conventional( key );
+    }
 
 #ifdef _DEBUG
     std::cout << "MISC::get_trip : " << str << " -> " << trip << std::endl;
