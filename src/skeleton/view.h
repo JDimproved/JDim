@@ -176,7 +176,7 @@ namespace SKELETON
         virtual void unlock(){ m_locked = false; }
 
         // view 上にマウスポインタがあれば true
-        bool is_mouse_on_view();
+        const bool is_mouse_on_view();
 
         // 各view個別のコマンド
         virtual const bool set_command( const std::string& command,

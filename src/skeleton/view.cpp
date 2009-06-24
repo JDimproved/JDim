@@ -175,13 +175,18 @@ const bool View::release_keyjump_key( int key )
 
 
 // view 上にマウスポインタがあれば true
-bool View::is_mouse_on_view()
+const bool View::is_mouse_on_view()
 {
     bool ret = false;
 
     int x,y;
     get_pointer( x, y );
-    if( x <= get_width() && x >= 0 && y <= get_height() && y >= 0 ) ret = true;
+    if( x < get_width() && x >= 0 && y < get_height() && y >= 0 ) ret = true;
+
+#ifdef _DEBUG
+    std::cout << "View::is_mouse_on_view ret = " << ret
+              << " x= " << x << " y= " << y << " w= " << get_width() << " h= " << get_height() << std::endl;
+#endif
 
     return ret;
 }

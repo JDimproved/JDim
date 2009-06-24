@@ -2536,10 +2536,19 @@ void ArticleViewBase::show_popup( SKELETON::View* view, int margin )
 //
 bool ArticleViewBase::slot_popup_leave_notify_event( GdkEventCrossing* event )
 {
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_popup_leave_notify_event\n";
+#endif
+
     // クリックしたときやホイールを回すと event->mode に　GDK_CROSSING_GRAB
     // か GDK_CROSSING_UNGRAB がセットされてイベントが発生する場合がある
     if( event->mode == GDK_CROSSING_GRAB ) return false;
     if( event->mode == GDK_CROSSING_UNGRAB ) return false;
+
+    // ポインタがポップアップ上だったらポップアップは消さない
+    // 時々ポインタがポップアップの上にあってもイベントが発生する場合がある
+    if( is_mouse_on_popup() ) return false;
+
 
     slot_hide_popup();
     return true;
@@ -2551,6 +2560,10 @@ bool ArticleViewBase::slot_popup_leave_notify_event( GdkEventCrossing* event )
 //
 void ArticleViewBase::slot_hide_popup()
 {
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_hide_popup\n";
+#endif
+
     hide_popup();
 
     // ポインタがwidgetの外にあったら親に知らせて自分も閉じてもらう
