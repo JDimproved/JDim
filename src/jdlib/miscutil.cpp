@@ -644,11 +644,11 @@ const size_t MISC::chrtobin( const char* chr_in, char* chr_out )
         chr_out[b] <<= 4;
 
         // 0(0x30)〜9(0x39)
-        if( ( chr - 0x30 ) < 0x0A ) chr_out[b] |= chr - 0x30;
+        if( (unsigned char)( chr - 0x30 ) < 10 ) chr_out[b] |= chr - 0x30;
         // A(0x41)〜F(0x46)
-        else if( ( chr - 0x41 ) < 0x06 ) chr_out[b] |= chr - 0x37;
+        else if( (unsigned char)( chr - 0x41 ) < 6 ) chr_out[b] |= chr - 0x37;
         // a(0x61)〜f(0x66)
-        else if( ( chr - 0x61 ) < 0x06 ) chr_out[b] |= chr - 0x57;
+        else if( (unsigned char)( chr - 0x61 ) < 6 ) chr_out[b] |= chr - 0x57;
         // その他
         else break;
 
