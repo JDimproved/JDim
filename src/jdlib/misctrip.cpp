@@ -72,14 +72,22 @@ const std::string create_sha1( const std::string& key )
 
     std::stringstream sha1;
 
-    unsigned int i;
-    for( i = 0; i < digest_length; i++ )
+#ifdef _DEBUG
+    std::cout << "create_sha1 : SHA1 = ";
+#endif
+
+    unsigned int n;
+    for( n = 0; n < digest_length; ++n )
     {
-        sha1 << digest[i];
+        sha1 << digest[n];
+
+#ifdef _DEBUG
+        std::cout << std::hex << (unsigned int)digest[n];
+#endif
     }
 
 #ifdef _DEBUG
-    std::cout << "SHA1: " << std::hex << sha1 << std::endl;
+    std::cout << std::endl;
 #endif
 
     return sha1.str();
@@ -87,7 +95,7 @@ const std::string create_sha1( const std::string& key )
 
 
 /*--------------------------------------------------------------------*/
-// トリップを計算(新方式) 2009/06/19の仕様
+// トリップを計算(新方式) 2009/06の仕様
 // param1: 元となる文字列
 // return: トリップ文字列
 /*--------------------------------------------------------------------*/
