@@ -608,7 +608,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
         if( m_analyzing_board_xml && m_analyzed_path_board.find( path_board ) != m_analyzed_path_board.end() ){
 
             std::string tmp_msg = "Root::set_board : The XML file is broken !\n";
-            tmp_msg += url + " has already been registerd as " + board->url_boardbase();
+            tmp_msg += url + " has already been registered as " + board->url_boardbase();
             MISC::ERRMSG( tmp_msg );
 
             const std::string path1 = CACHE::path_board_root_fast( board->url_boardbase() );
