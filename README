@@ -26,9 +26,9 @@
 
 * 動作プラットフォーム
 
-  LinuxなどのUnixライクなOS(FreeBSD,Nexenta,MacOSXでも動作報告例があります)。
+  LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
 
-  Windowsでも環境が整えば動くかも知れませんが今のところ報告例がありません。
+  WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定していないようです。
 
 * 使用方法
 

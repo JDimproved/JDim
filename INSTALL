@@ -87,6 +87,10 @@
 
       正規表現ライブラリとしてPOSIX regex の代わりに鬼車を使用する。鬼車はBSDライセンスなのでJDをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
 
+    --with-gthread
+
+      pthreadの代わりにgthreadを使用する。
+
 * メモ
 
   最近のディストリビューションの場合は autogen.sh よりも autoreconf -i の方を推奨。
