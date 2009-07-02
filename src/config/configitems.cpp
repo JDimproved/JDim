@@ -210,10 +210,10 @@ const bool ConfigItems::load( const bool restore )
     zoom_to_fit = cf.get_option_bool( "zoom_to_fit", CONF_ZOOM_TO_FIT );
 
     // 画像キャッシュ削除の日数
-    del_img_day = cf.get_option_int( "del_img_day", CONF_DEL_IMG_DAY, 1, 65535 );
+    del_img_day = cf.get_option_int( "del_img_day", CONF_DEL_IMG_DAY, 0, 65535 );
 
     // 画像あぼーん削除の日数
-    del_imgabone_day = cf.get_option_int( "del_imgabone_day", CONF_DEL_IMGABONE_DAY, 1, 65535 );
+    del_imgabone_day = cf.get_option_int( "del_imgabone_day", CONF_DEL_IMGABONE_DAY, 0, 65535 );
 
     // ダウンロードする画像の最大ファイルサイズ(Mbyte)
     max_img_size = cf.get_option_int( "max_img_size", CONF_MAX_IMG_SIZE, 1, 1024 );
