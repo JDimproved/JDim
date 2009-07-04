@@ -106,6 +106,7 @@ namespace CONFIG
         CONF_EXPAND_RPANE = 1,        // 3ペーン時にスレ一覧やスレビューを最大化する
         CONF_THRESHOLD_NEXT = 5,   // 次スレ検索の類似度のしきい値
         CONF_REPLACE_FAVORITE_NEXT = 1,  // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
+        CONF_SHOW_DIAG_REPLACE_FAVORITE = 1, // お気に入りの自動更新をするかダイアログを出す
         CONF_BOOKMARK_DROP = 0, // スレをお気に入りに追加したときにしおりをセットする
         CONF_CHECK_UPDATE_BOARD = 0,  // お気に入りの更新チェック時に板の更新もチェックする
         CONF_DISABLE_CLOSE = 0, // Ctrl+qでウィンドウを閉じない

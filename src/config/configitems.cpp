@@ -441,6 +441,9 @@ const bool ConfigItems::load( const bool restore )
     // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
     replace_favorite_next = cf.get_option_bool( "replace_favorite_next", CONF_REPLACE_FAVORITE_NEXT );
 
+    // お気に入りの自動更新をするかダイアログを出す
+    show_diag_replace_favorite = cf.get_option_bool( "show_diag_replace_favorite", CONF_SHOW_DIAG_REPLACE_FAVORITE );
+
     // スレをお気に入りに追加したときにしおりをセットする
     bookmark_drop = cf.get_option_bool( "bookmark_drop", CONF_BOOKMARK_DROP );
 
@@ -721,6 +724,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "threshold_next", threshold_next );
     cf.update( "replace_favorite_next", replace_favorite_next );
+    cf.update( "show_diag_replace_favorite", show_diag_replace_favorite );
     cf.update( "bookmark_drop", bookmark_drop );
     cf.update( "check_update_board", check_update_board );
     cf.update( "disable_close", disable_close );

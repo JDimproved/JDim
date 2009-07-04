@@ -40,8 +40,8 @@ namespace CONFIG
     void set_manage_winpos( const bool manage );
 
     // 色 ( # + 12桁の16進数 の形式 )
-    const std::string& get_color( int id );
-    void set_color( int id, const std::string& color );
+    const std::string& get_color( const int id );
+    void set_color( const int id, const std::string& color );
     void reset_colors();
 
     // ツリービューでgtkrcの設定を使用するか
@@ -54,8 +54,8 @@ namespace CONFIG
     const int get_view_margin();
 
     // フォント
-    const std::string& get_fontname( int id );
-    void set_fontname( int id, const std::string& fontname );
+    const std::string& get_fontname( const int id );
+    void set_fontname( const int id, const std::string& fontname );
     void reset_fonts();
 
     // レスを参照するときに前に付ける文字
@@ -148,7 +148,7 @@ namespace CONFIG
 
     // ipv6使用
     const bool get_use_ipv6();
-    void set_use_ipv6( bool set );
+    void set_use_ipv6( const bool set );
 
     // リンクをクリックしたときに実行するコマンド
     const std::string& get_command_openurl();
@@ -156,7 +156,7 @@ namespace CONFIG
 
     // ブラウザ設定ダイアログのコンボボックスの番号
     const int get_browsercombo_id();
-    void set_browsercombo_id( int id );
+    void set_browsercombo_id( const int id );
 
     // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
     const bool get_refpopup_by_mo();
@@ -219,7 +219,7 @@ namespace CONFIG
 
     // スレ一覧にdat落ちしたスレも表示する
     const bool get_show_oldarticle();
-    void set_show_oldarticle( bool showarticle );
+    void set_show_oldarticle( const bool showarticle );
 
     // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
     const int get_newthread_hour();
@@ -245,11 +245,11 @@ namespace CONFIG
 
     // スレビューでリロード後に一番下までスクロール
     const bool get_jump_after_reload();
-    void set_jump_after_reload( bool set );
+    void set_jump_after_reload( const bool set );
 
     // スレビューでリロード後に新着までスクロール
     const bool get_jump_new_after_reload();
-    void set_jump_new_after_reload( bool set );
+    void set_jump_new_after_reload( const bool set );
 
     // 実況モード
     const int get_live_mode();
@@ -271,29 +271,29 @@ namespace CONFIG
 
     // 書き込み時に書き込み確認ダイアログを出すかどうか
     const bool get_always_write_ok();
-    void set_always_write_ok( bool write_ok );
+    void set_always_write_ok( const bool write_ok );
 
     // 書き込みログを保存
     const bool get_save_post_log();
-    void set_save_post_log( bool save );
+    void set_save_post_log( const bool save );
 
     // 書き込みログの最大サイズ
     const size_t get_maxsize_post_log();
 
     // 書き込み履歴を保存
     const bool get_save_post_history();
-    void set_save_post_history( bool save );
+    void set_save_post_history( const bool save );
 
     // 書き込み中のダイアログを表示しない
     const bool get_hide_writing_dialog();
 
     // 非アクティブ時に書き込みビューを折りたたむ
     const bool get_fold_message();
-    void set_fold_message( bool fold );
+    void set_fold_message( const bool fold );
 
     // ポップアップとカーソルの間のマージン
     const int get_margin_popup();
-    void set_margin_popup( int margin );
+    void set_margin_popup( const int margin );
 
     // 画像ポップアップとカーソルの間のマージン
     const int get_margin_imgpopup();
@@ -312,26 +312,26 @@ namespace CONFIG
 
     // スレビューを開いたときにスレ一覧との切り替え方法を説明する
     const bool get_instruct_tglart();
-    void set_instruct_tglart( bool set );
+    void set_instruct_tglart( const bool set );
 
     // 画像ビューを開いたときにスレビューとの切り替え方法を説明する
     const bool get_instruct_tglimg();
-    void set_instruct_tglimg( bool set );
+    void set_instruct_tglimg( const bool set );
 
     // 下線位置調整
     const double get_adjust_underline_pos();
-    void set_adjust_underline_pos( double pos );
+    void set_adjust_underline_pos( const double pos );
 
     // スレ表示の行間調整
     const double get_adjust_line_space();
-    void set_adjust_line_space( double space );
+    void set_adjust_line_space( const double space );
 
     // スレ表示でリンクの下に下線を引く
     const bool get_draw_underline();
 
     // スレビューで文字幅の近似を厳密にする
     const bool get_strict_char_width();
-    void set_strict_char_width( bool strictwidth );
+    void set_strict_char_width( const bool strictwidth );
 
     // スレビューで発言数(ID)をカウントする
     const bool get_check_id();
@@ -349,7 +349,7 @@ namespace CONFIG
 
     // ユーザーコマンドで選択できない項目を非表示にする
     const bool get_hide_usrcmd();
-    void set_hide_usrcmd( bool hide );
+    void set_hide_usrcmd( const bool hide );
 
     // スレビューで再読み込みボタンを押したときに全タブを更新する
     const bool get_reload_allthreads();
@@ -408,6 +408,11 @@ namespace CONFIG
 
     // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
     const bool get_replace_favorite_next();
+    void set_replace_favorite_next( const bool set );
+
+    // お気に入りの自動更新をするかダイアログを出す
+    const bool show_diag_replace_favorite();
+    void set_show_diag_replace_favorite( const bool show );
 
     // スレをお気に入りに追加したときにしおりをセットする
     const bool get_bookmark_drop();

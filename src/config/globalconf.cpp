@@ -76,12 +76,12 @@ void CONFIG::set_manage_winpos( const bool manage ){ get_confitem()->manage_winp
 
 
 // 色
-const std::string& CONFIG::get_color( int id )
+const std::string& CONFIG::get_color( const int id )
 {
     return get_confitem()->str_color[ id ];
 }
 
-void CONFIG::set_color( int id, const std::string& color )
+void CONFIG::set_color( const int id, const std::string& color )
 {
     get_confitem()->str_color[ id ] = color;
 }
@@ -95,12 +95,12 @@ const int CONFIG::get_tree_ypad(){ return get_confitem()->tree_ypad; }
 const int CONFIG::get_view_margin(){ return get_confitem()->view_margin; }
 
 // フォント
-const std::string& CONFIG::get_fontname( int id )
+const std::string& CONFIG::get_fontname( const int id )
 {
     return get_confitem()->fontname[ id ];
 }
 
-void CONFIG::set_fontname( int id, const std::string& fontname )
+void CONFIG::set_fontname( const int id, const std::string& fontname )
 {
     get_confitem()->fontname[ id ] = fontname;
 }
@@ -173,13 +173,13 @@ const int CONFIG::get_loader_timeout_data(){ return get_confitem()->loader_timeo
 const int CONFIG::get_loader_timeout_checkupdate(){ return get_confitem()->loader_timeout_checkupdate; }
 
 const bool CONFIG::get_use_ipv6(){ return get_confitem()->use_ipv6; }
-void CONFIG::set_use_ipv6( bool set ){ get_confitem()->use_ipv6 = set; }
+void CONFIG::set_use_ipv6( const bool set ){ get_confitem()->use_ipv6 = set; }
 
 const std::string& CONFIG::get_command_openurl() { return get_confitem()->command_openurl; }
 void CONFIG::set_command_openurl( const std::string& command ){ get_confitem()->command_openurl = command; }
 
 const int CONFIG::get_browsercombo_id(){ return get_confitem()->browsercombo_id; }
-void CONFIG::set_browsercombo_id( int id ){ get_confitem()->browsercombo_id = id; }
+void CONFIG::set_browsercombo_id( const int id ){ get_confitem()->browsercombo_id = id; }
 
 const bool CONFIG::get_refpopup_by_mo(){ return get_confitem()->refpopup_by_mo; }
 const bool CONFIG::get_namepopup_by_mo(){ return get_confitem()->namepopup_by_mo; }
@@ -217,7 +217,7 @@ const int CONFIG::get_max_img_size(){ return get_confitem()->max_img_size; }
 const int CONFIG::get_max_img_pixel(){ return get_confitem()->max_img_pixel; }
 
 const bool CONFIG::get_show_oldarticle(){ return get_confitem()->show_oldarticle; }
-void CONFIG::set_show_oldarticle( bool showarticle ){ get_confitem()->show_oldarticle = showarticle; }
+void CONFIG::set_show_oldarticle( const bool showarticle ){ get_confitem()->show_oldarticle = showarticle; }
 
 const int CONFIG::get_newthread_hour(){ return get_confitem()->newthread_hour; }
 
@@ -232,9 +232,9 @@ const int CONFIG::get_key_scroll_size(){ return get_confitem()->key_scroll_size;
 const int CONFIG::get_key_fastscroll_size(){ return get_confitem()->key_fastscroll_size; }
 
 const bool CONFIG::get_jump_after_reload(){ return get_confitem()->jump_after_reload; }
-void CONFIG::set_jump_after_reload( bool set ){ get_confitem()->jump_after_reload = set; }
+void CONFIG::set_jump_after_reload( const bool set ){ get_confitem()->jump_after_reload = set; }
 const bool CONFIG::get_jump_new_after_reload(){ return get_confitem()->jump_new_after_reload; }
-void CONFIG::set_jump_new_after_reload( bool set ){ get_confitem()->jump_new_after_reload = set; }
+void CONFIG::set_jump_new_after_reload( const bool set ){ get_confitem()->jump_new_after_reload = set; }
 
 const int CONFIG::get_live_mode(){ return get_confitem()->live_mode; }
 void CONFIG::set_live_mode( const int mode ) { get_confitem()->live_mode = mode; }
@@ -246,22 +246,22 @@ void CONFIG::set_live_threshode( const int th ){ get_confitem()->live_threshold 
 const bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; }
 const bool CONFIG::get_open_one_favorite(){ return get_confitem()->open_one_favorite; }
 const bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }
-void CONFIG::set_always_write_ok( bool write_ok ){ get_confitem()->always_write_ok = write_ok; }
+void CONFIG::set_always_write_ok( const bool write_ok ){ get_confitem()->always_write_ok = write_ok; }
 
 const bool CONFIG::get_save_post_log(){ return get_confitem()->save_postlog; }
-void CONFIG::set_save_post_log( bool save ){ get_confitem()->save_postlog = save; }
+void CONFIG::set_save_post_log( const bool save ){ get_confitem()->save_postlog = save; }
 const size_t CONFIG::get_maxsize_post_log(){ return get_confitem()->maxsize_postlog; }
 
 // 書き込み履歴を保存
 const bool CONFIG::get_save_post_history(){ return get_confitem()->save_posthist; }
-void CONFIG::set_save_post_history( bool save ){ get_confitem()->save_posthist = save; }
+void CONFIG::set_save_post_history( const bool save ){ get_confitem()->save_posthist = save; }
 
 const bool CONFIG::get_hide_writing_dialog(){ return get_confitem()->hide_writing_dialog; }
 const bool CONFIG::get_fold_message(){ return get_confitem()->fold_message; }
-void CONFIG::set_fold_message( bool fold ){ get_confitem()->fold_message = fold; }
+void CONFIG::set_fold_message( const bool fold ){ get_confitem()->fold_message = fold; }
 
 const int CONFIG::get_margin_popup(){ return get_confitem()->margin_popup; }
-void CONFIG::set_margin_popup( int margin ){ get_confitem()->margin_popup = margin; }
+void CONFIG::set_margin_popup( const int margin ){ get_confitem()->margin_popup = margin; }
 
 const int CONFIG::get_margin_imgpopup(){ return get_confitem()->margin_imgpopup; }
 
@@ -284,7 +284,7 @@ const bool CONFIG::get_instruct_tglart(){
     get_confitem()->instruct_tglart_end = true; // 一度表示したら表示しない
     return get_confitem()->instruct_tglart;
 }
-void CONFIG::set_instruct_tglart( bool tgl ){ get_confitem()->instruct_tglart = tgl; }
+void CONFIG::set_instruct_tglart( const bool tgl ){ get_confitem()->instruct_tglart = tgl; }
 
 const bool CONFIG::get_instruct_tglimg(){
 
@@ -298,15 +298,15 @@ void CONFIG::set_instruct_tglimg( bool tgl ){ get_confitem()->instruct_tglimg = 
 
 
 const double CONFIG::get_adjust_underline_pos(){ return get_confitem()->adjust_underline_pos; }
-void CONFIG::set_adjust_underline_pos( double pos ){ get_confitem()->adjust_underline_pos = pos; }
+void CONFIG::set_adjust_underline_pos( const double pos ){ get_confitem()->adjust_underline_pos = pos; }
 
 const double CONFIG::get_adjust_line_space(){ return get_confitem()->adjust_line_space; }
-void CONFIG::set_adjust_line_space( double space ){ get_confitem()->adjust_line_space = space; }
+void CONFIG::set_adjust_line_space( const double space ){ get_confitem()->adjust_line_space = space; }
 
 const bool CONFIG::get_draw_underline(){ return get_confitem()->draw_underline; }
 
 const bool CONFIG::get_strict_char_width(){ return get_confitem()->strict_char_width; }
-void CONFIG::set_strict_char_width( bool strictwidth ){ get_confitem()->strict_char_width = strictwidth; }
+void CONFIG::set_strict_char_width( const bool strictwidth ){ get_confitem()->strict_char_width = strictwidth; }
 
 const bool CONFIG::get_check_id(){ return get_confitem()->check_id; }
 
@@ -318,7 +318,7 @@ const int CONFIG::get_num_id_low(){ return get_confitem()->num_id_low; }
 const bool CONFIG::get_loose_url(){ return get_confitem()->loose_url; }
 
 const bool CONFIG::get_hide_usrcmd(){ return get_confitem()->hide_usrcmd; }
-void CONFIG::set_hide_usrcmd( bool hide ){ get_confitem()->hide_usrcmd = hide; }
+void CONFIG::set_hide_usrcmd( const bool hide ){ get_confitem()->hide_usrcmd = hide; }
 
 const bool CONFIG::get_reload_allthreads(){ return get_confitem()->reload_allthreads; }
 
@@ -399,6 +399,11 @@ const int CONFIG::get_threshold_next(){ return get_confitem()->threshold_next; }
 
 // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
 const bool CONFIG::get_replace_favorite_next(){ return get_confitem()->replace_favorite_next; }
+void CONFIG::set_replace_favorite_next( const bool set ){ get_confitem()->replace_favorite_next = set; }
+
+// お気に入りの自動更新をするかダイアログを出す
+const bool CONFIG::show_diag_replace_favorite(){ return get_confitem()->show_diag_replace_favorite; }
+void CONFIG::set_show_diag_replace_favorite( const bool show ){ get_confitem()->show_diag_replace_favorite = show; }
 
 // スレをお気に入りに追加したときにしおりをセットする
 const bool CONFIG::get_bookmark_drop(){ return get_confitem()->bookmark_drop; }

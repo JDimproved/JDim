@@ -2392,6 +2392,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
               << "type = " << type << std::endl;
 #endif
 
+    bool show_diag = true;
     while( 1 ){
 
         if( ( row = m_treeview.get_row( path ) ) ){
@@ -2409,6 +2410,27 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                 case TYPE_THREAD_OLD:
 
                     if( urldat == url_row || urlcgi == url_row ){
+
+                        if( show_diag && CONFIG::show_diag_replace_favorite() ){
+
+                            show_diag = false;
+
+                            SKELETON::MsgCheckDiag mdiag( get_parent_win(),
+                                                          "お気に入りに前スレが登録されています。\n名前とアドレスを新スレの物に置き換えますか？"
+                                                          , "今後表示しない(_D)",
+                                                          Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO
+                                );
+                            mdiag.set_title( "お気に入り更新" );
+                            const int ret = mdiag.run();
+
+                            if( mdiag.get_chkbutton().get_active() ){
+
+                                CONFIG::set_show_diag_replace_favorite( false );
+                                CONFIG::set_replace_favorite_next( ( ret == Gtk::RESPONSE_YES ) );
+                            }
+
+                            if( ret != Gtk::RESPONSE_YES ) return;
+                        }
 
                         row[ m_columns.m_url ] = urldat_new;
 
