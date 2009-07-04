@@ -1628,6 +1628,8 @@ void Admin::toggle_icon( const std::string& url )
 #endif
         int id = view->get_icon( iconname );
         get_notebook()->set_tabicon( iconname, get_notebook()->page_num( *view ), id );
+
+        if( m_tabswitchmenu ) m_tabswitchmenu->update_icons();
     }
 }
 

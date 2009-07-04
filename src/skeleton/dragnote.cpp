@@ -323,7 +323,7 @@ int DragableNoteBook::insert_page( const std::string& url, Gtk::Widget& child, i
 //
 // タブの文字列取得
 //
-const std::string DragableNoteBook::get_tab_fulltext( int page )
+const std::string DragableNoteBook::get_tab_fulltext( const int page )
 {
     return m_notebook_tab.get_tab_fulltext( page );
 }
@@ -333,7 +333,7 @@ const std::string DragableNoteBook::get_tab_fulltext( int page )
 //
 // タブに文字列をセットとタブ幅調整
 //
-void DragableNoteBook::set_tab_fulltext( const std::string& str, int page )
+void DragableNoteBook::set_tab_fulltext( const std::string& str, const int page )
 {
     m_notebook_tab.set_tab_fulltext( str, page );
 }
@@ -485,6 +485,18 @@ void DragableNoteBook::update_toolbar_button()
         SKELETON::ToolBar* toolbar = get_toolbar( i );
         if( toolbar ) toolbar->update_button();
     } 
+}
+
+
+//
+// タブのアイコンを取得する
+//
+const int DragableNoteBook::get_tabicon( const int page )
+{
+    SKELETON::TabLabel* tablabel = m_notebook_tab.get_tablabel( page );
+    if( tablabel ) return tablabel->get_id_icon();
+
+    return ICON::NONE;
 }
 
 

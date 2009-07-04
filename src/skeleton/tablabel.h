@@ -80,7 +80,7 @@ namespace SKELETON
         void set_fulltext( const std::string& label ){ m_fulltext = label; }
 
         // アイコンセット
-        void set_id_icon( int id );
+        void set_id_icon( const int id );
         const int get_id_icon() const { return m_id_icon; }
 
         // タブの文字列の文字数をlngにセット

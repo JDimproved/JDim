@@ -44,7 +44,7 @@ TabLabel::~TabLabel()
 
 
 // アイコンセット
-void TabLabel::set_id_icon( int id )
+void TabLabel::set_id_icon( const int id )
 {
     if( ! CONFIG::get_show_tab_icon() ) return;
     if( m_id_icon == id ) return;

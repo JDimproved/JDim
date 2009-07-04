@@ -142,10 +142,11 @@ namespace SKELETON
         void update_toolbar_button();
 
         // タブの文字列取得/セット
-        const std::string get_tab_fulltext( int page );
-        void set_tab_fulltext( const std::string& str, int page );
+        const std::string get_tab_fulltext( const int page );
+        void set_tab_fulltext( const std::string& str, const int page );
 
-        // タブにアイコンをセットする
+        // タブのアイコン取得/セット
+        const int get_tabicon( const int page );
         void set_tabicon( const std::string& iconname, const int page, const int icon );
 
         // ドラッグ可/不可切り替え(デフォルト false );
