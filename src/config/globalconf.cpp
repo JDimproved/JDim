@@ -331,6 +331,10 @@ void CONFIG::set_show_post_mark( const bool show ){ get_confitem()->show_post_ma
 const bool CONFIG::get_flat_button(){ return get_confitem()->flat_button; }
 void CONFIG::set_flat_button( const bool set ){ get_confitem()->flat_button = set; }
 
+// ツールバーの背景描画
+const bool CONFIG::get_draw_toolbarback(){ return get_confitem()->draw_toolbarback; }
+void CONFIG::set_draw_toolbarback( const bool set ){ get_confitem()->draw_toolbarback = set; }
+
 std::list< std::string >& CONFIG::get_list_abone_word_thread(){ return get_confitem()->list_abone_word_thread; }
 std::list< std::string >& CONFIG::get_list_abone_regex_thread(){ return get_confitem()->list_abone_regex_thread; }
 

@@ -396,6 +396,9 @@ const bool ConfigItems::load( const bool restore )
     // ボタンをフラットにするか
     flat_button = cf.get_option_bool( "flat_button", CONF_FLAT_BUTTON );
 
+    // ツールバーの背景描画
+    draw_toolbarback = cf.get_option_bool( "draw_toolbarback", CONF_DRAW_TOOLBARBACK );
+
     std::list< std::string > list_tmp;
     std::list< std::string >::iterator it_tmp;
 
@@ -696,6 +699,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "show_post_mark", show_post_mark );
 
     cf.update( "flat_button", flat_button );
+
+    cf.update( "draw_toolbarback", draw_toolbarback );
 
     // スレあぼーん情報
     std::string str_abone_word_thread = MISC::listtostr( list_abone_word_thread );

@@ -368,6 +368,10 @@ namespace CONFIG
     const bool get_flat_button();
     void set_flat_button( const bool set );
 
+    // ツールバーの背景描画
+    const bool get_draw_toolbarback();
+    void set_draw_toolbarback( const bool set );
+
     // boardviewでのスレの全体あぼーん
     std::list< std::string >& get_list_abone_word_thread(); // ワード
     std::list< std::string >& get_list_abone_regex_thread(); // 正規表現

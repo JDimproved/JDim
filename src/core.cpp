@@ -329,6 +329,8 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::mem_fun( *this, &Core::toggle_menubar ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToggleFlatButton", "ボタンをフラット表示(_F)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_flat_button ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleDrawToolbarback", "ツールバーの背景を描画する(_T)", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::toggle_draw_toolbarback ) );
     m_action_group->add( Gtk::ToggleAction::create( "TogglePostMark", "自分が書き込んだレスにマークをつける(_W)",
                                                     std::string(), CONFIG::get_show_post_mark() ),
                          sigc::mem_fun( *this, &Core::toggle_post_mark ) );
@@ -614,6 +616,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menu action='General_Menu'>"
         "<menuitem action='ShowMenuBar'/>"
         "<menuitem action='ToggleFlatButton'/>"
+        "<menuitem action='ToggleDrawToolbarback'/>"
         "<menuitem action='TogglePostMark'/>"
         "</menu>"
         "<separator/>"
@@ -1145,6 +1148,14 @@ void Core::slot_activate_menubar()
         else tact->set_active( false );
     }
 
+    // ツールバー背景描画
+    act = m_action_group->get_action( "ToggleDrawToolbarback" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( CONFIG::get_draw_toolbarback() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
     // ツールバー
     act = m_action_group->get_action( "ToolbarPos0" );
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
@@ -1390,6 +1401,25 @@ void Core::toggle_flat_button()
     IMAGE::get_admin()->set_command( "update_toolbar_button" );
     MESSAGE::get_admin()->set_command( "update_toolbar_button" );
     m_toolbar->update_button();
+}
+
+
+//
+// ツールバーの背景描画切り替え
+//
+void Core::toggle_draw_toolbarback()
+{
+    if( SESSION::is_booting() ) return;
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::toggle_draw_toolbarback\n";
+#endif
+
+    CONFIG::set_draw_toolbarback( ! CONFIG::get_draw_toolbarback() );
+
+    SKELETON::MsgDiag mdiag( NULL, "正しく表示させるためにはJDを再起動してください。" );
+    mdiag.run();
 }
 
 

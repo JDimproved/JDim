@@ -323,6 +323,9 @@ namespace CONFIG
         // ボタンをフラットにするか
         bool flat_button;
 
+        // ツールバーの背景描画
+        bool draw_toolbarback;
+
         // スレ あぼーん word
         std::list< std::string > list_abone_word_thread;
 

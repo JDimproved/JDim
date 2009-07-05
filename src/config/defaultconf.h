@@ -80,6 +80,7 @@ namespace CONFIG
         CONF_SHOW_TAB_ICON = 1, // タブにアイコンを表示するか
         CONF_SHOW_POST_MARK = 1, // スレビューに書き込みマークを表示するか
         CONF_FLAT_BUTTON = 1,    // ボタンをフラットにするか
+        CONF_DRAW_TOOLBARBACK = 0, // ツールバーの背景描画
         CONF_IMGEMB_INTERP = 0,   // 埋め込み画像のスムージングレベル(0-2, 2が最も高画質かつ低速)
         CONF_IMGMAIN_INTERP = 0,   // 画像ビューのスムージングレベル(0-2, 2が最も高画質かつ低速)
         CONF_IMGPOPUP_INTERP = 0,   // 画像ポップアップのスムージングレベル(0-2, 2が最も高画質かつ低速)

@@ -7,6 +7,8 @@
 
 #include "jdlib/miscmsg.h"
 
+#include "config/globalconf.h"
+
 #include <gtk/gtk.h>
 
 ///////////////////////////////////////////
@@ -184,9 +186,12 @@ bool JDToolbar::on_expose_event( GdkEventExpose* event )
     std::cout << "JDToolbar::on_expose_event\n";
 #endif
 
-    // 自前で描画処理
-//    Gtk::Toolbar::on_expose_event( event );
+    if( CONFIG::get_draw_toolbarback() ){
 
+        return Gtk::Toolbar::on_expose_event( event );
+    }
+
+    // 自前で描画処理( 背景の描画をしない )
     GtkWidget* widget = dynamic_cast< Gtk::Widget* >( this )->gobj();
     if( widget ) return customized_gtk_toolbar_expose( widget, event );
 
