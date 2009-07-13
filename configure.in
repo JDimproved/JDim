@@ -138,9 +138,8 @@ case "${host_os}" in
    AC_CHECK_HEADERS([iconv.h])
    AC_CHECK_LIB(iconv,_head_libiconv_a)
    
-   echo "use pthread2-win32"
-   AC_CHECK_HEADERS([pthread.h])
-   AC_CHECK_LIB(pthreadGCE2,pthread_create)
+   echo "use gthread"
+   AC_DEFINE(USE_GTHREAD, , "use gthread")
    ;;
  *)
    dnl
@@ -349,6 +348,16 @@ AC_ARG_WITH(oniguruma,[ --with-oniguruma    (enable oniguruma)],
                AC_DEFINE(USE_ONIG, , "use oniguruma")
                AC_SUBST(ONIG_LIBS)
                LDFLAGS="${LDFLAGS_ORIGINAL}"
+       fi ])
+
+
+dnl
+dnl checking gthread
+dnl
+AC_ARG_WITH(gthread,[ --with-gthread    (use gthread instead of pthread)],
+       [ if test "$withval" ;then
+               echo "use gthread"
+               AC_DEFINE(USE_GTHREAD, , "use gthread")
        fi ])
 
 

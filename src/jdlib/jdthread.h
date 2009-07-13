@@ -5,12 +5,18 @@
 #ifndef _JDTHREAD_H
 #define _JDTHREAD_H
 
-#include <pthread.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-#ifdef _WIN32
-#define JDTH_ISRUNNING( pth ) ( ( pth ).p != NULL )
-#define JDTH_CLEAR( pth ) ( ( pth ).p = NULL )
+#ifdef USE_GTHREAD
+#include <gtkmm.h>
+#define JDTH_TYPE Glib::Thread*
+#define JDTH_ISRUNNING( pth ) ( ( pth ) != NULL )
+#define JDTH_CLEAR( pth ) ( ( pth ) = NULL )
 #else
+#include <pthread.h>
+#define JDTH_TYPE pthread_t
 #define JDTH_ISRUNNING( pth ) ( pth )
 #define JDTH_CLEAR( pth ) ( pth = 0 )
 #endif
@@ -32,7 +38,7 @@ namespace JDLIB
 
     class Thread
     {
-        pthread_t m_thread;
+        JDTH_TYPE m_thread;
 
       public:
 
