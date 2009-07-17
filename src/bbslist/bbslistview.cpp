@@ -36,7 +36,7 @@ BBSListViewMain::BBSListViewMain( const std::string& url,
 
 BBSListViewMain::~BBSListViewMain()
 {
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "BBSListViewMain::~BBSListViewMain : " << get_url() << std::endl;
 #endif
 
@@ -50,7 +50,7 @@ void BBSListViewMain::save_xml( const bool backup )
     std::string file = CACHE::path_xml_listmain();
     if( backup ) file = CACHE::path_xml_listmain_bkup();
 
-    save_xml_impl( file , ROOT_NODE_NAME, SUBDIR_ETCLIST );
+    save_xml_impl( file, ROOT_NODE_NAME, SUBDIR_ETCLIST );
 }
 
 
@@ -61,21 +61,15 @@ void BBSListViewMain::show_view()
 {
 #ifdef _DEBUG
     std::cout << "BBSListViewMain::show_view : " << get_url() << std::endl;
-#endif    
+#endif
 
     // BBSListViewBase::m_document に Root::m_document を代入
     m_document = DBTREE::get_xml_document();
 
-    // 板一覧のDomノードが空ならサーバから取得
     // 更新が終わったらBBSListViewMain::update_view()が呼ばれる
-    if( ! m_document.hasChildNodes() )
-    {
-        DBTREE::download_bbsmenu();
-        set_status( "loading..." );
-        BBSLIST::get_admin()->set_command( "set_status", get_url(), get_status() );
-    }
-
-    else update_view();
+    if( m_document.hasChildNodes() ) update_view();
+    // 板一覧のDomノードが空ならサーバから取得
+    else DBTREE::download_bbsmenu();
 }
 
 
@@ -84,8 +78,14 @@ void BBSListViewMain::show_view()
 //
 void BBSListViewMain::update_view()
 {
+    XML::Document document;
+    document = DBTREE::get_xml_document();
+
+    // 空なら更新しない
+    if( ! document.hasChildNodes() ) return;
+
     // BBSListViewBase::m_document に Root::m_document を代入
-    m_document = DBTREE::get_xml_document();
+    m_document = document;
 
     // ルート要素を取得
     XML::Dom* root = m_document.get_root_element( std::string( ROOT_NODE_NAME ) );
