@@ -327,7 +327,7 @@ void Root::receive_finish()
 {
     if( get_code() != HTTP_OK ){
 
-        std::string msg = get_str_code() + "\n\n板一覧の読み込みに失敗しました。\n\nプロキシ設定や板一覧を取得するサーバのアドレスを確認して、ファイルメニューから板一覧の再読み込みをして下さい。\n板一覧取得サーバのアドレスはabout:configで確認出来ます。";
+        std::string msg = get_str_code() + "\n\n板一覧の読み込みに失敗したため板一覧は更新されませんでした。\n\nプロキシ設定や板一覧を取得するサーバのアドレスを確認して、ファイルメニューから板一覧の再読み込みをして下さい。\n板一覧取得サーバのアドレスはabout:configで確認出来ます。";
         SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_ERROR );
         mdiag.run();
         MISC::ERRMSG( "bbsmenu load failed : " + get_str_code() );
