@@ -22,6 +22,9 @@ namespace CORE
         VIEW_BBSLISTVIEW,
         VIEW_FAVORITELIST,
         VIEW_SELECTLIST,
+        VIEW_HISTTHREAD,
+        VIEW_HISTCLOSE,
+        VIEW_HISTBOARD,
 
         VIEW_BOARDVIEW,
         VIEW_BOARDNEXT,

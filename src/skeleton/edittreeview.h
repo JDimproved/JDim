@@ -153,6 +153,15 @@ namespace SKELETON
         // dir : true の時はディレクトリが選択されているときはディレクトリ内の行もlist_infoに再帰的にセットする
         void get_info_in_selection( CORE::DATA_INFO_LIST& list_info, const bool dir );
 
+        // 一行追加
+        // 戻り値は追加した行のpath
+        // (1) path_dest が empty なら一番最後に作る
+        // (2) before = true なら前に作る
+        // (3) path_dest がディレクトリかつ sudir == true なら path_dest の下に追加。
+        // (4) そうでなければ path_dest の後に追加
+        const Gtk::TreePath append_one_row( const std::string& url, const std::string& name, int type, const std::string& data,
+                                            const Gtk::TreePath& path_dest,const bool before, const bool subdir );
+
       protected:
 
         virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time );
@@ -201,15 +210,6 @@ namespace SKELETON
 
         // path から info を取得
         void path2info( CORE::DATA_INFO& info, const Gtk::TreePath& path );
-
-        // 一行追加
-        // 戻り値は追加した行のpath
-        // (1) path_dest が empty なら一番最後に作る
-        // (2) before = true なら前に作る
-        // (3) path_dest がディレクトリかつ sudir == true なら path_dest の下に追加。
-        // (4) そうでなければ path_dest の後に追加
-        const Gtk::TreePath append_one_row( const std::string& url, const std::string& name, int type, const std::string& data,
-                                            const Gtk::TreePath& path_dest,const bool before, const bool subdir );
 
         // list_info に示した行の親を再起的にexpandする
         // list_info の各要素の path にあらかじめ値をセットしておくこと

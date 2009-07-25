@@ -5,6 +5,7 @@
 #include "bbslist/bbslistview.h"
 #include "bbslist/favoriteview.h"
 #include "bbslist/selectlistview.h"
+#include "bbslist/historyview.h"
 
 #include "board/boardview.h"
 #include "board/boardviewnext.h"
@@ -34,6 +35,15 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
 
         case VIEW_SELECTLIST:
             return new BBSLIST::SelectListView( url, view_args.arg1, view_args.arg2 );
+
+        case VIEW_HISTTHREAD:
+            return new BBSLIST::HistoryThreadView( url, view_args.arg1, view_args.arg2 );
+
+        case VIEW_HISTCLOSE:
+            return new BBSLIST::HistoryCloseView( url, view_args.arg1, view_args.arg2 );
+
+        case VIEW_HISTBOARD:
+            return new BBSLIST::HistoryBoardView( url, view_args.arg1, view_args.arg2 );
 
             //////////////////
 

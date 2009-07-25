@@ -146,7 +146,61 @@ std::string dir_select_favorite;
 /////////////////////////////////////
 
 
-// 項目名 -> 番号変換
+// ツールバー等の項目名 -> ID 変換
+const int SESSION::parse_item( const std::string& item_name )
+{
+    int item = ITEM_END;
+
+    if( item_name == ITEM_NAME_BBSLISTVIEW ) item = ITEM_BBSLISTVIEW;
+    if( item_name == ITEM_NAME_FAVORITEVIEW ) item = ITEM_FAVORITEVIEW;
+    if( item_name == ITEM_NAME_BOARDVIEW ) item = ITEM_BOARDVIEW;
+    if( item_name == ITEM_NAME_ARTICLEVIEW ) item = ITEM_ARTICLEVIEW;
+    if( item_name == ITEM_NAME_IMAGEVIEW ) item = ITEM_IMAGEVIEW;
+    if( item_name == ITEM_NAME_URL ) item = ITEM_URL;
+    if( item_name == ITEM_NAME_GO ) item = ITEM_GO;
+    if( item_name == ITEM_NAME_SEPARATOR ) item = ITEM_SEPARATOR;
+
+    if( item_name == ITEM_NAME_MARK ) item = ITEM_MARK;
+    if( item_name == ITEM_NAME_ID ) item = ITEM_ID;
+    if( item_name == ITEM_NAME_NAME ) item = ITEM_NAME;
+    if( item_name == ITEM_NAME_RES ) item = ITEM_RES;
+    if( item_name == ITEM_NAME_LOAD ) item = ITEM_LOAD;
+    if( item_name == ITEM_NAME_NEW ) item = ITEM_NEW;
+    if( item_name == ITEM_NAME_SINCE ) item = ITEM_SINCE;
+    if( item_name == ITEM_NAME_LASTWRITE ) item = ITEM_LASTWRITE;
+    if( item_name == ITEM_NAME_SPEED ) item = ITEM_SPEED;
+
+    if( item_name == ITEM_NAME_WRITEMSG ) item = ITEM_WRITEMSG;
+    if( item_name == ITEM_NAME_OPENBOARD ) item = ITEM_OPENBOARD;
+    if( item_name == ITEM_NAME_SEARCH ) item = ITEM_SEARCH;
+    if( item_name == ITEM_NAME_RELOAD ) item = ITEM_RELOAD;
+    if( item_name == ITEM_NAME_STOPLOADING ) item = ITEM_STOPLOADING;
+    if( item_name == ITEM_NAME_FAVORITE ) item = ITEM_FAVORITE;
+    if( item_name == ITEM_NAME_CHECK_UPDATE_ROOT ) item = ITEM_CHECK_UPDATE_ROOT;
+    if( item_name == ITEM_NAME_CHECK_UPDATE_OPEN_ROOT ) item = ITEM_CHECK_UPDATE_OPEN_ROOT;
+    if( item_name == ITEM_NAME_DELETE ) item = ITEM_DELETE;
+    if( item_name == ITEM_NAME_QUIT ) item = ITEM_QUIT;
+    if( item_name == ITEM_NAME_PREVVIEW ) item = ITEM_PREVVIEW;
+    if( item_name == ITEM_NAME_NEXTVIEW ) item = ITEM_NEXTVIEW;
+    if( item_name == ITEM_NAME_LOCK ) item = ITEM_LOCK;
+    if( item_name == ITEM_NAME_LIVE ) item = ITEM_LIVE;
+
+    if( item_name == ITEM_NAME_NEWARTICLE ) item = ITEM_NEWARTICLE;
+    if( item_name == ITEM_NAME_SEARCHBOX ) item = ITEM_SEARCHBOX;
+    if( item_name == ITEM_NAME_SEARCH_NEXT ) item = ITEM_SEARCH_NEXT;
+    if( item_name == ITEM_NAME_SEARCH_PREV ) item = ITEM_SEARCH_PREV;
+
+    if( item_name == ITEM_NAME_INSERTTEXT ) item = ITEM_INSERTTEXT;
+    if( item_name == ITEM_NAME_LOCK_MESSAGE ) item = ITEM_LOCK_MESSAGE;
+    if( item_name == ITEM_NAME_PREVIEW ) item = ITEM_PREVIEW;
+
+    if( item_name == ITEM_NAME_UNDO ) item = ITEM_UNDO;
+    if( item_name == ITEM_NAME_REDO ) item = ITEM_REDO;
+
+    return item;
+}
+
+
 std::vector< int > parse_items( const std::string& items_str )
 {
     std::vector< int > items;
@@ -154,51 +208,8 @@ std::vector< int > parse_items( const std::string& items_str )
     std::list< std::string >::const_iterator it = list_order.begin();
     for( ; it != list_order.end(); ++it ){
 
-        if( *it == ITEM_NAME_BBSLISTVIEW ) items.push_back(ITEM_BBSLISTVIEW );
-        if( *it == ITEM_NAME_FAVORITEVIEW ) items.push_back(ITEM_FAVORITEVIEW );
-        if( *it == ITEM_NAME_BOARDVIEW ) items.push_back(ITEM_BOARDVIEW );
-        if( *it == ITEM_NAME_ARTICLEVIEW ) items.push_back(ITEM_ARTICLEVIEW );
-        if( *it == ITEM_NAME_IMAGEVIEW ) items.push_back(ITEM_IMAGEVIEW );
-        if( *it == ITEM_NAME_URL ) items.push_back(ITEM_URL );
-        if( *it == ITEM_NAME_GO ) items.push_back(ITEM_GO );
-        if( *it == ITEM_NAME_SEPARATOR ) items.push_back(ITEM_SEPARATOR );
-
-        if( *it == ITEM_NAME_MARK ) items.push_back(ITEM_MARK );
-        if( *it == ITEM_NAME_ID ) items.push_back(ITEM_ID );
-        if( *it == ITEM_NAME_NAME ) items.push_back(ITEM_NAME );
-        if( *it == ITEM_NAME_RES ) items.push_back(ITEM_RES );
-        if( *it == ITEM_NAME_LOAD ) items.push_back(ITEM_LOAD );
-        if( *it == ITEM_NAME_NEW ) items.push_back(ITEM_NEW );
-        if( *it == ITEM_NAME_SINCE ) items.push_back(ITEM_SINCE );
-        if( *it == ITEM_NAME_LASTWRITE ) items.push_back(ITEM_LASTWRITE );
-        if( *it == ITEM_NAME_SPEED ) items.push_back(ITEM_SPEED );
-
-        if( *it == ITEM_NAME_WRITEMSG ) items.push_back( ITEM_WRITEMSG );
-        if( *it == ITEM_NAME_OPENBOARD ) items.push_back(ITEM_OPENBOARD );
-        if( *it == ITEM_NAME_SEARCH ) items.push_back(ITEM_SEARCH );
-        if( *it == ITEM_NAME_RELOAD ) items.push_back( ITEM_RELOAD );
-        if( *it == ITEM_NAME_STOPLOADING ) items.push_back( ITEM_STOPLOADING );
-        if( *it == ITEM_NAME_FAVORITE ) items.push_back( ITEM_FAVORITE );
-        if( *it == ITEM_NAME_CHECK_UPDATE_ROOT ) items.push_back( ITEM_CHECK_UPDATE_ROOT );
-        if( *it == ITEM_NAME_CHECK_UPDATE_OPEN_ROOT ) items.push_back( ITEM_CHECK_UPDATE_OPEN_ROOT );
-        if( *it == ITEM_NAME_DELETE ) items.push_back( ITEM_DELETE );
-        if( *it == ITEM_NAME_QUIT ) items.push_back( ITEM_QUIT );
-        if( *it == ITEM_NAME_PREVVIEW ) items.push_back( ITEM_PREVVIEW );
-        if( *it == ITEM_NAME_NEXTVIEW ) items.push_back( ITEM_NEXTVIEW );
-        if( *it == ITEM_NAME_LOCK ) items.push_back( ITEM_LOCK );
-        if( *it == ITEM_NAME_LIVE ) items.push_back( ITEM_LIVE );
-
-        if( *it == ITEM_NAME_NEWARTICLE ) items.push_back( ITEM_NEWARTICLE );
-        if( *it == ITEM_NAME_SEARCHBOX ) items.push_back( ITEM_SEARCHBOX );
-        if( *it == ITEM_NAME_SEARCH_NEXT ) items.push_back( ITEM_SEARCH_NEXT );
-        if( *it == ITEM_NAME_SEARCH_PREV ) items.push_back( ITEM_SEARCH_PREV );
-
-        if( *it == ITEM_NAME_INSERTTEXT ) items.push_back( ITEM_INSERTTEXT );
-        if( *it == ITEM_NAME_LOCK_MESSAGE ) items.push_back( ITEM_LOCK_MESSAGE );
-        if( *it == ITEM_NAME_PREVIEW ) items.push_back( ITEM_PREVIEW );
-
-        if( *it == ITEM_NAME_UNDO ) items.push_back( ITEM_UNDO );
-        if( *it == ITEM_NAME_REDO ) items.push_back( ITEM_REDO );
+        const int item = SESSION::parse_item( *it );
+        if( item != ITEM_END ) items.push_back( item );
     }
     items.push_back( ITEM_END );
 
@@ -860,14 +871,14 @@ const int SESSION::col_write(){ return board_col_write; }
 const int SESSION::col_speed(){ return board_col_speed; }
 
 
-// 現在開いている bbslist のページ
-const int SESSION::get_bbslist_current_page()
+// 現在開いているサイドバーのページ
+const int SESSION::get_sidebar_current_page()
 {
     return BBSLIST::get_admin()->get_current_page();
 }
 
-// 現在開いている bbslist のurl
-const std::string SESSION::get_bbslist_current_url()
+// 現在開いているサイドバーのurl
+const std::string SESSION::get_sidebar_current_url()
 {
     return BBSLIST::get_admin()->get_current_url();
 }
@@ -1025,4 +1036,11 @@ const std::string& SESSION::get_dir_select_favorite()
 void SESSION::set_dir_select_favorite( const std::string& dir )
 {
     dir_select_favorite = dir;
+}
+
+
+// 各履歴を取得
+void SESSION::get_history( const std::string& url, CORE::DATA_INFO_LIST& info_list )
+{
+    return BBSLIST::get_admin()->get_history( url, info_list );
 }

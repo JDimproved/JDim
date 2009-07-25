@@ -32,7 +32,6 @@
 #include "cache.h"
 #include "command.h"
 #include "global.h"
-#include "type.h"
 #include "httpcode.h"
 #include "sharedbuffer.h"
 #include "viewfactory.h"
@@ -98,6 +97,33 @@ show_popupmenu( url, slot ); \
     "<menuitem action='PreferenceImage'/>"
 
 using namespace BBSLIST;
+
+
+enum
+{
+    HASH_TBLSIZE = 1024
+};
+
+hash_set_thread::hash_set_thread()
+    : MISC::simple_hash_set( HASH_TBLSIZE )
+{}
+
+
+const int hash_set_thread::get_key( const std::string& url )
+{
+    const int key = atoi(  url.substr( DBTREE::url_datbase( url ).length() ).c_str() ) % size();
+
+#ifdef _DEBUG
+    std::cout << "hash_set_thread::get_key url = " << url << " key = " << key << std::endl;
+#endif
+
+    return key ;
+}
+
+
+/////////////////////////////////////////////////
+
+
 
 BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
@@ -173,6 +199,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );    
     action_group()->add( Gtk::Action::create( "Delete", "お気に入りから削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
     action_group()->add( Gtk::Action::create( "Delete_etc", "外部板を削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
+    action_group()->add( Gtk::Action::create( "Delete_hist", "履歴から削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
     action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)"), sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
 
     action_group()->add( Gtk::Action::create( "CheckUpdateRows", "更新チェックのみ(_H)"), sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_selected_rows ) );
@@ -188,7 +215,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CheckUpdateOpenDir", "更新された行をタブで開く(_A)"),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_open_dir ) );
     action_group()->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
-                         sigc::mem_fun( *this, &BBSListViewBase::slot_cancel_check_update ) );
+                         sigc::mem_fun( *this, &BBSListViewBase::stop ) );
 
     action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索(_S)"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
     action_group()->add( Gtk::Action::create( "ImportDat", "datのインポート(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_import_dat ) );
@@ -330,6 +357,45 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     POPUPMENU_SELECT
     "</popup>"
 
+    /////////////////////////////////////////
+
+    // 履歴
+    "<popup name='popup_menu_history'>"
+    "<menuitem action='OpenTab'/>"
+    "<menuitem action='OpenBrowser'/>"
+    "<separator/>"
+    "<menuitem action='CopyURL'/>" \
+    "<menuitem action='CopyTitleURL'/>" \
+    "<separator/>" \
+    "<menu action='Delete_Menu'>" \
+    "<menuitem action='Delete_hist'/>" \
+    "</menu>" \
+    "<separator/>" \
+    "<menuitem action='SearchCacheBoard'/>" \
+    "<separator/>" \
+    "<menuitem action='ImportDat'/>" \
+    "<separator/>" \
+    "<menuitem action='PreferenceArticle'/>" \
+    "<menuitem action='PreferenceBoard'/>" \
+    "</popup>"
+
+    // 履歴 + 複数選択
+    "<popup name='popup_menu_history_mul'>"
+    "<menuitem action='OpenRows'/>"
+    "<separator/>"
+    "<menu action='CheckUpdate_Menu'>"
+    "<menuitem action='CheckUpdateRows'/>"
+    "<menuitem action='CheckUpdateOpenRows'/>"
+    "<separator/>"
+    "<menuitem action='CancelCheckUpdate'/>"
+    "</menu>"
+    "<separator/>"
+
+    "<menu action='Delete_Menu'>"
+    "<menuitem action='Delete_hist'/>"
+    "</menu>"
+    "</popup>"
+
     "</ui>";
 
     ui_manager()->add_ui_from_string( str_ui );
@@ -363,6 +429,12 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     CONTROL::set_menu_motion( popupmenu );
 
     popupmenu = id2popupmenu(  "/popup_menu_favorite_com" );
+    CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = id2popupmenu(  "/popup_menu_history" );
+    CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = id2popupmenu(  "/popup_menu_history_mul" );
     CONTROL::set_menu_motion( popupmenu );
 
     popupmenu = id2popupmenu(  "/popup_menu_select" );
@@ -418,7 +490,9 @@ void BBSListViewBase::set_parent_win( Gtk::Window* parent_win )
 const bool BBSListViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "append_item" ) append_item();
+    else if( command == "append_history" ) append_history();
     else if( command == "remove_item" ) remove_item( arg1 );
+    else if( command == "remove_allitems" ) remove_allitems();
     else if( command == "edit_tree" ) edit_tree();
     else if( command == "save_xml" ) save_xml( false );
     else if( command == "toggle_articleicon" ) toggle_articleicon( arg1 );
@@ -427,7 +501,7 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
 
     else if( command == "check_update_root" ) check_update_root( false );
     else if( command == "check_update_open_root" ) check_update_root( true );
-    else if( command == "cancel_check_update" ) slot_cancel_check_update();
+    else if( command == "cancel_check_update" ) stop();
 
     return true;
 }
@@ -564,16 +638,14 @@ void BBSListViewBase::delete_view()
 // BBSListViewBaseの場合は選択行の削除
 void BBSListViewBase::delete_view_impl()
 {
-    const bool force = false;
+    const bool force = true;
     m_treeview.delete_selected_rows( force );
 }
 
 
 
 //
-// 内容更新
-//
-// URLを新しいアドレスに変更するだけ
+// ツリー内の全ての項目をURLを新しいアドレスに変更 ( id は未使用 )
 //
 void BBSListViewBase::update_item( const std::string& url, const std::string& id )
 {
@@ -1162,13 +1234,27 @@ void BBSListViewBase::slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_
         const CORE::DATA_INFO& info = ( *it );
         const int type = info.type;
 
-        // ブックマークセット
-        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
+        switch( type ){
 
-            if( CONFIG::get_bookmark_drop() ) DBTREE::set_bookmarked_thread( info.url, true );
+            case TYPE_BOARD:
+            case TYPE_BOARD_UPDATE:
+
+                m_set_board.insert( DBTREE::url_boardbase( info.url ) );
+                break;
+                
+            case TYPE_THREAD:
+            case TYPE_THREAD_UPDATE:
+            case TYPE_THREAD_OLD:
+
+                if( CONFIG::get_bookmark_drop() ) DBTREE::set_bookmarked_thread( info.url, true );
+                m_set_thread.insert( DBTREE::url_dat( info.url ) );
+                break;
+
+            case TYPE_IMAGE:
+
+                DBIMG::set_protect( info.url, true );
+                break;
         }
-
-        else if( type == TYPE_IMAGE ) DBIMG::set_protect( info.url, true );
     }
 }
 
@@ -1609,7 +1695,7 @@ void BBSListViewBase::check_update_root( const Gtk::TreeModel::Children& childre
         const int type = row2type( row );
         const std::string url = row2url( row );
 
-        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
+        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( url, open );
         else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) )
             CORE::get_checkupdate_manager()->push_back( DBTREE::url_subject( url ), open );
         else if( type == TYPE_DIR ) check_update_root( row.children(), open );
@@ -1622,10 +1708,14 @@ void BBSListViewBase::check_update_root( const Gtk::TreeModel::Children& childre
 //
 // ルート以下を全て更新チェック( command 呼び出し用 )
 //
-// tab_open はタブで開くか否か
+// open はタブで開くか否か
 //
 void BBSListViewBase::check_update_root( const bool open )
 {
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::check_update_root " << get_url() << " open = " << open << std::endl;
+#endif
+
     check_update_root( m_treestore->children(), open );
 
     CORE::get_checkupdate_manager()->run();
@@ -1635,8 +1725,12 @@ void BBSListViewBase::check_update_root( const bool open )
 //
 // 更新チェックキャンセル
 //
-void BBSListViewBase::slot_cancel_check_update()
+void BBSListViewBase::stop()
 {
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::stop " << get_url() << std::endl;
+#endif
+
     CORE::get_checkupdate_manager()->stop();
 }
 
@@ -1947,6 +2041,9 @@ Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
 //
 // row -> url 変換
 //
+// 板の場合は boardbase
+// スレの場合は dat 型のアドレスを返す
+//
 Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
 {
     if( ! row ) return Glib::ustring();
@@ -1966,7 +2063,7 @@ Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
         case TYPE_THREAD_OLD:
-            url = DBTREE::url_readcgi( url, 0, 0 );
+            url = DBTREE::url_dat( url );
             break;
     }
 
@@ -2005,6 +2102,16 @@ int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
 {
     if( ! row ) return TYPE_UNKNOWN;
     return row[ m_columns.m_type ];
+}
+
+
+//
+// row -> name 変換
+//
+Glib::ustring BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
+{
+    if( !row ) return Glib::ustring();
+    return row[ m_columns.m_name ];
 }
 
 
@@ -2156,6 +2263,9 @@ void BBSListViewBase::update_urls()
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::update_urls()\n";
 #endif
+
+    m_set_board.clear();
+    m_set_thread.clear();
     
     Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
     Gtk::TreeModel::Row row;
@@ -2176,29 +2286,26 @@ void BBSListViewBase::update_urls()
 
                 case TYPE_BOARD: // 板
                 case TYPE_BOARD_UPDATE:
-                    url_new = DBTREE::is_board_moved( url );
-                    if( ! url_new.empty() ){
-                        url_new = DBTREE::url_boardbase( url );
+
+                    url_new = DBTREE::url_boardbase( url );
+                    row[ m_columns.m_url ] = url_new;
+                    m_set_board.insert( url_new );
 #ifdef _DEBUG
-                        std::cout << url << " -> " << url_new << std::endl;
+                    std::cout << url << " -> " << url_new << std::endl;
 #endif
-                        row[ m_columns.m_url ] = url_new;
-                    }
                     path.next();
                     break;
 
                 case TYPE_THREAD: // スレ
                 case TYPE_THREAD_UPDATE:
                 case TYPE_THREAD_OLD:
-                    url_new = DBTREE::is_board_moved( url );
-                    if( ! url_new.empty() ){
 
-                        url_new = DBTREE::url_dat( url );
+                    url_new = DBTREE::url_dat( url );
+                    row[ m_columns.m_url ] = url_new;
+                    m_set_thread.insert( url_new );
 #ifdef _DEBUG
-                        std::cout << url << " -> " << url_new << std::endl;
+                    std::cout << url << " -> " << url_new << std::endl;
 #endif
-                        row[ m_columns.m_url ] = url_new;
-                    }
                     path.next();
                     break;
 
@@ -2229,16 +2336,17 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
     if( ! m_ready_tree ) return;
     if( m_treestore->children().empty() ) return; 
    
-    const std::string url_dat = DBTREE::url_dat( url );
-    const std::string url_cgi = DBTREE::url_readcgi( url, 0, 0 );
+    // ツリーの中に無い場合は処理しない
+    if( ! m_set_thread.find_if( url ) ) return;
 
+    bool erase = true;
     int type = TYPE_THREAD;
     const int status = DBTREE::article_status( url );
     if( status & STATUS_OLD ) type = TYPE_THREAD_OLD;
     else if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
     
 #ifdef _DEBUG
-    std::cout << "BBSListViewBase::toggle_articleicon url = " << url_dat << " type = " << type << std::endl;
+    std::cout << "BBSListViewBase::toggle_articleicon url = " << url << " type = " << type << std::endl;
 #endif
 
     Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
@@ -2259,12 +2367,15 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
                 case TYPE_THREAD:
                 case TYPE_THREAD_UPDATE:
                 case TYPE_THREAD_OLD:
-                    if( url_dat == url_row || url_cgi == url_row ){
+
+                    if( url == url_row ){
 #ifdef _DEBUG
-                        std::cout << "hit " << url_dat << " == " << url_row << std::endl;
+                        std::cout << "hit " << url << " == " << url_row << std::endl;
 #endif
                         row[ m_columns.m_type ] = type;
                         row[ m_columns.m_image ] = XML::get_icon( type );
+
+                        erase = false;
                     }
                     path.next();
                     break;
@@ -2285,6 +2396,8 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
             else break;
         }
     }
+
+    if( erase ) m_set_thread.erase( url );
 }
 
 
@@ -2297,14 +2410,18 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
     if( ! m_ready_tree ) return;
     if( m_treestore->children().empty() ) return;
    
-    const std::string url_subject = DBTREE::url_subject( url );
+    const std::string url_boardbase = DBTREE::url_boardbase( url );
 
+    // ツリーの中に無い場合は処理しない
+    if( m_set_board.find( url_boardbase ) == m_set_board.end() ) return;
+
+    bool erase = true;
     int type = TYPE_BOARD;
     const int status = DBTREE::board_status( url );
     if( status & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
     
 #ifdef _DEBUG
-    std::cout << "BBSListViewBase::toggle_boardicon url = " << url_subject << " type = " << type << std::endl;
+    std::cout << "BBSListViewBase::toggle_boardicon url = " << url_boardbase << " type = " << type << std::endl;
 #endif
 
     Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
@@ -2325,12 +2442,14 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
                 case TYPE_BOARD:
                 case TYPE_BOARD_UPDATE:
 
-                    if( url_subject == DBTREE::url_subject( url_row ) ){
+                    if( url_boardbase == url_row ){
 #ifdef _DEBUG
-                        std::cout << "hit " << url_subject << " == " << url_row << std::endl;
+                        std::cout << "hit " << url_boardbase << " == " << url_row << std::endl;
 #endif
                         row[ m_columns.m_type ] = type;
                         row[ m_columns.m_image ] = XML::get_icon( type );
+
+                        erase = false;
                     }
                     path.next();
                     break;
@@ -2351,6 +2470,8 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
             else break;
         }
     }
+
+    if( erase ) m_set_board.erase( url_boardbase );
 }
 
 
@@ -2639,13 +2760,101 @@ void BBSListViewBase::append_item()
 
 
 //
-// アイテム削除
+// 履歴のセット
+//
+// 先頭にアイテムを追加する。ツリーにアイテムが含まれている場合は移動する
+// あらかじめ共有バッファにデータを入れておくこと
+//
+void BBSListViewBase::append_history()
+{
+    if( CORE::SBUF_size() == 0 ) return;
+
+    CORE::DATA_INFO_LIST list_info = CORE::SBUF_list_info();
+    CORE::DATA_INFO_LIST::iterator it_info = list_info.begin();
+    ( *it_info ).path = Gtk::TreePath( "0" ).to_string();
+
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::append_history url = " << ( *it_info ).url << std::endl;
+#endif
+
+    // ツリーにアイテムが含まれている場合は削除
+    // 履歴はサブディレクトリが無いと仮定してサブディレクトリの探査はしない
+    if( ( ( *it_info ).type == TYPE_THREAD && m_set_thread.find_if( ( *it_info ).url ) ) 
+        || ( ( *it_info ).type == TYPE_BOARD  && m_set_board.find( ( *it_info ).url ) != m_set_board.end() ) ){
+
+        std::vector< Gtk::TreePath > del_path;
+
+        Gtk::TreeModel::iterator it = m_treestore->children().begin();
+        for( ; it != m_treestore->children().end(); ++it ){
+
+            Gtk::TreeModel::Row row = *it;
+            if( row2url( row ) == ( *it_info ).url ) del_path.push_back( GET_PATH( row ) );
+        }
+
+        for( int i = del_path.size() -1; i >= 0 ; --i ){
+#ifdef _DEBUG
+            std::cout << "erase " << del_path[ i ].to_string() << std::endl;
+#endif
+            m_treestore->erase( m_treeview.get_row( del_path[ i ] ) );
+        }
+    }
+
+    // 先頭にアイテム追加
+    Gtk::TreePath path;
+    if( ! m_treestore->children().empty() ) path = Gtk::TreePath( "0" );
+    const bool before = true;
+    const bool subdir = false;
+
+    m_treeview.append_one_row( ( *it_info ).url, ( *it_info ).name, ( *it_info ).type, ( *it_info ).data, path, before, subdir );
+
+    // サイズが越えていたら最後を削除
+    while( ( int )m_treestore->children().size() > CONFIG::get_historyview_size() ){
+
+        Gtk::TreeModel::Row row = *( m_treestore->children().rbegin() );
+        m_treestore->erase( row );
+#ifdef _DEBUG
+        std::cout << "erase bottom\n";
+#endif
+    }
+
+    goto_top();
+
+    CORE::SBUF_clear_info();
+    slot_dropped_from_other( list_info );
+}
+
+
+//
+// 履歴を DATA_INFO_LIST 型で取得
+//
+void BBSListViewBase::get_history( CORE::DATA_INFO_LIST& info_list )
+{
+    CORE::DATA_INFO info;
+
+    // 履歴はサブディレクトリが無いと仮定してサブディレクトリの探査はしない
+    Gtk::TreeModel::iterator it = get_treestore()->children().begin();
+    for( ; it != get_treestore()->children().end(); ++it ){
+
+        Gtk::TreeModel::Row row = *it;
+
+        info.type = row2type( row );
+        info.url = row2url( row );
+        info.name = row2name( row );
+
+        info_list.push_back( info );
+    }
+}
+
+
+//
+// url で指定した項目を削除
 //
 void BBSListViewBase::remove_item( const std::string& url )
 {
-    const std::string url_target = DBTREE::url_dat( url );
+    std::string url_target = DBTREE::url_dat( url );
+    if( url_target.empty() ) url_target = DBTREE::url_boardbase( url );
     if( url_target.empty() ) return;
-
+        
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::remove_item url = " << url_target << std::endl;
 #endif
@@ -2661,7 +2870,6 @@ void BBSListViewBase::remove_item( const std::string& url )
 
             const Glib::ustring url = row[ m_columns.m_url ];
             const int type = row[ m_columns.m_type ];
-            std::string url_new;
 
             switch( type ){
 
@@ -2669,11 +2877,13 @@ void BBSListViewBase::remove_item( const std::string& url )
                     path.down();
                     break;
 
+                case TYPE_BOARD: // 板
+                case TYPE_BOARD_UPDATE:
+
                 case TYPE_THREAD: // スレ
                 case TYPE_THREAD_UPDATE:
                 case TYPE_THREAD_OLD:
-                    url_new = DBTREE::url_dat( url );
-                    if( url_new == url_target ) list_path.push_back( path );
+                    if( url == url_target ) list_path.push_back( path );
                     path.next();
                     break;
 
@@ -2694,8 +2904,23 @@ void BBSListViewBase::remove_item( const std::string& url )
         }
     }
 
-    const bool force = false;
+    const bool force = true;
     m_treeview.delete_path( list_path, force );
+}
+
+
+//
+// 全項目を削除
+//
+void BBSListViewBase::remove_allitems()
+{
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::remove_allitems\n";
+#endif
+
+    m_treestore->clear();
+    m_set_board.clear();
+    m_set_thread.clear();
 }
 
 

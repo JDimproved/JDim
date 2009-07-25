@@ -96,6 +96,8 @@ namespace CORE
         std::string m_title;
 
         Gtk::MenuBar* m_menubar;
+        Gtk::MenuItem *m_menuitem_prevview;
+        Gtk::MenuItem *m_menuitem_nextview;
 
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
@@ -140,6 +142,10 @@ namespace CORE
         void slot_style_changed( Glib::RefPtr< Gtk::Style > );
 
         void slot_activate_menubar();
+        void slot_activate_historymenu();
+
+        void slot_prevview();
+        void slot_nextview();
 
         void slot_clear_board();
         void slot_clear_thread();
@@ -203,10 +209,6 @@ namespace CORE
         void switch_leftview();
         void switch_rightview();
         void open_by_browser( const std::string& url );
-
-        void set_history_article( const std::string& url );
-        void set_history_board( const std::string& url );
-        void set_history_close( const std::string& url );
 
         // 画像インジケータ表示/非表示
         void show_imagetab();

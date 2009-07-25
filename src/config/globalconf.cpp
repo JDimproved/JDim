@@ -267,6 +267,7 @@ const int CONFIG::get_margin_imgpopup(){ return get_confitem()->margin_imgpopup;
 
 const int CONFIG::get_mouse_radius(){ return get_confitem()->mouse_radius; }
 const int CONFIG::get_history_size(){ return get_confitem()->history_size; }
+const int CONFIG::get_historyview_size(){ return get_confitem()->historyview_size; }
 const int CONFIG::get_aahistory_size(){ return get_confitem()->aahistory_size; }
 
 // 0以上なら多重ポップアップの説明を表示する

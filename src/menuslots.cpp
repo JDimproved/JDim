@@ -984,7 +984,7 @@ void Core::slot_search_title()
 
 
 //
-// お気に入りルートからの更新チェック( 通常 )
+// サイドバーの全更新チェック
 //
 void Core::slot_check_update_root()
 {
@@ -993,7 +993,7 @@ void Core::slot_check_update_root()
 
 
 //
-// お気に入りルートからの更新チェック( タブで開く )
+// サイドバーを全更新チェックしてタブで開く
 //
 void Core::slot_check_update_open_root()
 {

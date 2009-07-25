@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "bbslistadmin.h"
+#include "bbslistviewbase.h"
 #include "toolbar.h"
 
 #include "skeleton/view.h"
@@ -90,12 +91,25 @@ void BBSListAdmin::restore( const bool only_locked )
 {
     COMMAND_ARGS command_arg;
 
-    // bbslist
+    // 板一覧
+    // 初回起動時は板一覧の読み込みもここで行われる
     command_arg = url_to_openarg( URL_BBSLISTVIEW, true, false );
     open_view( command_arg );
 
-    // favorite
+    // お気に入り
     command_arg = url_to_openarg( URL_FAVORITEVIEW, true, false );
+    open_view( command_arg );
+
+    // スレ履歴
+    command_arg = url_to_openarg( URL_HISTTHREADVIEW, true, false );
+    open_view( command_arg );
+
+    // 板履歴
+    command_arg = url_to_openarg( URL_HISTBOARDVIEW, true, false );
+    open_view( command_arg );
+
+    // 最近閉じたスレ
+    command_arg = url_to_openarg( URL_HISTCLOSEVIEW, true, false );
     open_view( command_arg );
 
     set_command( "set_page", std::string(), MISC::itostr( SESSION::bbslist_page() ) );
@@ -155,8 +169,13 @@ void BBSListAdmin::toggle_toolbar()
 
 SKELETON::View* BBSListAdmin::create_view( const COMMAND_ARGS& command )
 {
-    int type = CORE::VIEW_BBSLISTVIEW;
+    int type = CORE::VIEW_NONE;
+
+    if( command.url == URL_BBSLISTVIEW ) type = CORE::VIEW_BBSLISTVIEW;
     if( command.url == URL_FAVORITEVIEW ) type = CORE::VIEW_FAVORITELIST;
+    if( command.url == URL_HISTTHREADVIEW ) type = CORE::VIEW_HISTTHREAD;
+    if( command.url == URL_HISTCLOSEVIEW ) type = CORE::VIEW_HISTCLOSE;
+    if( command.url == URL_HISTBOARDVIEW ) type = CORE::VIEW_HISTBOARD;
 
     CORE::VIEWFACTORY_ARGS view_args;
     view_args.arg1 = command.arg4;
@@ -177,11 +196,19 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
     if( view ){
 
         // アイテム追加
-        // append_favorite を呼ぶ前に共有バッファにコピーデータをセットしておくこと
+        // 共有バッファにコピーデータをセットしておくこと
         if( command.command  == "append_item" ) view->set_command( "append_item" );
 
-        // アイテム削除
+        // 履歴のセット
+        // 先頭にアイテムを追加する。ツリーにアイテムが含まれている場合は移動する
+        // 共有バッファにコピーデータをセットしておくこと
+        else if( command.command  == "append_history" ) view->set_command( "append_history" );
+
+        // 項目削除
         else if( command.command  == "remove_item" ) view->set_command( "remove_item", command.arg1 );
+
+        // 全項目削除
+        else if( command.command  == "remove_allitems" ) view->set_command( "remove_allitems" );
 
         // ツリーの編集
         else if( command.command  == "edit_tree" ) view->set_command( "edit_tree" );
@@ -203,4 +230,14 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
         // 板のアイコン表示を更新
         else if( command.command  == "toggle_boardicon" ) view->set_command( "toggle_boardicon", command.arg1 );
     }
+}
+
+
+// 履歴を DATA_INFO_LIST 型で取得
+void BBSListAdmin::get_history( const std::string& url, CORE::DATA_INFO_LIST& info_list )
+{
+    info_list.clear();
+
+    BBSListViewBase* view = dynamic_cast< BBSListViewBase* >( get_view( url ) );
+    if( view ) return view->get_history( info_list );
 }

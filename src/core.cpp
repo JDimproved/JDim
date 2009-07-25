@@ -321,6 +321,12 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_BBSLISTVIEW, false ) );
     m_action_group->add( Gtk::ToggleAction::create( "Show_FAVORITE", "お気に入り(_F)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTTHREAD", "スレ履歴(_T)", std::string(), SESSION::show_sidebar() ),
+                         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTTHREADVIEW, false ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTBOARD", "板履歴(_O)", std::string(), SESSION::show_sidebar() ),
+                         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTBOARDVIEW, false ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTCLOSE", "最近閉じたスレ(_C)", std::string(), SESSION::show_sidebar() ),
+                         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEVIEW, false ) );
 
     m_action_group->add( Gtk::Action::create( "View_Menu", "詳細設定(_D)" ) );
 
@@ -410,6 +416,16 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "SetupBoardItem", "スレ一覧(_B)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
     m_action_group->add( Gtk::Action::create( "SetupArticleItem", "スレビュー(_A)..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem ) );
     m_action_group->add( Gtk::Action::create( "SetupMsgItem", "書き込みビュー(_W)..." ), sigc::mem_fun( *this, &Core::slot_setup_msgitem ) );
+
+
+    //////////////////////////////////////////////////////
+
+    // 履歴
+    m_action_group->add( Gtk::Action::create( "Menu_History", "履歴(_S)" ) );    
+
+    // 戻る、進む
+    m_action_group->add( Gtk::Action::create( "PrevView", "PrevView"), sigc::mem_fun( *this, &Core::slot_prevview ) );
+    m_action_group->add( Gtk::Action::create( "NextView", "NextView"), sigc::mem_fun( *this, &Core::slot_nextview ) );
 
     //////////////////////////////////////////////////////
 
@@ -529,7 +545,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索(_A)" ), sigc::mem_fun( *this, &Core::slot_search_cache ) );
     m_action_group->add( Gtk::Action::create( "SearchTitle", "SearchTitle" ), sigc::mem_fun( *this, &Core::slot_search_title ) );
 
-    m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "お気に入りの更新チェック(_U)" ) );
+    m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "サイドバーの更新チェック(_U)" ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateRoot", "更新チェックのみ(_R)" ), sigc::mem_fun( *this, &Core::slot_check_update_root ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateOpenRoot", "更新されたスレをタブで開く(_T)" ),
                          sigc::mem_fun( *this, &Core::slot_check_update_open_root ) );
@@ -598,6 +614,9 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menu action='Sidebar_Menu'>"
         "<menuitem action='Show_BBS'/>"
         "<menuitem action='Show_FAVORITE'/>"
+        "<menuitem action='Show_HISTTHREAD'/>"
+        "<menuitem action='Show_HISTBOARD'/>"
+        "<menuitem action='Show_HISTCLOSE'/>"
         "</menu>"
         "<separator/>"
 
@@ -677,6 +696,12 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "</menu>"
 
         "</menu>"
+
+    // 履歴
+    "<menu action='Menu_History'>"
+    "<menuitem action='PrevView'/>"
+    "<menuitem action='NextView'/>"
+    "</menu>"
 
     // ツール
         "<menu action='Menu_Tool'>"
@@ -816,27 +841,32 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_menubar->set_size_request( 0 );
 
     // 履歴メニュー追加
-    Gtk::MenuItem* menuitem = Gtk::manage( new Gtk::MenuItem( "履歴(_S)", true ) );
-    m_menubar->items().insert( --(--(--( m_menubar->items().end() ))), *menuitem );
+    Gtk::Menu_Helpers::MenuList& items = m_menubar->items();
+    Gtk::Menu_Helpers::MenuList::iterator it_item = items.begin();
+    ++it_item; ++it_item;
+    (*it_item).signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_historymenu ) );
 
-    Gtk::Menu* submenu = Gtk::manage( new Gtk::Menu() );
-    menuitem->set_submenu( *submenu );
+    Gtk::Menu* submenu = dynamic_cast< Gtk::Menu* >( (*it_item).get_submenu() );
+
+    submenu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
+
+    // スレ履歴
+    submenu->append( *HISTORY::get_history_manager()->get_menu_thread() );
 
     // 板履歴
     submenu->append( *HISTORY::get_history_manager()->get_menu_board() );
-    
-    // スレ履歴
-    submenu->append( *HISTORY::get_history_manager()->get_menu_thread() );
 
     // 最近閉じたスレ履歴
     submenu->append( *HISTORY::get_history_manager()->get_menu_close() );
 
+    submenu->show_all_children();
+
     // メニューにショートカットキーやマウスジェスチャを表示
-    Gtk::Menu_Helpers::MenuList& items = m_menubar->items();
-    Gtk::Menu_Helpers::MenuList::iterator it_item = items.begin();
+    items = m_menubar->items();
+    it_item = items.begin();
     for( ; it_item != items.end(); ++it_item ){
-        Gtk::Menu* menu = dynamic_cast< Gtk::Menu* >( (*it_item).get_submenu() );
-        CONTROL::set_menu_motion( menu );
+        submenu = dynamic_cast< Gtk::Menu* >( (*it_item).get_submenu() );
+        CONTROL::set_menu_motion( submenu );
 
         ( *it_item ).signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_menubar ) );
     }
@@ -1107,6 +1137,21 @@ void Core::set_maintitle()
 
 
 
+inline void toggle_sidebar_action( Glib::RefPtr< Gtk::ActionGroup >& group, const std::string& action, const std::string url )
+{
+    Glib::RefPtr< Gtk::Action > act;
+    Glib::RefPtr< Gtk::ToggleAction > tact;
+
+    act = group->get_action( action );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+
+        if( SESSION::show_sidebar() && SESSION::get_sidebar_current_url() == url ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+}
+
+
 //
 // メニューバーがアクティブになったときに呼ばれるスロット
 //
@@ -1115,22 +1160,15 @@ void Core::slot_activate_menubar()
     // toggle　アクションを activeにするとスロット関数が呼ばれるので処理しないようにする
     m_enable_menuslot = false;
 
+    Glib::RefPtr< Gtk::Action > act;
+    Glib::RefPtr< Gtk::ToggleAction > tact;
+
     // サイドバー
-    Glib::RefPtr< Gtk::Action > act = m_action_group->get_action( "Show_BBS" );
-    Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-    if( tact ){
-
-        if( SESSION::show_sidebar() && SESSION::get_bbslist_current_url() == URL_BBSLISTVIEW ) tact->set_active( true );
-        else tact->set_active( false );
-    }
-
-    act = m_action_group->get_action( "Show_FAVORITE" );
-    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-    if( tact ){
-
-        if( SESSION::show_sidebar() && SESSION::get_bbslist_current_url() == URL_FAVORITEVIEW ) tact->set_active( true );
-        else tact->set_active( false );
-    }
+    toggle_sidebar_action( m_action_group, "Show_BBS", URL_BBSLISTVIEW );
+    toggle_sidebar_action( m_action_group, "Show_FAVORITE", URL_FAVORITEVIEW );
+    toggle_sidebar_action( m_action_group, "Show_HISTTHREAD", URL_HISTTHREADVIEW );
+    toggle_sidebar_action( m_action_group, "Show_HISTBOARD", URL_HISTBOARDVIEW );
+    toggle_sidebar_action( m_action_group, "Show_HISTCLOSE", URL_HISTCLOSEVIEW );
 
     // メニューバー
     act = m_action_group->get_action( "ShowMenuBar" );
@@ -1301,21 +1339,93 @@ void Core::slot_activate_menubar()
 }
 
 
+//
+// 履歴メニューがアクティブになった
+//
+void Core::slot_activate_historymenu()
+{
+    m_enable_menuslot = false;
+
+    std::string view_url;
+    switch( SESSION::focused_admin() ){
+
+        case SESSION::FOCUS_BOARD: view_url = BOARD::get_admin()->get_current_url(); break;
+        case SESSION::FOCUS_ARTICLE: view_url = ARTICLE::get_admin()->get_current_url(); break;
+    }
+
+    bool enable_prev = false;
+    bool enable_next = false;
+    if( ! view_url.empty() ){
+
+        enable_prev = HISTORY::get_history_manager()->can_back_viewhistory( view_url, 1 );
+        enable_next = HISTORY::get_history_manager()->can_forward_viewhistory( view_url, 1 );
+    }
+
+#ifdef _DEBUG
+    std::cout << "Core::slot_activate_historymenu\n"
+              << "view_url = " << view_url
+              << " prev = " << enable_prev << " next = " << enable_next
+              << std::endl;
+#endif    
+
+    Glib::RefPtr< Gtk::Action > act;
+    act = m_action_group->get_action( "PrevView" );
+    if( act ) act->set_sensitive( enable_prev );
+    act = m_action_group->get_action( "NextView" );
+    if( act ) act->set_sensitive( enable_next );
+
+    m_enable_menuslot = true;
+}
+
+
+// 戻る
+void Core::slot_prevview()
+{
+    if( SESSION::is_booting() ) return;
+    if( ! m_enable_menuslot ) return;
+
+    if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ){
+
+        ARTICLE::get_admin()->set_command( "back_viewhistory", ARTICLE::get_admin()->get_current_url(), "1" );
+    }
+    else if( SESSION::focused_admin() == SESSION::FOCUS_BOARD ){
+
+        BOARD::get_admin()->set_command( "back_viewhistory", BOARD::get_admin()->get_current_url(), "1" );
+    }
+}
+
+
+// 進む
+void Core::slot_nextview()
+{
+    if( SESSION::is_booting() ) return;
+    if( ! m_enable_menuslot ) return;
+
+    if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ){
+
+        ARTICLE::get_admin()->set_command( "forward_viewhistory", ARTICLE::get_admin()->get_current_url(), "1" );
+    }
+    else if( SESSION::focused_admin() == SESSION::FOCUS_BOARD ){
+
+        BOARD::get_admin()->set_command( "forward_viewhistory", BOARD::get_admin()->get_current_url(), "1" );
+    }
+}
+
 void Core::slot_clear_board()
 {
-    HISTORY::get_history_manager()->clear_board();
+    HISTORY::remove_allhistories( URL_HISTBOARDVIEW );
     BOARD::get_admin()->set_command( "clear_viewhistory" );
 }
 
 void Core::slot_clear_thread()
 {
-    HISTORY::get_history_manager()->clear_thread();
+    HISTORY::remove_allhistories( URL_HISTTHREADVIEW );
     ARTICLE::get_admin()->set_command( "clear_viewhistory" );
 }
 
 void Core::slot_clear_close()
 {
-    HISTORY::get_history_manager()->clear_close();
+    HISTORY::remove_allhistories( URL_HISTCLOSEVIEW );
 }
 
 void Core::slot_clear_search()
@@ -1548,9 +1658,6 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         // ジャンプ( empty ならジャンプしない )
         if( ! command.arg3.empty() ) ARTICLE::get_admin()->set_command( "goto_num", command.url, command.arg3 );
-
-        // 履歴更新
-        set_history_article( command.url );
 
         return;
     }
@@ -1995,8 +2102,6 @@ void Core::set_command( const COMMAND_ARGS& command )
                                          "MAIN" // モード
             );
 
-        // 履歴更新
-        set_history_board( command.url );
         return;
     }
 
@@ -2133,39 +2238,48 @@ void Core::set_command( const COMMAND_ARGS& command )
 
 
     ////////////////////////////
-    // bbslist系のコマンド
+    // bbslist(サイドバー)系のコマンド
 
+    // 板一覧の表示を更新
+    // 板一覧を更新したとき等に呼び出す
     else if( command.command  == "update_bbslist" ){
 
         CORE::core_set_command( "set_status","" ,"" );        
 
         // フォーカスされていなかったらサイドバーにフォーカス切り替え
         if( SESSION::focused_admin() != SESSION::FOCUS_SIDEBAR
-            || SESSION::get_bbslist_current_url() != URL_BBSLISTVIEW ) CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
+            || SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW ) CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
 
         BBSLIST::get_admin()->set_command( "update_view", URL_BBSLISTVIEW );
         return;
     }
-    else if( command.command  == "update_bbslist_item" ){
 
-        BBSLIST::get_admin()->set_command( "update_item", URL_BBSLISTVIEW );
-        return;
-    }
+    // お気に入りに項目追加
+    // 共有バッファにコピーデータをセットしておくこと
     else if( command.command  == "append_favorite" ){
 
         BBSLIST::get_admin()->set_command( "append_item", URL_FAVORITEVIEW );
         return;
     }
+
+    // お気に入りから command.url で指定したスレを削除
     else if( command.command  == "remove_favorite" ){
 
         BBSLIST::get_admin()->set_command( "remove_item", URL_FAVORITEVIEW, command.url );
         return;
     }
-    else if( command.command  == "update_favorite_item" ){
 
-        BBSLIST::get_admin()->set_command( "update_item", URL_FAVORITEVIEW );
+    // 新スレ移行時等にお気に入りのスレの url と 名前を変更
+    else if( command.command  == "replace_favorite_thread" ){
+
+        BBSLIST::get_admin()->set_command( "replace_thread", URL_FAVORITEVIEW,
+                                           command.arg1,  // 旧スレのURL
+                                           command.arg2   // 新スレのURL
+            );
         return;
     }
+
+    // サイドバーの表示中のビューの全体更新チェック
     else if( command.command  == "check_update_root" ){
 
         if( ! SESSION::is_online() ){
@@ -2174,9 +2288,14 @@ void Core::set_command( const COMMAND_ARGS& command )
             return;
         }
 
-        BBSLIST::get_admin()->set_command( "check_update_root", URL_FAVORITEVIEW );
+        if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW ){
+
+            BBSLIST::get_admin()->set_command( "check_update_root", SESSION::get_sidebar_current_url() );
+        }
         return;
     }
+
+    // サイドバーの表示中のビューの全体を更新チェックして開く
     else if( command.command  == "check_update_open_root" ){
 
         if( ! SESSION::is_online() ){
@@ -2185,46 +2304,89 @@ void Core::set_command( const COMMAND_ARGS& command )
             return;
         }
 
-        BBSLIST::get_admin()->set_command( "check_update_open_root", URL_FAVORITEVIEW );
-        return;
-    }
-    else if( command.command  == "cancel_update" ){
+        if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW ){
 
-        BBSLIST::get_admin()->set_command( "cancel_update", URL_FAVORITEVIEW );
+            BBSLIST::get_admin()->set_command( "check_update_open_root", SESSION::get_sidebar_current_url() );
+        }
         return;
     }
+
+    // サイドバーの全体の更新チェックのキャンセル
+    else if( command.command  == "cancel_check_update" ){
+
+        BBSLIST::get_admin()->set_command( "cancel_check_update", SESSION::get_sidebar_current_url() );
+
+        return;
+    }
+
+    // お気に入りの編集ウィンドウを開く
     else if( command.command  == "edit_favorite" ){
 
         BBSLIST::get_admin()->set_command( "edit_tree", URL_FAVORITEVIEW );
         return;
     }
+
+    // お気に入り保存
     else if( command.command  == "save_favorite" ){
 
         BBSLIST::get_admin()->set_command( "save_xml", URL_FAVORITEVIEW );
         return;
     }
 
-    // お気に入りのアイコン表示を更新 ( スレ )
-    else if( command.command  == "toggle_favorite_articleicon" ){
+    // サイドバーのアイコン表示を更新 ( スレ )
+    else if( command.command  == "toggle_sidebar_articleicon" ){
 
         BBSLIST::get_admin()->set_command( "toggle_articleicon", URL_FAVORITEVIEW, command.url );
+        BBSLIST::get_admin()->set_command( "toggle_articleicon", URL_HISTTHREADVIEW, command.url );
+        BBSLIST::get_admin()->set_command( "toggle_articleicon", URL_HISTCLOSEVIEW, command.url );
+
+        HISTORY::get_history_manager()->set_menulabel( URL_HISTTHREADVIEW );
+        HISTORY::get_history_manager()->set_menulabel( URL_HISTCLOSEVIEW );
+
         return;
     }
 
-    // お気に入りのアイコン表示を更新 ( 板 )
-    else if( command.command  == "toggle_favorite_boardicon" ){
+    // サイドバーのアイコン表示を更新 ( 板 )
+    else if( command.command  == "toggle_sidebar_boardicon" ){
 
         BBSLIST::get_admin()->set_command( "toggle_boardicon", URL_FAVORITEVIEW, command.url );
+        BBSLIST::get_admin()->set_command( "toggle_boardicon", URL_HISTBOARDVIEW, command.url );
+
+        HISTORY::get_history_manager()->set_menulabel( URL_HISTBOARDVIEW );
         return;
     }
 
-    // お気に入りのスレの url と 名前を変更
-    else if( command.command  == "replace_favorite_thread" ){
+    // 移転時にサイドバーに登録されているURLを新URLに更新
+    else if( command.command  == "update_sidebar_item" ){
 
-        BBSLIST::get_admin()->set_command( "replace_thread", URL_FAVORITEVIEW,
-                                           command.arg1,  // 旧スレのURL
-                                           command.arg2   // 新スレのURL
-            );
+        BBSLIST::get_admin()->set_command( "update_item", URL_BBSLISTVIEW );
+        BBSLIST::get_admin()->set_command( "update_item", URL_FAVORITEVIEW );
+        BBSLIST::get_admin()->set_command( "update_item", URL_HISTTHREADVIEW );
+        BBSLIST::get_admin()->set_command( "update_item", URL_HISTBOARDVIEW );
+        BBSLIST::get_admin()->set_command( "update_item", URL_HISTCLOSEVIEW );
+
+        return;
+    }
+
+    // 各履歴の更新
+    // 共有バッファにデータをセットしておくこと
+    else if( command.command  == "append_history" ){
+
+        BBSLIST::get_admin()->set_command_immediately( "append_history", command.url );
+        return;
+    }
+
+    // 各履歴から command.arg1 で指定したスレや板を削除
+    else if( command.command  == "remove_history" ){
+
+        BBSLIST::get_admin()->set_command( "remove_item", command.url, command.arg1 );
+        return;
+    }
+
+    // 各履歴から全項目を削除
+    else if( command.command  == "remove_allhistories" ){
+
+        BBSLIST::get_admin()->set_command( "remove_allitems", command.url );
         return;
     }
 
@@ -2549,20 +2711,6 @@ void Core::exec_command()
     else if( command.command == "update_main_toolbar_button" ){
         m_toolbar->update_button();
     }
-
-    // history 登録
-    else if( command.command  == "set_history_article" ) set_history_article( command.url );
-        
-    else if( command.command  == "set_history_board" ) set_history_board( command.url );
-
-    else if( command.command  == "set_history_close" ) set_history_close( command.url );
-
-    else if( command.command  == "update_history" ){
-        HISTORY::get_history_manager()->update_thread();
-        HISTORY::get_history_manager()->update_board();
-        HISTORY::get_history_manager()->update_close();
-    }
-
 
     // 履歴のクリア
     else if( command.command  == "clear_board" ) slot_clear_board();
@@ -3170,14 +3318,24 @@ void Core::set_toggle_view_button()
 
         case SESSION::FOCUS_SIDEBAR:
 
-            if( SESSION::get_bbslist_current_page() == 0 ){
-                m_toolbar->m_button_bbslist.set_active( true );
-                m_toolbar->m_button_favorite.set_active( false );
+            switch( SESSION::get_sidebar_current_page() ){
+
+                case 0:
+                    m_toolbar->m_button_bbslist.set_active( true );
+                    m_toolbar->m_button_favorite.set_active( false );
+                    break;
+
+                case 1:
+                    m_toolbar->m_button_bbslist.set_active( false );
+                    m_toolbar->m_button_favorite.set_active( true );
+                    break;
+
+                default:
+                    m_toolbar->m_button_bbslist.set_active( false );
+                    m_toolbar->m_button_favorite.set_active( false );
+                    break;
             }
-            else{
-                m_toolbar->m_button_bbslist.set_active( false );
-                m_toolbar->m_button_favorite.set_active( true );
-            }
+
             m_toolbar->m_button_board.set_active( false );
             m_toolbar->m_button_thread.set_active( false );
             m_toolbar->m_button_image.set_active( false );
@@ -3397,7 +3555,7 @@ void Core::switch_sidebar( const std::string& url, const bool present )
         }
 
         // urlがフォーカスされていて、かつ他のadminがemptyで無いときは閉じる
-        else if( SESSION::get_bbslist_current_url() == url && ! is_all_admin_empty() ){
+        else if( SESSION::get_sidebar_current_url() == url && ! is_all_admin_empty() ){
             toggle_sidebar();
             return;
         }
@@ -3604,25 +3762,6 @@ void Core::open_by_browser( const std::string& url )
 #endif
         Glib::spawn_command_line_async( command_openurl );
     }
-}
-
-
-
-// history セット
-void Core::set_history_article( const std::string& url )
-{
-    HISTORY::get_history_manager()->append_thread( url, DBTREE::article_subject( url ), TYPE_THREAD );
-}
-
-
-void Core::set_history_board( const std::string& url )
-{
-    HISTORY::get_history_manager()->append_board( url, DBTREE::board_name( url ), TYPE_BOARD );
-}
-
-void Core::set_history_close( const std::string& url )
-{
-    HISTORY::get_history_manager()->append_close( url, DBTREE::article_subject( url ), TYPE_THREAD );
 }
 
 

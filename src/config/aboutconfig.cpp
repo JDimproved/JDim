@@ -138,14 +138,14 @@ void AboutConfig::append_rows()
 
     // 板一覧、お気に入り
     append_row( "" );
-    append_row( "■ 板一覧、お気に入り" );
+    append_row( "■ 板一覧、お気に入り、履歴" );
     append_row( "板移転時に確認ダイアログを表示する", get_confitem()->show_movediag, CONF_SHOW_MOVEDIAG );
     append_row( "板一覧内にあるリンクを全て板とみなす", get_confitem()->use_link_as_board, CONF_USE_LINK_AS_BOARD );
     append_row( "板一覧でカテゴリを常にひとつだけ開く", get_confitem()->open_one_category, CONF_OPEN_ONE_CATEGORY );
     append_row( "お気に入りでカテゴリを常にひとつだけ開く", get_confitem()->open_one_favorite, CONF_OPEN_ONE_FAVORITE );
     append_row( "右ペーンが空の時にサイドバーを最大化する", get_confitem()->expand_sidebar, CONF_EXPAND_SIDEBAR );
     append_row( "スレをお気に入りに追加した時にしおりをセットする", get_confitem()->bookmark_drop, CONF_BOOKMARK_DROP );
-    append_row( "お気に入りの更新チェック時に板の更新もチェックする", get_confitem()->check_update_board, CONF_CHECK_UPDATE_BOARD );
+    append_row( "更新チェック時に板の更新もチェックする", get_confitem()->check_update_board, CONF_CHECK_UPDATE_BOARD );
 
     // スレ一覧
     append_row( "" );
@@ -225,7 +225,8 @@ void AboutConfig::append_rows()
     // その他
     append_row( "" );
     append_row( "■ その他" );
-    append_row( "履歴の保持数", get_confitem()->history_size, CONF_HISTORY );
+    append_row( "履歴メニューの表示数", get_confitem()->history_size, CONF_HISTORY_SIZE );
+    append_row( "履歴ビューの表示数", get_confitem()->historyview_size, CONF_HISTORYVIEW_SIZE );
     append_row( "マウスジェスチャの判定開始半径", get_confitem()->mouse_radius, CONF_MOUSE_RADIUS );
     append_row( "起動時に開いていたスレ一覧を復元する", get_confitem()->restore_board, CONF_RESTORE_BOARD );
     append_row( "起動時に開いていたスレを復元する", get_confitem()->restore_article, CONF_RESTORE_ARTICLE );

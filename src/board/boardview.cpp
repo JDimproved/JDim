@@ -12,6 +12,8 @@
 
 #include "sound/soundmanager.h"
 
+#include "history/historymanager.h"
+
 #include "session.h"
 #include "command.h"
 #include "httpcode.h"
@@ -83,13 +85,7 @@ void BoardView::reload()
         return;
     }
 
-    // オートリロードのカウンタを0にする
-    View::reset_autoreload_counter();
-
     show_view();
-
-    // 板履歴更新
-    CORE::core_set_command( "set_history_board", get_url_board() );
 }
 
 
@@ -121,6 +117,11 @@ void BoardView::update_view()
 
     // dat落ちしたスレッドをスレあぼーんのリストから取り除く
     if( code == HTTP_OK ) DBTREE::remove_old_abone_thread( get_url_board() );
+
+    // 板の履歴に登録
+    HISTORY::append_history( URL_HISTBOARDVIEW,
+                             DBTREE::url_boardbase( get_url_board() ),
+                             DBTREE::board_name( get_url_board() ), TYPE_BOARD );
 }
 
 

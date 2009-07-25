@@ -335,8 +335,11 @@ const bool ConfigItems::load( const bool restore )
     // マウスジェスチャの判定開始半径
     mouse_radius = cf.get_option_int( "mouse_radius", CONF_MOUSE_RADIUS, 4, 1024 );
 
-    // 履歴の保持数
-    history_size = cf.get_option_int( "history_size", CONF_HISTORY, 0, 65535 );
+    // 履歴メニューの表示数
+    history_size = cf.get_option_int( "history_size", CONF_HISTORY_SIZE, 0, 256 );
+
+    // 履歴ビューの表示数
+    historyview_size = cf.get_option_int( "historyview_size", CONF_HISTORYVIEW_SIZE, 0, 1024 );
 
     // AA履歴の保持数
     aahistory_size = cf.get_option_int( "aahistory_size", CONF_AAHISTORY, 0, 65535 );
@@ -671,6 +674,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "margin_imgpopup", margin_imgpopup );
     cf.update( "mouse_radius", mouse_radius );
     cf.update( "history_size", history_size );
+    cf.update( "historyview_size", historyview_size );
     cf.update( "aahistory_size", aahistory_size );
     cf.update( "instruct_popup", instruct_popup );
     cf.update( "instruct_tglart", instruct_tglart );

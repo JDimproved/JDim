@@ -18,6 +18,8 @@ namespace ARTICLE
 
         int m_gotonum_seen; // 前回見ていた場所へのジャンプ用
 
+        bool m_set_history; // update_finish() で履歴を登録する
+
         bool m_show_instdialog;
 
         bool m_playsound;

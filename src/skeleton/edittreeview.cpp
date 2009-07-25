@@ -815,7 +815,7 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
 //
 // pathをまとめて削除
 //
-// force = true なら m_editable が false でも追加
+// force = true なら m_editable が false でも削除
 //
 void EditTreeView::delete_path( std::list< Gtk::TreePath >& list_path, const bool force )
 {
@@ -1266,19 +1266,24 @@ const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const 
     else row_new = *( treestore->insert_after( row_dest ) );
 
     // スレ一覧の状態を最新にする
+    std::string url_new = url;
     if( type == TYPE_BOARD ){
 
-        if( DBTREE::board_status( url ) & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
+        url_new = DBTREE::url_boardbase( url );
+
+        if( DBTREE::board_status( url_new ) & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
     }
 
     // スレ状態を最新にする
     if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
 
-        if( DBTREE::article_status( url ) & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
-        if( DBTREE::article_status( url ) & STATUS_OLD ) type = TYPE_THREAD_OLD;
+        url_new = DBTREE::url_dat( url );
+
+        if( DBTREE::article_status( url_new ) & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
+        if( DBTREE::article_status( url_new ) & STATUS_OLD ) type = TYPE_THREAD_OLD;
     }
 
-    m_columns.setup_row( row_new, url, name, data, type );
+    m_columns.setup_row( row_new, url_new, name, data, type );
 
     return treestore->get_path( row_new );
 }

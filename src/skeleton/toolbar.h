@@ -108,6 +108,8 @@ namespace SKELETON
 
       protected:
 
+        SKELETON::Admin* get_admin(){ return m_admin; }
+
         // ボタンのパッキング
         virtual void pack_buttons() = 0;
         void unpack_buttons();

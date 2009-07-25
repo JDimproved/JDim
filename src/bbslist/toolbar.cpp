@@ -15,6 +15,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "config/globalconf.h"
+
 #include "command.h"
 #include "session.h"
 #include "compmanager.h"
@@ -25,16 +27,20 @@ using namespace BBSLIST;
 
 BBSListToolBar::BBSListToolBar() :
     SKELETON::ToolBar( BBSLIST::get_admin() ),
-    m_button_toggle( "板一覧とお気に入りの切り替え", true, true, m_label ),
+    m_button_toggle( "ページ切り替え", true, true, m_label ),
     m_button_check_update_root( NULL ),
-    m_button_check_update_open_root( NULL )
+    m_button_check_update_open_root( NULL ),
+    m_button_stop_check_update( NULL )
 {
-    m_button_toggle.get_button()->set_tooltip_arrow( "板一覧とお気に入りの切り替え\n\nマウスホイール回転でも切り替え可能" );
+    m_button_toggle.get_button()->set_tooltip_arrow( "ページ切り替え\n\nマウスホイール回転でも切り替え可能" );
 
     m_label.set_alignment( Gtk::ALIGN_LEFT );
     std::vector< std::string > menu;
     menu.push_back( "板一覧" );
     menu.push_back( "お気に入り" );
+    menu.push_back( "スレ履歴" );
+    menu.push_back( "板履歴" );
+    menu.push_back( "最近閉じたスレ" );
     m_button_toggle.get_button()->append_menu( menu );
     m_button_toggle.get_button()->signal_selected().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_toggle ) );
     m_button_toggle.get_button()->signal_scroll_event().connect(  sigc::mem_fun( *this, &BBSListToolBar::slot_scroll_event ));
@@ -87,6 +93,11 @@ void BBSListToolBar::pack_buttons()
                 get_buttonbar().append( *m_button_check_update_open_root );
                 break;
 
+            case ITEM_STOPLOADING:
+                if( ! m_button_stop_check_update ) m_button_stop_check_update = get_button_stop();
+                get_buttonbar().append( *m_button_stop_check_update );
+                break;
+
             case ITEM_SEARCH_NEXT:
                 get_buttonbar().append( *get_button_down_search() );
                 break;
@@ -114,7 +125,22 @@ void BBSListToolBar::set_view( SKELETON::View* view )
 {
     ToolBar::set_view( view );
 
-    if( view )  m_label.set_text( view->get_label() );
+    if( view ){
+        m_label.set_text( view->get_label() );
+
+        if( view->get_url() == URL_BBSLISTVIEW
+            || ( ! CONFIG::get_check_update_board() && view->get_url() == URL_HISTBOARDVIEW ) )
+        {
+            if( m_button_check_update_root ) m_button_check_update_root->set_sensitive( false );
+            if( m_button_check_update_open_root ) m_button_check_update_open_root->set_sensitive( false );
+            if( m_button_stop_check_update ) m_button_stop_check_update->set_sensitive( false );
+        }
+        else{
+            if( m_button_check_update_root ) m_button_check_update_root->set_sensitive( true );
+            if( m_button_check_update_open_root ) m_button_check_update_open_root->set_sensitive( true );
+            if( m_button_stop_check_update ) m_button_stop_check_update->set_sensitive( true );
+        }
+    }
 }
 
 
@@ -133,6 +159,18 @@ void BBSListToolBar::slot_toggle( int i )
          case 1:
              if( get_url() != URL_FAVORITEVIEW ) CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW ); 	 
              break; 	 
+
+         case 2:
+             if( get_url() != URL_HISTTHREADVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTTHREADVIEW ); 	 
+             break; 	 
+
+         case 3:
+             if( get_url() != URL_HISTBOARDVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTBOARDVIEW );
+             break; 	 
+
+         case 4:
+             if( get_url() != URL_HISTCLOSEVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTCLOSEVIEW );
+             break; 	 
      }
 }
 
@@ -145,8 +183,16 @@ bool BBSListToolBar::slot_scroll_event( GdkEventScroll* event )
     std::cout << "BBSListToolBar::slot_scroll_event dir = " << direction << std::endl;
 #endif
 
-    if( direction == GDK_SCROLL_UP ) slot_toggle( 0 );
-    if( direction == GDK_SCROLL_DOWN ) slot_toggle( 1 );
+    int page = get_admin()->get_current_page();
+    const int tab_nums = get_admin()->get_tab_nums();
+
+    if( direction == GDK_SCROLL_UP ) --page;
+    if( direction == GDK_SCROLL_DOWN ) ++page;
+
+    if( page < 0 ) page = tab_nums-1;
+    else if( page >= tab_nums ) page = 0;
+
+    slot_toggle( page );
 
     return true;
 }

@@ -4,7 +4,7 @@
 #define _TYPE_H
 
 #include <string>
-#include <list>
+#include <vector>
 
 enum 
 {
@@ -49,7 +49,7 @@ namespace CORE
         std::string data;
     };
 
-    typedef std::list< CORE::DATA_INFO > DATA_INFO_LIST;
+    typedef std::vector< CORE::DATA_INFO > DATA_INFO_LIST;
 }
 
 #endif

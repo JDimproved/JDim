@@ -49,8 +49,8 @@ enum{
 #define ITEM_NAME_RELOAD    "再読み込み"
 #define ITEM_NAME_STOPLOADING "読み込み中止"
 #define ITEM_NAME_FAVORITE  "お気に入りに追加"
-#define ITEM_NAME_CHECK_UPDATE_ROOT "お気に入り更新チェック"
-#define ITEM_NAME_CHECK_UPDATE_OPEN_ROOT "お気に入り更新チェックしてタブで開く"
+#define ITEM_NAME_CHECK_UPDATE_ROOT "更新チェック"
+#define ITEM_NAME_CHECK_UPDATE_OPEN_ROOT "更新チェックしてタブで開く"
 #define ITEM_NAME_DELETE    "削除"
 #define ITEM_NAME_QUIT      "閉じる"
 #define ITEM_NAME_PREVVIEW  "前へ戻る"
@@ -183,16 +183,16 @@ enum
 #define URL_LOGINP2 "jdlogin://loginp2"
 
 #define URL_BBSLISTADMIN "jdadmin://bbslist"
+#define URL_BOARDADMIN "jdadmin://board"
+#define URL_ARTICLEADMIN "jdadmin://article"
+#define URL_IMAGEADMIN "jdadmin://image"
+#define URL_MESSAGEADMIN "jdadmin://message"
+
 #define URL_BBSLISTVIEW "jdview://bbslist"
 #define URL_FAVORITEVIEW "jdview://favorite"
-
-#define URL_BOARDADMIN "jdadmin://board"
-
-#define URL_ARTICLEADMIN "jdadmin://article"
-
-#define URL_IMAGEADMIN "jdadmin://image"
-
-#define URL_MESSAGEADMIN "jdadmin://message"
+#define URL_HISTTHREADVIEW "jdview://histthread"
+#define URL_HISTBOARDVIEW "jdview://histboard"
+#define URL_HISTCLOSEVIEW "jdview://histclose"
 
 #define URL_USRCMD "jdpref://usrcmd"
 #define URL_LINKFILTER "jdpref://linkfilter"

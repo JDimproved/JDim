@@ -6,6 +6,8 @@
 #ifndef _SESSION_H
 #define _SESSION_H
 
+#include "type.h"
+
 #include <list>
 #include <vector>
 #include <string>
@@ -267,11 +269,14 @@ namespace SESSION
     const std::list< bool >& get_image_locked();
     void set_image_locked( const std::list< bool >& locked );
 
-    // 現在開いている bbslist のページ
-    const int get_bbslist_current_page();
+    // 現在開いているサイドバーのページ
+    const int get_sidebar_current_page();
 
-    // 現在開いている bbslist のurl
-    const std::string get_bbslist_current_url();
+    // 現在開いているサイドバーのurl
+    const std::string get_sidebar_current_url();
+
+    // ツールバー等の項目名 -> ID 変換
+    const int parse_item( const std::string& item_name );
 
     // サイドバーのツールバー項目
     const std::string& get_items_sidebar_str();
@@ -375,6 +380,9 @@ namespace SESSION
     // お気に入り挿入ダイアログで最後に保存したディレクトリ名
     const std::string& get_dir_select_favorite();
     void set_dir_select_favorite( const std::string& dir );
+
+    // 各履歴を取得
+    void get_history( const std::string& url, CORE::DATA_INFO_LIST& info_list );
 }
 
 

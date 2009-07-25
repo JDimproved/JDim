@@ -13,23 +13,23 @@
 
 namespace Gtk
 {
+    class Menu;
     class MenuItem;
 };
 
 
 namespace HISTORY
 {
-    class HistoryMenuThread;
-    class HistoryMenuBoard;
-    class HistoryMenuClose;
+    class HistoryMenu;
     class ViewHistory;
     class ViewHistoryItem;
 
     class History_Manager
     {
-        HistoryMenuThread* m_menu_thread;
-        HistoryMenuBoard* m_menu_board;
-        HistoryMenuClose* m_menu_close;
+        // 履歴メニュー
+        HistoryMenu* m_menu_thread;
+        HistoryMenu* m_menu_board;
+        HistoryMenu* m_menu_close;
 
         // View履歴
         std::list< ViewHistory* > m_view_histories;
@@ -40,29 +40,26 @@ namespace HISTORY
         History_Manager();
         virtual ~History_Manager();
 
-        // メイン履歴
+        // 履歴メニュー取得
         Gtk::MenuItem* get_menu_thread();
         Gtk::MenuItem* get_menu_board();
         Gtk::MenuItem* get_menu_close();
 
-        // メイン履歴追加
-        void append_thread( const std::string& url, const std::string& name, const int type );
-        void append_board( const std::string& url, const std::string& name, const int type );
-        void append_close( const std::string& url, const std::string& name, const int type );
+        // url_history で指定した履歴に追加
+        void append_history( const std::string& url_history, const std::string& url, const std::string& name, const int type );
 
-        // メイン履歴クリア
-        void clear_thread();
-        void clear_board();
-        void clear_close();
+        // url_history で指定した履歴を全クリア
+        void remove_allhistories( const std::string& url_history );
 
-        // メイン履歴更新
-        void update_thread();
-        void update_board();
-        void update_close();
+        // url_history で指定した履歴メニューのラベルを更新
+        void set_menulabel( const std::string& url_history );
+
 
         //////////////////////////////////////////////////////////////////////////////
         //
         // View履歴
+
+      public:
 
         // 作成 / 削除
         void create_viewhistory( const std::string& url );
@@ -109,6 +106,12 @@ namespace HISTORY
 
     History_Manager* get_history_manager();
     void delete_history_manager();
+
+    // url_history で指定した履歴に追加
+    void append_history( const std::string& url_history, const std::string& url, const std::string& name, const int type );
+
+    // url_history で指定した履歴を全クリア
+    void remove_allhistories( const std::string& url_history );
 }
 
 #endif

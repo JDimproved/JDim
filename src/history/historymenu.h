@@ -13,54 +13,23 @@ namespace HISTORY
 {
     class HistorySubMenu;
 
-    class HistoryMenuBase : public Gtk::MenuItem
+    class HistoryMenu : public Gtk::MenuItem
     {
         HistorySubMenu* m_submenu;
+        bool m_activate;
 
       public:
 
-        HistoryMenuBase( const std::string& label );
-        virtual ~HistoryMenuBase();
+        HistoryMenu( const std::string& url_history, const std::string& label );
 
-        void append( const std::string& url, const std::string& name, int type );
-        void update();
-
-        // 履歴クリア
-        void slot_clear();
-
-      protected:
-
-        void setup( HistorySubMenu* submenu );
+        void set_menulabel();
 
       private:
 
         // メニューがactiveになった時にラベルをセットする
         void slot_activate_menu();
-    };
 
-
-
-    // スレ履歴
-    class HistoryMenuThread : public HistoryMenuBase
-    {
-      public:
-        HistoryMenuThread();
-    };
-
-
-    // 板履歴
-    class HistoryMenuBoard : public HistoryMenuBase
-    {
-      public:
-        HistoryMenuBoard();
-    };
-
-
-    // 最近閉じたスレ履歴
-    class HistoryMenuClose : public HistoryMenuBase
-    {
-      public:
-        HistoryMenuClose();
+        void slot_deactivate_menu();
     };
 }
 

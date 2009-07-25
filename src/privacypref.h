@@ -60,8 +60,8 @@ namespace CORE
         {
             m_vbox.set_spacing( 8 );
             m_vbox.set_border_width( 8 );
-            m_vbox.pack_start( m_bt_board );
             m_vbox.pack_start( m_bt_thread );
+            m_vbox.pack_start( m_bt_board );
             m_vbox.pack_start( m_bt_close );
             m_vbox.pack_start( m_bt_search );
             m_vbox.pack_start( m_bt_name );

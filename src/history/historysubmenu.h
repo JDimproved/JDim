@@ -12,19 +12,12 @@
 
 namespace HISTORY
 {
-    struct HIST_ITEM
-    {
-        std::string url;
-        std::string name;
-        int type;
-    };
-
     class HistorySubMenu : public Gtk::Menu
     {
-        std::string m_path_load_xml;
-        std::string m_path_save_xml;
-        std::list< Gtk::MenuItem* > m_itemlist;
-        std::list< HIST_ITEM* > m_histlist;
+        std::string m_url_history;
+
+        std::vector< Gtk::Image* > m_vec_images;
+        std::vector< Gtk::Label* > m_vec_label;
 
         // ポップアップメニュー
         Gtk::Menu m_popupmenu;
@@ -32,25 +25,19 @@ namespace HISTORY
 
       public:
 
-        HistorySubMenu( const std::string& path_load_xml, const std::string& path_save_xml );
-        ~HistorySubMenu();
+        HistorySubMenu( const std::string& url_history );
+        virtual ~HistorySubMenu();
 
-        void clear();
-        void append_item( const std::string& url, const std::string& name, int type );
-        void update();
-
-        // ラベルをセット
+        // アクティブ時にラベルをセットする
         void set_menulabel();
 
       private:
 
-        // 上から num 版目の HIST_ITEM 取得
-        HIST_ITEM* get_item( int num );
+        void open_history( const int i );
 
-        void xml2list( const std::string& xml );
-        std::string list2xml();
-
-        void open_history( int i );
+        // メニューのslot関数
+        void slot_clear();
+        void slot_switch_sideber();
 
         // メニューアイテムがactiveになった
         void slot_active( const int i );

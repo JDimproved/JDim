@@ -14,10 +14,11 @@
 #include "xml/tools.h"
 
 #include "cache.h"
-#include "type.h"
 #include "session.h"
+#include "sharedbuffer.h"
+#include "command.h"
+#include "global.h"
 
-#include <set>
 
 HISTORY::History_Manager* instance_history_manager = NULL;
 
@@ -36,6 +37,21 @@ void HISTORY::delete_history_manager()
     if( instance_history_manager ) delete instance_history_manager;
     instance_history_manager = NULL;
 }
+
+
+// url_history で指定した履歴に追加
+void HISTORY::append_history( const std::string& url_history, const std::string& url, const std::string& name, const int type )
+{
+    get_history_manager()->append_history( url_history, url, name, type );
+}
+
+
+// url_history で指定した履歴を全クリア
+void HISTORY::remove_allhistories( const std::string& url_history )
+{
+    get_history_manager()->remove_allhistories( url_history );
+}
+
 
 ///////////////////////////////////////////////
 
@@ -78,76 +94,70 @@ History_Manager::~History_Manager()
 }
 
 
-// メイン履歴
+// 履歴メニュー取得
 Gtk::MenuItem* History_Manager::get_menu_thread()
 {
-    if( ! m_menu_thread ) m_menu_thread = new HistoryMenuThread();
+    if( ! m_menu_thread ) m_menu_thread = new HistoryMenu( URL_HISTTHREADVIEW, "スレ履歴(_T)" );
     return m_menu_thread;
 }
 
 
 Gtk::MenuItem* History_Manager::get_menu_board()
 {
-    if( ! m_menu_board ) m_menu_board = new HistoryMenuBoard();
+    if( ! m_menu_board ) m_menu_board = new HistoryMenu( URL_HISTBOARDVIEW, "板履歴(_B)" );
     return m_menu_board;
 }
 
 
 Gtk::MenuItem* History_Manager::get_menu_close()
 {
-    if( ! m_menu_close ) m_menu_close = new HistoryMenuClose();
+    if( ! m_menu_close ) m_menu_close = new HistoryMenu( URL_HISTCLOSEVIEW, "最近閉じたスレ(_M)" );
     return m_menu_close;
 }
 
 
-// メイン履歴追加
-void History_Manager::append_thread( const std::string& url, const std::string& name, const int type )
+// url_history で指定した履歴に追加
+void History_Manager::append_history( const std::string& url_history, const std::string& url, const std::string& name, const int type )
 {
-    if( m_menu_thread ) m_menu_thread->append( url, DBTREE::article_subject( url ), TYPE_THREAD );
-}
+    if( SESSION::is_booting() ) return;
 
-void History_Manager::append_board( const std::string& url, const std::string& name, const int type )
-{
-    if( m_menu_board ) m_menu_board->append( url, DBTREE::board_name( url ), TYPE_BOARD );
-}
+    CORE::DATA_INFO info;
 
-void History_Manager::append_close( const std::string& url, const std::string& name, const int type )
-{
-    if( m_menu_close ) m_menu_close->append( url, DBTREE::article_subject( url ), TYPE_THREAD );
-}
+    if( url_history == URL_HISTTHREADVIEW || url_history == URL_HISTCLOSEVIEW ){
 
+        info.type = TYPE_THREAD;
+        info.url = DBTREE::url_dat( url );
+        info.name = DBTREE::article_subject( info.url );
+    }
+    if( url_history == URL_HISTBOARDVIEW ){
 
-// メイン履歴クリア
-void History_Manager::clear_thread()
-{
-    if( m_menu_thread ) m_menu_thread->slot_clear();
-}
+        info.type = TYPE_BOARD;
+        info.url = DBTREE::url_boardbase( url );
+        info.name = DBTREE::board_name( info.url );
+    }
 
-void History_Manager::clear_board()
-{
-    if( m_menu_board ) m_menu_board->slot_clear();
-}
+    CORE::DATA_INFO_LIST list_info;
+    list_info.push_back( info );
+    CORE::SBUF_set_list( list_info );
 
-void History_Manager::clear_close()
-{
-    if( m_menu_close ) m_menu_close->slot_clear();
+    CORE::core_set_command( "append_history", url_history );
+    set_menulabel( url_history );
 }
 
 
-// メイン履歴更新
-void History_Manager::update_thread()
+// url_history で指定した履歴を全クリア
+void History_Manager::remove_allhistories( const std::string& url_history )
 {
-    if( m_menu_thread ) m_menu_thread->update();
+    CORE::core_set_command( "remove_allhistories", url_history );
 }
 
-void History_Manager::update_board()
-{
-    if( m_menu_board ) m_menu_board->update();
-}
 
-void History_Manager::update_close()
+// url_history で指定した履歴メニューのラベルを更新
+void History_Manager::set_menulabel( const std::string& url_history )
 {
-    if( m_menu_close ) m_menu_close->update();
+    if( url_history == URL_HISTTHREADVIEW && m_menu_thread ) m_menu_thread->set_menulabel();
+    if( url_history == URL_HISTBOARDVIEW && m_menu_board ) m_menu_board->set_menulabel();
+    if( url_history == URL_HISTCLOSEVIEW && m_menu_close ) m_menu_close->set_menulabel();
 }
 
 

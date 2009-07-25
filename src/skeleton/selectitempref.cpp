@@ -8,6 +8,7 @@
 #include "jdlib/miscutil.h"
 
 #include "global.h"
+#include "session.h"
 
 using namespace SKELETON;
 
@@ -271,8 +272,8 @@ void SelectItemPref::append_rows( const std::string& str )
     std::list< std::string >::iterator it = items.begin();
     while( it != items.end() )
     {
-        append_shown( *it, false );
-        erase_hidden( *it );
+        if( append_shown( *it, false ) ) erase_hidden( *it );
+
         ++it;
     }
 }
@@ -303,7 +304,11 @@ std::string SelectItemPref::get_items()
 //
 Gtk::TreeRow SelectItemPref::append_shown( const std::string& name, const bool set_cursor )
 {
-    Gtk::TreeModel::Row row = *( m_store_shown->append() );
+    Gtk::TreeModel::Row row;
+
+    if( SESSION::parse_item( name ) == ITEM_END ) return row;
+
+    row = *( m_store_shown->append() );
 
     Glib::RefPtr< Gdk::Pixbuf > icon = get_icon( name );
 

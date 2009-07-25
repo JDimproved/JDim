@@ -79,7 +79,7 @@ void FavoriteListView::show_view()
 //
 Gtk::Menu* FavoriteListView::get_popupmenu( const std::string& url )
 {
-    Gtk::Menu* popupmenu;
+    Gtk::Menu* popupmenu = NULL;
     if( url.empty() ) popupmenu = id2popupmenu(  "/popup_menu_favorite_space" );
     else{
         std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();

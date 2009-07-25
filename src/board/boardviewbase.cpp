@@ -863,6 +863,8 @@ void BoardViewBase::show_view()
     std::cout << "BoardViewBase::show_view " << get_url() << std::endl;
 #endif
 
+    if( is_loading() ) return;
+
     // DBに登録されてない
     if( get_url_board().empty() ){
         set_status( "invalid URL" );
@@ -880,6 +882,9 @@ void BoardViewBase::show_view()
     m_last_access_time = DBTREE::board_last_access_time( get_url_board() );
     m_loading = true;
     
+    // オートリロードのカウンタを0にする
+    reset_autoreload_counter();
+
     // download 開始
     // 終わったら update_view() が呼ばれる
     DBTREE::board_download_subject( get_url_board(), get_url() );

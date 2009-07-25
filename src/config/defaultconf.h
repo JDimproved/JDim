@@ -59,7 +59,8 @@ namespace CONFIG
         CONF_MARGIN_POPUP = 30,     // レスアンカーとポップアップの間のマージン
         CONF_MARGIN_IMGPOPUP = CONF_MARGIN_POPUP,  // レスアンカーと画像ポップアップの間のマージン
         CONF_MOUSE_RADIUS = 25,     // マウスジェスチャの判定開始半径
-        CONF_HISTORY = 20,          // 履歴の保持数
+        CONF_HISTORY_SIZE = 20,      // 履歴メニューの表示数
+        CONF_HISTORYVIEW_SIZE = 100, // 履歴ビューの表示数
         CONF_AAHISTORY = 7,         // AA履歴の保持数
         CONF_INSTRUCT_POPUP = 100,  // 0以上なら多重ポップアップの説明を表示する
         CONF_INSTRUCT_TGLART = 1, // スレビューを開いたときにスレ一覧との切り替え方法を説明する

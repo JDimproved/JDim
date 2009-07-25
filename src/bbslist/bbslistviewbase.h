@@ -12,6 +12,8 @@
 
 #include "xml/document.h"
 
+#include "jdlib/hash_set.h"
+
 #include "columns.h"
 
 #include <gtkmm.h>
@@ -27,6 +29,18 @@ namespace SKELETON
 
 namespace BBSLIST
 {
+    class hash_set_thread : public MISC::simple_hash_set
+    {
+      public:
+        hash_set_thread();
+
+      private:
+
+        virtual const int get_key( const std::string& url );
+    };
+
+    /////////////////////////////////////////////////
+
     class EditListWin;
 
     class BBSListViewBase : public SKELETON::View
@@ -57,6 +71,14 @@ namespace BBSLIST
         bool m_open_only_onedir; // あるフォルダを開いたときに他のフォルダを閉じる
         bool m_cancel_expand; // signal_row_expanded() をキャンセルする
         bool m_expanding; // 行を開いている最中にtrueにしてsignal_row_collapsed()をキャンセルする
+
+        // ツリーに含まれているスレのURLを入れる hash_set
+        // toggle_articleicon() で使用する
+        hash_set_thread m_set_thread;
+
+        // ツリーに含まれている板のURLを入れる set
+        // toggle_boardicon() で使用する
+        std::set< std::string > m_set_board;
 
         EditListWin* m_editlistwin;
 
@@ -109,6 +131,14 @@ namespace BBSLIST
         // row からタイプを取得
         int row2type( const Gtk::TreeModel::Row& row );
 
+        // row -> name 変換
+        Glib::ustring row2name( const Gtk::TreeModel::Row& row );
+
+        // row -> url 変換
+        // 板の場合は boardbase
+        // スレの場合は dat 型のアドレスを返す
+        Glib::ustring row2url( const Gtk::TreeModel::Row& row );
+
         // path からその行の名前を取得
         Glib::ustring path2name( const Gtk::TreePath& path );
 
@@ -116,8 +146,11 @@ namespace BBSLIST
         Glib::ustring path2rawurl( const Gtk::TreePath& path );
         Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
 
-        // アイテム削除
+        // url で指定した項目を削除
         void remove_item( const std::string& url );
+
+        // 全項目を削除
+        void remove_allitems();
 
         // ツリーの編集ウィンドウを開く
         void edit_tree();
@@ -153,12 +186,16 @@ namespace BBSLIST
         virtual void shutdown();
 
         virtual void clock_in();
+        virtual void stop();
         virtual void relayout();
         virtual void focus_view();
         virtual void focus_out();
         virtual void close_view();
         virtual void delete_view();
+
+        // ツリー内の全ての項目をURLを新しいアドレスに変更 ( id は未使用 )
         virtual void update_item( const std::string& url, const std::string& id );
+
         virtual const bool operate_view( const int control );
         virtual void goto_top();
         virtual void goto_bottom();
@@ -172,6 +209,14 @@ namespace BBSLIST
         // 挿入先ダイアログを表示してアイテム追加
         // あらかじめ共有バッファに追加するデータをセットしておくこと
         void append_item();
+
+        // 履歴のセット
+        // 先頭にアイテムを追加する。ツリーにアイテムが含まれている場合は移動する
+        // あらかじめ共有バッファに追加するデータをセットしておくこと
+        void append_history();
+
+        // 履歴を DATA_INFO_LIST 型で取得
+        void get_history( CORE::DATA_INFO_LIST& info_list );
 
         // selectdialogで使う
         Gtk::TreePath get_current_path() { return m_treeview.get_current_path(); }
@@ -216,7 +261,6 @@ namespace BBSLIST
         void slot_select_all();
         void slot_check_update_dir();
         void slot_check_update_open_dir();
-        void slot_cancel_check_update();
         void slot_search_cache_board();
         void slot_import_dat();
         void slot_preferences_board();
@@ -239,7 +283,6 @@ namespace BBSLIST
         virtual void switch_rightview();
         void open_selected_rows();
         void checkupdate_selected_rows( const bool open );
-        Glib::ustring row2url( const Gtk::TreeModel::Row& row );
 
         void show_status();
 

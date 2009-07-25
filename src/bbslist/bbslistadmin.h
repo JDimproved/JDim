@@ -8,6 +8,8 @@
 
 #include "skeleton/admin.h"
 
+#include "type.h"
+
 #include <string>
 
 namespace SKELETON
@@ -26,6 +28,9 @@ namespace BBSLIST
       public:
         BBSListAdmin( const std::string& url );
         ~BBSListAdmin();
+
+        // 履歴を DATA_INFO_LIST 型で取得
+        void get_history( const std::string& url, CORE::DATA_INFO_LIST& info_list );
 
       protected:
 

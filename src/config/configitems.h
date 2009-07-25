@@ -262,8 +262,11 @@ namespace CONFIG
         // マウスジェスチャの判定開始半径
         int mouse_radius;
 
-        // 履歴の保持数        
+        // 履歴メニューの表示数
         int history_size;
+
+        // 履歴ビューの表示数
+        int historyview_size;
 
         // AA履歴の保持数
         int aahistory_size;

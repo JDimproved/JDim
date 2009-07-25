@@ -4,31 +4,22 @@
 #include "jddebug.h"
 
 #include "historysubmenu.h"
-#include "type.h"
-#include "command.h"
-#include "cache.h"
-#include "prefdiagfactory.h"
 
-#include "dbtree/interface.h"
+#include "command.h"
+#include "prefdiagfactory.h"
+#include "session.h"
 
 #include "jdlib/miscutil.h"
-#include "jdlib/misctime.h"
 
 #include "config/globalconf.h"
 
-#include "xml/document.h"
 #include "xml/tools.h"
 
-
-#include <sstream>
 #include <list>
 
 using namespace HISTORY;
 
 #define HIST_NONAME "--------------"
-
-// ルート要素名( hist.xml, hist_board.xml, hist_close.xml )
-#define ROOT_NODE_NAME "history"
 
 enum
 {
@@ -36,30 +27,55 @@ enum
 };
 
 
-HistorySubMenu::HistorySubMenu( const std::string& path_load_xml, const std::string& path_save_xml )
+HistorySubMenu::HistorySubMenu( const std::string& url_history )
     : Gtk::Menu(),
-      m_path_load_xml( path_load_xml ),
-      m_path_save_xml( path_save_xml )
+      m_url_history( url_history )
 {
     Gtk::MenuItem* item;
 
     // メニュー項目作成
+
+    // 履歴クリア
+    Gtk::Menu* menu = Gtk::manage( new Gtk::Menu() );
+    item = Gtk::manage( new Gtk::MenuItem( "クリアする(_C)", true ) );
+    menu->append( *item );
+    item->signal_activate().connect( sigc::mem_fun( *this, &HistorySubMenu::slot_clear ) ); 
+
+    item = Gtk::manage( new Gtk::MenuItem( "履歴クリア(_C)", true ) );
+    item->set_submenu( *menu );
+    append( *item );
+
+    item = Gtk::manage( new Gtk::MenuItem( "サイドバーに全て表示(_S)", true ) );
+    append( *item );
+    item->signal_activate().connect( sigc::mem_fun( *this, &HistorySubMenu::slot_switch_sideber ) );
+
+    // セパレータ
+    item = Gtk::manage( new Gtk::SeparatorMenuItem() );
+    append( *item );
+
+    // 履歴項目
     for( int i = 0; i < CONFIG::get_history_size(); ++i ){
-        item = Gtk::manage( new Gtk::MenuItem( HIST_NONAME ) );
-        m_itemlist.push_back( item );
+
+        Gtk::Image* image = Gtk::manage( new Gtk::Image() );
+        m_vec_images.push_back( image );
+
+        Gtk::Label* label = Gtk::manage( new Gtk::Label( HIST_NONAME ) );
+        m_vec_label.push_back( label );
+
+        Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox() );
+        hbox->pack_start( *image, Gtk::PACK_SHRINK );
+        hbox->pack_start( *label, Gtk::PACK_SHRINK );
+
+        Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( *hbox ) );
         append( *item );
         item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_active ), i ) );
         item->signal_button_press_event().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_button_press ), i ) );
-
-        HIST_ITEM* histitem = new HIST_ITEM;
-        histitem->type = TYPE_UNKNOWN;
-        m_histlist.push_back( histitem );
     }
 
     // ポップアップメニュー作成
     m_popupmenu.signal_deactivate().connect( sigc::mem_fun( *this, &HistorySubMenu::deactivate ) );
 
-    item = Gtk::manage( new Gtk::MenuItem( "開く" ) );
+    item = Gtk::manage( new Gtk::MenuItem( "タブで開く" ) );
     item->signal_activate().connect( sigc::mem_fun( *this, &HistorySubMenu::slot_open_history ) );
     m_popupmenu.append( *item );
 
@@ -78,12 +94,7 @@ HistorySubMenu::HistorySubMenu( const std::string& path_load_xml, const std::str
     m_popupmenu.append( *item );
 
     m_popupmenu.show_all_children();
-
-    std::string xml;
-    CACHE::load_rawdata( m_path_load_xml, xml );
-    xml2list( xml );
 }
-
 
 
 HistorySubMenu::~HistorySubMenu()
@@ -91,226 +102,36 @@ HistorySubMenu::~HistorySubMenu()
 #ifdef _DEBUG
     std::cout << "HistorySubMenu::~HistorySubMenu\n";
 #endif
-
-    // XML保存
-    CACHE::save_rawdata( m_path_save_xml, list2xml() );
-
-    std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
-    for(; it != m_histlist.end(); ++it ) delete ( *it );
 }
-
-
-// 履歴のクリア
-void HistorySubMenu::clear()
-{
-    std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
-    for(; it != m_histlist.end(); ++it ){
-        (*it)->url = std::string();
-        (*it)->name = std::string();
-        (*it)->type = TYPE_UNKNOWN;
-    }
-
-    std::list< Gtk::MenuItem* >::iterator it_item = m_itemlist.begin();
-    for(; it_item != m_itemlist.end(); ++it_item ){
-        dynamic_cast< Gtk::Label* >( (*it_item)->get_child() )->set_text( HIST_NONAME );
-    }
-}
-
-
-// 上から num 版目の HIST_ITEM 取得
-HISTORY::HIST_ITEM* HistorySubMenu::get_item( int num )
-{
-    HIST_ITEM* item = NULL;
-
-    if( m_histlist.size() > ( size_t ) num ){
-
-        std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
-        for( int i = 0; i < num && it != m_histlist.end() ; ++it, ++i );
-        if( it != m_histlist.end() ) item = *it;
-    }
-
-    return item;
-}
-
-
-void HistorySubMenu::append_item( const std::string& url, const std::string& name, int type )
-{
-#ifdef _DEBUG
-    std::cout << "HistorySubMenu::append_item"
-              << " url = " << url
-              << " name = " << name
-              << " type = " << type << std::endl;
-#endif   
-
-    std::list< HIST_ITEM* >::iterator it;
-    HIST_ITEM* item = NULL;
-
-    if( ! m_histlist.size() ) return;
-
-    it = m_histlist.begin();
-    for(; it != m_histlist.end(); ++it ){
-
-        item = (*it);
-        assert( item );
-
-        // 同じURLがあったら先頭に持ってくる
-        if( item->type == type && item->url == url ){
-#ifdef _DEBUG
-            std::cout << "found in list\n";
-#endif
-            m_histlist.remove( item );
-            m_histlist.push_front( item );
-            return;
-        }
-
-        // emptyを見付けたら値をセットして先頭に持ってくる
-        if( item->url.empty() ){
-            item->url = url;
-            item->name = name;
-            item->type = type;
-            m_histlist.remove( item );
-            m_histlist.push_front( item );
-            return;
-        }
-    }
-
-    // 一番最後のitemを削除して先頭に持ってくる
-    assert( item );
-    item->url = url;
-    item->name = name;
-    item->type = type;
-    m_histlist.remove( item );
-    m_histlist.push_front( item );
-}
-
-
-
-//
-// 移転などでURLを更新する
-//
-void HistorySubMenu::update()
-{
-#ifdef _DEBUG
-    std::cout << "HistorySubMenu::update\n";
-#endif
-
-    std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
-    for(; it != m_histlist.end(); ++it ){
-
-        HIST_ITEM* item = (*it);
-        assert( item );
-
-        if( item->type == TYPE_THREAD ) item->url = DBTREE::url_dat( item->url );
-        else if( item->type == TYPE_BOARD ) item->url = DBTREE::url_subject( item->url );
-    }
-}
-
-
-//
-// XML->list 変換
-//
-void HistorySubMenu::xml2list( const std::string& xml )
-{
-    if( xml.empty() ) return;
-
-    XML::Document document( xml );
-
-    XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME ) );
-
-    // ルート要素の有無で処理を分ける( 旧様式=無, 新様式=有 )
-    XML::DomList domlist;
-    if( root ) domlist = root->childNodes();
-    else domlist = document.childNodes();
-
-#ifdef _DEBUG
-    std::cout << "HistoryMenu::xml2list\n";
-    std::cout << " 子ノード数=" << document.childNodes().size() << std::endl;
-#endif
-
-    std::list< HIST_ITEM* >::iterator it_hist = m_histlist.begin();
-    std::list< XML::Dom* >::iterator it = domlist.begin();
-    while( it != domlist.end() && it_hist != m_histlist.end() )
-    {
-        if( (*it)->nodeType() == XML::NODE_TYPE_ELEMENT )    
-        {
-            const int type = XML::get_type( (*it)->nodeName() );
-            const std::string name = (*it)->getAttribute( "name" );
-            const std::string url = (*it)->getAttribute( "url" );
-
-            if( type != TYPE_UNKNOWN && ! name.empty() && ! url.empty() )
-            {
-                ( *it_hist )->url = url;
-                ( *it_hist )->name = name;
-                ( *it_hist )->type = type;
-                ++it_hist;
-                if( it_hist == m_histlist.end() ) break;
-            }
-        }
-        ++it;
-    }
-}
-
-
-
-//
-// list->XML 変換
-//
-std::string HistorySubMenu::list2xml()
-{
-	// Domノードを作成
-    XML::Document document;
-
-    // ルート要素を追加
-    XML::Dom* root = document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME ) );
-
-    std::list< HIST_ITEM* >::iterator it = m_histlist.begin();
-    while( it != m_histlist.end() )
-    {
-        const Glib::ustring name = ( *it )->name;
-        const Glib::ustring url = ( *it )->url;
-        const int type = ( *it )->type;
-        const std::string node_name = XML::get_name( type );
-
-        if( type != TYPE_UNKNOWN && ! name.empty() && ! url.empty() )
-        {
-            XML::Dom* node = root->appendChild( XML::NODE_TYPE_ELEMENT, node_name );
-            node->setAttribute( "name", name );
-            node->setAttribute( "url", url );
-        }
-        ++it;
-    }
-
-    std::string xml;
-
-    if( root->hasChildNodes() ) xml = document.get_xml();
-
-#ifdef _DEBUG
-    std::cout << "HistoryMenu::list2xml\n";
-    std::cout << xml << std::endl;
-#endif
-
-    return xml;
-}
-
 
 
 // 履歴を開く
-void HistorySubMenu::open_history( int i )
+void HistorySubMenu::open_history( const int i )
 {
-    HIST_ITEM* item = get_item( i );
-    if( ! item ) return;
+    CORE::DATA_INFO_LIST info_list;
+    SESSION::get_history( m_url_history, info_list );
+    if( (int)info_list.size() <= i ) return;
 
-    std::string& url = item->url;
-    int type = item->type;
-    if( !url.empty() ){
+    if( ! info_list[ i ].url.empty() ){
+
 #ifdef _DEBUG
-        std::cout << "open " << url << std::endl;
+        std::cout << "open " << info_list[ i ].url << std::endl;
 #endif
-        if( type == TYPE_THREAD ) CORE::core_set_command( "open_article" , url, "true", "" );
-        else if( type == TYPE_BOARD ) CORE::core_set_command( "open_board" , url, "true", "" );
+        switch( info_list[ i ].type ){
+
+            case TYPE_THREAD: 
+            case TYPE_THREAD_UPDATE:
+            case TYPE_THREAD_OLD:
+
+                CORE::core_set_command( "open_article" , info_list[ i ].url, "true", "" );
+                break;
+
+            default:
+                
+                CORE::core_set_command( "open_board" , info_list[ i ].url, "true", "" );
+        }
     }
 }
-
 
 
 // メニューアイテムがactiveになった
@@ -324,6 +145,7 @@ void HistorySubMenu::slot_active( const int i )
 
     open_history( i );
 }
+
 
 // マウスボタンをクリックした
 bool HistorySubMenu::slot_button_press( GdkEventButton* event, int i )
@@ -343,33 +165,51 @@ bool HistorySubMenu::slot_button_press( GdkEventButton* event, int i )
     return true;
 }
 
-// ラベルをセット
+
+// アクティブ時にラベルをセットする
 void HistorySubMenu::set_menulabel()
 {
 #ifdef _DEBUG
     std::cout << "HistorySubMenu::set_menulabel\n";
 #endif
 
-    std::list< HIST_ITEM* >::iterator it_hist = m_histlist.begin();
-    std::list< Gtk::MenuItem* >::iterator it_item = m_itemlist.begin();
-    for(; it_hist != m_histlist.end(); ++it_hist, ++it_item ){
+    CORE::DATA_INFO_LIST info_list;
+    SESSION::get_history( m_url_history, info_list );
+    for( size_t i = 0; i < m_vec_label.size(); ++i ){
 
-        std::string url = ( *it_hist )->url;
-        std::string name = ( *it_hist )->name;
-        int type = ( *it_hist )->type;
-
-        if( url.empty() ) name = HIST_NONAME;
-        else if( name.empty() ){
-
-            if( type == TYPE_BOARD ) name = DBTREE::board_name( url );
-            else if( type == TYPE_THREAD ) name = DBTREE::article_subject( url );
-
-            if( name.empty() ) name = "???";
-            else ( *it_hist )->name = name;
+        std::string name;
+        int type = TYPE_UNKNOWN;
+        if( i <  info_list.size() ){
+            name = info_list[ i ].name;
+            type = info_list[ i ].type;
         }
+        if( name.empty() ) name = HIST_NONAME;
 
-        dynamic_cast< Gtk::Label* >( (*it_item)->get_child() )->set_text( MISC::cut_str( name, HIST_MAX_LNG ) );
+        m_vec_images[ i ]->set( XML::get_icon( type ) );
+        m_vec_label[ i ]->set_text( MISC::cut_str( name, HIST_MAX_LNG ) );
     }
+}
+
+
+// 履歴クリア
+void HistorySubMenu::slot_clear()
+{
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::slot_clear " << m_url_history << std::endl;
+#endif
+
+    CORE::core_set_command( "remove_allhistories", m_url_history );
+}
+
+
+// サイドバー切り替え
+void HistorySubMenu::slot_switch_sideber()
+{
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::slot_switch_sideber " << m_url_history << std::endl;
+#endif
+
+    CORE::core_set_command( "switch_sidebar", m_url_history );
 }
 
 
@@ -393,19 +233,13 @@ void HistorySubMenu::slot_remove_history()
     std::cout << "HistorySubMenu::slot_remove_history no = " << m_number_menuitem << std::endl;
 #endif 
 
-    HIST_ITEM* item = get_item( m_number_menuitem );
-    if( ! item ) return;
+    const int i = m_number_menuitem;
 
-    m_histlist.remove( item );
+    CORE::DATA_INFO_LIST info_list;
+    SESSION::get_history( m_url_history, info_list );
+    if( (int)info_list.size() <= i ) return;
 
-#ifdef _DEBUG
-    std::cout << "remove " << item->name << std::endl;
-#endif
-
-    item->url = std::string();
-    item->name = std::string();
-    item->type = TYPE_UNKNOWN;
-    m_histlist.push_back( item );
+    CORE::core_set_command( "remove_history", m_url_history, info_list[ i ].url );
 }
 
 
@@ -417,20 +251,33 @@ void HistorySubMenu::slot_show_property()
     std::cout << "HistorySubMenu::slot_show_property no = " << m_number_menuitem << std::endl;
 #endif
 
-    HIST_ITEM* item = get_item( m_number_menuitem );
-    if( ! item ) return;
+    const int i = m_number_menuitem;
 
-    std::string& url = item->url;
-    int type = item->type;
-    if( !url.empty() ){
+    CORE::DATA_INFO_LIST info_list;
+    SESSION::get_history( m_url_history, info_list );
+    if( (int)info_list.size() <= i ) return;
+
+    if( ! info_list[ i ].url.empty() ){
 
 #ifdef _DEBUG
-        std::cout << "open " << url << std::endl;
+        std::cout << "url " << info_list[ i ].url << std::endl;
 #endif
 
         SKELETON::PrefDiag* pref = NULL;
-        if( type == TYPE_THREAD ) pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, DBTREE::url_dat( url ) ); 
-        else if( type == TYPE_BOARD ) pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, DBTREE::url_subject( url ) );
+        switch( info_list[ i ].type ){
+
+            case TYPE_THREAD: 
+            case TYPE_THREAD_UPDATE:
+            case TYPE_THREAD_OLD:
+
+                pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, info_list[ i ].url );
+                break;
+
+            default:
+
+                pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, info_list[ i ].url );
+                break;
+        }
 
         if( pref ){
             pref->run();

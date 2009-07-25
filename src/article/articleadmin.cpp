@@ -345,8 +345,6 @@ COMMAND_ARGS ArticleAdmin::get_open_list_args( const std::string& url, const COM
     COMMAND_ARGS command_arg;
     command_arg.arg4 = "MAIN";
 
-    CORE::core_set_command( "set_history_article", url );
-
     return command_arg;
 }
 

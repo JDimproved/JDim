@@ -1416,14 +1416,8 @@ void Root::save_movetable()
     
     CACHE::save_rawdata( file_move, movetable.str() );
 
-    // 板一覧に登録されているURL更新
-    CORE::core_set_command( "update_bbslist_item" );
-
-    // お気に入りに登録されているURL更新
-    CORE::core_set_command( "update_favorite_item" );
-
-    // 履歴メニューのURL更新
-    CORE::core_set_command( "update_history" );
+    // サイドバーに登録されているURL更新
+    CORE::core_set_command( "update_sidebar_item" );
 }
 
 

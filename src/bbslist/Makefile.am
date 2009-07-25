@@ -6,6 +6,7 @@ libbbslist_a_SOURCES = \
 	bbslistview.cpp \
 	favoriteview.cpp \
 	selectlistview.cpp \
+	historyview.cpp \
 	selectdialog.cpp \
 	editlistwin.cpp \
 	addetcdialog.cpp \
@@ -18,6 +19,7 @@ noinst_HEADERS = \
 	bbslistview.h \
 	favoriteview.h \
 	selectlistview.h \
+	historyview.h \
 	selectdialog.h \
 	editlistwin.h \
 	addetcdialog.h \

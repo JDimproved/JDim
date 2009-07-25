@@ -158,8 +158,6 @@ COMMAND_ARGS BoardAdmin::get_open_list_args( const std::string& url, const COMMA
     COMMAND_ARGS command_arg;
     command_arg.arg4 = "MAIN";
 
-    CORE::core_set_command( "set_history_board", url );
-
     return command_arg;
 }
 

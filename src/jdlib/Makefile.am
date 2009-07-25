@@ -38,7 +38,8 @@ noinst_HEADERS = \
 	confloader.h \
 	jdregex.h \
 	jdmigemo.h \
-	tfidf.h
+	tfidf.h \
+	hash_set.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

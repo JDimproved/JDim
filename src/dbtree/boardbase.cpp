@@ -1276,7 +1276,7 @@ void BoardBase::append_all_article_in_cache()
     const std::string datbase = url_datbase();
 
 #ifdef _DEBUG
-    std::cout << "BoardBase::append_all_article_in_cache\n";
+    std::cout << "BoardBase::append_all_article_in_cache url = " << datbase << std::endl;
 #endif
     
     std::list< std::string >list_file = get_filelist_in_cache();
@@ -1994,8 +1994,8 @@ void BoardBase::show_updateicon( const bool update )
             // スレ一覧のタブのアイコン表示を更新
             CORE::core_set_command( "toggle_board_icon", url_subject() );
 
-            // お気に入りのアイコン表示を更新
-            CORE::core_set_command( "toggle_favorite_boardicon", url_datbase() );
+            // サイドバーのアイコン表示を更新
+            CORE::core_set_command( "toggle_sidebar_boardicon", url_datbase() );
 
             save_info();
         }
@@ -2010,9 +2010,9 @@ void BoardBase::show_updateicon( const bool update )
 
             m_status &= ~STATUS_UPDATE;
 
-            // お気に入りのアイコン表示を戻す
+            // サイドバーのアイコン表示を戻す
             // スレ一覧のタブのアイコンはBoardViewがロード終了時に自動的に戻す
-            CORE::core_set_command( "toggle_favorite_boardicon", url_subject() );
+            CORE::core_set_command( "toggle_sidebar_boardicon", url_subject() );
 
             save_info();
         }

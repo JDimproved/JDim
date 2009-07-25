@@ -1007,7 +1007,7 @@ void ArticleBase::download_dat( const bool check_update )
 #ifdef _DEBUG
         std::cout << "old !\n";
 #endif       
-        CORE::core_set_command( "toggle_favorite_articleicon", m_url );
+        CORE::core_set_command( "toggle_sidebar_articleicon", m_url );
 
         // update_article_finish コマンドを送らないとキャッシュが無くて
         // dat落ちしているスレのタブが空白になる
@@ -1147,7 +1147,7 @@ void ArticleBase::slot_load_finished()
         if( m_code == HTTP_REDIRECT || m_code == HTTP_NOT_FOUND ){
             m_status &= ~STATUS_NORMAL;
             m_status |= STATUS_OLD;
-            CORE::core_set_command( "toggle_favorite_articleicon", m_url );
+            CORE::core_set_command( "toggle_sidebar_articleicon", m_url );
         }
 
         // 既にDAT落ち状態では無いときは通常状態にする
@@ -1392,12 +1392,20 @@ void ArticleBase::show_updateicon( const bool update )
             // スレビューのタブのアイコン表示を更新
             CORE::core_set_command( "toggle_article_icon", m_url);
 
-            CORE::core_set_command( "toggle_favorite_articleicon", m_url );
+            CORE::core_set_command( "toggle_sidebar_articleicon", m_url );
         }
     }
     else{
 
-        if( m_status & STATUS_UPDATE ){
+        // この if をコメントアウトしないと
+        //
+        // スレ一覧を開いてお気に入りにあるスレに更新マークを付ける → スレ一覧を閉じる
+        // 更新マークを付けたスレを開かないでJD終了(※) → 再起動してお気に入りで更新マークを付けたスレをクリック
+        // → お気に入りのアイコン表示が戻らない
+        //
+        // という問題が生じる( ※ の所でスレ情報が保存されていないので再起動すると STATUS_UPDATE が外れるため。
+        // 終了時にスレ情報を保存しようとすると終了処理が重くなる。)
+//        if( m_status & STATUS_UPDATE ){
 
 #ifdef _DEBUG
             std::cout << "toggle_icon off\n";
@@ -1406,10 +1414,10 @@ void ArticleBase::show_updateicon( const bool update )
             m_save_info = true;
             m_status &= ~STATUS_UPDATE;
 
-            // お気に入りのアイコン表示を戻す
+            // サイドバーのアイコン表示を戻す
             // スレビューのタブのアイコンはArticleViewがロード終了時に自動的に戻す
-            CORE::core_set_command( "toggle_favorite_articleicon", m_url );
-        }
+            CORE::core_set_command( "toggle_sidebar_articleicon", m_url );
+//        }
     }
 }
 
@@ -1485,8 +1493,8 @@ void ArticleBase::delete_cache( const bool cache_only )
     // BoardViewの行を更新
     CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
 
-    // お気に入りのアイコン表示を戻す
-    CORE::core_set_command( "toggle_favorite_articleicon", m_url );
+    // サイドバーのアイコン表示を戻す
+    CORE::core_set_command( "toggle_sidebar_articleicon", m_url );
 }
 
 

@@ -301,8 +301,11 @@ namespace CONFIG
     // マウスジェスチャの判定開始半径
     const int get_mouse_radius();
 
-    // 履歴の保持数
+    // 履歴メニューの表示数
     const int get_history_size();
+
+    // 履歴ビューの表示数
+    const int get_historyview_size();
 
     // AA履歴の保持数
     const int get_aahistory_size();

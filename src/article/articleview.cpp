@@ -20,6 +20,8 @@
 
 #include "control/controlid.h"
 
+#include "history/historymanager.h"
+
 #include "command.h"
 #include "global.h"
 #include "httpcode.h"
@@ -77,7 +79,9 @@ ArticleViewMain::~ArticleViewMain()
     if( seen >= 1 ) get_article()->set_number_seen( seen );
 
     // 閉じたタブ履歴更新
-    CORE::core_set_command( "set_history_close", url_article() );
+    HISTORY::append_history( URL_HISTCLOSEVIEW,
+                             DBTREE::url_dat( get_url() ),
+                             DBTREE::article_subject( get_url() ), TYPE_THREAD );
 
     if( get_live() ) live_stop();
 }
@@ -183,13 +187,7 @@ void ArticleViewMain::exec_reload()
         return;
     }
 
-    // オートリロードのカウンタを0にする
-    View::reset_autoreload_counter();
-
     show_view();
-
-    // スレ履歴更新
-    CORE::core_set_command( "set_history_article", url_article() );
 }
 
 
@@ -199,10 +197,16 @@ void ArticleViewMain::exec_reload()
 //
 void ArticleViewMain::show_view()
 {
+    if( is_loading() ) return;
+
     m_gotonum_reserve = 0;
     m_gotonum_seen = 0;
+    m_set_history = false;
     m_show_instdialog = false;
     m_playsound = false;
+
+    // オートリロードのカウンタを0にする
+    reset_autoreload_counter();
 
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::show_view\n";
@@ -229,11 +233,11 @@ void ArticleViewMain::show_view()
     //   キャッシュを読み込んでいる場合    -> show_viewから直接  update_finish を呼ぶ
     //  　　　　　　　　　　　　　　　　　　　　ロード終了時にもupdate_finish がコールバックされる
 
-    bool call_update_finish = get_article()->is_cache_read();
+    const bool call_update_finish = get_article()->is_cache_read();
 
     // キャッシュに含まれているレスを表示
-    int from_num = drawarea()->max_number() + 1;
-    int to_num = get_article()->get_number_load();
+    const int from_num = drawarea()->max_number() + 1;
+    const int to_num = get_article()->get_number_load();
     if( from_num <= to_num ){
 
         drawarea()->append_res( from_num, to_num );
@@ -262,6 +266,8 @@ void ArticleViewMain::show_view()
         const bool live = get_live();
         set_live( false );
 
+        if( ! SESSION::is_online() ) m_set_history = true;
+
         update_finish();
 
         CONFIG::set_jump_after_reload( jump_bottom );
@@ -275,6 +281,7 @@ void ArticleViewMain::show_view()
         if( ! SESSION::is_online() ) update_finish();
     }
 
+    m_set_history = true;
 
     // オフラインならダウンロードを開始しない
     if( ! SESSION::is_online() ) return;
@@ -457,6 +464,11 @@ void ArticleViewMain::update_finish()
 
         drawarea()->update_live_speed( get_autoreload_sec() );
     }
+
+    // 履歴に登録
+    if( m_set_history ) HISTORY::append_history( URL_HISTTHREADVIEW,
+                                                 DBTREE::url_dat( get_url() ),
+                                                 DBTREE::article_subject( get_url() ), TYPE_THREAD );
 
     if( m_show_instdialog ) show_instruct_diag();
 }
