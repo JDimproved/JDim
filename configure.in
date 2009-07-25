@@ -118,6 +118,7 @@ AC_CHECK_LIB(z,inflate)
 dnl
 dnl packages dependent on platform 
 dnl
+MAKE_WINDRES=""
 
 case "${host_os}" in 
  mingw*)
@@ -140,6 +141,10 @@ case "${host_os}" in
    
    echo "use gthread"
    AC_DEFINE(USE_GTHREAD, , "use gthread")
+   
+   echo "use windows resources"
+   AC_DEFINE(USE_WINDRES, , "use windres")
+   MAKE_WINDRES="make"
    ;;
  *)
    dnl
@@ -154,6 +159,8 @@ case "${host_os}" in
    AC_CHECK_LIB(socket,socket)
    ;;
 esac
+
+AC_SUBST(MAKE_WINDRES)
 
 
 dnl

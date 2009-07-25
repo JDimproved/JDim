@@ -59,7 +59,9 @@ jd_SOURCES = \
 	usrcmdpref.cpp \
 	linkfilterpref.cpp \
 	iomonitor.cpp \
-	environment.cpp
+	environment.cpp \
+\
+	jd_windres.rc
 
 
 noinst_HEADERS = \
@@ -117,3 +119,16 @@ noinst_HEADERS = \
 
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@
+
+
+MAKE_WINDRES = @MAKE_WINDRES@
+
+SUFFIXES = .rc .o
+
+.rc.o:
+	if test -n "$(MAKE_WINDRES)"; \
+	then \
+		windres -o $@ $<; \
+	else \
+		touch $@; \
+	fi

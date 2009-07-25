@@ -1326,3 +1326,22 @@ const std::string MISC::getenv_limited( const char *name, const size_t size )
 
     return std::string( env );
 }
+
+
+//
+// pathセパレータを / に置き換える
+//
+const std::string MISC::recover_path( const std::string& str )
+{
+#ifdef _WIN32
+    // Windowsのpathセパレータ \ を、jdの / に置き換える
+    std::string ret( str );
+    for (int i=ret.length()-1; i>=0; i--)
+        if (ret[ i ] == '\\')
+            ret[ i ] = '/';
+    return ret;
+#elif
+    return str;
+#endif
+}
+

@@ -204,6 +204,9 @@ namespace MISC
 
     // 文字数を限定して環境変数の値を返す
     const std::string getenv_limited( const char *name, const size_t size = 1 );
+
+    // pathセパレータを / に置き換える
+    const std::string recover_path( const std::string& str );
 }
 
 

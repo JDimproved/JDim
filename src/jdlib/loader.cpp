@@ -258,8 +258,8 @@ Loader::Loader( const bool low_priority )
 #endif
 
 #ifdef _WIN32
-    WSADATA wsaData;
     if ( !initialized_loader ){
+        WSADATA wsaData;
         if ( WSAStartup(MAKEWORD(2,0), &wsaData) != 0 ){
             MISC::ERRMSG( "could not startup winsock2" );
         }

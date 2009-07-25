@@ -90,17 +90,8 @@ std::string CACHE::path_root()
         if( root_path[ 0 ] == '~' ){
 #ifdef _WIN32
             // windows default path of application data
-            std::string home = MISC::getenv_limited( "APPDATA", MAX_SAFE_PATH );
-            // call from msys terminal, or user manually defined
-            if (home.length() == 0)
-                home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
-            // using uesr profile folder in case of lost APPDATA
-            if (home.length() == 0)
-                home = MISC::getenv_limited( "HOMEPATH", MAX_SAFE_PATH );
-            // convert '\\' for recursive mkdir() function
-            for (int i=home.length()-1; i>=0; i--)
-                if (home[i] == '\\')
-                    home[i] = '/';
+            std::string home = MISC::recover_path(
+                MISC::getenv_limited( "APPDATA", MAX_SAFE_PATH ));
 #else
             std::string home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
 #endif
@@ -917,7 +908,7 @@ std::string CACHE::copy_file( Gtk::Window* parent, const std::string& file_from,
 
     if( CACHE::jdcopy( file_from, path_to ) ) return path_to;
     else{
-        SKELETON::MsgDiag mdiag( parent, file_to + "\n\nの保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。" );
+        SKELETON::MsgDiag mdiag( parent, path_to + "\n\nの保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。" );
         mdiag.run();
     }
 
@@ -1013,8 +1004,8 @@ std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& dir, 
 
     if( diag.run() != Gtk::RESPONSE_ACCEPT ) return std::string();
     diag.hide();
-        
-    std::string path_to = diag.get_filename();
+
+    std::string path_to = MISC::recover_path( diag.get_filename() );
 
 #ifdef _DEBUG
     std::cout << "to   = " << path_to  << std::endl;

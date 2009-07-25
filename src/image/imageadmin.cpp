@@ -966,7 +966,7 @@ void ImageAdmin::save_all()
 
         diag.hide();
 
-        std::string path_dir = diag.get_filename();
+        std::string path_dir = MISC::recover_path( diag.get_filename() );
         if( path_dir.empty() ) return;
         if( path_dir.c_str()[ path_dir.length()-1 ] != '/' ) path_dir += "/";
         

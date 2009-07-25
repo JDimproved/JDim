@@ -15,8 +15,7 @@ noinst_HEADERS = \
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src
 
-clean_icon :
-	rm -rf $(icon_headers)
+DISTCLEANFILES = $(icon_headers)
 
 iconmanager.cpp : $(icon_headers)
 
