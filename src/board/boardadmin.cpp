@@ -15,6 +15,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
+#include "jdlib/miscmsg.h"
 
 #include "global.h"
 #include "type.h"
@@ -96,6 +97,12 @@ void BoardAdmin::restore( const bool only_locked )
 
         // ロックされているものだけ表示
         if( only_locked && ! lock ) continue;
+
+        // 板がDBに登録されていない場合は表示しない
+        if( DBTREE::url_boardbase( *it_url ).empty() ){
+            MISC::ERRMSG(  *it_url + " is not registered" );
+            continue;
+        }
 
         if( page == SESSION::board_page() ) set_page_num = get_tab_nums();
 
