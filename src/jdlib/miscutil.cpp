@@ -1340,7 +1340,7 @@ const std::string MISC::recover_path( const std::string& str )
         if (ret[ i ] == '\\')
             ret[ i ] = '/';
     return ret;
-#elif
+#else
     return str;
 #endif
 }
