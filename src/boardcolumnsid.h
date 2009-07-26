@@ -37,7 +37,8 @@ enum
 
     SORTMODE_MARK1, // 通常
     SORTMODE_MARK2, // 新着をキャッシュの上に。後は通常
-    SORTMODE_MARK3,  // 反転
+    SORTMODE_MARK3,  // 新着を一番上に。後は通常 
+    SORTMODE_MARK4,  // 反転
 
     SORTMODE_NUM
 };

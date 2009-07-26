@@ -662,7 +662,8 @@ void BoardViewBase::slot_col_clicked( const int col )
     else if( m_sortmode == SORTMODE_ASCEND ) m_sortmode = SORTMODE_DESCEND;
     else if( m_sortmode == SORTMODE_MARK1 ) m_sortmode = SORTMODE_MARK2;
     else if( m_sortmode == SORTMODE_MARK2 ) m_sortmode = SORTMODE_MARK3;
-    else if( m_sortmode == SORTMODE_MARK3 ) m_sortmode = SORTMODE_MARK1;
+    else if( m_sortmode == SORTMODE_MARK3 ) m_sortmode = SORTMODE_MARK4;
+    else if( m_sortmode == SORTMODE_MARK4 ) m_sortmode = SORTMODE_MARK1;
 
     // 旧バージョンとの互換性のため
     if( m_col == COL_MARK ){
@@ -725,6 +726,25 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
                     num_b = DOWN;
                 }
             }
+            else if( sortmode == SORTMODE_MARK3 ){ // 新着を一番上に
+
+                if( num_a == COL_MARKVAL_NEWTHREAD && num_b != COL_MARKVAL_NEWTHREAD ){
+                    num_a = DOWN; // 下で ret *= -1 しているので UP と DOWNを逆にする
+                    num_b = UP;
+                }
+                else if( num_b == COL_MARKVAL_NEWTHREAD && num_a != COL_MARKVAL_NEWTHREAD  ){
+                    num_a = UP; // 下で ret *= -1 しているので UP と DOWNを逆にする
+                    num_b = DOWN;
+                }
+                else if( num_a == COL_MARKVAL_NEWTHREAD_HOUR && num_b != COL_MARKVAL_NEWTHREAD_HOUR ){
+                    num_a = DOWN; // 下で ret *= -1 しているので UP と DOWNを逆にする
+                    num_b = UP;
+                }
+                else if( num_b == COL_MARKVAL_NEWTHREAD_HOUR && num_a != COL_MARKVAL_NEWTHREAD_HOUR ){
+                    num_a = UP; // 下で ret *= -1 しているので UP と DOWNを逆にする
+                    num_b = DOWN;
+                }
+            }
 
             break;
         }
@@ -782,7 +802,7 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
         else if( num_a > num_b ) ret = COL_B_UP;
 
         if( sortmode == SORTMODE_DESCEND ) ret *= -1;
-        if( sortmode == SORTMODE_MARK1 || sortmode == SORTMODE_MARK2 ) ret *= -1;
+        if( sortmode == SORTMODE_MARK1 || sortmode == SORTMODE_MARK2 || sortmode == SORTMODE_MARK3 ) ret *= -1;
     }
 
     // 0より大きい方を優先
