@@ -20,6 +20,7 @@ jd_LDADD = \
 	./control/libcontrol.a \
 	@LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @ONIG_LIBS@
 
+
 jd_SOURCES = \
 	main.cpp \
 	winmain.cpp \
@@ -59,9 +60,11 @@ jd_SOURCES = \
 	usrcmdpref.cpp \
 	linkfilterpref.cpp \
 	iomonitor.cpp \
-	environment.cpp \
-\
-	jd_windres.rc
+	environment.cpp
+
+if MAKE_WINDRES
+jd_SOURCES += jd_windres.rc
+endif
 
 
 noinst_HEADERS = \
@@ -121,14 +124,7 @@ noinst_HEADERS = \
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@
 
 
-MAKE_WINDRES = @MAKE_WINDRES@
-
 SUFFIXES = .rc .o
 
 .rc.o:
-	if test -n "$(MAKE_WINDRES)"; \
-	then \
-		windres -o $@ $<; \
-	else \
-		touch $@; \
-	fi
+	windres -o $@ $<;

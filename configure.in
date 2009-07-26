@@ -118,7 +118,7 @@ AC_CHECK_LIB(z,inflate)
 dnl
 dnl packages dependent on platform 
 dnl
-MAKE_WINDRES=""
+use_windres=""
 
 case "${host_os}" in 
  mingw*)
@@ -144,7 +144,7 @@ case "${host_os}" in
    
    echo "use windows resources"
    AC_DEFINE(USE_WINDRES, , "use windres")
-   MAKE_WINDRES="make"
+   use_windres="yes"
    ;;
  *)
    dnl
@@ -160,7 +160,7 @@ case "${host_os}" in
    ;;
 esac
 
-AC_SUBST(MAKE_WINDRES)
+AM_CONDITIONAL(MAKE_WINDRES, test -n "$use_windres")
 
 
 dnl
