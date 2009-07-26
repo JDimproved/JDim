@@ -264,9 +264,9 @@ bool MISC::ImgLoader::load( bool& stop, bool pixbufonly, bool sizeonly )
 #endif
         if( ! m_stop ){
             m_errmsg = err.what();
+            m_loader.clear();
             ret = false;
         }
-        m_loader.clear();
     }
 
     fclose( f );
