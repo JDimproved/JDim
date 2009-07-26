@@ -45,6 +45,9 @@ namespace ICON
 
         DIR,
         FAVORITE,
+        HIST,
+        HIST_BOARD,
+        HIST_CLOSE,
 
         BOARD,
         BOARD_UPDATE,

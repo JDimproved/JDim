@@ -27,6 +27,10 @@
 
 #include "dir.h"
 #include "favorite.h"
+#include "hist.h"
+#include "hist_board.h"
+#include "hist_close.h"
+
 #include "board.h"
 #include "board_update.h"
 #include "board_updated.h"
@@ -98,6 +102,10 @@ ICON_Manager::ICON_Manager()
 
     m_list_icons[ ICON::DIR ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_dir ), icon_dir );
     m_list_icons[ ICON::FAVORITE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_favorite ), icon_favorite );
+    m_list_icons[ ICON::HIST ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist ), icon_hist );
+    m_list_icons[ ICON::HIST_BOARD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_board ), icon_hist_board );
+    m_list_icons[ ICON::HIST_CLOSE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_close ), icon_hist_close );
+
     m_list_icons[ ICON::BOARD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board ), icon_board );
     m_list_icons[ ICON::BOARD_UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board_update ), icon_board_update );
     m_list_icons[ ICON::BOARD_UPDATED ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board_updated ), icon_board_updated );

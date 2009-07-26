@@ -26,8 +26,14 @@ namespace CORE
 
         SKELETON::ImgToggleToolButton m_button_bbslist;
         SKELETON::ImgToggleToolButton m_button_favorite;
+        SKELETON::ImgToggleToolButton m_button_hist;
+        SKELETON::ImgToggleToolButton m_button_hist_board;
+        SKELETON::ImgToggleToolButton m_button_hist_close;
+
         SKELETON::ImgToggleToolButton m_button_board;
+
         SKELETON::ImgToggleToolButton m_button_thread;
+
         SKELETON::ImgToggleToolButton m_button_image;
 
       public:

@@ -154,6 +154,9 @@ const int SESSION::parse_item( const std::string& item_name )
     if( item_name == ITEM_NAME_BBSLISTVIEW ) item = ITEM_BBSLISTVIEW;
     if( item_name == ITEM_NAME_FAVORITEVIEW ) item = ITEM_FAVORITEVIEW;
     if( item_name == ITEM_NAME_BOARDVIEW ) item = ITEM_BOARDVIEW;
+    if( item_name == ITEM_NAME_HISTVIEW ) item = ITEM_HISTVIEW;
+    if( item_name == ITEM_NAME_HIST_BOARDVIEW ) item = ITEM_HIST_BOARDVIEW;
+    if( item_name == ITEM_NAME_HIST_CLOSEVIEW ) item = ITEM_HIST_CLOSEVIEW;
     if( item_name == ITEM_NAME_ARTICLEVIEW ) item = ITEM_ARTICLEVIEW;
     if( item_name == ITEM_NAME_IMAGEVIEW ) item = ITEM_IMAGEVIEW;
     if( item_name == ITEM_NAME_URL ) item = ITEM_URL;

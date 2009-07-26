@@ -1070,6 +1070,12 @@ void Core::create_toolbar()
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_BBSLISTVIEW, false ) );
     m_toolbar->m_button_favorite.signal_clicked().connect(
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
+    m_toolbar->m_button_hist.signal_clicked().connect(
+        sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTTHREADVIEW, false ) );
+    m_toolbar->m_button_hist_board.signal_clicked().connect(
+        sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTBOARDVIEW, false ) );
+    m_toolbar->m_button_hist_close.signal_clicked().connect(
+        sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEVIEW, false ) );
 
     m_toolbar->m_button_board.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_board ), false ) );
     m_toolbar->m_button_thread.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_article ), false ) );
@@ -3313,28 +3319,18 @@ void Core::empty_page( const std::string& url )
 void Core::set_toggle_view_button()
 {
     m_enable_menuslot = false;
+    bool sidebar_state[ 5 ] = { false, false, false, false, false };
 
     switch( SESSION::focused_admin() ){
 
         case SESSION::FOCUS_SIDEBAR:
 
-            switch( SESSION::get_sidebar_current_page() ){
-
-                case 0:
-                    m_toolbar->m_button_bbslist.set_active( true );
-                    m_toolbar->m_button_favorite.set_active( false );
-                    break;
-
-                case 1:
-                    m_toolbar->m_button_bbslist.set_active( false );
-                    m_toolbar->m_button_favorite.set_active( true );
-                    break;
-
-                default:
-                    m_toolbar->m_button_bbslist.set_active( false );
-                    m_toolbar->m_button_favorite.set_active( false );
-                    break;
-            }
+            sidebar_state[ SESSION::get_sidebar_current_page() ] = true;
+            m_toolbar->m_button_bbslist.set_active( sidebar_state[ 0 ] );
+            m_toolbar->m_button_favorite.set_active( sidebar_state[ 1 ] );
+            m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
+            m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
+            m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
 
             m_toolbar->m_button_board.set_active( false );
             m_toolbar->m_button_thread.set_active( false );
@@ -3344,8 +3340,13 @@ void Core::set_toggle_view_button()
         case SESSION::FOCUS_BOARD:
 
             if( ! BOARD::get_admin()->empty() ){
-                m_toolbar->m_button_bbslist.set_active( false );
-                m_toolbar->m_button_favorite.set_active( false );
+
+                m_toolbar->m_button_bbslist.set_active( sidebar_state[ 0 ] );
+                m_toolbar->m_button_favorite.set_active( sidebar_state[ 1 ] );
+                m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
+                m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
+                m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
+
                 m_toolbar->m_button_board.set_active( true );
                 m_toolbar->m_button_thread.set_active( false );
                 m_toolbar->m_button_image.set_active( false );
@@ -3357,8 +3358,13 @@ void Core::set_toggle_view_button()
         case SESSION::FOCUS_ARTICLE:
 
             if( ! ARTICLE::get_admin()->empty() ){
-                m_toolbar->m_button_bbslist.set_active( false );
-                m_toolbar->m_button_favorite.set_active( false );
+
+                m_toolbar->m_button_bbslist.set_active( sidebar_state[ 0 ] );
+                m_toolbar->m_button_favorite.set_active( sidebar_state[ 1 ] );
+                m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
+                m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
+                m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
+
                 m_toolbar->m_button_board.set_active( false );
                 m_toolbar->m_button_thread.set_active( true );
                 m_toolbar->m_button_image.set_active( false );
@@ -3370,8 +3376,13 @@ void Core::set_toggle_view_button()
         case SESSION::FOCUS_IMAGE:
 
             if( ! IMAGE::get_admin()->empty() ){
-                m_toolbar->m_button_bbslist.set_active( false );
-                m_toolbar->m_button_favorite.set_active( false );
+
+                m_toolbar->m_button_bbslist.set_active( sidebar_state[ 0 ] );
+                m_toolbar->m_button_favorite.set_active( sidebar_state[ 1 ] );
+                m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
+                m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
+                m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
+
                 m_toolbar->m_button_board.set_active( false );
                 m_toolbar->m_button_thread.set_active( false );
                 m_toolbar->m_button_image.set_active( true );
@@ -3381,8 +3392,13 @@ void Core::set_toggle_view_button()
             break;
 
         case SESSION::FOCUS_MESSAGE:
-                m_toolbar->m_button_bbslist.set_active( false );
-                m_toolbar->m_button_favorite.set_active( false );
+
+                m_toolbar->m_button_bbslist.set_active( sidebar_state[ 0 ] );
+                m_toolbar->m_button_favorite.set_active( sidebar_state[ 1 ] );
+                m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
+                m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
+                m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
+
                 m_toolbar->m_button_board.set_active( false );
                 if( SESSION::get_embedded_mes() ) m_toolbar->m_button_thread.set_active( true );
                 else m_toolbar->m_button_thread.set_active( false );

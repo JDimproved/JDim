@@ -23,8 +23,14 @@ MainItemPref::MainItemPref( Gtk::Window* parent, const std::string& url )
     // デフォルトの項目を設定( 無効にする場合には最後に false を付ける )
     append_default_pair( ITEM_NAME_BBSLISTVIEW, ICON::get_icon( ICON::DIR ) );
     append_default_pair( ITEM_NAME_FAVORITEVIEW, ICON::get_icon( ICON::FAVORITE ) );
+    append_default_pair( ITEM_NAME_HISTVIEW, ICON::get_icon( ICON::HIST ) );
+    append_default_pair( ITEM_NAME_HIST_BOARDVIEW, ICON::get_icon( ICON::HIST_BOARD ) );
+    append_default_pair( ITEM_NAME_HIST_CLOSEVIEW, ICON::get_icon( ICON::HIST_CLOSE ) );
+
     append_default_pair( ITEM_NAME_BOARDVIEW, ICON::get_icon( ICON::BOARD ) );
+
     append_default_pair( ITEM_NAME_ARTICLEVIEW, ICON::get_icon( ICON::THREAD ) );
+
     if( CONFIG::get_use_image_view() )
     {
         append_default_pair( ITEM_NAME_IMAGEVIEW, ICON::get_icon( ICON::IMAGE ) );

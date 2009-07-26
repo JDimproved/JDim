@@ -24,8 +24,14 @@ MainToolBar::MainToolBar() :
 
       m_button_bbslist( ICON::DIR ),
       m_button_favorite( ICON::FAVORITE ),
+      m_button_hist( ICON::HIST ),
+      m_button_hist_board( ICON::HIST_BOARD ),
+      m_button_hist_close( ICON::HIST_CLOSE ),
+
       m_button_board( ICON::BOARD ),
+
       m_button_thread( ICON::THREAD ),
+
       m_button_image( ICON::IMAGE )
 {
     m_entry_url.set_size_request( 0 );
@@ -38,10 +44,16 @@ MainToolBar::MainToolBar() :
                  + "\n\nお気に入りに切替え " + CONTROL::get_str_motions( CONTROL::TabRight ) );
     set_tooltip( m_button_favorite, std::string( ITEM_NAME_FAVORITEVIEW )
                  + "\n\n板一覧に切替え " + CONTROL::get_str_motions( CONTROL::TabLeft ) );
+    set_tooltip( m_button_hist, std::string( ITEM_NAME_HISTVIEW ) );
+    set_tooltip( m_button_hist_board, std::string( ITEM_NAME_HIST_BOARDVIEW ) );
+    set_tooltip( m_button_hist_close, std::string( ITEM_NAME_HIST_CLOSEVIEW ) );
+
     set_tooltip( m_button_board, std::string( ITEM_NAME_BOARDVIEW )
                  + "\n\n" + CONTROL::get_label_motions( CONTROL::ToggleArticle ) );
+
     set_tooltip( m_button_thread, std::string( ITEM_NAME_ARTICLEVIEW )
                  + "\n\n" + CONTROL::get_label_motions( CONTROL::ToggleArticle ) );
+
     set_tooltip( m_button_image, std::string( ITEM_NAME_IMAGEVIEW )
                  + "\n\nスレビューに切替 "
                  + CONTROL::get_str_motions( CONTROL::ToggleArticle ) + " , " + CONTROL::get_str_motions( CONTROL::Left ) );
@@ -65,6 +77,18 @@ void MainToolBar::pack_buttons()
 
             case ITEM_FAVORITEVIEW:
                 get_buttonbar().append( m_button_favorite );
+                break;
+
+            case ITEM_HISTVIEW:
+                get_buttonbar().append( m_button_hist );
+                break;
+
+            case ITEM_HIST_BOARDVIEW:
+                get_buttonbar().append( m_button_hist_board );
+                break;
+
+            case ITEM_HIST_CLOSEVIEW:
+                get_buttonbar().append( m_button_hist_close );
                 break;
 
             case ITEM_BOARDVIEW:
