@@ -357,6 +357,7 @@ void FontColorPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::T
 
     Gtk::ColorSelectionDialog colordiag;
     colordiag.get_colorsel()->set_current_color( Gdk::Color( CONFIG::get_color( colorid ) ) );
+    colordiag.set_transient_for( *CORE::get_mainwindow() );
     const int ret = colordiag.run();
 
     if( ret == Gtk::RESPONSE_OK ){

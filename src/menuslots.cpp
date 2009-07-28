@@ -642,6 +642,7 @@ void Core::slot_changefont_main()
     Gtk::FontSelectionDialog diag;
     diag.set_font_name( CONFIG::get_fontname( FONT_MAIN ) );
     diag.set_title( "スレビューフォント" );
+    diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
         CONFIG::set_fontname( FONT_MAIN, diag.get_font_name() );
@@ -662,6 +663,7 @@ void Core::slot_changefont_popup()
     Gtk::FontSelectionDialog diag;
     diag.set_font_name( CONFIG::get_fontname( FONT_POPUP ) );
     diag.set_title( "ポップアップフォント" );
+    diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
         CONFIG::set_fontname( FONT_POPUP, diag.get_font_name() );
@@ -678,6 +680,7 @@ void Core::slot_changefont_tree()
     Gtk::FontSelectionDialog diag;
     diag.set_font_name( CONFIG::get_fontname( FONT_BBS ) );
     diag.set_title( "板／スレ一覧フォント" );
+    diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
         CONFIG::set_fontname( FONT_BBS, diag.get_font_name() );

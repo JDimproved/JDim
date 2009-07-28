@@ -1462,6 +1462,7 @@ bool Core::open_color_diag( std::string title, int id )
 
     Gtk::ColorSelectionDialog diag( title );
     diag.get_colorsel()->set_current_color( color );
+    diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
         CONFIG::set_color( id, MISC::color_to_str( diag.get_colorsel()->get_current_color() ) );
