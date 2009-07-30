@@ -7,6 +7,7 @@
 #define _SESSION_H
 
 #include "type.h"
+#include "article/drawareabase.h"
 
 #include <list>
 #include <vector>
@@ -328,6 +329,8 @@ namespace SESSION
     void set_col_write( const int width );
     void set_col_speed( const int width );
 
+    // 現在開いているarticle の ARTICLE::DrawAreaBase
+    ARTICLE::DrawAreaBase* get_base_drawarea();
 
     // 現在開いているarticle のurl
     const std::string get_article_current_url();

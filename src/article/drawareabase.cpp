@@ -638,20 +638,18 @@ void DrawAreaBase::redraw_view()
 //
 bool DrawAreaBase::exec_layout()
 {
-    return exec_layout_impl( false, 0, 0 );
+    return exec_layout_impl( false, 0 );
 }
-
 
 
 
 //
 // 先頭ノードから順に全ノードの座標を計算する(描画はしない)
 //
-// init_popupwin = true ならポップアップウィンドウの初期サイズ計算を行う(画面サイズをdrawareaの横幅として強制的にレイアウトする)
+// is_popup = true ならポップアップウィンドウの幅を親ビューの幅とする
 // offset_y は y 座標の上オフセット行数
-// right_mrg は右マージン量(ピクセル)
 //
-bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_y, const int right_mrg )
+bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 {
     // 起動中とシャットダウン中は処理しない
     if( SESSION::is_booting() ) return false;
@@ -660,11 +658,31 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
     // レイアウトがセットされていない
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
-    
+
     // drawareaのウィンドウサイズ
-    // init_popupwin = true の時は画面サイズを横幅にして計算
-    const int width_view = init_popupwin ? m_view.get_screen()->get_width() : m_view.get_width();
+    int width_view = m_view.get_width();
     const int height_view = m_view.get_height();
+
+    // ポップアップウィンドウの幅
+    int popup_max_width = 0;
+
+    // ポップアップである
+    if ( is_popup )
+    {
+        DrawAreaBase* base_drawarea = NULL;
+        base_drawarea = SESSION::get_base_drawarea();
+
+        Gtk::DrawingArea* base_drawing = NULL;
+        base_drawing = base_drawarea->get_view();
+
+        width_view = base_drawing->get_width();
+
+        Gtk::VScrollbar* base_vscrbar = NULL;
+        base_vscrbar = base_drawarea->get_vscrbar();
+
+        // 親ビューは常にスクロールバーを含むので、その分の幅を引いた値にする
+        popup_max_width = base_drawarea->get_width() - base_vscrbar->get_width();
+    }
 
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::exec_layout_impl : url = " << m_url << std::endl
@@ -673,7 +691,7 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
 #endif
 
     //表示はされてるがまだリサイズしてない状況
-    if( ! init_popupwin && height_view < LAYOUT_MIN_HEIGHT ){
+    if( ! is_popup && height_view < LAYOUT_MIN_HEIGHT ){
 #ifdef _DEBUG
         std::cout << "drawarea is not resized yet.\n";
 #endif        
@@ -790,7 +808,7 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
 
                     // レイアウトして次のノードの左上座標を計算
                     // x,y, br_size が参照なので更新された値が戻る
-                    layout_one_img_node( layout, x, y, br_size, m_width_client, init_popupwin, EIMG_MRG );
+                    layout_one_img_node( layout, x, y, br_size, m_width_client, is_popup, EIMG_MRG );
 
                     break;
 
@@ -799,7 +817,7 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
                 case DBTREE::NODE_SSSP: // sssp アイコン
 
                     y += EIMG_MRG;
-                    layout_one_img_node( layout, x, y, br_size, m_width_client, init_popupwin, 0 );
+                    layout_one_img_node( layout, x, y, br_size, m_width_client, is_popup, 0 );
 
                     if( layout->rect->height > m_br_size ){
 
@@ -840,7 +858,7 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
                     //////////////////////////////////////////
 
                 case DBTREE::NODE_HTAB: // 水平タブ
-                    x += m_font_height * SPACE_TAB;
+                    //x += m_font_height * SPACE_TAB;
                     break;
             }
 
@@ -884,11 +902,13 @@ bool DrawAreaBase::exec_layout_impl( const bool init_popupwin, const int offset_
 
     y += m_css_body.padding_bottom;
 
-    // クライアント領域の幅、高さ確定
-    m_width_client += right_mrg;
+    // ポップアップの場合は幅を親ビューに合わせる
+    if( is_popup ) m_width_client = popup_max_width;
+
+    // クライアント領域の高さ確定
     m_height_client = y;
 
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "virtual size of drawarea : m_width_client = " << m_width_client
               << " m_height_client = " << m_height_client << std::endl;
 #endif

@@ -15,7 +15,6 @@ using namespace ARTICLE;
 // スクロールバーが付くとレイアウトがずれるのでクライアント領域の横幅をその分広げる
 enum
 {
-    POPUP_RIGHT_MRG = 40,
     POPUP_OFFSET_Y = 1
 };
 
@@ -44,15 +43,12 @@ DrawAreaPopup::DrawAreaPopup( const std::string& url, bool show_abone )
 //
 bool DrawAreaPopup::exec_layout()
 {
-    // まだクライアント領域のサイズが未取得のときは画面サイズを横幅として計算する
-    // (親ウィンドウにクライアントのサイズを知らせるため)
-    const bool init_popupwin = ( width_client() == 0 || height_client() == 0 );
-
 #ifdef _DEBUG
     std::cout << "DrawAreaPopup::exec_layout() " << get_url() << std::endl;
 #endif
 
-    bool ret = exec_layout_impl( init_popupwin, POPUP_OFFSET_Y, POPUP_RIGHT_MRG );
+    // is_popup = true
+    bool ret = exec_layout_impl( true, POPUP_OFFSET_Y );
     if( ret ) draw_backscreen( true );
 
     return ret;

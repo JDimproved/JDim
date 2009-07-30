@@ -12,6 +12,7 @@
 
 #include "bbslist/bbslistadmin.h"
 #include "article/articleadmin.h"
+#include "article/articleviewbase.h"
 
 #include <sstream>
 
@@ -896,6 +897,21 @@ void SESSION::set_col_new( const int width ){ board_col_new = width; }
 void SESSION::set_col_since( const int width ){ board_col_since = width; }
 void SESSION::set_col_write( const int width ){ board_col_write = width; }
 void SESSION::set_col_speed( const int width ){ board_col_speed = width; }
+
+
+// 現在開いているarticle の ARTICLE::DrawAreaBase
+ARTICLE::DrawAreaBase* SESSION::get_base_drawarea()
+{
+    ARTICLE::ArticleViewBase* base_view = NULL;
+    base_view = dynamic_cast< ARTICLE::ArticleViewBase* >( ARTICLE::get_admin()->get_current_view() );
+
+    if( base_view == NULL ) return NULL;
+
+    ARTICLE::DrawAreaBase* base_drawarea = NULL;
+    base_drawarea = base_view->drawarea();
+
+    return base_drawarea;
+}
 
 
 // 現在開いているarticle のurl

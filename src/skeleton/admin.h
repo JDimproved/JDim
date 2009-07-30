@@ -121,6 +121,8 @@ namespace SKELETON
         // フォーカスしてから指定したページに表示切替え
         void set_current_page_focus( const int page );
 
+        virtual View* get_current_view();
+
     protected:
 
         void set_use_viewhistory( const bool use ){ m_use_viewhistory = use; }
@@ -211,7 +213,6 @@ namespace SKELETON
         virtual View* get_view( const std::string& url );
         std::list< View* > get_list_view( const std::string& url );
         std::list< View* > get_list_view();
-        virtual View* get_current_view();
 
         // ツールバー
         virtual void show_toolbar(){}

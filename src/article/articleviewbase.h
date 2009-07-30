@@ -136,12 +136,13 @@ namespace ARTICLE
         // 実況モードか
         const bool get_live() const { return m_live; }
 
+        DrawAreaBase* drawarea();
+
     protected:
 
         // Viewが所属するAdminクラス
         virtual SKELETON::Admin* get_admin();
 
-        DrawAreaBase* drawarea();
         JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article();
 
         // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える

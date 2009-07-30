@@ -275,7 +275,7 @@ namespace ARTICLE
 
         // レイアウト処理
         virtual bool exec_layout();
-        bool exec_layout_impl( const bool init_popupwin, const int offset_y, const int right_mrg );
+        bool exec_layout_impl( const bool is_popup, const int offset_y );
 
         // バックスクリーンをDrawAreaにコピー
         bool draw_drawarea( int x = 0, int y = 0, int width = 0, int height = 0 );
@@ -286,6 +286,9 @@ namespace ARTICLE
 
         // リサイズした
         virtual bool slot_configure_event( GdkEventConfigure* event );
+
+        Gtk::DrawingArea* get_view(){ return &m_view; }
+        Gtk::VScrollbar* get_vscrbar(){ return m_vscrbar; }
 
       private:
 
