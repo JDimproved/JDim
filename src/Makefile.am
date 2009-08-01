@@ -54,6 +54,7 @@ jd_SOURCES = \
 	mainitempref.cpp \
 	boarditempref.cpp \
 	articleitempref.cpp \
+	articleitemmenupref.cpp \
 	msgitempref.cpp \
 	sidebaritempref.cpp \
 	fontcolorpref.cpp \
@@ -111,6 +112,7 @@ noinst_HEADERS = \
 	mainitempref.h \
 	boarditempref.h \
 	articleitempref.h \
+	articleitemmenupref.h \
 	msgitempref.h \
 	sidebaritempref.h \
 	fontcolorpref.h \

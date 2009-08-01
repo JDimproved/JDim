@@ -17,7 +17,6 @@ namespace SKELETON
     {
         std::string name;
         Glib::RefPtr< Gdk::Pixbuf > icon;
-        bool enabled;
     } DEFAULT_DATA;
 
     class SelectItemPref : public SKELETON::PrefDiag
@@ -106,8 +105,7 @@ namespace SKELETON
 
         // デフォルトデータを追加
         void append_default_pair( const Glib::ustring& name,
-                                   const Glib::RefPtr< Gdk::Pixbuf > icon = Glib::RefPtr< Gdk::Pixbuf >(),
-                                   const bool enabled = true );
+                                  const Glib::RefPtr< Gdk::Pixbuf > icon = Glib::RefPtr< Gdk::Pixbuf >() );
 
         // 文字列を元に行を作成
         void append_rows( const std::string& str );
@@ -149,10 +147,10 @@ namespace SKELETON
         void slot_add();
 
         // デフォルトボタン
-        void slot_default();
+        virtual void slot_default() = 0;
 
         // 適用ボタン
-        virtual void slot_apply_clicked(){ slot_ok_clicked(); }
+        void slot_apply_clicked(){ slot_ok_clicked(); }
     };
 }
 

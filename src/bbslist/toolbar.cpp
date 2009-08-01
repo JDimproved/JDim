@@ -67,7 +67,7 @@ void BBSListToolBar::pack_buttons()
 {
     int num = 0;
     for(;;){
-        int item = SESSION::get_item_sidebar( num );
+        int item = SESSION::get_item_sidebar_toolbar( num );
         if( item == ITEM_END ) break;
         switch( item ){
 

@@ -407,7 +407,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // リスト表示項目設定
     m_action_group->add( Gtk::Action::create( "ListItem_Menu", "リスト項目設定(_L)" ) );
-    m_action_group->add( Gtk::Action::create( "SetupBoardItemColumn", "スレ一覧(_T)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditemcolumn ) );
+    m_action_group->add( Gtk::Action::create( "SetupBoardItemColumn", "スレ一覧(_T)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem_column ) );
 
     // ツールバー項目設定
     m_action_group->add( Gtk::Action::create( "Item_Menu", "ツールバー項目設定(_I)" ) );
@@ -416,6 +416,11 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "SetupBoardItem", "スレ一覧(_B)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
     m_action_group->add( Gtk::Action::create( "SetupArticleItem", "スレビュー(_A)..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem ) );
     m_action_group->add( Gtk::Action::create( "SetupMsgItem", "書き込みビュー(_W)..." ), sigc::mem_fun( *this, &Core::slot_setup_msgitem ) );
+
+
+    // コンテキストメニュー項目設定
+    m_action_group->add( Gtk::Action::create( "MenuItem_Menu", "コンテキストメニュー項目設定(_C)" ) );
+    m_action_group->add( Gtk::Action::create( "SetupArticleItemMenu", "スレビュー(_A)..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem_menu ) );
 
 
     //////////////////////////////////////////////////////
@@ -669,6 +674,12 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menu action='ListItem_Menu'>"
         "<menuitem action='SetupBoardItemColumn'/>"
         "</menu>"
+        "<separator/>"
+
+        "<menu action='MenuItem_Menu'>"
+        "<menuitem action='SetupArticleItemMenu'/>"
+        "</menu>"
+
     "<separator/>"
 
     + menu_font

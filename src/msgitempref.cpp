@@ -19,7 +19,7 @@ using namespace CORE;
 MsgItemPref::MsgItemPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )
 {
-    // デフォルトの項目を設定( 無効にする場合には最後に false を付ける )
+    // デフォルトの項目を設定
     append_default_pair( ITEM_NAME_PREVIEW, ICON::get_icon( ICON::THREAD ) );
     append_default_pair( ITEM_NAME_WRITEMSG, ICON::get_icon( ICON::WRITE ) );
     append_default_pair( ITEM_NAME_OPENBOARD, ICON::get_icon( ICON::TRANSPARENT ) );
@@ -28,7 +28,7 @@ MsgItemPref::MsgItemPref( Gtk::Window* parent, const std::string& url )
     append_default_pair( ITEM_NAME_INSERTTEXT, STOCK_ICON( Gtk::Stock::OPEN ) );
     append_default_pair( ITEM_NAME_LOCK_MESSAGE, STOCK_ICON( Gtk::Stock::NO ) );
     append_default_pair( ITEM_NAME_QUIT, STOCK_ICON( Gtk::Stock::CLOSE ) );
-    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
+    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ) );
 
     // 文字列を元に行を追加
     append_rows( SESSION::get_items_msg_toolbar_str() );
@@ -45,3 +45,10 @@ void MsgItemPref::slot_ok_clicked()
 }
 
 
+//
+// デフォルトボタン
+//
+void MsgItemPref::slot_default()
+{
+    append_rows( SESSION::get_items_msg_toolbar_default_str() );
+}

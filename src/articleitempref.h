@@ -20,6 +20,9 @@ namespace CORE
 
         // OKボタン
         virtual void slot_ok_clicked();
+
+        // デフォルトボタン
+        virtual void slot_default();
     };
 }
 

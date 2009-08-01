@@ -35,7 +35,6 @@
 #include "icons/iconmanager.h"
 
 #include <gtk/gtk.h> // m_liststore->gobj()->sort_column_id = -2
-#include <sstream>
 
 using namespace BOARD;
 
@@ -181,13 +180,17 @@ BoardViewBase::BoardViewBase( const std::string& url )
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
     action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する(_D)" ), sigc::mem_fun( *this, &BoardViewBase::slot_delete_logs ) );
     action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)" ), sigc::mem_fun( *this, &BoardViewBase::open_selected_rows ) );
-    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_C)" ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_url ) );
-    action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー(_U)" ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_title_url ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)" ), sigc::mem_fun( *this, &BoardViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_url ) );
+    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL + std::string( "(_L)" ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_copy_title_url ) );
+    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "AboneThread", "スレをあぼ〜んする(_N)" ), sigc::mem_fun( *this, &BoardViewBase::slot_abone_thread ) );
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ(_I)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "Preference", "板のプロパティ(_P)..." ), sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", "datを保存(_S)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_preferences_article ) );
+    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ(_O)..." ), sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT + std::string( "(_S)..." ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_save_dat ) );
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
@@ -216,7 +219,7 @@ BoardViewBase::BoardViewBase( const std::string& url )
     "</menu>"
     "<separator/>"
     "<menuitem action='PreferenceArticle'/>"
-    "<menuitem action='Preference'/>"
+    "<menuitem action='PreferenceBoard'/>"
     "</popup>"
 
 
@@ -340,7 +343,7 @@ void BoardViewBase::update_columns()
 
     int num = 0;
     for(;;){
-        const int item = SESSION::get_item_board( num );
+        const int item = SESSION::get_item_board_col( num );
         if( item == ITEM_END ) break;
         switch( item ){
             case ITEM_MARK: APPEND_COLUMN( m_col_mark, ITEM_NAME_MARK, m_columns.m_col_mark ); break;
@@ -1931,11 +1934,8 @@ void BoardViewBase::slot_copy_title_url()
 
     const std::string url = DBTREE::url_readcgi( path2daturl( m_path_selected ), 0, 0 );
     const std::string name = DBTREE::article_subject( url );
-    std::stringstream ss;
-    ss << name << std::endl
-       << url << std::endl;
 
-    MISC::CopyClipboard( ss.str() );
+    MISC::CopyClipboard( name + '\n' + url );
 }
 
 

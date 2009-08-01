@@ -43,8 +43,6 @@
 #include "compmanager.h"
 #include "dndmanager.h"
 
-#include <sstream>
-
 
 // row -> path
 #define GET_PATH( row ) m_treestore->get_path( row )
@@ -189,8 +187,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く(_T)"), sigc::mem_fun( *this, &BBSListViewBase::slot_open_tab ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)"), sigc::mem_fun( *this, &BBSListViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "AppendFavorite", "お気に入りに追加(_F)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_append_favorite ) );
+    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
+                         sigc::mem_fun( *this, &BBSListViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &BBSListViewBase::slot_append_favorite ) );
     action_group()->add( Gtk::Action::create( "NewDir", "新規ディレクトリ(_N)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newdir ) );
     action_group()->add( Gtk::Action::create( "NewCom", "コメント挿入(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newcomment ) );
     action_group()->add( Gtk::Action::create( "NewEtc", "外部板追加(_E)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_newetcboard ) );
@@ -206,8 +205,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CheckUpdateOpenRows", "更新された行をタブで開く(_E)"),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_open_selected_rows ) );
 
-    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_U)"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
-    action_group()->add( Gtk::Action::create( "CopyTitleURL", "タイトルとURLをコピー(_L)"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
+    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" )), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
+    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL + std::string( "(_L)") ),
+                         sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "SelectDir", "全て選択(_A)"), sigc::mem_fun( *this, &BBSListViewBase::slot_select_all_dir ) );
 
     action_group()->add( Gtk::Action::create( "CheckUpdate_Menu", "更新チェック(_M)" ) );
@@ -220,8 +220,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索(_S)"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
     action_group()->add( Gtk::Action::create( "ImportDat", "datのインポート(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_import_dat ) );
 
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", "スレのプロパティ(_P)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ(_B)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
+                         sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
+    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ(_O)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
 
 
@@ -1534,13 +1535,10 @@ void BBSListViewBase::slot_copy_title_url()
 {
     if( m_path_selected.empty() ) return;
 
-    std::string url = path2url( m_path_selected );
-    std::string name = path2name( m_path_selected );
-    std::stringstream ss;
-    ss << name << std::endl
-       << url << std::endl;
+    const std::string url = path2url( m_path_selected );
+    const std::string name = path2name( m_path_selected );
 
-    MISC::CopyClipboard( ss.str() );
+    MISC::CopyClipboard( name + '\n' + url );
 }
 
 

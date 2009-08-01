@@ -49,11 +49,16 @@ enum{
 #define ITEM_NAME_WRITEMSG  "書き込み"
 #define ITEM_NAME_OPENBOARD "板を開く"
 #define ITEM_NAME_SEARCH    "検索"
+#define ITEM_NAME_DRAWOUT    "抽出"
 #define ITEM_NAME_RELOAD    "再読み込み"
 #define ITEM_NAME_STOPLOADING "読み込み中止"
 #define ITEM_NAME_FAVORITE  "お気に入りに追加"
 #define ITEM_NAME_CHECK_UPDATE_ROOT "更新チェック"
 #define ITEM_NAME_CHECK_UPDATE_OPEN_ROOT "更新チェックしてタブで開く"
+#define ITEM_NAME_COPY      "コピー"
+#define ITEM_NAME_COPY_URL      "URLをコピー"
+#define ITEM_NAME_COPY_TITLE_URL "タイトルとURLをコピー"
+#define ITEM_NAME_COPY_TITLE_URL_THREAD "スレのタイトルとURLをコピー"
 #define ITEM_NAME_DELETE    "削除"
 #define ITEM_NAME_QUIT      "閉じる"
 #define ITEM_NAME_PREVVIEW  "前へ戻る"
@@ -72,6 +77,16 @@ enum{
 
 #define ITEM_NAME_UNDO        "元に戻す(Undo)"
 #define ITEM_NAME_REDO        "やり直し(Redo)"
+
+#define ITEM_NAME_NGWORD      "NGワード"
+#define ITEM_NAME_QUOTE_SELECTION   "引用してレスする"
+#define ITEM_NAME_OPEN_BROWSER      "ブラウザで開く"
+#define ITEM_NAME_USER_COMMAND      "ユーザコマンド"
+#define ITEM_NAME_ETC         "その他"
+#define ITEM_NAME_SAVE_DAT    "datを保存"
+#define ITEM_NAME_COPY_THREAD_INFO   "スレ情報のコピー"
+
+#define ITEM_NAME_PREF_THREAD    "スレのプロパティ"
 
 
 // SESSION::get_item_*() の戻り値
@@ -102,11 +117,16 @@ enum
     ITEM_WRITEMSG,
     ITEM_OPENBOARD,
     ITEM_SEARCH,
+    ITEM_DRAWOUT,
     ITEM_RELOAD,
     ITEM_STOPLOADING,
     ITEM_FAVORITE,
     ITEM_CHECK_UPDATE_ROOT,
     ITEM_CHECK_UPDATE_OPEN_ROOT,
+    ITEM_COPY,
+    ITEM_COPY_URL,
+    ITEM_COPY_TITLE_URL,
+    ITEM_COPY_TITLE_URL_THREAD,
     ITEM_DELETE,
     ITEM_QUIT,
     ITEM_PREVVIEW,
@@ -125,6 +145,16 @@ enum
 
     ITEM_UNDO,
     ITEM_REDO,
+
+    ITEM_NGWORD,
+    ITEM_QUOTE_SELECTION,
+    ITEM_OPEN_BROWSER,
+    ITEM_USER_COMMAND,
+    ITEM_ETC,
+    ITEM_SAVE_DAT,
+    ITEM_COPY_THREAD_INFO,
+
+    ITEM_PREF_THREAD,
 
     ITEM_END
 };

@@ -18,6 +18,7 @@
 #include "sharedbuffer.h"
 #include "cache.h"
 #include "command.h"
+#include "global.h"
 
 
 // 枠を描く
@@ -168,7 +169,8 @@ Gtk::Menu* ImageViewIcon::get_popupmenu( const std::string& url )
         Gtk::Menu_Helpers::MenuList::iterator it_item =  menu->items().begin();
 
         Gtk::Label* label = dynamic_cast< Gtk::Label* >( (*it_item).get_child() );
-        if( label ) label->set_text_with_mnemonic( "移動 [ タブ数 " + MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) + " ](_M)" );
+        if( label ) label->set_text_with_mnemonic( ITEM_NAME_GO + std::string( " [ タブ数 " )
+                                                   + MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) + " ](_M)" );
     }
 
     return menu;

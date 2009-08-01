@@ -686,7 +686,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::exec_layout_impl : url = " << m_url << std::endl
-              << "init_popupwin = " << init_popupwin << " width_view = " << width_view << " height_view  = " << height_view << std::endl
+              << "is_popupwin = " << is_popupwin << " width_view = " << width_view << " height_view  = " << height_view << std::endl
               << "m_width_client = " << m_width_client << " m_height_client = " << m_height_client << std::endl;
 #endif
 
@@ -858,7 +858,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
                     //////////////////////////////////////////
 
                 case DBTREE::NODE_HTAB: // 水平タブ
-                    //x += m_font_height * SPACE_TAB;
+                    x += m_font_height * SPACE_TAB;
                     break;
             }
 
@@ -903,7 +903,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
     y += m_css_body.padding_bottom;
 
     // ポップアップの場合は幅を親ビューに合わせる
-    if( is_popup ) m_width_client = popup_max_width;
+    if( is_popup ) m_width_client = MIN( m_width_client, popup_max_width );
 
     // クライアント領域の高さ確定
     m_height_client = y;

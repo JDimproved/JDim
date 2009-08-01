@@ -121,7 +121,7 @@ void Admin::setup_menu()
     m_action_group->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする(_K)", std::string(), false ),
                          sigc::mem_fun( *this, &Admin::slot_lock ) );
 
-    m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる(_L)" ) );
+    m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる(_T)" ) );
     m_action_group->add( Gtk::Action::create( "CloseOther", "他のタブ(_O)" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseLeft", "左←のタブ(_L)" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseRight", "右→のタブ(_R)" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
@@ -134,9 +134,11 @@ void Admin::setup_menu()
     m_action_group->add( Gtk::Action::create( "ReloadAll", "再読み込み(_R)" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
     m_action_group->add( Gtk::Action::create( "CancelReloadAll", "キャンセル(_C)" ), sigc::mem_fun( *this, &Admin::slot_cancel_reload_all_tabs ) );
 
-    m_action_group->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)" ), sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
-    m_action_group->add( Gtk::Action::create( "CopyURL", "URLをコピー(_U)" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
-    m_action_group->add( Gtk::Action::create( "CopyTitle", "タイトルとURLをコピー(_T)" ), sigc::mem_fun( *this, &Admin::slot_copy_title_url ) );
+    m_action_group->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
+                         sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
+    m_action_group->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
+    m_action_group->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL + std::string( "(_L)" ) ),
+                         sigc::mem_fun( *this, &Admin::slot_copy_title_url ) );
 
     m_action_group->add( Gtk::Action::create( "Preference", "プロパティ(_P)..."), sigc::mem_fun( *this, &Admin::show_preference ) );
 
@@ -186,7 +188,7 @@ void Admin::setup_menu()
     "<separator/>"
 
     "<menuitem action='CopyURL'/>"
-    "<menuitem action='CopyTitle'/>"
+    "<menuitem action='CopyTitleURL'/>"
 
     "<separator/>"
     "<menuitem action='Preference'/>"
@@ -1954,7 +1956,8 @@ void Admin::slot_tab_menu( int page, int x, int y )
 
         // コメント更新
         Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_vec_movemenu_items[ MAX_TABS ]->get_child() );
-        if( label ) label->set_text_with_mnemonic( "移動 [ タブ数 " + MISC::itostr( pages ) +" ](_M)" );
+        if( label ) label->set_text_with_mnemonic( ITEM_NAME_GO + std::string( " [ タブ数 " )
+                                                   + MISC::itostr( pages ) +" ](_M)" );
 
         m_move_menu->show_all();
 

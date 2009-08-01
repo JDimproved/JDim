@@ -188,26 +188,33 @@ void ArticleViewBase::setup_action()
     action_group().clear();
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowser", "ブラウザで開く(_W)"), sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "CopyURL", "URLをコピー(_U)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_current_url ) );
+    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_copy_current_url ) );
+    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL_THREAD + std::string( "(_L)" ) ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "CopyNAME", "名前コピー(_N)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_name ) );
     action_group()->add( Gtk::Action::create( "CopyID", "IDコピー(_D)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_id ) );
     action_group()->add( Gtk::Action::create( "Copy", "Copy"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_selection_str ) );
     action_group()->add( Gtk::Action::create( "WriteRes", "レスする(_W)" ),sigc::mem_fun( *this, &ArticleViewBase::slot_write_res ) );
-    action_group()->add( Gtk::Action::create( "QuoteRes", "引用してレスする(_E)"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_res ) );
-    action_group()->add( Gtk::Action::create( "QuoteSelectionRes", "引用してレスする(_R)"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_selection_res ) );
+    action_group()->add( Gtk::Action::create( "QuoteRes", "引用してレスする(_Q)"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_res ) );
+    action_group()->add( Gtk::Action::create( "QuoteSelectionRes", ITEM_NAME_QUOTE_SELECTION + std::string( "(_Q)" ) ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_quote_selection_res ) );
     action_group()->add( Gtk::Action::create( "CopyRes", "レスをコピー(_R)"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), false ) );
     action_group()->add( Gtk::Action::create( "CopyResRef", "引用コピー(_F)"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), true ) );
     action_group()->add( Gtk::Action::create( "Delete", "削除"), sigc::mem_fun( *this, &ArticleViewBase::exec_delete ) );
     action_group()->add( Gtk::Action::create( "DeleteOpen", "スレ情報を消さずにスレ再取得(_R)"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
-    action_group()->add( Gtk::Action::create( "Favorite", "お気に入りに登録する(_F)"), sigc::mem_fun( *this, &ArticleViewBase::set_favorite ) );
-    action_group()->add( Gtk::Action::create( "Preference", "スレのプロパティ(_T)..."), sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
+    action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &ArticleViewBase::set_favorite ) );
+    action_group()->add( Gtk::Action::create( "Reload", "Reload"), sigc::mem_fun( *this, &ArticleViewBase::exec_reload ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
+                         sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
 
     // 検索
-    action_group()->add( Gtk::Action::create( "Search_Menu", "検索(_F)" ) );
+    action_group()->add( Gtk::Action::create( "Search_Menu", ITEM_NAME_SEARCH + std::string( "(_H)" ) ) );
     action_group()->add( Gtk::Action::create( "SearchNextArticle", "SearchNextArticle"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_next ) );
     action_group()->add( Gtk::Action::create( "SearchWeb", "SearchWeb" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_web ) );
     action_group()->add( Gtk::Action::create( "SearchCacheLocal", "SearchCacheLocal" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
@@ -216,7 +223,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "SearchTitle", "SearchTitle" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
 
     // 抽出系
-    action_group()->add( Gtk::Action::create( "Drawout_Menu", "抽出(_E)" ) );
+    action_group()->add( Gtk::Action::create( "Drawout_Menu", ITEM_NAME_DRAWOUT + std::string( "(_E)" ) ) );
     action_group()->add( Gtk::Action::create( "DrawoutWord", "キーワード抽出(_K)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_selection_str ) );
     action_group()->add( Gtk::Action::create( "DrawoutRes", "レス抽出(_R)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_res ) );
     action_group()->add( Gtk::Action::create( "DrawoutNAME", "名前抽出(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_name ) );
@@ -229,7 +236,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DrawoutTmp", "テンプレート抽出(_T)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_tmp ) );
 
     // あぼーん系
-    action_group()->add( Gtk::Action::create( "AboneWord_Menu", "NG ワード(_N)" ) );
+    action_group()->add( Gtk::Action::create( "AboneWord_Menu", ITEM_NAME_NGWORD + std::string( "(_N)" ) ) );
     action_group()->add( Gtk::Action::create( "AboneRes", "レスをあぼ〜んする(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_res ) );
     action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加(_G)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
     action_group()->add( Gtk::Action::create( "AboneName", "NG 名前に追加 (対象: ローカル)(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
@@ -252,7 +259,7 @@ void ArticleViewBase::setup_action()
 
 
     // 移動系
-    action_group()->add( Gtk::Action::create( "Move_Menu", "移動(_M)" ) );
+    action_group()->add( Gtk::Action::create( "Move_Menu", ITEM_NAME_GO + std::string( "(_M)" ) ) );
     action_group()->add( Gtk::Action::create( "Home", "Home"), sigc::mem_fun( *this, &ArticleViewBase::goto_top ) );
     action_group()->add( Gtk::Action::create( "GotoNew", "GotoNew"), sigc::mem_fun( *this, &ArticleViewBase::goto_new ) );
     action_group()->add( Gtk::Action::create( "End", "End"), sigc::mem_fun( *this, &ArticleViewBase::goto_bottom ) );
@@ -278,34 +285,33 @@ void ArticleViewBase::setup_action()
                          sigc::mem_fun( *this, &ArticleViewBase::slot_abone_img ) );
 
     // その他
-    action_group()->add( Gtk::Action::create( "Etc_Menu", "その他(_O)" ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", "datを保存(_S)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
-    action_group()->add( Gtk::Action::create( "CopyInfo", "スレ情報のコピー(_C)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_article_info ) );
+    action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC + std::string( "(_O)" ) ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT + std::string( "(_D)..." ) ), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "CopyInfo", ITEM_NAME_COPY_THREAD_INFO + std::string( "(_I)..." ) ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_copy_article_info ) );
 
-    // ユーザコマンド
-    const std::string usrcmd_ui = create_usrcmd_menu();
+    create_usrcmd_menu();
 
     ui_manager().clear();
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
 
-    // レイアウト
-    Glib::ustring str_ui =
-    "<ui>"
-
     // 削除ボタン押したときのポップアップ
+    const std::string menu_delete =
     "<popup name='popup_menu_delete'>"
     "<menuitem action='Delete'/>"
     "<separator/>"
     "<menuitem action='DeleteOpen'/>"
-    "</popup>"
+    "</popup>";
 
     // 壊れていますをクリックしたときのポップアップ
+    const std::string menu_broken =
     "<popup name='popup_menu_broken'>"
     "<menuitem action='DeleteOpen'/>"
-    "</popup>"
+    "</popup>";
 
     // レス番号をクリックしたときのメニュー
+    const std::string menu_res =
     "<popup name='popup_menu_res'>"
     "<menuitem action='BookMark'/>"
     "<separator/>"
@@ -330,24 +336,27 @@ void ArticleViewBase::setup_action()
     "<separator/>"
 
     "<menuitem action='AboneRes'/>"
-    "</popup>"
+    "</popup>";
 
     // レスアンカーをクリックしたときのメニュー
+    const std::string menu_anc =
     "<popup name='popup_menu_anc'>"
     "<menuitem action='Jump'/>"
     "<menuitem action='DrawoutAround'/>"
     "<menuitem action='DrawoutRes'/>"
-    "</popup>"
+    "</popup>";
 
     // IDをクリックしたときのメニュー
+    const std::string menu_id =
     "<popup name='popup_menu_id'>"
     "<menuitem action='DrawoutID'/>"
     "<menuitem action='CopyID'/>"
     "<separator/>"
     "<menuitem action='AboneID'/>"
-    "</popup>"
+    "</popup>";
 
     // 名前をクリックしたときのメニュー
+    const std::string menu_name =
     "<popup name='popup_menu_name'>"
     "<menuitem action='DrawoutNAME'/>"
     "<menuitem action='CopyNAME'/>"
@@ -363,106 +372,26 @@ void ArticleViewBase::setup_action()
     "<menuitem action='SetGlobalAboneName'/>"
     "</menu>"
 
-    "</popup>"
+    "</popup>";
 
     // あぼーんをクリックしたときのメニュー
+    const std::string menu_abone =
     "<popup name='popup_menu_abone'>"
     "<menuitem action='TranspAbone'/>"
     "<menuitem action='TranspChainAbone'/>"
-    "</popup>"
+    "</popup>";
 
-    // 通常の右クリックメニュー
-    "<popup name='popup_menu'>"
-
-    "<menu action='Drawout_Menu'>"
-    "<menuitem action='DrawoutWord'/>"
-    "<menuitem action='DrawoutBM'/>"
-    "<menuitem action='DrawoutPost'/>"
-    "<menuitem action='DrawoutURL'/>"
-    "<menuitem action='DrawoutTmp'/>"
-    "</menu>"
-
-    "<menu action='Move_Menu'>"
-    "<menuitem action='PrevView'/>"
-    "<menuitem action='NextView'/>"
-    "<separator/>"
-    "<menuitem action='Home'/>"
-    "<menuitem action='End'/>"
-    "<menuitem action='GotoNew'/>"
-    "<separator/>"
-    "<menuitem action='PreBookMark'/>"
-    "<menuitem action='NextBookMark'/>"
-    "</menu>"
-
-    "<menu action='Search_Menu'>"
-
-    "<menuitem action='SearchWeb'/>"
-    "<separator/>"
-    "<menuitem action='SearchNextArticle' />"
-    "<separator/>"
-    "<menuitem action='SearchTitle' />"
-    "<separator/>"
-    "<menuitem action='SearchCacheLocal'/>"
-    "<menu action='SearchCacheAll'>"
-    "<menuitem action='ExecSearchCacheAll'/>"
-    "</menu>"
-
-    "</menu>"
-
-    "<menu action='AboneWord_Menu'>"
-
-    "<menuitem action='AboneWord'/>"
-
-    "<menu action='AboneWordBoard'>"
-    "<menuitem action='SetAboneWordBoard'/>"
-    "</menu>"
-
-    "<menu action='GlobalAboneWord'>"
-    "<menuitem action='SetGlobalAboneWord'/>"
-    "</menu>"
-
-    "</menu>"
-
-    "<separator/>"
-    "<menuitem action='QuoteSelectionRes' />"
-
-    "<separator/>"
-    "<menuitem action='OpenBrowser'/>";
-
-    // ユーザコマンド
-    str_ui += usrcmd_ui;
-
-    Glib::ustring str_ui2 = 
-
-    "<separator/>"
-    "<menuitem action='CopyURL'/>"
-    "<menuitem action='Copy'/>"
-
-    "<separator/>"
-
-    "<menu action='Etc_Menu'>"
-    "<menuitem action='SaveDat'/>"
-    "<menuitem action='CopyInfo'/>"
-    "</menu>"
-
-    "<separator/>"
-
-    "<menuitem action='Preference'/>"
-
-    "</popup>"
 
     // 画像メニュー
+    const std::string menu_img =
     "<popup name='popup_menu_img'>"
     "<menuitem action='Cancel_Mosaic'/>"
     "<menuitem action='Show_Mosaic'/>"
     "<menuitem action='ShowLargeImg'/>"
     "<separator/>"
-    "<menuitem action='OpenBrowser'/>";
-
-    // ユーザコマンド
-    str_ui2 += usrcmd_ui;
-
-    Glib::ustring str_ui3 = 
+    "<menuitem action='OpenBrowser'/>"
+    + m_usrcmd
+    + std::string(
     "<separator/>"
     "<menuitem action='CopyURL'/>"
     "<separator/>"
@@ -477,12 +406,21 @@ void ArticleViewBase::setup_action()
     "<separator/>"
     "<menuitem action='PreferenceImage'/>"
     "</popup>"
+        );
 
-    "</ui>";
-
-    str_ui += str_ui2 + str_ui3;
-
-    ui_manager()->add_ui_from_string( str_ui );
+    ui_manager()->add_ui_from_string(
+        "<ui>"
+        + menu_delete
+        + menu_broken
+        + menu_res
+        + menu_anc
+        + menu_id
+        + menu_name
+        + menu_abone
+        + menu_img
+        + create_context_menu()
+        + "</ui>"
+        );
 
     // ポップアップメニューにショートカットキーやマウスジェスチャを表示
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
@@ -491,21 +429,195 @@ void ArticleViewBase::setup_action()
 
 
 //
+// 通常の右クリックメニューの作成
+//
+const std::string ArticleViewBase::create_context_menu()
+{
+    std::list< int > list_menu;
+
+    list_menu.push_back( ITEM_DRAWOUT );
+    list_menu.push_back( ITEM_GO );
+    list_menu.push_back( ITEM_SEARCH );
+    list_menu.push_back( ITEM_NGWORD );
+    list_menu.push_back( ITEM_QUOTE_SELECTION );
+    list_menu.push_back( ITEM_OPEN_BROWSER );
+    list_menu.push_back( ITEM_USER_COMMAND );
+    list_menu.push_back( ITEM_COPY_URL );
+    list_menu.push_back( ITEM_COPY );
+    list_menu.push_back( ITEM_RELOAD );
+    list_menu.push_back( ITEM_COPY_TITLE_URL_THREAD );
+    list_menu.push_back( ITEM_SAVE_DAT );
+    list_menu.push_back( ITEM_COPY_THREAD_INFO );
+    list_menu.push_back( ITEM_FAVORITE );
+    list_menu.push_back( ITEM_PREF_THREAD );
+
+    // メニューに含まれていない項目を抜き出して「その他」に含める
+    int num = 0;
+    for(;;){
+
+        const int item = SESSION::get_item_article_menu( num );
+
+        if( item == ITEM_END ) break;
+        list_menu.remove( item );
+
+        ++num;
+    }
+
+    std::string menu;
+    num = 0;
+    for(;;){
+
+        const int item = SESSION::get_item_article_menu( num );
+
+        if( item == ITEM_END ) break;
+        else if( item == ITEM_ETC && list_menu.size() ){
+            menu += std::string( "<menu action='Etc_Menu'>" );
+            std::list< int >::iterator it = list_menu.begin();
+            for( ; it != list_menu.end(); ++it ) menu += get_menu_item( *it );
+            menu += std::string( "</menu>" );
+        }
+        else menu += get_menu_item( item );
+
+        ++num;
+    }
+
+#ifdef _DEBUG
+    std::cout << "menu = " << menu << std::endl;
+#endif
+
+    return "<popup name='popup_menu'>" + menu + "</popup>";
+}
+
+
+const char* ArticleViewBase::get_menu_item( const int item )
+{
+    switch( item ){
+
+        // 抽出
+        case ITEM_DRAWOUT:
+            return 
+            "<menu action='Drawout_Menu'>"
+            "<menuitem action='DrawoutWord'/>"
+            "<menuitem action='DrawoutBM'/>"
+            "<menuitem action='DrawoutPost'/>"
+            "<menuitem action='DrawoutURL'/>"
+            "<menuitem action='DrawoutTmp'/>"
+            "</menu>"
+            ;
+
+            // 移動
+        case ITEM_GO:
+            return
+            "<menu action='Move_Menu'>"
+            "<menuitem action='PrevView'/>"
+            "<menuitem action='NextView'/>"
+            "<separator/>"
+            "<menuitem action='Home'/>"
+            "<menuitem action='End'/>"
+            "<menuitem action='GotoNew'/>"
+            "<separator/>"
+            "<menuitem action='PreBookMark'/>"
+            "<menuitem action='NextBookMark'/>"
+            "</menu>"
+            ;
+
+            // 検索
+        case ITEM_SEARCH:
+            return
+            "<menu action='Search_Menu'>"
+            "<menuitem action='SearchWeb'/>"
+            "<separator/>"
+            "<menuitem action='SearchNextArticle' />"
+            "<separator/>"
+            "<menuitem action='SearchTitle' />"
+            "<separator/>"
+            "<menuitem action='SearchCacheLocal'/>"
+            "<menu action='SearchCacheAll'>"
+            "<menuitem action='ExecSearchCacheAll'/>"
+            "</menu>"
+            "</menu>"
+            ;
+
+            // NGワード
+        case ITEM_NGWORD:
+            return
+            "<menu action='AboneWord_Menu'>"
+            "<menuitem action='AboneWord'/>"
+            "<menu action='AboneWordBoard'>"
+            "<menuitem action='SetAboneWordBoard'/>"
+            "</menu>"
+            "<menu action='GlobalAboneWord'>"
+            "<menuitem action='SetGlobalAboneWord'/>"
+            "</menu>"
+            "</menu>"
+            ;
+
+            // 引用してレス
+        case ITEM_QUOTE_SELECTION:
+            return "<menuitem action='QuoteSelectionRes' />";
+
+            // リンクをブラウザで開く
+        case ITEM_OPEN_BROWSER:
+            return "<menuitem action='OpenBrowser'/>";
+
+            // ユーザコマンド
+        case ITEM_USER_COMMAND:
+            return m_usrcmd.c_str();
+
+            // リンクのURLをコピー
+        case ITEM_COPY_URL:
+            return "<menuitem action='CopyURL'/>";
+
+            // スレのタイトルとURLをコピー
+        case ITEM_COPY_TITLE_URL_THREAD:
+            return "<menuitem action='CopyTitleURL'/>";
+
+            // コピー
+        case ITEM_COPY:
+            return "<menuitem action='Copy'/>";
+
+            // 再読み込み
+        case ITEM_RELOAD:
+            return "<menuitem action='Reload'/>";
+
+            // dat 保存
+        case ITEM_SAVE_DAT:
+            return "<menuitem action='SaveDat'/>";
+
+            // 情報コピー
+        case ITEM_COPY_THREAD_INFO:
+            return "<menuitem action='CopyInfo'/>";
+
+            // お気に入り
+        case ITEM_FAVORITE:
+            return "<menuitem action='AppendFavorite'/>";
+
+            // プロパティ
+        case ITEM_PREF_THREAD:
+            return "<menuitem action='PreferenceArticle'/>";
+
+            // 区切り
+        case ITEM_SEPARATOR:
+            return "<separator/>";
+    }
+
+    return "";
+}
+
+
+//
 // ユーザコマンドの登録とメニュー作成
 //
-const std::string ArticleViewBase::create_usrcmd_menu()
+void ArticleViewBase::create_usrcmd_menu()
 {
-    std::string menu;
     int dirno = 0;
     int cmdno = 0;
 
-    menu = create_usrcmd_menu( & CORE::get_usrcmd_manager()->xml_document(), dirno, cmdno );
+    m_usrcmd = create_usrcmd_menu( & CORE::get_usrcmd_manager()->xml_document(), dirno, cmdno );
 
 #ifdef _DEBUG
-    std::cout << menu << std::endl;
+    std::cout << m_usrcmd << std::endl;
 #endif
-
-    return menu;
 }
 
 // ユーザコマンドの登録とメニュー作成(再帰用)
@@ -2717,7 +2829,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
-    act = action_group()->get_action( "Preference" );
+    act = action_group()->get_action( "PreferenceArticle" );
     if( act ){
         if( nourl ) act->set_sensitive( false );
         else act->set_sensitive( true );
@@ -3317,6 +3429,13 @@ void ArticleViewBase::slot_copy_res( bool ref )
 }
 
 
+//
+// スレのタイトルとURLをコピー
+//
+void ArticleViewBase::slot_copy_title_url()
+{
+    MISC::CopyClipboard( DBTREE::article_subject( m_url_article ) + '\n' + url_for_copy() );
+}
 
 
 //

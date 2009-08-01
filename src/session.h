@@ -280,34 +280,46 @@ namespace SESSION
     const int parse_item( const std::string& item_name );
 
     // サイドバーのツールバー項目
-    const std::string& get_items_sidebar_str();
-    void set_items_sidebar_str( const std::string& items );
-    const int get_item_sidebar( const int num );
+    const std::string& get_items_sidebar_toolbar_str();
+    const std::string get_items_sidebar_toolbar_default_str();
+    void set_items_sidebar_toolbar_str( const std::string& items );
+    const int get_item_sidebar_toolbar( const int num );
 
     // メインツールバーの項目
     const std::string& get_items_main_toolbar_str();
+    const std::string get_items_main_toolbar_default_str();
     void set_items_main_toolbar_str( const std::string& items_str );
     const int get_item_main_toolbar( const int num );
 
     // スレビューのツールバーの項目
     const std::string& get_items_article_toolbar_str();
+    const std::string get_items_article_toolbar_default_str();
     void set_items_article_toolbar_str( const std::string& items_str );
     const int get_item_article_toolbar( const int num );
 
     // スレ一覧のツールバー項目
     const std::string& get_items_board_toolbar_str();
+    const std::string get_items_board_toolbar_default_str();
     void set_items_board_toolbar_str( const std::string& items );
     const int get_item_board_toolbar( const int num );
 
-    // スレ一覧の項目
-    const std::string& get_items_board_str();
-    void set_items_board_str( const std::string& items );
-    const int get_item_board( const int num );
-
     // 書き込みビューのツールバー項目
     const std::string& get_items_msg_toolbar_str();
+    const std::string get_items_msg_toolbar_default_str();
     void set_items_msg_toolbar_str( const std::string& items );
     const int get_item_msg_toolbar( const int num );
+
+    // スレ一覧の列項目
+    const std::string& get_items_board_col_str();
+    const std::string get_items_board_col_default_str();
+    void set_items_board_col_str( const std::string& items );
+    const int get_item_board_col( const int num );
+
+    // スレビューのコンテキストメニュー項目
+    const std::string& get_items_article_menu_str();
+    const std::string get_items_article_menu_default_str();
+    void set_items_article_menu_str( const std::string& items_str );
+    const int get_item_article_menu( const int num );
 
     // スレ一覧の列幅
     const int col_mark();

@@ -93,7 +93,7 @@ namespace CONTROL
         { "Delete", ITEM_NAME_DELETE },
         { "Reload", ITEM_NAME_RELOAD },
         { "StopLoading", ITEM_NAME_STOPLOADING },
-        { "Copy", "コピー" },
+        { "Copy", ITEM_NAME_COPY },
         { "SelectAll", "全て選択" },
         { "AppendFavorite", ITEM_NAME_FAVORITE "..." },
         { "Property", "プロパティ..." },

@@ -224,18 +224,17 @@ void SelectItemPref::clear()
 
 
 //
-// デフォルトデータを追加( 項目名、アイコンID, 有効/無効  )
+// デフォルトデータを追加( 項目名、アイコンID )
 //
 void SelectItemPref::append_default_pair( const Glib::ustring& name,
-                                           const Glib::RefPtr< Gdk::Pixbuf > icon,
-                                           const bool enabled )
+                                          const Glib::RefPtr< Gdk::Pixbuf > icon )
+
 {
     if( name.empty() ) return;
 
     DEFAULT_DATA default_data;
     default_data.name = name;
     default_data.icon = icon;
-    default_data.enabled = enabled;
 
     m_list_default_data.push_back( default_data );
 }
@@ -685,36 +684,3 @@ void SelectItemPref::slot_add()
     // フォーカスを移す
     set_focus( m_tree_shown );
 }
-
-
-//
-// デフォルトボタン
-//
-void SelectItemPref::slot_default()
-{
-    clear();
-
-    std::list< DEFAULT_DATA >::iterator it = m_list_default_data.begin();
-    while( it != m_list_default_data.end() )
-    {
-        // 表示
-        if( (*it).enabled )
-        {
-            Gtk::TreeModel::Row row = *( m_store_shown->append() );
-
-            if( (*it).icon ) row[ m_columns_shown.m_column_icon ] = (*it).icon;
-            row[ m_columns_shown.m_column_text ] = (*it).name;
-        }
-        // 非表示
-        else
-        {
-            Gtk::TreeModel::Row row = *( m_store_hidden->append() );
-
-            if( (*it).icon ) row[ m_columns_hidden.m_column_icon ] = (*it).icon;
-            row[ m_columns_hidden.m_column_text ] = (*it).name;
-        }
-
-        ++it;
-    }
-}
-

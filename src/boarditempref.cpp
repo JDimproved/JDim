@@ -31,7 +31,7 @@ BoardItemColumnPref::BoardItemColumnPref( Gtk::Window* parent, const std::string
     append_default_pair( ITEM_NAME_SPEED );
 
     // 文字列を元に列を追加
-    append_rows( SESSION::get_items_board_str() );
+    append_rows( SESSION::get_items_board_col_str() );
 
     set_title( "リスト項目設定(スレ一覧)" );
 }
@@ -40,10 +40,19 @@ BoardItemColumnPref::BoardItemColumnPref( Gtk::Window* parent, const std::string
 // OKを押した
 void BoardItemColumnPref::slot_ok_clicked()
 {
-    SESSION::set_items_board_str( get_items() );
+    SESSION::set_items_board_col_str( get_items() );
     CORE::core_set_command( "update_board_columns" );
 }
 
+
+
+//
+// デフォルトボタン
+//
+void BoardItemColumnPref::slot_default()
+{
+    append_rows( SESSION::get_items_board_col_default_str() );
+}
 
 
 ///////////////////////////////////
@@ -53,7 +62,7 @@ void BoardItemColumnPref::slot_ok_clicked()
 BoardItemPref::BoardItemPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )
 {
-    // デフォルトの項目を設定( 無効にする場合には最後に false を付ける )
+    // デフォルトの項目を設定
     append_default_pair( ITEM_NAME_NEWARTICLE, ICON::get_icon( ICON::WRITE ) );
     append_default_pair( ITEM_NAME_SEARCHBOX, ICON::get_icon( ICON::TRANSPARENT ) );
     append_default_pair( ITEM_NAME_SEARCH_NEXT, STOCK_ICON( Gtk::Stock::GO_DOWN ) );
@@ -63,10 +72,10 @@ BoardItemPref::BoardItemPref( Gtk::Window* parent, const std::string& url )
     append_default_pair( ITEM_NAME_FAVORITE, STOCK_ICON( Gtk::Stock::COPY ) );
     append_default_pair( ITEM_NAME_DELETE, STOCK_ICON( Gtk::Stock::DELETE ) );
     append_default_pair( ITEM_NAME_QUIT, STOCK_ICON( Gtk::Stock::CLOSE ) );
-    append_default_pair( ITEM_NAME_PREVVIEW, STOCK_ICON( Gtk::Stock::GO_BACK ), false );
-    append_default_pair( ITEM_NAME_NEXTVIEW, STOCK_ICON( Gtk::Stock::GO_FORWARD ), false );
-    append_default_pair( ITEM_NAME_LOCK, STOCK_ICON( Gtk::Stock::NO ), false );
-    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
+    append_default_pair( ITEM_NAME_PREVVIEW, STOCK_ICON( Gtk::Stock::GO_BACK ) );
+    append_default_pair( ITEM_NAME_NEXTVIEW, STOCK_ICON( Gtk::Stock::GO_FORWARD ) );
+    append_default_pair( ITEM_NAME_LOCK, STOCK_ICON( Gtk::Stock::NO ) );
+    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ) );
 
     // 文字列を元に列を追加
     append_rows( SESSION::get_items_board_toolbar_str() );
@@ -82,3 +91,11 @@ void BoardItemPref::slot_ok_clicked()
     CORE::core_set_command( "update_board_toolbar_button" );
 }
 
+
+//
+// デフォルトボタン
+//
+void BoardItemPref::slot_default()
+{
+    append_rows( SESSION::get_items_board_toolbar_default_str() );
+}

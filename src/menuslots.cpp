@@ -388,9 +388,9 @@ void Core::slot_toggle_show_ssspicon()
 //
 // リスト項目(スレ一覧)の設定
 //
-void Core::slot_setup_boarditemcolumn()
+void Core::slot_setup_boarditem_column()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEMCOLUM, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEM_COLUM, "" );
     pref->run();
     delete pref;
 }
@@ -446,6 +446,17 @@ void Core::slot_setup_articleitem()
 void Core::slot_setup_msgitem()
 {
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_MSGITEM, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
+// コンテキストメニュー(スレビュー)の表示項目
+//
+void Core::slot_setup_articleitem_menu()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLEITEM_MENU, "" );
     pref->run();
     delete pref;
 }

@@ -46,8 +46,8 @@ std::list< bool > article_locked;
 std::list< std::string > image_urls;
 std::list< bool > image_locked;
 
-std::string items_sidebar_str;
-std::vector< int > items_sidebar;
+std::string items_sidebar_toolbar_str;
+std::vector< int > items_sidebar_toolbar;
 
 std::string items_main_toolbar_str;
 std::vector< int > items_main_toolbar;
@@ -58,11 +58,14 @@ std::vector< int > items_article_toolbar;
 std::string items_board_toolbar_str;
 std::vector< int > items_board_toolbar;
 
-std::string items_board_str;
-std::vector< int > items_board;
+std::string items_board_col_str;
+std::vector< int > items_board_col;
 
 std::string items_msg_toolbar_str;
 std::vector< int > items_msg_toolbar;
+
+std::string items_article_menu_str;
+std::vector< int > items_article_menu;
 
 int board_col_mark;
 int board_col_id;
@@ -153,53 +156,68 @@ const int SESSION::parse_item( const std::string& item_name )
     int item = ITEM_END;
 
     if( item_name == ITEM_NAME_BBSLISTVIEW ) item = ITEM_BBSLISTVIEW;
-    if( item_name == ITEM_NAME_FAVORITEVIEW ) item = ITEM_FAVORITEVIEW;
-    if( item_name == ITEM_NAME_BOARDVIEW ) item = ITEM_BOARDVIEW;
-    if( item_name == ITEM_NAME_HISTVIEW ) item = ITEM_HISTVIEW;
-    if( item_name == ITEM_NAME_HIST_BOARDVIEW ) item = ITEM_HIST_BOARDVIEW;
-    if( item_name == ITEM_NAME_HIST_CLOSEVIEW ) item = ITEM_HIST_CLOSEVIEW;
-    if( item_name == ITEM_NAME_ARTICLEVIEW ) item = ITEM_ARTICLEVIEW;
-    if( item_name == ITEM_NAME_IMAGEVIEW ) item = ITEM_IMAGEVIEW;
-    if( item_name == ITEM_NAME_URL ) item = ITEM_URL;
-    if( item_name == ITEM_NAME_GO ) item = ITEM_GO;
-    if( item_name == ITEM_NAME_SEPARATOR ) item = ITEM_SEPARATOR;
+    else if( item_name == ITEM_NAME_FAVORITEVIEW ) item = ITEM_FAVORITEVIEW;
+    else if( item_name == ITEM_NAME_BOARDVIEW ) item = ITEM_BOARDVIEW;
+    else if( item_name == ITEM_NAME_HISTVIEW ) item = ITEM_HISTVIEW;
+    else if( item_name == ITEM_NAME_HIST_BOARDVIEW ) item = ITEM_HIST_BOARDVIEW;
+    else if( item_name == ITEM_NAME_HIST_CLOSEVIEW ) item = ITEM_HIST_CLOSEVIEW;
+    else if( item_name == ITEM_NAME_ARTICLEVIEW ) item = ITEM_ARTICLEVIEW;
+    else if( item_name == ITEM_NAME_IMAGEVIEW ) item = ITEM_IMAGEVIEW;
+    else if( item_name == ITEM_NAME_URL ) item = ITEM_URL;
+    else if( item_name == ITEM_NAME_GO ) item = ITEM_GO;
+    else if( item_name == ITEM_NAME_SEPARATOR ) item = ITEM_SEPARATOR;
 
-    if( item_name == ITEM_NAME_MARK ) item = ITEM_MARK;
-    if( item_name == ITEM_NAME_ID ) item = ITEM_ID;
-    if( item_name == ITEM_NAME_NAME ) item = ITEM_NAME;
-    if( item_name == ITEM_NAME_RES ) item = ITEM_RES;
-    if( item_name == ITEM_NAME_LOAD ) item = ITEM_LOAD;
-    if( item_name == ITEM_NAME_NEW ) item = ITEM_NEW;
-    if( item_name == ITEM_NAME_SINCE ) item = ITEM_SINCE;
-    if( item_name == ITEM_NAME_LASTWRITE ) item = ITEM_LASTWRITE;
-    if( item_name == ITEM_NAME_SPEED ) item = ITEM_SPEED;
+    else if( item_name == ITEM_NAME_MARK ) item = ITEM_MARK;
+    else if( item_name == ITEM_NAME_ID ) item = ITEM_ID;
+    else if( item_name == ITEM_NAME_NAME ) item = ITEM_NAME;
+    else if( item_name == ITEM_NAME_RES ) item = ITEM_RES;
+    else if( item_name == ITEM_NAME_LOAD ) item = ITEM_LOAD;
+    else if( item_name == ITEM_NAME_NEW ) item = ITEM_NEW;
+    else if( item_name == ITEM_NAME_SINCE ) item = ITEM_SINCE;
+    else if( item_name == ITEM_NAME_LASTWRITE ) item = ITEM_LASTWRITE;
+    else if( item_name == ITEM_NAME_SPEED ) item = ITEM_SPEED;
 
-    if( item_name == ITEM_NAME_WRITEMSG ) item = ITEM_WRITEMSG;
-    if( item_name == ITEM_NAME_OPENBOARD ) item = ITEM_OPENBOARD;
-    if( item_name == ITEM_NAME_SEARCH ) item = ITEM_SEARCH;
-    if( item_name == ITEM_NAME_RELOAD ) item = ITEM_RELOAD;
-    if( item_name == ITEM_NAME_STOPLOADING ) item = ITEM_STOPLOADING;
-    if( item_name == ITEM_NAME_FAVORITE ) item = ITEM_FAVORITE;
-    if( item_name == ITEM_NAME_CHECK_UPDATE_ROOT ) item = ITEM_CHECK_UPDATE_ROOT;
-    if( item_name == ITEM_NAME_CHECK_UPDATE_OPEN_ROOT ) item = ITEM_CHECK_UPDATE_OPEN_ROOT;
-    if( item_name == ITEM_NAME_DELETE ) item = ITEM_DELETE;
-    if( item_name == ITEM_NAME_QUIT ) item = ITEM_QUIT;
-    if( item_name == ITEM_NAME_PREVVIEW ) item = ITEM_PREVVIEW;
-    if( item_name == ITEM_NAME_NEXTVIEW ) item = ITEM_NEXTVIEW;
-    if( item_name == ITEM_NAME_LOCK ) item = ITEM_LOCK;
-    if( item_name == ITEM_NAME_LIVE ) item = ITEM_LIVE;
+    else if( item_name == ITEM_NAME_WRITEMSG ) item = ITEM_WRITEMSG;
+    else if( item_name == ITEM_NAME_OPENBOARD ) item = ITEM_OPENBOARD;
+    else if( item_name == ITEM_NAME_SEARCH ) item = ITEM_SEARCH;
+    else if( item_name == ITEM_NAME_DRAWOUT ) item = ITEM_DRAWOUT;
+    else if( item_name == ITEM_NAME_RELOAD ) item = ITEM_RELOAD;
+    else if( item_name == ITEM_NAME_STOPLOADING ) item = ITEM_STOPLOADING;
+    else if( item_name == ITEM_NAME_FAVORITE ) item = ITEM_FAVORITE;
+    else if( item_name == ITEM_NAME_CHECK_UPDATE_ROOT ) item = ITEM_CHECK_UPDATE_ROOT;
+    else if( item_name == ITEM_NAME_CHECK_UPDATE_OPEN_ROOT ) item = ITEM_CHECK_UPDATE_OPEN_ROOT;
+    else if( item_name == ITEM_NAME_COPY ) item = ITEM_COPY;
+    else if( item_name == ITEM_NAME_COPY_URL ) item = ITEM_COPY_URL;
+    else if( item_name == ITEM_NAME_COPY_TITLE_URL ) item = ITEM_COPY_TITLE_URL;
+    else if( item_name == ITEM_NAME_COPY_TITLE_URL_THREAD ) item = ITEM_COPY_TITLE_URL_THREAD;
+    else if( item_name == ITEM_NAME_DELETE ) item = ITEM_DELETE;
+    else if( item_name == ITEM_NAME_QUIT ) item = ITEM_QUIT;
+    else if( item_name == ITEM_NAME_PREVVIEW ) item = ITEM_PREVVIEW;
+    else if( item_name == ITEM_NAME_NEXTVIEW ) item = ITEM_NEXTVIEW;
+    else if( item_name == ITEM_NAME_LOCK ) item = ITEM_LOCK;
+    else if( item_name == ITEM_NAME_LIVE ) item = ITEM_LIVE;
 
-    if( item_name == ITEM_NAME_NEWARTICLE ) item = ITEM_NEWARTICLE;
-    if( item_name == ITEM_NAME_SEARCHBOX ) item = ITEM_SEARCHBOX;
-    if( item_name == ITEM_NAME_SEARCH_NEXT ) item = ITEM_SEARCH_NEXT;
-    if( item_name == ITEM_NAME_SEARCH_PREV ) item = ITEM_SEARCH_PREV;
+    else if( item_name == ITEM_NAME_NEWARTICLE ) item = ITEM_NEWARTICLE;
+    else if( item_name == ITEM_NAME_SEARCHBOX ) item = ITEM_SEARCHBOX;
+    else if( item_name == ITEM_NAME_SEARCH_NEXT ) item = ITEM_SEARCH_NEXT;
+    else if( item_name == ITEM_NAME_SEARCH_PREV ) item = ITEM_SEARCH_PREV;
 
-    if( item_name == ITEM_NAME_INSERTTEXT ) item = ITEM_INSERTTEXT;
-    if( item_name == ITEM_NAME_LOCK_MESSAGE ) item = ITEM_LOCK_MESSAGE;
-    if( item_name == ITEM_NAME_PREVIEW ) item = ITEM_PREVIEW;
+    else if( item_name == ITEM_NAME_INSERTTEXT ) item = ITEM_INSERTTEXT;
+    else if( item_name == ITEM_NAME_LOCK_MESSAGE ) item = ITEM_LOCK_MESSAGE;
+    else if( item_name == ITEM_NAME_PREVIEW ) item = ITEM_PREVIEW;
 
-    if( item_name == ITEM_NAME_UNDO ) item = ITEM_UNDO;
-    if( item_name == ITEM_NAME_REDO ) item = ITEM_REDO;
+    else if( item_name == ITEM_NAME_UNDO ) item = ITEM_UNDO;
+    else if( item_name == ITEM_NAME_REDO ) item = ITEM_REDO;
+
+    else if( item_name == ITEM_NAME_NGWORD ) item = ITEM_NGWORD;
+    else if( item_name == ITEM_NAME_QUOTE_SELECTION ) item = ITEM_QUOTE_SELECTION;
+    else if( item_name == ITEM_NAME_OPEN_BROWSER ) item = ITEM_OPEN_BROWSER;
+    else if( item_name == ITEM_NAME_USER_COMMAND ) item = ITEM_USER_COMMAND;
+    else if( item_name == ITEM_NAME_ETC ) item = ITEM_ETC;
+    else if( item_name == ITEM_NAME_SAVE_DAT ) item = ITEM_SAVE_DAT;
+    else if( item_name == ITEM_NAME_COPY_THREAD_INFO ) item = ITEM_COPY_THREAD_INFO;
+
+    else if( item_name == ITEM_NAME_PREF_THREAD ) item = ITEM_PREF_THREAD;
 
     return item;
 }
@@ -317,74 +335,33 @@ void SESSION::init_session()
     read_list_urls( cf, "article_urls", "article_locked", article_urls, article_locked );
     read_list_urls( cf, "image_urls", "image_locked", image_urls, image_locked );
 
-    items_sidebar_str = cf.get_option_str( "items_sidebar",
-                                 ITEM_NAME_SEARCHBOX + std::string ( " " ) +
-                                 ITEM_NAME_SEARCH_NEXT + std::string ( " " ) +
-                                 ITEM_NAME_SEARCH_PREV + std::string ( " " ) );
+    // サイドバーのツールバー項目
+    items_sidebar_toolbar_str = cf.get_option_str( "items_sidebar", get_items_sidebar_toolbar_default_str() );
+    items_sidebar_toolbar =  parse_items( items_sidebar_toolbar_str );
 
-    items_sidebar =  parse_items( items_sidebar_str );
-
-    items_main_toolbar_str = cf.get_option_str( "items_main_toolbar",
-                                 ITEM_NAME_BBSLISTVIEW + std::string ( " " ) +
-                                 ITEM_NAME_FAVORITEVIEW + std::string ( " " ) +
-                                 ITEM_NAME_BOARDVIEW + std::string ( " " ) +
-                                 ITEM_NAME_ARTICLEVIEW + std::string ( " " ) +
-                                 ITEM_NAME_IMAGEVIEW + std::string ( " " ) +
-                                 ITEM_NAME_SEPARATOR + std::string ( " " ) +
-                                 ITEM_NAME_URL + std::string ( " " ) +
-                                 ITEM_NAME_GO + std::string ( " " ) );
-
+    // メインツールバーの項目
+    items_main_toolbar_str = cf.get_option_str( "items_main_toolbar", get_items_main_toolbar_default_str() );
     items_main_toolbar =  parse_items( items_main_toolbar_str );
 
-    items_article_toolbar_str = cf.get_option_str( "items_article_toolbar",
-                                 ITEM_NAME_WRITEMSG + std::string ( " " ) +
-                                 ITEM_NAME_OPENBOARD + std::string ( " " ) +
-                                 ITEM_NAME_NAME + std::string ( " " ) +
-                                 ITEM_NAME_SEARCH + std::string ( " " ) +
-                                 ITEM_NAME_RELOAD + std::string ( " " ) +
-                                 ITEM_NAME_STOPLOADING + std::string ( " " ) +
-                                 ITEM_NAME_FAVORITE + std::string ( " " ) +
-                                 ITEM_NAME_DELETE + std::string ( " " ) +
-                                 ITEM_NAME_QUIT + std::string ( " " ) );
-
+    // スレビューのツールバーの項目
+    items_article_toolbar_str = cf.get_option_str( "items_article_toolbar", get_items_article_toolbar_default_str() );
     items_article_toolbar =  parse_items( items_article_toolbar_str );
 
-    items_board_toolbar_str = cf.get_option_str( "items_board_toolbar",
-                                 ITEM_NAME_NEWARTICLE + std::string ( " " ) +
-                                 ITEM_NAME_SEARCHBOX + std::string ( " " ) +
-                                 ITEM_NAME_SEARCH_NEXT + std::string ( " " ) +
-                                 ITEM_NAME_SEARCH_PREV + std::string ( " " ) +
-                                 ITEM_NAME_RELOAD + std::string ( " " ) +
-                                 ITEM_NAME_STOPLOADING + std::string ( " " ) +
-                                 ITEM_NAME_FAVORITE + std::string ( " " ) +
-                                 ITEM_NAME_DELETE + std::string ( " " ) +
-                                 ITEM_NAME_QUIT + std::string ( " " ) );
-
+    // スレ一覧のツールバー項目
+    items_board_toolbar_str = cf.get_option_str( "items_board_toolbar", get_items_board_toolbar_default_str() );
     items_board_toolbar =  parse_items( items_board_toolbar_str );
 
-    items_board_str = cf.get_option_str( "items_board",
-                                 ITEM_NAME_MARK + std::string ( " " ) +
-                                 ITEM_NAME_ID + std::string ( " " ) +
-                                 ITEM_NAME_NAME + std::string ( " " ) +
-                                 ITEM_NAME_RES + std::string ( " " ) +
-                                 ITEM_NAME_LOAD + std::string ( " " ) +
-                                 ITEM_NAME_NEW + std::string ( " " ) +
-                                 ITEM_NAME_SINCE + std::string ( " " ) +
-                                 ITEM_NAME_LASTWRITE + std::string ( " " ) +
-                                 ITEM_NAME_SPEED + std::string ( " " ) );
-
-    items_board =  parse_items( items_board_str );
-
-    items_msg_toolbar_str = cf.get_option_str( "items_msg_toolbar",
-                                 ITEM_NAME_PREVIEW + std::string ( " " ) +
-                                 ITEM_NAME_WRITEMSG+ std::string ( " " ) +
-                                 ITEM_NAME_NAME + std::string ( " " ) +
-                                 ITEM_NAME_UNDO + std::string ( " " ) +
-                                 ITEM_NAME_INSERTTEXT + std::string ( " " ) +
-                                 ITEM_NAME_LOCK_MESSAGE + std::string ( " " ) +
-                                 ITEM_NAME_QUIT + std::string ( " " ) );
-
+    // 書き込みビューのツールバー項目
+    items_msg_toolbar_str = cf.get_option_str( "items_msg_toolbar", get_items_msg_toolbar_default_str() );
     items_msg_toolbar =  parse_items( items_msg_toolbar_str );
+
+    // スレ一覧の列項目
+    items_board_col_str = cf.get_option_str( "items_board", get_items_board_col_default_str() );
+    items_board_col =  parse_items( items_board_col_str );
+
+    // スレビューのコンテキストメニュー項目
+    items_article_menu_str = cf.get_option_str( "items_article_menu", get_items_article_menu_default_str() );
+    items_article_menu =  parse_items( items_article_menu_str );
 
     // board ビューの列幅
     board_col_mark = cf.get_option_int( "col_mark", 30, 4, 8192 );
@@ -575,12 +552,13 @@ void SESSION::save_session()
         << "image_urls = " << str_image_urls << std::endl
         << "image_locked = " << str_image_locked << std::endl
 
-        << "items_sidebar = " << items_sidebar_str << std::endl
+        << "items_sidebar = " << items_sidebar_toolbar_str << std::endl
         << "items_main_toolbar = " << items_main_toolbar_str << std::endl
         << "items_article_toolbar = " << items_article_toolbar_str << std::endl
         << "items_board_toolbar = " << items_board_toolbar_str << std::endl
-        << "items_board = " << items_board_str << std::endl
         << "items_msg_toolbar = " << items_msg_toolbar_str << std::endl
+        << "items_board = " << items_board_col_str << std::endl
+        << "items_article_menu = " << items_article_menu_str << std::endl
 
         << "col_mark = " << board_col_mark << std::endl
         << "col_id = " << board_col_id << std::endl
@@ -809,16 +787,36 @@ const std::list< bool >& SESSION::get_image_locked(){ return image_locked; }
 void SESSION::set_image_locked( const std::list< bool >& locked ){ image_locked = locked; }
 
 // サイドバーのツールバーの項目
-const std::string& SESSION::get_items_sidebar_str(){ return items_sidebar_str; }
-void SESSION::set_items_sidebar_str( const std::string& items_str )
+const std::string& SESSION::get_items_sidebar_toolbar_str(){ return items_sidebar_toolbar_str; }
+const std::string SESSION::get_items_sidebar_toolbar_default_str()
 {
-    items_sidebar_str = items_str;
-    items_sidebar = parse_items( items_sidebar_str );
+    return
+    ITEM_NAME_SEARCHBOX + std::string ( " " ) +
+    ITEM_NAME_SEARCH_NEXT + std::string ( " " ) +
+    ITEM_NAME_SEARCH_PREV;
+
 }
-const int SESSION::get_item_sidebar( const int num ){ return items_sidebar[ num ]; }
+void SESSION::set_items_sidebar_toolbar_str( const std::string& items_str )
+{
+    items_sidebar_toolbar_str = items_str;
+    items_sidebar_toolbar = parse_items( items_sidebar_toolbar_str );
+}
+const int SESSION::get_item_sidebar_toolbar( const int num ){ return items_sidebar_toolbar[ num ]; }
 
 // メインツールバーの項目
 const std::string& SESSION::get_items_main_toolbar_str(){ return items_main_toolbar_str; }
+const std::string SESSION::get_items_main_toolbar_default_str()
+{
+    return
+    ITEM_NAME_BBSLISTVIEW + std::string ( " " ) +
+    ITEM_NAME_FAVORITEVIEW + std::string ( " " ) +
+    ITEM_NAME_BOARDVIEW + std::string ( " " ) +
+    ITEM_NAME_ARTICLEVIEW + std::string ( " " ) +
+    ITEM_NAME_IMAGEVIEW + std::string ( " " ) +
+    ITEM_NAME_SEPARATOR + std::string ( " " ) +
+    ITEM_NAME_URL + std::string ( " " ) +
+    ITEM_NAME_GO;
+}
 void SESSION::set_items_main_toolbar_str( const std::string& items_str )
 {
     items_main_toolbar_str = items_str;
@@ -828,6 +826,19 @@ const int SESSION::get_item_main_toolbar( const int num ){ return items_main_too
 
 // スレビューのツールバーの項目
 const std::string& SESSION::get_items_article_toolbar_str(){ return items_article_toolbar_str; }
+const std::string SESSION::get_items_article_toolbar_default_str()
+{
+    return
+    ITEM_NAME_WRITEMSG + std::string ( " " ) +
+    ITEM_NAME_OPENBOARD + std::string ( " " ) +
+    ITEM_NAME_NAME + std::string ( " " ) +
+    ITEM_NAME_SEARCH + std::string ( " " ) +
+    ITEM_NAME_RELOAD + std::string ( " " ) +
+    ITEM_NAME_STOPLOADING + std::string ( " " ) +
+    ITEM_NAME_FAVORITE + std::string ( " " ) +
+    ITEM_NAME_DELETE + std::string ( " " ) +
+    ITEM_NAME_QUIT;
+}
 void SESSION::set_items_article_toolbar_str( const std::string& items_str )
 {
     items_article_toolbar_str = items_str;
@@ -837,6 +848,19 @@ const int SESSION::get_item_article_toolbar( const int num ){ return items_artic
 
 // スレ一覧のツールバー項目
 const std::string& SESSION::get_items_board_toolbar_str(){ return items_board_toolbar_str; }
+const std::string SESSION::get_items_board_toolbar_default_str()
+{
+    return
+    ITEM_NAME_NEWARTICLE + std::string ( " " ) +
+    ITEM_NAME_SEARCHBOX + std::string ( " " ) +
+    ITEM_NAME_SEARCH_NEXT + std::string ( " " ) +
+    ITEM_NAME_SEARCH_PREV + std::string ( " " ) +
+    ITEM_NAME_RELOAD + std::string ( " " ) +
+    ITEM_NAME_STOPLOADING + std::string ( " " ) +
+    ITEM_NAME_FAVORITE + std::string ( " " ) +
+    ITEM_NAME_DELETE + std::string ( " " ) +
+    ITEM_NAME_QUIT;
+}
 void SESSION::set_items_board_toolbar_str( const std::string& items_str )
 {
     items_board_toolbar_str = items_str;
@@ -844,17 +868,19 @@ void SESSION::set_items_board_toolbar_str( const std::string& items_str )
 }
 const int SESSION::get_item_board_toolbar( const int num ){ return items_board_toolbar[ num ]; }
 
-// スレ一覧の項目
-const std::string& SESSION::get_items_board_str(){ return items_board_str; }
-void SESSION::set_items_board_str( const std::string& items_str )
-{
-    items_board_str = items_str;
-    items_board = parse_items( items_board_str );
-}
-const int SESSION::get_item_board( const int num ){ return items_board[ num ]; }
-
 // 書き込みビューのツールバー項目
 const std::string& SESSION::get_items_msg_toolbar_str(){ return items_msg_toolbar_str; }
+const std::string SESSION::get_items_msg_toolbar_default_str()
+{
+    return
+    ITEM_NAME_PREVIEW + std::string ( " " ) +
+    ITEM_NAME_WRITEMSG+ std::string ( " " ) +
+    ITEM_NAME_NAME + std::string ( " " ) +
+    ITEM_NAME_UNDO + std::string ( " " ) +
+    ITEM_NAME_INSERTTEXT + std::string ( " " ) +
+    ITEM_NAME_LOCK_MESSAGE + std::string ( " " ) +
+    ITEM_NAME_QUIT;
+}
 void SESSION::set_items_msg_toolbar_str( const std::string& items_str )
 {
     items_msg_toolbar_str = items_str;
@@ -862,6 +888,56 @@ void SESSION::set_items_msg_toolbar_str( const std::string& items_str )
 }
 const int SESSION::get_item_msg_toolbar( const int num ){ return items_msg_toolbar[ num ]; }
 
+// スレ一覧の列項目
+const std::string& SESSION::get_items_board_col_str(){ return items_board_col_str; }
+const std::string SESSION::get_items_board_col_default_str()
+{
+    return
+    ITEM_NAME_MARK + std::string ( " " ) +
+    ITEM_NAME_ID + std::string ( " " ) +
+    ITEM_NAME_NAME + std::string ( " " ) +
+    ITEM_NAME_RES + std::string ( " " ) +
+    ITEM_NAME_LOAD + std::string ( " " ) +
+    ITEM_NAME_NEW + std::string ( " " ) +
+    ITEM_NAME_SINCE + std::string ( " " ) +
+    ITEM_NAME_LASTWRITE + std::string ( " " ) +
+    ITEM_NAME_SPEED;
+}
+void SESSION::set_items_board_col_str( const std::string& items_str )
+{
+    items_board_col_str = items_str;
+    items_board_col = parse_items( items_board_col_str );
+}
+const int SESSION::get_item_board_col( const int num ){ return items_board_col[ num ]; }
+
+// スレビューのコンテキストメニュー項目
+const std::string& SESSION::get_items_article_menu_str(){ return items_article_menu_str; }
+const std::string SESSION::get_items_article_menu_default_str()
+{
+    return
+    ITEM_NAME_DRAWOUT + std::string ( " " ) +
+    ITEM_NAME_GO + std::string ( " " ) +
+    ITEM_NAME_SEARCH + std::string ( " " ) +
+    ITEM_NAME_NGWORD + std::string ( " " ) +
+    ITEM_NAME_SEPARATOR + std::string ( " " ) +
+    ITEM_NAME_QUOTE_SELECTION + std::string ( " " ) +
+    ITEM_NAME_SEPARATOR + std::string ( " " ) +
+    ITEM_NAME_OPEN_BROWSER + std::string ( " " ) +
+    ITEM_NAME_USER_COMMAND + std::string ( " " ) +
+    ITEM_NAME_SEPARATOR + std::string ( " " ) +
+    ITEM_NAME_COPY_URL + std::string ( " " ) +
+    ITEM_NAME_COPY + std::string ( " " ) +
+    ITEM_NAME_SEPARATOR + std::string ( " " ) +
+    ITEM_NAME_ETC + std::string ( " " ) +
+    ITEM_NAME_SEPARATOR + std::string ( " " ) +
+    ITEM_NAME_PREF_THREAD;
+}
+void SESSION::set_items_article_menu_str( const std::string& items_str )
+{
+    items_article_menu_str = items_str;
+    items_article_menu = parse_items( items_article_menu_str );
+}
+const int SESSION::get_item_article_menu( const int num ){ return items_article_menu[ num ]; }
 
 // board ビューの列幅
 const int SESSION::col_mark(){ return board_col_mark; }

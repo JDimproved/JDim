@@ -244,12 +244,13 @@ namespace CORE
         void slot_toggle_use_imgpopup();
         void slot_toggle_use_inlineimg();
         void slot_toggle_show_ssspicon();
-        void slot_setup_boarditemcolumn();
+        void slot_setup_boarditem_column();
         void slot_setup_mainitem();
         void slot_setup_sidebaritem();
         void slot_setup_boarditem();
         void slot_setup_articleitem();
         void slot_setup_msgitem();
+        void slot_setup_articleitem_menu();
         //
         void slot_board_pref();
         void slot_article_pref();

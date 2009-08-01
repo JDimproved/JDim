@@ -79,6 +79,9 @@ namespace ARTICLE
         // ライブモードか
         bool m_live;
 
+        // メニューのユーザコマンド、 create_usrcmd_menu() で作成
+        std::string m_usrcmd;
+
     public:
 
         ArticleViewBase( const std::string& url );
@@ -226,7 +229,13 @@ namespace ARTICLE
         virtual DrawAreaBase* create_drawarea();        
 
         void setup_action();
-        const std::string create_usrcmd_menu();
+
+        // 通常の右クリックメニューの作成
+        const std::string create_context_menu();
+        const char* get_menu_item( const int item );
+
+        // ユーザコマンドの登録とメニューの作成
+        void create_usrcmd_menu();
         const std::string create_usrcmd_menu( XML::Dom* dom, int& dirno, int& cmdno );
 
         virtual void exec_reload();
@@ -274,6 +283,7 @@ namespace ARTICLE
         void slot_search_title();
         void slot_usrcmd( int num );
         void slot_copy_res( bool ref );
+        void slot_copy_title_url();
         void slot_drawout_res();
         void slot_drawout_around();
         void slot_drawout_tmp();

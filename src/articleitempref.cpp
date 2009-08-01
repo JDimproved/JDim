@@ -18,7 +18,7 @@ using namespace CORE;
 ArticleItemPref::ArticleItemPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )
 {
-    // デフォルトの項目を設定( 無効にする場合には最後に false を付ける )
+    // デフォルトの項目を設定
     append_default_pair( ITEM_NAME_WRITEMSG, ICON::get_icon( ICON::WRITE ) );
     append_default_pair( ITEM_NAME_OPENBOARD, ICON::get_icon( ICON::TRANSPARENT ) );
     append_default_pair( ITEM_NAME_NAME, ICON::get_icon( ICON::TRANSPARENT ) );
@@ -28,15 +28,15 @@ ArticleItemPref::ArticleItemPref( Gtk::Window* parent, const std::string& url )
     append_default_pair( ITEM_NAME_FAVORITE, STOCK_ICON( Gtk::Stock::COPY ) );
     append_default_pair( ITEM_NAME_DELETE, STOCK_ICON( Gtk::Stock::DELETE ) );
     append_default_pair( ITEM_NAME_QUIT, STOCK_ICON( Gtk::Stock::CLOSE ) );
-    append_default_pair( ITEM_NAME_PREVVIEW, STOCK_ICON( Gtk::Stock::GO_BACK ), false );
-    append_default_pair( ITEM_NAME_NEXTVIEW, STOCK_ICON( Gtk::Stock::GO_FORWARD ), false );
-    append_default_pair( ITEM_NAME_LOCK, STOCK_ICON( Gtk::Stock::NO ), false );
+    append_default_pair( ITEM_NAME_PREVVIEW, STOCK_ICON( Gtk::Stock::GO_BACK ) );
+    append_default_pair( ITEM_NAME_NEXTVIEW, STOCK_ICON( Gtk::Stock::GO_FORWARD ) );
+    append_default_pair( ITEM_NAME_LOCK, STOCK_ICON( Gtk::Stock::NO ) );
 #if GTKMMVER <= 240
-    append_default_pair( ITEM_NAME_LIVE, ICON::get_icon( ICON::PLAY ), false );
+    append_default_pair( ITEM_NAME_LIVE, ICON::get_icon( ICON::PLAY ) );
 #else
-    append_default_pair( ITEM_NAME_LIVE, STOCK_ICON( Gtk::Stock::MEDIA_PLAY ), false );
+    append_default_pair( ITEM_NAME_LIVE, STOCK_ICON( Gtk::Stock::MEDIA_PLAY ) );
 #endif
-    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ), false );
+    append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ) );
 
     // 文字列を元に行を追加
     append_rows( SESSION::get_items_article_toolbar_str() );
@@ -54,3 +54,11 @@ void ArticleItemPref::slot_ok_clicked()
     CORE::core_set_command( "update_article_toolbar_button" );
 }
 
+
+//
+// デフォルトボタン
+//
+void ArticleItemPref::slot_default()
+{
+    append_rows( SESSION::get_items_article_toolbar_default_str() );
+}
