@@ -62,6 +62,8 @@ bool DrawAreaPopup::exec_layout()
 //
 bool DrawAreaPopup::slot_configure_event( GdkEventConfigure* event )
 {
+    if( ! is_drawarea_realized() ) return true;
+
 #ifdef _DEBUG
     std::cout << "DrawAreaPopup::slot_configure_event\n";
 #endif

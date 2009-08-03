@@ -19,8 +19,6 @@ namespace CORE
     // cssプロパティ
     struct CSS_PROPERTY
     {
-        bool width; // != 0 の場合は幅固定
-
         int align; // text-align
 
         int border_style;

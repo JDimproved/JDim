@@ -259,6 +259,10 @@ namespace ARTICLE
 
       protected:
 
+        // リアライズしたか
+        // Gtk::Widget::is_realized() はうまく動作しない
+        const bool is_drawarea_realized(){ return m_window; }
+
         // バックスクリーン描画
         bool draw_backscreen( const bool redraw_all = false );
 
@@ -275,7 +279,7 @@ namespace ARTICLE
 
         // レイアウト処理
         virtual bool exec_layout();
-        bool exec_layout_impl( const bool is_popup, const int offset_y );
+        const bool exec_layout_impl( const bool is_popup, const int offset_y );
 
         // バックスクリーンをDrawAreaにコピー
         bool draw_drawarea( int x = 0, int y = 0, int width = 0, int height = 0 );

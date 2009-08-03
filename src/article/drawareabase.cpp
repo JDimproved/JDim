@@ -649,7 +649,7 @@ bool DrawAreaBase::exec_layout()
 // is_popup = true ならポップアップウィンドウの幅を親ビューの幅とする
 // offset_y は y 座標の上オフセット行数
 //
-bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
+const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 {
     // 起動中とシャットダウン中は処理しない
     if( SESSION::is_booting() ) return false;
@@ -663,40 +663,32 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
     int width_view = m_view.get_width();
     const int height_view = m_view.get_height();
 
-    // ポップアップウィンドウの幅
-    int popup_max_width = 0;
-
-    // ポップアップである
-    if ( is_popup )
-    {
-        DrawAreaBase* base_drawarea = NULL;
-        base_drawarea = SESSION::get_base_drawarea();
-
-        Gtk::DrawingArea* base_drawing = NULL;
-        base_drawing = base_drawarea->get_view();
-
-        width_view = base_drawing->get_width();
-
-        Gtk::VScrollbar* base_vscrbar = NULL;
-        base_vscrbar = base_drawarea->get_vscrbar();
-
-        // 親ビューは常にスクロールバーを含むので、その分の幅を引いた値にする
-        popup_max_width = base_drawarea->get_width() - base_vscrbar->get_width();
-    }
+    int width_base_vscrbar = 0;
+    if( is_popup ) width_base_vscrbar = SESSION::get_base_drawarea()->get_vscrbar()->get_width();
 
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::exec_layout_impl : url = " << m_url << std::endl
-              << "is_popupwin = " << is_popupwin << " width_view = " << width_view << " height_view  = " << height_view << std::endl
-              << "m_width_client = " << m_width_client << " m_height_client = " << m_height_client << std::endl;
+    std::cout << "DrawAreaBase::exec_layout_impl : is_popup = " << is_popup << " url = " << m_url << std::endl;
 #endif
 
     //表示はされてるがまだリサイズしてない状況
-    if( ! is_popup && height_view < LAYOUT_MIN_HEIGHT ){
+    if( height_view < LAYOUT_MIN_HEIGHT ){
+
+        // ポップアップで無い場合は処理しない
+        if( ! is_popup ){
 #ifdef _DEBUG
-        std::cout << "drawarea is not resized yet.\n";
+            std::cout << "drawarea is not resized yet.\n";
 #endif        
-        return false;
+            return false;
+        }
+
+        // ポップアップの場合、横幅が確定出来ないのでメインウィンドウのスレビューの
+        // drawarea の幅を最大幅とする
+        width_view = SESSION::get_base_drawarea()->get_view()->get_width();
     }
+
+#ifdef _DEBUG
+    std::cout << "width_view = " << width_view << " height_view  = " << height_view << std::endl;
+#endif
 
     // 新着セパレータの挿入
     // 実況時は新着セパレータを表示しない(スクロールがガタガタするから)
@@ -717,25 +709,22 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
         LAYOUT* layout = header->next_layout;
         if( ! layout ) break;
 
+        // (注) header は div ノードであり、クラス名は "res"
+        // 詳しくは LayoutTree::create_layout_header() を参照せよ
         CORE::get_css_manager()->set_size( header->css, m_font_height );
 
-        // ヘッダブロックの位置をセット
-        if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_icon( ICON::BKMARK_THREAD );
+        // div の位置と幅を計算
+        // 高さは子ノードのレイアウトが全て済んでから計算
+        if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_icon( ICON::BKMARK_THREAD ); // 最低でもブックマークのアイコン分だけ左のスペース開ける
         x = MAX( 1 + m_pixbuf_bkmk->get_width() + 1, m_css_body.padding_left + header->css->mrg_left );
         y += header->css->mrg_top;
 
         if( ! header->rect ) header->rect = m_layout_tree->create_rect();
         header->rect->x = x;
         header->rect->y = y;
+        header->rect->width = width_view - x - ( header->css->mrg_right + m_css_body.padding_right );
 
-        // 幅が固定でない場合はここで幅を計算
-        if( ! header->css->width ){
-            header->rect->width = width_view
-            - ( m_css_body.padding_left + m_css_body.padding_right )
-            - ( header->css->mrg_left + header->css->mrg_right );
-        }
-        else header->rect->width = header->css->width;
-
+        // 内部ノードの開始座標
         x += header->css->padding_left;
         y += header->css->padding_top;
 
@@ -747,7 +736,8 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 
             switch( layout->type ){
 
-                case DBTREE::NODE_DIV:  // div
+                // div (注) div の中に div は作れない仕様になっている( header は除く )
+                case DBTREE::NODE_DIV:
 
                     // 違うdivに切り替わったら以前のdivの高さを更新
                     if( current_div ){
@@ -764,8 +754,9 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 
                     current_div = layout;
 
+                    // div の位置と幅を計算
+                    // 高さは違う div に切り替わった時に計算
                     CORE::get_css_manager()->set_size( current_div->css, m_font_height );
-
                     x = header->rect->x + header->css->padding_left;
                     x += current_div->css->mrg_left;
                     y += current_div->css->mrg_top;
@@ -773,15 +764,11 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
                     if( ! current_div->rect ) current_div->rect = m_layout_tree->create_rect();
                     current_div->rect->x = x;
                     current_div->rect->y = y;
+                    current_div->rect->width = header->rect->width
+                    - ( header->css->padding_left + current_div->css->mrg_left )
+                    - ( header->css->padding_right + current_div->css->mrg_right );
 
-                    if( ! current_div->css->width ){ // divの幅が固定でない場合はここで幅を計算
-
-                        current_div->rect->width = header->rect->width
-                        - ( header->css->padding_left + header->css->padding_right )
-                        - ( current_div->css->mrg_left + current_div->css->mrg_right );
-                    }
-                    else current_div->rect->width = current_div->css->width;
-
+                    // divの内部にあるノードの開始座標
                     x += current_div->css->padding_left;
                     y += current_div->css->padding_top;
 
@@ -871,6 +858,11 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
                 // divの中なら右スペースの分も足す
                 if( layout->div ) width_tmp += ( layout->div->css->padding_right + layout->div->css->mrg_right );
 
+                width_tmp += m_mrg_right + m_css_body.padding_right;
+                if( width_tmp > width_view ) width_tmp = width_view;
+
+                width_tmp += width_base_vscrbar;
+
                 if( width_tmp > m_width_client ) m_width_client = width_tmp;
             }
 
@@ -901,10 +893,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
     }
 
     y += m_css_body.padding_bottom;
-
-    // ポップアップの場合は幅を親ビューに合わせる
-    if( is_popup ) m_width_client = MIN( m_width_client, popup_max_width );
-
+    
     // クライアント領域の高さ確定
     m_height_client = y;
 
@@ -914,12 +903,24 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 #endif
 
     // 実際に画面に表示されてない
-    if( !m_window ) return false;
+    if( ! is_drawarea_realized() ){
+#ifdef _DEBG
+        std::cout << "windows is not shown yet\n";
+#endif        
+        return false;
+    }
 
     // 表示はされてるがまだリサイズしてない状況
-    if( height_view < LAYOUT_MIN_HEIGHT ) return false;
+    if( height_view < LAYOUT_MIN_HEIGHT ){
+#ifdef _DEBG
+        std::cout << "windows is not resized yet\n";
+#endif        
+        return false;
+    }
     
-    // スクロールバーが表示されていないならここで作成
+    // ポップアップなどでスクロールバーが表示されていないならここで作成
+    // (注) メインウィンドウのスレビューなどは DrawAreaBase::setup() の show_scrbar
+    // が true 指定されているので、はじめからスクロールバーが表示されている
     if( ! m_vscrbar && m_height_client > height_view ) create_scrbar();
 
     // adjustment 範囲変更
