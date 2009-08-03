@@ -24,7 +24,7 @@ namespace MISC
       : m_hash_size( hash_size )
         {}
 
-        ~simple_hash_set()
+        virtual ~simple_hash_set()
         {
 #ifdef _DEBUG
             std::cout << "simple_hash_set::~simple_hash_set\n";

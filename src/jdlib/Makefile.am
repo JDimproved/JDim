@@ -9,7 +9,7 @@ libjdlib_a_SOURCES = \
 	miscgtk.cpp \
 	jdthread.cpp \
 	misccharcode.cpp \
-        heap.cpp \
+	heap.cpp \
 	jdiconv.cpp \
 	loader.cpp \
 	ssl.cpp \
