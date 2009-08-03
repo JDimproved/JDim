@@ -9,19 +9,15 @@
 #include <limits.h>
 #include <cstring>
 
-#ifdef USE_GTHREAD
-static void jdth_slot_wrapper( STARTFUNC func, void* arg )
-{
-    func( arg );
-}
-#endif
-
 using namespace JDLIB;
 
 
 Thread::Thread()
 {
     JDTH_CLEAR( m_thread );
+#ifdef USE_GTHREAD
+    if( !Glib::thread_supported() ) Glib::thread_init();
+#endif
 }
 
 
@@ -34,6 +30,14 @@ Thread::~Thread()
 
     join();
 }
+
+
+#ifdef USE_GTHREAD
+void Thread::slot_wrapper( STARTFUNC func, void* arg )
+{
+    func( arg );
+}
+#endif
 
 
 // スレッド作成
@@ -50,10 +54,9 @@ const bool Thread::create( STARTFUNC func , void* arg, const bool detach, const 
     std::cout << "Thread::create (gthread)\n";
 #endif
 
-    if( !Glib::thread_supported() ) Glib::thread_init();
-    
     try {
-        m_thread = Glib::Thread::create( sigc::bind( sigc::ptr_fun( jdth_slot_wrapper ), func, arg ),
+        m_thread = Glib::Thread::create(
+            sigc::bind( sigc::ptr_fun( Thread::slot_wrapper ), func, arg ),
             stack_kbyte * 1024, ! detach, true, Glib::THREAD_PRIORITY_NORMAL );
     }
     catch( Glib::ThreadError& err )

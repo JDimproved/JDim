@@ -17,7 +17,8 @@ libjdlib_a_SOURCES = \
 	confloader.cpp \
 	jdregex.cpp \
 	jdmigemo.cpp \
-	tfidf.cpp
+	tfidf.cpp \
+	misctimeout.cpp
 
 noinst_HEADERS = \
 	miscutil.h \
@@ -39,7 +40,8 @@ noinst_HEADERS = \
 	jdregex.h \
 	jdmigemo.h \
 	tfidf.h \
-	hash_set.h
+	hash_set.h \
+	misctimeout.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

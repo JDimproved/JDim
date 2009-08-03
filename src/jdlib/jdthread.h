@@ -40,7 +40,11 @@ namespace JDLIB
     {
         JDTH_TYPE m_thread;
 
-      public:
+#ifdef USE_GTHREAD
+        static void slot_wrapper( STARTFUNC func, void* arg );
+#endif
+
+    public:
 
         Thread();
         virtual ~Thread();

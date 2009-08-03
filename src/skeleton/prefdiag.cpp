@@ -36,7 +36,10 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_
 
 PrefDiag::~PrefDiag()
 {
-    m_conn_timer.disconnect();
+    if( m_conn_timer != NULL )
+    {
+        delete m_conn_timer;
+    }
 }
 
 
@@ -60,7 +63,7 @@ int PrefDiag::run(){
 
     // タイマーセット
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &PrefDiag::slot_timeout), 0 );
-    m_conn_timer = Glib::signal_timeout().connect( slot_timeout, TIMER_TIMEOUT );
+    m_conn_timer = MISC::Timeout::connect( slot_timeout, TIMER_TIMEOUT );
 
     int ret = Gtk::Dialog::run();
 

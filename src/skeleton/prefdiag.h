@@ -7,6 +7,8 @@
 
 #include <gtkmm.h>
 
+#include "jdlib/misctimeout.h"
+
 namespace SKELETON
 {
     class PrefDiag : public Gtk::Dialog
@@ -16,7 +18,7 @@ namespace SKELETON
         Gtk::Button* m_bt_ok;
         Gtk::Button m_bt_apply;
 
-        sigc::connection m_conn_timer;
+        MISC::Timeout* m_conn_timer;
 
       public:
 

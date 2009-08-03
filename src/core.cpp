@@ -41,6 +41,7 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
 #include "jdlib/loader.h"
+#include "jdlib/misctimeout.h"
 
 #include "dbtree/interface.h"
 #include "dbimg/imginterface.h"
@@ -2941,7 +2942,7 @@ void Core::exec_command_after_boot()
 
     // タイマーセット
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
-    sigc::connection conn = Glib::signal_timeout().connect( slot_timeout, TIMER_TIMEOUT );
+    MISC::Timeout::connect( slot_timeout, TIMER_TIMEOUT );
 
     // 2chログイン
     if( SESSION::login2ch() ) slot_toggle_login2ch();

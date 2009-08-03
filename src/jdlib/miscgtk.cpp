@@ -288,7 +288,9 @@ void MISC::ImgLoader::slot_size_prepared( int w, int h )
 
     m_width = w;
     m_height = h;
+#ifndef _WIN32
     m_stop = true;
+#endif
 }
 
 
