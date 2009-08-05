@@ -80,7 +80,7 @@ Timeout* Timeout::connect( const sigc::slot< bool > slot_timeout, unsigned int i
 }
 
 #ifdef _WIN32
-void Timeout::slot_timeout()
+void Timeout::slot_timeout_call()
 {
     m_context->acquire();
     m_slot_timeout();
@@ -91,7 +91,7 @@ void Timeout::slot_timeout()
 VOID CALLBACK Timeout::slot_timeout_win32( HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime )
 {
     Timeout* timeout = s_timeouts[ idEvent ];
-    timeout->slot_timeout();
+    timeout->slot_timeout_call();
 }
 #endif
 
