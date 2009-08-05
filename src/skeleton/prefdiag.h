@@ -7,7 +7,7 @@
 
 #include <gtkmm.h>
 
-#include "jdlib/misctimeout.h"
+#include "jdlib/timeout.h"
 
 namespace SKELETON
 {
@@ -18,7 +18,7 @@ namespace SKELETON
         Gtk::Button* m_bt_ok;
         Gtk::Button m_bt_apply;
 
-        MISC::Timeout* m_conn_timer;
+        JDLIB::Timeout* m_conn_timer;
 
       public:
 

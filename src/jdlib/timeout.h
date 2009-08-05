@@ -1,7 +1,7 @@
 // ライセンス: GPL2
 
-#ifndef _MISCTIMEOUT_H
-#define _MISCTIMEOUT_H
+#ifndef _TIMEOUT_H
+#define _TIMEOUT_H
 
 #include <gtkmm.h>
 #ifdef _WIN32
@@ -9,7 +9,7 @@
 #undef DELETE // conflict with Gtk::Stock::DELETE
 #endif
 
-namespace MISC
+namespace JDLIB
 {
     class Timeout
     {
@@ -41,4 +41,4 @@ namespace MISC
     };
 }
 
-#endif // _MISCTIMEOUT_H
+#endif // _TIMEOUT_H

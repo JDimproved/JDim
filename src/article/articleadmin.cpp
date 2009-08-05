@@ -14,7 +14,7 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/miscmsg.h"
-#include "jdlib/misctimeout.h"
+#include "jdlib/timeout.h"
 
 #include "skeleton/view.h"
 #include "skeleton/dragnote.h"
@@ -67,7 +67,7 @@ ArticleAdmin::ArticleAdmin( const std::string& url )
     // オートスクロール時など、スムースにスクロールをするため描画用タイマーを
     // メインタイマと別にする。DrawAreaBase::clock_in_smooth_scroll() も参照すること
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &ArticleAdmin::clock_in_smooth_scroll ), 0 );
-    MISC::Timeout::connect( slot_timeout, TIMER_TIMEOUT_SMOOTH_SCROLL );
+    JDLIB::Timeout::connect( slot_timeout, TIMER_TIMEOUT_SMOOTH_SCROLL );
 }
 
 

@@ -63,7 +63,7 @@ int PrefDiag::run(){
 
     // タイマーセット
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &PrefDiag::slot_timeout), 0 );
-    m_conn_timer = MISC::Timeout::connect( slot_timeout, TIMER_TIMEOUT );
+    m_conn_timer = JDLIB::Timeout::connect( slot_timeout, TIMER_TIMEOUT );
 
     int ret = Gtk::Dialog::run();
 

@@ -1,13 +1,13 @@
 // ライセンス: GPL2
 
-#include "misctimeout.h"
+#include "timeout.h"
 #include "miscmsg.h"
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
 #endif
 
-using namespace MISC;
+using namespace JDLIB;
 
 #ifdef _WIN32
 // static
