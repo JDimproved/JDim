@@ -29,7 +29,7 @@ namespace SKELETON
 
 namespace BBSLIST
 {
-    class hash_set_thread : public MISC::simple_hash_set
+    class hash_set_thread : public JDLIB::simple_hash_set
     {
       public:
         hash_set_thread();

@@ -9,7 +9,7 @@
 #include <set>
 #include <string>
 
-namespace MISC
+namespace JDLIB
 {
     typedef std::set< std::string > HASH_SET_ITEM;
 

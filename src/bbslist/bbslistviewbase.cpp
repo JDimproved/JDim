@@ -103,7 +103,7 @@ enum
 };
 
 hash_set_thread::hash_set_thread()
-    : MISC::simple_hash_set( HASH_TBLSIZE )
+    : JDLIB::simple_hash_set( HASH_TBLSIZE )
 {}
 
 
