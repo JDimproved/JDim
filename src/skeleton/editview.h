@@ -99,6 +99,9 @@ namespace SKELETON
 
         // クリップボードから引用
         bool slot_quote_clipboard( GdkEventButton* event );
+
+        // 変換(スペース⇔&nbsp;)
+        bool slot_convert_space( GdkEventButton* event );
  
         // JDの動作環境を記入
         bool slot_write_jdinfo( GdkEventButton* event );

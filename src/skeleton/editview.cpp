@@ -451,6 +451,11 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
     menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_write_jdinfo ) );
     menu->prepend( *menuitem );
 
+    // 変換(スペース⇔&nbsp;)
+    menuitem = Gtk::manage( new Gtk::MenuItem( "変換(スペース⇔&nbsp;)" ) );
+    menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_convert_space ) );
+    menu->prepend( *menuitem );
+
     // クリップボードから引用
     menuitem = Gtk::manage( new Gtk::MenuItem( "クリップボードから引用" ) );
     menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_quote_clipboard ) );
@@ -498,6 +503,49 @@ bool EditTextView::slot_quote_clipboard( GdkEventButton* event )
 
     text = MISC::replace_str( text, "\n", "\n" + str_res );
     insert_str( str_res + text, false );
+    return true;
+}
+
+
+//
+// 変換(スペース⇔&nbsp;)
+//
+bool EditTextView::slot_convert_space( GdkEventButton* event )
+{
+    Glib::RefPtr< Gtk::TextBuffer > buffer = get_buffer();
+    std::string text = buffer->get_text();
+    std::string converted;
+
+    // &nbsp;が含まれていたらスペースに変換する
+    if( text.find( "&nbsp;", 0 ) != std::string::npos )
+    {
+        converted = MISC::replace_str( text, "&nbsp;", " " );
+    }
+    else
+    {
+        size_t rpos = std::string::npos;
+        size_t nlpos = std::string::npos;
+
+        // 改行前のスペースを取り除く
+        while( ( nlpos = text.rfind( "\n", rpos ) ) != std::string::npos )
+        {
+            if( nlpos == 0 ) break;
+            rpos = nlpos;
+            while( text[ rpos - 1 ] == ' ' ) rpos--;
+            text.erase( rpos, nlpos - rpos );
+            rpos--;
+        }
+
+        // 最後のスペースを取り除く
+        rpos = text.length();
+        while( text[ rpos - 1 ] == ' ' ) rpos--;
+        text.erase( rpos, std::string::npos );
+
+        converted = MISC::replace_str( text, " ", "&nbsp;" );
+    }
+
+    buffer->set_text( converted );
+
     return true;
 }
 
