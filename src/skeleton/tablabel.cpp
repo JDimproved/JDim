@@ -13,6 +13,12 @@
 
 using namespace SKELETON;
 
+enum
+{
+    SPACING_LABEL = 4 // アイコンとラベルの間のスペース
+};
+
+
 TabLabel::TabLabel( const std::string& url )
     : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_image( NULL ), m_image_width( 0 )
 {
@@ -53,6 +59,7 @@ void TabLabel::set_id_icon( const int id )
     if( !m_image ){
         m_image = new Gtk::Image();
         m_hbox.remove( m_label );
+        m_hbox.set_spacing( SPACING_LABEL );
         m_hbox.pack_start( *m_image, Gtk::PACK_SHRINK );
         m_hbox.pack_start( m_label, Gtk::PACK_SHRINK );
         show_all_children();
