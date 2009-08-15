@@ -23,6 +23,7 @@ using namespace HISTORY;
 
 enum
 {
+    SPACING_MENU = 4, // アイコンと項目名の間のスペース
     HIST_MAX_LNG = 50 // 履歴に表示する文字数(半角)
 };
 
@@ -63,6 +64,7 @@ HistorySubMenu::HistorySubMenu( const std::string& url_history )
         m_vec_label.push_back( label );
 
         Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox() );
+        hbox->set_spacing( SPACING_MENU );
         hbox->pack_start( *image, Gtk::PACK_SHRINK );
         hbox->pack_start( *label, Gtk::PACK_SHRINK );
 

@@ -11,6 +11,12 @@
 
 #include "icons/iconmanager.h"
 
+enum
+{
+    SPACING_MENU = 4, // アイコンと項目名の間のスペース
+};
+
+
 using namespace SKELETON;
 
 TabSwitchMenu::TabSwitchMenu( DragableNoteBook* notebook, Admin* admin )
@@ -36,6 +42,7 @@ TabSwitchMenu::TabSwitchMenu( DragableNoteBook* notebook, Admin* admin )
         Gtk::Label* label = Gtk::manage( new Gtk::Label( MISC::cut_str( name, maxsize ) ) );
 
         Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox() );
+        hbox->set_spacing( SPACING_MENU );
         hbox->pack_start( *image, Gtk::PACK_SHRINK );
         hbox->pack_start( *label, Gtk::PACK_SHRINK );
 
