@@ -61,15 +61,27 @@ namespace CORE
                                  const int number
             );
 
-        const bool is_sensitive( int num, const std::string& link, const std::string& selection );
-        const bool is_hide( int num, const std::string& url );
+        // ユーザコマンドメニューの作成
+        const std::string create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group );
+        const std::string create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group,
+                                              XML::Dom* dom, int& dirno, int& cmdno );
 
+        Glib::RefPtr< Gtk::Action > get_action( Glib::RefPtr< Gtk::ActionGroup >& action_group, const int num );
+
+        // 選択不可かどうか判断して visible や sensitive を切り替える
+        void toggle_sensitive( Glib::RefPtr< Gtk::ActionGroup >& action_group,
+                               const std::string& url_article,
+                               const std::string& url_link,
+                               const std::string& str_select );
       private:
 
         void txt2xml();
 
         const bool show_replacetextdiag( std::string& texti, const std::string& title );
         void set_cmd( const std::string& cmd );
+
+        const bool is_sensitive( int num, const std::string& link, const std::string& selection );
+        const bool is_hide( int num, const std::string& url );
     };
 
     ///////////////////////////////////////

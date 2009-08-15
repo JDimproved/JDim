@@ -34,6 +34,8 @@ namespace BOARD
         // ツールバー
         virtual void show_toolbar();
         virtual void toggle_toolbar();
+        virtual void open_searchbar();
+        virtual void close_searchbar();
 
         virtual void command_local( const COMMAND_ARGS& command );
 

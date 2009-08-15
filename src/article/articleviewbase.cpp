@@ -238,6 +238,8 @@ void ArticleViewBase::setup_action()
     // あぼーん系
     action_group()->add( Gtk::Action::create( "AboneWord_Menu", ITEM_NAME_NGWORD + std::string( "(_N)" ) ) );
     action_group()->add( Gtk::Action::create( "AboneRes", "レスをあぼ〜んする(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_res ) );
+    action_group()->add( Gtk::Action::create( "AboneSelectionRes", ITEM_NAME_ABONE_SELECTION + std::string( "(_A)") ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_abone_selection_res ) );
     action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加(_G)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
     action_group()->add( Gtk::Action::create( "AboneName", "NG 名前に追加 (対象: ローカル)(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
     action_group()->add( Gtk::Action::create( "AboneWord", "NG ワードに追加 (対象: ローカル)(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_word ) );
@@ -290,7 +292,13 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "CopyInfo", ITEM_NAME_COPY_THREAD_INFO + std::string( "(_I)..." ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_copy_article_info ) );
 
-    create_usrcmd_menu();
+    m_usrcmd = CORE::get_usrcmd_manager()->create_usrcmd_menu( action_group() );
+    const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
+    for( int i = 0; i < usrcmd_size; ++i ){
+        Glib::RefPtr< Gtk::Action > act = CORE::get_usrcmd_manager()->get_action( action_group(), i );
+        if( act ) act->signal_activate().connect(
+            sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::slot_usrcmd ), i ) );
+    }
 
     ui_manager().clear();
     ui_manager() = Gtk::UIManager::create();    
@@ -449,6 +457,7 @@ const std::string ArticleViewBase::create_context_menu()
     list_menu.push_back( ITEM_SAVE_DAT );
     list_menu.push_back( ITEM_COPY_THREAD_INFO );
     list_menu.push_back( ITEM_FAVORITE );
+    list_menu.push_back( ITEM_ABONE_SELECTION );
     list_menu.push_back( ITEM_PREF_THREAD );
 
     // メニューに含まれていない項目を抜き出して「その他」に含める
@@ -552,6 +561,12 @@ const char* ArticleViewBase::get_menu_item( const int item )
             "</menu>"
             ;
 
+            // 選択範囲のレスをあぼーん
+        case ITEM_ABONE_SELECTION:
+            return
+            "<menuitem action='AboneSelectionRes' />"
+            ;
+
             // 引用してレス
         case ITEM_QUOTE_SELECTION:
             return "<menuitem action='QuoteSelectionRes' />";
@@ -602,81 +617,6 @@ const char* ArticleViewBase::get_menu_item( const int item )
     }
 
     return "";
-}
-
-
-//
-// ユーザコマンドの登録とメニュー作成
-//
-void ArticleViewBase::create_usrcmd_menu()
-{
-    int dirno = 0;
-    int cmdno = 0;
-
-    m_usrcmd = create_usrcmd_menu( & CORE::get_usrcmd_manager()->xml_document(), dirno, cmdno );
-
-#ifdef _DEBUG
-    std::cout << m_usrcmd << std::endl;
-#endif
-}
-
-// ユーザコマンドの登録とメニュー作成(再帰用)
-const std::string ArticleViewBase::create_usrcmd_menu( XML::Dom* dom, int& dirno, int& cmdno )
-{
-    std::string menu;
-    if( ! dom ) return menu;
-
-    XML::DomList domlist = dom->childNodes();
-    std::list< XML::Dom* >::iterator it = domlist.begin();
-    while( it != domlist.end() )
-    {
-        if( (*it)->nodeType() == XML::NODE_TYPE_ELEMENT )    
-        {
-#ifdef _DEBUG
-            std::cout << "name = " << (*it)->nodeName() << std::endl;
-#endif
-            const int type = XML::get_type( (*it)->nodeName() );
-
-            if( type == TYPE_DIR ){
-
-                const std::string name = (*it)->getAttribute( "name" );
-#ifdef _DEBUG
-                std::cout << "[" << dirno << "] " << name << std::endl;
-#endif                    
-                const std::string dirname = "usrcmd_dir" + MISC::itostr( dirno );
-                action_group()->add( Gtk::Action::create( dirname, name ) );
-                ++dirno;
-
-                menu += "<menu action='" + dirname + "'>";
-                menu += create_usrcmd_menu( *it, dirno, cmdno );
-                menu += "</menu>";
-            }
-
-            else if( type == TYPE_SEPARATOR ){
-
-                menu += "<separator/>";
-            }
-
-            else if( type == TYPE_USRCMD ){
-
-                    const std::string name = (*it)->getAttribute( "name" );
-#ifdef _DEBUG
-                    std::cout << "[" << cmdno << "] " << name << std::endl;
-#endif                    
-                    const std::string cmdname = "usrcmd" + MISC::itostr( cmdno );
-                    Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( cmdname, name );
-                    action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::slot_usrcmd ), cmdno ) );
-                    ++cmdno;
-
-                    menu += "<menuitem action='" + cmdname + "'/>";
-            }
-
-            else if( (*it)->hasChildNodes() ) menu += create_usrcmd_menu( *it, dirno, cmdno );
-        }
-        ++it;
-    }
-
-    return menu;
 }
 
 
@@ -1573,10 +1513,11 @@ void ArticleViewBase::show_name( const std::string& name, bool show_option )
     std::list< int > list_resnum = m_article->get_res_name( name );       
 
     std::ostringstream comment;
-    comment << "名前：" << name << "  " << list_resnum.size() << " 件";
+    comment << "名前：" << name << "  " << list_resnum.size() << " 件<br>";
+    comment << "総参照数:" << m_article->get_res_reference( list_resnum ).size() << " 件";
 
     if( show_option && ! list_resnum.empty() ){
-        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
+        if( !m_show_url4report ) comment << "<br><br><a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
 
         comment << "<br><br>" << url_for_copy();
@@ -1606,10 +1547,11 @@ void ArticleViewBase::show_id( const std::string& id_name, bool show_option )
     std::list< int > list_resnum = m_article->get_res_id_name( id_name );       
 
     std::ostringstream comment;
-    comment << "ID:" << id_name.substr( strlen( PROTO_ID ) ) << "  " << list_resnum.size() << " 件";
+    comment << "ID:" << id_name.substr( strlen( PROTO_ID ) ) << "  " << list_resnum.size() << " 件<br>";
+    comment << "総参照数:" << m_article->get_res_reference( list_resnum ).size() << " 件";
 
     if( show_option && ! list_resnum.empty() ){
-        if( !m_show_url4report ) comment << " <a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
+        if( !m_show_url4report ) comment << "<br><br><a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
         else comment << "<br><br>" + get_html_url4report( list_resnum );
 
         comment << "<br><br>" << url_for_copy();
@@ -1655,7 +1597,15 @@ void ArticleViewBase::show_post()
     
     std::list< int > list_resnum = m_article->get_res_posted();
 
-    if( ! list_resnum.empty() ) append_res( list_resnum );
+    if( ! list_resnum.empty() ){
+
+        std::ostringstream comment;
+        comment << "書き込み数：" << list_resnum.size() << " 件<br>";
+        comment << "総参照数:" << m_article->get_res_reference( list_resnum ).size() << " 件";
+        append_html( comment.str() );
+
+        append_res( list_resnum );
+    }
     else append_html( "このスレでは書き込みしていません" );
 }
 
@@ -1722,6 +1672,11 @@ void ArticleViewBase::show_refer( int num )
 #endif
 
     std::list< int > list_resnum = m_article->get_res_reference( num );
+
+    std::ostringstream comment;
+    comment << "参照数：" << list_resnum.size() << " 件";
+
+    append_html( comment.str() );
 
     // num 番は先頭に必ず表示
     list_resnum.push_front( num );
@@ -2865,6 +2820,12 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
+    act = action_group()->get_action( "AboneSelectionRes" );
+    if( act ){
+        if( nourl || str_select.empty() ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     // 検索関係
     act = action_group()->get_action( "SearchWeb" );
     if( act ){
@@ -2892,30 +2853,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
     // ユーザコマンド
     // 選択不可かどうか判断して visible か sensitive にする
-    const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
-    for( int i = 0; i < usrcmd_size; ++i ){
-        std::string str_cmd = "usrcmd" + MISC::itostr( i );
-        act = action_group()->get_action( str_cmd );
-        if( act ){
-
-#if GTKMMVER >= 260
-            if( CORE::get_usrcmd_manager()->is_hide( i, m_url_article ) ) act->set_visible( false );
-            else{
-                act->set_visible( true );
-
-                if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_sensitive( true );
-                else{
-                    act->set_sensitive( false );
-                    if( CONFIG::get_hide_usrcmd() ) act->set_visible( false );
-                }
-            }
-#else
-            if( CORE::get_usrcmd_manager()->is_sensitive( i, url, str_select ) ) act->set_sensitive( true );
-            else act->set_sensitive( false );
-#endif            
-        }
-    }
-
+    CORE::get_usrcmd_manager()->toggle_sensitive( action_group(), m_url_article, url, str_select );
 
     // ブックマークがセットされていない
     act = action_group()->get_action( "DrawoutBM" );
@@ -3573,9 +3511,26 @@ void ArticleViewBase::slot_drawout_url()
 //
 void ArticleViewBase::slot_abone_res()
 {
-    int number = atoi( m_str_num.c_str() );
+    const int number = atoi( m_str_num.c_str() );
 
-    DBTREE::set_abone_res( m_url_article, number, true );
+    DBTREE::set_abone_res( m_url_article, number, number, true );
+
+    // 再レイアウト
+    ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
+}
+
+
+//
+// 選択範囲内のレス番号であぼ〜ん
+//
+void ArticleViewBase::slot_abone_selection_res()
+{
+    const int num_from = m_drawarea->get_selection_resnum_from();
+    if( ! num_from ) return;
+
+    const int num_to = m_drawarea->get_selection_resnum_to();
+
+    DBTREE::set_abone_res( m_url_article, num_from, num_to, true );
 
     // 再レイアウト
     ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );

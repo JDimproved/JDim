@@ -79,6 +79,7 @@ enum{
 #define ITEM_NAME_REDO        "やり直し(Redo)"
 
 #define ITEM_NAME_NGWORD      "NGワード"
+#define ITEM_NAME_ABONE_SELECTION "選択範囲のレスをあぼ〜ん"
 #define ITEM_NAME_QUOTE_SELECTION   "引用してレスする"
 #define ITEM_NAME_OPEN_BROWSER      "ブラウザで開く"
 #define ITEM_NAME_USER_COMMAND      "ユーザコマンド"
@@ -147,6 +148,7 @@ enum
     ITEM_REDO,
 
     ITEM_NGWORD,
+    ITEM_ABONE_SELECTION,
     ITEM_QUOTE_SELECTION,
     ITEM_OPEN_BROWSER,
     ITEM_USER_COMMAND,

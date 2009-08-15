@@ -234,10 +234,6 @@ namespace ARTICLE
         const std::string create_context_menu();
         const char* get_menu_item( const int item );
 
-        // ユーザコマンドの登録とメニューの作成
-        void create_usrcmd_menu();
-        const std::string create_usrcmd_menu( XML::Dom* dom, int& dirno, int& cmdno );
-
         virtual void exec_reload();
         void exec_delete();
 
@@ -294,6 +290,7 @@ namespace ARTICLE
         void slot_drawout_refer();
         void slot_drawout_url();
         void slot_abone_res();
+        void slot_abone_selection_res();
         void slot_abone_id();
         void slot_abone_name();
         void slot_abone_word();

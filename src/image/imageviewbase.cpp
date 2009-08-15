@@ -26,6 +26,7 @@
 #include "global.h"
 #include "type.h"
 #include "prefdiagfactory.h"
+#include "usrcmdmanager.h"
 #include "httpcode.h"
 #include "session.h"
 
@@ -168,12 +169,19 @@ void ImageViewBase::setup_common()
 
     action_group()->add( Gtk::Action::create( "Preference", "プロパティ(_P)..."), sigc::mem_fun( *this, &ImageViewBase::show_preference ) );
 
+    const std::string usrcmd = CORE::get_usrcmd_manager()->create_usrcmd_menu( action_group() );
+    const int usrcmd_size = CORE::get_usrcmd_manager()->get_size();
+    for( int i = 0; i < usrcmd_size; ++i ){
+        Glib::RefPtr< Gtk::Action > act = CORE::get_usrcmd_manager()->get_action( action_group(), i );
+        if( act ) act->signal_activate().connect(
+            sigc::bind< int >( sigc::mem_fun( *this, &ImageViewBase::slot_usrcmd ), i ) );
+    }
+
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
 
-    Glib::ustring str_ui = 
-
-    "<ui>"
+    // 画像ビューのメニュー
+    const std::string menu = 
 
     "<popup name='popup_menu'>"
 
@@ -201,6 +209,8 @@ void ImageViewBase::setup_common()
 
     "<menuitem action='OpenBrowser'/>"
     "<menuitem action='OpenRef'/>"
+    + usrcmd
+    + std::string( 
     "<separator/>"
 
     "<menuitem action='CopyURL'/>"
@@ -226,12 +236,11 @@ void ImageViewBase::setup_common()
 
     "<menuitem action='Preference'/>"
 
-
     "</popup>"
-
-    //////////////////////////
+    );
 
     // アイコンのメニュー
+    const std::string menu_icon = 
     
     "<popup name='popup_menu_icon'>"
 
@@ -286,12 +295,14 @@ void ImageViewBase::setup_common()
     "<separator/>"
     "<menuitem action='Preference'/>"
 
-    "</popup>"
+    "</popup>";
 
-    "</ui>";
-
-    ui_manager()->add_ui_from_string( str_ui );
-
+    ui_manager()->add_ui_from_string(
+        "<ui>"
+        + menu
+        + menu_icon
+        + "</ui>"
+        );
 
     // ポップアップメニューにキーアクセレータやマウスジェスチャを表示
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
@@ -1196,6 +1207,29 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( false );
     }
 
+    // ユーザコマンド
+    // 選択不可かどうか判断して visible か sensitive にする
+    const std::string url_article = DBTREE::url_dat( m_img->get_refurl() );
+    CORE::get_usrcmd_manager()->toggle_sensitive( action_group(), url_article, get_url(), "" );
+
     m_enable_menuslot = true;
 }
 
+
+//
+// ユーザコマンド実行
+//
+void ImageViewBase::slot_usrcmd( int num )
+{
+    int from, to;
+    std::string num_str;
+    const std::string url_article = DBTREE::url_dat( m_img->get_refurl(), from, to, num_str );
+
+    CORE::core_set_command( "exec_usr_cmd" ,
+                            url_article,
+                            MISC::itostr( num ),
+                            get_url(),
+                            "",
+                            MISC::itostr( from )
+        );
+}

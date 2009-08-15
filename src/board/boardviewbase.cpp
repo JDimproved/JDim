@@ -1224,12 +1224,12 @@ const bool BoardViewBase::operate_view( const int control )
         // 検索
         case CONTROL::Search:
             m_search_invert = false;
-            BOARD::get_admin()->set_command( "focus_toolbar_search" );
+            BOARD::get_admin()->set_command( "open_searchbar", get_url() );
             break;
 
         case CONTROL::SearchInvert:
             m_search_invert = true;
-            BOARD::get_admin()->set_command( "focus_toolbar_search" );
+            BOARD::get_admin()->set_command( "open_searchbar", get_url() );
             break;
 
         case CONTROL::SearchNext:

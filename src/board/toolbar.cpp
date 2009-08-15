@@ -20,6 +20,9 @@ BoardToolBar::BoardToolBar() :
     SKELETON::ToolBar( BOARD::get_admin() )
 {
     pack_buttons();
+
+    // JDEntry::on_key_release_event()で
+    // CONTROL::SearchCache を有効にする
     add_search_control_mode( CONTROL::MODE_BOARD );
 }
 
@@ -27,6 +30,20 @@ BoardToolBar::BoardToolBar() :
 // virtual
 void BoardToolBar::pack_buttons()
 {
+    // ツールバー非表示の場合は検索バーに検索関係の wiget を表示する
+    if( SESSION::get_show_board_toolbar() ) pack_toolbar();
+    else pack_search_toolbar();
+
+    set_relief();
+    show_all_children();
+}
+
+void BoardToolBar::pack_toolbar()
+{
+#ifdef _DEBUG    
+    std::cout << "BoardToolBar::pack_toolbar\n";
+#endif
+
     int num = 0;
     for(;;){
         int item = SESSION::get_item_board_toolbar( num );
@@ -90,7 +107,26 @@ void BoardToolBar::pack_buttons()
         }
         ++num;
     }
+}
 
-    set_relief();
-    show_all_children();
-}    
+void BoardToolBar::pack_search_toolbar()
+{
+#ifdef _DEBUG    
+    std::cout << "BoardToolBar::pack_search_toolbar\n";
+#endif
+
+    get_searchbar()->append( *get_tool_search( CORE::COMP_SEARCH_BOARD ) );        
+    get_searchbar()->append( *get_button_down_search() );
+    get_searchbar()->append( *get_button_up_search() );
+    get_searchbar()->append( *get_button_close_searchbar() );
+}
+
+
+// ツールバー表示切り替え時に検索関係の wiget の位置を変更する
+void BoardToolBar::unpack_pack()
+{
+    unpack_buttons();
+    unpack_search_buttons();
+
+    pack_buttons();
+}

@@ -184,7 +184,10 @@ namespace DBTREE
         std::list< int > get_res_posted();
 
         // number番のレスを参照しているレス番号をリストにして取得
-        std::list< int > get_res_reference( int number );
+        std::list< int > get_res_reference( const int number );
+
+        // res_num に含まれるレスを参照しているレス番号をリストにして取得
+        std::list< int > get_res_reference( const std::list< int >& res_num );
 
         // URL を含むレス番号をリストにして取得
         std::list< int > get_res_with_url();
@@ -323,7 +326,7 @@ namespace DBTREE
         void add_abone_id( const std::string& id );
         void add_abone_name( const std::string& name );
         void add_abone_word( const std::string& word );
-        void set_abone_res( const int number, const bool set );
+        void set_abone_res( const int num_from, const int num_to, const bool set );
         void set_abone_transparent( const bool set ); // 透明
         void set_abone_chain( const bool set ); // 連鎖
         void set_abone_age( const bool set ); // age

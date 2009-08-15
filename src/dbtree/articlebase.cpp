@@ -272,9 +272,20 @@ std::list< int > ArticleBase::get_res_posted()
 //
 // number番のレスを参照しているレス番号をリストにして取得
 //
-std::list< int > ArticleBase::get_res_reference( int number )
+std::list< int > ArticleBase::get_res_reference( const int number )
 {
-    return get_nodetree()->get_res_reference( number );
+    std::list< int > res_num;
+    res_num.push_back( number );
+    return get_res_reference( res_num );
+}
+
+
+//
+// res_num に含まれるレスを参照しているレス番号をリストにして取得
+//
+std::list< int > ArticleBase::get_res_reference( const std::list< int >& res_num )
+{
+    return get_nodetree()->get_res_reference( res_num );
 }
 
 
@@ -705,10 +716,11 @@ void ArticleBase::add_abone_word( const std::string& word )
 //
 // レスあぼーんのセット
 //
-void ArticleBase::set_abone_res( const int number, const bool set )
+void ArticleBase::set_abone_res( const int num_from, const int num_to, const bool set )
 {
     if( empty() ) return;
-    if( number <= 0 || number > MAX_RESNUMBER ) return;
+    if( num_from > num_to ) return;
+    if( num_from <= 0 || num_to >= MAX_RESNUMBER ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::set_abone_res num = " << number << " set = " << set << std::endl;
@@ -716,7 +728,7 @@ void ArticleBase::set_abone_res( const int number, const bool set )
 
     if( ! m_vec_abone_res.size() ) m_vec_abone_res.resize( MAX_RESNUMBER );
 
-    m_vec_abone_res[ number ] = set;
+    for( int i = num_from; i <= num_to; ++i ) m_vec_abone_res[ i ] = set;
 
     update_abone();
 

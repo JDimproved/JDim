@@ -1080,9 +1080,9 @@ void DBTREE::reset_abone( const std::string& url,
 }
 
 
-void DBTREE::set_abone_res( const std::string& url, const int number, const bool set )
+void DBTREE::set_abone_res( const std::string& url, const int num_from, const int num_to, const bool set )
 {
-    DBTREE::get_article( url )->set_abone_res( number, set );
+    DBTREE::get_article( url )->set_abone_res( num_from, num_to, set );
 }
 
 

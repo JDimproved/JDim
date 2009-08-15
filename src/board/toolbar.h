@@ -18,9 +18,17 @@ namespace BOARD
         BoardToolBar();
         virtual ~BoardToolBar(){}
 
+        // ツールバー表示切り替え時に検索関係の wiget の位置を変更する
+        void unpack_pack();
+
       protected:
 
         virtual void pack_buttons();
+
+      private:
+
+        void pack_toolbar();
+        void pack_search_toolbar();
     };
 }
 

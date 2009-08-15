@@ -204,6 +204,7 @@ void ArticleViewMain::show_view()
     m_set_history = false;
     m_show_instdialog = false;
     m_playsound = false;
+    m_show_closedialog = false;
 
     // オートリロードのカウンタを0にする
     reset_autoreload_counter();
@@ -290,6 +291,8 @@ void ArticleViewMain::show_view()
     if( CONFIG::get_instruct_tglart() && SESSION::get_mode_pane() == SESSION::MODE_2PANE ){
         m_show_instdialog = true;
     }
+
+    m_show_closedialog = true;
 
     clear_highlight();
     if( ! get_live() && SESSION::is_online() ) m_playsound = true;
@@ -471,6 +474,14 @@ void ArticleViewMain::update_finish()
                                                  DBTREE::article_subject( get_url() ), TYPE_THREAD );
 
     if( m_show_instdialog ) show_instruct_diag();
+
+    if( m_show_closedialog && !number_load && is_old() ){
+
+        SKELETON::MsgDiag mdiag( get_parent_win(), "DAT落ちしたためスレッドを取得できませんでした。\n\nタブを閉じますか？",
+                                 false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+        mdiag.set_default_response( Gtk::RESPONSE_YES );
+        if( mdiag.run() == Gtk::RESPONSE_YES ) close_view();
+    }
 }
 
 

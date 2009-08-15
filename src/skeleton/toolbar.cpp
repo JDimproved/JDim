@@ -211,6 +211,18 @@ void ToolBar::unpack_buttons()
     }
 }
 
+// 検索ツールバー上のボタンのアンパック
+void ToolBar::unpack_search_buttons()
+{
+    if( ! m_searchbar ) return;
+
+    std::list< Gtk::Widget* > lists = m_searchbar->get_children();
+    std::list< Gtk::Widget* >::iterator it = lists.begin();
+    for( ; it != lists.end(); ++it ){
+        m_searchbar->remove( *(*it) );
+        if( dynamic_cast< Gtk::SeparatorToolItem* >( *it ) ) delete *it;
+    }
+}
 
 // ボタンのrelief指定
 void ToolBar::set_relief()

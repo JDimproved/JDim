@@ -210,6 +210,7 @@ const int SESSION::parse_item( const std::string& item_name )
     else if( item_name == ITEM_NAME_REDO ) item = ITEM_REDO;
 
     else if( item_name == ITEM_NAME_NGWORD ) item = ITEM_NGWORD;
+    else if( item_name == ITEM_NAME_ABONE_SELECTION ) item = ITEM_ABONE_SELECTION;
     else if( item_name == ITEM_NAME_QUOTE_SELECTION ) item = ITEM_QUOTE_SELECTION;
     else if( item_name == ITEM_NAME_OPEN_BROWSER ) item = ITEM_OPEN_BROWSER;
     else if( item_name == ITEM_NAME_USER_COMMAND ) item = ITEM_USER_COMMAND;

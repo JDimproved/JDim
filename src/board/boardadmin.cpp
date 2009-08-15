@@ -193,11 +193,46 @@ void BoardAdmin::toggle_toolbar()
 {
     if( ! m_toolbar ) return;
 
-    if( SESSION::get_show_board_toolbar() ){
-        m_toolbar->open_buttonbar();
+#ifdef _DEBUG    
+    std::cout << "BoardAdmin::toggle_toolbar\n";
+#endif
+
+    // 検索関係の wiget の位置を変更
+    m_toolbar->unpack_pack();
+
+    if( SESSION::get_show_board_toolbar() ) m_toolbar->open_buttonbar();
+    else m_toolbar->close_buttonbar();
+
+    m_toolbar->close_searchbar();
+    m_toolbar->show_toolbar();
+}
+
+
+//
+// 検索バー表示
+//
+void BoardAdmin::open_searchbar()
+{
+    if( ! m_toolbar ) return;
+
+    // ツールバー表示時は検索関係の wiget はツールバーに表示されている
+    if( ! SESSION::get_show_board_toolbar() ){
+        m_toolbar->open_searchbar();
         m_toolbar->show_toolbar();
     }
-    else m_toolbar->close_buttonbar();
+
+    m_toolbar->focus_entry_search();
+}
+
+
+//
+// 検索バー非表示
+//
+void BoardAdmin::close_searchbar()
+{
+    if( ! m_toolbar ) return;
+
+    if( ! SESSION::get_show_board_toolbar() ) m_toolbar->close_searchbar();
 }
 
 

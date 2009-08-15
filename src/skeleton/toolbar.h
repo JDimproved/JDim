@@ -113,6 +113,7 @@ namespace SKELETON
         // ボタンのパッキング
         virtual void pack_buttons() = 0;
         void unpack_buttons();
+        void unpack_search_buttons();
 
         // ボタンのrelief指定
         void set_relief();

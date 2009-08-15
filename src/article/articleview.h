@@ -24,6 +24,8 @@ namespace ARTICLE
 
         bool m_playsound;
 
+        bool m_show_closedialog;
+
       public:
         ArticleViewMain( const std::string& url );
         ~ArticleViewMain();

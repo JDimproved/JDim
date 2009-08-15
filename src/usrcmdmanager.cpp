@@ -20,6 +20,8 @@
 
 #include "dbimg/imginterface.h"
 
+#include "config/globalconf.h"
+
 CORE::Usrcmd_Manager* instance_usrcmd_manager = NULL;
 
 CORE::Usrcmd_Manager* CORE::get_usrcmd_manager()
@@ -450,4 +452,118 @@ const bool Usrcmd_Manager::is_hide( int num, const std::string& url )
     }
 
     return false;
+}
+
+
+//
+// ユーザコマンドの登録とメニュー作成
+//
+const std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group )
+{
+    int dirno = 0;
+    int cmdno = 0;
+
+    return create_usrcmd_menu( action_group, &m_document, dirno, cmdno );
+}
+
+// ユーザコマンドの登録とメニュー作成(再帰用)
+const std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group,
+                                                      XML::Dom* dom, int& dirno, int& cmdno )
+{
+    std::string menu;
+    if( ! dom ) return menu;
+
+    XML::DomList domlist = dom->childNodes();
+    std::list< XML::Dom* >::iterator it = domlist.begin();
+    while( it != domlist.end() )
+    {
+        if( (*it)->nodeType() == XML::NODE_TYPE_ELEMENT )    
+        {
+#ifdef _DEBUG
+            std::cout << "name = " << (*it)->nodeName() << std::endl;
+#endif
+            const int type = XML::get_type( (*it)->nodeName() );
+
+            if( type == TYPE_DIR ){
+
+                const std::string name = (*it)->getAttribute( "name" );
+#ifdef _DEBUG
+                std::cout << "[" << dirno << "] " << name << std::endl;
+#endif                    
+                const std::string dirname = "usrcmd_dir" + MISC::itostr( dirno );
+                action_group->add( Gtk::Action::create( dirname, name ) );
+                ++dirno;
+
+                menu += "<menu action='" + dirname + "'>";
+                menu += create_usrcmd_menu( action_group, *it, dirno, cmdno );
+                menu += "</menu>";
+            }
+
+            else if( type == TYPE_SEPARATOR ){
+
+                menu += "<separator/>";
+            }
+
+            else if( type == TYPE_USRCMD ){
+
+                    const std::string name = (*it)->getAttribute( "name" );
+#ifdef _DEBUG
+                    std::cout << "[" << cmdno << "] " << name << std::endl;
+#endif                    
+                    const std::string cmdname = "usrcmd" + MISC::itostr( cmdno );
+                    action_group->add( Gtk::Action::create( cmdname, name ) );
+                    ++cmdno;
+
+                    menu += "<menuitem action='" + cmdname + "'/>";
+            }
+
+            else if( (*it)->hasChildNodes() ) menu += create_usrcmd_menu( action_group, *it, dirno, cmdno );
+        }
+        ++it;
+    }
+
+    return menu;
+}
+
+
+Glib::RefPtr< Gtk::Action > Usrcmd_Manager::get_action( Glib::RefPtr< Gtk::ActionGroup >& action_group, const int num )
+{
+    const std::string str_cmd = "usrcmd" + MISC::itostr( num );
+    return action_group->get_action( str_cmd );
+}
+
+
+//
+// 選択不可かどうか判断して visible や sensitive を切り替える
+//
+void Usrcmd_Manager::toggle_sensitive( Glib::RefPtr< Gtk::ActionGroup >& action_group,
+                                       const std::string& url_article,
+                                       const std::string& url_link,
+                                       const std::string& str_select
+    )
+{
+    for( int i = 0; i < m_size; ++i ){
+
+        Glib::RefPtr< Gtk::Action > act = get_action( action_group, i );
+        if( act ){
+
+#if GTKMMVER >= 260
+            if( is_hide( i, url_article ) ) act->set_visible( false );
+            else{
+
+                act->set_visible( true );
+
+                if( is_sensitive( i, url_link, str_select ) ) act->set_sensitive( true );
+                else{
+
+                    act->set_sensitive( false );
+                    if( CONFIG::get_hide_usrcmd() ) act->set_visible( false );
+                }
+            }
+#else
+            if( is_sensitive( i, url_link, str_select ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+#endif            
+        }
+    }
 }

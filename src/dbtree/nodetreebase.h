@@ -184,8 +184,8 @@ namespace DBTREE
         // URL を含むレス番号をリストにして取得
         std::list< int > get_res_with_url();
 
-        // number番のレスを参照しているレス番号をリストにして取得
-        std::list< int > get_res_reference( int number );
+        // res_num に含まれるレスを参照しているレス番号をリストにして取得
+        std::list< int > get_res_reference( const std::list< int >& res_num );
 
         // query を含むレス番号をリストにして取得
         // mode_or == true なら OR抽出

@@ -372,12 +372,20 @@ std::list< int > NodeTreeBase::get_res_with_url()
 
 
 //
-// number番のレスを参照しているレスの番号全てをリストにして取得
+// res_num に含まれるレスを参照しているレス番号をリストにして取得
 //
-std::list< int > NodeTreeBase::get_res_reference( int number )
+std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_num )
 {
     std::list< int > list_resnum;
-    for( int i = number + 1; i <= m_id_header; ++i ){
+
+    if( ! res_num.size() ) return list_resnum;
+
+    std::list< int >::const_iterator it_res = res_num.begin();
+
+    for( int i = ( *it_res ) + 1; i <= m_id_header; ++i ){
+
+        //  透明あぼーんは除外
+        if( m_abone_transparent && get_abone( i ) ) continue;
 
         NODE* head = res_header( i );
         if( head ){
@@ -403,16 +411,19 @@ std::list< int > NodeTreeBase::get_res_reference( int number )
                                 if( anc_from == 0 ) break;
                                 ++anc;
 
-                                // >>1-1000 みたいなアンカーは弾く
-                                if( anc_to - anc_from < RANGE_REF && anc_from <= number && number <= anc_to
-                                    && ( ! m_abone_transparent || ! get_abone( i ) ) //  透明あぼーんしていない　or あぼーんしていない
-                                    ) {
-                                    list_resnum.push_back( i );
-                                    block = BLOCK_NUM;
-                                    break;
+                                it_res = res_num.begin();
+                                for( ; it_res != res_num.end(); ++it_res ){
+
+                                    const int number = ( *it_res );
+
+                                    // >>1-1000 みたいなアンカーは弾く
+                                    if( anc_to - anc_from < RANGE_REF && anc_from <= number && number <= anc_to
+                                        ) {
+                                        list_resnum.push_back( i );
+                                        goto EXIT_LOOP;
+                                    }
                                 }
                             }
-                            if( anc_from != 0 ) break;
                         }
                     }
 
@@ -422,9 +433,11 @@ std::list< int > NodeTreeBase::get_res_reference( int number )
 
             } // for( block )
 
-        }
+        } // if( head )
 
-    }
+EXIT_LOOP:;
+
+    } // for( int i )
 
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::get_reference\n";

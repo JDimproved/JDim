@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "articleitemmenupref.h"
@@ -36,6 +36,7 @@ ArticleItemMenuPref::ArticleItemMenuPref( Gtk::Window* parent, const std::string
     append_default_pair( ITEM_NAME_SAVE_DAT );
     append_default_pair( ITEM_NAME_COPY_THREAD_INFO );
     append_default_pair( ITEM_NAME_FAVORITE );
+    append_default_pair( ITEM_NAME_ABONE_SELECTION );
     append_default_pair( ITEM_NAME_PREF_THREAD );
     append_default_pair( ITEM_NAME_SEPARATOR );
 
