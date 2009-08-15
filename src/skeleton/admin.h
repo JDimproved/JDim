@@ -211,7 +211,11 @@ namespace SKELETON
         virtual COMMAND_ARGS get_open_list_args( const std::string& url, const COMMAND_ARGS& command_list ){ return COMMAND_ARGS(); }
         virtual View* create_view( const COMMAND_ARGS& command ){ return NULL; };
         virtual View* get_view( const std::string& url );
+
+        // url を含むビュークラスをリストで取得 ( url と一致するビューでは無い )
         std::list< View* > get_list_view( const std::string& url );
+
+        // 全てのビュークラスをリストで取得
         std::list< View* > get_list_view();
 
         // ツールバー

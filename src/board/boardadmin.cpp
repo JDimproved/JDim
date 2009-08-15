@@ -238,6 +238,7 @@ void BoardAdmin::close_searchbar()
 
 SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
 {
+    const std::string url_subject = DBTREE::url_subject( command.url );
     int type = CORE::VIEW_NONE; 
     CORE::VIEWFACTORY_ARGS view_args;
 
@@ -251,7 +252,7 @@ SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
     }
     else return NULL;
 
-    SKELETON::View* view = CORE::ViewFactory( type, command.url, view_args );
+    SKELETON::View* view = CORE::ViewFactory( type, url_subject, view_args );
     assert( view != NULL );
 
     return view;
