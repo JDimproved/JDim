@@ -15,7 +15,7 @@ using namespace SKELETON;
 
 enum
 {
-    SPACING_LABEL = 4 // アイコンとラベルの間のスペース
+    SPACING_LABEL = 3 // アイコンとラベルの間のスペース
 };
 
 

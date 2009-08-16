@@ -25,7 +25,7 @@ using namespace HISTORY;
 
 enum
 {
-    SPACING_MENU = 4, // アイコンと項目名の間のスペース
+    SPACING_MENU = 3, // アイコンと項目名の間のスペース
     HIST_MAX_LNG = 50 // 履歴に表示する文字数(半角)
 };
 
