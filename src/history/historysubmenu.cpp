@@ -11,6 +11,8 @@
 
 #include "jdlib/miscutil.h"
 
+#include "dbtree/interface.h"
+
 #include "config/globalconf.h"
 
 #include "xml/tools.h"
@@ -125,12 +127,12 @@ void HistorySubMenu::open_history( const int i )
             case TYPE_THREAD_UPDATE:
             case TYPE_THREAD_OLD:
 
-                CORE::core_set_command( "open_article" , info_list[ i ].url, "true", "" );
+                CORE::core_set_command( "open_article" , DBTREE::url_dat( info_list[ i ].url ), "true", "" );
                 break;
 
             default:
                 
-                CORE::core_set_command( "open_board" , info_list[ i ].url, "true", "" );
+                CORE::core_set_command( "open_board" , DBTREE::url_subject( info_list[ i ].url ), "true", "" );
         }
     }
 }
