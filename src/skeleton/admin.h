@@ -38,10 +38,9 @@ namespace SKELETON
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
         int m_clicked_page;
 
-        // 移動サブメニュー用
-        Gtk::Menu* m_move_menu;
-        std::vector< Gtk::MenuItem* > m_vec_movemenu_items;
-        std::vector< bool > m_vec_movemenu_append;
+        // 移動サブメニュー
+        Gtk::MenuItem* m_move_menuitem;
+        TabSwitchMenu* m_move_menu;
 
         // タブ切り替えメニュー
         TabSwitchMenu* m_tabswitchmenu;
@@ -296,6 +295,8 @@ namespace SKELETON
         void clear_viewhistory();
 
       private:
+
+        void slot_popupmenu_deactivate();
 
         bool back_forward_viewhistory( const std::string& url, const bool back, const int count );
 

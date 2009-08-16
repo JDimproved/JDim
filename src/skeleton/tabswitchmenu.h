@@ -13,16 +13,28 @@ namespace SKELETON
 
     class TabSwitchMenu : public Gtk::Menu
     {
+        Admin* m_parentadmin;
         DragableNoteBook* m_parentnote;
-        std::vector< Gtk::Image* > m_vec_images;
         bool m_deactivated;
+        int m_size;
+
+        std::vector< Gtk::MenuItem* > m_vec_items;
+        std::vector< Gtk::Label* > m_vec_labels;
+        std::vector< Gtk::Image* > m_vec_images;
+
 
       public:
 
         TabSwitchMenu( DragableNoteBook* notebook, Admin* admin );
         ~TabSwitchMenu();
 
+        void remove_items();
+        void append_items();
+
+        void update_labels();
         void update_icons();
+
+        void deactivate();
 
       protected:
 

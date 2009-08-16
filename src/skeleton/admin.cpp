@@ -51,6 +51,7 @@ Admin::Admin( const std::string& url )
       m_win( NULL ),
       m_notebook( NULL ),
       m_focus( false ),
+      m_move_menu( NULL ),
       m_tabswitchmenu( NULL ),
       m_use_viewhistory( false )
 {
@@ -105,6 +106,7 @@ Admin::~Admin()
     delete_jdwin();
 
     if( m_notebook ) delete m_notebook;
+    if( m_move_menu ) delete m_move_menu;
     if( m_tabswitchmenu ) delete m_tabswitchmenu;
 }
 
@@ -203,16 +205,8 @@ void Admin::setup_menu()
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
     Gtk::MenuItem* item;
 
-    // 移動サブメニュー作成と登録
-    for( int i = 0; i < MAX_TABS; ++i ){
-        item = Gtk::manage( new Gtk::MenuItem( "dummy" ) );
-        item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &Admin::set_current_page_focus ), i ) );
-
-        m_vec_movemenu_items.push_back( item );
-        m_vec_movemenu_append.push_back( false );
-    }
-
-    m_move_menu = Gtk::manage( new Gtk::Menu() );
+    // 移動サブメニュー
+    m_move_menu = new SKELETON::TabSwitchMenu( m_notebook, this );
 
     // 進む、戻る
     Glib::RefPtr< Gtk::Action > act;
@@ -239,12 +233,11 @@ void Admin::setup_menu()
 
     m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
 
-    item  = Gtk::manage( new Gtk::MenuItem( "移動" ) );
-    item->set_submenu( *m_move_menu );
-    m_vec_movemenu_items.push_back( item );
+    m_move_menuitem  = Gtk::manage( new Gtk::MenuItem( "移動" ) );
+    m_move_menuitem->set_submenu( *m_move_menu );
 
-    popupmenu->insert( *item, 0 );
-    item->show_all();
+    popupmenu->insert( *m_move_menuitem, 0 );
+    m_move_menuitem->show_all();
 
     item = Gtk::manage( new Gtk::SeparatorMenuItem() );
     popupmenu->insert( *item, 1 );
@@ -252,6 +245,14 @@ void Admin::setup_menu()
 
     // ポップアップメニューにアクセレータを表示
     CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu->signal_deactivate().connect( sigc::mem_fun( *this, &Admin::slot_popupmenu_deactivate ) );
+}
+
+
+void Admin::slot_popupmenu_deactivate()
+{
+    if( m_move_menu ) m_move_menu->deactivate();
 }
 
 
@@ -1631,6 +1632,7 @@ void Admin::toggle_icon( const std::string& url )
         int id = view->get_icon( iconname );
         get_notebook()->set_tabicon( iconname, get_notebook()->page_num( *view ), id );
 
+        if( m_move_menu ) m_move_menu->update_icons();
         if( m_tabswitchmenu ) m_tabswitchmenu->update_icons();
     }
 }
@@ -1930,36 +1932,16 @@ void Admin::slot_tab_menu( int page, int x, int y )
     m_clicked_page = page;
 
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
-    if( popupmenu ){
+    if( popupmenu && m_move_menu ){
 
-        // menu item をサブメニューから取り除く
-        for( int i = 0; i < MAX_TABS ; ++i ){
-            if( m_vec_movemenu_append[ i ] )m_move_menu->remove( *m_vec_movemenu_items[ i ] );
-            m_vec_movemenu_append[ i ] = false;
-        }
+        m_move_menu->remove_items();
+        m_move_menu->append_items();
+        m_move_menu->update_labels();
+        m_move_menu->update_icons();
 
-        // 移動サブメニューにタブ名をセットする
-        int pages = m_notebook->get_n_pages();
-        for( int i = 0; i < MIN( pages, MAX_TABS ); ++ i ){
-
-            Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_vec_movemenu_items[ i ]->get_child() );
-            if( label ){
-
-                std::string name = m_notebook->get_tab_fulltext( i );
-                if( name.empty() ) name = "???";
-                const unsigned int maxsize = 50;
-                label->set_text( MISC::cut_str( name, maxsize ) );
-            }
-            m_move_menu->append( *m_vec_movemenu_items[ i ] );
-            m_vec_movemenu_append[ i ] = true;
-        }
-
-        // コメント更新
-        Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_vec_movemenu_items[ MAX_TABS ]->get_child() );
+        Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_move_menuitem->get_child() );
         if( label ) label->set_text_with_mnemonic( ITEM_NAME_GO + std::string( " [ タブ数 " )
-                                                   + MISC::itostr( pages ) +" ](_M)" );
-
-        m_move_menu->show_all();
+                                                   + MISC::itostr( m_notebook->get_n_pages() ) +" ](_M)" );
 
         popupmenu->popup( 0, gtk_get_current_event_time() );
     }
@@ -1973,9 +1955,13 @@ void Admin::slot_show_tabswitchmenu()
     std::cout << "Admin::slot_show_tabswitchmenu\n";
 #endif
 
-    if( m_tabswitchmenu ) delete m_tabswitchmenu;
+    if( ! m_tabswitchmenu ) m_tabswitchmenu = new SKELETON::TabSwitchMenu( m_notebook, this );
 
-    m_tabswitchmenu = new  SKELETON::TabSwitchMenu( m_notebook, this );
+    m_tabswitchmenu->remove_items();
+    m_tabswitchmenu->append_items();
+    m_tabswitchmenu->update_labels();
+    m_tabswitchmenu->update_icons();
+
     m_tabswitchmenu->popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &Admin::slot_popup_pos ) ),
                             0, gtk_get_current_event_time() );
 }
