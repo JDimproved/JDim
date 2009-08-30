@@ -7,6 +7,8 @@
 
 #include "command.h"
 #include "session.h"
+#include "dispatchmanager.h"
+#include "global.h"
 
 #include <gtk/gtkmessagedialog.h>
 #include <gtk/gtklabel.h>
@@ -53,6 +55,10 @@ int MsgDiag::run()
     SESSION::set_dialog_shown( true );
     CORE::core_set_command( "dialog_shown" );
 
+    // タイマーセット
+    sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &MsgDiag::slot_timeout), 0 );
+    m_conn_timer = JDLIB::Timeout::connect( slot_timeout, TIMER_TIMEOUT );
+
     int ret = Gtk::MessageDialog::run();
 
     SESSION::set_dialog_shown( false );
@@ -89,6 +95,17 @@ void MsgDiag::hide()
     CORE::core_set_command( "dialog_hidden" );
 
     Gtk::MessageDialog::hide();
+}
+
+
+// タイマーのslot関数
+bool MsgDiag::slot_timeout( int timer_number )
+{
+    // メインループが停止していて dispatcher が働かないため
+    // タイマーから強制的に実行させる
+    CORE::get_dispmanager()->slot_dispatch();
+
+    return true;
 }
 
 
@@ -134,3 +151,20 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
 
     show_all_children();
 }
+
+
+
+/////////////////////////////////////
+
+
+
+MsgOverwriteDiag::MsgOverwriteDiag( Gtk::Window* parent )
+    : SKELETON::MsgDiag( parent, "ファイルが存在します。ファイル名を変更して保存しますか？", 
+                         false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE )
+{
+    add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+    add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+    add_button( "上書き", OVERWRITE_YES );
+    add_button( "すべていいえ", OVERWRITE_NO_ALL );
+    add_button( "すべて上書き", OVERWRITE_YES_ALL );
+};

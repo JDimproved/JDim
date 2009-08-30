@@ -953,7 +953,7 @@ void ImageAdmin::save_all()
     std::cout << "ImageAdmin::save_all\n";
 #endif
 
-    int overwrite = 0; // -1 なら全てNO、1ならすべてYES
+    int overwrite = Gtk::RESPONSE_NO;
 
     std::list< std::string > list_urls = get_URLs();
 
@@ -996,10 +996,14 @@ void ImageAdmin::save_all()
                 if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
 
                     // すべて上書き
-                    if( overwrite == 1 ){
+                    if( overwrite == SKELETON::OVERWRITE_YES_ALL ){
                         if( ! copy_file( url, path_from, path_to ) ) return;
                     }
-                    else if( overwrite != -1 ){
+
+                    // すべていいえ
+                    else if( overwrite == SKELETON::OVERWRITE_NO_ALL ){}
+
+                    else{
 
                         // ビューを切り替えてURLやステータス更新
                         switch_img( url );
@@ -1008,35 +1012,25 @@ void ImageAdmin::save_all()
 
                         for(;;){
 
-                            SKELETON::MsgDiag mdiag( get_win(), "ファイルが存在します。ファイル名を変更して保存しますか？", 
-                                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
-                            mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-                            mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
-                            mdiag.add_button( "上書き", Gtk::RESPONSE_YES + 100 );
-                            mdiag.add_button( "すべていいえ", Gtk::RESPONSE_NO + 200 );
-                            mdiag.add_button( "すべて上書き", Gtk::RESPONSE_YES + 200 );
+                            SKELETON::MsgOverwriteDiag mdiag( get_win() );
 
-                            int ret = mdiag.run();
+                            overwrite = mdiag.run();
                             mdiag.hide();
 
-                            switch( ret ){
+                            switch( overwrite ){
 
                                 // すべて上書き
-                                case Gtk::RESPONSE_YES + 200:
-                                    overwrite = 1;
+                                case SKELETON::OVERWRITE_YES_ALL:
+
                                     // 上書き
-                                case Gtk::RESPONSE_YES + 100:
+                                case SKELETON::OVERWRITE_YES:
+
                                     if( ! copy_file( url, path_from, path_to ) ) return;
                                     break;
 
                                     // 名前変更
                                 case Gtk::RESPONSE_YES:
                                     if( ! DBIMG::save( url, get_win(), path_to ) ) continue;
-                                    break;
-
-                                    //  すべていいえ
-                                case Gtk::RESPONSE_NO + 200:
-                                    overwrite = -1;
                                     break;
 
                                 default:
@@ -1053,7 +1047,11 @@ void ImageAdmin::save_all()
             }
 
         }
-        else MISC::ERRMSG( "can't create " + path_dir );
+        else{
+
+            SKELETON::MsgDiag mdiag( get_win(), path_dir + "\n\nの作成に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。\n\n画像保存をキャンセルしました。原因を解決してからもう一度保存を行ってください。" );
+            mdiag.run();
+        }
     }
 }
 

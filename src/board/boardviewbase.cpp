@@ -7,6 +7,7 @@
 #include "boardview.h"
 
 #include "skeleton/msgdiag.h"
+#include "skeleton/filediag.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
@@ -21,6 +22,7 @@
 #include "control/controlutil.h"
 
 #include "command.h"
+#include "cache.h"
 #include "session.h"
 #include "sharedbuffer.h"
 #include "global.h"
@@ -229,6 +231,8 @@ BoardViewBase::BoardViewBase( const std::string& url )
     "<separator/>"
     "<menuitem action='SetBookMark'/>"
     "<menuitem action='UnsetBookMark'/>"
+    "<separator/>"
+    "<menuitem action='SaveDat'/>"
     "<separator/>"
     "<menuitem action='Favorite_Article'/>"
     "<separator/>"
@@ -1377,20 +1381,26 @@ void BoardViewBase::activate_act_before_popupmenu( const std::string& url )
 
     Glib::RefPtr< Gtk::Action > act;
 
-    std::string url_selected;
-    DBTREE::ArticleBase* art_selected = NULL;
-    if( ! m_path_selected.empty() ){
-        url_selected = path2daturl( m_path_selected );
-        art_selected = DBTREE::get_article( url_selected );
-    }
+    // dat 保存
+    act = action_group()->get_action( "SaveDat" );
+    if( act ){
 
-    if( ! url_selected.empty() && art_selected ) {
+        act->set_sensitive( false );
 
-        // キャッシュが無い
-        act = action_group()->get_action( "SaveDat" );
-        if( act ){
-            if( art_selected->is_cached() ) act->set_sensitive( true );
-            else act->set_sensitive( false );
+        std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
+        if( list_it.size() ){
+
+            std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
+            for( ; it != list_it.end(); ++it ){
+
+                Gtk::TreeModel::Row row = *( *it );
+                const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
+
+                if( DBTREE::article_is_cached( url ) ) {
+                    act->set_sensitive( true );
+                    break;
+                }
+            }
         }
     }
 
@@ -2243,10 +2253,129 @@ void BoardViewBase::slot_save_dat()
 {
     if( ! m_enable_menuslot ) return;
 
-    if( m_path_selected.empty() ) return;
-    const std::string url = path2daturl( m_path_selected );
+    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
+    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
 
-    DBTREE::article_save_dat( url, std::string() );
+#ifdef _DEBUG
+    std::cout << "BoardViewBase::slot_save_dat size = " << list_it.size() << std::endl;
+#endif
+
+    if( ! list_it.size() ) return;
+
+    // ひとつだけ名前を付けて保存
+    if( list_it.size() == 1 ){
+
+        if( m_path_selected.empty() ) return;
+        const std::string url = path2daturl( m_path_selected );
+
+        DBTREE::article_save_dat( url, std::string() );
+        return;
+    }
+
+    // 複数のdatを保存
+
+    int overwrite = Gtk::RESPONSE_NO;
+
+    // ディレクトリ選択
+    SKELETON::FileDiag diag( get_parent_win(), "保存先選択", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
+    diag.set_current_folder( SESSION::get_dir_dat() );
+    if( diag.run() != Gtk::RESPONSE_ACCEPT ) return;
+
+    diag.hide();
+
+    std::string path_dir = MISC::recover_path( diag.get_filename() );
+    if( path_dir.empty() ) return;
+    if( path_dir.c_str()[ path_dir.length()-1 ] != '/' ) path_dir += "/";
+        
+#ifdef _DEBUG
+    std::cout << "dir = " << path_dir << std::endl;
+#endif
+
+    if( ! CACHE::jdmkdir( path_dir ) ){
+
+        SKELETON::MsgDiag mdiag( get_parent_win(), path_dir + "\n\nの作成に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。\n\ndatファイルの保存をキャンセルしました。原因を解決してからもう一度保存を行ってください。" );
+        mdiag.run();
+        return;
+    }
+
+    SESSION::set_dir_dat( path_dir );
+
+    for( ; it != list_it.end(); ++it ){
+
+        Gtk::TreeModel::Row row = *( *it );
+        const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
+
+        if( ! DBTREE::article_is_cached( url ) ) continue;
+
+        const std::string path_from = CACHE::path_dat( url );
+        const std::string path_to = path_dir + MISC::get_filename( url );
+
+#ifdef _DEBUG
+        std::cout << "from = " << path_from  << std::endl;
+        std::cout << "to   = " << path_to  << std::endl;
+#endif
+
+        bool copy_file = true;
+
+        // 既にファイルがある場合
+        if( CACHE::file_exists( path_to ) == CACHE::EXIST_FILE ){
+
+            // すべて上書き
+            if( overwrite == SKELETON::OVERWRITE_YES_ALL ) copy_file = true;
+
+            // すべていいえ
+            else if( overwrite == SKELETON::OVERWRITE_NO_ALL ) copy_file = false;
+
+            else{
+
+                for(;;){
+
+                    SKELETON::MsgOverwriteDiag mdiag( get_parent_win() );
+
+                    overwrite = mdiag.run();
+                    mdiag.hide();
+
+                    switch( overwrite ){
+
+                        // すべて上書き
+                        case SKELETON::OVERWRITE_YES_ALL:
+
+                            // 上書き
+                        case SKELETON::OVERWRITE_YES:
+
+                            copy_file = true;
+                            break;
+
+                            // 名前変更
+                        case Gtk::RESPONSE_YES:
+                            if( ! DBTREE::article_save_dat( url, path_to ) ) continue;
+
+                        default:
+                            copy_file = false;
+                            break;
+                    }
+
+                    break;  // for(;;)
+                }
+            }
+        }
+
+        if( copy_file ){
+
+#ifdef _DEBUG
+            std::cout << "copy\n";
+#endif
+            if( ! CACHE::jdcopy( path_from, path_to ) ){
+
+                SKELETON::MsgDiag mdiag( get_parent_win(), path_to + "\n\nの保存に失敗しました。\nハードディスクの容量やパーミッションなどを確認してください。\n\ndatファイルの保存をキャンセルしました。原因を解決してからもう一度保存を行ってください。" );
+                mdiag.run();
+
+                return;
+            }
+        }
+
+    }
+
 }
 
 

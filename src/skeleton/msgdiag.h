@@ -7,10 +7,15 @@
 
 #include <gtkmm.h>
 
+#include "jdlib/timeout.h"
+
 namespace SKELETON
 {
     class MsgDiag : public Gtk::MessageDialog
     {
+
+        JDLIB::Timeout* m_conn_timer;
+
       public:
 
         MsgDiag( Gtk::Window& parent,
@@ -34,6 +39,11 @@ namespace SKELETON
 
         void show();
         void hide();
+
+      private:
+
+        // タイマーのslot関数
+        bool slot_timeout( int timer_number );
     };
 
 
@@ -53,6 +63,25 @@ namespace SKELETON
                       Gtk::ButtonsType buttons = Gtk::BUTTONS_OK );
 
         Gtk::CheckButton& get_chkbutton(){ return m_chkbutton; }
+    };
+
+
+    /////////////////////////////////////
+
+    // 上書きチェックダイアログ
+
+    enum
+    {
+        OVERWRITE_YES = Gtk::RESPONSE_YES + 100,
+        OVERWRITE_YES_ALL = Gtk::RESPONSE_YES + 200,
+        OVERWRITE_NO_ALL = Gtk::RESPONSE_NO + 200
+    };
+
+    class MsgOverwriteDiag : public SKELETON::MsgDiag
+    {
+      public:
+
+        MsgOverwriteDiag( Gtk::Window* parent );
     };
 }
 
