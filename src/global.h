@@ -171,6 +171,7 @@ enum
     STATUS_BROKEN = 4,   // あぼーんなどで壊れている
     STATUS_UPDATE = 8,   // 更新可能
     STATUS_UPDATED = 16,   // 更新済み
+    STATUS_BROKEN_SUBJECT = 32  // subject.txt が壊れている( subject.txt に示されたレス数よりも実際の取得数の方が多い )
 };
 
 

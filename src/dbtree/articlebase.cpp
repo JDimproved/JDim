@@ -447,13 +447,26 @@ void ArticleBase::set_subject( const std::string& subject )
 
 void ArticleBase::set_number( const int number )
 {
-    if( number && number > m_number ){
+    if( ! number ) return;
+
+    m_status &= ~STATUS_BROKEN_SUBJECT;
+
+    if( number > m_number ){
 
         m_number = number;
 
         // キャッシュがあって更新可能になった場合は
         // お気に入りとスレビューのタブのアイコンに更新マークを表示
         if( is_cached() && !( m_status & STATUS_UPDATE ) && m_number_load < m_number ) show_updateicon( true );
+    }
+
+    // subject.txt に示されたレス数よりも実際の取得数の方が多い
+    else if( number < m_number ){
+#ifdef _DEBUG
+        std::cout << "ArticleBase::set_number : broken_subject " << get_subject() << " "
+                  << number << " / " << m_number << std::endl;
+#endif
+        m_status |= STATUS_BROKEN_SUBJECT;
     }
 }
 

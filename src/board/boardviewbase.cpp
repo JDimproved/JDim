@@ -66,8 +66,10 @@ enum{
     COL_MARKVAL_NEWTHREAD_HOUR,  // 新スレ( CONFIG::get_newthread_hour 時間以内 )
     COL_MARKVAL_NEWTHREAD,       // 前回の板一覧読み込み時から新しく出来たスレ
     COL_MARKVAL_CACHED,          // キャッシュあり、新着無し
+    COL_MARKVAL_BROKEN_SUBJECT,  // キャッシュあり、新着無しだが subject.txt が壊れている可能性がある
     COL_MARKVAL_UPDATED,         // キャッシュあり、新着有り
     COL_MARKVAL_BKMARKED,        // ブックマークされている、新着無し
+    COL_MARKVAL_BKMARKED_BROKEN_SUBJECT, // ブックマークされている、新着無しだが subject.txt が壊れている可能性がある
     COL_MARKVAL_BKMARKED_UPDATED // ブックマークされている、新着有り
 };
 
@@ -723,12 +725,14 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
             if( sortmode == SORTMODE_MARK2 ){ // 新着をキャッシュの上に
 
                 if( num_a == COL_MARKVAL_NEWTHREAD
-                    && ( num_b != COL_MARKVAL_NEWTHREAD && num_b != COL_MARKVAL_BKMARKED_UPDATED && num_b != COL_MARKVAL_BKMARKED ) ){
+                    && ( num_b != COL_MARKVAL_NEWTHREAD && num_b != COL_MARKVAL_BKMARKED_UPDATED 
+                         && num_b != COL_MARKVAL_BKMARKED_BROKEN_SUBJECT && num_b != COL_MARKVAL_BKMARKED ) ){
                     num_a = DOWN; // 下で ret *= -1 しているので UP と DOWNを逆にする
                     num_b = UP;
                 }
                 else if( num_b == COL_MARKVAL_NEWTHREAD
-                         && ( num_a != COL_MARKVAL_NEWTHREAD && num_a != COL_MARKVAL_BKMARKED_UPDATED && num_a != COL_MARKVAL_BKMARKED ) ){
+                         && ( num_a != COL_MARKVAL_NEWTHREAD && num_a != COL_MARKVAL_BKMARKED_UPDATED 
+                             && num_a != COL_MARKVAL_BKMARKED_BROKEN_SUBJECT && num_a != COL_MARKVAL_BKMARKED ) ){
                     num_a = UP; // 下で ret *= -1 しているので UP と DOWNを逆にする
                     num_b = DOWN;
                 }
@@ -1536,16 +1540,25 @@ void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel:
     int mark_val;
     int icon;
 
-    // ブックマーク & 新着あり
-    if( art->is_bookmarked_thread() && art->enable_load() ){
-        mark_val = COL_MARKVAL_BKMARKED_UPDATED;
-        icon = ICON::BKMARK_UPDATE;
-    }
+    // ブックマーク 
+    if( art->is_bookmarked_thread() ){
 
-    // ブックマーク
-    else if( art->is_bookmarked_thread() ){
-        mark_val = COL_MARKVAL_BKMARKED;
-        icon = ICON::BKMARK;
+        //  新着あり
+        if( art->enable_load() ){
+            mark_val = COL_MARKVAL_BKMARKED_UPDATED;
+            icon = ICON::BKMARK_UPDATE;
+        }
+
+        // subject.txt が壊れている( subject.txt に示されたレス数よりも実際の取得数の方が多い )
+        else if( art->is_cached() && ( art->get_status() & STATUS_BROKEN_SUBJECT ) ){
+            mark_val = COL_MARKVAL_BKMARKED_BROKEN_SUBJECT;
+            icon = ICON::BKMARK_BROKEN_SUBJECT;
+        }
+
+        else{
+            mark_val = COL_MARKVAL_BKMARKED;
+            icon = ICON::BKMARK;
+        }
     }
 
     // dat落ち
@@ -1557,7 +1570,10 @@ void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel:
     // キャッシュはあるが規定のレス数を越えていて全てのレスが既読
     else if( art->is_finished() ){
         mark_val = COL_MARKVAL_FINISHED;
-        icon = ICON::CHECK;
+
+        // subject.txt が壊れている( subject.txt に示されたレス数よりも実際の取得数の方が多い )
+        if( art->get_status() & STATUS_BROKEN_SUBJECT ) icon = ICON::BROKEN_SUBJECT;
+        else icon = ICON::CHECK;
     }
 
     // 新着あり
@@ -1565,11 +1581,23 @@ void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel:
         mark_val = COL_MARKVAL_UPDATED;
         icon = ICON::UPDATE;
     }
-    // キャッシュあり、新着無し
+
+    // キャッシュあり
     else if( art->is_cached() ){
-        mark_val = COL_MARKVAL_CACHED;
-        icon = ICON::CHECK;
+
+        // subject.txt が壊れている( subject.txt に示されたレス数よりも実際の取得数の方が多い )
+        if( art->get_status() & STATUS_BROKEN_SUBJECT ){
+            mark_val = COL_MARKVAL_BROKEN_SUBJECT;
+            icon = ICON::BROKEN_SUBJECT;
+        }
+
+        // 新着無し
+        else{
+            mark_val = COL_MARKVAL_CACHED;
+            icon = ICON::CHECK;
+        }
     }
+
     // キャッシュ無し、新着
     else if( art->get_since_time() > m_last_access_time ){
         mark_val = COL_MARKVAL_NEWTHREAD;

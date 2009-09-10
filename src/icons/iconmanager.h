@@ -30,11 +30,13 @@ namespace ICON
 
         BKMARK_UPDATE,
         BKMARK,
+        BKMARK_BROKEN_SUBJECT,
         BKMARK_THREAD,
 
         UPDATE,
         NEWTHREAD,
         NEWTHREAD_HOUR,
+        BROKEN_SUBJECT,
         CHECK,
         DOWN,
         WRITE,
