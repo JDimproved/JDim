@@ -674,11 +674,22 @@ void BoardViewBase::slot_col_clicked( const int col )
     else if( m_sortmode == SORTMODE_MARK3 ) m_sortmode = SORTMODE_MARK4;
     else if( m_sortmode == SORTMODE_MARK4 ) m_sortmode = SORTMODE_MARK1;
 
+    if( m_col == COL_MARK ){
+        std::string info;
+        if( m_sortmode == SORTMODE_MARK1 ) info = "モード 1";
+        if( m_sortmode == SORTMODE_MARK2 ) info = "モード 2";
+        if( m_sortmode == SORTMODE_MARK3 ) info = "モード 3";
+        if( m_sortmode == SORTMODE_MARK4 ) info = "モード 4";
+        CORE::core_set_command( "set_info", "", info );
+    }
+
+/*  そろそろ消しても良い?  問題があれば戻す
+
     // 旧バージョンとの互換性のため
     if( m_col == COL_MARK ){
         if( m_sortmode == SORTMODE_DESCEND || m_sortmode == SORTMODE_ASCEND ) m_sortmode = SORTMODE_MARK1;
     }
-
+*/
     save_sort_columns();
     exec_sort();
     focus_view();
