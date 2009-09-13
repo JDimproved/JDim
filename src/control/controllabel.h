@@ -53,6 +53,8 @@ namespace CONTROL
 
         { "TabRight", "右のタブに移動" },
         { "TabLeft", "左のタブに移動" },
+        { "TabRightUpdated", "右の更新済みタブに移動" },
+        { "TabLeftUpdated", "左の更新済みタブに移動" },
 
         { "TabNum1", "タブ1に移動" },
         { "TabNum2", "タブ2に移動" },

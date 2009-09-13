@@ -58,8 +58,8 @@ namespace MESSAGE
 
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void switch_admin();
-        virtual void tab_left();
-        virtual void tab_right();
+        virtual void tab_left( const bool updated );
+        virtual void tab_right( const bool updated );
         virtual void close_view( const std::string& url );
         virtual void open_window();
         virtual void close_window();

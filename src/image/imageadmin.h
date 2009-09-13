@@ -62,8 +62,8 @@ namespace IMAGE
 
         virtual void switch_admin();
         virtual void open_view( const COMMAND_ARGS& command );
-        virtual void tab_left();
-        virtual void tab_right();
+        virtual void tab_left( const bool updated );
+        virtual void tab_right( const bool updatd );
         virtual void tab_head();
         virtual void tab_tail();
         virtual void redraw_view( const std::string& url );

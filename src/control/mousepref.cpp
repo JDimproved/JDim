@@ -67,6 +67,8 @@ MousePref::MousePref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::Left );
     append_row( CONTROL::TabRight );
     append_row( CONTROL::TabLeft );
+    append_row( CONTROL::TabRightUpdated );
+    append_row( CONTROL::TabLeftUpdated );
     append_row( CONTROL::ToggleArticle );
     append_row( CONTROL::Home );
     append_row( CONTROL::End );

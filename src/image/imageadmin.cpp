@@ -326,7 +326,7 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
 //
 // タブの切替え
 //
-void ImageAdmin::tab_left()
+void ImageAdmin::tab_left( const bool updated )
 {
     if( m_iconbox.children().size() == 1 ) return;
 
@@ -354,7 +354,7 @@ void ImageAdmin::tab_left()
 }
 
 
-void ImageAdmin::tab_right()
+void ImageAdmin::tab_right( const bool updated )
 {
     if( m_iconbox.children().size() == 1 ) return;
 

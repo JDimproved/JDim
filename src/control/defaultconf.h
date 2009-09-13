@@ -23,6 +23,8 @@ namespace CONTROL
 
 #define KEYCONF_TabRight  "Ctrl+Page_Down Ctrl+Tab Ctrl+Left_Tab Ctrl+l Ctrl+Right"
 #define KEYCONF_TabLeft  "Ctrl+Page_Up Ctrl+Shift+Tab Ctrl+Shift+Left_Tab Ctrl+h Ctrl+Left"
+#define KEYCONF_TabRightUpdated  "Ctrl+Shift+Page_Down Ctrl+L Ctrl+Shift+Right ]"
+#define KEYCONF_TabLeftUpdated  "Ctrl+Shift+Page_Up Ctrl+H Ctrl+Shift+Left ["
 
 #define KEYCONF_TabNum1 "Alt+1"
 #define KEYCONF_TabNum2 "Alt+2"
@@ -156,8 +158,12 @@ namespace CONTROL
 // 共通
 #define MOUSECONF_Right "6"
 #define MOUSECONF_Left "4"
+
 #define MOUSECONF_TabRight "86"
 #define MOUSECONF_TabLeft "84"
+#define MOUSECONF_TabRightUpdated ""
+#define MOUSECONF_TabLeftUpdated ""
+
 #define MOUSECONF_ToggleArticle "2"
 #define MOUSECONF_Home "68"
 #define MOUSECONF_End "62"

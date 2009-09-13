@@ -495,10 +495,16 @@ void Admin::exec_command()
         switch_view( command.url );
     }
     else if( command.command == "tab_left" ){
-        tab_left();
+        tab_left( false );
     }
     else if( command.command == "tab_right" ){
-        tab_right();
+        tab_right( false );
+    }
+    else if( command.command == "tab_left_updated" ){
+        tab_left( true );
+    }
+    else if( command.command == "tab_right_updated" ){
+        tab_right( true );
     }
     else if( command.command == "tab_num" ){
         tab_num( command.arg1 );
@@ -1080,17 +1086,38 @@ void Admin::switch_view( const std::string& url )
 //
 // タブ左移動
 //
-void Admin::tab_left()
+// updated == true の時は更新されたタブに移動
+//
+void Admin::tab_left( const bool updated )
 {
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages == 1 ) return;
 
     int page = m_notebook->get_current_page();
     if( page == -1 ) return;
 
-    if( page == 0 ) page = pages;
+#ifdef _DEBUG
+    std::cout << "Admin::tab_left updated << " << updated << " page = " << page;
+#endif
 
-    set_current_page( --page );
+    for( int i = 0; i < pages ; ++i ){
+
+        --page;
+        if( page < 0 ) page = pages -1;
+        if( ! updated ) break;
+
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+        if( ! view ) return;
+
+        // updated アイコンが表示されているタブを見つける
+        if( get_notebook()->get_tabicon( page ) == view->get_icon( "updated" ) ) break;
+    }
+
+#ifdef _DEBUG
+    std::cout << " -> " << page << std::endl;
+#endif
+
+    if( page != m_notebook->get_current_page() ) set_current_page( page );
 }
 
 
@@ -1098,7 +1125,9 @@ void Admin::tab_left()
 //
 // タブ右移動
 //
-void Admin::tab_right()
+// updated == true の時は更新されたタブに移動
+//
+void Admin::tab_right( const bool updated )
 {
     int pages = m_notebook->get_n_pages();
     if( pages == 1 ) return;
@@ -1106,9 +1135,28 @@ void Admin::tab_right()
     int page = m_notebook->get_current_page();
     if( page == -1 ) return;
 
-    if( page == pages -1 ) page = -1;
+#ifdef _DEBUG
+    std::cout << "Admin::tab_right updated << " << updated << " page = " << page;
+#endif
 
-    set_current_page( ++page );
+    for( int i = 0; i < pages; ++i ){
+
+        ++page;
+        if( page >= pages ) page = 0;
+        if( ! updated ) break;
+
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+        if( ! view ) return;
+
+        // updated アイコンが表示されているタブを見つける
+        if( get_notebook()->get_tabicon( page ) == view->get_icon( "updated" ) ) break;
+    }
+
+#ifdef _DEBUG
+    std::cout << " -> " << page << std::endl;
+#endif
+
+    if( page != m_notebook->get_current_page() ) set_current_page( page );
 }
 
 
@@ -1629,7 +1677,7 @@ void Admin::toggle_icon( const std::string& url )
 #ifdef _DEBUG
         std::cout << "name = " << iconname << std::endl;
 #endif
-        int id = view->get_icon( iconname );
+        const int id = view->get_icon( iconname );
         get_notebook()->set_tabicon( iconname, get_notebook()->page_num( *view ), id );
 
         if( m_move_menu ) m_move_menu->update_icons();

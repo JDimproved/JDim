@@ -41,6 +41,8 @@ void MouseConfig::load_conf()
     SETMOTION( "Left", MOUSECONF_Left );
     SETMOTION( "TabRight", MOUSECONF_TabRight );
     SETMOTION( "TabLeft", MOUSECONF_TabLeft );
+    SETMOTION( "TabRightUpdated", MOUSECONF_TabRightUpdated );
+    SETMOTION( "TabLeftUpdated", MOUSECONF_TabLeftUpdated );
     SETMOTION( "ToggleArticle", MOUSECONF_ToggleArticle );
     SETMOTION( "Home", MOUSECONF_Home );
     SETMOTION( "End", MOUSECONF_End );

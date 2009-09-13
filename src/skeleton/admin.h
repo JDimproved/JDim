@@ -167,8 +167,12 @@ namespace SKELETON
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void switch_admin() = 0;  // CORE::core_set_command( "switch_*" )　を送る
         virtual void switch_view( const std::string& url );
-        virtual void tab_left();
-        virtual void tab_right();
+
+        // タブ左右移動
+        // updated == true の時は更新されたタブに移動
+        virtual void tab_left( const bool updated );
+        virtual void tab_right( const bool updated );
+
         virtual void tab_num( const std::string& str_num );
         virtual void tab_head();
         void tab_head_focus();

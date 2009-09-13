@@ -47,6 +47,8 @@ void KeyConfig::load_conf()
 
     SETKEYMOTION( "TabRight", KEYCONF_TabRight );
     SETKEYMOTION( "TabLeft", KEYCONF_TabLeft );
+    SETKEYMOTION( "TabRightUpdated", KEYCONF_TabRightUpdated );
+    SETKEYMOTION( "TabLeftUpdated", KEYCONF_TabLeftUpdated );
 
     SETKEYMOTION( "TabNum1", KEYCONF_TabNum1 );
     SETKEYMOTION( "TabNum2", KEYCONF_TabNum2 );

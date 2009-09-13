@@ -759,10 +759,12 @@ const bool BBSListViewBase::operate_view( const int control )
             break;
 
         case CONTROL::TabLeft:
+        case CONTROL::TabLeftUpdated:
             BBSLIST::get_admin()->set_command( "tab_left" );
             break;
 
         case CONTROL::TabRight:
+        case CONTROL::TabRightUpdated:
             BBSLIST::get_admin()->set_command( "tab_right" );
             break;
 

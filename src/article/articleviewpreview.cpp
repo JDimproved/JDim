@@ -90,10 +90,12 @@ const bool ArticleViewPreview::operate_view( const int control )
             break;
 
         case CONTROL::TabLeft:
+        case CONTROL::TabLeftUpdated:
             MESSAGE::get_admin()->set_command( "tab_left" );
             break;
 
         case CONTROL::TabRight:
+        case CONTROL::TabRightUpdated:
             MESSAGE::get_admin()->set_command( "tab_right" );
         break;
 

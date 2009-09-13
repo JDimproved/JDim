@@ -1150,8 +1150,16 @@ const bool BoardViewBase::operate_view( const int control )
             BOARD::get_admin()->set_command( "tab_left" );
             break;
 
+        case CONTROL::TabLeftUpdated:
+            BOARD::get_admin()->set_command( "tab_left_updated" );
+            break;
+
         case CONTROL::TabRight:
             BOARD::get_admin()->set_command( "tab_right" );
+            break;
+
+        case CONTROL::TabRightUpdated:
+            BOARD::get_admin()->set_command( "tab_right_updated" );
             break;
 
         // タブ位置(1-9)で移動

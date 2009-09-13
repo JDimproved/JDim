@@ -1071,6 +1071,14 @@ const bool ArticleViewBase::operate_view( const int control )
             ARTICLE::get_admin()->set_command( "tab_right" );
             break;
 
+        case CONTROL::TabLeftUpdated:
+            ARTICLE::get_admin()->set_command( "tab_left_updated" );
+            break;
+
+        case CONTROL::TabRightUpdated:
+            ARTICLE::get_admin()->set_command( "tab_right_updated" );
+            break;
+
         // タブ位置(1-9)で移動
         case CONTROL::TabNum1:
             ARTICLE::get_admin()->set_command( "tab_num", "", "1" );

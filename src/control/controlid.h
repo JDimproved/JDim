@@ -47,6 +47,8 @@ namespace CONTROL
 
         TabRight,
         TabLeft,
+        TabRightUpdated,
+        TabLeftUpdated,
 
         TabNum1,
         TabNum2,
