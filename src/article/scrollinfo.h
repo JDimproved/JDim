@@ -16,6 +16,7 @@ namespace ARTICLE
         SCROLL_TO_NUM,  // レス番号 res にジャンプ
         SCROLL_TO_TOP,  // 先頭にジャンプ
         SCROLL_TO_BOTTOM, // 最後にジャンプ
+        SCROLL_TO_Y,    // y 座標にジャンプ
         SCROLL_AUTO     // マーカを中心にしてオートスクロール
     };
     

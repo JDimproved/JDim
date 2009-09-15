@@ -1491,7 +1491,7 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
     LAYOUT* header = m_layout_tree->top_header();
     while( header ){
 
-        // 現在みているスレ番号取得
+        // 現在みているレス番号取得
         if( ! m_seen_current ){
 
             if( ! header->next_header // 最後のレス
@@ -2442,15 +2442,25 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
         }
         break;
 
-        // 先頭、最後に移動
+        // 先頭に移動
         case SCROLL_TO_TOP:
             y = 0;
             m_scrollinfo.reset();
             break;
 
+        // 最後に移動
         case SCROLL_TO_BOTTOM:
             y = (int) adjust->get_upper();
             m_scrollinfo.reset();
+            break;
+
+            // y 座標に移動
+        case SCROLL_TO_Y:
+            y = m_scrollinfo.y;
+            m_scrollinfo.reset();
+#ifdef _DEBUG
+            std::cout << "DrawAreaBase::exec_scroll : y = " << y << std::endl;
+#endif        
             break;
         
         case SCROLL_NORMAL: // 1 回だけスクロール
@@ -3745,23 +3755,36 @@ void DrawAreaBase::configure_impl()
 
     // サイズが変わっていないときは再レイアウトしない
     if( m_configure_width == width &&  m_configure_height == height ) return;
-    m_configure_width = width;
-    m_configure_height = height;
 
     // リサイズする前のレス番号を保存しておいて
     // redrawした後にジャンプ
-    int seen_current = m_seen_current;
+    const int seen_current = m_seen_current;
+
+    // リサイズ前と横幅が同じ場合はスクロールバーの位置を変えない
+    const int pos_y = m_configure_width == width ? get_vscr_val() : 0;
+
+    m_configure_width = width;
+    m_configure_height = height;
+
 
 #ifdef _DEBUG    
     std::cout << "DrawAreaBase::configure_impl : url = " << m_url << std::endl
               << "seen = " << seen_current
+              << " pos_y = " << pos_y
               << " width = " << m_view.get_width() << " heigth = " << m_view.get_height()
               << " pre_width = " << m_configure_width << " pre_height = " << m_configure_height << std::endl;
 #endif
 
     if( exec_layout() ) redraw_view();
 
-    if( seen_current ) goto_num( seen_current );
+    // スクロール実行
+    if( pos_y ){
+        m_scrollinfo.reset();
+        m_scrollinfo.mode = SCROLL_TO_Y;
+        m_scrollinfo.y = pos_y;
+        exec_scroll( false );
+    }
+    else if( seen_current ) goto_num( seen_current );
 }
 
 
