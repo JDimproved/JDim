@@ -132,7 +132,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
       m_open_only_onedir( false ),
       m_cancel_expand( false ),
       m_expanding( 0 ),
-      m_editlistwin( NULL )
+      m_editlistwin( NULL ),
+      m_set_bookmark( false )
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
@@ -1249,7 +1250,7 @@ void BBSListViewBase::slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_
             case TYPE_THREAD_UPDATE:
             case TYPE_THREAD_OLD:
 
-                if( CONFIG::get_bookmark_drop() ) DBTREE::set_bookmarked_thread( info.url, true );
+                if( m_set_bookmark ) DBTREE::set_bookmarked_thread( info.url, true );
                 m_set_thread.insert( DBTREE::url_dat( info.url ) );
                 break;
 

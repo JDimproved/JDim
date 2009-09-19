@@ -82,6 +82,9 @@ namespace BBSLIST
 
         EditListWin* m_editlistwin;
 
+        // スレを追加したときにそのスレにしおりを付ける
+        bool m_set_bookmark;
+
       protected:
 
         // Viewが所属するAdminクラス
@@ -91,6 +94,9 @@ namespace BBSLIST
         void set_editable( const bool editable );
 
         void set_search_invert( const bool invert ){ m_search_invert = invert; }
+
+        // スレを追加したときにそのスレにしおりを付ける
+        void set_bookmark( const bool set ){ m_set_bookmark = set; }
 
         // DOM共有オブジェクト
         XML::Document m_document;

@@ -26,6 +26,9 @@ FavoriteListView::FavoriteListView( const std::string& url,
     // D&Dで編集可能
     set_editable( true );
 
+    // スレをお気に入りに追加したらしおりをつけるかどうか
+    set_bookmark( CONFIG::get_bookmark_drop() );
+
     set_open_only_onedir( CONFIG::get_open_one_favorite() );
 }
  
