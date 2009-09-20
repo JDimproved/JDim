@@ -36,7 +36,7 @@ namespace JDLIB
         const int get_height() const{ return m_height; }
 
         bool get_size();
-        bool load( bool& stop, bool pixbufonly, bool sizeonly );
+        const bool load( const bool& stop, const bool pixbufonly, const bool sizeonly );
 
       private:
         void slot_size_prepared( int w, int h );

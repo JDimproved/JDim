@@ -29,7 +29,7 @@ bool ImgLoader::get_size()
 // stop を trueにすると読み込みを停止する
 // 動画でpixbufonly = true の時はアニメーションさせない
 // sizeonly = true の時はサイズの取得のみ
-bool ImgLoader::load( bool& stop, bool pixbufonly, bool sizeonly )
+const bool ImgLoader::load( const bool& stop, const bool pixbufonly, const bool sizeonly )
 {
     if( sizeonly && m_width && m_height ) return true;
     if( m_loader ) return true;
@@ -90,10 +90,10 @@ bool ImgLoader::load( bool& stop, bool pixbufonly, bool sizeonly )
     catch( Glib::Error& err )
     {
 #ifdef _DEBUG
-        std::string stop_s = m_stop ? "true" : "false";
+        std::string stop_s = ( m_stop || stop )  ? "true" : "false";
         std::cout << "ImgLoader (" << stop_s << ") : " << m_file << std::endl;
 #endif
-        if( ! m_stop ){
+        if( ! m_stop && ! stop ){
             m_errmsg = err.what();
             m_loader.clear();
             ret = false;
