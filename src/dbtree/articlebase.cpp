@@ -445,7 +445,7 @@ void ArticleBase::set_subject( const std::string& subject )
 }
 
 
-void ArticleBase::set_number( const int number )
+void ArticleBase::set_number( const int number, const bool is_online )
 {
     if( ! number ) return;
 
@@ -461,7 +461,7 @@ void ArticleBase::set_number( const int number )
     }
 
     // subject.txt に示されたレス数よりも実際の取得数の方が多い
-    else if( number < m_number ){
+    else if( is_online && number < m_number ){
 #ifdef _DEBUG
         std::cout << "ArticleBase::set_number : broken_subject " << get_subject() << " "
                   << number << " / " << m_number << std::endl;

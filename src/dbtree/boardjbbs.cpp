@@ -148,7 +148,7 @@ const std::string BoardJBBS::url_subbbscgi_new()
 //
 // subject.txt から Aarticle のリストにアイテムを追加・更新
 //
-void BoardJBBS::parse_subject( const char* str_subject_txt )
+void BoardJBBS::parse_subject( const char* str_subject_txt, const bool is_online )
 {
 #ifdef _DEBUG
     std::cout << "BoardJBBS::parse_subject\n";
@@ -234,7 +234,7 @@ void BoardJBBS::parse_subject( const char* str_subject_txt )
         if( article ){
             article->read_info();
             article->set_subject( subject );
-            article->set_number( number );
+            article->set_number( number, is_online );
 
             // boardビューに表示するリスト更新
             // JBBSは最初と最後の行が同じになる仕様があるので最後の行を除く

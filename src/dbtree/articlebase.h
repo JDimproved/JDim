@@ -267,7 +267,7 @@ namespace DBTREE
         void set_status( const int status ){ m_status = status; }
         
         void set_subject( const std::string& subject );
-        void set_number( const int number );
+        void set_number( const int number, const bool is_online );
         void set_number_load( const int number_load );
         void set_number_seen( const int number_seen );
         void update_writetime();

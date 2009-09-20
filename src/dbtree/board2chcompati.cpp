@@ -308,7 +308,7 @@ ArticleBase* Board2chCompati::append_article( const std::string& datbase, const 
 //
 // subject.txt から Aarticle のリストにアイテムを追加・更新
 //
-void Board2chCompati::parse_subject( const char* str_subject_txt )
+void Board2chCompati::parse_subject( const char* str_subject_txt, const bool is_online )
 {
 #ifdef _DEBUG
     std::cout << "Board2chCompati::parse_subject\n";
@@ -398,7 +398,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
 
             // infoファイルが無い場合もあるのでsubject.txtから取得したサブジェクト、レス数を指定しておく
             article->set_subject( subject );
-            article->set_number( number );
+            article->set_number( number, is_online );
 
             // ステータスをDAT落ち状態から通常状態に変更
             int status = article->get_status();

@@ -1082,7 +1082,7 @@ void BoardBase::receive_finish()
     }
 
     // subject.txtをパースしながらデータベース更新
-    parse_subject( rawdata_utf8 );
+    parse_subject( rawdata_utf8, m_is_online );
 
     // list_subject 更新
     if( ! m_list_subject.empty() ){

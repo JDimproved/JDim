@@ -209,10 +209,10 @@ const std::string BoardMachi::url_subbbscgi_new()
 //
 // subject.txt から Aarticle のリストにアイテムを追加・更新
 //
-void BoardMachi::parse_subject( const char* str_subject_txt )
+void BoardMachi::parse_subject( const char* str_subject_txt, const bool is_online )
 {
 #ifdef _DEBUG
-    std::cout << "BoardMachi::parse_subject\n";
+    std::cout << "BoardMachi::parse_subject is_online = " << is_online << std::endl;
 #endif 
    
     const char* pos = str_subject_txt;
@@ -296,7 +296,7 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
 
             article->read_info();
             article->set_subject( subject );
-            article->set_number( number );
+            article->set_number( number, is_online );
 
             // boardビューに表示するリスト更新
             // Machiは最初と最後の行が同じになる仕様があるので最後の行を除く

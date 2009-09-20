@@ -496,7 +496,7 @@ namespace DBTREE
         bool start_checkking_if_board_moved();
 
         virtual ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached );
-        virtual void parse_subject( const char* str_subject_txt ){}
+        virtual void parse_subject( const char* str_subject_txt, const bool is_online ){}
 
         std::list< std::string > get_filelist_in_cache();
 
