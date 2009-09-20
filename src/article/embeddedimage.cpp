@@ -31,7 +31,7 @@ void* eimg_launcher( void* dat )
     Glib::Mutex::Lock lock( eimg_launcher_mutex );
 
 #ifdef _DEBUG
-    std::cout << "start eimg_launcher\n";
+    std::cout << "start eimg_launcher" << std::endl;
 #endif
 
     ARTICLE::EmbeddedImage* eimg = (ARTICLE::EmbeddedImage* )( dat );
@@ -45,7 +45,7 @@ void* eimg_launcher( void* dat )
     }
 
 #ifdef _DEBUG
-    std::cout << "end\n";
+    std::cout << "end" << std::endl;
 #endif
 
     return 0;
@@ -80,10 +80,12 @@ EmbeddedImage::~EmbeddedImage()
 void EmbeddedImage::stop()
 {
 #ifdef _DEBUG    
-    std::cout << "EmbeddedImage::stop\n";
+    std::cout << "EmbeddedImage::stop" << std::endl;
 #endif 
 
+#ifndef _WIN32
     m_stop = true;
+#endif
 }
 
 
@@ -91,7 +93,7 @@ void EmbeddedImage::stop()
 void EmbeddedImage::wait()
 {
 #ifdef _DEBUG    
-    std::cout << "EmbeddedImage::wait\n";
+    std::cout << "EmbeddedImage::wait" << std::endl;
 #endif 
     m_thread.join();
 }

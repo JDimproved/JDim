@@ -23,14 +23,14 @@ void* imgarea_launcher( void* dat )
     Glib::Mutex::Lock lock( imgarea_launcher_mutex);
 
 #ifdef _DEBUG
-    std::cout << "start imgarea_launcher\n";
+    std::cout << "start imgarea_launcher" << std::endl;
 #endif
 
     IMAGE::ImageAreaBase* area = ( IMAGE::ImageAreaBase* )( dat );
     area->load_image_thread();
 
 #ifdef _DEBUG
-    std::cout << "end\n";
+    std::cout << "end" << std::endl;
 #endif
 
     return 0;
@@ -86,23 +86,25 @@ ImageAreaBase::~ImageAreaBase()
 void ImageAreaBase::stop()
 {
 #ifdef _DEBUG    
-    std::cout << "ImageAreaBase::stop\n";
+    std::cout << "ImageAreaBase::stop" << std::endl;
 #endif 
 
+#ifndef _WIN32
     m_stop = true;
+#endif
 }
 
 
 void ImageAreaBase::wait()
 {
 #ifdef _DEBUG    
-    std::cout << "ImageAreaBase::wait\n";
+    std::cout << "ImageAreaBase::wait" << std::endl;
 #endif 
 
     m_thread.join();
 
 #ifdef _DEBUG    
-    std::cout << "ImageAreaBase::wait ok\n";
+    std::cout << "ImageAreaBase::wait ok" << std::endl;
 #endif 
 }
 
@@ -130,7 +132,7 @@ void ImageAreaBase::set_height( const int height )
 void ImageAreaBase::load_image()
 {
 #ifdef _DEBUG
-    std::cout << "ImageAreaBase::load_image\n";
+    std::cout << "ImageAreaBase::load_image" << std::endl;
 #endif
 
     // 大きい画像を表示しようとするとJDが固まるときがあるのでスレッドを使用する
@@ -175,7 +177,7 @@ void ImageAreaBase::load_image_thread()
     dispatch();
 
 #ifdef _DEBUG
-    std::cout << "ImageAreaBase::load_image_thread finished\n";
+    std::cout << "ImageAreaBase::load_image_thread finished" << std::endl;
 #endif    
 }
 
@@ -204,7 +206,7 @@ void ImageAreaBase::callback_dispatch()
 void ImageAreaBase::set_image()
 {
 #ifdef _DEBUG
-    std::cout << "ImageAreaBase::set_image\n";
+    std::cout << "ImageAreaBase::set_image" << std::endl;
 #endif
 
     clear();

@@ -42,13 +42,16 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag )
     if( !Glib::thread_supported() ) Glib::thread_init();
     assert( Glib::thread_supported() );
 
+#ifndef _WIN32
     // アイコンをセット
+    // WindowsはwindresのデフォルトICONが初期適用されるので不要
     std::list< Glib::RefPtr< Gdk::Pixbuf > > list_icons;
     list_icons.push_back( ICON::get_icon( ICON::JD16 ) );
     list_icons.push_back( ICON::get_icon( ICON::JD32 ) );
     list_icons.push_back( ICON::get_icon( ICON::JD48 ) );
     Gtk::Window::set_default_icon_list( list_icons );
-    
+#endif
+
     // セッション回復
     SESSION::init_session();
 

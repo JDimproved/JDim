@@ -128,7 +128,7 @@ void ImageAreaIcon::load_image_thread()
     dispatch();
 
 #ifdef _DEBUG
-    std::cout << "ImageAreaIcon::load_image_thread finished\n";
+    std::cout << "ImageAreaIcon::load_image_thread finished" << std::endl;
 #endif    
 }
 
@@ -193,7 +193,7 @@ void ImageAreaIcon::set_image()
     if( m_imagetype == IMAGE_SHOW_ICON ){
 
 #ifdef _DEBUG
-    std::cout << "show icon\n";
+    std::cout << "show icon" << std::endl;
 #endif    
 
         set( m_pixbuf_icon );
@@ -202,7 +202,7 @@ void ImageAreaIcon::set_image()
     else if( m_imagetype == IMAGE_SHOW_INDICATOR ){
 
 #ifdef _DEBUG
-    std::cout << "show indicator\n";
+    std::cout << "show indicator" << std::endl;
 #endif    
 
         set( m_pixbuf );
