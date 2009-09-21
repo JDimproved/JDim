@@ -37,6 +37,7 @@
 #include "icons/iconmanager.h"
 
 #include <gtk/gtk.h> // m_liststore->gobj()->sort_column_id = -2
+#include <sstream>
 
 using namespace BOARD;
 
