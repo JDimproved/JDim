@@ -11,13 +11,13 @@
 #endif
 
 // svn 版の時は JDVERSION_SVN をdefineする
-#define JDVERSION_SVN
+//#define JDVERSION_SVN
 
 #define MAJORVERSION 2
 #define MINORVERSION 4
 #define MICROVERSION 2
-#define JDDATE    "090914"
-#define JDTAG     "beta"
+#define JDDATE    "090921"
+#define JDTAG     "rc"
 
 //---------------------------------
 
