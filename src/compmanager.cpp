@@ -108,7 +108,7 @@ void Completion_Manager::clear( const int mode )
         m_lists[ mode ]->clear();
 
         std::string path = CACHE::path_completion( mode );
-        unlink( path.c_str() );
+        unlink( to_locale_cstr( path ) );
     }
 }
 

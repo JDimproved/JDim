@@ -110,10 +110,10 @@ void DelImgCacheDiag::main_thread()
 #endif
 
         // キャッシュ削除
-        if( CACHE::file_exists( path_file ) == CACHE::EXIST_FILE ) unlink( path_file.c_str() );
+        if( CACHE::file_exists( path_file ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path_file ) );
 
         // info 削除
-        if( CACHE::file_exists( path_info ) == CACHE::EXIST_FILE ) unlink( path_info.c_str() );
+        if( CACHE::file_exists( path_info ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path_info ) );
     }
 
     // あぼーん情報
@@ -141,7 +141,7 @@ void DelImgCacheDiag::main_thread()
         std::cout << "days = " << days << std::endl;
 #endif
         // info 削除
-        if( CACHE::file_exists( path_info ) == CACHE::EXIST_FILE ) unlink( path_info.c_str() );
+        if( CACHE::file_exists( path_info ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path_info ) );
     }
 
 #ifdef _DEBUG

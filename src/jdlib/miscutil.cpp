@@ -1324,7 +1324,11 @@ const std::string MISC::getenv_limited( const char *name, const size_t size )
 
     strncpy( env, getenv( name ), size );
 
+#ifdef _WIN32
+    return recover_path( Glib::locale_to_utf8( std::string( env ) ) );
+#else
     return std::string( env );
+#endif
 }
 
 
@@ -1344,4 +1348,5 @@ const std::string MISC::recover_path( const std::string& str )
     return str;
 #endif
 }
+
 

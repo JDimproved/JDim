@@ -419,6 +419,6 @@ void Log_Manager::clear_post_log()
         std::string path = CACHE::path_postlog();
         if( num ) path += "-" + MISC::itostr( num );
 
-        unlink( path.c_str() );
+        unlink( to_locale_cstr( path ) );
     }
 }

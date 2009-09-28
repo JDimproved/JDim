@@ -214,7 +214,7 @@ void Img::download_img( const std::string& refurl, const bool mosaic )
 
     // ダウンロード開始
     std::string path = get_cache_path();
-    m_fout = fopen( path.c_str(), "wb" );
+    m_fout = fopen( to_locale_cstr( path ), "wb" );
     if( m_fout == NULL ){
         m_type = T_OPENFAILED;
         receive_finish();
@@ -525,7 +525,7 @@ void Img::receive_finish()
     // 読み込み失敗の場合はファイルを消しておく
     if( ! total_length() ){
         std::string path = get_cache_path();
-        if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+        if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path ) );
 #ifdef _DEBUG
         std::cout << "unlink cache\n";
 #endif
@@ -755,7 +755,7 @@ void Img::save_info()
 #ifdef _DEBUG
             std::cout << "unlink " << path_info << std::endl;
 #endif 
-            unlink( path_info.c_str() );
+            unlink( to_locale_cstr( path_info ) );
         }
 
         if( get_code() == HTTP_INIT ) return;

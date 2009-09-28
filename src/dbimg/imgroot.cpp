@@ -220,11 +220,11 @@ void ImgRoot::delete_cache( const std::string& url )
 
     // キャッシュ削除
     std::string path = CACHE::path_img( url );
-    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path ) );
 
     // info 削除
     path = CACHE::path_img_info( url );
-    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+    if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path ) );
 
     // 再描画
     if( img ) img->reset();

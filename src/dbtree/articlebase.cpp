@@ -1502,10 +1502,10 @@ void ArticleBase::delete_cache( const bool cache_only )
         m_bookmarked_thread = false;
     
         // info 削除
-        if( CACHE::file_exists( m_path_article_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_info.c_str() );
+        if( CACHE::file_exists( m_path_article_info ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( m_path_article_info ) );
 
         // 拡張info 削除
-        if( CACHE::file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ) unlink( m_path_article_ext_info.c_str() );
+        if( CACHE::file_exists( m_path_article_ext_info ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( m_path_article_ext_info ) );
 
         // お気に入りから削除
         CORE::core_set_command( "remove_favorite", m_url );
@@ -1513,7 +1513,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
     // キャッシュ削除
     std::string path_dat = CACHE::path_dat( m_url );
-    if( CACHE::file_exists( path_dat ) == CACHE::EXIST_FILE ) unlink( path_dat.c_str() );
+    if( CACHE::file_exists( path_dat ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path_dat ) );
 
     // BoardViewの行を更新
     CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );

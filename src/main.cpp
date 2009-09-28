@@ -100,8 +100,8 @@ void restore_bkup()
             delete mdiag;
         }
         else{
-            if( bkup_main ) unlink( path_main_bkup.c_str() );
-            if( bkup_favor ) unlink( path_favor_bkup.c_str() );
+            if( bkup_main ) unlink( to_locale_cstr( path_main_bkup ) );
+            if( bkup_favor ) unlink( to_locale_cstr( path_favor_bkup ) );
         }
     }
 }

@@ -9,6 +9,19 @@
 #include <string>
 #include <list>
 
+#ifdef _WIN32
+#define ENV_HOME "USERPROFILE"
+#else
+#define ENV_HOME "HOME"
+#endif
+
+// UTF-8からロケールでエンコードされた文字列に変換
+#ifdef _WIN32
+#define to_locale_cstr( path ) Glib::locale_from_utf8((path)).c_str()
+#else
+#define to_locale_cstr( path ) (path).c_str()
+#endif
+
 namespace Gtk
 {
     class Window;

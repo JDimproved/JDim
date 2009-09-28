@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "imgloader.h"
+#include "cache.h"
 
 using namespace JDLIB;
 
@@ -49,7 +50,7 @@ const bool ImgLoader::load( const bool& stop, const bool pixbufonly, const bool 
     size_t readsize = 0;
     guint8 data[ bufsize ];
 
-    f = fopen( m_file.c_str(), "rb" );
+    f = fopen( to_locale_cstr( m_file ), "rb" );
     if( ! f ){
         m_errmsg = "cannot file open";
         return false;

@@ -6,9 +6,10 @@
 #ifndef _IOMONITOR_H
 #define _IOMONITOR_H
 
+#ifndef _WIN32
+
 #include <gtkmm.h>
 
-#ifndef _WIN32
 namespace CORE
 {
     enum

@@ -50,7 +50,7 @@ std::string CACHE::path_conf_bkup()
 // 旧設定ファイル
 std::string CACHE::path_conf_old()
 {
-    std::string home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
+    std::string home = MISC::getenv_limited( ENV_HOME, MAX_SAFE_PATH );
 
     return home + "/.jdrc";
 }
@@ -88,13 +88,7 @@ std::string CACHE::path_root()
         if( root_path[ root_path.length() -1 ] != '/' ) root_path = root_path + "/";
 
         if( root_path[ 0 ] == '~' ){
-#ifdef _WIN32
-            // windows default path of application data
-            std::string home = MISC::recover_path(
-                MISC::getenv_limited( "APPDATA", MAX_SAFE_PATH ));
-#else
-            std::string home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
-#endif
+            std::string home = MISC::getenv_limited( ENV_HOME , MAX_SAFE_PATH );
             root_path.replace( 0, 1, home );
         }
     }
@@ -648,9 +642,9 @@ bool CACHE::mkdir_logroot()
 size_t CACHE::load_rawdata( const std::string& path, std::string& str )
 {
     str.clear();
-    
     std::ifstream fin;
-    fin.open( path.c_str() );
+
+    fin.open( to_locale_cstr( path ) );
     if( !fin.is_open() ) return 0;
     getline( fin, str, '\0' );
     fin.close();
@@ -663,7 +657,8 @@ size_t CACHE::load_rawdata( const std::string& path, char* data, const size_t n 
 {
     size_t count = 0;
     std::ifstream fin;
-    fin.open( path.c_str() );
+
+    fin.open( to_locale_cstr( path ), std::ios::binary );
     if( !fin.is_open() ) return 0;
     fin.read( data, n );
     count = fin.gcount();
@@ -679,19 +674,17 @@ size_t CACHE::save_rawdata( const std::string& path, const std::string& str, con
 }
 
 
-
 size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n, const bool append )
 {
     size_t count = 0;
     size_t byte = 0;
     std::ofstream fout;
-#ifdef _WIN32
-    if( append ) fout.open( path.c_str(), std::ios::app | std::ios::ate | std::ios::binary );
-    else fout.open( path.c_str(), std::ios::binary );
-#else
-    if( append ) fout.open( path.c_str(), std::ios::app );
-    else fout.open( path.c_str() );
-#endif
+    std::ofstream::openmode fmode;
+    
+    if( append ) fmode = std::ios::app | std::ios::ate | std::ios::binary;
+    else fmode = std::ios::binary;
+    
+    fout.open( to_locale_cstr( path ), fmode );
     if( !fout.is_open() ){
         MISC::ERRMSG( "can't open " + path );
         return 0;
@@ -726,17 +719,17 @@ const int CACHE::file_exists( const std::string& path )
     struct stat buf_stat;
 
     if( path.empty() ) return EXIST_ERROR;
+
+    std::string path_s = path;
 #ifdef _WIN32
     // on windows fail stat() directory path with ends '/'
     // "c:/" = ok, "c:" = fail
     // "c:/dir/" = fail, "c:/dir" = ok
     if( path.length() > 3 && path[ path.length() - 1 ] == '/' ){
-        std::string dpath = path.substr( 0, path.length() - 1 );
-        if( stat( dpath.c_str(), &buf_stat ) != 0 ) return EXIST_ERROR;
+        path_s = path.substr( 0, path.length() - 1 );
     }
-    else // continue out of #endif
 #endif
-    if( stat( path.c_str(), &buf_stat ) != 0 ) return EXIST_ERROR;
+    if( stat( to_locale_cstr( path_s ), &buf_stat ) != 0 ) return EXIST_ERROR;
 
     if( S_ISREG( buf_stat.st_mode ) ) return EXIST_FILE;
     if( S_ISDIR( buf_stat.st_mode ) ) return EXIST_DIR;
@@ -750,7 +743,7 @@ size_t CACHE::get_filesize( const std::string& path )
 {
     struct stat buf_stat;
 
-    if( stat( path.c_str(), &buf_stat ) != 0 ) return 0;
+    if( stat( to_locale_cstr( path ), &buf_stat ) != 0 ) return 0;
     if( S_ISREG( buf_stat.st_mode ) ) return buf_stat.st_size;
     return 0;
 }
@@ -760,7 +753,7 @@ time_t CACHE::get_filemtime( const std::string& path )
 {
     struct stat buf_stat;
 
-    if( stat( path.c_str(), &buf_stat ) != 0 ) return 0;
+    if( stat( to_locale_cstr( path ), &buf_stat ) != 0 ) return 0;
     if( S_ISREG( buf_stat.st_mode ) ) return buf_stat.st_mtime;
     return 0;
 }
@@ -781,7 +774,7 @@ bool CACHE::jdmkdir( const std::string& path )
     
     if( path.find( "~/" ) == 0 ){
 
-        std::string homedir = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
+        std::string homedir = MISC::getenv_limited( ENV_HOME, MAX_SAFE_PATH );
         if( homedir.empty() ) return false;
 
         target = homedir + path.substr( 2 );
@@ -814,9 +807,9 @@ bool CACHE::jdmkdir( const std::string& path )
         if( CACHE::file_exists( currentdir ) == EXIST_DIR ) continue;
 
 #ifdef _WIN32
-        if( mkdir( currentdir.c_str() ) != 0 ){
+        if( mkdir( to_locale_cstr( currentdir ) ) != 0 ){
 #else
-        if( mkdir( currentdir.c_str(), 0755 ) != 0 ){
+        if( mkdir( to_locale_cstr( currentdir ), 0755 ) != 0 ){
 #endif
             MISC::ERRMSG( "mkdir failed " + currentdir );
             return false;
@@ -834,7 +827,7 @@ bool CACHE::jdmkdir( const std::string& path )
 bool CACHE::jdcopy( const std::string& file_from, const std::string& file_to )
 {
     struct stat buf_stat;
-    if( stat( file_from.c_str(), &buf_stat ) != 0 ) return false;
+    if( stat( to_locale_cstr( file_from ), &buf_stat ) != 0 ) return false;
 
 #ifdef _DEBUG
     std::cout << "CACHE::jdcopy : from = " << file_from << std::endl;
@@ -872,7 +865,7 @@ bool CACHE::jdcopy( const std::string& file_from, const std::string& file_to )
 bool CACHE::jdmv( const std::string& file_from, const std::string& file_to )
 {
     if( CACHE::jdcopy( file_from, file_to ) ){
-        unlink( file_from.c_str() );
+        unlink( to_locale_cstr( file_from ) );
         return true;
     }
 
@@ -955,7 +948,7 @@ void CACHE::add_filter_to_diag( Gtk::FileChooserDialog& diag, const int type )
 const std::list< std::string > CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type, const bool multi )
 {
     std::string dir = MISC::get_dir( open_path );
-    if( dir.empty() ) dir = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
+    if( dir.empty() ) dir = MISC::getenv_limited( ENV_HOME, MAX_SAFE_PATH );
 
     SKELETON::FileDiag diag( parent, "ファイルを開く", Gtk::FILE_CHOOSER_ACTION_OPEN );
 
@@ -992,7 +985,7 @@ std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& dir, 
     SKELETON::FileDiag diag( parent, "保存先選択", Gtk::FILE_CHOOSER_ACTION_SAVE );
     if( dir.empty() )
     {
-        const std::string home = MISC::getenv_limited( "HOME", MAX_SAFE_PATH );
+        const std::string home = MISC::getenv_limited( ENV_HOME, MAX_SAFE_PATH );
         if( ! home.empty() ) diag.set_current_folder( home );
     }
     else
@@ -1044,7 +1037,7 @@ std::list< std::string > CACHE::get_filelist( const std::string& dir )
     std::cout << "CACHE::get_filelist " << dir << std::endl;
 #endif
 
-    DIR *dirp = opendir( dir.c_str() );
+    DIR *dirp = opendir( to_locale_cstr( dir ) );
     if( !dirp ) return list_files;
 
     struct dirent *direntry;
@@ -1078,7 +1071,7 @@ int64_t CACHE::get_dirsize( const std::string& dir )
     std::cout << "CACHE::get_dirsize " << dir << std::endl;
 #endif
 
-    DIR *dirp = opendir( dir.c_str() );
+    DIR *dirp = opendir( to_locale_cstr( dir ) );
     if( !dirp ) return 0;
 
     struct dirent *direntry;
@@ -1104,9 +1097,9 @@ const std::string CACHE::get_realpath( const std::string& path )
     std::string path_real;
 
 #ifdef _WIN32
-    char* ret = _fullpath( NULL, path.c_str(), MAX_PATH );
+    char* ret = _fullpath( NULL, to_locale_cstr( path ), MAX_PATH );
 #else
-    char* ret = realpath( path.c_str(), NULL );
+    char* ret = realpath( to_locale_cstr( path ), NULL );
 #endif
     if( ret ){
         path_real = ret;

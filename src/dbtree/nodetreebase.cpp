@@ -1059,7 +1059,7 @@ void NodeTreeBase::download_dat( const bool check_update )
             std::cout << "open " << path_cache.c_str() << std::endl;
 #endif
 
-            m_fout = fopen( path_cache.c_str(), "ab" );
+            m_fout = fopen( to_locale_cstr( path_cache ), "ab" );
             if( m_fout == NULL ){
                 MISC::ERRMSG( "fopen failed : " + path_cache );
             }
@@ -1191,7 +1191,7 @@ void NodeTreeBase::receive_finish()
         if( get_res_number() == 0 ){
 
             std::string path = CACHE::path_dat( m_url );
-            if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( path.c_str() );
+            if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path ) );
             set_date_modified( std::string() );
         }
 
