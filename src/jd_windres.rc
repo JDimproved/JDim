@@ -1,1 +1,42 @@
+#include <windows.h>
+#include "jdversion.h"
+
+// 
+// DEFAULT ICON
+// 
 jd ICON "icons/jd_windres.ico"
+
+// 
+// VERSION INFO
+// 
+1 VERSIONINFO
+FILEVERSION     JDVER_FILEVERSION
+PRODUCTVERSION  JDVER_PRODUCTVERSION
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       (JDVER_DEBUG)
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName",        JDRC_COMPANYNAME
+            VALUE "FileDescription",    JDRC_FILEDESCRIPTION
+            VALUE "FileVersion",        JDRC_FILEVERSION
+            VALUE "InternalName",       JDRC_INTERNALNAME
+            VALUE "LegalCopyright",     JDRC_LEGALCOPYRIGHT
+            VALUE "OriginalFilename",   JDRC_ORIGINALFILENAME
+            VALUE "ProductName",        JDRC_PRODUCTNAME
+            VALUE "ProductVersion",     JDRC_PRODUCTVERSION
+            VALUE "Comments",           JDRC_COMMENTS
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        /* Don't modify without localized versions. */
+        /* set to U.S. English(0x0409) , Unicode(1200) */
+        VALUE "Translation", 0x0409, 1200
+    END
+END
+

@@ -126,6 +126,8 @@ noinst_HEADERS = \
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@
 
 
+jd_windres.o: jdversion.h
+
 SUFFIXES = .rc .o
 
 .rc.o:

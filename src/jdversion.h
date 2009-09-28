@@ -56,3 +56,32 @@
     "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA)。\n"
 
 #endif
+
+//---------------------------------
+// for windres.rc
+#ifndef DEBUG
+#define JDVER_DEBUG             0
+#else
+#define JDVER_DEBUG             VS_FF_DEBUG
+#endif
+
+#define JDVER_FILEVERSION       MAJORVERSION,MINORVERSION,MICROVERSION,0
+#define JDVER_PRODUCTVERSION    JDVER_FILEVERSION
+
+// Two macros expansion is gcc preprocessor technic
+#define JDRC_VERSION_EXP(a,b,c,d,e) JDRC_VERSION_FMT(a,b,c,d,e)
+#define JDRC_VERSION_FMT(a,b,c,d,e) #a "." #b "." #c "-" d e
+#define JDRC_VERSION_STR JDRC_VERSION_EXP( \
+            MAJORVERSION, MINORVERSION, MICROVERSION, JDTAG, JDDATE)
+
+#define JDRC_FILEVERSION        JDRC_VERSION_STR
+#define JDRC_PRODUCTVERSION     JDRC_FILEVERSION
+
+#define JDRC_PRODUCTNAME        "JD for Linux"
+#define JDRC_INTERNALNAME       "JD"
+#define JDRC_ORIGINALFILENAME   "jd.exe"
+#define JDRC_COMPANYNAME        "JD project"
+#define JDRC_FILEDESCRIPTION    JDRC_PRODUCTNAME
+#define JDRC_COMMENTS           JDRC_PRODUCTNAME
+#define JDRC_LEGALCOPYRIGHT     JDCOPYRIGHT
+
