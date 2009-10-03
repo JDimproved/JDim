@@ -29,7 +29,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     ,m_check_transpabone( "透明あぼ〜ん" )
     ,m_check_chainabone( "連鎖あぼ〜ん" )
     ,m_check_ageabone( "sage以外をあぼ〜ん" )
-    ,m_label_since( false, "スレ立て日時 : ", DBTREE::article_since_date( get_url() ) )
+    ,m_label_since( false, "スレ立て日時 : ", std::string() )
     ,m_label_modified( false, "最終更新日時 : ", std::string() )
     ,m_button_clearmodified( "日時クリア" )
     ,m_label_write( false, "最終書き込み日時 : ", std::string() )
@@ -46,10 +46,21 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         m_label_size.set_text( MISC::itostr( size )  + " / " + MISC::itostr( size/1024 ) );
 
         if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
-        else m_label_modified.set_text( MISC::timettostr( DBTREE::article_time_modified( get_url() ) ) );
+        else m_label_modified.set_text(
+            MISC::timettostr( DBTREE::article_time_modified( get_url() ), MISC::TIME_WEEK )
+            + " ( " + MISC::timettostr( DBTREE::article_time_modified( get_url() ), MISC::TIME_PASSED ) + " )"
+            );
 
-        if( DBTREE::article_write_time( get_url() ) ) m_label_write.set_text( DBTREE::article_write_date( get_url() ) );
+        if( DBTREE::article_write_time( get_url() ) ) m_label_write.set_text(
+            MISC::timettostr( DBTREE::article_write_time( get_url() ), MISC::TIME_WEEK )
+            + " ( " + MISC::timettostr( DBTREE::article_write_time( get_url() ), MISC::TIME_PASSED ) + " )"
+            );
     }
+
+    m_label_since.set_text(
+            MISC::timettostr( DBTREE::article_since_time( get_url() ), MISC::TIME_WEEK )
+            + " ( " + MISC::timettostr( DBTREE::article_since_time( get_url() ), MISC::TIME_PASSED ) + " )"
+        );
 
     m_button_clearmodified.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_modified ) );
     m_hbox_modified.pack_start( m_label_modified );
@@ -233,7 +244,11 @@ void Preferences::slot_clear_modified()
     DBTREE::article_set_date_modified( get_url(), "" );
 
     if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
-    else m_label_modified.set_text( MISC::timettostr( DBTREE::article_time_modified( get_url() ) ) );
+    else m_label_modified.set_text(
+        MISC::timettostr( DBTREE::article_time_modified( get_url() ), MISC::TIME_WEEK )
+        + " ( " + MISC::timettostr( DBTREE::article_time_modified( get_url() ), MISC::TIME_PASSED ) + " )"
+        );
+
 }
 
 

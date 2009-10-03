@@ -78,6 +78,9 @@ namespace IMAGE
         // 親ウィンドウを取得
         virtual Gtk::Window* get_parent_win();
 
+        // キーを押した
+        virtual const bool slot_key_press( GdkEventKey* event );
+
         // コマンド
         virtual const bool set_command( const std::string& command,
                                         const std::string& arg1 = std::string(),
@@ -99,10 +102,13 @@ namespace IMAGE
 
         virtual void activate_act_before_popupmenu( const std::string& url );
 
+        void delete_view_impl( const bool show_diag );
+        void slot_cancel_mosaic();
+        void slot_save();
+
         virtual bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );
         virtual bool slot_motion_notify( GdkEventMotion* event );
-        bool slot_key_press( GdkEventKey* event );
         virtual bool slot_scroll_event( GdkEventScroll* event );
         bool slot_enter_notify_event( GdkEventCrossing* event );
         bool slot_leave_notify_event( GdkEventCrossing* event );
@@ -113,12 +119,14 @@ namespace IMAGE
         virtual void add_image(){}
         virtual void switch_icon(){}
 
+        // クリックした時の処理
+        virtual void clicked();
+
         void zoom_in_out( bool zoomin );
 
         void slot_move_head();
         void slot_move_tail();
         void slot_reload_force();
-        void slot_cancel_mosaic();
         void slot_show_large_img();
         void slot_fit_win();
         void slot_zoom_in();
@@ -128,7 +136,6 @@ namespace IMAGE
         void slot_open_browser();
         void slot_open_ref();
         void slot_copy_url();
-        void slot_save();
         void slot_save_all();
         void slot_favorite();
         void slot_toggle_protectimage();

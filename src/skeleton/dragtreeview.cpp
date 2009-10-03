@@ -16,6 +16,7 @@
 #include "command.h"
 #include "colorid.h"
 #include "dndmanager.h"
+#include "session.h"
 
 #ifndef MAX
 #define MAX( a, b ) ( a > b ? a : b )
@@ -37,7 +38,8 @@ DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget
       m_dndtarget( dndtarget ),
       m_dragging( false ),
       m_use_bg_even( false ),
-      m_popup_win( NULL )
+      m_popup_win( NULL ),
+      m_popup_shown( false )
 {
 #ifdef _DEBUG
     std::cout << "DragTreeView::DragTreeView\n";
@@ -96,6 +98,18 @@ void DragTreeView::set_enable_drop_uri_list()
 
 
 //
+// 再描画
+//
+void DragTreeView::redraw_view()
+{
+    // 今のところ特に何もしない
+
+    // ポップアップが表示されていたらポップアップを再描画
+    if( is_popup_shown() && m_popup_win->view() ) m_popup_win->view()->redraw_view();
+}
+
+
+//
 // 色初期化
 //
 void DragTreeView::init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even )
@@ -133,6 +147,12 @@ void DragTreeView::init_font( const std::string& fontname )
 //
 void DragTreeView::clock_in()
 {
+    // ポップアップ表示中はそちらにクロックを回す
+    if( is_popup_shown() && m_popup_win->view() ){
+        m_popup_win->view()->clock_in();
+        return;
+    }
+
     m_tooltip.clock_in();
 }
 
@@ -174,17 +194,82 @@ void DragTreeView::hide_tooltip()
 
 
 //
+// ポップアップが表示されていてかつマウスがその上にあるか
+//
+const bool DragTreeView::is_mouse_on_popup()
+{
+    if( ! is_popup_shown() ) return false;
+    if( ! m_popup_win->view() ) return false;
+
+    return m_popup_win->view()->is_mouse_on_view();
+}
+
+
+//
 // ポップアップウィンドウ表示
 //
 void DragTreeView::show_popup( const std::string& url, View* view )
 {
     const int mrg = 10;
 
-    if( m_popup_win == NULL || m_popup_win->view() != view ){
-        delete_popup();
-        m_popup_win = new PopupWin( this, view, mrg );
-        m_pre_popup_url = url;
-    }
+#ifdef _DEBUG
+    std::cout << "DragTreeView::show_popup url = " << url << std::endl;
+#endif
+
+    delete_popup();
+
+    m_popup_win = new PopupWin( this, view, mrg );
+    m_popup_win->signal_leave_notify_event().connect( sigc::mem_fun( *this, &DragTreeView::slot_popup_leave_notify_event ) );
+    m_popup_win->sig_hide_popup().connect( sigc::mem_fun( *this, &DragTreeView::hide_popup ) );
+
+    m_pre_popup_url = url;
+    m_popup_shown = true;
+}
+
+
+//
+// popup windowの外にポインタが出た
+//
+const bool DragTreeView::slot_popup_leave_notify_event( GdkEventCrossing* event )
+{
+#ifdef _DEBUG
+    std::cout << "DragTreeView::slot_popup_leave_notify_event\n";
+#endif
+
+    // クリックしたときやホイールを回すと event->mode に　GDK_CROSSING_GRAB
+    // か GDK_CROSSING_UNGRAB がセットされてイベントが発生する場合がある
+    if( event->mode == GDK_CROSSING_GRAB ) return false;
+    if( event->mode == GDK_CROSSING_UNGRAB ) return false;
+
+    // ポインタがポップアップ上にある場合はポップアップは消さない
+    // 時々ポインタがポップアップの上にあってもイベントが発生する場合がある
+    if( is_mouse_on_popup() ) return false;
+
+    hide_popup();
+
+    return true;
+}
+
+
+//
+// ポップアップを隠す
+//
+void DragTreeView::hide_popup()
+{
+    if( ! is_popup_shown() ) return;
+
+    // ポップアップメニューが表示されてたらhideしない
+    if( SESSION::is_popupmenu_shown() ) return;
+
+#ifdef _DEBUG
+        std::cout << "DragTreeView::hide_popup\n";
+#endif
+
+    m_popup_win->hide();
+    if( m_popup_win->view() ) m_popup_win->view()->stop();
+
+    if( get_path_under_mouse().empty() ) m_pre_popup_url = std::string();
+    m_popup_shown = false;
 }
 
 
@@ -194,9 +279,16 @@ void DragTreeView::show_popup( const std::string& url, View* view )
 void DragTreeView::delete_popup()
 {
     if( m_popup_win ){
+
+#ifdef _DEBUG
+        std::cout << "DragTreeView::delete_popup\n";
+#endif
+
         delete m_popup_win;
         m_popup_win = NULL;
+
         m_pre_popup_url = std::string();
+        m_popup_shown = false;
     }
 }
 
@@ -350,6 +442,22 @@ void DragTreeView::on_drag_data_received( const Glib::RefPtr< Gdk::DragContext >
 
 
 //
+// キーボードのキーを押した
+//
+bool DragTreeView::on_key_press_event( GdkEventKey* event )
+{
+#ifdef _DEBUG
+    std::cout << "DragTreeView::on_key_press_event\n";
+#endif
+
+    // ポップアップ表示中はそちらにクロックを回す
+    if( is_popup_shown() && m_popup_win->view() ) return m_popup_win->view()->slot_key_press( event );
+
+    return JDTreeViewBase::on_key_press_event( event );
+}
+
+
+//
 // マウスを動かした
 //
 bool DragTreeView::on_motion_notify_event( GdkEventMotion* event )
@@ -416,7 +524,10 @@ void DragTreeView::wheelscroll( GdkEventScroll* event )
 bool DragTreeView::on_leave_notify_event( GdkEventCrossing* event )
 {
     m_tooltip.hide_tooltip();
-    delete_popup();
+    if( ! is_mouse_on_popup() ){
+        hide_popup();
+        m_pre_popup_url = std::string();
+    }
     return Gtk::TreeView::on_leave_notify_event( event );
 }
 

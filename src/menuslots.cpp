@@ -163,9 +163,41 @@ void Core::slot_quit()
 
 
 //
+// スレ一覧のsinceの表示モード
+void Core::slot_toggle_since( const int mode )
+{
+    if( ! m_enable_menuslot ) return;
+    if( SESSION::get_col_since_time() == mode ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::slot_toggle_since mode = " << mode << std::endl;
+#endif
+
+    SESSION::set_col_since_time( mode );
+    BOARD::get_admin()->set_command( "relayout_all" );    
+}
+
+
+//
+// スレ一覧の最終書込の表示モード
+void Core::slot_toggle_write( const int mode )
+{
+    if( ! m_enable_menuslot ) return;
+    if( SESSION::get_col_write_time() == mode ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::slot_toggle_write mode = " << mode << std::endl;
+#endif
+
+    SESSION::set_col_write_time( mode );
+    BOARD::get_admin()->set_command( "relayout_all" );    
+}
+
+
+//
 // ツールバーの表示モード
 //
-void Core::slot_toggle_toolbarpos( int pos )
+void Core::slot_toggle_toolbarpos( const int pos )
 {
     if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
@@ -177,8 +209,8 @@ void Core::slot_toggle_toolbarpos( int pos )
     pack_widget( true );
 
     // 表示切り替え
-    if( SESSION::toolbar_pos() == pos ) pos = SESSION::TOOLBAR_POS_NOT;
-    SESSION::set_toolbar_pos( pos );
+    if( SESSION::toolbar_pos() == pos ) SESSION::set_toolbar_pos( SESSION::TOOLBAR_POS_NOT ); // 隠す
+    else SESSION::set_toolbar_pos( pos );
 
     pack_widget( false );
 

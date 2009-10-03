@@ -25,7 +25,7 @@
 //
 // gettimeofday()の秒を文字列で取得
 //
-std::string MISC::get_sec_str()
+const std::string MISC::get_sec_str()
 {
 	std::ostringstream sec_str;
 
@@ -42,7 +42,7 @@ std::string MISC::get_sec_str()
 //
 // timeval を str に変換
 //
-std::string MISC::timevaltostr( struct timeval& tv )
+const std::string MISC::timevaltostr( const struct timeval& tv )
 {
     std::ostringstream sstr;
     sstr << ( tv.tv_sec >> 16 ) << " " << ( tv.tv_sec & 0xffff ) << " " << tv.tv_usec;
@@ -53,7 +53,7 @@ std::string MISC::timevaltostr( struct timeval& tv )
 //
 // 時刻を紀元からの経過秒に直す
 //
-time_t MISC::datetotime( const std::string& date )
+const time_t MISC::datetotime( const std::string& date )
 {
     if( date.empty() ) return 0;
 
@@ -98,16 +98,43 @@ time_t MISC::datetotime( const std::string& date )
 //
 // time_t を月日の文字列に変換
 //
-std::string MISC::timettostr( time_t time_from )
+const std::string MISC::timettostr( const time_t& time_from, const int mode )
 {
-    char str_ret[ 64 ];
+    const int lng = 64;
+    struct tm tm_tmp;
+
+    char str_ret[ lng ];
     str_ret[ 0 ] = '\0';
 
-    struct tm tm_tmp;
-    if( localtime_r( &time_from, &tm_tmp ) ){
+    if( mode == MISC::TIME_NORMAL ){
 
-        snprintf( str_ret, 64, "%d/%02d/%02d %02d:%02d",
-                  ( 1900 + tm_tmp.tm_year ), ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday, tm_tmp.tm_hour, tm_tmp.tm_min );
+        if( localtime_r( &time_from, &tm_tmp ) )
+            snprintf( str_ret, lng, "%d/%02d/%02d %02d:%02d",
+                      ( 1900 + tm_tmp.tm_year ), ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday, tm_tmp.tm_hour, tm_tmp.tm_min );
+    }
+    else if( mode == MISC::TIME_NO_YEAR ){
+
+        if( localtime_r( &time_from, &tm_tmp ) )
+            snprintf( str_ret, lng, "%02d/%02d %02d:%02d",
+                      ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday, tm_tmp.tm_hour, tm_tmp.tm_min );
+    }
+    else if( mode == MISC::TIME_WEEK ){
+
+        const char week[][32] = { "日","月","火","水","木","金","土" };
+
+        if( localtime_r( &time_from, &tm_tmp ) )
+            snprintf( str_ret, lng, "%d/%02d/%02d(%s) %02d:%02d:%02d",
+                      ( 1900 + tm_tmp.tm_year ), ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday,
+                      week[ tm_tmp.tm_wday ], tm_tmp.tm_hour, tm_tmp.tm_min, tm_tmp.tm_sec );
+    }
+    else if( mode == MISC::TIME_PASSED ){
+
+        time_t tmp_t = time( NULL ) - time_from;
+        if( tmp_t < 60 ) snprintf( str_ret, lng, "%d 秒前", (int) tmp_t );
+        else if( tmp_t < 60 * 60 ) snprintf( str_ret, lng, "%d 分前", (int)tmp_t / 60 );
+        else if( tmp_t < 60 * 60 * 24 ) snprintf( str_ret, lng, "%d 時間前", (int)tmp_t / ( 60 * 60 ) );
+        else if( tmp_t < 60 * 60 * 24 * 365 ) snprintf( str_ret, lng, "%d 日前", (int)tmp_t / ( 60 * 60 * 24 ) );
+        else snprintf( str_ret, lng, "%d 年前", (int)tmp_t / ( 60 * 60 * 24 * 365 ) );
     }
 
 #ifdef _DEBUG

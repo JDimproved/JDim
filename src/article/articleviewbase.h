@@ -104,6 +104,9 @@ namespace ARTICLE
         virtual void clock_in();
         void clock_in_smooth_scroll();
 
+        // キーを押した
+        virtual const bool slot_key_press( GdkEventKey* event );
+
         virtual void write();
         virtual void reload();
         virtual void stop();
@@ -155,7 +158,7 @@ namespace ARTICLE
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
         // レスポップアップを隠す
-        void hide_popup( bool force = false );
+        void hide_popup( const bool force = false );
 
         // 初期設定
         void setup_view();
@@ -244,7 +247,6 @@ namespace ARTICLE
         virtual bool slot_button_press( std::string url, int res_number, GdkEventButton* event );
         bool slot_button_release( std::string url, int res_number, GdkEventButton* event );
         bool slot_motion_notify( GdkEventMotion* event );
-        const bool slot_key_press( GdkEventKey* event );
         bool slot_key_release( GdkEventKey* event );
         bool slot_scroll_event( GdkEventScroll* event );
         bool slot_leave_notify( GdkEventCrossing* ev );

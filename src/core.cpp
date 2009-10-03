@@ -40,6 +40,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
+#include "jdlib/misctime.h"
 #include "jdlib/loader.h"
 #include "jdlib/timeout.h"
 
@@ -342,6 +343,54 @@ void Core::run( const bool init, const bool skip_setupdiag )
                                                     std::string(), CONFIG::get_show_post_mark() ),
                          sigc::mem_fun( *this, &Core::toggle_post_mark ) );
 
+    // since
+    Gtk::RadioButtonGroup radiogroup_since;
+    m_action_group->add( Gtk::Action::create( "Since_Menu", "スレ一覧の since 表示(_N)" ) );
+    Glib::RefPtr< Gtk::RadioAction > raction_since0 = Gtk::RadioAction::create( radiogroup_since, "Since_Normal", "年/月/日 時:分" );
+    Glib::RefPtr< Gtk::RadioAction > raction_since1 = Gtk::RadioAction::create( radiogroup_since, "Since_NoYear", "月/日 時:分" );
+    Glib::RefPtr< Gtk::RadioAction > raction_since2 = Gtk::RadioAction::create( radiogroup_since, "Since_Week", "年/月/日(曜日) 時:分:秒" );
+    Glib::RefPtr< Gtk::RadioAction > raction_since3 = Gtk::RadioAction::create( radiogroup_since, "Since_Passed", "～前" );
+
+    switch( SESSION::get_col_since_time() ){
+        case MISC::TIME_NORMAL: raction_since0->set_active( true ); break;
+        case MISC::TIME_NO_YEAR: raction_since1->set_active( true ); break;
+        case MISC::TIME_WEEK: raction_since2->set_active( true ); break;
+        case MISC::TIME_PASSED: raction_since3->set_active( true ); break;
+    }
+
+    m_action_group->add( raction_since0,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_since ), MISC::TIME_NORMAL ) );
+    m_action_group->add( raction_since1,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_since ), MISC::TIME_NO_YEAR ) );
+    m_action_group->add( raction_since2,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_since ), MISC::TIME_WEEK ) );
+    m_action_group->add( raction_since3,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_since ), MISC::TIME_PASSED ) );
+
+    // 最終書き込み
+    Gtk::RadioButtonGroup radiogroup_write;
+    m_action_group->add( Gtk::Action::create( "Write_Menu", "スレ一覧の最終書込表示(_N)" ) );
+    Glib::RefPtr< Gtk::RadioAction > raction_write0 = Gtk::RadioAction::create( radiogroup_write, "Write_Normal", "年/月/日 時:分" );
+    Glib::RefPtr< Gtk::RadioAction > raction_write1 = Gtk::RadioAction::create( radiogroup_write, "Write_NoYear", "月/日 時:分" );
+    Glib::RefPtr< Gtk::RadioAction > raction_write2 = Gtk::RadioAction::create( radiogroup_write, "Write_Week", "年/月/日(曜日) 時:分:秒" );
+    Glib::RefPtr< Gtk::RadioAction > raction_write3 = Gtk::RadioAction::create( radiogroup_write, "Write_Passed", "～前" );
+
+    switch( SESSION::get_col_write_time() ){
+        case MISC::TIME_NORMAL: raction_write0->set_active( true ); break;
+        case MISC::TIME_NO_YEAR: raction_write1->set_active( true ); break;
+        case MISC::TIME_WEEK: raction_write2->set_active( true ); break;
+        case MISC::TIME_PASSED: raction_write3->set_active( true ); break;
+    }
+
+    m_action_group->add( raction_write0,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_write ), MISC::TIME_NORMAL ) );
+    m_action_group->add( raction_write1,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_write ), MISC::TIME_NO_YEAR ) );
+    m_action_group->add( raction_write2,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_write ), MISC::TIME_WEEK ) );
+    m_action_group->add( raction_write3,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_write ), MISC::TIME_PASSED ) );
+
     // ツールバー表示
     m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー表示(_T)" ) );
     m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メイン(_M)" ) );
@@ -643,6 +692,21 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menuitem action='ToggleFlatButton'/>"
         "<menuitem action='ToggleDrawToolbarback'/>"
         "<menuitem action='TogglePostMark'/>"
+        "<separator/>"
+        "<menu action='Since_Menu'>"
+        "<menuitem action='Since_Normal'/>"
+        "<menuitem action='Since_NoYear'/>"
+        "<menuitem action='Since_Week'/>"
+        "<menuitem action='Since_Passed'/>"
+        "</menu>"
+        "<separator/>"
+        "<menu action='Write_Menu'>"
+        "<menuitem action='Write_Normal'/>"
+        "<menuitem action='Write_NoYear'/>"
+        "<menuitem action='Write_Week'/>"
+        "<menuitem action='Write_Passed'/>"
+        "</menu>"
+
         "</menu>"
         "<separator/>"
 
@@ -2467,6 +2531,11 @@ void Core::set_command( const COMMAND_ARGS& command )
         }
     }
 
+    else if( command.command == "close_message" ){
+
+        if( ! MESSAGE::get_admin()->empty() ) MESSAGE::get_admin()->set_command( "close_message", command.url );
+    }
+
     else if( command.command == "create_new_thread" ){
 
         if( ! SESSION::is_online() ){
@@ -2659,6 +2728,15 @@ void Core::set_command( const COMMAND_ARGS& command )
             && SESSION::is_focus_win_img() ) IMAGE::get_admin()->set_command( "set_mginfo", "", command.arg1 );
 
         else m_win_main.set_mginfo( command.arg1 );
+    }
+
+    ////////////////////////////
+    // ポップを隠す
+    else if( command.command  == "hide_popup" ){
+
+        BBSLIST::get_admin()->set_command_immediately( "hide_popup" );
+        ARTICLE::get_admin()->set_command_immediately( "hide_popup" );
+        return;
     }
 
     ////////////////////////////

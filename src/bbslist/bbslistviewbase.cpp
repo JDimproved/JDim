@@ -501,6 +501,8 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
     else if( command == "toggle_boardicon" ) toggle_boardicon( arg1 );
     else if( command == "replace_thread" ) replace_thread( arg1, arg2 );
 
+    else if( command == "hide_popup" ) m_treeview.hide_popup();
+
     else if( command == "check_update_root" ) check_update_root( false );
     else if( command == "check_update_open_root" ) check_update_root( true );
     else if( command == "cancel_check_update" ) stop();
@@ -573,6 +575,23 @@ void BBSListViewBase::set_fgcolor_of_comment( const Gtk::TreeModel::Children& ch
 //
 // 再描画
 //
+void BBSListViewBase::redraw_view()
+{
+    // 起動中とシャットダウン中は処理しない
+    if( SESSION::is_booting() ) return;
+    if( SESSION::is_quitting() ) return;
+
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::ViewBase::redraw_view " << get_url() << std::endl;
+#endif
+
+    m_treeview.redraw_view();
+}
+
+
+//
+// 色やフォントなどの変更
+//
 void BBSListViewBase::relayout()
 {
     m_treeview.init_color( COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN );
@@ -606,7 +625,7 @@ void BBSListViewBase::focus_out()
     SKELETON::View::focus_out();
 
     m_treeview.hide_tooltip();
-    m_treeview.delete_popup();
+    m_treeview.hide_popup();
 }
 
 
@@ -1123,6 +1142,8 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
         Glib::ustring url = row[ m_columns.m_url ];
         int type = row[ m_columns.m_type ];
 
+        m_treeview.reset_pre_popupurl( url );
+
         // 画像ポップアップ
         if( type == TYPE_IMAGE ){
 
@@ -1132,18 +1153,17 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 
                 if( m_treeview.pre_popup_url() != url ){
 
-                    m_treeview.delete_popup();
                     SKELETON::View* view = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
                     m_treeview.show_popup( url, view );
                 }
             }
-            else m_treeview.delete_popup();
+            else m_treeview.hide_popup();
         }
 
         // ツールチップ
         else{
 
-            m_treeview.delete_popup();
+            m_treeview.hide_popup();
 
             Gdk::Rectangle rect;
             m_treeview.get_cell_area( path, *column, rect );
@@ -1153,7 +1173,7 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
     }
     else{
         m_treeview.hide_tooltip();
-        m_treeview.delete_popup();
+        m_treeview.hide_popup();
     }
     
     return true;
@@ -1164,7 +1184,7 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 // キーを押した
 //
-bool BBSListViewBase::slot_key_press( GdkEventKey* event )
+const bool BBSListViewBase::slot_key_press( GdkEventKey* event )
 {
     // 行の名前を編集中なら何もしない
     if( m_treeview.is_renaming_row() ) return false;

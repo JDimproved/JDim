@@ -341,6 +341,14 @@ namespace SESSION
     void set_col_write( const int width );
     void set_col_speed( const int width );
 
+    // スレ一覧の since の表示モード
+    const int get_col_since_time();
+    void set_col_since_time( const int mode );
+
+    // スレ一覧の 最終書込 の表示モード
+    const int get_col_write_time();
+    void set_col_write_time( const int mode );
+
     // 現在開いているarticle の ARTICLE::DrawAreaBase
     ARTICLE::DrawAreaBase* get_base_drawarea();
 

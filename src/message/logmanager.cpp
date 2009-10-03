@@ -309,7 +309,7 @@ void Log_Manager::save( const std::string& url,
     gettimeofday( &tv, &tz );
 
     // 保存メッセージ作成
-    const std::string date = MISC::timettostr( tv.tv_sec );
+    const std::string date = MISC::timettostr( tv.tv_sec, MISC::TIME_WEEK );
     const bool include_url = false; // URLを除外して msg をエスケープ
 
     std::string html = "<hr><br>" + DBTREE::url_readcgi( url, 0, 0 ) + "<br>"

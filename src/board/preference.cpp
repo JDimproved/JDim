@@ -138,10 +138,16 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_hbox_max.pack_start( m_entry_max_res );
 
     const time_t last_access = DBTREE::board_last_access_time( get_url() );
-    if( last_access ) m_label_last_access.set_text( MISC::timettostr( last_access ) );
+    if( last_access ) m_label_last_access.set_text(
+        MISC::timettostr( last_access, MISC::TIME_WEEK )
+        + " ( " + MISC::timettostr( last_access, MISC::TIME_PASSED ) + " )"
+        );
 
     if( DBTREE::board_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
-    else m_label_modified.set_text( MISC::timettostr( DBTREE::board_time_modified( get_url() ) ) );
+    else m_label_modified.set_text(
+        MISC::timettostr( DBTREE::board_time_modified( get_url() ), MISC::TIME_WEEK )
+        + " ( " + MISC::timettostr( DBTREE::board_time_modified( get_url() ), MISC::TIME_PASSED ) + " )"
+        );
 
     m_button_clearmodified.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_modified ) );
     m_hbox_modified.pack_start( m_label_modified );
@@ -317,7 +323,10 @@ void Preferences::slot_clear_modified()
     DBTREE::board_set_date_modified( get_url(), "" );
 
     if( DBTREE::board_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
-    else m_label_modified.set_text( MISC::timettostr( DBTREE::board_time_modified( get_url() ) ) );
+    else m_label_modified.set_text(
+        MISC::timettostr( DBTREE::board_time_modified( get_url() ), MISC::TIME_WEEK )
+        + " ( " + MISC::timettostr( DBTREE::board_time_modified( get_url() ), MISC::TIME_PASSED ) + " )"
+        );
 }
 
 

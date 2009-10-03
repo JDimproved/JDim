@@ -91,6 +91,9 @@ namespace MESSAGE
         // ロード中
         virtual const bool is_loading();
 
+        // キーを押した        
+        virtual const bool slot_key_press( GdkEventKey* event );
+
         virtual void clock_in();
         virtual void write();
         virtual void reload(){}
@@ -126,7 +129,6 @@ namespace MESSAGE
         // 下書きファイル挿入
         void insert_draft();
 
-        bool slot_key_press( GdkEventKey* event );
         bool slot_button_press( GdkEventButton* event );
         void slot_switch_page( GtkNotebookPage*, guint page );
 

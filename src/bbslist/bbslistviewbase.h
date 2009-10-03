@@ -192,8 +192,13 @@ namespace BBSLIST
         virtual void shutdown();
 
         virtual void clock_in();
+
+        // キーを押した
+        virtual const bool slot_key_press( GdkEventKey* event );
+
         virtual void stop();
-        virtual void relayout();
+        virtual void redraw_view();
+        virtual void relayout();  // 色やフォントなどの変更
         virtual void focus_view();
         virtual void focus_out();
         virtual void close_view();
@@ -248,7 +253,6 @@ namespace BBSLIST
         bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );
         bool slot_motion_notify( GdkEventMotion* event );
-        bool slot_key_press( GdkEventKey* event );
         bool slot_key_release( GdkEventKey* event );
         bool slot_scroll_event( GdkEventScroll* event );
         void slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_info );

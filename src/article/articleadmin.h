@@ -72,6 +72,7 @@ namespace ARTICLE
 
         bool clock_in_smooth_scroll( int timer_number );
 
+        void hide_popup();
         void delete_popup();
         void delete_all_popups();
 

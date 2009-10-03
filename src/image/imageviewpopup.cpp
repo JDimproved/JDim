@@ -10,6 +10,8 @@
 
 #include "config/globalconf.h"
 
+#include "control/controlid.h"
+
 #include "colorid.h"
 #include "cssmanager.h"
 
@@ -19,10 +21,15 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
     : ImageViewBase( url )
     , m_label( NULL )
     , m_length_prev( 0 )
+    , m_clicked( false )
 {
 #ifdef _DEBUG
     std::cout << "ImageViewPopup::ImageViewPopup url = " << get_url() << std::endl;
 #endif    
+
+    // コントロールモード設定
+    get_control().add_mode( CONTROL::MODE_IMAGEVIEW );
+    get_control().add_mode( CONTROL::MODE_IMAGEICON );
 
     int border_width = 1;
     int margin = 0;
@@ -164,11 +171,24 @@ void ImageViewPopup::remove_label()
 void ImageViewPopup::show_view()
 {
     if( is_loading() ) return;
-    if( get_imagearea() ) return;  // 画像を既に表示している
 
 #ifdef _DEBUG
     std::cout << "ImageViewPopup::show_view url = " << get_url() << std::endl;
 #endif    
+
+    // 画像を既に表示している
+    if( get_imagearea() ){
+
+        // キャッシュされてるなら再描画
+        if( get_img()->is_cached() ){
+#ifdef _DEBUG
+            std::cout << "redraw\n";
+#endif    
+            get_imagearea()->show_image();
+        }
+
+        return;
+    }
 
     // サーバから読み込み中        
     if( get_img()->is_loading() ){
@@ -241,3 +261,80 @@ void ImageViewPopup::update_label()
     }
 }
 
+
+// クリックした時の処理
+void ImageViewPopup::clicked()
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewPopup::clicked\n";
+#endif
+
+    // クリックしたらマウスボタンのリリース時に閉じる
+    m_clicked = true;
+}
+
+
+//
+// ポップアップメニュー取得
+//
+// SKELETON::View::show_popupmenu() を参照すること
+//
+Gtk::Menu* ImageViewPopup::get_popupmenu( const std::string& url )
+{
+    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_popup" ) );
+    return popupmenu;
+}
+
+
+//
+// 閉じる
+//
+void ImageViewPopup::close_view()
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewPopup::close_view\n";
+#endif
+
+    sig_hide_popup().emit();
+}
+
+
+//
+// viewの操作
+//
+const bool ImageViewPopup::operate_view( const int control )
+{
+#ifdef _DEBUG
+    std::cout << "ImageViewPopup::operate_view control = " << control << std::endl;
+#endif
+
+    switch( control ){
+
+        case CONTROL::CancelMosaic:
+        case CONTROL::CancelMosaicButton:
+            slot_cancel_mosaic();
+            break;
+
+        case CONTROL::Cancel:
+        case CONTROL::CloseImageButton:
+        case CONTROL::CloseImageTabButton:
+        case CONTROL::Quit:
+            close_view();
+            break;
+
+        case CONTROL::Save:
+            slot_save();
+            break;
+
+        case CONTROL::Delete:
+            delete_view_impl( true );
+            break;
+
+        default:
+            if( m_clicked ) close_view();
+            break;
+    }
+
+    m_clicked = false;
+    return true;
+}

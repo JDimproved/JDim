@@ -232,6 +232,9 @@ namespace SKELETON
         // shutdown( SIGHUP )用
         virtual void shutdown(){}
 
+        // キーを押した
+        virtual const bool slot_key_press( GdkEventKey* event ){ return false; }
+
         // クロック入力
         // clock_in()はビューがアクティブのときに呼び出される
         // clock_in_always()はviewの種類に依らず常に呼び出されるので重い処理を含めてはいけない

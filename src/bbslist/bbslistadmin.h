@@ -26,6 +26,7 @@ namespace BBSLIST
         BBSListToolBar* m_toolbar;
 
       public:
+
         BBSListAdmin( const std::string& url );
         ~BBSListAdmin();
 
@@ -56,7 +57,14 @@ namespace BBSLIST
 
         // タブメニュー表示キャンセル
         virtual void slot_tab_menu( int page, int x, int y ){}
+
+
+      private:
+
+        // カレントビューでポップアップ表示していたら隠す(インスタンスは削除しない)
+        void hide_popup();
     };
+
     
     BBSLIST::BBSListAdmin* get_admin();
     void delete_admin();

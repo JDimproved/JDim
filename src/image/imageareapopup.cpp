@@ -38,14 +38,12 @@ ImageAreaPopup::~ImageAreaPopup()
 //
 void ImageAreaPopup::show_image()
 {
+    if( is_loading() ) return;
+    if( ! get_img()->is_cached() ) return;
+
 #ifdef _DEBUG
     std::cout << "ImageAreaPopup::show_image url = " << get_url() << std::endl;
 #endif    
-
-    if( is_loading() ) return;
-    if( is_ready() ) return;
-
-    if( ! get_img()->is_cached() ) return;
 
     set_errmsg( std::string() );
     int width_max = CONFIG::get_imgpopup_width();

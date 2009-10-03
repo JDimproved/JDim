@@ -25,7 +25,6 @@ Article2chCompati::Article2chCompati( const std::string& datbase, const std::str
 
     // key から since 計算
     if( i != std::string::npos ) set_since_time( atol( get_key().c_str() ) );
-    set_since_date( MISC::timettostr( get_since_time() ) );
 }
 
 

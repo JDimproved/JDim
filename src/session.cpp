@@ -9,6 +9,7 @@
 
 #include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
+#include "jdlib/misctime.h"
 
 #include "bbslist/bbslistadmin.h"
 #include "article/articleadmin.h"
@@ -76,6 +77,9 @@ int board_col_new;
 int board_col_since;
 int board_col_write;
 int board_col_speed;
+
+int board_col_since_time;
+int board_col_write_time;
 
 bool win_show_sidebar;
 
@@ -375,6 +379,12 @@ void SESSION::init_session()
     board_col_write = cf.get_option_int( "col_write", 70, 4, 8192 );
     board_col_speed = cf.get_option_int( "col_speed", 45, 4, 8192 );
 
+    // スレ一覧の since の表示モード
+    board_col_since_time = cf.get_option_int( "col_since_time", MISC::TIME_NORMAL, 0, MISC::TIME_NUM-1 );
+
+    // スレ一覧の 最終書込 の表示モード
+    board_col_write_time = cf.get_option_int( "col_write_time", MISC::TIME_NORMAL, 0, MISC::TIME_NUM-1 );
+
     embedded_img = cf.get_option_bool( "embedded_img", true );
 
     x_win_img = cf.get_option_int( "x_win_img", 0, 0, 8192 );
@@ -570,6 +580,9 @@ void SESSION::save_session()
         << "col_since = " << board_col_since << std::endl
         << "col_write = " << board_col_write << std::endl
         << "col_speed = " << board_col_speed << std::endl
+
+        << "col_since_time = " << board_col_since_time << std::endl
+        << "col_write_time = " << board_col_write_time << std::endl
 
         << "embedded_img = " << embedded_img << std::endl
         << "x_win_img = " << x_win_img << std::endl
@@ -951,6 +964,13 @@ const int SESSION::col_since(){ return board_col_since; }
 const int SESSION::col_write(){ return board_col_write; }
 const int SESSION::col_speed(){ return board_col_speed; }
 
+// スレ一覧の since の表示モード
+const int SESSION::get_col_since_time() { return board_col_since_time; }
+void SESSION::set_col_since_time( const int mode ){ board_col_since_time = mode; }
+
+// スレ一覧の 最終書込 の表示モード
+const int SESSION::get_col_write_time() { return board_col_write_time; }
+void SESSION::set_col_write_time( const int mode ){ board_col_write_time = mode; }
 
 // 現在開いているサイドバーのページ
 const int SESSION::get_sidebar_current_page()

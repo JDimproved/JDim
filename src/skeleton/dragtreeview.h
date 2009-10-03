@@ -49,6 +49,7 @@ namespace SKELETON
         // ポップアップウィンドウ用
         PopupWin* m_popup_win;
         std::string m_pre_popup_url;
+        bool m_popup_shown;
         
         // 入力コントローラ
         CONTROL::Control m_control;
@@ -72,6 +73,8 @@ namespace SKELETON
         // ドロップされるとSIG_DROPPED_URI_LIST を発行する
         void set_enable_drop_uri_list();
 
+        void redraw_view();
+
         // 色初期化
         void init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even );
 
@@ -87,8 +90,9 @@ namespace SKELETON
 
         // ポップアップウィンドウ表示
         const std::string& pre_popup_url() const { return m_pre_popup_url; }
+        void reset_pre_popupurl( const std::string& url ){ if( ! m_pre_popup_url.empty() && m_pre_popup_url != url ) m_pre_popup_url = std::string(); }
         void show_popup( const std::string& url, View* view );
-        void delete_popup();
+        void hide_popup();
 
         // マウスホイールの処理
         void wheelscroll( GdkEventScroll* event );
@@ -118,12 +122,24 @@ namespace SKELETON
         virtual void on_drag_data_received( const Glib::RefPtr< Gdk::DragContext >& context, int x, int y, 
                                             const Gtk::SelectionData& selection, guint info, guint time );
 
+        virtual bool on_key_press_event( GdkEventKey* event );
+
         virtual bool on_motion_notify_event( GdkEventMotion* event );
         virtual bool on_scroll_event( GdkEventScroll* event );
         virtual bool on_leave_notify_event( GdkEventCrossing* event );
 
       private:
 
+        // ポップアップが表示されているか
+        const bool is_popup_shown() const { return ( m_popup_win && m_popup_shown ); }
+
+        // ポップアップ削除
+        void delete_popup();
+
+        // ポップアップが表示されていてかつマウスがその上にあるか
+        const bool is_mouse_on_popup();
+
+        const bool slot_popup_leave_notify_event( GdkEventCrossing* event );
         void slot_selection_changed();
    };
 }

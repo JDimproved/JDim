@@ -297,10 +297,44 @@ void ImageViewBase::setup_common()
 
     "</popup>";
 
+    // 画像ポップアップのメニュー
+    const std::string menu_popup = 
+
+    "<popup name='popup_menu_popup'>"
+
+    "<menuitem action='CancelMosaic'/>"
+    "<separator/>"
+
+    "<menuitem action='Quit'/>"
+    "<separator/>"
+
+    "<menuitem action='CopyURL'/>"
+    "<separator/>"
+
+    "<menuitem action='Save'/>"
+    "<separator/>"
+
+    "<menuitem action='ProtectImage'/>"
+    "<menu action='DeleteMenu'>"
+    "<menuitem action='DeleteImage'/>"
+    "</menu>"
+
+    "<separator/>"
+    "<menuitem action='AboneImage'/>"
+
+    "<separator/>"
+
+    "<menuitem action='Preference'/>"
+
+    "</popup>"
+    ;
+
+
     ui_manager()->add_ui_from_string(
         "<ui>"
         + menu
         + menu_icon
+        + menu_popup
         + "</ui>"
         );
 
@@ -309,6 +343,9 @@ void ImageViewBase::setup_common()
     CONTROL::set_menu_motion( popupmenu );
 
     popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_icon" ) );
+    CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_popup" ) );
     CONTROL::set_menu_motion( popupmenu );
 }
 
@@ -480,6 +517,8 @@ void ImageViewBase::slot_close_all_views()
 //
 void ImageViewBase::show_preference()
 {
+    CORE::core_set_command( "hide_popup" );
+
     SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, get_url() );
 
     IMAGE::get_admin()->set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
@@ -495,7 +534,42 @@ void ImageViewBase::show_preference()
 //
 void ImageViewBase::delete_view()
 {
+    delete_view_impl( false );
+}
+
+
+void ImageViewBase::delete_view_impl( const bool show_diag )
+{
+    CORE::core_set_command( "hide_popup" );
+
+    if( show_diag ){
+
+        if( !m_img->is_protected() ){
+
+            SKELETON::MsgDiag mdiag( get_parent_win(),
+                                     "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            mdiag.set_default_response( Gtk::RESPONSE_NO );
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+        }
+        else{
+
+            SKELETON::MsgDiag mdiag( get_parent_win(), "キャッシュ保護されています" );
+            mdiag.run();
+            return;
+        }
+    }
+
     CORE::core_set_command( "delete_image", get_url() );
+}
+
+
+//
+// クリックした時の処理
+//
+void ImageViewBase::clicked()
+{
+    IMAGE::get_admin()->set_command( "switch_image", get_url() );
+    IMAGE::get_admin()->set_command( "switch_admin" );
 }
 
 
@@ -625,20 +699,7 @@ const bool ImageViewBase::operate_view( const int control )
             break;
 
         case CONTROL::Delete:
-
-            if( !m_img->is_protected() ){
-
-                SKELETON::MsgDiag mdiag( get_parent_win(),
-                                         "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-                mdiag.set_default_response( Gtk::RESPONSE_NO );
-                if( mdiag.run() == Gtk::RESPONSE_YES ) delete_view();
-            }
-            else{
-
-                SKELETON::MsgDiag mdiag( get_parent_win(), "キャッシュ保護されています" );
-                mdiag.run();
-            }
-
+            delete_view_impl( true );
             break;
 
             // サイドバー表示/非表示
@@ -670,7 +731,7 @@ const bool ImageViewBase::operate_view( const int control )
 //
 // キープレスイベント
 //
-bool ImageViewBase::slot_key_press( GdkEventKey* event )
+const bool ImageViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG
     std::cout << "ImageViewBase::slot_key_press url = " << get_url() << std::endl;
@@ -702,11 +763,8 @@ bool ImageViewBase::slot_button_press( GdkEventButton* event )
     if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
 
     // クリック
-    // 反応を良くするため slot_button_release() ではなくてここで処理する
-    if( get_control().button_alloted( event, CONTROL::ClickButton ) ){
-        IMAGE::get_admin()->set_command( "switch_image", get_url() );
-        IMAGE::get_admin()->set_command( "switch_admin" );
-    }
+    // 反応を良くするため slot_button_release() ではなくてボタンを押した時点で処理する
+    if( get_control().button_alloted( event, CONTROL::ClickButton ) ) clicked();
 
     return true;
 }
@@ -1022,12 +1080,13 @@ void ImageViewBase::slot_copy_url()
 
 
 //
-// 保存メニュー
+// 保存
 //
 void ImageViewBase::slot_save()
 {
     if( ! m_enable_menuslot ) return;
 
+    CORE::core_set_command( "hide_popup" );
     m_img->save( IMAGE::get_admin()->get_win(), std::string() );
 }
 

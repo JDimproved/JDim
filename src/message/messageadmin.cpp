@@ -112,6 +112,15 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
             m_toolbar_preview->set_active_previewbutton( true );
         }
     }
+    // 指定したスレに対応する書き込みビューを開いていて
+    // かつ書き込みビューが空なら閉じる
+    else if( command.command == "close_message" ){
+
+        SKELETON::View *view = get_current_view();
+        if( view && view->set_command( "empty" ) && view->get_url().find( command.url ) != std::string::npos ){
+            close_current_view();
+        }
+    }
 }
 
 

@@ -24,7 +24,6 @@ ArticleJBBS::ArticleJBBS( const std::string& datbase, const std::string& _id, bo
 
     // key から since 計算
     set_since_time( atol( get_key().c_str() ) );
-    set_since_date( MISC::timettostr( get_since_time() ) );
 }
 
 

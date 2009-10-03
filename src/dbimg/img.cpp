@@ -274,6 +274,7 @@ void Img::set_mosaic( const bool mosaic )
     save_info();
 
     // 再描画
+    CORE::core_set_command( "redraw_bbslist" );
     CORE::core_set_command( "redraw_article" );
     CORE::core_set_command( "redraw_message" );
 }

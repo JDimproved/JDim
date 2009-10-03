@@ -27,6 +27,8 @@
 
 #include "message/logmanager.h"
 
+#include "image/imageviewpopup.h"
+
 #include "xml/document.h"
 #include "xml/tools.h"
 
@@ -687,6 +689,7 @@ const bool ArticleViewBase::set_command( const std::string& command, const std::
         if( m_drawarea ) m_drawarea->clear_screen();
     }
     else if( command == "goto_num" ) goto_num( atoi( arg1.c_str() ) );
+    else if( command == "hide_popup" ) hide_popup( true );
     else if( command == "delete_popup" ) delete_popup();
     else if( command == "clear_highlight" ) clear_highlight();
 
@@ -827,10 +830,7 @@ void ArticleViewBase::redraw_view()
     m_drawarea->redraw_view();
 
     // ポップアップが表示されていたらポップアップも再描画
-    if( is_popup_shown() ){
-        ArticleViewBase* popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
-        if( popup_article ) return popup_article->redraw_view();
-    }
+    if( is_popup_shown() ) m_popup_win->view()->redraw_view();
 }
 
 
@@ -1913,9 +1913,19 @@ const bool ArticleViewBase::slot_key_press( GdkEventKey* event )
 #endif
 
     // ポップアップはキーフォーカスを取れないので親からキー入力を送ってやる
-    ArticleViewBase* popup_article = NULL;
-    if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
-    if( popup_article && DBTREE::article_is_cached( popup_article->url_article() ) ) return popup_article->slot_key_press( event );
+    if( is_popup_shown() ){
+
+        ArticleViewBase* popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
+        if( popup_article ){
+
+            if( DBTREE::article_is_cached( popup_article->url_article() ) ) return popup_article->slot_key_press( event );
+        }
+        else{
+
+            IMAGE::ImageViewPopup* popup_image = dynamic_cast< IMAGE::ImageViewPopup* >( m_popup_win->view() );
+            if( popup_image ) return popup_image->slot_key_press( event );
+        }
+    }
 
     int key = get_control().key_press( event );
 
@@ -2652,7 +2662,7 @@ void ArticleViewBase::slot_hide_popup()
 //
 // force = true ならチェック無しで強制 hide
 //
-void ArticleViewBase::hide_popup( bool force )
+void ArticleViewBase::hide_popup( const bool force )
 {
     if( ! is_popup_shown() ) return;
 
@@ -2660,14 +2670,14 @@ void ArticleViewBase::hide_popup( bool force )
     std::cout << "ArticleViewBase::hide_popup force = " << force << " " << get_url() << std::endl;
 #endif
 
-    if( ! force ){
+    // ArticleView をポップアップ表示している場合
+    ArticleViewBase* popup_article = NULL;
+    popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
+
+    if( popup_article ){
+
+        if( ! force ){
         
-        // ArticleView をポップアップ表示している場合
-        ArticleViewBase* popup_article = NULL;
-        popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
-
-        if( popup_article ){
-
             // 孫のpopupが表示されてたらhideしない
             if( popup_article->is_popup_shown() ) return;
 
@@ -2676,9 +2686,11 @@ void ArticleViewBase::hide_popup( bool force )
             if( SESSION::is_popupmenu_shown() ) return;
 
 #ifdef _DEBUG
-        std::cout << "target = " << popup_article->get_url() << std::endl;
+            std::cout << "target = " << popup_article->get_url() << std::endl;
 #endif
         }
+
+        popup_article->hide_popup( force );
     }
 
     m_popup_win->hide();

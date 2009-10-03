@@ -953,12 +953,13 @@ void BoardViewBase::redraw_scrollbar()
 
 
 //
-// 色、フォントの更新
+// 色、フォント、表示内容の更新
 //
 void BoardViewBase::relayout()
 {
     m_treeview.init_color( COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN );
     m_treeview.init_font( CONFIG::get_fontname( FONT_BOARD ) );
+    update_item_all();
 }
 
 
@@ -1468,7 +1469,7 @@ Gtk::Menu* BoardViewBase::get_popupmenu( const std::string& url )
 
 
 //
-// 特定の行だけの更新
+// 特定の行だけの表示内容更新
 //
 void BoardViewBase::update_item( const std::string& url, const std::string& id_dat )
 {
@@ -1493,6 +1494,38 @@ void BoardViewBase::update_item( const std::string& url, const std::string& id_d
 
 
 //
+// 全ての行の表示内容更新
+//
+void BoardViewBase::update_item_all()
+{
+
+#ifdef _DEBUG
+    std::cout << "BoardViewBase::update_item_all " << get_url() << std::endl;
+#endif
+
+    const std::string datbase = DBTREE::url_datbase( get_url_board() );
+
+    // 自動ソート抑制
+    UNSORTED_COLUMN();
+    
+    Gtk::TreeModel::Children child = m_liststore->children();
+    Gtk::TreeModel::Children::iterator it;
+    for( it = child.begin() ; it != child.end() ; ++it ){
+
+        Gtk::TreeModel::Row row = *( it );
+        if( ! row ) continue;
+
+        const std::string url_art = datbase + row[ m_columns.m_col_id_dat ];
+        DBTREE::ArticleBase* art = DBTREE::get_article( url_art );
+        art->reset_since_date();
+        art->reset_write_date();
+
+        update_row_common( art, row );
+    }
+}
+
+
+//
 // 行を作って内容をセット
 //
 Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art )
@@ -1502,12 +1535,11 @@ Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art )
     ++m_id;
 
     row[ m_columns.m_col_id ]  = m_id;
-    row[ m_columns.m_col_since ] = art->get_since_date();
+    row[ m_columns.m_col_since_t ] = art->get_since_time();
 
     if( art->get_status() & STATUS_NORMAL )
         row[ m_columns.m_col_speed ] = art->get_speed();
         
-    row[ m_columns.m_col_since_t ] = art->get_since_time();
     row[ m_columns.m_col_id_dat ] = art->get_id();
 
     row[ m_columns.m_col_drawbg ] = false;
@@ -1635,6 +1667,9 @@ void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel:
     }
     row[ m_columns.m_col_mark_val ] = mark_val;
     row[ m_columns.m_col_mark ] = ICON::get_icon( icon );
+
+    // スレ立て時間
+    row[ m_columns.m_col_since ] = art->get_since_date();
 
     // 書き込み時間
     if( art->get_write_time() ){

@@ -229,7 +229,9 @@ namespace CORE
         void slot_save_favorite();
         void slot_quit();
         ///
-        void slot_toggle_toolbarpos( int pos );
+        void slot_toggle_since( const int mode );
+        void slot_toggle_write( const int mode );
+        void slot_toggle_toolbarpos( const int pos );
         void slot_toggle_toolbarbbslist();
         void slot_toggle_toolbarboard();
         void slot_toggle_toolbararticle();

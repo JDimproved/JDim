@@ -138,6 +138,19 @@ const std::string ArticleBase::get_org_url()
 }
 
 
+// スレ立て時刻( string型 )
+const std::string& ArticleBase::get_since_date()
+{
+    if( m_since_date.empty()
+        || SESSION::get_col_since_time() == MISC::TIME_PASSED ){
+
+        m_since_date = MISC::timettostr( get_since_time(), SESSION::get_col_since_time() );
+    }
+
+    return m_since_date;
+}
+
+
 // スレ速度
 const int ArticleBase::get_speed()
 {
@@ -486,6 +499,22 @@ void ArticleBase::set_number_seen( const int number_seen )
 }
 
 
+// 最終書き込み時間( string型 )
+const std::string& ArticleBase::get_write_date()
+{
+    if( m_write_time.tv_sec ){
+
+        if( m_write_time_date.empty() 
+            || SESSION::get_col_write_time() == MISC::TIME_PASSED ){
+        
+            m_write_time_date = MISC::timettostr( m_write_time.tv_sec, SESSION::get_col_write_time() );
+        }
+    }
+
+    return m_write_time_date;
+}
+
+
 //
 // 書き込み時間更新
 //
@@ -496,7 +525,6 @@ void ArticleBase::update_writetime()
     if( CONFIG::get_save_post_history() && gettimeofday( &tv, &tz ) == 0 ){
 
         m_write_time = tv;
-        m_write_time_date = MISC::timettostr( m_write_time.tv_sec );
 
 #ifdef _DEBUG
         std::cout << "ArticleBase::update_writetime : " << m_write_time.tv_sec << " " << m_write_time_date << std::endl;
@@ -1624,8 +1652,6 @@ void ArticleBase::read_info()
                 m_write_time.tv_sec = ( atoi( ( *(it_tmp++) ).c_str() ) << 16 ) + atoi( ( *(it_tmp++) ).c_str() );
                 m_write_time.tv_usec = atoi( ( *(it_tmp++) ).c_str() );
             }
-
-            if( m_write_time.tv_sec ) m_write_time_date = MISC::timettostr( m_write_time.tv_sec );
         }
 
         // write name

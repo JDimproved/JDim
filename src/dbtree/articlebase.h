@@ -100,9 +100,9 @@ namespace DBTREE
         std::string m_url_pre_article;
 
       protected:
+
         void set_key( const std::string& key ){ m_key = key; }
         void set_since_time( time_t since ){ m_since_time = since; }
-        void set_since_date( std::string since ){ m_since_date = since; }
         
       public:
 
@@ -229,7 +229,8 @@ namespace DBTREE
 
         // 最終書き込み時間
         const time_t& get_write_time() const { return m_write_time.tv_sec; } // 秒
-        const std::string& get_write_date() const { return m_write_time_date; } // string型
+        const std::string& get_write_date(); // string型
+        void reset_write_date(){ m_write_time_date = std::string(); }
 
         // 書き込み数
         const int get_num_posted();
@@ -245,7 +246,8 @@ namespace DBTREE
 
         // スレ立て時刻
         const time_t& get_since_time() const { return m_since_time; };
-        const std::string& get_since_date() const { return m_since_date; }
+        const std::string& get_since_date();
+        void reset_since_date(){ m_since_date = std::string(); }
 
         // 更新時間
         time_t get_time_modified();

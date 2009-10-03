@@ -146,12 +146,15 @@ void MessageViewBase::clock_in()
 {
     if( m_preview ) m_preview->clock_in();
 
-    // 経過時刻表示
     ++m_counter;
     if( m_counter % ( PASS_TIMEOUT / TIMER_TIMEOUT ) == 0 ){
 
         m_counter = 0;
 
+        // 書き込みから時間があまり経っていなければステータス表示を更新
+        if( time( NULL ) - DBTREE::article_write_time( get_url() ) < 60 * 60 ) show_status();
+
+        // 書き込み規制経過時刻表示
         time_t left = DBTREE::board_write_leftsec( get_url() );
         if( left ){
             m_str_pass = "  ( 書込規制中 残り " + MISC::itostr( left ) + " 秒 )";
@@ -594,7 +597,7 @@ void MessageViewBase::toggle_preview()
 //
 // テキストビューでキーを押した
 //
-bool MessageViewBase::slot_key_press( GdkEventKey* event )
+const bool MessageViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG_KEY
     guint key = event->keyval;
@@ -806,7 +809,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         struct timeval tv;
         struct timezone tz;
         gettimeofday( &tv, &tz );
-        ss << MISC::timettostr( tv.tv_sec );
+        ss << MISC::timettostr( tv.tv_sec, MISC::TIME_WEEK );
 
         ss << " ID:???" << "<>" << msg << "<>\n";
 
@@ -869,7 +872,9 @@ void MessageViewBase::show_status()
 
     if( m_max_str ) ss << "/ " << m_max_str;
 
-    if( DBTREE::article_write_time( get_url() ) ) ss << "  /  最終書込 " << DBTREE::article_write_date( get_url() );
+    const time_t wtime = DBTREE::article_write_time( get_url() );
+    if( wtime ) ss << "  /  最終書込 "
+                   << ( MISC::timettostr( wtime, MISC::TIME_WEEK ) + " ( " +  MISC::timettostr( wtime, MISC::TIME_PASSED ) +  " )" );
 
     ss << " ]";
 

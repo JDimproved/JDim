@@ -18,6 +18,8 @@ namespace IMAGE
         Gtk::Label* m_label;
         size_t m_length_prev;
 
+        bool m_clicked;
+
       public:
 
         ImageViewPopup( const std::string& url );
@@ -27,8 +29,17 @@ namespace IMAGE
 
         virtual void stop();
         virtual void show_view();
+        virtual void close_view();
+        virtual const bool operate_view( const int control );
+
+      protected:
+
+        virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
       private:
+
+        // クリックした時の処理
+        virtual void clicked();
 
         void update_label();
         void set_label( const std::string& status );

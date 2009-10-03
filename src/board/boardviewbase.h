@@ -97,6 +97,9 @@ namespace BOARD
 
         virtual void clock_in();
 
+        // キーを押した        
+        virtual const bool slot_key_press( GdkEventKey* event );
+
         virtual void write();
         virtual void stop();
         virtual void show_view();
@@ -171,6 +174,9 @@ namespace BOARD
 
         void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
 
+        // 全ての行の表示内容更新
+        void update_item_all();
+
         // ソート用
         void exec_sort();
         void slot_col_clicked( const int col );
@@ -183,7 +189,6 @@ namespace BOARD
         const bool slot_button_press( GdkEventButton* event );
         const bool slot_button_release( GdkEventButton* event );
         const bool slot_motion_notify( GdkEventMotion* event );
-        const bool slot_key_press( GdkEventKey* event );
         const bool slot_key_release( GdkEventKey* event );
         const bool slot_scroll_event( GdkEventScroll* event );
 

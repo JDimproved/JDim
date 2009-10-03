@@ -13,6 +13,7 @@
 #include "dbtree/articlebase.h"
 
 #include "jdlib/miscutil.h"
+#include "jdlib/misctime.h"
 
 #include "config/globalconf.h"
 
@@ -82,6 +83,8 @@ ArticleViewMain::~ArticleViewMain()
     HISTORY::append_history( URL_HISTCLOSEVIEW,
                              DBTREE::url_dat( get_url() ),
                              DBTREE::article_subject( get_url() ), TYPE_THREAD );
+
+    CORE::core_set_command( "close_message" ,url_article() );
 
     if( get_live() ) live_stop();
 }
@@ -502,7 +505,9 @@ void ArticleViewMain::create_status_message()
            << " [ 全 " << number_load
            << " / 新着 " << number_new;
 
-    if( DBTREE::article_write_time( url_article() ) ) ss_tmp << " / 最終書込 " << DBTREE::article_write_date( url_article() );
+    const time_t wtime = DBTREE::article_write_time( url_article() );
+    if( wtime ) ss_tmp << " / 最終書込 "
+                       << ( MISC::timettostr( wtime, MISC::TIME_WEEK ) + " ( " +  MISC::timettostr( wtime, MISC::TIME_PASSED ) +  " )" );
 
     std::string str_stat;
     if( is_old() ) str_stat = "[ DAT落ち 又は 移転しました ] ";
