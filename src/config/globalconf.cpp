@@ -89,6 +89,10 @@ void CONFIG::set_color( const int id, const std::string& color )
 void CONFIG::reset_colors(){ get_confitem()->reset_colors(); }
 
 const bool CONFIG::get_use_tree_gtkrc(){ return get_confitem()->use_tree_gtkrc; }
+void CONFIG::set_use_tree_gtkrc( const bool use ){ get_confitem()->use_tree_gtkrc = use; }
+
+const bool CONFIG::get_use_select_gtkrc(){ return get_confitem()->use_select_gtkrc; }
+void CONFIG::set_use_select_gtkrc( const bool use ){ get_confitem()->use_select_gtkrc = use; }
 
 const int CONFIG::get_tree_ypad(){ return get_confitem()->tree_ypad; }
 

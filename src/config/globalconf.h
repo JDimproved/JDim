@@ -46,6 +46,11 @@ namespace CONFIG
 
     // ツリービューでgtkrcの設定を使用するか
     const bool get_use_tree_gtkrc();
+    void set_use_tree_gtkrc( const bool use );
+
+    // スレビューの選択色でgtkrcの設定を使用するか
+    const bool get_use_select_gtkrc();
+    void set_use_select_gtkrc( const bool use );
 
     // ツリービューの行間スペース
     const int get_tree_ypad();

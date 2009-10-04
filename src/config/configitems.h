@@ -184,6 +184,9 @@ namespace CONFIG
         // ツリービューでgtkrcの設定を使用するか
         bool use_tree_gtkrc;
 
+        // スレビューの選択色でgtkrcの設定を使用するか
+        bool use_select_gtkrc;
+
         // ツリービューの行間スペース
         int tree_ypad;
 

@@ -162,8 +162,8 @@ void DrawAreaBase::setup( bool show_abone, bool show_scrbar )
     m_pango_layout = m_view.create_pango_layout( "" );
     m_pango_layout->set_width( -1 ); // no wrap
 
-    // 色、フォント初期化
-    init_color();
+    // フォント初期化
+    // 色の初期化は realize したとき
     init_font();
 
     // スクロールバー作成
@@ -262,6 +262,15 @@ void DrawAreaBase::init_color()
 
         m_color[ i ] = Gdk::Color( CONFIG::get_color( i ) );
         colormap->alloc_color( m_color[ i ] );
+    }
+
+    // スレビューの選択色でgtkrcの設定を使用
+    if( CONFIG::get_use_select_gtkrc() ){
+        m_color[ COLOR_CHAR_SELECTION ] = get_style()->get_text( Gtk::STATE_SELECTED );
+        colormap->alloc_color( m_color[ COLOR_CHAR_SELECTION ] );
+
+        m_color[ COLOR_BACK_SELECTION ] = get_style()->get_base( Gtk::STATE_SELECTED );
+        colormap->alloc_color( m_color[ COLOR_BACK_SELECTION ] );
     }
 
     std::vector< std::string >::const_iterator it = colors.begin();
@@ -3849,6 +3858,9 @@ void DrawAreaBase::slot_realize()
 
     m_gc = Gdk::GC::create( m_window );
     assert( m_gc );
+
+    // 色初期化
+    init_color();
 
     exec_layout();
     m_view.grab_focus();

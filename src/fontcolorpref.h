@@ -34,6 +34,8 @@ namespace CORE
 
     class FontColorPref : public SKELETON::PrefDiag
     {
+        Gtk::Notebook m_notebook;
+
         // ツールチップ
         Gtk::Tooltips m_tooltips;
 
@@ -50,24 +52,28 @@ namespace CORE
         Gtk::HBox m_hbox_checkbutton;
         Gtk::CheckButton m_checkbutton_font;
 
-        Gtk::HBox m_hbox_space_ubar;
+        Gtk::HBox m_hbox_space;
+        Gtk::HBox m_hbox_ubar;
         Gtk::Label m_label_space;
         SKELETON::SpinButtonDouble m_spin_space;
         Gtk::Label m_label_ubar;
         SKELETON::SpinButtonDouble m_spin_ubar;
 
-        Gtk::HBox m_hbox_reset_font;
         Gtk::Button m_bt_reset_font;
 
-        Gtk::Frame m_frame_font;
-
         // 色の設定
+        Gtk::Label m_label_warning_color;
         Gtk::VBox m_vbox_color;
+
+        Gtk::CheckButton m_chk_use_gtkrc_tree;
+        Gtk::CheckButton m_chk_use_gtkrc_selection;
+
         Gtk::TreeView m_treeview_color;
         Glib::RefPtr< Gtk::ListStore > m_liststore_color;
         CORE::ColorTreeColumn m_columns_color;
         Gtk::ScrolledWindow m_scrollwin_color;
-        Gtk::HBox m_hbox_reset_color;
+        Gtk::HBox m_hbox_change_color;
+        Gtk::Button m_bt_change_color;
         Gtk::Button m_bt_reset_color;
         Gtk::Button m_bt_reset_all_colors;
 
@@ -86,12 +92,14 @@ namespace CORE
         void slot_combo_font_changed();
         void slot_fontbutton_on_set();
         void slot_checkbutton_font_toggled();
+        void slot_chk_use_gtkrc_toggled();
         void slot_reset_font();
 
         // 色の設定
         void set_color_settings( const int colorid, const std::string& name, const std::string& defaultval );
         void slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column );
         void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
+        void slot_change_color();
         void slot_reset_color();
         void slot_reset_all_colors();
 

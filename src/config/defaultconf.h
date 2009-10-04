@@ -34,6 +34,7 @@ namespace CONFIG
         CONF_NAMEPOPUP_BY_MO = 0,   // 名前の上にマウスオーバーしたときにポップアップ表示する
         CONF_IDPOPUP_BY_MO = 0,     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
         CONF_USE_TREE_GTKRC = 0,    // ツリービューでgtkrcの設定を使用するか
+        CONF_USE_SELECT_GTKRC = 0,  // スレビューの選択色でgtkrcの設定を使用するか
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
         CONF_VIEW_MARGIN = 0,       // 各ビューと枠との間の余白
         CONF_SHOW_OLDARTICLE = 0,   // スレ一覧で古いスレも表示

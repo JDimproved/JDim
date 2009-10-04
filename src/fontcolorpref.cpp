@@ -20,13 +20,17 @@
 
 #define WARNING_STRICTCHAR "スレビューのフォント幅の近似計算を厳密に行います\n\nレイアウトが崩れにくくなるかわりにパフォーマンスが著しく低下します。通常は設定しないでください"
 
+#define WARNING_GTKRC_TREE "gtkrc 関係の設定はJDの再起動後に有効になります"
+
 using namespace CORE;
 
 FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::PrefDiag( parent, url, true, true ),
       m_bt_reset_font( "フォントの設定を全てデフォルトに戻す(_F)", true ),
-      m_bt_reset_color( "選択行の色の設定をデフォルトに戻す(_R)", true ),
-      m_bt_reset_all_colors( "色の設定を全てデフォルトに戻す(_A)", true )
+
+      m_bt_change_color( "選択行の色を設定する(_S)", true ),
+      m_bt_reset_color( "選択行の色をデフォルトに戻す(_R)", true ),
+      m_bt_reset_all_colors( "色の設定を全てデフォルトに戻す(_C)", true )
 {
     CONFIG::bkup_conf();
 
@@ -128,38 +132,33 @@ void FontColorPref::pack_widget()
     m_spin_space.set_range( 0.1, 10.0 );
     m_spin_space.set_increments( 0.1, 0.1 );
     m_spin_space.set_value( CONFIG::get_adjust_line_space() );
-    m_label_space.set_text_with_mnemonic( "行の高さ(_H)： " );
+    m_label_space.set_text_with_mnemonic( "スレビューの文字列の行の高さ(_H)： " );
     m_label_space.set_mnemonic_widget( m_spin_space );
 
-    m_hbox_space_ubar.set_spacing ( mrg );
-    m_hbox_space_ubar.pack_start( m_label_space, Gtk::PACK_SHRINK );
-    m_hbox_space_ubar.pack_start( m_spin_space, Gtk::PACK_SHRINK );
+    m_hbox_space.set_spacing ( mrg );
+    m_hbox_space.pack_start( m_label_space, Gtk::PACK_SHRINK );
+    m_hbox_space.pack_start( m_spin_space, Gtk::PACK_SHRINK );
     m_tooltips.set_tip( m_spin_space, "スレビューにおいて行の高さを調節します( 標準は 1 )" );
+    m_vbox_font.pack_start( m_hbox_space, Gtk::PACK_SHRINK, mrg/2 );
 
     // 下線位置
     m_spin_ubar.set_digits( 1 );
     m_spin_ubar.set_range( 0.1, 10.0 );
     m_spin_ubar.set_increments( 0.1, 0.1 );
     m_spin_ubar.set_value( CONFIG::get_adjust_underline_pos() );
-    m_label_ubar.set_text_with_mnemonic( "下線位置(_U)： " );
+    m_label_ubar.set_text_with_mnemonic( "スレビューの文字列の下線位置(_U)： " );
     m_label_ubar.set_mnemonic_widget( m_spin_ubar );
 
-    m_hbox_space_ubar.pack_start( m_label_ubar, Gtk::PACK_SHRINK );
-    m_hbox_space_ubar.pack_start( m_spin_ubar, Gtk::PACK_SHRINK );
-
-    m_vbox_font.pack_start( m_hbox_space_ubar, Gtk::PACK_SHRINK, mrg/2 );
+    m_hbox_ubar.pack_start( m_label_ubar, Gtk::PACK_SHRINK );
+    m_hbox_ubar.pack_start( m_spin_ubar, Gtk::PACK_SHRINK );
+    m_vbox_font.pack_start( m_hbox_ubar, Gtk::PACK_SHRINK, mrg/2 );
     m_tooltips.set_tip( m_spin_ubar, "スレビューにおいてアンカーなどの下線の位置を調節します( 標準は 1 )" );
 
     // フォントのリセット
     m_bt_reset_font.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_font ) );
-    m_hbox_reset_font.set_spacing( mrg );
-    m_hbox_reset_font.pack_start( m_bt_reset_font, Gtk::PACK_SHRINK );
-    m_vbox_font.pack_start( m_hbox_reset_font, Gtk::PACK_SHRINK, mrg/2 );
+    m_vbox_font.pack_end( m_bt_reset_font, Gtk::PACK_SHRINK );
 
-    m_frame_font.set_label( "フォントの設定" );
-    m_frame_font.add( m_vbox_font );
-
-    get_vbox()->pack_start( m_frame_font, Gtk::PACK_SHRINK );
+    m_notebook.append_page( m_vbox_font, "フォントの設定" );    
 
     m_combo_font.signal_changed().connect( sigc::mem_fun( *this, &FontColorPref::slot_combo_font_changed ) );
     m_fontbutton.signal_font_set().connect( sigc::mem_fun( *this, &FontColorPref::slot_fontbutton_on_set ) );
@@ -167,12 +166,20 @@ void FontColorPref::pack_widget()
 
 
     // 色
+    m_vbox_color.set_border_width( mrg );
+    m_vbox_color.set_spacing( mrg );
+
+    m_label_warning_color.set_text( "Ctrl+クリック又はShift+クリックで複数行選択可能\nテーマによってはツリービュー(板一覧、スレ一覧)の背景色が正しく設定されない場合があります。" );
+    m_vbox_color.pack_start( m_label_warning_color, Gtk::PACK_SHRINK );
+
     m_liststore_color = Gtk::ListStore::create( m_columns_color );
     m_treeview_color.set_model( m_liststore_color );
-    m_treeview_color.set_size_request( 480, 300 );
+    m_treeview_color.set_size_request( 480, 280 );
+    m_treeview_color.get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
     m_treeview_color.signal_row_activated().connect( sigc::mem_fun( *this, &FontColorPref::slot_row_activated ) );
     m_scrollwin_color.add( m_treeview_color );
     m_scrollwin_color.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
+    m_vbox_color.pack_start( m_scrollwin_color, Gtk::PACK_EXPAND_WIDGET );
 
     Gtk::TreeViewColumn* column = Gtk::manage( new Gtk::TreeViewColumn( "設定名", m_columns_color.m_col_name ) );
     column->set_fixed_width( 430 );
@@ -185,20 +192,30 @@ void FontColorPref::pack_widget()
     Gtk::CellRenderer *cell = column->get_first_cell_renderer();
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &FontColorPref::slot_cell_data ) );
 
-    m_hbox_reset_color.set_spacing( mrg );
-    m_hbox_reset_color.pack_start( m_bt_reset_color, Gtk::PACK_SHRINK );
-    m_hbox_reset_color.pack_start( m_bt_reset_all_colors, Gtk::PACK_SHRINK );
-
-    m_vbox_color.set_spacing( mrg );
-    m_vbox_color.pack_start( m_scrollwin_color, Gtk::PACK_EXPAND_WIDGET );
-    m_vbox_color.pack_start( m_hbox_reset_color, Gtk::PACK_SHRINK );
-
-    get_vbox()->pack_start( m_vbox_color, Gtk::PACK_SHRINK );
-
+    m_bt_change_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_change_color ) );
     m_bt_reset_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_color ) );
+
+    m_hbox_change_color.set_spacing( mrg );
+    m_hbox_change_color.pack_end( m_bt_reset_color, Gtk::PACK_SHRINK );
+    m_hbox_change_color.pack_end( m_bt_change_color , Gtk::PACK_SHRINK );
+    m_vbox_color.pack_start( m_hbox_change_color, Gtk::PACK_SHRINK );
+
+    m_chk_use_gtkrc_tree.add_label( "ツリービューの背景色設定に gtkrc を用いる(_T)", true ),
+    m_chk_use_gtkrc_tree.set_active( CONFIG::get_use_tree_gtkrc() );
+    m_chk_use_gtkrc_tree.signal_toggled().connect( sigc::mem_fun( *this, &FontColorPref::slot_chk_use_gtkrc_toggled ) );
+    m_vbox_color.pack_start( m_chk_use_gtkrc_tree, Gtk::PACK_SHRINK );
+
+    m_chk_use_gtkrc_selection.add_label( "スレビューの選択範囲の色設定に gtkrc を用いる(_S)", true ),
+    m_chk_use_gtkrc_selection.set_active( CONFIG::get_use_select_gtkrc() );
+    m_vbox_color.pack_start( m_chk_use_gtkrc_selection, Gtk::PACK_SHRINK );
+
     m_bt_reset_all_colors.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_all_colors ) );
+    m_vbox_color.pack_end( m_bt_reset_all_colors, Gtk::PACK_SHRINK );
+
+    m_notebook.append_page( m_vbox_color, "色の設定" );    
 
     // 全体
+    get_vbox()->pack_start( m_notebook );
     get_vbox()->set_spacing( mrg );
     set_border_width( mrg );
 }
@@ -217,6 +234,9 @@ void FontColorPref::slot_ok_clicked()
     CONFIG::set_adjust_underline_pos( m_spin_ubar.get_value() );
 
     CONFIG::set_strict_char_width( m_checkbutton_font.property_active() );
+
+    CONFIG::set_use_tree_gtkrc( m_chk_use_gtkrc_tree.property_active() );
+    CONFIG::set_use_select_gtkrc( m_chk_use_gtkrc_selection.property_active() );
 
     CORE::core_set_command( "relayout_all_bbslist" );
     CORE::core_set_command( "relayout_all_board" );
@@ -290,6 +310,15 @@ void FontColorPref::slot_checkbutton_font_toggled()
     }
 }
 
+void FontColorPref::slot_chk_use_gtkrc_toggled()
+{
+    if( m_chk_use_gtkrc_tree.property_active() )
+    {
+        SKELETON::MsgDiag mdiag( NULL, WARNING_GTKRC_TREE );
+        mdiag.run();
+    }
+}
+
 
 //
 // フォント選択ダイアログで OK が押された
@@ -349,22 +378,8 @@ void FontColorPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::T
     std::cout << "FontColorPref::slot_row_activated path = " << path.to_string() << std::endl;
 #endif
 
-    Gtk::TreeModel::Row row = *( m_liststore_color->get_iter( path ) );
-    if( ! row ) return;
-
-    const int colorid = row[ m_columns_color.m_col_colorid ];
-    if( colorid == COLOR_NONE ) return;
-
-    Gtk::ColorSelectionDialog colordiag;
-    colordiag.get_colorsel()->set_current_color( Gdk::Color( CONFIG::get_color( colorid ) ) );
-    colordiag.set_transient_for( *CORE::get_mainwindow() );
-    const int ret = colordiag.run();
-
-    if( ret == Gtk::RESPONSE_OK ){
-        CONFIG::set_color( colorid , MISC::color_to_str( colordiag.get_colorsel()->get_current_color() ) );
-    }
+    slot_change_color();
 }
-
 
 //
 // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
@@ -384,6 +399,47 @@ void FontColorPref::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeMode
 
 
 //
+// 選択行の色の変更
+//
+void FontColorPref::slot_change_color()
+{
+    Gtk::TreeModel::Path path;
+    Gtk::TreeRow row;
+    
+    std::list< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
+    if( selection_path.empty() ) return;
+
+    std::list< Gtk::TreePath >::iterator it = selection_path.begin();
+
+    int colorid = COLOR_NONE;
+    if( selection_path.size() == 1 ){
+        row = *m_liststore_color->get_iter( *it );
+        if( ! row ) return;
+        colorid = row[ m_columns_color.m_col_colorid ];
+        if( colorid == COLOR_NONE ) return;
+    }
+
+    Gtk::ColorSelectionDialog colordiag;
+    if( colorid != COLOR_NONE ) colordiag.get_colorsel()->set_current_color( Gdk::Color( CONFIG::get_color( colorid ) ) );
+    colordiag.set_transient_for( *CORE::get_mainwindow() );
+    const int ret = colordiag.run();
+
+    if( ret == Gtk::RESPONSE_OK ){
+
+        for( ; it != selection_path.end(); ++it ){
+
+            row = *m_liststore_color->get_iter( *it );
+            if( ! row ) continue;
+
+            colorid = row[ m_columns_color.m_col_colorid ];
+            if( colorid != COLOR_NONE )
+                CONFIG::set_color( colorid , MISC::color_to_str( colordiag.get_colorsel()->get_current_color() ) );
+        }
+    }
+}
+
+
+//
 // 選択行の色のリセット
 //
 void FontColorPref::slot_reset_color()
@@ -392,15 +448,19 @@ void FontColorPref::slot_reset_color()
     if( selection_path.empty() ) return;
 
     std::list< Gtk::TreePath >::iterator it = selection_path.begin();
-    Gtk::TreeRow row = *m_liststore_color->get_iter( *it );
-    if( ! row ) return;
 
-    const int colorid = row[ m_columns_color.m_col_colorid ];
-    if( colorid != COLOR_NONE ){
+    for( ; it != selection_path.end(); ++it ){
 
-        std::string defaultcolor = row[ m_columns_color.m_col_default ];
-        CONFIG::set_color( colorid , defaultcolor );
-        m_treeview_color.queue_draw();
+        Gtk::TreeRow row = *m_liststore_color->get_iter( *it );
+        if( ! row ) continue;
+
+        const int colorid = row[ m_columns_color.m_col_colorid ];
+        if( colorid != COLOR_NONE ){
+
+            std::string defaultcolor = row[ m_columns_color.m_col_default ];
+            CONFIG::set_color( colorid , defaultcolor );
+            m_treeview_color.queue_draw();
+        }
     }
 }
 
@@ -410,6 +470,14 @@ void FontColorPref::slot_reset_color()
 //
 void FontColorPref::slot_reset_all_colors()
 {
+    if( m_chk_use_gtkrc_tree.property_active() )
+    {
+        SKELETON::MsgDiag mdiag( NULL, WARNING_GTKRC_TREE );
+        mdiag.run();
+    }
+    m_chk_use_gtkrc_tree.set_active( CONFIG::CONF_USE_TREE_GTKRC );
+    m_chk_use_gtkrc_selection.set_active( CONFIG::CONF_USE_SELECT_GTKRC );
+
     CONFIG::reset_colors();
 
     m_treeview_color.queue_draw();

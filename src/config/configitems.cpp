@@ -257,6 +257,9 @@ const bool ConfigItems::load( const bool restore )
     // ツリービューでgtkrcの設定を使用するか
     use_tree_gtkrc = cf.get_option_bool( "use_tree_gtkrc", CONF_USE_TREE_GTKRC );
 
+    // スレビューの選択色でgtkrcの設定を使用するか
+    use_select_gtkrc = cf.get_option_bool( "use_select_gtkrc", CONF_USE_SELECT_GTKRC );
+
     // ツリービューの行間スペース
     tree_ypad = cf.get_option_int( "tree_ypad", CONF_TREE_YPAD, 0, 64 );
 
@@ -641,6 +644,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_back_board_even", str_color[ COLOR_BACK_BOARD_EVEN ] );
 
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
+    cf.update( "use_select_gtkrc", use_select_gtkrc );
 
     cf.update( "tree_ypad", tree_ypad );
 
