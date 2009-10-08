@@ -459,6 +459,9 @@ const bool ConfigItems::load( const bool restore )
     // お気に入りの更新チェック時に板の更新もチェックする
     check_update_board  = cf.get_option_bool( "check_update_board", CONF_CHECK_UPDATE_BOARD );
 
+    // 起動時にお気に入りを自動でチェックする
+    check_update_boot = cf.get_option_bool( "check_update_boot", CONF_CHECK_UPDATE_BOOT );
+
     // Ctrl+qでウィンドウを閉じない
     disable_close = cf.get_option_bool( "disable_close", CONF_DISABLE_CLOSE );
 
@@ -740,6 +743,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "show_diag_replace_favorite", show_diag_replace_favorite );
     cf.update( "bookmark_drop", bookmark_drop );
     cf.update( "check_update_board", check_update_board );
+    cf.update( "check_update_boot", check_update_boot );
     cf.update( "disable_close", disable_close );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
 

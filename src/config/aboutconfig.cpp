@@ -145,6 +145,7 @@ void AboutConfig::append_rows()
     append_row( "右ペーンが空の時にサイドバーを最大化する", get_confitem()->expand_sidebar, CONF_EXPAND_SIDEBAR );
     append_row( "スレをお気に入りに追加した時にしおりをセットする", get_confitem()->bookmark_drop, CONF_BOOKMARK_DROP );
     append_row( "更新チェック時に板の更新もチェックする", get_confitem()->check_update_board, CONF_CHECK_UPDATE_BOARD );
+    append_row( "起動時にお気に入りを自動でチェックする", get_confitem()->check_update_boot, CONF_CHECK_UPDATE_BOOT );
 
     // スレ一覧
     append_row( "" );

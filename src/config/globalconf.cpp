@@ -420,6 +420,9 @@ const bool CONFIG::get_bookmark_drop(){ return get_confitem()->bookmark_drop; }
 // お気に入りの更新チェック時に板の更新もチェックする
 const bool CONFIG::get_check_update_board(){ return get_confitem()->check_update_board; }
 
+// 起動時にお気に入りを自動でチェックする
+const bool CONFIG::get_check_update_boot(){ return get_confitem()->check_update_boot; }
+
 // Ctrl+qでウィンドウを閉じない
 const bool CONFIG::get_disable_close(){ return get_confitem()->disable_close; }
 

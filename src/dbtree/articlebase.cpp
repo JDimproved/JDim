@@ -1029,28 +1029,25 @@ void ArticleBase::download_dat( const bool check_update )
     struct timezone tz;
     if( gettimeofday( &tv, &tz ) != 0 ) tv.tv_sec = 0;
 
+    // 更新チェック可能か判定する
     if( check_update ){
-
-        if( ! SESSION::is_online() ) return;
-
-        // 既に更新状態の時はチェックしない
-        if( enable_load() ){
-
-            // 次のスレを更新チェック
-            CORE::get_checkupdate_manager()->pop_front();
-
-            return;
-        }
 
         // 一度更新チェックしたらしばらくは再チェックできないようにする
         time_t passed = 0;
         if( tv.tv_sec ) passed = MAX( 0, tv.tv_sec - m_check_update_time.tv_sec );
 
+        if( ! SESSION::is_online()
+            || is_loading()
+            || enable_load() // 既に新着あり状態の時はチェックしない
+            || ( m_status & STATUS_OLD )
+            || ( passed <= CHECKUPDATE_MINSEC )
+            )
+        {
 #ifdef _DEBUG
-        std::cout << "check_update passed = " << passed << std::endl;
+            std::cout << "skipped : passed = " << passed << " enable_load = " << enable_load() << std::endl;
 #endif
-
-        if( passed <= CHECKUPDATE_MINSEC ) return;
+            return;
+        }
     }
 
     if( SESSION::is_online() && tv.tv_sec ) m_check_update_time = tv;

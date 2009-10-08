@@ -231,18 +231,6 @@ void CheckUpdate_Manager::pop_front()
         m_url_checking = item.urllist.front();
         item.urllist.pop_front();
 
-        if( DBTREE::article_is_loading( m_url_checking ) ){
-            m_url_checking = std::string();
-            pop_front();
-            return;
-        }
-
-        if( DBTREE::article_status( m_url_checking ) & STATUS_UPDATE ){
-            m_url_checking = std::string();
-            pop_front();
-            return;
-        }
-
 #ifdef _DEBUG
         std::cout << "CheckUpdate_Manager::pop_front download url = " << m_url_checking << " size = " << m_list_item.size() << std::endl;
 #endif
@@ -252,9 +240,17 @@ void CheckUpdate_Manager::pop_front()
         DBTREE::article_download_dat( m_url_checking, check_update );
 
         if( ! DBTREE::article_is_loading( m_url_checking ) ){
+
+#ifdef _DEBUG
+            std::cout << "skipped\n";
+#endif
             m_url_checking = std::string();
             pop_front();
             return;
         }
+
+#ifdef _DEBUG
+        std::cout << "started\n";
+#endif
     }
 }

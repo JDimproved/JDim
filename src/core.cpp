@@ -3041,6 +3041,11 @@ void Core::exec_command_after_boot()
     // 画像ウィンドウが復元されると画面が表示されないので再レイアウト指定
     ARTICLE::get_admin()->set_command( "relayout_current_view" );
 
+    // お気に入り更新チェック
+    if( CONFIG::get_check_update_boot() && SESSION::is_online() ){
+        BBSLIST::get_admin()->set_command( "check_update_root", URL_FAVORITEVIEW );
+    }
+
 #ifdef _DEBUG
     std::cout << "\n\n----------- boot fin --------------\n\n";
 #endif

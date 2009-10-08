@@ -378,6 +378,9 @@ namespace CONFIG
         // お気に入りの更新チェック時に板の更新もチェックする
         bool check_update_board;
 
+        // 起動時にお気に入りを自動でチェックする
+        bool check_update_boot;
+
         // Ctrl+qでウィンドウを閉じない
         bool disable_close;
 
