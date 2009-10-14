@@ -1517,6 +1517,8 @@ void BoardViewBase::update_item_all()
 
         const std::string url_art = datbase + row[ m_columns.m_col_id_dat ];
         DBTREE::ArticleBase* art = DBTREE::get_article( url_art );
+
+        // since と write の表示形式を変更
         art->reset_since_date();
         art->reset_write_date();
 

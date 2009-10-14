@@ -1171,6 +1171,7 @@ void NodeTreeBase::receive_finish()
         && get_code() != HTTP_OK
         && get_code() != HTTP_PARTIAL_CONTENT
         && get_code() != HTTP_NOT_MODIFIED
+        && get_code() != HTTP_OLD
         ){
         std::ostringstream err;
         err << m_url << std::endl

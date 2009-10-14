@@ -498,6 +498,21 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
     // どちらでもない(スレのURLでない)場合
     else{
 
+        // 過去ログかどうか
+        const std::string pathboard = MISC::replace_str( m_path_board, "?", "\\?" );
+        const std::string query_kako = "^ *(http://.+)" + pathboard  + "/kako(/[1234567890]+)?/[1234567890]+/([1234567890]+).html *$";
+#ifdef _DEBUG
+        std::cout << "query_kako = " << query_kako << std::endl;
+#endif
+        if( regex.exec( query_kako , url ) ){
+
+            std::string url_tmp = regex.str( 1 ) + url_datpath() + regex.str( 3 ) + get_ext();
+#ifdef _DEBUG
+            std::cout << "kako log -> " << url_tmp << std::endl;
+#endif
+            return url_dat( url_tmp, num_from, num_to, num_str );
+        }
+
         // 外部板の移転の場合は path_board も変わるときがあるので
         // 移転した場合はurlを置換してからもう一度試す
         std::string old_root;
@@ -521,6 +536,7 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
 #endif
             return url_dat( url_tmp, num_from, num_to, num_str );
         }
+
 
 #ifdef _DEBUG
         std::cout << "not found\n";

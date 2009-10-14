@@ -405,8 +405,8 @@ void ArticleBase::set_org_host( const std::string& host )
 #ifdef _DEBUG
     std::cout << "ArticleBase::set_org_host : " << m_id << std::endl
               << "m_url = " << m_url << std::endl
-              << "host = " << host << std::endl
-              << "org_host = " << m_org_host << std::endl;
+              << "org_host = " << m_org_host
+              << " -> " << host << std::endl;
 #endif
 
         m_org_host = host;
@@ -1194,7 +1194,7 @@ void ArticleBase::slot_load_finished()
     if( m_code != HTTP_ERR ){
 
         // DAT落ち
-        if( m_code == HTTP_REDIRECT || m_code == HTTP_NOT_FOUND ){
+        if( m_code == HTTP_REDIRECT || m_code == HTTP_NOT_FOUND || m_code == HTTP_OLD ){
             m_status &= ~STATUS_NORMAL;
             m_status |= STATUS_OLD;
             CORE::core_set_command( "toggle_sidebar_articleicon", m_url );
