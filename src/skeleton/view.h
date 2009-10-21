@@ -5,6 +5,7 @@
 
 #include <gtkmm.h>
 #include <string>
+#include <set>
 
 #include "control/control.h"
 
@@ -38,6 +39,7 @@ namespace SKELETON
         // ポップアップメニュー
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
+        std::set< std::string > m_url_popup;
 
         // ツールバーに表示する文字列
         std::string m_label;
@@ -133,6 +135,9 @@ namespace SKELETON
 
         // ポップアップメニュー表示時に表示位置を決めるスロット
         void slot_popup_menu_position( int& x, int& y, bool& push_in );
+
+        // ポップアップメニューがmapした時に呼び出されるスロット
+        void slot_map_popupmenu();
 
         // ポップアップメニューがhideした時に呼び出されるスロット
         void slot_hide_popupmenu();

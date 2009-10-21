@@ -202,12 +202,19 @@ void View::show_popupmenu( const std::string& url, bool use_slot )
     Gtk::Menu* popupmenu = get_popupmenu( url );
     if( popupmenu ){
 
-        popupmenu->signal_hide().connect( sigc::mem_fun( *this, &View::slot_hide_popupmenu ) ); 
+#ifdef _DEBUG
+        std::cout << "View::show_popupmenu\n";
+#endif
+
+        if( m_url_popup.find( url ) == m_url_popup.end() ){
+
+            m_url_popup.insert( url );
+            popupmenu->signal_map().connect( sigc::mem_fun( *this, &View::slot_map_popupmenu ) ); 
+            popupmenu->signal_hide().connect( sigc::mem_fun( *this, &View::slot_hide_popupmenu ) );
+        }
 
         if( use_slot ) popupmenu->popup( sigc::mem_fun( *this, &View::slot_popup_menu_position ), 0, gtk_get_current_event_time() );
         else popupmenu->popup( 0, gtk_get_current_event_time() );
-
-        SESSION::set_popupmenu_shown( true );
     }
 }
 
@@ -226,10 +233,27 @@ void View::slot_popup_menu_position( int& x, int& y, bool& push_in)
 
 
 //
+// ポップアップメニューがmapしたときに呼ばれるslot
+//
+void View::slot_map_popupmenu()
+{
+#ifdef _DEBUG
+    std::cout << "View::slot_map_popupmenu\n";
+#endif
+
+    SESSION::set_popupmenu_shown( true );
+}
+
+
+//
 // ポップアップメニューがhideしたときに呼ばれるslot
 //
 void View::slot_hide_popupmenu()
 {
+#ifdef _DEBUG
+    std::cout << "View::slot_hide_popupmenu\n";
+#endif
+
     SESSION::set_popupmenu_shown( false );
 
     // もしviewがポップアップウィンドウ上にあって、かつ
