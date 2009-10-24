@@ -129,8 +129,10 @@ const std::string MISC::timettostr( const time_t& time_from, const int mode )
     }
     else if( mode == MISC::TIME_PASSED ){
 
-        time_t tmp_t = time( NULL ) - time_from;
-        if( tmp_t < 60 ) snprintf( str_ret, lng, "%d 秒前", (int) tmp_t );
+        const time_t tmp_t = time( NULL ) - time_from;
+
+        if( tmp_t < 0 ) snprintf( str_ret, lng, "未来" );
+        else if( tmp_t < 60 ) snprintf( str_ret, lng, "%d 秒前", (int) tmp_t );
         else if( tmp_t < 60 * 60 ) snprintf( str_ret, lng, "%d 分前", (int)tmp_t / 60 );
         else if( tmp_t < 60 * 60 * 24 ) snprintf( str_ret, lng, "%d 時間前", (int)tmp_t / ( 60 * 60 ) );
         else if( tmp_t < 60 * 60 * 24 * 365 ) snprintf( str_ret, lng, "%d 日前", (int)tmp_t / ( 60 * 60 * 24 ) );
