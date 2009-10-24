@@ -441,7 +441,7 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
 #endif
 
     m_context_menu = menu;
-    SESSION::set_popupmenu_shown( true );
+    menu->signal_map().connect( sigc::mem_fun( *this, &EditTextView::slot_map_popupmenu ) ); 
     menu->signal_hide().connect( sigc::mem_fun( *this, &EditTextView::slot_hide_popupmenu ) );
 
     // セパレータ
@@ -566,7 +566,20 @@ bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
 
 
 //
-// ポップアップを隠す
+// ポップアップメニューがmapしたときに呼ばれるslot
+//
+void EditTextView::slot_map_popupmenu()
+{
+#ifdef _DEBUG
+    std::cout << "EditTextView::slot_map_popupmenu\n";
+#endif
+
+    SESSION::set_popupmenu_shown( true );
+}
+
+
+//
+// コンテキストメニューが閉じた
 //
 void EditTextView::slot_hide_popupmenu()
 {
@@ -608,14 +621,15 @@ void EditTextView::show_aalist_popup()
     {
         if( m_aapopupmenu ) delete m_aapopupmenu;
 
-        SESSION::set_popupmenu_shown( true );
         m_aapopupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ) ) );
+
+        m_aapopupmenu->sig_selected().connect( sigc::mem_fun( *this, &EditTextView::slot_aamenu_selected ) );
+        m_aapopupmenu->signal_map().connect( sigc::mem_fun( *this, &EditTextView::slot_map_aamenu ) ); 
+        m_aapopupmenu->signal_hide().connect( sigc::mem_fun( *this, &EditTextView::slot_hide_aamenu ) );
+
         m_aapopupmenu->popup( Gtk::Menu::SlotPositionCalc(
                             sigc::mem_fun( *this, &EditTextView::slot_popup_aamenu_pos ) ),
                             0, gtk_get_current_event_time() );
-
-        m_aapopupmenu->sig_selected().connect( sigc::mem_fun( *this, &EditTextView::slot_aamenu_selected ) );
-        m_aapopupmenu->signal_hide().connect( sigc::mem_fun( *this, &EditTextView::slot_hide_aamenu ) );
     }
 }
 
@@ -650,8 +664,25 @@ void EditTextView::slot_aamenu_selected( const std::string& aa )
 
 
 //
+// AAポップアップメニューがmapしたときに呼ばれるslot
+//
+void EditTextView::slot_map_aamenu()
+{
+#ifdef _DEBUG
+    std::cout << "EditTextView::slot_map_aamenu\n";
+#endif
+
+    SESSION::set_popupmenu_shown( true );
+}
+
+
+//
 // AAポップアップが閉じた
 void EditTextView::slot_hide_aamenu()
 {
+#ifdef _DEBUG
+    std::cout << "EditTextView::slot_hide_aamenu\n";
+#endif
+
     SESSION::set_popupmenu_shown( false );
 }

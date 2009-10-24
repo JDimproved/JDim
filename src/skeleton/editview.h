@@ -95,6 +95,7 @@ namespace SKELETON
         void cursor_up_down( bool up );
 
         bool slot_select_aamenu( GdkEventButton* event );
+        void slot_map_popupmenu();
         void slot_hide_popupmenu();
 
         // クリップボードから引用
@@ -110,6 +111,7 @@ namespace SKELETON
         void slot_popup_aamenu_pos( int& x, int& y, bool& push_in );
         void show_aalist_popup();
         void slot_aamenu_selected( const std::string& aa );
+        void slot_map_aamenu();
         void slot_hide_aamenu();
     };
 
