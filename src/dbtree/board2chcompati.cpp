@@ -367,6 +367,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt, const bool is_
         std::string id = MISC::remove_space( str_tmp );
 
         memcpy( str_tmp, str_subject, lng_subject );
+        if( str_tmp[ lng_subject-1 ] == ' ' ) lng_subject--;  // 2chのsubject.txtは()の前に空白が一つ入る
         str_tmp[ lng_subject ] = '\0';
         std::string subject = str_tmp;
         subject = MISC::replace_str( subject, "&lt;", "<" );
