@@ -52,6 +52,9 @@ ImageAdmin::ImageAdmin( const std::string& url )
     m_left.set_label( "<" );
     m_right.set_label( ">" );
 
+    m_left.set_focus_on_click( false );
+    m_right.set_focus_on_click( false );
+
     m_left.signal_pressed().connect( sigc::mem_fun( *this, &ImageAdmin::slot_press_left ) );
     m_right.signal_pressed().connect( sigc::mem_fun( *this, &ImageAdmin::slot_press_right ) );
     m_left.signal_released().connect( sigc::mem_fun( *this, &ImageAdmin::slot_release_left ) );
