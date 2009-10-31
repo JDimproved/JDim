@@ -43,6 +43,7 @@ ArticleViewSearch::ArticleViewSearch( const std::string& url_board,
 
     set_search_query( query );
     update_url_query( false );
+    set_writeable( false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewSearch::ArticleViewSearch " << get_url() << std::endl;
@@ -140,13 +141,10 @@ void ArticleViewSearch::show_view()
                                                              + MISC::get_hostname( CONFIG::get_url_search_title() ) + "<br>" );
     else append_html( "検索対象：" + DBTREE::board_name( m_url_board ) + "<br>" );
 
-    if( CORE::get_search_manager()->get_id() == get_url() ){
-
-        if( CORE::get_search_manager()->is_searching() ){
-            append_html( "検索中・・・" );
-            m_loading = true;
-            ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
-        }
+    if( CORE::get_search_manager()->is_searching( get_url() ) ){
+        append_html( "検索中・・・" );
+        m_loading = true;
+        ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
     }
     else if( ! m_search_executed ) append_html( "検索語を入れて再検索ボタンを押してください。" );
 }
@@ -205,9 +203,9 @@ void ArticleViewSearch::relayout()
 //
 // 検索終了
 //
-void ArticleViewSearch::slot_search_fin()
+void ArticleViewSearch::slot_search_fin( const std::string& id )
 {
-    if( CORE::get_search_manager()->get_id() != get_url() ) return;
+    if( id != get_url() ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewSearch::slot_search_fin " << get_url() << std::endl;
@@ -248,7 +246,8 @@ void ArticleViewSearch::reload()
             CORE::get_search_manager()->search_title( get_url(), get_search_query() );
             m_url_title = CORE::get_usrcmd_manager()->replace_cmd( CONFIG::get_url_search_title(), "", "", get_search_query(), 0 );
         }
-        else CORE::get_search_manager()->search( get_url(), m_url_board, get_search_query(), m_mode_or, ( m_searchmode == SEARCHMODE_ALLLOG ) );
+        else CORE::get_search_manager()->search_log( get_url(), m_url_board, get_search_query(),
+                                                     m_mode_or, ( m_searchmode == SEARCHMODE_ALLLOG ), true );
         
         m_search_executed = true;
         show_view();
@@ -262,8 +261,7 @@ void ArticleViewSearch::reload()
 //
 void ArticleViewSearch::stop()
 {
-    if( CORE::get_search_manager()->is_searching()
-        && CORE::get_search_manager()->get_id() == get_url() ) CORE::get_search_manager()->stop();
+    CORE::get_search_manager()->stop( get_url() );
 }
 
 
@@ -280,7 +278,7 @@ void ArticleViewSearch::exec_search()
 //
 void ArticleViewSearch::operate_search( const std::string& controlid )
 {
-    int id = atoi( controlid.c_str() );
+    const int id = atoi( controlid.c_str() );
 
     if( id == CONTROL::Cancel ){
         focus_view();

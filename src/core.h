@@ -298,6 +298,8 @@ namespace CORE
         void slot_live_start_stop();
         void slot_search_cache_board();
         void slot_search_cache();
+        void slot_show_cache_board();
+        void slot_show_cache();
         void slot_search_title();
         void slot_check_update_root();
         void slot_check_update_open_root();

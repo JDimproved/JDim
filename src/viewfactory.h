@@ -28,6 +28,7 @@ namespace CORE
 
         VIEW_BOARDVIEW,
         VIEW_BOARDNEXT,
+        VIEW_BOARDLOG,
 
         VIEW_ARTICLEVIEW,
         VIEW_ARTICLERES,

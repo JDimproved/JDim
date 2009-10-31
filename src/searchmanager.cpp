@@ -11,6 +11,7 @@
 #include "jdlib/jdregex.h"
 
 #include "dbtree/interface.h"
+#include "dbtree/articlebase.h"
 
 #include "config/globalconf.h"
 
@@ -40,12 +41,13 @@ Search_Manager::Search_Manager()
       m_searchloader( NULL )
 {}
 
+
 Search_Manager::~Search_Manager()
 {
     // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
     set_dispatchable( false );
 
-    stop();
+    stop( std::string() );
     wait();
 
     if( m_searchloader ) delete m_searchloader;
@@ -55,12 +57,19 @@ Search_Manager::~Search_Manager()
 //
 // ログ検索
 //
-bool Search_Manager::search( const std::string& id,
-                             const std::string& url, const std::string& query,
-                             bool mode_or, bool searchall )
+// 結果は m_list_article と m_list_data に入る。
+//
+// id : 呼び出し元の ID。 検索終了時に SIG_SEARCH_FIN シグナルで送る
+// url: ログ検索先の板のアドレス
+// query : 検索文字列、空文字ならキャッシュにあるスレを全て選択
+// mode_or : false なら AND、true なら OR で検索する
+// searchall : true なら全板検索
+// calc_data : 検索終了時に m_list_data を求める
+const bool Search_Manager::search_log( const std::string& id, const std::string& url, const std::string& query,
+                                       const bool mode_or, const bool searchall, const bool calc_data )
 {
 #ifdef _DEBUG
-    std::cout << "Search_Manager::search url = " << url << " query = " << query << std::endl;
+    std::cout << "Search_Manager::search_log url = " << url << " query = " << query << std::endl;
 #endif
 
     if( m_searching ) return false;
@@ -71,7 +80,9 @@ bool Search_Manager::search( const std::string& id,
     m_query = query;
     m_mode_or = mode_or;
     m_searchall = searchall;
+    m_calc_data = calc_data;
 
+    m_list_article.clear();
     m_list_data.clear();
 
     // 全ログ検索のとき、スレッドを起動する前にメインスレッドで板情報ファイルを
@@ -102,7 +113,7 @@ void* Search_Manager::launcher( void* dat )
 
 
 //
-// 検索実行スレッド
+// ログ検索実行スレッド
 //
 void Search_Manager::thread_search()
 {
@@ -112,26 +123,31 @@ void Search_Manager::thread_search()
 
     m_stop = false;
 
-    std::list< std::string > urls_readcgi;
-    if( m_searchall ) urls_readcgi = DBTREE::search_cache_all( m_url, m_query, m_mode_or, m_stop );
-    else urls_readcgi = DBTREE::search_cache( m_url, m_query, m_mode_or, m_stop );
+    if( m_searchall ) DBTREE::search_cache_all( m_list_article, m_query, m_mode_or, m_stop );
+    else DBTREE::search_cache( m_url, m_list_article, m_query, m_mode_or, m_stop );
 
-    std::list< std::string >::iterator it = urls_readcgi.begin();
-    for( ; it != urls_readcgi.end(); ++it ){
+    if( m_calc_data ){
 
-        SEARCHDATA data;
-        data.url_readcgi = *it;
-        data.subject = DBTREE::article_subject( data.url_readcgi );
-        data.num = DBTREE::article_number_load( data.url_readcgi );
-        data.boardname = DBTREE::board_name( data.url_readcgi );
+        std::list< DBTREE::ArticleBase* >::iterator it = m_list_article.begin();
+        for( ; it != m_list_article.end(); ++it ){
+
+            DBTREE::ArticleBase* article = ( *it );
+
+            SEARCHDATA data;
+            data.url_readcgi = DBTREE::url_readcgi( article->get_url(), 0, 0 );
+            data.subject = article->get_subject();
+            data.num = article->get_number_load();
+            data.boardname = DBTREE::board_name( data.url_readcgi );
 
 #ifdef _DEBUG
-        std::cout << "url = " << data.url_readcgi << std::endl
-                  << "board = " << data.boardname << std::endl
-                  << "subject = " << data.subject << std::endl
-                  << "num = " << data.num << std::endl << std::endl;
+            std::cout << "url = " << data.url_readcgi << std::endl
+                      << "board = " << data.boardname << std::endl
+                      << "subject = " << data.subject << std::endl
+                      << "num = " << data.num << std::endl << std::endl;
 #endif
-        m_list_data.push_back( data );
+            m_list_data.push_back( data );
+        }
+
     }
 
     dispatch();
@@ -157,7 +173,7 @@ void Search_Manager::search_fin()
     std::cout << "Search_Manager::search_fin\n";
 #endif
 
-    m_sig_search_fin.emit();
+    m_sig_search_fin.emit( m_id );
     m_searching = false;
 }
 
@@ -165,9 +181,14 @@ void Search_Manager::search_fin()
 //
 // 検索中止
 //
-void Search_Manager::stop()
+void Search_Manager::stop( const std::string& id )
 {
     if( ! m_searching ) return;
+    if( ! id.empty() && id != m_id ) return;
+
+#ifdef _DEBUG
+    std::cout << "Search_Manager::stop\n";
+#endif
 
     m_stop = true;
 
@@ -182,10 +203,13 @@ void Search_Manager::wait()
 }
 
 
+/////////////////////////////////////////////////////////////////////////
+
+
 //
 // スレタイ検索
 //
-bool Search_Manager::search_title( const std::string& id, const std::string& query )
+const bool Search_Manager::search_title( const std::string& id, const std::string& query )
 {
     if( m_searching ) return false;
     if( m_searchloader && m_searchloader->is_loading() ) return false;

@@ -289,6 +289,17 @@ void BoardBase::send_update_board()
     std::cout << "BoardBase::send_update_board\n";
 #endif
 
+    // ダウンロードを開始したビュー以外のビューの内容を更新する
+    //
+    // "update_board" コマンドの後に"update_board_item"を送ると
+    // ローディングが終了しているため行を二回更新してしまうので注意
+    // 詳しくは BoardViewBase::update_item() を参照
+    CORE::core_set_command( "update_board_item", url_subject(),
+                            std::string() // IDとして空文字を送る
+        );
+
+
+    // ダウンロードを開始したビューの内容を更新する
     std::list< std::string >::iterator it = m_url_update_views.begin();
     for( ; it != m_url_update_views.end(); ++it ){
 #ifdef _DEBUG
@@ -1124,8 +1135,6 @@ void BoardBase::receive_finish()
         }
 
         // DAT落ちなどでsubject.txtに無いスレもsubjectリストに加える
-        // サブジェクトやロード数などの情報が無いのでスレのinfoファイルから
-        // 取得する必要がある
         if( CONFIG::get_show_oldarticle() ){
 
             ArticleHashIterator it = m_hash_article->begin();
@@ -1135,22 +1144,14 @@ void BoardBase::receive_finish()
                     && ( ( *it )->get_status() & STATUS_OLD )
                     ){
 
-                    // info 読み込み
+
+                    // サブジェクトやロード数などの情報が無いのでスレのinfoファイルから
+                    // 取得する必要がある
                     // TODO : 数が多いとboardビューを開くまで時間がかかるのをなんとかする
 #ifdef _DEBUG
                     std::cout << "read article_info : " << ( *it )->get_url() << std::endl;
 #endif                
                     ( *it )->read_info();
-
-                    // ↑のread_info()で状態が変わる時があるのでDAT落ちに戻してからsubjectリスト(m_list_subject)に加える
-                    int status = ( *it )->get_status();
-
-                    if( status & STATUS_NORMAL ){
-                        status &= ~STATUS_NORMAL;
-                        status |= STATUS_OLD;
-                        ( *it )->set_status( status );
-                        ( *it )->save_info( true );
-                    }
 
                     if( ! is_abone_thread( *it ) ) m_list_subject.push_back( *it );
                 }
@@ -1594,37 +1595,51 @@ void BoardBase::set_local_proxy_w( const std::string& proxy )
 //
 // キャッシュ内のログ検索
 //
-// datファイルのURL(read.cgi型)を返す
+// ArticleBase のアドレスをリスト(list_article)にセットして返す
+// query が空の時はキャッシュにあるログを全てヒットさせる
+// 
 //
-std::list< std::string > BoardBase::search_cache( const std::string& query,
-                                                  bool mode_or, // 今のところ無視
-                                                  bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
+void BoardBase::search_cache( std::list< DBTREE::ArticleBase* >& list_article,
+                              const std::string& query,
+                              const bool mode_or, // 今のところ無視
+                              const bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
     )
 {
 #ifdef _DEBUG
     std::cout << "BoardBase::search_cache " << query << std::endl;
 #endif
 
-    std::list< std::string >list_out;
-
-    if( empty() ) return list_out;
+    if( empty() ) return;
 
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
-    if( m_hash_article->size() == 0 ) return list_out;
+    if( m_hash_article->size() == 0 ) return;
 
-    std::string query_local = MISC::Iconv( query, "UTF-8", get_charset() );
-    std::list< std::string > list_query = MISC::split_line( query_local );
+    const bool append_all = query.empty();
+    const std::string query_local = MISC::Iconv( query, "UTF-8", get_charset() );
+    const std::list< std::string > list_query = MISC::split_line( query_local );
 
-    std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
+    const std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
 
     ArticleHashIterator it = m_hash_article->begin();
     for( ; it != m_hash_article->end(); ++it ){
 
+        if( stop ) break;
+
         ArticleBase* article = ( *it );
         if( ! article->is_cached() ) continue;
 
-        std::string path = path_board_root + article->get_id();
+        if( append_all ){
+
+#ifdef _DEBUG
+            std::cout << "append " << article->get_subject() << std::endl;
+#endif
+            article->read_info();
+            list_article.push_back( article );
+            continue;
+        }
+
+        const std::string path = path_board_root + article->get_id();
         std::string rawdata;
 
         if( CACHE::load_rawdata( path, rawdata ) > 0 ){
@@ -1635,7 +1650,7 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
             std::cout << "load " << path << " size = " << rawdata.size() << " byte" << std::endl;
 #endif
 
-            std::list< std::string >::iterator it_query = list_query.begin();
+            std::list< std::string >::const_iterator it_query = list_query.begin();
             for( ; it_query != list_query.end(); ++it_query ){
 
                 if( rawdata.find( *it_query ) == std::string::npos ){
@@ -1649,15 +1664,11 @@ std::list< std::string > BoardBase::search_cache( const std::string& query,
                 std::cout << "found word in " << url_readcgi( article->get_url(), 0, 0 ) << std::endl
                           << article->get_subject() << std::endl;
 #endif
-                std::string readcgi = url_readcgi( article->get_url(), 0, 0 );
-                list_out.push_back( readcgi );
+                article->read_info();
+                list_article.push_back( article );
             }
         }
-
-        if( stop ) break;
     }
-
-    return list_out;
 }
 
 

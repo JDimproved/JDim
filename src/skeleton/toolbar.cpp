@@ -120,6 +120,8 @@ void ToolBar::set_view( SKELETON::View* view )
         if( m_button_lock ) m_button_lock->set_active( view->is_locked() );
     }
 
+    if( m_button_write ) m_button_write->set_sensitive( view->is_writeable() );
+
     if( m_entry_search ) m_entry_search->set_text( view->get_search_query() );
 
     if( m_label_board ) m_label_board->set_text( DBTREE::board_name( get_url() ) );

@@ -22,6 +22,7 @@ BoardItemColumnPref::BoardItemColumnPref( Gtk::Window* parent, const std::string
     // デフォルトの項目を設定( 無効にする場合には後に", Glib::RefPtr< Gdk::Pixbuf >(), false" を付ける )
     append_default_pair( ITEM_NAME_MARK );
     append_default_pair( ITEM_NAME_ID );
+    append_default_pair( ITEM_NAME_BOARD );
     append_default_pair( ITEM_NAME_NAME );
     append_default_pair( ITEM_NAME_RES );
     append_default_pair( ITEM_NAME_LOAD );

@@ -9,6 +9,7 @@
 
 #include "board/boardview.h"
 #include "board/boardviewnext.h"
+#include "board/boardviewlog.h"
 
 #include "article/articleview.h"
 #include "article/articleviewsearch.h"
@@ -52,6 +53,9 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
 
         case VIEW_BOARDNEXT:
             return new BOARD::BoardViewNext( url, view_args.arg1 );
+
+        case VIEW_BOARDLOG:
+            return new BOARD::BoardViewLog( url );
 
             /////////////////
 

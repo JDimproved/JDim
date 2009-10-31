@@ -153,7 +153,7 @@ void BBSListAdmin::show_toolbar()
 
 
 //
-// ツールバー表示切り替え
+// ツールバー表示/非表示切り替え
 //
 void BBSListAdmin::toggle_toolbar()
 {

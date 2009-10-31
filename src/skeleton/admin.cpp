@@ -631,7 +631,7 @@ void Admin::exec_command()
         focus_toolbar_search();
     }
 
-    // ツールバー表示切り替え
+    // ツールバー表示/非表示切り替え
     else if( command.command == "toggle_toolbar" ){
         toggle_toolbar();
     }
@@ -912,7 +912,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
     // urlを既に開いていたら表示してリロード
     if( ! nocheck_opened ){
 
-        view = get_view( command.url );
+        view = get_view( command_to_url( command ) );
         if( view ){
 
             // タブの切り替え

@@ -467,7 +467,13 @@ namespace DBTREE
         virtual void save_info();
         
         // キャッシュ内のログ検索
-        virtual std::list< std::string > search_cache( const std::string& query, bool mode_or, bool& stop );
+        // ArticleBase のアドレスをリスト(list_article)にセットして返す
+        // query が空の時はキャッシュにあるログを全てヒットさせる
+        virtual void search_cache( std::list< ArticleBase* >& list_article,
+                                   const std::string& query,
+                                   const bool mode_or, // 今のところ無視
+                                   const bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
+            );
 
         // datファイルのインポート
         // 成功したらdat型のurlを返す

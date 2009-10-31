@@ -12,6 +12,7 @@
 
 #define ARTICLE_SIGN "_ARTICLE_"
 #define NEXT_SIGN "_NEXT_"
+#define LOG_SIGN "_LOG_"
 #define TIME_SIGN "_TIME_"
 
 namespace BOARD
@@ -41,6 +42,7 @@ namespace BOARD
 
         virtual void restore( const bool only_locked );
         virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock );
+        virtual const std::string command_to_url( const COMMAND_ARGS& command );
 
         virtual void switch_admin();
 

@@ -90,21 +90,23 @@ enum
 };
 
 
+
+#define DELETE_COLUMN(col) do{ if( ! col ) { delete col; col = NULL; } }while(0)
+
 // set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ) を指定して append_columnする
 #define APPEND_COLUMN(col,title,model) do{                    \
-if( ! col ) delete col; \
 col = Gtk::manage( new Gtk::TreeViewColumn( title, model ) );   \
 col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ); \
 m_treeview.append_column( *col ); \
 }while(0)
 
 
-BoardViewBase::BoardViewBase( const std::string& url )
+BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board )
     : SKELETON::View( url ),
-      m_url_board( url ),
       m_treeview( url, DNDTARGET_FAVORITE, true, CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
       m_col_mark( NULL ),
       m_col_id( NULL ),
+      m_col_board( NULL ),
       m_col_subject( NULL ),
       m_col_res( NULL ),
       m_col_str_load( NULL ),     
@@ -117,8 +119,15 @@ BoardViewBase::BoardViewBase( const std::string& url )
       m_sortmode( SORTMODE_ASCEND ),
       m_previous_sortmode( false ),
       m_loading( false ),
-      m_enable_menuslot( true )
+      m_enable_menuslot( true ),
+      m_load_subject_txt( true ),
+      m_show_col_board( show_col_board )
 {
+    // 次スレ検索ビューのようにURLの途中に http が入っている場合は取り除く
+    const size_t pos = url.rfind( "http://" );
+    if( pos != std::string::npos && pos != 0 ) m_url_board = DBTREE::url_subject( url.substr( 0, pos ) );
+    else m_url_board = DBTREE::url_subject( url );
+
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
 
@@ -151,6 +160,7 @@ BoardViewBase::BoardViewBase( const std::string& url )
     // ソート関数セット
     m_liststore->set_sort_func( COL_MARK, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );    
     m_liststore->set_sort_func( COL_ID, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_BOARD, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_SUBJECT, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_RES, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_STR_LOAD, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
@@ -253,6 +263,11 @@ BoardViewBase::BoardViewBase( const std::string& url )
     "<menuitem action='Favorite_Board'/>"
     "</popup>"
 
+    // お気に入りボタン押した時のメニュー( スレのみ )
+    "<popup name='popup_menu_favorite_article'>"
+    "<menuitem action='Favorite_Article'/>"
+    "</popup>"
+
 
     // 削除ボタン押した時のメニュー
     "<popup name='popup_menu_delete'>"
@@ -284,14 +299,25 @@ BoardViewBase::~BoardViewBase()
 #ifdef _DEBUG    
     std::cout << "BoardViewBase::~BoardViewBase : " << get_url() << std::endl;
 #endif
-
-    save_column_width();
 }
 
 
 SKELETON::Admin* BoardViewBase::get_admin()
 {
     return BOARD::get_admin();
+}
+
+
+//
+// url 更新
+//
+// 移転があったときなどにadminから呼び出される
+//
+void BoardViewBase::update_url( const std::string& url_old, const std::string& url_new )
+{
+    if( m_url_board.find( url_old ) == 0 ) m_url_board = url_new + m_url_board.substr( url_old.length() );
+
+    SKELETON::View::update_url( url_old, url_new );
 }
 
 
@@ -333,8 +359,8 @@ Gtk::TreeModel::Row BoardViewBase::get_row_from_url( const std::string& url )
     for( it = child.begin() ; it != child.end() ; ++it ){
 
         Gtk::TreeModel::Row row = *( it );
-        Glib::ustring id_dat = row[ m_columns.m_col_id_dat ];
-        if( url.find( id_dat ) != std::string::npos ) return row;
+        DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
+        if( url == art->get_url() ) return row;
     }
 
     return Gtk::TreeModel::Row();
@@ -348,13 +374,39 @@ void BoardViewBase::update_columns()
 {
     m_treeview.remove_all_columns();
 
+    DELETE_COLUMN( m_col_id );
+    DELETE_COLUMN( m_col_board );
+    DELETE_COLUMN( m_col_subject );
+    DELETE_COLUMN( m_col_res );
+    DELETE_COLUMN( m_col_str_load );
+    DELETE_COLUMN( m_col_str_new );
+    DELETE_COLUMN( m_col_since );
+    DELETE_COLUMN( m_col_write );
+    DELETE_COLUMN( m_col_speed );
+
     int num = 0;
+
+    // 先頭に「板」列を追加
+    if( m_show_col_board ){
+
+        bool append_board = true;
+        for(;;){
+            const int item = SESSION::get_item_board_col( num );
+            if( item == ITEM_BOARD ) append_board = false;
+            if( item == ITEM_END ) break;
+            num++;
+        }
+        if( append_board ) APPEND_COLUMN( m_col_board, ITEM_NAME_BOARD, m_columns.m_col_board );
+    }
+
+    num = 0;
     for(;;){
         const int item = SESSION::get_item_board_col( num );
         if( item == ITEM_END ) break;
         switch( item ){
             case ITEM_MARK: APPEND_COLUMN( m_col_mark, ITEM_NAME_MARK, m_columns.m_col_mark ); break;
             case ITEM_ID: APPEND_COLUMN( m_col_id, ITEM_NAME_ID, m_columns.m_col_id ); break;
+            case ITEM_BOARD: APPEND_COLUMN( m_col_board, ITEM_NAME_BOARD, m_columns.m_col_board ); break;
             case ITEM_NAME: APPEND_COLUMN( m_col_subject, ITEM_NAME_NAME, m_columns.m_col_subject ); break;
             case ITEM_RES: APPEND_COLUMN( m_col_res, ITEM_NAME_RES, m_columns.m_col_res ); break;
             case ITEM_LOAD: APPEND_COLUMN( m_col_str_load, ITEM_NAME_LOAD, m_columns.m_col_str_load ); break;
@@ -385,6 +437,10 @@ void BoardViewBase::update_columns()
 
         case COL_ID:
             width = SESSION::col_id();
+            break;
+
+        case COL_BOARD:
+            width = SESSION::col_board();
             break;
 
         case COL_SUBJECT:
@@ -492,6 +548,7 @@ const int BoardViewBase::get_title_id( const int col )
 
     if( title == ITEM_NAME_MARK ) id = COL_MARK;
     else if( title == ITEM_NAME_ID ) id = COL_ID;
+    else if( title == ITEM_NAME_BOARD ) id = COL_BOARD;
     else if( title == ITEM_NAME_NAME ) id = COL_SUBJECT;
     else if( title == ITEM_NAME_RES ) id = COL_RES;
     else if( title == ITEM_NAME_LOAD ) id = COL_STR_LOAD;
@@ -549,6 +606,10 @@ void BoardViewBase::save_column_width()
 
         case COL_ID:
             SESSION::set_col_id( width );
+            break;
+
+        case COL_BOARD:
+            SESSION::set_col_board( width );
             break;
 
         case COL_SUBJECT:
@@ -723,6 +784,7 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
 {
     int num_a = 0, num_b = 0;
     int ret = 0;
+    DBTREE::ArticleBase *arta, *artb;
 
     const int UP = 1;
     const int DOWN = 2;
@@ -780,8 +842,8 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
         case COL_SUBJECT:
         {
             // 文字列の大小を数字に変換
-            Glib::ustring name_a = row_a[ m_columns.m_col_subject ]; 
-            Glib::ustring name_b = row_b[ m_columns.m_col_subject ]; 
+            const Glib::ustring name_a = row_a[ m_columns.m_col_subject ]; 
+            const Glib::ustring name_b = row_b[ m_columns.m_col_subject ]; 
             if( name_a < name_b ) { num_a = UP; num_b = DOWN; }
             else if( name_a > name_b ) { num_a = DOWN; num_b = UP; }
             break;
@@ -793,8 +855,10 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
             break;
 
         case COL_STR_LOAD:
-            num_a = row_a[ m_columns.m_col_load ];
-            num_b = row_b[ m_columns.m_col_load ];
+            arta = row_a[ m_columns.m_col_article ];
+            artb = row_b[ m_columns.m_col_article ];
+            num_a = arta->get_number_load();
+            num_b = artb->get_number_load();
             break;
 
         case COL_STR_NEW:
@@ -803,8 +867,10 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
             break;
 
         case COL_SINCE:
-            num_a = row_a[ m_columns.m_col_since_t ];
-            num_b = row_b[ m_columns.m_col_since_t ];
+            arta = row_a[ m_columns.m_col_article ];
+            artb = row_b[ m_columns.m_col_article ];
+            num_a = arta->get_since_time();
+            num_b = artb->get_since_time();
             break;
 
         case COL_WRITE:
@@ -816,6 +882,16 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
             num_a = row_a[ m_columns.m_col_speed ];
             num_b = row_b[ m_columns.m_col_speed ];
             break;
+
+        case COL_BOARD:
+        {
+            // 文字列の大小を数字に変換
+            Glib::ustring name_a = row_a[ m_columns.m_col_board ]; 
+            Glib::ustring name_b = row_b[ m_columns.m_col_board ]; 
+            if( name_a < name_b ) { num_a = UP; num_b = DOWN; }
+            else if( name_a > name_b ) { num_a = DOWN; num_b = UP; }
+            break;
+        }
     }
 
     // 両方とも 0 より大きいか 0 より小さい場合は普通に比較
@@ -908,13 +984,6 @@ void BoardViewBase::show_view()
 
     if( is_loading() ) return;
 
-    // DBに登録されてない
-    if( get_url_board().empty() ){
-        set_status( "invalid URL" );
-        BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
-        return;
-    }
-
     update_boardname();
 
 #if GTKMMVER >= 280
@@ -923,13 +992,27 @@ void BoardViewBase::show_view()
     m_liststore->clear();
     m_pre_query = std::string();
     m_last_access_time = DBTREE::board_last_access_time( get_url_board() );
-    m_loading = true;
     
     // オートリロードのカウンタを0にする
     reset_autoreload_counter();
 
+    if( ! m_load_subject_txt ){
+
+        update_view();
+        return;
+    }
+
     // download 開始
     // 終わったら update_view() が呼ばれる
+
+    // DBに登録されてない時はロードしない
+    if( get_url_board().empty() ){
+        set_status( "invalid URL" );
+        BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
+        return;
+    }
+
+    m_loading = true;
     DBTREE::board_download_subject( get_url_board(), get_url() );
     set_status( "loading..." );
     BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
@@ -967,14 +1050,16 @@ void BoardViewBase::relayout()
 //
 // view更新
 //
-void BoardViewBase::update_view_impl( std::list< DBTREE::ArticleBase* >& list_subject )
+void BoardViewBase::update_view_impl( const std::list< DBTREE::ArticleBase* >& list_subject )
 {
     m_loading = false;
 
 #ifdef _DEBUG
     const int code = DBTREE::board_code( get_url_board() );
     std::cout << "BoardViewBase::update_view_impl " << get_url()
-              << " code = " << code << std::endl;
+              << " code = " << code
+              << " size = " << list_subject.size()
+              << std::endl;
 #endif    
 
     // 画面消去
@@ -989,7 +1074,7 @@ void BoardViewBase::update_view_impl( std::list< DBTREE::ArticleBase* >& list_su
     m_id = 0;
     if( list_subject.size() ){
 
-        std::list< DBTREE::ArticleBase* >::iterator it;
+        std::list< DBTREE::ArticleBase* >::const_iterator it;
         for( it = list_subject.begin(); it != list_subject.end(); ++it ){
 
             DBTREE::ArticleBase* art = *( it );
@@ -1007,7 +1092,9 @@ void BoardViewBase::update_view_impl( std::list< DBTREE::ArticleBase* >& list_su
 
     // ステータスバー更新
     std::ostringstream ss_tmp;
-    ss_tmp << DBTREE::board_str_code( get_url_board() ) << " [ 全 " << m_id << " ] ";
+    if( m_load_subject_txt ) ss_tmp << DBTREE::board_str_code( get_url_board() ) << " ";
+    ss_tmp << "[ 全 " << m_id << " ] ";
+
     set_status( ss_tmp.str() );
     BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
 
@@ -1030,7 +1117,6 @@ void BoardViewBase::focus_out()
 {
     SKELETON::View::focus_out();
 
-    save_column_width();
     m_treeview.hide_tooltip();
 }
 
@@ -1053,12 +1139,10 @@ void BoardViewBase::slot_delete_logs()
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
     for( ; it != list_it.end(); ++it ){
+
         Gtk::TreeModel::Row row = *( *it );
-        const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
-#ifdef _DEBUG
-        std::cout << url << std::endl;
-#endif
-        CORE::core_set_command( "delete_article", url );
+        DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
+        CORE::core_set_command( "delete_article", art->get_url() );
     }
 }
 
@@ -1419,9 +1503,8 @@ void BoardViewBase::activate_act_before_popupmenu( const std::string& url )
             for( ; it != list_it.end(); ++it ){
 
                 Gtk::TreeModel::Row row = *( *it );
-                const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
-
-                if( DBTREE::article_is_cached( url ) ) {
+                DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
+                if( art->is_cached() ) {
                     act->set_sensitive( true );
                     break;
                 }
@@ -1449,7 +1532,9 @@ Gtk::Menu* BoardViewBase::get_popupmenu( const std::string& url )
 
     // お気に入りサブメニュー
     else if( url == "popup_menu_favorite" ){
-        popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite" ) );
+
+        if( get_url_board().empty() ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_article" ) );
+        else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite" ) );
     }
 
     // 通常メニュー
@@ -1471,25 +1556,34 @@ Gtk::Menu* BoardViewBase::get_popupmenu( const std::string& url )
 //
 // 特定の行だけの表示内容更新
 //
-void BoardViewBase::update_item( const std::string& url, const std::string& id_dat )
+// url : subject.txt のアドレス
+// id : DAT の ID(拡張子付き)
+//
+// もし ID が empty() なら全ての行の表示内容を更新する
+//
+void BoardViewBase::update_item( const std::string& url, const std::string& id )
 {
-    if( get_url().find( url ) != 0 ) return;
+    if( is_loading() ) return;
+    if( ! m_liststore->children().size() ) return;
+    if( get_url_board() !=  url ) return;
+
+    if( id.empty() ){
+        update_item_all();
+        return;
+    }
+
+    const std::string url_dat = DBTREE::url_datbase( url ) + id;
 
 #ifdef _DEBUG
-    std::cout << "BoardViewBase::update_item " << get_url() << " id = " << id_dat << std::endl;
+    std::cout << "BoardViewBase::update_item " << get_url() << std::endl
+              << "url = " << url << " id = " << id << " url_dat = " << url_dat << std::endl;
 #endif
 
     // 自動ソート抑制
     UNSORTED_COLUMN();
-    
-    Gtk::TreeModel::Row row = get_row_from_url( id_dat );
-    if( row ){
-
-        const std::string url_art = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
-        DBTREE::ArticleBase* art = DBTREE::get_article( url_art );
-
-        update_row_common( art, row );
-    }
+   
+    Gtk::TreeModel::Row row = get_row_from_url( url_dat );
+    if( row ) update_row_common( row );
 }
 
 
@@ -1503,8 +1597,6 @@ void BoardViewBase::update_item_all()
     std::cout << "BoardViewBase::update_item_all " << get_url() << std::endl;
 #endif
 
-    const std::string datbase = DBTREE::url_datbase( get_url_board() );
-
     // 自動ソート抑制
     UNSORTED_COLUMN();
     
@@ -1515,14 +1607,14 @@ void BoardViewBase::update_item_all()
         Gtk::TreeModel::Row row = *( it );
         if( ! row ) continue;
 
-        const std::string url_art = datbase + row[ m_columns.m_col_id_dat ];
-        DBTREE::ArticleBase* art = DBTREE::get_article( url_art );
+        DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
+        if( ! art ) continue;
 
         // since と write の表示形式を変更
         art->reset_since_date();
         art->reset_write_date();
 
-        update_row_common( art, row );
+        update_row_common( row );
     }
 }
 
@@ -1537,16 +1629,17 @@ Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art )
     ++m_id;
 
     row[ m_columns.m_col_id ]  = m_id;
-    row[ m_columns.m_col_since_t ] = art->get_since_time();
 
     if( art->get_status() & STATUS_NORMAL )
         row[ m_columns.m_col_speed ] = art->get_speed();
+
+    if( m_col_board ) row[ m_columns.m_col_board ] = DBTREE::board_name( art->get_url() );
         
-    row[ m_columns.m_col_id_dat ] = art->get_id();
+    row[ m_columns.m_col_article ] = art;
 
     row[ m_columns.m_col_drawbg ] = false;
 
-    update_row_common( art, row );
+    update_row_common( row );
 
     return row;
 }
@@ -1555,8 +1648,9 @@ Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art )
 //
 // prepend_row() と update_item() で共通に更新する列
 //
-void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row& row )
+void BoardViewBase::update_row_common( Gtk::TreeModel::Row& row )
 {
+    DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
     if( art->empty() ) return;
 
     const int load = art->get_number_load();
@@ -1576,14 +1670,14 @@ void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel:
         snprintf( tmp, tmpsize, "%d", res - load );
         row[ m_columns.m_col_str_new ] = tmp;
 
-        row[ m_columns.m_col_load ] = load;
         row[ m_columns.m_col_new ] = res - load;
     }
     else{
         row[ m_columns.m_col_str_load ] = "";
         row[ m_columns.m_col_str_new ] = "";
 
-        row[ m_columns.m_col_load ] = -1;
+        // キャッシュが無い場合はソートの優先度を
+        // キャッシュがあって新着0の物より下げる
         row[ m_columns.m_col_new ] = -1;
     }
 
@@ -1680,6 +1774,8 @@ void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel:
     }
     else{
         row[ m_columns.m_col_write ] = std::string();
+
+        // DAT落ちしたスレや1000に到達したスレなどは書き込んでいてもソート時の優先度を下げる
         if( mark_val < COL_MARKVAL_NORMAL ) row[ m_columns.m_col_write_t ] = 0;
         else row[ m_columns.m_col_write_t ] = -1;
     }
@@ -1691,6 +1787,10 @@ void BoardViewBase::update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel:
 //
 const bool BoardViewBase::slot_button_press( GdkEventButton* event )
 {
+#ifdef _DEBUG        
+    std::cout << "BoardViewBase::slot_button_press\n";
+#endif
+
     // マウスジェスチャ
     get_control().MG_start( event );
 
@@ -1726,6 +1826,13 @@ const bool BoardViewBase::slot_button_release( GdkEventButton* event )
         return true;
     }
 
+    // リサイズするときにラベルをドラッグした場合
+    if( event->window != m_treeview.get_bin_window()->gobj() ){
+
+        save_column_width();
+        return true;
+    }
+
     const int x = (int)event->x;
     const int y = (int)event->y;
     Gtk::TreeModel::Path path;
@@ -1739,15 +1846,12 @@ const bool BoardViewBase::slot_button_release( GdkEventButton* event )
         m_path_selected = path;
 
 #ifdef _DEBUG        
-        std::cout << "BoardViewBase::slot_button_press : path = " << path.to_string()
+        std::cout << "BoardViewBase::slot_button_release : path = " << path.to_string()
+                  << " title = " << column->get_title()
                   << " x = " << x << " y = " << y
                   << " cellheight = " << m_treeview.get_row_height() 
                   << " cell_x = " << cell_x << " cell_y = " << cell_y << std::endl;
 #endif
-
-        // リサイズするときにラベルをクリックすると行を開く問題の対処
-        // かなりその場しのぎな方法なのでGTKのバージョンが上がったら誤動作するかも
-        if( x == cell_x && y < m_treeview.get_row_height() ) return true;
 
         // ダブルクリックの処理のため一時的にtypeを切替える
         GdkEventType type_copy = event->type;
@@ -1799,8 +1903,11 @@ const bool BoardViewBase::slot_motion_notify( GdkEventMotion* event )
     // ツールチップに文字列をセットする
     if( m_treeview.get_path_at_pos( x, y, path, column, cell_x, cell_y ) ){
 
+        // 列幅よりもツールチップの幅が広い場合はツールチップを表示する
         m_treeview.set_tooltip_min_width( column->get_width() );
-        if( column->get_title() == ITEM_NAME_NAME ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_subject ) );
+
+        if( column->get_title() == ITEM_NAME_BOARD ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_board ) );
+        else if( column->get_title() == ITEM_NAME_NAME ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_subject ) );
         else if( column->get_title() == ITEM_NAME_SINCE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_since ) );
         else if( column->get_title() == ITEM_NAME_LASTWRITE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_write ) );
         else m_treeview.set_str_tooltip( std::string() );
@@ -1928,13 +2035,11 @@ void BoardViewBase::slot_dropped_url_list( const std::list< std::string >& url_l
 //
 void BoardViewBase::slot_bookmark( const int bookmark )
 {
-    const std::string datbase = DBTREE::url_datbase( get_url_board() );
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
     for( ; it != list_it.end(); ++it ){
         Gtk::TreeModel::Row row = *( *it );
-        const std::string url = datbase + row[ m_columns.m_col_id_dat ];
-        DBTREE::ArticleBase* art = DBTREE::get_article( url );
+        DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
         if( art ){
             bool set = bookmark;
             if( bookmark == BOOKMARK_AUTO ) set = ! art->is_bookmarked_thread();
@@ -2095,14 +2200,15 @@ void BoardViewBase::open_selected_rows()
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
     for( ; it != list_it.end(); ++it ){
-        Gtk::TreeModel::Row row = *( *it );
-        const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
 
         if( !list_url.empty() ) list_url += " ";
-        list_url += url;
+
+        Gtk::TreeModel::Row row = *( *it );
+        DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
+        list_url += art->get_url();
 
         // datロード終了時に次スレ移行チェックを行う
-        DBTREE::article_set_url_pre_article( url, get_url_pre_article() );
+        art->set_url_pre_article( get_url_pre_article() );
     }
 
     CORE::core_set_command( "open_article_list", std::string(), list_url );
@@ -2117,8 +2223,8 @@ const std::string BoardViewBase::path2daturl( const Gtk::TreePath& path )
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return std::string();
 
-    const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
-    return url;
+    DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
+    return art->get_url();
 }
 
 
@@ -2388,12 +2494,12 @@ void BoardViewBase::slot_save_dat()
     for( ; it != list_it.end(); ++it ){
 
         Gtk::TreeModel::Row row = *( *it );
-        const std::string url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
+        DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
 
-        if( ! DBTREE::article_is_cached( url ) ) continue;
+        if( ! art->is_cached() ) continue;
 
-        const std::string path_from = CACHE::path_dat( url );
-        const std::string path_to = path_dir + MISC::get_filename( url );
+        const std::string path_from = CACHE::path_dat( art->get_url() );
+        const std::string path_to = path_dir + MISC::get_filename( art->get_url() );
 
 #ifdef _DEBUG
         std::cout << "from = " << path_from  << std::endl;
@@ -2433,7 +2539,7 @@ void BoardViewBase::slot_save_dat()
 
                             // 名前変更
                         case Gtk::RESPONSE_YES:
-                            if( ! DBTREE::article_save_dat( url, path_to ) ) continue;
+                            if( ! art->save_dat( path_to ) ) continue;
 
                         default:
                             copy_file = false;
@@ -2521,11 +2627,12 @@ void BoardViewBase::set_article_to_buffer()
         for( ; it != list_it.end(); ++it ){
 
             Gtk::TreeModel::Row row = *( *it );
+            DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
             const Glib::ustring name = row[ m_columns.m_col_subject ];
 
             CORE::DATA_INFO info;
             info.type = TYPE_THREAD;
-            info.url = DBTREE::url_datbase( get_url_board() ) + row[ m_columns.m_col_id_dat ];
+            info.url = art->get_url();
             info.name = name.raw();
             info.data = std::string();
             info.path = path.to_string();

@@ -39,6 +39,7 @@ namespace BOARD
         // 列
         Gtk::TreeView::Column* m_col_mark;
         Gtk::TreeView::Column* m_col_id;
+        Gtk::TreeView::Column* m_col_board;
         Gtk::TreeView::Column* m_col_subject;
         Gtk::TreeView::Column* m_col_res;
         Gtk::TreeView::Column* m_col_str_load;        
@@ -79,15 +80,23 @@ namespace BOARD
         // ポップアップメニュー表示のときにactivate_act_before_popupmenu()で使う変数
         bool m_enable_menuslot;
 
+        // subject.txt をロードする
+        bool m_load_subject_txt;
+
+        // 先頭に「板」列を表示
+        bool m_show_col_board;
+
     public:
 
-        BoardViewBase( const std::string& url );
+        BoardViewBase( const std::string& url, const bool show_col_board );
         virtual ~BoardViewBase();
 
         const std::string& get_url_board() const { return m_url_board; }
         virtual const std::string url_for_copy();
 
         // SKELETON::View の関数のオーバロード
+        virtual void update_url( const std::string& url_old, const std::string& url_new );
+
         virtual const int get_icon( const std::string& iconname );
         virtual const bool is_loading(){ return m_loading; }
         virtual const bool set_command( const std::string& command,
@@ -110,7 +119,14 @@ namespace BOARD
         virtual void close_view();
         virtual void delete_view();
         virtual void set_favorite();
+
+
+        // 特定の行だけの表示内容更新
+        // url : subject.txt のアドレス
+        // id : DAT の ID(拡張子付き)
+        // もし ID が empty() なら全ての行の表示内容を更新する
         virtual void update_item( const std::string& url, const std::string& id );
+
         virtual const bool operate_view( const int control );
         virtual void goto_top();
         virtual void goto_bottom();
@@ -137,6 +153,9 @@ namespace BOARD
 
       protected:
 
+        // url から row を取得
+        Gtk::TreeModel::Row get_row_from_url( const std::string& url );
+
         SKELETON::DragTreeView& get_treeview(){ return m_treeview; }
 
         // Viewが所属するAdminクラス
@@ -148,15 +167,18 @@ namespace BOARD
         // ポップアップメニュー取得
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
-        void update_view_impl( std::list< DBTREE::ArticleBase* >& list_subject );
+        void update_view_impl( const std::list< DBTREE::ArticleBase* >& list_subject );
 
         // ソート状態回復
         void restore_sort();
 
-    private:
+        // subject.txt をロードする
+        void set_load_subject_txt( const bool load ){ m_load_subject_txt = load; }
 
-        // url から row を取得
-        Gtk::TreeModel::Row get_row_from_url( const std::string& url );
+        // 行を作って内容をセット
+        Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art );
+
+    private:
 
         // 次スレ移行処理に使用する前スレのアドレス
         // BOARD::BoardViewNext と BoardViewBase::open_row()を参照せよ
@@ -217,10 +239,7 @@ namespace BOARD
         // 検索
         const bool drawout();
 
-        // 行を作って内容をセット
-        Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art );
-
-        void update_row_common( DBTREE::ArticleBase* art, Gtk::TreeModel::Row& row );
+        void update_row_common( Gtk::TreeModel::Row& row );
         const std::string get_subject_from_path( Gtk::TreePath& path );
 
         template < typename ColumnType >

@@ -36,6 +36,8 @@ ArticleViewPreview::ArticleViewPreview( const std::string& url )
     std::cout << "ArticleViewPreview::ArticleViewPreview " << get_url() << std::endl;
 #endif
 
+    set_writeable( false );
+
     setup_view();
 
     // コントロールモード設定

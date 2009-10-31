@@ -38,6 +38,7 @@ enum{
 
 #define ITEM_NAME_MARK  "!"
 #define ITEM_NAME_ID    "番号"
+#define ITEM_NAME_BOARD "板"
 #define ITEM_NAME_NAME  "タイトル"
 #define ITEM_NAME_RES   "レス"
 #define ITEM_NAME_LOAD  "取得"
@@ -107,6 +108,7 @@ enum
 
     ITEM_MARK,
     ITEM_ID,
+    ITEM_BOARD,
     ITEM_NAME,
     ITEM_RES,
     ITEM_LOAD,
@@ -232,6 +234,8 @@ enum
 #define URL_HISTTHREADVIEW "jdview://histthread"
 #define URL_HISTBOARDVIEW "jdview://histboard"
 #define URL_HISTCLOSEVIEW "jdview://histclose"
+
+#define URL_ALLLOG "jdview://alllog"
 
 #define URL_USRCMD "jdpref://usrcmd"
 #define URL_LINKFILTER "jdpref://linkfilter"

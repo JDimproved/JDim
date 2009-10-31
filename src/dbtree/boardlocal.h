@@ -31,7 +31,7 @@ namespace DBTREE
         virtual void save_info(){}
 
         // キャッシュサーチをキャンセル
-        virtual std::list< std::string > search_cache( const std::string& query, bool mode_or, bool& stop ){ return std::list< std::string >(); }
+        virtual void search_cache( std::list< ArticleBase* >& list_article, const std::string& query, const bool mode_or, const bool& stop ){}
 
         // datファイルのインポート
         virtual const std::string import_dat( const std::string& filename );

@@ -598,6 +598,11 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "SearchCache_Menu", "キャッシュ内ログ検索(_C)" ) );
     m_action_group->add( Gtk::Action::create( "SearchCacheBoard", "表示中の板のログを検索(_B)" ), sigc::mem_fun( *this, &Core::slot_search_cache_board ) );
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索(_A)" ), sigc::mem_fun( *this, &Core::slot_search_cache ) );
+
+    m_action_group->add( Gtk::Action::create( "ShowCache_Menu", "キャッシュ内ログ一覧(_H)" ) );
+    m_action_group->add( Gtk::Action::create( "ShowCacheBoard", "表示中の板のログ一覧を表示(_B)" ), sigc::mem_fun( *this, &Core::slot_show_cache_board ) );
+    m_action_group->add( Gtk::Action::create( "ShowCache", "キャッシュ内の全ログ一覧を表示(_A)" ), sigc::mem_fun( *this, &Core::slot_show_cache ) );
+
     m_action_group->add( Gtk::Action::create( "SearchTitle", "SearchTitle" ), sigc::mem_fun( *this, &Core::slot_search_title ) );
 
     m_action_group->add( Gtk::Action::create( "CheckUpdate_Menu", "サイドバーの更新チェック(_U)" ) );
@@ -791,6 +796,12 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menu action='SearchCache_Menu'>"
         "<menuitem action='SearchCacheBoard'/>"    
         "<menuitem action='SearchCache'/>"    
+        "</menu>"
+        "<separator/>"
+
+        "<menu action='ShowCache_Menu'>"
+        "<menuitem action='ShowCacheBoard'/>"    
+        "<menuitem action='ShowCache'/>"    
         "</menu>"
         "<separator/>"
 
@@ -1389,6 +1400,11 @@ void Core::slot_activate_menubar()
     if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
     else act->set_sensitive( false );
 
+    // 開いている板のログ一覧表示
+    act = m_action_group->get_action( "ShowCacheBoard" );
+    if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
     // スレ一覧のプロパティ
     act = m_action_group->get_action( "BoardPref" );
     if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
@@ -1416,6 +1432,11 @@ void Core::slot_activate_menubar()
         if( CONTROL::is_emacs_mode() ) tact->set_active( true );
         else tact->set_active( false );
     }
+
+    // datのインポート
+    act = m_action_group->get_action( "ImportDat" );
+    if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
 
     m_enable_menuslot = true;
 }
@@ -2202,12 +2223,47 @@ void Core::set_command( const COMMAND_ARGS& command )
                                          // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                          // 詳しくは Admin::open_view() を参照せよ
                                          str_tab, // 開く位置
-                                         "true", // command.url を開いてるかチェックしない
+                                         "false", // 既にビューを開いてるかチェックする
                                          "", // 開き方のモード
 
                                          "NEXT", // モード
                                      
                                          command.arg1 // スレのアドレス
+            );
+
+        return;
+
+    }
+    
+    // ログ一覧表示
+    else if( command.command  == "open_board_showlog" || command.command  == "open_board_showalllog" ){
+
+        if( CORE::get_search_manager()->is_searching() ){
+            SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
+            mdiag.run();
+            return;
+        }
+
+        std::string url = command.url;
+        if( command.command == "open_board_showalllog" ){
+
+            SKELETON::MsgDiag mdiag( NULL, "全ログの一覧表示はかなり時間がかかります。\n\n本当に表示しますか？",
+                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
+            url = URL_ALLLOG;
+        }
+
+        BOARD::get_admin()->set_command( "open_view",
+                                         url,
+
+                                         // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
+                                         // 詳しくは Admin::open_view() を参照せよ
+                                         "left", // 開く位置
+                                         "false", // 既にビューを開いてるかチェックする
+                                         "", // 開き方のモード
+
+                                         "LOG" // モード
             );
 
         return;

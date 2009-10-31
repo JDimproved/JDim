@@ -164,6 +164,9 @@ namespace SKELETON
         // restore() などで使用する
         virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ) = 0; 
 
+        // COMMAND_ARGS からビューの URL を取得する
+        virtual const std::string command_to_url( const COMMAND_ARGS& command ){ return command.url; }
+
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void switch_admin() = 0;  // CORE::core_set_command( "switch_*" )　を送る
         virtual void switch_view( const std::string& url );

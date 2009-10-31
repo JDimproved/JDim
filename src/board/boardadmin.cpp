@@ -98,16 +98,17 @@ void BoardAdmin::restore( const bool only_locked )
         // ロックされているものだけ表示
         if( only_locked && ! lock ) continue;
 
+        if( page == SESSION::board_page() ) set_page_num = get_tab_nums();
+
+        COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
+
         // 板がDBに登録されていない場合は表示しない
-        if( DBTREE::url_boardbase( *it_url ).empty() ){
+        if( DBTREE::url_boardbase( command_arg.url ).empty() ){
             MISC::ERRMSG(  *it_url + " is not registered" );
             continue;
         }
 
-        if( page == SESSION::board_page() ) set_page_num = get_tab_nums();
-
-        COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
-        if( ! command_arg.url.empty() ) open_view( command_arg );
+        open_view( command_arg );
     }
 
     SESSION::set_online( online );
@@ -131,12 +132,28 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
 #endif    
 
     // 次スレ検索
-    if( regex.exec( std::string( "(.*)" ) + NEXT_SIGN + ARTICLE_SIGN + "(.*)" + TIME_SIGN, url )){
+    if( regex.exec( std::string( "(.*)" ) + NEXT_SIGN + ARTICLE_SIGN + "(.*)", url )){
 
         command_arg.url = regex.str( 1 );
 
         command_arg.arg4 = "NEXT";
-        command_arg.arg5 = regex.str( 2 );
+        command_arg.arg5 = regex.str( 2 ); // 前スレのアドレス
+    }
+
+    // 全ログ一覧
+    else if( url == URL_ALLLOG ){
+
+        command_arg.url = URL_ALLLOG;
+
+        command_arg.arg4 = "LOG";
+    }
+
+    // ログ一覧
+    else if( regex.exec( std::string( "(.*)" ) + LOG_SIGN, url )){
+
+        command_arg.url = regex.str( 1 );
+
+        command_arg.arg4 = "LOG";
     }
 
     // スレビュー
@@ -147,7 +164,25 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
         command_arg.arg4 = "MAIN";
     }
 
+#ifdef _DEBUG
+    std::cout << "open " << command_arg.arg4 << std::endl;
+#endif    
+
     return command_arg;
+}
+
+
+const std::string BoardAdmin::command_to_url( const COMMAND_ARGS& command )
+{
+    if( command.arg4 == "NEXT" ) return command.url + NEXT_SIGN + ARTICLE_SIGN + command.arg5;
+
+    else if( command.arg4 == "LOG" ){
+
+        if( command.url == URL_ALLLOG ) return URL_ALLLOG;
+        else return command.url + LOG_SIGN;
+    }
+
+    return command.url;
 }
 
 
@@ -187,7 +222,7 @@ void BoardAdmin::show_toolbar()
 
 
 //
-// ツールバー表示切り替え
+// ツールバー表示/非表示切り替え
 //
 void BoardAdmin::toggle_toolbar()
 {
@@ -247,11 +282,14 @@ SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
     }
     else if( command.arg4 == "NEXT" ){
         type = CORE::VIEW_BOARDNEXT;
-        view_args.arg1 = command.arg5;
+        view_args.arg1 = command.arg5;  // 前スレのアドレス
+    }
+    else if( command.arg4 == "LOG" ){
+        type = CORE::VIEW_BOARDLOG;
     }
     else return NULL;
 
-    SKELETON::View* view = CORE::ViewFactory( type, command.url, view_args );
+    SKELETON::View* view = CORE::ViewFactory( type, command_to_url( command ), view_args );
     assert( view != NULL );
 
     return view;
@@ -284,7 +322,7 @@ void BoardAdmin::command_local( const COMMAND_ARGS& command )
 
 
 //
-// タブをお気に入りにドロップした時にお気に入りがデータ送信を要求してきた
+// タブをサイドバーにドロップした時にお気に入りがデータ送信を要求してきた
 //
 void BoardAdmin::slot_drag_data_get( Gtk::SelectionData& selection_data, const int page )
 {

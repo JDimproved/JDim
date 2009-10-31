@@ -1021,6 +1021,25 @@ void Core::slot_search_cache()
 
 
 //
+// 現在開いている板のキャッシュ内のログ一覧表示
+//
+void Core::slot_show_cache_board()
+{
+    std::string url = DBTREE::url_subject( BOARD::get_admin()->get_current_url() );
+    if( ! url.empty() ) CORE::core_set_command( "open_board_showlog", url );
+}
+
+
+//
+// キャッシュ内の全ログ一覧表示
+//
+void Core::slot_show_cache()
+{
+    CORE::core_set_command( "open_board_showalllog" );
+}
+
+
+//
 // スレタイ検索
 //
 void Core::slot_search_title()

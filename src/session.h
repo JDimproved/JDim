@@ -324,6 +324,7 @@ namespace SESSION
     // スレ一覧の列幅
     const int col_mark();
     const int col_id();
+    const int col_board();
     const int col_subject();
     const int col_number();
     const int col_load();
@@ -333,6 +334,7 @@ namespace SESSION
     const int col_speed();
     void set_col_mark( const int width );
     void set_col_id( const int width );
+    void set_col_board( const int width );
     void set_col_subject( const int width );
     void set_col_number( const int width );
     void set_col_load( const int width );

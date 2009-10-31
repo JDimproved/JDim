@@ -20,6 +20,7 @@
 namespace DBTREE
 {
     class BoardBase;
+    class ArticleBase;
 
     // サーバ移転テーブル
     //
@@ -131,7 +132,7 @@ namespace DBTREE
         void read_boardinfo_all();
 
         // 全ログ検索
-        std::list< std::string > search_cache( const std::string& query, bool mode_or, bool& stop );
+        void search_cache( std::list< ArticleBase* >& list_article, const std::string& query, const bool mode_or, const bool& stop );
 
         // 全てのスレの書き込み履歴削除
         void clear_all_post_history();

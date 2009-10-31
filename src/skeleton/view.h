@@ -69,6 +69,9 @@ namespace SKELETON
         // ロック状態
         bool m_locked;
 
+        // 書き込み可能か
+        bool m_writeable;
+
         // ツールバーのID
         int m_id_toolbar;
 
@@ -162,7 +165,7 @@ namespace SKELETON
         virtual Gtk::Window* get_parent_win(){ return m_parent_win; }
 
         // 移転があったときなどにadminから呼び出される
-        void update_url( const std::string& url_old, const std::string& url_new );
+        virtual void update_url( const std::string& url_old, const std::string& url_new );
 
         // 検索文字列
         const std::string& get_search_query(){ return m_search_query; }
@@ -179,6 +182,10 @@ namespace SKELETON
         const bool is_locked() const { return m_locked; }
         virtual void lock(){ m_locked = true; }
         virtual void unlock(){ m_locked = false; }
+
+        // 書き込み可能/不可能
+        const bool is_writeable() const { return m_writeable; }
+        void set_writeable( const bool writeable ){ m_writeable = writeable; }
 
         // view 上にマウスポインタがあれば true
         const bool is_mouse_on_view();

@@ -395,6 +395,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt, const bool is_
         if( article ){
 
             // 情報ファイル読み込み
+            article->set_status( STATUS_UNKNOWN );
             article->read_info();
 
             // infoファイルが無い場合もあるのでsubject.txtから取得したサブジェクト、レス数を指定しておく

@@ -1594,6 +1594,9 @@ void ArticleBase::read_info()
 
     m_read_info = true;
 
+    const int status_old = m_status;
+    bool saveinfo = false;
+
     // 情報ファイルのパスをセット
     if( m_path_article_info.empty() ) SET_INFOPATH();
 
@@ -1792,7 +1795,7 @@ void ArticleBase::read_info()
         }
         
         m_number_before_load = m_number_load;
-        m_save_info = true;
+        saveinfo = true;
         unlock_impl();
 
 #ifdef _DEBUG
@@ -1801,6 +1804,16 @@ void ArticleBase::read_info()
     }
 
     if( m_number < m_number_load ) m_number = m_number_load;
+
+    // infoファイル読み込み前に既にDAT落ち状態になっていた場合は
+    // 状態を DAT 落ちに戻しておく
+    if( ( status_old & STATUS_OLD ) && ( m_status & STATUS_NORMAL ) ){
+        m_status &= ~STATUS_NORMAL;
+        m_status |= STATUS_OLD;
+        saveinfo = true;
+    }
+
+    if( saveinfo ) save_info( true );
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::read_info file = " << m_path_article_ext_info << std::endl;

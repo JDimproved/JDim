@@ -1295,7 +1295,7 @@ void ArticleViewBase::clear_highlight()
 //
 void ArticleViewBase::write()
 {
-    if( m_article->empty() ) return;
+    if( ! is_writeable() ) return;
 
     CORE::core_set_command( "open_message" ,m_url_article, std::string() );
 }

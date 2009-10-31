@@ -67,7 +67,7 @@ namespace ARTICLE
         //viewのURL更新
         void update_url_query( const bool update_history );
 
-        void slot_search_fin();
+        void slot_search_fin( const std::string& id );
     };
 }
 

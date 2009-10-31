@@ -11,7 +11,6 @@
 
 #include "skeleton/msgdiag.h"
 
-#include "jdlib/misctime.h"
 #include "jdlib/tfidf.h"
 
 #include "config/globalconf.h"
@@ -22,17 +21,9 @@ using namespace BOARD;
 
 
 BoardViewNext::BoardViewNext( const std::string& url, const std::string& url_pre_article )
-    : BoardViewBase( url ),
+    : BoardViewBase( url, false ),
       m_url_pre_article( url_pre_article )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-
-    // viewのURL更新
-    const bool update_history = false;
-    set_url( get_url_board() + NEXT_SIGN + ARTICLE_SIGN + m_url_pre_article + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
-
 #ifdef _DEBUG
     std::cout << "BoardViewNext::BoardViewNext : url = " << get_url() << std::endl;
 #endif

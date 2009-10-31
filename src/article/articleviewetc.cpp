@@ -587,6 +587,7 @@ ArticleViewPostlog::ArticleViewPostlog( const std::string& url, const int num )
 #endif
 
     set_id_toolbar( TOOLBAR_SIMPLE );
+    set_writeable( false );
 
     setup_view();
 }

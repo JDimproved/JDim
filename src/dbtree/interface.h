@@ -173,9 +173,12 @@ namespace DBTREE
     void read_boardinfo_all();
 
     // キャッシュ内のログ検索
-    // datファイルのURL(read.cgi型)を返す
-    std::list< std::string > search_cache_all( const std::string& url, const std::string& query, bool mode_or, bool& stop );
-    std::list< std::string > search_cache( const std::string& url, const std::string& query, bool mode_or, bool& top );
+    // ArticleBase のアドレスをリスト(list_article)にセットして返す
+    // query が空の時はキャッシュにあるログを全てヒットさせる
+    void search_cache_all( std::list< DBTREE::ArticleBase* >& list_article,
+                           const std::string& query, const bool mode_or, const bool& stop );
+    void search_cache( const std::string& url, std::list< DBTREE::ArticleBase* >& list_article,
+                       const std::string& query, const bool mode_or, const bool& stop );
     
     // article 系
     const bool article_is_cached( const std::string& url ); // キャッシュにあるかどうか

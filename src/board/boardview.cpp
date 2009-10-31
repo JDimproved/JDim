@@ -23,7 +23,7 @@ using namespace BOARD;
 
 
 BoardView::BoardView( const std::string& url )
-    : BoardViewBase( url )
+    : BoardViewBase( url, false )
 {
 #ifdef _DEBUG
     std::cout << "BoardView::BoardView : url = " << get_url() << std::endl;

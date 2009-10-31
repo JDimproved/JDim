@@ -33,6 +33,7 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
       m_keyjump_num( 0 ),
       m_lockable( true ),
       m_locked( false ),
+      m_writeable( true ),
       m_id_toolbar( 0 )
 {}
 

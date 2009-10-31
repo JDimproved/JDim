@@ -28,6 +28,8 @@ ArticleViewInfo::ArticleViewInfo( const std::string& url )
     std::cout << "ArticleViewInfo::ArticleViewInfo " << get_url() << std::endl;
 #endif
 
+    set_writeable( false );
+
     setup_view();
 }
 

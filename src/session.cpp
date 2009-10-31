@@ -70,6 +70,7 @@ std::vector< int > items_article_menu;
 
 int board_col_mark;
 int board_col_id;
+int board_col_board;
 int board_col_subject;
 int board_col_number;
 int board_col_load;
@@ -173,6 +174,7 @@ const int SESSION::parse_item( const std::string& item_name )
 
     else if( item_name == ITEM_NAME_MARK ) item = ITEM_MARK;
     else if( item_name == ITEM_NAME_ID ) item = ITEM_ID;
+    else if( item_name == ITEM_NAME_BOARD ) item = ITEM_BOARD;
     else if( item_name == ITEM_NAME_NAME ) item = ITEM_NAME;
     else if( item_name == ITEM_NAME_RES ) item = ITEM_RES;
     else if( item_name == ITEM_NAME_LOAD ) item = ITEM_LOAD;
@@ -371,6 +373,7 @@ void SESSION::init_session()
     // board ビューの列幅
     board_col_mark = cf.get_option_int( "col_mark", 30, 4, 8192 );
     board_col_id = cf.get_option_int( "col_id", 45, 4, 8192 );
+    board_col_board = cf.get_option_int( "col_board", 70, 4, 8192 );
     board_col_subject = cf.get_option_int( "col_subject", 190, 4, 8192 );
     board_col_number = cf.get_option_int( "col_number", 45, 4, 8192 );
     board_col_load = cf.get_option_int( "col_load", 45, 4, 8192 );
@@ -454,6 +457,7 @@ void SESSION::init_session()
     std::cout << "columns\n"
               << board_col_mark << std::endl
               << board_col_id << std::endl
+              << board_col_board << std::endl
               << board_col_subject << std::endl
               << board_col_number << std::endl
               << board_col_load << std::endl
@@ -573,6 +577,7 @@ void SESSION::save_session()
 
         << "col_mark = " << board_col_mark << std::endl
         << "col_id = " << board_col_id << std::endl
+        << "col_board = " << board_col_board << std::endl    
         << "col_subject = " << board_col_subject << std::endl
         << "col_number = " << board_col_number << std::endl
         << "col_load = " << board_col_load << std::endl
@@ -956,6 +961,7 @@ const int SESSION::get_item_article_menu( const int num ){ return items_article_
 // board ビューの列幅
 const int SESSION::col_mark(){ return board_col_mark; }
 const int SESSION::col_id(){ return board_col_id; }
+const int SESSION::col_board(){ return board_col_board; }
 const int SESSION::col_subject(){ return board_col_subject; }
 const int SESSION::col_number(){ return board_col_number; }
 const int SESSION::col_load(){ return board_col_load; }
@@ -987,6 +993,7 @@ const std::string SESSION::get_sidebar_current_url()
 
 void SESSION::set_col_mark( const int width ){ board_col_mark = width; }
 void SESSION::set_col_id( const int width ){ board_col_id = width; }
+void SESSION::set_col_board( const int width ){ board_col_board = width; }
 void SESSION::set_col_subject( const int width ){ board_col_subject = width; }
 void SESSION::set_col_number( const int width ){ board_col_number = width; }
 void SESSION::set_col_load( const int width ){ board_col_load = width; }
