@@ -294,11 +294,16 @@ void BoardMachi::parse_subject( const char* str_subject_txt, const bool is_onlin
         // スレ情報更新
         if( article ){
 
+            // ステータスをDAT落ち状態から通常状態に変更
+            int status = article->get_status();
+            status |= STATUS_NORMAL;
+            status &= ~STATUS_OLD;
+            article->set_status( status );
+
             // 情報ファイル読み込み
-            article->set_status( STATUS_UNKNOWN );
             article->read_info();
 
-            // infoファイルが無い場合もあるのでsubject.txtから取得したサブジェクト、レス数を指定しておく
+            // 情報ファイルが無い場合もあるのでsubject.txtから取得したサブジェクト、レス数を指定しておく
             article->set_subject( subject );
             article->set_number( number, is_online );
 
@@ -310,8 +315,9 @@ void BoardMachi::parse_subject( const char* str_subject_txt, const bool is_onlin
 
             if( pushback ){
 
+                // 情報ファイル読み込み後にステータスが変わることがあるので、もう一度
                 // ステータスをDAT落ち状態から通常状態に変更
-                int status = article->get_status();
+                status = article->get_status();
                 status |= STATUS_NORMAL;
                 status &= ~STATUS_OLD;
                 article->set_status( status );
