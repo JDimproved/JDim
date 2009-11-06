@@ -219,6 +219,7 @@ const int CONFIG::get_del_imgabone_day(){ return get_confitem()->del_imgabone_da
 void CONFIG::set_del_imgabone_day( const int day ){ get_confitem()->del_imgabone_day = day; }
 const int CONFIG::get_max_img_size(){ return get_confitem()->max_img_size; }
 const int CONFIG::get_max_img_pixel(){ return get_confitem()->max_img_pixel; }
+const int CONFIG::get_imgcache_size(){ return get_confitem()->imgcache_size; }
 
 const bool CONFIG::get_show_oldarticle(){ return get_confitem()->show_oldarticle; }
 void CONFIG::set_show_oldarticle( const bool showarticle ){ get_confitem()->show_oldarticle = showarticle; }

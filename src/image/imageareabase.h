@@ -13,6 +13,7 @@
 
 #include "jdlib/constptr.h"
 #include "jdlib/jdthread.h"
+#include "jdlib/imgloader.h"
 
 namespace DBIMG
 {
@@ -26,7 +27,6 @@ namespace IMAGE
     {
         std::string m_url;
         JDLIB::ConstPtr< DBIMG::Img > m_img;
-        Glib::RefPtr< Gdk::PixbufLoader > m_imgloader;
         Gdk::InterpType m_interptype;
 
         std::string m_errmsg; // エラーメッセージ
@@ -38,9 +38,11 @@ namespace IMAGE
 
         // スレッド用変数
         JDLIB::Thread m_thread;
-        bool m_stop;
 
-      public:
+    protected:
+        Glib::RefPtr< JDLIB::ImgLoader > m_imgloader;
+
+    public:
 
         // interptype :
         // 0 -> INTERP_NEAREST
@@ -67,7 +69,7 @@ namespace IMAGE
 
         virtual void load_image_thread();
 
-      protected:
+    protected:
 
         JDLIB::ConstPtr< DBIMG::Img >& get_img(){ return  m_img; }
         void set_errmsg( const std::string& errmsg ){ m_errmsg = errmsg; }
@@ -79,9 +81,8 @@ namespace IMAGE
         void load_image();
 
         bool create_imgloader( bool pixbufonly, std::string& errmsg );
-        Glib::RefPtr< Gdk::PixbufLoader > get_imgloader(){ return m_imgloader; }
 
-      private:
+    private:
 
         virtual void callback_dispatch();
         virtual void set_image();

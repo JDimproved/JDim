@@ -70,7 +70,11 @@
 
 // Two macros expansion is gcc preprocessor technic
 #define JDRC_VERSION_EXP(a,b,c,d,e) JDRC_VERSION_FMT(a,b,c,d,e)
+#ifdef JDVERSION_SVN
+#define JDRC_VERSION_FMT(a,b,c,d,e) #a "." #b "." #c "-svnversion"
+#else
 #define JDRC_VERSION_FMT(a,b,c,d,e) #a "." #b "." #c "-" d e
+#endif
 #define JDRC_VERSION_STR JDRC_VERSION_EXP( \
             MAJORVERSION, MINORVERSION, MICROVERSION, JDTAG, JDDATE)
 

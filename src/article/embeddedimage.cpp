@@ -6,7 +6,7 @@
 #include "embeddedimage.h"
 #include "articleadmin.h"
 
-#include "jdlib/miscgtk.h"
+#include "jdlib/imgloader.h"
 #include "jdlib/miscmsg.h"
 
 #include "dbimg/imginterface.h"
@@ -83,9 +83,7 @@ void EmbeddedImage::stop()
     std::cout << "EmbeddedImage::stop" << std::endl;
 #endif 
 
-#ifndef _WIN32
-    m_stop = true;
-#endif
+    m_imgloader->request_stop();
 }
 
 
@@ -116,7 +114,6 @@ void EmbeddedImage::show()
     if( ! width || ! height ) return;
 
     // スレッド起動して縮小
-    m_stop = false;
     if( ! m_thread.create( eimg_launcher, ( void* )this, JDLIB::NODETACH ) ){
         MISC::ERRMSG( "EmbeddedImage::show : could not start thread" );
     }
@@ -137,14 +134,15 @@ void EmbeddedImage::resize_thread()
     bool pixbufonly = true;
 
     if( m_img->get_type() == DBIMG::T_BMP ) pixbufonly = false; // BMP の場合 pixbufonly = true にすると真っ黒になる
-    Glib::RefPtr< Gdk::PixbufLoader > loader = MISC::get_ImageLoder( m_img->get_cache_path(), m_stop, pixbufonly, errmsg );
-    if( loader && loader->get_pixbuf() ){
-
+    
+    Glib::RefPtr<JDLIB::ImgLoader> loader = JDLIB::ImgLoader::get_loader( m_img->get_cache_path() );
+    Glib::RefPtr<Gdk::Pixbuf> pixbuf = loader->get_pixbuf( pixbufonly );
+    if( pixbuf ){
         Gdk::InterpType interptype = Gdk::INTERP_NEAREST;
         if( CONFIG::get_imgemb_interp() == 1 ) interptype = Gdk::INTERP_BILINEAR;
         else if( CONFIG::get_imgemb_interp() >= 2 ) interptype = Gdk::INTERP_HYPER;
 
-        m_pixbuf = loader->get_pixbuf()->scale_simple( width, height, interptype );
+        m_pixbuf = pixbuf->scale_simple( width, height, interptype );
     }
 
     // メインスレッドにリサイズが終わったことを知らせて

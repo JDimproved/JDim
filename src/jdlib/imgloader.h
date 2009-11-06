@@ -11,36 +11,59 @@
 
 namespace JDLIB
 {
-    class ImgLoader
+    class ImgLoader : public Glib::Object
     {
         Glib::RefPtr< Gdk::PixbufLoader > m_loader;
-
+        Glib::Mutex m_loader_lock;
+        
         std::string m_file;
         std::string m_errmsg;
         int m_width;
         int m_height;
+        
         bool m_stop;
-
+        bool m_stopped; // 実際に読み込みを中断したフラグ
+        
         bool m_pixbufonly;
         int m_y;
-
-      public:
-
-        ImgLoader( const std::string& file );
-
+        
+    public:
         virtual ~ImgLoader(){}
-
-        Glib::RefPtr< Gdk::PixbufLoader > get_loader(){ return  m_loader; }
+        static Glib::RefPtr< ImgLoader > get_loader( const std::string& file );
+        
         const std::string& get_errmsg() const { return m_errmsg; }
-        const int get_width() const { return m_width; }
-        const int get_height() const{ return m_height; }
-
-        bool get_size();
-        const bool load( const bool& stop, const bool pixbufonly, const bool sizeonly );
-
-      private:
+        bool get_size( int& width, int& height );
+        
+        void request_stop();
+        
+        const bool load( const bool pixbufonly = false );
+        Glib::RefPtr<Gdk::Pixbuf> get_pixbuf( const bool pixbufonly = false );
+        Glib::RefPtr<Gdk::PixbufAnimation> get_animation();
+        
+        bool equals( const std::string& file ) const;
+        
+    private:
+        ImgLoader( const std::string& file );
+        const bool load( const bool pixbufonly, const bool sizeonly );
+        
         void slot_size_prepared( int w, int h );
         void slot_area_updated(int x, int y, int w, int h );
+    };
+    
+    class ImgProvider
+    {
+        std::list< Glib::RefPtr< ImgLoader > > m_cache;
+        Glib::Mutex m_cache_lock;
+        
+    public:
+        virtual ~ImgProvider(){}
+        static ImgProvider& get_provider();
+        
+        Glib::RefPtr< ImgLoader > get_loader( const std::string& file );
+        void set_loader( Glib::RefPtr< ImgLoader > loader );
+        
+    private:
+        ImgProvider();
     };
 }
 

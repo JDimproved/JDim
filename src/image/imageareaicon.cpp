@@ -107,8 +107,9 @@ void ImageAreaIcon::load_image_thread()
 
     std::string errmsg;
     if( create_imgloader( pixbufonly, errmsg ) ){
-
-        if( get_imgloader()->get_pixbuf() ) m_pixbuf_icon = get_imgloader()->get_pixbuf()->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
+        Glib::RefPtr< Gdk::Pixbuf > pixbuf = m_imgloader->get_pixbuf();
+        if( pixbuf ) 
+            m_pixbuf_icon = pixbuf->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
     }
 
     if( m_pixbuf_icon ){

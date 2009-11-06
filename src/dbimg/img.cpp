@@ -8,7 +8,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
-#include "jdlib/miscgtk.h"
+#include "jdlib/imgloader.h"
 #include "jdlib/confloader.h"
 #include "jdlib/loaderdata.h"
 
@@ -455,8 +455,7 @@ void Img::receive_finish()
 
     // 画像サイズ取得
     if( get_code() == HTTP_OK && current_length() ){
-
-        MISC::get_img_size( get_cache_path(), m_width, m_height );
+        JDLIB::ImgLoader::get_loader( get_cache_path() )->get_size( m_width, m_height );
         if( ! m_width || ! m_height ) m_type = T_NOSIZE;
     }
 

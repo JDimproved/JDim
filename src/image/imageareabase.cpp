@@ -6,7 +6,6 @@
 #include "imageareabase.h"
 
 #include "jdlib/miscmsg.h"
-#include "jdlib/miscgtk.h"
 
 #include "dbimg/imginterface.h"
 #include "dbimg/img.h"
@@ -89,9 +88,7 @@ void ImageAreaBase::stop()
     std::cout << "ImageAreaBase::stop" << std::endl;
 #endif 
 
-#ifndef _WIN32
-    m_stop = true;
-#endif
+    m_imgloader->request_stop();
 }
 
 
@@ -184,9 +181,11 @@ void ImageAreaBase::load_image_thread()
 
 bool ImageAreaBase::create_imgloader( bool pixbufonly, std::string& errmsg )
 {
-    m_stop = false;
-    m_imgloader = MISC::get_ImageLoder( m_img->get_cache_path(), m_stop, pixbufonly, errmsg );
-    return ( m_imgloader );
+    m_imgloader = JDLIB::ImgLoader::get_loader( m_img->get_cache_path() );
+    if( ! m_imgloader->load( pixbufonly ) ) {
+        errmsg = m_imgloader->get_errmsg();
+    }
+    return m_imgloader;
 }
 
 
@@ -214,18 +213,19 @@ void ImageAreaBase::set_image()
     const int w_org = get_img()->get_width();
     const int h_org = get_img()->get_height();
 
-    if( m_imgloader && m_imgloader->get_pixbuf() ){
-
-        // モザイク
-        if( m_img->get_mosaic() ) set_mosaic( m_imgloader->get_pixbuf() );
-        else{
-
+    if( m_imgloader ){
+        Glib::RefPtr< Gdk::Pixbuf > pixbuf = m_imgloader->get_pixbuf();
+        if( ! pixbuf ){
+            // ERROR
+        }else if( m_img->get_mosaic() ){
+            // モザイク
+            set_mosaic( pixbuf );
+        }else if( w_org != get_width() || h_org != get_height() ){
             // 拡大縮小
-            if( w_org != get_width() || h_org != get_height() )
-                set( m_imgloader->get_pixbuf()->scale_simple( get_width(), get_height(), m_interptype ) );
-
+            set( pixbuf->scale_simple( get_width(), get_height(), m_interptype ) );
+        }else{
             // 通常
-            else set( m_imgloader->get_animation() );
+            set( m_imgloader->get_animation() );
         }
     }
 

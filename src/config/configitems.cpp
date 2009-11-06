@@ -221,6 +221,9 @@ const bool ConfigItems::load( const bool restore )
     // 画像の最大サイズ(Mピクセル)
     max_img_pixel = cf.get_option_int( "max_img_pixel", CONF_MAX_IMG_PIXEL, 1, 1024 );
 
+    // 画像のメモリキャッシュ枚数
+    imgcache_size = cf.get_option_int( "imgcache_size", CONF_IMGCACHE_SIZE, 0, 20 );
+
     // JD ホームページのアドレス
     url_jdhp = cf.get_option_str( "url_jdhp", CONF_URL_JDHP );
 
@@ -611,6 +614,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "del_imgabone_day", del_imgabone_day );
     cf.update( "max_img_size", max_img_size );
     cf.update( "max_img_pixel", max_img_pixel );
+    cf.update( "imgcache_size", imgcache_size );
 
     cf.update( "cl_char", str_color[ COLOR_CHAR ] );
     cf.update( "cl_char_name", str_color[ COLOR_CHAR_NAME ] );

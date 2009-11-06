@@ -37,13 +37,6 @@ namespace MISC
 
     // str をクリップボードにコピー
     void CopyClipboard( const std::string& str );
-
-    // 画像の幅と高さを取得
-    void get_img_size( const std::string& filename, int& width, int& height );
-
-    // PixbufLoaderローダ取得
-    // stop を trueにすると読み込みを停止する
-    Glib::RefPtr< Gdk::PixbufLoader > get_ImageLoder( const std::string& file, bool& stop, bool pixbufonly, std::string& errmsg );
 }
 
 #endif

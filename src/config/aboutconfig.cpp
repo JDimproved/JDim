@@ -213,6 +213,7 @@ void AboutConfig::append_rows()
     append_row( "画像ビューのスムージングレベル(0-2, 大きい程高画質で低速)", get_confitem()->imgmain_interp, CONF_IMGMAIN_INTERP );
     append_row( "埋め込み画像のスムージングレベル(0-2, 大きい程高画質で低速)", get_confitem()->imgemb_interp, CONF_IMGEMB_INTERP );
     append_row( "ポップアップ画像のスムージングレベル(0-2, 大きい程高画質で低速)", get_confitem()->imgpopup_interp, CONF_IMGPOPUP_INTERP );
+    append_row( "画像のメモリキャッシュ枚数", get_confitem()->imgcache_size, CONF_IMGCACHE_SIZE );
 
     // ウィンドウ
     append_row( "" );

@@ -12,6 +12,7 @@
 
 #include "jdlib/constptr.h"
 #include "jdlib/jdthread.h"
+#include "jdlib/imgloader.h"
 
 namespace DBIMG
 {
@@ -27,7 +28,7 @@ namespace ARTICLE
         JDLIB::ConstPtr< DBIMG::Img > m_img;
         JDLIB::Thread m_thread;
 
-        bool m_stop;
+        Glib::RefPtr< JDLIB::ImgLoader > m_imgloader;
 
       public:
 

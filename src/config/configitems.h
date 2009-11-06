@@ -145,6 +145,9 @@ namespace CONFIG
         // 画像の最大サイズ(Mピクセル)
         int max_img_pixel;
 
+        // 画像のメモリキャッシュ枚数
+        int imgcache_size;
+
         // JD ホームページのアドレス
         std::string url_jdhp;
 

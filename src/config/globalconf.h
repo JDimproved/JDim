@@ -222,6 +222,9 @@ namespace CONFIG
     // 画像の最大サイズ(Mピクセル)
     const int get_max_img_pixel();
 
+    // 画像のメモリキャッシュ枚数
+    const int get_imgcache_size();
+
     // スレ一覧にdat落ちしたスレも表示する
     const bool get_show_oldarticle();
     void set_show_oldarticle( const bool showarticle );

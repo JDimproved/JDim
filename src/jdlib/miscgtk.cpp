@@ -150,27 +150,3 @@ void MISC::CopyClipboard( const std::string& str )
     clip->set_text( str );
 }
 
-
-// 画像の幅と高さを取得
-void MISC::get_img_size( const std::string& filename, int& width, int& height )
-{
-    width = height = 0;
-
-    JDLIB::ImgLoader imgloader( filename );
-    imgloader.get_size();
-    width = imgloader.get_width();
-    height = imgloader.get_height();
-}
-
-
-//
-// PixbufLoaderローダ取得
-//
-// stop を trueにすると読み込みを停止する
-//
-Glib::RefPtr< Gdk::PixbufLoader > MISC::get_ImageLoder( const std::string& file, bool& stop, bool pixbufonly, std::string& errmsg )
-{
-    JDLIB::ImgLoader imgloader( file );
-    if( ! imgloader.load( stop, pixbufonly, false ) ) errmsg = imgloader.get_errmsg();
-    return imgloader.get_loader();
-}
