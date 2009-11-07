@@ -206,7 +206,7 @@ void ImgLoader::slot_area_updated(int x, int y, int w, int h )
 /* interface inner behavior *******************************/
 
 // 読み込み中断のリクエスト
-inline void ImgLoader::request_stop()
+void ImgLoader::request_stop()
 {
 #ifndef _WIN32
     // 中断をリクエストされても実際には読み込みが完了していることがある
@@ -215,7 +215,7 @@ inline void ImgLoader::request_stop()
 #endif
 }
 
-inline bool ImgLoader::equals( const std::string& file ) const
+bool ImgLoader::equals( const std::string& file ) const
 {
     return m_file == file;
 }
