@@ -8,6 +8,8 @@
 #include "compmanager.h"
 #include "cache.h"
 
+#include <unistd.h>
+
 enum
 {
     MAX_COMPLETION = 50

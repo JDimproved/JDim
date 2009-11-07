@@ -1,5 +1,8 @@
 // ライセンス: GPL2
 
+//#define _DEBUG
+#include "jddebug.h"
+
 #include "timeout.h"
 #include "miscmsg.h"
 

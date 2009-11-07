@@ -139,9 +139,6 @@ case "${host_os}" in
    AC_CHECK_HEADERS([iconv.h])
    AC_CHECK_LIB(iconv,_head_libiconv_a)
    
-   echo "use gthread"
-   AC_DEFINE(USE_GTHREAD, , "use gthread")
-   
    echo "use windows resources"
    AC_DEFINE(USE_WINDRES, , "use windres")
    use_windres="yes"
