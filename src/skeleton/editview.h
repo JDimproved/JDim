@@ -6,6 +6,7 @@
 #include <gtkmm.h>
 
 #include "control/control.h"
+#include "jdlib/miscutil.h"
 
 namespace SKELETON
 {
@@ -138,7 +139,13 @@ namespace SKELETON
         Glib::RefPtr< Gtk::TextBuffer > get_buffer(){ return m_textview.get_buffer(); }
 
         void set_text( const Glib::ustring& text ){ m_textview.get_buffer()->set_text( text ); }
-        Glib::ustring get_text(){ return m_textview.get_buffer()->get_text(); }
+        Glib::ustring get_text(){
+#ifdef _WIN32
+            return MISC::utf8_fix_wavedash( m_textview.get_buffer()->get_text() );
+#else
+            return m_textview.get_buffer()->get_text();
+#endif
+        }
 
         void modify_text( Gtk::StateType state, const Gdk::Color& color ){ m_textview.modify_text( state, color ); }
         void modify_base( Gtk::StateType state, const Gdk::Color& color ){ m_textview.modify_base( state, color ); }

@@ -1213,6 +1213,40 @@ const int MISC::get_ucs2mode( const int ucs2 )
     return UCS2MODE_OTHER;
 }
 
+//
+// WAVEDASHなどのWindows系UTF-8文字をUnix系文字に変換
+//
+const std::string MISC::utf8_fix_wavedash( const std::string& str )
+{
+    // WAVE DASH 問題
+    const size_t size = 4;
+    const char fromWin[size][4] = {
+        { 0xef, 0xbd, 0x9e, '\0' }, // FULLWIDTH TILDE (U+FF5E)
+        { 0xe2, 0x80, 0x95, '\0' }, // HORIZONTAL BAR (U+2015)
+        { 0xe2, 0x88, 0xa5, '\0' }, // PARALLEL TO (U+2225)
+        { 0xef, 0xbc, 0x8d, '\0' }  // FULLWIDTH HYPHEN-MINUS (U+FF0D)
+    };
+    const char toUnix[size][4] = {
+        { 0xe3, 0x80, 0x9c, '\0' }, // WAVE DASH (U+301C)
+        { 0xe2, 0x80, 0x94, '\0' }, // EM DASH(U+2014)
+        { 0xe2, 0x80, 0x96, '\0' }, // DOUBLE VERTICAL LINE (U+2016)
+        { 0xe2, 0x88, 0x92, '\0' }  // MINUS SIGN (U+2212)
+    };
+    
+    std::string ret(str);
+    for( size_t i = 0; i < ret.length(); i++ ) {
+        for( size_t s = 0; s < size; s++ ) {
+            if( ret[ i ] != fromWin[ s ][ 0 ] || ret[ i+1 ] != fromWin[ s ][ 1 ] || ret[ i+2 ] != fromWin[ s ][ 2 ] )
+                continue;
+            for( size_t t = 0; t < 3; t++ )
+                ret[ i+t ] = toUnix[ s ][ t ];
+            i += 2;
+            break;
+        }
+    }
+    return ret;
+}
+
 
 //
 // str を大文字化

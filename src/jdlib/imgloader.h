@@ -44,7 +44,7 @@ namespace JDLIB
         
     private:
         ImgLoader( const std::string& file );
-        const bool load( const bool pixbufonly, const bool sizeonly );
+        const bool load_imgfile( const bool pixbufonly, const bool sizeonly );
         
         void slot_size_prepared( int w, int h );
         void slot_area_updated(int x, int y, int w, int h );
@@ -53,7 +53,9 @@ namespace JDLIB
     class ImgProvider
     {
         std::list< Glib::RefPtr< ImgLoader > > m_cache;
-        Glib::Mutex m_cache_lock;
+        
+    public:
+        Glib::Mutex m_provider_lock; // ImgProvider操作時の必須ロック
         
     public:
         virtual ~ImgProvider(){}

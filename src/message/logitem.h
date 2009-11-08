@@ -38,33 +38,7 @@ namespace MESSAGE
         {
 
             // WAVE DASH 問題
-            const char wavedash[] = { 0xe3, 0x80, 0x9c, '\0' }; // WAVE DASH (U+301C)
-            const char fulltilde[] = { 0xef, 0xbd, 0x9e, '\0' }; // FULLWIDTH TILDE (U+FF5E)
-
-            const char emdash[] = { 0xe2, 0x80, 0x94, '\0' }; // EM DASH(U+2014)
-            const char hbar[] = { 0xe2, 0x80, 0x95, '\0' }; // HORIZONTAL BAR (U+2015)
-
-            const char dvline[] = { 0xe2, 0x80, 0x96, '\0' }; // DOUBLE VERTICAL LINE (U+2016)
-            const char plto[] = { 0xe2, 0x88, 0xa5, '\0' }; // PARALLEL TO (U+2225)
-
-            const char msign[] = { 0xe2, 0x88, 0x92, '\0' }; // MINUS SIGN (U+2212) 
-            const char fullhm[] = { 0xef, 0xbc, 0x8d, '\0' }; // FULLWIDTH HYPHEN-MINUS (U+FF0D)
-
-            for( size_t i = 0; i < msg.length(); ++i ){
-
-                if( msg.c_str()[ i ] == wavedash[ 0 ] && msg.c_str()[ i+1 ] == wavedash[ 1 ] && msg.c_str()[ i+2 ] == wavedash[ 2 ] ){
-                    msg = msg.replace( i, 3, fulltilde ); i += 3;
-                }
-                if( msg.c_str()[ i ] == emdash[ 0 ] && msg.c_str()[ i+1 ] == emdash[ 1 ] && msg.c_str()[ i+2 ] == emdash[ 2 ] ){
-                    msg = msg.replace( i, 3, hbar ); i += 3;
-                }
-                if( msg.c_str()[ i ] == dvline[ 0 ] && msg.c_str()[ i+1 ] == dvline[ 1 ] && msg.c_str()[ i+2 ] == dvline[ 2 ] ){
-                    msg = msg.replace( i, 3, plto ); i += 3;
-                }
-                if( msg.c_str()[ i ] == msign[ 0 ] && msg.c_str()[ i+1 ] == msign[ 1 ] && msg.c_str()[ i+2 ] == msign[ 2 ] ){
-                    msg = msg.replace( i, 3, fullhm ); i += 3;
-                }
-            }
+            msg = MISC::utf8_fix_wavedash( msg );
 
             // 水平タブを空白に置き換える
             msg = MISC::replace_str( msg, "\t", " " );

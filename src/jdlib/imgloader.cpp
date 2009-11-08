@@ -26,57 +26,69 @@ ImgLoader::ImgLoader( const std::string& file )
 Glib::RefPtr< ImgLoader > ImgLoader::get_loader( const std::string& file )
 {
     ImgProvider& provider = ImgProvider::get_provider();
+    provider.m_provider_lock.lock();
     Glib::RefPtr< ImgLoader > loader = provider.get_loader( file );
     if( ! loader ) {
         loader = Glib::RefPtr< ImgLoader >( new ImgLoader( file ) );
         provider.set_loader( loader );
     }
+    provider.m_provider_lock.unlock();
     return loader;
 }
 
 /**********************************************************/
-/* get data from PixbufLoader *****************************/
+/* external interface to PixbufLoader *********************/
 
 // 画像サイズ取得
 bool ImgLoader::get_size( int& width, int& height )
 {
-    bool ret = load( true, true );
+    m_loader_lock.lock();
+    bool ret = load_imgfile( true, true );
     width = m_width;
     height = m_height;
+    m_loader_lock.unlock();
     return ret;
 }
 
 Glib::RefPtr< Gdk::Pixbuf > ImgLoader::get_pixbuf( const bool pixbufonly )
 {
-    if( ! load( pixbufonly ) ) {
-        return Glib::RefPtr< Gdk::Pixbuf >();
+    Glib::RefPtr< Gdk::Pixbuf > ret;
+    m_loader_lock.lock();
+    if( load_imgfile( pixbufonly, false ) ) {
+        ret = m_loader->get_pixbuf();
     }
-    return m_loader->get_pixbuf();
+    m_loader_lock.unlock();
+    return ret;
 }
 
 Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 {
-    if( ! load( false ) ) {
-        return Glib::RefPtr< Gdk::PixbufAnimation >();
+    Glib::RefPtr< Gdk::PixbufAnimation > ret;
+    m_loader_lock.lock();
+    if( load_imgfile( false, false ) ) {
+        ret = m_loader->get_animation();
     }
-    return m_loader->get_animation();
+    m_loader_lock.unlock();
+    return ret;
 }
-
-/**********************************************************/
-/* create PixbufLoader ************************************/
 
 // 画像読み込み
 // 動画でpixbufonly = true の時はアニメーションさせない
 const bool ImgLoader::load( const bool pixbufonly )
 {
-    return load( pixbufonly, false );
+    m_loader_lock.lock();
+    bool ret = load_imgfile( pixbufonly, false );
+    m_loader_lock.unlock();
+    return ret;
 }
 
-// private, thread safe
+/**********************************************************/
+/* create PixbufLoader ************************************/
+
+// private, NOT thread safe
 // sizeonly = true の時はサイズの取得のみ、pixbufonly = true も指定すること 
-const bool ImgLoader::load( const bool pixbufonly, const bool sizeonly )
+const bool ImgLoader::load_imgfile( const bool pixbufonly, const bool sizeonly )
 {
-    m_loader_lock.lock();
     if( sizeonly && m_width && m_height ) return true;
     if( m_loader ) {
         // 以前の読み込みが中断せずに完了した、またはpixbufonly
@@ -84,7 +96,6 @@ const bool ImgLoader::load( const bool pixbufonly, const bool sizeonly )
 #ifdef _DEBUG
     std::cout << "ImgLoader don't load" << std::endl;
 #endif
-            m_loader_lock.unlock();
             return true;
         }
         // リロード
@@ -113,7 +124,6 @@ const bool ImgLoader::load( const bool pixbufonly, const bool sizeonly )
     f = fopen( to_locale_cstr( m_file ), "rb" );
     if( ! f ){
         m_errmsg = "cannot file open";
-        m_loader_lock.unlock();
         return false;
     }
 
@@ -167,7 +177,6 @@ const bool ImgLoader::load( const bool pixbufonly, const bool sizeonly )
     std::cout << "ImgLoader::load read = " << total << "  w = " << m_width << " h = " << m_height << std::endl;
 #endif
 
-    m_loader_lock.unlock();
     return ret;
 }
 
@@ -227,7 +236,7 @@ ImgProvider::ImgProvider()
 {
 }
 
-// static, NOT thread safe
+// static
 ImgProvider& ImgProvider::get_provider()
 {
     // singleton provider
@@ -235,9 +244,9 @@ ImgProvider& ImgProvider::get_provider()
     return instance;
 }
 
+// NOT thread safe
 Glib::RefPtr< ImgLoader > ImgProvider::get_loader( const std::string& file )
 {
-    m_cache_lock.lock();
     // ImgLoaderキャッシュをサーチ
     for( std::list< Glib::RefPtr< ImgLoader > >::iterator it = m_cache.begin();
             it != m_cache.end(); it++ ) {
@@ -248,24 +257,21 @@ Glib::RefPtr< ImgLoader > ImgProvider::get_loader( const std::string& file )
                 m_cache.erase( it );
                 m_cache.push_front( ret );
             }
-            m_cache_lock.unlock();
             return ret;
         }
     }
-    m_cache_lock.unlock();
     return Glib::RefPtr< ImgLoader >(); //null
 }
 
+// NOT thread safe
 void ImgProvider::set_loader( Glib::RefPtr< ImgLoader > loader )
 {
     int size = CONFIG::get_imgcache_size();
     if( size ) {
-        m_cache_lock.lock();
         if( m_cache.size() >= (size_t)size ) {
             m_cache.pop_back();
         }
         m_cache.push_front( loader );
-        m_cache_lock.unlock();
     }
 }
 
