@@ -87,8 +87,8 @@ void ImageAreaBase::stop()
 #ifdef _DEBUG    
     std::cout << "ImageAreaBase::stop" << std::endl;
 #endif 
-
-    m_imgloader->request_stop();
+    if( m_imgloader )
+        m_imgloader->request_stop();
 }
 
 
