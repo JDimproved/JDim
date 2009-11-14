@@ -87,7 +87,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
     }
 
     // 過去ログ倉庫使用
-    if( m_mode == MODE_KAKO_GZ || m_mode == MODE_KAKO ){
+    else if( m_mode == MODE_KAKO_GZ || m_mode == MODE_KAKO ){
 
         JDLIB::Regex regex;
         if( ! regex.exec( "(http://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url ) ) return;
