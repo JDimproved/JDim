@@ -28,7 +28,7 @@ namespace JDLIB
         int m_y;
         
     public:
-        virtual ~ImgLoader(){}
+        virtual ~ImgLoader();
         static Glib::RefPtr< ImgLoader > get_loader( const std::string& file );
         
         const std::string& get_errmsg() const { return m_errmsg; }

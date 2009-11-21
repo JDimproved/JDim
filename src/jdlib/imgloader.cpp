@@ -20,19 +20,31 @@ ImgLoader::ImgLoader( const std::string& file )
       m_stop( false ),
       m_stopped( false ),
       m_y( 0 )
-{}
+{
+#ifdef _DEBUG
+    std::cout << "ImgLoader::ImgLoader file = " << m_file << std::endl;
+#endif
+}
+
+
+ImgLoader::~ImgLoader()
+{
+#ifdef _DEBUG
+    std::cout << "ImgLoader::~ImgLoader file = " << m_file << std::endl;
+#endif
+}
+
 
 // static
 Glib::RefPtr< ImgLoader > ImgLoader::get_loader( const std::string& file )
 {
     ImgProvider& provider = ImgProvider::get_provider();
-    provider.m_provider_lock.lock();
+    Glib::Mutex::Lock lock( provider.m_provider_lock );
     Glib::RefPtr< ImgLoader > loader = provider.get_loader( file );
     if( ! loader ) {
         loader = Glib::RefPtr< ImgLoader >( new ImgLoader( file ) );
         provider.set_loader( loader );
     }
-    provider.m_provider_lock.unlock();
     return loader;
 }
 
@@ -42,33 +54,30 @@ Glib::RefPtr< ImgLoader > ImgLoader::get_loader( const std::string& file )
 // 画像サイズ取得
 bool ImgLoader::get_size( int& width, int& height )
 {
-    m_loader_lock.lock();
+    Glib::Mutex::Lock lock( m_loader_lock );
     bool ret = load_imgfile( true, true );
     width = m_width;
     height = m_height;
-    m_loader_lock.unlock();
     return ret;
 }
 
 Glib::RefPtr< Gdk::Pixbuf > ImgLoader::get_pixbuf( const bool pixbufonly )
 {
     Glib::RefPtr< Gdk::Pixbuf > ret;
-    m_loader_lock.lock();
+    Glib::Mutex::Lock lock( m_loader_lock );
     if( load_imgfile( pixbufonly, false ) ) {
         ret = m_loader->get_pixbuf();
     }
-    m_loader_lock.unlock();
     return ret;
 }
 
 Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 {
     Glib::RefPtr< Gdk::PixbufAnimation > ret;
-    m_loader_lock.lock();
+    Glib::Mutex::Lock lock( m_loader_lock );
     if( load_imgfile( false, false ) ) {
         ret = m_loader->get_animation();
     }
-    m_loader_lock.unlock();
     return ret;
 }
 
@@ -76,9 +85,8 @@ Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 // 動画でpixbufonly = true の時はアニメーションさせない
 const bool ImgLoader::load( const bool pixbufonly )
 {
-    m_loader_lock.lock();
+    Glib::Mutex::Lock lock( m_loader_lock );
     bool ret = load_imgfile( pixbufonly, false );
-    m_loader_lock.unlock();
     return ret;
 }
 
@@ -94,7 +102,7 @@ const bool ImgLoader::load_imgfile( const bool pixbufonly, const bool sizeonly )
         // 以前の読み込みが中断せずに完了した、またはpixbufonly
         if( ! m_stopped || pixbufonly ) {
 #ifdef _DEBUG
-    std::cout << "ImgLoader don't load" << std::endl;
+            std::cout << "ImgLoader don't load file = " << m_file << std::endl;
 #endif
             return true;
         }
