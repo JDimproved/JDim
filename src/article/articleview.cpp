@@ -44,7 +44,7 @@ enum
 // メインビュー
 
 ArticleViewMain::ArticleViewMain( const std::string& url )
-    :  ArticleViewBase( url ), m_gotonum_reserve( 0 ), m_gotonum_seen( 0 ), m_playsound( false )
+    :  ArticleViewBase( url ), m_gotonum_reserve( 0 ), m_gotonum_seen( 0 ), m_playsound( false ), m_reload_reserve( false )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::ArticleViewMain " << get_url() << " url_article = " << url_article() << std::endl;
@@ -97,6 +97,17 @@ void ArticleViewMain::clock_in()
 
     // 実況モードでリロード
     if( get_live() && ! is_loading() && inc_autoreload_counter() ) exec_reload();
+
+    // 更新チェック中にshow_view()が呼び出された場合は
+    // チェックが終わってから改めてロードする
+    if( m_reload_reserve ){
+
+        if( ! get_article()->is_checking_update() ){
+
+            m_reload_reserve = false;
+            show_view();
+        }
+    }
 }
 
 
@@ -200,6 +211,12 @@ void ArticleViewMain::exec_reload()
 //
 void ArticleViewMain::show_view()
 {
+    // 更新チェック中の場合はチェックが終わってからclock_in()でロードする
+    if( get_article()->is_checking_update() ){
+        m_reload_reserve = true;
+        return;
+    }
+
     if( is_loading() ) return;
 
     m_gotonum_reserve = 0;

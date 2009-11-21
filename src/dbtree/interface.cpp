@@ -849,6 +849,11 @@ const bool DBTREE::article_is_loading( const std::string& url )
     return DBTREE::get_article( url )->is_loading();
 }
 
+const bool DBTREE::article_is_checking_update( const std::string& url )
+{
+    return DBTREE::get_article( url )->is_checking_update();
+}
+
 void DBTREE::article_download_dat( const std::string& url, const bool check_update )
 {
     DBTREE::get_article( url )->download_dat( check_update );

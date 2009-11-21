@@ -26,6 +26,8 @@ namespace ARTICLE
 
         bool m_show_closedialog;
 
+        bool m_reload_reserve;
+
       public:
         ArticleViewMain( const std::string& url );
         ~ArticleViewMain();

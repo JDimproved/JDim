@@ -995,6 +995,16 @@ const bool ArticleBase::is_loading()
 }
 
 
+//
+// 更新チェック中か
+//
+const bool ArticleBase::is_checking_update()
+{
+    if( ! is_loading() ) return false;
+
+    return m_nodetree->is_checking_update();
+}
+
 
 //
 // ロード停止
@@ -1044,7 +1054,9 @@ void ArticleBase::download_dat( const bool check_update )
             )
         {
 #ifdef _DEBUG
-            std::cout << "skipped : passed = " << passed << " enable_load = " << enable_load() << std::endl;
+            std::cout << "skipped : passed = " << passed << " enable_load = " << enable_load()
+                      << " loading = " << is_loading()
+                      << std::endl;
 #endif
             return;
         }

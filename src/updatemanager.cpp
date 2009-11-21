@@ -52,7 +52,13 @@ CheckUpdate_Manager::~CheckUpdate_Manager()
 
 void CheckUpdate_Manager::run()
 {
-    if( m_running ) return;
+    if( m_running ){
+
+#ifdef _DEBUG
+        std::cout << "CheckUpdate_Manager::run failed items = " << m_list_item.size() << std::endl;
+#endif
+        return;
+    }
 
     m_total = m_list_item.size();
     if( ! m_total ) return;
@@ -239,7 +245,7 @@ void CheckUpdate_Manager::pop_front()
         const bool check_update = true;
         DBTREE::article_download_dat( m_url_checking, check_update );
 
-        if( ! DBTREE::article_is_loading( m_url_checking ) ){
+        if( ! DBTREE::article_is_checking_update( m_url_checking ) ){
 
 #ifdef _DEBUG
             std::cout << "skipped\n";

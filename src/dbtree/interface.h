@@ -203,6 +203,7 @@ namespace DBTREE
     void article_set_number_seen( const std::string& url, int seen );
     const int article_number_new( const std::string& url );    
     const bool article_is_loading( const std::string& url );
+    const bool article_is_checking_update( const std::string& url );
     void article_download_dat( const std::string& url, const bool check_update );
     void article_set_url_pre_article( const std::string& url, const std::string& url_pre_article );
     void article_copy_article_info( const std::string& url, const std::string& url_src );

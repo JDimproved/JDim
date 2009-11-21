@@ -349,8 +349,10 @@ namespace DBTREE
         // キャッシュがあって、force = true の時は強制書き込み
         virtual void save_info( const bool force );
 
-        // スレッドのロード開始
-        const bool is_loading();
+        const bool is_loading(); // ロード中か
+        const bool is_checking_update();  // 更新チェック中か
+
+        // スレッドのロード停止
         void stop_load();
 
         // スレッドのロード開始
