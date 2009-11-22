@@ -144,6 +144,7 @@ void EmbeddedImage::resize_thread()
 
         m_pixbuf = pixbuf->scale_simple( width, height, interptype );
     }
+    m_imgloader.clear();
 
     // メインスレッドにリサイズが終わったことを知らせて
     // メインスレッドがpthread_join()を呼び出す

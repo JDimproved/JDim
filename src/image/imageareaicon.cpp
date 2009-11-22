@@ -111,6 +111,7 @@ void ImageAreaIcon::load_image_thread()
         if( pixbuf ) 
             m_pixbuf_icon = pixbuf->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
     }
+    m_imgloader.clear();
 
     if( m_pixbuf_icon ){
         m_imagetype = IMAGE_SHOW_ICON;

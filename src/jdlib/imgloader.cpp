@@ -1,6 +1,7 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
+//#define _VERBOSE
 #include "jddebug.h"
 
 #include "imgloader.h"
@@ -35,6 +36,8 @@ ImgLoader::~ImgLoader()
 
 
 // static
+// いつまでもImgLoaderを保持していると、キャッシュアウトしても解放されないため、
+// ImgLoaderは不要になった時点で、ただちに解放(.clear()または他の値代入)すること
 Glib::RefPtr< ImgLoader > ImgLoader::get_loader( const std::string& file )
 {
     ImgProvider& provider = ImgProvider::get_provider();
@@ -98,7 +101,8 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
         // キャッシュに読み込んだデータが十分かどうか
         if( m_loadlevel <= loadlevel ) {
 #ifdef _DEBUG
-            std::cout << "ImgLoader don't load file = " << m_file << std::endl;
+            std::cout << "ImgLoader use cache loadlevel = " << loadlevel << " / " << m_loadlevel
+                      << " file = " << m_file << std::endl;
 #endif
             return true;
         }
@@ -118,11 +122,13 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
 #endif
 
     bool ret = true;
-
     FILE* f = NULL;
     const size_t bufsize = 8192;
     size_t readsize = 0;
     guint8 data[ bufsize ];
+#if GTKMMVER <= 240
+    bool size_prepared = false;
+#endif
 
     f = fopen( to_locale_cstr( m_file ), "rb" );
     if( ! f ){
@@ -134,7 +140,7 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
         m_loader = Gdk::PixbufLoader::create();
 
 #if GTKMMVER > 240
-        if( m_loadlevel == LOADLEVEL_SIZEONLY ) m_loader->signal_size_prepared().connect( sigc::mem_fun( *this, &ImgLoader::slot_size_prepared ) );
+        m_loader->signal_size_prepared().connect( sigc::mem_fun( *this, &ImgLoader::slot_size_prepared ) );
 #endif
         m_loader->signal_area_updated().connect( sigc::mem_fun( *this, &ImgLoader::slot_area_updated ) );
 
@@ -153,11 +159,11 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
             }
 
 #if GTKMMVER <= 240 // gdkのバージョンが古い場合はpixbufを取得してサイズを得る
-
-            if( loadlevel == LOADLEVEL_SIZEONLY && m_loader->get_pixbuf() ){
+            if( ! size_prepared && m_loader->get_pixbuf() ){
+                size_prepared = true;
                 m_width = m_loader->get_pixbuf()->get_width();
                 m_height = m_loader->get_pixbuf()->get_height();
-                m_stop = true;
+                if( loadlevel == LOADLEVEL_SIZEONLY ) m_stop = true;
             }
 #endif
         }
@@ -196,7 +202,7 @@ void ImgLoader::slot_size_prepared( int w, int h )
 
     m_width = w;
     m_height = h;
-    request_stop();
+    if( m_loadlevel == LOADLEVEL_SIZEONLY ) request_stop();
 }
 
 
@@ -205,7 +211,7 @@ void ImgLoader::slot_area_updated(int x, int y, int w, int h )
 {
     if( m_loadlevel >= LOADLEVEL_PIXBUFONLY ){
 
-#ifdef _DEBUG
+#if defined( _DEBUG ) && defined( _VERBOSE )
         std::cout << "ImgLoader::slot_area_updated x = " << x << " y = " << y << " w = " << w << " h = " << h << std::endl;
 #endif
 
