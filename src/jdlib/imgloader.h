@@ -11,6 +11,14 @@
 
 namespace JDLIB
 {
+    // 画像ロードレベル、必要なデータ量順に定義
+    enum
+    {
+        LOADLEVEL_NORMAL = 0,   // 画像データ全体を読み込む
+        LOADLEVEL_PIXBUFONLY,   // pixbufを作るのに十分なデータを読み込む
+        LOADLEVEL_SIZEONLY      // サイズを計算するのに十分なデータを読み込む
+    };
+    
     class ImgLoader : public Glib::Object
     {
         Glib::RefPtr< Gdk::PixbufLoader > m_loader;
@@ -22,10 +30,8 @@ namespace JDLIB
         int m_height;
         
         bool m_stop;
-        bool m_stopped; // 実際に読み込みを中断したフラグ
-        
-        bool m_pixbufonly;
         int m_y;
+        int m_loadlevel;
         
     public:
         virtual ~ImgLoader();
@@ -44,7 +50,7 @@ namespace JDLIB
         
     private:
         ImgLoader( const std::string& file );
-        const bool load_imgfile( const bool pixbufonly, const bool sizeonly );
+        const bool load_imgfile( const int loadlevel );
         
         void slot_size_prepared( int w, int h );
         void slot_area_updated(int x, int y, int w, int h );

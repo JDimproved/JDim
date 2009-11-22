@@ -18,7 +18,6 @@ ImgLoader::ImgLoader( const std::string& file )
       m_width( 0 ),
       m_height( 0 ),
       m_stop( false ),
-      m_stopped( false ),
       m_y( 0 )
 {
 #ifdef _DEBUG
@@ -55,7 +54,7 @@ Glib::RefPtr< ImgLoader > ImgLoader::get_loader( const std::string& file )
 bool ImgLoader::get_size( int& width, int& height )
 {
     Glib::Mutex::Lock lock( m_loader_lock );
-    bool ret = load_imgfile( true, true );
+    bool ret = load_imgfile( LOADLEVEL_SIZEONLY );
     width = m_width;
     height = m_height;
     return ret;
@@ -65,7 +64,7 @@ Glib::RefPtr< Gdk::Pixbuf > ImgLoader::get_pixbuf( const bool pixbufonly )
 {
     Glib::RefPtr< Gdk::Pixbuf > ret;
     Glib::Mutex::Lock lock( m_loader_lock );
-    if( load_imgfile( pixbufonly, false ) ) {
+    if( load_imgfile( pixbufonly ? LOADLEVEL_PIXBUFONLY : LOADLEVEL_NORMAL ) ) {
         ret = m_loader->get_pixbuf();
     }
     return ret;
@@ -75,7 +74,7 @@ Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 {
     Glib::RefPtr< Gdk::PixbufAnimation > ret;
     Glib::Mutex::Lock lock( m_loader_lock );
-    if( load_imgfile( false, false ) ) {
+    if( load_imgfile( LOADLEVEL_NORMAL ) ) {
         ret = m_loader->get_animation();
     }
     return ret;
@@ -86,21 +85,18 @@ Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 const bool ImgLoader::load( const bool pixbufonly )
 {
     Glib::Mutex::Lock lock( m_loader_lock );
-    bool ret = load_imgfile( pixbufonly, false );
-    return ret;
+    return load_imgfile( pixbufonly ? LOADLEVEL_PIXBUFONLY : LOADLEVEL_NORMAL );
 }
 
 /**********************************************************/
 /* create PixbufLoader ************************************/
 
 // private, NOT thread safe
-// sizeonly = true の時はサイズの取得のみ、pixbufonly = true も指定すること 
-const bool ImgLoader::load_imgfile( const bool pixbufonly, const bool sizeonly )
+const bool ImgLoader::load_imgfile( const int loadlevel )
 {
-    if( sizeonly && m_width && m_height ) return true;
     if( m_loader ) {
-        // 以前の読み込みが中断せずに完了した、またはpixbufonly
-        if( ! m_stopped || pixbufonly ) {
+        // キャッシュに読み込んだデータが十分かどうか
+        if( m_loadlevel <= loadlevel ) {
 #ifdef _DEBUG
             std::cout << "ImgLoader don't load file = " << m_file << std::endl;
 #endif
@@ -110,14 +106,13 @@ const bool ImgLoader::load_imgfile( const bool pixbufonly, const bool sizeonly )
         m_width = 0;
         m_height = 0;
         m_stop = false;
-        m_stopped = false;
         m_y = 0;
     }
 
-    m_pixbufonly = pixbufonly;
+    m_loadlevel = loadlevel;
 
 #ifdef _DEBUG
-    std::cout << "ImgLoader sizeonly = " << sizeonly
+    std::cout << "ImgLoader loadlevel = " << loadlevel
               << " file = " << m_file << std::endl;
     size_t total = 0;
 #endif
@@ -139,11 +134,11 @@ const bool ImgLoader::load_imgfile( const bool pixbufonly, const bool sizeonly )
         m_loader = Gdk::PixbufLoader::create();
 
 #if GTKMMVER > 240
-        if( sizeonly ) m_loader->signal_size_prepared().connect( sigc::mem_fun( *this, &ImgLoader::slot_size_prepared ) );
+        if( m_loadlevel == LOADLEVEL_SIZEONLY ) m_loader->signal_size_prepared().connect( sigc::mem_fun( *this, &ImgLoader::slot_size_prepared ) );
 #endif
         m_loader->signal_area_updated().connect( sigc::mem_fun( *this, &ImgLoader::slot_area_updated ) );
 
-        while( ! m_stop || ! ( m_stopped = true ) ){
+        while( ! m_stop ){
 
             readsize = fread( data, 1, bufsize, f );
             if( readsize ) m_loader->write( data, readsize );
@@ -152,11 +147,14 @@ const bool ImgLoader::load_imgfile( const bool pixbufonly, const bool sizeonly )
             total += readsize;
             std::cout << readsize << " / " << total << std::endl;
 #endif
-            if( feof( f ) ) break;
+            if( feof( f ) ){ // 画像データ全体を読み込み完了
+                m_loadlevel = LOADLEVEL_NORMAL;
+                break;
+            }
 
 #if GTKMMVER <= 240 // gdkのバージョンが古い場合はpixbufを取得してサイズを得る
 
-            if( sizeonly && m_loader->get_pixbuf() ){
+            if( loadlevel == LOADLEVEL_SIZEONLY && m_loader->get_pixbuf() ){
                 m_width = m_loader->get_pixbuf()->get_width();
                 m_height = m_loader->get_pixbuf()->get_height();
                 m_stop = true;
@@ -205,7 +203,7 @@ void ImgLoader::slot_size_prepared( int w, int h )
 // 画像の一部分が更新された時のシグナルハンドラ
 void ImgLoader::slot_area_updated(int x, int y, int w, int h )
 {
-    if( m_pixbufonly ){
+    if( m_loadlevel >= LOADLEVEL_PIXBUFONLY ){
 
 #ifdef _DEBUG
         std::cout << "ImgLoader::slot_area_updated x = " << x << " y = " << y << " w = " << w << " h = " << h << std::endl;
