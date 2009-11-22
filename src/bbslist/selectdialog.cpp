@@ -36,6 +36,7 @@ SelectListDialog::SelectListDialog( const std::string& url, Glib::RefPtr< Gtk::T
     const int mrg = 8;
 
     if( CORE::SBUF_size() ) m_label_name.set_text(  ( *CORE::SBUF_list_info().begin() ).name );
+    set_activate_entry( m_label_name );
 
     m_hbox_dirs.set_spacing( mrg );
     m_hbox_dirs.pack_start( m_label_dirs, Gtk::PACK_SHRINK );
@@ -91,6 +92,7 @@ SelectListDialog::SelectListDialog( const std::string& url, Glib::RefPtr< Gtk::T
     set_title( "お気に入り追加先選択" );
     resize( SELECTDIAG_WIDTH, 1 );
 
+    set_default_response( Gtk::RESPONSE_OK );
     grab_ok();
     show_all_children();
 }
@@ -108,9 +110,13 @@ SelectListDialog::~SelectListDialog()
 void SelectListDialog::slot_ok_clicked()
 {
     if( ! m_selectview ) SESSION::set_dir_select_favorite( m_combo_dirs.get_active_text() );
-    if( CORE::SBUF_size() == 1 ) ( *CORE::SBUF_list_info().begin() ).name = m_label_name.get_text();
 }
 
+
+const std::string SelectListDialog::get_name()
+{
+    return m_label_name.get_text();
+}
 
 const std::string SelectListDialog::get_path()
 {

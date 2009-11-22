@@ -2752,7 +2752,7 @@ void BBSListViewBase::append_item()
 
     // 挿入先ダイアログ内で編集を行うとバッファがクリアされてしまうので
     // バックアップを取っておく
-    const CORE::DATA_INFO_LIST list_info_bkup = CORE::SBUF_list_info();
+    CORE::DATA_INFO_LIST list_info_bkup = CORE::SBUF_list_info();
 
     // 挿入先ダイアログ表示
     SelectListDialog diag( get_url(), get_treestore() );
@@ -2763,6 +2763,7 @@ void BBSListViewBase::append_item()
     const bool scroll = true;
 
     const std::string path_str = diag.get_path();
+    if( list_info_bkup.size() == 1 && ! diag.get_name().empty() ) ( *list_info_bkup.begin() ).name = diag.get_name();
 
     // 先頭
     if( path_str == "-1" ){

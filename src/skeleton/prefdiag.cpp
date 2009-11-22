@@ -4,6 +4,7 @@
 #include "jddebug.h"
 
 #include "prefdiag.h"
+#include "label_entry.h"
 
 #include "command.h"
 #include "session.h"
@@ -53,6 +54,26 @@ void PrefDiag::grab_ok()
     m_bt_ok->set_flags( Gtk::CAN_DEFAULT );
     m_bt_ok->grab_default();
     m_bt_ok->grab_focus();
+}
+
+
+//
+// LabelEntryがactiveになったときにOKでダイアログを終了させる
+//
+void PrefDiag::set_activate_entry( LabelEntry& entry )
+{
+    entry.signal_activate().connect( sigc::mem_fun( *this, &PrefDiag::slot_activate_entry ) );
+}
+
+
+void PrefDiag::slot_activate_entry()
+{
+#ifdef _DEBUG
+    std::cout << "PrefDiag::slot_activate_entry\n";
+#endif
+
+    slot_ok_clicked();
+    response( Gtk::RESPONSE_OK );
 }
 
 

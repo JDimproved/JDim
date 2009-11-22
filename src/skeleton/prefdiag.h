@@ -11,6 +11,8 @@
 
 namespace SKELETON
 {
+    class LabelEntry;
+
     class PrefDiag : public Gtk::Dialog
     {
         std::string m_url;
@@ -32,6 +34,9 @@ namespace SKELETON
         // okボタンをフォーカス
         void grab_ok();
 
+        // LabelEntryがactiveになったときにOKでダイアログを終了させる
+        void set_activate_entry( LabelEntry& entry );
+
         virtual int run();
 
       protected:
@@ -47,6 +52,8 @@ namespace SKELETON
 
         // 各設定ダイアログ別のタイムアウト処理 ( slot_timeout()から呼び出される )
         virtual void timeout(){}
+
+        void slot_activate_entry();
     };
 }
 

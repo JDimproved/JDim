@@ -15,6 +15,10 @@ namespace SKELETON
 {
     class LabelEntry : public Gtk::HBox
     {
+        typedef sigc::signal< void > SIG_ACTIVATE;
+
+        SIG_ACTIVATE m_sig_activate;
+
         bool m_editable;
         Gtk::Label m_label;
         Gtk::Label m_info;
@@ -23,6 +27,8 @@ namespace SKELETON
       public:
 
         LabelEntry( const bool editable, const std::string& label, const std::string& text = std::string() );
+
+        SIG_ACTIVATE signal_activate(){ return m_sig_activate; }
 
         void set_editable( const bool editable );
         void set_visibility( const bool visibility );
@@ -38,6 +44,9 @@ namespace SKELETON
       private:
 
         void setup();
+
+        // entry からsignal_activateを受け取った
+        void slot_entry_acivate();
     };
 }
 

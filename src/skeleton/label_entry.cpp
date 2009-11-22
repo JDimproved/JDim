@@ -14,6 +14,7 @@ LabelEntry::LabelEntry( const bool editable, const std::string& label, const std
 {
     set_label( label );
     m_label.set_mnemonic_widget ( m_entry );
+    m_entry.signal_activate().connect( sigc::mem_fun( *this, &LabelEntry::slot_entry_acivate ) );
     pack_start( m_label, Gtk::PACK_SHRINK );
 
     m_info.set_size_request( 0, 0 );
@@ -86,4 +87,14 @@ const bool LabelEntry::has_grab()
 {
     if( m_editable ) return m_entry.has_grab();
     return false;
+}
+
+// entry からsignal_activateを受け取った
+void LabelEntry::slot_entry_acivate()
+{
+#ifdef _DEBUG    
+    std::cout << "LabelEntry::slot_entry_acivate\n";
+#endif
+
+    m_sig_activate.emit();
 }
