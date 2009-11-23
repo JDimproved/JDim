@@ -161,6 +161,15 @@ const bool DBTREE::move_board( const std::string& url_old, const std::string& ur
     return get_root()->move_board( url_old, url_new, false );
 }
 
+void DBTREE::set_enable_save_movetable( const bool set )
+{
+    get_root()->set_enable_save_movetable( set );
+}
+
+void DBTREE::save_movetable()
+{
+    get_root()->save_movetable();
+}
 
 const XML::Document& DBTREE::get_xml_document()
 {

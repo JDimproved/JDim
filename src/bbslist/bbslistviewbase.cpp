@@ -2282,8 +2282,15 @@ void BBSListViewBase::update_urls()
     if( m_treestore->children().empty() ) return; 
    
 #ifdef _DEBUG
-    std::cout << "BBSListViewBase::update_urls()\n";
+    std::cout << "BBSListViewBase::update_urls " << get_url() << std::endl;
 #endif
+
+    bool updated = false;
+
+    // 移転情報の保存( Root::save_movetable() )を無効にする。
+    // 無効にしないと DBTREE::url_boardbase() -> Root::get_board() 経由で
+    // 繰り返し Root::save_movetable() が実行されてJDが固まったようになる
+    DBTREE::set_enable_save_movetable( false );
 
     m_set_board.clear();
     m_set_thread.clear();
@@ -2309,11 +2316,15 @@ void BBSListViewBase::update_urls()
                 case TYPE_BOARD_UPDATE:
 
                     url_new = DBTREE::url_boardbase( url );
-                    row[ m_columns.m_url ] = url_new;
-                    m_set_board.insert( url_new );
+                    if( url != url_new ){
+                        updated = true;
+                        row[ m_columns.m_url ] = url_new;
 #ifdef _DEBUG
-                    std::cout << url << " -> " << url_new << std::endl;
+                        std::cout << url << " -> " << url_new << std::endl;
 #endif
+                    }
+
+                    m_set_board.insert( url_new );
                     path.next();
                     break;
 
@@ -2322,11 +2333,15 @@ void BBSListViewBase::update_urls()
                 case TYPE_THREAD_OLD:
 
                     url_new = DBTREE::url_dat( url );
-                    row[ m_columns.m_url ] = url_new;
-                    m_set_thread.insert( url_new );
+                    if( url != url_new ){
+                        updated = true;
+                        row[ m_columns.m_url ] = url_new;
 #ifdef _DEBUG
-                    std::cout << url << " -> " << url_new << std::endl;
+                        std::cout << url << " -> " << url_new << std::endl;
 #endif
+                    }
+
+                    m_set_thread.insert( url_new );
                     path.next();
                     break;
 
@@ -2345,6 +2360,13 @@ void BBSListViewBase::update_urls()
             }
             else break;
         }
+    }
+
+    DBTREE::set_enable_save_movetable( true );
+
+    if( updated ){
+        save_xml( false );
+        DBTREE::save_movetable();
     }
 }
 

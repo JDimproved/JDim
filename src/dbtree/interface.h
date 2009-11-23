@@ -70,6 +70,12 @@ namespace DBTREE
     // 板移転
     const bool move_board( const std::string& url_old, const std::string& url_new );
 
+    // 板移転情報の保存の有効切り替え
+    void set_enable_save_movetable( const bool set );
+
+    // 移転情報保存
+    void save_movetable();
+
     // bbslist系
     const XML::Document& get_xml_document();
     const std::list< DBTREE::ETCBOARDINFO >& get_etcboards();

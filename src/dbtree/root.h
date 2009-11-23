@@ -74,6 +74,8 @@ namespace DBTREE
         std::string m_get_board_url;
         BoardBase* m_get_board;
 
+        bool m_enable_save_movetable;
+
       public:
 
         Root();
@@ -128,6 +130,12 @@ namespace DBTREE
                                           const int count = 0
             );
 
+        // 移転情報保存の有効切り替え
+        void set_enable_save_movetable( const bool set ){ m_enable_save_movetable = set; }
+
+        // 移転情報保存
+        void save_movetable();
+
         // 全板の情報ファイル読み込み
         void read_boardinfo_all();
 
@@ -180,7 +188,6 @@ namespace DBTREE
         void load_cache();
         void load_etc();
         void load_movetable();
-        void save_movetable();
 
         // urlのタイプ判定
         const bool is_2ch( const std::string& url );

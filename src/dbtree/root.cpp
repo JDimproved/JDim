@@ -66,6 +66,7 @@ Root::Root()
     , m_analyzing_board_xml( false )
     , m_board_null( 0 )
     , m_get_board( NULL )
+    , m_enable_save_movetable( true )
 {
     m_document.clear();
     clear();
@@ -231,8 +232,14 @@ BoardBase* Root::get_board( const std::string& url, const int count )
                        << "新 URL  = " << board->url_boardbase() << std::endl;
                     MISC::MSG( ss.str() );
 
-                    //移転テーブル保存
-                    save_movetable();
+                    if( m_enable_save_movetable ){
+
+                        //移転テーブル保存
+                        save_movetable();
+
+                        // サイドバーに登録されているURL更新
+                        CORE::core_set_command( "update_sidebar_item" );
+                    }
 
                     BoardBase* board = get_board( url, count + 1 );
                     m_get_board_url = url;
@@ -475,8 +482,14 @@ void Root::analyze_board_xml()
         diag.resize( 600, 400 );
         diag.run();
 
-        //移転テーブル保存
-        save_movetable();
+        if( m_enable_save_movetable ){
+
+            //移転テーブル保存
+            save_movetable();
+
+            // サイドバーに登録されているURL更新
+            CORE::core_set_command( "update_sidebar_item" );
+        }
     }
 
     m_analyzing_board_xml = false;
@@ -683,7 +696,16 @@ const bool Root::move_board( const std::string& url_old, const std::string& url_
             ) ) return false;
 
     // キャッシュを移動した
-    if( ! m_move_info.empty() ) save_movetable();
+    if( ! m_move_info.empty() ){
+
+        if( m_enable_save_movetable ){
+
+            save_movetable();
+
+            // サイドバーに登録されているURL更新
+            CORE::core_set_command( "update_sidebar_item" );
+        }
+    }
 
     return true;
 }
@@ -1286,8 +1308,14 @@ const std::string Root::is_board_moved( const std::string& url,
 
                     MISC::MSG( str );
 
-                    //移転テーブル保存
-                    save_movetable();
+                    if( m_enable_save_movetable ){
+
+                        //移転テーブル保存
+                        save_movetable();
+
+                        // サイドバーに登録されているURL更新
+                        CORE::core_set_command( "update_sidebar_item" );
+                    }
 
                     // 改めてもう一度実行
                     return is_board_moved( url, old_root, old_path_board, new_root, new_path_board, 0 ); 
@@ -1408,9 +1436,6 @@ void Root::save_movetable()
 #endif
     
     CACHE::save_rawdata( file_move, movetable.str() );
-
-    // サイドバーに登録されているURL更新
-    CORE::core_set_command( "update_sidebar_item" );
 }
 
 
