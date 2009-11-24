@@ -235,6 +235,7 @@ namespace BOARD
         const bool open_row( Gtk::TreePath& path, const bool tab );
         void open_selected_rows();
         const std::string path2daturl( const Gtk::TreePath& path );
+        const std::string path2url_board( const Gtk::TreePath& path );
 
         // 検索
         const bool drawout();

@@ -1891,6 +1891,7 @@ void ArticleBase::save_info( const bool force )
     m_save_info = false;
 
     if( m_path_article_ext_info.empty() ) return;
+    if( ! CACHE::mkdir_boardroot( m_url ) ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::save_info force = " << force << std::endl;

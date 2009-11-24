@@ -2228,6 +2228,15 @@ const std::string BoardViewBase::path2daturl( const Gtk::TreePath& path )
 }
 
 
+//
+// path -> 板URL変換
+// 
+const std::string BoardViewBase::path2url_board( const Gtk::TreePath& path )
+{
+    if( ! get_url_board().empty() ) return get_url_board();
+    if( path.empty() ) return std::string();
+    return DBTREE::url_subject( path2daturl( path ) );
+}
 
 
 //
@@ -2398,7 +2407,10 @@ void BoardViewBase::operate_search( const std::string& controlid )
 //
 void BoardViewBase::show_preference()
 {
-    SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, get_url_board() );
+    std::string url_board = path2url_board( m_path_selected );
+    if( url_board.empty() ) return;
+
+    SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, url_board );
     pref->run();
     delete pref;
 }
