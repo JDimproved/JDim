@@ -103,7 +103,7 @@ void BoardAdmin::restore( const bool only_locked )
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
 
         // 板がDBに登録されていない場合は表示しない
-        if( DBTREE::url_boardbase( command_arg.url ).empty() ){
+        if( command_arg.url != URL_ALLLOG && DBTREE::url_boardbase( command_arg.url ).empty() ){
             MISC::ERRMSG(  *it_url + " is not registered" );
             continue;
         }
