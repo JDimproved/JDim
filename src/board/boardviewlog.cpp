@@ -103,8 +103,9 @@ void BoardViewLog::slot_search_fin( const std::string& id )
 //
 void BoardViewLog::update_boardname()
 {
-    std::string title = "[ ログ一覧 ]";
-    if( ! get_url_board().empty() ) title += " - " + DBTREE::board_name( get_url_board() );
+    std::string title;
+    if( get_url() == URL_ALLLOG ) title = "[ 全ログ一覧 ]";
+    else if( ! get_url_board().empty() ) title = "[ ログ一覧 ] - " + DBTREE::board_name( get_url_board() );
 
     // ウィンドウタイトル表示
     set_title( title );
@@ -146,6 +147,8 @@ void BoardViewLog::update_item( const std::string& url, const std::string& id )
 #ifdef _DEBUG
             std::cout << "prepend\n";
 #endif
+
+            unsorted_column();
             prepend_row( art );
             goto_top();
         }

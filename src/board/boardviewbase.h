@@ -153,6 +153,9 @@ namespace BOARD
 
       protected:
 
+        // 自動ソート抑制
+        void unsorted_column();
+
         // url から row を取得
         Gtk::TreeModel::Row get_row_from_url( const std::string& url );
 

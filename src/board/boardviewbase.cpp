@@ -47,14 +47,6 @@ using namespace BOARD;
 
 
 
-// 自動ソート抑制
-// -2 = DEFAULT_UNSORTED_COLUMN_ID
-//
-// 列に値をセットする前にUNSORTED_COLUMN()しておかないと
-// いちいちソートをかけるので極端に遅くなる
-#define UNSORTED_COLUMN() do{ m_liststore->gobj()->sort_column_id = -2; } while(0)
-
-
 enum{
     DEFAULT_COLMUN_WIDTH = 50
 };
@@ -346,6 +338,19 @@ const int BoardViewBase::get_icon( const std::string& iconname )
 const std::string BoardViewBase::url_for_copy()
 {
     return DBTREE::url_boardbase( get_url_board() );
+}
+
+
+//
+// 自動ソート抑制
+// -2 = DEFAULT_UNSORTED_COLUMN_ID
+//
+// 追加や更新などで列に値をセットする前に実行してしておかないと
+// いちいちソートをかけるので極端に遅くなる
+//
+void BoardViewBase::unsorted_column()
+{
+    m_liststore->gobj()->sort_column_id = -2;
 }
 
 
@@ -1068,8 +1073,7 @@ void BoardViewBase::update_view_impl( const std::list< DBTREE::ArticleBase* >& l
 #endif
     m_liststore->clear();
 
-    // 自動ソート抑制
-    UNSORTED_COLUMN();
+    unsorted_column();
 
     m_id = 0;
     if( list_subject.size() ){
@@ -1579,8 +1583,7 @@ void BoardViewBase::update_item( const std::string& url, const std::string& id )
               << "url = " << url << " id = " << id << " url_dat = " << url_dat << std::endl;
 #endif
 
-    // 自動ソート抑制
-    UNSORTED_COLUMN();
+    unsorted_column();
    
     Gtk::TreeModel::Row row = get_row_from_url( url_dat );
     if( row ) update_row_common( row );
@@ -1597,9 +1600,8 @@ void BoardViewBase::update_item_all()
     std::cout << "BoardViewBase::update_item_all " << get_url() << std::endl;
 #endif
 
-    // 自動ソート抑制
-    UNSORTED_COLUMN();
-    
+    unsorted_column(); 
+   
     Gtk::TreeModel::Children child = m_liststore->children();
     Gtk::TreeModel::Children::iterator it;
     for( it = child.begin() ; it != child.end() ; ++it ){
@@ -2256,8 +2258,7 @@ const bool BoardViewBase::drawout()
     std::cout << "BoardViewBase::drawout query = " <<  query << std::endl;
 #endif
 
-    // 自動ソート抑制
-    UNSORTED_COLUMN();
+    unsorted_column();
 
     JDLIB::Regex regex;
     Gtk::TreeModel::Children child = m_liststore->children();
@@ -2714,9 +2715,8 @@ void BoardViewBase::draw_bg_articles()
     std::cout << "BoardViewBase::draw_bg_articles size = " << m_list_draw_bg_articles.size() << std::endl;
 #endif
 
-    // 自動ソート抑制
-    UNSORTED_COLUMN();
-
+    unsorted_column();
+    
     std::list< std::string >::const_iterator it = m_list_draw_bg_articles.begin();
     for( ; it != m_list_draw_bg_articles.end(); ++it ){
 
