@@ -370,6 +370,15 @@ std::string CACHE::path_postlog()
 
 
 //
+// メッセージログ（-lオプション）
+//
+std::string CACHE::path_msglog()
+{
+    return path_logroot() + "msglog";
+}
+
+
+//
 // 検索や名前などの補完情報
 //
 std::string CACHE::path_completion( int mode )

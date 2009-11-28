@@ -136,6 +136,7 @@ namespace CACHE
     // ログ
     std::string path_logroot();
     std::string path_postlog(); // 書き込みログ
+    std::string path_msglog(); // メッセージログ（-lオプション）
 
     // 検索や名前などの補完情報
     std::string path_completion( int mode );
