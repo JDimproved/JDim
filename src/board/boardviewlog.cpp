@@ -98,6 +98,14 @@ void BoardViewLog::slot_search_fin( const std::string& id )
 }
 
 
+void BoardViewLog::slot_abone_thread()
+{
+    SKELETON::MsgDiag mdiag( get_parent_win(), "ログ一覧ではあぼ〜ん出来ません" );
+    mdiag.run();
+    return;
+}
+
+
 //
 // 板名更新
 //
@@ -136,7 +144,7 @@ void BoardViewLog::update_item( const std::string& url, const std::string& id )
 
     const Gtk::TreeModel::Row row = get_row_from_url( url_dat );
 
-    if( id.empty() || row ) BoardViewBase::update_item( get_url_board(), id );
+    if( id.empty() || row ) BoardViewBase::update_item( url, id );
 
     // もし row が無く、かつキャッシュがあるならば行を追加
     else{ 

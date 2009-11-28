@@ -24,6 +24,8 @@ BoardViewNext::BoardViewNext( const std::string& url, const std::string& url_pre
     : BoardViewBase( url, false ),
       m_url_pre_article( url_pre_article )
 {
+    set_writeable( false );
+
 #ifdef _DEBUG
     std::cout << "BoardViewNext::BoardViewNext : url = " << get_url() << std::endl;
 #endif
@@ -170,6 +172,14 @@ void BoardViewNext::update_by_tfidf( std::list< NEXT_ITEM >& next_items )
             if( it_next_items == next_items.end() ) next_items.push_back( item );
         }
     }
+}
+
+
+void BoardViewNext::slot_abone_thread()
+{
+    SKELETON::MsgDiag mdiag( get_parent_win(), "次スレ検索ではあぼ〜ん出来ません" );
+    mdiag.run();
+    return;
 }
 
 

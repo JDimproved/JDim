@@ -705,6 +705,15 @@ void BoardViewBase::restore_sort()
     m_previous_col = DBTREE::board_view_sort_pre_column( get_url_board() );
     m_previous_sortmode = DBTREE::board_view_sort_pre_mode( get_url_board() );
 
+    if( m_show_col_board ){
+
+        m_previous_col = m_col;
+        m_previous_sortmode = m_sortmode;
+
+        m_col = COL_BOARD;
+        m_sortmode = SORTMODE_ASCEND;
+    }
+
     Gtk::TreeModel::Children child = m_liststore->children();
     if( child.size() ){
         exec_sort();
@@ -1537,7 +1546,9 @@ Gtk::Menu* BoardViewBase::get_popupmenu( const std::string& url )
     // お気に入りサブメニュー
     else if( url == "popup_menu_favorite" ){
 
-        if( get_url_board().empty() ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_article" ) );
+        const std::string url_board = path2url_board( m_path_selected );
+
+        if( url_board.empty() ) popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite_article" ) );
         else popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_favorite" ) );
     }
 
@@ -1569,7 +1580,7 @@ void BoardViewBase::update_item( const std::string& url, const std::string& id )
 {
     if( is_loading() ) return;
     if( ! m_liststore->children().size() ) return;
-    if( get_url_board() !=  url ) return;
+    if( ! get_url_board().empty() && get_url_board() !=  url ) return;
 
     if( id.empty() ){
         update_item_all();
@@ -1749,7 +1760,7 @@ void BoardViewBase::update_row_common( Gtk::TreeModel::Row& row )
     }
 
     // キャッシュ無し、新着
-    else if( art->get_since_time() > m_last_access_time ){
+    else if( ! get_url_board().empty() && art->get_since_time() > m_last_access_time ){
         mark_val = COL_MARKVAL_NEWTHREAD;
         icon = ICON::NEWTHREAD;
     }
@@ -2408,7 +2419,7 @@ void BoardViewBase::operate_search( const std::string& controlid )
 //
 void BoardViewBase::show_preference()
 {
-    std::string url_board = path2url_board( m_path_selected );
+    const std::string url_board = path2url_board( m_path_selected );
     if( url_board.empty() ) return;
 
     SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, url_board );
@@ -2671,9 +2682,13 @@ void BoardViewBase::set_board_to_buffer()
 {
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
+
+    const std::string url_board = path2url_board( m_path_selected );
+    if( url_board.empty() ) return;
+
     info.type = TYPE_BOARD;
-    info.url = DBTREE::url_boardbase( get_url_board() );
-    info.name = DBTREE::board_name( get_url_board() );
+    info.url = DBTREE::url_boardbase( url_board );
+    info.name = DBTREE::board_name( url_board );
     info.data = std::string();
     info.path = Gtk::TreePath( "0" ).to_string();
 

@@ -41,6 +41,8 @@ namespace BOARD
         // 次スレ移行処理に使用する。BoardViewBase::open_row()を参照せよ
         virtual const std::string get_url_pre_article(){ return m_url_pre_article; }
 
+        virtual void slot_abone_thread();
+
         // ソート列やソートモードの保存
         virtual void save_sort_columns(){} // 保存しない
 

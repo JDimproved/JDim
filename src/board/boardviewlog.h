@@ -28,6 +28,8 @@ namespace BOARD
 
         void slot_search_fin( const std::string& id );
 
+        virtual void slot_abone_thread();
+
         // ソート列やソートモードの保存
         virtual void save_sort_columns(){} // 保存しない
 
