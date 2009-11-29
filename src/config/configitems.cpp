@@ -45,6 +45,7 @@ std::string get_default_font()
     IS_DEFAULT_FONT( "IPAMonaPGothic" );
     IS_DEFAULT_FONT( "Mona-VLGothic" );
     IS_DEFAULT_FONT( "Mona" );
+    IS_DEFAULT_FONT( "Konatu" );
     IS_DEFAULT_FONT( "VL Pゴシック" );
     IS_DEFAULT_FONT( "VL PGothic" );
     IS_DEFAULT_FONT( "さざなみゴシック" );
@@ -502,7 +503,7 @@ const bool ConfigItems::load( const bool restore )
         }
     }
     // 正常ならバックアップ
-    else
+    else if( CACHE::file_exists( CACHE::path_root() ) == CACHE::EXIST_DIR )
     {
         save_impl( CACHE::path_conf_bkup() );
     }
