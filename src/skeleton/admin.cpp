@@ -1830,7 +1830,7 @@ int Admin::get_current_page()
 //
 // 現在表示されているページのURL
 //
-std::string Admin::get_current_url()
+const std::string Admin::get_current_url()
 {
     SKELETON::View* view = get_current_view();
     if( ! view ) return std::string();

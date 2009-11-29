@@ -106,7 +106,7 @@ namespace SKELETON
         // 現在表示してるページ番号およびURL
         // 表示ページを指定したいときは "set_page" コマンドを使う
         virtual int get_current_page();
-        std::string get_current_url();
+        const std::string get_current_url();
 
         // urlで指定されるタブがロックされているか
         const bool is_locked( const std::string& url );

@@ -1397,18 +1397,18 @@ void Core::slot_activate_menubar()
 
     // 開いている板のログ検索
     act = m_action_group->get_action( "SearchCacheBoard" );
-    if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
-    else act->set_sensitive( false );
+    if( BOARD::get_admin()->empty() || DBTREE::url_subject( BOARD::get_admin()->get_current_url() ).empty() ) act->set_sensitive( false );
+    else act->set_sensitive( true );
 
     // 開いている板のログ一覧表示
     act = m_action_group->get_action( "ShowCacheBoard" );
-    if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
-    else act->set_sensitive( false );
+    if( BOARD::get_admin()->empty() || DBTREE::url_subject( BOARD::get_admin()->get_current_url() ).empty() ) act->set_sensitive( false );
+    else act->set_sensitive( true );
 
     // スレ一覧のプロパティ
     act = m_action_group->get_action( "BoardPref" );
-    if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
-    else act->set_sensitive( false );
+    if( BOARD::get_admin()->empty() || DBTREE::url_subject( BOARD::get_admin()->get_current_url() ).empty() ) act->set_sensitive( false );
+    else act->set_sensitive( true );
     
     // スレのプロパティ
     act = m_action_group->get_action( "ArticlePref" );
