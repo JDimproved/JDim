@@ -309,6 +309,8 @@ void usage( const int status )
     "        Does not terminate even if it is a subprocess\n"
     "-s, --skip-setup\n"
     "        Skip the setup dialog\n"
+    "-l, --logfile\n"
+    "        Write message to msglog file\n"
     "-V, --version\n"
     "        Display version of this program\n";
 
