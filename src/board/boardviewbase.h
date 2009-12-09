@@ -34,7 +34,6 @@ namespace BOARD
         BOARD::TreeColumns m_columns;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
         Gtk::ScrolledWindow m_scrwin;
-        int m_id;
 
         // 列
         Gtk::TreeView::Column* m_col_mark;
@@ -93,6 +92,9 @@ namespace BOARD
 
         const std::string& get_url_board() const { return m_url_board; }
         virtual const std::string url_for_copy();
+
+        // 行数
+        const int get_row_size();
 
         // SKELETON::View の関数のオーバロード
         virtual void update_url( const std::string& url_old, const std::string& url_new );
@@ -170,7 +172,7 @@ namespace BOARD
         // ポップアップメニュー取得
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
-        void update_view_impl( const std::list< DBTREE::ArticleBase* >& list_subject );
+        void update_view_impl( const std::vector< DBTREE::ArticleBase* >& list_subject, const bool loading_fin );
 
         // ソート状態回復
         void restore_sort();
@@ -179,7 +181,7 @@ namespace BOARD
         void set_load_subject_txt( const bool load ){ m_load_subject_txt = load; }
 
         // 行を作って内容をセット
-        Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art );
+        Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art, const int id );
 
     private:
 

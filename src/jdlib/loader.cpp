@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 //#define _DEBUG_CHUNKED
+//#define _DEBUG_TIME
 #ifdef _WIN32
 #define STRICT
 #endif
@@ -15,6 +16,10 @@
 #include "miscmsg.h"
 #include "miscutil.h"
 #include "ssl.h"
+
+#ifdef _DEBUG_TIME
+#include "misctime.h"
+#endif
 
 #include "skeleton/loadable.h"
 
@@ -39,8 +44,8 @@ enum
 {
     MAX_LOADER = 10, // 最大スレッド数
     MAX_LOADER_SAMEHOST = 2, // 同一ホストに対して実行できる最大スレッド数
-    LNG_BUF_MIN = 16 * 1024, // 読み込みバッファの最小値 (byte)
-    TIMEOUT_MIN = 10 // タイムアウトの最小値 (秒)
+    LNG_BUF_MIN = 1 * 1024, // 読み込みバッファの最小値 (byte)
+    TIMEOUT_MIN = 1 // タイムアウトの最小値 (秒)
 };
 
 
@@ -750,6 +755,10 @@ void Loader::run_main()
 
     bool receiving_header;
 
+#ifdef _DEBUG_TIME
+    MISC::start_measurement( 1 );
+#endif
+
     // 受信開始
     receiving_header = true;
     m_data.length_current = 0;
@@ -763,6 +772,10 @@ void Loader::run_main()
 
             // 通常
             if( !ssl ){
+
+#ifdef _DEBUG_TIME
+                MISC::start_measurement( 0 );
+#endif
 
                 // readfds 待ち
                 if( !wait_recv_send( soc, true ) ){
@@ -779,6 +792,9 @@ void Loader::run_main()
                     goto EXIT_LOADING;
                 }
 
+#ifdef _DEBUG_TIME
+                std::cout << "size = " << tmpsize << " time = " << MISC::measurement( 0 ) << std::endl;
+#endif
             }
 
             // SSL
@@ -875,6 +891,10 @@ void Loader::run_main()
         if( m_data.length && m_data.length <= m_data.length_current ) break;
         
     } while( !m_stop );
+
+#ifdef _DEBUG_TIME
+    std::cout << "loadingl time = " << MISC::measurement( 1 ) << std::endl;
+#endif
 
     // 終了処理
 EXIT_LOADING:

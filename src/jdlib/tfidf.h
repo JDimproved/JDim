@@ -38,7 +38,7 @@ namespace MISC
 
     // スレ一覧からIDF 計算
     void tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
-                                          const Glib::ustring& subject_src, const std::list< DBTREE::ArticleBase* >& list_subject, const VEC_WORDS& vec_words );
+                                          const Glib::ustring& subject_src, const std::vector< DBTREE::ArticleBase* >& list_subject, const VEC_WORDS& vec_words );
 
 
     // str1 と str2 間のレーベンシュタイン距離

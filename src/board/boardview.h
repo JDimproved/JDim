@@ -21,6 +21,7 @@ namespace BOARD
         virtual const bool is_check_update();
 
         virtual void reload();
+        virtual void show_view();
         virtual void update_view();
         virtual void update_boardname();
     };

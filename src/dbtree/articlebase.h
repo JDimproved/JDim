@@ -99,10 +99,14 @@ namespace DBTREE
         // ロード終了時に次スレ移行チェックと前スレの情報のコピーをする
         std::string m_url_pre_article;
 
+        // スレッド924か
+        bool m_924;
+
       protected:
 
         void set_key( const std::string& key ){ m_key = key; }
-        void set_since_time( time_t since ){ m_since_time = since; }
+        void set_since_time( const time_t since ){ m_since_time = since; }
+        void set_is_924( const bool is924 ){ m_924 = is924; }
         
       public:
 
@@ -368,6 +372,9 @@ namespace DBTREE
 
         // url_src で示されるスレの情報をコピー
         void copy_article_info( const std::string& url_src );
+
+        // スレッド924か
+        const bool is_924() const{ return m_924; }
 
       private:
 

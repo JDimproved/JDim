@@ -62,6 +62,7 @@ namespace ICON
 
         IMAGE,
         LINK,
+        INFO,
 
 #if GTKMMVER <= 240   // 2.4 以前は Gtk::Stock::MEDIA_PLAY が無い
         PLAY,

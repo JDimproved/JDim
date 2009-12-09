@@ -73,8 +73,10 @@ namespace DBTREE
         bool abone; // あぼーんされているか
         int num_reference; // 他のレスから参照されている数
         char* name; // 名前
-        int num_id_name; // 同じIDのレスの個数( = 発言数 )
         bool sage; // メール欄がsageか
+
+        int num_id_name; // 同じIDのレスの個数( = 発言数 )
+        NODE* pre_id_name_header; // 同じIDを持つ一つ前のヘッダノードのアドレス
 
         NODE* block[ BLOCK_NUM ];
     };

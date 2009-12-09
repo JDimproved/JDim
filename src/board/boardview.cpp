@@ -89,6 +89,32 @@ void BoardView::reload()
 }
 
 
+//
+// ビュー表示
+//
+void BoardView::show_view()
+{
+#ifdef _DEBUG
+    std::cout << "BoardView::show_view " << get_url() << std::endl;
+#endif
+
+    BoardViewBase::show_view();
+
+    if( SESSION::is_online() && ! get_row_size() ){
+    
+        std::vector< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
+
+        if( list_subject.size() ){
+
+#ifdef _DEBUG
+            std::cout << "append rows\n";
+#endif
+            const bool loading_fin = false;
+            update_view_impl( list_subject, loading_fin );
+        }
+    }
+}
+
 
 //
 // view更新
@@ -112,8 +138,9 @@ void BoardView::update_view()
     }
 
     // 高速化のためデータベースに直接アクセス
-    std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
-    update_view_impl( list_subject );
+    std::vector< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
+    const bool loading_fin = true;
+    update_view_impl( list_subject, loading_fin );
 
     // dat落ちしたスレッドをスレあぼーんのリストから取り除く
     if( code == HTTP_OK ) DBTREE::remove_old_abone_thread( get_url_board() );

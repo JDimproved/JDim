@@ -35,7 +35,7 @@ namespace BOARD
       private:
 
         // TFIDFで次スレ検索
-        void update_by_tfidf( std::list< NEXT_ITEM >& next_items );
+        void update_by_tfidf( std::vector< NEXT_ITEM >& next_items );
 
         // 次スレ移行処理に使用する前スレのアドレス
         // 次スレ移行処理に使用する。BoardViewBase::open_row()を参照せよ

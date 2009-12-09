@@ -75,7 +75,8 @@ namespace CONFIG
         std::string x_2ch_ua;
 
         // ローダのバッファサイズ
-        int loader_bufsize;
+        int loader_bufsize; // 一般
+        int loader_bufsize_board; // スレ一覧用
 
         // ローダのタイムアウト値
         int loader_timeout;

@@ -331,14 +331,14 @@ namespace DBTREE
         void clear_id_name();
 
         // from_number番から to_number 番までの発言数の更新
-        void update_id_name( int from_number, int to_number );
+        void update_id_name( const int from_number, const int to_number );
 
         // number番のレスの発言数をチェック
-        void check_id_name( int number );
+        void check_id_name( const int number );
 
         // 発言数( num_id_name )の更新
         // IDノードの色も変更する
-        void set_num_id_name( NODE* header, int num_id_name );
+        void set_num_id_name( NODE* header, const int num_id_name, NODE* pre_id_name_header );
 
         // http://ime.nu/ などをリンクから削除
         bool remove_imenu( char* str_link );

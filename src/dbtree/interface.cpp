@@ -373,7 +373,7 @@ void DBTREE::board_stop_load( const std::string& url )
 }
 
 
-std::list< DBTREE::ArticleBase* >& DBTREE::board_list_subject( const std::string& url )
+std::vector< DBTREE::ArticleBase* >& DBTREE::board_list_subject( const std::string& url )
 {
     return DBTREE::get_board( url )->get_list_subject();
 }
@@ -540,13 +540,13 @@ void DBTREE::read_boardinfo_all()
     DBTREE::get_root()->read_boardinfo_all();
 }
 
-void DBTREE::search_cache_all( std::list< DBTREE::ArticleBase* >& list_article,
+void DBTREE::search_cache_all( std::vector< DBTREE::ArticleBase* >& list_article,
                                const std::string& query, const bool mode_or, const bool& stop )
 {
     DBTREE::get_root()->search_cache( list_article, query, mode_or, stop );
 }
 
-void DBTREE::search_cache( const std::string& url, std::list< DBTREE::ArticleBase* >& list_article, const std::string& query, const bool mode_or, const bool& stop )
+void DBTREE::search_cache( const std::string& url, std::vector< DBTREE::ArticleBase* >& list_article, const std::string& query, const bool mode_or, const bool& stop )
 {
     DBTREE::get_board( url )->search_cache( list_article, query, mode_or, stop );
 }

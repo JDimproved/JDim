@@ -209,7 +209,7 @@ const std::string BoardMachi::url_subbbscgi_new()
 //
 // subject.txt から Aarticle のリストにアイテムを追加・更新
 //
-void BoardMachi::parse_subject( const char* str_subject_txt, const bool is_online )
+void BoardMachi::parse_subject( const char* str_subject_txt )
 {
 #ifdef _DEBUG
     std::cout << "BoardMachi::parse_subject is_online = " << is_online << std::endl;
@@ -217,9 +217,6 @@ void BoardMachi::parse_subject( const char* str_subject_txt, const bool is_onlin
    
     const char* pos = str_subject_txt;
     char str_tmp[ 1024 ];
-    const std::string datbase = url_datbase();
-
-    ArticleBase* article_first = NULL;
 
     while( *pos != '\0' ){
         
@@ -265,31 +262,55 @@ void BoardMachi::parse_subject( const char* str_subject_txt, const bool is_onlin
         ++pos;
 
         // id, subject, number 取得
+        ARTICLE_INFO artinfo;
+
         memcpy( str_tmp, str_id_dat, lng_id_dat );
         str_tmp[ lng_id_dat ] = '\0';
-        std::string id = MISC::remove_space( str_tmp );
+        artinfo.id = MISC::remove_space( str_tmp );
 
         memcpy( str_tmp, str_subject, lng_subject );
         str_tmp[ lng_subject ] = '\0';
-        std::string subject = MISC::remove_space( str_tmp );
-        subject = MISC::replace_str( subject, "&lt;", "<" );
-        subject = MISC::replace_str( subject, "&gt;", ">" );
+        artinfo.subject = MISC::remove_space( str_tmp );
+        artinfo.subject = MISC::replace_str( artinfo.subject, "&lt;", "<" );
+        artinfo.subject = MISC::replace_str( artinfo.subject, "&gt;", ">" );
         
-        int number = atol( str_num );
+        artinfo.number = atol( str_num );
+
+        get_list_artinfo().push_back( artinfo );        
 
 #ifdef _DEBUG
-//        std::cout << id << " " << number << " " << subject << std::endl;
+        std::cout << "pos = " << ( pos - str_subject_txt ) << " lng = " << lng_subject << " id = " << artinfo.id << " num = " << artinfo.number;
+        std::cout << " : " << artinfo.subject << std::endl;
 #endif
+    }
+}
+
+
+void BoardMachi::regist_article( const bool is_online )
+{
+    if( ! get_list_artinfo().size() ) return;
+
+#ifdef _DEBUG
+    std::cout << "BoardMachii::regist_article size = " << get_list_artinfo().size() << std::endl;
+#endif 
+
+    ArticleBase* article_first = NULL;
+
+    const std::string datbase = url_datbase();
+
+    for( unsigned int i = 0; i < get_list_artinfo().size(); ++i ){
+
+        const ARTICLE_INFO& artinfo = get_list_artinfo()[ i ];
 
         // DBに登録されてるならarticle クラスの情報更新
-        ArticleBase* article = get_article( datbase, id );
+        ArticleBase* article = get_article( datbase, artinfo.id );
 
         // DBにないなら新規に article クラスを追加
         //
         // なお BoardBase::receive_finish() のなかで append_all_article_in_cache() が既に呼び出されているため
         // DBに無いということはキャッシュにも無いということ。よって append_article()で  cached = false
 
-        if( article->empty() ) article = append_article( datbase, id, false );
+        if( article->empty() ) article = append_article( datbase, artinfo.id, false );
 
         // スレ情報更新
         if( article ){
@@ -304,8 +325,8 @@ void BoardMachi::parse_subject( const char* str_subject_txt, const bool is_onlin
             article->read_info();
 
             // 情報ファイルが無い場合もあるのでsubject.txtから取得したサブジェクト、レス数を指定しておく
-            article->set_subject( subject );
-            article->set_number( number, is_online );
+            article->set_subject( artinfo.subject );
+            article->set_number( artinfo.number, is_online );
 
             // boardビューに表示するリスト更新
             // Machiは最初と最後の行が同じになる仕様があるので最後の行を除く

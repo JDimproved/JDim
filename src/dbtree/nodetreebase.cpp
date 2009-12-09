@@ -2954,7 +2954,7 @@ void NodeTreeBase::clear_id_name()
 //
 // from_number番から to_number 番までの発言数の更新
 //
-void NodeTreeBase::update_id_name( int from_number, int to_number )
+void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 {
     if( ! CONFIG::get_check_id() ) return;
 
@@ -2968,37 +2968,49 @@ void NodeTreeBase::update_id_name( int from_number, int to_number )
 //
 // number番のレスの発言数を更新
 //
-void NodeTreeBase::check_id_name( int number )
+void NodeTreeBase::check_id_name( const int number )
 {
     NODE* header = res_header( number );
-
-    // あぼーんしているならチェックしない
+    if( ! header ) return;
     if( header->headinfo->abone ) return;
+    if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) return;
 
-    if( header && header->headinfo->block[ BLOCK_ID_NAME ] ){
+    const char* str_id = header->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link;
 
-        char* str_id = header->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link;
+    // 同じIDのレスを持つ一つ前のレスを探す
+    NODE* tmphead;
+    NODE* prehead = NULL;
+    for( int i = header->id_header -1 ; i >= 1 ; --i ){
 
-        // 以前に出た同じIDのレスの発言数を更新しつつ発言回数を調べる
-        int num_id_name = 1;
-        for( int i = 1 ; i < header->id_header; ++i ){
+        tmphead = m_vec_header[ i ];
 
-            NODE* tmphead = m_vec_header[ i ];
-
-            if( tmphead
-                && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
-                && tmphead->headinfo->block[ BLOCK_ID_NAME ]
-                && strcmp( str_id, tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link ) == 0 ){
-
-                set_num_id_name( tmphead, tmphead->headinfo->num_id_name+1 );
-                ++num_id_name;
-            }
+        if( tmphead
+            && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
+            && tmphead->headinfo->block[ BLOCK_ID_NAME ]
+            && str_id[ 0 ] == tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link[ 0 ]
+            && strcmp( str_id, tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link ) == 0 ){
+            prehead = tmphead;
+            break;
         }
+    }
 
-        set_num_id_name( header, num_id_name );
+    // 見つからなかった
+    if( ! prehead ) set_num_id_name( header, 1, NULL );
+
+    // 見つかった
+    else{
+
+        set_num_id_name( header, prehead->headinfo->num_id_name+1, prehead );
+
+        // 以前に出た同じIDのレスの発言数を更新
+        tmphead = prehead;
+        while( tmphead ){
+
+            set_num_id_name( tmphead, tmphead->headinfo->num_id_name+1, tmphead->headinfo->pre_id_name_header );
+            tmphead = tmphead->headinfo->pre_id_name_header;
+        }
     }
 }
-
 
 
 //
@@ -3006,15 +3018,16 @@ void NodeTreeBase::check_id_name( int number )
 //
 // IDノードの色も変更する
 //
-void NodeTreeBase::set_num_id_name( NODE* header, int num_id_name )
+void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name, NODE* pre_id_name_header )
 {
-    if( header->headinfo->block[ BLOCK_ID_NAME ] ){
+    if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) return;
 
-        header->headinfo->num_id_name = num_id_name;        
-        if( num_id_name >= m_num_id[ LINK_HIGH ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_HIGH;
-        else if( num_id_name >= m_num_id[ LINK_LOW ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK;
-        else header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR;
-    }
+    header->headinfo->num_id_name = num_id_name;        
+    header->headinfo->pre_id_name_header = pre_id_name_header;
+
+    if( num_id_name >= m_num_id[ LINK_HIGH ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_HIGH;
+    else if( num_id_name >= m_num_id[ LINK_LOW ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK;
+    else header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR;
 }
 
 

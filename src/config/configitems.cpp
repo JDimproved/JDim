@@ -154,7 +154,8 @@ const bool ConfigItems::load( const bool restore )
     x_2ch_ua = cf.get_option_str( "x_2ch_ua", CONF_X_2CH_UA );
 
     // ローダのバッファサイズ
-    loader_bufsize = cf.get_option_int( "loader_bufsize", CONF_LOADER_BUFSIZE, 8, 4096 );
+    loader_bufsize = cf.get_option_int( "loader_bufsize", CONF_LOADER_BUFSIZE, 1, 4096 ); // 一般
+    loader_bufsize_board = cf.get_option_int( "loader_bufsize_board", CONF_LOADER_BUFSIZE_BOARD, 1, 4096 ); // スレ一覧用
 
     // ローダのタイムアウト値
     loader_timeout = cf.get_option_int( "loader_timeout", CONF_LOADER_TIMEOUT, 1, 120 );
@@ -585,6 +586,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "x_2ch_ua", x_2ch_ua );
 
     cf.update( "loader_bufsize", loader_bufsize );
+    cf.update( "loader_bufsize_board", loader_bufsize_board );
+
     cf.update( "loader_timeout", loader_timeout );
     cf.update( "loader_timeout_post", loader_timeout_post );
     cf.update( "loader_timeout_img", loader_timeout_img );

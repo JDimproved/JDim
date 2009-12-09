@@ -160,7 +160,7 @@ const double MISC::tfidf_cos_similarity( const VEC_TFIDF& vec_tfidf1, const VEC_
 // スレ一覧からIDF 計算
 //
 void MISC::tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
-                                            const Glib::ustring& subject_src, const std::list< DBTREE::ArticleBase* >& list_subject, const VEC_WORDS& vec_words )
+                                            const Glib::ustring& subject_src, const std::vector< DBTREE::ArticleBase* >& list_subject, const VEC_WORDS& vec_words )
 {
 #ifdef _DEBUG
     std::cout << "MISC::tfidf_create_vec_idf_from_board\n";
@@ -172,7 +172,7 @@ void MISC::tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
     MISC::tfidf_create_vec_idf( vec_idf, subject_src, vec_words );
 
     int D = 1;
-    std::list< DBTREE::ArticleBase* >::const_iterator it = list_subject.begin();
+    std::vector< DBTREE::ArticleBase* >::const_iterator it = list_subject.begin();
     for( ; it != list_subject.end(); ++it ){
 
         // DAT落ちのスレは除く

@@ -128,7 +128,7 @@ void Search_Manager::thread_search()
 
     if( m_calc_data ){
 
-        std::list< DBTREE::ArticleBase* >::iterator it = m_list_article.begin();
+        std::vector< DBTREE::ArticleBase* >::iterator it = m_list_article.begin();
         for( ; it != m_list_article.end(); ++it ){
 
             DBTREE::ArticleBase* article = ( *it );

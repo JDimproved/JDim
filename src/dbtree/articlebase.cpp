@@ -81,7 +81,8 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_bookmarked_thread( false ),
       m_cached( cached ),
       m_read_info( 0 ),
-      m_save_info( 0 )
+      m_save_info( 0 ),
+      m_924( false )
 {
 #ifdef _DEBUG
 //    std::cout << "ArticleBase::ArticleBase : " << m_id << std::endl;
@@ -1296,7 +1297,7 @@ void ArticleBase::slot_load_finished()
 #endif
             int value = 0;
 
-            const std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( m_url );
+            const std::vector< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( m_url );
 
             // subjectがキャッシュにある場合は TFIDF を使って類似度チェック
             if( list_subject.size() ){

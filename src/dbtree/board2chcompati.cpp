@@ -308,7 +308,7 @@ ArticleBase* Board2chCompati::append_article( const std::string& datbase, const 
 //
 // subject.txt から Aarticle のリストにアイテムを追加・更新
 //
-void Board2chCompati::parse_subject( const char* str_subject_txt, const bool is_online )
+void Board2chCompati::parse_subject( const char* str_subject_txt )
 {
 #ifdef _DEBUG
     std::cout << "Board2chCompati::parse_subject\n";
@@ -317,7 +317,6 @@ void Board2chCompati::parse_subject( const char* str_subject_txt, const bool is_
     const int max_subject = 512;
     const char* pos = str_subject_txt;
     char str_tmp[ max_subject ];
-    const std::string datbase = url_datbase();
 
     while( *pos != '\0' ){
         
@@ -327,18 +326,26 @@ void Board2chCompati::parse_subject( const char* str_subject_txt, const bool is_
         int lng_subject = 0;
         char str_num[ 16 ];
 
+        while( *pos == ' ' ) ++pos;
+
         // datのID取得
         str_id_dat = pos;
-        while( *pos != '<' && *pos != '\0' && *pos != '\n' ) { ++pos; ++lng_id_dat; }
+        while( *pos != ' ' && *pos != '<' && *pos != '\0' && *pos != '\n' ) { ++pos; ++lng_id_dat; }
         
         // 壊れてる
         if( *pos == '\0' ) break;
         if( *pos == '\n' ) { ++pos; continue; }
 
+        while( *pos != '<' ) ++pos;
+
         // subject取得
+        bool exist_amp = false;
         pos += 2;
         str_subject = pos;
-        while( *pos != '\0' && *pos != '\n' ) ++pos;
+        while( *pos != '\0' && *pos != '\n' ){
+            if( *pos == '&' ) exist_amp = true;
+            ++pos;
+        }
         --pos;
         while( *pos != '(' && *pos != '\n' && pos != str_subject_txt ) --pos;
         
@@ -362,32 +369,55 @@ void Board2chCompati::parse_subject( const char* str_subject_txt, const bool is_
         ++pos;
 
         // id, subject, number 取得
+        ARTICLE_INFO artinfo;
+
         memcpy( str_tmp, str_id_dat, lng_id_dat );
         str_tmp[ lng_id_dat ] = '\0';
-        std::string id = MISC::remove_space( str_tmp );
+        artinfo.id = str_tmp;
 
         memcpy( str_tmp, str_subject, lng_subject );
         if( str_tmp[ lng_subject-1 ] == ' ' ) lng_subject--;  // 2chのsubject.txtは()の前に空白が一つ入る
         str_tmp[ lng_subject ] = '\0';
-        std::string subject = str_tmp;
-        subject = MISC::replace_str( subject, "&lt;", "<" );
-        subject = MISC::replace_str( subject, "&gt;", ">" );
+        artinfo.subject = str_tmp;
+        if( exist_amp ){
+            artinfo.subject = MISC::replace_str( artinfo.subject, "&lt;", "<" );
+            artinfo.subject = MISC::replace_str( artinfo.subject, "&gt;", ">" );
+        }
         
-        int number = atol( str_num );
+        artinfo.number = atol( str_num );
+
+        get_list_artinfo().push_back( artinfo );
 
 #ifdef _DEBUG
-        std::cout << pos - str_subject_txt << " " << lng_subject << " id = " << id << " num = " << number;
-        std::cout << " : " << subject << std::endl;
+        std::cout << "pos = " << ( pos - str_subject_txt ) << " lng = " << lng_subject << " id = " << artinfo.id << " num = " << artinfo.number;
+        std::cout << " : " << artinfo.subject << std::endl;
 #endif
+    }
+}
 
+
+void Board2chCompati::regist_article( const bool is_online )
+{
+    if( ! get_list_artinfo().size() ) return;
+
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::regist_article size = " << get_list_artinfo().size() << std::endl;
+#endif 
+
+    const std::string datbase = url_datbase();
+
+    for( unsigned int i = 0; i < get_list_artinfo().size(); ++i ){
+
+        const ARTICLE_INFO& artinfo = get_list_artinfo()[ i ];
+        
         // DBに登録されてるならarticle クラスの情報更新
-        ArticleBase* article = get_article( datbase, id );
+        ArticleBase* article = get_article( datbase, artinfo.id );
 
         // DBにないなら新規に article クラスをDBに登録
         //
         // なお BoardBase::receive_finish() のなかで append_all_article_in_cache() が既に呼び出されているため
         // DBに無いということはキャッシュに無いということ。よって append_article()の呼出に cached = false　を指定する
-        if( article->empty() ) article = append_article( datbase, id,
+        if( article->empty() ) article = append_article( datbase, artinfo.id,
                                                          false // キャッシュ無し
             );
 
@@ -404,8 +434,8 @@ void Board2chCompati::parse_subject( const char* str_subject_txt, const bool is_
             article->read_info();
 
             // 情報ファイルが無い場合もあるのでsubject.txtから取得したサブジェクト、レス数を指定しておく
-            article->set_subject( subject );
-            article->set_number( number, is_online );
+            article->set_subject( artinfo.subject );
+            article->set_number( artinfo.number, is_online );
 
             // 情報ファイル読み込み後にステータスが変わることがあるので、もう一度
             // ステータスをDAT落ち状態から通常状態に変更

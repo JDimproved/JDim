@@ -24,7 +24,8 @@ namespace CONFIG
         CONF_PROXY_PORT_FOR2CH_W = 8080, // 2ch 書き込み用プロクシポート番号
         CONF_USE_PROXY_FOR_DATA = 0, // 2ch 以外にアクセスするときにプロクシを使用するか
         CONF_PROXY_PORT_FOR_DATA = 8080, // 2ch 以外にアクセスするときのプロクシポート番号
-        CONF_LOADER_BUFSIZE = 32,   // ローダのバッファサイズ
+        CONF_LOADER_BUFSIZE = 32,   // ローダのバッファサイズ (一般)
+        CONF_LOADER_BUFSIZE_BOARD = 2,   // ローダのバッファサイズ (スレ一覧用)
         CONF_LOADER_TIMEOUT = 10,   // ローダのタイムアウト値        
         CONF_LOADER_TIMEOUT_POST = 30, // ポストローダのタイムアウト値        
         CONF_LOADER_TIMEOUT_IMG = 30,  // 画像ローダのタイムアウト値

@@ -94,7 +94,8 @@ void BoardViewLog::slot_search_fin( const std::string& id )
     std::cout << "BoardViewLog::slot_search_fin size = " << CORE::get_search_manager()->get_list_article().size() << std::endl;
 #endif
 
-    update_view_impl( CORE::get_search_manager()->get_list_article() );
+    const bool loading_fin = true;
+    update_view_impl( CORE::get_search_manager()->get_list_article(), loading_fin );
 }
 
 
@@ -157,7 +158,7 @@ void BoardViewLog::update_item( const std::string& url, const std::string& id )
 #endif
 
             unsorted_column();
-            prepend_row( art );
+            prepend_row( art, get_row_size() + 1 );
             goto_top();
         }
     }

@@ -47,7 +47,7 @@ namespace CORE
         bool m_searchall;
         bool m_calc_data;
 
-        std::list< DBTREE::ArticleBase* > m_list_article;
+        std::vector< DBTREE::ArticleBase* > m_list_article;
         std::list< SEARCHDATA > m_list_data;
 
         // 検索実行中
@@ -65,7 +65,7 @@ namespace CORE
 
         SIG_SEARCH_FIN sig_search_fin(){ return m_sig_search_fin; }
 
-        const std::list< DBTREE::ArticleBase* >& get_list_article() const{ return m_list_article; }
+        const std::vector< DBTREE::ArticleBase* >& get_list_article() const{ return m_list_article; }
         const std::list< SEARCHDATA >& get_list_data() const { return m_list_data; }
 
         const bool is_searching() const { return m_searching; }

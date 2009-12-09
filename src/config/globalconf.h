@@ -143,7 +143,8 @@ namespace CONFIG
     void set_proxy_port_for_data( const int port );
 
     // ローダのバッファサイズ
-    const int get_loader_bufsize();
+    const int get_loader_bufsize();  // 一般
+    const int get_loader_bufsize_board();  // スレ一覧読み込み用
 
     // ローダのタイムアウト値
     const int get_loader_timeout();

@@ -45,6 +45,9 @@ namespace SKELETON
         JDTreeViewBase();
         virtual ~JDTreeViewBase();
 
+        // 行数
+        const int get_row_size();
+
         // カーソル解除
         void unset_cursor(){ get_selection()->unselect_all(); }
 

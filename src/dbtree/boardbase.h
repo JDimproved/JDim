@@ -10,6 +10,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 
 #ifdef _WIN32
 #include <sys/time.h>
@@ -18,6 +19,7 @@
 namespace JDLIB
 {
     class LOADERDATA;
+    class Iconv;
 }
 
 
@@ -33,6 +35,15 @@ namespace DBTREE
         PROXY_NUM
     };
 
+    struct ARTICLE_INFO
+    {
+        std::string id;
+        std::string subject;
+        int number;
+    };
+
+    typedef std::vector< ARTICLE_INFO > ARTICLE_INFO_LIST;
+
     class Root;
     class ArticleBase;
     class ArticleHash;
@@ -45,7 +56,11 @@ namespace DBTREE
 
         // subject.txt から作ったArticleBaseクラスのポインタのリスト
         // subject.txt と同じ順番で、ロードされるたびに更新される
-        std::list< ArticleBase* > m_list_subject; 
+        std::vector< ArticleBase* > m_list_subject; 
+
+        // ダウンロード中に parse_subject() でsubject.txtを解析して結果を入れておく
+        // ダウンロード終了後に regist_article() でスレを登録する
+        ARTICLE_INFO_LIST m_list_artinfo; 
 
         // 状態 ( global.h で定義 )
         int m_status;                
@@ -148,8 +163,11 @@ namespace DBTREE
 
         // ダウンロード用変数
         std::list< std::string > m_url_update_views; // CORE::core_set_command( "update_board" ) を送信するビューのアドレス
+        JDLIB::Iconv* m_iconv;
         char* m_rawdata;
-        int m_lng_rawdata;
+        char* m_rawdata_left;
+        size_t m_lng_rawdata;
+        size_t m_lng_rawdata_left;
 
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
         bool m_read_info;
@@ -178,6 +196,8 @@ namespace DBTREE
         ArticleBase* m_article_null;
 
       protected:
+
+        ARTICLE_INFO_LIST& get_list_artinfo(){ return m_list_artinfo; }
 
         ArticleHash* get_hash_article(){ return m_hash_article; }
         std::list< std::string >& get_url_update_views(){ return  m_url_update_views; }
@@ -211,7 +231,7 @@ namespace DBTREE
         const int get_status() const{ return m_status; }
 
         // boardviewに表示するスレッドのリストを取得
-        std::list< ArticleBase* >& get_list_subject(){ return m_list_subject; }
+        std::vector< ArticleBase* >& get_list_subject(){ return m_list_subject; }
 
         // ローカルルールの modified 時刻
         const std::string& get_modified_localrule() const { return m_modified_localrule; }
@@ -469,7 +489,7 @@ namespace DBTREE
         // キャッシュ内のログ検索
         // ArticleBase のアドレスをリスト(list_article)にセットして返す
         // query が空の時はキャッシュにあるログを全てヒットさせる
-        virtual void search_cache( std::list< ArticleBase* >& list_article,
+        virtual void search_cache( std::vector< ArticleBase* >& list_article,
                                    const std::string& query,
                                    const bool mode_or, // 今のところ無視
                                    const bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
@@ -502,7 +522,8 @@ namespace DBTREE
         bool start_checkking_if_board_moved();
 
         virtual ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached );
-        virtual void parse_subject( const char* str_subject_txt, const bool is_online ){}
+        virtual void parse_subject( const char* str_subject_txt ){}
+        virtual void regist_article( const bool is_online ){}
 
         std::list< std::string > get_filelist_in_cache();
 

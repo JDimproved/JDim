@@ -127,7 +127,8 @@ void AboutConfig::append_rows()
     append_row( "書き込み時のタイムアウト値(秒)", get_confitem()->loader_timeout_post, CONF_LOADER_TIMEOUT_POST );
     append_row( "画像等のデータのロード時のタイムアウト値(秒)", get_confitem()->loader_timeout_img, CONF_LOADER_TIMEOUT_IMG );
     append_row( "更新チェック時のタイムアウト値(秒)", get_confitem()->loader_timeout_checkupdate, CONF_LOADER_TIMEOUT_CHECKUPDATE );
-    append_row( "ダウンローダのバッファサイズ(Kbyte)", get_confitem()->loader_bufsize, CONF_LOADER_BUFSIZE );
+    append_row( "一般データのダウンロード時のバッファサイズ(Kbyte)", get_confitem()->loader_bufsize, CONF_LOADER_BUFSIZE );
+    append_row( "スレ一覧のダウンロード時のバッファサイズ(Kbyte)", get_confitem()->loader_bufsize_board, CONF_LOADER_BUFSIZE_BOARD );
 
     // ツリービュー
     append_row( "" );

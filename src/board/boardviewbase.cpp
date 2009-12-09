@@ -55,9 +55,10 @@ enum{
 enum{
     COL_MARKVAL_OLD = -2,        // dat 落ち
     COL_MARKVAL_FINISHED = -1,   // キャッシュあり、新着無し、規定スレ数を越えている
-    COL_MARKVAL_NORMAL = 0,      // 通常状態
-    COL_MARKVAL_NEWTHREAD_HOUR,  // 新スレ( CONFIG::get_newthread_hour 時間以内 )
-    COL_MARKVAL_NEWTHREAD,       // 前回の板一覧読み込み時から新しく出来たスレ
+    COL_MARKVAL_NORMAL = 0,      // 通常状態、キャッシュ無し、
+    COL_MARKVAL_924,             // スレッド924、キャッシュ無し
+    COL_MARKVAL_NEWTHREAD_HOUR,  // 新スレ( CONFIG::get_newthread_hour 時間以内 )、キャッシュ無し
+    COL_MARKVAL_NEWTHREAD,       // 前回の板一覧読み込み時から新しく出来たスレ、キャッシュ無し
     COL_MARKVAL_CACHED,          // キャッシュあり、新着無し
     COL_MARKVAL_BROKEN_SUBJECT,  // キャッシュあり、新着無しだが subject.txt が壊れている可能性がある
     COL_MARKVAL_UPDATED,         // キャッシュあり、新着有り
@@ -338,6 +339,15 @@ const int BoardViewBase::get_icon( const std::string& iconname )
 const std::string BoardViewBase::url_for_copy()
 {
     return DBTREE::url_boardbase( get_url_board() );
+}
+
+
+//
+// 行数
+//
+const int BoardViewBase::get_row_size()
+{
+    return m_treeview.get_row_size();
 }
 
 
@@ -656,7 +666,7 @@ void BoardViewBase::save_column_width()
 void BoardViewBase::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
 {
     Gtk::TreeModel::Row row = *it;
-    Gtk::TreePath path = m_liststore->get_path( row );
+    Gtk::TreePath path = GET_PATH( row );
 
 #ifdef _DEBUG
 //    std::cout << "BoardViewBase::slot_cell_data path = " << path.to_string() << std::endl;
@@ -714,8 +724,7 @@ void BoardViewBase::restore_sort()
         m_sortmode = SORTMODE_ASCEND;
     }
 
-    Gtk::TreeModel::Children child = m_liststore->children();
-    if( child.size() ){
+    if( get_row_size() ){
         exec_sort();
         goto_top();
     }
@@ -813,14 +822,16 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
             if( sortmode == SORTMODE_MARK2 ){ // 新着をキャッシュの上に
 
                 if( num_a == COL_MARKVAL_NEWTHREAD
-                    && ( num_b != COL_MARKVAL_NEWTHREAD && num_b != COL_MARKVAL_BKMARKED_UPDATED 
-                         && num_b != COL_MARKVAL_BKMARKED_BROKEN_SUBJECT && num_b != COL_MARKVAL_BKMARKED ) ){
+                    && ( num_b != COL_MARKVAL_NEWTHREAD && num_b <= COL_MARKVAL_UPDATED )
+                    ){
+
                     num_a = DOWN; // 下で ret *= -1 しているので UP と DOWNを逆にする
                     num_b = UP;
                 }
                 else if( num_b == COL_MARKVAL_NEWTHREAD
-                         && ( num_a != COL_MARKVAL_NEWTHREAD && num_a != COL_MARKVAL_BKMARKED_UPDATED 
-                             && num_a != COL_MARKVAL_BKMARKED_BROKEN_SUBJECT && num_a != COL_MARKVAL_BKMARKED ) ){
+                         && ( num_a != COL_MARKVAL_NEWTHREAD && num_a <= COL_MARKVAL_UPDATED )
+                    ){
+
                     num_a = UP; // 下で ret *= -1 しているので UP と DOWNを逆にする
                     num_b = DOWN;
                 }
@@ -1000,10 +1011,6 @@ void BoardViewBase::show_view()
 
     update_boardname();
 
-#if GTKMMVER >= 280
-    m_treeview.unset_model();
-#endif
-    m_liststore->clear();
     m_pre_query = std::string();
     m_last_access_time = DBTREE::board_last_access_time( get_url_board() );
     
@@ -1064,10 +1071,8 @@ void BoardViewBase::relayout()
 //
 // view更新
 //
-void BoardViewBase::update_view_impl( const std::list< DBTREE::ArticleBase* >& list_subject )
+void BoardViewBase::update_view_impl( const std::vector< DBTREE::ArticleBase* >& list_subject, const bool loading_fin )
 {
-    m_loading = false;
-
 #ifdef _DEBUG
     const int code = DBTREE::board_code( get_url_board() );
     std::cout << "BoardViewBase::update_view_impl " << get_url()
@@ -1080,39 +1085,46 @@ void BoardViewBase::update_view_impl( const std::list< DBTREE::ArticleBase* >& l
 #if GTKMMVER >= 280
     m_treeview.unset_model();
 #endif
-    m_liststore->clear();
 
-    unsorted_column();
-
-    m_id = 0;
     if( list_subject.size() ){
 
-        std::list< DBTREE::ArticleBase* >::const_iterator it;
-        for( it = list_subject.begin(); it != list_subject.end(); ++it ){
+        m_liststore->clear();
 
-            DBTREE::ArticleBase* art = *( it );
+        unsorted_column();
 
-            prepend_row( art );
+        // 行の追加
+        for( int i = list_subject.size()-1; i >= 0;  --i ){
+
+            DBTREE::ArticleBase* art = list_subject[ i ];
+            prepend_row( art, i + 1 );
         }
 
 #if GTKMMVER >= 280
         m_treeview.set_model( m_liststore );
 #endif
 
-        if( m_list_draw_bg_articles.size() ) draw_bg_articles();
-        else restore_sort();
+        if( loading_fin ){
+            if( m_list_draw_bg_articles.size() ) draw_bg_articles();
+            else restore_sort();
+        }
     }
 
-    // ステータスバー更新
-    std::ostringstream ss_tmp;
-    if( m_load_subject_txt ) ss_tmp << DBTREE::board_str_code( get_url_board() ) << " ";
-    ss_tmp << "[ 全 " << m_id << " ] ";
+    if( loading_fin ){
 
-    set_status( ss_tmp.str() );
-    BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
+        m_loading = false;
 
-    // タブのアイコン状態を更新
-    BOARD::get_admin()->set_command( "toggle_icon", get_url() );
+        // ステータスバー更新
+        std::ostringstream ss_tmp;
+        if( m_load_subject_txt ) ss_tmp << DBTREE::board_str_code( get_url_board() ) << " ";
+        ss_tmp << "[ 全 " << get_row_size() << " ] ";
+
+        set_status( ss_tmp.str() );
+        BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
+
+        // タブのアイコン状態を更新
+        BOARD::get_admin()->set_command( "toggle_icon", get_url() );
+
+    }
 }
 
 
@@ -1579,7 +1591,7 @@ Gtk::Menu* BoardViewBase::get_popupmenu( const std::string& url )
 void BoardViewBase::update_item( const std::string& url, const std::string& id )
 {
     if( is_loading() ) return;
-    if( ! m_liststore->children().size() ) return;
+    if( ! get_row_size() ) return;
     if( ! get_url_board().empty() && get_url_board() !=  url ) return;
 
     if( id.empty() ){
@@ -1635,15 +1647,13 @@ void BoardViewBase::update_item_all()
 //
 // 行を作って内容をセット
 //
-Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art )
+Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, const int id )
 {
     Gtk::TreeModel::Row row = *( m_liststore->prepend() ); // append より prepend の方が速いらしい
 
-    ++m_id;
+    row[ m_columns.m_col_id ]  = id;
 
-    row[ m_columns.m_col_id ]  = m_id;
-
-    if( art->get_status() & STATUS_NORMAL )
+    if( ( art->get_status() & STATUS_NORMAL ) && ! art->is_924() )
         row[ m_columns.m_col_speed ] = art->get_speed();
 
     if( m_col_board ) row[ m_columns.m_col_board ] = DBTREE::board_name( art->get_url() );
@@ -1759,6 +1769,12 @@ void BoardViewBase::update_row_common( Gtk::TreeModel::Row& row )
         }
     }
 
+    // スレッド924
+    else if( art->is_924() ){
+        mark_val = COL_MARKVAL_924;
+        icon = ICON::INFO;
+    }
+
     // キャッシュ無し、新着
     else if( ! get_url_board().empty() && art->get_since_time() > m_last_access_time ){
         mark_val = COL_MARKVAL_NEWTHREAD;
@@ -1778,7 +1794,8 @@ void BoardViewBase::update_row_common( Gtk::TreeModel::Row& row )
     row[ m_columns.m_col_mark ] = ICON::get_icon( icon );
 
     // スレ立て時間
-    row[ m_columns.m_col_since ] = art->get_since_date();
+    if( ! art->is_924() ) row[ m_columns.m_col_since ] = art->get_since_date();
+    else row[ m_columns.m_col_since ] = std::string();
 
     // 書き込み時間
     if( art->get_write_time() ){
@@ -2746,7 +2763,7 @@ void BoardViewBase::draw_bg_articles()
         // row が無ければ作成
         if( ! row ){
             DBTREE::ArticleBase* art = DBTREE::get_article( url );
-            row = prepend_row( art );
+            row = prepend_row( art, get_row_size() + 1 );
         }
 
         // 強調表示

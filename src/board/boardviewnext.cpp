@@ -63,12 +63,12 @@ void BoardViewNext::reload()
 //
 void BoardViewNext::update_view()
 {
-    std::list< NEXT_ITEM > next_items;
+    std::vector< NEXT_ITEM > next_items;
 
     update_by_tfidf( next_items );
 
-    std::list< DBTREE::ArticleBase* >list_nexts;
-    std::list< NEXT_ITEM >::iterator it_next_items = next_items.begin();
+    std::vector< DBTREE::ArticleBase* >list_nexts;
+    std::vector< NEXT_ITEM >::iterator it_next_items = next_items.begin();
     for( ; it_next_items != next_items.end(); ++it_next_items ) list_nexts.push_back( ( *it_next_items ).article );
 
     // 一時的にIDでソートに切り替える
@@ -77,7 +77,8 @@ void BoardViewNext::update_view()
     DBTREE::board_set_view_sort_column( get_url_board(), COL_ID );
     DBTREE::board_set_view_sort_mode( get_url_board(), SORTMODE_ASCEND );
 
-    update_view_impl( list_nexts );
+    const bool loading_fin = true;
+    update_view_impl( list_nexts, loading_fin );
 
     DBTREE::board_set_view_sort_column( get_url_board(), col );
     DBTREE::board_set_view_sort_mode( get_url_board(), sortmode );
@@ -87,7 +88,7 @@ void BoardViewNext::update_view()
 //
 // TFIDFで次スレ検索
 //
-void BoardViewNext::update_by_tfidf( std::list< NEXT_ITEM >& next_items )
+void BoardViewNext::update_by_tfidf( std::vector< NEXT_ITEM >& next_items )
 {
     const Glib::ustring subject_src = DBTREE::article_subject( m_url_pre_article );
     const time_t since_src = DBTREE::article_since_time( m_url_pre_article );
@@ -100,7 +101,7 @@ void BoardViewNext::update_by_tfidf( std::list< NEXT_ITEM >& next_items )
 #endif    
 
     // 高速化のためデータベースに直接アクセス
-    const std::list< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
+    const std::vector< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
     if( ! list_subject.size() ) return;
 
     // 単語ベクトル作成
@@ -119,7 +120,7 @@ void BoardViewNext::update_by_tfidf( std::list< NEXT_ITEM >& next_items )
     MISC::tfidf_calc_vec_tfifd( vec_tfidf_src, subject_src, vec_idf, vec_words );
 
     // 類似度検索
-    std::list< DBTREE::ArticleBase* >::const_iterator it = list_subject.begin();
+    std::vector< DBTREE::ArticleBase* >::const_iterator it = list_subject.begin();
     for( ; it != list_subject.end(); ++it ){
 
         NEXT_ITEM item;
@@ -139,7 +140,7 @@ void BoardViewNext::update_by_tfidf( std::list< NEXT_ITEM >& next_items )
             std::cout << item.value << " , " << item.since << " | " << subject << std::endl;
 #endif
 
-            std::list< NEXT_ITEM >::iterator it_next_items = next_items.begin();
+            std::vector< NEXT_ITEM >::iterator it_next_items = next_items.begin();
             for( ; it_next_items != next_items.end(); ++it_next_items ){
 
                 // next が src よりも以前に立てられて、item が src よりも後に立てられた

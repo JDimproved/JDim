@@ -24,6 +24,17 @@ JDTreeViewBase::~JDTreeViewBase()
 
 
 //
+// 行数
+//
+const int JDTreeViewBase::get_row_size()
+{
+    if( ! get_model() ) return 0;
+
+    return get_model()->children().size();
+}
+
+
+//
 // 現在フォーカスしてる行の最初のパスを取得
 //
 Gtk::TreeModel::Path JDTreeViewBase::get_current_path()
@@ -118,8 +129,7 @@ std::list< Gtk::TreeModel::iterator > JDTreeViewBase::get_selected_iterators()
 //
 void JDTreeViewBase::goto_top()
 {
-    if( ! get_model() ) return;
-    if( ! get_model()->children().size() ) return;
+    if( ! get_row_size() ) return;
 
     Gtk::TreePath path = get_model()->get_path(  *( get_model()->children().begin() ) );
     scroll_to_row( path, 0 );
@@ -132,8 +142,7 @@ void JDTreeViewBase::goto_top()
 //
 void JDTreeViewBase::goto_bottom()
 {
-    if( ! get_model() ) return;
-    if( ! get_model()->children().size() ) return;
+    if( ! get_row_size() ) return;
 
     Gtk::TreePath path = get_model()->get_path( *( get_model()->children().rbegin() ) );
 

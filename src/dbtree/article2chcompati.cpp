@@ -24,7 +24,11 @@ Article2chCompati::Article2chCompati( const std::string& datbase, const std::str
     if( i != std::string::npos ) set_key( get_id().substr( 0, i ) );
 
     // key から since 計算
-    if( i != std::string::npos ) set_since_time( atol( get_key().c_str() ) );
+    const char* ckey = get_key().c_str();
+    if( i != std::string::npos ) set_since_time( atol( ckey ) );
+
+    // スレッド924か
+    if( ckey[ 0 ] == '9' && ckey[ 1 ] == '2' && ckey[ 2 ] == '4' ) set_is_924( true );
 }
 
 

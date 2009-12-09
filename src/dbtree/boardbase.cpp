@@ -60,7 +60,9 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_live_sec( 0 )
     , m_last_access_time( 0 )
     , m_number_max_res( 0 )
-    , m_rawdata( 0 )
+    , m_iconv( NULL )
+    , m_rawdata( NULL )
+    , m_rawdata_left( NULL )
     , m_read_info( 0 )
     , m_append_articles( false )
     , m_get_article( NULL )
@@ -278,9 +280,19 @@ void BoardBase::clear()
 {
     if( m_rawdata ) free( m_rawdata );
     m_rawdata = NULL;
+
+    if( m_rawdata_left ) free( m_rawdata_left );
+    m_rawdata_left = NULL;
+
     m_lng_rawdata = 0;
+    m_lng_rawdata_left = 0;
 
     m_get_article_url = std::string();
+
+    if( m_iconv ) delete m_iconv;
+    m_iconv = NULL;
+
+    m_list_artinfo.clear();
 }
 
 
@@ -884,7 +896,6 @@ void BoardBase::download_subject( const std::string& url_update_view, const bool
     if( read_from_cache && m_list_subject_created ) return;
 
     clear();
-    m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
     m_read_url_boardbase = false;
 
     if( read_from_cache ) m_is_online = false;
@@ -927,7 +938,7 @@ void BoardBase::create_loaderdata( JDLIB::LOADERDATA& data )
     data.host_proxy = get_proxy_host();
     data.port_proxy = get_proxy_port();
     data.basicauth_proxy = get_proxy_basicauth();
-    data.size_buf = CONFIG::get_loader_bufsize();
+    data.size_buf = CONFIG::get_loader_bufsize_board();
     data.timeout = CONFIG::get_loader_timeout();
     data.basicauth = get_basicauth();
     data.modified = get_date_modified();
@@ -939,8 +950,45 @@ void BoardBase::create_loaderdata( JDLIB::LOADERDATA& data )
 //
 void BoardBase::receive_data( const char* data, size_t size )
 {
+    if( ! size ) return;
+
+    if( ! m_rawdata ) m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
+
     memcpy( m_rawdata + m_lng_rawdata , data, size );
     m_lng_rawdata += size;
+    m_rawdata[ m_lng_rawdata ] = '\0';
+
+    if( m_read_url_boardbase ) return; // url_boardbase をロードして移転が起きたかチェック中
+
+
+    //
+    // 改行ごとに区切ってUTF8に文字コード変換して解析
+    //
+
+    if( ! m_rawdata_left ) m_rawdata_left = ( char* )malloc( SIZE_OF_RAWDATA );
+    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( m_charset, "UTF-8" );
+
+    memcpy( m_rawdata_left + m_lng_rawdata_left, data, size );
+
+    size_t byte_in = size + m_lng_rawdata_left;
+    m_lng_rawdata_left = byte_in;
+    while( byte_in && m_rawdata_left[ byte_in -1 ] != '\n' ) --byte_in;
+    if( byte_in ){
+
+        int byte_out;
+        const char* rawdata_utf8 = m_iconv->convert( m_rawdata_left,  byte_in,  byte_out );
+
+        parse_subject( rawdata_utf8 );
+
+        // 残りを先頭に移動
+        m_lng_rawdata_left -= byte_in;
+        memmove( m_rawdata_left, m_rawdata_left + byte_in, m_lng_rawdata_left );
+
+#ifdef _DEBUG
+        std::cout << "BoardBase::receive_data lng_rawdata = " << m_lng_rawdata << " size = " << size
+                  << " byte_in = " << byte_in << " byte_out = " << byte_out << " lng_rawdata_left = " << m_lng_rawdata_left << std::endl;
+#endif
+    }
 }
 
 
@@ -957,25 +1005,26 @@ void BoardBase::receive_finish()
     m_status &= ~STATUS_UPDATED;
 
     bool read_from_cache = false;
-    std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
-    std::string path_oldsubject = CACHE::path_board_root_fast( url_boardbase() ) + "old-" + m_subjecttxt;
+    const std::string path_subject = CACHE::path_board_root_fast( url_boardbase() ) + m_subjecttxt;
+    const std::string path_oldsubject = CACHE::path_board_root_fast( url_boardbase() ) + "old-" + m_subjecttxt;
 
 #ifdef _DEBUG
     std::cout << "----------------------------------\nBoardBase::receive_finish code = " << get_str_code() << std::endl;
-    std::cout << "size = " << m_lng_rawdata << std::endl;
+    std::cout << "lng_rawdata = " << m_lng_rawdata << std::endl;
 #endif
 
+    ///////////////////////////////////////////////////////
+    //
     // url_boardbase をロードして移転が起きたかチェック
     if( m_read_url_boardbase ){
 
 #ifdef _DEBUG
         std::cout << "move check\n";
 #endif
-        m_rawdata[ m_lng_rawdata ] = '\0';
         set_date_modified( std::string() );
         send_update_board();
 
-        if( get_code() == HTTP_OK && std::string( m_rawdata ).find( "window.location.href" ) != std::string::npos ){
+        if( m_lng_rawdata && get_code() == HTTP_OK && std::string( m_rawdata ).find( "window.location.href" ) != std::string::npos ){
 
 #ifdef _DEBUG
             std::cout << m_rawdata << std::endl;
@@ -1021,13 +1070,15 @@ void BoardBase::receive_finish()
         clear();
         return;
     }
+    // 移転チェック終わり
+    // 
+    ///////////////////////////////////////////////////////
+
 
     // サーバーからtimeoutなどのエラーが返った or 移転
     if( get_code() != HTTP_ERR // HTTP_ERR はローダでの内部のエラー
         && get_code() != HTTP_OK
         && get_code() != HTTP_NOT_MODIFIED ){
-
-        m_lng_rawdata = 0;
 
         //
         // リダイレクト(302)の場合は移転確認
@@ -1058,19 +1109,24 @@ void BoardBase::receive_finish()
     // キャッシュから読み込み
     if( read_from_cache ){
 
-        m_lng_rawdata = CACHE::load_rawdata( path_subject, m_rawdata, SIZE_OF_RAWDATA );
-
 #ifdef _DEBUG
         std::cout << "read from cache " << path_subject << std::endl;
 #endif
+        m_lng_rawdata = 0;
+        m_lng_rawdata_left = 0;
+
+        char* rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
+        size_t lng = CACHE::load_rawdata( path_subject, rawdata, SIZE_OF_RAWDATA );
+        receive_data( rawdata, lng );
+        free( rawdata );
     }
 
 #ifdef _DEBUG
-        std::cout << "size(final) = " << m_lng_rawdata << std::endl;
+    std::cout << "size = " << m_list_artinfo.size() << " lng_rawdata = " << m_lng_rawdata << " left = " << m_lng_rawdata_left << std::endl;
 #endif
 
     // データが無い
-    if( m_lng_rawdata == 0 ){
+    if( ! m_list_artinfo.size() ){
 
         set_date_modified( std::string() );
 
@@ -1083,12 +1139,6 @@ void BoardBase::receive_finish()
         clear();
         return;
     }
-
-    // UTF-8に変換しておく
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( m_charset, "UTF-8" );
-    int byte_out;
-    const char* rawdata_utf8 = libiconv->convert( m_rawdata , m_lng_rawdata,  byte_out );
-
 
     //////////////////////////////
     // データベース更新
@@ -1112,8 +1162,7 @@ void BoardBase::receive_finish()
         }
     }
 
-    // subject.txtをパースしながらデータベース更新
-    parse_subject( rawdata_utf8, m_is_online );
+    regist_article( m_is_online );
 
     // list_subject 更新
     if( ! m_list_subject.empty() ){
@@ -1125,7 +1174,7 @@ void BoardBase::receive_finish()
         if( m_is_online ){
 
             // 既読スレに更新があったかチェック
-            std::list< ArticleBase* >::iterator it_art;
+            std::vector< ArticleBase* >::iterator it_art;
             for( it_art = m_list_subject.begin(); it_art != m_list_subject.end(); ++it_art ){
 
                 if( ( *it_art )->is_cached() && ( *it_art )->get_number() > ( *it_art )->get_number_load() ){
@@ -1223,7 +1272,6 @@ void BoardBase::receive_finish()
     // コアにデータベース更新を知らせる
     send_update_board();
 
-    delete libiconv;
     clear();
 }
 
@@ -1242,6 +1290,8 @@ bool BoardBase::start_checkking_if_board_moved()
 #ifdef _DEBUG
     std::cout << "BoardBase::start_checkking_if_board_moved " << url_boardbase() << std::endl;
 #endif
+
+    m_lng_rawdata = 0;
 
     JDLIB::LOADERDATA data;
     data.init_for_data();
@@ -1603,7 +1653,7 @@ void BoardBase::set_local_proxy_w( const std::string& proxy )
 // query が空の時はキャッシュにあるログを全てヒットさせる
 // 
 //
-void BoardBase::search_cache( std::list< DBTREE::ArticleBase* >& list_article,
+void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
                               const std::string& query,
                               const bool mode_or, // 今のところ無視
                               const bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
@@ -1925,7 +1975,7 @@ void BoardBase::save_summary()
     std::ostringstream sstr_out;
     sstr_out << "(";
 
-    std::list< ArticleBase* >::iterator it;
+    std::vector< ArticleBase* >::iterator it;
     for( it = m_list_subject.begin(); it != m_list_subject.end(); ++it ){
 
         ArticleBase* art = *( it );

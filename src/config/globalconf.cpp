@@ -171,6 +171,8 @@ void CONFIG::set_proxy_for_data( const std::string& proxy ){ get_confitem()->set
 void CONFIG::set_proxy_port_for_data( int port ){ get_confitem()->proxy_port_for_data = port; }
 
 const int CONFIG::get_loader_bufsize(){ return get_confitem()->loader_bufsize; }
+const int CONFIG::get_loader_bufsize_board(){ return get_confitem()->loader_bufsize_board; }
+
 const int CONFIG::get_loader_timeout(){ return get_confitem()->loader_timeout; }
 const int CONFIG::get_loader_timeout_post(){ return get_confitem()->loader_timeout_post; }
 const int CONFIG::get_loader_timeout_data(){ return get_confitem()->loader_timeout_img; } // 旧 get_loader_timeout_img() 関数

@@ -115,7 +115,7 @@ namespace DBTREE
     void board_download_subject( const std::string& url, const std::string& url_update_view );
     const bool board_is_loading( const std::string& url );
     void board_stop_load( const std::string& url );
-    std::list< DBTREE::ArticleBase* >& board_list_subject( const std::string& url );
+    std::vector< DBTREE::ArticleBase* >& board_list_subject( const std::string& url );
     const int board_view_sort_column( const std::string& url );
     void board_set_view_sort_column( const std::string& url, int column );
     const int board_view_sort_mode( const std::string& url );
@@ -181,9 +181,9 @@ namespace DBTREE
     // キャッシュ内のログ検索
     // ArticleBase のアドレスをリスト(list_article)にセットして返す
     // query が空の時はキャッシュにあるログを全てヒットさせる
-    void search_cache_all( std::list< DBTREE::ArticleBase* >& list_article,
+    void search_cache_all( std::vector< DBTREE::ArticleBase* >& list_article,
                            const std::string& query, const bool mode_or, const bool& stop );
-    void search_cache( const std::string& url, std::list< DBTREE::ArticleBase* >& list_article,
+    void search_cache( const std::string& url, std::vector< DBTREE::ArticleBase* >& list_article,
                        const std::string& query, const bool mode_or, const bool& stop );
     
     // article 系

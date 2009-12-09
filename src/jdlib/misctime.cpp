@@ -14,6 +14,7 @@
 #include <cstring>
 #include <time.h>
 #include <sys/time.h>
+#include <vector>
 
 #ifdef _WIN32
 // not exist _r suffix functions in mingw time.h
@@ -171,3 +172,32 @@ time_t timegm (struct tm *tm)
     return ret;
 }
 #endif
+
+
+
+// 実行時間測定用
+
+std::vector< struct timeval > tv_measurement;
+
+void MISC::start_measurement( const int id )
+{
+    while( (int)tv_measurement.size() <= id ){
+        struct timeval tv;
+        tv_measurement.push_back( tv );
+    }
+
+    gettimeofday( &tv_measurement[ id ], NULL );
+}
+
+const int MISC::measurement( const int id )
+{
+    if( id >= (int)tv_measurement.size() ) return 0;
+
+    struct timeval tv;
+    gettimeofday( &tv, NULL );
+
+    int ret = ( tv.tv_sec * 1000000 + tv.tv_usec ) - ( tv_measurement[ id ].tv_sec * 1000000 + tv_measurement[ id ].tv_usec );
+    tv_measurement[ id ] = tv;
+
+    return ret;
+}

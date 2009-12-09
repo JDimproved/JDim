@@ -1385,7 +1385,7 @@ void Root::read_boardinfo_all()
 }
 
 // 全ログ検索
-void Root::search_cache( std::list< ArticleBase* >& list_article,
+void Root::search_cache( std::vector< ArticleBase* >& list_article,
                          const std::string& query, const bool mode_or, const bool& stop )
 {
     std::list< BoardBase* >::iterator it;
