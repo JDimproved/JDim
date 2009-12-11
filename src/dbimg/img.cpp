@@ -356,6 +356,9 @@ void Img::receive_data( const char* data, size_t size )
               << "size / total = " << current_length() << " / " << total_length() << std::endl;
 #endif
 
+    // Created は OK にしておく
+    if( get_code() == HTTP_CREATED ) set_code( HTTP_OK );
+
     // 先頭のシグネチャを見て画像かどうかをチェック
     if( m_type == T_UNKNOWN && get_code() == HTTP_OK ){
 
@@ -424,6 +427,9 @@ void Img::receive_finish()
 
     if( m_fout ) fclose( m_fout );
     m_fout = NULL;
+
+    // Created は OK にしておく
+    if( get_code() == HTTP_CREATED ) set_code( HTTP_OK );
 
     // データが無い
     if( get_code() == HTTP_OK && ! current_length() ) m_type = T_NODATA;

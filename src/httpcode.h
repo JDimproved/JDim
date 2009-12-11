@@ -11,6 +11,7 @@ enum
     HTTP_OLD = 2, // offlaw や 過去ログ倉庫からの読み込み
 
     HTTP_OK = 200,
+    HTTP_CREATED = 201,
     HTTP_PARTIAL_CONTENT = 206,
     HTTP_REDIRECT = 302,
     HTTP_NOT_MODIFIED = 304,
