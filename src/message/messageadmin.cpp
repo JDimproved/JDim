@@ -10,6 +10,7 @@
 #include "skeleton/view.h"
 #include "skeleton/msgdiag.h"
 #include "skeleton/dragnote.h"
+#include "skeleton/editview.h"
 
 #include "dbtree/interface.h"
 
@@ -37,7 +38,7 @@ using namespace MESSAGE;
 
 
 MessageAdmin::MessageAdmin( const std::string& url )
-    : SKELETON::Admin( url ), m_toolbar( NULL ), m_toolbar_preview( NULL )
+    : SKELETON::Admin( url ), m_toolbar( NULL ), m_toolbar_preview( NULL ), m_text_message( NULL )
 {
     get_notebook()->set_show_tabs( false );
 }
@@ -51,6 +52,7 @@ MessageAdmin::~MessageAdmin()
 
     if( m_toolbar ) delete m_toolbar;
     if( m_toolbar_preview ) delete m_toolbar_preview;
+    if( m_text_message ) delete m_text_message;
 }
 
 
@@ -66,6 +68,14 @@ std::string MessageAdmin::get_new_subject()
     if( m_toolbar ) return m_toolbar->get_new_subject();
 
     return std::string();
+}
+
+
+SKELETON::EditView* MessageAdmin::get_text_message()
+{
+    if( ! m_text_message ) m_text_message = new SKELETON::EditView();
+
+    return m_text_message;
 }
 
 

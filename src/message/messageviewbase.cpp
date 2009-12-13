@@ -11,6 +11,7 @@
 
 #include "skeleton/msgdiag.h"
 #include "skeleton/label_entry.h"
+#include "skeleton/editview.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
@@ -63,6 +64,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_preview( 0 ),
       m_entry_name( CORE::COMP_NAME ),
       m_entry_mail( CORE::COMP_MAIL ),
+      m_text_message( NULL ),
       m_enable_focus( true ),
       m_counter( 0 )
 {
@@ -188,7 +190,8 @@ void MessageViewBase::init_font( const std::string& fontname )
 
     m_entry_name.modify_font( pfd );
     m_entry_mail.modify_font( pfd );
-    m_text_message.modify_font( pfd );
+
+    if( m_text_message ) m_text_message->modify_font( pfd );
 }
 
 
@@ -197,12 +200,28 @@ void MessageViewBase::init_font( const std::string& fontname )
 //
 void MessageViewBase::init_color()
 {
-    m_text_message.modify_text( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE ) ) );
-    m_text_message.modify_text( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE_SELECTION ) ) );
-    m_text_message.modify_base( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE ) ) );
-    m_text_message.modify_base( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE_SELECTION ) ) );
+    if( m_text_message ){
+
+        m_text_message->modify_text( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE ) ) );
+        m_text_message->modify_text( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE_SELECTION ) ) );
+        m_text_message->modify_base( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE ) ) );
+        m_text_message->modify_base( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE_SELECTION ) ) );
+    }
 }
 
+
+void MessageViewBase::set_message( const std::string& msg )
+{
+    if( m_text_message ) m_text_message->set_text( msg );
+}
+
+
+const Glib::ustring MessageViewBase::get_message()
+{
+    if( m_text_message ) return m_text_message->get_text();
+
+    return Glib::ustring();
+}
 
 
 //
@@ -225,7 +244,7 @@ const bool MessageViewBase::set_command( const std::string& command, const std::
     if( command == "empty" ) return get_message().empty();
 
     else if( command == "toggle_preview" ) toggle_preview();
-    else if( command == "undo_text" ) m_text_message.undo();
+    else if( command == "undo_text" && m_text_message ) m_text_message->undo();
     else if( command == "insert_draft" ) insert_draft();
 
     else if( command == "tab_left" ) tab_left();
@@ -234,7 +253,7 @@ const bool MessageViewBase::set_command( const std::string& command, const std::
     // メッセージをクリア
     else if( command == "clear_message" ){
 
-        m_text_message.set_text( std::string() );
+        if( m_text_message ) m_text_message->set_text( std::string() );
 
         if( m_notebook.get_current_page() != PAGE_MESSAGE ){
             m_enable_focus = false;
@@ -246,7 +265,7 @@ const bool MessageViewBase::set_command( const std::string& command, const std::
     // メッセージを追加
     else if( command == "add_message" )
     {
-        if( ! arg1.empty() ) m_text_message.insert_str( arg1, true );
+        if( ! arg1.empty() && m_text_message ) m_text_message->insert_str( arg1, true );
     }
 
     // メッセージ保存
@@ -365,12 +384,24 @@ void MessageViewBase::pack_widget()
     m_toolbar_name_mail.append( m_tool_entry_mail );
 
     m_msgview.pack_start( m_toolbar_name_mail, Gtk::PACK_SHRINK );    
-    m_msgview.pack_start( m_text_message );
 
-    m_text_message.set_accepts_tab( false );
-    m_text_message.sig_key_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );    
-    m_text_message.sig_button_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_button_press ) );
-    m_text_message.get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::show_status ) );
+    if( ! m_text_message ){
+
+        // 日本語のON/OFF状態を保存
+        // Admin から EditView のインスタンスをもらう
+        if( CONFIG::get_keep_im_status() ){
+
+            m_text_message = MESSAGE::get_admin()->get_text_message();
+            m_text_message->set_text( std::string() );
+        }
+        else m_text_message = Gtk::manage( new SKELETON::EditView() );
+    }
+    m_msgview.pack_start( *m_text_message );
+
+    m_text_message->set_accepts_tab( false );
+    m_text_message->sig_key_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );    
+    m_text_message->sig_button_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_button_press ) );
+    m_text_message->get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::show_status ) );
 
     // プレビュー
     m_preview = CORE::ViewFactory( CORE::VIEW_ARTICLEPREVIEW, get_url() );
@@ -412,7 +443,7 @@ void MessageViewBase::focus_view()
 //    std::cout << "MessageViewBase::focus_view page = " << m_notebook.get_current_page() << std::endl;
 #endif
 
-    if( m_notebook.get_current_page() == PAGE_MESSAGE ) m_text_message.focus_view();
+    if( m_notebook.get_current_page() == PAGE_MESSAGE && m_text_message ) m_text_message->focus_view();
     else if( m_preview && m_notebook.get_current_page() == PAGE_PREVIEW ) m_preview->focus_view();
 }
 
@@ -539,7 +570,7 @@ void MessageViewBase::write()
     // 行数チェック
     if( m_max_line ){
 
-        if( m_text_message.get_buffer()->get_line_count() > m_max_line ){
+        if( m_text_message && m_text_message->get_buffer()->get_line_count() > m_max_line ){
             SKELETON::MsgDiag mdiag( get_parent_win(), "行数が多すぎます。" );
             mdiag.run();
             return;
@@ -732,7 +763,8 @@ void MessageViewBase::post_fin()
         || ( code == HTTP_REDIRECT && ! location.empty() ) // (まちBBSなどで)リダイレクトした場合
         ){
         save_postlog();
-        m_text_message.set_text( std::string() );
+
+        if( m_text_message ) m_text_message->set_text( std::string() );
 
         close_view();
 
@@ -777,7 +809,8 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 
         // URLを除外してエスケープ
         const bool include_url = false;
-        std::string msg = MISC::html_escape( m_text_message.get_text(), include_url );
+        std::string msg;
+        if( m_text_message ) msg = MISC::html_escape( m_text_message->get_text(), include_url );
         msg = MISC::replace_str( msg, "\n", " <br> " );
         
         std::stringstream ss;
@@ -841,12 +874,14 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 //
 void MessageViewBase::show_status()
 {
+    if( ! m_text_message ) return;
+
     std::stringstream ss;
 
-    ss << " [ 行数 " << m_text_message.get_buffer()->get_line_count();
+    if( m_text_message ) ss << " [ 行数 " << m_text_message->get_buffer()->get_line_count();
     if( m_max_line ) ss << "/ " << m_max_line;
 
-    const std::string message = m_text_message.get_text();
+    const std::string message = m_text_message->get_text();
 
     ss << "   /  文字数 ";
 
@@ -891,8 +926,10 @@ void MessageViewBase::show_status()
 //
 void MessageViewBase::push_logitem()
 {
+    if( ! m_text_message ) return;
+
     const bool newthread = ! ( MESSAGE::get_admin()->get_new_subject().empty() );
-    const std::string msg = get_text_message().get_text();
+    const std::string msg = m_text_message->get_text();
 
     MESSAGE::get_log_manager()->push_logitem( get_url(), newthread, msg );
 }
@@ -903,9 +940,11 @@ void MessageViewBase::push_logitem()
 //
 void MessageViewBase::save_postlog()
 {
+    if( ! m_text_message ) return;
+
     std::string subject = MESSAGE::get_admin()->get_new_subject();
     if( subject.empty() ) subject = DBTREE::article_subject( get_url() );
-    const std::string msg = get_text_message().get_text();
+    const std::string msg = m_text_message->get_text();
     const std::string name = get_entry_name().get_text();
     const std::string mail = get_entry_mail().get_text();
 

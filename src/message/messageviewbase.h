@@ -4,7 +4,6 @@
 #define _MESSAGEVIEWBASE_H
 
 #include "skeleton/view.h"
-#include "skeleton/editview.h"
 #include "skeleton/imgbutton.h"
 #include "skeleton/compentry.h"
 #include "skeleton/jdtoolbar.h"
@@ -19,6 +18,7 @@ namespace SKELETON
 {
     class Admin;
     class LabelEntry;
+    class EditView;
 }
 
 
@@ -52,7 +52,7 @@ namespace MESSAGE
         SKELETON::CompletionEntry m_entry_name;
         SKELETON::CompletionEntry m_entry_mail;
 
-        SKELETON::EditView m_text_message;
+        SKELETON::EditView* m_text_message;
 
         bool m_enable_focus;
 
@@ -141,12 +141,12 @@ namespace MESSAGE
         // Viewが所属するAdminクラス
         virtual SKELETON::Admin* get_admin();
 
-        void set_message( const std::string& msg ){ m_text_message.set_text( msg ); }
-        Glib::ustring get_message(){ return m_text_message.get_text(); }
+        void set_message( const std::string& msg );
+        const Glib::ustring get_message();
 
         SKELETON::CompletionEntry& get_entry_name(){ return m_entry_name; }
         SKELETON::CompletionEntry& get_entry_mail(){ return m_entry_mail; }
-        SKELETON::EditView& get_text_message() { return m_text_message; }
+        SKELETON::EditView* get_text_message() { return m_text_message; }
 
         void post_msg( const std::string& msg, bool new_article );
         void post_fin();

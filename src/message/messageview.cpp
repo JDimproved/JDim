@@ -9,6 +9,7 @@
 
 #include "skeleton/msgdiag.h"
 #include "skeleton/label_entry.h"
+#include "skeleton/editview.h"
 
 #include "jdlib/miscutil.h"
 
@@ -21,7 +22,7 @@
 
 using namespace MESSAGE;
 
- MessageViewMain::MessageViewMain( const std::string& url, const std::string& msg )
+MessageViewMain::MessageViewMain( const std::string& url, const std::string& msg )
     : MessageViewBase( url )
 {
     setup_view();
@@ -49,7 +50,9 @@ MessageViewMain::~MessageViewMain()
 //
 std::string MessageViewMain::create_message()
 {
-    const Glib::ustring msg = get_text_message().get_text();
+    if( ! get_text_message() ) return std::string();
+
+    const Glib::ustring msg = get_text_message()->get_text();
     const std::string name = get_entry_name().get_text();
     const std::string mail = get_entry_mail().get_text();
 
@@ -162,8 +165,10 @@ void MessageViewMain::reload()
 //
 std::string MessageViewNew::create_message()
 {
+    if( ! get_text_message() ) return std::string();
+
     std::string subject = MESSAGE::get_admin()->get_new_subject();
-    std::string msg = get_text_message().get_text();
+    std::string msg = get_text_message()->get_text();
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();
 

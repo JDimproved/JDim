@@ -1113,18 +1113,25 @@ void BoardViewBase::update_view_impl( const std::vector< DBTREE::ArticleBase* >&
 
         m_loading = false;
 
-        // ステータスバー更新
+        update_status();
+
+        // タブのアイコン状態を更新
+        BOARD::get_admin()->set_command( "toggle_icon", get_url() );
+    }
+}
+
+
+//
+// ステータスバー更新
+//
+void BoardViewBase::update_status()
+{
         std::ostringstream ss_tmp;
         if( m_load_subject_txt ) ss_tmp << DBTREE::board_str_code( get_url_board() ) << " ";
         ss_tmp << "[ 全 " << get_row_size() << " ] ";
 
         set_status( ss_tmp.str() );
         BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
-
-        // タブのアイコン状態を更新
-        BOARD::get_admin()->set_command( "toggle_icon", get_url() );
-
-    }
 }
 
 

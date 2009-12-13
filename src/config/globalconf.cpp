@@ -264,8 +264,11 @@ const bool CONFIG::get_save_post_history(){ return get_confitem()->save_posthist
 void CONFIG::set_save_post_history( const bool save ){ get_confitem()->save_posthist = save; }
 
 const bool CONFIG::get_hide_writing_dialog(){ return get_confitem()->hide_writing_dialog; }
+
 const bool CONFIG::get_fold_message(){ return get_confitem()->fold_message; }
 void CONFIG::set_fold_message( const bool fold ){ get_confitem()->fold_message = fold; }
+
+const bool CONFIG::get_keep_im_status(){ return get_confitem()->keep_im_status; }
 
 const int CONFIG::get_margin_popup(){ return get_confitem()->margin_popup; }
 void CONFIG::set_margin_popup( const int margin ){ get_confitem()->margin_popup = margin; }

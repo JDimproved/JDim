@@ -172,7 +172,11 @@ namespace BOARD
         // ポップアップメニュー取得
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
+        // view更新
         void update_view_impl( const std::vector< DBTREE::ArticleBase* >& list_subject, const bool loading_fin );
+
+        // ステータスバー更新
+        void update_status();
 
         // ソート状態回復
         void restore_sort();

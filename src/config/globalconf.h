@@ -300,6 +300,9 @@ namespace CONFIG
     const bool get_fold_message();
     void set_fold_message( const bool fold );
 
+    // 書き込み欄の日本語のON/OFF状態を保存
+    const bool get_keep_im_status();
+
     // ポップアップとカーソルの間のマージン
     const int get_margin_popup();
     void set_margin_popup( const int margin );

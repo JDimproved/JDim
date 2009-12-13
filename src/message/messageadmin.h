@@ -9,6 +9,12 @@
 
 #include "skeleton/admin.h"
 
+namespace SKELETON
+{
+    class EditView;
+}
+
+
 namespace MESSAGE
 {
 
@@ -28,6 +34,11 @@ namespace MESSAGE
         MessageToolBar* m_toolbar;
         MessageToolBarPreview* m_toolbar_preview;
 
+        // 書き込み用のメッセージ欄
+        // インスタンスを破棄しないで、前回書き込みビューを閉じた時の
+        // 日本語のON/OFF状態を次回開いたときに継続させる
+        SKELETON::EditView* m_text_message;
+
       public:
 
         MessageAdmin( const std::string& url );
@@ -35,6 +46,8 @@ namespace MESSAGE
 
         void show_entry_new_subject( bool show );
         std::string get_new_subject();
+
+        SKELETON::EditView* get_text_message();
 
       protected:
 

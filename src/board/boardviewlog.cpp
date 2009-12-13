@@ -160,6 +160,7 @@ void BoardViewLog::update_item( const std::string& url, const std::string& id )
             unsorted_column();
             prepend_row( art, get_row_size() + 1 );
             goto_top();
+            update_status();
         }
     }
 }
