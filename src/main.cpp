@@ -299,14 +299,14 @@ void usage( const int status )
     // -h, --help で表示するメッセージ
     std::stringstream help_message;
     help_message <<
-    "Usage: jd [option] [<url>]\n"
+    "Usage: jd [OPTION] [URL,FILE]\n"
     "\n"
     "-h, --help\n"
     "        Display this information\n"
     //"-t <url>, --tab=<url>\n"
     //"        URL open of BBS etc by Tab\n"
     "-m, --multi\n"
-    "        Does not terminate even if it is a subprocess\n"
+    "        Do not quit even if multiple sub-process\n"
     "-s, --skip-setup\n"
     "        Skip the setup dialog\n"
     "-l, --logfile\n"
