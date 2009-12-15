@@ -1108,11 +1108,11 @@ const std::string CACHE::get_realpath( const std::string& path )
 #ifdef _WIN32
     char* ret = _fullpath( NULL, to_locale_cstr( path ), MAX_PATH );
 #else
-    char* ret = realpath( to_locale_cstr( path ), NULL );
+    char resolved_path[ PATH_MAX ];
+    char* ret = realpath( to_locale_cstr( path ), resolved_path );
 #endif
     if( ret ){
         path_real = ret;
-        free( ret );
     }
     else return std::string();
 
