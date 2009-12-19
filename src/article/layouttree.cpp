@@ -53,6 +53,7 @@ using namespace ARTICLE;
 LayoutTree::LayoutTree( const std::string& url, bool show_abone )
     : m_heap( SIZE_OF_HEAP ),
       m_url( url ),
+      m_vec_header( NULL ),
       m_local_nodetree( 0 ),
       m_separator_header( NULL ),
       m_show_abone( show_abone )
@@ -82,6 +83,8 @@ LayoutTree::~LayoutTree()
 void LayoutTree::clear()
 {
     m_heap.clear();
+
+    m_vec_header = NULL;
     
     m_last_header = NULL;
     m_max_res_number = 0;
@@ -279,14 +282,14 @@ LAYOUT* LayoutTree::create_layout_sssp( const char* link )
 //
 // joint == true の時はヘッダを作らないで、本文を前のツリーの続きに連結する
 //
-void LayoutTree::append_node( DBTREE::NODE* node_header, bool joint )
+void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
 {
     if( ! node_header ) return;
 
     DBTREE::HEADERINFO* headinfo = node_header->headinfo;
     if( ! headinfo ) return;
 
-    int res_number = node_header->id_header;
+    const int res_number = node_header->id_header;
 
 #ifdef _DEBUG
     std::cout << "LayoutTree::append_node num = " << res_number << " show_abone = " << m_show_abone << std::endl;
@@ -315,6 +318,8 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, bool joint )
         header->res_number = res_number;
         header->node = node_header;
         if( res_number > m_max_res_number ) m_max_res_number = res_number;
+        if( ! m_vec_header ) m_vec_header = ( LAYOUT** ) m_heap.heap_alloc( sizeof( LAYOUT* ) * MAX_RESNUMBER );
+        m_vec_header[ res_number ] = header;
 
         while( dom ){
 
@@ -531,27 +536,13 @@ void LayoutTree::append_dat( const std::string& dat, int num )
 //
 // レス番号 number のヘッダを返す
 //
-const LAYOUT* LayoutTree::get_header_of_res_const( int number ){ return get_header_of_res( number ); }
+const LAYOUT* LayoutTree::get_header_of_res_const( const int number ){ return get_header_of_res( number ); }
 
-LAYOUT* LayoutTree::get_header_of_res( int number )
+LAYOUT* LayoutTree::get_header_of_res( const int number )
 {
-#ifdef _DEBUG
-    std::cout << "LayoutTree::get_header_of_res num = " << number << std::endl;
-#endif  
+    if( number > m_max_res_number || number <= 0 ) return NULL;
 
-    LAYOUT* tmpheader = top_header();
-    while( tmpheader ){
-
-        if( tmpheader->res_number == number ) return tmpheader;
-
-        tmpheader = tmpheader->next_header;
-    }
-
-#ifdef _DEBUG
-    std::cout << "not found.\n";
-#endif  
-
-    return NULL;
+    return m_vec_header[ number ];
 }
 
 

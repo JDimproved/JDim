@@ -134,11 +134,14 @@ namespace ARTICLE
         // 状態
         int m_x_pointer, m_y_pointer;  // 現在のマウスポインタの位置
         bool m_key_press; // キーを押している
+        bool m_key_locked; // 同じキーを押したままにしている
+        guint m_keyval;
         bool m_drugging;  // ドラッグ中
         bool m_r_drugging; // 右ドラッグ中
         std::string m_link_current; // 現在マウスポインタの下にあるリンクの文字列
         LAYOUT* m_layout_current; // 現在マウスポインタの下にあるlayoutノード(下が空白ならNULL)
         Gdk::CursorType m_cursor_type; // カーソルの形状
+        bool m_drawn;
 
         // 入力コントローラ
         CONTROL::Control m_control;

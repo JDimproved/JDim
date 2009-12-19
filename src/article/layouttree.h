@@ -83,6 +83,8 @@ namespace ARTICLE
         JDLIB::HEAP m_heap;
         std::string m_url;
 
+        LAYOUT** m_vec_header;  // ヘッダのポインタの配列
+
         // コメントノードやプレビュー表示時に使うローカルなノードツリー
         DBTREE::NodeTreeBase* m_local_nodetree; 
 
@@ -125,7 +127,7 @@ namespace ARTICLE
 
         // nodetreeのノード構造をコピーし、ツリーの一番最後に加える
         // joint == true の時はヘッダを作らないで、本文を前のツリーの続きに連結する
-        void append_node( DBTREE::NODE* node_header, bool joint );
+        void append_node( DBTREE::NODE* node_header, const bool joint );
 
         void append_block( DBTREE::NODE* block, const int res_number, IMGDATA* imgdata );
 
@@ -136,7 +138,8 @@ namespace ARTICLE
         void append_dat( const std::string& dat, int num );
 
         // レス番号 number のヘッダを返す
-        const LAYOUT* get_header_of_res_const( int number );
+        const LAYOUT* get_header_of_res_const( const int number );
+        LAYOUT* get_header_of_res( const int number );
 
         // 新着セパレータ移動
         // set_separator_new()にレス番号をセットしてからmove_separator()を呼ぶ
@@ -158,8 +161,6 @@ namespace ARTICLE
         LAYOUT* create_layout_div( const int id );
         LAYOUT* create_layout_img( const char* link );
         LAYOUT* create_layout_sssp( const char* link );
-
-        LAYOUT* get_header_of_res( int number );
 
         void append_abone_node( DBTREE::NODE* node_header );
         LAYOUT* create_separator();

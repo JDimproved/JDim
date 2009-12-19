@@ -201,12 +201,15 @@ void DrawAreaBase::clear()
     m_r_drugging = false;
     m_pre_pos_y = 0;
     m_key_press = false;
+    m_key_locked = false;
+    m_keyval = 0;
     m_goto_num_reserve = 0;
     m_goto_bottom_reserve = false;
     m_wheel_scroll_time = 0;
     m_caret_pos = CARET_POSITION();
     m_caret_pos_pre = CARET_POSITION();
     m_caret_pos_dragstart = CARET_POSITION();
+    m_drawn = true;
 
     m_jump_history.clear();
 
@@ -334,7 +337,14 @@ void DrawAreaBase::init_font()
 //
 void DrawAreaBase::clock_in()
 {
-    if( m_scrollinfo.mode != SCROLL_AUTO && ! m_scrollinfo.live ) exec_scroll( false );
+    if( m_scrollinfo.mode != SCROLL_NOT && m_scrollinfo.mode != SCROLL_AUTO && ! m_scrollinfo.live ){
+
+        // スクロールのロック中にダイアログを開いた場合はスクロールされたままになるので
+        // スクロールを止める
+        if( SESSION::is_dialog_shown() ) focus_out();
+
+        else exec_scroll( false );
+    }
 }
 
 
@@ -364,9 +374,16 @@ void DrawAreaBase::focus_out()
     // realize していない
     if( !m_gc ) return;
 
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::focus_out\n";
+#endif
+
     change_cursor( Gdk::ARROW );
 
     m_key_press = false;
+    m_key_locked = false;
+    m_keyval = 0;
+
     if( m_scrollinfo.mode != SCROLL_AUTO ) m_scrollinfo.reset();
 
 }
@@ -1422,6 +1439,14 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
 
+    // スクロール中にまだdraw_drawarea()が実行されていない時はキャンセル
+    if( ! redraw_all && ( m_scrollinfo.mode == SCROLL_LOCKED || m_scrollinfo.mode == SCROLL_AUTO ) && ! m_drawn ){
+#ifdef _DEBUG
+        std::cout << "DrawAreaBase::draw_backscreen was canceled\n";
+#endif
+        return false;
+    }
+
     const int width_view = m_view.get_width();
     const int height_view = m_view.get_height();
     const int pos_y = get_vscr_val();
@@ -1477,12 +1502,17 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
     if( !redraw_all && ! dy ) return false;
 
 #ifdef _DEBUG
-//    std::cout << "DrawAreaBase::draw_backscreen all = " << redraw_all << " y = " << pos_y <<" dy = " << dy << std::endl;
+    std::cout << "DrawAreaBase::draw_backscreen all = " << redraw_all
+              << " y = " << pos_y <<" dy = " << dy
+              << " upper = " << upper << " lower = " << lower
+              << " mode = " << m_scrollinfo.mode
+              << std::endl;
 #endif    
 
     // 一番最後のレスが半分以上表示されていたら最後のレス番号をm_seen_currentにセット
     m_seen_current = 0;
-    int num = m_layout_tree->max_res_number();
+    const int max_res_number = m_layout_tree->max_res_number();
+    int num = max_res_number;
     const LAYOUT* lastheader = m_layout_tree->get_header_of_res_const( num );
 
     // あぼーんなどで表示されていないときは前のレスを調べる
@@ -1497,8 +1527,41 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
 
     // ノード描画
     bool relayout = false;
-    LAYOUT* header = m_layout_tree->top_header();
-    while( header ){
+    LAYOUT* header = NULL;
+
+    // 2分探索で画面に表示されているノードを探す
+    int top = 1;
+    int back = max_res_number;
+    while( top <= back ){
+
+        const int pivot = ( top + back )/2;
+
+        header = m_layout_tree->get_header_of_res( pivot );
+        if( ! header ) break;
+
+/*
+        std::cout << "top = " << top << " back = " << back << " pivot = " << pivot
+                  << " pos_y = " << pos_y << " y = " << header->rect->y
+                  << " y + height = " << header->rect->y + header->rect->height
+                  << std::endl;
+*/
+
+        if( ! header->next_header // 最後のレス
+            || header->rect->y <= pos_y && header->next_header->rect->y >= pos_y ) break;
+
+        if( header->rect->y > pos_y ) back = pivot -1;
+        else top = pivot + 1;
+
+        header = NULL;
+    }
+    if( ! header ){
+#ifdef _DEBUG
+        std::cout << "not found\n";
+#endif
+        header = m_layout_tree->top_header();
+    }
+
+    while( header && header->rect->y < pos_y + height_view ){
 
         // 現在みているレス番号取得
         if( ! m_seen_current ){
@@ -1544,6 +1607,8 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
 
         if( exec_layout() ) redraw_view();
     }
+
+    m_drawn = false;
 
     return true;
 }
@@ -1597,6 +1662,8 @@ bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
 
     // フレーム描画
     if( m_draw_frame ) draw_frame();
+
+    m_drawn = true;
 
     return true;
 }
@@ -2371,7 +2438,7 @@ const bool DrawAreaBase::set_scroll( const int control )
             m_scrollinfo.dy = ( int ) dy;
             
             // キーを押しっぱなしにしてる場合スクロールロックする
-            if( m_key_press ) m_scrollinfo.mode = SCROLL_LOCKED;
+            if( m_key_locked ) m_scrollinfo.mode = SCROLL_LOCKED;
         
             // レスポンスを上げるため押した直後はすぐ描画
             else{
@@ -2564,7 +2631,12 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
 
     // 再描画
     if( draw_backscreen( redraw_all ) ){
-        draw_drawarea();
+
+        // スクロールがロック状態の時やオートスクロールの時はすぐに描画しないで
+        // アイドル状態になったら描画する
+        if( m_scrollinfo.mode == SCROLL_LOCKED || m_scrollinfo.mode == SCROLL_AUTO ) m_view.queue_draw();
+
+        else draw_drawarea();
 
         // カーソル形状の更新
         CARET_POSITION caret_pos;
@@ -4189,29 +4261,18 @@ void DrawAreaBase::change_cursor( const Gdk::CursorType type )
 //
 const bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
 {
+    //オートスクロール中なら無視
+    if( m_scrollinfo.mode == SCROLL_AUTO ) return true;
+
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::slot_key_press_event\n";
 #endif
 
-    // ダイアログなどを開いてslot_key_release_event()が呼び出されないときが
-    // あるので m_key_press をリセットしておく
-    m_key_press = false;
+    if( m_key_press && m_keyval == event->keyval ) m_key_locked = true;
+    m_key_press = true;
+    m_keyval = event->keyval;
 
-    //オートスクロール中なら無視
-    if( m_scrollinfo.mode == SCROLL_AUTO ) return true;
-
-    const bool ret = m_sig_key_press.emit( event );
-
-    // 修飾キーを押したときは m_key_press をtrueにしない
-    // そうしないと Shift + ○ をスクロールに割り当てたときに
-    // 2回スクロールする。DrawAreaBase::set_scroll()も参照すること。
-    bool ctrl = ( event->keyval == GDK_Control_L || event->keyval == GDK_Control_R );
-    bool eisu = ( event->keyval == GDK_Eisu_toggle || event->keyval == GDK_Caps_Lock );
-    bool shift = ( event->keyval == GDK_Shift_L || event->keyval == GDK_Shift_R );
-    bool alt = ( event->keyval == GDK_Alt_L || event->keyval == GDK_Alt_R );
-    if( ! ctrl && ! eisu && ! shift && ! alt ) m_key_press = true;
-
-    return ret;
+    return m_sig_key_press.emit( event );
 }
 
 
@@ -4221,15 +4282,18 @@ const bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
 //
 bool DrawAreaBase::slot_key_release_event( GdkEventKey* event )
 {
+    if( !m_key_press ) return true;
+
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::slot_key_release_event\n";
 #endif
 
-    if( !m_key_press ) return true;
-    m_key_press = false;
-
     m_scrollinfo.reset();
-    redraw_view();
+    if( m_key_locked ) redraw_view();
+
+    m_key_press = false;
+    m_key_locked = false;
+    m_keyval = 0;
 
     m_sig_key_release.emit( event );
     return true;
