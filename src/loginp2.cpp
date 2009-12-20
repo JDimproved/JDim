@@ -131,7 +131,8 @@ void Loginp2::start_login()
     data.str_post += get_passwd();
     data.str_post += "&ctl_regist_cookie=1";
     data.str_post += "&regist_cookie=1";
-    data.str_post += "&submit_member=" + MISC::charset_url_encode( "ユーザログイン", "MS932" );
+//    data.str_post += "&submit_member=" + MISC::charset_url_encode( "ユーザログイン", "MS932" );  // 2009/12/20 仕様変更
+    data.str_post += "&submit_userlogin=" + MISC::charset_url_encode( "ユーザログイン", "MS932" );
 
     logout();
     if( ! m_rawdata ) m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
@@ -167,7 +168,7 @@ void Loginp2::receive_finish()
 #ifdef _DEBUG
     std::cout << "Loginp2::receive_finish code = " << get_code() << std::endl;
     std::cout << "lng_rawdata = " << m_lng_rawdata << std::endl;
-//    if( m_rawdata ) std::cout << m_rawdata << std::endl;
+    if( !m_loading_csrfid && m_rawdata ) std::cout << m_rawdata << std::endl;
 #endif
 
     // csrfid 取得
