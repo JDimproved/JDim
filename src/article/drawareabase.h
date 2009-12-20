@@ -141,7 +141,7 @@ namespace ARTICLE
         std::string m_link_current; // 現在マウスポインタの下にあるリンクの文字列
         LAYOUT* m_layout_current; // 現在マウスポインタの下にあるlayoutノード(下が空白ならNULL)
         Gdk::CursorType m_cursor_type; // カーソルの形状
-        bool m_drawn;
+        struct timeval m_draw_time;  // 最後に描画した時刻
 
         // 入力コントローラ
         CONTROL::Control m_control;
@@ -267,7 +267,7 @@ namespace ARTICLE
         const bool is_drawarea_realized(){ return m_window; }
 
         // バックスクリーン描画
-        bool draw_backscreen( const bool redraw_all = false );
+        const bool draw_backscreen( const bool redraw_all = false );
 
         // 文字色のID( colorid.h にある ID を指定)
         const int get_colorid_text() const{ return m_colorid_text; }

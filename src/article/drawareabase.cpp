@@ -209,7 +209,8 @@ void DrawAreaBase::clear()
     m_caret_pos = CARET_POSITION();
     m_caret_pos_pre = CARET_POSITION();
     m_caret_pos_dragstart = CARET_POSITION();
-    m_drawn = true;
+
+    memset( &m_draw_time, 0, sizeof( struct timeval ) );
 
     m_jump_history.clear();
 
@@ -337,10 +338,10 @@ void DrawAreaBase::init_font()
 //
 void DrawAreaBase::clock_in()
 {
-    if( m_scrollinfo.mode != SCROLL_NOT && m_scrollinfo.mode != SCROLL_AUTO && ! m_scrollinfo.live ){
+    if( m_scrollinfo.mode != SCROLL_NOT &&
+        ! ( m_scrollinfo.mode == SCROLL_AUTO || m_scrollinfo.live ) ){
 
-        // スクロールのロック中にダイアログを開いた場合はスクロールされたままになるので
-        // スクロールを止める
+        // スクロール中にダイアログを開いた場合はスクロールされたままになるのでスクロールを止める
         if( SESSION::is_dialog_shown() ) focus_out();
 
         else exec_scroll( false );
@@ -353,7 +354,16 @@ void DrawAreaBase::clock_in()
 //
 void DrawAreaBase::clock_in_smooth_scroll()
 {
-    if( m_scrollinfo.mode == SCROLL_AUTO || m_scrollinfo.live ) exec_scroll( false );
+    if( m_scrollinfo.mode == SCROLL_AUTO || m_scrollinfo.live ){
+
+        // スクロール中にダイアログを開いた場合はスクロールされたままになるのでスクロールを止める
+        if( ! m_scrollinfo.live && SESSION::is_dialog_shown() ){
+            m_scrollinfo.mode = SCROLL_NOT;
+            focus_out();
+        }
+
+        else exec_scroll( false );
+    }
 }
 
 
@@ -1432,19 +1442,31 @@ bool DrawAreaBase::is_wrapped( const int x, const int border, const char* str )
 //
 // redraw_all = true なら全画面を描画、falseならスクロールした分だけ
 //
-bool DrawAreaBase::draw_backscreen( const bool redraw_all )
+const bool DrawAreaBase::draw_backscreen( const bool redraw_all )
 {
     if( ! m_gc ) return false;
     if( ! m_backscreen ) return false;
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
 
-    // スクロール中にまだdraw_drawarea()が実行されていない時はキャンセル
-    if( ! redraw_all && ( m_scrollinfo.mode == SCROLL_LOCKED || m_scrollinfo.mode == SCROLL_AUTO ) && ! m_drawn ){
+    // スクロール中に処理落ちが起きている場合は描画をキャンセルする
+    if( ! redraw_all
+        && ( m_scrollinfo.mode == SCROLL_LOCKED || m_scrollinfo.mode == SCROLL_AUTO ) ){
+        
+        struct timeval tv;
+        struct timezone tz;
+        if( ! gettimeofday( &tv, &tz ) ){
+
+            const time_t passed = ( tv.tv_sec * 1000000 + tv.tv_usec ) - ( m_draw_time.tv_sec * 1000000 + m_draw_time.tv_usec );
+            m_draw_time = tv;
+
+            if( passed > TIMER_TIMEOUT * ( 1000 * 5 / 4 ) ){
 #ifdef _DEBUG
-        std::cout << "DrawAreaBase::draw_backscreen was canceled\n";
+                std::cout << "DrawAreaBase::draw_backscreen was canceled\n";
 #endif
-        return false;
+                return false;
+            }
+        }
     }
 
     const int width_view = m_view.get_width();
@@ -1471,9 +1493,6 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
         // 上にスクロールした
         if( dy > 0 ){
 
-            // スクロールロックの時は描画を省略する
-            if( m_scrollinfo.mode == SCROLL_LOCKED ) dy = MIN( dy, (int)SCROLLSPEED_SLOW );
-
             if( dy < height_view ){
                 upper += ( height_view - dy );
                 m_backscreen->draw_drawable( m_gc, m_backscreen, 0, dy, 0, 0, width_view , height_view - dy );
@@ -1484,9 +1503,6 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
 
         // 下にスクロールした
         else if( dy < 0 ){
-
-            // スクロールロックの時は描画を省略する
-            if( m_scrollinfo.mode == SCROLL_LOCKED ) dy = MAX( dy, (int)-SCROLLSPEED_SLOW );
 
             if( -dy < height_view ){
                 lower = upper - dy;
@@ -1608,8 +1624,6 @@ bool DrawAreaBase::draw_backscreen( const bool redraw_all )
         if( exec_layout() ) redraw_view();
     }
 
-    m_drawn = false;
-
     return true;
 }
 
@@ -1662,8 +1676,6 @@ bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
 
     // フレーム描画
     if( m_draw_frame ) draw_frame();
-
-    m_drawn = true;
 
     return true;
 }
