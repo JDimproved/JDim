@@ -19,7 +19,8 @@ ImgLoader::ImgLoader( const std::string& file )
       m_width( 0 ),
       m_height( 0 ),
       m_stop( false ),
-      m_y( 0 )
+      m_y( 0 ),
+      m_loadedlevel( LOADLEVEL_INIT )
 {
 #ifdef _DEBUG
     std::cout << "ImgLoader::ImgLoader file = " << m_file << std::endl;
@@ -99,9 +100,9 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
 {
     if( m_loader ) {
         // キャッシュに読み込んだデータが十分かどうか
-        if( m_loadlevel <= loadlevel ) {
+        if( m_loadedlevel <= loadlevel ) {
 #ifdef _DEBUG
-            std::cout << "ImgLoader use cache loadlevel = " << loadlevel << " / " << m_loadlevel
+            std::cout << "ImgLoader use cache loadlevel / loadedlevel = " << loadlevel << " / " << m_loadedlevel
                       << " file = " << m_file << std::endl;
 #endif
             return true;
@@ -116,7 +117,8 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
     m_loadlevel = loadlevel;
 
 #ifdef _DEBUG
-    std::cout << "ImgLoader loadlevel = " << loadlevel
+    std::cout << "ImgLoader::load_imgfile start loadlevel = " << loadlevel
+              << " loadedlevel = " << m_loadedlevel
               << " file = " << m_file << std::endl;
     size_t total = 0;
 #endif
@@ -151,10 +153,10 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
 
 #ifdef _DEBUG
             total += readsize;
-            std::cout << readsize << " / " << total << std::endl;
+//            std::cout << readsize << " / " << total << std::endl;
 #endif
             if( feof( f ) ){ // 画像データ全体を読み込み完了
-                m_loadlevel = LOADLEVEL_NORMAL;
+                m_loadedlevel = LOADLEVEL_NORMAL;
                 break;
             }
 
@@ -174,7 +176,7 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
     {
 #ifdef _DEBUG
         std::string stop_s = m_stop ? "true" : "false";
-        std::cout << "ImgLoader (" << stop_s << ") : " << m_file << std::endl;
+        std::cout << "ImgLoader stop = (" << stop_s << ") : " << m_file << std::endl;
 #endif
         if( ! m_stop ){
             m_errmsg = err.what();
@@ -186,7 +188,8 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
     fclose( f );
 
 #ifdef _DEBUG
-    std::cout << "ImgLoader::load read = " << total << "  w = " << m_width << " h = " << m_height << std::endl;
+    std::cout << "ImgLoader::load_imgfile fisished read = " << total << "  w = " << m_width << " h = " << m_height
+              << " loadedlevel = " << m_loadedlevel << std::endl;
 #endif
 
     return ret;
@@ -202,7 +205,8 @@ void ImgLoader::slot_size_prepared( int w, int h )
 
     m_width = w;
     m_height = h;
-    if( m_loadlevel == LOADLEVEL_SIZEONLY ) request_stop();
+    if( m_loadedlevel > LOADLEVEL_SIZEONLY ) m_loadedlevel = LOADLEVEL_SIZEONLY;
+    if( m_loadlevel >= LOADLEVEL_SIZEONLY ) request_stop();
 }
 
 
@@ -218,7 +222,10 @@ void ImgLoader::slot_area_updated(int x, int y, int w, int h )
         // アニメーション画像を表示する際、幅や高さが元の値と異なる時に、全ての画像データを
         // 読み込まなくても pixbuf だけ取り出せれば良いので、pixbufを取り出せるようになった時点で
         // 画像データの読み込みを途中で止めて表示待ち時間を短縮する
-        if( y < m_y ) request_stop();
+        if( y < m_y ){
+            m_loadedlevel = LOADLEVEL_PIXBUFONLY;
+            request_stop();
+        }
         m_y = y;
     }
 }

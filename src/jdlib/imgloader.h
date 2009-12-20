@@ -16,7 +16,9 @@ namespace JDLIB
     {
         LOADLEVEL_NORMAL = 0,   // 画像データ全体を読み込む
         LOADLEVEL_PIXBUFONLY,   // pixbufを作るのに十分なデータを読み込む
-        LOADLEVEL_SIZEONLY      // サイズを計算するのに十分なデータを読み込む
+        LOADLEVEL_SIZEONLY,     // サイズを計算するのに十分なデータを読み込む
+
+        LOADLEVEL_INIT
     };
     
     class ImgLoader : public Glib::Object
@@ -32,6 +34,7 @@ namespace JDLIB
         bool m_stop;
         int m_y;
         int m_loadlevel;
+        int m_loadedlevel;
         
     public:
         virtual ~ImgLoader();
