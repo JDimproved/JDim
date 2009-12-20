@@ -1,5 +1,6 @@
 [ make、実行方法について ]
 
+
 * 動作環境
 
   必須環境
@@ -38,58 +39,58 @@
 
 * make 方法( rpmbuild の場合 )
 
-   1. rpmbuild -tb 〜.tgz でrpmファイルが出来るのであとは rpm -Uvh 〜.rpm
-   2. ライブラリが足りないといわれたら yum install 〜-devel
-   3. 起動はメニューから起動するか、端末で jd と打ち込んでエンターを押す。
+    1. rpmbuild -tb 〜.tgz でrpmファイルが出来るのであとは rpm -Uvh 〜.rpm
+    2. ライブラリが足りないといわれたら yum install 〜-devel
+    3. 起動はメニューから起動するか、端末で jd と打ち込んでエンターを押す。
 
 * make 方法( configure + make の場合 )
 
-   1. autoreconf -i ( 又は ./autogen.sh )
-   2. ./configure
-   3. make
-   4. (お好みで) strip src/jd
+    1. autoreconf -i ( 又は ./autogen.sh )
+    2. ./configure
+    3. make
+    4. (お好みで) strip src/jd
 
 * configureオプション
 
     --with-sessionlib=[xsmp|gnomeui|no]
 
-      GNOMEUIを使ってセッション管理をするには「gnomeui」を、セッション管理を無効にするには「no」を選択。デフォルトでは XSMPを使用する。
+       GNOMEUIを使ってセッション管理をするには「gnomeui」を、セッション管理を無効にするには「no」を選択。デフォルトでは XSMPを使用する。
 
     --with-pangolayout
 
-      描画にPangoLayoutを使う。デフォルトでは PangoGlyphString を使用する。
+       描画にPangoLayoutを使う。デフォルトでは PangoGlyphString を使用する。
 
     --with-migemo
 
-      migemoによる検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
+       migemoによる検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
 
     --with-[native|core2duo|athlon64|atom|ppc7400|ppc7450]
 
-      CPUに合わせた最適化
+       CPUに合わせた最適化
 
     --with-openssl
 
-      GNU TLSではなく OpenSSLを使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。
+       GNU TLSではなく OpenSSLを使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。
 
     --with-alsa
 
-      ALSAによる効果音再生機能を有効にする。詳しくは"http://jd4linux.sourceforge.jp/manual/"の項を参照すること。
+       ALSAによる効果音再生機能を有効にする。詳しくは"http://jd4linux.sourceforge.jp/manual/"の項を参照すること。
 
     --with-xdgopen
 
-      デフォルトブラウザとしてxdg-openを使用する。
+       デフォルトブラウザとしてxdg-openを使用する。
 
     --enable-gprof
 
-      gprofによるプロファイリングを行う。コンパイルオプションに -pg が付き、JDを実行すると gmon.out が出来るのでgprof./jdgmon.out で解析できる。CPUの最適化は効かなくなるので注意する。
+       gprofによるプロファイリングを行う。コンパイルオプションに -pg が付き、JDを実行すると gmon.out が出来るのでgprof./jdgmon.out で解析できる。CPUの最適化は効かなくなるので注意する。
 
     --with-oniguruma
 
-      正規表現ライブラリとしてPOSIX regex の代わりに鬼車を使用する。鬼車はBSDライセンスなのでJDをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
+       正規表現ライブラリとしてPOSIX regex の代わりに鬼車を使用する。鬼車はBSDライセンスなのでJDをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
 
     --with-gthread
 
-      pthreadの代わりにgthreadを使用する。
+       pthreadの代わりにgthreadを使用する。
 
 * メモ
 
@@ -98,4 +99,3 @@
   実行するには直接 src/jd を起動するか手動で /usr/bin あたりに src/jd を cp する。
 
   以上の操作でmakeが通らなかったり動作が変な時は configure のオプションを変更する。
-
