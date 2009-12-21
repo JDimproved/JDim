@@ -1480,9 +1480,13 @@ std::string ArticleViewBase::get_html_url4report( std::list< int >& list_resnum 
 //
 // show_title == trueの時は 板名、スレ名を表示
 // 
-void ArticleViewBase::show_res( const std::string& num, bool show_title )
+void ArticleViewBase::show_res( const std::string& num, const bool show_title )
 {
     assert( m_article );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::show_res num = " << num << " show_title = " << show_title << std::endl;
+#endif
 
     // 板名、スレ名
     if( show_title ){
