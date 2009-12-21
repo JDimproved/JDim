@@ -1563,7 +1563,7 @@ const bool DrawAreaBase::draw_backscreen( const bool redraw_all )
 */
 
         if( ! header->next_header // 最後のレス
-            || header->rect->y <= pos_y && header->next_header->rect->y >= pos_y ) break;
+            || ( header->rect->y <= pos_y && header->next_header->rect->y >= pos_y ) ) break;
 
         if( header->rect->y > pos_y ) back = pivot -1;
         else top = pivot + 1;
