@@ -81,7 +81,7 @@ void AboutConfigDiagInt::slot_default()
 
 AboutConfigDiagBool::AboutConfigDiagBool( Gtk::Window* parent, bool* value, const bool defaultval )
     : SKELETON::PrefDiag( parent, "", true ), m_value( value ), m_defaultval( defaultval ),
-      m_radio_true( "true" ), m_radio_false( "false" ),  m_button_default( "デフォルト" )
+      m_radio_true( "はい" ), m_radio_false( "いいえ" ),  m_button_default( "デフォルト" )
 {
     m_radio_true.set_group( m_radiogroup );
     m_radio_false.set_group( m_radiogroup );
