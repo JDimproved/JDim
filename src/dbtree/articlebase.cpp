@@ -1498,11 +1498,20 @@ void ArticleBase::delete_cache( const bool cache_only )
 
     if( empty() ) return;
 
-    if( ! cache_only && m_bookmarked_thread ){
-        SKELETON::MsgDiag mdiag( NULL, "「" + get_subject() + "」にはしおりが付けられています。\n\nスレを削除しますか？\n\nしおりを解除するにはスレの上で右クリックしてしおり解除を選択してください。"
-                                  ,false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-        mdiag.set_default_response( Gtk::RESPONSE_YES );
-        if( mdiag.run() == Gtk::RESPONSE_NO ) return;
+
+    if( ! cache_only ){
+
+        std::string msg;
+
+        if( m_bookmarked_thread ) msg = "「" + get_subject() + "」にはしおりが付けられています。\n\nスレを削除しますか？\n\nしおりを解除するにはスレの上で右クリックしてしおり解除を選択してください。";
+        else if( m_write_time.tv_sec ) msg = "「" + get_subject() + "」には書き込み履歴が残っています。\n\nスレを削除しますか？";
+
+        if( ! msg.empty() ){
+            
+            SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            mdiag.set_default_response( Gtk::RESPONSE_YES );
+            if( mdiag.run() == Gtk::RESPONSE_NO ) return;
+        }
     }
 
     m_number_load = m_number_seen = m_number_before_load = 0;
