@@ -186,11 +186,13 @@ void FontColorPref::pack_widget()
     column->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
     column->set_resizable( true );
     m_treeview_color.append_column( *column );
+    Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+    if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &FontColorPref::slot_cell_data_name ) );
 
     column = Gtk::manage( new Gtk::TreeViewColumn( "色", m_columns_color.m_col_color ) );
     m_treeview_color.append_column( *column );
-    Gtk::CellRenderer *cell = column->get_first_cell_renderer();
-    if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &FontColorPref::slot_cell_data ) );
+    cell = column->get_first_cell_renderer();
+    if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &FontColorPref::slot_cell_data_color ) );
 
     m_bt_change_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_change_color ) );
     m_bt_reset_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_color ) );
@@ -384,7 +386,21 @@ void FontColorPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::T
 //
 // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
 //
-void FontColorPref::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
+void FontColorPref::slot_cell_data_name( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
+{
+    Gtk::TreeModel::Row row = *it;
+
+    const int colorid = row[ m_columns_color.m_col_colorid ];
+    const std::string defaultcolor = row[ m_columns_color.m_col_default ];
+    if( colorid != COLOR_NONE && CONFIG::get_color( colorid ) != defaultcolor ){
+        cell->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
+        cell->property_cell_background_set() = true;
+    }
+    else cell->property_cell_background_set() = false;
+}
+
+
+void FontColorPref::slot_cell_data_color( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
 {
     Gtk::TreeModel::Row row = *it;
 
@@ -457,7 +473,7 @@ void FontColorPref::slot_reset_color()
         const int colorid = row[ m_columns_color.m_col_colorid ];
         if( colorid != COLOR_NONE ){
 
-            std::string defaultcolor = row[ m_columns_color.m_col_default ];
+            const std::string defaultcolor = row[ m_columns_color.m_col_default ];
             CONFIG::set_color( colorid , defaultcolor );
             m_treeview_color.queue_draw();
         }

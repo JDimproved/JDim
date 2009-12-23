@@ -98,7 +98,8 @@ namespace CORE
         // 色の設定
         void set_color_settings( const int colorid, const std::string& name, const std::string& defaultval );
         void slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column );
-        void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
+        void slot_cell_data_name( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
+        void slot_cell_data_color( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
         void slot_change_color();
         void slot_reset_color();
         void slot_reset_all_colors();
