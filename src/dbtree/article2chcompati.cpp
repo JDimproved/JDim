@@ -10,6 +10,8 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 
+#include "config/globalconf.h"
+
 #include <sstream>
 
 using namespace DBTREE;

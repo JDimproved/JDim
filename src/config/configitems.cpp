@@ -283,6 +283,12 @@ const bool ConfigItems::load( const bool restore )
     // スレ一覧でdeleteを押したときに確認ダイアログを表示する
     show_deldiag = cf.get_option_bool( "show_deldiag", CONF_SHOW_DELDIAG );
 
+    // スレ一覧をロードする前にキャッシュにある一覧を表示
+    show_cached_board = cf.get_option_bool( "show_cached_board", CONF_SHOW_CACHED_BOARD );
+
+    // スレ一覧でお知らせスレ(924)のアイコンを表示する
+    show_924 = cf.get_option_bool( "show_924", CONF_SHOW_924 );
+ 
     // ツリービューのスクロール量(行数)
     tree_scroll_size = cf.get_option_int( "tree_scroll_size", CONF_TREE_SCROLL_SIZE, 1, 64 );
 
@@ -668,6 +674,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "newthread_hour", newthread_hour );
     cf.update( "inc_search_board", inc_search_board );
     cf.update( "show_deldiag", show_deldiag );
+    cf.update( "show_cached_board", show_cached_board );
+    cf.update( "show_924", show_924 );
 
     cf.update( "tree_scroll_size", tree_scroll_size );
     cf.update( "scroll_size", scroll_size );

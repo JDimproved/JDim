@@ -1778,8 +1778,15 @@ void BoardViewBase::update_row_common( Gtk::TreeModel::Row& row )
 
     // スレッド924
     else if( art->is_924() ){
-        mark_val = COL_MARKVAL_924;
-        icon = ICON::INFO;
+
+        if( CONFIG::get_show_924() ){
+            mark_val = COL_MARKVAL_924;
+            icon = ICON::INFO;
+        }
+        else{
+            mark_val = COL_MARKVAL_NORMAL;
+            icon = ICON::TRANSPARENT;
+        }
     }
 
     // キャッシュ無し、新着

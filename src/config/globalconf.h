@@ -240,6 +240,12 @@ namespace CONFIG
     const bool get_show_deldiag();
     void set_show_deldiag( const bool show );
 
+    // スレ一覧をロードする前にキャッシュにある一覧を表示
+    const bool get_show_cached_board();
+
+    // スレ一覧でお知らせスレ(924)のアイコンを表示する
+    const bool get_show_924();
+    
     // ツリービューのスクロール量(マウスホイール上下・行数)
     const int get_tree_scroll_size();
 

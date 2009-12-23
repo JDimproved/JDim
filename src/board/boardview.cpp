@@ -14,6 +14,8 @@
 
 #include "history/historymanager.h"
 
+#include "config/globalconf.h"
+
 #include "session.h"
 #include "command.h"
 #include "httpcode.h"
@@ -100,7 +102,8 @@ void BoardView::show_view()
 
     BoardViewBase::show_view();
 
-    if( SESSION::is_online() && ! get_row_size() ){
+    // ロード中にキャッシュにあるスレ一覧を表示する
+    if( CONFIG::get_show_cached_board() && SESSION::is_online() && ! get_row_size() ){
     
         std::vector< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
 

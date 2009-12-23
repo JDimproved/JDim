@@ -155,6 +155,8 @@ void AboutConfig::append_rows()
     append_row( "deleteを押したときに確認ダイアログを表示", get_confitem()->show_deldiag, CONF_SHOW_DELDIAG );
     append_row( "指定した値(時間)よりも後に立てられたスレを新着とみなす", get_confitem()->newthread_hour, CONF_NEWTHREAD_HOUR );
     append_row( "3ペーン時にスレ一覧やスレビューを最大化する", get_confitem()->expand_rpane, CONF_EXPAND_RPANE );
+    append_row( "スレ一覧をロードする前にキャッシュにある一覧を表示する", get_confitem()->show_cached_board, CONF_SHOW_CACHED_BOARD );
+    append_row( "お知らせスレ(924)のアイコンを表示する", get_confitem()->show_924, CONF_SHOW_924 );
 
     // 次スレ検索
     append_row( "" );

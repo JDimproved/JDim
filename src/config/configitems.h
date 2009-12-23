@@ -209,6 +209,12 @@ namespace CONFIG
         // スレ一覧でdeleteを押したときに確認ダイアログを表示する
         bool show_deldiag;
 
+        // スレ一覧をロードする前にキャッシュにある一覧を表示
+        bool show_cached_board;
+
+        // スレ一覧でお知らせスレ(924)のアイコンを表示する
+        bool show_924;
+
         // ツリービューのスクロール量(マウスホイール上下・行数)
         int tree_scroll_size;
 

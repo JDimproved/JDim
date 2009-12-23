@@ -42,6 +42,8 @@ namespace CONFIG
         CONF_NEWTHREAD_HOUR = 24,   // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
         CONF_INC_SEARCH_BOARD = 0,  // スレ一覧でインクリメント検索をする
         CONF_SHOW_DELDIAG = 1 ,     // スレ一覧でdeleteを押したときに確認ダイアログを表示する
+        CONF_SHOW_CACHED_BOARD = 1, // スレ一覧をロードする前にキャッシュにある一覧を表示
+        CONF_SHOW_924 = 1,          // スレ一覧でお知らせスレ(924)のアイコンを表示する
         CONF_TREE_SCROLL_SIZE = 4,  // ツリービューのスクロール量(行数)
         CONF_SCROLL_SIZE = 3,       // スレビューのスクロール量
         CONF_KEY_SCROLL_SIZE = 2,   // スレビューのスクロール量(キー上下)

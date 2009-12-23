@@ -233,6 +233,12 @@ const bool CONFIG::get_inc_search_board(){ return get_confitem()->inc_search_boa
 const bool CONFIG::get_show_deldiag(){ return get_confitem()->show_deldiag; }
 void CONFIG::set_show_deldiag( const bool show ){ get_confitem()->show_deldiag = show; }
 
+// スレ一覧をロードする前にキャッシュにある一覧を表示
+const bool CONFIG::get_show_cached_board(){ return get_confitem()->show_cached_board; }
+
+// スレ一覧でお知らせスレ(924)のアイコンを表示する
+const bool CONFIG::get_show_924(){ return get_confitem()->show_924; }
+
 const int CONFIG::get_tree_scroll_size(){ return get_confitem()->tree_scroll_size; }
 const int CONFIG::get_scroll_size(){ return get_confitem()->scroll_size; }
 const int CONFIG::get_key_scroll_size(){ return get_confitem()->key_scroll_size; }
