@@ -451,8 +451,9 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
 //
 void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
 {
-    int res_number = node_header->id_header;
+    const int res_number = node_header->id_header;
     if( res_number > m_max_res_number ) m_max_res_number = res_number;
+    if( ! m_vec_header ) m_vec_header = ( LAYOUT** ) m_heap.heap_alloc( sizeof( LAYOUT* ) * MAX_RESNUMBER );
 
 #ifdef _DEBUG
     std::cout << "LayoutTree::append_abone_node num = " << res_number << std::endl;
@@ -462,6 +463,8 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
     if( ! m_show_abone && m_article->get_abone_transparent() ) return;
 
     LAYOUT* head = create_layout_header();
+    m_vec_header[ res_number ] = head;
+
     head->res_number = res_number;
 
     int classid = CORE::get_css_manager()->get_classid( "title" );
@@ -540,6 +543,7 @@ const LAYOUT* LayoutTree::get_header_of_res_const( const int number ){ return ge
 
 LAYOUT* LayoutTree::get_header_of_res( const int number )
 {
+    if( ! m_vec_header ) return NULL;
     if( number > m_max_res_number || number <= 0 ) return NULL;
 
     return m_vec_header[ number ];
@@ -588,7 +592,7 @@ void LayoutTree::move_separator()
 
     if( ! num ) return;
 
-    // あぼーんしているレスは飛ばす
+    // 透明あぼーんしているレスは飛ばす
     int num_tmp = num;
     while( ! ( header_after = get_header_of_res( num_tmp ) ) && num_tmp++ < m_max_res_number );
     if( ! header_after ) return;
