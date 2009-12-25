@@ -16,6 +16,7 @@
 #include "cssmanager.h"
 
 #include <gtkmm.h>
+#include <sys/time.h>
 
 namespace ARTICLE
 {
