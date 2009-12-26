@@ -120,6 +120,7 @@ namespace CONFIG
         CONF_CHECK_UPDATE_BOOT = 0,  // 起動時にお気に入りを自動でチェックする
         CONF_DISABLE_CLOSE = 0, // Ctrl+qでウィンドウを閉じない
         CONF_USE_MACHI_OFFLAW = 0, // まちBBSの取得に offlaw.cgi を使用する
+        CONF_SHOW_DEL_WRITTEN_THREAD_DIAG = 1, // 書き込み履歴のあるスレを削除する時にダイアログを表示
     };
 
 // browsers.cpp のデフォルトのラベル番号

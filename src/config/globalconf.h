@@ -455,6 +455,10 @@ namespace CONFIG
     const bool get_use_machi_offlaw();
     void set_use_machi_offlaw( const bool set );
 
+    // 書き込み履歴のあるスレを削除する時にダイアログを表示
+    const bool get_show_del_written_thread_diag();
+    void set_del_written_thread_diag( const bool set );
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     const std::string& get_migemodict_path();

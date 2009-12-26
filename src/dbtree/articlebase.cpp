@@ -1501,16 +1501,26 @@ void ArticleBase::delete_cache( const bool cache_only )
 
     if( ! cache_only ){
 
-        std::string msg;
+        if( m_bookmarked_thread ){
 
-        if( m_bookmarked_thread ) msg = "「" + get_subject() + "」にはしおりが付けられています。\n\nスレを削除しますか？\n\nしおりを解除するにはスレの上で右クリックしてしおり解除を選択してください。";
-        else if( m_write_time.tv_sec ) msg = "「" + get_subject() + "」には書き込み履歴が残っています。\n\nスレを削除しますか？";
+            const std::string msg = "「" + get_subject() +
+            "」にはしおりが付けられています。\n\nスレを削除しますか？\n\nしおりを解除するにはスレの上で右クリックしてしおり解除を選択してください。";
 
-        if( ! msg.empty() ){
-            
             SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             mdiag.set_default_response( Gtk::RESPONSE_YES );
             if( mdiag.run() == Gtk::RESPONSE_NO ) return;
+        }
+        else if( CONFIG::get_show_del_written_thread_diag() && m_write_time.tv_sec ){
+
+            const std::string msg = "「" + get_subject() + "」には書き込み履歴が残っています。\n\nスレを削除しますか？";
+
+            SKELETON::MsgCheckDiag mdiag( NULL, msg,
+                                          "今後表示しない(常に削除)(_D)",
+                                          Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+
+            if( mdiag.run() == Gtk::RESPONSE_NO ) return;
+
+            if( mdiag.get_chkbutton().get_active() ) CONFIG::set_del_written_thread_diag( false );
         }
     }
 

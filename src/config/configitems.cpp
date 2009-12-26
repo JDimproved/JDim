@@ -482,6 +482,9 @@ const bool ConfigItems::load( const bool restore )
     // まちBBSの取得に offlaw.cgi を使用する
     use_machi_offlaw = cf.get_option_bool( "use_machi_offlaw", CONF_USE_MACHI_OFFLAW );
 
+    // 書き込み履歴のあるスレを削除する時にダイアログを表示
+    show_del_written_thread_diag = cf.get_option_bool( "show_del_written_thread_diag", CONF_SHOW_DEL_WRITTEN_THREAD_DIAG );
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     migemodict_path = cf.get_option_str( "migemodict_path", CONF_MIGEMO_PATH );
@@ -766,6 +769,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "check_update_boot", check_update_boot );
     cf.update( "disable_close", disable_close );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
+    cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );
 
 #ifdef HAVE_MIGEMO_H
     cf.update( "migemodict_path", migemodict_path );

@@ -442,6 +442,10 @@ const bool CONFIG::get_disable_close(){ return get_confitem()->disable_close; }
 const bool CONFIG::get_use_machi_offlaw(){ return get_confitem()->use_machi_offlaw; }
 void CONFIG::set_use_machi_offlaw( const bool set ){ get_confitem()->use_machi_offlaw = set; }
 
+// 書き込み履歴のあるスレを削除する時にダイアログを表示
+const bool CONFIG::get_show_del_written_thread_diag(){ return get_confitem()->show_del_written_thread_diag; }
+void CONFIG::set_del_written_thread_diag( const bool set ){ get_confitem()->show_del_written_thread_diag = set; }
+
 
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }

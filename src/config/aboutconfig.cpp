@@ -245,6 +245,7 @@ void AboutConfig::append_rows()
     append_row( "スレタイ検索用のアドレス", get_confitem()->url_search_title, CONF_URL_SEARCH_TITLE );
     append_row( "スレタイ検索時にアドレスとスレタイを取得する正規表現", get_confitem()->regex_search_title, CONF_REGEX_SEARCH_TITLE );
     append_row( "Ctrl+qでウィンドウを閉じない", get_confitem()->disable_close, CONF_DISABLE_CLOSE );
+    append_row( "書き込み履歴のあるスレを削除する時にダイアログを表示", get_confitem()->show_del_written_thread_diag, CONF_SHOW_DEL_WRITTEN_THREAD_DIAG );
 }
 
 

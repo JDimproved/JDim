@@ -400,6 +400,9 @@ namespace CONFIG
         // まちBBSの取得に offlaw.cgi を使用する
         bool use_machi_offlaw;
 
+        // 書き込み履歴のあるスレを削除する時にダイアログを表示
+        bool show_del_written_thread_diag;
+
 #ifdef HAVE_MIGEMO_H
         // migemo-dictの場所
         std::string migemodict_path;
