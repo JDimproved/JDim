@@ -294,9 +294,8 @@ namespace ARTICLE
         virtual bool exec_layout();
         const bool exec_layout_impl( const bool is_popup, const int offset_y );
 
-        // DrawAreaに枠を描画
+        // DrawAreaに枠を描画する
         void set_draw_frame( bool draw_frame ){ m_draw_frame = draw_frame; }
-        void draw_frame();
 
         // リサイズした
         virtual bool slot_configure_event( GdkEventConfigure* event );
@@ -371,6 +370,12 @@ namespace ARTICLE
 
         // カーソルの形状の変更
         void change_cursor( const Gdk::CursorType type );
+
+        // スクロールマーカの描画
+        void draw_marker();
+
+        // 枠の描画
+        void draw_frame();
 
         // スロット
         void slot_change_adjust();

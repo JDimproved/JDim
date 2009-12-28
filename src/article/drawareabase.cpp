@@ -1709,43 +1709,9 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
     if( dy ) m_window->scroll( 0, -dy );
     m_window->draw_drawable( m_gc, m_backscreen, 0, y_screen, 0, y_screen, width_view, height_screen );
 
-    // オートスクロールマーカの描画
-    if( m_scrollinfo.mode != SCROLL_NOT && m_scrollinfo.show_marker ){
-
-        const int x_marker = m_scrollinfo.x - AUTOSCR_CIRCLE/2;
-        const int y_marker = m_scrollinfo.y - AUTOSCR_CIRCLE/2;
-
-        m_clip_marker.x = x_marker;
-        m_clip_marker.y = y_marker;
-        m_clip_marker.width = AUTOSCR_CIRCLE;
-        m_clip_marker.height = AUTOSCR_CIRCLE;
-        m_shown_marker = true;
-
-        if( m_clip_marker.y < 0 ){
-
-            m_clip_marker.height += m_clip_marker.y;
-            m_clip_marker.y = 0;
-        }
-        if( m_clip_marker.y + m_clip_marker.height > height_view ){
-
-            m_clip_marker.height = height_view - m_clip_marker.y;
-        }
-
-        const Gdk::Rectangle rect_marker( 0, 0, m_clip_marker.width, m_clip_marker.height );
-        m_gc->set_clip_rectangle( rect_marker );
-        m_back_marker->draw_drawable( m_gc, m_window, m_clip_marker.x, m_clip_marker.y,
-                                      0, 0, m_clip_marker.width, m_clip_marker.height );
-
-        const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-        m_gc->set_clip_rectangle( rect_window );
-        m_gc->set_foreground( m_color[ COLOR_MARKER ] );
-        m_window->draw_arc( m_gc, false,
-                            x_marker, y_marker, AUTOSCR_CIRCLE-1, AUTOSCR_CIRCLE-1,
-                            0, 360 * 64 );
-    }
-
-    // フレーム描画
-    if( m_draw_frame ) draw_frame();
+    // オートスクロールマーカと枠の描画
+    draw_marker();
+    draw_frame();
 
     return true;
 }
@@ -2015,10 +1981,54 @@ void DrawAreaBase::draw_div( LAYOUT* layout_div, const int pos_y, const int uppe
 
 
 //
+// オートスクロールマーカの描画
+//
+void DrawAreaBase::draw_marker()
+{
+    if( m_scrollinfo.mode == SCROLL_NOT ) return;
+    if( ! m_scrollinfo.show_marker ) return;
+
+    const int height_view = m_view.get_height();
+    const int x_marker = m_scrollinfo.x - AUTOSCR_CIRCLE/2;
+    const int y_marker = m_scrollinfo.y - AUTOSCR_CIRCLE/2;
+
+    m_clip_marker.x = x_marker;
+    m_clip_marker.y = y_marker;
+    m_clip_marker.width = AUTOSCR_CIRCLE;
+    m_clip_marker.height = AUTOSCR_CIRCLE;
+    m_shown_marker = true;
+
+    if( m_clip_marker.y < 0 ){
+
+        m_clip_marker.height += m_clip_marker.y;
+        m_clip_marker.y = 0;
+    }
+    if( m_clip_marker.y + m_clip_marker.height > height_view ){
+
+        m_clip_marker.height = height_view - m_clip_marker.y;
+    }
+
+    const Gdk::Rectangle rect_marker( 0, 0, m_clip_marker.width, m_clip_marker.height );
+    m_gc->set_clip_rectangle( rect_marker );
+    m_back_marker->draw_drawable( m_gc, m_window, m_clip_marker.x, m_clip_marker.y,
+                                  0, 0, m_clip_marker.width, m_clip_marker.height );
+
+    const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
+    m_gc->set_clip_rectangle( rect_window );
+    m_gc->set_foreground( m_color[ COLOR_MARKER ] );
+    m_window->draw_arc( m_gc, false,
+                        x_marker, y_marker, AUTOSCR_CIRCLE-1, AUTOSCR_CIRCLE-1,
+                        0, 360 * 64 );
+}
+
+
+//
 // 枠の描画
 //
 void DrawAreaBase::draw_frame()
 {
+    if( ! m_draw_frame ) return;
+
     const int width_win = m_view.get_width();
     const int height_win = m_view.get_height();
 
@@ -4050,6 +4060,10 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
         m_gc->set_clip_rectangle( rect );
         m_window->draw_drawable( m_gc, m_backscreen, event->area.x, event->area.y,
                                  event->area.x, event->area.y, event->area.width, event->area.height );
+
+        // オートスクロールマーカと枠の描画
+        draw_marker();
+        draw_frame();
     }
 
     // レイアウトがセットされていない or まだリサイズしていない( m_backscreen == NULL )なら画面消去
