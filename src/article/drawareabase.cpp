@@ -76,12 +76,14 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_seen_current( 0 )
     , m_window( 0 )
     , m_gc( 0 )
-    , m_backscreen( 0 )
+    , m_backscreen( NULL )
     , m_pango_layout( 0 )
     , m_draw_frame( false )
     , m_configure_reserve( false )
     , m_configure_width( 0 )
     , m_configure_height( 0 )
+    , m_back_marker( NULL )
+    , m_shown_marker( false )
     , m_cursor_type( Gdk::ARROW )
 {
 #ifdef _DEBUG
@@ -200,6 +202,8 @@ void DrawAreaBase::clear()
     m_drugging = false;
     m_r_drugging = false;
     m_pre_pos_y = 0;
+    m_cancel_expose = false;
+    m_cancel_change_adjust = false;
     m_key_press = false;
     m_key_locked = false;
     m_keyval = 0;
@@ -211,6 +215,9 @@ void DrawAreaBase::clear()
     m_caret_pos_dragstart = CARET_POSITION();
 
     memset( &m_draw_time, 0, sizeof( struct timeval ) );
+
+    m_ready_backscreen = false;
+    m_enable_draw = true;
 
     m_jump_history.clear();
 
@@ -344,7 +351,7 @@ void DrawAreaBase::clock_in()
         // スクロール中にダイアログを開いた場合はスクロールされたままになるのでスクロールを止める
         if( SESSION::is_dialog_shown() ) focus_out();
 
-        else exec_scroll( false );
+        else exec_scroll();
     }
 }
 
@@ -362,7 +369,7 @@ void DrawAreaBase::clock_in_smooth_scroll()
             focus_out();
         }
 
-        else exec_scroll( false );
+        else exec_scroll();
     }
 }
 
@@ -520,9 +527,12 @@ void DrawAreaBase::append_res( int from_num, int to_num )
         if( css ) m_scrollinfo.dy += css->mrg_top + css->mrg_bottom;
         if( rect ) m_scrollinfo.dy += rect->height;
         if( m_scrollinfo.dy ){
-            redraw_view();
+
+#ifdef _DEBUG
+            std::cout << "exec scroll dy = " << m_scrollinfo.dy << std::endl;
+#endif
             m_scrollinfo.mode = SCROLL_NORMAL;
-            exec_scroll( false );
+            exec_scroll();
         }
     }
 
@@ -647,7 +657,7 @@ void DrawAreaBase::clear_screen()
 
 
 //
-// バックスクリーンを描き直して再描画予約(queue_draw())する。
+// 再描画
 // 再レイアウトはしないが configureの予約がある場合は再レイアウトしてから再描画する
 //
 void DrawAreaBase::redraw_view()
@@ -661,11 +671,17 @@ void DrawAreaBase::redraw_view()
 #endif
 
     configure_impl();
-    draw_backscreen( true );
+
+    m_cancel_expose = false;
     m_view.queue_draw();
 }
 
-
+// 強制再描画
+void DrawAreaBase::redraw_view_force()
+{
+    m_ready_backscreen = false;
+    redraw_view();
+}
 
 
 
@@ -963,16 +979,20 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
     Gtk::Adjustment* adjust = m_vscrbar ? m_vscrbar->get_adjustment(): NULL;
     if( adjust ){
 
-        double current = adjust->get_value();
-        double newpos = MAX( 0, MIN( m_height_client - height_view , current ) );
-        m_pre_pos_y = (int) newpos;
+        const double current = adjust->get_value();
+        const double newpos = MAX( 0, MIN( m_height_client - height_view , current ) );
+
+        m_pre_pos_y = 0;
 
         adjust->set_lower( 0 );
         adjust->set_upper( m_height_client );
         adjust->set_page_size( height_view );
         adjust->set_step_increment( m_br_size );
         adjust->set_page_increment(  height_view / 2 );
+
+        m_cancel_change_adjust = true;
         adjust->set_value( newpos );
+        m_cancel_change_adjust = false;
     }
 
     // 裏描画画面作成と初期描画
@@ -982,6 +1002,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
 
     m_backscreen.clear();
     m_backscreen = Gdk::Pixmap::create( m_window, m_view.get_width(), m_view.get_height() );
+    m_ready_backscreen = false;
 
     // 予約されているならジャンプ予約を実行
     if( m_goto_num_reserve ) goto_num( m_goto_num_reserve );
@@ -1436,92 +1457,124 @@ bool DrawAreaBase::is_wrapped( const int x, const int border, const char* str )
 
 
 //
-// バックスクリーン描画
+// スクリーン描画
 //
-// ここで書かれた画面がexposeイベントで表画面にコピーされる
+// y_redraw から height_redraw の高さ分だけ描画する
+// height_redraw == 0 ならスクロールした分だけ描画
 //
-// redraw_all = true なら全画面を描画、falseならスクロールした分だけ
-//
-const bool DrawAreaBase::draw_backscreen( const bool redraw_all )
+const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redraw )
 {
+    if( ! m_enable_draw ) return false;
     if( ! m_gc ) return false;
     if( ! m_backscreen ) return false;
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
 
-    // スクロール中に処理落ちが起きている場合は描画をキャンセルする
-    if( ! redraw_all
-        && ( m_scrollinfo.mode == SCROLL_LOCKED || m_scrollinfo.mode == SCROLL_AUTO ) ){
-        
-        struct timeval tv;
-        struct timezone tz;
-        if( ! gettimeofday( &tv, &tz ) ){
-
-            const time_t passed = ( tv.tv_sec * 1000000 + tv.tv_usec ) - ( m_draw_time.tv_sec * 1000000 + m_draw_time.tv_usec );
-            m_draw_time = tv;
-
-            if( passed > TIMER_TIMEOUT * ( 1000 * 5 / 4 ) ){
-#ifdef _DEBUG
-                std::cout << "DrawAreaBase::draw_backscreen was canceled\n";
-#endif
-                return false;
-            }
-        }
-    }
-
     const int width_view = m_view.get_width();
     const int height_view = m_view.get_height();
     const int pos_y = get_vscr_val();
 
+    // まだ画面に表示されていない
     if( height_view < LAYOUT_MIN_HEIGHT ) return false;
 
-    // 移動量、再描画範囲の上限、下限
+    // スクロール量
     int dy = 0;
-    int upper = pos_y;
-    int lower = upper + height_view;
 
-    m_gc->set_foreground( m_color[ get_colorid_back() ] );
+    // 画面上の描画開始領域のy座標と高さ
+    int y_screen = y_redraw;
+    int height_screen = height_redraw;
 
-    // 画面全体を再描画
-    if( redraw_all ){
-        m_backscreen->draw_rectangle( m_gc, true, 0, 0, width_view,  height_view );
+    // 描画範囲の上限、下限
+    int upper = pos_y + y_screen;
+    int lower = upper + height_screen;
+
+    // 初回呼び出し時は全画面再描画
+    if( ! m_pre_pos_y ){
+        y_screen = 0;
+        height_screen = height_view;
+        upper = pos_y;
+        lower = upper + height_screen;
     }
-    else{
+
+    // スクロール中
+    else if( ! height_redraw ){
+
+        // 処理落ちが起きている場合は描画をキャンセルする
+        if( m_scrollinfo.mode == SCROLL_LOCKED || m_scrollinfo.mode == SCROLL_AUTO ){
+        
+            struct timeval tv;
+            struct timezone tz;
+            if( ! gettimeofday( &tv, &tz ) ){
+
+                time_t passed = 0;
+                if( m_draw_time.tv_sec || m_draw_time.tv_usec )
+                    passed = ( tv.tv_sec * 1000000 + tv.tv_usec ) - ( m_draw_time.tv_sec * 1000000 + m_draw_time.tv_usec );
+                m_draw_time = tv;
+
+                if( passed > TIMER_TIMEOUT * ( 1000 * 5 / 4 ) ){
+#ifdef _DEBUG
+                    std::cout << "DrawAreaBase::draw_screen was canceled passed = " << passed << std::endl;
+#endif
+                    return false;
+                }
+            }
+        }
 
         dy = pos_y - m_pre_pos_y;
+        upper = pos_y;
+        lower = pos_y + height_view;
 
         // 上にスクロールした
         if( dy > 0 ){
 
-            if( dy < height_view ){
-                upper += ( height_view - dy );
-                m_backscreen->draw_drawable( m_gc, m_backscreen, 0, dy, 0, 0, width_view , height_view - dy );
+            if( dy < height_view ) upper += ( height_view - dy );
+            y_screen = MAX( 0, height_view - dy );
+
+            // フレーム表示の場合は枠の分拡大する
+            if( m_draw_frame ){
+                --upper;
+                if( y_screen > 0 ) --y_screen;
             }
 
-            m_backscreen->draw_rectangle( m_gc, true, 0, MAX( 0, height_view - dy ), width_view, MIN( dy, height_view ) );
+            height_screen = height_view - y_screen;
         }
 
         // 下にスクロールした
         else if( dy < 0 ){
 
-            if( -dy < height_view ){
-                lower = upper - dy;
-                m_backscreen->draw_drawable( m_gc, m_backscreen, 0, 0, 0, -dy, width_view , height_view + dy );
-            }
+            if( -dy < height_view ) lower = upper - dy;
+            y_screen = 0;
+            height_screen = MIN( -dy, height_view );
 
-            m_backscreen->draw_rectangle( m_gc, true, 0, 0, width_view, MIN( -dy, height_view ) );
+            // フレーム表示の場合は枠の分拡大する
+            if( m_draw_frame ){
+                ++lower;
+                if( height_screen < height_view ) ++height_screen;
+            }
         }
+
+        // 変化無し
+        else return false;
     }
-    
+
     m_pre_pos_y = pos_y;
 
-    if( !redraw_all && ! dy ) return false;
+    m_rect_backscreen.y = y_screen;
+    m_rect_backscreen.height = height_screen;
+
+    // 全画面をバックスクリーンに描画した時は expose イベント時に描画をキャンセルして
+    // バックスクリーンから画面をコピーする。slot_expose_event()参照
+    if( y_screen == 0 && height_screen == height_view ) m_ready_backscreen = true;
+    else m_ready_backscreen = false;
 
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::draw_backscreen all = " << redraw_all
-              << " y = " << pos_y <<" dy = " << dy
+    std::cout << "DrawAreaBase::draw_screen "
+              << " y_redraw = " << y_redraw << " height_redraw " << height_redraw
+              << " pos_y = " << pos_y
+              << " dy = " << dy
               << " upper = " << upper << " lower = " << lower
-              << " mode = " << m_scrollinfo.mode
+              << " y_screen = " << y_screen << " h_screen = " << height_screen
+              << " scroll mode = " << m_scrollinfo.mode
               << std::endl;
 #endif    
 
@@ -1541,11 +1594,8 @@ const bool DrawAreaBase::draw_backscreen( const bool redraw_all )
         m_seen_current = m_layout_tree->max_res_number();
     }
 
-    // ノード描画
-    bool relayout = false;
+    // 2分探索で画面に表示されているノードの先頭を探す
     LAYOUT* header = NULL;
-
-    // 2分探索で画面に表示されているノードを探す
     int top = 1;
     int back = max_res_number;
     while( top <= back ){
@@ -1583,6 +1633,14 @@ const bool DrawAreaBase::draw_backscreen( const bool redraw_all )
         header = m_layout_tree->top_header();
     }
 
+    // 背景クリア
+    const Gdk::Rectangle rect_clip( 0, y_screen, width_view, height_screen );
+    m_gc->set_clip_rectangle( rect_clip );
+    m_gc->set_foreground( m_color[ get_colorid_back() ] );
+    m_backscreen->draw_rectangle( m_gc, true, 0, y_screen, width_view, height_screen );
+
+    // 描画ループ
+    bool relayout = false;
     while( header && header->rect->y < pos_y + height_view ){
 
         // 現在みているレス番号取得
@@ -1610,6 +1668,7 @@ const bool DrawAreaBase::draw_backscreen( const bool redraw_all )
                         if( draw_one_node( layout, width_view, pos_y, upper, lower ) ) relayout = true;
                         break;
                     }
+
                     rect = rect->next_rect;
                 }
 
@@ -1624,60 +1683,65 @@ const bool DrawAreaBase::draw_backscreen( const bool redraw_all )
     if( relayout ){
 
 #ifdef _DEBUG
-        std::cout << "DrawAreaBase::draw_backscreen : exec_layout\n";
+        std::cout << "relayout\n";
 #endif    
 
-        if( exec_layout() ) redraw_view();
+        if( exec_layout() ){
+            redraw_view();
+            return true;
+        }
     }
 
-    return true;
-}
+    // 前回描画したオートスクロールマーカを消す
+    if( m_shown_marker ){
 
+        m_shown_marker = false;
 
+        const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
+        m_gc->set_clip_rectangle( rect_window );
+        m_window->draw_drawable( m_gc, m_back_marker, 0, 0,
+                                 m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
 
-//
-// バックスクリーンを表画面に描画
-//
-// draw_backscreen()でバックスクリーンを描画してから呼ぶこと
-// 
-bool DrawAreaBase::draw_drawarea( int x, int y, int width, int height )
-{
-    if( ! m_layout_tree ) return false;
-
-    // まだ realize してない
-    if( !m_gc ) return false;
-
-    // レイアウトがセットされていない or まだリサイズしていない( m_backscreen == NULL )
-    // なら画面消去して終わり
-    if( ! m_layout_tree->top_header()
-        || ! m_backscreen
-        ){
-        m_window->set_background( m_color[ get_colorid_back() ] );
-        m_window->clear();
-        return false;
+        m_gc->set_clip_rectangle( rect_clip );
     }
-    
-    if( !width )  width = m_view.get_width();
-    if( !height ) height = m_view.get_height();
 
-    // バックスクリーンをコピー
-    m_window->draw_drawable( m_gc, m_backscreen, x, y, x, y, width, height );
+    // バックスクリーンをウィンドウにコピー
+    if( dy ) m_window->scroll( 0, -dy );
+    m_window->draw_drawable( m_gc, m_backscreen, 0, y_screen, 0, y_screen, width_view, height_screen );
 
-#ifdef _DRAW_CARET
-    // キャレット描画
-    int xx = m_caret_pos.x;
-    int yy = m_caret_pos.y - get_vscr_val();
-    if( yy >= 0 ){
-        m_gc->set_foreground( m_color[ get_colorid_text() ] );
-        m_window->draw_line( m_gc, xx, yy, xx, yy + m_underline_pos );
-    }
-#endif
-
-    // オートスクロールのマーカ
+    // オートスクロールマーカの描画
     if( m_scrollinfo.mode != SCROLL_NOT && m_scrollinfo.show_marker ){
+
+        const int x_marker = m_scrollinfo.x - AUTOSCR_CIRCLE/2;
+        const int y_marker = m_scrollinfo.y - AUTOSCR_CIRCLE/2;
+
+        m_clip_marker.x = x_marker;
+        m_clip_marker.y = y_marker;
+        m_clip_marker.width = AUTOSCR_CIRCLE;
+        m_clip_marker.height = AUTOSCR_CIRCLE;
+        m_shown_marker = true;
+
+        if( m_clip_marker.y < 0 ){
+
+            m_clip_marker.height += m_clip_marker.y;
+            m_clip_marker.y = 0;
+        }
+        if( m_clip_marker.y + m_clip_marker.height > height_view ){
+
+            m_clip_marker.height = height_view - m_clip_marker.y;
+        }
+
+        const Gdk::Rectangle rect_marker( 0, 0, m_clip_marker.width, m_clip_marker.height );
+        m_gc->set_clip_rectangle( rect_marker );
+        m_back_marker->draw_drawable( m_gc, m_window, m_clip_marker.x, m_clip_marker.y,
+                                      0, 0, m_clip_marker.width, m_clip_marker.height );
+
+        const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
+        m_gc->set_clip_rectangle( rect_window );
         m_gc->set_foreground( m_color[ COLOR_MARKER ] );
-        m_window->draw_arc( m_gc, false, m_scrollinfo.x - AUTOSCR_CIRCLE/2, m_scrollinfo.y - AUTOSCR_CIRCLE/2 ,
-                            AUTOSCR_CIRCLE, AUTOSCR_CIRCLE, 0, 360 * 64 );
+        m_window->draw_arc( m_gc, false,
+                            x_marker, y_marker, AUTOSCR_CIRCLE-1, AUTOSCR_CIRCLE-1,
+                            0, 360 * 64 );
     }
 
     // フレーム描画
@@ -1955,8 +2019,12 @@ void DrawAreaBase::draw_div( LAYOUT* layout_div, const int pos_y, const int uppe
 //
 void DrawAreaBase::draw_frame()
 {
-    int width_win = m_view.get_width();
-    int height_win = m_view.get_height();
+    const int width_win = m_view.get_width();
+    const int height_win = m_view.get_height();
+
+    Gdk::Rectangle rect_clip( 0, 0, width_win, height_win );
+    m_gc->set_clip_rectangle( rect_clip );
+
     m_gc->set_foreground( m_color[ COLOR_FRAME ] );
     m_window->draw_rectangle( m_gc, false, 0, 0, width_win-1, height_win-1 );
 }
@@ -2182,7 +2250,7 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
     m_backscreen->draw_rectangle( m_gc, false, rect->x , rect->y  - pos_y, rect->width -1, rect->height -1 );
 
     // 右上のアイコン
-    if( code != HTTP_OK ){
+    if( code != HTTP_OK || img->is_loading() ){
         const int x_tmp = rect->x + rect->width / 10 + 1;
         const int y_tmp = rect->y + rect->height / 10 + 1;
         const int width_tmp = rect->width / 4;
@@ -2456,13 +2524,16 @@ const bool DrawAreaBase::set_scroll( const int control )
             m_scrollinfo.dy = ( int ) dy;
             
             // キーを押しっぱなしにしてる場合スクロールロックする
-            if( m_key_locked ) m_scrollinfo.mode = SCROLL_LOCKED;
+            if( m_key_locked ){
+                m_scrollinfo.mode = SCROLL_LOCKED;
+                memset( &m_draw_time, 0, sizeof( struct timeval ) );
+            }
         
             // レスポンスを上げるため押した直後はすぐ描画
             else{
 
                 m_scrollinfo.mode = SCROLL_NORMAL;
-                exec_scroll( false );
+                exec_scroll();
             }
         }
     }
@@ -2499,7 +2570,7 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
             if( event->direction == GDK_SCROLL_UP ) m_scrollinfo.dy = -( int ) adjust->get_step_increment() * speed;
             else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() * speed;
 
-            exec_scroll( false );
+            exec_scroll();
         }
     }
 }
@@ -2511,13 +2582,16 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
 //
 // clock_in()からクロック入力される度にスクロールする
 //
-// redraw_all : true なら全画面再描画
-//
-void DrawAreaBase::exec_scroll( bool redraw_all )
+void DrawAreaBase::exec_scroll()
 {
     if( ! m_layout_tree ) return;
     if( ! m_vscrbar ) return;
     if( m_scrollinfo.mode == SCROLL_NOT && ! m_scrollinfo.live ) return;
+
+    bool redraw_all = false;
+
+    CARET_POSITION caret_pos;
+    bool selection = false;
 
     // 移動後のスクロール位置を計算
     int y = 0;
@@ -2540,12 +2614,14 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
         case SCROLL_TO_TOP:
             y = 0;
             m_scrollinfo.reset();
+            redraw_all = true;
             break;
 
         // 最後に移動
         case SCROLL_TO_BOTTOM:
             y = (int) adjust->get_upper();
             m_scrollinfo.reset();
+            redraw_all = true;
             break;
 
             // y 座標に移動
@@ -2556,7 +2632,7 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
             std::cout << "DrawAreaBase::exec_scroll : y = " << y << std::endl;
 #endif        
             break;
-        
+            
         case SCROLL_NORMAL: // 1 回だけスクロール
 
             y = ( int ) adjust->get_value() + m_scrollinfo.dy;
@@ -2592,10 +2668,9 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
             // 範囲選択中ならキャレット移動して選択範囲更新
             if( m_drugging ){
 
-                CARET_POSITION caret_pos;
                 int y_tmp = MIN( MAX( 0, y_point ), m_view.get_height() );
                 set_caret( caret_pos, x_point , y + y_tmp );
-                set_selection( caret_pos );
+                selection = true; // スクロールさせてから対応する範囲を描画
             }
         }
         break;
@@ -2639,22 +2714,55 @@ void DrawAreaBase::exec_scroll( bool redraw_all )
     }
 
     y = (int)MAX( 0, MIN( adjust->get_upper() - adjust->get_page_size() , y ) );
-    adjust->set_value( y );
 
-    // キーを押しっぱなしの時に一番上か下に着いたらスクロール停止
+    m_cancel_change_adjust = true;
+    adjust->set_value( y );
+    m_cancel_change_adjust = false;
+
+    m_cancel_expose = true;  // スクロールバーの値を変更すると expose イベントが発生するので1回キャンセルする
+
+    // キーを押しっぱなしの時に一番上か下に着いたらスクロール停止して全画面再描画
     if( m_scrollinfo.mode == SCROLL_LOCKED && ( y <= 0 || y >= adjust->get_upper() - adjust->get_page_size() ) ){
         m_scrollinfo.reset();
         redraw_all = true;
     }
 
-    // 再描画
-    if( draw_backscreen( redraw_all ) ){
+    // 選択範囲のセット
+    RECTANGLE rect_selection;
 
-        // スクロールがロック状態の時やオートスクロールの時はすぐに描画しないで
-        // アイドル状態になったら描画する
-        if( m_scrollinfo.mode == SCROLL_LOCKED || m_scrollinfo.mode == SCROLL_AUTO ) m_view.queue_draw();
+    if( selection ){
+        if( ! set_selection( caret_pos, &rect_selection ) ) selection = false;
+    }
 
-        else draw_drawarea();
+    // 描画
+    const int height_redraw = ( redraw_all ? m_view.get_height() : 0 );
+    if( draw_screen( 0, height_redraw ) ){
+
+        // 選択範囲描画
+        if( selection
+
+            // 既に描画済みならキャンセル
+            && ! ( m_rect_backscreen.y <= rect_selection.y
+                   && m_rect_backscreen.y + m_rect_backscreen.height >= rect_selection.y + rect_selection.height )
+            ){
+
+            // 描画済みの範囲を除く
+            if( m_rect_backscreen.y <= rect_selection.y
+                && m_rect_backscreen.y + m_rect_backscreen.height >= rect_selection.y ){
+
+                const int dh = ( m_rect_backscreen.y + m_rect_backscreen.height ) - rect_selection.y;
+                rect_selection.y += dh;
+                rect_selection.height -= dh;
+            }
+            else if( m_rect_backscreen.y <= rect_selection.y + rect_selection.height
+                     && m_rect_backscreen.y + m_rect_backscreen.height >= rect_selection.y + rect_selection.height ){
+
+                const int dh = ( rect_selection.y + rect_selection.height ) - m_rect_backscreen.y;
+                rect_selection.height -= dh;
+            }
+
+            draw_screen( rect_selection.y, rect_selection.height );
+        }
 
         // カーソル形状の更新
         CARET_POSITION caret_pos;
@@ -2738,7 +2846,7 @@ void DrawAreaBase::goto_num( int num )
     m_scrollinfo.reset();
     m_scrollinfo.mode = SCROLL_TO_NUM;
     m_scrollinfo.res = num;
-    exec_scroll( false );
+    exec_scroll();
 }
 
 
@@ -2788,7 +2896,7 @@ void DrawAreaBase::goto_top()
 
         m_scrollinfo.reset();
         m_scrollinfo.mode = SCROLL_TO_TOP;
-        exec_scroll( true );
+        exec_scroll();
     }
 }
 
@@ -2800,7 +2908,11 @@ void DrawAreaBase::goto_new()
 
         m_jump_history.push_back( get_seen_current() );
 
-        int num = separator_new > 1 ? separator_new -1 : 1;
+        const int num = separator_new > 1 ? separator_new -1 : 1;
+
+#ifdef _DEBUG
+        std::cout << "DrawAreaBase::goto_new num = " << num << std::endl;
+#endif
         goto_num( num );
     }
 }
@@ -2829,7 +2941,7 @@ void DrawAreaBase::goto_bottom()
 
         m_scrollinfo.reset();
         m_scrollinfo.mode = SCROLL_TO_BOTTOM;
-        exec_scroll( true );
+        exec_scroll();
     }
 }
 
@@ -3001,7 +3113,7 @@ int DrawAreaBase::search_move( bool reverse )
 
             // 移動先を範囲選択状態にする
             m_caret_pos_dragstart = ( *it ).caret_from;
-            set_selection( ( *it ).caret_to, false );
+            set_selection( ( *it ).caret_to );
 
             int y = MAX( 0, ( *it ).caret_from.layout->rect->y - 10 );
 
@@ -3010,8 +3122,12 @@ int DrawAreaBase::search_move( bool reverse )
 #endif            
 
             Gtk::Adjustment* adjust = m_vscrbar->get_adjustment();
-            if( ( int ) adjust->get_value() > y || ( int ) adjust->get_value() + ( int ) adjust->get_page_size() - m_br_size < y )
+            if( ( int ) adjust->get_value() > y || ( int ) adjust->get_value() + ( int ) adjust->get_page_size() - m_br_size < y ){
+
+                m_cancel_change_adjust = true;
                 adjust->set_value( y );
+                m_cancel_change_adjust = false;
+            }
 
             return m_multi_selection.size();
         }
@@ -3495,39 +3611,38 @@ const bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_PO
 //
 // 範囲選択の範囲を計算してm_selectionにセット & 範囲選択箇所の再描画
 //
-// redraw : true なら再描画, false なら範囲の計算のみ
-//
 // caret_left から caret_right まで範囲選択状態にする
 //
 
-bool DrawAreaBase::set_selection( CARET_POSITION& caret_left, CARET_POSITION& caret_right, const bool redraw )
+const bool DrawAreaBase::set_selection( const CARET_POSITION& caret_left, const CARET_POSITION& caret_right )
 {
     m_caret_pos_pre = caret_left;
     m_caret_pos = caret_left;
     m_caret_pos_dragstart = caret_left;
-    return set_selection( caret_right, redraw );
+    return set_selection( caret_right, NULL );
 }
 
 
+//
+// 範囲選択の範囲を計算してm_selectionにセット
+//
+// caret_pos : 移動後のキャレット位置、m_caret_pos_pre から caret_pos まで範囲選択状態にする
+//
+const bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos )
+{
+    return set_selection( caret_pos, NULL );
+}
 
-//
-// 範囲選択の範囲を計算してm_selectionにセット & 範囲選択箇所のバックスクリーンの再描画
-//
-// caret_pos : 移動後のキャレット位置
-// redraw : true なら再描画, false なら範囲の計算のみ
-//
-// m_caret_pos_pre から caret_pos まで範囲選択状態にする
-//
-bool DrawAreaBase::set_selection( CARET_POSITION& caret_pos, const bool redraw )
+
+// rect に再描画範囲を計算して入れる( NULL なら入らない )
+// その後 draw_screen( rect.y, rect.height ) で選択範囲を描画する
+const bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos, RECTANGLE* rect )
 {
     if( ! caret_pos.layout ) return false;
     if( ! m_caret_pos_dragstart.layout ) return false;
 
     // 前回の呼び出しからキャレット位置が変わってない
     if( m_caret_pos == caret_pos ) return false;
-
-    int pos_y = get_vscr_val();
-    int width_view = m_view.get_width();
 
     m_caret_pos_pre = m_caret_pos;;
     m_caret_pos = caret_pos;
@@ -3557,18 +3672,19 @@ bool DrawAreaBase::set_selection( CARET_POSITION& caret_pos, const bool redraw )
         }
     }
 
-    if( !redraw ) return true;
+    if( ! rect ) return true;
 
+    // 再描画範囲計算
 
-    /////////////////////////////////////////////////
-    //
-    // 前回呼び出した位置(m_caret_pos_pre.layout) から現在の位置( m_caret_pos.layout) までバックスクリーンを再描画
-    //
+    const int pos_y = get_vscr_val();
+    const int height_view = m_view.get_height();
+    int y_redraw = 0;
+    int height_redraw = height_view;
 
     LAYOUT* layout = m_caret_pos_pre.layout;
     LAYOUT* layout_to = m_caret_pos.layout;
 
-    if( !layout ) layout = m_caret_pos_dragstart.layout;
+    if( ! layout ) layout = m_caret_pos_dragstart.layout;
 
     // layout_toの方が前だったらポインタを入れ換え
     if( layout_to->id_header < layout->id_header
@@ -3578,20 +3694,32 @@ bool DrawAreaBase::set_selection( CARET_POSITION& caret_pos, const bool redraw )
         layout = layout_tmp;
     }
 
+    RECTANGLE* rect_from = layout->rect;
+    RECTANGLE* rect_to = layout_to->rect;
+    if( ! rect_from | ! rect_to ) return false;
+    while( rect_to->next_rect ) rect_to = rect_to->next_rect;
+
+    // 範囲外
+    if( rect_from->y > pos_y + height_view ) return false;
+    if( rect_to->y + rect_to->height < pos_y ) return false;
+
+    if( rect_from->y > pos_y ){
+        y_redraw = rect_from->y - pos_y;
+        height_redraw = height_view - y_redraw;
+    }
+    if( rect_to->y + rect_to->height < pos_y + height_view ){
+        height_redraw -= ( pos_y + height_view ) - ( rect_to->y + rect_to->height ); 
+    }
+
 #ifdef _DEBUG
     std::cout << "redraw layout from : " << layout->id_header << ":" << layout->id
-              << " to " << layout_to->id_header <<  ":" << layout_to->id << std::endl;
+              << " to " << layout_to->id_header <<  ":" << layout_to->id
+              << " y_redraw = " << y_redraw << " height_redraw = " << height_redraw
+              << std::endl;
 #endif
 
-    while ( layout ){
-
-        draw_one_node( layout, width_view, pos_y, 0, 0 );
-        if( layout == layout_to ) break;
-
-        if( layout->next_layout ) layout = layout->next_layout;
-        else if( layout->header->next_header ) layout = layout->header->next_header;
-        else break;
-    }
+    rect->y = y_redraw;
+    rect->height = height_redraw;
 
     return true;
 }
@@ -3603,7 +3731,7 @@ bool DrawAreaBase::set_selection( CARET_POSITION& caret_pos, const bool redraw )
 //
 // set_selection()の中で毎回やると重いので、ボタンのリリース時に一回だけ呼び出すこと
 //
-bool DrawAreaBase::set_selection_str()
+const bool DrawAreaBase::set_selection_str()
 {
     assert( m_layout_tree );
 
@@ -3803,7 +3931,7 @@ void DrawAreaBase::select_all()
 
     caret_right.set( layout_back, layout_back->lng_text );
 
-    set_selection( caret_left, caret_right, false );
+    set_selection( caret_left, caret_right );
     set_selection_str();
     redraw_view();
 }
@@ -3815,11 +3943,16 @@ void DrawAreaBase::select_all()
 //
 void DrawAreaBase::slot_change_adjust()
 {
+    if( m_cancel_change_adjust ) return;
     if( m_scrollinfo.mode != SCROLL_NOT ) return; // スクロール中
-    
+
+#ifdef _DEBUG    
+    std::cout << "slot_change_adjust\n";
+#endif
+
     m_scrollinfo.reset();
     m_scrollinfo.mode = SCROLL_NORMAL;
-    exec_scroll( false );
+    exec_scroll();
 }
 
 
@@ -3860,30 +3993,31 @@ void DrawAreaBase::configure_impl()
     const int seen_current = m_seen_current;
 
     // リサイズ前と横幅が同じ場合はスクロールバーの位置を変えない
-    const int pos_y = m_configure_width == width ? get_vscr_val() : 0;
+    const int pos_y = ( m_configure_width == width ? get_vscr_val() : 0 );
+
+#ifdef _DEBUG    
+    std::cout << "DrawAreaBase::configure_impl : url = " << m_url << std::endl
+              << "seen_current = " << seen_current
+              << " pos_y = " << pos_y
+              << " width = " << width << " heigth = " << height
+              << " pre_width = " << m_configure_width << " pre_height = " << m_configure_height << std::endl;
+#endif
 
     m_configure_width = width;
     m_configure_height = height;
 
+    if( exec_layout() ){
 
-#ifdef _DEBUG    
-    std::cout << "DrawAreaBase::configure_impl : url = " << m_url << std::endl
-              << "seen = " << seen_current
-              << " pos_y = " << pos_y
-              << " width = " << m_view.get_width() << " heigth = " << m_view.get_height()
-              << " pre_width = " << m_configure_width << " pre_height = " << m_configure_height << std::endl;
-#endif
-
-    if( exec_layout() ) redraw_view();
-
-    // スクロール実行
-    if( pos_y ){
-        m_scrollinfo.reset();
-        m_scrollinfo.mode = SCROLL_TO_Y;
-        m_scrollinfo.y = pos_y;
-        exec_scroll( false );
+        // スクロール実行
+        if( pos_y ){
+            m_scrollinfo.reset();
+            m_scrollinfo.mode = SCROLL_TO_Y;
+            m_scrollinfo.y = pos_y;
+            exec_scroll();
+        }
+        else if( seen_current ) goto_num( seen_current );
+        else redraw_view();
     }
-    else if( seen_current ) goto_num( seen_current );
 }
 
 
@@ -3893,11 +4027,44 @@ void DrawAreaBase::configure_impl()
 //
 bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
 {
+    if( m_cancel_expose ){
+        m_cancel_expose = false;
+        return true;
+    }
+
 #ifdef _DEBUG    
-    std::cout << "DrawAreaBase::slot_expose_event\n";
+    std::cout << "DrawAreaBase::slot_expose_event"
+              << " x = " << event->area.x
+              << " y = " << event->area.y
+              << " width = " << event->area.width
+              << " height = " << event->area.height << std::endl;
 #endif
 
-    draw_drawarea();
+    if( m_ready_backscreen ){
+
+#ifdef _DEBUG    
+        std::cout << "copy from backscreen\n";
+#endif
+
+        const Gdk::Rectangle rect( event->area.x, event->area.y, event->area.width, event->area.height );
+        m_gc->set_clip_rectangle( rect );
+        m_window->draw_drawable( m_gc, m_backscreen, event->area.x, event->area.y,
+                                 event->area.x, event->area.y, event->area.width, event->area.height );
+    }
+
+    // レイアウトがセットされていない or まだリサイズしていない( m_backscreen == NULL )なら画面消去
+    else if( ! m_layout_tree->top_header() || ! m_backscreen ){
+
+#ifdef _DEBUG    
+        std::cout << "clear window\n";
+#endif
+
+        m_window->set_background( m_color[ get_colorid_back() ] );
+        m_window->clear();
+        return false;
+    }
+
+    else draw_screen( event->area.y, event->area.height );
 
     return true;
 }
@@ -3952,6 +4119,9 @@ void DrawAreaBase::slot_realize()
     // 色初期化
     init_color();
 
+    m_back_marker = Gdk::Pixmap::create( m_window, AUTOSCR_CIRCLE, AUTOSCR_CIRCLE );
+    assert( m_back_marker );
+
     exec_layout();
     m_view.grab_focus();
 }
@@ -3989,24 +4159,18 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
     }
     else {
 
-        // キャレット移動
+        // 範囲選択解除、及びドラッグ開始
         if( m_control.button_alloted( event, CONTROL::ClickButton ) ){
 
-            // ctrl+クリックで範囲選択
-            if( event->state & GDK_CONTROL_MASK ){
+            m_drugging = true;
+            m_selection.select = false;
+            if( ! m_selection.str.empty() ) m_selection.str_pre = m_selection.str;
+            m_selection.str.clear();
+            m_caret_pos_pre = m_caret_pos;
+            m_caret_pos = caret_pos;
+            m_caret_pos_dragstart = caret_pos;
 
-                set_selection( caret_pos );
-            }
-            else{
-                // 範囲選択解除、及びドラッグ開始
-                m_drugging = true;
-                m_selection.select = false;
-                if( ! m_selection.str.empty() ) m_selection.str_pre = m_selection.str;
-                m_selection.str.clear();
-                m_caret_pos_pre = m_caret_pos;
-                m_caret_pos = caret_pos;
-                m_caret_pos_dragstart = caret_pos;
-            }
+            m_ready_backscreen = false;
         }
 
         // マウスジェスチャ(右ドラッグ)開始
@@ -4026,6 +4190,8 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
                 m_scrollinfo.enable_down = true;                
                 m_scrollinfo.x = ( int ) event->x;
                 m_scrollinfo.y = ( int ) event->y;
+
+                memset( &m_draw_time, 0, sizeof( struct timeval ) );
             }
         }
 
@@ -4162,11 +4328,6 @@ bool DrawAreaBase::motion_mouse()
     // ドラッグ中なら範囲選択
     if( m_drugging ){
 
-        if( set_selection( caret_pos ) ){
-
-            if( m_scrollinfo.mode == SCROLL_NOT ) draw_drawarea();
-        }
-    
         // ポインタが画面外に近かったらオートスクロールを開始する
         const int mrg = ( int )( (double)m_br_size*0.5 );
 
@@ -4201,6 +4362,14 @@ bool DrawAreaBase::motion_mouse()
                 m_scrollinfo.enable_down = true;
                 m_scrollinfo.y = m_view.get_height() - mrg*6;
             }
+
+            memset( &m_draw_time, 0, sizeof( struct timeval ) );
+        }
+
+        // スクロール中の場合は exec_scroll() で選択部分を描画する
+        if( m_scrollinfo.mode == SCROLL_NOT ){
+            RECTANGLE rect;
+            if( set_selection( caret_pos, &rect ) ) draw_screen( rect.y, rect.height );
         }
     }
 

@@ -239,11 +239,14 @@ void ArticleViewMain::show_view()
         return;
     }
 
-    // もしarticleクラスがまだキャッシュにあるdatを解析していないときに
-    // drawarea()->append_res()を呼ぶと update_finish() がコールバック
-    // されて2回再描画することになるので、 show_view() の中で update_finish()を
-    // 呼ばないようにする。動作をまとめると次のようになる。
+    // 負荷を減らすため update_view() や update_finish() が呼び出されるまで描画不可にしておく
+    drawarea()->set_enable_draw( false );
 
+    // articleクラスがまだキャッシュにあるdatを解析していないときに
+    // drawarea()->append_res()を呼ぶと、 nodetree が作られて update_finish() が
+    // コールバックされるので、 キャッシュをまだ読み込んでない時は show_view() の中で
+    // update_finish()を呼ばないようにする。動作をまとめると次のようになる。
+    //
     // オフライン　かつ
     //   キャッシュを読み込んでいない場合  -> articleでnodetreeが作られた時に update_finish がコールバックされる
     //   キャッシュを読み込んでいる場合    -> show_viewから直接  update_finish を呼ぶ
@@ -380,7 +383,13 @@ void ArticleViewMain::update_view()
 
     if( num_from > num_to ) return;
 
+#ifdef _DEBUG
+    std::cout << "append " << num_from << " to " << num_to << std::endl;
+#endif
+
     drawarea()->append_res( num_from, num_to );
+
+    drawarea()->set_enable_draw( true );
     drawarea()->redraw_view();
 }
 
@@ -407,7 +416,6 @@ void ArticleViewMain::update_finish()
     // タブのアイコン状態を更新
     ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 
-
 #ifdef _DEBUG
     const int code = DBTREE::article_code( url_article() );
     std::cout << "ArticleViewMain::update_finish " << str_label << " code = " << code << std::endl;;
@@ -426,20 +434,24 @@ void ArticleViewMain::update_finish()
     set_title( DBTREE::article_subject( url_article() ) );
     ARTICLE::get_admin()->set_command( "set_title", get_url(), get_title() );
 
-    // 全体再描画
-    drawarea()->redraw_view();
+    drawarea()->set_enable_draw( true );
+
+    // ロード中に goto_num() が明示的に呼び出された場合はgoto_num()を呼びつづける
+    if( m_gotonum_reserve ){
+#ifdef _DEBUG
+        std::cout << "reserve\n";
+#endif
+        goto_num( m_gotonum_reserve );
+    }
 
     // 前回見ていた所にジャンプ
-    if( m_gotonum_seen && number_load >= m_gotonum_seen ){
+    else if( m_gotonum_seen && number_load >= m_gotonum_seen ){
 #ifdef _DEBUG
         std::cout << "goto_seen\n";
 #endif
         ArticleViewBase::goto_num( m_gotonum_seen );
         m_gotonum_seen = 0;
     }
-
-    // ロード中に goto_num() が明示的に呼び出された場合はgoto_num()を呼びつづける
-    if( m_gotonum_reserve ) goto_num( m_gotonum_reserve );
 
     // ロード後に末尾ジャンプ
     else if( CONFIG::get_jump_after_reload() && number_new ){
@@ -455,6 +467,14 @@ void ArticleViewMain::update_finish()
         std::cout << "jump_new_after_reload\n";
 #endif
         goto_new();
+    }
+
+    // 全体再描画
+    else{
+#ifdef _DEBUG
+        std::cout << "redraw\n";
+#endif
+        drawarea()->redraw_view();
     }
 
     // 実況モードで新着がない場合はリロード間隔を空ける

@@ -48,10 +48,7 @@ bool DrawAreaPopup::exec_layout()
 #endif
 
     // is_popup = true
-    bool ret = exec_layout_impl( true, POPUP_OFFSET_Y );
-    if( ret ) draw_backscreen( true );
-
-    return ret;
+    return exec_layout_impl( true, POPUP_OFFSET_Y );
 }
 
 

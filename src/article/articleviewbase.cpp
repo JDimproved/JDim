@@ -827,7 +827,7 @@ void ArticleViewBase::redraw_view()
 #endif
 
     assert( m_drawarea );
-    m_drawarea->redraw_view();
+    m_drawarea->redraw_view_force();
 
     // ポップアップが表示されていたらポップアップも再描画
     if( is_popup_shown() ) m_popup_win->view()->redraw_view();
@@ -846,7 +846,6 @@ void ArticleViewBase::focus_view()
 #endif
 
     m_drawarea->focus_view();
-    redraw_view();
 }
 
 
@@ -2700,6 +2699,7 @@ void ArticleViewBase::hide_popup( const bool force )
     m_popup_win->hide();
     if( m_popup_win->view() ) m_popup_win->view()->stop();
     m_popup_shown = false;
+    m_drawarea->redraw_view();
 }
 
 

@@ -7,11 +7,15 @@
 #define _SESSION_H
 
 #include "type.h"
-#include "article/drawareabase.h"
 
 #include <list>
 #include <vector>
 #include <string>
+
+namespace ARTICLE
+{
+    class DrawAreaBase;
+};
 
 namespace SESSION
 {

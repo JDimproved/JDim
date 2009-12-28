@@ -89,6 +89,9 @@ namespace ARTICLE
         Glib::RefPtr< Gdk::Pixmap > m_backscreen;
         Glib::RefPtr< Pango::Layout > m_pango_layout;
         Glib::RefPtr< Pango::Context > m_context;
+        RECTANGLE m_rect_backscreen;
+        bool m_ready_backscreen;
+        bool m_enable_draw;
 
         // キャレット情報
         CARET_POSITION m_caret_pos;           // 現在のキャレットの位置(クリックやドラッグすると移動)
@@ -131,6 +134,11 @@ namespace ARTICLE
         bool m_goto_bottom_reserve; // 初期化時のジャンプ予約(底)
         int m_pre_pos_y; // ひとつ前のスクロールバーの位置。スクロールした時の差分量計算に使用する
         std::vector< int > m_jump_history;  // ジャンプ履歴
+        bool m_cancel_expose; // expose イベントをキャンセル
+        bool m_cancel_change_adjust; // adjust の値変更イベントをキャンセル
+        Glib::RefPtr< Gdk::Pixmap > m_back_marker; // オートスクロールマーカの背景
+        RECTANGLE m_clip_marker;
+        bool m_shown_marker;
 
         // 状態
         int m_x_pointer, m_y_pointer;  // 現在のマウスポインタの位置
@@ -183,6 +191,8 @@ namespace ARTICLE
         void focus_view();
         void focus_out();
 
+        void set_enable_draw( const bool enable ){ m_enable_draw = enable; }
+
         // フォントID( fontid.h にある ID を指定)
         const int get_fontid() const { return m_fontid; }
         void set_fontid( int id ){ m_fontid = id; }
@@ -232,8 +242,10 @@ namespace ARTICLE
         // 全画面消去
         void clear_screen();
 
-        // バックスクリーンを描き直して再描画予約(queue_draw())する。再レイアウトはしない
-        void redraw_view();  
+        // 再描画
+        // 再レイアウトはしないが configureの予約がある場合は再レイアウトしてから再描画する
+        void redraw_view_force();
+        void redraw_view();
 
         // スクロール方向指定
         const bool set_scroll( const int control );
@@ -267,9 +279,6 @@ namespace ARTICLE
         // Gtk::Widget::is_realized() はうまく動作しない
         const bool is_drawarea_realized(){ return m_window; }
 
-        // バックスクリーン描画
-        const bool draw_backscreen( const bool redraw_all = false );
-
         // 文字色のID( colorid.h にある ID を指定)
         const int get_colorid_text() const{ return m_colorid_text; }
         void set_colorid_text( int id ){ m_colorid_text = id; }
@@ -284,9 +293,6 @@ namespace ARTICLE
         // レイアウト処理
         virtual bool exec_layout();
         const bool exec_layout_impl( const bool is_popup, const int offset_y );
-
-        // バックスクリーンをDrawAreaにコピー
-        bool draw_drawarea( int x = 0, int y = 0, int width = 0, int height = 0 );
 
         // DrawAreaに枠を描画
         void set_draw_frame( bool draw_frame ){ m_draw_frame = draw_frame; }
@@ -318,7 +324,12 @@ namespace ARTICLE
         bool set_init_wide_mode( const char* str, const int pos_start, const int pos_to );
         bool is_wrapped( const int x, const int border, const char* str );
 
-        // 描画
+        // スクリーン描画
+        // y_redraw から height_redraw の高さ分だけ描画する
+        // height_redraw == 0 ならスクロールした分だけ描画
+        // rect_draw に実際に描画した範囲が入って戻る( NULL 可 )
+        const bool draw_screen( const int y_redraw, const int height_redraw );
+
         bool draw_one_node( LAYOUT* layout, const int width_win, const int pos_y, const int upper, const int lower );
         void draw_div( LAYOUT* layout_div, const int pos_y, const int upper, const int lower );
         void draw_one_text_node( LAYOUT* layout, const int width_win, const int pos_y );
@@ -333,7 +344,7 @@ namespace ARTICLE
         int set_num_id( LAYOUT* layout );
 
         // スクロール関係
-        void exec_scroll( bool redraw_all ); // スクロールやジャンプを実行して再描画
+        void exec_scroll(); // スクロールやジャンプを実行して再描画
         int get_vscr_val();
         int get_vscr_maxval();
 
@@ -345,9 +356,10 @@ namespace ARTICLE
         const bool set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,  const int x, const int y, const bool triple );
 
         // 範囲選択関係
-        bool set_selection( CARET_POSITION& caret_left, CARET_POSITION& caret_right, const bool redraw = true );
-        bool set_selection( CARET_POSITION& caret_pos, const bool redraw = true );
-        bool set_selection_str();
+        const bool set_selection( const CARET_POSITION& caret_left, const CARET_POSITION& caret_right );
+        const bool set_selection( const CARET_POSITION& caret_pos );
+        const bool set_selection( const CARET_POSITION& caret_pos, RECTANGLE* rect );
+        const bool set_selection_str();
         const bool is_caret_on_selection( const CARET_POSITION& caret_pos );
         std::string get_selection_as_url( const CARET_POSITION& caret_pos );
 
