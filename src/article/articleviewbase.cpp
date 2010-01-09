@@ -846,6 +846,7 @@ void ArticleViewBase::focus_view()
 #endif
 
     m_drawarea->focus_view();
+    m_drawarea->redraw_view();
 }
 
 

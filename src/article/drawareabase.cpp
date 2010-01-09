@@ -84,6 +84,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_configure_height( 0 )
     , m_back_marker( NULL )
     , m_shown_marker( false )
+    , m_wait_scroll( 0 )
     , m_cursor_type( Gdk::ARROW )
 {
 #ifdef _DEBUG
@@ -214,7 +215,7 @@ void DrawAreaBase::clear()
     m_caret_pos_pre = CARET_POSITION();
     m_caret_pos_dragstart = CARET_POSITION();
 
-    memset( &m_draw_time, 0, sizeof( struct timeval ) );
+    m_list_drawinfo.clear();
 
     m_ready_backscreen = false;
     m_enable_draw = true;
@@ -674,6 +675,7 @@ void DrawAreaBase::redraw_view()
 
     m_cancel_expose = false;
     m_view.queue_draw();
+    if( m_window ) m_window->process_updates( false );
 }
 
 // 強制再描画
@@ -1003,6 +1005,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
     m_backscreen.clear();
     m_backscreen = Gdk::Pixmap::create( m_window, m_view.get_width(), m_view.get_height() );
     m_ready_backscreen = false;
+    m_list_drawinfo.clear();
 
     // 予約されているならジャンプ予約を実行
     if( m_goto_num_reserve ) goto_num( m_goto_num_reserve );
@@ -1460,7 +1463,7 @@ bool DrawAreaBase::is_wrapped( const int x, const int border, const char* str )
 // スクリーン描画
 //
 // y_redraw から height_redraw の高さ分だけ描画する
-// height_redraw == 0 ならスクロールした分だけ描画
+// height_redraw == 0 ならスクロールした分だけ描画( y_redraw は無視 )
 //
 const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redraw )
 {
@@ -1469,13 +1472,33 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
     if( ! m_backscreen ) return false;
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
+    if( m_view.get_height() < LAYOUT_MIN_HEIGHT ) return false; // まだ画面に表示されていない
 
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::draw_screen "
+              << " y_redraw = " << y_redraw << " height_redraw " << height_redraw << std::endl;
+#endif
+
+    DRAWINFO drawinfo;
+
+    drawinfo.y_redraw = y_redraw;
+    drawinfo.height_redraw = height_redraw;
+    m_list_drawinfo.push_back( drawinfo );
+
+    // expose イベント経由で exec_draw_screen() を呼び出す
+    // gtk2.18以降は expose イベント内で描画処理しないと正しく描画されない様なので注意
+    m_view.queue_draw();
+    m_window->process_updates( false );
+
+    return true;
+}
+
+
+void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw )
+{
     const int width_view = m_view.get_width();
     const int height_view = m_view.get_height();
     const int pos_y = get_vscr_val();
-
-    // まだ画面に表示されていない
-    if( height_view < LAYOUT_MIN_HEIGHT ) return false;
 
     // スクロール量
     int dy = 0;
@@ -1498,27 +1521,6 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
 
     // スクロール中
     else if( ! height_redraw ){
-
-        // 処理落ちが起きている場合は描画をキャンセルする
-        if( m_scrollinfo.mode == SCROLL_LOCKED || m_scrollinfo.mode == SCROLL_AUTO ){
-        
-            struct timeval tv;
-            struct timezone tz;
-            if( ! gettimeofday( &tv, &tz ) ){
-
-                time_t passed = 0;
-                if( m_draw_time.tv_sec || m_draw_time.tv_usec )
-                    passed = ( tv.tv_sec * 1000000 + tv.tv_usec ) - ( m_draw_time.tv_sec * 1000000 + m_draw_time.tv_usec );
-                m_draw_time = tv;
-
-                if( passed > TIMER_TIMEOUT * ( 1000 * 5 / 4 ) ){
-#ifdef _DEBUG
-                    std::cout << "DrawAreaBase::draw_screen was canceled passed = " << passed << std::endl;
-#endif
-                    return false;
-                }
-            }
-        }
 
         dy = pos_y - m_pre_pos_y;
         upper = pos_y;
@@ -1554,7 +1556,13 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
         }
 
         // 変化無し
-        else return false;
+        else{
+
+#ifdef _DEBUG
+            std::cout << "DrawAreaBase::exec_draw_screen canceled\n";
+#endif
+            return;
+        }
     }
 
     m_pre_pos_y = pos_y;
@@ -1568,7 +1576,7 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
     else m_ready_backscreen = false;
 
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::draw_screen "
+    std::cout << "DrawAreaBase::exec_draw_screen "
               << " y_redraw = " << y_redraw << " height_redraw " << height_redraw
               << " pos_y = " << pos_y
               << " dy = " << dy
@@ -1593,6 +1601,10 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
 
         m_seen_current = m_layout_tree->max_res_number();
     }
+
+    struct timeval tv_before;
+    struct timezone tz;
+    gettimeofday( &tv_before, &tz );
 
     // 2分探索で画面に表示されているノードの先頭を探す
     LAYOUT* header = NULL;
@@ -1679,6 +1691,24 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
         header = header->next_header;        
     }
 
+    // 処理落ちが起きていないかチェックする
+    // exec_scroll()を参照せよ
+    struct timeval tv_after;
+    if( ! m_wait_scroll && ! gettimeofday( &tv_after, &tz ) ){
+
+        const time_t passed = ( tv_after.tv_sec * 1000000 + tv_after.tv_usec ) - ( tv_before.tv_sec * 1000000 + tv_before.tv_usec );
+        if( passed > TIMER_TIMEOUT * 1000 ){
+
+            m_scroll_time = tv_after;
+            m_wait_scroll = TIMER_TIMEOUT * 1000;
+
+#ifdef _DEBUG
+            std::cout << "DrawAreaBase::draw_screen_core : passed = " << passed
+                      << " wait = " << m_wait_scroll << std::endl;
+#endif
+        }
+    }
+
     // 再レイアウト & 再描画
     if( relayout ){
 
@@ -1688,7 +1718,7 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
 
         if( exec_layout() ){
             redraw_view();
-            return true;
+            return;
         }
     }
 
@@ -1712,8 +1742,6 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
     // オートスクロールマーカと枠の描画
     draw_marker();
     draw_frame();
-
-    return true;
 }
 
 
@@ -2534,10 +2562,7 @@ const bool DrawAreaBase::set_scroll( const int control )
             m_scrollinfo.dy = ( int ) dy;
             
             // キーを押しっぱなしにしてる場合スクロールロックする
-            if( m_key_locked ){
-                m_scrollinfo.mode = SCROLL_LOCKED;
-                memset( &m_draw_time, 0, sizeof( struct timeval ) );
-            }
+            if( m_key_locked ) m_scrollinfo.mode = SCROLL_LOCKED;
         
             // レスポンスを上げるため押した直後はすぐ描画
             else{
@@ -2597,6 +2622,31 @@ void DrawAreaBase::exec_scroll()
     if( ! m_layout_tree ) return;
     if( ! m_vscrbar ) return;
     if( m_scrollinfo.mode == SCROLL_NOT && ! m_scrollinfo.live ) return;
+
+    // 描画で処理落ちしている時はスクロール処理をキャンセルする
+    if( m_wait_scroll ){
+
+        struct timeval tv;
+        struct timezone tz;
+        if( ! gettimeofday( &tv, &tz ) ){
+
+            const time_t passed = ( tv.tv_sec * 1000000 + tv.tv_usec ) - ( m_scroll_time.tv_sec * 1000000 + m_scroll_time.tv_usec );
+            m_scroll_time = tv;
+            m_wait_scroll = MAX( 0, m_wait_scroll - passed );
+
+            if( m_wait_scroll ){
+#ifdef _DEBUG
+                std::cout << "cancel scroll passed = " << passed
+                          << " wait = " << m_wait_scroll << std::endl;
+#endif
+                return;
+            }
+        }
+    }
+
+#ifdef _DEBUG
+    std::cout << "exec scroll\n";
+#endif
 
     bool redraw_all = false;
 
@@ -4037,6 +4087,21 @@ void DrawAreaBase::configure_impl()
 //
 bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
 {
+    // draw_screen() で描画指定された場合
+    // draw_screen() を参照せよ
+    if( m_list_drawinfo.size() ){
+
+        do{
+            DRAWINFO& drawinfo = * m_list_drawinfo.begin();
+            m_list_drawinfo.pop_front();
+            exec_draw_screen( drawinfo.y_redraw, drawinfo.height_redraw );
+        } while( m_list_drawinfo.size() );
+
+        return true;
+    }
+
+    // 以下、通常の expose 処理
+
     if( m_cancel_expose ){
         m_cancel_expose = false;
         return true;
@@ -4050,6 +4115,7 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
               << " height = " << event->area.height << std::endl;
 #endif
 
+    // バックスクリーンに描画されているならコピー
     if( m_ready_backscreen ){
 
 #ifdef _DEBUG    
@@ -4078,7 +4144,8 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
         return false;
     }
 
-    else draw_screen( event->area.y, event->area.height );
+    // 必要な所だけ再描画
+    else exec_draw_screen( event->area.y, event->area.height );
 
     return true;
 }
@@ -4204,8 +4271,6 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
                 m_scrollinfo.enable_down = true;                
                 m_scrollinfo.x = ( int ) event->x;
                 m_scrollinfo.y = ( int ) event->y;
-
-                memset( &m_draw_time, 0, sizeof( struct timeval ) );
             }
         }
 
@@ -4376,8 +4441,6 @@ bool DrawAreaBase::motion_mouse()
                 m_scrollinfo.enable_down = true;
                 m_scrollinfo.y = m_view.get_height() - mrg*6;
             }
-
-            memset( &m_draw_time, 0, sizeof( struct timeval ) );
         }
 
         // スクロール中の場合は exec_scroll() で選択部分を描画する

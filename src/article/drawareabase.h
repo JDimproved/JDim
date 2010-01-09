@@ -47,6 +47,12 @@ namespace ARTICLE
         std::string str_pre;  // 一つ前の選択文字列
     };
 
+    // 描画情報
+    struct DRAWINFO
+    {
+        int y_redraw;
+        int height_redraw;
+    };
 
     ///////////////////////////////////
 
@@ -92,6 +98,7 @@ namespace ARTICLE
         RECTANGLE m_rect_backscreen;
         bool m_ready_backscreen;
         bool m_enable_draw;
+        std::list< DRAWINFO > m_list_drawinfo;
 
         // キャレット情報
         CARET_POSITION m_caret_pos;           // 現在のキャレットの位置(クリックやドラッグすると移動)
@@ -139,6 +146,8 @@ namespace ARTICLE
         Glib::RefPtr< Gdk::Pixmap > m_back_marker; // オートスクロールマーカの背景
         RECTANGLE m_clip_marker;
         bool m_shown_marker;
+        time_t m_wait_scroll;  // 処理落ちした時にスクロールにウエイトを入れる
+        struct timeval m_scroll_time;  // ウエイト時に最後にスクロールした時刻
 
         // 状態
         int m_x_pointer, m_y_pointer;  // 現在のマウスポインタの位置
@@ -150,7 +159,6 @@ namespace ARTICLE
         std::string m_link_current; // 現在マウスポインタの下にあるリンクの文字列
         LAYOUT* m_layout_current; // 現在マウスポインタの下にあるlayoutノード(下が空白ならNULL)
         Gdk::CursorType m_cursor_type; // カーソルの形状
-        struct timeval m_draw_time;  // 最後に描画した時刻
 
         // 入力コントローラ
         CONTROL::Control m_control;
@@ -325,9 +333,9 @@ namespace ARTICLE
 
         // スクリーン描画
         // y_redraw から height_redraw の高さ分だけ描画する
-        // height_redraw == 0 ならスクロールした分だけ描画
-        // rect_draw に実際に描画した範囲が入って戻る( NULL 可 )
+        // height_redraw == 0 ならスクロールした分だけ描画( y_redraw は無視 )
         const bool draw_screen( const int y_redraw, const int height_redraw );
+        void exec_draw_screen( const int y_redraw, const int height_redraw );
 
         bool draw_one_node( LAYOUT* layout, const int width_win, const int pos_y, const int upper, const int lower );
         void draw_div( LAYOUT* layout_div, const int pos_y, const int upper, const int lower );
