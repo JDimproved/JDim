@@ -202,7 +202,7 @@ void DrawAreaBase::clear()
     m_height_client = 0;
     m_drugging = false;
     m_r_drugging = false;
-    m_pre_pos_y = 0;
+    m_pre_pos_y = -1;
     m_cancel_expose = false;
     m_cancel_change_adjust = false;
     m_key_press = false;
@@ -652,7 +652,7 @@ void DrawAreaBase::clear_screen()
     clear();
     init_color();
     init_font();
-    if( exec_layout() ) redraw_view();
+    if( exec_layout() ) redraw_view_force();
 }
 
 
@@ -681,6 +681,10 @@ void DrawAreaBase::redraw_view()
 // 強制再描画
 void DrawAreaBase::redraw_view_force()
 {
+#ifdef _DEBUG    
+    std::cout << "DrawAreaBase::redraw_view_force()\n";
+#endif
+
     m_ready_backscreen = false;
     redraw_view();
 }
@@ -984,7 +988,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
         const double current = adjust->get_value();
         const double newpos = MAX( 0, MIN( m_height_client - height_view , current ) );
 
-        m_pre_pos_y = 0;
+        m_pre_pos_y = -1;
 
         adjust->set_lower( 0 );
         adjust->set_upper( m_height_client );
@@ -1493,7 +1497,7 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
     return true;
 }
 
-
+#include <iostream>
 void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw )
 {
     const int width_view = m_view.get_width();
@@ -1512,7 +1516,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     int lower = upper + height_screen;
 
     // 初回呼び出し時は全画面再描画
-    if( ! m_pre_pos_y ){
+    if( m_pre_pos_y == -1 ){
         y_screen = 0;
         height_screen = height_view;
         upper = pos_y;
@@ -1583,6 +1587,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
               << " upper = " << upper << " lower = " << lower
               << " y_screen = " << y_screen << " h_screen = " << height_screen
               << " scroll mode = " << m_scrollinfo.mode
+              << " ready_backscreen = " << m_ready_backscreen
               << std::endl;
 #endif    
 
@@ -1717,7 +1722,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 #endif    
 
         if( exec_layout() ){
-            redraw_view();
+            redraw_view_force();
             return;
         }
     }
@@ -3131,7 +3136,7 @@ int DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
         else ( *( --it ) ).select = true;            
     }
     
-    redraw_view();
+    redraw_view_force();
     return m_multi_selection.size();
 }
 
@@ -3189,6 +3194,7 @@ int DrawAreaBase::search_move( bool reverse )
                 m_cancel_change_adjust = false;
             }
 
+            redraw_view_force();
             return m_multi_selection.size();
         }
     }
@@ -3203,7 +3209,7 @@ int DrawAreaBase::search_move( bool reverse )
 void DrawAreaBase::clear_highlight()
 {
     m_multi_selection.clear();
-    redraw_view();
+    redraw_view_force();
 }    
 
 
@@ -3993,7 +3999,7 @@ void DrawAreaBase::select_all()
 
     set_selection( caret_left, caret_right );
     set_selection_str();
-    redraw_view();
+    redraw_view_force();
 }
 
 
@@ -4076,7 +4082,7 @@ void DrawAreaBase::configure_impl()
             exec_scroll();
         }
         else if( seen_current ) goto_num( seen_current );
-        else redraw_view();
+        else redraw_view_force();
     }
 }
 
@@ -4216,6 +4222,7 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 {
     std::string url;
     int res_num = 0;
+    bool redraw_force = false;
 
     if( m_layout_current && m_layout_current->link ) url = m_layout_current->link;
     if( m_layout_current ) res_num = m_layout_current->res_number;
@@ -4251,7 +4258,7 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
             m_caret_pos = caret_pos;
             m_caret_pos_dragstart = caret_pos;
 
-            m_ready_backscreen = false;
+            redraw_force = true;
         }
 
         // マウスジェスチャ(右ドラッグ)開始
@@ -4280,12 +4287,17 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 
             const bool triple = m_control.button_alloted( event, CONTROL::TrpClickButton );
             CARET_POSITION caret_left, caret_right;
-            if( set_carets_dclick( caret_left, caret_right, x, y, triple ) ) set_selection( caret_left, caret_right );
+            if( set_carets_dclick( caret_left, caret_right, x, y, triple ) ){
+
+                set_selection( caret_left, caret_right );
+                redraw_force = true;
+            }
         }
     }
 
     // 再描画
-    redraw_view();
+    if( redraw_force ) redraw_view_force();
+    else redraw_view();
 
     m_sig_button_press.emit( url, res_num, event );
 
