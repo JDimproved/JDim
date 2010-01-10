@@ -107,7 +107,7 @@ void ArticleHash::it_inc()
 #endif
 
     ++m_it_size;
-    if( m_it_size <= size() ){
+    if( m_it_size < size() ){
 
         ++m_it_pos;
         if( m_it_pos == m_table[ m_it_hash ].size() ){
@@ -118,7 +118,8 @@ void ArticleHash::it_inc()
     }
 
 #ifdef _DEBUG
-    std::cout << " -> hash = " << m_it_hash << " pos = " << m_it_pos << " size = " << m_it_size << " / " << size() << std::endl;
+    std::cout << " -> hash = " << m_it_hash << " tablesize = " << m_table[ m_it_hash ].size()
+              << " pos = " << m_it_pos << " size = " << m_it_size << " / " << size() << std::endl;
 #endif
 }
 
