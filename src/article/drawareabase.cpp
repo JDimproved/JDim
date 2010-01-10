@@ -2810,8 +2810,6 @@ void DrawAreaBase::exec_scroll()
         if( ! set_selection( caret_pos, &rect_selection ) ) selection = false;
     }
 
-    if( current_y == y_new && ! redraw_all && ! selection ) return;
-
     // 描画
     const int height_redraw = ( redraw_all ? m_view.get_height() : 0 );
     if( draw_screen( 0, height_redraw ) ){
