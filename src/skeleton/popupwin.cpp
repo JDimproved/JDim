@@ -71,7 +71,7 @@ void PopupWin::slot_resize_popup()
         y_popup = y_mouse + m_mrg_y;        
         height_popup = height_client;
     }
-    else if( y_mouse > height_desktop/2 ){ // スペースは無いが上に表示
+    else if( m_view->get_popup_upside() || y_mouse > height_desktop/2 ){ // スペースは無いが上に表示
         y_popup = MAX( 0, y_mouse - ( height_client + m_mrg_y ) );
         height_popup = y_mouse - ( y_popup + m_mrg_y );
     }

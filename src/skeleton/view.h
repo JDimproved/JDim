@@ -78,6 +78,9 @@ namespace SKELETON
         // 検索文字列
         std::string m_search_query;
 
+        // ポップアップ時に全ての領域を表示できないならカーソルの上に表示
+        bool m_popup_upside;
+
       protected:
 
         void set_url( const std::string& url_new, const bool update_history );
@@ -186,6 +189,10 @@ namespace SKELETON
         // 書き込み可能/不可能
         const bool is_writeable() const { return m_writeable; }
         void set_writeable( const bool writeable ){ m_writeable = writeable; }
+
+        // ポップアップ時に全ての領域を表示できないならカーソルの上に表示
+        const bool get_popup_upside() const { return m_popup_upside; }
+        void set_popup_upside( const bool upside ){ m_popup_upside = upside; }
 
         // view 上にマウスポインタがあれば true
         const bool is_mouse_on_view();

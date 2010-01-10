@@ -63,6 +63,9 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
     m_event_margin.modify_bg( Gtk::STATE_NORMAL, color_bg );
     get_event().modify_bg( Gtk::STATE_NORMAL, color_bg );
 
+    // 全ての領域を表示できないならカーソルの上に表示
+    set_popup_upside( true );
+
     setup_common();
 }
 
