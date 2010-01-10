@@ -882,7 +882,7 @@ void ArticleViewBase::close_view()
         return;
     }
 
-    ARTICLE::get_admin()->set_command( "close_currentview" );
+    ARTICLE::get_admin()->set_command( "close_view", get_url() );
 }
 
 
@@ -1016,7 +1016,7 @@ const bool ArticleViewBase::operate_view( const int control )
 
             // 閉じる
         case CONTROL::Quit:
-            ARTICLE::get_admin()->set_command( "close_currentview" );
+            close_view();
             break;
 
             // 書き込み
