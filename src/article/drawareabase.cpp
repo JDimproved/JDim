@@ -2608,11 +2608,18 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
 
             Gtk::Adjustment* adjust = m_vscrbar->get_adjustment();
 
+            const int current_y = ( int ) adjust->get_value();
+            if( event->direction == GDK_SCROLL_UP && current_y == 0 ) return;
+            if( event->direction == GDK_SCROLL_DOWN && current_y == adjust->get_upper() - adjust->get_page_size() ) return;
+
             m_scrollinfo.reset();
             m_scrollinfo.mode = SCROLL_NORMAL;
         
             if( event->direction == GDK_SCROLL_UP ) m_scrollinfo.dy = -( int ) adjust->get_step_increment() * speed;
             else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() * speed;
+
+            // ホイールを回すと expose イベントが発生するので1回キャンセルする
+            m_cancel_expose = true;
 
             exec_scroll();
         }
@@ -2665,6 +2672,7 @@ void DrawAreaBase::exec_scroll()
     // 移動後のスクロール位置を計算
     int y = 0;
     Gtk::Adjustment* adjust = m_vscrbar->get_adjustment();
+    const int current_y = ( int ) adjust->get_value();
 
     switch( m_scrollinfo.mode ){
 
@@ -2704,13 +2712,13 @@ void DrawAreaBase::exec_scroll()
             
         case SCROLL_NORMAL: // 1 回だけスクロール
 
-            y = ( int ) adjust->get_value() + m_scrollinfo.dy;
+            y = current_y + m_scrollinfo.dy;
             m_scrollinfo.reset();
             break;
 
         case SCROLL_LOCKED: // ロックが外れるまでスクロールを続ける
 
-            y = ( int ) adjust->get_value() + m_scrollinfo.dy;
+            y = current_y + m_scrollinfo.dy;
 
             break;
 
@@ -2732,7 +2740,7 @@ void DrawAreaBase::exec_scroll()
                 if( m_drugging ) dy *= 4;  // 範囲選択中ならスピード上げる
             }
 
-            y = ( int ) adjust->get_value() -( int ) dy;
+            y = current_y -( int ) dy;
 
             // 範囲選択中ならキャレット移動して選択範囲更新
             if( m_drugging ){
@@ -2753,8 +2761,8 @@ void DrawAreaBase::exec_scroll()
                 if( m_scrollinfo.live_speed < CONFIG::get_live_threshold() ){
 
                     const int mode = CONFIG::get_live_mode();
-                    if( mode == LIVE_SCRMODE_VARIABLE ) y = ( int ) ( adjust->get_value() + m_scrollinfo.live_speed );
-                    else if( mode == LIVE_SCRMODE_STEADY ) y = ( int ) ( adjust->get_value() + CONFIG::get_live_speed() );
+                    if( mode == LIVE_SCRMODE_VARIABLE ) y = ( int ) ( current_y + m_scrollinfo.live_speed );
+                    else if( mode == LIVE_SCRMODE_STEADY ) y = ( int ) ( current_y + CONFIG::get_live_speed() );
                 }
 
                 // 行単位スクロール
@@ -2768,7 +2776,7 @@ void DrawAreaBase::exec_scroll()
 
                     // スクロール中
                     if( m_scrollinfo.live_counter <= step_move ){
-                        y = ( int ) ( adjust->get_value() + step );
+                        y = ( int ) ( current_y + step );
                     }
 
                     // 停止中
@@ -2782,26 +2790,27 @@ void DrawAreaBase::exec_scroll()
             break;
     }
 
-    y = (int)MAX( 0, MIN( adjust->get_upper() - adjust->get_page_size() , y ) );
+    const int y_new = (int)MAX( 0, MIN( adjust->get_upper() - adjust->get_page_size() , y ) );
+    if( current_y != y_new ){
 
-    m_cancel_change_adjust = true;
-    adjust->set_value( y );
-    m_cancel_change_adjust = false;
+        m_cancel_change_adjust = true;
+        adjust->set_value( y_new );
+        m_cancel_change_adjust = false;
 
-    m_cancel_expose = true;  // スクロールバーの値を変更すると expose イベントが発生するので1回キャンセルする
-
-    // キーを押しっぱなしの時に一番上か下に着いたらスクロール停止して全画面再描画
-    if( m_scrollinfo.mode == SCROLL_LOCKED && ( y <= 0 || y >= adjust->get_upper() - adjust->get_page_size() ) ){
-        m_scrollinfo.reset();
-        redraw_all = true;
+        // キーを押しっぱなしの時に一番上か下に着いたらスクロール停止して全画面再描画
+        if( m_scrollinfo.mode == SCROLL_LOCKED && ( y_new <= 0 || y_new >= adjust->get_upper() - adjust->get_page_size() ) ){
+            m_scrollinfo.reset();
+            redraw_all = true;
+        }
     }
 
     // 選択範囲のセット
     RECTANGLE rect_selection;
-
     if( selection ){
         if( ! set_selection( caret_pos, &rect_selection ) ) selection = false;
     }
+
+    if( current_y == y_new && ! redraw_all && ! selection ) return;
 
     // 描画
     const int height_redraw = ( redraw_all ? m_view.get_height() : 0 );
@@ -4113,6 +4122,9 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
     // 以下、通常の expose 処理
 
     if( m_cancel_expose ){
+#ifdef _DEBUG    
+        std::cout << "cancel expose_event\n";
+#endif
         m_cancel_expose = false;
         return true;
     }
