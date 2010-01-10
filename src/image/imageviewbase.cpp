@@ -882,6 +882,7 @@ void ImageViewBase::slot_reload_force()
     m_img->set_type( DBIMG::T_UNKNOWN );
     reload();
     CORE::core_set_command( "redraw", get_url() );
+    CORE::core_set_command( "redraw_article" );
 }
 
 

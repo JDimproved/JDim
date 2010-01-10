@@ -630,12 +630,21 @@ void ImageAdmin::close_right_views( const std::string& url )
 //
 void ImageAdmin::close_nocached_views()
 {
+#ifdef _DEBUG
+    std::cout << "ImageAdmin::close_nocached_views\n";
+#endif
+
     Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
     for(; it !=  m_iconbox.children().end(); ++it ){
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
         if( view ){
             std::string url = view->get_url();
-            if( ! DBIMG::is_cached( url ) && DBIMG::get_code( url ) == HTTP_INIT ) set_command( "close_view", url );
+            if( ! DBIMG::is_cached( url ) && ! DBIMG::is_loading ( url ) && DBIMG::get_code( url ) == HTTP_INIT ){
+#ifdef _DEBUG
+                std::cout << "close " << url << std::endl;
+#endif
+                set_command( "close_view", url );
+            }
         }
     }
 }
@@ -645,6 +654,10 @@ void ImageAdmin::close_nocached_views()
 //
 void ImageAdmin::close_error_views()
 {
+#ifdef _DEBUG
+    std::cout << "ImageAdmin::close_error_views\n";
+#endif
+
     Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
     for(; it !=  m_iconbox.children().end(); ++it ){
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );

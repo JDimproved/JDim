@@ -1497,7 +1497,7 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
     return true;
 }
 
-#include <iostream>
+
 void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw )
 {
     const int width_view = m_view.get_width();
@@ -2207,21 +2207,21 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
     int color = COLOR_IMG_ERR;
     const int code = img->get_code();
 
+    // 画像が削除された場合、埋め込み画像を削除してノードの座標を再計算
+    if( layout->eimg &&
+        ( img->is_loading() || code == HTTP_INIT )
+        ){
+
+        delete layout->eimg;
+        m_eimgs.remove( layout->eimg );
+        layout->eimg = NULL;
+        
+        relayout = true;
+    }
+
     if( img->is_loading() ) color = COLOR_IMG_LOADING;
 
     else if( code == HTTP_INIT ){
-
-        // 画像が削除された場合
-        if( layout->eimg ){
-
-            delete layout->eimg;
-            m_eimgs.remove( layout->eimg );
-            layout->eimg = NULL;
-
-            // 後のノードの座標を再計算
-            relayout = true;
-            
-        }
 
         if( img->get_abone() ) color = COLOR_IMG_ERR;
         else color = COLOR_IMG_NOCACHE;
@@ -2300,6 +2300,10 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
         const int height_tmp = rect->width / 4;
         m_backscreen->draw_rectangle( m_gc, true, x_tmp, y_tmp - pos_y, width_tmp, height_tmp );
     }
+
+#ifdef _DEBUG
+    std::cout << "code = " << code << " relayout = " << relayout << std::endl;
+#endif
 
     return relayout;
 }

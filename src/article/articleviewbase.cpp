@@ -3775,6 +3775,7 @@ void ArticleViewBase::slot_abone_img()
 
     DBIMG::set_abone( m_url_tmp , ! DBIMG::get_abone( m_url_tmp ) );
     if( DBIMG::get_abone( m_url_tmp ) ) CORE::core_set_command( "delete_image", m_url_tmp );
+    redraw_view();
 }
 
 
