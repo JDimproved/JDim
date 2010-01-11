@@ -969,7 +969,7 @@ const std::list< std::string > CACHE::open_load_diag( Gtk::Window* parent, const
     {
         diag.hide();
 
-        return diag.get_filenames();
+        return MISC::recover_path( diag.get_filenames() );
     }
 
     return std::list< std::string >();
@@ -1105,10 +1105,10 @@ const std::string CACHE::get_realpath( const std::string& path )
 {
     std::string path_real;
 
+    char resolved_path[ PATH_MAX + 1 ];
 #ifdef _WIN32
-    char* ret = _fullpath( NULL, to_locale_cstr( path ), MAX_PATH );
+    char* ret = _fullpath( resolved_path, to_locale_cstr( path ), PATH_MAX );
 #else
-    char resolved_path[ PATH_MAX ];
     char* ret = realpath( to_locale_cstr( path ), resolved_path );
 #endif
     if( ret ){

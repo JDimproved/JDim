@@ -210,7 +210,9 @@ namespace MISC
 
     // pathセパレータを / に置き換える
     const std::string recover_path( const std::string& str );
+    const std::list< std::string > recover_path( const std::list< std::string >& list_str );
 }
 
 
 #endif
+

@@ -1383,4 +1383,17 @@ const std::string MISC::recover_path( const std::string& str )
 #endif
 }
 
+const std::list< std::string > MISC::recover_path( const std::list< std::string >& list_str )
+{
+#ifdef _WIN32
+    std::list< std::string > list_ret;
+    std::list< std::string >::const_iterator it = list_str.begin();
+    for( ; it != list_str.end() ; ++it )
+        list_ret.push_back( MISC::recover_path( *it ) );
+    return list_ret;
+#else
+    return list_str;
+#endif
+}
+
 
