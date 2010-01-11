@@ -333,24 +333,32 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
         while( *pos != ' ' && *pos != '<' && *pos != '\0' && *pos != '\n' ) { ++pos; ++lng_id_dat; }
         
         // 壊れてる
-        if( *pos == '\0' ) break;
+        if( *pos == '\0' ){
+            MISC::ERRMSG( "subject.txt is broken" );
+            break;
+        }
         if( *pos == '\n' ) { ++pos; continue; }
 
         while( *pos != '<' ) ++pos;
+        ++pos;
+        if( *pos != '>' ){
+            MISC::ERRMSG( "subject.txt is broken" );
+            break;
+        }
 
         // subject取得
         bool exist_amp = false;
-        pos += 2;
+        ++pos;
         str_subject = pos;
         while( *pos != '\0' && *pos != '\n' ){
             if( *pos == '&' ) exist_amp = true;
             ++pos;
         }
         --pos;
-        while( *pos != '(' && *pos != '\n' && pos != str_subject_txt ) --pos;
+        while( *pos != '(' && *pos != '\n' && pos != str_subject ) --pos;
         
         // 壊れてる
-        if( *pos == '\n' || pos == str_subject_txt ){
+        if( *pos == '\n' || pos == str_subject ){
             MISC::ERRMSG( "subject.txt is broken" );
             break;
         }
