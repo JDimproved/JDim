@@ -192,13 +192,16 @@ bool AAMenu::on_key_press_event( GdkEventKey* event )
         ){
 
         move_down();
-        if( event->keyval == GDK_space ) return true;
+        return true;
     }
 
     // 上移動
     else if( event->keyval == GDK_k
                   || ( ( event->state & GDK_CONTROL_MASK ) && event->keyval == GDK_p )
-        ) move_up();
+        ){
+        move_up();
+        return true;
+    }
 
     // ショートカット
     else{ 
