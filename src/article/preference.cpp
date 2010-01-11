@@ -19,7 +19,7 @@
 
 using namespace ARTICLE;
 
-Preferences::Preferences( Gtk::Window* parent, const std::string& url )
+Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string command )
     : SKELETON::PrefDiag( parent, url )
     ,m_label_name( false, "スレタイトル : ", DBTREE::article_subject( get_url() ) )
     ,m_label_url( false, "スレのURL : ", DBTREE:: url_readcgi( get_url(),0,0 ) )
@@ -191,12 +191,15 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_notebook_abone.append_page( m_edit_regex, "NG 正規表現" );
 
     m_notebook.append_page( m_vbox_info, "一般" );
-    m_notebook.append_page( m_notebook_abone, "あぼーん設定" );
+    const int page_abone = 1;
+    m_notebook.append_page( m_notebook_abone, "あぼ〜ん設定" );
 
     get_vbox()->pack_start( m_notebook );
     set_title( "「" + DBTREE::article_subject( get_url() ) + "」のプロパティ" );
     resize( 600, 400 );
     show_all_children();
+
+    if( command == "show_abone" ) m_notebook.set_current_page( page_abone );
 }
 
 Preferences::~Preferences()

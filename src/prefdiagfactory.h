@@ -50,7 +50,7 @@ namespace CORE
         PREFDIAG_NONE
     };
     
-    SKELETON::PrefDiag* PrefDiagFactory( Gtk::Window* parent, int type, const std::string& url );
+    SKELETON::PrefDiag* PrefDiagFactory( Gtk::Window* parent, const int type, const std::string& url, const std::string command = std::string() );
 }
 
 #endif

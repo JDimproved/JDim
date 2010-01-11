@@ -32,7 +32,7 @@
 
 #include "config/aboutconfig.h"
 
-SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const std::string& url )
+SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, const int type, const std::string& url, const std::string command )
 {
     switch( type )
     {
@@ -94,7 +94,7 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, int type, const 
             return new BOARD::Preferences( parent, url );
 
         case PREFDIAG_ARTICLE:
-            return new ARTICLE::Preferences( parent, url );
+            return new ARTICLE::Preferences( parent, url, command );
 
         case PREFDIAG_IMAGE:
             return new IMAGE::Preferences( parent, url );

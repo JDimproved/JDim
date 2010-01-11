@@ -214,6 +214,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
+    action_group()->add( Gtk::Action::create( "PreferenceAbone", "あぼ〜ん設定(_P)..."), sigc::mem_fun( *this, &ArticleViewBase::show_preference_abone ) );
 
     // 検索
     action_group()->add( Gtk::Action::create( "Search_Menu", ITEM_NAME_SEARCH + std::string( "(_H)" ) ) );
@@ -389,6 +390,8 @@ void ArticleViewBase::setup_action()
     "<popup name='popup_menu_abone'>"
     "<menuitem action='TranspAbone'/>"
     "<menuitem action='TranspChainAbone'/>"
+    "<separator/>"
+    "<menuitem action='PreferenceAbone'/>"
     "</popup>";
 
 
@@ -1315,6 +1318,20 @@ void ArticleViewBase::show_preference()
     delete pref;
 }
 
+
+//
+// あぼーん設定表示
+//
+void ArticleViewBase::show_preference_abone()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::show_preference_abone\n";
+#endif
+
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, m_url_article, "show_abone" );
+    pref->run();
+    delete pref;
+}
 
 
 //
