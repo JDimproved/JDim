@@ -214,7 +214,6 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
-    action_group()->add( Gtk::Action::create( "PreferenceAbone", "あぼ〜ん設定(_P)..."), sigc::mem_fun( *this, &ArticleViewBase::show_preference_abone ) );
 
     // 検索
     action_group()->add( Gtk::Action::create( "Search_Menu", ITEM_NAME_SEARCH + std::string( "(_H)" ) ) );
@@ -262,6 +261,9 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::ToggleAction::create( "TranspChainAbone", "透明/連鎖あぼ〜ん(_C)", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_abone_transp_chain ) );
 
+    action_group()->add( Gtk::Action::create( "SetupAbone", "あぼ〜ん設定(対象: ローカル)(_L)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_setup_abone ) );
+    action_group()->add( Gtk::Action::create( "SetupAboneBoard", "あぼ〜ん設定(対象: 板)(_B)..." ), sigc::mem_fun( *this, &ArticleViewBase::slot_setup_abone_board ) );
+    action_group()->add( Gtk::Action::create( "SetupAboneAll", "あぼ〜ん設定(対象: 全体)(_A)..." ), sigc::mem_fun( *this, &ArticleViewBase::slot_setup_abone_all ) );
 
     // 移動系
     action_group()->add( Gtk::Action::create( "Move_Menu", ITEM_NAME_GO + std::string( "(_M)" ) ) );
@@ -391,7 +393,9 @@ void ArticleViewBase::setup_action()
     "<menuitem action='TranspAbone'/>"
     "<menuitem action='TranspChainAbone'/>"
     "<separator/>"
-    "<menuitem action='PreferenceAbone'/>"
+    "<menuitem action='SetupAbone'/>"
+    "<menuitem action='SetupAboneBoard'/>"
+    "<menuitem action='SetupAboneAll'/>"
     "</popup>";
 
 
@@ -1320,21 +1324,6 @@ void ArticleViewBase::show_preference()
 
 
 //
-// あぼーん設定表示
-//
-void ArticleViewBase::show_preference_abone()
-{
-#ifdef _DEBUG
-    std::cout << "ArticleViewBase::show_preference_abone\n";
-#endif
-
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, m_url_article, "show_abone" );
-    pref->run();
-    delete pref;
-}
-
-
-//
 // 画像プロパティ表示
 //
 void ArticleViewBase::slot_preferences_image()
@@ -1460,6 +1449,31 @@ void ArticleViewBase::slot_copy_article_info()
 
     // 再レイアウト
     ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );
+}
+
+
+//
+// あぼーん設定
+//
+void ArticleViewBase::slot_setup_abone()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, m_url_article, "show_abone" );
+    pref->run();
+    delete pref;
+}
+
+void ArticleViewBase::slot_setup_abone_board()
+{
+    SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, DBTREE::url_subject( m_url_article ), "show_abone_article" );
+    pref->run();
+    delete pref;
+}
+
+void ArticleViewBase::slot_setup_abone_all()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_GLOBALABONE, "" );
+    pref->run();
+    delete pref;
 }
 
 

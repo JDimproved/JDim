@@ -121,7 +121,6 @@ namespace ARTICLE
         virtual void goto_bottom();
         virtual void goto_num( int num );
         virtual void show_preference();
-        void show_preference_abone();
 
         // 進む、戻る
         virtual void back_viewhistory( const int count );
@@ -308,6 +307,11 @@ namespace ARTICLE
         void slot_jump();
         void slot_save_dat();
         void slot_copy_article_info();
+
+        // あぼーん設定
+        void slot_setup_abone();
+        void slot_setup_abone_board();
+        void slot_setup_abone_all();
 
         // リンクの処理
         virtual void slot_on_url( std::string url, int res_number );

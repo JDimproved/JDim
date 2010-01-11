@@ -91,7 +91,7 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, const int type, 
             return new DBIMG::DelImgDiag( parent, url );
 
         case PREFDIAG_BOARD:
-            return new BOARD::Preferences( parent, url );
+            return new BOARD::Preferences( parent, url, command );
 
         case PREFDIAG_ARTICLE:
             return new ARTICLE::Preferences( parent, url, command );

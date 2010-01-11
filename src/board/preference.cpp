@@ -20,7 +20,7 @@
 
 using namespace BOARD;
 
-Preferences::Preferences( Gtk::Window* parent, const std::string& url )
+Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string command )
     : SKELETON::PrefDiag( parent, url ),
       m_frame_write( "書き込み設定" ),
       m_entry_writename( true, "名前：" ),
@@ -299,8 +299,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_notebook.append_page( m_vbox, "一般" );
     m_notebook.append_page( *m_localrule, "ローカルルール" );
     m_notebook.append_page( m_vbox_proxy, "プロキシ設定" );
-    m_notebook.append_page( m_notebook_abone, "あぼーん設定(スレビュー)" );
-    m_notebook.append_page( m_notebook_abone_thread, "あぼーん設定(スレ一覧)" );
+    const int page_abone_article = 3;
+    m_notebook.append_page( m_notebook_abone, "あぼ〜ん設定(スレビュー)" );
+    m_notebook.append_page( m_notebook_abone_thread, "あぼ〜ん設定(スレ一覧)" );
     m_notebook.append_page( m_edit_settingtxt, "SETTING.TXT" );
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Preferences::slot_switch_page ) );
 
@@ -308,6 +309,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     set_title( "「" + DBTREE::board_name( get_url() ) + "」のプロパティ" );
     resize( 600, 400 );
     show_all_children();
+
+    if( command == "show_abone_article" ) m_notebook.set_current_page( page_abone_article );
 }
 
 
