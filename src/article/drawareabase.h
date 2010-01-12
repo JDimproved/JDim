@@ -141,7 +141,6 @@ namespace ARTICLE
         bool m_goto_bottom_reserve; // 初期化時のジャンプ予約(底)
         int m_pre_pos_y; // ひとつ前のスクロールバーの位置。スクロールした時の差分量計算に使用する
         std::vector< int > m_jump_history;  // ジャンプ履歴
-        bool m_cancel_expose; // expose イベントをキャンセル
         bool m_cancel_change_adjust; // adjust の値変更イベントをキャンセル
         Glib::RefPtr< Gdk::Pixmap > m_back_marker; // オートスクロールマーカの背景
         RECTANGLE m_clip_marker;

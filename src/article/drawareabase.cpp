@@ -203,7 +203,6 @@ void DrawAreaBase::clear()
     m_drugging = false;
     m_r_drugging = false;
     m_pre_pos_y = -1;
-    m_cancel_expose = false;
     m_cancel_change_adjust = false;
     m_key_press = false;
     m_key_locked = false;
@@ -673,7 +672,6 @@ void DrawAreaBase::redraw_view()
 
     configure_impl();
 
-    m_cancel_expose = false;
     m_view.queue_draw();
     if( m_window ) m_window->process_updates( false );
 }
@@ -1491,7 +1489,8 @@ const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redra
 
     // expose イベント経由で exec_draw_screen() を呼び出す
     // gtk2.18以降は expose イベント内で描画処理しないと正しく描画されない様なので注意
-    m_view.queue_draw();
+    Gdk::Rectangle rect( 0, 0, 1, 1 );
+    m_window->invalidate_rect( rect, false );
     m_window->process_updates( false );
 
     return true;
@@ -1741,7 +1740,10 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     }
 
     // バックスクリーンをウィンドウにコピー
-    if( dy ) m_window->scroll( 0, -dy );
+    if( dy ){
+        m_window->scroll( 0, -dy );
+        m_window->get_update_area(); // Gdk::Window::scroll()を実行するとexposeイベントが生じるのでキャンセルする
+    }
     m_window->draw_drawable( m_gc, m_backscreen, 0, y_screen, 0, y_screen, width_view, height_screen );
 
     // オートスクロールマーカと枠の描画
@@ -2617,9 +2619,6 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
         
             if( event->direction == GDK_SCROLL_UP ) m_scrollinfo.dy = -( int ) adjust->get_step_increment() * speed;
             else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() * speed;
-
-            // ホイールを回すと expose イベントが発生するので1回キャンセルする
-            m_cancel_expose = true;
 
             exec_scroll();
         }
@@ -4114,18 +4113,12 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
             exec_draw_screen( drawinfo.y_redraw, drawinfo.height_redraw );
         } while( m_list_drawinfo.size() );
 
-        return true;
+        // width == 1 かつ height == 1 の時は draw_screen() から invalidate されたとみなして expose 処理をしない
+        // それ以外の時は X が invalidate したと考える
+        if( event->area.width == 1 && event->area.height == 1 ) return true;
     }
 
     // 以下、通常の expose 処理
-
-    if( m_cancel_expose ){
-#ifdef _DEBUG    
-        std::cout << "cancel expose_event\n";
-#endif
-        m_cancel_expose = false;
-        return true;
-    }
 
 #ifdef _DEBUG    
     std::cout << "DrawAreaBase::slot_expose_event"
@@ -4165,7 +4158,12 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
     }
 
     // 必要な所だけ再描画
-    else exec_draw_screen( event->area.y, event->area.height );
+    else{
+#ifdef _DEBUG
+        std::cout << "expose\n";
+#endif
+        exec_draw_screen( event->area.y, event->area.height );
+    }
 
     return true;
 }
