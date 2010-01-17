@@ -141,6 +141,7 @@ void DrawAreaBase::setup( bool show_abone, bool show_scrbar )
     m_view.add_events( Gdk::SCROLL_MASK );
     m_view.add_events( Gdk::POINTER_MOTION_MASK );
     m_view.add_events( Gdk::LEAVE_NOTIFY_MASK );
+    m_view.add_events( Gdk::VISIBILITY_NOTIFY_MASK );
 
     // focus 可にセット
     m_view.set_flags( m_view.get_flags() | Gtk::CAN_FOCUS );
@@ -158,6 +159,7 @@ void DrawAreaBase::setup( bool show_abone, bool show_scrbar )
     m_view.signal_motion_notify_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_motion_notify_event ));
     m_view.signal_key_press_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_press_event ));
     m_view.signal_key_release_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_release_event ));
+    m_view.signal_visibility_notify_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_visibility_notify_event ) );
 
     pack_start( m_view );
 
@@ -214,9 +216,13 @@ void DrawAreaBase::clear()
     m_caret_pos_pre = CARET_POSITION();
     m_caret_pos_dragstart = CARET_POSITION();
 
-    m_list_drawinfo.clear();
+    m_drawinfo.draw = false;
 
-    m_ready_backscreen = false;
+    m_rect_backscreen.y = 0;
+    m_rect_backscreen.height = 0;
+
+    m_scroll_window = true;
+
     m_enable_draw = true;
 
     m_jump_history.clear();
@@ -683,7 +689,9 @@ void DrawAreaBase::redraw_view_force()
     std::cout << "DrawAreaBase::redraw_view_force()\n";
 #endif
 
-    m_ready_backscreen = false;
+    m_drawinfo.draw = false;
+    m_rect_backscreen.y = 0;
+    m_rect_backscreen.height = 0;
     redraw_view();
 }
 
@@ -1006,8 +1014,9 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
 
     m_backscreen.clear();
     m_backscreen = Gdk::Pixmap::create( m_window, m_view.get_width(), m_view.get_height() );
-    m_ready_backscreen = false;
-    m_list_drawinfo.clear();
+
+    m_rect_backscreen.y = 0;
+    m_rect_backscreen.height = 0;
 
     // 予約されているならジャンプ予約を実行
     if( m_goto_num_reserve ) goto_num( m_goto_num_reserve );
@@ -1464,33 +1473,38 @@ bool DrawAreaBase::is_wrapped( const int x, const int border, const char* str )
 //
 // スクリーン描画
 //
-// y_redraw から height_redraw の高さ分だけ描画する
-// height_redraw == 0 ならスクロールした分だけ描画( y_redraw は無視 )
+// y から height の高さ分だけ描画する
+// height == 0 ならスクロールした分だけ描画( y は無視 )
 //
-const bool DrawAreaBase::draw_screen( const int y_redraw, const int height_redraw )
+const bool DrawAreaBase::draw_screen( const int y, const int height )
 {
     if( ! m_enable_draw ) return false;
     if( ! m_gc ) return false;
     if( ! m_backscreen ) return false;
     if( ! m_layout_tree ) return false;
     if( ! m_layout_tree->top_header() ) return false;
+    if( ! m_window ) return false;
     if( m_view.get_height() < LAYOUT_MIN_HEIGHT ) return false; // まだ画面に表示されていない
+
+    // キューに expose イベントが溜まっている時は全画面再描画
+    Gdk::Region rg = m_window->get_update_area();
+    if( rg.gobj() ){
+        redraw_view_force();
+        return true;
+    }
 
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::draw_screen "
-              << " y_redraw = " << y_redraw << " height_redraw " << height_redraw << std::endl;
+              << " y = " << y << " height " << height << std::endl;
 #endif
 
-    DRAWINFO drawinfo;
-
-    drawinfo.y_redraw = y_redraw;
-    drawinfo.height_redraw = height_redraw;
-    m_list_drawinfo.push_back( drawinfo );
+    m_drawinfo.draw = true;
+    m_drawinfo.y = y;
+    m_drawinfo.height = height;
 
     // expose イベント経由で exec_draw_screen() を呼び出す
     // gtk2.18以降は expose イベント内で描画処理しないと正しく描画されない様なので注意
-    Gdk::Rectangle rect( 0, 0, 1, 1 );
-    m_window->invalidate_rect( rect, false );
+    m_view.queue_draw();
     m_window->process_updates( false );
 
     return true;
@@ -1514,12 +1528,19 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     int upper = pos_y + y_screen;
     int lower = upper + height_screen;
 
-    // 初回呼び出し時は全画面再描画
-    if( m_pre_pos_y == -1 ){
+    if( m_pre_pos_y == -1 // 初回呼び出し時
+
+        // 高速スクロールモードでなく、バックスクリーンが全て描画されていない場合
+        || ( ! m_scroll_window && ( m_rect_backscreen.y != 0 || m_rect_backscreen.height != height_view ) )
+
+        ){
+
+        // 全画面再描画
+        dy = 0;
         y_screen = 0;
         height_screen = height_view;
         upper = pos_y;
-        lower = upper + height_screen;
+        lower = pos_y + height_screen;
     }
 
     // スクロール中
@@ -1549,13 +1570,14 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 
             if( -dy < height_view ) lower = upper - dy;
             y_screen = 0;
-            height_screen = MIN( -dy, height_view );
 
             // フレーム表示の場合は枠の分拡大する
             if( m_draw_frame ){
                 ++lower;
                 if( height_screen < height_view ) ++height_screen;
             }
+
+            height_screen = MIN( -dy, height_view );
         }
 
         // 変化無し
@@ -1568,27 +1590,46 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
         }
     }
 
-    m_pre_pos_y = pos_y;
-
-    m_rect_backscreen.y = y_screen;
-    m_rect_backscreen.height = height_screen;
-
-    // 全画面をバックスクリーンに描画した時は expose イベント時に描画をキャンセルして
-    // バックスクリーンから画面をコピーする。slot_expose_event()参照
-    if( y_screen == 0 && height_screen == height_view ) m_ready_backscreen = true;
-    else m_ready_backscreen = false;
-
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::exec_draw_screen "
-              << " y_redraw = " << y_redraw << " height_redraw " << height_redraw
-              << " pos_y = " << pos_y
+              << " y_redraw = " << y_redraw
+              << " height_redraw " << height_redraw << std::endl
+              << "pos_y = " << pos_y
               << " dy = " << dy
-              << " upper = " << upper << " lower = " << lower
               << " y_screen = " << y_screen << " h_screen = " << height_screen
-              << " scroll mode = " << m_scrollinfo.mode
-              << " ready_backscreen = " << m_ready_backscreen
+              << " upper = " << upper << " lower = " << lower
+              << " scroll = " << m_scrollinfo.mode
               << std::endl;
 #endif    
+
+    m_pre_pos_y = pos_y;
+
+    m_rect_backscreen.x = 0;
+    m_rect_backscreen.y = y_screen;
+    m_rect_backscreen.width = width_view;
+    m_rect_backscreen.height = height_screen;
+
+    Gdk::Rectangle rect_clip( 0, y_screen, width_view, height_screen );
+    m_gc->set_clip_rectangle( rect_clip );
+
+    // バックスクリーンをスクロール処理する
+    if( ! m_scroll_window ){
+
+        rect_clip.set_y( 0 );
+        rect_clip.set_height( height_view );
+        m_gc->set_clip_rectangle( rect_clip );
+
+        // 上にスクロールした
+        if( dy > 0 && dy < height_view )
+            m_backscreen->draw_drawable( m_gc, m_backscreen, 0, dy, 0, 0, width_view , height_view - dy );
+
+        // 下にスクロールした
+        else if( dy < 0 && -dy < height_view )
+            m_backscreen->draw_drawable( m_gc, m_backscreen, 0, 0, 0, -dy, width_view , height_view + dy );
+
+        m_rect_backscreen.y = 0;
+        m_rect_backscreen.height = height_view;
+    }
 
     // 一番最後のレスが半分以上表示されていたら最後のレス番号をm_seen_currentにセット
     m_seen_current = 0;
@@ -1649,9 +1690,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
         header = m_layout_tree->top_header();
     }
 
-    // 背景クリア
-    const Gdk::Rectangle rect_clip( 0, y_screen, width_view, height_screen );
-    m_gc->set_clip_rectangle( rect_clip );
+    // バックスクリーンの背景クリア
     m_gc->set_foreground( m_color[ get_colorid_back() ] );
     m_backscreen->draw_rectangle( m_gc, true, 0, y_screen, width_view, height_screen );
 
@@ -1726,25 +1765,49 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
         }
     }
 
-    // 前回描画したオートスクロールマーカを消す
-    if( m_shown_marker ){
 
-        m_shown_marker = false;
+    // 高速スクロール
+    // DrawingAreaの領域が全て表示されているときは Gdk::Window::scroll() を使ってスクロール
+    // 一部が隠れている時はバックスクリーン内でスクロール処理してバックスクリーン全体をウィンドウにコピーする
+    // slot_visibility_notify_event()を参照せよ
+    if( m_scroll_window ){
 
-        const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-        m_gc->set_clip_rectangle( rect_window );
-        m_window->draw_drawable( m_gc, m_back_marker, 0, 0,
-                                 m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
+#ifdef _DEBUG
+        std::cout << "rapid scroll\n";
+#endif 
 
-        m_gc->set_clip_rectangle( rect_clip );
+        // 前回描画したオートスクロールマーカを消す
+        if( m_shown_marker ){
+
+            m_shown_marker = false;
+
+            const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
+            m_gc->set_clip_rectangle( rect_window );
+            m_window->draw_drawable( m_gc, m_back_marker, 0, 0,
+                                     m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
+
+            m_gc->set_clip_rectangle( rect_clip );
+        }
+
+        // ウィンドウをスクロール
+        if( dy ){
+
+            m_window->scroll( 0, -dy );
+            m_window->get_update_area();  // スクロールすると expose イベントが生じるのでキャンセルする
+        }
+
+        // 更新した所だけバックスクリーンをウィンドウにコピー
+        m_window->draw_drawable( m_gc, m_backscreen, 0, y_screen, 0, y_screen, width_view, height_screen );
     }
 
-    // バックスクリーンをウィンドウにコピー
-    if( dy ){
-        m_window->scroll( 0, -dy );
-        m_window->get_update_area(); // Gdk::Window::scroll()を実行するとexposeイベントが生じるのでキャンセルする
+    // バックスクリーンを全てウィンドウにコピー    
+    else{
+
+#ifdef _DEBUG
+        std::cout << "copy all\n";
+#endif 
+        m_window->draw_drawable( m_gc, m_backscreen, 0, 0, 0, 0, width_view, height_view );
     }
-    m_window->draw_drawable( m_gc, m_backscreen, 0, y_screen, 0, y_screen, width_view, height_screen );
 
     // オートスクロールマーカと枠の描画
     draw_marker();
@@ -2043,10 +2106,14 @@ void DrawAreaBase::draw_marker()
         m_clip_marker.height = height_view - m_clip_marker.y;
     }
 
-    const Gdk::Rectangle rect_marker( 0, 0, m_clip_marker.width, m_clip_marker.height );
-    m_gc->set_clip_rectangle( rect_marker );
-    m_back_marker->draw_drawable( m_gc, m_window, m_clip_marker.x, m_clip_marker.y,
-                                  0, 0, m_clip_marker.width, m_clip_marker.height );
+
+    if( m_scroll_window ){
+
+        const Gdk::Rectangle rect_marker( 0, 0, m_clip_marker.width, m_clip_marker.height );
+        m_gc->set_clip_rectangle( rect_marker );
+        m_back_marker->draw_drawable( m_gc, m_window, m_clip_marker.x, m_clip_marker.y,
+                                      0, 0, m_clip_marker.width, m_clip_marker.height );
+    }
 
     const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
     m_gc->set_clip_rectangle( rect_window );
@@ -2600,7 +2667,7 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
     if( !m_vscrbar ) return;
 
     // あまり速く動かしたならキャンセル
-    int time_tmp = event->time - m_wheel_scroll_time;
+    const int time_tmp = event->time - m_wheel_scroll_time;
 
     if( ( ! m_wheel_scroll_time || time_tmp >= time_cancel  ) && event->type == GDK_SCROLL ){
 
@@ -2616,6 +2683,9 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
 
             m_scrollinfo.reset();
             m_scrollinfo.mode = SCROLL_NORMAL;
+
+            // ホイールのスクロールの場合は必ずスクロール処理を実施する
+            m_wait_scroll = 0;
         
             if( event->direction == GDK_SCROLL_UP ) m_scrollinfo.dy = -( int ) adjust->get_step_increment() * speed;
             else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() * speed;
@@ -2645,18 +2715,26 @@ void DrawAreaBase::exec_scroll()
         struct timezone tz;
         if( ! gettimeofday( &tv, &tz ) ){
 
-            const time_t passed = ( tv.tv_sec * 1000000 + tv.tv_usec ) - ( m_scroll_time.tv_sec * 1000000 + m_scroll_time.tv_usec );
-            m_scroll_time = tv;
-            m_wait_scroll = MAX( 0, m_wait_scroll - passed );
+            const time_t current = tv.tv_sec * 1000000 + tv.tv_usec;
+            const time_t before = m_scroll_time.tv_sec * 1000000 + m_scroll_time.tv_usec;
 
-            if( m_wait_scroll ){
+            if( current < before ) m_wait_scroll = 0;
+            else{
+
+                const time_t passed = current - before;
+                m_scroll_time = tv;
+                m_wait_scroll = MAX( 0, m_wait_scroll - passed );
+
+                if( m_wait_scroll ){
 #ifdef _DEBUG
-                std::cout << "cancel scroll passed = " << passed
-                          << " wait = " << m_wait_scroll << std::endl;
+                    std::cout << "cancel scroll passed = " << passed
+                              << " wait = " << m_wait_scroll << std::endl;
 #endif
-                return;
+                    return;
+                }
             }
         }
+        else m_wait_scroll = 0;
     }
 
 #ifdef _DEBUG
@@ -4103,42 +4181,37 @@ void DrawAreaBase::configure_impl()
 //
 bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
 {
-    // draw_screen() で描画指定された場合
-    // draw_screen() を参照せよ
-    if( m_list_drawinfo.size() ){
-
-        do{
-            DRAWINFO& drawinfo = * m_list_drawinfo.begin();
-            m_list_drawinfo.pop_front();
-            exec_draw_screen( drawinfo.y_redraw, drawinfo.height_redraw );
-        } while( m_list_drawinfo.size() );
-
-        // width == 1 かつ height == 1 の時は draw_screen() から invalidate されたとみなして expose 処理をしない
-        // それ以外の時は X が invalidate したと考える
-        if( event->area.width == 1 && event->area.height == 1 ) return true;
-    }
-
-    // 以下、通常の expose 処理
+    const int x = event->area.x;
+    const int y = event->area.y;
+    const int width = event->area.width;
+    const int height = event->area.height;
 
 #ifdef _DEBUG    
     std::cout << "DrawAreaBase::slot_expose_event"
-              << " x = " << event->area.x
-              << " y = " << event->area.y
-              << " width = " << event->area.width
-              << " height = " << event->area.height << std::endl;
+              << " y = " << y << " height = " << height << " draw_screen = " << m_drawinfo.draw << std::endl;
 #endif
 
-    // バックスクリーンに描画されているならコピー
-    if( m_ready_backscreen ){
+    // draw_screen からの呼び出し
+    if(  m_drawinfo.draw  ){
+
+#ifdef _DEBUG    
+        std::cout << "draw\n";
+#endif
+
+        m_drawinfo.draw = false;
+        exec_draw_screen( m_drawinfo.y, m_drawinfo.height );
+    }
+
+    // バックスクリーンに描画済みならコピー
+    else if( y >= m_rect_backscreen.y && y + height <= m_rect_backscreen.y + m_rect_backscreen.height ){
 
 #ifdef _DEBUG    
         std::cout << "copy from backscreen\n";
 #endif
 
-        const Gdk::Rectangle rect( event->area.x, event->area.y, event->area.width, event->area.height );
+        const Gdk::Rectangle rect( x, y, width, height );
         m_gc->set_clip_rectangle( rect );
-        m_window->draw_drawable( m_gc, m_backscreen, event->area.x, event->area.y,
-                                 event->area.x, event->area.y, event->area.width, event->area.height );
+        m_window->draw_drawable( m_gc, m_backscreen, x, y, x, y, width, height );
 
         // オートスクロールマーカと枠の描画
         draw_marker();
@@ -4162,7 +4235,7 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
 #ifdef _DEBUG
         std::cout << "expose\n";
 #endif
-        exec_draw_screen( event->area.y, event->area.height );
+        exec_draw_screen( y, height );
     }
 
     return true;
@@ -4196,6 +4269,42 @@ bool DrawAreaBase::slot_leave_notify_event( GdkEventCrossing* event )
     return false;
 }
 
+
+//
+// ウィンドウの重なり状態が変わった
+//
+// スクロール時の描画モードを変更する
+//
+// DrawingAreaの領域が全て表示されているときは Gdk::Window::scroll() を使ってスクロール
+// 一部が隠れている時はバックスクリーン内でスクロール処理してバックスクリーン全体をウィンドウにコピーする
+//
+bool DrawAreaBase::slot_visibility_notify_event(GdkEventVisibility* event)
+{
+#ifdef _DEBUG
+    std::cout << "slot_visibility_notify_event\n";
+#endif
+
+    m_scroll_window = false;
+
+    if (event->state == GDK_VISIBILITY_UNOBSCURED) {
+
+#ifdef _DEBUG
+        std::cout << "unobscured\n";
+#endif
+        m_scroll_window = true;
+
+    } else if ( event->state == GDK_VISIBILITY_PARTIAL ){
+
+#ifdef _DEBUG
+        std::cout << "partial\n";    
+#endif
+    }
+#ifdef _DEBUG
+    else  std::cout << "invisible\n";    
+#endif
+
+    return true;
+}
 
 
 //

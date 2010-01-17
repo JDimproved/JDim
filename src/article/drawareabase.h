@@ -50,8 +50,9 @@ namespace ARTICLE
     // 描画情報
     struct DRAWINFO
     {
-        int y_redraw;
-        int height_redraw;
+        bool draw;
+        int y;
+        int height;
     };
 
     ///////////////////////////////////
@@ -95,10 +96,14 @@ namespace ARTICLE
         Glib::RefPtr< Gdk::Pixmap > m_backscreen;
         Glib::RefPtr< Pango::Layout > m_pango_layout;
         Glib::RefPtr< Pango::Context > m_context;
-        RECTANGLE m_rect_backscreen;
-        bool m_ready_backscreen;
+        RECTANGLE m_rect_backscreen; // バックスクリーンが描画されている範囲
         bool m_enable_draw;
-        std::list< DRAWINFO > m_list_drawinfo;
+        DRAWINFO m_drawinfo;
+
+        // 高速スクロール描画実行
+        // DrawingAreaの領域が全て表示されているときは Gdk::Window::scroll() を使ってスクロール
+        // 一部が隠れている時はバックスクリーン内でスクロール処理してバックスクリーン全体をウィンドウにコピーする
+        bool m_scroll_window; 
 
         // キャレット情報
         CARET_POSITION m_caret_pos;           // 現在のキャレットの位置(クリックやドラッグすると移動)
@@ -331,9 +336,9 @@ namespace ARTICLE
         bool is_wrapped( const int x, const int border, const char* str );
 
         // スクリーン描画
-        // y_redraw から height_redraw の高さ分だけ描画する
-        // height_redraw == 0 ならスクロールした分だけ描画( y_redraw は無視 )
-        const bool draw_screen( const int y_redraw, const int height_redraw );
+        // y から height の高さ分だけ描画する
+        // height == 0 ならスクロールした分だけ描画( y は無視 )
+        const bool draw_screen( const int y, const int height );
         void exec_draw_screen( const int y_redraw, const int height_redraw );
 
         bool draw_one_node( LAYOUT* layout, const int width_win, const int pos_y, const int upper, const int lower );
@@ -389,6 +394,7 @@ namespace ARTICLE
         bool slot_expose_event( GdkEventExpose* event );
         bool slot_scroll_event( GdkEventScroll* event );
         bool slot_leave_notify_event( GdkEventCrossing* event );
+        bool slot_visibility_notify_event( GdkEventVisibility* event );
         void slot_realize();
 
         bool slot_button_press_event( GdkEventButton* event );
