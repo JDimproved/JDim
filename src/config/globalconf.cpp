@@ -96,6 +96,9 @@ void CONFIG::set_use_select_gtkrc( const bool use ){ get_confitem()->use_select_
 
 const int CONFIG::get_tree_ypad(){ return get_confitem()->tree_ypad; }
 
+// カテゴリを開いたときにツリービューをスクロールする
+const bool CONFIG::get_scroll_tree(){ return get_confitem()->scroll_tree; }
+
 const int CONFIG::get_view_margin(){ return get_confitem()->view_margin; }
 
 // フォント

@@ -137,6 +137,7 @@ void AboutConfig::append_rows()
     append_row( "■ ツリービュー(板一覧、スレ一覧)" );
     append_row( "ツリービューでマウスホイールを回したときのスクロール量(行数)", get_confitem()->tree_scroll_size, CONF_TREE_SCROLL_SIZE );
     append_row( "ツリービューの行間スペース", get_confitem()->tree_ypad, CONF_TREE_YPAD );
+    append_row( "カテゴリを開いたときにスクロールする", get_confitem()->scroll_tree, CONF_SCROLL_TREE );
 
     // 板一覧、お気に入り
     append_row( "" );

@@ -194,6 +194,9 @@ namespace CONFIG
         // ツリービューの行間スペース
         int tree_ypad;
 
+        // カテゴリを開いたときにツリービューをスクロールする
+        bool scroll_tree;
+
         // 各ビューと枠との間の余白
         int view_margin;
 

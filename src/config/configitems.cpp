@@ -268,6 +268,9 @@ const bool ConfigItems::load( const bool restore )
     // ツリービューの行間スペース
     tree_ypad = cf.get_option_int( "tree_ypad", CONF_TREE_YPAD, 0, 64 );
 
+    // カテゴリを開いたときにツリービューをスクロールする
+    scroll_tree = cf.get_option_bool( "scroll_tree", CONF_SCROLL_TREE );
+
     // 各ビューと枠との間の余白
     view_margin = cf.get_option_int( "view_margin", CONF_VIEW_MARGIN, 0, 64 );
 
@@ -670,6 +673,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_select_gtkrc", use_select_gtkrc );
 
     cf.update( "tree_ypad", tree_ypad );
+
+    cf.update( "scroll_tree", scroll_tree );
 
     cf.update( "view_margin", view_margin );
 

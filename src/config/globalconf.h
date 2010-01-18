@@ -55,6 +55,9 @@ namespace CONFIG
     // ツリービューの行間スペース
     const int get_tree_ypad();
 
+    // カテゴリを開いたときにツリービューをスクロールする
+    const bool get_scroll_tree();
+
     // 各ビューと枠との間の余白
     const int get_view_margin();
 

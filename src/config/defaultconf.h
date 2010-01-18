@@ -37,6 +37,7 @@ namespace CONFIG
         CONF_USE_TREE_GTKRC = 0,    // ツリービューでgtkrcの設定を使用するか
         CONF_USE_SELECT_GTKRC = 0,  // スレビューの選択色でgtkrcの設定を使用するか
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
+        CONF_SCROLL_TREE = 1,       // カテゴリを開いたときにツリービューをスクロールする
         CONF_VIEW_MARGIN = 0,       // 各ビューと枠との間の余白
         CONF_SHOW_OLDARTICLE = 0,   // スレ一覧で古いスレも表示
         CONF_NEWTHREAD_HOUR = 24,   // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす

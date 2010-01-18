@@ -1843,7 +1843,7 @@ void BBSListViewBase::slot_row_exp( const Gtk::TreeModel::iterator&, const Gtk::
     }
 
     m_treeview.set_cursor( path );
-    m_treeview.scroll_to_row( path, 0.1 );
+    if( CONFIG::get_scroll_tree() ) m_treeview.scroll_to_row( path, 0.1 );
     show_status();
 }
 
