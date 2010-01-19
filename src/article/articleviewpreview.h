@@ -24,7 +24,7 @@ namespace ARTICLE
 
         virtual bool slot_button_press( std::string url, int res_number, GdkEventButton* event );
 
-        virtual void goto_num( int num ){}
+        virtual void goto_num( const int num_to, const int num_from ){}
     };
 }
 

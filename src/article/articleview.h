@@ -14,7 +14,8 @@ namespace ARTICLE
     class ArticleViewMain : public ArticleViewBase
     {
         // ジャンプ予約, goto_num() のコメント参照
-        int m_gotonum_reserve; 
+        int m_gotonum_reserve_to; 
+        int m_gotonum_reserve_from; 
 
         int m_gotonum_seen; // 前回見ていた場所へのジャンプ用
 
@@ -34,7 +35,7 @@ namespace ARTICLE
 
         virtual void clock_in();
 
-        virtual void goto_num( int num );
+        virtual void goto_num( const int num_to, const int num_from );
 
         // SKELETON::View の関数のオーバロード
         virtual const bool is_loading();

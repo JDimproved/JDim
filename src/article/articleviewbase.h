@@ -50,6 +50,8 @@ namespace ARTICLE
         // slot呼び出し時にURLのやりとりに使う一時変数
         std::string m_url_tmp; // url
         std::string m_str_num; // レス番号
+        std::string m_jump_to; // ジャンプ先番号
+        std::string m_jump_from; // ジャンプ元番号
         std::string m_id_name; // ID
         std::string m_name;    // 名前
 
@@ -119,7 +121,7 @@ namespace ARTICLE
         virtual const bool operate_view( const int control );
         virtual void goto_top();
         virtual void goto_bottom();
-        virtual void goto_num( int num );
+        virtual void goto_num( const int num_to, const int num_from );
         virtual void show_preference();
 
         // 進む、戻る

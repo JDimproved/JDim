@@ -1760,8 +1760,9 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            "MAIN" // メインモードでarticleを開く
             );
 
-        // ジャンプ( empty ならジャンプしない )
-        if( ! command.arg3.empty() ) ARTICLE::get_admin()->set_command( "goto_num", command.url, command.arg3 );
+        // ジャンプ
+        // command.arg3 がジャンプ先番号( empty ならジャンプしない )、arg4 がジャンプ元番号
+        if( ! command.arg3.empty() ) ARTICLE::get_admin()->set_command( "goto_num", command.url, command.arg3, command.arg4 );
 
         return;
     }

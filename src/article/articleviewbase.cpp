@@ -695,7 +695,7 @@ const bool ArticleViewBase::set_command( const std::string& command, const std::
     {
         if( m_drawarea ) m_drawarea->clear_screen();
     }
-    else if( command == "goto_num" ) goto_num( atoi( arg1.c_str() ) );
+    else if( command == "goto_num" ) goto_num( atoi( arg1.c_str() ), atoi( arg2.c_str() ) );
     else if( command == "hide_popup" ) hide_popup( true );
     else if( command == "delete_popup" ) delete_popup();
     else if( command == "clear_highlight" ) clear_highlight();
@@ -1223,20 +1223,24 @@ void ArticleViewBase::goto_bottom()
 
 
 //
-// num番へジャンプ
+// num_from から num_to番へジャンプ
 //
-void ArticleViewBase::goto_num( int num )
+// num_from が 0 の時は m_drawarea->get_seen_current() からジャンプすると見なす
+//
+void ArticleViewBase::goto_num( const int num_to, const int num_from )
 {
     assert( m_drawarea );
 
-    if( m_drawarea->get_seen_current() == num ) return;
+    const int from = ( num_from > 0 ? num_from : m_drawarea->get_seen_current() );
+
+    if( from == num_to ) return;
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::goto_num num = " << num << std::endl;
+    std::cout << "ArticleViewBase::goto_num to = " << num_to << " from = " << from << std::endl;
 #endif
 
-    m_drawarea->set_jump_history();
-    m_drawarea->goto_num( num );
+    m_drawarea->set_jump_history( from );
+    m_drawarea->goto_num( num_to );
 }
 
 
@@ -1367,7 +1371,7 @@ void ArticleViewBase::slot_pre_bm()
 
     for( int i = m_current_bm -1 ; i >= 1 ; --i ){
         if( m_article->is_bookmarked( i ) ){
-            goto_num( i );
+            goto_num( i, 0 );
             m_current_bm = i;
             return;
         }
@@ -1375,7 +1379,7 @@ void ArticleViewBase::slot_pre_bm()
 
     for( int i = m_article->get_number_load() ; i > m_current_bm ; --i ){
         if( m_article->is_bookmarked( i ) ){
-            goto_num( i );
+            goto_num( i, 0 );
             m_current_bm = i;
             return;
         }
@@ -1395,7 +1399,7 @@ void ArticleViewBase::slot_next_bm()
 
     for( int i = m_current_bm + 1; i <= m_article->get_number_load() ; ++i ){
         if( m_article->is_bookmarked( i ) ){
-            goto_num( i );
+            goto_num( i, 0 );
             m_current_bm = i;
             return;
         }
@@ -1403,7 +1407,7 @@ void ArticleViewBase::slot_next_bm()
 
     for( int i = 1; i <= m_current_bm ; ++i ){
         if( m_article->is_bookmarked( i ) ){
-            goto_num( i );
+            goto_num( i, 0 );
             m_current_bm = i;
             return;
         }
@@ -1421,7 +1425,7 @@ void ArticleViewBase::slot_jump()
 {
     const std::string str_tab = "true";
     const std::string str_mode = "auto";
-    CORE::core_set_command( "open_article", m_url_article , str_tab, str_mode, m_str_num );
+    CORE::core_set_command( "open_article", m_url_article , str_tab, str_mode, m_jump_to, m_jump_from );
 }
 
 
@@ -2420,7 +2424,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         else{
 
         // ジャンプ先セット
-        m_str_num = url.substr( strlen( PROTO_ANCHORE ) );
+        m_jump_to = url.substr( strlen( PROTO_ANCHORE ) );
+        m_jump_from = MISC::itostr( res_number );
+        m_str_num = m_jump_to;
 
 #ifdef _DEBUG
         std::cout << "anchor num = " << m_str_num << std::endl;
@@ -3829,7 +3835,7 @@ void ArticleViewBase::exec_search()
     if( get_pre_query() != query ){
         set_pre_query( query );
         CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, query );
-        m_drawarea->set_jump_history();
+        m_drawarea->set_jump_history( m_drawarea->get_seen_current() );
         m_drawarea->search( list_query, m_search_invert );
     }
 

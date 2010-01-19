@@ -1427,7 +1427,7 @@ void BoardViewBase::goto_bottom()
 //
 // 指定したIDのスレに移動
 //
-void BoardViewBase::goto_num( const int num )
+void BoardViewBase::goto_num( const int num, const int )
 {
     if( ! num ) return;
 

@@ -3005,12 +3005,11 @@ void DrawAreaBase::goto_num( int num )
 
 
 //
-// 現在のスレ番号をジャンプ履歴に登録
-// 
+// ジャンプ履歴にスレ番号を登録
 //
-void DrawAreaBase::set_jump_history()
+void DrawAreaBase::set_jump_history( const int num )
 {
-    m_jump_history.push_back( get_seen_current() );
+    m_jump_history.push_back( num );
 }
 
 

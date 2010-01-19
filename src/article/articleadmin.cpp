@@ -633,7 +633,7 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
 {
     if( command.command == "goto_num" ){
         SKELETON::View* view = get_view( command.url );
-        if( view ) view->set_command( "goto_num", command.arg1 );
+        if( view ) view->set_command( "goto_num", command.arg1, command.arg2 );
     }
 
     // ポップアップを隠す(インスタンスは削除しない)

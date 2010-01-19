@@ -44,7 +44,7 @@ enum
 // メインビュー
 
 ArticleViewMain::ArticleViewMain( const std::string& url )
-    :  ArticleViewBase( url ), m_gotonum_reserve( 0 ), m_gotonum_seen( 0 ), m_playsound( false ), m_reload_reserve( false )
+    :  ArticleViewBase( url ), m_gotonum_reserve_to( 0 ), m_gotonum_reserve_from( 0 ), m_gotonum_seen( 0 ), m_playsound( false ), m_reload_reserve( false )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::ArticleViewMain " << get_url() << " url_article = " << url_article() << std::endl;
@@ -116,16 +116,18 @@ void ArticleViewMain::clock_in()
 //
 // ローディング中ならジャンプ予約をしてロード後に update_finish() の中で改めて goto_num() を呼び出す
 //
-void ArticleViewMain::goto_num( int num )
+void ArticleViewMain::goto_num( const int num_to, const int num_from )
 {
 #ifdef _DEBUG
-    std::cout << "ArticleViewMain::goto_num num = " << num << " seen = " << m_gotonum_seen << " res = " << m_gotonum_reserve << std::endl;
+    std::cout << "ArticleViewMain::goto_num num = " << num_to << " num_from " << num_from
+              << " gotonum_seen = " << m_gotonum_seen << " gotonum_reserve = " << m_gotonum_reserve_to << std::endl;
 #endif
 
-    m_gotonum_seen = 0; // m_gotonum_reserve を優先させる
-    m_gotonum_reserve = num;
+    m_gotonum_seen = 0; // m_gotonum_reserve_to を優先させる
+    m_gotonum_reserve_to = num_to;
+    m_gotonum_reserve_from = num_from;
 
-    if( get_article()->get_number_load() < num  && is_loading() ){
+    if( get_article()->get_number_load() < num_to  && is_loading() ){
 #ifdef _DEBUG
         std::cout << "reserve\n";
 #endif
@@ -136,7 +138,7 @@ void ArticleViewMain::goto_num( int num )
     std::cout << "jump\n";
 #endif
 
-    ArticleViewBase::goto_num( num );
+    ArticleViewBase::goto_num( num_to, num_from );
 }
 
 
@@ -219,7 +221,8 @@ void ArticleViewMain::show_view()
 
     if( is_loading() ) return;
 
-    m_gotonum_reserve = 0;
+    m_gotonum_reserve_to = 0;
+    m_gotonum_reserve_from = 0;
     m_gotonum_seen = 0;
     m_set_history = false;
     m_show_instdialog = false;
@@ -437,11 +440,11 @@ void ArticleViewMain::update_finish()
     drawarea()->set_enable_draw( true );
 
     // ロード中に goto_num() が明示的に呼び出された場合はgoto_num()を呼びつづける
-    if( m_gotonum_reserve ){
+    if( m_gotonum_reserve_to ){
 #ifdef _DEBUG
         std::cout << "reserve\n";
 #endif
-        goto_num( m_gotonum_reserve );
+        goto_num( m_gotonum_reserve_to, m_gotonum_reserve_from );
     }
 
     // 前回見ていた所にジャンプ
@@ -449,7 +452,7 @@ void ArticleViewMain::update_finish()
 #ifdef _DEBUG
         std::cout << "goto_seen\n";
 #endif
-        ArticleViewBase::goto_num( m_gotonum_seen );
+        ArticleViewBase::goto_num( m_gotonum_seen, 0 );
         m_gotonum_seen = 0;
     }
 

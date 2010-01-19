@@ -132,7 +132,7 @@ namespace BOARD
         virtual const bool operate_view( const int control );
         virtual void goto_top();
         virtual void goto_bottom();
-        virtual void goto_num( int num );
+        virtual void goto_num( const int num_to, const int num_from );
         virtual void scroll_left();
         virtual void scroll_right();
         virtual void show_preference();

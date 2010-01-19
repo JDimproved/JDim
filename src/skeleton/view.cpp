@@ -88,7 +88,7 @@ void View::clock_in_always()
 
     // キーボード数字入力ジャンプ
     if( inc_keyjump_counter() ){
-        goto_num( m_keyjump_num );
+        goto_num( m_keyjump_num, 0 );
         reset_keyjump_counter();
     }
 }

@@ -278,7 +278,7 @@ namespace SKELETON
         virtual const bool operate_view( const int ) = 0;
         virtual void goto_top(){}
         virtual void goto_bottom(){}
-        virtual void goto_num( int num ){}
+        virtual void goto_num( const int num_to, const int num_from ){}
         virtual void scroll_up(){}
         virtual void scroll_down(){}
         virtual void scroll_left(){}
