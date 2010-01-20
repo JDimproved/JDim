@@ -52,6 +52,8 @@ enum
     EIMG_ICONSIZE = 32,  // 埋め込み画像のアイコンサイズ
     EIMG_MRG = 8,       // 埋め込み画像のアイコンの間隔
 
+    WIDTH_FRAME = 1, // フレーム幅
+
     SPACE_TAB =  4 // 水平タブをどれだけ空けるか ( フォントの高さ * SPACE_TAB )
 };
 
@@ -79,11 +81,13 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_backscreen( NULL )
     , m_pango_layout( 0 )
     , m_draw_frame( false )
+    , m_back_frame( NULL )
+    , m_ready_back_frame( false )
     , m_configure_reserve( false )
     , m_configure_width( 0 )
     , m_configure_height( 0 )
     , m_back_marker( NULL )
-    , m_shown_marker( false )
+    , m_ready_back_marker( false )
     , m_wait_scroll( 0 )
     , m_cursor_type( Gdk::ARROW )
 {
@@ -1018,6 +1022,11 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
     m_rect_backscreen.y = 0;
     m_rect_backscreen.height = 0;
 
+    m_back_frame.clear();
+    m_back_frame = Gdk::Pixmap::create( m_window, m_view.get_width(), WIDTH_FRAME * 2 );
+
+    m_ready_back_frame = false;
+
     // 予約されているならジャンプ予約を実行
     if( m_goto_num_reserve ) goto_num( m_goto_num_reserve );
     if( m_goto_bottom_reserve ) goto_bottom();
@@ -1555,13 +1564,6 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 
             if( dy < height_view ) upper += ( height_view - dy );
             y_screen = MAX( 0, height_view - dy );
-
-            // フレーム表示の場合は枠の分拡大する
-            if( m_draw_frame ){
-                --upper;
-                if( y_screen > 0 ) --y_screen;
-            }
-
             height_screen = height_view - y_screen;
         }
 
@@ -1570,13 +1572,6 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 
             if( -dy < height_view ) lower = upper - dy;
             y_screen = 0;
-
-            // フレーム表示の場合は枠の分拡大する
-            if( m_draw_frame ){
-                ++lower;
-                if( height_screen < height_view ) ++height_screen;
-            }
-
             height_screen = MIN( -dy, height_view );
         }
 
@@ -1598,7 +1593,8 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
               << " dy = " << dy
               << " y_screen = " << y_screen << " h_screen = " << height_screen
               << " upper = " << upper << " lower = " << lower
-              << " scroll = " << m_scrollinfo.mode
+              << " scrollmode = " << m_scrollinfo.mode
+              << " scroll_window = " << m_scroll_window
               << std::endl;
 #endif    
 
@@ -1777,9 +1773,9 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 #endif 
 
         // 前回描画したオートスクロールマーカを消す
-        if( m_shown_marker ){
+        if( m_ready_back_marker ){
 
-            m_shown_marker = false;
+            m_ready_back_marker = false;
 
             const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
             m_gc->set_clip_rectangle( rect_window );
@@ -1788,6 +1784,20 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 
             m_gc->set_clip_rectangle( rect_clip );
         }
+
+        // 前回描画したフレームを消す
+        if( m_ready_back_frame ){
+
+            m_ready_back_frame = false;
+
+            const Gdk::Rectangle rect_frame( 0, 0, width_view, height_view );
+            m_gc->set_clip_rectangle( rect_frame );
+            m_window->draw_drawable( m_gc, m_back_frame, 0, 0, 0, 0, width_view, WIDTH_FRAME );
+            m_window->draw_drawable( m_gc, m_back_frame, 0, WIDTH_FRAME, 0, height_view - WIDTH_FRAME, width_view, WIDTH_FRAME );
+
+            m_gc->set_clip_rectangle( rect_clip );
+        }
+        
 
         // ウィンドウをスクロール
         if( dy ){
@@ -2094,7 +2104,6 @@ void DrawAreaBase::draw_marker()
     m_clip_marker.y = y_marker;
     m_clip_marker.width = AUTOSCR_CIRCLE;
     m_clip_marker.height = AUTOSCR_CIRCLE;
-    m_shown_marker = true;
 
     if( m_clip_marker.y < 0 ){
 
@@ -2113,6 +2122,7 @@ void DrawAreaBase::draw_marker()
         m_gc->set_clip_rectangle( rect_marker );
         m_back_marker->draw_drawable( m_gc, m_window, m_clip_marker.x, m_clip_marker.y,
                                       0, 0, m_clip_marker.width, m_clip_marker.height );
+        m_ready_back_marker = true;
     }
 
     const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
@@ -2134,11 +2144,20 @@ void DrawAreaBase::draw_frame()
     const int width_win = m_view.get_width();
     const int height_win = m_view.get_height();
 
+    if( m_scroll_window ){
+
+        const Gdk::Rectangle rect_frame( 0, 0, width_win, WIDTH_FRAME * 2 );
+        m_gc->set_clip_rectangle( rect_frame );
+        m_back_frame->draw_drawable( m_gc, m_window, 0, 0, 0, 0, width_win, WIDTH_FRAME );
+        m_back_frame->draw_drawable( m_gc, m_window, 0, height_win - WIDTH_FRAME, 0, WIDTH_FRAME, width_win, WIDTH_FRAME );
+        m_ready_back_frame = true;
+    }
+
     Gdk::Rectangle rect_clip( 0, 0, width_win, height_win );
     m_gc->set_clip_rectangle( rect_clip );
 
     m_gc->set_foreground( m_color[ COLOR_FRAME ] );
-    m_window->draw_rectangle( m_gc, false, 0, 0, width_win-1, height_win-1 );
+    m_window->draw_rectangle( m_gc, false, WIDTH_FRAME-1, WIDTH_FRAME-1, width_win-WIDTH_FRAME, height_win-WIDTH_FRAME );
 }
 
 

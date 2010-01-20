@@ -115,8 +115,10 @@ namespace ARTICLE
         int m_colorid_back;     // デフォルトの背景色
         std::vector< Gdk::Color > m_color;
 
-        // 枠を描くか
-        bool m_draw_frame;
+        // 枠
+        bool m_draw_frame;  // 枠を描画する
+        Glib::RefPtr< Gdk::Pixmap > m_back_frame; // 枠の背景
+        bool m_ready_back_frame;
 
         // 範囲選択
         SELECTION m_selection;
@@ -149,7 +151,7 @@ namespace ARTICLE
         bool m_cancel_change_adjust; // adjust の値変更イベントをキャンセル
         Glib::RefPtr< Gdk::Pixmap > m_back_marker; // オートスクロールマーカの背景
         RECTANGLE m_clip_marker;
-        bool m_shown_marker;
+        bool m_ready_back_marker;
         time_t m_wait_scroll;  // 処理落ちした時にスクロールにウエイトを入れる
         struct timeval m_scroll_time;  // ウエイト時に最後にスクロールした時刻
 
