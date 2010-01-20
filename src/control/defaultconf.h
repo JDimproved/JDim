@@ -229,6 +229,7 @@ namespace CONTROL
 
 #define BUTTONCONF_DrawoutAncButton "Mid"
 #define BUTTONCONF_PopupmenuAncButton "Left Right"
+#define BUTTONCONF_JumpAncButton ""
 
 #define BUTTONCONF_PopupIDButton "Right"
 #define BUTTONCONF_DrawoutIDButton "Mid"

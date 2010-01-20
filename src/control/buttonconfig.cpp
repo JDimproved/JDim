@@ -72,6 +72,7 @@ void ButtonConfig::load_conf()
 
     SETMOTION( "DrawoutAncButton", BUTTONCONF_DrawoutAncButton );
     SETMOTION( "PopupmenuAncButton", BUTTONCONF_PopupmenuAncButton );
+    SETMOTION( "JumpAncButton", BUTTONCONF_JumpAncButton );
 
     SETMOTION( "PopupIDButton", BUTTONCONF_PopupIDButton );
     SETMOTION( "DrawoutIDButton", BUTTONCONF_DrawoutIDButton );

@@ -2434,7 +2434,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
             hide_popup();
 
-            if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ) show_popupmenu( url, false );
+            if( control.button_alloted( event, CONTROL::JumpAncButton ) ) slot_jump();
+            else if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ) show_popupmenu( url, false );
             else if( control.button_alloted( event, CONTROL::DrawoutAncButton ) ) slot_drawout_around();
         }
     }

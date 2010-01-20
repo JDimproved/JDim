@@ -179,6 +179,7 @@ namespace CONTROL
 
         DrawoutAncButton,
         PopupmenuAncButton,
+        JumpAncButton,
 
         PopupIDButton,
         DrawoutIDButton,

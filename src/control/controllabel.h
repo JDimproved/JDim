@@ -186,7 +186,8 @@ namespace CONTROL
         { "PopupmenuResButton", "レス番号メニュー表示" },
 
         { "DrawoutAncButton", "レスの周辺を抽出" },
-        { "PopupmenuAncButton", "アンカーメニュー表示" },
+        { "PopupmenuAncButton", "アンカーをクリックでメニュー表示" },
+        { "JumpAncButton", "アンカーをクリックでジャンプ" },
 
         { "PopupIDButton", "ID抽出ポップアップ表示" },
         { "DrawoutIDButton", "ID抽出" },

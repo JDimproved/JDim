@@ -100,6 +100,7 @@ ButtonPref::ButtonPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::PopupmenuResButton );
     append_row( CONTROL::DrawoutAncButton );
     append_row( CONTROL::PopupmenuAncButton );
+    append_row( CONTROL::JumpAncButton );
     append_row( CONTROL::PopupIDButton );
     append_row( CONTROL::DrawoutIDButton );
     append_row( CONTROL::PopupmenuIDButton );
