@@ -320,6 +320,10 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
             case CONTROL::AppendFavorite:   //お気に入りに追加..
                 label.replace( pos, strlen( "..." ), "(_F)..." );
                 break;
+
+            case CONTROL::OpenURL:  //URLを開く
+                label.replace( pos, strlen( "..." ), "(_U)..." );
+                break;
         }
     }
     else

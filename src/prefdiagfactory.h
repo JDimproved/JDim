@@ -47,6 +47,8 @@ namespace CORE
 
         PREFDIAG_ABOUTCONFIG,
 
+        PREFDIAG_OPENURL,
+
         PREFDIAG_NONE
     };
     

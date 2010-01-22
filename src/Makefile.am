@@ -60,6 +60,8 @@ jd_SOURCES = \
 	fontcolorpref.cpp \
 	usrcmdpref.cpp \
 	linkfilterpref.cpp \
+	openurldiag.cpp \
+\
 	iomonitor.cpp \
 	environment.cpp
 
@@ -119,6 +121,8 @@ noinst_HEADERS = \
 	usrcmdpref.h \
 	linkfilterpref.h \
 	livepref.h \
+	openurldiag.h \
+\
 	iomonitor.h \
 	environment.h
 

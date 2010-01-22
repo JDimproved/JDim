@@ -221,6 +221,7 @@ namespace CORE
         //
         // メニュー関係( menuslots.cpp の中に記述)
         //
+        void slot_openurl();
         void slot_toggle_online();
         void slot_toggle_login2ch();
         void slot_toggle_loginbe();

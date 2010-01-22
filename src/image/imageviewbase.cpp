@@ -717,6 +717,11 @@ const bool ImageViewBase::operate_view( const int control )
             slot_favorite();
             break;
 
+            // URLを開くダイアログを表示
+        case CONTROL::OpenURL:
+            CORE::core_set_command( "show_openurl_diag" );
+            break;
+
         default:
             return false;
     }

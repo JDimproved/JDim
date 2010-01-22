@@ -1395,6 +1395,11 @@ const bool BoardViewBase::operate_view( const int control )
             CORE::core_set_command( "toggle_menubar" );
             break;
 
+            // URLを開くダイアログを表示
+        case CONTROL::OpenURL:
+            CORE::core_set_command( "show_openurl_diag" );
+            break;
+
         default:
             return false;
     }

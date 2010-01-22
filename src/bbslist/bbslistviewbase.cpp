@@ -898,6 +898,11 @@ const bool BBSListViewBase::operate_view( const int control )
             redo();
             break;
 
+            // URLを開くダイアログを表示
+        case CONTROL::OpenURL:
+            CORE::core_set_command( "show_openurl_diag" );
+            break;
+
         default:
             return false;
     }

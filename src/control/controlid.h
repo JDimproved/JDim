@@ -90,6 +90,7 @@ namespace CONTROL
         Reload,
         StopLoading,
         Cancel = StopLoading,
+        OpenURL,
         Copy,
         SelectAll,
         AppendFavorite,

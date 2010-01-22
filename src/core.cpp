@@ -288,7 +288,8 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // File
     m_action_group->add( Gtk::Action::create( "Menu_File", "ファイル(_F)" ) );    
-    m_action_group->add( Gtk::ToggleAction::create( "Online", "オンライン(_O)", std::string(), SESSION::is_online() ),
+    m_action_group->add( Gtk::Action::create( "OpenURL", "OpenURL"), sigc::mem_fun( *this, &Core::slot_openurl ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Online", "オフライン作業(_W)", std::string(), ! SESSION::is_online() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_online ) );
     m_action_group->add( Gtk::ToggleAction::create( "Login2ch", "2chにログイン(_L)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
@@ -298,7 +299,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                         sigc::mem_fun( *this, &Core::slot_toggle_loginp2 ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
-    m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り保存(_S)"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
+    m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り上書き保存(_S)"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
 
     if( CONFIG::get_disable_close() ) m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ), sigc::mem_fun(*this, &Core::slot_quit ) );
     else m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ),
@@ -655,7 +656,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // ファイル
         "<menu action='Menu_File'>"
-        "<menuitem action='Online'/>"
+        "<menuitem action='OpenURL'/>"
         "<separator/>"
         "<menuitem action='Login2ch'/>"
         "<menuitem action='LoginBe'/>"
@@ -665,6 +666,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<separator/>"
         "<menuitem action='ReloadList'/>"
         "<separator/>"
+        "<menuitem action='Online'/>"
         "<menuitem action='Quit'/>"
         "</menu>"
 
@@ -2957,6 +2959,9 @@ void Core::exec_command()
     }
 
     // URL のオープン関係
+
+    // URLを開くダイアログを表示
+    else if( command.command == "show_openurl_diag" ) slot_openurl();
 
     // 常に外部ブラウザで開く場合
     else if( command.command  == "open_url_browser" ) open_by_browser( command.url );

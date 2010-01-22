@@ -47,6 +47,18 @@
 using namespace CORE;
 
 
+
+//
+// URLを開く
+//
+void Core::slot_openurl()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_OPENURL, "" );
+    pref->run();
+    delete pref;
+}
+
+
 //
 // オンライン、オフライン切替え
 //

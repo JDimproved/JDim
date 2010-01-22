@@ -1192,6 +1192,11 @@ const bool ArticleViewBase::operate_view( const int control )
             slot_search_cacheall();
             break;
 
+            // URLを開くダイアログを表示
+        case CONTROL::OpenURL:
+            CORE::core_set_command( "show_openurl_diag" );
+            break;
+
         default:
             return false;
     }

@@ -12,6 +12,7 @@
 #include "globalabonethreadpref.h"
 #include "fontcolorpref.h"
 #include "livepref.h"
+#include "openurldiag.h"
 
 #include "mainitempref.h"
 #include "sidebaritempref.h"
@@ -111,8 +112,10 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, const int type, 
         case PREFDIAG_ABOUTCONFIG:
             return new CONFIG::AboutConfig( parent );
 
+        case PREFDIAG_OPENURL:
+            return new CORE::OpenURLDialog( url );
+
         default:
             return NULL;
     }
 }
-
