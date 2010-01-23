@@ -156,7 +156,9 @@ void NodeTree2ch::receive_finish()
     // 更新チェックではない、オンラインの場合は offlaw や 過去ログ倉庫から取得出来るか試みる
     if( ! is_checking_update()
         && SESSION::is_online()
-        && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_NOT_FOUND )
+        && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_NOT_FOUND
+             || ( m_mode == MODE_OFFLAW && ! get_ext_err().empty() ) // offlaw 読み込み失敗
+            )
         ){
 
 /*
@@ -196,7 +198,7 @@ void NodeTree2ch::receive_finish()
 
         // 過去ログ倉庫(gz圧縮)
         // ただし 2008年1月1日以降に立てられたスレは除く
-        else if( m_mode == MODE_NORMAL && m_since_time < 1199113200 ) m_mode = MODE_KAKO_GZ;
+        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OFFLAW ) && m_since_time < 1199113200 ) m_mode = MODE_KAKO_GZ;
 
         // 過去ログ倉庫
         else if( m_mode == MODE_KAKO_GZ ) m_mode = MODE_KAKO;
