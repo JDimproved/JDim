@@ -233,6 +233,7 @@ namespace BOARD
         void slot_open_browser();
         void slot_preferences_article();
         void slot_save_dat();
+        void slot_search_next();
         virtual void slot_abone_thread();
         void slot_delete_logs();
 

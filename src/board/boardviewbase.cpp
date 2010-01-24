@@ -199,6 +199,7 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ(_O)..." ), sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT + std::string( "(_S)..." ) ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "SearchNextArticle", "次スレ検索"), sigc::mem_fun( *this, &BoardViewBase::slot_search_next ) );
 
     ui_manager() = Gtk::UIManager::create();    
     ui_manager()->insert_action_group( action_group() );
@@ -217,8 +218,8 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     "<menuitem action='CopyTitleURL'/>"
     "<separator/>"
     "<menuitem action='SaveDat'/>"
-    "<separator/>"
     "<menuitem action='Favorite_Article'/>"
+    "<menuitem action='SearchNextArticle'/>"
     "<separator/>"
     "<menuitem action='AboneThread'/>"
     "<separator/>"
@@ -2627,6 +2628,18 @@ void BoardViewBase::slot_save_dat()
 
     }
 
+}
+
+
+//
+// 次スレ検索
+//
+void BoardViewBase::slot_search_next()
+{
+    if( m_path_selected.empty() ) return;
+    const std::string url = path2daturl( m_path_selected );
+
+    CORE::core_set_command( "open_board_next", DBTREE::url_subject( url ) , url );
 }
 
 
