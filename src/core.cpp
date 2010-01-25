@@ -3260,7 +3260,8 @@ int Core::get_right_current_page()
 void Core::set_right_current_page( int page )
 {
     // page が empty でないか調べる
-    if( page == SESSION::PAGE_ARTICLE && ARTICLE::get_admin()->empty() ){
+    if( page == SESSION::PAGE_ARTICLE && ARTICLE::get_admin()->empty()
+        && ( SESSION::get_embedded_mes() && MESSAGE::get_admin()->empty() ) ){
 
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE && ! BOARD::get_admin()->empty() ) page = SESSION::PAGE_BOARD;
         else if( ! IMAGE::get_admin()->empty() ) page = SESSION::PAGE_IMAGE;
@@ -3807,7 +3808,7 @@ void Core::switch_message( const bool present )
 #endif
 
     // 埋め込み書き込みビュー使用
-    bool emb_mes = SESSION::get_embedded_mes();
+    const bool emb_mes = SESSION::get_embedded_mes();
 
     if( ! MESSAGE::get_admin()->empty() ){
 
@@ -3900,7 +3901,9 @@ void Core::switch_rightview()
             switch_board( present );
             break;
         }
-        else if( next_admin == SESSION::FOCUS_ARTICLE && ! ARTICLE::get_admin()->empty() ){
+        else if( next_admin == SESSION::FOCUS_ARTICLE
+                 && ( ! ARTICLE::get_admin()->empty() || ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() ) )
+            ){
             switch_article( present );
             break;
         }
