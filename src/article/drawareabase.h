@@ -160,6 +160,7 @@ namespace ARTICLE
         bool m_key_press; // キーを押している
         bool m_key_locked; // 同じキーを押したままにしている
         guint m_keyval;
+        bool m_clicked;
         bool m_drugging;  // ドラッグ中
         bool m_r_drugging; // 右ドラッグ中
         std::string m_link_current; // 現在マウスポインタの下にあるリンクの文字列

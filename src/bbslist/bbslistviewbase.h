@@ -54,8 +54,11 @@ namespace BBSLIST
 
         Gtk::ScrolledWindow m_scrwin;
 
+        // クリック状態
+        bool m_clicked;
+
         // ダブルクリック状態
-        bool m_dblclick;
+        bool m_dblclicked;
 
         // ポップアップメニュー用
         Gtk::TreeModel::Path m_path_selected;

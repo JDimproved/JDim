@@ -206,6 +206,7 @@ void DrawAreaBase::clear()
     m_layout_current = NULL;
     m_width_client = 0;
     m_height_client = 0;
+    m_clicked = false;
     m_drugging = false;
     m_r_drugging = false;
     m_pre_pos_y = -1;
@@ -4359,6 +4360,8 @@ void DrawAreaBase::slot_realize()
 //
 bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 {
+    m_clicked = true;
+
     std::string url;
     int res_num = 0;
     bool redraw_force = false;
@@ -4449,6 +4452,9 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 //
 bool DrawAreaBase::slot_button_release_event( GdkEventButton* event )
 {
+    if( ! m_clicked ) return true;
+    m_clicked = false;
+
     // リンクの上でコンテキストメニューを表示してからマウスを移動すると
     // slot_motion_notify_eventが呼び出されず m_layout_current が変わらないため
     // リンクを開いてしまう

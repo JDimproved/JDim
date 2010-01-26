@@ -127,6 +127,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     : SKELETON::View( url ),
       m_treeview( url, DNDTARGET_FAVORITE, m_columns, true, CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN ),
       m_ready_tree( false ),
+      m_clicked( false ), 
       m_jump_y( -1 ),
       m_search_invert( false ),
       m_open_only_onedir( false ),
@@ -1060,6 +1061,8 @@ void BBSListViewBase::copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store )
 //
 bool BBSListViewBase::slot_button_press( GdkEventButton* event )
 {
+    m_clicked = true;
+
     // マウスジェスチャ
     get_control().MG_start( event );
 
@@ -1068,8 +1071,8 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
 
     // ダブルクリック
     // button_release_eventでは event->type に必ず GDK_BUTTON_RELEASE が入る
-    m_dblclick = false;
-    if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
+    m_dblclicked = false;
+    if( event->type == GDK_2BUTTON_PRESS ) m_dblclicked = true; 
 
     // 親ウィンドウがメインウィンドウならフォーカスを移す
     if( ! get_parent_win() ) BBSLIST::get_admin()->set_command( "switch_admin" );
@@ -1083,6 +1086,9 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
 //
 bool BBSListViewBase::slot_button_release( GdkEventButton* event )
 {
+    if( ! m_clicked ) return true;
+    m_clicked = false;
+
     /// マウスジェスチャ
     int mg = get_control().MG_end( event );
 
@@ -1101,7 +1107,7 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
 
     // ダブルクリックの処理のため一時的にtypeを切替える
     GdkEventType type_copy = event->type;
-    if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
+    if( m_dblclicked ) event->type = GDK_2BUTTON_PRESS;
 
     // 行を開く
     if( get_control().button_alloted( event, CONTROL::OpenBoardButton ) ) operate_view( CONTROL::OpenBoardButton );

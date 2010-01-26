@@ -107,6 +107,7 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
       m_col_since( NULL ),
       m_col_write( NULL ),
       m_col_speed( NULL ),
+      m_clicked( false ),
       m_col( COL_NUM_COL ),
       m_previous_col( COL_NUM_COL ),
       m_sortmode( SORTMODE_ASCEND ),
@@ -1841,6 +1842,8 @@ const bool BoardViewBase::slot_button_press( GdkEventButton* event )
     std::cout << "BoardViewBase::slot_button_press\n";
 #endif
 
+    m_clicked = true;
+
     // マウスジェスチャ
     get_control().MG_start( event );
 
@@ -1849,8 +1852,8 @@ const bool BoardViewBase::slot_button_press( GdkEventButton* event )
 
     // ダブルクリック
     // button_release_eventでは event->type に必ず GDK_BUTTON_RELEASE が入る
-    m_dblclick = false;
-    if( event->type == GDK_2BUTTON_PRESS ) m_dblclick = true; 
+    m_dblclicked = false;
+    if( event->type == GDK_2BUTTON_PRESS ) m_dblclicked = true; 
 
     BOARD::get_admin()->set_command( "switch_admin" );
 
@@ -1864,6 +1867,9 @@ const bool BoardViewBase::slot_button_press( GdkEventButton* event )
 //
 const bool BoardViewBase::slot_button_release( GdkEventButton* event )
 {
+    if( ! m_clicked ) return true;
+    m_clicked = false;
+
     /// マウスジェスチャ
     const int mg = get_control().MG_end( event );
 
@@ -1905,7 +1911,7 @@ const bool BoardViewBase::slot_button_release( GdkEventButton* event )
 
         // ダブルクリックの処理のため一時的にtypeを切替える
         GdkEventType type_copy = event->type;
-        if( m_dblclick ) event->type = GDK_2BUTTON_PRESS;
+        if( m_dblclicked ) event->type = GDK_2BUTTON_PRESS;
 
         // スレを開く
         bool openarticle = get_control().button_alloted( event, CONTROL::OpenArticleButton );

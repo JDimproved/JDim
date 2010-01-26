@@ -47,8 +47,11 @@ namespace BOARD
         Gtk::TreeView::Column* m_col_write;
         Gtk::TreeView::Column* m_col_speed;
 
+        // クリック状態
+        bool m_clicked;
+
         // ダブルクリック状態
-        bool m_dblclick;
+        bool m_dblclicked;
 
         // 押したキー
         int m_pressed_key;
