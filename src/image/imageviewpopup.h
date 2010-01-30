@@ -38,6 +38,8 @@ namespace IMAGE
 
       private:
 
+        void show_view_impl();
+
         // クリックした時の処理
         virtual void clicked();
 

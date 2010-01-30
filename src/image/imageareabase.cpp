@@ -149,8 +149,8 @@ void ImageAreaBase::load_image_thread()
     std::cout << "ImageAreaBase::load_image_thread url = " << get_url() << std::endl;
 #endif
 
-    int w_org = get_img()->get_width();
-    int h_org = get_img()->get_height();
+    const int w_org = get_img()->get_width();
+    const int h_org = get_img()->get_height();
 
     // アニメーションoff
     bool pixbufonly = ( w_org != get_width() || h_org != get_height() );
@@ -179,7 +179,7 @@ void ImageAreaBase::load_image_thread()
 }
 
 
-bool ImageAreaBase::create_imgloader( bool pixbufonly, std::string& errmsg )
+const bool ImageAreaBase::create_imgloader( const bool pixbufonly, std::string& errmsg )
 {
     m_imgloader = JDLIB::ImgLoader::get_loader( m_img->get_cache_path() );
     bool ret = m_imgloader->load( pixbufonly );

@@ -90,24 +90,6 @@ void ImageViewPopup::clock_in()
 
         // 読み込みサイズの表示更新
         if( get_img()->is_loading() ) update_label();
-
-        // ロード完了
-        else {
-
-            set_loading( false );
-
-            if( CONFIG::get_use_image_popup() ){
-
-                // 画像表示
-                show_view();
-
-                // リサイズ依頼
-                sig_resize_popup().emit();
-            }
-
-            // ポップアップを閉じる
-            else sig_hide_popup().emit();
-        }
     }
 }
 
@@ -173,10 +155,37 @@ void ImageViewPopup::remove_label()
 //
 void ImageViewPopup::show_view()
 {
+#ifdef _DEBUG
+    std::cout << "ImageViewPopup::show_view url = " << get_url() << std::endl;
+#endif
+
+    // ロード完了
+    if( is_loading() && ! get_img()->is_loading() ){
+
+        set_loading( false );
+
+        // 画像表示
+        if( CONFIG::get_use_image_popup() ){
+
+            show_view_impl();
+
+            // リサイズ依頼
+            sig_resize_popup().emit();
+        }
+
+        // ポップアップを閉じる
+        else sig_hide_popup().emit();
+    }
+    else show_view_impl();
+}
+
+
+void ImageViewPopup::show_view_impl()
+{
     if( is_loading() ) return;
 
 #ifdef _DEBUG
-    std::cout << "ImageViewPopup::show_view url = " << get_url() << std::endl;
+    std::cout << "ImageViewPopup::show_view_impl url = " << get_url() << std::endl;
 #endif    
 
     // 画像を既に表示している
@@ -193,8 +202,13 @@ void ImageViewPopup::show_view()
         return;
     }
 
-    // サーバから読み込み中        
+    // サーバから読み込み中
+    // 読み込みが終わったら show_view() が呼び出されて画像が表示される
     if( get_img()->is_loading() ){
+
+#ifdef _DEBUG
+            std::cout << "loading\n";
+#endif    
 
         set_loading( true );
         m_length_prev = 0;
@@ -204,8 +218,11 @@ void ImageViewPopup::show_view()
     }
 
     // 画像張り付け
-    // サーバから画像をロード中の時はclock_in()経由でもう一度 show_view()が呼び出される
     else{
+
+#ifdef _DEBUG
+        std::cout << "not loading\n";
+#endif    
 
         // キャッシュがあったら画像貼り付け
         if( get_img()->is_cached() ){

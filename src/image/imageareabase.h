@@ -80,7 +80,7 @@ namespace IMAGE
 
         void load_image();
 
-        bool create_imgloader( bool pixbufonly, std::string& errmsg );
+        const bool create_imgloader( const bool pixbufonly, std::string& errmsg );
 
     private:
 

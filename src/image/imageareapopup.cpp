@@ -46,16 +46,15 @@ void ImageAreaPopup::show_image()
 #endif    
 
     set_errmsg( std::string() );
-    int width_max = CONFIG::get_imgpopup_width();
-    int height_max = CONFIG::get_imgpopup_height();
+    const int width_max = CONFIG::get_imgpopup_width();
+    const int height_max = CONFIG::get_imgpopup_height();
 
     // 縮小比率を計算
-    double scale;
-    int w_org = get_img()->get_width();
-    int h_org = get_img()->get_height();
-    double scale_w = ( double ) width_max / w_org;
-    double scale_h = ( double ) height_max / h_org;
-    scale = MIN( scale_w, scale_h );
+    const int w_org = get_img()->get_width();
+    const int h_org = get_img()->get_height();
+    const double scale_w = ( double ) width_max / w_org;
+    const double scale_h = ( double ) height_max / h_org;
+    const double scale = MIN( scale_w, scale_h );
 
     if( scale < 1 ){
         set_width( (int)( w_org * scale ) );
