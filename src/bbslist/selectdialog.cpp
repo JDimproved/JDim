@@ -25,8 +25,8 @@ enum
 
 
 
-SelectListDialog::SelectListDialog( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore )
-    : SKELETON::PrefDiag( NULL, url, true ),
+SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore )
+    : SKELETON::PrefDiag( parent, url, true ),
       m_treestore( treestore ),
       m_label_name( CORE::SBUF_size() == 1, "名前 ：" ),
       m_label_dirs( "ディレクトリ ：" ),

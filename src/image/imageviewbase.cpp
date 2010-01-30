@@ -1151,6 +1151,7 @@ void ImageViewBase::set_image_to_buffer()
 {
     CORE::DATA_INFO info;
     info.type = TYPE_IMAGE;
+    info.parent = IMAGE::get_admin()->get_win();
     info.url = get_url();
     info.name = get_url();
     info.data = std::string();

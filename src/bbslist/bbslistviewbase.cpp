@@ -1499,6 +1499,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
             CORE::DATA_INFO_LIST list_info;
             CORE::DATA_INFO info;
             info.type = TYPE_BOARD;
+            info.parent = NULL;
             info.url = url;
             info.name = name;
             info.data = std::string();
@@ -2788,7 +2789,8 @@ void BBSListViewBase::append_item()
     CORE::DATA_INFO_LIST list_info_bkup = CORE::SBUF_list_info();
 
     // 挿入先ダイアログ表示
-    SelectListDialog diag( get_url(), get_treestore() );
+    Gtk::Window* parent = ( *list_info_bkup.begin() ).parent;
+    SelectListDialog diag( parent, get_url(), get_treestore() );
     if( diag.run() != Gtk::RESPONSE_OK ) return;
 
     bool before = false;
@@ -2893,6 +2895,7 @@ void BBSListViewBase::get_history( CORE::DATA_INFO_LIST& info_list )
         Gtk::TreeModel::Row row = *it;
 
         info.type = row2type( row );
+        info.parent = NULL;
         info.url = row2url( row );
         info.name = row2name( row );
 

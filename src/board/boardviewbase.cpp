@@ -2073,6 +2073,7 @@ void BoardViewBase::slot_dropped_url_list( const std::list< std::string >& url_l
 
         CORE::DATA_INFO info;
         info.type = TYPE_FILE;
+        info.parent = NULL;
         info.url = MISC::remove_str( ( *it ), "file://" );
         list_info.push_back( info );
 
@@ -2711,6 +2712,7 @@ void BoardViewBase::set_article_to_buffer()
 
             CORE::DATA_INFO info;
             info.type = TYPE_THREAD;
+            info.parent = BOARD::get_admin()->get_win();
             info.url = art->get_url();
             info.name = name.raw();
             info.data = std::string();
@@ -2742,6 +2744,7 @@ void BoardViewBase::set_board_to_buffer()
     if( url_board.empty() ) return;
 
     info.type = TYPE_BOARD;
+    info.parent = BOARD::get_admin()->get_win();
     info.url = DBTREE::url_boardbase( url_board );
     info.name = DBTREE::board_name( url_board );
     info.data = std::string();

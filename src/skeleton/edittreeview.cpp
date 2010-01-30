@@ -326,6 +326,7 @@ const Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
     info.type = TYPE_DIR;
+    info.parent = NULL;
     info.url = std::string();
     info.name = "新規ディレクトリ";
     info.data = std::string();
@@ -355,6 +356,7 @@ const Gtk::TreePath EditTreeView::create_newcomment( const Gtk::TreePath& path )
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
     info.type = TYPE_COMMENT;
+    info.parent = NULL;
     info.url = std::string();
     info.name = "コメント";
     info.data = std::string();
@@ -1208,6 +1210,8 @@ void EditTreeView::path2info( CORE::DATA_INFO& info, const Gtk::TreePath& path )
     Gtk::TreeRow row = get_row( path );
 
     info.type = row[ m_columns.m_type ];
+
+    info.parent = NULL;
 
     tmp_str = row[ m_columns.m_url ];
     info.url = tmp_str.raw();

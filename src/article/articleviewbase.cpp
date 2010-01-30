@@ -3453,6 +3453,7 @@ void ArticleViewBase::set_favorite()
 
     CORE::DATA_INFO info;
     info.type = TYPE_THREAD;
+    info.parent = ARTICLE::get_admin()->get_win();
     info.url = m_url_article;;
     info.name = DBTREE::article_subject( m_url_article );
     info.data = std::string();

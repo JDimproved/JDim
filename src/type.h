@@ -37,12 +37,17 @@ enum
     TYPE_UNKNOWN
 };
 
+namespace Gtk
+{
+    class Window;
+}
 
 namespace CORE
 {
     struct DATA_INFO
     {
-        int type; 
+        int type;
+        Gtk::Window* parent;
         std::string url;
         std::string name;
         std::string path; // treeview の path

@@ -284,6 +284,7 @@ void UsrCmdPref::slot_newcmd()
         CORE::DATA_INFO_LIST list_info;
         CORE::DATA_INFO info;
         info.type = TYPE_USRCMD;
+        info.parent = NULL;
         info.url = std::string();
         info.name = diag.get_name();
         info.data = diag.get_cmd();
@@ -312,6 +313,7 @@ void UsrCmdPref::slot_newsepa()
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
     info.type = TYPE_SEPARATOR;
+    info.parent = NULL;
     info.url = std::string();
     info.name = "--- 区切り ---";
     info.data = std::string();

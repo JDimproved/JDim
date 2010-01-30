@@ -337,6 +337,7 @@ void BoardAdmin::slot_drag_data_get( Gtk::SelectionData& selection_data, const i
     
     CORE::DATA_INFO info;
     info.type = TYPE_BOARD;
+    info.parent = NULL;
     info.url = DBTREE::url_boardbase( url );
     info.name = DBTREE::board_name( info.url );
     info.data = std::string();

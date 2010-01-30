@@ -719,6 +719,7 @@ void ArticleAdmin::slot_drag_data_get( Gtk::SelectionData& selection_data, const
     
     CORE::DATA_INFO info;
     info.type = TYPE_THREAD;
+    info.parent = NULL;
     info.url = DBTREE::url_readcgi( url, 0, 0 );
     info.name = DBTREE::article_subject( info.url );
     info.data = std::string();

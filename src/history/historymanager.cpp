@@ -136,6 +136,8 @@ void History_Manager::append_history( const std::string& url_history, const std:
         info.name = DBTREE::board_name( info.url );
     }
 
+    info.parent = NULL;
+
     CORE::DATA_INFO_LIST list_info;
     list_info.push_back( info );
     CORE::SBUF_set_list( list_info );
