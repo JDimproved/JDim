@@ -97,6 +97,8 @@ namespace SKELETON
 
         SKELETON::IconPopup* m_down_arrow;
 
+        Alloc_NoteBook m_alloc_old;
+
       public:
 
         SIG_SWITCH_PAGE signal_switch_page(){ return m_sig_switch_page; }

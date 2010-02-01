@@ -51,6 +51,8 @@ DragableNoteBook::DragableNoteBook()
     m_show_tabs = true;
     m_show_toolbar = true;
 
+    memset( &m_alloc_old, 0, sizeof( Alloc_NoteBook ) );
+
     show_all_children();
 }
 
@@ -187,11 +189,22 @@ void DragableNoteBook::draw_box( Gtk::Widget* widget, GdkEventExpose* event )
 {
     const Glib::RefPtr<Gdk::Window> win = widget->get_window();
     const Gdk::Rectangle rect( &(event->area) );
-    const Alloc_NoteBook alloc = get_alloc_notebook();
+    Alloc_NoteBook alloc = get_alloc_notebook();
 
     if( alloc.height_box > 0 ){
 
         if( get_show_tabs() ){
+
+            // gtk2.18以降？では新しいタブを開くときに一瞬タブが消える場合がある
+            // その場合は保存しておいた座標と高さを利用してboxを描画する
+            if( ! alloc.height_tab ){
+
+                if( ! m_alloc_old.height_tab ) return;
+
+                alloc.y_box = m_alloc_old.y_box;
+                alloc.height_box = m_alloc_old.height_box;
+            }
+            else m_alloc_old = alloc;
 
             widget->get_style()->paint_box_gap( win,
                                                 Gtk::STATE_NORMAL,

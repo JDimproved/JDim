@@ -107,7 +107,7 @@ struct _GtkNotebookPage
 const bool TabNotebook::paint( GdkEventExpose* event )
 {
     GtkNotebook *notebook = gobj();
-    if( ! notebook || ! notebook->cur_page || ! GTK_WIDGET_VISIBLE( notebook->cur_page->child ) ) return Notebook::on_expose_event( event );
+    if( ! notebook || ! notebook->cur_page || ! GTK_WIDGET_VISIBLE( notebook->cur_page->child ) ) return true;
 
     GtkWidget *widget = GTK_WIDGET( notebook );
     GdkRectangle *area = &event->area;
@@ -138,6 +138,11 @@ const bool TabNotebook::paint( GdkEventExpose* event )
 
         else if( page != notebook->cur_page ) draw_tab( notebook, page, area, rect, win );
     }
+
+    // gtk2.18以降？では cur_page が表示されていないのに一瞬だけ状態が visible になる時がある
+    // その時に矢印を描画すると画面にゴミが残るので描画しないようにする
+    if( show_arrow
+        && ( notebook->cur_page->allocation.width == 0 || notebook->cur_page->allocation.height == 0 ) ) show_arrow = FALSE;
 
     //矢印マーク描画
     if( show_arrow ){
