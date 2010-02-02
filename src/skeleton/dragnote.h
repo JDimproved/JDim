@@ -42,6 +42,7 @@ namespace SKELETON
     // 及びタブの高さや位置の情報
     struct Alloc_NoteBook
     {
+        int y_tab;
         int x_tab;
         int height_tab;
         int width_tab;

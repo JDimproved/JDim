@@ -154,7 +154,7 @@ const Alloc_NoteBook DragableNoteBook::get_alloc_notebook()
     alloc.y_toolbar = m_notebook_toolbar.get_allocation().get_y();
     alloc.height_toolbar = m_notebook_toolbar.get_allocation().get_height();
 
-    const int offset_tabbar = ( get_show_tabs() ? alloc.height_tabbar - alloc.height_tab : 0 );
+    const int offset_tabbar = ( get_show_tabs() ? alloc.height_tabbar - ( alloc.y_tab + alloc.height_tab ) : 0 );
     alloc.x_box = m_notebook_view.get_allocation().get_x();
     alloc.y_box = m_notebook_view.get_allocation().get_y() - alloc.height_toolbar - offset_tabbar;
     alloc.width_box = m_notebook_view.get_allocation().get_width()
