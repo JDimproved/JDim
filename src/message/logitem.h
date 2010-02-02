@@ -38,7 +38,7 @@ namespace MESSAGE
         {
 
             // WAVE DASH 問題
-            msg = MISC::utf8_fix_wavedash( msg );
+            msg = MISC::utf8_fix_wavedash( msg, MISC::UNIXtoWIN );
 
             // 水平タブを空白に置き換える
             msg = MISC::replace_str( msg, "\t", " " );

@@ -921,7 +921,7 @@ void MessageViewBase::show_status()
 //
 // 自分の書き込みの判定用データの保存
 //
-// 実況中など post_fin() がコールされる前に自分のスレが表示されてしまう時があるので
+// 実況中など post_fin() がコールされる前に自分のレスが表示されてしまう時があるので
 //  m_post->post_msg() する前に情報を保存しておく
 //
 void MessageViewBase::push_logitem()

@@ -34,6 +34,14 @@ namespace MISC
          UCS2MODE_OTHER
      };
 
+
+     // utf8_fix_wavedash のモード
+     enum
+     {
+         UNIXtoWIN = 0,
+         WINtoUNIX
+     };
+
     // str を "\n" ごとに区切ってlistにして出力
     const std::list< std::string > get_lines( const std::string& str );
 
@@ -183,8 +191,8 @@ namespace MISC
     // 戻り値 : バイト数
     const int ucs2toutf8( const int ucs2, char* utfstr );
 
-    // WAVEDASHなどのWindows系UTF-8文字をUnix系文字に変換
-    const std::string utf8_fix_wavedash( const std::string& str );
+    // WAVEDASHなどのWindows系UTF-8文字をUnix系文字と相互変換
+    const std::string utf8_fix_wavedash( const std::string& str, const int mode );
 
     // str を大文字化
     const std::string toupper_str( const std::string& str );

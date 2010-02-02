@@ -141,7 +141,7 @@ namespace SKELETON
         void set_text( const Glib::ustring& text ){ m_textview.get_buffer()->set_text( text ); }
         Glib::ustring get_text(){
 #ifdef _WIN32
-            return MISC::utf8_fix_wavedash( m_textview.get_buffer()->get_text() );
+            return MISC::utf8_fix_wavedash( m_textview.get_buffer()->get_text(), MISC::WINtoUNIX );
 #else
             return m_textview.get_buffer()->get_text();
 #endif
