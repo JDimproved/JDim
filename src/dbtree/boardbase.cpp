@@ -1149,8 +1149,9 @@ void BoardBase::receive_finish()
 
     // 一度全てのarticleをdat落ち状態にして subject.txt に
     // 含まれているものだけ regist_article()の中で通常状態にする
-
-//    if( m_is_online ){  オフラインの時も状態を変えないと起動直後にdat落ちしたスレが表示されない
+    if( m_is_online
+        || SESSION::is_booting() // ブート中の時も状態を変えないと起動直後にスレ一覧を復元した時にdat落ちしたスレが表示されない
+        ){  
 
         ArticleHashIterator it = m_hash_article->begin();
         for( ; it != m_hash_article->end(); ++it ){
@@ -1160,7 +1161,7 @@ void BoardBase::receive_finish()
             status |= STATUS_OLD;
             ( *it )->set_status( status );
         }
-//    }
+    }
 
     regist_article( m_is_online );
 
