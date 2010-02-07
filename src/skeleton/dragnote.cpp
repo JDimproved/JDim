@@ -157,16 +157,8 @@ const Alloc_NoteBook DragableNoteBook::get_alloc_notebook()
     const int offset_tabbar = ( get_show_tabs() ? alloc.height_tabbar - ( alloc.y_tab + alloc.height_tab ) : 0 );
     alloc.x_box = m_notebook_view.get_allocation().get_x();
     alloc.y_box = m_notebook_view.get_allocation().get_y() - alloc.height_toolbar - offset_tabbar;
-    alloc.width_box = m_notebook_view.get_allocation().get_width()
-#ifdef _WIN32
-    + 1 // "MS-Windows"テーマのL&F対策
-#endif
-    ;
-    alloc.height_box = offset_tabbar + alloc.height_toolbar + m_notebook_view.get_allocation().get_height()
-#ifdef _WIN32
-    + 1 // "MS-Windows"テーマのL&F対策
-#endif
-    ;
+    alloc.width_box =m_notebook_view.get_allocation().get_width();
+    alloc.height_box = offset_tabbar + alloc.height_toolbar + m_notebook_view.get_allocation().get_height();
 
 #ifdef _DEBUG
     std::cout << "DragableNoteBook::get_alloc_notebook"
