@@ -8,6 +8,8 @@
 #include "img.h"
 
 #include "cache.h"
+#include "global.h"
+
 
 // インスタンスは Core でひとつだけ作って、Coreのデストラクタでdeleteする
 DBIMG::ImgRoot *instance_dbimg_root = NULL;
@@ -24,6 +26,22 @@ void DBIMG::delete_root()
     if( instance_dbimg_root ) delete instance_dbimg_root;
 }
 
+
+void DBIMG::clock_in()
+{
+    if( instance_dbimg_root ) instance_dbimg_root->clock_in();
+}
+
+// 読み込み待ちのためクロックを回すImgクラスをセット/リセット
+void DBIMG::set_clock_in( Img* img )
+{
+    if( instance_dbimg_root ) instance_dbimg_root->set_clock_in( img );
+}
+
+void DBIMG::reset_clock_in( Img* img )
+{
+    if( instance_dbimg_root ) instance_dbimg_root->reset_clock_in( img );
+}
 
 
 const int DBIMG::get_type_ext( const std::string& url )
@@ -75,7 +93,19 @@ const std::string DBIMG::get_cache_path( const std::string& url )
 void DBIMG::download_img( const std::string& url, const std::string& refurl, const bool mosaic )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
-    if( img ) img->download_img( refurl, mosaic );
+    if( img ) img->download_img( refurl, mosaic, 0 );
+}
+
+void DBIMG::download_img_wait( const std::string& url, const std::string& refurl, const bool mosaic, const int first )
+{
+    DBIMG::Img* img = DBIMG::get_img( url );
+    if( img && instance_dbimg_root ){
+
+        int wait = 0;
+        if( ! first || instance_dbimg_root->get_wait_size() ) wait = ( instance_dbimg_root->get_wait_size() + 1 ) * WAITLOADIMG_SEC;
+
+        img->download_img( refurl, mosaic, wait  );
+    }
 }
 
 
@@ -155,6 +185,13 @@ const bool DBIMG::is_loading( const std::string& url )
     return false;
 }
 
+const bool DBIMG::is_wait( const std::string& url )
+{
+    DBIMG::Img* img = DBIMG::get_img( url );
+    if( img ) return img->is_wait();
+
+    return false;
+}
 
 const int DBIMG::get_code( const std::string& url )
 {

@@ -72,6 +72,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
       m_popup_shown( false ),
       m_enable_menuslot( true ),
       m_current_bm( 0 ),
+      m_current_post( 0 ),
       m_show_url4report( false ),
       m_url_show_status( false ),
       m_enable_live( false ),
@@ -272,6 +273,8 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "End", "End"), sigc::mem_fun( *this, &ArticleViewBase::goto_bottom ) );
     action_group()->add( Gtk::Action::create( "PreBookMark", "PreBookMark"), sigc::mem_fun( *this, &ArticleViewBase::slot_pre_bm ) );
     action_group()->add( Gtk::Action::create( "NextBookMark", "NextBookMark"), sigc::mem_fun( *this, &ArticleViewBase::slot_next_bm ) );
+    action_group()->add( Gtk::Action::create( "PrePost", "PrePost"), sigc::mem_fun( *this, &ArticleViewBase::slot_pre_post ) );
+    action_group()->add( Gtk::Action::create( "NextPost", "NextPost"), sigc::mem_fun( *this, &ArticleViewBase::slot_next_post ) );
     action_group()->add( Gtk::Action::create( "Jump", "ジャンプ(_J)"), sigc::mem_fun( *this, &ArticleViewBase::slot_jump ) );
     action_group()->add( Gtk::Action::create( "PrevView", "PrevView"),
                          sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::back_viewhistory ), 1 ) );
@@ -281,6 +284,8 @@ void ArticleViewBase::setup_action()
     // 画像系
     action_group()->add( Gtk::Action::create( "Cancel_Mosaic", "モザイク解除(_C)"), sigc::mem_fun( *this, &ArticleViewBase::slot_cancel_mosaic ) );
     action_group()->add( Gtk::Action::create( "Show_Mosaic", "モザイクで開く(_M)"), sigc::mem_fun( *this, &ArticleViewBase::slot_show_image_with_mosaic ) );
+    action_group()->add( Gtk::Action::create( "Show_SelectImg", ITEM_NAME_SELECTIMG + std::string( "(_G)" ) )
+                         , sigc::mem_fun( *this, &ArticleViewBase::slot_show_selection_images ) );
     action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する(_P)", std::string(), false ),
@@ -467,6 +472,7 @@ const std::string ArticleViewBase::create_context_menu()
     list_menu.push_back( ITEM_COPY_THREAD_INFO );
     list_menu.push_back( ITEM_FAVORITE );
     list_menu.push_back( ITEM_ABONE_SELECTION );
+    list_menu.push_back( ITEM_SELECTIMG );
     list_menu.push_back( ITEM_PREF_THREAD );
 
     // メニューに含まれていない項目を抜き出して「その他」に含める
@@ -532,10 +538,14 @@ const char* ArticleViewBase::get_menu_item( const int item )
             "<separator/>"
             "<menuitem action='Home'/>"
             "<menuitem action='End'/>"
+            "<separator/>"
             "<menuitem action='GotoNew'/>"
             "<separator/>"
             "<menuitem action='PreBookMark'/>"
             "<menuitem action='NextBookMark'/>"
+            "<separator/>"
+            "<menuitem action='PrePost'/>"
+            "<menuitem action='NextPost'/>"
             "</menu>"
             ;
 
@@ -619,6 +629,10 @@ const char* ArticleViewBase::get_menu_item( const int item )
             // プロパティ
         case ITEM_PREF_THREAD:
             return "<menuitem action='PreferenceArticle'/>";
+
+            // 選択範囲の画像を開く
+        case ITEM_SELECTIMG:
+            return "<menuitem action='Show_SelectImg'/>";
 
             // 区切り
         case ITEM_SEPARATOR:
@@ -1146,6 +1160,15 @@ const bool ArticleViewBase::operate_view( const int control )
             slot_next_bm();
             break;
 
+            // 書き込み移動
+        case CONTROL::PrePost:
+            slot_pre_post();
+            break;
+
+        case CONTROL::NextPost:
+            slot_next_post();
+            break;
+
             // 親にhideを依頼する and ローディング停止
         case CONTROL::StopLoading:
             stop();
@@ -1419,6 +1442,60 @@ void ArticleViewBase::slot_next_bm()
     }
 }
 
+
+//
+// 前の書き込みに移動
+//
+void ArticleViewBase::slot_pre_post()
+{
+    assert( m_article );
+
+    if( m_current_post == 0 ) m_current_post = m_drawarea->get_seen_current();
+
+    for( int i = m_current_post -1 ; i >= 1 ; --i ){
+        if( m_article->is_posted( i ) ){
+            goto_num( i, 0 );
+            m_current_post = i;
+            return;
+        }
+    }
+
+    for( int i = m_article->get_number_load() ; i > m_current_post ; --i ){
+        if( m_article->is_posted( i ) ){
+            goto_num( i, 0 );
+            m_current_post = i;
+            return;
+        }
+    }
+}
+
+
+
+//
+// 後ろの書き込みに移動
+//
+void ArticleViewBase::slot_next_post()
+{
+    assert( m_article );
+
+    if( m_current_post == 0 ) m_current_post = m_drawarea->get_seen_current();
+
+    for( int i = m_current_post + 1; i <= m_article->get_number_load() ; ++i ){
+        if( m_article->is_posted( i ) ){
+            goto_num( i, 0 );
+            m_current_post = i;
+            return;
+        }
+    }
+
+    for( int i = 1; i <= m_current_post ; ++i ){
+        if( m_article->is_posted( i ) ){
+            goto_num( i, 0 );
+            m_current_post = i;
+            return;
+        }
+    }
+}
 
 
 //
@@ -2052,7 +2129,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
 
         else if(
             ( ! DBIMG::is_cached( url ) || CONFIG::get_use_image_popup() )
-            && ( DBIMG::is_loading( url ) || DBIMG::get_code( url ) != HTTP_INIT ) ){ 
+            && ( DBIMG::is_loading( url ) || DBIMG::is_wait( url ) || DBIMG::get_code( url ) != HTTP_INIT ) ){ 
 
 #ifdef _DEBUG
             std::cout << "image " << DBIMG::get_code( url ) << " " << DBIMG::is_loading( url ) << "\n";
@@ -2894,6 +2971,12 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
+    act = action_group()->get_action( "Show_SelectImg" );
+    if( act ){
+        if( str_select.empty() || ! m_drawarea->get_selection_imgurls().size() ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     // 検索関係
     act = action_group()->get_action( "SearchWeb" );
     if( act ){
@@ -2942,6 +3025,18 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
     // 書き込みしていない
     act = action_group()->get_action( "DrawoutPost" );
+    if( act ){
+        if( m_article->get_num_posted() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+
+    act = action_group()->get_action( "PrePost" );
+    if( act ){
+        if( m_article->get_num_posted() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
+    }
+
+    act = action_group()->get_action( "NextPost" );
     if( act ){
         if( m_article->get_num_posted() ) act->set_sensitive( true );
         else act->set_sensitive( false );
@@ -3767,6 +3862,47 @@ void ArticleViewBase::slot_show_image_with_mosaic()
     const bool switch_image = open_imageview;
         
     open_image( m_url_tmp, res_number, open_imageview, open_browser, mosaic, switch_image );
+}
+
+
+
+//
+// 選択範囲の画像を開く
+//
+void ArticleViewBase::slot_show_selection_images()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_show_selection_images\n";
+#endif    
+
+    if( m_drawarea->get_selection_imgurls().size() ){
+
+        bool first = true;
+        std::vector< URLINFO >::const_iterator it = m_drawarea->get_selection_imgurls().begin();
+        for( ; it != m_drawarea->get_selection_imgurls().end(); ++it ){
+
+            const std::string& url = (*it).url;
+            const int res_number = (*it).res_number;
+
+            const std::string refurl = DBTREE::url_readcgi( m_url_article, res_number, 0 );
+            const bool open_imageview = true;
+            const bool mosaic = true;
+
+#ifdef _DEBUG
+            std::cout << url << " - " << res_number << " : " << refurl << std::endl;
+#endif            
+
+            if( ! DBIMG::is_cached( url ) ){
+
+                DBIMG::download_img_wait( url, refurl, mosaic, first );
+                first = false;
+            }
+
+            if( open_imageview ) CORE::core_set_command( "open_image", url );
+        }
+
+        redraw_view();
+    }
 }
 
 

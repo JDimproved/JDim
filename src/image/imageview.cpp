@@ -73,6 +73,8 @@ ImageViewMain::ImageViewMain( const std::string& url )
 //
 // クロック入力
 //
+// アクティブ(表示されている)view以外にはクロックは来ないのに注意
+//
 void ImageViewMain::clock_in()
 {
     View::clock_in();
@@ -86,14 +88,35 @@ void ImageViewMain::clock_in()
         IMAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
     }
 
+    // ロード待ち
+    if( is_wait() ){
+
+        // ロード待ち状態解除
+        if( ! get_img()->is_wait() ){
+
+            set_wait( false );
+
+            if( get_img()->is_loading() ){
+                set_loading( true  ); 
+                set_status( "読み込み中" );
+                if( m_show_label ) m_label.set_text( get_status() );
+            }
+
+            else{
+                set_loading( false );
+                show_view();
+                show_status();
+            }
+        }
+    }
+
     // ロード中
-    if( is_loading() ){
+    else if( is_loading() ){
 
         // 読み込みサイズの表示更新
         if( get_img()->is_loading() ) show_status();
 
         // ロード完了
-        // 次にclock_in()が呼ばれたら下のelseの中に入る
         else{
 
             set_loading( false ); 
@@ -208,6 +231,7 @@ void ImageViewMain::remove_label()
 void ImageViewMain::show_view()
 {
     if( is_loading() ) return;
+    if( is_wait() ) return;
 
 #ifdef _DEBUG
     std::cout << "ImageViewMain::show_view url = " << get_url() << std::endl;
@@ -231,15 +255,26 @@ void ImageViewMain::show_view()
 
     remove_label();
 
-    // 読み込み中        
-    if( get_img()->is_loading() ){
+    // ロード待ち、又は読み込み中        
+    if( get_img()->is_wait() || get_img()->is_loading() ){
 
+        if( get_img()->is_wait() ){
 #ifdef _DEBUG
-        std::cout << "now loading\n";
-#endif    
-        set_loading( true );
+            std::cout << "wait\n";
+#endif
+            set_wait( true );
+            set_loading( false );
+            set_status( "待機中" );
+        }
+        else{
+#ifdef _DEBUG
+            std::cout << "loading\n";
+#endif
+            set_wait( false );
+            set_loading( true );
+            set_status( "読み込み中" );
+        }
         m_length_prev = 0;
-        set_status( "loading..." );
         m_show_status = true; // viewがアクティブになった時点でステータス表示
 
         set_label();
@@ -258,7 +293,9 @@ void ImageViewMain::show_view()
     // エラー
     else{
 
-        set_status( get_img()->get_str_code() );
+        if( ! get_img()->get_str_code().empty() ) set_status( get_img()->get_str_code() );
+        else set_status( "画像情報が存在しません。再読み込みして下さい" );
+
         m_show_status = true; // viewがアクティブになった時点でステータス表示
 
         set_label();
@@ -274,7 +311,7 @@ void ImageViewMain::show_view()
 //
 void ImageViewMain::show_status()
 {
-    if( ! is_loading() ){
+    if( ! is_loading() && ! is_wait() ){
 
         // 画像が表示されていたら画像情報
         if( get_imagearea() ){
@@ -292,8 +329,7 @@ void ImageViewMain::show_status()
         // エラー(ネットワーク系)
         else if( get_img()->get_code() != HTTP_OK ) set_status( get_img()->get_str_code() );
 
-        // ステータス標示
-        IMAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
+        m_show_status = true; // viewがアクティブになった時点でステータス表示
         if( m_show_label ) m_label.set_text( get_status() );
 
 #ifdef _DEBUG
@@ -302,7 +338,7 @@ void ImageViewMain::show_status()
     }
 
     // ロード中
-    else{
+    else if( is_loading() ){
 
         // 読み込みサイズが更新した場合
         if( m_length_prev != get_img()->current_length() ){
@@ -313,8 +349,7 @@ void ImageViewMain::show_status()
             snprintf( tmpstr, 256, "%zd k / %zd k", m_length_prev/1024, get_img()->total_length()/1024 );
             set_status( tmpstr );
 
-            // ステータス標示
-            IMAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
+            m_show_status = true; // viewがアクティブになった時点でステータス表示
             if( m_show_label ) m_label.set_text( get_status() );
 
 #ifdef _DEBUG

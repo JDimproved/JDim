@@ -123,6 +123,9 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "PrevRes", KEYCONF_PrevRes );
     SETKEYMOTION( "NextRes", KEYCONF_NextRes );
 
+    SETKEYMOTION( "PrePost", KEYCONF_PrePost );
+    SETKEYMOTION( "NextPost", KEYCONF_NextPost );
+
     SETKEYMOTION( "GotoNew", KEYCONF_GotoNew );
     SETKEYMOTION( "WriteMessage", KEYCONF_WriteMessage );
 

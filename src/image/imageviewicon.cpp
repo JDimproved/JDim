@@ -80,12 +80,18 @@ void ImageViewIcon::clock_in()
 {
     View::clock_in();
 
+    // 待ち状態
+    if( is_wait() && ! get_img()->is_wait() ){
+
+        set_wait( false );
+        set_loading( get_img()->is_loading() );
+        show_view();
+    }
+
     // ロード終了
-    if( get_imagearea() && is_loading() && ! get_img()->is_loading() ){
+    else if( get_imagearea() && is_loading() && ! get_img()->is_loading() ){
 
         set_loading( false );
-
-        // 画像表示
         show_view();
     }
 }
@@ -119,13 +125,17 @@ void ImageViewIcon::focus_out()
 void ImageViewIcon::show_view()
 {
     if( is_loading() ) return;
+    if( is_wait() ) return;
 
 #ifdef _DEBUG
     std::cout << "ImageViewIcon::show_view url = " << get_url() << std::endl;
 #endif    
 
+    // 待ち状態
+    if( get_img()->is_wait() ) set_wait( true );
+
     // 読み込み中        
-    if( get_img()->is_loading() ) set_loading( true );
+    else if( get_img()->is_loading() ) set_loading( true );
 
     // 画像が既に表示しているなら再描画
     if( get_imagearea() ) get_imagearea()->show_image();

@@ -471,6 +471,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // コンテキストメニュー項目設定
     m_action_group->add( Gtk::Action::create( "MenuItem_Menu", "コンテキストメニュー項目設定(_C)" ) );
+    m_action_group->add( Gtk::Action::create( "SetupBoardItemMenu", "スレ一覧(_B)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem_menu ) );
     m_action_group->add( Gtk::Action::create( "SetupArticleItemMenu", "スレビュー(_A)..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem_menu ) );
 
 
@@ -749,6 +750,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<separator/>"
 
         "<menu action='MenuItem_Menu'>"
+        "<menuitem action='SetupBoardItemMenu'/>"
         "<menuitem action='SetupArticleItemMenu'/>"
         "</menu>"
 
@@ -2553,7 +2555,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         show_imagetab();
 
         // キャッシュに無かったらロード
-        if( ! DBIMG::is_cached( command.url ) ){
+        if( ! DBIMG::is_cached( command.url ) && ! DBIMG::is_loading( command.url ) && ! DBIMG::is_wait( command.url ) ){
             const bool mosaic = CONFIG::get_use_mosaic();
             DBIMG::download_img( command.url, std::string(), mosaic );
         }
@@ -3205,6 +3207,7 @@ bool Core::slot_timeout( int timer_number )
     ARTICLE::get_admin()->clock_in();
     IMAGE::get_admin()->clock_in();
     MESSAGE::get_admin()->clock_in();
+    DBIMG::clock_in();
 
     // Panedにクロック入力
     m_hpaned.get_ctrl().clock_in();

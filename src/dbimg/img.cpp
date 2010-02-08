@@ -18,6 +18,7 @@
 #include "httpcode.h"
 #include "cache.h"
 #include "session.h"
+#include "global.h"
 
 #include <sstream>
 #include <cstring>
@@ -87,6 +88,17 @@ Img::~Img()
 }
 
 
+void Img::clock_in()
+{
+    // ロード待ち
+    if( m_wait ){
+
+        --m_wait_counter;
+        if( m_wait_counter <= 0 ) download_img( m_refurl, m_mosaic, 0 );
+    }
+}
+
+
 //
 // リセット( 情報をクリアしてinfoファイル再読み込み )
 //
@@ -116,6 +128,53 @@ void Img::clear()
     m_width_mosaic = 0;
     m_height_mosaic = 0;
     m_abone = false;
+    m_wait = false;
+    m_wait_counter = 0;
+}
+
+
+//
+// ロード待ち状態セット/リセット
+//
+const bool Img::set_wait( const std::string& refurl, const bool mosaic, const int waitsec )
+{
+    if( waitsec && ! m_wait ){
+
+#ifdef _DEBUG
+        std::cout << "Img::set_wait url = " << m_url << std::endl;
+#endif
+        m_wait = true;
+        m_wait_counter = (1000/TIMER_TIMEOUT) * waitsec;
+        DBIMG::set_clock_in( this );
+
+        m_refurl = refurl;
+        m_mosaic = mosaic;
+
+        CORE::core_set_command( "redraw", m_url );
+        CORE::core_set_command( "redraw_article" );
+        CORE::core_set_command( "redraw_message" );
+
+        return true;
+    }
+
+    return false;
+}
+
+
+void Img::reset_wait()
+{
+    if( m_wait ){
+#ifdef _DEBUG
+        std::cout << "Img::reset_wait url = " << m_url << std::endl;
+#endif
+        m_wait = false;
+        m_wait_counter = 0;
+        DBIMG::reset_clock_in( this );
+
+        CORE::core_set_command( "redraw", m_url );
+        CORE::core_set_command( "redraw_article" );
+        CORE::core_set_command( "redraw_message" );
+    }
 }
 
 
@@ -194,8 +253,9 @@ const std::string Img::get_cache_path()
 //
 // refurl : 参照元のスレのアドレス
 // mosaic : モザイク表示するか
+// waitsec: 指定した秒数経過後にロード開始
 //
-void Img::download_img( const std::string& refurl, const bool mosaic )
+void Img::download_img( const std::string refurl, const bool mosaic, const int waitsec )
 {
     // ダウンロード初回(リダイレクトでは無い)
     if( ! m_count_redirect ) m_url_alt = std::string();
@@ -204,13 +264,24 @@ void Img::download_img( const std::string& refurl, const bool mosaic )
     std::cout << "Img::download_img url = ";
     if( ! m_url_alt.empty() ) std::cout << m_url_alt << "  count = " << m_count_redirect << std::endl;
     else std::cout << m_url << std::endl;
-    std::cout << "refurl = " << refurl <<  std::endl;
+    std::cout << "refurl = " << refurl <<  " wait = " << m_wait << " waitsec = " << waitsec << std::endl;
 #endif
 
     if( is_loading() ) return;
     if( is_cached() ) return;
     if( ! CACHE::mkdir_imgroot() ) return;
     if( get_type() == T_LARGE ) return;
+    if( is_wait() && waitsec ) return;
+
+    // ロード待ち状態にセット
+    if( set_wait( refurl, mosaic, waitsec ) ) return;
+
+    // ロード待ち状態解除
+    reset_wait();
+
+#ifdef _DEBUG
+    std::cout << "start...\n";
+#endif
 
     // ダウンロード開始
     std::string path = get_cache_path();
@@ -224,7 +295,7 @@ void Img::download_img( const std::string& refurl, const bool mosaic )
     clear();
     m_refurl = refurl;
     m_mosaic = mosaic;
-               
+
     JDLIB::LOADERDATA data;
     data.init_for_data();
 
@@ -235,6 +306,26 @@ void Img::download_img( const std::string& refurl, const bool mosaic )
     else CORE::core_set_command( "redraw", m_url );
 }
 
+
+//
+// ロード停止
+//
+void Img::stop_load()
+{
+#ifdef _DEBUG
+    std::cout << "Img::stop_load url = " << m_url << std::endl;
+#endif
+
+    SKELETON::Loadable::stop_load();
+
+    if( m_wait ){
+
+        set_code( HTTP_TIMEOUT );
+        set_str_code( "stop loading" );
+
+        reset_wait();
+    }
+}
 
 
 //
@@ -450,7 +541,7 @@ void Img::receive_finish()
 #endif
             ++m_count_redirect;
             m_url_alt = location();
-            download_img( m_refurl, m_mosaic );
+            download_img( m_refurl, m_mosaic, 0 );
             return;
         }
         else m_type = T_NODATA;

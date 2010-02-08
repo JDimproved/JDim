@@ -17,6 +17,7 @@
 #include "mainitempref.h"
 #include "sidebaritempref.h"
 #include "boarditempref.h"
+#include "boarditemmenupref.h"
 #include "articleitempref.h"
 #include "articleitemmenupref.h"
 #include "msgitempref.h"
@@ -78,6 +79,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, const int type, 
 
         case PREFDIAG_BOARDITEM:
             return new CORE::BoardItemPref( parent, url );            
+
+        case PREFDIAG_BOARDITEM_MENU:
+            return new CORE::BoardItemMenuPref( parent, url );
 
         case PREFDIAG_ARTICLEITEM:
             return new CORE::ArticleItemPref( parent, url );            

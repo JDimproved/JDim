@@ -70,7 +70,7 @@ void ImageAreaIcon::show_image()
 
     // キャッシュされてない時は読み込みorエラーマークを表示
     if( ! get_img()->is_cached() ){
-        show_indicator( ( get_img()->is_loading() || get_img()->get_code() == HTTP_INIT ) );
+        show_indicator( ( get_img()->is_loading() || get_img()->is_wait() || get_img()->get_code() == HTTP_INIT ) );
         set_image();
     }
 

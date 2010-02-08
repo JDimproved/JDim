@@ -159,8 +159,24 @@ void ImageViewPopup::show_view()
     std::cout << "ImageViewPopup::show_view url = " << get_url() << std::endl;
 #endif
 
+    // 待ち状態
+    if( is_wait() && ! get_img()->is_wait() ){
+
+        set_wait( false );
+
+        if( get_img()->is_loading() ){
+
+            set_loading( true  );
+            set_label( "読み込み中" );
+        }
+        else{
+            set_loading( false );
+            show_view_impl();
+        }
+    }
+
     // ロード完了
-    if( is_loading() && ! get_img()->is_loading() ){
+    else if( is_loading() && ! get_img()->is_loading() ){
 
         set_loading( false );
 
@@ -183,6 +199,7 @@ void ImageViewPopup::show_view()
 void ImageViewPopup::show_view_impl()
 {
     if( is_loading() ) return;
+    if( is_wait() ) return;
 
 #ifdef _DEBUG
     std::cout << "ImageViewPopup::show_view_impl url = " << get_url() << std::endl;
@@ -204,17 +221,28 @@ void ImageViewPopup::show_view_impl()
 
     // サーバから読み込み中
     // 読み込みが終わったら show_view() が呼び出されて画像が表示される
-    if( get_img()->is_loading() ){
+    if( get_img()->is_loading() || get_img()->is_wait() ){
+
+        if( get_img()->is_wait() ){
+#ifdef _DEBUG
+            std::cout << "wait\n";
+#endif
+            set_wait( true );
+            set_loading( false );
+            set_label( "待機中" );
+        }
+        else{
 
 #ifdef _DEBUG
             std::cout << "loading\n";
-#endif    
+#endif
 
-        set_loading( true );
+            set_wait( false );
+            set_loading( true );
+            set_label( "読み込み中" );
+        }
+
         m_length_prev = 0;
-
-        // ラベルに経過表示
-        set_label( "読み込み中" );
     }
 
     // 画像張り付け

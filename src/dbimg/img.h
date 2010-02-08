@@ -43,18 +43,27 @@ namespace DBIMG
         std::string m_refurl; // 参照元のスレのURL
         bool m_abone; // あぼーんされている
 
+        // 読み込み待ち
+        bool m_wait;
+        int m_wait_counter;
+
         // 保存用ファイルハンドラ
         FILE* m_fout;
         
       public:
+
         Img( const std::string& url );
         ~Img();
+
+        void clock_in();
 
         void reset();
         void clear();
 
         const std::string& url() const { return m_url; }
         const std::string get_cache_path();
+
+        const bool is_wait() const{ return m_wait; }
 
         const int get_type() const { return m_type; }
         void set_type( const int type ){ m_type = type; }
@@ -101,7 +110,11 @@ namespace DBIMG
         // receive_data()　と receive_finish() がコールバックされる
         // refurl : 参照元のスレのアドレス
         // mosaic : モザイク表示するか
-        void download_img( const std::string& refurl, const bool mosaic );
+        // waitsec: 指定した秒数経過後にロード開始
+        void download_img( const std::string refurl, const bool mosaic, const int waitsec );
+
+        // ロード停止
+        virtual void stop_load();
 
         const bool save( Gtk::Window* parent, const std::string& path_to );
         
@@ -109,6 +122,10 @@ namespace DBIMG
 
         virtual void receive_data( const char* data, size_t size );
         virtual void receive_finish();
+
+        // ロード待ち状態セット/リセット
+        const bool set_wait( const std::string& refurl, const bool mosaic, const int waitsec );
+        void reset_wait();
 
         // 埋め込み画像のサイズを計算
         void set_embedded_size();

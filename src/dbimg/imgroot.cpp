@@ -39,6 +39,52 @@ ImgRoot::~ImgRoot()
 }
 
 
+void ImgRoot::clock_in()
+{
+    if( m_list_wait.size() ){
+
+        std::list< Img* >::iterator it = m_list_wait.begin();
+        for( ; it != m_list_wait.end(); ++it ) ( *it )->clock_in();
+
+        remove_clock_in();
+    }
+}
+
+
+// 読み込み待ちのためクロックを回すImgクラスをセット/リセット
+void ImgRoot::set_clock_in( Img* img )
+{
+    m_list_wait.push_back( img );
+}
+
+void ImgRoot::reset_clock_in( Img* img )
+{
+    // リストに登録しておいて remove_clock_in()で消す
+    m_list_delwait.push_back( img );
+}
+
+
+void ImgRoot::remove_clock_in()
+{
+    if( m_list_delwait.size() ){
+
+#ifdef _DEBUG
+        std::cout << "ImgRoot::remove_clock_in\n";
+#endif
+
+        std::list< Img* >::iterator it = m_list_delwait.begin();
+        for( ; it != m_list_delwait.end(); ++it ){
+#ifdef _DEBUG
+            std::cout << ( *it )->url() << std::endl;
+#endif
+            m_list_wait.remove( *it );
+        }
+
+        m_list_delwait.clear();
+    }
+}
+
+
 //
 // Imgクラス取得
 // データベースに無ければImgクラスを作る

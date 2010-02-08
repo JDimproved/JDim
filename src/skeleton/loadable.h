@@ -120,7 +120,7 @@ namespace SKELETON
         bool start_load( const JDLIB::LOADERDATA& data );
 
         // ロード停止
-        void stop_load();
+        virtual void stop_load();
 
         // ロード強制停止
         // loadableを delete する前に terminate_load() を呼び出さないと

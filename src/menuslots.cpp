@@ -495,6 +495,17 @@ void Core::slot_setup_msgitem()
 }
 
 
+
+//
+// コンテキストメニュー(スレ一覧)の表示項目
+//
+void Core::slot_setup_boarditem_menu()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEM_MENU, "" );
+    pref->run();
+    delete pref;
+}
+
 //
 // コンテキストメニュー(スレビュー)の表示項目
 //

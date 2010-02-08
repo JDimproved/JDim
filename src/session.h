@@ -319,6 +319,12 @@ namespace SESSION
     void set_items_board_col_str( const std::string& items );
     const int get_item_board_col( const int num );
 
+    // スレ一覧のコンテキストメニュー項目
+    const std::string& get_items_board_menu_str();
+    const std::string get_items_board_menu_default_str();
+    void set_items_board_menu_str( const std::string& items_str );
+    const int get_item_board_menu( const int num );
+
     // スレビューのコンテキストメニュー項目
     const std::string& get_items_article_menu_str();
     const std::string get_items_article_menu_default_str();

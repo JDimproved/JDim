@@ -161,6 +161,9 @@ namespace CONTROL
         PrevRes,
         NextRes,
 
+        PrePost,
+        NextPost,
+
         GotoNew,
         OpenParentBoard,
         WriteMessage,

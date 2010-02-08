@@ -7,6 +7,7 @@
 
 #include <string>
 #include <map>
+#include <list>
 
 namespace DBIMG
 {
@@ -15,10 +16,20 @@ namespace DBIMG
     class ImgRoot
     {
         std::map< std::string, Img* > m_map_img;
+        std::list< Img* > m_list_wait; // ロード待ち状態のImgクラス
+        std::list< Img* > m_list_delwait; // ロード待ち状態のImgクラスを削除する時の一時変数
         
       public:
         ImgRoot();
         ~ImgRoot();
+
+        void clock_in();
+
+        // ロード待ちのためクロックを回すImgクラスをセット/リセット
+        void set_clock_in( Img* img );
+        void reset_clock_in( Img* img );
+        void remove_clock_in();
+        const int get_wait_size(){ return m_list_wait.size(); }
 
         // Imgクラス取得(無ければ作成)
         Img* get_img( const std::string& url );

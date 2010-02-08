@@ -42,6 +42,7 @@ namespace IMAGE
         // Gtk::manage で作っているのでdeleteしなくても良い
         JDLIB::ConstPtr< ImageAreaBase > m_imagearea;
 
+        bool m_wait;
         bool m_loading;
         Gtk::EventBox m_event;
         bool m_dblclick;
@@ -60,8 +61,12 @@ namespace IMAGE
         void set_imagearea( ImageAreaBase* imagearea );
         void remove_imagearea();
 
+        const bool is_wait() const{ return m_wait; }
+        void set_wait( const bool wait ){ m_wait = wait; }
+
         const bool is_loading() const{ return m_loading; }
-        void set_loading( bool loading ){ m_loading = loading; }
+        void set_loading( const bool loading ){ m_loading = loading; }
+
         Gtk::EventBox& get_event(){ return  m_event; }
 
       public:

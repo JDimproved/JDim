@@ -69,6 +69,9 @@ namespace ARTICLE
         // ブックマーク移動時の現在の位置(レス番号)
         int m_current_bm;
 
+        // 書き込みマーク移動時の現在の位置(レス番号)
+        int m_current_post;
+
         // 抽出ビューで荒らし報告用のURLを表示する
         bool m_show_url4report;
 
@@ -306,6 +309,8 @@ namespace ARTICLE
         void slot_toggle_abone_transp_chain();
         void slot_pre_bm();
         void slot_next_bm();
+        void slot_pre_post();
+        void slot_next_post();
         void slot_jump();
         void slot_save_dat();
         void slot_copy_article_info();
@@ -325,6 +330,7 @@ namespace ARTICLE
         // 画像ポップアップメニュー用
         void slot_cancel_mosaic();
         void slot_show_image_with_mosaic();
+        void slot_show_selection_images();
         void slot_show_large_img();
         void slot_deleteimage();
         void slot_toggle_protectimage();

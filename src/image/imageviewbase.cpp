@@ -42,6 +42,7 @@ using namespace IMAGE;
 
 ImageViewBase::ImageViewBase( const std::string& url, const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url ),
+      m_wait( false ),
       m_loading( false ),
       m_under_mouse( false ),
       m_enable_menuslot( true )
@@ -403,7 +404,13 @@ void ImageViewBase::reload()
 
     std::string refurl = m_img->get_refurl();
     const bool mosaic = m_img->get_mosaic();
-    m_img->download_img( refurl, mosaic );
+    m_img->download_img( refurl, mosaic, 0 );
+
+    if( m_img->is_loading() ){
+
+        CORE::core_set_command( "redraw", get_url() );
+        CORE::core_set_command( "redraw_article" );
+    }
 }
 
 
@@ -886,8 +893,6 @@ void ImageViewBase::slot_reload_force()
     m_img->set_code( HTTP_INIT );
     m_img->set_type( DBIMG::T_UNKNOWN );
     reload();
-    CORE::core_set_command( "redraw", get_url() );
-    CORE::core_set_command( "redraw_article" );
 }
 
 

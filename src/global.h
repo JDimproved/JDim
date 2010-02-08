@@ -49,17 +49,23 @@ enum{
 
 #define ITEM_NAME_WRITEMSG  "書き込み"
 #define ITEM_NAME_OPENBOARD "板を開く"
+#define ITEM_NAME_OPENARTICLETAB   "タブでスレを開く"
+#define ITEM_NAME_BOOKMARK   "しおりを設定/解除"
 #define ITEM_NAME_SEARCH    "検索"
 #define ITEM_NAME_DRAWOUT    "抽出"
 #define ITEM_NAME_RELOAD    "再読み込み"
 #define ITEM_NAME_STOPLOADING "読み込み中止"
 #define ITEM_NAME_FAVORITE  "お気に入りに追加"
+#define ITEM_NAME_FAVORITE_ARTICLE  "スレをお気に入りに追加"
 #define ITEM_NAME_CHECK_UPDATE_ROOT "更新チェック"
 #define ITEM_NAME_CHECK_UPDATE_OPEN_ROOT "更新チェックしてタブで開く"
+
 #define ITEM_NAME_COPY      "コピー"
 #define ITEM_NAME_COPY_URL      "URLをコピー"
 #define ITEM_NAME_COPY_TITLE_URL "タイトルとURLをコピー"
 #define ITEM_NAME_COPY_TITLE_URL_THREAD "スレのタイトルとURLをコピー"
+#define ITEM_NAME_COPY_THREAD_INFO   "スレ情報のコピー"
+
 #define ITEM_NAME_DELETE    "削除"
 #define ITEM_NAME_QUIT      "閉じる"
 #define ITEM_NAME_PREVVIEW  "前へ戻る"
@@ -71,6 +77,7 @@ enum{
 #define ITEM_NAME_SEARCHBOX    "検索ボックス"
 #define ITEM_NAME_SEARCH_NEXT  "次検索"
 #define ITEM_NAME_SEARCH_PREV  "前検索"
+#define ITEM_NAME_NEXTARTICLE    "次スレ検索"
 
 #define ITEM_NAME_INSERTTEXT  "テキストファイル挿入"
 #define ITEM_NAME_LOCK_MESSAGE "書き込み後に閉じない"
@@ -81,13 +88,15 @@ enum{
 
 #define ITEM_NAME_NGWORD      "NGワード"
 #define ITEM_NAME_ABONE_SELECTION "選択範囲のレスをあぼ〜ん"
+#define ITEM_NAME_ABONE_ARTICLE   "スレをあぼ〜んする"
 #define ITEM_NAME_QUOTE_SELECTION   "引用してレスする"
 #define ITEM_NAME_OPEN_BROWSER      "ブラウザで開く"
 #define ITEM_NAME_USER_COMMAND      "ユーザコマンド"
 #define ITEM_NAME_ETC         "その他"
 #define ITEM_NAME_SAVE_DAT    "datを保存"
-#define ITEM_NAME_COPY_THREAD_INFO   "スレ情報のコピー"
+#define ITEM_NAME_SELECTIMG "選択範囲の画像を開く"
 
+#define ITEM_NAME_PREF_BOARD     "板のプロパティ"
 #define ITEM_NAME_PREF_THREAD    "スレのプロパティ"
 
 
@@ -119,17 +128,23 @@ enum
 
     ITEM_WRITEMSG,
     ITEM_OPENBOARD,
+    ITEM_OPENARTICLETAB,
+    ITEM_BOOKMARK,
     ITEM_SEARCH,
     ITEM_DRAWOUT,
     ITEM_RELOAD,
     ITEM_STOPLOADING,
     ITEM_FAVORITE,
+    ITEM_FAVORITE_ARTICLE,
     ITEM_CHECK_UPDATE_ROOT,
     ITEM_CHECK_UPDATE_OPEN_ROOT,
+
     ITEM_COPY,
     ITEM_COPY_URL,
     ITEM_COPY_TITLE_URL,
     ITEM_COPY_TITLE_URL_THREAD,
+    ITEM_COPY_THREAD_INFO,
+
     ITEM_DELETE,
     ITEM_QUIT,
     ITEM_PREVVIEW,
@@ -141,6 +156,7 @@ enum
     ITEM_SEARCHBOX,
     ITEM_SEARCH_NEXT,
     ITEM_SEARCH_PREV,
+    ITEM_NEXTARTICLE,
 
     ITEM_INSERTTEXT,
     ITEM_LOCK_MESSAGE,
@@ -151,13 +167,15 @@ enum
 
     ITEM_NGWORD,
     ITEM_ABONE_SELECTION,
+    ITEM_ABONE_ARTICLE,
     ITEM_QUOTE_SELECTION,
     ITEM_OPEN_BROWSER,
     ITEM_USER_COMMAND,
     ITEM_ETC,
     ITEM_SAVE_DAT,
-    ITEM_COPY_THREAD_INFO,
+    ITEM_SELECTIMG,
 
+    ITEM_PREF_BOARD,
     ITEM_PREF_THREAD,
 
     ITEM_END
@@ -189,6 +207,8 @@ enum
 {
     AUTORELOAD_MINSEC = 10, // オートリロードの最小秒数
     MIN_LIVE_RELOAD_SEC = AUTORELOAD_MINSEC, // 実況時の最小リロード間隔
+
+    WAITLOADIMG_SEC = 6, // 画像のロード待ち間隔
 
     CHECKUPDATE_MINSEC = 300 // 更新チェックの最小秒数
 };

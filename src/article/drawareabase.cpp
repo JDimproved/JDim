@@ -1874,6 +1874,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
                 if( img ){
 
                     if( img->is_loading() ) node->color_text = COLOR_IMG_LOADING;
+                    else if( img->is_wait() ) node->color_text = COLOR_IMG_LOADING;
                     else if( img->get_code() == HTTP_OK ) node->color_text = COLOR_IMG_CACHED;
                     else if( img->get_code() == HTTP_INIT ){
                         if( img->get_abone() ) node->color_text = COLOR_IMG_ERR;
@@ -2308,7 +2309,7 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
         relayout = true;
     }
 
-    if( img->is_loading() ) color = COLOR_IMG_LOADING;
+    if( img->is_loading() || img->is_wait() ) color = COLOR_IMG_LOADING;
 
     else if( code == HTTP_INIT ){
 
@@ -3910,6 +3911,8 @@ const bool DrawAreaBase::set_selection_str()
 
     if( ! m_selection.str.empty() ) m_selection.str_pre = m_selection.str;
     m_selection.str.clear();
+    m_selection.imgurls.clear();
+
     if( !m_selection.select ) return false;
     
 #ifdef _DEBUG
@@ -3919,6 +3922,8 @@ const bool DrawAreaBase::set_selection_str()
     std::cout << "to   header = " << m_selection.caret_to.layout->id_header << " node = " << m_selection.caret_to.layout->id;
     std::cout << " byte = " << m_selection.caret_to.byte  << std::endl;
 #endif
+
+    std::vector< URLINFO > urls;
     
     bool start_copy = false;
 
@@ -3953,11 +3958,39 @@ const bool DrawAreaBase::set_selection_str()
                 else if( tmplayout->text ){
                     if( copy_from || copy_to ) m_selection.str += std::string( tmplayout->text ).substr( copy_from, copy_to - copy_from );
                     else m_selection.str += tmplayout->text;
+
+                    if( tmplayout->type == DBTREE::NODE_LINK && tmplayout->link ){
+
+                        URLINFO urlinfo;
+                        urlinfo.url = std::string( tmplayout->link );
+                        urlinfo.res_number = tmplayout->res_number;
+                        urls.push_back( urlinfo );
+                    }
                 }
             }
 
             // 終了
-            if( tmplayout == m_selection.caret_to.layout ) return true;
+            if( tmplayout == m_selection.caret_to.layout ){
+
+                // 画像のURLだけ抽出する
+                if( urls.size() ){
+
+                    std::vector< URLINFO >::const_iterator it = urls.begin();
+                    for( ; it != urls.end(); ++it ){
+
+                        if( DBIMG::get_type_ext( (*it).url ) != DBIMG::T_UNKNOWN ){
+
+                            std::vector< URLINFO >::const_iterator it2 = m_selection.imgurls.begin();
+                            for( ; it2 != m_selection.imgurls.end(); ++it2 ){
+                                if( (*it).url == (*it2).url ) break;
+                            }
+                            if( it2 == m_selection.imgurls.end() ) m_selection.imgurls.push_back( *it );
+                        }
+                    }
+                }
+
+                return true;
+            }
             
             tmplayout = tmplayout->next_layout;
         }
@@ -4396,6 +4429,7 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
             m_selection.select = false;
             if( ! m_selection.str.empty() ) m_selection.str_pre = m_selection.str;
             m_selection.str.clear();
+            m_selection.imgurls.clear();
             m_caret_pos_pre = m_caret_pos;
             m_caret_pos = caret_pos;
             m_caret_pos_dragstart = caret_pos;

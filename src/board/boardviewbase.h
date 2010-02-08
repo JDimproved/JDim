@@ -192,6 +192,12 @@ namespace BOARD
 
     private:
 
+        void setup_action();
+
+        // 通常の右クリックメニューの作成
+        const std::string create_context_menu();
+        const char* get_menu_item( const int item );
+
         // 次スレ移行処理に使用する前スレのアドレス
         // BOARD::BoardViewNext と BoardViewBase::open_row()を参照せよ
         virtual const std::string get_url_pre_article(){ return std::string(); }

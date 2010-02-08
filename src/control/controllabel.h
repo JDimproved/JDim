@@ -144,7 +144,7 @@ namespace CONTROL
         { "", "" },
 
         { "OpenArticle", "スレを開く" },
-        { "OpenArticleTab", "タブでスレを開く" },
+        { "OpenArticleTab", ITEM_NAME_OPENARTICLETAB },
         { "NewArticle", ITEM_NAME_NEWARTICLE },
         { "SearchCache", "ログ検索" },
 
@@ -169,13 +169,16 @@ namespace CONTROL
         { "PrevRes", "前のレスへ移動" },
         { "NextRes", "次のレスへ移動" },
 
+        { "PrePost", "前の書き込みヘ移動" },
+        { "NextPost", "次の書き込みヘ移動" },
+
         { "GotoNew", "新着へ移動" },
         { "OpenParentBoard", ITEM_NAME_OPENBOARD },
         { "WriteMessage", ITEM_NAME_WRITEMSG },
 
         { "LiveStartStop", ITEM_NAME_LIVE },
 
-        { "SearchNextArticle", "次スレ検索" },
+        { "SearchNextArticle", ITEM_NAME_NEXTARTICLE },
         { "SearchWeb", "" },  //  CONTROL::get_keyconfig() で名前をセットする
         { "SearchTitle", "" }, //  CONTROL::get_keyconfig() で名前をセットする
         { "SearchCacheLocal", "ログ検索(対象: 板)" },

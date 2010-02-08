@@ -253,6 +253,7 @@ namespace CORE
         void slot_setup_boarditem();
         void slot_setup_articleitem();
         void slot_setup_msgitem();
+        void slot_setup_boarditem_menu();
         void slot_setup_articleitem_menu();
         //
         void slot_board_pref();

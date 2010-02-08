@@ -172,116 +172,10 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     m_treeview.signal_drag_data_get().connect( sigc::mem_fun(*this, &BoardViewBase::slot_drag_data_get ) );
     m_treeview.sig_dropped_uri_list().connect( sigc::mem_fun(*this, &BoardViewBase::slot_dropped_url_list ) );
 
-    // ポップアップメニューの設定
-    // アクショングループを作ってUIマネージャに登録
-    action_group() = Gtk::ActionGroup::create();
-    action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)" ),
-                         sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_AUTO ) );
-    action_group()->add( Gtk::Action::create( "SetBookMark", "しおりを設定(_S)" ),  // 未使用
-                         sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_SET ) );
-    action_group()->add( Gtk::Action::create( "UnsetBookMark", "しおりを解除(_U)" ),    // 未使用
-                         sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_UNSET ) );
-    action_group()->add( Gtk::Action::create( "OpenTab", "OpenArticleTab" ), sigc::mem_fun( *this, &BoardViewBase::slot_open_tab ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Article", "スレをお気に入りに追加(_F)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_thread ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに追加(_A)" ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_board ) );
-    action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動(_T)" ), sigc::mem_fun( *this, &BoardViewBase::goto_top ) );
-    action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動(_M)" ), sigc::mem_fun( *this, &BoardViewBase::goto_bottom ) );
-    action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
-    action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する(_D)" ), sigc::mem_fun( *this, &BoardViewBase::slot_delete_logs ) );
-    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)" ), sigc::mem_fun( *this, &BoardViewBase::open_selected_rows ) );
-    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_url ) );
-    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL + std::string( "(_L)" ) ),
-                         sigc::mem_fun( *this, &BoardViewBase::slot_copy_title_url ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
-                         sigc::mem_fun( *this, &BoardViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "AboneThread", "スレをあぼ〜んする(_N)" ), sigc::mem_fun( *this, &BoardViewBase::slot_abone_thread ) );
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
-                         sigc::mem_fun( *this, &BoardViewBase::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ(_O)..." ), sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT + std::string( "(_S)..." ) ),
-                         sigc::mem_fun( *this, &BoardViewBase::slot_save_dat ) );
-    action_group()->add( Gtk::Action::create( "SearchNextArticle", "次スレ検索"), sigc::mem_fun( *this, &BoardViewBase::slot_search_next ) );
+    // アクション初期化
+    setup_action();
 
-    ui_manager() = Gtk::UIManager::create();    
-    ui_manager()->insert_action_group( action_group() );
-
-    Glib::ustring str_ui = 
-    "<ui>"
-
-    // 通常
-    "<popup name='popup_menu'>"
-    "<menuitem action='BookMark'/>"
-    "<separator/>"
-    "<menuitem action='OpenTab'/>"
-    "<menuitem action='OpenBrowser'/>"
-    "<separator/>"
-    "<menuitem action='CopyURL'/>"
-    "<menuitem action='CopyTitleURL'/>"
-    "<separator/>"
-    "<menuitem action='SaveDat'/>"
-    "<menuitem action='Favorite_Article'/>"
-    "<menuitem action='SearchNextArticle'/>"
-    "<separator/>"
-    "<menuitem action='AboneThread'/>"
-    "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
-    "<separator/>"
-    "<menuitem action='PreferenceArticle'/>"
-    "<menuitem action='PreferenceBoard'/>"
-    "</popup>"
-
-
-    // 通常 + 複数
-    "<popup name='popup_menu_mul'>"
-    "<menuitem action='OpenRows'/>"
-    "<separator/>"
-    "<menuitem action='SetBookMark'/>"
-    "<menuitem action='UnsetBookMark'/>"
-    "<separator/>"
-    "<menuitem action='SaveDat'/>"
-    "<separator/>"
-    "<menuitem action='Favorite_Article'/>"
-    "<separator/>"
-    "<menuitem action='AboneThread'/>"
-    "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
-    "</popup>"
-
-
-    // お気に入りボタン押した時のメニュー
-    "<popup name='popup_menu_favorite'>"
-    "<menuitem action='Favorite_Article'/>"
-    "<menuitem action='Favorite_Board'/>"
-    "</popup>"
-
-    // お気に入りボタン押した時のメニュー( スレのみ )
-    "<popup name='popup_menu_favorite_article'>"
-    "<menuitem action='Favorite_Article'/>"
-    "</popup>"
-
-
-    // 削除ボタン押した時のメニュー
-    "<popup name='popup_menu_delete'>"
-    "<menuitem action='Delete'/>"
-    "</popup>"
-
-
-    "</ui>";
-
-    ui_manager()->add_ui_from_string( str_ui );
-
-    // ポップアップメニューにキーアクセレータを表示
-    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_mul" ) );
-    CONTROL::set_menu_motion( popupmenu );
-
-    // マウスジェスチォ可能
+    // マウスジェスチャ可能
     set_enable_mg( true );
 
     // コントロールモード設定
@@ -341,6 +235,234 @@ const int BoardViewBase::get_icon( const std::string& iconname )
 const std::string BoardViewBase::url_for_copy()
 {
     return DBTREE::url_boardbase( get_url_board() );
+}
+
+
+//
+// アクション初期化
+//
+void BoardViewBase::setup_action()
+{
+#ifdef _DEBUG    
+    std::cout << "BoardViewBase::setup_action\n";
+#endif
+
+    // アクショングループを作ってUIマネージャに登録
+    action_group() = Gtk::ActionGroup::create();
+    action_group()->add( Gtk::Action::create( "BookMark", ITEM_NAME_BOOKMARK + std::string( "(_B)" ) ),
+                         sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_AUTO ) );
+    action_group()->add( Gtk::Action::create( "SetBookMark", "しおりを設定(_S)" ),  // 未使用
+                         sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_SET ) );
+    action_group()->add( Gtk::Action::create( "UnsetBookMark", "しおりを解除(_U)" ),    // 未使用
+                         sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_UNSET ) );
+    action_group()->add( Gtk::Action::create( "OpenTab", "OpenArticleTab" ), sigc::mem_fun( *this, &BoardViewBase::slot_open_tab ) );
+    action_group()->add( Gtk::Action::create( "Favorite_Article", ITEM_NAME_FAVORITE_ARTICLE + std::string( "(_F)..." ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_favorite_thread ) );
+    action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに追加(_A)" ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_board ) );
+    action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動(_T)" ), sigc::mem_fun( *this, &BoardViewBase::goto_top ) );
+    action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動(_M)" ), sigc::mem_fun( *this, &BoardViewBase::goto_bottom ) );
+    action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
+    action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する(_D)" ), sigc::mem_fun( *this, &BoardViewBase::slot_delete_logs ) );
+    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)" ), sigc::mem_fun( *this, &BoardViewBase::open_selected_rows ) );
+    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_url ) );
+    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL + std::string( "(_L)" ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_copy_title_url ) );
+    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "AboneThread", ITEM_NAME_ABONE_ARTICLE + std::string( "(_N)" ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_abone_thread ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_preferences_article ) );
+    action_group()->add( Gtk::Action::create( "PreferenceBoard", ITEM_NAME_PREF_BOARD + std::string( "(_O)..." ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT + std::string( "(_S)..." ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "SearchNextArticle", ITEM_NAME_NEXTARTICLE ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_search_next ) );
+
+    // その他
+    action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC + std::string( "(_O)" ) ) );
+
+    ui_manager().clear();
+    ui_manager() = Gtk::UIManager::create();    
+    ui_manager()->insert_action_group( action_group() );
+
+    // 通常 + 複数
+    const std::string menu_mul =
+    "<popup name='popup_menu_mul'>"
+    "<menuitem action='OpenRows'/>"
+    "<separator/>"
+    "<menuitem action='SetBookMark'/>"
+    "<menuitem action='UnsetBookMark'/>"
+    "<separator/>"
+    "<menuitem action='SaveDat'/>"
+    "<separator/>"
+    "<menuitem action='Favorite_Article'/>"
+    "<separator/>"
+    "<menuitem action='AboneThread'/>"
+    "<separator/>"
+    "<menu action='Delete_Menu'>"
+    "<menuitem action='Delete'/>"
+    "</menu>"
+    "</popup>";
+
+    // お気に入りボタン押した時のメニュー
+    const std::string menu_favorite =
+    "<popup name='popup_menu_favorite'>"
+    "<menuitem action='Favorite_Article'/>"
+    "<menuitem action='Favorite_Board'/>"
+    "</popup>";
+
+    // お気に入りボタン押した時のメニュー( スレのみ )
+    const std::string menu_favorite_article =
+    "<popup name='popup_menu_favorite_article'>"
+    "<menuitem action='Favorite_Article'/>"
+    "</popup>";
+
+    // 削除ボタン押した時のメニュー
+    const std::string menu_delete = 
+    "<popup name='popup_menu_delete'>"
+    "<menuitem action='Delete'/>"
+    "</popup>";
+
+    ui_manager()->add_ui_from_string(
+        "<ui>"
+        + menu_mul
+        + menu_favorite
+        + menu_favorite_article
+        + menu_delete
+        + create_context_menu()
+        + "</ui>"
+        );
+
+    // ポップアップメニューにキーアクセレータを表示
+    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
+    CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_mul" ) );
+    CONTROL::set_menu_motion( popupmenu );
+}
+
+
+//
+// 通常の右クリックメニューの作成
+//
+const std::string BoardViewBase::create_context_menu()
+{
+    std::list< int > list_menu;
+
+    list_menu.push_back( ITEM_BOOKMARK );
+    list_menu.push_back( ITEM_OPENARTICLETAB );
+    list_menu.push_back( ITEM_OPEN_BROWSER );
+    list_menu.push_back( ITEM_COPY_URL );
+    list_menu.push_back( ITEM_COPY_TITLE_URL_THREAD );
+    list_menu.push_back( ITEM_SAVE_DAT );
+    list_menu.push_back( ITEM_FAVORITE_ARTICLE );
+    list_menu.push_back( ITEM_NEXTARTICLE );
+    list_menu.push_back( ITEM_ABONE_ARTICLE );
+    list_menu.push_back( ITEM_DELETE );
+    list_menu.push_back( ITEM_PREF_THREAD );
+    list_menu.push_back( ITEM_PREF_BOARD );
+
+    // メニューに含まれていない項目を抜き出して「その他」に含める
+    int num = 0;
+    for(;;){
+
+        const int item = SESSION::get_item_board_menu( num );
+
+        if( item == ITEM_END ) break;
+        list_menu.remove( item );
+
+        ++num;
+    }
+
+    std::string menu;
+    num = 0;
+    for(;;){
+
+        const int item = SESSION::get_item_board_menu( num );
+
+        if( item == ITEM_END ) break;
+        else if( item == ITEM_ETC && list_menu.size() ){
+            menu += std::string( "<menu action='Etc_Menu'>" );
+            std::list< int >::iterator it = list_menu.begin();
+            for( ; it != list_menu.end(); ++it ) menu += get_menu_item( *it );
+            menu += std::string( "</menu>" );
+        }
+        else menu += get_menu_item( item );
+
+        ++num;
+    }
+
+#ifdef _DEBUG
+    std::cout << "menu = " << menu << std::endl;
+#endif
+
+    return "<popup name='popup_menu'>" + menu + "</popup>";
+}
+
+
+const char* BoardViewBase::get_menu_item( const int item )
+{
+    switch( item ){
+
+        // しおりを設定/解除
+        case ITEM_BOOKMARK:
+            return "<menuitem action='BookMark'/>";
+
+            // タブでスレを開く
+        case ITEM_OPENARTICLETAB:
+            return "<menuitem action='OpenTab'/>";
+
+            // リンクをブラウザで開く
+        case ITEM_OPEN_BROWSER:
+            return "<menuitem action='OpenBrowser'/>";
+
+            // リンクのURLをコピー
+        case ITEM_COPY_URL:
+            return "<menuitem action='CopyURL'/>";
+
+            // スレのタイトルとURLをコピー
+        case ITEM_COPY_TITLE_URL_THREAD:
+            return "<menuitem action='CopyTitleURL'/>";
+
+            // dat 保存
+        case ITEM_SAVE_DAT:
+            return "<menuitem action='SaveDat'/>";
+
+            // スレをお気に入りに追加
+        case ITEM_FAVORITE_ARTICLE:
+            return "<menuitem action='Favorite_Article'/>";
+
+            // 次スレ検索
+        case ITEM_NEXTARTICLE:
+            return "<menuitem action='SearchNextArticle'/>";
+
+            // スレをあぼ〜んする"
+        case ITEM_ABONE_ARTICLE:
+            return "<menuitem action='AboneThread'/>";
+
+            // 削除
+        case ITEM_DELETE:
+            return
+            "<menu action='Delete_Menu'>"
+            "<menuitem action='Delete'/>"
+            "</menu>";
+
+            // スレのプロパティ
+        case ITEM_PREF_THREAD:
+            return "<menuitem action='PreferenceArticle'/>";
+
+            // 板のプロパティ
+        case ITEM_PREF_BOARD:
+            return "<menuitem action='PreferenceBoard'/>";
+
+            // 区切り
+        case ITEM_SEPARATOR:
+            return "<separator/>";
+    }
+
+    return "";
 }
 
 

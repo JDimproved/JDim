@@ -39,6 +39,12 @@ namespace DBIMG
     void create_root();
     void delete_root();
 
+    void clock_in();
+
+    // 読み込み待ちのためクロックを回すImgクラスをセット/リセット
+    void set_clock_in( Img* img );
+    void reset_clock_in( Img* img );
+
     // 画像データの先頭のシグネチャを見て画像のタイプを取得
     // 画像ではない場合は T_NOIMG を返す
     const int get_image_type( const unsigned char *sign );
@@ -61,6 +67,10 @@ namespace DBIMG
     // mosaic : モザイク表示するか
     void download_img( const std::string& url, const std::string& refurl, const bool mosaic );
 
+    // 時間差ロード
+    // first : 一番最初の画像か
+    void download_img_wait( const std::string& url, const std::string& refurl, const bool mosaic, const int first );
+
     void stop_load( const std::string& url );
     const bool save( const std::string& url, Gtk::Window* parent, const std::string& path_to );
     void delete_cache( const std::string& url );
@@ -72,6 +82,7 @@ namespace DBIMG
     const bool get_abone( const std::string& url ); 
     void set_abone( const std::string& url, bool abone ); 
     const bool is_loading( const std::string& url );
+    const bool is_wait( const std::string& url );
     const int get_code( const std::string& url );
     const std::string get_str_code( const std::string& url );
     const bool get_mosaic( const std::string& url );

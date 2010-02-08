@@ -36,7 +36,13 @@ namespace ARTICLE
 
     typedef sigc::signal< void, std::string, int > SIG_ON_URL;
     typedef sigc::signal< void > SIG_LEAVE_URL;
-    
+
+    struct URLINFO
+    {
+        std::string url;
+        int res_number;
+    };
+
     // 範囲選択用
     struct SELECTION
     {
@@ -45,6 +51,7 @@ namespace ARTICLE
         CARET_POSITION caret_to;
         std::string str;      // 現在の選択文字列
         std::string str_pre;  // 一つ前の選択文字列
+        std::vector< URLINFO > imgurls;// 選択範囲に含まれる画像URL
     };
 
     // 描画情報
@@ -232,6 +239,9 @@ namespace ARTICLE
 
         // 範囲選択を終了したレス番号
         const int get_selection_resnum_to();
+
+        // 範囲選択に含まれる画像URLのリスト
+        const std::vector< URLINFO >& get_selection_imgurls() const { return m_selection.imgurls; }
 
         const int get_seen_current() const { return m_seen_current; } // 現在見ているレスの番号
         const int get_goto_num_reserve() const { return m_goto_num_reserve; } // 初期化時のジャンプ予約(レス番号)

@@ -99,6 +99,9 @@ namespace CONTROL
 #define KEYCONF_PrevRes  "p"
 #define KEYCONF_NextRes  "n"
 
+#define KEYCONF_PrePost  "Ctrl+Shift+F2"
+#define KEYCONF_NextPost  "Shift+F2"
+
 #define KEYCONF_GotoNew  "F4"
 #define KEYCONF_WriteMessage  "w Alt+w"
 
