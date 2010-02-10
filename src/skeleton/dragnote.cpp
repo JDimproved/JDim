@@ -15,6 +15,8 @@
 
 #include "dndmanager.h"
 
+#include <cstring>
+
 using namespace SKELETON;
 
 DragableNoteBook::DragableNoteBook()
