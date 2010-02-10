@@ -286,6 +286,8 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Show_Mosaic", "モザイクで開く(_M)"), sigc::mem_fun( *this, &ArticleViewBase::slot_show_image_with_mosaic ) );
     action_group()->add( Gtk::Action::create( "Show_SelectImg", ITEM_NAME_SELECTIMG + std::string( "(_G)" ) )
                          , sigc::mem_fun( *this, &ArticleViewBase::slot_show_selection_images ) );
+    action_group()->add( Gtk::Action::create( "DeleteSelectImage_Menu", ITEM_NAME_SELECTDELIMG + std::string( "(_T)" ) ) );    
+    action_group()->add( Gtk::Action::create( "DeleteSelectImage", "削除する(_D)"), sigc::mem_fun( *this, &ArticleViewBase::slot_delete_selection_images ) );
     action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する(_P)", std::string(), false ),
@@ -473,6 +475,7 @@ const std::string ArticleViewBase::create_context_menu()
     list_menu.push_back( ITEM_FAVORITE );
     list_menu.push_back( ITEM_ABONE_SELECTION );
     list_menu.push_back( ITEM_SELECTIMG );
+    list_menu.push_back( ITEM_SELECTDELIMG );
     list_menu.push_back( ITEM_PREF_THREAD );
 
     // メニューに含まれていない項目を抜き出して「その他」に含める
@@ -633,6 +636,12 @@ const char* ArticleViewBase::get_menu_item( const int item )
             // 選択範囲の画像を開く
         case ITEM_SELECTIMG:
             return "<menuitem action='Show_SelectImg'/>";
+
+            // "選択範囲の画像を削除"
+        case ITEM_SELECTDELIMG:
+            return "<menu action='DeleteSelectImage_Menu'>"
+            "<menuitem action='DeleteSelectImage'/>"
+            "</menu>";
 
             // 区切り
         case ITEM_SEPARATOR:
@@ -2977,6 +2986,12 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
+    act = action_group()->get_action( "DeleteSelectImage_Menu" );
+    if( act ){
+        if( str_select.empty() || ! m_drawarea->get_selection_imgurls().size() ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     // 検索関係
     act = action_group()->get_action( "SearchWeb" );
     if( act ){
@@ -3899,6 +3914,29 @@ void ArticleViewBase::slot_show_selection_images()
             }
 
             if( open_imageview ) CORE::core_set_command( "open_image", url );
+        }
+
+        redraw_view();
+    }
+}
+
+
+//
+// 選択範囲の画像を削除
+//
+void ArticleViewBase::slot_delete_selection_images()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_delete_selection_images\n";
+#endif    
+
+    if( m_drawarea->get_selection_imgurls().size() ){
+
+        std::vector< URLINFO >::const_iterator it = m_drawarea->get_selection_imgurls().begin();
+        for( ; it != m_drawarea->get_selection_imgurls().end(); ++it ){
+
+            const std::string& url = (*it).url;
+            if( DBIMG::is_cached( url ) ) CORE::core_set_command( "delete_image", url );
         }
 
         redraw_view();

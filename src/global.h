@@ -94,7 +94,9 @@ enum{
 #define ITEM_NAME_USER_COMMAND      "ユーザコマンド"
 #define ITEM_NAME_ETC         "その他"
 #define ITEM_NAME_SAVE_DAT    "datを保存"
+
 #define ITEM_NAME_SELECTIMG "選択範囲の画像を開く"
+#define ITEM_NAME_SELECTDELIMG "選択範囲の画像を削除"
 
 #define ITEM_NAME_PREF_BOARD     "板のプロパティ"
 #define ITEM_NAME_PREF_THREAD    "スレのプロパティ"
@@ -173,7 +175,9 @@ enum
     ITEM_USER_COMMAND,
     ITEM_ETC,
     ITEM_SAVE_DAT,
+
     ITEM_SELECTIMG,
+    ITEM_SELECTDELIMG,
 
     ITEM_PREF_BOARD,
     ITEM_PREF_THREAD,

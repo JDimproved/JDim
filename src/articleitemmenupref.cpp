@@ -38,6 +38,7 @@ ArticleItemMenuPref::ArticleItemMenuPref( Gtk::Window* parent, const std::string
     append_default_pair( ITEM_NAME_FAVORITE );
     append_default_pair( ITEM_NAME_ABONE_SELECTION );
     append_default_pair( ITEM_NAME_SELECTIMG );
+    append_default_pair( ITEM_NAME_SELECTDELIMG );
     append_default_pair( ITEM_NAME_PREF_THREAD );
     
     append_default_pair( ITEM_NAME_SEPARATOR );
