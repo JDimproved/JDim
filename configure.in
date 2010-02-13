@@ -159,6 +159,17 @@ esac
 
 AM_CONDITIONAL(MAKE_WINDRES, test -n "$use_windres")
 
+dnl
+dnl X関連ライブラリ
+dnl
+X11_CFLAGS=""
+X11_LIBS=""
+
+if test -z "$use_windres" ; then
+PKG_CHECK_MODULES(X11, x11)
+AC_SUBST(X11_CFLAGS)
+AC_SUBST(X11_LIBS)
+fi
 
 dnl
 dnl セッション管理
@@ -261,6 +272,9 @@ case "${use_gnutls}" in
    echo "use gnutls"
    PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2] )
    AC_DEFINE(USE_GNUTLS, , "use gnutls")
+   AC_CHECK_HEADERS([gcrypt.h])
+   AC_CHECK_LIB(gcrypt, gcry_md_hash_buffer, [GCRYPT_LIBS=-lgcrypt])
+   GNUTLS_LIBS="$GNUTLS_LIBS $GCRYPT_LIBS"
    AC_SUBST(GNUTLS_CFLAGS)
    AC_SUBST(GNUTLS_LIBS)
    ;;

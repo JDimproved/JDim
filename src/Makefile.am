@@ -20,6 +20,9 @@ jd_LDADD = \
 	./control/libcontrol.a \
 	@LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @ONIG_LIBS@
 
+if ! MAKE_WINDRES
+jd_LDADD += @X11_LIBS@
+endif
 
 jd_SOURCES = \
 	main.cpp \

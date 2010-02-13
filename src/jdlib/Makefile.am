@@ -46,4 +46,7 @@ noinst_HEADERS = \
 	timeout.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@
+if ! MAKE_WINDRES
+AM_CXXFLAGS += @X11_CFLAGS@
+endif
 INCLUDES = -I$(top_srcdir)/src
