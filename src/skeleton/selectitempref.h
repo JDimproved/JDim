@@ -87,10 +87,6 @@ namespace SKELETON
         // widgetのパック
         void pack_widgets();
 
-        // 列に色を付ける
-        void on_cell_data_shown( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
-        void on_cell_data_hidden( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
-
         // フォーカスが外れたTreeViewから項目の選択をなくす
         bool slot_focus_in_shown( GdkEventFocus* event );
         bool slot_focus_in_hidden( GdkEventFocus* event );

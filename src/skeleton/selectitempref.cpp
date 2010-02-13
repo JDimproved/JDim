@@ -5,6 +5,7 @@
 
 #include "selectitempref.h"
 
+#include "config/globalconf.h"
 #include "jdlib/miscutil.h"
 
 #include "global.h"
@@ -38,6 +39,7 @@ void SelectItemPref::pack_widgets()
     // 同一カラムにアイコンと項目名の両方を表示するので、手動で列を作成する
 
     // 表示項目リスト
+    m_tree_shown.set_rules_hint( CONFIG::get_use_tree_gtkrc() );
     m_tree_shown.get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
     m_tree_shown.signal_focus_in_event().connect( sigc::mem_fun( *this, &SelectItemPref::slot_focus_in_shown ) );
     m_store_shown = Gtk::ListStore::create( m_columns_shown );
@@ -53,13 +55,6 @@ void SelectItemPref::pack_widgets()
     Gtk::CellRendererText* render_text_shown = Gtk::manage( new Gtk::CellRendererText() );
     view_column_shown->pack_start( *render_text_shown, true );
     view_column_shown->add_attribute( *render_text_shown, "text", 1 );
-    // 列の色分け
-    if( render_pixbuf_shown && render_text_shown )
-    {
-        Gtk::TreeView::Column* column = m_tree_shown.get_column( 0 );
-        column->set_cell_data_func( *render_pixbuf_shown, sigc::mem_fun( *this, &SelectItemPref::on_cell_data_shown ) );
-        column->set_cell_data_func( *render_text_shown, sigc::mem_fun( *this, &SelectItemPref::on_cell_data_shown ) );
-    }
 
 
     // ボタン(縦移動)
@@ -84,6 +79,7 @@ void SelectItemPref::pack_widgets()
 
 
     // 非表示項目リスト
+    m_tree_hidden.set_rules_hint( CONFIG::get_use_tree_gtkrc() );
     m_tree_hidden.get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
     m_tree_hidden.signal_focus_in_event().connect( sigc::mem_fun( *this, &SelectItemPref::slot_focus_in_hidden ) );
     m_store_hidden = Gtk::ListStore::create( m_columns_hidden );
@@ -99,13 +95,6 @@ void SelectItemPref::pack_widgets()
     Gtk::CellRendererText* render_text_hidden = Gtk::manage( new Gtk::CellRendererText() );
     view_column_hidden->pack_start( *render_text_hidden, true );
     view_column_hidden->add_attribute( *render_text_hidden, "text", 1 );
-    // 列の色分け
-    if( render_pixbuf_hidden && render_text_hidden )
-    {
-        Gtk::TreeView::Column* column = m_tree_hidden.get_column( 0 );
-        column->set_cell_data_func( *render_pixbuf_hidden, sigc::mem_fun( *this, &SelectItemPref::on_cell_data_hidden ) );
-        column->set_cell_data_func( *render_text_hidden, sigc::mem_fun( *this, &SelectItemPref::on_cell_data_hidden ) );
-    }
 
 
     // 全体のパッキング
@@ -139,36 +128,6 @@ void SelectItemPref::pack_widgets()
     get_vbox()->pack_start( m_hbox );
 
     show_all_children();
-}
-
-
-//
-// 列に色を付ける
-//
-void SelectItemPref::on_cell_data_shown( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
-{
-    if( ! cell || ! it ) return;
-
-    Gtk::TreeModel::Path path = m_store_shown->get_path( it );
-
-    if( ( path[ 0 ] % 2 ) )
-    {
-        cell->property_cell_background_gdk() = Gdk::Color( ROW_COLOR );
-    }
-    else cell->property_cell_background_set() = false;
-}
-
-void SelectItemPref::on_cell_data_hidden( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
-{
-    if( ! cell || ! it ) return;
-
-    Gtk::TreeModel::Path path = m_store_hidden->get_path( it );
-
-    if( ( path[ 0 ] % 2 ) )
-    {
-        cell->property_cell_background_gdk() = Gdk::Color( ROW_COLOR );
-    }
-    else cell->property_cell_background_set() = false;
 }
 
 
