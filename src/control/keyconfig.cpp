@@ -277,8 +277,18 @@ void KeyConfig::toggle_emacs_mode()
 // タブで開くキーを入れ替えているか
 const bool KeyConfig::is_toggled_tab_key()
 {
-    return ( get_str_motions( CONTROL::OpenArticleTab ).find( "Space" ) != std::string::npos
-             && get_str_motions( CONTROL::OpenArticleTab ).find( "Ctrl+Space" ) == std::string::npos );
+    const bool ret = ( get_str_motions( CONTROL::OpenBoard ).find( "Ctrl+Space" ) != std::string::npos
+                       && get_str_motions( CONTROL::OpenBoardTab ).find( "Space" ) != std::string::npos
+
+                       && get_str_motions( CONTROL::OpenArticle ).find( "Ctrl+Space" ) != std::string::npos
+                       && get_str_motions( CONTROL::OpenArticleTab ).find( "Space" ) != std::string::npos
+        );
+
+#ifdef _DEBUG
+    std::cout << "KeyConfig::is_toggled_tab_key ret = " << ret << std::endl;
+#endif
+
+    return ret;
 }
 
 
@@ -295,6 +305,7 @@ void KeyConfig::toggle_tab_key( const bool toggle )
 
         set_one_motion( "OpenBoard", "Ctrl+Space" );
         set_one_motion( "OpenBoardTab", "Space" );
+
         set_one_motion( "OpenArticle", "Ctrl+Space" );
         set_one_motion( "OpenArticleTab", "Space" );
     }
@@ -302,6 +313,7 @@ void KeyConfig::toggle_tab_key( const bool toggle )
 
         set_one_motion( "OpenBoard", "Space" );
         set_one_motion( "OpenBoardTab", "Ctrl+Space" );
+
         set_one_motion( "OpenArticle", "Space" );
         set_one_motion( "OpenArticleTab", "Ctrl+Space" );
     }

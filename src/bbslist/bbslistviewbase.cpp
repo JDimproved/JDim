@@ -1883,8 +1883,8 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
     const std::string str_mode = "";
 
-    Glib::ustring url = path2url( path );
-    int type = path2type( path );
+    const Glib::ustring url = path2url( path );
+    const int type = path2type( path );
 
     if( type != TYPE_DIR && url.empty() ) return false;
 

@@ -155,7 +155,18 @@ void ButtonConfig::set_one_motion_impl( const int id, const int mode, const std:
 // タブで開くボタンを入れ替えているか
 const bool ButtonConfig::is_toggled_tab_button()
 {
-    return ( get_str_motions( CONTROL::OpenArticleTabButton ).find( "Left" ) != std::string::npos );
+    const bool ret =  ( get_str_motions( CONTROL::OpenBoardButton ).find( "Mid" ) != std::string::npos
+                        && get_str_motions( CONTROL::OpenBoardTabButton ).find( "Left" ) != std::string::npos
+
+                        && get_str_motions( CONTROL::OpenArticleButton ).find( "Mid" ) != std::string::npos
+                        && get_str_motions( CONTROL::OpenArticleTabButton ).find( "Left" ) != std::string::npos
+        );
+
+#ifdef _DEBUG
+    std::cout << "KeyConfig::is_toggled_tab_button ret = " << ret << std::endl;
+#endif
+
+    return ret;
 }
 
 
@@ -172,6 +183,7 @@ void ButtonConfig::toggle_tab_button( const bool toggle )
 
         set_one_motion( "OpenBoardButton", "Mid" );
         set_one_motion( "OpenBoardTabButton", "Left" );
+
         set_one_motion( "OpenArticleButton", "Mid" );
         set_one_motion( "OpenArticleTabButton", "Left" );
     }
@@ -179,6 +191,7 @@ void ButtonConfig::toggle_tab_button( const bool toggle )
 
         set_one_motion( "OpenBoardButton", "Left" );
         set_one_motion( "OpenBoardTabButton", "Mid" );
+
         set_one_motion( "OpenArticleButton", "Left" );
         set_one_motion( "OpenArticleTabButton", "Mid" );
     }

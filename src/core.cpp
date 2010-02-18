@@ -524,7 +524,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     // マウス／キーボード
     m_action_group->add( Gtk::Action::create( "Mouse_Menu", "マウス／キーボード(_M)" ) );
 
-    bool toggled = CONTROL::is_toggled_tab_button() && CONTROL::is_toggled_tab_key();
+    const bool toggled = CONTROL::is_toggled_tab_button() && CONTROL::is_toggled_tab_key();
     m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "スレ一覧／スレビューを開く時に常に新しいタブで開く(_T)", std::string(), toggled ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
