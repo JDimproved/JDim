@@ -639,7 +639,9 @@ void ImageAdmin::close_nocached_views()
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
         if( view ){
             std::string url = view->get_url();
-            if( ! DBIMG::is_cached( url ) && ! DBIMG::is_loading ( url ) && DBIMG::get_code( url ) == HTTP_INIT ){
+            if( ! DBIMG::is_cached( url )
+                && ! DBIMG::is_loading ( url ) && ! DBIMG::is_wait ( url ) 
+                && DBIMG::get_code( url ) == HTTP_INIT ){
 #ifdef _DEBUG
                 std::cout << "close " << url << std::endl;
 #endif
