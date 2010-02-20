@@ -1048,6 +1048,7 @@ void ArticleBase::download_dat( const bool check_update )
         if( tv.tv_sec ) passed = MAX( 0, tv.tv_sec - m_check_update_time.tv_sec );
 
         if( ! SESSION::is_online()
+            || ! enable_check_update()
             || is_loading()
             || enable_load() // 既に新着あり状態の時はチェックしない
             || ( m_status & STATUS_OLD )
@@ -1234,7 +1235,8 @@ void ArticleBase::slot_load_finished()
 #endif
 
         // スレタブとお気に入りとスレ一覧のアイコンに更新マークをつける
-        if( m_code == HTTP_OK || m_code == HTTP_PARTIAL_CONTENT ){
+        if( m_code == HTTP_OK // まちBBSは206が返らない(200か304のみ)
+            || m_code == HTTP_PARTIAL_CONTENT ){
 
             show_updateicon( true );
 
@@ -1375,9 +1377,14 @@ void ArticleBase::slot_load_finished()
 
     else{
 
-        // スレが更新している場合はスレ情報を更新
-        if( m_number_new
+        // スレ情報を更新
+        if( m_number_new // スレが更新している場合
+
             || m_date_modified != m_old_modified // ときどき modified が誤って返るときがあるので最新の値を保存しておく
+
+            || ( SESSION::is_online() && ( m_status & STATUS_UPDATE )
+                 && ( m_code == HTTP_OK || m_code == HTTP_NOT_MODIFIED ) )  // 間違って更新可能マークが付いている場合はマークを消す
+
             ){
 
             m_cached = true;

@@ -10,6 +10,8 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 
+#include "config/globalconf.h"
+
 #include <sstream>
 
 using namespace DBTREE;
@@ -82,6 +84,13 @@ const std::string ArticleMachi::url_subbbscgi()
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
 }
 
+
+
+// offlawモードなら更新チェック可能
+const bool ArticleMachi::enable_check_update()
+{
+    return CONFIG::get_use_machi_offlaw();
+}
 
 
 NodeTreeBase* ArticleMachi::create_nodetree()

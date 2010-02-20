@@ -15,6 +15,7 @@
 #include "config/globalconf.h"
 
 #include "global.h"
+#include "httpcode.h"
 
 #include <sstream>
 
@@ -22,12 +23,19 @@
 using namespace DBTREE;
 
 
+enum
+{
+    BUF_SIZE_200 = 256
+};
+
+
 NodeTreeMachi::NodeTreeMachi( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
     , m_regex( 0 )
     , m_iconv( 0 )
-    , m_decoded_lines( 0 )
-    , m_buffer( 0 )
+    , m_decoded_lines( NULL )
+    , m_buffer( NULL )
+    , m_buffer_for_200( NULL )
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeMachi::NodeTreeMachi url = " << get_url() << " modified = " << date_modified << std::endl;
@@ -68,6 +76,9 @@ void NodeTreeMachi::clear()
 
     if( m_buffer ) free( m_buffer );
     m_buffer = NULL;
+
+    if( m_buffer_for_200 ) free( m_buffer_for_200 );
+    m_buffer_for_200 = NULL;
 }
 
 
@@ -92,6 +103,8 @@ void NodeTreeMachi::init_loading()
 
     if( ! m_decoded_lines ) m_decoded_lines = ( char* )malloc( BUF_SIZE_ICONV_OUT );
     if( ! m_buffer ) m_buffer = ( char* )malloc( BUF_SIZE_ICONV_OUT + 64 );
+
+    if( m_buffer_for_200 ) m_buffer_for_200[ 0 ] = '\0';
 
     m_tmp_buffer = std::string();
 }
@@ -320,4 +333,64 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
     m_decoded_lines[ byte ] = '\0';
 
     return m_decoded_lines;
+}
+
+
+
+//
+// ローダからデータ受け取り
+//
+void NodeTreeMachi::receive_data( const char* data, size_t size )
+{
+    // dat落ち判定用処理。 receive_finish() も参照
+    if( ! is_checking_update() && get_code() == HTTP_OK
+        && ( ! m_buffer_for_200 || m_buffer_for_200[ 0 ] == '\0' ) ){
+#ifdef _DEBUG
+        std::cout << "NodeTreeMachi::receive_data : save some bytes\n";
+#endif
+
+        if( ! m_buffer_for_200 ) m_buffer_for_200 = ( char* )malloc( BUF_SIZE_200 + 64 );
+        const int lng = MIN( size, BUF_SIZE_200 );
+        memcpy( m_buffer_for_200, data, lng );
+        m_buffer_for_200[ lng ] = '\0';
+    }
+
+    NodeTreeBase::receive_data( data, size );
+}
+
+
+//
+// ロード完了
+//
+void NodeTreeMachi::receive_finish()
+{
+#ifdef _DEBUG    
+    std::cout << "NodeTreeMachi::receive_finish : " << get_url() << std::endl
+              << " code = " << get_code() << std::endl;
+#endif
+
+    // dat落ち判定
+    if( m_buffer_for_200 && m_buffer_for_200[ 0 ] == '<' && ( m_buffer_for_200[ 1 ] == 'E' || m_buffer_for_200[ 1 ] == 'h' )
+        ){
+
+        int byte_lines;
+        std::string str_lines( m_iconv->convert( m_buffer_for_200, strlen( m_buffer_for_200 ), byte_lines ) );
+
+#ifdef _DEBUG    
+        std::cout << str_lines << std::endl;
+#endif
+
+        if( str_lines.find( "<ERROR>" ) != std::string::npos
+            || str_lines.find( "<html><head></head><body>\nなんらかの原因により、まちＢＢＳサーバ内にログを見つけることができませんでした。" ) != std::string::npos
+            ){
+
+#ifdef _DEBUG    
+            std::cout << "not found\n";
+#endif
+            set_code( HTTP_NOT_FOUND );
+            set_str_code( "Not Found" );
+        }
+    }
+
+    NodeTreeBase::receive_finish();
 }

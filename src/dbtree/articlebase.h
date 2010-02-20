@@ -378,6 +378,9 @@ namespace DBTREE
 
       private:
 
+        // 更新チェック可能
+        virtual const bool enable_check_update(){ return true; }
+
         // NodeTree作成
         // もしNodeTreeが作られていなかったら作成
         JDLIB::ConstPtr< NodeTreeBase >& get_nodetree();

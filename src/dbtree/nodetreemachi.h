@@ -24,6 +24,7 @@ namespace DBTREE
         JDLIB::Iconv* m_iconv;
         char* m_decoded_lines;
         char* m_buffer;
+        char* m_buffer_for_200;  // HTTP200が来た時のdat落ち判定用
 
         std::string m_tmp_buffer;
 
@@ -41,6 +42,9 @@ namespace DBTREE
         virtual void create_loaderdata( JDLIB::LOADERDATA& data );
         virtual char* process_raw_lines( char* rawlines );
         virtual const char* raw2dat( char* rawlines, int& byte );
+
+        virtual void receive_data( const char* data, size_t size );
+        virtual void receive_finish();
     };
 }
 

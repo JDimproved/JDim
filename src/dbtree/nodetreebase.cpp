@@ -1210,6 +1210,7 @@ void NodeTreeBase::receive_finish()
 
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::receive_finish lng = " << m_lng_dat
+              << " raw lng = " << current_length()
               << " code = " << get_code() << " " << get_str_code()
               << " modified = " << get_date_modified() << std::endl;
 #endif    

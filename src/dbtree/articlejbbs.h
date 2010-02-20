@@ -31,6 +31,9 @@ namespace DBTREE
 
       private:
         
+        // 更新チェック不可能
+        virtual const bool enable_check_update(){ return false; }
+
         virtual NodeTreeBase* create_nodetree();
     };
 }
