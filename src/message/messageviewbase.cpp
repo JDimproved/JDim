@@ -547,8 +547,7 @@ void MessageViewBase::write()
     }
 
     if( m_post && m_post->is_loading() ){
-        SKELETON::MsgDiag mdiag( get_parent_win(), "書き込み中です" );
-        mdiag.run();
+        m_post->show_writingdiag( true );
         return;
     }
 

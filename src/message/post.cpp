@@ -66,6 +66,10 @@ Post::~Post()
 
 void Post::clear()
 {
+#ifdef _DEBUG
+    std::cout << "Post::clear\n";
+#endif
+
     if( m_rawdata ) free( m_rawdata );
     m_rawdata = NULL;
 
@@ -75,12 +79,53 @@ void Post::clear()
 
 void Post::emit_sigfin()
 {
+#ifdef _DEBUG
+    std::cout << "Post::emit_sigfin\n";
+#endif
+
     m_sig_fin.emit();
 
     clear();
 
     if( m_writingdiag ) delete m_writingdiag;
     m_writingdiag = NULL;
+}
+
+
+//
+// 書き込み中ダイアログ表示
+//
+void Post::show_writingdiag( const bool show_buttons )
+{
+    Gtk::Window* toplevel = dynamic_cast< Gtk::Window* >( m_parent->get_toplevel() );
+    if( ! toplevel ) return;
+
+    Gtk::ButtonsType buttons = Gtk::BUTTONS_NONE;
+    if( show_buttons ) buttons = Gtk::BUTTONS_OK;
+
+    if( ! m_writingdiag ){
+        m_writingdiag = new SKELETON::MsgDiag( *toplevel, "書き込み中・・・", false, Gtk::MESSAGE_INFO, buttons, false );
+        m_writingdiag->signal_response().connect( sigc::mem_fun( *this, &Post::slot_response ) );
+    }
+    m_writingdiag->show();
+
+    // gtkのバージョンによってはラベルが選択状態になっている場合があるので
+    // 選択状態を解除する
+    Gtk::Label *label = dynamic_cast< Gtk::Label* >( m_writingdiag->get_focus() );
+    if( label ) label->set_selectable( false );
+}
+
+
+//
+// 書き込み中ダイアログのボタンを押した
+//
+void Post::slot_response( int id )
+{
+#ifdef _DEBUG
+    std::cout << "Post::slot_response id = " << id << std::endl;
+#endif
+
+    if( m_writingdiag ) m_writingdiag->hide();
 }
 
 
@@ -96,17 +141,7 @@ void Post::post_msg()
     m_lng_rawdata = 0;
 
     // 書き込み中ダイアログ表示
-    Gtk::Window* toplevel = dynamic_cast< Gtk::Window* >( m_parent->get_toplevel() );
-    if( ! CONFIG::get_hide_writing_dialog() && toplevel ){
-
-        if( ! m_writingdiag ) m_writingdiag = new SKELETON::MsgDiag( *toplevel, "書き込み中・・・", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, false );
-        m_writingdiag->show();
-
-        // gtkのバージョンによってはラベルが選択状態になっている場合があるので
-        // 選択状態を解除する
-        Gtk::Label *label = dynamic_cast< Gtk::Label* >( m_writingdiag->get_focus() );
-        if( label ) label->set_selectable( false );
-    }
+    if( ! CONFIG::get_hide_writing_dialog() ) show_writingdiag( false );
 
     JDLIB::LOADERDATA data;
 

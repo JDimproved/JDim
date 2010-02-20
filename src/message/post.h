@@ -51,10 +51,14 @@ namespace MESSAGE
 
         void post_msg();
 
+        // 書き込み中ダイアログ表示
+        void show_writingdiag( const bool show_buttons );
+
       private:
 
         void clear();
         void emit_sigfin();
+        void slot_response( int id );
 
         virtual void receive_data( const char* data, size_t size );
         virtual void receive_finish();
