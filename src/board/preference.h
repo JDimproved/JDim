@@ -92,7 +92,10 @@ namespace BOARD
         Gtk::HBox m_hbox_max;
         SKELETON::LabelEntry m_label_max_line;
         SKELETON::LabelEntry m_label_max_byte;
-        SKELETON::LabelEntry m_entry_max_res;
+
+        // 最大レス数
+        Gtk::Label m_label_maxres;
+        SKELETON::SpinButton m_spin_maxres;
 
         SKELETON::LabelEntry m_label_last_access;
 

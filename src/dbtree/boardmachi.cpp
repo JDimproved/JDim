@@ -19,11 +19,6 @@
 
 using namespace DBTREE;
 
-enum
-{
-    DEFAULT_NUMBER_MAX_MACHI = 1000 // 規定の最大レス数
-};
-
 
 BoardMachi::BoardMachi( const std::string& root, const std::string& path_board, const std::string& name )
     : BoardBase( root, path_board, name )
@@ -37,8 +32,6 @@ BoardMachi::BoardMachi( const std::string& root, const std::string& path_board, 
     set_ext( "" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く  
     set_charset( "MS932" );
-
-    set_number_max_res( DEFAULT_NUMBER_MAX_MACHI );
 }
 
 

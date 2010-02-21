@@ -401,6 +401,24 @@ void BoardBase::clear_all_post_history()
 }
 
 
+
+//
+// 最大レス数をセット
+//
+void BoardBase::set_number_max_res( const int number )
+{
+#ifdef _DEBUG
+    std::cout << "BoardBase::set_number_max_res " << m_number_max_res << " -> " << number << std::endl;
+#endif
+
+    m_number_max_res = MAX( 0, MIN( MAX_RESNUMBER, number ) );
+
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ) ( *it )->set_number_max( m_number_max_res );
+}
+
+
+
 //
 // 板情報の取得
 //
@@ -901,6 +919,8 @@ void BoardBase::download_subject( const std::string& url_update_view, const bool
     if( read_from_cache ) m_is_online = false;
     else m_is_online = SESSION::is_online();
 
+    m_is_booting = SESSION::is_booting();
+
     // オフライン
     if( ! m_is_online  ){
 
@@ -1150,7 +1170,7 @@ void BoardBase::receive_finish()
     // 一度全てのarticleをdat落ち状態にして subject.txt に
     // 含まれているものだけ regist_article()の中で通常状態にする
     if( m_is_online
-        || SESSION::is_booting() // ブート中の時も状態を変えないと起動直後にスレ一覧を復元した時にdat落ちしたスレが表示されない
+        || m_is_booting // ブート中の時も状態を変えないと起動直後にスレ一覧を復元した時にdat落ちしたスレが表示されない
         ){  
 
         ArticleHashIterator it = m_hash_article->begin();
@@ -1162,6 +1182,8 @@ void BoardBase::receive_finish()
             ( *it )->set_status( status );
         }
     }
+
+    m_is_booting = false;
 
     regist_article( m_is_online );
 
@@ -1865,6 +1887,9 @@ void BoardBase::read_board_info()
     // ステータス
     m_status = cf.get_option_int( "status", STATUS_UNKNOWN, 0, 8192 );
 
+    // 最大レス数
+    m_number_max_res = cf.get_option_int( "max_res", get_default_number_max_res(), 0, MAX_RESNUMBER );
+
 #ifdef _DEBUG
     std::cout << "modified = " << get_date_modified() << std::endl;
 #endif
@@ -1951,7 +1976,8 @@ void BoardBase::save_jdboard_info()
          << "samba_sec = " << m_samba_sec << std::endl
          << "live_sec = " << m_live_sec << std::endl
          << "last_access_time = " << m_last_access_time << std::endl
-         << "status = " << m_status
+         << "status = " << m_status << std::endl
+         << "max_res = " << m_number_max_res << std::endl
     ;
 
     CACHE::save_rawdata( path_info, sstr.str() );

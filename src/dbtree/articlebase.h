@@ -56,7 +56,7 @@ namespace DBTREE
         int m_number_load;           // キャッシュにあるレスの数
         int m_number_before_load;    // ロード前のレスの数( m_number_new を計算するのに使う )
         int m_number_seen;           // どこまで読んだか
-        int m_number_max;            // 規定の最大レス数
+        int m_number_max;            // 規定の最大レス数(0:未設定)
         struct timeval m_access_time;  // ユーザが最後にロードした時間
         struct timeval m_check_update_time;  // 最終更新チェック時間
         struct timeval m_write_time;   // 最終書き込み時間
@@ -137,9 +137,8 @@ namespace DBTREE
         const int get_number_new() const { return m_number_new; }
         const int get_number_load() const { return m_number_load; }
         const int get_number_seen() const{  return m_number_seen; }
-        const int get_number_max() const { return m_number_max; }
 
-        void set_number_max( const int number ){ if( number > 0 ) m_number_max = number; }
+        void set_number_max( const int number ){ m_number_max = number; }
 
         // スレ速度
         const int get_speed();

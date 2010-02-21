@@ -44,7 +44,6 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
       m_label_noname( false, "デフォルト名無し：", DBTREE::default_noname( get_url() ) ),
       m_label_max_line( false, "1レスの最大改行数：" ),
       m_label_max_byte( false, "1レスの最大バイト数：" ),
-      m_entry_max_res( false, "最大レス数：" ),
       m_label_last_access( false, "最終アクセス日時 ：" ),
       m_label_modified( false, "最終更新日時 ：" ),
       m_button_clearmodified( "日時クリア" ),
@@ -128,14 +127,19 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     // 一般ページのパッキング
     m_label_max_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
     m_label_max_byte.set_text( MISC::itostr( DBTREE::message_count( get_url() ) ) );
-
-    int max_res = DBTREE::board_get_number_max_res( get_url() );
-    if( ! max_res ) m_entry_max_res.set_text( "未設定 " );
-    else m_entry_max_res.set_text( MISC::itostr( max_res ) );
-
     m_hbox_max.pack_start( m_label_max_line );
     m_hbox_max.pack_start( m_label_max_byte );
-    m_hbox_max.pack_start( m_entry_max_res );
+
+    // 最大レス数
+    const int max_res = DBTREE::board_get_number_max_res( get_url() );
+    m_label_maxres.set_text( "最大レス数 (0 : 未設定)：" );
+    m_spin_maxres.set_range( 0, MAX_RESNUMBER );
+    m_spin_maxres.set_increments( 1, 1 );
+    m_spin_maxres.set_value( max_res );
+    m_spin_maxres.set_sensitive( true );
+
+    m_hbox_max.pack_start( m_label_maxres, Gtk::PACK_SHRINK );
+    m_hbox_max.pack_start( m_spin_maxres, Gtk::PACK_SHRINK );
 
     const time_t last_access = DBTREE::board_last_access_time( get_url() );
     if( last_access ) m_label_last_access.set_text(
@@ -436,6 +440,10 @@ void Preferences::slot_ok_clicked()
     if( m_check_live.get_active() ) live_sec = m_spin_live.get_value_as_int();
     DBTREE::board_set_live_sec( get_url(), live_sec );
     CORE::core_set_command( "redraw_article_toolbar" );
+
+    // 最大レス数
+    const int number_max_res = m_spin_maxres.get_value_as_int();
+    DBTREE::board_set_number_max_res( get_url(), number_max_res );
 
     DBTREE::board_save_info( get_url() );
 }

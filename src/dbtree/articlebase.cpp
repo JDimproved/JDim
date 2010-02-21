@@ -72,7 +72,7 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_number_load( 0 ),
       m_number_before_load( 0 ),
       m_number_seen( 0 ),
-      m_number_max( MAX_RESNUMBER ),
+      m_number_max( 0 ),
       m_write_fixname( 0 ),
       m_write_fixmail( 0 ),
       m_abone_transparent( false ),
@@ -581,11 +581,16 @@ const bool ArticleBase::enable_load()
 //
 const bool ArticleBase::is_finished()
 {
+    if( is_cached() && ! enable_load() &&  m_number_max && get_number_seen() >= m_number_max ){
+
 #ifdef _DEBUG
-    if( get_number_seen() >= get_number_max() ) std::cout << is_cached() << " " << !enable_load() << " " << get_number_seen() << " " << get_subject() << std::endl;
+        std::cout << "ArticleBase::is_finished :  seen = " << get_number_seen() << " max = " << m_number_max << " : " << get_subject() << std::endl;
 #endif
 
-    return ( is_cached() && ! enable_load() && get_number_seen() >= get_number_max() );
+        return true;
+    }
+
+    return false;
 }
 
 

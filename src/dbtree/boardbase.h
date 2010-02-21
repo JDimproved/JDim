@@ -77,6 +77,9 @@ namespace DBTREE
         // subjectダウンロード指示時(BoardBase::download_subject)にオンラインだったか
         bool m_is_online;
 
+        // subjectダウンロード指示時(BoardBase::download_subject)にブート中だったか
+        bool m_is_booting;
+
         // ビュワーでソートをする列番号、ソード順
         int m_view_sort_column;
         int m_view_sort_mode;
@@ -478,7 +481,7 @@ namespace DBTREE
 
         // 最大レス数
         const int get_number_max_res() const{ return m_number_max_res; }
-        void set_number_max_res( const int number ){ m_number_max_res = number; }
+        void set_number_max_res( const int number );
 
         // 板情報の取得
         virtual void read_info();
@@ -510,6 +513,9 @@ namespace DBTREE
       private:
 
         void clear();
+
+        // デフォルト最大レス数( 0 : 未設定 )
+        virtual const int get_default_number_max_res(){ return 0; }
 
         // キャッシュのファイル名が正しいかどうか
         virtual bool is_valid( const std::string& filename ){ return false; }

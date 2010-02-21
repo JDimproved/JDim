@@ -11,6 +11,11 @@
 
 namespace DBTREE
 {
+    enum
+    {
+        DEFAULT_NUMBER_MAX_2CH = 1000  // デフォルト最大レス数
+    };
+
     class Board2ch : public Board2chCompati
     {
       public:
@@ -49,6 +54,9 @@ namespace DBTREE
 
 
       private:
+
+        // デフォルト最大レス数
+        virtual const int get_default_number_max_res() { return DEFAULT_NUMBER_MAX_2CH; }
 
         virtual ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached );
     };

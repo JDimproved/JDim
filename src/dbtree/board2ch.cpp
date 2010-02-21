@@ -22,20 +22,12 @@
 using namespace DBTREE;
 
 
-enum
-{
-    DEFAULT_NUMBER_MAX_2CH = 1000  // 規定の最大レス数
-};
-
-
 Board2ch::Board2ch( const std::string& root, const std::string& path_board, const std::string& name )
     : Board2chCompati( root, path_board, name, std::string() )
 {
 #ifdef _DEBUG
     std::cout << "Board2ch::Board2ch\n";
 #endif
-
-    set_number_max_res( DEFAULT_NUMBER_MAX_2CH );
 }
 
 
