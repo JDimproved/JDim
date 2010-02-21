@@ -159,17 +159,23 @@ esac
 
 AM_CONDITIONAL(MAKE_WINDRES, test -n "$use_windres")
 
+
 dnl
 dnl X関連ライブラリ
 dnl
 X11_CFLAGS=""
 X11_LIBS=""
 
-if test -z "$use_windres" ; then
-PKG_CHECK_MODULES(X11, x11)
-AC_SUBST(X11_CFLAGS)
-AC_SUBST(X11_LIBS)
-fi
+case "${host_os}" in 
+ mingw*)
+   ;;
+ *)
+   PKG_CHECK_MODULES(X11, x11)
+   AC_SUBST(X11_CFLAGS)
+   AC_SUBST(X11_LIBS)
+   ;;
+esac
+
 
 dnl
 dnl セッション管理

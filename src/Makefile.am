@@ -18,11 +18,8 @@ jd_LDADD = \
 	./sound/libsound.a \
 	./xml/libxml.a \
 	./control/libcontrol.a \
-	@LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @ONIG_LIBS@
+	@LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @ONIG_LIBS@ @X11_LIBS@
 
-if ! MAKE_WINDRES
-jd_LDADD += @X11_LIBS@
-endif
 
 jd_SOURCES = \
 	main.cpp \
