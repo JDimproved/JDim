@@ -5,7 +5,11 @@
 enum
 {
     MAX_TEXT = 256,
+#ifdef _WIN32
+    BROWSER_NUM = 5
+#else
     BROWSER_NUM = 6
+#endif
 };
 
 namespace CORE
@@ -14,11 +18,10 @@ namespace CORE
 
         { "ユーザ設定", "" },
 #ifdef _WIN32
-        { "ie",    "C:/Program\\ Files/Internet\\ Explorer/iexplore.exe \"%LINK\"" },
-        { "firefox 1.5/2.0/3.0 以降", "C:/Program\\ Files/Mozilla\\ Firefox/firefox.exe \"%LINK\"" },
-        { "firefox 1.0*", "C:/Program\\ Files/Mozilla\\ Firefox/firefox.exe -remote \"openURL(%LINK,new-tab)\"" },
-        { "opera 9.*",    "C:/Program\\ Files/Opera/opera.exe \"%LINK\"" },
-        { "chrome",    "" }
+        { "ie",    "\"C:/Program Files/Internet Explorer/iexplore.exe\" \"%LINK\"" },
+        { "firefox 1.5/2.0/3.0 以降", "\"C:/Program Files/Mozilla Firefox/firefox.exe\" \"%LINK\"" },
+        { "firefox 1.0*", "\"C:/Program Files/Mozilla Firefox/firefox.exe\" -remote \"openURL(%LINK,new-tab)\"" },
+        { "opera 9.*",    "\"C:/Program Files/Opera/opera.exe\" \"%LINK\"" }
 #else
         { "標準ブラウザ(xdg-open)",    "xdg-open \"%LINK\"" },
         { "firefox 1.5/2.0/3.0 以降", "firefox \"%LINK\"" },
