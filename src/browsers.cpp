@@ -27,7 +27,7 @@ namespace CORE
         { "firefox 1.5/2.0/3.0 以降", "firefox \"%LINK\"" },
         { "firefox 1.0*", "firefox -remote \"openURL(%LINK,new-tab)\"" },
         { "opera 9.*",    "opera -remote \"openURL(%LINK,new-tab)\"" },
-        { "chrome",    "google-chrome %U -open \"%LINK\"" }
+        { "chrome",    "google-chrome \"%LINK\"" }
 #endif
     };
 
