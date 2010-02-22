@@ -1496,6 +1496,14 @@ const bool DrawAreaBase::draw_screen( const int y, const int height )
     if( ! m_window ) return false;
     if( m_view.get_height() < LAYOUT_MIN_HEIGHT ) return false; // まだ画面に表示されていない
 
+    // スクロールしていない 
+    if( ! height && m_pre_pos_y != -1 ){  
+
+        const int pos_y = get_vscr_val();
+        const int dy = pos_y - m_pre_pos_y;
+        if( ! dy ) return false;
+    }
+
     // キューに expose イベントが溜まっている時は全画面再描画
     Gdk::Region rg = m_window->get_update_area();
     if( rg.gobj() ){
@@ -4333,7 +4341,7 @@ bool DrawAreaBase::slot_leave_notify_event( GdkEventCrossing* event )
 bool DrawAreaBase::slot_visibility_notify_event(GdkEventVisibility* event)
 {
 #ifdef _DEBUG
-    std::cout << "slot_visibility_notify_event\n";
+    std::cout << "DrawAreaBase::slot_visibility_notify_event\n";
 #endif
 
     m_scroll_window = false;
