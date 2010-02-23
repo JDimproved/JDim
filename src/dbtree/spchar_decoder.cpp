@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 
-bool check_spchar( const char* n_in, const char* spchar )
+const bool check_spchar( const char* n_in, const char* spchar )
 {
     int i = 0;
     while( spchar[ i ] != '\0' ){
@@ -33,10 +33,11 @@ bool check_spchar( const char* n_in, const char* spchar )
 // n_in : 入力で使用した文字数が返る
 // out_char : 出力文字列
 // n_out : 出力した文字数が返る
+// only_check : チェックのみ実施 ( out_char は NULL でも可 )
 //
 // 戻り値 : node.h で定義したノード番号
 //
-const int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out )
+const int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
 {
     int ret = DBTREE::NODE_TEXT;
     int lng = 0;
@@ -81,6 +82,8 @@ const int decode_char_number( const char* in_char, int& n_in,  char* out_char, i
         }
     }
 
+    if( only_check ) return ret;
+
     memcpy( str_num, in_char + offset, lng );
     str_num[ lng ] = '\0';
 
@@ -112,6 +115,7 @@ const int decode_char_number( const char* in_char, int& n_in,  char* out_char, i
     }
 
     n_in = offset + lng + 1;
+    if( out_char ) out_char[ n_out ] = '\0';
 
     return ret;
 }    
@@ -124,26 +128,29 @@ const int decode_char_number( const char* in_char, int& n_in,  char* out_char, i
 // n_in : 入力で使用した文字数が返る
 // out_char : 出力文字列
 // n_out : 出力した文字数が返る
+// only_check : チェックのみ実施 ( out_char は NULL でも可 )
 //
 // 戻り値 : node.h で定義したノード番号
 //
-const int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out )
+const int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
 {
+    // 数字参照 &#数字;
+    if( in_char[ 1 ] == '#' ) return decode_char_number( in_char, n_in, out_char, n_out, only_check );
+
+    // 文字参照 -> ユニコード変換
     int ret = DBTREE::NODE_TEXT;
     n_in = n_out = 0;
 
-    // 数字参照 &#数字;
-    if( in_char[ 1 ] == '#' ) ret = decode_char_number( in_char, n_in, out_char, n_out );
+    int i = 0;
+    for(;;){
 
-    // 文字参照 -> ユニコード変換
-    else{
+        const int ucs = ucstbl[ i ].ucs;
+        if( ! ucs ) break;
+        if( in_char[ 1 ] == ucstbl[ i ].str[ 0 ] ){
 
-        int i = 0;
-        for(;;){
-
-            int ucs = ucstbl[ i ].ucs;
-            if( ! ucs ) break;
             if( check_spchar( in_char +1, ucstbl[ i ].str ) ){
+
+                if( only_check ) return ret;
 
                 n_in = strlen( ucstbl[ i ].str ) +1;
 
@@ -153,11 +160,13 @@ const int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, 
 
                 break;
             }
-            ++i;
         }
+
+        ++i;
     }
 
-    if( !n_in ) ret = NODE_NONE;
-    out_char[ n_out ] = '\0';
+    if( !n_in ) ret = DBTREE::NODE_NONE;
+    if( out_char ) out_char[ n_out ] = '\0';
+
     return ret;
 }

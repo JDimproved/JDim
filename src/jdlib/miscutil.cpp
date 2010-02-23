@@ -729,7 +729,7 @@ const std::string MISC::html_escape( const std::string& str, const bool include_
             const int bufsize = 64;
             char out_char[ bufsize ];
             int n_in, n_out;
-            DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out );
+            DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out, false );
 
             if( n_out ) str_out += tmpchar;
             else str_out += "&amp;";
@@ -767,7 +767,7 @@ const std::string MISC::html_unescape( const std::string& str )
         const int bufsize = 64;
         char out_char[ bufsize ];
         int n_in, n_out;
-        DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out );
+        DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out, false );
 
         if( n_out ){
             str_out += out_char;

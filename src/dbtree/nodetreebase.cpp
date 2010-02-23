@@ -1841,7 +1841,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
                 int n_in = 0;
                 int n_out = 0;
-                DBTREE::decode_char( "&#12539;", n_in, m_parsed_text + lng_text, n_out );
+                DBTREE::decode_char( "&#12539;", n_in, m_parsed_text + lng_text, n_out, false );
                 lng_text += n_out;
             }
 
@@ -1974,7 +1974,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
         // 特殊文字デコード
         if( *pos == '&' ){
 
-            int ret_decode = DBTREE::decode_char( pos, n_in, m_parsed_text + lng_text, n_out );
+            int ret_decode = DBTREE::decode_char( pos, n_in, m_parsed_text + lng_text, n_out, false );
 
             if( ret_decode != NODE_NONE ){
 
@@ -2294,44 +2294,24 @@ const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n
     // リンクの長さを取得
     n_in = delim_pos;
     bool url_encode = false;
+    int n_in_tmp, n_out_tmp;
     char cchar = *( str_in + n_in );
+
     while(
+
         // バッファサイズを超えない
         n_in < lng_in
+
         // URLとして扱う文字かどうか
         && MISC::is_url_char( &cchar, loose_url )
+
         // HTML特殊文字は除く( &〜; )
         && ! (
             *( str_in + n_in ) == '&'
-            && (
-                 (
-                   // quot;
-                   *( str_in + n_in + 1 ) == 'q'
-                   && *( str_in + n_in + 2 ) == 'u'
-                   && *( str_in + n_in + 3 ) == 'o'
-                   && *( str_in + n_in + 4 ) == 't'
-                   && *( str_in + n_in + 5 ) == ';'
-                 ) || (
-                   // nbsp;
-                   *( str_in + n_in + 1 ) == 'n'
-                   && *( str_in + n_in + 2 ) == 'b'
-                   && *( str_in + n_in + 3 ) == 's'
-                   && *( str_in + n_in + 4 ) == 'p'
-                   && *( str_in + n_in + 5 ) == ';'
-                 ) || (
-                   // lt;
-                   *( str_in + n_in + 1 ) == 'l'
-                   && *( str_in + n_in + 2 ) == 't'
-                   && *( str_in + n_in + 3 ) == ';'
-                 ) || (
-                   // gt;
-                   *( str_in + n_in + 1 ) == 'g'
-                   && *( str_in + n_in + 2 ) == 't'
-                   && *( str_in + n_in + 3 ) == ';'
-                 )
+            && DBTREE::decode_char( str_in + n_in, n_in_tmp, NULL, n_out_tmp, true ) != DBTREE::NODE_NONE
             )
-        )
-    ){
+        ){
+
         // "^"と"|"はエンコードする
         // "[]"はダウンローダに渡す用途のためにエンコードしないでおく
         if( loose_url && ( cchar == '^' || cchar == '|' ) ) url_encode = true;
