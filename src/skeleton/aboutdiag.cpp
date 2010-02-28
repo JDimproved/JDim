@@ -104,17 +104,20 @@ void AboutDiag::init()
         m_hbox_url.pack_start( m_button_website, Gtk::PACK_EXPAND_PADDING );
         m_vbox_info.pack_start( m_hbox_url, Gtk::PACK_SHRINK );
     }
+    m_vbox_info.set_border_width( CONFIG::get_view_margin() );
     m_notebook.append_page( m_vbox_info, m_label_tab_info );
 
     // ライセンスタブの追加
     if( ! get_license().empty() )
     {
         m_label_tab_license.set_label( "ライセンス" );
+        m_scrollwindow_license.set_border_width( CONFIG::get_view_margin() );
         m_notebook.append_page( m_scrollwindow_license, m_label_tab_license );
     }
 
     // 動作環境タブの追加
     m_label_tab_environment.set_label( "動作環境" );
+    m_vbox_environment.set_border_width( CONFIG::get_view_margin() );
     m_notebook.append_page( m_vbox_environment, m_label_tab_environment );
 
     // 動作環境一覧
