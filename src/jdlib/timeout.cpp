@@ -8,7 +8,6 @@
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
-#define TIMEOUT_INIT_RETRY 5
 #endif
 
 using namespace JDLIB;
