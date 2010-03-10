@@ -449,6 +449,9 @@ void CONFIG::set_use_machi_offlaw( const bool set ){ get_confitem()->use_machi_o
 const bool CONFIG::get_show_del_written_thread_diag(){ return get_confitem()->show_del_written_thread_diag; }
 void CONFIG::set_del_written_thread_diag( const bool set ){ get_confitem()->show_del_written_thread_diag = set; }
 
+// FIFOの作成などにエラーがあったらダイアログを表示する
+const bool CONFIG::get_show_diag_fifo_error(){ return get_confitem()->show_diag_fifo_error; }
+void CONFIG::set_show_diag_fifo_error( const bool set ){ get_confitem()->show_diag_fifo_error = set; }
 
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }

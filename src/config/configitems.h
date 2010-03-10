@@ -406,6 +406,9 @@ namespace CONFIG
         // 書き込み履歴のあるスレを削除する時にダイアログを表示
         bool show_del_written_thread_diag;
 
+        // FIFOの作成などにエラーがあったらダイアログを表示する
+        bool show_diag_fifo_error;
+
 #ifdef HAVE_MIGEMO_H
         // migemo-dictの場所
         std::string migemodict_path;

@@ -537,14 +537,30 @@ int main( int argc, char **argv )
             if( ret != Gtk::RESPONSE_YES ) return 0;
         }
     }
-    // FIFOに問題がある
+    // FIFOに問題がある(FATで作成出来ないなど)
     else
     {
-        Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( CACHE::path_lock() + "の作成またはオープンに問題があります。起動しますか？",
-                                                            false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-        int ret = mdiag->run();
-        delete mdiag;
-        if( ret != Gtk::RESPONSE_YES ) return 1;
+        if( CONFIG::get_show_diag_fifo_error() )
+        {
+            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( CACHE::path_lock() + "の作成またはオープンに問題があります。このまま起動しますか？",
+                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+
+            Gtk::CheckButton chk_button( "今後表示しない" );
+            mdiag->get_vbox()->pack_start( chk_button, Gtk::PACK_SHRINK );
+            chk_button.show();
+
+            const int ret = mdiag->run();
+
+            CONFIG::set_show_diag_fifo_error( ! chk_button.get_active() );
+
+            delete mdiag;
+
+            if( ret != Gtk::RESPONSE_YES )
+            {
+                CONFIG::save_conf();
+                return 1;
+            }
+        }
     }
 #endif
 

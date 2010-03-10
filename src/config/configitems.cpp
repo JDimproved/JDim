@@ -488,6 +488,9 @@ const bool ConfigItems::load( const bool restore )
     // 書き込み履歴のあるスレを削除する時にダイアログを表示
     show_del_written_thread_diag = cf.get_option_bool( "show_del_written_thread_diag", CONF_SHOW_DEL_WRITTEN_THREAD_DIAG );
 
+    // FIFOの作成などにエラーがあったらダイアログを表示する
+    show_diag_fifo_error = cf.get_option_bool( "show_diag_fifo_error", CONF_SHOW_DIAG_FIFO_ERROR );
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     migemodict_path = cf.get_option_str( "migemodict_path", CONF_MIGEMO_PATH );
@@ -775,6 +778,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "disable_close", disable_close );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
     cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );
+    cf.update( "show_diag_fifo_error", show_diag_fifo_error );
 
 #ifdef HAVE_MIGEMO_H
     cf.update( "migemodict_path", migemodict_path );

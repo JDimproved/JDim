@@ -462,6 +462,10 @@ namespace CONFIG
     const bool get_show_del_written_thread_diag();
     void set_del_written_thread_diag( const bool set );
 
+    // FIFOの作成などにエラーがあったらダイアログを表示する
+    const bool get_show_diag_fifo_error();
+    void set_show_diag_fifo_error( const bool set );
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     const std::string& get_migemodict_path();
