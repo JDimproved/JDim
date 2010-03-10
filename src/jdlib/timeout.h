@@ -16,11 +16,10 @@ namespace JDLIB
         sigc::slot< bool > m_slot_timeout;
 #ifdef _WIN32
         Glib::RefPtr<Glib::MainContext> m_context;
-        UINT m_idevent;
+        UINT_PTR m_identifer;
         
-        static UINT s_idcapacity;
-        static HWND s_hwnd;
-        static std::vector< Timeout* > s_timeouts;
+        static Glib::StaticMutex s_lock;
+        static std::map< UINT_PTR, Timeout* > s_timeouts;
 #else
         sigc::connection m_connection;
 #endif
@@ -34,8 +33,8 @@ namespace JDLIB
         Timeout( const sigc::slot< bool > slot_timeout );
         
 #ifdef _WIN32
-        void slot_timeout_call();
-        static VOID CALLBACK slot_timeout_win32( HWND, UINT, UINT, DWORD );
+        void slot_timeout_callback();
+        static VOID CALLBACK slot_timeout_win32( HWND, UINT, UINT_PTR, DWORD );
 #endif
     };
 }

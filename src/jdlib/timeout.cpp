@@ -8,47 +8,41 @@
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
+#define TIMEOUT_INIT_RETRY 5
 #endif
 
 using namespace JDLIB;
 
 #ifdef _WIN32
 // static
-HWND Timeout::s_hwnd;
-UINT Timeout::s_idcapacity;
-std::vector< Timeout* > Timeout::s_timeouts;
+Glib::StaticMutex Timeout::s_lock = GLIBMM_STATIC_MUTEX_INIT;
+std::map< UINT_PTR, Timeout* > Timeout::s_timeouts;
 #endif
 
+/*
+ * Glib::signal_timeout()はタイムアウトのタイミングを得るために、インターバルに応じたsleepで
+ * g_get_current_time()を呼んで時刻取得することで、タイミングを得ている
+ * マイクロ秒オーダのインターバルでは、Windowsでの時刻取得にかかる負荷は無視できないので、
+ * Windowsタイマーに基づいてタイムアウトを発生させる
+*/
 // private
 Timeout::Timeout( const sigc::slot< bool > slot_timeout )
+    : m_slot_timeout( slot_timeout )
 {
-    m_slot_timeout = slot_timeout;
 #ifdef _WIN32
     m_context = Glib::MainContext::get_default();
-    if( ! s_hwnd )
-    {
-        Glib::ListHandle< Glib::RefPtr<Gdk::Window> > windows = Gdk::Window::get_toplevels();
-        if( ! windows.empty() )
-        {
-            // Gdk::Window will be get named gdkWindowTemp
-            Glib::RefPtr<Gdk::Window> p_win = *( windows.begin() );
-            s_hwnd = static_cast<HWND>( GDK_WINDOW_HWND( p_win->gobj() ));
-            s_idcapacity = 0;
-        }
-        else
-        {
-            MISC::ERRMSG( "hwnd empty" );
-            assert( s_hwnd );
-        }
-    }
 #endif
 }
 
 Timeout::~Timeout()
 {
 #ifdef _WIN32
-    KillTimer( s_hwnd, m_idevent );
-    s_timeouts[ m_idevent ] = NULL;
+    if( m_identifer ){
+        Glib::Mutex::Lock lock( s_lock );
+        KillTimer( NULL, m_identifer );
+        s_timeouts.erase( m_identifer );
+        m_identifer = NULL;
+    }
 #else
     m_connection.disconnect();
 #endif
@@ -59,23 +53,18 @@ Timeout* Timeout::connect( const sigc::slot< bool > slot_timeout, unsigned int i
 {
     Timeout* timeout = new Timeout( slot_timeout );
 #ifdef _WIN32
-    bool hasBlank = false;
-    for( UINT i=0; i < s_idcapacity; i++ )
-    {
-        if( s_timeouts[i] == NULL )
-        {
-            timeout->m_idevent = i;
-            s_timeouts[i] = timeout;
-            hasBlank = true;
-            break;
-        }
+    Glib::Mutex::Lock lock( s_lock );
+    // use global windows timer
+    UINT_PTR ident = SetTimer( NULL, 0, interval, slot_timeout_win32 );
+    if( ident != 0 ) {
+        // register object into static domain
+        s_timeouts.insert( std::map< UINT_PTR, Timeout* >::value_type( ident, timeout ));
+        timeout->m_identifer = ident;
+    } else {
+        std::stringstream msg;
+        msg << "Set timer : " << std::hex << GetLastError();
+        MISC::ERRMSG( msg.str() );
     }
-    if( ! hasBlank )
-    {
-        timeout->m_idevent = s_idcapacity++;
-        s_timeouts.push_back( timeout );
-    }
-    SetTimer( s_hwnd, timeout->m_idevent, interval, slot_timeout_win32 );
 #else
     timeout->m_connection = Glib::signal_timeout().connect( slot_timeout, interval );
 #endif
@@ -83,7 +72,7 @@ Timeout* Timeout::connect( const sigc::slot< bool > slot_timeout, unsigned int i
 }
 
 #ifdef _WIN32
-void Timeout::slot_timeout_call()
+void Timeout::slot_timeout_callback()
 {
     m_context->acquire();
     m_slot_timeout();
@@ -91,10 +80,11 @@ void Timeout::slot_timeout_call()
 }
 
 // static
-VOID CALLBACK Timeout::slot_timeout_win32( HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime )
+VOID CALLBACK Timeout::slot_timeout_win32( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
 {
     Timeout* timeout = s_timeouts[ idEvent ];
-    timeout->slot_timeout_call();
+    if( timeout != NULL ){
+        timeout->slot_timeout_callback();
+    }
 }
 #endif
-
