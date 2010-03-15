@@ -1107,6 +1107,7 @@ const std::string CACHE::get_realpath( const std::string& path )
 
     char resolved_path[ PATH_MAX + 1 ];
 #ifdef _WIN32
+    // _fullpath() are not checked　the path is completely available
     char* ret = _fullpath( resolved_path, to_locale_cstr( path ), PATH_MAX );
 #else
     char* ret = realpath( to_locale_cstr( path ), resolved_path );
@@ -1116,7 +1117,9 @@ const std::string CACHE::get_realpath( const std::string& path )
     }
     else return std::string();
 
-    if( CACHE::file_exists( path_real ) == EXIST ) return std::string();
+    if( CACHE::file_exists( path_real ) == EXIST_ERROR ){
+        return std::string();
+    }
 
 #ifdef _DEBUG
     std::cout << "CACHE::get_realpath path = " << path

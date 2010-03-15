@@ -40,10 +40,6 @@ struct XSMPDATA
 };
 #endif
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 enum
 {
     MAX_SAFE_ARGC = 4,   // 引数の数の制限値
@@ -376,7 +372,9 @@ int main( int argc, char **argv )
                 //break;
 
             case 'm':
+#ifndef _WIN32
                 multi_mode = true;
+#endif
                 break;
 
             case 's':
@@ -508,7 +506,6 @@ int main( int argc, char **argv )
     }
 
     /*--- IOMonitor -------------------------------------------------*/
-#ifndef _WIN32
     CORE::IOMonitor iomonitor;
 
     // FIFOの状態をチェックする
@@ -562,31 +559,8 @@ int main( int argc, char **argv )
             }
         }
     }
-#endif
 
     /*---------------------------------------------------------------*/
-#ifdef _WIN32
-    // 多重起動の確認
-    HANDLE hJdLock = NULL;
-    hJdLock = CreateSemaphore(NULL, LONG_MAX, LONG_MAX, "JdForWindowsLockObject"); //2147483647
-    if( ! multi_mode )
-    {
-        if( GetLastError() == ERROR_ALREADY_EXISTS )
-        {
-            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDは既に起動しています。起動しますか？",
-                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            int ret = mdiag->run();
-            delete mdiag;
-            if( ret != Gtk::RESPONSE_YES )
-            {
-                CloseHandle( hJdLock );
-                return 0;
-            }
-        }
-    }
-#endif
-    /*---------------------------------------------------------------*/
-
     // バックアップファイル復元
     restore_bkup();
 
@@ -601,12 +575,6 @@ int main( int argc, char **argv )
 
 #ifdef USE_XSMP
     xsmp_session_end( &xsmpdata );
-#endif
-#ifdef _WIN32
-    if( hJdLock != NULL )
-    {
-        CloseHandle( hJdLock );
-    }
 #endif
 
     JDLIB::deinit_ssl();
