@@ -225,6 +225,10 @@ void EditTreeView::xml2tree( XML::Document& document, Glib::RefPtr< Gtk::TreeSto
     set_treestore( treestore );
 #endif
 
+    // ディレクトリIDのセット(まだセットされていない場合)
+    get_max_dirid();
+    set_dirid();
+
     // ディレクトリオープン
     std::list< Gtk::TreePath >::iterator it_path = list_path_expand.begin();
     while( it_path != list_path_expand.end() )
@@ -259,6 +263,60 @@ void EditTreeView::tree2xml( XML::Document& document, const std::string& root_na
     std::cout << " size = " << document.childNodes().size() << std::endl;
 #endif
 }
+
+
+// ディレクトリIDの最大値を取得
+void EditTreeView::get_max_dirid()
+{
+    m_max_dirid = 0;
+
+    SKELETON::EditTreeViewIterator it( *this, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
+
+        Gtk::TreeModel::Row row = *it;
+
+        if( row[ m_columns.m_type ] == TYPE_DIR ){
+
+            const size_t dirid = row[ m_columns.m_dirid ];
+            if( dirid > m_max_dirid ) m_max_dirid = dirid;
+        }
+    }
+
+    ++m_max_dirid;
+
+#ifdef _DEBUG
+    std::cout << "EditTreeView::get_max_dirid id = " << m_max_dirid << std::endl;
+#endif
+}
+
+
+// IDがついていないディレクトリにIDをセットする
+void EditTreeView::set_dirid()
+{
+#ifdef _DEBUG
+    std::cout << "EditTreeView::set_dirid\n";
+#endif
+
+    SKELETON::EditTreeViewIterator it( *this, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
+
+        Gtk::TreeModel::Row row = *it;
+
+        if( row[ m_columns.m_type ] == TYPE_DIR ){
+
+            const size_t dirid = row[ m_columns.m_dirid ];
+            if( ! dirid ){
+
+                row[ m_columns.m_dirid ] = m_max_dirid++;
+
+#ifdef _DEBUG
+                std::cout << row[ m_columns.m_name ] << " id = " << row[ m_columns.m_dirid ] << std::endl;
+#endif
+            }
+        }
+    }
+}
+
 
 
 //
@@ -326,11 +384,12 @@ const Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
     info.type = TYPE_DIR;
-    info.parent = NULL;
-    info.url = std::string();
     info.name = "新規ディレクトリ";
-    info.data = std::string();
     info.path = path.to_string();
+
+    while( ! dirid_to_path( m_max_dirid ).empty() ) ++m_max_dirid;
+    info.dirid = m_max_dirid;
+
     list_info.push_back( info );
 
     const bool before = false;
@@ -348,6 +407,35 @@ const Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
 }
 
 
+// ディレクトリIDとパスを相互変換
+const Gtk::TreePath EditTreeView::dirid_to_path( const size_t dirid )
+{
+    if( ! dirid ) return Gtk::TreePath();
+
+    SKELETON::EditTreeViewIterator it( *this, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
+
+        Gtk::TreeModel::Row row = *it;
+
+        if( row[ m_columns.m_type ] == TYPE_DIR ){
+
+            if( row[ m_columns.m_dirid ] == dirid ) return get_model()->get_path( row );
+        }
+    }
+
+    return Gtk::TreePath();
+}
+
+
+const size_t EditTreeView::path_to_dirid( const Gtk::TreePath path )
+{
+    Gtk::TreeModel::Row row = get_row( Gtk::TreePath( path ) );
+    if( row ) return row[ m_columns.m_dirid ];
+
+    return 0;
+}
+
+
 //
 // コメント挿入
 //
@@ -356,10 +444,7 @@ const Gtk::TreePath EditTreeView::create_newcomment( const Gtk::TreePath& path )
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
     info.type = TYPE_COMMENT;
-    info.parent = NULL;
-    info.url = std::string();
     info.name = "コメント";
-    info.data = std::string();
     info.path = path.to_string();
     list_info.push_back( info );
 
@@ -1223,6 +1308,8 @@ void EditTreeView::path2info( CORE::DATA_INFO& info, const Gtk::TreePath& path )
     info.data = tmp_str.raw();
 
     info.path = path.to_string();
+
+    info.dirid = row[ m_columns.m_dirid ];
 }
 
 
@@ -1239,7 +1326,7 @@ void EditTreeView::path2info( CORE::DATA_INFO& info, const Gtk::TreePath& path )
 //
 // (4) そうでなければ path_dest の後に追加
 //
-const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const std::string& name, int type, const std::string& data,
+const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const std::string& name, int type, const size_t dirid, const std::string& data,
                                                   const Gtk::TreePath& path_dest, const bool before, const bool subdir )
 {
     Glib::RefPtr< Gtk::TreeStore > treestore = Glib::RefPtr< Gtk::TreeStore >::cast_dynamic( get_model() );
@@ -1287,7 +1374,7 @@ const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const 
         if( DBTREE::article_status( url_new ) & STATUS_OLD ) type = TYPE_THREAD_OLD;
     }
 
-    m_columns.setup_row( row_new, url_new, name, data, type );
+    m_columns.setup_row( row_new, url_new, name, data, type, dirid );
 
     return treestore->get_path( row_new );
 }
@@ -1360,7 +1447,7 @@ void EditTreeView::append_rows( const CORE::DATA_INFO_LIST& list_info )
             }
         }
 
-        append_one_row( info.url, info.name, info.type, info.data, path, before, subdir );
+        append_one_row( info.url, info.name, info.type, info.dirid, info.data, path, before, subdir );
     }
 
     m_updated = true;
@@ -1435,5 +1522,86 @@ void EditTreeView::select_info( const CORE::DATA_INFO_LIST& list_info )
     for( ; it != list_info.end(); ++it ){
         Gtk::TreePath path( ( *it ).path );
         get_selection()->select( path );
+    }
+}
+
+
+////////////////////////////////
+
+//
+// EditTreeViewの項目の反復子
+//
+// path から反復開始
+// path が empty の時はルートから反復する
+//
+EditTreeViewIterator::EditTreeViewIterator( EditTreeView& treeview, EditColumns& columns, const Gtk::TreePath path )
+    : m_treeview( treeview ),
+      m_columns( columns ),
+      m_end( false ),
+      m_path( path )
+{
+    const bool root = ( m_path.empty() );
+    if( root ){
+
+        Gtk::TreeModel::Children children = m_treeview.get_model()->children();
+        if( ! children.empty() ) m_path = m_treeview.get_model()->get_path( children.begin() );
+        else{
+            m_end = true;
+            return;
+        }
+    }
+
+    Gtk::TreeModel::Row row = m_treeview.get_row( m_path );
+    if( ! row ) m_end = true;
+    else{
+
+        m_depth = m_path.get_depth();
+        if( ! root ) ++m_depth;
+    }
+}
+
+
+Gtk::TreeModel::Row EditTreeViewIterator::operator * ()
+{
+    return m_treeview.get_row( m_path );
+}
+
+
+void EditTreeViewIterator::operator ++ ()
+{
+    if( m_end ) return;
+
+    Gtk::TreeModel::Row row = m_treeview.get_row( m_path );
+
+    while( 1 ){
+
+        if( row ){
+
+            switch( row[ m_columns.m_type ] ){
+
+                case TYPE_DIR:
+                    m_path.down();
+                    break;
+
+                default:
+                    m_path.next();
+                    break;
+            }
+        }
+
+        else{
+
+            if( m_path.get_depth() > m_depth ){
+                m_path.up();
+                m_path.next();
+            }
+            else{
+                m_end = true;
+                break;
+            }
+        }
+
+        row = m_treeview.get_row( m_path );
+        if( row ) break;
     }
 }

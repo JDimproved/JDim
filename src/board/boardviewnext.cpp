@@ -67,21 +67,12 @@ void BoardViewNext::update_view()
 
     update_by_tfidf( next_items );
 
-    std::vector< DBTREE::ArticleBase* >list_nexts;
+    std::vector< DBTREE::ArticleBase* >list_article;
     std::vector< NEXT_ITEM >::iterator it_next_items = next_items.begin();
-    for( ; it_next_items != next_items.end(); ++it_next_items ) list_nexts.push_back( ( *it_next_items ).article );
-
-    // 一時的にIDでソートに切り替える
-    const int col = DBTREE::board_view_sort_column( get_url_board() );
-    const int sortmode = DBTREE::board_view_sort_mode( get_url_board() );
-    DBTREE::board_set_view_sort_column( get_url_board(), COL_ID );
-    DBTREE::board_set_view_sort_mode( get_url_board(), SORTMODE_ASCEND );
+    for( ; it_next_items != next_items.end(); ++it_next_items ) list_article.push_back( ( *it_next_items ).article );
 
     const bool loading_fin = true;
-    update_view_impl( list_nexts, loading_fin );
-
-    DBTREE::board_set_view_sort_column( get_url_board(), col );
-    DBTREE::board_set_view_sort_mode( get_url_board(), sortmode );
+    update_view_impl( list_article, loading_fin );
 }
 
 
@@ -197,4 +188,28 @@ void BoardViewNext::update_boardname()
 
     // タブに名前をセット
     BOARD::get_admin()->set_command( "set_tablabel", get_url(), title );
+}
+
+
+//
+// デフォルトのソート状態
+//
+const int BoardViewNext::get_default_sort_column()
+{
+    return COL_ID;
+}
+
+const int BoardViewNext::get_default_view_sort_mode()
+{
+    return SORTMODE_ASCEND;
+}
+
+const int BoardViewNext::get_default_view_sort_pre_column()
+{
+    return COL_ID;
+}
+
+const int BoardViewNext::get_default_view_sort_pre_mode()
+{
+    return SORTMODE_ASCEND;
 }

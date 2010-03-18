@@ -602,8 +602,8 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "SearchCache", "キャッシュ内の全ログを検索(_A)" ), sigc::mem_fun( *this, &Core::slot_search_cache ) );
 
     m_action_group->add( Gtk::Action::create( "ShowCache_Menu", "キャッシュ内ログ一覧(_H)" ) );
-    m_action_group->add( Gtk::Action::create( "ShowCacheBoard", "表示中の板のログ一覧を表示(_B)" ), sigc::mem_fun( *this, &Core::slot_show_cache_board ) );
-    m_action_group->add( Gtk::Action::create( "ShowCache", "キャッシュ内の全ログ一覧を表示(_A)" ), sigc::mem_fun( *this, &Core::slot_show_cache ) );
+    m_action_group->add( Gtk::Action::create( "ShowCacheBoard", "表示中の板のログをスレ一覧に表示(_B)" ), sigc::mem_fun( *this, &Core::slot_show_cache_board ) );
+    m_action_group->add( Gtk::Action::create( "ShowCache", "キャッシュ内の全ログをスレ一覧に表示(_A)" ), sigc::mem_fun( *this, &Core::slot_show_cache ) );
 
     m_action_group->add( Gtk::Action::create( "SearchTitle", "SearchTitle" ), sigc::mem_fun( *this, &Core::slot_search_title ) );
 
@@ -619,6 +619,11 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "ShowPostlog", "書き込みログの表示(_P)" ), sigc::mem_fun( *this, &Core::slot_show_postlog ) );
 
     m_action_group->add( Gtk::Action::create( "ImportDat", "表示中の板にdatをインポート(_I)" ), sigc::mem_fun( *this, &Core::slot_import_dat ) );
+
+    m_action_group->add( Gtk::Action::create( "ShowSidebarBoard", "サイドバーをスレ一覧に表示(_B)" ), sigc::mem_fun( *this, &Core::slot_show_sidebarboard ) );
+
+    m_action_group->add( Gtk::Action::create( "CreateVBoard", "サイドバーの仮想板を作成(_V)" ), sigc::mem_fun( *this, &Core::slot_create_vboard ) );
+
 
     //////////////////////////////////////////////////////
 
@@ -815,6 +820,10 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<separator/>"
         "<menuitem action='CancelCheckUpdate'/>"
         "</menu>"
+        "<menuitem action='ShowSidebarBoard'/>"
+        "<menuitem action='CreateVBoard'/>"
+
+        "<separator/>"
         "<menuitem action='EditFavorite'/>"
 
         "<separator/>"
@@ -1440,6 +1449,18 @@ void Core::slot_activate_menubar()
     // datのインポート
     act = m_action_group->get_action( "ImportDat" );
     if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
+    // サイドバーのスレ一覧表示
+    act = m_action_group->get_action( "ShowSidebarBoard" );
+    if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW
+        && SESSION::get_sidebar_current_url() != URL_HISTBOARDVIEW ) act->set_sensitive( true );
+    else act->set_sensitive( false );
+
+    // 仮想板作成
+    act = m_action_group->get_action( "CreateVBoard" );
+    if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW
+        && SESSION::get_sidebar_current_url() != URL_HISTBOARDVIEW ) act->set_sensitive( true );
     else act->set_sensitive( false );
 
     m_enable_menuslot = true;
@@ -2269,6 +2290,27 @@ void Core::set_command( const COMMAND_ARGS& command )
                                          "", // 開き方のモード
 
                                          "LOG" // モード
+            );
+
+        return;
+    }
+
+    // サイドバーをスレ一覧に表示
+    else if( command.command  == "open_sidebar_board" ) {
+
+        BOARD::get_admin()->set_command( "open_view",
+                                         command.url,
+
+                                         // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
+                                         // 詳しくは Admin::open_view() を参照せよ
+                                         command.arg1,  // 開く位置
+                                         "false", // command.url を開いてるかチェック
+                                         command.arg2, // 開き方のモード
+
+                                         "SIDEBAR", // モード
+                                         command.arg3, // お気に入りのディレクトリID、emptyでも可(その場合はcommand.urlにIDを含める)
+                                         command.arg4 // "set_history" の時は板の履歴に登録する
+
             );
 
         return;

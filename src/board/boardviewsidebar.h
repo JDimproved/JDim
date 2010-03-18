@@ -1,9 +1,9 @@
 // ライセンス: GPL2
 
-// ログ一覧ビュー
+// サイドバー一覧ビュー
 
-#ifndef _BOARDVIEWLOG_H
-#define _BOARDVIEWLOG_H
+#ifndef _BOARDVIEWSIDEBAR_H
+#define _BOARDVIEWSIDEBAR_H
 
 #include "boardviewbase.h"
 
@@ -11,16 +11,21 @@
 
 namespace BOARD
 {
-    class BoardViewLog : public BOARD::BoardViewBase
+    class BoardViewSidebar : public BOARD::BoardViewBase
     {
+        std::string m_sidebar_url;
+        size_t m_dirid;
+
+        bool m_set_history;
+
         JDLIB::hash_set_thread m_set_thread;
 
       public:
 
-        BoardViewLog( const std::string& url );
-        virtual ~BoardViewLog();
+        BoardViewSidebar( const std::string& url, const bool set_history );
+        virtual ~BoardViewSidebar();
 
-        virtual void stop();
+        virtual void stop(){}
         virtual void reload();
         virtual void show_view();
         virtual void update_boardname();
@@ -36,8 +41,6 @@ namespace BOARD
         virtual const int get_default_view_sort_pre_mode();
 
       private:
-
-        void slot_search_fin( const std::string& id );
 
         virtual void slot_abone_thread();
 

@@ -309,6 +309,9 @@ namespace CORE
         void slot_edit_favorite();
         void slot_show_postlog();
         void slot_import_dat();
+        void slot_show_sidebarboard();
+        void slot_create_vboard();
+
         //
         void slot_show_bbs();
         void slot_show_old2ch();

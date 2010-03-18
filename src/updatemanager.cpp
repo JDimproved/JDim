@@ -115,7 +115,8 @@ void CheckUpdate_Manager::push_back( const std::string& url, const bool open )
     // スレ
     if( ! url_dat.empty() ){
 #ifdef _DEBUG
-        std::cout << "type = dat\n";
+        std::cout << "type = dat\n"
+                  << DBTREE::article_subject( url ) << std::endl;
 #endif
         urllist.push_back( url );
     }
@@ -123,7 +124,8 @@ void CheckUpdate_Manager::push_back( const std::string& url, const bool open )
     // 板
     else if( ! url_subject.empty() ){
 #ifdef _DEBUG
-        std::cout << "type = board\n";
+        std::cout << "type = board\n"
+                  << url_subject << std::endl;
 #endif
         urllist = DBTREE::board_get_check_update_articles( url );
     }

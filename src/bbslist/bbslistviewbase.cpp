@@ -42,6 +42,7 @@
 #include "session.h"
 #include "compmanager.h"
 #include "dndmanager.h"
+#include "sign.h"
 
 
 // row -> path
@@ -95,32 +96,6 @@ show_popupmenu( url, slot ); \
     "<menuitem action='PreferenceImage'/>"
 
 using namespace BBSLIST;
-
-
-enum
-{
-    HASH_TBLSIZE = 1024
-};
-
-hash_set_thread::hash_set_thread()
-    : JDLIB::simple_hash_set( HASH_TBLSIZE )
-{}
-
-
-const int hash_set_thread::get_key( const std::string& url )
-{
-    const int key = atoi(  url.substr( DBTREE::url_datbase( url ).length() ).c_str() ) % size();
-
-#ifdef _DEBUG
-    std::cout << "hash_set_thread::get_key url = " << url << " key = " << key << std::endl;
-#endif
-
-    return key ;
-}
-
-
-/////////////////////////////////////////////////
-
 
 
 BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1, const std::string& arg2 )
@@ -219,6 +194,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
                          sigc::mem_fun( *this, &BBSListViewBase::stop ) );
 
+    action_group()->add( Gtk::Action::create( "OpenAsBoard", "ディレクトリをスレ一覧に表示(_B)"), sigc::mem_fun( *this, &BBSListViewBase::slot_opendir_as_board ) );
+    action_group()->add( Gtk::Action::create( "CreateVBoard", "仮想板作成(_V)"), sigc::mem_fun( *this, &BBSListViewBase::slot_create_vboard ) );
     action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索(_S)"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
     action_group()->add( Gtk::Action::create( "ImportDat", "datのインポート(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_import_dat ) );
 
@@ -335,6 +312,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='NewDir'/>"
     "<menuitem action='NewCom'/>"
     "<separator/>"
+    "<menuitem action='OpenAsBoard'/>"
+    "<menuitem action='CreateVBoard'/>"
+    "<separator/>"
     "<menu action='Delete_Menu'>"
     "<menuitem action='Delete'/>"
     "</menu>"
@@ -351,6 +331,18 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "</menu>"
     "</popup>"
 
+    // お気に入り + 仮想板
+    "<popup name='popup_menu_favorite_vboard'>"
+    "<menuitem action='OpenTab'/>"
+    "<separator/>"
+    "<menuitem action='Rename'/>"
+    "<menuitem action='NewDir'/>"
+    "<menuitem action='NewCom'/>"
+    "<separator/>"
+    "<menu action='Delete_Menu'>"
+    "<menuitem action='Delete'/>"
+    "</menu>"
+    "</popup>"
 
     //////////////////////////////////////
 
@@ -399,6 +391,17 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "</menu>"
     "</popup>"
 
+    // 履歴 + 仮想板
+    "<popup name='popup_menu_history_vboard'>"
+    "<menuitem action='OpenTab'/>"
+    "<separator/>"
+
+    "<menu action='Delete_Menu'>"
+    "<menuitem action='Delete_hist'/>"
+    "</menu>"
+
+    "</popup>"
+
     "</ui>";
 
     ui_manager()->add_ui_from_string( str_ui );
@@ -434,10 +437,16 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     popupmenu = id2popupmenu(  "/popup_menu_favorite_com" );
     CONTROL::set_menu_motion( popupmenu );
 
+    popupmenu = id2popupmenu(  "/popup_menu_favorite_vboard" );
+    CONTROL::set_menu_motion( popupmenu );
+
     popupmenu = id2popupmenu(  "/popup_menu_history" );
     CONTROL::set_menu_motion( popupmenu );
 
     popupmenu = id2popupmenu(  "/popup_menu_history_mul" );
+    CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = id2popupmenu(  "/popup_menu_history_vboard" );
     CONTROL::set_menu_motion( popupmenu );
 
     popupmenu = id2popupmenu(  "/popup_menu_select" );
@@ -504,8 +513,8 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
 
     else if( command == "hide_popup" ) m_treeview.hide_popup();
 
-    else if( command == "check_update_root" ) check_update_root( false );
-    else if( command == "check_update_open_root" ) check_update_root( true );
+    else if( command == "check_update_root" ) check_update_dir( true, false );
+    else if( command == "check_update_open_root" ) check_update_dir( true, true );
     else if( command == "cancel_check_update" ) stop();
 
     return true;
@@ -1277,6 +1286,10 @@ void BBSListViewBase::slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_
                 m_set_board.insert( DBTREE::url_boardbase( info.url ) );
                 break;
                 
+            case TYPE_VBOARD:
+                m_set_board.insert( info.url );
+                break;
+
             case TYPE_THREAD:
             case TYPE_THREAD_UPDATE:
             case TYPE_THREAD_OLD:
@@ -1499,10 +1512,8 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
             CORE::DATA_INFO_LIST list_info;
             CORE::DATA_INFO info;
             info.type = TYPE_BOARD;
-            info.parent = NULL;
             info.url = url;
             info.name = name;
-            info.data = std::string();
             info.path = m_path_selected.to_string();
             list_info.push_back( info );
 
@@ -1636,65 +1647,13 @@ void BBSListViewBase::slot_select_all()
 }
 
 
-
 //
-// ディレクトリ内を全更新チェック
+// ディレクトリ以下を更新チェック
 //
-// 呼び出した後に CORE::get_checkupdate_manager()->run() を実行すること
+// root : true ならルートから検索する。falseの場合は m_path_selected にパスをセットしておくこと
+// open : チェック後に更新していたら開く
 //
-void BBSListViewBase::check_update_dir( Gtk::TreeModel::Path path, const bool open )
-{
-    if( path.empty() ) return;
-
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::check_update_dir path = " << path.to_string() << std::endl;
-#endif
-
-    if( m_treeview.is_dir( path ) ){
-
-        path.down();
-
-        while( m_treeview.get_row( path ) ){
-
-            int type = path2type( path );
-            std::string url = path2url( path );
-
-            if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
-            else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) )
-                CORE::get_checkupdate_manager()->push_back( DBTREE::url_subject( url ), open );
-            else if( type == TYPE_DIR ) check_update_dir( path, open );
-
-            path.next();
-        }
-    }
-}
-
-
-//
-// ディレクトリ内を全更新チェック
-//
-// m_path_selected にパスをセットしておくこと
-//
-void BBSListViewBase::slot_check_update_dir()
-{
-    if( m_path_selected.empty() ) return;
-
-    if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
-        mdiag.run();
-        return;
-    }
-
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::slot_check_check_update_dir path = " << m_path_selected.to_string() << std::endl;
-#endif
-
-    check_update_dir( m_path_selected, false );
-    CORE::get_checkupdate_manager()->run();
-}
-
-// 全更新チェックして開く
-void BBSListViewBase::slot_check_update_open_dir()
+void BBSListViewBase::check_update_dir( const bool root, const bool open )
 {
     if( ! SESSION::is_online() ){
         SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
@@ -1702,56 +1661,85 @@ void BBSListViewBase::slot_check_update_open_dir()
         return;
     }
 
-    if( m_path_selected.empty() ) return;
-
 #ifdef _DEBUG
-    std::cout << "BBSListViewBase::slot_check_check_update_open_dir path = " << m_path_selected.to_string() << std::endl;
+    std::cout << "BBSListViewBase::check_update_dir root = " << root << std::endl;
 #endif
 
-    check_update_dir( m_path_selected, true );
-    CORE::get_checkupdate_manager()->run();
-}
+    Gtk::TreePath path; 
+    if( ! root ){
+        if( m_path_selected.empty() ) return;
+        path = m_path_selected;
 
+#ifdef _DEBUG
+        std::cout << "path = " << path.to_string() << std::endl;
+#endif
+    }
 
-//
-// ルート以下を全て更新チェック( 再帰用 )
-//
-// 呼び出した後に CORE::get_checkupdate_manager()->run() を実行すること
-//
-void BBSListViewBase::check_update_root( const Gtk::TreeModel::Children& children, const bool open )
-{
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() )
-    {
+    SKELETON::EditTreeViewIterator it( m_treeview, m_columns, path );
+    for( ; ! it.end(); ++it ){
+
         Gtk::TreeModel::Row row = *it;
-
         const int type = row2type( row );
         const std::string url = row2url( row );
+#ifdef _DEBUG
+        std::cout << row2name( row ) << std::endl;
+#endif
 
-        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( url, open );
+        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
         else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) )
             CORE::get_checkupdate_manager()->push_back( DBTREE::url_subject( url ), open );
-        else if( type == TYPE_DIR ) check_update_root( row.children(), open );
 
-        ++it;
     }
+
+    CORE::get_checkupdate_manager()->run();
+}
+
+void BBSListViewBase::slot_check_update_dir()
+{
+    check_update_dir( false, false );
+}
+
+void BBSListViewBase::slot_check_update_open_dir()
+{
+    check_update_dir( false, true );
 }
 
 
 //
-// ルート以下を全て更新チェック( command 呼び出し用 )
+// ディレクトリをスレ一覧に表示
 //
-// open はタブで開くか否か
-//
-void BBSListViewBase::check_update_root( const bool open )
+void BBSListViewBase::slot_opendir_as_board()
 {
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::check_update_root " << get_url() << " open = " << open << std::endl;
-#endif
+    if( m_path_selected.empty() ) return;
+    const size_t dirid = m_treeview.path_to_dirid( m_path_selected );
+    if( ! dirid ) return;
 
-    check_update_root( m_treestore->children(), open );
+    const std::string tab = "left";
+    const std::string mode = "";
+    CORE::core_set_command( "open_sidebar_board", get_url(), tab, mode, MISC::itostr( dirid ) );
+}
 
-    CORE::get_checkupdate_manager()->run();
+
+//
+// 仮想板作成
+//
+void BBSListViewBase::slot_create_vboard()
+{
+    if( m_path_selected.empty() ) return;
+    const size_t dirid = m_treeview.path_to_dirid( m_path_selected );
+    if( ! dirid ) return;
+
+    CORE::DATA_INFO_LIST list_info;
+    CORE::DATA_INFO info;
+    info.type = TYPE_VBOARD;
+    info.parent = BBSLIST::get_admin()->get_win();
+    info.url = get_url() + SIDEBAR_SIGN + MISC::itostr( dirid );
+    info.name = path2name( m_path_selected );
+    info.path = m_path_selected.to_string();
+    list_info.push_back( info );
+    CORE::SBUF_set_list( list_info );
+
+    CORE::core_set_command( "append_favorite", URL_FAVORITEVIEW );
 }
 
 
@@ -1876,7 +1864,7 @@ void BBSListViewBase::slot_row_col( const Gtk::TreeModel::iterator&, const Gtk::
 //
 const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 {
-    if( !m_treeview.get_row( path ) ) return false;
+    if( ! m_treeview.get_row( path ) ) return false;
 
     std::string str_tab = "false";
     if( tab ) str_tab = "true";
@@ -1922,6 +1910,10 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
             if( tab ) slot_check_update_open_dir();
             else if( ! m_treeview.row_expanded( path ) ) m_treeview.expand_row( path, false );
             else m_treeview.collapse_row( path );
+            break;
+
+        case TYPE_VBOARD:
+            CORE::core_set_command( "open_sidebar_board", url, str_tab, str_mode, "", "set_history" );
             break;
     }
     
@@ -2033,8 +2025,7 @@ void BBSListViewBase::slot_checkupdate_open_selected_rows()
 //
 // path -> url 変換
 //
-
-Glib::ustring BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
+const Glib::ustring BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return Glib::ustring();
@@ -2042,8 +2033,9 @@ Glib::ustring BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
     return url;
 }
 
+
 // 移転をチェックするバージョン
-Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
+const Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return Glib::ustring();
@@ -2077,7 +2069,7 @@ Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
 // 板の場合は boardbase
 // スレの場合は dat 型のアドレスを返す
 //
-Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
+const Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
 {
     if( ! row ) return Glib::ustring();
 
@@ -2108,7 +2100,7 @@ Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
 //
 // path -> name 変換
 //
-Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
+const Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return Glib::ustring();
@@ -2120,7 +2112,7 @@ Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
 //
 // path -> type 変換
 //
-int BBSListViewBase::path2type( const Gtk::TreePath& path )
+const int BBSListViewBase::path2type( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return TYPE_UNKNOWN;
@@ -2131,7 +2123,7 @@ int BBSListViewBase::path2type( const Gtk::TreePath& path )
 //
 // row -> type 変換
 //
-int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
+const int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
 {
     if( ! row ) return TYPE_UNKNOWN;
     return row[ m_columns.m_type ];
@@ -2141,10 +2133,20 @@ int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
 //
 // row -> name 変換
 //
-Glib::ustring BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
+const Glib::ustring BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
 {
     if( !row ) return Glib::ustring();
     return row[ m_columns.m_name ];
+}
+
+
+//
+// row -> dirid 変換
+//
+const size_t BBSListViewBase::row2dirid( const Gtk::TreeModel::Row& row )
+{
+    if( !row ) return 0;
+    return row[ m_columns.m_dirid ];
 }
 
 
@@ -2307,72 +2309,57 @@ void BBSListViewBase::update_urls()
     m_set_board.clear();
     m_set_thread.clear();
     
-    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
-    Gtk::TreeModel::Row row;
+    SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
 
-    while( 1 ){
+        Gtk::TreeModel::Row row = *it;
+        const Glib::ustring url = row[ m_columns.m_url ];
+        const int type = row[ m_columns.m_type ];
 
-        if( ( row = m_treeview.get_row( path ) ) ){
-
-            const Glib::ustring url = row[ m_columns.m_url ];
-            const int type = row[ m_columns.m_type ];
-            std::string url_new;
-
-            switch( type ){
-
-                case TYPE_DIR: // サブディレクトリ
-                    path.down();
-                    break;
-
-                case TYPE_BOARD: // 板
-                case TYPE_BOARD_UPDATE:
-
-                    url_new = DBTREE::url_boardbase( url );
-                    if( url != url_new ){
-                        updated = true;
-                        row[ m_columns.m_url ] = url_new;
 #ifdef _DEBUG
-                        std::cout << url << " -> " << url_new << std::endl;
+        std::cout << row2name( row ) << std::endl;
 #endif
-                    }
 
-                    m_set_board.insert( url_new );
-                    path.next();
-                    break;
+        std::string url_new;
+        switch( type ){
 
-                case TYPE_THREAD: // スレ
-                case TYPE_THREAD_UPDATE:
-                case TYPE_THREAD_OLD:
+            case TYPE_BOARD: // 板
+            case TYPE_BOARD_UPDATE:
 
-                    url_new = DBTREE::url_dat( url );
-                    if( url != url_new ){
-                        updated = true;
-                        row[ m_columns.m_url ] = url_new;
+                url_new = DBTREE::url_boardbase( url );
+                if( url != url_new ){
+                    updated = true;
+                    row[ m_columns.m_url ] = url_new;
 #ifdef _DEBUG
-                        std::cout << url << " -> " << url_new << std::endl;
+                    std::cout << url << " -> " << url_new << std::endl;
 #endif
-                    }
+                }
 
-                    m_set_thread.insert( url_new );
-                    path.next();
-                    break;
+                m_set_board.insert( url_new );
+                break;
 
-                default:
-                    path.next();
-                    break;
-            }
-        }
+            case TYPE_VBOARD:
+                m_set_board.insert( url );
+                break;
 
-        // サブディレクトリ内ならupする
-        else{
+            case TYPE_THREAD: // スレ
+            case TYPE_THREAD_UPDATE:
+            case TYPE_THREAD_OLD:
 
-            if( path.get_depth() >= 2 ){
-                path.up();
-                path.next();
-            }
-            else break;
+                url_new = DBTREE::url_dat( url );
+                if( url != url_new ){
+                    updated = true;
+                    row[ m_columns.m_url ] = url_new;
+#ifdef _DEBUG
+                    std::cout << url << " -> " << url_new << std::endl;
+#endif
+                }
+
+                m_set_thread.insert( url_new );
+                break;
         }
     }
+
 
     DBTREE::set_enable_save_movetable( true );
 
@@ -2404,51 +2391,25 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
     std::cout << "BBSListViewBase::toggle_articleicon url = " << url << " type = " << type << std::endl;
 #endif
 
-    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
-    Gtk::TreeModel::Row row;
+    SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
 
-    while( 1 ){
+        Gtk::TreeModel::Row row = *it;
+        const Glib::ustring url_row = row[ m_columns.m_url ];
+        const int type_row = row[ m_columns.m_type ];
 
-        if( ( row = m_treeview.get_row( path ) ) ){
+        if( type_row == TYPE_THREAD || type_row == TYPE_THREAD_UPDATE || type_row == TYPE_THREAD_OLD ){
 
-            const Glib::ustring url_row = row[ m_columns.m_url ];
-
-            switch( row[ m_columns.m_type ] ){
-
-                case TYPE_DIR: // サブディレクトリ
-                    path.down();
-                    break;
-
-                case TYPE_THREAD:
-                case TYPE_THREAD_UPDATE:
-                case TYPE_THREAD_OLD:
-
-                    if( url == url_row ){
+            if( url == url_row ){
 #ifdef _DEBUG
-                        std::cout << "hit " << url << " == " << url_row << std::endl;
+                std::cout << "hit " << url << " == " << url_row << std::endl;
+                std::cout << row2name( row ) << std::endl;
 #endif
-                        row[ m_columns.m_type ] = type;
-                        row[ m_columns.m_image ] = XML::get_icon( type );
+                row[ m_columns.m_type ] = type;
+                row[ m_columns.m_image ] = XML::get_icon( type );
 
-                        erase = false;
-                    }
-                    path.next();
-                    break;
-
-                default:
-                    path.next();
-                    break;
+                erase = false;
             }
-        }
-
-        // サブディレクトリ内ならupする
-        else{
-
-            if( path.get_depth() >= 2 ){
-                path.up();
-                path.next();
-            }
-            else break;
         }
     }
 
@@ -2479,50 +2440,25 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
     std::cout << "BBSListViewBase::toggle_boardicon url = " << url_boardbase << " type = " << type << std::endl;
 #endif
 
-    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
-    Gtk::TreeModel::Row row;
+    SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
 
-    while( 1 ){
+        Gtk::TreeModel::Row row = *it;
+        const Glib::ustring url_row = row[ m_columns.m_url ];
+        const int type_row = row[ m_columns.m_type ];
 
-        if( ( row = m_treeview.get_row( path ) ) ){
+        if( type_row == TYPE_BOARD || type_row == TYPE_BOARD_UPDATE ){
 
-            const Glib::ustring url_row = row[ m_columns.m_url ];
-
-            switch( row[ m_columns.m_type ] ){
-
-                case TYPE_DIR: // サブディレクトリ
-                    path.down();
-                    break;
-
-                case TYPE_BOARD:
-                case TYPE_BOARD_UPDATE:
-
-                    if( url_boardbase == url_row ){
+            if( url_boardbase == url_row ){
 #ifdef _DEBUG
-                        std::cout << "hit " << url_boardbase << " == " << url_row << std::endl;
+                std::cout << "hit " << url_boardbase << " == " << url_row << std::endl;
+                std::cout << row2name( row ) << std::endl;
 #endif
-                        row[ m_columns.m_type ] = type;
-                        row[ m_columns.m_image ] = XML::get_icon( type );
+                row[ m_columns.m_type ] = type;
+                row[ m_columns.m_image ] = XML::get_icon( type );
 
-                        erase = false;
-                    }
-                    path.next();
-                    break;
-
-                default:
-                    path.next();
-                    break;
+                erase = false;
             }
-        }
-
-        // サブディレクトリ内ならupする
-        else{
-
-            if( path.get_depth() >= 2 ){
-                path.up();
-                path.next();
-            }
-            else break;
         }
     }
 
@@ -2532,7 +2468,7 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
 
 
 //
-// スレの url と 名前を変更
+// 新スレ移行時などにスレの url と 名前を変更
 //
 void BBSListViewBase::replace_thread( const std::string& url, const std::string& url_new )
 {
@@ -2550,9 +2486,6 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
     const std::string name_new = DBTREE::article_subject( urldat_new );
     if( name_new.empty() ) return;
    
-    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
-    Gtk::TreeModel::Row row;
-
     const std::string urldat = DBTREE::url_dat( url );
     const std::string urlcgi = DBTREE::url_readcgi( url, 0, 0 );
     const std::string name_old = MISC::remove_space( DBTREE::article_subject( urldat ) );
@@ -2569,84 +2502,67 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 #endif
 
     bool show_diag = true;
-    while( 1 ){
 
-        if( ( row = m_treeview.get_row( path ) ) ){
+    SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
 
-            const Glib::ustring url_row = row[ m_columns.m_url ];
+        Gtk::TreeModel::Row row = *it;
+        const Glib::ustring url_row = row[ m_columns.m_url ];
 
-            switch( row[ m_columns.m_type ] ){
+        switch( row[ m_columns.m_type ] ){
 
-                case TYPE_DIR: // サブディレクトリ
-                    path.down();
-                    break;
+            case TYPE_THREAD:
+            case TYPE_THREAD_UPDATE:
+            case TYPE_THREAD_OLD:
 
-                case TYPE_THREAD:
-                case TYPE_THREAD_UPDATE:
-                case TYPE_THREAD_OLD:
+                if( urldat == url_row || urlcgi == url_row ){
 
-                    if( urldat == url_row || urlcgi == url_row ){
+                    if( show_diag && CONFIG::show_diag_replace_favorite() ){
 
-                        if( show_diag && CONFIG::show_diag_replace_favorite() ){
+                        show_diag = false;
 
-                            show_diag = false;
+                        SKELETON::MsgCheckDiag mdiag( get_parent_win(),
+                                                      "お気に入りに前スレが登録されています。\n名前とアドレスを新スレの物に置き換えますか？"
+                                                      , "今後表示しない(_D)",
+                                                      Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO
+                            );
+                        mdiag.set_title( "お気に入り更新" );
+                        const int ret = mdiag.run();
 
-                            SKELETON::MsgCheckDiag mdiag( get_parent_win(),
-                                                          "お気に入りに前スレが登録されています。\n名前とアドレスを新スレの物に置き換えますか？"
-                                                          , "今後表示しない(_D)",
-                                                          Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO
-                                );
-                            mdiag.set_title( "お気に入り更新" );
-                            const int ret = mdiag.run();
+                        if( mdiag.get_chkbutton().get_active() ){
 
-                            if( mdiag.get_chkbutton().get_active() ){
-
-                                CONFIG::set_show_diag_replace_favorite( false );
-                                CONFIG::set_replace_favorite_next( ( ret == Gtk::RESPONSE_YES ) );
-                            }
-
-                            if( ret != Gtk::RESPONSE_YES ) return;
+                            CONFIG::set_show_diag_replace_favorite( false );
+                            CONFIG::set_replace_favorite_next( ( ret == Gtk::RESPONSE_YES ) );
                         }
 
-                        row[ m_columns.m_url ] = urldat_new;
-
-                        // 名前が古いものであったら更新
-                        // 変更されていたらそのまま
-                        const Glib::ustring name_row = row[ m_columns.m_name ];
-#ifdef _DEBUG
-                        std::cout << "name_row = " << name_row << std::endl;
-#endif 
-                        if( MISC::remove_space( name_row ) == name_old ){
-#ifdef _DEBUG
-                            std::cout << "replace name\n";
-#endif 
-                            row[ m_columns.m_name ] = name_new;
-                        }
-
-                        row[ m_columns.m_type ] = type;
-                        row[ m_columns.m_image ] = XML::get_icon( type );
-
-                        // 行を開いた時にxmlを保存
-                        m_treeview.set_updated( true ); 
+                        if( ret != Gtk::RESPONSE_YES ) return;
                     }
 
-                default:
-                    path.next();
-                    break;
-            }
-        }
+                    row[ m_columns.m_url ] = urldat_new;
 
-        // サブディレクトリ内ならupする
-        else{
+                    // 名前が古いものであったら更新
+                    // 手動で変更されていたらそのまま
+                    const Glib::ustring name_row = row[ m_columns.m_name ];
+#ifdef _DEBUG
+                    std::cout << "name_row = " << name_row << std::endl;
+#endif 
+                    if( MISC::remove_space( name_row ) == name_old ){
+#ifdef _DEBUG
+                        std::cout << "replace name\n";
+#endif 
+                        row[ m_columns.m_name ] = name_new;
+                    }
 
-            if( path.get_depth() >= 2 ){
-                path.up();
-                path.next();
-            }
-            else break;
+                    row[ m_columns.m_type ] = type;
+                    row[ m_columns.m_image ] = XML::get_icon( type );
+
+                    // 行を開いた時にxmlを保存
+                    m_treeview.set_updated( true ); 
+                }
         }
     }
 }
+
 
 
 //
@@ -2837,7 +2753,7 @@ void BBSListViewBase::append_history()
     // ツリーにアイテムが含まれている場合は削除
     // 履歴はサブディレクトリが無いと仮定してサブディレクトリの探査はしない
     if( ( ( *it_info ).type == TYPE_THREAD && m_set_thread.find_if( ( *it_info ).url ) ) 
-        || ( ( *it_info ).type == TYPE_BOARD  && m_set_board.find( ( *it_info ).url ) != m_set_board.end() ) ){
+        || ( ( ( *it_info ).type == TYPE_BOARD || ( *it_info ).type == TYPE_VBOARD )  && m_set_board.find( ( *it_info ).url ) != m_set_board.end() ) ){
 
         std::vector< Gtk::TreePath > del_path;
 
@@ -2862,7 +2778,7 @@ void BBSListViewBase::append_history()
     const bool before = true;
     const bool subdir = false;
 
-    m_treeview.append_one_row( ( *it_info ).url, ( *it_info ).name, ( *it_info ).type, ( *it_info ).data, path, before, subdir );
+    m_treeview.append_one_row( ( *it_info ).url, ( *it_info ).name, ( *it_info ).type, ( *it_info ).dirid, ( *it_info ).data, path, before, subdir );
 
     // サイズが越えていたら最後を削除
     while( ( int )m_treestore->children().size() > CONFIG::get_historyview_size() ){
@@ -2886,6 +2802,8 @@ void BBSListViewBase::append_history()
 //
 void BBSListViewBase::get_history( CORE::DATA_INFO_LIST& info_list )
 {
+    info_list.clear();
+
     CORE::DATA_INFO info;
 
     // 履歴はサブディレクトリが無いと仮定してサブディレクトリの探査はしない
@@ -2895,12 +2813,54 @@ void BBSListViewBase::get_history( CORE::DATA_INFO_LIST& info_list )
         Gtk::TreeModel::Row row = *it;
 
         info.type = row2type( row );
-        info.parent = NULL;
         info.url = row2url( row );
         info.name = row2name( row );
+        info.dirid = row2dirid( row );
 
         info_list.push_back( info );
     }
+}
+
+
+//
+// 指定したidのディレクトリに含まれるスレのアドレスを取得
+//
+void BBSListViewBase::get_threads( const size_t dirid, std::vector< std::string >& list_url )
+{
+    list_url.clear();
+
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::get_threads " << dirid << std::endl;
+#endif
+
+    std::list< Gtk::TreePath > list_path;
+
+    Gtk::TreePath path = m_treeview.dirid_to_path( dirid );
+    if( dirid && path.empty() ) return;
+
+    SKELETON::EditTreeViewIterator it( m_treeview, m_columns, path );
+    for( ; ! it.end(); ++it ){
+
+        Gtk::TreeModel::Row row = *it;
+        const int type = row2type( row );
+        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
+
+#ifdef _DEBUG
+            std::cout << row2name( row ) << std::endl;
+#endif
+
+            list_url.push_back( row2url( row ) );
+        }
+    }
+}
+
+
+// 指定したidのディレクトリの名前を取得
+const std::string BBSListViewBase::get_dirname( const int dirid )
+{
+    if( ! dirid ) return get_label();
+
+    return path2name( m_treeview.dirid_to_path( dirid ) );
 }
 
 
@@ -2917,48 +2877,32 @@ void BBSListViewBase::remove_item( const std::string& url )
     std::cout << "BBSListViewBase::remove_item url = " << url_target << std::endl;
 #endif
 
-    CORE::DATA_INFO_LIST list_info;
-    Gtk::TreePath path = GET_PATH( m_treestore->children().begin() );
-    Gtk::TreeModel::Row row;
     std::list< Gtk::TreePath > list_path;
 
-    while( 1 ){
+    SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
 
-        if( ( row = m_treeview.get_row( path ) ) ){
+        Gtk::TreeModel::Row row = *it;
+        const Glib::ustring url = row[ m_columns.m_url ];
+        const int type = row[ m_columns.m_type ];
 
-            const Glib::ustring url = row[ m_columns.m_url ];
-            const int type = row[ m_columns.m_type ];
+        switch( type ){
 
-            switch( type ){
+            case TYPE_BOARD: // 板
+            case TYPE_BOARD_UPDATE:
 
-                case TYPE_DIR: // サブディレクトリ
-                    path.down();
-                    break;
+            case TYPE_THREAD: // スレ
+            case TYPE_THREAD_UPDATE:
+            case TYPE_THREAD_OLD:
 
-                case TYPE_BOARD: // 板
-                case TYPE_BOARD_UPDATE:
-
-                case TYPE_THREAD: // スレ
-                case TYPE_THREAD_UPDATE:
-                case TYPE_THREAD_OLD:
-                    if( url == url_target ) list_path.push_back( path );
-                    path.next();
-                    break;
-
-                default:
-                    path.next();
-                    break;
-            }
-        }
-
-        // サブディレクトリ内ならupする
-        else{
-
-            if( path.get_depth() >= 2 ){
-                path.up();
-                path.next();
-            }
-            else break;
+                if( url == url_target ){
+#ifdef _DEBUG
+                    std::cout << "hit " << url << " == " << url_target << std::endl;
+                    std::cout << row2name( row ) << std::endl;
+#endif
+                    list_path.push_back( it.get_path() );
+                }
+                break;
         }
     }
 

@@ -97,6 +97,7 @@ noinst_HEADERS = \
 	command_args.h \
 	browsers.h \
 	setupwizard.h \
+	sign.h \
 \
 	session.h \
 	login2ch.h \

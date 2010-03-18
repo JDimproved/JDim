@@ -13,6 +13,7 @@
 #include "jdlib/constptr.h"
 
 #include "type.h"
+#include "data_info.h"
 
 #include <gtkmm.h>
 #include <list>
@@ -67,6 +68,9 @@ namespace SKELETON
         // ドラッグがこのツリー上で行われている
         bool m_dragging_on_tree;
 
+        // ディレクトリIDの最大値
+        size_t m_max_dirid;
+
       public:
 
         // ColumnRecord として SKELETON::EditColumns を派生したものを使用すること
@@ -115,6 +119,10 @@ namespace SKELETON
         // 新規ディレクトリ作成
         const Gtk::TreePath create_newdir( const Gtk::TreePath& path );
 
+        // ディレクトリIDとパスを相互変換
+        const Gtk::TreePath dirid_to_path( const size_t dirid );
+        const size_t path_to_dirid( const Gtk::TreePath path );
+
         // コメント挿入
         const Gtk::TreePath create_newcomment( const Gtk::TreePath& path );
 
@@ -159,7 +167,7 @@ namespace SKELETON
         // (2) before = true なら前に作る
         // (3) path_dest がディレクトリかつ sudir == true なら path_dest の下に追加。
         // (4) そうでなければ path_dest の後に追加
-        const Gtk::TreePath append_one_row( const std::string& url, const std::string& name, int type, const std::string& data,
+        const Gtk::TreePath append_one_row( const std::string& url, const std::string& name, int type, const size_t dirid, const std::string& data,
                                             const Gtk::TreePath& path_dest,const bool before, const bool subdir );
 
       protected:
@@ -183,6 +191,12 @@ namespace SKELETON
         void set_model( const Glib::RefPtr< Gtk::TreeModel >& model ){ Gtk::TreeView::set_model( model ); }
 
         void setup();
+
+        // ディレクトリIDの最大値を取得
+        void get_max_dirid();
+
+        // ディレクトリにIDをセットする
+        void set_dirid();
 
         // 全てのツリーに m_columns.m_expand の値をセットする( tree2xml()で使用 )
         void set_expanded_row( Glib::RefPtr< Gtk::TreeStore >& treestore, const Gtk::TreeModel::Children& children );
@@ -228,6 +242,35 @@ namespace SKELETON
         void select_info( const CORE::DATA_INFO_LIST& list_info );
 
    };
+
+
+
+    ////////////////////////////////
+
+    // EditTreeViewの項目の反復子
+
+    class EditTreeViewIterator
+    {
+        EditTreeView& m_treeview;
+        EditColumns& m_columns;
+        int m_depth;
+        bool m_end;
+
+        Gtk::TreePath m_path;
+
+      public:
+
+        // path から反復開始
+        // path が empty の時はルートから反復する
+        EditTreeViewIterator( EditTreeView& treeview, EditColumns& columns, const Gtk::TreePath path );
+
+        Gtk::TreeModel::Row operator * ();
+        const Gtk::TreePath get_path() const { return m_path; }
+
+        void operator ++ ();
+
+        const bool end() const { return m_end; }
+    };
 }
 
 #endif

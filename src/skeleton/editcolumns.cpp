@@ -24,6 +24,7 @@ EditColumns::EditColumns()
     add( m_underline );
     add( m_expand );
     add( m_fgcolor );
+    add( m_dirid );
 }
 
 EditColumns::~EditColumns()
@@ -31,7 +32,7 @@ EditColumns::~EditColumns()
 
 
 void EditColumns::setup_row( Gtk::TreeModel::Row& row,
-                             const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type )
+                             const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type, const size_t dirid )
 {
     row[ m_name ] = name;
     row[ m_image ] = XML::get_icon( type );
@@ -41,6 +42,7 @@ void EditColumns::setup_row( Gtk::TreeModel::Row& row,
     row[ m_data ] = data;
     row[ m_expand ] = false;
     row[ m_underline ] = false;
+    row[ m_dirid ] = dirid;
 }
 
 
@@ -50,6 +52,7 @@ void EditColumns::copy_row( const Gtk::TreeModel::Row& row_src, Gtk::TreeModel::
     const Glib::ustring name = row_src[ m_name ];
     const Glib::ustring data = row_src[ m_data ];
     const int type = row_src[ m_type ];
+    const size_t dirid = row_src[ m_dirid ];
 
-    setup_row( row_dest, url, name, data, type );
+    setup_row( row_dest, url, name, data, type, dirid );
 }

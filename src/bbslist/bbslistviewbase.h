@@ -29,18 +29,6 @@ namespace SKELETON
 
 namespace BBSLIST
 {
-    class hash_set_thread : public JDLIB::simple_hash_set
-    {
-      public:
-        hash_set_thread();
-
-      private:
-
-        virtual const int get_key( const std::string& url );
-    };
-
-    /////////////////////////////////////////////////
-
     class EditListWin;
 
     class BBSListViewBase : public SKELETON::View
@@ -77,7 +65,7 @@ namespace BBSLIST
 
         // ツリーに含まれているスレのURLを入れる hash_set
         // toggle_articleicon() で使用する
-        hash_set_thread m_set_thread;
+        JDLIB::hash_set_thread m_set_thread;
 
         // ツリーに含まれている板のURLを入れる set
         // toggle_boardicon() で使用する
@@ -135,25 +123,28 @@ namespace BBSLIST
         void replace_thread( const std::string& url, const std::string& url_new );
 
         // path からその行のタイプを取得
-        int path2type( const Gtk::TreePath& path );
+        const int path2type( const Gtk::TreePath& path );
 
         // row からタイプを取得
-        int row2type( const Gtk::TreeModel::Row& row );
+        const int row2type( const Gtk::TreeModel::Row& row );
 
         // row -> name 変換
-        Glib::ustring row2name( const Gtk::TreeModel::Row& row );
+        const Glib::ustring row2name( const Gtk::TreeModel::Row& row );
 
         // row -> url 変換
         // 板の場合は boardbase
         // スレの場合は dat 型のアドレスを返す
-        Glib::ustring row2url( const Gtk::TreeModel::Row& row );
+        const Glib::ustring row2url( const Gtk::TreeModel::Row& row );
+
+        // row -> dirid 変換
+        const size_t row2dirid( const Gtk::TreeModel::Row& row );
 
         // path からその行の名前を取得
-        Glib::ustring path2name( const Gtk::TreePath& path );
+        const Glib::ustring path2name( const Gtk::TreePath& path );
 
         // path からその行のURLを取得
-        Glib::ustring path2rawurl( const Gtk::TreePath& path );
-        Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
+        const Glib::ustring path2rawurl( const Gtk::TreePath& path );
+        const Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
 
         // url で指定した項目を削除
         void remove_item( const std::string& url );
@@ -232,6 +223,12 @@ namespace BBSLIST
         // 履歴を DATA_INFO_LIST 型で取得
         void get_history( CORE::DATA_INFO_LIST& info_list );
 
+        // 指定したidのディレクトリに含まれるスレのアドレスを取得
+        void get_threads( const size_t dirid, std::vector< std::string >& list_url );
+
+        // 指定したidのディレクトリの名前を取得
+        const std::string get_dirname( const int dirid );
+
         // selectdialogで使う
         Gtk::TreePath get_current_path() { return m_treeview.get_current_path(); }
         void copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store );
@@ -249,9 +246,12 @@ namespace BBSLIST
         void page_up();
         void page_down();
         void expand_all_dir( Gtk::TreeModel::Path path );
-        void check_update_dir( Gtk::TreeModel::Path path, const bool open );
-        void check_update_root( const Gtk::TreeModel::Children& children, const bool open );
-        void check_update_root( const bool open );
+
+        // ディレクトリ以下を更新チェック
+        // root : true ならルートから検索する。falseの場合は m_path_selected にパスをセットしておくこと
+        // open : チェック後に更新していたら開く
+        void check_update_dir( const bool root, const bool open );
+
 
         bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );
@@ -274,6 +274,8 @@ namespace BBSLIST
         void slot_select_all();
         void slot_check_update_dir();
         void slot_check_update_open_dir();
+        void slot_opendir_as_board();
+        void slot_create_vboard();
         void slot_search_cache_board();
         void slot_import_dat();
         void slot_preferences_board();

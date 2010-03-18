@@ -10,6 +10,7 @@
 #include "board/boardview.h"
 #include "board/boardviewnext.h"
 #include "board/boardviewlog.h"
+#include "board/boardviewsidebar.h"
 
 #include "article/articleview.h"
 #include "article/articleviewsearch.h"
@@ -56,6 +57,9 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
 
         case VIEW_BOARDLOG:
             return new BOARD::BoardViewLog( url );
+
+        case VIEW_BOARDSIDEBAR:
+            return new BOARD::BoardViewSidebar( url, ( view_args.arg1 == "set_history" ) );
 
             /////////////////
 

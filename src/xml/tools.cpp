@@ -51,6 +51,10 @@ std::string XML::get_name( const int type_id )
             name = "link";
             break;
 
+        case TYPE_VBOARD: // 仮想板
+            name = "vboard";
+            break;
+
         case TYPE_AA: // AA
             name = "aa";
             break;
@@ -102,6 +106,10 @@ int XML::get_type( const std::string& node_name )
     else if( node_name == "link" )
     {
         type = TYPE_LINK;
+    }
+    else if( node_name == "vboard" )
+    {
+        type = TYPE_VBOARD;
     }
     else if( node_name == "subdir" )
     {
@@ -183,6 +191,10 @@ Glib::RefPtr< Gdk::Pixbuf > XML::get_icon( const int type_id )
 
         case TYPE_LINK:
             icon = ICON::get_icon( ICON::LINK );
+            break;
+
+        case TYPE_VBOARD:
+            icon = ICON::get_icon( ICON::BOARD );
             break;
 
         case TYPE_USRCMD:

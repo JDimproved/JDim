@@ -122,21 +122,24 @@ void History_Manager::append_history( const std::string& url_history, const std:
     if( SESSION::is_booting() ) return;
 
     CORE::DATA_INFO info;
+    info.type = type;
 
     if( url_history == URL_HISTTHREADVIEW || url_history == URL_HISTCLOSEVIEW ){
 
-        info.type = TYPE_THREAD;
         info.url = DBTREE::url_dat( url );
         info.name = DBTREE::article_subject( info.url );
     }
     if( url_history == URL_HISTBOARDVIEW ){
 
-        info.type = TYPE_BOARD;
-        info.url = DBTREE::url_boardbase( url );
-        info.name = DBTREE::board_name( info.url );
+        if( type == TYPE_BOARD ){
+            info.url = DBTREE::url_boardbase( url );
+            info.name = DBTREE::board_name( info.url );
+        }
+        else{
+            info.url = url;
+            info.name = name;
+        }
     }
-
-    info.parent = NULL;
 
     CORE::DATA_INFO_LIST list_info;
     list_info.push_back( info );

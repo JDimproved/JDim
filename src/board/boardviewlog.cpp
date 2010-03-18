@@ -95,7 +95,15 @@ void BoardViewLog::slot_search_fin( const std::string& id )
 #endif
 
     const bool loading_fin = true;
-    update_view_impl( CORE::get_search_manager()->get_list_article(), loading_fin );
+    const std::vector< DBTREE::ArticleBase* >& list_article = CORE::get_search_manager()->get_list_article();
+    update_view_impl( list_article, loading_fin );
+
+    m_set_thread.clear();
+    for( size_t i = 0; i < list_article.size(); ++i ){
+
+        const DBTREE::ArticleBase* art = list_article[ i ];
+        m_set_thread.insert( art->get_url() );
+    }
 }
 
 
@@ -129,26 +137,29 @@ void BoardViewLog::update_boardname()
 // 特定の行だけの表示内容更新
 //
 // url : subject.txt のアドレス
-// id : DAT の ID(拡張子付き)
+// id : DAT の ID(拡張子付き), empty なら全ての行の表示内容を更新する
 //
 void BoardViewLog::update_item( const std::string& url, const std::string& id )
 {
+    // url が URL_ALLLOG の時は get_url_board() の戻り値は empty
     if( get_url() != URL_ALLLOG && get_url_board() != url ) return;
+
     if( CORE::get_search_manager()->is_searching( get_url() ) ) return;
 
     const std::string url_dat = DBTREE::url_datbase( url ) + id;
+
+    Gtk::TreeModel::Row row;
+    if( ! id.empty() && m_set_thread.find_if( url_dat ) ) row = get_row_from_url( url_dat );
 
 #ifdef _DEBUG
     std::cout << "BoardViewLog::update_item " << get_url() << std::endl
               << "url = " << url << " id = " << id << " url_dat = " << url_dat << std::endl;
 #endif
 
-    const Gtk::TreeModel::Row row = get_row_from_url( url_dat );
-
     if( id.empty() || row ) BoardViewBase::update_item( url, id );
 
     // もし row が無く、かつキャッシュがあるならば行を追加
-    else{ 
+    else if( ! id.empty() ){ 
 
         DBTREE::ArticleBase* art = DBTREE::get_article( url_dat );
         if( art && art->is_cached() ){
@@ -159,8 +170,41 @@ void BoardViewLog::update_item( const std::string& url, const std::string& id )
 
             unsorted_column();
             prepend_row( art, get_row_size() + 1 );
+            m_set_thread.insert( art->get_url() );
             goto_top();
             update_status();
         }
     }
+}
+
+
+//
+// デフォルトのソート状態
+//
+const int BoardViewLog::get_default_sort_column()
+{
+    if( get_url() != URL_ALLLOG ) return BoardViewBase::get_default_sort_column();
+
+    return COL_BOARD;
+}
+
+const int BoardViewLog::get_default_view_sort_mode()
+{
+    if( get_url() != URL_ALLLOG ) return BoardViewBase::get_default_view_sort_mode();
+
+    return SORTMODE_ASCEND;
+}
+
+const int BoardViewLog::get_default_view_sort_pre_column()
+{
+    if( get_url() != URL_ALLLOG ) return BoardViewBase::get_default_view_sort_pre_column();
+
+    return COL_ID;
+}
+
+const int BoardViewLog::get_default_view_sort_pre_mode()
+{
+    if( get_url() != URL_ALLLOG ) return BoardViewBase::get_default_view_sort_pre_mode();
+
+    return SORTMODE_ASCEND;
 }

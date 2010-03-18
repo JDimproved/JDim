@@ -833,25 +833,40 @@ void BoardViewBase::restore_sort()
 {
     m_search_invert = false;
 
-    m_col = DBTREE::board_view_sort_column( get_url_board() );
-    m_sortmode = DBTREE::board_view_sort_mode( get_url_board() );
+    m_col = get_default_sort_column();
+    m_sortmode = get_default_view_sort_mode();
 
-    m_previous_col = DBTREE::board_view_sort_pre_column( get_url_board() );
-    m_previous_sortmode = DBTREE::board_view_sort_pre_mode( get_url_board() );
-
-    if( m_show_col_board ){
-
-        m_previous_col = m_col;
-        m_previous_sortmode = m_sortmode;
-
-        m_col = COL_BOARD;
-        m_sortmode = SORTMODE_ASCEND;
-    }
+    m_previous_col = get_default_view_sort_pre_column();
+    m_previous_sortmode = get_default_view_sort_pre_mode();
 
     if( get_row_size() ){
         exec_sort();
         goto_top();
     }
+}
+
+
+//
+// デフォルトのソート状態
+//
+const int BoardViewBase::get_default_sort_column()
+{
+    return DBTREE::board_view_sort_column( get_url_board() );
+}
+
+const int BoardViewBase::get_default_view_sort_mode()
+{
+    return DBTREE::board_view_sort_mode( get_url_board() );
+}
+
+const int BoardViewBase::get_default_view_sort_pre_column()
+{
+    return DBTREE::board_view_sort_pre_column( get_url_board() );
+}
+
+const int BoardViewBase::get_default_view_sort_pre_mode()
+{
+    return DBTREE::board_view_sort_pre_mode( get_url_board() );
 }
 
 
@@ -1195,13 +1210,15 @@ void BoardViewBase::relayout()
 //
 // view更新
 //
-void BoardViewBase::update_view_impl( const std::vector< DBTREE::ArticleBase* >& list_subject, const bool loading_fin )
+// loading_fin : ロードが完了したら true をセットして呼び出す
+//
+void BoardViewBase::update_view_impl( const std::vector< DBTREE::ArticleBase* >& list_article, const bool loading_fin )
 {
 #ifdef _DEBUG
     const int code = DBTREE::board_code( get_url_board() );
     std::cout << "BoardViewBase::update_view_impl " << get_url()
               << " code = " << code
-              << " size = " << list_subject.size()
+              << " size = " << list_article.size()
               << std::endl;
 #endif    
 
@@ -1210,16 +1227,16 @@ void BoardViewBase::update_view_impl( const std::vector< DBTREE::ArticleBase* >&
     m_treeview.unset_model();
 #endif
 
-    if( list_subject.size() ){
+    if( list_article.size() ){
 
         m_liststore->clear();
 
         unsorted_column();
 
         // 行の追加
-        for( int i = list_subject.size()-1; i >= 0;  --i ){
+        for( int i = list_article.size()-1; i >= 0;  --i ){
 
-            DBTREE::ArticleBase* art = list_subject[ i ];
+            DBTREE::ArticleBase* art = list_article[ i ];
             prepend_row( art, i + 1 );
         }
 
@@ -1720,9 +1737,7 @@ Gtk::Menu* BoardViewBase::get_popupmenu( const std::string& url )
 // 特定の行だけの表示内容更新
 //
 // url : subject.txt のアドレス
-// id : DAT の ID(拡張子付き)
-//
-// もし ID が empty() なら全ての行の表示内容を更新する
+// id : DAT の ID(拡張子付き), empty なら全ての行の表示内容を更新する
 //
 void BoardViewBase::update_item( const std::string& url, const std::string& id )
 {
@@ -1744,7 +1759,7 @@ void BoardViewBase::update_item( const std::string& url, const std::string& id )
 
     unsorted_column();
    
-    Gtk::TreeModel::Row row = get_row_from_url( url_dat );
+    const Gtk::TreeModel::Row row = get_row_from_url( url_dat );
     if( row ) update_row_common( row );
 }
 
@@ -1783,7 +1798,7 @@ void BoardViewBase::update_item_all()
 //
 // 行を作って内容をセット
 //
-Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, const int id )
+const Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, const int id )
 {
     Gtk::TreeModel::Row row = *( m_liststore->prepend() ); // append より prepend の方が速いらしい
 
@@ -1807,7 +1822,7 @@ Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, const 
 //
 // prepend_row() と update_item() で共通に更新する列
 //
-void BoardViewBase::update_row_common( Gtk::TreeModel::Row& row )
+void BoardViewBase::update_row_common( const Gtk::TreeModel::Row& row )
 {
     DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
     if( art->empty() ) return;
@@ -2195,7 +2210,6 @@ void BoardViewBase::slot_dropped_url_list( const std::list< std::string >& url_l
 
         CORE::DATA_INFO info;
         info.type = TYPE_FILE;
-        info.parent = NULL;
         info.url = MISC::remove_str( ( *it ), "file://" );
         list_info.push_back( info );
 
@@ -2837,7 +2851,6 @@ void BoardViewBase::set_article_to_buffer()
             info.parent = BOARD::get_admin()->get_win();
             info.url = art->get_url();
             info.name = name.raw();
-            info.data = std::string();
             info.path = path.to_string();
 
             list_info.push_back( info );
@@ -2869,7 +2882,6 @@ void BoardViewBase::set_board_to_buffer()
     info.parent = BOARD::get_admin()->get_win();
     info.url = DBTREE::url_boardbase( url_board );
     info.name = DBTREE::board_name( url_board );
-    info.data = std::string();
     info.path = Gtk::TreePath( "0" ).to_string();
 
     list_info.push_back( info );

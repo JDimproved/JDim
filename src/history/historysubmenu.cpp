@@ -121,18 +121,27 @@ void HistorySubMenu::open_history( const int i )
 #ifdef _DEBUG
         std::cout << "open " << info_list[ i ].url << std::endl;
 #endif
+        const std::string tab = "true";
+        const std::string mode = "";
+
         switch( info_list[ i ].type ){
 
             case TYPE_THREAD: 
             case TYPE_THREAD_UPDATE:
             case TYPE_THREAD_OLD:
 
-                CORE::core_set_command( "open_article" , DBTREE::url_dat( info_list[ i ].url ), "true", "" );
+                CORE::core_set_command( "open_article" , DBTREE::url_dat( info_list[ i ].url ), tab, mode );
                 break;
 
-            default:
+            case TYPE_BOARD:
                 
-                CORE::core_set_command( "open_board" , DBTREE::url_subject( info_list[ i ].url ), "true", "" );
+                CORE::core_set_command( "open_board" , DBTREE::url_subject( info_list[ i ].url ), tab, mode );
+                break;
+
+            case TYPE_VBOARD:
+
+                CORE::core_set_command( "open_sidebar_board", info_list[ i ].url, tab, mode, "", "set_history" );
+                break;
         }
     }
 }

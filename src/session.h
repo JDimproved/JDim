@@ -7,6 +7,7 @@
 #define _SESSION_H
 
 #include "type.h"
+#include "data_info.h"
 
 #include <list>
 #include <vector>
@@ -418,6 +419,12 @@ namespace SESSION
 
     // 各履歴を取得
     void get_history( const std::string& url, CORE::DATA_INFO_LIST& info_list );
+
+    // サイドバーの指定したidのディレクトリに含まれるスレのアドレスを取得
+    void get_sidebar_threads( const std::string& url, const int dirid, std::vector< std::string >& list_url );
+
+    // サイドバーの指定したidのディレクトリの名前を取得
+    const std::string get_sidebar_dirname( const std::string& url, const int dirid );
 }
 
 

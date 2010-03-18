@@ -1215,3 +1215,17 @@ void SESSION::get_history( const std::string& url, CORE::DATA_INFO_LIST& info_li
 {
     return BBSLIST::get_admin()->get_history( url, info_list );
 }
+
+
+// サイドバーの指定したidのディレクトリに含まれるスレのアドレスを取得
+void SESSION::get_sidebar_threads( const std::string& url, const int dirid, std::vector< std::string >& list_url )
+{
+    BBSLIST::get_admin()->get_threads( url, dirid, list_url );
+}
+
+
+// サイドバーの指定したidのディレクトリの名前を取得
+const std::string SESSION::get_sidebar_dirname( const std::string& url, const int dirid )
+{
+    return BBSLIST::get_admin()->get_dirname( url, dirid );
+}

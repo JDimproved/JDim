@@ -26,6 +26,7 @@ namespace SKELETON
         EDITCOL_UNDERLINE,
         EDITCOL_EXPAND,
         EDITCOL_FGCOLOR,
+        EDITCOL_DIRID,
 
         EDITCOL_NUM_COL
     };
@@ -45,12 +46,13 @@ namespace SKELETON
         Gtk::TreeModelColumn< bool > m_underline; // 行に下線を引く
         Gtk::TreeModelColumn< bool > m_expand; // Dom::parse() で使用
         Gtk::TreeModelColumn< Gdk::Color > m_fgcolor; // 文字色
+        Gtk::TreeModelColumn< size_t > m_dirid; // ディレクトリID
 
         EditColumns();
         virtual ~EditColumns();
 
         virtual void setup_row( Gtk::TreeModel::Row& row,
-                                const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type );
+                                const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type, const size_t dirid );
         virtual void copy_row( const Gtk::TreeModel::Row& row_src, Gtk::TreeModel::Row& row_dest );
     };
 }

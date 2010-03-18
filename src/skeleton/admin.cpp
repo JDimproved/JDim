@@ -864,7 +864,7 @@ void Admin::update_status( View* view, const bool force )
 // "false" ならアクティブなタブを置き換える
 // "true" なら一番右側に新しいタブを開く
 // "right" ならアクティブなタブの右に開く
-// "left" ならアクティブな左に開く
+// "left" ならアクティブなタブの左に開く
 // "page数字" なら指定した位置にタブで開く
 //
 // command.arg2: "true" なら既に command.url を開いているかチェックしない

@@ -25,6 +25,8 @@
 #include "command.h"
 #include "dndmanager.h"
 
+
+
 BOARD::BoardAdmin *instance_boardadmin = NULL;
 
 BOARD::BoardAdmin* BOARD::get_admin()
@@ -103,7 +105,8 @@ void BoardAdmin::restore( const bool only_locked )
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
 
         // 板がDBに登録されていない場合は表示しない
-        if( command_arg.url != URL_ALLLOG && DBTREE::url_boardbase( command_arg.url ).empty() ){
+        if( command_arg.url != URL_ALLLOG && command_arg.arg4 != "SIDEBAR"
+            && DBTREE::url_boardbase( command_arg.url ).empty() ){
             MISC::ERRMSG(  *it_url + " is not registered" );
             continue;
         }
@@ -156,6 +159,15 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
         command_arg.arg4 = "LOG";
     }
 
+    // サイドバー
+    else if( regex.exec( std::string( "(.*)" ) + SIDEBAR_SIGN + "(.*)", url )){
+
+        command_arg.url = regex.str( 1 );
+
+        command_arg.arg4 = "SIDEBAR";
+        command_arg.arg5 = regex.str( 2 ); // ディレクトリID
+    }
+
     // スレビュー
     else{
 
@@ -180,6 +192,11 @@ const std::string BoardAdmin::command_to_url( const COMMAND_ARGS& command )
 
         if( command.url == URL_ALLLOG ) return URL_ALLLOG;
         else return command.url + LOG_SIGN;
+    }
+
+    else if( command.arg4 == "SIDEBAR" ){
+        if( command.arg5.empty() ) return command.url;
+        return command.url + SIDEBAR_SIGN + command.arg5;
     }
 
     return command.url;
@@ -280,13 +297,24 @@ SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
     if( command.arg4 == "MAIN" ){
         type = CORE::VIEW_BOARDVIEW;
     }
+
+    // 次スレ検索
     else if( command.arg4 == "NEXT" ){
         type = CORE::VIEW_BOARDNEXT;
         view_args.arg1 = command.arg5;  // 前スレのアドレス
     }
+
+    // ログ
     else if( command.arg4 == "LOG" ){
         type = CORE::VIEW_BOARDLOG;
     }
+
+    // サイドバー
+    else if( command.arg4 == "SIDEBAR" ){
+        type = CORE::VIEW_BOARDSIDEBAR;
+        view_args.arg1 = command.arg6; // "set_history" の時は板の履歴に登録する
+    }
+
     else return NULL;
 
     SKELETON::View* view = CORE::ViewFactory( type, command_to_url( command ), view_args );
@@ -337,10 +365,8 @@ void BoardAdmin::slot_drag_data_get( Gtk::SelectionData& selection_data, const i
     
     CORE::DATA_INFO info;
     info.type = TYPE_BOARD;
-    info.parent = NULL;
     info.url = DBTREE::url_boardbase( url );
     info.name = DBTREE::board_name( info.url );
-    info.data = std::string();
     info.path = Gtk::TreePath( "0" ).to_string();
 
     if( info.url.empty() ) return;

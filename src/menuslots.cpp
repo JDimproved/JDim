@@ -16,6 +16,7 @@
 #include "fontid.h"
 #include "colorid.h"
 #include "global.h"
+#include "sharedbuffer.h"
 
 #include "linkfiltermanager.h"
 #include "prefdiagfactory.h"
@@ -1128,6 +1129,46 @@ void Core::slot_import_dat()
 #endif
 
     if( ! url_board.empty() ) CORE::core_set_command( "import_dat", url_board, "show_diag" );
+}
+
+
+//
+// サイドバーをスレ一覧に表示
+//
+void Core::slot_show_sidebarboard()
+{
+    if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW
+        && SESSION::get_sidebar_current_url() != URL_HISTBOARDVIEW
+        ){
+
+        const std::string tab = "left";
+        const std::string mode = "";
+        CORE::core_set_command( "open_sidebar_board", SESSION::get_sidebar_current_url(), tab, mode, "0" );
+    }
+}
+
+
+//
+// サイドバーの仮想板を作成
+//
+void Core::slot_create_vboard()
+{
+    if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW
+        && SESSION::get_sidebar_current_url() != URL_HISTBOARDVIEW
+        ){
+
+        CORE::DATA_INFO_LIST list_info;
+        CORE::DATA_INFO info;
+        info.type = TYPE_VBOARD;
+        info.parent = CORE::get_mainwindow();
+        info.url = SESSION::get_sidebar_current_url() + SIDEBAR_SIGN + "0";
+        info.name = SESSION::get_sidebar_dirname( SESSION::get_sidebar_current_url(), 0 );
+        info.path = Gtk::TreePath( "0" ).to_string();
+        list_info.push_back( info );
+        CORE::SBUF_set_list( list_info );
+
+        CORE::core_set_command( "append_favorite", URL_FAVORITEVIEW );
+    }
 }
 
 

@@ -246,6 +246,26 @@ void BBSListAdmin::get_history( const std::string& url, CORE::DATA_INFO_LIST& in
 }
 
 
+// サイドバーの指定したidのディレクトリに含まれるスレのアドレスを取得
+void BBSListAdmin::get_threads( const std::string& url, const int dirid, std::vector< std::string >& list_url )
+{
+    list_url.clear();
+
+    BBSListViewBase* view = dynamic_cast< BBSListViewBase* >( get_view( url ) );
+    if( view ) view->get_threads( dirid, list_url );
+}
+
+
+// サイドバーの指定したidのディレクトリの名前を取得
+const std::string BBSListAdmin::get_dirname( const std::string& url, const int dirid )
+{
+    BBSListViewBase* view = dynamic_cast< BBSListViewBase* >( get_view( url ) );
+    if( view ) return view->get_dirname( dirid );
+
+    return std::string();
+}
+
+
 //
 // カレントビューでポップアップ表示していたら隠す(インスタンスは削除しない)
 //

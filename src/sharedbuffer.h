@@ -10,6 +10,7 @@
 #define _SHAREDBUFFER_H
 
 #include "type.h"
+#include "data_info.h"
 
 namespace CORE
 {

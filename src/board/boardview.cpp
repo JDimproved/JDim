@@ -105,15 +105,15 @@ void BoardView::show_view()
     // ロード中にキャッシュにあるスレ一覧を表示する
     if( CONFIG::get_show_cached_board() && SESSION::is_online() && ! get_row_size() ){
     
-        std::vector< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
+        const std::vector< DBTREE::ArticleBase* >& list_article = DBTREE::board_list_subject( get_url_board() );
 
-        if( list_subject.size() ){
+        if( list_article.size() ){
 
 #ifdef _DEBUG
             std::cout << "append rows\n";
 #endif
             const bool loading_fin = false;
-            update_view_impl( list_subject, loading_fin );
+            update_view_impl( list_article, loading_fin );
         }
     }
 }
@@ -141,9 +141,9 @@ void BoardView::update_view()
     }
 
     // 高速化のためデータベースに直接アクセス
-    std::vector< DBTREE::ArticleBase* >& list_subject = DBTREE::board_list_subject( get_url_board() );
+    const std::vector< DBTREE::ArticleBase* >& list_article = DBTREE::board_list_subject( get_url_board() );
     const bool loading_fin = true;
-    update_view_impl( list_subject, loading_fin );
+    update_view_impl( list_article, loading_fin );
 
     // dat落ちしたスレッドをスレあぼーんのリストから取り除く
     if( code == HTTP_OK ) DBTREE::remove_old_abone_thread( get_url_board() );

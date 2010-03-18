@@ -32,6 +32,14 @@ namespace BOARD
         virtual void update_view();
         virtual void update_boardname();
 
+      protected:
+
+        // デフォルトのソート状態
+        virtual const int get_default_sort_column();
+        virtual const int get_default_view_sort_mode();
+        virtual const int get_default_view_sort_pre_column();
+        virtual const int get_default_view_sort_pre_mode();
+
       private:
 
         // TFIDFで次スレ検索

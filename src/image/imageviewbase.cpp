@@ -1159,7 +1159,6 @@ void ImageViewBase::set_image_to_buffer()
     info.parent = IMAGE::get_admin()->get_win();
     info.url = get_url();
     info.name = get_url();
-    info.data = std::string();
     info.path = Gtk::TreePath( "0" ).to_string();
 
     CORE::DATA_INFO_LIST list_info;

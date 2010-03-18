@@ -3566,7 +3566,6 @@ void ArticleViewBase::set_favorite()
     info.parent = ARTICLE::get_admin()->get_win();
     info.url = m_url_article;;
     info.name = DBTREE::article_subject( m_url_article );
-    info.data = std::string();
     info.path = Gtk::TreePath( "0" ).to_string();
 
     CORE::DATA_INFO_LIST list_info;

@@ -8,12 +8,9 @@
 
 #include "skeleton/admin.h"
 
-#include <string>
+#include "sign.h"
 
-#define ARTICLE_SIGN "_ARTICLE_"
-#define NEXT_SIGN "_NEXT_"
-#define LOG_SIGN "_LOG_"
-#define TIME_SIGN "_TIME_"
+#include <string>
 
 namespace BOARD
 {

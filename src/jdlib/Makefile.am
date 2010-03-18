@@ -19,6 +19,7 @@ libjdlib_a_SOURCES = \
 	jdregex.cpp \
 	jdmigemo.cpp \
 	tfidf.cpp \
+	hash_set.cpp \
 	timeout.cpp
 
 noinst_HEADERS = \

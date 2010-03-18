@@ -9,8 +9,10 @@
 #include "skeleton/admin.h"
 
 #include "type.h"
+#include "data_info.h"
 
 #include <string>
+#include <vector>
 
 namespace SKELETON
 {
@@ -32,6 +34,12 @@ namespace BBSLIST
 
         // 履歴を DATA_INFO_LIST 型で取得
         void get_history( const std::string& url, CORE::DATA_INFO_LIST& info_list );
+
+        // サイドバーの指定したidのディレクトリに含まれるスレのアドレスを取得
+        void get_threads( const std::string& url, const int dirid, std::vector< std::string >& list_url );
+
+        // サイドバーの指定したidのディレクトリの名前を取得
+        const std::string get_dirname( const std::string& url, const int dirid );
 
       protected:
 

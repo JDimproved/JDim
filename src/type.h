@@ -3,9 +3,6 @@
 #ifndef _TYPE_H
 #define _TYPE_H
 
-#include <string>
-#include <vector>
-
 enum 
 {
     // 板のタイプ
@@ -27,6 +24,7 @@ enum
     TYPE_DIR_END, // お気に入りの追加の時にサブディレクトリの終了の意味で使う
     TYPE_COMMENT,
     TYPE_LINK,
+    TYPE_VBOARD, // お気に入りの仮想板
     TYPE_AA,
     TYPE_HISTITEM,
     TYPE_USRCMD,
@@ -36,25 +34,5 @@ enum
 
     TYPE_UNKNOWN
 };
-
-namespace Gtk
-{
-    class Window;
-}
-
-namespace CORE
-{
-    struct DATA_INFO
-    {
-        int type;
-        Gtk::Window* parent;
-        std::string url;
-        std::string name;
-        std::string path; // treeview の path
-        std::string data;
-    };
-
-    typedef std::vector< CORE::DATA_INFO > DATA_INFO_LIST;
-}
 
 #endif

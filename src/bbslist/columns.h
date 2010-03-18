@@ -20,7 +20,7 @@ namespace BBSLIST
         virtual ~TreeColumns();
 
         virtual void setup_row( Gtk::TreeModel::Row& row,
-                                const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type );
+                                const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type, const size_t dirid );
     };
 }
 

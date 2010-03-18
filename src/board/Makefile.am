@@ -6,6 +6,7 @@ libboard_a_SOURCES = \
 	boardview.cpp \
 	boardviewnext.cpp \
 	boardviewlog.cpp \
+	boardviewsidebar.cpp \
 	toolbar.cpp \
 	preference.cpp
 
@@ -15,6 +16,7 @@ noinst_HEADERS = \
 	boardview.h \
 	boardviewnext.h \
 	boardviewlog.h \
+	boardviewsidebar.h \
 	toolbar.h \
 	columns.h \
 	preference.h

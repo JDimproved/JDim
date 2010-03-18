@@ -176,19 +176,22 @@ namespace BOARD
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
         // view更新
-        void update_view_impl( const std::vector< DBTREE::ArticleBase* >& list_subject, const bool loading_fin );
+        void update_view_impl( const std::vector< DBTREE::ArticleBase* >& list_article, const bool loading_fin );
 
         // ステータスバー更新
         void update_status();
-
-        // ソート状態回復
-        void restore_sort();
 
         // subject.txt をロードする
         void set_load_subject_txt( const bool load ){ m_load_subject_txt = load; }
 
         // 行を作って内容をセット
-        Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art, const int id );
+        const Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art, const int id );
+
+        // デフォルトのソート状態
+        virtual const int get_default_sort_column();
+        virtual const int get_default_view_sort_mode();
+        virtual const int get_default_view_sort_pre_column();
+        virtual const int get_default_view_sort_pre_mode();
 
     private:
 
@@ -217,8 +220,13 @@ namespace BOARD
         // 全ての行の表示内容更新
         void update_item_all();
 
-        // ソート用
+        // ソート実行
         void exec_sort();
+
+        // ソート状態回復
+        void restore_sort();
+
+        // ヘッダをクリックしたときのslot関数
         void slot_col_clicked( const int col );
 
         const int compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
@@ -259,7 +267,7 @@ namespace BOARD
         // 検索
         const bool drawout();
 
-        void update_row_common( Gtk::TreeModel::Row& row );
+        void update_row_common( const Gtk::TreeModel::Row& row );
         const std::string get_subject_from_path( Gtk::TreePath& path );
 
         template < typename ColumnType >

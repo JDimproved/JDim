@@ -23,9 +23,9 @@ TreeColumns::~TreeColumns()
 {}
 
 void TreeColumns::setup_row( Gtk::TreeModel::Row& row,
-                             const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type )
+                             const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type, const size_t dirid )
 {
-    SKELETON::EditColumns::setup_row( row, url, name, data, type );
+    SKELETON::EditColumns::setup_row( row, url, name, data, type, dirid );
 
     if( type == TYPE_COMMENT ) row[ m_fgcolor ] = Gdk::Color( CONFIG::get_color( COLOR_CHAR_BBS_COMMENT ) );
 }
