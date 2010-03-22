@@ -60,11 +60,6 @@ const bool simple_hash_set::find_if( const std::string& item )
 }
 
 
-const int simple_hash_set::get_key( const std::string& item )
-{
-    return ( atoi( item.c_str() ) % m_hash_size );
-}
-
 
 //////////////////////////////
 

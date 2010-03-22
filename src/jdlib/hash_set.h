@@ -32,7 +32,7 @@ namespace JDLIB
 
       private:
 
-        virtual const int get_key( const std::string& item );
+        virtual const int get_key( const std::string& item ) = 0;
     };
 
 
