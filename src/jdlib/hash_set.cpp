@@ -7,6 +7,8 @@
 
 #include "dbtree/interface.h"
 
+#include <cstdlib>
+
 
 using namespace JDLIB;
 
