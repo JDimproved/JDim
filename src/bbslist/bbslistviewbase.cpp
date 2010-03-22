@@ -45,6 +45,14 @@
 #include "sign.h"
 
 
+enum
+{
+    REPLACE_NEXT_NO = 0,
+    REPLACE_NEXT_YES,
+    REPLACE_NEXT_ADD
+};
+
+
 // row -> path
 #define GET_PATH( row ) m_treestore->get_path( row )
 
@@ -2486,6 +2494,10 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
     const std::string name_new = DBTREE::article_subject( urldat_new );
     if( name_new.empty() ) return;
    
+    bool show_diag = CONFIG::show_diag_replace_favorite();
+    int mode = CONFIG::get_replace_favorite_next();
+    if( ! show_diag && mode == REPLACE_NEXT_NO ) return;
+
     const std::string urldat = DBTREE::url_dat( url );
     const std::string urlcgi = DBTREE::url_readcgi( url, 0, 0 );
     const std::string name_old = MISC::remove_space( DBTREE::article_subject( urldat ) );
@@ -2501,8 +2513,6 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
               << "type = " << type << std::endl;
 #endif
 
-    bool show_diag = true;
-
     SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
     for( ; ! it.end(); ++it ){
 
@@ -2517,47 +2527,81 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 
                 if( urldat == url_row || urlcgi == url_row ){
 
-                    if( show_diag && CONFIG::show_diag_replace_favorite() ){
+                    if( show_diag ){
 
                         show_diag = false;
 
                         SKELETON::MsgCheckDiag mdiag( get_parent_win(),
-                                                      "お気に入りに前スレが登録されています。\n名前とアドレスを新スレの物に置き換えますか？"
+                                                      "お気に入りに前スレが登録されています。\n\n名前とアドレスを新スレの物に置き換えますか？"
                                                       , "今後表示しない(_D)",
-                                                      Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO
+                                                      Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE
                             );
+
+                        mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+                        mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+                        mdiag.add_button( "新スレをお気に入りに追加(_F)", Gtk::RESPONSE_CANCEL );
+
                         mdiag.set_title( "お気に入り更新" );
                         const int ret = mdiag.run();
+
+                        switch( ret ){
+
+                            case Gtk::RESPONSE_YES: mode = REPLACE_NEXT_YES; break;
+                            case Gtk::RESPONSE_NO: mode = REPLACE_NEXT_NO; break;
+                            case Gtk::RESPONSE_CANCEL: mode = REPLACE_NEXT_ADD; break;
+                        }
 
                         if( mdiag.get_chkbutton().get_active() ){
 
                             CONFIG::set_show_diag_replace_favorite( false );
-                            CONFIG::set_replace_favorite_next( ( ret == Gtk::RESPONSE_YES ) );
+                            CONFIG::set_replace_favorite_next( mode );
                         }
 
-                        if( ret != Gtk::RESPONSE_YES ) return;
+                        if( mode == REPLACE_NEXT_NO ) return;
                     }
-
-                    row[ m_columns.m_url ] = urldat_new;
-
-                    // 名前が古いものであったら更新
-                    // 手動で変更されていたらそのまま
-                    const Glib::ustring name_row = row[ m_columns.m_name ];
-#ifdef _DEBUG
-                    std::cout << "name_row = " << name_row << std::endl;
-#endif 
-                    if( MISC::remove_space( name_row ) == name_old ){
-#ifdef _DEBUG
-                        std::cout << "replace name\n";
-#endif 
-                        row[ m_columns.m_name ] = name_new;
-                    }
-
-                    row[ m_columns.m_type ] = type;
-                    row[ m_columns.m_image ] = XML::get_icon( type );
 
                     // 行を開いた時にxmlを保存
                     m_treeview.set_updated( true ); 
+
+                    // 置き換え
+                    if( mode == REPLACE_NEXT_YES ){
+                        
+                        row[ m_columns.m_url ] = urldat_new;
+
+                        // 名前が古いものであったら更新
+                        // 手動で変更されていたらそのまま
+                        const Glib::ustring name_row = row[ m_columns.m_name ];
+#ifdef _DEBUG
+                        std::cout << "name_row = " << name_row << std::endl;
+#endif 
+                        if( MISC::remove_space( name_row ) == name_old ){
+#ifdef _DEBUG
+                            std::cout << "replace name\n";
+#endif 
+                            row[ m_columns.m_name ] = name_new;
+                        }
+
+                        row[ m_columns.m_type ] = type;
+                        row[ m_columns.m_image ] = XML::get_icon( type );
+                    }
+
+                    // 追加
+                    else if( mode == REPLACE_NEXT_ADD ){
+
+                        CORE::DATA_INFO_LIST list_info;
+                        CORE::DATA_INFO info;
+                        info.type = type;
+                        info.parent = BBSLIST::get_admin()->get_win();
+                        info.url = urldat_new;
+                        info.name = name_new;
+                        info.path = Gtk::TreePath( "0" ).to_string();
+                        list_info.push_back( info );
+                        CORE::SBUF_set_list( list_info );
+
+                        CORE::core_set_command( "append_favorite", URL_FAVORITEVIEW );
+
+                        return;
+                    }
                 }
         }
     }
@@ -2729,6 +2773,9 @@ void BBSListViewBase::append_item()
     const CORE::DATA_INFO_LIST list_info = m_treeview.append_info( list_info_bkup, path, before, scroll );
     CORE::SBUF_clear_info();
     slot_dropped_from_other( list_info );
+
+    // 行を開いた時にxmlを保存
+    m_treeview.set_updated( true ); 
 }
 
 

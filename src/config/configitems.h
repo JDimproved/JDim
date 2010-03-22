@@ -383,7 +383,7 @@ namespace CONFIG
         int threshold_next;
 
         // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
-        bool replace_favorite_next;
+        int replace_favorite_next;
 
         // お気に入りの自動更新をするかダイアログを出す
         bool show_diag_replace_favorite;

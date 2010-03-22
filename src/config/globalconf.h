@@ -435,8 +435,8 @@ namespace CONFIG
     const int get_threshold_next();
 
     // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
-    const bool get_replace_favorite_next();
-    void set_replace_favorite_next( const bool set );
+    const int get_replace_favorite_next();
+    void set_replace_favorite_next( const int mode );
 
     // お気に入りの自動更新をするかダイアログを出す
     const bool show_diag_replace_favorite();

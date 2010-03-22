@@ -165,7 +165,7 @@ void AboutConfig::append_rows()
     append_row( "" );
     append_row( "■ 次スレ検索" );
     append_row( "類似度判定のしきい値(小さいほど判定が甘くなる、最大10)", get_confitem()->threshold_next, CONF_THRESHOLD_NEXT );
-    append_row( "移行時にお気に入りのアドレスと名前を自動更新する", get_confitem()->replace_favorite_next, CONF_REPLACE_FAVORITE_NEXT );
+    append_row( "移行時にお気に入りのアドレスと名前を自動更新する(0: しない, 1:する, 2:追加)", get_confitem()->replace_favorite_next, CONF_REPLACE_FAVORITE_NEXT );
     append_row( "お気に入り自動更新の確認ダイアログを表示する", get_confitem()->show_diag_replace_favorite, CONF_SHOW_DIAG_REPLACE_FAVORITE );
 
     // スレビュー

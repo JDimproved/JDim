@@ -465,7 +465,7 @@ const bool ConfigItems::load( const bool restore )
     threshold_next = cf.get_option_int( "threshold_next", CONF_THRESHOLD_NEXT, 1, 10 );
 
     // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
-    replace_favorite_next = cf.get_option_bool( "replace_favorite_next", CONF_REPLACE_FAVORITE_NEXT );
+    replace_favorite_next = cf.get_option_int( "replace_favorite_next", CONF_REPLACE_FAVORITE_NEXT, 0, 2 );
 
     // お気に入りの自動更新をするかダイアログを出す
     show_diag_replace_favorite = cf.get_option_bool( "show_diag_replace_favorite", CONF_SHOW_DIAG_REPLACE_FAVORITE );

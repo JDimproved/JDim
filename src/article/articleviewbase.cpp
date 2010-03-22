@@ -1538,9 +1538,7 @@ void ArticleViewBase::slot_copy_article_info()
     if( ! DBTREE::article_is_cached( m_url_tmp ) ) return;
 
     m_article->copy_article_info( m_url_tmp );
-    if( CONFIG::get_replace_favorite_next() ){
-        CORE::core_set_command( "replace_favorite_thread", "", m_url_tmp, m_url_article );
-    }
+    CORE::core_set_command( "replace_favorite_thread", "", m_url_tmp, m_url_article );
 
     // 再レイアウト
     ARTICLE::get_admin()->set_command( "relayout_views", m_url_article );

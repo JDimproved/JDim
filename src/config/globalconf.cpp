@@ -422,8 +422,8 @@ const bool CONFIG::get_expand_rpane(){ return get_confitem()->expand_rpane; }
 const int CONFIG::get_threshold_next(){ return get_confitem()->threshold_next; }
 
 // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
-const bool CONFIG::get_replace_favorite_next(){ return get_confitem()->replace_favorite_next; }
-void CONFIG::set_replace_favorite_next( const bool set ){ get_confitem()->replace_favorite_next = set; }
+const int CONFIG::get_replace_favorite_next(){ return get_confitem()->replace_favorite_next; }
+void CONFIG::set_replace_favorite_next( const int mode ){ get_confitem()->replace_favorite_next = mode; }
 
 // お気に入りの自動更新をするかダイアログを出す
 const bool CONFIG::show_diag_replace_favorite(){ return get_confitem()->show_diag_replace_favorite; }

@@ -1355,9 +1355,7 @@ void ArticleBase::slot_load_finished()
                 copy_article_info( m_url_pre_article );
 
                 // お気に入りのアドレスと名前を自動更新
-                if( CONFIG::get_replace_favorite_next() ){
-                    CORE::core_set_command( "replace_favorite_thread", "", m_url_pre_article, m_url );
-                }
+                CORE::core_set_command( "replace_favorite_thread", "", m_url_pre_article, m_url );
 
                 // 前スレにしおりがセットされていたらしおりをつける
                 if( DBTREE::is_bookmarked_thread( m_url_pre_article ) ){
