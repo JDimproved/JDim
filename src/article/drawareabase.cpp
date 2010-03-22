@@ -1786,13 +1786,10 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 
             m_ready_back_marker = false;
 
-#if GTKMMVER <= 280 // [Deprecated] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
+            // [gtkmm <= 2.8] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
+            // Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
             Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
             m_gc->set_clip_rectangle( rect_window );
-#else // [gtkmm >= 2.10] Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
-            const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-            m_gc->set_clip_rectangle( rect_window );
-#endif
             m_window->draw_drawable( m_gc, m_back_marker, 0, 0,
                                      m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
 
@@ -1804,14 +1801,10 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 
             m_ready_back_frame = false;
 
-#if GTKMMVER <= 280 // [Deprecated] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
-            Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-            m_gc->set_clip_rectangle( rect_window );
-#else // [gtkmm >= 2.10] Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
-            const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-            m_gc->set_clip_rectangle( rect_window );
-#endif
-
+            // [gtkmm <= 2.8] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
+            // Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
+            Gdk::Rectangle rect_frame( 0, 0, width_view, height_view );
+            m_gc->set_clip_rectangle( rect_frame );
             m_window->draw_drawable( m_gc, m_back_frame, 0, 0, 0, 0, width_view, WIDTH_FRAME );
             m_window->draw_drawable( m_gc, m_back_frame, 0, WIDTH_FRAME, 0, height_view - WIDTH_FRAME, width_view, WIDTH_FRAME );
 
@@ -2139,27 +2132,19 @@ void DrawAreaBase::draw_marker()
 
     if( m_scroll_window ){
 
-#if GTKMMVER <= 280 // [Deprecated] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
-        Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-        m_gc->set_clip_rectangle( rect_window );
-#else // [gtkmm >= 2.10] Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
-        const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-        m_gc->set_clip_rectangle( rect_window );
-#endif
-
+        // [gtkmm <= 2.8] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
+        // Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
+        Gdk::Rectangle rect_marker( 0, 0, m_clip_marker.width, m_clip_marker.height );
+        m_gc->set_clip_rectangle( rect_marker );
         m_back_marker->draw_drawable( m_gc, m_window, m_clip_marker.x, m_clip_marker.y,
                                       0, 0, m_clip_marker.width, m_clip_marker.height );
         m_ready_back_marker = true;
     }
 
-#if GTKMMVER <= 280 // [Deprecated] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
+    // [gtkmm <= 2.8] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
+    // Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
     Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
     m_gc->set_clip_rectangle( rect_window );
-#else // [gtkmm >= 2.10] Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
-    const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-    m_gc->set_clip_rectangle( rect_window );
-#endif
-
     m_gc->set_foreground( m_color[ COLOR_MARKER ] );
     m_window->draw_arc( m_gc, false,
                         x_marker, y_marker, AUTOSCR_CIRCLE-1, AUTOSCR_CIRCLE-1,
@@ -2179,14 +2164,10 @@ void DrawAreaBase::draw_frame()
 
     if( m_scroll_window ){
 
-#if GTKMMVER <= 280 // [Deprecated] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
-        Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-        m_gc->set_clip_rectangle( rect_window );
-#else // [gtkmm >= 2.10] Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
-        const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-        m_gc->set_clip_rectangle( rect_window );
-#endif
-
+        // [gtkmm <= 2.8] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
+        // Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
+        Gdk::Rectangle rect_frame( 0, 0, width_win, WIDTH_FRAME * 2 );
+        m_gc->set_clip_rectangle( rect_frame );
         m_back_frame->draw_drawable( m_gc, m_window, 0, 0, 0, 0, width_win, WIDTH_FRAME );
         m_back_frame->draw_drawable( m_gc, m_window, 0, height_win - WIDTH_FRAME, 0, WIDTH_FRAME, width_win, WIDTH_FRAME );
         m_ready_back_frame = true;
@@ -4298,14 +4279,10 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
         std::cout << "copy from backscreen\n";
 #endif
 
-#if GTKMMVER <= 280 // [Deprecated] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
-        Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-        m_gc->set_clip_rectangle( rect_window );
-#else // [gtkmm >= 2.10] Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
-        const Gdk::Rectangle rect_window( m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-        m_gc->set_clip_rectangle( rect_window );
-#endif
-
+        // [gtkmm <= 2.8] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
+        // Gdk::GC::set_clip_rectangle( const Gdk::Rectangle& rectangle )
+        Gdk::Rectangle rect( x, y, width, height );
+        m_gc->set_clip_rectangle( rect );
         m_window->draw_drawable( m_gc, m_backscreen, x, y, x, y, width, height );
 
         // オートスクロールマーカと枠の描画
