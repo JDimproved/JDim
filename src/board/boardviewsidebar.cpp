@@ -17,6 +17,8 @@
 #include "session.h"
 #include "updatemanager.h"
 
+#include <cstring>
+
 using namespace BOARD;
 
 
