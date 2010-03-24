@@ -375,6 +375,9 @@ void CONFIG::set_list_abone_regex_thread( std::list< std::string >& regex )
 }
 
 
+const int CONFIG::get_remove_old_abone_thread(){ return get_confitem()->remove_old_abone_thread; } 
+void CONFIG::set_remove_old_abone_thread( const int remove ){ get_confitem()->remove_old_abone_thread = remove; }
+
 const int CONFIG::get_abone_number_thread(){ return get_confitem()->abone_number_thread; } 
 void CONFIG::set_abone_number_thread( const int number ){ get_confitem()->abone_number_thread = number; }
 

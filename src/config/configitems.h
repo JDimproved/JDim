@@ -354,6 +354,9 @@ namespace CONFIG
         // スレ あぼーん regex
         std::list< std::string > list_abone_regex_thread;
 
+        // dat落ちしたスレをNGスレタイトルリストから取り除くか( 0: ダイアログ表示 1: 取り除く 2: 除かない )
+        int remove_old_abone_thread;
+
         // スレ あぼーん レス数
         int abone_number_thread;
 

@@ -160,6 +160,8 @@ void AboutConfig::append_rows()
     append_row( "3ペーン時にスレ一覧やスレビューを最大化する", get_confitem()->expand_rpane, CONF_EXPAND_RPANE );
     append_row( "スレ一覧をロードする前にキャッシュにある一覧を表示する", get_confitem()->show_cached_board, CONF_SHOW_CACHED_BOARD );
     append_row( "お知らせスレ(924)のアイコンを表示する", get_confitem()->show_924, CONF_SHOW_924 );
+    append_row( "dat落ちしたスレをNGスレタイトルから除く( 0: ダイアログ表示 1: 除く 2: 除かない )", get_confitem()->remove_old_abone_thread, CONF_REMOVE_OLD_ABONE_THREAD );
+
 
     // 次スレ検索
     append_row( "" );

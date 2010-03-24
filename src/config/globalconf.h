@@ -403,6 +403,9 @@ namespace CONFIG
     void set_list_abone_word_thread( std::list< std::string >& word );
     void set_list_abone_regex_thread( std::list< std::string >& regex );
 
+    const int get_remove_old_abone_thread(); // dat落ちしたスレをNGスレタイトルリストから取り除くか( 0: ダイアログ表示 1: 取り除く 2: 除かない )
+    void set_remove_old_abone_thread( const int remove ); 
+
     const int get_abone_number_thread();
     void set_abone_number_thread( const int number );
 

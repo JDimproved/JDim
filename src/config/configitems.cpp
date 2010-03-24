@@ -433,6 +433,9 @@ const bool ConfigItems::load( const bool restore )
     str_tmp = cf.get_option_str( "aboneregexthread", "" );
     if( ! str_tmp.empty() ) list_abone_regex_thread = MISC::strtolist( str_tmp );
 
+    // dat落ちしたスレをNGスレタイトルリストから取り除くか( 0: ダイアログ表示 1: 取り除く 2: 除かない )
+    remove_old_abone_thread = cf.get_option_int( "remove_old_abone_thread", CONF_REMOVE_OLD_ABONE_THREAD, 0, 2 );
+
     // スレ あぼーん( レス数 )
     abone_number_thread = cf.get_option_int( "abone_number_thread", CONF_ABONE_NUMBER_THREAD, 0, 9999 );
 
@@ -750,6 +753,8 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "abonewordthread", str_abone_word_thread );
     cf.update( "aboneregexthread", str_abone_regex_thread );
+
+    cf.update( "remove_old_abone_thread", remove_old_abone_thread );
 
     cf.update( "abone_number_thread", abone_number_thread );
     cf.update( "abone_hour_thread", abone_hour_thread );

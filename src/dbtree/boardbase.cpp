@@ -1488,6 +1488,7 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
 //
 void BoardBase::remove_old_abone_thread()
 {
+    if( CONFIG::get_remove_old_abone_thread() == 2 ) return;
     if( m_list_abone_thread.empty() ) return;
     if( m_list_abone_thread.size() == m_list_abone_thread_remove.size() ) return;
 
@@ -1500,10 +1501,25 @@ void BoardBase::remove_old_abone_thread()
     for( ; it2 != m_list_abone_thread_remove.end(); ++it2 ) std::cout << ( *it2 ) << std::endl;
 #endif
 
-    SKELETON::MsgDiag mdiag( NULL, "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？",
-                             false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    if( CONFIG::get_remove_old_abone_thread() == 1 ){
+        m_list_abone_thread = m_list_abone_thread_remove;
+        return;
+    }
+
+    SKELETON::MsgCheckDiag mdiag( NULL,
+                             "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？",
+                             "今後表示しない(_D)",
+                             Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     mdiag.set_default_response( Gtk::RESPONSE_YES );
-    if( mdiag.run() == Gtk::RESPONSE_YES ) m_list_abone_thread = m_list_abone_thread_remove;
+
+    const int ret = mdiag.run();
+    if( ret == Gtk::RESPONSE_YES ) m_list_abone_thread = m_list_abone_thread_remove;
+
+    if( mdiag.get_chkbutton().get_active() ){
+
+        if( ret == Gtk::RESPONSE_YES ) CONFIG::set_remove_old_abone_thread( 1 );
+        else CONFIG::set_remove_old_abone_thread( 2 );
+    }
 }
 
 
