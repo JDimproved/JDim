@@ -66,6 +66,7 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_read_info( 0 )
     , m_append_articles( false )
     , m_get_article( NULL )
+    , m_cancel_remove_abone_thread( false )
     , m_article_null( 0 )
 {
     clear();
@@ -1488,6 +1489,7 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
 //
 void BoardBase::remove_old_abone_thread()
 {
+    if( m_cancel_remove_abone_thread ) return;
     if( CONFIG::get_remove_old_abone_thread() == 2 ) return;
     if( m_list_abone_thread.empty() ) return;
     if( m_list_abone_thread.size() == m_list_abone_thread_remove.size() ) return;
@@ -1509,11 +1511,17 @@ void BoardBase::remove_old_abone_thread()
     SKELETON::MsgCheckDiag mdiag( NULL,
                              "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？",
                              "今後表示しない(_D)",
-                             Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-    mdiag.set_default_response( Gtk::RESPONSE_YES );
+                                  Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+
+    mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+    mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+    mdiag.set_default_response( Gtk::RESPONSE_NO );
 
     const int ret = mdiag.run();
     if( ret == Gtk::RESPONSE_YES ) m_list_abone_thread = m_list_abone_thread_remove;
+
+    // 一度いいえを選択したらあとは再起動するまでダイアログを表示しない
+    else m_cancel_remove_abone_thread = true; 
 
     if( mdiag.get_chkbutton().get_active() ){
 

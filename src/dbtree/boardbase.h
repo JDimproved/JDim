@@ -195,6 +195,9 @@ namespace DBTREE
         std::string m_get_article_url;
         ArticleBase* m_get_article;
 
+        // remove_old_abone_thread() をキャンセルするか
+        bool m_cancel_remove_abone_thread;
+
         // NULL artice クラス
         ArticleBase* m_article_null;
 
