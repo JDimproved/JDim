@@ -3368,8 +3368,14 @@ void DrawAreaBase::update_live_speed( const int sec )
     if( ! m_scrollinfo.live ) return;
     if( sec <= 0 ) return;
 
-    double speed = ( get_vscr_maxval() - get_vscr_val() ) / ( sec * 1000/TIMER_TIMEOUT_SMOOTH_SCROLL );
-    m_scrollinfo.live_speed = MAX( CONFIG::get_live_speed(), speed );
+    const int min_live_speed = CONFIG::get_live_speed();
+    if( ! min_live_speed ) m_scrollinfo.live_speed = 0;
+    else{
+
+        double speed = ( get_vscr_maxval() - get_vscr_val() ) / ( sec * 1000/TIMER_TIMEOUT_SMOOTH_SCROLL );
+        m_scrollinfo.live_speed = MAX( min_live_speed, speed );
+    }
+
     m_scrollinfo.live_counter = 0;
 
 #ifdef _DEBUG

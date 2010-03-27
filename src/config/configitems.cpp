@@ -314,7 +314,7 @@ const bool ConfigItems::load( const bool restore )
     live_mode = cf.get_option_int( "live_mode", LIVE_SCRMODE_VARIABLE, 0, LIVE_SCRMODE_NUM -1 );
 
     // 実況速度
-    live_speed = cf.get_option_int( "live_speed", CONF_LIVE_SPEED, 1, 1024 );
+    live_speed = cf.get_option_int( "live_speed", CONF_LIVE_SPEED, 0, 50 );
 
     // 実況のスクロールモードを切り替えるしきい値
     live_threshold = cf.get_option_int( "live_threshold", CONF_LIVE_THRESHOLD, 1, 1024 );

@@ -47,7 +47,7 @@ namespace CORE
 
         LivePref( Gtk::Window* parent, const std::string& url )
         : SKELETON::PrefDiag( parent, url ),
-        m_label_inst( "実況を行うには始めに板のプロパティで更新間隔を設定して下さい。" ),
+        m_label_inst( "実況を行うには始めに板のプロパティで更新間隔を設定して下さい。\n速度を0にするとスクロールしません。" ),
         m_mode1( m_radiogroup, "速度可変、速度がしきい値を越えると行単位でスクロール(_1)", true ),
         m_mode2( m_radiogroup, "速度一定、遅れがしきい値を越えると行単位でスクロール(_2)", true )
         {
@@ -64,7 +64,7 @@ namespace CORE
             else m_mode2.set_active( true );
 
             // 速度
-            m_spin_speed.set_range( 1, 50 );
+            m_spin_speed.set_range( 0, 50 );
             m_spin_speed.set_increments( 1, 1 );
             m_spin_speed.set_value( CONFIG::get_live_speed() );
             m_label_speed.set_text_with_mnemonic( "可変モードでの最低速度/一定モードでの速度(_S)：" );
