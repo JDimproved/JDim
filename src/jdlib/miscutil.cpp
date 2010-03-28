@@ -546,7 +546,7 @@ const int MISC::str_to_uint( const char* str, unsigned int& dig, unsigned int& n
     n = 0;
     while( *str != '\0' ){
 
-        unsigned char in = (*str);
+        const unsigned char in = (*str);
         
         if( '0' <=  in && in <= '9' ){
 
@@ -557,9 +557,11 @@ const int MISC::str_to_uint( const char* str, unsigned int& dig, unsigned int& n
         }
 
         else{
+
+            const unsigned char in2 = (* ( str +1 ));
+            const unsigned char in3 = (* ( str +2 ));
+
             // utf-8
-            unsigned char in2 = (* ( str +1 ));
-            unsigned char in3 = (* ( str +2 ));
             if( in == 0xef && in2 == 0xbc && ( 0x90 <= in3 && in3 <= 0x99 ) ){
                 out = out*10 + ( in3 - 0x90 );
                 ++dig;

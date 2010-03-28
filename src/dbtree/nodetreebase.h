@@ -300,7 +300,7 @@ namespace DBTREE
         // m_buffer_write に作成した文字列をセットする
         void parse_write( const char* str, const int lng, const int max_lng_write );
 
-        bool check_anchor( int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
+        const bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
         const int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link );
 
         // あぼーんのクリア

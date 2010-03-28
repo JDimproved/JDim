@@ -2136,8 +2136,8 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
 //
 // 戻り値 : アンカーが現れれば true
 //
-bool NodeTreeBase::check_anchor( int mode, const char* str_in,
-                                 int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo )
+const bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
+                                       int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo )
 {
     char tmp_out[ 64 ];
     int lng_out = 0;
@@ -2199,9 +2199,9 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
     }
 
     // 数字かチェック
-    unsigned int n, dig;
-    ancinfo->anc_from = ancinfo->anc_to = MISC::str_to_uint( pos, dig, n );
-    if( dig == 0 || dig > MAX_LINK_DIGIT || ancinfo->anc_from == 0 ){
+    size_t n, dig;
+    int num = MISC::str_to_uint( pos, dig, n );
+    if( dig == 0 || dig > MAX_LINK_DIGIT || num == 0 ){
 
         // モード2で数字が長すぎるときは飛ばす
         if( mode == 2 && dig > MAX_LINK_DIGIT ) n_in = ( int )( pos - str_in ) + n; 
@@ -2215,16 +2215,34 @@ bool NodeTreeBase::check_anchor( int mode, const char* str_in,
     memcpy( str_out, tmp_out, lng_out );
     memcpy( str_out + lng_out, pos, n );
     str_out[ lng_out + n ] = '\0';
-
-    // アンカー文字
-    snprintf( str_link, lng_link, "%d", ancinfo->anc_from );
     pos += n;
     lng_out += n;    
 
+    // </a>をキャンセル
+    if( *( pos ) == '<' && *( pos + 1 ) == '/' && ( *( pos + 2 ) == 'a' || *( pos + 2 ) == 'A' ) && *( pos + 3 ) == '>' ){
 
-    // dat形式では "&gt;&gt;数字"のパターンの場合には後に</a>がついてるのでのぞく
-    if( *( pos ) == '<' && *( pos + 1 ) == '/' && ( *( pos + 2 ) == 'a' || *( pos + 2 ) == 'A' ) && *( pos + 3 ) == '>' ) pos += 4;
+        pos += 4;
 
+        // もう一度数字チェック
+        // >>1１ を書き込むと <a href="..">&gt;&gt;1</a>１ となるため
+        size_t n2, dig2;
+        const int num2 = MISC::str_to_uint( pos, dig2, n2 );
+        if( dig2 > 0 && dig2 <= MAX_LINK_DIGIT ){
+
+            for( size_t i = 0; i < dig2; ++i ) num *= 10;
+            num += num2;
+
+            memcpy( str_out + lng_out, pos, n2 );
+            str_out[ lng_out + n2 ] = '\0';
+            pos += n2;
+            lng_out += n2;
+        }
+    }
+
+    ancinfo->anc_from = ancinfo->anc_to = num;
+
+    // アンカー文字
+    snprintf( str_link, lng_link, "%d", ancinfo->anc_from );
 
     // "-" でつながってる場合同じことをもう一回
     int offset = 0;
