@@ -539,7 +539,7 @@ const int MISC::count_chr( const std::string& str, const char chr )
 //
 // 戻り値: 数値
 //
-const int MISC::str_to_uint( const char* str, unsigned int& dig, unsigned int& n )
+const int MISC::str_to_uint( const char* str, size_t& dig, size_t& n )
 {
     int out = 0;
     dig = 0;

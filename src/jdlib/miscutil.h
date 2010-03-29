@@ -119,7 +119,7 @@ namespace MISC
     // dig: 桁数、0なら失敗
     // n : str から何バイト読み取ったか
     // 戻り値: 数値
-    const int str_to_uint( const char* str, unsigned int& dig, unsigned int& n );
+    const int str_to_uint( const char* str, size_t& dig, size_t& n );
 
     // 数字　-> 文字変換
     const std::string itostr( const int n );
