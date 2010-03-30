@@ -69,6 +69,9 @@ namespace SKELETON
         // 選択中の Gtk::TreeModel::iterator のリストを取得
         std::list< Gtk::TreeModel::iterator > get_selected_iterators();
 
+        // 選択行の削除
+        virtual void delete_selected_rows( const bool force );
+
         // 選択行の移動
         void goto_top();
         void goto_bottom();

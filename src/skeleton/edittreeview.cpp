@@ -957,7 +957,7 @@ void EditTreeView::delete_path( std::list< Gtk::TreePath >& list_path, const boo
 //
 // 選択した行をまとめて削除
 //
-// force = true なら m_editable が false でも追加
+// force = true なら m_editable が false でも削除
 //
 void EditTreeView::delete_selected_rows( const bool force )
 {

@@ -147,12 +147,12 @@ namespace SKELETON
             );
 
         // pathをまとめて削除
-        // force = true なら m_editable が false でも追加
+        // force = true なら m_editable が false でも削除
         void delete_path( std::list< Gtk::TreePath >& list_path, const bool force );
 
         // 選択した行をまとめて削除
-        // force = true なら m_editable が false でも追加
-        void delete_selected_rows( const bool force );
+        // force = true なら m_editable が false でも削除
+        virtual void delete_selected_rows( const bool force );
 
         void undo();
         void redo();

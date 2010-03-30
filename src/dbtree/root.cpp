@@ -1514,7 +1514,7 @@ const bool Root::is_local( const std::string& url )
 void Root::update_abone_thread()
 {
     std::list< BoardBase* >::iterator it = m_list_board.begin();
-    for( ; it != m_list_board.end(); ++it ) ( *it )->update_abone_thread();
+    for( ; it != m_list_board.end(); ++it ) ( *it )->update_abone_thread( true );
 }
 
 

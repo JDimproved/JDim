@@ -429,14 +429,18 @@ namespace DBTREE
 
         // スレあぼーん情報を更新した時に対応するスレ一覧の表示を更新する
         // CONFIG::set_abone_number_thread() などでグローバル設定をした後などに呼び出す
-        void update_abone_thread();
+        // redraw : スレ一覧の表示更新を行う
+        void update_abone_thread( const bool redraw );
 
         // スレあぼーん状態のリセット(情報セットとスレ一覧の表示更新を同時におこなう)
+        // redraw : スレ一覧の表示更新を行う
         void reset_abone_thread( const std::list< std::string >& threads,
                                  const std::list< std::string >& words,
                                  const std::list< std::string >& regexs,
                                  const int number,
-                                 const int hour );
+                                 const int hour,
+                                 const bool redraw
+            );
 
         // ローカルプロキシ設定
         const int get_mode_local_proxy() const { return m_mode_local_proxy; }

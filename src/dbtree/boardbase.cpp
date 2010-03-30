@@ -925,10 +925,17 @@ void BoardBase::download_subject( const std::string& url_update_view, const bool
     // オフライン
     if( ! m_is_online  ){
 
-        set_str_code( "" );
-
+        // まだスレ一覧を開いていないときはディスパッチャを通さないで直接subject.txtを読み込む
         if( read_from_cache ) receive_finish();
-        else finish(); // ディスパッチャ経由で receive_finish() を呼び出す
+
+        // 一度でもスレ一覧を開いている場合はディスパッチャ経由で receive_finish() を呼び出す
+        else{
+
+            // HTTP コードは Loadable::callback_dispatch() の中で HTTP_INIT にセットされる
+            set_str_code( "" );
+
+            finish();
+        }
 
         return;
     }
@@ -1536,7 +1543,9 @@ void BoardBase::remove_old_abone_thread()
 //
 // CONFIG::set_abone_number_thread() などでグローバル設定をした後などに呼び出す
 //
-void BoardBase::update_abone_thread()
+// redraw : スレ一覧の表示更新を行う
+//
+void BoardBase::update_abone_thread( const bool redraw )
 {
 #ifdef _DEBUG
     std::cout << "BoardBase::update_abone_thread\n";
@@ -1549,7 +1558,7 @@ void BoardBase::update_abone_thread()
     const bool online = SESSION::is_online();
     SESSION::set_online( false );
 
-    download_subject( url_subject(), false );
+    download_subject( ( redraw ? url_subject() : std::string() ), false );
 
     SESSION::set_online( online );
 }
@@ -1623,13 +1632,17 @@ void BoardBase::add_abone_word_board( const std::string& word )
 
 
 //
-// スレあぼーん状態のリセット(情報セットとスレ一覧の表示更新を同時におこなう)
+// スレあぼーん状態のリセット
+//
+// redraw : スレ一覧の表示更新を行う
 //
 void BoardBase::reset_abone_thread( const std::list< std::string >& threads,
                                     const std::list< std::string >& words,
                                     const std::list< std::string >& regexs,
                                     const int number,
-                                    const int hour )
+                                    const int hour,
+                                    const bool redraw
+    )
 {
     if( empty() ) return;
 
@@ -1651,7 +1664,7 @@ void BoardBase::reset_abone_thread( const std::list< std::string >& threads,
     m_abone_number_thread = number;
     m_abone_hour_thread = hour;
 
-    update_abone_thread();
+    update_abone_thread( redraw );
 }
 
 

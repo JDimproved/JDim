@@ -317,12 +317,13 @@ namespace DBTREE
     // CONFIG::set_abone_number_thread() などでグローバル設定をした後などに呼び出す
     void update_abone_thread();
 
-    // スレあぼーん状態のリセット(情報セットとスレ一覧の表示更新を同時におこなう)
+    // スレあぼーん状態のリセット
+    // redraw : スレ一覧の表示更新を行う    
     void reset_abone_thread( const std::string& url,
                              const std::list< std::string >& threads,
                              const std::list< std::string >& words,
                              const std::list< std::string >& regexs,
-                             const int number, const int hour );
+                             const int number, const int hour, const bool redraw );
 
     //
     // 各articlebase別のあぼーん情報

@@ -425,7 +425,8 @@ void Preferences::slot_ok_clicked()
     std::list< std::string > list_regex_thread = MISC::get_lines( m_edit_regex_thread.get_text() );
     const int number = m_spin_number.get_value_as_int();
     const int hour = m_spin_hour.get_value_as_int();
-    DBTREE::reset_abone_thread( get_url(), list_thread, list_word_thread, list_regex_thread, number, hour );  // 板の再描画も行われる
+    const bool redraw = true; // スレ一覧を再描画
+    DBTREE::reset_abone_thread( get_url(), list_thread, list_word_thread, list_regex_thread, number, hour, redraw );  
 
     // 書き込み設定
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );

@@ -125,6 +125,41 @@ std::list< Gtk::TreeModel::iterator > JDTreeViewBase::get_selected_iterators()
 
 
 //
+// 選択行の削除
+//
+void JDTreeViewBase::delete_selected_rows( const bool force )
+{
+    std::list< Gtk::TreeModel::Path > list_path = get_selection()->get_selected_rows();
+
+    if( ! list_path.size() ) return;
+
+    Glib::RefPtr< Gtk::ListStore > liststore;
+    Glib::RefPtr< Gtk::TreeStore > treestore = Glib::RefPtr< Gtk::TreeStore >::cast_dynamic( get_model() );
+    if( ! treestore ){
+
+        liststore = Glib::RefPtr< Gtk::ListStore >::cast_dynamic( get_model() );
+        if( ! liststore ) return;
+    }
+
+    // カーソルを選択範囲の最後の行の次の行に移動
+    const Gtk::TreePath next = next_path( list_path.back(), true );
+    const bool gotobottom = ( ! get_row( next ) );
+    if( ! gotobottom ) set_cursor( next );
+
+    std::list< Gtk::TreePath >::reverse_iterator it = list_path.rbegin();
+    for( ; it != list_path.rend(); ++it ){
+        Gtk::TreeRow row = get_row( *it );
+
+        if( treestore ) treestore->erase( row );
+        else liststore->erase( row );
+    }
+
+    if( gotobottom ) goto_bottom();
+}
+
+
+
+//
 // 先頭へ
 //
 void JDTreeViewBase::goto_top()

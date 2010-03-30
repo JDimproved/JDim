@@ -723,9 +723,11 @@ void DBTREE::reset_abone_thread( const std::string& url,
                                  const std::list< std::string >& words,
                                  const std::list< std::string >& regexs,
                                  const int number,
-                                 const int hour )
+                                 const int hour,
+                                 const bool redraw
+    )
 {
-    DBTREE::get_board( url )->reset_abone_thread( threads, words, regexs, number, hour );
+    DBTREE::get_board( url )->reset_abone_thread( threads, words, regexs, number, hour, redraw );
 }
 
 /////////////////////////////////////////////////
