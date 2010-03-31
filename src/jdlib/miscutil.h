@@ -6,6 +6,7 @@
 #define _MISCUTIL_H
 
 #include <string>
+#include <cstring>
 #include <list>
 #include <vector>
 #include <glibmm.h>
