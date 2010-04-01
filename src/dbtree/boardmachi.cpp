@@ -55,11 +55,11 @@ bool  BoardMachi::equal( const std::string& url )
 //
 // キャッシュのファイル名が正しいか
 //
-bool BoardMachi::is_valid( const std::string& filename )
+const bool BoardMachi::is_valid( const std::string& filename )
 {
     if( filename.length() != 10 ) return false;
 
-    unsigned int dig, n;
+    size_t dig, n;
     MISC::str_to_uint( filename.c_str(), dig, n );
     if( dig != n ) return false;
     if( dig != 10 ) return false;

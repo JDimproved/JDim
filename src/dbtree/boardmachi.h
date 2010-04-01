@@ -38,7 +38,7 @@ namespace DBTREE
 
       private:
 
-        virtual bool is_valid( const std::string& filename );
+        virtual const bool is_valid( const std::string& filename );
         virtual ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached );
         virtual void parse_subject( const char* str_subject_txt );
         virtual void regist_article( const bool is_online );

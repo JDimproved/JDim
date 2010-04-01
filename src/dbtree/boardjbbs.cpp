@@ -38,11 +38,11 @@ BoardJBBS::BoardJBBS( const std::string& root, const std::string& path_board, co
 //
 // キャッシュのファイル名が正しいか
 //
-bool BoardJBBS::is_valid( const std::string& filename )
+const bool BoardJBBS::is_valid( const std::string& filename )
 {
     if( filename.length() != 10 ) return false;
 
-    unsigned int dig, n;
+    size_t dig, n;
     MISC::str_to_uint( filename.c_str(), dig, n );
     if( dig != n ) return false;
     if( dig != 10 ) return false;

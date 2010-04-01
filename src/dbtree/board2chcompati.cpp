@@ -73,12 +73,12 @@ Board2chCompati::~Board2chCompati()
 //
 // キャッシュのファイル名が正しいか
 //
-bool Board2chCompati::is_valid( const std::string& filename )
+const bool Board2chCompati::is_valid( const std::string& filename )
 {
     if( filename.find( get_ext() ) == std::string::npos ) return false;
     if( filename.length() - filename.rfind( get_ext() ) != get_ext().length() ) return false;
 
-    unsigned int dig, n;
+    size_t dig, n;
     MISC::str_to_uint( filename.c_str(), dig, n );
     if( dig != n ) return false;
     if( dig == 0 ) return false;

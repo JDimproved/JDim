@@ -525,7 +525,7 @@ namespace DBTREE
         virtual const int get_default_number_max_res(){ return 0; }
 
         // キャッシュのファイル名が正しいかどうか
-        virtual bool is_valid( const std::string& filename ){ return false; }
+        virtual const bool is_valid( const std::string& filename ){ return false; }
 
         virtual void create_loaderdata( JDLIB::LOADERDATA& data );
         virtual void receive_data( const char* data, size_t size );
