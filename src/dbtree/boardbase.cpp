@@ -1520,9 +1520,8 @@ void BoardBase::remove_old_abone_thread()
                              "今後表示しない(_D)",
                                   Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
 
+    mdiag.add_default_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
     mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
-    mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-    mdiag.set_default_response( Gtk::RESPONSE_NO );
 
     const int ret = mdiag.run();
     if( ret == Gtk::RESPONSE_YES ) m_list_abone_thread = m_list_abone_thread_remove;

@@ -2537,11 +2537,9 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                                                       Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE
                             );
 
+                        mdiag.add_default_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
                         mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
-                        mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
                         mdiag.add_button( "新スレをお気に入りに追加(_F)", Gtk::RESPONSE_CANCEL );
-
-                        mdiag.set_default_response( Gtk::RESPONSE_NO );
 
                         mdiag.set_title( "お気に入り更新" );
                         const int ret = mdiag.run();

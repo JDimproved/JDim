@@ -46,6 +46,33 @@ MsgDiag::MsgDiag( Gtk::Window* parent,
 }
 
 
+void MsgDiag::add_default_button( const Gtk::StockID& stock_id, const int id )
+{
+    Gtk::Button* button = Gtk::manage( new Gtk::Button( stock_id ) );
+    add_default_button( button, id );
+}
+
+
+void MsgDiag::add_default_button( const Glib::ustring& label, const int id )
+{
+    Gtk::Button* button = Gtk::manage( new Gtk::Button( label ) );
+    add_default_button( button, id );
+}
+
+
+void MsgDiag::add_default_button( Gtk::Widget* button, const int id )
+{
+    if( ! button ) return;
+
+    add_action_widget( *button, id );
+    button->show();
+
+    button->set_flags( Gtk::CAN_DEFAULT );
+    button->grab_default();
+    button->grab_focus();
+}
+
+
 int MsgDiag::run()
 {
 #ifdef _DEBUG
@@ -126,27 +153,24 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
     hbox->pack_start( m_chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
     get_vbox()->pack_start( *hbox, Gtk::PACK_SHRINK );
 
-    Gtk::Button* okbutton = NULL;
+    Gtk::Button* button = NULL;
 
     if( buttons == Gtk::BUTTONS_OK ){
-        okbutton = Gtk::manage( new Gtk::Button( Gtk::Stock::OK ) );
-        add_action_widget( *okbutton, Gtk::RESPONSE_OK );
+
+        button = Gtk::manage( new Gtk::Button( Gtk::Stock::OK ) );
+        add_default_button( button, Gtk::RESPONSE_OK );
     }
     else if( buttons == Gtk::BUTTONS_OK_CANCEL ){
         add_button( Gtk::Stock::NO, Gtk::RESPONSE_CANCEL );
-        okbutton = Gtk::manage( new Gtk::Button( Gtk::Stock::OK ) );
-        add_action_widget( *okbutton, Gtk::RESPONSE_OK );
+
+        button = Gtk::manage( new Gtk::Button( Gtk::Stock::OK ) );
+        add_default_button( button, Gtk::RESPONSE_OK );
     }
     else if( buttons == Gtk::BUTTONS_YES_NO ){
         add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-        okbutton = Gtk::manage( new Gtk::Button( Gtk::Stock::YES ) );
-        add_action_widget( *okbutton, Gtk::RESPONSE_YES );
-    }
 
-    if( okbutton ){
-        okbutton->set_flags( Gtk::CAN_DEFAULT );
-        okbutton->grab_default();
-        okbutton->grab_focus();
+        button = Gtk::manage( new Gtk::Button( Gtk::Stock::YES ) );
+        add_default_button( button, Gtk::RESPONSE_YES );
     }
 
     show_all_children();
