@@ -76,6 +76,7 @@ namespace SKELETON
         void backsp_char();
 
         void undo();
+        void clear_undo();
 
         // カーソルの画面上の座標
         Gdk::Rectangle get_cursor_root_origin();
@@ -160,6 +161,7 @@ namespace SKELETON
         void focus_view(){ m_textview.grab_focus(); }
 
         void undo(){ m_textview.undo(); }
+        void clear_undo(){ m_textview.clear_undo(); }
 
         // カーソルの画面上の座標
         Gdk::Rectangle get_cursor_root_origin(){ return m_textview.get_cursor_root_origin(); }

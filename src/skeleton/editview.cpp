@@ -294,6 +294,11 @@ void EditTextView::undo()
 }
 
 
+void EditTextView::clear_undo()
+{
+    m_undo_tree.clear();
+}
+
 
 //
 // マウスボタン入力のフック

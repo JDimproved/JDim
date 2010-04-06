@@ -253,7 +253,10 @@ const bool MessageViewBase::set_command( const std::string& command, const std::
     // メッセージをクリア
     else if( command == "clear_message" ){
 
-        if( m_text_message ) m_text_message->set_text( std::string() );
+        if( m_text_message ){
+            m_text_message->set_text( std::string() );
+            m_text_message->clear_undo();
+        }
 
         if( m_notebook.get_current_page() != PAGE_MESSAGE ){
             m_enable_focus = false;
@@ -393,10 +396,13 @@ void MessageViewBase::pack_widget()
 
             m_text_message = MESSAGE::get_admin()->get_text_message();
             m_text_message->set_text( std::string() );
+            m_text_message->clear_undo();
         }
         else m_text_message = Gtk::manage( new SKELETON::EditView() );
     }
-    m_msgview.pack_start( *m_text_message );
+
+    if( m_text_message->get_parent() ) m_text_message->reparent( m_msgview );
+    else m_msgview.pack_start( *m_text_message );
 
     m_text_message->set_accepts_tab( false );
     m_text_message->sig_key_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );    
@@ -763,7 +769,10 @@ void MessageViewBase::post_fin()
         ){
         save_postlog();
 
-        if( m_text_message ) m_text_message->set_text( std::string() );
+        if( m_text_message ){
+            m_text_message->set_text( std::string() );
+            m_text_message->clear_undo();
+        }
 
         close_view();
 
