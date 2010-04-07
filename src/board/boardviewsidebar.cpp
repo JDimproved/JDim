@@ -134,7 +134,7 @@ void BoardViewSidebar::update_item( const std::string& url, const std::string& i
 {
     const std::string url_dat = DBTREE::url_datbase( url ) + id;
 
-    if( ! id.empty() || m_set_thread.find_if( url_dat ) ){
+    if( id.empty() || m_set_thread.find_if( url_dat ) ){
 
 #ifdef _DEBUG
         std::cout << "BoardViewSidebar::update_item " << get_url() << std::endl
