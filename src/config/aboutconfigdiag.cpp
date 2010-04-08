@@ -24,6 +24,8 @@ AboutConfigDiagStr::AboutConfigDiagStr( Gtk::Window* parent, std::string* value,
     get_vbox()->set_spacing( 8 );
     get_vbox()->pack_start( m_hbox );
 
+    set_activate_entry( m_entry );
+
     set_title( "文字列設定" );
     show_all_children();
 }
@@ -58,6 +60,8 @@ AboutConfigDiagInt::AboutConfigDiagInt( Gtk::Window* parent, int* value, const i
 
     get_vbox()->set_spacing( 8 );
     get_vbox()->pack_start( m_hbox );
+
+    set_activate_entry( m_entry );
 
     set_title( "整数値設定" );
     show_all_children();

@@ -77,6 +77,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     m_frame_write.add( m_vbox_write );
 
+    set_activate_entry( m_entry_writename );
+    set_activate_entry( m_entry_writemail );
 
     // cookie と 書き込みキーワード の設定
     std::string str_cookies;
@@ -124,6 +126,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_live.pack_start( m_spin_live, Gtk::PACK_SHRINK );
     m_hbox_live.pack_start( m_check_live, Gtk::PACK_SHRINK );
 
+    set_activate_entry( m_spin_live );
+
     // 一般ページのパッキング
     m_label_max_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
     m_label_max_byte.set_text( MISC::itostr( DBTREE::message_count( get_url() ) ) );
@@ -140,6 +144,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     m_hbox_max.pack_start( m_label_maxres, Gtk::PACK_SHRINK );
     m_hbox_max.pack_start( m_spin_maxres, Gtk::PACK_SHRINK );
+
+    set_activate_entry( m_spin_maxres );
 
     const time_t last_access = DBTREE::board_last_access_time( get_url() );
     if( last_access ) m_label_last_access.set_text(
@@ -214,6 +220,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_vbox_proxy.pack_start( m_proxy_frame, Gtk::PACK_SHRINK );
     m_vbox_proxy.pack_start( m_proxy_frame_w, Gtk::PACK_SHRINK );
 
+    set_activate_entry( m_proxy_frame.entry_host );
+    set_activate_entry( m_proxy_frame.entry_port );
+    set_activate_entry( m_proxy_frame_w.entry_host );
+    set_activate_entry( m_proxy_frame_w.entry_port );
+
     // あぼーん
     std::string str_id, str_name, str_word, str_regex;
     std::string str_thread, str_word_thread, str_regex_thread;
@@ -261,6 +272,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_number.pack_start( m_spin_number, Gtk::PACK_SHRINK );
     m_hbox_number.pack_start( m_label_number, Gtk::PACK_SHRINK );
 
+    set_activate_entry( m_spin_number );
+
     m_label_hour.set_text( "時間以上スレ立てから経過したスレをあぼ〜ん" );
     m_spin_hour.set_range( 0, 9999 );
     m_spin_hour.set_increments( 1, 1 );
@@ -269,6 +282,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_hour.set_spacing( 4 );
     m_hbox_hour.pack_start( m_spin_hour, Gtk::PACK_SHRINK );
     m_hbox_hour.pack_start( m_label_hour, Gtk::PACK_SHRINK );
+
+    set_activate_entry( m_spin_hour );
 
     m_vbox_abone_thread.set_border_width( 16 );
     m_vbox_abone_thread.set_spacing( 8 );

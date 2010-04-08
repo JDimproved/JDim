@@ -60,8 +60,13 @@ void PrefDiag::grab_ok()
 
 
 //
-// LabelEntryがactiveになったときにOKでダイアログを終了させる
+// Entry、LabelEntryがactiveになったときにOKでダイアログを終了させる
 //
+void PrefDiag::set_activate_entry( Gtk::Entry& entry )
+{
+    entry.signal_activate().connect( sigc::mem_fun( *this, &PrefDiag::slot_activate_entry ) );
+}
+
 void PrefDiag::set_activate_entry( LabelEntry& entry )
 {
     entry.signal_activate().connect( sigc::mem_fun( *this, &PrefDiag::slot_activate_entry ) );

@@ -34,7 +34,8 @@ namespace SKELETON
         // okボタンをフォーカス
         void grab_ok();
 
-        // LabelEntryがactiveになったときにOKでダイアログを終了させる
+        // Entry、LabelEntryがactiveになったときにOKでダイアログを終了させる
+        void set_activate_entry( Gtk::Entry& entry );
         void set_activate_entry( LabelEntry& entry );
 
         virtual int run();

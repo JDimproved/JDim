@@ -111,6 +111,9 @@ namespace DBIMG
             get_vbox()->pack_start( m_frame_cache );
             get_vbox()->pack_start( m_frame_abone );
 
+            set_activate_entry( m_frame_cache.get_spin() );
+            set_activate_entry( m_frame_abone.get_spin() );
+
             set_title( "画像キャッシュの消去" );
             show_all_children();
         }

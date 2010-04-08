@@ -25,6 +25,10 @@ AddEtcDialog::AddEtcDialog( const bool move, const std::string& url, const std::
     m_vbox.set_border_width( 8 );
     m_vbox.add( m_entry_id );
     m_vbox.add( m_entry_pw );
+
+    set_activate_entry( m_entry_id );
+    set_activate_entry( m_entry_pw );
+
     m_frame.set_label( "BASIC認証" );
     m_frame.add( m_vbox );
 
@@ -32,6 +36,9 @@ AddEtcDialog::AddEtcDialog( const bool move, const std::string& url, const std::
     get_vbox()->pack_start( m_entry_name );
     get_vbox()->pack_start( m_entry_url );
     get_vbox()->pack_start( m_frame );
+
+    set_activate_entry( m_entry_name );
+    set_activate_entry( m_entry_url );
 
     if( move ){
         set_title( "外部板編集" );
