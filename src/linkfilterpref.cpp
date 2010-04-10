@@ -41,6 +41,9 @@ LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, con
     m_vbox.pack_start( m_hbox_cmd, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_entry_cmd, Gtk::PACK_SHRINK );
 
+    set_activate_entry( m_entry_url );
+    set_activate_entry( m_entry_cmd );
+
     get_vbox()->set_spacing( 8 );
     get_vbox()->pack_start( m_vbox );
 

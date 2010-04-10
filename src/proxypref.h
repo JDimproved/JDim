@@ -97,6 +97,9 @@ namespace CORE
             m_frame_2ch.entry_host.set_text( host );
             m_frame_2ch.entry_port.set_text( MISC::itostr( CONFIG::get_proxy_port_for2ch() ) );
 
+            set_activate_entry( m_frame_2ch.entry_host );
+            set_activate_entry( m_frame_2ch.entry_port );
+
             // 2ch書き込み用
             if( CONFIG::get_use_proxy_for2ch_w() ) m_frame_2ch_w.ckbt.set_active( true );
             else m_frame_2ch_w.ckbt.set_active( false );
@@ -105,6 +108,9 @@ namespace CORE
             m_frame_2ch_w.entry_host.set_text( host );
             m_frame_2ch_w.entry_port.set_text( MISC::itostr( CONFIG::get_proxy_port_for2ch_w() ) );
 
+            set_activate_entry( m_frame_2ch_w.entry_host );
+            set_activate_entry( m_frame_2ch_w.entry_port );
+
             // 一般用
             if( CONFIG::get_use_proxy_for_data() ) m_frame_data.ckbt.set_active( true );
             else m_frame_data.ckbt.set_active( false );
@@ -112,6 +118,9 @@ namespace CORE
             else host = CONFIG::get_proxy_basicauth_for_data() + "@" + CONFIG::get_proxy_for_data();
             m_frame_data.entry_host.set_text( host );
             m_frame_data.entry_port.set_text( MISC::itostr( CONFIG::get_proxy_port_for_data() ) );
+
+            set_activate_entry( m_frame_data.entry_host );
+            set_activate_entry( m_frame_data.entry_port );
 
             get_vbox()->set_spacing( 4 );
             get_vbox()->pack_start( m_label );

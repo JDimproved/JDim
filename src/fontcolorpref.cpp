@@ -141,6 +141,8 @@ void FontColorPref::pack_widget()
     m_tooltips.set_tip( m_spin_space, "スレビューにおいて行の高さを調節します( 標準は 1 )" );
     m_vbox_font.pack_start( m_hbox_space, Gtk::PACK_SHRINK, mrg/2 );
 
+    set_activate_entry( m_spin_space );
+
     // 下線位置
     m_spin_ubar.set_digits( 1 );
     m_spin_ubar.set_range( 0.1, 10.0 );
@@ -153,6 +155,8 @@ void FontColorPref::pack_widget()
     m_hbox_ubar.pack_start( m_spin_ubar, Gtk::PACK_SHRINK );
     m_vbox_font.pack_start( m_hbox_ubar, Gtk::PACK_SHRINK, mrg/2 );
     m_tooltips.set_tip( m_spin_ubar, "スレビューにおいてアンカーなどの下線の位置を調節します( 標準は 1 )" );
+
+    set_activate_entry( m_spin_ubar );
 
     // フォントのリセット
     m_bt_reset_font.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_font ) );

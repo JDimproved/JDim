@@ -61,6 +61,7 @@ jd_SOURCES = \
 	fontcolorpref.cpp \
 	usrcmdpref.cpp \
 	linkfilterpref.cpp \
+	livepref.cpp \
 	openurldiag.cpp \
 \
 	iomonitor.cpp \

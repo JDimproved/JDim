@@ -47,6 +47,9 @@ UsrCmdDiag::UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Gl
     get_vbox()->set_spacing( 8 );
     get_vbox()->pack_start( m_vbox );
 
+    set_activate_entry( m_entry_name );
+    set_activate_entry( m_entry_cmd );
+
     set_title( "ユーザコマンド設定" );
     show_all_children();
 }

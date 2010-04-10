@@ -69,6 +69,8 @@ namespace CORE
             get_vbox()->set_spacing( 0 );
             get_vbox()->pack_start( m_vbox );
 
+            set_activate_entry( m_entry_browser );
+
             set_title( "Webブラウザ設定" );
             show_all_children();
             resize( 400, 100 );

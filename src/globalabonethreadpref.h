@@ -77,6 +77,8 @@ namespace CORE
             m_hbox_number.pack_start( m_spin_number, Gtk::PACK_SHRINK );
             m_hbox_number.pack_start( m_label_number, Gtk::PACK_SHRINK );
 
+            set_activate_entry( m_spin_number );
+
             m_label_hour.set_text( "時間以上スレ立てから経過したスレをあぼ〜ん" );
             m_spin_hour.set_range( 0, 9999 );
             m_spin_hour.set_increments( 1, 1 );
@@ -85,6 +87,8 @@ namespace CORE
             m_hbox_hour.set_spacing( 4 );
             m_hbox_hour.pack_start( m_spin_hour, Gtk::PACK_SHRINK );
             m_hbox_hour.pack_start( m_label_hour, Gtk::PACK_SHRINK );
+
+            set_activate_entry( m_spin_hour );
 
             m_vbox_abone_thread.set_border_width( 16 );
             m_vbox_abone_thread.set_spacing( 8 );

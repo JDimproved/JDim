@@ -147,13 +147,22 @@ namespace CORE
             m_frame_2ch.entry_id.set_text( CORE::get_login2ch()->get_username() );
             m_frame_2ch.entry_passwd.set_text( CORE::get_login2ch()->get_passwd() );
 
+            set_activate_entry( m_frame_2ch.entry_id );
+            set_activate_entry( m_frame_2ch.entry_passwd );
+
             // beログイン用
             m_frame_be.entry_id.set_text( CORE::get_loginbe()->get_username() );
             m_frame_be.entry_passwd.set_text( CORE::get_loginbe()->get_passwd() );
 
+            set_activate_entry( m_frame_be.entry_id );
+            set_activate_entry( m_frame_be.entry_passwd );
+
             // p2ログイン用
             m_frame_p2.entry_id.set_text( CORE::get_loginp2()->get_username() );
             m_frame_p2.entry_passwd.set_text( CORE::get_loginp2()->get_passwd() );
+
+            set_activate_entry( m_frame_p2.entry_id );
+            set_activate_entry( m_frame_p2.entry_passwd );
 
             m_notebook.append_page( m_frame_2ch, "2ch" );
             m_notebook.append_page( m_frame_be, "BE" );
