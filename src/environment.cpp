@@ -20,6 +20,8 @@
 #endif
 #ifdef _WIN32
 #include <windows.h>
+typedef void (WINAPI *GetSystemInfo_t)(LPSYSTEM_INFO);
+typedef BOOL (WINAPI *GetProductInfo_t)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 #endif
 
 std::string ENVIRONMENT::get_jdcomments(){ return std::string( JDCOMMENT ); }
@@ -156,58 +158,109 @@ std::string ENVIRONMENT::get_distname()
     std::cout << "SESSION::get_dist_name\n";
 #endif
 
-    std::string tmp;
-    std::string text_data;
+    std::string dist_name;
 
 #ifdef _WIN32
+    std::ostringstream vstr;
+    vstr << "Windows";
+
     OSVERSIONINFOEX osvi;
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
     if (GetVersionEx((OSVERSIONINFO *)&osvi) != 0)
     {
-        std::ostringstream vstr;
-        vstr << "Windows";
         switch (osvi.dwPlatformId)
         {
         case VER_PLATFORM_WIN32_NT:
             switch (osvi.dwMajorVersion)
             {
             case 6:
-                switch (osvi.dwMinorVersion)
+                if (osvi.wProductType != VER_NT_WORKSTATION)
                 {
-                case 1: 
-                    if (osvi.wProductType == VER_NT_WORKSTATION)
-                        vstr << " 7";
-                    else
-                        vstr << " Server 2008 R2";
-                    break;
-                case 0:
-                    if (osvi.wProductType == VER_NT_WORKSTATION)
-                        vstr << " Vista";
-                    else
-                        vstr << " Server 2008";
-                    break;
+                    switch (osvi.dwMinorVersion)
+                    {
+                    case 1: vstr << " Server 2008 R2"; break;
+                    case 0: vstr << " Server 2008"; break;
+                    }
+                }
+                else
+                {
+                    switch (osvi.dwMinorVersion)
+                    {
+                    case 1: vstr << " 7"; break;
+                    case 0: vstr << " Vista"; break;
+                    }
+                    DWORD product;
+                    GetProductInfo_t get_product = (GetProductInfo_t)GetProcAddress(
+                        GetModuleHandle("kernel32.dll"), "GetProductInfo");
+                    get_product(osvi.dwMajorVersion, osvi.dwMinorVersion,
+                        0, 0, &product);
+                    switch (product)
+                    {
+                    case 0x0001: vstr << " Ultimate"; break; // PRODUCT_ULTIMATE
+                    case 0x0002: vstr << " Home Basic"; break; // PRODUCT_HOME_BASIC
+                    case 0x0003: vstr << " Home Premium"; break; // PRODUCT_HOME_PREMIUM
+                    case 0x0004: vstr << " Enterprise"; break; // PRODUCT_ENTERPRISE
+                    case 0x0006: vstr << " Business"; break; // PRODUCT_BUSINESS
+                    case 0x000B: vstr << " Starter"; break; // PRODUCT_STARTER
+                    case 0x0030: vstr << " Professional"; break; // PRODUCT_PROFESSIONAL
+                    }
                 }
                 break;
             case 5:
                 switch (osvi.dwMinorVersion)
                 {
-                case 2: vstr << " Server 2003"; break;
-                case 1: vstr << " XP"; break;
-                case 0: vstr << " 2000"; break;
+                case 2:
+                    if (GetSystemMetrics(SM_SERVERR2))
+                        vstr << " Server 2003 R2";
+                    else if (osvi.wSuiteMask & 0x8000) // VER_SUITE_WH_SERVER
+                        vstr << " Home Server";
+                    else if (osvi.wProductType == VER_NT_WORKSTATION)
+                        vstr << " XP Professional"; // x64
+                    else
+                        vstr << " Server 2003";
+                    break;
+                case 1:
+                    if (osvi.wSuiteMask & VER_SUITE_PERSONAL)
+                        vstr << " XP Home";
+                    else
+                        vstr << " XP Professional";
+                    break;
+                case 0:
+                    if (osvi.wProductType == VER_NT_WORKSTATION)
+                        vstr << " 2000 Professional";
+                    else
+                        vstr << " 2000 Server";
+                    break;
                 }
                 break;
             case 4: vstr << " NT 4.0"; break;
             }
-            if (osvi.dwMajorVersion > 4)
+            // additional informations
+            if (osvi.dwMajorVersion >= 5)
             {
+                // OS architecture
+                SYSTEM_INFO sysi;
+                GetSystemInfo_t get_system = (GetSystemInfo_t)GetProcAddress(
+                    GetModuleHandle("kernel32.dll"), "GetNativeSystemInfo");
+                if (get_system != NULL)
+                    get_system(&sysi);
+                else
+                    GetSystemInfo(&sysi);
+                if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+                    vstr << " x64";
+                else if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+                    vstr << " ia64";
+                // Service pack version
                 if (strlen(osvi.szCSDVersion) > 0)
                 {
                     vstr << " " << osvi.szCSDVersion;
                 }
+                // Build version
                 vstr << " (build " << osvi.dwBuildNumber << ")";
             }
             break;
         case VER_PLATFORM_WIN32_WINDOWS:
+            // Not support versions
             if (osvi.dwMajorVersion == 4)
             {
                 switch (osvi.dwMinorVersion)
@@ -219,9 +272,13 @@ std::string ENVIRONMENT::get_distname()
             }
             break;
         }
-        tmp = vstr.str();
     }
-#else
+    dist_name = vstr.str();
+
+#else // _WIN32
+    std::string tmp;
+    std::string text_data;
+
     // LSB系 ( Ubuntu ..etc )
     if( CACHE::load_rawdata( "/etc/lsb-release", text_data ) )
     {
@@ -317,10 +374,9 @@ std::string ENVIRONMENT::get_distname()
             }
         }
     }
-#endif // _WIN32
 
     // 文字列両端のスペースなどを削除する
-    std::string dist_name = MISC::remove_spaces( tmp );
+    dist_name = MISC::remove_spaces( tmp );
 
     // 取得した文字が異常に長い場合は空にする
     if( dist_name.length() > 50 ) dist_name.clear();
@@ -359,6 +415,7 @@ std::string ENVIRONMENT::get_distname()
     uts = NULL;
 
 #endif
+#endif // _WIN32
 
     return dist_name;
 }
