@@ -2110,6 +2110,7 @@ void DrawAreaBase::draw_marker()
     if( m_scrollinfo.mode == SCROLL_NOT ) return;
     if( ! m_scrollinfo.show_marker ) return;
 
+    const int width_view = m_view.get_width();
     const int height_view = m_view.get_height();
     const int x_marker = m_scrollinfo.x - AUTOSCR_CIRCLE/2;
     const int y_marker = m_scrollinfo.y - AUTOSCR_CIRCLE/2;
@@ -2119,6 +2120,15 @@ void DrawAreaBase::draw_marker()
     m_clip_marker.width = AUTOSCR_CIRCLE;
     m_clip_marker.height = AUTOSCR_CIRCLE;
 
+    if( m_clip_marker.x < 0 ){
+
+        m_clip_marker.width += m_clip_marker.x;
+        m_clip_marker.x = 0;
+    }
+    if( m_clip_marker.x + m_clip_marker.width > width_view ){
+
+        m_clip_marker.width = width_view - m_clip_marker.x;
+    }
     if( m_clip_marker.y < 0 ){
 
         m_clip_marker.height += m_clip_marker.y;
@@ -2129,7 +2139,8 @@ void DrawAreaBase::draw_marker()
         m_clip_marker.height = height_view - m_clip_marker.y;
     }
 
-
+    // オートスクロールマーカを描く前に背景のバックアップを取っておきスクロールする前に描き直す
+    // exec_draw_screen() 参照
     if( m_scroll_window ){
 
         // [gtkmm <= 2.8] Gdk::GC::set_clip_rectangle( Gdk::Rectangle& rectangle )
