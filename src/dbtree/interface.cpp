@@ -687,6 +687,11 @@ const std::list< std::string >& DBTREE::get_abone_list_thread( const std::string
     return DBTREE::get_board( url )->get_abone_list_thread();
 }
 
+const std::list< std::string >& DBTREE::get_abone_list_thread_remove( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_list_thread_remove();
+}
+
 const std::list< std::string >& DBTREE::get_abone_list_word_thread( const std::string& url )
 {
     return DBTREE::get_board( url )->get_abone_list_word_thread();

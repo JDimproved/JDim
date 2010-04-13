@@ -127,6 +127,8 @@ namespace BOARD
         Gtk::Label m_label_hour;
         SKELETON::SpinButton m_spin_hour;
 
+        Gtk::VBox m_vbox_abone_title;
+        Gtk::Button m_button_remove_old_title;
 
         // ローカルルール
         SKELETON::View* m_localrule;
@@ -144,6 +146,7 @@ namespace BOARD
         void slot_clear_post_history();
         void slot_delete_cookie();
         void slot_check_live();
+        void slot_remove_old_title();
         void slot_switch_page( GtkNotebookPage*, guint page );
         virtual void slot_ok_clicked();
         virtual void timeout();

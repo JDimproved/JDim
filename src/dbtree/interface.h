@@ -304,6 +304,7 @@ namespace DBTREE
     // スレあぼーん情報
     // グローバルなあぼーん情報は globalconf が管理
     const std::list< std::string >& get_abone_list_thread( const std::string& url );
+    const std::list< std::string >& get_abone_list_thread_remove( const std::string& url );
     const std::list< std::string >& get_abone_list_word_thread( const std::string& url );
     const std::list< std::string >& get_abone_list_regex_thread( const std::string& url );
     const std::vector< char >& get_abone_vec_res( const std::string& url );

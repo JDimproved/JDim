@@ -419,6 +419,7 @@ namespace DBTREE
 
         // スレあぼーん情報
         const std::list< std::string >& get_abone_list_thread(){ return m_list_abone_thread; }
+        const std::list< std::string >& get_abone_list_thread_remove(){ return m_list_abone_thread_remove; }
         const std::list< std::string >& get_abone_list_word_thread(){ return m_list_abone_word_thread; }
         const std::list< std::string >& get_abone_list_regex_thread(){ return m_list_abone_regex_thread; }
         const int get_abone_number_thread(){ return m_abone_number_thread; }

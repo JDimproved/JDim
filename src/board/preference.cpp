@@ -49,6 +49,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
       m_button_clearmodified( "日時クリア" ),
       m_label_samba( false, "書き込み規制秒数 (Samba24) ：" ),
       m_button_clearsamba( "秒数クリア" ),
+      m_button_remove_old_title( "dat落ちしたスレのタイトルを削除する" ),
       m_localrule( NULL )
 {
     m_edit_cookies.set_editable( false );
@@ -296,6 +297,10 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     for( it = list_thread.begin(); it != list_thread.end(); ++it ) if( ! ( *it ).empty() ) str_thread += ( *it ) + "\n";
     m_edit_thread.set_text( str_thread );
 
+    m_button_remove_old_title.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_remove_old_title ) );
+    m_vbox_abone_title.pack_start( m_edit_thread );
+    m_vbox_abone_title.pack_start( m_button_remove_old_title, Gtk::PACK_SHRINK );
+
     // スレwordあぼーん
     std::list< std::string > list_word_thread = DBTREE::get_abone_list_word_thread( get_url() );
     for( it = list_word_thread.begin(); it != list_word_thread.end(); ++it ) if( ! ( *it ).empty() ) str_word_thread += ( *it ) + "\n";
@@ -307,7 +312,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_edit_regex_thread.set_text( str_regex_thread );
 
     m_notebook_abone_thread.append_page( m_vbox_abone_thread, "一般" );
-    m_notebook_abone_thread.append_page( m_edit_thread, "NG スレタイトル" );
+    m_notebook_abone_thread.append_page( m_vbox_abone_title, "NG スレタイトル" );
     m_notebook_abone_thread.append_page( m_edit_word_thread, "NG ワード" );
     m_notebook_abone_thread.append_page( m_edit_regex_thread, "NG 正規表現" );
 
@@ -394,6 +399,23 @@ void Preferences::slot_check_live()
         mdiag.run();
     }
     else m_spin_live.set_sensitive( false );
+}
+
+
+void Preferences::slot_remove_old_title()
+{
+
+    if( ! DBTREE::board_list_subject( get_url() ).size() ){
+        SKELETON::MsgDiag mdiag( NULL, "再読み込みしてスレ一覧を更新して下さい。", false, Gtk::MESSAGE_WARNING );
+        mdiag.run();
+        return;
+    }
+
+    const std::list< std::string > list_thread = DBTREE::get_abone_list_thread_remove( get_url() );
+    std::list< std::string >::const_iterator it = list_thread.begin();
+    std::string str;
+    for( ; it != list_thread.end(); ++it ) if( ! ( *it ).empty() ) str += ( *it ) + "\n";
+    m_edit_thread.set_text( str );
 }
 
 

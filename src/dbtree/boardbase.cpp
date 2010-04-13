@@ -1516,7 +1516,7 @@ void BoardBase::remove_old_abone_thread()
     }
 
     SKELETON::MsgCheckDiag mdiag( NULL,
-                             "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？",
+                             "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？\n後で板のプロパティから削除する事も可能です。",
                              "今後表示しない(_D)",
                                   Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
 
