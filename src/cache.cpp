@@ -66,6 +66,9 @@ std::string CACHE::path_session()
 // ロックファイル
 std::string CACHE::path_lock()
 {
+    const std::string jd_lock = MISC::getenv_limited( "JD_LOCK", MAX_SAFE_PATH );
+    if( ! jd_lock.empty() ) return jd_lock;
+
     return CACHE::path_root() + "JDLOCK";
 }
 
