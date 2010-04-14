@@ -2237,7 +2237,7 @@ void BoardViewBase::slot_bookmark( const int bookmark )
             bool set = bookmark;
             if( bookmark == BOOKMARK_AUTO ) set = ! art->is_bookmarked_thread();
 #ifdef _DEBUG
-            std::cout << "BoardViewBase::slot_bookmark url = " << url << " set = " << set << std::endl;
+            std::cout << "BoardViewBase::slot_bookmark url = " << art->get_url() << " set = " << set << std::endl;
 #endif
             art->set_bookmarked_thread( set );
         }

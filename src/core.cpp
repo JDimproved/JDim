@@ -3768,7 +3768,7 @@ void Core::switch_sidebar( const std::string& url, const bool present )
 
 #ifdef _DEBUG
     std::cout << "Core::switch_sidebar url = " << url
-              << " current = " << SESSION::get_bbslist_current_url() << std::endl;
+              << " current = " << SESSION::get_sidebar_current_url() << std::endl;
 #endif
 
     if( ! BBSLIST::get_admin()->empty() ){

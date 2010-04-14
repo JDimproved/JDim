@@ -79,7 +79,9 @@ hash_set_thread::hash_set_thread()
 
 const int hash_set_thread::get_key( const std::string& url )
 {
-    const int key = atoi(  url.substr( DBTREE::url_datbase( url ).length() ).c_str() ) % size();
+
+    const int lng = DBTREE::url_datbase( url ).length();
+    const int key = atoi(  url.substr( lng < (int) url.length() ? lng : 0  ).c_str() ) % size();
 
 #ifdef _DEBUG
     std::cout << "hash_set_thread::get_key url = " << url << " key = " << key << std::endl;
