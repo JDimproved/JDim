@@ -48,6 +48,7 @@
 
 #include <gtkmm.h>
 #include <list>
+#include <ctime>
 
 namespace JDLIB
 {

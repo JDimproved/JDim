@@ -12,6 +12,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <ctime>
 
 
 namespace XML
