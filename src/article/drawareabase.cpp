@@ -733,7 +733,9 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
     const int height_view = m_view.get_height();
 
     int width_base_vscrbar = 0;
-    if( is_popup ) width_base_vscrbar = SESSION::get_base_drawarea()->get_vscrbar()->get_width();
+    if( is_popup && SESSION::get_base_drawarea() && SESSION::get_base_drawarea()->get_vscrbar() ){
+        width_base_vscrbar = SESSION::get_base_drawarea()->get_vscrbar()->get_width();
+    }
 
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::exec_layout_impl : is_popup = " << is_popup << " url = " << m_url << std::endl;
@@ -752,7 +754,12 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
 
         // ポップアップの場合、横幅が確定出来ないのでメインウィンドウのスレビューの
         // drawarea の幅を最大幅とする
-        width_view = SESSION::get_base_drawarea()->get_view()->get_width();
+        if( SESSION::get_base_drawarea() && SESSION::get_base_drawarea()->get_view() ){
+            width_view = SESSION::get_base_drawarea()->get_view()->get_width();
+        }
+
+        // スレビューを表示していない場合はメインウィンドウサイズを使用
+        else width_view = SESSION::get_width_win_main();
     }
 
 #ifdef _DEBUG
