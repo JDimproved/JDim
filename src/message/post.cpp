@@ -350,7 +350,7 @@ void Post::receive_finish()
     else if( m_count < 1 && // 永久ループ防止
         ( title.find( "書き込み確認" ) != std::string::npos
           || tag_2ch.find( "cookie" ) != std::string::npos
-          || ! DBTREE::board_list_cookies_for_write( m_url ).size() && list_cookies.size()
+          || ( ! DBTREE::board_list_cookies_for_write( m_url ).size() && list_cookies.size() )
             ) ){
 
         clear();
