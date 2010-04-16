@@ -6,7 +6,7 @@
 #include "miscmsg.h"
 
 #include <iostream>
-#include <time.h>
+#include <ctime>
 
 #ifdef _WIN32
 // not exist _r suffix functions in mingw time.h

@@ -11,6 +11,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <ctime>
 
 #ifdef _WIN32
 #include <sys/time.h>

@@ -8,6 +8,7 @@
 #define _NODETREE2ch_H
 
 #include "nodetree2chcompati.h"
+#include <ctime>
 
 namespace DBTREE
 {

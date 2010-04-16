@@ -8,6 +8,7 @@
 #include "boardcolumnsid.h"
 
 #include <gtkmm.h>
+#include <ctime>
 
 namespace DBTREE
 {

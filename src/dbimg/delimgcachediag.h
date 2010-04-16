@@ -12,6 +12,7 @@
 #include "skeleton/dispatchable.h"
 
 #include <gtkmm.h>
+#include <ctime>
 
 namespace DBIMG
 {

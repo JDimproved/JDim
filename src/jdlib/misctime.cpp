@@ -12,7 +12,6 @@
 #include <sstream>
 #include <cstdio>
 #include <cstring>
-#include <time.h>
 #include <sys/time.h>
 #include <vector>
 

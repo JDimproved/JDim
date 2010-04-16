@@ -7,6 +7,8 @@
 
 #include "boardviewbase.h"
 
+#include <ctime>
+
 namespace BOARD
 {
 

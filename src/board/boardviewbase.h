@@ -11,6 +11,8 @@
 #include "columns.h"
 
 #include <gtkmm.h>
+#include <ctime>
+
 
 namespace SKELETON
 {

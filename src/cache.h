@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <string>
 #include <list>
+#include <ctime>
 
 #ifdef _WIN32
 #define ENV_HOME "USERPROFILE"

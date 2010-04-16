@@ -7,6 +7,7 @@
 
 #include <string>
 #include <sys/time.h>
+#include <ctime>
 
 namespace MISC
 {
