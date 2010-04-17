@@ -97,6 +97,7 @@ enum{
 
 #define ITEM_NAME_SELECTIMG "選択範囲の画像を開く"
 #define ITEM_NAME_SELECTDELIMG "選択範囲の画像を削除"
+#define ITEM_NAME_SELECTABONEIMG "選択範囲の画像をあぼ〜ん"
 
 #define ITEM_NAME_PREF_BOARD     "板のプロパティ"
 #define ITEM_NAME_PREF_THREAD    "スレのプロパティ"
@@ -178,6 +179,7 @@ enum
 
     ITEM_SELECTIMG,
     ITEM_SELECTDELIMG,
+    ITEM_SELECTABONEIMG,
 
     ITEM_PREF_BOARD,
     ITEM_PREF_THREAD,

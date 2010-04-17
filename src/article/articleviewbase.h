@@ -332,6 +332,7 @@ namespace ARTICLE
         void slot_show_image_with_mosaic();
         void slot_show_selection_images();
         void slot_delete_selection_images();
+        void slot_abone_selection_images();
         void slot_show_large_img();
         void slot_deleteimage();
         void slot_toggle_protectimage();

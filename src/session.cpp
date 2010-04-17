@@ -235,6 +235,7 @@ const int SESSION::parse_item( const std::string& item_name )
     else if( item_name == ITEM_NAME_SAVE_DAT ) item = ITEM_SAVE_DAT;
     else if( item_name == ITEM_NAME_SELECTIMG ) item = ITEM_SELECTIMG;
     else if( item_name == ITEM_NAME_SELECTDELIMG ) item = ITEM_SELECTDELIMG;
+    else if( item_name == ITEM_NAME_SELECTABONEIMG ) item = ITEM_SELECTABONEIMG;
 
     else if( item_name == ITEM_NAME_PREF_BOARD ) item = ITEM_PREF_BOARD;
     else if( item_name == ITEM_NAME_PREF_THREAD ) item = ITEM_PREF_THREAD;

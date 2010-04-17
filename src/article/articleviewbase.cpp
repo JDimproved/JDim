@@ -288,6 +288,8 @@ void ArticleViewBase::setup_action()
                          , sigc::mem_fun( *this, &ArticleViewBase::slot_show_selection_images ) );
     action_group()->add( Gtk::Action::create( "DeleteSelectImage_Menu", ITEM_NAME_SELECTDELIMG + std::string( "(_T)" ) ) );    
     action_group()->add( Gtk::Action::create( "DeleteSelectImage", "削除する(_D)"), sigc::mem_fun( *this, &ArticleViewBase::slot_delete_selection_images ) );
+    action_group()->add( Gtk::Action::create( "AboneSelectImage_Menu", ITEM_NAME_SELECTABONEIMG + std::string( "(_B)" ) ) );    
+    action_group()->add( Gtk::Action::create( "AboneSelectImage", "あぼ〜んする(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_selection_images ) );
     action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する(_P)", std::string(), false ),
@@ -476,6 +478,7 @@ const std::string ArticleViewBase::create_context_menu()
     list_menu.push_back( ITEM_ABONE_SELECTION );
     list_menu.push_back( ITEM_SELECTIMG );
     list_menu.push_back( ITEM_SELECTDELIMG );
+    list_menu.push_back( ITEM_SELECTABONEIMG );
     list_menu.push_back( ITEM_PREF_THREAD );
 
     // メニューに含まれていない項目を抜き出して「その他」に含める
@@ -637,10 +640,16 @@ const char* ArticleViewBase::get_menu_item( const int item )
         case ITEM_SELECTIMG:
             return "<menuitem action='Show_SelectImg'/>";
 
-            // "選択範囲の画像を削除"
+            // 選択範囲の画像を削除
         case ITEM_SELECTDELIMG:
             return "<menu action='DeleteSelectImage_Menu'>"
             "<menuitem action='DeleteSelectImage'/>"
+            "</menu>";
+
+            // 選択範囲の画像をあぼーん
+        case ITEM_SELECTABONEIMG:
+            return "<menu action='AboneSelectImage_Menu'>"
+            "<menuitem action='AboneSelectImage'/>"
             "</menu>";
 
             // 区切り
@@ -2990,6 +2999,12 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
+    act = action_group()->get_action( "AboneSelectImage_Menu" );
+    if( act ){
+        if( str_select.empty() || ! m_drawarea->get_selection_imgurls().size() ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     // 検索関係
     act = action_group()->get_action( "SearchWeb" );
     if( act ){
@@ -3939,6 +3954,31 @@ void ArticleViewBase::slot_delete_selection_images()
         redraw_view();
     }
 }
+
+
+//
+// 選択範囲の画像をあぼーん
+//
+void ArticleViewBase::slot_abone_selection_images()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::slot_abone_selection_images\n";
+#endif    
+
+    if( m_drawarea->get_selection_imgurls().size() ){
+
+        std::vector< URLINFO >::const_iterator it = m_drawarea->get_selection_imgurls().begin();
+        for( ; it != m_drawarea->get_selection_imgurls().end(); ++it ){
+
+            const std::string& url = (*it).url;
+            DBIMG::set_abone( url, true );
+            CORE::core_set_command( "delete_image", url );
+        }
+
+        redraw_view();
+    }
+}
+
 
 
 //
