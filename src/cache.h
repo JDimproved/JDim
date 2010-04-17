@@ -5,7 +5,7 @@
 #ifndef _CACHE_H
 #define _CACHE_H
 
-#include <stdint.h>
+#include <glib.h>
 #include <string>
 #include <list>
 #include <ctime>
@@ -211,7 +211,7 @@ namespace CACHE
     std::list< std::string > get_filelist( const std::string& dir );
 
     // dir ディレクトリ内のレギュラーファイルの合計サイズを取得
-    int64_t get_dirsize( const std::string& dir );
+    guint64 get_dirsize( const std::string& dir );
 
     // 相対パスから絶対パスを取得してファイルが存在すれば絶対パスを返す
     // ファイルが存在しない場合は std::string() を返す
