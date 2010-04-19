@@ -42,7 +42,6 @@ case "${host_os}" in
  solaris*)
    echo "os = solaris"
    AC_DEFINE(ICONV_CONST, const , "iconv_const")
-   AC_DEFINE(NO_MSG_NOSIGNAL, , "no MSG_NOSIGNAL")
    AC_DEFINE(NO_TIMEGM, , "no timegm")
    ;;
  mingw*)

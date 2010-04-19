@@ -703,14 +703,14 @@ void Loader::run_main()
             ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
             int lastError = WSAGetLastError();
 #else
-#ifndef NO_MSG_NOSIGNAL
-            ssize_t tmpsize = send( soc, msg_send.data(), send_size , MSG_NOSIGNAL );
+#ifdef MSG_NOSIGNAL
+            ssize_t tmpsize = send( soc, msg_send.data(), send_size, MSG_NOSIGNAL );
 #else
-            // SolarisにはMSG_NOSIGNALが無いのでSIGPIPEをIGNOREする
+            // SolarisにはMSG_NOSIGNALが無いのでSIGPIPEをIGNOREする (FreeBSD4.11Rにもなかった)
             signal( SIGPIPE , SIG_IGN ); /* シグナルを無視する */
             ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
             signal(SIGPIPE,SIG_DFL); /* 念のため戻す */
-#endif // NO_MSG_NOSIGNAL
+#endif // MSG_NOSIGNAL
 #endif // _WIN32
 
 #ifdef _WIN32
