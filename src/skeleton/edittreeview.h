@@ -26,6 +26,13 @@ namespace XML
 
 namespace SKELETON
 {
+    // ソートのモード
+    enum
+    {
+        SORT_BY_TYPE = 0,
+        SORT_BY_NAME
+    };
+
     // 他のwidgetからドロップされた
     typedef sigc::signal< void, const CORE::DATA_INFO_LIST& > SIG_DROPPED_FROM_OTHER;
 
@@ -113,6 +120,9 @@ namespace SKELETON
         const bool is_dir( Gtk::TreeModel::iterator& it );
         const bool is_dir( const Gtk::TreePath& path );
 
+        // 指定したアドレスの行が含まれているか
+        const bool exist_row( const std::string& url, const int type );
+
         // ディレクトリ内を全選択
         void select_all_dir( Gtk::TreePath path_dir );
 
@@ -136,6 +146,7 @@ namespace SKELETON
         // scroll = true なら追加した行にスクロールする
         // force = true なら m_editable が false でも追加
         // cancel_undo_commit = true なら undo バッファをコミットしない
+        // check_dup == true なら重複チェックをする
         //
         // (1) path_dest が empty なら一番最後
         // (2) before = true なら path_dest の前
@@ -143,7 +154,7 @@ namespace SKELETON
         // (4) そうでなければ path_dest の後
         CORE::DATA_INFO_LIST append_info( const CORE::DATA_INFO_LIST& list_info,
                                           const Gtk::TreePath& path_dest, const bool before, const bool scroll,
-                                          const bool force = false, const bool cancel_undo_commit = false
+                                          const bool force, const bool cancel_undo_commit, const bool check_dup
             );
 
         // pathをまとめて削除
@@ -167,8 +178,11 @@ namespace SKELETON
         // (2) before = true なら前に作る
         // (3) path_dest がディレクトリかつ sudir == true なら path_dest の下に追加。
         // (4) そうでなければ path_dest の後に追加
-        const Gtk::TreePath append_one_row( const std::string& url, const std::string& name, int type, const size_t dirid, const std::string& data,
+        const Gtk::TreePath append_one_row( const std::string& url, const std::string& name, const int type, const size_t dirid, const std::string& data,
                                             const Gtk::TreePath& path_dest,const bool before, const bool subdir );
+
+        // ソート実行
+        void sort( const Gtk::TreePath& path, const int mode );
 
       protected:
 
@@ -240,7 +254,6 @@ namespace SKELETON
 
         // list_infoに示した行を選択
         void select_info( const CORE::DATA_INFO_LIST& list_info );
-
    };
 
 

@@ -285,6 +285,7 @@ namespace BBSLIST
         void slot_row_col( const Gtk::TreeModel::iterator& it, const Gtk::TreeModel::Path& path );        
         void slot_checkupdate_selected_rows();
         void slot_checkupdate_open_selected_rows();
+        void slot_sort( const int mode );
 
         virtual void delete_view_impl();
 

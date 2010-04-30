@@ -83,6 +83,25 @@ show_popupmenu( url, slot ); \
     "<menuitem action='PreferenceBoard'/>" \
     "</popup>" \
 
+#define POPUPMENU_ARRANGE_BASE \
+    "<menuitem action='Arrange_Type'/>" \
+    "<menuitem action='Arrange_Name'/>" \
+    "</menu>" \
+    "<separator/>"
+
+#define POPUPMENU_ARRANGE \
+    "<menu action='Arrange_Menu'>" \
+    POPUPMENU_ARRANGE_BASE
+
+#define POPUPMENU_ARRANGEDIR \
+    "<menu action='ArrangeDir_Menu'>" \
+    POPUPMENU_ARRANGE_BASE
+
+#define POPUPMENU_DELETE \
+    "<menu action='Delete_Menu'>" \
+    "<menuitem action='Delete'/>" \
+    "</menu>"
+
 #define POPUPMENU_SELECT \
     "<menuitem action='CopyURL'/>" \
     "<menuitem action='CopyTitleURL'/>" \
@@ -91,9 +110,9 @@ show_popupmenu( url, slot ); \
     "<menuitem action='NewDir'/>" \
     "<menuitem action='NewCom'/>" \
     "<separator/>" \
-    "<menu action='Delete_Menu'>" \
-    "<menuitem action='Delete'/>" \
-    "</menu>" \
+    POPUPMENU_ARRANGE \
+    "<separator/>" \
+    POPUPMENU_DELETE \
     "<separator/>" \
     "<menuitem action='SearchCacheBoard'/>" \
     "<separator/>" \
@@ -202,6 +221,13 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
                          sigc::mem_fun( *this, &BBSListViewBase::stop ) );
 
+    action_group()->add( Gtk::Action::create( "Arrange_Menu", "並び替え(_G)" ) );
+    action_group()->add( Gtk::Action::create( "ArrangeDir_Menu", "ディレクトリ内の並び替え(_G)" ) );
+    action_group()->add( Gtk::Action::create( "Arrange_Type", "種類順(_T)"),
+                         sigc::bind< int >( sigc::mem_fun( *this, &BBSListViewBase::slot_sort ), SKELETON::SORT_BY_TYPE ) );
+    action_group()->add( Gtk::Action::create( "Arrange_Name", "名前順(_N)"),
+                         sigc::bind< int >( sigc::mem_fun( *this, &BBSListViewBase::slot_sort ), SKELETON::SORT_BY_NAME ) );
+
     action_group()->add( Gtk::Action::create( "OpenAsBoard", "ディレクトリをスレ一覧に表示(_B)"), sigc::mem_fun( *this, &BBSListViewBase::slot_opendir_as_board ) );
     action_group()->add( Gtk::Action::create( "CreateVBoard", "仮想板作成(_V)"), sigc::mem_fun( *this, &BBSListViewBase::slot_create_vboard ) );
     action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索(_S)"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
@@ -293,9 +319,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "</menu>"
     "<separator/>"
 
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
+    POPUPMENU_DELETE
     "</popup>"
 
     // お気に入り + 何もないところをクリック
@@ -323,9 +347,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='OpenAsBoard'/>"
     "<menuitem action='CreateVBoard'/>"
     "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
+    POPUPMENU_ARRANGEDIR
+    "<separator/>"
+    POPUPMENU_DELETE
     "</popup>"
 
     // お気に入り + コメント
@@ -334,9 +358,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='NewDir'/>"
     "<menuitem action='NewCom'/>"
     "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
+    POPUPMENU_ARRANGE
+    "<separator/>"
+    POPUPMENU_DELETE
     "</popup>"
 
     // お気に入り + 仮想板
@@ -347,9 +371,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<menuitem action='NewDir'/>"
     "<menuitem action='NewCom'/>"
     "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
+    POPUPMENU_ARRANGE
+    "<separator/>"
+    POPUPMENU_DELETE
     "</popup>"
 
     //////////////////////////////////////
@@ -1528,7 +1552,9 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
             const bool before = false;
             const bool scroll = false;
             const bool force = true;  // 強制的に追加
-            m_treeview.append_info( list_info, m_path_selected, before, scroll, force );
+            const bool cancel_undo_commit = false;
+            const bool check_dup = false;
+            m_treeview.append_info( list_info, m_path_selected, before, scroll, force, cancel_undo_commit, check_dup );
             m_path_selected = m_treeview.get_current_path();
 
             // etc.txt保存
@@ -2027,6 +2053,12 @@ void BBSListViewBase::slot_checkupdate_open_selected_rows()
 {
     checkupdate_selected_rows( true );
     CORE::get_checkupdate_manager()->run();
+}
+
+
+void BBSListViewBase::slot_sort( const int mode )
+{
+    m_treeview.sort( m_path_selected, mode );
 }
 
 
@@ -2755,7 +2787,6 @@ void BBSListViewBase::append_item()
 
     bool before = false;
     Gtk::TreePath path;
-    const bool scroll = true;
 
     const std::string path_str = diag.get_path();
     if( list_info_bkup.size() == 1 && ! diag.get_name().empty() ) ( *list_info_bkup.begin() ).name = diag.get_name();
@@ -2770,7 +2801,12 @@ void BBSListViewBase::append_item()
 
     else path = Gtk::TreePath( path_str );
 
-    const CORE::DATA_INFO_LIST list_info = m_treeview.append_info( list_info_bkup, path, before, scroll );
+    const bool scroll = true;
+    const bool force = false;
+    const bool cancel_undo_commit = false;
+    const bool check_dup = true; // 重複チェック
+
+    const CORE::DATA_INFO_LIST list_info = m_treeview.append_info( list_info_bkup, path, before, scroll, force, cancel_undo_commit, check_dup );
     CORE::SBUF_clear_info();
     slot_dropped_from_other( list_info );
 

@@ -26,6 +26,7 @@ namespace CORE
         std::string path; // treeview の path
         std::string data;
         size_t dirid;  // ディレクトリID、ディレクトリで無い場合は0
+        bool expanded;
 
         DATA_INFO()
         {
@@ -36,6 +37,7 @@ namespace CORE
             path = std::string();
             data = std::string();
             dirid = 0;
+            expanded = false;
         }
     };
 

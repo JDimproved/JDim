@@ -32,6 +32,135 @@ enum
 };
 
 
+
+//
+// 行の最新アドレスを取得
+//
+const std::string get_uptodate_url( const std::string& url_org, const int type )
+{
+    std::string url = url_org;
+
+    if( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ){
+
+        url = DBTREE::url_boardbase( url );
+    }
+    else if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
+
+        url = DBTREE::url_dat( url );
+    }
+
+    return url;
+}
+
+
+//
+// 行の最新状態を取得
+//
+const int get_uptodate_type( const std::string& url, const int type_org )
+{
+    int type = type_org;
+
+    if( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ){
+
+        if( DBTREE::board_status( url ) & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
+        else if( type != TYPE_BOARD ) type = TYPE_BOARD;
+    }
+    else if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
+
+        if( DBTREE::article_status( url ) & STATUS_OLD ) type = TYPE_THREAD_OLD;
+        else if( DBTREE::article_status( url ) & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
+        else if( type != TYPE_THREAD ) type = TYPE_THREAD;
+    }
+
+    return type;
+}
+
+
+//
+// ソート用比較クラス
+//
+// EditTreeView::sort()で使用
+//
+class compare_path
+{
+    SKELETON::JDTreeViewBase& m_treeview;
+    SKELETON::EditColumns& m_columns;
+    int m_mode;
+
+    const int type_to_order( const int type )
+    {
+        int order[]={
+
+            TYPE_DIR,
+
+            TYPE_VBOARD,
+
+            TYPE_BOARD_UPDATE,
+            TYPE_BOARD,
+
+            TYPE_THREAD_UPDATE,
+            TYPE_THREAD,
+
+            TYPE_IMAGE,
+
+            TYPE_COMMENT,
+
+            TYPE_THREAD_OLD,
+
+            TYPE_UNKNOWN
+        };
+
+        int i = 0;
+        for( ; order[ i ] != TYPE_UNKNOWN; ++i ){
+
+            if( type == order[ i ] ) return i;
+        }
+
+        return i;
+    }
+
+public:
+
+    compare_path( SKELETON::JDTreeViewBase& treeview, SKELETON::EditColumns& columns, const int mode )
+        : m_treeview( treeview ), m_columns( columns ), m_mode( mode ){}
+
+    // path_a が上ならtrue　path_b　が上ならfalse
+    bool operator () ( const Gtk::TreePath& path_a, const Gtk::TreePath& path_b )
+    {
+        const Gtk::TreeRow row_a = m_treeview.get_row( path_a );
+        const Gtk::TreeRow row_b = m_treeview.get_row( path_b );
+
+        if( ! row_a || ! row_b ) return false;
+
+        // 名前でソート
+        if( m_mode == SKELETON::SORT_BY_NAME ){
+
+            const Glib::ustring name_a = row_a[ m_columns.m_name ];
+            const Glib::ustring name_b = row_b[ m_columns.m_name ];
+
+            if( name_a > name_b ) return false;
+            else if( name_a < name_b ) return true;
+        }
+
+        // タイプでソート
+        const Glib::ustring url_a = row_a[ m_columns.m_url ];
+        const Glib::ustring url_b = row_b[ m_columns.m_url ];
+
+        const int type_a = get_uptodate_type( url_a.raw(), row_a[ m_columns.m_type ] );
+        const int type_b = get_uptodate_type( url_b.raw(), row_b[ m_columns.m_type ] );
+
+        const int order_a = type_to_order( type_a );
+        const int order_b = type_to_order( type_b );
+
+        if( order_a == order_b ) return false;
+        return ( order_a < order_b );
+    }
+};
+
+
+/////////////////////////////////////////////////
+
+
 using namespace SKELETON;
 
 
@@ -397,7 +526,8 @@ const Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
     const bool force = false;
     //  append_info 内でundoのコミットをしないで名前を変更してからslot_ren_text_on_canceled()でコミットする
     const bool cancel_undo_commit = true; 
-    append_info( list_info, path, before, scroll, force, cancel_undo_commit );
+    const bool check_dup = false;
+    append_info( list_info, path, before, scroll, force, cancel_undo_commit, check_dup );
 
     Gtk::TreePath path_new = get_current_path();
     set_cursor( path_new );
@@ -453,7 +583,8 @@ const Gtk::TreePath EditTreeView::create_newcomment( const Gtk::TreePath& path )
     const bool force = false;
     //  append_info 内でundoのコミットをしないで名前を変更してからslot_ren_text_on_canceled()でコミットする
     const bool cancel_undo_commit = true; 
-    append_info( list_info, path, before, scroll, force, cancel_undo_commit );
+    const bool check_dup = false;
+    append_info( list_info, path, before, scroll, force, cancel_undo_commit, check_dup );
 
     Gtk::TreePath path_new = get_current_path();
     set_cursor( path_new );
@@ -728,7 +859,10 @@ bool EditTreeView::on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, 
 
     // 共有バッファ内の行を追加
     const bool scroll = false;
-    const CORE::DATA_INFO_LIST list_info = append_info( CORE::SBUF_list_info(), path_dest, before, scroll );
+    const bool force = false;
+    const bool cancel_undo_commit = false;
+    const bool check_dup = m_dropped_from_other;
+    const CORE::DATA_INFO_LIST list_info = append_info( CORE::SBUF_list_info(), path_dest, before, scroll, force, cancel_undo_commit, check_dup );
     CORE::SBUF_clear_info();
     if( m_dropped_from_other ) m_sig_dropped_from_other.emit( list_info );
 
@@ -816,6 +950,30 @@ const bool EditTreeView::is_dir( const Gtk::TreePath& path )
 }
 
 
+//
+// 指定したアドレスの行が含まれているか
+//
+const bool EditTreeView::exist_row( const std::string& url, const int type )
+{
+    if( url.empty() ) return false;
+
+    const std::string url_target = get_uptodate_url( url, type );
+
+    SKELETON::EditTreeViewIterator it( *this, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
+
+        Gtk::TreeModel::Row row = *it;
+
+        const Glib::ustring url_row = row[ m_columns.m_url ];
+        if( ! url_row.empty() ){
+
+            if( url_target == get_uptodate_url( url_row.raw(), row[ m_columns.m_type ] ) ) return true;
+        }
+    }
+
+    return false;
+}
+
 
 //
 // ディレクトリ内を全選択
@@ -847,6 +1005,8 @@ void EditTreeView::select_all_dir( Gtk::TreePath path_dir )
 //
 // cancel_undo_commit = true なら undo バッファをコミットしない
 //
+// check_dup == true なら重複チェックをする
+//
 // (1) path_dest が empty なら一番最後
 //
 // (2) before = true なら path_dest の前
@@ -857,7 +1017,7 @@ void EditTreeView::select_all_dir( Gtk::TreePath path_dir )
 //
 CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list_info,
                                                 const Gtk::TreePath& path_dest, const bool before, const bool scroll,
-                                                const bool force, const bool cancel_undo_commit
+                                                const bool force, const bool cancel_undo_commit, const bool check_dup
     )
 {
     CORE::DATA_INFO_LIST list_info_src;
@@ -872,6 +1032,33 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
               << std::endl;
 #endif
 
+    if( ! check_dup ) list_info_src = list_info;
+
+    // 重複がないかチェック
+    else{
+
+#ifdef _DEBUG
+        std::cout << "checking duplicatiion\n";
+#endif        
+
+        CORE::DATA_INFO_LIST::const_iterator it_info = list_info.begin();
+        for( ; it_info != list_info.end(); ++it_info ){
+
+            const CORE::DATA_INFO& info = ( *it_info );
+
+            if( exist_row( info.url, info.type ) ){
+
+                SKELETON::MsgDiag mdiag( get_parent_win(),  info.name + "\n\nは既に含まれています。追加しますか？",
+                                         false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+                if( mdiag.run() != Gtk::RESPONSE_YES ) continue;
+            }
+
+            list_info_src.push_back( info );
+        }
+    }
+
+    if( ! list_info_src.size() ) return list_info_src;
+
     if( m_editable && m_undo_buffer ){
         CORE::DATA_INFO_LIST list_info_selected;
         const bool dir = false;
@@ -879,7 +1066,6 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
         m_undo_buffer->set_list_info_selected( list_info_selected );   // undo したときに選択する列
     }
 
-    list_info_src = list_info;
     replace_infopath( list_info_src, path_dest, before );
     expand_parents( path_dest );
     append_rows( list_info_src );
@@ -1267,13 +1453,16 @@ void EditTreeView::get_info_in_selection( CORE::DATA_INFO_LIST& list_info, const
 //
 // ディレクトリ(path_dir)内の行を全てlist_infoにセットする
 //
+// path_dir が empty() ならルートの行を全てセット
+//
 void EditTreeView::get_info_in_dir( CORE::DATA_INFO_LIST& list_info, const Gtk::TreePath& path_dir )
 {
-    if( ! is_dir( path_dir ) ) return;
+    if( ! path_dir.empty() && ! is_dir( path_dir ) ) return;
 
     CORE::DATA_INFO info;
     Gtk::TreePath path = path_dir;
-    path.down();
+    if( path_dir.empty() ) path = Gtk::TreePath( "0" );
+    else path.down();
 
     while( get_row( path ) ){
 
@@ -1310,6 +1499,8 @@ void EditTreeView::path2info( CORE::DATA_INFO& info, const Gtk::TreePath& path )
     info.path = path.to_string();
 
     info.dirid = row[ m_columns.m_dirid ];
+
+    info.expanded = row_expanded( path );
 }
 
 
@@ -1326,7 +1517,7 @@ void EditTreeView::path2info( CORE::DATA_INFO& info, const Gtk::TreePath& path )
 //
 // (4) そうでなければ path_dest の後に追加
 //
-const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const std::string& name, int type, const size_t dirid, const std::string& data,
+const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const std::string& name, const int type, const size_t dirid, const std::string& data,
                                                   const Gtk::TreePath& path_dest, const bool before, const bool subdir )
 {
     Glib::RefPtr< Gtk::TreeStore > treestore = Glib::RefPtr< Gtk::TreeStore >::cast_dynamic( get_model() );
@@ -1347,34 +1538,19 @@ const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const 
     // 前に追加
     else if( before ) row_new = *( treestore->insert( row_dest ) );
 
-    // ディレクトリの下に追加してディレクトリを開く
+    // ディレクトリの下に追加
     else if( subdir && row_dest[ m_columns.m_type ] == TYPE_DIR ){
         row_new = *( treestore->prepend( row_dest.children() ) );
-        expand_row( path_dest, false );
     }
 
     // 後ろに追加
     else row_new = *( treestore->insert_after( row_dest ) );
 
-    // スレ一覧の状態を最新にする
-    std::string url_new = url;
-    if( type == TYPE_BOARD ){
+    // 行のアドレスや状態を最新にする
+    const std::string url_new = get_uptodate_url( url, type );
+    const int type_new = get_uptodate_type( url_new, type );
 
-        url_new = DBTREE::url_boardbase( url );
-
-        if( DBTREE::board_status( url_new ) & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
-    }
-
-    // スレ状態を最新にする
-    if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
-
-        url_new = DBTREE::url_dat( url );
-
-        if( DBTREE::article_status( url_new ) & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
-        if( DBTREE::article_status( url_new ) & STATUS_OLD ) type = TYPE_THREAD_OLD;
-    }
-
-    m_columns.setup_row( row_new, url_new, name, data, type, dirid );
+    m_columns.setup_row( row_new, url_new, name, data, type_new, dirid );
 
     return treestore->get_path( row_new );
 }
@@ -1417,6 +1593,10 @@ void EditTreeView::append_rows( const CORE::DATA_INFO_LIST& list_info )
 
     if( ! list_info.size() ) return;
 
+    Gtk::TreePath path_parent;
+    bool expand_parent = false;
+    bool head_info = true;
+
     CORE::DATA_INFO_LIST::const_iterator it = list_info.begin();
     for( ; it != list_info.end(); ++it ){
 
@@ -1442,12 +1622,36 @@ void EditTreeView::append_rows( const CORE::DATA_INFO_LIST& list_info )
 
             // ディレクトリの先頭
             else {
+
                 path.up();
                 subdir = true;
+
+                // 最初の info なら親のディレクトリを開く
+                if( head_info ){
+#ifdef _DEBUG
+                    std::cout << "expand parent dir\n";
+#endif
+                    path_parent = path;
+                    expand_parent = true;
+                }
             }
         }
 
         append_one_row( info.url, info.name, info.type, info.dirid, info.data, path, before, subdir );
+
+        head_info = false;
+    }
+
+    // ディレクトリを開く
+    if( expand_parent ) expand_row( path_parent, false );
+
+    it = list_info.begin();
+    for( ; it != list_info.end(); ++it ){
+        const CORE::DATA_INFO& info = ( *it );
+        if( info.expanded ){
+            const Gtk::TreePath path( info.path );
+            expand_row( path, false );
+        }
     }
 
     m_updated = true;
@@ -1523,6 +1727,92 @@ void EditTreeView::select_info( const CORE::DATA_INFO_LIST& list_info )
         Gtk::TreePath path( ( *it ).path );
         get_selection()->select( path );
     }
+}
+
+
+
+//
+// ソート実行
+//
+// path : ディレクトリなら中をソート、そうでなければそのレベルでソート
+// mode : ソートのモード。詳しくは class compare_path を参照
+//
+void EditTreeView::sort( const Gtk::TreePath& path, const int mode )
+{
+    if( ! m_editable ) return;
+    if( ! get_row( path ) ) return;
+
+    CORE::DATA_INFO_LIST list_info;
+
+    Gtk::TreePath path_head = path;
+
+    if( is_dir( path_head ) ) path_head.down();
+    else while( path_head.prev() );
+    if( ! get_row( path_head ) ) return;
+    
+    Gtk::TreePath path_parent = path_head;
+    if( path_parent.get_depth() >= 2 ) path_parent.up();
+    else path_parent = Gtk::TreePath();
+
+#ifdef _DEBUG
+    std::cout << "EditTreeView::sort head = " << path_head.to_string() << " parent = " << path_parent.to_string() << std::endl;
+#endif
+
+
+    // ソート
+    std::list< Gtk::TreePath > list_path;
+    Gtk::TreePath path_tmp = path_head;
+    while( get_row( path_tmp ) ){
+
+        list_path.push_back( path_tmp );
+        path_tmp.next();
+    }
+    list_path.sort( compare_path( *this, m_columns, mode ) );
+
+    std::list< Gtk::TreePath >::const_iterator it_path = list_path.begin();
+    for( ; it_path != list_path.end(); ++it_path ){
+
+        const Gtk::TreeRow row = get_row( *it_path );
+        if( row ){
+
+#ifdef _DEBUG
+            std::cout << ( *it_path ).to_string()
+                      << " type = " << row[ m_columns.m_type ]
+                      << " name = " << row[ m_columns.m_name ] << std::endl;
+#endif
+
+            CORE::DATA_INFO info;
+            path2info( info, *it_path );
+            list_info.push_back( info );
+            get_info_in_dir( list_info, *it_path );
+        }
+    }
+
+    // path_parent の中を全て削除
+    if( m_undo_buffer ){
+        CORE::DATA_INFO_LIST list_info_selected;
+        const bool dir = false;
+        get_info_in_selection( list_info_selected, dir );
+        m_undo_buffer->set_list_info_selected( list_info_selected );  // undo したときに選択する列
+    }
+
+    CORE::DATA_INFO_LIST list_info_delete;
+    get_info_in_dir( list_info_delete, path_parent );
+    delete_rows( list_info_delete, Gtk::TreePath() );
+
+    if( m_undo_buffer ){
+        m_undo_buffer->set_list_info( CORE::DATA_INFO_LIST(), list_info_delete );
+    }
+
+    // list_info を path_parent の中に追加
+    const bool before = false;
+    const bool scroll = false;
+    const bool force = false;
+    const bool cancel_undo_commit = false;
+    const bool check_dup = false;
+    append_info( list_info, path_parent, before, scroll, force, cancel_undo_commit, check_dup );
+
+    set_scroll( path_parent );
 }
 
 

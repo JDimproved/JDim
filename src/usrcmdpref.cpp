@@ -297,7 +297,10 @@ void UsrCmdPref::slot_newcmd()
 
         const bool subdir = true;
         const bool scroll = false;
-        m_treeview.append_info( list_info, m_path_selected, subdir, scroll );
+        const bool force = false;
+        const bool cancel_undo_commit = false;
+        const bool check_dup = false;
+        m_treeview.append_info( list_info, m_path_selected, subdir, scroll, force, cancel_undo_commit, check_dup );
         m_path_selected = m_treeview.get_current_path();
     }
 }
@@ -326,7 +329,10 @@ void UsrCmdPref::slot_newsepa()
 
     const bool subdir = true;
     const bool scroll = false;
-    m_treeview.append_info( list_info, m_path_selected, subdir, scroll );
+    const bool force = false;
+    const bool cancel_undo_commit = false;
+    const bool check_dup = false;
+    m_treeview.append_info( list_info, m_path_selected, subdir, scroll, force, cancel_undo_commit, check_dup );
     m_path_selected = m_treeview.get_current_path();
 }
 

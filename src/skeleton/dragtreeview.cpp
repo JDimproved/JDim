@@ -368,8 +368,8 @@ bool DragTreeView::on_button_release_event( GdkEventButton* event )
 
     m_path_dragstart = m_path_dragpre = Gtk::TreeModel::Path();
 
-    bool expanded = row_expanded( path );
-    bool ret = Gtk::TreeView::on_button_release_event( event );
+    const bool expanded = row_expanded( path );
+    const bool ret = Gtk::TreeView::on_button_release_event( event );
 
     // 左の△ボタンを押してディレクトリを開け閉めした場合は信号のemitをキャンセル
     if( expanded != row_expanded( path ) ) emit_sig = false;
