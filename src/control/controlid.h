@@ -106,6 +106,9 @@ namespace CONTROL
         DrawOutAnd,
         DrawOutOr,
 
+        CheckUpdateRoot,
+        CheckUpdateOpenRoot,
+
         ClickButton, // 以下、マウスボタン専用の設定
         DblClickButton,
         TrpClickButton,
@@ -127,9 +130,6 @@ namespace CONTROL
 
         OpenBoardButton, // 以下、マウスボタン専用の設定
         OpenBoardTabButton,
-
-        CheckUpdateRoot,
-        CheckUpdateOpenRoot,
 
         BBSLISTMOTION_END,
 

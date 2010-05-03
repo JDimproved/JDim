@@ -919,7 +919,7 @@ const bool BBSListViewBase::operate_view( const int control )
             CORE::core_set_command( "toggle_menubar" );
             break;
 
-            // お気に入り更新チェック
+            // サイドバー更新チェック
         case CONTROL::CheckUpdateRoot:
             CORE::core_set_command( "check_update_root" );
             break;
@@ -1687,6 +1687,7 @@ void BBSListViewBase::slot_select_all()
 // root : true ならルートから検索する。falseの場合は m_path_selected にパスをセットしておくこと
 // open : チェック後に更新していたら開く
 //
+#include <iostream>
 void BBSListViewBase::check_update_dir( const bool root, const bool open )
 {
     if( ! SESSION::is_online() ){
@@ -1695,9 +1696,9 @@ void BBSListViewBase::check_update_dir( const bool root, const bool open )
         return;
     }
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
     std::cout << "BBSListViewBase::check_update_dir root = " << root << std::endl;
-#endif
+//#endif
 
     Gtk::TreePath path; 
     if( ! root ){

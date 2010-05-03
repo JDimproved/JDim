@@ -123,6 +123,9 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::SearchPrev );
     append_row( CONTROL::DrawOutAnd );
 
+    append_row( CONTROL::CheckUpdateRoot );
+    append_row( CONTROL::CheckUpdateOpenRoot );
+
     append_comment_row( "" );
     append_comment_row( "■ " + CONTROL::get_mode_label( CONTROL::MODE_EDIT ) );
     append_row( CONTROL::HomeEdit );

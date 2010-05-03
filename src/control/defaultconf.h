@@ -76,6 +76,9 @@ namespace CONTROL
 #define KEYCONF_SearchPrev  "Shift+Enter Ctrl+F3 Ctrl+G N"
 #define KEYCONF_DrawOutAnd  "Ctrl+Enter"
 
+#define KEYCONF_CheckUpdateRoot ""
+#define KEYCONF_CheckUpdateOpenRoot ""
+
 // BBSLIST
 #define KEYCONF_OpenBoard  "Space"
 #define KEYCONF_OpenBoardTab  "Ctrl+Space"
@@ -176,8 +179,6 @@ namespace CONTROL
 #define MOUSECONF_StopLoading "8"
 #define MOUSECONF_NewArticle "24"
 #define MOUSECONF_WriteMessage "24"
-
-// 全お気に入り更新チェック
 #define MOUSECONF_CheckUpdateRoot "48"
 #define MOUSECONF_CheckUpdateOpenRoot "42"
 

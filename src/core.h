@@ -217,6 +217,9 @@ namespace CORE
         // 板にdatファイルをインポートする
         void import_dat( const std::string& url_board, const std::list< std::string > list_files );
 
+        // サイドバー更新チェック
+        // open : 更新があったらタブで開く
+        void check_update( const bool open );
 
         //
         // メニュー関係( menuslots.cpp の中に記述)

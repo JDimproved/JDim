@@ -111,6 +111,9 @@ namespace CONTROL
         { "DrawOutAnd", "AND 抽出" },
         { "DrawOutOr", "OR 抽出" },
 
+        { "CheckUpdateRoot", ITEM_NAME_CHECK_UPDATE_ROOT },
+        { "CheckUpdateOpenRoot", ITEM_NAME_CHECK_UPDATE_OPEN_ROOT },
+
         { "ClickButton", "クリック" },
         { "DblClickButton", "ダブルクリック" },
         { "TrpClickButton", "トリプルクリック" },
@@ -133,9 +136,6 @@ namespace CONTROL
 
         { "OpenBoardButton", "板を開く" },
         { "OpenBoardTabButton", "タブで板を開く" },
-
-        { "CheckUpdateRoot", ITEM_NAME_CHECK_UPDATE_ROOT },
-        { "CheckUpdateOpenRoot", ITEM_NAME_CHECK_UPDATE_OPEN_ROOT },
 
         { "", "" },
 

@@ -52,7 +52,6 @@ void MouseConfig::load_conf()
     SETMOTION( "NewArticle", MOUSECONF_NewArticle );
     SETMOTION( "WriteMessage", MOUSECONF_WriteMessage );
 
-    // 全お気に入り更新チェック
     SETMOTION( "CheckUpdateRoot", MOUSECONF_CheckUpdateRoot );
     SETMOTION( "CheckUpdateOpenRoot", MOUSECONF_CheckUpdateOpenRoot );
 

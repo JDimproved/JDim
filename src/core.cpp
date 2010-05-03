@@ -2468,32 +2468,14 @@ void Core::set_command( const COMMAND_ARGS& command )
     // サイドバーの表示中のビューの全体更新チェック
     else if( command.command  == "check_update_root" ){
 
-        if( ! SESSION::is_online() ){
-            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
-            mdiag.run();
-            return;
-        }
-
-        if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW ){
-
-            BBSLIST::get_admin()->set_command( "check_update_root", SESSION::get_sidebar_current_url() );
-        }
+        check_update( false );
         return;
     }
 
     // サイドバーの表示中のビューの全体を更新チェックして開く
     else if( command.command  == "check_update_open_root" ){
 
-        if( ! SESSION::is_online() ){
-            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
-            mdiag.run();
-            return;
-        }
-
-        if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW ){
-
-            BBSLIST::get_admin()->set_command( "check_update_open_root", SESSION::get_sidebar_current_url() );
-        }
+        check_update( true );
         return;
     }
 
@@ -4065,5 +4047,34 @@ void Core::import_dat( const std::string& url_board, const std::list< std::strin
 
         CORE::SBUF_set_list( list_info );
         BOARD::get_admin()->set_command( "draw_bg_articles", url_subject );
+    }
+}
+
+
+// サイドバー更新チェック
+// open : 更新があったらタブで開く
+void Core::check_update( const bool open )
+{
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        mdiag.run();
+        return;
+    }
+
+    if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW ){
+
+        // 閉じていたら開く
+        if( ! SESSION::show_sidebar() ){
+
+            const int admin = SESSION::focused_admin();
+            toggle_sidebar();
+            switch( admin ){
+                case SESSION::FOCUS_BOARD: switch_board( false ); break;
+                case SESSION::FOCUS_ARTICLE: switch_article( false ); break;
+            }
+        }
+
+        if( ! open ) BBSLIST::get_admin()->set_command( "check_update_root", SESSION::get_sidebar_current_url() );
+        else BBSLIST::get_admin()->set_command( "check_update_open_root", SESSION::get_sidebar_current_url() );
     }
 }

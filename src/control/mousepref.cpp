@@ -76,8 +76,6 @@ MousePref::MousePref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::Reload );
     append_row( CONTROL::StopLoading );
 
-    append_comment_row( "" );
-    append_comment_row( "■ "+ CONTROL::get_mode_label( CONTROL::MODE_BBSLIST ) );
     append_row( CONTROL::CheckUpdateRoot );
     append_row( CONTROL::CheckUpdateOpenRoot );
 

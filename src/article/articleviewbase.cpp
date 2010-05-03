@@ -1238,6 +1238,15 @@ const bool ArticleViewBase::operate_view( const int control )
             CORE::core_set_command( "show_openurl_diag" );
             break;
 
+            // サイドバー更新チェック
+        case CONTROL::CheckUpdateRoot:
+            CORE::core_set_command( "check_update_root" );
+            break;
+
+        case CONTROL::CheckUpdateOpenRoot:
+            CORE::core_set_command( "check_update_open_root" );
+            break;
+
         default:
             return false;
     }

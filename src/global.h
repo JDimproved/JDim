@@ -57,8 +57,8 @@ enum{
 #define ITEM_NAME_STOPLOADING "読み込み中止"
 #define ITEM_NAME_FAVORITE  "お気に入りに追加"
 #define ITEM_NAME_FAVORITE_ARTICLE  "スレをお気に入りに追加"
-#define ITEM_NAME_CHECK_UPDATE_ROOT "更新チェック"
-#define ITEM_NAME_CHECK_UPDATE_OPEN_ROOT "更新チェックしてタブで開く"
+#define ITEM_NAME_CHECK_UPDATE_ROOT "サイドバー更新チェック"
+#define ITEM_NAME_CHECK_UPDATE_OPEN_ROOT "サイドバー更新チェックして開く"
 
 #define ITEM_NAME_COPY      "コピー"
 #define ITEM_NAME_COPY_URL      "URLをコピー"
