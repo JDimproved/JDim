@@ -5,6 +5,7 @@
 
 #include "messageadmin.h"
 #include "post.h"
+#include "confirmdiag.h"
 
 #include "skeleton/msgdiag.h"
 
@@ -361,12 +362,7 @@ void Post::receive_finish()
             std::string diagmsg = MISC::replace_str( msg, "<br>", "\n" );
             if( diagmsg.empty() ) diagmsg = "クッキーを有功にして書き込みますか？";
 
-            SKELETON::MsgCheckDiag mdiag( MESSAGE::get_admin()->get_win(),
-                                          diagmsg,
-                                          "今後表示しない(常にOK)(_D)",
-                                          Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL );
-
-            mdiag.set_title( "書き込み確認" );
+            ConfirmDiag mdiag( m_url, diagmsg );
             const int ret = mdiag.run();
             mdiag.hide();
             if( ret != Gtk::RESPONSE_OK ){

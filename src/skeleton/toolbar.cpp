@@ -25,6 +25,7 @@
 #include "control/controlid.h"
 
 #include "command.h"
+#include "prefdiagfactory.h"
 
 #include <gtk/gtk.h>  // gtk_separator_tool_item_set_draw
 #include <gtk/gtkbutton.h>
@@ -621,6 +622,9 @@ Gtk::ToolItem* ToolBar::get_button_board()
         std::vector< std::string > menu;
         menu.push_back( "開く" );
         menu.push_back( "再読み込みして開く" );
+        menu.push_back( "separator" );
+        menu.push_back( "ローカルルールを表示" );
+        menu.push_back( "板のプロパティを表示" );
         m_button_board->get_button()->append_menu( menu );
         m_button_board->get_button()->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_menu_board ) );
         m_button_board->get_button()->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_open_board ) );
@@ -646,8 +650,18 @@ void ToolBar::slot_menu_board( int i )
 {
     if( ! m_enable_slot ) return;
 
+    SKELETON::PrefDiag* pref = NULL;
+
+    // ToolBar::get_button_board()で作成したメニューの順番に内容を合わせる
     if( i == 0 ) slot_open_board();
     else if( i == 1 ) CORE::core_set_command( "open_board", DBTREE::url_subject( get_url() ), "true" );
+    else if( i == 3 ) pref = CORE::PrefDiagFactory( CORE::get_mainwindow(), CORE::PREFDIAG_BOARD, DBTREE::url_subject( get_url() ), "show_localrule" );
+    else if( i == 4 ) pref = CORE::PrefDiagFactory( CORE::get_mainwindow(), CORE::PREFDIAG_BOARD, DBTREE::url_subject( get_url() )  );
+
+    if( pref ){
+        pref->run();
+        delete pref;
+    }
 }
 
 

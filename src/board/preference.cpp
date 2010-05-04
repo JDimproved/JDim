@@ -321,6 +321,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_edit_settingtxt.set_text( DBTREE::settingtxt( get_url() ) );
 
     m_notebook.append_page( m_vbox, "一般" );
+    const int page_localrule = 1;
     m_notebook.append_page( *m_localrule, "ローカルルール" );
     m_notebook.append_page( m_vbox_proxy, "プロキシ設定" );
     const int page_abone_article = 3;
@@ -334,7 +335,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     resize( 600, 400 );
     show_all_children();
 
-    if( command == "show_abone_article" ) m_notebook.set_current_page( page_abone_article );
+    if( command == "show_localrule" ) m_notebook.set_current_page( page_localrule );
+    else if( command == "show_abone_article" ) m_notebook.set_current_page( page_abone_article );
 }
 
 

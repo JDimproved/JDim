@@ -117,10 +117,20 @@ void MenuButton::append_menu( std::vector< std::string >& items )
     m_popupmenu = Gtk::manage( new Gtk::Menu() );
     const int size = MIN( items.size(), MAX_MENU_SIZE );
     for( int i = 0 ; i < size; ++i ){
-        Gtk::MenuItem* item = m_menuitems[ i ];
-        dynamic_cast< Gtk::Label* >( item->get_child() )->set_text( MISC::cut_str( items[ i ], MENU_MAX_LNG ) );
-        m_popupmenu->append( *item );
+
+        Gtk::MenuItem* item = NULL;
+
+        if( items[ i ] == "separator" ){
+            item = Gtk::manage( new Gtk::SeparatorMenuItem() );
+        }
+        else{
+            item = m_menuitems[ i ];
+            dynamic_cast< Gtk::Label* >( item->get_child() )->set_text( MISC::cut_str( items[ i ], MENU_MAX_LNG ) );
+        }
+
+        if( item ) m_popupmenu->append( *item );
     }
+    m_popupmenu->show_all();
 }
 
 
