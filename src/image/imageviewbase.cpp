@@ -883,6 +883,9 @@ void ImageViewBase::slot_reload_force()
     if( ! m_enable_menuslot ) return;
 
     if( ! SESSION::is_online() ){
+
+        CORE::core_set_command( "hide_popup" );
+
         SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
         mdiag.run();
         return;
@@ -906,6 +909,8 @@ void ImageViewBase::slot_cancel_mosaic()
     if( ! m_img->is_cached() ) return;
 
     if( m_img->is_fake() ){
+
+        CORE::core_set_command( "hide_popup" );
 
         std::string type = "本当の画像タイプは";
         switch( DBIMG::get_type_real( get_url() ) ){
