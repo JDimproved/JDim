@@ -343,6 +343,9 @@ const bool ConfigItems::load( const bool restore )
     // 非アクティブ時に書き込みビューを折りたたむ
     fold_message = cf.get_option_bool( "fold_message", CONF_FOLD_MESSAGE );
 
+    // 非アクティブ時に画像ビューを折りたたむ
+    fold_image = cf.get_option_bool( "fold_image", CONF_FOLD_IMAGE );
+
     // 書き込み欄の日本語のON/OFF状態を保存
     keep_im_status = cf.get_option_bool( "keep_im_status", CONF_KEEP_IM_STATUS );
 
@@ -710,6 +713,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "save_posthist", save_posthist );
     cf.update( "hide_writing_dialog", hide_writing_dialog );
     cf.update( "fold_message", fold_message );
+    cf.update( "fold_image", fold_image );
     cf.update( "keep_im_status", keep_im_status );
     cf.update( "margin_popup", margin_popup );
     cf.update( "margin_imgpopup", margin_imgpopup );

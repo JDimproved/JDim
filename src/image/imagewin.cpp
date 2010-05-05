@@ -8,6 +8,8 @@
 
 #include "jdlib/miscgtk.h"
 
+#include "config/globalconf.h"
+
 #include "session.h"
 #include "command.h"
 
@@ -15,7 +17,7 @@ using namespace IMAGE;
 
 
 ImageWin::ImageWin()
-    : SKELETON::JDWindow( true ),
+    : SKELETON::JDWindow( CONFIG::get_fold_image() ),
       m_tab( NULL )
 {
 #ifdef _DEBUG
@@ -26,6 +28,8 @@ ImageWin::ImageWin()
 
     init_win();
     pack_remove_end( false, get_statbar(), Gtk::PACK_SHRINK );
+
+    if( ! CONFIG::get_fold_image() ) set_transient_for( *CORE::get_mainwindow() );
 
     show_all_children();
 }

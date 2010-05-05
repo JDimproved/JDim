@@ -163,9 +163,9 @@ bool JDWindow::slot_idle()
                 m_mode = JDWIN_UNGRAB;
                 m_counter = 0;
             }
-
-            CORE::core_set_command( "window_boot_fin" );
         }
+
+        CORE::core_set_command( "window_boot_fin" );
     }
 
     return false;

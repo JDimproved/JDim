@@ -269,6 +269,9 @@ namespace CONFIG
         // 非アクティブ時に書き込みビューを折りたたむ
         bool fold_message;
 
+        // 非アクティブ時に画像ビューを折りたたむ
+        bool fold_image;
+
         // 書き込み欄の日本語のON/OFF状態を保存
         bool keep_im_status;
 

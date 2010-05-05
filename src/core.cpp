@@ -2809,8 +2809,10 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "set_mginfo" ){
 
         // 画像ウィンドウが表示されている場合
-        if( ! SESSION::get_embedded_img() && SESSION::is_shown_win_img()
-            && SESSION::is_focus_win_img() ) IMAGE::get_admin()->set_command( "set_mginfo", "", command.arg1 );
+        if( ! SESSION::get_embedded_img() && SESSION::is_shown_win_img() && SESSION::is_focus_win_img() ){
+
+            IMAGE::get_admin()->set_command( "set_mginfo", "", command.arg1 );
+        }
 
         else m_win_main.set_mginfo( command.arg1 );
     }
@@ -3870,7 +3872,8 @@ void Core::toggle_article()
     const bool present = true;
 
     // 画像ウィンドウが表示されている場合
-    if( ! SESSION::get_embedded_img() && SESSION::is_shown_win_img() ){
+    if( ! SESSION::get_embedded_img() && SESSION::is_shown_win_img() && SESSION::is_focus_win_img() ){
+
         if( SESSION::focused_admin() == SESSION::FOCUS_ARTICLE ) switch_article( present );
         else switch_board( present );
     }
@@ -3885,8 +3888,11 @@ void Core::switch_leftview()
     const bool present = true;
     int next_admin = SESSION::focused_admin();
 
-    // 画像ウィンドウが表示されている
-    if( ! SESSION::get_embedded_img() && SESSION::is_shown_win_img() ) next_admin = SESSION::FOCUS_IMAGE;
+    // 画像ウィンドウが表示されている場合
+    if( ! SESSION::get_embedded_img() && SESSION::is_shown_win_img() && SESSION::is_focus_win_img() ){
+
+        next_admin = SESSION::FOCUS_IMAGE;
+    }
 
     for(;;){
 

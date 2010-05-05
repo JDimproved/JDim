@@ -309,6 +309,9 @@ namespace CONFIG
     const bool get_fold_message();
     void set_fold_message( const bool fold );
 
+    // 非アクティブ時に画像ビューを折りたたむ
+    const bool get_fold_image();
+
     // 書き込み欄の日本語のON/OFF状態を保存
     const bool get_keep_im_status();
 

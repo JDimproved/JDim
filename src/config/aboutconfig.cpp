@@ -216,6 +216,7 @@ void AboutConfig::append_rows()
     append_row( "画像ポップアップの幅(ピクセル)", get_confitem()->imgpopup_width, CONF_IMGPOPUP_WIDTH );
     append_row( "画像ポップアップの高さ(ピクセル)", get_confitem()->imgpopup_height, CONF_IMGPOPUP_HEIGHT );
     append_row( "画像ビューを開いたときにウィンドウサイズに合わせる", get_confitem()->zoom_to_fit, CONF_ZOOM_TO_FIT );
+    append_row( "画像ビューのフォーカスが外れたら折りたたむ", get_confitem()->fold_image, CONF_FOLD_IMAGE );
     append_row( "指定したサイズ(M byte)より大きい画像を表示するときに警告する", get_confitem()->max_img_size, CONF_MAX_IMG_SIZE );
     append_row( "指定した画素数(M pixel)より大きい画像を表示するときに警告する", get_confitem()->max_img_pixel, CONF_MAX_IMG_PIXEL );
     append_row( "モザイクのレベル", get_confitem()->mosaic_size, CONF_MOSAIC_SIZE );
