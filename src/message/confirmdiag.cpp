@@ -22,7 +22,9 @@ ConfirmDiag::ConfirmDiag( const std::string& url, const std::string& message )
       m_localrule( NULL ),
       m_chkbutton( "今後表示しない(常にOK)(_D)", true )
 {
+#if GTKMMVER >= 260
     m_message.set_width_chars( 60 );
+#endif
     m_message.set_line_wrap( true );
     m_message.set_padding( 8, 8 );
 
@@ -63,5 +65,5 @@ void ConfirmDiag::slot_switch_page( GtkNotebookPage*, guint page )
 
 void ConfirmDiag::timeout()
 {
-    if( m_localrule ) m_localrule->clock_in();    
+    if( m_localrule ) m_localrule->clock_in();
 }
