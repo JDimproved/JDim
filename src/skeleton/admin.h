@@ -86,7 +86,9 @@ namespace SKELETON
                           const std::string& arg3 = std::string(),
                           const std::string& arg4 = std::string(),
                           const std::string& arg5 = std::string(),
-                          const std::string& arg6 = std::string()
+                          const std::string& arg6 = std::string(),
+                          const std::string& arg7 = std::string(),
+                          const std::string& arg8 = std::string()
             );
 
         // コマンド入力(即時実行)
@@ -97,7 +99,9 @@ namespace SKELETON
                           const std::string& arg3 = std::string(),
                           const std::string& arg4 = std::string(),
                           const std::string& arg5 = std::string(),
-                          const std::string& arg6 = std::string()
+                          const std::string& arg6 = std::string(),
+                          const std::string& arg7 = std::string(),
+                          const std::string& arg8 = std::string()
             );
 
         // コマンドがセットされているか
@@ -138,16 +142,7 @@ namespace SKELETON
 
         // コマンド入力
         // immediately = true のときディスパッチャを呼ばずにすぐさま実行
-        void set_command_impl( const bool immediately,
-                          const std::string& command,
-                          const std::string& url = std::string(),
-                          const std::string& arg1 = std::string(),
-                          const std::string& arg2 = std::string(),
-                          const std::string& arg3 = std::string(),
-                          const std::string& arg4 = std::string(),
-                          const std::string& arg5 = std::string(),
-                          const std::string& arg6 = std::string()
-            );
+        void set_command_impl( const bool immediately, const COMMAND_ARGS& command_arg );
 
         virtual void callback_dispatch();
 

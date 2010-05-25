@@ -13,6 +13,8 @@ struct COMMAND_ARGS
     std::string arg4;
     std::string arg5;
     std::string arg6;
+    std::string arg7;
+    std::string arg8;
 };
 
 #endif

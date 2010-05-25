@@ -13,6 +13,8 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 
+#include "control/controlid.h"
+
 #include "global.h"
 
 #include <sys/time.h>
@@ -636,3 +638,35 @@ void ArticleViewPostlog::relayout()
     goto_bottom();
 }
 
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewPostlog::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+void ArticleViewPostlog::exec_reload()
+{
+    relayout();
+}
+
+
+
+//
+// 検索entryの操作
+//
+void ArticleViewPostlog::operate_search( const std::string& controlid )
+{
+    int id = atoi( controlid.c_str() );
+
+    if( id == CONTROL::Cancel ){
+        focus_view();
+        ARTICLE::get_admin()->set_command( "close_searchbar" );
+    }
+}

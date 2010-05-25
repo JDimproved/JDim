@@ -60,26 +60,30 @@ Search_Manager::~Search_Manager()
 // 結果は m_list_article と m_list_data に入る。
 //
 // id : 呼び出し元の ID。 検索終了時に SIG_SEARCH_FIN シグナルで送る
+// searchmode : 検索モード
 // url: ログ検索先の板のアドレス
 // query : 検索文字列、空文字ならキャッシュにあるスレを全て選択
 // mode_or : false なら AND、true なら OR で検索する
-// searchall : true なら全板検索
+// bm : trueの時、スレにしおりが付いている時は全てのレスをサーチ、そうで無いときはしおりが付いているレスだけをサーチ
 // calc_data : 検索終了時に m_list_data を求める
-const bool Search_Manager::search_log( const std::string& id, const std::string& url, const std::string& query,
-                                       const bool mode_or, const bool searchall, const bool calc_data )
+//
+const bool Search_Manager::search( const std::string& id, const int searchmode, const std::string& url,
+                                   const std::string& query, const bool mode_or, const bool bm, const bool calc_data )
 {
 #ifdef _DEBUG
-    std::cout << "Search_Manager::search_log url = " << url << " query = " << query << std::endl;
+    std::cout << "Search_Manager::search url = " << url << " query = " << query << std::endl;
 #endif
 
     if( m_searching ) return false;
     if( m_thread.is_running() ) return false;
 
+    m_searchmode = searchmode;
+
     m_id = id;
     m_url = url;
     m_query = query;
     m_mode_or = mode_or;
-    m_searchall = searchall;
+    m_bm = bm;
     m_calc_data = calc_data;
 
     m_list_article.clear();
@@ -87,16 +91,14 @@ const bool Search_Manager::search_log( const std::string& id, const std::string&
 
     // 全ログ検索のとき、スレッドを起動する前にメインスレッドで板情報ファイルを
     // 読み込んでおかないと大量の warning が出る
-    if( m_searchall ) DBTREE::read_boardinfo_all();
+    if( m_searchmode == SEARCHMODE_ALLLOG ) DBTREE::read_boardinfo_all();
 
     if( ! m_thread.create( ( STARTFUNC ) launcher, ( void * ) this, JDLIB::NODETACH ) ){
         MISC::ERRMSG( "Search_Manager::search : could not start thread" );
-    }
-    else{
-        m_searching = true;
+        return FALSE;
     }
 
-
+    m_searching = true;
     return true;
 }
 
@@ -123,8 +125,8 @@ void Search_Manager::thread_search()
 
     m_stop = false;
 
-    if( m_searchall ) DBTREE::search_cache_all( m_list_article, m_query, m_mode_or, m_stop );
-    else DBTREE::search_cache( m_url, m_list_article, m_query, m_mode_or, m_stop );
+    if( m_searchmode == SEARCHMODE_LOG ) DBTREE::search_cache( m_url, m_list_article, m_query, m_mode_or, m_bm,  m_stop );
+    else if( m_searchmode == SEARCHMODE_ALLLOG ) DBTREE::search_cache_all( m_list_article, m_query, m_mode_or, m_bm, m_stop );
 
     if( m_calc_data ){
 
@@ -137,6 +139,8 @@ void Search_Manager::thread_search()
             data.url_readcgi = DBTREE::url_readcgi( article->get_url(), 0, 0 );
             data.subject = article->get_subject();
             data.num = article->get_number_load();
+            data.bookmarked = article->is_bookmarked_thread();
+            data.num_bookmarked = article->get_num_bookmark();
             data.boardname = DBTREE::board_name( data.url_readcgi );
 
 #ifdef _DEBUG
@@ -193,7 +197,7 @@ void Search_Manager::stop( const std::string& id )
     m_stop = true;
 
     // スレタイ検索停止
-    if( m_searchloader ) m_searchloader->stop_load();
+    if( m_searchmode == SEARCHMODE_TITLE && m_searchloader ) m_searchloader->stop_load();
 }
 
 
@@ -218,8 +222,11 @@ const bool Search_Manager::search_title( const std::string& id, const std::strin
     std::cout << "Search_Manager::search_title query = " << query << std::endl;
 #endif
 
+    m_searchmode = SEARCHMODE_TITLE;
+
     m_id = id;
     m_query = query;
+
     m_list_data.clear();
 
     // スレタイの検索が終わったら search_fin_title が呼び出される
@@ -267,6 +274,8 @@ void Search_Manager::search_fin_title()
                 data.url_readcgi = DBTREE::url_readcgi( regex.str( 1 ), 0, 0 );
                 data.subject = MISC::html_unescape( regex.str( 2 ) );
                 data.num = atoi( regex.str( 3 ).c_str() );
+                data.bookmarked = false;
+                data.num_bookmarked = 0;
 
                 if( ! data.url_readcgi.empty() ){
 

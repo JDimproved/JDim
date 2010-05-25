@@ -1030,8 +1030,8 @@ void Core::slot_live_start_stop()
 //
 void Core::slot_search_cache_board()
 {
-    std::string url = BOARD::get_admin()->get_current_url();
-    if( ! url.empty() ) CORE::core_set_command( "open_article_searchlog", url );
+    const std::string url = BOARD::get_admin()->get_current_url();
+    if( ! url.empty() ) CORE::core_set_command( "open_article_searchlog", url, "", "noexec" );
 }
 
 
@@ -1040,7 +1040,7 @@ void Core::slot_search_cache_board()
 //
 void Core::slot_search_cache()
 {
-    CORE::core_set_command( "open_article_searchalllog" );
+    CORE::core_set_command( "open_article_searchlog", "allboard", "", "noexec" );
 }
 
 
@@ -1049,7 +1049,7 @@ void Core::slot_search_cache()
 //
 void Core::slot_show_cache_board()
 {
-    std::string url = DBTREE::url_subject( BOARD::get_admin()->get_current_url() );
+    const std::string url = DBTREE::url_subject( BOARD::get_admin()->get_current_url() );
     if( ! url.empty() ) CORE::core_set_command( "open_board_showlog", url );
 }
 
@@ -1068,7 +1068,7 @@ void Core::slot_show_cache()
 //
 void Core::slot_search_title()
 {
-    CORE::core_set_command( "open_article_searchtitle" );
+    CORE::core_set_command( "open_article_searchtitle", "", "", "noexec" );
 }
 
 

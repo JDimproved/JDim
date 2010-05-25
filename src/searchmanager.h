@@ -24,12 +24,23 @@ namespace CORE
 {
     class SearchLoader;
 
+    // 検索モード
+    enum
+    {
+        SEARCHMODE_LOG = 0,   // ログ検索
+        SEARCHMODE_ALLLOG,    // 全ログ検索
+
+        SEARCHMODE_TITLE      // スレタイ検索
+    };
+
     struct SEARCHDATA
     {
         std::string url_readcgi;
         std::string boardname;
         std::string subject;
-        int num;
+        int num;  // 読み込み数
+        bool bookmarked;   // スレ全体にしおりがついているか
+        int num_bookmarked;  // レスにつけられたしおりの数
     };
 
     class Search_Manager : public SKELETON::Dispatchable
@@ -40,11 +51,12 @@ namespace CORE
 
         JDLIB::Thread m_thread;
 
+        int m_searchmode;
         std::string m_id;
         std::string m_url;
         std::string m_query;
         bool m_mode_or;
-        bool m_searchall;
+        bool m_bm;
         bool m_calc_data;
 
         std::vector< DBTREE::ArticleBase* > m_list_article;
@@ -74,16 +86,18 @@ namespace CORE
 
 
         // ログ検索
+        //
         // 結果は m_list_article と m_list_data に入る。
         //
         // id : 呼び出し元の ID。 検索終了時に SIG_SEARCH_FIN シグナルで送る
+        // searchmode : 検索モード
         // url: ログ検索先の板のアドレス
         // query : 検索文字列、空文字ならキャッシュにあるスレを全て選択
         // mode_or : false なら AND、true なら OR で検索する
-        // searchall : true なら全板検索
+        // bm : trueの時、スレにしおりが付いている時は全てのレスをサーチ、そうで無いときはしおりが付いているレスだけをサーチ
         // calc_data : 検索終了時に m_list_data を求める
-        const bool search_log( const std::string& id, const std::string& url, const std::string& query,
-                               const bool mode_or, const bool searchall, const bool calc_data );
+        const bool search( const std::string& id, const int searchmode, const std::string& url,
+                           const std::string& query, const bool mode_or, const bool bm, const bool calc_data );
 
 
         // スレタイ検索

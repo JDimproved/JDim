@@ -13,14 +13,6 @@
 
 namespace ARTICLE
 {
-    // 検索モード
-    // コンストラクタの searchmode で指定する
-    enum{
-        SEARCHMODE_LOG = 0,
-        SEARCHMODE_ALLLOG,
-        SEARCHMODE_TITLE
-    };
-
     class ArticleViewSearch : public ArticleViewBase
     {
         std::string m_url_title;
@@ -28,6 +20,8 @@ namespace ARTICLE
         std::string m_time_str;
         int m_searchmode; // 上のenumで定義した検索モード
         bool m_mode_or;
+        bool m_enable_bm;
+        bool m_bm;
         std::list< CORE::SEARCHDATA > m_list_searchdata;
         bool m_loading;
         bool m_search_executed;
@@ -38,8 +32,8 @@ namespace ARTICLE
         // mode_or == true なら OR 検索する
         ArticleViewSearch( const std::string& url_board, // searchmode == SEARCHMODE_LOG の場合はboardのurl
                            const std::string& query,
-                           const int searchmode,  // 上のenumで定義した検索モード
-                           const bool exec_search, const bool mode_or );
+                           const int searchmode,  // searchmanager.hで定義した検索モード
+                           const bool exec_search, const bool mode_or, const bool bm );
         ~ArticleViewSearch();
 
         // SKELETON::View の関数のオーバロード
@@ -57,6 +51,9 @@ namespace ARTICLE
         // 検索
         virtual void exec_search();
         virtual void operate_search( const std::string& controlid );
+        const bool get_enable_bm() const{ return m_enable_bm; }
+        const bool get_bm() const { return m_bm; }
+        void set_bm( const bool set ){ m_bm = set; }
 
       protected:
 
@@ -68,6 +65,8 @@ namespace ARTICLE
         void update_url_query( const bool update_history );
 
         void slot_search_fin( const std::string& id );
+
+        virtual void exec_reload();
     };
 }
 

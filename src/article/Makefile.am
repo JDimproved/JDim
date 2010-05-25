@@ -21,6 +21,7 @@ libarticle_a_SOURCES = \
 	font.cpp \
 	preference.cpp \
 	toolbar.cpp \
+	toolbarsimple.cpp \
 	toolbarsearch.cpp
 
 noinst_HEADERS = \
@@ -46,6 +47,7 @@ noinst_HEADERS = \
 	caret.h \
 	scrollinfo.h \
 	toolbar.h \
+	toolbarsimple.h \
 	toolbarsearch.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@

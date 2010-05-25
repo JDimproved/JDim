@@ -52,21 +52,6 @@ namespace ARTICLE
 
         void slot_live_play_stop();
     };
-
-    ///////////////////////////
-
-    // 簡易版
-    class ArticleToolBarSimple : public SKELETON::ToolBar
-    {
-      public:
-
-        ArticleToolBarSimple();
-        virtual ~ArticleToolBarSimple(){}
-
-      protected:
-
-        virtual void pack_buttons();
-    };
 }
 
 

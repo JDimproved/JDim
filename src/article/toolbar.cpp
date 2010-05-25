@@ -226,35 +226,3 @@ void ArticleToolBar::slot_live_play_stop()
 
     ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );
 }
-
-
-/////////////////////////////
-
-// 簡易版
-
-
-ArticleToolBarSimple::ArticleToolBarSimple() :
-    SKELETON::ToolBar( ARTICLE::get_admin() )
-{
-    // 検索バー    
-    get_searchbar()->append( *get_tool_search( CORE::COMP_SEARCH_ARTICLE ) );
-    get_searchbar()->append( *get_button_down_search() );
-    get_searchbar()->append( *get_button_up_search() );
-    get_searchbar()->append( *get_button_close_searchbar() );
-
-    pack_buttons();
-}
-
-
-//
-// ボタンのパッキング
-//
-void ArticleToolBarSimple::pack_buttons()
-{
-    pack_transparent_separator();
-    get_buttonbar().append( *get_label() );
-    get_buttonbar().append( *get_button_close() );
-
-    set_relief();
-    show_all_children();
-}

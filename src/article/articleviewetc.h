@@ -169,6 +169,14 @@ namespace ARTICLE
         // SKELETON::View の関数のオーバロード
         virtual void show_view();
         virtual void relayout();
+        virtual void reload();
+        virtual void stop(){} // キャンセル
+
+        // 検索
+        virtual void operate_search( const std::string& controlid );
+
+      private:
+        virtual void exec_reload();
     };
 }
 

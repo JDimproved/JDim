@@ -1710,16 +1710,17 @@ void BoardBase::set_local_proxy_w( const std::string& proxy )
 //
 // ArticleBase のアドレスをリスト(list_article)にセットして返す
 // query が空の時はキャッシュにあるログを全てヒットさせる
-// 
+// bm がtrueの時、しおりが付いている(スレ一覧でしおりを付けた or レスに一つでもしおりが付いている)スレのみを対象に検索する
 //
 void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
                               const std::string& query,
                               const bool mode_or, // 今のところ無視
+                              const bool bm,
                               const bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
     )
 {
 #ifdef _DEBUG
-    std::cout << "BoardBase::search_cache " << query << std::endl;
+    std::cout << "BoardBase::search_cache " << url_subject() << std::endl;
 #endif
 
     if( empty() ) return;
@@ -1742,12 +1743,20 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
         ArticleBase* article = ( *it );
         if( ! article->is_cached() ) continue;
 
+        // しおりがついているスレだけ追加
+        if( bm ){
+            article->read_info();
+            if( ! article->is_bookmarked_thread() && ! article->get_num_bookmark() ) continue;
+        }
+
+        // 全て追加
         if( append_all ){
 
-#ifdef _DEBUG
-            std::cout << "append " << article->get_subject() << std::endl;
-#endif
             article->read_info();
+
+#ifdef _DEBUG
+            std::cout << "append " << article->get_subject() << " bm = " << article->get_num_bookmark() << std::endl;
+#endif
             list_article.push_back( article );
             continue;
         }
@@ -1766,6 +1775,7 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
             std::list< std::string >::const_iterator it_query = list_query.begin();
             for( ; it_query != list_query.end(); ++it_query ){
 
+                // 今の所 AND だけ対応
                 if( rawdata.find( *it_query ) == std::string::npos ){
                     apnd = false;
                     break;
@@ -1773,11 +1783,13 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
             }
 
             if( apnd ){
+
+                article->read_info();
+
 #ifdef _DEBUG
                 std::cout << "found word in " << url_readcgi( article->get_url(), 0, 0 ) << std::endl
                           << article->get_subject() << std::endl;
 #endif
-                article->read_info();
                 list_article.push_back( article );
             }
         }

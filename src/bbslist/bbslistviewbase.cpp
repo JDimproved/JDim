@@ -1687,7 +1687,6 @@ void BBSListViewBase::slot_select_all()
 // root : true ならルートから検索する。falseの場合は m_path_selected にパスをセットしておくこと
 // open : チェック後に更新していたら開く
 //
-#include <iostream>
 void BBSListViewBase::check_update_dir( const bool root, const bool open )
 {
     if( ! SESSION::is_online() ){
@@ -1696,9 +1695,9 @@ void BBSListViewBase::check_update_dir( const bool root, const bool open )
         return;
     }
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
     std::cout << "BBSListViewBase::check_update_dir root = " << root << std::endl;
-//#endif
+#endif
 
     Gtk::TreePath path; 
     if( ! root ){
@@ -1799,7 +1798,7 @@ void BBSListViewBase::slot_search_cache_board()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    CORE::core_set_command( "open_article_searchlog", url );
+    CORE::core_set_command( "open_article_searchlog", url, "", "noexec" );
 }
 
 

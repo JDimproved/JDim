@@ -374,9 +374,22 @@ void Admin::clock_in()
 void Admin::set_command( const std::string& command, const std::string& url,
                          const std::string& arg1, const std::string& arg2,
                          const std::string& arg3, const std::string& arg4,
-                         const std::string& arg5, const std::string& arg6 )
+                         const std::string& arg5, const std::string& arg6,
+                         const std::string& arg7, const std::string& arg8 )
 {
-    set_command_impl( false, command, url, arg1, arg2, arg3, arg4, arg5, arg6 );
+    COMMAND_ARGS command_arg;
+    command_arg.command = command;
+    command_arg.url = url;
+    command_arg.arg1 = arg1;
+    command_arg.arg2 = arg2;
+    command_arg.arg3 = arg3;
+    command_arg.arg4 = arg4;
+    command_arg.arg5 = arg5;
+    command_arg.arg6 = arg6;
+    command_arg.arg7 = arg7;
+    command_arg.arg8 = arg8;
+
+    set_command_impl( false, command_arg );
 }
 
 
@@ -384,11 +397,24 @@ void Admin::set_command( const std::string& command, const std::string& url,
 // コマンド受付(即実行)
 //
 void Admin::set_command_immediately( const std::string& command, const std::string& url,
-                         const std::string& arg1, const std::string& arg2,
-                         const std::string& arg3, const std::string& arg4,
-                         const std::string& arg5, const std::string& arg6 )
+                                     const std::string& arg1, const std::string& arg2,
+                                     const std::string& arg3, const std::string& arg4,
+                                     const std::string& arg5, const std::string& arg6,
+                                     const std::string& arg7, const std::string& arg8 )
 {
-    set_command_impl( true, command, url, arg1, arg2, arg3, arg4, arg5, arg6 );
+    COMMAND_ARGS command_arg;
+    command_arg.command = command;
+    command_arg.url = url;
+    command_arg.arg1 = arg1;
+    command_arg.arg2 = arg2;
+    command_arg.arg3 = arg3;
+    command_arg.arg4 = arg4;
+    command_arg.arg5 = arg5;
+    command_arg.arg6 = arg6;
+    command_arg.arg7 = arg7;
+    command_arg.arg8 = arg8;
+
+    set_command_impl( true, command_arg );
 }
 
 
@@ -401,11 +427,7 @@ void Admin::set_command_immediately( const std::string& command, const std::stri
 // immediately = false で呼び出して、緊急にコマンドを実行させたい場合は
 // immediately = true とすること。
 //
-void Admin::set_command_impl( const bool immediately,
-                         const std::string& command, const std::string& url,
-                         const std::string& arg1, const std::string& arg2,
-                         const std::string& arg3, const std::string& arg4,
-                         const std::string& arg5, const std::string& arg6 )
+void Admin::set_command_impl( const bool immediately, const COMMAND_ARGS& command_arg )
 {
 #ifdef _DEBUG
     std::cout << "Admin::set_command : immediately = " << immediately <<  " command = " << command << " url = " << url << std::endl
@@ -413,16 +435,6 @@ void Admin::set_command_impl( const bool immediately,
               << arg3 << " " << arg4 << std::endl
               << arg5 << " " << arg6 << std::endl;
 #endif
-    
-    COMMAND_ARGS command_arg;
-    command_arg.command = command;
-    command_arg.url = url;
-    command_arg.arg1 = arg1;
-    command_arg.arg2 = arg2;
-    command_arg.arg3 = arg3;
-    command_arg.arg4 = arg4;
-    command_arg.arg5 = arg5;
-    command_arg.arg6 = arg6;
 
     if( immediately ){
 

@@ -75,8 +75,16 @@ void BoardViewLog::show_view()
 #endif
 
     if( ! SESSION::is_booting() ){
-        const bool searchall = ( get_url() == URL_ALLLOG );
-        CORE::get_search_manager()->search_log( get_url(), get_url_board(), "", false, searchall, false );
+
+        const std::string id = get_url();
+        int searchmode = CORE::SEARCHMODE_LOG;
+        if( get_url() == URL_ALLLOG ) searchmode = CORE::SEARCHMODE_ALLLOG;
+        const bool mode_or = false;
+        const bool bm = false;
+        const bool calc_data = false;
+
+        CORE::get_search_manager()->search( id, searchmode, get_url_board(),
+                                            "", mode_or, bm, calc_data );
     }
 
     BoardViewBase::show_view();

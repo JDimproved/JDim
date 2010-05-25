@@ -7,6 +7,7 @@
 #include "articleviewbase.h"
 #include "font.h"
 #include "toolbar.h"
+#include "toolbarsimple.h"
 #include "toolbarsearch.h"
 
 #include "dbtree/interface.h"
@@ -127,13 +128,18 @@ void ArticleAdmin::restore( const bool only_locked )
         // ロックされているものだけ表示
         if( only_locked && ! lock ) continue;
 
+        if( page == SESSION::article_page() ) set_page_num = get_tab_nums();
+
+        COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
+
         // 板がDBに登録されていない場合は表示しない
-        if( DBTREE::url_boardbase( *it_url ).empty() ){
+        if( command_arg.url != "allboard" && command_arg.arg4 != "SEARCHTITLE" && command_arg.arg4 != "POSTLOG"
+            && DBTREE::url_boardbase( *it_url ).empty() ){
             MISC::ERRMSG(  *it_url + " is not registered" );
             continue;
         }
 
-        if( page == SESSION::article_page() ) set_page_num = get_tab_nums();
+        if( command_arg.arg4 == "MAIN" && DBTREE::url_dat( *it_url ).empty() ) continue;
 
         // 検索ビューなど、復元したときに view のurlが変わることがあるので
         // view履歴内のURLを置き換える必要がある。そこで Admin::open_view() 中の
@@ -142,8 +148,7 @@ void ArticleAdmin::restore( const bool only_locked )
         const bool use_history = get_use_viewhistory();
         set_use_viewhistory( false );
 
-        COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
-        if( ! command_arg.url.empty() ) open_view( command_arg );
+        open_view( command_arg );
 
         if( use_history ){
 
@@ -275,7 +280,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
     // キャッシュのログ検索
     else if( regex.exec( std::string( "(.*)" ) + BOARD_SIGN + KEYWORD_SIGN + "(.*)"
-                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url )){
+                         + ORMODE_SIGN + "(.*)" + BOOKMK_SIGN + "(.*)" + TIME_SIGN, url )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -286,6 +291,8 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
         else command_arg.arg4 = "SEARCHLOG";
         command_arg.arg5 = regex.str( 2 ); // query
         command_arg.arg6 = "noexec"; // Viewを開いた直後に検索を実行しない
+        if( regex.str( 3 ) == "1" ) command_arg.arg7 = "OR";
+        if( regex.str( 4 ) == "1" ) command_arg.arg8 = "BM";
     }
 
     // スレタイ検索
@@ -314,7 +321,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
         command_arg.arg5 = regex.str( 2 ); // ログ番号
     }
 
-    // MAIN
+    // 通常のスレ
     else if( !url.empty() ){
         command_arg.url = url;
         if( tab ) command_arg.arg1 = "true";   // タブで開く
@@ -331,7 +338,10 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
               << command_arg.arg3 << std::endl
               << command_arg.arg4 << std::endl
               << command_arg.arg5 << std::endl
-              << command_arg.arg6 << std::endl << std::endl;
+              << command_arg.arg6 << std::endl
+              << command_arg.arg7 << std::endl
+              << command_arg.arg8 << std::endl
+              << std::endl;
 #endif
 
     return command_arg;
@@ -472,6 +482,8 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
         type = CORE::VIEW_ARTICLESEARCHLOG;
         view_args.arg1 = command.arg5;  // query
         view_args.arg2 = command.arg6;  // exec
+        view_args.arg3 = command.arg7;  // OR
+        view_args.arg4 = command.arg8;  // BM
     }
 
     // 全キャッシュログ検索
@@ -479,6 +491,8 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
         type = CORE::VIEW_ARTICLESEARCHALLLOG;
         view_args.arg1 = command.arg5;  // query
         view_args.arg2 = command.arg6;  // exec
+        view_args.arg3 = command.arg7;  // OR
+        view_args.arg4 = command.arg8;  // BM
     }
 
     // スレタイ検索

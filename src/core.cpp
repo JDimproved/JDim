@@ -1994,6 +1994,10 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
+        // "allboard" の時は全ログ対象
+        std::string mode = "SEARCHLOG";
+        if( command.url == "allboard" ) mode = "SEARCHALLLOG";
+
         // 検索履歴更新
         CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, command.arg1 );
 
@@ -2006,47 +2010,16 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            "true", // command.url を開いてるかチェックしない
                                            "", // 開き方のモード
 
-                                           "SEARCHLOG", // ログ検索
+                                           mode,
 
                                            command.arg1, // query
-                                           "exec" // Viewを開いた直後に検索開始
+                                           command.arg2, // "exec" ならViewを開いた直後に検索開始
+                                           command.arg3, // OR
+                                           command.arg4  // BM
             );
 
         return;
     }
-
-    // 全ログ検索
-    else if( command.command  == "open_article_searchalllog" ) { 
-
-        if( CORE::get_search_manager()->is_searching() ){
-            SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
-            mdiag.run();
-            return;
-        }
-
-        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
-        
-        // 検索履歴更新
-        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, command.arg1 );
-
-        ARTICLE::get_admin()->set_command( "open_view",
-                                           "allboard",
-
-                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
-                                           // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
-                                           "", // 開き方のモード
-
-                                           "SEARCHALLLOG", // 全ログ検索
-
-                                           command.arg1, // query
-                                           "exec" // Viewを開いた直後に検索開始
-            );
-
-        return;
-    }
-
 
     // スレタイ検索
     else if( command.command  == "open_article_searchtitle" ) { 
@@ -2071,7 +2044,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            "SEARCHTITLE", // モード
 
                                            command.arg1, // query
-                                           "exec" // Viewを開いた直後に検索開始
+                                           command.arg2  // "exec" ならViewを開いた直後に検索開始
             );
 
         return;

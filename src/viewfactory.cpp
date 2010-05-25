@@ -1,6 +1,7 @@
 // ライセンス: GPL2
 
 #include "viewfactory.h"
+#include "searchmanager.h"
 
 #include "bbslist/bbslistview.h"
 #include "bbslist/favoriteview.h"
@@ -97,13 +98,15 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
             return new ARTICLE::ArticleViewInfo( url );
 
         case VIEW_ARTICLESEARCHLOG:
-            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, ARTICLE::SEARCHMODE_LOG , ( view_args.arg2 == "exec" ), ( view_args.arg3 == "OR" ) );
+            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, CORE::SEARCHMODE_LOG
+                                                   , ( view_args.arg2 == "exec" ), ( view_args.arg3 == "OR" ), ( view_args.arg4 == "BM" ) );
 
         case VIEW_ARTICLESEARCHALLLOG:
-            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, ARTICLE::SEARCHMODE_ALLLOG, ( view_args.arg2 == "exec" ), (view_args.arg3 == "OR" ) );
+            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, CORE::SEARCHMODE_ALLLOG,
+                                                   ( view_args.arg2 == "exec" ), (view_args.arg3 == "OR" ), ( view_args.arg4 == "BM" ) );
 
         case VIEW_ARTICLESEARCHTITLE:
-            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, ARTICLE::SEARCHMODE_TITLE, ( view_args.arg2 == "exec" ), (view_args.arg3 == "OR" ) );
+            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, CORE::SEARCHMODE_TITLE, ( view_args.arg2 == "exec" ), (view_args.arg3 == "OR" ), false );
 
         case VIEW_ARTICLEPOSTLOG:
             return new ARTICLE::ArticleViewPostlog( url, atoi( view_args.arg1.c_str() ) );
@@ -127,6 +130,9 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
 
         case VIEW_ARTICLEPOPUPDRAWOUT:
             return new ARTICLE::ArticleViewPopupDrawout( url, view_args.arg1, ( view_args.arg2 == "OR" ) );
+
+        case VIEW_ARTICLEPOPUPBM:
+            return new ARTICLE::ArticleViewPopupBM( url );
 
             /////////////////
 

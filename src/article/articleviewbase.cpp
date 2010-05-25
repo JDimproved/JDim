@@ -2221,6 +2221,16 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         }
     }
 
+    // しおり
+    else if( url.find( PROTO_BM ) == 0 ){
+
+        const std::string url_tmp = url.substr( strlen( PROTO_BM ) );
+        const std::string url_dat = DBTREE::url_dat( url_tmp );
+        if( ! url_dat.empty() ){
+            view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPBM, url_dat );
+        }
+    }
+
     // 名前ポップアップ
     else if( CONFIG::get_namepopup_by_mo() && url.find( PROTO_NAME ) == 0 ){
 
@@ -2585,14 +2595,25 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     // OR抽出
     else if( url.find( PROTO_OR ) == 0 ){
 
-        std::string url_tmp = url.substr( strlen( PROTO_OR ) );
+        const std::string url_tmp = url.substr( strlen( PROTO_OR ) );
         int i = url_tmp.find( KEYWORD_SIGN );
-        std::string url_dat = DBTREE::url_dat( url_tmp.substr( 0, i ) );
+        const std::string url_dat = DBTREE::url_dat( url_tmp.substr( 0, i ) );
 
         if( ! url_dat.empty() ){
-            std::string query = url_tmp.substr( i + strlen( KEYWORD_SIGN ) );
+            const std::string query = url_tmp.substr( i + strlen( KEYWORD_SIGN ) );
             CORE::core_set_command( "open_article_keyword" ,url_dat, query, "true" );
         }
+    }
+
+    /////////////////////////////////////////////////////////////////
+    // しおり抽出
+    else if( url.find( PROTO_BM ) == 0 ){
+
+        const std::string url_tmp = url.substr( strlen( PROTO_BM ) );
+        const std::string url_dat = DBTREE::url_dat( url_tmp );
+        if( ! url_dat.empty() ){
+            CORE::core_set_command( "open_article_bm" , url_dat );
+       }
     }
 
     /////////////////////////////////////////////////////////////////
@@ -3317,7 +3338,7 @@ void ArticleViewBase::slot_search_cacheall()
     std::cout << "ArticleViewBase::slot_search_cacheall "<< query << std::endl;
 #endif
     
-    CORE::core_set_command( "open_article_searchalllog", "" , query );
+    CORE::core_set_command( "open_article_searchlog", "allboard" , query, "exec" );
 }
 
 
@@ -3329,14 +3350,16 @@ void ArticleViewBase::slot_search_cachelocal()
     std::string query = m_drawarea->str_selection();
     query = MISC::replace_str( query, "\n", "" );
 
-    std::string url = DBTREE::url_subject( m_url_article );
+    if( query.empty() ) return;
+
+    const std::string url = DBTREE::url_subject( m_url_article );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_search_cachelocal " << url << std::endl
               << query << std::endl;
 #endif
     
-    CORE::core_set_command( "open_article_searchlog", url , query );
+    CORE::core_set_command( "open_article_searchlog", url , query, "exec" );
 }
 
 
@@ -3380,13 +3403,14 @@ void ArticleViewBase::slot_search_title()
     std::string query = m_drawarea->str_selection();
     query = MISC::replace_str( query, "\n", "" );
 
+    if( query.empty() ) return;
+
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_search_title query = " << query << std::endl;
 #endif
     
-    CORE::core_set_command( "open_article_searchtitle", "" , query );
+    CORE::core_set_command( "open_article_searchtitle", "" , query, "exec" );
 }
-
 
 
 //

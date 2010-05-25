@@ -23,8 +23,8 @@ namespace ARTICLE
     enum
     {
         TOOLBAR_ARTICLE = 0,
-        TOOLBAR_SIMPLE = 1,
-        TOOLBAR_SEARCH = 2
+        TOOLBAR_SIMPLE,
+        TOOLBAR_SEARCH
     };
 
     class ArticleAdmin : public SKELETON::Admin

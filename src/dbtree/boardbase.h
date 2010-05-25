@@ -501,9 +501,11 @@ namespace DBTREE
         // キャッシュ内のログ検索
         // ArticleBase のアドレスをリスト(list_article)にセットして返す
         // query が空の時はキャッシュにあるログを全てヒットさせる
+        // bm がtrueの時、しおりが付いている(スレ一覧でしおりを付けた or レスに一つでもしおりが付いている)スレのみを対象に検索する
         virtual void search_cache( std::vector< ArticleBase* >& list_article,
                                    const std::string& query,
                                    const bool mode_or, // 今のところ無視
+                                   const bool bm,
                                    const bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
             );
 

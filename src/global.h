@@ -238,6 +238,7 @@ enum
 #define PROTO_BE "BE://"
 #define PROTO_ABONE "abone://"
 #define PROTO_OR "or://"
+#define PROTO_BM "bm://"
 #define PROTO_BROKEN "bloken://"
 #define PROTO_POSTLOG "postlog://"
 #define PROTO_SSSP "sssp://"

@@ -19,7 +19,7 @@ namespace ARTICLE
 
       public:
         ArticleViewPopup( const std::string& url, bool show_abone );
-        ~ArticleViewPopup();
+        virtual ~ArticleViewPopup();
 
         virtual void stop(){}
 
@@ -41,7 +41,7 @@ namespace ARTICLE
 
       public:
         ArticleViewPopupHTML( const std::string& url, const std::string& html ): ArticleViewPopup( url, false ), m_html( html ){}
-        ~ArticleViewPopupHTML(){}
+        virtual ~ArticleViewPopupHTML(){}
 
         virtual void show_view(){ append_html( m_html ); }
     };
@@ -59,7 +59,7 @@ namespace ARTICLE
       public:
         ArticleViewPopupRes( const std::string& url, const std::string& num, bool show_title, bool show_abone )
         : ArticleViewPopup( url, show_abone ), m_str_num( num ), m_show_title( show_title ){}
-        ~ArticleViewPopupRes(){}
+        virtual ~ArticleViewPopupRes(){}
 
         virtual void show_view(){
             show_instruct_popup();
@@ -78,7 +78,7 @@ namespace ARTICLE
 
       public:
         ArticleViewPopupName( const std::string& url, const std::string& name ): ArticleViewPopup( url, false ), m_str_name( name ){}
-        ~ArticleViewPopupName(){}
+        virtual ~ArticleViewPopupName(){}
 
         virtual void show_view(){
             show_instruct_popup();
@@ -97,7 +97,7 @@ namespace ARTICLE
 
       public:
         ArticleViewPopupID( const std::string& url, const std::string& id ): ArticleViewPopup( url, false ), m_str_id( id ) {}
-        ~ArticleViewPopupID(){}
+        virtual ~ArticleViewPopupID(){}
 
         virtual void show_view(){
             show_instruct_popup();
@@ -116,7 +116,7 @@ namespace ARTICLE
 
       public:
         ArticleViewPopupRefer( const std::string& url, const std::string& num ): ArticleViewPopup( url, false ), m_str_num( num ){}
-        ~ArticleViewPopupRefer(){}
+        virtual ~ArticleViewPopupRefer(){}
 
         virtual void show_view(){
             show_instruct_popup();
@@ -135,11 +135,27 @@ namespace ARTICLE
       public:
         ArticleViewPopupDrawout( const std::string& url, const std::string& query, bool mode_or )
         : ArticleViewPopup( url, false ), m_query( query ), m_mode_or( mode_or ){}
-        ~ArticleViewPopupDrawout(){}
+        virtual ~ArticleViewPopupDrawout(){}
 
         virtual void show_view(){
             show_instruct_popup();
             drawout_keywords( m_query, m_mode_or, false );
+        }
+    };
+
+    /////////////////////////////////////////////////////////////////////////
+
+
+    // しおり抽出ポップアップ
+    class ArticleViewPopupBM : public ArticleViewPopup
+    {
+      public:
+      ArticleViewPopupBM( const std::string& url ) : ArticleViewPopup( url, false ){}
+        virtual ~ArticleViewPopupBM(){}
+
+        virtual void show_view(){
+            show_instruct_popup();
+            show_bm();
         }
     };
 }

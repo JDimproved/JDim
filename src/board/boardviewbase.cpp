@@ -2599,7 +2599,7 @@ void BoardViewBase::operate_search( const std::string& controlid )
     const int id = atoi( controlid.c_str() );
 
     if( id == CONTROL::Cancel ) focus_view();
-    else if( id == CONTROL::SearchCache ) CORE::core_set_command( "open_article_searchlog", get_url_board() , get_search_query() );
+    else if( id == CONTROL::SearchCache ) CORE::core_set_command( "open_article_searchlog", get_url_board() , get_search_query(), "exec" );
 }
 
 
