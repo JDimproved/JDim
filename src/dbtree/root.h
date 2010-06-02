@@ -118,6 +118,10 @@ namespace DBTREE
         // 全boardbaseクラスに、それに属する全articlebaseクラスのあぼーん状態の更新をさせる
         void update_abone_all_article();
 
+        // 全boardbaseクラスに、それに属する全articlebaseクラスの書き込み時間とスレ立て時間の文字列をリセットさせる
+        void reset_all_write_date();
+        void reset_all_since_date();
+
         // 板が移転したかチェックする
         // 移転した時は移転後のURLを返す
         const std::string is_board_moved( const std::string& url ); // 簡易版

@@ -1795,10 +1795,6 @@ void BoardViewBase::update_item_all()
         DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
         if( ! art ) continue;
 
-        // since と write の表示形式を変更
-        art->reset_since_date();
-        art->reset_write_date();
-
         update_row_common( row );
     }
 }

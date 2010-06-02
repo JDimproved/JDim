@@ -526,6 +526,7 @@ void ArticleBase::update_writetime()
     if( CONFIG::get_save_post_history() && gettimeofday( &tv, &tz ) == 0 ){
 
         m_write_time = tv;
+        m_write_time_date = std::string();
 
 #ifdef _DEBUG
         std::cout << "ArticleBase::update_writetime : " << m_write_time.tv_sec << " " << m_write_time_date << std::endl;

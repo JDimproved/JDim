@@ -94,7 +94,7 @@ namespace CORE
         // url: ログ検索先の板のアドレス
         // query : 検索文字列、空文字ならキャッシュにあるスレを全て選択
         // mode_or : false なら AND、true なら OR で検索する
-        // bm : trueの時、スレにしおりが付いている時は全てのレスをサーチ、そうで無いときはしおりが付いているレスだけをサーチ
+        // bm  : trueの時、しおりが付いている(スレ一覧でしおりを付けた or レスに一つでもしおりが付いている)スレのみを対象に検索する
         // calc_data : 検索終了時に m_list_data を求める
         const bool search( const std::string& id, const int searchmode, const std::string& url,
                            const std::string& query, const bool mode_or, const bool bm, const bool calc_data );

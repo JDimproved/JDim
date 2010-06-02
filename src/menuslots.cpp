@@ -187,6 +187,7 @@ void Core::slot_toggle_since( const int mode )
 #endif
 
     SESSION::set_col_since_time( mode );
+    DBTREE::reset_all_since_date();
     BOARD::get_admin()->set_command( "relayout_all" );    
 }
 
@@ -203,6 +204,7 @@ void Core::slot_toggle_write( const int mode )
 #endif
 
     SESSION::set_col_write_time( mode );
+    DBTREE::reset_all_write_date();
     BOARD::get_admin()->set_command( "relayout_all" );    
 }
 

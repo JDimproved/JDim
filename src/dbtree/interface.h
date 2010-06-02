@@ -335,6 +335,10 @@ namespace DBTREE
     // 全articlebaseクラスのあぼーん状態の更新
     void update_abone_all_article();
 
+    // 全articlebaseクラスの書き込み時間とスレ立て時間の文字列をリセット
+    void reset_all_write_date();
+    void reset_all_since_date();
+
     // レスあぼーん
     // グローバルなあぼーん情報は globalconf が管理
     const std::list< std::string >& get_abone_list_id( const std::string& url );

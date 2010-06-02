@@ -1063,6 +1063,18 @@ void DBTREE::update_abone_all_article()
 }
 
 
+// 全articlebaseクラスの書き込み時間とスレ立て時間の文字列をリセット
+void DBTREE::reset_all_write_date()
+{
+    DBTREE::get_root()->reset_all_write_date();
+}
+
+void DBTREE::reset_all_since_date()
+{
+    DBTREE::get_root()->reset_all_since_date();
+}
+
+
 const std::list< std::string >& DBTREE::get_abone_list_id( const std::string& url )
 {
     return DBTREE::get_article( url )->get_abone_list_id();
