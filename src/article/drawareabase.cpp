@@ -258,8 +258,13 @@ void DrawAreaBase::create_scrbar()
     assert( m_vscrbar );
     assert( m_event );
 
+    if( CONFIG::get_left_scrbar() ) remove( m_view );
+
     m_event->add( *m_vscrbar );
     pack_start( *m_event, Gtk::PACK_SHRINK );
+
+    if( CONFIG::get_left_scrbar() ) pack_start( m_view );
+
     m_vscrbar->get_adjustment()->signal_value_changed().connect( sigc::mem_fun( *this, &DrawAreaBase::slot_change_adjust ) );
 
     show_all_children();
@@ -3686,6 +3691,9 @@ bool is_separate_char( const int ucs2 )
 }
 
 
+//
+// ダブルクリック時にキャレット位置を決める
+//
 const bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right
                                       ,const int x, const int y, const bool triple )
 {
@@ -3703,12 +3711,15 @@ const bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_PO
         if( header->rect->y <= y && y <= header->rect->y + header->rect->height ){        
 
             LAYOUT* layout = header->next_layout;
+            LAYOUT* layout_before = layout;
             while( layout ){
 
                 RECTANGLE* rect = layout->rect;
 
                 if( ! layout->text || ! rect ){
                     layout = layout->next_layout;
+                    if( layout->text ) layout_before = layout;
+                    else layout_before = NULL;
                     continue;
                 }
 
@@ -3734,8 +3745,15 @@ const bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_PO
 
                 // トリプルクリック
                 if( triple ){
-                    caret_left.set( layout, 0 );
-                    caret_right.set( layout, layout->lng_text );
+
+                    LAYOUT* layout_after = layout;
+                    while( layout_after->next_layout && layout_after->next_layout->text ) layout_after = layout_after->next_layout;
+
+                    if( layout_before ) caret_left.set( layout_before, 0 );
+                    else caret_left.set( layout, 0 );
+
+                    caret_right.set( layout_after, layout_after->lng_text );
+
                     return true;
                 }
 

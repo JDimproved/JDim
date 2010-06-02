@@ -200,6 +200,9 @@ namespace CONFIG
         // 各ビューと枠との間の余白
         int view_margin;
 
+        // スクロールバーを左に配置
+        bool left_scrbar;
+
         // スレ一覧で古いスレも表示
         bool show_oldarticle;
 

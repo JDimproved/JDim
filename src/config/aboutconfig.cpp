@@ -232,6 +232,7 @@ void AboutConfig::append_rows()
     append_row( "タブに表示する文字列の最小文字数", get_confitem()->tab_min_str, CONF_TAB_MIN_STR );
     append_row( "各ビューと枠との間の余白", get_confitem()->view_margin, CONF_VIEW_MARGIN );
     append_row( "自前でウィンドウ配置を管理する", get_confitem()->manage_winpos, CONF_MANAGE_WINPOS );
+    append_row( "スレビューのスクロールバーを左に配置する", get_confitem()->left_scrbar, CONF_LEFT_SCRBAR );
 
     // その他
     append_row( "" );

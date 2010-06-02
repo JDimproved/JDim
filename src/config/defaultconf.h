@@ -39,6 +39,7 @@ namespace CONFIG
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
         CONF_SCROLL_TREE = 1,       // カテゴリを開いたときにツリービューをスクロールする
         CONF_VIEW_MARGIN = 0,       // 各ビューと枠との間の余白
+        CONF_LEFT_SCRBAR = 0,       // スクロールバーを左に配置
         CONF_SHOW_OLDARTICLE = 0,   // スレ一覧で古いスレも表示
         CONF_NEWTHREAD_HOUR = 24,   // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
         CONF_INC_SEARCH_BOARD = 0,  // スレ一覧でインクリメント検索をする

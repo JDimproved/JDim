@@ -101,6 +101,9 @@ const bool CONFIG::get_scroll_tree(){ return get_confitem()->scroll_tree; }
 
 const int CONFIG::get_view_margin(){ return get_confitem()->view_margin; }
 
+// スクロールバーを左に配置
+const bool CONFIG::get_left_scrbar(){ return get_confitem()->left_scrbar; }
+
 // フォント
 const std::string& CONFIG::get_fontname( const int id )
 {

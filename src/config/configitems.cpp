@@ -274,6 +274,9 @@ const bool ConfigItems::load( const bool restore )
     // 各ビューと枠との間の余白
     view_margin = cf.get_option_int( "view_margin", CONF_VIEW_MARGIN, 0, 64 );
 
+    // スクロールバーを左に配置
+    left_scrbar = cf.get_option_bool( "left_scrbar", CONF_LEFT_SCRBAR );
+
     // スレ一覧で古いスレも表示
     show_oldarticle = cf.get_option_bool( "show_oldarticle", CONF_SHOW_OLDARTICLE );
 
@@ -686,6 +689,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "scroll_tree", scroll_tree );
 
     cf.update( "view_margin", view_margin );
+
+    cf.update( "left_scrbar", left_scrbar );
 
     cf.update( "show_oldarticle", show_oldarticle );
     cf.update( "newthread_hour", newthread_hour );

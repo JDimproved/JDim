@@ -61,6 +61,9 @@ namespace CONFIG
     // 各ビューと枠との間の余白
     const int get_view_margin();
 
+    // スクロールバーを左に配置
+    const bool get_left_scrbar();
+
     // フォント
     const std::string& get_fontname( const int id );
     void set_fontname( const int id, const std::string& fontname );
