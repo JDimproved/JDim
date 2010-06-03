@@ -203,9 +203,9 @@ NODE* NodeTreeBase::res_header( int number )
 //
 // 指定したID の重複数( = 発言数 )
 //
-// 下のnum_id_name( int number )と違って検索するので遅い
+// 下の get_num_id_name( int number ) と違って検索するので遅い
 //
-int NodeTreeBase::get_num_id_name( const std::string& id )
+const int NodeTreeBase::get_num_id_name( const std::string& id )
 {
     if( id.empty() ) return 0;
 
@@ -233,7 +233,7 @@ int NodeTreeBase::get_num_id_name( const std::string& id )
 //
 // number番の ID の重複数
 //
-int NodeTreeBase::get_num_id_name( int number )
+const int NodeTreeBase::get_num_id_name( const int number )
 {
     NODE* head = res_header( number );
     if( ! head ) return 0;
@@ -2971,7 +2971,7 @@ void NodeTreeBase::check_id_name( const int number )
 {
     NODE* header = res_header( number );
     if( ! header ) return;
-    if( header->headinfo->abone ) return;
+//    if( header->headinfo->abone ) return;
     if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) return;
 
     const char* str_id = header->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link;
@@ -2984,7 +2984,7 @@ void NodeTreeBase::check_id_name( const int number )
         tmphead = m_vec_header[ i ];
 
         if( tmphead
-            && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
+//            && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
             && tmphead->headinfo->block[ BLOCK_ID_NAME ]
             && str_id[ 0 ] == tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link[ 0 ]
             && strcmp( str_id, tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link ) == 0 ){

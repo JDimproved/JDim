@@ -168,10 +168,10 @@ namespace DBTREE
 
         // 指定したID の重複数( = 発言数 )
         // 下のget_num_id_name( int number )と違って検索するので遅い
-        int get_num_id_name( const std::string& id );
+        const int get_num_id_name( const std::string& id );
 
         // number番のID の重複数( = 発言数 )
-        int get_num_id_name( int number );
+        const int get_num_id_name( const int number );
 
         // 指定した発言者IDを持つレス番号をリストにして取得
         std::list< int > get_res_id_name( const std::string& id_name );
