@@ -81,7 +81,7 @@ namespace SKELETON
         // ポップアップ時に全ての領域を表示できないならカーソルの上に表示
         bool m_popup_upside;
 
-        // ロード時にキャッシュを削除してからスレを再読み込みする
+        // ロード時にキャッシュを削除してからviewを再読み込みする
         bool m_reget;
 
       protected:
@@ -233,7 +233,7 @@ namespace SKELETON
         // 現在のオートリロードのモード取得
         const int get_autoreload_mode() const { return m_autoreload_mode; }
 
-        // ロード時にキャッシュを削除してからスレを再読み込みする
+        // ロード時にキャッシュを削除してからviewを再読み込みする
         const bool get_reget() const{ return m_reget; }
         void set_reget( const bool reget ){ m_reget = reget; }
 

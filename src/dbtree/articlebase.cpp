@@ -1519,9 +1519,10 @@ void ArticleBase::delete_cache( const bool cache_only )
 
             SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             mdiag.set_default_response( Gtk::RESPONSE_YES );
-            if( mdiag.run() == Gtk::RESPONSE_NO ) return;
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
         }
-        else if( CONFIG::get_show_del_written_thread_diag() && m_write_time.tv_sec ){
+
+        if( CONFIG::get_show_del_written_thread_diag() && m_write_time.tv_sec ){
 
             const std::string msg = "「" + get_subject() + "」には書き込み履歴が残っています。\n\nスレを削除しますか？";
 
@@ -1529,7 +1530,7 @@ void ArticleBase::delete_cache( const bool cache_only )
                                           "今後表示しない(常に削除)(_D)",
                                           Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
-            if( mdiag.run() == Gtk::RESPONSE_NO ) return;
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
             if( mdiag.get_chkbutton().get_active() ) CONFIG::set_del_written_thread_diag( false );
         }
