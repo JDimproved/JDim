@@ -256,6 +256,8 @@ void BoardViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "UnsetBookMark", "しおりを解除(_U)" ),    // 未使用
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_UNSET ) );
     action_group()->add( Gtk::Action::create( "OpenTab", "OpenArticleTab" ), sigc::mem_fun( *this, &BoardViewBase::slot_open_tab ) );
+    action_group()->add( Gtk::Action::create( "RegetArticle", ITEM_NAME_REGETARTICLE + std::string( "(_R)" ) ),
+                         sigc::mem_fun( *this, &BoardViewBase::slot_reget_article ) );
     action_group()->add( Gtk::Action::create( "Favorite_Article", ITEM_NAME_FAVORITE_ARTICLE + std::string( "(_F)..." ) ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_favorite_thread ) );
     action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに追加(_A)" ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_board ) );
@@ -263,7 +265,10 @@ void BoardViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "GotoBottom", "一番下に移動(_M)" ), sigc::mem_fun( *this, &BoardViewBase::goto_bottom ) );
     action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
     action_group()->add( Gtk::Action::create( "Delete", "選択した行のログを削除する(_D)" ), sigc::mem_fun( *this, &BoardViewBase::slot_delete_logs ) );
-    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)" ), sigc::mem_fun( *this, &BoardViewBase::open_selected_rows ) );
+    action_group()->add( Gtk::Action::create( "OpenRows", "選択したスレを開く(_O)" ),
+                         sigc::bind< bool >( sigc::mem_fun( *this, &BoardViewBase::open_selected_rows ), false ) );
+    action_group()->add( Gtk::Action::create( "RegetRows", "スレ情報を消さずにスレを再取得(_R)" ), 
+                         sigc::bind< bool >( sigc::mem_fun( *this, &BoardViewBase::open_selected_rows ), true ) );
     action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL + std::string( "(_L)" ) ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_copy_title_url ) );
@@ -291,6 +296,8 @@ void BoardViewBase::setup_action()
     const std::string menu_mul =
     "<popup name='popup_menu_mul'>"
     "<menuitem action='OpenRows'/>"
+    "<separator/>"
+    "<menuitem action='RegetRows'/>"
     "<separator/>"
     "<menuitem action='SetBookMark'/>"
     "<menuitem action='UnsetBookMark'/>"
@@ -353,6 +360,7 @@ const std::string BoardViewBase::create_context_menu()
 
     list_menu.push_back( ITEM_BOOKMARK );
     list_menu.push_back( ITEM_OPENARTICLETAB );
+    list_menu.push_back( ITEM_REGETARTICLE );
     list_menu.push_back( ITEM_OPEN_BROWSER );
     list_menu.push_back( ITEM_COPY_URL );
     list_menu.push_back( ITEM_COPY_TITLE_URL_THREAD );
@@ -413,6 +421,10 @@ const char* BoardViewBase::get_menu_item( const int item )
             // タブでスレを開く
         case ITEM_OPENARTICLETAB:
             return "<menuitem action='OpenTab'/>";
+
+            // スレ情報を消さずに再取得"
+        case ITEM_REGETARTICLE:
+            return "<menuitem action='RegetArticle'/>";
 
             // リンクをブラウザで開く
         case ITEM_OPEN_BROWSER:
@@ -1380,7 +1392,7 @@ const bool BoardViewBase::operate_view( const int control )
         case CONTROL::OpenArticleTab:
             open_tab = true;
         case CONTROL::OpenArticle:
-            if( ! path.empty() ) open_row( path, open_tab );
+            if( ! path.empty() ) open_row( path, open_tab, false );
             break;
 
             // Listに戻る
@@ -2062,9 +2074,9 @@ const bool BoardViewBase::slot_button_release( GdkEventButton* event )
         if( openarticle || openarticletab ){
 
             // 複数行選択中
-            if( m_treeview.get_selected_iterators().size() >= 2 ) open_selected_rows();
+            if( m_treeview.get_selected_iterators().size() >= 2 ) open_selected_rows( false );
 
-            else open_row( path, openarticletab );
+            else open_row( path, openarticletab, false );
         }
 
         // ポップアップメニューボタン
@@ -2255,7 +2267,16 @@ void BoardViewBase::slot_bookmark( const int bookmark )
 //
 void BoardViewBase::slot_open_tab()
 {
-    if( ! m_path_selected.empty() ) open_row( m_path_selected, true );
+    if( ! m_path_selected.empty() ) open_row( m_path_selected, true, false );
+}
+
+
+//
+// popupmenu でスレ情報を消さずに再取得を選択
+//
+void BoardViewBase::slot_reget_article()
+{
+    if( ! m_path_selected.empty() ) open_row( m_path_selected, true, true );
 }
 
 
@@ -2366,10 +2387,12 @@ void BoardViewBase::slot_open_browser()
 //
 // 記事を開く 
 //
-const bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab )
+const bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab, const bool reget )
 {
     std::string str_tab = "false";
     if( tab ) str_tab = "true";
+
+    std::string mode = std::string();;
 
     const std::string url_target = path2daturl( path );
 
@@ -2379,10 +2402,30 @@ const bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
     if( url_target.empty() ) return false;
 
+    if( reget ){
+
+        if( ! SESSION::is_online() ){
+            SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
+            mdiag.run();
+            return false;
+        }
+
+        if( ! DBTREE::article_is_cached( url_target ) ) return false;
+
+        if( DBTREE::article_status( url_target ) & STATUS_OLD ){
+            SKELETON::MsgDiag mdiag( get_parent_win(),
+                                     "DAT落ちしています。\n\nログが消える恐れがあります。実行しますか？",
+                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            mdiag.set_default_response( Gtk::RESPONSE_NO );
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return false;
+        }
+
+        mode = "reget";
+    }
+
     // datロード終了時に次スレ移行チェックを行う
     DBTREE::article_set_url_pre_article( url_target, get_url_pre_article() );
 
-    const std::string mode = std::string();
     CORE::core_set_command( "open_article", url_target, str_tab, mode );
     return true;
 }
@@ -2392,24 +2435,60 @@ const bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab )
 //
 // 選択した行をまとめて開く
 //
-void BoardViewBase::open_selected_rows()
+void BoardViewBase::open_selected_rows( const bool reget )
 {
+    std::string mode = std::string();;
     std::string list_url;
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
+    std::list< Gtk::TreeModel::iterator >::iterator it;
+
+    if( reget ){
+
+        if( ! SESSION::is_online() ){
+            SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
+            mdiag.run();
+            return;
+        }
+
+        it = list_it.begin();
+        for( ; it != list_it.end(); ++it ){
+
+            Gtk::TreeModel::Row row = *( *it );
+            DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
+
+            if( ! art->is_cached() ) continue;
+
+            if( art->get_status() & STATUS_OLD ){
+                SKELETON::MsgDiag mdiag( get_parent_win(),
+                                         "DAT落ちしているスレを含んでいます。\n\nログが消える恐れがあります。実行しますか？",
+                                         false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+                mdiag.set_default_response( Gtk::RESPONSE_NO );
+                if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+
+                break;
+            }
+        }
+
+        mode = "reget";
+    }
+
+    it = list_it.begin();
     for( ; it != list_it.end(); ++it ){
 
         if( !list_url.empty() ) list_url += " ";
 
         Gtk::TreeModel::Row row = *( *it );
         DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
+
+        if( reget && ! art->is_cached() ) continue;
+
         list_url += art->get_url();
 
         // datロード終了時に次スレ移行チェックを行う
         art->set_url_pre_article( get_url_pre_article() );
     }
 
-    CORE::core_set_command( "open_article_list", std::string(), list_url );
+    if( list_url.size() ) CORE::core_set_command( "open_article_list", std::string(), list_url, mode );
 }
 
 

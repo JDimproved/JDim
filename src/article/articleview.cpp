@@ -221,6 +221,22 @@ void ArticleViewMain::show_view()
 
     if( is_loading() ) return;
 
+    // キャッシュを削除してからスレを再読み込み
+    if( SESSION::is_online() && get_reget() ){
+
+        int jump_to = drawarea()->get_seen_current();
+        if( ! jump_to ) jump_to = get_article()->get_number_seen();
+
+#ifdef _DEBUG
+        std::cout << "ArticleViewMain::show_view reget url_article = " << url_article()
+                  << " jump_to = " << jump_to << std::endl;
+#endif
+
+        set_reget( false );
+        CORE::core_set_command( "delete_article", url_article(), "reget", MISC::itostr( jump_to ) );        
+        return;
+    }
+
     m_gotonum_reserve_to = 0;
     m_gotonum_reserve_from = 0;
     m_gotonum_seen = 0;

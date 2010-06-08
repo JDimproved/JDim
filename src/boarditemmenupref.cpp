@@ -24,6 +24,7 @@ BoardItemMenuPref::BoardItemMenuPref( Gtk::Window* parent, const std::string& ur
     append_default_pair( ITEM_NAME_BOOKMARK );
     append_default_pair( ITEM_NAME_OPENARTICLETAB );
     append_default_pair( ITEM_NAME_OPEN_BROWSER );
+    append_default_pair( ITEM_NAME_REGETARTICLE );
     append_default_pair( ITEM_NAME_COPY_URL );
     append_default_pair( ITEM_NAME_COPY_TITLE_URL_THREAD );
     append_default_pair( ITEM_NAME_SAVE_DAT );

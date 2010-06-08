@@ -50,6 +50,7 @@ enum{
 #define ITEM_NAME_WRITEMSG  "書き込み"
 #define ITEM_NAME_OPENBOARD "板を開く"
 #define ITEM_NAME_OPENARTICLETAB   "タブでスレを開く"
+#define ITEM_NAME_REGETARTICLE "スレ情報を消さずに再取得"
 #define ITEM_NAME_BOOKMARK   "しおりを設定/解除"
 #define ITEM_NAME_SEARCH    "検索"
 #define ITEM_NAME_DRAWOUT    "抽出"
@@ -132,6 +133,7 @@ enum
     ITEM_WRITEMSG,
     ITEM_OPENBOARD,
     ITEM_OPENARTICLETAB,
+    ITEM_REGETARTICLE,
     ITEM_BOOKMARK,
     ITEM_SEARCH,
     ITEM_DRAWOUT,

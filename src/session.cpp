@@ -189,6 +189,7 @@ const int SESSION::parse_item( const std::string& item_name )
     else if( item_name == ITEM_NAME_WRITEMSG ) item = ITEM_WRITEMSG;
     else if( item_name == ITEM_NAME_OPENBOARD ) item = ITEM_OPENBOARD;
     else if( item_name == ITEM_NAME_OPENARTICLETAB ) item = ITEM_OPENARTICLETAB;
+    else if( item_name == ITEM_NAME_REGETARTICLE ) item = ITEM_REGETARTICLE;
     else if( item_name == ITEM_NAME_BOOKMARK ) item = ITEM_BOOKMARK;
     else if( item_name == ITEM_NAME_SEARCH ) item = ITEM_SEARCH;
     else if( item_name == ITEM_NAME_DRAWOUT ) item = ITEM_DRAWOUT;

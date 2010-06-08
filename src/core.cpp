@@ -1802,7 +1802,8 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            std::string(),
 
                                            // 以下 Admin::set_command() におけるCOMMAND_ARGS::arg1, arg2,....
-                                           command.arg1 // datファイルのURLを空白で区切って指定
+                                           command.arg1, // datファイルのURLを空白で区切って指定
+                                           command.arg2  // 開き方のモード
             );
 
         return;
@@ -2089,14 +2090,14 @@ void Core::set_command( const COMMAND_ARGS& command )
 
     // articleの削除
     //
-    // command.arg1 == "reopen" のときはキャッシュだけ再読み込み
+    // command.arg1 == "reget" のときはキャッシュだけ再読み込み
     // command.arg2 再読み込み後にジャンプするレス番号
     //
     else if( command.command == "delete_article" ){
 
         bool locked = FALSE;
         int num_open = 0;
-        if( command.arg1 == "reopen" ){
+        if( command.arg1 == "reget" ){
 
             locked = ARTICLE::get_admin()->is_locked( command.url );
 
@@ -2112,7 +2113,7 @@ void Core::set_command( const COMMAND_ARGS& command )
             }
         }
 
-        DBTREE::delete_article( command.url, ( command.arg1 == "reopen" ) );
+        DBTREE::delete_article( command.url, ( command.arg1 == "reget" ) );
 
         if( DBTREE::article_is_cached( command.url ) ) return;
 
@@ -2131,14 +2132,14 @@ void Core::set_command( const COMMAND_ARGS& command )
         ARTICLE::get_admin()->set_command( "delete_all_popups" );  
 
         // もう一度開く
-        if( command.arg1 == "reopen" ){
+        if( command.arg1 == "reget" ){
 
             const std::string str_num_open = "page" + MISC::itostr( num_open );
             const std::string mode = ( locked ? "lock" : "" );
             const std::string str_num_jump = command.arg2;
 
 #ifdef _DEBUG
-            std::cout << "reopen tab = " << str_num_open
+            std::cout << "reget tab = " << str_num_open
                       << " mode = " << mode
                       << " jump = " << str_num_jump << std::endl;
 #endif

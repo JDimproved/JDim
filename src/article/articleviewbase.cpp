@@ -961,7 +961,9 @@ void ArticleViewBase::delete_open_view()
         if( mdiag.run() != Gtk::RESPONSE_YES ) return;
     }
 
-    CORE::core_set_command( "delete_article", m_url_article, "reopen", MISC::itostr( drawarea()->get_seen_current() ) );
+    const std::string str_tab = "false";
+    const std::string mode = "reget";
+    CORE::core_set_command( "open_article", m_url_article, str_tab, mode );
 }
 
 

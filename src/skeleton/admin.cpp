@@ -39,7 +39,8 @@ enum
     OPEN_MODE_AUTO = 1,
     OPEN_MODE_NOSWITCH = 2,
     OPEN_MODE_LOCK = 4,
-    OPEN_MODE_OFFLINE = 8
+    OPEN_MODE_OFFLINE = 8,
+    OPEN_MODE_REGET = 16
 };
 
 
@@ -790,6 +791,7 @@ void Admin::open_list( const COMMAND_ARGS& command_list )
         command_arg.arg1 = "true";   // タブで開く
         command_arg.arg2 = "false";  // 既に開いているかチェック
         command_arg.arg3 = "noswitch";  // タブを切り替えない
+        if( ! command_list.arg2.empty() ) command_arg.arg3 += " " + command_list.arg2;
 
 #ifdef _DEBUG
         std::cout << "url = " << command_arg.url << std::endl;
@@ -881,7 +883,7 @@ void Admin::update_status( View* view, const bool force )
 //
 // command.arg2: "true" なら既に command.url を開いているかチェックしない
 //
-// command.arg3: モード
+// command.arg3: モード  ( 複数指定する場合は空白で空ける )
 //
 // "auto"なら表示されていればリロードせずに切替える
 // されていなければarg1で指定した場所に新しいタブで開いてロード
@@ -892,6 +894,8 @@ void Admin::update_status( View* view, const bool force )
 // "lock" なら開いてからロックする
 //
 // "offline" なら オフラインで開く
+//
+// "reget" なら読み込み時にキャッシュ等を消してから再読み込みする
 //
 //
 // その他のargは各ビュー別の設定
@@ -917,6 +921,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
         if( command.arg3.find( "noswitch" ) != std::string::npos ) mode |= OPEN_MODE_NOSWITCH;
         if( command.arg3.find( "lock" ) != std::string::npos ) mode |= OPEN_MODE_LOCK;
         if( command.arg3.find( "offline" ) != std::string::npos ) mode |= OPEN_MODE_OFFLINE;
+        if( command.arg3.find( "reget" ) != std::string::npos ) mode |= OPEN_MODE_REGET;
     }
 
     if( current_view ) current_view->focus_out();
@@ -946,6 +951,9 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
             // オフラインで開く
             if( mode & OPEN_MODE_OFFLINE ) SESSION::set_online( false );
+
+            // ロード時にキャッシュを削除してからスレを再読み込みする
+            if( mode & OPEN_MODE_REGET ) view->set_reget( true );
 
             view->show_view();
             SESSION::set_online( online );
@@ -1031,6 +1039,9 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
     // オフラインで開く
     if( mode & OPEN_MODE_OFFLINE ) SESSION::set_online( false );
+
+    // ロード時にキャッシュを削除してからスレを再読み込みする
+    if( mode & OPEN_MODE_REGET ) view->set_reget( true );
 
     view->show_view();
     SESSION::set_online( online );
