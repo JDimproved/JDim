@@ -1129,7 +1129,7 @@ void BoardBase::receive_finish()
         // ちなみにdatの読み込みでリダイレクト(302)が返ってきたときは、移転かdat落ちか判断出来ないので注意
         // NodeTree2ch::receive_finish()も参照せよ
         //
-        if( get_code() == HTTP_REDIRECT ){
+        if( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM ){
 
             set_date_modified( std::string() );
 

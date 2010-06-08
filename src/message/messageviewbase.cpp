@@ -765,7 +765,7 @@ void MessageViewBase::post_fin()
 
     // 成功
     if( code == HTTP_OK
-        || ( code == HTTP_REDIRECT && ! location.empty() ) // (まちBBSなどで)リダイレクトした場合
+        || ( ( code == HTTP_MOVED_PERM || code == HTTP_REDIRECT ) && ! location.empty() ) // (まちBBSなどで)リダイレクトした場合
         ){
         save_postlog();
 

@@ -463,7 +463,7 @@ const std::string Board2chCompati::localrule()
 {
     if( m_ruleloader ){
         if( m_ruleloader->is_loading() ) return "ロード中です";
-        else if( m_ruleloader->get_code() == HTTP_OK || m_ruleloader->get_code() == HTTP_REDIRECT ){
+        else if( m_ruleloader->get_code() == HTTP_OK || m_ruleloader->get_code() == HTTP_REDIRECT || m_ruleloader->get_code() == HTTP_MOVED_PERM ){
             if( m_ruleloader->get_data().empty() ) return "ローカルルールはありません";
             else return m_ruleloader->get_data();
         }
@@ -478,7 +478,7 @@ const std::string Board2chCompati::settingtxt()
 {
     if( m_settingloader ){
         if( m_settingloader->is_loading() ) return "ロード中です";
-        else if( m_settingloader->get_code() == HTTP_OK || m_ruleloader->get_code() == HTTP_REDIRECT ){
+        else if( m_settingloader->get_code() == HTTP_OK || m_settingloader->get_code() == HTTP_REDIRECT || m_settingloader->get_code() == HTTP_MOVED_PERM ){
             if( m_settingloader->get_data().empty() ) return "SETTING.TXTはありません";
             else return m_settingloader->get_data();
         }

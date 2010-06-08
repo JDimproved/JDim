@@ -1176,7 +1176,7 @@ void NodeTreeBase::receive_finish()
         std::ostringstream err;
         err << m_url << std::endl
             << "load failed. : " << get_str_code();
-        if( get_code() == HTTP_REDIRECT ) err << " location = " << location();
+        if( get_code() == HTTP_REDIRECT || get_code() == HTTP_REDIRECT ) err << " location = " << location();
         MISC::ERRMSG( err.str() );
     }
 

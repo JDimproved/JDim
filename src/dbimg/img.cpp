@@ -526,9 +526,9 @@ void Img::receive_finish()
     if( get_code() == HTTP_OK && ! current_length() ) m_type = T_NODATA;
 
     // リダイレクト
-    if( get_code() == HTTP_REDIRECT ){
+    if( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM ){
 #ifdef _DEBUG
-        std::cout << "302 redirect url = " << location() << std::endl;
+        std::cout << "301/302 redirect url = " << location() << std::endl;
 #endif
         // アドレスに "404", ".htm" が含まれていたら not found と仮定
         std::string url_tmp = MISC::tolower_str( location() );

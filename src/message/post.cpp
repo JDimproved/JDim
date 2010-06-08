@@ -232,7 +232,7 @@ void Post::receive_finish()
     
     // ポスト失敗
     if( get_code() != HTTP_OK
-        && ! ( get_code() == HTTP_REDIRECT && ! location().empty() ) // リダイレクトは成功(かもしれない)
+        && ! ( ( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT ) && ! location().empty() ) // リダイレクトは成功(かもしれない)
         ){
 
         m_errmsg = get_str_code();
@@ -335,7 +335,7 @@ void Post::receive_finish()
     // 成功
     if( title.find( "書きこみました" ) != std::string::npos
         || tag_2ch.find( "true" ) != std::string::npos
-        || ( get_code() == HTTP_REDIRECT && ! location().empty() )  // リダイレクトされた場合
+        || ( ( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT ) && ! location().empty() )  // リダイレクトされた場合
         ){
 
 #ifdef _DEBUG
