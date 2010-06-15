@@ -70,7 +70,13 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
     if( m_mode == MODE_OFFLAW ){
 
         JDLIB::Regex regex;
-        if( ! regex.exec( "(http://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url ) ) return;
+        const size_t offset = 0;
+        const bool icase = false;
+        const bool newline = true;
+        const bool usemigemo = false;
+        const bool wchar = false;
+
+        if( ! regex.exec( "(http://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
 
         std::ostringstream ss;
         ss << regex.str( 1 ) << "/test/offlaw.cgi" << regex.str( 2 ) << regex.str( 3 )
@@ -90,7 +96,13 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
     else if( m_mode == MODE_KAKO_GZ || m_mode == MODE_KAKO ){
 
         JDLIB::Regex regex;
-        if( ! regex.exec( "(http://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url ) ) return;
+        const size_t offset = 0;
+        const bool icase = false;
+        const bool newline = true;
+        const bool usemigemo = false;
+        const bool wchar = false;
+
+        if( ! regex.exec( "(http://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
         const int id = atoi( regex.str( 3 ).c_str() + 1 );
 
         std::ostringstream ss;

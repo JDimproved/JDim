@@ -441,13 +441,19 @@ const bool Usrcmd_Manager::is_hide( int num, const std::string& url )
         if( lines.size() >= 2 ){
 
             JDLIB::Regex regex;
+            const size_t offset = 0;
+            const bool icase = false;
+            const bool newline = true;
+            const bool usemigemo = false;
+            const bool wchar = false;
+
             std::list< std::string >::iterator it = lines.begin();
             ++it;
             const std::string query = *it;
 #ifdef _DEBUG
             std::cout << "query = " << query << std::endl;
 #endif
-            if( ! regex.exec( query, url ) ) return true;
+            if( ! regex.exec( query, url, offset, icase, newline, usemigemo, wchar ) ) return true;
         }
     }
 

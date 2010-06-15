@@ -2536,10 +2536,15 @@ const bool BoardViewBase::drawout()
     unsorted_column();
 
     JDLIB::Regex regex;
+    const bool icase = true; // 大文字小文字区別しない
+    const bool newline = true; // . に改行をマッチさせない
+    const bool usemigemo = true; // migemo使用
+    const bool wchar = true;  // 全角半角の区別をしない
+
     Gtk::TreeModel::Children child = m_liststore->children();
     Gtk::TreeModel::Children::iterator it = child.begin();
 
-    if ( ! reset ) regex.compile( query, true, true, true );
+    if ( ! reset ) regex.compile( query, icase, newline, usemigemo, wchar );
 
     for( ; it != child.end() ; ++it ){
 
@@ -2613,6 +2618,11 @@ void BoardViewBase::exec_search()
 
     Gtk::TreePath path_start = path;
     JDLIB::Regex regex; 
+    const size_t offset = 0;
+    const bool icase = true; // 大文字小文字区別しない
+    const bool newline = true; // . に改行をマッチさせない
+    const bool usemigemo = true; // migemo使用
+    const bool wchar = true;  // 全角半角の区別をしない
 
 #ifdef _DEBUG
     std::cout << "BoardViewBase::search start = " << path_start.to_string() << " query = " <<  query << std::endl;
@@ -2638,7 +2648,7 @@ void BoardViewBase::exec_search()
         if( path == path_start ) break;
         
         Glib::ustring subject = get_name_of_cell( path, m_columns.m_col_subject );
-        if( regex.exec( query, subject, 0, true, true, true ) ){
+        if( regex.exec( query, subject, offset, icase, newline, usemigemo, wchar ) ){
             m_treeview.scroll_to_row( path, 0 );
             m_treeview.set_cursor( path );
             return;

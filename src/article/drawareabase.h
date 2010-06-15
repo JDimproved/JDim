@@ -290,8 +290,8 @@ namespace ARTICLE
         void goto_back();
 
         // 検索
-        int search( std::list< std::string >& list_query, bool reverse );
-        int search_move( bool reverse );
+        const int search( const std::list< std::string >& list_query, const bool reverse );
+        const int search_move( const bool reverse );
         void clear_highlight();
 
         // 実況モード

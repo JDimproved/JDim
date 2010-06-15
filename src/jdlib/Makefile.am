@@ -44,7 +44,8 @@ noinst_HEADERS = \
 	jdmigemo.h \
 	tfidf.h \
 	hash_set.h \
-	timeout.h
+	timeout.h \
+	hkana.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @X11_CFLAGS@
 INCLUDES = -I$(top_srcdir)/src

@@ -122,6 +122,11 @@ void BoardAdmin::restore( const bool only_locked )
 COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab, const bool lock )
 {
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     COMMAND_ARGS command_arg;
     command_arg.command = "open_view";
@@ -135,7 +140,7 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
 #endif    
 
     // 次スレ検索
-    if( regex.exec( std::string( "(.*)" ) + NEXT_SIGN + ARTICLE_SIGN + "(.*)", url )){
+    if( regex.exec( std::string( "(.*)" ) + NEXT_SIGN + ARTICLE_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
 
@@ -152,7 +157,7 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
     }
 
     // ログ一覧
-    else if( regex.exec( std::string( "(.*)" ) + LOG_SIGN, url )){
+    else if( regex.exec( std::string( "(.*)" ) + LOG_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
 
@@ -160,7 +165,7 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
     }
 
     // サイドバー
-    else if( regex.exec( std::string( "(.*)" ) + SIDEBAR_SIGN + "(.*)", url )){
+    else if( regex.exec( std::string( "(.*)" ) + SIDEBAR_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
 

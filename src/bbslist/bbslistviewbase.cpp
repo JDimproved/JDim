@@ -1490,7 +1490,13 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
 
         // .htmlを取り除く
         JDLIB::Regex regex;
-        if( regex.exec( "(.*)/[^/]+\\.html?$" , url ) ) url = regex.str( 1 );
+        const size_t offset = 0;
+        const bool icase = false;
+        const bool newline = true;
+        const bool usemigemo = false;
+        const bool wchar = false;
+
+        if( regex.exec( "(.*)/[^/]+\\.html?$" , url, offset, icase, newline, usemigemo, wchar ) ) url = regex.str( 1 );
 
         // 末尾の / を取り除く
         while( url.rfind( "/" ) == url.length() -1 ) url = url.substr( 0, url.length() -1 );
@@ -1499,7 +1505,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         url += "/";
 
         // boardid 取得
-        if( ! regex.exec( "(http://.*)/([^/]*)/$" , url ) ){
+        if( ! regex.exec( "(http://.*)/([^/]*)/$" , url, offset, icase, newline, usemigemo, wchar ) ){
             SKELETON::MsgDiag mdiag( get_parent_win(), "アドレスが不正な形式になっています", false, Gtk::MESSAGE_ERROR );
             mdiag.run();
             mdiag.hide();
@@ -2679,8 +2685,17 @@ void BBSListViewBase::exec_search()
     std::cout << "BBSListViewBase::exec_search() path = " << path.to_string() << " query = " << query << std::endl;
 #endif
 	
-    regex_name.compile( query, true, true, true );
-    regex_url.compile( query, true );
+    const bool icase_name = true; // 大文字小文字区別しない
+    const bool newline_name = true; // . に改行をマッチさせない
+    const bool usemigemo_name = true; // migemo使用
+    const bool wchar_name = true;  // 全角半角の区別をしない
+    regex_name.compile( query, icase_name, newline_name, usemigemo_name, wchar_name );
+
+    const bool icase_url = true; // 大文字小文字区別しない
+    const bool newline_url = true;
+    const bool usemigemo_url = false;
+    const bool wchar_url = false;
+    regex_url.compile( query, icase_url, newline_url, usemigemo_url, wchar_url );
 
     bool hit = false;
     for(;;){
@@ -2714,7 +2729,8 @@ void BBSListViewBase::exec_search()
         Glib::ustring name = path2name( path );
         Glib::ustring url = path2url( path );
 
-        if( regex_name.exec( name, 0 ) || regex_url.exec( url, 0 ) ) hit = true;
+        const size_t offset = 0;
+        if( regex_name.exec( name, offset ) || regex_url.exec( url, offset ) ) hit = true;
 
         // 一周したら終わり
         if( path == path_start ) break;

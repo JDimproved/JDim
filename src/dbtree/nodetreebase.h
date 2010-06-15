@@ -189,7 +189,7 @@ namespace DBTREE
 
         // query を含むレス番号をリストにして取得
         // mode_or == true なら OR抽出
-        std::list< int > get_res_query( const std::string& query, bool mode_or );
+        const std::list< int > get_res_query( const std::string& query, const bool mode_or );
 
 
         // number番のレスの文字列を返す

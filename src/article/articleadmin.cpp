@@ -171,6 +171,11 @@ void ArticleAdmin::restore( const bool only_locked )
 COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool tab, const bool lock )
 {
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     COMMAND_ARGS command_arg;
     command_arg.command = "open_view";
@@ -183,7 +188,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
     // レス抽出
     if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + RES_SIGN + "(.*)"
-                    + CENTER_SIGN + "(.*)" + TIME_SIGN, url )){
+                    + CENTER_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -196,7 +201,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // 名前抽出
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + NAME_SIGN + "(.*)" + TIME_SIGN, url )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + NAME_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -208,7 +213,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // ID抽出
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + ID_SIGN + "(.*)" + TIME_SIGN, url )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + ID_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -220,7 +225,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // ブックマーク抽出
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + BOOKMK_SIGN, url )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + BOOKMK_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -231,7 +236,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // 書き込み抽出
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + POST_SIGN, url )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + POST_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -242,7 +247,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // URL抽出
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + URL_SIGN, url )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + URL_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -253,7 +258,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // 参照
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + REFER_SIGN + "(.*)" + TIME_SIGN, url )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + REFER_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -266,7 +271,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
     // キーワード
     else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + KEYWORD_SIGN + "(.*)"
-                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url )){
+                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -280,7 +285,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
     // キャッシュのログ検索
     else if( regex.exec( std::string( "(.*)" ) + BOARD_SIGN + KEYWORD_SIGN + "(.*)"
-                         + ORMODE_SIGN + "(.*)" + BOOKMK_SIGN + "(.*)" + TIME_SIGN, url )){
+                         + ORMODE_SIGN + "(.*)" + BOOKMK_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -297,7 +302,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
     // スレタイ検索
     else if( regex.exec( std::string( "(.*)" ) + TITLE_SIGN + KEYWORD_SIGN + "(.*)"
-                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url )){
+                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
@@ -310,7 +315,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // 書き込みログ表示
-    else if( regex.exec( std::string( "(.*)" ) + POSTLOG_SIGN + "(.*)" + TIME_SIGN, url ) ){
+    else if( regex.exec( std::string( "(.*)" ) + POSTLOG_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar ) ){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く

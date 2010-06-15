@@ -54,8 +54,14 @@ const std::string BoardLocal::url_dat( const std::string& url, int& num_from, in
 const std::string BoardLocal::url_readcgi( const std::string& url, int num_from, int num_to )
 {
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
     const std::string query = "^ *file://.*/[1234567890]+" + get_ext() + " *$";
-    if( ! regex.exec( query , url ) ) return std::string();
+    if( ! regex.exec( query , url, offset, icase, newline, usemigemo, wchar ) ) return std::string();
 
 #ifdef _DEBUG
     std::cout << "BoardLocal::url_readcgi : url = " << url << std::endl;

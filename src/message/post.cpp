@@ -243,6 +243,11 @@ void Post::receive_finish()
     // 以下、code == 200、 又は 302 かつ locationがセットされている(リダイレクト) の場合
 
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    bool icase = false;
+    bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     std::string title;
     std::string tag_2ch;
@@ -252,18 +257,24 @@ void Post::receive_finish()
     bool ret;
 
     // タイトル
-    regex.exec( ".*<title>([^<]*)</title>.*", str, 0, true, false );
+    icase = true;
+    newline = false; // . に改行をマッチさせる
+    regex.exec( ".*<title>([^<]*)</title>.*", str, offset, icase, newline, usemigemo, wchar );
     title = MISC::remove_space( regex.str( 1 ) );
 
     // 2chタグ
-    regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", str, 0, false, false );
+    icase = false;
+    newline = false; // . に改行をマッチさせる
+    regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", str, offset, icase, newline, usemigemo, wchar );
     tag_2ch = MISC::remove_space( regex.str( 1 ) );
 
     // エラー内容を取得
 
     // 一番内側の<b>〜</b>を探して取得
+    icase = true;
+    newline = false; // . に改行をマッチさせる
     m_errmsg = std::string();
-    if( regex.exec( "([^>]|[^b]>)*<b>(([^>]|[^b]>)*)</b>.*", str, 0, true, false ) ){
+    if( regex.exec( "([^>]|[^b]>)*<b>(([^>]|[^b]>)*)</b>.*", str, offset, icase, newline, usemigemo, wchar ) ){
 
         m_errmsg = regex.str( 2 );
     }
@@ -271,13 +282,17 @@ void Post::receive_finish()
     // 2ch タグで error が返った場合
     else if( tag_2ch.find( "error" ) != std::string::npos ){
 
-        if( regex.exec( "error +-->(.*)</body>", str, 0, true, false ) ) m_errmsg = regex.str( 1 );
+        icase = true;
+        newline = false; // . に改行をマッチさせる
+        if( regex.exec( "error +-->(.*)</body>", str, offset, icase, newline, usemigemo, wchar ) ) m_errmsg = regex.str( 1 );
     }
 
     // p2 型
     else if( title.find( "error" ) != std::string::npos ){
 
-        if( regex.exec( "<h4>(.*)</h4>", str, 0, true, false ) ) m_errmsg = regex.str( 1 );
+        icase = true;
+        newline = false; // . に改行をマッチさせる
+        if( regex.exec( "<h4>(.*)</h4>", str, offset, icase, newline, usemigemo, wchar ) ) m_errmsg = regex.str( 1 );
     }
 
     if( ! m_errmsg.empty() ){
@@ -285,7 +300,9 @@ void Post::receive_finish()
         m_errmsg = MISC::replace_str( m_errmsg, "\n", "" ); 
 
         // <a 〜を取り除く
-        while( regex.exec( "(.*)<a +href *= *\"([^\"]*)\" *>(.*)</a>(.*)", m_errmsg ) ){
+        icase = false;
+        newline = true;
+        while( regex.exec( "(.*)<a +href *= *\"([^\"]*)\" *>(.*)</a>(.*)", m_errmsg, offset, icase, newline, usemigemo, wchar ) ){
             m_errmsg = regex.str( 1 ) + " " + regex.str( 2 ) + " " + regex.str( 3 ) + regex.str( 4 );
         }
 
@@ -294,7 +311,9 @@ void Post::receive_finish()
         m_errmsg= MISC::replace_str( m_errmsg, "<hr>", "\n-------------------\n" );
 
         // samba秒取得
-        if( regex.exec( "ＥＲＲＯＲ +- +593 +([0-9]+) +sec", m_errmsg ) ){
+        icase = false;
+        newline = true;
+        if( regex.exec( "ＥＲＲＯＲ +- +593 +([0-9]+) +sec", m_errmsg, offset, icase, newline, usemigemo, wchar ) ){
             time_t sec = atoi( regex.str( 1 ).c_str() );
 #ifdef _DEBUG
             std::cout << "samba = " << sec << std::endl;
@@ -305,16 +324,22 @@ void Post::receive_finish()
     }
 
     // 書き込み確認
-    regex.exec( ".*<font size=\\+1 color=#FF0000>([^<]*)</font>.*", str );
+    icase = false;
+    newline = true;
+    regex.exec( ".*<font size=\\+1 color=#FF0000>([^<]*)</font>.*", str, offset, icase, newline, usemigemo, wchar );
     conf = MISC::remove_space( regex.str( 1 ) );
 
     // メッセージ本文
 
     // 2ch 型
-    ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<form.*", str, 0, false, false );
+    icase = false;
+    newline = false; // . に改行をマッチさせる
+    ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<form.*", str, offset, icase, newline, usemigemo, wchar );
 
     // 0ch 型
-    if( ! ret ) ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<input.*", str, 0, false, false );
+    icase = false;
+    newline = false; // . に改行をマッチさせる
+    if( ! ret ) ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<input.*", str, offset, icase, newline, usemigemo, wchar );
 
     msg = MISC::remove_space( regex.str( 1 ) );
     std::list< std::string > list_cookies = SKELETON::Loadable::cookies();

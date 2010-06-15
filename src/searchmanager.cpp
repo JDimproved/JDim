@@ -257,7 +257,12 @@ void Search_Manager::search_fin_title()
     if( ! m_searchloader->get_data().empty() ){
 
         JDLIB::Regex regex;
-        regex.compile( CONFIG::get_regex_search_title() );
+        const size_t offset = 0;
+        const bool icase = false;
+        const bool newline = true;
+        const bool usemigemo = false;
+        const bool wchar = false;
+        regex.compile( CONFIG::get_regex_search_title(), icase, newline, usemigemo, wchar );
 
         std::list< std::string > lines = MISC::get_lines( m_searchloader->get_data() );
         std::list< std::string >::iterator it;
@@ -268,7 +273,7 @@ void Search_Manager::search_fin_title()
             // & が &amp; に置き換わっているので直す
             if( line.find( "&" ) != std::string::npos ) line = MISC::replace_str( line, "&amp;", "&" );
 
-            if( ! line.empty() && regex.exec( line ) ){
+            if( ! line.empty() && regex.exec( line, offset ) ){
 
                 SEARCHDATA data;
                 data.url_readcgi = DBTREE::url_readcgi( regex.str( 1 ), 0, 0 );

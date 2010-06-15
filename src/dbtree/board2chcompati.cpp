@@ -98,6 +98,11 @@ const std::string Board2chCompati::cookie_for_write()
 #endif
 
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     std::string str_expire;
     std::string query_expire = "expires=([^;]*)";
@@ -120,8 +125,8 @@ const std::string Board2chCompati::cookie_for_write()
     std::list< std::string >::iterator it = list_cookies.begin();
 
     // expire と path は一つ目のcookieから取得
-    if( regex.exec( query_expire, (*it) ) ) str_expire = regex.str( 1 );
-    if( regex.exec( query_path, (*it) ) ) str_path = regex.str( 1 );
+    if( regex.exec( query_expire, (*it), offset, icase, newline, usemigemo, wchar ) ) str_expire = regex.str( 1 );
+    if( regex.exec( query_path, (*it), offset, icase, newline, usemigemo, wchar ) ) str_path = regex.str( 1 );
 
     // その他は iterateして取得
     for( ; it != list_cookies.end(); ++it ){
@@ -132,15 +137,15 @@ const std::string Board2chCompati::cookie_for_write()
         std::cout << tmp_cookie << std::endl;
 #endif
 
-        if( regex.exec( query_pon, tmp_cookie ) ){
+        if( regex.exec( query_pon, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
             use_pon = true;
             str_pon = regex.str( 1 );
         }
-        if( regex.exec( query_name, tmp_cookie ) ){
+        if( regex.exec( query_name, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
             use_name = true;
             str_name = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
         }
-        if( regex.exec( query_mail, tmp_cookie ) ){
+        if( regex.exec( query_mail, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
             use_mail = true;
             str_mail = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
         }
@@ -185,11 +190,15 @@ void Board2chCompati::analyze_keyword_for_write( const std::string& html )
 
     JDLIB::Regex regex;
     size_t offset = 0;
+    const bool icase = true; // 大文字小文字区別しない
+    const bool newline = false;  // . に改行をマッチさせる
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     for(;;){
 
         // <input type=hidden> のタグを解析して name と value を取得
-        if( ! regex.exec( "<input +type=hidden +name=([^ ]*) +value=([^>]*)>", html, offset, true, false ) ) break;
+        if( ! regex.exec( "<input +type=hidden +name=([^ ]*) +value=([^>]*)>", html, offset, icase, newline, usemigemo, wchar ) ) break;
 
         offset = html.find( regex.str( 0 ) );
 

@@ -118,6 +118,12 @@ const std::string BoardMachi::url_dat( const std::string& url, int& num_from, in
 #endif
     
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
     std::string id; // スレッドのID
 
     num_from = num_to = 0;
@@ -131,7 +137,7 @@ const std::string BoardMachi::url_dat( const std::string& url, int& num_from, in
     std::cout << "query_dat = " << query_dat << std::endl;
 #endif
 
-    if( regex.exec( query_dat , url ) ){
+    if( regex.exec( query_dat , url, offset, icase, newline, usemigemo, wchar ) ){
         id = regex.str( 2 );
 
         if( ! regex.str( 5 ).empty() ){

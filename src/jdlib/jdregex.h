@@ -26,6 +26,10 @@ namespace JDLIB
         regex_t m_reg;
         bool m_compiled;
         bool m_newline;
+        bool m_wchar;
+
+        char *m_target_asc;
+        int *m_table_pos;
 
     public:
 
@@ -34,15 +38,19 @@ namespace JDLIB
 
         void dispose();
         
-        // icase : true なら大小無視
-        // newline : true なら . に改行をマッチさせない
+        // icase : 大文字小文字区別しない
+        // newline :  . に改行をマッチさせない
+        // usemigemo : migemo使用 (コンパイルオプションで指定する必要あり)
+        // wchar : 全角半角の区別をしない
         const bool compile( const std::string reg
-                   , const bool icase = false, const bool newline = true, const bool usemigemo = false );
-        const bool exec( const std::string& target, const unsigned int offset = 0 );
-        const bool exec( const std::string reg, const std::string& target, const unsigned int offset = 0
-                         , const bool icase = false, const bool newline = true, const bool usemigemo = false );
-        const int pos( const unsigned int num );
-        const std::string str( const unsigned int num );
+                            , const bool icase, const bool newline, const bool usemigemo, const bool wchar );
+
+        const bool exec( const std::string& target, const size_t offset );
+        const bool exec( const std::string reg, const std::string& target, const size_t offset
+                         , const bool icase, const bool newline, const bool usemigemo, const bool wchar );
+
+        const int pos( const size_t num );
+        const std::string str( const size_t num );
     };
 }
 

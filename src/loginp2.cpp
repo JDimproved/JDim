@@ -181,9 +181,15 @@ void Loginp2::receive_finish()
             m_rawdata[ m_lng_rawdata ] = '\0';
 
             JDLIB::Regex regex;
+            const size_t offset = 0;
+            const bool icase = false;
+            const bool newline = true;
+            const bool usemigemo = false;
+            const bool wchar = false;
+
             std::string query = "csrfid=([^\"]*)";
 
-            if( regex.exec( query, m_rawdata ) ) csrfid = regex.str( 1 );
+            if( regex.exec( query, m_rawdata, offset, icase, newline, usemigemo, wchar ) ) csrfid = regex.str( 1 );
         }
 
 #ifdef _DEBUG
@@ -224,9 +230,15 @@ void Loginp2::receive_finish()
 #endif
 
             JDLIB::Regex regex;
+            const size_t offset = 0;
+            const bool icase = false;
+            const bool newline = true;
+            const bool usemigemo = false;
+            const bool wchar = false;
+
             std::string query = "cid=([^;]*)?";
 
-            if( regex.exec( query, (*it) ) ){
+            if( regex.exec( query, (*it), offset, icase, newline, usemigemo, wchar ) ){
 
                 if( regex.str( 1 ) != "deleted" ){
                     cid = regex.str( 1 );

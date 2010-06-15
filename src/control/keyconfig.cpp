@@ -198,7 +198,13 @@ void KeyConfig::set_one_motion_impl( const int id, const int mode, const std::st
     const bool trpclick = false;
 
     JDLIB::Regex regex;
-    if( regex.exec( "(Ctrl\\+)?(Shift\\+)?(Alt\\+)?(.*)", str_motion, 0, true ) ){
+    const size_t offset = 0;
+    const bool icase = true; // 大文字小文字区別しない
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
+    if( regex.exec( "(Ctrl\\+)?(Shift\\+)?(Alt\\+)?(.*)", str_motion, offset, icase, newline, usemigemo, wchar ) ){
 
         if( ! regex.str( 1 ).empty() ) ctrl = true;
         if( ! regex.str( 2 ).empty() ) shift = true;

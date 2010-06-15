@@ -454,24 +454,40 @@ EXIT_LOOP:;
 //
 // mode_or == true なら OR抽出
 //
-std::list< int > NodeTreeBase::get_res_query( const std::string& query, bool mode_or )
+const std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bool mode_or )
 {
     std::list< int > list_resnum;
     if( query.empty() ) return list_resnum;
 
-    JDLIB::Regex regex;
-    std::list< std::string > list_query = MISC::split_line( query );
+    std::list< JDLIB::Regex > list_regex;
+    const size_t offset = 0;
+    const bool icase = true; // 大文字小文字区別しない
+    const bool newline = true; // . に改行をマッチさせない
+    const bool usemigemo = true; // migemo使用
+    const bool wchar = true; // 全角半角の区別をしない
+
+    const std::list< std::string > list_query = MISC::split_line( query );
+    std::list< std::string >::const_iterator it_query;
+    for( it_query = list_query.begin(); it_query != list_query.end() ; ++it_query ){
+
+        const std::string &query = ( *it_query );
+        
+        list_regex.push_back( JDLIB::Regex() );
+        list_regex.back().compile( query, icase, newline, usemigemo, wchar );
+    }
 
     for( int i = 1; i <= m_id_header ; ++i ){
 
-        std::string res_str = get_res_str( i );
+        const std::string res_str = get_res_str( i );
 
         bool apnd = true;
         if( mode_or ) apnd = false;
-        std::list< std::string >::iterator it = list_query.begin();
-        for( ; it != list_query.end(); ++it ){
 
-            bool ret = regex.exec( ( *it ), res_str, 0, true );
+        std::list< JDLIB::Regex >::iterator it_regex;
+        for( it_regex = list_regex.begin(); it_regex != list_regex.end() ; ++it_regex ){
+
+            JDLIB::Regex &regex = ( *it_regex );
+            const bool ret = regex.exec( res_str, offset );
 
             // OR
             if( mode_or ){
@@ -659,8 +675,13 @@ const std::string NodeTreeBase::get_time_str( int number )
 
     std::string time_str;
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
-    if( regex.exec( " 名前：.+]： +([0-9]*/[0-9]*/[0-9]*[^ ]* [0-9]*:[0-9]*[^ ]*).*$", res_str ) ){
+    if( regex.exec( " 名前：.+]： +([0-9]*/[0-9]*/[0-9]*[^ ]* [0-9]*:[0-9]*[^ ]*).*$", res_str, offset, icase, newline, usemigemo, wchar ) ){
         time_str = regex.str( 1 );
     }
 
@@ -2677,6 +2698,11 @@ const bool NodeTreeBase::check_abone_word( const int number )
 
     const std::string res_str = get_res_str( number );
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     // ローカル NG word
     if( check_word ){
@@ -2695,7 +2721,7 @@ const bool NodeTreeBase::check_abone_word( const int number )
 
         std::list< std::string >::iterator it = m_list_abone_regex.begin();
         for( ; it != m_list_abone_regex.end(); ++it ){
-            if( regex.exec( *it, res_str ) ){
+            if( regex.exec( *it, res_str, offset, icase, newline, usemigemo, wchar ) ){
                 head->headinfo->abone = true;
                 return true;
             }
@@ -2719,7 +2745,7 @@ const bool NodeTreeBase::check_abone_word( const int number )
 
         std::list< std::string >::iterator it = m_list_abone_regex_board.begin();
         for( ; it != m_list_abone_regex_board.end(); ++it ){
-            if( regex.exec( *it, res_str ) ){
+            if( regex.exec( *it, res_str, offset, icase, newline, usemigemo, wchar ) ){
                 head->headinfo->abone = true;
                 return true;
             }
@@ -2743,7 +2769,7 @@ const bool NodeTreeBase::check_abone_word( const int number )
 
         std::list< std::string >::iterator it = m_list_abone_regex_global.begin();
         for( ; it != m_list_abone_regex_global.end(); ++it ){
-            if( regex.exec( *it, res_str ) ){
+            if( regex.exec( *it, res_str, offset, icase, newline, usemigemo, wchar ) ){
                 head->headinfo->abone = true;
                 return true;
             }

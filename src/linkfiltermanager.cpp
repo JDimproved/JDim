@@ -135,6 +135,12 @@ const bool Linkfilter_Manager::exec( const std::string& url, const std::string& 
 #endif
 
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
     std::vector< LinkFilterItem >::iterator it = m_list_cmd.begin();
     for( ; it != m_list_cmd.end(); ++it ){
 
@@ -145,7 +151,7 @@ const bool Linkfilter_Manager::exec( const std::string& url, const std::string& 
         std::cout << "query = " << query << std::endl
                   << "cmd = " << cmd << std::endl;
 #endif
-        if( ! regex.exec( query, link ) ) continue;
+        if( ! regex.exec( query, link, offset, icase, newline, usemigemo, wchar ) ) continue;
 
         // queryと一致したら実行
         CORE::get_usrcmd_manager()->exec( cmd, url, link, selection, 0 );

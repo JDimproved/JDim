@@ -377,6 +377,11 @@ void Root::bbsmenu2xml( const std::string& menu )
 #endif
 
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     // menu のノードツリーを取得( menu がHTMLなので第二引数は true )
     XML::Document html( menu, true );
@@ -425,7 +430,7 @@ void Root::bbsmenu2xml( const std::string& menu )
             // 板として扱うURLかどうかで要素名を変える
             std::string element_name;
             if( CONFIG::use_link_as_board() ) element_name = "board";
-            else if( ( regex.exec( "^http://.*/.*/$", url )
+            else if( ( regex.exec( "^http://.*/.*/$", url, offset, icase, newline, usemigemo, wchar )
 			            && ( is_2ch( url ) || is_machi( url ) ) )
                      || is_JBBS( url )
                      || is_vip2ch( url )
@@ -503,12 +508,18 @@ void Root::analyze_board_xml()
 int Root::get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc )
 {
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
     int type = TYPE_BOARD_UNKNOWN;
 
     // 2ch
     if( ! etc && is_2ch( url ) ){
 
-        if( regex.exec( "(http://[^/]*)/([^/]*)/$" , url ) ){
+        if( regex.exec( "(http://[^/]*)/([^/]*)/$" , url, offset, icase, newline, usemigemo, wchar ) ){
             root = regex.str( 1 );
             path_board = "/" + regex.str( 2 );
 
@@ -519,7 +530,7 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
     // JBBS
     else if( is_JBBS( url ) ){
 
-        if( regex.exec( "(http://[^/]*)/(.*)/(index2?\\.html?)?$" , url ) ){
+        if( regex.exec( "(http://[^/]*)/(.*)/(index2?\\.html?)?$" , url, offset, icase, newline, usemigemo, wchar ) ){
             root = "http://jbbs.livedoor.jp";
             path_board = "/" + regex.str( 2 );
 
@@ -530,7 +541,7 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
     // まち
     else if( is_machi( url ) ){
 
-        if( regex.exec( "(http://[^/]*)/([^/]*)/(index2?\\.html?)?$" , url ) ){
+        if( regex.exec( "(http://[^/]*)/([^/]*)/(index2?\\.html?)?$" , url, offset, icase, newline, usemigemo, wchar ) ){
             root = regex.str( 1 );
             path_board = "/" + regex.str( 2 );
 
@@ -541,7 +552,7 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
     // vipサービス
     else if( is_vip2ch( url ) ){
 
-        if( regex.exec( "(http://[^/]*)/([^/]*)/$" , url ) ){
+        if( regex.exec( "(http://[^/]*)/([^/]*)/$" , url, offset, icase, newline, usemigemo, wchar ) ){
             root = regex.str( 1 );
             path_board = "/" + regex.str( 2 );
 
@@ -561,7 +572,7 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
     // その他は互換型
     else{
 
-        if( regex.exec( "(http://.*)/([^/]*)/([^\\.]+\\.html?)?$" , url ) ){
+        if( regex.exec( "(http://.*)/([^/]*)/([^\\.]+\\.html?)?$" , url, offset, icase, newline, usemigemo, wchar ) ){
             root = regex.str( 1 );
             path_board = "/" + regex.str( 2 );
 
@@ -977,6 +988,12 @@ void Root::load_etc()
     m_etcboards.clear();
 
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
     std::string file_etctxt = CACHE::path_etcboard();
     std::string etcboard;
     if( CACHE::load_rawdata( file_etctxt, etcboard ) )
@@ -999,7 +1016,7 @@ void Root::load_etc()
             if( it == list_etc.end() ) break;
 
             // basic認証
-            if( regex.exec( "http://([^/]+:[^/]+@)(.+)$" , info.url ) )
+            if( regex.exec( "http://([^/]+:[^/]+@)(.+)$" , info.url, offset, icase, newline, usemigemo, wchar ) )
             {
                 info.basicauth = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
                 info.url = "http://" + regex.str( 2 );

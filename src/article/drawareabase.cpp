@@ -3183,11 +3183,15 @@ void DrawAreaBase::goto_back()
 //
 // 戻り値: ヒット数
 //
-int DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
+const int DrawAreaBase::search( const std::list< std::string >& list_query, const bool reverse )
 {
     assert( m_layout_tree );
 
     std::list< JDLIB::Regex > list_regex;
+    const bool icase = true; // 大文字小文字区別しない
+    const bool newline = true; // . に改行をマッチさせない
+    const bool usemigemo = true; // migemo使用
+    const bool wchar = true;  // 全角半角の区別をしない
 
     if( list_query.size() == 0 ) return 0;
 
@@ -3195,13 +3199,13 @@ int DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
     std::cout << "ArticleViewBase::search size = " << list_query.size() << std::endl;
 #endif
 
-    std::list< std::string >::iterator it_query;
+    std::list< std::string >::const_iterator it_query;
     for( it_query = list_query.begin(); it_query != list_query.end() ; ++it_query ){
 
-        std::string &query = ( *it_query );
+        const std::string &query = ( *it_query );
         
         list_regex.push_back( JDLIB::Regex() );
-        list_regex.back().compile( query, true, true, true );
+        list_regex.back().compile( query, icase, newline, usemigemo, wchar );
     }
 
     m_multi_selection.clear();
@@ -3219,10 +3223,10 @@ int DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
                   || tmplayout->type == DBTREE::NODE_LINK )
                 && tmplayout->text ){
 
-                std::string text = tmplayout->text;
-                int offset = 0;
+                size_t offset = 0;
                 for(;;){
 
+                    int min_offset = -1;
                     int lng = 0;
                     std::list< JDLIB::Regex >::iterator it_regex;
                     for( it_regex = list_regex.begin(); it_regex != list_regex.end() ; ++it_regex ){
@@ -3230,19 +3234,23 @@ int DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
                         JDLIB::Regex &regex = ( *it_regex );
                         if( regex.exec( tmplayout->text, offset ) ){
 
-                            offset = regex.pos( 0 );
-                            lng = regex.str( 0 ).length();
-
-#ifdef _DEBUG
-                            std::cout << "id = " << tmplayout->id <<  " offset = " << offset << " lng = " << lng
-                                      << " " << text.substr( offset, lng ) << std::endl;
-#endif
-
-                            break;
+                            if( min_offset == -1 || regex.pos( 0 ) <= min_offset ){
+                                min_offset = regex.pos( 0 );
+                                lng = regex.str( 0 ).length();
+                            }
                         }
                     }
-
+                    
                     if( lng == 0 ) break;
+
+                    offset = min_offset;
+
+#ifdef _DEBUG
+                    const std::string text = tmplayout->text;
+                    std::cout << "id = " << tmplayout->id <<  " offset = " << offset << " lng = " << lng
+                              << " " << text.substr( offset, lng ) << std::endl;
+#endif
+
 
                     // 選択設定
                     SELECTION selection;
@@ -3296,7 +3304,7 @@ int DrawAreaBase::search( std::list< std::string >& list_query, bool reverse )
 //
 // 戻り値: ヒット数
 //
-int DrawAreaBase::search_move( bool reverse )
+const int DrawAreaBase::search_move( const bool reverse )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::search_move " << m_multi_selection.size() << std::endl;

@@ -319,7 +319,7 @@ std::list< int > ArticleBase::get_res_with_url()
 //
 // mode_or == true なら OR抽出
 //
-std::list< int > ArticleBase::get_res_query( const std::string& query, bool mode_or )
+const std::list< int > ArticleBase::get_res_query( const std::string& query, const bool mode_or )
 {
     if( empty() ){ std::list< int > tmp; return tmp; }
 

@@ -504,6 +504,12 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
     if( empty() ) return std::string();
 
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
     std::string id; // スレッドのID
 
 #ifdef _DEBUG
@@ -525,9 +531,9 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
     std::cout << "query_cgi = " << query_cgi << std::endl;
 #endif
 
-    if( regex.exec( query_dat , url ) ) id = regex.str( 2 );
+    if( regex.exec( query_dat , url, offset, icase, newline, usemigemo, wchar ) ) id = regex.str( 2 );
 
-    else if( regex.exec( query_cgi , url ) ){
+    else if( regex.exec( query_cgi , url, offset, icase, newline, usemigemo, wchar ) ){
 
         id = regex.str( 2 ) + get_ext(); 
 
@@ -565,7 +571,7 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
 #ifdef _DEBUG
         std::cout << "query_kako = " << query_kako << std::endl;
 #endif
-        if( regex.exec( query_kako , url ) ){
+        if( regex.exec( query_kako , url, offset, icase, newline, usemigemo, wchar ) ){
 
             std::string url_tmp = regex.str( 1 ) + url_datpath() + regex.str( 3 ) + get_ext();
 #ifdef _DEBUG
@@ -1073,8 +1079,14 @@ void BoardBase::receive_finish()
             std::cout << m_rawdata << std::endl;
 #endif
             JDLIB::Regex regex;
+            const size_t offset = 0;
+            const bool icase = false;
+            const bool newline = true;
+            const bool usemigemo = false;
+            const bool wchar = false;
+
             std::string query = ".*window.location.href=\"([^\"]*)\".*";
-            if( regex.exec( query, m_rawdata ) ){
+            if( regex.exec( query, m_rawdata, offset, icase, newline, usemigemo, wchar ) ){
 
                 const std::string new_url = regex.str( 1 );
                 int ret = Gtk::RESPONSE_YES;
@@ -1447,6 +1459,11 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
     if( !check_number && !check_hour && !check_thread && !check_word && !check_regex && !check_word_global && !check_regex_global ) return false;
 
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     // レスの数であぼーん
     if( check_number ) if( article->get_number() >= check_number ) return true;
@@ -1480,7 +1497,7 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
     if( check_regex ){
         std::list< std::string >::iterator it = m_list_abone_regex_thread.begin();
         for( ; it != m_list_abone_regex_thread.end(); ++it ){
-            if( regex.exec( *it, article->get_subject() ) ) return true;
+            if( regex.exec( *it, article->get_subject(), offset, icase, newline, usemigemo, wchar ) ) return true;
         }
     }
 
@@ -1496,7 +1513,7 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
     if( check_regex_global ){
         std::list< std::string >::iterator it = CONFIG::get_list_abone_regex_thread().begin();
         for( ; it != CONFIG::get_list_abone_regex_thread().end(); ++it ){
-            if( regex.exec( *it, article->get_subject() ) ) return true;
+            if( regex.exec( *it, article->get_subject(), offset, icase, newline, usemigemo, wchar ) ) return true;
         }
     }
 
@@ -1693,7 +1710,13 @@ void BoardBase::set_local_proxy( const std::string& proxy )
 
     // basic認証
     JDLIB::Regex regex;
-    if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy ) )
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
+    if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy, offset, icase, newline, usemigemo, wchar ) )
     {
         m_local_proxy_basicauth = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
         m_local_proxy = regex.str( 2 );
@@ -1712,7 +1735,13 @@ void BoardBase::set_local_proxy_w( const std::string& proxy )
 
     // basic認証
     JDLIB::Regex regex;
-    if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy ) )
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
+    if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy, offset, icase, newline, usemigemo, wchar ) )
     {
         m_local_proxy_basicauth_w = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
         m_local_proxy_w = regex.str( 2 );

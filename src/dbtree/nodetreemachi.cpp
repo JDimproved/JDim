@@ -124,7 +124,13 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
     if( CONFIG::get_use_machi_offlaw() ){
 
         JDLIB::Regex regex;
-        if( regex.exec( "(http://[^/]*)/bbs/read.cgi\\?BBS=([^&]*)&KEY=([0-9]*)", get_url() ) ){
+        const size_t offset = 0;
+        const bool icase = false;
+        const bool newline = true;
+        const bool usemigemo = false;
+        const bool wchar = false;
+
+        if( regex.exec( "(http://[^/]*)/bbs/read.cgi\\?BBS=([^&]*)&KEY=([0-9]*)", get_url(), offset, icase, newline, usemigemo, wchar ) ){
 
             data.url = regex.str( 1 ) + std::string( "/bbs/offlaw.cgi/" ) + regex.str( 2 ) + std::string( "/" ) +  regex.str( 3 );
             if( id_header() >= 1 ) data.url += "/" + MISC::itostr( id_header() +1 ) + "-";
@@ -162,6 +168,12 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
     // オフラインか offlaw 形式を使用する場合はそのまま返す
     if( ! is_loading() || CONFIG::get_use_machi_offlaw() ) return rawlines;
 
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
     std::string buffer;
 
     // オンラインでかつ read.cgi 形式の場合は
@@ -194,7 +206,7 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
             else if( ! id_header() && m_subject_machi.empty() ){
 
                 std::string reg_subject( "<title>([^<]*)</title>" );
-                if( m_regex->exec( reg_subject, line ) ){
+                if( m_regex->exec( reg_subject, line, offset, icase, newline, usemigemo, wchar ) ){
 
                     const std::string charset = DBTREE::board_charset( get_url() );
                     m_subject_machi = MISC::Iconv( m_regex->str( 1 ), charset, "UTF-8" );
@@ -241,6 +253,12 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
     std::cout << "NodeTreeMachi::raw2dat\n";
 #endif
 
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
     int next = id_header() + 1;
 
     std::string buffer;
@@ -267,7 +285,7 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
 
             std::string reg( "(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)$");
 
-            if( ! m_regex->exec( reg, line ) ){
+            if( ! m_regex->exec( reg, line, offset, icase, newline, usemigemo, wchar ) ){
 #ifdef _DEBUG
                 std::cout << "失敗\n";
                 std::cout << line << std::endl;
@@ -288,7 +306,7 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
 
             std::string reg( "<dt>([1-9][0-9]*) ?名前：(<a href=\"mailto:([^\"]*)\"><b>|<font[^>]*><b>) ?(<font[^>]*>)?([^<]*)(</font>)? ?</[bB]>.+ ?投稿日： ?([^<]*)( <font[^>]*>\\[ ?(.*) ?\\]</font>)?<br><dd> ?(.*) ?<br><br>$" );
 
-            if( ! m_regex->exec( reg, line ) ){
+            if( ! m_regex->exec( reg, line, offset, icase, newline, usemigemo, wchar ) ){
 #ifdef _DEBUG
                 std::cout << "失敗\n";
                 std::cout << line << std::endl;

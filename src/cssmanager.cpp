@@ -289,6 +289,11 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
     clear_property( &css );
 
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = true; // 大文字小文字区別しない
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     std::map< std::string, std::string >::iterator it = css_pair.begin();
     for( ; it != css_pair.end(); ++it )
@@ -324,7 +329,7 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
             css.border_bottom_color = colorid;
         }
         // border-*-color
-        else if( regex.exec( "border-([a-z]+)-color", key, 0, true ) )
+        else if( regex.exec( "border-([a-z]+)-color", key, offset, icase, newline, usemigemo, wchar ) )
         {
             std::string mode = regex.str( 1 );
 
@@ -375,7 +380,7 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
             }
         }
         // border-*-width
-        else if( regex.exec( "border-([a-z]+)-width", key, 0, true ) )
+        else if( regex.exec( "border-([a-z]+)-width", key, offset, icase, newline, usemigemo, wchar ) )
         {
             std::string mode = regex.str( 1 );
             int type;
@@ -428,7 +433,7 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
             }
         }
         // margin-*
-        else if( regex.exec( "margin-([a-z]+)", key, 0, true ) )
+        else if( regex.exec( "margin-([a-z]+)", key, offset, icase, newline, usemigemo, wchar ) )
         {
             std::string mode = regex.str( 1 );
             int type;
@@ -471,7 +476,7 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
             }
         }
         // padding-*
-        else if( regex.exec( "padding-([a-z]+)", key, 0, true ) )
+        else if( regex.exec( "padding-([a-z]+)", key, offset, icase, newline, usemigemo, wchar ) )
         {
             std::string mode = regex.str( 1 );
             int type;
@@ -719,6 +724,11 @@ bool Css_Manager::read_html()
     std::list< std::string > blocks = MISC::StringTokenizer( MISC::remove_str( html, "\n" ), '>' );
 
     JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = true; // 大文字小文字区別しない
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
 
     std::list< std::string >::iterator it_block = blocks.begin();
     for( ; it_block != blocks.end(); ++it_block ){
@@ -745,7 +755,7 @@ bool Css_Manager::read_html()
         std::cout << "tag = " << block << std::endl;
 #endif
 
-        if( regex.exec( "div +class=\"([^\"]*)\"", block, 0, true ) ){
+        if( regex.exec( "div +class=\"([^\"]*)\"", block, offset, icase, newline, usemigemo, wchar ) ){
 #ifdef _DEBUG
             std::cout << "name = " << regex.str( 1 ) << std::endl;
 #endif
