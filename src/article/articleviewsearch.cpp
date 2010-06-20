@@ -194,7 +194,7 @@ void ArticleViewSearch::relayout()
                                                 + MISC::get_hostname( CONFIG::get_url_search_title() ) + "<br>";
     else comment <<  "検索対象：" << DBTREE::board_name( m_url_board ) << "<br>";
 
-    if( get_bm() ) comment << "検索条件：しおり<br";
+    if( get_bm() ) comment << "検索条件：しおり<br>";
 
     if( m_search_executed ){
         if( has_query ) comment << get_search_query() << " ";
