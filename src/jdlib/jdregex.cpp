@@ -74,6 +74,7 @@ const bool Regex::compile( const std::string reg, const bool icase, const bool n
 
     const char* asc_reg = reg.c_str();
 
+    // 全角英数字 → 半角英数字、半角カナ → 全角カナ
     if( m_wchar && MISC::has_widechar( asc_reg ) ){
 
         if( ! m_target_asc ) m_target_asc = ( char* )malloc( MAX_TARGET_SIZE );
@@ -134,6 +135,7 @@ const bool Regex::exec( const std::string& target, const size_t offset )
 
     bool exec_asc = false;
 
+    // 全角英数字 → 半角英数字、半角カナ → 全角カナ
     if( m_wchar && MISC::has_widechar( asc_target ) ){
 
 #ifdef _DEBUG

@@ -357,6 +357,7 @@ namespace ARTICLE
 
         bool draw_one_node( LAYOUT* layout, const int width_win, const int pos_y, const int upper, const int lower );
         void draw_div( LAYOUT* layout_div, const int pos_y, const int upper, const int lower );
+        const bool get_selection_byte( const LAYOUT* layout, const SELECTION& selection, size_t& byte_from, size_t& byte_to );
         void draw_one_text_node( LAYOUT* layout, const int width_win, const int pos_y );
         void draw_string( LAYOUT* node, const int pos_y, const int width_view,
                           const int color, const int color_back, const int byte_from, const int byte_to );

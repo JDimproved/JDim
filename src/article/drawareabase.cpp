@@ -54,7 +54,9 @@ enum
 
     WIDTH_FRAME = 1, // フレーム幅
 
-    SPACE_TAB =  4 // 水平タブをどれだけ空けるか ( フォントの高さ * SPACE_TAB )
+    SPACE_TAB =  4, // 水平タブをどれだけ空けるか ( フォントの高さ * SPACE_TAB )
+
+    SEARCH_BUFFER_SIZE = 64 * 1024   // 検索のバッファサイズ
 };
 
 
@@ -66,6 +68,17 @@ enum
 #define SCROLLSPEED_SLOW ( m_vscrbar ? m_vscrbar->get_adjustment()->get_step_increment()*CONFIG::get_key_scroll_size() : 0 )
 
 #define IS_ALPHABET( chr ) ( ( chr >= 'a' && chr <= 'z' ) || ( chr >= 'A' && chr <= 'Z' ) )
+
+#define HAS_TEXT(layout) ( ( layout->type == DBTREE::NODE_TEXT || layout->type == DBTREE::NODE_IDNUM || layout->type == DBTREE::NODE_LINK ) && layout->text )
+
+
+// 検索で使用
+struct LAYOUT_TABLE
+{
+    LAYOUT* layout;
+    size_t offset;
+};
+
 
 //////////////////////////////////////////////////////////
 
@@ -2205,6 +2218,60 @@ void DrawAreaBase::draw_frame()
 
 
 //
+// 範囲選択の描画をする必要があるかどうかの判定( draw_one_text_node()で使用 )
+//
+// 戻り値: 描画が必要かとどうか
+// byte_from : 描画開始位置
+// byte_to : 描画終了位置
+//
+const bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTION& selection, size_t& byte_from, size_t& byte_to )
+{
+    if( ! layout ) return false;
+    if( ! selection.caret_from.layout ) return false;
+    if( ! selection.caret_to.layout ) return false;
+
+    const int id_header = layout->id_header;
+    const int id = layout->id ;
+
+    int id_header_from = 0;
+    int id_from = 0;
+
+    int id_header_to = 0;
+    int id_to = 0;
+
+    id_header_from = selection.caret_from.layout->id_header;
+    id_from = selection.caret_from.layout->id;
+
+    id_header_to = selection.caret_to.layout->id_header;
+    id_to = selection.caret_to.layout->id;
+
+    // 選択開始ノードの場合は selection.caret_from.byte から、それ以外は0バイト目から描画
+    byte_from =  selection.caret_from.byte * ( id_header == id_header_from && id == id_from );
+
+    // 選択終了ノードの場合は selection.caret_to.byte から、それ以外は最後まで描画
+    byte_to =  selection.caret_to.byte * ( id_header == id_header_to && id == id_to );
+    if( byte_to == 0 ) byte_to = strlen( layout->text );
+        
+    if( byte_from == byte_to
+
+        //  このノードは範囲選択外なので範囲選択の描画をしない
+        || ( id_header < id_header_from )
+        || ( id_header > id_header_to )
+        || ( id_header == id_header_from && id < id_from )
+        || ( id_header == id_header_to && id > id_to )
+
+        // キャレットが先頭にあるので範囲選択の描画をしない
+        ||  ( id_header == id_header_to && id == id_to && selection.caret_to.byte == 0 )
+        ){
+
+        return false;
+    }
+
+    return true;
+}
+
+
+//
 // テキストの含まれているノードひとつを描画する関数
 //
 // width_view : 描画領域の幅
@@ -2212,54 +2279,11 @@ void DrawAreaBase::draw_frame()
 //
 void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, const int pos_y )
 {
-    const int id_header = layout->id_header;
-    const int id = layout->id ;
-    
-    int id_header_from = 0;
-    int id_from = 0;
-
-    int id_header_to = 0;
-    int id_to = 0;
-
-    unsigned int byte_from = 0;
-    unsigned int byte_to = 0;
-
     // 範囲選択の描画をする必要があるかどうかの判定
     // 二度書きすると重いので、ちょっと式は複雑になるけど同じ所を二度書きしないようにする
-    bool draw_selection = false;
-    if( m_selection.select && m_selection.caret_from.layout && m_selection.caret_to.layout ){
-
-        draw_selection = true;
-    
-        id_header_from = m_selection.caret_from.layout->id_header;
-        id_from = m_selection.caret_from.layout->id;
-
-        id_header_to = m_selection.caret_to.layout->id_header;
-        id_to = m_selection.caret_to.layout->id;
-
-        // 選択開始ノードの場合は m_selection.caret_from.byte から、それ以外は0バイト目から描画
-        byte_from =  m_selection.caret_from.byte * ( id_header == id_header_from && id == id_from );
-
-        // 選択終了ノードの場合は m_selection.caret_to.byte から、それ以外は最後まで描画
-        byte_to =  m_selection.caret_to.byte * ( id_header == id_header_to && id == id_to );
-        if( byte_to == 0 ) byte_to = strlen( layout->text );
-        
-        if( byte_from == byte_to
-
-            //  このノードは範囲選択外なので範囲選択の描画をしない
-            || ( id_header < id_header_from )
-            || ( id_header > id_header_to )
-            || ( id_header == id_header_from && id < id_from )
-            || ( id_header == id_header_to && id > id_to )
-
-            // キャレットが先頭にあるので範囲選択の描画をしない
-            ||  ( id_header == id_header_to && id == id_to && m_selection.caret_to.byte == 0 )
-            ){
-
-            draw_selection = false;
-        }
-
-    }
+    size_t byte_from = 0;
+    size_t byte_to = 0;
+    const bool draw_selection = ( m_selection.select && get_selection_byte( layout, m_selection, byte_from, byte_to ) );
 
     int color_text = get_colorid_text();
     if( layout->color_text && *layout->color_text != COLOR_CHAR ) color_text = *layout->color_text;
@@ -2284,12 +2308,12 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, con
     // 検索結果のハイライト
     if( m_multi_selection.size() > 0 ){
 
-        std::list< SELECTION >::iterator it;
+        std::list< SELECTION >::const_iterator it;
         for( it = m_multi_selection.begin(); it != m_multi_selection.end(); ++it ){
-            if( layout->id_header == ( *it ).caret_from.layout->id_header && layout->id == ( *it ).caret_from.layout->id ){
 
-                int byte_from2 = ( *it ).caret_from.byte;
-                int byte_to2 = ( *it ).caret_to.byte;
+            size_t byte_from2;
+            size_t byte_to2;
+            if( get_selection_byte( layout, *it, byte_from2, byte_to2 )){
 
                 draw_string( layout, pos_y, width_view, COLOR_CHAR_HIGHLIGHT, COLOR_BACK_HIGHLIGHT, byte_from2, byte_to2 );
             }
@@ -3187,13 +3211,13 @@ const int DrawAreaBase::search( const std::list< std::string >& list_query, cons
 {
     assert( m_layout_tree );
 
+    if( list_query.size() == 0 ) return 0;
+
     std::list< JDLIB::Regex > list_regex;
     const bool icase = true; // 大文字小文字区別しない
     const bool newline = true; // . に改行をマッチさせない
     const bool usemigemo = true; // migemo使用
     const bool wchar = true;  // 全角半角の区別をしない
-
-    if( list_query.size() == 0 ) return 0;
 
 #ifdef _DEBUG    
     std::cout << "ArticleViewBase::search size = " << list_query.size() << std::endl;
@@ -3210,6 +3234,11 @@ const int DrawAreaBase::search( const std::list< std::string >& list_query, cons
 
     m_multi_selection.clear();
 
+    std::vector< LAYOUT_TABLE > layout_table;
+    const char *target;
+    char *buffer = NULL;
+    size_t buffer_lng = 0;
+
     // 先頭ノードから順にサーチして m_multi_selection に選択箇所をセットしていく
     LAYOUT* tmpheader = m_layout_tree->top_header();
     while( tmpheader ){
@@ -3217,11 +3246,46 @@ const int DrawAreaBase::search( const std::list< std::string >& list_query, cons
         LAYOUT* tmplayout = tmpheader->next_layout;
         while( tmplayout ){
 
-            // (注意) 今のところレイアウトノードをまたがった検索は出来ない
-            if( ( tmplayout->type == DBTREE::NODE_TEXT
-                  || tmplayout->type == DBTREE::NODE_IDNUM
-                  || tmplayout->type == DBTREE::NODE_LINK )
-                && tmplayout->text ){
+            if( HAS_TEXT( tmplayout ) ){
+
+                layout_table.clear();
+                buffer_lng = 0;
+                target = tmplayout->text;
+
+                // 次のノードもテキストを含んでいたら変換テーブルを作成しながらバッファに連結コピー
+                if( tmplayout->next_layout && HAS_TEXT( tmplayout->next_layout ) ){
+
+                    if( ! buffer ) buffer = ( char* )malloc( SEARCH_BUFFER_SIZE );
+                    target = buffer;
+
+                    do{
+                        LAYOUT_TABLE tbl;
+                        tbl.layout = tmplayout;
+                        tbl.offset = buffer_lng;;
+                        layout_table.push_back( tbl );
+
+                        const size_t lng = strlen( tmplayout->text );
+
+                        if( buffer_lng + lng > SEARCH_BUFFER_SIZE ){
+
+                            MISC::ERRMSG( "DrawAreaBase::search : buffer overflow." );
+                            break;
+                        }
+
+                        memcpy( buffer + buffer_lng, tmplayout->text, lng );
+                        buffer_lng += lng;
+                        buffer[ buffer_lng ] = '\0';
+
+                        tmplayout = tmplayout->next_layout;
+                    }
+                    while( tmplayout && HAS_TEXT( tmplayout ) );
+
+#ifdef _DEBUG
+                    std::cout << "use buffer lng = " << buffer_lng << std::endl << buffer << std::endl;
+#endif
+                }
+
+                /////////////////////////////////
 
                 size_t offset = 0;
                 for(;;){
@@ -3232,7 +3296,7 @@ const int DrawAreaBase::search( const std::list< std::string >& list_query, cons
                     for( it_regex = list_regex.begin(); it_regex != list_regex.end() ; ++it_regex ){
 
                         JDLIB::Regex &regex = ( *it_regex );
-                        if( regex.exec( tmplayout->text, offset ) ){
+                        if( regex.exec( target, offset ) ){
 
                             if( min_offset == -1 || regex.pos( 0 ) <= min_offset ){
                                 min_offset = regex.pos( 0 );
@@ -3244,29 +3308,58 @@ const int DrawAreaBase::search( const std::list< std::string >& list_query, cons
                     if( lng == 0 ) break;
 
                     offset = min_offset;
+                    LAYOUT* layout_from = tmplayout;
+                    LAYOUT* layout_to = tmplayout;
+                    size_t offset_from = min_offset;
+                    size_t offset_to = min_offset + lng;
+
+                    // 変換テーブルを参照して開始位置と終了位置を求める
+                    if( layout_table.size() ){
+
+                        std::vector< LAYOUT_TABLE >::reverse_iterator it = layout_table.rbegin();
+                        for( ; it != layout_table.rend(); ++it ){
+                            if( ( *it ).offset < offset_to ){
+                                layout_to = ( *it ).layout;
+                                offset_to -= ( *it ).offset;
+                                break;
+                            }
+                        }
+
+                        for( ; it != layout_table.rend(); ++it ){
+                            if( ( *it ).offset <= offset_from ){
+                                layout_from = ( *it ).layout;
+                                offset_from -= ( *it ).offset;
+                                break;
+                            }
+                        }
+                    }
 
 #ifdef _DEBUG
-                    const std::string text = tmplayout->text;
-                    std::cout << "id = " << tmplayout->id <<  " offset = " << offset << " lng = " << lng
-                              << " " << text.substr( offset, lng ) << std::endl;
-#endif
+                    std::cout << "id_from = " << layout_from->id <<  " offset_from = " << offset_from
+                              << " -> id_to = " << layout_to->id <<  " offset_to = " << offset_to << std::endl;
 
+                    const std::string text_from = std::string( layout_from->text ).substr( offset_from );
+                    const std::string text_to = std::string( layout_to->text ).substr( 0, offset_to );
+                    std::cout << text_from << std::endl << text_to << std::endl;
+#endif
 
                     // 選択設定
                     SELECTION selection;
                     selection.select = false;
-                    selection.caret_from.set( tmplayout, offset );
-                    selection.caret_to.set( tmplayout, offset + lng );
+                    selection.caret_from.set( layout_from, offset_from );
+                    selection.caret_to.set( layout_to, offset_to );
                     m_multi_selection.push_back( selection );
                     offset += lng;
                 }
             }
 
-            tmplayout = tmplayout->next_layout;
+            if( tmplayout ) tmplayout = tmplayout->next_layout;
         }
 
         tmpheader = tmpheader->next_header;
     }
+
+    if( buffer ) free( buffer );
 
 #ifdef _DEBUG    
     std::cout << "m_multi_selection.size = " << m_multi_selection.size() << std::endl;

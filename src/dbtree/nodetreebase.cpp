@@ -1589,15 +1589,20 @@ void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
     else header->headinfo->sage = TRUE;
 
     header->headinfo->block[ BLOCK_MAIL ] = create_node_block();
-    create_node_text( "[", color );
 
-    const bool digitlink = true;
-    const bool bold = false;
-    const bool ahref = false;
-    const bool sssp = false;
-    parse_html( str, lng, color, digitlink, bold, ahref, sssp );
+    if( ! lng )  create_node_text( "[]", color );
 
-    create_node_text( "]", color );
+    else{
+        create_node_text( "[", color );
+
+        const bool digitlink = true;
+        const bool bold = false;
+        const bool ahref = false;
+        const bool sssp = false;
+        parse_html( str, lng, color, digitlink, bold, ahref, sssp );
+
+        create_node_text( "]", color );
+    }
 }
 
 

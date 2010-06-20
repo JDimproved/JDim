@@ -607,24 +607,25 @@ const std::string MISC::intlisttostr( const std::list< int >& list_num )
     bool comma = false;
     int num_from = *it;
     int num_to = -1;
-    ++it;
+    int i = 0;
     for(;;){
 
-        int num = *it;
-        if( num_from + 1 != num || it == list_num.end() ){
-                
+        ++i;
+        ++it;
+        const int num = *it;
+        if( num_from + i != num || it == list_num.end() ){
+
             if( comma ) comment << ",";
             comment << num_from;
             if( num_to != -1 ) comment << "-" << num_to;
             num_from = num;
             num_to = -1;
+            i = 0;
             comma = true;
 
             if( it == list_num.end() ) break;
         }
         else num_to = num;
-
-        ++it;
     }
 
     return comment.str();
@@ -1479,10 +1480,11 @@ const bool MISC::has_widechar( const char* str )
 //
 void MISC::asc( const char* str1, char* str2, int* table_pos, const size_t n )
 {
+    const size_t mrg = 18;
     size_t pos = 0;
     size_t pos2 = 0;
 
-    while( pos2 < n && *( str1 + pos ) != '\0' ){
+    while( pos2 < ( n - mrg ) && *( str1 + pos ) != '\0' ){
 
         const unsigned char in = *( str1 + pos );
 
@@ -1581,9 +1583,9 @@ void MISC::asc( const char* str1, char* str2, int* table_pos, const size_t n )
         ++pos2;
     }
 
-    if( pos2 >= n ){
+    if( pos2 >= ( n - mrg ) ){
         ERRMSG( "MISC::asc : buffer overflow." );
-        pos2 = n - 1;
+        pos2 = ( n - mrg ) - 1;
     }
 
     table_pos[ pos2 ] = pos;
