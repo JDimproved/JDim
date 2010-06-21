@@ -83,7 +83,8 @@ void Tooltip::show_tooltip()
     // 幅が大きければマウスの位置に移動する
     move( -100, -100 );
     show();
-    int width = get_width();
+    const int width = get_width();
+    const int height = get_height();
     
 #ifdef _DEBUG
     std::cout << "width / min_width = " << width << " / " << m_min_width << std::endl;
@@ -91,11 +92,11 @@ void Tooltip::show_tooltip()
     if( width >= m_min_width ){
 
         // 画面外にはみださないように調整
-        const int mrg = 30;
-        int width_desktop = get_screen()->get_width();
+        const int mrg = 4;
+        const int width_desktop = get_screen()->get_width();
         if( x_mouse + width > width_desktop ) x_mouse = MAX( 0, width_desktop - width );
 
-        move( x_mouse, y_mouse - mrg );
+        move( x_mouse, y_mouse - height - mrg );
     }
 }
 
