@@ -455,17 +455,17 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
 
     // JDの動作環境を記入
     menuitem = Gtk::manage( new Gtk::MenuItem( "JDの動作環境を記入" ) );
-    menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_write_jdinfo ) );
+    menuitem->signal_button_release_event().connect( sigc::mem_fun( *this, &EditTextView::slot_write_jdinfo ) );
     menu->prepend( *menuitem );
 
     // 変換(スペース⇔&nbsp;)
     menuitem = Gtk::manage( new Gtk::MenuItem( "変換(スペース⇔&nbsp;)" ) );
-    menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_convert_space ) );
+    menuitem->signal_button_release_event().connect( sigc::mem_fun( *this, &EditTextView::slot_convert_space ) );
     menu->prepend( *menuitem );
 
     // クリップボードから引用
     menuitem = Gtk::manage( new Gtk::MenuItem( "クリップボードから引用" ) );
-    menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_quote_clipboard ) );
+    menuitem->signal_button_release_event().connect( sigc::mem_fun( *this, &EditTextView::slot_quote_clipboard ) );
 
     Glib::RefPtr< Gtk::Clipboard > clip = Gtk::Clipboard::get();
     if( clip->wait_is_text_available() ) menuitem->set_sensitive( true );
@@ -502,6 +502,8 @@ bool EditTextView::slot_select_aamenu( GdkEventButton* event )
 //
 bool EditTextView::slot_quote_clipboard( GdkEventButton* event )
 {
+    if( m_context_menu ) m_context_menu->hide();
+
     Glib::RefPtr< Gtk::Clipboard > clip = Gtk::Clipboard::get();
     Glib::ustring text = clip->wait_for_text();
 
@@ -519,6 +521,8 @@ bool EditTextView::slot_quote_clipboard( GdkEventButton* event )
 //
 bool EditTextView::slot_convert_space( GdkEventButton* event )
 {
+    if( m_context_menu ) m_context_menu->hide();
+
     Glib::RefPtr< Gtk::TextBuffer > buffer = get_buffer();
     std::string text = buffer->get_text();
     std::string converted;
@@ -562,6 +566,8 @@ bool EditTextView::slot_convert_space( GdkEventButton* event )
 //
 bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
 {
+    if( m_context_menu ) m_context_menu->hide();
+
     std::string jdinfo = ENVIRONMENT::get_jdinfo();
 
     insert_str( jdinfo, false );
