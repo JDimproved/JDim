@@ -3819,7 +3819,7 @@ const bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_PO
 
                 if( ! layout->text || ! rect ){
                     layout = layout->next_layout;
-                    if( layout->text ) layout_before = layout;
+                    if( layout && layout->text ) layout_before = layout;
                     else layout_before = NULL;
                     continue;
                 }
