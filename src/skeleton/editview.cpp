@@ -476,7 +476,7 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
     if( CORE::get_aamanager()->get_size() ){
 
         menuitem = Gtk::manage( new Gtk::MenuItem( CONTROL::get_label_motions( CONTROL::InputAA ) ) );
-        menuitem->signal_button_press_event().connect( sigc::mem_fun( *this, &EditTextView::slot_select_aamenu ) );
+        menuitem->signal_button_release_event().connect( sigc::mem_fun( *this, &EditTextView::slot_select_aamenu ) );
         menu->prepend( *menuitem );
     }
 
