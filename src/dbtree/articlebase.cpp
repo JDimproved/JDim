@@ -1066,6 +1066,24 @@ void ArticleBase::download_dat( const bool check_update )
                       << " loading = " << is_loading()
                       << std::endl;
 #endif
+
+            // スレビューのタブとサイドバーのアイコン表示を更新
+
+            // JDが異常終了すると、お気に入りに+が付いてないのにスレが更新可能状態になっていて
+            // 更新チェックが行われてなくなるときがある。このバグは次の様にして再現出来た
+            // (1) 端末からJDを起動する
+            // (2) 適当な板のスレ一覧を開く
+            // (3) お気に入りに適当なスレを登録
+            // (4) そのスレを読み込む。読み込んだらスレビューは閉じないままにしておく
+            // (5) スレ一覧を更新してそのスレに + マークを付ける。お気に入りにも + が付く
+            // (6) そのスレのスレビューを閉じる ( スレ情報を保存 )
+            // (7) 端末で Ctrl+c を押してJDを強制終了
+            // (8) 再起動してお気に入りの復元をしない
+            // (9) お気に入りの + が消えている。以後更新チェックも行われない
+
+            CORE::core_set_command( "toggle_article_icon", m_url);
+            CORE::core_set_command( "toggle_sidebar_articleicon", m_url );
+
             return;
         }
     }
@@ -1463,9 +1481,8 @@ void ArticleBase::show_updateicon( const bool update )
             m_save_info = true;
             m_status |= STATUS_UPDATE;
 
-            // スレビューのタブのアイコン表示を更新
+            // スレビューのタブとサイドバーのアイコン表示を更新
             CORE::core_set_command( "toggle_article_icon", m_url);
-
             CORE::core_set_command( "toggle_sidebar_articleicon", m_url );
         }
     }
