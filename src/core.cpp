@@ -334,7 +334,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "View_Menu", "詳細設定(_D)" ) );
 
     // 一般
-    m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "メニューバー表示(_S)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "ShowMenuBar", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_menubar ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToggleFlatButton", "ボタンをフラット表示(_F)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_flat_button ) );

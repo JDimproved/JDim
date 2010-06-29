@@ -346,6 +346,10 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
                 label += "(_N)";
                 break;
 
+            case CONTROL::ShowMenuBar:  // メニューバー表示
+                label += "(_S)";
+                break;
+
             case CONTROL::Home:         //先頭へ移動
                 label += "(_H)";
                 break;
