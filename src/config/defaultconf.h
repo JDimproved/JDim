@@ -66,6 +66,7 @@ namespace CONFIG
         CONF_KEEP_IM_STATUS = 0,    // 書き込み欄の日本語のON/OFF状態を保存
         CONF_MARGIN_POPUP = 30,     // レスアンカーとポップアップの間のマージン
         CONF_MARGIN_IMGPOPUP = CONF_MARGIN_POPUP,  // レスアンカーと画像ポップアップの間のマージン
+        CONF_ENABLE_MG = 1,         // マウスジェスチャを有効
         CONF_MOUSE_RADIUS = 25,     // マウスジェスチャの判定開始半径
         CONF_HISTORY_SIZE = 20,      // 履歴メニューの表示数
         CONF_HISTORYVIEW_SIZE = 100, // 履歴ビューの表示数

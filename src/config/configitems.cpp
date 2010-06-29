@@ -358,6 +358,9 @@ const bool ConfigItems::load( const bool restore )
     // 画像ポップアップとカーソルの間のマージン
     margin_imgpopup = cf.get_option_int( "margin_imgpopup", CONF_MARGIN_IMGPOPUP, 1, 1024 );
 
+    // マウスジェスチャを有効
+    enable_mg = cf.get_option_bool( "enable_mg", CONF_ENABLE_MG );
+
     // マウスジェスチャの判定開始半径
     mouse_radius = cf.get_option_int( "mouse_radius", CONF_MOUSE_RADIUS, 4, 1024 );
 
@@ -722,6 +725,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "keep_im_status", keep_im_status );
     cf.update( "margin_popup", margin_popup );
     cf.update( "margin_imgpopup", margin_imgpopup );
+    cf.update( "enable_mg", enable_mg );
     cf.update( "mouse_radius", mouse_radius );
     cf.update( "history_size", history_size );
     cf.update( "historyview_size", historyview_size );

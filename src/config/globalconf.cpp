@@ -289,7 +289,12 @@ void CONFIG::set_margin_popup( const int margin ){ get_confitem()->margin_popup 
 
 const int CONFIG::get_margin_imgpopup(){ return get_confitem()->margin_imgpopup; }
 
+// マウスジェスチャを有効
+const bool CONFIG::get_enable_mg(){ return get_confitem()->enable_mg; }
+
+// マウスジェスチャの判定開始半径
 const int CONFIG::get_mouse_radius(){ return get_confitem()->mouse_radius; }
+
 const int CONFIG::get_history_size(){ return get_confitem()->history_size; }
 const int CONFIG::get_historyview_size(){ return get_confitem()->historyview_size; }
 const int CONFIG::get_aahistory_size(){ return get_confitem()->aahistory_size; }

@@ -284,6 +284,9 @@ namespace CONFIG
         // 画像ポップアップとカーソルの間のマージン
         int margin_imgpopup;
 
+        // マウスジェスチャを有効
+        bool enable_mg;
+
         // マウスジェスチャの判定開始半径
         int mouse_radius;
 

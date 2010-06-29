@@ -325,6 +325,9 @@ namespace CONFIG
     // 画像ポップアップとカーソルの間のマージン
     const int get_margin_imgpopup();
 
+    // マウスジェスチャを有効
+    const bool get_enable_mg();
+
     // マウスジェスチャの判定開始半径
     const int get_mouse_radius();
 

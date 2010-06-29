@@ -239,6 +239,7 @@ void AboutConfig::append_rows()
     append_row( "■ その他" );
     append_row( "履歴メニューの表示数", get_confitem()->history_size, CONF_HISTORY_SIZE );
     append_row( "履歴ビューの表示数", get_confitem()->historyview_size, CONF_HISTORYVIEW_SIZE );
+    append_row( "マウスジェスチャを有効にする", get_confitem()->enable_mg, CONF_ENABLE_MG );
     append_row( "マウスジェスチャの判定開始半径", get_confitem()->mouse_radius, CONF_MOUSE_RADIUS );
     append_row( "起動時に開いていたスレ一覧を復元する", get_confitem()->restore_board, CONF_RESTORE_BOARD );
     append_row( "起動時に開いていたスレを復元する", get_confitem()->restore_article, CONF_RESTORE_ARTICLE );

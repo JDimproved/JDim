@@ -176,6 +176,8 @@ void Control::MG_reset()
 
 const bool Control::MG_start( const GdkEventButton* event )
 {
+    if( ! CONFIG::get_enable_mg() ) return false;
+
     MG_reset();
 
     if( ! button_alloted( event, CONTROL::GestureButton ) ) return false;
