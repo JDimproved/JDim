@@ -3405,13 +3405,12 @@ void ArticleViewBase::slot_search_title()
     std::string query = m_drawarea->str_selection();
     query = MISC::replace_str( query, "\n", "" );
 
-    if( query.empty() ) return;
-
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_search_title query = " << query << std::endl;
 #endif
     
-    CORE::core_set_command( "open_article_searchtitle", "" , query, "exec" );
+    if( query.empty() ) CORE::core_set_command( "open_article_searchtitle", "", "", "noexec" );
+    else CORE::core_set_command( "open_article_searchtitle", "" , query, "exec" );
 }
 
 
