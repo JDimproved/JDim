@@ -94,7 +94,14 @@ void CONFIG::set_use_tree_gtkrc( const bool use ){ get_confitem()->use_tree_gtkr
 const bool CONFIG::get_use_select_gtkrc(){ return get_confitem()->use_select_gtkrc; }
 void CONFIG::set_use_select_gtkrc( const bool use ){ get_confitem()->use_select_gtkrc = use; }
 
+// ツリービューの行間スペース
 const int CONFIG::get_tree_ypad(){ return get_confitem()->tree_ypad; }
+
+// ツリービューにエクスパンダを表示
+const bool CONFIG::get_tree_show_expanders(){ return get_confitem()->tree_show_expanders; }
+
+// ツリービューのレベルインデント調整量(ピクセル)
+const int CONFIG::get_tree_level_indent(){ return get_confitem()->tree_level_indent; }
 
 // カテゴリを開いたときにツリービューをスクロールする
 const bool CONFIG::get_scroll_tree(){ return get_confitem()->scroll_tree; }

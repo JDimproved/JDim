@@ -37,6 +37,8 @@ namespace CONFIG
         CONF_USE_TREE_GTKRC = 0,    // ツリービューでgtkrcの設定を使用するか
         CONF_USE_SELECT_GTKRC = 0,  // スレビューの選択色でgtkrcの設定を使用するか
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
+        CONF_TREE_SHOW_EXPANDERS = 1, // ツリービューにエクスパンダを表示
+        CONF_TREE_LEVEL_INDENT = 0, // ツリービューのレベルインデント調整量(ピクセル)
         CONF_SCROLL_TREE = 1,       // カテゴリを開いたときにツリービューをスクロールする
         CONF_VIEW_MARGIN = 0,       // 各ビューと枠との間の余白
         CONF_LEFT_SCRBAR = 0,       // スクロールバーを左に配置

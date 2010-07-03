@@ -268,6 +268,12 @@ const bool ConfigItems::load( const bool restore )
     // ツリービューの行間スペース
     tree_ypad = cf.get_option_int( "tree_ypad", CONF_TREE_YPAD, 0, 64 );
 
+    // ツリービューにエクスパンダを表示
+    tree_show_expanders = cf.get_option_bool( "tree_show_expanders", CONF_TREE_SHOW_EXPANDERS );
+
+    // ツリービューのレベルインデント調整量(ピクセル)
+    tree_level_indent = cf.get_option_int( "tree_level_indent", CONF_TREE_LEVEL_INDENT, -256, 256 );
+
     // カテゴリを開いたときにツリービューをスクロールする
     scroll_tree = cf.get_option_bool( "scroll_tree", CONF_SCROLL_TREE );
 
@@ -688,6 +694,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_select_gtkrc", use_select_gtkrc );
 
     cf.update( "tree_ypad", tree_ypad );
+    cf.update( "tree_show_expanders", tree_show_expanders );
+    cf.update( "tree_level_indent", tree_level_indent );
 
     cf.update( "scroll_tree", scroll_tree );
 

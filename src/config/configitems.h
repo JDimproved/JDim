@@ -194,6 +194,12 @@ namespace CONFIG
         // ツリービューの行間スペース
         int tree_ypad;
 
+        // ツリービューにエクスパンダを表示
+        bool tree_show_expanders;
+
+        // ツリービューのレベルインデント調整量(ピクセル)
+        int tree_level_indent;
+
         // カテゴリを開いたときにツリービューをスクロールする
         bool scroll_tree;
 
