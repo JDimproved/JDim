@@ -384,6 +384,11 @@ bool ImageViewMain::slot_button_press( GdkEventButton* event )
     m_x_motion = event->x_root;
     m_y_motion = event->y_root;
 
+    // ボタンをリリースした時に大きさを変更
+    m_clicked = false;
+    if( ! is_loading() && ! is_wait()
+        && get_control().button_alloted( event, CONTROL::ClickButton ) ) m_clicked = true;
+
     return true;
 }
 
@@ -430,6 +435,8 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
 
             if( vadj ) vadj->set_value(
                 MAX( vadj->get_lower(), MIN( vadj->get_upper() - vadj->get_page_size(), vadj->get_value() - dy ) ) );
+
+            m_clicked = false;
         }
     }
 
@@ -496,4 +503,23 @@ void ImageViewMain::scroll_right()
     if( !hadjust ) return;
     hadjust->set_value(  MIN( hadjust->get_upper() - hadjust->get_page_size(),
                               hadjust->get_value() + hadjust->get_step_increment() ) );
+}
+
+
+//
+// viewの操作
+//
+const bool ImageViewMain::operate_view( const int control )
+{
+    int cntl = control;
+
+    if( m_clicked ){
+
+        m_clicked = false;
+
+        if( get_img()->get_size() == 100 ) cntl = CONTROL::ZoomFitImage;
+        else cntl = CONTROL::OrgSizeImage;
+    }
+
+    return ImageViewBase::operate_view( cntl );
 }

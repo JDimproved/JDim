@@ -25,6 +25,8 @@ namespace IMAGE
         int m_pre_height;
         int m_redraw_count;
 
+        bool m_clicked;
+
       public:
         ImageViewMain( const std::string& url );
 
@@ -34,6 +36,8 @@ namespace IMAGE
         virtual void scroll_down();
         virtual void scroll_left();
         virtual void scroll_right();
+
+        virtual const bool operate_view( const int control );
 
       protected:
         virtual void show_status();
