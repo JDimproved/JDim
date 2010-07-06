@@ -296,6 +296,9 @@ void CONFIG::set_margin_popup( const int margin ){ get_confitem()->margin_popup 
 
 const int CONFIG::get_margin_imgpopup(){ return get_confitem()->margin_imgpopup; }
 
+// ポップアップが消えるまでの時間(ミリ秒)
+const int CONFIG::get_hide_popup_msec(){ return get_confitem()->hide_popup_msec; }
+
 // マウスジェスチャを有効
 const bool CONFIG::get_enable_mg(){ return get_confitem()->enable_mg; }
 

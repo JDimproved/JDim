@@ -364,6 +364,9 @@ const bool ConfigItems::load( const bool restore )
     // 画像ポップアップとカーソルの間のマージン
     margin_imgpopup = cf.get_option_int( "margin_imgpopup", CONF_MARGIN_IMGPOPUP, 1, 1024 );
 
+    // ポップアップが消えるまでの時間(ミリ秒)
+    hide_popup_msec = cf.get_option_int( "hide_popup_msec", CONF_HIDE_POPUP_MSEC, 0, 2000 );
+
     // マウスジェスチャを有効
     enable_mg = cf.get_option_bool( "enable_mg", CONF_ENABLE_MG );
 
@@ -733,6 +736,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "keep_im_status", keep_im_status );
     cf.update( "margin_popup", margin_popup );
     cf.update( "margin_imgpopup", margin_imgpopup );
+    cf.update( "hide_popup_msec", hide_popup_msec );
     cf.update( "enable_mg", enable_mg );
     cf.update( "mouse_radius", mouse_radius );
     cf.update( "history_size", history_size );

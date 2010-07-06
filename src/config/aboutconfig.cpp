@@ -182,6 +182,7 @@ void AboutConfig::append_rows()
     append_row( "リロード後に新着レスに自動的に移動する", get_confitem()->jump_new_after_reload, CONF_JUMP_NEW_AFTER_RELOAD );
     append_row( "ポップアップとカーソルの間の間隔(ピクセル)", get_confitem()->margin_popup, CONF_MARGIN_POPUP );
     append_row( "画像ポップアップとカーソルの間の間隔(ピクセル)", get_confitem()->margin_imgpopup, CONF_MARGIN_IMGPOPUP );
+    append_row( "ポップアップが消えるまでの時間(ミリ秒)", get_confitem()->hide_popup_msec, CONF_HIDE_POPUP_MSEC );
     append_row( "多重ポップアップの説明を表示する", get_confitem()->instruct_popup, CONF_INSTRUCT_POPUP );    
     append_row( "レス番号の上にマウスオーバーしたときに参照ポップアップ表示する", get_confitem()->refpopup_by_mo, CONF_REFPOPUP_BY_MO );
     append_row( "「名前」の上にマウスオーバーしたときにポップアップ表示する", get_confitem()->namepopup_by_mo, CONF_NAMEPOPUP_BY_MO );

@@ -58,6 +58,8 @@ namespace ARTICLE
         // ポップアップ
         SKELETON::PopupWin* m_popup_win;
         bool m_popup_shown; // 表示されているならtrue, falseでもdeleteしない限りは m_popup_win != NULLに注意
+        int m_hidepopup_counter; // ポップアップを消すまでのカウンタ
+        std::string m_popup_url; // 表示中のポップアップのアドレス
 
         // 検索用
         bool m_search_invert; // 逆方向検索モード

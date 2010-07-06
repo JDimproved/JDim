@@ -70,6 +70,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
       m_url_article( url ),
       m_popup_win( NULL ),
       m_popup_shown( false ),
+      m_hidepopup_counter( 0 ),
       m_enable_menuslot( true ),
       m_current_bm( 0 ),
       m_current_post( 0 ),
@@ -781,8 +782,19 @@ void ArticleViewBase::clock_in()
 
     View::clock_in();
 
+    // ポップアップを時間差で消す
+    if( m_hidepopup_counter ){
+
+        --m_hidepopup_counter;
+        if( ! m_hidepopup_counter ){
+
+            // ポインタがポップアップ上に戻っていたらキャンセル
+            if( ! is_mouse_on_popup() )  slot_hide_popup();
+        }
+    }
+
     // ポップアップが出てたらそっちにクロックを回す
-    if( is_popup_shown() && m_popup_win->view() ){
+    else if( is_popup_shown() && m_popup_win->view() ){
         m_popup_win->view()->clock_in();
         return;
     }
@@ -902,11 +914,15 @@ void ArticleViewBase::focus_out()
 
     m_drawarea->focus_out();
 
-    // フォーカスアウトした瞬間に、子ポップアップが表示されていて、かつ
-    // ポインタがその上だったらポップアップは消さない
-    if( is_mouse_on_popup() ) return;
+    if( is_popup_shown() ){
 
-    hide_popup();
+        // フォーカスアウトした瞬間に、子ポップアップが表示されていて、かつ
+        // ポインタがその上だったらポップアップは消さない
+        if( is_mouse_on_popup() ) return;
+
+        if( CONFIG::get_hide_popup_msec() ) m_hidepopup_counter = CONFIG::get_hide_popup_msec() / TIMER_TIMEOUT;
+        else hide_popup();
+    }
 }
 
 
@@ -2141,9 +2157,18 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
     std::cout << "ArticleViewBase::slot_on_url " << url << std::endl;
 #endif
 
+    // ポップアップが消えるまでに同じリンク上にポインタを乗せたら
+    // カウンタをリセットする
+    if( m_hidepopup_counter && m_popup_url == url ){
+        m_hidepopup_counter = 0;
+        return;
+    }
+
     CORE::VIEWFACTORY_ARGS args;
     SKELETON::View* view_popup = NULL;
     int margin_popup = CONFIG::get_margin_popup();
+
+    m_popup_url = url;
 
     // 画像ポップアップ
     if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){
@@ -2386,7 +2411,10 @@ void ArticleViewBase::slot_leave_url()
         m_url_show_status = false;
     }
 
-    hide_popup();
+    if( is_popup_shown() ){
+        if( CONFIG::get_hide_popup_msec() ) m_hidepopup_counter = CONFIG::get_hide_popup_msec() / TIMER_TIMEOUT;
+        else hide_popup();
+    }
 }
 
 
@@ -2807,7 +2835,9 @@ bool ArticleViewBase::slot_popup_leave_notify_event( GdkEventCrossing* event )
     if( is_mouse_on_popup() ) return false;
 
 
-    slot_hide_popup();
+    if( CONFIG::get_hide_popup_msec() ) m_hidepopup_counter = CONFIG::get_hide_popup_msec() / TIMER_TIMEOUT;
+    else hide_popup();
+
     return true;
 }
 
@@ -2837,6 +2867,8 @@ void ArticleViewBase::slot_hide_popup()
 void ArticleViewBase::hide_popup( const bool force )
 {
     if( ! is_popup_shown() ) return;
+
+    m_hidepopup_counter = 0;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::hide_popup force = " << force << " " << get_url() << std::endl;

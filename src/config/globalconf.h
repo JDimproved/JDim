@@ -331,6 +331,9 @@ namespace CONFIG
     // 画像ポップアップとカーソルの間のマージン
     const int get_margin_imgpopup();
 
+    // ポップアップが消えるまでの時間(ミリ秒)
+    const int get_hide_popup_msec();
+
     // マウスジェスチャを有効
     const bool get_enable_mg();
 
