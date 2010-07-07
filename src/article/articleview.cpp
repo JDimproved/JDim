@@ -9,6 +9,8 @@
 
 #include "skeleton/msgdiag.h"
 
+#include "message/messageadmin.h"
+
 #include "dbtree/interface.h"
 #include "dbtree/articlebase.h"
 
@@ -521,7 +523,7 @@ void ArticleViewMain::update_finish()
             set_autoreload_sec( MAX( live_sec, get_autoreload_sec() - LIVE_SEC_PLUS ) );
 
             // messageビューが出ているときはフォーカスを移す
-            CORE::core_set_command( "switch_message" );
+            if( ! MESSAGE::get_admin()->empty() ) CORE::core_set_command( "switch_message" );
         }
 
         drawarea()->update_live_speed( get_autoreload_sec() );
