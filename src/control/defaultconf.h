@@ -72,7 +72,7 @@ namespace CONTROL
 
 #define KEYCONF_Search  "Ctrl+f / KP_Divide"
 #define KEYCONF_SearchInvert  "?"
-#define KEYCONF_SearchNext  "Enter F3 Ctrl+g n"
+#define KEYCONF_SearchNext  "Enter F3 Ctrl+g"
 #define KEYCONF_SearchPrev  "Shift+Enter Ctrl+F3 Ctrl+G N"
 #define KEYCONF_DrawOutAnd  "Ctrl+Enter"
 
