@@ -1221,6 +1221,11 @@ const bool ArticleViewBase::operate_view( const int control )
             CORE::core_set_command( "toggle_menubar" );
             break;
 
+            // メインツールバー表示/非表示
+        case CONTROL::ShowToolBarMain:
+            CORE::core_set_command( "toggle_toolbarmain" );
+            break;
+
             // 実況モード切り替え
         case CONTROL::LiveStartStop:
             if( ! m_article->empty() ) ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );

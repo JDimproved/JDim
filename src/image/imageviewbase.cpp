@@ -719,6 +719,11 @@ const bool ImageViewBase::operate_view( const int control )
             CORE::core_set_command( "toggle_menubar" );
             break;
 
+            // メインツールバー表示/非表示
+        case CONTROL::ShowToolBarMain:
+            CORE::core_set_command( "toggle_toolbarmain" );
+            break;
+
             // お気に入りに追加
         case CONTROL::AppendFavorite:
             slot_favorite();

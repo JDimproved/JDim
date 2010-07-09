@@ -71,6 +71,7 @@ namespace CONTROL
         ShowPopupMenu,
 
         ShowMenuBar,
+        ShowToolBarMain,
         ShowSideBar,
 
         PageUp,

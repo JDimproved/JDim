@@ -235,6 +235,7 @@ namespace CORE
         ///
         void slot_toggle_since( const int mode );
         void slot_toggle_write( const int mode );
+        void slot_toggle_toolbarmain();
         void slot_toggle_toolbarpos( const int pos );
         void slot_toggle_toolbarbbslist();
         void slot_toggle_toolbarboard();

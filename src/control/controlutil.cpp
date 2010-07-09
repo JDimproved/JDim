@@ -350,6 +350,10 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
                 label += "(_S)";
                 break;
 
+            case CONTROL::ShowToolBarMain:  // メインツールバー表示
+                label += "(_M)";
+                break;
+
             case CONTROL::Home:         //先頭へ移動
                 label += "(_H)";
                 break;

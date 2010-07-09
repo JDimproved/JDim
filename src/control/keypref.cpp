@@ -94,6 +94,7 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::ShowPopupMenu );
 
     append_row( CONTROL::ShowMenuBar );
+    append_row( CONTROL::ShowToolBarMain );
     append_row( CONTROL::ShowSideBar );
 
     append_row( CONTROL::PageUp );

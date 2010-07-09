@@ -210,7 +210,24 @@ void Core::slot_toggle_write( const int mode )
 
 
 //
-// ツールバーの表示モード
+// メインツールバー表示切り替え
+//
+void Core::slot_toggle_toolbarmain()
+{
+    if( SESSION::is_booting() ) return;
+    if( ! m_enable_menuslot ) return;
+
+    pack_widget( true );
+    SESSION::set_show_main_toolbar( ! SESSION::get_show_main_toolbar() );
+    pack_widget( false );
+
+    restore_focus( true, false );
+
+}
+
+
+//
+// メインツールバーの表示位置
 //
 void Core::slot_toggle_toolbarpos( const int pos )
 {
@@ -221,15 +238,15 @@ void Core::slot_toggle_toolbarpos( const int pos )
     std::cout << "Core::slot_toggle_toolbarpos pos = " << pos << " / " << SESSION::toolbar_pos() << std::endl;
 #endif
 
-    pack_widget( true );
+    if( ! SESSION::get_show_main_toolbar() ) SESSION::set_toolbar_pos( pos );
+    else{
 
-    // 表示切り替え
-    if( SESSION::toolbar_pos() == pos ) SESSION::set_toolbar_pos( SESSION::TOOLBAR_POS_NOT ); // 隠す
-    else SESSION::set_toolbar_pos( pos );
+        pack_widget( true );
+        SESSION::set_toolbar_pos( pos );
+        pack_widget( false );
 
-    pack_widget( false );
-
-    restore_focus( true, false );
+        restore_focus( true, false );
+    }
 }
 
 

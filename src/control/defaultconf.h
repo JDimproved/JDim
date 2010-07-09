@@ -47,6 +47,7 @@ namespace CONTROL
 #define KEYCONF_ShowPopupMenu  "Shift+F10 Ctrl+m Menu"
 
 #define KEYCONF_ShowMenuBar  "F8"
+#define KEYCONF_ShowToolBarMain  ""
 #define KEYCONF_ShowSideBar  "F9"
 
 #define KEYCONF_PageUp  "Page_Up KP_Prior"

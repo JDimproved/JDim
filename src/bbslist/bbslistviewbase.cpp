@@ -925,6 +925,11 @@ const bool BBSListViewBase::operate_view( const int control )
             CORE::core_set_command( "toggle_menubar" );
             break;
 
+            // メインツールバー表示/非表示
+        case CONTROL::ShowToolBarMain:
+            CORE::core_set_command( "toggle_toolbarmain" );
+            break;
+
             // サイドバー更新チェック
         case CONTROL::CheckUpdateRoot:
             CORE::core_set_command( "check_update_root" );

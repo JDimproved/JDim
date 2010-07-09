@@ -89,6 +89,7 @@ bool win_show_sidebar;
 
 bool win_show_menubar;
 
+bool show_main_toolbar;
 int win_toolbar_pos;
 
 bool show_bbslist_toolbar;
@@ -326,6 +327,7 @@ void SESSION::init_session()
 
     win_show_menubar = cf.get_option_bool( "show_menubar", true );
 
+    show_main_toolbar = cf.get_option_bool( "show_main_toolbar", true );
     win_toolbar_pos = cf.get_option_int( "toolbar_pos", TOOLBAR_POS_NORMAL, 0, TOOLBAR_POS_NUM -1 );
 
     show_bbslist_toolbar = cf.get_option_bool( "show_bbslist_toolbar", true );
@@ -554,6 +556,7 @@ void SESSION::save_session()
         << "width = " << width_win_main << std::endl
         << "height = " << height_win_main << std::endl
         << "maximized = " << maximized_win_main << std::endl
+        << "show_main_toolbar = " << show_main_toolbar << std::endl
         << "toolbar_pos = " << win_toolbar_pos << std::endl
         << "show_bbslist_toolbar = " << show_bbslist_toolbar << std::endl
         << "show_board_toolbar = " << show_board_toolbar << std::endl
@@ -666,7 +669,9 @@ const bool SESSION::show_sidebar(){ return win_show_sidebar; }
 const bool SESSION::show_menubar(){ return win_show_menubar; }
 void SESSION::set_show_menubar( const bool show ){ win_show_menubar = show; }
 
-const int SESSION::toolbar_pos(){ return win_toolbar_pos; }
+const bool SESSION::get_show_main_toolbar(){ return show_main_toolbar; }
+void SESSION::set_show_main_toolbar( const bool show ){ show_main_toolbar = show; }
+const int SESSION::get_toolbar_pos(){ return win_toolbar_pos; }
 void SESSION::set_toolbar_pos( const int pos ){ win_toolbar_pos = pos; }
 
 const bool SESSION::get_show_bbslist_toolbar(){ return show_bbslist_toolbar; }

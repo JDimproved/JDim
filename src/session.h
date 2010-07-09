@@ -54,12 +54,11 @@ namespace SESSION
         PAGE_NUM
     };
 
-    // ツールバーの位置
+    // メインツールバーの位置
     enum
     {
         TOOLBAR_POS_NORMAL = 0, // メニューバーの下に表示
         TOOLBAR_POS_RIGHT, // サイドバーの右に表示
-        TOOLBAR_POS_NOT, // 非表示
 
         TOOLBAR_POS_NUM
     };
@@ -110,8 +109,12 @@ namespace SESSION
     const bool show_menubar();
     void set_show_menubar( const bool show );
 
-    // ツールバー位置
-    const int toolbar_pos();
+    // メインツールバー表示
+    const bool get_show_main_toolbar();
+    void set_show_main_toolbar( const bool show );
+
+    // メインツールバー位置
+    const int get_toolbar_pos();
     void set_toolbar_pos( const int pos );
 
     // 板一覧のツールバー表示

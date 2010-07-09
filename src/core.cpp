@@ -394,17 +394,32 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // ツールバー表示
     m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー表示(_T)" ) );
-    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メイン(_M)" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos0", "メニューバーの下に表示する(_U)", std::string(), false ),
+
+    // メインツールバー
+    m_action_group->add( Gtk::ToggleAction::create( "ShowToolBarMain", "ShowToolBarMain", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_toolbarmain ) );
+
+    Gtk::RadioButtonGroup radiogroup_toolbar;
+    m_action_group->add( Gtk::Action::create( "Toolbar_Main_Menu", "メインツールバーの位置(_P)" ) );
+    Glib::RefPtr< Gtk::RadioAction > raction_toolbarpos0 = Gtk::RadioAction::create( radiogroup_toolbar, "ToolbarPos0", "メニューバーの下に表示する(_U)" );
+    Glib::RefPtr< Gtk::RadioAction > raction_toolbarpos1 = Gtk::RadioAction::create( radiogroup_toolbar, "ToolbarPos1", "サイドバーの右に表示する(_R)" );
+
+    switch( SESSION::get_toolbar_pos() ){
+        case SESSION::TOOLBAR_POS_NORMAL: raction_toolbarpos0->set_active( true ); break;
+        case SESSION::TOOLBAR_POS_RIGHT: raction_toolbarpos1->set_active( true ); break;
+    }
+
+    m_action_group->add( raction_toolbarpos0,
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_POS_NORMAL ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarPos1", "サイドバーの右に表示する(_R)", std::string(), false ),
+    m_action_group->add( raction_toolbarpos1,
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_toolbarpos ), SESSION::TOOLBAR_POS_RIGHT ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBbslist", "サイドバー(_S)", std::string(), false ),
+    // その他のツールバー
+    m_action_group->add( Gtk::ToggleAction::create( "ShowToolBarBbslist", "サイドバーのツールバー表示(_S)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbarbbslist ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarBoard", "スレ一覧(_B)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ShowToolBarBoard", "スレ一覧のツールバー表示(_B)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbarboard ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ToolbarArticle", "スレビュー(_A)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "ShowToolBarArticle", "スレビューのツールバー表示(_A)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_toolbararticle ) );
 
     // タブ表示
@@ -730,13 +745,15 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<separator/>"
 
         "<menu action='Toolbar_Menu'>"
+        "<menuitem action='ShowToolBarMain'/>"
+        "<menuitem action='ShowToolBarBbslist'/>"
+        "<menuitem action='ShowToolBarBoard'/>"
+        "<menuitem action='ShowToolBarArticle'/>"
+        "<separator/>"
         "<menu action='Toolbar_Main_Menu'>"
         "<menuitem action='ToolbarPos0'/>"
         "<menuitem action='ToolbarPos1'/>"
         "</menu>"
-        "<menuitem action='ToolbarBbslist'/>"
-        "<menuitem action='ToolbarBoard'/>"
-        "<menuitem action='ToolbarArticle'/>"
         "</menu>"
         "<separator/>"
 
@@ -1103,7 +1120,7 @@ void Core::pack_widget( bool unpack )
 
         m_notebook_right.append_remove_page( unpack, *BOARD::get_admin()->get_widget(), "スレ一覧" );
 
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT )
+        if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT )
             m_vbox_article.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
 
         m_vbox_article.pack_remove_start( unpack, m_notebook_right );
@@ -1119,7 +1136,7 @@ void Core::pack_widget( bool unpack )
         get_rpctrl()->add_remove1( unpack, *BOARD::get_admin()->get_widget() );
         get_rpctrl()->add_remove2( unpack, m_vbox_article );
 
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT ){
+        if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT ){
 
             m_vbox_toolbar.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
             m_vbox_toolbar.pack_remove_start( unpack, *get_rpane() );
@@ -1132,7 +1149,7 @@ void Core::pack_widget( bool unpack )
     // メインwindowのパッキング
     m_win_main.pack_remove_end( unpack, m_win_main.get_statbar(), Gtk::PACK_SHRINK );
     m_win_main.pack_remove_end( unpack, m_hpaned );
-    if( SESSION::toolbar_pos() == SESSION::TOOLBAR_POS_NORMAL )
+    if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_NORMAL )
         m_win_main.pack_remove_end( unpack, *m_toolbar, Gtk::PACK_SHRINK );
     if( SESSION::show_menubar() ) m_win_main.pack_remove_end( unpack, *m_menubar, Gtk::PACK_SHRINK );
 
@@ -1301,31 +1318,25 @@ void Core::slot_activate_menubar()
     }
 
     // ツールバー
-    act = m_action_group->get_action( "ToolbarPos0" );
+    act = m_action_group->get_action( "ShowToolBarMain" );
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_POS_NORMAL ) tact->set_active( true );
+        if( SESSION::get_show_main_toolbar() ) tact->set_active( true );
         else tact->set_active( false );
     }
-    act = m_action_group->get_action( "ToolbarPos1" );
-    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-    if( tact ){
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT ) tact->set_active( true );
-        else tact->set_active( false );
-    }
-    act = m_action_group->get_action( "ToolbarBbslist" );
+    act = m_action_group->get_action( "ShowToolBarBbslist" );
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
         if( SESSION::get_show_bbslist_toolbar() ) tact->set_active( true );
         else tact->set_active( false );
     }
-    act = m_action_group->get_action( "ToolbarBoard" );
+    act = m_action_group->get_action( "ShowToolBarBoard" );
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
         if( SESSION::get_show_board_toolbar() ) tact->set_active( true );
         else tact->set_active( false );
     }
-    act = m_action_group->get_action( "ToolbarArticle" );
+    act = m_action_group->get_action( "ShowToolBarArticle" );
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
         if( SESSION::get_show_article_toolbar() ) tact->set_active( true );
@@ -2907,6 +2918,9 @@ void Core::exec_command()
     // メニューバー表示/非表示
     else if( command.command  == "toggle_menubar" ) toggle_menubar();
 
+    // メインツールバー表示/非表示
+    else if( command.command  == "toggle_toolbarmain" ) slot_toggle_toolbarmain();
+
     // サイドバー表示/非表示
     else if( command.command  == "toggle_sidebar" ) toggle_sidebar();
 
@@ -3962,7 +3976,7 @@ void Core::show_imagetab()
 
         // ツールバーの位置がサイドバーの右側の時はツールバーの下に挿入する
         int pos = 0;
-        if( SESSION::toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT && SESSION::get_mode_pane() == SESSION::MODE_2PANE ) pos = 1;
+        if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT && SESSION::get_mode_pane() == SESSION::MODE_2PANE ) pos = 1;
 
         m_vbox_article.pack_start( IMAGE::get_admin()->tab(), Gtk::PACK_SHRINK );
         m_vbox_article.reorder_child( IMAGE::get_admin()->tab(), pos );

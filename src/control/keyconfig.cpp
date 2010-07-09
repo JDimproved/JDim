@@ -71,6 +71,7 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "ShowPopupMenu", KEYCONF_ShowPopupMenu );
 
     SETKEYMOTION( "ShowMenuBar", KEYCONF_ShowMenuBar );
+    SETKEYMOTION( "ShowToolBarMain", KEYCONF_ShowToolBarMain );
     SETKEYMOTION( "ShowSideBar", KEYCONF_ShowSideBar );
 
     SETKEYMOTION( "PageUp", KEYCONF_PageUp );
