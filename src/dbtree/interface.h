@@ -126,7 +126,9 @@ namespace DBTREE
     const int board_view_sort_pre_mode( const std::string& url );
     void board_set_view_sort_pre_mode( const std::string& url, int mode );
     const bool board_check_noname( const std::string& url );
-    void board_set_check_noname( const std::string& url, bool check );
+    void board_set_check_noname( const std::string& url, const bool check );
+    const bool board_show_oldlog( const std::string& url );
+    void board_set_show_oldlog( const std::string& url, const bool show );
     const int board_get_mode_local_proxy( const std::string& url );
     const std::string& board_get_local_proxy( const std::string& url );
     const int board_get_local_proxy_port( const std::string& url );

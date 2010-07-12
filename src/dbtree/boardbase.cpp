@@ -123,12 +123,6 @@ bool BoardBase::empty()
 }
 
 
-void BoardBase::set_check_noname( bool check )
-{
-    m_check_noname = check;
-}
-
-
 //
 // url がこの板のものかどうか
 //
@@ -1246,7 +1240,7 @@ void BoardBase::receive_finish()
         }
 
         // DAT落ちなどでsubject.txtに無いスレもsubjectリストに加える
-        if( CONFIG::get_show_oldarticle() ){
+        if( m_show_oldlog ){
 
             ArticleHashIterator it = m_hash_article->begin();
             for( ; it != m_hash_article->end(); ++it ){
@@ -1916,6 +1910,8 @@ void BoardBase::read_board_info()
 
     m_check_noname = cf.get_option_bool( "check_noname", false );
 
+    m_show_oldlog = cf.get_option_bool( "show_oldlog", false );
+
     std::string str_tmp;
 
     // あぼーん id は再起動ごとにリセット
@@ -2044,6 +2040,7 @@ void BoardBase::save_jdboard_info()
          << "view_sort_pre_column = " << m_view_sort_pre_column << std::endl
          << "view_sort_pre_mode = " << m_view_sort_pre_mode << std::endl
          << "check_noname = " << m_check_noname << std::endl
+         << "show_oldlog = " << m_show_oldlog << std::endl
 
     // IDは再起動ごとにリセット
 //         << "aboneid = " << str_abone_id << std::endl

@@ -90,6 +90,9 @@ namespace DBTREE
         // 名無し書き込み不可
         bool m_check_noname;
 
+        // 過去ログも表示する
+        bool m_show_oldlog;
+
         //
         // subjectファイルのURLが "http://www.hoge2ch.net/hogeboard/subject.txt"
         // datファイルのURLが "http://www.hoge2ch.net/hogeboard/dat/12345.dat"
@@ -261,7 +264,11 @@ namespace DBTREE
 
         // 名無し書き込み不可
         const bool get_check_noname() const { return m_check_noname; }
-        void set_check_noname( bool check );
+        void set_check_noname( const bool check ){ m_check_noname = check; }
+
+        // 過去ログも表示する
+        const bool get_show_oldlog() const { return m_show_oldlog; }
+        void set_show_oldlog( const bool show ){ m_show_oldlog = show; }
 
         // url がこの板のものかどうか
         virtual bool equal( const std::string& url );

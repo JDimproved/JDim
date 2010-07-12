@@ -103,9 +103,13 @@ namespace BOARD
         SKELETON::LabelEntry m_label_modified;
         Gtk::Button m_button_clearmodified;
 
+        // samba24
         Gtk::HBox m_hbox_samba;
         SKELETON::LabelEntry m_label_samba;
         Gtk::Button m_button_clearsamba;
+
+        // 過去ログ表示
+        Gtk::CheckButton m_check_oldlog;
 
         // あぼーん
         Gtk::Notebook m_notebook_abone;

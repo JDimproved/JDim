@@ -511,8 +511,6 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // 一般
     m_action_group->add( Gtk::Action::create( "General_Menu", "一般(_G)" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "OldArticle", "スレ一覧に過去ログも表示する(_S)", std::string(), CONFIG::get_show_oldarticle() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_oldarticle ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "前回開いていた各ビューを起動時に復元する(_R)", std::string(),
                                                     ( CONFIG::get_restore_board()
@@ -863,7 +861,6 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<separator/>"
 
         "<menu action='General_Menu'>"
-        "<menuitem action='OldArticle'/>"
         "<menuitem action='RestoreViews'/>"
         "<menuitem action='ToggleFoldMessage'/>"
         "<separator/>"

@@ -263,7 +263,6 @@ namespace CORE
         void slot_board_pref();
         void slot_article_pref();
         void slot_image_pref();
-        void slot_toggle_oldarticle();
         void slot_toggle_restore_views();
         void slot_toggle_fold_message();
         void slot_toggle_save_post_log();

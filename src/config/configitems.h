@@ -209,9 +209,6 @@ namespace CONFIG
         // スクロールバーを左に配置
         bool left_scrbar;
 
-        // スレ一覧で古いスレも表示
-        bool show_oldarticle;
-
         // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
         int newthread_hour;
 

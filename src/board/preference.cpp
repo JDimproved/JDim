@@ -49,12 +49,21 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
       m_button_clearmodified( "日時クリア" ),
       m_label_samba( false, "書き込み規制秒数 (Samba24) ：" ),
       m_button_clearsamba( "秒数クリア" ),
+      m_check_oldlog( "過去ログを表示する" ),
       m_button_remove_old_title( "dat落ちしたスレのタイトルを削除する" ),
       m_localrule( NULL )
 {
     m_edit_cookies.set_editable( false );
 
     // 書き込み設定
+    const int samba_sec = DBTREE::board_samba_sec( get_url() );
+    if( ! samba_sec ) m_label_samba.set_text( "未取得" );
+    else m_label_samba.set_text( MISC::itostr( samba_sec ) );
+
+    m_button_clearsamba.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_samba ) );
+    m_hbox_samba.pack_start( m_label_samba );
+    m_hbox_samba.pack_start( m_button_clearsamba, Gtk::PACK_SHRINK );    
+
     m_check_noname.set_active( DBTREE::board_check_noname( get_url() ) );
     m_entry_writename.set_text(DBTREE::board_get_write_name( get_url() ) ); 
     m_entry_writemail.set_text(DBTREE::board_get_write_mail( get_url() ) );
@@ -73,6 +82,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     m_vbox_write.set_border_width( 8 );
     m_vbox_write.set_spacing( 8 );
+    m_vbox_write.pack_start( m_hbox_samba,  Gtk::PACK_SHRINK );
     m_vbox_write.pack_start( m_hbox_write1, Gtk::PACK_SHRINK );
     m_vbox_write.pack_start( m_hbox_write2, Gtk::PACK_SHRINK );
 
@@ -164,13 +174,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_modified.pack_start( m_label_modified );
     m_hbox_modified.pack_start( m_button_clearmodified, Gtk::PACK_SHRINK );    
 
-    const int samba_sec = DBTREE::board_samba_sec( get_url() );
-    if( ! samba_sec ) m_label_samba.set_text( "未取得" );
-    else m_label_samba.set_text( MISC::itostr( samba_sec ) );
-
-    m_button_clearsamba.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_samba ) );
-    m_hbox_samba.pack_start( m_label_samba );
-    m_hbox_samba.pack_start( m_button_clearsamba, Gtk::PACK_SHRINK );    
+    // 過去ログ表示
+    m_check_oldlog.set_active( DBTREE::board_show_oldlog( get_url() ) );
 
     m_vbox.set_border_width( 16 );
     m_vbox.set_spacing( 8 );
@@ -183,7 +188,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_vbox.pack_start( m_label_last_access, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_live, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_hbox_samba, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_check_oldlog, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
     m_vbox.pack_end( m_frame_write, Gtk::PACK_SHRINK );
 
@@ -451,22 +456,6 @@ void Preferences::slot_ok_clicked()
     DBTREE::board_set_local_proxy_w( get_url(), MISC::remove_space( m_proxy_frame_w.entry_host.get_text() ) );
     DBTREE::board_set_local_proxy_port_w( get_url(), atoi( m_proxy_frame_w.entry_port.get_text().c_str() ) );
 
-    // あぼーん再設定
-    std::list< std::string > list_id = MISC::get_lines( m_edit_id.get_text() );
-    std::list< std::string > list_name = MISC::get_lines( m_edit_name.get_text() );
-    std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text() );
-    std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
-    DBTREE::reset_abone_board( get_url(), list_id, list_name, list_word, list_regex ); 
-
-    // スレあぼーん再設定
-    std::list< std::string > list_thread = MISC::get_lines( m_edit_thread.get_text() );
-    std::list< std::string > list_word_thread = MISC::get_lines( m_edit_word_thread.get_text() );
-    std::list< std::string > list_regex_thread = MISC::get_lines( m_edit_regex_thread.get_text() );
-    const int number = m_spin_number.get_value_as_int();
-    const int hour = m_spin_hour.get_value_as_int();
-    const bool redraw = true; // スレ一覧を再描画
-    DBTREE::reset_abone_thread( get_url(), list_thread, list_word_thread, list_regex_thread, number, hour, redraw );  
-
     // 書き込み設定
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );
     DBTREE::board_set_write_name( get_url(), m_entry_writename.get_text() );
@@ -484,6 +473,26 @@ void Preferences::slot_ok_clicked()
     // 最大レス数
     const int number_max_res = m_spin_maxres.get_value_as_int();
     DBTREE::board_set_number_max_res( get_url(), number_max_res );
+
+    // 過去ログ表示
+    DBTREE::board_set_show_oldlog( get_url(), m_check_oldlog.get_active() );
+
+    // あぼーん再設定
+    std::list< std::string > list_id = MISC::get_lines( m_edit_id.get_text() );
+    std::list< std::string > list_name = MISC::get_lines( m_edit_name.get_text() );
+    std::list< std::string > list_word = MISC::get_lines( m_edit_word.get_text() );
+    std::list< std::string > list_regex = MISC::get_lines( m_edit_regex.get_text() );
+    DBTREE::reset_abone_board( get_url(), list_id, list_name, list_word, list_regex ); 
+
+    // スレあぼーん再設定
+    std::list< std::string > list_thread = MISC::get_lines( m_edit_thread.get_text() );
+    std::list< std::string > list_word_thread = MISC::get_lines( m_edit_word_thread.get_text() );
+    std::list< std::string > list_regex_thread = MISC::get_lines( m_edit_regex_thread.get_text() );
+    const int number = m_spin_number.get_value_as_int();
+    const int hour = m_spin_hour.get_value_as_int();
+
+    const bool redraw = true; // ここでスレ一覧の再描画指定をする
+    DBTREE::reset_abone_thread( get_url(), list_thread, list_word_thread, list_regex_thread, number, hour, redraw );  
 
     DBTREE::board_save_info( get_url() );
 }

@@ -431,11 +431,21 @@ const bool DBTREE::board_check_noname( const std::string& url )
     return DBTREE::get_board( url )->get_check_noname();
 }
 
-
-void DBTREE::board_set_check_noname( const std::string& url, bool check )
+void DBTREE::board_set_check_noname( const std::string& url, const bool check )
 {
     DBTREE::get_board( url )->set_check_noname( check );
 }
+
+const bool DBTREE::board_show_oldlog( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_show_oldlog();
+}
+
+void DBTREE::board_set_show_oldlog( const std::string& url, const bool show )
+{
+    DBTREE::get_board( url )->set_show_oldlog( show );
+}
+
 
 const int DBTREE::board_get_mode_local_proxy( const std::string& url )
 {

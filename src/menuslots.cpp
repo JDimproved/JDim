@@ -564,18 +564,6 @@ void Core::slot_image_pref()
 
 
 //
-// 過去ログ表示切替え
-//
-void Core::slot_toggle_oldarticle()
-{
-    CONFIG::set_show_oldarticle( ! CONFIG::get_show_oldarticle() );
-
-    SKELETON::MsgDiag mdiag( NULL, "次に開いた板から有効になります" );
-    mdiag.run();
-}
-
-
-//
 // 起動時にviewを復元
 //
 void Core::slot_toggle_restore_views()

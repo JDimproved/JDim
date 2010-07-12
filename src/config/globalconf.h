@@ -238,10 +238,6 @@ namespace CONFIG
     // 画像のメモリキャッシュ枚数
     const int get_imgcache_size();
 
-    // スレ一覧にdat落ちしたスレも表示する
-    const bool get_show_oldarticle();
-    void set_show_oldarticle( const bool showarticle );
-
     // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
     const int get_newthread_hour();
 
