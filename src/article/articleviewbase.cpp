@@ -340,6 +340,7 @@ void ArticleViewBase::setup_action()
     "<separator/>"
 
     "<menu action='Drawout_Menu'>"
+    "<menuitem action='Jump'/>"
     "<menuitem action='DrawoutRefer'/>"
     "<menuitem action='DrawoutAround'/>"
     "<menuitem action='DrawoutRes'/>"
@@ -1309,9 +1310,7 @@ void ArticleViewBase::goto_num( const int num_to, const int num_from )
 {
     assert( m_drawarea );
 
-    const int from = ( num_from > 0 ? num_from : m_drawarea->get_seen_current() );
-
-    if( from == num_to ) return;
+    const int from = ( ( num_from > 0 && num_to != num_from )  ? num_from : m_drawarea->get_seen_current() );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::goto_num to = " << num_to << " from = " << from << std::endl;
@@ -1551,7 +1550,7 @@ void ArticleViewBase::slot_next_post()
 //
 // ジャンプ
 //
-// 呼び出す前に m_str_num に対象のレス番号を入れておくこと
+// 呼び出す前に m_jump_to に対象のレス番号を入れておくこと
 //
 void ArticleViewBase::slot_jump()
 {
@@ -2606,6 +2605,10 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
             m_str_num = MISC::itostr( res_number );
             m_url_tmp = DBTREE::url_readcgi( m_url_article, res_number, 0 );
+
+            // ジャンプ先セット
+            m_jump_to = m_str_num;
+            m_jump_from = m_str_num;
 
             if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ) show_popupmenu( url, false );
 
