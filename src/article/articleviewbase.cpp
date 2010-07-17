@@ -3849,6 +3849,7 @@ void ArticleViewBase::slot_abone_word()
 void ArticleViewBase::slot_abone_name_board()
 {
     DBTREE::add_abone_name_board( m_url_article, m_name );
+    DBTREE::board_save_info( m_url_article );
 }
 
 
@@ -3858,6 +3859,7 @@ void ArticleViewBase::slot_abone_name_board()
 void ArticleViewBase::slot_abone_word_board()
 {
     DBTREE::add_abone_word_board( m_url_article, m_drawarea->str_selection() );
+    DBTREE::board_save_info( m_url_article );
 }
 
 
