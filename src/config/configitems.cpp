@@ -283,6 +283,9 @@ const bool ConfigItems::load( const bool restore )
     // スクロールバーを左に配置
     left_scrbar = cf.get_option_bool( "left_scrbar", CONF_LEFT_SCRBAR );
 
+    // スレ一覧で古いスレも表示 	 
+    show_oldarticle = cf.get_option_bool( "show_oldarticle", CONF_SHOW_OLDARTICLE );
+
     // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
     newthread_hour = cf.get_option_int( "newthread_hour", CONF_NEWTHREAD_HOUR, 1, 65535 );
 
@@ -703,6 +706,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "left_scrbar", left_scrbar );
 
+    cf.update( "show_oldarticle", show_oldarticle );
     cf.update( "newthread_hour", newthread_hour );
     cf.update( "inc_search_board", inc_search_board );
     cf.update( "show_deldiag", show_deldiag );

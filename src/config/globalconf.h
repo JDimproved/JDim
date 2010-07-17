@@ -70,6 +70,9 @@ namespace CONFIG
     // スクロールバーを左に配置
     const bool get_left_scrbar();
 
+    // スレ一覧で古いスレも表示 	 
+    const bool get_show_oldarticle();
+
     // フォント
     const std::string& get_fontname( const int id );
     void set_fontname( const int id, const std::string& fontname );

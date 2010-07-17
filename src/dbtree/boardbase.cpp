@@ -1240,7 +1240,7 @@ void BoardBase::receive_finish()
         }
 
         // DAT落ちなどでsubject.txtに無いスレもsubjectリストに加える
-        if( m_show_oldlog ){
+        if( CONFIG::get_show_oldarticle() || m_show_oldlog ){
 
             ArticleHashIterator it = m_hash_article->begin();
             for( ; it != m_hash_article->end(); ++it ){

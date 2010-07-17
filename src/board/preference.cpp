@@ -13,6 +13,8 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
 
+#include "config/globalconf.h"
+
 #include "cache.h"
 #include "command.h"
 #include "global.h"
@@ -175,7 +177,12 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_modified.pack_start( m_button_clearmodified, Gtk::PACK_SHRINK );    
 
     // 過去ログ表示
-    m_check_oldlog.set_active( DBTREE::board_show_oldlog( get_url() ) );
+    if( CONFIG::get_show_oldarticle() ){
+
+        m_check_oldlog.set_active( true );
+        m_check_oldlog.set_sensitive( false );
+    }
+    else m_check_oldlog.set_active( DBTREE::board_show_oldlog( get_url() ) );
 
     m_vbox.set_border_width( 16 );
     m_vbox.set_spacing( 8 );
@@ -475,7 +482,7 @@ void Preferences::slot_ok_clicked()
     DBTREE::board_set_number_max_res( get_url(), number_max_res );
 
     // 過去ログ表示
-    DBTREE::board_set_show_oldlog( get_url(), m_check_oldlog.get_active() );
+    if( ! CONFIG::get_show_oldarticle() ) DBTREE::board_set_show_oldlog( get_url(), m_check_oldlog.get_active() );
 
     // あぼーん再設定
     std::list< std::string > list_id = MISC::get_lines( m_edit_id.get_text() );

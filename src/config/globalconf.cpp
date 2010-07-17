@@ -111,6 +111,9 @@ const int CONFIG::get_view_margin(){ return get_confitem()->view_margin; }
 // スクロールバーを左に配置
 const bool CONFIG::get_left_scrbar(){ return get_confitem()->left_scrbar; }
 
+// スレ一覧で古いスレも表示 	 
+const bool CONFIG::get_show_oldarticle(){ return get_confitem()->show_oldarticle; }
+
 // フォント
 const std::string& CONFIG::get_fontname( const int id )
 {
