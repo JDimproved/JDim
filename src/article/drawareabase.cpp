@@ -4712,6 +4712,8 @@ bool DrawAreaBase::slot_button_release_event( GdkEventButton* event )
 //
 bool DrawAreaBase::slot_motion_notify_event( GdkEventMotion* event )
 {
+    if( m_x_pointer == ( int ) event->x && m_y_pointer == ( int ) event->y ) return true;
+
     m_x_pointer = ( int ) event->x;
     m_y_pointer = ( int ) event->y;
 
