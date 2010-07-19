@@ -56,6 +56,8 @@ enum
 
     SPACE_TAB =  4, // 水平タブをどれだけ空けるか ( フォントの高さ * SPACE_TAB )
 
+    COUNTER_NOMOTION = 16, // ホイールスクロール直後にモーションイベントをキャンセルする時の遊び量
+
     SEARCH_BUFFER_SIZE = 64 * 1024   // 検索のバッファサイズ
 };
 
@@ -2777,6 +2779,14 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
             else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() * speed;
 
             exec_scroll();
+
+            // スクロール終了直後にポインタがリンクの上にある時はマウスをある程度動かすまでモーションイベントをキャンセルする
+            // slot_motion_notify_event() を参照
+            if( m_layout_current && m_layout_current->link ){
+                m_scrollinfo.counter_nomotion = COUNTER_NOMOTION;
+                m_scrollinfo.x = m_x_pointer;
+                m_scrollinfo.y = m_y_pointer;
+            }
         }
     }
 }
@@ -4565,10 +4575,9 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
     if( m_layout_current && m_layout_current->link ) url = m_layout_current->link;
     if( m_layout_current ) res_num = m_layout_current->res_number;
 
-    int x, y;
-    int pos = get_vscr_val();
-    x = ( int ) event->x;
-    y = ( int ) event->y + pos;
+    const int pos = get_vscr_val();
+    const int x = ( int ) event->x;
+    const int y = ( int ) event->y + pos;
 
     CARET_POSITION caret_pos; 
     set_caret( caret_pos, x, y );
@@ -4579,7 +4588,10 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
     if( m_scrollinfo.mode == SCROLL_AUTO ){
             
         m_scrollinfo.reset();
-        m_scrollinfo.just_finished = true;
+
+        // リンクのクリックを認識させないためオートスクロール解除直後はリンククリックの処理をしない
+        // 直後に slot_button_release_event() が呼び出されて m_scrollinfo がリセットされる
+        m_scrollinfo.autoscroll_finished = true;
 
         change_cursor( Gdk::ARROW );
     }
@@ -4688,8 +4700,8 @@ bool DrawAreaBase::slot_button_release_event( GdkEventButton* event )
         }
 
         // リンクのクリックを認識させないためオートスクロール解除直後はリンククリックの処理をしない
-        if( m_scrollinfo.just_finished ){
-            m_scrollinfo.just_finished = false;
+        if( m_scrollinfo.autoscroll_finished ){
+            m_scrollinfo.reset();
             url = std::string();
         }
 
@@ -4716,6 +4728,34 @@ bool DrawAreaBase::slot_motion_notify_event( GdkEventMotion* event )
 
     m_x_pointer = ( int ) event->x;
     m_y_pointer = ( int ) event->y;
+
+    // ホイールスクロール終了直後はある程度マウスを動かすまでモーションイベントをキャンセル
+    if( m_scrollinfo.counter_nomotion ){
+
+#ifdef _DEBUG
+        std::cout << "counter_nomotion = " << m_scrollinfo.counter_nomotion
+                  << " x = " << m_scrollinfo.x
+                  << " y = " << m_scrollinfo.x
+                  << " xp = " << m_x_pointer
+                  << " yp = " << m_x_pointer;
+#endif
+
+        m_scrollinfo.counter_nomotion
+        =  MAX( 0,
+               m_scrollinfo.counter_nomotion - abs( m_scrollinfo.x - m_x_pointer ) - abs( m_scrollinfo.y - m_y_pointer )
+            );
+
+        if( m_scrollinfo.x != m_x_pointer ) m_scrollinfo.x = m_x_pointer;
+        if( m_scrollinfo.y != m_y_pointer ) m_scrollinfo.y = m_y_pointer;
+
+#ifdef _DEBUG
+        std::cout << " -> " << m_scrollinfo.counter_nomotion << std::endl;
+#endif
+
+        if( m_scrollinfo.counter_nomotion ) return true;
+
+        m_scrollinfo.reset();
+    }
 
     motion_mouse();
 

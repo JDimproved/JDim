@@ -34,7 +34,11 @@ namespace ARTICLE
         bool show_marker;  // true ならマーカを出す
         bool enable_up;    // true なら上方向にスクロール可
         bool enable_down;  // true なら下方向にスクロール可
-        bool just_finished; // true ならオートスクロールが丁度終わったところ( slot_button_release_drawarea() で使う )
+
+        bool autoscroll_finished; // オートスクロールが終わった
+
+        // > 0 の間はモーションイベントをキャンセルする
+        int counter_nomotion; 
 
         // 実況モード用変数
         bool live;
@@ -58,7 +62,9 @@ namespace ARTICLE
             show_marker = false;
             enable_up = false;
             enable_down = false;
-            just_finished = false;
+
+            autoscroll_finished = false;
+            counter_nomotion = 0;
         }
     };
 }
