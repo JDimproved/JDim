@@ -136,6 +136,15 @@ namespace MISC
     // strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
     const std::string cut_str( const std::string& str, const unsigned int maxsize );
 
+    // 正規表現のメタ文字が含まれているか
+    const bool has_regex_metachar( const std::string& str );
+
+    // 正規表現のメタ文字をエスケープ
+    const std::string regex_escape( const std::string& str );
+
+    // 正規表現のメタ文字をアンエスケープ
+    const std::string regex_unescape( const std::string& str );
+
     // HTMLエスケープ
     // include_url : URL中でもエスケープする( デフォルト = true )
     const std::string html_escape( const std::string& str, const bool include_url = true );

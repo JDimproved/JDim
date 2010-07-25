@@ -25,6 +25,7 @@ namespace ARTICLE
         std::list< CORE::SEARCHDATA > m_list_searchdata;
         bool m_loading;
         bool m_search_executed;
+        bool m_escaped;
 
       public:
 

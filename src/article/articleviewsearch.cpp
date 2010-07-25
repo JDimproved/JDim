@@ -32,7 +32,7 @@ ArticleViewSearch::ArticleViewSearch( const std::string& url_board,
                                       const std::string& query, const int searchmode, const bool exec_search, const bool mode_or, const bool bm )
     : ArticleViewBase( url_board )
     , m_url_board( url_board ), m_searchmode( searchmode ), m_mode_or( mode_or ), m_bm( bm ),
-      m_loading( false ), m_search_executed( false )
+      m_loading( false ), m_search_executed( false ), m_escaped( false )
 {
     struct timeval tv;
     struct timezone tz;
@@ -82,6 +82,17 @@ ArticleViewSearch::~ArticleViewSearch()
 //
 void ArticleViewSearch::update_url_query( const bool update_history )
 {
+    // ログ検索の場合は正規表現メタ文字をエスケープする
+    m_escaped = false;
+    if( m_searchmode == CORE::SEARCHMODE_LOG || m_searchmode == CORE::SEARCHMODE_ALLLOG ){
+
+        if( MISC::has_regex_metachar( get_search_query() ) ){
+
+            m_escaped = true;
+            set_search_query( MISC::regex_escape( get_search_query() ) );
+        }
+    }
+
     std::string url_tmp = m_url_board;
 
     if( m_searchmode == CORE::SEARCHMODE_TITLE ) url_tmp += TITLE_SIGN;
@@ -199,6 +210,7 @@ void ArticleViewSearch::relayout()
     if( m_search_executed ){
         if( has_query ) comment << get_search_query() << " ";
         comment << m_list_searchdata.size() << " 件<br>";
+        if( m_escaped ) comment << "ログ検索では正規表現は使用出来ません。メタ文字はエスケープされました。<br>";
     }
     else{
         comment << "<br><br>検索条件を入れて再検索ボタンを押してください。";
@@ -306,7 +318,7 @@ void ArticleViewSearch::exec_reload()
 
             const bool calc_data = true;
             CORE::get_search_manager()->search( id, m_searchmode, m_url_board,
-                                                get_search_query(), m_mode_or, get_bm(), calc_data );
+                                                MISC::regex_unescape( get_search_query() ), m_mode_or, get_bm(), calc_data );
         }
         
         m_search_executed = true;

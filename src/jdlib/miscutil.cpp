@@ -692,6 +692,143 @@ const std::string MISC::cut_str( const std::string& str, const unsigned int maxs
 }
 
 
+//
+// 正規表現のメタ文字が含まれているか
+//
+
+#define REGEX_METACHARS ".+*?^$|{}[]\\"
+
+const bool MISC::has_regex_metachar( const std::string& str )
+{
+    const char metachars[] = REGEX_METACHARS;
+    const size_t str_length = str.length();
+
+    for( size_t pos = 0; pos < str_length; ++pos ){
+
+        if( str[ pos ] == '\\' ){
+
+            int i = 0;
+            while( metachars[ i ] != '\0' ){
+
+                if( str[ pos + 1 ] == metachars[ i ]  ) break;
+                ++i;
+            }
+
+            if( metachars[ i ] == '\0' ) return true;
+
+            ++pos;
+        }
+        else{
+
+            int i = 0;
+            while( metachars[ i ] != '\0' ){
+
+                if( str[ pos ] == metachars[ i ] ) return true;
+                ++i;
+            }
+        }
+    }
+
+    return false;
+}
+
+
+//
+// 正規表現のメタ文字をエスケープ
+//
+const std::string MISC::regex_escape( const std::string& str )
+{
+    if( ! has_regex_metachar( str ) ) return str;
+
+#ifdef _DEBUG
+    std::cout << "MISC::regex_escape" << std::endl;
+#endif
+
+    std::string str_out;
+
+    const char metachars[] = REGEX_METACHARS;
+    const size_t str_length = str.length();
+
+    for( size_t pos = 0; pos < str_length; ++pos ){
+
+        if( str[ pos ] == '\\' ){
+
+            int i = 0;
+            while( metachars[ i ] != '\0' ){
+
+                if( str[ pos + 1 ] == metachars[ i ]  ) break;
+                ++i;
+            }
+
+            if( metachars[ i ] == '\0' ) str_out += '\\';
+            else{
+                str_out += str[ pos ];
+                ++pos;
+            }
+        }
+        else{
+
+            int i = 0;
+            while( metachars[ i ] != '\0' ){
+
+                if( str[ pos ] == metachars[ i ] ){
+                    str_out += '\\';
+                    break;
+                }                    
+                ++i;
+            }
+        }
+
+        str_out += str[ pos ];
+    }
+
+#ifdef _DEBUG
+    std::cout << str << " -> " << str_out << std::endl;
+#endif
+
+    return str_out;
+}
+
+
+//
+// 正規表現のメタ文字をアンエスケープ
+//
+const std::string MISC::regex_unescape( const std::string& str )
+{
+#ifdef _DEBUG
+    std::cout << "MISC::regex_unescape" << std::endl;
+#endif
+
+    std::string str_out;
+
+    const char metachars[] = REGEX_METACHARS;
+    const size_t str_length = str.length();
+
+    for( size_t pos = 0; pos < str_length; ++pos ){
+
+        if( str[ pos ] == '\\' ){
+
+            int i = 0;
+            while( metachars[ i ] != '\0' ){
+
+                if( str[ pos + 1 ] == metachars[ i ] ){
+                    ++pos;
+                    break;
+                }
+                ++i;
+            }
+        }
+
+        str_out += str[ pos ];
+    }
+
+#ifdef _DEBUG
+    std::cout << str << " -> " << str_out << std::endl;
+#endif
+
+    return str_out;
+}
+
 
 //
 // HTMLエスケープ
