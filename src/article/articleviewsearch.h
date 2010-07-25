@@ -62,8 +62,11 @@ namespace ARTICLE
 
       private:
 
-        //viewのURL更新
+        // viewのURL更新
         void update_url_query( const bool update_history );
+
+        // 正規表現メタ文字をエスケープ
+        void regex_escape();
 
         void slot_search_fin( const std::string& id );
 

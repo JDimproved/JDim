@@ -82,17 +82,6 @@ ArticleViewSearch::~ArticleViewSearch()
 //
 void ArticleViewSearch::update_url_query( const bool update_history )
 {
-    // ログ検索の場合は正規表現メタ文字をエスケープする
-    m_escaped = false;
-    if( m_searchmode == CORE::SEARCHMODE_LOG || m_searchmode == CORE::SEARCHMODE_ALLLOG ){
-
-        if( MISC::has_regex_metachar( get_search_query() ) ){
-
-            m_escaped = true;
-            set_search_query( MISC::regex_escape( get_search_query() ) );
-        }
-    }
-
     std::string url_tmp = m_url_board;
 
     if( m_searchmode == CORE::SEARCHMODE_TITLE ) url_tmp += TITLE_SIGN;
@@ -121,6 +110,23 @@ void ArticleViewSearch::update_url_query( const bool update_history )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+}
+
+
+//
+// 正規表現メタ文字をエスケープ
+//
+void ArticleViewSearch::regex_escape()
+{
+    m_escaped = false;
+    if( m_searchmode == CORE::SEARCHMODE_LOG || m_searchmode == CORE::SEARCHMODE_ALLLOG ){
+
+        if( MISC::has_regex_metachar( get_search_query() ) ){
+
+            m_escaped = true;
+            set_search_query( MISC::regex_escape( get_search_query() ) );
+        }
+    }
 }
 
 
@@ -296,6 +302,7 @@ void ArticleViewSearch::exec_reload()
     // 検索が終わると ArticleViewSearch::slot_search_fin() が呼ばれる
     if( ! get_search_query().empty() || get_bm() ){
 
+        regex_escape();
         update_url_query( true );
         const std::string id = get_url();
 
