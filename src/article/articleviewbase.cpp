@@ -3362,7 +3362,7 @@ void ArticleViewBase::slot_drawout_selection_str()
 
     if( query.empty() ) return;
 
-    CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "false" );
+    CORE::core_set_command( "open_article_keyword" ,m_url_article, MISC::regex_escape( query ), "false" );
 }
 
 
