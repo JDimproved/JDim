@@ -33,6 +33,9 @@ std::string ENVIRONMENT::get_jdhelpcmd(){ return std::string( JDHELPCMD ); }
 std::string ENVIRONMENT::get_jdlicense(){ return std::string( JDLICENSE ); }
 
 
+int window_manager = ENVIRONMENT::WM_UNKNOWN;
+
+
 //
 // CONFIGURE_ARGSを返す
 //
@@ -425,9 +428,10 @@ std::string ENVIRONMENT::get_distname()
 // WM 判定
 // TODO: 環境変数で判定できない場合の判定方法を考える
 //
-int ENVIRONMENT::get_wm()
+const int ENVIRONMENT::get_wm()
 {
-    int window_manager = WM_UNKNOWN;
+    if( window_manager != WM_UNKNOWN ) return window_manager;
+
     const std::string str_wm = MISC::getenv_limited( "DESKTOP_SESSION", 5 );
 
     if( str_wm.find( "xfce" ) != std::string::npos ) window_manager = WM_XFCE;
