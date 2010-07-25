@@ -912,6 +912,7 @@ void ImageViewBase::slot_cancel_mosaic()
     if( ! m_enable_menuslot ) return;
 
     if( ! m_img->is_cached() ) return;
+    if( ! m_img->get_mosaic() ) return;
 
     if( m_img->is_fake() ){
 
