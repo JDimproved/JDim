@@ -15,6 +15,8 @@
 #include "jdlib/jdregex.h"
 #include "jdlib/tfidf.h"
 
+#include "dbimg/imginterface.h"
+
 #include "config/globalconf.h"
 
 #include "httpcode.h"
@@ -1550,6 +1552,56 @@ void ArticleBase::delete_cache( const bool cache_only )
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
             if( mdiag.get_chkbutton().get_active() ) CONFIG::set_del_written_thread_diag( false );
+        }
+
+        // スレ内の画像キャッシュ削除
+        if( CONFIG::get_delete_img_in_thread() != 2 ){
+
+            bool delete_img_cache = false;
+
+            std::list< std::string > list_urls = get_nodetree()->get_urls();
+            std::list< std::string >::iterator it = list_urls.begin();
+            for( ; it != list_urls.end(); ++it ){
+
+                if( DBIMG::get_type_ext( *it ) != DBIMG::T_UNKNOWN && DBIMG::is_cached( *it ) ){
+                    delete_img_cache = true;
+                    break;
+                }
+            }
+
+            if( delete_img_cache ){
+
+                if( CONFIG::get_delete_img_in_thread() == 0 ){
+
+                    const std::string msg = "「" + get_subject() + "」には画像が貼られています。\n\n画像のキャッシュも削除しますか？";
+
+                    SKELETON::MsgCheckDiag mdiag( NULL, msg,
+                                                  "今後表示しない(常に削除しない)(_D)",
+                                                  Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, Gtk::RESPONSE_NO );
+
+                    if( mdiag.run() != Gtk::RESPONSE_YES ){
+
+                        if( mdiag.get_chkbutton().get_active() ) CONFIG::set_delete_img_in_thread( 2 );
+                        delete_img_cache = false;
+                    }
+                }
+
+                if( delete_img_cache ){
+
+                    it = list_urls.begin();
+                    for( ; it != list_urls.end(); ++it ){
+
+                        if( DBIMG::get_type_ext( *it ) != DBIMG::T_UNKNOWN && DBIMG::is_cached( *it ) ){
+
+#ifdef _DEBUG
+                            std::cout << "delete " << *it << std::endl;
+#endif
+                            DBIMG::delete_cache( *it );
+                        }
+                    }
+                }
+
+            }
         }
     }
 

@@ -509,6 +509,9 @@ const bool ConfigItems::load( const bool restore )
     // 書き込み履歴のあるスレを削除する時にダイアログを表示
     show_del_written_thread_diag = cf.get_option_bool( "show_del_written_thread_diag", CONF_SHOW_DEL_WRITTEN_THREAD_DIAG );
 
+    // スレを削除する時に画像キャッシュも削除する ( 0: ダイアログ表示 1: 削除 2: 削除しない )
+    delete_img_in_thread = cf.get_option_int( "delete_img_in_thread", CONF_DELETE_IMG_IN_THREAD, 0, 2 );
+
     // FIFOの作成などにエラーがあったらダイアログを表示する
     show_diag_fifo_error = cf.get_option_bool( "show_diag_fifo_error", CONF_SHOW_DIAG_FIFO_ERROR );
 
@@ -808,6 +811,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "disable_close", disable_close );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
     cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );
+    cf.update( "delete_img_in_thread", delete_img_in_thread );
     cf.update( "show_diag_fifo_error", show_diag_fifo_error );
 
 #ifdef HAVE_MIGEMO_H

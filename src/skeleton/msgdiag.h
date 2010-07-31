@@ -64,7 +64,9 @@ namespace SKELETON
                       const Glib::ustring& message,
                       const Glib::ustring& message_check,
                       Gtk::MessageType type = Gtk::MESSAGE_INFO,
-                      Gtk::ButtonsType buttons = Gtk::BUTTONS_OK );
+                      Gtk::ButtonsType buttons = Gtk::BUTTONS_OK,
+                      const int default_response = -1
+            );
 
         Gtk::CheckButton& get_chkbutton(){ return m_chkbutton; }
     };

@@ -129,6 +129,7 @@ namespace CONFIG
         CONF_DISABLE_CLOSE = 0, // Ctrl+qでウィンドウを閉じない
         CONF_USE_MACHI_OFFLAW = 0, // まちBBSの取得に offlaw.cgi を使用する
         CONF_SHOW_DEL_WRITTEN_THREAD_DIAG = 1, // 書き込み履歴のあるスレを削除する時にダイアログを表示
+        CONF_DELETE_IMG_IN_THREAD = 0, // スレを削除する時に画像キャッシュも削除する ( 0: ダイアログ表示 1: 削除 2: 削除しない )
         CONF_SHOW_DIAG_FIFO_ERROR = 1, // FIFOの作成などにエラーがあったらダイアログを表示する
     };
 

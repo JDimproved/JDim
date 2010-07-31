@@ -203,6 +203,8 @@ void AboutConfig::append_rows()
     append_row( "WEB検索用のアドレス", get_confitem()->url_search_web, CONF_URL_SEARCH_WEB );
     append_row( "デフォルトで透明あぼーん", get_confitem()->abone_transparent, CONF_ABONE_TRANSPARENT );
     append_row( "デフォルトで連鎖あぼーん", get_confitem()->abone_chain, CONF_ABONE_CHAIN );
+    append_row( "書き込み履歴のあるスレを削除する時にダイアログを表示", get_confitem()->show_del_written_thread_diag, CONF_SHOW_DEL_WRITTEN_THREAD_DIAG );
+    append_row( "スレを削除する時に画像キャッシュも削除する ( 0: ダイアログ表示 1: 削除 2: 削除しない )", get_confitem()->delete_img_in_thread, CONF_DELETE_IMG_IN_THREAD );
 
     // 書き込みウィンドウ
     append_row( "" );
@@ -254,7 +256,6 @@ void AboutConfig::append_rows()
     append_row( "スレタイ検索用のアドレス", get_confitem()->url_search_title, CONF_URL_SEARCH_TITLE );
     append_row( "スレタイ検索時にアドレスとスレタイを取得する正規表現", get_confitem()->regex_search_title, CONF_REGEX_SEARCH_TITLE );
     append_row( "Ctrl+qでウィンドウを閉じない", get_confitem()->disable_close, CONF_DISABLE_CLOSE );
-    append_row( "書き込み履歴のあるスレを削除する時にダイアログを表示", get_confitem()->show_del_written_thread_diag, CONF_SHOW_DEL_WRITTEN_THREAD_DIAG );
     append_row( "FIFOの作成などにエラーがあったらダイアログを表示する", get_confitem()->show_diag_fifo_error, CONF_SHOW_DIAG_FIFO_ERROR );
 }
 

@@ -143,7 +143,7 @@ bool MsgDiag::slot_timeout( int timer_number )
 MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
                             const Glib::ustring& message,
                             const Glib::ustring& message_check,
-                            Gtk::MessageType type, Gtk::ButtonsType buttons )
+                            Gtk::MessageType type, Gtk::ButtonsType buttons, const int default_response )
     : SKELETON::MsgDiag( parent, message, false, type, Gtk::BUTTONS_NONE, false )
     , m_chkbutton( message_check, true )
 {
@@ -167,10 +167,21 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
         add_default_button( button, Gtk::RESPONSE_OK );
     }
     else if( buttons == Gtk::BUTTONS_YES_NO ){
-        add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
 
-        button = Gtk::manage( new Gtk::Button( Gtk::Stock::YES ) );
-        add_default_button( button, Gtk::RESPONSE_YES );
+        if( default_response == Gtk::RESPONSE_NO ){
+
+            button = Gtk::manage( new Gtk::Button( Gtk::Stock::NO ) );
+            add_default_button( button, Gtk::RESPONSE_NO );
+
+            add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+        }
+        else{
+
+            add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+
+            button = Gtk::manage( new Gtk::Button( Gtk::Stock::YES ) );
+            add_default_button( button, Gtk::RESPONSE_YES );
+        }
     }
 
     show_all_children();

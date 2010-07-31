@@ -472,6 +472,10 @@ void CONFIG::set_use_machi_offlaw( const bool set ){ get_confitem()->use_machi_o
 const bool CONFIG::get_show_del_written_thread_diag(){ return get_confitem()->show_del_written_thread_diag; }
 void CONFIG::set_del_written_thread_diag( const bool set ){ get_confitem()->show_del_written_thread_diag = set; }
 
+// スレを削除する時に画像キャッシュも削除する ( 0: ダイアログ表示 1: 削除 2: 削除しない )
+const int CONFIG::get_delete_img_in_thread(){ return get_confitem()->delete_img_in_thread; }
+void CONFIG::set_delete_img_in_thread( const int set ){ get_confitem()->delete_img_in_thread = set; }
+
 // FIFOの作成などにエラーがあったらダイアログを表示する
 const bool CONFIG::get_show_diag_fifo_error(){ return get_confitem()->show_diag_fifo_error; }
 void CONFIG::set_show_diag_fifo_error( const bool set ){ get_confitem()->show_diag_fifo_error = set; }

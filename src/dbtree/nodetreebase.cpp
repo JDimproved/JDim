@@ -65,6 +65,14 @@ enum
 };
 
 
+#define IS_URL(node) \
+( node->type == NODE_LINK && node->linkinfo->link \
+&& ( std::string( node->linkinfo->link ).find( "http" ) == 0 \
+|| std::string( node->linkinfo->link ).find( "https" ) == 0  \
+|| std::string( node->linkinfo->link ).find( "ftp" ) == 0 )  \
+)
+
+
 using namespace DBTREE;
 
 
@@ -345,13 +353,7 @@ std::list< int > NodeTreeBase::get_res_with_url()
 
                 while( node ){
 
-                    if( node->type == NODE_LINK
-                        && node->linkinfo->link
-                        && (
-                            std::string( node->linkinfo->link ).find( "http" ) == 0
-                            || std::string( node->linkinfo->link ).find( "https" ) == 0
-                            || std::string( node->linkinfo->link ).find( "ftp" ) == 0
-                            )
+                    if( IS_URL( node )
                         && ( ! m_abone_transparent || ! get_abone( i ) ) //  透明あぼーんしていない　or あぼーんしていない
                         ){
 
@@ -367,6 +369,33 @@ std::list< int > NodeTreeBase::get_res_with_url()
     }
     
     return list_resnum;
+}
+
+
+//
+// 含まれる URL をリストにして取得
+//
+std::list< std::string > NodeTreeBase::get_urls()
+{
+    std::list< std::string > list_urls;
+    for( int i = 1; i <= m_id_header; ++i ){
+
+        NODE* head = res_header( i );
+        if( head ){
+
+            for( int block = 0; block < BLOCK_NUM; ++block ){
+
+                NODE* node = head->headinfo->block[ block ];
+
+                while( node ){
+                    if( IS_URL( node ) ) list_urls.push_back( node->linkinfo->link );
+                    node = node->next_node;
+                }
+            }
+        }
+    }
+    
+    return list_urls;
 }
 
 

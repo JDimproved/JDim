@@ -427,6 +427,9 @@ namespace CONFIG
         // 書き込み履歴のあるスレを削除する時にダイアログを表示
         bool show_del_written_thread_diag;
 
+        // スレを削除する時に画像キャッシュも削除する ( 0: ダイアログ表示 1: 削除 2: 削除しない )
+        int delete_img_in_thread;
+
         // FIFOの作成などにエラーがあったらダイアログを表示する
         bool show_diag_fifo_error;
 
