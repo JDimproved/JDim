@@ -21,6 +21,8 @@
 #include "misctime.h"
 #endif
 
+#include "config/globalconf.h"
+
 #include "skeleton/loadable.h"
 
 #include "httpcode.h"
@@ -96,7 +98,9 @@ const bool JDLIB::get_token( JDLIB::Loader* loader )
 #ifdef _DEBUG
     std::cout << "count = " << count << std::endl;
 #endif
-    if( count >= MAX_LOADER_SAMEHOST ) return false;
+
+    const int max_loader = MIN( MAX_LOADER_SAMEHOST, MAX( 1, CONFIG::get_connection_num() ) );
+    if( count >= max_loader ) return false;
 
 #ifdef _DEBUG
     std::cout << "got token\n";

@@ -166,6 +166,9 @@ const bool ConfigItems::load( const bool restore )
     // ipv6使用
     use_ipv6 = cf.get_option_bool( "use_ipv6", CONF_USE_IPV6 );
 
+    // 同一ホストに対する最大コネクション数( 1 または 2 )
+    connection_num = cf.get_option_int( "connection_num", CONF_CONNECTION_NUM, 1, 2 );
+
     // ブラウザ設定ダイアログのコンボボックスの番号
     browsercombo_id = cf.get_option_int( "browsercombo_id", CONF_BROWSER_NO, 0, CORE::get_browser_number() -1 );
 

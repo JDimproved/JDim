@@ -87,6 +87,9 @@ namespace CONFIG
         // ipv6使用
         bool use_ipv6;
 
+        // 同一ホストに対する最大コネクション数( 1 または 2 )
+        int connection_num;
+
         // リンクをクリックしたときに実行するコマンド
         std::string command_openurl;
 

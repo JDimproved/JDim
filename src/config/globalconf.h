@@ -171,6 +171,9 @@ namespace CONFIG
     const bool get_use_ipv6();
     void set_use_ipv6( const bool set );
 
+    // 同一ホストに対する最大コネクション数( 1 または 2 )
+    const int get_connection_num();
+
     // リンクをクリックしたときに実行するコマンド
     const std::string& get_command_openurl();
     void set_command_openurl( const std::string& command );
