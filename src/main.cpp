@@ -50,30 +50,36 @@ JDWinMain* Win_Main = NULL;
 
 
 // バックアップ復元
-void restore_bkup()
+void restore_bkup( const bool no_restore_bkup )
 {
     struct timeval tv;
     struct timezone tz;
     gettimeofday( &tv, &tz );
 
-    std::string path_main = CACHE::path_xml_listmain();
-    std::string path_favor = CACHE::path_xml_favorite();
-    std::string path_main_bkup = CACHE::path_xml_listmain_bkup();
-    std::string path_favor_bkup = CACHE::path_xml_favorite_bkup();
-    std::string path_main_old = path_main + "." + MISC::itostr( tv.tv_sec );
-    std::string path_favor_old = path_favor + "." + MISC::itostr( tv.tv_sec );
+    const std::string path_main = CACHE::path_xml_listmain();
+    const std::string path_favor = CACHE::path_xml_favorite();
+    const std::string path_main_bkup = CACHE::path_xml_listmain_bkup();
+    const std::string path_favor_bkup = CACHE::path_xml_favorite_bkup();
+    const std::string path_main_old = path_main + "." + MISC::itostr( tv.tv_sec );
+    const std::string path_favor_old = path_favor + "." + MISC::itostr( tv.tv_sec );
 
-    bool bkup_main = ( CACHE::file_exists( path_main_bkup ) == CACHE::EXIST_FILE );
-    bool bkup_favor = ( CACHE::file_exists( path_favor_bkup ) == CACHE::EXIST_FILE );
+    const bool bkup_main = ( CACHE::file_exists( path_main_bkup ) == CACHE::EXIST_FILE );
+    const bool bkup_favor = ( CACHE::file_exists( path_favor_bkup ) == CACHE::EXIST_FILE );
 
     if( bkup_main || bkup_favor ){
 
-        Gtk::MessageDialog* mdiag
-        = new Gtk::MessageDialog( "前回の起動時に正しくJDが終了されませんでした。\n\n板リストとお気に入りをバックアップファイルから復元しますか？\nいいえを押すとバックアップファイルを削除します。",
-                                  false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-        int ret = mdiag->run();
-        delete mdiag;
-        if( ret == Gtk::RESPONSE_YES ){
+        bool restore = false;
+
+        if( ! no_restore_bkup ){
+
+            Gtk::MessageDialog* mdiag
+            = new Gtk::MessageDialog( "前回の起動時に正しくJDが終了されませんでした。\n\n板リストとお気に入りをバックアップファイルから復元しますか？\nいいえを押すとバックアップファイルを削除します。",
+                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            if( mdiag->run() == Gtk::RESPONSE_YES ) restore = true;
+            delete mdiag;
+        }
+
+        if( restore ){
 
             if( bkup_main ){
                 rename( path_main.c_str(), path_main_old.c_str() );
@@ -91,7 +97,7 @@ void restore_bkup()
 
             msg += "\nに移動しました。";
 
-            mdiag = new Gtk::MessageDialog( msg );
+            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg );
             mdiag->run();
             delete mdiag;
         }
@@ -303,6 +309,8 @@ void usage( const int status )
     //"        URL open of BBS etc by Tab\n"
     "-m, --multi\n"
     "        Do not quit even if multiple sub-process\n"
+    "-n, --norestore\n"
+    "        Do not restore backup files\n"
     "-s, --skip-setup\n"
     "        Skip the setup dialog\n"
     "-l, --logfile\n"
@@ -340,12 +348,13 @@ int main( int argc, char **argv )
 
     // "現在のタブ/新規タブ"など引数によって開き方を変えたい場合は、--tab=<url>
     // など新しいオプションを追加する
-    // --help, --tab=<url>, --multi, --logfile --version
+    // --help, --tab=<url>, --multi, --norestore, --logfile --version
     const struct option options[] =
     {
         { "help", 0, 0, 'h' },
         //{ "tab", 1, 0, 't' },
         { "multi", 0, 0, 'm' },
+        { "norestore", 0, 0, 'n' },
         { "skip-setup", 0, 0, 's' },
         { "logfile", 0, 0, 'l' },
         { "version", 0, 0, 'V' },
@@ -354,12 +363,13 @@ int main( int argc, char **argv )
 
     std::string url;
     bool multi_mode = false;
+    bool no_restore_bkup = false;
     bool skip_setupdiag = false;
     bool logfile_mode = false;
 
-    // -h, -t <url>, -m, -s, -l, -V
+    // -h, -t <url>, -m, -n, -s, -l, -V
     int opt = 0;
-    while( ( opt = getopt_long( argc, argv, "ht:mslV", options, NULL ) ) != -1 )
+    while( ( opt = getopt_long( argc, argv, "ht:mnslV", options, NULL ) ) != -1 )
     {
         switch( opt )
         {
@@ -375,6 +385,10 @@ int main( int argc, char **argv )
 #ifndef _WIN32
                 multi_mode = true;
 #endif
+                break;
+
+            case 'n':
+                no_restore_bkup = true;
                 break;
 
             case 's':
@@ -404,7 +418,9 @@ int main( int argc, char **argv )
             url = argv[ optind ];
         }
         // -m 、-s でなく、URLを含まない引数だけの場合は終了
-        else if( optind > 1 && ! ( multi_mode || skip_setupdiag || logfile_mode ) ) return 0;
+        else if( optind > 1 && ! ( multi_mode || no_restore_bkup || skip_setupdiag || logfile_mode ) ){
+            usage( EXIT_FAILURE );
+        }
     }
     /*---------------------------------------------------------------*/
 
@@ -562,7 +578,7 @@ int main( int argc, char **argv )
 
     /*---------------------------------------------------------------*/
     // バックアップファイル復元
-    restore_bkup();
+    restore_bkup( no_restore_bkup );
 
     Win_Main = new JDWinMain( init, skip_setupdiag );
     if( Win_Main ){
