@@ -5,23 +5,23 @@
 
 * 概要
 
-  JDはGTK+2(gtkmm)を使用した"２ちゃんねる[http://www.2ch.net/]"型マルチスレッドBBSを閲覧するためのブラウザです。
+  JDはGTK+2(gtkmm)を使用した"２ちゃんねる [http://www.2ch.net/]"型マルチスレッドBBSを閲覧するためのブラウザです。
 
 * 著作権
 
-  "JD Project[http://sourceforge.jp/projects/jd4linux/]"
+  ©2006-2010 "JD Project [http://sourceforge.jp/projects/jd4linux/]"
 
   パッチやファイルを取り込んだ場合、それらのコピーライトは「JD Project」に統一します。
 
 * ライセンス
 
-  "GNU General Public License, version 2[http://sourceforge.jp/projects/opensource/wiki/licenses%2FGNU_General_Public_License]"
+  "GNU General Public License, version 2 [http://sourceforge.jp/projects/opensource/wiki/licenses%2FGNU_General_Public_License]"
 
   将来的にライセンスをGPL3に変更するかもしれません。GPL3以降へのライセンス変更に関してはプロジェクトリーダーに一任させて頂きます。
 
 * 連絡先
 
-  バグ報告その他は"Linux板@２ちゃんねる[http://www.2ch.net/linux/]"のJDスレ、またはJDのヘルプメニューから行くことが出来るサポート掲示板にて行ってください。
+  バグ報告その他は"Linux板@２ちゃんねる [http://www.2ch.net/linux/]"のJDスレ、またはJDのヘルプメニューから行くことが出来るサポート掲示板にて行ってください。
 
 * 動作プラットフォーム
 
@@ -60,6 +60,10 @@
     -m, --multi
 
        多重起動時のサブプロセスであっても終了しない
+
+    -n, --norestore
+
+       前回異常終了した時にバックアップファイルを復元しない
 
     -s, --skip-setup
 
