@@ -1001,7 +1001,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_notebook_right.set_show_border( false );
     m_notebook_right.get_style()->set_xthickness( 10 );
 
-    m_hpaned.get_ctrl().set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
+    if( CONFIG::get_open_sidebar_by_click() ) m_hpaned.get_ctrl().set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
     m_hpaned.get_ctrl().add_remove1( false, *m_sidebar );
 
     pack_widget( false );

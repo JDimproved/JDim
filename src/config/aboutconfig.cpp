@@ -142,17 +142,19 @@ void AboutConfig::append_rows()
     append_row( "ツリービューのレベルインデント調整量(ピクセル)", get_confitem()->tree_level_indent, CONF_TREE_LEVEL_INDENT );
     append_row( "カテゴリを開いたときにスクロールする", get_confitem()->scroll_tree, CONF_SCROLL_TREE );
 
-    // 板一覧、お気に入り
+    // 板一覧、お気に入り、履歴ビュー
     append_row( "" );
-    append_row( "■ 板一覧、お気に入り、履歴" );
+    append_row( "■ 板一覧、お気に入り、履歴ビュー" );
     append_row( "板移転時に確認ダイアログを表示する", get_confitem()->show_movediag, CONF_SHOW_MOVEDIAG );
     append_row( "板一覧内にあるリンクを全て板とみなす", get_confitem()->use_link_as_board, CONF_USE_LINK_AS_BOARD );
     append_row( "板一覧でカテゴリを常にひとつだけ開く", get_confitem()->open_one_category, CONF_OPEN_ONE_CATEGORY );
     append_row( "お気に入りでカテゴリを常にひとつだけ開く", get_confitem()->open_one_favorite, CONF_OPEN_ONE_FAVORITE );
     append_row( "右ペーンが空の時にサイドバーを最大化する", get_confitem()->expand_sidebar, CONF_EXPAND_SIDEBAR );
+    append_row( "ペーン境界をクリックしてサイドバーを開け閉めする", get_confitem()->open_sidebar_by_click, CONF_OPEN_SIDEBAR_BY_CLICK );
     append_row( "スレをお気に入りに追加した時にしおりをセットする", get_confitem()->bookmark_drop, CONF_BOOKMARK_DROP );
     append_row( "更新チェック時に板の更新もチェックする", get_confitem()->check_update_board, CONF_CHECK_UPDATE_BOARD );
     append_row( "起動時にお気に入りを自動でチェックする", get_confitem()->check_update_boot, CONF_CHECK_UPDATE_BOOT );
+    append_row( "履歴ビューの最大表示数", get_confitem()->historyview_size, CONF_HISTORYVIEW_SIZE );
 
     // スレ一覧
     append_row( "" );
@@ -165,13 +167,6 @@ void AboutConfig::append_rows()
     append_row( "お知らせスレ(924)のアイコンを表示する", get_confitem()->show_924, CONF_SHOW_924 );
     append_row( "dat落ちしたスレをNGスレタイトルから除く( 0: ダイアログ表示 1: 除く 2: 除かない )", get_confitem()->remove_old_abone_thread, CONF_REMOVE_OLD_ABONE_THREAD );
     append_row( "dat落ちしたスレを表示する", get_confitem()->show_oldarticle, CONF_SHOW_OLDARTICLE );
-
-    // 次スレ検索
-    append_row( "" );
-    append_row( "■ 次スレ検索" );
-    append_row( "類似度判定のしきい値(小さいほど判定が甘くなる、最大10)", get_confitem()->threshold_next, CONF_THRESHOLD_NEXT );
-    append_row( "移行時にお気に入りのアドレスと名前を自動更新する(0: しない, 1:する, 2:追加)", get_confitem()->replace_favorite_next, CONF_REPLACE_FAVORITE_NEXT );
-    append_row( "お気に入り自動更新の確認ダイアログを表示する", get_confitem()->show_diag_replace_favorite, CONF_SHOW_DIAG_REPLACE_FAVORITE );
 
     // スレビュー
     append_row( "" );
@@ -239,12 +234,26 @@ void AboutConfig::append_rows()
     append_row( "各ビューと枠との間の余白", get_confitem()->view_margin, CONF_VIEW_MARGIN );
     append_row( "自前でウィンドウ配置を管理する", get_confitem()->manage_winpos, CONF_MANAGE_WINPOS );
     append_row( "スレビューのスクロールバーを左に配置する", get_confitem()->left_scrbar, CONF_LEFT_SCRBAR );
+    append_row( "Ctrl+qでウィンドウを閉じない", get_confitem()->disable_close, CONF_DISABLE_CLOSE );
+
+    // 次スレ検索
+    append_row( "" );
+    append_row( "■ 次スレ検索" );
+    append_row( "類似度判定のしきい値(小さいほど判定が甘くなる、最大10)", get_confitem()->threshold_next, CONF_THRESHOLD_NEXT );
+    append_row( "移行時にお気に入りのアドレスと名前を自動更新する(0: しない, 1:する, 2:追加)", get_confitem()->replace_favorite_next, CONF_REPLACE_FAVORITE_NEXT );
+    append_row( "お気に入り自動更新の確認ダイアログを表示する", get_confitem()->show_diag_replace_favorite, CONF_SHOW_DIAG_REPLACE_FAVORITE );
+
+    // スレタイ検索
+    append_row( "" );
+    append_row( "■ スレタイ検索" );
+    append_row( "スレタイ検索用のメニュー項目名", get_confitem()->menu_search_title, CONF_MENU_SEARCH_TITLE );
+    append_row( "スレタイ検索用のアドレス", get_confitem()->url_search_title, CONF_URL_SEARCH_TITLE );
+    append_row( "スレタイ検索時にアドレスとスレタイを取得する正規表現", get_confitem()->regex_search_title, CONF_REGEX_SEARCH_TITLE );
 
     // その他
     append_row( "" );
     append_row( "■ その他" );
     append_row( "履歴メニューの表示数", get_confitem()->history_size, CONF_HISTORY_SIZE );
-    append_row( "履歴ビューの表示数", get_confitem()->historyview_size, CONF_HISTORYVIEW_SIZE );
     append_row( "マウスジェスチャを有効にする", get_confitem()->enable_mg, CONF_ENABLE_MG );
     append_row( "マウスジェスチャの判定開始半径", get_confitem()->mouse_radius, CONF_MOUSE_RADIUS );
     append_row( "起動時に開いていたスレ一覧を復元する", get_confitem()->restore_board, CONF_RESTORE_BOARD );
@@ -253,10 +262,6 @@ void AboutConfig::append_rows()
 #ifdef HAVE_MIGEMO_H
     append_row( "migomoの辞書ファイルの場所(migemo使用時のみ)", get_confitem()->migemodict_path, CONF_MIGEMO_PATH );
 #endif
-    append_row( "スレタイ検索用のメニュー項目名", get_confitem()->menu_search_title, CONF_MENU_SEARCH_TITLE );
-    append_row( "スレタイ検索用のアドレス", get_confitem()->url_search_title, CONF_URL_SEARCH_TITLE );
-    append_row( "スレタイ検索時にアドレスとスレタイを取得する正規表現", get_confitem()->regex_search_title, CONF_REGEX_SEARCH_TITLE );
-    append_row( "Ctrl+qでウィンドウを閉じない", get_confitem()->disable_close, CONF_DISABLE_CLOSE );
     append_row( "FIFOの作成などにエラーがあったらダイアログを表示する", get_confitem()->show_diag_fifo_error, CONF_SHOW_DIAG_FIFO_ERROR );
 }
 

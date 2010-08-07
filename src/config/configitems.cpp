@@ -485,6 +485,9 @@ const bool ConfigItems::load( const bool restore )
     // 3ペーン時にスレ一覧やスレビューを最大化する
     expand_rpane = cf.get_option_bool( "expand_rpane", CONF_EXPAND_RPANE );
 
+    // ペーンの境界をクリックしてサイドバーを開け閉めする
+    open_sidebar_by_click = cf.get_option_bool( "open_sidebar_by_click", CONF_OPEN_SIDEBAR_BY_CLICK );
+
     // 次スレ検索の類似度のしきい値
     threshold_next = cf.get_option_int( "threshold_next", CONF_THRESHOLD_NEXT, 1, 10 );
 
@@ -534,7 +537,7 @@ const bool ConfigItems::load( const bool restore )
         // 非resotreモードでバックアップが存在する
         if( ! restore && CACHE::file_exists( CACHE::path_conf_bkup() ) == CACHE::EXIST_FILE )
         {
-            msg = path_conf + "に異常な値があります。全設定をバックアップから復元しますか？";
+            msg = "設定ファイル (" + path_conf + ")に異常な値があります。全設定をバックアップから復元しますか？";
             mdiag = new Gtk::MessageDialog( msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             int ret = mdiag->run();
             delete mdiag;
@@ -542,7 +545,7 @@ const bool ConfigItems::load( const bool restore )
         }
         else
         {
-            msg = path_conf + "に異常な値があるため、一部をデフォルトに設定しました。";
+            msg = "設定ファイル (" + path_conf + ")に異常な値があるため、一部をデフォルトに設定しました。";
             mdiag = new Gtk::MessageDialog( msg );
             mdiag->run();
             delete mdiag;
@@ -639,6 +642,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "loader_timeout_checkupdate", loader_timeout_checkupdate );
 
     cf.update( "use_ipv6", use_ipv6 );
+    cf.update( "connection_num", connection_num );
 
     cf.update( "command_openurl", command_openurl );
     cf.update( "browsercombo_id", browsercombo_id );
@@ -804,6 +808,8 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "expand_sidebar", expand_sidebar );
     cf.update( "expand_rpane", expand_rpane );
+
+    cf.update( "open_sidebar_by_click", open_sidebar_by_click );
 
     cf.update( "threshold_next", threshold_next );
     cf.update( "replace_favorite_next", replace_favorite_next );

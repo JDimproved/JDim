@@ -403,6 +403,9 @@ namespace CONFIG
         // 3ペーン時にスレ一覧やスレビューを最大化するか
         bool expand_rpane;
 
+        // ペーンの境界をクリックしてサイドバーを開け閉めする
+        bool open_sidebar_by_click;
+
         // 次スレ検索の類似度のしきい値
         int threshold_next;
 

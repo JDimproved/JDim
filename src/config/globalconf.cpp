@@ -443,6 +443,8 @@ const bool CONFIG::get_expand_sidebar(){ return get_confitem()->expand_sidebar; 
 
 const bool CONFIG::get_expand_rpane(){ return get_confitem()->expand_rpane; }
 
+// ペーンの境界をクリックしてサイドバーを開け閉めする
+const bool CONFIG::get_open_sidebar_by_click(){ return get_confitem()->open_sidebar_by_click; }
 
 // 次スレ検索の類似度のしきい値
 const int CONFIG::get_threshold_next(){ return get_confitem()->threshold_next; }

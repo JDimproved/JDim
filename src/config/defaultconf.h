@@ -121,6 +121,7 @@ namespace CONFIG
         CONF_ABONE_CHAIN = 0,       // デフォルトで連鎖あぼーんをする
         CONF_EXPAND_SIDEBAR = 0,      // 右ペーンが空の時にサイドバーを閉じる
         CONF_EXPAND_RPANE = 1,        // 3ペーン時にスレ一覧やスレビューを最大化する
+        CONF_OPEN_SIDEBAR_BY_CLICK = 1, // ペーンの境界をクリックしてサイドバーを開け閉めする
         CONF_THRESHOLD_NEXT = 5,   // 次スレ検索の類似度のしきい値
         CONF_REPLACE_FAVORITE_NEXT = 1,  // 次スレを開いたときにお気に入りのアドレスと名前を自動更新
         CONF_SHOW_DIAG_REPLACE_FAVORITE = 1, // お気に入りの自動更新をするかダイアログを出す
