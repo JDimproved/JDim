@@ -2844,7 +2844,7 @@ bool ArticleViewBase::slot_popup_leave_notify_event( GdkEventCrossing* event )
 
 
     if( CONFIG::get_hide_popup_msec() ) m_hidepopup_counter = CONFIG::get_hide_popup_msec() / TIMER_TIMEOUT;
-    else hide_popup();
+    else slot_hide_popup();
 
     return true;
 }
