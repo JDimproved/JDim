@@ -1642,6 +1642,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
 {
     int start = 0;
     int lng_text = 0;
+    int lng_link_tmp;
     char tmplink[ LNG_LINK ];
 
     int lng_id_tmp;
@@ -1677,10 +1678,17 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
             // リンク文字作成
             memcpy( tmplink, PROTO_ID, sizeof( PROTO_ID ) );
             memcpy( tmplink + sizeof( PROTO_ID ) - 1, tmpid, lng_id_tmp + 1 );
-            
+            lng_link_tmp = strlen( tmplink );
+
+            // 後ろに●が付いていたら取り除く
+            if( tmplink[ lng_link_tmp - 3 ] == (char)0xe2 && tmplink[ lng_link_tmp - 2 ] == (char)0x97 && tmplink[ lng_link_tmp - 1 ] == (char)0x8f ){
+                lng_link_tmp -= 3;
+                tmplink[ lng_link_tmp ] = '\0';
+            }
+
             // リンク作成
             header->headinfo->block[ BLOCK_ID_NAME ] = create_node_block();
-            create_node_link( "ID:", 3 , tmplink, strlen( tmplink ), COLOR_CHAR, false );
+            create_node_link( "ID:", 3 , tmplink, lng_link_tmp, COLOR_CHAR, false );
             create_node_ntext( tmpid, lng_id_tmp, COLOR_CHAR);
 
             // 発言回数ノード作成
