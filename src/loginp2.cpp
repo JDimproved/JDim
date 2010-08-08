@@ -126,9 +126,9 @@ void Loginp2::start_login()
 
     data.contenttype = "application/x-www-form-urlencoded";
     data.str_post = "form_login_id=";
-    data.str_post += get_username();
+    data.str_post += MISC::url_encode( get_username() );
     data.str_post += "&form_login_pass=";
-    data.str_post += get_passwd();
+    data.str_post += MISC::url_encode( get_passwd() );
     data.str_post += "&ctl_regist_cookie=1";
     data.str_post += "&regist_cookie=1";
 //    data.str_post += "&submit_member=" + MISC::charset_url_encode( "ユーザログイン", "MS932" );  // 2009/12/20 仕様変更
