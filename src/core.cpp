@@ -2105,9 +2105,12 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         bool locked = FALSE;
         int num_open = 0;
+        std::string current_url;
         if( command.arg1 == "reget" ){
 
             locked = ARTICLE::get_admin()->is_locked( command.url );
+            current_url = ARTICLE::get_admin()->get_current_url();
+            if( current_url.find( command.url ) == 0 ) current_url = command.url;
 
             // タブを開く位置を取得
             const std::list<std::string> list_urls = ARTICLE::get_admin()->get_URLs();
@@ -2143,7 +2146,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         if( command.arg1 == "reget" ){
 
             const std::string str_num_open = "page" + MISC::itostr( num_open );
-            const std::string mode = ( locked ? "lock" : "" );
+            const std::string mode = std::string( "noswitch" ) + ( locked ? " lock" : "" );
             const std::string str_num_jump = command.arg2;
 
 #ifdef _DEBUG
@@ -2153,6 +2156,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 #endif
 
             core_set_command( "open_article", command.url , str_num_open, mode, str_num_jump );
+            ARTICLE::get_admin()->set_command( "switch_view", current_url );
         }
 
         return;
