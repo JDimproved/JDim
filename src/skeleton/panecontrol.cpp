@@ -200,14 +200,19 @@ void PaneControl::button_release_event( GdkEventButton* event )
     // 仕切りをドラッグした場合
     else if( m_clicked && m_drag ){
 
-        if( m_fixmode == PANE_FIXSIZE_PAGE1 ) m_pos = m_paned.get_position();
-        else if( m_fixmode == PANE_FIXSIZE_PAGE2 ) m_pos = get_size() - m_paned.get_position();
+        if( m_mode == PANE_NORMAL ){
+
+            if( m_fixmode == PANE_FIXSIZE_PAGE1 ) m_pos = m_paned.get_position();
+            else if( m_fixmode == PANE_FIXSIZE_PAGE2 ) m_pos = get_size() - m_paned.get_position();
 
 #ifdef _DEBUG
-        std::cout << "new pos = " << m_pos << std::endl;
+            std::cout << "new pos = " << m_pos << std::endl;
 #endif
 
-        set_mode( PANE_NORMAL );
+            set_mode( PANE_NORMAL );
+        }
+        else if( m_mode == PANE_MAX_PAGE1 ) m_paned.set_position( get_size() );
+        else if( m_mode == PANE_MAX_PAGE2 ) m_paned.set_position( 0 );
     }
 
     m_clicked = false;
