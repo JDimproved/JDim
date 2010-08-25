@@ -915,10 +915,19 @@ void DBTREE::article_clear_post_history( const std::string& url )
 }
 
 
+// ユーザーエージェント
+// ダウンロード用
 const std::string& DBTREE::get_agent( const std::string& url )
 {
     return DBTREE::get_board( url )->get_agent();
 }
+
+// 書き込み用
+const std::string& DBTREE::get_agent_w( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_agent_w();
+}
+
     
 const std::string DBTREE::get_proxy_host( const std::string& url )
 {

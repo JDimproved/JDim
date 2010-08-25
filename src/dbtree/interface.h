@@ -234,7 +234,8 @@ namespace DBTREE
     size_t article_lng_dat( const std::string& url );
 
     // ユーザーエージェント
-    const std::string& get_agent( const std::string& url );
+    const std::string& get_agent( const std::string& url );   // ダウンロード用
+    const std::string& get_agent_w( const std::string& url ); // 書き込み用
 
     // 読み込み用プロキシ
     const std::string get_proxy_host( const std::string& url );

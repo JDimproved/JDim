@@ -163,7 +163,7 @@ void Post::post_msg()
     // http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1
     data.contenttype = "application/x-www-form-urlencoded";
 
-    data.agent = DBTREE::get_agent( m_url );
+    data.agent = DBTREE::get_agent_w( m_url );
     data.referer = DBTREE::get_write_referer( m_url );
     data.str_post = m_msg;
     data.host_proxy = DBTREE::get_proxy_host_w( m_url );

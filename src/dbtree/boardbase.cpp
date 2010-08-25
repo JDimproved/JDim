@@ -151,9 +151,16 @@ void BoardBase::update_name( const std::string& name )
 
 
 // ユーザエージェント
+// ダウンロード用
 const std::string& BoardBase::get_agent()
 {
     return CONFIG::get_agent_for_data();
+}
+
+// 書き込み用
+const std::string& BoardBase::get_agent_w()
+{
+    return get_agent();
 }
 
 

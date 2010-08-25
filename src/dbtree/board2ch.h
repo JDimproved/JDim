@@ -23,8 +23,9 @@ namespace DBTREE
         Board2ch( const std::string& root, const std::string& path_board,const std::string& name );
         virtual ~Board2ch();
 
-        // ユーザエージェント
-        virtual const std::string& get_agent();
+        // ユーザーエージェント
+        virtual const std::string& get_agent(); // ダウンロード用
+        virtual const std::string& get_agent_w(); // 書き込み用
 
         // 読み込み用プロキシ
         virtual const std::string get_proxy_host();

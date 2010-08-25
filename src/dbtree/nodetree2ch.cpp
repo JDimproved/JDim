@@ -144,6 +144,10 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
 
     data.agent = DBTREE::get_agent( get_url() );
 
+#ifdef _DEBUG
+    std::cout << "agent = " << data.agent << std::endl;
+#endif
+
     data.host_proxy = DBTREE::get_proxy_host( get_url() );
     data.port_proxy = DBTREE::get_proxy_port( get_url() );
     data.basicauth_proxy = DBTREE::get_proxy_basicauth( get_url() );

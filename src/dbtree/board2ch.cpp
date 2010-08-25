@@ -36,7 +36,14 @@ Board2ch::~Board2ch()
 
 
 // ユーザエージェント
+// ダウンロード用
 const std::string& Board2ch::get_agent()
+{
+    return CONFIG::get_agent_for2ch();
+}
+
+// 書き込み用
+const std::string& Board2ch::get_agent_w()
 {
     if( CORE::get_loginp2()->login_now() ) return CONFIG::get_agent_for_data();
 

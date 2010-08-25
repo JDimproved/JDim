@@ -285,8 +285,9 @@ namespace DBTREE
         void update_name( const std::string& name );
         const std::string& get_subjecttxt() const { return m_subjecttxt; }
 
-        // ダウンロード、書き込み時のエージェント名
-        virtual const std::string& get_agent();
+        // ユーザーエージェント
+        virtual const std::string& get_agent(); // ダウンロード用
+        virtual const std::string& get_agent_w(); // 書き込み用
 
         // ダウンロード時のプロキシ
         virtual const std::string get_proxy_host();
