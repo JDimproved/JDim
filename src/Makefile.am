@@ -139,4 +139,4 @@ jd_windres.o: jdversion.h
 SUFFIXES = .rc .o
 
 .rc.o:
-	windres -o $@ $<;
+	$(WINDRES) -o $@ $<;

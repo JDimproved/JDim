@@ -139,6 +139,8 @@ case "${host_os}" in
    AC_CHECK_LIB(iconv,_head_libiconv_a)
    
    echo "use windows resources"
+   AC_CHECK_TOOL([WINDRES], [windres], [windres])
+   AC_SUBST(WINDRES)
    AC_DEFINE(USE_WINDRES, , "use windres")
    use_windres="yes"
    ;;
