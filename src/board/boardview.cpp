@@ -45,6 +45,12 @@ BoardView::~BoardView()
     std::cout << "BoardView::~BoardView : url = " << get_url() << std::endl;
 #endif
 
+    if( ! SESSION::is_quitting() ) save_session();
+}
+
+
+void BoardView::save_session()
+{
     DBTREE::board_save_info( get_url_board() );
 }
 

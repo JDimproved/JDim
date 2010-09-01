@@ -85,8 +85,6 @@ History_Manager::~History_Manager()
     if( m_menu_board ) delete m_menu_board;
     if( m_menu_close ) delete m_menu_close;
 
-    viewhistory2xml();
-
     if( m_view_histories.size() ){
         std::list< ViewHistory* >::iterator it = m_view_histories.begin();
         for( ; it != m_view_histories.end(); ++it ) delete *it;
@@ -171,7 +169,7 @@ void History_Manager::set_menulabel( const std::string& url_history )
 
 
 //
-// XML -> viewhistory 変換
+// XMLを読み込んで View履歴に変換
 //
 void History_Manager::xml2viewhistory()
 {
@@ -246,7 +244,7 @@ void History_Manager::xml2viewhistory()
 
 
 //
-// viewhistory->XML 変換
+// View履歴をXMLに変換して保存
 //
 void History_Manager::viewhistory2xml()
 {

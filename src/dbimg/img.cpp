@@ -213,6 +213,7 @@ const int Img::get_height_mosaic()
 const bool Img::is_cached()
 {
     if( is_loading() ) return false;
+    if( is_wait() ) return false;
     if( ! total_length() ) return false;
 
     return ( get_code() == HTTP_OK );

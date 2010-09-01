@@ -59,8 +59,6 @@ AAManager::~AAManager()
 #ifdef _DEBUG
     std::cout << "AAManager::~AAManager\n";
 #endif
-
-    save_history();
 }
 
 

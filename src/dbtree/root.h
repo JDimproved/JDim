@@ -143,6 +143,9 @@ namespace DBTREE
         // 全板の情報ファイル読み込み
         void read_boardinfo_all();
 
+        // 全スレ情報の保存
+        void save_articleinfo_all();
+
         // 全ログ検索
         void search_cache( std::vector< ArticleBase* >& list_article, const std::string& query, const bool mode_or, const bool bm, const bool& stop );
 

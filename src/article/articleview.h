@@ -38,6 +38,9 @@ namespace ARTICLE
         virtual void goto_num( const int num_to, const int num_from );
 
         // SKELETON::View の関数のオーバロード
+
+        virtual void save_session();
+
         virtual const bool is_loading();
         virtual const bool is_updated();
         virtual const bool is_check_update();

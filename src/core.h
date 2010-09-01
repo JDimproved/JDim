@@ -106,6 +106,9 @@ namespace CORE
         // 初期設定中
         bool m_init;
 
+        // セッション保存までのカウンタ
+        int m_count_savesession;
+
     public:
 
         Core( JDWinMain& win_main );
@@ -121,6 +124,9 @@ namespace CORE
 
         // SIGHUPを受け取った時の処理
         void shutdown();
+
+        // セッション保存
+        void save_session();
 
     private:
 
@@ -230,7 +236,6 @@ namespace CORE
         void slot_toggle_loginbe();
         void slot_toggle_loginp2();
         void slot_reload_list();
-        void slot_save_favorite();
         void slot_quit();
         ///
         void slot_toggle_since( const int mode );

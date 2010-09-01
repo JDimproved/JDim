@@ -509,6 +509,12 @@ BBSListViewBase::~BBSListViewBase()
 }
 
 
+void BBSListViewBase::save_session()
+{
+    save_xml( false );
+}
+
+
 SKELETON::Admin* BBSListViewBase::get_admin()
 {
     return BBSLIST::get_admin();

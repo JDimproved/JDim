@@ -112,6 +112,17 @@ Admin::~Admin()
 }
 
 
+void Admin::save_session()
+{
+    std::list< SKELETON::View* > list_view = get_list_view();
+    std::list< SKELETON::View* >::iterator it = list_view.begin();
+    for( ; it != list_view.end(); ++it ){
+        SKELETON::View* view = ( *it );
+        if( view ) view->save_session();
+    }
+}
+
+
 //
 // メニューのセットアップ
 //

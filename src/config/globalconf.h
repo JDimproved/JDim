@@ -496,6 +496,9 @@ namespace CONFIG
     const bool get_show_diag_fifo_error();
     void set_show_diag_fifo_error( const bool set );
 
+    // 指定した分ごとにセッションを自動保存 (0: 保存しない)
+    const int get_save_session();
+
 #ifdef HAVE_MIGEMO_H
     // migemo-dictの場所
     const std::string& get_migemodict_path();

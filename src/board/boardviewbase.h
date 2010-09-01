@@ -102,6 +102,9 @@ namespace BOARD
         const int get_row_size();
 
         // SKELETON::View の関数のオーバロード
+
+        virtual void save_session(){}
+
         virtual void update_url( const std::string& url_old, const std::string& url_new );
 
         virtual const int get_icon( const std::string& iconname );

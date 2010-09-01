@@ -28,8 +28,6 @@ HistoryViewBase::~HistoryViewBase()
 #ifdef _DEBUG    
     std::cout << "HistoryViewBase::~HistoryViewBase : " << get_url() << std::endl;
 #endif 
-
-    save_xml( false );
 }
 
 

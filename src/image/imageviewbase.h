@@ -80,6 +80,8 @@ namespace IMAGE
         // SKELETON::View の関数のオーバロード
         //
 
+        virtual void save_session(){}
+
         // 親ウィンドウを取得
         virtual Gtk::Window* get_parent_win();
 
@@ -149,6 +151,9 @@ namespace IMAGE
         void slot_close_left_views();
         void slot_close_right_views();
         void slot_close_error_views();
+        void slot_close_notimeout_error_views();
+        void slot_close_all_error_views();
+        void slot_close_noerror_views();
         void slot_close_all_views();
         void slot_usrcmd( int num );
     };

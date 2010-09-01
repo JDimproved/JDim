@@ -158,15 +158,6 @@ void Core::slot_reload_list()
 
 
 //
-// お気に入り保存
-//
-void Core::slot_save_favorite()
-{
-    CORE::core_set_command( "save_favorite","" );
-}
-
-
-//
 // 終了
 //
 void Core::slot_quit()

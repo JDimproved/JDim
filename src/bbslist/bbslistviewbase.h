@@ -173,6 +173,8 @@ namespace BBSLIST
         // SKELETON::View の関数のオーバロード
         //
 
+        virtual void save_session();
+
         // 親ウィンドウをセット
         virtual void set_parent_win( Gtk::Window* parent_win );
 

@@ -44,6 +44,8 @@ namespace MESSAGE
         MessageAdmin( const std::string& url );
         virtual ~MessageAdmin();
 
+        virtual void save_session(){}
+
         void show_entry_new_subject( bool show );
         std::string get_new_subject();
 

@@ -230,6 +230,9 @@ namespace DBTREE
     // キャッシュ保存
     bool article_save_dat( const std::string& url, const std::string& path_to );
 
+    // 全スレ情報の保存
+    void save_articleinfo_all();
+
     void article_update_writetime( const std::string& url );
     size_t article_lng_dat( const std::string& url );
 

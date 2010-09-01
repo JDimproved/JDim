@@ -76,12 +76,18 @@ ImageAdmin::~ImageAdmin()
     std::cout << "ImageAdmin::~ImageAdmin\n";
 #endif 
 
+    close_window();
+}
+
+
+void ImageAdmin::save_session()
+{
+    Admin::save_session();
+
     // 開いているURLを保存
     SESSION::set_image_URLs( get_URLs() );
     SESSION::set_image_locked( get_locked() );
     SESSION::set_image_page( get_current_page() );
-
-    close_window();
 }
 
 
@@ -262,12 +268,14 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
 
     else if( command.command  == "close_right_views" ) close_right_views( command.url );
 
-    else if( command.command  == "close_error_views" ) close_error_views();
+    else if( command.command  == "close_error_views" ) close_error_views( command.arg1 );
+
+    else if( command.command  == "close_noerror_views" ) close_noerror_views();
 
     else if( command.command  == "close_all_views" ) close_other_views( std::string() );
 
     // キャッシュに無いviewを削除
-    else if( command.command  == "close_nocached_views" ) close_nocached_views();
+    else if( command.command  == "close_nocached_views" ) close_error_views( "nocached" );
 
     // 画面のスクロール
     else if( command.command == "scroll_up" ){
@@ -626,35 +634,9 @@ void ImageAdmin::close_right_views( const std::string& url )
 
 
 //
-// キャッシュに無い画像を閉じる
-//
-void ImageAdmin::close_nocached_views()
-{
-#ifdef _DEBUG
-    std::cout << "ImageAdmin::close_nocached_views\n";
-#endif
-
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view ){
-            std::string url = view->get_url();
-            if( ! DBIMG::is_cached( url )
-                && ! DBIMG::is_loading ( url ) && ! DBIMG::is_wait ( url ) 
-                && DBIMG::get_code( url ) == HTTP_INIT ){
-#ifdef _DEBUG
-                std::cout << "close " << url << std::endl;
-#endif
-                set_command( "close_view", url );
-            }
-        }
-    }
-}
-
-//
 // エラーになっている画像を閉じる
 //
-void ImageAdmin::close_error_views()
+void ImageAdmin::close_error_views( const std::string mode )
 {
 #ifdef _DEBUG
     std::cout << "ImageAdmin::close_error_views\n";
@@ -662,12 +644,51 @@ void ImageAdmin::close_error_views()
 
     Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
     for(; it !=  m_iconbox.children().end(); ++it ){
+
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
         if( view ){
-            std::string url = view->get_url();
 
-            //ロード中の画像は閉じない
-            if( ! DBIMG::is_loading ( url ) && DBIMG::get_code( url ) == HTTP_NOT_FOUND ) set_command( "close_view", url );
+            const std::string url = view->get_url();
+
+            if( DBIMG::is_cached ( url ) ) continue;
+            if( mode != "all" && DBIMG::is_loading ( url ) ) continue;
+            if( DBIMG::is_wait ( url ) ) continue;
+
+            const int code = DBIMG::get_code( url );
+            if( ( code == HTTP_FORBIDDEN || code == HTTP_NOT_FOUND )  // 404,403 は無条件で閉じる
+                || ( mode == "notimeout" && code != HTTP_TIMEOUT && code != HTTP_TEMP_UNAV ) // timeout,503以外
+                || ( mode == "nocached"  && code == HTTP_INIT ) // キャッシュに無い(削除済み)の画像
+                || mode == "all"  // 読み込み中も含めて閉じる
+                ){
+                set_command( "close_view", url );
+                if( mode == "all" ) DBIMG::stop_load( url );
+            }
+        }
+    }
+}
+
+
+//
+// エラーでない画像を閉じる
+//
+void ImageAdmin::close_noerror_views()
+{
+#ifdef _DEBUG
+    std::cout << "ImageAdmin::close_noerror_views\n";
+#endif
+
+    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
+    for(; it !=  m_iconbox.children().end(); ++it ){
+
+        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+        if( view ){
+
+            const std::string url = view->get_url();
+
+            if( ! DBIMG::is_cached ( url ) ) continue;
+
+            const int code = DBIMG::get_code( url );
+            if( code == HTTP_OK ) set_command( "close_view", url );
         }
     }
 }

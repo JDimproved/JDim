@@ -49,8 +49,15 @@ Completion_Manager::Completion_Manager()
 Completion_Manager::~Completion_Manager()
 {
     for( int i = 0; i < COMP_SIZE; ++i ){
-        save_info( i );
         delete m_lists[ i ];
+    }
+}
+
+
+void Completion_Manager::save_session()
+{
+    for( int i = 0; i < COMP_SIZE; ++i ){
+        save_info( i );
     }
 }
 

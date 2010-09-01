@@ -92,7 +92,8 @@ Core::Core( JDWinMain& win_main )
       m_vpaned_message( SKELETON::PANE_FIXSIZE_PAGE2 ),
       m_toolbar( NULL ),
       m_enable_menuslot( true ),
-      m_init( false )
+      m_init( false ),
+      m_count_savesession( 0 )
 {
     // ディスパッチマネージャ作成
     CORE::get_dispmanager();
@@ -150,9 +151,11 @@ Core::~Core()
 
     SESSION::set_quitting( true );
 
+    // ローダの起動待ちキューにあるスレッドを実行しない
+    // アプリ終了時にこの関数を呼び出さないとキューに登録されたスレッドが起動してしまうので注意
     JDLIB::disable_pop_loader_queue();
 
-    // 削除リストに登録されているスレを削除
+    // 削除リストに登録されているスレを削除 ( 実況したスレなど )
     const std::vector< std::string >& dellist =  SESSION::get_delete_list();
     if( dellist.size() ){
         std::vector< std::string >::const_iterator it = dellist.begin();
@@ -169,16 +172,7 @@ Core::~Core()
         }
     }
 
-    // 設定保存
-    // セッション情報は JDWinMain::~JDWinMain() で保存する
-    CONFIG::save_conf();
-    CONFIG::delete_confitem();
-
-    // PANEの敷居の位置保存
-    SESSION::set_hpane_main_pos( m_hpaned.get_ctrl().get_position() );
-    SESSION::set_vpane_main_pos( m_vpaned_r.get_ctrl().get_position() );
-    SESSION::set_hpane_main_r_pos( m_hpaned_r.get_ctrl().get_position() );
-    SESSION::set_vpane_main_mes_pos( m_vpaned_message.get_ctrl().get_position() );
+    save_session();
 
     // ログ検索マネージャ削除
     CORE::delete_search_manager();
@@ -201,8 +195,7 @@ Core::~Core()
     // 更新チェックマネージャ削除
     CORE::delete_checkupdate_manager();
 
-    // マウス、キーコンフィグ保存
-    CONTROL::save_conf();
+    // マウス、キーコンフィグ削除
     CONTROL::delete_conf();
 
     // ビューを削除する前にswitch_pageをdisconnectしておかないとエラーが出る
@@ -216,8 +209,6 @@ Core::~Core()
     MESSAGE::delete_admin();
 
     // 履歴マネージャ削除
-    // 内部で SESSION::get_*_URLs() を使用しているので
-    // ARTICLEやBOARDなどの管理クラスを削除した後で削除すること
     HISTORY::delete_history_manager();
 
     // cssマネージャ削除
@@ -247,6 +238,47 @@ Core::~Core()
 
     // ツールバー削除
     if( m_toolbar ) delete m_toolbar;
+
+    // 設定削除
+    CONFIG::delete_confitem();
+}
+
+
+//
+// セッション保存
+//
+void Core::save_session()
+{
+    // 設定保存
+    CONFIG::save_conf();
+
+    // マウス、キーコンフィグ保存
+    CONTROL::save_conf();
+
+    // PANEの敷居の位置保存
+    SESSION::set_hpane_main_pos( m_hpaned.get_ctrl().get_position() );
+    SESSION::set_vpane_main_pos( m_vpaned_r.get_ctrl().get_position() );
+    SESSION::set_hpane_main_r_pos( m_hpaned_r.get_ctrl().get_position() );
+    SESSION::set_vpane_main_mes_pos( m_vpaned_message.get_ctrl().get_position() );
+
+    CORE::get_completion_manager()->save_session();
+    CORE::get_aamanager()->save_history();
+
+    BBSLIST::get_admin()->save_session();
+    BOARD::get_admin()->save_session();
+    ARTICLE::get_admin()->save_session();
+    IMAGE::get_admin()->save_session();
+    MESSAGE::get_admin()->save_session();
+
+    // 内部で SESSION::get_*_URLs() を使用しているので
+    // ARTICLEやBOARDなどの管理クラスのセッションを保存してから呼び出すこと
+    HISTORY::get_history_manager()->viewhistory2xml();
+
+    // 全スレ情報保存
+    // 板情報は BOARD::get_admin()->save_session() で保存される
+    DBTREE::save_articleinfo_all();
+
+    SESSION::save_session();
 }
 
 
@@ -299,7 +331,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                         sigc::mem_fun( *this, &Core::slot_toggle_loginp2 ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
-    m_action_group->add( Gtk::Action::create( "SaveFavorite", "お気に入り上書き保存(_S)"), sigc::mem_fun( *this, &Core::slot_save_favorite ) );
+    m_action_group->add( Gtk::Action::create( "SaveSession", "セッション保存(_S)"), sigc::mem_fun( *this, &Core::save_session ) );
 
     if( CONFIG::get_disable_close() ) m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ), sigc::mem_fun(*this, &Core::slot_quit ) );
     else m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ),
@@ -681,7 +713,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menuitem action='LoginBe'/>"
         "<menuitem action='LoginP2'/>"
         "<separator/>"
-        "<menuitem action='SaveFavorite'/>"
+        "<menuitem action='SaveSession'/>"
         "<separator/>"
         "<menuitem action='ReloadList'/>"
         "<separator/>"
@@ -1566,19 +1598,19 @@ void Core::slot_clear_close()
 
 void Core::slot_clear_search()
 {
-    get_completion_manager()->clear( CORE::COMP_SEARCH_ARTICLE );
-    get_completion_manager()->clear( CORE::COMP_SEARCH_BBSLIST );
-    get_completion_manager()->clear( CORE::COMP_SEARCH_BOARD );
+    CORE::get_completion_manager()->clear( CORE::COMP_SEARCH_ARTICLE );
+    CORE::get_completion_manager()->clear( CORE::COMP_SEARCH_BBSLIST );
+    CORE::get_completion_manager()->clear( CORE::COMP_SEARCH_BOARD );
 }
 
 void Core::slot_clear_name()
 {
-    get_completion_manager()->clear( CORE::COMP_NAME );
+    CORE::get_completion_manager()->clear( CORE::COMP_NAME );
 }
 
 void Core::slot_clear_mail()
 {
-    get_completion_manager()->clear( CORE::COMP_MAIL );
+    CORE::get_completion_manager()->clear( CORE::COMP_MAIL );
 }
 
 
@@ -2480,13 +2512,6 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
-    // お気に入り保存
-    else if( command.command  == "save_favorite" ){
-
-        BBSLIST::get_admin()->set_command( "save_xml", URL_FAVORITEVIEW );
-        return;
-    }
-
     // サイドバーのアイコン表示を更新 ( スレ )
     else if( command.command  == "toggle_sidebar_articleicon" ){
 
@@ -3230,6 +3255,17 @@ bool Core::slot_timeout( int timer_number )
     m_hpaned_r.get_ctrl().clock_in();
     m_vpaned_message.get_ctrl().clock_in();
    
+    // セッション保存
+    if( CONFIG::get_save_session() ){
+
+        ++m_count_savesession;
+        if( m_count_savesession > ( CONFIG::get_save_session() * 60 * 1000 / TIMER_TIMEOUT )){
+
+            m_count_savesession = 0;
+            save_session();
+        }
+    }
+
     return true;
 }
 

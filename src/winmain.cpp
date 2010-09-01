@@ -83,7 +83,13 @@ JDWinMain::~JDWinMain()
               << " w = " << get_width_win() << " h = " << get_height_win() << " max = " << is_maximized_win() << std::endl;
 #endif
 
-    save_session();
+    if( m_core ){
+
+        delete m_core;
+        m_core = NULL;
+
+        JDLIB::check_loader_alive();
+    }
 
     // migemo のクローズ
 #ifdef HAVE_MIGEMO_H
@@ -113,15 +119,7 @@ void JDWinMain::save_session()
     std::cout << "JDWinMain::save_session\n";
 #endif
 
-    if( m_core ){
-
-        delete m_core;
-        m_core = NULL;
-
-        SESSION::save_session();
-
-        JDLIB::check_loader_alive();
-    }
+    if( m_core ) m_core->save_session();
 }
 
 

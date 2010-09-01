@@ -17,6 +17,9 @@ namespace BOARD
         virtual ~BoardView();
 
         // SKELETON::View の関数のオーバロード
+
+        virtual void save_session();
+
         virtual const bool is_updated();
         virtual const bool is_check_update();
 

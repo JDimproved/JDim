@@ -66,6 +66,12 @@ BoardAdmin::~BoardAdmin()
 #endif
 
     if( m_toolbar ) delete m_toolbar;
+}
+
+
+void BoardAdmin::save_session()
+{
+    Admin::save_session();
 
     // 開いているURLを保存
     SESSION::set_board_URLs( get_URLs() );

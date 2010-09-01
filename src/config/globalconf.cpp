@@ -485,6 +485,10 @@ void CONFIG::set_delete_img_in_thread( const int set ){ get_confitem()->delete_i
 const bool CONFIG::get_show_diag_fifo_error(){ return get_confitem()->show_diag_fifo_error; }
 void CONFIG::set_show_diag_fifo_error( const bool set ){ get_confitem()->show_diag_fifo_error = set; }
 
+// 指定した分ごとにセッションを自動保存 (0: 保存しない)
+const int CONFIG::get_save_session(){ return get_confitem()->save_session; }
+
+
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }
 #endif

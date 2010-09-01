@@ -32,6 +32,8 @@ namespace BBSLIST
         BBSListAdmin( const std::string& url );
         ~BBSListAdmin();
 
+        virtual void save_session();
+        
         // 履歴を DATA_INFO_LIST 型で取得
         void get_history( const std::string& url, CORE::DATA_INFO_LIST& info_list );
 

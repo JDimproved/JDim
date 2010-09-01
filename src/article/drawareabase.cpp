@@ -521,7 +521,7 @@ int DrawAreaBase::max_number()
 //
 // from_num　から to_num までレスをappendして再レイアウト
 //
-void DrawAreaBase::append_res( int from_num, int to_num )
+void DrawAreaBase::append_res( const int from_num, const int to_num )
 {
     assert( m_article );
     assert( m_layout_tree );
@@ -574,7 +574,7 @@ void DrawAreaBase::append_res( int from_num, int to_num )
 //
 // リストで指定したレスをappendして再レイアウト
 //
-void DrawAreaBase::append_res( std::list< int >& list_resnum )
+void DrawAreaBase::append_res( const std::list< int >& list_resnum )
 {
     std::list< bool > list_joint;
     append_res( list_resnum, list_joint );
@@ -587,7 +587,7 @@ void DrawAreaBase::append_res( std::list< int >& list_resnum )
 // 
 // list_joint で連結指定したレスはヘッダを取り除いて前のレスに連結する
 //
-void DrawAreaBase::append_res( std::list< int >& list_resnum, std::list< bool >& list_joint )
+void DrawAreaBase::append_res( const std::list< int >& list_resnum, const std::list< bool >& list_joint )
 {
     assert( m_article );
     assert( m_layout_tree );
@@ -598,10 +598,10 @@ void DrawAreaBase::append_res( std::list< int >& list_resnum, std::list< bool >&
     std::cout << "DrawAreaBase::append_res" << std::endl;
 #endif
 
-    bool use_joint = ( list_joint.size() == list_resnum.size() );
+    const bool use_joint = ( list_joint.size() == list_resnum.size() );
     
-    std::list< int >::iterator it = list_resnum.begin();
-    std::list< bool >::iterator it_joint = list_joint.begin();
+    std::list< int >::const_iterator it = list_resnum.begin();
+    std::list< bool >::const_iterator it_joint = list_joint.begin();
     for( ; it != list_resnum.end(); ++it ){
 
         bool joint = false;

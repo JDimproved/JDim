@@ -510,6 +510,9 @@ namespace DBTREE
         // 情報保存
         virtual void save_info();
         
+        // 配下の全articlebaseクラスの情報保存
+        void save_articleinfo_all();
+
         // キャッシュ内のログ検索
         // ArticleBase のアドレスをリスト(list_article)にセットして返す
         // query が空の時はキャッシュにあるログを全てヒットさせる

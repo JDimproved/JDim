@@ -83,7 +83,7 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_bookmarked_thread( false ),
       m_cached( cached ),
       m_read_info( 0 ),
-      m_save_info( 0 ),
+      m_save_info( false ),
       m_924( false )
 {
 #ifdef _DEBUG
@@ -984,10 +984,11 @@ void ArticleBase::unlock_impl()
 #endif
 
     m_nodetree->terminate_load(); // deleteする前にスレッド停止
-    m_nodetree.clear();
 
-    // スレ情報保存
+    // スレ情報保存 	 
     save_info( false );
+
+    m_nodetree.clear();
 }
 
 
@@ -1925,7 +1926,6 @@ void ArticleBase::read_info()
         m_status |= STATUS_OLD;
         saveinfo = true;
     }
-
     if( saveinfo ) save_info( true );
 
 #ifdef _DEBUG
@@ -1980,15 +1980,20 @@ void ArticleBase::read_info()
 // infoファイル書き込み
 //
 // キャッシュがある( is_cached() == true )　かつ
-// m_save_info = true の時に保存。save_info()を呼ぶ前にm_save_infoをセットすること。
+// m_save_info = true かつ nodetree が作られている時に保存。
+// save_info()を呼ぶ前にm_save_infoをセットすること。
 //
 // キャッシュがあって、force = true の時は強制書き込み
-//
 void ArticleBase::save_info( const bool force )
 {
     if( empty() ) return;
     if( ! is_cached() ) return;
-    if( ! force && ! m_save_info ) return;
+    if( ! force ){
+
+        if( ! m_save_info ) return;
+        if( ! m_nodetree ) return;
+    }
+
     m_save_info = false;
 
     if( m_path_article_ext_info.empty() ) return;

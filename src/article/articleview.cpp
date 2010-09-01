@@ -73,13 +73,8 @@ ArticleViewMain::~ArticleViewMain()
 #ifdef _DEBUG    
     std::cout << "ArticleViewMain::~ArticleViewMain : " << get_url() << " url_article = " << url_article() << std::endl;
 #endif
-    const int seen = drawarea()->get_seen_current();
-        
-#ifdef _DEBUG    
-    std::cout << "set seen to " << seen << std::endl;
-#endif
 
-    if( seen >= 1 ) get_article()->set_number_seen( seen );
+    save_session();
 
     // 閉じたタブ履歴更新
     HISTORY::append_history( URL_HISTCLOSEVIEW,
@@ -89,6 +84,18 @@ ArticleViewMain::~ArticleViewMain()
     CORE::core_set_command( "close_message" ,url_article() );
 
     if( get_live() ) live_stop();
+}
+
+
+void ArticleViewMain::save_session()
+{
+    const int seen = drawarea()->get_seen_current();
+        
+#ifdef _DEBUG    
+    std::cout << "set seen to " << seen << std::endl;
+#endif
+
+    if( seen >= 1 ) get_article()->set_number_seen( seen );
 }
 
 

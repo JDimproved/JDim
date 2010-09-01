@@ -1613,16 +1613,16 @@ void ArticleViewBase::slot_setup_abone_all()
 //
 // 荒らし報告用のURLリストをHTML形式で取得
 //
-std::string ArticleViewBase::get_html_url4report( std::list< int >& list_resnum )
+const std::string ArticleViewBase::get_html_url4report( const std::list< int >& list_resnum )
 {
     std::string html;
 
-    std::list < int >::iterator it = list_resnum.begin();
+    std::list < int >::const_iterator it = list_resnum.begin();
     for( ; it != list_resnum.end(); ++it ){
 
-        int num = (*it);
-        std::string time_str = m_article->get_time_str( num );
-        std::string id_str = m_article->get_id_name( num );
+        const int num = (*it);
+        const std::string time_str = m_article->get_time_str( num );
+        const std::string id_str = m_article->get_id_name( num );
 
         html += url_for_copy() + MISC::itostr( num );
         if( ! time_str.empty() ) html += " " + MISC::remove_str_regex( time_str, "\\([^\\)]+\\)" ); // 曜日を取り除く
@@ -1712,7 +1712,7 @@ void ArticleViewBase::show_name( const std::string& name, bool show_option )
 // 
 // show_option = true の時は URL 表示などのオプションが表示される
 //
-void ArticleViewBase::show_id( const std::string& id_name, bool show_option )
+void ArticleViewBase::show_id( const std::string& id_name, const bool show_option )
 {
     assert( m_article );
 
@@ -1720,11 +1720,29 @@ void ArticleViewBase::show_id( const std::string& id_name, bool show_option )
     std::cout << "ArticleViewBase::show_id " << id_name << std::endl;
 #endif
     
-    std::list< int > list_resnum = m_article->get_res_id_name( id_name );       
+    const std::list< int > list_resnum = m_article->get_res_id_name( id_name );       
+
+    const std::string raw_id = id_name.substr( strlen( PROTO_ID ) ); 
 
     std::ostringstream comment;
-    comment << "ID:" << id_name.substr( strlen( PROTO_ID ) ) << "  " << list_resnum.size() << " 件<br>";
+    comment << "ID:" << raw_id << "  " << list_resnum.size() << " 件<br>";
     comment << "総参照数:" << m_article->get_res_reference( list_resnum ).size() << " 件";
+
+    // 末尾判定
+    if( raw_id.length() == 9 ){
+
+        char c = raw_id.c_str()[ 8 ];
+        switch( c ){
+
+            case 'O': comment << "<br>末尾:" << c << " 携帯";  break;
+            case 'o': comment << "<br>末尾:" << c << " 携帯(WILLCOM)";  break;
+            case 'Q': comment << "<br>末尾:" << c << " ibisBrowserDX";  break;
+            case 'I':
+            case 'i': comment << "<br>末尾:" << c << " iPhone";  break;
+            case 'P': comment << "<br>末尾:" << c << " p2";  break;
+            case '0': comment << "<br>末尾:" << c << " PC";  break;
+        }
+    }
 
     if( show_option && ! list_resnum.empty() ){
         if( !m_show_url4report ) comment << "<br><br><a href=\"" << PROTO_URL4REPORT << "\">抽出したレスのURLをリスト表示</a>";
@@ -1938,7 +1956,7 @@ void ArticleViewBase::append_dat( const std::string& dat, int num )
 //
 // リストで指定したレスの表示
 //
-void ArticleViewBase::append_res( std::list< int >& list_resnum )
+void ArticleViewBase::append_res( const std::list< int >& list_resnum )
 {
     assert( m_drawarea );
     m_drawarea->append_res( list_resnum );
@@ -1951,7 +1969,7 @@ void ArticleViewBase::append_res( std::list< int >& list_resnum )
 //
 // list_joint で連結指定したレスはヘッダを取り除いて前のレスに連結する
 //
-void ArticleViewBase::append_res( std::list< int >& list_resnum, std::list< bool >& list_joint )
+void ArticleViewBase::append_res( const std::list< int >& list_resnum, const std::list< bool >& list_joint )
 {
     assert( m_drawarea );
     m_drawarea->append_res( list_resnum, list_joint );

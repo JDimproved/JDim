@@ -44,10 +44,11 @@ namespace CORE
         // num 番目の履歴をIDに変換
         const int history2id( const int num );
 
+        void save_history();
+
       private:
         void load_label();
         void load_history();
-        void save_history();
     };
 
 

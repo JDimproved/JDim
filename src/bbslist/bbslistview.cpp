@@ -39,8 +39,6 @@ BBSListViewMain::~BBSListViewMain()
 #ifdef _DEBUG
     std::cout << "BBSListViewMain::~BBSListViewMain : " << get_url() << std::endl;
 #endif
-
-    save_xml( false );
 }
 
 

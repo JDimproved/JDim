@@ -2176,6 +2176,16 @@ void BoardBase::save_board_info()
 }
 
 
+//
+// 配下の全articlebaseクラスの情報保存
+//
+void BoardBase::save_articleinfo_all()
+{
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ) ( *it )->save_info( false );
+}
+
+
 // 更新可能状態にしてお気に入りやスレ一覧のタブのアイコンに更新マークを表示
 // update == true の時に表示。falseなら戻す
 void BoardBase::show_updateicon( const bool update )

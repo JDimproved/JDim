@@ -76,6 +76,8 @@ namespace MESSAGE
         // SKELETON::View の関数のオーバロード
         //
 
+        virtual void save_session(){}
+
         // 親ウィンドウを取得
         virtual Gtk::Window* get_parent_win();
 

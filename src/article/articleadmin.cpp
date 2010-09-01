@@ -82,10 +82,17 @@ ArticleAdmin::~ArticleAdmin()
     if( m_toolbarsimple ) delete m_toolbarsimple;
     if( m_search_toolbar ) delete m_search_toolbar;
 
+    ARTICLE::init_font();
+}
+
+
+void ArticleAdmin::save_session()
+{
+    Admin::save_session();
+
     SESSION::set_article_URLs( get_URLs() );
     SESSION::set_article_locked( get_locked() );
     SESSION::set_article_page( get_current_page() );
-    ARTICLE::init_font();
 }
 
 

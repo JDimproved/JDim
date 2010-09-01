@@ -1062,6 +1062,12 @@ bool DBTREE::article_save_dat( const std::string& url, const std::string& path_t
 }
 
 
+// 全スレ情報の保存
+void DBTREE::save_articleinfo_all()
+{
+    DBTREE::get_root()->save_articleinfo_all();
+}
+
 
 void DBTREE::article_update_writetime( const std::string& url )
 {

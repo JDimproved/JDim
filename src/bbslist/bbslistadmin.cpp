@@ -79,11 +79,16 @@ BBSListAdmin::~BBSListAdmin()
 
     if( m_toolbar ) delete m_toolbar;
     BBSLIST::delete_undo_buffer_favorite();
+}
+
+
+void BBSListAdmin::save_session()
+{
+    Admin::save_session();
 
     // bbslistのページの位置保存
     SESSION::set_bbslist_page( get_current_page() );
 }
-
 
 
 // 前回開いていたURLを復元

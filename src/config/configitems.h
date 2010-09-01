@@ -439,6 +439,9 @@ namespace CONFIG
         // FIFOの作成などにエラーがあったらダイアログを表示する
         bool show_diag_fifo_error;
 
+        // 指定した分ごとにセッションを自動保存 (0: 保存しない)
+        int save_session;
+        
 #ifdef HAVE_MIGEMO_H
         // migemo-dictの場所
         std::string migemodict_path;

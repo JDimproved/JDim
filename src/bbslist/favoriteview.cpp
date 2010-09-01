@@ -38,8 +38,6 @@ FavoriteListView::~FavoriteListView()
 #ifdef _DEBUG    
     std::cout << "FavoriteList::~FavoriteList : " << get_url() << std::endl;
 #endif 
-
-    save_xml( false );
 }
 
 

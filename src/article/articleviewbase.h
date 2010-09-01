@@ -99,6 +99,9 @@ namespace ARTICLE
         const std::string& get_label_board(){ return m_label_board; }
 
         // SKELETON::View の関数のオーバロード
+
+        virtual void save_session(){}        
+
         virtual const std::string url_for_copy(); // コピーやURLバー表示用のURL
         virtual const int width_client();
         virtual const int height_client();
@@ -184,7 +187,7 @@ namespace ARTICLE
 
         // ID で抽出して表示
         // show_option = true の時は URL 表示などのオプションが表示される
-        void show_id( const std::string& id_name, bool show_option );
+        void show_id( const std::string& id_name, const bool show_option );
 
         // ブックマークを抽出して表示
         void show_bm();
@@ -217,10 +220,10 @@ namespace ARTICLE
         virtual void append_dat( const std::string& dat, int num );
 
         // リストで指定したレスを表示
-        void append_res( std::list< int >& list_resnum );
+        void append_res( const std::list< int >& list_resnum );
 
         // リストで指定したレスを表示(連結情報付き)
-        void append_res( std::list< int >& list_resnum, std::list< bool >& list_joint );
+        void append_res( const std::list< int >& list_resnum, const std::list< bool >& list_joint );
 
         // 画像プロパティ表示
         void slot_preferences_image();
@@ -248,7 +251,7 @@ namespace ARTICLE
         void exec_delete();
 
         // 荒らし報告用のURLリストをHTML形式で取得
-        std::string get_html_url4report( std::list< int >& list_resnum );
+        const std::string get_html_url4report( const std::list< int >& list_resnum );
         
         // drawarea の signal を受け取る slots
         virtual bool slot_button_press( std::string url, int res_number, GdkEventButton* event );

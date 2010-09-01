@@ -122,7 +122,7 @@ void sig_handler( int sig )
 #ifdef _DEBUG
         std::cout << "sig_handler sig = " << sig << std::endl;
 #endif
-        if( Win_Main ) Win_Main->shutdown();
+        if( Win_Main ) Win_Main->save_session();
     }
 
     exit(0);

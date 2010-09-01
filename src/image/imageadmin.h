@@ -38,6 +38,8 @@ namespace IMAGE
         ImageAdmin( const std::string& url );
         ~ImageAdmin();
 
+        virtual void save_session();
+
         Gtk::HBox& tab() { return m_tab; }
         virtual Gtk::Widget* get_widget() { return &m_view; }
 
@@ -94,8 +96,8 @@ namespace IMAGE
         void close_other_views( const std::string& url );
         void close_left_views( const std::string& url );
         void close_right_views( const std::string& url );
-        void close_error_views();
-        void close_nocached_views();
+        void close_error_views( const std::string mode );
+        void close_noerror_views();
         void reorder( const std::string& url_from, const std::string& url_to );
         void focus_out_all();
         void switch_img( const std::string& url );

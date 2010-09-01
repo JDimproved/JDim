@@ -61,6 +61,9 @@ namespace HISTORY
 
       public:
 
+        // View履歴をXMLに変換して保存
+        void viewhistory2xml();
+
         // 作成 / 削除
         void create_viewhistory( const std::string& url );
         void delete_viewhistory( const std::string& url );
@@ -91,9 +94,8 @@ namespace HISTORY
 
       private:
 
-        // XML <-> View履歴変換
+        // XMLを読み込んで View履歴に変換
         void xml2viewhistory();
-        void viewhistory2xml();
 
         // View履歴取得
         ViewHistory* get_viewhistory( const std::string& url );

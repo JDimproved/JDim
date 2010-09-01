@@ -54,6 +54,8 @@ namespace SKELETON
         Admin( const std::string& url );
         virtual ~Admin();
 
+        virtual void save_session();
+
         void setup_menu();
 
         virtual bool empty();

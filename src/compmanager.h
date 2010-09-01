@@ -41,6 +41,8 @@ namespace CORE
 
         void clear( const int mode );
 
+        void save_session();
+
       private:
 
         // 情報ファイル読み書き

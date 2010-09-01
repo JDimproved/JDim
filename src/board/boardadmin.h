@@ -24,6 +24,8 @@ namespace BOARD
         BoardAdmin( const std::string& url );
         ~BoardAdmin();
 
+        virtual void save_session();
+
       protected:
 
         virtual COMMAND_ARGS get_open_list_args( const std::string& url, const COMMAND_ARGS& command_list );
