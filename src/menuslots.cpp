@@ -1038,7 +1038,7 @@ void Core::slot_search_cache_board()
 //
 void Core::slot_search_cache()
 {
-    CORE::core_set_command( "open_article_searchlog", "allboard", "", "noexec" );
+    CORE::core_set_command( "open_article_searchlog", URL_SEARCH_ALLBOARD, "", "noexec" );
 }
 
 

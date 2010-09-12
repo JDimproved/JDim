@@ -41,22 +41,20 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
 
 
 //
-// URL 変更
+// url_new に URL を変更
 //
-// update_history == true の時は 履歴も更新
-//
-void View::set_url( const std::string& url_new, const bool update_history )
+void View::set_url( const std::string& url_new )
 {
-    if( update_history && ! m_url.empty() && ! url_new.empty() && m_url != url_new ){
+    if( ! m_url.empty() && ! url_new.empty() && m_url != url_new ){
 
         // View履歴のURLを更新
         HISTORY::get_history_manager()->replace_url_viewhistory( m_url, url_new );
 
         // ツールバーのURLを更新
         get_admin()->set_command( "update_toolbar_url", m_url, url_new );
-    }
 
-    m_url = url_new;
+        m_url = url_new;
+    }
 }
 
 
@@ -76,7 +74,7 @@ void View::update_url( const std::string& url_old, const std::string& url_new )
     std::cout << m_url << " -> " << url << std::endl;
 #endif
 
-    set_url( url, true );
+    set_url( url );
 }
 
 

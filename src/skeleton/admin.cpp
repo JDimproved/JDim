@@ -518,6 +518,9 @@ void Admin::exec_command()
     else if( command.command == "switch_view" ){
         switch_view( command.url );
     }
+    else if( command.command == "reload_view" ){
+        reload_view( command.url );
+    }
     else if( command.command == "tab_left" ){
         tab_left( false );
     }
@@ -1038,7 +1041,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
         if( current_view ){
 
-            std::string url_current = current_view->get_url();
+            const std::string url_current = current_view->get_url();
             delete current_view;
 
             if( m_use_viewhistory ) HISTORY::get_history_manager()->append_viewhistory( url_current, view->get_url() );    
@@ -1115,6 +1118,15 @@ void Admin::switch_view( const std::string& url )
     }
 }
 
+
+//
+// 指定したURLのビューを再読み込み
+//
+void Admin::reload_view( const std::string& url )
+{
+    SKELETON::View* view = get_view( url );
+    if( view ) view->reload();
+}
 
 
 //
@@ -2385,6 +2397,15 @@ void Admin::unlock( const int page )
     }
 }
 
+// urlで指定されるタブが存在するか
+const bool Admin::exist_tab( const std::string& url )
+{
+    SKELETON::View* view = get_view( url );
+    if( view ) return true;
+
+    return false;
+}
+
 // プロパティ表示
 void Admin::show_preference()
 {
@@ -2437,7 +2458,7 @@ void Admin::forward_clicked_viewhistory( const int count )
 //
 // 戻る、進む
 //
-bool Admin::back_forward_viewhistory( const std::string& url, const bool back, const int count )
+const bool Admin::back_forward_viewhistory( const std::string& url, const bool back, const int count )
 {
     if( ! m_use_viewhistory ) return false;
 
@@ -2494,9 +2515,7 @@ bool Admin::back_forward_viewhistory( const std::string& url, const bool back, c
                 return false;
             }
 
-            // 検索ビューなど、back/forwardしたときに view のurlが変わることがあるので
-            // view履歴内のURLを置き換える必要がある。そこで Admin::open_view() 中の
-            // append_viewhistory() を実行しないでここで View履歴の現在位置を変更する
+            // Admin::open_view() 中の append_viewhistory() を実行しないでここで View履歴の現在位置を変更する
             // Admin::Open_view()も参照すること
             const bool use_history = get_use_viewhistory();
             set_use_viewhistory( false );
@@ -2506,20 +2525,10 @@ bool Admin::back_forward_viewhistory( const std::string& url, const bool back, c
                 else HISTORY::get_history_manager()->forward_viewhistory( url, count, true );
             }
 
-            COMMAND_ARGS command_arg = url_to_openarg( historyitem->url, false, false );
+            const COMMAND_ARGS command_arg = url_to_openarg( historyitem->url, false, false );
             open_view( command_arg );
 
-            // URLが変わっていたらview履歴内のURLも更新
-            if( use_history ){
-
-                SKELETON::View* current_view = get_current_view();
-                if( current_view && current_view->get_url() != historyitem->url ){
-                    HISTORY::get_history_manager()->replace_current_url_viewhistory( historyitem->url, current_view->get_url() );
-                    redraw_toolbar();
-                }
-
-                set_use_viewhistory( true );
-            }
+            set_use_viewhistory( use_history );
 
             return true;
         }

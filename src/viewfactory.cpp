@@ -68,13 +68,13 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
             return new ARTICLE::ArticleViewMain( url );
 
         case VIEW_ARTICLERES:
-            return new ARTICLE::ArticleViewRes( url,  view_args.arg1, ( view_args.arg2 == "true" ), view_args.arg3 );
+            return new ARTICLE::ArticleViewRes( url );
 
         case VIEW_ARTICLENAME:
-            return new ARTICLE::ArticleViewName( url, view_args.arg1 );
+            return new ARTICLE::ArticleViewName( url );
 
         case VIEW_ARTICLEID:
-            return new ARTICLE::ArticleViewID( url, view_args.arg1 );
+            return new ARTICLE::ArticleViewID( url );
 
         case VIEW_ARTICLEBM:
             return new ARTICLE::ArticleViewBM( url );
@@ -86,30 +86,28 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
             return new ARTICLE::ArticleViewURL( url );
 
         case VIEW_ARTICLEREFER:
-            return new ARTICLE::ArticleViewRefer( url, view_args.arg1 );
+            return new ARTICLE::ArticleViewRefer( url );
 
         case VIEW_ARTICLEDRAWOUT:
-            return new ARTICLE::ArticleViewDrawout( url, view_args.arg1, ( view_args.arg2 == "OR" ) );
+            return new ARTICLE::ArticleViewDrawout( url );
+
+        case VIEW_ARTICLEPOSTLOG:
+            return new ARTICLE::ArticleViewPostlog( url );
+
+        case VIEW_ARTICLESEARCHLOG:
+            return new ARTICLE::ArticleViewSearch( url, ( view_args.arg1 == "exec" ) );
+
+        case VIEW_ARTICLESEARCHALLLOG:
+            return new ARTICLE::ArticleViewSearch( url, ( view_args.arg1 == "exec" ) );
+
+        case VIEW_ARTICLESEARCHTITLE:
+            return new ARTICLE::ArticleViewSearch( url, ( view_args.arg1 == "exec" ) );
 
         case VIEW_ARTICLEPREVIEW:
             return new ARTICLE::ArticleViewPreview( url );
 
         case VIEW_ARTICLEINFO:
             return new ARTICLE::ArticleViewInfo( url );
-
-        case VIEW_ARTICLESEARCHLOG:
-            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, CORE::SEARCHMODE_LOG
-                                                   , ( view_args.arg2 == "exec" ), ( view_args.arg3 == "OR" ), ( view_args.arg4 == "BM" ) );
-
-        case VIEW_ARTICLESEARCHALLLOG:
-            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, CORE::SEARCHMODE_ALLLOG,
-                                                   ( view_args.arg2 == "exec" ), (view_args.arg3 == "OR" ), ( view_args.arg4 == "BM" ) );
-
-        case VIEW_ARTICLESEARCHTITLE:
-            return new ARTICLE::ArticleViewSearch( url, view_args.arg1, CORE::SEARCHMODE_TITLE, ( view_args.arg2 == "exec" ), (view_args.arg3 == "OR" ), false );
-
-        case VIEW_ARTICLEPOSTLOG:
-            return new ARTICLE::ArticleViewPostlog( url, atoi( view_args.arg1.c_str() ) );
 
             /////////////////
 

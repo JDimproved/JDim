@@ -274,4 +274,7 @@ enum
 
 #define URL_BOARD_LOCAL "file:///local"
 
+#define URL_SEARCH_ALLBOARD "allboard"
+#define URL_SEARCH_TITLE "title"
+
 #endif

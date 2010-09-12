@@ -17,8 +17,7 @@ namespace ARTICLE
     {
         std::string m_url_title;
         std::string m_url_board;
-        std::string m_time_str;
-        int m_searchmode; // 上のenumで定義した検索モード
+        int m_searchmode; // searchmanager.hで定義した検索モード
         bool m_mode_or;
         bool m_enable_bm;
         bool m_bm;
@@ -26,20 +25,21 @@ namespace ARTICLE
         bool m_loading;
         bool m_search_executed;
         bool m_escaped;
+        bool m_cancel_reload;
 
       public:
 
         // exec_search == true ならviewを開いてすぐに検索開始
-        // mode_or == true なら OR 検索する
-        ArticleViewSearch( const std::string& url_board, // searchmode == SEARCHMODE_LOG の場合はboardのurl
-                           const std::string& query,
-                           const int searchmode,  // searchmanager.hで定義した検索モード
-                           const bool exec_search, const bool mode_or, const bool bm );
+        ArticleViewSearch( const std::string& url, const bool exec_search );
         ~ArticleViewSearch();
 
         // SKELETON::View の関数のオーバロード
 
         virtual const std::string url_for_copy(); // コピーやURLバー表示用のURL
+        virtual const bool set_command( const std::string& command,
+                                        const std::string& arg1 = std::string(),
+                                        const std::string& arg2 = std::string()
+            );
 
         virtual const bool is_loading(){ return m_loading; }
 
@@ -62,8 +62,14 @@ namespace ARTICLE
 
       private:
 
-        // viewのURL更新
-        void update_url_query( const bool update_history );
+        // url から query などを取得してツールバーの状態をセット
+        void set_toolbar_from_url();
+
+        // queryなどを変更した時の新しいURL
+        const std::string get_new_url();
+
+        // ラベルやタブを更新
+        void update_label();
 
         // 正規表現メタ文字をエスケープ
         void regex_escape();

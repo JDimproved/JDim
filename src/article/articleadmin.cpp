@@ -22,8 +22,6 @@
 
 #include "icons/iconmanager.h"
 
-#include "history/historymanager.h"
-
 #include "global.h"
 #include "type.h"
 #include "viewfactory.h"
@@ -140,7 +138,7 @@ void ArticleAdmin::restore( const bool only_locked )
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
 
         // 板がDBに登録されていない場合は表示しない
-        if( command_arg.url != "allboard" && command_arg.arg4 != "SEARCHTITLE" && command_arg.arg4 != "POSTLOG"
+        if( command_arg.url != URL_SEARCH_ALLBOARD && command_arg.arg4 != "SEARCHTITLE" && command_arg.arg4 != "POSTLOG"
             && DBTREE::url_boardbase( *it_url ).empty() ){
             MISC::ERRMSG(  *it_url + " is not registered" );
             continue;
@@ -148,26 +146,14 @@ void ArticleAdmin::restore( const bool only_locked )
 
         if( command_arg.arg4 == "MAIN" && DBTREE::url_dat( *it_url ).empty() ) continue;
 
-        // 検索ビューなど、復元したときに view のurlが変わることがあるので
-        // view履歴内のURLを置き換える必要がある。そこで Admin::open_view() 中の
-        // create_viewhistory()やappend_viewhistory()を実行しないで、ここで View履歴内のURLを更新する
+        // Admin::open_view() 中の create_viewhistory()やappend_viewhistory()を実行しない
         // Admin::Open_view()も参照すること
         const bool use_history = get_use_viewhistory();
         set_use_viewhistory( false );
 
         open_view( command_arg );
 
-        if( use_history ){
-
-            // URLが変わっていたらview履歴内のURLを更新
-            SKELETON::View* current_view = get_current_view();
-            if( current_view && current_view->get_url() != *it_url ){
-                HISTORY::get_history_manager()->replace_current_url_viewhistory( *it_url, current_view->get_url() );
-                redraw_toolbar();
-            }
-
-            set_use_viewhistory( true );
-        }
+        set_use_viewhistory( use_history );
     }
 
     SESSION::set_online( online );
@@ -195,11 +181,11 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
     // レス抽出
     if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + RES_SIGN + "(.*)"
-                    + CENTER_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
+                    + CENTER_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
         command_arg.arg4 = "RES";
@@ -208,11 +194,11 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // 名前抽出
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + NAME_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + NAME_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
         command_arg.arg4 = "NAME";
@@ -220,11 +206,11 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // ID抽出
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + ID_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + ID_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
         command_arg.arg4 = "ID";
@@ -236,7 +222,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
         command_arg.arg4 = "BM";
@@ -247,7 +233,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
         command_arg.arg4 = "POST";
@@ -258,18 +244,18 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
         command_arg.arg4 = "URL";
     }
 
     // 参照
-    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + REFER_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + REFER_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
         command_arg.arg4 = "REF";
@@ -278,11 +264,11 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 
     // キーワード
     else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + KEYWORD_SIGN + "(.*)"
-                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
+                         + ORMODE_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
         if( regex.str( 3 ) == "1" ) command_arg.arg4 = "KEYWORD_OR";
@@ -290,16 +276,28 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
         command_arg.arg5 = regex.str( 2 );
     }
 
-    // キャッシュのログ検索
-    else if( regex.exec( std::string( "(.*)" ) + BOARD_SIGN + KEYWORD_SIGN + "(.*)"
-                         + ORMODE_SIGN + "(.*)" + BOOKMK_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
+    // 書き込みログ表示
+    else if( regex.exec( std::string( "(.*)" ) + POSTLOG_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar ) ){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
-        if( command_arg.url == "allboard" ) command_arg.arg4 = "SEARCHALLLOG";
+        command_arg.arg4 = "POSTLOG";
+        command_arg.arg5 = regex.str( 2 ); // ログ番号
+    }
+
+    // キャッシュのログ検索
+    else if( regex.exec( std::string( "(.*)" ) + BOARD_SIGN + KEYWORD_SIGN + "(.*)" + ORMODE_SIGN + "(.*)" + BOOKMK_SIGN + "(.*)",
+                         url, offset, icase, newline, usemigemo, wchar )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
+        if( lock ) command_arg.arg3 = "lock";
+
+        if( command_arg.url == URL_SEARCH_ALLBOARD ) command_arg.arg4 = "SEARCHALLLOG";
         else command_arg.arg4 = "SEARCHLOG";
         command_arg.arg5 = regex.str( 2 ); // query
         command_arg.arg6 = "noexec"; // Viewを開いた直後に検索を実行しない
@@ -308,29 +306,17 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     }
 
     // スレタイ検索
-    else if( regex.exec( std::string( "(.*)" ) + TITLE_SIGN + KEYWORD_SIGN + "(.*)"
-                         + ORMODE_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar )){
+    else if( regex.exec( std::string( "(.*)" ) + TITLE_SIGN + KEYWORD_SIGN + "(.*)",
+                         url, offset, icase, newline, usemigemo, wchar )){
 
         command_arg.url = regex.str( 1 );
         if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
         if( lock ) command_arg.arg3 = "lock";
 
         command_arg.arg4 = "SEARCHTITLE";
         command_arg.arg5 = regex.str( 2 ); // query
         command_arg.arg6 = "noexec";  // Viewを開いた直後に検索を実行しない
-    }
-
-    // 書き込みログ表示
-    else if( regex.exec( std::string( "(.*)" ) + POSTLOG_SIGN + "(.*)" + TIME_SIGN, url, offset, icase, newline, usemigemo, wchar ) ){
-
-        command_arg.url = regex.str( 1 );
-        if( tab ) command_arg.arg1 = "true"; // タブで開く
-        command_arg.arg2 = "true"; // 既に開いているかチェック無し
-        if( lock ) command_arg.arg3 = "lock";
-
-        command_arg.arg4 = "POSTLOG";
-        command_arg.arg5 = regex.str( 2 ); // ログ番号
     }
 
     // 通常のスレ
@@ -359,6 +345,57 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
     return command_arg;
 }
 
+
+const std::string ArticleAdmin::command_to_url( const COMMAND_ARGS& command )
+{
+    std::string url;
+
+    if( command.arg4 == "RES" ){
+
+        url = command.url + ARTICLE_SIGN + RES_SIGN + command.arg5 + CENTER_SIGN;
+        if( ! command.arg6.empty() ) url += command.arg6;
+        else url += "0";
+
+        return url;
+    }
+
+    if( command.arg4 == "NAME" ) return command.url + ARTICLE_SIGN + NAME_SIGN + command.arg5;
+
+    if( command.arg4 == "ID" ) return command.url + ARTICLE_SIGN + ID_SIGN + command.arg5;
+
+    if( command.arg4 == "BM" ) return command.url + ARTICLE_SIGN + BOOKMK_SIGN;
+
+    if( command.arg4 == "POST" ) return command.url + ARTICLE_SIGN + POST_SIGN;
+
+    if( command.arg4 == "URL" ) return command.url + ARTICLE_SIGN + URL_SIGN;
+
+    if( command.arg4 == "REF" ) return command.url + ARTICLE_SIGN + REFER_SIGN + command.arg5;
+
+    if( command.arg4 == "KEYWORD" ) return command.url + ARTICLE_SIGN + KEYWORD_SIGN + command.arg5 + ORMODE_SIGN + "0";
+
+    if( command.arg4 == "KEYWORD_OR" ) return command.url + ARTICLE_SIGN + KEYWORD_SIGN + command.arg5 + ORMODE_SIGN + "1";
+
+    if( command.arg4 == "POSTLOG" ) return command.url + POSTLOG_SIGN + command.arg5;
+
+    if( command.arg4 == "SEARCHALLLOG" || command.arg4 == "SEARCHLOG" ){
+
+        url = command.url + BOARD_SIGN + KEYWORD_SIGN + command.arg5;
+
+        url += ORMODE_SIGN;
+        if( command.arg7 == "OR" ) url += "1";
+        else url += "0";
+
+        url += BOOKMK_SIGN;
+        if( command.arg8 == "BM" ) url += "1";
+        else url += "0";
+
+        return url;
+    }
+
+    if( command.arg4 == "SEARCHTITLE" ) return command.url + TITLE_SIGN + KEYWORD_SIGN + command.arg5;
+
+    return command.url;
+}
 
 
 void ArticleAdmin::switch_admin()
@@ -426,46 +463,25 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
 
     int type = CORE::VIEW_NONE; 
     CORE::VIEWFACTORY_ARGS view_args;
-    std::string str_jump;
 
     // メインビュー
     if( command.arg4 == "MAIN" ){
         type = CORE::VIEW_ARTICLEVIEW;
     }
 
-    // キーワード抽出ビュー(AND)
-    else if( command.arg4 == "KEYWORD" ){
-        type = CORE::VIEW_ARTICLEDRAWOUT;
-        view_args.arg1 = command.arg5;  // query
-        view_args.arg2 = "AND";
-    }
-
-    // キーワード抽出ビュー(OR)
-    else if( command.arg4 == "KEYWORD_OR" ){
-        type = CORE::VIEW_ARTICLEDRAWOUT;
-        view_args.arg1 = command.arg5; // query
-        view_args.arg2 = "OR";
-    }
-
     // レス抽出ビュー
     else if( command.arg4 == "RES" ){
         type = CORE::VIEW_ARTICLERES;
-        view_args.arg1 = command.arg5; // レス番号 ( from-to )
-        view_args.arg2 = "false";
-        view_args.arg3 = command.arg6; // ジャンプ番号
-        str_jump = command.arg6;
     }
 
     // 名前抽出ビュー
     else if( command.arg4 == "NAME" ){
         type = CORE::VIEW_ARTICLENAME;
-        view_args.arg1 = command.arg5; // 名前
     }
 
     // ID 抽出ビュー
     else if( command.arg4 == "ID" ){
         type = CORE::VIEW_ARTICLEID;
-        view_args.arg1 = command.arg5; // ID
     }
 
     // ブックマーク抽出ビュー
@@ -486,52 +502,40 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
     // 参照抽出ビュー
     else if( command.arg4 == "REF" ){
         type = CORE::VIEW_ARTICLEREFER;
-        view_args.arg1 = command.arg5; // 対象レス番号
     }
 
-    // ログ検索
-    else if( command.arg4 == "SEARCHLOG" ){
-        type = CORE::VIEW_ARTICLESEARCHLOG;
-        view_args.arg1 = command.arg5;  // query
-        view_args.arg2 = command.arg6;  // exec
-        view_args.arg3 = command.arg7;  // OR
-        view_args.arg4 = command.arg8;  // BM
-    }
-
-    // 全キャッシュログ検索
-    else if( command.arg4 == "SEARCHALLLOG" ){
-        type = CORE::VIEW_ARTICLESEARCHALLLOG;
-        view_args.arg1 = command.arg5;  // query
-        view_args.arg2 = command.arg6;  // exec
-        view_args.arg3 = command.arg7;  // OR
-        view_args.arg4 = command.arg8;  // BM
-    }
-
-    // スレタイ検索
-    else if( command.arg4 == "SEARCHTITLE" ){
-        type = CORE::VIEW_ARTICLESEARCHTITLE;
-        view_args.arg1 = command.arg5;  // query
-        view_args.arg2 = command.arg6;  // exec
+    // キーワード抽出ビュー
+    else if( command.arg4 == "KEYWORD" || command.arg4 == "KEYWORD_OR" ){
+        type = CORE::VIEW_ARTICLEDRAWOUT;
     }
 
     // 書き込みログ表示
     else if( command.arg4 == "POSTLOG" ){
         type = CORE::VIEW_ARTICLEPOSTLOG;
-        view_args.arg1 = command.arg5;  // ログ番号
+    }
+
+    // ログ検索
+    else if( command.arg4 == "SEARCHLOG" ){
+        type = CORE::VIEW_ARTICLESEARCHLOG;
+        view_args.arg1 = command.arg6;  // exec
+    }
+
+    // 全キャッシュログ検索
+    else if( command.arg4 == "SEARCHALLLOG" ){
+        type = CORE::VIEW_ARTICLESEARCHALLLOG;
+        view_args.arg1 = command.arg6;  // exec
+    }
+
+    // スレタイ検索
+    else if( command.arg4 == "SEARCHTITLE" ){
+        type = CORE::VIEW_ARTICLESEARCHTITLE;
+        view_args.arg1 = command.arg6;  // exec
     }
 
     else return NULL;
 
-    SKELETON::View* view = CORE::ViewFactory( type, command.url, view_args );
+    SKELETON::View* view = CORE::ViewFactory( type,  command_to_url( command ), view_args );
     assert( view != NULL );
-
-    // ジャンプ
-    if( ! str_jump.empty() ){
-#ifdef _DEBUG    
-        std::cout << "goto " << str_jump << std::endl;
-#endif
-        set_command( "goto_num", view->get_url(), str_jump );
-    }
 
     return view;
 }
@@ -725,6 +729,12 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
             // ツールバー表示更新
             get_notebook()->set_current_toolbar( view->get_id_toolbar(), view );
         }
+    }
+
+    // 検索ビューなどで、URL とツールバーの状態を一致させる
+    else if( command.command == "set_toolbar_from_url" ){
+        SKELETON::View* view = get_view( command.url );
+        if( view ) view->set_command( "set_toolbar_from_url" );
     }
 }
 

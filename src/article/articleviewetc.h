@@ -16,15 +16,20 @@ namespace ARTICLE
     {
         std::string m_str_num;
         std::string m_str_center;
-        bool m_show_title;
 
       public:
-        ArticleViewRes( const std::string& url, const std::string& num, bool show_title, const std::string& center );
+        ArticleViewRes( const std::string& url );
         ~ArticleViewRes();
 
         // SKELETON::View の関数のオーバロード
-        virtual void show_view();
         virtual void relayout();
+
+        virtual void show_view();
+        virtual void reload();
+
+      private:
+
+        virtual void exec_reload();
     };
 
 
@@ -37,12 +42,18 @@ namespace ARTICLE
         std::string m_str_name;
 
       public:
-        ArticleViewName( const std::string& url, const std::string& name );
+        ArticleViewName( const std::string& url );
         ~ArticleViewName();
 
         // SKELETON::View の関数のオーバロード
-        virtual void show_view();
         virtual void relayout();
+
+        virtual void show_view();
+        virtual void reload();
+
+      private:
+
+        virtual void exec_reload();
     };
 
 
@@ -55,12 +66,18 @@ namespace ARTICLE
         std::string m_str_id;
 
       public:
-        ArticleViewID( const std::string& url, const std::string& id );
+        ArticleViewID( const std::string& url );
         ~ArticleViewID();
 
         // SKELETON::View の関数のオーバロード
-        virtual void show_view();
         virtual void relayout();
+
+        virtual void show_view();
+        virtual void reload();
+
+      private:
+
+        virtual void exec_reload();
     };
 
 
@@ -77,8 +94,14 @@ namespace ARTICLE
         ~ArticleViewBM();
 
         // SKELETON::View の関数のオーバロード
-        virtual void show_view();
         virtual void relayout();
+
+        virtual void show_view();
+        virtual void reload();
+
+      private:
+
+        virtual void exec_reload();
     };
 
 
@@ -96,8 +119,14 @@ namespace ARTICLE
         ~ArticleViewPost();
 
         // SKELETON::View の関数のオーバロード
-        virtual void show_view();
         virtual void relayout();
+
+        virtual void show_view();
+        virtual void reload();
+
+      private:
+
+        virtual void exec_reload();
     };
 
 
@@ -113,8 +142,14 @@ namespace ARTICLE
         ~ArticleViewURL();
 
         // SKELETON::View の関数のオーバロード
-        virtual void show_view();
         virtual void relayout();
+
+        virtual void show_view();
+        virtual void reload();
+
+      private:
+
+        virtual void exec_reload();
     };
 
 
@@ -127,12 +162,18 @@ namespace ARTICLE
         std::string m_str_num;
 
       public:
-        ArticleViewRefer( const std::string& url, const std::string& num );
+        ArticleViewRefer( const std::string& url );
         ~ArticleViewRefer();
 
         // SKELETON::View の関数のオーバロード
-        virtual void show_view();
         virtual void relayout();
+
+        virtual void show_view();
+        virtual void reload();
+
+      private:
+
+        virtual void exec_reload();
     };
 
 
@@ -143,15 +184,22 @@ namespace ARTICLE
     // キーワード抽出ビュー
     class ArticleViewDrawout : public ArticleViewBase
     {
+        std::string m_query;
         bool m_mode_or;
 
       public:
-        ArticleViewDrawout( const std::string& url, const std::string& query, bool mode_or );
+        ArticleViewDrawout( const std::string& url );
         ~ArticleViewDrawout();
 
         // SKELETON::View の関数のオーバロード
-        virtual void show_view();
         virtual void relayout();
+
+        virtual void show_view();
+        virtual void reload();
+
+      private:
+
+        virtual void exec_reload();
     };
 
     /////////////////////////////////////////////////////////////////////////
@@ -163,17 +211,18 @@ namespace ARTICLE
         int m_num;
 
       public:
-        ArticleViewPostlog( const std::string& url, const int num );
+        ArticleViewPostlog( const std::string& url );
         ~ArticleViewPostlog();
 
         // SKELETON::View の関数のオーバロード
-        virtual void show_view();
         virtual void relayout();
-        virtual void reload();
         virtual void stop(){} // キャンセル
 
         // 検索
         virtual void operate_search( const std::string& controlid );
+
+        virtual void show_view();
+        virtual void reload();
 
       private:
         virtual void exec_reload();

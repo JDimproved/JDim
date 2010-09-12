@@ -6,26 +6,17 @@
 #include "articleviewpopup.h"
 #include "drawareapopup.h"
 
-#include "jdlib/misctime.h"
-
 #include "global.h"
 
 #include "config/globalconf.h"
-
-#include <sys/time.h>
 
 using namespace ARTICLE;
 
 
 // show_abone == true ならあぼーんされたスレも表示
 ArticleViewPopup::ArticleViewPopup( const std::string& url, bool show_abone )
-    : ArticleViewBase( url ), m_show_abone( show_abone )
+    : ArticleViewBase( url, url ), m_show_abone( show_abone )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-    set_url( url_article() + MISC::timevaltostr( tv ) + "_POPUP_", false );
-
 #ifdef _DEBUG
     std::cout << "ArticleViewPopup::ArticleViewPupup " << get_url() << " show_abone " << m_show_abone << std::endl;
 #endif

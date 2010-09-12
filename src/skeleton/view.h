@@ -86,7 +86,8 @@ namespace SKELETON
 
       protected:
 
-        void set_url( const std::string& url_new, const bool update_history );
+        // url_new に URL を変更
+        void set_url( const std::string& url_new );
 
         // Viewが所属するAdminクラス
         virtual Admin* get_admin() = 0;

@@ -10,45 +10,37 @@
 #include "dbtree/interface.h"
 #include "dbtree/articlebase.h"
 
-#include "jdlib/miscutil.h"
-#include "jdlib/misctime.h"
-
 #include "control/controlid.h"
 
 #include "global.h"
 
-#include <sys/time.h>
 #include <cstring>
 
 using namespace ARTICLE;
 
 
 // レス抽出ビュー
-ArticleViewRes::ArticleViewRes( const std::string& url,
-                                const std::string& num, bool show_title, const std::string& center  )
-    : ArticleViewBase( url ),
-      m_str_num( num ),
-      m_str_center( center ),
-      m_show_title( show_title )
+ArticleViewRes::ArticleViewRes( const std::string& url )
+    : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
+    const int pos0 = url.find( RES_SIGN ) + strlen( RES_SIGN );
+    const int pos1 = url.find( CENTER_SIGN );
 
-    // viewのURL更新
-    std::string url_tmp = url_article() + ARTICLE_SIGN + RES_SIGN + m_str_num + CENTER_SIGN;
-    if( !m_str_center.empty() ) url_tmp += m_str_center;
-    else url_tmp += "0";
-    url_tmp += TIME_SIGN + MISC::timevaltostr( tv );
-
-    const bool update_history = false;
-    set_url( url_tmp, update_history );
+    m_str_num = url.substr( pos0, pos1 - pos0  );
+    m_str_center = url.substr( pos1 + strlen( CENTER_SIGN ) );
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewRes::ArticleViewRes " << get_url() << std::endl;
+    std::cout << "ArticleViewRes::ArticleViewRes " << get_url()
+              << " num = " << m_str_num << " center = " << m_str_center << std::endl;
 #endif
 
     setup_view();
+
+    // ラベル更新
+    set_label( " [ RES:" + m_str_num + " ] - " + DBTREE::article_subject( url_article() ) );
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -63,22 +55,6 @@ ArticleViewRes::~ArticleViewRes()
 
 
 //
-// 抽出表示
-//
-void ArticleViewRes::show_view()
-{
-    show_res( m_str_num, m_show_title );
-
-    // ラベル更新
-    set_label( " [ RES:" + m_str_num + " ] - " + DBTREE::article_subject( url_article() ) );
-
-    // タブ更新
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
-}
-
-
-
-//
 // 画面を消してレイアウトやりなおし & 再描画
 //
 void ArticleViewRes::relayout()
@@ -88,9 +64,40 @@ void ArticleViewRes::relayout()
 #endif
 
     drawarea()->clear_screen();
-    show_res( m_str_num, m_show_title );
+    show_res( m_str_num, false );
     drawarea()->redraw_view();
+
+    ARTICLE::get_admin()->set_command( "goto_num", get_url(), m_str_center );
 }
+
+
+//
+// 抽出表示
+//
+void ArticleViewRes::show_view()
+{
+    relayout();
+}
+
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewRes::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+// virtual
+void ArticleViewRes::exec_reload()
+{
+    relayout();
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,23 +105,23 @@ void ArticleViewRes::relayout()
 // 名前抽出ビュー
 
 
-ArticleViewName::ArticleViewName( const std::string& url, const std::string& name )
-    : ArticleViewBase( url ),
-      m_str_name( name )
+ArticleViewName::ArticleViewName( const std::string& url )
+    : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-
-    // viewのURL更新
-    const bool update_history = false;
-    set_url( url_article() + ARTICLE_SIGN + NAME_SIGN + m_str_name + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
+    m_str_name = url.substr( url.find( NAME_SIGN ) + strlen( NAME_SIGN ) );
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewName::ArticleViewName " << get_url() << std::endl;
+    std::cout << "ArticleViewName::ArticleViewName " << get_url()
+              << " name = " << m_str_name << std::endl;
 #endif
 
     setup_view();
+
+    // ラベル更新
+    set_label( " [ 名前：" + m_str_name + " ] - " + DBTREE::article_subject( url_article() ));
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -126,22 +133,6 @@ ArticleViewName::~ArticleViewName()
     std::cout << "ArticleViewName::~ArticleViewName : " << get_url() << std::endl;
 #endif
 }
-
-
-//
-// 抽出表示
-//
-void ArticleViewName::show_view()
-{
-    show_name( m_str_name, true );
-
-    // ラベル更新
-    set_label( " [ 名前：" + m_str_name + " ] - " + DBTREE::article_subject( url_article() ));
-
-    // タブ更新
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
-}
-
 
 
 //
@@ -159,29 +150,56 @@ void ArticleViewName::relayout()
 }
 
 
+//
+// 抽出表示
+//
+void ArticleViewName::show_view()
+{
+    relayout();
+}
+
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewName::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+// virtual
+void ArticleViewName::exec_reload()
+{
+    relayout();
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // ID抽出ビュー
 
 
-ArticleViewID::ArticleViewID( const std::string& url, const std::string& id )
-    : ArticleViewBase( url ),
-      m_str_id( id )
+ArticleViewID::ArticleViewID( const std::string& url )
+    : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-
-    // viewのURL更新
-    const bool update_history = false;
-    set_url( url_article() + ARTICLE_SIGN + ID_SIGN + m_str_id + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
+    m_str_id = url.substr( url.find( ID_SIGN ) + strlen( ID_SIGN ) );
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewID::ArticleViewID " << get_url() << std::endl;
+    std::cout << "ArticleViewID::ArticleViewID " << get_url() << " ID = " << m_str_id << std::endl;
 #endif
 
     setup_view();
+
+    // ラベル更新
+    set_label( " [ ID:" + m_str_id.substr( strlen( PROTO_ID ) ) + " ] - " + DBTREE::article_subject( url_article() ));
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -193,22 +211,6 @@ ArticleViewID::~ArticleViewID()
     std::cout << "ArticleViewID::~ArticleViewID : " << get_url() << std::endl;
 #endif
 }
-
-
-//
-// 抽出表示
-//
-void ArticleViewID::show_view()
-{
-    show_id( m_str_id, true );
-
-    // ラベル更新
-    set_label( " [ ID:" + m_str_id.substr( strlen( PROTO_ID ) ) + " ] - " + DBTREE::article_subject( url_article() ));
-
-    // タブ更新
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
-}
-
 
 
 //
@@ -226,6 +228,34 @@ void ArticleViewID::relayout()
 }
 
 
+//
+// 抽出表示
+//
+void ArticleViewID::show_view()
+{
+    relayout();
+}
+
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewID::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+// virtual
+void ArticleViewID::exec_reload()
+{
+    relayout();
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -233,21 +263,19 @@ void ArticleViewID::relayout()
 
 
 ArticleViewBM::ArticleViewBM( const std::string& url )
-    : ArticleViewBase( url )
+    : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-
-    // viewのURL更新
-    const bool update_history = false;
-    set_url( url_article() + ARTICLE_SIGN + BOOKMK_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
-
 #ifdef _DEBUG
     std::cout << "ArticleViewBM::ArticleViewBM " << get_url() << std::endl;
 #endif
 
     setup_view();
+
+    // ラベル更新
+    set_label( " [ しおり ] - " + DBTREE::article_subject( url_article() ));
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -259,23 +287,6 @@ ArticleViewBM::~ArticleViewBM()
     std::cout << "ArticleViewBM::~ArticleViewBM : " << get_url() << std::endl;
 #endif
 }
-
-
-
-//
-// 抽出表示
-//
-void ArticleViewBM::show_view()
-{
-    show_bm();
-
-    // ラベル更新
-    set_label( " [ しおり ] - " + DBTREE::article_subject( url_article() ));
-
-    // タブ更新
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
-}
-
 
 
 //
@@ -294,26 +305,54 @@ void ArticleViewBM::relayout()
 
 
 
+//
+// 抽出表示
+//
+void ArticleViewBM::show_view()
+{
+    relayout();
+}
+
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewBM::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+// virtual
+void ArticleViewBM::exec_reload()
+{
+    relayout();
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // 書き込み抽出ビュー
 
 ArticleViewPost::ArticleViewPost( const std::string& url )
-    : ArticleViewBase( url )
+    : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-
-    // viewのURL更新
-    const bool update_history = false;
-    set_url( url_article() + ARTICLE_SIGN + POST_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
-
 #ifdef _DEBUG
     std::cout << "ArticleViewPost::ArticleViewPost " << get_url() << std::endl;
 #endif
 
     setup_view();
+
+
+    // ラベル更新
+    set_label( " [ 書き込み ] - " + DBTREE::article_subject( url_article() ));
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -325,23 +364,6 @@ ArticleViewPost::~ArticleViewPost()
     std::cout << "ArticleViewPost::~ArticleViewPost : " << get_url() << std::endl;
 #endif
 }
-
-
-
-//
-// 抽出表示
-//
-void ArticleViewPost::show_view()
-{
-    show_post();
-
-    // ラベル更新
-    set_label( " [ 書き込み ] - " + DBTREE::article_subject( url_article() ));
-
-    // タブ更新
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
-}
-
 
 
 //
@@ -359,6 +381,33 @@ void ArticleViewPost::relayout()
 }
 
 
+//
+// 抽出表示
+//
+void ArticleViewPost::show_view()
+{
+    relayout();
+}
+
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewPost::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+// virtual
+void ArticleViewPost::exec_reload()
+{
+    relayout();
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,21 +415,19 @@ void ArticleViewPost::relayout()
 // URL抽出ビュー
 
 ArticleViewURL::ArticleViewURL( const std::string& url )
-    : ArticleViewBase( url )
+    : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-
-    // viewのURL更新
-    const bool update_history = false;
-    set_url( url_article() + ARTICLE_SIGN + URL_SIGN + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
-
 #ifdef _DEBUG
     std::cout << "ArticleViewURL::ArticleViewURL " << get_url() << std::endl;
 #endif
 
     setup_view();
+
+    // ラベル更新
+    set_label( " [ URL ] - " + DBTREE::article_subject( url_article() ));
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -391,21 +438,6 @@ ArticleViewURL::~ArticleViewURL()
 #ifdef _DEBUG    
     std::cout << "ArticleViewURL::~ArticleViewURL : " << get_url() << std::endl;
 #endif
-}
-
-
-//
-// 抽出表示
-//
-void ArticleViewURL::show_view()
-{
-    show_res_with_url();
-
-    // ラベル更新
-    set_label( " [ URL ] - " + DBTREE::article_subject( url_article() ));
-
-    // タブ更新
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -424,28 +456,57 @@ void ArticleViewURL::relayout()
 }
 
 
+//
+// 抽出表示
+//
+void ArticleViewURL::show_view()
+{
+    relayout();
+}
+
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewURL::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+// virtual
+void ArticleViewURL::exec_reload()
+{
+    relayout();
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // 参照抽出ビュー
 
 
-ArticleViewRefer::ArticleViewRefer( const std::string& url, const std::string& num )
-    : ArticleViewBase( url ),
-      m_str_num( num )
+ArticleViewRefer::ArticleViewRefer( const std::string& url )
+    : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-
-    // viewのURL更新
-    const bool update_history = false;
-    set_url( url_article() + ARTICLE_SIGN + REFER_SIGN + m_str_num + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
+    m_str_num = url.substr( url.find( REFER_SIGN ) + strlen( REFER_SIGN ) );
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewRefer::ArticleViewRefer " << get_url() << std::endl;
+    std::cout << "ArticleViewRefer::ArticleViewRefer " << get_url()
+              << " num = " << m_str_num << std::endl;
 #endif
 
     setup_view();
+
+    // ラベル更新
+    set_label( " [ Re:" + m_str_num + " ] - " + DBTREE::article_subject( url_article() ));
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -456,21 +517,6 @@ ArticleViewRefer::~ArticleViewRefer()
 #ifdef _DEBUG    
     std::cout << "ArticleViewRefer::~ArticleViewRefer : " << get_url() << std::endl;
 #endif
-}
-
-
-//
-// 抽出表示
-//
-void ArticleViewRefer::show_view()
-{
-    show_refer( atol( m_str_num.c_str() ) );
-
-    // ラベル更新
-    set_label( " [ Re:" + m_str_num + " ] - " + DBTREE::article_subject( url_article() ));
-
-    // タブ更新
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -489,6 +535,32 @@ void ArticleViewRefer::relayout()
 }
 
 
+//
+// 抽出表示
+//
+void ArticleViewRefer::show_view()
+{
+    relayout();
+}
+
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewRefer::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+// virtual
+void ArticleViewRefer::exec_reload()
+{
+    relayout();
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -496,30 +568,32 @@ void ArticleViewRefer::relayout()
 // キーワード抽出ビュー
 
 
-ArticleViewDrawout::ArticleViewDrawout( const std::string& url, const std::string& query, bool mode_or )
-    : ArticleViewBase( url ), m_mode_or( mode_or )
+ArticleViewDrawout::ArticleViewDrawout( const std::string& url )
+    : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
+    const int pos0 = url.find( KEYWORD_SIGN ) + strlen( KEYWORD_SIGN );
+    const int pos1 = url.find( ORMODE_SIGN );
 
-    set_search_query( query );
-    set_pre_query( query );
+    m_query = url.substr( pos0, pos1 - pos0  );
+    m_mode_or = ( url.substr( pos1 + strlen( ORMODE_SIGN ) ) == "1" );
 
-    //viewのURL更新
-    std::string url_tmp = url_article() + ARTICLE_SIGN + KEYWORD_SIGN + query + ORMODE_SIGN;
-    if( mode_or ) url_tmp += "1";
-    else url_tmp += "0";
-    url_tmp += TIME_SIGN + MISC::timevaltostr( tv );
-
-    const bool update_history = false;
-    set_url( url_tmp, update_history );
+    set_search_query( m_query );
+    set_pre_query( m_query );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewDrawout::ArticleViewDrawout " << get_url() << std::endl;
 #endif
 
     setup_view();
+
+    // ラベル更新
+    std::string str_label;
+    if( m_mode_or ) str_label = "[ OR 抽出 ] - ";
+    else str_label = "[ AND 抽出 ] - ";
+    set_label( str_label + DBTREE::article_subject( url_article() ) );
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -530,24 +604,6 @@ ArticleViewDrawout::~ArticleViewDrawout()
 #ifdef _DEBUG    
     std::cout << "ArticleViewDrawout::~ArticleViewDrawout : " << get_url() << std::endl;
 #endif
-}
-
-
-//
-// 抽出表示
-//
-void ArticleViewDrawout::show_view()
-{
-    drawout_keywords( get_search_query(), m_mode_or, true );
-
-    // ラベル更新
-    std::string str_label;
-    if( m_mode_or ) str_label = "[ OR 抽出 ] - ";
-    else str_label = "[ AND 抽出 ] - ";
-    set_label( str_label + DBTREE::article_subject( url_article() ) );
-
-    // タブ更新
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -563,8 +619,36 @@ void ArticleViewDrawout::relayout()
 
     drawarea()->clear_screen();
     drawarea()->clear_highlight();
-    drawout_keywords( get_search_query(), m_mode_or, true );
+    drawout_keywords( m_query, m_mode_or, true );
     drawarea()->redraw_view();
+}
+
+
+//
+// 抽出表示
+//
+void ArticleViewDrawout::show_view()
+{
+    relayout();
+}
+
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewDrawout::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+// virtual
+void ArticleViewDrawout::exec_reload()
+{
+    relayout();
 }
 
 
@@ -572,16 +656,10 @@ void ArticleViewDrawout::relayout()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // 書き込みログ表示ビュー
-ArticleViewPostlog::ArticleViewPostlog( const std::string& url, const int num )
-    : ArticleViewBase( url ), m_num( num )
+ArticleViewPostlog::ArticleViewPostlog( const std::string& url )
+    : ArticleViewBase( url, url.substr( 0, url.find( POSTLOG_SIGN ) ) )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-
-    // viewのURL更新
-    const bool update_history = false;
-    set_url( url + POSTLOG_SIGN + MISC::itostr( m_num ) + TIME_SIGN + MISC::timevaltostr( tv ), update_history );
+    m_num = atoi( url.substr( url.find( POSTLOG_SIGN ) + strlen( POSTLOG_SIGN ) ).c_str() );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewPostlog::ArticleViewPostlog " << get_url()
@@ -592,6 +670,12 @@ ArticleViewPostlog::ArticleViewPostlog( const std::string& url, const int num )
     set_writeable( false );
 
     setup_view();
+
+    // ラベル更新
+    set_label( " [ 書き込みログ ] " );
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
 }
 
 
@@ -606,21 +690,17 @@ ArticleViewPostlog::~ArticleViewPostlog()
 
 
 //
-// 抽出表示
+// 検索entryの操作
 //
-void ArticleViewPostlog::show_view()
+void ArticleViewPostlog::operate_search( const std::string& controlid )
 {
-    show_postlog( m_num );
+    const int id = atoi( controlid.c_str() );
 
-    // ラベル更新
-    set_label( " [ 書き込みログ ] " );
-
-    // タブ更新
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
-
-    goto_bottom();
+    if( id == CONTROL::Cancel ){
+        focus_view();
+        ARTICLE::get_admin()->set_command( "close_searchbar" );
+    }
 }
-
 
 
 //
@@ -636,6 +716,15 @@ void ArticleViewPostlog::relayout()
     show_postlog( m_num );
     drawarea()->redraw_view();
     goto_bottom();
+}
+
+
+//
+// 抽出表示
+//
+void ArticleViewPostlog::show_view()
+{
+    relayout();
 }
 
 
@@ -656,17 +745,3 @@ void ArticleViewPostlog::exec_reload()
     relayout();
 }
 
-
-
-//
-// 検索entryの操作
-//
-void ArticleViewPostlog::operate_search( const std::string& controlid )
-{
-    int id = atoi( controlid.c_str() );
-
-    if( id == CONTROL::Cancel ){
-        focus_view();
-        ARTICLE::get_admin()->set_command( "close_searchbar" );
-    }
-}

@@ -7,23 +7,12 @@
 #include "articleviewinfo.h"
 #include "drawareainfo.h"
 
-#include "jdlib/misctime.h"
-
-#include "control/controlid.h"
-
-#include <sys/time.h>
-
 using namespace ARTICLE;
 
 
 ArticleViewInfo::ArticleViewInfo( const std::string& url )
-    : ArticleViewBase( url )
+    : ArticleViewBase( url, url )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-    set_url( url_article() + MISC::timevaltostr( tv ) + ARTICLE_SIGN + "_PREV_", false );
-
 #ifdef _DEBUG
     std::cout << "ArticleViewInfo::ArticleViewInfo " << get_url() << std::endl;
 #endif

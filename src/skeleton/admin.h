@@ -117,6 +117,9 @@ namespace SKELETON
         // urlで指定されるタブがロックされているか
         const bool is_locked( const std::string& url );
 
+        // urlで指定されるタブが存在するか
+        const bool exist_tab( const std::string& url );
+
         // SIGHUPを受け取ったときの処理
         virtual void shutdown();
 
@@ -167,6 +170,7 @@ namespace SKELETON
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void switch_admin() = 0;  // CORE::core_set_command( "switch_*" )　を送る
         virtual void switch_view( const std::string& url );
+        void reload_view( const std::string& url );
 
         // タブ左右移動
         // updated == true の時は更新されたタブに移動
@@ -302,7 +306,7 @@ namespace SKELETON
 
         void slot_popupmenu_deactivate();
 
-        bool back_forward_viewhistory( const std::string& url, const bool back, const int count );
+        const bool back_forward_viewhistory( const std::string& url, const bool back, const int count );
 
         // 移転などでviewのurlを更新
         void update_url( const std::string& url_old, const std::string& url_new );

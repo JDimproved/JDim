@@ -65,9 +65,9 @@ using namespace ARTICLE;
 #define PROTO_URL4REPORT "url4report://"
 
 
-ArticleViewBase::ArticleViewBase( const std::string& url )
+ArticleViewBase::ArticleViewBase( const std::string& url, const std::string& url_article )
     : SKELETON::View( url ),
-      m_url_article( url ),
+      m_url_article( url_article ),
       m_popup_win( NULL ),
       m_popup_shown( false ),
       m_hidepopup_counter( 0 ),
@@ -80,7 +80,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url )
       m_live( false )
 {
 #ifdef _DEBUG    
-    std::cout << "ArticleViewBase::ArticleViewBase : " << get_url() << std::endl;
+    std::cout << "ArticleViewBase::ArticleViewBase : " << get_url() << " : " << m_url_article << std::endl;
 #endif
 
     set_id_toolbar( TOOLBAR_ARTICLE );
@@ -3398,7 +3398,7 @@ void ArticleViewBase::slot_search_cacheall()
     std::cout << "ArticleViewBase::slot_search_cacheall "<< query << std::endl;
 #endif
     
-    CORE::core_set_command( "open_article_searchlog", "allboard" , query, "exec" );
+    CORE::core_set_command( "open_article_searchlog", URL_SEARCH_ALLBOARD , query, "exec" );
 }
 
 
@@ -4170,7 +4170,7 @@ void ArticleViewBase::exec_search()
 //
 void ArticleViewBase::operate_search( const std::string& controlid )
 {
-    int id = atoi( controlid.c_str() );
+    const int id = atoi( controlid.c_str() );
 
     if( id == CONTROL::Cancel ){
         focus_view();

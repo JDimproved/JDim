@@ -11,26 +11,17 @@
 
 #include "dbtree/articlebase.h"
 
-#include "jdlib/misctime.h"
-
 #include "control/controlid.h"
 
 #include "command.h"
-
-#include <sys/time.h>
 
 using namespace ARTICLE;
 
 
 ArticleViewPreview::ArticleViewPreview( const std::string& url )
-    : ArticleViewBase( url )
+    : ArticleViewBase( url, url )
 {
     m_url_messageview = url;
-
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-    set_url( url_article() + MISC::timevaltostr( tv ) + ARTICLE_SIGN + "_PREV_", false );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewPreview::ArticleViewPreview " << get_url() << std::endl;

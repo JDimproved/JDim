@@ -1849,33 +1849,6 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
-    // キーワードで抽出( AND/OR )
-    else if( command.command  == "open_article_keyword" ) { 
-
-        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
-
-        std::string mode_str = "KEYWORD";
-        if( command.arg2 == "true" ) mode_str = "KEYWORD_OR";  // OR 抽出
-        
-        // 検索履歴更新
-        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, command.arg1 );
-       
-        ARTICLE::get_admin()->set_command( "open_view",
-                                           command.url, 
-
-                                           // 以下 Admin::set_command() におけるCOMMAND_ARGS::arg1, arg2,....
-                                           // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
-                                           "", // 開き方のモード
-
-                                           mode_str, // キーワード抽出モード
-
-                                           command.arg1 // query
-            );
-        return;
-    }
-
     // レス抽出
     else if( command.command  == "open_article_res" ) { 
 
@@ -1887,7 +1860,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 Admin::set_command() におけるCOMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
                                            "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
+                                           "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
                                            "RES", // レス抽出モード
@@ -1914,7 +1887,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
                                            "left", // 開く位置
-                                           "true", // command.url 開いてるかチェックしない
+                                           "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
                                            "NAME", // 名前抽出モード
@@ -1936,7 +1909,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
                                            "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
+                                           "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
                                            "ID", // ID 抽出モード
@@ -1957,7 +1930,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
                                            "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
+                                           "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
                                            "BM" //　ブックマーク抽出モード
@@ -1976,7 +1949,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
                                            "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
+                                           "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
                                            "POST" // 書き込み抽出モード
@@ -1995,7 +1968,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
                                            "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
+                                           "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
                                            "URL" // URL抽出モード
@@ -2014,7 +1987,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
                                            "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
+                                           "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
                                            "REF", // 参照抽出モード
@@ -2023,6 +1996,55 @@ void Core::set_command( const COMMAND_ARGS& command )
             );
         return;
     }
+
+    // キーワードで抽出( AND/OR )
+    else if( command.command  == "open_article_keyword" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+
+        std::string mode_str = "KEYWORD";
+        if( command.arg2 == "true" ) mode_str = "KEYWORD_OR";  // OR 抽出
+        
+        // 検索履歴更新
+        CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, command.arg1 );
+       
+        ARTICLE::get_admin()->set_command( "open_view",
+                                           command.url, 
+
+                                           // 以下 Admin::set_command() におけるCOMMAND_ARGS::arg1, arg2,....
+                                           // 詳しくは Admin::open_view() を参照せよ
+                                           "left", // 開く位置
+                                           "false", // command.url を開いてるかチェックする
+                                           "", // 開き方のモード
+
+                                           mode_str, // キーワード抽出モード
+
+                                           command.arg1 // query
+            );
+        return;
+    }
+
+    // 書き込みログ表示
+    else if( command.command  == "open_article_postlog" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+
+        ARTICLE::get_admin()->set_command( "open_view",
+                                           "postlog",
+
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
+                                           // 詳しくは Admin::open_view() を参照せよ
+                                           "left", // 開く位置
+                                           "false", // command.url を開いてるかチェックする
+                                           "", // 開き方のモード
+
+                                           "POSTLOG", // モード
+                                           command.arg1 // ログ番号
+            );
+
+        return;
+    }
+
 
     // ログ検索
     else if( command.command  == "open_article_searchlog" ) { 
@@ -2035,9 +2057,9 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
-        // "allboard" の時は全ログ対象
+        // URL_SEARCH_ALLBOARD の時は全ログ対象
         std::string mode = "SEARCHLOG";
-        if( command.url == "allboard" ) mode = "SEARCHALLLOG";
+        if( command.url == URL_SEARCH_ALLBOARD ) mode = "SEARCHALLLOG";
 
         // 検索履歴更新
         CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_ARTICLE, command.arg1 );
@@ -2048,7 +2070,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
                                            "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
+                                           "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
                                            mode,
@@ -2074,39 +2096,18 @@ void Core::set_command( const COMMAND_ARGS& command )
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
-                                           "title",
+                                           URL_SEARCH_TITLE,
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
                                            "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
+                                           "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
                                            "SEARCHTITLE", // モード
 
                                            command.arg1, // query
                                            command.arg2  // "exec" ならViewを開いた直後に検索開始
-            );
-
-        return;
-    }
-
-    // 書き込みログ表示
-    else if( command.command  == "open_article_postlog" ) { 
-
-        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
-
-        ARTICLE::get_admin()->set_command( "open_view",
-                                           "postlog",
-
-                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
-                                           // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
-                                           "true", // command.url を開いてるかチェックしない
-                                           "", // 開き方のモード
-
-                                           "POSTLOG", // モード
-                                           command.arg1 // ログ番号
             );
 
         return;
