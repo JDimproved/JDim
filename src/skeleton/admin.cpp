@@ -1044,7 +1044,19 @@ void Admin::open_view( const COMMAND_ARGS& command )
             const std::string url_current = current_view->get_url();
             delete current_view;
 
-            if( m_use_viewhistory ) HISTORY::get_history_manager()->append_viewhistory( url_current, view->get_url() );    
+            if( m_use_viewhistory ){
+
+                // Aを開く -> B をタブで開く -> A を閉じる -> A を開いて B と置き換える(*) -> B をタブで開く
+                // とすると、History_Manager::get_viewhistory()のキャッシュが誤作動して
+                // ビューの戻る進むが変になるので、(*)の所で進む戻るの履歴を引き継ぐのをキャンセルする
+                if( ! m_last_closed_url.empty() && view->get_url() == m_last_closed_url ){
+                    HISTORY::get_history_manager()->delete_viewhistory( m_last_closed_url );
+                    m_last_closed_url = std::string();
+                }
+
+                HISTORY::get_history_manager()->append_viewhistory( url_current, view->get_url() );    
+            }
+
         }
     }
 
