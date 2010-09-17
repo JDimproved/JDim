@@ -13,6 +13,7 @@
 
 #include "jdlib/heap.h"
 
+#include <map>
 #include <cstring>
 
 namespace JDLIB
@@ -99,6 +100,10 @@ namespace DBTREE
 
         // 自分の書き込みにレスしているか
         std::vector< char > m_vec_refer_posted;
+
+        // 未来のレスに対するアンカーがある時に使用する
+        // check_reference() を参照
+        std::map< int, std::vector< int > > m_map_future_refer;
 
         // ロード用変数
         char* m_buffer_lines;
@@ -328,7 +333,11 @@ namespace DBTREE
         void update_reference( int from_number, int to_number );
 
         // number番のレスが参照しているレスのレス番号の参照数(num_reference)と色をチェック
-        void check_reference( int number );
+        void check_reference( const int number );
+
+        // 参照数を count だけ増やしてして色を変更
+        void inc_reference( NODE* head, const int count );
+
 
         // 発言数とIDの色のクリア
         void clear_id_name();

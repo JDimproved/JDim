@@ -411,7 +411,7 @@ std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_nu
 
     std::list< int >::const_iterator it_res = res_num.begin();
 
-    for( int i = ( *it_res ) + 1; i <= m_id_header; ++i ){
+    for( int i = 1; i <= m_id_header; ++i ){
 
         //  透明あぼーんは除外
         if( m_abone_transparent && get_abone( i ) ) continue;
@@ -445,8 +445,10 @@ std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_nu
 
                                     const int number = ( *it_res );
 
-                                    // >>1-1000 みたいなアンカーは弾く
-                                    if( anc_to - anc_from < RANGE_REF && anc_from <= number && number <= anc_to
+                                    
+                                    if( i != number
+                                        && anc_to - anc_from < RANGE_REF // >>1-1000 みたいなアンカーは弾く
+                                        && anc_from <= number && number <= anc_to
                                         ) {
                                         list_resnum.push_back( i );
                                         goto EXIT_LOOP;
@@ -2911,7 +2913,7 @@ void NodeTreeBase::update_reference( int from_number, int to_number )
 //
 // number番のレスが参照しているレスのレス番号の参照数(num_reference)と色をチェック
 //
-void NodeTreeBase::check_reference( int number )
+void NodeTreeBase::check_reference( const int number )
 {
     NODE* head = res_header( number );
     if( ! head ) return;
@@ -2920,10 +2922,48 @@ void NodeTreeBase::check_reference( int number )
     if( head->headinfo->abone ) return;
 
     // 2重チェック防止用
-    bool checked[ number ];
-    memset( checked, 0, sizeof( bool ) * number );
+    bool checked[ MAX_RESNUMBER ];
+    memset( checked, 0, sizeof( bool ) * MAX_RESNUMBER );
 
     const bool posted = m_vec_posted.size();
+
+    // 過去のレスから number 番へのアンカーがあった場合
+    if( m_map_future_refer.size() ){
+
+        std::map< int, std::vector< int > >::iterator it_map = m_map_future_refer.find( number );
+        if( it_map != m_map_future_refer.end() ){
+
+            const int size = ( (*it_map).second ).size();
+
+            inc_reference( head, size );
+
+#ifdef _DEBUG
+            std::cout << "found number = " << number << " size = " << size << std::endl;
+#endif
+            // 過去のレスへ自分の書き込みへの参照マークを付ける
+            if( posted && m_vec_posted[ number ] ){
+
+                for( int i = 0; i < size; ++ i ){
+
+                    const int from = ( (*it_map).second )[ i ];
+#ifdef _DEBUG
+                    std::cout << "from " << from << std::endl;
+#endif
+                    NODE* tmphead = res_header( from );
+                    if( tmphead && ! tmphead->headinfo->abone ){
+                        if( ! m_vec_refer_posted.size() ) m_vec_refer_posted.resize( MAX_RESNUMBER );
+                        m_vec_refer_posted[ from ] = true;
+                    }
+                }
+            }
+
+            m_map_future_refer.erase( it_map );
+#ifdef _DEBUG
+            std::cout << "map_future_refer size = " << m_map_future_refer.size() << std::endl;
+#endif
+        }
+    }
+
 
     for( int block = 0; block < BLOCK_NUM; ++block ){
 
@@ -2946,9 +2986,7 @@ void NodeTreeBase::check_reference( int number )
                         if( anc_from == 0 ) break;
                         ++anc;
 
-                        // number-1 番以下のレスだけを見る
-                        if( anc_from >= number ) continue;
-                        anc_to = MIN( anc_to, number -1 );
+                        anc_to = MIN( anc_to, MAX_RESNUMBER );
 
                         // >>1-1000 みたいなアンカーは弾く
                         if( anc_to - anc_from >= RANGE_REF ) continue;
@@ -2958,6 +2996,37 @@ void NodeTreeBase::check_reference( int number )
                             // 既にチェックしている
                             if( checked[ i ] ) continue;
 
+                            // 自分自身
+                            if( i == number ) continue;
+
+                            // 未来へのレス
+                            if( i > number ){
+#ifdef _DEBUG
+                                std::cout << "future ref " << i << " from " << number << std::endl;
+#endif
+                                std::map< int, std::vector< int > >::iterator it_map = m_map_future_refer.find( i );
+                                if( it_map != m_map_future_refer.end() ){
+
+                                    ( (*it_map).second ).push_back( number );
+#ifdef _DEBUG
+                                    std::cout << "found size = " << ( (*it_map).second ).size() << std::endl;
+#endif
+                                }
+                                else{
+#ifdef _DEBUG
+                                    std::cout << "not found\n";
+#endif
+                                    std::pair< int, std::vector< int > > tmp_pair;
+                                    tmp_pair.first = i;
+                                    tmp_pair.second.push_back( number );
+                                    m_map_future_refer.insert( tmp_pair );
+                                }
+
+                                continue;
+                            }
+
+
+                            // 過去へのレス
                             NODE* tmphead = res_header( i );
                             if( tmphead
                                 && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
@@ -2972,23 +3041,11 @@ void NodeTreeBase::check_reference( int number )
                                     m_vec_refer_posted[ number ] = true;
 
 #ifdef _DEBUG
-                                    std::cout << "ref " << i << " " << number << std::endl;
+                                    std::cout << "ref " << i << " from " << number << std::endl;
 #endif
                                 }
 
-                                // 参照数を更新して色を変更
-                                ++( tmphead->headinfo->num_reference );
-
-                                // 参照回数大
-                                if( tmphead->headinfo->num_reference >= m_num_reference[ LINK_HIGH ] )
-                                    tmphead->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK_HIGH;
-
-                                // 参照回数中
-                                else if( tmphead->headinfo->num_reference >= m_num_reference[ LINK_LOW ] )
-                                    tmphead->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK_LOW;
-
-                                // 参照無し
-                                else tmphead->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK;
+                                inc_reference( tmphead, 1 );
                             }
                         }
                     }
@@ -3001,6 +3058,26 @@ void NodeTreeBase::check_reference( int number )
         } // while( node )
 
     } // for( block )
+}
+
+
+//
+// 参照数を count だけ増やしてして色を変更
+//
+void NodeTreeBase::inc_reference( NODE* head, const int count )
+{
+    head->headinfo->num_reference += count;
+
+    // 参照回数大
+    if( head->headinfo->num_reference >= m_num_reference[ LINK_HIGH ] )
+        head->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK_HIGH;
+
+    // 参照回数中
+    else if( head->headinfo->num_reference >= m_num_reference[ LINK_LOW ] )
+        head->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK_LOW;
+
+    // 参照無し
+    else head->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK;
 }
 
 
