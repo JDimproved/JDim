@@ -137,10 +137,13 @@ namespace SESSION
     const bool get_show_article_tab();
     void set_show_article_tab( const bool show );
 
+    // メインステータスバー表示
+    const bool get_show_main_statbar();
+    void set_show_main_statbar( const bool show );
+
     // フォーカスされているadmin
     const int focused_admin();
     void set_focused_admin( const int admin );
-
 
     // 各windowの座標
     const int get_x_win_main(); // メインウィンドウ

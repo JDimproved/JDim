@@ -99,6 +99,8 @@ bool show_article_toolbar;
 bool show_board_tab;
 bool show_article_tab;
 
+bool show_main_statbar;
+
 int win_focused_admin;
 int win_focused_admin_sidebar;
 
@@ -337,6 +339,8 @@ void SESSION::init_session()
     show_board_tab = cf.get_option_bool( "show_board_tab", true );
     show_article_tab = cf.get_option_bool( "show_article_tab", true );
 
+    show_main_statbar = cf.get_option_bool( "show_main_statbar", true );
+
     win_focused_admin = cf.get_option_int( "focused_admin", FOCUS_NOT, 0, FOCUS_NUM -1 );
     win_focused_admin_sidebar = cf.get_option_int( "focused_admin_sidebar", FOCUS_NOT, 0, FOCUS_NUM -1 );
 
@@ -565,6 +569,7 @@ void SESSION::save_session()
         << "show_article_tab = " << show_article_tab << std::endl
         << "show_sidebar = " << win_show_sidebar << std::endl
         << "show_menubar = " << win_show_menubar << std::endl
+        << "show_main_statbar = " << show_main_statbar << std::endl
         << "focused_admin = " << win_focused_admin << std::endl
         << "focused_admin_sidebar = " << win_focused_admin_sidebar << std::endl
 
@@ -688,6 +693,9 @@ void SESSION::set_show_board_tab( const bool show ){ show_board_tab = show; }
 
 const bool SESSION::get_show_article_tab(){ return show_article_tab; }
 void SESSION::set_show_article_tab( const bool show ){ show_article_tab = show; }
+
+const bool SESSION::get_show_main_statbar(){ return show_main_statbar; }
+void SESSION::set_show_main_statbar( const bool show ){ show_main_statbar = show; }
 
 const int SESSION::focused_admin(){ return win_focused_admin; }
 void SESSION::set_focused_admin( const int admin ){ win_focused_admin = admin; }

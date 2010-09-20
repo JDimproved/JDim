@@ -347,7 +347,7 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
                 break;
 
             case CONTROL::ShowMenuBar:  // メニューバー表示
-                label += "(_S)";
+                label += "(_M)";
                 break;
 
             case CONTROL::ShowToolBarMain:  // メインツールバー表示

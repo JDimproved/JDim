@@ -368,6 +368,8 @@ void Core::run( const bool init, const bool skip_setupdiag )
     // 一般
     m_action_group->add( Gtk::ToggleAction::create( "ShowMenuBar", "ShowMenuBar", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_menubar ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ShowStatBar", "ステータスバー表示(_S)", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::toggle_statbar ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToggleFlatButton", "ボタンをフラット表示(_F)", std::string(), false ),
                          sigc::mem_fun( *this, &Core::toggle_flat_button ) );
     m_action_group->add( Gtk::ToggleAction::create( "ToggleDrawToolbarback", "ツールバーの背景を描画する(_T)", std::string(), false ),
@@ -747,6 +749,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
         "<menu action='General_Menu'>"
         "<menuitem action='ShowMenuBar'/>"
+        "<menuitem action='ShowStatBar'/>"
         "<menuitem action='ToggleFlatButton'/>"
         "<menuitem action='ToggleDrawToolbarback'/>"
         "<menuitem action='TogglePostMark'/>"
@@ -1176,7 +1179,7 @@ void Core::pack_widget( bool unpack )
     }
 
     // メインwindowのパッキング
-    m_win_main.pack_remove_end( unpack, m_win_main.get_statbar(), Gtk::PACK_SHRINK );
+    if( SESSION::get_show_main_statbar() ) m_win_main.pack_remove_end( unpack, m_win_main.get_statbar(), Gtk::PACK_SHRINK );
     m_win_main.pack_remove_end( unpack, m_hpaned );
     if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_NORMAL )
         m_win_main.pack_remove_end( unpack, *m_toolbar, Gtk::PACK_SHRINK );
@@ -1383,6 +1386,14 @@ void Core::slot_activate_menubar()
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
         if( SESSION::get_show_article_tab() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // ステータスバー
+    act = m_action_group->get_action( "ShowStatBar" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::get_show_main_statbar() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
@@ -1657,6 +1668,26 @@ void Core::toggle_menubar()
         SKELETON::MsgDiag mdiag( NULL, "メニューバーを再表示するには\n\n" + CONTROL::get_str_motions( CONTROL::ShowMenuBar ) + "\n\nを押してください" );
         mdiag.run();
     }
+}
+
+
+//
+// ステータスバー表示切替え
+//
+void Core::toggle_statbar()
+{
+    if( SESSION::is_booting() ) return;
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::toggle_statbar\n";
+#endif
+
+    pack_widget( true );
+    SESSION::set_show_main_statbar( ! SESSION::get_show_main_statbar() );
+    pack_widget( false );
+
+    restore_focus( true, false );
 }
 
 

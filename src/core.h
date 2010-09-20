@@ -163,6 +163,7 @@ namespace CORE
         bool open_color_diag( std::string title, int id );
         
         void toggle_menubar();
+        void toggle_statbar();
         void toggle_flat_button();
         void toggle_draw_toolbarback();
         void toggle_post_mark();
