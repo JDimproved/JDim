@@ -194,6 +194,8 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "OpenCacheBrowser", ITEM_NAME_OPEN_CACHE_BROWSER + std::string( "(_X)" ) ),
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_open_cache_browser ) );
     action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_copy_current_url ) );
     action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL_THREAD + std::string( "(_L)" ) ),
@@ -418,6 +420,7 @@ void ArticleViewBase::setup_action()
     "<menuitem action='ShowLargeImg'/>"
     "<separator/>"
     "<menuitem action='OpenBrowser'/>"
+    "<menuitem action='OpenCacheBrowser'/>"
     + m_usrcmd
     + std::string(
     "<separator/>"
@@ -3276,6 +3279,13 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
                 else tact->set_active( false );
             }
         }
+
+        // キャッシュをブラウザで開く
+        act = action_group()->get_action( "OpenCacheBrowser" );
+        if( act ){
+            if( DBIMG::is_cached( url ) ) act->set_sensitive( true );
+            else act->set_sensitive( false );
+        }
     }
 
     // スレ情報コピー
@@ -3507,11 +3517,20 @@ void ArticleViewBase::slot_bookmark()
 void ArticleViewBase::slot_open_browser()
 {
     if( m_url_tmp.empty() ) return;
-    std::string url = m_url_tmp;
 
-    // 画像、かつキャッシュにある場合
-    if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && DBIMG::is_cached( url ) ) url = "file://" + DBIMG::get_cache_path( url );
+    CORE::core_set_command( "open_url_browser", m_url_tmp );
+}
 
+
+//
+// ポップアップメニューで画像のキャッシュをブラウザで開くを選択
+//
+void ArticleViewBase::slot_open_cache_browser()
+{
+    if( m_url_tmp.empty() ) return;
+    if( ! DBIMG::is_cached( m_url_tmp ) ) return;
+
+    const std::string url = "file://" + DBIMG::get_cache_path( m_url_tmp );
     CORE::core_set_command( "open_url_browser", url );
 }
 

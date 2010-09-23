@@ -141,6 +141,7 @@ namespace IMAGE
         void slot_resize_image( int size );
         void slot_lock();
         void slot_open_browser();
+        void slot_open_cache_browser();
         void slot_open_ref();
         void slot_copy_url();
         void slot_save_all();

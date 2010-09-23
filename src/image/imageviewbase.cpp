@@ -159,6 +159,8 @@ void ImageViewBase::setup_common()
 
     action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
                          sigc::mem_fun( *this, &ImageViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "OpenCacheBrowser", ITEM_NAME_OPEN_CACHE_BROWSER + std::string( "(_X)" ) ),
+                         sigc::mem_fun( *this, &ImageViewBase::slot_open_cache_browser ) );
     action_group()->add( Gtk::Action::create( "OpenRef", "参照元のレスを開く(_O)"), sigc::mem_fun( *this, &ImageViewBase::slot_open_ref ) );
     action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ), sigc::mem_fun( *this, &ImageViewBase::slot_copy_url ) );
     action_group()->add( Gtk::Action::create( "Save", "Save"), sigc::mem_fun( *this, &ImageViewBase::slot_save ) );
@@ -212,6 +214,7 @@ void ImageViewBase::setup_common()
     "<separator/>"
 
     "<menuitem action='OpenBrowser'/>"
+    "<menuitem action='OpenCacheBrowser'/>"
     "<menuitem action='OpenRef'/>"
     + usrcmd
     + std::string( 
@@ -278,6 +281,7 @@ void ImageViewBase::setup_common()
     "<separator/>"
 
     "<menuitem action='OpenBrowser'/>"
+    "<menuitem action='OpenCacheBrowser'/>"
     "<menuitem action='OpenRef'/>"
     "<separator/>"
 
@@ -1092,11 +1096,21 @@ void ImageViewBase::slot_open_browser()
 {
     if( ! m_enable_menuslot ) return;
 
-    std::string url = get_url();
-    if( m_img->is_cached() ) url = "file://" + m_img->get_cache_path();
-    CORE::core_set_command( "open_url_browser", url );
+    CORE::core_set_command( "open_url_browser", get_url() );
 }
 
+
+//
+// キャッシュをブラウザで開く
+//
+void ImageViewBase::slot_open_cache_browser()
+{
+    if( ! m_enable_menuslot ) return;
+    if( ! m_img->is_cached() ) return;
+
+    const std::string url = "file://" + m_img->get_cache_path();
+    CORE::core_set_command( "open_url_browser", url );
+}
 
 
 //
@@ -1277,6 +1291,13 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
             if( m_img->is_cached() ) act->set_sensitive( true );
             else act->set_sensitive( false );
         }
+    }
+
+    // キャッシュをブラウザで開く
+    act = action_group()->get_action( "OpenCacheBrowser" );
+    if( act ){
+        if( m_img->is_cached() ) act->set_sensitive( true );
+        else act->set_sensitive( false );
     }
 
     // 参照元スレ

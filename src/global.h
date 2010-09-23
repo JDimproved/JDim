@@ -92,6 +92,7 @@ enum{
 #define ITEM_NAME_ABONE_ARTICLE   "スレをあぼ〜んする"
 #define ITEM_NAME_QUOTE_SELECTION   "引用してレスする"
 #define ITEM_NAME_OPEN_BROWSER      "ブラウザで開く"
+#define ITEM_NAME_OPEN_CACHE_BROWSER      "キャッシュをブラウザで開く"
 #define ITEM_NAME_USER_COMMAND      "ユーザコマンド"
 #define ITEM_NAME_ETC         "その他"
 #define ITEM_NAME_SAVE_DAT    "datを保存"
@@ -175,6 +176,7 @@ enum
     ITEM_ABONE_ARTICLE,
     ITEM_QUOTE_SELECTION,
     ITEM_OPEN_BROWSER,
+    ITEM_OPEN_CACHE_BROWSER,
     ITEM_USER_COMMAND,
     ITEM_ETC,
     ITEM_SAVE_DAT,

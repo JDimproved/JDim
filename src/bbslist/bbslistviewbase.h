@@ -264,6 +264,7 @@ namespace BBSLIST
 
         void slot_open_tab();
         void slot_open_browser();
+        void slot_open_cache_browser();
         void slot_append_favorite();
         void slot_newdir();
         void slot_newcomment();

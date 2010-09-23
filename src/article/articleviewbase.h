@@ -277,6 +277,7 @@ namespace ARTICLE
         
         void slot_bookmark();
         void slot_open_browser();
+        void slot_open_cache_browser();
         void slot_write_res();
         void slot_quote_res();
         void slot_quote_selection_res();

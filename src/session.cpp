@@ -234,6 +234,7 @@ const int SESSION::parse_item( const std::string& item_name )
     else if( item_name == ITEM_NAME_ABONE_ARTICLE ) item = ITEM_ABONE_ARTICLE;
     else if( item_name == ITEM_NAME_QUOTE_SELECTION ) item = ITEM_QUOTE_SELECTION;
     else if( item_name == ITEM_NAME_OPEN_BROWSER ) item = ITEM_OPEN_BROWSER;
+    else if( item_name == ITEM_NAME_OPEN_CACHE_BROWSER ) item = ITEM_OPEN_CACHE_BROWSER;
     else if( item_name == ITEM_NAME_USER_COMMAND ) item = ITEM_USER_COMMAND;
     else if( item_name == ITEM_NAME_ETC ) item = ITEM_ETC;
     else if( item_name == ITEM_NAME_SAVE_DAT ) item = ITEM_SAVE_DAT;

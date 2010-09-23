@@ -199,6 +199,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く(_T)"), sigc::mem_fun( *this, &BBSListViewBase::slot_open_tab ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
                          sigc::mem_fun( *this, &BBSListViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "OpenCacheBrowser", ITEM_NAME_OPEN_CACHE_BROWSER + std::string( "(_X)" ) ),
+                         sigc::mem_fun( *this, &BBSListViewBase::slot_open_cache_browser ) );
     action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &BBSListViewBase::slot_append_favorite ) );
     action_group()->add( Gtk::Action::create( "NewDir", "新規ディレクトリ(_N)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newdir ) );
     action_group()->add( Gtk::Action::create( "NewCom", "コメント挿入(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newcomment ) );
@@ -309,6 +311,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<popup name='popup_menu_favorite'>"
     "<menuitem action='OpenTab'/>"
     "<menuitem action='OpenBrowser'/>"
+    "<menuitem action='OpenCacheBrowser'/>"
     "<separator/>"
     POPUPMENU_SELECT
     "</popup>"
@@ -978,12 +981,13 @@ const bool BBSListViewBase::operate_view( const int control )
 //
 void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
 {
-    Glib::RefPtr< Gtk::Action > act_search, act_import, act_board, act_article, act_image, act_opentab;
+    Glib::RefPtr< Gtk::Action > act_search, act_import, act_board, act_article, act_image, act_opencache, act_opentab;
     act_search = action_group()->get_action( "SearchCacheBoard" );
     act_import = action_group()->get_action( "ImportDat" );
     act_board = action_group()->get_action( "PreferenceBoard" );
     act_article = action_group()->get_action( "PreferenceArticle" );
     act_image = action_group()->get_action( "PreferenceImage" );
+    act_opencache = action_group()->get_action( "OpenCacheBrowser" );
     act_opentab = action_group()->get_action( "OpenTab" );
 
     if( act_search ) act_search->set_sensitive( false );
@@ -991,6 +995,7 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
     if( act_board ) act_board->set_sensitive( false );
     if( act_article ) act_article->set_sensitive( false );
     if( act_image ) act_image->set_sensitive( false );
+    if( act_opencache ) act_opencache->set_sensitive( false );
     if( act_opentab ) act_opentab->set_sensitive( true );
 
     int type = path2type( m_path_selected );
@@ -1011,6 +1016,7 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
 
         case TYPE_IMAGE:
             if( act_image && ! DBIMG::get_abone( url ) ) act_image->set_sensitive( true );
+            if( act_opencache && DBIMG::is_cached( url ) ) act_opencache->set_sensitive( true );
             break;
 
         case TYPE_DIR:
@@ -1375,6 +1381,21 @@ void BBSListViewBase::slot_open_browser()
     if( m_path_selected.empty() ) return;
 
     std::string url = path2url( m_path_selected );
+    CORE::core_set_command( "open_url_browser", url );
+}
+
+
+//
+// 画像キャッシュをブラウザで開く
+//
+void BBSListViewBase::slot_open_cache_browser()
+{
+    if( m_path_selected.empty() ) return;
+
+    std::string url = path2url( m_path_selected );
+    if( ! DBIMG::is_cached( url ) ) return;
+
+    url = "file://" + DBIMG::get_cache_path( url );
     CORE::core_set_command( "open_url_browser", url );
 }
 
