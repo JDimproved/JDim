@@ -89,6 +89,7 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "Save", KEYCONF_Save );
     SETKEYMOTION( "Delete", KEYCONF_Delete );
     SETKEYMOTION( "Reload", KEYCONF_Reload );
+    SETKEYMOTION( "ReloadArticle", KEYCONF_ReloadArticle );
     SETKEYMOTION( "StopLoading",  KEYCONF_StopLoading ); // = CONTROL::Cancel
     SETKEYMOTION( "OpenURL", KEYCONF_OpenURL );
     SETKEYMOTION( "Copy", KEYCONF_Copy );

@@ -89,6 +89,7 @@ namespace CONTROL
         Save,
         Delete,
         Reload,
+        ReloadArticle,
         StopLoading,
         Cancel = StopLoading,
         OpenURL,

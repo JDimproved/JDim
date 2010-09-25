@@ -845,6 +845,14 @@ void ArticleViewBase::reload()
 // virtual
 void ArticleViewBase::exec_reload()
 {
+    reload_article();
+}
+
+
+//
+// 元のスレを開く
+void ArticleViewBase::reload_article()
+{
     if( m_article->empty() ) return;
 
     // オフライン
@@ -1041,6 +1049,11 @@ const bool ArticleViewBase::operate_view( const int control )
         // リロード
         case CONTROL::Reload:
             exec_reload();
+            break;
+
+        // 元のスレを開く
+        case CONTROL::ReloadArticle:
+            reload_article();
             break;
 
             // コピー

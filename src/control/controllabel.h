@@ -95,6 +95,7 @@ namespace CONTROL
         { "Save", "名前を付けて保存..." },
         { "Delete", ITEM_NAME_DELETE },
         { "Reload", ITEM_NAME_RELOAD },
+        { "ReloadArticle", "元のスレを開く" },
         { "StopLoading", ITEM_NAME_STOPLOADING },
         { "OpenURL", "URLを開く..." },        
         { "Copy", ITEM_NAME_COPY },

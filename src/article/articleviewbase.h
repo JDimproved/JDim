@@ -248,6 +248,8 @@ namespace ARTICLE
         const char* get_menu_item( const int item );
 
         virtual void exec_reload();
+        void reload_article();
+
         void exec_delete();
 
         // 荒らし報告用のURLリストをHTML形式で取得

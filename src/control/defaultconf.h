@@ -65,6 +65,7 @@ namespace CONTROL
 #define KEYCONF_Save  "Ctrl+s"
 #define KEYCONF_Delete  "Delete KP_Delete"
 #define KEYCONF_Reload  "F5 s"
+#define KEYCONF_ReloadArticle  "Shift+F5 S"
 #define KEYCONF_StopLoading  "Escape"
 #define KEYCONF_OpenURL "Ctrl+o"
 #define KEYCONF_Copy  "Ctrl+c"
