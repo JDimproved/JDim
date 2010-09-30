@@ -1642,7 +1642,7 @@ const std::string ArticleViewBase::get_html_url4report( const std::list< int >& 
 
         html += url_for_copy() + MISC::itostr( num );
         if( ! time_str.empty() ) html += " " + MISC::remove_str_regex( time_str, "\\([^\\)]+\\)" ); // 曜日を取り除く
-        if( ! id_str.empty() ) html += " ID:" + id_str.substr( strlen( PROTO_ID ) );
+        if( ! id_str.empty() ) html += " " + id_str.substr( strlen( PROTO_ID ) );
         html += "<br>";
     }
 
@@ -1741,7 +1741,7 @@ void ArticleViewBase::show_id( const std::string& id_name, const bool show_optio
     const std::string raw_id = id_name.substr( strlen( PROTO_ID ) ); 
 
     std::ostringstream comment;
-    comment << "ID:" << raw_id << "  " << list_resnum.size() << " 件<br>";
+    comment << raw_id << "  " << list_resnum.size() << " 件<br>";
     comment << "総参照数:" << m_article->get_res_reference( list_resnum ).size() << " 件";
 
     // 末尾判定
@@ -2321,7 +2321,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
     // ID:〜の範囲選択の上にポインタがあるときIDポップアップ
     else if( url.find( "ID:" ) == 0 ){
 
-        args.arg1 = PROTO_ID + url.substr( 3 );
+        args.arg1 = PROTO_ID + url;
         int num_id = m_article->get_num_id_name( args.arg1 );
 
 #ifdef _DEBUG
@@ -3651,7 +3651,7 @@ void ArticleViewBase::slot_copy_name()
 //
 void ArticleViewBase::slot_copy_id()
 {
-    std::string id = "ID:" + m_id_name.substr( strlen( PROTO_ID ) );
+    std::string id = m_id_name.substr( strlen( PROTO_ID ) );
     MISC::CopyClipboard( id );
 }
 

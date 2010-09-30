@@ -196,7 +196,7 @@ ArticleViewID::ArticleViewID( const std::string& url )
     setup_view();
 
     // ラベル更新
-    set_label( " [ ID:" + m_str_id.substr( strlen( PROTO_ID ) ) + " ] - " + DBTREE::article_subject( url_article() ));
+    set_label( " [ " + m_str_id.substr( strlen( PROTO_ID ) ) + " ] - " + DBTREE::article_subject( url_article() ));
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );

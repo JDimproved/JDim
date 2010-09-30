@@ -43,7 +43,7 @@ enum
 {
     SECTION_NUM = 5,
     LNG_RES = 16,
-    LNG_ID = 64,
+    LNG_ID = 256,
     LNG_LINK = 256,
     MAX_ANCINFO = 64,
     RANGE_REF = 20,
@@ -1663,8 +1663,20 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
         while( start_block + lng_block < lng && str[ start_block + lng_block ] != ' ' ) ++lng_block;
         if( !lng_block ) break;
 
-        // ID ( ??? の時は除く )
-        if( str[ start_block ] == 'I' && str[ start_block + 1 ] == 'D' && str[ start_block + 3 ] != '?' ){
+        if(
+            // ID ( ??? の時は除く )
+            ( str[ start_block ] == 'I' && str[ start_block + 1 ] == 'D' && str[ start_block + 3 ] != '?' )
+
+            // HOST
+            || ( str[ start_block + 0 ] == 'H' && str[ start_block + 1 ] == 'O' && str[ start_block + 2 ] == 'S' && str[ start_block + 3 ] == 'T' )
+
+            // 発言元
+            || (    str[ start_block + 0 ] == (char)0xe7 && str[ start_block + 1 ] == (char)0x99 && str[ start_block + 2 ] == (char)0xba // 発
+                 && str[ start_block + 3 ] == (char)0xe4 && str[ start_block + 4 ] == (char)0xbf && str[ start_block + 5 ] == (char)0xa1 // 言
+                 && str[ start_block + 6 ] == (char)0xe5 && str[ start_block + 7 ] == (char)0x85 && str[ start_block + 8 ] == (char)0x83 // 元
+                )
+
+            ){
 
             // フラッシュ
             if( lng_text ){
@@ -1672,9 +1684,19 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
                 create_node_ntext( str + start, lng_text, COLOR_CHAR );
             }
 
+            int offset = 0;
+            if( str[ start_block ] == 'I' ) offset = 3;
+            else if( str[ start_block ] == 'H' ){
+                offset = 5;
+
+                // HOST: の場合は途中で空白が入るときがあるので最後までブロックを伸ばす
+                lng_block = lng - start_block;
+            }
+            else if( str[ start_block ] == (char)0xe7 ) offset = 10;
+
             // id 取得
-            lng_id_tmp = lng_block -3;
-            memcpy( tmpid, str + start_block + 3, lng_id_tmp );
+            lng_id_tmp = MIN( lng_block, LNG_ID - 16 );
+            memcpy( tmpid, str + start_block, lng_id_tmp );
             tmpid[ lng_id_tmp ] = '\0';
             
             // リンク文字作成
@@ -1690,8 +1712,8 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
 
             // リンク作成
             header->headinfo->block[ BLOCK_ID_NAME ] = create_node_block();
-            create_node_link( "ID:", 3 , tmplink, lng_link_tmp, COLOR_CHAR, false );
-            create_node_ntext( tmpid, lng_id_tmp, COLOR_CHAR);
+            create_node_link( tmpid, offset, tmplink, lng_link_tmp, COLOR_CHAR, false );
+            create_node_ntext( tmpid +offset, lng_id_tmp -offset, COLOR_CHAR);
 
             // 発言回数ノード作成
             create_node_idnum();
