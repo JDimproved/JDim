@@ -315,6 +315,9 @@ Gtk::Widget* Core::get_toplevel()
 //
 void Core::run( const bool init, const bool skip_setupdiag )
 {
+    // 初回起動時の設定
+    if( init && ! skip_setupdiag ) first_setup();
+
     // メインメニューの設定
     m_action_group = Gtk::ActionGroup::create();
 
@@ -1019,9 +1022,6 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
         ( *it_item ).signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_menubar ) );
     }
-
-    // 初回起動時の設定
-    if( init && ! skip_setupdiag ) first_setup();
 
     // ツールバー作成
     create_toolbar();
