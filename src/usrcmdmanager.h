@@ -54,11 +54,11 @@ namespace CORE
         // コマンド置換
         // cmdの$URLをurl, $LINKをlink, $TEXT*をtext, $NUMBERをnumberで置き換えて出力
         // text は UTF-8 であること
-        std::string replace_cmd( const std::string& cmd,
-                                 const std::string& url,
-                                 const std::string& link,
-                                 const std::string& text,
-                                 const int number
+        const std::string replace_cmd( const std::string& cmd,
+                                       const std::string& url,
+                                       const std::string& link,
+                                       const std::string& text,
+                                       const int number
             );
 
         // ユーザコマンドメニューの作成

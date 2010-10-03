@@ -769,6 +769,13 @@ const std::string DBTREE::article_key( const std::string& url )
 }
 
 
+// 移転する前のオリジナルのURL
+const std::string DBTREE::article_org_host( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_org_host();
+}
+
+
 const time_t DBTREE::article_since_time( const std::string& url )
 {
     return DBTREE::get_article( url )->get_since_time();

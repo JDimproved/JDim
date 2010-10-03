@@ -290,14 +290,16 @@ const bool Usrcmd_Manager::show_replacetextdiag( std::string& texti, const std::
 // コマンド置換
 // cmdの$URLをurl, $LINKをlink, $TEXT*をtext, $NUMBERをnumberで置き換えて出力
 // text は UTF-8 であること
-std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
-                                         const std::string& url,
-                                         const std::string& link,
-                                         const std::string& text,
-                                         const int number                                         
+const std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
+                                               const std::string& url,
+                                               const std::string& link,
+                                               const std::string& text,
+                                               const int number                                         
     )
 {
     std::string cmd_out = cmd;
+    const std::string oldhostl = DBTREE::article_org_host( link );
+    const std::string oldhost = DBTREE::article_org_host( url );
 
     cmd_out = MISC::replace_str( cmd_out, "$URL", DBTREE::url_readcgi( url, 0, 0 ) );
     cmd_out = MISC::replace_str( cmd_out, "$DATURL", DBTREE::url_dat( url ) );
@@ -315,12 +317,21 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
     cmd_out = MISC::replace_str( cmd_out, "$SERVER", MISC::get_hostname( url ) );
 
     // ホスト名(http://含まない)
+    cmd_out = MISC::replace_str( cmd_out, "$OLDHOSTNAMEL", MISC::get_hostname( oldhostl, false ) );
+    cmd_out = MISC::replace_str( cmd_out, "$OLDHOSTNAME", MISC::get_hostname( oldhost, false ) );
+    cmd_out = MISC::replace_str( cmd_out, "$OLDHOSTL", MISC::get_hostname( oldhostl, false ) );
+    cmd_out = MISC::replace_str( cmd_out, "$OLDHOST", MISC::get_hostname( oldhost, false ) );
     cmd_out = MISC::replace_str( cmd_out, "$HOSTNAMEL", MISC::get_hostname( link, false ) );
     cmd_out = MISC::replace_str( cmd_out, "$HOSTNAME", MISC::get_hostname( url, false ) );
     cmd_out = MISC::replace_str( cmd_out, "$HOSTL", MISC::get_hostname( link, false ) );
     cmd_out = MISC::replace_str( cmd_out, "$HOST", MISC::get_hostname( url, false ) );
 
+    // スレが属する板のID
+    cmd_out = MISC::replace_str( cmd_out, "$BBSNAMEL", DBTREE::board_id( link ) );
     cmd_out = MISC::replace_str( cmd_out, "$BBSNAME", DBTREE::board_id( url ) );
+
+    // スレのID
+    cmd_out = MISC::replace_str( cmd_out, "$DATNAMEL", DBTREE::article_key( link ) );
     cmd_out = MISC::replace_str( cmd_out, "$DATNAME", DBTREE::article_key( url ) );
 
     cmd_out = MISC::replace_str( cmd_out, "$TITLE", DBTREE::article_subject( url ) );
