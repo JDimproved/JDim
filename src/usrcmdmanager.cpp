@@ -304,6 +304,7 @@ const std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
     cmd_out = MISC::replace_str( cmd_out, "$URL", DBTREE::url_readcgi( url, 0, 0 ) );
     cmd_out = MISC::replace_str( cmd_out, "$DATURL", DBTREE::url_dat( url ) );
     cmd_out = MISC::replace_str( cmd_out, "$LOGPATH", CACHE::path_root() );
+    cmd_out = MISC::replace_str( cmd_out, "$LOCALDATL", CACHE::path_dat( link ) );
     cmd_out = MISC::replace_str( cmd_out, "$LOCALDAT", CACHE::path_dat( url ) );
     cmd_out = MISC::replace_str( cmd_out, "$LINK", link );
     cmd_out = MISC::replace_str( cmd_out, "$NUMBER", MISC::itostr( number ) );
@@ -412,6 +413,11 @@ const bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const
         || cmd.find( "$SERVERL" ) != std::string::npos
         || cmd.find( "$HOSTNAMEL" ) != std::string::npos
         || cmd.find( "$HOSTL" ) != std::string::npos
+        || cmd.find( "$OLDHOSTNAMEL" ) != std::string::npos
+        || cmd.find( "$OLDHOSTL" ) != std::string::npos
+        || cmd.find( "$BBSNAMEL" ) != std::string::npos
+        || cmd.find( "$DATNAMEL" ) != std::string::npos
+        || cmd.find( "$LOCALDATL" ) != std::string::npos
         ){
         if( link.empty() ) return false;
     }
