@@ -482,7 +482,7 @@ void ArticleViewMain::update_finish()
     }
 
     // ロード後に末尾ジャンプ
-    else if( CONFIG::get_jump_after_reload() && number_new ){
+    else if( ! get_live() && CONFIG::get_jump_after_reload() && number_new ){
 #ifdef _DEBUG
         std::cout << "jump_after_reload\n";
 #endif
@@ -490,7 +490,7 @@ void ArticleViewMain::update_finish()
     }
 
     // ロード後に新着へジャンプ
-    else if( CONFIG::get_jump_new_after_reload() && number_new ){
+    else if( ! get_live() && CONFIG::get_jump_new_after_reload() && number_new ){
 #ifdef _DEBUG
         std::cout << "jump_new_after_reload\n";
 #endif
