@@ -15,5 +15,8 @@ DrawAreaMain::DrawAreaMain( const std::string& url )
     std::cout << "DrawAreaMain::DrawAreaMain url = " << url << std::endl;
 #endif
 
-    setup( false, true );
+    const bool show_abone = false;
+    const bool show_scrbar = true;
+    const bool show_multispace = false;
+    setup( show_abone, show_scrbar, show_multispace );
 }

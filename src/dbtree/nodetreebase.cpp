@@ -832,6 +832,17 @@ NODE* NodeTreeBase::create_node_space( const int type )
 
 
 //
+// 連続半角スペース
+//
+NODE* NodeTreeBase::create_node_multispace( const char* text, const int n )
+{
+    NODE* tmpnode = create_node_ntext( text, n, COLOR_CHAR, false );
+    tmpnode->type = NODE_MULTISP;
+    return tmpnode;
+}
+
+
+//
 // 水平タブノード
 //
 NODE* NodeTreeBase::create_node_htab()
@@ -1812,8 +1823,17 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
     const char* pos_end = str + lng;
     int lng_text = 0;
     
-    // 行頭の空白は全て除く
-    while( *pos == ' ' ) ++pos;
+    if( *pos == ' ' ){
+
+        pos++;  // 一文字だけなら取り除く
+
+        // 連続半角空白
+        if( *pos == ' ' ){
+
+            while( *pos == ' ' ) m_parsed_text[ lng_text++ ] = *(pos++);
+            create_node_multispace( m_parsed_text, lng_text ); lng_text = 0;
+        }
+    }
    
     for( ; pos < pos_end; ++pos, digitlink = false ){
 
@@ -1965,9 +1985,19 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                 // 改行ノード作成
                 create_node_br();
 
-                // 改行直後と行頭の空白は全て除く
                 while( *pos != '>' ) ++pos; ++pos;
-                while( *pos == ' ' ) ++pos;
+
+                if( *pos == ' ' ){
+
+                    pos++;  // 一文字だけなら取り除く
+
+                    // 連続半角空白
+                    if( *pos == ' ' ){
+
+                        while( *pos == ' ' ) m_parsed_text[ lng_text++ ] = *(pos++);
+                        create_node_multispace( m_parsed_text, lng_text ); lng_text = 0;
+                    }
+                }
             }
 
             // forのところで++されるので--しておく
@@ -2061,7 +2091,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
         // 特殊文字デコード
         if( *pos == '&' ){
 
-            int ret_decode = DBTREE::decode_char( pos, n_in, m_parsed_text + lng_text, n_out, false );
+            const int ret_decode = DBTREE::decode_char( pos, n_in, m_parsed_text + lng_text, n_out, false );
 
             if( ret_decode != NODE_NONE ){
 
@@ -2099,8 +2129,22 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             continue;
         }
 
-        // 連続する空白は一個にする
-        while( *pos == ' ' && *( pos + 1 ) == ' ' ) ++pos;
+        ///////////////////////
+        // 連続半角空白
+        if( *pos == ' ' && *( pos + 1 ) == ' ' ){
+
+            m_parsed_text[ lng_text++ ] = *(pos++);
+
+            // フラッシュしてから連続半角ノードを作る
+            create_node_ntext( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
+
+            while( *pos == ' ' ) m_parsed_text[ lng_text++ ] = *(pos++);
+            create_node_multispace( m_parsed_text, lng_text ); lng_text = 0;
+
+            // forのところで++されるので--しておく
+            --pos;
+            continue;
+        }
 
         m_parsed_text[ lng_text++ ] = *pos;
     }

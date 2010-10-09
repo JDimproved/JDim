@@ -108,11 +108,15 @@ namespace ARTICLE
 
         // true ならあぼーんしたレスも表示
         bool m_show_abone;
+
+        // true なら連続空白ノードも表示
+        bool m_show_multispace;
         
       public:
         
-        // m_show_abone = true ならあぼーんしたレスも表示する
-        LayoutTree( const std::string& url, bool show_abone );
+        // show_abone : true ならあぼーんしたレスも表示する
+        // show_multispace : true なら連続空白ノードも表示
+        LayoutTree( const std::string& url, const bool show_abone, const bool show_multispace );
         ~LayoutTree();
 
         void clear();

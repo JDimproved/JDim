@@ -314,7 +314,10 @@ namespace ARTICLE
         void set_colorid_back( int id ){ m_colorid_back = id; }
 
         // 共通セットアップ
-        void setup( bool show_abone, bool show_scrbar );
+        // show_abone : あぼーんされたスレも表示
+        // show_scrbar : スクロールバーを最初から表示
+        // show_multispace : 連続空白も表示
+        void setup( const bool show_abone, const bool show_scrbar, const bool show_multispace );
 
         // レイアウト処理
         virtual bool exec_layout();

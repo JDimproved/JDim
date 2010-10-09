@@ -2490,7 +2490,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
             hide_popup();
 
-            int num_id = m_article->get_num_id_name( res_number );
+            const int num_id = m_article->get_num_id_name( res_number );
             m_id_name = m_article->get_id_name( res_number );
 
             // ID ポップアップ
@@ -2650,8 +2650,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             else if( control.button_alloted( event, CONTROL::BmResButton ) ) slot_bookmark();
 
             // 参照ポップアップ表示
-            else if( control.button_alloted( event, CONTROL::ReferResButton )
-                     && m_article->get_res_reference( res_number ).size() ){
+            else if( control.button_alloted( event, CONTROL::ReferResButton ) ){
 
                 CORE::VIEWFACTORY_ARGS args;
                 args.arg1 = m_str_num;

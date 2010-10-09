@@ -142,15 +142,16 @@ DrawAreaBase::~DrawAreaBase()
 //
 // show_abone : あぼーんされたスレも表示
 // show_scrbar : スクロールバーを最初から表示
+// show_multispace : 連続空白も表示
 //
-void DrawAreaBase::setup( bool show_abone, bool show_scrbar )
+void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const bool show_multispace )
 {
     if( m_layout_tree ) delete m_layout_tree;
     m_layout_tree = NULL;
     clear();
 
     m_article = DBTREE::get_article( m_url );
-    m_layout_tree = new LayoutTree( m_url, show_abone );
+    m_layout_tree = new LayoutTree( m_url, show_abone, show_multispace );
 
     m_view.set_double_buffered( false );
 

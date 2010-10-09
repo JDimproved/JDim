@@ -49,14 +49,16 @@ namespace ARTICLE
 using namespace ARTICLE;
 
 
-// m_show_abone = true ならあぼーんしたレスも表示する
-LayoutTree::LayoutTree( const std::string& url, bool show_abone )
+// show_abone : true ならあぼーんしたレスも表示する
+// show_multispace : true なら連続空白ノードも表示
+LayoutTree::LayoutTree( const std::string& url, const bool show_abone, const bool show_multispace )
     : m_heap( SIZE_OF_HEAP ),
       m_url( url ),
       m_vec_header( NULL ),
       m_local_nodetree( 0 ),
       m_separator_header( NULL ),
-      m_show_abone( show_abone )
+      m_show_abone( show_abone ),
+      m_show_multispace( show_multispace )
 {
 #ifdef _DEBUG
     std::cout << "LayoutTree::LayoutTree : url = " << url << " show_abone = " << m_show_abone << std::endl;
@@ -428,6 +430,10 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
             
             case DBTREE::NODE_ZWSP: // 幅0スペース
                 tmplayout = create_layout_hspace( tmpnode->type );
+                break;
+
+            case DBTREE::NODE_MULTISP: // 連続半角スペース
+                if( m_show_multispace ) tmplayout = create_layout_text( tmpnode->text, &tmpnode->color_text, tmpnode->bold );
                 break;
 
             case DBTREE::NODE_HTAB: // 水平タブ

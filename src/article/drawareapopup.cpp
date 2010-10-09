@@ -33,7 +33,10 @@ DrawAreaPopup::DrawAreaPopup( const std::string& url, bool show_abone )
     // 背景色
     set_colorid_back( COLOR_BACK_POPUP );
 
-    setup( show_abone, false );
+    const bool show_scrbar = false;
+    const bool show_multispace = true;
+    setup( show_abone, show_scrbar, show_multispace );
+
     set_draw_frame( true );
 }
 
