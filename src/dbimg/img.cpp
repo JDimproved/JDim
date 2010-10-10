@@ -423,10 +423,9 @@ const bool Img::is_fake()
     if( ! is_cached() ) return false;
 
     bool ret = false;
-    std::string url = m_url;
-    if( ! m_url_alt.empty() ) url = m_url_alt;
 
-    if( DBIMG::get_type_ext( url ) != m_type ) ret = true;
+    if( DBIMG::get_type_ext( m_url ) != m_type ) ret = true;
+    else if( ! m_url_alt.empty() && DBIMG::get_type_ext( m_url_alt ) != m_type ) ret = true;
 
 #ifdef _DEBUG
     std::cout << "Img::is_fake url = " << url << " ret = " << ret << std::endl;
