@@ -66,7 +66,9 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_entry_mail( CORE::COMP_MAIL ),
       m_text_message( NULL ),
       m_enable_focus( true ),
-      m_counter( 0 )
+      m_lng_str_enc( 0 ),
+      m_counter( 0 ),
+      m_text_changed( false )
 {
 #ifdef _DEBUG
     std::cout << "MessageViewBase::MessageViewBase " << get_url() << std::endl;
@@ -407,7 +409,7 @@ void MessageViewBase::pack_widget()
     m_text_message->set_accepts_tab( false );
     m_text_message->sig_key_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );    
     m_text_message->sig_button_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_button_press ) );
-    m_text_message->get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::show_status ) );
+    m_text_message->get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::slot_text_changed ) );
 
     // プレビュー
     m_preview = CORE::ViewFactory( CORE::VIEW_ARTICLEPREVIEW, get_url() );
@@ -876,6 +878,16 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
 }
 
 
+//
+// 書き込み欄のテキストが更新された
+//
+void MessageViewBase::slot_text_changed()
+{
+    m_text_changed = true;
+    show_status();
+    m_text_changed = false;
+}
+
 
 //
 // ステータス表示
@@ -897,21 +909,22 @@ void MessageViewBase::show_status()
     {
         ss << "過多";
     }
-    else
+    else if( m_text_changed )
     {
         int byte_out;
         const char* msgc = message.c_str();
         std::string str_enc = m_iconv->convert( (char*)msgc, strlen( msgc ), byte_out );
-         m_lng_str_enc = str_enc.length();
+        m_lng_str_enc = str_enc.length();
 
-         // 特殊文字の文字数を計算
-         m_lng_str_enc += MISC::count_chr( str_enc, '\n' ) * 5; // " <br> " = 6バイト
-         m_lng_str_enc += MISC::count_chr( str_enc, '"' ) * 5; // &quot; = 6バイト
-         m_lng_str_enc += MISC::count_chr( str_enc, '<' ) * 3; // &lt; = 4バイト
-         m_lng_str_enc += MISC::count_chr( str_enc, '>' ) * 3; // &gt; = 4バイト
+        // 特殊文字の文字数を計算
+        m_lng_str_enc += MISC::count_chr( str_enc, '\n' ) * 5; // " <br> " = 6バイト
+        m_lng_str_enc += MISC::count_chr( str_enc, '"' ) * 5; // &quot; = 6バイト
+        m_lng_str_enc += MISC::count_chr( str_enc, '<' ) * 3; // &lt; = 4バイト
+        m_lng_str_enc += MISC::count_chr( str_enc, '>' ) * 3; // &gt; = 4バイト
 
         ss << m_lng_str_enc;
     }
+    else ss << m_lng_str_enc;
 
     if( m_max_str ) ss << "/ " << m_max_str;
 

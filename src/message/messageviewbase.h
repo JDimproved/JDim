@@ -67,6 +67,8 @@ namespace MESSAGE
         int m_counter;
         std::string m_str_pass;
 
+        bool m_text_changed;
+
       public:
 
         MessageViewBase( const std::string& url );
@@ -133,6 +135,7 @@ namespace MESSAGE
 
         bool slot_button_press( GdkEventButton* event );
         void slot_switch_page( GtkNotebookPage*, guint page );
+        void slot_text_changed();
 
         virtual std::string create_message() = 0;
 
