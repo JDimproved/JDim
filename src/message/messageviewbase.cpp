@@ -17,6 +17,7 @@
 #include "jdlib/misctime.h"
 #include "jdlib/misctrip.h"
 #include "jdlib/jdiconv.h"
+#include "jdlib/jdregex.h"
 
 #include "dbtree/interface.h"
 
@@ -594,7 +595,28 @@ void MessageViewBase::write()
         }
     }
 
-    write_impl();
+    const std::string msg = create_message();
+    if( msg.empty() ) return;
+
+    // 数値文字参照(&#????;)書き込み可能か
+    if( DBTREE::get_unicode( get_url() ) == "change" ){
+
+        JDLIB::Regex regex;
+        const size_t offset = 0;
+        const bool icase = false;
+        const bool newline = true;
+        const bool usemigemo = false;
+        const bool wchar = false;
+        if( regex.exec( "%26%23[0-9]*%3b", msg, offset, icase, newline, usemigemo, wchar ) ){
+
+            SKELETON::MsgDiag mdiag( get_parent_win(),
+                                     "ユニコード文字が含まれていますが、この板ではユニコード文字は文字化けします(BBS_UNICODE=change)。\n\n書き込みますか？",
+                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+        }
+    }
+
+    write_impl( msg );
 }
 
 
@@ -927,6 +949,9 @@ void MessageViewBase::show_status()
     else ss << m_lng_str_enc;
 
     if( m_max_str ) ss << "/ " << m_max_str;
+
+    if( DBTREE::get_unicode( get_url() ) == "pass" ) ss << " / unicode ○";
+    else if( DBTREE::get_unicode( get_url() ) == "change" ) ss << " / unicode ×";
 
     const time_t wtime = DBTREE::article_write_time( get_url() );
     if( wtime ) ss << "  /  最終書込 "

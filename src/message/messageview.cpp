@@ -48,7 +48,7 @@ MessageViewMain::~MessageViewMain()
 //
 // ポストするメッセージ作成
 //
-std::string MessageViewMain::create_message()
+const std::string MessageViewMain::create_message()
 {
     if( ! get_text_message() ) return std::string();
 
@@ -125,10 +125,8 @@ std::string MessageViewMain::create_message()
 //
 // 書き込みが終わったら MessageViewBase::post_fin()が呼ばれる
 //
-void MessageViewMain::write_impl()
+void MessageViewMain::write_impl( const std::string& msg )
 {
-    std::string msg = create_message();
-    if( msg.empty() ) return;
     post_msg( msg, false );
 }
 
@@ -163,7 +161,7 @@ void MessageViewMain::reload()
 //
 // ポストするメッセージ作成
 //
-std::string MessageViewNew::create_message()
+const std::string MessageViewNew::create_message()
 {
     if( ! get_text_message() ) return std::string();
 
@@ -195,10 +193,8 @@ std::string MessageViewNew::create_message()
 //
 // 書き込みが終わったら MessageViewBase::post_fin()が呼ばれる
 //
-void MessageViewNew::write_impl()
+void MessageViewNew::write_impl( const std::string& msg )
 {
-    std::string msg = create_message();
-    if( msg.empty() ) return;
     post_msg( msg, true );
 }
 

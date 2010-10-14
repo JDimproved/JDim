@@ -1154,10 +1154,8 @@ const std::string MISC::charset_url_encode( const std::string& str, const std::s
 {
     if( charset.empty() || charset == "UTF-8" ) return MISC::url_encode( str.c_str(), str.length() );
 
-    std::string str_enc = MISC::Iconv( str, "UTF-8", charset );
-    std::string str_encoded = MISC::url_encode( str_enc.c_str(), strlen( str_enc.c_str() ) );
-
-    return str_encoded;
+    const std::string str_enc = MISC::Iconv( str, "UTF-8", charset );
+    return  MISC::url_encode( str_enc.c_str(), str_enc.length() );
 }
 
 
@@ -1240,7 +1238,7 @@ const std::string MISC::Iconv( const std::string& str, const std::string& coding
     JDLIB::Iconv* libiconv = new JDLIB::Iconv( coding_from, coding_to );
     int byte_out;
 
-    std::string str_enc = libiconv->convert( str_bk, strlen( str_bk ), byte_out );
+    const std::string str_enc = libiconv->convert( str_bk, strlen( str_bk ), byte_out );
 
     delete libiconv;
     free( str_bk );

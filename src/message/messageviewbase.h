@@ -122,7 +122,7 @@ namespace MESSAGE
         void save_postlog();
 
         // 実際の書き込み処理を行う関数(子クラス別に実装)
-        virtual void write_impl() = 0;  
+        virtual void write_impl( const std::string& msg ) = 0;  
 
         // プレビュー切り替え
         void toggle_preview();
@@ -137,7 +137,7 @@ namespace MESSAGE
         void slot_switch_page( GtkNotebookPage*, guint page );
         void slot_text_changed();
 
-        virtual std::string create_message() = 0;
+        virtual const std::string create_message() = 0;
 
         void show_status();
 

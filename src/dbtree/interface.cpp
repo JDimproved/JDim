@@ -994,6 +994,12 @@ const int DBTREE::message_count( const std::string& url )
     return DBTREE::get_board( url )->message_count();
 }
 
+// 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
+const std::string DBTREE::get_unicode( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_unicode();
+}
+
 const std::string& DBTREE::write_name( const std::string& url )
 {
     return DBTREE::get_article( url )->get_write_name();

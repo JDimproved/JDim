@@ -268,6 +268,8 @@ namespace DBTREE
     // 最大書き込みバイト数
     const int message_count( const std::string& url );
 
+    // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
+    const std::string get_unicode( const std::string& url );
 
     // 書き込み時の名前とメール
     const std::string& write_name( const std::string& url );

@@ -314,6 +314,9 @@ namespace DBTREE
         // 最大書き込みバイト数
         virtual const int message_count();
 
+        // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
+        virtual const std::string get_unicode();
+
         // 書き込み用クッキー
         virtual const std::string cookie_for_write();
         const std::list< std::string >& list_cookies_for_write() { return m_list_cookies_for_write; }

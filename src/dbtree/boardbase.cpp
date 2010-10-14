@@ -269,6 +269,13 @@ const int BoardBase::message_count()
 }
 
 
+// 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
+const std::string BoardBase::get_unicode()
+{
+    return "";
+}
+
+
 //書き込み用クッキー
 const std::string BoardBase::cookie_for_write()
 {

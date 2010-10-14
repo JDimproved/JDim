@@ -17,8 +17,8 @@ namespace MESSAGE
         virtual void reload();
 
       private:
-        virtual void write_impl();
-        virtual std::string create_message();
+        virtual void write_impl( const std::string& msg );
+        virtual const std::string create_message();
     };
 
 
@@ -32,8 +32,8 @@ namespace MESSAGE
         virtual void reload();
 
       private:
-        virtual void write_impl();
-        virtual std::string create_message();
+        virtual void write_impl( const std::string& msg );
+        virtual const std::string create_message();
     };
 
 }

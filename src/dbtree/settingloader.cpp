@@ -88,12 +88,14 @@ void SettingLoader::parse_data()
     m_default_noname = cf.get_option_str( "BBS_NONAME_NAME", "No Name" );
     m_line_number = cf.get_option_int( "BBS_LINE_NUMBER", 0, 0, 8192 );
     m_message_count = cf.get_option_int( "BBS_MESSAGE_COUNT", 0, 0, 81920 );
+    m_unicode = cf.get_option_str( "BBS_UNICODE", "" );
     DBTREE::board_set_modified_setting( m_url_boadbase, get_date_modified() );
 
 #ifdef _DEBUG
     std::cout << "SettingLoader::parse url = " << get_url() << std::endl
               << "default_noname = " << m_default_noname << std::endl
               << "line_number = " << m_line_number << std::endl
-              << "message_count = " << m_message_count << std::endl;
+              << "message_count = " << m_message_count << std::endl
+              << "unicode = " << m_unicode << std::endl;
 #endif
 }

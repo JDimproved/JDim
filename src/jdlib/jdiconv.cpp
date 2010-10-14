@@ -9,6 +9,7 @@
 
 #include "jdiconv.h"
 #include "miscmsg.h"
+#include "miscutil.h"
 
 #include <errno.h>
 #include <cstring>
@@ -98,7 +99,7 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
         std::cout << "byte_left_out = " << byte_left_out << std::endl;
 #endif
     
-        int ret = iconv( m_cd, ( ICONV_CONST char**)&m_buf_in_tmp, &m_byte_left_in, &buf_out, &byte_left_out );
+        const int ret = iconv( m_cd, ( ICONV_CONST char**)&m_buf_in_tmp, &m_byte_left_in, &buf_out, &byte_left_out );
 
 #ifdef _DEBUG
         std::cout << "--> ret = " << ret << std::endl;
@@ -113,9 +114,9 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
             if( errno == EILSEQ ){
 
                 char str_tmp[256];
-                unsigned char code0 = *m_buf_in_tmp;
-                unsigned char code1 = *(m_buf_in_tmp+1);
-                unsigned char code2 = *(m_buf_in_tmp+2);
+                const unsigned char code0 = *m_buf_in_tmp;
+                const unsigned char code1 = *(m_buf_in_tmp+1);
+                const unsigned char code2 = *(m_buf_in_tmp+2);
 
                 if( m_coding_from == "MS932" )
                 {
@@ -144,6 +145,32 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
 
                         snprintf( str_tmp, 256, "iconv 0x%x%x -> □ (0x81a0) ", code0, code1 );
                         MISC::MSG( str_tmp );
+                        continue;
+                    }
+                }
+
+                // unicode 文字からの変換失敗
+                // 数値文字参照(&#????;)形式にする
+                if( m_coding_from == "UTF-8" ){
+
+                    int byte;
+                    const int ucs2 = MISC::utf8toucs2( m_buf_in_tmp, byte );
+                    if( byte != 1 ){
+
+                        const std::string ucs2_str = MISC::itostr( ucs2 );
+#ifdef _DEBUG
+                        std::cout << "ucs2 = " << ucs2_str << " byte = " << byte << std::endl;
+#endif
+                        m_buf_in_tmp += byte;
+                        m_byte_left_in -= byte;
+
+                        *(buf_out++) = '&';
+                        *(buf_out++) = '#';
+                        memcpy( buf_out, ucs2_str.c_str(), ucs2_str.size() ); buf_out += ucs2_str.size();
+                        *(buf_out++) = ';';
+
+                        byte_left_out -= ucs2_str.size() + 3;
+
                         continue;
                     }
                 }

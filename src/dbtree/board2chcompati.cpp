@@ -525,6 +525,15 @@ const int Board2chCompati::message_count()
 }    
 
 
+const std::string Board2chCompati::get_unicode()
+{
+    if( m_settingloader
+        && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->get_unicode();
+
+    return BoardBase::get_unicode();
+}
+
+
 //
 // ローカルルールとSETTING.TXTをキャッシュから読み込む
 //

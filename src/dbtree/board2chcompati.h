@@ -48,6 +48,7 @@ namespace DBTREE
         virtual const std::string default_noname();
         virtual const int line_number();
         virtual const int message_count();
+        virtual const std::string get_unicode();
 
       private:
 
