@@ -487,7 +487,7 @@ Gtk::TreeViewColumn* EditTreeView::create_column( const int ypad )
     m_ren_text->property_underline() = Pango::UNDERLINE_SINGLE;
 
     // 行間スペース
-    if( ypad ) m_ren_text->property_ypad() = ypad;
+    if( ypad >= 0 ) m_ren_text->property_ypad() = ypad;
 
     col->pack_start( *m_ren_text, true );
     col->add_attribute( *m_ren_text, "text", EDITCOL_NAME );
