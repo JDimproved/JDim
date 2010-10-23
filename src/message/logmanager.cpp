@@ -267,19 +267,14 @@ void Log_Manager::push_logitem( const std::string& url, const bool newthread,  c
 {
     if( ! CONFIG::get_save_post_history() ) return;
 
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
-
-    std::string logurl = url;
-    if( newthread && logurl.find( ID_OF_NEWTHREAD ) != std::string::npos ) logurl = logurl.substr( 0, logurl.find( ID_OF_NEWTHREAD ) );
-    m_logitems.push_back( new LogItem( logurl, newthread, msg, tv.tv_sec ) );
+    LogItem *item = new LogItem( url, newthread, msg );
+    m_logitems.push_back( item );
 
 #ifdef _DEBUG
     std::cout << "Log_Manager::push_logitem\n";
-    std::cout << "url = " << logurl << std::endl;
-    std::cout << "newthread = " << newthread << std::endl;
-    std::cout << "msg = " << msg << std::endl;
+    std::cout << "url = " << item->url << std::endl;
+    std::cout << "newthread = " << item->newthread << std::endl;
+    std::cout << "msg = " << item->msg << std::endl;
 #endif
 }
 

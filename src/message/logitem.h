@@ -7,6 +7,8 @@
 #ifndef _LOGITEM_H
 #define _LOGITEM_H
 
+#include "messageadmin.h"
+
 #include "jdlib/miscutil.h"
 
 #include <list>
@@ -26,23 +28,33 @@ namespace MESSAGE
     {
       public:
 
-        const std::string url;
+        std::string url;
         const bool newthread;
         std::string msg;
-        const time_t time_write;
+        time_t time_write;
         std::list< std::string > msg_lines;
         char head[ LOGITEM_SIZE_HEAD ];
         bool remove;
 
-        LogItem( const std::string& _url, const bool _newthread, const std::string& _msg, const time_t _time_write )
-        : url( _url ), newthread( _newthread ), msg( _msg ), time_write( _time_write ), remove( false )
+      LogItem( const std::string& _url, const bool _newthread, const std::string& _msg )
+      : url( _url ), newthread( _newthread ), msg( _msg ), remove( false )
         {
+
+            struct timeval tv;
+            struct timezone tz;
+            gettimeofday( &tv, &tz );
+            time_write = tv.tv_sec;
+
+            if( newthread && url.find( ID_OF_NEWTHREAD ) != std::string::npos ) url = url.substr( 0, url.find( ID_OF_NEWTHREAD ) );
 
             // WAVE DASH 問題
             msg = MISC::utf8_fix_wavedash( msg, MISC::UNIXtoWIN );
 
             // 水平タブを空白に置き換える
             msg = MISC::replace_str( msg, "\t", " " );
+
+            // 数字参照を変換
+            msg = MISC::decode_spchar_number( msg );
 
             // MISC::replace_str( ..., "\n", " \n" ) しているのは MISC::get_lines 実行時に
             // 改行のみの行を削除しないようにするため

@@ -10,6 +10,7 @@
 #include "hkana.h"
 
 #include "dbtree/spchar_decoder.h"
+#include "dbtree/node.h"
 
 #include <sstream>
 #include <cstring>
@@ -875,10 +876,9 @@ const std::string MISC::html_escape( const std::string& str, const bool include_
             const int bufsize = 64;
             char out_char[ bufsize ];
             int n_in, n_out;
-            DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out, false );
-
-            if( n_out ) str_out += tmpchar;
-            else str_out += "&amp;";
+            const int type = DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out, false );
+            if( type == DBTREE::NODE_NONE ) str_out += "&amp;";
+            else str_out += tmpchar;
         }
         else if( tmpchar == '\"' ) str_out += "&quot;";
         else if( tmpchar == '<' ) str_out += "&lt;";
@@ -1246,6 +1246,128 @@ const std::string MISC::Iconv( const std::string& str, const std::string& coding
     return str_enc;
 }
 
+
+//
+// 「&#数字;」形式の数字参照文字列の中の「数字」部分の文字列長
+//
+// in_char: 入力文字列、in_char[0] == "&" && in_char[1] == "#" であること
+// offset : 開始位置が返る
+//
+// 戻り値 : 「&#数字;」の中の数字の文字列の長さ、変換出来ないときは -1
+//
+// 例 : &#9999; なら 戻り値 = 4、 offset = 2
+//
+const int MISC::spchar_number_ln( const char* in_char, int& offset )
+{
+    int lng;
+    offset = 2;
+
+    // offset == 2 なら 10 進数、3 なら16進数
+    if( in_char[ offset ] == 'x' || in_char[ offset ] == 'X' ) ++offset;
+
+    // 桁数取得(最大4桁)
+    if( in_char[ offset ] == ';' ) return -1;
+    else if( in_char[ offset +1 ] == ';' ) lng = 1;
+    else if( in_char[ offset +2 ] == ';' ) lng = 2;
+    else if( in_char[ offset +3 ] == ';' ) lng = 3;
+    else if( in_char[ offset +4 ] == ';' ) lng = 4;
+    else if( in_char[ offset +5 ] == ';' ) lng = 5;
+    else return -1;
+
+    // デコード可能かチェック
+
+    // 10 進数
+    if( offset == 2 ){
+
+        for( int i = 0; i < lng; ++i ){
+            if( in_char[ offset + i ] < '0' || in_char[ offset + i ] > '9' ) return -1;
+        }
+    }
+
+    // 16 進数
+    else{
+
+        for( int i = 0; i < lng; ++i ){
+            if(
+                ! (
+                    ( in_char[ offset + i ] >= '0' && in_char[ offset + i ] <= '9' )
+                    || ( in_char[ offset + i ] >= 'a' && in_char[ offset + i ] <= 'f' )
+                    || ( in_char[ offset + i ] >= 'A' && in_char[ offset + i ] <= 'F' )
+                    )
+                ) return -1;
+        }
+    }
+
+    return lng;
+}
+
+
+//
+// 「&#数字;」形式の数字参照文字列を数字(int)に変換する
+//
+// 最初に MISC::spchar_number_ln() を呼び出して offset と lng を取得すること
+//
+// in_char: 入力文字列、in_char[0] == "&" && in_char[1] == "#" であること
+// offset : spchar_number_ln() の戻り値
+// lng : spchar_number_ln() の戻り値
+//
+// 戻り値 : 「&#数字;」の中の数字(int型)
+//
+const int MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
+{
+    char str_num[ 16 ];
+
+    memcpy( str_num, in_char + offset, lng );
+    str_num[ lng ] = '\0';
+
+#ifdef _DEBUG
+    std::cout << "MISC::decode_spchar_number offset = " << offset << " lng = " << lng << " str = " << str_num << std::endl;
+#endif
+
+    int num = 0;
+    if( offset == 2 ) num = atoi( str_num );
+    else num = strtol( str_num, NULL, 16 );
+
+    return num;
+}
+
+
+//
+// str に含まれる「&#数字;」形式の数字参照文字列を全てユニーコード文字に変換する
+//
+const std::string MISC::decode_spchar_number( const std::string& str )
+{
+    std::string str_out;
+    const size_t str_length = str.length();
+
+    for( size_t i = 0; i < str_length ; ++i ){
+
+        if( str[ i ] == '&' && str[ i + 1 ] == '#' ){
+
+            int offset;
+            const int lng = MISC::spchar_number_ln( str.c_str()+i, offset );
+            if( lng == -1 ){
+                str_out += str[ i ];
+                continue;
+            }
+
+            const int num = MISC::decode_spchar_number( str.c_str()+i, offset, lng );
+
+            char out_char[ 64 ];
+            const int n_out = MISC::ucs2toutf8( num, out_char );
+            if( ! n_out ){
+                str_out += str[ i ];
+                continue;
+            }
+
+            for( int j = 0; j < n_out; ++j ) str_out += out_char[ j ];
+            i += offset + lng;
+        }
+        else str_out += str[ i ];
+    }
+
+    return str_out;
+}
 
 
 //

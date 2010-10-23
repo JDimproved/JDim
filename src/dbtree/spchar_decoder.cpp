@@ -40,63 +40,15 @@ const bool check_spchar( const char* n_in, const char* spchar )
 const int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
 {
     int ret = DBTREE::NODE_TEXT;
-    int lng = 0;
-    char str_num[ 16 ];
-    int offset = 2;
-
     n_in = n_out = 0;
 
-    // offset == 2 なら 10 進数、3 なら16進数
-    if( in_char[ offset ] == 'x' || in_char[ offset ] == 'X' ) offset += 1;
-
-    // 桁数取得(最大4桁)
-    if( in_char[ offset ] == ';' ) return DBTREE::NODE_NONE;
-    else if( in_char[ offset +1 ] == ';' ) lng = 1;
-    else if( in_char[ offset +2 ] == ';' ) lng = 2;
-    else if( in_char[ offset +3 ] == ';' ) lng = 3;
-    else if( in_char[ offset +4 ] == ';' ) lng = 4;
-    else if( in_char[ offset +5 ] == ';' ) lng = 5;
-    else return DBTREE::NODE_NONE;
-
-    // デコード可能かチェック
-
-    // 10 進数
-    if( offset == 2 ){
-
-        for( int i = 0; i < lng; ++i ){
-            if( in_char[ offset + i ] < '0' || in_char[ offset + i ] > '9' ) return DBTREE::NODE_NONE;
-        }
-    }
-
-    // 16 進数
-    else{
-
-        for( int i = 0; i < lng; ++i ){
-            if(
-                ! (
-                    ( in_char[ offset + i ] >= '0' && in_char[ offset + i ] <= '9' )
-                    || ( in_char[ offset + i ] >= 'a' && in_char[ offset + i ] <= 'f' )
-                    || ( in_char[ offset + i ] >= 'A' && in_char[ offset + i ] <= 'F' )
-                    )
-                ) return DBTREE::NODE_NONE;
-        }
-    }
+    int offset;
+    const int lng = MISC::spchar_number_ln( in_char, offset );
+    if( lng == -1 ) return DBTREE::NODE_NONE;
 
     if( only_check ) return ret;
 
-    memcpy( str_num, in_char + offset, lng );
-    str_num[ lng ] = '\0';
-
-#ifdef _DEBUG
-    std::cout << "decode_char_number offset = " << offset
-              << " lng = " << lng
-              << " str = " << str_num << std::endl;
-#endif
-
-    int num = 0;
-
-    if( offset == 2 ) num = atoi( str_num );
-    else num = strtol( str_num, NULL, 16 );
+    const int num = MISC::decode_spchar_number( in_char, offset, lng );
 
     switch( num ){
 

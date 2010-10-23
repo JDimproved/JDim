@@ -187,6 +187,32 @@ namespace MISC
     // 遅いので連続的な処理が必要な時は使わないこと
     const std::string Iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to );
 
+    // 「&#数字;」形式の数字参照文字列の中の「数字」部分の文字列長
+    //
+    // in_char: 入力文字列、in_char[0] == "&" && in_char[1] == "#" であること
+    // offset : 開始位置が返る
+    //
+    // 戻り値 : 「&#数字;」の中の数字の文字列の長さ、変換出来ないときは -1
+    //
+    // 例 : &#9999; なら 戻り値 = 4、 offset = 2
+    //
+    const int spchar_number_ln( const char* in_char, int& offset );
+
+    // 「&#数字;」形式の数字参照文字列を数字(int)に変換する
+    //
+    // 最初に MISC::spchar_number_ln() を呼び出して offset と lng を取得すること
+    //
+    // in_char: 入力文字列、in_char[0] == "&" && in_char[1] == "#" であること
+    // offset : spchar_number_ln() の戻り値
+    // lng : spchar_number_ln() の戻り値
+    //
+    // 戻り値 : 「&#数字;」の中の数字(int型)
+    //
+    const int decode_spchar_number( const char* in_char, const int offset, const int lng );
+
+    // str に含まれる「&#数字;」形式の数字参照文字列を全てユニーコード文字に変換する
+    const std::string decode_spchar_number( const std::string& str );
+
     // utf-8 -> ucs2 変換
     // 入力 : utfstr 入力文字 (UTF-8)
     // 出力 :  byte  長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 or 4 を入れて返す

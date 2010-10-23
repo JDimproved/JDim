@@ -2172,6 +2172,9 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
     const char* pos = str;
     const char* pos_end = str + lng;
 
+    int offset_num;
+    int lng_num;
+
     char* pos_write = m_buffer_write;
 
     // 行頭の空白は全て除く
@@ -2239,6 +2242,17 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
 
             // 空白に置き換える
             *(pos_write++) = ' ';
+
+            continue;
+        }
+
+        // 数字参照
+        else if( *pos == '&' && *( pos + 1 ) == '#' && ( lng_num = MISC::spchar_number_ln( pos, offset_num ) ) != -1 ){
+
+            const int num = MISC::decode_spchar_number( pos, offset_num, lng_num );
+            const int n_out = MISC::ucs2toutf8( num, pos_write );
+            pos_write += n_out;
+            pos += offset_num + lng_num;
 
             continue;
         }
