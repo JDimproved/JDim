@@ -81,6 +81,7 @@ int board_col_new;
 int board_col_since;
 int board_col_write;
 int board_col_speed;
+int board_col_diff;
 
 int board_col_since_time;
 int board_col_write_time;
@@ -188,6 +189,7 @@ const int SESSION::parse_item( const std::string& item_name )
     else if( item_name == ITEM_NAME_SINCE ) item = ITEM_SINCE;
     else if( item_name == ITEM_NAME_LASTWRITE ) item = ITEM_LASTWRITE;
     else if( item_name == ITEM_NAME_SPEED ) item = ITEM_SPEED;
+    else if( item_name == ITEM_NAME_DIFF ) item = ITEM_DIFF;
 
     else if( item_name == ITEM_NAME_WRITEMSG ) item = ITEM_WRITEMSG;
     else if( item_name == ITEM_NAME_OPENBOARD ) item = ITEM_OPENBOARD;
@@ -407,6 +409,7 @@ void SESSION::init_session()
     board_col_since = cf.get_option_int( "col_since", 70, 4, 8192 );
     board_col_write = cf.get_option_int( "col_write", 70, 4, 8192 );
     board_col_speed = cf.get_option_int( "col_speed", 45, 4, 8192 );
+    board_col_diff = cf.get_option_int( "col_diff", 45, 4, 8192 );
 
     // スレ一覧の since の表示モード
     board_col_since_time = cf.get_option_int( "col_since_time", MISC::TIME_NORMAL, 0, MISC::TIME_NUM-1 );
@@ -491,6 +494,7 @@ void SESSION::init_session()
               << board_col_since << std::endl
               << board_col_write << std::endl
               << board_col_speed << std::endl
+              << board_col_diff << std::endl
 
               << "embedded_mes = " << embedded_mes << std::endl
               << "close_mes = " << close_mes << std::endl
@@ -614,6 +618,7 @@ void SESSION::save_session()
         << "col_since = " << board_col_since << std::endl
         << "col_write = " << board_col_write << std::endl
         << "col_speed = " << board_col_speed << std::endl
+        << "col_diff = " << board_col_diff << std::endl
 
         << "col_since_time = " << board_col_since_time << std::endl
         << "col_write_time = " << board_col_write_time << std::endl
@@ -1033,6 +1038,7 @@ const int SESSION::col_new(){ return board_col_new; }
 const int SESSION::col_since(){ return board_col_since; }
 const int SESSION::col_write(){ return board_col_write; }
 const int SESSION::col_speed(){ return board_col_speed; }
+const int SESSION::col_diff(){ return board_col_diff; }
 
 // スレ一覧の since の表示モード
 const int SESSION::get_col_since_time() { return board_col_since_time; }
@@ -1065,6 +1071,7 @@ void SESSION::set_col_new( const int width ){ board_col_new = width; }
 void SESSION::set_col_since( const int width ){ board_col_since = width; }
 void SESSION::set_col_write( const int width ){ board_col_write = width; }
 void SESSION::set_col_speed( const int width ){ board_col_speed = width; }
+void SESSION::set_col_diff( const int width ){ board_col_diff = width; }
 
 
 // 現在開いているarticle の ARTICLE::DrawAreaBase

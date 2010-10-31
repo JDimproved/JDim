@@ -424,6 +424,9 @@ namespace CONFIG
         // 起動時にお気に入りを自動でチェックする
         bool check_update_boot;
 
+        // お気に入り登録時に重複項目を登録するか ( 0: 登録する 1: ダイアログ表示  2: 登録しない )
+        int check_favorite_dup;
+
         // Ctrl+qでウィンドウを閉じない
         bool disable_close;
 

@@ -70,6 +70,7 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_status( STATUS_UNKNOWN ),
       m_subject( std::string() ),
       m_number( 0 ),
+      m_number_diff( 0 ),
       m_number_new( 0 ),
       m_number_load( 0 ),
       m_number_before_load( 0 ),
@@ -465,10 +466,12 @@ void ArticleBase::set_number( const int number, const bool is_online )
 {
     if( ! number ) return;
 
+    m_number_diff = 0;
     m_status &= ~STATUS_BROKEN_SUBJECT;
 
     if( number > m_number ){
 
+        m_number_diff = number - m_number;
         m_number = number;
 
         // キャッシュがあって更新可能になった場合は

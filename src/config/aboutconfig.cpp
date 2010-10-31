@@ -142,19 +142,24 @@ void AboutConfig::append_rows()
     append_row( "ツリービューのレベルインデント調整量(ピクセル)", get_confitem()->tree_level_indent, CONF_TREE_LEVEL_INDENT );
     append_row( "カテゴリを開いたときにスクロールする", get_confitem()->scroll_tree, CONF_SCROLL_TREE );
 
-    // 板一覧、お気に入り、履歴ビュー
+    // 板一覧、履歴ビュー
     append_row( "" );
-    append_row( "■ 板一覧、お気に入り、履歴ビュー" );
+    append_row( "■ 板一覧、履歴ビュー" );
     append_row( "板移転時に確認ダイアログを表示する", get_confitem()->show_movediag, CONF_SHOW_MOVEDIAG );
     append_row( "板一覧内にあるリンクを全て板とみなす", get_confitem()->use_link_as_board, CONF_USE_LINK_AS_BOARD );
     append_row( "板一覧でカテゴリを常にひとつだけ開く", get_confitem()->open_one_category, CONF_OPEN_ONE_CATEGORY );
-    append_row( "お気に入りでカテゴリを常にひとつだけ開く", get_confitem()->open_one_favorite, CONF_OPEN_ONE_FAVORITE );
     append_row( "右ペーンが空の時にサイドバーを最大化する", get_confitem()->expand_sidebar, CONF_EXPAND_SIDEBAR );
     append_row( "ペーン境界をクリックしてサイドバーを開け閉めする", get_confitem()->open_sidebar_by_click, CONF_OPEN_SIDEBAR_BY_CLICK );
-    append_row( "スレをお気に入りに追加した時にしおりをセットする", get_confitem()->bookmark_drop, CONF_BOOKMARK_DROP );
     append_row( "更新チェック時に板の更新もチェックする", get_confitem()->check_update_board, CONF_CHECK_UPDATE_BOARD );
-    append_row( "起動時にお気に入りを自動でチェックする", get_confitem()->check_update_boot, CONF_CHECK_UPDATE_BOOT );
     append_row( "履歴ビューの最大表示数", get_confitem()->historyview_size, CONF_HISTORYVIEW_SIZE );
+
+    // お気に入り
+    append_row( "" );
+    append_row( "■ お気に入り" );
+    append_row( "お気に入りでカテゴリを常にひとつだけ開く", get_confitem()->open_one_favorite, CONF_OPEN_ONE_FAVORITE );
+    append_row( "スレをお気に入りに追加した時にしおりをセットする", get_confitem()->bookmark_drop, CONF_BOOKMARK_DROP );
+    append_row( "起動時にお気に入りを自動でチェックする", get_confitem()->check_update_boot, CONF_CHECK_UPDATE_BOOT );
+    append_row( "重複項目を登録する ( 0: 登録する 1: ダイアログ表示 2: 登録しない )", get_confitem()->check_favorite_dup, CONF_CHECK_FAVORITE_DUP );
 
     // スレ一覧
     append_row( "" );

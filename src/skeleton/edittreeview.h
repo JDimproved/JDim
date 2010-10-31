@@ -146,7 +146,7 @@ namespace SKELETON
         // scroll = true なら追加した行にスクロールする
         // force = true なら m_editable が false でも追加
         // cancel_undo_commit = true なら undo バッファをコミットしない
-        // check_dup == true なら重複チェックをする
+        // check_dup == 0 ならチェックせず追加 1 なら重複チェックをして重複してたらダイアログ表示、2なら重複チェックして重複してたら追加しない
         //
         // (1) path_dest が empty なら一番最後
         // (2) before = true なら path_dest の前
@@ -154,7 +154,7 @@ namespace SKELETON
         // (4) そうでなければ path_dest の後
         CORE::DATA_INFO_LIST append_info( const CORE::DATA_INFO_LIST& list_info,
                                           const Gtk::TreePath& path_dest, const bool before, const bool scroll,
-                                          const bool force, const bool cancel_undo_commit, const bool check_dup
+                                          const bool force, const bool cancel_undo_commit, int check_dup
             );
 
         // pathをまとめて削除

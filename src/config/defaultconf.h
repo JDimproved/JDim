@@ -128,6 +128,7 @@ namespace CONFIG
         CONF_BOOKMARK_DROP = 0, // スレをお気に入りに追加したときにしおりをセットする
         CONF_CHECK_UPDATE_BOARD = 0,  // お気に入りの更新チェック時に板の更新もチェックする
         CONF_CHECK_UPDATE_BOOT = 0,  // 起動時にお気に入りを自動でチェックする
+        CONF_CHECK_FAVORITE_DUP = 1, // お気に入り登録時に重複項目を登録するか ( 0: 登録する 1: ダイアログ表示 2: 登録しない )
         CONF_DISABLE_CLOSE = 0, // Ctrl+qでウィンドウを閉じない
         CONF_USE_MACHI_OFFLAW = 0, // まちBBSの取得に offlaw.cgi を使用する
         CONF_SHOW_DEL_WRITTEN_THREAD_DIAG = 1, // 書き込み履歴のあるスレを削除する時にダイアログを表示

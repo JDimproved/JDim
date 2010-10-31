@@ -107,6 +107,7 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
       m_col_since( NULL ),
       m_col_write( NULL ),
       m_col_speed( NULL ),
+      m_col_diff( NULL ),
       m_clicked( false ),
       m_col( COL_NUM_COL ),
       m_previous_col( COL_NUM_COL ),
@@ -115,7 +116,8 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
       m_loading( false ),
       m_enable_menuslot( true ),
       m_load_subject_txt( true ),
-      m_show_col_board( show_col_board )
+      m_show_col_board( show_col_board ),
+      m_col_diff_is_shown( false )
 {
     // 次スレ検索ビューのようにURLの途中に http が入っている場合は取り除く
     const size_t pos = url.rfind( "http://" );
@@ -162,6 +164,7 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     m_liststore->set_sort_func( COL_SINCE, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_WRITE, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_SPEED, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_DIFF, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     
     m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BoardViewBase::slot_button_press ) );
     m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BoardViewBase::slot_button_release ) );
@@ -534,6 +537,7 @@ void BoardViewBase::update_columns()
     DELETE_COLUMN( m_col_since );
     DELETE_COLUMN( m_col_write );
     DELETE_COLUMN( m_col_speed );
+    DELETE_COLUMN( m_col_diff );
 
     int num = 0;
 
@@ -550,6 +554,7 @@ void BoardViewBase::update_columns()
         if( append_board ) APPEND_COLUMN( m_col_board, ITEM_NAME_BOARD, m_columns.m_col_board );
     }
 
+    m_col_diff_is_shown = false;
     num = 0;
     for(;;){
         const int item = SESSION::get_item_board_col( num );
@@ -565,6 +570,7 @@ void BoardViewBase::update_columns()
             case ITEM_SINCE: APPEND_COLUMN( m_col_since, ITEM_NAME_SINCE, m_columns.m_col_since ); break;
             case ITEM_LASTWRITE: APPEND_COLUMN( m_col_write, ITEM_NAME_LASTWRITE, m_columns.m_col_write ); break;
             case ITEM_SPEED: APPEND_COLUMN( m_col_speed, ITEM_NAME_SPEED, m_columns.m_col_speed ); break;
+            case ITEM_DIFF: APPEND_COLUMN( m_col_diff, ITEM_NAME_DIFF, m_columns.m_col_diff); m_col_diff_is_shown = true; break;
         }
         ++num;
     }
@@ -622,6 +628,10 @@ void BoardViewBase::update_columns()
         case COL_SPEED:
             width = SESSION::col_speed(); 
             break;
+
+        case COL_DIFF:
+            width = SESSION::col_diff(); 
+            break;
         }
 
         if( ! width ) width = DEFAULT_COLMUN_WIDTH;
@@ -644,6 +654,7 @@ void BoardViewBase::update_columns()
             case COL_STR_LOAD:
             case COL_STR_NEW:
             case COL_SPEED:
+            case COL_DIFF:
                 column->set_alignment( 1.0 );
                 break;
 
@@ -673,6 +684,7 @@ void BoardViewBase::update_columns()
                 case COL_STR_LOAD:
                 case COL_STR_NEW:
                 case COL_SPEED:
+                case COL_DIFF:
                     rentext->property_xalign() = 1.0;
                     break;
 
@@ -707,6 +719,7 @@ const int BoardViewBase::get_title_id( const int col )
     else if( title == ITEM_NAME_SINCE ) id = COL_SINCE;
     else if( title == ITEM_NAME_LASTWRITE ) id = COL_WRITE;
     else if( title == ITEM_NAME_SPEED ) id = COL_SPEED;
+    else if( title == ITEM_NAME_DIFF ) id = COL_DIFF;
 
     return id;
 }
@@ -789,6 +802,10 @@ void BoardViewBase::save_column_width()
 
         case COL_SPEED:
             SESSION::set_col_speed( width );
+            break;
+
+        case COL_DIFF:
+            SESSION::set_col_diff( width );
             break;
         }
     }
@@ -1059,6 +1076,11 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
             num_b = row_b[ m_columns.m_col_speed ];
             break;
 
+        case COL_DIFF:
+            num_a = row_a[ m_columns.m_col_diff ];
+            num_b = row_b[ m_columns.m_col_diff ];
+            break;
+
         case COL_BOARD:
         {
             // 文字列の大小を数字に変換
@@ -1173,6 +1195,8 @@ void BoardViewBase::show_view()
         update_view();
         return;
     }
+
+    if( m_col_diff_is_shown ) DBTREE::board_read_subject_from_cache( get_url_board() );
 
     // download 開始
     // 終わったら update_view() が呼ばれる
@@ -1828,6 +1852,8 @@ const Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, 
 
     if( ( art->get_status() & STATUS_NORMAL ) && ! art->is_924() )
         row[ m_columns.m_col_speed ] = art->get_speed();
+
+    row[ m_columns.m_col_diff ] = art->get_number_diff();
 
     if( m_col_board ) row[ m_columns.m_col_board ] = DBTREE::board_name( art->get_url() );
         

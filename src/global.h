@@ -46,6 +46,7 @@ enum{
 #define ITEM_NAME_SINCE "since"
 #define ITEM_NAME_LASTWRITE "最終書込"
 #define ITEM_NAME_SPEED "速度"
+#define ITEM_NAME_DIFF "増分"
 
 #define ITEM_NAME_WRITEMSG  "書き込み"
 #define ITEM_NAME_OPENBOARD "板を開く"
@@ -130,6 +131,7 @@ enum
     ITEM_SINCE,
     ITEM_LASTWRITE,
     ITEM_SPEED,
+    ITEM_DIFF,
 
     ITEM_WRITEMSG,
     ITEM_OPENBOARD,

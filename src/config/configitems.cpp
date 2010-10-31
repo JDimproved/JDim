@@ -506,6 +506,9 @@ const bool ConfigItems::load( const bool restore )
     // 起動時にお気に入りを自動でチェックする
     check_update_boot = cf.get_option_bool( "check_update_boot", CONF_CHECK_UPDATE_BOOT );
 
+    // お気に入り登録時に重複項目を登録するか ( 0: 登録する 1: ダイアログ表示  2: 登録しない )
+    check_favorite_dup = cf.get_option_bool( "check_favorite_dup", CONF_CHECK_FAVORITE_DUP );
+
     // Ctrl+qでウィンドウを閉じない
     disable_close = cf.get_option_bool( "disable_close", CONF_DISABLE_CLOSE );
 
@@ -820,6 +823,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "bookmark_drop", bookmark_drop );
     cf.update( "check_update_board", check_update_board );
     cf.update( "check_update_boot", check_update_boot );
+    cf.update( "check_favorite_dup", check_favorite_dup );
     cf.update( "disable_close", disable_close );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
     cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );

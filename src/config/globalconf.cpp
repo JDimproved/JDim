@@ -466,6 +466,10 @@ const bool CONFIG::get_check_update_board(){ return get_confitem()->check_update
 // 起動時にお気に入りを自動でチェックする
 const bool CONFIG::get_check_update_boot(){ return get_confitem()->check_update_boot; }
 
+// お気に入り登録時に重複項目を登録するか ( 0: 登録する 1: ダイアログ表示 2: 登録しない )
+const int CONFIG::get_check_favorite_dup(){ return get_confitem()->check_favorite_dup; }
+void CONFIG::set_check_favorite_dup( const int check ){ get_confitem()->check_favorite_dup = check; }
+
 // Ctrl+qでウィンドウを閉じない
 const bool CONFIG::get_disable_close(){ return get_confitem()->disable_close; }
 

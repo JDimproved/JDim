@@ -10,6 +10,8 @@
 
 #include "dbtree/interface.h"
 
+#include "config/globalconf.h"
+
 #include "xml/document.h"
 
 #include "sharedbuffer.h"
@@ -526,7 +528,7 @@ const Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
     const bool force = false;
     //  append_info 内でundoのコミットをしないで名前を変更してからslot_ren_text_on_canceled()でコミットする
     const bool cancel_undo_commit = true; 
-    const bool check_dup = false;
+    const int check_dup = 0; // 項目の重複チェックをしない
     append_info( list_info, path, before, scroll, force, cancel_undo_commit, check_dup );
 
     Gtk::TreePath path_new = get_current_path();
@@ -583,7 +585,7 @@ const Gtk::TreePath EditTreeView::create_newcomment( const Gtk::TreePath& path )
     const bool force = false;
     //  append_info 内でundoのコミットをしないで名前を変更してからslot_ren_text_on_canceled()でコミットする
     const bool cancel_undo_commit = true; 
-    const bool check_dup = false;
+    const int check_dup = 0; // 項目の重複チェックをしない
     append_info( list_info, path, before, scroll, force, cancel_undo_commit, check_dup );
 
     Gtk::TreePath path_new = get_current_path();
@@ -861,7 +863,8 @@ bool EditTreeView::on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, 
     const bool scroll = false;
     const bool force = false;
     const bool cancel_undo_commit = false;
-    const bool check_dup = m_dropped_from_other;
+    const int check_dup = m_dropped_from_other ? CONFIG::get_check_favorite_dup() : 0;
+
     const CORE::DATA_INFO_LIST list_info = append_info( CORE::SBUF_list_info(), path_dest, before, scroll, force, cancel_undo_commit, check_dup );
     CORE::SBUF_clear_info();
     if( m_dropped_from_other ) m_sig_dropped_from_other.emit( list_info );
@@ -1005,7 +1008,7 @@ void EditTreeView::select_all_dir( Gtk::TreePath path_dir )
 //
 // cancel_undo_commit = true なら undo バッファをコミットしない
 //
-// check_dup == true なら重複チェックをする
+// check_dup == 0 ならチェックせず追加 1 なら重複チェックをして重複してたらダイアログ表示、2なら重複チェックして重複してたら追加しない
 //
 // (1) path_dest が empty なら一番最後
 //
@@ -1017,7 +1020,7 @@ void EditTreeView::select_all_dir( Gtk::TreePath path_dir )
 //
 CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list_info,
                                                 const Gtk::TreePath& path_dest, const bool before, const bool scroll,
-                                                const bool force, const bool cancel_undo_commit, const bool check_dup
+                                                const bool force, const bool cancel_undo_commit, int check_dup
     )
 {
     CORE::DATA_INFO_LIST list_info_src;
@@ -1029,6 +1032,7 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
     std::cout << "EditTreeView::append_info"
               << " path_dest = " << path_dest.to_string()
               << " before = " << before
+              << " check_dup = " << check_dup
               << std::endl;
 #endif
 
@@ -1048,9 +1052,20 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
 
             if( exist_row( info.url, info.type ) ){
 
-                SKELETON::MsgDiag mdiag( get_parent_win(),  info.name + "\n\nは既に含まれています。追加しますか？",
-                                         false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-                if( mdiag.run() != Gtk::RESPONSE_YES ) continue;
+                if( check_dup == 2 ) continue;
+
+                SKELETON::MsgCheckDiag mdiag( get_parent_win(),
+                                              info.name + "\n\nは既に含まれています。追加しますか？",
+                                              "今後表示しない(常に追加しない) (_D)",
+                                              Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, Gtk::RESPONSE_NO );
+                mdiag.set_title( "お気に入り追加確認" );
+
+                const int ret = mdiag.run();
+                if( mdiag.get_chkbutton().get_active() ){
+                    CONFIG::set_check_favorite_dup( 2 );
+                    check_dup = 2;
+                }
+                if( ret != Gtk::RESPONSE_YES ) continue;
             }
 
             list_info_src.push_back( info );
@@ -1809,7 +1824,7 @@ void EditTreeView::sort( const Gtk::TreePath& path, const int mode )
     const bool scroll = false;
     const bool force = false;
     const bool cancel_undo_commit = false;
-    const bool check_dup = false;
+    const int check_dup = 0; // 項目の重複チェックをしない
     append_info( list_info, path_parent, before, scroll, force, cancel_undo_commit, check_dup );
 
     set_scroll( path_parent );

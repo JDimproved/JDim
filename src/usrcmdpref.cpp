@@ -299,7 +299,7 @@ void UsrCmdPref::slot_newcmd()
         const bool scroll = false;
         const bool force = false;
         const bool cancel_undo_commit = false;
-        const bool check_dup = false;
+        const int check_dup = 0; // 項目の重複チェックをしない
         m_treeview.append_info( list_info, m_path_selected, subdir, scroll, force, cancel_undo_commit, check_dup );
         m_path_selected = m_treeview.get_current_path();
     }
@@ -331,7 +331,7 @@ void UsrCmdPref::slot_newsepa()
     const bool scroll = false;
     const bool force = false;
     const bool cancel_undo_commit = false;
-    const bool check_dup = false;
+    const int check_dup = 0; // 項目の重複チェックをしない
     m_treeview.append_info( list_info, m_path_selected, subdir, scroll, force, cancel_undo_commit, check_dup );
     m_path_selected = m_treeview.get_current_path();
 }

@@ -53,6 +53,7 @@ namespace DBTREE
 
         std::string m_subject;       // サブジェクト
         int m_number;                // サーバ上にあるレスの数
+        int m_number_diff;            // レス増分( subject.txt をロードした時の m_number の増分 )
         int m_number_new;            // 新着数( ロードした時の差分読み込み数)
         int m_number_load;           // キャッシュにあるレスの数
         int m_number_before_load;    // ロード前のレスの数( m_number_new を計算するのに使う )
@@ -135,6 +136,7 @@ namespace DBTREE
         const std::string& get_key() const { return m_key; }
         const std::string& get_subject() const { return m_subject; }
         const int get_number() const { return m_number; }
+        const int get_number_diff() const { return m_number_diff; }
         const int get_number_new() const { return m_number_new; }
         const int get_number_load() const { return m_number_load; }
         const int get_number_seen() const{  return m_number_seen; }

@@ -48,6 +48,7 @@ namespace BOARD
         Gtk::TreeView::Column* m_col_since;
         Gtk::TreeView::Column* m_col_write;
         Gtk::TreeView::Column* m_col_speed;
+        Gtk::TreeView::Column* m_col_diff;
 
         // クリック状態
         bool m_clicked;
@@ -89,6 +90,9 @@ namespace BOARD
 
         // 先頭に「板」列を表示
         bool m_show_col_board;
+
+        // 増分行が表示されている
+        bool m_col_diff_is_shown;
 
     public:
 

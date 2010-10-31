@@ -349,6 +349,7 @@ namespace SESSION
     const int col_since();
     const int col_write();
     const int col_speed();
+    const int col_diff();
     void set_col_mark( const int width );
     void set_col_id( const int width );
     void set_col_board( const int width );
@@ -359,6 +360,7 @@ namespace SESSION
     void set_col_since( const int width );
     void set_col_write( const int width );
     void set_col_speed( const int width );
+    void set_col_diff( const int width );
 
     // スレ一覧の since の表示モード
     const int get_col_since_time();

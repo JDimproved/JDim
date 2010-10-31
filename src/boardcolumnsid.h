@@ -15,6 +15,7 @@ enum
     COL_SINCE,
     COL_WRITE,
     COL_SPEED,
+    COL_DIFF,
 
     COL_VISIBLE_END,
             

@@ -30,6 +30,7 @@ BoardItemColumnPref::BoardItemColumnPref( Gtk::Window* parent, const std::string
     append_default_pair( ITEM_NAME_SINCE );
     append_default_pair( ITEM_NAME_LASTWRITE );
     append_default_pair( ITEM_NAME_SPEED );
+    append_default_pair( ITEM_NAME_DIFF );
 
     // 文字列を元に列を追加
     append_rows( SESSION::get_items_board_col_str() );

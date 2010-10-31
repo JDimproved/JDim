@@ -31,6 +31,7 @@ namespace BOARD
         Gtk::TreeModelColumn< Glib::ustring > m_col_since;
         Gtk::TreeModelColumn< Glib::ustring > m_col_write;
         Gtk::TreeModelColumn< int > m_col_speed;
+        Gtk::TreeModelColumn< int > m_col_diff;
         Gtk::TreeModelColumn< Glib::ustring > m_col_board;
 
         // 以下は不可視
@@ -51,6 +52,7 @@ namespace BOARD
             add( m_col_since );
             add( m_col_write );
             add( m_col_speed );
+            add( m_col_diff );
             add( m_col_board );
 
             add( m_col_mark_val );

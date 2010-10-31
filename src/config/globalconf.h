@@ -477,6 +477,10 @@ namespace CONFIG
     // 起動時にお気に入りを自動でチェックする
     const bool get_check_update_boot();
 
+    // お気に入り登録時に重複項目を登録するか ( 0: 登録する 1: ダイアログ表示  2: 登録しない )
+    const int get_check_favorite_dup();
+    void set_check_favorite_dup( const int check );
+
     // Ctrl+qでウィンドウを閉じない
     const bool get_disable_close();
 

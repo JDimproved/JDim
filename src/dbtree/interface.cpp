@@ -362,6 +362,11 @@ void DBTREE::board_download_subject( const std::string& url, const std::string& 
     DBTREE::get_board( url )->download_subject( url_update_view, false );
 }
 
+void DBTREE::board_read_subject_from_cache( const std::string& url )
+{
+    DBTREE::get_board( url )->download_subject( std::string(), true );
+}
+
 const bool DBTREE::board_is_loading( const std::string& url )
 {
     return DBTREE::get_board( url )->is_loading();

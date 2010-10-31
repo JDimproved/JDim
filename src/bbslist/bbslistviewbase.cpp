@@ -1597,7 +1597,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
             const bool scroll = false;
             const bool force = true;  // 強制的に追加
             const bool cancel_undo_commit = false;
-            const bool check_dup = false;
+            const int check_dup = 0; // 項目の重複チェックをしない
             m_treeview.append_info( list_info, m_path_selected, before, scroll, force, cancel_undo_commit, check_dup );
             m_path_selected = m_treeview.get_current_path();
 
@@ -2821,6 +2821,7 @@ void BBSListViewBase::operate_search( const std::string& controlid )
 //
 // あらかじめ共有バッファにデータを入れておくこと
 //
+#include <iostream>
 void BBSListViewBase::append_item()
 {
     if( m_editlistwin ){
@@ -2858,7 +2859,7 @@ void BBSListViewBase::append_item()
     const bool scroll = true;
     const bool force = false;
     const bool cancel_undo_commit = false;
-    const bool check_dup = true; // 重複チェック
+    const int check_dup = CONFIG::get_check_favorite_dup(); // 重複チェックするか
 
     const CORE::DATA_INFO_LIST list_info = m_treeview.append_info( list_info_bkup, path, before, scroll, force, cancel_undo_commit, check_dup );
     CORE::SBUF_clear_info();
