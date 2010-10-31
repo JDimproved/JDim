@@ -2821,7 +2821,6 @@ void BBSListViewBase::operate_search( const std::string& controlid )
 //
 // あらかじめ共有バッファにデータを入れておくこと
 //
-#include <iostream>
 void BBSListViewBase::append_item()
 {
     if( m_editlistwin ){
