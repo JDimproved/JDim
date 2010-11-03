@@ -507,7 +507,7 @@ const bool ConfigItems::load( const bool restore )
     check_update_boot = cf.get_option_bool( "check_update_boot", CONF_CHECK_UPDATE_BOOT );
 
     // お気に入り登録時に重複項目を登録するか ( 0: 登録する 1: ダイアログ表示  2: 登録しない )
-    check_favorite_dup = cf.get_option_bool( "check_favorite_dup", CONF_CHECK_FAVORITE_DUP );
+    check_favorite_dup = cf.get_option_int( "check_favorite_dup", CONF_CHECK_FAVORITE_DUP, 0, 2 );
 
     // Ctrl+qでウィンドウを閉じない
     disable_close = cf.get_option_bool( "disable_close", CONF_DISABLE_CLOSE );

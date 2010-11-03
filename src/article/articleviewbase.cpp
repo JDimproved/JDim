@@ -203,7 +203,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "CopyNAME", "名前コピー(_N)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_name ) );
     action_group()->add( Gtk::Action::create( "CopyID", "IDコピー(_D)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_id ) );
     action_group()->add( Gtk::Action::create( "Copy", "Copy"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_selection_str ) );
-    action_group()->add( Gtk::Action::create( "WriteRes", "レスする(_W)" ),sigc::mem_fun( *this, &ArticleViewBase::slot_write_res ) );
+    action_group()->add( Gtk::Action::create( "WriteRes", "レスする(_P)" ),sigc::mem_fun( *this, &ArticleViewBase::slot_write_res ) );
     action_group()->add( Gtk::Action::create( "QuoteRes", "引用してレスする(_Q)"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_res ) );
     action_group()->add( Gtk::Action::create( "QuoteSelectionRes", ITEM_NAME_QUOTE_SELECTION + std::string( "(_Q)" ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_quote_selection_res ) );
