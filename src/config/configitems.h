@@ -278,6 +278,9 @@ namespace CONFIG
         // 「書き込み中」のダイアログを表示しない
         bool hide_writing_dialog;
 
+        // 書き込みビューでテキストを折り返す
+        bool message_wrap;
+
         // 非アクティブ時に書き込みビューを折りたたむ
         bool fold_message;
 

@@ -316,6 +316,10 @@ namespace CONFIG
     // 書き込み中のダイアログを表示しない
     const bool get_hide_writing_dialog();
 
+    // 書き込みビューでテキストを折り返す
+    const bool get_message_wrap();
+    void set_message_wrap( const bool wrap );
+
     // 非アクティブ時に書き込みビューを折りたたむ
     const bool get_fold_message();
     void set_fold_message( const bool fold );

@@ -379,6 +379,15 @@ void Core::slot_toggle_embmsg()
 
 
 //
+// messgeビューのwrap切り替え
+//
+void Core::slot_toggle_msg_wrap()
+{
+    CORE::core_set_command( "toggle_message_wrap", "" );
+}
+
+
+//
 // imageビュー表示設定
 //
 void Core::slot_toggle_imgview( const int mode )

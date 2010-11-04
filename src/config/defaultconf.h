@@ -64,6 +64,7 @@ namespace CONFIG
         CONF_SAVE_POSTHIST = 1,      //書き込み履歴を保存
         CONF_MAXSIZE_POSTLOG = ( 256 * 1024 ), // 書き込みログの最大サイズ
         CONF_HIDE_WRITING_DIALOG = 0, // 「書き込み中」のダイアログを表示しない
+        CONF_MESSAGE_WRAP = 1,      // 書き込みビューでテキストを折り返す
         CONF_FOLD_MESSAGE = 0,      // 非アクティブ時に書き込みビューを折りたたむ
         CONF_FOLD_IMAGE = 1,        // 非アクティブ時に画像ビューを折りたたむ
         CONF_KEEP_IM_STATUS = 0,    // 書き込み欄の日本語のON/OFF状態を保存

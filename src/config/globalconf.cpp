@@ -287,6 +287,10 @@ void CONFIG::set_save_post_history( const bool save ){ get_confitem()->save_post
 
 const bool CONFIG::get_hide_writing_dialog(){ return get_confitem()->hide_writing_dialog; }
 
+// 書き込みビューでテキストを折り返す
+const bool CONFIG::get_message_wrap(){ return get_confitem()->message_wrap; }
+void CONFIG::set_message_wrap( const bool wrap ){ get_confitem()->message_wrap = wrap; }
+
 const bool CONFIG::get_fold_message(){ return get_confitem()->fold_message; }
 void CONFIG::set_fold_message( const bool fold ){ get_confitem()->fold_message = fold; }
 

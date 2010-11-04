@@ -483,6 +483,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
 
     // 書き込みビュー
+    m_action_group->add( Gtk::Action::create( "MessageView_Menu", "書き込み設定(_M)" ) );
     Gtk::RadioButtonGroup radiogroup_msg;
     m_action_group->add( Gtk::Action::create( "ShowMsgView_Menu", "書き込みビュー(_M)" ) );
     Glib::RefPtr< Gtk::RadioAction > raction_msg0 = Gtk::RadioAction::create( radiogroup_msg, "UseWinMsg", "ウィンドウ表示する(_W)" );
@@ -493,6 +494,9 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     m_action_group->add( raction_msg0, sigc::mem_fun( *this, &Core::slot_toggle_winmsg ) );
     m_action_group->add( raction_msg1, sigc::mem_fun( *this, &Core::slot_toggle_embmsg ) );
+
+    m_action_group->add( Gtk::ToggleAction::create( "ToggleWrap", "テキストを折り返し表示する(_W)", std::string(), CONFIG::get_message_wrap() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_msg_wrap ) );
 
     // 画像表示設定
     m_action_group->add( Gtk::Action::create( "ImageView_Menu", "画像表示設定(_G)" ) );
@@ -831,9 +835,12 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     "<separator/>"
 
+    "<menu action='MessageView_Menu'>"
     "<menu action='ShowMsgView_Menu'>"
     "<menuitem action='UseWinMsg'/>"
     "<menuitem action='UseEmbMsg'/>"
+    "</menu>"
+    "<menuitem action='ToggleWrap'/>"    
     "</menu>"
 
         "</menu>"
@@ -2691,6 +2698,15 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command == "relayout_all_message" ){
         MESSAGE::get_admin()->set_command( "relayout_all" );
     }
+
+
+    // meesageview の wrap 切り替え
+    else if( command.command == "toggle_message_wrap" ){
+
+        CONFIG::set_message_wrap( ! CONFIG::get_message_wrap() );
+        MESSAGE::get_admin()->set_command( "toggle_wrap" );
+    }
+
 
     ////////////////////////////
     // ダイアログボックスが表示/非表示状態になった

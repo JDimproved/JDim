@@ -275,7 +275,7 @@ const bool MessageViewBase::set_command( const std::string& command, const std::
     }
 
     // メッセージ保存
-    else if ( "save_message" )
+    else if( command == "save_message" )
     {
         if( ! get_message().empty() ){
 
@@ -296,6 +296,9 @@ const bool MessageViewBase::set_command( const std::string& command, const std::
             }
         }
     }
+
+    // ビューの wrap 切り替え
+    else if( command == "toggle_wrap" ) set_wrap();
 
     return false;
 }
@@ -404,6 +407,8 @@ void MessageViewBase::pack_widget()
         else m_text_message = Gtk::manage( new SKELETON::EditView() );
     }
 
+    set_wrap();
+
     if( m_text_message->get_parent() ) m_text_message->reparent( m_msgview );
     else m_msgview.pack_start( *m_text_message );
 
@@ -434,6 +439,17 @@ void MessageViewBase::pack_widget()
     show_status();
 }
 
+
+//
+// テキストの折り返し
+//
+void MessageViewBase::set_wrap()
+{
+    if( ! m_text_message ) return;
+
+    if( CONFIG::get_message_wrap() ) m_text_message->set_wrap_mode( Gtk::WRAP_CHAR );
+    else m_text_message->set_wrap_mode( Gtk::WRAP_NONE );
+}
 
 
 //

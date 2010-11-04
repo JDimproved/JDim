@@ -159,6 +159,9 @@ namespace MESSAGE
         void save_name();
         void setup_view();
         void pack_widget();
+
+        // テキストの折り返し
+        void set_wrap();
     };
 }
 
