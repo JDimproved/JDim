@@ -455,17 +455,17 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
 
     // JDの動作環境を記入
     menuitem = Gtk::manage( new Gtk::MenuItem( "JDの動作環境を記入" ) );
-    menuitem->signal_button_release_event().connect( sigc::mem_fun( *this, &EditTextView::slot_write_jdinfo ) );
+    menuitem->signal_activate().connect( sigc::mem_fun( *this, &EditTextView::slot_write_jdinfo ) );
     menu->prepend( *menuitem );
 
     // 変換(スペース⇔&nbsp;)
     menuitem = Gtk::manage( new Gtk::MenuItem( "変換(スペース⇔&nbsp;)" ) );
-    menuitem->signal_button_release_event().connect( sigc::mem_fun( *this, &EditTextView::slot_convert_space ) );
+    menuitem->signal_activate().connect( sigc::mem_fun( *this, &EditTextView::slot_convert_space ) );
     menu->prepend( *menuitem );
 
     // クリップボードから引用
     menuitem = Gtk::manage( new Gtk::MenuItem( "クリップボードから引用" ) );
-    menuitem->signal_button_release_event().connect( sigc::mem_fun( *this, &EditTextView::slot_quote_clipboard ) );
+    menuitem->signal_activate().connect( sigc::mem_fun( *this, &EditTextView::slot_quote_clipboard ) );
 
     Glib::RefPtr< Gtk::Clipboard > clip = Gtk::Clipboard::get();
     if( clip->wait_is_text_available() ) menuitem->set_sensitive( true );
@@ -476,7 +476,7 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
     if( CORE::get_aamanager()->get_size() ){
 
         menuitem = Gtk::manage( new Gtk::MenuItem( CONTROL::get_label_motions( CONTROL::InputAA ) ) );
-        menuitem->signal_button_release_event().connect( sigc::mem_fun( *this, &EditTextView::slot_select_aamenu ) );
+        menuitem->signal_activate().connect( sigc::mem_fun( *this, &EditTextView::slot_select_aamenu ) );
         menu->prepend( *menuitem );
     }
 
@@ -489,18 +489,17 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
 //
 // AA追加メニュー
 //
-bool EditTextView::slot_select_aamenu( GdkEventButton* event )
+void EditTextView::slot_select_aamenu()
 {
     if( m_context_menu ) m_context_menu->hide();
     show_aalist_popup();
-    return true;
 }
 
 
 //
 // クリップボードから引用して貼り付け
 //
-bool EditTextView::slot_quote_clipboard( GdkEventButton* event )
+void EditTextView::slot_quote_clipboard()
 {
     if( m_context_menu ) m_context_menu->hide();
 
@@ -512,14 +511,14 @@ bool EditTextView::slot_quote_clipboard( GdkEventButton* event )
 
     text = MISC::replace_str( text, "\n", "\n" + str_res );
     insert_str( str_res + text, false );
-    return true;
+//    return true;
 }
 
 
 //
 // 変換(スペース⇔&nbsp;)
 //
-bool EditTextView::slot_convert_space( GdkEventButton* event )
+void EditTextView::slot_convert_space()
 {
     if( m_context_menu ) m_context_menu->hide();
 
@@ -556,23 +555,19 @@ bool EditTextView::slot_convert_space( GdkEventButton* event )
     }
 
     buffer->set_text( converted );
-
-    return true;
 }
 
 
 //
 // JDの動作環境を記入
 //
-bool EditTextView::slot_write_jdinfo( GdkEventButton* event )
+void EditTextView::slot_write_jdinfo()
 {
     if( m_context_menu ) m_context_menu->hide();
 
     std::string jdinfo = ENVIRONMENT::get_jdinfo();
 
     insert_str( jdinfo, false );
-
-    return true;
 }
 
 
