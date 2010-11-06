@@ -194,6 +194,8 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
+    action_group()->add( Gtk::Action::create( "OpenBrowserRes", ITEM_NAME_OPEN_BROWSER + std::string( "(_S)" ) ),   // レスをクリックした時のメニュー用
+                         sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "OpenCacheBrowser", ITEM_NAME_OPEN_CACHE_BROWSER + std::string( "(_X)" ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_open_cache_browser ) );
     action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ),
@@ -203,7 +205,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "CopyNAME", "名前コピー(_N)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_name ) );
     action_group()->add( Gtk::Action::create( "CopyID", "IDコピー(_D)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_id ) );
     action_group()->add( Gtk::Action::create( "Copy", "Copy"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_selection_str ) );
-    action_group()->add( Gtk::Action::create( "WriteRes", "レスする(_P)" ),sigc::mem_fun( *this, &ArticleViewBase::slot_write_res ) );
+    action_group()->add( Gtk::Action::create( "WriteRes", "レスする(_W)" ),sigc::mem_fun( *this, &ArticleViewBase::slot_write_res ) );
     action_group()->add( Gtk::Action::create( "QuoteRes", "引用してレスする(_Q)"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_res ) );
     action_group()->add( Gtk::Action::create( "QuoteSelectionRes", ITEM_NAME_QUOTE_SELECTION + std::string( "(_Q)" ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_quote_selection_res ) );
@@ -353,7 +355,7 @@ void ArticleViewBase::setup_action()
     "<menuitem action='QuoteRes'/>"
     "<separator/>"
 
-    "<menuitem action='OpenBrowser'/>"
+    "<menuitem action='OpenBrowserRes'/>"
     "<separator/>"
 
     "<menuitem action='CopyURL'/>"
