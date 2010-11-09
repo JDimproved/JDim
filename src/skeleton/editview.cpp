@@ -511,7 +511,6 @@ void EditTextView::slot_quote_clipboard()
 
     text = MISC::replace_str( text, "\n", "\n" + str_res );
     insert_str( str_res + text, false );
-//    return true;
 }
 
 

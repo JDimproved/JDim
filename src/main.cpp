@@ -403,6 +403,7 @@ int main( int argc, char **argv )
                 std::cout << "JD " << ENVIRONMENT::get_jdversion() << ", " <<
                 ENVIRONMENT::get_jdcopyright() << "\n"
                 "configure: " << ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_FULL ) << std::endl;
+                exit( EXIT_FAILURE );
                 break;
 
             default:
