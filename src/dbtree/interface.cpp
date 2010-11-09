@@ -630,6 +630,12 @@ void DBTREE::board_set_number_max_res( const std::string& url, const int number 
     DBTREE::get_board( url )->set_number_max_res( number );
 }
 
+// datの最大サイズ(Kバイト)
+const int DBTREE::board_get_max_dat_lng( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_max_dat_lng();
+}
+
 const time_t DBTREE::board_get_live_sec( const std::string& url )
 {
     return DBTREE::get_board( url )->get_live_sec();

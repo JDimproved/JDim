@@ -13,7 +13,8 @@ namespace DBTREE
 {
     enum
     {
-        DEFAULT_NUMBER_MAX_2CH = 1000  // デフォルト最大レス数
+        DEFAULT_NUMBER_MAX_2CH = 1000,  // デフォルト最大レス数
+        DEFAULT_MAX_DAT_LNG = 512 // デフォルトのdatの最大サイズ(Kバイト)
     };
 
     class Board2ch : public Board2chCompati
@@ -53,6 +54,8 @@ namespace DBTREE
         // 新スレ作成用のsubbbscgi のURL
         virtual const std::string url_subbbscgi_new();
 
+        // datの最大サイズ(Kバイト)
+        virtual const int get_max_dat_lng() const { return DEFAULT_MAX_DAT_LNG; }
 
       private:
 

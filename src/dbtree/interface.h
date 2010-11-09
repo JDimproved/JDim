@@ -172,6 +172,10 @@ namespace DBTREE
 
     const int board_get_number_max_res( const std::string& url );
     void board_set_number_max_res( const std::string& url, const int number );
+
+    // datの最大サイズ(Kバイト)
+    const int board_get_max_dat_lng( const std::string& url );
+
     const time_t board_get_live_sec( const std::string& url );
     void board_set_live_sec( const std::string& url, time_t sec );
     const time_t board_last_access_time( const std::string& url );

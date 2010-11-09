@@ -507,6 +507,9 @@ namespace DBTREE
         const int get_number_max_res() const{ return m_number_max_res; }
         void set_number_max_res( const int number );
 
+        // datの最大サイズ(Kバイト)
+        virtual const int get_max_dat_lng() const { return 0; }
+
         // 板情報の取得
         virtual void read_info();
 
