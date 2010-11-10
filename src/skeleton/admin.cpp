@@ -297,25 +297,6 @@ const bool Admin::is_booting()
 }
 
 
-// SIGHUPを受け取った
-void Admin::shutdown()
-{
-    int pages = m_notebook->get_n_pages();
-
-#ifdef _DEBUG
-    std::cout << "pages = " << pages << std::endl;
-#endif
-    if( pages ){
-
-        for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
-            if( view ) view->shutdown();
-        }
-    }
-}
-
-
-
 //
 // ページが含まれていないか
 //

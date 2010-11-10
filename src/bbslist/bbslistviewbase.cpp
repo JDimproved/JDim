@@ -514,7 +514,7 @@ BBSListViewBase::~BBSListViewBase()
 
 void BBSListViewBase::save_session()
 {
-    save_xml( false );
+    save_xml();
 }
 
 
@@ -553,7 +553,7 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
     else if( command == "remove_item" ) remove_item( arg1 );
     else if( command == "remove_allitems" ) remove_allitems();
     else if( command == "edit_tree" ) edit_tree();
-    else if( command == "save_xml" ) save_xml( false );
+    else if( command == "save_xml" ) save_xml(); 
     else if( command == "toggle_articleicon" ) toggle_articleicon( arg1 );
     else if( command == "toggle_boardicon" ) toggle_boardicon( arg1 );
     else if( command == "replace_thread" ) replace_thread( arg1, arg2 );
@@ -565,19 +565,6 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
     else if( command == "cancel_check_update" ) stop();
 
     return true;
-}
-
-
-//
-// shutdown( SIGHUP )用
-//
-void BBSListViewBase::shutdown()
-{
-#ifdef _DEBUG    
-    std::cout << "BBSListViewBase::shutdown\n";
-#endif
-
-    save_xml( true );
 }
 
 
@@ -2001,7 +1988,7 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
     // treeviewが編集されていたらxml保存
     if( type != TYPE_DIR && m_treeview.is_updated() ){
-        save_xml( false );
+        save_xml();
         m_treeview.set_updated( false );
     }
 
@@ -2448,7 +2435,7 @@ void BBSListViewBase::update_urls()
     DBTREE::set_enable_save_movetable( true );
 
     if( updated ){
-        save_xml( false );
+        save_xml();
         DBTREE::save_movetable();
     }
 }

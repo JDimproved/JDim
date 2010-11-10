@@ -1260,25 +1260,6 @@ void Core::first_setup()
 
 
 //
-// SIGHUPを受け取った
-//
-// 時間のかかる処理は行わないこと
-//
-void Core::shutdown()
-{
-    // 設定保存
-    CONFIG::save_conf();
-    CONTROL::save_conf();
-
-    ARTICLE::get_admin()->shutdown();
-    BOARD::get_admin()->shutdown();
-    BBSLIST::get_admin()->shutdown();
-    IMAGE::get_admin()->shutdown();
-    MESSAGE::get_admin()->shutdown();
-}
-
-
-//
 // メインタイトルセット
 //
 void Core::set_maintitle()
@@ -2661,7 +2642,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         }
         else{
 
-            const int max_lng = DBTREE::board_get_max_dat_lng( command.url );
+            const size_t max_lng = DBTREE::board_get_max_dat_lng( command.url );
             if( max_lng > 0 && DBTREE::article_lng_dat( command.url ) > max_lng * 1024 ){
 
                 SKELETON::MsgDiag mdiag( NULL, "スレのサイズが" + MISC::itostr( max_lng ) + "Kバイトを越えています。\n\n本当に書き込みますか？",

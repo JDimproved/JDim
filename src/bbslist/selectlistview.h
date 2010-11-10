@@ -28,7 +28,7 @@ namespace BBSLIST
         SIG_CLOSE_DIALOG sig_close_dialog() { return m_sig_close_dialog; }
         SIG_FOCUS_ENTRY_SEARCH sig_focus_entry_search() { return m_sig_focus_entry_search; }
 
-        virtual void save_xml( const bool backup ){}
+        virtual void save_xml(){}
 
         virtual void close_view();
         virtual const bool operate_view( const int control );

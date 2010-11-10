@@ -156,7 +156,7 @@ namespace BBSLIST
         void edit_tree();
 
         // xml保存
-        virtual void save_xml( const bool backup ) = 0;
+        virtual void save_xml() = 0;
 
         // remove_dir != empty()の時はその名前のディレクトリを削除する
         void save_xml_impl( const std::string& file, const std::string& root, const std::string& remove_dir );
@@ -184,8 +184,6 @@ namespace BBSLIST
                                         const std::string& arg1 = std::string(),
                                         const std::string& arg2 = std::string()
             );
-
-        virtual void shutdown();
 
         virtual void clock_in();
 

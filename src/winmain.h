@@ -23,9 +23,6 @@ class JDWinMain : public SKELETON::JDWindow
     JDWinMain( const bool init, const bool skip_setupdiag );
     virtual ~JDWinMain();
 
-    // 緊急シャットダウン
-    void shutdown();
-
     // 通常のセッション保存
     void save_session();
 

@@ -44,7 +44,7 @@ void HistoryViewBase::show_view()
 
 
 // xml保存
-void HistoryViewBase::save_xml( const bool backup )
+void HistoryViewBase::save_xml()
 {
     save_xml_impl( m_file_xml, ROOT_NODE_NAME, "" );
 }

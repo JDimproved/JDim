@@ -101,17 +101,6 @@ JDWinMain::~JDWinMain()
 }
 
 
-// 緊急シャットダウン
-void JDWinMain::shutdown()
-{
-#ifdef _DEBUG
-    std::cout << "JDWinMain::shutdown\n";
-#endif
-
-    if( m_core ) m_core->shutdown();
-}
-
-
 // 通常のセッション保存
 void JDWinMain::save_session()
 {

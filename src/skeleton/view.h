@@ -258,9 +258,6 @@ namespace SKELETON
         // 壊れているか
         virtual const bool is_broken(){ return false; }
 
-        // shutdown( SIGHUP )用
-        virtual void shutdown(){}
-
         // キーを押した
         virtual const bool slot_key_press( GdkEventKey* event ){ return false; }
 

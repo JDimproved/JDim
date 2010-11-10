@@ -122,9 +122,6 @@ namespace CORE
 
         void set_command( const COMMAND_ARGS& command );
 
-        // SIGHUPを受け取った時の処理
-        void shutdown();
-
         // セッション保存
         void save_session();
 

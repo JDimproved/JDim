@@ -120,9 +120,6 @@ namespace SKELETON
         // urlで指定されるタブが存在するか
         const bool exist_tab( const std::string& url );
 
-        // SIGHUPを受け取ったときの処理
-        virtual void shutdown();
-
         // 指定したページに表示切替え
         void set_current_page( const int page );
 

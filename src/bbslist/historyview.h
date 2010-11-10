@@ -24,7 +24,7 @@ namespace BBSLIST
       protected:
 
         // xml保存
-        virtual void save_xml( const bool backup );
+        virtual void save_xml();
 
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
     };
