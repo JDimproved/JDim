@@ -2643,7 +2643,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         else{
 
             const size_t max_lng = DBTREE::board_get_max_dat_lng( command.url );
-            if( max_lng > 0 && DBTREE::article_lng_dat( command.url ) > max_lng * 1024 ){
+            if( max_lng > 0 && DBTREE::article_lng_dat( command.url ) > max_lng * 1000 ){
 
                 SKELETON::MsgDiag mdiag( NULL, "スレのサイズが" + MISC::itostr( max_lng ) + "Kバイトを越えています。\n\n本当に書き込みますか？",
                                          false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
