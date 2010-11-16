@@ -224,6 +224,7 @@ namespace CONTROL
         CloseImageButton, // 以下、マウスボタン専用の設定
         ScrollImageButton,
         CancelMosaicButton,
+        SaveImageButton,
 
         IMAGEVIEWMOTION_END,
 

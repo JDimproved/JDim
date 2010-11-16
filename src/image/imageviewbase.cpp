@@ -740,6 +740,7 @@ const bool ImageViewBase::operate_view( const int control )
             break;
 
         case CONTROL::Save:
+        case CONTROL::SaveImageButton:
             slot_save();
             break;
 

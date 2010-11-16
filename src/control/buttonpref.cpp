@@ -116,6 +116,7 @@ ButtonPref::ButtonPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::CloseImageButton );
     append_row( CONTROL::ScrollImageButton );
     append_row( CONTROL::CancelMosaicButton );
+    append_row( CONTROL::SaveImageButton );
 }
 
 

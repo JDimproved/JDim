@@ -92,6 +92,7 @@ void ButtonConfig::load_conf()
     SETMOTION( "CloseImageButton", BUTTONCONF_CloseImageButton );
     SETMOTION( "ScrollImageButton", BUTTONCONF_ScrollImageButton );
     SETMOTION( "CancelMosaicButton", BUTTONCONF_CancelMosaicButton );
+    SETMOTION( "SaveImageButton", BUTTONCONF_SaveImageButton );
 }
 
 
