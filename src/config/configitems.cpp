@@ -515,6 +515,9 @@ const bool ConfigItems::load( const bool restore )
     // Ctrl+qでウィンドウを閉じない
     disable_close = cf.get_option_bool( "disable_close", CONF_DISABLE_CLOSE );
 
+    // メニューバーを非表示にした時にダイアログを表示
+    show_hide_menubar_diag = cf.get_option_bool( "show_hide_menubar_diag", CONF_SHOW_HIDE_MENUBAR_DIAG );
+
     // まちBBSの取得に offlaw.cgi を使用する
     use_machi_offlaw = cf.get_option_bool( "use_machi_offlaw", CONF_USE_MACHI_OFFLAW );
 
@@ -829,6 +832,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "check_update_boot", check_update_boot );
     cf.update( "check_favorite_dup", check_favorite_dup );
     cf.update( "disable_close", disable_close );
+    cf.update( "show_hide_menubar_diag", show_hide_menubar_diag );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
     cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );
     cf.update( "delete_img_in_thread", delete_img_in_thread );

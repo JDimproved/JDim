@@ -477,6 +477,11 @@ void CONFIG::set_check_favorite_dup( const int check ){ get_confitem()->check_fa
 // Ctrl+qでウィンドウを閉じない
 const bool CONFIG::get_disable_close(){ return get_confitem()->disable_close; }
 
+// メニューバーを非表示にした時にダイアログを表示
+const bool CONFIG::get_show_hide_menubar_diag(){ return get_confitem()->show_hide_menubar_diag; }
+void CONFIG::set_show_hide_menubar_diag( const bool set ){ get_confitem()->show_hide_menubar_diag = set; }
+
+
 // まちBBSの取得に offlaw.cgi を使用する
 const bool CONFIG::get_use_machi_offlaw(){ return get_confitem()->use_machi_offlaw; }
 void CONFIG::set_use_machi_offlaw( const bool set ){ get_confitem()->use_machi_offlaw = set; }

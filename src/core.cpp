@@ -1652,9 +1652,14 @@ void Core::toggle_menubar()
 
     restore_focus( true, false );
 
-    if( ! SESSION::show_menubar() ){
-        SKELETON::MsgDiag mdiag( NULL, "メニューバーを再表示するには\n\n" + CONTROL::get_str_motions( CONTROL::ShowMenuBar ) + "\n\nを押してください" );
+    if( ! SESSION::show_menubar() && CONFIG::get_show_hide_menubar_diag() ){
+
+        SKELETON::MsgCheckDiag mdiag( NULL, "メニューバーを再表示するには\n\n" + CONTROL::get_str_motions( CONTROL::ShowMenuBar ) + "\n\nを押してください",
+                                      "今後表示しない (_D)"
+            );
+
         mdiag.run();
+        if( mdiag.get_chkbutton().get_active() ) CONFIG::set_show_hide_menubar_diag( false );
     }
 }
 

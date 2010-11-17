@@ -433,6 +433,9 @@ namespace CONFIG
         // Ctrl+qでウィンドウを閉じない
         bool disable_close;
 
+        // メニューバーを非表示にした時にダイアログを表示
+        bool show_hide_menubar_diag;
+
         // まちBBSの取得に offlaw.cgi を使用する
         bool use_machi_offlaw;
 
