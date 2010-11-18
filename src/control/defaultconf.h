@@ -175,6 +175,8 @@ namespace CONTROL
 
 #define MOUSECONF_ToggleArticle "2"
 #define MOUSECONF_ShowSideBar  ""
+#define MOUSECONF_ShowMenuBar ""
+#define MOUSECONF_ShowToolBarMain ""
 #define MOUSECONF_Home "68"
 #define MOUSECONF_End "62"
 #define MOUSECONF_Quit "26"

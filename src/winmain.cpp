@@ -16,6 +16,8 @@
 
 #include "jdlib/loader.h"
 
+#include "control/controlid.h"
+
 #ifdef HAVE_MIGEMO_H
 #include "jdlib/jdmigemo.h"
 #include "config/globalconf.h"
@@ -64,6 +66,10 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag )
     property_window_position().set_value( Gtk::WIN_POS_NONE );
     set_resizable( true );
     property_destroy_with_parent().set_value( false );
+
+    add_events( Gdk::BUTTON_PRESS_MASK );
+    add_events( Gdk::BUTTON_RELEASE_MASK );
+    add_events( Gdk::POINTER_MOTION_MASK );
 
     // migemo 初期化
 #ifdef HAVE_MIGEMO_H
@@ -252,4 +258,94 @@ bool JDWinMain::on_configure_event( GdkEventConfigure* event )
     if( m_cancel_state_event ) return Gtk::Window::on_configure_event( event );
 
     return SKELETON::JDWindow::on_configure_event( event );
+}
+
+
+bool JDWinMain::on_button_press_event( GdkEventButton* event )
+{
+#ifdef _DEBUG
+    std::cout << "JDWinMain::on_button_press_event\n";
+#endif
+
+    // マウスジェスチャ
+    m_control.MG_start( event );
+
+    return SKELETON::JDWindow::on_button_press_event( event );
+}
+
+
+bool JDWinMain::on_button_release_event( GdkEventButton* event )
+{
+#ifdef _DEBUG
+    std::cout << "JDWinMain::on_button_release_event\n";
+#endif
+
+    const bool ret =  SKELETON::JDWindow::on_button_release_event( event );
+
+    /// マウスジェスチャ
+    const int mg = m_control.MG_end( event );
+
+    // マウスジェスチャ
+    if( mg != CONTROL::None ) operate_win( mg );
+
+    return ret;
+}
+
+
+//
+// マウスが動いた
+//
+bool JDWinMain::on_motion_notify_event( GdkEventMotion* event )
+{
+#ifdef _DEBUG
+    std::cout << "JDWinMain::on_motion_notify_event\n";
+#endif
+
+    /// マウスジェスチャ
+    m_control.MG_motion( event );
+
+    return SKELETON::JDWindow::on_motion_notify_event( event );
+}
+
+
+const bool JDWinMain::operate_win( const int control )
+{
+    if( control == CONTROL::None ) return false;;
+
+#ifdef _DEBUG
+    std::cout << "JDWinMain::operate_win control = " << control << std::endl;
+#endif    
+
+    switch( control ){
+            
+            // サイドバー表示/非表示
+        case CONTROL::ShowSideBar:
+            CORE::core_set_command( "toggle_sidebar" );
+            break;
+
+            // メニューバー表示/非表示
+        case CONTROL::ShowMenuBar:
+            CORE::core_set_command( "toggle_menubar" );
+            break;
+
+            // メインツールバー表示/非表示
+        case CONTROL::ShowToolBarMain:
+            CORE::core_set_command( "toggle_toolbarmain" );
+            break;
+
+            // サイドバー更新チェック
+        case CONTROL::CheckUpdateRoot:
+            CORE::core_set_command( "check_update_root" );
+            break;
+
+        case CONTROL::CheckUpdateOpenRoot:
+            CORE::core_set_command( "check_update_open_root" );
+            break;
+
+        default:
+            return false;
+    }
+
+    return true;
+
 }

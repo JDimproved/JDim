@@ -8,6 +8,8 @@
 
 #include "skeleton/window.h"
 
+#include "control/control.h"
+
 namespace CORE
 {
     class Core;
@@ -18,6 +20,9 @@ class JDWinMain : public SKELETON::JDWindow
     CORE::Core* m_core;
     bool m_cancel_state_event;
     
+    // 入力コントローラ
+    CONTROL::Control m_control;
+
   public:
 
     JDWinMain( const bool init, const bool skip_setupdiag );
@@ -55,6 +60,12 @@ class JDWinMain : public SKELETON::JDWindow
     virtual bool on_delete_event( GdkEventAny* event );
     virtual bool on_window_state_event( GdkEventWindowState* event );
     virtual bool on_configure_event( GdkEventConfigure* event );
+    virtual bool on_button_press_event( GdkEventButton* event );
+    virtual bool on_button_release_event( GdkEventButton* event );
+    virtual bool on_motion_notify_event( GdkEventMotion* event );
+
+  private:
+    const bool operate_win( const int control );
 };
 
 
