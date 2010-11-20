@@ -16,6 +16,7 @@
 
 #include "jdlib/loader.h"
 
+#include "control/controlutil.h"
 #include "control/controlid.h"
 
 #ifdef HAVE_MIGEMO_H
@@ -310,42 +311,5 @@ bool JDWinMain::on_motion_notify_event( GdkEventMotion* event )
 
 const bool JDWinMain::operate_win( const int control )
 {
-    if( control == CONTROL::None ) return false;;
-
-#ifdef _DEBUG
-    std::cout << "JDWinMain::operate_win control = " << control << std::endl;
-#endif    
-
-    switch( control ){
-            
-            // サイドバー表示/非表示
-        case CONTROL::ShowSideBar:
-            CORE::core_set_command( "toggle_sidebar" );
-            break;
-
-            // メニューバー表示/非表示
-        case CONTROL::ShowMenuBar:
-            CORE::core_set_command( "toggle_menubar" );
-            break;
-
-            // メインツールバー表示/非表示
-        case CONTROL::ShowToolBarMain:
-            CORE::core_set_command( "toggle_toolbarmain" );
-            break;
-
-            // サイドバー更新チェック
-        case CONTROL::CheckUpdateRoot:
-            CORE::core_set_command( "check_update_root" );
-            break;
-
-        case CONTROL::CheckUpdateOpenRoot:
-            CORE::core_set_command( "check_update_open_root" );
-            break;
-
-        default:
-            return false;
-    }
-
-    return true;
-
+    return CONTROL::operate_common( control );
 }

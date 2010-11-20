@@ -1036,6 +1036,8 @@ const bool ArticleViewBase::operate_view( const int control )
 {
     assert( m_drawarea );
 
+    if( CONTROL::operate_common( control ) ) return true;
+
     if( control == CONTROL::None ) return false;;
 
     // スクロール系操作
@@ -1230,21 +1232,6 @@ const bool ArticleViewBase::operate_view( const int control )
             sig_hide_popup().emit();
             break;
 
-            // サイドバー表示/非表示
-        case CONTROL::ShowSideBar:
-            CORE::core_set_command( "toggle_sidebar" );
-            break;
-
-            // メニューバー表示/非表示
-        case CONTROL::ShowMenuBar:
-            CORE::core_set_command( "toggle_menubar" );
-            break;
-
-            // メインツールバー表示/非表示
-        case CONTROL::ShowToolBarMain:
-            CORE::core_set_command( "toggle_toolbarmain" );
-            break;
-
             // 実況モード切り替え
         case CONTROL::LiveStartStop:
             if( ! m_article->empty() ) ARTICLE::get_admin()->set_command( "live_start_stop", get_url() );
@@ -1273,20 +1260,6 @@ const bool ArticleViewBase::operate_view( const int control )
             // ログ検索(全て)
         case CONTROL::SearchCacheAll:
             slot_search_cacheall();
-            break;
-
-            // URLを開くダイアログを表示
-        case CONTROL::OpenURL:
-            CORE::core_set_command( "show_openurl_diag" );
-            break;
-
-            // サイドバー更新チェック
-        case CONTROL::CheckUpdateRoot:
-            CORE::core_set_command( "check_update_root" );
-            break;
-
-        case CONTROL::CheckUpdateOpenRoot:
-            CORE::core_set_command( "check_update_open_root" );
             break;
 
         default:

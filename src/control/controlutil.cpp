@@ -18,6 +18,7 @@
 #include "config/globalconf.h"
 
 #include "cache.h"
+#include "command.h"
 
 #include <cstring>
 
@@ -471,6 +472,50 @@ const std::string CONTROL::get_label_motions( const int id )
 {
     std::string motion = CONTROL::get_str_motions( id );
     return CONTROL::get_label( id ) + ( motion.empty() ? "" :  "  " ) + motion;
+}
+
+
+// 共通操作
+const bool CONTROL::operate_common( const int control )
+{
+    if( control == CONTROL::None ) return false;;
+
+    switch( control ){
+            
+            // サイドバー表示/非表示
+        case CONTROL::ShowSideBar:
+            CORE::core_set_command( "toggle_sidebar" );
+            break;
+
+            // メニューバー表示/非表示
+        case CONTROL::ShowMenuBar:
+            CORE::core_set_command( "toggle_menubar" );
+            break;
+
+            // メインツールバー表示/非表示
+        case CONTROL::ShowToolBarMain:
+            CORE::core_set_command( "toggle_toolbarmain" );
+            break;
+
+            // URLを開くダイアログを表示
+        case CONTROL::OpenURL:
+            CORE::core_set_command( "show_openurl_diag" );
+            break;
+
+            // サイドバー更新チェック
+        case CONTROL::CheckUpdateRoot:
+            CORE::core_set_command( "check_update_root" );
+            break;
+
+        case CONTROL::CheckUpdateOpenRoot:
+            CORE::core_set_command( "check_update_open_root" );
+            break;
+
+        default:
+            return false;
+    }
+
+    return true;
 }
 
 

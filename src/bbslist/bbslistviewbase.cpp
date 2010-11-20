@@ -727,6 +727,8 @@ void BBSListViewBase::update_item( const std::string& url, const std::string& id
 //
 const bool BBSListViewBase::operate_view( const int control )
 {
+    if( CONTROL::operate_common( control ) ) return true;
+
     Gtk::TreePath path = m_treeview.get_current_path();
     Gtk::TreeModel::Row row;
     bool open_tab = false;
@@ -911,30 +913,6 @@ const bool BBSListViewBase::operate_view( const int control )
             up_search();
             break;
 
-            // サイドバー表示/非表示
-        case CONTROL::ShowSideBar:
-            CORE::core_set_command( "toggle_sidebar" );
-            break;
-
-            // メニューバー表示/非表示
-        case CONTROL::ShowMenuBar:
-            CORE::core_set_command( "toggle_menubar" );
-            break;
-
-            // メインツールバー表示/非表示
-        case CONTROL::ShowToolBarMain:
-            CORE::core_set_command( "toggle_toolbarmain" );
-            break;
-
-            // サイドバー更新チェック
-        case CONTROL::CheckUpdateRoot:
-            CORE::core_set_command( "check_update_root" );
-            break;
-
-        case CONTROL::CheckUpdateOpenRoot:
-            CORE::core_set_command( "check_update_open_root" );
-            break;
-
         case CONTROL::StopLoading:
             CORE::core_set_command( "cancel_check_update" );
             break;
@@ -945,11 +923,6 @@ const bool BBSListViewBase::operate_view( const int control )
 
         case CONTROL::Redo:
             redo();
-            break;
-
-            // URLを開くダイアログを表示
-        case CONTROL::OpenURL:
-            CORE::core_set_command( "show_openurl_diag" );
             break;
 
         default:

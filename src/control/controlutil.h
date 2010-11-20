@@ -62,6 +62,9 @@ namespace CONTROL
     // IDからラベルと操作の両方を取得
     const std::string get_label_motions( const int id );
 
+    // 共通操作
+    const bool operate_common( const int control );
+
 
     ///////////////////////
 

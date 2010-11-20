@@ -624,6 +624,8 @@ void ImageViewBase::clicked()
 //
 const bool ImageViewBase::operate_view( const int control )
 {
+    if( CONTROL::operate_common( control ) ) return true;
+
 #ifdef _DEBUG
     std::cout << "ImageViewBase::operate_view control = " << control << std::endl;
 #endif
@@ -748,29 +750,9 @@ const bool ImageViewBase::operate_view( const int control )
             delete_view_impl( true );
             break;
 
-            // サイドバー表示/非表示
-        case CONTROL::ShowSideBar:
-            CORE::core_set_command( "toggle_sidebar" );
-            break;
-
-            // メニューバー表示/非表示
-        case CONTROL::ShowMenuBar:
-            CORE::core_set_command( "toggle_menubar" );
-            break;
-
-            // メインツールバー表示/非表示
-        case CONTROL::ShowToolBarMain:
-            CORE::core_set_command( "toggle_toolbarmain" );
-            break;
-
             // お気に入りに追加
         case CONTROL::AppendFavorite:
             slot_favorite();
-            break;
-
-            // URLを開くダイアログを表示
-        case CONTROL::OpenURL:
-            CORE::core_set_command( "show_openurl_diag" );
             break;
 
         default:
