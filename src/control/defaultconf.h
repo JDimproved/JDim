@@ -187,6 +187,8 @@ namespace CONTROL
 #define MOUSECONF_CheckUpdateRoot "48"
 #define MOUSECONF_CheckUpdateOpenRoot "42"
 
+#define MOUSECONF_QuitJD ""
+
 // ARTICLE
 #define MOUSECONF_GotoNew "626"
 #define MOUSECONF_SearchNextArticle "28"

@@ -502,6 +502,11 @@ const bool CONTROL::operate_common( const int control )
             CORE::core_set_command( "show_openurl_diag" );
             break;
 
+            // JD終了
+        case CONTROL::QuitJD:
+            CORE::core_set_command( "quit_jd" );
+            break;
+
             // サイドバー更新チェック
         case CONTROL::CheckUpdateRoot:
             CORE::core_set_command( "check_update_root" );

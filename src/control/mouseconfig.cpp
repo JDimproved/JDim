@@ -58,6 +58,8 @@ void MouseConfig::load_conf()
     SETMOTION( "CheckUpdateRoot", MOUSECONF_CheckUpdateRoot );
     SETMOTION( "CheckUpdateOpenRoot", MOUSECONF_CheckUpdateOpenRoot );
 
+    SETMOTION( "QuitJD", MOUSECONF_QuitJD );
+
     // ARTICLE
     SETMOTION( "GotoNew", MOUSECONF_GotoNew );
     SETMOTION( "SearchNextArticle", MOUSECONF_SearchNextArticle );

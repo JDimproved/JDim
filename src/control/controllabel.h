@@ -116,6 +116,8 @@ namespace CONTROL
         { "CheckUpdateRoot", ITEM_NAME_CHECK_UPDATE_ROOT },
         { "CheckUpdateOpenRoot", ITEM_NAME_CHECK_UPDATE_OPEN_ROOT },
 
+        { "QuitJD", "JD終了" },
+
         { "ClickButton", "クリック" },
         { "DblClickButton", "ダブルクリック" },
         { "TrpClickButton", "トリプルクリック" },

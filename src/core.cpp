@@ -3042,6 +3042,9 @@ void Core::exec_command()
             );
     }
 
+    // JD 終了
+    else if( command.command  == "quit_jd" ) slot_quit();
+
     // URL のオープン関係
 
     // URLを開くダイアログを表示

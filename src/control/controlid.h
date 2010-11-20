@@ -111,6 +111,8 @@ namespace CONTROL
         CheckUpdateRoot,
         CheckUpdateOpenRoot,
 
+        QuitJD,
+
         ClickButton, // 以下、マウスボタン専用の設定
         DblClickButton,
         TrpClickButton,
