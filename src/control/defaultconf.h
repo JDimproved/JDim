@@ -182,8 +182,11 @@ namespace CONTROL
 #define MOUSECONF_Quit "26"
 #define MOUSECONF_Reload "82"
 #define MOUSECONF_StopLoading "8"
+#define MOUSECONF_AppendFavorite  ""
+
 #define MOUSECONF_NewArticle "24"
 #define MOUSECONF_WriteMessage "24"
+
 #define MOUSECONF_CheckUpdateRoot "48"
 #define MOUSECONF_CheckUpdateOpenRoot "42"
 
