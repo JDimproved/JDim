@@ -668,6 +668,11 @@ const bool ImageViewBase::operate_view( const int control )
             close_view();
             break;
 
+            // 他のタブを閉じる
+        case CONTROL::CloseOtherTabs:
+            IMAGE::get_admin()->set_command( "close_view", get_url(), "closeother" );
+            break;
+
         case CONTROL::TabLeft:
         case CONTROL::TabLeftUpdated:
             IMAGE::get_admin()->set_command( "tab_left" );

@@ -1097,6 +1097,11 @@ const bool ArticleViewBase::operate_view( const int control )
             close_view();
             break;
 
+            // 他のタブを閉じる
+        case CONTROL::CloseOtherTabs:
+            ARTICLE::get_admin()->set_command( "close_view", get_url(), "closeother" );
+            break;
+
             // 書き込み
         case CONTROL::WriteMessage:
             write();

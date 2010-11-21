@@ -551,13 +551,16 @@ void Admin::exec_command()
         unlock_all_view( command.url );
     }
 
+    // ビューを閉じる
     else if( command.command == "close_view" ){
         if( command.arg1 == "closeall" ) close_all_view( command.url );
+        if( command.arg1 == "closeother" ) close_other_views( command.url );
         else close_view( command.url );
     }
     else if( command.command == "close_currentview" ){
         close_current_view();
     }
+
     else if( command.command == "set_page" ){
         set_current_page( atoi( command.arg1.c_str() ) );
     }
@@ -1430,6 +1433,18 @@ void Admin::close_all_view( const std::string& url )
 }
 
 
+//
+// url 以外のビューを全て閉じる
+//
+void Admin::close_other_views( const std::string& url )
+{
+    const int pages = m_notebook->get_n_pages();
+    for( int i = 0; i < pages; ++i ){
+        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        if( view && view->get_url() != url ) set_command( "close_view", view->get_url() );
+    }
+}
+
 
 //
 // 現在のビューを閉じる
@@ -2116,11 +2131,7 @@ void Admin::slot_close_other_tabs()
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) url = view->get_url();
 
-    int pages = m_notebook->get_n_pages();
-    for( int i = 0; i < pages; ++i ){
-        view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
-        if( view && view->get_url() != url ) set_command( "close_view", view->get_url() );
-    }
+    close_other_views( url );
 }
 
 

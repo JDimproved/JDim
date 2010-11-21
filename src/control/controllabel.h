@@ -66,6 +66,8 @@ namespace CONTROL
         { "TabNum8", "タブ8に移動" },
         { "TabNum9", "タブ9に移動" },
 
+        { "CloseOtherTabs", "他のタブを閉じる" },
+
         { "PreBookMark", "前のしおりヘ移動" },
         { "NextBookMark", "次のしおりヘ移動" },
 

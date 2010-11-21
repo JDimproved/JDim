@@ -1509,6 +1509,11 @@ const bool BoardViewBase::operate_view( const int control )
             close_view();
             break;
 
+            // 他のタブを閉じる
+        case CONTROL::CloseOtherTabs:
+            BOARD::get_admin()->set_command( "close_view", get_url(), "closeother" );
+            break;
+
         case CONTROL::Reload:
             reload();
             break;
