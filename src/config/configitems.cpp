@@ -286,7 +286,7 @@ const bool ConfigItems::load( const bool restore )
     // スクロールバーを左に配置
     left_scrbar = cf.get_option_bool( "left_scrbar", CONF_LEFT_SCRBAR );
 
-    // スレ一覧で古いスレも表示 	 
+    // スレ一覧で古いスレも表示
     show_oldarticle = cf.get_option_bool( "show_oldarticle", CONF_SHOW_OLDARTICLE );
 
     // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
@@ -365,10 +365,10 @@ const bool ConfigItems::load( const bool restore )
     keep_im_status = cf.get_option_bool( "keep_im_status", CONF_KEEP_IM_STATUS );
 
     // ポップアップとカーソルの間のマージン
-    margin_popup = cf.get_option_int( "margin_popup", CONF_MARGIN_POPUP, 1, 1024 );
+    margin_popup = cf.get_option_int( "margin_popup", CONF_MARGIN_POPUP, 0, 1024 );
 
     // 画像ポップアップとカーソルの間のマージン
-    margin_imgpopup = cf.get_option_int( "margin_imgpopup", CONF_MARGIN_IMGPOPUP, 1, 1024 );
+    margin_imgpopup = cf.get_option_int( "margin_imgpopup", CONF_MARGIN_IMGPOPUP, 0, 1024 );
 
     // ポップアップが消えるまでの時間(ミリ秒)
     hide_popup_msec = cf.get_option_int( "hide_popup_msec", CONF_HIDE_POPUP_MSEC, 0, 2000 );
