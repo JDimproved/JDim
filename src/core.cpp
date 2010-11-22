@@ -3045,6 +3045,14 @@ void Core::exec_command()
     // JD 終了
     else if( command.command  == "quit_jd" ) slot_quit();
 
+
+    // 最大化/最大化解除
+    else if( command.command == "maximize_mainwin" ){
+
+        if( ! SESSION::is_maximized_win_main() ) m_win_main.maximize_win();
+        else m_win_main.unmaximize_win();
+    }
+
     // URL のオープン関係
 
     // URLを開くダイアログを表示

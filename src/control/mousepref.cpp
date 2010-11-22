@@ -85,6 +85,7 @@ MousePref::MousePref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::CheckUpdateOpenRoot );
 
     append_row( CONTROL::QuitJD );
+    append_row( CONTROL::MaximizeMainWin );
 
     append_comment_row( "" );
     append_comment_row( "■ "+ CONTROL::get_mode_label( CONTROL::MODE_BOARD ) );

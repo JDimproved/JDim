@@ -193,6 +193,7 @@ namespace CONTROL
 #define MOUSECONF_CheckUpdateOpenRoot "42"
 
 #define MOUSECONF_QuitJD ""
+#define MOUSECONF_MaximizeMainWin ""
 
 // ARTICLE
 #define MOUSECONF_GotoNew "626"

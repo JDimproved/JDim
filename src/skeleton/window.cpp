@@ -257,6 +257,13 @@ void JDWindow::maximize_win()
 }
 
 
+void JDWindow::unmaximize_win()
+{
+    set_maximized_win( false );
+    unmaximize();
+}
+
+
 //
 // ウィンドウ移動
 // 
@@ -606,8 +613,8 @@ bool JDWindow::on_delete_event( GdkEventAny* event )
 // 最大、最小化
 bool JDWindow::on_window_state_event( GdkEventWindowState* event )
 {
-    bool maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
-    bool iconified = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+    const bool maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+    const bool iconified = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
 
 #ifdef _DEBUG
     std::cout << "JDWindow::on_window_state_event : " 

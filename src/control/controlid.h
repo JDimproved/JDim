@@ -114,6 +114,7 @@ namespace CONTROL
         CheckUpdateOpenRoot,
 
         QuitJD,
+        MaximizeMainWin,
 
         ClickButton, // 以下、マウスボタン専用の設定
         DblClickButton,

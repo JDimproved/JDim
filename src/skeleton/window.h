@@ -58,6 +58,10 @@ namespace SKELETON
 
         virtual void clock_in();
 
+        // 最大化
+        void maximize_win();
+        void unmaximize_win();
+
         void set_spacing( int space );
 
         // hide 中
@@ -123,9 +127,6 @@ namespace SKELETON
         virtual bool on_key_press_event( GdkEventKey* event );
 
       private:
-
-        // 最大化する
-        void maximize_win();
 
         bool slot_idle();
 

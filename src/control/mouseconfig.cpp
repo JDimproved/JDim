@@ -62,6 +62,7 @@ void MouseConfig::load_conf()
     SETMOTION( "CheckUpdateOpenRoot", MOUSECONF_CheckUpdateOpenRoot );
 
     SETMOTION( "QuitJD", MOUSECONF_QuitJD );
+    SETMOTION( "MaximizeMainWin", MOUSECONF_MaximizeMainWin );
 
     // ARTICLE
     SETMOTION( "GotoNew", MOUSECONF_GotoNew );
