@@ -58,9 +58,10 @@ namespace SKELETON
 
         virtual void clock_in();
 
-        // 最大化
+        // 最大、最小化
         void maximize_win();
         void unmaximize_win();
+        void iconify_win();
 
         void set_spacing( int space );
 

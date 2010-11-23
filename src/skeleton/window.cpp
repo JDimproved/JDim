@@ -264,6 +264,13 @@ void JDWindow::unmaximize_win()
 }
 
 
+void JDWindow::iconify_win()
+{
+    set_iconified_win( true );
+    iconify();
+}
+
+
 //
 // ウィンドウ移動
 // 

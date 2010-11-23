@@ -512,6 +512,11 @@ const bool CONTROL::operate_common( const int control )
             CORE::core_set_command( "maximize_mainwin" );
             break;
 
+            // 最小化
+        case CONTROL::IconifyMainWin:
+            CORE::core_set_command( "iconify_mainwin" );
+            break;
+
             // サイドバー更新チェック
         case CONTROL::CheckUpdateRoot:
             CORE::core_set_command( "check_update_root" );

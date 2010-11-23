@@ -63,6 +63,7 @@ void MouseConfig::load_conf()
 
     SETMOTION( "QuitJD", MOUSECONF_QuitJD );
     SETMOTION( "MaximizeMainWin", MOUSECONF_MaximizeMainWin );
+    SETMOTION( "IconifyMainWin", MOUSECONF_IconifyMainWin );
 
     // ARTICLE
     SETMOTION( "GotoNew", MOUSECONF_GotoNew );

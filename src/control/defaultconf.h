@@ -194,6 +194,7 @@ namespace CONTROL
 
 #define MOUSECONF_QuitJD ""
 #define MOUSECONF_MaximizeMainWin ""
+#define MOUSECONF_IconifyMainWin ""
 
 // ARTICLE
 #define MOUSECONF_GotoNew "626"

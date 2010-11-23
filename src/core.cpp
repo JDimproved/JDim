@@ -3053,6 +3053,11 @@ void Core::exec_command()
         else m_win_main.unmaximize_win();
     }
 
+    // 最小化
+    else if( command.command == "iconify_mainwin" ){
+        m_win_main.iconify_win();
+    }
+
     // URL のオープン関係
 
     // URLを開くダイアログを表示

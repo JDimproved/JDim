@@ -115,6 +115,7 @@ namespace CONTROL
 
         QuitJD,
         MaximizeMainWin,
+        IconifyMainWin,
 
         ClickButton, // 以下、マウスボタン専用の設定
         DblClickButton,

@@ -120,6 +120,7 @@ namespace CONTROL
 
         { "QuitJD", "JD終了" },
         { "MaximizeMainWin", "最大化 / 最大化解除" },
+        { "IconifyMainWin", "最小化" },
 
         { "ClickButton", "クリック" },
         { "DblClickButton", "ダブルクリック" },
