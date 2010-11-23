@@ -269,6 +269,7 @@ namespace CONTROL
 #define BUTTONCONF_ScrollImageButton "Left"
 #define BUTTONCONF_CancelMosaicButton ""
 #define BUTTONCONF_SaveImageButton ""
+#define BUTTONCONF_ResizeImageButton "Left"
 
 }
 

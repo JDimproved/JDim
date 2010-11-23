@@ -45,7 +45,8 @@ ImageViewMain::ImageViewMain( const std::string& url )
       m_length_prev( 0 ),
       m_show_status( false ),
       m_show_label( false ),
-      m_clicked( false )
+      m_do_resizing( false ),
+      m_scrolled( false )
 {
 #ifdef _DEBUG    
     std::cout << "ImageViewMain::ImageViewMain : " << get_url() << std::endl;
@@ -384,11 +385,12 @@ bool ImageViewMain::slot_button_press( GdkEventButton* event )
     // ドラッグして画像移動するときの起点
     m_x_motion = event->x_root;
     m_y_motion = event->y_root;
+    m_scrolled = false;
 
     // ボタンをリリースした時に大きさを変更
-    m_clicked = false;
+    m_do_resizing = false;
     if( ! is_loading() && ! is_wait()
-        && get_control().button_alloted( event, CONTROL::ClickButton ) ) m_clicked = true;
+        && get_control().button_alloted( event, CONTROL::ResizeImageButton ) ) m_do_resizing = true;
 
     return true;
 }
@@ -437,7 +439,7 @@ bool ImageViewMain::slot_motion_notify( GdkEventMotion* event )
             if( vadj ) vadj->set_value(
                 MAX( vadj->get_lower(), MIN( vadj->get_upper() - vadj->get_page_size(), vadj->get_value() - dy ) ) );
 
-            m_clicked = false;
+            m_scrolled = true;
         }
     }
 
@@ -512,11 +514,17 @@ void ImageViewMain::scroll_right()
 //
 const bool ImageViewMain::operate_view( const int control )
 {
+    // スクロールしたときはキャンセル
+    if( m_scrolled ){
+        m_scrolled = false;
+        return false;
+    }
+
     int cntl = control;
 
-    if( m_clicked ){
+    if( m_do_resizing ){
 
-        m_clicked = false;
+        m_do_resizing = false;
 
         if( get_img()->get_size() == 100 ) cntl = CONTROL::ZoomFitImage;
         else cntl = CONTROL::OrgSizeImage;

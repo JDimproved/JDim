@@ -231,6 +231,7 @@ namespace CONTROL
         ScrollImageButton,
         CancelMosaicButton,
         SaveImageButton,
+        ResizeImageButton,
 
         IMAGEVIEWMOTION_END,
 

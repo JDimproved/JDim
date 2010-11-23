@@ -241,6 +241,7 @@ namespace CONTROL
         { "ScrollImageButton", "画像スクロール" },
         { "CancelMosaicButton", "モザイク解除" },
         { "SaveImageButton", "画像保存" },
+        { "ResizeImageButton", "画像サイズ調整" },
 
         { "", "" },
 

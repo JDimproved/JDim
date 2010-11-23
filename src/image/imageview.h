@@ -25,7 +25,8 @@ namespace IMAGE
         int m_pre_height;
         int m_redraw_count;
 
-        bool m_clicked;
+        bool m_do_resizing;
+        bool m_scrolled;
 
       public:
         ImageViewMain( const std::string& url );
