@@ -430,6 +430,9 @@ namespace CONFIG
         // お気に入り登録時に重複項目を登録するか ( 0: 登録する 1: ダイアログ表示  2: 登録しない )
         int check_favorite_dup;
 
+        // お気に入り登録時に挿入先ダイアログを表示する ( 0 : 表示する 1: 表示せず先頭に追加 2: 表示せず最後に追加 )
+        int show_favorite_select_diag;
+
         // Ctrl+qでウィンドウを閉じない
         bool disable_close;
 

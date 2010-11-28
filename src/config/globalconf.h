@@ -485,6 +485,9 @@ namespace CONFIG
     const int get_check_favorite_dup();
     void set_check_favorite_dup( const int check );
 
+    // お気に入り登録時に挿入先ダイアログを表示する ( 0 : 表示する 1: 表示せず先頭に追加 2: 表示せず最後に追加 )
+    const int get_show_favorite_select_diag();
+
     // Ctrl+qでウィンドウを閉じない
     const bool get_disable_close();
 

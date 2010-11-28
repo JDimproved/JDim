@@ -130,6 +130,7 @@ namespace CONFIG
         CONF_CHECK_UPDATE_BOARD = 0,  // お気に入りの更新チェック時に板の更新もチェックする
         CONF_CHECK_UPDATE_BOOT = 0,  // 起動時にお気に入りを自動でチェックする
         CONF_CHECK_FAVORITE_DUP = 1, // お気に入り登録時に重複項目を登録するか ( 0: 登録する 1: ダイアログ表示 2: 登録しない )
+        CONF_SHOW_FAVORITE_SELECT_DIAG = 0, // お気に入り登録時に挿入先ダイアログを表示する ( 0 : 表示する 1: 表示せず先頭に追加 2: 表示せず最後に追加 )
         CONF_DISABLE_CLOSE = 0, // Ctrl+qでウィンドウを閉じない
         CONF_SHOW_HIDE_MENUBAR_DIAG = 1, // メニューバーを非表示にした時にダイアログを表示
         CONF_USE_MACHI_OFFLAW = 0, // まちBBSの取得に offlaw.cgi を使用する

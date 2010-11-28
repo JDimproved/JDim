@@ -2794,16 +2794,24 @@ void BBSListViewBase::append_item()
     // バックアップを取っておく
     CORE::DATA_INFO_LIST list_info_bkup = CORE::SBUF_list_info();
 
-    // 挿入先ダイアログ表示
-    Gtk::Window* parent = ( *list_info_bkup.begin() ).parent;
-    SelectListDialog diag( parent, get_url(), get_treestore() );
-    if( diag.run() != Gtk::RESPONSE_OK ) return;
+    std::string path_str;
+
+    const int show_diag = CONFIG::get_show_favorite_select_diag();
+    if( show_diag == 1 ) path_str = "-1";
+    else if( show_diag == 2 ) path_str = "";
+    else{
+
+        // 挿入先ダイアログ表示
+        Gtk::Window* parent = ( *list_info_bkup.begin() ).parent;
+        SelectListDialog diag( parent, get_url(), get_treestore() );
+        if( diag.run() != Gtk::RESPONSE_OK ) return;
+
+        path_str = diag.get_path();
+        if( list_info_bkup.size() == 1 && ! diag.get_name().empty() ) ( *list_info_bkup.begin() ).name = diag.get_name();
+    }
 
     bool before = false;
     Gtk::TreePath path;
-
-    const std::string path_str = diag.get_path();
-    if( list_info_bkup.size() == 1 && ! diag.get_name().empty() ) ( *list_info_bkup.begin() ).name = diag.get_name();
 
     // 先頭
     if( path_str == "-1" ){

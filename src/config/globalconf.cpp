@@ -474,6 +474,9 @@ const bool CONFIG::get_check_update_boot(){ return get_confitem()->check_update_
 const int CONFIG::get_check_favorite_dup(){ return get_confitem()->check_favorite_dup; }
 void CONFIG::set_check_favorite_dup( const int check ){ get_confitem()->check_favorite_dup = check; }
 
+// お気に入り登録時に挿入先ダイアログを表示する ( 0 : 表示する 1: 表示せず先頭に追加 2: 表示せず最後に追加 )
+const int CONFIG::get_show_favorite_select_diag(){ return get_confitem()->show_favorite_select_diag; }
+
 // Ctrl+qでウィンドウを閉じない
 const bool CONFIG::get_disable_close(){ return get_confitem()->disable_close; }
 

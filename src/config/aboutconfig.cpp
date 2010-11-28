@@ -50,11 +50,11 @@ void AboutConfig::pack_widgets()
 
     m_liststore = Gtk::ListStore::create( m_columns );
     m_treeview.set_model( m_liststore );
-    m_treeview.set_size_request( 640, 400 );
+    m_treeview.set_size_request( 700, 400 );
     m_treeview.signal_row_activated().connect( sigc::mem_fun( *this, &AboutConfig::slot_row_activated ) );
 
     Gtk::TreeViewColumn* column = Gtk::manage( new Gtk::TreeViewColumn( "設定名", m_columns.m_col_name ) );
-    column->set_fixed_width( 480 );
+    column->set_fixed_width( 540 );
     column->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
     column->set_resizable( true );
     m_treeview.append_column( *column );
@@ -160,6 +160,8 @@ void AboutConfig::append_rows()
     append_row( "スレをお気に入りに追加した時にしおりをセットする", get_confitem()->bookmark_drop, CONF_BOOKMARK_DROP );
     append_row( "起動時にお気に入りを自動でチェックする", get_confitem()->check_update_boot, CONF_CHECK_UPDATE_BOOT );
     append_row( "重複項目を登録する ( 0: 登録する 1: ダイアログ表示 2: 登録しない )", get_confitem()->check_favorite_dup, CONF_CHECK_FAVORITE_DUP );
+    append_row( "登録時に挿入先ダイアログ表示 ( 0 : 表示 1: 表示せず先頭に追加 2: 表示せず最後に追加 )",
+                get_confitem()->show_favorite_select_diag, CONF_SHOW_FAVORITE_SELECT_DIAG );
 
     // スレ一覧
     append_row( "" );

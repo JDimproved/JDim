@@ -512,6 +512,9 @@ const bool ConfigItems::load( const bool restore )
     // お気に入り登録時に重複項目を登録するか ( 0: 登録する 1: ダイアログ表示  2: 登録しない )
     check_favorite_dup = cf.get_option_int( "check_favorite_dup", CONF_CHECK_FAVORITE_DUP, 0, 2 );
 
+    // お気に入り登録時に挿入先ダイアログを表示する ( 0 : 表示する 1: 表示せず先頭に追加 2: 表示せず最後に追加 )
+    show_favorite_select_diag = cf.get_option_int( "show_favorite_select_diag", CONF_SHOW_FAVORITE_SELECT_DIAG, 0, 2 );
+
     // Ctrl+qでウィンドウを閉じない
     disable_close = cf.get_option_bool( "disable_close", CONF_DISABLE_CLOSE );
 
@@ -831,6 +834,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "check_update_board", check_update_board );
     cf.update( "check_update_boot", check_update_boot );
     cf.update( "check_favorite_dup", check_favorite_dup );
+    cf.update( "show_favorite_select_diag", show_favorite_select_diag );
     cf.update( "disable_close", disable_close );
     cf.update( "show_hide_menubar_diag", show_hide_menubar_diag );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
