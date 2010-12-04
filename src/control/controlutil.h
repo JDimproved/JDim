@@ -8,6 +8,12 @@
 
 #include <gtkmm.h>
 
+namespace SKELETON
+{
+    class Admin;
+}
+
+
 namespace CONTROL
 {
     void load_conf();
@@ -63,7 +69,7 @@ namespace CONTROL
     const std::string get_label_motions( const int id );
 
     // 共通操作
-    const bool operate_common( const int control );
+    const bool operate_common( const int control, const std::string& url, SKELETON::Admin* admin );
 
 
     ///////////////////////

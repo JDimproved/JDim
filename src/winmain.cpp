@@ -311,5 +311,5 @@ bool JDWinMain::on_motion_notify_event( GdkEventMotion* event )
 
 const bool JDWinMain::operate_win( const int control )
 {
-    return CONTROL::operate_common( control );
+    return CONTROL::operate_common( control, std::string(), NULL );
 }

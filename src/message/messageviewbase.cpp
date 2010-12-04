@@ -478,7 +478,7 @@ void MessageViewBase::focus_view()
 //
 const bool MessageViewBase::operate_view( const int control )
 {
-    if( control == CONTROL::None ) return false;
+    if( CONTROL::operate_common( control, get_url(), MESSAGE::get_admin() ) ) return true;
 
     switch( control ){
             
@@ -490,53 +490,6 @@ const bool MessageViewBase::operate_view( const int control )
             // 書き込み実行
         case CONTROL::ExecWrite:
             MESSAGE::get_admin()->set_command( "toolbar_write", get_url() );
-            break;
-
-        case CONTROL::TabLeft:
-        case CONTROL::TabLeftUpdated:
-            MESSAGE::get_admin()->set_command( "tab_left" );
-            break;
-
-        case CONTROL::TabRight:
-        case CONTROL::TabRightUpdated:
-            MESSAGE::get_admin()->set_command( "tab_right" );
-            break;
-
-        // タブ位置(1-9)で移動
-        case CONTROL::TabNum1:
-            MESSAGE::get_admin()->set_command( "tab_num", "", "1" );
-            break;
-
-        case CONTROL::TabNum2:
-            MESSAGE::get_admin()->set_command( "tab_num", "", "2" );
-            break;
-
-        case CONTROL::TabNum3:
-            MESSAGE::get_admin()->set_command( "tab_num", "", "3" );
-            break;
-
-        case CONTROL::TabNum4:
-            MESSAGE::get_admin()->set_command( "tab_num", "", "4" );
-            break;
-
-        case CONTROL::TabNum5:
-            MESSAGE::get_admin()->set_command( "tab_num", "", "5" );
-            break;
-
-        case CONTROL::TabNum6:
-            MESSAGE::get_admin()->set_command( "tab_num", "", "6" );
-            break;
-
-        case CONTROL::TabNum7:
-            MESSAGE::get_admin()->set_command( "tab_num", "", "7" );
-            break;
-
-        case CONTROL::TabNum8:
-            MESSAGE::get_admin()->set_command( "tab_num", "", "8" );
-            break;
-
-        case CONTROL::TabNum9:
-            MESSAGE::get_admin()->set_command( "tab_num", "", "9" );
             break;
 
             // 書き込みボタンにフォーカスを移す

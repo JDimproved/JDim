@@ -1036,7 +1036,7 @@ const bool ArticleViewBase::operate_view( const int control )
 {
     assert( m_drawarea );
 
-    if( CONTROL::operate_common( control ) ) return true;
+    if( CONTROL::operate_common( control, get_url(), ARTICLE::get_admin() ) ) return true;
 
     if( control == CONTROL::None ) return false;;
 
@@ -1097,11 +1097,6 @@ const bool ArticleViewBase::operate_view( const int control )
             close_view();
             break;
 
-            // 他のタブを閉じる
-        case CONTROL::CloseOtherTabs:
-            ARTICLE::get_admin()->set_command( "close_view", get_url(), "closeother" );
-            break;
-
             // 書き込み
         case CONTROL::WriteMessage:
             write();
@@ -1143,60 +1138,6 @@ const bool ArticleViewBase::operate_view( const int control )
             // image に切り替え
         case CONTROL::Right:
             CORE::core_set_command( "switch_rightview" );
-            break;
-
-            // 右、左のタブに切り替え
-        case CONTROL::TabLeft:
-            ARTICLE::get_admin()->set_command( "tab_left" );
-            break;
-
-        case CONTROL::TabRight:
-            ARTICLE::get_admin()->set_command( "tab_right" );
-            break;
-
-        case CONTROL::TabLeftUpdated:
-            ARTICLE::get_admin()->set_command( "tab_left_updated" );
-            break;
-
-        case CONTROL::TabRightUpdated:
-            ARTICLE::get_admin()->set_command( "tab_right_updated" );
-            break;
-
-        // タブ位置(1-9)で移動
-        case CONTROL::TabNum1:
-            ARTICLE::get_admin()->set_command( "tab_num", "", "1" );
-            break;
-
-        case CONTROL::TabNum2:
-            ARTICLE::get_admin()->set_command( "tab_num", "", "2" );
-            break;
-
-        case CONTROL::TabNum3:
-            ARTICLE::get_admin()->set_command( "tab_num", "", "3" );
-            break;
-
-        case CONTROL::TabNum4:
-            ARTICLE::get_admin()->set_command( "tab_num", "", "4" );
-            break;
-
-        case CONTROL::TabNum5:
-            ARTICLE::get_admin()->set_command( "tab_num", "", "5" );
-            break;
-
-        case CONTROL::TabNum6:
-            ARTICLE::get_admin()->set_command( "tab_num", "", "6" );
-            break;
-
-        case CONTROL::TabNum7:
-            ARTICLE::get_admin()->set_command( "tab_num", "", "7" );
-            break;
-
-        case CONTROL::TabNum8:
-            ARTICLE::get_admin()->set_command( "tab_num", "", "8" );
-            break;
-
-        case CONTROL::TabNum9:
-            ARTICLE::get_admin()->set_command( "tab_num", "", "9" );
             break;
 
         // 戻る、進む

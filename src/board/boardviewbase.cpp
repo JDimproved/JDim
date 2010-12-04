@@ -1363,7 +1363,7 @@ void BoardViewBase::slot_delete_logs()
 //
 const bool BoardViewBase::operate_view( const int control )
 {
-    if( CONTROL::operate_common( control ) ) return true;
+    if( CONTROL::operate_common( control, get_url(), BOARD::get_admin() ) ) return true;
 
     bool open_tab = false;
 
@@ -1443,59 +1443,6 @@ const bool BoardViewBase::operate_view( const int control )
             CORE::core_set_command( "toggle_article" );
             break;
 
-        case CONTROL::TabLeft:
-            BOARD::get_admin()->set_command( "tab_left" );
-            break;
-
-        case CONTROL::TabLeftUpdated:
-            BOARD::get_admin()->set_command( "tab_left_updated" );
-            break;
-
-        case CONTROL::TabRight:
-            BOARD::get_admin()->set_command( "tab_right" );
-            break;
-
-        case CONTROL::TabRightUpdated:
-            BOARD::get_admin()->set_command( "tab_right_updated" );
-            break;
-
-        // タブ位置(1-9)で移動
-        case CONTROL::TabNum1:
-            BOARD::get_admin()->set_command( "tab_num", "", "1" );
-            break;
-
-        case CONTROL::TabNum2:
-            BOARD::get_admin()->set_command( "tab_num", "", "2" );
-            break;
-
-        case CONTROL::TabNum3:
-            BOARD::get_admin()->set_command( "tab_num", "", "3" );
-            break;
-
-        case CONTROL::TabNum4:
-            BOARD::get_admin()->set_command( "tab_num", "", "4" );
-            break;
-
-        case CONTROL::TabNum5:
-            BOARD::get_admin()->set_command( "tab_num", "", "5" );
-            break;
-
-        case CONTROL::TabNum6:
-            BOARD::get_admin()->set_command( "tab_num", "", "6" );
-            break;
-
-        case CONTROL::TabNum7:
-            BOARD::get_admin()->set_command( "tab_num", "", "7" );
-            break;
-
-        case CONTROL::TabNum8:
-            BOARD::get_admin()->set_command( "tab_num", "", "8" );
-            break;
-
-        case CONTROL::TabNum9:
-            BOARD::get_admin()->set_command( "tab_num", "", "9" );
-            break;
-
             // 戻る、進む
         case CONTROL::PrevView:
             back_viewhistory( 1 );
@@ -1507,11 +1454,6 @@ const bool BoardViewBase::operate_view( const int control )
 
         case CONTROL::Quit:
             close_view();
-            break;
-
-            // 他のタブを閉じる
-        case CONTROL::CloseOtherTabs:
-            BOARD::get_admin()->set_command( "close_view", get_url(), "closeother" );
             break;
 
         case CONTROL::Reload:

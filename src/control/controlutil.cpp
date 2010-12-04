@@ -17,6 +17,8 @@
 
 #include "config/globalconf.h"
 
+#include "skeleton/admin.h"
+
 #include "cache.h"
 #include "command.h"
 
@@ -476,12 +478,71 @@ const std::string CONTROL::get_label_motions( const int id )
 
 
 // 共通操作
-const bool CONTROL::operate_common( const int control )
+const bool CONTROL::operate_common( const int control, const std::string& url, SKELETON::Admin* admin )
 {
     if( control == CONTROL::None ) return false;;
 
     switch( control ){
             
+            // 他のタブを閉じる
+        case CONTROL::CloseOtherTabs:
+            if( admin ) admin->set_command( "close_view", url, "closeother" );
+            break;
+
+            // 右、左のタブに切り替え
+        case CONTROL::TabLeft:
+            if( admin ) admin->set_command( "tab_left" );
+            break;
+
+        case CONTROL::TabRight:
+            if( admin ) admin->set_command( "tab_right" );
+            break;
+
+        case CONTROL::TabLeftUpdated:
+            if( admin ) admin->set_command( "tab_left_updated" );
+            break;
+
+        case CONTROL::TabRightUpdated:
+            if( admin ) admin->set_command( "tab_right_updated" );
+            break;
+
+        // タブ位置(1-9)で移動
+        case CONTROL::TabNum1:
+            if( admin ) admin->set_command( "tab_num", "", "1" );
+            break;
+
+        case CONTROL::TabNum2:
+            if( admin ) admin->set_command( "tab_num", "", "2" );
+            break;
+
+        case CONTROL::TabNum3:
+            if( admin ) admin->set_command( "tab_num", "", "3" );
+            break;
+
+        case CONTROL::TabNum4:
+            if( admin ) admin->set_command( "tab_num", "", "4" );
+            break;
+
+        case CONTROL::TabNum5:
+            if( admin ) admin->set_command( "tab_num", "", "5" );
+            break;
+
+        case CONTROL::TabNum6:
+            if( admin ) admin->set_command( "tab_num", "", "6" );
+            break;
+
+        case CONTROL::TabNum7:
+            if( admin ) admin->set_command( "tab_num", "", "7" );
+            break;
+
+        case CONTROL::TabNum8:
+            if( admin ) admin->set_command( "tab_num", "", "8" );
+            break;
+
+        case CONTROL::TabNum9:
+            if( admin ) admin->set_command( "tab_num", "", "9" );
+            break;
+
             // サイドバー表示/非表示
         case CONTROL::ShowSideBar:
             CORE::core_set_command( "toggle_sidebar" );
