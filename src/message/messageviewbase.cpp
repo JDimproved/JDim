@@ -162,12 +162,19 @@ void MessageViewBase::clock_in()
         // 書き込み規制経過時刻表示
         time_t left = DBTREE::board_write_leftsec( get_url() );
         if( left ){
-            m_str_pass = "  ( 書込規制中 残り " + MISC::itostr( left ) + " 秒 )";
-            MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() + m_str_pass );
+            m_str_pass = "規制中 " + MISC::itostr( left ) + " 秒 ";
+
+            std::string force;
+            if( SESSION::focused_admin() == SESSION::FOCUS_MESSAGE ) force = "force";
+            MESSAGE::get_admin()->set_command( "set_title", get_url(), m_str_pass + get_title(), force );
+            MESSAGE::get_admin()->set_command( "set_status", get_url(), m_str_pass + get_status(), force );
         }
         else if( ! m_str_pass.empty() ){
             m_str_pass = std::string();
-            MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() );
+            std::string force;
+            if( SESSION::focused_admin() == SESSION::FOCUS_MESSAGE ) force = "force";
+            MESSAGE::get_admin()->set_command( "set_title", get_url(), get_title(), force );
+            MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status(), force );
         }
     }
 }
@@ -929,7 +936,7 @@ void MessageViewBase::show_status()
     ss << " ]";
 
     set_status( ss.str() );
-    MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status() + m_str_pass );
+    MESSAGE::get_admin()->set_command( "set_status", get_url(), m_str_pass + get_status() );
 }
 
 

@@ -599,14 +599,16 @@ void Admin::exec_command()
     // タイトル表示
     // アクティブなviewから依頼が来たらコアに渡す
     else if( command.command == "set_title" ){
-        set_title( command.url, command.arg1, false );
+
+        const bool force = ( command.arg2 == "force" );
+        set_title( command.url, command.arg1, force );
     }
 
     // ステータス表示
     // アクティブなviewから依頼が来たらコアに渡す
     else if( command.command == "set_status" ){
 
-        bool force = ( command.arg2 == "force" );
+        const bool force = ( command.arg2 == "force" );
         set_status( command.url, command.arg1, force );
     }
 
