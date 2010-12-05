@@ -229,6 +229,10 @@ void CONFIG::set_use_inline_image( const bool inline_img ){ get_confitem()->use_
 const bool CONFIG::get_show_ssspicon(){ return get_confitem()->show_ssspicon; }
 void CONFIG::set_show_sssp_icon( const bool show ){ get_confitem()->show_ssspicon = show; }
 
+// 画像ビューでdeleteを押したときに確認ダイアログを表示する
+const bool CONFIG::get_show_delimgdiag(){ return get_confitem()->show_delimgdiag; }
+void CONFIG::set_show_delimgdiag( const bool show ){ get_confitem()->show_delimgdiag = show; }
+
 const bool CONFIG::get_use_mosaic(){ return get_confitem()->use_mosaic; }
 void CONFIG::set_use_mosaic( const bool mosaic ) { get_confitem()->use_mosaic = mosaic; }
 const int CONFIG::get_mosaic_size(){ return get_confitem()->mosaic_size; }

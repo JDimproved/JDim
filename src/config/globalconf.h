@@ -216,6 +216,10 @@ namespace CONFIG
     const bool get_show_ssspicon();
     void set_show_sssp_icon( const bool show );
 
+    // 画像ビューでdeleteを押したときに確認ダイアログを表示する
+    const bool get_show_delimgdiag();
+    void set_show_delimgdiag( const bool show );
+
     // 画像にモザイクかける
     const bool get_use_mosaic();
     void set_use_mosaic( const bool mosaic );

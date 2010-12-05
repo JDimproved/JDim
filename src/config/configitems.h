@@ -126,6 +126,9 @@ namespace CONFIG
         // ssspアイコン表示
         bool show_ssspicon;
 
+        // 画像ビューでdeleteを押したときに確認ダイアログを表示する
+        bool show_delimgdiag;
+
         // 画像にモザイクかける
         bool use_mosaic;
 

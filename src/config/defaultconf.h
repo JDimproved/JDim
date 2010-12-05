@@ -105,6 +105,7 @@ namespace CONFIG
         CONF_USE_IMAGE_VIEW = 1,    // 画像ビューを使用する
         CONF_INLINE_IMG = 0,        // インライン画像を表示する
         CONF_SHOW_SSSPICON = 1,     // sssp アイコン表示
+        CONF_SHOW_DELIMGDIAG = 1 ,     // 画像ビューでdeleteを押したときに確認ダイアログを表示する
         CONF_USE_MOSAIC = 1,        // 画像にモザイクをかける
         CONF_MOSAIC_SIZE = 60,        // モザイクの大きさ
         CONF_ZOOM_TO_FIT = 1,       // 画像をデフォルトでウィンドウサイズに合わせる

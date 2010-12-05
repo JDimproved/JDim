@@ -20,6 +20,8 @@
 #include "control/controlutil.h"
 #include "control/controlid.h"
 
+#include "config/globalconf.h"
+
 #include "cache.h"
 #include "command.h"
 #include "sharedbuffer.h"
@@ -589,18 +591,24 @@ void ImageViewBase::delete_view_impl( const bool show_diag )
 
     if( show_diag ){
 
-        if( !m_img->is_protected() ){
-
-            SKELETON::MsgDiag mdiag( get_parent_win(),
-                                     "画像を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            mdiag.set_default_response( Gtk::RESPONSE_NO );
-            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
-        }
-        else{
+        if( m_img->is_protected() ){
 
             SKELETON::MsgDiag mdiag( get_parent_win(), "キャッシュ保護されています" );
             mdiag.run();
             return;
+        }
+        else if( CONFIG::get_show_delimgdiag() ){
+
+            SKELETON::MsgCheckDiag mdiag( get_parent_win(),
+                                          "画像を削除しますか？",
+                                          "今後表示しない(常に削除) (_D)",
+                                          Gtk::MESSAGE_QUESTION,
+                                          Gtk::BUTTONS_YES_NO,
+                                          Gtk::RESPONSE_NO
+                );
+
+            if( mdiag.run() != Gtk::RESPONSE_YES ) return;
+            if( mdiag.get_chkbutton().get_active() ) CONFIG::set_show_delimgdiag( false );
         }
     }
 
