@@ -484,9 +484,19 @@ const bool CONTROL::operate_common( const int control, const std::string& url, S
 
     switch( control ){
             
+            // 全てのタブを閉じる
+        case CONTROL::CloseAllTabs:
+            if( admin ) admin->set_command( "close_view", "", "closealltabs" );
+            break;
+
             // 他のタブを閉じる
         case CONTROL::CloseOtherTabs:
             if( admin ) admin->set_command( "close_view", url, "closeother" );
+            break;
+
+            // 全ての更新されたタブを再読み込み
+        case CONTROL::CheckUpdateTabs:
+            if( admin ) admin->set_command( "check_update_reload_all_tabs" );
             break;
 
             // 右、左のタブに切り替え

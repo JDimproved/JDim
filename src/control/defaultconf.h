@@ -173,7 +173,10 @@ namespace CONTROL
 #define MOUSECONF_TabRightUpdated ""
 #define MOUSECONF_TabLeftUpdated ""
 
+#define MOUSECONF_CloseAllTabs ""
 #define MOUSECONF_CloseOtherTabs ""
+
+#define MOUSECONF_CheckUpdateTabs ""
 
 #define MOUSECONF_ToggleArticle "2"
 #define MOUSECONF_ShowSideBar  ""

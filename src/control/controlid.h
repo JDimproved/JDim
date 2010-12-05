@@ -60,7 +60,10 @@ namespace CONTROL
         TabNum8,
         TabNum9,
 
+        CloseAllTabs,
         CloseOtherTabs,
+
+        CheckUpdateTabs,
 
         PreBookMark,
         NextBookMark,

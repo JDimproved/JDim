@@ -233,6 +233,7 @@ namespace SKELETON
         virtual void close_searchbar(){}
 
         // タブの更新チェック
+        void check_update_all_tabs( const bool open );
         void check_update_all_tabs( const int from_page, const bool open );
 
         // タブの再読み込み
