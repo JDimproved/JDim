@@ -138,7 +138,7 @@ namespace SKELETON
         void show_toolbar();
         void hide_toolbar();
         void append_toolbar( Gtk::Widget& toolbar );
-        void set_current_toolbar( int page_num, SKELETON::View* view );
+        void set_current_toolbar( const int id_toolbar, SKELETON::View* view );
         const int get_current_toolbar();
         void focus_toolbar_search(); // ツールバー内の検索entryにフォーカスを移す
         void update_toolbar_url( std::string& url_old, std::string& url_new );

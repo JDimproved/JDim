@@ -322,6 +322,8 @@ void ToolBar::set_label( const std::string& label )
     if( m_ebox_label->get_visible_window() ){
         m_ebox_label->set_visible_window( false );
         m_label->unset_fg( Gtk::STATE_NORMAL );
+
+        m_admin->set_command( "set_status_color", m_url, "restore" );
     }
 
     m_label->set_text( label );
@@ -342,6 +344,8 @@ void ToolBar::set_broken()
     m_label->modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
     m_ebox_label->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "red" ) );
     m_ebox_label->modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( "red" ) );
+
+    m_admin->set_command( "set_status_color", m_url, "broken" );
 }
 
 
@@ -358,6 +362,8 @@ void ToolBar::set_old()
     m_label->modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
     m_ebox_label->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "blue" ) );
     m_ebox_label->modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( "blue" ) );
+
+    m_admin->set_command( "set_status_color", m_url, "old" );
 }
 
 

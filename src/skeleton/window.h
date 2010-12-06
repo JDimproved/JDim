@@ -45,6 +45,7 @@ namespace SKELETON
         Gtk::HBox m_statbar;
         Gtk::Label m_label_stat;
         Gtk::EventBox m_label_stat_ebox;
+        Gtk::EventBox m_mginfo_ebox;
         Gtk::Tooltips m_tooltip;
 #endif
         Gtk::Label m_mginfo;
@@ -79,6 +80,9 @@ namespace SKELETON
         void restore_status();
         std::string get_status(){ return m_status; }
         void set_mginfo( const std::string& mginfo );
+
+        // ステータスの色を変える
+        void set_status_color( const std::string& stat );
 
         // メインウィンドウに対して transient 設定
         void set_transient( bool set );

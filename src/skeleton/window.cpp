@@ -76,7 +76,11 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     m_label_stat_ebox.set_visible_window( false );
 
     m_statbar.pack_start( m_label_stat_ebox );
-    if( need_mginfo ) m_statbar.pack_start( m_mginfo, Gtk::PACK_SHRINK );
+    if( need_mginfo ){
+        m_mginfo_ebox.add( m_mginfo );
+        m_mginfo_ebox.set_visible_window( false );
+        m_statbar.pack_start( m_mginfo_ebox, Gtk::PACK_SHRINK );
+    }
 
     m_mginfo.set_width_chars( MGINFO_CHARS );
     m_mginfo.set_alignment( Gtk::ALIGN_LEFT );
@@ -416,6 +420,46 @@ void JDWindow::restore_status()
 void JDWindow::set_mginfo( const std::string& mginfo )
 {
     if( m_mginfo.is_realized() ) m_mginfo.set_text( mginfo );
+}
+
+
+// ステータスの色を変える
+void JDWindow::set_status_color( const std::string& stat )
+{
+#if GTKMMVER > 240
+
+#ifdef _DEBUG
+    std::cout << "JDWindow::set_status_color " << stat << std::endl;
+#endif
+
+    if( stat == "restore" ){
+
+        if( m_label_stat_ebox.get_visible_window() ){
+            m_label_stat.unset_fg( Gtk::STATE_NORMAL );
+            m_mginfo.unset_fg( Gtk::STATE_NORMAL );
+
+            m_label_stat_ebox.set_visible_window( false );
+            m_mginfo_ebox.set_visible_window( false );
+        }
+    }
+    else{
+
+        std::string color;
+        if( stat == "broken" ) color = "red";
+        else color = "blue";
+
+        m_label_stat.modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
+        m_mginfo.modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
+
+        m_label_stat_ebox.set_visible_window( true );
+        m_label_stat_ebox.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) );
+        m_label_stat_ebox.modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( color ) );
+
+        m_mginfo_ebox.set_visible_window( true );
+        m_mginfo_ebox.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) );
+        m_mginfo_ebox.modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( color ) );
+    }
+#endif
 }
 
 

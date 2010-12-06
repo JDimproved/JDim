@@ -2842,6 +2842,10 @@ void Core::set_command( const COMMAND_ARGS& command )
         m_win_main.set_status( command.arg1 );
     }
 
+    else if( command.command  == "set_status_color" ){
+        m_win_main.set_status_color( command.arg1 );
+    }
+
     // 一時的にステータスバーの表示を変える( マウスオーバーでのURL表示用 )
     else if( command.command  == "set_status_temporary" ){
         m_win_main.set_status_temporary( command.arg1 );

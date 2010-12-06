@@ -443,19 +443,20 @@ void DragableNoteBook::append_toolbar( Gtk::Widget& toolbar )
 //
 // ツールバー切り替え
 //
-void DragableNoteBook::set_current_toolbar( int page_num, SKELETON::View* view )
+void DragableNoteBook::set_current_toolbar( const int id_toolbar, SKELETON::View* view )
 {
 #ifdef _DEBUG
-    std::cout << "DragableNoteBook::set_current_toolbar page = " << page_num << " / " << m_notebook_toolbar.get_n_pages() << std::endl
+    std::cout << "DragableNoteBook::set_current_toolbar id = " << id_toolbar
+              << " / " << m_notebook_toolbar.get_n_pages() << std::endl
               << "url = " << view->get_url() << std::endl;
 #endif
 
-    if( m_notebook_toolbar.get_n_pages() <= page_num ) return;
+    if( m_notebook_toolbar.get_n_pages() <= id_toolbar ) return;
 
-    m_notebook_toolbar.set_current_page( page_num );
+    m_notebook_toolbar.set_current_page( id_toolbar );
 
     // ツールバーのラベルなどの情報を更新
-    SKELETON::ToolBar* toolbar = get_toolbar( page_num );
+    SKELETON::ToolBar* toolbar = get_toolbar( id_toolbar );
     if( toolbar ){
         toolbar->set_view( view );
         toolbar->show_toolbar();

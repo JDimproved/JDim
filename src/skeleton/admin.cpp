@@ -612,6 +612,11 @@ void Admin::exec_command()
         set_status( command.url, command.arg1, force );
     }
 
+    // ステータスの色を変える
+    else if( command.command == "set_status_color" ){
+        set_status_color( command.arg1 );
+    }
+
     // マウスジェスチャ
     else if( command.command  == "set_mginfo" ){
         if( m_win ) m_win->set_mginfo( command.arg1 );
@@ -1572,6 +1577,19 @@ void Admin::set_status( const std::string& url, const std::string& stat, const b
                 CORE::core_set_command( "set_mginfo", "", "" );
             }
         }
+    }
+}
+
+
+//
+// ステータスの色を変える
+//
+void Admin::set_status_color( const std::string& stat )
+{
+    if( m_win ) m_win->set_status_color( stat );
+    else{
+
+        CORE::core_set_command( "set_status_color", "", stat );
     }
 }
 
