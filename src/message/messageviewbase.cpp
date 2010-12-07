@@ -485,7 +485,7 @@ void MessageViewBase::focus_view()
 //
 const bool MessageViewBase::operate_view( const int control )
 {
-    if( CONTROL::operate_common( control, get_url(), MESSAGE::get_admin() ) ) return true;
+    if( control == CONTROL::None ) return false;
 
     switch( control ){
             
@@ -497,6 +497,16 @@ const bool MessageViewBase::operate_view( const int control )
             // 書き込み実行
         case CONTROL::ExecWrite:
             MESSAGE::get_admin()->set_command( "toolbar_write", get_url() );
+            break;
+
+       case CONTROL::TabLeft:
+        case CONTROL::TabLeftUpdated:
+            MESSAGE::get_admin()->set_command( "tab_left" );
+            break;
+
+        case CONTROL::TabRight:
+        case CONTROL::TabRightUpdated:
+            MESSAGE::get_admin()->set_command( "tab_right" );
             break;
 
             // 書き込みボタンにフォーカスを移す
