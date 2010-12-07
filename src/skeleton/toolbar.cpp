@@ -109,8 +109,7 @@ void ToolBar::set_view( SKELETON::View* view )
 
     // ラベル表示更新
     set_label( view->get_label() );
-    if( view->is_broken() ) set_broken();
-    if( view->is_old() ) set_old();
+    if( view->is_broken() || view->is_old() ) set_color( view->get_color() );
 
     // 閉じるボタンの表示更新
     if( m_button_close ){
@@ -318,54 +317,31 @@ void ToolBar::set_label( const std::string& label )
 {
     if( ! m_ebox_label ) return;
 
-    // ラベルの文字色と背景色を戻す
-    if( m_ebox_label->get_visible_window() ){
-        m_ebox_label->set_visible_window( false );
-        m_label->unset_fg( Gtk::STATE_NORMAL );
-
-        m_admin->set_command( "set_status_color", m_url, "restore" );
-    }
-
     m_label->set_text( label );
     if( m_tool_label ) set_tooltip( *m_tool_label, label );
+    set_color( "" );
 }
 
 
-// viewが壊れている
-void ToolBar::set_broken()
+void ToolBar::set_color( const std::string& color )
 {
     if( ! m_ebox_label ) return;
 
-#ifdef _DEBUG
-    std::cout << "ToolBar::set_broken\n";
-#endif
+    if( color.empty() ){
 
-    m_ebox_label->set_visible_window( true );
-    m_label->modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
-    m_ebox_label->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "red" ) );
-    m_ebox_label->modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( "red" ) );
+        if( m_ebox_label->get_visible_window() ){
+            m_ebox_label->set_visible_window( false );
+            m_label->unset_fg( Gtk::STATE_NORMAL );
+        }
+    }
+    else{
 
-    m_admin->set_command( "set_status_color", m_url, "broken" );
+        m_ebox_label->set_visible_window( true );
+        m_label->modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
+        m_ebox_label->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) );
+        m_ebox_label->modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( color ) );
+    }
 }
-
-
-// viewが古い
-void ToolBar::set_old()
-{
-    if( ! m_ebox_label ) return;
-
-#ifdef _DEBUG
-    std::cout << "ToolBar::set_old\n";
-#endif
-
-    m_ebox_label->set_visible_window( true );
-    m_label->modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
-    m_ebox_label->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( "blue" ) );
-    m_ebox_label->modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( "blue" ) );
-
-    m_admin->set_command( "set_status_color", m_url, "old" );
-}
-
 
 
 // 検索バー

@@ -261,3 +261,15 @@ void View::slot_hide_popupmenu()
     // メニューを消したときにマウスポインタが領域外にあれば自分自身をhide
     if( ! is_mouse_on_view() ) sig_hide_popup().emit();
 }
+
+
+//
+// ラベルやステータスバーの色
+//
+const std::string View::get_color()
+{
+    if( is_broken() ) return "red";
+    else if( is_old() ) return "blue";
+
+    return "";
+}

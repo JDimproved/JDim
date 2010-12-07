@@ -165,8 +165,7 @@ namespace SKELETON
 
         // ラベル関係
         void set_label( const std::string& label );
-        void set_broken(); // viewが壊れている
-        void set_old(); // viewが古い
+        void set_color( const std::string& color );
 
         // 書き込みボタン関係
         void drawframe_button_write( const bool draw );

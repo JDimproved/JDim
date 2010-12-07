@@ -876,6 +876,7 @@ void Admin::update_status( View* view, const bool force )
         set_title( view->get_url(), view->get_title(), force );
         set_url( view->get_url(), view->url_for_copy(), force );
         set_status( view->get_url(), view->get_status(), force );
+        set_status_color( view->get_color() );
     }
 }
 
@@ -1584,12 +1585,12 @@ void Admin::set_status( const std::string& url, const std::string& stat, const b
 //
 // ステータスの色を変える
 //
-void Admin::set_status_color( const std::string& stat )
+void Admin::set_status_color( const std::string& color )
 {
-    if( m_win ) m_win->set_status_color( stat );
+    if( m_win ) m_win->set_status_color( color );
     else{
 
-        CORE::core_set_command( "set_status_color", "", stat );
+        CORE::core_set_command( "set_status_color", "", color );
     }
 }
 

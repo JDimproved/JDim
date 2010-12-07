@@ -82,7 +82,7 @@ namespace SKELETON
         void set_mginfo( const std::string& mginfo );
 
         // ステータスの色を変える
-        void set_status_color( const std::string& stat );
+        void set_status_color( const std::string& color );
 
         // メインウィンドウに対して transient 設定
         void set_transient( bool set );

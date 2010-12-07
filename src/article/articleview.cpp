@@ -457,6 +457,7 @@ void ArticleViewMain::update_finish()
     // ステータス更新 (実況中はフォーカスされてなくても表示)
     create_status_message();
     ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status(), ( get_live() ? "force" : "" ) );
+    ARTICLE::get_admin()->set_command( "set_status_color", "", get_color() );
 
     // タイトルセット
     set_title( DBTREE::article_subject( url_article() ) );

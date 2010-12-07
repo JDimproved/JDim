@@ -424,7 +424,7 @@ void JDWindow::set_mginfo( const std::string& mginfo )
 
 
 // ステータスの色を変える
-void JDWindow::set_status_color( const std::string& stat )
+void JDWindow::set_status_color( const std::string& color )
 {
 #if GTKMMVER > 240
 
@@ -432,7 +432,7 @@ void JDWindow::set_status_color( const std::string& stat )
     std::cout << "JDWindow::set_status_color " << stat << std::endl;
 #endif
 
-    if( stat == "restore" ){
+    if( color.empty() ){
 
         if( m_label_stat_ebox.get_visible_window() ){
             m_label_stat.unset_fg( Gtk::STATE_NORMAL );
@@ -443,10 +443,6 @@ void JDWindow::set_status_color( const std::string& stat )
         }
     }
     else{
-
-        std::string color;
-        if( stat == "broken" ) color = "red";
-        else color = "blue";
 
         m_label_stat.modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
         m_mginfo.modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
