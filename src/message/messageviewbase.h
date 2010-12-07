@@ -95,6 +95,9 @@ namespace MESSAGE
         // ロード中
         virtual const bool is_loading();
 
+        // 規制中の時trueにする
+        virtual const bool is_broken(){ return ! m_str_pass.empty(); }
+
         // キーを押した        
         virtual const bool slot_key_press( GdkEventKey* event );
 
