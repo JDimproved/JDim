@@ -69,7 +69,9 @@ MessageViewBase::MessageViewBase( const std::string& url )
       m_enable_focus( true ),
       m_lng_str_enc( 0 ),
       m_counter( 0 ),
-      m_text_changed( false )
+      m_text_changed( false ),
+      m_over_lines( false ),
+      m_over_lng( false )
 {
 #ifdef _DEBUG
     std::cout << "MessageViewBase::MessageViewBase " << get_url() << std::endl;
@@ -917,10 +919,20 @@ void MessageViewBase::show_status()
 {
     if( ! m_text_message ) return;
 
+    const bool broken = is_broken();
+
     std::stringstream ss;
 
-    if( m_text_message ) ss << " [ 行数 " << m_text_message->get_buffer()->get_line_count();
-    if( m_max_line ) ss << "/ " << m_max_line;
+    int line_count = 0;
+    if( m_text_message ){
+        line_count = m_text_message->get_buffer()->get_line_count();
+        ss << " [ 行数 " << line_count;
+    }
+    if( m_max_line ){
+        ss << "/ " << m_max_line;
+        if( m_max_line < line_count ) m_over_lines = true;
+        else m_over_lines = false;
+    }
 
     const std::string message = m_text_message->get_text();
 
@@ -947,7 +959,11 @@ void MessageViewBase::show_status()
     }
     else ss << m_lng_str_enc;
 
-    if( m_max_str ) ss << "/ " << m_max_str;
+    if( m_max_str ){
+        ss << "/ " << m_max_str;
+        if( m_max_str < m_lng_str_enc ) m_over_lng = true;
+        else m_over_lng = false;
+    }
 
     if( DBTREE::get_unicode( get_url() ) == "pass" ) ss << " / unicode ○";
     else if( DBTREE::get_unicode( get_url() ) == "change" ) ss << " / unicode ×";
@@ -960,6 +976,11 @@ void MessageViewBase::show_status()
 
     set_status( ss.str() );
     MESSAGE::get_admin()->set_command( "set_status", get_url(), m_str_pass + get_status() );
+
+    if( broken != is_broken() ){
+        MESSAGE::get_admin()->set_command( "redraw_toolbar" );
+        MESSAGE::get_admin()->set_command( "set_status_color", "", get_color() );
+    }
 }
 
 

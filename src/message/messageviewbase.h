@@ -69,6 +69,9 @@ namespace MESSAGE
 
         bool m_text_changed;
 
+        bool m_over_lines;
+        bool m_over_lng;
+
       public:
 
         MessageViewBase( const std::string& url );
@@ -95,8 +98,8 @@ namespace MESSAGE
         // ロード中
         virtual const bool is_loading();
 
-        // 規制中の時trueにする
-        virtual const bool is_broken(){ return ! m_str_pass.empty(); }
+        // 規制中や行数や文字列がオーバーして書き込めない
+        virtual const bool is_broken(){ return ( ! m_str_pass.empty() || m_over_lines || m_over_lng ); }
 
         // キーを押した        
         virtual const bool slot_key_press( GdkEventKey* event );
