@@ -455,9 +455,11 @@ void ArticleViewMain::update_finish()
     if( ! number_new ) drawarea()->hide_separator_new();
 
     // ステータス更新 (実況中はフォーカスされてなくても表示)
+    std::string force;
+    if( get_live() ) force = "force";
     create_status_message();
-    ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status(), ( get_live() ? "force" : "" ) );
-    ARTICLE::get_admin()->set_command( "set_status_color", "", get_color() );
+    ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status(), force );
+    ARTICLE::get_admin()->set_command( "set_status_color", get_url(), get_color(), force );
 
     // タイトルセット
     set_title( DBTREE::article_subject( url_article() ) );

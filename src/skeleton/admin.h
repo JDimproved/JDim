@@ -195,7 +195,7 @@ namespace SKELETON
         virtual void set_title( const std::string& url, const std::string& title, const bool force );
         virtual void set_url( const std::string& url, const std::string& url_show, const bool force );
         virtual void set_status( const std::string& url, const std::string& stat, const bool force );
-        void set_status_color( const std::string& color );
+        void set_status_color( const std::string& url, const std::string& color, const bool force );
         virtual void focus_view( int page );
         virtual void focus_current_view();
         virtual void restore_focus();

@@ -177,7 +177,7 @@ void MessageViewBase::clock_in()
 
             if( set_color ){
                 MESSAGE::get_admin()->set_command( "redraw_toolbar" );
-                MESSAGE::get_admin()->set_command( "set_status_color", "", get_color() );
+                MESSAGE::get_admin()->set_command( "set_status_color", get_url(), get_color(), force );
             }
         }
         else if( ! m_str_pass.empty() ){
@@ -189,7 +189,7 @@ void MessageViewBase::clock_in()
             MESSAGE::get_admin()->set_command( "set_status", get_url(), get_status(), force );
 
             MESSAGE::get_admin()->set_command( "redraw_toolbar" );
-            MESSAGE::get_admin()->set_command( "set_status_color", "", get_color() );
+            MESSAGE::get_admin()->set_command( "set_status_color", get_url(), get_color(), force );
         }
     }
 }
@@ -979,7 +979,7 @@ void MessageViewBase::show_status()
 
     if( broken != is_broken() ){
         MESSAGE::get_admin()->set_command( "redraw_toolbar" );
-        MESSAGE::get_admin()->set_command( "set_status_color", "", get_color() );
+        MESSAGE::get_admin()->set_command( "set_status_color", get_url(), get_color() );
     }
 }
 

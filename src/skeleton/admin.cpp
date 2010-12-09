@@ -614,7 +614,9 @@ void Admin::exec_command()
 
     // ステータスの色を変える
     else if( command.command == "set_status_color" ){
-        set_status_color( command.arg1 );
+
+        const bool force = ( command.arg2 == "force" );
+        set_status_color( command.url, command.arg1, force );
     }
 
     // マウスジェスチャ
@@ -876,7 +878,7 @@ void Admin::update_status( View* view, const bool force )
         set_title( view->get_url(), view->get_title(), force );
         set_url( view->get_url(), view->url_for_copy(), force );
         set_status( view->get_url(), view->get_status(), force );
-        set_status_color( view->get_color() );
+        set_status_color( view->get_url(), view->get_color(), force );
     }
 }
 
@@ -1585,12 +1587,19 @@ void Admin::set_status( const std::string& url, const std::string& stat, const b
 //
 // ステータスの色を変える
 //
-void Admin::set_status_color( const std::string& color )
+void Admin::set_status_color( const std::string& url, const std::string& color, const bool force )
 {
     if( m_win ) m_win->set_status_color( color );
     else{
 
-        CORE::core_set_command( "set_status_color", "", color );
+        SKELETON::View* view = get_current_view();
+        if( view ){
+            
+            // アクティブなviewからコマンドが来たら色を変える
+            if( force || ( m_focus && view->get_url() == url ) ){
+                CORE::core_set_command( "set_status_color", url, color );
+            }
+        }
     }
 }
 
