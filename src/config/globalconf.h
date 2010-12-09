@@ -320,6 +320,10 @@ namespace CONFIG
     // 書き込み中のダイアログを表示しない
     const bool get_hide_writing_dialog();
 
+    // 編集中のメッセージの保存確認ダイアログを表示する
+    const bool get_show_savemsgdiag();
+    void set_show_savemsgdiag( const bool show );
+
     // 書き込みビューでテキストを折り返す
     const bool get_message_wrap();
     void set_message_wrap( const bool wrap );

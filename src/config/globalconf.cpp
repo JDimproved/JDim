@@ -291,6 +291,10 @@ void CONFIG::set_save_post_history( const bool save ){ get_confitem()->save_post
 
 const bool CONFIG::get_hide_writing_dialog(){ return get_confitem()->hide_writing_dialog; }
 
+// 編集中のメッセージの保存確認ダイアログを表示する
+const bool CONFIG::get_show_savemsgdiag(){ return get_confitem()->show_savemsgdiag; }
+void CONFIG::set_show_savemsgdiag( const bool show ){ get_confitem()->show_savemsgdiag = show; }
+
 // 書き込みビューでテキストを折り返す
 const bool CONFIG::get_message_wrap(){ return get_confitem()->message_wrap; }
 void CONFIG::set_message_wrap( const bool wrap ){ get_confitem()->message_wrap = wrap; }

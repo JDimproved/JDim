@@ -281,6 +281,9 @@ namespace CONFIG
         // 「書き込み中」のダイアログを表示しない
         bool hide_writing_dialog;
 
+        // 編集中のメッセージの保存確認ダイアログを表示する
+        bool show_savemsgdiag;
+
         // 書き込みビューでテキストを折り返す
         bool message_wrap;
 

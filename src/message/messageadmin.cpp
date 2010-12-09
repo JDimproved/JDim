@@ -14,6 +14,8 @@
 
 #include "dbtree/interface.h"
 
+#include "config/globalconf.h"
+
 #include "viewfactory.h"
 #include "command.h"
 #include "global.h"
@@ -368,16 +370,22 @@ void MessageAdmin::show_toolbar()
 //
 // 破棄する場合はtrueが戻る
 //
-bool MessageAdmin::delete_message( SKELETON::View * view )
+const bool MessageAdmin::delete_message( SKELETON::View * view )
 {
-    SKELETON::MsgDiag mdiag( get_win(),
-                             "編集中のメッセージを閉じる前に内容を保存しますか？\n\n保存ボタンを押すとメッセージを保存できます。",
-                             false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE );
+    if( ! CONFIG::get_show_savemsgdiag() ) return true;
+
+    SKELETON::MsgCheckDiag mdiag( get_win(),
+                                  "編集中のメッセージを閉じる前に内容を保存しますか？\n\n保存ボタンを押すとメッセージを保存できます。",
+
+                                  "今後表示しない(常に保存せずに閉じる) (_D)",
+                                  Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE );
 
     mdiag.add_button( "保存せずに閉じる(_Q)", Gtk::RESPONSE_NO );
     mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-    mdiag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_YES );
-    mdiag.set_default_response( Gtk::RESPONSE_YES );
+//    mdiag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_YES );
+//    mdiag.set_default_response( Gtk::RESPONSE_YES );
+    Gtk::Button button( Gtk::Stock::SAVE );
+    mdiag.add_default_button( &button, Gtk::RESPONSE_YES );
 
     int ret = mdiag.run();
     mdiag.hide();
@@ -387,6 +395,7 @@ bool MessageAdmin::delete_message( SKELETON::View * view )
     {
         case Gtk::RESPONSE_NO:
             result = true;
+            if( mdiag.get_chkbutton().get_active() ) CONFIG::set_show_savemsgdiag( false );
             break;
 
         case Gtk::RESPONSE_YES:

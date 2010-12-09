@@ -355,6 +355,9 @@ const bool ConfigItems::load( const bool restore )
     // 「書き込み中」のダイアログを表示しない
     hide_writing_dialog = cf.get_option_bool( "hide_writing_dialog", CONF_HIDE_WRITING_DIALOG );
 
+    // 編集中のメッセージの保存確認ダイアログを表示する
+    show_savemsgdiag = cf.get_option_bool( "show_savemsgdiag", CONF_SHOW_SAVEMSGDIAG );
+
     // 書き込みビューでテキストを折り返す
     message_wrap = cf.get_option_bool( "message_wrap", CONF_MESSAGE_WRAP );
 
@@ -760,6 +763,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "maxsize_postlog", maxsize_postlog );
     cf.update( "save_posthist", save_posthist );
     cf.update( "hide_writing_dialog", hide_writing_dialog );
+    cf.update( "show_savemsgdiag", show_savemsgdiag );
     cf.update( "message_wrap", message_wrap );
     cf.update( "fold_message", fold_message );
     cf.update( "fold_image", fold_image );

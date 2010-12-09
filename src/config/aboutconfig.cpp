@@ -214,6 +214,7 @@ void AboutConfig::append_rows()
     append_row( "■ 書き込みビュー" );
     append_row( "書き込み時に確認ダイアログを表示しない", get_confitem()->always_write_ok, CONF_ALWAYS_WRITE_OK );
     append_row( "書き込み中ダイアログを表示しない", get_confitem()->hide_writing_dialog, CONF_HIDE_WRITING_DIALOG );
+    append_row( "編集中のメッセージの保存確認ダイアログを表示する", get_confitem()->show_savemsgdiag, CONF_SHOW_SAVEMSGDIAG ); 
     append_row( "アスキーアートメニューの履歴の保持数", get_confitem()->aahistory_size, CONF_AAHISTORY );
     append_row( "書き込みログの最大サイズ(バイト)", get_confitem()->maxsize_postlog, CONF_MAXSIZE_POSTLOG );
     append_row( "ビューを閉じても書き込み欄の日本語のON/OFF状態を保つ", get_confitem()->keep_im_status, CONF_KEEP_IM_STATUS );
