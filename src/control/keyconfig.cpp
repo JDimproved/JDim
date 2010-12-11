@@ -77,6 +77,9 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "PageUp", KEYCONF_PageUp );
     SETKEYMOTION( "PageDown", KEYCONF_PageDown );
 
+    SETKEYMOTION( "PrevDir", KEYCONF_PrevDir );
+    SETKEYMOTION( "NextDir", KEYCONF_NextDir );
+
     SETKEYMOTION( "Home", KEYCONF_Home );
     SETKEYMOTION( "End", KEYCONF_End );
 

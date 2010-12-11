@@ -88,6 +88,9 @@ namespace CONTROL
         { "PageUp", "上のページに移動" },
         { "PageDown", "下のページに移動" },
 
+        { "PrevDir", "前のディレクトリに移動" },
+        { "NextDir", "次のディレクトリに移動" },
+
         { "Home", "先頭へ移動" },
         { "End", "最後へ移動" },
 

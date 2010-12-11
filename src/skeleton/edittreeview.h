@@ -120,6 +120,10 @@ namespace SKELETON
         const bool is_dir( Gtk::TreeModel::iterator& it );
         const bool is_dir( const Gtk::TreePath& path );
 
+        // 次のディレクトリに移動
+        void prev_dir();
+        void next_dir();
+
         // 指定したアドレスの行が含まれているか
         const bool exist_row( const std::string& url, const int type );
 

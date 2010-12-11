@@ -75,8 +75,8 @@ namespace SKELETON
         // 選択行の移動
         void goto_top();
         void goto_bottom();
-        bool row_up();
-        bool row_down();
+        const bool row_up();
+        const bool row_down();
         void page_up();
         void page_down();
 

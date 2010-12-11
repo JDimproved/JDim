@@ -198,7 +198,7 @@ void JDTreeViewBase::goto_bottom()
 //
 // 選択行を上へ移動
 //
-bool JDTreeViewBase::row_up()
+const bool JDTreeViewBase::row_up()
 {
     Gtk::TreePath path = get_current_path();
     if( !get_row( path ) ) return false;
@@ -215,7 +215,7 @@ bool JDTreeViewBase::row_up()
 //
 // 選択行を下へ移動
 //
-bool JDTreeViewBase::row_down()
+const bool JDTreeViewBase::row_down()
 {
     Gtk::TreePath path = get_current_path();
     if( !get_row( path ) ) return false;

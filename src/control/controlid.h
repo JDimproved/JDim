@@ -82,6 +82,9 @@ namespace CONTROL
         PageUp,
         PageDown,
 
+        PrevDir,
+        NextDir,
+
         Home,
         End,
 

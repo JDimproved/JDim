@@ -100,6 +100,9 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::PageUp );
     append_row( CONTROL::PageDown );
 
+    append_row( CONTROL::PrevDir );
+    append_row( CONTROL::NextDir );
+
     append_row( CONTROL::Home );
     append_row( CONTROL::End );
 

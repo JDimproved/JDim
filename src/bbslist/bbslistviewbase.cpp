@@ -755,6 +755,14 @@ const bool BBSListViewBase::operate_view( const int control )
             page_down();
             break;
 
+        case CONTROL::PrevDir:
+            prev_dir();
+            break;
+
+        case CONTROL::NextDir:
+            next_dir();
+            break;
+
         case CONTROL::Home:
             goto_top();
             break;
@@ -1005,6 +1013,23 @@ void BBSListViewBase::page_down()
 {
     m_treeview.page_down();
 } 
+
+
+//
+// 前のディレクトリに移動
+//
+void BBSListViewBase::prev_dir()
+{
+    m_treeview.prev_dir();
+}
+
+//
+// 次のディレクトリに移動
+//
+void BBSListViewBase::next_dir()
+{
+    m_treeview.next_dir();
+}
 
 
 //

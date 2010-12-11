@@ -53,6 +53,9 @@ namespace CONTROL
 #define KEYCONF_PageUp  "Page_Up KP_Prior"
 #define KEYCONF_PageDown  "Page_Down KP_Next"
 
+#define KEYCONF_PrevDir  "{"
+#define KEYCONF_NextDir  "}"
+
 #define KEYCONF_Home  "Home g < KP_Home"
 #define KEYCONF_End  "End G > KP_End"
 

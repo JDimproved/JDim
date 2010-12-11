@@ -245,6 +245,8 @@ namespace BBSLIST
         void row_down();
         void page_up();
         void page_down();
+        void prev_dir();
+        void next_dir();
         void expand_all_dir( Gtk::TreeModel::Path path );
 
         // ディレクトリ以下を更新チェック

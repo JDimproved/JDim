@@ -953,6 +953,40 @@ const bool EditTreeView::is_dir( const Gtk::TreePath& path )
 }
 
 
+// 前のディレクトリに移動
+void EditTreeView::prev_dir()
+{
+    Gtk::TreePath path = get_current_path();
+    for(;;){
+        Gtk::TreePath new_path = prev_path( path );
+        if( path == new_path ){
+            goto_top();
+            return;
+        }
+        path = new_path;
+        if( is_dir( path ) ) break;
+    }
+
+    set_cursor( path );
+}
+
+// 次のディレクトリに移動
+void EditTreeView::next_dir()
+{
+    Gtk::TreePath path = get_current_path();
+    for(;;){
+        path = next_path( path );
+        if( ! path.get_depth() || ! get_row( path ) ){
+            goto_bottom();
+            return;
+        }
+        if( is_dir( path ) ) break;
+    }
+
+    set_cursor( path );
+}
+
+
 //
 // 指定したアドレスの行が含まれているか
 //
