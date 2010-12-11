@@ -230,7 +230,9 @@ void AboutConfig::append_rows()
     append_row( "指定した画素数(M pixel)より大きい画像を表示するときに警告する", get_confitem()->max_img_pixel, CONF_MAX_IMG_PIXEL );
     append_row( "モザイクのレベル", get_confitem()->mosaic_size, CONF_MOSAIC_SIZE );
     append_row( "画像ビューのスムージングレベル(0-2, 大きい程高画質で低速)", get_confitem()->imgmain_interp, CONF_IMGMAIN_INTERP );
-    append_row( "埋め込み画像のスムージングレベル(0-2, 大きい程高画質で低速)", get_confitem()->imgemb_interp, CONF_IMGEMB_INTERP );
+    append_row( "インライン画像のスムージングレベル(0-2, 大きい程高画質で低速)", get_confitem()->imgemb_interp, CONF_IMGEMB_INTERP );
+    append_row( "インライン画像の最大幅", get_confitem()->embimg_width, CONF_EMBIMG_WIDTH );
+    append_row( "インライン画像の最大高さ", get_confitem()->embimg_height, CONF_EMBIMG_HEIGHT );
     append_row( "ポップアップ画像のスムージングレベル(0-2, 大きい程高画質で低速)", get_confitem()->imgpopup_interp, CONF_IMGPOPUP_INTERP );
     append_row( "画像のメモリキャッシュ枚数", get_confitem()->imgcache_size, CONF_IMGCACHE_SIZE );
     append_row( "deleteを押したときに確認ダイアログを表示", get_confitem()->show_delimgdiag, CONF_SHOW_DELIMGDIAG );

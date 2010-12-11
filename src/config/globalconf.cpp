@@ -229,6 +229,10 @@ void CONFIG::set_use_inline_image( const bool inline_img ){ get_confitem()->use_
 const bool CONFIG::get_show_ssspicon(){ return get_confitem()->show_ssspicon; }
 void CONFIG::set_show_sssp_icon( const bool show ){ get_confitem()->show_ssspicon = show; }
 
+// インライン画像の最大幅と高さ
+const int CONFIG::get_embimg_width(){ return get_confitem()->embimg_width; }
+const int CONFIG::get_embimg_height(){ return get_confitem()->embimg_height; }
+
 // 画像ビューでdeleteを押したときに確認ダイアログを表示する
 const bool CONFIG::get_show_delimgdiag(){ return get_confitem()->show_delimgdiag; }
 void CONFIG::set_show_delimgdiag( const bool show ){ get_confitem()->show_delimgdiag = show; }

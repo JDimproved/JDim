@@ -216,6 +216,10 @@ namespace CONFIG
     const bool get_show_ssspicon();
     void set_show_sssp_icon( const bool show );
 
+    // インライン画像の最大幅と高さ
+    const int get_embimg_width();
+    const int get_embimg_height();
+
     // 画像ビューでdeleteを押したときに確認ダイアログを表示する
     const bool get_show_delimgdiag();
     void set_show_delimgdiag( const bool show );

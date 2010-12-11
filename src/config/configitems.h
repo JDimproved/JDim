@@ -126,6 +126,10 @@ namespace CONFIG
         // ssspアイコン表示
         bool show_ssspicon;
 
+        // インライン画像の最大幅と高さ
+        int embimg_width;
+        int embimg_height;
+
         // 画像ビューでdeleteを押したときに確認ダイアログを表示する
         bool show_delimgdiag;
 

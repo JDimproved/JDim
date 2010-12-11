@@ -35,9 +35,6 @@
 
 enum
 {
-    MAX_WIDTH_EMB = 100, // 埋め込み画像の最大横幅(ピクセル)
-    MAX_HEIGHT_EMB = 100, // 埋め込み画像の最大横幅(ピクセル)
-
     MAX_REDIRECT = 5  // 最大リダイレクト回数
 };
 
@@ -660,8 +657,8 @@ void Img::set_embedded_size()
 
     // 縮小比率を計算してサイズ取得
     double scale;
-    double scale_w = ( double ) MAX_WIDTH_EMB / m_width;
-    double scale_h = ( double ) MAX_HEIGHT_EMB / m_height;
+    double scale_w = ( double ) CONFIG::get_embimg_width() / m_width;
+    double scale_h = ( double ) CONFIG::get_embimg_height() / m_height;
     scale = MIN( scale_w, scale_h );
     if( scale < 1.0 ){
         m_width_emb = (int)( m_width * scale );

@@ -205,6 +205,10 @@ const bool ConfigItems::load( const bool restore )
     // ssspアイコン表示
     show_ssspicon = cf.get_option_bool( "show_ssspicon", CONF_SHOW_SSSPICON );
 
+    // インライン画像の最大幅と高さ
+    embimg_width = cf.get_option_int( "embimg_width", CONF_EMBIMG_WIDTH, 16, 8192 );
+    embimg_height = cf.get_option_int( "embimg_height", CONF_EMBIMG_HEIGHT, 16, 8192 );
+
     // 画像ビューでdeleteを押したときに確認ダイアログを表示する
     show_delimgdiag = cf.get_option_bool( "show_delimgdiag", CONF_SHOW_DELIMGDIAG );
 
@@ -681,6 +685,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_image_view", use_image_view );
     cf.update( "use_inline_image", use_inline_image );
     cf.update( "show_ssspicon", show_ssspicon );
+    cf.update( "embimg_width", embimg_width );
+    cf.update( "embimg_height", embimg_height );
     cf.update( "show_delimgdiag", show_delimgdiag );
     cf.update( "use_mosaic", use_mosaic );
     cf.update( "mosaic_size", mosaic_size );
