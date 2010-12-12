@@ -662,11 +662,13 @@ bool JDWindow::on_window_state_event( GdkEventWindowState* event )
 {
     const bool maximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     const bool iconified = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+    const bool fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
 
 #ifdef _DEBUG
     std::cout << "JDWindow::on_window_state_event : " 
               << "maximized = " << is_maximized_win() << " -> " << maximized
-              << " / iconified = " << is_iconified_win() << " -> " << iconified << std::endl;
+              << " / iconified = " << is_iconified_win() << " -> " << iconified
+              << " / full = " << is_full_win() << " -> " << fullscreen << std::endl;
 #endif
 
     if( ! m_boot ){
@@ -692,6 +694,12 @@ bool JDWindow::on_window_state_event( GdkEventWindowState* event )
             // 最大 -> 通常
             else m_mode = JDWIN_UNMAX;
         }
+
+        // 通常 -> 全画面
+        else if( ! is_full_win() && fullscreen ) set_full_win( true );
+
+        // 全画面 -> 通常
+        else if( is_full_win() && ! fullscreen ) set_full_win( false );
 
 #ifdef _DEBUG
         std::cout << " mode = " << m_mode << std::endl;
@@ -730,7 +738,7 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
         else if( m_mode == JDWIN_UNMAX_FOLD ) m_mode = JDWIN_FOLD;
 
         // 最大、最小化しているときは除く
-        else if( ! is_maximized_win() && ! is_iconified_win() ){
+        else if( ! is_maximized_win() && ! is_iconified_win() && ! is_full_win() ){
 
             set_win_pos();
 

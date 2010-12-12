@@ -137,6 +137,8 @@ bool shown_win_main = false;
 bool shown_win_img = false;
 bool shown_win_mes = false;
 
+bool full_win_main = false;
+
 bool dialog_shown = false;
 
 bool embedded_img;
@@ -327,6 +329,7 @@ void SESSION::init_session()
     width_win_main = cf.get_option_int( "width", 800, 80, 8192 );
     height_win_main = cf.get_option_int( "height", 600, 60, 8192 );
     maximized_win_main = cf.get_option_bool( "maximized", false );
+    full_win_main = cf.get_option_bool( "full_win_main", false );
 
     win_show_sidebar = cf.get_option_bool( "show_sidebar", true );
 
@@ -565,6 +568,7 @@ void SESSION::save_session()
         << "width = " << width_win_main << std::endl
         << "height = " << height_win_main << std::endl
         << "maximized = " << maximized_win_main << std::endl
+        << "full_win_main = " << full_win_main << std::endl
         << "show_main_toolbar = " << show_main_toolbar << std::endl
         << "toolbar_pos = " << win_toolbar_pos << std::endl
         << "show_bbslist_toolbar = " << show_bbslist_toolbar << std::endl
@@ -785,6 +789,11 @@ void SESSION::set_shown_win_img( const bool set ){ shown_win_img = set; }
 
 const bool SESSION::is_shown_win_mes(){ return shown_win_mes; }
 void SESSION::set_shown_win_mes( const bool set ){ shown_win_mes = set; }
+
+
+// windowがフルスクリーンか
+const bool SESSION::is_full_win_main(){ return full_win_main; }
+void SESSION::set_full_win_main( const bool set ){ full_win_main = set; }
 
 
 // ダイアログ表示中

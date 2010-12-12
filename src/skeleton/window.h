@@ -104,25 +104,28 @@ namespace SKELETON
 
         virtual const int get_x_win() = 0;
         virtual const int get_y_win() = 0;
-        virtual void set_x_win( int x ) = 0;
-        virtual void set_y_win( int y ) = 0;
+        virtual void set_x_win( const int x ) = 0;
+        virtual void set_y_win( const int y ) = 0;
 
         virtual const int get_width_win() = 0;
         virtual const int get_height_win() = 0;
-        virtual void set_width_win( int width ) = 0;
-        virtual void set_height_win( int height ) = 0;
+        virtual void set_width_win( const int width ) = 0;
+        virtual void set_height_win( const int height ) = 0;
 
         virtual const bool is_focus_win() = 0;
-        virtual void set_focus_win( bool set ) = 0;
+        virtual void set_focus_win( const bool set ) = 0;
 
         virtual const bool is_maximized_win() = 0;
-        virtual void set_maximized_win( bool set ) = 0;
+        virtual void set_maximized_win( const bool set ) = 0;
 
         virtual const bool is_iconified_win() = 0;
-        virtual void set_iconified_win( bool set ) = 0;
+        virtual void set_iconified_win( const bool set ) = 0;
+
+        virtual const bool is_full_win() = 0;
+        virtual void set_full_win( const bool set ) = 0;
 
         virtual const bool is_shown_win() = 0;
-        virtual void set_shown_win( bool set ) = 0;
+        virtual void set_shown_win( const bool set ) = 0;
 
         virtual bool on_focus_in_event( GdkEventFocus* event );
         virtual bool on_focus_out_event( GdkEventFocus* event );

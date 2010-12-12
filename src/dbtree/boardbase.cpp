@@ -505,7 +505,7 @@ void BoardBase::update_url( const std::string& root, const std::string& path_boa
 //
 // (例) url =  "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345/12-15"のとき、
 //
-// 戻り値 : "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15
+// 戻り値 : "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15, num_str = "12-15"
 //
 const std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
 {

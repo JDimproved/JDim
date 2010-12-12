@@ -222,6 +222,9 @@ namespace SESSION
     const bool is_shown_win_mes(); // 書き込みウィンドウ
     void set_shown_win_mes( const bool set );
 
+    // windowがフルスクリーンか
+    const bool is_full_win_main(); // メインウィンドウ
+    void set_full_win_main( const bool set );
 
 
     // ダイアログ表示中

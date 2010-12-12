@@ -342,7 +342,7 @@ namespace DBTREE
         // url がスレッドのURLで無い時はempty()が返る
         // もしurlが移転前の旧ホストのものだったら対応するarticlebaseクラスに旧ホスト名を知らせる
         // (例) url =  "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345/12-15"のとき、
-        // "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15, num_str = 12-15
+        // "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15, num_str = "12-15"
         virtual const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ); 
 
         // スレの url を read.cgi型のurlに変換

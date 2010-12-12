@@ -353,6 +353,18 @@ void Core::slot_toggle_v3pane()
 
 
 //
+// フルスクリーン
+//
+void Core::slot_toggle_fullscreen()
+{
+    if( ! m_enable_menuslot ) return;
+
+    if( SESSION::is_full_win_main() ) m_win_main.unfullscreen();
+    else m_win_main.fullscreen();
+}
+
+
+//
 // messageビューをウィンドウ表示
 //
 void Core::slot_toggle_winmsg()

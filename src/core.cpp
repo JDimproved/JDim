@@ -482,6 +482,11 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( raction1, sigc::mem_fun( *this, &Core::slot_toggle_3pane ) );
     m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
 
+    // フルスクリーン
+    m_action_group->add( Gtk::ToggleAction::create( "FullScreen", "全画面表示(_F)", std::string(), false ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_fullscreen ) );
+
+
     // 書き込みビュー
     m_action_group->add( Gtk::Action::create( "MessageView_Menu", "書き込み設定(_M)" ) );
     Gtk::RadioButtonGroup radiogroup_msg;
@@ -750,6 +755,9 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menuitem action='2Pane'/>"
         "<menuitem action='3Pane'/>"
         "<menuitem action='v3Pane'/>"
+        "<separator/>"
+
+        "<menuitem action='FullScreen'/>"
         "<separator/>"
 
         "<menu action='View_Menu'>"
@@ -1374,6 +1382,14 @@ void Core::slot_activate_menubar()
     tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
     if( tact ){
         if( SESSION::get_show_article_tab() ) tact->set_active( true );
+        else tact->set_active( false );
+    }
+
+    // フルスクリーン
+    act = m_action_group->get_action( "FullScreen" );
+    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+    if( tact ){
+        if( SESSION::is_full_win_main() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
