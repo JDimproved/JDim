@@ -268,6 +268,7 @@ void AboutConfig::append_rows()
     append_row( "履歴メニューの表示数", get_confitem()->history_size, CONF_HISTORY_SIZE );
     append_row( "マウスジェスチャを有効にする", get_confitem()->enable_mg, CONF_ENABLE_MG );
     append_row( "マウスジェスチャの判定開始半径", get_confitem()->mouse_radius, CONF_MOUSE_RADIUS );
+    append_row( "数字入力ジャンプの待ち時間(ミリ秒)", get_confitem()->numberjmp_msec, CONF_NUMBERJMP_MSEC );
     append_row( "起動時に開いていたスレ一覧を復元する", get_confitem()->restore_board, CONF_RESTORE_BOARD );
     append_row( "起動時に開いていたスレを復元する", get_confitem()->restore_article, CONF_RESTORE_ARTICLE );
     append_row( "起動時に開いていた画像を復元する", get_confitem()->restore_image, CONF_RESTORE_IMAGE );

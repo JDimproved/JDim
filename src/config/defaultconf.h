@@ -74,6 +74,7 @@ namespace CONFIG
         CONF_HIDE_POPUP_MSEC = 0,   // ポップアップが消えるまでの時間(ミリ秒)
         CONF_ENABLE_MG = 1,         // マウスジェスチャを有効
         CONF_MOUSE_RADIUS = 25,     // マウスジェスチャの判定開始半径
+        CONF_NUMBERJMP_MSEC = 1000, // 数字入力ジャンプの待ち時間(ミリ秒)
         CONF_HISTORY_SIZE = 20,      // 履歴メニューの表示数
         CONF_HISTORYVIEW_SIZE = 100, // 履歴ビューの表示数
         CONF_AAHISTORY = 7,         // AA履歴の保持数

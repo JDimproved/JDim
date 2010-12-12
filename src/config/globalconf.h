@@ -358,6 +358,9 @@ namespace CONFIG
     // マウスジェスチャの判定開始半径
     const int get_mouse_radius();
 
+    // 数字入力ジャンプの待ち時間(ミリ秒)
+    const int get_numberjmp_msec();
+
     // 履歴メニューの表示数
     const int get_history_size();
 

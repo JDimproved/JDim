@@ -10,17 +10,13 @@
 
 #include "history/historymanager.h"
 
+#include "config/globalconf.h"
+
 #include "global.h"
 #include "session.h"
 #include "command.h"
 
 using namespace SKELETON;
-
-enum
-{
-    KEYJUMP_TIMEOUT = 1000
-};
-
 
 View::View( const std::string& url, const std::string& arg1 ,const std::string& arg2 )
     : m_url( url ),
@@ -140,7 +136,7 @@ bool View::inc_keyjump_counter()
 
     ++m_keyjump_counter;
 
-    if( m_keyjump_counter > KEYJUMP_TIMEOUT / TIMER_TIMEOUT ) return true;
+    if( m_keyjump_counter > CONFIG::get_numberjmp_msec() / TIMER_TIMEOUT ) return true;
 
     return false;
 }

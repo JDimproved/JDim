@@ -324,6 +324,9 @@ const bool CONFIG::get_enable_mg(){ return get_confitem()->enable_mg; }
 // マウスジェスチャの判定開始半径
 const int CONFIG::get_mouse_radius(){ return get_confitem()->mouse_radius; }
 
+// 数字入力ジャンプのウェイト(ミリ秒)
+const int CONFIG::get_numberjmp_msec(){ return get_confitem()->numberjmp_msec; }
+
 const int CONFIG::get_history_size(){ return get_confitem()->history_size; }
 const int CONFIG::get_historyview_size(){ return get_confitem()->historyview_size; }
 const int CONFIG::get_aahistory_size(){ return get_confitem()->aahistory_size; }

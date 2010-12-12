@@ -389,6 +389,9 @@ const bool ConfigItems::load( const bool restore )
     // マウスジェスチャの判定開始半径
     mouse_radius = cf.get_option_int( "mouse_radius", CONF_MOUSE_RADIUS, 4, 1024 );
 
+    // 数字入力ジャンプの待ち時間(ミリ秒)
+    numberjmp_msec = cf.get_option_int( "numberjmp_msec", CONF_NUMBERJMP_MSEC, 1, 5000 );
+
     // 履歴メニューの表示数
     history_size = cf.get_option_int( "history_size", CONF_HISTORY_SIZE, 0, 256 );
 
@@ -779,6 +782,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "hide_popup_msec", hide_popup_msec );
     cf.update( "enable_mg", enable_mg );
     cf.update( "mouse_radius", mouse_radius );
+    cf.update( "numberjmp_msec", numberjmp_msec );
     cf.update( "history_size", history_size );
     cf.update( "historyview_size", historyview_size );
     cf.update( "aahistory_size", aahistory_size );

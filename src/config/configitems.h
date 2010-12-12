@@ -315,6 +315,9 @@ namespace CONFIG
         // マウスジェスチャの判定開始半径
         int mouse_radius;
 
+        // 数字入力ジャンプの待ち時間(ミリ秒)
+        int numberjmp_msec;
+
         // 履歴メニューの表示数
         int history_size;
 
