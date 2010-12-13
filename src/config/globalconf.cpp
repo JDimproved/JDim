@@ -313,6 +313,8 @@ const bool CONFIG::get_keep_im_status(){ return get_confitem()->keep_im_status; 
 const int CONFIG::get_margin_popup(){ return get_confitem()->margin_popup; }
 void CONFIG::set_margin_popup( const int margin ){ get_confitem()->margin_popup = margin; }
 
+// 画像ポップアップとカーソルの間のマージン
+const int CONFIG::get_margin_imgpopup_x(){ return get_confitem()->margin_imgpopup_x; }
 const int CONFIG::get_margin_imgpopup(){ return get_confitem()->margin_imgpopup; }
 
 // ポップアップが消えるまでの時間(ミリ秒)

@@ -304,7 +304,8 @@ namespace CONFIG
         int margin_popup;
 
         // 画像ポップアップとカーソルの間のマージン
-        int margin_imgpopup;
+        int margin_imgpopup_x;  // 水平方向
+        int margin_imgpopup; // 垂直方向
 
         // ポップアップが消えるまでの時間(ミリ秒)
         int hide_popup_msec;

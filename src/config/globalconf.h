@@ -347,7 +347,8 @@ namespace CONFIG
     void set_margin_popup( const int margin );
 
     // 画像ポップアップとカーソルの間のマージン
-    const int get_margin_imgpopup();
+    const int get_margin_imgpopup_x(); // 水平方向
+    const int get_margin_imgpopup(); // 垂直方向
 
     // ポップアップが消えるまでの時間(ミリ秒)
     const int get_hide_popup_msec();

@@ -210,7 +210,8 @@ const bool DragTreeView::is_mouse_on_popup()
 //
 void DragTreeView::show_popup( const std::string& url, View* view )
 {
-    const int mrg = 10;
+    const int mrg_x = 0;
+    const int mrg_y = 10;
 
 #ifdef _DEBUG
     std::cout << "DragTreeView::show_popup url = " << url << std::endl;
@@ -218,7 +219,7 @@ void DragTreeView::show_popup( const std::string& url, View* view )
 
     delete_popup();
 
-    m_popup_win = new PopupWin( this, view, mrg );
+    m_popup_win = new PopupWin( this, view, mrg_x, mrg_y );
     m_popup_win->signal_leave_notify_event().connect( sigc::mem_fun( *this, &DragTreeView::slot_popup_leave_notify_event ) );
     m_popup_win->sig_hide_popup().connect( sigc::mem_fun( *this, &DragTreeView::hide_popup ) );
 

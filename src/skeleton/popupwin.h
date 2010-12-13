@@ -22,11 +22,12 @@ namespace SKELETON
 
         Gtk::Widget* m_parent;
         SKELETON::View* m_view;
-        int m_mrg_y;  // ポップアップとマウスカーソルの間のマージン
+        int m_mrg_x;  // ポップアップとマウスカーソルの間のマージン(水平方向)
+        int m_mrg_y;  // ポップアップとマウスカーソルの間のマージン(垂直方向)
 
     public:
 
-        PopupWin( Gtk::Widget* parent, SKELETON::View* view, int mrg_y );
+        PopupWin( Gtk::Widget* parent, SKELETON::View* view, const int mrg_x, const int mrg_y );
         virtual ~PopupWin();
 
         // m_view　からの hide シグナルをブリッジする

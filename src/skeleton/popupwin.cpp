@@ -8,10 +8,11 @@
 using namespace SKELETON;
 
 
-PopupWin::PopupWin( Gtk::Widget* parent, SKELETON::View* view, int mrg_y )
+PopupWin::PopupWin( Gtk::Widget* parent, SKELETON::View* view, const int mrg_x, const int mrg_y )
     : PopupWinBase( POPUPWIN_NOFRAME ),
       m_parent( parent ),
       m_view( view ),
+      m_mrg_x( mrg_x ),
       m_mrg_y( mrg_y )
 {
 #ifdef _DEBUG
@@ -57,7 +58,7 @@ void PopupWin::slot_resize_popup()
     // x 座標と幅
     const int width_popup = width_client;
     int x_popup;
-    if( x_mouse + width_popup <= width_desktop ) x_popup = x_mouse;
+    if( x_mouse + m_mrg_x + width_popup <= width_desktop ) x_popup = x_mouse + m_mrg_x;
     else x_popup = MAX( 0, width_desktop - width_popup );
 
     // y 座標と高さ

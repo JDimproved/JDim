@@ -2125,7 +2125,8 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
 
     CORE::VIEWFACTORY_ARGS args;
     SKELETON::View* view_popup = NULL;
-    int margin_popup = CONFIG::get_margin_popup();
+    int margin_popup_x = 0;
+    int margin_popup_y = CONFIG::get_margin_popup();
 
     m_popup_url = url;
 
@@ -2147,7 +2148,8 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
 #endif
 
             view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
-            margin_popup = CONFIG::get_margin_imgpopup();
+            margin_popup_x = CONFIG::get_margin_imgpopup_x();
+            margin_popup_y = CONFIG::get_margin_imgpopup();
         }
     }
 
@@ -2294,7 +2296,7 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
         }
     }
 
-    if( view_popup ) show_popup( view_popup, margin_popup );
+    if( view_popup ) show_popup( view_popup, margin_popup_x, margin_popup_y );
 
     // リンクとして扱うURLをステータスバーに表示する
     if( MISC::is_url_scheme( url.c_str() ) != MISC::SCHEME_NONE )
@@ -2419,8 +2421,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
                 CORE::VIEWFACTORY_ARGS args;
                 args.arg1 = m_id_name;
                 SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPID, m_url_article, args );
-                const int margin_popup = CONFIG::get_margin_popup();
-                show_popup( view_popup, margin_popup );
+                const int margin_popup_x = 0;
+                const int margin_popup_y = CONFIG::get_margin_popup();
+                show_popup( view_popup, margin_popup_x, margin_popup_y );
             }
             else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_id();
             else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
@@ -2449,8 +2452,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
                 CORE::VIEWFACTORY_ARGS args;
                 args.arg1 = m_name;
                 SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPNAME, m_url_article, args );
-                const int margin_popup = CONFIG::get_margin_popup();
-                show_popup( view_popup, margin_popup );
+                const int margin_popup_x = 0;
+                const int margin_popup_y = CONFIG::get_margin_popup();
+                show_popup( view_popup, margin_popup_x, margin_popup_y );
             }
             else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_name();
             else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
@@ -2576,8 +2580,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
                 CORE::VIEWFACTORY_ARGS args;
                 args.arg1 = m_str_num;
                 SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPREFER, m_url_article, args );
-                const int margin_popup = CONFIG::get_margin_popup();
-                show_popup( view_popup, margin_popup );
+                const int margin_popup_x = 0;
+                const int margin_popup_y = CONFIG::get_margin_popup();
+                show_popup( view_popup, margin_popup_x, margin_popup_y );
             }
         }
     }
@@ -2718,8 +2723,9 @@ void ArticleViewBase::open_image( const std::string& url, const int res_number,
         // ポップアップ表示してダウンロードサイズを表示
         hide_popup();
         SKELETON::View* view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
-        const int margin_popup = CONFIG::get_margin_imgpopup();
-        show_popup( view_popup, margin_popup );
+        const int margin_popup_x = CONFIG::get_margin_imgpopup_x();
+        const int margin_popup_y = CONFIG::get_margin_imgpopup();
+        show_popup( view_popup, margin_popup_x, margin_popup_y );
         load = true;
     }
 
@@ -2763,14 +2769,14 @@ const bool ArticleViewBase::is_mouse_on_popup()
 // view にあらかじめ内容をセットしてから呼ぶこと
 // viewは SKELETON::PopupWin のデストラクタで削除される
 //
-void ArticleViewBase::show_popup( SKELETON::View* view, int margin )
+void ArticleViewBase::show_popup( SKELETON::View* view, const int mrg_x, const int mrg_y )
 {
     hide_popup();
     if( !view ) return;
 
     delete_popup();
 
-    m_popup_win = new SKELETON::PopupWin( this, view, margin );
+    m_popup_win = new SKELETON::PopupWin( this, view, mrg_x, mrg_y );
     m_popup_win->signal_leave_notify_event().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_popup_leave_notify_event ) );
     m_popup_win->sig_hide_popup().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_hide_popup ) );
     m_popup_shown = true;

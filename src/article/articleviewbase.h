@@ -271,7 +271,7 @@ namespace ARTICLE
         // ポップアップが表示されていてかつマウスがその上にあるか
         const bool is_mouse_on_popup();
 
-        void show_popup( SKELETON::View* view, int margin );
+        void show_popup( SKELETON::View* view, const int mrg_x, const int mrg_y );
         bool slot_popup_leave_notify_event( GdkEventCrossing* event );
         void slot_hide_popup();
         void delete_popup(); // ポップアップ強制削除

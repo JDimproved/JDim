@@ -69,8 +69,9 @@ namespace CONFIG
         CONF_FOLD_MESSAGE = 0,      // 非アクティブ時に書き込みビューを折りたたむ
         CONF_FOLD_IMAGE = 1,        // 非アクティブ時に画像ビューを折りたたむ
         CONF_KEEP_IM_STATUS = 0,    // 書き込み欄の日本語のON/OFF状態を保存
-        CONF_MARGIN_POPUP = 30,     // レスアンカーとポップアップの間のマージン
-        CONF_MARGIN_IMGPOPUP = CONF_MARGIN_POPUP,  // レスアンカーと画像ポップアップの間のマージン
+        CONF_MARGIN_POPUP = 30,     // レスアンカーとポップアップの間のマージン ( 垂直方向 )
+        CONF_MARGIN_IMGPOPUP_X = 0, // レスアンカーと画像ポップアップの間のマージン ( 水平方向 )
+        CONF_MARGIN_IMGPOPUP = CONF_MARGIN_POPUP,  // レスアンカーと画像ポップアップの間のマージン ( 垂直方向 )
         CONF_HIDE_POPUP_MSEC = 0,   // ポップアップが消えるまでの時間(ミリ秒)
         CONF_ENABLE_MG = 1,         // マウスジェスチャを有効
         CONF_MOUSE_RADIUS = 25,     // マウスジェスチャの判定開始半径

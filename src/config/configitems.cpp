@@ -378,6 +378,7 @@ const bool ConfigItems::load( const bool restore )
     margin_popup = cf.get_option_int( "margin_popup", CONF_MARGIN_POPUP, 0, 1024 );
 
     // 画像ポップアップとカーソルの間のマージン
+    margin_imgpopup_x = cf.get_option_int( "margin_imgpopup_x", CONF_MARGIN_IMGPOPUP_X, 0, 1024 );
     margin_imgpopup = cf.get_option_int( "margin_imgpopup", CONF_MARGIN_IMGPOPUP, 0, 1024 );
 
     // ポップアップが消えるまでの時間(ミリ秒)
@@ -778,6 +779,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "fold_image", fold_image );
     cf.update( "keep_im_status", keep_im_status );
     cf.update( "margin_popup", margin_popup );
+    cf.update( "margin_imgpopup_x", margin_imgpopup_x );
     cf.update( "margin_imgpopup", margin_imgpopup );
     cf.update( "hide_popup_msec", hide_popup_msec );
     cf.update( "enable_mg", enable_mg );
