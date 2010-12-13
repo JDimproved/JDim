@@ -1581,9 +1581,16 @@ void ArticleBase::delete_cache( const bool cache_only )
 
                     SKELETON::MsgCheckDiag mdiag( NULL, msg,
                                                   "今後表示しない(常に削除しない)(_D)",
-                                                  Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, Gtk::RESPONSE_NO );
+                                                  Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
 
-                    if( mdiag.run() != Gtk::RESPONSE_YES ){
+                    mdiag.add_button( "スレ削除中止(_C)", Gtk::RESPONSE_CANCEL );
+                    mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+                    Gtk::Button button( Gtk::Stock::NO );
+                    mdiag.add_default_button( &button, Gtk::RESPONSE_NO );
+
+                    const int ret = mdiag.run();
+                    if( ret == Gtk::RESPONSE_CANCEL ) return;
+                    if( ret != Gtk::RESPONSE_YES ){
 
                         if( mdiag.get_chkbutton().get_active() ) CONFIG::set_delete_img_in_thread( 2 );
                         delete_img_cache = false;

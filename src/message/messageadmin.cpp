@@ -382,8 +382,6 @@ const bool MessageAdmin::delete_message( SKELETON::View * view )
 
     mdiag.add_button( "保存せずに閉じる(_Q)", Gtk::RESPONSE_NO );
     mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-//    mdiag.add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_YES );
-//    mdiag.set_default_response( Gtk::RESPONSE_YES );
     Gtk::Button button( Gtk::Stock::SAVE );
     mdiag.add_default_button( &button, Gtk::RESPONSE_YES );
 
