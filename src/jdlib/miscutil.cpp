@@ -696,17 +696,19 @@ const std::string MISC::cut_str( const std::string& str, const unsigned int maxs
 //
 // 正規表現のメタ文字が含まれているか
 //
+// escape == true ならエスケープを考慮 (例)  escape == true なら \+ → \+ のまま、falseなら \+ → \\\+
+//
 
 #define REGEX_METACHARS ".+*?^$|{}[]()\\"
 
-const bool MISC::has_regex_metachar( const std::string& str )
+const bool MISC::has_regex_metachar( const std::string& str, const bool escape )
 {
     const char metachars[] = REGEX_METACHARS;
     const size_t str_length = str.length();
 
     for( size_t pos = 0; pos < str_length; ++pos ){
 
-        if( str[ pos ] == '\\' ){
+        if( escape && str[ pos ] == '\\' ){
 
             int i = 0;
             while( metachars[ i ] != '\0' ){
@@ -737,9 +739,11 @@ const bool MISC::has_regex_metachar( const std::string& str )
 //
 // 正規表現のメタ文字をエスケープ
 //
-const std::string MISC::regex_escape( const std::string& str )
+// escape == true ならエスケープを考慮 (例)  escape == true なら \+ → \+ のまま、falseなら \+ → \\\+
+//
+const std::string MISC::regex_escape( const std::string& str, const bool escape )
 {
-    if( ! has_regex_metachar( str ) ) return str;
+    if( ! has_regex_metachar( str, escape ) ) return str;
 
 #ifdef _DEBUG
     std::cout << "MISC::regex_escape" << std::endl;
@@ -752,7 +756,7 @@ const std::string MISC::regex_escape( const std::string& str )
 
     for( size_t pos = 0; pos < str_length; ++pos ){
 
-        if( str[ pos ] == '\\' ){
+        if( escape && str[ pos ] == '\\' ){
 
             int i = 0;
             while( metachars[ i ] != '\0' ){

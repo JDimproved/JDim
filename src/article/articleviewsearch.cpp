@@ -171,10 +171,11 @@ void ArticleViewSearch::regex_escape()
     m_escaped = false;
     if( m_searchmode == CORE::SEARCHMODE_LOG || m_searchmode == CORE::SEARCHMODE_ALLLOG ){
 
-        if( MISC::has_regex_metachar( get_search_query() ) ){
+        const bool escape = false;  // \ を エスケープ文字として考慮しない
+        if( MISC::has_regex_metachar( get_search_query(), escape ) ){
 
             m_escaped = true;
-            set_search_query( MISC::regex_escape( get_search_query() ) );
+            set_search_query( MISC::regex_escape( get_search_query(), escape ) );
         }
     }
 }

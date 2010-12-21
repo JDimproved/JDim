@@ -137,10 +137,12 @@ namespace MISC
     const std::string cut_str( const std::string& str, const unsigned int maxsize );
 
     // 正規表現のメタ文字が含まれているか
-    const bool has_regex_metachar( const std::string& str );
+    // escape == true ならエスケープを考慮 (例)  escape == true なら \+ → \+ のまま、falseなら \+ → \\\+
+    const bool has_regex_metachar( const std::string& str, const bool escape );
 
     // 正規表現のメタ文字をエスケープ
-    const std::string regex_escape( const std::string& str );
+    // escape == true ならエスケープを考慮 (例)  escape == true なら \+ → \+ のまま、falseなら \+ → \\\+
+    const std::string regex_escape( const std::string& str, const bool escape );
 
     // 正規表現のメタ文字をアンエスケープ
     const std::string regex_unescape( const std::string& str );

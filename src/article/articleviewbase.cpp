@@ -3329,7 +3329,8 @@ void ArticleViewBase::slot_drawout_selection_str()
 
     if( query.empty() ) return;
 
-    CORE::core_set_command( "open_article_keyword" ,m_url_article, MISC::regex_escape( query ), "false" );
+    const bool escape = false;  // \ を エスケープ文字として考慮しない
+    CORE::core_set_command( "open_article_keyword" ,m_url_article, MISC::regex_escape( query, escape ), "false" );
 }
 
 
