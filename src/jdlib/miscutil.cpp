@@ -697,7 +697,7 @@ const std::string MISC::cut_str( const std::string& str, const unsigned int maxs
 // 正規表現のメタ文字が含まれているか
 //
 
-#define REGEX_METACHARS ".+*?^$|{}[]\\"
+#define REGEX_METACHARS ".+*?^$|{}[]()\\"
 
 const bool MISC::has_regex_metachar( const std::string& str )
 {
