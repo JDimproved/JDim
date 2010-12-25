@@ -208,6 +208,11 @@ void CompletionEntry::slot_entry_operate( int controlid )
             if( ! m_treeview.row_down() ) m_treeview.goto_top();
             break;
 
+        case CONTROL::Cancel:
+            if( m_show_popup ) hide_popup();
+            else m_sig_operate.emit( controlid );
+            break;
+
         default:
             m_sig_operate.emit( controlid );
     }

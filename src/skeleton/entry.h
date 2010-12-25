@@ -24,6 +24,7 @@ namespace SKELETON
 
         // 入力コントローラ
         CONTROL::Control m_control;
+        int m_controlid;
 
       public:
 
