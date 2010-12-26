@@ -3964,6 +3964,8 @@ void ArticleViewBase::slot_show_selection_images()
             const std::string& url = (*it).url;
             const int res_number = (*it).res_number;
 
+            if( DBIMG::get_abone( url ) ) continue;
+
             const std::string refurl = DBTREE::url_readcgi( m_url_article, res_number, 0 );
             const bool open_imageview = CONFIG::get_use_image_view();
             const bool mosaic = CONFIG::get_use_mosaic();
