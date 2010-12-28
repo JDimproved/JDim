@@ -36,6 +36,11 @@ namespace BBSLIST
         Glib::RefPtr< Gtk::TreeStore > m_treestore;
         SKELETON::EditTreeView m_treeview;
 
+        // DOM共有オブジェクト
+        XML::Document m_document;
+
+        std::string m_date_modified;
+
         bool m_ready_tree; // ツリーがセットされているならtrue
 
         BBSLIST::TreeColumns m_columns;
@@ -71,6 +76,9 @@ namespace BBSLIST
         // toggle_boardicon() で使用する
         std::set< std::string > m_set_board;
 
+        // ツリーに含まれている画像のURLを入れる hash_set
+        std::set< std::string > m_set_image;
+
         EditListWin* m_editlistwin;
 
         // スレを追加したときにそのスレにしおりを付ける
@@ -90,7 +98,8 @@ namespace BBSLIST
         void set_bookmark( const bool set ){ m_set_bookmark = set; }
 
         // DOM共有オブジェクト
-        XML::Document m_document;
+        XML::Document& get_document(){ return m_document;}
+        void set_document( const XML::Document& document){ m_document = document;}
 
         Glib::RefPtr< Gtk::TreeStore >& get_treestore() { return m_treestore; }
         SKELETON::EditTreeView& get_treeview() { return  m_treeview; }

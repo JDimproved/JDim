@@ -74,15 +74,15 @@ namespace CACHE
 
     // スレ履歴
     std::string path_xml_history();
-    std::string path_xml_history_old();
 
     // 板履歴
     std::string path_xml_history_board();
-    std::string path_xml_history_board_old();
 
     // 最近閉じたスレの履歴
     std::string path_xml_history_close();
-    std::string path_xml_history_close_old();
+
+    // 最近閉じた画像の履歴
+    std::string path_xml_history_closeimg();
 
     // View履歴
     std::string path_xml_history_view();
@@ -128,11 +128,19 @@ namespace CACHE
     std::string path_aadir();  // アスキーアートファイル格納用ディレクトリ .jd/aa/
     std::string path_aahistory();  // AAの使用履歴ファイル
 
+    // テーマのルートパス
+    const std::string path_theme_root();
+
+    // アイコンテーマのルートパス
+    const std::string path_theme_icon_root();
+
     // css
     std::string path_css();
+    std::string path_css_old();
 
     // html
     std::string path_reshtml();
+    std::string path_reshtml_old();
 
     // ログ
     std::string path_logroot();

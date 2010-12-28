@@ -21,6 +21,7 @@ namespace BBSLIST
         virtual void show_view();
         virtual void update_view();
         virtual void delete_view();
+        virtual void show_preference();
 
       protected:
 

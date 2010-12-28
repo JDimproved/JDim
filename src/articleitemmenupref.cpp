@@ -15,7 +15,6 @@
 
 using namespace CORE;
 
-#define STOCK_ICON( id ) Gtk::Widget::render_icon( id, Gtk::ICON_SIZE_MENU )
 
 ArticleItemMenuPref::ArticleItemMenuPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )
@@ -35,7 +34,7 @@ ArticleItemMenuPref::ArticleItemMenuPref( Gtk::Window* parent, const std::string
     append_default_pair( ITEM_NAME_RELOAD );
     append_default_pair( ITEM_NAME_SAVE_DAT );
     append_default_pair( ITEM_NAME_COPY_THREAD_INFO );
-    append_default_pair( ITEM_NAME_FAVORITE );
+    append_default_pair( ITEM_NAME_APPENDFAVORITE );
     append_default_pair( ITEM_NAME_ABONE_SELECTION );
     append_default_pair( ITEM_NAME_SELECTIMG );
     append_default_pair( ITEM_NAME_SELECTDELIMG );

@@ -404,7 +404,7 @@ void ToolBar::close_searchbar()
 Gtk::ToolItem* ToolBar::get_button_open_searchbar()
 {
     if( ! m_button_open_searchbar ){
-        m_button_open_searchbar = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::FIND ) );
+        m_button_open_searchbar = Gtk::manage( new SKELETON::ImgToolButton( ICON::SEARCH ) );
 
         std::string tooltip = "検索バーを開く  " + CONTROL::get_str_motions( CONTROL::Search );
         set_tooltip( *m_button_open_searchbar, tooltip );
@@ -417,7 +417,7 @@ Gtk::ToolItem* ToolBar::get_button_open_searchbar()
 Gtk::ToolItem* ToolBar::get_button_close_searchbar()
 {
     if( ! m_button_close_searchbar ){
-        m_button_close_searchbar = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::UNDO ) );
+        m_button_close_searchbar = Gtk::manage( new SKELETON::ImgToolButton( ICON::CLOSE_SEARCH ) );
         set_tooltip( *m_button_close_searchbar, CONTROL::get_label_motions( CONTROL::CloseSearchBar ) );
         m_button_close_searchbar->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_toggle_searchbar ) );
     }
@@ -539,7 +539,7 @@ void ToolBar::focus_entry_search()
 Gtk::ToolButton* ToolBar::get_button_up_search()
 {
     if( ! m_button_up_search ){
-        m_button_up_search = Gtk::manage( new ImgToolButton( Gtk::Stock::GO_UP ) );
+        m_button_up_search = Gtk::manage( new ImgToolButton( ICON::SEARCH_PREV ) );
         set_tooltip( *m_button_up_search, CONTROL::get_label_motions( CONTROL::SearchPrev ) );
 
         m_button_up_search->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_up_search ) );
@@ -568,7 +568,7 @@ void ToolBar::slot_clicked_up_search()
 Gtk::ToolButton* ToolBar::get_button_down_search()
 {
     if( ! m_button_down_search ){
-        m_button_down_search = Gtk::manage( new ImgToolButton( Gtk::Stock::GO_DOWN ) );
+        m_button_down_search = Gtk::manage( new ImgToolButton( ICON::SEARCH_NEXT ) );
         set_tooltip( *m_button_down_search, CONTROL::get_label_motions( CONTROL::SearchNext ) );
 
         m_button_down_search->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_down_search ) );
@@ -721,7 +721,7 @@ bool ToolBar::slot_focusout_write_button( GdkEventFocus* event )
 Gtk::ToolItem* ToolBar::get_button_reload()
 {
     if( ! m_button_reload ){
-        m_button_reload = Gtk::manage( new ImgToolButton( Gtk::Stock::REFRESH ) );
+        m_button_reload = Gtk::manage( new ImgToolButton( ICON::RELOAD ) );
         set_tooltip( *m_button_reload, CONTROL::get_label_motions( CONTROL::Reload ) );
 
         m_button_reload->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_reload ) );
@@ -750,7 +750,7 @@ void ToolBar::slot_clicked_reload()
 Gtk::ToolItem* ToolBar::get_button_stop()
 {
     if( ! m_button_stop ){
-        m_button_stop = Gtk::manage( new ImgToolButton( Gtk::Stock::STOP ) );
+        m_button_stop = Gtk::manage( new ImgToolButton( ICON::STOPLOADING ) );
         set_tooltip( *m_button_stop, CONTROL::get_label_motions( CONTROL::StopLoading ) );
 
         m_button_stop->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_stop ) );
@@ -779,7 +779,7 @@ void ToolBar::slot_clicked_stop()
 Gtk::ToolButton* ToolBar::get_button_close()
 {
     if( ! m_button_close ){
-        m_button_close = Gtk::manage( new ImgToolButton( Gtk::Stock::CLOSE ) );
+        m_button_close = Gtk::manage( new ImgToolButton( ICON::QUIT ) );
         set_tooltip( *m_button_close, CONTROL::get_label_motions( CONTROL::Quit ) );
 
         m_button_close->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_close ) );
@@ -820,7 +820,7 @@ void ToolBar::slot_clicked_close()
 Gtk::ToolItem* ToolBar::get_button_delete()
 {
     if( ! m_button_delete ){
-        m_button_delete = Gtk::manage( new ImgToolButton( Gtk::Stock::DELETE ) );
+        m_button_delete = Gtk::manage( new ImgToolButton( ICON::DELETE ) );
         set_tooltip( *m_button_delete, CONTROL::get_label_motions( CONTROL::Delete ) );
 
         m_button_delete->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_delete ) );
@@ -849,7 +849,7 @@ void ToolBar::slot_clicked_delete()
 Gtk::ToolItem* ToolBar::get_button_favorite()
 {
     if( ! m_button_favorite ){
-        m_button_favorite = Gtk::manage( new ImgToolButton( Gtk::Stock::COPY ) );
+        m_button_favorite = Gtk::manage( new ImgToolButton( ICON::APPENDFAVORITE ) );
         set_tooltip( *m_button_favorite, CONTROL::get_label_motions( CONTROL::AppendFavorite ) );
 
         m_button_favorite->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_favorite ) );
@@ -878,7 +878,7 @@ void ToolBar::slot_clicked_favorite()
 Gtk::ToolButton* ToolBar::get_button_undo()
 {
     if( ! m_button_undo ){
-        m_button_undo = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::UNDO ) );
+        m_button_undo = Gtk::manage( new SKELETON::ImgToolButton( ICON::UNDO ) );
         m_button_undo->set_sensitive( false );
         set_tooltip( *m_button_undo, CONTROL::get_label_motions( CONTROL::Undo ) );
     }
@@ -893,7 +893,7 @@ Gtk::ToolButton* ToolBar::get_button_undo()
 Gtk::ToolButton* ToolBar::get_button_redo()
 {
     if( ! m_button_redo ){
-        m_button_redo = Gtk::manage( new SKELETON::ImgToolButton( Gtk::Stock::REDO ) );
+        m_button_redo = Gtk::manage( new SKELETON::ImgToolButton( ICON::REDO ) );
         m_button_redo->set_sensitive( false );
         set_tooltip( *m_button_redo, CONTROL::get_label_motions( CONTROL::Redo ) );
     }
@@ -995,7 +995,7 @@ void ToolBar::slot_selected_forward( const int i )
 Gtk::ToolItem* ToolBar::get_button_lock()
 {
     if( ! m_button_lock ){
-        m_button_lock = Gtk::manage( new SKELETON::ImgToggleToolButton( Gtk::Stock::NO ) );
+        m_button_lock = Gtk::manage( new SKELETON::ImgToggleToolButton( ICON::LOCK ) );
         set_tooltip( *m_button_lock, CONTROL::get_label_motions( CONTROL::Lock ) );
         m_button_lock->set_label( CONTROL::get_label( CONTROL::Lock ) );
         m_button_lock->signal_clicked().connect( sigc::mem_fun( *this, &ToolBar::slot_lock_clicked ) );

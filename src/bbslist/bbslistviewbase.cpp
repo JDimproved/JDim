@@ -413,6 +413,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<separator/>" \
     "<menuitem action='PreferenceArticle'/>" \
     "<menuitem action='PreferenceBoard'/>" \
+    "<menuitem action='PreferenceImage'/>" \
     "</popup>"
 
     // 履歴 + 複数選択
@@ -1293,7 +1294,8 @@ void BBSListViewBase::slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_
 
             case TYPE_IMAGE:
 
-                DBIMG::set_protect( info.url, true );
+                if( m_set_bookmark ) DBIMG::set_protect( info.url, true );
+                m_set_image.insert( info.url );
                 break;
         }
     }
@@ -2249,6 +2251,7 @@ void BBSListViewBase::tree2xml( const std::string& root_name )
     // ルート要素に属性( path, y )の値を設定
     XML::Dom* root = m_document.get_root_element( root_name );
     if( root ){
+        if( ! m_date_modified.empty() ) root->setAttribute( "date_modified", m_date_modified );
         root->setAttribute( "y", y );
         root->setAttribute( "path", path );
     }
@@ -2281,7 +2284,8 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
     XML::Dom* root = m_document.get_root_element( root_name );
     if( root ){
 
-	// ルート要素から属性( path, y )の値を取得
+	// ルート要素から属性( date_modified, path, y )の値を取得
+	m_date_modified = root->getAttribute( "date_modified" );
 	std::string focused_path = root->getAttribute( "path" );
 	int y = atoi( root->getAttribute( "y" ).c_str() );
 
@@ -2330,6 +2334,7 @@ void BBSListViewBase::update_urls()
 
     m_set_board.clear();
     m_set_thread.clear();
+    m_set_image.clear();
     
     SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
     for( ; ! it.end(); ++it ){
@@ -2378,6 +2383,10 @@ void BBSListViewBase::update_urls()
                 }
 
                 m_set_thread.insert( url_new );
+                break;
+
+            case TYPE_IMAGE:
+                m_set_image.insert( url );
                 break;
         }
     }
@@ -2836,7 +2845,9 @@ void BBSListViewBase::append_history()
     // ツリーにアイテムが含まれている場合は削除
     // 履歴はサブディレクトリが無いと仮定してサブディレクトリの探査はしない
     if( ( ( *it_info ).type == TYPE_THREAD && m_set_thread.find_if( ( *it_info ).url ) ) 
-        || ( ( ( *it_info ).type == TYPE_BOARD || ( *it_info ).type == TYPE_VBOARD )  && m_set_board.find( ( *it_info ).url ) != m_set_board.end() ) ){
+        || ( ( ( *it_info ).type == TYPE_BOARD || ( *it_info ).type == TYPE_VBOARD )  && m_set_board.find( ( *it_info ).url ) != m_set_board.end() )
+        || ( ( *it_info ).type == TYPE_IMAGE && m_set_image.find( ( *it_info ).url ) != m_set_image.end() ) 
+        ){
 
         std::vector< Gtk::TreePath > del_path;
 
@@ -3006,6 +3017,7 @@ void BBSListViewBase::remove_allitems()
     m_treestore->clear();
     m_set_board.clear();
     m_set_thread.clear();
+    m_set_image.clear();
 }
 
 

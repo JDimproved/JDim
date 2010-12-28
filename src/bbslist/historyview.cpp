@@ -10,6 +10,7 @@
 
 #include "cache.h"
 #include "type.h"
+#include "global.h"
 
 // ルート要素名
 #define ROOT_NODE_NAME "history"
@@ -82,18 +83,24 @@ Gtk::Menu* HistoryViewBase::get_popupmenu( const std::string& url )
 HistoryThreadView::HistoryThreadView( const std::string& url, const std::string& arg1, const std::string& arg2 )
     : HistoryViewBase( url, CACHE::path_xml_history(), arg1, arg2 )
 {
-    set_label( "スレ履歴" );
+    set_label( ITEM_NAME_HISTVIEW );
 }
 
 
 HistoryCloseView::HistoryCloseView( const std::string& url, const std::string& arg1, const std::string& arg2 )
     : HistoryViewBase( url, CACHE::path_xml_history_close(), arg1, arg2 )
 {
-    set_label( "最近閉じたスレ" );
+    set_label( ITEM_NAME_HIST_CLOSEVIEW );
 }
 
 HistoryBoardView::HistoryBoardView( const std::string& url, const std::string& arg1, const std::string& arg2 )
     : HistoryViewBase( url, CACHE::path_xml_history_board(), arg1, arg2 )
 {
-    set_label( "板履歴" );
+    set_label( ITEM_NAME_HIST_BOARDVIEW );
+}
+
+HistoryCloseImgView::HistoryCloseImgView( const std::string& url, const std::string& arg1, const std::string& arg2 )
+    : HistoryViewBase( url, CACHE::path_xml_history_closeimg(), arg1, arg2 )
+{
+    set_label( ITEM_NAME_HIST_CLOSEIMGVIEW );
 }

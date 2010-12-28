@@ -11,9 +11,13 @@
 
 #include "dbimg/img.h"
 
+#include "jdlib/miscutil.h"
+
 #include "config/globalconf.h"
 
 #include "control/controlid.h"
+
+#include "history/historymanager.h"
 
 #include "command.h"
 #include "httpcode.h"
@@ -69,6 +73,15 @@ ImageViewMain::ImageViewMain( const std::string& url )
     // タイトルセット
     set_title( "[ 画像 ]" );
     IMAGE::get_admin()->set_command( "set_title", get_url(), get_title() );
+}
+
+
+ImageViewMain::~ImageViewMain()
+{
+    // 閉じた画像履歴更新
+    HISTORY::append_history( URL_HISTCLOSEIMGVIEW,
+                             get_url(),
+                             MISC::get_filename( get_url() ), TYPE_IMAGE );
 }
 
 

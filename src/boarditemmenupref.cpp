@@ -15,7 +15,6 @@
 
 using namespace CORE;
 
-#define STOCK_ICON( id ) Gtk::Widget::render_icon( id, Gtk::ICON_SIZE_MENU )
 
 BoardItemMenuPref::BoardItemMenuPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )

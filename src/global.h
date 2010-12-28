@@ -29,6 +29,7 @@ enum{
 #define ITEM_NAME_HISTVIEW "スレ履歴"
 #define ITEM_NAME_HIST_BOARDVIEW "板履歴"
 #define ITEM_NAME_HIST_CLOSEVIEW "最近閉じたスレ"
+#define ITEM_NAME_HIST_CLOSEIMGVIEW "最近閉じた画像"
 #define ITEM_NAME_BOARDVIEW "スレ一覧"
 #define ITEM_NAME_ARTICLEVIEW "スレビュー"
 #define ITEM_NAME_IMAGEVIEW "画像ビュー"
@@ -57,7 +58,7 @@ enum{
 #define ITEM_NAME_DRAWOUT    "抽出"
 #define ITEM_NAME_RELOAD    "再読み込み"
 #define ITEM_NAME_STOPLOADING "読み込み中止"
-#define ITEM_NAME_FAVORITE  "お気に入りに追加"
+#define ITEM_NAME_APPENDFAVORITE  "お気に入りに追加"
 #define ITEM_NAME_FAVORITE_ARTICLE  "スレをお気に入りに追加"
 #define ITEM_NAME_CHECK_UPDATE_ROOT "サイドバー更新チェック"
 #define ITEM_NAME_CHECK_UPDATE_OPEN_ROOT "サイドバー更新チェックして開く"
@@ -70,8 +71,8 @@ enum{
 
 #define ITEM_NAME_DELETE    "削除"
 #define ITEM_NAME_QUIT      "閉じる"
-#define ITEM_NAME_PREVVIEW  "前へ戻る"
-#define ITEM_NAME_NEXTVIEW  "次へ進む"
+#define ITEM_NAME_BACK  "前へ戻る"
+#define ITEM_NAME_FORWARD  "次へ進む"
 #define ITEM_NAME_LOCK      "タブをロックする"
 #define ITEM_NAME_LIVE      "実況開始／停止"
 
@@ -115,6 +116,7 @@ enum
     ITEM_HISTVIEW,
     ITEM_HIST_BOARDVIEW,
     ITEM_HIST_CLOSEVIEW,
+    ITEM_HIST_CLOSEIMGVIEW,
     ITEM_ARTICLEVIEW,
     ITEM_IMAGEVIEW,
     ITEM_URL,
@@ -142,7 +144,7 @@ enum
     ITEM_DRAWOUT,
     ITEM_RELOAD,
     ITEM_STOPLOADING,
-    ITEM_FAVORITE,
+    ITEM_APPENDFAVORITE,
     ITEM_FAVORITE_ARTICLE,
     ITEM_CHECK_UPDATE_ROOT,
     ITEM_CHECK_UPDATE_OPEN_ROOT,
@@ -155,8 +157,8 @@ enum
 
     ITEM_DELETE,
     ITEM_QUIT,
-    ITEM_PREVVIEW,
-    ITEM_NEXTVIEW,
+    ITEM_BACK,
+    ITEM_FORWARD,
     ITEM_LOCK,
     ITEM_LIVE,
 
@@ -267,6 +269,7 @@ enum
 #define URL_HISTTHREADVIEW "jdview://histthread"
 #define URL_HISTBOARDVIEW "jdview://histboard"
 #define URL_HISTCLOSEVIEW "jdview://histclose"
+#define URL_HISTCLOSEIMGVIEW "jdview://histcloseimg"
 
 #define URL_ALLLOG "jdview://alllog"
 

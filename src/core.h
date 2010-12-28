@@ -153,6 +153,7 @@ namespace CORE
         void slot_clear_board();
         void slot_clear_thread();
         void slot_clear_close();
+        void slot_clear_closeimg();
         void slot_clear_search();
         void slot_clear_name();
         void slot_clear_mail();
@@ -265,6 +266,7 @@ namespace CORE
         void slot_setup_boarditem_menu();
         void slot_setup_articleitem_menu();
         //
+        void slot_bbslist_pref();
         void slot_board_pref();
         void slot_article_pref();
         void slot_image_pref();

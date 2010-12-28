@@ -74,8 +74,8 @@ namespace CONTROL
         { "PreBookMark", "前のしおりヘ移動" },
         { "NextBookMark", "次のしおりヘ移動" },
 
-        { "PrevView", ITEM_NAME_PREVVIEW },
-        { "NextView", ITEM_NAME_NEXTVIEW },
+        { "PrevView", ITEM_NAME_BACK },
+        { "NextView", ITEM_NAME_FORWARD },
 
         { "ToggleArticle", "スレ一覧とスレビュー切替" },
 
@@ -108,7 +108,7 @@ namespace CONTROL
         { "OpenURL", "URLを開く..." },        
         { "Copy", ITEM_NAME_COPY },
         { "SelectAll", "全て選択" },
-        { "AppendFavorite", ITEM_NAME_FAVORITE "..." },
+        { "AppendFavorite", ITEM_NAME_APPENDFAVORITE "..." },
         { "Property", "プロパティ..." },
         { "Lock", ITEM_NAME_LOCK },
 

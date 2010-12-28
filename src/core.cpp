@@ -357,14 +357,16 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "Sidebar_Menu", "サイドバー(_S)" ) );
     m_action_group->add( Gtk::ToggleAction::create( "Show_BBS", "板一覧(_B)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_BBSLISTVIEW, false ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Show_FAVORITE", "お気に入り(_F)", std::string(), SESSION::show_sidebar() ),
+    m_action_group->add( Gtk::ToggleAction::create( "Show_FAVORITE", std::string( ITEM_NAME_FAVORITEVIEW ) + "(_F)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTTHREAD", "スレ履歴(_T)", std::string(), SESSION::show_sidebar() ),
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTTHREAD", std::string( ITEM_NAME_HISTVIEW ) + "(_T)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTTHREADVIEW, false ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTBOARD", "板履歴(_O)", std::string(), SESSION::show_sidebar() ),
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTBOARD", std::string( ITEM_NAME_HIST_BOARDVIEW ) + "(_O)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTBOARDVIEW, false ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTCLOSE", "最近閉じたスレ(_C)", std::string(), SESSION::show_sidebar() ),
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTCLOSE", std::string( ITEM_NAME_HIST_CLOSEVIEW ) + "(_C)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEVIEW, false ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTCLOSEIMG", std::string( ITEM_NAME_HIST_CLOSEIMGVIEW ) + "(_I)", std::string(), SESSION::show_sidebar() ),
+                         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEIMGVIEW, false ) );
 
     m_action_group->add( Gtk::Action::create( "View_Menu", "詳細設定(_D)" ) );
 
@@ -551,6 +553,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "Menu_Config", "設定(_C)" ) );    
 
     m_action_group->add( Gtk::Action::create( "Property_Menu", "プロパティ(_P)" ) );
+    m_action_group->add( Gtk::Action::create( "BbslistPref", "板一覧のプロパティ(_L)..." ), sigc::mem_fun( *this, &Core::slot_bbslist_pref ) );
     m_action_group->add( Gtk::Action::create( "BoardPref", "表示中の板のプロパティ(_B)..." ), sigc::mem_fun( *this, &Core::slot_board_pref ) );
     m_action_group->add( Gtk::Action::create( "ArticlePref", "表示中のスレのプロパティ(_T)..." ), sigc::mem_fun( *this, &Core::slot_article_pref ) );
     m_action_group->add( Gtk::Action::create( "ImagePref", "表示中の画像のプロパティ(_I)..." ), sigc::mem_fun( *this, &Core::slot_image_pref ) );
@@ -744,6 +747,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menuitem action='Show_HISTTHREAD'/>"
         "<menuitem action='Show_HISTBOARD'/>"
         "<menuitem action='Show_HISTCLOSE'/>"
+        "<menuitem action='Show_HISTCLOSEIMG'/>"
         "</menu>"
         "<separator/>"
 
@@ -906,6 +910,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menu action='Menu_Config'>"
 
         "<menu action='Property_Menu'>"
+        "<menuitem action='BbslistPref'/>"
         "<menuitem action='BoardPref'/>"
         "<menuitem action='ArticlePref'/>"
         "<menuitem action='ImagePref'/>"
@@ -1025,6 +1030,9 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // 最近閉じたスレ履歴
     submenu->append( *HISTORY::get_history_manager()->get_menu_close() );
+
+    // 最近閉じた画像履歴
+    submenu->append( *HISTORY::get_history_manager()->get_menu_closeimg() );
 
     submenu->show_all_children();
 
@@ -1240,6 +1248,8 @@ void Core::create_toolbar()
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTBOARDVIEW, false ) );
     m_toolbar->m_button_hist_close.signal_clicked().connect(
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEVIEW, false ) );
+    m_toolbar->m_button_hist_closeimg.signal_clicked().connect(
+        sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEIMGVIEW, false ) );
 
     m_toolbar->m_button_board.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_board ), false ) );
     m_toolbar->m_button_thread.signal_clicked().connect( sigc::bind< bool >( sigc::mem_fun(*this, &Core::switch_article ), false ) );
@@ -1320,6 +1330,7 @@ void Core::slot_activate_menubar()
     toggle_sidebar_action( m_action_group, "Show_HISTTHREAD", URL_HISTTHREADVIEW );
     toggle_sidebar_action( m_action_group, "Show_HISTBOARD", URL_HISTBOARDVIEW );
     toggle_sidebar_action( m_action_group, "Show_HISTCLOSE", URL_HISTCLOSEVIEW );
+    toggle_sidebar_action( m_action_group, "Show_HISTCLOSEIMG", URL_HISTCLOSEIMGVIEW );
 
     // メニューバー
     act = m_action_group->get_action( "ShowMenuBar" );
@@ -1609,6 +1620,11 @@ void Core::slot_clear_thread()
 void Core::slot_clear_close()
 {
     HISTORY::remove_allhistories( URL_HISTCLOSEVIEW );
+}
+
+void Core::slot_clear_closeimg()
+{
+    HISTORY::remove_allhistories( URL_HISTCLOSEIMGVIEW );
 }
 
 void Core::slot_clear_search()
@@ -2556,10 +2572,11 @@ void Core::set_command( const COMMAND_ARGS& command )
     // サイドバーのアイコン表示を更新 ( スレ )
     else if( command.command  == "toggle_sidebar_articleicon" ){
 
-        BBSLIST::get_admin()->set_command( "toggle_articleicon", URL_FAVORITEVIEW, command.url );
-        BBSLIST::get_admin()->set_command( "toggle_articleicon", URL_HISTTHREADVIEW, command.url );
-        BBSLIST::get_admin()->set_command( "toggle_articleicon", URL_HISTCLOSEVIEW, command.url );
+        BBSLIST::get_admin()->set_command_immediately( "toggle_articleicon", URL_FAVORITEVIEW, command.url );
+        BBSLIST::get_admin()->set_command_immediately( "toggle_articleicon", URL_HISTTHREADVIEW, command.url );
+        BBSLIST::get_admin()->set_command_immediately( "toggle_articleicon", URL_HISTCLOSEVIEW, command.url );
 
+        // 履歴メニューを開いていたらメニューのアイコンも更新
         HISTORY::get_history_manager()->set_menulabel( URL_HISTTHREADVIEW );
         HISTORY::get_history_manager()->set_menulabel( URL_HISTCLOSEVIEW );
 
@@ -2569,9 +2586,10 @@ void Core::set_command( const COMMAND_ARGS& command )
     // サイドバーのアイコン表示を更新 ( 板 )
     else if( command.command  == "toggle_sidebar_boardicon" ){
 
-        BBSLIST::get_admin()->set_command( "toggle_boardicon", URL_FAVORITEVIEW, command.url );
-        BBSLIST::get_admin()->set_command( "toggle_boardicon", URL_HISTBOARDVIEW, command.url );
+        BBSLIST::get_admin()->set_command_immediately( "toggle_boardicon", URL_FAVORITEVIEW, command.url );
+        BBSLIST::get_admin()->set_command_immediately( "toggle_boardicon", URL_HISTBOARDVIEW, command.url );
 
+        // 履歴メニューを開いていたらメニューのアイコンも更新
         HISTORY::get_history_manager()->set_menulabel( URL_HISTBOARDVIEW );
         return;
     }
@@ -3614,7 +3632,7 @@ void Core::empty_page( const std::string& url )
 void Core::set_toggle_view_button()
 {
     m_enable_menuslot = false;
-    bool sidebar_state[ 5 ] = { false, false, false, false, false };
+    bool sidebar_state[ 6 ] = { false, false, false, false, false, false };
 
     switch( SESSION::focused_admin() ){
 
@@ -3626,6 +3644,7 @@ void Core::set_toggle_view_button()
             m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
             m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
             m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
+            m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
 
             m_toolbar->m_button_board.set_active( false );
             m_toolbar->m_button_thread.set_active( false );
@@ -3641,6 +3660,7 @@ void Core::set_toggle_view_button()
                 m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
                 m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
                 m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
+                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
 
                 m_toolbar->m_button_board.set_active( true );
                 m_toolbar->m_button_thread.set_active( false );
@@ -3659,6 +3679,7 @@ void Core::set_toggle_view_button()
                 m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
                 m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
                 m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
+                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
 
                 m_toolbar->m_button_board.set_active( false );
                 m_toolbar->m_button_thread.set_active( true );
@@ -3677,6 +3698,7 @@ void Core::set_toggle_view_button()
                 m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
                 m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
                 m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
+                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
 
                 m_toolbar->m_button_board.set_active( false );
                 m_toolbar->m_button_thread.set_active( false );
@@ -3693,6 +3715,7 @@ void Core::set_toggle_view_button()
                 m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
                 m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
                 m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
+                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
 
                 m_toolbar->m_button_board.set_active( false );
                 if( SESSION::get_embedded_mes() ) m_toolbar->m_button_thread.set_active( true );

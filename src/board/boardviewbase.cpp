@@ -221,7 +221,7 @@ const int BoardViewBase::get_icon( const std::string& iconname )
     if( iconname == "default" ) id = ICON::BOARD;
     if( iconname == "loading" ) id = ICON::LOADING;
     if( iconname == "loading_stop" ) id = ICON::LOADING_STOP;
-    if( iconname == "update" ) id = ICON::BOARD_UPDATE;  // 更新チェックしで更新があった場合
+    if( iconname == "update" ) id = ICON::BOARD_UPDATE;  // 更新チェックして更新があった場合
     if( iconname == "updated" ) id = ICON::BOARD_UPDATED;
 
 #ifdef _DEBUG
@@ -1854,7 +1854,7 @@ void BoardViewBase::update_row_common( const Gtk::TreeModel::Row& row )
     // dat落ち
     else if( art->get_status() & STATUS_OLD ){
         mark_val = COL_MARKVAL_OLD;
-        icon = ICON::DOWN;
+        icon = ICON::OLD;
     }
 
     // キャッシュはあるが規定のレス数を越えていて全てのレスが既読

@@ -51,6 +51,13 @@ namespace BBSLIST
 
         HistoryBoardView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
     };
+
+    class HistoryCloseImgView : public HistoryViewBase
+    {
+      public:
+
+        HistoryCloseImgView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+    };
 }
 
 #endif

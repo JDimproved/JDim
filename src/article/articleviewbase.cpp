@@ -481,7 +481,7 @@ const std::string ArticleViewBase::create_context_menu()
     list_menu.push_back( ITEM_COPY_TITLE_URL_THREAD );
     list_menu.push_back( ITEM_SAVE_DAT );
     list_menu.push_back( ITEM_COPY_THREAD_INFO );
-    list_menu.push_back( ITEM_FAVORITE );
+    list_menu.push_back( ITEM_APPENDFAVORITE );
     list_menu.push_back( ITEM_ABONE_SELECTION );
     list_menu.push_back( ITEM_SELECTIMG );
     list_menu.push_back( ITEM_SELECTDELIMG );
@@ -636,7 +636,7 @@ const char* ArticleViewBase::get_menu_item( const int item )
             return "<menuitem action='CopyInfo'/>";
 
             // お気に入り
-        case ITEM_FAVORITE:
+        case ITEM_APPENDFAVORITE:
             return "<menuitem action='AppendFavorite'/>";
 
             // プロパティ

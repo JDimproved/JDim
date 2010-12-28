@@ -19,10 +19,9 @@ ToolMenuButton::ToolMenuButton( const std::string& label, const bool expand,
 
 ToolMenuButton::ToolMenuButton( const std::string& label, const bool expand,
                                 const bool show_arrow ,
-                                const Gtk::StockID& stock_id,
-                                const Gtk::BuiltinIconSize icon_size )
+                                const int id )
 {
-    SKELETON::MenuButton *button = Gtk::manage( new SKELETON::MenuButton( show_arrow, stock_id, icon_size ) );
+    SKELETON::MenuButton *button = Gtk::manage( new SKELETON::MenuButton( show_arrow, id ) );
     setup( button, label, expand );
 }
 

@@ -25,6 +25,7 @@ namespace CORE
         VIEW_HISTTHREAD,
         VIEW_HISTCLOSE,
         VIEW_HISTBOARD,
+        VIEW_HISTCLOSEIMG,
 
         VIEW_BOARDVIEW,
         VIEW_BOARDNEXT,

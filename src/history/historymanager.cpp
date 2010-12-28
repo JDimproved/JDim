@@ -65,6 +65,7 @@ History_Manager::History_Manager()
     : m_menu_thread( NULL ),
       m_menu_board( NULL ),
       m_menu_close( NULL ),
+      m_menu_closeimg( NULL ),
       m_last_viewhistory( NULL )
 {
 #ifdef _DEBUG
@@ -84,6 +85,7 @@ History_Manager::~History_Manager()
     if( m_menu_thread ) delete m_menu_thread;
     if( m_menu_board ) delete m_menu_board;
     if( m_menu_close ) delete m_menu_close;
+    if( m_menu_closeimg ) delete m_menu_closeimg;
 
     if( m_view_histories.size() ){
         std::list< ViewHistory* >::iterator it = m_view_histories.begin();
@@ -95,22 +97,29 @@ History_Manager::~History_Manager()
 // 履歴メニュー取得
 Gtk::MenuItem* History_Manager::get_menu_thread()
 {
-    if( ! m_menu_thread ) m_menu_thread = new HistoryMenu( URL_HISTTHREADVIEW, "スレ履歴(_T)" );
+    if( ! m_menu_thread ) m_menu_thread = new HistoryMenu( URL_HISTTHREADVIEW, std::string( ITEM_NAME_HISTVIEW ) + "(_T)" );
     return m_menu_thread;
 }
 
 
 Gtk::MenuItem* History_Manager::get_menu_board()
 {
-    if( ! m_menu_board ) m_menu_board = new HistoryMenu( URL_HISTBOARDVIEW, "板履歴(_B)" );
+    if( ! m_menu_board ) m_menu_board = new HistoryMenu( URL_HISTBOARDVIEW, std::string( ITEM_NAME_HIST_BOARDVIEW ) + "(_B)" );
     return m_menu_board;
 }
 
 
 Gtk::MenuItem* History_Manager::get_menu_close()
 {
-    if( ! m_menu_close ) m_menu_close = new HistoryMenu( URL_HISTCLOSEVIEW, "最近閉じたスレ(_M)" );
+    if( ! m_menu_close ) m_menu_close = new HistoryMenu( URL_HISTCLOSEVIEW, std::string( ITEM_NAME_HIST_CLOSEVIEW ) + "(_M)" );
     return m_menu_close;
+}
+
+
+Gtk::MenuItem* History_Manager::get_menu_closeimg()
+{
+    if( ! m_menu_closeimg ) m_menu_closeimg = new HistoryMenu( URL_HISTCLOSEIMGVIEW, std::string( ITEM_NAME_HIST_CLOSEIMGVIEW ) + "(_I)" );
+    return m_menu_closeimg;
 }
 
 
@@ -138,6 +147,12 @@ void History_Manager::append_history( const std::string& url_history, const std:
             info.name = name;
         }
     }
+    if( url_history == URL_HISTCLOSEIMGVIEW ){
+
+        info.url = url;
+        info.name = name;
+    }
+
 
     CORE::DATA_INFO_LIST list_info;
     list_info.push_back( info );
@@ -161,6 +176,7 @@ void History_Manager::set_menulabel( const std::string& url_history )
     if( url_history == URL_HISTTHREADVIEW && m_menu_thread ) m_menu_thread->set_menulabel();
     if( url_history == URL_HISTBOARDVIEW && m_menu_board ) m_menu_board->set_menulabel();
     if( url_history == URL_HISTCLOSEVIEW && m_menu_close ) m_menu_close->set_menulabel();
+    if( url_history == URL_HISTCLOSEIMGVIEW && m_menu_closeimg ) m_menu_closeimg->set_menulabel();
 }
 
 

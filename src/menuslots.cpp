@@ -550,6 +550,15 @@ void Core::slot_setup_articleitem_menu()
 
 
 //
+// 板一覧のプロパティ
+//
+void Core::slot_bbslist_pref()
+{
+    BBSLIST::get_admin()->set_command( "show_preferences", URL_BBSLISTVIEW );
+}
+
+
+//
 // スレ一覧のプロパティ
 //
 void Core::slot_board_pref()

@@ -175,6 +175,7 @@ const int SESSION::parse_item( const std::string& item_name )
     else if( item_name == ITEM_NAME_HISTVIEW ) item = ITEM_HISTVIEW;
     else if( item_name == ITEM_NAME_HIST_BOARDVIEW ) item = ITEM_HIST_BOARDVIEW;
     else if( item_name == ITEM_NAME_HIST_CLOSEVIEW ) item = ITEM_HIST_CLOSEVIEW;
+    else if( item_name == ITEM_NAME_HIST_CLOSEIMGVIEW ) item = ITEM_HIST_CLOSEIMGVIEW;
     else if( item_name == ITEM_NAME_ARTICLEVIEW ) item = ITEM_ARTICLEVIEW;
     else if( item_name == ITEM_NAME_IMAGEVIEW ) item = ITEM_IMAGEVIEW;
     else if( item_name == ITEM_NAME_URL ) item = ITEM_URL;
@@ -202,7 +203,7 @@ const int SESSION::parse_item( const std::string& item_name )
     else if( item_name == ITEM_NAME_DRAWOUT ) item = ITEM_DRAWOUT;
     else if( item_name == ITEM_NAME_RELOAD ) item = ITEM_RELOAD;
     else if( item_name == ITEM_NAME_STOPLOADING ) item = ITEM_STOPLOADING;
-    else if( item_name == ITEM_NAME_FAVORITE ) item = ITEM_FAVORITE;
+    else if( item_name == ITEM_NAME_APPENDFAVORITE ) item = ITEM_APPENDFAVORITE;
     else if( item_name == ITEM_NAME_FAVORITE_ARTICLE ) item = ITEM_FAVORITE_ARTICLE;
     else if( item_name == ITEM_NAME_CHECK_UPDATE_ROOT ) item = ITEM_CHECK_UPDATE_ROOT;
     else if( item_name == ITEM_NAME_CHECK_UPDATE_OPEN_ROOT ) item = ITEM_CHECK_UPDATE_OPEN_ROOT;
@@ -215,8 +216,8 @@ const int SESSION::parse_item( const std::string& item_name )
 
     else if( item_name == ITEM_NAME_DELETE ) item = ITEM_DELETE;
     else if( item_name == ITEM_NAME_QUIT ) item = ITEM_QUIT;
-    else if( item_name == ITEM_NAME_PREVVIEW ) item = ITEM_PREVVIEW;
-    else if( item_name == ITEM_NAME_NEXTVIEW ) item = ITEM_NEXTVIEW;
+    else if( item_name == ITEM_NAME_BACK ) item = ITEM_BACK;
+    else if( item_name == ITEM_NAME_FORWARD ) item = ITEM_FORWARD;
     else if( item_name == ITEM_NAME_LOCK ) item = ITEM_LOCK;
     else if( item_name == ITEM_NAME_LIVE ) item = ITEM_LIVE;
 
@@ -902,7 +903,7 @@ const std::string SESSION::get_items_article_toolbar_default_str()
     ITEM_NAME_SEARCH + std::string ( " " ) +
     ITEM_NAME_RELOAD + std::string ( " " ) +
     ITEM_NAME_STOPLOADING + std::string ( " " ) +
-    ITEM_NAME_FAVORITE + std::string ( " " ) +
+    ITEM_NAME_APPENDFAVORITE + std::string ( " " ) +
     ITEM_NAME_DELETE + std::string ( " " ) +
     ITEM_NAME_QUIT;
 }
@@ -924,7 +925,7 @@ const std::string SESSION::get_items_board_toolbar_default_str()
     ITEM_NAME_SEARCH_PREV + std::string ( " " ) +
     ITEM_NAME_RELOAD + std::string ( " " ) +
     ITEM_NAME_STOPLOADING + std::string ( " " ) +
-    ITEM_NAME_FAVORITE + std::string ( " " ) +
+    ITEM_NAME_APPENDFAVORITE + std::string ( " " ) +
     ITEM_NAME_DELETE + std::string ( " " ) +
     ITEM_NAME_QUIT;
 }

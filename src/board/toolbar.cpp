@@ -75,7 +75,7 @@ void BoardToolBar::pack_toolbar()
                 get_buttonbar().append( *get_button_stop() );
                 break;
 
-            case ITEM_FAVORITE:
+            case ITEM_APPENDFAVORITE:
                 get_buttonbar().append( *get_button_favorite() );
                 set_tooltip( *get_button_favorite(), CONTROL::get_label_motions( CONTROL::AppendFavorite )
                              + "\n\nスレ一覧のタブか選択したスレをお気に入りに直接Ｄ＆Ｄしても登録可能" );
@@ -89,11 +89,11 @@ void BoardToolBar::pack_toolbar()
                 get_buttonbar().append( *get_button_close() );
                 break;
 
-            case ITEM_PREVVIEW:
+            case ITEM_BACK:
                 get_buttonbar().append( *get_button_back() );
                 break;
 
-            case ITEM_NEXTVIEW:
+            case ITEM_FORWARD:
                 get_buttonbar().append( *get_button_forward() );
                 break;
 

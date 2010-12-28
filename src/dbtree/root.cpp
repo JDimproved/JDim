@@ -68,7 +68,7 @@ Root::Root()
     , m_get_board( NULL )
     , m_enable_save_movetable( true )
 {
-    m_document.clear();
+    m_xml_document.clear();
     clear();
     clear_load_data();
     load_movetable();
@@ -268,6 +268,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
 // ローカルキャッシュから板一覧XML読み込み
 //
 // (注) 板一覧 XML の保存は BBSLIST::BBSListViewMain が行う
+//
 void Root::load_cache()
 {
     clear();
@@ -283,10 +284,11 @@ void Root::load_cache()
     std::cout << "Root::load_cache xml  = " << file_in << std::endl;
 #endif    
 
-    if( CACHE::load_rawdata( file_in, m_xml_bbsmenu ) )
+    std::string xml_bbsmenu;
+    if( CACHE::load_rawdata( file_in, xml_bbsmenu ) )
     {
         // Domノードを初期化
-        m_document.init( m_xml_bbsmenu );
+        m_xml_document.init( xml_bbsmenu );
 
         // Domノードの内容からDBに板を登録
         analyze_board_xml();
@@ -304,12 +306,13 @@ void Root::download_bbsmenu()
     if( is_loading() ) return;
 
     clear();
-    m_document.clear();
+    m_xml_document.clear();
     m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
 
     JDLIB::LOADERDATA data;
     data.init_for_data();
     data.url = CONFIG::get_url_bbsmenu();
+    data.modified = get_date_modified();
 
     start_load( data );
 }
@@ -332,6 +335,23 @@ void Root::receive_data( const char* data, size_t size )
 // virtual
 void Root::receive_finish()
 {
+#ifdef _DEBUG
+    std::cout << "Root::receive_finish code = " << get_code() << std::endl;
+#endif
+
+    if( get_code() == HTTP_NOT_MODIFIED ){
+
+        std::string msg = get_str_code() + "\n\nサーバー上の板一覧は更新されていません。強制的に再読み込みをしますか？";
+        SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+        mdiag.set_default_response( Gtk::RESPONSE_YES );
+        if( mdiag.run() == Gtk::RESPONSE_YES ){
+            set_date_modified( std::string() );
+            download_bbsmenu();
+        }
+
+        return;
+    }
+
     if( get_code() != HTTP_OK ){
 
         std::string msg = get_str_code() + "\n\n板一覧の読み込みに失敗したため板一覧は更新されませんでした。\n\nプロキシ設定や板一覧を取得するサーバのアドレスを確認して、ファイルメニューから板一覧の再読み込みをして下さい。\n板一覧取得サーバのアドレスはabout:configで確認出来ます。";
@@ -350,7 +370,7 @@ void Root::receive_finish()
     const char* rawdata_utf8 = libiconv->convert( m_rawdata , m_lng_rawdata,  byte_out );
     bbsmenu2xml( rawdata_utf8 );
 
-    if( m_document.hasChildNodes() )
+    if( m_xml_document.hasChildNodes() )
     {
         // データベース更新
         analyze_board_xml();
@@ -387,8 +407,8 @@ void Root::bbsmenu2xml( const std::string& menu )
     XML::Document html( menu, true );
 
     // XML用のノードツリーにルートノードを追加
-    m_document.clear();
-    XML::Dom* boardlist = m_document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME ) );
+    m_xml_document.clear();
+    XML::Dom* root = m_xml_document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME ) );
 
     // カテゴリの要素 <subdir></subdir>
     XML::Dom* subdir = 0;
@@ -418,7 +438,7 @@ void Root::bbsmenu2xml( const std::string& menu )
             else enabled = true;
 
             // <subdir>
-            subdir = boardlist->appendChild( XML::NODE_TYPE_ELEMENT, "subdir" );
+            subdir = root->appendChild( XML::NODE_TYPE_ELEMENT, "subdir" );
             subdir->setAttribute( "name", category );
         }
         // 要素bに続く要素a( 板URL )
@@ -445,8 +465,9 @@ void Root::bbsmenu2xml( const std::string& menu )
         ++it;
     }
 
+    root->setAttribute( "date_modified", get_date_modified() );
 #ifdef _DEBUG
-    std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
+    std::cout << "modified = " << get_date_modified() << std::endl;
 #endif
 }
 
@@ -457,16 +478,11 @@ void Root::bbsmenu2xml( const std::string& menu )
 //
 void Root::analyze_board_xml()
 {
-#ifdef _DEBUG
-    std::cout << "Root::analyze_board_xml\n";
-    std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
-#endif
-
     m_move_info = std::string();
     m_analyzing_board_xml = true;
     m_analyzed_path_board.clear();
 
-    XML::DomList boards = m_document.getElementsByTagName( "board" );
+    XML::DomList boards = m_xml_document.getElementsByTagName( "board" );
 
     std::list< XML::Dom* >::iterator it = boards.begin();
     while( it != boards.end() )
@@ -497,8 +513,16 @@ void Root::analyze_board_xml()
         }
     }
 
+    XML::Dom* root = m_xml_document.get_root_element( std::string( ROOT_NODE_NAME ) );
+    if( root ) set_date_modified( root->getAttribute( "date_modified" ) );
+
     m_analyzing_board_xml = false;
     m_analyzed_path_board.clear();
+
+#ifdef _DEBUG
+    std::cout << "Root::analyze_board_xml\n";
+    std::cout << "date_modified = " << get_date_modified() << std::endl;
+#endif
 }
 
 

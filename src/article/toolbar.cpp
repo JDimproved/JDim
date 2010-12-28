@@ -12,9 +12,7 @@
 #include "control/controlutil.h"
 #include "control/controlid.h"
 
-#if GTKMMVER <= 240
 #include "icons/iconmanager.h"
-#endif
 
 #include "command.h"
 #include "session.h"
@@ -28,9 +26,9 @@ ArticleToolBar::ArticleToolBar() :
     SKELETON::ToolBar( ARTICLE::get_admin() ),
     m_enable_slot( true ),
 
-    m_button_drawout_and( Gtk::Stock::CUT ),
-    m_button_drawout_or( Gtk::Stock::ADD ),
-    m_button_clear_hl( Gtk::Stock::CLEAR ),
+    m_button_drawout_and( ICON::SEARCH_AND ),
+    m_button_drawout_or( ICON::SEARCH_OR ),
+    m_button_clear_hl( ICON::CLEAR_SEARCH ),
 
     m_button_live_play_stop( NULL )
 {
@@ -123,7 +121,7 @@ void ArticleToolBar::pack_buttons()
                 get_buttonbar().append( *get_button_stop() );
                 break;
 
-            case ITEM_FAVORITE:
+            case ITEM_APPENDFAVORITE:
                 get_buttonbar().append( *get_button_favorite() );
                 set_tooltip( *get_button_favorite(), CONTROL::get_label_motions( CONTROL::AppendFavorite )
                              + "\n\nスレのタブをお気に入りに直接Ｄ＆Ｄしても登録可能" );
@@ -139,11 +137,11 @@ void ArticleToolBar::pack_buttons()
                 get_buttonbar().append( *get_button_close() );
                 break;
 
-            case ITEM_PREVVIEW:
+            case ITEM_BACK:
                 get_buttonbar().append( *get_button_back() );
                 break;
 
-            case ITEM_NEXTVIEW:
+            case ITEM_FORWARD:
                 get_buttonbar().append( *get_button_forward() );
                 break;
 
@@ -153,11 +151,7 @@ void ArticleToolBar::pack_buttons()
 
             case ITEM_LIVE:
                 if( ! m_button_live_play_stop ){
-#if GTKMMVER <= 240
-                    m_button_live_play_stop = Gtk::manage( new SKELETON::ImgToggleToolButton( ICON::PLAY ) );
-#else
-                    m_button_live_play_stop = Gtk::manage( new SKELETON::ImgToggleToolButton( Gtk::Stock::MEDIA_PLAY ) );
-#endif
+                    m_button_live_play_stop = Gtk::manage( new SKELETON::ImgToggleToolButton( ICON::LIVE ) );
                     set_tooltip( *m_button_live_play_stop, CONTROL::get_label_motions( CONTROL::LiveStartStop ) );
                     m_button_live_play_stop->set_label( CONTROL::get_label( CONTROL::LiveStartStop ) );
                     m_button_live_play_stop->signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_live_play_stop ) );

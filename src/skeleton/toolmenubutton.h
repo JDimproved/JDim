@@ -29,8 +29,7 @@ namespace SKELETON
 
         ToolMenuButton( const std::string& label, const bool expand,
                         const bool show_arrow ,
-                        const Gtk::StockID& stock_id,
-                        const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
+                        const int id );
 
         SKELETON::MenuButton* get_button(){ return m_button; }
 

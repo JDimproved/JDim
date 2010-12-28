@@ -17,9 +17,6 @@ namespace SKELETON
       public:
 
         ImgToolButton( const int id );
-
-        ImgToolButton( const Gtk::StockID& stock_id,
-                   const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
     };
 }
 

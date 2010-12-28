@@ -165,22 +165,12 @@ std::string CACHE::path_xml_history()
 {
     return CACHE::path_root() +  "hist.xml";
 }
-// 1.9.5-beta070611以前
-std::string CACHE::path_xml_history_old()
-{
-    return CACHE::path_root() +  "history.xml";
-}
 
 
 // 板履歴
 std::string CACHE::path_xml_history_board()
 {
     return CACHE::path_root() +  "hist_board.xml";
-}
-// 1.9.5-beta070611以前
-std::string CACHE::path_xml_history_board_old()
-{
-    return CACHE::path_root() +  "history_board.xml";
 }
 
 
@@ -189,10 +179,11 @@ std::string CACHE::path_xml_history_close()
 {
     return CACHE::path_root() +  "hist_close.xml";
 }
-// 1.9.5-beta070611以前
-std::string CACHE::path_xml_history_close_old()
+
+// 最近閉じた画像の履歴
+std::string CACHE::path_xml_history_closeimg()
 {
-    return CACHE::path_root() +  "history_close.xml";
+    return CACHE::path_root() +  "hist_closeimg.xml";
 }
 
 
@@ -496,11 +487,28 @@ std::string CACHE::path_aahistory()
 
 
 //
+// テーマのルートパス
+//
+const std::string CACHE::path_theme_root()
+{
+    return CACHE::path_root() + "theme/";
+}
+
+//
+// アイコンテーマのルートパス
+//
+const std::string CACHE::path_theme_icon_root()
+{
+    return CACHE::path_theme_root() + "icons/";
+}
+
+
+//
 // css
 //
 std::string CACHE::path_css()
 {
-    return CACHE::path_root() +  "jd.css";
+    return CACHE::path_theme_root() +  "jd.css";
 }
 
 
@@ -508,6 +516,24 @@ std::string CACHE::path_css()
 // res.html
 //
 std::string CACHE::path_reshtml()
+{
+    return CACHE::path_theme_root() +  "Res.html";
+}
+
+
+//
+// css (旧バージョンとの互換性のため)
+//
+std::string CACHE::path_css_old()
+{
+    return CACHE::path_root() +  "jd.css";
+}
+
+
+//
+// res.html (旧バージョンとの互換性のため)
+//
+std::string CACHE::path_reshtml_old()
 {
     return CACHE::path_root() +  "Res.html";
 }

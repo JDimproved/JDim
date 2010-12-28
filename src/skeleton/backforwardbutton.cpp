@@ -8,10 +8,12 @@
 #include "history/historymanager.h"
 #include "history/viewhistoryitem.h"
 
+#include "icons/iconmanager.h"
+
 using namespace SKELETON;
 
 BackForwardButton::BackForwardButton( const std::string& url, const bool back )
-    : SKELETON::MenuButton( true, ( back ? Gtk::Stock::GO_BACK : Gtk::Stock::GO_FORWARD ) ),
+    : SKELETON::MenuButton( true, ( back ? ICON::BACK : ICON::FORWARD ) ),
       m_url( url ),
       m_back( back )
 {}

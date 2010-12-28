@@ -17,10 +17,6 @@ namespace SKELETON
       public:
 
         ImgToggleToolButton( const int id );
-
-        ImgToggleToolButton( const Gtk::StockID& stock_id,
-                         const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
-
     };
 }
 

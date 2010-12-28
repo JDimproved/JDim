@@ -11,7 +11,10 @@
 
 #include "jdlib/miscutil.h"
 
+#include "skeleton/msgdiag.h"
+
 #include "dbtree/interface.h"
+#include "dbimg/imginterface.h"
 
 #include "config/globalconf.h"
 
@@ -141,6 +144,18 @@ void HistorySubMenu::open_history( const int i )
             case TYPE_VBOARD:
 
                 CORE::core_set_command( "open_sidebar_board", info_list[ i ].url, tab, mode, "", "set_history" );
+                break;
+
+            case TYPE_IMAGE:
+
+                if( DBIMG::get_abone( info_list[ i ].url )){
+                    SKELETON::MsgDiag mdiag( NULL, "あぼ〜んされています" );
+                    mdiag.run();
+                }
+                else{
+                    CORE::core_set_command( "open_image", info_list[ i ].url );
+                    CORE::core_set_command( "switch_image" );
+                }
                 break;
         }
     }
@@ -286,9 +301,15 @@ void HistorySubMenu::slot_show_property()
                 pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, info_list[ i ].url );
                 break;
 
-            default:
+            case TYPE_BOARD:
+            case TYPE_VBOARD:
 
                 pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, info_list[ i ].url );
+                break;
+
+            case TYPE_IMAGE:
+
+                pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_IMAGE, info_list[ i ].url );
                 break;
         }
 

@@ -39,7 +39,7 @@ namespace BBSLIST
 
       private:
 
-        void slot_toggle( int i );
+        void slot_toggle( const int i );
         bool slot_scroll_event( GdkEventScroll* event );
         void slot_check_update_root();
         void slot_check_update_open_root();

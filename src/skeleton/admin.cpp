@@ -707,6 +707,11 @@ void Admin::exec_command()
     }
 
     // プロパティ表示
+    else if( command.command == "show_preferences" ){
+        SKELETON::View* view = get_view( command.url );
+        if( view ) view->show_preference();
+    }
+
     else if( command.command == "show_current_preferences" ){
         SKELETON::View* view = get_current_view();
         if( view ) view->show_preference();

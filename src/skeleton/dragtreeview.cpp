@@ -210,7 +210,7 @@ const bool DragTreeView::is_mouse_on_popup()
 //
 void DragTreeView::show_popup( const std::string& url, View* view )
 {
-    const int mrg_x = 0;
+    const int mrg_x = 10;
     const int mrg_y = 10;
 
 #ifdef _DEBUG

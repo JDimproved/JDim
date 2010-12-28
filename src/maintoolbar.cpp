@@ -20,19 +20,20 @@ using namespace CORE;
 
 MainToolBar::MainToolBar() :
     SKELETON::ToolBar( NULL ),
-      m_button_go( Gtk::Stock::JUMP_TO ),
+    m_button_go( ICON::GO ),
 
-      m_button_bbslist( ICON::DIR ),
-      m_button_favorite( ICON::FAVORITE ),
-      m_button_hist( ICON::HIST ),
-      m_button_hist_board( ICON::HIST_BOARD ),
-      m_button_hist_close( ICON::HIST_CLOSE ),
+      m_button_bbslist( ICON::BBSLISTVIEW ),
+      m_button_favorite( ICON::FAVORITEVIEW ),
+      m_button_hist( ICON::HISTVIEW ),
+      m_button_hist_board( ICON::HIST_BOARDVIEW ),
+      m_button_hist_close( ICON::HIST_CLOSEVIEW ),
+      m_button_hist_closeimg( ICON::HIST_CLOSEIMGVIEW ),
 
-      m_button_board( ICON::BOARD ),
+      m_button_board( ICON::BOARDVIEW ),
 
-      m_button_thread( ICON::THREAD ),
+      m_button_thread( ICON::ARTICLEVIEW ),
 
-      m_button_image( ICON::IMAGE )
+      m_button_image( ICON::IMAGEVIEW )
 {
     m_entry_url.set_size_request( 0 );
     m_tool_url.add( m_entry_url );
@@ -47,6 +48,7 @@ MainToolBar::MainToolBar() :
     set_tooltip( m_button_hist, std::string( ITEM_NAME_HISTVIEW ) );
     set_tooltip( m_button_hist_board, std::string( ITEM_NAME_HIST_BOARDVIEW ) );
     set_tooltip( m_button_hist_close, std::string( ITEM_NAME_HIST_CLOSEVIEW ) );
+    set_tooltip( m_button_hist_closeimg, std::string( ITEM_NAME_HIST_CLOSEIMGVIEW ) );
 
     set_tooltip( m_button_board, std::string( ITEM_NAME_BOARDVIEW )
                  + "\n\n" + CONTROL::get_label_motions( CONTROL::ToggleArticle ) );
@@ -89,6 +91,10 @@ void MainToolBar::pack_buttons()
 
             case ITEM_HIST_CLOSEVIEW:
                 get_buttonbar().append( m_button_hist_close );
+                break;
+
+            case ITEM_HIST_CLOSEIMGVIEW:
+                get_buttonbar().append( m_button_hist_closeimg );
                 break;
 
             case ITEM_BOARDVIEW:

@@ -30,6 +30,7 @@ namespace IMAGE
 
       public:
         ImageViewMain( const std::string& url );
+        virtual ~ImageViewMain();
 
         virtual void clock_in();
         virtual void show_view();

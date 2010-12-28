@@ -55,8 +55,7 @@ namespace DBTREE
         // 鯖移転テーブル
         std::list< MOVETABLE > m_movetable;
 
-        std::string m_xml_bbsmenu;
-        XML::Document m_document;
+        XML::Document m_xml_document;
         char* m_rawdata;
         size_t m_lng_rawdata;
         std::list< DBTREE::ETCBOARDINFO > m_etcboards; // 外部板情報
@@ -82,8 +81,7 @@ namespace DBTREE
         ~Root();
 
         // 板一覧のxml
-        const std::string& xml_bbsmenu() const { return m_xml_bbsmenu; }
-        const XML::Document& xml_document() const { return m_document; }
+        const XML::Document& xml_document() const { return m_xml_document; }
 
         // 板移転
         const bool move_board( const std::string& url_old, const std::string& url_new, const bool etc );

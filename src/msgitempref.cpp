@@ -14,20 +14,18 @@
 
 using namespace CORE;
 
-#define STOCK_ICON( id ) Gtk::Widget::render_icon( id, Gtk::ICON_SIZE_MENU )
-
 MsgItemPref::MsgItemPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )
 {
     // デフォルトの項目を設定
-    append_default_pair( ITEM_NAME_PREVIEW, ICON::get_icon( ICON::THREAD ) );
+    append_default_pair( ITEM_NAME_PREVIEW, ICON::get_icon( ICON::PREVIEW ) );
     append_default_pair( ITEM_NAME_WRITEMSG, ICON::get_icon( ICON::WRITE ) );
     append_default_pair( ITEM_NAME_OPENBOARD, ICON::get_icon( ICON::TRANSPARENT ) );
     append_default_pair( ITEM_NAME_NAME, ICON::get_icon( ICON::TRANSPARENT ) );
-    append_default_pair( ITEM_NAME_UNDO, STOCK_ICON( Gtk::Stock::UNDO ) );
-    append_default_pair( ITEM_NAME_INSERTTEXT, STOCK_ICON( Gtk::Stock::OPEN ) );
-    append_default_pair( ITEM_NAME_LOCK_MESSAGE, STOCK_ICON( Gtk::Stock::NO ) );
-    append_default_pair( ITEM_NAME_QUIT, STOCK_ICON( Gtk::Stock::CLOSE ) );
+    append_default_pair( ITEM_NAME_UNDO, ICON::get_icon( ICON::UNDO ) );
+    append_default_pair( ITEM_NAME_INSERTTEXT, ICON::get_icon( ICON::INSERTTEXT ) );
+    append_default_pair( ITEM_NAME_LOCK_MESSAGE, ICON::get_icon( ICON::LOCK) );
+    append_default_pair( ITEM_NAME_QUIT, ICON::get_icon( ICON::QUIT ) );
     append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ) );
 
     // 文字列を元に行を追加

@@ -87,6 +87,8 @@ namespace DBTREE
     bool remove_etc( const std::string& url, const std::string& name );
     void save_etc();
     void download_bbsmenu();
+    const std::string get_date_modified(); // bbsmenuの更新時間( 文字列 )
+    const time_t get_time_modified(); // bbsmenuの更新時間( time_t )
     
     // board 系
     const std::string board_path( const std::string& url );

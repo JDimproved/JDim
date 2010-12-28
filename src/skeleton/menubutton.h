@@ -38,9 +38,7 @@ namespace SKELETON
 
         MenuButton( const bool show_arrow, Gtk::Widget& label );
 
-        MenuButton( const bool show_arrow ,
-                    const Gtk::StockID& stock_id,
-                    const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
+        MenuButton( const bool show_arrow , const int id );
 
       virtual ~MenuButton();
 

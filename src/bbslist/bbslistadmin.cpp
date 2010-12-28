@@ -117,6 +117,10 @@ void BBSListAdmin::restore( const bool only_locked )
     command_arg = url_to_openarg( URL_HISTCLOSEVIEW, true, false );
     open_view( command_arg );
 
+    // 最近閉じた画像
+    command_arg = url_to_openarg( URL_HISTCLOSEIMGVIEW, true, false );
+    open_view( command_arg );
+
     set_command( "set_page", std::string(), MISC::itostr( SESSION::bbslist_page() ) );
     set_command( "hide_tabs" );
 }
@@ -181,6 +185,7 @@ SKELETON::View* BBSListAdmin::create_view( const COMMAND_ARGS& command )
     if( command.url == URL_HISTTHREADVIEW ) type = CORE::VIEW_HISTTHREAD;
     if( command.url == URL_HISTCLOSEVIEW ) type = CORE::VIEW_HISTCLOSE;
     if( command.url == URL_HISTBOARDVIEW ) type = CORE::VIEW_HISTBOARD;
+    if( command.url == URL_HISTCLOSEIMGVIEW ) type = CORE::VIEW_HISTCLOSEIMG;
 
     CORE::VIEWFACTORY_ARGS view_args;
     view_args.arg1 = command.arg4;

@@ -217,6 +217,20 @@ void DBTREE::download_bbsmenu()
 }
 
 
+// bbsmenuの更新時間( 文字列 )
+const std::string DBTREE::get_date_modified()
+{
+    return get_root()->get_date_modified();
+}
+
+
+// bbsmenuの更新時間( time_t )
+const time_t DBTREE::get_time_modified()
+{
+    return get_root()->get_time_modified();
+}
+
+
 const std::string DBTREE::board_path( const std::string& url )
 {
     return DBTREE::get_board( url )->get_path_board();

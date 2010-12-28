@@ -12,6 +12,8 @@
 
 #include "config/globalconf.h"
 
+#include "jdlib/misctime.h"
+
 #include "cache.h"
 #include "type.h"
 #include "command.h"
@@ -59,12 +61,13 @@ void BBSListViewMain::show_view()
     std::cout << "BBSListViewMain::show_view : " << get_url() << std::endl;
 #endif
 
-    // BBSListViewBase::m_document に Root::m_document を代入
-    m_document = DBTREE::get_xml_document();
+    // BBSListViewBase::m_document に Root::m_xml_document を代入
+    set_document( DBTREE::get_xml_document() );
 
-    // 更新が終わったらBBSListViewMain::update_view()が呼ばれる
-    if( m_document.hasChildNodes() ) update_view();
-    // 板一覧のDomノードが空ならサーバから取得
+    if( get_document().hasChildNodes() ) update_view();
+
+    // 板一覧のDomノードが空ならサーバからbbsmenuを取得
+    // 取得が終わったらBBSListViewMain::update_view()が呼び出される
     else DBTREE::download_bbsmenu();
 }
 
@@ -81,10 +84,10 @@ void BBSListViewMain::update_view()
     if( ! document.hasChildNodes() ) return;
 
     // BBSListViewBase::m_document に Root::m_document を代入
-    m_document = document;
+    set_document( document );
 
     // ルート要素を取得
-    XML::Dom* root = m_document.get_root_element( std::string( ROOT_NODE_NAME ) );
+    XML::Dom* root = get_document().get_root_element( std::string( ROOT_NODE_NAME ) );
 
     //----------------------------------
     // 外部板追加
@@ -93,7 +96,7 @@ void BBSListViewMain::update_view()
     // ルート要素の有無で処理を分ける( 旧様式=無, 新様式=有 )
     XML::Dom* subdir = 0;
     if( root ) subdir = root->insertBefore( XML::NODE_TYPE_ELEMENT, "subdir", root->firstChild() );
-    else subdir = m_document.insertBefore( XML::NODE_TYPE_ELEMENT, "subdir", m_document.firstChild() );
+    else subdir = get_document().insertBefore( XML::NODE_TYPE_ELEMENT, "subdir", get_document().firstChild() );
     subdir->setAttribute( "name", std::string( SUBDIR_ETCLIST ) );
 
     // 子要素( <board> )を追加
@@ -175,6 +178,22 @@ void BBSListViewMain::delete_view_impl()
     // etc.txt保存
     DBTREE::save_etc();
 }
+
+
+void BBSListViewMain::show_preference()
+{
+    std::string modified = "最終更新日時 ：";
+
+    if( DBTREE::get_date_modified().empty() ) modified +=  "未取得";
+    else modified += 
+             MISC::timettostr( DBTREE::get_time_modified(), MISC::TIME_WEEK )
+             + " ( " + MISC::timettostr( DBTREE::get_time_modified(), MISC::TIME_PASSED ) + " )";
+
+    SKELETON::MsgDiag mdiag( get_parent_win(), modified, false );
+    mdiag.set_title( "板一覧のプロパティ" );
+    mdiag.run();
+}
+
 
 
 //

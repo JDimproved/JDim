@@ -15,29 +15,29 @@
 
 using namespace CORE;
 
-#define STOCK_ICON( id ) Gtk::Widget::render_icon( id, Gtk::ICON_SIZE_MENU )
 
 MainItemPref::MainItemPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::SelectItemPref( parent, url )
 {
     // デフォルトの項目を設定
-    append_default_pair( ITEM_NAME_BBSLISTVIEW, ICON::get_icon( ICON::DIR ) );
-    append_default_pair( ITEM_NAME_FAVORITEVIEW, ICON::get_icon( ICON::FAVORITE ) );
-    append_default_pair( ITEM_NAME_HISTVIEW, ICON::get_icon( ICON::HIST ) );
-    append_default_pair( ITEM_NAME_HIST_BOARDVIEW, ICON::get_icon( ICON::HIST_BOARD ) );
-    append_default_pair( ITEM_NAME_HIST_CLOSEVIEW, ICON::get_icon( ICON::HIST_CLOSE ) );
+    append_default_pair( ITEM_NAME_BBSLISTVIEW, ICON::get_icon( ICON::BBSLISTVIEW ) );
+    append_default_pair( ITEM_NAME_FAVORITEVIEW, ICON::get_icon( ICON::FAVORITEVIEW ) );
+    append_default_pair( ITEM_NAME_HISTVIEW, ICON::get_icon( ICON::HISTVIEW ) );
+    append_default_pair( ITEM_NAME_HIST_BOARDVIEW, ICON::get_icon( ICON::HIST_BOARDVIEW ) );
+    append_default_pair( ITEM_NAME_HIST_CLOSEVIEW, ICON::get_icon( ICON::HIST_CLOSEVIEW ) );
+    append_default_pair( ITEM_NAME_HIST_CLOSEIMGVIEW, ICON::get_icon( ICON::HIST_CLOSEIMGVIEW ) );
 
-    append_default_pair( ITEM_NAME_BOARDVIEW, ICON::get_icon( ICON::BOARD ) );
+    append_default_pair( ITEM_NAME_BOARDVIEW, ICON::get_icon( ICON::BOARDVIEW ) );
 
-    append_default_pair( ITEM_NAME_ARTICLEVIEW, ICON::get_icon( ICON::THREAD ) );
+    append_default_pair( ITEM_NAME_ARTICLEVIEW, ICON::get_icon( ICON::ARTICLEVIEW ) );
 
     if( CONFIG::get_use_image_view() )
     {
-        append_default_pair( ITEM_NAME_IMAGEVIEW, ICON::get_icon( ICON::IMAGE ) );
+        append_default_pair( ITEM_NAME_IMAGEVIEW, ICON::get_icon( ICON::IMAGEVIEW ) );
     }
     append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ) );
     append_default_pair( ITEM_NAME_URL, ICON::get_icon( ICON::TRANSPARENT ) );
-    append_default_pair( ITEM_NAME_GO, STOCK_ICON( Gtk::Stock::JUMP_TO ) );
+    append_default_pair( ITEM_NAME_GO, ICON::get_icon( ICON::GO ) );
     append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ) );
 
     // 文字列を元に列を追加

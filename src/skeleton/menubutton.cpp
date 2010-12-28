@@ -7,6 +7,8 @@
 
 #include "jdlib/miscutil.h"
 
+#include "icons/iconmanager.h"
+
 #include "command.h"
 
 using namespace SKELETON;
@@ -24,13 +26,10 @@ MenuButton::MenuButton( const bool show_arrow, Gtk::Widget& label )
 }
 
 
-MenuButton::MenuButton( const bool show_arrow,
-                        const Gtk::StockID& stock_id,
-                        const Gtk::BuiltinIconSize icon_size
-    )
+MenuButton::MenuButton( const bool show_arrow, const int id )
     : m_label( NULL ), m_arrow( NULL )
 {
-    setup( show_arrow, Gtk::manage( new Gtk::Image( stock_id, icon_size ) ), Gtk::PACK_SHRINK );
+    setup( show_arrow, Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) ), Gtk::PACK_SHRINK );
 }
 
 
