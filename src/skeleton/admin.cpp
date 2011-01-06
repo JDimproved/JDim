@@ -562,6 +562,11 @@ void Admin::exec_command()
         close_current_view();
     }
 
+    // 最後に閉じたタブを復元する
+    else if( command.command == "restore_lasttab" ){
+        restore_lasttab();
+    }
+
     else if( command.command == "set_page" ){
         set_current_page( atoi( command.arg1.c_str() ) );
     }

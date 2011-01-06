@@ -158,6 +158,9 @@ namespace BBSLIST
         // url で指定した項目を削除
         void remove_item( const std::string& url );
 
+        // 先頭項目を削除
+        void remove_headitem();
+
         // 全項目を削除
         void remove_allitems();
 

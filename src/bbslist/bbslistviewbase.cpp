@@ -552,6 +552,7 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
     if( command == "append_item" ) append_item();
     else if( command == "append_history" ) append_history();
     else if( command == "remove_item" ) remove_item( arg1 );
+    else if( command == "remove_headitem" ) remove_headitem();
     else if( command == "remove_allitems" ) remove_allitems();
     else if( command == "edit_tree" ) edit_tree();
     else if( command == "save_xml" ) save_xml(); 
@@ -2965,6 +2966,7 @@ void BBSListViewBase::remove_item( const std::string& url )
 {
     std::string url_target = DBTREE::url_dat( url );
     if( url_target.empty() ) url_target = DBTREE::url_boardbase( url );
+    if( url_target.empty() && DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ) url_target = url;
     if( url_target.empty() ) return;
         
 #ifdef _DEBUG
@@ -2989,6 +2991,8 @@ void BBSListViewBase::remove_item( const std::string& url )
             case TYPE_THREAD_UPDATE:
             case TYPE_THREAD_OLD:
 
+            case TYPE_IMAGE: // 画像
+
                 if( url == url_target ){
 #ifdef _DEBUG
                     std::cout << "hit " << url << " == " << url_target << std::endl;
@@ -2999,6 +3003,27 @@ void BBSListViewBase::remove_item( const std::string& url )
                 break;
         }
     }
+
+    const bool force = true;
+    m_treeview.delete_path( list_path, force );
+}
+
+
+//
+// 先頭項目を削除
+//
+void BBSListViewBase::remove_headitem()
+{
+    if( ! m_ready_tree ) return;
+    if( m_treestore->children().empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::remove_headitem\n";
+#endif
+
+    std::list< Gtk::TreePath > list_path;
+    SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
+    list_path.push_back( it.get_path() );
 
     const bool force = true;
     m_treeview.delete_path( list_path, force );

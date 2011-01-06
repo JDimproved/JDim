@@ -57,6 +57,8 @@ namespace ARTICLE
 
         virtual void switch_admin();
 
+        virtual void restore_lasttab();
+
       private:
 
         bool clock_in_smooth_scroll( int timer_number );

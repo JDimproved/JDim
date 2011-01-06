@@ -2614,10 +2614,17 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
-    // 各履歴から command.arg1 で指定したスレや板を削除
+    // 各履歴から command.arg1 で指定した項目を削除
     else if( command.command  == "remove_history" ){
 
         BBSLIST::get_admin()->set_command( "remove_item", command.url, command.arg1 );
+        return;
+    }
+
+    // 各履歴から先頭にある項目を削除
+    else if( command.command  == "remove_headhistory" ){
+
+        BBSLIST::get_admin()->set_command( "remove_headitem", command.url );
         return;
     }
 

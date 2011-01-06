@@ -22,6 +22,9 @@ namespace HISTORY
 
         HistoryMenu( const std::string& url_history, const std::string& label );
 
+        // 履歴の先頭を復元
+        void restore_history();
+
         void set_menulabel();
 
       private:

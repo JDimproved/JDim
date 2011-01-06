@@ -21,6 +21,12 @@ HistoryMenu::HistoryMenu( const std::string& url_history, const std::string& lab
 }
 
 
+void HistoryMenu::restore_history()
+{
+    m_submenu->restore_history();
+}
+
+
 // ラベルをセットする
 void HistoryMenu::set_menulabel()
 {

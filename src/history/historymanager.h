@@ -50,6 +50,9 @@ namespace HISTORY
         // url_history で指定した履歴に追加
         void append_history( const std::string& url_history, const std::string& url, const std::string& name, const int type );
 
+        // url_history で指定した履歴の先頭を復元
+        void restore_history( const std::string& url_history );
+
         // url_history で指定した履歴を全クリア
         void remove_allhistories( const std::string& url_history );
 
@@ -113,6 +116,9 @@ namespace HISTORY
 
     // url_history で指定した履歴に追加
     void append_history( const std::string& url_history, const std::string& url, const std::string& name, const int type );
+
+    // url_history で指定した履歴の先頭を復元
+    void restore_history( const std::string& url_history );
 
     // url_history で指定した履歴を全クリア
     void remove_allhistories( const std::string& url_history );

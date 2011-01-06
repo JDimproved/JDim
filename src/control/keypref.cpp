@@ -83,6 +83,8 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::TabNum8 );
     append_row( CONTROL::TabNum9 );
 
+    append_row( CONTROL::RestoreLastTab );
+
     append_row( CONTROL::PreBookMark );
     append_row( CONTROL::NextBookMark );
 

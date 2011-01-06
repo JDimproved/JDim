@@ -217,6 +217,9 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
         // 項目削除
         else if( command.command  == "remove_item" ) view->set_command( "remove_item", command.arg1 );
 
+        // 先頭項目削除
+        else if( command.command  == "remove_headitem" ) view->set_command( "remove_headitem" );
+
         // 全項目削除
         else if( command.command  == "remove_allitems" ) view->set_command( "remove_allitems" );
 

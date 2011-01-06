@@ -78,6 +78,7 @@ MousePref::MousePref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::Quit );
     append_row( CONTROL::CloseAllTabs );
     append_row( CONTROL::CloseOtherTabs );
+    append_row( CONTROL::RestoreLastTab );
     append_row( CONTROL::CheckUpdateTabs );
     append_row( CONTROL::Reload );
     append_row( CONTROL::StopLoading );

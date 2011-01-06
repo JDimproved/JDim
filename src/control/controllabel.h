@@ -69,6 +69,8 @@ namespace CONTROL
         { "CloseAllTabs", "全てのタブを閉じる" },
         { "CloseOtherTabs", "他のタブを閉じる" },
 
+        { "RestoreLastTab", "最後に閉じたタブを復元" },
+
         { "CheckUpdateTabs", "全ての更新されたタブを再読み込み" },
 
         { "PreBookMark", "前のしおりヘ移動" },

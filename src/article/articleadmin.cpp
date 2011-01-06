@@ -22,6 +22,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "history/historymanager.h"
+
 #include "global.h"
 #include "type.h"
 #include "viewfactory.h"
@@ -401,6 +403,12 @@ const std::string ArticleAdmin::command_to_url( const COMMAND_ARGS& command )
 void ArticleAdmin::switch_admin()
 {
     if( ! has_focus() ) CORE::core_set_command( "switch_article" );
+}
+
+
+void ArticleAdmin::restore_lasttab()
+{
+    HISTORY::restore_history( URL_HISTCLOSEVIEW );
 }
 
 

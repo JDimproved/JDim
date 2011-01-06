@@ -28,12 +28,15 @@ namespace HISTORY
         HistorySubMenu( const std::string& url_history );
         virtual ~HistorySubMenu();
 
+        // 履歴の先頭を復元
+        void restore_history();
+
         // アクティブ時にラベルをセットする
         void set_menulabel();
 
       private:
 
-        void open_history( const int i );
+        const bool open_history( const int i );
 
         // メニューのslot関数
         void slot_clear();

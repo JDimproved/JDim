@@ -45,6 +45,12 @@ void HISTORY::append_history( const std::string& url_history, const std::string&
     get_history_manager()->append_history( url_history, url, name, type );
 }
 
+// url_history で指定した履歴の先頭を復元
+void HISTORY::restore_history( const std::string& url_history )
+{
+    get_history_manager()->restore_history( url_history );
+}
+
 
 // url_history で指定した履歴を全クリア
 void HISTORY::remove_allhistories( const std::string& url_history )
@@ -160,6 +166,14 @@ void History_Manager::append_history( const std::string& url_history, const std:
 
     CORE::core_set_command( "append_history", url_history );
     set_menulabel( url_history );
+}
+
+
+// url_history で指定した履歴の先頭を復元
+void History_Manager::restore_history( const std::string& url_history )
+{
+    if( url_history == URL_HISTCLOSEVIEW && m_menu_close ) m_menu_close->restore_history();
+    if( url_history == URL_HISTCLOSEIMGVIEW && m_menu_closeimg ) m_menu_closeimg->restore_history();
 }
 
 

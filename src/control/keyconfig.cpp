@@ -60,6 +60,8 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "TabNum8", KEYCONF_TabNum8 );
     SETKEYMOTION( "TabNum9", KEYCONF_TabNum9 );
 
+    SETKEYMOTION( "RestoreLastTab", KEYCONF_RestoreLastTab );
+
     SETKEYMOTION( "PreBookMark", KEYCONF_PreBookMark );
     SETKEYMOTION( "NextBookMark", KEYCONF_NextBookMark );
 

@@ -63,6 +63,8 @@ namespace CONTROL
         CloseAllTabs,
         CloseOtherTabs,
 
+        RestoreLastTab,
+
         CheckUpdateTabs,
 
         PreBookMark,

@@ -494,6 +494,11 @@ const bool CONTROL::operate_common( const int control, const std::string& url, S
             if( admin ) admin->set_command( "close_view", url, "closeother" );
             break;
 
+            // 最後に閉じたタブを復元
+        case CONTROL::RestoreLastTab:
+            if( admin ) admin->set_command( "restore_lasttab" );
+            break;
+
             // 全ての更新されたタブを再読み込み
         case CONTROL::CheckUpdateTabs:
             if( admin ) admin->set_command( "check_update_reload_all_tabs" );

@@ -19,6 +19,8 @@
 #include "session.h"
 #include "httpcode.h"
 
+#include "history/historymanager.h"
+
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 
@@ -691,6 +693,12 @@ void ImageAdmin::close_noerror_views()
             if( code == HTTP_OK ) set_command( "close_view", url );
         }
     }
+}
+
+
+void ImageAdmin::restore_lasttab()
+{
+    HISTORY::restore_history( URL_HISTCLOSEIMGVIEW );
 }
 
 

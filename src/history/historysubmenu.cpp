@@ -18,6 +18,9 @@
 
 #include "config/globalconf.h"
 
+#include "control/controlid.h"
+#include "control/controlutil.h"
+
 #include "xml/tools.h"
 
 #include <list>
@@ -68,10 +71,14 @@ HistorySubMenu::HistorySubMenu( const std::string& url_history )
         Gtk::Label* label = Gtk::manage( new Gtk::Label( HIST_NONAME ) );
         m_vec_label.push_back( label );
 
+        Gtk::Label *label_motion = Gtk::manage( new Gtk::Label() );
+        if( i == 0 ) label_motion->set_text( CONTROL::get_str_motions( CONTROL::RestoreLastTab ) );
+
         Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox() );
         hbox->set_spacing( SPACING_MENU );
         hbox->pack_start( *image, Gtk::PACK_SHRINK );
         hbox->pack_start( *label, Gtk::PACK_SHRINK );
+        hbox->pack_end( *label_motion, Gtk::PACK_SHRINK );
 
         Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( *hbox ) );
         append( *item );
@@ -112,12 +119,24 @@ HistorySubMenu::~HistorySubMenu()
 }
 
 
-// 履歴を開く
-void HistorySubMenu::open_history( const int i )
+// 履歴の先頭を復元
+void HistorySubMenu::restore_history()
 {
+#ifdef _DEBUG
+    std::cout << "HistorySubMenu::restore_history " << m_url_history << std::endl;
+#endif
+
+    if( open_history( 0 ) ) CORE::core_set_command( "remove_headhistory", m_url_history );
+}
+
+
+// 履歴を開く
+const bool HistorySubMenu::open_history( const int i )
+{
+    bool ret = false;
     CORE::DATA_INFO_LIST info_list;
     SESSION::get_history( m_url_history, info_list );
-    if( (int)info_list.size() <= i ) return;
+    if( (int)info_list.size() <= i ) return ret;
 
     if( ! info_list[ i ].url.empty() ){
 
@@ -134,16 +153,19 @@ void HistorySubMenu::open_history( const int i )
             case TYPE_THREAD_OLD:
 
                 CORE::core_set_command( "open_article" , DBTREE::url_dat( info_list[ i ].url ), tab, mode );
+                ret = true;
                 break;
 
             case TYPE_BOARD:
                 
                 CORE::core_set_command( "open_board" , DBTREE::url_subject( info_list[ i ].url ), tab, mode );
+                ret = true;
                 break;
 
             case TYPE_VBOARD:
 
                 CORE::core_set_command( "open_sidebar_board", info_list[ i ].url, tab, mode, "", "set_history" );
+                ret = true;
                 break;
 
             case TYPE_IMAGE:
@@ -155,10 +177,13 @@ void HistorySubMenu::open_history( const int i )
                 else{
                     CORE::core_set_command( "open_image", info_list[ i ].url );
                     CORE::core_set_command( "switch_image" );
+                    ret = true;
                 }
                 break;
         }
     }
+
+    return ret;
 }
 
 

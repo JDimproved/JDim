@@ -36,6 +36,8 @@ namespace CONTROL
 #define KEYCONF_TabNum8 "Alt+8"
 #define KEYCONF_TabNum9 "Alt+9"
 
+#define KEYCONF_RestoreLastTab "Ctrl+T"
+
 #define KEYCONF_PreBookMark  "Ctrl+F2"
 #define KEYCONF_NextBookMark  "F2"
 
@@ -178,6 +180,8 @@ namespace CONTROL
 
 #define MOUSECONF_CloseAllTabs ""
 #define MOUSECONF_CloseOtherTabs ""
+
+#define MOUSECONF_RestoreLastTab "64"
 
 #define MOUSECONF_CheckUpdateTabs ""
 
