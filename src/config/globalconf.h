@@ -511,6 +511,9 @@ namespace CONFIG
     const bool get_show_hide_menubar_diag();
     void set_show_hide_menubar_diag( const bool set );
 
+    // 状態変更時にメインステータスバーの色を変える
+    const bool get_change_stastatus_color();
+
     // まちBBSの取得に offlaw.cgi を使用する
     const bool get_use_machi_offlaw();
     void set_use_machi_offlaw( const bool set );

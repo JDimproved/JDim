@@ -248,6 +248,7 @@ void AboutConfig::append_rows()
     append_row( "スレビューのスクロールバーを左に配置する", get_confitem()->left_scrbar, CONF_LEFT_SCRBAR );
     append_row( "Ctrl+qでウィンドウを閉じない", get_confitem()->disable_close, CONF_DISABLE_CLOSE );
     append_row( "メニューバーを非表示にした時にダイアログを表示", get_confitem()->show_hide_menubar_diag, CONF_SHOW_HIDE_MENUBAR_DIAG );
+    append_row( "状態変更時にメインステータスバーの色を変える", get_confitem()->change_stastatus_color, CONF_CHANGE_STASTATUS_COLOR );
 
     // 次スレ検索
     append_row( "" );

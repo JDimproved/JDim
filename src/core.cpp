@@ -2884,7 +2884,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     else if( command.command  == "set_status_color" ){
-        m_win_main.set_status_color( command.arg1 );
+        if( CONFIG::get_change_stastatus_color() ) m_win_main.set_status_color( command.arg1 );
     }
 
     // 一時的にステータスバーの表示を変える( マウスオーバーでのURL表示用 )

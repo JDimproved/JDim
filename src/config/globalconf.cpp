@@ -501,6 +501,8 @@ const bool CONFIG::get_disable_close(){ return get_confitem()->disable_close; }
 const bool CONFIG::get_show_hide_menubar_diag(){ return get_confitem()->show_hide_menubar_diag; }
 void CONFIG::set_show_hide_menubar_diag( const bool set ){ get_confitem()->show_hide_menubar_diag = set; }
 
+// 状態変更時にメインステータスバーの色を変える
+const bool CONFIG::get_change_stastatus_color(){ return get_confitem()->change_stastatus_color; }
 
 // まちBBSの取得に offlaw.cgi を使用する
 const bool CONFIG::get_use_machi_offlaw(){ return get_confitem()->use_machi_offlaw; }

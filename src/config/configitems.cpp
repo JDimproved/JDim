@@ -535,6 +535,9 @@ const bool ConfigItems::load( const bool restore )
     // メニューバーを非表示にした時にダイアログを表示
     show_hide_menubar_diag = cf.get_option_bool( "show_hide_menubar_diag", CONF_SHOW_HIDE_MENUBAR_DIAG );
 
+    // 状態変更時にメインステータスバーの色を変える
+    change_stastatus_color = cf.get_option_bool( "change_stastatus_color", CONF_CHANGE_STASTATUS_COLOR );
+
     // まちBBSの取得に offlaw.cgi を使用する
     use_machi_offlaw = cf.get_option_bool( "use_machi_offlaw", CONF_USE_MACHI_OFFLAW );
 
@@ -857,6 +860,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "show_favorite_select_diag", show_favorite_select_diag );
     cf.update( "disable_close", disable_close );
     cf.update( "show_hide_menubar_diag", show_hide_menubar_diag );
+    cf.update( "change_stastatus_color", change_stastatus_color );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
     cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );
     cf.update( "delete_img_in_thread", delete_img_in_thread );

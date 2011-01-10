@@ -453,6 +453,9 @@ namespace CONFIG
         // メニューバーを非表示にした時にダイアログを表示
         bool show_hide_menubar_diag;
 
+        // 状態変更時にメインステータスバーの色を変える
+        bool change_stastatus_color;
+
         // まちBBSの取得に offlaw.cgi を使用する
         bool use_machi_offlaw;
 
