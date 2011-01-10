@@ -423,10 +423,13 @@ void Admin::set_command_immediately( const std::string& command, const std::stri
 void Admin::set_command_impl( const bool immediately, const COMMAND_ARGS& command_arg )
 {
 #ifdef _DEBUG
-    std::cout << "Admin::set_command : immediately = " << immediately <<  " command = " << command << " url = " << url << std::endl
-              << arg1 << " " << arg2 << std::endl
-              << arg3 << " " << arg4 << std::endl
-              << arg5 << " " << arg6 << std::endl;
+    std::cout << "Admin::set_command : immediately = " << immediately
+              <<  " command = " << command_arg.command
+              << " url = " << command_arg.url << std::endl
+              << command_arg.arg1 << " " << command_arg.arg2 << std::endl
+              << command_arg.arg3 << " " << command_arg.arg4 << std::endl
+              << command_arg.arg5 << " " << command_arg.arg6 << std::endl
+              << command_arg.arg7 << " " << command_arg.arg8 << std::endl;
 #endif
 
     if( immediately ){

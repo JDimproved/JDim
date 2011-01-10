@@ -425,7 +425,7 @@ const bool Img::is_fake()
     else if( ! m_url_alt.empty() && DBIMG::get_type_ext( m_url_alt ) != m_type ) ret = true;
 
 #ifdef _DEBUG
-    std::cout << "Img::is_fake url = " << url << " ret = " << ret << std::endl;
+    std::cout << "Img::is_fake url = " << m_url << " ret = " << ret << std::endl;
 #endif
 
     return ret;

@@ -429,7 +429,7 @@ void JDWindow::set_status_color( const std::string& color )
 #if GTKMMVER > 240
 
 #ifdef _DEBUG
-    std::cout << "JDWindow::set_status_color " << stat << std::endl;
+    std::cout << "JDWindow::set_status_color " << color << std::endl;
 #endif
 
     if( color.empty() ){

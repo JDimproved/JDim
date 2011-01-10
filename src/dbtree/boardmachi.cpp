@@ -211,7 +211,7 @@ const std::string BoardMachi::url_subbbscgi_new()
 void BoardMachi::parse_subject( const char* str_subject_txt )
 {
 #ifdef _DEBUG
-    std::cout << "BoardMachi::parse_subject is_online = " << is_online << std::endl;
+    std::cout << "BoardMachi::parse_subject" << std::endl;
 #endif 
    
     const char* pos = str_subject_txt;

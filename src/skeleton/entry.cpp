@@ -75,7 +75,7 @@ bool JDEntry::on_key_release_event( GdkEventKey* event )
     const bool ret = Gtk::Entry::on_key_release_event( event );
 
 #ifdef _DEBUG    
-    std::cout << "JDEntry::on_key_release_event id = " << controlid << std::endl;
+    std::cout << "JDEntry::on_key_release_event id = " << m_controlid << std::endl;
 #endif
 
     switch( m_controlid ){

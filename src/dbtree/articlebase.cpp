@@ -776,7 +776,7 @@ void ArticleBase::set_abone_res( const int num_from, const int num_to, const boo
     if( num_from <= 0 || num_to >= MAX_RESNUMBER ) return;
 
 #ifdef _DEBUG
-    std::cout << "ArticleBase::set_abone_res num = " << number << " set = " << set << std::endl;
+    std::cout << "ArticleBase::set_abone_res num_from = " << num_from << " num_to = " << num_to << " set = " << set << std::endl;
 #endif    
 
     if( ! m_vec_abone_res.size() ) m_vec_abone_res.resize( MAX_RESNUMBER );

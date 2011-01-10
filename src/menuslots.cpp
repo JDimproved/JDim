@@ -226,7 +226,7 @@ void Core::slot_toggle_toolbarpos( const int pos )
     if( ! m_enable_menuslot ) return;
 
 #ifdef _DEBUG
-    std::cout << "Core::slot_toggle_toolbarpos pos = " << pos << " / " << SESSION::toolbar_pos() << std::endl;
+    std::cout << "Core::slot_toggle_toolbarpos pos = " << pos << " / " << SESSION::get_toolbar_pos() << std::endl;
 #endif
 
     if( ! SESSION::get_show_main_toolbar() ) SESSION::set_toolbar_pos( pos );
