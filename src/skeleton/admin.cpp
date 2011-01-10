@@ -85,7 +85,7 @@ Admin::~Admin()
     // デストラクタの中からdispatchを呼ぶと落ちるので dispatch不可にする
     set_dispatchable( false );
 
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
 
 #ifdef _DEBUG
     std::cout << "pages = " << pages << std::endl;
@@ -140,6 +140,7 @@ void Admin::setup_menu()
     m_action_group->add( Gtk::Action::create( "CloseLeft", "左←のタブ(_L)" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseRight", "右→のタブ(_R)" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
     m_action_group->add( Gtk::Action::create( "CloseAll", "全てのタブ(_A)" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
+    m_action_group->add( Gtk::Action::create( "CloseSameIcon", "同じアイコンのタブ(_I)" ), sigc::mem_fun( *this, &Admin::slot_close_same_icon_tabs ) );
 
     m_action_group->add( Gtk::Action::create( "Reload_Tab_Menu", "全てのタブの再読み込み(_A)" ) );
     m_action_group->add( Gtk::Action::create( "CheckUpdateAll", "更新チェックのみ(_U)" ), sigc::mem_fun( *this, &Admin::slot_check_update_all_tabs ) );
@@ -184,6 +185,7 @@ void Admin::setup_menu()
     "<menuitem action='CloseOther'/>"
     "<menuitem action='CloseLeft'/>"
     "<menuitem action='CloseRight'/>"
+    "<menuitem action='CloseSameIcon'/>"
     "</menu>"
     "<separator/>"
 
@@ -346,7 +348,7 @@ void Admin::clock_in()
 
     // 全てのビューにクロックを送る
     // clock_in_always()には軽い処理だけを含めること
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages ){
         for( int i = 0; i < pages; ++i ){
             SKELETON::View* view = dynamic_cast< SKELETON::View* >( m_notebook->get_nth_page( i ) );
@@ -849,7 +851,7 @@ void Admin::update_url( const std::string& url_old, const std::string& url_new )
     std::cout << "Admin::update_url " << url_old << " -> " << url_new << std::endl;
 #endif
 
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
@@ -869,7 +871,7 @@ void Admin::update_boardname( const std::string& url )
     std::cout << "Admin::update_boardname url = " << url << std::endl;
 #endif
 
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
@@ -1200,7 +1202,7 @@ void Admin::tab_left( const bool updated )
 //
 void Admin::tab_right( const bool updated )
 {
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages == 1 ) return;
 
     int page = m_notebook->get_current_page();
@@ -1257,7 +1259,7 @@ void Admin::tab_num( const std::string& str_num )
 //
 void Admin::tab_head()
 {
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages == 1 ) return;
 
     set_current_page( 0 );
@@ -1279,7 +1281,7 @@ void Admin::tab_head_focus()
 //
 void Admin::tab_tail()
 {
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages == 1 ) return;
 
     set_current_page( pages-1 );
@@ -1827,7 +1829,7 @@ View* Admin::get_view( const std::string& url )
     SKELETON::View* view = get_current_view();
     if( view && view->get_url() == url ) return view;
 
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
@@ -1850,7 +1852,7 @@ std::list< View* > Admin::get_list_view( const std::string& url )
 {
     std::list< View* > list_view;
     
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
@@ -1872,7 +1874,7 @@ std::list< View* > Admin::get_list_view()
 {
     std::list< View* > list_view;
     
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
@@ -2210,7 +2212,7 @@ void Admin::slot_close_right_tabs()
     std::cout << "Admin::slot_close_right_tabs " << m_clicked_page << std::endl;
 #endif
 
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     for( int i = m_clicked_page +1; i < pages; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
@@ -2229,10 +2231,33 @@ void Admin::slot_close_all_tabs()
     std::cout << "Admin::slot_close_all_tabs " << m_clicked_page << std::endl;
 #endif
 
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     for( int i = 0; i < pages; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
+    }
+}
+
+
+//
+// 右クリックメニューの同じアイコンのタブを閉じる
+//
+void Admin::slot_close_same_icon_tabs()
+{
+    const int id = get_notebook()->get_tabicon( m_clicked_page );
+
+#ifdef _DEBUG
+    std::cout << "Admin::slot_close_same_icon_tabs page = " << m_clicked_page << " id = " << id << std::endl;
+#endif
+
+    const int pages = m_notebook->get_n_pages();
+    for( int i = 0; i < pages; ++i ){
+
+        if( get_notebook()->get_tabicon( i ) == id ){
+
+            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+            if( view ) set_command( "close_view", view->get_url() );
+        }
     }
 }
 
@@ -2275,7 +2300,7 @@ void Admin::check_update_all_tabs( const int from_page, const bool open )
 
     if( ! SESSION::is_online() ) return;
 
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
 
     // 開始タブから右側
     for( int i = from_page ; i < pages; ++i ){
@@ -2327,7 +2352,7 @@ void Admin::reload_all_tabs( const int from_page )
     if( ! SESSION::is_online() ) return;
 
     int waittime = 0;
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
 
     // クリックしたタブから右側
     for( int i = from_page ; i < pages; ++i ){
@@ -2404,7 +2429,7 @@ std::list< bool > Admin::get_locked()
 {
     std::list< bool > locked;
     
-    int pages = m_notebook->get_n_pages();
+    const int pages = m_notebook->get_n_pages();
     if( pages ){
         for( int i = 0; i < pages; ++i ) locked.push_back( is_locked( i ) );
     }

@@ -273,6 +273,7 @@ namespace SKELETON
         virtual void slot_close_left_tabs();
         virtual void slot_close_right_tabs();
         virtual void slot_close_all_tabs();
+        virtual void slot_close_same_icon_tabs();
         virtual void slot_check_update_all_tabs();
         virtual void slot_check_update_reload_all_tabs();
         virtual void slot_reload_all_tabs();
