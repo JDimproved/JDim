@@ -207,6 +207,7 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::CancelWrite );
     append_row( CONTROL::ExecWrite );
     append_row( CONTROL::FocusWrite );
+    append_row( CONTROL::ToggleSage );
 }
 
 

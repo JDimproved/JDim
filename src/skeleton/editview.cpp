@@ -336,6 +336,7 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::TabRight:
         case CONTROL::TabLeftUpdated:
         case CONTROL::TabRightUpdated:
+        case CONTROL::ToggleSage:
         case CONTROL::HomeEdit:
         case CONTROL::EndEdit:
         case CONTROL::UpEdit:
@@ -368,6 +369,7 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::FocusWrite:
         case CONTROL::TabLeft:
         case CONTROL::TabRight:
+        case CONTROL::ToggleSage:
             cancel_event = true;
             break;
 
@@ -410,6 +412,7 @@ bool EditTextView::on_key_release_event( GdkEventKey* event )
         case CONTROL::FocusWrite:
         case CONTROL::TabLeft:
         case CONTROL::TabRight:
+        case CONTROL::ToggleSage:
             cancel_event = true;
             break;
 

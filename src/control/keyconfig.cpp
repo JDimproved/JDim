@@ -164,6 +164,7 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "ExecWrite", KEYCONF_ExecWrite );
 
     SETKEYMOTION( "FocusWrite", KEYCONF_FocusWrite );
+    SETKEYMOTION( "ToggleSage", KEYCONF_ToggleSage );
 
     // EDIT
     SETKEYMOTION( "HomeEdit", KEYCONF_HomeEdit );

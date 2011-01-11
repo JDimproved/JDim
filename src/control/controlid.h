@@ -253,6 +253,7 @@ namespace CONTROL
         Preview,
 
         FocusWrite,
+        ToggleSage,
 
         MESSAGEMOTION_END,
 

@@ -264,6 +264,7 @@ namespace CONTROL
         { "Preview", ITEM_NAME_PREVIEW },
 
         { "FocusWrite", "書き込みボタンにフォーカスを移す" },
+        { "ToggleSage", "sageのON/OFF切り替え" },
 
         { "", "" },
 

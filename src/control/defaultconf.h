@@ -140,6 +140,7 @@ namespace CONTROL
 #define KEYCONF_ExecWrite  "Alt+w" 
 
 #define KEYCONF_FocusWrite  "Tab" 
+#define KEYCONF_ToggleSage  "Alt+s" 
 
 // EDIT
 #define KEYCONF_HomeEdit  ""

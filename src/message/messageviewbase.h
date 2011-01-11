@@ -121,6 +121,9 @@ namespace MESSAGE
         // 色初期化
         void init_color();
 
+        // メール欄にアドレスをセット
+        void set_mail();
+
         // 自分の書き込みの判定用データの保存
         void push_logitem();
 

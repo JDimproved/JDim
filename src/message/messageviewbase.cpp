@@ -349,6 +349,29 @@ void MessageViewBase::save_name()
 }
 
 
+//
+// メール欄にアドレスをセット
+//
+void MessageViewBase::set_mail()
+{
+    // スレ別のメール
+    if( DBTREE::write_fixmail( get_url() ) ){
+        m_check_fixmail.set_active();
+        m_entry_mail.set_text( DBTREE::write_mail( get_url() ) );
+    }
+    // スレ別の名前が設定されていなかったら板別のメール
+    else if( ! DBTREE::board_get_write_mail( get_url() ).empty() ){
+
+        std::string tmpmail = DBTREE::board_get_write_mail( get_url() );
+
+        // 空白セット
+        if( tmpmail == JD_MAIL_BLANK ) m_entry_mail.set_text( std::string() );
+        else m_entry_mail.set_text( tmpmail );
+    }
+    // デフォルトはsage
+    else m_entry_mail.set_text( "sage" );
+}
+
 
 //
 // ツールバーなどのパック
@@ -377,22 +400,7 @@ void MessageViewBase::pack_widget()
         m_entry_name.set_text( DBTREE::board_get_write_name( get_url() ) );
     }
 
-    // スレ別のメール
-    if( DBTREE::write_fixmail( get_url() ) ){
-        m_check_fixmail.set_active();
-        m_entry_mail.set_text( DBTREE::write_mail( get_url() ) );
-    }
-    // スレ別の名前が設定されていなかったら板別のメール
-    else if( ! DBTREE::board_get_write_mail( get_url() ).empty() ){
-
-        std::string tmpmail = DBTREE::board_get_write_mail( get_url() );
-
-        // 空白セット
-        if( tmpmail == JD_MAIL_BLANK ) m_entry_mail.set_text( std::string() );
-        else m_entry_mail.set_text( tmpmail );
-    }
-    // デフォルトはsage
-    else m_entry_mail.set_text( "sage" );
+    set_mail();
 
     m_tool_name.add( m_label_name );
     m_tool_mail.add( m_label_mail );
@@ -522,6 +530,11 @@ const bool MessageViewBase::operate_view( const int control )
         case CONTROL::TabRight:
         case CONTROL::TabRightUpdated:
             MESSAGE::get_admin()->set_command( "tab_right" );
+            break;
+
+        case CONTROL::ToggleSage:
+            if( m_entry_mail.get_text() == "sage" ) m_entry_mail.set_text( "" );
+            else set_mail();
             break;
 
             // 書き込みボタンにフォーカスを移す
