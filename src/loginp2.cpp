@@ -81,7 +81,7 @@ void Loginp2::logout()
     
     SKELETON::Login::set_login_now( false );
     SKELETON::Login::set_sessionid( std::string() );
-    SKELETON::Login::set_csrfid( std::string() );
+    SKELETON::Login::set_sessiondata( std::string() );
     SESSION::set_loginp2( false );
 }
 
@@ -115,7 +115,7 @@ void Loginp2::start_login()
     }
 
     if( CONFIG::get_url_loginp2().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "p2のアドレスが指定されていません。" );
+        SKELETON::MsgDiag mdiag( NULL, "p2の認証サーバのアドレスが指定されていません。" );
         mdiag.run();
         return;
     }
@@ -199,7 +199,7 @@ void Loginp2::receive_finish()
         if( ! csrfid.empty() ){
 
             set_login_now( true );
-            set_csrfid( csrfid );
+            set_sessiondata( csrfid );
             SESSION::set_loginp2( true );
 
             CORE::core_set_command( "loginp2_finished", "" );
@@ -266,7 +266,7 @@ void Loginp2::receive_finish()
         }
         else{
 
-            std::string str_err = "ログインに失敗しました。\n\np2のアドレスやID、パスワード等を確認して下さい。\n\n";
+            std::string str_err = "ログインに失敗しました。\n\np2の認証サーバのアドレスやID、パスワード等を確認して下さい。\n\n";
             str_err += get_str_code();
             SKELETON::MsgDiag mdiag( NULL, str_err );
             mdiag.run();  

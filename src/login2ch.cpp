@@ -204,7 +204,7 @@ void Login2ch::receive_finish()
         mdiag.run();
     }
     else if( CONFIG::get_url_login2ch().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "認証サーバのURLが指定されていません。" );
+        SKELETON::MsgDiag mdiag( NULL, "2chの認証サーバのURLが指定されていません。" );
         mdiag.run();
     }
     else if( show_err ){

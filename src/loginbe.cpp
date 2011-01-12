@@ -5,9 +5,22 @@
 
 #include "loginbe.h"
 #include "global.h"
+#include "httpcode.h"
 #include "session.h"
+#include "command.h"
+
+#include "config/globalconf.h"
 
 #include "skeleton/msgdiag.h"
+
+#include "jdlib/loaderdata.h"
+#include "jdlib/miscutil.h"
+#include "jdlib/jdregex.h"
+
+enum
+{
+    SIZE_OF_RAWDATA = 64 * 1024
+};
 
 CORE::LoginBe* instance_loginbe = NULL;
 
@@ -34,13 +47,24 @@ using namespace CORE;
 
 
 LoginBe::LoginBe()
-    : SKELETON::Login( URL_LOGINBE )
+    : SKELETON::Login( URL_LOGINBE ),
+      m_rawdata( NULL ),
+      m_lng_rawdata( 0 )
 {
 #ifdef _DEBUG
     std::cout << "LoginBe::LoginBe\n";
 #endif
 }
 
+
+LoginBe::~LoginBe()
+{
+#ifdef _DEBUG
+    std::cout << "LoginBe::~LoginBe\n";
+#endif
+
+    if( m_rawdata ) free( m_rawdata );
+}
 
 //
 // ログアウト
@@ -50,8 +74,11 @@ void LoginBe::logout()
 #ifdef _DEBUG
     std::cout << "LoginBe::logout\n";
 #endif
+    if( is_loading() ) return;
 
     SKELETON::Login::set_login_now( false );
+    SKELETON::Login::set_sessionid( std::string() );
+    SKELETON::Login::set_sessiondata( std::string() );
     SESSION::set_loginbe( false );
 }
 
@@ -61,18 +88,127 @@ void LoginBe::logout()
 //
 void LoginBe::start_login()
 {
-    if( login_now() ) return;
+    if( is_loading() ) return;
 
 #ifdef _DEBUG
-    std::cout << "LoginBe::start_login\n";
+    std::cout << "LoginBe::start_login  url = " << CONFIG::get_url_loginbe() << std::endl;
 #endif 
 
-    if( get_username().empty() || get_passwd().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "メールアドレスまたは認証コード設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
+    set_str_code( "" );
+
+    if( ! SESSION::is_online() ){
+        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
         mdiag.run();
         return;
     }
 
-    set_login_now( true );
-    SESSION::set_loginbe( true );
+    if( get_username().empty() || get_passwd().empty() ){
+        SKELETON::MsgDiag mdiag( NULL, "メールアドレスまたはパスワードが設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
+        mdiag.run();
+        return;
+    }
+
+    if( CONFIG::get_url_loginbe().empty() ){
+        SKELETON::MsgDiag mdiag( NULL, "BEの認証サーバのアドレスが指定されていません。" );
+        mdiag.run();
+        return;
+    }
+
+    JDLIB::LOADERDATA data;
+    data.init_for_data();
+    data.url = CONFIG::get_url_loginbe();
+
+    data.contenttype = "application/x-www-form-urlencoded";
+    data.str_post = "m=" + MISC::url_encode( get_username() );
+    data.str_post += "&p=" + MISC::url_encode( get_passwd() );
+    data.str_post += "&submit=" + MISC::charset_url_encode( "登録", "EUC-JP" );
+
+    logout();
+    if( ! m_rawdata ) m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
+    memset( m_rawdata, 0, SIZE_OF_RAWDATA );
+    m_lng_rawdata = 0;
+
+    start_load( data );
+}
+
+
+//
+// データ受信
+//
+void LoginBe::receive_data( const char* data, size_t size )
+{
+    if( ! m_rawdata ) return;
+
+#ifdef _DEBUG
+    std::cout << "LoginBe::receive_data\n";
+#endif
+
+    if( m_lng_rawdata + size < SIZE_OF_RAWDATA ){
+
+        memcpy( m_rawdata + m_lng_rawdata , data, size );
+        m_lng_rawdata += size;
+    }
+}
+
+
+//
+// データ受信完了
+//
+void LoginBe::receive_finish()
+{
+    if( ! m_rawdata ) return;
+    m_rawdata[ m_lng_rawdata ] = '\0';
+
+#ifdef _DEBUG
+    std::cout << "LoginBe::receive_finish code = " << get_code() << std::endl;
+    std::cout << "lng_rawdata = " << m_lng_rawdata << std::endl;
+    std::cout << m_rawdata << std::endl;
+#endif
+
+    std::string dmdm;
+    std::string mdmd;
+
+    if( get_code() == HTTP_OK ){
+
+        std::list< std::string >::const_iterator it = cookies().begin();
+        for( ; it != cookies().end(); ++it ){
+
+#ifdef _DEBUG
+            std::cout << ( *it ) << std::endl;
+#endif
+
+            JDLIB::Regex regex;
+            const size_t offset = 0;
+            const bool icase = false;
+            const bool newline = true;
+            const bool usemigemo = false;
+            const bool wchar = false;
+
+            std::string query = "DMDM=([^;]*)";
+            if( regex.exec( query, (*it), offset, icase, newline, usemigemo, wchar ) ) dmdm = regex.str( 1 );
+
+            query = "MDMD=([^;]*)";
+            if( regex.exec( query, (*it), offset, icase, newline, usemigemo, wchar ) ) mdmd = regex.str( 1 );
+        }
+    }
+
+#ifdef _DEBUG
+    std::cout << "dmdm = " << dmdm << " mdmd = " << mdmd << std::endl;
+#endif
+
+    if( ! dmdm.empty() && ! mdmd.empty() ){
+        set_login_now( true );
+        set_sessionid( dmdm );
+        set_sessiondata( mdmd );
+        SESSION::set_loginbe( true );
+
+        CORE::core_set_command( "loginbe_finished", "" );
+    }
+    else{
+
+        std::string str_err = "ログインに失敗しました。\n\nBEの認証サーバのアドレスやメールアドレス、パスワード等を確認して下さい。\n\n";
+        str_err += get_str_code();
+        SKELETON::MsgDiag mdiag( NULL, str_err );
+        mdiag.run();  
+    }
 }

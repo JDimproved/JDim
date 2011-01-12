@@ -150,7 +150,7 @@ const std::string Board2ch::cookie_for_write()
     // BE ログイン中
     else if( CORE::get_loginbe()->login_now() ){
         if( ! cookie.empty() ) cookie += "; ";
-        cookie += "DMDM=" + CORE::get_loginbe()->get_username() + "; MDMD=" + CORE::get_loginbe()->get_passwd();
+        cookie += "DMDM=" + CORE::get_loginbe()->get_sessionid() + "; MDMD=" + CORE::get_loginbe()->get_sessiondata();
     }
 
 #ifdef _DEBUG
@@ -207,7 +207,7 @@ const std::string Board2ch::create_newarticle_message( const std::string& subjec
                 << "&popup=1"
                 << "&rescount=1"
                 << "&ttitle_en="
-                << "&csrfid=" << MISC::url_encode( CORE::get_loginp2()->get_csrfid() )
+                << "&csrfid=" << MISC::url_encode( CORE::get_loginp2()->get_sessiondata() )
                 << "&newthread=1";
     }
 

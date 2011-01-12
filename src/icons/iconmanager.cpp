@@ -52,6 +52,7 @@
 #include "play.h"
 #endif
 
+#include <cstring>
 
 ICON::ICON_Manager* instance_icon_manager = NULL;
 

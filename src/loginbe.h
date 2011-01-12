@@ -15,12 +15,21 @@ namespace CORE
 {
     class LoginBe : public SKELETON::Login
     {
+        char* m_rawdata;
+        int m_lng_rawdata;
+
       public:
 
         LoginBe();
+        virtual ~LoginBe();
 
         virtual void start_login();
         virtual void logout();
+
+      private:
+
+        virtual void receive_data( const char* , size_t );
+        virtual void receive_finish();
     };
 
 

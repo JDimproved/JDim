@@ -3043,6 +3043,9 @@ void Core::exec_command()
     // p2へのログイン処理が完了した
     else if( command.command  == "loginp2_finished" ) set_maintitle();
 
+    // BEへのログイン処理が完了した
+    else if( command.command  == "loginbe_finished" ) set_maintitle();
+
     // あるadminのnotebookが空になった
     else if( command.command  == "empty_page" ) empty_page( command.url );
 

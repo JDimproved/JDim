@@ -245,6 +245,9 @@ const bool ConfigItems::load( const bool restore )
     // p2の認証サーバのアドレス
     url_loginp2 = cf.get_option_str( "url_loginp2", CONF_LOGINP2 );
 
+    // BEの認証サーバのアドレス
+    url_loginbe = cf.get_option_str( "url_loginbe", CONF_LOGINBE );
+
     // bbsmenu.htmlのURL
     url_bbsmenu = cf.get_option_str( "url_bbsmenu", CONF_URL_BBSMENU );
 
@@ -618,6 +621,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "url_jdhp", url_jdhp );
     cf.update( "url_login2ch", url_login2ch );
     cf.update( "url_loginp2", url_loginp2 );
+    cf.update( "url_loginbe", url_loginbe );
     cf.update( "url_bbsmenu", url_bbsmenu );
     cf.update( "use_link_as_board", use_link_as_board );
     cf.update( "show_movediag", show_movediag );

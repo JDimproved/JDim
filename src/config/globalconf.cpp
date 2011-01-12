@@ -133,8 +133,14 @@ const int CONFIG::ref_prefix_space(){ return get_confitem()->ref_prefix_space; }
 
 const std::string& CONFIG::get_url_jdhp() { return get_confitem()->url_jdhp; }
 
+// 2chの認証サーバのアドレス
 const std::string& CONFIG::get_url_login2ch() { return get_confitem()->url_login2ch; }
+
+// p2の認証サーバのアドレス
 const std::string& CONFIG::get_url_loginp2() { return get_confitem()->url_loginp2; }
+
+// BEの認証サーバのアドレス
+const std::string& CONFIG::get_url_loginbe() { return get_confitem()->url_loginbe; }
 
 const std::string& CONFIG::get_url_bbsmenu() { return get_confitem()->url_bbsmenu; }
 

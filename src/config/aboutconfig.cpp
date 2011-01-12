@@ -122,6 +122,7 @@ void AboutConfig::append_rows()
     append_row(	"板一覧を取得するサーバ", get_confitem()->url_bbsmenu, CONF_URL_BBSMENU );
     append_row( "2chログイン認証サーバのアドレス", get_confitem()->url_login2ch, CONF_LOGIN2CH );
     append_row( "p2ログイン認証サーバのアドレス", get_confitem()->url_loginp2, CONF_LOGINP2 );
+    append_row( "BE認証サーバのアドレス", get_confitem()->url_loginbe, CONF_LOGINBE );
     append_row( "2chにアクセスするときのエージェント名", get_confitem()->agent_for2ch, CONF_AGENT_FOR2CH );
     append_row( "2ch以外のサーバにアクセスするときのエージェント名", get_confitem()->agent_for_data, CONF_AGENT_FOR_DATA );
     append_row( "2chログイン認証サーバにアクセスするときのエージェント名", get_confitem()->x_2ch_ua, CONF_X_2CH_UA );

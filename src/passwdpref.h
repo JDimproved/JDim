@@ -56,7 +56,8 @@ namespace CORE
     // BEログイン用
     class PasswdFrameBe : public Gtk::VBox
     {
-        Gtk::Label m_label;
+        SKELETON::LabelEntry m_label_dmdm;
+        SKELETON::LabelEntry m_label_mdmd;
 
       public:
 
@@ -64,8 +65,9 @@ namespace CORE
         SKELETON::LabelEntry entry_passwd;
 
       PasswdFrameBe()
-        : m_label( "パスワードではなく認証コードを入れて下さい" ),
-        entry_id( true, "メールアドレス(_I)： " ), entry_passwd( true, "認証コード(_P)： " )
+          : m_label_dmdm( false, "DMDM： ", CORE::get_loginbe()->get_sessionid() ),
+            m_label_mdmd( false, "MDMD： ", CORE::get_loginbe()->get_sessiondata() ),
+            entry_id( true, "メールアドレス(_I)： " ), entry_passwd( true, "パスワード(_P)： " )
         {
             set_border_width( BOXSPACING );
 
@@ -76,7 +78,8 @@ namespace CORE
             entry_passwd.set_visibility( false );
             pack_start( entry_passwd, Gtk::PACK_SHRINK );
 
-            pack_start( m_label );
+            pack_start( m_label_dmdm );
+            pack_start( m_label_mdmd );
 
             set_border_width( BOXSPACING );
         }

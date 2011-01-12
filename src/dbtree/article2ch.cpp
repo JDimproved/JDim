@@ -65,7 +65,7 @@ const std::string Article2ch::create_write_message( const std::string& name, con
                 << "&popup=1"
                 << "&rescount=" << get_number_load()
                 << "&ttitle_en=" << MISC::url_encode( MISC::base64( MISC::Iconv( MISC::remove_space( get_subject() ), "UTF-8", charset ) ) )
-                << "&csrfid=" << MISC::url_encode( CORE::get_loginp2()->get_csrfid() );
+                << "&csrfid=" << MISC::url_encode( CORE::get_loginp2()->get_sessiondata() );
     }
 
 #ifdef _DEBUG
