@@ -131,9 +131,11 @@ const int TabLabel::get_label_margin()
 
         int x_pad, y_pad;
         m_label.get_padding( x_pad, y_pad );
-        label_margin = x_pad*2 + ICON::get_icon( m_id_icon )->get_width()
+        label_margin = x_pad*2
             + m_hbox.get_spacing() + m_hbox.get_border_width()*2
             + get_border_width()*2;
+
+        if( ICON::get_icon( m_id_icon ) ) label_margin += ICON::get_icon( m_id_icon )->get_width();
     }
 
 #ifdef _DEBUG
