@@ -23,8 +23,6 @@ namespace SKELETON
 {
     class Dispatchable
     {
-        Glib::Mutex m_mutex;
-
         friend class CORE::DispatchManager;
         bool m_dispatchable;
 
@@ -36,10 +34,10 @@ namespace SKELETON
       protected:
 
         void dispatch();
-        void set_dispatchable( bool dispatchable );
+        void set_dispatchable( const bool dispatchable );
 
-        // dispacth()でDispatchManagerに登録されてcallback_disp()が呼び戻される
-        //  cancel_dispatch()で呼び出しをキャンセルする
+        // dispacth() で DispatchManager に登録されて
+        // DispatchManager が callback_dispatch() を呼び戻す
         virtual void callback_dispatch() = 0;
     };
 }

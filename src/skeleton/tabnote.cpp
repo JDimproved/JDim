@@ -590,7 +590,7 @@ bool TabNotebook::adjust_tabwidth()
     if( SESSION::is_booting() ) return false;
     if( SESSION::is_quitting() ) return false;
 
-    const int mrg_notebook = 30;
+    const int mrg_notebook = 20;
 
     const int pages = get_n_pages();
     if( ! pages ) return false;
@@ -599,6 +599,7 @@ bool TabNotebook::adjust_tabwidth()
     SKELETON::TabLabel* tab = get_tablabel( 0 );
     if( ! tab ) return false;
     m_layout_tab->set_font_description( tab->get_label_font_description() );
+    const int label_margin = tab->get_label_margin();
 
     std::vector< int > vec_width_org; // 変更前のタブの文字数
     std::vector< int > vec_width; // 変更後のタブの文字数
@@ -608,7 +609,7 @@ bool TabNotebook::adjust_tabwidth()
     m_pre_width = get_width();
     const int width_notebook = m_pre_width - mrg_notebook;
 
-    const int avg_width_tab = (int)( (double)width_notebook / MAX( 3, pages+0.5 ) );  // タブ幅の平均値
+    const int avg_width_tab = (int)( (double)width_notebook / MAX( 3, pages ) );  // タブ幅の平均値
 
 #ifdef _DEBUG_RESIZE_TAB
     std::cout << "TabNotebook::adjust_tabwidth\n"
@@ -630,7 +631,7 @@ bool TabNotebook::adjust_tabwidth()
             while( vec_width[ i ] > CONFIG::get_tab_min_str() ){
 
                 m_layout_tab->set_text( LABEL_WIDTH );
-                int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_margin() + m_tab_mrg;
+                int width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "s " << i << " " << width << " / " << avg_width_tab
@@ -660,7 +661,7 @@ bool TabNotebook::adjust_tabwidth()
                 ++vec_width[ i ];
 
                 m_layout_tab->set_text( LABEL_WIDTH );
-                int width = m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_margin() + m_tab_mrg;
+                int width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "w " << i << " " << width << " / " << avg_width_tab
@@ -675,7 +676,7 @@ bool TabNotebook::adjust_tabwidth()
             }
 
             m_layout_tab->set_text( LABEL_WIDTH );
-            width_total += ( m_layout_tab->get_pixel_ink_extents().get_width() + tab->get_margin() + m_tab_mrg );
+            width_total += ( m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg );
 
             tab->resize_tab( vec_width[ i ] );
         }

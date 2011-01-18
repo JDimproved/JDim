@@ -20,7 +20,7 @@ enum
 
 
 TabLabel::TabLabel( const std::string& url )
-    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_image( NULL ), m_image_width( 0 )
+    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_image( NULL )
 {
 #ifdef _DEBUG
     std::cout << "TabLabel::TabLabel " << m_url << std::endl;
@@ -72,7 +72,6 @@ void TabLabel::set_id_icon( const int id )
     m_id_icon = id;
 
     m_image->set( ICON::get_icon( id ) );
-    m_image_width = ICON::get_icon( id )->get_width();
 }
 
 
@@ -112,6 +111,40 @@ void TabLabel::set_dragable( bool dragable, int button )
         drag_source_unset();
         drag_dest_unset();
     }
+}
+
+
+//
+// 本体の横幅 - ラベルの横幅
+//
+const int TabLabel::get_label_margin()
+{
+    int label_margin;
+
+    // map 後は実際の値を返す
+    if( is_mapped() && m_label.is_mapped() ){
+        label_margin = get_allocation().get_width() - m_label.get_allocation().get_width();
+    }
+
+    // 起動直後など、まだmapしていない時は理論値を返す
+    else{
+
+        int x_pad, y_pad;
+        m_label.get_padding( x_pad, y_pad );
+        label_margin = x_pad*2 + ICON::get_icon( m_id_icon )->get_width()
+            + m_hbox.get_spacing() + m_hbox.get_border_width()*2
+            + get_border_width()*2;
+    }
+
+#ifdef _DEBUG
+    std::cout << "image_w = " << m_image->get_allocation().get_width()
+              << " label_w = "  << m_label.get_allocation().get_width()
+              << " alloc_w =  " << get_allocation().get_width()
+              << " label_margine = " << label_margin
+              << std::endl;
+#endif
+
+    return label_margin;
 }
 
 

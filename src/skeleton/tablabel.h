@@ -39,7 +39,6 @@ namespace SKELETON
 
         // アイコン画像
         Gtk::Image* m_image;
-        int m_image_width;
 
         // ラベルに表示する文字列の全体
         std::string m_fulltext;
@@ -73,7 +72,8 @@ namespace SKELETON
 
         void set_dragable( bool dragable, int button );
 
-        const int get_margin() const { return m_image_width; }
+        // 本体の横幅 - ラベルの横幅
+        const int get_label_margin();
 
         // カットしていない全体の文字列
         const std::string& get_fulltext() const { return m_fulltext; }

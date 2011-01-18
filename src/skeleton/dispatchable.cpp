@@ -25,9 +25,8 @@ Dispatchable::~Dispatchable()
 }
 
 
-void Dispatchable::set_dispatchable( bool dispatchable )
+void Dispatchable::set_dispatchable( const bool dispatchable )
 {
-    Glib::Mutex::Lock lock( m_mutex );
     m_dispatchable = dispatchable;
     if( ! m_dispatchable ) CORE::get_dispmanager()->remove( this );
 }
@@ -35,6 +34,5 @@ void Dispatchable::set_dispatchable( bool dispatchable )
 
 void Dispatchable::dispatch()
 {
-    Glib::Mutex::Lock lock( m_mutex );
     if( m_dispatchable ) CORE::get_dispmanager()->add( this );
 }
