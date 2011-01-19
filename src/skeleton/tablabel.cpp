@@ -135,7 +135,7 @@ const int TabLabel::get_label_margin()
             + m_hbox.get_spacing() + m_hbox.get_border_width()*2
             + get_border_width()*2;
 
-        if( ICON::get_icon( m_id_icon ) ) label_margin += ICON::get_icon( m_id_icon )->get_width();
+        if( CONFIG::get_show_tab_icon() && m_id_icon < ICON::NUM_ICONS ) label_margin += ICON::get_icon( m_id_icon )->get_width();
     }
 
 #ifdef _DEBUG
