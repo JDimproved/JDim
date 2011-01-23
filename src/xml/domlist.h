@@ -11,6 +11,7 @@
 #define _DOMLIST_H
 
 #include <list>
+#include <cstddef>
 
 namespace XML
 {
