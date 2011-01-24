@@ -358,11 +358,11 @@ void DragableNoteBook::set_tab_fulltext( const std::string& str, const int page 
 //
 // ページ取り除き
 //
-void DragableNoteBook::remove_page( int page )
+void DragableNoteBook::remove_page( const int page, const bool adjust_tab )
 {
     SKELETON::TabLabel* tablabel = m_notebook_tab.get_tablabel( page );
 
-    m_notebook_tab.remove_tab( page );
+    m_notebook_tab.remove_tab( page, adjust_tab );
     m_notebook_view.remove_page( page );
 
     if( tablabel ) delete tablabel;

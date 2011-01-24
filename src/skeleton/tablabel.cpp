@@ -121,22 +121,13 @@ const int TabLabel::get_label_margin()
 {
     int label_margin;
 
-    // map 後は実際の値を返す
-    if( is_mapped() && m_label.is_mapped() ){
-        label_margin = get_allocation().get_width() - m_label.get_allocation().get_width();
-    }
+    int x_pad, y_pad;
+    m_label.get_padding( x_pad, y_pad );
+    label_margin = x_pad*2
+        + m_hbox.get_spacing() + m_hbox.get_border_width()*2
+        + get_border_width()*2;
 
-    // 起動直後など、まだmapしていない時は理論値を返す
-    else{
-
-        int x_pad, y_pad;
-        m_label.get_padding( x_pad, y_pad );
-        label_margin = x_pad*2
-            + m_hbox.get_spacing() + m_hbox.get_border_width()*2
-            + get_border_width()*2;
-
-        if( CONFIG::get_show_tab_icon() && m_id_icon < ICON::NUM_ICONS ) label_margin += ICON::get_icon( m_id_icon )->get_width();
-    }
+    if( CONFIG::get_show_tab_icon() && m_id_icon < ICON::NUM_ICONS ) label_margin += ICON::get_icon( m_id_icon )->get_width();
 
 #ifdef _DEBUG
     std::cout << "image_w = " << m_image->get_allocation().get_width()

@@ -131,7 +131,7 @@ namespace SKELETON
 
         int append_page( const std::string& url, Gtk::Widget& child );
         int insert_page( const std::string& url, Gtk::Widget& child, int page );
-        void remove_page( int page );
+        void remove_page( const int page, const bool adust_tab );
 
         // ツールバー関係
         // 各Adminクラスの virtual void show_toolbar()でツールバーを作成してappend_toolbar()で登録する

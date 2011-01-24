@@ -96,7 +96,7 @@ Admin::~Admin()
 
             SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( 0 ) );
 
-            m_notebook->remove_page( 0 );
+            m_notebook->remove_page( 0, false );
 
             if( view ) delete view;
         }
@@ -1052,7 +1052,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
         // タブ入れ替え
         m_notebook->insert_page( command.url, *view, page );
 
-        m_notebook->remove_page( page + 1 );
+        m_notebook->remove_page( page + 1, false );
 
         if( current_view ){
 
@@ -1392,7 +1392,7 @@ void Admin::close_view( SKELETON::View* view )
         if( newview ) switch_view( newview->get_url() );
     }
 
-    m_notebook->remove_page( page );
+    m_notebook->remove_page( page, true );
 
     if( m_use_viewhistory ){
 

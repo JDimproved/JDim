@@ -72,7 +72,7 @@ namespace SKELETON
 
         int append_tab( Widget& tab );
         int insert_tab( Widget& tab, int page );
-        void remove_tab( int page );
+        void remove_tab( const int page, const bool adjust_tab );
         void reorder_child( int page1, int page2 );
 
         // タブ取得

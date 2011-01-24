@@ -416,7 +416,7 @@ int TabNotebook::insert_tab( Widget& tab, int page )
 }
 
 
-void TabNotebook::remove_tab( int page )
+void TabNotebook::remove_tab( const int page, const bool adjust_tab )
 {
 #ifdef _DEBUG
     std::cout << "TabNotebook::remove_tab page = " << page << std::endl;
@@ -428,7 +428,7 @@ void TabNotebook::remove_tab( int page )
 
     if( dummypage ) delete dummypage;
 
-    adjust_tabwidth();
+    if( adjust_tab ) adjust_tabwidth();
 }
 
 
@@ -525,7 +525,7 @@ void TabNotebook::set_tab_fulltext( const std::string& str, int page )
 #endif
 
     SKELETON::TabLabel* tablabel = get_tablabel( page );
-    if( tablabel ){
+    if( tablabel && str != tablabel->get_fulltext() ){
         tablabel->set_fulltext( str );
         if( m_fixtab ) tablabel->resize_tab( str.length() );
         else adjust_tabwidth();
@@ -590,7 +590,7 @@ bool TabNotebook::adjust_tabwidth()
     if( SESSION::is_booting() ) return false;
     if( SESSION::is_quitting() ) return false;
 
-    const int mrg_notebook = 20;
+    const int mrg_notebook = 30;
 
     const int pages = get_n_pages();
     if( ! pages ) return false;
@@ -616,6 +616,7 @@ bool TabNotebook::adjust_tabwidth()
               << "width_notebook = " << width_notebook << " page = " << pages << std::endl
               << "avg_width_tab = " << avg_width_tab
               << " tab_mrg = " << m_tab_mrg
+              << " label_margin " << label_margin
               << std::endl;
 #endif
 

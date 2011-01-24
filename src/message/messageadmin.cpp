@@ -283,7 +283,7 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
 
         // 古いビューを破棄
         int page = get_notebook()->get_current_page();
-        get_notebook()->remove_page( page );
+        get_notebook()->remove_page( page, true );
         delete current_view;
 
         if( m_toolbar ) m_toolbar->clear_new_subject();
