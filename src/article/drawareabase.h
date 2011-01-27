@@ -228,6 +228,9 @@ namespace ARTICLE
         // セパレータが画面に表示されているか
         const bool is_separator_on_screen();
 
+        // 現在のポインタの下にあるレス番号取得
+        const int get_current_res_num();
+
         // 全選択
         void select_all(); 
 

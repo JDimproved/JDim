@@ -478,6 +478,26 @@ const bool DrawAreaBase::is_separator_on_screen()
 }
 
 
+// 現在のポインタの下にあるレス番号取得
+const int DrawAreaBase::get_current_res_num()
+{
+    const int y = m_y_pointer + get_vscr_val();
+
+    // 先頭のヘッダブロックから順に調べる
+    LAYOUT* header = m_layout_tree->top_header();
+    while( header ){
+
+        // y が含まれているブロックを探す
+        if( header->rect->y >= y ) return header->res_number -1;
+
+        // 次のブロックへ
+        header = header->next_header;        
+    }
+
+    return max_number();
+}
+
+
 // 範囲選択中の文字列
 const std::string DrawAreaBase::str_selection()
 {
