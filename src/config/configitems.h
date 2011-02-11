@@ -90,6 +90,9 @@ namespace CONFIG
         // 同一ホストに対する最大コネクション数( 1 または 2 )
         int connection_num;
 
+        // 2ch冒険の書( クッキー:HAP )
+        std::string cookie_hap;
+
         // リンクをクリックしたときに実行するコマンド
         std::string command_openurl;
 

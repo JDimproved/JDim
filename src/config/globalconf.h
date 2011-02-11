@@ -177,6 +177,10 @@ namespace CONFIG
     // 同一ホストに対する最大コネクション数( 1 または 2 )
     const int get_connection_num();
 
+    // 2ch冒険の書( クッキー:HAP )
+    const std::string& get_cookie_hap();
+    void set_cookie_hap( const std::string& cookie_hap );
+
     // リンクをクリックしたときに実行するコマンド
     const std::string& get_command_openurl();
     void set_command_openurl( const std::string& command );

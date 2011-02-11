@@ -110,10 +110,12 @@ const std::string Board2chCompati::cookie_for_write()
     std::string str_path;
     std::string query_path = "path=([^;]*)";
 
-    bool use_pon = true;
+    bool use_pon = false;
     std::string query_pon = "PON=([^;]*)?";
 
-    bool use_hap = true;
+    bool use_hap = false;
+    std::string conf_hap = CONFIG::get_cookie_hap();
+    std::string str_hap;
     std::string query_hap = "HAP=([^;]*)?";
 
     bool use_name = false;
@@ -140,9 +142,11 @@ const std::string Board2chCompati::cookie_for_write()
 #endif
 
         if( regex.exec( query_pon, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
+            use_pon = true;
             str_pon = regex.str( 1 );
         }
         if( regex.exec( query_hap, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
+            use_hap = true;
             str_hap = regex.str( 1 );
         }
         if( regex.exec( query_name, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
@@ -152,6 +156,17 @@ const std::string Board2chCompati::cookie_for_write()
         if( regex.exec( query_mail, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
             use_mail = true;
             str_mail = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
+        }
+    }
+    // 2ch冒険の書( クッキー:HAP )
+    if( use_hap || !conf_hap.empty() ){
+        // HAPが送られてくるときPONがこない
+        use_hap = true;
+        use_pon = true;
+        if( !str_hap.empty() && str_hap != conf_hap ){
+            CONFIG::set_cookie_hap( str_hap );
+        } else {
+            str_hap = conf_hap;
         }
     }
 

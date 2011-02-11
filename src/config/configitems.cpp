@@ -169,6 +169,9 @@ const bool ConfigItems::load( const bool restore )
     // 同一ホストに対する最大コネクション数( 1 または 2 )
     connection_num = cf.get_option_int( "connection_num", CONF_CONNECTION_NUM, 1, 2 );
 
+    // 2ch冒険の書( クッキー:HAP )
+    cookie_hap = cf.get_option_str( "cookie_hap", CONF_COOKIE_HAP );
+
     // ブラウザ設定ダイアログのコンボボックスの番号
     browsercombo_id = cf.get_option_int( "browsercombo_id", CONF_BROWSER_NO, 0, CORE::get_browser_number() -1 );
 
@@ -679,6 +682,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "use_ipv6", use_ipv6 );
     cf.update( "connection_num", connection_num );
+    cf.update( "cookie_hap", cookie_hap );
 
     cf.update( "command_openurl", command_openurl );
     cf.update( "browsercombo_id", browsercombo_id );

@@ -206,6 +206,10 @@ void CONFIG::set_use_ipv6( const bool set ){ get_confitem()->use_ipv6 = set; }
 // 同一ホストに対する最大コネクション数( 1 または 2 )
 const int CONFIG::get_connection_num(){ return get_confitem()->connection_num; }
 
+// 2ch冒険の書( クッキー:HAP )
+const std::string& CONFIG::get_cookie_hap(){ return get_confitem()->cookie_hap; }
+void CONFIG::set_cookie_hap( const std::string& cookie_hap ){ get_confitem()->cookie_hap = cookie_hap; }
+
 const std::string& CONFIG::get_command_openurl() { return get_confitem()->command_openurl; }
 void CONFIG::set_command_openurl( const std::string& command ){ get_confitem()->command_openurl = command; }
 

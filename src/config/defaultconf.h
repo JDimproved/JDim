@@ -210,6 +210,9 @@ namespace CONFIG
 #define CONF_URL_WRITEP2 "http://p2.2ch.net/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME"
 #define CONF_URL_RESP2 "http://p2.2ch.net/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME&popup=1&inyou=2&resnum=$NUMBER"
 
+// 2ch冒険の書( クッキー:HAP )
+#define CONF_COOKIE_HAP ""
+
 // 色
 #define CONF_COLOR_CHAR    "#000000000000"     // スレの文字
 #define CONF_COLOR_CHAR_NAME "#000064640000"   //名前欄の文字色

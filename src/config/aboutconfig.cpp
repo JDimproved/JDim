@@ -133,6 +133,7 @@ void AboutConfig::append_rows()
     append_row( "一般データのダウンロード時のバッファサイズ(Kbyte)", get_confitem()->loader_bufsize, CONF_LOADER_BUFSIZE );
     append_row( "スレ一覧のダウンロード時のバッファサイズ(Kbyte)", get_confitem()->loader_bufsize_board, CONF_LOADER_BUFSIZE_BOARD );
     append_row( "同一ホストに対する最大コネクション数( 1 または 2 )", get_confitem()->connection_num, CONF_CONNECTION_NUM );
+    append_row( "2ch冒険の書( クッキー:HAP )", get_confitem()->cookie_hap, CONF_COOKIE_HAP );
 
     // ツリービュー
     append_row( "" );
