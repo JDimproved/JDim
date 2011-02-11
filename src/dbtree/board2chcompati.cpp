@@ -110,9 +110,11 @@ const std::string Board2chCompati::cookie_for_write()
     std::string str_path;
     std::string query_path = "path=([^;]*)";
 
-    bool use_pon = false;
-    std::string str_pon;
+    bool use_pon = true;
     std::string query_pon = "PON=([^;]*)?";
+
+    bool use_hap = true;
+    std::string query_hap = "HAP=([^;]*)?";
 
     bool use_name = false;
     std::string str_name;
@@ -138,8 +140,10 @@ const std::string Board2chCompati::cookie_for_write()
 #endif
 
         if( regex.exec( query_pon, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
-            use_pon = true;
             str_pon = regex.str( 1 );
+        }
+        if( regex.exec( query_hap, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
+            str_hap = regex.str( 1 );
         }
         if( regex.exec( query_name, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
             use_name = true;
@@ -155,6 +159,7 @@ const std::string Board2chCompati::cookie_for_write()
     std::cout << "expire = " << str_expire << std::endl
               << "path = " << str_path << std::endl    
               << "pon = " << str_pon << std::endl
+              << "hap = " << str_hap << std::endl
               << "name = " << str_name << std::endl
               << "mail = " << str_mail << std::endl;
 #endif    
@@ -164,6 +169,7 @@ const std::string Board2chCompati::cookie_for_write()
     if( use_name ) cookie += "NAME=" + str_name + "; ";
     if( use_mail ) cookie += "MAIL=" + str_mail + "; ";
     if( use_pon ) cookie += "PON=" + str_pon + "; ";
+    if( use_hap ) cookie += "HAP=" + str_hap + "; ";
 
     if( cookie.empty() ) return std::string();
 

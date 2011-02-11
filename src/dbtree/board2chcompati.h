@@ -18,6 +18,8 @@ namespace DBTREE
     {
         SettingLoader* m_settingloader;
         RuleLoader* m_ruleloader;
+        std::string str_hap;
+        std::string str_pon;
 
       public:
 
