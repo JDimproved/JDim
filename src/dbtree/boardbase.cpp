@@ -285,6 +285,57 @@ const std::string BoardBase::cookie_for_write()
 }
 
 
+//書き込み用クッキーのセット
+void BoardBase::set_list_cookies_for_write( const std::list< std::string >& list_cookies )
+{
+#ifdef _DEBUG
+    std::cout << "BoardBase::set_list_cookies_for_write\n";
+#endif
+
+    std::list< std::string >::const_iterator it = list_cookies.begin();
+    for( ; it != list_cookies.end(); ++it ){
+
+        const std::string cookie = MISC::remove_space( *it );
+
+#ifdef _DEBUG        
+        std::cout << "cookie = " << cookie << std::endl;
+#endif
+
+        std::string key;
+        const size_t n = cookie.find( "=" );
+        if( n != std::string::npos ) key = cookie.substr( 0, n+1 );
+
+        // 更新
+        // クッキーの削除は未実装
+        if( ! key.empty() && key.find( ";" ) == std::string::npos ){
+             
+#ifdef _DEBUG        
+            std::cout << "key = " << key << std::endl;
+#endif
+            std::list< std::string >::iterator it2 = m_list_cookies_for_write.begin();
+            for( ; it2 != m_list_cookies_for_write.end(); ++it2 ){
+
+                if( (*it2).find( key ) == 0 ){
+#ifdef _DEBUG        
+                    std::cout << "found\n";
+#endif
+                    (*it2) = cookie;
+                    break;
+                }
+            }
+            if( it2 == m_list_cookies_for_write.end() ) m_list_cookies_for_write.push_back( cookie );
+        }
+    }
+
+#ifdef _DEBUG        
+    std::cout << "result:\n";
+    it = m_list_cookies_for_write.begin();
+    for( ; it != m_list_cookies_for_write.end(); ++it ) std::cout << (*it) << std::endl;
+#endif
+}
+
+
+
 void BoardBase::clear()
 {
     if( m_rawdata ) free( m_rawdata );

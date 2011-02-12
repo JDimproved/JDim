@@ -342,7 +342,7 @@ void Post::receive_finish()
     if( ! ret ) ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<input.*", str, offset, icase, newline, usemigemo, wchar );
 
     msg = MISC::remove_space( regex.str( 1 ) );
-    std::list< std::string > list_cookies = SKELETON::Loadable::cookies();
+    const::std::list< std::string > list_cookies = SKELETON::Loadable::cookies();
 
 #ifdef _DEBUG
     std::cout << "TITLE: [" << title << "]\n";
@@ -351,7 +351,7 @@ void Post::receive_finish()
     std::cout << "MSG: [" << msg << "]\n";
     std::cout << "ERR: [" << m_errmsg << "]\n";
 
-    std::list< std::string >::iterator it = list_cookies.begin();
+    std::list< std::string >::const_iterator it = list_cookies.begin();
     for( ; it != list_cookies.end(); ++it ) std::cout << "cookie : [" << (*it) << "]\n";
 
     std::cout << "location: [" << location() << "]\n";
@@ -366,6 +366,9 @@ void Post::receive_finish()
 #ifdef _DEBUG
         std::cout << "write ok" << std::endl;
 #endif        
+
+        // クッキーのセット
+        DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
 
         DBTREE::article_update_writetime( m_url );
         emit_sigfin();
@@ -385,7 +388,10 @@ void Post::receive_finish()
         if( ! CONFIG::get_always_write_ok() ){
 
             std::string diagmsg = MISC::replace_str( msg, "<br>", "\n" );
-            if( diagmsg.empty() ) diagmsg = "クッキーを有功にして書き込みますか？";
+            if( diagmsg.empty() ){
+                if( m_errmsg.empty() ) diagmsg = "クッキーを有功にして書き込みますか？";
+                else diagmsg = m_errmsg;
+            }
 
             ConfirmDiag mdiag( m_url, diagmsg );
             const int ret = mdiag.run();
@@ -407,9 +413,7 @@ void Post::receive_finish()
         if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
 
         // クッキーのセット
-        if( list_cookies.size() ){
-            DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
-        }
+        DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
 
         ++m_count; // 永久ループ防止
         post_msg();
@@ -429,8 +433,7 @@ void Post::receive_finish()
         if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
 
         // クッキーのセット
-        if( ! SKELETON::Loadable::cookies().empty() )
-            DBTREE::board_set_list_cookies_for_write( m_url, SKELETON::Loadable::cookies() );
+        DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
 
         // subbbs.cgi にポスト先を変更してもう一回ポスト
         m_subbbs = true;
@@ -446,6 +449,9 @@ void Post::receive_finish()
         std::cout << "Error" << std::endl;
         std::cout << m_errmsg << std::endl;
 #endif        
+
+        // クッキー関係のエラー(冒険の書など)の時はクッキーをセット
+        if( tag_2ch.find( "cookie" ) != std::string::npos ) DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
 
         MISC::ERRMSG( str );
 

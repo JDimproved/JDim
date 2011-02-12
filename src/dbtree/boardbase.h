@@ -320,7 +320,8 @@ namespace DBTREE
         // 書き込み用クッキー
         virtual const std::string cookie_for_write();
         const std::list< std::string >& list_cookies_for_write() { return m_list_cookies_for_write; }
-        void set_list_cookies_for_write( const std::list< std::string >& list_cookies ){ m_list_cookies_for_write = list_cookies; }
+        void set_list_cookies_for_write( const std::list< std::string >& list_cookies );
+        void reset_list_cookies_for_write(){ m_list_cookies_for_write.clear(); }
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )
         // 書き込み時のメッセージに付加する

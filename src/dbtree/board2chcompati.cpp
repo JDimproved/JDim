@@ -90,7 +90,7 @@ const bool Board2chCompati::is_valid( const std::string& filename )
 //書き込み用クッキー作成
 const std::string Board2chCompati::cookie_for_write()
 {
-    std::list< std::string > list_cookies = BoardBase::list_cookies_for_write();
+    const std::list< std::string > list_cookies = BoardBase::list_cookies_for_write();
     if( list_cookies.empty() ) return std::string();
 
 #ifdef _DEBUG
@@ -104,91 +104,75 @@ const std::string Board2chCompati::cookie_for_write()
     const bool usemigemo = false;
     const bool wchar = false;
 
-    std::string str_expire;
-    std::string query_expire = "expires=([^;]*)";
+    std::string cookie_expire;
+    std::string cookie_path;
+    std::string cookie_pon;
+    std::string cookie_hap = CONFIG::get_cookie_hap();
+    std::string cookie_name;
+    std::string cookie_mail;
 
-    std::string str_path;
-    std::string query_path = "path=([^;]*)";
+    const std::string query_expire = "expires=([^;]*)";
+    const std::string query_path = "path=([^;]*)";
+    const std::string query_pon = "PON=([^;]*)?";
+    const std::string query_hap = "HAP=([^;]*)?";
+    const std::string query_name = "NAME=([^;]*)?";
+    const std::string query_mail = "MAIL=([^;]*)?";
 
-    bool use_pon = false;
-    std::string query_pon = "PON=([^;]*)?";
-
-    bool use_hap = false;
-    std::string conf_hap = CONFIG::get_cookie_hap();
-    std::string str_hap;
-    std::string query_hap = "HAP=([^;]*)?";
-
-    bool use_name = false;
-    std::string str_name;
-    std::string query_name = "NAME=([^;]*)?";
-
-    bool use_mail = false;
-    std::string str_mail;
-    std::string query_mail = "MAIL=([^;]*)?";
-
-    std::list< std::string >::iterator it = list_cookies.begin();
+    std::list< std::string >::const_iterator it = list_cookies.begin();
 
     // expire と path は一つ目のcookieから取得
-    if( regex.exec( query_expire, (*it), offset, icase, newline, usemigemo, wchar ) ) str_expire = regex.str( 1 );
-    if( regex.exec( query_path, (*it), offset, icase, newline, usemigemo, wchar ) ) str_path = regex.str( 1 );
+    if( regex.exec( query_expire, (*it), offset, icase, newline, usemigemo, wchar ) ) cookie_expire = regex.str( 1 );
+    if( regex.exec( query_path, (*it), offset, icase, newline, usemigemo, wchar ) ) cookie_path = regex.str( 1 );
 
-    // その他は iterateして取得
     for( ; it != list_cookies.end(); ++it ){
 
-        std::string tmp_cookie = MISC::Iconv( (*it), get_charset(), "UTF-8" );
+        const std::string tmp_cookie = MISC::Iconv( (*it), get_charset(), "UTF-8" );
 
 #ifdef _DEBUG
         std::cout << tmp_cookie << std::endl;
 #endif
 
         if( regex.exec( query_pon, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
-            use_pon = true;
-            str_pon = regex.str( 1 );
+            cookie_pon = regex.str( 1 );
         }
         if( regex.exec( query_hap, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
-            use_hap = true;
-            str_hap = regex.str( 1 );
+
+            const std::string tmp_hap = regex.str( 1 );
+            if( ! tmp_hap.empty() && tmp_hap != cookie_hap ){
+                CONFIG::set_cookie_hap( tmp_hap );
+                cookie_hap = tmp_hap;
+            }
         }
         if( regex.exec( query_name, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
-            use_name = true;
-            str_name = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
+            cookie_name = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
         }
         if( regex.exec( query_mail, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
-            use_mail = true;
-            str_mail = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
-        }
-    }
-    // 2ch冒険の書( クッキー:HAP )
-    if( use_hap || !conf_hap.empty() ){
-        // HAPが送られてくるときPONがこない
-        use_hap = true;
-        use_pon = true;
-        if( !str_hap.empty() && str_hap != conf_hap ){
-            CONFIG::set_cookie_hap( str_hap );
-        } else {
-            str_hap = conf_hap;
+            cookie_mail = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
         }
     }
 
+    // PONを取得していないときはHAPを送らない
+    if( cookie_pon.empty() ) cookie_hap = std::string();
+
 #ifdef _DEBUG
-    std::cout << "expire = " << str_expire << std::endl
-              << "path = " << str_path << std::endl    
-              << "pon = " << str_pon << std::endl
-              << "hap = " << str_hap << std::endl
-              << "name = " << str_name << std::endl
-              << "mail = " << str_mail << std::endl;
+    std::cout << "expire = " << cookie_expire << std::endl
+              << "path = " << cookie_path << std::endl    
+              << "pon = " << cookie_pon << std::endl
+              << "hap = " << cookie_hap << std::endl
+              << "name = " << cookie_name << std::endl
+              << "mail = " << cookie_mail << std::endl;
 #endif    
 
     std::string cookie;
 
-    if( use_name ) cookie += "NAME=" + str_name + "; ";
-    if( use_mail ) cookie += "MAIL=" + str_mail + "; ";
-    if( use_pon ) cookie += "PON=" + str_pon + "; ";
-    if( use_hap ) cookie += "HAP=" + str_hap + "; ";
+    if( ! cookie_name.empty() ) cookie += "NAME=" + cookie_name + "; ";
+    if( ! cookie_mail.empty() ) cookie += "MAIL=" + cookie_mail + "; ";
+    if( ! cookie_pon.empty() ) cookie += "PON=" + cookie_pon + "; ";
+    if( ! cookie_hap.empty() ) cookie += "HAP=" + cookie_hap + "; ";
 
     if( cookie.empty() ) return std::string();
 
-    cookie += "expires=" + str_expire + "; path=" + str_path;
+    cookie += "expires=" + cookie_expire + "; path=" + cookie_path;
 
 #ifdef _DEBUG
     std::cout << "cookie = " << cookie << std::endl;

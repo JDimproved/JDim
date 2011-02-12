@@ -316,6 +316,10 @@ void DBTREE::board_set_list_cookies_for_write( const std::string& url, const std
     DBTREE::get_board( url )->set_list_cookies_for_write( list_cookies );
 }
 
+void DBTREE::board_reset_list_cookies_for_write( const std::string& url )
+{
+    DBTREE::get_board( url )->reset_list_cookies_for_write();
+}
 
 const std::string DBTREE::board_keyword_for_write( const std::string& url )
 {
