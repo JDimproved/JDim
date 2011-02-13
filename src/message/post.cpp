@@ -383,6 +383,9 @@ void Post::receive_finish()
         // クッキーのセット
         DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
 
+        if( ! CONFIG::get_use_cookie_hap() )
+            m_errmsg = "冒険の書を使用しない設定になっています。\nabout:configから冒険の書を有効にして下さい。";
+
         set_code( HTTP_ERR );
         emit_sigfin();
         return;

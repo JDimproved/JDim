@@ -273,6 +273,8 @@ ArticleBase* Board2ch::append_article( const std::string& datbase, const std::st
 // 冒険の書(HAP)
 const std::string Board2ch::get_hap()
 {
+    if( ! CONFIG::get_use_cookie_hap() ) return std::string();
+
     return CONFIG::get_cookie_hap();
 }
 
@@ -282,6 +284,8 @@ const std::string Board2ch::get_hap()
 //
 void Board2ch::update_hap()
 {
+    if( ! CONFIG::get_use_cookie_hap() ) return;
+
     const std::list< std::string > list_cookies = BoardBase::list_cookies_for_write();
     if( list_cookies.empty() ) return;
 

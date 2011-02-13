@@ -178,6 +178,7 @@ namespace CONFIG
     const int get_connection_num();
 
     // 2ch冒険の書( クッキー:HAP )
+    const bool get_use_cookie_hap();
     const std::string& get_cookie_hap();
     void set_cookie_hap( const std::string& cookie_hap );
 
