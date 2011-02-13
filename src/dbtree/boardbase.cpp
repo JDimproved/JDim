@@ -332,6 +332,8 @@ void BoardBase::set_list_cookies_for_write( const std::list< std::string >& list
     it = m_list_cookies_for_write.begin();
     for( ; it != m_list_cookies_for_write.end(); ++it ) std::cout << (*it) << std::endl;
 #endif
+
+    update_hap();
 }
 
 

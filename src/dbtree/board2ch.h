@@ -57,6 +57,14 @@ namespace DBTREE
         // datの最大サイズ(Kバイト)
         virtual const int get_max_dat_lng() const { return DEFAULT_MAX_DAT_LNG; }
 
+      protected:
+
+        // 冒険の書(HAP)
+        virtual const std::string get_hap();
+
+        // 冒険の書(HAP)の更新 (クッキーをセットした時に実行)
+        virtual void update_hap();
+
       private:
 
         // デフォルト最大レス数

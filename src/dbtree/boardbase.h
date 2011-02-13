@@ -231,6 +231,12 @@ namespace DBTREE
         // m_url_update_views に登録されている view に update_board コマンドを送る
         void send_update_board();
 
+        // 冒険の書(HAP)
+        virtual const std::string get_hap(){ return std::string(); }
+
+        // 冒険の書(HAP)の更新 (クッキーをセットした時に実行)
+        virtual void update_hap(){}
+
       public:
 
         BoardBase( const std::string& root, const std::string& path_board, const std::string& name );
