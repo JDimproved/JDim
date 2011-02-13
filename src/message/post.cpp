@@ -375,6 +375,19 @@ void Post::receive_finish()
         return;
     }
 
+    // 冒険の書(HAP)の取得、又は秒数規制に引っかかった
+    else if( tag_2ch.find( "cookie" ) != std::string::npos
+             && ( m_errmsg.find( "冒険" ) != std::string::npos || m_errmsg.find( "修行" ) != std::string::npos )
+        ){
+
+        // クッキーのセット
+        DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
+
+        set_code( HTTP_ERR );
+        emit_sigfin();
+        return;
+    }
+
     // クッキー確認
     else if( m_count < 1 && // 永久ループ防止
         ( title.find( "書き込み確認" ) != std::string::npos
@@ -442,21 +455,18 @@ void Post::receive_finish()
         return;
     }
 
-    // その他エラー
-    else{
-        
+    // その他のエラー
+
 #ifdef _DEBUG
-        std::cout << "Error" << std::endl;
-        std::cout << m_errmsg << std::endl;
+    std::cout << "Error" << std::endl;
+    std::cout << m_errmsg << std::endl;
 #endif        
 
-        // クッキー関係のエラー(冒険の書など)の時はクッキーをセット
-        if( tag_2ch.find( "cookie" ) != std::string::npos ) DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
+    // クッキー関係のエラーの時はクッキーをセット
+    if( tag_2ch.find( "cookie" ) != std::string::npos ) DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
 
-        MISC::ERRMSG( str );
+    MISC::ERRMSG( str );
 
-        set_code( HTTP_ERR );
-        emit_sigfin();
-        return;
-    }
+    set_code( HTTP_ERR );
+    emit_sigfin();
 }

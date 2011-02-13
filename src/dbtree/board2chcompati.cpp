@@ -118,6 +118,11 @@ const std::string Board2chCompati::cookie_for_write()
     const std::string query_name = "NAME=([^;]*)?";
     const std::string query_mail = "MAIL=([^;]*)?";
 
+    bool use_pon = false;
+    bool use_hap = ! cookie_hap.empty();
+    bool use_name = false;
+    bool use_mail = false;
+
     std::list< std::string >::const_iterator it = list_cookies.begin();
 
     // expire と path は一つ目のcookieから取得
@@ -133,6 +138,7 @@ const std::string Board2chCompati::cookie_for_write()
 #endif
 
         if( regex.exec( query_pon, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
+            use_pon = true;
             cookie_pon = regex.str( 1 );
         }
         if( regex.exec( query_hap, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
@@ -140,35 +146,42 @@ const std::string Board2chCompati::cookie_for_write()
             const std::string tmp_hap = regex.str( 1 );
             if( ! tmp_hap.empty() && tmp_hap != cookie_hap ){
                 CONFIG::set_cookie_hap( tmp_hap );
-                cookie_hap = tmp_hap;
             }
+
+            use_hap = true;
+            cookie_hap = tmp_hap;
         }
         if( regex.exec( query_name, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
+            use_name = true;
             cookie_name = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
         }
         if( regex.exec( query_mail, tmp_cookie, offset, icase, newline, usemigemo, wchar ) ){
+            use_mail = true;
             cookie_mail = MISC::charset_url_encode( regex.str( 1 ), get_charset() );
         }
     }
 
     // PONを取得していないときはHAPを送らない
-    if( cookie_pon.empty() ) cookie_hap = std::string();
+    if( ! use_pon || cookie_pon.empty() ){
+        use_hap = false;
+        cookie_hap = std::string();
+    }
 
 #ifdef _DEBUG
     std::cout << "expire = " << cookie_expire << std::endl
               << "path = " << cookie_path << std::endl    
-              << "pon = " << cookie_pon << std::endl
-              << "hap = " << cookie_hap << std::endl
-              << "name = " << cookie_name << std::endl
-              << "mail = " << cookie_mail << std::endl;
+              << "pon = " << cookie_pon << " " << use_pon << std::endl
+              << "hap = " << cookie_hap << " " << use_hap << std::endl
+              << "name = " << cookie_name << " " << use_name << std::endl
+              << "mail = " << cookie_mail << " " << use_mail << std::endl;
 #endif    
 
     std::string cookie;
 
-    if( ! cookie_name.empty() ) cookie += "NAME=" + cookie_name + "; ";
-    if( ! cookie_mail.empty() ) cookie += "MAIL=" + cookie_mail + "; ";
-    if( ! cookie_pon.empty() ) cookie += "PON=" + cookie_pon + "; ";
-    if( ! cookie_hap.empty() ) cookie += "HAP=" + cookie_hap + "; ";
+    if( use_pon ) cookie += "PON=" + cookie_pon + "; ";
+    if( use_hap ) cookie += "HAP=" + cookie_hap + "; ";
+    if( use_name ) cookie += "NAME=" + cookie_name + "; ";
+    if( use_mail ) cookie += "MAIL=" + cookie_mail + "; ";
 
     if( cookie.empty() ) return std::string();
 
