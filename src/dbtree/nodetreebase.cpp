@@ -2010,7 +2010,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
         // アンカーのチェック
         int n_in = 0;
         int n_out = 0;
-        char tmpstr[ LNG_LINK ], tmplink[ LNG_LINK ];
+        char tmpstr[ LNG_LINK +16 ], tmplink[ LNG_LINK +16 ];
         int lng_str = 0, lng_link = strlen( PROTO_ANCHORE );
         ANCINFO ancinfo[ MAX_ANCINFO ];
         int lng_anc = 0;
@@ -2504,7 +2504,7 @@ const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n
         }
     }
 
-    if( n_in + offset > lng_link ) return MISC::SCHEME_NONE;
+    if( n_in + offset >= lng_link ) return MISC::SCHEME_NONE;
 
     if( ! url_encode ){
         memcpy( str_link + offset, str_in, n_in );
@@ -2513,19 +2513,32 @@ const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n
     else{ // URLエンコードが必要な場合
 
         char *pos = str_link + offset;
+        int tmp_out = offset;
         for( int i = 0; i < n_in; ++i, ++pos ){
 
             if( str_in[ i ] == '^' ){ // '^' -> %5e
                 *( pos++ ) = '%';
                 *( pos++ ) = '5';
                 *pos = 'e';
+                tmp_out += 3;
             }
             else if( str_in[ i ] == '|' ){ // '|' -> %7c
                 *( pos++ ) = '%';
                 *( pos++ ) = '7';
                 *pos = 'c';
+                tmp_out += 3;
             }
-            else *pos = str_in[ i ];
+            else{
+                *pos = str_in[ i ];
+                ++tmp_out;
+            }
+
+            if( tmp_out >= lng_link ){
+#ifdef _DEBUG
+                std::cout << " tmp_out = " << tmp_out << " lng_link = " << lng_link << " n_in + offset = " << n_in + offset << std::endl;
+#endif                
+                return MISC::SCHEME_NONE;
+            }
         }
         *pos = '\0';
     }
@@ -2536,6 +2549,11 @@ const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n
         str_link[ 1 ] = 't';
         str_link[ 2 ] = 't';
     }        
+
+#ifdef _DEBUG
+    std::cout << str_link << std::endl
+              << "len = " << strlen( str_link ) << " lng_link = " << lng_link << " n_in + offset = " << n_in + offset << std::endl;
+#endif
 
     return linktype;
 }
