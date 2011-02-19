@@ -314,6 +314,12 @@ namespace CONFIG
     // お気に入りでカテゴリを常にひとつだけ開く
     const bool get_open_one_favorite();
 
+    // デフォルトの書き込み名
+    const std::string get_write_name();
+
+    // デフォルトのメールアドレス
+    const std::string get_write_mail();
+
     // 書き込み時に書き込み確認ダイアログを出すかどうか
     const bool get_always_write_ok();
     void set_always_write_ok( const bool write_ok );

@@ -2030,6 +2030,25 @@ void BoardBase::read_board_info()
     m_write_name = cf.get_option_str( "write_name", "" );
     m_write_mail = cf.get_option_str( "write_mail", "" );
 
+    if( ! m_write_name.empty()
+        && ( m_write_name == CONFIG::get_write_name()
+          || ( m_write_name == JD_NAME_BLANK && CONFIG::get_write_name().empty() ) )
+        ){
+#ifdef _DEBUG
+        std::cout << "reset name = " << m_write_name << std::endl;
+#endif
+        m_write_name = std::string();
+    }
+    if( ! m_write_mail.empty()
+        && ( m_write_mail == CONFIG::get_write_mail()
+          || ( m_write_mail == JD_MAIL_BLANK && CONFIG::get_write_mail().empty() ) )
+        ){
+#ifdef _DEBUG
+        std::cout << "reset mail = " << m_write_mail << std::endl;
+#endif
+        m_write_mail = std::string();
+    }
+
     // samba24
     m_samba_sec = cf.get_option_int( "samba_sec", 0, 0, 65535 );
 

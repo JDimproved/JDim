@@ -29,6 +29,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
       m_entry_writemail( true, "メール：" ),
       m_check_noname( "名前欄が空白の時は書き込まない" ),
       m_bt_clear_post_history( "この板にある全スレの書き込み履歴クリア" ),
+      m_bt_set_default_namemail( "デフォルト" ),
 
       m_frame_cookie( "クッキーと書き込みキーワード" ),
       m_button_cookie( "削除" ) ,
@@ -67,9 +68,14 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_samba.pack_start( m_button_clearsamba, Gtk::PACK_SHRINK );    
 
     m_check_noname.set_active( DBTREE::board_check_noname( get_url() ) );
-    m_entry_writename.set_text(DBTREE::board_get_write_name( get_url() ) ); 
-    m_entry_writemail.set_text(DBTREE::board_get_write_mail( get_url() ) );
-    if( m_entry_writemail.get_text().empty() ) m_entry_writemail.set_text( "sage" );
+
+    m_entry_writename.set_text( DBTREE::board_get_write_name( get_url() ) ); 
+    if( m_entry_writename.get_text().empty() ) m_entry_writename.set_text( CONFIG::get_write_name() );
+    // JD_NAME_BLANK の場合空白をセットする
+    else if( m_entry_writename.get_text() == JD_NAME_BLANK ) m_entry_writename.set_text( std::string() );
+
+    m_entry_writemail.set_text( DBTREE::board_get_write_mail( get_url() ) );
+    if( m_entry_writemail.get_text().empty() ) m_entry_writemail.set_text( CONFIG::get_write_mail() );
     // JD_MAIL_BLANK の場合空白をセットする
     else if( m_entry_writemail.get_text() == JD_MAIL_BLANK ) m_entry_writemail.set_text( std::string() );
 
@@ -78,8 +84,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_write1.pack_start( m_check_noname );
     m_hbox_write1.pack_start( m_bt_clear_post_history );
 
+    m_bt_set_default_namemail.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_set_default_namemail ) );
+
     m_hbox_write2.set_spacing( 8 );
     m_hbox_write2.pack_start( m_entry_writename );
+    m_hbox_write2.pack_end( m_bt_set_default_namemail, Gtk::PACK_SHRINK );
     m_hbox_write2.pack_end( m_entry_writemail, Gtk::PACK_SHRINK );
 
     m_vbox_write.set_border_width( 8 );
@@ -396,6 +405,13 @@ void Preferences::slot_clear_post_history()
 }
 
 
+void Preferences::slot_set_default_namemail()
+{
+    m_entry_writename.set_text( CONFIG::get_write_name() );
+    m_entry_writemail.set_text( CONFIG::get_write_mail() );
+}
+
+
 void Preferences::slot_delete_cookie()
 {
     DBTREE::board_reset_list_cookies_for_write( get_url() );
@@ -466,10 +482,15 @@ void Preferences::slot_ok_clicked()
 
     // 書き込み設定
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );
-    DBTREE::board_set_write_name( get_url(), m_entry_writename.get_text() );
+
+    std::string tmpname = m_entry_writename.get_text();
+    if( tmpname == CONFIG::get_write_name() ) tmpname = std::string();
+    else if( tmpname.empty() ) tmpname = JD_NAME_BLANK; // 空白の場合 JD_NAME_BLANK をセットする
+    DBTREE::board_set_write_name( get_url(), tmpname );
 
     std::string tmpmail = m_entry_writemail.get_text();
-    if( tmpmail.empty() ) tmpmail = JD_MAIL_BLANK; // 空白の場合 JD_MAIL_BLANK をセットする
+    if( tmpmail == CONFIG::get_write_mail() ) tmpmail = std::string();
+    else if( tmpmail.empty() ) tmpmail = JD_MAIL_BLANK; // 空白の場合 JD_MAIL_BLANK をセットする
     DBTREE::board_set_write_mail( get_url(), tmpmail );
 
     // 実況間隔

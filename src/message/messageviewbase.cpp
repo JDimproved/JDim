@@ -350,6 +350,30 @@ void MessageViewBase::save_name()
 
 
 //
+// 名前欄に名前をセット
+//
+void MessageViewBase::set_name()
+{
+    // スレ別の名前
+    if( DBTREE::write_fixname( get_url() ) ){
+        m_check_fixname.set_active();
+        m_entry_name.set_text( DBTREE::write_name( get_url() ) );
+    }
+    // スレ別の名前が設定されていなかったら板別の名前
+    else if( ! DBTREE::board_get_write_name( get_url() ).empty() ){
+
+        std::string tmpname = DBTREE::board_get_write_name( get_url() );
+
+        // 空白セット
+        if( tmpname == JD_NAME_BLANK ) m_entry_name.set_text( std::string() );
+        else m_entry_name.set_text( tmpname );
+    }
+    // デフォルトをセット
+    else m_entry_name.set_text( CONFIG::get_write_name() );
+}
+
+
+//
 // メール欄にアドレスをセット
 //
 void MessageViewBase::set_mail()
@@ -368,8 +392,8 @@ void MessageViewBase::set_mail()
         if( tmpmail == JD_MAIL_BLANK ) m_entry_mail.set_text( std::string() );
         else m_entry_mail.set_text( tmpmail );
     }
-    // デフォルトはsage
-    else m_entry_mail.set_text( "sage" );
+    // デフォルトをセット
+    else m_entry_mail.set_text( CONFIG::get_write_mail() );
 }
 
 
@@ -390,16 +414,7 @@ void MessageViewBase::pack_widget()
     m_tooltip.set_tip( m_check_fixname, "チェックすると名前欄を保存して固定にする" );
     m_tooltip.set_tip( m_check_fixmail, "チェックするとメール欄を保存して固定にする" );
 
-    // スレ別の名前
-    if( DBTREE::write_fixname( get_url() ) ){
-        m_check_fixname.set_active();
-        m_entry_name.set_text( DBTREE::write_name( get_url() ) );
-    }
-    // スレ別の名前が設定されていなかったら板別の名前
-    else if( ! DBTREE::board_get_write_name( get_url() ).empty() ){
-        m_entry_name.set_text( DBTREE::board_get_write_name( get_url() ) );
-    }
-
+    set_name();
     set_mail();
 
     m_tool_name.add( m_label_name );

@@ -121,6 +121,9 @@ namespace MESSAGE
         // 色初期化
         void init_color();
 
+        // 名前欄に名前をセット
+        void set_name();
+
         // メール欄にアドレスをセット
         void set_mail();
 

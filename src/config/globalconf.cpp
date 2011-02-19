@@ -293,6 +293,13 @@ void CONFIG::set_live_threshode( const int th ){ get_confitem()->live_threshold 
 
 const bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; }
 const bool CONFIG::get_open_one_favorite(){ return get_confitem()->open_one_favorite; }
+
+// デフォルトの書き込み名
+const std::string CONFIG::get_write_name(){ return get_confitem()->write_name; }
+
+// デフォルトのメールアドレス
+const std::string CONFIG::get_write_mail(){ return get_confitem()->write_mail; }
+
 const bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }
 void CONFIG::set_always_write_ok( const bool write_ok ){ get_confitem()->always_write_ok = write_ok; }
 

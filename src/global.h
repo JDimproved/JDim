@@ -19,6 +19,9 @@ enum{
 };
 
 
+// 書き込みビューの名前欄の空白
+#define JD_NAME_BLANK "jd_name_blank"
+
 // 書き込みビューのメール欄の空白
 #define JD_MAIL_BLANK "jd_mail_blank"
 

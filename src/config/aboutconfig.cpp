@@ -216,6 +216,8 @@ void AboutConfig::append_rows()
     // 書き込みウィンドウ
     append_row( "" );
     append_row( "■ 書き込みビュー" );
+    append_row( "デフォルトの書き込み名", get_confitem()->write_name, CONF_WRITE_NAME );
+    append_row( "デフォルトのメールアドレス", get_confitem()->write_mail, CONF_WRITE_MAIL );
     append_row( "書き込み時に確認ダイアログを表示しない", get_confitem()->always_write_ok, CONF_ALWAYS_WRITE_OK );
     append_row( "書き込み中ダイアログを表示しない", get_confitem()->hide_writing_dialog, CONF_HIDE_WRITING_DIALOG );
     append_row( "編集中のメッセージの保存確認ダイアログを表示する", get_confitem()->show_savemsgdiag, CONF_SHOW_SAVEMSGDIAG ); 

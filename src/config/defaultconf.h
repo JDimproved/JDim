@@ -257,6 +257,9 @@ namespace CONFIG
 #define CONF_COLOR_BACK_BOARD CONF_COLOR_BACK  // スレ一覧の背景色
 #define CONF_COLOR_BACK_BOARD_EVEN CONF_COLOR_BACK_BOARD  // スレ一覧の背景色(偶数行)
 
+#define CONF_WRITE_NAME ""  // デフォルトの書き込み名
+#define CONF_WRITE_MAIL "sage"  // デフォルトのメールアドレス
+
 // migemo-dictの場所
 #ifdef MIGEMODICT
 #define CONF_MIGEMO_PATH MIGEMODICT

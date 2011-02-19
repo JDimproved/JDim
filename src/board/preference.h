@@ -62,6 +62,7 @@ namespace BOARD
         SKELETON::LabelEntry m_entry_writemail;
         Gtk::CheckButton m_check_noname; // 名無し書き込みチェック
         Gtk::Button m_bt_clear_post_history;
+        Gtk::Button m_bt_set_default_namemail;
 
         // クッキー と キーワード表示
         Gtk::Frame m_frame_cookie;
@@ -148,6 +149,7 @@ namespace BOARD
         void slot_clear_modified();
         void slot_clear_samba();
         void slot_clear_post_history();
+        void slot_set_default_namemail();
         void slot_delete_cookie();
         void slot_check_live();
         void slot_remove_old_title();

@@ -353,6 +353,12 @@ const bool ConfigItems::load( const bool restore )
     // お気に入りでカテゴリを常にひとつだけ開く
     open_one_favorite = cf.get_option_bool( "open_one_favorite", CONF_OPEN_ONE_FAVORITE );
 
+    // デフォルトの書き込み名
+    write_name = cf.get_option_str( "write_name", CONF_WRITE_NAME );
+
+    // デフォルトのメールアドレス
+    write_mail = cf.get_option_str( "write_mail", CONF_WRITE_MAIL );
+
     // 書き込み時に書き込み確認ダイアログを出さない
     always_write_ok = cf.get_option_bool( "always_write_ok", CONF_ALWAYS_WRITE_OK );
 
@@ -784,6 +790,9 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "open_one_category", open_one_category );
     cf.update( "open_one_favorite", open_one_favorite );
+
+    cf.update( "write_mail", write_mail );
+    cf.update( "write_name", write_name );
     cf.update( "always_write_ok", always_write_ok );
     cf.update( "save_postlog", save_postlog );
     cf.update( "maxsize_postlog", maxsize_postlog );
