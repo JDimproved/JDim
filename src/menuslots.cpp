@@ -934,12 +934,30 @@ void Core::slot_setup_abone_thread()
 //
 void Core::slot_toggle_abone_transp_chain()
 {
-    bool status = CONFIG::get_abone_chain() & CONFIG::get_abone_transparent();
+    const bool status = CONFIG::get_abone_chain() & CONFIG::get_abone_transparent();
 
     CONFIG::set_abone_transparent( ! status );
     CONFIG::set_abone_chain( ! status );
 
     // あぼーん情報更新
+    DBTREE::update_abone_all_article();
+    CORE::core_set_command( "relayout_all_article" );
+}
+
+
+//
+// NG正規表現によるあぼーん時に大小と全半角文字の違いを無視する
+//
+void Core::slot_toggle_abone_icase_wchar()
+{
+    const bool status = CONFIG::get_abone_icase() & CONFIG::get_abone_wchar();
+
+    CONFIG::set_abone_icase( ! status );
+    CONFIG::set_abone_wchar( ! status );
+
+    // あぼーん情報更新
+    DBTREE::update_abone_thread();
+
     DBTREE::update_abone_all_article();
     CORE::core_set_command( "relayout_all_article" );
 }

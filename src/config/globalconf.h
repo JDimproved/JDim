@@ -482,6 +482,13 @@ namespace CONFIG
     const bool get_abone_chain();
     void set_abone_chain( const bool set );
 
+    // NG正規表現によるあぼーん時に大小と全半角文字の違いを無視
+    const bool get_abone_icase();
+    void set_abone_icase( const bool set );
+
+    const bool get_abone_wchar();
+    void set_abone_wchar( const bool set );
+
     // 右ペーンが空の時にサイドバーを閉じるか
     const bool get_expand_sidebar();
 

@@ -429,6 +429,10 @@ namespace CONFIG
         bool abone_transparent;
         bool abone_chain;
 
+        // NG正規表現によるあぼーん時に大小と全半角文字の違いを無視
+        bool abone_icase;
+        bool abone_wchar;
+
         // 右ペーンが空の時にサイドバーを閉じるか
         bool expand_sidebar;
 

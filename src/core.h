@@ -298,6 +298,7 @@ namespace CORE
         void slot_setup_abone();
         void slot_setup_abone_thread();
         void slot_toggle_abone_transp_chain();
+        void slot_toggle_abone_icase_wchar();
         void slot_setup_live();
         void slot_usrcmd_pref();
         void slot_filter_pref();

@@ -636,6 +636,10 @@ void Core::run( const bool init, const bool skip_setupdiag )
                                                     ( CONFIG::get_abone_transparent() && CONFIG::get_abone_chain() ) ),
                                                     sigc::mem_fun( *this, &Core::slot_toggle_abone_transp_chain ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "IcaseWcharAbone", "NG正規表現で大小と全半角文字の違いを無視する(_W)", std::string(),
+                                                    ( CONFIG::get_abone_icase() && CONFIG::get_abone_wchar() ) ),
+                                                    sigc::mem_fun( *this, &Core::slot_toggle_abone_icase_wchar ) );
+
     // その他
     m_action_group->add( Gtk::Action::create( "Etc_Menu", "その他(_O)" ) );    
     m_action_group->add( Gtk::Action::create( "LivePref", "実況設定(_L)..." ), sigc::mem_fun( *this, &Core::slot_setup_live ) );
@@ -967,6 +971,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menuitem action='SetupAboneThread'/>"
         "<separator/>"
         "<menuitem action='TranspChainAbone'/>"
+        "<menuitem action='IcaseWcharAbone'/>"
         "</menu>"
 
         "<separator/>"

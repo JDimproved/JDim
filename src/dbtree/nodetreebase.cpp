@@ -2841,10 +2841,10 @@ const bool NodeTreeBase::check_abone_word( const int number )
     const std::string res_str = get_res_str( number );
     JDLIB::Regex regex;
     const size_t offset = 0;
-    const bool icase = false;
+    const bool icase = CONFIG::get_abone_icase();
     const bool newline = true;
     const bool usemigemo = false;
-    const bool wchar = false;
+    const bool wchar = CONFIG::get_abone_wchar();
 
     // ローカル NG word
     if( check_word ){

@@ -1521,10 +1521,10 @@ const bool BoardBase::is_abone_thread( ArticleBase* article )
 
     JDLIB::Regex regex;
     const size_t offset = 0;
-    const bool icase = false;
+    const bool icase = CONFIG::get_abone_icase();
     const bool newline = true;
     const bool usemigemo = false;
-    const bool wchar = false;
+    const bool wchar = CONFIG::get_abone_wchar();
 
     // レスの数であぼーん
     if( check_number ) if( article->get_number() >= check_number ) return true;

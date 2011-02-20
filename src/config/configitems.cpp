@@ -511,6 +511,10 @@ const bool ConfigItems::load( const bool restore )
     abone_transparent = cf.get_option_bool( "abone_transparent", CONF_ABONE_TRANSPARENT );
     abone_chain = cf.get_option_bool( "abone_chain", CONF_ABONE_CHAIN );
 
+    // NG正規表現によるあぼーん時に大小と全半角文字の違いを無視
+    abone_icase = cf.get_option_bool( "abone_icase", CONF_ABONE_ICASE );
+    abone_wchar = cf.get_option_bool( "abone_wchar", CONF_ABONE_WCHAR );
+
     // 右ペーンが空の時にサイドバーを閉じるか
     expand_sidebar = cf.get_option_bool( "expand_sidebar", CONF_EXPAND_SIDEBAR );
 
@@ -866,6 +870,9 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "abone_transparent", abone_transparent );
     cf.update( "abone_chain", abone_chain );
+
+    cf.update( "abone_icase", abone_icase );
+    cf.update( "abone_wchar", abone_wchar );
 
     cf.update( "expand_sidebar", expand_sidebar );
     cf.update( "expand_rpane", expand_rpane );

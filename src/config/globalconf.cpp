@@ -473,10 +473,21 @@ void CONFIG::set_list_abone_regex( const std::list< std::string >& regex )
     get_confitem()->list_abone_regex = MISC::remove_nullline_from_list( get_confitem()->list_abone_regex );
 }
 
+
+// デフォルトで透明、連鎖あぼーんをするか
 const bool CONFIG::get_abone_transparent(){ return get_confitem()->abone_transparent; }
 void CONFIG::set_abone_transparent( const bool set ){ get_confitem()->abone_transparent = set; }
+
 const bool CONFIG::get_abone_chain(){ return get_confitem()->abone_chain; }
 void CONFIG::set_abone_chain( const bool set ){ get_confitem()->abone_chain = set; }
+
+// NG正規表現によるあぼーん時に大小と全半角文字の違いを無視
+const bool CONFIG::get_abone_icase(){ return get_confitem()->abone_icase; }
+void CONFIG::set_abone_icase( const bool set ){ get_confitem()->abone_icase = set; }
+
+const bool CONFIG::get_abone_wchar(){ return get_confitem()->abone_wchar; }
+void CONFIG::set_abone_wchar( const bool set ){ get_confitem()->abone_wchar = set; }
+
 
 const bool CONFIG::get_expand_sidebar(){ return get_confitem()->expand_sidebar; }
 
