@@ -12,6 +12,7 @@
 #include "skeleton/msgdiag.h"
 #include "skeleton/label_entry.h"
 #include "skeleton/editview.h"
+#include "skeleton/detaildiag.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
@@ -843,9 +844,13 @@ void MessageViewBase::post_fin()
     // 失敗
     else if( code != HTTP_CANCEL ){
 
-        SKELETON::MsgDiag mdiag( get_parent_win(),
-                                 "書き込みに失敗しました\n\n" + m_post->errmsg(), false, Gtk::MESSAGE_ERROR  );
-        mdiag.run();
+        SKELETON::DetailDiag ddiag( get_parent_win(), get_url(),
+                          false,
+                          "書き込みに失敗しました\n\n" + m_post->get_errmsg(), "概要",
+                          m_post->get_return_html(), "詳細" );
+
+        ddiag.set_title( "書き込みエラー" );
+        ddiag.run();
     }
 }
 

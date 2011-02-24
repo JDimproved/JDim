@@ -218,7 +218,7 @@ void Post::receive_finish()
     std::string charset = DBTREE::board_charset( m_url );
     JDLIB::Iconv* libiconv = new JDLIB::Iconv( charset, "UTF-8" );
     int byte_out;
-    const std::string str = libiconv->convert( m_rawdata, m_lng_rawdata, byte_out );
+    m_return_html = libiconv->convert( m_rawdata, m_lng_rawdata, byte_out );
     delete libiconv;
 
 #ifdef _DEBUG
@@ -259,13 +259,13 @@ void Post::receive_finish()
     // タイトル
     icase = true;
     newline = false; // . に改行をマッチさせる
-    regex.exec( ".*<title>([^<]*)</title>.*", str, offset, icase, newline, usemigemo, wchar );
+    regex.exec( ".*<title>([^<]*)</title>.*", m_return_html, offset, icase, newline, usemigemo, wchar );
     title = MISC::remove_space( regex.str( 1 ) );
 
     // 2chタグ
     icase = false;
     newline = false; // . に改行をマッチさせる
-    regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", str, offset, icase, newline, usemigemo, wchar );
+    regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", m_return_html, offset, icase, newline, usemigemo, wchar );
     tag_2ch = MISC::remove_space( regex.str( 1 ) );
 
     // エラー内容を取得
@@ -274,7 +274,7 @@ void Post::receive_finish()
     icase = true;
     newline = false; // . に改行をマッチさせる
     m_errmsg = std::string();
-    if( regex.exec( "([^>]|[^b]>)*<b>(([^>]|[^b]>)*)</b>.*", str, offset, icase, newline, usemigemo, wchar ) ){
+    if( regex.exec( "([^>]|[^b]>)*<b>(([^>]|[^b]>)*)</b>.*", m_return_html, offset, icase, newline, usemigemo, wchar ) ){
 
         m_errmsg = regex.str( 2 );
     }
@@ -284,7 +284,7 @@ void Post::receive_finish()
 
         icase = true;
         newline = false; // . に改行をマッチさせる
-        if( regex.exec( "error +-->(.*)</body>", str, offset, icase, newline, usemigemo, wchar ) ) m_errmsg = regex.str( 1 );
+        if( regex.exec( "error +-->(.*)</body>", m_return_html, offset, icase, newline, usemigemo, wchar ) ) m_errmsg = regex.str( 1 );
     }
 
     // p2 型
@@ -292,7 +292,7 @@ void Post::receive_finish()
 
         icase = true;
         newline = false; // . に改行をマッチさせる
-        if( regex.exec( "<h4>(.*)</h4>", str, offset, icase, newline, usemigemo, wchar ) ) m_errmsg = regex.str( 1 );
+        if( regex.exec( "<h4>(.*)</h4>", m_return_html, offset, icase, newline, usemigemo, wchar ) ) m_errmsg = regex.str( 1 );
     }
 
     if( ! m_errmsg.empty() ){
@@ -326,7 +326,7 @@ void Post::receive_finish()
     // 書き込み確認
     icase = false;
     newline = true;
-    regex.exec( ".*<font size=\\+1 color=#FF0000>([^<]*)</font>.*", str, offset, icase, newline, usemigemo, wchar );
+    regex.exec( ".*<font size=\\+1 color=#FF0000>([^<]*)</font>.*", m_return_html, offset, icase, newline, usemigemo, wchar );
     conf = MISC::remove_space( regex.str( 1 ) );
 
     // メッセージ本文
@@ -334,12 +334,12 @@ void Post::receive_finish()
     // 2ch 型
     icase = false;
     newline = false; // . に改行をマッチさせる
-    ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<form.*", str, offset, icase, newline, usemigemo, wchar );
+    ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<form.*", m_return_html, offset, icase, newline, usemigemo, wchar );
 
     // 0ch 型
     icase = false;
     newline = false; // . に改行をマッチさせる
-    if( ! ret ) ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<input.*", str, offset, icase, newline, usemigemo, wchar );
+    if( ! ret ) ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<input.*", m_return_html, offset, icase, newline, usemigemo, wchar );
 
     msg = MISC::remove_space( regex.str( 1 ) );
     const::std::list< std::string > list_cookies = SKELETON::Loadable::cookies();
@@ -386,6 +386,8 @@ void Post::receive_finish()
         if( ! CONFIG::get_use_cookie_hap() )
             m_errmsg = "冒険の書を使用しない設定になっています。\nabout:configから冒険の書を有効にして下さい。";
 
+        MISC::ERRMSG( m_return_html );
+
         set_code( HTTP_ERR );
         emit_sigfin();
         return;
@@ -422,7 +424,7 @@ void Post::receive_finish()
         }
 
         // 書き込み用キーワード( hana=mogera や suka=pontan など )をセット
-        DBTREE::board_analyze_keyword_for_write( m_url, str );
+        DBTREE::board_analyze_keyword_for_write( m_url, m_return_html );
 
         // 現在のメッセージにキーワードが付加されていない時は付け加える
         const std::string keyword = DBTREE::board_keyword_for_write( m_url );
@@ -442,7 +444,7 @@ void Post::receive_finish()
              && ! m_subbbs && conf.find( "書き込み確認" ) != std::string::npos ){
 
         // 書き込み用キーワード( hana=mogera や suka=pontan など )をセット
-        DBTREE::board_analyze_keyword_for_write( m_url, str );
+        DBTREE::board_analyze_keyword_for_write( m_url, m_return_html );
 
         // 現在のメッセージにキーワードが付加されていない時は付け加える
         const std::string keyword = DBTREE::board_keyword_for_write( m_url );
@@ -468,7 +470,7 @@ void Post::receive_finish()
     // クッキー関係のエラーの時はクッキーをセット
     if( tag_2ch.find( "cookie" ) != std::string::npos ) DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
 
-    MISC::ERRMSG( str );
+    MISC::ERRMSG( m_return_html );
 
     set_code( HTTP_ERR );
     emit_sigfin();

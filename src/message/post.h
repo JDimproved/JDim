@@ -31,6 +31,7 @@ namespace MESSAGE
 
         std::string m_url;
         std::string m_msg;
+        std::string m_return_html;
         std::string m_errmsg;
         char* m_rawdata;
         size_t m_lng_rawdata;
@@ -47,7 +48,8 @@ namespace MESSAGE
         Post( Gtk::Widget* parent, const std::string& url, const std::string& msg, bool new_article );
         ~Post();
         SIG_FIN sig_fin() const { return m_sig_fin; }
-        const std::string& errmsg() const { return m_errmsg; }
+        const std::string& get_return_html() const { return m_return_html;}
+        const std::string& get_errmsg() const { return m_errmsg; }
 
         void post_msg();
 

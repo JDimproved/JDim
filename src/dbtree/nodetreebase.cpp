@@ -1937,6 +1937,17 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                     && ( *( pos + 3 ) == 'i' || *( pos + 3 ) == 'I' )
                     && *( pos + 1 ) == '/'
                     )
+
+                // </title>
+                || (
+                    ( *( pos + 2 ) == 't' || *( pos + 2 ) == 'T' )
+                    && ( *( pos + 3 ) == 'i' || *( pos + 3 ) == 'I' )
+                    && ( *( pos + 4 ) == 't' || *( pos + 4 ) == 'T' )
+                    && ( *( pos + 5 ) == 'l' || *( pos + 5 ) == 'L' )
+                    && ( *( pos + 6 ) == 'e' || *( pos + 6 ) == 'E' )
+                    && *( pos + 1 ) == '/'
+                    )
+
                 ) br = true;
 
             // <li>は・にする

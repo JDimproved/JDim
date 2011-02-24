@@ -36,6 +36,7 @@ libskeleton_a_SOURCES = \
 	selectitempref.cpp \
 	msgdiag.cpp \
 	aboutdiag.cpp \
+	detaildiag.cpp \
 	panecontrol.cpp \
 	hpaned.cpp \
 	vpaned.cpp \
@@ -85,6 +86,7 @@ noinst_HEADERS = \
 	selectitempref.h \
 	msgdiag.h \
 	aboutdiag.h \
+	detaildiag.h \
 	filediag.h \
 	login.h \
 	panecontrol.h \
