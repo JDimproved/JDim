@@ -90,10 +90,10 @@ namespace CONFIG
         // 同一ホストに対する最大コネクション数( 1 または 2 )
         int connection_num;
 
-        // 2ch冒険の書( クッキー:HAP )を使用する
+        // 2chのクッキー:HAPを保存する
         bool use_cookie_hap;
 
-        // 2ch冒険の書( クッキー:HAP )
+        // 2chのクッキー:HAP
         std::string cookie_hap;
 
         // リンクをクリックしたときに実行するコマンド

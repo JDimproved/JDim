@@ -32,7 +32,7 @@ namespace CONFIG
         CONF_LOADER_TIMEOUT_CHECKUPDATE = 10,  // 更新チェックのタイムアウト値
         CONF_USE_IPV6 = 1,          // ipv6使用
         CONF_CONNECTION_NUM = 2,    // 同一ホストに対する最大コネクション数( 1 または 2 )
-        CONF_USE_COOKIE_HAP = 1,    // 2ch冒険の書( クッキー:HAP )を使用する
+        CONF_USE_COOKIE_HAP = 1,    // 2chのクッキー:HAPを保存する
         CONF_REFPOPUP_BY_MO = 0,    // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
         CONF_NAMEPOPUP_BY_MO = 0,   // 名前の上にマウスオーバーしたときにポップアップ表示する
         CONF_IDPOPUP_BY_MO = 0,     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
@@ -213,7 +213,7 @@ namespace CONFIG
 #define CONF_URL_WRITEP2 "http://p2.2ch.net/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME"
 #define CONF_URL_RESP2 "http://p2.2ch.net/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME&popup=1&inyou=2&resnum=$NUMBER"
 
-// 2ch冒険の書( クッキー:HAP )
+// 2chのクッキー:HAP
 #define CONF_COOKIE_HAP ""
 
 // 色

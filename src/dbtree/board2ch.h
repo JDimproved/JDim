@@ -59,10 +59,10 @@ namespace DBTREE
 
       protected:
 
-        // 冒険の書(HAP)
+        // クッキー:HAP
         virtual const std::string get_hap();
 
-        // 冒険の書(HAP)の更新 (クッキーをセットした時に実行)
+        // クッキー:HAPの更新 (クッキーをセットした時に実行)
         virtual void update_hap();
 
       private:

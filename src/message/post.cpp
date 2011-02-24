@@ -375,24 +375,6 @@ void Post::receive_finish()
         return;
     }
 
-    // 冒険の書(HAP)の取得、又は秒数規制に引っかかった
-    else if( tag_2ch.find( "cookie" ) != std::string::npos
-             && ( m_errmsg.find( "冒険" ) != std::string::npos || m_errmsg.find( "修行" ) != std::string::npos )
-        ){
-
-        // クッキーのセット
-        DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
-
-        if( ! CONFIG::get_use_cookie_hap() )
-            m_errmsg = "冒険の書を使用しない設定になっています。\nabout:configから冒険の書を有効にして下さい。";
-
-        MISC::ERRMSG( m_return_html );
-
-        set_code( HTTP_ERR );
-        emit_sigfin();
-        return;
-    }
-
     // クッキー確認
     else if( m_count < 1 && // 永久ループ防止
         ( title.find( "書き込み確認" ) != std::string::npos
