@@ -16,7 +16,11 @@ namespace CONFIG
         CONF_RESTORE_BOARD = 0,     // スレ一覧を復元
         CONF_RESTORE_ARTICLE = 0,   // スレを復元
         CONF_RESTORE_IMAGE = 0,     // 画像を復元
+#ifndef _WIN32
         CONF_MANAGE_WINPOS = 1,    // 自前でウィンドウ配置を管理する
+#else
+        CONF_MANAGE_WINPOS = 0,    // Windowsがウインドウ配置を管理する
+#endif
         CONF_REF_PREFIX_SPACE = 1, // 参照文字( CONF_REF_PREFIX ) の後のスペースの数
         CONF_USE_PROXY_FOR2CH = 0, // 2ch 読み込み用プロクシを使用するか
         CONF_PROXY_PORT_FOR2CH = 8080, // 2ch 読み込み用プロクシポート番号
@@ -153,15 +157,17 @@ namespace CONFIG
 // browsers.cpp のデフォルトのラベル番号
 // configure で --with-xdg-open を指定すると xdg-open をデフォルトにする
 // browsers.cpp のブラウザの順番に気をつけること
+    enum{
+#ifndef _WIN32
 #ifdef XDGOPEN
-    enum{
         CONF_BROWSER_NO = 1  // xdg-open をデフォルトにする
-    };
 #else
-    enum{
         CONF_BROWSER_NO = 2  // firefox をデフォルトにする
+#endif
+#else /* _WIN32 */
+        CONF_BROWSER_NO = 1  // ie をデフォルトにする
+#endif /* _WIN32 */
     };
-#endif        
 
 #define CONF_FONTSIZE_THREAD "12"
 #define CONF_FONTSIZE_POPUP  "10"
