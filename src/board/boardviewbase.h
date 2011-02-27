@@ -94,6 +94,9 @@ namespace BOARD
         // 増分行が表示されている
         bool m_col_diff_is_shown;
 
+        // 連続クリック防止用カウンタ
+        int m_cancel_openrow_counter;
+
     public:
 
         BoardViewBase( const std::string& url, const bool show_col_board );

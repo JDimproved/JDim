@@ -29,6 +29,9 @@ namespace ARTICLE
 
         bool m_reload_reserve;
 
+        // 連続リロード防止用
+        int m_cancel_reload_counter;
+
       public:
         ArticleViewMain( const std::string& url );
         ~ArticleViewMain();

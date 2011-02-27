@@ -48,6 +48,7 @@ using namespace BOARD;
 
 
 enum{
+    CANCEL_OPENROW = 500,  // msec  連続クリック防止用カウンタ
     DEFAULT_COLMUN_WIDTH = 50
 };
 
@@ -117,7 +118,8 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
       m_enable_menuslot( true ),
       m_load_subject_txt( true ),
       m_show_col_board( show_col_board ),
-      m_col_diff_is_shown( false )
+      m_col_diff_is_shown( false ),
+      m_cancel_openrow_counter( 0 )
 {
     // 次スレ検索ビューのようにURLの途中に http が入っている場合は取り除く
     const size_t pos = url.rfind( "http://" );
@@ -1158,6 +1160,8 @@ void BoardViewBase::clock_in()
     View::clock_in();
 
     m_treeview.clock_in();
+
+    if( m_cancel_openrow_counter ) --m_cancel_openrow_counter;
 }
 
 
@@ -1947,6 +1951,13 @@ const bool BoardViewBase::slot_button_press( GdkEventButton* event )
     std::cout << "BoardViewBase::slot_button_press\n";
 #endif
 
+    if( m_cancel_openrow_counter ){
+#ifdef _DEBUG
+        std::cout << "canceled\n";
+#endif
+        return true;
+    }
+
     m_clicked = true;
 
     // マウスジェスチャ
@@ -2378,6 +2389,11 @@ const bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab, const b
     DBTREE::article_set_url_pre_article( url_target, get_url_pre_article() );
 
     CORE::core_set_command( "open_article", url_target, str_tab, mode );
+
+    // 行を長押ししてから素早くクリックし直すとslot_button_press()が呼び出されて
+    // スレビューが表示されてから一瞬スレ一覧に切り替わるのを防ぐ
+    m_cancel_openrow_counter = CANCEL_OPENROW / TIMER_TIMEOUT;
+
     return true;
 }
 

@@ -38,6 +38,7 @@ using namespace ARTICLE;
 
 enum
 {
+    CANCEL_RELOAD = 500,  // msec  連続リロード防止用カウンタ
     LIVE_SEC_PLUS = 5, // 実況で更新失敗/成功ごとに増減する更新間隔(秒)
     LIVE_MAX_RELOAD = 5  // 実況でこの回数連続でリロードに失敗したら実況停止
 };
@@ -46,7 +47,7 @@ enum
 // メインビュー
 
 ArticleViewMain::ArticleViewMain( const std::string& url )
-    :  ArticleViewBase( url, url ), m_gotonum_reserve_to( 0 ), m_gotonum_reserve_from( 0 ), m_gotonum_seen( 0 ), m_playsound( false ), m_reload_reserve( false )
+    :  ArticleViewBase( url, url ), m_gotonum_reserve_to( 0 ), m_gotonum_reserve_from( 0 ), m_gotonum_seen( 0 ), m_playsound( false ), m_reload_reserve( false ), m_cancel_reload_counter( 0 )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::ArticleViewMain " << get_url() << " url_article = " << url_article() << std::endl;
@@ -117,6 +118,8 @@ void ArticleViewMain::clock_in()
             show_view();
         }
     }
+
+    if( m_cancel_reload_counter ) --m_cancel_reload_counter;
 }
 
 
@@ -229,6 +232,12 @@ void ArticleViewMain::show_view()
     }
 
     if( is_loading() ) return;
+    if( m_cancel_reload_counter ){
+#ifdef _DEBUG
+        std::cout << "cancel reload\n";
+#endif
+        return;
+    }
 
     // キャッシュを削除してからスレを再読み込み
     if( SESSION::is_online() && get_reget() ){
@@ -258,7 +267,7 @@ void ArticleViewMain::show_view()
     reset_autoreload_counter();
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewMain::show_view\n";
+    std::cout << "ArticleViewMain::show_view " << url_article() << std::endl;
 #endif
 
     if( get_url().empty() ){
@@ -360,6 +369,9 @@ void ArticleViewMain::show_view()
 
         // タブのアイコン状態を更新
         ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
+
+        // スレ一覧などを素早くクリックした時などに2回リロードされるのを防ぐ
+        m_cancel_reload_counter = CANCEL_RELOAD / TIMER_TIMEOUT;
     }
 }
 
