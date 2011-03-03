@@ -180,7 +180,9 @@ namespace CONFIG
     // 2chのクッキー:HAP
     const bool get_use_cookie_hap();
     const std::string& get_cookie_hap();
+    const std::string& get_cookie_hap_bbspink();
     void set_cookie_hap( const std::string& cookie_hap );
+    void set_cookie_hap_bbspink( const std::string& cookie_hap );
 
     // リンクをクリックしたときに実行するコマンド
     const std::string& get_command_openurl();

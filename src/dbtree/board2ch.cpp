@@ -275,7 +275,16 @@ const std::string Board2ch::get_hap()
 {
     if( ! CONFIG::get_use_cookie_hap() ) return std::string();
 
+    if( get_root().find( ".bbspink.com" ) != std::string::npos ) return CONFIG::get_cookie_hap_bbspink();
     return CONFIG::get_cookie_hap();
+}
+
+void Board2ch::set_hap( const std::string& hap )
+{
+    if( ! CONFIG::get_use_cookie_hap() )  return;
+
+    if( get_root().find( ".bbspink.com" ) != std::string::npos ) CONFIG::set_cookie_hap_bbspink( hap );
+    else CONFIG::set_cookie_hap( hap );
 }
 
 
@@ -317,7 +326,7 @@ void Board2ch::update_hap()
                 std::cout << "old = " << get_hap() << std::endl;
                 std::cout << "new = " << tmp_hap << std::endl;
 #endif
-                CONFIG::set_cookie_hap( tmp_hap );
+                set_hap( tmp_hap );
                 return;
             }
         }

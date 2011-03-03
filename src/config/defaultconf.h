@@ -221,6 +221,7 @@ namespace CONFIG
 
 // 2chのクッキー:HAP
 #define CONF_COOKIE_HAP ""
+#define CONF_COOKIE_HAP_BBSPINK ""
 
 // 色
 #define CONF_COLOR_CHAR    "#000000000000"     // スレの文字

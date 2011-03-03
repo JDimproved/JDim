@@ -61,6 +61,7 @@ namespace DBTREE
 
         // クッキー:HAP
         virtual const std::string get_hap();
+        virtual void set_hap( const std::string& hap );
 
         // クッキー:HAPの更新 (クッキーをセットした時に実行)
         virtual void update_hap();

@@ -95,6 +95,7 @@ namespace CONFIG
 
         // 2chのクッキー:HAP
         std::string cookie_hap;
+        std::string cookie_hap_bbspink;
 
         // リンクをクリックしたときに実行するコマンド
         std::string command_openurl;
