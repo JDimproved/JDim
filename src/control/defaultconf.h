@@ -154,6 +154,7 @@ namespace CONTROL
 #define KEYCONF_DeleteEdit  ""
 #define KEYCONF_BackspEdit  ""
 #define KEYCONF_UndoEdit  "Ctrl+/ Ctrl+z"
+#define KEYCONF_EnterEdit  ""
 
 #define KEYCONF_InputAA  "Alt+a"
 

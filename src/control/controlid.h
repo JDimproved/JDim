@@ -271,6 +271,7 @@ namespace CONTROL
         DeleteEdit,
         BackspEdit,
         UndoEdit,
+        EnterEdit,
 
         InputAA,
 

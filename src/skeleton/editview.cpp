@@ -385,6 +385,13 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::BackspEdit: backsp_char(); return true;
         case CONTROL::UndoEdit: undo(); return true;
 
+        case CONTROL::EnterEdit:
+            event->keyval = GDK_Return;
+            event->state &= ~GDK_CONTROL_MASK;
+            event->state &= ~GDK_SHIFT_MASK;
+            event->state &= ~GDK_MOD1_MASK;
+            break;
+
         case CONTROL::InputAA: show_aalist_popup(); return true;
     }
 

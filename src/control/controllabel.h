@@ -283,6 +283,7 @@ namespace CONTROL
         { "DeleteEdit", "一文字削除" },
         { "BackspEdit", "BackSpace" },
         { "UndoEdit", ITEM_NAME_UNDO },
+        { "EnterEdit", "改行" },
 
         { "InputAA", "アスキーアート入力" },
 

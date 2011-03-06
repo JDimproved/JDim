@@ -178,6 +178,7 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "DeleteEdit", KEYCONF_DeleteEdit );
     SETKEYMOTION( "BackspEdit", KEYCONF_BackspEdit );
     SETKEYMOTION( "UndoEdit", KEYCONF_UndoEdit );
+    SETKEYMOTION( "EnterEdit", KEYCONF_EnterEdit );
 
     SETKEYMOTION( "InputAA", KEYCONF_InputAA );
 }
@@ -263,18 +264,20 @@ void KeyConfig::toggle_emacs_mode()
     remove_motions( CONTROL::LeftEdit );
 
     remove_motions( CONTROL::DeleteEdit );
+    remove_motions( CONTROL::EnterEdit );
 
     if( mode ){
 
-        set_one_motion( "HomeEdit", "" );
-        set_one_motion( "EndEdit", "" );
+        set_one_motion( "HomeEdit", KEYCONF_HomeEdit );
+        set_one_motion( "EndEdit", KEYCONF_EndEdit );
 
-        set_one_motion( "UpEdit", "" );
-        set_one_motion( "DownEdit", "" );
-        set_one_motion( "RightEdit", "" );
-        set_one_motion( "LeftEdit", "" );
+        set_one_motion( "UpEdit", KEYCONF_UpEdit );
+        set_one_motion( "DownEdit", KEYCONF_DownEdit );
+        set_one_motion( "RightEdit", KEYCONF_RightEdit );
+        set_one_motion( "LeftEdit", KEYCONF_LeftEdit );
 
-        set_one_motion( "DeleteEdit", "" );
+        set_one_motion( "DeleteEdit", KEYCONF_DeleteEdit );
+        set_one_motion( "EnterEdit", KEYCONF_EnterEdit );
     }
     else{
 
@@ -287,6 +290,7 @@ void KeyConfig::toggle_emacs_mode()
         set_one_motion( "LeftEdit", "Ctrl+b" );
 
         set_one_motion( "DeleteEdit", "Ctrl+d" );
+        set_one_motion( "EnterEdit", "Ctrl+m" );
     }
 }
 

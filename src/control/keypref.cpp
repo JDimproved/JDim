@@ -146,6 +146,7 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::DeleteEdit );
     append_row( CONTROL::BackspEdit );
     append_row( CONTROL::UndoEdit );
+    append_row( CONTROL::EnterEdit );
 
     append_row( CONTROL::InputAA );
 
