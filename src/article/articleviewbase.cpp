@@ -3971,6 +3971,9 @@ void ArticleViewBase::slot_show_selection_images()
 
             if( DBIMG::get_abone( url ) ) continue;
 
+            // オフラインでキャッシュが無い場合はスキップ
+            if( ! SESSION::is_online() && ! DBIMG::is_cached( url ) ) continue;
+
             const std::string refurl = DBTREE::url_readcgi( m_url_article, res_number, 0 );
             const bool open_imageview = CONFIG::get_use_image_view();
             const bool mosaic = CONFIG::get_use_mosaic();
