@@ -274,7 +274,9 @@ void ImgRoot::delete_cache( const std::string& url )
 
     // 再描画
     if( img ) img->reset();
-    redraw_imgs();
+    CORE::core_set_command( "close_image", url );
+    CORE::core_set_command( "redraw_article" );
+    CORE::core_set_command( "redraw_message" );
 }
 
 
@@ -301,15 +303,7 @@ void ImgRoot::delete_all_files()
     delete deldiag;
 
     reset_imgs();
-    redraw_imgs();
-}
 
-
-//
-// 画像の再描画
-//
-void ImgRoot::redraw_imgs()
-{
     CORE::core_set_command( "close_nocached_image_views" );
     CORE::core_set_command( "redraw_article" );
     CORE::core_set_command( "redraw_message" );

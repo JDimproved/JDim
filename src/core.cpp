@@ -2674,6 +2674,9 @@ void Core::set_command( const COMMAND_ARGS& command )
         DBIMG::delete_cache( command.url );
         return;
     }
+    else if( command.command == "close_image" ){
+        IMAGE::get_admin()->set_command( "close_view", command.url );
+    }
 
     // キャッシュに無い画像を閉じる
     else if( command.command == "close_nocached_image_views" ){

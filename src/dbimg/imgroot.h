@@ -59,7 +59,6 @@ namespace DBIMG
         bool is_gif( const char* url, int n );
         bool is_bmp( const char* url, int n );
 
-        void redraw_imgs();
         void reset_imgs();
     };
 }
