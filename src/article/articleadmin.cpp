@@ -425,16 +425,6 @@ COMMAND_ARGS ArticleAdmin::get_open_list_args( const std::string& url, const COM
 
 
 //
-// カレントビューでポップアップ表示していたら隠す(インスタンスは削除しない)
-//
-void ArticleAdmin::hide_popup()
-{
-    SKELETON::View* view = get_current_view();
-    if( view ) view->set_command( "hide_popup" );
-}
-
-
-//
 // カレントビューでポップアップ表示していたら消す
 //
 void ArticleAdmin::delete_popup()
@@ -673,9 +663,6 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
         SKELETON::View* view = get_view( command.url );
         if( view ) view->set_command( "goto_num", command.arg1, command.arg2 );
     }
-
-    // ポップアップを隠す(インスタンスは削除しない)
-    else if( command.command == "hide_popup" ) hide_popup();
 
     // ポップアップを消去
     else if( command.command == "delete_popup" ) delete_popup();

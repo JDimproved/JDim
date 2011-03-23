@@ -758,6 +758,9 @@ void Admin::exec_command()
         set_autoreload_mode( command.url, AUTORELOAD_NOT, 0 );
     }
 
+    // ポップアップを隠す(インスタンスは削除しない)
+    else if( command.command == "hide_popup" ) hide_popup();
+
     else{
 
         // ツールバー関係
@@ -1819,6 +1822,13 @@ bool Admin::set_autoreload_mode( const std::string& url, int mode, int sec )
     return false;
 }
 
+
+// ポップアップを隠す(インスタンスは削除しない)
+void Admin::hide_popup()
+{
+    SKELETON::View* view = get_current_view();
+    if( view ) view->set_command( "hide_popup" );
+}
 
 
 //

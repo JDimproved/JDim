@@ -276,6 +276,8 @@ const bool MessageViewBase::set_command( const std::string& command, const std::
     else if( command == "tab_left" ) tab_left();
     else if( command == "tab_right" ) tab_right();
 
+    else if( command == "hide_popup" && m_preview ) m_preview->set_command( "hide_popup" );
+
     // メッセージをクリア
     else if( command == "clear_message" ){
 

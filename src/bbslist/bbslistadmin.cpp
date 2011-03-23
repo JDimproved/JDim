@@ -243,9 +243,6 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
         // 板のアイコン表示を更新
         else if( command.command  == "toggle_boardicon" ) view->set_command( "toggle_boardicon", command.arg1 );
     }
-
-    // ポップアップを隠す(インスタンスは削除しない)
-    else if( command.command == "hide_popup" ) hide_popup();
 }
 
 
@@ -278,16 +275,3 @@ const std::string BBSListAdmin::get_dirname( const std::string& url, const int d
     return std::string();
 }
 
-
-//
-// カレントビューでポップアップ表示していたら隠す(インスタンスは削除しない)
-//
-void BBSListAdmin::hide_popup()
-{
-#ifdef _DEBUG
-    std::cout << "BBSListAdmin::hide_popup\n";
-#endif
-
-    SKELETON::View* view = get_current_view();
-    if( view ) view->set_command( "hide_popup" );
-}

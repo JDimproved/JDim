@@ -67,12 +67,6 @@ namespace BBSLIST
 
         // タブメニュー表示キャンセル
         virtual void slot_tab_menu( int page, int x, int y ){}
-
-
-      private:
-
-        // カレントビューでポップアップ表示していたら隠す(インスタンスは削除しない)
-        void hide_popup();
     };
 
     

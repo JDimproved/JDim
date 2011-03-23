@@ -211,6 +211,9 @@ namespace SKELETON
         // オートリロードのモード設定
         virtual bool set_autoreload_mode( const std::string& url, int mode, int sec );
 
+        // ポップアップを隠す(インスタンスは削除しない)
+        void hide_popup();
+        
         // タブをお気に入りにドロップした時にお気に入りがデータ送信を要求してきた
         virtual void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ) = 0;
 

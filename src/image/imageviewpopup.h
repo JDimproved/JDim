@@ -27,6 +27,9 @@ namespace IMAGE
 
         virtual void clock_in();
 
+        // 親ウィンドウは無し
+        virtual Gtk::Window* get_parent_win(){ return NULL; }
+
         virtual void stop();
         virtual void show_view();
         virtual void close_view();

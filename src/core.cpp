@@ -2924,11 +2924,12 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     ////////////////////////////
-    // ポップを隠す
+    // ポップアップを隠す
     else if( command.command  == "hide_popup" ){
 
         BBSLIST::get_admin()->set_command_immediately( "hide_popup" );
         ARTICLE::get_admin()->set_command_immediately( "hide_popup" );
+        MESSAGE::get_admin()->set_command_immediately( "hide_popup" );
         return;
     }
 
