@@ -18,9 +18,12 @@ enum
     COLOR_CHAR_AGE,         // 非sageのメール欄
     COLOR_CHAR_SELECTION,   // 選択範囲の文字
     COLOR_CHAR_HIGHLIGHT,   // ハイライトの文字
-    COLOR_CHAR_LINK,        // リンク
-    COLOR_CHAR_LINK_LOW,    // レス番号やIDなどの複数現れたリンク
-    COLOR_CHAR_LINK_HIGH,   // レス番号やIDなどの多数現れたリンク
+    COLOR_CHAR_LINK,        // 通常のリンクの文字色
+    COLOR_CHAR_LINK_ID_LOW, // 複数発言したIDの文字色
+    COLOR_CHAR_LINK_ID_HIGH,// 多く発言したIDの文字色
+    COLOR_CHAR_LINK_RES,    // 参照されていないレス番号の文字色
+    COLOR_CHAR_LINK_LOW,    // 他のレスから参照されたレス番号の文字色
+    COLOR_CHAR_LINK_HIGH,   // 参照された数が多いレス番号の文字色
     COLOR_CHAR_MESSAGE,           // メッセージビューの文字
     COLOR_CHAR_MESSAGE_SELECTION, // メッセージビュー(選択範囲)の文字
     COLOR_CHAR_ENTRY_DEFAULT,      // Gtk::Entryのデフォルトの文字色

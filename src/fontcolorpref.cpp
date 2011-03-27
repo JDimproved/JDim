@@ -69,9 +69,12 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     set_color_settings( COLOR_CHAR_AGE, "sage でないメール欄の文字色", CONF_COLOR_CHAR_AGE );
     set_color_settings( COLOR_CHAR_SELECTION, "選択範囲の文字色", CONF_COLOR_CHAR_SELECTION );
     set_color_settings( COLOR_CHAR_HIGHLIGHT, "検索結果などのハイライトの文字色", CONF_COLOR_CHAR_HIGHLIGHT );
-    set_color_settings( COLOR_CHAR_LINK, "通常のリンクや参照されていないレス番号、複数発言したIDの文字色", CONF_COLOR_CHAR_LINK );
+    set_color_settings( COLOR_CHAR_LINK, "通常のリンクの文字色", CONF_COLOR_CHAR_LINK );
+    set_color_settings( COLOR_CHAR_LINK_ID_LOW, "複数発言したIDの文字色", CONF_COLOR_CHAR_LINK_ID_LOW );
+    set_color_settings( COLOR_CHAR_LINK_ID_HIGH, "多く発言したIDの文字色", CONF_COLOR_CHAR_LINK_ID_HIGH );
+    set_color_settings( COLOR_CHAR_LINK_RES, "参照されていないレス番号の文字色", CONF_COLOR_CHAR_LINK_RES );
     set_color_settings( COLOR_CHAR_LINK_LOW, "他のレスから参照されたレス番号の文字色", CONF_COLOR_CHAR_LINK_LOW );
-    set_color_settings( COLOR_CHAR_LINK_HIGH, "参照された数が多いレス番号や多く発言したIDの文字色", CONF_COLOR_CHAR_LINK_HIGH );
+    set_color_settings( COLOR_CHAR_LINK_HIGH, "参照された数が多いレス番号の文字色", CONF_COLOR_CHAR_LINK_HIGH );
     set_color_settings( COLOR_IMG_NOCACHE, "画像として扱うリンクのうち、キャッシュされていない物の文字色", CONF_COLOR_IMG_NOCACHE );
     set_color_settings( COLOR_IMG_CACHED, "画像として扱うリンクのうち、キャッシュされている物の文字色", CONF_COLOR_IMG_CACHED );
     set_color_settings( COLOR_IMG_LOADING, "画像として扱うリンクのうち、ロード中の物の文字色", CONF_COLOR_IMG_LOADING );

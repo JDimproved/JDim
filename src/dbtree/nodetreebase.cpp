@@ -1419,7 +1419,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     snprintf( tmplink, LNG_RES,"%s%d", PROTO_RES, header->id_header );    
 
     header->headinfo->block[ BLOCK_NUMBER ] = create_node_block();
-    create_node_link( tmpstr, strlen( tmpstr ) , tmplink, strlen( tmplink ), COLOR_CHAR_LINK, true );
+    create_node_link( tmpstr, strlen( tmpstr ) , tmplink, strlen( tmplink ), COLOR_CHAR_LINK_RES, true );
 
     const char* section[ SECTION_NUM ];
     int section_lng[ SECTION_NUM ];
@@ -3000,7 +3000,7 @@ void NodeTreeBase::clear_reference()
         NODE* tmphead = m_vec_header[ i ];
         if( tmphead && tmphead->headinfo && tmphead->headinfo->block[ BLOCK_NUMBER ]->next_node ){
             tmphead->headinfo->num_reference = 0;
-            tmphead->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK;
+            tmphead->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK_RES;
         }
     }
 }
@@ -3186,7 +3186,7 @@ void NodeTreeBase::inc_reference( NODE* head, const int count )
         head->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK_LOW;
 
     // 参照無し
-    else head->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK;
+    else head->headinfo->block[ BLOCK_NUMBER ]->next_node->color_text = COLOR_CHAR_LINK_RES;
 }
 
 
@@ -3278,8 +3278,8 @@ void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name, NODE* p
     header->headinfo->num_id_name = num_id_name;        
     header->headinfo->pre_id_name_header = pre_id_name_header;
 
-    if( num_id_name >= m_num_id[ LINK_HIGH ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_HIGH;
-    else if( num_id_name >= m_num_id[ LINK_LOW ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK;
+    if( num_id_name >= m_num_id[ LINK_HIGH ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_ID_HIGH;
+    else if( num_id_name >= m_num_id[ LINK_LOW ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_ID_LOW;
     else header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR;
 }
 

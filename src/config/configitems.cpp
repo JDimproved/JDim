@@ -737,6 +737,9 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_char_selection", str_color[ COLOR_CHAR_SELECTION ] );
     cf.update( "cl_char_highlight", str_color[ COLOR_CHAR_HIGHLIGHT ] );
     cf.update( "cl_char_link", str_color[ COLOR_CHAR_LINK ] );
+    cf.update( "cl_char_link_id_low", str_color[ COLOR_CHAR_LINK_ID_LOW ] );
+    cf.update( "cl_char_link_id_high", str_color[ COLOR_CHAR_LINK_ID_HIGH ] );
+    cf.update( "cl_char_link_res", str_color[ COLOR_CHAR_LINK_RES ] );
     cf.update( "cl_char_link_low", str_color[ COLOR_CHAR_LINK_LOW ] );
     cf.update( "cl_char_link_high", str_color[ COLOR_CHAR_LINK_HIGH ] );
     cf.update( "cl_char_message", str_color[ COLOR_CHAR_MESSAGE ] );
@@ -970,13 +973,22 @@ void ConfigItems::set_colors( JDLIB::ConfLoader& cf )
     // ハイライトの文字色
     str_color[ COLOR_CHAR_HIGHLIGHT ] = cf.get_option_str( "cl_char_highlight", CONF_COLOR_CHAR_HIGHLIGHT, 13 );
 
-    // リンク(通常)の文字色
+    // 通常のリンクの文字色
     str_color[ COLOR_CHAR_LINK ] = cf.get_option_str( "cl_char_link", CONF_COLOR_CHAR_LINK, 13 );
 
-    // リンク(複数)の文字色
+    // 複数発言したIDの文字色
+    str_color[ COLOR_CHAR_LINK_ID_LOW ] = cf.get_option_str( "cl_char_link_id_low", CONF_COLOR_CHAR_LINK_ID_LOW, 13 );
+
+    // 多く発言したIDの文字色
+    str_color[ COLOR_CHAR_LINK_ID_HIGH ] = cf.get_option_str( "cl_char_link_id_high", CONF_COLOR_CHAR_LINK_ID_HIGH, 13 );
+
+    // 参照されていないレス番号の文字色
+    str_color[ COLOR_CHAR_LINK_RES ] = cf.get_option_str( "cl_char_link_res", CONF_COLOR_CHAR_LINK_RES, 13 );
+
+    // 他のレスから参照されたレス番号の文字色
     str_color[ COLOR_CHAR_LINK_LOW ] = cf.get_option_str( "cl_char_link_low", CONF_COLOR_CHAR_LINK_LOW, 13 );
 
-    // リンク(多数)の文字色
+    // 参照された数が多いレス番号の文字色
     str_color[ COLOR_CHAR_LINK_HIGH ] = cf.get_option_str( "cl_char_link_high", CONF_COLOR_CHAR_LINK_HIGH, 13 );
 
     // メッセージビューの文字色

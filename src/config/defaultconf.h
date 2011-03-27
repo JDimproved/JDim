@@ -231,9 +231,12 @@ namespace CONFIG
 #define CONF_COLOR_CHAR_AGE "#fde800000000"    // ageの時のメール欄の文字色
 #define CONF_COLOR_CHAR_SELECTION "#ffffffffffff"  // 選択範囲の文字色
 #define CONF_COLOR_CHAR_HIGHLIGHT CONF_COLOR_CHAR  // ハイライトの文字色
-#define CONF_COLOR_CHAR_LINK "#00000000ffff" //リンク(通常)の文字色
-#define CONF_COLOR_CHAR_LINK_LOW "#ffff0000ffff" // リンク(複数)の文字色
-#define CONF_COLOR_CHAR_LINK_HIGH CONF_COLOR_CHAR_AGE  // リンク(多数)の文字色
+#define CONF_COLOR_CHAR_LINK "#00000000ffff" //通常のリンクの文字色
+#define CONF_COLOR_CHAR_LINK_ID_LOW  CONF_COLOR_CHAR_LINK // 複数発言したIDの文字色
+#define CONF_COLOR_CHAR_LINK_ID_HIGH CONF_COLOR_CHAR_AGE // 多く発言したIDの文字色
+#define CONF_COLOR_CHAR_LINK_RES CONF_COLOR_CHAR_LINK // 参照されていないレス番号の文字色
+#define CONF_COLOR_CHAR_LINK_LOW "#ffff0000ffff" // 他のレスから参照されたレス番号の文字色
+#define CONF_COLOR_CHAR_LINK_HIGH CONF_COLOR_CHAR_AGE  // 参照された数が多いレス番号の文字色
 #define CONF_COLOR_CHAR_MESSAGE CONF_COLOR_CHAR  // メッセージビューの文字色
 #define CONF_COLOR_CHAR_MESSAGE_SELECTION CONF_COLOR_CHAR_SELECTION  // メッセージビュー(選択範囲)の文字色
 
