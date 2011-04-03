@@ -123,6 +123,7 @@ namespace IMAGE
       private:
 
         virtual void show_status(){}
+        virtual void update_status(){}
         virtual void add_image(){}
         virtual void switch_icon(){}
 

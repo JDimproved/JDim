@@ -19,6 +19,7 @@ namespace IMAGE
         gdouble m_y_motion;
         size_t m_length_prev;
         bool m_show_status;
+        bool m_update_status;
         bool m_show_label;
 
         int m_pre_width;
@@ -42,7 +43,6 @@ namespace IMAGE
         virtual const bool operate_view( const int control );
 
       protected:
-        virtual void show_status();
 
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
 
@@ -50,6 +50,10 @@ namespace IMAGE
         virtual bool slot_motion_notify( GdkEventMotion* event );
 
       private:
+
+        virtual void show_status();
+        virtual void update_status();
+
         void show_instruct_diag();
         void set_label();
         void remove_label();

@@ -401,6 +401,7 @@ void ImageViewBase::remove_imagearea()
 const bool ImageViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "switch_icon" ) switch_icon();
+    else if( command == "update_status" ) update_status();
 
     return true;
 }

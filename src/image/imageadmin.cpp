@@ -331,6 +331,7 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
     }
 
     open_window();
+    update_status_of_all_views();
     switch_img( command.url );
 }
 
@@ -452,11 +453,26 @@ void ImageAdmin::reorder( const std::string& url_from, const std::string& url_to
 #endif    
 
         m_iconbox.reorder_child( *view_from, pos );
+
+        update_status_of_all_views();
     }
 }
 
 
+//
+// 全てのビューのステータス表示内容更新の予約
+//
+void ImageAdmin::update_status_of_all_views()
+{
+#ifdef _DEBUG
+    std::cout << "ImageAdmin::update_status_of_all_views\n";
+#endif    
 
+    std::list< SKELETON::View* >::iterator it_view;
+    for( it_view = m_list_view.begin(); it_view != m_list_view.end(); ++it_view ){
+        if( *it_view ) (*it_view)->set_command( "update_status" );
+    }
+}
 
 
 //
@@ -550,7 +566,10 @@ void ImageAdmin::close_view( const std::string& url )
         close_window();
         CORE::core_set_command( "empty_page", get_url() );
     }
-    else if( ! url_next.empty() ) switch_img( url_next );
+    else if( ! url_next.empty() ){
+        update_status_of_all_views();
+        switch_img( url_next );
+    }
 }
 
 

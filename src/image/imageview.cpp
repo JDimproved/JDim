@@ -48,6 +48,7 @@ ImageViewMain::ImageViewMain( const std::string& url )
       m_scrwin( 0 ),
       m_length_prev( 0 ),
       m_show_status( false ),
+      m_update_status( false ),
       m_show_label( false ),
       m_do_resizing( false ),
       m_scrolled( false )
@@ -96,6 +97,12 @@ void ImageViewMain::clock_in()
 
     const int width_view = get_width();
     const int height_view = get_height();
+
+    // ステータス表示内容更新
+    if( m_update_status ){
+        m_update_status = false;
+        show_status();
+    }
 
     // viewがアクティブになった(クロック入力が来た)ときにステータス表示
     if( m_show_status ){
@@ -332,11 +339,14 @@ void ImageViewMain::show_status()
         if( get_imagearea() ){
 
             std::stringstream ss;
+            ss << " [" << MISC::itostr( IMAGE::get_admin()->get_current_page() + 1 )
+               << "/" << MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) << "] ";
             ss << get_img()->get_width() << " x " << get_img()->get_height();
             if( get_img()->get_width() )
                 ss << " (" << get_img()->get_size() << " %)";
             ss << " " << get_img()->total_length()/1024 << " K ";
-            if( get_img()->is_protected() ) ss << " キャッシュ保護されています";
+            ss << " [" << MISC::get_filename( get_url() ) << "] ";
+            if( get_img()->is_protected() ) ss << " キャッシュ保護中";
 
             set_status( ss.str() );
         }
@@ -373,6 +383,14 @@ void ImageViewMain::show_status()
         }
     }
 }
+
+
+
+void ImageViewMain::update_status()
+{
+    m_update_status = true; // viewがアクティブになった時点でステータス表示更新
+}
+
 
 
 //

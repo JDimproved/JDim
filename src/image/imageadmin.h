@@ -100,6 +100,7 @@ namespace IMAGE
         void close_error_views( const std::string mode );
         void close_noerror_views();
         void reorder( const std::string& url_from, const std::string& url_to );
+        void update_status_of_all_views();
         void focus_out_all();
         void switch_img( const std::string& url );
 
