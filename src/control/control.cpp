@@ -70,9 +70,9 @@ const int Control::key_press( const GdkEventKey* event )
     const bool dblclick = false;
     const bool trpclick = false;
 
-    // keyがアスキー文字の場合は shift を無視する
+    // keyがアスキー文字の場合は shift を無視する (大文字除く)
     // KeyConfig::set_one_motion()も参照せよ
-    if( CONTROL::is_ascii( key ) ) shift = false;
+    if( CONTROL::is_ascii( key ) && key < 'A' && key > 'Z' ) shift = false;
 
 #ifdef _DEBUG
     std::cout << "Control::key_press key = " << std::hex << key;

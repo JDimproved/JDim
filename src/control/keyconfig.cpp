@@ -224,14 +224,17 @@ void KeyConfig::set_one_motion_impl( const int id, const int mode, const std::st
 
         key = CONTROL::get_keysym( str_key );
 
-        // keyがアスキー文字の場合は shift を無視する
+        // keyがアスキー文字の場合は shift を無視する (大文字除く)
         // Control::key_press() も参照せよ
-        if( CONTROL::is_ascii( key ) ) shift = false;
+        if( CONTROL::is_ascii( key ) ){
+            if( str_motion.length() == 1 && key >= 'A' && key <= 'Z' ) shift = true;
+            else shift = false;
+        }
     }
     else return;
 
 #ifdef _DEBUG
-    std::cout << "key = " << key;
+    std::cout << "str_motion = " << str_motion << " key = " << key;
     if( ctrl ) std::cout << " ctrl";
     if( shift ) std::cout << " shift";
     if( alt ) std::cout << " alt";

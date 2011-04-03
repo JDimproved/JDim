@@ -75,7 +75,10 @@ const int MouseKeyConf::get_id( const int mode,
     }
 
 #ifdef _DEBUG
-    std::cout << "MouseKeyConf::get_id mode = " << mode << " id = " << id << " motion = " << motion << std::endl;
+    std::cout << "MouseKeyConf::get_id mode = " << mode << " id = " << id << " motion = " << motion
+              << " ctrl = " << ctrl << " shift = " << shift << " alt = " << alt
+              << " dblclick = " << dblclick << " trpclick = " << trpclick
+              << std::endl;
 #endif
 
     return id;
