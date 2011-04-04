@@ -227,7 +227,7 @@ void KeyConfig::set_one_motion_impl( const int id, const int mode, const std::st
         // keyがアスキー文字の場合は shift を無視する (大文字除く)
         // Control::key_press() も参照せよ
         if( CONTROL::is_ascii( key ) ){
-            if( str_motion.length() == 1 && key >= 'A' && key <= 'Z' ) shift = true;
+            if( regex.str( 4 ).length() == 1 && key >= 'A' && key <= 'Z' ) shift = true;
             else shift = false;
         }
     }
