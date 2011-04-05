@@ -98,10 +98,11 @@ void ImageViewMain::clock_in()
     const int width_view = get_width();
     const int height_view = get_height();
 
-    // ステータス表示内容更新
+    // ステータスのタブ番号などの表示内容更新
     if( m_update_status ){
         m_update_status = false;
-        show_status();
+        add_tab_number();
+        m_show_status = true;
     }
 
     // viewがアクティブになった(クロック入力が来た)ときにステータス表示
@@ -120,8 +121,9 @@ void ImageViewMain::clock_in()
 
             if( get_img()->is_loading() ){
                 set_loading( true  ); 
-                set_status( "読み込み中" );
-                if( m_show_label ) m_label.set_text( get_status() );
+                set_status_local( "読み込み中" );
+                add_tab_number();
+                if( m_show_label ) m_label.set_text( get_status_local() );
             }
 
             else{
@@ -163,7 +165,8 @@ void ImageViewMain::clock_in()
 
             // 読み込みエラーが起きたらimageareaを除いてラベルを貼る
             if( ! get_imagearea()->get_errmsg().empty() ){
-                set_status( get_imagearea()->get_errmsg() );
+                set_status_local( get_imagearea()->get_errmsg() );
+                add_tab_number();
                 remove_imagearea();
                 set_label();
             }
@@ -225,7 +228,7 @@ void ImageViewMain::show_instruct_diag()
 void ImageViewMain::set_label()
 {
     if( !m_show_label ){
-        m_label.set_text( get_status() );
+        m_label.set_text( get_status_local() );
         get_event().add( m_label );
         m_label.show();
         m_show_label = true;
@@ -286,7 +289,7 @@ void ImageViewMain::show_view()
 #endif
             set_wait( true );
             set_loading( false );
-            set_status( "待機中" );
+            set_status_local( "待機中" );
         }
         else{
 #ifdef _DEBUG
@@ -294,8 +297,10 @@ void ImageViewMain::show_view()
 #endif
             set_wait( false );
             set_loading( true );
-            set_status( "読み込み中" );
+            set_status_local( "読み込み中" );
         }
+        add_tab_number();
+
         m_length_prev = 0;
         m_show_status = true; // viewがアクティブになった時点でステータス表示
 
@@ -315,8 +320,9 @@ void ImageViewMain::show_view()
     // エラー
     else{
 
-        if( ! get_img()->get_str_code().empty() ) set_status( get_img()->get_str_code() );
-        else set_status( "画像情報が存在しません。再読み込みして下さい" );
+        if( ! get_img()->get_str_code().empty() ) set_status_local( get_img()->get_str_code() );
+        else set_status_local( "画像情報が存在しません。再読み込みして下さい" );
+        add_tab_number();
 
         m_show_status = true; // viewがアクティブになった時点でステータス表示
 
@@ -339,27 +345,22 @@ void ImageViewMain::show_status()
         if( get_imagearea() ){
 
             std::stringstream ss;
-            ss << " [" << MISC::itostr( IMAGE::get_admin()->get_current_page() + 1 )
-               << "/" << MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) << "] ";
             ss << get_img()->get_width() << " x " << get_img()->get_height();
             if( get_img()->get_width() )
                 ss << " (" << get_img()->get_size() << " %)";
             ss << " " << get_img()->total_length()/1024 << " K ";
-            ss << " [" << MISC::get_filename( get_url() ) << "] ";
-            if( get_img()->is_protected() ) ss << " キャッシュ保護中";
+            if( get_img()->is_protected() ) ss << " 保護中";
 
-            set_status( ss.str() );
+            set_status_local( ss.str() );
         }
 
         // エラー(ネットワーク系)
-        else if( get_img()->get_code() != HTTP_OK ) set_status( get_img()->get_str_code() );
+        else if( get_img()->get_code() != HTTP_OK ) set_status_local( get_img()->get_str_code() );
+
+        add_tab_number();
 
         m_show_status = true; // viewがアクティブになった時点でステータス表示
-        if( m_show_label ) m_label.set_text( get_status() );
-
-#ifdef _DEBUG
-            std::cout << "ImageViewMain::show_status : " << get_status() << std::endl;;
-#endif
+        if( m_show_label ) m_label.set_text( get_status_local() );
     }
 
     // ロード中
@@ -372,18 +373,14 @@ void ImageViewMain::show_status()
 
             char tmpstr[ 256 ];
             snprintf( tmpstr, 256, "%zd k / %zd k", m_length_prev/1024, get_img()->total_length()/1024 );
-            set_status( tmpstr );
+            set_status_local( tmpstr );
+            add_tab_number();
 
             m_show_status = true; // viewがアクティブになった時点でステータス表示
-            if( m_show_label ) m_label.set_text( get_status() );
-
-#ifdef _DEBUG
-            std::cout << "ImageViewMain::show_status : " << get_status() << std::endl;;
-#endif
+            if( m_show_label ) m_label.set_text( get_status_local() );
         }
     }
 }
-
 
 
 void ImageViewMain::update_status()
@@ -391,6 +388,22 @@ void ImageViewMain::update_status()
     m_update_status = true; // viewがアクティブになった時点でステータス表示更新
 }
 
+
+//
+// ステータスのタブ番号などの表示内容更新
+//
+void ImageViewMain::add_tab_number()
+{
+    set_status( " [" + MISC::itostr( IMAGE::get_admin()->get_current_page() + 1 )
+                + "/" + MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) + "] "
+                + get_status_local()
+                + " [" + MISC::get_filename( get_url() )
+                + " (" + MISC::get_hostname( get_url(), false ) + ")]" );
+
+#ifdef _DEBUG
+    std::cout << "ImageViewMain::add_tab_number : " << get_status() << std::endl;;
+#endif
+}
 
 
 //

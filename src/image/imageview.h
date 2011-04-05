@@ -22,6 +22,8 @@ namespace IMAGE
         bool m_update_status;
         bool m_show_label;
 
+        std::string m_status_local;
+
         int m_pre_width;
         int m_pre_height;
         int m_redraw_count;
@@ -51,8 +53,12 @@ namespace IMAGE
 
       private:
 
+        void set_status_local( const std::string& status ){ m_status_local = status; }
+        const std::string& get_status_local(){ return m_status_local; }
+
         virtual void show_status();
         virtual void update_status();
+        void add_tab_number();
 
         void show_instruct_diag();
         void set_label();
