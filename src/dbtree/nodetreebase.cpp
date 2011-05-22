@@ -1881,7 +1881,12 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                 const char* pos_str_start = pos;
                 int lng_str = 0;
 
-                while( pos < pos_end && *pos != '<' ){ ++pos; ++lng_str; }
+                bool exec_decode = false;
+                while( pos < pos_end && *pos != '<' ){
+                    if( *pos == '&' ) exec_decode = true;
+                    ++pos;
+                    ++lng_str;
+                }
                 if( pos >= pos_end ) continue;
 
                 while( pos < pos_end && *pos != '>' ) ++pos;
@@ -1889,6 +1894,30 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                 ++pos;
 
                 if( lng_link && lng_str ){
+
+                    // 特殊文字デコード
+                    if( exec_decode ){
+
+                        for( int pos_tmp = 0; pos_tmp < lng_str; ++ pos_tmp ){
+                            int n_in = 0;
+                            int n_out = 0;
+                            const int ret_decode = DBTREE::decode_char( pos_str_start + pos_tmp, n_in, m_parsed_text + lng_text, n_out, false );
+                            if( ret_decode != NODE_NONE ){
+                                lng_text += n_out;
+                                pos_tmp += n_in;
+                                pos_tmp--;
+                            }
+                            else m_parsed_text[ lng_text++ ] = *( pos_str_start + pos_tmp );
+                        }
+#ifdef _DEBUG
+                        m_parsed_text[ lng_text ] = '\0';
+                        std::cout << m_parsed_text << std::endl;
+#endif
+                        pos_str_start = m_parsed_text;
+                        lng_str = lng_text;
+                        lng_text = 0;
+                    }
+
                     create_node_link( pos_str_start, lng_str , pos_link_start, lng_link, COLOR_CHAR_LINK, false );
                 }
             }
