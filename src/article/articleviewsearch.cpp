@@ -152,7 +152,7 @@ void ArticleViewSearch::update_label()
 {
     std::string label;
     if( m_searchmode == CORE::SEARCHMODE_TITLE ) label =  "スレタイ検索";
-    if( m_searchmode == CORE::SEARCHMODE_ALLLOG ) label =  "全ログ検索";
+    else if( m_searchmode == CORE::SEARCHMODE_ALLLOG ) label =  "全ログ検索";
     else label = "ログ検索";
     if( ! get_search_query().empty() ) label += " ： " + get_search_query();
     set_label( label );
