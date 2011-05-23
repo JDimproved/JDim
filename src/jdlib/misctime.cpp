@@ -78,7 +78,18 @@ const time_t MISC::datetotime( const std::string& date )
         }
     }
 #else
-    if( strptime( date.c_str(), "%a, %d %b %Y %T %Z", &tm_out ) == NULL ) return 0;
+    // (注意) LC_TIMEが"C"でないと環境によってはstrptime()が失敗する
+    std::string lcl;
+    char *lcl_tmp = setlocale( LC_TIME, NULL );
+    if( lcl_tmp ) lcl = lcl_tmp;
+#ifdef _DEBUG
+    std::cout << "locale = " << lcl << std::endl;
+#endif    
+    if( ! lcl.empty() ) setlocale( LC_TIME, "C" ); 
+    char *ret = strptime( date.c_str(), "%a, %d %b %Y %T %Z", &tm_out );
+    if( ! lcl.empty() ) setlocale( LC_TIME, lcl.c_str() ); 
+
+    if( ret == NULL ) return 0;
 #endif
 
 #ifdef USE_MKTIME
