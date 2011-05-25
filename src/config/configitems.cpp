@@ -216,6 +216,9 @@ const bool ConfigItems::load( const bool restore )
     embimg_width = cf.get_option_int( "embimg_width", CONF_EMBIMG_WIDTH, 16, 8192 );
     embimg_height = cf.get_option_int( "embimg_height", CONF_EMBIMG_HEIGHT, 16, 8192 );
 
+    // 埋め込み画像ビューを閉じたときにタブも閉じる
+    hide_imagetab = cf.get_option_bool( "hide_imagetab", CONF_HIDE_IMAGETAB );
+
     // 画像ビューでdeleteを押したときに確認ダイアログを表示する
     show_delimgdiag = cf.get_option_bool( "show_delimgdiag", CONF_SHOW_DELIMGDIAG );
 
@@ -719,6 +722,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "show_ssspicon", show_ssspicon );
     cf.update( "embimg_width", embimg_width );
     cf.update( "embimg_height", embimg_height );
+    cf.update( "hide_imagetab", hide_imagetab );
     cf.update( "show_delimgdiag", show_delimgdiag );
     cf.update( "use_mosaic", use_mosaic );
     cf.update( "mosaic_size", mosaic_size );

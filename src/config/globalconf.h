@@ -230,6 +230,9 @@ namespace CONFIG
     const int get_embimg_width();
     const int get_embimg_height();
 
+    // 埋め込み画像ビューを閉じたときにタブも閉じる
+    const bool get_hide_imagetab();
+
     // 画像ビューでdeleteを押したときに確認ダイアログを表示する
     const bool get_show_delimgdiag();
     void set_show_delimgdiag( const bool show );

@@ -3549,7 +3549,7 @@ void Core::empty_page( const std::string& url )
     // 埋め込み画像ビューが空になった
     if( url == URL_IMAGEADMIN && SESSION::get_embedded_img() ){
 
-        hide_imagetab();
+        if( CONFIG::get_hide_imagetab() ) hide_imagetab();
 
         // 空でないadminを前に出す
         if( SESSION::get_mode_pane() == SESSION::MODE_2PANE ){

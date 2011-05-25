@@ -137,6 +137,9 @@ namespace CONFIG
         int embimg_width;
         int embimg_height;
 
+        // 埋め込み画像ビューを閉じたときにタブも閉じる
+        bool hide_imagetab;
+
         // 画像ビューでdeleteを押したときに確認ダイアログを表示する
         bool show_delimgdiag;
 

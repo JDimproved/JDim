@@ -246,6 +246,9 @@ void CONFIG::set_show_sssp_icon( const bool show ){ get_confitem()->show_ssspico
 const int CONFIG::get_embimg_width(){ return get_confitem()->embimg_width; }
 const int CONFIG::get_embimg_height(){ return get_confitem()->embimg_height; }
 
+// 埋め込み画像ビューを閉じたときにタブも閉じる
+const bool CONFIG::get_hide_imagetab(){ return get_confitem()->hide_imagetab; }
+
 // 画像ビューでdeleteを押したときに確認ダイアログを表示する
 const bool CONFIG::get_show_delimgdiag(){ return get_confitem()->show_delimgdiag; }
 void CONFIG::set_show_delimgdiag( const bool show ){ get_confitem()->show_delimgdiag = show; }
