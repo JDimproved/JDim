@@ -49,6 +49,7 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag )
     list_icons.push_back( ICON::get_icon( ICON::JD16 ) );
     list_icons.push_back( ICON::get_icon( ICON::JD32 ) );
     list_icons.push_back( ICON::get_icon( ICON::JD48 ) );
+    list_icons.push_back( ICON::get_icon( ICON::JD96 ) );
     Gtk::Window::set_default_icon_list( list_icons );
 #endif
 
