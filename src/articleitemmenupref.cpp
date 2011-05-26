@@ -32,6 +32,7 @@ ArticleItemMenuPref::ArticleItemMenuPref( Gtk::Window* parent, const std::string
     append_default_pair( ITEM_NAME_COPY );
     append_default_pair( ITEM_NAME_ETC );
     append_default_pair( ITEM_NAME_RELOAD );
+    append_default_pair( ITEM_NAME_DELETE );
     append_default_pair( ITEM_NAME_SAVE_DAT );
     append_default_pair( ITEM_NAME_COPY_THREAD_INFO );
     append_default_pair( ITEM_NAME_APPENDFAVORITE );

@@ -213,7 +213,8 @@ void ArticleViewBase::setup_action()
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), false ) );
     action_group()->add( Gtk::Action::create( "CopyResRef", "引用コピー(_F)"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), true ) );
-    action_group()->add( Gtk::Action::create( "Delete", "削除"), sigc::mem_fun( *this, &ArticleViewBase::exec_delete ) );
+    action_group()->add( Gtk::Action::create( "Delete_Menu", "削除(_D)" ) );
+    action_group()->add( Gtk::Action::create( "Delete", "Delete"), sigc::mem_fun( *this, &ArticleViewBase::exec_delete ) );
     action_group()->add( Gtk::Action::create( "DeleteOpen", "スレ情報を消さずにスレ再取得(_R)"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
     action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &ArticleViewBase::set_favorite ) );
     action_group()->add( Gtk::Action::create( "Reload", "Reload"), sigc::mem_fun( *this, &ArticleViewBase::exec_reload ) );
@@ -458,6 +459,9 @@ void ArticleViewBase::setup_action()
     // ポップアップメニューにショートカットキーやマウスジェスチャを表示
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu" ) );
     CONTROL::set_menu_motion( popupmenu );
+
+    popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_delete" ) );
+    CONTROL::set_menu_motion( popupmenu );
 }
 
 
@@ -478,6 +482,7 @@ const std::string ArticleViewBase::create_context_menu()
     list_menu.push_back( ITEM_COPY_URL );
     list_menu.push_back( ITEM_COPY );
     list_menu.push_back( ITEM_RELOAD );
+    list_menu.push_back( ITEM_DELETE );
     list_menu.push_back( ITEM_COPY_TITLE_URL_THREAD );
     list_menu.push_back( ITEM_SAVE_DAT );
     list_menu.push_back( ITEM_COPY_THREAD_INFO );
@@ -662,6 +667,13 @@ const char* ArticleViewBase::get_menu_item( const int item )
             // 区切り
         case ITEM_SEPARATOR:
             return "<separator/>";
+
+            // 削除
+        case ITEM_DELETE:
+            return "<menu action='Delete_Menu'>"
+                "<menuitem action='Delete'/>"
+                "<menuitem action='DeleteOpen'/>"
+                "</menu>";
     }
 
     return "";
