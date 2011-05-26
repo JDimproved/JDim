@@ -57,8 +57,6 @@ const bool JDSSL::connect( const int soc )
     std::cout << "JDSSL::connect(gnutls)\n";
 #endif
 
-    static const int priority_prot[] = { GNUTLS_SSL3, 0 };
-
     if( soc < 0 ) return false;
     if( m_session ) return false;
     if( m_cred ) return false;
@@ -71,11 +69,17 @@ const bool JDSSL::connect( const int soc )
         return false;
     }
 
+#if GNUTLSVER >= 2120
+    // http://www.gnu.org/software/gnutls/reference/gnutls-gnutls.html#gnutls-priority-set-direct
+    gnutls_priority_set_direct( m_session, "NORMAL:COMPAT", NULL );
+#else
+    static const int priority_prot[] = { GNUTLS_SSL3, 0 };
     gnutls_set_default_priority( m_session );
-    gnutls_protocol_set_priority( m_session, priority_prot );
-    gnutls_transport_set_ptr( m_session, ( gnutls_transport_ptr_t ) soc );
+    gnutls_protocol_set_priority( m_session, priority_prot ); // 廃止 gnutls>=2.12.0
+#endif // GNUTLSVER >= 2120
 
-    gnutls_certificate_allocate_credentials( &m_cred);
+    gnutls_transport_set_ptr( m_session, ( gnutls_transport_ptr_t )(long) soc );
+    gnutls_certificate_allocate_credentials( &m_cred );
     gnutls_credentials_set( m_session, GNUTLS_CRD_CERTIFICATE, m_cred );
 
     for(;;){

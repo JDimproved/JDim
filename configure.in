@@ -277,13 +277,17 @@ AC_ARG_WITH(openssl,[ --with-openssl    (use openssl)],
 case "${use_gnutls}" in 
  yes)
    echo "use gnutls"
-   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2] )
+
+   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 2.12.0], [ echo "gnutls >= 2.12.0"; GNUTLSVER=2120 ], [ 
+     PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2])
+   ])
    AC_DEFINE(USE_GNUTLS, , "use gnutls")
    AC_CHECK_HEADERS([gcrypt.h])
    AC_CHECK_LIB(gcrypt, gcry_md_hash_buffer, [GCRYPT_LIBS=-lgcrypt])
    GNUTLS_LIBS="$GNUTLS_LIBS $GCRYPT_LIBS"
    AC_SUBST(GNUTLS_CFLAGS)
    AC_SUBST(GNUTLS_LIBS)
+   CXXFLAGS="$CXXFLAGS -DGNUTLSVER=$GNUTLSVER"
    ;;
  *)
    echo "use openssl"
