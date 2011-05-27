@@ -278,8 +278,8 @@ case "${use_gnutls}" in
  yes)
    echo "use gnutls"
 
-   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 2.12.0], [ echo "gnutls >= 2.12.0"; GNUTLSVER=2120 ], [ 
-     PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2])
+   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 2.12.0], [echo "gnutls >= 2.12.0"; GNUTLSVER=2120], [ 
+     PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2], [echo "gnutls >= 1.2"; GNUTLSVER=120])
    ])
    AC_DEFINE(USE_GNUTLS, , "use gnutls")
    AC_CHECK_HEADERS([gcrypt.h])

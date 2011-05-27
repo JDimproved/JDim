@@ -72,7 +72,7 @@ const bool JDSSL::connect( const int soc )
 #if GNUTLSVER >= 2120
     // http://www.gnu.org/software/gnutls/reference/gnutls-gnutls.html#gnutls-priority-set-direct
     gnutls_priority_set_direct( m_session, "NORMAL:COMPAT", NULL );
-#else
+#else // GNUTLSVER >= 120
     static const int priority_prot[] = { GNUTLS_SSL3, 0 };
     gnutls_set_default_priority( m_session );
     gnutls_protocol_set_priority( m_session, priority_prot ); // 廃止 gnutls>=2.12.0
