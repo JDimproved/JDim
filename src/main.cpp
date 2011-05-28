@@ -316,7 +316,7 @@ void usage( const int status )
     "        Skip the setup dialog\n"
     "-l, --logfile\n"
     "        Write message to msglog file\n"
-    "-g, --geometry WxH-X+Y"
+    "-g, --geometry WxH-X+Y\n"
     "        The initial size and location\n"
     "-V, --version\n"
     "        Display version of this program\n";
