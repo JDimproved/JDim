@@ -14,6 +14,7 @@
 #include "jdlib/miscmsg.h"
 #include "jdlib/miscutil.h"
 #include "jdlib/ssl.h"
+#include "jdlib/jdregex.h"
 
 #include <signal.h>
 #include <string>
@@ -315,6 +316,8 @@ void usage( const int status )
     "        Skip the setup dialog\n"
     "-l, --logfile\n"
     "        Write message to msglog file\n"
+    "-g, --geometry WxH-X+Y"
+    "        The initial size and location\n"
     "-V, --version\n"
     "        Display version of this program\n";
 
@@ -357,6 +360,7 @@ int main( int argc, char **argv )
         { "norestore", 0, 0, 'n' },
         { "skip-setup", 0, 0, 's' },
         { "logfile", 0, 0, 'l' },
+        { "geometry", required_argument, NULL, 'g' },
         { "version", 0, 0, 'V' },
         { 0, 0, 0, 0 }
     };
@@ -366,10 +370,22 @@ int main( int argc, char **argv )
     bool no_restore_bkup = false;
     bool skip_setupdiag = false;
     bool logfile_mode = false;
+    int init_w = -1;
+    int init_h = -1;
+    int init_x = -1;
+    int init_y = -1;
 
-    // -h, -t <url>, -m, -n, -s, -l, -V
+    JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+    std::string query;
+
+    // -h, -t <url>, -m, -n, -s, -l, -g WxH+X+Y, -V
     int opt = 0;
-    while( ( opt = getopt_long( argc, argv, "ht:mnslV", options, NULL ) ) != -1 )
+    while( ( opt = getopt_long( argc, argv, "ht:mnslg:V", options, NULL ) ) != -1 )
     {
         switch( opt )
         {
@@ -397,6 +413,21 @@ int main( int argc, char **argv )
 
             case 'l': // メッセージをログファイルに出力
                 logfile_mode = true;
+                break;
+
+            case 'g':
+                if( ! optarg ) usage( EXIT_FAILURE );
+
+                query = "(([0-9]*)x([0-9]*))?\\-([0-9]*)\\+([0-9]*)";
+                if( regex.exec( query, optarg, offset, icase, newline, usemigemo, wchar ) ){
+
+                    if( ! regex.str( 2 ).empty() ) init_w = atoi( regex.str( 2 ).c_str() );
+                    if( ! regex.str( 3 ).empty() ) init_h = atoi( regex.str( 3 ).c_str() );
+                    if( ! regex.str( 4 ).empty() ) init_x = atoi( regex.str( 4 ).c_str() );
+                    if( ! regex.str( 5 ).empty() ) init_y = atoi( regex.str( 5 ).c_str() );
+                }
+                else usage( EXIT_FAILURE );
+
                 break;
 
             case 'V': // バージョンと完全なconfigureオプションを表示
@@ -582,7 +613,7 @@ int main( int argc, char **argv )
     // バックアップファイル復元
     restore_bkup( no_restore_bkup );
 
-    Win_Main = new JDWinMain( init, skip_setupdiag );
+    Win_Main = new JDWinMain( init, skip_setupdiag, init_w, init_h, init_x, init_y );
     if( Win_Main ){
 
         m.run( *Win_Main );

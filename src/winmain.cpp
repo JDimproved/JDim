@@ -25,7 +25,8 @@
 #endif
 
 
-JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag )
+JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag,
+                      const int init_w, const int init_h, const int init_x, const int init_y )
     : SKELETON::JDWindow( false ),
       m_core( NULL ),
       m_cancel_state_event( false )
@@ -55,6 +56,27 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag )
 
     // セッション回復
     SESSION::init_session();
+    bool cancel_maximize = false;
+    if( init_w >= 0 ){
+        cancel_maximize = true;
+        set_width_win( init_w );
+    }
+    if( init_h >= 0 ){
+        cancel_maximize = true;
+        set_height_win( init_h );
+    }
+    if( init_x >= 0 ){
+        cancel_maximize = true;
+        set_x_win( init_x );
+    }
+    if( init_y >= 0 ){
+        cancel_maximize = true;
+        set_y_win( init_y );
+    }
+    if( cancel_maximize ){
+        set_maximized_win( false );
+        set_full_win( false );
+    }
 
     // サイズ変更
     init_win();

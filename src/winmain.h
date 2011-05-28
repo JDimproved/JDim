@@ -25,7 +25,7 @@ class JDWinMain : public SKELETON::JDWindow
 
   public:
 
-    JDWinMain( const bool init, const bool skip_setupdiag );
+    JDWinMain( const bool init, const bool skip_setupdiag, const int init_w, const int init_h, const int init_x, const int init_y );
     virtual ~JDWinMain();
 
     // 通常のセッション保存
