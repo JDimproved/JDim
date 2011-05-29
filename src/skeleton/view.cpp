@@ -36,6 +36,12 @@ View::View( const std::string& url, const std::string& arg1 ,const std::string& 
 {}
 
 
+const std::string& View::get_url_admin()
+{
+    return get_admin()->get_url();
+}
+
+
 //
 // url_new に URL を変更
 //

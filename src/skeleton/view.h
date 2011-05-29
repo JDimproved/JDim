@@ -169,6 +169,7 @@ namespace SKELETON
         virtual void save_session() = 0;
 
         virtual const std::string& get_url(){ return m_url; }
+        const std::string& get_url_admin();
 
         virtual void set_parent_win( Gtk::Window* parent_win ){ m_parent_win = parent_win; }
         virtual Gtk::Window* get_parent_win(){ return m_parent_win; }

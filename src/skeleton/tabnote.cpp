@@ -374,7 +374,8 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
 //
 void TabNotebook::clock_in()
 {
-    // Gtk::NoteBook は configure_event()をキャッチ出来ないので
+    // Gtk::NoteBook は on_configure_event() と on_window_state_event() をキャッチ出来ない
+    // かつ、 on_size_allocate() は最大化、最小化の時に無反応なので
     // 応急処置としてタイマーの中でサイズが変更したか調べて
     // 変わっていたらタブ幅を調整する
     if( ! m_fixtab && get_n_pages() && m_pre_width != get_width()
@@ -385,6 +386,17 @@ void TabNotebook::clock_in()
         calc_tabsize();
         adjust_tabwidth();
     }
+}
+
+
+
+//
+// サイズ変更
+//
+void TabNotebook::on_size_allocate( Gtk::Allocation& allocation )
+{
+    clock_in(); // タブ再描画の反応を良くする
+    Gtk::Notebook::on_size_allocate( allocation );
 }
 
 

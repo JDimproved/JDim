@@ -121,6 +121,7 @@ namespace SKELETON
       protected:
 
         virtual bool on_expose_event( GdkEventExpose* event );
+        virtual void on_size_allocate( Gtk::Allocation& allocation );
 
         // signal_button_press_event と signal_button_release_event は emit されない
         // ときがあるので自前でemitする

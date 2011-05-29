@@ -718,8 +718,11 @@ void DrawAreaBase::redraw_view()
     if( SESSION::is_booting() ) return;
     if( SESSION::is_quitting() ) return;
 
+    // タブ操作中は処理しない
+    if( SESSION::is_tab_operating( URL_ARTICLEADMIN ) ) return;
+
 #ifdef _DEBUG    
-    std::cout << "DrawAreaBase::redraw_view()\n";
+    std::cout << "DrawAreaBase::redraw_view " << m_url << std::endl;
 #endif
 
     configure_impl();
@@ -764,6 +767,9 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
     // 起動中とシャットダウン中は処理しない
     if( SESSION::is_booting() ) return false;
     if( SESSION::is_quitting() ) return false;
+
+    // タブ操作中は処理しない
+    if( SESSION::is_tab_operating( URL_ARTICLEADMIN ) ) return true;
 
     // レイアウトがセットされていない
     if( ! m_layout_tree ) return false;
@@ -1652,6 +1658,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
               << " upper = " << upper << " lower = " << lower
               << " scrollmode = " << m_scrollinfo.mode
               << " scroll_window = " << m_scroll_window
+              << " url = " << m_url
               << std::endl;
 #endif    
 
@@ -4430,9 +4437,14 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
     const int width = event->area.width;
     const int height = event->area.height;
 
+    // タブ操作中は再描画しない
+    if( SESSION::is_tab_operating( URL_ARTICLEADMIN ) ) return true;
+
 #ifdef _DEBUG    
     std::cout << "DrawAreaBase::slot_expose_event"
-              << " y = " << y << " height = " << height << " draw_screen = " << m_drawinfo.draw << std::endl;
+              << " y = " << y << " height = " << height << " draw_screen = " << m_drawinfo.draw
+              << " url = " << m_url
+              << std::endl;
 #endif
 
     // draw_screen からの呼び出し

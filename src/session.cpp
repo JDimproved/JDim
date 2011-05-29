@@ -19,6 +19,7 @@
 
 bool booting = true;
 bool quitting = false;
+bool tab_operating_article = false;
 
 int mode_pane;
 bool mode_online;
@@ -664,6 +665,20 @@ void SESSION::set_booting( const bool boot ){ booting = boot; }
 // 終了中
 const bool SESSION::is_quitting(){ return quitting; }
 void SESSION::set_quitting( const bool quit ){ quitting = quit; }
+
+// 入れ替えなどのタブ操作中
+// ビューの再描画などを禁止する
+const bool SESSION::is_tab_operating( const std::string& url_admin )
+{
+    if( url_admin == URL_ARTICLEADMIN ) return tab_operating_article;
+
+    return false;
+}
+
+void SESSION::set_tab_operating( const std::string& url_admin, const bool operating )
+{
+    if( url_admin == URL_ARTICLEADMIN ) tab_operating_article = operating;
+}
 
 const int SESSION::get_mode_pane() { return mode_pane; }
 void SESSION::set_mode_pane( const int mode ){ mode_pane = mode; }

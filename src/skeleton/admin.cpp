@@ -528,6 +528,29 @@ void Admin::exec_command()
     else if( command.command == "tab_tail" ){
         tab_tail();
     }
+
+    else if( command.command == "set_tab_operating" ){
+
+#ifdef _DEBUG
+        std::cout << command.command << " " << m_url << " " << command.arg1 << std::endl;
+#endif
+
+        if( command.arg1 == "true" ) SESSION::set_tab_operating( m_url, true );
+        else{
+
+            SESSION::set_tab_operating( m_url, false );
+
+            if( ! empty() ){
+
+                // 現在開いているタブへの switch 処理
+                const bool focus_tmp = m_focus;
+                m_focus = true;
+                slot_switch_page( NULL,  m_notebook->get_current_page() );
+                m_focus = focus_tmp;
+            }
+        }
+
+    }
     else if( command.command == "redraw" ){
         redraw_view( command.url );
     }
@@ -810,6 +833,8 @@ void Admin::open_list( const COMMAND_ARGS& command_list )
     int waittime = 0;
     const bool online = SESSION::is_online();
 
+    SESSION::set_tab_operating( m_url, true );
+
     std::list< std::string >::iterator it = list_url.begin();
     for( ; it != list_url.end(); ++it, waittime += AUTORELOAD_MINSEC ){
 
@@ -839,6 +864,8 @@ void Admin::open_list( const COMMAND_ARGS& command_list )
     }
 
     SESSION::set_online( online );
+
+    set_command( "set_tab_operating", "", "false" );
 
     switch_admin();
     switch_view( *( list_url.begin() ) );
@@ -1052,6 +1079,10 @@ void Admin::open_view( const COMMAND_ARGS& command )
 #ifdef _DEBUG
         std::cout << "replace page\n";
 #endif
+
+        // タブを入れ替えたときに隣のタブの再描画を防ぐ
+        set_command_immediately( "set_tab_operating", "", "true" );
+
         // タブ入れ替え
         m_notebook->insert_page( command.url, *view, page );
 
@@ -1076,6 +1107,12 @@ void Admin::open_view( const COMMAND_ARGS& command )
             }
 
         }
+
+#ifdef _DEBUG
+        std::cout << "replace done\n";
+#endif
+
+        set_command( "set_tab_operating", "", "false" );
     }
 
     m_notebook->show_all();
@@ -1962,8 +1999,11 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
     if( SESSION::is_booting() ) return;
     if( SESSION::is_quitting() ) return;
 
+    // タブ操作中
+    if( SESSION::is_tab_operating( m_url ) ) return;
+
 #ifdef _DEBUG
-    std::cout << "Admin::slot_switch_page : " << m_url << " page = " << page << std::endl;
+    std::cout << "Admin::slot_switch_page : " << m_url << " page = " << page << " focus = " << m_focus << std::endl;
 #endif
 
     SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
@@ -2188,11 +2228,15 @@ void Admin::slot_close_other_tabs()
     std::cout << "Admin::slot_close_other_tabs " << m_clicked_page << std::endl;
 #endif
 
+    set_command( "set_tab_operating", "", "true" );
+
     std::string url;
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) url = view->get_url();
 
     close_other_views( url );
+
+    set_command( "set_tab_operating", "", "false" );
 }
 
 
@@ -2206,10 +2250,14 @@ void Admin::slot_close_left_tabs()
     std::cout << "Admin::slot_close_left_tabs " << m_clicked_page << std::endl;
 #endif
 
+    set_command( "set_tab_operating", "", "true" );
+
     for( int i = 0; i < m_clicked_page; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
     }
+
+    set_command( "set_tab_operating", "", "false" );
 }
 
 
@@ -2222,11 +2270,15 @@ void Admin::slot_close_right_tabs()
     std::cout << "Admin::slot_close_right_tabs " << m_clicked_page << std::endl;
 #endif
 
+    set_command( "set_tab_operating", "", "true" );
+
     const int pages = m_notebook->get_n_pages();
     for( int i = m_clicked_page +1; i < pages; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
     }
+
+    set_command( "set_tab_operating", "", "false" );
 }
 
 
@@ -2241,11 +2293,15 @@ void Admin::slot_close_all_tabs()
     std::cout << "Admin::slot_close_all_tabs " << m_clicked_page << std::endl;
 #endif
 
+    set_command( "set_tab_operating", "", "true" );
+
     const int pages = m_notebook->get_n_pages();
     for( int i = 0; i < pages; ++i ){
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
     }
+
+    set_command( "set_tab_operating", "", "false" );
 }
 
 
@@ -2260,6 +2316,8 @@ void Admin::slot_close_same_icon_tabs()
     std::cout << "Admin::slot_close_same_icon_tabs page = " << m_clicked_page << " id = " << id << std::endl;
 #endif
 
+    set_command( "set_tab_operating", "", "true" );
+
     const int pages = m_notebook->get_n_pages();
     for( int i = 0; i < pages; ++i ){
 
@@ -2269,6 +2327,8 @@ void Admin::slot_close_same_icon_tabs()
             if( view ) set_command( "close_view", view->get_url() );
         }
     }
+
+    set_command( "set_tab_operating", "", "false" );
 }
 
 

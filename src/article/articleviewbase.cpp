@@ -919,7 +919,7 @@ void ArticleViewBase::focus_view()
     assert( m_drawarea );
 
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::focus_view\n";
+    std::cout << "ArticleViewBase::focus_view " << get_url() << std::endl;
 #endif
 
     m_drawarea->focus_view();

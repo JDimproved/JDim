@@ -14,6 +14,7 @@
 #include "control/controlid.h"
 
 #include "dndmanager.h"
+#include "session.h"
 
 #include <cstring>
 
@@ -445,6 +446,9 @@ void DragableNoteBook::append_toolbar( Gtk::Widget& toolbar )
 //
 void DragableNoteBook::set_current_toolbar( const int id_toolbar, SKELETON::View* view )
 {
+    // タブ操作中
+    if( SESSION::is_tab_operating( view->get_url_admin() ) ) return;
+
 #ifdef _DEBUG
     std::cout << "DragableNoteBook::set_current_toolbar id = " << id_toolbar
               << " / " << m_notebook_toolbar.get_n_pages() << std::endl

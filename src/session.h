@@ -83,6 +83,11 @@ namespace SESSION
     const bool is_quitting();
     void set_quitting( const bool quit );
 
+    // 入れ替えなどのタブ操作中
+    // ビューの再描画などを禁止する
+    const bool is_tab_operating( const std::string& url_admin );
+    void set_tab_operating( const std::string& url_admin, const bool operating );
+
     const int get_mode_pane();
     void set_mode_pane( const int mode );
     
