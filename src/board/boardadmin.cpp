@@ -357,6 +357,12 @@ void BoardAdmin::command_local( const COMMAND_ARGS& command )
         SKELETON::View* view = get_view( command.url );
         if( view ) view->set_command( "draw_bg_articles" );
     }
+
+    // ハイライト解除
+    else if( command.command == "clear_highlight" ){
+        SKELETON::View* view = get_view( command.url );
+        if( view ) view->set_command( "clear_highlight" );
+    }
 }
 
 

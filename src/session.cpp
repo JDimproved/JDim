@@ -227,6 +227,7 @@ const int SESSION::parse_item( const std::string& item_name )
     else if( item_name == ITEM_NAME_SEARCH_NEXT ) item = ITEM_SEARCH_NEXT;
     else if( item_name == ITEM_NAME_SEARCH_PREV ) item = ITEM_SEARCH_PREV;
     else if( item_name == ITEM_NAME_NEXTARTICLE ) item = ITEM_NEXTARTICLE;
+    else if( item_name == ITEM_NAME_CLEAR_HIGHLIGHT ) item = ITEM_CLEAR_HIGHLIGHT;
 
     else if( item_name == ITEM_NAME_INSERTTEXT ) item = ITEM_INSERTTEXT;
     else if( item_name == ITEM_NAME_LOCK_MESSAGE ) item = ITEM_LOCK_MESSAGE;

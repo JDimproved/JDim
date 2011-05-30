@@ -51,6 +51,7 @@ ToolBar::ToolBar( Admin* admin )
       m_button_close_searchbar( NULL ),
       m_button_up_search( NULL ),
       m_button_down_search( NULL ),
+      m_button_clear_highlight( NULL ),
 
       m_tool_search( NULL ),
       m_entry_search( NULL ),
@@ -589,6 +590,32 @@ void ToolBar::slot_clicked_down_search()
 
     m_admin->set_command( "toolbar_down_search", m_url );
 }
+
+
+//
+// ハイライト解除
+//
+Gtk::ToolButton* ToolBar::get_button_clear_highlight()
+{
+    if( ! m_button_clear_highlight ){
+        m_button_clear_highlight = Gtk::manage( new ImgToolButton( ICON::CLEAR_SEARCH ) );
+        set_tooltip( *m_button_clear_highlight, CONTROL::get_label_motions( CONTROL::HiLightOff ) );
+
+        m_button_clear_highlight->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clear_highlight ) );
+    }
+
+    return m_button_clear_highlight;
+}
+
+
+void ToolBar::slot_clear_highlight()
+{
+    if( ! m_enable_slot ) return;    
+    if( m_url.empty() || ! m_admin ) return;
+
+    m_admin->set_command( "clear_highlight", m_url );
+}
+
 
 
 // 板を開くボタン

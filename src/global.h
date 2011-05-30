@@ -84,6 +84,7 @@ enum{
 #define ITEM_NAME_SEARCH_NEXT  "次検索"
 #define ITEM_NAME_SEARCH_PREV  "前検索"
 #define ITEM_NAME_NEXTARTICLE    "次スレ検索"
+#define ITEM_NAME_CLEAR_HIGHLIGHT   "ハイライト解除"
 
 #define ITEM_NAME_INSERTTEXT  "テキストファイル挿入"
 #define ITEM_NAME_LOCK_MESSAGE "書き込み後に閉じない"
@@ -170,6 +171,7 @@ enum
     ITEM_SEARCH_NEXT,
     ITEM_SEARCH_PREV,
     ITEM_NEXTARTICLE,
+    ITEM_CLEAR_HIGHLIGHT,
 
     ITEM_INSERTTEXT,
     ITEM_LOCK_MESSAGE,

@@ -162,6 +162,7 @@ namespace BOARD
         virtual void down_search();
         virtual void operate_search( const std::string& controlid );
         virtual void set_search_query( const std::string& query );
+        void clear_highlight();
 
         void row_up();
         void row_down();
@@ -278,7 +279,7 @@ namespace BOARD
         const std::string path2url_board( const Gtk::TreePath& path );
 
         // 検索
-        const bool drawout();
+        const bool drawout( const bool force_reset );
 
         void update_row_common( const Gtk::TreeModel::Row& row );
         const std::string get_subject_from_path( Gtk::TreePath& path );

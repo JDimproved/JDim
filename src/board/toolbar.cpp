@@ -101,6 +101,10 @@ void BoardToolBar::pack_toolbar()
                 get_buttonbar().append( *get_button_lock() );
                 break;
 
+            case ITEM_CLEAR_HIGHLIGHT:
+                get_buttonbar().append( *get_button_clear_highlight() );
+                break;
+
             case ITEM_SEPARATOR:
                 pack_separator();
                 break;

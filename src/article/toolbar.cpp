@@ -28,24 +28,21 @@ ArticleToolBar::ArticleToolBar() :
 
     m_button_drawout_and( ICON::SEARCH_AND ),
     m_button_drawout_or( ICON::SEARCH_OR ),
-    m_button_clear_hl( ICON::CLEAR_SEARCH ),
 
     m_button_live_play_stop( NULL )
 {
     // 検索バー
     set_tooltip( m_button_drawout_and, CONTROL::get_label_motions( CONTROL::DrawOutAnd ) );
     set_tooltip( m_button_drawout_or, CONTROL::get_label_motions( CONTROL::DrawOutOr ) );
-    set_tooltip( m_button_clear_hl, CONTROL::get_label_motions( CONTROL::HiLightOff ) );
 
     get_searchbar()->append( *get_tool_search( CORE::COMP_SEARCH_ARTICLE ) );
     get_searchbar()->append( *get_button_down_search() );
     get_searchbar()->append( *get_button_up_search() );
     get_searchbar()->append( m_button_drawout_and );
     get_searchbar()->append( m_button_drawout_or );
-    get_searchbar()->append( m_button_clear_hl );
+    get_searchbar()->append( *get_button_clear_highlight() );
     get_searchbar()->append( *get_button_close_searchbar() );
 
-    m_button_clear_hl.signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_clear_highlight ) );
     m_button_drawout_or.signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_drawout_or ) );
     m_button_drawout_and.signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_drawout_and ) );
 
@@ -197,17 +194,6 @@ void ArticleToolBar::slot_drawout_or()
     if( query.empty() ) return;
 
     CORE::core_set_command( "open_article_keyword" ,m_url_article, query, "true" );
-}
-
-
-//
-// ハイライト解除
-//
-void ArticleToolBar::slot_clear_highlight()
-{
-    if( ! m_enable_slot ) return;    
-
-    ARTICLE::get_admin()->set_command( "clear_highlight", get_url() );
 }
 
 

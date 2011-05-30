@@ -26,7 +26,6 @@ namespace ARTICLE
 
         SKELETON::ImgToolButton m_button_drawout_and;
         SKELETON::ImgToolButton m_button_drawout_or;
-        SKELETON::ImgToolButton m_button_clear_hl;
 
         // 実況
         SKELETON::ImgToggleToolButton* m_button_live_play_stop;

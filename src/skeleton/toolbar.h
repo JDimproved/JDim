@@ -50,6 +50,7 @@ namespace SKELETON
         SKELETON::ImgToolButton *m_button_close_searchbar;
         SKELETON::ImgToolButton *m_button_up_search;
         SKELETON::ImgToolButton *m_button_down_search;
+        SKELETON::ImgToolButton *m_button_clear_highlight;
 
         Gtk::ToolItem* m_tool_search;
         SKELETON::CompletionEntry* m_entry_search;
@@ -137,8 +138,15 @@ namespace SKELETON
         void add_search_control_mode( const int mode );
 
         const std::string get_search_text();
+
+        // 上検索
         Gtk::ToolButton* get_button_up_search();
+
+        // 下検索
         Gtk::ToolButton* get_button_down_search();
+
+        // ハイライト解除
+        Gtk::ToolButton* get_button_clear_highlight();
 
         // 板を開く
         Gtk::ToolItem* get_button_board();
@@ -179,6 +187,7 @@ namespace SKELETON
         void slot_operate_search( const int controlid );
         void slot_clicked_up_search();
         void slot_clicked_down_search();
+        void slot_clear_highlight();
 
         // 板を開く
         void slot_open_board();

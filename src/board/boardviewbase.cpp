@@ -1147,6 +1147,7 @@ const bool BoardViewBase::set_command( const std::string& command, const std::st
     if( command == "update_columns" ) update_columns();
 
     else if( command == "draw_bg_articles" ) draw_bg_articles();
+    else if( command == "clear_highlight" ) clear_highlight();
 
     return true;
 }
@@ -2486,7 +2487,7 @@ const std::string BoardViewBase::path2url_board( const Gtk::TreePath& path )
 //
 // 抽出
 //
-const bool BoardViewBase::drawout()
+const bool BoardViewBase::drawout( const bool force_reset )
 {
     int hit = 0;
     bool reset = false;
@@ -2494,7 +2495,7 @@ const bool BoardViewBase::drawout()
     const std::string query = get_search_query();
 
     // 空の時はリセット
-    if( query.empty() ) reset = true;
+    if( force_reset || query.empty() ) reset = true;
 
 #ifdef _DEBUG
     std::cout << "BoardViewBase::drawout query = " <<  query << std::endl;
@@ -2554,7 +2555,7 @@ void BoardViewBase::set_search_query( const std::string& query )
 #endif
 
     if( CONFIG::get_inc_search_board() ){
-        drawout();
+        drawout( false );
         m_pre_query = std::string();
     }
 }
@@ -2567,7 +2568,7 @@ void BoardViewBase::exec_search()
 {
     const std::string query = get_search_query();
     if( m_pre_query != query ){
-        drawout();
+        drawout( false );
         focus_view();
         m_pre_query = query;
         CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_BOARD, query );
@@ -2652,6 +2653,17 @@ void BoardViewBase::operate_search( const std::string& controlid )
 
     if( id == CONTROL::Cancel ) focus_view();
     else if( id == CONTROL::SearchCache ) CORE::core_set_command( "open_article_searchlog", get_url_board() , get_search_query(), "exec" );
+}
+
+
+//
+// ハイライト解除
+//
+void BoardViewBase::clear_highlight()
+{
+    drawout( true );
+    focus_view();
+    m_pre_query = std::string();
 }
 
 

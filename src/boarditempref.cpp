@@ -76,6 +76,7 @@ BoardItemPref::BoardItemPref( Gtk::Window* parent, const std::string& url )
     append_default_pair( ITEM_NAME_BACK, ICON::get_icon( ICON::BACK ) );
     append_default_pair( ITEM_NAME_FORWARD, ICON::get_icon( ICON::FORWARD ) );
     append_default_pair( ITEM_NAME_LOCK, ICON::get_icon( ICON::LOCK ) );
+    append_default_pair( ITEM_NAME_CLEAR_HIGHLIGHT, ICON::get_icon( ICON::CLEAR_SEARCH ) );
     append_default_pair( ITEM_NAME_SEPARATOR, ICON::get_icon( ICON::TRANSPARENT ) );
 
     // 文字列を元に列を追加

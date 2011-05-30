@@ -116,7 +116,7 @@ namespace CONTROL
 
         { "Search", ITEM_NAME_SEARCH },
         { "CloseSearchBar", "検索バーを閉じる" },
-        { "HiLightOff", "ハイライト解除" },
+        { "HiLightOff", ITEM_NAME_CLEAR_HIGHLIGHT },
         { "SearchInvert", "前方検索" },
         { "SearchNext", ITEM_NAME_SEARCH_NEXT },
         { "SearchPrev", ITEM_NAME_SEARCH_PREV },
