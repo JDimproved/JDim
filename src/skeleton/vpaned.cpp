@@ -8,7 +8,7 @@
 using namespace SKELETON;
 
 
-JDVPaned::JDVPaned( int fixmode )
+JDVPaned::JDVPaned( const int fixmode )
     : Gtk::VPaned(),
       m_pctrl( *this, fixmode )
 {}
@@ -39,4 +39,16 @@ bool JDVPaned::on_motion_notify_event( GdkEventMotion* event )
 {
     m_pctrl.motion_notify_event( event );
     return Gtk::VPaned::on_motion_notify_event( event );
+}
+
+bool JDVPaned::on_enter_notify_event( GdkEventCrossing* event )
+{
+    m_pctrl.enter_notify_event( event );
+    return Gtk::VPaned::on_enter_notify_event( event );
+}
+
+bool JDVPaned::on_leave_notify_event( GdkEventCrossing* event )
+{
+    m_pctrl.leave_notify_event( event );
+    return Gtk::VPaned::on_leave_notify_event( event );
 }

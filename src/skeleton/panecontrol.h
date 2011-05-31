@@ -45,6 +45,7 @@ namespace SKELETON
 
         bool m_clicked;
         bool m_drag;
+        bool m_on_paned;
 
         int m_fixmode;
         int m_mode;
@@ -80,10 +81,12 @@ namespace SKELETON
         void button_press_event( GdkEventButton* event );
         void button_release_event( GdkEventButton* event );
         void motion_notify_event( GdkEventMotion* event );
-
+        void enter_notify_event( GdkEventCrossing* event );
+        void leave_notify_event( GdkEventCrossing* event );
 
       protected:
 
+        const bool is_on_paned() const { return m_on_paned; }
         Gtk::Paned& get_paned(){ return m_paned; }
         virtual int get_size() = 0;
         virtual bool is_separater_clicked( GdkEventButton* event ) = 0;
@@ -104,7 +107,7 @@ namespace SKELETON
         virtual int get_size(){ return get_paned().get_width(); }
 
         virtual bool is_separater_clicked( GdkEventButton* event ){
-            if( event->type == GDK_BUTTON_PRESS && event->button == 1
+            if( is_on_paned() && event->type == GDK_BUTTON_PRESS && event->button == 1
                 && event->x >= 0 && event->x <= 8 ) return true;
             return false;
         }
@@ -125,7 +128,7 @@ namespace SKELETON
         virtual int get_size(){ return get_paned().get_height(); }
 
         virtual bool is_separater_clicked( GdkEventButton* event ){
-            if( event->type == GDK_BUTTON_PRESS && event->button == 1
+            if( is_on_paned() && event->type == GDK_BUTTON_PRESS && event->button == 1
                 && event->y >= 0 && event->y <= 8 ) return true;
             return false;
         }

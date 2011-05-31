@@ -17,6 +17,7 @@ PaneControl::PaneControl( Gtk::Paned& paned, int fixmode )
       m_click_fold( PANE_CLICK_NORMAL ),
       m_clicked( false ),
       m_drag( false ),
+      m_on_paned( false ),
       m_fixmode( fixmode ),
       m_mode( PANE_NORMAL )
 {
@@ -228,4 +229,24 @@ void PaneControl::motion_notify_event( GdkEventMotion* event )
 #endif
 
     m_drag = true;
+}
+
+
+void PaneControl::enter_notify_event( GdkEventCrossing* event )
+{
+#ifdef _DEBUG
+    std::cout << "PaneControl::enter_notify_event\n";
+#endif
+
+    m_on_paned = true;
+}
+
+
+void PaneControl::leave_notify_event( GdkEventCrossing* event )
+{
+#ifdef _DEBUG
+    std::cout << "PaneControl::leave_notify_event\n";
+#endif
+
+    m_on_paned = false;
 }

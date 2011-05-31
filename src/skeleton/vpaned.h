@@ -18,7 +18,7 @@ namespace SKELETON
 
       public:
 
-        JDVPaned( int fixmode );
+        JDVPaned( const int fixmode );
         virtual ~JDVPaned(){}
 
         VPaneControl& get_ctrl(){ return m_pctrl; }
@@ -29,6 +29,8 @@ namespace SKELETON
         virtual bool on_button_press_event( GdkEventButton* event );
         virtual bool on_button_release_event( GdkEventButton* event );
         virtual bool on_motion_notify_event( GdkEventMotion* event );
+        virtual bool on_enter_notify_event( GdkEventCrossing* event );
+        virtual bool on_leave_notify_event( GdkEventCrossing* event );
     };
 }
 
