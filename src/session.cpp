@@ -57,6 +57,9 @@ std::vector< int > items_main_toolbar;
 std::string items_article_toolbar_str;
 std::vector< int > items_article_toolbar;
 
+std::string items_search_toolbar_str;
+std::vector< int > items_search_toolbar;
+
 std::string items_board_toolbar_str;
 std::vector< int > items_board_toolbar;
 
@@ -384,6 +387,10 @@ void SESSION::init_session()
     items_article_toolbar_str = cf.get_option_str( "items_article_toolbar", get_items_article_toolbar_default_str() );
     items_article_toolbar =  parse_items( items_article_toolbar_str );
 
+    // 検索ビューのツールバーの項目
+    items_search_toolbar_str = cf.get_option_str( "items_search_toolbar", get_items_search_toolbar_default_str() );
+    items_search_toolbar =  parse_items( items_search_toolbar_str );
+
     // スレ一覧のツールバー項目
     items_board_toolbar_str = cf.get_option_str( "items_board_toolbar", get_items_board_toolbar_default_str() );
     items_board_toolbar =  parse_items( items_board_toolbar_str );
@@ -609,6 +616,7 @@ void SESSION::save_session()
         << "items_sidebar = " << items_sidebar_toolbar_str << std::endl
         << "items_main_toolbar = " << items_main_toolbar_str << std::endl
         << "items_article_toolbar = " << items_article_toolbar_str << std::endl
+        << "items_search_toolbar = " << items_search_toolbar_str << std::endl
         << "items_board_toolbar = " << items_board_toolbar_str << std::endl
         << "items_msg_toolbar = " << items_msg_toolbar_str << std::endl
         << "items_board = " << items_board_col_str << std::endl
@@ -929,6 +937,24 @@ void SESSION::set_items_article_toolbar_str( const std::string& items_str )
     items_article_toolbar = parse_items( items_article_toolbar_str );
 }
 const int SESSION::get_item_article_toolbar( const int num ){ return items_article_toolbar[ num ]; }
+
+// 検索ビューのツールバーの項目
+const std::string& SESSION::get_items_search_toolbar_str(){ return items_search_toolbar_str; }
+const std::string SESSION::get_items_search_toolbar_default_str()
+{
+    return
+    ITEM_NAME_NAME + std::string ( " " ) +
+    ITEM_NAME_SEARCH + std::string ( " " ) +
+    ITEM_NAME_RELOAD + std::string ( " " ) +
+    ITEM_NAME_STOPLOADING + std::string ( " " ) +
+    ITEM_NAME_QUIT;
+}
+void SESSION::set_items_search_toolbar_str( const std::string& items_str )
+{
+    items_search_toolbar_str = items_str;
+    items_search_toolbar = parse_items( items_search_toolbar_str );
+}
+const int SESSION::get_item_search_toolbar( const int num ){ return items_search_toolbar[ num ]; }
 
 // スレ一覧のツールバー項目
 const std::string& SESSION::get_items_board_toolbar_str(){ return items_board_toolbar_str; }

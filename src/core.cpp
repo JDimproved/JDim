@@ -529,6 +529,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "SetupSidebarItem", "サイドバー(_S)..." ), sigc::mem_fun( *this, &Core::slot_setup_sidebaritem ) );
     m_action_group->add( Gtk::Action::create( "SetupBoardItem", "スレ一覧(_B)..." ), sigc::mem_fun( *this, &Core::slot_setup_boarditem ) );
     m_action_group->add( Gtk::Action::create( "SetupArticleItem", "スレビュー(_A)..." ), sigc::mem_fun( *this, &Core::slot_setup_articleitem ) );
+    m_action_group->add( Gtk::Action::create( "SetupSearchItem", "ログ/スレタイ検索(_L)..." ), sigc::mem_fun( *this, &Core::slot_setup_searchitem ) );
     m_action_group->add( Gtk::Action::create( "SetupMsgItem", "書き込みビュー(_W)..." ), sigc::mem_fun( *this, &Core::slot_setup_msgitem ) );
 
 
@@ -818,6 +819,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menuitem action='SetupSidebarItem'/>"
         "<menuitem action='SetupBoardItem'/>"
         "<menuitem action='SetupArticleItem'/>"
+        "<menuitem action='SetupSearchItem'/>"
         "<menuitem action='SetupMsgItem'/>"
         "</menu>"
         "<separator/>"

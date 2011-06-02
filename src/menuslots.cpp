@@ -517,6 +517,17 @@ void Core::slot_setup_articleitem()
 
 
 //
+// ツールバーのアイコン(ログ/スレタイ検索)の表示項目
+//
+void Core::slot_setup_searchitem()
+{
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_SEARCHITEM, "" );
+    pref->run();
+    delete pref;
+}
+
+
+//
 // ツールバーのアイコン(書き込みビュー)の表示項目
 //
 void Core::slot_setup_msgitem()

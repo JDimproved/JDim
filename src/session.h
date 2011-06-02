@@ -316,6 +316,12 @@ namespace SESSION
     void set_items_article_toolbar_str( const std::string& items_str );
     const int get_item_article_toolbar( const int num );
 
+    // 検索ビューのツールバーの項目
+    const std::string& get_items_search_toolbar_str();
+    const std::string get_items_search_toolbar_default_str();
+    void set_items_search_toolbar_str( const std::string& items_str );
+    const int get_item_search_toolbar( const int num );
+
     // スレ一覧のツールバー項目
     const std::string& get_items_board_toolbar_str();
     const std::string get_items_board_toolbar_default_str();

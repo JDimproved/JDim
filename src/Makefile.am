@@ -55,6 +55,7 @@ jd_SOURCES = \
 	boarditempref.cpp \
 	articleitempref.cpp \
 	articleitemmenupref.cpp \
+	searchitempref.cpp \
 	boarditemmenupref.cpp \
 	msgitempref.cpp \
 	sidebaritempref.cpp \
@@ -118,6 +119,7 @@ noinst_HEADERS = \
 	boarditempref.h \
 	articleitempref.h \
 	articleitemmenupref.h \
+	searchitempref.h \
 	boarditemmenupref.h \
 	msgitempref.h \
 	sidebaritempref.h \

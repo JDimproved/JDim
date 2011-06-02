@@ -20,6 +20,7 @@
 #include "boarditemmenupref.h"
 #include "articleitempref.h"
 #include "articleitemmenupref.h"
+#include "searchitempref.h"
 #include "msgitempref.h"
 
 #include "dbimg/delimgdiag.h"
@@ -88,6 +89,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, const int type, 
 
         case PREFDIAG_ARTICLEITEM_MENU:
             return new CORE::ArticleItemMenuPref( parent, url );
+
+        case PREFDIAG_SEARCHITEM:
+            return new CORE::SearchItemPref( parent, url );            
 
         case PREFDIAG_MSGITEM:
             return new CORE::MsgItemPref( parent, url );            

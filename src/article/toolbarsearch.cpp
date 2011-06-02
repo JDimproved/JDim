@@ -13,6 +13,8 @@
 #include "control/controlid.h"
 
 #include "compmanager.h"
+#include "session.h"
+#include "global.h"
 
 using namespace ARTICLE;
 
@@ -40,15 +42,42 @@ SearchToolBar::SearchToolBar() :
 //
 void SearchToolBar::pack_buttons()
 {
-    set_tooltip( *get_button_stop(), "検索中止 " + CONTROL::get_str_motions( CONTROL::StopLoading ) );
-    set_tooltip( *get_button_reload(), "再検索 " + CONTROL::get_str_motions( CONTROL::Reload ) );
+    int num = 0;
+    for(;;){
+        int item = SESSION::get_item_search_toolbar( num );
+        if( item == ITEM_END ) break;
+        switch( item ){
 
-    pack_transparent_separator();
-    get_buttonbar().append( *get_label() );
-    get_buttonbar().append( *get_button_open_searchbar() );
-    get_buttonbar().append( *get_button_reload() );
-    get_buttonbar().append( *get_button_stop() );
-    get_buttonbar().append( *get_button_close() );
+            case ITEM_NAME:
+                pack_transparent_separator();
+                get_buttonbar().append( *get_label() );
+                pack_transparent_separator();
+                break;
+
+            case ITEM_SEARCH:
+                get_buttonbar().append( *get_button_open_searchbar() );
+                break;
+
+            case ITEM_RELOAD:
+                get_buttonbar().append( *get_button_reload() );
+                set_tooltip( *get_button_reload(), "再検索 " + CONTROL::get_str_motions( CONTROL::Reload ) );
+                break;
+
+            case ITEM_STOPLOADING:
+                get_buttonbar().append( *get_button_stop() );
+                set_tooltip( *get_button_stop(), "検索中止 " + CONTROL::get_str_motions( CONTROL::StopLoading ) );
+                break;
+
+            case ITEM_QUIT:
+                get_buttonbar().append( *get_button_close() );
+                break;
+
+            case ITEM_SEPARATOR:
+                pack_separator();
+                break;
+        }
+        ++num;
+    }
 
     set_relief();
     show_all_children();
