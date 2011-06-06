@@ -86,6 +86,8 @@ namespace CONTROL
 #define KEYCONF_CheckUpdateRoot ""
 #define KEYCONF_CheckUpdateOpenRoot ""
 
+#define KEYCONF_FullScreen "F11"
+
 // BBSLIST
 #define KEYCONF_OpenBoard  "Space"
 #define KEYCONF_OpenBoardTab  "Ctrl+Space"

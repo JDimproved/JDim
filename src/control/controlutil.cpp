@@ -448,6 +448,10 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
             case CONTROL::OrgSizeImage: //元の画像サイズ
                 label += "(_N)";
                 break;
+
+            case CONTROL::FullScreen: // 全画面表示
+                label += "(_F)";
+                break;
         }
     }
 
@@ -600,6 +604,11 @@ const bool CONTROL::operate_common( const int control, const std::string& url, S
 
         case CONTROL::CheckUpdateOpenRoot:
             CORE::core_set_command( "check_update_open_root" );
+            break;
+
+            // 全画面表示
+        case CONTROL::FullScreen:
+            CORE::core_set_command( "toggle_fullscreen" );
             break;
 
         default:

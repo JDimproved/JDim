@@ -110,6 +110,8 @@ void KeyConfig::load_conf()
     SETMOTION( "CheckUpdateRoot", KEYCONF_CheckUpdateRoot );
     SETMOTION( "CheckUpdateOpenRoot", KEYCONF_CheckUpdateOpenRoot );
 
+    SETMOTION( "FullScreen", KEYCONF_FullScreen );
+
     // BBSLIST
     SETKEYMOTION( "OpenBoard", KEYCONF_OpenBoard );
     SETKEYMOTION( "OpenBoardTab", KEYCONF_OpenBoardTab );

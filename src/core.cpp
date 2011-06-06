@@ -485,7 +485,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( raction2, sigc::mem_fun( *this, &Core::slot_toggle_v3pane ) );
 
     // フルスクリーン
-    m_action_group->add( Gtk::ToggleAction::create( "FullScreen", "全画面表示(_F)", std::string(), false ),
+    m_action_group->add( Gtk::ToggleAction::create( "FullScreen", "FullScreen", std::string(), false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_fullscreen ) );
 
 
@@ -3115,6 +3115,11 @@ void Core::exec_command()
     // 最小化
     else if( command.command == "iconify_mainwin" ){
         m_win_main.iconify_win();
+    }
+
+    // 全画面表示
+    else if( command.command == "toggle_fullscreen" ){
+        slot_toggle_fullscreen();
     }
 
     // URL のオープン関係
