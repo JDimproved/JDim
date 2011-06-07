@@ -1612,29 +1612,40 @@ void BoardBase::remove_old_abone_thread()
     for( ; it2 != m_list_abone_thread_remove.end(); ++it2 ) std::cout << ( *it2 ) << std::endl;
 #endif
 
-    if( CONFIG::get_remove_old_abone_thread() == 1 ){
-        m_list_abone_thread = m_list_abone_thread_remove;
-        return;
+    if( CONFIG::get_remove_old_abone_thread() == 0 ){
+
+        SKELETON::MsgCheckDiag mdiag( NULL,
+                                      "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？\n後で板のプロパティから削除する事も可能です。",
+                                      "今後表示しない(_D)",
+                                      Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+
+        mdiag.add_default_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+        mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+
+        const int ret = mdiag.run();
+
+        // 一度いいえを選択したらあとは再起動するまでダイアログを表示しない
+        if( ret != Gtk::RESPONSE_YES ) m_cancel_remove_abone_thread = true; 
+
+        if( mdiag.get_chkbutton().get_active() ){
+
+            if( ret == Gtk::RESPONSE_YES ) CONFIG::set_remove_old_abone_thread( 1 );
+            else CONFIG::set_remove_old_abone_thread( 2 );
+        }
+
+        if( ret != Gtk::RESPONSE_YES ) return;
     }
 
-    SKELETON::MsgCheckDiag mdiag( NULL,
-                             "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？\n後で板のプロパティから削除する事も可能です。",
-                             "今後表示しない(_D)",
-                                  Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+    std::list< std::string >::iterator it = m_list_abone_thread.begin();
+    for( ; it != m_list_abone_thread.end(); ++it ){
 
-    mdiag.add_default_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-    mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+        if( std::find( m_list_abone_thread_remove.begin(), m_list_abone_thread_remove.end(), *it )
+            == m_list_abone_thread_remove.end() ){
 
-    const int ret = mdiag.run();
-    if( ret == Gtk::RESPONSE_YES ) m_list_abone_thread = m_list_abone_thread_remove;
-
-    // 一度いいえを選択したらあとは再起動するまでダイアログを表示しない
-    else m_cancel_remove_abone_thread = true; 
-
-    if( mdiag.get_chkbutton().get_active() ){
-
-        if( ret == Gtk::RESPONSE_YES ) CONFIG::set_remove_old_abone_thread( 1 );
-        else CONFIG::set_remove_old_abone_thread( 2 );
+            m_list_abone_thread.erase( it );
+            it = m_list_abone_thread.begin();
+            continue;
+        }
     }
 }
 
