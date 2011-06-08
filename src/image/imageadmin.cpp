@@ -1020,6 +1020,7 @@ void ImageAdmin::save_all()
 #endif
 
     int overwrite = Gtk::RESPONSE_NO;
+    bool use_name_in_cache = false;
 
     std::list< std::string > list_urls = get_URLs();
 
@@ -1066,6 +1067,11 @@ void ImageAdmin::save_all()
                         if( ! copy_file( url, path_from, path_to ) ) return;
                     }
 
+                    // ファイル名として画像キャッシュでのファイル名を使用
+                    else if( use_name_in_cache ){
+                        if( ! copy_file( url, path_from, path_dir + CACHE::filename_img( url ) ) ) return;
+                    }
+
                     // すべていいえ
                     else if( overwrite == SKELETON::OVERWRITE_NO_ALL ){}
 
@@ -1096,8 +1102,26 @@ void ImageAdmin::save_all()
 
                                     // 名前変更
                                 case Gtk::RESPONSE_YES:
-                                    if( ! DBIMG::save( url, get_win(), path_to ) ) continue;
+                                {
+                                    SKELETON::MsgDiag mdiag_name( get_win(),
+                                                                  "ファイル名として画像キャッシュでのファイル名を使用しますか？\n\nいいえを選ぶとファイル選択ダイアログを開きます。",
+                                                                  false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+
+                                    mdiag_name.add_button( "すべてはい", SKELETON::OVERWRITE_YES_ALL );
+                                    mdiag_name.set_default_response( Gtk::RESPONSE_YES );
+                                    const int ret = mdiag_name.run();
+
+                                    if( ret == Gtk::RESPONSE_YES || ret == SKELETON::OVERWRITE_YES_ALL ){
+
+                                        if( ret == SKELETON::OVERWRITE_YES_ALL ) use_name_in_cache = true;
+                                        if( ! copy_file( url, path_from, path_dir + CACHE::filename_img( url ) ) ) return;
+                                    }
+                                    else{
+
+                                        if( ! DBIMG::save( url, get_win(), path_to ) ) continue;
+                                    }
                                     break;
+                                }
 
                                 default:
                                     break;
