@@ -197,6 +197,7 @@ void AboutConfig::append_rows()
     append_row( "IDの上にマウスオーバーしたときにIDをポップアップ表示する", get_confitem()->idpopup_by_mo, CONF_IDPOPUP_BY_MO );
     append_row( "スレビューとスレ一覧の切り替え方法説明ダイアログを表示する", get_confitem()->instruct_tglart, CONF_INSTRUCT_TGLART );
     append_row( "画像ビューとスレビューの切り替え方法説明ダイアログを表示する", get_confitem()->instruct_tglimg, CONF_INSTRUCT_TGLIMG );
+    append_row( "deleteを押したときに確認ダイアログを表示", get_confitem()->show_delartdiag, CONF_SHOW_DELARTDIAG );
     append_row( "リンクの下線を表示する", get_confitem()->draw_underline, CONF_DRAW_UNDERLINE );
     append_row( "レスを引用コピーするときに前に付ける引用文字", get_confitem()->ref_prefix, CONF_REF_PREFIX );
     append_row( "引用文字の後のスペース数", get_confitem()->ref_prefix_space, CONF_REF_PREFIX_SPACE );

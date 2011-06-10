@@ -401,6 +401,10 @@ namespace CONFIG
     const bool get_instruct_tglimg();
     void set_instruct_tglimg( const bool set );
 
+    // スレビューでdeleteを押したときに確認ダイアログを表示する
+    const bool get_show_delartdiag();
+    void set_show_delartdiag( const bool show );
+
     // 下線位置調整
     const double get_adjust_underline_pos();
     void set_adjust_underline_pos( const double pos );

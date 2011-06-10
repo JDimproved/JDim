@@ -1119,10 +1119,17 @@ const bool ArticleViewBase::operate_view( const int control )
         {
             if( m_article->empty() ) break;
 
-            SKELETON::MsgDiag mdiag( get_parent_win(), "ログを削除しますか？\n\n「スレ再取得」を押すと\nあぼ〜んなどのスレ情報を削除せずにスレを再取得します。",
-                                     false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+            if( ! CONFIG::get_show_delartdiag() ){
+                exec_delete();
+                break;
+            }
+
+            SKELETON::MsgCheckDiag mdiag( get_parent_win(),
+                                          "ログを削除しますか？\n\n「スレ再取得」を押すと\nあぼ〜んなどのスレ情報を削除せずにスレを再取得します。",
+                                          "今後表示しない(常に削除)(_D)",
+                                          Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-            mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+            mdiag.add_default_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
 
 #if GTKMMVER >= 260
             Gtk::Button *button = mdiag.add_button( "スレ再取得(_R)", Gtk::RESPONSE_YES + 100 );
@@ -1135,6 +1142,9 @@ const bool ArticleViewBase::operate_view( const int control )
             int ret = mdiag.run();
             if( ret == Gtk::RESPONSE_YES ) exec_delete();
             else if( ret == Gtk::RESPONSE_YES + 100 ) delete_open_view();
+
+            if( mdiag.get_chkbutton().get_active() ) CONFIG::set_show_delartdiag( false );
+
             break;
         }
 

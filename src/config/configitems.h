@@ -358,6 +358,9 @@ namespace CONFIG
         bool instruct_tglimg;
         bool instruct_tglimg_end;
 
+        // スレビューでdeleteを押したときに確認ダイアログを表示する
+        bool show_delartdiag;
+
         // 下線位置
         double adjust_underline_pos;
 

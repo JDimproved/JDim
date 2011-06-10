@@ -432,6 +432,9 @@ const bool ConfigItems::load( const bool restore )
     instruct_tglimg = cf.get_option_bool( "instruct_tglimg", CONF_INSTRUCT_TGLIMG );
     instruct_tglimg_end = false;
 
+    // スレビューでdeleteを押したときに確認ダイアログを表示する
+    show_delartdiag = cf.get_option_bool( "show_delartdiag", CONF_SHOW_DELARTDIAG );
+
     // 下線位置
     adjust_underline_pos = cf.get_option_double( "adjust_underline_pos", ( double )CONF_ADJUST_UNDERLINE_POS, ( double )0, ( double )64 );
 
@@ -829,6 +832,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "instruct_popup", instruct_popup );
     cf.update( "instruct_tglart", instruct_tglart );
     cf.update( "instruct_tglimg", instruct_tglimg );
+    cf.update( "show_delartdiag", show_delartdiag );
 
     cf.update( "adjust_underline_pos", adjust_underline_pos );
     cf.update( "adjust_line_space", adjust_line_space );

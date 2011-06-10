@@ -384,6 +384,11 @@ const bool CONFIG::get_instruct_tglimg(){
 void CONFIG::set_instruct_tglimg( bool tgl ){ get_confitem()->instruct_tglimg = tgl; }
 
 
+// スレビューでdeleteを押したときに確認ダイアログを表示する
+const bool CONFIG::get_show_delartdiag(){ return get_confitem()->show_delartdiag; }
+void CONFIG::set_show_delartdiag( const bool show ){ get_confitem()->show_delartdiag = show; }
+
+
 const double CONFIG::get_adjust_underline_pos(){ return get_confitem()->adjust_underline_pos; }
 void CONFIG::set_adjust_underline_pos( const double pos ){ get_confitem()->adjust_underline_pos = pos; }
 

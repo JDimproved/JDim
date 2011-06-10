@@ -87,6 +87,7 @@ namespace CONFIG
         CONF_INSTRUCT_POPUP = 100,  // 0以上なら多重ポップアップの説明を表示する
         CONF_INSTRUCT_TGLART = 1, // スレビューを開いたときにスレ一覧との切り替え方法を説明する
         CONF_INSTRUCT_TGLIMG = 1, // 画像ビューを開いたときにスレビューとの切り替え方法を説明する
+        CONF_SHOW_DELARTDIAG = 1, // スレビューでdeleteを押したときに確認ダイアログを表示する
         CONF_ADJUST_UNDERLINE_POS = 1, // 下線位置
         CONF_ADJUST_LINE_SPACE = 1,    // 行間スペース
         CONF_DRAW_UNDERLINE = 1,     // リンク下線を表示
