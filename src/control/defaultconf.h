@@ -197,6 +197,7 @@ namespace CONTROL
 #define MOUSECONF_End "62"
 #define MOUSECONF_Quit "26"
 #define MOUSECONF_Reload "82"
+#define MOUSECONF_Delete "262"
 #define MOUSECONF_StopLoading "8"
 #define MOUSECONF_AppendFavorite  ""
 

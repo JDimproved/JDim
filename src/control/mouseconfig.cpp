@@ -55,6 +55,7 @@ void MouseConfig::load_conf()
     SETMOTION( "End", MOUSECONF_End );
     SETMOTION( "Quit", MOUSECONF_Quit );
     SETMOTION( "Reload", MOUSECONF_Reload );
+    SETMOTION( "Delete", MOUSECONF_Delete );
     SETMOTION( "StopLoading", MOUSECONF_StopLoading );
     SETMOTION( "AppendFavorite", MOUSECONF_AppendFavorite );
 
