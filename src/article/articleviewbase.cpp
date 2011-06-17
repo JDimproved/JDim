@@ -1947,8 +1947,17 @@ bool ArticleViewBase::slot_leave_notify( GdkEventCrossing* event )
     if( event->mode == GDK_CROSSING_GRAB ) return false;
     if( event->mode == GDK_CROSSING_UNGRAB ) return false;
 
+    // クリックしたりホイールを回すとイベントが発生する時があるのでキャンセルする
+    if( event->state
+        & ( GDK_BUTTON1_MASK | GDK_BUTTON2_MASK | GDK_BUTTON3_MASK |
+            GDK_BUTTON4_MASK | GDK_BUTTON5_MASK ) ) return false;
+
 #ifdef _DEBUG
-    std::cout << "ArticleViewBase::slot_leave_drawarea\n";
+    std::cout << "ArticleViewBase::slot_leave_drawarea :";
+    std::cout << " type = " << event->type;
+    std::cout << " mode = " << event->mode;
+    std::cout << " detail = " << event->detail;
+    std::cout << " state = " << event->state << std::endl;
 #endif
 
     focus_out();
