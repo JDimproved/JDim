@@ -2523,12 +2523,6 @@ const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n
         cchar = *( str_in + n_in );
     }
 
-    // 最後に ()[] が来たら除く
-    if( *( str_in + n_in -1 ) == '('
-        || *( str_in + n_in -1 ) == ')'
-        || *( str_in + n_in -1 ) == '['
-        || *( str_in + n_in -1 ) == ']' ) --n_in;
-
     // URLとして短かすぎる場合は除外する( 最短ドメイン名の例 "1.cc" )
     if( n_in - delim_pos < 4 ) return MISC::SCHEME_NONE;
 
