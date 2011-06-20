@@ -27,6 +27,7 @@ MainToolBar::MainToolBar() :
       m_button_hist( ICON::HISTVIEW ),
       m_button_hist_board( ICON::HIST_BOARDVIEW ),
       m_button_hist_close( ICON::HIST_CLOSEVIEW ),
+      m_button_hist_closeboard( ICON::HIST_CLOSEBOARDVIEW ),
       m_button_hist_closeimg( ICON::HIST_CLOSEIMGVIEW ),
 
       m_button_board( ICON::BOARDVIEW ),
@@ -48,6 +49,7 @@ MainToolBar::MainToolBar() :
     set_tooltip( m_button_hist, std::string( ITEM_NAME_HISTVIEW ) );
     set_tooltip( m_button_hist_board, std::string( ITEM_NAME_HIST_BOARDVIEW ) );
     set_tooltip( m_button_hist_close, std::string( ITEM_NAME_HIST_CLOSEVIEW ) );
+    set_tooltip( m_button_hist_closeboard, std::string( ITEM_NAME_HIST_CLOSEBOARDVIEW ) );
     set_tooltip( m_button_hist_closeimg, std::string( ITEM_NAME_HIST_CLOSEIMGVIEW ) );
 
     set_tooltip( m_button_board, std::string( ITEM_NAME_BOARDVIEW )
@@ -91,6 +93,10 @@ void MainToolBar::pack_buttons()
 
             case ITEM_HIST_CLOSEVIEW:
                 get_buttonbar().append( m_button_hist_close );
+                break;
+
+            case ITEM_HIST_CLOSEBOARDVIEW:
+                get_buttonbar().append( m_button_hist_closeboard );
                 break;
 
             case ITEM_HIST_CLOSEIMGVIEW:

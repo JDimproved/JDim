@@ -361,10 +361,12 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_FAVORITEVIEW, false ) );
     m_action_group->add( Gtk::ToggleAction::create( "Show_HISTTHREAD", std::string( ITEM_NAME_HISTVIEW ) + "(_T)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTTHREADVIEW, false ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTBOARD", std::string( ITEM_NAME_HIST_BOARDVIEW ) + "(_O)", std::string(), SESSION::show_sidebar() ),
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTBOARD", std::string( ITEM_NAME_HIST_BOARDVIEW ) + "(_B)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTBOARDVIEW, false ) );
-    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTCLOSE", std::string( ITEM_NAME_HIST_CLOSEVIEW ) + "(_C)", std::string(), SESSION::show_sidebar() ),
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTCLOSE", std::string( ITEM_NAME_HIST_CLOSEVIEW ) + "(_M)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEVIEW, false ) );
+    m_action_group->add( Gtk::ToggleAction::create( "Show_HISTCLOSEBOARD", std::string( ITEM_NAME_HIST_CLOSEBOARDVIEW ) + "(_N)", std::string(), SESSION::show_sidebar() ),
+                         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEBOARDVIEW, false ) );
     m_action_group->add( Gtk::ToggleAction::create( "Show_HISTCLOSEIMG", std::string( ITEM_NAME_HIST_CLOSEIMGVIEW ) + "(_I)", std::string(), SESSION::show_sidebar() ),
                          sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEIMGVIEW, false ) );
 
@@ -752,6 +754,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menuitem action='Show_HISTTHREAD'/>"
         "<menuitem action='Show_HISTBOARD'/>"
         "<menuitem action='Show_HISTCLOSE'/>"
+        "<menuitem action='Show_HISTCLOSEBOARD'/>"
         "<menuitem action='Show_HISTCLOSEIMG'/>"
         "</menu>"
         "<separator/>"
@@ -1038,6 +1041,9 @@ void Core::run( const bool init, const bool skip_setupdiag )
     // 最近閉じたスレ履歴
     submenu->append( *HISTORY::get_history_manager()->get_menu_close() );
 
+    // 最近閉じた板履歴
+    submenu->append( *HISTORY::get_history_manager()->get_menu_closeboard() );
+
     // 最近閉じた画像履歴
     submenu->append( *HISTORY::get_history_manager()->get_menu_closeimg() );
 
@@ -1255,6 +1261,8 @@ void Core::create_toolbar()
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTBOARDVIEW, false ) );
     m_toolbar->m_button_hist_close.signal_clicked().connect(
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEVIEW, false ) );
+    m_toolbar->m_button_hist_closeboard.signal_clicked().connect(
+        sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEBOARDVIEW, false ) );
     m_toolbar->m_button_hist_closeimg.signal_clicked().connect(
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_HISTCLOSEIMGVIEW, false ) );
 
@@ -1337,6 +1345,7 @@ void Core::slot_activate_menubar()
     toggle_sidebar_action( m_action_group, "Show_HISTTHREAD", URL_HISTTHREADVIEW );
     toggle_sidebar_action( m_action_group, "Show_HISTBOARD", URL_HISTBOARDVIEW );
     toggle_sidebar_action( m_action_group, "Show_HISTCLOSE", URL_HISTCLOSEVIEW );
+    toggle_sidebar_action( m_action_group, "Show_HISTCLOSEBOARD", URL_HISTCLOSEBOARDVIEW );
     toggle_sidebar_action( m_action_group, "Show_HISTCLOSEIMG", URL_HISTCLOSEIMGVIEW );
 
     // メニューバー
@@ -1627,6 +1636,11 @@ void Core::slot_clear_thread()
 void Core::slot_clear_close()
 {
     HISTORY::remove_allhistories( URL_HISTCLOSEVIEW );
+}
+
+void Core::slot_clear_closeboard()
+{
+    HISTORY::remove_allhistories( URL_HISTCLOSEBOARDVIEW );
 }
 
 void Core::slot_clear_closeimg()
@@ -2609,6 +2623,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         BBSLIST::get_admin()->set_command( "update_item", URL_HISTTHREADVIEW );
         BBSLIST::get_admin()->set_command( "update_item", URL_HISTBOARDVIEW );
         BBSLIST::get_admin()->set_command( "update_item", URL_HISTCLOSEVIEW );
+        BBSLIST::get_admin()->set_command( "update_item", URL_HISTCLOSEBOARDVIEW );
 
         return;
     }
@@ -3658,7 +3673,7 @@ void Core::empty_page( const std::string& url )
 void Core::set_toggle_view_button()
 {
     m_enable_menuslot = false;
-    bool sidebar_state[ 6 ] = { false, false, false, false, false, false };
+    bool sidebar_state[ 7 ] = { false, false, false, false, false, false, false };
 
     switch( SESSION::focused_admin() ){
 
@@ -3670,7 +3685,8 @@ void Core::set_toggle_view_button()
             m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
             m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
             m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
-            m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
+            m_toolbar->m_button_hist_closeboard.set_active( sidebar_state[ 5 ] );
+            m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 6 ] );
 
             m_toolbar->m_button_board.set_active( false );
             m_toolbar->m_button_thread.set_active( false );
@@ -3686,7 +3702,8 @@ void Core::set_toggle_view_button()
                 m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
                 m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
                 m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
-                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
+                m_toolbar->m_button_hist_closeboard.set_active( sidebar_state[ 5 ] );
+                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 6 ] );
 
                 m_toolbar->m_button_board.set_active( true );
                 m_toolbar->m_button_thread.set_active( false );
@@ -3705,7 +3722,8 @@ void Core::set_toggle_view_button()
                 m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
                 m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
                 m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
-                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
+                m_toolbar->m_button_hist_closeboard.set_active( sidebar_state[ 5 ] );
+                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 6 ] );
 
                 m_toolbar->m_button_board.set_active( false );
                 m_toolbar->m_button_thread.set_active( true );
@@ -3724,7 +3742,8 @@ void Core::set_toggle_view_button()
                 m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
                 m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
                 m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
-                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
+                m_toolbar->m_button_hist_closeboard.set_active( sidebar_state[ 5 ] );
+                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 6 ] );
 
                 m_toolbar->m_button_board.set_active( false );
                 m_toolbar->m_button_thread.set_active( false );
@@ -3741,7 +3760,8 @@ void Core::set_toggle_view_button()
                 m_toolbar->m_button_hist.set_active( sidebar_state[ 2 ] );
                 m_toolbar->m_button_hist_board.set_active( sidebar_state[ 3 ] );
                 m_toolbar->m_button_hist_close.set_active( sidebar_state[ 4 ] );
-                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 5 ] );
+                m_toolbar->m_button_hist_closeboard.set_active( sidebar_state[ 5 ] );
+                m_toolbar->m_button_hist_closeimg.set_active( sidebar_state[ 6 ] );
 
                 m_toolbar->m_button_board.set_active( false );
                 if( SESSION::get_embedded_mes() ) m_toolbar->m_button_thread.set_active( true );

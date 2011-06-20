@@ -45,6 +45,12 @@ BoardView::~BoardView()
     std::cout << "BoardView::~BoardView : url = " << get_url() << std::endl;
 #endif
 
+    // 閉じたタブ履歴更新
+    HISTORY::append_history( URL_HISTCLOSEBOARDVIEW,
+                             DBTREE::url_boardbase( get_url() ),
+                             DBTREE::board_name( get_url() ), TYPE_BOARD );
+
+
     if( ! SESSION::is_quitting() ) save_session();
 }
 

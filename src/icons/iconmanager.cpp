@@ -35,6 +35,7 @@
 #include "hist.h"
 #include "hist_board.h"
 #include "hist_close.h"
+#include "hist_closeboard.h"
 #include "hist_closeimg.h"
 
 #include "board.h"
@@ -159,6 +160,7 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::HISTVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist ), icon_hist );
     m_list_icons[ ICON::HIST_BOARDVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_board ), icon_hist_board );
     m_list_icons[ ICON::HIST_CLOSEVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_close ), icon_hist_close );
+    m_list_icons[ ICON::HIST_CLOSEBOARDVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_closeboard ), icon_hist_closeboard );
     m_list_icons[ ICON::HIST_CLOSEIMGVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_closeimg ), icon_hist_closeimg );
     m_list_icons[ ICON::BOARDVIEW ] = m_list_icons[ ICON::BOARD ];
     m_list_icons[ ICON::ARTICLEVIEW ] = m_list_icons[ ICON::THREAD ];

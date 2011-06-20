@@ -41,6 +41,7 @@ BBSListToolBar::BBSListToolBar() :
     menu.push_back( ITEM_NAME_HISTVIEW );
     menu.push_back( ITEM_NAME_HIST_BOARDVIEW );
     menu.push_back( ITEM_NAME_HIST_CLOSEVIEW );
+    menu.push_back( ITEM_NAME_HIST_CLOSEBOARDVIEW );
     menu.push_back( ITEM_NAME_HIST_CLOSEIMGVIEW );
     m_button_toggle.get_button()->append_menu( menu );
     m_button_toggle.get_button()->signal_selected().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_toggle ) );
@@ -174,6 +175,10 @@ void BBSListToolBar::slot_toggle( const int i )
              break; 	 
 
          case 5:
+             if( get_url() != URL_HISTCLOSEBOARDVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTCLOSEBOARDVIEW );
+             break; 	 
+
+         case 6:
              if( get_url() != URL_HISTCLOSEIMGVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTCLOSEIMGVIEW );
              break; 	 
      }

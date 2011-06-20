@@ -99,6 +99,12 @@ HistoryBoardView::HistoryBoardView( const std::string& url, const std::string& a
     set_label( ITEM_NAME_HIST_BOARDVIEW );
 }
 
+HistoryCloseBoardView::HistoryCloseBoardView( const std::string& url, const std::string& arg1, const std::string& arg2 )
+    : HistoryViewBase( url, CACHE::path_xml_history_closeboard(), arg1, arg2 )
+{
+    set_label( ITEM_NAME_HIST_CLOSEBOARDVIEW );
+}
+
 HistoryCloseImgView::HistoryCloseImgView( const std::string& url, const std::string& arg1, const std::string& arg2 )
     : HistoryViewBase( url, CACHE::path_xml_history_closeimg(), arg1, arg2 )
 {

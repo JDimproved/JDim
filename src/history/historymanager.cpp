@@ -71,6 +71,7 @@ History_Manager::History_Manager()
     : m_menu_thread( NULL ),
       m_menu_board( NULL ),
       m_menu_close( NULL ),
+      m_menu_closeboard( NULL ),
       m_menu_closeimg( NULL ),
       m_last_viewhistory( NULL )
 {
@@ -121,6 +122,11 @@ Gtk::MenuItem* History_Manager::get_menu_close()
     return m_menu_close;
 }
 
+Gtk::MenuItem* History_Manager::get_menu_closeboard()
+{
+    if( ! m_menu_closeboard ) m_menu_closeboard = new HistoryMenu( URL_HISTCLOSEBOARDVIEW, std::string( ITEM_NAME_HIST_CLOSEBOARDVIEW ) + "(_N)" );
+    return m_menu_closeboard;
+}
 
 Gtk::MenuItem* History_Manager::get_menu_closeimg()
 {
@@ -142,7 +148,7 @@ void History_Manager::append_history( const std::string& url_history, const std:
         info.url = DBTREE::url_dat( url );
         info.name = DBTREE::article_subject( info.url );
     }
-    if( url_history == URL_HISTBOARDVIEW ){
+    if( url_history == URL_HISTBOARDVIEW || url_history == URL_HISTCLOSEBOARDVIEW ){
 
         if( type == TYPE_BOARD ){
             info.url = DBTREE::url_boardbase( url );
@@ -173,6 +179,7 @@ void History_Manager::append_history( const std::string& url_history, const std:
 void History_Manager::restore_history( const std::string& url_history )
 {
     if( url_history == URL_HISTCLOSEVIEW && m_menu_close ) m_menu_close->restore_history();
+    if( url_history == URL_HISTCLOSEBOARDVIEW && m_menu_closeboard ) m_menu_closeboard->restore_history();
     if( url_history == URL_HISTCLOSEIMGVIEW && m_menu_closeimg ) m_menu_closeimg->restore_history();
 }
 
@@ -190,6 +197,7 @@ void History_Manager::set_menulabel( const std::string& url_history )
     if( url_history == URL_HISTTHREADVIEW && m_menu_thread ) m_menu_thread->set_menulabel();
     if( url_history == URL_HISTBOARDVIEW && m_menu_board ) m_menu_board->set_menulabel();
     if( url_history == URL_HISTCLOSEVIEW && m_menu_close ) m_menu_close->set_menulabel();
+    if( url_history == URL_HISTCLOSEBOARDVIEW && m_menu_closeboard ) m_menu_closeboard->set_menulabel();
     if( url_history == URL_HISTCLOSEIMGVIEW && m_menu_closeimg ) m_menu_closeimg->set_menulabel();
 }
 

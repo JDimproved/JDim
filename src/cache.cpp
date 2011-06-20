@@ -180,6 +180,12 @@ std::string CACHE::path_xml_history_close()
     return CACHE::path_root() +  "hist_close.xml";
 }
 
+// 最近閉じた板の履歴
+std::string CACHE::path_xml_history_closeboard()
+{
+    return CACHE::path_root() +  "hist_closeboard.xml";
+}
+
 // 最近閉じた画像の履歴
 std::string CACHE::path_xml_history_closeimg()
 {

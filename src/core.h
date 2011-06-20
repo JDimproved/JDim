@@ -153,6 +153,7 @@ namespace CORE
         void slot_clear_board();
         void slot_clear_thread();
         void slot_clear_close();
+        void slot_clear_closeboard();
         void slot_clear_closeimg();
         void slot_clear_search();
         void slot_clear_name();

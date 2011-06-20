@@ -48,6 +48,9 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
         case VIEW_HISTBOARD:
             return new BBSLIST::HistoryBoardView( url, view_args.arg1, view_args.arg2 );
 
+        case VIEW_HISTCLOSEBOARD:
+            return new BBSLIST::HistoryCloseBoardView( url, view_args.arg1, view_args.arg2 );
+
         case VIEW_HISTCLOSEIMG:
             return new BBSLIST::HistoryCloseImgView( url, view_args.arg1, view_args.arg2 );
 

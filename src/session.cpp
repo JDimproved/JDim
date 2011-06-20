@@ -179,6 +179,7 @@ const int SESSION::parse_item( const std::string& item_name )
     else if( item_name == ITEM_NAME_HISTVIEW ) item = ITEM_HISTVIEW;
     else if( item_name == ITEM_NAME_HIST_BOARDVIEW ) item = ITEM_HIST_BOARDVIEW;
     else if( item_name == ITEM_NAME_HIST_CLOSEVIEW ) item = ITEM_HIST_CLOSEVIEW;
+    else if( item_name == ITEM_NAME_HIST_CLOSEBOARDVIEW ) item = ITEM_HIST_CLOSEBOARDVIEW;
     else if( item_name == ITEM_NAME_HIST_CLOSEIMGVIEW ) item = ITEM_HIST_CLOSEIMGVIEW;
     else if( item_name == ITEM_NAME_ARTICLEVIEW ) item = ITEM_ARTICLEVIEW;
     else if( item_name == ITEM_NAME_IMAGEVIEW ) item = ITEM_IMAGEVIEW;

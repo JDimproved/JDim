@@ -25,6 +25,7 @@ MainItemPref::MainItemPref( Gtk::Window* parent, const std::string& url )
     append_default_pair( ITEM_NAME_HISTVIEW, ICON::get_icon( ICON::HISTVIEW ) );
     append_default_pair( ITEM_NAME_HIST_BOARDVIEW, ICON::get_icon( ICON::HIST_BOARDVIEW ) );
     append_default_pair( ITEM_NAME_HIST_CLOSEVIEW, ICON::get_icon( ICON::HIST_CLOSEVIEW ) );
+    append_default_pair( ITEM_NAME_HIST_CLOSEBOARDVIEW, ICON::get_icon( ICON::HIST_CLOSEBOARDVIEW ) );
     append_default_pair( ITEM_NAME_HIST_CLOSEIMGVIEW, ICON::get_icon( ICON::HIST_CLOSEIMGVIEW ) );
 
     append_default_pair( ITEM_NAME_BOARDVIEW, ICON::get_icon( ICON::BOARDVIEW ) );

@@ -82,6 +82,7 @@ namespace ICON
         "histview",       // スレ履歴
         "hist_boardview", // 板履歴
         "hist_closeview", // 最近閉じたスレ
+        "hist_closeboardview", // 最近閉じた板
         "hist_closeimgview", // 最近閉じた画像
         "boardview",      // スレ一覧
         "articleview",    // スレビュー

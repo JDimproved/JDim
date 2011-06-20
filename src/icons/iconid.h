@@ -1,13 +1,15 @@
 // ライセンス: GPL2
 
 // アイコンのID
+//
+// !!注意!!   項目を増やしたら iconfiles.h も修正すること
+//
 
 #ifndef _ICONID_H
 #define _ICONID_H
 
 namespace ICON
 {
-    // 項目を増やしたら iconfiles.h も修正すること
     enum
     {
         NONE = -1,
@@ -80,6 +82,7 @@ namespace ICON
         HISTVIEW,       // スレ履歴
         HIST_BOARDVIEW, // 板履歴
         HIST_CLOSEVIEW, // 最近閉じたスレ
+        HIST_CLOSEBOARDVIEW, // 最近閉じた板
         HIST_CLOSEIMGVIEW, // 最近閉じた画像
         BOARDVIEW,      // スレ一覧
         ARTICLEVIEW,    // スレビュー

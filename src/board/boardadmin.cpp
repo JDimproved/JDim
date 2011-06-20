@@ -17,6 +17,8 @@
 #include "jdlib/jdregex.h"
 #include "jdlib/miscmsg.h"
 
+#include "history/historymanager.h"
+
 #include "global.h"
 #include "type.h"
 #include "viewfactory.h"
@@ -217,6 +219,12 @@ const std::string BoardAdmin::command_to_url( const COMMAND_ARGS& command )
 void BoardAdmin::switch_admin()
 {
     if( ! has_focus() ) CORE::core_set_command( "switch_board" );
+}
+
+
+void BoardAdmin::restore_lasttab()
+{
+    HISTORY::restore_history( URL_HISTCLOSEBOARDVIEW );
 }
 
 

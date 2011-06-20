@@ -29,6 +29,7 @@ namespace CORE
         SKELETON::ImgToggleToolButton m_button_hist;
         SKELETON::ImgToggleToolButton m_button_hist_board;
         SKELETON::ImgToggleToolButton m_button_hist_close;
+        SKELETON::ImgToggleToolButton m_button_hist_closeboard;
         SKELETON::ImgToggleToolButton m_button_hist_closeimg;
 
         SKELETON::ImgToggleToolButton m_button_board;

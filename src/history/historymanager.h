@@ -30,6 +30,7 @@ namespace HISTORY
         HistoryMenu* m_menu_thread;
         HistoryMenu* m_menu_board;
         HistoryMenu* m_menu_close;
+        HistoryMenu* m_menu_closeboard;
         HistoryMenu* m_menu_closeimg;
 
         // View履歴
@@ -45,6 +46,7 @@ namespace HISTORY
         Gtk::MenuItem* get_menu_thread();
         Gtk::MenuItem* get_menu_board();
         Gtk::MenuItem* get_menu_close();
+        Gtk::MenuItem* get_menu_closeboard();
         Gtk::MenuItem* get_menu_closeimg();
 
         // url_history で指定した履歴に追加

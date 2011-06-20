@@ -81,6 +81,9 @@ namespace CACHE
     // 最近閉じたスレの履歴
     std::string path_xml_history_close();
 
+    // 最近閉じた板の履歴
+    std::string path_xml_history_closeboard();
+
     // 最近閉じた画像の履歴
     std::string path_xml_history_closeimg();
 

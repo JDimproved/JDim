@@ -32,6 +32,7 @@ enum{
 #define ITEM_NAME_HISTVIEW "スレ履歴"
 #define ITEM_NAME_HIST_BOARDVIEW "板履歴"
 #define ITEM_NAME_HIST_CLOSEVIEW "最近閉じたスレ"
+#define ITEM_NAME_HIST_CLOSEBOARDVIEW "最近閉じた板"
 #define ITEM_NAME_HIST_CLOSEIMGVIEW "最近閉じた画像"
 #define ITEM_NAME_BOARDVIEW "スレ一覧"
 #define ITEM_NAME_ARTICLEVIEW "スレビュー"
@@ -120,6 +121,7 @@ enum
     ITEM_HISTVIEW,
     ITEM_HIST_BOARDVIEW,
     ITEM_HIST_CLOSEVIEW,
+    ITEM_HIST_CLOSEBOARDVIEW,
     ITEM_HIST_CLOSEIMGVIEW,
     ITEM_ARTICLEVIEW,
     ITEM_IMAGEVIEW,
@@ -274,6 +276,7 @@ enum
 #define URL_HISTTHREADVIEW "jdview://histthread"
 #define URL_HISTBOARDVIEW "jdview://histboard"
 #define URL_HISTCLOSEVIEW "jdview://histclose"
+#define URL_HISTCLOSEBOARDVIEW "jdview://histcloseboard"
 #define URL_HISTCLOSEIMGVIEW "jdview://histcloseimg"
 
 #define URL_ALLLOG "jdview://alllog"

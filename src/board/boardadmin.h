@@ -45,6 +45,8 @@ namespace BOARD
 
         virtual void switch_admin();
 
+        virtual void restore_lasttab();
+
       private:
 
         // タブをお気に入りにドロップした時にお気に入りがデータ送信を要求してきた
