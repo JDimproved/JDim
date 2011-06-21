@@ -1994,6 +1994,10 @@ void BBSListViewBase::open_selected_rows()
                 if( !list_url_article.empty() ) list_url_article += " ";
                 list_url_article += url;
                 break;
+
+            case TYPE_IMAGE:
+                if( ! DBIMG::get_abone( url ) ) CORE::core_set_command( "open_image", url );
+                break;
         }
     }
 
