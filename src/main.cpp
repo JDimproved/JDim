@@ -550,8 +550,10 @@ int main( int argc, char **argv )
     // メッセージをログファイルに出力
     if( logfile_mode && CACHE::mkdir_logroot() ){
         FILE *tmp; // warning 消し
-        tmp = freopen( to_locale_cstr( CACHE::path_msglog() ), "ab", stdout );
-        tmp = freopen( to_locale_cstr( CACHE::path_msglog() ), "ab", stderr );
+        const char *logfile = to_locale_cstr( CACHE::path_msglog() );
+        tmp = freopen( logfile, "ab", stdout );
+        tmp = freopen( logfile, "ab", stderr );
+        fclose( tmp );
     }
 
     /*--- IOMonitor -------------------------------------------------*/
