@@ -1048,6 +1048,13 @@ const bool ArticleViewBase::operate_view( const int control )
 {
     assert( m_drawarea );
 
+    // スレタイ検索
+    // CONTROL::operate_common()の中で処理しないようにCONTROL::operate_common()の前で処理
+    if( control == CONTROL::SearchTitle ){
+        slot_search_title();
+        return true;
+    }
+
     if( CONTROL::operate_common( control, get_url(), ARTICLE::get_admin() ) ) return true;
 
     if( control == CONTROL::None ) return false;;
@@ -1213,11 +1220,6 @@ const bool ArticleViewBase::operate_view( const int control )
             // Web検索
         case CONTROL::SearchWeb:
             slot_search_web();
-            break;
-
-            // スレタイ検索
-        case CONTROL::SearchTitle:
-            slot_search_title();
             break;
 
             // ログ検索(板内)

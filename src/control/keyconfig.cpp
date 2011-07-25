@@ -105,6 +105,7 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "SearchInvert", KEYCONF_SearchInvert );
     SETKEYMOTION( "SearchNext", KEYCONF_SearchNext );
     SETKEYMOTION( "SearchPrev", KEYCONF_SearchPrev );
+    SETKEYMOTION( "SearchTitle", KEYCONF_SearchTitle );
     SETKEYMOTION( "DrawOutAnd", KEYCONF_DrawOutAnd );
 
     SETMOTION( "CheckUpdateRoot", KEYCONF_CheckUpdateRoot );
@@ -145,7 +146,6 @@ void KeyConfig::load_conf()
 
     SETKEYMOTION( "SearchNextArticle", KEYCONF_SearchNextArticle );
     SETKEYMOTION( "SearchWeb", KEYCONF_SearchWeb );
-    SETKEYMOTION( "SearchTitle", KEYCONF_SearchTitle );
     SETKEYMOTION( "SearchCacheLocal", KEYCONF_SearchCacheLocal );
     SETKEYMOTION( "SearchCacheAll", KEYCONF_SearchCacheAll );
 

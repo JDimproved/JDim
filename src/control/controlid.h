@@ -115,6 +115,7 @@ namespace CONTROL
         SearchInvert,
         SearchNext,
         SearchPrev,
+        SearchTitle,
         DrawOutAnd,
         DrawOutOr,
 
@@ -189,7 +190,6 @@ namespace CONTROL
 
         SearchNextArticle,
         SearchWeb,
-        SearchTitle,
         SearchCacheLocal,
         SearchCacheAll,
 

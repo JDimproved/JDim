@@ -611,6 +611,11 @@ const bool CONTROL::operate_common( const int control, const std::string& url, S
             CORE::core_set_command( "toggle_fullscreen" );
             break;
 
+            // スレタイ検索
+        case CONTROL::SearchTitle:
+            CORE::core_set_command( "open_article_searchtitle", "", "", "noexec" );
+            break;
+
         default:
             return false;
     }

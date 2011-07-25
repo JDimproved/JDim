@@ -120,6 +120,7 @@ namespace CONTROL
         { "SearchInvert", "前方検索" },
         { "SearchNext", ITEM_NAME_SEARCH_NEXT },
         { "SearchPrev", ITEM_NAME_SEARCH_PREV },
+        { "SearchTitle", "" }, //  CONTROL::get_keyconfig() で名前をセットする
         { "DrawOutAnd", "AND 抽出" },
         { "DrawOutOr", "OR 抽出" },
 
@@ -197,7 +198,6 @@ namespace CONTROL
 
         { "SearchNextArticle", ITEM_NAME_NEXTARTICLE },
         { "SearchWeb", "" },  //  CONTROL::get_keyconfig() で名前をセットする
-        { "SearchTitle", "" }, //  CONTROL::get_keyconfig() で名前をセットする
         { "SearchCacheLocal", "ログ検索(対象: 板)" },
         { "SearchCacheAll", "ログ検索(対象: 全ログ)" },
 

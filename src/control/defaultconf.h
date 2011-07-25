@@ -81,6 +81,7 @@ namespace CONTROL
 #define KEYCONF_SearchInvert  "?"
 #define KEYCONF_SearchNext  "Enter F3 Ctrl+g"
 #define KEYCONF_SearchPrev  "Shift+Enter Ctrl+F3 Ctrl+G N"
+#define KEYCONF_SearchTitle "Ctrl+t"
 #define KEYCONF_DrawOutAnd  "Ctrl+Enter"
 
 #define KEYCONF_CheckUpdateRoot ""
@@ -121,7 +122,6 @@ namespace CONTROL
 
 #define KEYCONF_SearchNextArticle "Ctrl+Space"
 #define KEYCONF_SearchWeb "Ctrl+k"
-#define KEYCONF_SearchTitle "Ctrl+t"
 #define KEYCONF_SearchCacheLocal "Ctrl+Enter"
 #define KEYCONF_SearchCacheAll ""
 
@@ -204,6 +204,8 @@ namespace CONTROL
 #define MOUSECONF_NewArticle "24"
 #define MOUSECONF_WriteMessage "24"
 
+#define MOUSECONF_SearchTitle ""
+
 #define MOUSECONF_CheckUpdateRoot "48"
 #define MOUSECONF_CheckUpdateOpenRoot "42"
 
@@ -215,7 +217,6 @@ namespace CONTROL
 #define MOUSECONF_GotoNew "626"
 #define MOUSECONF_SearchNextArticle "28"
 #define MOUSECONF_SearchWeb ""
-#define MOUSECONF_SearchTitle ""
 #define MOUSECONF_LiveStartStop ""
 
 // IMAGE

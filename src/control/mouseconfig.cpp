@@ -62,6 +62,8 @@ void MouseConfig::load_conf()
     SETMOTION( "NewArticle", MOUSECONF_NewArticle );
     SETMOTION( "WriteMessage", MOUSECONF_WriteMessage );
 
+    SETMOTION( "SearchTitle", MOUSECONF_SearchTitle );
+
     SETMOTION( "CheckUpdateRoot", MOUSECONF_CheckUpdateRoot );
     SETMOTION( "CheckUpdateOpenRoot", MOUSECONF_CheckUpdateOpenRoot );
 
@@ -73,7 +75,6 @@ void MouseConfig::load_conf()
     SETMOTION( "GotoNew", MOUSECONF_GotoNew );
     SETMOTION( "SearchNextArticle", MOUSECONF_SearchNextArticle );
     SETMOTION( "SearchWeb", MOUSECONF_SearchWeb );
-    SETMOTION( "SearchTitle", MOUSECONF_SearchTitle );
     SETMOTION( "LiveStartStop", MOUSECONF_LiveStartStop );
 
     // IMAGE
