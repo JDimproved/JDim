@@ -20,6 +20,7 @@
 bool booting = true;
 bool quitting = false;
 bool tab_operating_article = false;
+bool tab_operating_image = false;
 
 int mode_pane;
 bool mode_online;
@@ -681,6 +682,7 @@ void SESSION::set_quitting( const bool quit ){ quitting = quit; }
 const bool SESSION::is_tab_operating( const std::string& url_admin )
 {
     if( url_admin == URL_ARTICLEADMIN ) return tab_operating_article;
+    if( url_admin == URL_IMAGEADMIN ) return tab_operating_image;
 
     return false;
 }
@@ -688,6 +690,7 @@ const bool SESSION::is_tab_operating( const std::string& url_admin )
 void SESSION::set_tab_operating( const std::string& url_admin, const bool operating )
 {
     if( url_admin == URL_ARTICLEADMIN ) tab_operating_article = operating;
+    if( url_admin == URL_IMAGEADMIN ) tab_operating_image = operating;
 }
 
 const int SESSION::get_mode_pane() { return mode_pane; }

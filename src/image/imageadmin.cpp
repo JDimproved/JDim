@@ -296,6 +296,19 @@ void ImageAdmin::command_local( const COMMAND_ARGS& command )
         SKELETON::View* view = get_current_view();
         if( view ) view->scroll_right();
     }
+
+    else if( command.command == "set_imgtab_operating" ){
+
+        if( command.arg1 == "true" ) SESSION::set_tab_operating( get_url(), true );
+        else{
+
+            SESSION::set_tab_operating( get_url(), false );
+
+            if( ! empty() ){
+                update_status_of_all_views();
+            }
+        }
+    }
 }
 
 
@@ -464,6 +477,8 @@ void ImageAdmin::reorder( const std::string& url_from, const std::string& url_to
 //
 void ImageAdmin::update_status_of_all_views()
 {
+    if( SESSION::is_tab_operating( get_url() ) ) return;
+
 #ifdef _DEBUG
     std::cout << "ImageAdmin::update_status_of_all_views\n";
 #endif    
@@ -614,11 +629,15 @@ void ImageAdmin::close_window()
 //
 void ImageAdmin::close_other_views( const std::string& url )
 {
+    set_command( "set_imgtab_operating", "", "true" );
+
     Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
     for(; it !=  m_iconbox.children().end(); ++it ){
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
         if( view && view->get_url() != url ) set_command( "close_view", view->get_url() );
     }
+
+    set_command( "set_imgtab_operating", "", "false" );
 }
 
 
@@ -627,12 +646,16 @@ void ImageAdmin::close_other_views( const std::string& url )
 //
 void ImageAdmin::close_left_views( const std::string& url )
 {
+    set_command( "set_imgtab_operating", "", "true" );
+
     Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
     for(; it !=  m_iconbox.children().end(); ++it ){
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view->get_url() == url ) return;
+        if( view->get_url() == url ) break;
         if( view ) set_command( "close_view", view->get_url() );
     }
+
+    set_command( "set_imgtab_operating", "", "false" );
 }
 
 
@@ -641,6 +664,8 @@ void ImageAdmin::close_left_views( const std::string& url )
 //
 void ImageAdmin::close_right_views( const std::string& url )
 {
+    set_command( "set_imgtab_operating", "", "true" );
+
     Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
     for(; it !=  m_iconbox.children().end(); ++it ){
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
@@ -651,6 +676,8 @@ void ImageAdmin::close_right_views( const std::string& url )
         SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
         if( view ) set_command( "close_view", view->get_url() );
     }
+
+    set_command( "set_imgtab_operating", "", "false" );
 }
 
 
@@ -662,6 +689,8 @@ void ImageAdmin::close_error_views( const std::string mode )
 #ifdef _DEBUG
     std::cout << "ImageAdmin::close_error_views\n";
 #endif
+
+    set_command( "set_imgtab_operating", "", "true" );
 
     Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
     for(; it !=  m_iconbox.children().end(); ++it ){
@@ -686,6 +715,8 @@ void ImageAdmin::close_error_views( const std::string mode )
             }
         }
     }
+
+    set_command( "set_imgtab_operating", "", "false" );
 }
 
 
@@ -697,6 +728,8 @@ void ImageAdmin::close_noerror_views()
 #ifdef _DEBUG
     std::cout << "ImageAdmin::close_noerror_views\n";
 #endif
+
+    set_command( "set_imgtab_operating", "", "true" );
 
     Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
     for(; it !=  m_iconbox.children().end(); ++it ){
@@ -712,6 +745,8 @@ void ImageAdmin::close_noerror_views()
             if( code == HTTP_OK ) set_command( "close_view", url );
         }
     }
+
+    set_command( "set_imgtab_operating", "", "false" );
 }
 
 
