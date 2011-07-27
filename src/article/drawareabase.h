@@ -35,7 +35,7 @@ namespace ARTICLE
     typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_RELEASE;
     typedef sigc::signal< bool, GdkEventScroll* > SIG_SCROLL_EVENT;
 
-    typedef sigc::signal< void, std::string, int > SIG_ON_URL;
+    typedef sigc::signal< void, std::string, std::string, int > SIG_ON_URL;
     typedef sigc::signal< void > SIG_LEAVE_URL;
 
     struct URLINFO

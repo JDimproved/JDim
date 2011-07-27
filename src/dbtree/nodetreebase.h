@@ -287,6 +287,7 @@ namespace DBTREE
         NODE* create_node_img( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold );
         NODE* create_node_text( const char* text, const int color_text, const bool bold = false );
         NODE* create_node_ntext( const char* text, const int n, const int color_text, const bool bold = false );
+        NODE* create_node_youtube( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold );
 
         // 以下、構文解析用関数
         void add_raw_lines( char* rawines, size_t size );

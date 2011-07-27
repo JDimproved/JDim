@@ -4891,10 +4891,16 @@ bool DrawAreaBase::motion_mouse()
             if( !m_link_current.empty()
                 && m_scrollinfo.mode == SCROLL_NOT // スクロール中はon_urlシグナルを出さない
                 ){
+
+                std::string imgurl;
+                const DBTREE::NODE* node = m_layout_current->node;
+                if( node && node->linkinfo->imglink ) imgurl = node->linkinfo->imglink;
+
 #ifdef _DEBUG
-                std::cout << "slot_motion_notify_drawarea : enter link = " << m_link_current << std::endl;;
+                std::cout << "slot_motion_notify_drawarea : enter link = " << m_link_current
+                          << " imgurl = " << imgurl << std::endl;;
 #endif
-                m_sig_on_url.emit( m_link_current, res_num );
+                m_sig_on_url.emit( m_link_current, imgurl, res_num );
             }
 
             // リンクノードからでた

@@ -2142,11 +2142,13 @@ bool ArticleViewBase::slot_scroll_event( GdkEventScroll* event )
 //
 // drawareaのsig_on_url()シグナルとつなぐ
 //
-void ArticleViewBase::slot_on_url( std::string url, int res_number )
+void ArticleViewBase::slot_on_url( std::string url, std::string imgurl, int res_number )
 {
 
 #ifdef _DEBUG    
-    std::cout << "ArticleViewBase::slot_on_url " << url << std::endl;
+    std::cout << "ArticleViewBase::slot_on_url = " << url
+              << " imgurl = " << imgurl
+              << std::endl;
 #endif
 
     // ポップアップが消えるまでに同じリンク上にポインタを乗せたら
@@ -2164,23 +2166,23 @@ void ArticleViewBase::slot_on_url( std::string url, int res_number )
     m_popup_url = url;
 
     // 画像ポップアップ
-    if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){
+    if( DBIMG::get_type_ext( imgurl ) != DBIMG::T_UNKNOWN ){
 
         // あぼーん
-        if( DBIMG::get_abone( url ) ){
+        if( DBIMG::get_abone( imgurl ) ){
             args.arg1 = "あぼ〜んされています";
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPHTML, m_url_article, args );
         }
 
         else if(
-            ( ! DBIMG::is_cached( url ) || CONFIG::get_use_image_popup() )
-            && ( DBIMG::is_loading( url ) || DBIMG::is_wait( url ) || DBIMG::get_code( url ) != HTTP_INIT ) ){ 
+            ( ! DBIMG::is_cached( imgurl ) || CONFIG::get_use_image_popup() )
+            && ( DBIMG::is_loading( imgurl ) || DBIMG::is_wait( imgurl ) || DBIMG::get_code( imgurl ) != HTTP_INIT ) ){ 
 
 #ifdef _DEBUG
-            std::cout << "image " << DBIMG::get_code( url ) << " " << DBIMG::is_loading( url ) << "\n";
+            std::cout << "image " << DBIMG::get_code( imgurl) << " " << DBIMG::is_loading( imgurl ) << "\n";
 #endif
 
-            view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
+            view_popup = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  imgurl );
             margin_popup_x = CONFIG::get_margin_imgpopup_x();
             margin_popup_y = CONFIG::get_margin_imgpopup();
         }

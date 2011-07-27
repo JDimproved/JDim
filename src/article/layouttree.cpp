@@ -395,8 +395,9 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
                 tmplayout = create_layout_link( tmpnode->text, tmpnode->linkinfo->link,
                                                 &tmpnode->color_text, tmpnode->bold );
                 // 画像リンクのurlを集める
-                if( imgdata && tmpnode->linkinfo->image && imgdata->num < MAX_IMGITEM ){
-                    imgdata->item[ imgdata->num ].link = tmpnode->linkinfo->link;
+                if( imgdata && tmpnode->linkinfo->imglink && imgdata->num < MAX_IMGITEM ){
+
+                    imgdata->item[ imgdata->num ].link = tmpnode->linkinfo->imglink;
                     imgdata->item[ imgdata->num++ ].node = tmpnode;
                 }
 

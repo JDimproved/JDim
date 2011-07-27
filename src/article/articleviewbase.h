@@ -329,7 +329,7 @@ namespace ARTICLE
         void slot_setup_abone_all();
 
         // リンクの処理
-        virtual void slot_on_url( std::string url, int res_number );
+        virtual void slot_on_url( std::string url, std::string imgurl, int res_number );
         void slot_leave_url();
         bool click_url( std::string url, int res_number, GdkEventButton* event );
         void open_image( const std::string& url, const int res_number,

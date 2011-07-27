@@ -103,6 +103,7 @@ namespace DBTREE
         // 詳しくは  DrawAreaBase::draw_one_node() を参照
 
         bool image; // 画像かどうか
+        char* imglink; // 画像のURL
         DBIMG::Img* img;  // 画像データクラスへのポインタ(危険だが高速化のため直接アクセス、deleteしないこと)
     };
 

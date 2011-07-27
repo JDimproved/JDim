@@ -907,6 +907,7 @@ NODE* NodeTreeBase::create_node_sssp( const char* link, const int n_link )
     memcpy( tmpnode->linkinfo->link, link, n_link );
     tmpnode->linkinfo->link[ n_link ] = '\0';
     tmpnode->linkinfo->image = true;
+    tmpnode->linkinfo->imglink = tmpnode->linkinfo->link;
 
     return tmpnode;
 }
@@ -918,8 +919,11 @@ NODE* NodeTreeBase::create_node_sssp( const char* link, const int n_link )
 NODE* NodeTreeBase::create_node_img( const char* text, const int n, const char* link, const int n_link, const int color_text,  const bool bold )
 {
     NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold );
-    if( tmpnode ) tmpnode->linkinfo->image = true;
-    
+    if( tmpnode ){
+        tmpnode->linkinfo->image = true;
+        tmpnode->linkinfo->imglink = tmpnode->linkinfo->link;
+    }
+
     return tmpnode;
 }
 
@@ -952,6 +956,54 @@ NODE* NodeTreeBase::create_node_ntext( const char* text, const int n, const int 
         tmpnode->bold = bold;
     }
 
+    return tmpnode;
+}
+
+
+//
+// Youtube ノード
+//
+NODE* NodeTreeBase::create_node_youtube( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold )
+{
+    NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold );
+
+    int pos = 22;
+
+    if( *( link + (pos++) ) == '/'
+        && *( link + (pos++) ) == 'w'
+        && *( link + (pos++) ) == 'a'
+        && *( link + (pos++) ) == 't'
+        && *( link + (pos++) ) == 'c'
+        && *( link + (pos++) ) == 'h'
+        && *( link + (pos++) ) == '?'
+        && *( link + (pos++) ) == 'v'
+        && *( link + (pos++) ) == '=' ){
+
+        char id[ LNG_LINK +16 ];
+        int lng_id = 0;
+        while( pos < n_link && *( link + pos ) != '&' ) id[ lng_id++ ] = *( link + (pos++) );
+
+        const char *server = "http://img.youtube.com/vi/";
+        const char *file = "/0.jpg";
+        char thumb[ LNG_LINK +16 ];
+        int lng_thumb = strlen( server );
+        const int lng_file = strlen( file );
+
+        memmove( thumb, server, lng_thumb );
+        memmove( thumb + lng_thumb, id, lng_id );
+        lng_thumb += lng_id;
+        memmove( thumb + lng_thumb, file, lng_file );
+        lng_thumb += lng_file;
+
+        tmpnode->linkinfo->imglink = ( char* )m_heap.heap_alloc( lng_thumb +4 );
+        memcpy( tmpnode->linkinfo->imglink, thumb, lng_thumb );
+        tmpnode->linkinfo->imglink[ lng_thumb ] = '\0';
+
+#ifdef _DEBUG
+        std::cout << "NodeTreeBase::create_node_youtube url = " << tmpnode->linkinfo->imglink << std::endl;
+#endif
+    }
+    
     return tmpnode;
 }
 
@@ -2119,6 +2171,19 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             // 画像リンク
             else if( DBIMG::get_type_ext( tmplink, lng_link ) != DBIMG::T_UNKNOWN ){
                 create_node_img( pos, n_in, tmplink , lng_link, COLOR_IMG_NOCACHE, bold );
+            }
+
+            // youtube
+            else if( *( tmplink + 11) == 'y'
+                     && *( tmplink + 12) == 'o' 
+                     && *( tmplink + 13) == 'u' 
+                     && *( tmplink + 14) == 't' 
+                     && *( tmplink + 15) == 'u' 
+                     && *( tmplink + 16) == 'b' 
+                     && *( tmplink + 17) == 'e' 
+                ){
+
+                create_node_youtube( pos, n_in, tmplink , lng_link, COLOR_CHAR_LINK, bold );
             }
 
             // 一般リンク
