@@ -1282,6 +1282,11 @@ void NodeTreeBase::receive_finish()
     m_sig_finished.emit();
 
     clear();
+
+    if( ! m_check_update
+        && ( get_code() == HTTP_OK || get_code() == HTTP_PARTIAL_CONTENT )
+        && ! get_date_modified().empty() ) CACHE::set_filemtime( CACHE::path_dat( m_url ), get_time_modified() );
+
     m_check_update = false;
     m_check_write = false;
     m_loading_newthread = false;

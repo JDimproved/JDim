@@ -12,6 +12,7 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
+#include "jdlib/misctime.h"
 
 #include "dbtree/interface.h"
 
@@ -800,6 +801,32 @@ time_t CACHE::get_filemtime( const std::string& path )
     if( stat( to_locale_cstr( path ), &buf_stat ) != 0 ) return 0;
     if( S_ISREG( buf_stat.st_mode ) ) return buf_stat.st_mtime;
     return 0;
+}
+
+
+const bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
+{
+#ifdef _DEBUG
+    std::cout << "CACHE::set_filemtime path = " << path
+              << " mtime = " << MISC::timettostr( mtime, MISC::TIME_NORMAL ) << std::endl;
+#endif
+
+    struct stat buf_stat;
+
+    if( stat( to_locale_cstr( path ), &buf_stat ) != 0 ) return false;
+    if( S_ISREG( buf_stat.st_mode ) ){
+
+        struct timespec ts[2];         
+
+        ts[0].tv_sec  = buf_stat.st_atime;
+        ts[0].tv_nsec = buf_stat.st_atim.tv_nsec;
+        ts[1].tv_sec  = mtime;
+        ts[1].tv_nsec = 0;
+
+        if( ! utimensat( AT_FDCWD, to_locale_cstr( path ), ts, AT_SYMLINK_NOFOLLOW ) ) return true;
+    }
+
+    return false;
 }
 
 

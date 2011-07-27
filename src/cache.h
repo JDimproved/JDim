@@ -196,6 +196,7 @@ namespace CACHE
     const int file_exists( const std::string& path );
     size_t get_filesize( const std::string& path );
     time_t get_filemtime( const std::string& path );
+    const bool set_filemtime( const std::string& path, const time_t mtime );
 
     // ファイル操作
     bool jdmkdir( const std::string& path );
