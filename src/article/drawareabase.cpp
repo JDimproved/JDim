@@ -4894,7 +4894,7 @@ bool DrawAreaBase::motion_mouse()
 
                 std::string imgurl;
                 const DBTREE::NODE* node = m_layout_current->node;
-                if( node && node->linkinfo->imglink ) imgurl = node->linkinfo->imglink;
+                if( node && node->linkinfo && node->linkinfo->imglink ) imgurl = node->linkinfo->imglink;
 
 #ifdef _DEBUG
                 std::cout << "slot_motion_notify_drawarea : enter link = " << m_link_current
