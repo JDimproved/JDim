@@ -447,6 +447,9 @@ namespace CONFIG
     // タブにアイコンを表示するか
     const bool get_show_tab_icon();
 
+    // タブ上でマウスホイールを回転してタブを切り替える
+    const bool get_switchtab_wheel();
+
     // スレビューに書き込みマークを表示するか
     const bool get_show_post_mark();
     void set_show_post_mark( const bool show );

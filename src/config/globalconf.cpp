@@ -417,6 +417,10 @@ const bool CONFIG::get_reload_allthreads(){ return get_confitem()->reload_allthr
 const int CONFIG::get_tab_min_str(){ return get_confitem()->tab_min_str; }
 
 const bool CONFIG::get_show_tab_icon(){ return get_confitem()->show_tab_icon; }
+
+// タブ上でマウスホイールを回転してタブを切り替える
+const bool CONFIG::get_switchtab_wheel(){ return get_confitem()->switchtab_wheel; }
+
 const bool CONFIG::get_show_post_mark(){ return get_confitem()->show_post_mark; }
 void CONFIG::set_show_post_mark( const bool show ){ get_confitem()->show_post_mark = show; }
 

@@ -805,6 +805,8 @@ bool TabNotebook::on_leave_notify_event( GdkEventCrossing* event )
 //
 bool TabNotebook::on_scroll_event( GdkEventScroll* event )
 {
+    if( ! CONFIG::get_switchtab_wheel() ) return true;
+
 #ifdef _DEBUG
     std::cout << "TabNotebook::scroll\n";
 #endif

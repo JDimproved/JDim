@@ -473,6 +473,9 @@ const bool ConfigItems::load( const bool restore )
     // タブにアイコンを表示するか
     show_tab_icon = cf.get_option_bool( "show_tab_icon", CONF_SHOW_TAB_ICON );
 
+    // タブ上でマウスホイールを回転してタブを切り替える
+    switchtab_wheel = cf.get_option_bool( "switchtab_wheel", CONF_SWITCHTAB_WHEEL );
+
     // スレビューに書き込みマークを表示するか
     show_post_mark = cf.get_option_bool( "show_post_mark", CONF_SHOW_POST_MARK );
 
@@ -854,6 +857,9 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "tab_min_str", tab_min_str );
 
     cf.update( "show_tab_icon", show_tab_icon );
+
+    cf.update( "switchtab_wheel", switchtab_wheel );
+
     cf.update( "show_post_mark", show_post_mark );
 
     cf.update( "flat_button", flat_button );

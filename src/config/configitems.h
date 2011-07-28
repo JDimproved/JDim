@@ -399,6 +399,9 @@ namespace CONFIG
         // タブにアイコンを表示するか
         bool show_tab_icon;
 
+        // タブ上でマウスホイールを回転してタブを切り替える
+        bool switchtab_wheel;
+
         // スレビューに書き込みマークを表示するか
         bool show_post_mark;
 

@@ -102,6 +102,7 @@ namespace CONFIG
         CONF_RELOAD_ALLTHREAD = 0,  // スレビューで再読み込みボタンを押したときに全タブを更新する
         CONF_TAB_MIN_STR = 4, // タブに表示する文字列の最小値
         CONF_SHOW_TAB_ICON = 1, // タブにアイコンを表示するか
+        CONF_SWITCHTAB_WHEEL = 1, // タブ上でマウスホイールを回転してタブを切り替える
         CONF_SHOW_POST_MARK = 1, // スレビューに書き込みマークを表示するか
         CONF_FLAT_BUTTON = 1,    // ボタンをフラットにするか
         CONF_DRAW_TOOLBARBACK = 0, // ツールバーの背景描画
