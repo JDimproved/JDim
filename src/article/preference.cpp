@@ -29,6 +29,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     ,m_check_transpabone( "透明あぼ〜ん" )
     ,m_check_chainabone( "連鎖あぼ〜ん" )
     ,m_check_ageabone( "sage以外をあぼ〜ん" )
+    ,m_check_boardabone( "板レベルでのあぼ〜んを有効にする" )
+    ,m_check_globalabone( "全体レベルでのあぼ〜んを有効にする" )
     ,m_label_since( false, "スレ立て日時 : ", std::string() )
     ,m_label_modified( false, "最終更新日時 : ", std::string() )
     ,m_button_clearmodified( "日時クリア" )
@@ -101,12 +103,20 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     // ageあぼーん
     m_check_ageabone.set_active( DBTREE::get_abone_age( get_url() ) );
 
+    // 板レベルあぼーん
+    m_check_boardabone.set_active( DBTREE::get_abone_board( get_url() ) );
+
+    // 全体レベルあぼーん
+    m_check_globalabone.set_active( DBTREE::get_abone_global( get_url() ) );
+
     if( CONFIG::get_abone_transparent() ) m_check_transpabone.set_sensitive( false );
     if( CONFIG::get_abone_chain() ) m_check_chainabone.set_sensitive( false );
 
     m_vbox_abone.pack_start( m_check_transpabone, Gtk::PACK_SHRINK );
     m_vbox_abone.pack_start( m_check_chainabone, Gtk::PACK_SHRINK );
     m_vbox_abone.pack_start( m_check_ageabone, Gtk::PACK_SHRINK );
+    m_vbox_abone.pack_start( m_check_boardabone, Gtk::PACK_SHRINK );
+    m_vbox_abone.pack_start( m_check_globalabone, Gtk::PACK_SHRINK );
 
     if( CONFIG::get_abone_transparent() || CONFIG::get_abone_chain() ){
         m_label_abone.set_text( "チェック出来ない場合は設定メニューから「デフォルトで透明/連鎖あぼ〜ん」を解除して下さい" );
@@ -235,7 +245,8 @@ void Preferences::slot_ok_clicked()
     }
 
     DBTREE::reset_abone( get_url(), list_id, list_name, list_word, list_regex, vec_abone_res
-                         , m_check_transpabone.get_active(), m_check_chainabone.get_active(), m_check_ageabone.get_active() );
+                         , m_check_transpabone.get_active(), m_check_chainabone.get_active(), m_check_ageabone.get_active(),
+                         m_check_boardabone.get_active(), m_check_globalabone.get_active() );
 
     // viewの再レイアウト
     CORE::core_set_command( "relayout_article", get_url() );

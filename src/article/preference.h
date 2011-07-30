@@ -39,6 +39,12 @@ namespace ARTICLE
         // ageあぼーん
         Gtk::CheckButton m_check_ageabone;
 
+        // 板レベルでのあぼーん
+        Gtk::CheckButton m_check_boardabone;
+
+        // 全体レベルでのあぼーん
+        Gtk::CheckButton m_check_globalabone;
+
         SKELETON::LabelEntry m_label_since;
 
         // 最終更新日時

@@ -94,6 +94,8 @@ namespace DBTREE
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
         bool m_abone_age; // age ているレスはあぼーん
+        bool m_abone_board; // 板レベルでのあぼーんを有効にする
+        bool m_abone_global; // 全体レベルでのあぼーんを有効にする
 
         // 自分が書き込んだレスか
         std::vector< char > m_vec_posted;
@@ -230,7 +232,8 @@ namespace DBTREE
                               const std::list< std::string >& list_abone_word,
                               const std::list< std::string >& list_abone_regex,
                               const std::vector< char >& vec_abone_res,
-                              const bool abone_transparent, const bool abone_chain, const bool abone_age );
+                              const bool abone_transparent, const bool abone_chain, const bool abone_age,
+                              const bool abone_board, const bool abone_global );
 
         // 全レスのあぼーん状態の更新
         // 発言数や参照数も更新する

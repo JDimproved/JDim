@@ -370,7 +370,9 @@ namespace DBTREE
                       const std::list< std::string >& words,
                       const std::list< std::string >& regexs,
                       const std::vector< char >& vec_abone_res,
-                      const bool transparent, const bool chain, const bool age );
+                      const bool transparent, const bool chain, const bool age,
+                      const bool board, const bool global
+        );
 
     // 個別のあぼーん情報のセットと更新
     void set_abone_res( const std::string& url, const int num_from, const int num_to, const bool set );
@@ -389,6 +391,14 @@ namespace DBTREE
     // ageあぼーん
     const bool get_abone_age( const std::string& url );
     void set_abone_age( const std::string& url, const bool set );
+
+    // 板レベルでのあぼーん
+    const bool get_abone_board( const std::string& url );
+    void set_abone_board( const std::string& url, const bool set );
+
+    // 全体レベルでのあぼーん
+    const bool get_abone_global( const std::string& url );
+    void set_abone_global( const std::string& url, const bool set );
 
     //　ブックマーク関係
 

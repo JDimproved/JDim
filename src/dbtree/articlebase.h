@@ -77,6 +77,8 @@ namespace DBTREE
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
         bool m_abone_age; // age ているレスをあぼーん
+        bool m_abone_board; // 板レベルでのあぼーんを有効にする
+        bool m_abone_global; // 全体レベルでのあぼーんを有効にする
 
         // 「スレ」がスレ一覧でブックマークされているか
         bool m_bookmarked_thread;          
@@ -316,6 +318,12 @@ namespace DBTREE
         // ageあぼーん
         const bool get_abone_age() const { return m_abone_age; }
 
+        // 板レベルでのあぼーん
+        const bool get_abone_board() const { return m_abone_board; }
+
+        // 全体レベルでのあぼーん
+        const bool get_abone_global() const { return m_abone_global; }        
+
         // number番のレスがあぼーんされているか
         const bool get_abone( int number );
 
@@ -328,7 +336,9 @@ namespace DBTREE
                           const std::list< std::string >& words,
                           const std::list< std::string >& regexs,
                           const std::vector< char >& vec_abone_res,
-                          const bool transparent, const bool chain, const bool age );
+                          const bool transparent, const bool chain, const bool age,
+                          const bool board, const bool global
+            );
 
         // あぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう)
         void add_abone_id( const std::string& id );
@@ -338,6 +348,9 @@ namespace DBTREE
         void set_abone_transparent( const bool set ); // 透明
         void set_abone_chain( const bool set ); // 連鎖
         void set_abone_age( const bool set ); // age
+        void set_abone_board( const bool set ); // 板レベルでのあぼーん
+        void set_abone_global( const bool set ); // 全体レベルでのあぼーん
+
 
         // 「スレ」のブックマーク
         void set_bookmarked_thread( const bool bookmarked );

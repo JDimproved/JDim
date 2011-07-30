@@ -2693,7 +2693,8 @@ void NodeTreeBase::copy_abone_info( const std::list< std::string >& list_abone_i
                                     const std::list< std::string >& list_abone_word,
                                     const std::list< std::string >& list_abone_regex,
                                     const std::vector< char >& vec_abone_res,
-                                    const bool abone_transparent, const bool abone_chain, const bool abone_age )
+                                    const bool abone_transparent, const bool abone_chain, const bool abone_age,
+                                    const bool abone_board, const bool abone_global )
 {
     m_list_abone_id = list_abone_id;
     m_list_abone_name = list_abone_name;
@@ -2722,6 +2723,8 @@ void NodeTreeBase::copy_abone_info( const std::list< std::string >& list_abone_i
     else m_abone_chain = abone_chain;
 
     m_abone_age = abone_age;
+    m_abone_board = abone_board;
+    m_abone_global = abone_global;
 }
 
 
@@ -2927,11 +2930,11 @@ const bool NodeTreeBase::check_abone_word( const int number )
     const bool check_word = ! m_list_abone_word.empty();
     const bool check_regex = ! m_list_abone_regex.empty();
 
-    const bool check_word_board = ! m_list_abone_word_board.empty();
-    const bool check_regex_board = ! m_list_abone_regex_board.empty();
+    const bool check_word_board = ( m_abone_board && ! m_list_abone_word_board.empty() );
+    const bool check_regex_board = ( m_abone_board && ! m_list_abone_regex_board.empty() );
 
-    const bool check_word_global = ! m_list_abone_word_global.empty();
-    const bool check_regex_global = ! m_list_abone_regex_global.empty();
+    const bool check_word_global = ( m_abone_global && ! m_list_abone_word_global.empty() );
+    const bool check_regex_global = ( m_abone_global && ! m_list_abone_regex_global.empty() );
 
     if( !check_word && !check_regex
         && !check_word_board && !check_regex_board

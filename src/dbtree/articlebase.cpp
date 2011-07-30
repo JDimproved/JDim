@@ -81,6 +81,8 @@ ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, boo
       m_abone_transparent( false ),
       m_abone_chain( false ),
       m_abone_age( false ),
+      m_abone_board( true ),
+      m_abone_global( true ),
       m_bookmarked_thread( false ),
       m_cached( cached ),
       m_read_info( 0 ),
@@ -645,7 +647,7 @@ void ArticleBase::update_abone()
     if( ! m_nodetree ) return;
 
     get_nodetree()->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_vec_abone_res,
-                                     m_abone_transparent, m_abone_chain, m_abone_age );
+                                     m_abone_transparent, m_abone_chain, m_abone_age, m_abone_board, m_abone_global );
 
     get_nodetree()->update_abone_all();
 }
@@ -660,7 +662,9 @@ void ArticleBase::reset_abone( const std::list< std::string >& ids,
                                const std::list< std::string >& words,
                                const std::list< std::string >& regexs,
                                const std::vector< char >& vec_abone_res,
-                               const bool transparent, const bool chain, const bool age )
+                               const bool transparent, const bool chain, const bool age,
+                               const bool board, const bool global
+    )
 {
     if( empty() ) return;
 
@@ -695,6 +699,8 @@ void ArticleBase::reset_abone( const std::list< std::string >& ids,
     m_abone_transparent = transparent;
     m_abone_chain = chain;
     m_abone_age = age;
+    m_abone_board = board;
+    m_abone_global = global;
 
     update_abone();
 
@@ -836,6 +842,36 @@ void ArticleBase::set_abone_age( const bool set )
 
 
 //
+// 板レベルでのあぼーんを有効にする
+//
+void ArticleBase::set_abone_board( const bool set )
+{
+    if( empty() ) return;
+
+    m_abone_board = set;
+
+    update_abone();
+
+    m_save_info = true;
+} 
+
+
+//
+// 全体レベルでのあぼーんを有効にする
+//
+void ArticleBase::set_abone_global( const bool set )
+{
+    if( empty() ) return;
+
+    m_abone_global = set;
+
+    update_abone();
+
+    m_save_info = true;
+} 
+
+
+//
 // ブックマークの数
 //
 const int ArticleBase::get_num_bookmark()
@@ -955,7 +991,7 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
 
         // あぼーん情報のコピー
         m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_vec_abone_res,
-                                     m_abone_transparent, m_abone_chain, m_abone_age );
+                                     m_abone_transparent, m_abone_chain, m_abone_age, m_abone_board, m_abone_global );
 
         // 書き込み情報のコピー
         m_nodetree->copy_post_info( m_vec_posted );
@@ -1180,8 +1216,10 @@ void ArticleBase::copy_article_info( const std::string& url_src )
     const bool transparent = DBTREE::get_abone_transparent( url_src );
     const bool chain = DBTREE::get_abone_chain( url_src );
     const bool age = DBTREE::get_abone_age( url_src );
+    const bool board = DBTREE::get_abone_board( url_src );
+    const bool global = DBTREE::get_abone_global( url_src );
 
-    reset_abone( ids, names ,words, regexs, vec_abone_res, transparent, chain, age );
+    reset_abone( ids, names ,words, regexs, vec_abone_res, transparent, chain, age, board, global );
 }
 
 
@@ -1646,6 +1684,8 @@ void ArticleBase::delete_cache( const bool cache_only )
         m_abone_transparent = false;
         m_abone_chain = false;
         m_abone_age = false;
+        m_abone_board = true;
+        m_abone_global = true;
         m_read_info = false;
         m_save_info = false;
         m_bookmarked_thread = false;
@@ -1892,6 +1932,16 @@ void ArticleBase::read_info()
                 m_check_update_time.tv_sec = ( atoi( ( *(it_tmp++) ).c_str() ) << 16 ) + atoi( ( *(it_tmp++) ).c_str() );
             }
         }
+
+        // 板レベルでのあぼーんを有効にする
+        m_abone_board = true;
+        GET_INFOVALUE( str_tmp, "aboneboard = " );
+        if( ! str_tmp.empty() ) m_abone_board = atoi( str_tmp.c_str() );
+
+        // 全体レベルでのあぼーんを有効にする
+        m_abone_global = true;
+        GET_INFOVALUE( str_tmp, "aboneglobal = " );
+        if( ! str_tmp.empty() ) m_abone_global = atoi( str_tmp.c_str() );
     }
 
     // キャッシュはあるけど情報ファイルが無い場合
@@ -2073,6 +2123,8 @@ void ArticleBase::save_info( const bool force )
          << "posted = " << ss_posted.str() << std::endl
          << "aboneage = " << m_abone_age << std::endl
          << "checktime = " << ss_check.str() << std::endl
+         << "aboneboard = " << m_abone_board << std::endl
+         << "aboneglobal = " << m_abone_global << std::endl
     ;
 
 #ifdef _DEBUG

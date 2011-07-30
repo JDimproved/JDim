@@ -1176,9 +1176,11 @@ void DBTREE::reset_abone( const std::string& url,
                           const std::list< std::string >& words,
                           const std::list< std::string >& regexs,
                           const std::vector< char >& vec_abone_res,
-                          const bool transparent, const bool chain, const bool age )
+                          const bool transparent, const bool chain, const bool age,
+                          const bool board, const bool global
+    )
 {
-    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs, vec_abone_res, transparent, chain, age );
+    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs, vec_abone_res, transparent, chain, age, board, global );
 }
 
 
@@ -1241,6 +1243,32 @@ const bool DBTREE::get_abone_age( const std::string& url )
 void DBTREE::set_abone_age( const std::string& url, const bool set )
 {
     DBTREE::get_article( url )->set_abone_age( set );
+}
+
+
+// 板レベルでのあぼーん
+const bool DBTREE::get_abone_board( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_abone_board();
+}
+
+
+void DBTREE::set_abone_board( const std::string& url, const bool set )
+{
+    DBTREE::get_article( url )->set_abone_board( set );
+}
+
+
+// 全体レベルでのあぼーん
+const bool DBTREE::get_abone_global( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_abone_global();
+}
+
+
+void DBTREE::set_abone_global( const std::string& url, const bool set )
+{
+    DBTREE::get_article( url )->set_abone_global( set );
 }
 
 
