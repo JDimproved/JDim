@@ -981,7 +981,9 @@ NODE* NodeTreeBase::create_node_youtube( const char* text, const int n, const ch
 
         char id[ LNG_LINK +16 ];
         int lng_id = 0;
-        while( pos < n_link && *( link + pos ) != '&' ) id[ lng_id++ ] = *( link + (pos++) );
+        while( pos < n_link
+               && *( link + pos ) != '&'
+               && ! ( *( link + pos ) == '#' && *( link + pos +1 ) == 't' ) ) id[ lng_id++ ] = *( link + (pos++) );
 
         const char *server = "http://img.youtube.com/vi/";
         const char *file = "/0.jpg";
