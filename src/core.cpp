@@ -1936,7 +1936,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() におけるCOMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -1963,7 +1963,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -1985,7 +1985,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -2006,7 +2006,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -2025,7 +2025,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -2044,7 +2044,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -2063,7 +2063,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -2090,7 +2090,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() におけるCOMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -2111,7 +2111,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -2146,7 +2146,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -2177,7 +2177,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ
-                                           "left", // 開く位置
+                                           "newtab", // 開く位置
                                            "false", // command.url を開いてるかチェックする
                                            "", // 開き方のモード
 
@@ -2336,7 +2336,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         // タブだらけになってしまうので実況中の場合はタブで開かない
         const bool live = SESSION::is_live( command.arg1 );
-        std::string str_tab = "left";
+        std::string str_tab = "newtab";
         if( live ) str_tab = "false";
 
         BOARD::get_admin()->set_command( "open_view",
@@ -2381,7 +2381,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
                                          // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                          // 詳しくは Admin::open_view() を参照せよ
-                                         "left", // 開く位置
+                                         "newtab", // 開く位置
                                          "false", // 既にビューを開いてるかチェックする
                                          "", // 開き方のモード
 
@@ -3175,10 +3175,8 @@ void Core::exec_command()
             std::cout << "exec : open_article url = " << url_dat << std::endl;
 #endif
             
-            if( num_from ) CORE::core_set_command( "open_article" , url_dat, "left", // 現在表示中のビューの左に表示する
-                                                   "", MISC::itostr( num_from ) );
-            else CORE::core_set_command( "open_article" , url_dat, "left", // 現在表示中のビューの左に表示する
-                                         "" );
+            if( num_from ) CORE::core_set_command( "open_article" , url_dat, "newtab", "", MISC::itostr( num_from ) );
+            else CORE::core_set_command( "open_article" , url_dat, "newtab", "" );
         }
 
         // 画像の場合

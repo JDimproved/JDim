@@ -864,19 +864,13 @@ void ArticleViewBase::exec_reload()
 
 
 //
-// 元のスレを開く
+// 元のスレを開く (shift+s)
+//
 void ArticleViewBase::reload_article()
 {
     if( m_article->empty() ) return;
 
-    // オフライン
-    if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( get_parent_win(), "オフラインです" );
-        mdiag.run();
-        return;
-    }
-
-    CORE::core_set_command( "open_article", m_url_article , "left", "" );
+    CORE::core_set_command( "open_article", m_url_article , "newtab", "" );
 }
 
 

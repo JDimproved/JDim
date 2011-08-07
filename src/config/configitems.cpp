@@ -476,6 +476,9 @@ const bool ConfigItems::load( const bool restore )
     // タブ上でマウスホイールを回転してタブを切り替える
     switchtab_wheel = cf.get_option_bool( "switchtab_wheel", CONF_SWITCHTAB_WHEEL );
 
+    // ビュー内から他のビューを開いたときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )
+    newtab_pos = cf.get_option_int( "newtab_pos", CONF_NEWTAB_POS, 0, 2 );
+
     // スレビューに書き込みマークを表示するか
     show_post_mark = cf.get_option_bool( "show_post_mark", CONF_SHOW_POST_MARK );
 
@@ -859,6 +862,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "show_tab_icon", show_tab_icon );
 
     cf.update( "switchtab_wheel", switchtab_wheel );
+
+    cf.update( "newtab_pos", newtab_pos );
 
     cf.update( "show_post_mark", show_post_mark );
 

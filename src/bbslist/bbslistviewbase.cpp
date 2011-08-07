@@ -402,6 +402,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     "<separator/>"
     "<menuitem action='CopyURL'/>" \
     "<menuitem action='CopyTitleURL'/>" \
+    "<separator/>"
+    "<menuitem action='AppendFavorite'/>"
     "<separator/>" \
     "<menu action='Delete_Menu'>" \
     "<menuitem action='Delete_hist'/>" \
@@ -419,6 +421,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     // 履歴 + 複数選択
     "<popup name='popup_menu_history_mul'>"
     "<menuitem action='OpenRows'/>"
+    "<separator/>"
+    "<menuitem action='AppendFavorite'/>"
     "<separator/>"
     "<menu action='CheckUpdate_Menu'>"
     "<menuitem action='CheckUpdateRows'/>"
@@ -1733,7 +1737,7 @@ void BBSListViewBase::slot_opendir_as_board()
     const size_t dirid = m_treeview.path_to_dirid( m_path_selected );
     if( ! dirid ) return;
 
-    const std::string tab = "left";
+    const std::string tab = "true";
     const std::string mode = "";
     CORE::core_set_command( "open_sidebar_board", get_url(), tab, mode, MISC::itostr( dirid ) );
 }

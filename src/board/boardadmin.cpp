@@ -53,6 +53,8 @@ BoardAdmin::BoardAdmin( const std::string& url )
     : SKELETON::Admin( url ) , m_toolbar( NULL )
 {
     set_use_viewhistory( true );
+    set_use_switchhistory( true );
+
     get_notebook()->set_dragable( true );
     get_notebook()->set_fixtab( false );
     if( ! SESSION::get_show_board_tab() ) get_notebook()->set_show_tabs( false );
@@ -78,6 +80,7 @@ void BoardAdmin::save_session()
     // 開いているURLを保存
     SESSION::set_board_URLs( get_URLs() );
     SESSION::set_board_locked( get_locked() );
+    SESSION::set_board_switchhistory( get_switchhistory() );
     SESSION::set_board_page( get_current_page() );
 }
 
@@ -93,6 +96,8 @@ void BoardAdmin::restore( const bool only_locked )
     const std::list< std::string >& list_url = SESSION::get_board_URLs();
     std::list< std::string >::const_iterator it_url = list_url.begin();
 
+    std::list< std::string > list_switchhistory = SESSION::get_board_switchhistory();
+
     std::list< bool > list_locked = SESSION::get_board_locked();
     std::list< bool >::iterator it_locked = list_locked.begin();
 
@@ -106,7 +111,10 @@ void BoardAdmin::restore( const bool only_locked )
         }
 
         // ロックされているものだけ表示
-        if( only_locked && ! lock ) continue;
+        if( only_locked && ! lock ){
+            list_switchhistory.remove( *it_url );
+            continue;
+        }
 
         if( page == SESSION::board_page() ) set_page_num = get_tab_nums();
 
@@ -116,11 +124,14 @@ void BoardAdmin::restore( const bool only_locked )
         if( command_arg.url != URL_ALLLOG && command_arg.arg4 != "SIDEBAR"
             && DBTREE::url_boardbase( command_arg.url ).empty() ){
             MISC::ERRMSG(  *it_url + " is not registered" );
+            list_switchhistory.remove( *it_url );
             continue;
         }
 
         open_view( command_arg );
     }
+
+    set_switchhistory( list_switchhistory );
 
     SESSION::set_online( online );
     if( get_tab_nums() ) set_command( "set_page", std::string(), MISC::itostr( set_page_num ) );

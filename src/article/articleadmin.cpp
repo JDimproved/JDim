@@ -56,6 +56,8 @@ ArticleAdmin::ArticleAdmin( const std::string& url )
     : SKELETON::Admin( url ), m_toolbar( NULL ), m_toolbarsimple( NULL ), m_search_toolbar( NULL )
 {
     set_use_viewhistory( true );
+    set_use_switchhistory( true );
+
     ARTICLE::init_font();
 
     get_notebook()->set_dragable( true );
@@ -92,6 +94,7 @@ void ArticleAdmin::save_session()
 
     SESSION::set_article_URLs( get_URLs() );
     SESSION::set_article_locked( get_locked() );
+    SESSION::set_article_switchhistory( get_switchhistory() );
     SESSION::set_article_page( get_current_page() );
 }
 
@@ -120,6 +123,8 @@ void ArticleAdmin::restore( const bool only_locked )
     const std::list< std::string >& list_url = SESSION::get_article_URLs();
     std::list< std::string >::const_iterator it_url = list_url.begin();
 
+    std::list< std::string > list_switchhistory = SESSION::get_article_switchhistory();
+
     const std::list< bool >& list_locked = SESSION::get_article_locked();
     std::list< bool >::const_iterator it_locked = list_locked.begin();
 
@@ -133,7 +138,10 @@ void ArticleAdmin::restore( const bool only_locked )
         }
 
         // ロックされているものだけ表示
-        if( only_locked && ! lock ) continue;
+        if( only_locked && ! lock ){
+            list_switchhistory.remove( *it_url );
+            continue;
+        }
 
         if( page == SESSION::article_page() ) set_page_num = get_tab_nums();
 
@@ -143,10 +151,14 @@ void ArticleAdmin::restore( const bool only_locked )
         if( command_arg.url != URL_SEARCH_ALLBOARD && command_arg.arg4 != "SEARCHTITLE" && command_arg.arg4 != "POSTLOG"
             && DBTREE::url_boardbase( *it_url ).empty() ){
             MISC::ERRMSG(  *it_url + " is not registered" );
+            list_switchhistory.remove( *it_url );
             continue;
         }
 
-        if( command_arg.arg4 == "MAIN" && DBTREE::url_dat( *it_url ).empty() ) continue;
+        if( command_arg.arg4 == "MAIN" && DBTREE::url_dat( *it_url ).empty() ){
+            list_switchhistory.remove( *it_url );
+            continue;
+        }
 
         // Admin::open_view() 中の create_viewhistory()やappend_viewhistory()を実行しない
         // Admin::Open_view()も参照すること
@@ -157,6 +169,8 @@ void ArticleAdmin::restore( const bool only_locked )
 
         set_use_viewhistory( use_history );
     }
+
+    set_switchhistory( list_switchhistory );
 
     SESSION::set_online( online );
     if( get_tab_nums() ) set_command( "set_page", std::string(), MISC::itostr( set_page_num ) );

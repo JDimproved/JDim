@@ -1198,7 +1198,7 @@ void Core::slot_show_sidebarboard()
         && SESSION::get_sidebar_current_url() != URL_HISTBOARDVIEW
         ){
 
-        const std::string tab = "left";
+        const std::string tab = "true";
         const std::string mode = "";
         CORE::core_set_command( "open_sidebar_board", SESSION::get_sidebar_current_url(), tab, mode, "0" );
     }

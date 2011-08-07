@@ -49,6 +49,10 @@ namespace SKELETON
         bool m_use_viewhistory;
         std::string m_last_closed_url;
 
+        // タブの切り替え履歴
+        bool m_use_switchhistory;
+        std::list< std::string > m_list_switchhistory;
+
     public:
 
         Admin( const std::string& url );
@@ -132,6 +136,8 @@ namespace SKELETON
 
         void set_use_viewhistory( const bool use ){ m_use_viewhistory = use; }
         const bool get_use_viewhistory() const { return m_use_viewhistory; }
+
+        void set_use_switchhistory( const bool use ){ m_use_switchhistory = use; }
 
         JDWindow* get_jdwin(){ return m_win; }
         void set_jdwin( JDWindow* win ){ m_win = win; }
@@ -307,6 +313,10 @@ namespace SKELETON
         // View履歴削除
         void clear_viewhistory();
 
+        // タブの切り替え履歴
+        const std::list< std::string >& get_switchhistory() const { return m_list_switchhistory; }
+        void set_switchhistory( const std::list< std::string >& hist ){ m_list_switchhistory = hist; }
+
       private:
 
         void slot_popupmenu_deactivate();
@@ -318,6 +328,10 @@ namespace SKELETON
 
         // urlを含むviewの板名を更新
         void update_boardname( const std::string& url );
+
+        // タブの切り替え履歴を更新
+        void append_switchhistory( const std::string& url );
+        void remove_switchhistory( const std::string& url );
     };
 }
 

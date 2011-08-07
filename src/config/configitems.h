@@ -402,6 +402,9 @@ namespace CONFIG
         // タブ上でマウスホイールを回転してタブを切り替える
         bool switchtab_wheel;
 
+        // ビュー内から他のビューを開いたときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )
+        int newtab_pos;
+
         // スレビューに書き込みマークを表示するか
         bool show_post_mark;
 

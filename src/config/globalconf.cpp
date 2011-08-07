@@ -421,6 +421,9 @@ const bool CONFIG::get_show_tab_icon(){ return get_confitem()->show_tab_icon; }
 // タブ上でマウスホイールを回転してタブを切り替える
 const bool CONFIG::get_switchtab_wheel(){ return get_confitem()->switchtab_wheel; }
 
+// ビュー内から他のビューを開いたときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )
+const int CONFIG::get_newtab_pos(){  return get_confitem()->newtab_pos; }
+
 const bool CONFIG::get_show_post_mark(){ return get_confitem()->show_post_mark; }
 void CONFIG::set_show_post_mark( const bool show ){ get_confitem()->show_post_mark = show; }
 

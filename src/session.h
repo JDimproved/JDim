@@ -269,6 +269,10 @@ namespace SESSION
     const std::list< bool >& get_board_locked();
     void set_board_locked( const std::list< bool >& locked );
 
+    // スレ一覧の切り替え履歴    
+    const std::list< std::string >& get_board_switchhistory();
+    void set_board_switchhistory( const std::list< std::string >& hist );
+
     // 前回閉じたときに開いていたスレタブのページ番号とURL
     const int article_page();
     void set_article_page( const int page );
@@ -278,6 +282,10 @@ namespace SESSION
     // スレタブのロック状態
     const std::list< bool >& get_article_locked();
     void set_article_locked( const std::list< bool >& locked );
+
+    // スレタブの切り替え履歴    
+    const std::list< std::string >& get_article_switchhistory();
+    void set_article_switchhistory( const std::list< std::string >& hist );
 
     // 前回閉じたときに開いていたimageのページ番号とURL
     const int image_page();

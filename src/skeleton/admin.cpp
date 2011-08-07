@@ -21,11 +21,14 @@
 #include "control/controlutil.h"
 #include "control/controlid.h"
 
+#include "config/globalconf.h"
+
 #include "command.h"
 #include "session.h"
 #include "global.h"
 #include "updatemanager.h"
 
+#include <algorithm>
 
 enum
 {
@@ -54,7 +57,8 @@ Admin::Admin( const std::string& url )
       m_focus( false ),
       m_move_menu( NULL ),
       m_tabswitchmenu( NULL ),
-      m_use_viewhistory( false )
+      m_use_viewhistory( false ),
+      m_use_switchhistory( false )
 {
     m_notebook = new DragableNoteBook();
 
@@ -886,7 +890,13 @@ void Admin::update_url( const std::string& url_old, const std::string& url_new )
 
         for( int i = 0; i < pages; ++i ){
             SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
-            if( view && view->get_url().find( url_old ) == 0 ) view->update_url( url_old, url_new );
+            if( view && view->get_url().find( url_old ) == 0 ){
+
+                std::list< std::string >::iterator it
+                    = std::find( m_list_switchhistory.begin(), m_list_switchhistory.end(), view->get_url() );
+                view->update_url( url_old, url_new );
+                if( it != m_list_switchhistory.end() ) (*it) = view->get_url();
+            }
         }
     }
 }
@@ -937,6 +947,7 @@ void Admin::update_status( View* view, const bool force )
 // "false" ならアクティブなタブを置き換える
 // "true" なら一番右側に新しいタブを開く
 // "right" ならアクティブなタブの右に開く
+// "newtab" なら設定によってアクティブなタブの右に開くか一番右側に開くか切り替える
 // "left" ならアクティブなタブの左に開く
 // "page数字" なら指定した位置にタブで開く
 //
@@ -1042,6 +1053,14 @@ void Admin::open_view( const COMMAND_ARGS& command )
         // 現在のページの右に表示
         if( command.arg1 == "right" ) openpage = page +1;
 
+        // 設定によって切り替える
+        if( command.arg1 == "newtab" ){
+            switch( CONFIG::get_newtab_pos() ){
+                case 1:  openpage = page +1; break;
+                case 2:  openpage = page; break;
+            }
+        }
+
         // 現在のページの左に表示
         else if( command.arg1 == "left" ) openpage = page;
 
@@ -1092,6 +1111,8 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
             const std::string url_current = current_view->get_url();
             delete current_view;
+
+            remove_switchhistory( url_current );
 
             if( m_use_viewhistory ){
 
@@ -1425,11 +1446,19 @@ void Admin::close_view( SKELETON::View* view )
 
     if( is_locked( page ) ) return;
 
-    // もし現在表示中のビューを消すときは予めひとつ右のビューにスイッチしておく
-    // そうしないと左のビューを一度表示してしまうので遅くなる
+    remove_switchhistory( view->get_url() );
+
     if( page == current_page ){
-        SKELETON::View* newview = dynamic_cast< View* >( m_notebook->get_nth_page( page + 1 ) );
-        if( newview ) switch_view( newview->get_url() );
+
+        // その前に開いていたビューに切り替える
+        if( m_use_switchhistory && m_list_switchhistory.size() ) switch_view( m_list_switchhistory.back() );
+
+        // もし現在表示中のビューを消すときは予めひとつ右のビューにスイッチしておく
+        // そうしないと左のビューを一度表示してしまうので遅くなる
+        else{
+            SKELETON::View* newview = dynamic_cast< View* >( m_notebook->get_nth_page( page + 1 ) );
+            if( newview ) switch_view( newview->get_url() );
+        }
     }
 
     m_notebook->remove_page( page, true );
@@ -2022,6 +2051,8 @@ void Admin::slot_switch_page( GtkNotebookPage*, guint page )
             update_status( view, false );
             focus_current_view();
         }
+
+        append_switchhistory( view->get_url() );
 
         CORE::core_set_command( "page_switched", m_url, view->get_url() );
     }
@@ -2716,4 +2747,53 @@ void Admin::clear_viewhistory()
     m_last_closed_url = std::string();
 
     update_toolbar_button();
+}
+
+//
+// タブの切り替え履歴を更新
+//
+void Admin::append_switchhistory( const std::string& url )
+{
+    if( ! m_use_switchhistory ) return;
+
+    // 起動中とシャットダウン中は処理しない
+    if( SESSION::is_booting() ) return;
+    if( SESSION::is_quitting() ) return;
+
+#ifdef _DEBUG
+    std::cout << "Admin::append_switchhistory url = " << url << std::endl;
+#endif
+
+    m_list_switchhistory.remove( url );
+    m_list_switchhistory.push_back( url );
+
+#ifdef _DEBUG
+    std::list< std::string >::iterator it = m_list_switchhistory.begin();
+    for( ; it != m_list_switchhistory.end(); ++it ){
+        std::cout << (*it) << std::endl;
+    }
+#endif
+}
+
+
+void Admin::remove_switchhistory( const std::string& url )
+{
+    if( ! m_use_switchhistory ) return;
+
+    // 起動中とシャットダウン中は処理しない
+    if( SESSION::is_booting() ) return;
+    if( SESSION::is_quitting() ) return;
+
+#ifdef _DEBUG
+    std::cout << "Admin::remove_switchhistory url = " << url << std::endl;
+#endif
+
+    m_list_switchhistory.remove( url );
+
+#ifdef _DEBUG
+    std::list< std::string >::iterator it = m_list_switchhistory.begin();
+    for( ; it != m_list_switchhistory.end(); ++it ){
+        std::cout << (*it) << std::endl;
+    }
+#endif
 }
