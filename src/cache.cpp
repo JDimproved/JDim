@@ -27,6 +27,9 @@
 
 #include <fcntl.h>
 #include <cstring>
+#if defined(_WIN32)
+#include <utime.h>
+#endif
 
 enum
 {
@@ -816,7 +819,15 @@ const bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
     if( stat( to_locale_cstr( path ), &buf_stat ) != 0 ) return false;
     if( S_ISREG( buf_stat.st_mode ) ){
 
-        struct timespec ts[2];         
+#if defined(_WIN32)
+        struct utimbuf tb;
+
+        tb.actime = buf_stat.st_atime;
+        tb.modtime = mtime;
+
+        if( ! utime( to_locale_cstr( path ), &tb ) ) return true;
+#else
+        struct timespec ts[2];
 
         ts[0].tv_sec  = buf_stat.st_atime;
         ts[0].tv_nsec = buf_stat.st_atim.tv_nsec;
@@ -824,6 +835,7 @@ const bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
         ts[1].tv_nsec = 0;
 
         if( ! utimensat( AT_FDCWD, to_locale_cstr( path ), ts, AT_SYMLINK_NOFOLLOW ) ) return true;
+#endif
     }
 
     return false;
