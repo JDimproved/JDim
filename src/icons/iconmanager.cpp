@@ -231,11 +231,16 @@ void ICON_Manager::load_theme()
 #endif
 
         int id = 0;
+
+        // 拡張子を削除
+        std::string filename = (*it);
+        size_t i = (*it).rfind( '.' );
+        if( i != std::string::npos ) filename = filename.substr( 0, i );
+
         while( iconfiles[ id ][ 0 ] != '\0' ){
 
-            const char* file = (*it).c_str();
-            if( iconfiles[ id ][ 0 ] == file[ 0 ]
-                && strncmp( iconfiles[ id ], file, strlen( iconfiles[ id ] ) ) == 0 ){
+            if( iconfiles[ id ][ 0 ] == filename[ 0 ]
+                && filename.compare(0, strlen( iconfiles[ id ] ), iconfiles[ id ] ) == 0 ){
 #ifdef _DEBUG
                 std::cout << "hit : " << iconfiles[ id ] << " id = " << id << std::endl;
 #endif

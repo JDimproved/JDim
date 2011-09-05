@@ -43,7 +43,7 @@ namespace ICON
         "bkmark",
         "update",
         "newthread",
-        "newthread_hour ",
+        "newthread_hour",
         "broken_subject",
         "check",
         "old",
