@@ -1161,7 +1161,8 @@ bool Loader::analyze_header()
     m_data.list_cookies = analyze_header_option_list( "Set-Cookie: " );
 
     // Location
-    if( m_data.code == HTTP_REDIRECT ) m_data.location = analyze_header_option( "Location: " );
+    if( m_data.code == HTTP_REDIRECT
+        || m_data.code == HTTP_MOVED_PERM ) m_data.location = analyze_header_option( "Location: " );
     else m_data.location = std::string();
 
     // Content-Type
