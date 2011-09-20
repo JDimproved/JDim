@@ -238,7 +238,7 @@ bool Css_Manager::read_css()
             ( r_pos = css_data.find( "}", l_pos + 1 ) ) != std::string::npos )
     {
         // セレクタ部分を取り出す
-        std::string selector = MISC::remove_space( css_data.substr( start_pos, l_pos - start_pos ) );
+        std::string selector = MISC::remove_spaces( css_data.substr( start_pos, l_pos - start_pos ) );
         start_pos = r_pos + 1;
         if( selector.find( "." ) == 0 ) selector.erase( 0, 1 );
         if( selector.empty() ) break;
@@ -259,8 +259,8 @@ bool Css_Manager::read_css()
         while( it != properties.end() )
         {
             size_t colon = (*it).find( ":" );
-            std::string key = MISC::remove_space( (*it).substr( 0, colon ) );
-            std::string value = MISC::remove_space( (*it).substr( colon + 1 ) );
+            std::string key = MISC::remove_spaces( (*it).substr( 0, colon ) );
+            std::string value = MISC::remove_spaces( (*it).substr( colon + 1 ) );
 
 #ifdef _DEBUG
             std::cout << "  key = " << key << " value = " << value << std::endl;
