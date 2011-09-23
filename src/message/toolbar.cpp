@@ -36,7 +36,7 @@ SKELETON::ImgToggleToolButton* MessageToolBarBase::get_button_preview()
 
     if( ! m_button_preview ){
 
-        m_button_preview = Gtk::manage( new SKELETON::ImgToggleToolButton( ICON::THREAD ) );
+        m_button_preview = Gtk::manage( new SKELETON::ImgToggleToolButton( ICON::PREVIEW ) );
         m_button_preview->signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBarBase::slot_toggle_preview ) );
     }
 
