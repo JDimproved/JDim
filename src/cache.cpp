@@ -826,16 +826,24 @@ const bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
         tb.modtime = mtime;
 
         if( ! utime( to_locale_cstr( path ), &tb ) ) return true;
-#else
-        struct timespec ts[2];
 
-        ts[0].tv_sec  = buf_stat.st_atime;
-        ts[0].tv_nsec = buf_stat.st_atim.tv_nsec;
-        ts[1].tv_sec  = mtime;
-        ts[1].tv_nsec = 0;
+#else // WIN32
 
-        if( ! utimensat( AT_FDCWD, to_locale_cstr( path ), ts, AT_SYMLINK_NOFOLLOW ) ) return true;
-#endif
+        struct timeval tv[2];
+
+#if _XOPEN_SOURCE >= 700 || _POSIX_C_SOURCE >= 200809L 
+        tv[0].tv_sec  = buf_stat.st_atim.tv_sec;
+        tv[0].tv_usec = buf_stat.st_atim.tv_nsec / 1000;
+#else // _XOPEN_SOURCE~
+        tv[0].tv_sec  = buf_stat.st_atime;
+        tv[0].tv_usec = buf_stat.st_atimensec / 1000;
+#endif // _XOPEN_SOURCE~
+        tv[1].tv_sec  = mtime;
+        tv[1].tv_usec = 0;
+
+        // lutimes: glibc>=2.6, utimensat: linux>=2.6.22
+        if( ! lutimes( to_locale_cstr( path ), tv ) ) return true;
+#endif // WIN32
     }
 
     return false;
