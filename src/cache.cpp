@@ -831,13 +831,13 @@ const bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
 
         struct timeval tv[2];
 
-#if _XOPEN_SOURCE >= 700 || _POSIX_C_SOURCE >= 200809L 
+#if defined(_BSD_SOURCE) || defined(_SVID_SOURCE)
         tv[0].tv_sec  = buf_stat.st_atim.tv_sec;
         tv[0].tv_usec = buf_stat.st_atim.tv_nsec / 1000;
-#else // _XOPEN_SOURCE~
+#else // _BSD_SOURCE || _SVID_SOURCE
         tv[0].tv_sec  = buf_stat.st_atime;
         tv[0].tv_usec = buf_stat.st_atimensec / 1000;
-#endif // _XOPEN_SOURCE~
+#endif // _BSD_SOURCE || _SVID_SOURCE
         tv[1].tv_sec  = mtime;
         tv[1].tv_usec = 0;
 
