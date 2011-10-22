@@ -828,19 +828,14 @@ const bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
         if( ! utime( to_locale_cstr( path ), &tb ) ) return true;
 
 #else // WIN32
-
         struct timeval tv[2];
 
-#if defined(_BSD_SOURCE) || defined(_SVID_SOURCE)
-        tv[0].tv_sec  = buf_stat.st_atim.tv_sec;
-        tv[0].tv_usec = buf_stat.st_atim.tv_nsec / 1000;
-#else // _BSD_SOURCE || _SVID_SOURCE
         tv[0].tv_sec  = buf_stat.st_atime;
-        tv[0].tv_usec = buf_stat.st_atimensec / 1000;
-#endif // _BSD_SOURCE || _SVID_SOURCE
+        tv[0].tv_usec = 0;
         tv[1].tv_sec  = mtime;
         tv[1].tv_usec = 0;
 
+        // Solarisにはlutimesがないため要対策
         // lutimes: glibc>=2.6, utimensat: linux>=2.6.22
         if( ! lutimes( to_locale_cstr( path ), tv ) ) return true;
 #endif // WIN32
