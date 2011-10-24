@@ -835,9 +835,7 @@ const bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
         tv[1].tv_sec  = mtime;
         tv[1].tv_usec = 0;
 
-        // Solarisにはlutimesがないため要対策
-        // lutimes: glibc>=2.6, utimensat: linux>=2.6.22
-        if( ! lutimes( to_locale_cstr( path ), tv ) ) return true;
+        if( ! utimes( to_locale_cstr( path ), tv ) ) return true;
 #endif // WIN32
     }
 
