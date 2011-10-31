@@ -71,20 +71,19 @@ $(jd_BUILDINFO_HEADER):
 	@echo '' >> $@.new
 	@echo '#endif' >> $@.new
 
-	@if test -n "$(DIFF)"; \
+	@if test -e $@; \
 	then \
-	    $(DIFF) -Nq $@ $@.new >/dev/null 2>&1; \
-	    if test $$? -eq 1; \
+	    SUM1=`cksum $@ | cut -d ' ' -f 1`; \
+	    SUM2=`cksum $@.new | cut -d ' ' -f 1`; \
+	    if test "$${SUM1}" = "$${SUM2}"; \
 	    then \
-	        echo '$@: Modified.'; \
-	        mv -f $@.new $@; \
-	    else \
 	        echo '$@: Not modified.'; \
 	        rm -f $@.new; \
+	    else \
+	        echo '$@: Modified.'; \
+	        mv -f $@.new $@; \
 	    fi \
 	else \
-	    echo '$@: Refreshed.'; \
+	    echo '$@: Created.'; \
 	    mv -f $@.new $@; \
 	fi
-
-	@test -e $@ || touch $@;
