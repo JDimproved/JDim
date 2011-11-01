@@ -71,11 +71,18 @@ $(jd_BUILDINFO_HEADER):
 	@echo '' >> $@.new
 	@echo '#endif' >> $@.new
 
-	@if test -e $@; \
+	@if test ! -e $@; \
 	then \
-	    SUM1=`cksum $@ | cut -d ' ' -f 1`; \
-	    SUM2=`cksum $@.new | cut -d ' ' -f 1`; \
-	    if test "$${SUM1}" = "$${SUM2}"; \
+	    echo '$@: Created.'; \
+	    mv -f $@.new $@; \
+	elif test -z "$(XSUM)"; \
+	then \
+	    echo '$@: Refreshed.'; \
+	    mv -f $@.new $@; \
+	else \
+	    HASH1=`cat $@ | $(XSUM)`; \
+	    HASH2=`cat $@.new | $(XSUM)`; \
+	    if test "$${HASH1}" = "$${HASH2}"; \
 	    then \
 	        echo '$@: Not modified.'; \
 	        rm -f $@.new; \
@@ -83,7 +90,4 @@ $(jd_BUILDINFO_HEADER):
 	        echo '$@: Modified.'; \
 	        mv -f $@.new $@; \
 	    fi \
-	else \
-	    echo '$@: Created.'; \
-	    mv -f $@.new $@; \
 	fi
