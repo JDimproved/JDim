@@ -187,7 +187,7 @@ namespace CONFIG
 #define CONF_AGENT_FOR2CH "Monazilla/1.00 JD"
 
 // 2ch外にアクセスするときのエージェント名
-#define CONF_AGENT_FOR_DATA "Mozilla/5.0 (Windows; U; Windows NT 5.0; ja; rv:1.9) Gecko/2008052906 Firefox/3.0"
+#define CONF_AGENT_FOR_DATA "Monazilla/1.00 JD"
 
 // 2ch にログインするときのX-2ch-UA
 #define CONF_X_2CH_UA "Navigator for 2ch 1.7.5"
