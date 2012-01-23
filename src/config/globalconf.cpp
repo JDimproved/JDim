@@ -138,6 +138,7 @@ const std::string& CONFIG::get_url_login2ch() { return get_confitem()->url_login
 
 // p2の認証サーバのアドレス
 const std::string& CONFIG::get_url_loginp2() { return get_confitem()->url_loginp2; }
+void CONFIG::set_url_loginp2( const std::string& url ) { get_confitem()->url_loginp2 = url; }
 
 // BEの認証サーバのアドレス
 const std::string& CONFIG::get_url_loginbe() { return get_confitem()->url_loginbe; }

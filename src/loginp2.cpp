@@ -129,8 +129,8 @@ void Loginp2::start_login()
     data.str_post += MISC::url_encode( get_username() );
     data.str_post += "&form_login_pass=";
     data.str_post += MISC::url_encode( get_passwd() );
-    data.str_post += "&ctl_regist_cookie=1";
-    data.str_post += "&regist_cookie=1";
+    data.str_post += "&ctl_register_cookie=1";
+    data.str_post += "&register_cookie=1";
 //    data.str_post += "&submit_member=" + MISC::charset_url_encode( "ユーザログイン", "MS932" );  // 2009/12/20 仕様変更
     data.str_post += "&submit_userlogin=" + MISC::charset_url_encode( "ユーザログイン", "MS932" );
 
@@ -216,6 +216,76 @@ void Loginp2::receive_finish()
 
     ///////////////////////////////////
 
+    // p2.2ch.net -> w2.p2.2ch.netなどのリダイレクト
+
+    if( get_code() == HTTP_REDIRECT ){
+        std::string loc = location();
+
+        if( ! loc.empty() ){
+            // ログインサーバ書き換え
+            JDLIB::Regex regex;
+            const size_t offset = 0;
+            const bool icase = false;
+            const bool newline = true;
+            const bool usemigemo = false;
+            const bool wchar = false;
+
+            std::string query = "^([^#&\?]*/)";
+            if( regex.exec( query, loc, offset, icase, newline, usemigemo, wchar ) ){
+
+                if( CONFIG::get_url_loginp2() != regex.str( 1 ) ){
+                    std::string str_err = "p2のリダイレクト要求がされました。ログイン先を変更してよろしいですか？\n\n";
+                    str_err += regex.str( 1 );
+                    SKELETON::MsgDiag mdiag( NULL, str_err, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+                    if( mdiag.run() != Gtk::RESPONSE_YES ) {
+                        return;
+                    }
+                    CONFIG::set_url_loginp2( regex.str( 1 ) );
+                }
+            }else{
+                return; // 不当なリダイレクト先
+            }
+
+            // Cookieが付いてきたら、そのままリダイレクト先へ投げる
+            std::string cookie;
+
+            std::list< std::string >::const_iterator it = cookies().begin();
+            for( ; it != cookies().end(); ++it ){
+
+                JDLIB::Regex regex;
+                const size_t offset = 0;
+                const bool icase = false;
+                const bool newline = true;
+                const bool usemigemo = false;
+                const bool wchar = false;
+
+                std::string query = "^([^=]*?=[^;]*?)";
+                if( regex.exec( query, (*it), offset, icase, newline, usemigemo, wchar ) ){
+                    if( cookie.empty() ){
+                        cookie = regex.str( 1 );
+                    }else{
+                        cookie += "; " + regex.str( 1 );
+                    }
+                }
+            }
+#ifdef _DEBUG
+            std::cout << "cookie = " << cookie << std::endl;
+            std::cout << "redirect = " << loc << std::endl;
+            std::cout << std::endl;
+#endif
+
+            // リダイレクト先をロード
+            JDLIB::LOADERDATA data;
+            data.init_for_data();
+            data.url = loc;
+            data.referer = CONFIG::get_url_loginp2(); // リファラセット
+            data.cookie_for_write = cookie;
+
+            start_load( data );
+    	}
+    }
+    ///////////////////////////////////
+
     // cid 取得
 
     std::string cid;
@@ -259,6 +329,7 @@ void Loginp2::receive_finish()
             JDLIB::LOADERDATA data;
             data.init_for_data();
             data.url = CONFIG::get_url_loginp2() + "menu.php";
+            data.referer = CONFIG::get_url_loginp2(); // リファラセット
             data.cookie_for_write = "cid="+cid;
 
             m_loading_csrfid = true;

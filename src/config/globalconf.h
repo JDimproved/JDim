@@ -92,6 +92,7 @@ namespace CONFIG
 
     // p2の認証サーバのアドレス
     const std::string& get_url_loginp2();
+    void set_url_loginp2( const std::string& url );
 
     // BEの認証サーバのアドレス
     const std::string& get_url_loginbe();
