@@ -314,13 +314,19 @@ std::string ENVIRONMENT::get_distname()
         tmp = "KNOPPIX ";
         tmp.append( text_data );
     }
+    // SUSE
+    else if( CACHE::load_rawdata( "/etc/SuSE-release", text_data ) )
+    {
+        std::list< std::string > lines = MISC::get_lines( text_data );
+        tmp = lines.front(); // 1行目のみ
+    }
     // Debian
     else if( CACHE::load_rawdata( "/etc/debian_version", text_data ) )
     {
         tmp = "Debian GNU/Linux ";
         tmp.append( text_data );
     }
-    // Arch Linux (2009/02/23現在"/etc/arch-release"は空)
+    // Arch Linux (2012/01/24現在"/etc/arch-release"は空)
     else if( CACHE::file_exists( "/etc/arch-release" ) == CACHE::EXIST_FILE )
     {
         tmp = "Arch Linux";
@@ -361,7 +367,6 @@ std::string ENVIRONMENT::get_distname()
             "/etc/redhat-release", // Redhat, CentOS, WhiteBox, PCLinuxOS
             "/etc/sabayon-release",
             "/etc/slackware-version",
-            "/etc/SuSE-release",
             "/etc/turbolinux-release",
             "/etc/vine-release",
             "/etc/zenwalk-version"
@@ -411,7 +416,9 @@ std::string ENVIRONMENT::get_distname()
                && machine[1] >= '3' && machine[1] <= '6'
                && machine[2] == '8' && machine[3] == '6' ) ) )
     {
-        dist_name.append( " (" + std::string( machine ) + ")" );
+        const std::string arch = "(" + std::string( machine ) + ")";
+
+        if ( dist_name.find(arch, 0) == std::string::npos ) dist_name.append( " " + arch);
     }
 
     free( uts );
