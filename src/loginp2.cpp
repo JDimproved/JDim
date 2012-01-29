@@ -129,8 +129,10 @@ void Loginp2::start_login()
     data.str_post += MISC::url_encode( get_username() );
     data.str_post += "&form_login_pass=";
     data.str_post += MISC::url_encode( get_passwd() );
-    data.str_post += "&ctl_register_cookie=1";
-    data.str_post += "&register_cookie=1";
+    data.str_post += "&ctl_regist_cookie=1"; // p2(rep2)
+    data.str_post += "&regist_cookie=1"; // p2(rep2)
+    data.str_post += "&ctl_register_cookie=1"; // p2.2ch.net(2012/01/24修正)
+    data.str_post += "&register_cookie=1"; // p2.2ch.net(2012/01/24修正)
 //    data.str_post += "&submit_member=" + MISC::charset_url_encode( "ユーザログイン", "MS932" );  // 2009/12/20 仕様変更
     data.str_post += "&submit_userlogin=" + MISC::charset_url_encode( "ユーザログイン", "MS932" );
 
