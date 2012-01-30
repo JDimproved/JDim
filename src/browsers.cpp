@@ -6,11 +6,9 @@
 enum
 {
     MAX_TEXT = 256,
+    BROWSER_NUM = 8
 #ifdef _WIN32
     MAX_SAFE_PATH = 1024,
-    BROWSER_NUM = 8
-#else
-    BROWSER_NUM = 6
 #endif
 };
 
@@ -21,18 +19,19 @@ namespace CORE
         { "ユーザ設定", "" },
 #ifdef _WIN32
         { "ie",                       "\"C:/Program Files/Internet Explorer/iexplore.exe\" \"%LINK\"" },
-        { "firefox 1.5/2.0/3.0 以降", "\"C:/Program Files/Mozilla Firefox/firefox.exe\" \"%LINK\"" },
-        { "firefox 1.0*",             "\"C:/Program Files/Mozilla Firefox/firefox.exe\" -remote \"openURL(%LINK,new-tab)\"" },
+        { "Firefox",                  "\"C:/Program Files/Mozilla Firefox/firefox.exe\" \"%LINK\"" },
         { "opera 9.* 以降",           "\"C:/Program Files/Opera/opera.exe\" \"%LINK\"" },
         { "chrome (Vista/7)",         "\"%USERPROFILE%/AppData/Local/Google/Chrome/Application/chrome.exe\" \"%LINK\"" },
         { "chrome (XP)",              "\"%USERPROFILE%/Local Settings/Application Data/Google/Chrome/Application/chrome.exe\" \"%LINK\"" },
         { "chrome (Google pack)",     "\"C:/Program Files/Google/Chrome/Application/chrome.exe\" \"%LINK\"" }
 #else
         { "標準ブラウザ(xdg-open)",   "xdg-open \"%LINK\"" },
-        { "firefox 1.5/2.0/3.0 以降", "firefox \"%LINK\"" },
-        { "firefox 1.0*",             "firefox -remote \"openURL(%LINK,new-tab)\"" },
+        { "Firefox",                  "firefox \"%LINK\"" },
+        { "konqeror",                 "konqeror \"%LINK\"" },
         { "opera 9.* 以降",           "opera -remote \"openURL(%LINK,new-tab)\"" },
-        { "chrome",                   "google-chrome \"%LINK\"" }
+        { "chrome",                   "google-chrome \"%LINK\"" },
+        { "chromium",                 "chromium \"%LINK\"" },
+        { "w3m",                      "w3m \"%LINK\"" }
 #endif
     };
 
