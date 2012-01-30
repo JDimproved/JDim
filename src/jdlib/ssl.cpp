@@ -82,14 +82,16 @@ const bool JDSSL::connect( const int soc )
     gnutls_certificate_allocate_credentials( &m_cred );
     gnutls_credentials_set( m_session, GNUTLS_CRD_CERTIFICATE, m_cred );
 
-    for(;;){
+    do {
         ret = gnutls_handshake( m_session );
-        if( ret < 0 ){
-            if( ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED ) continue;
-            m_errmsg = "gnutls_handshake failed";
-            return false;
-        }
-        else break;
+    }
+    while ( gnutls_error_is_fatal( ret ) == 0 );
+
+    if ( ret < 0 )
+    {
+        m_errmsg = "gnutls_handshake failed";
+        gnutls_perror( ret );
+        return false;
     }
 
 #ifdef _DEBUG
