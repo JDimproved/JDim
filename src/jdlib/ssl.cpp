@@ -78,20 +78,17 @@ const bool JDSSL::connect( const int soc )
     gnutls_protocol_set_priority( m_session, priority_prot ); // 廃止 gnutls>=2.12.0
 #endif // GNUTLSVER >= 2120
 
-    gnutls_transport_set_ptr( m_session, ( gnutls_transport_ptr_t )(long) soc );
+    gnutls_transport_set_ptr( m_session, (gnutls_transport_ptr_t)(long) soc );
     gnutls_certificate_allocate_credentials( &m_cred );
     gnutls_credentials_set( m_session, GNUTLS_CRD_CERTIFICATE, m_cred );
 
-    do {
-        ret = gnutls_handshake( m_session );
-    }
-    while ( gnutls_error_is_fatal( ret ) == 0 );
-
-    if ( ret < 0 )
+    while ( ( ret = gnutls_handshake( m_session ) ) != GNUTLS_E_SUCCESS )
     {
-        m_errmsg = "gnutls_handshake failed";
-        gnutls_perror( ret );
-        return false;
+        if ( gnutls_error_is_fatal( ret ) != 0 )
+        {
+            m_errmsg = "gnutls_handshake failed";
+            return false;
+        }
     }
 
 #ifdef _DEBUG
