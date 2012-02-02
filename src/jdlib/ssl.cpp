@@ -69,14 +69,17 @@ const bool JDSSL::connect( const int soc )
         return false;
     }
 
-#if GNUTLSVER >= 2120
-    // http://www.gnu.org/software/gnutls/reference/gnutls-gnutls.html#gnutls-priority-set-direct
+#if GNUTLSVER >= 218
+    // gnutls >= 2.1.7 (unreleased)
     gnutls_priority_set_direct( m_session, "NORMAL:%COMPAT", NULL );
-#else // GNUTLSVER >= 120
+#else // GNUTLSVER >= 218
     static const int priority_prot[] = { GNUTLS_SSL3, 0 };
+    // DEPRECATED (gnutls >= 2.1.4 gnutls =< 2.1.6)
+    // UNDEPRECATED (gnutls >= 2.1.7)
     gnutls_set_default_priority( m_session );
-    gnutls_protocol_set_priority( m_session, priority_prot ); // 廃止 gnutls>=2.12.0
-#endif // GNUTLSVER >= 2120
+    // _GNUTLS_GCC_ATTR_DEPRECATE (gnutls >= 2.12.0)
+    gnutls_protocol_set_priority( m_session, priority_prot );
+#endif // GNUTLSVER >= 218
 
     gnutls_transport_set_ptr( m_session, (gnutls_transport_ptr_t)(long) soc );
     gnutls_certificate_allocate_credentials( &m_cred );
