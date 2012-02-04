@@ -64,7 +64,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
       m_vbox_view( NULL )
 {
     // ステータスバー
-#if GTKMMVER <= 240
+#if GTKMM_MINOR_VERSION <= 4
     if( need_mginfo ) m_statbar.pack_start( m_mginfo );
 #else
     m_label_stat.set_size_request( 0, -1 );
@@ -381,7 +381,7 @@ void JDWindow::set_status( const std::string& stat )
 
     m_status = stat;
 
-#if GTKMMVER <= 240
+#if GTKMM_MINOR_VERSION <= 4
     m_statbar.push( stat );
 #else
     m_label_stat.set_text( stat );
@@ -398,7 +398,7 @@ void JDWindow::set_status_temporary( const std::string& stat )
 {
     if( stat == m_status ) return;
 
-#if GTKMMVER <= 240
+#if GTKMM_MINOR_VERSION <= 4
     m_statbar.push( stat );
 #else
     m_label_stat.set_text( stat );
@@ -408,7 +408,7 @@ void JDWindow::set_status_temporary( const std::string& stat )
 // 一時的に変えたステータスバーの表示を戻す
 void JDWindow::restore_status()
 {
-#if GTKMMVER <= 240
+#if GTKMM_MINOR_VERSION <= 4
     m_statbar.push( m_status );
 #else
     m_label_stat.set_text( m_status );
@@ -426,7 +426,7 @@ void JDWindow::set_mginfo( const std::string& mginfo )
 // ステータスの色を変える
 void JDWindow::set_status_color( const std::string& color )
 {
-#if GTKMMVER > 240
+#if GTKMM_MINOR_VERSION > 4
 
 #ifdef _DEBUG
     std::cout << "JDWindow::set_status_color " << color << std::endl;

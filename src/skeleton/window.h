@@ -39,7 +39,7 @@ namespace SKELETON
         // ステータスバー
         std::string m_status;
 
-#if GTKMMVER <= 240
+#if GTKMM_MINOR_VERSION <= 4
         Gtk::Statusbar m_statbar;
 #else
         Gtk::HBox m_statbar;

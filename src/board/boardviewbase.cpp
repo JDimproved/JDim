@@ -135,12 +135,12 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     // ツリービュー設定
     m_liststore = Gtk::ListStore::create( m_columns );
 
-#if GTKMMVER <= 260
+#if GTKMM_MINOR_VERSION <= 6
     // gtkmm26以下にはunset_model()が無いのでここでset_model()しておく
     m_treeview.set_model( m_liststore );
 #endif
 
-#if GTKMMVER >= 260
+#if GTKMM_MINOR_VERSION >= 6
 
     // セルを固定の高さにする
     // append_column する前に columnに対して set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ) すること
@@ -1264,7 +1264,7 @@ void BoardViewBase::update_view_impl( const std::vector< DBTREE::ArticleBase* >&
 #endif    
 
     // 画面消去
-#if GTKMMVER >= 280
+#if GTKMM_MINOR_VERSION >= 8
     m_treeview.unset_model();
 #endif
 
@@ -1281,7 +1281,7 @@ void BoardViewBase::update_view_impl( const std::vector< DBTREE::ArticleBase* >&
             prepend_row( art, i + 1 );
         }
 
-#if GTKMMVER >= 280
+#if GTKMM_MINOR_VERSION >= 8
         m_treeview.set_model( m_liststore );
 #endif
 

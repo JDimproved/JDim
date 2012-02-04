@@ -48,7 +48,7 @@ BBSListToolBar::BBSListToolBar() :
     m_button_toggle.get_button()->signal_scroll_event().connect(  sigc::mem_fun( *this, &BBSListToolBar::slot_scroll_event ));
     m_button_toggle.get_button()->set_enable_sig_clicked( false );
 
-#if GTKMMVER >= 2120
+#if GTKMM_MINOR_VERSION >= 12
     m_tool_label.set_icon_size( Gtk::ICON_SIZE_MENU );
 #endif
     m_tool_label.set_toolbar_style( Gtk::TOOLBAR_ICONS );

@@ -22,7 +22,7 @@ namespace SKELETON
 
       protected:
 
-#if GTKMMVER <= 240
+#if GTKMM_MINOR_VERSION <= 4
         virtual void on_spinbutton_digits_changed(){
             const size_t size = 256;
             char str[ size ];
@@ -41,7 +41,7 @@ namespace SKELETON
 
       protected:
 
-#if GTKMMVER <= 240
+#if GTKMM_MINOR_VERSION <= 4
         virtual void on_spinbutton_digits_changed(){
             const size_t size = 256;
             char str[ size ];

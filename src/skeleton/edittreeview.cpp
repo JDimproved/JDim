@@ -342,7 +342,7 @@ void EditTreeView::xml2tree( XML::Document& document, Glib::RefPtr< Gtk::TreeSto
 
     treestore->clear();
 
-#if GTKMMVER >= 280
+#if GTKMM_MINOR_VERSION >= 8
     unset_model();
 #endif
 
@@ -352,7 +352,7 @@ void EditTreeView::xml2tree( XML::Document& document, Glib::RefPtr< Gtk::TreeSto
     // Domノードから Gtk::TreeStore をセット
     document.set_treestore( treestore, m_columns, root_name, list_path_expand );
 
-#if GTKMMVER >= 280
+#if GTKMM_MINOR_VERSION >= 8
     set_treestore( treestore );
 #endif
 

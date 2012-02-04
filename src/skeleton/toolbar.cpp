@@ -73,7 +73,7 @@ ToolBar::ToolBar( Admin* admin )
       m_button_forward( NULL )
 {
     m_buttonbar.set_border_width( 0 );
-#if GTKMMVER >= 2120
+#if GTKMM_MINOR_VERSION >= 12
     m_buttonbar.set_icon_size( Gtk::ICON_SIZE_MENU );
 #endif
     m_buttonbar.set_toolbar_style( Gtk::TOOLBAR_ICONS );
@@ -279,7 +279,7 @@ void ToolBar::pack_transparent_separator()
 //
 void ToolBar::set_tooltip( Gtk::ToolItem& toolitem, const std::string& tip )
 {
-#if GTKMMVER < 2120
+#if GTKMM_MINOR_VERSION < 12
     toolitem.set_tooltip( m_tooltip, tip );
 #else
     toolitem.set_tooltip_text( tip );
@@ -350,7 +350,7 @@ Gtk::Toolbar* ToolBar::get_searchbar()
 {
     if( ! m_searchbar ){
         m_searchbar = Gtk::manage( new SKELETON::JDToolbar() );
-#if GTKMMVER >= 2120
+#if GTKMM_MINOR_VERSION >= 12
         m_searchbar->set_icon_size( Gtk::ICON_SIZE_MENU );
 #endif
         m_searchbar->set_toolbar_style( Gtk::TOOLBAR_ICONS );

@@ -1132,7 +1132,7 @@ const bool ArticleViewBase::operate_view( const int control )
             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
             mdiag.add_default_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
 
-#if GTKMMVER >= 260
+#if GTKMM_MINOR_VERSION >= 6
             Gtk::Button *button = mdiag.add_button( "スレ再取得(_R)", Gtk::RESPONSE_YES + 100 );
             Gtk::Image image( Gtk::Stock::REFRESH, Gtk::ICON_SIZE_BUTTON );
             button->set_image( image );

@@ -272,7 +272,7 @@ void TabNotebook::get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook
     GdkRectangle event_window_pos;
     if( get_event_window_position( widget, notebook, &event_window_pos ) ){
 
-#if GTKMMVER >= 291
+#if GTKMM_MINOR_VERSION >= 9
         gtk_widget_style_get( widget,
                               "scroll-arrow-hlength", &rectangle->width,
                               "scroll-arrow-vlength", &rectangle->height,

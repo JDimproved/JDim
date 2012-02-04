@@ -88,7 +88,7 @@ MenuButton::~MenuButton()
 
 void MenuButton::set_tooltip_arrow( const std::string& tooltip )
 {
-#if GTKMMVER < 2120
+#if GTKMM_MINOR_VERSION < 12
     // gtkmm-2.12.0より前のバージョンはボタンの中のWidgetにツールチップを設定できない
     m_tooltip_arrow.set_tip( *this, tooltip );
 #else

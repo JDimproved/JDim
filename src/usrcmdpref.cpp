@@ -70,7 +70,7 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
       m_ckbt_hide_usrcmd( "選択不可のユーザコマンドを非表示にする", true )
 {
     m_treestore = Gtk::TreeStore::create( m_columns );
-#if GTKMMVER <= 260
+#if GTKMM_MINOR_VERSION <= 6
     // gtkmm26以下にはunset_model()が無いのでここでset_model()しておく
     // それ以上は m_treeview.xml2tree() でセットする
     m_treeview.set_treestore( m_treestore );
@@ -93,7 +93,7 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     get_vbox()->pack_start( m_label );
     get_vbox()->pack_start( m_scrollwin );
 
-#if GTKMMVER >= 260
+#if GTKMM_MINOR_VERSION >= 6
     m_ckbt_hide_usrcmd.set_active( CONFIG::get_hide_usrcmd() );
     get_vbox()->pack_start( m_ckbt_hide_usrcmd, Gtk::PACK_SHRINK );
 #endif

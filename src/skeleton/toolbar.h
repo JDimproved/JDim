@@ -28,7 +28,7 @@ namespace SKELETON
 
         bool m_enable_slot;
 
-#if GTKMMVER < 2120
+#if GTKMM_MINOR_VERSION < 12
         Gtk::Tooltips m_tooltip;
 #endif
 

@@ -49,7 +49,7 @@
 #include "link.h"
 #include "info.h"
 
-#if GTKMMVER <= 240
+#if GTKMM_MINOR_VERSION <= 4
 #include "play.h"
 #endif
 
@@ -175,7 +175,7 @@ ICON_Manager::ICON_Manager()
 
     // スレビュー
     m_list_icons[ ICON::SEARCH ]  = m_dummy.render_icon( Gtk::Stock::FIND, Gtk::ICON_SIZE_MENU );
-#if GTKMMVER <= 240
+#if GTKMM_MINOR_VERSION <= 4
     m_list_icons[ ICON::LIVE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_play ), icon_play );
 #else
     m_list_icons[ ICON::LIVE ]  = m_dummy.render_icon( Gtk::Stock::MEDIA_PLAY, Gtk::ICON_SIZE_MENU );    

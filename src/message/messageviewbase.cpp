@@ -429,7 +429,7 @@ void MessageViewBase::pack_widget()
     m_tool_entry_name.set_expand( true );
     m_tool_entry_mail.set_expand( true );
 
-#if GTKMMVER >= 2120
+#if GTKMM_MINOR_VERSION >= 12
     m_toolbar_name_mail.set_icon_size( Gtk::ICON_SIZE_MENU );
 #endif
     m_toolbar_name_mail.set_toolbar_style( Gtk::TOOLBAR_ICONS );
