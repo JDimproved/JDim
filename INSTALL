@@ -31,7 +31,7 @@
   オプション
 
   ・alsa-lib (--with-alsa)
-  ・libgnoeui (--with-sessionlib=gnomeui)
+  ・libgnomeui (--with-sessionlib=gnomeui)
   ・openssl (--with-openssl)
   ・oniguruma (--with-oniguruma)
 
