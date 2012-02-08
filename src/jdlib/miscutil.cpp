@@ -1490,13 +1490,13 @@ const std::string MISC::utf8_fix_wavedash( const std::string& str, const int mod
 {
     // WAVE DASH 問題
     const size_t size = 4;
-    const char Win[size][4] = {
+    const unsigned char Win[size][4] = {
         { 0xef, 0xbd, 0x9e, '\0' }, // FULLWIDTH TILDE (U+FF5E)
         { 0xe2, 0x80, 0x95, '\0' }, // HORIZONTAL BAR (U+2015)
         { 0xe2, 0x88, 0xa5, '\0' }, // PARALLEL TO (U+2225)
         { 0xef, 0xbc, 0x8d, '\0' }  // FULLWIDTH HYPHEN-MINUS (U+FF0D)
     };
-    const char Unix[size][4] = {
+    const unsigned char Unix[size][4] = {
         { 0xe3, 0x80, 0x9c, '\0' }, // WAVE DASH (U+301C)
         { 0xe2, 0x80, 0x94, '\0' }, // EM DASH(U+2014)
         { 0xe2, 0x80, 0x96, '\0' }, // DOUBLE VERTICAL LINE (U+2016)
