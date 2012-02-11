@@ -6,7 +6,7 @@
 enum
 {
     MAX_TEXT = 256,
-    BROWSER_NUM = 8
+    BROWSER_NUM = 8,
 #ifdef _WIN32
     MAX_SAFE_PATH = 1024,
 #endif

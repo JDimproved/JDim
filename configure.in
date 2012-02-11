@@ -41,7 +41,7 @@ case "${host_os}" in
    ;;
  mingw*)
    echo "os = ${host_os}"
-   AC_DEFINE(ICONV_CONST, const, "iconv_const")
+   AC_DEFINE(ICONV_CONST, , "iconv_const")
    AC_DEFINE(USE_MKTIME, , "use mktime")
    ;;
 dnl linux*|gnu*|*-gnu|darwin*
