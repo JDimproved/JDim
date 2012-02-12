@@ -29,6 +29,7 @@ Timeout::Timeout( const sigc::slot< bool > slot_timeout )
     : m_slot_timeout( slot_timeout )
 {
 #ifdef _WIN32
+    m_identifer = 0;
     m_context = Glib::MainContext::get_default();
 #endif
 }
@@ -36,11 +37,11 @@ Timeout::Timeout( const sigc::slot< bool > slot_timeout )
 Timeout::~Timeout()
 {
 #ifdef _WIN32
-    if( m_identifer ){
+    if( m_identifer != 0 ){
         Glib::Mutex::Lock lock( s_lock );
         KillTimer( NULL, m_identifer );
         s_timeouts.erase( m_identifer );
-        m_identifer = NULL;
+        m_identifer = 0;
     }
 #else
     m_connection.disconnect();
