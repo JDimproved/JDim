@@ -967,6 +967,7 @@ NODE* NodeTreeBase::create_node_youtube( const char* text, const int n, const ch
 {
     NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold );
 
+    // 「http://www.youtube.com」の後にセット
     int pos = 22;
 
     if( *( link + (pos++) ) == '/'
@@ -974,17 +975,30 @@ NODE* NodeTreeBase::create_node_youtube( const char* text, const int n, const ch
         && *( link + (pos++) ) == 'a'
         && *( link + (pos++) ) == 't'
         && *( link + (pos++) ) == 'c'
-        && *( link + (pos++) ) == 'h'
-        && *( link + (pos++) ) == '?'
-        && *( link + (pos++) ) == 'v'
-        && *( link + (pos++) ) == '=' ){
+        && *( link + (pos++) ) == 'h' ){
 
+        // 「?v=」または「&v=」を探す
+        while ( pos < n_link
+                && ! ( ( *( link + pos ) == '?' || *( link + pos ) == '&' )
+                    && *( link + pos + 1 ) == 'v'
+                    && *( link + pos + 2 ) == '=' ) ){
+            pos++;
+        }
+        if( pos == n_link ){
+            return tmpnode; // 見つからない
+        }
+        pos += 3;
+
+        // 「v=...」をidに格納
         char id[ LNG_LINK +16 ];
         int lng_id = 0;
         while( pos < n_link
                && *( link + pos ) != '&'
-               && ! ( *( link + pos ) == '#' && *( link + pos +1 ) == 't' ) ) id[ lng_id++ ] = *( link + (pos++) );
+               && *( link + pos ) != '#' ){
+            id[ lng_id++ ] = *( link + (pos++) );
+        }
 
+        // 画像のURL「http://img.youtube.com/vi/<id>/0.jpg」を生成
         const char *server = "http://img.youtube.com/vi/";
         const char *file = "/0.jpg";
         char thumb[ LNG_LINK +16 ];
@@ -997,6 +1011,7 @@ NODE* NodeTreeBase::create_node_youtube( const char* text, const int n, const ch
         memmove( thumb + lng_thumb, file, lng_file );
         lng_thumb += lng_file;
 
+        // 画像のURLをセット
         tmpnode->linkinfo->imglink = ( char* )m_heap.heap_alloc( lng_thumb +4 );
         memcpy( tmpnode->linkinfo->imglink, thumb, lng_thumb );
         tmpnode->linkinfo->imglink[ lng_thumb ] = '\0';
