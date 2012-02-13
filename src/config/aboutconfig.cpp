@@ -285,7 +285,7 @@ void AboutConfig::append_rows()
     append_row( "起動時に開いていたスレを復元する", get_confitem()->restore_article, CONF_RESTORE_ARTICLE );
     append_row( "起動時に開いていた画像を復元する", get_confitem()->restore_image, CONF_RESTORE_IMAGE );
 #ifdef HAVE_MIGEMO_H
-    append_row( "migomoの辞書ファイルの場所(migemo使用時のみ)", get_confitem()->migemodict_path, CONF_MIGEMO_PATH );
+    append_row( "migemoの辞書ファイルの場所(migemo使用時のみ)", get_confitem()->migemodict_path, CONF_MIGEMO_PATH );
 #endif
     append_row( "FIFOの作成などにエラーがあったらダイアログを表示する", get_confitem()->show_diag_fifo_error, CONF_SHOW_DIAG_FIFO_ERROR );
     append_row( "指定した分ごとにセッションを自動保存 (0: 保存しない)", get_confitem()->save_session, CONF_SAVE_SESSION );
