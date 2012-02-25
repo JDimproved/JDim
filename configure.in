@@ -44,7 +44,13 @@ case "${host_os}" in
    AC_DEFINE(ICONV_CONST, , "iconv_const")
    AC_DEFINE(USE_MKTIME, , "use mktime")
    ;;
-dnl linux*|gnu*|*-gnu|darwin*
+ darwin*)
+   echo "os = ${host_os}"
+   AC_DEFUN([AM_ICONV], [])
+   AC_DEFINE(ICONV_CONST, , "iconv_const")
+   AC_DEFINE(USE_MKTIME, , "use mktime")
+   ;;
+dnl linux*|gnu*|*-gnu
  *)
    echo "os = ${host_os}"
    AC_DEFUN([AM_ICONV], [])
