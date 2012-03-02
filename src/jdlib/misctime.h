@@ -19,6 +19,8 @@ namespace MISC
         TIME_NO_YEAR, // 月/日 時:分
         TIME_WEEK,  // 年/月/日(曜日) 時:分:秒
         TIME_PASSED, // ～前
+        TIME_SECOND, // 年/月/日 時:分:秒
+        // この値が設定ファイルに保存されているので、最後に追加
 
         TIME_NUM
     };

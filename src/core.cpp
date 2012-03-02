@@ -391,13 +391,15 @@ void Core::run( const bool init, const bool skip_setupdiag )
     Glib::RefPtr< Gtk::RadioAction > raction_since0 = Gtk::RadioAction::create( radiogroup_since, "Since_Normal", "年/月/日 時:分" );
     Glib::RefPtr< Gtk::RadioAction > raction_since1 = Gtk::RadioAction::create( radiogroup_since, "Since_NoYear", "月/日 時:分" );
     Glib::RefPtr< Gtk::RadioAction > raction_since2 = Gtk::RadioAction::create( radiogroup_since, "Since_Week", "年/月/日(曜日) 時:分:秒" );
-    Glib::RefPtr< Gtk::RadioAction > raction_since3 = Gtk::RadioAction::create( radiogroup_since, "Since_Passed", "～前" );
+    Glib::RefPtr< Gtk::RadioAction > raction_since3 = Gtk::RadioAction::create( radiogroup_since, "Since_Second", "年/月/日 時:分:秒" );
+    Glib::RefPtr< Gtk::RadioAction > raction_since4 = Gtk::RadioAction::create( radiogroup_since, "Since_Passed", "～前" );
 
     switch( SESSION::get_col_since_time() ){
         case MISC::TIME_NORMAL: raction_since0->set_active( true ); break;
         case MISC::TIME_NO_YEAR: raction_since1->set_active( true ); break;
         case MISC::TIME_WEEK: raction_since2->set_active( true ); break;
-        case MISC::TIME_PASSED: raction_since3->set_active( true ); break;
+        case MISC::TIME_SECOND: raction_since3->set_active( true ); break;
+        case MISC::TIME_PASSED: raction_since4->set_active( true ); break;
     }
 
     m_action_group->add( raction_since0,
@@ -407,6 +409,8 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( raction_since2,
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_since ), MISC::TIME_WEEK ) );
     m_action_group->add( raction_since3,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_since ), MISC::TIME_SECOND ) );
+    m_action_group->add( raction_since4,
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_since ), MISC::TIME_PASSED ) );
 
     // 最終書き込み
@@ -415,13 +419,15 @@ void Core::run( const bool init, const bool skip_setupdiag )
     Glib::RefPtr< Gtk::RadioAction > raction_write0 = Gtk::RadioAction::create( radiogroup_write, "Write_Normal", "年/月/日 時:分" );
     Glib::RefPtr< Gtk::RadioAction > raction_write1 = Gtk::RadioAction::create( radiogroup_write, "Write_NoYear", "月/日 時:分" );
     Glib::RefPtr< Gtk::RadioAction > raction_write2 = Gtk::RadioAction::create( radiogroup_write, "Write_Week", "年/月/日(曜日) 時:分:秒" );
-    Glib::RefPtr< Gtk::RadioAction > raction_write3 = Gtk::RadioAction::create( radiogroup_write, "Write_Passed", "～前" );
+    Glib::RefPtr< Gtk::RadioAction > raction_write3 = Gtk::RadioAction::create( radiogroup_write, "Write_Second", "年/月/日 時:分:秒" );
+    Glib::RefPtr< Gtk::RadioAction > raction_write4 = Gtk::RadioAction::create( radiogroup_write, "Write_Passed", "～前" );
 
     switch( SESSION::get_col_write_time() ){
         case MISC::TIME_NORMAL: raction_write0->set_active( true ); break;
         case MISC::TIME_NO_YEAR: raction_write1->set_active( true ); break;
         case MISC::TIME_WEEK: raction_write2->set_active( true ); break;
-        case MISC::TIME_PASSED: raction_write3->set_active( true ); break;
+        case MISC::TIME_SECOND: raction_write3->set_active( true ); break;
+        case MISC::TIME_PASSED: raction_write4->set_active( true ); break;
     }
 
     m_action_group->add( raction_write0,
@@ -431,6 +437,8 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( raction_write2,
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_write ), MISC::TIME_WEEK ) );
     m_action_group->add( raction_write3,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_write ), MISC::TIME_SECOND ) );
+    m_action_group->add( raction_write4,
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_write ), MISC::TIME_PASSED ) );
 
     // ツールバー表示
@@ -785,6 +793,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menuitem action='Since_Normal'/>"
         "<menuitem action='Since_NoYear'/>"
         "<menuitem action='Since_Week'/>"
+        "<menuitem action='Since_Second'/>"
         "<menuitem action='Since_Passed'/>"
         "</menu>"
         "<separator/>"
@@ -792,6 +801,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
         "<menuitem action='Write_Normal'/>"
         "<menuitem action='Write_NoYear'/>"
         "<menuitem action='Write_Week'/>"
+        "<menuitem action='Write_Second'/>"
         "<menuitem action='Write_Passed'/>"
         "</menu>"
 

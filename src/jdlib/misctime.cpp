@@ -155,6 +155,12 @@ const std::string MISC::timettostr( const time_t& time_from, const int mode )
                       ( 1900 + tm_tmp.tm_year ), ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday,
                       week[ tm_tmp.tm_wday ], tm_tmp.tm_hour, tm_tmp.tm_min, tm_tmp.tm_sec );
     }
+    else if( mode == MISC::TIME_SECOND ){
+
+        if( localtime_r( &time_from, &tm_tmp ) )
+            snprintf( str_ret, lng, "%d/%02d/%02d %02d:%02d:%02d",
+                      ( 1900 + tm_tmp.tm_year ), ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday, tm_tmp.tm_hour, tm_tmp.tm_min, tm_tmp.tm_sec );
+    }
     else if( mode == MISC::TIME_PASSED ){
 
         const time_t tmp_t = time( NULL ) - time_from;
