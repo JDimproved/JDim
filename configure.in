@@ -373,6 +373,21 @@ AC_ARG_WITH(oniguruma,[ --with-oniguruma    (enable oniguruma)],
 
 
 dnl
+dnl checking PCRE
+dnl
+AC_ARG_WITH(pcre,[ --with-pcre    (enable PCRE)],
+       [ if test "$withval" != "no" ;then
+               echo "use PCRE"
+               PKG_CHECK_MODULES(PCRE, [libpcre >= 6.5] )
+               AC_DEFINE(USE_PCRE, , "use PCRE")
+               AC_SUBST(PCRE_CFLAGS)
+               AC_SUBST(PCRE_LIBS)
+               AC_CHECK_HEADERS([pcreposix.h])
+               AC_CHECK_LIB(pcreposix,regexec)
+       fi ])
+
+
+dnl
 dnl checking gthread
 dnl
 AC_ARG_WITH(gthread,[ --with-gthread    (use gthread instead of pthread)],

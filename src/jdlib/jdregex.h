@@ -12,6 +12,8 @@
 
 #ifdef USE_ONIG
 #include <onigposix.h>
+#elif defined( USE_PCRE )
+#include <pcreposix.h>
 #else
 #include <regex.h>
 #endif	/** USE_ONIG **/

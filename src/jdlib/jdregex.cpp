@@ -65,7 +65,11 @@ const bool Regex::compile( const std::string reg, const bool icase, const bool n
     
     if( reg.empty() ) return false;
     
+#ifdef USE_PCRE
+    int cflags = REG_UTF8;
+#else
     int cflags = REG_EXTENDED;
+#endif
     if( newline ) cflags |= REG_NEWLINE;
     if( icase ) cflags |= REG_ICASE;
 
