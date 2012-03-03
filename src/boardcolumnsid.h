@@ -14,6 +14,7 @@ enum
     COL_STR_NEW,
     COL_SINCE,
     COL_WRITE,
+    COL_ACCESS,
     COL_SPEED,
     COL_DIFF,
 
@@ -24,6 +25,7 @@ enum
     COL_DRAWBG,
     COL_NEW,
     COL_WRITE_T,
+    COL_ACCESS_T,
     COL_ARTICLE,
             
     COL_NUM_COL

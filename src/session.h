@@ -370,6 +370,7 @@ namespace SESSION
     const int col_new();
     const int col_since();
     const int col_write();
+    const int col_access();
     const int col_speed();
     const int col_diff();
     void set_col_mark( const int width );
@@ -381,6 +382,7 @@ namespace SESSION
     void set_col_new( const int width );
     void set_col_since( const int width );
     void set_col_write( const int width );
+    void set_col_access( const int width );
     void set_col_speed( const int width );
     void set_col_diff( const int width );
 

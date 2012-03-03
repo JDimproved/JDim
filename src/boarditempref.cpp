@@ -28,6 +28,7 @@ BoardItemColumnPref::BoardItemColumnPref( Gtk::Window* parent, const std::string
     append_default_pair( ITEM_NAME_NEW );
     append_default_pair( ITEM_NAME_SINCE );
     append_default_pair( ITEM_NAME_LASTWRITE );
+    append_default_pair( ITEM_NAME_ACCESS );
     append_default_pair( ITEM_NAME_SPEED );
     append_default_pair( ITEM_NAME_DIFF );
 

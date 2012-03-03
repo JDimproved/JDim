@@ -107,6 +107,7 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
       m_col_str_new( NULL ),
       m_col_since( NULL ),
       m_col_write( NULL ),
+      m_col_access( NULL ),
       m_col_speed( NULL ),
       m_col_diff( NULL ),
       m_clicked( false ),
@@ -165,6 +166,7 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     m_liststore->set_sort_func( COL_STR_NEW, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_SINCE, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_WRITE, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
+    m_liststore->set_sort_func( COL_ACCESS, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_SPEED, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_DIFF, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     
@@ -540,6 +542,7 @@ void BoardViewBase::update_columns()
     DELETE_COLUMN( m_col_write );
     DELETE_COLUMN( m_col_speed );
     DELETE_COLUMN( m_col_diff );
+    DELETE_COLUMN( m_col_access );
 
     int num = 0;
 
@@ -571,6 +574,7 @@ void BoardViewBase::update_columns()
             case ITEM_NEW: APPEND_COLUMN( m_col_str_new, ITEM_NAME_NEW, m_columns.m_col_str_new ); break;
             case ITEM_SINCE: APPEND_COLUMN( m_col_since, ITEM_NAME_SINCE, m_columns.m_col_since ); break;
             case ITEM_LASTWRITE: APPEND_COLUMN( m_col_write, ITEM_NAME_LASTWRITE, m_columns.m_col_write ); break;
+            case ITEM_ACCESS: APPEND_COLUMN( m_col_access, ITEM_NAME_ACCESS, m_columns.m_col_access); break;
             case ITEM_SPEED: APPEND_COLUMN( m_col_speed, ITEM_NAME_SPEED, m_columns.m_col_speed ); break;
             case ITEM_DIFF: APPEND_COLUMN( m_col_diff, ITEM_NAME_DIFF, m_columns.m_col_diff); m_col_diff_is_shown = true; break;
         }
@@ -625,6 +629,10 @@ void BoardViewBase::update_columns()
 
         case COL_WRITE:
             width = SESSION::col_write();
+            break;
+
+        case COL_ACCESS:
+            width = SESSION::col_access(); 
             break;
 
         case COL_SPEED:
@@ -720,6 +728,7 @@ const int BoardViewBase::get_title_id( const int col )
     else if( title == ITEM_NAME_NEW ) id = COL_STR_NEW;
     else if( title == ITEM_NAME_SINCE ) id = COL_SINCE;
     else if( title == ITEM_NAME_LASTWRITE ) id = COL_WRITE;
+    else if( title == ITEM_NAME_ACCESS ) id = COL_ACCESS;
     else if( title == ITEM_NAME_SPEED ) id = COL_SPEED;
     else if( title == ITEM_NAME_DIFF ) id = COL_DIFF;
 
@@ -800,6 +809,10 @@ void BoardViewBase::save_column_width()
 
         case COL_WRITE:
             SESSION::set_col_write( width );
+            break;
+
+        case COL_ACCESS:
+            SESSION::set_col_access( width );
             break;
 
         case COL_SPEED:
@@ -1071,6 +1084,11 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
         case COL_WRITE:
             num_a = row_a[ m_columns.m_col_write_t ];
             num_b = row_b[ m_columns.m_col_write_t ];
+            break;
+
+        case COL_ACCESS:
+            num_a = row_a[ m_columns.m_col_access_t ];
+            num_b = row_b[ m_columns.m_col_access_t ];
             break;
 
         case COL_SPEED:
@@ -1940,6 +1958,19 @@ void BoardViewBase::update_row_common( const Gtk::TreeModel::Row& row )
         if( mark_val < COL_MARKVAL_NORMAL ) row[ m_columns.m_col_write_t ] = 0;
         else row[ m_columns.m_col_write_t ] = -1;
     }
+
+    // ユーザが最後にロードした時間
+    if( art->get_access_time() ){
+        row[ m_columns.m_col_access ] = art->get_access_date();
+        row[ m_columns.m_col_access_t ] = art->get_access_time();
+    }
+    else{
+        row[ m_columns.m_col_access ] = std::string();
+        
+        // DAT落ちしたスレや1000に到達したスレなどは書き込んでいてもソート時の優先度を下げる
+        if( mark_val < COL_MARKVAL_NORMAL ) row[ m_columns.m_col_access_t ] = 0;
+        else row[ m_columns.m_col_access_t ] = -1;
+    }
 }
 
 
@@ -2083,6 +2114,7 @@ const bool BoardViewBase::slot_motion_notify( GdkEventMotion* event )
         else if( column->get_title() == ITEM_NAME_NAME ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_subject ) );
         else if( column->get_title() == ITEM_NAME_SINCE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_since ) );
         else if( column->get_title() == ITEM_NAME_LASTWRITE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_write ) );
+        else if( column->get_title() == ITEM_NAME_ACCESS ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_access ) );
         else m_treeview.set_str_tooltip( std::string() );
     }
 

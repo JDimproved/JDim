@@ -60,6 +60,7 @@ namespace DBTREE
         int m_number_seen;           // どこまで読んだか
         int m_number_max;            // 規定の最大レス数(0:未設定)
         struct timeval m_access_time;  // ユーザが最後にロードした時間
+        std::string m_access_date;     // ユーザが最後にロードした月日( string型 )
         struct timeval m_check_update_time;  // 最終更新チェック時間
         struct timeval m_write_time;   // 最終書き込み時間
         std::string m_write_time_date; // 最終書き込み月日( string型 )
@@ -234,6 +235,8 @@ namespace DBTREE
 
         // 最終アクセス時間
         const std::string get_access_time_str();
+        const time_t& get_access_time() const { return m_access_time.tv_sec; } // 秒
+        const std::string& get_access_date(); // string型
 
         // 最終書き込み時間
         const time_t& get_write_time() const { return m_write_time.tv_sec; } // 秒

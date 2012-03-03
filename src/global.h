@@ -50,6 +50,7 @@ enum{
 #define ITEM_NAME_NEW   "新着"
 #define ITEM_NAME_SINCE "since"
 #define ITEM_NAME_LASTWRITE "最終書込"
+#define ITEM_NAME_ACCESS "最終取得"
 #define ITEM_NAME_SPEED "速度"
 #define ITEM_NAME_DIFF "増分"
 
@@ -138,6 +139,7 @@ enum
     ITEM_NEW,
     ITEM_SINCE,
     ITEM_LASTWRITE,
+    ITEM_ACCESS,
     ITEM_SPEED,
     ITEM_DIFF,
 

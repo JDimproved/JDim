@@ -47,6 +47,7 @@ namespace BOARD
         Gtk::TreeView::Column* m_col_str_new;
         Gtk::TreeView::Column* m_col_since;
         Gtk::TreeView::Column* m_col_write;
+        Gtk::TreeView::Column* m_col_access;
         Gtk::TreeView::Column* m_col_speed;
         Gtk::TreeView::Column* m_col_diff;
 

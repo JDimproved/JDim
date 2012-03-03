@@ -432,6 +432,24 @@ const std::string ArticleBase::get_access_time_str()
 }
 
 
+//
+// ユーザが最後にロードした月日( string型 )
+//
+const std::string& ArticleBase::get_access_date()
+{
+    if( m_access_time.tv_sec ){
+
+        if( m_access_date.empty() 
+            || SESSION::get_col_write_time() == MISC::TIME_PASSED ){
+        
+        	m_access_date = MISC::timettostr( m_access_time.tv_sec, SESSION::get_col_write_time() );
+        }
+    }
+
+    return m_access_date;
+}
+
+
 void ArticleBase::reset_status()
 {
 #ifdef _DEBUG
@@ -1459,7 +1477,10 @@ void ArticleBase::slot_load_finished()
 
             struct timeval tv;
             struct timezone tz;
-            if( gettimeofday( &tv, &tz ) == 0 ) m_access_time = tv;
+            if( gettimeofday( &tv, &tz ) == 0 ) {
+                m_access_time = tv;
+                m_access_date = std::string();
+            }
 
             if( m_number < m_number_load ) m_number = m_number_load;
 
