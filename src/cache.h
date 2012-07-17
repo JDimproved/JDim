@@ -16,6 +16,11 @@
 #define ENV_HOME "HOME"
 #endif
 
+// GNU/Hurd doen't have PATH_MAX
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif
+
 // UTF-8からロケールでエンコードされた文字列に変換
 #ifdef _WIN32
 #define to_locale_cstr( path ) Glib::locale_from_utf8((path)).c_str()
