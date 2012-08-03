@@ -3,6 +3,7 @@
 //#define _DEBUG
 //#define _DEBUG_KEY
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "messageadmin.h"
 #include "messageviewbase.h"
@@ -429,7 +430,7 @@ void MessageViewBase::pack_widget()
     m_tool_entry_name.set_expand( true );
     m_tool_entry_mail.set_expand( true );
 
-#if GTKMM_MINOR_VERSION >= 12
+#if GTKMM_CHECK_VERSION(2,12,0)
     m_toolbar_name_mail.set_icon_size( Gtk::ICON_SIZE_MENU );
 #endif
     m_toolbar_name_mail.set_toolbar_style( Gtk::TOOLBAR_ICONS );
@@ -440,7 +441,7 @@ void MessageViewBase::pack_widget()
     m_toolbar_name_mail.append( m_tool_fixmail );
     m_toolbar_name_mail.append( m_tool_entry_mail );
 
-    m_msgview.pack_start( m_toolbar_name_mail, Gtk::PACK_SHRINK );    
+    m_msgview.pack_start( m_toolbar_name_mail, Gtk::PACK_SHRINK );
 
     if( ! m_text_message ){
 
@@ -461,7 +462,7 @@ void MessageViewBase::pack_widget()
     else m_msgview.pack_start( *m_text_message );
 
     m_text_message->set_accepts_tab( false );
-    m_text_message->sig_key_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );    
+    m_text_message->sig_key_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );
     m_text_message->sig_button_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_button_press ) );
     m_text_message->get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::slot_text_changed ) );
 
@@ -529,7 +530,7 @@ const bool MessageViewBase::operate_view( const int control )
     if( control == CONTROL::None ) return false;
 
     switch( control ){
-            
+
             // 書き込まずに閉じる
         case CONTROL::CancelWrite:
             close_view();
@@ -880,7 +881,7 @@ void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
         std::string msg;
         if( m_text_message ) msg = MISC::html_escape( m_text_message->get_text(), include_url );
         msg = MISC::replace_str( msg, "\n", " <br> " );
-        
+
         std::stringstream ss;
 
         // 名前 + トリップ

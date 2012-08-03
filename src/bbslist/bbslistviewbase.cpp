@@ -3,6 +3,7 @@
 //#define _DEBUG
 //#define _DEBUG_XML
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "bbslistviewbase.h"
 #include "bbslistadmin.h"
@@ -129,7 +130,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     : SKELETON::View( url ),
       m_treeview( url, DNDTARGET_FAVORITE, m_columns, true, CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN ),
       m_ready_tree( false ),
-      m_clicked( false ), 
+      m_clicked( false ),
       m_jump_y( -1 ),
       m_search_invert( false ),
       m_open_only_onedir( false ),
@@ -142,11 +143,11 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
 
     pack_start( m_scrwin );
-    show_all_children();    
+    show_all_children();
 
-    m_treestore = Gtk::TreeStore::create( m_columns ); 
+    m_treestore = Gtk::TreeStore::create( m_columns );
 
-#if GTKMM_MINOR_VERSION <= 6
+#if !GTKMM_CHECK_VERSION(2,7,0)
     // gtkmm26以下にはunset_model()が無いのでここでset_model()しておく
     // それ以上は m_treeview.xml2tree() でセットする
     m_treeview.set_treestore( m_treestore );
@@ -173,7 +174,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_treeview.create_column( CONFIG::get_tree_ypad() );
     m_treeview.set_column_for_height( 0 );
 
-#if GTKMM_MINOR_VERSION >= 12
+#if GTKMM_CHECK_VERSION(2,12,0)
     // エクスパンダ表示とレベルインデント
     m_treeview.set_show_expanders( CONFIG::get_tree_show_expanders() );
     m_treeview.set_level_indentation( CONFIG::get_tree_level_indent() );
@@ -181,7 +182,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
     // treeviewのシグナルにコネクト
     m_treeview.signal_row_expanded().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_row_exp ) );
-    m_treeview.signal_row_collapsed().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_row_col ) );        
+    m_treeview.signal_row_collapsed().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_row_col ) );
 
     m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_button_press ) );
     m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_button_release ) );
@@ -192,7 +193,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_treeview.sig_dropped_from_other().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_dropped_from_other ) );
 
     ///////////////////
-    
+
     // ポップアップメニューの設定
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
@@ -207,7 +208,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "NewEtc", "外部板追加(_E)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_newetcboard ) );
     action_group()->add( Gtk::Action::create( "MoveEtc", "編集(_E)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_moveetcboard ) );
     action_group()->add( Gtk::Action::create( "Rename", "名前変更(_R)"), sigc::mem_fun( *this, &BBSListViewBase::slot_rename ) );
-    action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );    
+    action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
     action_group()->add( Gtk::Action::create( "Delete", "お気に入りから削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
     action_group()->add( Gtk::Action::create( "Delete_etc", "外部板を削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
     action_group()->add( Gtk::Action::create( "Delete_hist", "履歴から削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
@@ -247,11 +248,11 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
 
 
-    ui_manager() = Gtk::UIManager::create();    
+    ui_manager() = Gtk::UIManager::create();
     ui_manager()->insert_action_group( action_group() );
 
     // ポップアップメニューのレイアウト
-    Glib::ustring str_ui = 
+    Glib::ustring str_ui =
 
     "<ui>"
 
@@ -508,7 +509,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
 BBSListViewBase::~BBSListViewBase()
 {
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "BBSListViewBase::~BBSListViewBase : " << get_url() << std::endl;
 #endif
 
@@ -559,7 +560,7 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
     else if( command == "remove_headitem" ) remove_headitem();
     else if( command == "remove_allitems" ) remove_allitems();
     else if( command == "edit_tree" ) edit_tree();
-    else if( command == "save_xml" ) save_xml(); 
+    else if( command == "save_xml" ) save_xml();
     else if( command == "toggle_articleicon" ) toggle_articleicon( arg1 );
     else if( command == "toggle_boardicon" ) toggle_boardicon( arg1 );
     else if( command == "replace_thread" ) replace_thread( arg1, arg2 );
@@ -591,7 +592,7 @@ void BBSListViewBase::clock_in()
         Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
         if( adjust && adjust->get_upper() > m_jump_y ){
 
-#ifdef _DEBUG    
+#ifdef _DEBUG
             std::cout << "BBSListViewBase::clock_in jump to = " << m_jump_y << " upper = " << (int)adjust->get_upper() << std::endl;
 #endif
 
@@ -661,7 +662,7 @@ void BBSListViewBase::focus_view()
 
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::focus_view url = " << get_url() << std::endl;
-#endif 
+#endif
 
     m_treeview.grab_focus();
 }
@@ -686,7 +687,7 @@ void BBSListViewBase::close_view()
 {
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::close_view\n";
-#endif 
+#endif
 
     CORE::core_set_command( "toggle_sidebar" );
 }
@@ -741,7 +742,7 @@ const bool BBSListViewBase::operate_view( const int control )
 
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::operate_view = " << control << std::endl;
-#endif 
+#endif
 
     switch( control ){
 
@@ -772,7 +773,7 @@ const bool BBSListViewBase::operate_view( const int control )
         case CONTROL::Home:
             goto_top();
             break;
-            
+
         case CONTROL::End:
             goto_bottom();
             break;
@@ -846,7 +847,7 @@ const bool BBSListViewBase::operate_view( const int control )
         case CONTROL::Reload:
             reload();
             break;
-            
+
         case CONTROL::Delete:
             delete_view();
             break;
@@ -875,7 +876,7 @@ const bool BBSListViewBase::operate_view( const int control )
         case CONTROL::SearchNext:
             down_search();
             break;
-    
+
         case CONTROL::SearchPrev:
             up_search();
             break;
@@ -990,7 +991,7 @@ void BBSListViewBase::row_up()
 {
     m_treeview.row_up();
     show_status();
-}    
+}
 
 
 //
@@ -1000,8 +1001,8 @@ void BBSListViewBase::row_down()
 {
     m_treeview.row_down();
     show_status();
-} 
-   
+}
+
 
 //
 // page up
@@ -1009,7 +1010,7 @@ void BBSListViewBase::row_down()
 void BBSListViewBase::page_up()
 {
     m_treeview.page_up();
-}    
+}
 
 
 //
@@ -1018,7 +1019,7 @@ void BBSListViewBase::page_up()
 void BBSListViewBase::page_down()
 {
     m_treeview.page_down();
-} 
+}
 
 
 //
@@ -1080,7 +1081,7 @@ bool BBSListViewBase::slot_button_press( GdkEventButton* event )
     // ダブルクリック
     // button_release_eventでは event->type に必ず GDK_BUTTON_RELEASE が入る
     m_dblclicked = false;
-    if( event->type == GDK_2BUTTON_PRESS ) m_dblclicked = true; 
+    if( event->type == GDK_2BUTTON_PRESS ) m_dblclicked = true;
 
     // 親ウィンドウがメインウィンドウならフォーカスを移す
     if( ! get_parent_win() ) BBSLIST::get_admin()->set_command( "switch_admin" );
@@ -1101,7 +1102,7 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
     int mg = get_control().MG_end( event );
 
     // ホイールマウスジェスチャ
-    // 実行された場合は何もしない 
+    // 実行された場合は何もしない
     if( get_control().MG_wheel_end( event ) ) return true;
 
     if( mg != CONTROL::None && enable_mg() ){
@@ -1155,7 +1156,7 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
     if( m_treeview.get_path_at_pos( x, y, path, column, cell_x, cell_y ) && m_treeview.get_row( path ) ){
 
         const int mrg = 16; // アイコンの横幅。計算するのが面倒だったのでとりあえず
-        
+
         Gtk::TreeModel::Row row = m_treeview.get_row( path );
         Glib::ustring subject = row[ m_columns.m_name ];
         Glib::ustring url = row[ m_columns.m_url ];
@@ -1194,7 +1195,7 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
         m_treeview.hide_tooltip();
         m_treeview.hide_popup();
     }
-    
+
     return true;
 }
 
@@ -1269,7 +1270,7 @@ void BBSListViewBase::slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_
 {
 #ifdef _DEBUG
     std::cout << "BBSListViewBase:slot_dropped_from_other\n";
-#endif    
+#endif
 
     CORE::DATA_INFO_LIST::const_iterator it = list_info.begin();
     for( ; it != list_info.end() ; ++it ){
@@ -1284,7 +1285,7 @@ void BBSListViewBase::slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_
 
                 m_set_board.insert( DBTREE::url_boardbase( info.url ) );
                 break;
-                
+
             case TYPE_VBOARD:
                 m_set_board.insert( info.url );
                 break;
@@ -1458,7 +1459,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         url = url_org;
         id = MISC::remove_space( diag.get_id() );
         passwd = MISC::remove_space( diag.get_passwd() );
-        if( ! id.empty() && ! passwd.empty() ) basicauth = id + ":" + passwd; 
+        if( ! id.empty() && ! passwd.empty() ) basicauth = id + ":" + passwd;
 
         if( name.empty() || url.empty() ){
             SKELETON::MsgDiag mdiag( get_parent_win(), "板名またはアドレスが空白です", false, Gtk::MESSAGE_ERROR );
@@ -1578,7 +1579,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
 //
 void BBSListViewBase::slot_rename()
 {
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "BBSListViewBase::slot_rename\n";
 #endif
 
@@ -1688,7 +1689,7 @@ void BBSListViewBase::check_update_dir( const bool root, const bool open )
     std::cout << "BBSListViewBase::check_update_dir root = " << root << std::endl;
 #endif
 
-    Gtk::TreePath path; 
+    Gtk::TreePath path;
     if( ! root ){
         if( m_path_selected.empty() ) return;
         path = m_path_selected;
@@ -1883,7 +1884,7 @@ void BBSListViewBase::slot_row_col( const Gtk::TreeModel::iterator&, const Gtk::
 
 
 //
-// 選択した行を開く 
+// 選択した行を開く
 //
 const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 {
@@ -1939,10 +1940,10 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
             CORE::core_set_command( "open_sidebar_board", url, str_tab, str_mode, "", "set_history" );
             break;
     }
-    
-#ifdef _DEBUG    
+
+#ifdef _DEBUG
     std::cout << "BBSListViewBase::open_row : path = " << path.to_string() << " tab = " << tab << std::endl;
-#endif        
+#endif
 
     // treeviewが編集されていたらxml保存
     if( type != TYPE_DIR && m_treeview.is_updated() ){
@@ -2328,8 +2329,8 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
 void BBSListViewBase::update_urls()
 {
     if( ! m_ready_tree ) return;
-    if( m_treestore->children().empty() ) return; 
-   
+    if( m_treestore->children().empty() ) return;
+
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::update_urls " << get_url() << std::endl;
 #endif
@@ -2344,7 +2345,7 @@ void BBSListViewBase::update_urls()
     m_set_board.clear();
     m_set_thread.clear();
     m_set_image.clear();
-    
+
     SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
     for( ; ! it.end(); ++it ){
 
@@ -2416,8 +2417,8 @@ void BBSListViewBase::update_urls()
 void BBSListViewBase::toggle_articleicon( const std::string& url )
 {
     if( ! m_ready_tree ) return;
-    if( m_treestore->children().empty() ) return; 
-   
+    if( m_treestore->children().empty() ) return;
+
     // ツリーの中に無い場合は処理しない
     if( ! m_set_thread.find_if( url ) ) return;
 
@@ -2426,7 +2427,7 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
     const int status = DBTREE::article_status( url );
     if( status & STATUS_OLD ) type = TYPE_THREAD_OLD;
     else if( status & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
-    
+
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::toggle_articleicon url = " << url << " type = " << type << std::endl;
 #endif
@@ -2465,7 +2466,7 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
 {
     if( ! m_ready_tree ) return;
     if( m_treestore->children().empty() ) return;
-   
+
     const std::string url_boardbase = DBTREE::url_boardbase( url );
 
     // ツリーの中に無い場合は処理しない
@@ -2475,7 +2476,7 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
     int type = TYPE_BOARD;
     const int status = DBTREE::board_status( url );
     if( status & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
-    
+
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::toggle_boardicon url = " << url_boardbase << " type = " << type << std::endl;
 #endif
@@ -2518,14 +2519,14 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 #endif
 
     if( ! m_ready_tree ) return;
-    if( m_treestore->children().empty() ) return; 
+    if( m_treestore->children().empty() ) return;
 
     const std::string urldat_new = DBTREE::url_dat( url_new );
     if( urldat_new.empty() ) return;
 
     const std::string name_new = DBTREE::article_subject( urldat_new );
     if( name_new.empty() ) return;
-   
+
     bool show_diag = CONFIG::show_diag_replace_favorite();
     int mode = CONFIG::get_replace_favorite_next();
     if( ! show_diag && mode == REPLACE_NEXT_NO ) return;
@@ -2593,11 +2594,11 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                     }
 
                     // 行を開いた時にxmlを保存
-                    m_treeview.set_updated( true ); 
+                    m_treeview.set_updated( true );
 
                     // 置き換え
                     if( mode == REPLACE_NEXT_YES ){
-                        
+
                         row[ m_columns.m_url ] = urldat_new;
 
                         // 名前が古いものであったら更新
@@ -2605,11 +2606,11 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                         const Glib::ustring name_row = row[ m_columns.m_name ];
 #ifdef _DEBUG
                         std::cout << "name_row = " << name_row << std::endl;
-#endif 
+#endif
                         if( MISC::remove_space( name_row ) == name_old ){
 #ifdef _DEBUG
                             std::cout << "replace name\n";
-#endif 
+#endif
                             row[ m_columns.m_name ] = name_new;
                         }
 
@@ -2658,7 +2659,7 @@ void BBSListViewBase::exec_search()
         focus_view();
         return;
     }
-    
+
     Gtk::TreePath path = m_treeview.get_current_path();
     if( !m_treeview.get_row( path ) ){
         goto_top();
@@ -2671,14 +2672,14 @@ void BBSListViewBase::exec_search()
         else path = m_treeview.next_path( path, false );
         m_pre_query = query;
         CORE::get_completion_manager()->set_query( CORE::COMP_SEARCH_BBSLIST, query );
-    } 
+    }
 
     Gtk::TreePath path_start = path;
 
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::exec_search() path = " << path.to_string() << " query = " << query << std::endl;
 #endif
-	
+
     const bool icase_name = true; // 大文字小文字区別しない
     const bool newline_name = true; // . に改行をマッチさせない
     const bool usemigemo_name = true; // migemo使用
@@ -2829,7 +2830,7 @@ void BBSListViewBase::append_item()
     slot_dropped_from_other( list_info );
 
     // 行を開いた時にxmlを保存
-    m_treeview.set_updated( true ); 
+    m_treeview.set_updated( true );
 }
 
 
@@ -2853,9 +2854,9 @@ void BBSListViewBase::append_history()
 
     // ツリーにアイテムが含まれている場合は削除
     // 履歴はサブディレクトリが無いと仮定してサブディレクトリの探査はしない
-    if( ( ( *it_info ).type == TYPE_THREAD && m_set_thread.find_if( ( *it_info ).url ) ) 
+    if( ( ( *it_info ).type == TYPE_THREAD && m_set_thread.find_if( ( *it_info ).url ) )
         || ( ( ( *it_info ).type == TYPE_BOARD || ( *it_info ).type == TYPE_VBOARD )  && m_set_board.find( ( *it_info ).url ) != m_set_board.end() )
-        || ( ( *it_info ).type == TYPE_IMAGE && m_set_image.find( ( *it_info ).url ) != m_set_image.end() ) 
+        || ( ( *it_info ).type == TYPE_IMAGE && m_set_image.find( ( *it_info ).url ) != m_set_image.end() )
         ){
 
         std::vector< Gtk::TreePath > del_path;
@@ -2976,7 +2977,7 @@ void BBSListViewBase::remove_item( const std::string& url )
     if( url_target.empty() ) url_target = DBTREE::url_boardbase( url );
     if( url_target.empty() && DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ) url_target = url;
     if( url_target.empty() ) return;
-        
+
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::remove_item url = " << url_target << std::endl;
 #endif
@@ -3111,7 +3112,7 @@ void BBSListViewBase::save_xml_impl( const std::string& file, const std::string&
         while( it != domlist.end() )
         {
             if( (*it)->nodeName() == "subdir"
-                && (*it)->getAttribute( "name" ) == remove_dir )    
+                && (*it)->getAttribute( "name" ) == remove_dir )
             {
                 domroot->removeChild( *it );
                 break;

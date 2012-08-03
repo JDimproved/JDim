@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "menubutton.h"
 
@@ -88,11 +89,11 @@ MenuButton::~MenuButton()
 
 void MenuButton::set_tooltip_arrow( const std::string& tooltip )
 {
-#if GTKMM_MINOR_VERSION < 12
+#if GTKMM_CHECK_VERSION(2,13,0)
+    if( m_arrow ) m_tooltip_arrow.set_tip( *m_arrow, tooltip );
+#else
     // gtkmm-2.12.0より前のバージョンはボタンの中のWidgetにツールチップを設定できない
     m_tooltip_arrow.set_tip( *this, tooltip );
-#else
-    if( m_arrow ) m_tooltip_arrow.set_tip( *m_arrow, tooltip );
 #endif
 }
 
@@ -246,7 +247,7 @@ void MenuButton::check_on_arrow( int ex )
     else m_on_arrow = false;
 
 #ifdef _DEBUG
-    std::cout << "MenuButton::check_on_arrow x = " << ex << " / " << x 
+    std::cout << "MenuButton::check_on_arrow x = " << ex << " / " << x
               << " on = " << m_on_arrow << std::endl;
 #endif
 }

@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "usrcmdmanager.h"
 #include "command.h"
@@ -257,7 +258,7 @@ void Usrcmd_Manager::exec( const std::string command, // コマンド
     }
 
     cmd = replace_cmd( cmd, url, link, selection, number );
-       
+
 #ifdef _DEBUG
     std::cout << "exec " << cmd << std::endl;
 #endif
@@ -294,7 +295,7 @@ const std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
                                                const std::string& url,
                                                const std::string& link,
                                                const std::string& text,
-                                               const int number                                         
+                                               const int number
     )
 {
     std::string cmd_out = cmd;
@@ -433,7 +434,7 @@ const bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const
         if( DBIMG::get_type_ext( link ) == DBIMG::T_UNKNOWN ) return false;
         if( ! DBIMG::is_cached( link ) ) return false;
     }
-    
+
     return true;
 }
 
@@ -500,7 +501,7 @@ const std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionG
     std::list< XML::Dom* >::iterator it = domlist.begin();
     while( it != domlist.end() )
     {
-        if( (*it)->nodeType() == XML::NODE_TYPE_ELEMENT )    
+        if( (*it)->nodeType() == XML::NODE_TYPE_ELEMENT )
         {
 #ifdef _DEBUG
             std::cout << "name = " << (*it)->nodeName() << std::endl;
@@ -512,7 +513,7 @@ const std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionG
                 const std::string name = (*it)->getAttribute( "name" );
 #ifdef _DEBUG
                 std::cout << "[" << dirno << "] " << name << std::endl;
-#endif                    
+#endif
                 const std::string dirname = "usrcmd_dir" + MISC::itostr( dirno );
                 action_group->add( Gtk::Action::create( dirname, name ) );
                 ++dirno;
@@ -532,7 +533,7 @@ const std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionG
                     const std::string name = (*it)->getAttribute( "name" );
 #ifdef _DEBUG
                     std::cout << "[" << cmdno << "] " << name << std::endl;
-#endif                    
+#endif
                     const std::string cmdname = "usrcmd" + MISC::itostr( cmdno );
                     action_group->add( Gtk::Action::create( cmdname, name ) );
                     ++cmdno;
@@ -570,7 +571,7 @@ void Usrcmd_Manager::toggle_sensitive( Glib::RefPtr< Gtk::ActionGroup >& action_
         Glib::RefPtr< Gtk::Action > act = get_action( action_group, i );
         if( act ){
 
-#if GTKMM_MINOR_VERSION >= 6
+#if GTKMM_CHECK_VERSION(2,6,0)
             if( is_hide( i, url_article ) ) act->set_visible( false );
             else{
 
@@ -586,7 +587,7 @@ void Usrcmd_Manager::toggle_sensitive( Glib::RefPtr< Gtk::ActionGroup >& action_
 #else
             if( is_sensitive( i, url_link, str_select ) ) act->set_sensitive( true );
             else act->set_sensitive( false );
-#endif            
+#endif
         }
     }
 }

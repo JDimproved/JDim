@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "usrcmdpref.h"
 #include "usrcmdmanager.h"
@@ -70,7 +71,7 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
       m_ckbt_hide_usrcmd( "選択不可のユーザコマンドを非表示にする", true )
 {
     m_treestore = Gtk::TreeStore::create( m_columns );
-#if GTKMM_MINOR_VERSION <= 6
+#if !GTKMM_CHECK_VERSION(2,7,0)
     // gtkmm26以下にはunset_model()が無いのでここでset_model()しておく
     // それ以上は m_treeview.xml2tree() でセットする
     m_treeview.set_treestore( m_treestore );
@@ -93,7 +94,7 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     get_vbox()->pack_start( m_label );
     get_vbox()->pack_start( m_scrollwin );
 
-#if GTKMM_MINOR_VERSION >= 6
+#if !GTKMM_CHECK_VERSION(2,7,0)
     m_ckbt_hide_usrcmd.set_active( CONFIG::get_hide_usrcmd() );
     get_vbox()->pack_start( m_ckbt_hide_usrcmd, Gtk::PACK_SHRINK );
 #endif
@@ -107,7 +108,7 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     m_action_group->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
     m_action_group->add( Gtk::Action::create( "Delete", "削除する(_D)"), sigc::mem_fun( *this, &UsrCmdPref::slot_delete ) );
 
-    Glib::ustring str_ui = 
+    Glib::ustring str_ui =
     "<ui>"
 
     "<popup name='popup_menu'>"
@@ -131,7 +132,7 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
 
     "</ui>";
 
-    m_ui_manager = Gtk::UIManager::create();    
+    m_ui_manager = Gtk::UIManager::create();
     m_ui_manager->insert_action_group( m_action_group );
     m_ui_manager->add_ui_from_string( str_ui );
 

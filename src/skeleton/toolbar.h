@@ -9,6 +9,7 @@
 #include "jdtoolbar.h"
 
 #include <gtkmm.h>
+#include "gtkmmversion.h"
 
 namespace SKELETON
 {
@@ -28,7 +29,7 @@ namespace SKELETON
 
         bool m_enable_slot;
 
-#if GTKMM_MINOR_VERSION < 12
+#if !GTKMM_CHECK_VERSION(2,13,0)
         Gtk::Tooltips m_tooltip;
 #endif
 

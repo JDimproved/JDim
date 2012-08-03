@@ -8,6 +8,7 @@
 #define _JDWINDOW_H
 
 #include <gtkmm.h>
+#include "gtkmmversion.h"
 
 #include "vbox.h"
 
@@ -39,14 +40,14 @@ namespace SKELETON
         // ステータスバー
         std::string m_status;
 
-#if GTKMM_MINOR_VERSION <= 4
-        Gtk::Statusbar m_statbar;
-#else
+#if GTKMM_CHECK_VERSION(2,5,0)
         Gtk::HBox m_statbar;
         Gtk::Label m_label_stat;
         Gtk::EventBox m_label_stat_ebox;
         Gtk::EventBox m_mginfo_ebox;
         Gtk::Tooltips m_tooltip;
+#else
+        Gtk::Statusbar m_statbar;
 #endif
         Gtk::Label m_mginfo;
 

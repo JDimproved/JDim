@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "iconmanager.h"
 #include "iconfiles.h"
@@ -49,7 +50,7 @@
 #include "link.h"
 #include "info.h"
 
-#if GTKMM_MINOR_VERSION <= 4
+#if !GTKMM_CHECK_VERSION(2,5,0)
 #include "play.h"
 #endif
 
@@ -126,7 +127,7 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::OLD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_down ), icon_down );
     m_list_icons[ ICON::INFO ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_info ), icon_info );
 
-    // スレビューで使用するアイコン    
+    // スレビューで使用するアイコン
     m_list_icons[ ICON::BKMARK_THREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_bkmark_thread ), icon_bkmark_thread );
     m_list_icons[ ICON::POST ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_post ), icon_post );
     m_list_icons[ ICON::POST_REFER ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_post_refer ), icon_post_refer );
@@ -175,10 +176,10 @@ ICON_Manager::ICON_Manager()
 
     // スレビュー
     m_list_icons[ ICON::SEARCH ]  = m_dummy.render_icon( Gtk::Stock::FIND, Gtk::ICON_SIZE_MENU );
-#if GTKMM_MINOR_VERSION <= 4
-    m_list_icons[ ICON::LIVE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_play ), icon_play );
+#if GTKMM_CHECK_VERSION(2,5,0)
+    m_list_icons[ ICON::LIVE ]  = m_dummy.render_icon( Gtk::Stock::MEDIA_PLAY, Gtk::ICON_SIZE_MENU );
 #else
-    m_list_icons[ ICON::LIVE ]  = m_dummy.render_icon( Gtk::Stock::MEDIA_PLAY, Gtk::ICON_SIZE_MENU );    
+    m_list_icons[ ICON::LIVE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_play ), icon_play );
 #endif
 
     // 検索バー

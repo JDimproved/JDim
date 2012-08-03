@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "edittreeview.h"
 #include "editcolumns.h"
@@ -342,7 +343,7 @@ void EditTreeView::xml2tree( XML::Document& document, Glib::RefPtr< Gtk::TreeSto
 
     treestore->clear();
 
-#if GTKMM_MINOR_VERSION >= 8
+#if GTKMM_CHECK_VERSION(2,8,0)
     unset_model();
 #endif
 
@@ -352,7 +353,7 @@ void EditTreeView::xml2tree( XML::Document& document, Glib::RefPtr< Gtk::TreeSto
     // Domノードから Gtk::TreeStore をセット
     document.set_treestore( treestore, m_columns, root_name, list_path_expand );
 
-#if GTKMM_MINOR_VERSION >= 8
+#if GTKMM_CHECK_VERSION(2,8,0)
     set_treestore( treestore );
 #endif
 
@@ -498,8 +499,8 @@ Gtk::TreeViewColumn* EditTreeView::create_column( const int ypad )
     col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
 
     // 実際の描画時に偶数行に色を塗る
-    col->set_cell_data_func( *col->get_first_cell_renderer(), sigc::mem_fun( *this, &DragTreeView::slot_cell_data ) );    
-    col->set_cell_data_func( *m_ren_text, sigc::mem_fun( *this, &DragTreeView::slot_cell_data ) );    
+    col->set_cell_data_func( *col->get_first_cell_renderer(), sigc::mem_fun( *this, &DragTreeView::slot_cell_data ) );
+    col->set_cell_data_func( *m_ren_text, sigc::mem_fun( *this, &DragTreeView::slot_cell_data ) );
 
     append_column( *col );
 
@@ -527,7 +528,7 @@ const Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
     const bool scroll = false;
     const bool force = false;
     //  append_info 内でundoのコミットをしないで名前を変更してからslot_ren_text_on_canceled()でコミットする
-    const bool cancel_undo_commit = true; 
+    const bool cancel_undo_commit = true;
     const int check_dup = 0; // 項目の重複チェックをしない
     append_info( list_info, path, before, scroll, force, cancel_undo_commit, check_dup );
 
@@ -584,7 +585,7 @@ const Gtk::TreePath EditTreeView::create_newcomment( const Gtk::TreePath& path )
     const bool scroll = false;
     const bool force = false;
     //  append_info 内でundoのコミットをしないで名前を変更してからslot_ren_text_on_canceled()でコミットする
-    const bool cancel_undo_commit = true; 
+    const bool cancel_undo_commit = true;
     const int check_dup = 0; // 項目の重複チェックをしない
     append_info( list_info, path, before, scroll, force, cancel_undo_commit, check_dup );
 
@@ -614,7 +615,7 @@ void EditTreeView::rename_row( const Gtk::TreePath& path )
 //
 void EditTreeView::slot_ren_text_on_edited( const Glib::ustring& path, const Glib::ustring& text )
 {
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "EditTreeView::slot_ren_text_on_edited\n"
               << "path = " << path << std::endl
               << "text = " << text << std::endl;
@@ -638,7 +639,7 @@ void EditTreeView::slot_ren_text_on_edited( const Glib::ustring& path, const Gli
 //
 void EditTreeView::slot_ren_text_on_canceled()
 {
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "EditTreeView::slot_ren_text_on_canceld\n";
 #endif
 
@@ -769,7 +770,7 @@ void EditTreeView::on_drag_data_received( const Glib::RefPtr<Gdk::DragContext>& 
                   << " before = " << m_row_dest_before
                   << " other = " << m_dropped_from_other
                   << std::endl;
-#endif  
+#endif
 
         // 同じ widget からドロップされた場合は上書きになっていないかチェックする
         if( m_row_dest && ! m_dropped_from_other ){
@@ -779,7 +780,7 @@ void EditTreeView::on_drag_data_received( const Glib::RefPtr<Gdk::DragContext>& 
 
 #ifdef _DEBUG
                 std::cout << ( *it ).name << " path = " << ( *it ).path << std::endl;
-#endif    
+#endif
 
                 if( ( *it ).path.empty() ) continue;
 
@@ -838,7 +839,7 @@ bool EditTreeView::on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, 
 {
 #ifdef _DEBUG
     std::cout << "EditTreeView::on_drag_drop\n";
-#endif    
+#endif
 
     const bool ret = DragTreeView::on_drag_drop( context, x, y, time );
     if( ! get_model() ) return ret;
@@ -857,7 +858,7 @@ bool EditTreeView::on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, 
     std::cout << "path_dest = " << path_dest.to_string()
               << " before = " << before
               << std::endl;
-#endif    
+#endif
 
     // 共有バッファ内の行を追加
     const bool scroll = false;
@@ -1077,7 +1078,7 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
 
 #ifdef _DEBUG
         std::cout << "checking duplicatiion\n";
-#endif        
+#endif
 
         CORE::DATA_INFO_LIST::const_iterator it_info = list_info.begin();
         for( ; it_info != list_info.end(); ++it_info ){
@@ -1576,7 +1577,7 @@ const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const 
     std::cout << "EditTreeView::append_one_row : " << name << " path = " << path_dest.to_string()
               << " before = " << before
               << " subdir = " << subdir << std::endl;
-#endif    
+#endif
 
     Gtk::TreeRow row_dest = get_row( path_dest );
     Gtk::TreeRow row_new;
@@ -1738,7 +1739,7 @@ void EditTreeView::delete_rows( const CORE::DATA_INFO_LIST& list_info, const Gtk
 
     CORE::DATA_INFO_LIST::const_iterator it = list_info.end();
     do{
- 
+
         --it;
 
         const CORE::DATA_INFO& info = ( *it );
@@ -1798,7 +1799,7 @@ void EditTreeView::sort( const Gtk::TreePath& path, const int mode )
     if( is_dir( path_head ) ) path_head.down();
     else while( path_head.prev() );
     if( ! get_row( path_head ) ) return;
-    
+
     Gtk::TreePath path_parent = path_head;
     if( path_parent.get_depth() >= 2 ) path_parent.up();
     else path_parent = Gtk::TreePath();

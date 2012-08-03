@@ -64,9 +64,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
       m_vbox_view( NULL )
 {
     // ステータスバー
-#if GTKMM_MINOR_VERSION <= 4
-    if( need_mginfo ) m_statbar.pack_start( m_mginfo );
-#else
+#if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_size_request( 0, -1 );
     m_label_stat.set_alignment( Gtk::ALIGN_LEFT );
     m_label_stat.set_selectable( true );
@@ -84,6 +82,8 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
 
     m_mginfo.set_width_chars( MGINFO_CHARS );
     m_mginfo.set_alignment( Gtk::ALIGN_LEFT );
+#else
+    if( need_mginfo ) m_statbar.pack_start( m_mginfo );
 #endif
 
     m_statbar.show_all_children();
@@ -189,7 +189,7 @@ void JDWindow::clock_in()
 
             waitcount = FOCUS_TIME / TIMER_TIMEOUT;
             ++m_counter;
-            if( m_counter > waitcount && ! ( m_counter % waitcount ) ){ 
+            if( m_counter > waitcount && ! ( m_counter % waitcount ) ){
 
                 if( get_height() < get_height_win() ) resize( get_width_win(), get_height_win() );
                 else{
@@ -207,7 +207,7 @@ void JDWindow::clock_in()
         else if( m_mode == JDWIN_UNGRAB ){
 
             ++m_counter;
-            if( m_counter > UNGRAB_TIME / TIMER_TIMEOUT ){ 
+            if( m_counter > UNGRAB_TIME / TIMER_TIMEOUT ){
 #ifdef _DEBUG
                 std::cout << "JDWindow::clock_in ungrab\n";
 #endif
@@ -217,7 +217,7 @@ void JDWindow::clock_in()
                 set_transient( false );
                 get_window()->lower();
                 set_transient( true );
-                
+
                 CORE::core_set_command( "restore_focus", "", "present" );
                 m_mode = JDWIN_FOLD;
             }
@@ -277,7 +277,7 @@ void JDWindow::iconify_win()
 
 //
 // ウィンドウ移動
-// 
+//
 void JDWindow::move_win( const int x, const int y )
 {
     if( ! CONFIG::get_manage_winpos() ) return;
@@ -381,11 +381,11 @@ void JDWindow::set_status( const std::string& stat )
 
     m_status = stat;
 
-#if GTKMM_MINOR_VERSION <= 4
-    m_statbar.push( stat );
-#else
+#if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_text( stat );
     m_tooltip.set_tip( m_label_stat_ebox, stat );
+#else
+    m_statbar.push( stat );
 #endif
 }
 
@@ -398,20 +398,20 @@ void JDWindow::set_status_temporary( const std::string& stat )
 {
     if( stat == m_status ) return;
 
-#if GTKMM_MINOR_VERSION <= 4
-    m_statbar.push( stat );
-#else
+#if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_text( stat );
+#else
+    m_statbar.push( stat );
 #endif
 }
 
 // 一時的に変えたステータスバーの表示を戻す
 void JDWindow::restore_status()
 {
-#if GTKMM_MINOR_VERSION <= 4
-    m_statbar.push( m_status );
-#else
+#if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_text( m_status );
+#else
+    m_statbar.push( m_status );
 #endif
 }
 
@@ -426,7 +426,7 @@ void JDWindow::set_mginfo( const std::string& mginfo )
 // ステータスの色を変える
 void JDWindow::set_status_color( const std::string& color )
 {
-#if GTKMM_MINOR_VERSION > 4
+#if GTKMM_CHECK_VERSION(2,5,0)
 
 #ifdef _DEBUG
     std::cout << "JDWindow::set_status_color " << color << std::endl;
@@ -665,7 +665,7 @@ bool JDWindow::on_window_state_event( GdkEventWindowState* event )
     const bool fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
 
 #ifdef _DEBUG
-    std::cout << "JDWindow::on_window_state_event : " 
+    std::cout << "JDWindow::on_window_state_event : "
               << "maximized = " << is_maximized_win() << " -> " << maximized
               << " / iconified = " << is_iconified_win() << " -> " << iconified
               << " / full = " << is_full_win() << " -> " << fullscreen << std::endl;
@@ -703,7 +703,7 @@ bool JDWindow::on_window_state_event( GdkEventWindowState* event )
 
 #ifdef _DEBUG
         std::cout << " mode = " << m_mode << std::endl;
-#endif     
+#endif
     }
 
     set_maximized_win( maximized );
@@ -752,12 +752,12 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
         }
 
 #ifdef _DEBUG
-    std::cout << "configure fin --> mode = " << m_mode << " show = " << is_shown_win() 
+    std::cout << "configure fin --> mode = " << m_mode << " show = " << is_shown_win()
               << " maximized = " << is_maximized_win()
               << " iconified = " << is_iconified_win()
               << " x = " << get_x_win() << " y = " << get_y_win()
               << " w = " << get_width_win() << " height = " << get_height_win() << std::endl;
-#endif     
+#endif
     }
 
     return Gtk::Window::on_configure_event( event );

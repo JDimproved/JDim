@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "articleadmin.h"
 #include "articleviewbase.h"
@@ -79,7 +80,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url, const std::string& url
       m_enable_live( false ),
       m_live( false )
 {
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "ArticleViewBase::ArticleViewBase : " << get_url() << " : " << m_url_article << std::endl;
 #endif
 
@@ -99,7 +100,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url, const std::string& url
 
 ArticleViewBase::~ArticleViewBase()
 {
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "ArticleViewBase::~ArticleViewBase : " << get_url() << std::endl;
 #endif
 
@@ -149,13 +150,13 @@ DrawAreaBase* ArticleViewBase::create_drawarea()
 // セットアップ
 //
 // 各派生ビューで初期設定が済んだ後に呼ばれる
-// 
+//
 void ArticleViewBase::setup_view()
 {
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "ArticleViewBase::setup_view " << get_url() << " url_article = " << m_url_article << std::endl;
 #endif
-    
+
     m_article = DBTREE::get_article( m_url_article );
     m_drawarea = create_drawarea();
     assert( m_article );
@@ -165,7 +166,7 @@ void ArticleViewBase::setup_view()
     m_drawarea->sig_button_release().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_button_release ));
     m_drawarea->sig_motion_notify().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_motion_notify ) );
     m_drawarea->sig_key_press().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_key_press ) );
-    m_drawarea->sig_key_release().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_key_release ) );    
+    m_drawarea->sig_key_release().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_key_release ) );
     m_drawarea->sig_scroll_event().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_scroll_event ));
     m_drawarea->sig_leave_notify().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_leave_notify ) );
 
@@ -175,7 +176,7 @@ void ArticleViewBase::setup_view()
     pack_start( *m_drawarea, Gtk::PACK_EXPAND_WIDGET );
     setup_action();
 
-    show_all_children();    
+    show_all_children();
 }
 
 
@@ -184,7 +185,7 @@ void ArticleViewBase::setup_view()
 //
 void ArticleViewBase::setup_action()
 {
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "ArticleViewBase::setup_action\n";
 #endif
 
@@ -292,15 +293,15 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Show_Mosaic", "モザイクで開く(_M)"), sigc::mem_fun( *this, &ArticleViewBase::slot_show_image_with_mosaic ) );
     action_group()->add( Gtk::Action::create( "Show_SelectImg", ITEM_NAME_SELECTIMG + std::string( "(_G)" ) )
                          , sigc::mem_fun( *this, &ArticleViewBase::slot_show_selection_images ) );
-    action_group()->add( Gtk::Action::create( "DeleteSelectImage_Menu", ITEM_NAME_SELECTDELIMG + std::string( "(_T)" ) ) );    
+    action_group()->add( Gtk::Action::create( "DeleteSelectImage_Menu", ITEM_NAME_SELECTDELIMG + std::string( "(_T)" ) ) );
     action_group()->add( Gtk::Action::create( "DeleteSelectImage", "削除する(_D)"), sigc::mem_fun( *this, &ArticleViewBase::slot_delete_selection_images ) );
-    action_group()->add( Gtk::Action::create( "AboneSelectImage_Menu", ITEM_NAME_SELECTABONEIMG + std::string( "(_B)" ) ) );    
+    action_group()->add( Gtk::Action::create( "AboneSelectImage_Menu", ITEM_NAME_SELECTABONEIMG + std::string( "(_B)" ) ) );
     action_group()->add( Gtk::Action::create( "AboneSelectImage", "あぼ〜んする(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_selection_images ) );
     action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する(_P)", std::string(), false ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_toggle_protectimage ) );
-    action_group()->add( Gtk::Action::create( "DeleteImage_Menu", "削除(_D)" ) );    
+    action_group()->add( Gtk::Action::create( "DeleteImage_Menu", "削除(_D)" ) );
     action_group()->add( Gtk::Action::create( "DeleteImage", "削除する(_D)"), sigc::mem_fun( *this, &ArticleViewBase::slot_deleteimage ) );
     action_group()->add( Gtk::Action::create( "SaveImage", "名前を付けて保存(_S)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_saveimage ) );
     action_group()->add( Gtk::ToggleAction::create( "AboneImage", "画像をあぼ〜んする(_A)", std::string(), false ),
@@ -321,7 +322,7 @@ void ArticleViewBase::setup_action()
     }
 
     ui_manager().clear();
-    ui_manager() = Gtk::UIManager::create();    
+    ui_manager() = Gtk::UIManager::create();
     ui_manager()->insert_action_group( action_group() );
 
     // 削除ボタン押したときのポップアップ
@@ -537,7 +538,7 @@ const char* ArticleViewBase::get_menu_item( const int item )
 
         // 抽出
         case ITEM_DRAWOUT:
-            return 
+            return
             "<menu action='Drawout_Menu'>"
             "<menuitem action='DrawoutWord'/>"
             "<menuitem action='DrawoutBM'/>"
@@ -1012,7 +1013,7 @@ const bool ArticleViewBase::get_enable_live()
 
 //
 // マウスポインタをポップアップの上に移動する
-// 
+//
 void ArticleViewBase::warp_pointer_to_popup()
 {
     if( is_popup_shown() ){
@@ -1058,11 +1059,11 @@ const bool ArticleViewBase::operate_view( const int control )
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::operate_view control = " << control << std::endl;
-#endif    
+#endif
 
     // その他の処理
     switch( control ){
-            
+
         // リロード
         case CONTROL::Reload:
             exec_reload();
@@ -1087,7 +1088,7 @@ const bool ArticleViewBase::operate_view( const int control )
         case CONTROL::AppendFavorite:
             set_favorite();
             break;
-        
+
             // 検索
         case CONTROL::Search:
             open_searchbar( false );
@@ -1132,7 +1133,7 @@ const bool ArticleViewBase::operate_view( const int control )
             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
             mdiag.add_default_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
 
-#if GTKMM_MINOR_VERSION >= 6
+#if GTKMM_CHECK_VERSION(2,6,0)
             Gtk::Button *button = mdiag.add_button( "スレ再取得(_R)", Gtk::RESPONSE_YES + 100 );
             Gtk::Image image( Gtk::Stock::REFRESH, Gtk::ICON_SIZE_BUTTON );
             button->set_image( image );
@@ -1598,7 +1599,7 @@ const std::string ArticleViewBase::get_html_url4report( const std::list< int >& 
 //      3と4を連結して表示したい時は "3+4"
 //
 // show_title == trueの時は 板名、スレ名を表示
-// 
+//
 void ArticleViewBase::show_res( const std::string& num, const bool show_title )
 {
     assert( m_article );
@@ -1630,7 +1631,7 @@ void ArticleViewBase::show_res( const std::string& num, const bool show_title )
 
 //
 // 名前 で抽出して表示
-// 
+//
 // show_option = true の時は URL 表示などのオプションが表示される
 //
 void ArticleViewBase::show_name( const std::string& name, bool show_option )
@@ -1640,8 +1641,8 @@ void ArticleViewBase::show_name( const std::string& name, bool show_option )
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::show_name " << name << std::endl;
 #endif
-    
-    std::list< int > list_resnum = m_article->get_res_name( name );       
+
+    std::list< int > list_resnum = m_article->get_res_name( name );
 
     std::ostringstream comment;
     comment << "名前：" << name << "  " << list_resnum.size() << " 件<br>";
@@ -1664,7 +1665,7 @@ void ArticleViewBase::show_name( const std::string& name, bool show_option )
 
 //
 // ID で抽出して表示
-// 
+//
 // show_option = true の時は URL 表示などのオプションが表示される
 //
 void ArticleViewBase::show_id( const std::string& id_name, const bool show_option )
@@ -1674,10 +1675,10 @@ void ArticleViewBase::show_id( const std::string& id_name, const bool show_optio
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::show_id " << id_name << std::endl;
 #endif
-    
-    const std::list< int > list_resnum = m_article->get_res_id_name( id_name );       
 
-    const std::string raw_id = id_name.substr( strlen( PROTO_ID ) ); 
+    const std::list< int > list_resnum = m_article->get_res_id_name( id_name );
+
+    const std::string raw_id = id_name.substr( strlen( PROTO_ID ) );
 
     std::ostringstream comment;
     comment << raw_id << "  " << list_resnum.size() << " 件<br>";
@@ -1707,7 +1708,7 @@ void ArticleViewBase::show_id( const std::string& id_name, const bool show_optio
         if( url_for_copy()[ url_for_copy().size() - 1 ] != '/' ) comment << "/";
         comment << MISC::intlisttostr( list_resnum ) << "<br><hr>";
     }
-      
+
     append_html( comment.str() );
 
     if( ! list_resnum.empty() ) append_res( list_resnum );
@@ -1725,7 +1726,7 @@ void ArticleViewBase::show_bm()
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::show_bm " << std::endl;
 #endif
-    
+
     std::list< int > list_resnum = m_article->get_res_bm();
 
     if( ! list_resnum.empty() ) append_res( list_resnum );
@@ -1743,7 +1744,7 @@ void ArticleViewBase::show_post()
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::show_post " << std::endl;
 #endif
-    
+
     std::list< int > list_resnum = m_article->get_res_posted();
 
     if( ! list_resnum.empty() ){
@@ -1792,7 +1793,7 @@ void ArticleViewBase::show_postlog( const int num )
 
 //
 // URLを含むレスを抽出して表示
-// 
+//
 void ArticleViewBase::show_res_with_url()
 {
     assert( m_article );
@@ -1811,7 +1812,7 @@ void ArticleViewBase::show_res_with_url()
 
 //
 // num 番のレスを参照してるレスを抽出して表示
-// 
+//
 void ArticleViewBase::show_refer( int num )
 {
     assert( m_article );
@@ -1838,7 +1839,7 @@ void ArticleViewBase::show_refer( int num )
 
 //
 // キーワードで抽出して表示
-// 
+//
 // mode_or = true の時は or 検索
 // show_option = true の時は URL 表示などのオプションが表示される
 //
@@ -1850,7 +1851,7 @@ void ArticleViewBase::drawout_keywords( const std::string& query, bool mode_or, 
     std::cout << "ArticleViewBase::drawout_keywords " << query << std::endl;
 #endif
 
-    std::list< int > list_resnum = m_article->get_res_query( query, mode_or );         
+    std::list< int > list_resnum = m_article->get_res_query( query, mode_or );
 
     std::ostringstream comment;
     comment << query << "  " << list_resnum.size() << " 件";
@@ -2001,7 +2002,7 @@ bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkE
     const int mg = get_control().MG_end( event );
 
     // ホイールマウスジェスチャ
-    // 実行された場合は何もしない 
+    // 実行された場合は何もしない
     if( get_control().MG_wheel_end( event ) ) return true;
 
 #ifdef _DEBUG
@@ -2102,7 +2103,7 @@ bool ArticleViewBase::slot_key_release( GdkEventKey* event )
     ArticleViewBase* popup_article = NULL;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
     if( popup_article ) return popup_article->slot_key_release( event );
-   
+
     return true;
 }
 
@@ -2139,7 +2140,7 @@ bool ArticleViewBase::slot_scroll_event( GdkEventScroll* event )
 void ArticleViewBase::slot_on_url( std::string url, std::string imgurl, int res_number )
 {
 
-#ifdef _DEBUG    
+#ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_on_url = " << url
               << " imgurl = " << imgurl
               << std::endl;
@@ -2170,7 +2171,7 @@ void ArticleViewBase::slot_on_url( std::string url, std::string imgurl, int res_
 
         else if(
             ( ! DBIMG::is_cached( imgurl ) || CONFIG::get_use_image_popup() )
-            && ( DBIMG::is_loading( imgurl ) || DBIMG::is_wait( imgurl ) || DBIMG::get_code( imgurl ) != HTTP_INIT ) ){ 
+            && ( DBIMG::is_loading( imgurl ) || DBIMG::is_wait( imgurl ) || DBIMG::get_code( imgurl ) != HTTP_INIT ) ){
 
 #ifdef _DEBUG
             std::cout << "image " << DBIMG::get_code( imgurl) << " " << DBIMG::is_loading( imgurl ) << "\n";
@@ -2184,7 +2185,7 @@ void ArticleViewBase::slot_on_url( std::string url, std::string imgurl, int res_
 
     // レスポップアップ
     else if( url.find( PROTO_ANCHORE ) == 0 ){
-      
+
         args.arg1 = url.substr( strlen( PROTO_ANCHORE) );
         args.arg2 = "false"; // 板名、スレ名非表示
         args.arg3 = "false"; // あぼーんしたレスの内容は非表示(あぼーんと表示)
@@ -2291,7 +2292,7 @@ void ArticleViewBase::slot_on_url( std::string url, std::string imgurl, int res_
         // dat 又は板の場合
         int num_from, num_to;
         std::string num_str;
-        
+
         const std::string url_dat = DBTREE::url_dat( url, num_from, num_to, num_str );
         const std::string url_subject = DBTREE::url_subject( url );
 
@@ -2418,8 +2419,8 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     if( url.empty() ) return false;
 
     CONTROL::Control& control = get_control();
-  
-#ifdef _DEBUG    
+
+#ifdef _DEBUG
     std::cout << "ArticleViewBase::click_url " << url << std::endl;
 #endif
 
@@ -2545,7 +2546,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
               << url.substr( strlen( PROTO_BE ) )
               << "&u=d:"
               << DBTREE::url_readcgi( m_url_article, res_number, 0 );
-#ifdef _DEBUG    
+#ifdef _DEBUG
         std::cout << "open  " << ssurl.str() << std::endl;
 #endif
         if( control.button_alloted( event, CONTROL::OpenBeButton ) ) CORE::core_set_command( "open_url_browser", ssurl.str() );
@@ -2697,7 +2698,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
             // 画像ビューに切り替える
             const bool switch_image = ( open_imageview && ! control.button_alloted( event, CONTROL::OpenBackImageButton ) );
-        
+
             open_image( url, res_number, open_imageview, open_browser, mosaic, switch_image );
         }
     }
@@ -2878,7 +2879,7 @@ void ArticleViewBase::hide_popup( const bool force )
     if( popup_article ){
 
         if( ! force ){
-        
+
             // 孫のpopupが表示されてたらhideしない
             if( popup_article->is_popup_shown() ) return;
 
@@ -2963,7 +2964,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else if( url.find( PROTO_ANCHORE ) == 0 ){
             m_url_tmp = DBTREE::url_readcgi( m_url_article, atoi( url.substr( strlen( PROTO_ANCHORE ) ).c_str() ), 0 );
         }
-        
+
         else m_url_tmp = url;
     }
 
@@ -3155,7 +3156,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     act = action_group()->get_action( "TranspAbone" );
     if( act ){
 
-        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
         if( m_article->get_abone_transparent() ) tact->set_active( true );
         else tact->set_active( false );
     }
@@ -3164,14 +3165,14 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     act = action_group()->get_action( "TranspChainAbone" );
     if( act ){
 
-        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
         if( m_article->get_abone_transparent() && m_article->get_abone_chain() ) tact->set_active( true );
         else tact->set_active( false );
     }
 
 
     // 画像
-    if( ! url.empty() && DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){ 
+    if( ! url.empty() && DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){
 
         // モザイク解除
         act = action_group()->get_action( "Cancel_Mosaic" );
@@ -3202,7 +3203,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
                 act->set_sensitive( true );
 
-                Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+                Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
                 if( DBIMG::is_protected( url ) ) tact->set_active( true );
                 else tact->set_active( false );
             }
@@ -3242,7 +3243,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 
                 act->set_sensitive( true );
 
-                Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+                Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
                 if( DBIMG::get_abone( url ) ) tact->set_active( true );
                 else tact->set_active( false );
             }
@@ -3273,7 +3274,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 //
 // SKELETON::View::show_popupmenu() を参照すること
 //
-Gtk::Menu* ArticleViewBase::get_popupmenu( const std::string& url )    
+Gtk::Menu* ArticleViewBase::get_popupmenu( const std::string& url )
 {
     // 表示
     Gtk::Menu* popupmenu = NULL;
@@ -3314,7 +3315,7 @@ Gtk::Menu* ArticleViewBase::get_popupmenu( const std::string& url )
     }
 
     // 画像ポップアップメニュー
-    else if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){ 
+    else if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_img" ) );
     }
 
@@ -3332,7 +3333,7 @@ void ArticleViewBase::slot_copy_selection_str()
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_copy_selection_str " << get_url() << std::endl;
-#endif    
+#endif
 
     if( m_drawarea->str_selection().empty() ) return;
     MISC::CopyClipboard( m_drawarea->str_selection() );
@@ -3378,7 +3379,7 @@ void ArticleViewBase::slot_search_cacheall()
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_search_cacheall "<< query << std::endl;
 #endif
-    
+
     CORE::core_set_command( "open_article_searchlog", URL_SEARCH_ALLBOARD , query, "exec" );
 }
 
@@ -3399,7 +3400,7 @@ void ArticleViewBase::slot_search_cachelocal()
     std::cout << "ArticleViewBase::slot_search_cachelocal " << url << std::endl
               << query << std::endl;
 #endif
-    
+
     CORE::core_set_command( "open_article_searchlog", url , query, "exec" );
 }
 
@@ -3447,7 +3448,7 @@ void ArticleViewBase::slot_search_title()
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_search_title query = " << query << std::endl;
 #endif
-    
+
     if( query.empty() ) CORE::core_set_command( "open_article_searchtitle", "", "", "noexec" );
     else CORE::core_set_command( "open_article_searchtitle", "" , query, "exec" );
 }
@@ -3521,7 +3522,7 @@ void ArticleViewBase::slot_write_res()
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_write_res number = " << m_str_num << std::endl;
-#endif    
+#endif
 
     CORE::core_set_command( "open_message" ,m_url_article, ">>" + m_str_num + "\n" );
 }
@@ -3536,10 +3537,10 @@ void ArticleViewBase::slot_quote_res()
 {
     assert( m_article );
     if( m_str_num.empty() ) return;
-    
+
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_quote_res number = " << m_str_num << std::endl;
-#endif    
+#endif
 
     CORE::core_set_command( "open_message" ,m_url_article,
                             ">>" + m_str_num + "\n" + m_article->get_res_str( atoi( m_str_num.c_str() ), true ) );
@@ -3571,7 +3572,7 @@ void ArticleViewBase::slot_quote_selection_res()
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_quote_selection_res number = " << str_num << std::endl;
-#endif    
+#endif
 
     CORE::core_set_command( "open_message", m_url_article, ">>" + str_num + "\n" + str_res + query + "\n" );
 }
@@ -3587,7 +3588,7 @@ void ArticleViewBase::slot_copy_current_url()
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_copy_current_url url = " << m_url_tmp << std::endl;
-#endif    
+#endif
 
     MISC::CopyClipboard( m_url_tmp );
 }
@@ -3630,7 +3631,7 @@ void ArticleViewBase::slot_copy_res( bool ref )
 
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::copy_res number = " << m_str_num << std::endl;
-#endif    
+#endif
 
     std::string tmpstr = m_url_tmp + "\n";
     if( ref ) tmpstr += CONFIG::get_ref_prefix();
@@ -3963,7 +3964,7 @@ void ArticleViewBase::slot_show_image_with_mosaic()
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_show_image_with_mosaic url = " << m_url_tmp << " num = " << m_str_num << std::endl;
-#endif    
+#endif
 
     if( DBIMG::is_cached( m_url_tmp ) ) return;
 
@@ -3974,7 +3975,7 @@ void ArticleViewBase::slot_show_image_with_mosaic()
     const bool open_browser = ! open_imageview;
     const bool mosaic = true;
     const bool switch_image = open_imageview;
-        
+
     open_image( m_url_tmp, res_number, open_imageview, open_browser, mosaic, switch_image );
 }
 
@@ -3987,7 +3988,7 @@ void ArticleViewBase::slot_show_selection_images()
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_show_selection_images\n";
-#endif    
+#endif
 
     if( m_drawarea->get_selection_imgurls().size() ){
 
@@ -4009,7 +4010,7 @@ void ArticleViewBase::slot_show_selection_images()
 
 #ifdef _DEBUG
             std::cout << url << " - " << res_number << " : " << refurl << std::endl;
-#endif            
+#endif
 
             if( ! DBIMG::is_cached( url ) ){
 
@@ -4032,7 +4033,7 @@ void ArticleViewBase::slot_delete_selection_images()
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_delete_selection_images\n";
-#endif    
+#endif
 
     if( m_drawarea->get_selection_imgurls().size() ){
 
@@ -4055,7 +4056,7 @@ void ArticleViewBase::slot_abone_selection_images()
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_abone_selection_images\n";
-#endif    
+#endif
 
     if( m_drawarea->get_selection_imgurls().size() ){
 

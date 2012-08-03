@@ -14,6 +14,7 @@
 #include "dndmanager.h"
 
 #include <gtk/gtk.h>
+#include "gtkmmversion.h"
 
 using namespace SKELETON;
 
@@ -22,7 +23,7 @@ using namespace SKELETON;
 // gtknotebook.c( Revision 19311, 2008-01-06 ) より引用
 //
 // gtkのバージョンが上がったときに誤動作しないかどうか注意
-// 
+//
 
 typedef enum
 {
@@ -248,17 +249,17 @@ void TabNotebook::draw_arrow( GtkWidget *widget,
 
     if( nbarrow == ARROW_LEFT_BEFORE ) arrow = Gtk::ARROW_LEFT;
     else arrow = Gtk::ARROW_RIGHT;
- 
+
     get_style()->paint_arrow( win,
                               state_type,
-                              shadow_type, 
+                              shadow_type,
                               rect,
                               *this,
                               "notebook",
                               arrow,
                               TRUE,
                               arrow_rect.x,
-                              arrow_rect.y, 
+                              arrow_rect.y,
                               arrow_rect.width,
                               arrow_rect.height
         );
@@ -272,7 +273,7 @@ void TabNotebook::get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook
     GdkRectangle event_window_pos;
     if( get_event_window_position( widget, notebook, &event_window_pos ) ){
 
-#if GTKMM_MINOR_VERSION >= 9
+#if GTKMM_CHECK_VERSION(2,9,0)
         gtk_widget_style_get( widget,
                               "scroll-arrow-hlength", &rectangle->width,
                               "scroll-arrow-vlength", &rectangle->height,
@@ -379,7 +380,7 @@ void TabNotebook::clock_in()
     // 応急処置としてタイマーの中でサイズが変更したか調べて
     // 変わっていたらタブ幅を調整する
     if( ! m_fixtab && get_n_pages() && m_pre_width != get_width()
-        && ! SESSION::is_booting() 
+        && ! SESSION::is_booting()
         && ! SESSION::is_quitting()
         ){
 

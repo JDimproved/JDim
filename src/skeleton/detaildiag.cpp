@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "detaildiag.h"
 #include "view.h"
@@ -18,7 +19,7 @@ DetailDiag::DetailDiag( Gtk::Window* parent, const std::string& url,
       m_message( message ),
       m_detail( NULL )
 {
-#if GTKMM_MINOR_VERSION >= 6
+#if GTKMM_CHECK_VERSION(2,6,0)
     m_message.set_width_chars( 60 );
 #endif
     m_message.set_line_wrap( true );

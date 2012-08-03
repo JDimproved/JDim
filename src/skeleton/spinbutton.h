@@ -10,6 +10,7 @@
 #define _SPINBUTTON_H
 
 #include <gtkmm.h>
+#include "gtkmmversion.h"
 
 namespace SKELETON
 {
@@ -22,7 +23,7 @@ namespace SKELETON
 
       protected:
 
-#if GTKMM_MINOR_VERSION <= 4
+#if !GTKMM_CHECK_VERSION(2,5,0)
         virtual void on_spinbutton_digits_changed(){
             const size_t size = 256;
             char str[ size ];
@@ -41,7 +42,7 @@ namespace SKELETON
 
       protected:
 
-#if GTKMM_MINOR_VERSION <= 4
+#if !GTKMM_CHECK_VERSION(2,5,0)
         virtual void on_spinbutton_digits_changed(){
             const size_t size = 256;
             char str[ size ];

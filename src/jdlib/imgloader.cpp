@@ -3,6 +3,7 @@
 //#define _DEBUG
 //#define _VERBOSE
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "imgloader.h"
 #include "cache.h"
@@ -128,7 +129,7 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
     const size_t bufsize = 8192;
     size_t readsize = 0;
     guint8 data[ bufsize ];
-#if GTKMM_MINOR_VERSION <= 4
+#if !GTKMM_CHECK_VERSION(2,5,0)
     bool size_prepared = false;
 #endif
 
@@ -141,7 +142,7 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
     try {
         m_loader = Gdk::PixbufLoader::create();
 
-#if GTKMM_MINOR_VERSION > 4
+#if GTKMM_CHECK_VERSION(2,5,0)
         m_loader->signal_size_prepared().connect( sigc::mem_fun( *this, &ImgLoader::slot_size_prepared ) );
 #endif
         m_loader->signal_area_updated().connect( sigc::mem_fun( *this, &ImgLoader::slot_area_updated ) );
@@ -160,7 +161,7 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
                 break;
             }
 
-#if GTKMM_MINOR_VERSION <= 4 // gdkのバージョンが古い場合はpixbufを取得してサイズを得る
+#if !GTKMM_CHECK_VERSION(2,5,0) // gdkのバージョンが古い場合はpixbufを取得してサイズを得る
             if( ! size_prepared && m_loader->get_pixbuf() ){
                 size_prepared = true;
                 m_width = m_loader->get_pixbuf()->get_width();

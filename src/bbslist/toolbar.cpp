@@ -2,6 +2,7 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#include "gtkmmversion.h"
 
 #include "toolbar.h"
 #include "bbslistadmin.h"
@@ -48,7 +49,7 @@ BBSListToolBar::BBSListToolBar() :
     m_button_toggle.get_button()->signal_scroll_event().connect(  sigc::mem_fun( *this, &BBSListToolBar::slot_scroll_event ));
     m_button_toggle.get_button()->set_enable_sig_clicked( false );
 
-#if GTKMM_MINOR_VERSION >= 12
+#if GTKMM_CHECK_VERSION(2,12,0)
     m_tool_label.set_icon_size( Gtk::ICON_SIZE_MENU );
 #endif
     m_tool_label.set_toolbar_style( Gtk::TOOLBAR_ICONS );
@@ -148,39 +149,39 @@ void BBSListToolBar::set_view( SKELETON::View* view )
 
 void BBSListToolBar::slot_toggle( const int i )
 {
-#ifdef _DEBUG 	 
+#ifdef _DEBUG
      std::cout << "BBSListToolBar::slot_toggle = " << get_url() << " i = " << i << std::endl;
-#endif 	 
-  	 
+#endif
+
      switch( i ){
-  	 
+
          case 0:
-             if( get_url() != URL_BBSLISTVIEW ) CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW ); 	 
-             break; 	 
-  	 
+             if( get_url() != URL_BBSLISTVIEW ) CORE::core_set_command( "switch_sidebar", URL_BBSLISTVIEW );
+             break;
+
          case 1:
-             if( get_url() != URL_FAVORITEVIEW ) CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW ); 	 
-             break; 	 
+             if( get_url() != URL_FAVORITEVIEW ) CORE::core_set_command( "switch_sidebar", URL_FAVORITEVIEW );
+             break;
 
          case 2:
-             if( get_url() != URL_HISTTHREADVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTTHREADVIEW ); 	 
-             break; 	 
+             if( get_url() != URL_HISTTHREADVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTTHREADVIEW );
+             break;
 
          case 3:
              if( get_url() != URL_HISTBOARDVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTBOARDVIEW );
-             break; 	 
+             break;
 
          case 4:
              if( get_url() != URL_HISTCLOSEVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTCLOSEVIEW );
-             break; 	 
+             break;
 
          case 5:
              if( get_url() != URL_HISTCLOSEBOARDVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTCLOSEBOARDVIEW );
-             break; 	 
+             break;
 
          case 6:
              if( get_url() != URL_HISTCLOSEIMGVIEW ) CORE::core_set_command( "switch_sidebar", URL_HISTCLOSEIMGVIEW );
-             break; 	 
+             break;
      }
 }
 
