@@ -1263,43 +1263,44 @@ const std::string MISC::Iconv( const std::string& str, const std::string& coding
 //
 const int MISC::spchar_number_ln( const char* in_char, int& offset )
 {
-    int lng;
+    int lng = 0;
     offset = 2;
 
     // offset == 2 なら 10 進数、3 なら16進数
     if( in_char[ offset ] == 'x' || in_char[ offset ] == 'X' ) ++offset;
 
-    // 桁数取得(最大4桁)
-    if( in_char[ offset ] == ';' ) return -1;
-    else if( in_char[ offset +1 ] == ';' ) lng = 1;
-    else if( in_char[ offset +2 ] == ';' ) lng = 2;
-    else if( in_char[ offset +3 ] == ';' ) lng = 3;
-    else if( in_char[ offset +4 ] == ';' ) lng = 4;
-    else if( in_char[ offset +5 ] == ';' ) lng = 5;
-    else return -1;
+    // UCS2の2バイトの範囲でデコードするので最大65535
+    // デコードするとき「;」で終端されていなくてもよい
 
     // デコード可能かチェック
-
     // 10 進数
     if( offset == 2 ){
 
-        for( int i = 0; i < lng; ++i ){
-            if( in_char[ offset + i ] < '0' || in_char[ offset + i ] > '9' ) return -1;
+        // 最大5桁 (&#65536;)
+        for( lng = 0; lng <= 5; lng++ ){
+            if( in_char[ offset + lng ] < '0' || in_char[ offset + lng ] > '9' ) break;
         }
+        
+        // 桁数チェック
+        if( lng == 0 || lng == 6 ) return -1;
     }
 
     // 16 進数
     else{
 
-        for( int i = 0; i < lng; ++i ){
+        // 最大4桁 (&#xFFFF;)
+        for( lng = 0; lng <= 4; lng++ ){
             if(
                 ! (
-                    ( in_char[ offset + i ] >= '0' && in_char[ offset + i ] <= '9' )
-                    || ( in_char[ offset + i ] >= 'a' && in_char[ offset + i ] <= 'f' )
-                    || ( in_char[ offset + i ] >= 'A' && in_char[ offset + i ] <= 'F' )
+                    ( in_char[ offset + lng ] >= '0' && in_char[ offset + lng ] <= '9' )
+                    || ( in_char[ offset + lng ] >= 'a' && in_char[ offset + lng ] <= 'f' )
+                    || ( in_char[ offset + lng ] >= 'A' && in_char[ offset + lng ] <= 'F' )
                     )
-                ) return -1;
+                ) break;
         }
+        
+        // 桁数チェック
+        if( lng == 0 || lng == 5 ) return -1;
     }
 
     return lng;

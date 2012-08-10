@@ -66,7 +66,9 @@ const int decode_char_number( const char* in_char, int& n_in,  char* out_char, i
             if( ! n_out ) return DBTREE::NODE_NONE;
     }
 
-    n_in = offset + lng + 1;
+    n_in = offset + lng;
+    if( in_char[n_in] == ';' ) n_in++; // 数値文字参照の終端「;」の場合は1文字削除
+    
     if( out_char ) out_char[ n_out ] = '\0';
 
     return ret;
