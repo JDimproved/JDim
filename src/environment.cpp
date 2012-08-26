@@ -282,8 +282,35 @@ std::string ENVIRONMENT::get_distname()
     std::string tmp;
     std::string text_data;
 
+    // 各ディストリビューション共通の形式として定められた
+    // http://www.freedesktop.org/software/systemd/man/os-release.html
+    // 旧形式のコードは頃合いを見て削除する予定
+    if( CACHE::load_rawdata( "/etc/os-release", text_data ) )
+    {
+        std::list< std::string > lines = MISC::get_lines( text_data );
+        std::list< std::string >::reverse_iterator it = lines.rbegin();
+        while( it != lines.rend() )
+        {
+            std::string name, value;
+
+            size_t e;
+            if( ( e = (*it).find( "=" ) ) != std::string::npos )
+            {
+                name = MISC::remove_spaces( (*it).substr( 0, e ) );
+                value = MISC::remove_spaces( (*it).substr( e + 1 ) );
+            }
+
+            if( name == "PRETTY_NAME" && ! value.empty() )
+            {
+                tmp = MISC::cut_str( value, "\"", "\"" );
+                break;
+            }
+
+            ++it;
+        }
+    }
     // LSB系 ( Ubuntu ..etc )
-    if( CACHE::load_rawdata( "/etc/lsb-release", text_data ) )
+    else if( CACHE::load_rawdata( "/etc/lsb-release", text_data ) )
     {
         std::list< std::string > lines = MISC::get_lines( text_data );
         std::list< std::string >::reverse_iterator it = lines.rbegin();
@@ -325,11 +352,6 @@ std::string ENVIRONMENT::get_distname()
     {
         tmp = "Debian GNU/Linux ";
         tmp.append( text_data );
-    }
-    // Arch Linux (2012/01/24現在"/etc/arch-release"は空)
-    else if( CACHE::file_exists( "/etc/arch-release" ) == CACHE::EXIST_FILE )
-    {
-        tmp = "Arch Linux";
     }
     // Solaris系
     else if( CACHE::load_rawdata( "/etc/release", text_data ) )
