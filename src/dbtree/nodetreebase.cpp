@@ -861,14 +861,19 @@ NODE* NodeTreeBase::create_node_htab()
 NODE* NodeTreeBase::create_node_link( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold )
 {
     NODE* tmpnode = create_node_ntext( text, n, color_text, bold );
+
     if( tmpnode ){
         tmpnode->type = NODE_LINK;
-        
+
         // リンク情報セット
         tmpnode->linkinfo = ( LINKINFO* )m_heap.heap_alloc( sizeof( LINKINFO ) );
 
         tmpnode->linkinfo->link = ( char* )m_heap.heap_alloc( n_link +4 );
         memcpy( tmpnode->linkinfo->link, link, n_link ); tmpnode->linkinfo->link[ n_link ] = '\0';
+
+        // &amp; → &
+        convert_amp( tmpnode->text, n );
+        convert_amp( tmpnode->linkinfo->link, n_link );
     }
     
     return tmpnode;
@@ -2212,7 +2217,6 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             --pos;
             continue;
         }
-        
 
         ///////////////////////
         // 特殊文字デコード
@@ -2342,6 +2346,15 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
 
             *(pos_write++) = '<';
             pos += 3;
+
+            continue;
+        }
+
+        // amp
+        else if( *pos == '&' && ( *( pos + 1 ) == 'a' && *( pos + 2 ) == 'm' && *( pos + 3 ) == 'p' && *( pos + 4 ) == ';' ) ){
+
+            *(pos_write++) = '&';
+            pos += 4;
 
             continue;
         }
@@ -2576,100 +2589,101 @@ const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n
     int delim_pos = 0;
     const int linktype = MISC::is_url_scheme( str_in, &delim_pos );
 
-    if( linktype == MISC::SCHEME_NONE ) return MISC::SCHEME_NONE;
+    if( linktype == MISC::SCHEME_NONE ) return linktype;
 
     // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
     const bool loose_url = CONFIG::get_loose_url();
 
     // リンクの長さを取得
     n_in = delim_pos;
-    bool url_encode = false;
     int n_in_tmp, n_out_tmp;
-    char cchar = *( str_in + n_in );
+    char buf[16];
 
-    while(
-
-        // バッファサイズを超えない
-        n_in < lng_in
+    while( n_in < lng_in ){
 
         // URLとして扱う文字かどうか
-        && MISC::is_url_char( &cchar, loose_url )
+        if ( MISC::is_url_char( str_in + n_in, loose_url ) == false ) break;
 
-        // HTML特殊文字は除く( &〜; )
-        && ! (
-            *( str_in + n_in ) == '&'
-            && DBTREE::decode_char( str_in + n_in, n_in_tmp, NULL, n_out_tmp, true ) != DBTREE::NODE_NONE
-            )
-        ){
+        // HTML特殊文字( &〜; )
+        if ( *( str_in + n_in ) == '&' &&
+             DBTREE::decode_char( str_in + n_in, n_in_tmp, buf, n_out_tmp, false ) != DBTREE::NODE_NONE ){
 
-        // "^"と"|"はエンコードする
-        // "[]"はダウンローダに渡す用途のためにエンコードしないでおく
-        if( loose_url && ( cchar == '^' || cchar == '|' ) ) url_encode = true;
+             // デコード結果が"&(&amp;)"でないもの
+             if( n_out_tmp != 1 && buf[0] != '&' ) break;
+        }
 
-        ++n_in;
-        cchar = *( str_in + n_in );
+        n_in++;
     }
 
     // URLとして短かすぎる場合は除外する( 最短ドメイン名の例 "1.cc" )
     if( n_in - delim_pos < 4 ) return MISC::SCHEME_NONE;
 
-    int offset = 0;
-    if( linktype == MISC::SCHEME_TTP || linktype == MISC::SCHEME_TP ){ // ttp://, tp:// の場合、リンクの先頭にhを補完
+    char *pos = str_link;
 
-        str_link[ 0 ] = 'h';
-        offset = 1;
+    // URLスキームを修正
+    switch( linktype ){
 
-        if( linktype == MISC::SCHEME_TP ){ // tp:// の場合、さらにリンク先頭にtを補完
-            str_link[ 1 ] = 't';
-            offset = 2;
+        // ttp -> http
+        case MISC::SCHEME_TTP:
+
+            if( n_in + 1 >= lng_link ) return MISC::SCHEME_NONE;
+
+            *pos = 'h';
+            pos++;
+            break;
+
+        // tp -> http
+        case MISC::SCHEME_TP:
+
+            if( n_in + 2 >= lng_link ) return MISC::SCHEME_NONE;
+
+            *pos  = 'h';
+            *(++pos) = 't';
+            pos++;
+            break;
+
+        // sssp -> http
+        case MISC::SCHEME_SSSP:
+
+            *pos = 'h';
+            *(++pos) = 't';
+            *(++pos) = 't';
+            break;
+    }
+
+    // srr_inの文字列をstr_linkにコピー
+    int i;
+    for( i = 0; i < n_in; i++, pos++ ){
+
+        *pos = str_in[ i ];
+
+        // loose_urlで含める"^"と"|"をエンコードする
+        // "[]"はダウンローダに渡す用途のためにエンコードしないでおく
+        if( loose_url == true ){
+
+            if( str_in[ i ] == '^' ){
+
+                // '^' → "%5E"(+2Byte)
+                if( n_in + 2 >= lng_link ) return MISC::SCHEME_NONE;
+
+                *pos = '%';
+                *(++pos) = '5';
+                *(++pos) = 'E';
+            }
+            else if( str_in[ i ] == '|' ){
+
+                // '|' → "%7C"(+2Byte)
+                if( n_in + 2 >= lng_link ) return MISC::SCHEME_NONE;
+
+                *pos = '%';
+                *(++pos) = '7';
+                *(++pos) = 'C';
+            }
         }
     }
 
-    if( n_in + offset >= lng_link ) return MISC::SCHEME_NONE;
-
-    if( ! url_encode ){
-        memcpy( str_link + offset, str_in, n_in );
-        str_link[ n_in + offset ] = '\0';
-    }
-    else{ // URLエンコードが必要な場合
-
-        char *pos = str_link + offset;
-        int tmp_out = offset;
-        for( int i = 0; i < n_in; ++i, ++pos ){
-
-            if( str_in[ i ] == '^' ){ // '^' -> %5e
-                *( pos++ ) = '%';
-                *( pos++ ) = '5';
-                *pos = 'e';
-                tmp_out += 3;
-            }
-            else if( str_in[ i ] == '|' ){ // '|' -> %7c
-                *( pos++ ) = '%';
-                *( pos++ ) = '7';
-                *pos = 'c';
-                tmp_out += 3;
-            }
-            else{
-                *pos = str_in[ i ];
-                ++tmp_out;
-            }
-
-            if( tmp_out >= lng_link ){
-#ifdef _DEBUG
-                std::cout << " tmp_out = " << tmp_out << " lng_link = " << lng_link << " n_in + offset = " << n_in + offset << std::endl;
-#endif                
-                return MISC::SCHEME_NONE;
-            }
-        }
-        *pos = '\0';
-    }
-
-    // sssp -> http
-    if( linktype == MISC::SCHEME_SSSP ){
-        str_link[ 0 ] = 'h';
-        str_link[ 1 ] = 't';
-        str_link[ 2 ] = 't';
-    }        
+    // str_linkの終端
+    *pos = '\0';
 
 #ifdef _DEBUG
     std::cout << str_link << std::endl
@@ -3440,6 +3454,33 @@ bool NodeTreeBase::remove_imenu( char* str_link )
 	}
 
     return false;
+}
+
+
+// 文字列中の"&amp;"を"&"に変換する
+void NodeTreeBase::convert_amp( char* text, const int n )
+{
+    int m = n;
+
+    int i;
+    for( i = 0; i < m; i++ ){
+
+        if( text[ i ] == '&' &&
+            m > (i + 4) &&
+            text[i + 1] == 'a' &&
+            text[i + 2] == 'm' &&
+            text[i + 3] == 'p' &&
+            text[i + 4] == ';' ){
+
+            // &の次, &amp;の次, &amp;の次からの長さ
+            memmove( text + i + 1, text + i + 5, n - i - 5 );
+
+            // "amp;"の分減らす
+            m -= 4;
+        }
+    }
+
+    text[m] = '\0';
 }
 
 

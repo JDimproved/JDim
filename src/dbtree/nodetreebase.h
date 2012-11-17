@@ -359,6 +359,9 @@ namespace DBTREE
 
         // http://ime.nu/ などをリンクから削除
         bool remove_imenu( char* str_link );
+
+        // 文字列中の"&amp;"を"&"に変換する
+        void convert_amp( char* text, const int n );
     };
 }
 
