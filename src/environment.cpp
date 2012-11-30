@@ -181,6 +181,7 @@ std::string ENVIRONMENT::get_distname()
                 {
                     switch (osvi.dwMinorVersion)
                     {
+                    case 2: vstr << " Server 2012"; break;
                     case 1: vstr << " Server 2008 R2"; break;
                     case 0: vstr << " Server 2008"; break;
                     }
@@ -189,6 +190,7 @@ std::string ENVIRONMENT::get_distname()
                 {
                     switch (osvi.dwMinorVersion)
                     {
+                    case 2: vstr << " 8"; break;
                     case 1: vstr << " 7"; break;
                     case 0: vstr << " Vista"; break;
                     }
