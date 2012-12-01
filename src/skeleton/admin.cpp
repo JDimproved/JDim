@@ -1032,6 +1032,11 @@ void Admin::open_view( const COMMAND_ARGS& command )
     // 開く位置の基準を、アクティブなタブに仮定
     int page = m_notebook->get_current_page();
 
+    std::string open_method = command.arg1;
+    if( open_method.empty() ){
+        open_method = "false";
+    }
+
     // 置き替えるページを探す
     int find_page = -1;
     if( command.arg1 == "replace" ){
@@ -1047,6 +1052,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
             current_view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
         }
         // 該当するタブが見つからない場合、新しいタブで開く
+        open_method = ( find_page >= 0 ) ? "false" : "newtab";
     }
 
     view = create_view( command );
@@ -1054,7 +1060,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
 
     const bool open_tab = (  page == -1
                              || find_page != -1
-                             || ( ! command.arg1.empty() && command.arg1 != "false" && command.arg1 != "replace" )
+                             || open_method != "false"
                              || ( mode & OPEN_MODE_AUTO ) // オートモードの時もタブで開く
                              || is_locked( page )
         );
@@ -1068,10 +1074,10 @@ void Admin::open_view( const COMMAND_ARGS& command )
         int openpage = -1;
 
         // 現在のページの右に表示
-        if( command.arg1 == "right" ) openpage = page +1;
+        if( open_method == "right" ) openpage = page +1;
 
         // 設定によって切り替える
-        if( command.arg1 == "newtab" ){
+        if( open_method == "newtab" ){
             switch( CONFIG::get_newtab_pos() ){
                 case 1:  openpage = page +1; break;
                 case 2:  openpage = page; break;
@@ -1079,13 +1085,13 @@ void Admin::open_view( const COMMAND_ARGS& command )
         }
 
         // 現在のページの左に表示
-        else if( command.arg1 == "left" ) openpage = page;
+        else if( open_method == "left" ) openpage = page;
 
         // 指定した位置に表示
-        else if( command.arg1.find( "page" ) == 0 ) openpage = atoi( command.arg1.c_str() + 4 );
+        else if( open_method.find( "page" ) == 0 ) openpage = atoi( open_method.c_str() + 4 );
 
         // ロックされていたら右に表示
-        else if( command.arg1 != "true" && page != -1 && is_locked( page ) ) openpage = page +1;
+        else if( open_method != "true" && page != -1 && is_locked( page ) ) openpage = page +1;
 
 #ifdef _DEBUG
         std::cout << "append openpage = " << openpage << " / page = " << page << std::endl;
