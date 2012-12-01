@@ -4,10 +4,12 @@
 #include "jddebug.h"
 
 #include "boardadmin.h"
+#include "boardviewnext.h"
 #include "toolbar.h"
 
 #include "dbtree/interface.h"
 
+#include "skeleton/admin.h"
 #include "skeleton/view.h"
 #include "skeleton/dragnote.h"
 
@@ -248,6 +250,47 @@ COMMAND_ARGS BoardAdmin::get_open_list_args( const std::string& url, const COMMA
     command_arg.arg4 = "MAIN";
 
     return command_arg;
+}
+
+
+//
+// view_modeに該当するページを探す
+//
+int BoardAdmin::find_view( const std::string& view_mode )
+{
+    if( view_mode.empty() ) return -1;
+
+    // 検索の基準を、アクティブなタブに仮定
+    const int page = m_notebook->get_current_page();
+    const int pages = m_notebook->get_n_pages();
+
+    // "boardnext" なら次スレ検索のタブで開く
+    if( view_mode.find( "boardnext" ) != std::string::npos ){
+
+        // アクティブな開始タブの右側から順に、すべてのタブをループ
+        int i = page;
+        while( i >= 0 ){
+            // BoardViewNextクラスのタブを探す
+            BOARD::BoardViewNext* view = dynamic_cast< BOARD::BoardViewNext* >( m_notebook->get_nth_page( i ) );
+            if( view ){
+                if( ! view->is_locked() ){
+                    // ページが見つかった
+                    return i;
+                }
+                // ロックされていれば次に該当するタブを探す
+            }
+
+            // 次のタブへインクリメント
+            i++;
+            if( i == page ){
+                break; // 一巡しても見つからなかった
+            } else if( i >= pages ){
+                i = 0; // 右端まで探したら左端から
+            }
+        }
+    }
+    // 該当するタブが見つからない場合
+    return -1;
 }
 
 

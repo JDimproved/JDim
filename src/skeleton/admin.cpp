@@ -950,23 +950,20 @@ void Admin::update_status( View* view, const bool force )
 // "newtab" なら設定によってアクティブなタブの右に開くか一番右側に開くか切り替える
 // "left" ならアクティブなタブの左に開く
 // "page数字" なら指定した位置にタブで開く
+// "replace" なら arg3 に指定したタブがあれば置き換え、なければ "newtab" で動作する
 //
 // command.arg2: "true" なら既に command.url を開いているかチェックしない
 //
 // command.arg3: モード  ( 複数指定する場合は空白で空ける )
 //
 // "auto"なら表示されていればリロードせずに切替える
-// されていなければarg1で指定した場所に新しいタブで開いてロード
-// スレ番号ジャンプなどで使用する
-//
+//     されていなければarg1で指定した場所に新しいタブで開いてロード
+//     スレ番号ジャンプなどで使用する
 // "noswitch"ならタブを切り替えない(連続して開くときに使用)
-//
 // "lock" なら開いてからロックする
-//
 // "offline" なら オフラインで開く
-//
 // "reget" なら読み込み時にキャッシュ等を消してから再読み込みする
-//
+// "boardnext" など、 "replace" で置き換えるタブの種類を指定する
 //
 // その他のargは各ビュー別の設定
 //
@@ -1032,12 +1029,32 @@ void Admin::open_view( const COMMAND_ARGS& command )
         }
     }
 
+    // 開く位置の基準を、アクティブなタブに仮定
+    int page = m_notebook->get_current_page();
+
+    // 置き替えるページを探す
+    int find_page = -1;
+    if( command.arg1 == "replace" ){
+        // タブの種類 (command.arg3) に該当するタブを探す
+        int find_page = find_view( command.arg3 );
+#ifdef _DEBUG
+        std::cout << "replace mode = " << command.arg3
+                << " page = " << page << " find = " << find_page << std::endl;
+#endif
+        if( find_page >= 0 ){
+            // 開く位置の基準を、見つかったタブに設定
+            page = find_page;
+            current_view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+        }
+        // 該当するタブが見つからない場合、新しいタブで開く
+    }
+
     view = create_view( command );
     if( !view ) return;
 
-    const int page = m_notebook->get_current_page();
     const bool open_tab = (  page == -1
-                             || ( ! command.arg1.empty() && command.arg1 != "false" )
+                             || find_page != -1
+                             || ( ! command.arg1.empty() && command.arg1 != "false" && command.arg1 != "replace" )
                              || ( mode & OPEN_MODE_AUTO ) // オートモードの時もタブで開く
                              || is_locked( page )
         );
@@ -1071,7 +1088,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
         else if( command.arg1 != "true" && page != -1 && is_locked( page ) ) openpage = page +1;
 
 #ifdef _DEBUG
-        std::cout << "append page = " << openpage << std::endl;
+        std::cout << "append openpage = " << openpage << " / page = " << page << std::endl;
 #endif
 
 

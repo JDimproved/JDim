@@ -479,6 +479,9 @@ const bool ConfigItems::load( const bool restore )
     // ビュー内から他のビューを開いたときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )
     newtab_pos = cf.get_option_int( "newtab_pos", CONF_NEWTAB_POS, 0, 2 );
 
+    // 次スレ検索を開くときのタブの位置 ( 0: 次スレ検索タブ 1:新しいタブ 2:アクティブなタブを置き換え -1:2.8.5以前の動作 )
+    boardnexttab_pos = cf.get_option_int( "boardnexttab_pos", CONF_BOARDNEXTTAB_POS, -1, 2 );
+
     // スレビューに書き込みマークを表示するか
     show_post_mark = cf.get_option_bool( "show_post_mark", CONF_SHOW_POST_MARK );
 
@@ -864,6 +867,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "switchtab_wheel", switchtab_wheel );
 
     cf.update( "newtab_pos", newtab_pos );
+
+    cf.update( "boardnexttab_pos", boardnexttab_pos );
 
     cf.update( "show_post_mark", show_post_mark );
 

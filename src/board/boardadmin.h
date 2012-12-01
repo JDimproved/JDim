@@ -31,6 +31,9 @@ namespace BOARD
         virtual COMMAND_ARGS get_open_list_args( const std::string& url, const COMMAND_ARGS& command_list );
         virtual SKELETON::View* create_view( const COMMAND_ARGS& command );
 
+        // view_modeに該当するページを探す
+        virtual int find_view( const std::string& view_mode );
+
         // ツールバー
         virtual void show_toolbar();
         virtual void toggle_toolbar();

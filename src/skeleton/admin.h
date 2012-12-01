@@ -27,8 +27,11 @@ namespace SKELETON
         std::string m_url;
 
         JDWindow * m_win;
+
+    protected:
         DragableNoteBook* m_notebook;
 
+    private:
         bool m_focus;
 
         std::list< COMMAND_ARGS > m_list_command;
@@ -169,6 +172,9 @@ namespace SKELETON
 
         // COMMAND_ARGS からビューの URL を取得する
         virtual const std::string command_to_url( const COMMAND_ARGS& command ){ return command.url; }
+
+        // view_modeに該当するページを探す
+        virtual int find_view( const std::string& view_mode ){ return -1; };
 
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void switch_admin() = 0;  // CORE::core_set_command( "switch_*" )　を送る

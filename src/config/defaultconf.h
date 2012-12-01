@@ -104,6 +104,7 @@ namespace CONFIG
         CONF_SHOW_TAB_ICON = 1, // タブにアイコンを表示するか
         CONF_SWITCHTAB_WHEEL = 1, // タブ上でマウスホイールを回転してタブを切り替える
         CONF_NEWTAB_POS = 1, // ビュー内から他のビューを開いたときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )
+        CONF_BOARDNEXTTAB_POS = 0, // 次スレ検索を開くときのタブの位置 ( 0: 次スレ検索タブ 1:新しいタブ 2:アクティブなタブを置き換え )
         CONF_SHOW_POST_MARK = 1, // スレビューに書き込みマークを表示するか
         CONF_FLAT_BUTTON = 1,    // ボタンをフラットにするか
         CONF_DRAW_TOOLBARBACK = 0, // ツールバーの背景描画

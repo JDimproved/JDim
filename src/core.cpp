@@ -2344,10 +2344,28 @@ void Core::set_command( const COMMAND_ARGS& command )
     // 次スレ検索
     else if( command.command  == "open_board_next" ){
 
-        // タブだらけになってしまうので実況中の場合はタブで開かない
-        const bool live = SESSION::is_live( command.arg1 );
-        std::string str_tab = "newtab";
-        if( live ) str_tab = "false";
+        int tabpos = CONFIG::get_boardnexttab_pos();
+        std::string str_tab;
+        std::string str_mode = "";
+        switch (tabpos) {
+        case -1: // 2.8.5以前の動作
+          { // タブだらけになってしまうので実況中の場合はタブで開かない
+            const bool live = SESSION::is_live( command.arg1 );
+            str_tab = (live) ? "false" : "newtab";
+            break;
+          }
+        case 1: // 新しいタブで開く
+            str_tab = "newtab";
+            break;
+        case 2: // アクティブなタブを置き換える
+            str_tab = "false";
+            break;
+        case 0: // 次スレ検索タブで開く
+        default:
+            str_tab = "replace";
+            str_mode = "boardnext";
+            break;
+        }
 
         BOARD::get_admin()->set_command( "open_view",
                                          command.url,
@@ -2356,7 +2374,7 @@ void Core::set_command( const COMMAND_ARGS& command )
                                          // 詳しくは Admin::open_view() を参照せよ
                                          str_tab, // 開く位置
                                          "false", // 既にビューを開いてるかチェックする
-                                         "", // 開き方のモード
+                                         str_mode, // 開き方のモード
 
                                          "NEXT", // モード
                                      
