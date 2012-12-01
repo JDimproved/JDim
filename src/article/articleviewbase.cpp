@@ -813,7 +813,7 @@ void ArticleViewBase::clock_in()
     }
 
     // ポップアップが出てたらそっちにクロックを回す
-    else if( is_popup_shown() && m_popup_win->view() ){
+    if( is_popup_shown() && m_popup_win->view() ){
         m_popup_win->view()->clock_in();
         return;
     }
