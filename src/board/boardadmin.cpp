@@ -285,6 +285,7 @@ int BoardAdmin::find_view( const std::string& view_mode )
             if( i == page ){
                 break; // 一巡しても見つからなかった
             } else if( i >= pages ){
+                if( pages == 1 ) break; // 1タブしかない
                 i = 0; // 右端まで探したら左端から
             }
         }
