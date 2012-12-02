@@ -401,6 +401,17 @@ std::list< std::string > NodeTreeBase::get_urls()
 
 
 //
+// number番のレスを参照しているレス番号をリストにして取得
+//
+std::list< int > NodeTreeBase::get_res_reference( const int number )
+{
+    std::list< int > res_num;
+    res_num.push_back( number );
+    return get_res_reference( res_num );
+}
+
+
+//
 // res_num に含まれるレスを参照しているレス番号をリストにして取得
 //
 std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_num )
@@ -478,7 +489,49 @@ EXIT_LOOP:;
     
     return list_resnum;
 }
-        
+
+
+//
+// number番のレスに含まれるレスアンカーをリストにして取得
+//
+std::list< ANCINFO* > NodeTreeBase::get_res_anchors( const int number )
+{
+    std::list< ANCINFO* > list_resnum;
+
+    NODE* head = res_header( number );
+    if( head && head->headinfo
+            && ! head->headinfo->abone ){
+
+        for( int block = 0; block < BLOCK_NUM; ++block ){
+
+            NODE* node = head->headinfo->block[ block ];
+            while( node ){
+
+                // アンカーノードの時は node->linkinfo->ancinfo != NULL;
+                if( node->type == NODE_LINK 
+                        && node->linkinfo->ancinfo ){
+
+                    for(int anc = 0; ; ++anc){
+
+                        ANCINFO* anchor = &( node->linkinfo->ancinfo[ anc ] );
+                        if( anchor->anc_from == 0 ) break;
+
+                        // >>1-1000 みたいなアンカーは弾く
+                        if( anchor->anc_to - anchor->anc_from < RANGE_REF ){
+                            list_resnum.push_back( anchor );
+                        }
+                    }
+                }
+                node = node->next_node;
+
+            } // while( node )
+
+        } // for( block )
+
+    } // if( head )
+    return list_resnum;
+}
+
 
 //
 // query を含むレス番号をリストにして取得
@@ -3491,6 +3544,52 @@ const bool NodeTreeBase::is_refer_posted( const int number )
     if( m_vec_refer_posted.size() <= ( size_t )number ) return false;
 
     return m_vec_refer_posted[ number ];
+}
+
+
+// 書き込みマークセット
+void NodeTreeBase::set_posted( const int number, const bool set )
+{
+    if( ! m_vec_posted.size() ) m_vec_posted.resize( MAX_RESNUMBER );
+    if( ! m_vec_refer_posted.size() ) m_vec_refer_posted.resize( MAX_RESNUMBER );
+
+    m_vec_posted[ number ] = set;
+
+    // 自分の書き込みに対するレス
+    std::list< int > res_num = get_res_reference( number );
+    std::list< int >::const_iterator it_res = res_num.begin();
+
+    // レスされたマークを設定する
+    if( set ){
+        for( ; it_res != res_num.end(); ++it_res ){
+            const int n = ( *it_res );
+            m_vec_refer_posted[ n ] = true;
+        }
+    }
+    
+    // レスされてなくなったので、マークを解除する
+    else{
+        for( ; it_res != res_num.end(); ++it_res ){
+            const int n = ( *it_res );
+
+            // レスアンカーのリストを取得
+            std::list< ANCINFO* > anchors = get_res_anchors( n );
+            std::list< ANCINFO* >::const_iterator it_anchor = anchors.begin();
+            for( ; it_anchor != anchors.end(); ++it_anchor ){
+
+                // 他の自分の書き込みに対するレスになっていないか？
+                ANCINFO* anchor = ( *it_anchor );
+                for( int i = anchor->anc_from; i <= anchor->anc_to; i++ ){
+                    // 他の自分の書き込みに対するレス
+                    if( m_vec_posted[ i ] ) goto KEEP_POSTMARK;
+                }
+            }
+
+            // マークを解除する
+            m_vec_refer_posted[ n ] = false;
+KEEP_POSTMARK:;
+        }
+    }
 }
 
 

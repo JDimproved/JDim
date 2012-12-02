@@ -252,6 +252,9 @@ namespace DBTREE
         // 自分の書き込みにレスしたか
         const bool is_refer_posted( const int number );
 
+        // 書き込みマークセット
+        void set_posted( const int number, const bool set );
+
         // 書き込み履歴のリセット
         void clear_post_history();
 

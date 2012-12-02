@@ -278,6 +278,7 @@ namespace ARTICLE
         void warp_pointer_to_popup(); // マウスポインタをポップアップの上に移動する
         
         void slot_bookmark();
+        void slot_postedmark();
         void slot_open_browser();
         void slot_open_cache_browser();
         void slot_write_res();

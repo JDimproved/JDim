@@ -293,9 +293,7 @@ std::list< int > ArticleBase::get_res_posted()
 //
 std::list< int > ArticleBase::get_res_reference( const int number )
 {
-    std::list< int > res_num;
-    res_num.push_back( number );
-    return get_res_reference( res_num );
+    return get_nodetree()->get_res_reference( number );
 }
 
 
@@ -953,6 +951,24 @@ const bool ArticleBase::is_posted( const int number )
 const bool ArticleBase::is_refer_posted( const int number )
 {
     return get_nodetree()->is_refer_posted( number );
+}
+
+
+// 書き込みマークセット
+void ArticleBase::set_posted( const int number, const bool set )
+{
+    if( number <= 0 || number > m_number_load ) return;
+
+    // まだnodetreeが作られてなくて情報が得られてないのでnodetreeを作って情報取得
+    if( ! m_vec_posted.size() ) get_nodetree();
+
+    if( ! m_vec_posted.size() ) m_vec_posted.resize( MAX_RESNUMBER );
+
+    m_save_info = true;
+    m_vec_posted[ number ] = set;
+
+    // nodetreeに情報反映
+    m_nodetree->set_posted( number, set );
 }
 
 

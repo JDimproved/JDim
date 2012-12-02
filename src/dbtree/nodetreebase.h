@@ -194,6 +194,9 @@ namespace DBTREE
         // 含まれる URL をリストにして取得
         std::list< std::string > get_urls();
 
+        // number番のレスを参照しているレス番号をリストにして取得
+        std::list< int > get_res_reference( const int number );
+
         // res_num に含まれるレスを参照しているレス番号をリストにして取得
         std::list< int > get_res_reference( const std::list< int >& res_num );
 
@@ -245,6 +248,9 @@ namespace DBTREE
 
         // 自分の書き込みにレスしたか
         const bool is_refer_posted( const int number );
+
+        // 書き込みマークセット
+        void set_posted( const int number, const bool set );
 
         // 書き込み履歴のリセット
         void clear_post_history();
@@ -330,6 +336,9 @@ namespace DBTREE
         const bool check_abone_word( const int number );
         const bool check_abone_chain( const int number );
 
+
+        // number番のレスに含まれるレスアンカーをリストにして取得
+        std::list< ANCINFO* > get_res_anchors( const int number );
 
         // 参照数(num_reference)と色のクリア
         void clear_reference();

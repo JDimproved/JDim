@@ -193,6 +193,7 @@ void ArticleViewBase::setup_action()
     action_group().clear();
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
+    action_group()->add( Gtk::Action::create( "PostedMark", "書き込みマークを設定/解除(_P)"), sigc::mem_fun( *this, &ArticleViewBase::slot_postedmark ) );
     action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "OpenBrowserRes", ITEM_NAME_OPEN_BROWSER + std::string( "(_S)" ) ),   // レスをクリックした時のメニュー用
@@ -343,6 +344,7 @@ void ArticleViewBase::setup_action()
     const std::string menu_res =
     "<popup name='popup_menu_res'>"
     "<menuitem action='BookMark'/>"
+    "<menuitem action='PostedMark'/>"
     "<separator/>"
 
     "<menu action='Drawout_Menu'>"
@@ -3480,6 +3482,24 @@ void ArticleViewBase::slot_bookmark()
     bool bookmark = ! DBTREE::is_bookmarked( m_url_article, number );
     DBTREE::set_bookmark( m_url_article, number, bookmark );
     if( bookmark ) m_current_bm = number;
+    redraw_view();
+    ARTICLE::get_admin()->set_command( "redraw_views", m_url_article );
+}
+
+
+
+//
+// 書き込みマーク設定、解除
+//
+// 呼び出す前に m_str_num に対象のレス番号を入れておくこと
+//
+void ArticleViewBase::slot_postedmark()
+{
+    if( m_str_num.empty() ) return;
+
+    int number = atoi( m_str_num.c_str() );
+    bool postedmark = ! m_article->is_posted( number );
+    m_article->set_posted( number, postedmark );
     redraw_view();
     ARTICLE::get_admin()->set_command( "redraw_views", m_url_article );
 }
