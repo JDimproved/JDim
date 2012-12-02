@@ -193,6 +193,13 @@ namespace CONTROL
         SearchCacheLocal,
         SearchCacheAll,
 
+        ShowSelectImage,
+        DeleteSelectImage,
+        AboneSelectImage,
+        AboneSelectionRes,
+
+        PreferenceArticle,
+
         PopupWarpButton, // 以下、マウスボタン専用の設定
         ReferResButton, 
         BmResButton,

@@ -7,6 +7,7 @@
 #include "controlid.h"
 #include "controlutil.h"
 
+#include "global.h"
 
 using namespace CONTROL;
 
@@ -191,6 +192,13 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::SearchCacheAll );
 
     append_row( CONTROL::LiveStartStop );
+
+    append_row( CONTROL::ShowSelectImage );
+    append_row( CONTROL::DeleteSelectImage, ITEM_NAME_SELECTDELIMG );
+    append_row( CONTROL::AboneSelectImage, ITEM_NAME_SELECTABONEIMG );
+    append_row( CONTROL::AboneSelectionRes );
+
+    append_row( CONTROL::PreferenceArticle );
 
     append_comment_row( "" );
     append_comment_row( "■ " + CONTROL::get_mode_label( CONTROL::MODE_IMAGEVIEW ) );

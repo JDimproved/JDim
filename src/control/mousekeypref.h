@@ -181,7 +181,7 @@ namespace CONTROL
         Glib::RefPtr< Gtk::ListStore >& get_liststore(){ return m_liststore; }
         MouseKeyTreeColumn& get_colums(){ return  m_columns; }
 
-        void append_row( const int id );
+        void append_row( const int id, const std::string& label = std::string() );
         void append_comment_row( const std::string& comment );
 
         virtual MouseKeyDiag* create_setting_diag( const int id, const std::string& str_motions ) = 0;

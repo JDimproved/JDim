@@ -201,6 +201,13 @@ namespace CONTROL
         { "SearchCacheLocal", "ログ検索(対象: 板)" },
         { "SearchCacheAll", "ログ検索(対象: 全ログ)" },
 
+        { "ShowSelectImage", ITEM_NAME_SELECTIMG },
+        { "DeleteSelectImage", "削除する" },
+        { "AboneSelectImage", "あぼ〜んする" },
+        { "AboneSelectionRes", ITEM_NAME_ABONE_SELECTION },
+
+        { "PreferenceArticle", ITEM_NAME_PREF_THREAD },
+
         { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },
         { "BmResButton", "ブックマーク" },

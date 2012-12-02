@@ -220,7 +220,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DeleteOpen", "スレ情報を消さずにスレ再取得(_R)"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
     action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &ArticleViewBase::set_favorite ) );
     action_group()->add( Gtk::Action::create( "Reload", "Reload"), sigc::mem_fun( *this, &ArticleViewBase::exec_reload ) );
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", "PreferenceArticle" ),
                          sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
 
@@ -249,7 +249,7 @@ void ArticleViewBase::setup_action()
     // あぼーん系
     action_group()->add( Gtk::Action::create( "AboneWord_Menu", ITEM_NAME_NGWORD + std::string( "(_N)" ) ) );
     action_group()->add( Gtk::Action::create( "AboneRes", "レスをあぼ〜んする(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_res ) );
-    action_group()->add( Gtk::Action::create( "AboneSelectionRes", ITEM_NAME_ABONE_SELECTION + std::string( "(_A)") ),
+    action_group()->add( Gtk::Action::create( "AboneSelectionRes", "AboneSelectionRes" ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_abone_selection_res ) );
     action_group()->add( Gtk::Action::create( "AboneID", "NG IDに追加(_G)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_id ) );
     action_group()->add( Gtk::Action::create( "AboneName", "NG 名前に追加 (対象: ローカル)(_L)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_name ) );
@@ -292,12 +292,12 @@ void ArticleViewBase::setup_action()
     // 画像系
     action_group()->add( Gtk::Action::create( "Cancel_Mosaic", "モザイク解除(_C)"), sigc::mem_fun( *this, &ArticleViewBase::slot_cancel_mosaic ) );
     action_group()->add( Gtk::Action::create( "Show_Mosaic", "モザイクで開く(_M)"), sigc::mem_fun( *this, &ArticleViewBase::slot_show_image_with_mosaic ) );
-    action_group()->add( Gtk::Action::create( "Show_SelectImg", ITEM_NAME_SELECTIMG + std::string( "(_G)" ) )
+    action_group()->add( Gtk::Action::create( "ShowSelectImage", "ShowSelectImage" )
                          , sigc::mem_fun( *this, &ArticleViewBase::slot_show_selection_images ) );
     action_group()->add( Gtk::Action::create( "DeleteSelectImage_Menu", ITEM_NAME_SELECTDELIMG + std::string( "(_T)" ) ) );
-    action_group()->add( Gtk::Action::create( "DeleteSelectImage", "削除する(_D)"), sigc::mem_fun( *this, &ArticleViewBase::slot_delete_selection_images ) );
+    action_group()->add( Gtk::Action::create( "DeleteSelectImage", "DeleteSelectImage"), sigc::mem_fun( *this, &ArticleViewBase::slot_delete_selection_images ) );
     action_group()->add( Gtk::Action::create( "AboneSelectImage_Menu", ITEM_NAME_SELECTABONEIMG + std::string( "(_B)" ) ) );
-    action_group()->add( Gtk::Action::create( "AboneSelectImage", "あぼ〜んする(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_selection_images ) );
+    action_group()->add( Gtk::Action::create( "AboneSelectImage", "AboneSelectImage"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_selection_images ) );
     action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_show_large_img ) );
     action_group()->add( Gtk::ToggleAction::create( "ProtectImage", "キャッシュを保護する(_P)", std::string(), false ),
@@ -653,7 +653,7 @@ const char* ArticleViewBase::get_menu_item( const int item )
 
             // 選択範囲の画像を開く
         case ITEM_SELECTIMG:
-            return "<menuitem action='Show_SelectImg'/>";
+            return "<menuitem action='ShowSelectImage'/>";
 
             // 選択範囲の画像を削除
         case ITEM_SELECTDELIMG:
@@ -1227,6 +1227,31 @@ const bool ArticleViewBase::operate_view( const int control )
             // ログ検索(全て)
         case CONTROL::SearchCacheAll:
             slot_search_cacheall();
+            break;
+
+            // 選択範囲の画像を開く
+        case CONTROL::ShowSelectImage:
+            slot_show_selection_images();
+            break;
+
+            // 選択範囲の画像を削除
+        case CONTROL::DeleteSelectImage:
+            slot_delete_selection_images();
+            break;
+
+            // 選択範囲の画像をあぼ〜ん
+        case CONTROL::AboneSelectImage:
+            slot_abone_selection_images();
+            break;
+
+            // 選択範囲のレスをあぼ〜ん
+        case CONTROL::AboneSelectionRes:
+            slot_abone_selection_res();
+            break;
+
+            // スレのプロパティ
+        case CONTROL::PreferenceArticle:
+            show_preference();
             break;
 
         default:
@@ -3051,7 +3076,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( true );
     }
 
-    act = action_group()->get_action( "Show_SelectImg" );
+    act = action_group()->get_action( "ShowSelectImage" );
     if( act ){
         if( str_select.empty() || ! m_drawarea->get_selection_imgurls().size() ) act->set_sensitive( false );
         else act->set_sensitive( true );

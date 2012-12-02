@@ -125,6 +125,13 @@ namespace CONTROL
 #define KEYCONF_SearchCacheLocal "Ctrl+Enter"
 #define KEYCONF_SearchCacheAll ""
 
+#define KEYCONF_ShowSelectImage  "Ctrl+I"
+#define KEYCONF_DeleteSelectImage  ""
+#define KEYCONF_AboneSelectImage  ""
+#define KEYCONF_AboneSelectionRes  ""
+
+#define KEYCONF_PreferenceArticle  "Ctrl+P"
+
 // IMAGE
 #define KEYCONF_CancelMosaic  "c"
 #define KEYCONF_ZoomFitImage  "x"

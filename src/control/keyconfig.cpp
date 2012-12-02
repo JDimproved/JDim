@@ -149,6 +149,13 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "SearchCacheLocal", KEYCONF_SearchCacheLocal );
     SETKEYMOTION( "SearchCacheAll", KEYCONF_SearchCacheAll );
 
+    SETKEYMOTION( "ShowSelectImage", KEYCONF_ShowSelectImage );
+    SETKEYMOTION( "DeleteSelectImage", KEYCONF_DeleteSelectImage );
+    SETKEYMOTION( "AboneSelectImage", KEYCONF_AboneSelectImage );
+    SETKEYMOTION( "AboneSelectionRes", KEYCONF_AboneSelectionRes );
+
+    SETKEYMOTION( "PreferenceArticle", KEYCONF_PreferenceArticle );
+
     // IMAGE
     SETKEYMOTION( "CancelMosaic", KEYCONF_CancelMosaic );
     SETKEYMOTION( "ZoomFitImage", KEYCONF_ZoomFitImage );

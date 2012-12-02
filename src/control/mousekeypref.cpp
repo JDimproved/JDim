@@ -525,7 +525,7 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
 
 
 // 行追加
-void MouseKeyPref::append_row( const int id )
+void MouseKeyPref::append_row( const int id, const std::string& label )
 {
     Gtk::TreeModel::Row row;
     row = *( get_liststore()->append() );
@@ -533,7 +533,11 @@ void MouseKeyPref::append_row( const int id )
 
         const std::string motions = get_str_motions( id );
 
-        row[ get_colums().m_col_label ] = CONTROL::get_label( id );
+        if( label.empty() ){
+            row[ get_colums().m_col_label ] = CONTROL::get_label( id );
+        }else{
+            row[ get_colums().m_col_label ] = label;
+        }
         row[ get_colums().m_col_motions ] = motions;
         row[ get_colums().m_col_id ] = id;
         if( motions != get_default_motions( id ) ) row[ get_colums().m_col_drawbg ] = true;

@@ -429,6 +429,26 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
                 label += "(_A)";
                 break;
 
+            case CONTROL::ShowSelectImage: // 選択範囲の画像を開く
+                label += "(_G)";
+                break;
+
+            case CONTROL::DeleteSelectImage: // 選択範囲の画像を削除（サブメニュー）
+                label += "(_D)";
+                break;
+
+            case CONTROL::AboneSelectImage: // 選択範囲の画像をあぼ〜ん（サブメニュー）
+                label += "(_A)";
+                break;
+
+            case CONTROL::AboneSelectionRes: // 選択範囲のレスをあぼ〜ん
+                label += "(_A)";
+                break;
+
+            case CONTROL::PreferenceArticle: // スレのプロパティ
+                label += "(_P)";
+                break;
+
             case CONTROL::CancelMosaic: //モザイク解除
                 label += "(_M)";
                 break;
