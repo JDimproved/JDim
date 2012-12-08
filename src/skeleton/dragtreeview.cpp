@@ -397,7 +397,7 @@ void DragTreeView::on_drag_begin( const Glib::RefPtr< Gdk::DragContext >& contex
     m_dragging = true;
     CORE::DND_Begin();
 
-    return Gtk::TreeView::on_drag_begin( context );
+    Gtk::TreeView::on_drag_begin( context );
 }
 
 
