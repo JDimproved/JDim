@@ -170,6 +170,9 @@ namespace ARTICLE
         // レスポップアップを隠す
         void hide_popup( const bool force = false );
 
+        // ポップアップが表示されているか
+        const bool is_popup_shown() const;
+
         // 初期設定
         void setup_view();
 
@@ -264,9 +267,6 @@ namespace ARTICLE
         bool slot_leave_notify( GdkEventCrossing* ev );
 
         // レスポップアップ関係
-
-        // ポップアップが表示されているか
-        const bool is_popup_shown() const;
 
         // ポップアップが表示されていてかつマウスがその上にあるか
         const bool is_mouse_on_popup();

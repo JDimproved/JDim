@@ -545,7 +545,15 @@ void ArticleViewMain::update_finish()
             set_autoreload_sec( MAX( live_sec, get_autoreload_sec() - LIVE_SEC_PLUS ) );
 
             // messageビューが出ているときはフォーカスを移す
-            if( ! MESSAGE::get_admin()->empty() ) CORE::core_set_command( "switch_message" );
+            if( ! MESSAGE::get_admin()->empty() ){
+                // 実況モードかつポップアップが表示されている状態で、 "switch_message" コマンドを発行すると、
+                // 埋め込みメッセージモードだと、 MessageAdmin に対して "focus_current_view" されるので、
+                // ArticleView に focus_out イベントが発生して、ポップアップが消えてしまう
+                // ポップアップが表示されているときは、フォーカスを移さない
+                if( ! is_popup_shown() ){
+                    CORE::core_set_command( "switch_message" );
+                }
+            }
         }
 
         drawarea()->update_live_speed( get_autoreload_sec() );
