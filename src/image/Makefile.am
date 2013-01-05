@@ -31,4 +31,4 @@ noinst_HEADERS = \
 	imageviewpopup.h 
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
-INCLUDES = -I$(top_srcdir)/src
+AM_CPPFLAGS = -I$(top_srcdir)/src

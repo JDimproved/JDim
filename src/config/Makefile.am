@@ -8,4 +8,4 @@ noinst_HEADERS = \
 	configitems.h globalconf.h defaultconf.h aboutconfig.h aboutconfigdiag.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
-INCLUDES = -I$(top_srcdir)/src
+AM_CPPFLAGS = -I$(top_srcdir)/src
