@@ -4086,7 +4086,9 @@ void ArticleViewBase::slot_delete_selection_images()
         for( ; it != m_drawarea->get_selection_imgurls().end(); ++it ){
 
             const std::string& url = (*it).url;
-            if( DBIMG::is_cached( url ) ) CORE::core_set_command( "delete_image", url );
+            if( ! DBIMG::is_protected( url ) ){
+                CORE::core_set_command( "delete_image", url );
+            }
         }
 
         redraw_view();
@@ -4109,8 +4111,10 @@ void ArticleViewBase::slot_abone_selection_images()
         for( ; it != m_drawarea->get_selection_imgurls().end(); ++it ){
 
             const std::string& url = (*it).url;
-            DBIMG::set_abone( url, true );
-            CORE::core_set_command( "delete_image", url );
+            if( ! DBIMG::is_protected( url ) ){
+                DBIMG::set_abone( url, true );
+                CORE::core_set_command( "delete_image", url );
+            }
         }
 
         redraw_view();
