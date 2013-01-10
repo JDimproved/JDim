@@ -194,22 +194,22 @@ void ArticleViewBase::setup_action()
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
     action_group()->add( Gtk::Action::create( "PostedMark", "書き込みマークを設定/解除(_P)"), sigc::mem_fun( *this, &ArticleViewBase::slot_postedmark ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
+    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER "(_W)" ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowserRes", ITEM_NAME_OPEN_BROWSER + std::string( "(_S)" ) ),   // レスをクリックした時のメニュー用
+    action_group()->add( Gtk::Action::create( "OpenBrowserRes", ITEM_NAME_OPEN_BROWSER "(_S)" ),   // レスをクリックした時のメニュー用
                          sigc::mem_fun( *this, &ArticleViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "OpenCacheBrowser", ITEM_NAME_OPEN_CACHE_BROWSER + std::string( "(_X)" ) ),
+    action_group()->add( Gtk::Action::create( "OpenCacheBrowser", ITEM_NAME_OPEN_CACHE_BROWSER "(_X)" ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_open_cache_browser ) );
-    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ),
+    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL "(_U)" ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_copy_current_url ) );
-    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL_THREAD + std::string( "(_L)" ) ),
+    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL_THREAD "(_L)" ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_copy_title_url ) );
     action_group()->add( Gtk::Action::create( "CopyNAME", "名前コピー(_N)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_name ) );
     action_group()->add( Gtk::Action::create( "CopyID", "IDコピー(_D)"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_id ) );
     action_group()->add( Gtk::Action::create( "Copy", "Copy"), sigc::mem_fun( *this, &ArticleViewBase::slot_copy_selection_str ) );
     action_group()->add( Gtk::Action::create( "WriteRes", "レスする(_W)" ),sigc::mem_fun( *this, &ArticleViewBase::slot_write_res ) );
     action_group()->add( Gtk::Action::create( "QuoteRes", "引用してレスする(_Q)"),sigc::mem_fun( *this, &ArticleViewBase::slot_quote_res ) );
-    action_group()->add( Gtk::Action::create( "QuoteSelectionRes", ITEM_NAME_QUOTE_SELECTION + std::string( "(_Q)" ) ),
+    action_group()->add( Gtk::Action::create( "QuoteSelectionRes", ITEM_NAME_QUOTE_SELECTION "(_Q)" ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_quote_selection_res ) );
     action_group()->add( Gtk::Action::create( "CopyRes", "レスをコピー(_R)"),
                          sigc::bind< bool >( sigc::mem_fun( *this, &ArticleViewBase::slot_copy_res ), false ) );
@@ -224,7 +224,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "PreferenceImage", ITEM_NAME_PREF_IMAGE "(_M)..." ), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
 
     // 検索
-    action_group()->add( Gtk::Action::create( "Search_Menu", ITEM_NAME_SEARCH + std::string( "(_H)" ) ) );
+    action_group()->add( Gtk::Action::create( "Search_Menu", ITEM_NAME_SEARCH "(_H)" ) );
     action_group()->add( Gtk::Action::create( "SearchNextArticle", "SearchNextArticle"), sigc::mem_fun( *this, &ArticleViewBase::slot_search_next ) );
     action_group()->add( Gtk::Action::create( "SearchWeb", "SearchWeb" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_web ) );
     action_group()->add( Gtk::Action::create( "SearchCacheLocal", "SearchCacheLocal" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_cachelocal ) );
@@ -233,7 +233,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "SearchTitle", "SearchTitle" ), sigc::mem_fun( *this, &ArticleViewBase::slot_search_title ) );
 
     // 抽出系
-    action_group()->add( Gtk::Action::create( "Drawout_Menu", ITEM_NAME_DRAWOUT + std::string( "(_E)" ) ) );
+    action_group()->add( Gtk::Action::create( "Drawout_Menu", ITEM_NAME_DRAWOUT "(_E)" ) );
     action_group()->add( Gtk::Action::create( "DrawoutWord", "キーワード抽出(_K)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_selection_str ) );
     action_group()->add( Gtk::Action::create( "DrawoutRes", "レス抽出(_R)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_res ) );
     action_group()->add( Gtk::Action::create( "DrawoutNAME", "名前抽出(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_name ) );
@@ -246,7 +246,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DrawoutTmp", "テンプレート抽出(_T)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_tmp ) );
 
     // あぼーん系
-    action_group()->add( Gtk::Action::create( "AboneWord_Menu", ITEM_NAME_NGWORD + std::string( "(_N)" ) ) );
+    action_group()->add( Gtk::Action::create( "AboneWord_Menu", ITEM_NAME_NGWORD "(_N)" ) );
     action_group()->add( Gtk::Action::create( "AboneRes", "レスをあぼ〜んする(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_res ) );
     action_group()->add( Gtk::Action::create( "AboneSelectionRes", "AboneSelectionRes" ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_abone_selection_res ) );
@@ -274,7 +274,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "SetupAboneAll", "あぼ〜ん設定(対象: 全体)(_A)..." ), sigc::mem_fun( *this, &ArticleViewBase::slot_setup_abone_all ) );
 
     // 移動系
-    action_group()->add( Gtk::Action::create( "Move_Menu", ITEM_NAME_GO + std::string( "(_M)" ) ) );
+    action_group()->add( Gtk::Action::create( "Move_Menu", ITEM_NAME_GO "(_M)" ) );
     action_group()->add( Gtk::Action::create( "Home", "Home"), sigc::mem_fun( *this, &ArticleViewBase::goto_top ) );
     action_group()->add( Gtk::Action::create( "GotoNew", "GotoNew"), sigc::mem_fun( *this, &ArticleViewBase::goto_new ) );
     action_group()->add( Gtk::Action::create( "End", "End"), sigc::mem_fun( *this, &ArticleViewBase::goto_bottom ) );
@@ -293,9 +293,9 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "Show_Mosaic", "モザイクで開く(_M)"), sigc::mem_fun( *this, &ArticleViewBase::slot_show_image_with_mosaic ) );
     action_group()->add( Gtk::Action::create( "ShowSelectImage", "ShowSelectImage" )
                          , sigc::mem_fun( *this, &ArticleViewBase::slot_show_selection_images ) );
-    action_group()->add( Gtk::Action::create( "DeleteSelectImage_Menu", ITEM_NAME_SELECTDELIMG + std::string( "(_T)" ) ) );
+    action_group()->add( Gtk::Action::create( "DeleteSelectImage_Menu", ITEM_NAME_SELECTDELIMG "(_T)" ) );
     action_group()->add( Gtk::Action::create( "DeleteSelectImage", "DeleteSelectImage"), sigc::mem_fun( *this, &ArticleViewBase::slot_delete_selection_images ) );
-    action_group()->add( Gtk::Action::create( "AboneSelectImage_Menu", ITEM_NAME_SELECTABONEIMG + std::string( "(_B)" ) ) );
+    action_group()->add( Gtk::Action::create( "AboneSelectImage_Menu", ITEM_NAME_SELECTABONEIMG "(_B)" ) );
     action_group()->add( Gtk::Action::create( "AboneSelectImage", "AboneSelectImage"), sigc::mem_fun( *this, &ArticleViewBase::slot_abone_selection_images ) );
     action_group()->add( Gtk::Action::create( "ShowLargeImg", "サイズが大きい画像を表示(_L)"),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_show_large_img ) );
@@ -308,9 +308,9 @@ void ArticleViewBase::setup_action()
                          sigc::mem_fun( *this, &ArticleViewBase::slot_abone_img ) );
 
     // その他
-    action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC + std::string( "(_O)" ) ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT + std::string( "(_D)..." ) ), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
-    action_group()->add( Gtk::Action::create( "CopyInfo", ITEM_NAME_COPY_THREAD_INFO + std::string( "(_I)..." ) ),
+    action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC "(_O)" ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT "(_D)..." ), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "CopyInfo", ITEM_NAME_COPY_THREAD_INFO "(_I)..." ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_copy_article_info ) );
 
     m_usrcmd = CORE::get_usrcmd_manager()->create_usrcmd_menu( action_group() );

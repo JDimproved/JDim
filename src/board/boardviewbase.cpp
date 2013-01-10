@@ -257,16 +257,16 @@ void BoardViewBase::setup_action()
 
     // アクショングループを作ってUIマネージャに登録
     action_group() = Gtk::ActionGroup::create();
-    action_group()->add( Gtk::Action::create( "BookMark", ITEM_NAME_BOOKMARK + std::string( "(_B)" ) ),
+    action_group()->add( Gtk::Action::create( "BookMark", ITEM_NAME_BOOKMARK "(_B)" ),
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_AUTO ) );
     action_group()->add( Gtk::Action::create( "SetBookMark", "しおりを設定(_S)" ),  // 未使用
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_SET ) );
     action_group()->add( Gtk::Action::create( "UnsetBookMark", "しおりを解除(_U)" ),    // 未使用
                          sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_bookmark ), BOOKMARK_UNSET ) );
     action_group()->add( Gtk::Action::create( "OpenTab", "OpenArticleTab" ), sigc::mem_fun( *this, &BoardViewBase::slot_open_tab ) );
-    action_group()->add( Gtk::Action::create( "RegetArticle", ITEM_NAME_REGETARTICLE + std::string( "(_R)" ) ),
+    action_group()->add( Gtk::Action::create( "RegetArticle", ITEM_NAME_REGETARTICLE "(_R)" ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_reget_article ) );
-    action_group()->add( Gtk::Action::create( "Favorite_Article", ITEM_NAME_FAVORITE_ARTICLE + std::string( "(_F)..." ) ),
+    action_group()->add( Gtk::Action::create( "Favorite_Article", ITEM_NAME_FAVORITE_ARTICLE "(_F)..." ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_favorite_thread ) );
     action_group()->add( Gtk::Action::create( "Favorite_Board", "板をお気に入りに追加(_A)" ), sigc::mem_fun( *this, &BoardViewBase::slot_favorite_board ) );
     action_group()->add( Gtk::Action::create( "GotoTop", "一番上に移動(_T)" ), sigc::mem_fun( *this, &BoardViewBase::goto_top ) );
@@ -277,22 +277,22 @@ void BoardViewBase::setup_action()
                          sigc::bind< bool >( sigc::mem_fun( *this, &BoardViewBase::open_selected_rows ), false ) );
     action_group()->add( Gtk::Action::create( "RegetRows", "スレ情報を消さずにスレを再取得(_R)" ),
                          sigc::bind< bool >( sigc::mem_fun( *this, &BoardViewBase::open_selected_rows ), true ) );
-    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL + std::string( "(_U)" ) ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_url ) );
-    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL + std::string( "(_L)" ) ),
+    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL "(_U)" ), sigc::mem_fun( *this, &BoardViewBase::slot_copy_url ) );
+    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL "(_L)" ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_copy_title_url ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER + std::string( "(_W)" ) ),
+    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER "(_W)" ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "AboneThread", ITEM_NAME_ABONE_ARTICLE + std::string( "(_N)" ) ),
+    action_group()->add( Gtk::Action::create( "AboneThread", ITEM_NAME_ABONE_ARTICLE "(_N)" ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_abone_thread ) );
     action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD "(_P)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "PreferenceBoard", "PreferenceBoard" ), sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT + std::string( "(_S)..." ) ),
+    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT "(_S)..." ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_save_dat ) );
     action_group()->add( Gtk::Action::create( "SearchNextArticle", ITEM_NAME_NEXTARTICLE ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_search_next ) );
 
     // その他
-    action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC + std::string( "(_O)" ) ) );
+    action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC "(_O)" ) );
 
     ui_manager().clear();
     ui_manager() = Gtk::UIManager::create();
