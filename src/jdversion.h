@@ -27,7 +27,7 @@
 //---------------------------------
 
 #define JDCOMMENT "JD は gtkmm/GTK+2 を用いた2chブラウザです。"
-#define JDCOPYRIGHT "(c) 2006-2012 JD project"
+#define JDCOPYRIGHT "(c) 2006-2013 JD project"
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 #define JDHELP CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/"
