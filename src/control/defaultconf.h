@@ -76,6 +76,7 @@ namespace CONTROL
 #define KEYCONF_Copy  "Ctrl+c"
 #define KEYCONF_SelectAll  "Ctrl+a"
 #define KEYCONF_AppendFavorite  "Ctrl+d"
+#define KEYCONF_PreferenceView  "Ctrl+P"
 
 #define KEYCONF_Search  "Ctrl+f / KP_Divide"
 #define KEYCONF_SearchInvert  "?"
@@ -129,8 +130,6 @@ namespace CONTROL
 #define KEYCONF_DeleteSelectImage  ""
 #define KEYCONF_AboneSelectImage  ""
 #define KEYCONF_AboneSelectionRes  ""
-
-#define KEYCONF_PreferenceArticle  "Ctrl+P"
 
 // IMAGE
 #define KEYCONF_CancelMosaic  "c"

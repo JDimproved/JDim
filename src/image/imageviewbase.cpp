@@ -175,6 +175,7 @@ void ImageViewBase::setup_common()
 
     action_group()->add( Gtk::Action::create( "AboneImage", "画像をあぼ〜んする(_B)"), sigc::mem_fun( *this, &ImageViewBase::slot_abone_img ) );
 
+    action_group()->add( Gtk::Action::create( "PreferenceImage", "PreferenceImage"), sigc::mem_fun( *this, &ImageViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "Preference", "プロパティ(_P)..."), sigc::mem_fun( *this, &ImageViewBase::show_preference ) );
 
     const std::string usrcmd = CORE::get_usrcmd_manager()->create_usrcmd_menu( action_group() );
@@ -243,7 +244,7 @@ void ImageViewBase::setup_common()
 
     "<separator/>"
 
-    "<menuitem action='Preference'/>"
+    "<menuitem action='PreferenceImage'/>"
 
     "</popup>"
     );
@@ -715,6 +716,11 @@ const bool ImageViewBase::operate_view( const int control )
             // お気に入りに追加
         case CONTROL::AppendFavorite:
             slot_favorite();
+            break;
+
+            // 画像のプロパティ
+        case CONTROL::PreferenceView:
+            show_preference();
             break;
 
         default:

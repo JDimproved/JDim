@@ -242,10 +242,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索(_S)"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
     action_group()->add( Gtk::Action::create( "ImportDat", "datのインポート(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_import_dat ) );
 
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
-                         sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "PreferenceBoard", "板のプロパティ(_O)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
-    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD "(_P)..." ), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
+    action_group()->add( Gtk::Action::create( "PreferenceBoard", ITEM_NAME_PREF_BOARD "(_O)..." ), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
+    action_group()->add( Gtk::Action::create( "PreferenceImage", ITEM_NAME_PREF_IMAGE "(_M)..." ), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
 
 
     ui_manager() = Gtk::UIManager::create();

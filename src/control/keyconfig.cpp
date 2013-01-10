@@ -100,6 +100,7 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "Copy", KEYCONF_Copy );
     SETKEYMOTION( "SelectAll", KEYCONF_SelectAll );
     SETKEYMOTION( "AppendFavorite", KEYCONF_AppendFavorite );
+    SETMOTION( "PreferenceView", KEYCONF_PreferenceView );
 
     SETKEYMOTION( "Search", KEYCONF_Search );
     SETKEYMOTION( "SearchInvert", KEYCONF_SearchInvert );
@@ -153,8 +154,6 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "DeleteSelectImage", KEYCONF_DeleteSelectImage );
     SETKEYMOTION( "AboneSelectImage", KEYCONF_AboneSelectImage );
     SETKEYMOTION( "AboneSelectionRes", KEYCONF_AboneSelectionRes );
-
-    SETKEYMOTION( "PreferenceArticle", KEYCONF_PreferenceArticle );
 
     // IMAGE
     SETKEYMOTION( "CancelMosaic", KEYCONF_CancelMosaic );

@@ -316,16 +316,25 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
                 label.replace( pos, strlen( "..." ), "(_S)..." );
                 break;
 	
-            case CONTROL::Property:     //プロパティ...
-                label.replace( pos, strlen( "..." ), "(_P)..." );
-                break;
-
             case CONTROL::AppendFavorite:   //お気に入りに追加..
                 label.replace( pos, strlen( "..." ), "(_F)..." );
                 break;
 
             case CONTROL::OpenURL:  //URLを開く
                 label.replace( pos, strlen( "..." ), "(_U)..." );
+                break;
+
+            case CONTROL::PreferenceView:     //プロパティ...
+            case CONTROL::PreferenceArticle:     //スレのプロパティ...
+                label.replace( pos, strlen( "..." ), "(_P)..." );
+                break;
+
+            case CONTROL::PreferenceBoard:     //板のプロパティ...
+                label.replace( pos, strlen( "..." ), "(_O)..." );
+                break;
+
+            case CONTROL::PreferenceImage:     //画像のプロパティ...
+                label.replace( pos, strlen( "..." ), "(_M)..." );
                 break;
         }
     }
@@ -445,10 +454,6 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
                 label += "(_A)";
                 break;
 
-            case CONTROL::PreferenceArticle: // スレのプロパティ
-                label += "(_P)";
-                break;
-
             case CONTROL::CancelMosaic: //モザイク解除
                 label += "(_M)";
                 break;
@@ -482,8 +487,20 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
 // IDからキーボードとマウスジェスチャの両方を取得
 const std::string CONTROL::get_str_motions( const int id )
 {
-    std::string str_motion = get_str_keymotions( id );
-    std::string mouse_motion = get_str_mousemotions( id );
+    int ctl = id;
+
+    // メニューのラベルとコントロールのIDが異なる場合は、ここで変換する
+    switch( ctl ){
+        // 表示中のビューのプロパティを表示する、共通コントロールID
+    case CONTROL::PreferenceArticle:     //スレのプロパティ...
+    case CONTROL::PreferenceBoard:       //板のプロパティ...
+    case CONTROL::PreferenceImage:       //画像のプロパティ...
+        ctl = CONTROL::PreferenceView;
+        break;
+    }
+
+    std::string str_motion = get_str_keymotions( ctl );
+    std::string mouse_motion = get_str_mousemotions( ctl );
     if( ! mouse_motion.empty() ){
         if( !str_motion.empty() ) str_motion += " ";
         str_motion += "( " + mouse_motion + " )";

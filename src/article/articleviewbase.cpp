@@ -220,9 +220,8 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DeleteOpen", "スレ情報を消さずにスレ再取得(_R)"), sigc::mem_fun( *this, &ArticleViewBase::delete_open_view ) );
     action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &ArticleViewBase::set_favorite ) );
     action_group()->add( Gtk::Action::create( "Reload", "Reload"), sigc::mem_fun( *this, &ArticleViewBase::exec_reload ) );
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", "PreferenceArticle" ),
-                         sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
-    action_group()->add( Gtk::Action::create( "PreferenceImage", "画像のプロパティ(_M)..."), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", "PreferenceArticle" ), sigc::mem_fun( *this, &ArticleViewBase::show_preference ) );
+    action_group()->add( Gtk::Action::create( "PreferenceImage", ITEM_NAME_PREF_IMAGE "(_M)..." ), sigc::mem_fun( *this, &ArticleViewBase::slot_preferences_image ) );
 
     // 検索
     action_group()->add( Gtk::Action::create( "Search_Menu", ITEM_NAME_SEARCH + std::string( "(_H)" ) ) );
@@ -1250,7 +1249,7 @@ const bool ArticleViewBase::operate_view( const int control )
             break;
 
             // スレのプロパティ
-        case CONTROL::PreferenceArticle:
+        case CONTROL::PreferenceView:
             show_preference();
             break;
 

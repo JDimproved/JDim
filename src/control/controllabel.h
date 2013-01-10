@@ -111,8 +111,12 @@ namespace CONTROL
         { "Copy", ITEM_NAME_COPY },
         { "SelectAll", "全て選択" },
         { "AppendFavorite", ITEM_NAME_APPENDFAVORITE "..." },
-        { "Property", "プロパティ..." },
         { "Lock", ITEM_NAME_LOCK },
+
+        { "PreferenceView", ITEM_NAME_PREFERENCEVIEW "..." },
+        { "PreferenceBoard", ITEM_NAME_PREF_BOARD "..." },
+        { "PreferenceArticle", ITEM_NAME_PREF_THREAD "..." },
+        { "PreferenceImage", ITEM_NAME_PREF_IMAGE "..." },
 
         { "Search", ITEM_NAME_SEARCH },
         { "CloseSearchBar", "検索バーを閉じる" },
@@ -205,8 +209,6 @@ namespace CONTROL
         { "DeleteSelectImage", "削除する" },
         { "AboneSelectImage", "あぼ〜んする" },
         { "AboneSelectionRes", ITEM_NAME_ABONE_SELECTION },
-
-        { "PreferenceArticle", ITEM_NAME_PREF_THREAD },
 
         { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },

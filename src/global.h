@@ -109,8 +109,10 @@ enum{
 #define ITEM_NAME_SELECTDELIMG "選択範囲の画像を削除"
 #define ITEM_NAME_SELECTABONEIMG "選択範囲の画像をあぼ〜ん"
 
+#define ITEM_NAME_PREFERENCEVIEW "プロパティ"
 #define ITEM_NAME_PREF_BOARD     "板のプロパティ"
 #define ITEM_NAME_PREF_THREAD    "スレのプロパティ"
+#define ITEM_NAME_PREF_IMAGE     "画像のプロパティ"
 
 
 // SESSION::get_item_*() の戻り値
@@ -198,8 +200,10 @@ enum
     ITEM_SELECTDELIMG,
     ITEM_SELECTABONEIMG,
 
+    ITEM_PREFERENCEVIEW,
     ITEM_PREF_BOARD,
     ITEM_PREF_THREAD,
+    ITEM_PREF_IMAGE,
 
     ITEM_END
 };

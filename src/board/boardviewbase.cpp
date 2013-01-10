@@ -284,10 +284,8 @@ void BoardViewBase::setup_action()
                          sigc::mem_fun( *this, &BoardViewBase::slot_open_browser ) );
     action_group()->add( Gtk::Action::create( "AboneThread", ITEM_NAME_ABONE_ARTICLE + std::string( "(_N)" ) ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_abone_thread ) );
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD + std::string( "(_P)..." ) ),
-                         sigc::mem_fun( *this, &BoardViewBase::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "PreferenceBoard", ITEM_NAME_PREF_BOARD + std::string( "(_O)..." ) ),
-                         sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
+    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD "(_P)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_preferences_article ) );
+    action_group()->add( Gtk::Action::create( "PreferenceBoard", "PreferenceBoard" ), sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
     action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT + std::string( "(_S)..." ) ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_save_dat ) );
     action_group()->add( Gtk::Action::create( "SearchNextArticle", ITEM_NAME_NEXTARTICLE ),
@@ -1533,6 +1531,11 @@ const bool BoardViewBase::operate_view( const int control )
 
         case CONTROL::SearchPrev:
             up_search();
+            break;
+
+            // 板のプロパティ
+        case CONTROL::PreferenceView:
+            show_preference();
             break;
 
         default:

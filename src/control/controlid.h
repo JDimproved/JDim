@@ -106,9 +106,13 @@ namespace CONTROL
         Copy,
         SelectAll,
         AppendFavorite,
-        Property,
         Lock,
-    
+
+        PreferenceView,
+        PreferenceBoard,
+        PreferenceArticle,
+        PreferenceImage,
+
         Search,
         CloseSearchBar,
         HiLightOff,
@@ -197,8 +201,6 @@ namespace CONTROL
         DeleteSelectImage,
         AboneSelectImage,
         AboneSelectionRes,
-
-        PreferenceArticle,
 
         PopupWarpButton, // 以下、マウスボタン専用の設定
         ReferResButton, 
