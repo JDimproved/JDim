@@ -50,7 +50,9 @@ enum
     MAX_LINK_DIGIT = 4,  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
 
     MAXSISE_OF_LINES = 512 * 1024,   // ロード時に１回の呼び出しで読み込まれる最大データサイズ
-    SIZE_OF_HEAP = MAXSISE_OF_LINES + 64
+    SIZE_OF_HEAP = MAXSISE_OF_LINES + 64,
+
+    INITIAL_RES_BUFSIZE = 128,  // レスの文字列を返すときの初期バッファサイズ
 };
 
 
@@ -631,6 +633,7 @@ const std::string NodeTreeBase::get_res_str( int number, bool ref )
     std::string ref_prefix;
     if( ref ) ref_prefix = CONFIG::get_ref_prefix();
 
+    str_res.reserve( INITIAL_RES_BUFSIZE );
     str_res += ref_prefix;
 
     NODE* node;
