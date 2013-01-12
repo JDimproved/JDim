@@ -251,9 +251,13 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
         // レス数取得
         ++pos;
         int i = 0;
-        while( *pos != ')' && *pos != '\0' && *pos != '\n' && i < 16 ) str_num[ i++ ] = *( pos++ );
+        while( '0' <= *pos && *pos <= '9' && i < 16 ) str_num[ i++ ] = *( pos++ );
 
         // 壊れてる
+        if( i == 0 ){
+            MISC::ERRMSG( "subject.txt is broken (res)" );
+            break;
+        }
         if( *pos == '\0' ) break;
         if( *pos == '\n' ) { ++pos; continue; }
 
