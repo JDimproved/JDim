@@ -2674,6 +2674,9 @@ const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n
     // URLとして短かすぎる場合は除外する( 最短ドメイン名の例 "1.cc" )
     if( n_in - delim_pos < 4 ) return MISC::SCHEME_NONE;
 
+    // URL出力バッファより長いときも除外する( 一般に256バイトを超えるとキャッシュをファイル名として扱えなくなる )
+    if( lng_link <= n_in ) return MISC::SCHEME_NONE;
+
     char *pos = str_link;
 
     // URLスキームを修正
