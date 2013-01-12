@@ -215,7 +215,6 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
 #endif 
    
     const char* pos = str_subject_txt;
-    char str_tmp[ 1024 ];
 
     while( *pos != '\0' ){
         
@@ -267,13 +266,11 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
         // id, subject, number 取得
         ARTICLE_INFO artinfo;
 
-        memcpy( str_tmp, str_id_dat, lng_id_dat );
-        str_tmp[ lng_id_dat ] = '\0';
-        artinfo.id = MISC::remove_space( str_tmp );
+        artinfo.id.assign( str_id_dat, lng_id_dat );
+        artinfo.id = MISC::remove_space( artinfo.id );
 
-        memcpy( str_tmp, str_subject, lng_subject );
-        str_tmp[ lng_subject ] = '\0';
-        artinfo.subject = MISC::remove_space( str_tmp );
+        artinfo.subject.assign( str_subject, lng_subject );
+        artinfo.subject = MISC::remove_space( artinfo.subject );
         artinfo.subject = MISC::replace_str( artinfo.subject, "&lt;", "<" );
         artinfo.subject = MISC::replace_str( artinfo.subject, "&gt;", ">" );
         

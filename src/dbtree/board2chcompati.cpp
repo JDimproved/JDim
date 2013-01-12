@@ -339,7 +339,6 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
     const int max_subject = 1024;  
 
     const char* pos = str_subject_txt;
-    char str_tmp[ max_subject ];
 
     while( *pos != '\0' ){
         
@@ -406,14 +405,13 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
         // id, subject, number 取得
         ARTICLE_INFO artinfo;
 
-        memcpy( str_tmp, str_id_dat, lng_id_dat );
-        str_tmp[ lng_id_dat ] = '\0';
-        artinfo.id = str_tmp;
+        artinfo.id.assign( str_id_dat, lng_id_dat );
 
-        memcpy( str_tmp, str_subject, lng_subject );
-        if( str_tmp[ lng_subject-1 ] == ' ' ) lng_subject--;  // 2chのsubject.txtは()の前に空白が一つ入る
-        str_tmp[ lng_subject ] = '\0';
-        artinfo.subject = str_tmp;
+        if( str_subject[ lng_subject-1 ] == ' ' ){
+            lng_subject--;  // 2chのsubject.txtは()の前に空白が一つ入る
+        }
+        artinfo.subject.assign( str_subject, lng_subject );
+
         if( exist_amp ){
             artinfo.subject = MISC::replace_str( artinfo.subject, "&lt;", "<" );
             artinfo.subject = MISC::replace_str( artinfo.subject, "&gt;", ">" );
