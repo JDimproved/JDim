@@ -29,8 +29,7 @@ const std::list< std::string > MISC::get_lines( const std::string& str ){
         r = 0;
         if( str[ i2 - 1 ] == '\r' ) r = 1;
         if( i2 - i > 0 ){
-            std::string str_tmp = str.substr( i, i2 - i - r );
-            lines.push_back( str_tmp );
+            lines.push_back( str.substr( i, i2 - i - r ) );
         }
         i = i2 + 1;
     }
@@ -298,7 +297,6 @@ const std::string MISC::remove_space( const std::string& str )
     std::string str_space = "　";
     size_t lng_space = str_space.length();
 
-    std::string str_out;
     size_t lng = str.length();
     
     if( lng == 0 ) return str;
@@ -332,9 +330,7 @@ const std::string MISC::remove_space( const std::string& str )
         else break;
     }
 
-    str_out = str.substr( i, i2 - i + 1 );
-    
-    return str_out;
+    return str.substr( i, i2 - i + 1 );
 }
 
 
@@ -434,14 +430,17 @@ const std::string MISC::cut_str( const std::string& str, const std::string& str1
 const std::string MISC::replace_str( const std::string& str, const std::string& str1, const std::string& str2 )
 {
     std::string str_out;
+    str_out.reserve( str.length() );
+
     size_t i, pos = 0;
     while( ( i = str.find( str1 , pos ) ) != std::string::npos ){
 
-        str_out += str.substr( pos, ( i - pos ) ) + str2;
-        pos += ( i - pos ) + str1.length();
+        str_out.append( str, pos, ( i - pos ) );
+        str_out.append( str2 );
+        pos = i + str1.length();
     }
 
-    str_out += str.substr( pos );
+    str_out.append( str, pos, str.length() );
     return str_out;
 }
 
@@ -467,18 +466,20 @@ const std::string MISC::replace_newlines_to_str( const std::string& str_in, cons
     if( str_in.empty() || replace.empty() ) return str_in;
 
     std::string str_out;
+    str_out.reserve( str_in.length() );
 
     size_t pos = 0, found = 0;
     while( ( found = str_in.find_first_of( "\r\n", pos ) ) != std::string::npos )
     {
-        str_out.append( str_in.substr( pos, ( found - pos ) ) + replace );
+        str_out.append( str_in, pos, ( found - pos ) );
+        str_out.append( replace );
 
         pos = found + 1;
 
         if( str_in[ found ] == '\r' && str_in[ found + 1 ] == '\n' ) ++pos;
     }
 
-    str_out.append( str_in.substr( pos ) );
+    str_out.append( str_in, pos, str_in.length() );
 
     return str_out;
 }
@@ -1013,46 +1014,39 @@ const int MISC::is_url_scheme( const char* str_in, int* length )
 // "RFC 3986" : http://www.ietf.org/rfc/rfc3986.txt
 // "RFC 2396" : http://www.ietf.org/rfc/rfc2396.txt
 //
+static const char s_url_char[ 128 ] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//         !  "  #  $  %  &  '  (  )  *  +  ,  -  .  /
+        0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//      0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
+//      @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//      P  Q  R  S  T  U  V  W  X  Y  Z  [  \  ]  ^  _
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 2, 2, 1,
+//      `  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//      p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 0, 1, 0,
+};
 const bool MISC::is_url_char( const char* str_in, const bool loose_url )
 {
-    if(
-        // 出現頻度が高いと思われる順にチェック
-        ( *str_in >= 'a' && *str_in <= 'z' )
-        || ( *str_in >= '0' && *str_in <= '9' )
-        || ( *str_in >= 'A' && *str_in <= 'Z' )
-        || *str_in == '.'
-        || *str_in == '/'
-        || *str_in == '-'
-        || *str_in == '%'
-        || *str_in == '?'
-        || *str_in == '='
-        || *str_in == ':'
-        || *str_in == '~'
-        || *str_in == '&'
+    unsigned char c = (unsigned char)(*str_in);
 
-        // あとの並びはASCIIコード順(なんとなく)
-        || *str_in == '!'
-        || *str_in == '#'
-        || *str_in == '$'
-        || *str_in == '\''
-        || *str_in == '('
-        || *str_in == ')'
-        || *str_in == '*'
-        || *str_in == '+'
-        || *str_in == ','
-        || *str_in == ';'
-        || *str_in == '@'
-        || *str_in == '_'
+    // 128以上のテーブルはないので先に判定
+    if( c & 0x80 ) return false;
 
-        // RFC 3986(2.2.)では"[]"が予約文字として定義されているが
-        // RFC 2396(2.4.3.)では除外されていて、普通にURLとして扱う
-        // と問題がありそうなので"loose_url"の扱いにしておく。
-        || ( loose_url && ( *str_in == '['
-                         || *str_in == ']'
-                         || *str_in == '^'
-                         || *str_in == '|' ) )
-    ) return true;
-    else return false;
+    // 基本
+    if( s_url_char[ c ] == 1 ) return true;
+
+    // 拡張
+    // RFC 3986(2.2.)では"[]"が予約文字として定義されているが
+    // RFC 2396(2.4.3.)では除外されていて、普通にURLとして扱う
+    // と問題がありそうなので"loose_url"の扱いにしておく。
+    if( loose_url && s_url_char[ c ] == 2 ) return true;
+
+    return false;
 }
 
 
@@ -1072,21 +1066,22 @@ const std::string MISC::url_decode( const std::string& url )
     unsigned int a, b;
     for( a = 0, b = a; a < url_length; ++a, ++b )
     {
-        if( url[a] == '%' )
+        if( url[a] == '%' && ( a + 2 < url_length ) )
         {
-            char src[3];
-            memset( src, 0, 3 );
-            memcpy( src, &url[ a + 1 ], 2 );
-
-            char tmp[3];
-            memset( tmp, 0, 3 );
+            char src[3] = { url[ a + 1 ], url[ a + 2 ], '\0' };
+            char tmp[3] = { '\0', '\0', '\0' };
 
             if( chrtobin( src, tmp ) == 2 )
             {
+                // '%4A' など、2文字が変換できていること
                 decoded[b] = *tmp;
                 a += 2;
             }
-            else decoded[b] = url[a];
+            else
+            {
+                // 変換失敗は、単なる '%' 文字として扱う
+                decoded[b] = url[a];
+            }
         }
         else if( url[a] == '+' )
         {
@@ -1190,8 +1185,11 @@ const std::string MISC::base64( const std::string& str )
 {
     char table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-    std::string out;
     int lng = str.length();
+
+    std::string out;
+    out.reserve( lng * 2 );
+
     std::string data = str + "\0\0\0\0";
 
     for( int i = 0; i < lng; i += 3 ){
@@ -1211,10 +1209,11 @@ const std::string MISC::base64( const std::string& str )
     }
 
     if( lng % 3 == 1 ){
-        out = out.substr( 0, out.length()-2 ) + "==";
+        out[ out.length()-2 ] = '=';
+        out[ out.length()-1 ] = '=';
     }
     else if( lng % 3 == 2 ){
-        out = out.substr( 0, out.length()-1 ) + "=";
+        out[ out.length()-1 ] = '=';
     }
 
 #ifdef _DEBUG
