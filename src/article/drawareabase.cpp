@@ -1703,7 +1703,8 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
         while( ! m_layout_tree->get_header_of_res_const( num ) && num-- > 0 );
         lastheader = m_layout_tree->get_header_of_res_const( num );
     }
-    if( lastheader && lastheader->rect->y + lastheader->rect->height/2 < pos_y + height_view ){
+    if( lastheader && lastheader->rect
+            && lastheader->rect->y + lastheader->rect->height/2 < pos_y + height_view ){
 
         m_seen_current = m_layout_tree->max_res_number();
     }
