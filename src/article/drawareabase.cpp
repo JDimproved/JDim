@@ -99,6 +99,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_draw_frame( false )
     , m_back_frame( NULL )
     , m_ready_back_frame( false )
+    , m_strict_of_char( false )
     , m_configure_reserve( false )
     , m_configure_width( 0 )
     , m_configure_height( 0 )
@@ -331,6 +332,9 @@ void DrawAreaBase::init_color()
 //
 void DrawAreaBase::init_font()
 {
+    // スレビューで文字幅の近似を厳密にするか
+    m_strict_of_char = CONFIG::get_strict_char_width();
+
     std::string fontname = CONFIG::get_fontname( get_fontid() );
 
     if( fontname.empty() ) return;
@@ -1345,7 +1349,7 @@ void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_
 //
 bool DrawAreaBase::set_init_wide_mode( const char* str, const int pos_start, const int pos_to )
 {
-    if( ! CONFIG::get_strict_char_width() ) return false;
+    if( ! m_strict_of_char ) return false;
 
     bool wide_mode = true;
     int i = pos_start;
@@ -1389,9 +1393,7 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
     // キャッシュに無かったら幅を調べてキャッシュに登録
     if( ! ARTICLE::get_width_of_char( utfstr, byte, pre_char, width, width_wide, mode ) ){
 
-        char tmpchar[ 64 ];
-        memcpy( tmpchar, utfstr, byte );
-        tmpchar[ byte ] = '\0';
+        const std::string tmpchar( utfstr, byte );
 
 #ifdef _DEBUG
         std::cout << "no cache [" << tmpchar << "] " << byte <<" byte ";
@@ -1400,7 +1402,7 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
 #endif
 
         // 厳密な幅計算をしない場合
-        if( ! CONFIG::get_strict_char_width() ){
+        if( ! m_strict_of_char ){
 
             m_pango_layout->set_text( tmpchar );
             width = width_wide = m_pango_layout->get_logical_extents().get_width();
@@ -1412,7 +1414,7 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
             // 全角モードでの幅
             if( ! width_wide ){
 
-                std::string str_dummy = "ぁ";
+                const std::string str_dummy( "ぁ" );
                 m_pango_layout->set_text( str_dummy + str_dummy );
                 int width_dummy = m_pango_layout->get_logical_extents().get_width() / 2;
 
@@ -1426,14 +1428,14 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
             // 半角モードではひとつ前の文字によって幅が変わることに注意する
             if( ! width ){
 
-                char char_dummy[ 8 ] = "a";
+                std::string char_dummy( "a" );
                 if( pre_char && IS_ALPHABET( pre_char ) ) char_dummy[ 0 ] = pre_char;
 
-                std::string str_dummy = std::string( char_dummy ) + char_dummy;
+                const std::string str_dummy( char_dummy + char_dummy );
                 m_pango_layout->set_text( str_dummy );
                 int width_dummy = m_pango_layout->get_logical_extents().get_width() / 2;
 
-                std::string str_tmp = char_dummy + std::string( tmpchar );
+                const std::string str_tmp( char_dummy + tmpchar );
                 m_pango_layout->set_text( str_tmp );
                 width = m_pango_layout->get_logical_extents().get_width() - width_dummy;
 
@@ -1452,7 +1454,7 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
         if( width_wide <= 0 ){
 
             int byte_tmp;
-            const unsigned int code = MISC::utf8toucs2( tmpchar, byte_tmp );
+            const unsigned int code = MISC::utf8toucs2( tmpchar.c_str(), byte_tmp );
 
             std::stringstream ss_err;
             ss_err << "unknown font byte = " << byte_tmp << " ucs2 = " << code << " width = " << width;
@@ -1476,7 +1478,7 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
     int ret = 0;
 
     // 厳密に計算しない場合
-    if( ! CONFIG::get_strict_char_width() ) ret = width_wide;
+    if( ! m_strict_of_char ) ret = width_wide;
 
     else{
 

@@ -144,6 +144,9 @@ namespace ARTICLE
         int m_br_size; // 改行量 (ピクセル値)
         int m_mrg_right; // wrap計算のときに使用する右マージン幅 (ピクセル値)
 
+        // スレビューで文字幅の近似を厳密にするか
+        bool m_strict_of_char;
+
         // ビューのリサイズ用
         bool m_configure_reserve; // true の時は再描画する前に再レイアウトする
         int m_configure_width;
