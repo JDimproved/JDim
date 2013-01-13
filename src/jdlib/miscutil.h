@@ -158,6 +158,7 @@ namespace MISC
     // 戻り値 : スキームタイプ
     // length    : "http://"等の文字数
     const int is_url_scheme( const char* str_in, int* length = NULL );
+    const int is_url_scheme_impl( const char* str_in, int* length );
 
     // URLとして扱う文字かどうか判別する
     // 基本 : 「!#$%&'()*+,-./0-9:;=?@A-Z_a-z~」
@@ -265,6 +266,17 @@ namespace MISC
     // table_pos : 置き換えた文字列の位置
     // n : str2 と table_pos のバッファサイズ
     void asc( const char* str1, char* str2, int* table_pos, const size_t n );
+
+
+    // URL中のスキームを判別する
+    inline const int is_url_scheme( const char* str_in, int* length )
+    {
+        // 候補になり得ない場合は以降の処理はしない
+        if( *str_in != 'h' && *str_in != 'f' && *str_in != 't' && *str_in != 's' )
+            return SCHEME_NONE;
+
+        return is_url_scheme_impl( str_in, length );
+    }
 }
 
 

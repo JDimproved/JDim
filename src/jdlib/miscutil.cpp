@@ -945,13 +945,10 @@ const std::string MISC::html_unescape( const std::string& str )
 // 戻り値 : スキームタイプ
 // length    : "http://"等の文字数
 //
-const int MISC::is_url_scheme( const char* str_in, int* length )
+const int MISC::is_url_scheme_impl( const char* str_in, int* length )
 {
     int scheme = SCHEME_NONE;
     int len = 0;
-
-    // 候補になり得ない場合は以降の処理はしない
-    if( *str_in != 'h' && *str_in != 'f' && *str_in != 't' && *str_in != 's' ) return scheme;
 
     // http https
     if( *str_in == 'h' && *( str_in + 1 ) == 't'

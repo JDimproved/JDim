@@ -1510,34 +1510,6 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
 
 
 //
-// 文字列を wrap するか判定する関数
-//
-// str != NULL なら禁則処理も考える
-//
-bool DrawAreaBase::is_wrapped( const int x, const int border, const char* str )
-{
-    const unsigned char* tmpchar = ( const unsigned char* ) str;
-
-    if( x < border
-
-        // 禁則文字
-        || ( tmpchar && tmpchar[ 0 ] == ',' )
-
-        || ( tmpchar && tmpchar[ 0 ] == '.' )
-
-        // UTF-8で"。"
-        || ( tmpchar && tmpchar[ 0 ] == 0xe3 && tmpchar[ 1 ] == 0x80 && tmpchar[ 2 ] == 0x82 )
-
-        // UTF-8で"、"
-        || ( tmpchar && tmpchar[ 0 ] == 0xe3 && tmpchar[ 1 ] == 0x80 && tmpchar[ 2 ] == 0x81 )
-
-        ) return false;
-
-    return true;
-}
-
-
-//
 // スクリーン描画
 //
 // y から height の高さ分だけ描画する
