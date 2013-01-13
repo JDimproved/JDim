@@ -26,7 +26,7 @@ namespace SKELETON
       public:
 
         TabSwitchMenu( DragableNoteBook* notebook, Admin* admin );
-        ~TabSwitchMenu();
+        virtual ~TabSwitchMenu();
 
         void remove_items();
         void append_items();
