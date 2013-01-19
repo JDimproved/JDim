@@ -181,6 +181,9 @@ namespace CONFIG
 // レスを参照するときに前に付ける文字
 #define CONF_REF_PREFIX ">"
 
+// レスにアスキーアートがあると判定する正規表現
+#define CONF_REGEX_RES_AA "\"　 \""
+
 // キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
 #define CONF_PATH_CACHEROOT "~/.jd/"
 

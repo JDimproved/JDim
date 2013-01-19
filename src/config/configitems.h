@@ -43,6 +43,9 @@ namespace CONFIG
         int ref_prefix_space;
         std::string ref_prefix_space_str;
 
+        // レスにアスキーアートがあると判定する正規表現
+        std::string regex_res_aa;
+
         // キャッシュのルートディレクトリ
         // 旧バージョンとの互換のため残しているだけで使用していない
         std::string path_cacheroot;

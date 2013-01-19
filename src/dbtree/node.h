@@ -120,6 +120,7 @@ namespace DBTREE
         char* text;
         unsigned char color_text; // 色
         bool bold;
+        char fontid; // fontid.h
         
         // ヘッダ拡張情報
         HEADERINFO* headinfo;

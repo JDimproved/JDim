@@ -63,6 +63,19 @@ namespace ARTICLE
         int height;
     };
 
+    // フォント情報
+    struct FONTINFO
+    {
+        std::string fontname;
+        Pango::FontDescription pfd;
+        int ascent;
+        int descent;
+        int height;
+        int underline_pos; // 下線の位置(文字の上からのピクセル値)
+        int br_size;       // 改行量 (ピクセル値)
+        int mrg_right;     // wrap計算のときに使用する右マージン幅 (ピクセル値)
+    };
+
     ///////////////////////////////////
 
 
@@ -137,12 +150,10 @@ namespace ARTICLE
         // レイアウト用
         CORE::CSS_PROPERTY m_css_body; // body の cssプロパティ
         int m_fontid;
-        int m_font_ascent;
-        int m_font_descent;
-        int m_font_height;
-        int m_underline_pos; // 下線の位置(文字の上からのピクセル値)
-        int m_br_size; // 改行量 (ピクセル値)
-        int m_mrg_right; // wrap計算のときに使用する右マージン幅 (ピクセル値)
+        int m_defaultfontid;
+        FONTINFO *m_font; // カレントフォント情報
+        FONTINFO m_defaultfont; // デフォルトフォント情報
+        FONTINFO m_aafont; // AA用フォント情報
 
         // スレビューで文字幅の近似を厳密にするか
         bool m_strict_of_char;
@@ -221,7 +232,7 @@ namespace ARTICLE
 
         // フォントID( fontid.h にある ID を指定)
         const int get_fontid() const { return m_fontid; }
-        void set_fontid( int id ){ m_fontid = id; }
+        void set_fontid( int id ){ m_fontid = id; m_defaultfontid = id; }
 
         // 新着セパレータのあるレス番号の取得とセット
         const int get_separator_new();
@@ -345,6 +356,7 @@ namespace ARTICLE
         void create_scrbar();
         void init_color();
         void init_font();
+        void init_fontinfo( FONTINFO& fi, std::string& fontname );
 
         // レイアウト処理
         void set_align( LAYOUT* div, int id_end, int align );
@@ -371,6 +383,7 @@ namespace ARTICLE
         void draw_string( LAYOUT* node, const int pos_y, const int width_view,
                           const int color, const int color_back, const int byte_from, const int byte_to );
         const bool draw_one_img_node( LAYOUT* layout, const int pos_y, const int upper, const int lower );
+        void set_node_font( LAYOUT* layout );
 
         // drawarea がリサイズ実行
         void configure_impl();

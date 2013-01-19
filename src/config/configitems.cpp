@@ -123,6 +123,9 @@ const bool ConfigItems::load( const bool restore )
     ref_prefix_space = cf.get_option_int( "ref_prefix_space", CONF_REF_PREFIX_SPACE, 0, 16 );
     for( int i = 0; i < ref_prefix_space; ++i ) ref_prefix_space_str += " ";
 
+    // レスにアスキーアートがあると判定する正規表現
+    regex_res_aa = cf.get_option_str( "regex_res_aa", CONF_REGEX_RES_AA );
+
     // キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
     path_cacheroot = cf.get_option_str( "path_cacheroot", CONF_PATH_CACHEROOT );
 
@@ -667,12 +670,15 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "fontname_main", fontname[ FONT_MAIN ] );
     cf.update( "fontname_popup", fontname[ FONT_POPUP ] );
+    cf.update( "fontname_aa", fontname[ FONT_AA ] );
     cf.update( "fontname_bbs", fontname[ FONT_BBS ] );
     cf.update( "fontname_board", fontname[ FONT_BOARD ] );
     cf.update( "fontname_message", fontname[ FONT_MESSAGE ] );
 
     cf.update( "ref_prefix", ref_prefix );
     cf.update( "ref_prefix_space", ref_prefix_space );
+
+    cf.update( "regex_res_aa", regex_res_aa );
 
     cf.update( "path_cacheroot", path_cacheroot );
 
@@ -945,6 +951,9 @@ void ConfigItems::set_fonts( JDLIB::ConfLoader& cf )
 
     // ポップアップのフォント
     fontname[ FONT_POPUP ] = cf.get_option_str( "fontname_popup", defaultfont + " " + std::string( CONF_FONTSIZE_POPUP ) );
+
+    // AA(スレビュー)のフォント
+    fontname[ FONT_AA ] = cf.get_option_str( "fontname_aa", fontname[ FONT_MAIN ] );
 
     // スレ一覧のフォント
     fontname[ FONT_BBS ] = cf.get_option_str( "fontname_bbs", defaultfont + " " + std::string( CONF_FONTSIZE_TREE ) );

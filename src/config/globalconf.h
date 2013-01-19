@@ -84,6 +84,9 @@ namespace CONFIG
     // 参照文字( ref_prefix ) の後のスペースの数
     const int ref_prefix_space();
 
+    // レスにアスキーアートがあると判定する正規表現
+    const std::string get_regex_res_aa();
+
     // JD ホームページのアドレス
     const std::string& get_url_jdhp();
 

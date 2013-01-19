@@ -7,6 +7,7 @@ enum
 {
     FONT_MAIN = 0,   // スレッドビューなどの基本の物
     FONT_POPUP,      // ポップアップ
+    FONT_AA,         // AA(スレビュー)
 
     FONT_BBS,        // スレ一覧
 
@@ -16,7 +17,10 @@ enum
 
     FONT_ENTRY_DEFAULT,    // Gtk::Entryのデフォルトフォント
 
-    FONT_NUM
+    FONT_NUM,
+
+    FONT_EMPTY,      // フォントID未設定
+    FONT_DEFAULT,    // ビューの標準フォントを使用
 };
 
 #endif

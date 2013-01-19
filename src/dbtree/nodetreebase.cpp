@@ -21,6 +21,7 @@
 #include "global.h"
 #include "httpcode.h"
 #include "colorid.h"
+#include "fontid.h"
 #include "command.h"
 #include "cache.h"
 #include "session.h"
@@ -114,6 +115,9 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
     // 発言数で色を変える回数
     m_num_id[ LINK_HIGH ] = CONFIG::get_num_id_high();
     m_num_id[ LINK_LOW ] = CONFIG::get_num_id_low();
+
+    // レスにアスキーアートがあると判定する正規表現
+    m_aa_regex = CONFIG::get_regex_res_aa();
 
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::NodeTreeBase url = " << m_url << " modified = " << get_date_modified()
@@ -798,6 +802,7 @@ NODE* NodeTreeBase::create_node()
     NODE* tmpnode = ( NODE* ) m_heap.heap_alloc( sizeof( NODE ) );
 
     tmpnode->id_header = m_id_header;
+    tmpnode->fontid = FONT_EMPTY; // フォントID未設定
     if( m_node_previous ) m_node_previous->next_node = tmpnode;
     m_node_previous = tmpnode;
     
@@ -1533,6 +1538,9 @@ void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
 
         // 参照数更新
         update_reference( num_before +1,  m_id_header );
+
+        // フォント判定
+        update_fontid( num_before +1,  m_id_header );
 
         // articlebase クラスに状態が変わったことを知らせる
         m_sig_updated.emit();
@@ -2842,6 +2850,9 @@ void NodeTreeBase::update_abone_all()
     // 参照状態更新
     clear_reference();
     update_reference( 1, m_id_header );
+
+    // フォント判定更新
+    update_fontid( 1, m_id_header );
 }
 
 
@@ -3474,6 +3485,62 @@ void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name, NODE* p
     if( num_id_name >= m_num_id[ LINK_HIGH ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_ID_HIGH;
     else if( num_id_name >= m_num_id[ LINK_LOW ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_ID_LOW;
     else header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR;
+}
+
+
+//
+// from_number番から to_number 番までのレスのフォント判定を更新
+//
+void NodeTreeBase::update_fontid( const int from_number, const int to_number )
+{
+    if( empty() ) return;
+    if( to_number < from_number ) return;
+    for( int i = from_number ; i <= to_number; ++i ) check_fontid( i );
+}
+
+
+//
+// number番のレスのフォント判定を更新
+//
+void NodeTreeBase::check_fontid( const int number )
+{
+    NODE* head = res_header( number );
+    if( ! head ) return;
+    if( ! head->headinfo ) return;
+    if( head->fontid != FONT_EMPTY ) return;
+
+    // ヘッダノードには、フォント判定済みの意味を兼ねて、デフォルトフォントを設定しておく
+    head->fontid = FONT_DEFAULT;
+
+    char fontid_mes = FONT_DEFAULT; // 本文のフォント(fontid.h)
+
+    const std::string res_str = get_res_str( number );
+    JDLIB::Regex regex;
+    const size_t offset = 0;
+    const bool icase = false;
+    const bool newline = true;
+    const bool usemigemo = false;
+    const bool wchar = false;
+
+    // AAフォント判定
+    if( ! m_aa_regex.empty() ) {
+        if( regex.exec( m_aa_regex, res_str, offset, icase, newline, usemigemo, wchar ) ){
+            fontid_mes = FONT_AA;
+#ifdef _DEBUG
+    std::cout << "NodeTreeBase::check_fontid() fontid = " << FONT_AA
+            << " res = " << number << std::endl;
+#endif
+        }
+    }
+    
+    // 本文のフォントを設定
+    if( fontid_mes != FONT_DEFAULT ){ 
+        NODE *node = head->headinfo->block[ BLOCK_MES ];
+        while (node) {
+            node->fontid = fontid_mes;
+            node = node->next_node;
+        }
+    }
 }
 
 

@@ -131,6 +131,18 @@ void CONFIG::reset_fonts(){ get_confitem()->reset_fonts(); }
 const std::string CONFIG::get_ref_prefix(){ return get_confitem()->ref_prefix + get_confitem()->ref_prefix_space_str; }
 const int CONFIG::ref_prefix_space(){ return get_confitem()->ref_prefix_space; }
 
+// レスにアスキーアートがあると判定する正規表現
+const std::string CONFIG::get_regex_res_aa(){
+    std::string str = get_confitem()->regex_res_aa;
+    int size = str.size();
+
+    // ダブルクオートの削除
+    if( size > 2 && str[ 0 ] == '"' && str[ size - 1 ] == '"' ){
+        str = str.substr( 1, size - 2 );
+    }
+    return str;
+}
+
 const std::string& CONFIG::get_url_jdhp() { return get_confitem()->url_jdhp; }
 
 // 2chの認証サーバのアドレス

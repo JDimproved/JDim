@@ -123,6 +123,9 @@ namespace DBTREE
         // パース用雑用変数
         NODE* m_node_previous;
 
+        // AA判定用
+        std::string m_aa_regex;
+
         // その他のエラーメッセージ
         std::string m_ext_err;
 
@@ -367,6 +370,14 @@ namespace DBTREE
         // 発言数( num_id_name )の更新
         // IDノードの色も変更する
         void set_num_id_name( NODE* header, const int num_id_name, NODE* pre_id_name_header );
+
+
+        // from_number番から to_number 番までのレスのフォント判定を更新
+        void update_fontid( const int from_number, const int to_number );
+
+        // number番のレスのフォント判定を更新
+        void check_fontid( const int number );
+
 
         // http://ime.nu/ などをリンクから削除
         bool remove_imenu( char* str_link );

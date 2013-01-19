@@ -335,37 +335,60 @@ void DrawAreaBase::init_font()
     // スレビューで文字幅の近似を厳密にするか
     m_strict_of_char = CONFIG::get_strict_char_width();
 
-    std::string fontname = CONFIG::get_fontname( get_fontid() );
-
-    if( fontname.empty() ) return;
-
     m_context = get_pango_context();
     assert( m_context );
 
+    std::string fontname = CONFIG::get_fontname( get_fontid() );
+    if( fontname.empty() ) return;
+
+    init_fontinfo( m_defaultfont, fontname );
+
+    std::string aafontname = CONFIG::get_fontname( FONT_AA );
+    if( aafontname.empty() ) aafontname = fontname;
+
+    init_fontinfo( m_aafont, aafontname );
+
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::aa_fontname = " << aafontname << std::endl;
+#endif
+
     // layoutにフォントをセット
-    Pango::FontDescription pfd( fontname );
-    pfd.set_weight( Pango::WEIGHT_NORMAL );
-    m_pango_layout->set_font_description( pfd );
-    modify_font( pfd );
+    m_font = &m_defaultfont;
+    m_pango_layout->set_font_description( m_font->pfd );
+    modify_font( m_font->pfd );
+}
+
+
+//
+// フォント情報初期化
+//
+void DrawAreaBase::init_fontinfo( FONTINFO& fi, std::string& fontname )
+{
+    fi.fontname = fontname;
+    
+    // layoutにフォントをセット
+    fi.pfd = Pango::FontDescription( fontname );
+    fi.pfd.set_weight( Pango::WEIGHT_NORMAL );
+    m_pango_layout->set_font_description( fi.pfd );
 
     // フォント情報取得
-    Pango::FontMetrics metrics = m_context->get_metrics( pfd );
-    m_font_ascent = PANGO_PIXELS( metrics.get_ascent() );
-    m_font_descent = PANGO_PIXELS( metrics.get_descent() );
-    m_font_height = m_font_ascent + m_font_descent;
+    Pango::FontMetrics metrics = m_context->get_metrics( fi.pfd );
+    fi.ascent = PANGO_PIXELS( metrics.get_ascent() );
+    fi.descent = PANGO_PIXELS( metrics.get_descent() );
+    fi.height = fi.ascent + fi.descent;
 
     // 改行高さ ( トップからの距離 )
-    m_br_size = ( int )( m_font_height * CONFIG::get_adjust_line_space() );
+    fi.br_size = ( int )( fi.height * CONFIG::get_adjust_line_space() );
 
     const char* wstr = "あいうえお";
     m_pango_layout->set_text( wstr );
 
     // リンクの下線の位置 ( トップからの距離 )
 #if GTKMM_CHECK_VERSION(2,5,0)
-    m_underline_pos = PANGO_PIXELS( ( metrics.get_ascent() - metrics.get_underline_position() )
+    fi.underline_pos = PANGO_PIXELS( ( metrics.get_ascent() - metrics.get_underline_position() )
                                   * CONFIG::get_adjust_underline_pos() );
 #else
-    m_underline_pos = int( ( m_pango_layout->get_pixel_logical_extents().get_height() )
+    fi.underline_pos = int( ( m_pango_layout->get_pixel_logical_extents().get_height() )
                            * CONFIG::get_adjust_underline_pos() );
 #endif
 
@@ -373,7 +396,7 @@ void DrawAreaBase::init_font()
     // マージン幅は真面目にやると大変そうなので文字列 wstr の平均を取る
     int width = m_pango_layout->get_pixel_ink_extents().get_width() / 5;
 
-    m_mrg_right = width /2 * 3;
+    fi.mrg_right = width /2 * 3;
 }
 
 
@@ -827,9 +850,12 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
     int x, y = 0;
     LAYOUT* header = m_layout_tree->top_header();
 
-    CORE::get_css_manager()->set_size( &m_css_body, m_font_height );
+    // フォント設定
+    set_node_font( header );
 
-    y += offset_y * m_br_size;
+    CORE::get_css_manager()->set_size( &m_css_body, m_font->height );
+
+    y += offset_y * m_font->br_size;
     y += m_css_body.padding_top;
 
     while( header ){
@@ -837,9 +863,12 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
         LAYOUT* layout = header->next_layout;
         if( ! layout ) break;
 
+        // フォント設定
+        set_node_font( layout );
+
         // (注) header は div ノードであり、クラス名は "res"
         // 詳しくは LayoutTree::create_layout_header() を参照せよ
-        CORE::get_css_manager()->set_size( header->css, m_font_height );
+        CORE::get_css_manager()->set_size( header->css, m_font->height );
 
         // div の位置と幅を計算
         // 高さは子ノードのレイアウトが全て済んでから計算
@@ -857,10 +886,13 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
         y += header->css->padding_top;
 
         LAYOUT* current_div = NULL;
-        int br_size = m_br_size; // 現在行の改行サイズ
+        int br_size = m_font->br_size; // 現在行の改行サイズ
 
         // 先頭の子ノードから順にレイアウトしていく
         while ( layout ){
+
+            // フォント設定
+            set_node_font( layout );
 
             switch( layout->type ){
 
@@ -884,7 +916,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
 
                     // div の位置と幅を計算
                     // 高さは違う div に切り替わった時に計算
-                    CORE::get_css_manager()->set_size( current_div->css, m_font_height );
+                    CORE::get_css_manager()->set_size( current_div->css, m_font->height );
                     x = header->rect->x + header->css->padding_left;
                     x += current_div->css->mrg_left;
                     y += current_div->css->mrg_top;
@@ -934,9 +966,9 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
                     y += EIMG_MRG;
                     layout_one_img_node( layout, x, y, br_size, m_width_client, is_popup, 0 );
 
-                    if( layout->rect->height > m_br_size ){
+                    if( layout->rect->height > m_font->br_size ){
 
-                        br_size = m_br_size;
+                        br_size = m_font->br_size;
                         y += layout->rect->height - br_size;
                     }
 
@@ -973,7 +1005,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
                     //////////////////////////////////////////
 
                 case DBTREE::NODE_HTAB: // 水平タブ
-                    x += m_font_height * SPACE_TAB;
+                    x += m_font->height * SPACE_TAB;
                     break;
             }
 
@@ -986,7 +1018,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
                 // divの中なら右スペースの分も足す
                 if( layout->div ) width_tmp += ( layout->div->css->padding_right + layout->div->css->mrg_right );
 
-                width_tmp += m_mrg_right + m_css_body.padding_right;
+                width_tmp += m_font->mrg_right + m_css_body.padding_right;
                 if( width_tmp > width_view ) width_tmp = width_view;
 
                 width_tmp += width_base_vscrbar;
@@ -1063,7 +1095,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
         adjust->set_lower( 0 );
         adjust->set_upper( m_height_client );
         adjust->set_page_size( height_view );
-        adjust->set_step_increment( m_br_size );
+        adjust->set_step_increment( m_font->br_size );
         adjust->set_page_increment(  height_view / 2 );
 
         m_cancel_change_adjust = true;
@@ -1200,7 +1232,7 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
     int border = 0;
     if( div ) border = div->rect->x + div->rect->width - div->css->padding_right;
     else border = width_view;
-    border -= m_mrg_right;
+    border -= m_font->mrg_right;
 
     // 先頭の RECTANGLE型のメモリ確保
     // wrapが起きたらまたRECTANGLE型のメモリを確保してリストの後ろに繋ぐ
@@ -1251,7 +1283,7 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
         }
 
         // 座標情報更新
-        br_size = m_br_size;
+        br_size = m_font->br_size;
         rect->end = true;
         rect->x = x;
         rect->y = y;
@@ -1332,7 +1364,7 @@ void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_
         x = 0;
         if( div ) x = div->rect->x + div->css->padding_left;
         y += br_size;
-        br_size = m_br_size;
+        br_size = m_font->br_size;
 
         rect->x = x;
         rect->y = y;
@@ -1734,12 +1766,15 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     bool relayout = false;
     while( header && header->rect->y < pos_y + height_view ){
 
+        // フォント設定
+        set_node_font( header );
+
         // 現在みているレス番号取得
         if( ! m_seen_current ){
 
             if( ! header->next_header // 最後のレス
-                || ( header->next_header->rect->y >= ( pos_y + m_br_size ) // 改行分下にずらす
-                     && header->rect->y <= ( pos_y + m_br_size ) ) ){
+                || ( header->next_header->rect->y >= ( pos_y + m_font->br_size ) // 改行分下にずらす
+                     && header->rect->y <= ( pos_y + m_font->br_size ) ) ){
 
                 m_seen_current = header->res_number;
             }
@@ -1751,6 +1786,9 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
             // ノードが描画範囲に含まれてるなら描画
             LAYOUT* layout  = header;
             while ( layout ){
+
+                // フォント設定
+                set_node_font( layout );
 
                 RECTANGLE* rect = layout->rect;
                 while( rect ){
@@ -1967,7 +2005,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
                     if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_icon( ICON::BKMARK_THREAD );
                     const int height_bkmk = m_pixbuf_bkmk->get_height();
 
-                    y += ( m_font_height - height_bkmk ) / 2;
+                    y += ( m_font->height - height_bkmk ) / 2;
 
                     const int s_top = MAX( 0, upper - y );
                     const int s_bottom = MIN( height_bkmk, lower - y );
@@ -1987,7 +2025,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
                         if( ! m_pixbuf_post ) m_pixbuf_post = ICON::get_icon( ICON::POST );
                         const int height_post = m_pixbuf_post->get_height();
 
-                        if( y == y_org ) y += ( m_font_height - height_post ) / 2;
+                        if( y == y_org ) y += ( m_font->height - height_post ) / 2;
 
                         const int s_top = MAX( 0, upper - y );
                         const int s_bottom = MIN( height_post, lower - y );
@@ -2005,7 +2043,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
                         if( ! m_pixbuf_refer_post ) m_pixbuf_refer_post = ICON::get_icon( ICON::POST_REFER );
                         const int height_refer_post = m_pixbuf_refer_post->get_height();
 
-                        if( y == y_org ) y += ( m_font_height - height_refer_post ) / 2;
+                        if( y == y_org ) y += ( m_font->height - height_refer_post ) / 2;
 
                         const int s_top = MAX( 0, upper - y );
                         const int s_bottom = MIN( height_refer_post, lower - y );
@@ -2274,6 +2312,50 @@ const bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTI
     }
 
     return true;
+}
+
+
+//
+// ノードのフォント設定
+//
+void DrawAreaBase::set_node_font( LAYOUT* layout )
+{
+    static char fontid = FONT_DEFAULT;
+    char layout_fontid;
+
+    // フォント設定
+    if( ! layout->node
+            || layout->node->fontid == FONT_EMPTY ){
+        // フォントID未決定のままであれば、デフォルトフォントを使用
+        layout_fontid = FONT_DEFAULT;
+    } else {
+        layout_fontid = layout->node->fontid;
+    }
+
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::set_node_font : fontid = " << (int)layout_fontid
+            << " res = " << layout->header->res_number << std::endl;
+#endif
+
+    if( layout_fontid != fontid ){
+        fontid = layout_fontid; // 新しいフォントIDをセット
+
+        switch( fontid ){
+        case FONT_AA:
+            m_fontid = FONT_AA;
+            m_font = &m_aafont;
+            break;
+        case FONT_DEFAULT:
+        default:
+            m_fontid = m_defaultfontid;
+            m_font = &m_defaultfont;
+            break;
+        }
+
+        // layoutにフォントをセット
+        m_pango_layout->set_font_description( m_font->pfd );
+        modify_font( m_font->pfd );
+    }
 }
 
 
@@ -2555,7 +2637,7 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
             assert( m_context );
 
             m_gc->set_foreground( m_color[ color_back ] );
-            m_backscreen->draw_rectangle( m_gc, true, x, y, width_line, m_font_height );
+            m_backscreen->draw_rectangle( m_gc, true, x, y, width_line, m_font->height );
 
             m_gc->set_foreground( m_color[ color ] );
 
@@ -2571,8 +2653,8 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
                 Pango::Rectangle pango_rect = grl.get_logical_extents(  item.get_analysis().get_font() );
                 int width = PANGO_PIXELS( pango_rect.get_width() );
 
-                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x, y + m_font_ascent, grl );
-                if( node->bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x +1, y + m_font_ascent, grl );
+                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x, y + m_font->ascent, grl );
+                if( node->bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x +1, y + m_font->ascent, grl );
                 x += width;
             }
 
@@ -2585,7 +2667,7 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
             if( node->link && CONFIG::get_draw_underline() ){
 
                 m_gc->set_foreground( m_color[ color ] );
-                m_backscreen->draw_line( m_gc, xx, y + m_underline_pos, xx + width_line, y + m_underline_pos );
+                m_backscreen->draw_line( m_gc, xx, y + m_font->underline_pos, xx + width_line, y + m_font->underline_pos );
             }
         }
 
@@ -3451,7 +3533,7 @@ const int DrawAreaBase::search_move( const bool reverse )
 #endif
 
             Gtk::Adjustment* adjust = m_vscrbar->get_adjustment();
-            if( ( int ) adjust->get_value() > y || ( int ) adjust->get_value() + ( int ) adjust->get_page_size() - m_br_size < y ){
+            if( ( int ) adjust->get_value() > y || ( int ) adjust->get_value() + ( int ) adjust->get_page_size() - m_font->br_size < y ){
 
                 m_cancel_change_adjust = true;
                 adjust->set_value( y );
@@ -3622,6 +3704,8 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
                 continue;
             }
 
+            // フォント設定
+            set_node_font( layout );
 
             //////////////////////////////////////////////
             //
@@ -3837,6 +3921,9 @@ const bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_PO
                     else layout_before = NULL;
                     continue;
                 }
+
+                // フォント設定
+                set_node_font( layout );
 
                 // ポインタの下にあるノードを探す
                 int pos;
@@ -4813,7 +4900,7 @@ bool DrawAreaBase::motion_mouse()
     if( m_drugging ){
 
         // ポインタが画面外に近かったらオートスクロールを開始する
-        const int mrg = ( int )( (double)m_br_size*0.5 );
+        const int mrg = ( int )( (double)m_font->br_size*0.5 );
 
         // スクロールのリセット
         if (

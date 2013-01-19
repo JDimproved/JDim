@@ -39,6 +39,7 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     // フォント設定をセット
     set_font_settings( "スレビュー", FONT_MAIN, "スレビューのフォント" );
     set_font_settings( "ポップアップ", FONT_POPUP, "ポップアップのフォント" );
+    set_font_settings( "アスキーアート", FONT_AA, "AA(スレビュー)のフォント" );
     set_font_settings( "板一覧／お気に入り", FONT_BBS, "板一覧／お気に入りのフォント" );
     set_font_settings( "スレ一覧", FONT_BOARD, "スレ一覧のフォント" );
     set_font_settings( "書き込みビュー", FONT_MESSAGE, "書き込みビューのフォント" );
