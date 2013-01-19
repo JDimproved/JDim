@@ -63,12 +63,23 @@ void Control::clear_mode()
 // 戻り値はコントロールID
 const int Control::key_press( const GdkEventKey* event )
 {
-    const guint key = event->keyval;
+    guint key = event->keyval;
     const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
     bool shift = ( event->state ) & GDK_SHIFT_MASK;
     const bool alt = ( event->state ) & GDK_MOD1_MASK;
+    const bool caps = ( event->state ) & GDK_LOCK_MASK; // caps lock
     const bool dblclick = false;
     const bool trpclick = false;
+
+    // caps lockされている場合は、アスキー文字を大文字小文字入れ替えて、capsを無視する
+    // InputDiag::on_key_press_event()も参照のこと
+    if( caps ){
+        if( key >= 'A' && key <= 'Z' ){
+            key += 'a' - 'A';
+        } else if( key >= 'a' && key <= 'z' ){
+            key += 'A' - 'a';
+        }
+    }
 
     // keyがアスキー文字の場合は shift を無視する (大文字除く)
     // KeyConfig::set_one_motion()も参照せよ
@@ -79,6 +90,7 @@ const int Control::key_press( const GdkEventKey* event )
     if( ctrl ) std::cout << " ctrl";
     if( shift ) std::cout << " shift";
     if( alt ) std::cout << " alt";
+    if( caps ) std::cout << " caps";
     std::cout << "\n";
 #endif    
 

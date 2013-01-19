@@ -46,12 +46,23 @@ InputDiag::InputDiag( Gtk::Window* parent, const std::string& url,
 
 bool InputDiag::on_key_press_event( GdkEventKey* event )
 {
-    const guint key = event->keyval;
+    guint key = event->keyval;
     const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
     bool shift = ( event->state ) & GDK_SHIFT_MASK;
     const bool alt = ( event->state ) & GDK_MOD1_MASK;
+    const bool caps = ( event->state ) & GDK_LOCK_MASK; // caps lock
 
     if( m_mode & INPUTDIAG_MODE_KEY ){
+
+        // caps lockされている場合は、アスキー文字を大文字小文字入れ替えて、capsを無視する
+        // Control::key_press()も参照のこと
+        if( caps ){
+            if( key >= 'A' && key <= 'Z' ){
+                key += 'a' - 'A';
+            } else if( key >= 'a' && key <= 'z' ){
+                key += 'A' - 'a';
+            }
+        }
 
         // keyがアスキー文字の場合は shift を無視する
         // KeyConfig::set_one_motion()も参照せよ
