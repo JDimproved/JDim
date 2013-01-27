@@ -468,6 +468,7 @@ const int ENVIRONMENT::get_wm()
     if( str_wm.find( "xfce" ) != std::string::npos ) window_manager = WM_XFCE;
     else if( str_wm.find( "gnome" ) != std::string::npos ) window_manager = WM_GNOME;
     else if( str_wm.find( "kde" ) != std::string::npos ) window_manager = WM_KDE;
+    else if( str_wm.find( "LXDE" ) != std::string::npos ) window_manager = WM_LXDE;
 
     if( window_manager == WM_UNKNOWN )
     {
@@ -505,6 +506,7 @@ std::string ENVIRONMENT::get_wm_str()
         case WM_GNOME : desktop = "GNOME"; break;
         case WM_XFCE  : desktop = "XFCE";  break;
         case WM_KDE   : desktop = "KDE";   break;
+        case WM_LXDE  : desktop = "LXDE";  break;
     }
 #endif
 

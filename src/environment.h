@@ -13,6 +13,7 @@ namespace ENVIRONMENT
         WM_GNOME = 0,
         WM_XFCE,
         WM_KDE,
+        WM_LXDE,
         WM_UNKNOWN
     };
 
