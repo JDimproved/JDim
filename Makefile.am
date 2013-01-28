@@ -50,7 +50,7 @@ $(jd_BUILDINFO_HEADER):
 
 	@if test -n "$(SVN)" -a -n "$(AWK)"; \
 	then \
-	    SVN_REPOSITORY=`LANG=C $(SVN) info 2>/dev/null | $(AWK) '/^URL/ {print $$2}' 2>/dev/null`; \
+	    SVN_REPOSITORY=`LANG=C "$(SVN)" info 2>/dev/null | $(AWK) '/^URL/ {print $$2}' 2>/dev/null`; \
 	    if test -n "$${SVN_REPOSITORY}"; \
 	    then \
 	        echo "SVN: Repository = \"$${SVN_REPOSITORY}\""; \
@@ -60,7 +60,7 @@ $(jd_BUILDINFO_HEADER):
 
 	@if test -n "$(SVNVERSION)"; \
 	then \
-	    SVN_REVISION=`LANG=C $(SVNVERSION) -n 2>/dev/null`; \
+	    SVN_REVISION=`LANG=C "$(SVNVERSION)" -n 2>/dev/null`; \
 	    if test -n "$${SVN_REVISION}" -a "$${SVN_REVISION}" != "exported"; \
 	    then \
 	        echo "SVN: Revision = \"$${SVN_REVISION}\""; \
