@@ -2322,23 +2322,25 @@ void DrawAreaBase::set_node_font( LAYOUT* layout )
 {
     static char fontid = FONT_DEFAULT;
     char layout_fontid;
+    if( ! layout->node ) return;
 
     // フォント設定
-    if( ! layout->node
-            || layout->node->fontid == FONT_EMPTY ){
+    if( layout->node->fontid == FONT_EMPTY ){
         // フォントID未決定のままであれば、デフォルトフォントを使用
         layout_fontid = FONT_DEFAULT;
     } else {
         layout_fontid = layout->node->fontid;
     }
 
-#ifdef _DEBUG
-    std::cout << "DrawAreaBase::set_node_font : fontid = " << (int)layout_fontid
-            << " res = " << layout->header->res_number << std::endl;
-#endif
 
     if( layout_fontid != fontid ){
         fontid = layout_fontid; // 新しいフォントIDをセット
+
+#ifdef _DEBUG
+        std::cout << "DrawAreaBase::set_node_font : fontid = " << (int)layout_fontid
+            << " res = " << layout->header->res_number
+            << " type = " << (int)(layout->node->type) << std::endl;
+#endif
 
         switch( fontid ){
         case FONT_AA:
