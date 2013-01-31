@@ -1,7 +1,7 @@
 dnl
 dnl JD用 configure.ac
 dnl
-AC_PREREQ(2.69)
+AC_PREREQ(2.50)
 AC_INIT(jd, 1.0)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
@@ -274,11 +274,9 @@ case "${use_gnutls}" in
    PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2], [echo "gnutls >= 1.2"])
    AC_DEFINE(USE_GNUTLS, , "use gnutls")
    AC_CHECK_HEADERS([gcrypt.h])
-   AC_CHECK_LIB(gcrypt, gcry_md_hash_buffer, [GCRYPT_LIBS=-lgcrypt])
-   GNUTLS_LIBS="$GNUTLS_LIBS $GCRYPT_LIBS"
+   AC_CHECK_LIB(gcrypt, gcry_md_hash_buffer, [], [AC_MSG_ERROR([gcrypt not found])])
    AC_SUBST(GNUTLS_CFLAGS)
    AC_SUBST(GNUTLS_LIBS)
-   CXXFLAGS="$CXXFLAGS"
    ;;
  *)
    echo "use openssl"
