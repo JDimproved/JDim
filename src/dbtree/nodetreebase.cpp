@@ -2679,7 +2679,7 @@ const int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, i
              DBTREE::decode_char( str_in + n_in, n_in_tmp, buf, n_out_tmp, false ) != DBTREE::NODE_NONE ){
 
              // デコード結果が"&(&amp;)"でないもの
-             if( n_out_tmp != 1 && buf[0] != '&' ) break;
+             if( n_out_tmp != 1 || buf[0] != '&' ) break;
         }
 
         n_in++;
