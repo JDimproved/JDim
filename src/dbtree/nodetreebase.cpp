@@ -2694,6 +2694,7 @@ const int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, i
     char *pos = str_link;
 
     // URLスキームを修正
+    int str_pos = 0;
     switch( linktype ){
 
         // ttp -> http
@@ -2721,12 +2722,14 @@ const int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, i
             *pos = 'h';
             *(++pos) = 't';
             *(++pos) = 't';
+            pos++;
+            str_pos = 3;
             break;
     }
 
     // srr_inの文字列をstr_linkにコピー
-    int i;
-    for( i = 0; i < n_in; i++, pos++ ){
+    int i = str_pos;
+    for( ; i < n_in; i++, pos++ ){
 
         *pos = str_in[ i ];
 
