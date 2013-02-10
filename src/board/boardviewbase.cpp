@@ -286,7 +286,7 @@ void BoardViewBase::setup_action()
                          sigc::mem_fun( *this, &BoardViewBase::slot_abone_thread ) );
     action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD "(_P)..." ), sigc::mem_fun( *this, &BoardViewBase::slot_preferences_article ) );
     action_group()->add( Gtk::Action::create( "PreferenceBoard", "PreferenceBoard" ), sigc::mem_fun( *this, &BoardViewBase::show_preference ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT "(_S)..." ),
+    action_group()->add( Gtk::Action::create( "SaveDat", "SaveDat" ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_save_dat ) );
     action_group()->add( Gtk::Action::create( "SearchNextArticle", ITEM_NAME_NEXTARTICLE ),
                          sigc::mem_fun( *this, &BoardViewBase::slot_search_next ) );
@@ -1474,6 +1474,12 @@ const bool BoardViewBase::operate_view( const int control )
             forward_viewhistory( 1 );
             break;
 
+            // datを保存
+        case CONTROL::Save:
+            slot_save_dat();
+            break;
+
+            // 閉じる
         case CONTROL::Quit:
             close_view();
             break;

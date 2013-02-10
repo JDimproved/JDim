@@ -97,6 +97,7 @@ namespace CONTROL
 
         Quit,
         Save,
+        SaveDat,            // alias: Save
         Delete,
         Reload,
         ReloadArticle,
@@ -109,9 +110,9 @@ namespace CONTROL
         Lock,
 
         PreferenceView,
-        PreferenceBoard,
-        PreferenceArticle,
-        PreferenceImage,
+        PreferenceBoard,    // alias: PreferenceView
+        PreferenceArticle,  // alias: PreferenceView
+        PreferenceImage,    // alias: PreferenceView
 
         Search,
         CloseSearchBar,

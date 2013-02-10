@@ -103,6 +103,7 @@ namespace CONTROL
 
         { "Quit", ITEM_NAME_QUIT },
         { "Save", "名前を付けて保存..." },
+        { "SaveDat", ITEM_NAME_SAVE_DAT "..." },
         { "Delete", ITEM_NAME_DELETE },
         { "Reload", ITEM_NAME_RELOAD },
         { "ReloadArticle", "元のスレを開く" },

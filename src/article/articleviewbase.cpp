@@ -309,7 +309,7 @@ void ArticleViewBase::setup_action()
 
     // その他
     action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC "(_O)" ) );
-    action_group()->add( Gtk::Action::create( "SaveDat", ITEM_NAME_SAVE_DAT "(_D)..." ), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
+    action_group()->add( Gtk::Action::create( "SaveDat", "SaveDat" ), sigc::mem_fun( *this, &ArticleViewBase::slot_save_dat ) );
     action_group()->add( Gtk::Action::create( "CopyInfo", ITEM_NAME_COPY_THREAD_INFO "(_I)..." ),
                          sigc::mem_fun( *this, &ArticleViewBase::slot_copy_article_info ) );
 
@@ -1105,6 +1105,11 @@ const bool ArticleViewBase::operate_view( const int control )
 
         case CONTROL::SearchPrev:
             up_search();
+            break;
+
+            // datを保存
+        case CONTROL::Save:
+            slot_save_dat();
             break;
 
             // 閉じる
