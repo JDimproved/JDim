@@ -2774,9 +2774,10 @@ void BoardViewBase::slot_save_dat()
 
     // ひとつだけ名前を付けて保存
     if( list_it.size() == 1 ){
+        Gtk::TreePath path = m_treeview.get_current_path();
 
-        if( m_path_selected.empty() ) return;
-        const std::string url = path2daturl( m_path_selected );
+        if( path.empty() ) return;
+        const std::string url = path2daturl( path );
 
         DBTREE::article_save_dat( url, std::string() );
         return;
