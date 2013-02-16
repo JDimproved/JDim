@@ -1043,35 +1043,44 @@ NODE* NodeTreeBase::create_node_youtube( const char* text, const int n, const ch
 {
     NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold );
 
+    if( ! tmpnode || ! tmpnode->linkinfo ){
+        return tmpnode;
+    }
+    
     // 「http://www.youtube.com」の後にセット
-    int pos = 22;
+    char *linkurl = tmpnode->linkinfo->link;
+    linkurl += 22;
 
-    if( *( link + (pos++) ) == '/'
-        && *( link + (pos++) ) == 'w'
-        && *( link + (pos++) ) == 'a'
-        && *( link + (pos++) ) == 't'
-        && *( link + (pos++) ) == 'c'
-        && *( link + (pos++) ) == 'h' ){
+    if( *( linkurl ) == '/'
+        && *( ++linkurl ) == 'w'
+        && *( ++linkurl ) == 'a'
+        && *( ++linkurl ) == 't'
+        && *( ++linkurl ) == 'c'
+        && *( ++linkurl ) == 'h' ){
 
         // 「?v=」または「&v=」を探す
-        while ( pos < n_link
-                && ! ( ( *( link + pos ) == '?' || *( link + pos ) == '&' )
-                    && *( link + pos + 1 ) == 'v'
-                    && *( link + pos + 2 ) == '=' ) ){
-            pos++;
+        while ( *( ++linkurl ) != '\0' ){
+            if( ( *( linkurl ) == '?' || *( linkurl ) == '&' )
+                    && *( linkurl + 1 ) == 'v'
+                    && *( linkurl + 2 ) == '=' ){
+                break;
+            }
         }
-        if( pos == n_link ){
+        if( *linkurl == '\0' ){
             return tmpnode; // 見つからない
         }
-        pos += 3;
+        linkurl += 3;
 
         // 「v=...」をidに格納
         char id[ LNG_LINK +16 ];
         int lng_id = 0;
-        while( pos < n_link
-               && *( link + pos ) != '&'
-               && *( link + pos ) != '#' ){
-            id[ lng_id++ ] = *( link + (pos++) );
+        while( *( linkurl ) != '\0'
+               && *( linkurl ) != '&'
+               && *( linkurl ) != '#' ){
+            id[ lng_id++ ] = *( linkurl++ );
+        }
+        if( lng_id == 0 ){
+            return tmpnode; // 見つからない
         }
 
         // 画像のURL「http://img.youtube.com/vi/<id>/0.jpg」を生成
