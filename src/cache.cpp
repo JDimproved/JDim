@@ -164,6 +164,13 @@ std::string CACHE::path_linkfilter()
 }
 
 
+// URL変換設定ファイル
+std::string CACHE::path_urlreplace()
+{
+    return CACHE::path_root() +  "urlreplace.conf";
+}
+
+
 // 履歴
 std::string CACHE::path_xml_history()
 {

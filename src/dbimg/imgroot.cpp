@@ -169,6 +169,10 @@ int ImgRoot::get_type_ext( const char* url, int n )
     if( is_gif( url, n ) ) return T_GIF;
     if( is_bmp( url, n ) ) return T_BMP;
 
+    // DBにurlが登録されていれば、画像として扱う
+    Img* img = search_img( url );
+    if( img ) return T_FORCEIMAGE;
+
     return T_UNKNOWN;
 }
 

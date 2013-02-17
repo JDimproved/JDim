@@ -33,6 +33,7 @@ jd_SOURCES = \
 	dndmanager.cpp \
 	usrcmdmanager.cpp \
 	linkfiltermanager.cpp \
+	urlreplacemanager.cpp \
 	compmanager.cpp \
 	searchmanager.cpp \
 	searchloader.cpp \
@@ -87,6 +88,7 @@ noinst_HEADERS = \
 	dndmanager.h \
 	usrcmdmanager.h \
 	linkfiltermanager.h \
+    urlreplacemanager.h \
 	compmanager.h \
 	searchmanager.h \
 	searchloader.h \

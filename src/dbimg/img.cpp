@@ -19,6 +19,7 @@
 #include "cache.h"
 #include "session.h"
 #include "global.h"
+#include "urlreplacemanager.h"
 
 #include <sstream>
 #include <cstring>
@@ -299,6 +300,10 @@ void Img::download_img( const std::string refurl, const bool mosaic, const int w
 
     if( ! m_url_alt.empty() ) data.url = m_url_alt;
     else data.url = m_url;
+
+    // Urlreplaceによるリファラ指定
+    const std::string referer = CORE::get_urlreplace_manager()->referer( m_url );
+    if( ! referer.empty() ) data.referer = referer;
 
     if( !start_load( data ) ) receive_finish();
     else CORE::core_set_command( "redraw", m_url );

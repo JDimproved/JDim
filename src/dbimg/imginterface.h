@@ -31,7 +31,8 @@ namespace DBIMG
         T_WRITEFAILED,
         T_NOT_FOUND,
         T_NODATA,
-        T_UNKNOWN
+        T_UNKNOWN,
+        T_FORCEIMAGE,
     };
 
     class Img;

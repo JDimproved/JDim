@@ -25,6 +25,7 @@
 #include "command.h"
 #include "cache.h"
 #include "session.h"
+#include "urlreplacemanager.h"
 
 #include <sstream>
 #include <fstream>
@@ -925,15 +926,13 @@ NODE* NodeTreeBase::create_node_link( const char* text, const int n, const char*
 
     if( tmpnode ){
         tmpnode->type = NODE_LINK;
-        convert_amp( tmpnode->text, n ); // &amp; → &
 
         // リンク情報作成
         char *tmplink = ( char* )m_heap.heap_alloc( n_link +4 );
         memcpy( tmplink, link, n_link );
         tmplink[ n_link ] = '\0';
-        convert_amp( tmplink, n_link ); // &amp; → &
 
-        // ハッシュ値は&amp;を変換した後の文字列で作成
+        // ハッシュ値を作成
         const long hash = DBTREE::linkhash( tmplink, n_link );
 
         // リンク情報セット
@@ -2257,15 +2256,46 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
         ///////////////////////
         // リンク(http)のチェック
-        const int linktype = check_link( pos, (int)( pos_end - pos ), n_in, tmplink, LNG_LINK );
+        bool force_image = false;
+        int linktype = check_link( pos, (int)( pos_end - pos ), n_in, tmplink, LNG_LINK );
         if( linktype != MISC::SCHEME_NONE ){
+            // リンクノードで実際にアクセスするURLの変換
+            while( remove_imenu( tmplink ) ); // ime.nuなどの除去
+            lng_link = convert_amp( tmplink, strlen( tmplink ) ); // &amp; → &
 
+            // Urlreplaceによる正規表現変換
+            std::string tmpurl( tmplink, lng_link );
+            tmpurl = CORE::get_urlreplace_manager()->exec( tmpurl, force_image );
+            if( tmpurl.empty() ){
+                // どの正規表現にも一致しなかった
+            } else if( tmpurl.size() > LNG_LINK ){
+                // 変換後のURLが長すぎる
+                MISC::ERRMSG( "too long replaced url : " + tmpurl );
+                force_image = false;
+            } else {
+                // 正常に変換された
+                lng_link = tmpurl.size();
+                memcpy( tmplink, tmpurl.c_str(), lng_link +1 );
+            }
+
+            // 正規表現変換の結果、スキームが変わっていないかチェックする
+            if( lng_link > 0 ){
+                // スキームだけの簡易チェックを行う
+                int delim_pos = 0;
+                linktype = MISC::is_url_scheme( tmplink, &delim_pos );
+            } else {
+                linktype = MISC::SCHEME_NONE;
+            }
+        }
+        // リンクノードか再チェック
+        if( linktype != MISC::SCHEME_NONE ){
             // フラッシュしてからリンクノードつくる
             create_node_ntext( m_parsed_text, lng_text, color_text, bold ); lng_text = 0;
 
-            while( remove_imenu( tmplink ) );
-
-            lng_link = strlen( tmplink );
+            // リンクノードの表示テキスト
+            memcpy( tmpstr, pos, n_in );
+            tmpstr[ n_in ] = '\0';
+            lng_str = convert_amp( tmpstr, n_in ); // &amp; → &
 
             // ssspアイコン
             if( enable_sssp && linktype == MISC::SCHEME_SSSP ){
@@ -2274,8 +2304,9 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             }
 
             // 画像リンク
-            else if( DBIMG::get_type_ext( tmplink, lng_link ) != DBIMG::T_UNKNOWN ){
-                create_node_img( pos, n_in, tmplink , lng_link, COLOR_IMG_NOCACHE, bold );
+            else if( force_image == true
+                    || DBIMG::get_type_ext( tmplink, lng_link ) != DBIMG::T_UNKNOWN ){
+                create_node_img( tmpstr, lng_str, tmplink , lng_link, COLOR_IMG_NOCACHE, bold );
             }
 
             // youtube
@@ -2288,11 +2319,11 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                      && *( tmplink + 17) == 'e' 
                 ){
 
-                create_node_youtube( pos, n_in, tmplink , lng_link, COLOR_CHAR_LINK, bold );
+                create_node_youtube( tmpstr, lng_str, tmplink , lng_link, COLOR_CHAR_LINK, bold );
             }
 
             // 一般リンク
-            else create_node_link( pos, n_in, tmplink , lng_link, COLOR_CHAR_LINK, bold );
+            else create_node_link( tmpstr, lng_str, tmplink , lng_link, COLOR_CHAR_LINK, bold );
 
             pos += n_in;
 
@@ -3603,7 +3634,7 @@ bool NodeTreeBase::remove_imenu( char* str_link )
 
 
 // 文字列中の"&amp;"を"&"に変換する
-void NodeTreeBase::convert_amp( char* text, const int n )
+int NodeTreeBase::convert_amp( char* text, const int n )
 {
     int m = n;
 
@@ -3626,6 +3657,7 @@ void NodeTreeBase::convert_amp( char* text, const int n )
     }
 
     text[m] = '\0';
+    return m;
 }
 
 

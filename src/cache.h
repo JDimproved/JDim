@@ -77,6 +77,9 @@ namespace CACHE
     // リンクフィルタ
     std::string path_linkfilter();
 
+    // URL変換設定ファイル
+    std::string path_urlreplace();
+
     // スレ履歴
     std::string path_xml_history();
 
