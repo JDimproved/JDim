@@ -22,6 +22,7 @@ namespace DBIMG
         std::string m_url_alt; // リダイレクトなどで使用するアドレス
         int m_count_redirect; // リダイレクト回数
 
+        int m_imgctrl; // 画像コントロール
         int m_type; // 画像タイプ
 
         // 幅、高さ
@@ -64,6 +65,8 @@ namespace DBIMG
         const std::string get_cache_path();
 
         const bool is_wait() const{ return m_wait; }
+
+        const int get_imgctrl() const { return m_imgctrl; }
 
         const int get_type() const { return m_type; }
         void set_type( const int type ){ m_type = type; }

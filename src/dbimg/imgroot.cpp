@@ -17,6 +17,7 @@
 #include "cache.h"
 #include "command.h"
 #include "prefdiagfactory.h"
+#include "urlreplacemanager.h"
 
 #include <sys/time.h>
 
@@ -169,9 +170,11 @@ int ImgRoot::get_type_ext( const char* url, int n )
     if( is_gif( url, n ) ) return T_GIF;
     if( is_bmp( url, n ) ) return T_BMP;
 
-    // DBにurlが登録されていれば、画像として扱う
-    Img* img = search_img( url );
-    if( img ) return T_FORCEIMAGE;
+    // Urlreplaceによる画像コントロールを取得する
+    int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( url );
+
+    // URLに拡張子がない場合でも画像として扱うか
+    if( imgctrl & CORE::IMGCTRL_FORCEIMAGE ) return T_FORCEIMAGE;
 
     return T_UNKNOWN;
 }

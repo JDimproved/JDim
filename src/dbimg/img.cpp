@@ -69,6 +69,8 @@ Img::Img( const std::string& url )
 
     set_priority_low();
 
+    m_imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( url );
+
     reset();
 }
 
@@ -302,8 +304,8 @@ void Img::download_img( const std::string refurl, const bool mosaic, const int w
     else data.url = m_url;
 
     // Urlreplaceによるリファラ指定
-    const std::string referer = CORE::get_urlreplace_manager()->referer( m_url );
-    if( ! referer.empty() ) data.referer = referer;
+    std::string referer;
+    if( CORE::get_urlreplace_manager()->referer( m_url, referer ) ) data.referer = referer;
 
     if( !start_load( data ) ) receive_finish();
     else CORE::core_set_command( "redraw", m_url );
@@ -423,6 +425,7 @@ void Img::set_protect( bool protect )
 const bool Img::is_fake()
 {
     if( ! is_cached() ) return false;
+    if( m_imgctrl & CORE::IMGCTRL_GENUINE ) return false;
 
     bool ret = false;
 

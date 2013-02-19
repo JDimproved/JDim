@@ -2256,7 +2256,6 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
         ///////////////////////
         // リンク(http)のチェック
-        bool force_image = false;
         int linktype = check_link( pos, (int)( pos_end - pos ), n_in, tmplink, LNG_LINK );
         if( linktype != MISC::SCHEME_NONE ){
             // リンクノードで実際にアクセスするURLの変換
@@ -2265,17 +2264,15 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
             // Urlreplaceによる正規表現変換
             std::string tmpurl( tmplink, lng_link );
-            tmpurl = CORE::get_urlreplace_manager()->exec( tmpurl, force_image );
-            if( tmpurl.empty() ){
-                // どの正規表現にも一致しなかった
-            } else if( tmpurl.size() > LNG_LINK ){
-                // 変換後のURLが長すぎる
-                MISC::ERRMSG( "too long replaced url : " + tmpurl );
-                force_image = false;
-            } else {
-                // 正常に変換された
-                lng_link = tmpurl.size();
-                memcpy( tmplink, tmpurl.c_str(), lng_link +1 );
+            if( CORE::get_urlreplace_manager()->exec( tmpurl ) ){
+                if( tmpurl.size() > LNG_LINK ){
+                    // 変換後のURLが長すぎるので、元のURLのままにする
+                    MISC::ERRMSG( "too long replaced url : " + tmpurl );
+                } else {
+                    // 正常に変換された
+                    lng_link = tmpurl.size();
+                    memcpy( tmplink, tmpurl.c_str(), lng_link +1 );
+                }
             }
 
             // 正規表現変換の結果、スキームが変わっていないかチェックする
@@ -2304,8 +2301,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             }
 
             // 画像リンク
-            else if( force_image == true
-                    || DBIMG::get_type_ext( tmplink, lng_link ) != DBIMG::T_UNKNOWN ){
+            else if( DBIMG::get_type_ext( tmplink, lng_link ) != DBIMG::T_UNKNOWN ){
                 create_node_img( tmpstr, lng_str, tmplink , lng_link, COLOR_IMG_NOCACHE, bold );
             }
 
