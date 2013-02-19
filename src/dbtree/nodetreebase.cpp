@@ -2275,12 +2275,10 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                 }
             }
 
-            // 正規表現変換の結果、スキームが変わっていないかチェックする
-            if( lng_link > 0 ){
-                // スキームだけの簡易チェックを行う
-                int delim_pos = 0;
-                linktype = MISC::is_url_scheme( tmplink, &delim_pos );
-            } else {
+            // 正規表現変換の結果、スキームだけの簡易チェックをする
+            int delim_pos = 0;
+            if( MISC::SCHEME_NONE == MISC::is_url_scheme( tmplink, &delim_pos ) ){
+                // スキーム http:// が消えていた
                 linktype = MISC::SCHEME_NONE;
             }
         }
