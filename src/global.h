@@ -232,12 +232,12 @@ enum
 
 enum
 {
-    AUTORELOAD_MINSEC = 10, // オートリロードの最小秒数
-    MIN_LIVE_RELOAD_SEC = AUTORELOAD_MINSEC, // 実況時の最小リロード間隔
+    AUTORELOAD_MINSEC = 2, // オートリロードの最小秒数
+    MIN_LIVE_RELOAD_SEC = 10, // 実況時の最小リロード間隔
 
-    WAITLOADIMG_SEC = 6, // 画像のロード待ち間隔
+    WAITLOADIMG_SEC = 2, // 画像のロード待ち間隔
 
-    CHECKUPDATE_MINSEC = 300 // 更新チェックの最小秒数
+    CHECKUPDATE_MINSEC = 60 // 更新チェックの最小秒数
 };
 
 
