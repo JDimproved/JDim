@@ -72,9 +72,17 @@ void Urlreplace_Manager::conf2list( const std::string& conf )
             int imgctrl = IMGCTRL_INIT;
 
             // 拡張子がない場合でも画像として扱う
-            if( ctrl.find( "$IMAGE" ) != std::string::npos ) imgctrl += IMGCTRL_FORCEIMAGE;
+            if( ctrl.find( "$IMAGE" ) != std::string::npos ){
+                imgctrl += IMGCTRL_FORCEIMAGE;
+            }
+            // 拡張子があっても画像として扱わない
+            else if( ctrl.find( "$BROWSER" ) != std::string::npos ){
+                imgctrl += IMGCTRL_FORCEBROWSER; // $IMAGEを優先
+            }
             // 拡張子の偽装をチェックしない
-            if( ctrl.find( "$GENUINE" ) != std::string::npos ) imgctrl += IMGCTRL_GENUINE;
+            if( ctrl.find( "$GENUINE" ) != std::string::npos ){
+                imgctrl += IMGCTRL_GENUINE;
+            }
 
             if( imgctrl != IMGCTRL_INIT ) item.imgctrl = imgctrl;
 

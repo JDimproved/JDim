@@ -165,13 +165,16 @@ int ImgRoot::get_type_ext( const std::string& url )
 
 int ImgRoot::get_type_ext( const char* url, int n )
 {
+    // Urlreplaceによる画像コントロールを取得する
+    int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( url );
+
+    // URLに拡張子があっても画像として扱わない
+    if( imgctrl & CORE::IMGCTRL_FORCEBROWSER ) return T_UNKNOWN;
+
     if( is_jpg( url, n ) ) return T_JPG;
     if( is_png( url, n ) ) return T_PNG;
     if( is_gif( url, n ) ) return T_GIF;
     if( is_bmp( url, n ) ) return T_BMP;
-
-    // Urlreplaceによる画像コントロールを取得する
-    int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( url );
 
     // URLに拡張子がない場合でも画像として扱うか
     if( imgctrl & CORE::IMGCTRL_FORCEIMAGE ) return T_FORCEIMAGE;
