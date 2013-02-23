@@ -86,6 +86,7 @@ namespace CONFIG
 
     // レスにアスキーアートがあると判定する正規表現
     const std::string get_regex_res_aa();
+    void set_regex_res_aa( const std::string& regex );
 
     // JD ホームページのアドレス
     const std::string& get_url_jdhp();

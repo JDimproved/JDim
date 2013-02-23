@@ -26,6 +26,7 @@ using namespace CORE;
 
 FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     : SKELETON::PrefDiag( parent, url, true, true ),
+      m_label_aafont( true, "AAレスと判定する正規表現(_R)： " ),
       m_bt_reset_font( "フォントの設定を全てデフォルトに戻す(_F)", true ),
 
       m_bt_change_color( "選択行の色を設定する(_S)", true ),
@@ -162,6 +163,13 @@ void FontColorPref::pack_widget()
 
     set_activate_entry( m_spin_ubar );
 
+    // AAレスと判定する正規表現
+    m_label_aafont.set_text( CONFIG::get_regex_res_aa() );
+    m_vbox_font.pack_start( m_label_aafont, Gtk::PACK_SHRINK, mrg/2 );
+    m_tooltips.set_tip( m_label_aafont, "この正規表現に一致したレスは、アスキーアートフォントで表示します( 次に開いたスレから有効 )" );
+
+    set_activate_entry( m_label_aafont );
+
     // フォントのリセット
     m_bt_reset_font.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_font ) );
     m_vbox_font.pack_end( m_bt_reset_font, Gtk::PACK_SHRINK );
@@ -242,6 +250,7 @@ void FontColorPref::slot_ok_clicked()
 
     CONFIG::set_adjust_line_space( m_spin_space.get_value() );
     CONFIG::set_adjust_underline_pos( m_spin_ubar.get_value() );
+    CONFIG::set_regex_res_aa( m_label_aafont.get_text() );
 
     CONFIG::set_strict_char_width( m_checkbutton_font.property_active() );
 

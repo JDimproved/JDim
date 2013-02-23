@@ -5,6 +5,7 @@
 
 #include "skeleton/prefdiag.h"
 #include "skeleton/spinbutton.h"
+#include "skeleton/label_entry.h"
 
 #include <vector>
 
@@ -58,6 +59,8 @@ namespace CORE
         SKELETON::SpinButtonDouble m_spin_space;
         Gtk::Label m_label_ubar;
         SKELETON::SpinButtonDouble m_spin_ubar;
+
+        SKELETON::LabelEntry m_label_aafont;
 
         Gtk::Button m_bt_reset_font;
 

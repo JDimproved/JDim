@@ -142,6 +142,9 @@ const std::string CONFIG::get_regex_res_aa(){
     }
     return str;
 }
+void CONFIG::set_regex_res_aa( const std::string& regex ){
+    get_confitem()->regex_res_aa = "\"" + regex + "\"";
+}
 
 const std::string& CONFIG::get_url_jdhp() { return get_confitem()->url_jdhp; }
 
