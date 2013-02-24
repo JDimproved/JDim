@@ -338,7 +338,7 @@ void DrawAreaBase::init_font()
     m_context = get_pango_context();
     assert( m_context );
 
-    std::string fontname = CONFIG::get_fontname( get_fontid() );
+    std::string fontname = CONFIG::get_fontname( m_defaultfontid );
     if( fontname.empty() ) return;
 
     init_fontinfo( m_defaultfont, fontname );
@@ -2320,39 +2320,37 @@ const bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTI
 //
 void DrawAreaBase::set_node_font( LAYOUT* layout )
 {
-    static char fontid = FONT_DEFAULT;
     char layout_fontid;
     if( ! layout->node ) return;
 
     // フォント設定
-    if( layout->node->fontid == FONT_EMPTY ){
-        // フォントID未決定のままであれば、デフォルトフォントを使用
-        layout_fontid = FONT_DEFAULT;
-    } else {
+    switch( layout->node->fontid ){
+    case FONT_AA:
         layout_fontid = layout->node->fontid;
+        break;
+    case FONT_EMPTY: // フォントID未決定
+    case FONT_DEFAULT:
+    default:
+        layout_fontid = m_defaultfontid; // デフォルトフォント情報
+        break;
     }
 
+    if( m_fontid != layout_fontid ){
+        m_fontid = layout_fontid; // 新しいフォントIDをセット
+        switch( m_fontid ){
+        case FONT_AA:
+            m_font = &m_aafont;
+            break;
+        default:
+            m_font = &m_defaultfont;
+            break;
+        }
 
-    if( layout_fontid != fontid ){
-        fontid = layout_fontid; // 新しいフォントIDをセット
-
-#ifdef _DEBUG
+#if 0 // _DEBUG
         std::cout << "DrawAreaBase::set_node_font : fontid = " << (int)layout_fontid
             << " res = " << layout->header->res_number
             << " type = " << (int)(layout->node->type) << std::endl;
 #endif
-
-        switch( fontid ){
-        case FONT_AA:
-            m_fontid = FONT_AA;
-            m_font = &m_aafont;
-            break;
-        case FONT_DEFAULT:
-        default:
-            m_fontid = m_defaultfontid;
-            m_font = &m_defaultfont;
-            break;
-        }
 
         // layoutにフォントをセット
         m_pango_layout->set_font_description( m_font->pfd );
