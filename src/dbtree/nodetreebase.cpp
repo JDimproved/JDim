@@ -932,12 +932,8 @@ NODE* NodeTreeBase::create_node_link( const char* text, const int n, const char*
         memcpy( tmplink, link, n_link );
         tmplink[ n_link ] = '\0';
 
-        // ハッシュ値を作成
-        const long hash = DBTREE::linkhash( tmplink, n_link );
-
         // リンク情報セット
         tmpnode->linkinfo = ( LINKINFO* )m_heap.heap_alloc( sizeof( LINKINFO ) );
-        tmpnode->linkinfo->linkhash = hash;
         tmpnode->linkinfo->link = tmplink;
     }
     
@@ -975,11 +971,9 @@ NODE* NodeTreeBase::create_node_sssp( const char* link, const int n_link )
     char *tmplink = ( char* )m_heap.heap_alloc( n_link +4 );
     memcpy( tmplink, link, n_link );
     tmplink[ n_link ] = '\0';
-    const long hash = DBTREE::linkhash( tmplink, n_link );
 
     // リンク情報セット
     tmpnode->linkinfo = ( LINKINFO* )m_heap.heap_alloc( sizeof( LINKINFO ) );
-    tmpnode->linkinfo->linkhash = hash;
     tmpnode->linkinfo->link = tmplink;
     tmpnode->linkinfo->image = true;
     tmpnode->linkinfo->imglink = tmpnode->linkinfo->link;
@@ -3468,7 +3462,6 @@ void NodeTreeBase::check_id_name( const int number )
 //    if( header->headinfo->abone ) return;
     if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) return;
 
-    const long str_hash = header->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->linkhash;
     const char* str_id = header->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link;
 
     // 同じIDのレスを持つ一つ前のレスを探す
@@ -3481,7 +3474,7 @@ void NodeTreeBase::check_id_name( const int number )
         if( tmphead
 //            && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
             && tmphead->headinfo->block[ BLOCK_ID_NAME ]
-            && str_hash == tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->linkhash
+            && str_id[ 0 ] == tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link[ 0 ]
             && strcmp( str_id, tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link ) == 0 ){
             prehead = tmphead;
             break;

@@ -88,7 +88,6 @@ namespace DBTREE
     struct LINKINFO
     {
         char* link; // リンクURL
-        long linkhash; // リンクURLのハッシュ linkhash() 値
 
         // アンカー情報のベクトル
         // NULL なら一般のリンク
@@ -128,23 +127,6 @@ namespace DBTREE
         // リンク情報
         LINKINFO* linkinfo;
     };
-    
-
-
-    //
-    // 文字列ハッシュ
-    //
-    //  str : ハッシュにする文字列
-    //  length : 文字列strの長さ
-    //
-    inline const long linkhash( const char *str, const int length )
-    {
-        long hash = 179L;     // cut corners (:D)
-        for( int i = 0; i < length && str[ i ] != '\0'; i ++ ){
-            hash += 47L * str[ i ] * i;
-        }
-        return hash;
-    }
 }
 
 
