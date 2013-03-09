@@ -864,7 +864,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
         if( ! layout ) break;
 
         // フォント設定
-        set_node_font( layout );
+        set_node_font( header );
 
         // (注) header は div ノードであり、クラス名は "res"
         // 詳しくは LayoutTree::create_layout_header() を参照せよ
