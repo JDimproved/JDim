@@ -170,12 +170,20 @@ void Log_Manager::remove_items( const std::string& url )
 //
 // headsize > 0 の時は先頭の headsize 文字だけを比較
 //
-const bool Log_Manager::check_write( const std::string& url, const bool newthread, const char* msg, const size_t headsize )
+const bool Log_Manager::check_write( const std::string& url, const bool newthread, const char* msg_in, const size_t headsize )
 {
     if( ! m_logitems.size() ) return false;
 
 #ifdef _DEBUG
     std::cout << "Log_Manager::check_write url = " << url << " newthread = " << newthread << " headsize = " << headsize << std::endl;
+#endif
+
+#ifndef _WIN32
+    const char* msg = msg_in;
+#else
+    // WAVE DASH 問題 ( UNIX用の文字コードになっていることがある )
+    const std::string msg_buf = MISC::utf8_fix_wavedash( msg_in, MISC::UNIXtoWIN );
+    const char* msg = msg_buf.c_str();
 #endif
 
     std::list< LogItem* >::iterator it = m_logitems.begin();
