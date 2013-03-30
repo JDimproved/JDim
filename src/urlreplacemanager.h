@@ -19,6 +19,7 @@ namespace CORE
         IMGCTRL_FORCEIMAGE = 2,
         IMGCTRL_FORCEBROWSER = 4,
         IMGCTRL_GENUINE = 8,
+        IMGCTRL_THUMBNAIL = 16,
     };
 
     struct UrlreplaceItem

@@ -31,10 +31,41 @@ void CORE::delete_urlreplace_manager()
 
 using namespace CORE;
 
+#define DEFALUT_CONFIG \
+    "#\n" \
+    "# UrlReplace設定ファイル (urlreplace.conf)\n" \
+    "#\n" \
+    "# 設定ファイルの書式:\n" \
+    "#   正規表現<タブ>変換後URL<タブ>リファラURL<タブ>制御文字\n" \
+    "#\n" \
+    "# 設定例:\n" \
+    "#   http://www\\.foobar\\.com/(view/|img\\.php\\?id=)([0-9]+)	http://www.foobar.com/view/$2	$0	$IMAGE\n" \
+    "#\n" \
+    "# 詳細な書式はマニュアルを参照してください。\n" \
+    "# この機能を無効にする場合は、このファイルの内容を空にして保存してください。\n" \
+    "#\n" \
+    "http://www\\.youtube\\.com/watch\\?(|[^#]+&)v=([^&#/]+)	http://img.youtube.com/vi/$2/0.jpg\n" \
+    "http://youtu\\.be/([^#&=/]+)	http://img.youtube.com/vi/$1/0.jpg\n" \
+    "http://img\\.youtube\\.com/vi/[^/]+/0.jpg	$0		$THUMBNAIL\n" \
+    "\n"
+
+
 Urlreplace_Manager::Urlreplace_Manager()
 {
     std::string conf;
-    if( CACHE::load_rawdata( CACHE::path_urlreplace(), conf ) ) conf2list( conf );
+    const std::string path = CACHE::path_urlreplace();
+    if( CACHE::load_rawdata( path, conf ) ){
+        conf2list( conf );
+    } else {
+        // 読み込みエラー、または空ファイル
+        if( CACHE::file_exists( path ) == CACHE::EXIST_ERROR ){
+            // ファイルが存在しないとき、デフォルト設定ファイルを作成する
+            conf = DEFALUT_CONFIG;
+            if( CACHE::save_rawdata( path, conf ) ){
+                conf2list( conf );
+            }
+        }
+    }
 }
 
 
@@ -51,6 +82,9 @@ void Urlreplace_Manager::conf2list( const std::string& conf )
 
     std::list < std::string >::iterator it = lines.begin();
     for( ; it != lines.end(); ++it ){
+        if( (*it).length() <= 0 ) continue;
+        if( (*it)[0] == '#' ) continue; // コメント行
+
         std::list< std::string > line = MISC::StringTokenizer( *it, '\t' );
         if( line.size() < 2 ) continue;
 
@@ -82,6 +116,10 @@ void Urlreplace_Manager::conf2list( const std::string& conf )
             // 拡張子の偽装をチェックしない
             if( ctrl.find( "$GENUINE" ) != std::string::npos ){
                 imgctrl += IMGCTRL_GENUINE;
+            }
+            // サムネイル画像
+            if( ctrl.find( "$THUMBNAIL" ) != std::string::npos ){
+                imgctrl += IMGCTRL_THUMBNAIL;
             }
 
             if( imgctrl != IMGCTRL_INIT ) item.imgctrl = imgctrl;

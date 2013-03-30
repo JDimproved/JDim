@@ -998,6 +998,27 @@ NODE* NodeTreeBase::create_node_img( const char* text, const int n, const char* 
 
 
 //
+// サムネイル画像ノード ( youtubeなどのサムネイル表示用 )
+//
+NODE* NodeTreeBase::create_node_thumbnail( const char* text, const int n, const char* link, const int n_link, const char* thumb, const int n_thumb, const int color_text, const bool bold )
+{
+    NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold );
+
+    if( tmpnode ){
+        // サムネイル画像のURLをセット
+        char *tmpthumb = ( char* )m_heap.heap_alloc( n_thumb +4 );
+        memcpy( tmpthumb, thumb, n_thumb );
+        tmpthumb[ n_thumb ] = '\0';
+
+        tmpnode->linkinfo->imglink = tmpthumb;
+    }
+
+    return tmpnode;
+}
+
+
+
+//
 // テキストノード作成
 //
 NODE* NodeTreeBase::create_node_text( const char* text, const int color_text, const bool bold )
@@ -1028,79 +1049,6 @@ NODE* NodeTreeBase::create_node_ntext( const char* text, const int n, const int 
     return tmpnode;
 }
 
-
-//
-// Youtube ノード
-//
-NODE* NodeTreeBase::create_node_youtube( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold )
-{
-    NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold );
-
-    if( ! tmpnode || ! tmpnode->linkinfo ){
-        return tmpnode;
-    }
-    
-    // 「http://www.youtube.com」の後にセット
-    char *linkurl = tmpnode->linkinfo->link;
-    linkurl += 22;
-
-    if( *( linkurl ) == '/'
-        && *( ++linkurl ) == 'w'
-        && *( ++linkurl ) == 'a'
-        && *( ++linkurl ) == 't'
-        && *( ++linkurl ) == 'c'
-        && *( ++linkurl ) == 'h' ){
-
-        // 「?v=」または「&v=」を探す
-        while ( *( ++linkurl ) != '\0' ){
-            if( ( *( linkurl ) == '?' || *( linkurl ) == '&' )
-                    && *( linkurl + 1 ) == 'v'
-                    && *( linkurl + 2 ) == '=' ){
-                break;
-            }
-        }
-        if( *linkurl == '\0' ){
-            return tmpnode; // 見つからない
-        }
-        linkurl += 3;
-
-        // 「v=...」をidに格納
-        char id[ LNG_LINK +16 ];
-        int lng_id = 0;
-        while( *( linkurl ) != '\0'
-               && *( linkurl ) != '&'
-               && *( linkurl ) != '#' ){
-            id[ lng_id++ ] = *( linkurl++ );
-        }
-        if( lng_id == 0 ){
-            return tmpnode; // 見つからない
-        }
-
-        // 画像のURL「http://img.youtube.com/vi/<id>/0.jpg」を生成
-        const char *server = "http://img.youtube.com/vi/";
-        const char *file = "/0.jpg";
-        char thumb[ LNG_LINK +16 ];
-        int lng_thumb = strlen( server );
-        const int lng_file = strlen( file );
-
-        memmove( thumb, server, lng_thumb );
-        memmove( thumb + lng_thumb, id, lng_id );
-        lng_thumb += lng_id;
-        memmove( thumb + lng_thumb, file, lng_file );
-        lng_thumb += lng_file;
-
-        // 画像のURLをセット
-        tmpnode->linkinfo->imglink = ( char* )m_heap.heap_alloc( lng_thumb +4 );
-        memcpy( tmpnode->linkinfo->imglink, thumb, lng_thumb );
-        tmpnode->linkinfo->imglink[ lng_thumb ] = '\0';
-
-#ifdef _DEBUG
-        std::cout << "NodeTreeBase::create_node_youtube url = " << tmpnode->linkinfo->imglink << std::endl;
-#endif
-    }
-    
-    return tmpnode;
-}
 
 
 //
@@ -2205,7 +2153,8 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
         // アンカーのチェック
         int n_in = 0;
         int n_out = 0;
-        char tmpstr[ LNG_LINK +16 ], tmplink[ LNG_LINK +16 ];
+        char tmpstr[ LNG_LINK +16 ]; // 画面に表示する文字列
+        char tmplink[ LNG_LINK +16 ]; // 編集したリンク文字列
         int lng_str = 0, lng_link = strlen( PROTO_ANCHORE );
         ANCINFO ancinfo[ MAX_ANCINFO ];
         int lng_anc = 0;
@@ -2250,6 +2199,8 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
         ///////////////////////
         // リンク(http)のチェック
+        char tmpreplace[ LNG_LINK +16 ]; // Urlreplaceで変換した後のリンク文字列
+        int lng_replace = 0;
         int linktype = check_link( pos, (int)( pos_end - pos ), n_in, tmplink, LNG_LINK );
         if( linktype != MISC::SCHEME_NONE ){
             // リンクノードで実際にアクセスするURLの変換
@@ -2258,22 +2209,30 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
             // Urlreplaceによる正規表現変換
             std::string tmpurl( tmplink, lng_link );
-            if( CORE::get_urlreplace_manager()->exec( tmpurl ) ){
+            if( CORE::get_urlreplace_manager()->exec( tmpurl ) == false ){
+                // 変換されてない
+                lng_replace = lng_link;
+                memcpy( tmpreplace, tmplink, lng_replace +1 );
+
+            } else {
                 if( tmpurl.size() > LNG_LINK ){
+                    MISC::ERRMSG( std::string( "too long replaced url : " ) + tmplink );
+
                     // 変換後のURLが長すぎるので、元のURLのままにする
-                    MISC::ERRMSG( "too long replaced url : " + tmpurl );
+                    lng_replace = lng_link;
+                    memcpy( tmpreplace, tmplink, lng_replace +1 );
                 } else {
                     // 正常に変換された
-                    lng_link = tmpurl.size();
-                    memcpy( tmplink, tmpurl.c_str(), lng_link +1 );
-                }
-            }
+                    lng_replace = tmpurl.size();
+                    memcpy( tmpreplace, tmpurl.c_str(), lng_replace +1 );
 
-            // 正規表現変換の結果、スキームだけの簡易チェックをする
-            int delim_pos = 0;
-            if( MISC::SCHEME_NONE == MISC::is_url_scheme( tmplink, &delim_pos ) ){
-                // スキーム http:// が消えていた
-                linktype = MISC::SCHEME_NONE;
+                    // 正規表現変換の結果、スキームだけの簡易チェックをする
+                    int delim_pos = 0;
+                    if( MISC::SCHEME_NONE == MISC::is_url_scheme( tmpreplace, &delim_pos ) ){
+                        // スキーム http:// が消えていた
+                        linktype = MISC::SCHEME_NONE;
+                    }
+                }
             }
         }
         // リンクノードか再チェック
@@ -2288,30 +2247,27 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
             // ssspアイコン
             if( enable_sssp && linktype == MISC::SCHEME_SSSP ){
-                create_node_sssp( tmplink, lng_link );
+                create_node_sssp( tmpreplace, lng_replace );
                 enable_sssp = false;
             }
 
-            // 画像リンク
-            else if( DBIMG::get_type_ext( tmplink, lng_link ) != DBIMG::T_UNKNOWN ){
-                create_node_img( tmpstr, lng_str, tmplink , lng_link, COLOR_IMG_NOCACHE, bold );
+            else {
+                // Urlreplaceによる画像コントロールを取得する
+                int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( std::string( tmpreplace, lng_replace ) );
+
+                // youtubeなどのサムネイル画像リンク
+                if( imgctrl & CORE::IMGCTRL_THUMBNAIL ){
+                    create_node_thumbnail( tmpstr, lng_str, tmplink , lng_link, tmpreplace, lng_replace, COLOR_CHAR_LINK, bold );
+                }
+
+                // 画像リンク
+                else if( DBIMG::get_type_ext( tmpreplace, lng_replace ) != DBIMG::T_UNKNOWN ){
+                    create_node_img( tmpstr, lng_str, tmpreplace , lng_replace, COLOR_IMG_NOCACHE, bold );
+                }
+    
+                // 一般リンク
+                else create_node_link( tmpstr, lng_str, tmpreplace , lng_replace, COLOR_CHAR_LINK, bold );
             }
-
-            // youtube
-            else if( *( tmplink + 11) == 'y'
-                     && *( tmplink + 12) == 'o' 
-                     && *( tmplink + 13) == 'u' 
-                     && *( tmplink + 14) == 't' 
-                     && *( tmplink + 15) == 'u' 
-                     && *( tmplink + 16) == 'b' 
-                     && *( tmplink + 17) == 'e' 
-                ){
-
-                create_node_youtube( tmpstr, lng_str, tmplink , lng_link, COLOR_CHAR_LINK, bold );
-            }
-
-            // 一般リンク
-            else create_node_link( tmpstr, lng_str, tmplink , lng_link, COLOR_CHAR_LINK, bold );
 
             pos += n_in;
 
