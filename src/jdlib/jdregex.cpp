@@ -32,10 +32,10 @@ Regex::Regex()
 
 Regex::~Regex()
 {
-	dispose();
+    dispose();
 
-        if( m_target_asc ) free( m_target_asc );
-        if( m_table_pos ) free( m_table_pos );
+    if( m_target_asc ) free( m_target_asc );
+    if( m_table_pos ) free( m_table_pos );
 }
 
 
@@ -67,6 +67,7 @@ const bool Regex::compile( const std::string reg, const bool icase, const bool n
     
 #ifdef USE_PCRE
     int cflags = REG_UTF8;
+    if( ! newline ) cflags |= REG_DOTALL; // . を改行にマッチさせる
 #else
     int cflags = REG_EXTENDED;
 #endif
@@ -128,7 +129,7 @@ const bool Regex::exec( const std::string& target, const size_t offset )
     memset(pmatch, 0, sizeof(pmatch));
 
     if ( ! m_compiled ) return false;
-	
+
     if( target.empty() ) return false;
     if( target.length() <= offset ) return false;
 
