@@ -312,9 +312,14 @@ void Post::receive_finish()
 
         // samba秒取得
         icase = false;
-        newline = true;
-        if( regex.exec( "ＥＲＲＯＲ +- +593 +([0-9]+) +sec", m_errmsg, offset, icase, newline, usemigemo, wchar ) ){
-            time_t sec = atoi( regex.str( 1 ).c_str() );
+        newline = false; // . に改行をマッチさせる
+        // Smaba24規制の場合
+        //   ＥＲＲＯＲ - 593 60 sec たたないと書けません。(1回目、8 sec しかたってない)
+        // 忍法帖規制の場合 ( samba秒だけ取得する。 )
+        //   ＥＲＲＯＲ：修行が足りません(Lv=2)。しばらくたってから投稿してください。(48 sec)
+        //   この板のsambaは samba=30 sec
+        if( regex.exec( "ＥＲＲＯＲ( +- +593 +|：.+samba=)([0-9]+) +sec", m_errmsg, offset, icase, newline, usemigemo, wchar ) ){
+            time_t sec = atoi( regex.str( 2 ).c_str() );
 #ifdef _DEBUG
             std::cout << "samba = " << sec << std::endl;
 #endif
