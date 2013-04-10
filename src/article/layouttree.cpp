@@ -15,6 +15,7 @@
 
 #include "global.h"
 #include "colorid.h"
+#include "fontid.h"
 #include "cssmanager.h"
 
 enum
@@ -568,6 +569,10 @@ LAYOUT* LayoutTree::create_separator()
     int classid = CORE::get_css_manager()->get_classid( "separator" );
     LAYOUT* header = create_layout_div( classid );
     header->type = DBTREE::NODE_HEADER;
+
+    DBTREE::NODE* node = ( DBTREE::NODE* ) m_heap.heap_alloc( sizeof( DBTREE::NODE ) );
+    node->fontid = FONT_DEFAULT; // デフォルトフォントを設定
+    header->node = node;
 
     if( header->css->bg_color < 0 ) header->css->bg_color = COLOR_SEPARATOR_NEW;
 
