@@ -338,6 +338,7 @@ namespace SKELETON
         // タブの切り替え履歴を更新
         void append_switchhistory( const std::string& url );
         void remove_switchhistory( const std::string& url );
+        const std::string get_valid_switchhistory();
     };
 }
 

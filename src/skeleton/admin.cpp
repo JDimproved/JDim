@@ -1479,7 +1479,8 @@ void Admin::close_view( SKELETON::View* view )
     if( page == current_page ){
 
         // その前に開いていたビューに切り替える
-        if( m_use_switchhistory && m_list_switchhistory.size() ) switch_view( m_list_switchhistory.back() );
+        const std::string hist_url = get_valid_switchhistory();
+        if( ! hist_url.empty() ) switch_view( hist_url );
 
         // もし現在表示中のビューを消すときは予めひとつ右のビューにスイッチしておく
         // そうしないと左のビューを一度表示してしまうので遅くなる
@@ -2824,4 +2825,40 @@ void Admin::remove_switchhistory( const std::string& url )
         std::cout << (*it) << std::endl;
     }
 #endif
+}
+
+
+//
+// タブの切り替え履歴から、有効な最後のURLを返す
+//
+// 表示されているビューに存在しないURLは履歴から削除して、表示されているビューのURLを返す。
+// 見つからないときは空文字列を返す。
+//
+// NOTE:
+//   タブの切り替え履歴にあるビューは、表示されているビューのうちのどれかであるはずだが、
+//   検索ビューなどでURLが変更になる場合があり、 ( View::set_url()で変更できてしまう。 )
+//   タブの切り替え履歴にあるURLと、表示されているビューのURLが不一致となることがある。
+//   また、その不一致なタブの切り替え履歴を、セッション情報 ( article_switchhistoryなど ) に
+//   保存してしまっていたため、ここで不一致な履歴の削除を行うことで、履歴を修復する。
+//
+const std::string Admin::get_valid_switchhistory()
+{
+    if( ! m_use_switchhistory ) return std::string();
+
+    while( m_list_switchhistory.size() > 0 ){
+
+        // タブの切り替え履歴から、最後のURLを取り出す
+        const std::string url = m_list_switchhistory.back();
+
+        // 表示されているビューであれば、そのURLを返す
+        SKELETON::View* view = get_view( url );
+        if( view ) return url;
+
+        // 表示されていないので、最後のURLを削除する
+        m_list_switchhistory.pop_back();
+#ifdef _DEBUG
+        std::cout << "Admin::get_valid_switchhistory remove = " << url << std::endl;
+#endif
+    }
+    return std::string();
 }
