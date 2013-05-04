@@ -944,7 +944,7 @@ void Admin::update_status( View* view, const bool force )
 //
 // command.arg1: 開く位置
 //
-// "false" ならアクティブなタブを置き換える
+// "false" ならアクティブなタブを置き換える ( デフォルト )
 // "true" なら一番右側に新しいタブを開く
 // "right" ならアクティブなタブの右に開く
 // "newtab" なら設定によってアクティブなタブの右に開くか一番右側に開くか切り替える
@@ -1038,8 +1038,10 @@ void Admin::open_view( const COMMAND_ARGS& command )
     }
 
     // 置き替えるページを探す
-    int find_page = -1;
-    if( command.arg1 == "replace" ){
+    if( open_method == "replace" ){
+        // 該当するタブが見つからない場合のために、新しいタブで開くモードに仮設定
+        open_method = "newtab";
+
         // タブの種類 (command.arg3) に該当するタブを探す
         int find_page = find_view( command.arg3 );
 #ifdef _DEBUG
@@ -1047,19 +1049,22 @@ void Admin::open_view( const COMMAND_ARGS& command )
                 << " page = " << page << " find = " << find_page << std::endl;
 #endif
         if( find_page >= 0 ){
-            // 開く位置の基準を、見つかったタブに設定
-            page = find_page;
-            current_view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+            SKELETON::View* found_view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+            if( found_view ){
+                // 指定したタブを置き換えるモードに設定
+                open_method = "false";
+
+                // 開く位置の基準を、見つかったタブに設定
+                page = find_page;
+                current_view = found_view;
+            }
         }
-        // 該当するタブが見つからない場合、新しいタブで開く
-        open_method = ( find_page >= 0 ) ? "false" : "newtab";
     }
 
     view = create_view( command );
     if( !view ) return;
 
     const bool open_tab = (  page == -1
-                             || find_page != -1
                              || open_method != "false"
                              || ( mode & OPEN_MODE_AUTO ) // オートモードの時もタブで開く
                              || is_locked( page )
