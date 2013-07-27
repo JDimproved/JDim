@@ -501,8 +501,9 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // 書き込みビュー
     m_action_group->add( Gtk::Action::create( "MessageView_Menu", "書き込み設定(_M)" ) );
-    Gtk::RadioButtonGroup radiogroup_msg;
     m_action_group->add( Gtk::Action::create( "ShowMsgView_Menu", "書き込みビュー(_M)" ) );
+
+    Gtk::RadioButtonGroup radiogroup_msg;
     Glib::RefPtr< Gtk::RadioAction > raction_msg0 = Gtk::RadioAction::create( radiogroup_msg, "UseWinMsg", "ウィンドウ表示する(_W)" );
     Glib::RefPtr< Gtk::RadioAction > raction_msg1 = Gtk::RadioAction::create( radiogroup_msg, "UseEmbMsg", "埋め込み表示する(_E)" );
 
@@ -518,10 +519,17 @@ void Core::run( const bool init, const bool skip_setupdiag )
     // 画像表示設定
     m_action_group->add( Gtk::Action::create( "ImageView_Menu", "画像表示設定(_G)" ) );
     m_action_group->add( Gtk::Action::create( "ShowImageView_Menu", "画像ビュー(_V)" ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseWinImg", "ウィンドウ表示する(_W)", std::string(), false ),
-                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_WINDOW ) );
-    m_action_group->add( Gtk::ToggleAction::create( "UseEmbImg", "埋め込み表示する(_E)", std::string(), false ),
-                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_EMB ) );
+
+    Gtk::RadioButtonGroup radiogroup_img;
+    Glib::RefPtr< Gtk::RadioAction > raction_img0 = Gtk::RadioAction::create( radiogroup_img, "UseWinImg", "ウィンドウ表示する(_W)" );
+    Glib::RefPtr< Gtk::RadioAction > raction_img1 = Gtk::RadioAction::create( radiogroup_img, "UseEmbImg", "埋め込み表示する(_E)" );
+
+    if( ! SESSION::get_embedded_img() ) raction_img0->set_active( true );
+    else raction_img1->set_active( true );
+
+    m_action_group->add( raction_img0, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_WINDOW ) );
+    m_action_group->add( raction_img1, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_EMB ) );
+
     m_action_group->add( Gtk::ToggleAction::create( "UseImgPopup", "画像ポップアップを表示する(_P)", std::string(), CONFIG::get_use_image_popup() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
