@@ -74,10 +74,10 @@ namespace CONFIG
     const bool get_show_oldarticle();
 
     // フォント
-    const bool get_fontenable( const int id );
     const std::string& get_fontname( const int id );
     void set_fontname( const int id, const std::string& fontname );
     void reset_fonts();
+    const bool get_aafont_enabled();
 
     // レスを参照するときに前に付ける文字
     const std::string get_ref_prefix();

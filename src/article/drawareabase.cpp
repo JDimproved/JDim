@@ -344,7 +344,7 @@ void DrawAreaBase::init_font()
 
     init_fontinfo( m_defaultfont, fontname );
 
-    if( CONFIG::get_fontenable( FONT_AA ) ){
+    if( CONFIG::get_aafont_enabled() ){
         m_aafont_initialized = true;
         std::string aafontname = CONFIG::get_fontname( FONT_AA );
 

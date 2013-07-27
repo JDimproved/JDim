@@ -118,7 +118,7 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
     m_num_id[ LINK_LOW ] = CONFIG::get_num_id_low();
 
     // レスにアスキーアートがあると判定する正規表現
-    if( CONFIG::get_fontenable( FONT_AA ) ){
+    if( CONFIG::get_aafont_enabled() ){
         m_aa_regex = CONFIG::get_regex_res_aa();
     } else {
         m_aa_regex = std::string();

@@ -45,6 +45,7 @@ namespace CONFIG
 
         // レスにアスキーアートがあると判定する正規表現
         std::string regex_res_aa;
+        bool aafont_enabled;
 
         // キャッシュのルートディレクトリ
         // 旧バージョンとの互換のため残しているだけで使用していない

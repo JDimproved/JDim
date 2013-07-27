@@ -115,11 +115,6 @@ const bool CONFIG::get_left_scrbar(){ return get_confitem()->left_scrbar; }
 const bool CONFIG::get_show_oldarticle(){ return get_confitem()->show_oldarticle; }
 
 // フォント
-const bool CONFIG::get_fontenable( const int id )
-{
-    return ! get_confitem()->fontname[ id ].empty();
-}
-
 const std::string& CONFIG::get_fontname( const int id )
 {
     return get_confitem()->fontname[ id ];
@@ -131,6 +126,8 @@ void CONFIG::set_fontname( const int id, const std::string& fontname )
 }
 
 void CONFIG::reset_fonts(){ get_confitem()->reset_fonts(); }
+
+const bool CONFIG::get_aafont_enabled(){ return get_confitem()->aafont_enabled; }
 
 
 const std::string CONFIG::get_ref_prefix(){ return get_confitem()->ref_prefix + get_confitem()->ref_prefix_space_str; }
