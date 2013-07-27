@@ -142,7 +142,7 @@ const std::string CONFIG::get_regex_res_aa(){
     int size = str.size();
 
     // ダブルクオートの削除
-    if( size > 2 && str[ 0 ] == '"' && str[ size - 1 ] == '"' ){
+    if( size >= 2 && str[ 0 ] == '"' && str[ size - 1 ] == '"' ){
         str = str.substr( 1, size - 2 );
     }
     return str;
