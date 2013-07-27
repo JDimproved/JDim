@@ -118,7 +118,11 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
     m_num_id[ LINK_LOW ] = CONFIG::get_num_id_low();
 
     // レスにアスキーアートがあると判定する正規表現
-    m_aa_regex = CONFIG::get_regex_res_aa();
+    if( CONFIG::get_fontenable( FONT_AA ) ){
+        m_aa_regex = CONFIG::get_regex_res_aa();
+    } else {
+        m_aa_regex = std::string();
+    }
 
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::NodeTreeBase url = " << m_url << " modified = " << get_date_modified()
@@ -3497,9 +3501,11 @@ void NodeTreeBase::check_fontid( const int number )
 
     // ヘッダノードには、フォント判定済みの意味を兼ねて、デフォルトフォントを設定しておく
     head->fontid = FONT_DEFAULT;
+    if( m_aa_regex.empty() ) return;
 
     char fontid_mes = FONT_DEFAULT; // 本文のフォント(fontid.h)
 
+    // AAフォント判定
     const std::string res_str = get_res_str( number );
     JDLIB::Regex regex;
     const size_t offset = 0;
@@ -3508,17 +3514,14 @@ void NodeTreeBase::check_fontid( const int number )
     const bool usemigemo = false;
     const bool wchar = false;
 
-    // AAフォント判定
-    if( ! m_aa_regex.empty() ) {
-        if( regex.exec( m_aa_regex, res_str, offset, icase, newline, usemigemo, wchar ) ){
-            fontid_mes = FONT_AA;
+    if( regex.exec( m_aa_regex, res_str, offset, icase, newline, usemigemo, wchar ) ){
+        fontid_mes = FONT_AA;
 #ifdef _DEBUG
-    std::cout << "NodeTreeBase::check_fontid() fontid = " << FONT_AA
-            << " res = " << number << std::endl;
+        std::cout << "NodeTreeBase::check_fontid() fontid = " << FONT_AA
+                << " res = " << number << std::endl;
 #endif
-        }
     }
-    
+
     // 本文のフォントを設定
     if( fontid_mes != FONT_DEFAULT ){ 
         NODE *node = head->headinfo->block[ BLOCK_MES ];

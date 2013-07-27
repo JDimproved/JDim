@@ -99,6 +99,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_draw_frame( false )
     , m_back_frame( NULL )
     , m_ready_back_frame( false )
+    , m_aafont_initialized( false )
     , m_strict_of_char( false )
     , m_configure_reserve( false )
     , m_configure_width( 0 )
@@ -343,14 +344,16 @@ void DrawAreaBase::init_font()
 
     init_fontinfo( m_defaultfont, fontname );
 
-    std::string aafontname = CONFIG::get_fontname( FONT_AA );
-    if( aafontname.empty() ) aafontname = fontname;
+    if( CONFIG::get_fontenable( FONT_AA ) ){
+        m_aafont_initialized = true;
+        std::string aafontname = CONFIG::get_fontname( FONT_AA );
 
-    init_fontinfo( m_aafont, aafontname );
+        init_fontinfo( m_aafont, aafontname );
 
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::aa_fontname = " << aafontname << std::endl;
+        std::cout << "DrawAreaBase::aa_fontname = " << aafontname << std::endl;
 #endif
+    }
 
     // layoutにフォントをセット
     m_font = &m_defaultfont;
@@ -2326,8 +2329,13 @@ void DrawAreaBase::set_node_font( LAYOUT* layout )
     // フォント設定
     switch( layout->node->fontid ){
     case FONT_AA:
-        layout_fontid = layout->node->fontid;
+        if( m_aafont_initialized ){
+            layout_fontid = layout->node->fontid;
+            break;
+        }
+        layout_fontid = m_defaultfontid; // デフォルトフォント情報
         break;
+
     case FONT_EMPTY: // フォントID未決定
     case FONT_DEFAULT:
     default:

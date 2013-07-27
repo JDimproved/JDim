@@ -953,7 +953,11 @@ void ConfigItems::set_fonts( JDLIB::ConfLoader& cf )
     fontname[ FONT_POPUP ] = cf.get_option_str( "fontname_popup", defaultfont + " " + std::string( CONF_FONTSIZE_POPUP ) );
 
     // AA(スレビュー)のフォント
-    fontname[ FONT_AA ] = cf.get_option_str( "fontname_aa", fontname[ FONT_MAIN ] );
+    std::string aafont = cf.get_option_str( "fontname_aa", fontname[ FONT_MAIN ] );
+    if( fontname[ FONT_MAIN ] == aafont ){
+        aafont = std::string();
+    }
+    fontname[ FONT_AA ] = aafont;
 
     // スレ一覧のフォント
     fontname[ FONT_BBS ] = cf.get_option_str( "fontname_bbs", defaultfont + " " + std::string( CONF_FONTSIZE_TREE ) );

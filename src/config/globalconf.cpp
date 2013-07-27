@@ -115,6 +115,11 @@ const bool CONFIG::get_left_scrbar(){ return get_confitem()->left_scrbar; }
 const bool CONFIG::get_show_oldarticle(){ return get_confitem()->show_oldarticle; }
 
 // フォント
+const bool CONFIG::get_fontenable( const int id )
+{
+    return ! get_confitem()->fontname[ id ].empty();
+}
+
 const std::string& CONFIG::get_fontname( const int id )
 {
     return get_confitem()->fontname[ id ];

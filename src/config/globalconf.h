@@ -74,6 +74,7 @@ namespace CONFIG
     const bool get_show_oldarticle();
 
     // フォント
+    const bool get_fontenable( const int id );
     const std::string& get_fontname( const int id );
     void set_fontname( const int id, const std::string& fontname );
     void reset_fonts();

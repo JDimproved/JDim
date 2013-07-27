@@ -153,6 +153,7 @@ namespace ARTICLE
         int m_defaultfontid;
         FONTINFO *m_font; // カレントフォント情報
         FONTINFO m_defaultfont; // デフォルトフォント情報
+        bool m_aafont_initialized;
         FONTINFO m_aafont; // AA用フォント情報
 
         // スレビューで文字幅の近似を厳密にするか
