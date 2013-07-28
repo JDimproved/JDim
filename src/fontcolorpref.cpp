@@ -364,6 +364,7 @@ void FontColorPref::slot_reset_font()
 
     m_spin_space.set_value( CONFIG::CONF_ADJUST_LINE_SPACE );
     m_spin_ubar.set_value( CONFIG::CONF_ADJUST_UNDERLINE_POS );
+    m_label_aafont.set_text( CONF_REGEX_RES_AA_DEFAULT );
 }
 
 

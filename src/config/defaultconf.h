@@ -182,7 +182,8 @@ namespace CONFIG
 #define CONF_REF_PREFIX ">"
 
 // レスにアスキーアートがあると判定する正規表現
-#define CONF_REGEX_RES_AA "\"　 \""
+#define CONF_REGEX_RES_AA_DEFAULT "　 "
+#define CONF_REGEX_RES_AA "\"" CONF_REGEX_RES_AA_DEFAULT "\""
 
 // キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
 #define CONF_PATH_CACHEROOT "~/.jd/"
