@@ -422,6 +422,12 @@ void BoardAdmin::command_local( const COMMAND_ARGS& command )
         SKELETON::View* view = get_view( command.url );
         if( view ) view->set_command( "clear_highlight" );
     }
+
+    // URLを選択
+    else if( command.command == "select_item" ){
+        SKELETON::View* view = get_current_view();
+        if( view ) view->set_command( "select_item", command.url );
+    }
 }
 
 

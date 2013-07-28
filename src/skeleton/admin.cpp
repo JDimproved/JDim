@@ -1669,7 +1669,11 @@ void Admin::set_url( const std::string& url, const std::string& url_show, const 
         if( view ){
 
             // アクティブなviewからコマンドが来たら表示する
-            if( force || ( m_focus && view->get_url() == url ) ) CORE::core_set_command( "set_url", url_show );
+            if( force || ( m_focus && view->get_url() == url ) ){
+                CORE::core_set_command( "set_url", url_show );
+                CORE::core_set_command( "select_sidebar_item", url );
+                CORE::core_set_command( "select_board_item", url );
+            }
         }
     }
 }

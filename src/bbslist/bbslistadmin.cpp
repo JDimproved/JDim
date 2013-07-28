@@ -247,6 +247,9 @@ void BBSListAdmin::command_local( const COMMAND_ARGS& command )
 
         // 板のアイコン表示を更新
         else if( command.command  == "toggle_boardicon" ) view->set_command( "toggle_boardicon", command.arg1 );
+
+        // URLを選択
+        else if( command.command  == "select_item" ) view->set_command( "select_item", command.arg1 );
     }
 }
 

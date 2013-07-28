@@ -1166,6 +1166,8 @@ const bool BoardViewBase::set_command( const std::string& command, const std::st
     else if( command == "draw_bg_articles" ) draw_bg_articles();
     else if( command == "clear_highlight" ) clear_highlight();
 
+    else if( command == "select_item" ) select_item( arg1 );
+
     return true;
 }
 
@@ -1332,6 +1334,22 @@ void BoardViewBase::update_status()
         set_status( ss_tmp.str() );
         BOARD::get_admin()->set_command( "set_status", get_url(), get_status() );
 }
+
+
+//
+// URLを選択
+//
+void BoardViewBase::select_item( const std::string& url )
+{
+    const Gtk::TreeModel::Row row = get_row_from_url( url );
+    if( row ){
+        Gtk::TreePath path = GET_PATH( row );
+
+        m_treeview.get_selection()->unselect_all();
+        m_treeview.set_cursor( path );
+    }
+}
+
 
 
 void BoardViewBase::focus_view()

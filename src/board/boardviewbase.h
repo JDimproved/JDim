@@ -195,6 +195,9 @@ namespace BOARD
         // ステータスバー更新
         void update_status();
 
+        // URLを選択
+        void select_item( const std::string& url );
+
         // subject.txt をロードする
         void set_load_subject_txt( const bool load ){ m_load_subject_txt = load; }
 

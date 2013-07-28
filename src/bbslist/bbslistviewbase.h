@@ -128,6 +128,9 @@ namespace BBSLIST
         // アイコン表示(板)の切り替え
         void toggle_boardicon( const std::string& url );
 
+        // URLを選択
+        void select_item( const std::string& url );
+
         // スレの url と 名前を変更
         void replace_thread( const std::string& url, const std::string& url_new );
 

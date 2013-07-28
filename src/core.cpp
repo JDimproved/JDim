@@ -2499,6 +2499,13 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    // 表示中のスレ一覧のURLを選択
+    else if( command.command == "select_board_item" ){
+
+        BOARD::get_admin()->set_command_immediately( "select_item", command.url );
+        return;
+    }
+
     // 全boardviewの再レイアウト
     else if( command.command == "relayout_all_board" ){
         BOARD::get_admin()->set_command( "relayout_all" );
@@ -2634,6 +2641,13 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         // 履歴メニューを開いていたらメニューのアイコンも更新
         HISTORY::get_history_manager()->set_menulabel( URL_HISTBOARDVIEW );
+        return;
+    }
+
+    // 表示中のサイドバーのURLを選択
+    else if( command.command == "select_sidebar_item" ){
+
+        BBSLIST::get_admin()->set_command_immediately( "select_item", SESSION::get_sidebar_current_url(), command.url );
         return;
     }
 

@@ -562,6 +562,7 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
     else if( command == "save_xml" ) save_xml();
     else if( command == "toggle_articleicon" ) toggle_articleicon( arg1 );
     else if( command == "toggle_boardicon" ) toggle_boardicon( arg1 );
+    else if( command == "select_item" ) select_item( arg1 );
     else if( command == "replace_thread" ) replace_thread( arg1, arg2 );
 
     else if( command == "hide_popup" ) m_treeview.hide_popup();
@@ -2503,6 +2504,48 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
     }
 
     if( erase ) m_set_board.erase( url_boardbase );
+}
+
+
+
+//
+// URLを選択
+//
+void BBSListViewBase::select_item( const std::string& url )
+{
+    if( ! m_ready_tree ) return;
+    if( m_treestore->children().empty() ) return;
+
+    std::string url_item( url );
+
+    if( m_set_thread.find_if( url_item )
+            || m_set_image.find( url_item ) != m_set_image.end()){
+        // スレまたは画像の場合
+    }
+    else {
+        // 板の場合
+        url_item = DBTREE::url_boardbase( url );
+
+        // 未登録の画像などで、板が見つからない場合は処理しない
+        if( url_item.empty() ) return;
+    }
+
+    SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
+    for( ; ! it.end(); ++it ){
+
+        Gtk::TreeModel::Row row = *it;
+        const Glib::ustring url_row = row[ m_columns.m_url ];
+
+        if( url_item == url_row ){
+            // 最初に見つかったものにフォーカスする
+            Gtk::TreePath path = GET_PATH( row );
+
+            m_treeview.get_selection()->unselect_all();
+            m_treeview.set_cursor( path );
+
+            return;
+        }
+    }
 }
 
 
