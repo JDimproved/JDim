@@ -562,7 +562,6 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
     else if( command == "save_xml" ) save_xml();
     else if( command == "toggle_articleicon" ) toggle_articleicon( arg1 );
     else if( command == "toggle_boardicon" ) toggle_boardicon( arg1 );
-    else if( command == "select_item" ) select_item( arg1 );
     else if( command == "replace_thread" ) replace_thread( arg1, arg2 );
 
     else if( command == "hide_popup" ) m_treeview.hide_popup();
@@ -570,6 +569,8 @@ const bool BBSListViewBase::set_command( const std::string& command, const std::
     else if( command == "check_update_root" ) check_update_dir( true, false );
     else if( command == "check_update_open_root" ) check_update_dir( true, true );
     else if( command == "cancel_check_update" ) stop();
+
+    else if( command == "select_item" ) select_item( arg1 );
 
     return true;
 }
@@ -2530,6 +2531,9 @@ void BBSListViewBase::select_item( const std::string& url )
         if( url_item.empty() ) return;
     }
 
+    Gtk::TreePath closed_path;
+    int closed_found = false;
+
     SKELETON::EditTreeViewIterator it( m_treeview, m_columns, Gtk::TreePath() );
     for( ; ! it.end(); ++it ){
 
@@ -2540,11 +2544,28 @@ void BBSListViewBase::select_item( const std::string& url )
             // 最初に見つかったものにフォーカスする
             Gtk::TreePath path = GET_PATH( row );
 
-            m_treeview.get_selection()->unselect_all();
-            m_treeview.set_cursor( path );
+            if( m_treeview.is_expand( path ) ){
+                // 開いているエントリ
+                m_treeview.get_selection()->unselect_all();
+                m_treeview.set_cursor( path );
 
-            return;
+                return;
+            }
+
+            // 最初の閉じたエントリを覚えておく
+            if( ! closed_found ){
+                closed_found = true;
+                closed_path = path;
+            }
         }
+    }
+
+    // 開いたエントリが見つからない
+    if( closed_found && CONFIG::get_select_item_sync() == 2 ){
+        // 閉じたエントリの上位フォルダを開いてフォーカスする
+        m_treeview.get_selection()->unselect_all();
+        m_treeview.expand_parents( closed_path );
+        m_treeview.set_cursor( closed_path );
     }
 }
 

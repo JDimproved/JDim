@@ -64,6 +64,9 @@ namespace CONFIG
     // カテゴリを開いたときにツリービューをスクロールする
     const bool get_scroll_tree();
 
+    // ツリービューの選択を、表示中のビューと同期するか ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )
+    const int get_select_item_sync();
+
     // 各ビューと枠との間の余白
     const int get_view_margin();
 

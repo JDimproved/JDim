@@ -230,6 +230,9 @@ namespace CONFIG
         // カテゴリを開いたときにツリービューをスクロールする
         bool scroll_tree;
 
+        // ツリービューの選択を、表示中のビューと同期するか ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )
+        int select_item_sync;
+
         // 各ビューと枠との間の余白
         int view_margin;
 
@@ -509,7 +512,7 @@ namespace CONFIG
 
         // 指定した分ごとにセッションを自動保存 (0: 保存しない)
         int save_session;
-        
+
 #ifdef HAVE_MIGEMO_H
         // migemo-dictの場所
         std::string migemodict_path;

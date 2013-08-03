@@ -1671,8 +1671,12 @@ void Admin::set_url( const std::string& url, const std::string& url_show, const 
             // アクティブなviewからコマンドが来たら表示する
             if( force || ( m_focus && view->get_url() == url ) ){
                 CORE::core_set_command( "set_url", url_show );
-                CORE::core_set_command( "select_sidebar_item", url );
-                CORE::core_set_command( "select_board_item", url );
+
+                // ツリービューのURLを選択
+                if( CONFIG::get_select_item_sync() != 0 ){
+                    CORE::core_set_command( "select_sidebar_item", url );
+                    CORE::core_set_command( "select_board_item", url );
+                }
             }
         }
     }

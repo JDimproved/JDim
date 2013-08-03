@@ -106,6 +106,9 @@ const int CONFIG::get_tree_level_indent(){ return get_confitem()->tree_level_ind
 // カテゴリを開いたときにツリービューをスクロールする
 const bool CONFIG::get_scroll_tree(){ return get_confitem()->scroll_tree; }
 
+// ツリービューの選択を、表示中のビューと同期するか ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )
+const int CONFIG::get_select_item_sync(){ return get_confitem()->select_item_sync; }
+
 const int CONFIG::get_view_margin(){ return get_confitem()->view_margin; }
 
 // スクロールバーを左に配置
@@ -589,7 +592,6 @@ void CONFIG::set_show_diag_fifo_error( const bool set ){ get_confitem()->show_di
 
 // 指定した分ごとにセッションを自動保存 (0: 保存しない)
 const int CONFIG::get_save_session(){ return get_confitem()->save_session; }
-
 
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }

@@ -303,6 +303,9 @@ const bool ConfigItems::load( const bool restore )
     // カテゴリを開いたときにツリービューをスクロールする
     scroll_tree = cf.get_option_bool( "scroll_tree", CONF_SCROLL_TREE );
 
+    // ツリービューの選択を、表示中のビューと同期するか
+    select_item_sync = cf.get_option_int( "select_item_sync", CONF_SELECT_ITEM_SYNC, 0, 2 );
+
     // 各ビューと枠との間の余白
     view_margin = cf.get_option_int( "view_margin", CONF_VIEW_MARGIN, 0, 64 );
 
@@ -796,6 +799,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "tree_level_indent", tree_level_indent );
 
     cf.update( "scroll_tree", scroll_tree );
+    cf.update( "select_item_sync", select_item_sync );
 
     cf.update( "view_margin", view_margin );
 

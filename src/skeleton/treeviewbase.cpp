@@ -357,6 +357,18 @@ void JDTreeViewBase::expand_parents( const Gtk::TreePath& path )
 
 
 //
+// pathが開かれているか
+//
+const bool JDTreeViewBase::is_expand( const Gtk::TreePath& path )
+{
+    Gtk::TreePath parent( path );
+
+    if( path.get_depth() < 2 ) return true;
+    if( parent.up() && row_expanded( parent ) ) return true;
+    return false;
+}
+
+//
 // 行のセルの高さ
 //
 int JDTreeViewBase::get_row_height()

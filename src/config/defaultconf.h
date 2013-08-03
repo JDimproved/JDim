@@ -46,6 +46,7 @@ namespace CONFIG
         CONF_TREE_SHOW_EXPANDERS = 1, // ツリービューにエクスパンダを表示
         CONF_TREE_LEVEL_INDENT = 0, // ツリービューのレベルインデント調整量(ピクセル)
         CONF_SCROLL_TREE = 1,       // カテゴリを開いたときにツリービューをスクロールする
+        CONF_SELECT_ITEM_SYNC = 1,  // ツリービューの選択を、表示中のビューと同期するか ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )
         CONF_VIEW_MARGIN = 0,       // 各ビューと枠との間の余白
         CONF_LEFT_SCRBAR = 0,       // スクロールバーを左に配置
         CONF_SHOW_OLDARTICLE = 0,   // スレ一覧で古いスレも表示

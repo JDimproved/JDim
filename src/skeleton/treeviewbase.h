@@ -90,6 +90,9 @@ namespace SKELETON
         // pathの親を再起的にexpandする
         void expand_parents( const Gtk::TreePath& path );
 
+        // pathが開かれているか
+        const bool is_expand( const Gtk::TreePath& path );
+
         // 行のセルの高さ
         int get_row_height();
         void set_column_for_height( int column ){ m_column_for_height = column; }
