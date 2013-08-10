@@ -32,23 +32,12 @@ KeyDiag::KeyDiag( Gtk::Window* parent, const std::string& url, const int id, con
     : CONTROL::MouseKeyDiag( parent, url, id, "ショートカットキー", str_motions )
 {
     // Gtkアクセラレーションキーは、1つだけしか設定できないようにする
-    m_single = ( get_controlmode() == CONTROL::MODE_JDGLOBALS );
+    set_single( get_controlmode() == CONTROL::MODE_JDGLOBALS );
 }
 
 
 InputDiag* KeyDiag::create_inputdiag()
 {
-    // 1つだけしか設定できない場合
-    if( m_single ){
-        if( get_count() >= 1 ){
-            std::string msg = "この項目には、1つだけ設定できます。";
-            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg );
-            mdiag->run();
-            delete mdiag;
-            return NULL;
-        }
-    }
-
     return new KeyInputDiag( this, "", get_id() );
 }
 

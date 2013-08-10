@@ -273,6 +273,7 @@ MouseKeyDiag::MouseKeyDiag( Gtk::Window* parent, const std::string& url,
     : SKELETON::PrefDiag( parent, url ),
       m_id( id ),
       m_controlmode( CONTROL::get_mode( m_id ) ),
+      m_single( false ),
       m_label( "編集したい" + target + "設定をダブルクリックして下さい。" ),
       m_button_delete( Gtk::Stock::DELETE ),
       m_button_add( Gtk::Stock::ADD ),
@@ -356,9 +357,19 @@ const std::string MouseKeyDiag::get_str_motions()
 //
 // 入力ダイアログを表示
 //
-const std::string MouseKeyDiag::show_inputdiag()
+const std::string MouseKeyDiag::show_inputdiag( bool is_append )
 {
     std::string str_motion;
+
+    if( m_single ){
+        // 1つだけしか設定できない場合
+        const int count = get_count();
+        if( count > 1 || ( count == 1 && is_append ) ){
+            SKELETON::MsgDiag mdiag( NULL, "この項目には、1つだけ設定できます。" );
+            mdiag.run();
+            return std::string();
+        }
+    }
 
     InputDiag* diag = create_inputdiag();
     if( diag == NULL ) return std::string();
@@ -400,7 +411,7 @@ void MouseKeyDiag::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tr
     Gtk::TreeModel::Row row = *( m_liststore->get_iter( path ) );
     if( ! row ) return;
 
-    std::string str_motion = show_inputdiag();
+    std::string str_motion = show_inputdiag( false );
     if( ! str_motion.empty() ) row[ m_columns.m_col_motion ] = str_motion;
 }
 
@@ -436,7 +447,7 @@ void MouseKeyDiag::slot_delete()
 // 行追加
 void MouseKeyDiag::slot_add()
 {
-    std::string str_motion = show_inputdiag();
+    std::string str_motion = show_inputdiag( true );
     if(  str_motion.empty() ) return;
 
     // 既に登録済みか調べる

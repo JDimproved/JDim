@@ -84,6 +84,7 @@ namespace CONTROL
     {
         int m_id;
         int m_controlmode;
+        bool m_single;
 
         SKELETON::JDTreeViewBase m_treeview;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
@@ -112,6 +113,9 @@ namespace CONTROL
         const int get_controlmode() const { return m_controlmode; }
         const int get_count() const { return m_liststore->children().size(); }
 
+        const int get_single() const { return m_single; }
+        const void set_single( bool single ){ m_single = single; }
+
         virtual InputDiag* create_inputdiag() = 0;
         virtual const std::string get_default_motions( const int id ) = 0;
         virtual const std::vector< int > check_conflict( const int mode, const std::string& str_motion ) = 0;
@@ -121,7 +125,7 @@ namespace CONTROL
         Gtk::TreeModel::Row append_row( const std::string& motion );
 
         // 入力ダイアログを表示
-        const std::string show_inputdiag();
+        const std::string show_inputdiag( bool is_append );
 
         // 行をダブルクリック
         void slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column );

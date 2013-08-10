@@ -31,8 +31,6 @@ namespace CONTROL
     //
     class KeyDiag : public CONTROL::MouseKeyDiag
     {
-        bool m_single;
-
       public:
 
         KeyDiag( Gtk::Window* parent, const std::string& url, const int id, const std::string& str_motions );
