@@ -188,6 +188,7 @@ const int CONTROL::get_mode( const int id )
     if( id < CONTROL::IMAGEVIEWMOTION_END ) return CONTROL::MODE_IMAGEVIEW;
     if( id < CONTROL::MESSAGEMOTION_END ) return CONTROL::MODE_MESSAGE;
     if( id < CONTROL::EDITMOTION_END ) return CONTROL::MODE_EDIT;
+    if( id < CONTROL::JDGLOBALS_END ) return CONTROL::MODE_JDGLOBALS;
 
     return CONTROL::MODE_ERROR;
 }
@@ -700,9 +701,9 @@ const std::string CONTROL::get_default_keymotions( const int id )
 
 
 // スペースで区切られた複数のキーボード操作をデータベースに登録
-void CONTROL::set_keymotions( const std::string& name, const std::string& str_motions )
+void CONTROL::set_keymotions( const int id, const std::string& str_motions )
 {
-    CONTROL::get_keyconfig()->set_motions( name, str_motions );
+    CONTROL::get_keyconfig()->set_motions( id, str_motions );
 }
 
 
@@ -743,6 +744,13 @@ const bool CONTROL::is_toggled_tab_key()
 void CONTROL::toggle_tab_key( const bool toggle )
 {
     CONTROL::get_keyconfig()->toggle_tab_key( toggle );
+}
+
+
+// Gtk アクセラレーションキーを取得
+Gtk::AccelKey CONTROL::get_accelkey( const int id )
+{
+    return CONTROL::get_keyconfig()->get_accelkey( id );
 }
 
 
@@ -801,10 +809,10 @@ const std::string CONTROL::get_default_mousemotions( const int id )
 
 
 // スペースで区切られた複数のマウスジェスチャをデータベースに登録
-void CONTROL::set_mousemotions( const std::string& name, const std::string& str_motions )
+void CONTROL::set_mousemotions( const int id, const std::string& str_motions )
 {
     const std::string motions = convert_mouse_motions_reverse( str_motions );    
-    CONTROL::get_mouseconfig()->set_motions( name, motions );
+    CONTROL::get_mouseconfig()->set_motions( id, motions );
 }
 
 
@@ -856,9 +864,9 @@ const std::string CONTROL::get_default_buttonmotions( const int id )
 
 
 // スペースで区切られた複数のボタン設定をデータベースに登録
-void CONTROL::set_buttonmotions( const std::string& name, const std::string& str_motions )
+void CONTROL::set_buttonmotions( const int id, const std::string& str_motions )
 {
-    CONTROL::get_buttonconfig()->set_motions( name, str_motions );
+    CONTROL::get_buttonconfig()->set_motions( id, str_motions );
 }
 
 // 指定したIDのボタン設定を全て削除

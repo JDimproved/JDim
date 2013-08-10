@@ -361,6 +361,8 @@ const std::string MouseKeyDiag::show_inputdiag()
     std::string str_motion;
 
     InputDiag* diag = create_inputdiag();
+    if( diag == NULL ) return std::string();
+
     while( diag->run() == Gtk::RESPONSE_OK ){
 
         // 設定が重複していないかチェック
@@ -592,7 +594,7 @@ void MouseKeyPref::slot_reset()
                 row[ get_colums().m_col_drawbg ] = false;
 
                 remove_motions( id );
-                set_motions( CONTROL::get_name( id ), str_motions );
+                set_motions( id, str_motions );
             }
         }
     }
@@ -624,7 +626,7 @@ void MouseKeyPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tr
         else row[ get_colums().m_col_drawbg ] = false;
 
         remove_motions( id );
-        set_motions( CONTROL::get_name( id ), motions );
+        set_motions( id, motions );
     }
 
     delete diag;

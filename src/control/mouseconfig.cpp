@@ -33,7 +33,6 @@ MouseConfig::~MouseConfig()
 //
 void MouseConfig::load_conf()
 {
-    std::string str_motions;
     JDLIB::ConfLoader cf( CACHE::path_mouseconf(), std::string() );
 
     // 共通

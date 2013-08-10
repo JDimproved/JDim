@@ -554,6 +554,7 @@ namespace CONFIG
 
     // Ctrl+qでウィンドウを閉じない
     const bool get_disable_close();
+    void set_disable_close( const bool disable );
 
     // メニューバーを非表示にした時にダイアログを表示
     const bool get_show_hide_menubar_diag();

@@ -7,24 +7,29 @@
 #define _MOUSEKEYCONF_H
 
 #include "mousekeyitem.h"
+#include "controlutil.h"
 
 #include <gtkmm.h>
 #include <vector>
 #include <map>
 
-#define SETMOTION(name,default_motions) do{\
-str_motions = cf.get_option_str( name, default_motions, 256 ); \
-set_motions( name, str_motions ); \
-set_default_motions( name, default_motions ); \
-}while(0)
+#define SETMOTION(name, default_motions) \
+{ \
+    const int id = CONTROL::get_id( (name) ); \
+    std::string str_motions = cf.get_option_str( (name), (default_motions), 256 ); \
+    set_motions( id, str_motions ); \
+    set_default_motions( id, (default_motions) ); \
+}
 
 // ver.2.0.2 以前との互換性のため Plus を + に置き換える
-#define SETKEYMOTION(name,default_motions) do{\
-str_motions = cf.get_option_str( name, default_motions, 256 ); \
-if( str_motions.find( "Plus" ) != std::string::npos ) str_motions = MISC::replace_str( str_motions, "Plus", "+" ); \
-set_motions( name, str_motions ); \
-set_default_motions( name, default_motions ); \
-}while(0)
+#define SETKEYMOTION(name, default_motions) \
+{ \
+    const int id = CONTROL::get_id( (name) ); \
+    std::string str_motions = cf.get_option_str( (name), (default_motions), 256 ); \
+    if( str_motions.find( "Plus" ) != std::string::npos ) str_motions = MISC::replace_str( str_motions, "Plus", "+" ); \
+    set_motions( id, str_motions ); \
+    set_default_motions( id, (default_motions) ); \
+}
 
 namespace CONTROL
 {
@@ -70,7 +75,7 @@ namespace CONTROL
         const std::vector< int > check_conflict( const int mode, const std::string& str_motion );
 
         // スペースで区切られた複数の操作をデータベースに登録
-        void set_motions( const std::string& name, const std::string& str_motions );
+        void set_motions( const int id, const std::string& str_motions );
 
         // 指定したIDの操作を全て削除
         const bool remove_motions( const int id );
@@ -80,7 +85,7 @@ namespace CONTROL
         std::vector< MouseKeyItem >& vec_items(){ return m_vec_items; }
 
         // デフォルト操作を登録
-        void set_default_motions( const std::string& name, const std::string& default_motions );
+        void set_default_motions( const int id, const std::string& default_motions );
 
         // ひとつの操作をデータベースに登録
         void set_one_motion( const std::string& name, const std::string& str_motion );

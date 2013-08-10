@@ -139,9 +139,9 @@ const std::string ButtonPref::get_default_motions( const int id )
 }
 
 
-void ButtonPref::set_motions( const std::string& name, const std::string& str_motions )
+void ButtonPref::set_motions( const int id, const std::string& str_motions )
 {
-    CONTROL::set_buttonmotions( name, str_motions );
+    CONTROL::set_buttonmotions( id, str_motions );
 }
 
 

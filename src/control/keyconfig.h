@@ -8,6 +8,8 @@
 
 #include "mousekeyconf.h"
 
+#include <gtkmm.h>
+
 namespace CONTROL
 {
     class KeyConfig : public MouseKeyConf
@@ -25,6 +27,9 @@ namespace CONTROL
 
         const bool is_toggled_tab_key(); // タブで開くキーを入れ替えているか
         void toggle_tab_key( const bool toggle ); // タブで開くキーを入れ替える
+
+        // Gtk アクセラレーションキーを取得
+        Gtk::AccelKey get_accelkey( const int id );
 
       private:
 

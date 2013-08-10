@@ -336,9 +336,15 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     m_action_group->add( Gtk::Action::create( "SaveSession", "セッション保存(_S)"), sigc::mem_fun( *this, &Core::save_session ) );
 
-    if( CONFIG::get_disable_close() ) m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ), sigc::mem_fun(*this, &Core::slot_quit ) );
-    else m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ),
-                              Gtk::AccelKey( "<Ctrl>Q" ), sigc::mem_fun(*this, &Core::slot_quit ) );
+    Gtk::AccelKey jdexitKey = CONTROL::get_accelkey( CONTROL::JDExit );
+    if( jdexitKey.is_null() ){
+        m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ),
+                             sigc::mem_fun(*this, &Core::slot_quit ) );
+    }else{
+        m_action_group->add( Gtk::Action::create( "Quit", "終了(_Q)" ),
+                             jdexitKey,
+                             sigc::mem_fun(*this, &Core::slot_quit ) );
+    }
 
 
     //////////////////////////////////////////////////////
@@ -716,8 +722,15 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
     m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板(_B)" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ(_L)" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
-    m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
-                         Gtk::AccelKey( "F1" ), sigc::mem_fun( *this, &Core::slot_show_manual ) );
+    Gtk::AccelKey jdhelpKey = CONTROL::get_accelkey( CONTROL::JDHelp );
+    if( jdhelpKey.is_null() ){
+        m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
+                             sigc::mem_fun( *this, &Core::slot_show_manual ) );
+    }else{
+        m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
+                             jdhelpKey,
+                             sigc::mem_fun( *this, &Core::slot_show_manual ) );
+    }
     m_action_group->add( Gtk::Action::create( "About", "JDについて(_A)..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
     
 

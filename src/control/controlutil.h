@@ -86,7 +86,7 @@ namespace CONTROL
     const std::string get_default_keymotions( const int id );
 
     // スペースで区切られた複数のキーボード操作をデータベースに登録
-    void set_keymotions( const std::string& name, const std::string& str_motions );
+    void set_keymotions( const int id, const std::string& str_motions );
 
     // 指定したIDのキーボード操作を全て削除
     const bool remove_keymotions( const int id );
@@ -101,6 +101,9 @@ namespace CONTROL
     // 「タブで開く」キーを入れ替える
     const bool is_toggled_tab_key();
     void toggle_tab_key( const bool toggle ); 
+
+    // Gtk アクセラレーションキーを取得
+    Gtk::AccelKey get_accelkey( const int id );
 
 
     ///////////////////////
@@ -117,7 +120,7 @@ namespace CONTROL
     const std::string get_default_mousemotions( const int id );
 
     // スペースで区切られた複数のマウスジェスチャをデータベースに登録
-    void set_mousemotions( const std::string& name, const std::string& str_motions );
+    void set_mousemotions( const int id, const std::string& str_motions );
 
     // 指定したIDのマウスジェスチャを全て削除
     const bool remove_mousemotions( const int id );
@@ -140,7 +143,7 @@ namespace CONTROL
     const std::string get_default_buttonmotions( const int id );
 
     // スペースで区切られた複数のボタン設定をデータベースに登録
-    void set_buttonmotions( const std::string& name, const std::string& str_motions );
+    void set_buttonmotions( const int id, const std::string& str_motions );
 
     // 指定したIDのボタン設定を全て削除
     const bool remove_buttonmotions( const int id );

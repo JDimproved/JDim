@@ -8,6 +8,8 @@
 #include "controlutil.h"
 #include "defaultconf.h"
 
+#include "config/globalconf.h"
+
 #include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/confloader.h"
@@ -35,7 +37,6 @@ KeyConfig::~KeyConfig()
 //
 void KeyConfig::load_conf()
 {
-    std::string str_motions;
     JDLIB::ConfLoader cf( CACHE::path_keyconf(), std::string() );
 
     // 共通設定
@@ -189,6 +190,12 @@ void KeyConfig::load_conf()
     SETKEYMOTION( "EnterEdit", KEYCONF_EnterEdit );
 
     SETKEYMOTION( "InputAA", KEYCONF_InputAA );
+
+    // JD globals
+    SETMOTION( "JDExit", KEYCONF_JDExit );
+    if( CONFIG::get_disable_close() ) remove_motions( CONTROL::JDExit );
+
+    SETMOTION( "JDHelp", KEYCONF_JDHelp );
 }
 
 
@@ -349,4 +356,35 @@ void KeyConfig::toggle_tab_key( const bool toggle )
         set_one_motion( "OpenArticle", "Space" );
         set_one_motion( "OpenArticleTab", "Ctrl+Space" );
     }
+}
+
+
+//
+// Gtk アクセラレーションキーを取得
+//
+Gtk::AccelKey KeyConfig::get_accelkey( const int id )
+{
+    guint motion;
+    bool ctrl, shift, alt, dblclick, trpclick;
+
+    bool found = get_motion( id, motion, ctrl, shift, alt, dblclick, trpclick );
+    if( ! found ){
+#ifdef _DEBUG
+        std::cout << "KeyConfig::get_accelkey id = " << id
+                  << " (" << CONTROL::get_name( id ) << ") notfound " << std::endl;
+#endif
+        return Gtk::AccelKey();
+    }
+
+    Gdk::ModifierType type =  static_cast<Gdk::ModifierType>(0);
+    if( ctrl ) type |= Gdk::CONTROL_MASK;
+    if( shift ) type |= Gdk::SHIFT_MASK;
+    if( alt) type |= Gdk::MOD1_MASK;
+
+#ifdef _DEBUG
+    std::cout << "KeyConfig::get_accelkey id = " << id
+              << " (" << CONTROL::get_name( id ) << ") motion = " << motion
+              << " ctrl = " << ctrl << " shift = " << shift << " alt = " << alt << std::endl;
+#endif
+    return Gtk::AccelKey( motion, type );
 }

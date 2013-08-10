@@ -564,8 +564,9 @@ void CONFIG::set_check_favorite_dup( const int check ){ get_confitem()->check_fa
 // お気に入り登録時に挿入先ダイアログを表示する ( 0 : 表示する 1: 表示せず先頭に追加 2: 表示せず最後に追加 )
 const int CONFIG::get_show_favorite_select_diag(){ return get_confitem()->show_favorite_select_diag; }
 
-// Ctrl+qでウィンドウを閉じない
+// Ctrl+qでウィンドウを閉じない ( 2.8.6以前と互換性を保つため残す )
 const bool CONFIG::get_disable_close(){ return get_confitem()->disable_close; }
+void CONFIG::set_disable_close( const bool disable ){ get_confitem()->disable_close = disable; }
 
 // メニューバーを非表示にした時にダイアログを表示
 const bool CONFIG::get_show_hide_menubar_diag(){ return get_confitem()->show_hide_menubar_diag; }

@@ -130,9 +130,9 @@ const std::string MousePref::get_default_motions( const int id )
 }
 
 
-void MousePref::set_motions( const std::string& name, const std::string& str_motions )
+void MousePref::set_motions( const int id, const std::string& str_motions )
 {
-    CONTROL::set_mousemotions( name, str_motions );
+    CONTROL::set_mousemotions( id, str_motions );
 }
 
 

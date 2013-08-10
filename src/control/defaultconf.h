@@ -166,6 +166,9 @@ namespace CONTROL
 
 #define KEYCONF_InputAA  "Alt+a"
 
+// JD globals
+#define KEYCONF_JDExit  "Ctrl+q"
+#define KEYCONF_JDHelp  "F1"
 
 //////////////////////////////////
 

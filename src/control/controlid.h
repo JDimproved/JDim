@@ -23,8 +23,9 @@ namespace CONTROL
         MODE_IMAGEVIEW,
         MODE_MESSAGE,
         MODE_EDIT,
+        MODE_JDGLOBALS,
 
-        MODE_END = MODE_EDIT,
+        MODE_END = MODE_JDGLOBALS,
 
         MODE_ERROR
     };
@@ -287,6 +288,14 @@ namespace CONTROL
         InputAA,
 
         EDITMOTION_END,
+
+        // JD globals
+        JDGLOBALS,
+
+        JDExit,
+        JDHelp,
+
+        JDGLOBALS_END,
 
         // その他
         CancelMG,

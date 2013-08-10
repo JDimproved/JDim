@@ -31,6 +31,8 @@ namespace CONTROL
     //
     class KeyDiag : public CONTROL::MouseKeyDiag
     {
+        bool m_single;
+
       public:
 
         KeyDiag( Gtk::Window* parent, const std::string& url, const int id, const std::string& str_motions );
@@ -59,7 +61,7 @@ namespace CONTROL
         virtual MouseKeyDiag* create_setting_diag( const int id, const std::string& str_motions );
         virtual const std::string get_str_motions( const int id );
         virtual const std::string get_default_motions( const int id );
-        virtual void set_motions( const std::string& name, const std::string& str_motions );
+        virtual void set_motions( const int id, const std::string& str_motions );
         virtual const bool remove_motions( const int id );
 
       private:

@@ -32,7 +32,6 @@ ButtonConfig::~ButtonConfig()
 //
 void ButtonConfig::load_conf()
 {
-    std::string str_motions;
     JDLIB::ConfLoader cf( CACHE::path_buttonconf(), std::string() );
 
     // デフォルト動作

@@ -169,10 +169,12 @@ const std::string MouseKeyConf::get_default_motions( const int id )
 
 
 // スペースで区切られた複数の操作をデータベースに登録
-void MouseKeyConf::set_motions( const std::string& name, const std::string& str_motions )
+void MouseKeyConf::set_motions( const int id, const std::string& str_motions )
 {
-    const int id = CONTROL::get_id( name );
     if( id == CONTROL::None ) return;
+
+    const std::string name = CONTROL::get_name( id );
+    if( name.empty() ) return;
 
     const int mode = CONTROL::get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;
@@ -184,9 +186,8 @@ void MouseKeyConf::set_motions( const std::string& name, const std::string& str_
 
 
 // デフォルト操作を登録
-void MouseKeyConf::set_default_motions( const std::string& name, const std::string& default_motions )
+void MouseKeyConf::set_default_motions( const int id, const std::string& default_motions )
 {
-    const int id = CONTROL::get_id( name );
     if( id == CONTROL::None ) return;
 
     m_map_default_motions.insert( make_pair( id, default_motions ) );

@@ -9,6 +9,8 @@
 
 #include "global.h"
 
+#include "config/globalconf.h"
+
 using namespace CONTROL;
 
 
@@ -28,11 +30,25 @@ KeyInputDiag::KeyInputDiag( Gtk::Window* parent, const std::string& url,const in
 //
 KeyDiag::KeyDiag( Gtk::Window* parent, const std::string& url, const int id, const std::string& str_motions )
     : CONTROL::MouseKeyDiag( parent, url, id, "ショートカットキー", str_motions )
-{}
+{
+    // Gtkアクセラレーションキーは、1つだけしか設定できないようにする
+    m_single = ( get_controlmode() == CONTROL::MODE_JDGLOBALS );
+}
 
 
 InputDiag* KeyDiag::create_inputdiag()
 {
+    // 1つだけしか設定できない場合
+    if( m_single ){
+        if( get_count() >= 1 ){
+            std::string msg = "この項目には、1つだけ設定できます。";
+            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg );
+            mdiag->run();
+            delete mdiag;
+            return NULL;
+        }
+    }
+
     return new KeyInputDiag( this, "", get_id() );
 }
 
@@ -218,6 +234,11 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::ExecWrite );
     append_row( CONTROL::FocusWrite );
     append_row( CONTROL::ToggleSage );
+
+    append_comment_row( "" );
+    append_comment_row( "■ " + CONTROL::get_mode_label( CONTROL::MODE_JDGLOBALS ) );
+    append_row( CONTROL::JDExit );
+    append_row( CONTROL::JDHelp );
 }
 
 
@@ -239,9 +260,14 @@ const std::string KeyPref::get_default_motions( const int id )
 }
 
 
-void KeyPref::set_motions( const std::string& name, const std::string& str_motions )
+void KeyPref::set_motions( const int id, const std::string& str_motions )
 {
-    CONTROL::set_keymotions( name, str_motions );
+    if( id == CONTROL::JDExit && ! str_motions.empty() ){
+        // JDExitを設定したら、2.8.6以前との互換性オプションをオフにする
+        CONFIG::set_disable_close( false );
+    }
+
+    CONTROL::set_keymotions( id, str_motions );
 }
 
 

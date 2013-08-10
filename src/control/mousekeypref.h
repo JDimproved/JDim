@@ -109,6 +109,8 @@ namespace CONTROL
       protected:
 
         const int get_id() const { return m_id; }
+        const int get_controlmode() const { return m_controlmode; }
+        const int get_count() const { return m_liststore->children().size(); }
 
         virtual InputDiag* create_inputdiag() = 0;
         virtual const std::string get_default_motions( const int id ) = 0;
@@ -187,7 +189,7 @@ namespace CONTROL
         virtual MouseKeyDiag* create_setting_diag( const int id, const std::string& str_motions ) = 0;
         virtual const std::string get_str_motions( const int id ) = 0;
         virtual const std::string get_default_motions( const int id ) = 0;
-        virtual void set_motions( const std::string& name, const std::string& str_motions ) = 0;
+        virtual void set_motions( const int id, const std::string& str_motions ) = 0;
         virtual const bool remove_motions( const int id ) = 0;
 
       private:
