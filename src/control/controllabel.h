@@ -306,7 +306,7 @@ namespace CONTROL
         { "", "" },
 
         { "JDExit", "終了" },
-        { "JDHelp", "オンラインヘルプ" },
+        { "JDHelp", "オンラインマニュアル" },
 
         { "", "" },
 
