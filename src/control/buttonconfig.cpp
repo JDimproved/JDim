@@ -35,64 +35,64 @@ void ButtonConfig::load_conf()
     JDLIB::ConfLoader cf( CACHE::path_buttonconf(), std::string() );
 
     // デフォルト動作
-    SETMOTION( "ClickButton", BUTTONCONF_ClickButton );
-    SETMOTION( "DblClickButton", BUTTONCONF_DblClickButton );
-    SETMOTION( "TrpClickButton", BUTTONCONF_TrpClickButton );
-    SETMOTION( "CloseTabButton", BUTTONCONF_CloseTabButton );
-    SETMOTION( "ReloadTabButton", BUTTONCONF_ReloadTabButton );
-    SETMOTION( "AutoScrollButton", BUTTONCONF_AutoScrollButton );
-    SETMOTION( "GestureButton", BUTTONCONF_GestureButton );
-    SETMOTION( "PopupmenuButton", BUTTONCONF_PopupmenuButton );
-    SETMOTION( "DragStartButton", BUTTONCONF_DragStartButton );
-    SETMOTION( "TreeRowSelectionButton", BUTTONCONF_TreeRowSelectionButton );
-    SETMOTION( "Reload", BUTTONCONF_Reload );
-    SETMOTION( "ToggleArticle", BUTTONCONF_ToggleArticle );
+    load_motions( cf, "ClickButton", BUTTONCONF_ClickButton );
+    load_motions( cf, "DblClickButton", BUTTONCONF_DblClickButton );
+    load_motions( cf, "TrpClickButton", BUTTONCONF_TrpClickButton );
+    load_motions( cf, "CloseTabButton", BUTTONCONF_CloseTabButton );
+    load_motions( cf, "ReloadTabButton", BUTTONCONF_ReloadTabButton );
+    load_motions( cf, "AutoScrollButton", BUTTONCONF_AutoScrollButton );
+    load_motions( cf, "GestureButton", BUTTONCONF_GestureButton );
+    load_motions( cf, "PopupmenuButton", BUTTONCONF_PopupmenuButton );
+    load_motions( cf, "DragStartButton", BUTTONCONF_DragStartButton );
+    load_motions( cf, "TreeRowSelectionButton", BUTTONCONF_TreeRowSelectionButton );
+    load_motions( cf, "Reload", BUTTONCONF_Reload );
+    load_motions( cf, "ToggleArticle", BUTTONCONF_ToggleArticle );
 
-    SETMOTION( "Right", BUTTONCONF_Right );
-    SETMOTION( "Left", BUTTONCONF_Left );
+    load_motions( cf, "Right", BUTTONCONF_Right );
+    load_motions( cf, "Left", BUTTONCONF_Left );
 
     // BBSLIST用ボタン設定
-    SETMOTION( "OpenBoardButton", BUTTONCONF_OpenBoardButton );
-    SETMOTION( "OpenBoardTabButton", BUTTONCONF_OpenBoardTabButton );
+    load_motions( cf, "OpenBoardButton", BUTTONCONF_OpenBoardButton );
+    load_motions( cf, "OpenBoardTabButton", BUTTONCONF_OpenBoardTabButton );
 
     // BOARD用ボタン設定
-    SETMOTION( "OpenArticleButton", BUTTONCONF_OpenArticleButton );
-    SETMOTION( "OpenArticleTabButton", BUTTONCONF_OpenArticleTabButton );
+    load_motions( cf, "OpenArticleButton", BUTTONCONF_OpenArticleButton );
+    load_motions( cf, "OpenArticleTabButton", BUTTONCONF_OpenArticleTabButton );
 
-    SETMOTION( "ScrollRightBoard", BUTTONCONF_ScrollRightBoard );
-    SETMOTION( "ScrollLeftBoard", BUTTONCONF_ScrollLeftBoard );
+    load_motions( cf, "ScrollRightBoard", BUTTONCONF_ScrollRightBoard );
+    load_motions( cf, "ScrollLeftBoard", BUTTONCONF_ScrollLeftBoard );
 
     // ARTICLE用ボタン設定
-    SETMOTION( "PopupWarpButton", BUTTONCONF_PopupWarpButton );
+    load_motions( cf, "PopupWarpButton", BUTTONCONF_PopupWarpButton );
 
-    SETMOTION( "ReferResButton", BUTTONCONF_ReferResButton );
-    SETMOTION( "BmResButton", BUTTONCONF_BmResButton );
-    SETMOTION( "PopupmenuResButton", BUTTONCONF_PopupmenuResButton );
+    load_motions( cf, "ReferResButton", BUTTONCONF_ReferResButton );
+    load_motions( cf, "BmResButton", BUTTONCONF_BmResButton );
+    load_motions( cf, "PopupmenuResButton", BUTTONCONF_PopupmenuResButton );
 
-    SETMOTION( "DrawoutAncButton", BUTTONCONF_DrawoutAncButton );
-    SETMOTION( "PopupmenuAncButton", BUTTONCONF_PopupmenuAncButton );
-    SETMOTION( "JumpAncButton", BUTTONCONF_JumpAncButton );
+    load_motions( cf, "DrawoutAncButton", BUTTONCONF_DrawoutAncButton );
+    load_motions( cf, "PopupmenuAncButton", BUTTONCONF_PopupmenuAncButton );
+    load_motions( cf, "JumpAncButton", BUTTONCONF_JumpAncButton );
 
-    SETMOTION( "PopupIDButton", BUTTONCONF_PopupIDButton );
-    SETMOTION( "DrawoutIDButton", BUTTONCONF_DrawoutIDButton );
-    SETMOTION( "PopupmenuIDButton", BUTTONCONF_PopupmenuIDButton );
+    load_motions( cf, "PopupIDButton", BUTTONCONF_PopupIDButton );
+    load_motions( cf, "DrawoutIDButton", BUTTONCONF_DrawoutIDButton );
+    load_motions( cf, "PopupmenuIDButton", BUTTONCONF_PopupmenuIDButton );
 
-    SETMOTION( "OpenImageButton", BUTTONCONF_OpenImageButton );
-    SETMOTION( "OpenBackImageButton", BUTTONCONF_OpenBackImageButton );
-    SETMOTION( "PopupmenuImageButton", BUTTONCONF_PopupmenuImageButton );
+    load_motions( cf, "OpenImageButton", BUTTONCONF_OpenImageButton );
+    load_motions( cf, "OpenBackImageButton", BUTTONCONF_OpenBackImageButton );
+    load_motions( cf, "PopupmenuImageButton", BUTTONCONF_PopupmenuImageButton );
 
-    SETMOTION( "OpenBeButton", BUTTONCONF_OpenBeButton );
-    SETMOTION( "PopupmenuBeButton", BUTTONCONF_PopupmenuBeButton );
+    load_motions( cf, "OpenBeButton", BUTTONCONF_OpenBeButton );
+    load_motions( cf, "PopupmenuBeButton", BUTTONCONF_PopupmenuBeButton );
 
     // IMAGE ICON用ボタン設定
-    SETMOTION( "CloseImageTabButton", BUTTONCONF_CloseImageTabButton );
+    load_motions( cf, "CloseImageTabButton", BUTTONCONF_CloseImageTabButton );
 
     // IMAGE用ボタン設定
-    SETMOTION( "CloseImageButton", BUTTONCONF_CloseImageButton );
-    SETMOTION( "ScrollImageButton", BUTTONCONF_ScrollImageButton );
-    SETMOTION( "CancelMosaicButton", BUTTONCONF_CancelMosaicButton );
-    SETMOTION( "SaveImageButton", BUTTONCONF_SaveImageButton );
-    SETMOTION( "ResizeImageButton", BUTTONCONF_ResizeImageButton );
+    load_motions( cf, "CloseImageButton", BUTTONCONF_CloseImageButton );
+    load_motions( cf, "ScrollImageButton", BUTTONCONF_ScrollImageButton );
+    load_motions( cf, "CancelMosaicButton", BUTTONCONF_CancelMosaicButton );
+    load_motions( cf, "SaveImageButton", BUTTONCONF_SaveImageButton );
+    load_motions( cf, "ResizeImageButton", BUTTONCONF_ResizeImageButton );
 }
 
 

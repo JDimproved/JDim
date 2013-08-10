@@ -36,48 +36,48 @@ void MouseConfig::load_conf()
     JDLIB::ConfLoader cf( CACHE::path_mouseconf(), std::string() );
 
     // 共通
-    SETMOTION( "Right", MOUSECONF_Right );
-    SETMOTION( "Left", MOUSECONF_Left );
-    SETMOTION( "TabRight", MOUSECONF_TabRight );
-    SETMOTION( "TabLeft", MOUSECONF_TabLeft );
-    SETMOTION( "TabRightUpdated", MOUSECONF_TabRightUpdated );
-    SETMOTION( "TabLeftUpdated", MOUSECONF_TabLeftUpdated );
-    SETMOTION( "CloseAllTabs", MOUSECONF_CloseAllTabs );
-    SETMOTION( "CloseOtherTabs", MOUSECONF_CloseOtherTabs );
-    SETMOTION( "RestoreLastTab", MOUSECONF_RestoreLastTab );
-    SETMOTION( "CheckUpdateTabs", MOUSECONF_CheckUpdateTabs );
-    SETMOTION( "ToggleArticle", MOUSECONF_ToggleArticle );
-    SETMOTION( "ShowSideBar", MOUSECONF_ShowSideBar );
-    SETMOTION( "ShowMenuBar", MOUSECONF_ShowMenuBar );
-    SETMOTION( "ShowToolBarMain", MOUSECONF_ShowToolBarMain );
-    SETMOTION( "Home", MOUSECONF_Home );
-    SETMOTION( "End", MOUSECONF_End );
-    SETMOTION( "Quit", MOUSECONF_Quit );
-    SETMOTION( "Reload", MOUSECONF_Reload );
-    SETMOTION( "Delete", MOUSECONF_Delete );
-    SETMOTION( "StopLoading", MOUSECONF_StopLoading );
-    SETMOTION( "AppendFavorite", MOUSECONF_AppendFavorite );
+    load_motions( cf, "Right", MOUSECONF_Right );
+    load_motions( cf, "Left", MOUSECONF_Left );
+    load_motions( cf, "TabRight", MOUSECONF_TabRight );
+    load_motions( cf, "TabLeft", MOUSECONF_TabLeft );
+    load_motions( cf, "TabRightUpdated", MOUSECONF_TabRightUpdated );
+    load_motions( cf, "TabLeftUpdated", MOUSECONF_TabLeftUpdated );
+    load_motions( cf, "CloseAllTabs", MOUSECONF_CloseAllTabs );
+    load_motions( cf, "CloseOtherTabs", MOUSECONF_CloseOtherTabs );
+    load_motions( cf, "RestoreLastTab", MOUSECONF_RestoreLastTab );
+    load_motions( cf, "CheckUpdateTabs", MOUSECONF_CheckUpdateTabs );
+    load_motions( cf, "ToggleArticle", MOUSECONF_ToggleArticle );
+    load_motions( cf, "ShowSideBar", MOUSECONF_ShowSideBar );
+    load_motions( cf, "ShowMenuBar", MOUSECONF_ShowMenuBar );
+    load_motions( cf, "ShowToolBarMain", MOUSECONF_ShowToolBarMain );
+    load_motions( cf, "Home", MOUSECONF_Home );
+    load_motions( cf, "End", MOUSECONF_End );
+    load_motions( cf, "Quit", MOUSECONF_Quit );
+    load_motions( cf, "Reload", MOUSECONF_Reload );
+    load_motions( cf, "Delete", MOUSECONF_Delete );
+    load_motions( cf, "StopLoading", MOUSECONF_StopLoading );
+    load_motions( cf, "AppendFavorite", MOUSECONF_AppendFavorite );
 
-    SETMOTION( "NewArticle", MOUSECONF_NewArticle );
-    SETMOTION( "WriteMessage", MOUSECONF_WriteMessage );
+    load_motions( cf, "NewArticle", MOUSECONF_NewArticle );
+    load_motions( cf, "WriteMessage", MOUSECONF_WriteMessage );
 
-    SETMOTION( "SearchTitle", MOUSECONF_SearchTitle );
+    load_motions( cf, "SearchTitle", MOUSECONF_SearchTitle );
 
-    SETMOTION( "CheckUpdateRoot", MOUSECONF_CheckUpdateRoot );
-    SETMOTION( "CheckUpdateOpenRoot", MOUSECONF_CheckUpdateOpenRoot );
+    load_motions( cf, "CheckUpdateRoot", MOUSECONF_CheckUpdateRoot );
+    load_motions( cf, "CheckUpdateOpenRoot", MOUSECONF_CheckUpdateOpenRoot );
 
-    SETMOTION( "QuitJD", MOUSECONF_QuitJD );
-    SETMOTION( "MaximizeMainWin", MOUSECONF_MaximizeMainWin );
-    SETMOTION( "IconifyMainWin", MOUSECONF_IconifyMainWin );
+    load_motions( cf, "QuitJD", MOUSECONF_QuitJD );
+    load_motions( cf, "MaximizeMainWin", MOUSECONF_MaximizeMainWin );
+    load_motions( cf, "IconifyMainWin", MOUSECONF_IconifyMainWin );
 
     // ARTICLE
-    SETMOTION( "GotoNew", MOUSECONF_GotoNew );
-    SETMOTION( "SearchNextArticle", MOUSECONF_SearchNextArticle );
-    SETMOTION( "SearchWeb", MOUSECONF_SearchWeb );
-    SETMOTION( "LiveStartStop", MOUSECONF_LiveStartStop );
+    load_motions( cf, "GotoNew", MOUSECONF_GotoNew );
+    load_motions( cf, "SearchNextArticle", MOUSECONF_SearchNextArticle );
+    load_motions( cf, "SearchWeb", MOUSECONF_SearchWeb );
+    load_motions( cf, "LiveStartStop", MOUSECONF_LiveStartStop );
 
     // IMAGE
-    SETMOTION( "CancelMosaicButton", MOUSECONF_CancelMosaicButton );
+    load_motions( cf, "CancelMosaicButton", MOUSECONF_CancelMosaicButton );
 }
 
 

@@ -7,7 +7,6 @@
 #include "mousekeyitem.h"
 #include "controlutil.h"
 
-#include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
 
 
@@ -165,6 +164,30 @@ const std::string MouseKeyConf::get_default_motions( const int id )
     if( it != m_map_default_motions.end() ) return ( *it ).second;
 
     return std::string();
+}
+
+
+// 設定ファイルから読み込んだモーションを登録
+void MouseKeyConf::load_motions( JDLIB::ConfLoader& cf, const std::string& name, const std::string& default_motions )
+{
+    const int id = CONTROL::get_id( name );
+    const std::string str_motions = cf.get_option_str( name, default_motions, 256 );
+
+    set_motions( id, str_motions );
+    set_default_motions( id, default_motions );
+}
+
+
+// 設定ファイルから読み込んだモーションを登録
+// ver.2.0.2 以前との互換性のため Plus を + に置き換える
+void MouseKeyConf::load_keymotions( JDLIB::ConfLoader& cf, const std::string& name, const std::string& default_motions )
+{
+    const int id = CONTROL::get_id( name );
+    std::string str_motions = cf.get_option_str( name, default_motions, 256 );
+    if( str_motions.find( "Plus" ) != std::string::npos ) str_motions = MISC::replace_str( str_motions, "Plus", "+" );
+
+    set_motions( id, str_motions );
+    set_default_motions( id, default_motions );
 }
 
 

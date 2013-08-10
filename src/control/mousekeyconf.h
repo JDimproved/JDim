@@ -9,27 +9,12 @@
 #include "mousekeyitem.h"
 #include "controlutil.h"
 
+#include "jdlib/confloader.h"
+
 #include <gtkmm.h>
 #include <vector>
 #include <map>
 
-#define SETMOTION(name, default_motions) \
-{ \
-    const int id = CONTROL::get_id( (name) ); \
-    std::string str_motions = cf.get_option_str( (name), (default_motions), 256 ); \
-    set_motions( id, str_motions ); \
-    set_default_motions( id, (default_motions) ); \
-}
-
-// ver.2.0.2 以前との互換性のため Plus を + に置き換える
-#define SETKEYMOTION(name, default_motions) \
-{ \
-    const int id = CONTROL::get_id( (name) ); \
-    std::string str_motions = cf.get_option_str( (name), (default_motions), 256 ); \
-    if( str_motions.find( "Plus" ) != std::string::npos ) str_motions = MISC::replace_str( str_motions, "Plus", "+" ); \
-    set_motions( id, str_motions ); \
-    set_default_motions( id, (default_motions) ); \
-}
 
 namespace CONTROL
 {
@@ -83,6 +68,10 @@ namespace CONTROL
       protected:
 
         std::vector< MouseKeyItem >& vec_items(){ return m_vec_items; }
+
+        // 設定ファイルから読み込んだモーションを登録
+        void load_motions( JDLIB::ConfLoader& cf, const std::string& name, const std::string& default_motions );
+        void load_keymotions( JDLIB::ConfLoader& cf, const std::string& name, const std::string& default_motions );
 
         // デフォルト操作を登録
         void set_default_motions( const int id, const std::string& default_motions );

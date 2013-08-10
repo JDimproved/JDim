@@ -40,162 +40,162 @@ void KeyConfig::load_conf()
     JDLIB::ConfLoader cf( CACHE::path_keyconf(), std::string() );
 
     // 共通設定
-    SETKEYMOTION( "Up", KEYCONF_Up );
-    SETKEYMOTION( "Down", KEYCONF_Down );
+    load_keymotions( cf, "Up", KEYCONF_Up );
+    load_keymotions( cf, "Down", KEYCONF_Down );
 
-    SETKEYMOTION( "Right", KEYCONF_Right );
-    SETKEYMOTION( "Left", KEYCONF_Left );
+    load_keymotions( cf, "Right", KEYCONF_Right );
+    load_keymotions( cf, "Left", KEYCONF_Left );
 
-    SETKEYMOTION( "TabRight", KEYCONF_TabRight );
-    SETKEYMOTION( "TabLeft", KEYCONF_TabLeft );
-    SETKEYMOTION( "TabRightUpdated", KEYCONF_TabRightUpdated );
-    SETKEYMOTION( "TabLeftUpdated", KEYCONF_TabLeftUpdated );
+    load_keymotions( cf, "TabRight", KEYCONF_TabRight );
+    load_keymotions( cf, "TabLeft", KEYCONF_TabLeft );
+    load_keymotions( cf, "TabRightUpdated", KEYCONF_TabRightUpdated );
+    load_keymotions( cf, "TabLeftUpdated", KEYCONF_TabLeftUpdated );
 
-    SETKEYMOTION( "TabNum1", KEYCONF_TabNum1 );
-    SETKEYMOTION( "TabNum2", KEYCONF_TabNum2 );
-    SETKEYMOTION( "TabNum3", KEYCONF_TabNum3 );
-    SETKEYMOTION( "TabNum4", KEYCONF_TabNum4 );
-    SETKEYMOTION( "TabNum5", KEYCONF_TabNum5 );
-    SETKEYMOTION( "TabNum6", KEYCONF_TabNum6 );
-    SETKEYMOTION( "TabNum7", KEYCONF_TabNum7 );
-    SETKEYMOTION( "TabNum8", KEYCONF_TabNum8 );
-    SETKEYMOTION( "TabNum9", KEYCONF_TabNum9 );
+    load_keymotions( cf, "TabNum1", KEYCONF_TabNum1 );
+    load_keymotions( cf, "TabNum2", KEYCONF_TabNum2 );
+    load_keymotions( cf, "TabNum3", KEYCONF_TabNum3 );
+    load_keymotions( cf, "TabNum4", KEYCONF_TabNum4 );
+    load_keymotions( cf, "TabNum5", KEYCONF_TabNum5 );
+    load_keymotions( cf, "TabNum6", KEYCONF_TabNum6 );
+    load_keymotions( cf, "TabNum7", KEYCONF_TabNum7 );
+    load_keymotions( cf, "TabNum8", KEYCONF_TabNum8 );
+    load_keymotions( cf, "TabNum9", KEYCONF_TabNum9 );
 
-    SETKEYMOTION( "RestoreLastTab", KEYCONF_RestoreLastTab );
+    load_keymotions( cf, "RestoreLastTab", KEYCONF_RestoreLastTab );
 
-    SETKEYMOTION( "PreBookMark", KEYCONF_PreBookMark );
-    SETKEYMOTION( "NextBookMark", KEYCONF_NextBookMark );
+    load_keymotions( cf, "PreBookMark", KEYCONF_PreBookMark );
+    load_keymotions( cf, "NextBookMark", KEYCONF_NextBookMark );
 
-    SETKEYMOTION( "PrevView", KEYCONF_PrevView );
-    SETKEYMOTION( "NextView", KEYCONF_NextView );
+    load_keymotions( cf, "PrevView", KEYCONF_PrevView );
+    load_keymotions( cf, "NextView", KEYCONF_NextView );
 
-    SETKEYMOTION( "ToggleArticle", KEYCONF_ToggleArticle );
+    load_keymotions( cf, "ToggleArticle", KEYCONF_ToggleArticle );
 
-    SETKEYMOTION( "ShowPopupMenu", KEYCONF_ShowPopupMenu );
+    load_keymotions( cf, "ShowPopupMenu", KEYCONF_ShowPopupMenu );
 
-    SETKEYMOTION( "ShowMenuBar", KEYCONF_ShowMenuBar );
-    SETKEYMOTION( "ShowToolBarMain", KEYCONF_ShowToolBarMain );
-    SETKEYMOTION( "ShowSideBar", KEYCONF_ShowSideBar );
+    load_keymotions( cf, "ShowMenuBar", KEYCONF_ShowMenuBar );
+    load_keymotions( cf, "ShowToolBarMain", KEYCONF_ShowToolBarMain );
+    load_keymotions( cf, "ShowSideBar", KEYCONF_ShowSideBar );
 
-    SETKEYMOTION( "PageUp", KEYCONF_PageUp );
-    SETKEYMOTION( "PageDown", KEYCONF_PageDown );
+    load_keymotions( cf, "PageUp", KEYCONF_PageUp );
+    load_keymotions( cf, "PageDown", KEYCONF_PageDown );
 
-    SETKEYMOTION( "PrevDir", KEYCONF_PrevDir );
-    SETKEYMOTION( "NextDir", KEYCONF_NextDir );
+    load_keymotions( cf, "PrevDir", KEYCONF_PrevDir );
+    load_keymotions( cf, "NextDir", KEYCONF_NextDir );
 
-    SETKEYMOTION( "Home", KEYCONF_Home );
-    SETKEYMOTION( "End", KEYCONF_End );
+    load_keymotions( cf, "Home", KEYCONF_Home );
+    load_keymotions( cf, "End", KEYCONF_End );
 
-    SETKEYMOTION( "Back", KEYCONF_Back );
+    load_keymotions( cf, "Back", KEYCONF_Back );
 
-    SETKEYMOTION( "Undo", KEYCONF_Undo );
-    SETKEYMOTION( "Redo", KEYCONF_Redo );
+    load_keymotions( cf, "Undo", KEYCONF_Undo );
+    load_keymotions( cf, "Redo", KEYCONF_Redo );
 
-    SETKEYMOTION( "Quit", KEYCONF_Quit );
-    SETKEYMOTION( "Save", KEYCONF_Save );
-    SETKEYMOTION( "Delete", KEYCONF_Delete );
-    SETKEYMOTION( "Reload", KEYCONF_Reload );
-    SETKEYMOTION( "ReloadArticle", KEYCONF_ReloadArticle );
-    SETKEYMOTION( "StopLoading",  KEYCONF_StopLoading ); // = CONTROL::Cancel
-    SETKEYMOTION( "OpenURL", KEYCONF_OpenURL );
-    SETKEYMOTION( "Copy", KEYCONF_Copy );
-    SETKEYMOTION( "SelectAll", KEYCONF_SelectAll );
-    SETKEYMOTION( "AppendFavorite", KEYCONF_AppendFavorite );
-    SETMOTION( "PreferenceView", KEYCONF_PreferenceView );
+    load_keymotions( cf, "Quit", KEYCONF_Quit );
+    load_keymotions( cf, "Save", KEYCONF_Save );
+    load_keymotions( cf, "Delete", KEYCONF_Delete );
+    load_keymotions( cf, "Reload", KEYCONF_Reload );
+    load_keymotions( cf, "ReloadArticle", KEYCONF_ReloadArticle );
+    load_keymotions( cf, "StopLoading",  KEYCONF_StopLoading ); // = CONTROL::Cancel
+    load_keymotions( cf, "OpenURL", KEYCONF_OpenURL );
+    load_keymotions( cf, "Copy", KEYCONF_Copy );
+    load_keymotions( cf, "SelectAll", KEYCONF_SelectAll );
+    load_keymotions( cf, "AppendFavorite", KEYCONF_AppendFavorite );
+    load_motions( cf, "PreferenceView", KEYCONF_PreferenceView );
 
-    SETKEYMOTION( "Search", KEYCONF_Search );
-    SETKEYMOTION( "SearchInvert", KEYCONF_SearchInvert );
-    SETKEYMOTION( "SearchNext", KEYCONF_SearchNext );
-    SETKEYMOTION( "SearchPrev", KEYCONF_SearchPrev );
-    SETKEYMOTION( "SearchTitle", KEYCONF_SearchTitle );
-    SETKEYMOTION( "DrawOutAnd", KEYCONF_DrawOutAnd );
+    load_keymotions( cf, "Search", KEYCONF_Search );
+    load_keymotions( cf, "SearchInvert", KEYCONF_SearchInvert );
+    load_keymotions( cf, "SearchNext", KEYCONF_SearchNext );
+    load_keymotions( cf, "SearchPrev", KEYCONF_SearchPrev );
+    load_keymotions( cf, "SearchTitle", KEYCONF_SearchTitle );
+    load_keymotions( cf, "DrawOutAnd", KEYCONF_DrawOutAnd );
 
-    SETMOTION( "CheckUpdateRoot", KEYCONF_CheckUpdateRoot );
-    SETMOTION( "CheckUpdateOpenRoot", KEYCONF_CheckUpdateOpenRoot );
+    load_motions( cf, "CheckUpdateRoot", KEYCONF_CheckUpdateRoot );
+    load_motions( cf, "CheckUpdateOpenRoot", KEYCONF_CheckUpdateOpenRoot );
 
-    SETMOTION( "FullScreen", KEYCONF_FullScreen );
+    load_motions( cf, "FullScreen", KEYCONF_FullScreen );
 
     // BBSLIST
-    SETKEYMOTION( "OpenBoard", KEYCONF_OpenBoard );
-    SETKEYMOTION( "OpenBoardTab", KEYCONF_OpenBoardTab );
+    load_keymotions( cf, "OpenBoard", KEYCONF_OpenBoard );
+    load_keymotions( cf, "OpenBoardTab", KEYCONF_OpenBoardTab );
 
     // BOARD
-    SETKEYMOTION( "OpenArticle", KEYCONF_OpenArticle );
-    SETKEYMOTION( "OpenArticleTab", KEYCONF_OpenArticleTab );
-    SETKEYMOTION( "NewArticle", KEYCONF_NewArticle );
-    SETKEYMOTION( "SearchCache", KEYCONF_SearchCache );
+    load_keymotions( cf, "OpenArticle", KEYCONF_OpenArticle );
+    load_keymotions( cf, "OpenArticleTab", KEYCONF_OpenArticleTab );
+    load_keymotions( cf, "NewArticle", KEYCONF_NewArticle );
+    load_keymotions( cf, "SearchCache", KEYCONF_SearchCache );
 
-    SETKEYMOTION( "ScrollRightBoard", KEYCONF_ScrollRightBoard );
-    SETKEYMOTION( "ScrollLeftBoard", KEYCONF_ScrollLeftBoard );
+    load_keymotions( cf, "ScrollRightBoard", KEYCONF_ScrollRightBoard );
+    load_keymotions( cf, "ScrollLeftBoard", KEYCONF_ScrollLeftBoard );
 
     // ARTICLE
-    SETKEYMOTION( "UpMid", KEYCONF_UpMid );
-    SETKEYMOTION( "UpFast", KEYCONF_UpFast );
+    load_keymotions( cf, "UpMid", KEYCONF_UpMid );
+    load_keymotions( cf, "UpFast", KEYCONF_UpFast );
 
-    SETKEYMOTION( "DownMid", KEYCONF_DownMid );
-    SETKEYMOTION( "DownFast", KEYCONF_DownFast );
+    load_keymotions( cf, "DownMid", KEYCONF_DownMid );
+    load_keymotions( cf, "DownFast", KEYCONF_DownFast );
 
-    SETKEYMOTION( "PrevRes", KEYCONF_PrevRes );
-    SETKEYMOTION( "NextRes", KEYCONF_NextRes );
+    load_keymotions( cf, "PrevRes", KEYCONF_PrevRes );
+    load_keymotions( cf, "NextRes", KEYCONF_NextRes );
 
-    SETKEYMOTION( "PrePost", KEYCONF_PrePost );
-    SETKEYMOTION( "NextPost", KEYCONF_NextPost );
+    load_keymotions( cf, "PrePost", KEYCONF_PrePost );
+    load_keymotions( cf, "NextPost", KEYCONF_NextPost );
 
-    SETKEYMOTION( "GotoNew", KEYCONF_GotoNew );
-    SETKEYMOTION( "WriteMessage", KEYCONF_WriteMessage );
+    load_keymotions( cf, "GotoNew", KEYCONF_GotoNew );
+    load_keymotions( cf, "WriteMessage", KEYCONF_WriteMessage );
 
-    SETKEYMOTION( "LiveStartStop", KEYCONF_LiveStartStop );
+    load_keymotions( cf, "LiveStartStop", KEYCONF_LiveStartStop );
 
-    SETKEYMOTION( "SearchNextArticle", KEYCONF_SearchNextArticle );
-    SETKEYMOTION( "SearchWeb", KEYCONF_SearchWeb );
-    SETKEYMOTION( "SearchCacheLocal", KEYCONF_SearchCacheLocal );
-    SETKEYMOTION( "SearchCacheAll", KEYCONF_SearchCacheAll );
+    load_keymotions( cf, "SearchNextArticle", KEYCONF_SearchNextArticle );
+    load_keymotions( cf, "SearchWeb", KEYCONF_SearchWeb );
+    load_keymotions( cf, "SearchCacheLocal", KEYCONF_SearchCacheLocal );
+    load_keymotions( cf, "SearchCacheAll", KEYCONF_SearchCacheAll );
 
-    SETKEYMOTION( "ShowSelectImage", KEYCONF_ShowSelectImage );
-    SETKEYMOTION( "DeleteSelectImage", KEYCONF_DeleteSelectImage );
-    SETKEYMOTION( "AboneSelectImage", KEYCONF_AboneSelectImage );
-    SETKEYMOTION( "AboneSelectionRes", KEYCONF_AboneSelectionRes );
+    load_keymotions( cf, "ShowSelectImage", KEYCONF_ShowSelectImage );
+    load_keymotions( cf, "DeleteSelectImage", KEYCONF_DeleteSelectImage );
+    load_keymotions( cf, "AboneSelectImage", KEYCONF_AboneSelectImage );
+    load_keymotions( cf, "AboneSelectionRes", KEYCONF_AboneSelectionRes );
 
     // IMAGE
-    SETKEYMOTION( "CancelMosaic", KEYCONF_CancelMosaic );
-    SETKEYMOTION( "ZoomFitImage", KEYCONF_ZoomFitImage );
-    SETKEYMOTION( "ZoomInImage", KEYCONF_ZoomInImage );
-    SETKEYMOTION( "ZoomOutImage", KEYCONF_ZoomOutImage );
-    SETKEYMOTION( "OrgSizeImage", KEYCONF_OrgSizeImage );
+    load_keymotions( cf, "CancelMosaic", KEYCONF_CancelMosaic );
+    load_keymotions( cf, "ZoomFitImage", KEYCONF_ZoomFitImage );
+    load_keymotions( cf, "ZoomInImage", KEYCONF_ZoomInImage );
+    load_keymotions( cf, "ZoomOutImage", KEYCONF_ZoomOutImage );
+    load_keymotions( cf, "OrgSizeImage", KEYCONF_OrgSizeImage );
 
-    SETKEYMOTION( "ScrollUpImage", KEYCONF_ScrollUpImage );
-    SETKEYMOTION( "ScrollDownImage", KEYCONF_ScrollDownImage );
-    SETKEYMOTION( "ScrollLeftImage", KEYCONF_ScrollLeftImage );
-    SETKEYMOTION( "ScrollRightImage", KEYCONF_ScrollRightImage );
+    load_keymotions( cf, "ScrollUpImage", KEYCONF_ScrollUpImage );
+    load_keymotions( cf, "ScrollDownImage", KEYCONF_ScrollDownImage );
+    load_keymotions( cf, "ScrollLeftImage", KEYCONF_ScrollLeftImage );
+    load_keymotions( cf, "ScrollRightImage", KEYCONF_ScrollRightImage );
 
     // MESSAGE
-    SETKEYMOTION( "CancelWrite", KEYCONF_CancelWrite );
-    SETKEYMOTION( "ExecWrite", KEYCONF_ExecWrite );
+    load_keymotions( cf, "CancelWrite", KEYCONF_CancelWrite );
+    load_keymotions( cf, "ExecWrite", KEYCONF_ExecWrite );
 
-    SETKEYMOTION( "FocusWrite", KEYCONF_FocusWrite );
-    SETKEYMOTION( "ToggleSage", KEYCONF_ToggleSage );
+    load_keymotions( cf, "FocusWrite", KEYCONF_FocusWrite );
+    load_keymotions( cf, "ToggleSage", KEYCONF_ToggleSage );
 
     // EDIT
-    SETKEYMOTION( "HomeEdit", KEYCONF_HomeEdit );
-    SETKEYMOTION( "EndEdit", KEYCONF_EndEdit );
+    load_keymotions( cf, "HomeEdit", KEYCONF_HomeEdit );
+    load_keymotions( cf, "EndEdit", KEYCONF_EndEdit );
 
-    SETKEYMOTION( "UpEdit", KEYCONF_UpEdit );
-    SETKEYMOTION( "DownEdit", KEYCONF_DownEdit );
-    SETKEYMOTION( "RightEdit", KEYCONF_RightEdit );
-    SETKEYMOTION( "LeftEdit", KEYCONF_LeftEdit );
+    load_keymotions( cf, "UpEdit", KEYCONF_UpEdit );
+    load_keymotions( cf, "DownEdit", KEYCONF_DownEdit );
+    load_keymotions( cf, "RightEdit", KEYCONF_RightEdit );
+    load_keymotions( cf, "LeftEdit", KEYCONF_LeftEdit );
 
-    SETKEYMOTION( "DeleteEdit", KEYCONF_DeleteEdit );
-    SETKEYMOTION( "BackspEdit", KEYCONF_BackspEdit );
-    SETKEYMOTION( "UndoEdit", KEYCONF_UndoEdit );
-    SETKEYMOTION( "EnterEdit", KEYCONF_EnterEdit );
+    load_keymotions( cf, "DeleteEdit", KEYCONF_DeleteEdit );
+    load_keymotions( cf, "BackspEdit", KEYCONF_BackspEdit );
+    load_keymotions( cf, "UndoEdit", KEYCONF_UndoEdit );
+    load_keymotions( cf, "EnterEdit", KEYCONF_EnterEdit );
 
-    SETKEYMOTION( "InputAA", KEYCONF_InputAA );
+    load_keymotions( cf, "InputAA", KEYCONF_InputAA );
 
     // JD globals
-    SETMOTION( "JDExit", KEYCONF_JDExit );
+    load_motions( cf, "JDExit", KEYCONF_JDExit );
     if( CONFIG::get_disable_close() ) remove_motions( CONTROL::JDExit );
 
-    SETMOTION( "JDHelp", KEYCONF_JDHelp );
+    load_motions( cf, "JDHelp", KEYCONF_JDHelp );
 }
 
 
