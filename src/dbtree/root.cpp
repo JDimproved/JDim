@@ -555,7 +555,7 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
     else if( is_JBBS( url ) ){
 
         if( regex.exec( "(http://[^/]*)/(.*)/(index2?\\.html?)?$" , url, offset, icase, newline, usemigemo, wchar ) ){
-            root = "http://jbbs.livedoor.jp";
+            root = "http://jbbs.shitaraba.net";
             path_board = "/" + regex.str( 2 );
 
             type = TYPE_BOARD_JBBS;
@@ -1525,7 +1525,8 @@ const bool Root::is_JBBS( const std::string& url )
     const std::string hostname = MISC::get_hostname( url );
 
     if( hostname.find( "jbbs.livedoor.jp" ) != std::string::npos
-        || hostname.find( "jbbs.shitaraba.com" ) != std::string::npos ) return true;
+        || hostname.find( "jbbs.shitaraba.com" ) != std::string::npos
+        || hostname.find( "jbbs.shitaraba.net" ) != std::string::npos ) return true;
 
     return false;
 }

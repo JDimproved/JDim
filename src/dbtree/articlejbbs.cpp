@@ -67,7 +67,7 @@ const std::string ArticleJBBS::create_write_message( const std::string& name, co
 //
 // bbscgi(write.cgi) のURL
 //
-// (例) "http://jbbs.livedoor.jp/bbs/write.cgi/computer/123/1234567/"
+// (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/1234567/"
 //
 //
 const std::string ArticleJBBS::url_bbscgi()
@@ -79,7 +79,7 @@ const std::string ArticleJBBS::url_bbscgi()
 //
 // subbbscgi のURL
 //
-// (例) "http://jbbs.livedoor.jp/bbs/write.cgi/computer/123/1234567/"
+// (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/1234567/"
 //
 const std::string ArticleJBBS::url_subbbscgi()
 {

@@ -124,7 +124,7 @@ const std::string BoardJBBS::create_newarticle_message( const std::string& subje
 //
 // 新スレ作成時のbbscgi(write.cgi) のURL
 //
-// (例) "http://jbbs.livedoor.jp/bbs/write.cgi/computer/123/new/"
+// (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/new/"
 //
 //
 const std::string BoardJBBS::url_bbscgi_new()
@@ -136,7 +136,7 @@ const std::string BoardJBBS::url_bbscgi_new()
 //
 // 新スレ作成時のsubbbscgi のURL
 //
-// (例) "http://jbbs.livedoor.jp/bbs/write.cgi/computer/123/new/"
+// (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/new/"
 //
 const std::string BoardJBBS::url_subbbscgi_new()
 {
