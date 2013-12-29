@@ -2330,10 +2330,10 @@ void DrawAreaBase::set_node_font( LAYOUT* layout )
     switch( layout->node->fontid ){
     case FONT_AA:
         if( m_aafont_initialized ){
-            layout_fontid = layout->node->fontid;
-            break;
+            layout_fontid = layout->node->fontid; // AA用フォント情報
+        } else {
+            layout_fontid = m_defaultfontid; // デフォルトフォント情報
         }
-        layout_fontid = m_defaultfontid; // デフォルトフォント情報
         break;
 
     case FONT_EMPTY: // フォントID未決定
