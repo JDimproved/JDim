@@ -42,6 +42,14 @@
 
 #include <glibmm.h>
 
+#ifdef _WIN32
+// _soc : SOCKET (unsigned int)
+#define SOC_ISVALID(_soc) ( (_soc) != INVALID_SOCKET )
+#else
+// _soc : int
+#define SOC_ISVALID(_soc) ( (_soc) >= 0 )
+#endif
+
 enum
 {
     MAX_LOADER = 10, // 最大スレッド数
@@ -557,7 +565,7 @@ void Loader::run_main()
     std::string errmsg;
 
 #ifdef _WIN32
-    SOCKET soc; // ソケットID
+    SOCKET soc = INVALID_SOCKET; // ソケットID
 #else
     int soc = -1; // ソケットID
 #endif
@@ -594,11 +602,7 @@ void Loader::run_main()
 
     // ソケット作成
     soc = socket( m_addrinfo ->ai_family, m_addrinfo ->ai_socktype, m_addrinfo ->ai_protocol );
-#ifdef _WIN32
-    if ( soc == INVALID_SOCKET ){
-#else
-    if ( soc < 0 ){
-#endif
+    if( ! SOC_ISVALID( soc ) ){
         m_data.code = HTTP_ERR;
         errmsg = "socket failed : " + m_data.url;
         goto EXIT_LOADING;
@@ -718,8 +722,8 @@ void Loader::run_main()
 #endif // _WIN32
 
 #ifdef _WIN32
-            if( tmpsize == 0 || ( tmpsize < 0 && !(
-                lastError == WSAEWOULDBLOCK || errno == WSAEINTR ) ) ){
+            if( tmpsize == 0
+                || ( tmpsize < 0 && !( lastError == WSAEWOULDBLOCK || errno == WSAEINTR ) ) ){
 #else
             if( tmpsize == 0
                 || ( tmpsize < 0 && !( errno == EWOULDBLOCK || errno == EINTR ) ) ){
@@ -910,7 +914,7 @@ EXIT_LOADING:
         ssl = NULL;
     }
 
-    if( soc >= 0 ){
+    if( SOC_ISVALID( soc ) ){
 
         // writefds待ち
         // 待たないとclose()したときにfinパケットが消える？
@@ -946,7 +950,13 @@ EXIT_LOADING:
     }
 
     // ソケットクローズ
-    if( soc >= 0 ) close( soc );
+    if( SOC_ISVALID( soc ) ){
+#ifdef _WIN32
+        closesocket( soc );
+#else
+        close( soc );
+#endif
+    }
 
     // addrinfo開放
     if( m_addrinfo ) freeaddrinfo( m_addrinfo );
