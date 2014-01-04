@@ -20,6 +20,7 @@
 #endif
 #ifdef _WIN32
 #include <windows.h>
+#define KEY_WOW64_64KEY 0x0100
 typedef void (WINAPI *GetSystemInfo_t)(LPSYSTEM_INFO);
 #endif
 
@@ -181,7 +182,7 @@ std::string ENVIRONMENT::get_distname()
             // Read Windows edition from the registry
             rc = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
                     "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
-                    0, KEY_READ, &hKey );
+                    0, KEY_READ | KEY_WOW64_64KEY, &hKey );
             if( rc == ERROR_SUCCESS )
             {
                 // read size of ProductName
