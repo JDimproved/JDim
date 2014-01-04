@@ -21,7 +21,6 @@
 #ifdef _WIN32
 #include <windows.h>
 typedef void (WINAPI *GetSystemInfo_t)(LPSYSTEM_INFO);
-typedef BOOL (WINAPI *GetProductInfo_t)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 #endif
 
 std::string ENVIRONMENT::get_jdcomments(){ return std::string( JDCOMMENT ); }
@@ -164,6 +163,11 @@ std::string ENVIRONMENT::get_distname()
     std::string dist_name;
 
 #ifdef _WIN32
+    LONG rc;
+    DWORD dwSize;
+    HKEY hKey;
+    char *regVal;
+
     std::ostringstream vstr;
     vstr << "Windows";
 
@@ -174,109 +178,87 @@ std::string ENVIRONMENT::get_distname()
         switch (osvi.dwPlatformId)
         {
         case VER_PLATFORM_WIN32_NT:
-            switch (osvi.dwMajorVersion)
+            // Read Windows edition from the registry
+            rc = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
+                    "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+                    0, KEY_READ, &hKey );
+            if( rc == ERROR_SUCCESS )
             {
-            case 6:
-                if (osvi.wProductType != VER_NT_WORKSTATION)
+                // read size of ProductName
+                rc = RegQueryValueEx( hKey, "ProductName",
+                        NULL, NULL, NULL, &dwSize );
+                if( rc == ERROR_SUCCESS && dwSize > 0 )
                 {
-                    switch (osvi.dwMinorVersion)
+                    // get buffer
+                    regVal = (char *)malloc( dwSize );
+                    if( regVal != NULL )
                     {
-                    case 2: vstr << " Server 2012"; break;
-                    case 1: vstr << " Server 2008 R2"; break;
-                    case 0: vstr << " Server 2008"; break;
+                        // read ProductName
+                        rc = RegQueryValueEx( hKey, "ProductName",
+                                NULL, NULL, (LPBYTE)regVal, &dwSize );
+                        if( rc == ERROR_SUCCESS && strlen( regVal ) > 0 )
+                        {
+                            // may be contains "Windows" in the value
+                            vstr.str( "" );
+                            vstr << regVal;
+                        }
+                        free( regVal );
                     }
                 }
-                else
+
+                // read size of CSDVersion
+                rc = RegQueryValueEx( hKey, "CSDVersion",
+                        NULL, NULL, NULL, &dwSize );
+                if( rc == ERROR_SUCCESS && dwSize > 0 )
                 {
-                    switch (osvi.dwMinorVersion)
+                    // get buffer
+                    regVal = (char *)malloc( dwSize );
+                    if( regVal != NULL )
                     {
-                    case 2: vstr << " 8"; break;
-                    case 1: vstr << " 7"; break;
-                    case 0: vstr << " Vista"; break;
-                    }
-                    DWORD product;
-                    GetProductInfo_t get_product = (GetProductInfo_t)GetProcAddress(
-                        GetModuleHandle("kernel32.dll"), "GetProductInfo");
-                    get_product(osvi.dwMajorVersion, osvi.dwMinorVersion,
-                        0, 0, &product);
-                    switch (product)
-                    {
-                    case 0x0001: vstr << " Ultimate"; break; // PRODUCT_ULTIMATE
-                    case 0x0002: vstr << " Home Basic"; break; // PRODUCT_HOME_BASIC
-                    case 0x0003: vstr << " Home Premium"; break; // PRODUCT_HOME_PREMIUM
-                    case 0x0004: vstr << " Enterprise"; break; // PRODUCT_ENTERPRISE
-                    case 0x0006: vstr << " Business"; break; // PRODUCT_BUSINESS
-                    case 0x000B: vstr << " Starter"; break; // PRODUCT_STARTER
-                    case 0x0030: vstr << " Professional"; break; // PRODUCT_PROFESSIONAL
+                        // read CSDVersion
+                        rc = RegQueryValueEx( hKey, "CSDVersion",
+                                NULL, NULL, (LPBYTE)regVal, &dwSize );
+                        if( rc == ERROR_SUCCESS && strlen( regVal ) > 0 )
+                        {
+                            // ServicePack version
+                            vstr << " " << regVal;
+                        }
+                        free( regVal );
                     }
                 }
-                break;
-            case 5:
-                switch (osvi.dwMinorVersion)
-                {
-                case 2:
-                    if (GetSystemMetrics(SM_SERVERR2))
-                        vstr << " Server 2003 R2";
-                    else if (osvi.wSuiteMask & 0x8000) // VER_SUITE_WH_SERVER
-                        vstr << " Home Server";
-                    else if (osvi.wProductType == VER_NT_WORKSTATION)
-                        vstr << " XP Professional"; // x64
-                    else
-                        vstr << " Server 2003";
-                    break;
-                case 1:
-                    if (osvi.wSuiteMask & VER_SUITE_PERSONAL)
-                        vstr << " XP Home";
-                    else
-                        vstr << " XP Professional";
-                    break;
-                case 0:
-                    if (osvi.wProductType == VER_NT_WORKSTATION)
-                        vstr << " 2000 Professional";
-                    else
-                        vstr << " 2000 Server";
-                    break;
-                }
-                break;
-            case 4: vstr << " NT 4.0"; break;
-            }
-            // additional informations
-            if (osvi.dwMajorVersion >= 5)
-            {
+
                 // OS architecture
-                SYSTEM_INFO sysi;
-                GetSystemInfo_t get_system = (GetSystemInfo_t)GetProcAddress(
-                    GetModuleHandle("kernel32.dll"), "GetNativeSystemInfo");
-                if (get_system != NULL)
-                    get_system(&sysi);
-                else
-                    GetSystemInfo(&sysi);
-                if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-                    vstr << " x64";
-                else if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
-                    vstr << " ia64";
-                // Service pack version
-                if (strlen(osvi.szCSDVersion) > 0)
+                if (osvi.dwMajorVersion >= 5)
                 {
-                    vstr << " " << osvi.szCSDVersion;
+                    SYSTEM_INFO sysi;
+                    GetSystemInfo_t get_system = (GetSystemInfo_t)GetProcAddress(
+                        GetModuleHandle("kernel32.dll"), "GetNativeSystemInfo");
+                    if (get_system != NULL)
+                        get_system(&sysi);
+                    else
+                        GetSystemInfo(&sysi);
+                    if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+                        vstr << " x64";
+                    else if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+                        vstr << " ia64";
                 }
-                // Build version
-                vstr << " (build " << osvi.dwBuildNumber << ")";
+
+                // close registry handle
+                RegCloseKey( hKey ); // ignore errors
             }
             break;
         case VER_PLATFORM_WIN32_WINDOWS:
-            // Not support versions
-            if (osvi.dwMajorVersion == 4)
-            {
-                switch (osvi.dwMinorVersion)
-                {
-                case 90: vstr << " Me"; break;
-                case 10: vstr << " 98"; break;
-                case 0:  vstr << " 95"; break;
-                }
-            }
+            // Not support versions (Me, 98, 95, ... )
+            break;
+        default:
+            // Unknown versions
             break;
         }
+
+        // Build version
+        vstr << " (build " << osvi.dwMajorVersion
+                << "." << osvi.dwMinorVersion
+                << "." << osvi.dwBuildNumber << ")";
     }
     dist_name = vstr.str();
 
