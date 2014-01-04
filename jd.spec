@@ -10,7 +10,7 @@
 # Defined by upsteam
 #
 %define         main_ver      2.8.8
-%define         strtag        140104
+%define         strtag        beta140104
 %define         repoid        ?????
 # Define this if this is pre-version
 %define         pre_release   1
