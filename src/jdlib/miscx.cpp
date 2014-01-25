@@ -7,8 +7,14 @@
 
 #ifndef _WIN32
 #include <gdk/gdkx.h>
+#else
+#include <gdk/gdkwin32.h>
+#include <windows.h>
 #endif
 
+//
+// dest ウインドウ上の、クライアント座標 x,y に移動する
+//
 void MISC::WarpPointer( Glib::RefPtr< Gdk::Window > src, Glib::RefPtr< Gdk::Window > dest, int x, int y ){
 
 #ifndef _WIN32
@@ -16,5 +22,18 @@ void MISC::WarpPointer( Glib::RefPtr< Gdk::Window > src, Glib::RefPtr< Gdk::Wind
                   None,
                   GDK_WINDOW_XWINDOW( Glib::unwrap( dest ) )
                   , 0, 0, 0, 0, x, y );
+#else
+    HWND hWnd;
+    POINT pos;
+
+    // スクリーン座標を取得してからカーソル位置を設定する
+    hWnd = (HWND)GDK_WINDOW_HWND( Glib::unwrap( dest ) );
+    if( hWnd != NULL ){
+        pos.x = x;
+        pos.y = y;
+        if( ClientToScreen( hWnd, &pos ) ){
+            SetCursorPos( pos.x, pos.y );
+        }
+    }
 #endif
 }
