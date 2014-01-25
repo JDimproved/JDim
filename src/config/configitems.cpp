@@ -179,6 +179,9 @@ const bool ConfigItems::load( const bool restore )
     cookie_hap = cf.get_option_str( "cookie_hap", CONF_COOKIE_HAP );
     cookie_hap_bbspink = cf.get_option_str( "cookie_hap_bbspink", CONF_COOKIE_HAP_BBSPINK );
 
+    // 2chの過去ログ取得時にofflaw2を使用する
+    cookie_hap_bbspink = cf.get_option_bool( "use_offlaw2_2ch", CONF_USE_OFFLAW2_2CH );
+
     // ブラウザ設定ダイアログのコンボボックスの番号
     browsercombo_id = cf.get_option_int( "browsercombo_id", CONF_BROWSER_NO, 0, CORE::get_browser_number() -1 );
 
@@ -724,6 +727,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_cookie_hap", use_cookie_hap );
     cf.update( "cookie_hap", cookie_hap );
     cf.update( "cookie_hap_bbspink", cookie_hap_bbspink );
+
+    cf.update( "use_offlaw2_2ch", use_offlaw2_2ch );
 
     cf.update( "command_openurl", command_openurl );
     cf.update( "browsercombo_id", browsercombo_id );

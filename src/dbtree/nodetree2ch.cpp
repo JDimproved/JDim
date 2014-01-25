@@ -25,6 +25,7 @@ enum
 {
     MODE_NORMAL = 0,
     MODE_OFFLAW,
+    MODE_OFFLAW2,
     MODE_KAKO_GZ,
     MODE_KAKO
 };
@@ -84,6 +85,29 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
 
         std::string sid = CORE::get_login2ch()->get_sessionid();
         ss << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
+
+        // レジュームは無し
+        set_resume( false );
+        data.byte_readfrom = 0;
+
+        data.url = ss.str();
+    }
+
+    //offlaw2 使用
+    else if( m_mode == MODE_OFFLAW2 ){
+
+        JDLIB::Regex regex;
+        const size_t offset = 0;
+        const bool icase = false;
+        const bool newline = true;
+        const bool usemigemo = false;
+        const bool wchar = false;
+
+        if( ! regex.exec( "(http://[^/]*)/(.*)/dat/(.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
+
+        std::ostringstream ss;
+        ss << regex.str( 1 ) << "/test/offlaw2.so?shiro=kuma&sid=ERROR&bbs=" << regex.str( 2 )
+           << "&key=" << regex.str( 3 );
 
         // レジュームは無し
         set_resume( false );
@@ -213,6 +237,10 @@ void NodeTree2ch::receive_finish()
 
         // ログインしている場合は offlaw.cgi 経由で旧URLで再取得
         if( m_mode == MODE_NORMAL && CORE::get_login2ch()->login_now() ) m_mode = MODE_OFFLAW;
+
+        // offlaw2.so 経由で再取得 ( bbspink を除く )
+        else if( m_mode == MODE_NORMAL && CONFIG::get_use_offlaw2_2ch()
+                && get_url().find( ".bbspink.com" ) == std::string::npos ) m_mode = MODE_OFFLAW2;
 
         // 過去ログ倉庫(gz圧縮)
         // ただし 2008年1月1日以降に立てられたスレは除く

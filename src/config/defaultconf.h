@@ -37,6 +37,7 @@ namespace CONFIG
         CONF_USE_IPV6 = 1,          // ipv6使用
         CONF_CONNECTION_NUM = 2,    // 同一ホストに対する最大コネクション数( 1 または 2 )
         CONF_USE_COOKIE_HAP = 1,    // 2chのクッキー:HAPを保存する
+        CONF_USE_OFFLAW2_2CH = 0,   // 2chの過去ログ取得時にofflaw2を使用する
         CONF_REFPOPUP_BY_MO = 0,    // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
         CONF_NAMEPOPUP_BY_MO = 0,   // 名前の上にマウスオーバーしたときにポップアップ表示する
         CONF_IDPOPUP_BY_MO = 0,     // IDの上にマウスオーバーしたときにIDをポップアップ表示する

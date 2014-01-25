@@ -101,6 +101,9 @@ namespace CONFIG
         std::string cookie_hap;
         std::string cookie_hap_bbspink;
 
+        // 2chの過去ログ取得時にofflaw2を使用する
+        bool use_offlaw2_2ch;
+
         // リンクをクリックしたときに実行するコマンド
         std::string command_openurl;
 
