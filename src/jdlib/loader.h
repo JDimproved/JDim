@@ -17,11 +17,6 @@
 #include <zlib.h>
 
 #ifdef _WIN32
-// set Windows XP or 2003 Server for addrinfo before include windows.h
-#ifdef WINVER
-#undef WINVER
-#endif
-#define WINVER 0x0501
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>

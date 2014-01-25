@@ -1,11 +1,13 @@
 // ライセンス: GPL2
 
+#ifdef _WIN32
+// require Windows XP or Server 2003 for getaddrinfo
+#define WINVER 0x0501
+#endif
+
 //#define _DEBUG
 //#define _DEBUG_CHUNKED
 //#define _DEBUG_TIME
-#ifdef _WIN32
-#define STRICT
-#endif
 #include "jddebug.h"
 
 #ifdef HAVE_CONFIG_H

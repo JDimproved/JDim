@@ -1,5 +1,10 @@
 // License GPL2
 
+#ifdef _WIN32
+// require Windows XP SP2 or Server 2003 SP1 for GetNativeSystemInfo, KEY_WOW64_64KEY
+#define WINVER 0x0502
+#endif
+
 //#define _DEBUG
 #include "jddebug.h"
 
@@ -20,8 +25,6 @@
 #endif
 #ifdef _WIN32
 #include <windows.h>
-#define KEY_WOW64_64KEY 0x0100
-typedef void (WINAPI *GetSystemInfo_t)(LPSYSTEM_INFO);
 #endif
 
 std::string ENVIRONMENT::get_jdcomments(){ return std::string( JDCOMMENT ); }
@@ -228,24 +231,19 @@ std::string ENVIRONMENT::get_distname()
                     }
                 }
 
-                // OS architecture
-                if (osvi.dwMajorVersion >= 5)
-                {
-                    SYSTEM_INFO sysi;
-                    GetSystemInfo_t get_system = (GetSystemInfo_t)GetProcAddress(
-                        GetModuleHandle("kernel32.dll"), "GetNativeSystemInfo");
-                    if (get_system != NULL)
-                        get_system(&sysi);
-                    else
-                        GetSystemInfo(&sysi);
-                    if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-                        vstr << " x64";
-                    else if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
-                        vstr << " ia64";
-                }
-
                 // close registry handle
                 RegCloseKey( hKey ); // ignore errors
+            }
+
+            // OS architecture
+            if (osvi.dwMajorVersion >= 5)
+            {
+                SYSTEM_INFO sysi;
+                GetNativeSystemInfo(&sysi);
+                if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+                    vstr << " x64";
+                else if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+                    vstr << " ia64";
             }
             break;
         case VER_PLATFORM_WIN32_WINDOWS:
