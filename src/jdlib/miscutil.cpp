@@ -1487,17 +1487,17 @@ const std::string MISC::utf8_fix_wavedash( const std::string& str, const int mod
 {
     // WAVE DASH 問題
     const size_t size = 4;
-    const char Win[size][4] = {
-        {  -17,  -67,  -98, '\0' }, // FULLWIDTH TILDE (U+FF5E)
-        {  -30, -128, -107, '\0' }, // HORIZONTAL BAR (U+2015)
-        {  -30, -120,  -91, '\0' }, // PARALLEL TO (U+2225)
-        {  -17,  -68, -115, '\0' }  // FULLWIDTH HYPHEN-MINUS (U+FF0D)
+    const unsigned char Win[size][4] = {
+        { 0xef, 0xbd, 0x9e, '\0' }, // FULLWIDTH TILDE (U+FF5E)
+        { 0xe2, 0x80, 0x95, '\0' }, // HORIZONTAL BAR (U+2015)
+        { 0xe2, 0x88, 0xa5, '\0' }, // PARALLEL TO (U+2225)
+        { 0xef, 0xbc, 0x8d, '\0' }  // FULLWIDTH HYPHEN-MINUS (U+FF0D)
     };
-    const char Unix[size][4] = {
-        {  -29, -128, -100, '\0' }, // WAVE DASH (U+301C)
-        {  -30, -128, -108, '\0' }, // EM DASH(U+2014)
-        {  -30, -128, -106, '\0' }, // DOUBLE VERTICAL LINE (U+2016)
-        {  -30, -120, -110, '\0' }  // MINUS SIGN (U+2212)
+    const unsigned char Unix[size][4] = {
+        { 0xe3, 0x80, 0x9c, '\0' }, // WAVE DASH (U+301C)
+        { 0xe2, 0x80, 0x94, '\0' }, // EM DASH(U+2014)
+        { 0xe2, 0x80, 0x96, '\0' }, // DOUBLE VERTICAL LINE (U+2016)
+        { 0xe2, 0x88, 0x92, '\0' }  // MINUS SIGN (U+2212)
     };
     
     std::string ret(str);
@@ -1506,10 +1506,10 @@ const std::string MISC::utf8_fix_wavedash( const std::string& str, const int mod
 
         for( size_t i = 0; i < ret.length(); i++ ) {
             for( size_t s = 0; s < size; s++ ) {
-                if( ret[ i ] != Win[ s ][ 0 ] || ret[ i+1 ] != Win[ s ][ 1 ] || ret[ i+2 ] != Win[ s ][ 2 ] )
+                if( ret[ i ] != (char)Win[ s ][ 0 ] || ret[ i+1 ] != (char)Win[ s ][ 1 ] || ret[ i+2 ] != (char)Win[ s ][ 2 ] )
                     continue;
                 for( size_t t = 0; t < 3; t++ )
-                    ret[ i+t ] = Unix[ s ][ t ];
+                    ret[ i+t ] = (char)Unix[ s ][ t ];
                 i += 2;
                 break;
             }
@@ -1519,10 +1519,10 @@ const std::string MISC::utf8_fix_wavedash( const std::string& str, const int mod
    
         for( size_t i = 0; i < ret.length(); i++ ) {
             for( size_t s = 0; s < size; s++ ) {
-                if( ret[ i ] != Unix[ s ][ 0 ] || ret[ i+1 ] != Unix[ s ][ 1 ] || ret[ i+2 ] != Unix[ s ][ 2 ] )
+                if( ret[ i ] != (char)Unix[ s ][ 0 ] || ret[ i+1 ] != (char)Unix[ s ][ 1 ] || ret[ i+2 ] != (char)Unix[ s ][ 2 ] )
                     continue;
                 for( size_t t = 0; t < 3; t++ )
-                    ret[ i+t ] = Win[ s ][ t ];
+                    ret[ i+t ] = (char)Win[ s ][ t ];
                 i += 2;
                 break;
             }
