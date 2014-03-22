@@ -33,7 +33,7 @@ namespace CORE
 
       PasswdFrame2ch()
       : m_label_sid_2ch( false, "SID： ", CORE::get_login2ch()->get_sessionid() ),
-        entry_id( true, "ユーザID(_I)： " ), entry_passwd( true, "パスワード(_P)： " )
+        entry_id( true, "ユーザID(_I)： " ), entry_passwd( true, "秘密鍵(_P)： " )
         {
             const int mrg = 8;
 

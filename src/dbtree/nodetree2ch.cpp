@@ -67,7 +67,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
 
     data.url = std::string();
 
-    //offlaw 使用
+    //rokka使用 (旧offlawは廃止)
     if( m_mode == MODE_OFFLAW ){
 
         JDLIB::Regex regex;
@@ -77,14 +77,15 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         const bool usemigemo = false;
         const bool wchar = false;
 
-        if( ! regex.exec( "(http://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
+        if( ! regex.exec( "(http://)([^/\\.]+)(\\.[^/]+)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
 
+        // http://rokka(.2ch.net|.bbspink.com)/<SERVER NAME>/<BOARD NAME>/<DAT NUMBER>/<OPTIONS>?sid=<SID>
         std::ostringstream ss;
-        ss << regex.str( 1 ) << "/test/offlaw.cgi" << regex.str( 2 ) << regex.str( 3 )
-           << "/?raw=." << get_lng_dat();
+        ss << regex.str( 1 ) << "rokka" << regex.str( 3 ) << "/" << regex.str( 2 )
+           << regex.str( 4 ) << regex.str( 5 );
 
         std::string sid = CORE::get_login2ch()->get_sessionid();
-        ss << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
+        ss << "/?sid=" << MISC::url_encode( sid.c_str(), sid.length() );
 
         // レジュームは無し
         set_resume( false );
