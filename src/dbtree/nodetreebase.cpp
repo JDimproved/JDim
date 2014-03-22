@@ -2751,7 +2751,7 @@ const int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, i
 
 #ifdef _DEBUG
     std::cout << str_link << std::endl
-              << "len = " << strlen( str_link ) << " lng_link = " << lng_link << " n_in + offset = " << n_in + offset << std::endl;
+              << "len = " << strlen( str_link ) << " lng_link = " << lng_link << " n_in = " << n_in << std::endl;
 #endif
 
     return linktype;

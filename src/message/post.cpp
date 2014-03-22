@@ -223,7 +223,7 @@ void Post::receive_finish()
 
 #ifdef _DEBUG
     std::cout << "code = " << get_code() << std::endl;
-    std::cout << str << std::endl;
+    std::cout << m_return_html << std::endl;
 #endif
 
     clear();

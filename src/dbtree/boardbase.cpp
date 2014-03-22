@@ -639,7 +639,7 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
     else{
 
 #ifdef _DEBUG
-        std::cout << "query_kako = " << query_kako << std::endl;
+        std::cout << "query_kako = " << m_query_kako << std::endl;
 #endif
         if( regex.exec( m_query_kako , url, offset, icase, newline, usemigemo, wchar ) ){
 
@@ -1605,8 +1605,8 @@ void BoardBase::remove_old_abone_thread()
 
 #ifdef _DEBUG
     std::cout << "BoardBase::remove_old_abone_thread\n";
-    std::list< std::string >::const_iterator it = m_list_abone_thread.begin();
-    for( ; it != m_list_abone_thread.end(); ++it ) std::cout << ( *it ) << std::endl;
+    std::list< std::string >::const_iterator it1 = m_list_abone_thread.begin();
+    for( ; it1 != m_list_abone_thread.end(); ++it1 ) std::cout << ( *it1 ) << std::endl;
     std::cout << "->\n";
     std::list< std::string >::const_iterator it2 = m_list_abone_thread_remove.begin();
     for( ; it2 != m_list_abone_thread_remove.end(); ++it2 ) std::cout << ( *it2 ) << std::endl;
