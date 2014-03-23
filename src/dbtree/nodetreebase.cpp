@@ -1306,12 +1306,14 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
     if( !size ) return;
     
     // バッファが '\n' で終わるように調整
-    const char* pos = data + size -1;
+    const char* pos = data + size;
+    if( *pos == '\0' ) --pos; // '\0' を除く
     while( *pos != '\n' && pos != data ) --pos;
 
     // 前回の残りのデータに新しいデータを付け足して add_raw_lines()にデータを送る
-    size_t size_in = ( int )( pos - data ) + 1;
-    if( size_in > 1 ){
+    size_t size_in = ( int )( pos - data );
+    if( size_in > 0 ){
+        size_in ++; // '\n'を加える
         memcpy( m_buffer_lines + m_byte_buffer_lines_left , data, size_in );
         m_buffer_lines[ m_byte_buffer_lines_left + size_in ] = '\0';
         add_raw_lines( m_buffer_lines, m_byte_buffer_lines_left + size_in );
@@ -1329,12 +1331,15 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
 //
 void NodeTreeBase::receive_finish()
 {
+    bool is_error = false;
     if( get_code() != HTTP_INIT
         && get_code() != HTTP_OK
         && get_code() != HTTP_PARTIAL_CONTENT
         && get_code() != HTTP_NOT_MODIFIED
         && get_code() != HTTP_OLD
         ){
+        is_error = true;
+
         std::ostringstream err;
         err << m_url << std::endl
             << "load failed. : " << get_str_code();
@@ -1343,6 +1348,17 @@ void NodeTreeBase::receive_finish()
     }
 
     if( ! m_check_update ){
+
+        if( ! is_error ){
+            // 特殊スレのdatには、最後の行に'\n'がない場合がある
+            if( m_byte_buffer_lines_left > 0 ){
+                // 正常に読込完了した場合で、バッファが残っていれば add_raw_lines()にデータを送る
+                m_buffer_lines[ m_byte_buffer_lines_left + 1 ] = '\0';
+                add_raw_lines( m_buffer_lines, m_byte_buffer_lines_left );
+                // バッファをクリア
+                m_byte_buffer_lines_left = 0;
+            }
+        }
 
         // Requested Range Not Satisfiable
         if( get_code() == HTTP_RANGE_ERR ){
