@@ -529,12 +529,19 @@ void Core::run( const bool init, const bool skip_setupdiag )
     Gtk::RadioButtonGroup radiogroup_img;
     Glib::RefPtr< Gtk::RadioAction > raction_img0 = Gtk::RadioAction::create( radiogroup_img, "UseWinImg", "ウィンドウ表示する(_W)" );
     Glib::RefPtr< Gtk::RadioAction > raction_img1 = Gtk::RadioAction::create( radiogroup_img, "UseEmbImg", "埋め込み表示する(_E)" );
+    Glib::RefPtr< Gtk::RadioAction > raction_img2 = Gtk::RadioAction::create( radiogroup_img, "NoUseImg", "表示しない(_D)" );
 
-    if( ! SESSION::get_embedded_img() ) raction_img0->set_active( true );
-    else raction_img1->set_active( true );
+    if( CONFIG::get_use_image_view() ){
+        if( ! SESSION::get_embedded_img() ) raction_img0->set_active( true );
+        else raction_img1->set_active( true );
+    }
+    else {
+        raction_img2->set_active( true );
+    }
 
     m_action_group->add( raction_img0, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_WINDOW ) );
     m_action_group->add( raction_img1, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_EMB ) );
+    m_action_group->add( raction_img2, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_NO ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "UseImgPopup", "画像ポップアップを表示する(_P)", std::string(), CONFIG::get_use_image_popup() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
@@ -877,6 +884,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                     "<menu action='ShowImageView_Menu'>"
                         "<menuitem action='UseWinImg'/>"
                         "<menuitem action='UseEmbImg'/>"
+                        "<menuitem action='NoUseImg'/>"
                     "</menu>"
                     "<menuitem action='UseImgPopup'/>"
                     "<menuitem action='UseInlineImg'/>"
@@ -1486,26 +1494,6 @@ void Core::slot_activate_menubar()
     act = m_action_group->get_action( "Show_Image" );
     if( CONFIG::get_use_image_view() && ! IMAGE::get_admin()->empty() ) act->set_sensitive( true );
     else act->set_sensitive( false );
-
-    // 画像ビュー表示切り替え
-    act = m_action_group->get_action( "UseWinImg" );
-    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-    if( tact ){
-        if( ! CONFIG::get_use_image_view() ) tact->set_active( false );
-        else{
-            if( SESSION::get_embedded_img() ) tact->set_active( false );
-            else tact->set_active( true );
-        }
-    }
-    act = m_action_group->get_action( "UseEmbImg" );
-    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-    if( tact ){
-        if( ! CONFIG::get_use_image_view() ) tact->set_active( false );
-        else{
-            if( SESSION::get_embedded_img() ) tact->set_active( true );
-            else tact->set_active( false );
-        }
-    }
 
     // 開いている板のログ検索
     act = m_action_group->get_action( "SearchCacheBoard" );

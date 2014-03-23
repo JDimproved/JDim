@@ -407,6 +407,7 @@ void Core::slot_toggle_imgview( const int mode )
     if( SESSION::is_booting() ) return;
     if( ! m_enable_menuslot ) return;
 
+    // imageビューの状態
     int current_mode = IMGVIEW_NO;
 
     if( CONFIG::get_use_image_view() ){
@@ -414,10 +415,15 @@ void Core::slot_toggle_imgview( const int mode )
         else current_mode = IMGVIEW_WINDOW;
     }
 
-    // ビュー使用切り替え
-    if( current_mode == IMGVIEW_NO || current_mode == mode ){
-        CONFIG::set_use_image_view( ! CONFIG::get_use_image_view() );
-        if( ! CONFIG::get_use_image_view() ) IMAGE::get_admin()->set_command( "close_all_views" );
+    if( current_mode == mode ) return;
+
+    // imageビュー使用切り替え
+    if( mode == IMGVIEW_NO ){
+        CONFIG::set_use_image_view( false );
+        IMAGE::get_admin()->set_command( "close_all_views" );
+    }
+    else {
+        CONFIG::set_use_image_view( true );
     }
 
     // ウィンドウ、埋め込みモード切り替え
