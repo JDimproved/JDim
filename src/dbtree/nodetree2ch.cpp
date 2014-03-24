@@ -56,6 +56,39 @@ NodeTree2ch::~NodeTree2ch()
 
 
 //
+// キャッシュに保存する前の前処理
+//
+// 先頭にrawモードのステータスが入っていたら取り除く
+//
+char* NodeTree2ch::process_raw_lines( char* rawlines )
+{
+    char* pos = rawlines;
+
+    if( m_mode == MODE_OFFLAW ){
+        // rokka独自のステータスが入っている
+
+        int status = 0;
+        if( strncmp( pos, "Success", 7 ) == 0 ) status = 1;
+        if( strncmp( pos, "Error", 5 ) == 0 ) status = 2;
+
+#ifdef _DEBUG
+        std::cout << "NodeTree2ch::process_raw_lines : raw mode status = " << status << std::endl;
+#endif
+
+        if( status != 0 ){
+            pos = skip_status_line( pos, status );
+        }
+    }
+
+    else {
+        pos = NodeTree2chCompati::process_raw_lines( rawlines );
+    }
+
+    return pos;
+}
+
+
+//
 // ロード用データ作成
 //
 void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )

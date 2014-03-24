@@ -26,6 +26,8 @@ namespace DBTREE
 
       protected:
 
+        virtual char* process_raw_lines( char* rawlines );
+
         virtual void create_loaderdata( JDLIB::LOADERDATA& data );
 
       private:

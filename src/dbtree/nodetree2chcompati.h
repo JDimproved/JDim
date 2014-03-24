@@ -32,6 +32,8 @@ namespace DBTREE
         virtual char* process_raw_lines( char* rawlines );
         virtual const char* raw2dat( char* rawlines, int& byte );
 
+        char* skip_status_line( char* pos, int status );
+
         virtual void create_loaderdata( JDLIB::LOADERDATA& data );
     };
 }

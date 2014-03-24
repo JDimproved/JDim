@@ -95,22 +95,34 @@ char* NodeTree2chCompati::process_raw_lines( char* rawlines )
 #endif
 
         if( status != 0 ){
-
-            // この行を飛ばす
-            char* pos_msg = pos;
-            while( *pos != '\n' && *pos != '\0' ) ++pos;
-
-            // エラー
-            if( status != 1 ){
-                int byte;
-                std::string ext_err = std::string( m_iconv->convert( pos_msg, pos - pos_msg, byte ) );
-                set_ext_err( ext_err );
-                MISC::ERRMSG( ext_err );
-            }
-
-            if( *pos == '\n' ) ++pos;
+            pos = skip_status_line( pos, status );
         }
     }
+
+    return pos;
+}
+
+
+//
+// ステータス行のスキップ処理
+//   status == 1 : 正常ステータス
+//   status != 1 : 異常ステータス
+// 
+char* NodeTree2chCompati::skip_status_line( char* pos, int status )
+{
+    // この行を飛ばす
+    char* pos_msg = pos;
+    while( *pos != '\n' && *pos != '\0' ) ++pos;
+
+    // エラー
+    if( status != 1 ){
+        int byte;
+        std::string ext_err = std::string( m_iconv->convert( pos_msg, pos - pos_msg, byte ) );
+        set_ext_err( ext_err );
+        MISC::ERRMSG( ext_err );
+    }
+
+    if( *pos == '\n' ) ++pos;
 
     return pos;
 }
