@@ -1,4 +1,4 @@
-##########################################
+ｊｄ##########################################
 # For using svn: do
 # export SVNROOT="http://svn.sourceforge.jp/svnroot/jd4linux/jd"
 # svn checkout $SVNROOT/trunk
@@ -10,7 +10,7 @@
 # Defined by upsteam
 #
 %define         main_ver      2.8.8
-%define         strtag        beta140104
+%define         strtag        beta140329
 %define         repoid        ?????
 # Define this if this is pre-version
 %define         pre_release   1
